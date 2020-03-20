@@ -1,0 +1,804 @@
+<?xml version="1.0" encoding="utf-8"?>
+<fieldtypes>
+	<type ct_name="string" name="string" label="Text String (Single Line)" description="Provides a text box for data entry." ct_alias="string" disabled="false" ct_special="false" priority="1">
+		<params>
+			<param name="length" label="Length" description="Number of characters. Number of characters not bytes." hidden="false" default="255" type="number" min="1" max="1024" example="30" />
+		</params>
+		<valueparams name="string" label="Text Output Parameters" description="This dictates how to process the text value of the field.">
+			<params>
+				<param name="limit" label="Limit Output" type="list" description="Limits returning output text, first number of characters or first number of words." >
+					<option value="" label="Returns as it is" />
+					<option value="chars" label="Returns first number of characters from text that was trimmed, sanitized and HTML tags stripped." />
+					<option value="words" label="Returns first number of words from text that was trimmed, sanitized and HTML tags stripped." />
+					<option value="firstimage" label="Returns the link to a first image found in the text." />
+				</param>
+				<param name="length" label="Length" description="Number of characters or words. " hidden="false" default="" type="number" min="1" max="1024" example="30" />
+				<param name="cleanbraces" label="Clean Braces" description="Deletes all braces from the text. (i.e. to avoid Content Plugins running.)" default="" type="radio" options="|No,true|Yes" />
+				<param name="cleanquotes" label="Clean Quotes" description="Deletes all quotes from the text." default="" type="radio" options="|No,true|Yes" />
+			</params>
+		</valueparams>
+
+		<editparams name="string" label="Input Element Parameters" description="">
+			<params>
+				<param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)." example="my_CSS_class" />
+				<param name="attributes" label="Attributes" description="Optional attributes like: disabled, onclick, onchange etc." default="" type="string" example="onclick='alert(1);'" />
+			</params>
+		</editparams>
+</type>
+
+	<type ct_name="multilangstring" name="multilangstring" label="Multilingual Text String (Single Line)" description="Provides a set of text boxes for data entry. One inputbox for each language." ct_alias="multilangstring" disabled="false" ct_special="false" priority="1">
+		<params>
+			<param name="length" label="Length" description="Number of characters. Number of characters not bytes." hidden="false" default="255" type="number" min="1" max="1024" example="50" />
+		</params>
+		<valueparams name="multilangstring" label="Text Output Parameters" description="This dictates how to process the text value of the field.">
+			<params>
+				<param name="limit" label="Limit Output" type="list" description="Limits returning output text, first number of characters or first number of words." >
+					<option value="" label="Returns as it is" />
+					<option value="chars" label="Returns first number of characters from text that was trimmed, sanitized and HTML tags stripped." />
+					<option value="words" label="Returns first number of words from text that was trimmed, sanitized and HTML tags stripped." />
+					<option value="firstimage" label="Returns the link to a first image found in the text." />
+				</param>
+				<param name="length" label="Length" description="Number of characters or words. " hidden="false" default="" type="number" min="1" max="1024" />
+				<param name="cleanbraces" label="Clean Braces" description="Deletes all braces from the text. (i.e. to avoid Content Plugins running.)" default="" type="radio" options="|No,true|Yes" />
+				<param name="cleanquotes" label="Clean Quotes" description="Deletes all quotes from the text." default="" type="radio" options="|No,true|Yes" />
+				
+				
+				<param name="language" label="Language" description="Specify the language. Default front-end languege will be used if not specified." default="" type="language" />
+			</params>
+		</valueparams>
+
+		<editparams name="multilangstring" label="Input Element Parameters" description="">
+			<params>
+				<param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)." />
+				<param name="attributes" label="Attributes" description="Optional attributes like: disabled, onclick, onchange etc." default="" type="string" />
+			</params>
+		</editparams>
+</type>
+
+	<type ct_name="alias" name="alias" label="Alias (For SEO Links)" description="Alias field that can be used insted of listing_id for SEO purpose." ct_alias="alias" disabled="false" ct_special="false" priority="1" >
+		<params>
+		</params>
+</type>
+
+	<type ct_name="color" name="color" label="Color" description="Provides Color Picker functionality in the Edit Form or hexidecimal value as output." ct_alias="color" disabled="false" ct_special="false" priority="2" >
+		<editparams name="color" label="Format" description="Color Picker format.">
+		<params>
+			<param name="transparent" label="Transparent" description="Allow transparency - alpha color." default="" type="radio" options="|No,transparent|Yes" />
+		</params>
+		</editparams>
+		<valueparams name="color" label="Color Output Parameters" description="Fromat color code.">
+			<params>
+				<param name="format" label="Format" description="Return formats: HEX is #rrggbb or #rrggbbaa, RGB is rgb(r,g,b) or rgbs(r,g,b,a)" default="" type="radio" options="|Hexadecimal,rgba|rgba()" />
+			</params>
+                </valueparams>
+
+</type>
+
+	<type ct_name="text" name="text" label="Text Area (Multilple Lines)" description="Provides a textarea box for data entry." ct_alias="text" disabled="false" ct_special="false" priority="1">
+		<params>
+			<param name="texteditor" label="Text Editor" description="" hidden="false" default="" type="list">
+				<option value="" label="No Editor" />
+				<option value="rich" label="Rich Text Editor" />
+				<!--<option value="codemirror" label="Code Mirror (Code Editor)" />-->
+			</param>
+
+			<param name="spellcheck" label="Spell Checker" description="" default="" type="radio" options="|No,spellcheck|Yes" />
+		</params>
+		<valueparams name="text" label="Text Output Parameters" description="This dictates how to process the text value of the field.">
+			<params>
+				<param name="limit" label="Limit Output" type="list" example="50" description="Limits returning output text, first number of characters or first number of words." >
+					<option value="" label="Returns as it is" />
+					<option value="chars" label="Returns first number of characters from text that was trimmed, sanitized and HTML tags stripped." />
+					<option value="words" label="Returns first number of words from text that was trimmed, sanitized and HTML tags stripped." />
+					<option value="firstimage" label="Returns the link to a first image found in the text." />
+				</param>
+				<param name="length" label="Length" description="Number of characters or words. " hidden="false" default="" type="number" min="1" max="1024" />
+				<param name="cleanbraces" label="Clean Braces" description="Deletes all braces from the text. (i.e. to avoid Content Plugins running.)" default="" type="radio" options="|No,true|Yes" />
+				<param name="cleanquotes" label="Clean Quotes" description="Deletes all quotes from the text." default="" type="radio" options="|No,true|Yes" />
+			</params>
+		</valueparams>
+
+		<editparams name="text" label="Input Element Parameters" description="">
+			<params>
+				<param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)." />
+				<param name="attributes" label="Attributes" description="Optional attributes like: disabled, onclick, onchange etc." default="" type="string" />
+			</params>
+		</editparams>
+</type>
+
+	<type ct_name="multilangtext" name="multilangtext" label="Multilingual Text Area (Multilple Lines)" description="Provides a set of textarea boxes for data entry. One textarea box for each language." ct_alias="multilangtext" disabled="false" ct_special="false" priority="1">
+		<params>
+			<param name="texteditor" label="Text Editor" description="" hidden="false" default="" type="list">
+				<option value="" label="No Editor" />
+				<option value="rich" label="Rich Text Editor" />
+				<!--<option value="codemirror" label="Code Mirror (Code Editor)" />-->
+			</param>
+
+			<param name="spellcheck" label="Spell Checker" description="" default="" type="radio" options="|No,spellcheck|Yes" />
+		</params>
+		<valueparams name="multilangtext" label="Text Output Parameters" description="This dictates how to process the text value of the field.">
+			<params>
+				<param name="limit" label="Limit Output" type="list" description="Limits returning output text, first number of characters or first number of words." >
+					<option value="" label="Returns as it is" />
+					<option value="chars" label="Returns first number of characters from text that was trimmed, sanitized and HTML tags stripped." />
+					<option value="words" label="Returns first number of words from text that was trimmed, sanitized and HTML tags stripped." />
+					<option value="firstimage" label="Returns the link to a first image found in the text." />
+				</param>
+				<param name="length" label="Length" example="50" description="Number of characters or words. " hidden="false" default="" type="number" min="1" max="1024" />
+				<param name="cleanbraces" label="Clean Braces" description="Deletes all braces from the text. (i.e. to avoid Content Plugins running.)" default="" type="radio" options="|No,true|Yes" />
+				<param name="cleanquotes" label="Clean Quotes" description="Deletes all quotes from the text." default="" type="radio" options="|No,true|Yes" />
+				<param name="language" label="Language" description="Specify the language. Default front-end languege will be used if not specified." default="" type="language" />
+			</params>
+		</valueparams>
+
+		<editparams name="multilangtext" label="Input Element Parameters" description="">
+			<params>
+				<param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)." />
+				<param name="attributes" label="Attributes" description="Optional attributes like: disabled, onclick, onchange etc." default="" type="string" />
+			</params>
+		</editparams>
+</type>
+
+	<type ct_name="int" name="int" label="Integer Number" description="Provides an integer number inputbox." ct_alias="int" disabled="false" ct_special="false" priority="1">
+			<editparams name="int" label="Input Element Parameters" description="">
+			<params>
+				<param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)." />
+				<param name="attributes" label="Attributes" description="Optional attributes like: disabled, onclick, onchange etc." default="" type="string" />
+			</params>
+		</editparams>
+</type>
+
+	<type ct_name="float" name="float" label="Float (Decimal) Number" description="Provides a decimal number inputbox." ct_alias="float" disabled="false" ct_special="false" priority="1">
+		<params>
+			<param name="decimals" label="Decimals" example="2" description="Number of digits to the right of the decimal point (the scale). Must be no larger than Precision Number of digits." default="2" type="number" min="1" max="30" />
+			<param name="numberofdigits" label="Precision" description="Maximum number of digits (the precision)." default="20" type="number" min="1" max="65" />
+			<param name="smart" label="Smart Imput" description="Allows input without pressing decimal point key. Example: to type [12.67]  just type [1267] The decimal point will be placed by itself."
+				   default="" type="radio" options="smart|Yes,|No" example="smart" />
+		</params>
+
+
+
+		<valueparams name="float" label="Decimal Number Format" description="This dictates how to format the decimal value of the field.">
+			<params>
+				<param name="decimals" label="Number of decimals" example="2" description="Format returning number. Add tracing 0 if needed. (useful when formating a currency)" hidden="false" default="" type="number" min="0" max="30" />
+				<param name="decimalseparator" label="Decimal Separator" example="." description="Separate decimals with provided character. i.e. ',' or '.'" default="" type="string" />
+				<param name="thousandseparator" label="Thousand Separator" example="," description="Separate thousands with provided character. i.e. ',' or '.' or ' ' (space)" default="" type="string" />
+			</params>
+		</valueparams>
+
+		<editparams name="float" label="Input Element Parameters" description="">
+			<params>
+				<param type="string" name="cssclass" label="CSS Class" example="inputboxClass" description="Name or names of CSS class(s)." />
+				<param name="attributes" label="Attributes" example="readonly='readonly'" description="Optional attributes like: disabled, onclick, onchange etc." default="" type="string" />
+			</params>
+		</editparams>
+</type>
+
+	<type ct_name="customtables" depricated="1" name="customtables" label="Hierarchical List" description="Hierarchical List" rawquotes="1" ct_alias="customtables" disabled="false" ct_special="false" priority="3" proversion="1" >
+		<params>
+			<param name="option" label="Option" description="" default="" type="string" />
+			<param name="selector" label="Selector" description="How to select records." default="single" type="list" example="multi">
+				<option value="single" label="Single (Select Box)" />
+				<option value="multi" label="Multiple (List Box)" />
+			</param>
+
+		</params>
+
+		<editparams name="customtables" label="Input Element Parameters" description="">
+			<params>
+				<param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)." />
+				<param name="attributes" label="Attributes" description="Optional attributes like: disabled, onclick, onchange etc." default="" type="string" />
+			</params>
+		</editparams>
+</type>
+
+	<type ct_name="records" label="SLQ Table Join (Multiple)" description="Provides a Multiple Left Join to records of another table." priority="2">
+		<params>
+			<param name="table" label="Table" description="Type the name of the Custom Table to join/link with." example="products" default="" type="table" />
+			<param name="fieldname" label="Field Name" example="title" description="Type the field name to return the value from (that can be overwritten in Layout). You may type layout name instead. options: [layout:the layout or tablelesslayout:the layout]" default="" type="string" />
+			<param name="selector" label="Selector" example="single" description="How to select records." default="single" type="list" >
+				<option value="single" label="Single Record (Dropdown List)" />
+				<option value="multi" label="Multiple Records (Dropdown List)" />
+				<option value="radio" label="Single Record (Radio)" />
+				<option value="checkbox" label="Multiple Records (Checkboxes)" />
+				<option value="multibox" label="Multiple Records (Add Record List, requires Dynamic Filter)" />
+			</param>
+			<param name="filter" label="Filter" description="Limits records using filter. Example: [age>30] where age is a field in joining table" default="" type="string" />
+			<param name="dynamicfilter" label="Dynamic Filter" description="Used with multibox, requires that joining table contain SQL Join field to use it as Category Filter" default="" type="string" />
+			<param name="orderby" label="Order By" example="title" description="Field name to sort record by" default="" type="string" />
+			<param name="allowunpublished" label="Allow Unpublished" description="Allow to select unpublished records." default="" type="radio" options="|No,true|Yes" />
+		</params>
+		<editparams name="records" label="Input Element Parameters" description="">
+			<params>
+				<param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)." />
+				<param name="attributes" label="Attributes" description="Optional attributes like: disabled, onclick, onchange etc." default="" type="string" />
+			</params>
+		</editparams>
+</type>
+
+	<type ct_name="checkbox" label="Checkbox (YES/NO)" description="Provides a single checkbox to be checked or unchecked" priority="1">
+		
+		<editparams name="checkbox" label="Input Element Parameters" description="">
+			<params>
+				<param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)." />
+				<param name="attributes" label="Attributes" description="Optional attributes like: disabled, onclick, onchange etc." default="" type="string" />
+				
+				<param name="form" label="Format" example="yesno" description="Type of checkbox" default="" type="list" >
+					<option value="" label="Simple HTML Checkbox" />
+					<option value="yesno" label="Yes/No buttons" />
+				</param>
+				
+			</params>
+		</editparams>
+</type>
+	<type ct_name="radio" label="Radio" description="" depricated="1" priority="3" proversion="1"><!-- pro -->
+		<params>
+			<param name="params" label="Parameters" description="" default="" type="string" />
+		</params>
+		<editparams name="radio" label="Input Element Parameters" description="">
+			<params>
+				<param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)." />
+				<param name="attributes" label="Attributes" description="Optional attributes like: disabled, onclick, onchange etc." default="" type="string" />
+			</params>
+		</editparams>
+</type>
+
+	<type ct_name="email" label="Email" description="Provides an email field." priority="1">
+		<editparams name="email" label="Input Element Parameters" description="">
+			<params>
+				<param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)." />
+				<param name="attributes" label="Attributes" description="Optional attributes like: disabled, onclick, onchange etc." default="" type="string" />
+			</params>
+		</editparams>
+</type>
+	<type ct_name="date" label="Date" description="Date Picker" priority="1">
+		<valueparams name="date" label="Date Format" description="This dictates how to format the date value of the field.">
+			<params>
+				<param name="format" example="Y-m-d" label="Format" type="string" description="PHP date format i.e. 'Y-m-d' or Joomla defined format (language supported) if left empty. 'timestamp' to return the datetime in UNIX timestamp format." />
+			</params>
+		</valueparams>
+			<editparams name="date" label="Input Element Parameters" description="">
+			<params>
+				<param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)." />
+				<param name="attributes" label="Attributes" description="Optional attributes like: disabled, onclick, onchange etc." default="" type="string" />
+			</params>
+		</editparams>
+</type>
+	
+	<type ct_name="time" label="Time" description="Time Selection. Saves value in ticks with defined offset. It will save time as number of seconds from the midnight by default." priority="1">
+		
+		<params>
+				<param type="string" name="min" default="0h" label="Min (From) Time" description="Minimum (From) Time that can be selected." example="10h5m" />
+				<param type="string" name="max" default="23h59m59s" label="Max (To) Time" description="Maximum (To) Time that can be selected." example="70h" />
+				<param type="string" name="step" default="1h" label="Step" description="Selection increment. you can use h - hours, m - minutes, s - seconds. Or combined: 1h5m" example="5m" />
+				<param type="string" name="ticks" default="1s" label="Save Ticks" description="Save the value as a number of ticks." example="1s" />
+				<param type="string" name="tickoffset" default="0" label="Save Tick Offset" description="Save value offset number." example="1s" />
+		</params>
+		
+		<valueparams name="time" label="Time Format" description="This dictates how to format the time value of the field.">
+			<params>
+				<param name="format" example="h:i" label="Format" type="string" description="PHP date format i.e. 'h:i:s'" />
+			</params>
+		</valueparams>
+		
+		<editparams name="time" label="Input Element Parameters" description="">
+			<params>
+				<param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)." />
+				<param name="attributes" label="Attributes" description="Optional attributes like: disabled, onclick, onchange etc." default="" type="string" />
+				<param name="format" label="format" description="Date/Time format. Similar to PHP date format." default="H:i:s" type="string" />
+			</params>
+		</editparams>
+</type>
+
+	<type ct_name="image" label="Image File" description="Provides Image Upload functionality." priority="2">
+		<params>
+			<param name="sizes" label="Image Size Options" example="id,100,100,,jpg" description="You may specify various size options. When image file being uploaded, the Custom Tables will create a modified version(s) of the image file based on the settings provided." default="" type="imagesizelist" >
+				<sizeparam name="name" label="Name" description="Image Size Name (shortcut), modified file name will contain that name and can use it in layout to get the proper image." default="" type="string" />
+				<sizeparam name="width" label="Width" description="Image Width in Pixels." style="width:50px;" default="100" type="number" min="1" max="100000" />
+				<sizeparam name="height" label="Height" description="Image Height in Pixels." style="width:50px;" default="100" type="number" min="1" max="100000" />
+				<sizeparam name="background" label="Background" description="Canvas background color. It will be visible after image crop. Possible values: #HEX Color: (#000000): Word Colors (black,white,red,green,blue,yellow), Fill: (fill) - Left Top corner pixel color will be used." default="" type="string" />
+				<sizeparam name="format" label="Image Format" description="New image file format."  style="width80px;" default="jpg" type="list" >
+					<option value="jpg" label="JPEG" />
+					<option value="gif" label="GIF" />
+					<option value="png" label="PNG" />
+				</sizeparam>
+			</param>
+			<param name="additionalparams" label="Image Processing Methods" description="Image processing methods that will be applied to newly uploaded image. This option available in Pro Version Only." default="" type="multiselect" >
+				<!--<option value="" label="- Keep it as it is" />-->
+				<!--<option value="compare" label="Compare With Existing Images" description="Compares images, pixel by pixel, to avoid saving duplicates, shortcuts will be used. " hasextra="true" proversion="1">
+					<extraoptions label="Tolerance Level" >
+						<extraoption value="0" label="Identical" />
+						<extraoption value="1" label="95 % Hm.. Identical" />
+						<extraoption value="2" label="90 % Almost" />
+						<extraoption value="4" label="80 % Very close" />
+						<extraoption value="6" label="70 % Close" />
+						<extraoption value="8" label="60 % Little Close" />
+						<extraoption value="10" label="50 % Something there" />
+						<extraoption value="12" label="40 % From a distance" />
+						<extraoption value="14" label="30 % From a far distance" />
+						<extraoption value="16" label="20 % From a very far distance" />
+						<extraoption value="18" label="10 % Bit alike" />
+						<extraoption value="21" label="Far from identical" />
+					</extraoptions>
+				</option>
+				-->
+			</param>
+			<param name="folder" example="/images/product_photos" label="Folder" description="Folder where all the files will be kept. By default /images" default="" type="folder" />
+		</params>
+		<editparams name="image" label="Input Element Parameters" description="">
+			<params>
+				<param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)." />
+				<param name="attributes" label="Attributes" description="Optional attributes like: disabled, onclick, onchange etc." default="" type="string" />
+			</params>
+		</editparams>
+
+
+
+</type>
+
+	<type ct_name="imagegallery" label="Image Gallery" description="Provides Multiple Image Upload functionality." priority="3" proversion="1"><!-- pro -->
+		<params>
+			<param name="sizes" example="id,100,100,,jpg" label="Image Size Options" description="You may specify various size options. When image file being uploaded, the Custom Tables will create a modified version(s) of the image file based on the settings provided." default="" type="imagesizelist" >
+				<sizeparam name="name" label="Name" description="Image Size Name (shortcut), modified file name will contain that name and can use it in layout to get the proper image." default="" type="string" />
+				<sizeparam name="width" label="Width" description="Image Width in Pixels." style="width:50px;" default="100" type="number" min="1" max="100000" />
+				<sizeparam name="height" label="Height" description="Image Height in Pixels." style="width:50px;" default="100" type="number" min="1" max="100000" />
+				<sizeparam name="background" label="Background" description="Canvas background color. It will be visible after image crop. Possible values: #HEX Color: (#000000): Word Colors (black,white,red,green,blue,yellow), Fill: (fill) - Left Top corner pixel color will be used." default="" type="string" />
+				<sizeparam name="format" label="Image Format" description="New image file format."  style="width80px;" default="jpg" type="list" >
+					<option value="jpg" label="JPEG" />
+					<option value="gif" label="GIF" />
+					<option value="png" label="PNG" />
+				</sizeparam>
+			</param>
+			<param name="additionalparams" label="Image Processing Methods" description="Image processing methods that will be applied to a newly uploaded image. This option availabel in Pro Version Only." default="" type="multiselect" >
+				<!--<option value="" label="- Keep it as it is" />-->
+				<!--<option value="compare" label="Compare With Existing Images" description="Compares images, pixel by pixel, to avoid saving duplicates, shortcuts will be used. " hasextra="true" proversion="1">
+					<extraoptions label="Tolerance Level" >
+						<extraoption value="0" label="Identical" />
+						<extraoption value="1" label="95 % Hm.. Identical" />
+						<extraoption value="2" label="90 % Almost" />
+						<extraoption value="4" label="80 % Very close" />
+						<extraoption value="6" label="70 % Close" />
+						<extraoption value="8" label="60 % Little Close" />
+						<extraoption value="10" label="50 % Something there" />
+						<extraoption value="12" label="40 % From a distance" />
+						<extraoption value="14" label="30 % From a far distance" />
+						<extraoption value="16" label="20 % From a very far distance" />
+						<extraoption value="18" label="10 % Bit alike" />
+						<extraoption value="21" label="Far from identical" />
+					</extraoptions>
+				</option>-->
+			</param>
+			<param name="folder" example="/images/product_photos" label="Folder" description="Folder where all the files will be kept. By default /images" default="" type="folder" />
+		</params>
+			<editparams name="imagegallery" label="Input Element Parameters" description="">
+			<params>
+				<param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)." />
+				<param name="attributes" label="Attributes" description="Optional attributes like: disabled, onclick, onchange etc." default="" type="string" />
+			</params>
+		</editparams>
+</type>
+
+
+	<type ct_name="file" label="File" description="Provides File Upload functionality." priority="2" helplink="https://joomlaboat.com/custom-tables-documentation/33-field-types">
+		<params>
+			<param name="size" label="Max File Size" example="8" description="Maximum file size that can be uploaded to the server (in megabytes). Note: check your PHP settings as well." default="" type="int" min="1" max="1000" />
+			<param name="folder" label="Folder" example="/images/user_files" description="Folder where all the files will be kept. By default /images" default="" type="folder" />
+			<param name="filetypes" label="File Types" example="doc docx" description="List of acceptable file types (list separated by space)" default="doc docx xls xlsx pdf pages ppt pptx" type="string" />
+			<param name="saveas" label="Save As File Name" description="Specify the name of a newly uploaded file. You may use field tags [fieldname]" default="" type="string" />
+			<param type="string" name="customphp" label="Custom PHP" description="PHP file/function that will process file content before being downloaded by the user. File must be located at /components/com_customtables/customphp."  proversion="1" />
+		</params>
+
+		<editparams name="file" label="Input Element Parameters" description="">
+			<params>
+				<param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)." />
+				<param name="attributes" label="Attributes" description="Optional attributes like: disabled, onclick, onchange etc." default="" type="string" />
+			</params>
+		</editparams>
+
+		<valueparams label="File link format" description="">
+			<params>
+				<param name="private" label="Security" example="timelimited" description="Encrypts the link to the file and limits access time to it." default="" type="list" >
+					<option value="" label="Public. Direct link to the file." />
+
+					<option value="timelimited" label="Time Limited (8-24 minutes)" code="d" />
+					<option value="timelimited_longterm" label="Time Limited (1.5 - 4 hours)" code="e" />
+					<option value="hostlimited" label="Time/Host Limited (8-24 minutes)" code="f" />
+					<option value="hostlimited_longterm" label="Time/Host Limited (1.5 - 4 hours)" code="g" />
+					<option value="private" label="Time/Host/User Limited (8-24 minutes)" code="h" />
+					<option value="private_longterm" label="Time/Host/User Limited (1.5 - 4 hours)" code="i" />
+				</param>
+                                        
+				<param name="format" label="Link" example="filename-link" description="How to render the link" default="icon-filename-link" type="list" >
+					<option value="icon-filename-link" label="Clickable Icon and File Name" />
+					<option value="icon-link" label="Clickable Icon" />
+					<option value="filename-link" label="Clickable File Name" />
+					<option value="link-anchor" label="Clickable Link" />
+					<option value="icon" label="Icon (IMG tag)" />
+					<option value="" label="Link Only" />
+					<option value="filename" label="File Name" />
+					<option value="link-to-icon" label="Link to Icon file" />
+					<option value="extension" label="Extension" />
+				</param>
+
+				<param name="icon" label="Icon" example="32" description="Select the icon size" default="32" type="list" >
+					<option value="16" label="16px X 16px Icon" />
+					<option value="32" label="32px X 32px Icon" />
+					<option value="48" label="48px X 48px Icon" />
+				</param>
+
+				<param name="target" label="Target Window" example="parent" description="Target browser window when opening the link" default="" type="list" >
+					<option value="" label="Parent" />
+					<option value="_blank" label="New Window With Navigation" />
+					<option value="savefile" label="Open Save File As Dialog Window" />
+				</param>
+
+			</params>
+		</valueparams>
+
+
+
+
+</type>
+	<type ct_name="filebox" label="File Box" description="Provides Multiple File Upload functionality. It also tracks versions." priority="3" proversion="1">
+		<params>
+			<param name="size" label="Max File Size" example="20" description="Maximum file size that can be uploaded to the server (in megabytes). Note: check your PHP settings as well." default="" type="int" min="1" max="1000" />
+			<param name="folder" label="Folder" example="/images/userfiles" description="Folder where all the files will be kept. By default /images" default="" type="folder" />
+			<param name="filetypes" label="File Type" example="pdf ppt" description="List of acceptable file types (list separated by space)" default="doc docx xls xlsx pdf pages ppt pptx" type="string" />
+		</params>
+
+</type><!-- pro -->
+
+	<type ct_name="filelink" label="File Link" description="Path to a folder on the server. Provides selection of the file at provided path." priority="3">
+		
+		<params>
+			<param name="folder" label="Folder" example="/images/userfiles" description="Folder a user can select a file from." default="" type="folder"  />
+		</params>
+		
+		
+		<editparams name="file" label="Input Element Parameters" description="">
+			<params>
+				<param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)." />
+				<param name="attributes" label="Attributes" description="Optional attributes like: disabled, onclick, onchange etc." default="" type="string" />
+			</params>
+		</editparams>
+
+		<valueparams label="File link format" description="">
+			<params>
+				<param name="private" label="Security" example="timelimited" description="Encrypts the link to the file and limits access time to it." default="" type="list" >
+					<option value="" label="Public. Direct link to the file." />
+
+					<option value="timelimited" label="Time Limited (8-24 minutes)" code="d" />
+					<option value="timelimited_longterm" label="Time Limited (1.5 - 4 hours)" code="e" />
+					<option value="hostlimited" label="Time/Host Limited (8-24 minutes)" code="f" />
+					<option value="hostlimited_longterm" label="Time/Host Limited (1.5 - 4 hours)" code="g" />
+					<option value="private" label="Time/Host/User Limited (8-24 minutes)" code="h" />
+					<option value="private_longterm" label="Time/Host/User Limited (1.5 - 4 hours)" code="i" />
+				</param>
+                                        
+				<param name="format" label="Link" example="filename-link" description="How to render the link" default="icon-filename-link" type="list" >
+					<option value="icon-filename-link" label="Clickable Icon and File Name" />
+					<option value="icon-link" label="Clickable Icon" />
+					<option value="filename-link" label="Clickable File Name" />
+					<option value="link-anchor" label="Clickable Link" />
+					<option value="icon" label="Icon (IMG tag)" />
+					<option value="" label="Link Only" />
+					<option value="filename" label="File Name" />
+					<option value="link-to-icon" label="Link to Icon file" />
+					<option value="extension" label="Extension" />
+				</param>
+
+				<param name="icon" label="Icon" example="32" description="Select the icon size" default="32" type="list" >
+					<option value="16" label="16px X 16px Icon" />
+					<option value="32" label="32px X 32px Icon" />
+					<option value="48" label="48px X 48px Icon" />
+				</param>
+
+				<param name="target" label="Target Window" example="parent" description="Target browser window when opening the link" default="" type="list" >
+					<option value="" label="Parent" />
+					<option value="_blank" label="New Window With Navigation" />
+					<option value="savefile" label="Open Save File As Dialog Window" />
+				</param>
+
+			</params>
+		</valueparams>
+
+</type>
+
+	<type ct_name="creationtime" label="Creation Time" description="Stores the date/time when record was created." priority="2">
+		<valueparams name="creationtime" label="Date Format" description="This dictates how to format the date value of the field.">
+			<params>
+				<param name="format" label="Format" example="Y-m-d" type="string" description="PHP date format i.e. 'Y-m-d' or Joomla defined format (language supported) if left empty. 'timestamp' to return the datetime in UNIX timestamp format." />
+			</params>
+		</valueparams>
+			<editparams name="creationtime" label="Input Element Parameters" description="">
+			<params>
+				<param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)." />
+				<param name="attributes" label="Attributes" description="Optional attributes like: disabled, onclick, onchange etc." default="" type="string" />
+			</params>
+		</editparams>
+</type>
+	<type ct_name="changetime" label="Change Time" description="Stores the date/time when record was last modified." priority="2">
+		<valueparams name="changetime" label="Date Format" description="This dictates how to format the date value of the field.">
+			<params>
+				<param name="format" label="Format" example="Y-m-d" type="string" description="PHP date format i.e. 'Y-m-d' or Joomla defined format (language supported) if left empty. 'timestamp' to return the datetime in UNIX timestamp format." />
+			</params>
+		</valueparams>
+			<editparams name="changetime" label="Input Element Parameters" description="">
+			<params>
+				<param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)." />
+				<param name="attributes" label="Attributes" description="Optional attributes like: disabled, onclick, onchange etc." default="" type="string" />
+			</params>
+		</editparams>
+</type>
+	<type ct_name="lastviewtime" label="View Time" description="Stores the date/time when record was last viewed." priority="2">
+		<valueparams name="lastviewtime" label="Date Format" description="This dictates how to format the date value of the field.">
+			<params>
+				<param name="format" label="Format" example="Y-m-d" type="string" description="PHP date format i.e. 'Y-m-d' or Joomla defined format (language supported) if left empty. 'timestamp' to return the datetime in UNIX timestamp format." />
+			</params>
+		</valueparams>
+			<editparams name="lastviewtime" label="Input Element Parameters" description="">
+			<params>
+				<param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)." />
+				<param name="attributes" label="Attributes" description="Optional attributes like: disabled, onclick, onchange etc." default="" type="string" />
+			</params>
+		</editparams>
+</type>
+	<type ct_name="viewcount" label="View Count" description="Stores the view count number." priority="2">
+</type>
+	<type ct_name="userid" label="Author User" description="Stores the ID of the user who created the record." priority="2">
+		<editparams name="userid" label="Input Element Parameters" description="">
+			<params>
+				<param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)." />
+				<param name="attributes" label="Attributes" description="Optional attributes like: disabled, onclick, onchange etc." default="" type="string" />
+			</params>
+		</editparams>
+</type>
+	<type ct_name="user" label="User" description="Provides User Selection box.  It can also create a New User account if all nessesary fields are set: Name,Email,User Group(s)" priority="2">
+		<params>
+			<param name="usergroups" label="User Groups" description="Limit selection to certain User Group(s). Or used as default User Group(s) when creating a new user account." default="" type="string" />
+			<param type="string" name="nametags" label="Name" description="Used to create new user account only. Field tags, example: [firstname] [lastname]" />
+            <param type="string" name="emailtag" label="Email" description="Used to create new user account only. Field tags, example: [email]" />
+            <param name="namefilter" label="Name Filter" description="Limit selection to certain name - name must content this characters." default="" type="string" />
+			<param name="uniqueusers" label="Unique Users" description="Do not let assign same user account to different records." default="" type="radio" options="|Not Unique,unique|Unique" />
+		</params>
+		<editparams name="user" label="Input Element Parameters" description="">
+			<params>
+				<param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)." />
+				<param name="attributes" label="Attributes" description="Optional attributes like: disabled, onclick, onchange etc." default="" type="string" />
+			</params>
+		</editparams>
+</type>
+
+	<type ct_name="language" label="Language" description="Provides Language Selection box." priority="2">
+		<editparams name="language" label="Input Element Parameters" description="">
+			<params>
+				<param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)." />
+				<param name="attributes" label="Attributes" description="Optional attributes like: disabled, onclick, onchange etc." default="" type="string" />
+			</params>
+		</editparams>
+</type>
+
+
+	<type ct_name="server" label="Server Info" description="Server and execution environment variables. See: http://php.net/manual/en/reserved.variables.server.php" priority="3" proversion="1"><!-- pro -->
+		<params>
+			<param name="option" label="Option" type="list" description="Select what information to save.">
+                    <option value="REMOTE_ADDR" label="REMOTE_ADDR"
+                            description="The IP address from which the user is viewing the current page. "/>
+                    <option value="HTTP_REFERER" label="HTTP_REFERER"
+                            description="The address of the page (if any) which referred the user agent to the current page. This is set by the user agent. Not all user agents will set this, and some provide the ability to modify HTTP_REFERER as a feature. In short, it cannot really be trusted."/>
+
+                    <option value="REMOTE_HOST" label="REMOTE_HOST"
+                            description="The Host name from which the user is viewing the current page. The reverse dns lookup is based off the REMOTE_ADDR of the user."/>
+                    <option value="REMOTE_PORT" label="REMOTE_PORT"
+                            description="The port being used on the user's machine to communicate with the web server. "/>
+                    <option value="REMOTE_USER" label="REMOTE_USER" description="The authenticated user."/>
+
+                    <option value="PHP_SELF" label="PHP_SELF"
+                            description="The filename of the currently executing script, relative to the document root."/>
+                    <option value="GATEWAY_INTERFACE" label="GATEWAY_INTERFACE"
+                            description="Revision of the CGI specification the server is using; i.e. 'CGI/1.1'"/>
+                    <option value="SERVER_ADDR" label="SERVER_ADDR"
+                            description="The IP address of the server under which the current script is executing."/>
+                    <option value="SERVER_NAME" label="SERVER_NAME"
+                            description="The name of the server host under which the current script is executing. If the script is running on a virtual host, this will be the value defined for that virtual host."/>
+                    <option value="SERVER_SOFTWARE" label="SERVER_SOFTWARE"
+                            description="Server identification string, given in the headers when responding to requests."/>
+                    <option value="SERVER_PROTOCOL" label="SERVER_PROTOCOL"
+                            description="Name and revision of the information protocol via which the page was requested; i.e. 'HTTP/1.0'"/>
+                    <option value="REQUEST_METHOD" label="REQUEST_METHOD"
+                            description="Which request method was used to access the page; i.e. 'GET', 'HEAD', 'POST', 'PUT'."/>
+                    <option value="REQUEST_TIME" label="REQUEST_TIME"
+                            description="The timestamp of the start of the request. Available since PHP 5.1.0."/>
+                    <option value="REQUEST_TIME_FLOAT" label="REQUEST_TIME_FLOAT"
+                            description="The timestamp of the start of the request, with microsecond precision. Available since PHP 5.4.0."/>
+                    <option value="QUERY_STRING" label="QUERY_STRING"
+                            description="The query string, if any, via which the page was accessed. "/>
+                    <option value="DOCUMENT_ROOT" label="DOCUMENT_ROOT"
+                            description="The document root directory under which the current script is executing, as defined in the server's configuration file."/>
+                    <option value="HTTP_ACCEPT" label="HTTP_ACCEPT"
+                            description="Contents of the Accept: header from the current request, if there is one."/>
+                    <option value="HTTP_ACCEPT_CHARSET" label="HTTP_ACCEPT_CHARSET"
+                            description="Contents of the Accept-Charset: header from the current request, if there is one. Example: 'iso-8859-1,*,utf-8'."/>
+                    <option value="HTTP_ACCEPT_ENCODING" label="HTTP_ACCEPT_ENCODING"
+                            description="Contents of the Accept-Encoding: header from the current request, if there is one. Example: 'gzip'."/>
+                    <option value="HTTP_ACCEPT_LANGUAGE" label="HTTP_ACCEPT_LANGUAGE"
+                            description="Contents of the Accept-Language: header from the current request, if there is one. Example: 'en'."/>
+                    <option value="HTTP_CONNECTION" label="HTTP_CONNECTION"
+                            description="Contents of the Connection: header from the current request, if there is one. Example: 'Keep-Alive'. "/>
+                    <option value="HTTP_HOST" label="HTTP_HOST"
+                            description="Contents of the Host: header from the current request, if there is one. "/>
+                    <option value="HTTP_USER_AGENT" label="HTTP_USER_AGENT"
+                            description="Contents of the User-Agent: header from the current request, if there is one. This is a string denoting the user agent which is accessing the page. A typical example is: Mozilla/4.5 [en] (X11; U; Linux 2.2.9 i586). Among other things, you can use this value with get_browser() to tailor your page's output to the capabilities of the user agent."/>
+                    <option value="HTTPS" label="HTTPS"
+                            description="Set to a non-empty value if the script was queried through the HTTPS protocol."/>
+                    <option value="REDIRECT_REMOTE_USER" label="REDIRECT_REMOTE_USER"
+                            description="The authenticated user if the request is internally redirected. "/>
+                    <option value="SCRIPT_FILENAME" label="SCRIPT_FILENAME"
+                            description="The absolute pathname of the currently executing script."/>
+                    <option value="SERVER_ADMIN" label="SERVER_ADMIN"
+                            description="The value given to the SERVER_ADMIN (for Apache) directive in the web server configuration file. If the script is running on a virtual host, this will be the value defined for that virtual host. "/>
+                    <option value="SERVER_PORT" label="SERVER_PORT"
+                            description="The port on the server machine being used by the web server for communication. For default setups, this will be '80'; using SSL, for instance, will change this to whatever your defined secure HTTP port is."/>
+                    <option value="SERVER_SIGNATURE" label="SERVER_SIGNATURE"
+                            description="String containing the server version and virtual host name which are added to server-generated pages, if enabled."/>
+                    <option value="PATH_TRANSLATED" label="PATH_TRANSLATED"
+                            description="Filesystem- (not document root-) based path to the current script, after the server has done any virtual-to-real mapping."/>
+                    <option value="SCRIPT_NAME" label="SCRIPT_NAME"
+                            description="Contains the current script's path. This is useful for pages which need to point to themselves. The __FILE__ constant contains the full path and filename of the current (i.e. included) file. "/>
+                    <option value="REQUEST_URI" label="REQUEST_URI"
+                            description="The URI which was given in order to access this page; for instance, '/index.html'."/>
+                    <option value="PHP_AUTH_DIGEST" label="PHP_AUTH_DIGEST"
+                            description="When doing Digest HTTP authentication, this variable is set to the 'Authorization' header sent by the client (which you should then use to make the appropriate validation). "/>
+                    <option value="PHP_AUTH_USER" label="PHP_AUTH_USER"
+                            description="When doing HTTP authentication, this variable is set to the username provided by the user."/>
+                    <option value="PHP_AUTH_PW" label="PHP_AUTH_PW"
+                            description="When doing HTTP authentication, this variable is set to the password provided by the user. "/>
+                    <option value="AUTH_TYPE" label="AUTH_TYPE"
+                            description="When doing HTTP authentication, this variable is set to the authentication type. "/>
+                    <option value="PATH_INFO" label="PATH_INFO"
+                            description="Contains any client-provided pathname information trailing the actual script filename but preceding the query string, if available. For instance, if the current script was accessed via the URL http://www.example.com/php/path_info.php/some/stuff?foo=bar, then $_SERVER['PATH_INFO'] would contain /some/stuff. "/>
+                    <option value="ORIG_PATH_INFO" label="ORIG_PATH_INFO"
+                            description="Original version of 'PATH_INFO' before processed by PHP."/>
+                </param>
+		</params>
+			<editparams name="server" label="Input Element Parameters" description="">
+			<params>
+				<param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)." />
+				<param name="attributes" label="Attributes" description="Optional attributes like: disabled, onclick, onchange etc." default="" type="string" />
+			</params>
+		</editparams>
+</type>
+
+	<type ct_name="id" label="Custom Record ID" description="Autoincremented ID. parameter: start from number" priority="2">
+		<params>
+			<param name="startnumber" example="3" label="Start Number" description="The value starts from number" default="1" type="number" min="1" />
+		</params>
+
+</type>
+
+	<type ct_name="phponadd" label="PHP On Add" description="Executes PHP script on record added event." rawquotes="0" priority="3" proversion="1"><!-- pro -->
+		<params>
+			<param name="phpcode" example="&quot;Time is &quot;.(time()+3600)" examplenoquotes="1" label="PHP Script" description='Note that you cannot use single quote symbol.
+			In addition you may use any field value, to do so, just type [fieldname], see more about table catalog layout.' default="" type="string"  />
+		</params>
+
+</type>
+
+	<type ct_name="phponchange" label="PHP On Change" description="Executes PHP script on record change event." rawquotes="0" priority="3" proversion="1"><!-- pro -->
+		<params>
+			<param name="phpcode" label="PHP Script" example="&quot;[firstname]&quot;.&quot;[lastname]&quot;" examplenoquotes="1" description='Note that you cannot use single quote symbol. In addition you may use any field value, to do so, just type [fieldname], see more about table catalog layout.' default="" type="string"  />
+		</params>
+
+</type>
+
+	<type ct_name="phponview" label="PHP On View" description="Executes PHP script on record view event." rawquotes="0" priority="3" proversion="1"><!-- pro -->
+		<params>
+			<param name="phpcode" label="PHP Script" example="&quot;Time is &quot;.(time()+3600)" examplenoquotes="1" description='Note that you cannot use single quote symbol. In addition you may use any field value, to do so, just type [fieldname], see more about table catalog layout.' default="" type="string"  />
+
+			<param name="storevalue" example="" label="Store in database" description="Store the field value in the database." default="" type="list">
+				<option value="" label="Store Value" />
+				<option value="dynamic" label="Do not store value" />
+			</param>
+
+		</params>
+
+</type>
+
+	<type ct_name="sqljoin" label="Table Join" description="Left Join to another table, finds the record and reads value of any field." priority="3">
+		<params>
+			<param name="table" label="Table" example="products" description="Type the name of the Custom Table to join/link with." default="" type="table" />
+			<param name="fieldname" label="Field Name" example="title" description="Type the field name to return the value by defualt. You may type layout name instead. options: 'layout:layout_name' or 'tablelesslayout:layout_name'" default="" type="string" tableobject="fieldtype_param_0" />
+			<param name="filter" label="Filter" description="Limits records using filter. Example: [age>30] where age is a field in joining table" default="" type="string" />
+			<param name="dynamicfilter" label="Dynamic Filter" description="Requires that joining table contains Table Join field to use it as a Category Filter" default="" type="string" />
+			<param name="orderby" label="Order By" example="title" description="Field name to sort record by" default="" type="string" />
+			<param name="allowunpublished" example="" label="Allow Unpublished" description="Allow to select unpublished records." default="" type="radio" options="|No,true|Yes" />
+			<param name="selector" label="Selector" example="dropdown" description="How to select records." default="dropdown" type="list">
+				<option value="dropdown" label="Dropdown List" />
+				<option value="radio" label="Radio" />
+			</param>
+
+			<param name="addforeignkey" label="Add Foreign Key" example="noforignkey" description="A FOREIGN KEY is a key used to link two tables together. The FOREIGN KEY constraint is used to prevent actions that would destroy links between tables. Like deleting table records. Enabled by default." default="" type="list" proversion="1">
+				<option value="" label="Add Foreign Key" />
+				<option value="noforignkey" label="No Foreign Key" />
+			</param>
+
+
+		</params>
+
+
+		<editparams name="sqljoin" label="Input Element Parameters" description="Input/Select box etc HTML element parameters.">
+			<params>
+				<param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)." />
+				<param type="string" name="attributes" label="Attributes" description="Optional attributes like: disabled, onclick, onchange etc." default="" />
+			</params>
+		</editparams>
+</type>
+
+	<type ct_name="googlemapcoordinates" label="GPS Coordinates" description="Google Map Coordinates (Latitude and Longitude) with selection map" priority="2">
+		<editparams name="googlemapcoordinates" label="Input Element Parameters" description="">
+			<params>
+				<param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)." />
+				<param name="attributes" label="Attributes" description="Optional attributes like: disabled, onclick, onchange etc." default="" type="string" />
+			</params>
+		</editparams>
+</type>
+	<type ct_name="dummy" label="Translation" description="Use field name to add translations of some terms in your layout. This doesn't store anything in the Data Base." priority="3">
+</type>
+	<type ct_name="article" label="Article" description="Select Article box." priority="3">
+		<editparams name="article" label="Input Element Parameters" description="">
+			<params>
+				<param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)." />
+				<param name="attributes" label="Attributes" description="Optional attributes like: disabled, onclick, onchange etc." default="" type="string" />
+			</params>
+		</editparams>
+</type>
+	<type ct_name="multilangarticle" label="Article (Multilingual)" description="Select Article box per each language installed." priority="3">
+		<editparams name="multilangarticle" label="Input Element Parameters" description="">
+			<params>
+				<param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)." />
+				<param name="attributes" label="Attributes" description="Optional attributes like: disabled, onclick, onchange etc." default="" type="string" />
+			</params>
+		</editparams>
+</type>
+	<type ct_name="md5" label="MD5 Hash" description="MD5 Hash calculated based on selected fields values." priority="3" proversion="1"><!-- pro -->
+		<params>
+			<param name="fieldlist" example="firstname,lastname,birthdate" label="List of Fields" description='Field Values will be taken and MD5 Hash code will be calculated over it.' default="" type="field" repeatative="1" />
+		</params>
+			
+</type>
+	<type ct_name="log" label="Change Log" description="Logs all record modifications. User, Datetime, IP. You can return to the previous version of the record." priority="3" proversion="1">
+		<editparams name="log" label="Input Element Parameters" description="">
+			<params>
+				<param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)." />
+				<param name="attributes" label="Attributes" description="Optional attributes like: disabled, onclick, onchange etc." default="" type="string" />
+			</params>
+		</editparams>
+</type><!-- pro -->
+	<type ct_name="usergroup" label="User Group" description="User Group Select Box." priority="3">
+		<editparams name="usergroup" label="Input Element Parameters" description="">
+			<params>
+				<param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)." />
+				<param name="attributes" label="Attributes" description="Optional attributes like: disabled, onclick, onchange etc." default="" type="string" />
+			</params>
+		</editparams>
+</type>
+	<type ct_name="usergroups" label="User Groups" description="User Group Multi Select Box" priority="3">
+		<params>
+			<param name="selector" label="Selector" description="How to select records." default="single" type="list" example="multi">
+				<option value="single" label="Single User Group (Select Box)" />
+				<option value="multi" label="Multiple User Groups  (List Box)" />
+				<option value="radio" label="Single User Group (Radio)" />
+				<option value="checkbox" label="Multiple User Groups (Checkboxes)" />
+			</param>
+		</params>
+			<editparams name="usergroups" label="Input Element Parameters" description="">
+			<params>
+				<param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)." />
+				<param name="attributes" label="Attributes" description="Optional attributes like: disabled, onclick, onchange etc." default="" type="string" />
+			</params>
+		</editparams>
+</type>
+
+
+</fieldtypes>
+

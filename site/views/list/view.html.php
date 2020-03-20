@@ -1,0 +1,111 @@
+<?php
+/**
+ * Custom Tables Joomla! 3.x Native Component
+ * @version 1.6.1
+ * @author Ivan komlev <support@joomlaboat.com>
+ * @link http://www.joomlaboat.com
+ * @license GNU/GPL
+ **/
+
+// no direct access
+defined('_JEXEC') or die('Restricted access');
+require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'misc.php');
+require_once (JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'languages.php');
+require_once (JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'toolbar.php');
+
+
+jimport('joomla.application.component.view');
+
+
+class CustomTablesViewList extends JView
+{
+	var $_name = 'list';
+
+	function display($tpl=null)
+	{
+		$jinput = JFactory::getApplication()->input;
+
+		$mainframe = JFactory::getApplication();
+
+		$this->_layout = 'default';
+
+		$LangMisc	= new ESLanguages;
+		$LanguageList=$LangMisc->getLanguageList();
+		$this->assignRef('LanguageList',		$LanguageList);
+
+		$limitstart = JFactory::getApplication()->input->getInt('limitstart','0');
+		$items		= $this->get('Items');
+		$pagination	= $this->get('Pagination');
+		$lists		= $this->_getViewLists();
+		$user		= JFactory::getUser();
+
+		// Ensure ampersands and double quotes are encoded in item titles
+		foreach ($items as $i => $item) {
+			$treename = $item->treename;
+			$treename = JFilterOutput::ampReplace($treename);
+			$treename = str_replace('"', '&quot;', $treename);
+			$items[$i]->treename = $treename;
+		}
+
+		//Ordering allowed ?
+		$ordering = ($lists['order'] == 'm.ordering');
+
+		JHTML::_('behavior.tooltip');
+
+		$this->assignRef('items', $items);
+		$this->assignRef('pagination', $pagination);
+		$this->assignRef('lists', $lists);
+		$this->assignRef('user', $user);
+
+		$this->assignRef('ordering', $ordering);
+		$this->assignRef('limitstart', $limitstart);
+
+		parent::display($tpl);
+	}
+
+
+
+
+
+	function &_getViewLists()
+	{
+		$mainframe = JFactory::getApplication();
+		$db		= JFactory::getDBO();
+
+		$context			= 'com_customtables.list.';
+
+		$filter_order		= $mainframe->getUserStateFromRequest($context."filter_order",		'filter_order',		'm.ordering',	'cmd' );
+		$filter_order_Dir	= $mainframe->getUserStateFromRequest($context."filter_order_Dir",	'filter_order_Dir',	'ASC',			'word' );
+
+		$filter_rootparent	= $mainframe->getUserStateFromRequest($context."filter_rootparent",'filter_rootparent','','int' );
+
+		$levellimit		= $mainframe->getUserStateFromRequest($context."levellimit",		'levellimit',		10,				'int' );
+		$search			= $mainframe->getUserStateFromRequest($context."search",			'search',			'',				'string' );
+		$search			= JString::strtolower( $search );
+
+		// level limit filter
+		$lists['levellist']	= JHTML::_('select.integerlist',    1, 20, 1, 'levellimit', 'size="1" onchange="document.adminForm.submit();"', $levellimit );
+
+
+
+		// Category List
+		$javascript = 'onchange="document.adminForm.submit();"';
+
+
+		$ListModel = $this->getModel();
+		$available_rootparents=$ListModel->getAllRootParents();
+		$lists['rootparent']=JHTML::_('select.genericlist', $available_rootparents, 'filter_rootparent', $javascript ,'id','optionname', $filter_rootparent);
+
+		// table ordering
+		$lists['order_Dir']	= $filter_order_Dir;
+
+
+
+		$lists['order']		= $filter_order;
+
+		// search filter
+		$lists['search']= $search;
+
+		return $lists;
+	}
+}

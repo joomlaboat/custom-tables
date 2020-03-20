@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<access component="com_customtables">
+	<section name="component">
+		<action name="core.admin" title="JACTION_ADMIN" description="JACTION_ADMIN_COMPONENT_DESC" />
+		<action name="core.options" title="JACTION_OPTIONS" description="JACTION_OPTIONS_COMPONENT_DESC" />
+		<action name="core.manage" title="JACTION_MANAGE" description="JACTION_MANAGE_COMPONENT_DESC" />
+		<action name="core.batch" title="COM_CUSTOMTABLES_USE_BATCH" description="COM_CUSTOMTABLES_USE_BATCH_DESC" />
+		<action name="core.version" title="COM_CUSTOMTABLES_EDIT_VERSIONS" description="COM_CUSTOMTABLES_EDIT_VERSIONS_DESC" />
+		<action name="core.create" title="JACTION_CREATE" description="JACTION_CREATE_COMPONENT_DESC" />
+		<action name="core.delete" title="JACTION_DELETE" description="JACTION_DELETE_COMPONENT_DESC" />
+		<action name="core.edit" title="JACTION_EDIT" description="JACTION_EDIT_COMPONENT_DESC" />
+		<action name="core.edit.state" title="JACTION_EDITSTATE" description="JACTION_ACCESS_EDITSTATE_DESC" />
+		<action name="core.edit.own" title="JACTION_EDITOWN" description="JACTION_EDITOWN_COMPONENT_DESC" />
+		<action name="core.edit.created_by" title="COM_CUSTOMTABLES_EDIT_CREATED_BY" description="COM_CUSTOMTABLES_EDIT_CREATED_BY_DESC" />
+		<action name="core.edit.created" title="COM_CUSTOMTABLES_EDIT_CREATED_DATE" description="COM_CUSTOMTABLES_EDIT_CREATED_DATE_DESC" />
+		<action name="site.catalog.access" title="COM_CUSTOMTABLES_CATALOG_ACCESS_SITE" description="COM_CUSTOMTABLES_CATALOG_ACCESS_SITE_DESC" />
+		<action name="categories.batch" title="COM_CUSTOMTABLES_LISTOFCATEGORIES_BATCH_USE" description="COM_CUSTOMTABLES_LISTOFCATEGORIES_BATCH_USE_DESC" />
+		<action name="categories.dashboard_list" title="COM_CUSTOMTABLES_LISTOFCATEGORIES_DASHBOARD_LIST" description="COM_CUSTOMTABLES_LISTOFCATEGORIES_DASHBOARD_LIST_DESC" />
+		<action name="categories.submenu" title="COM_CUSTOMTABLES_LISTOFCATEGORIES_SUBMENU" description="COM_CUSTOMTABLES_LISTOFCATEGORIES_SUBMENU_DESC" />
+		<action name="layouts.batch" title="COM_CUSTOMTABLES_LISTOFLAYOUTS_BATCH_USE" description="COM_CUSTOMTABLES_LISTOFLAYOUTS_BATCH_USE_DESC" />
+		<action name="layouts.dashboard_list" title="COM_CUSTOMTABLES_LISTOFLAYOUTS_DASHBOARD_LIST" description="COM_CUSTOMTABLES_LISTOFLAYOUTS_DASHBOARD_LIST_DESC" />
+		<action name="layouts.submenu" title="COM_CUSTOMTABLES_LISTOFLAYOUTS_SUBMENU" description="COM_CUSTOMTABLES_LISTOFLAYOUTS_SUBMENU_DESC" />
+		<action name="tables.batch" title="COM_CUSTOMTABLES_LISTOFTABLES_BATCH_USE" description="COM_CUSTOMTABLES_LISTOFTABLES_BATCH_USE_DESC" />
+		<action name="tables.dashboard_list" title="COM_CUSTOMTABLES_LISTOFTABLES_DASHBOARD_LIST" description="COM_CUSTOMTABLES_LISTOFTABLES_DASHBOARD_LIST_DESC" />
+		<action name="tables.submenu" title="COM_CUSTOMTABLES_LISTOFTABLES_SUBMENU" description="COM_CUSTOMTABLES_LISTOFTABLES_SUBMENU_DESC" />
+	</section>
+
+</access>

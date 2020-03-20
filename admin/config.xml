@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+	<fieldset
+		addrulepath="/administrator/components/com_customtables/models/rules"
+		addfieldpath="/administrator/components/com_customtables/models/fields"
+		name="global_config"
+		label="COM_CUSTOMTABLES_CONFIG_GLOBAL_LABEL"
+		description="COM_CUSTOMTABLES_CONFIG_GLOBAL_DESC">
+		<field name="autorTitle"
+			type="spacer"
+			label="COM_CUSTOMTABLES_CONFIG_AUTHOR"
+		/>
+		<field name="autorName"
+			type="text"
+			label="COM_CUSTOMTABLES_CONFIG_AUTHOR_NAME_LABEL"
+			description="COM_CUSTOMTABLES_CONFIG_AUTHOR_NAME_DESC"
+			size="60"
+			default="Ivan Komlev"
+			readonly="true"
+			class="readonly"
+		/>
+		<field name="autorEmail"
+			type="email"
+			label="COM_CUSTOMTABLES_CONFIG_AUTHOR_EMAIL_LABEL"
+			description="COM_CUSTOMTABLES_CONFIG_AUTHOR_EMAIL_DESC"
+			size="60"
+			default="support@joomlaboat.com"
+			readonly="true"
+			class="readonly"
+		/>
+	</fieldset>
+	<fieldset
+		name="permissions"
+		label="JCONFIG_PERMISSIONS_LABEL"
+		description="JCONFIG_PERMISSIONS_DESC">
+		<field
+			name="rules"
+			type="rules"
+			label="JCONFIG_PERMISSIONS_LABEL"
+			class="inputbox"
+			validate="rules"
+			filter="rules"
+			component="com_customtables"
+			section="component"
+		/>
+	</fieldset>
+</config>

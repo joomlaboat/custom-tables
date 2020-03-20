@@ -1,0 +1,1 @@
+ALTER TABLE `#__customtables_tables` ADD COLUMN `allowimportcontent` tinyint(1) NOT NULL default '0';

@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form
+	addrulepath="/administrator/components/com_customtables/models/rules"
+	addfieldpath="/administrator/components/com_customtables/models/fields"
+>
+	<fieldset name="details">
+                <!-- Default Fields.-->
+                <!-- Id Field. Type: Text (joomla)-->
+                <field name="id"
+                       type="text"
+                       class="readonly"
+                       label="JGLOBAL_FIELD_ID_LABEL"
+                       description="JGLOBAL_FIELD_ID_DESC"
+                       size="10"
+                       default="0" />
+                <!-- Date Created Field. Type: Calendar (joomla)-->
+                <field name="created"
+                       type="calendar"
+                       label="COM_CUSTOMTABLES_FIELDS_CREATED_DATE_LABEL"
+                       description="COM_CUSTOMTABLES_FIELDS_CREATED_DATE_DESC"
+                       size="22"
+                       format="%Y-%m-%d %H:%M:%S"
+                       filter="user_utc" />
+                <!-- User Created Field. Type: User (joomla)-->
+                <field name="created_by"
+                       type="user"
+                       label="COM_CUSTOMTABLES_FIELDS_CREATED_BY_LABEL"
+                       description="COM_CUSTOMTABLES_FIELDS_CREATED_BY_DESC" />
+                <!-- Published Field. Type: List (joomla)-->
+                <field name="published"
+                       type="list"
+                       label="JSTATUS">
+                        <option value="1">JPUBLISHED</option>
+                        <option value="0">JUNPUBLISHED</option>
+                        <option value="2">JARCHIVED</option>
+                        <option value="-2">JTRASHED</option>
+                </field>
+                <!-- Date Modified Field. Type: Calendar (joomla)-->
+                <field name="modified"
+                       type="calendar"
+                       class="readonly"
+                       label="COM_CUSTOMTABLES_FIELDS_MODIFIED_DATE_LABEL"
+                       description="COM_CUSTOMTABLES_FIELDS_MODIFIED_DATE_DESC"
+                       size="22"
+                       readonly="true"
+                       format="%Y-%m-%d %H:%M:%S"
+                       filter="user_utc" />
+                <!-- User Modified Field. Type: User (joomla)-->
+                <field name="modified_by"
+                       type="user"
+                       label="COM_CUSTOMTABLES_FIELDS_MODIFIED_BY_LABEL"
+                       description="COM_CUSTOMTABLES_FIELDS_MODIFIED_BY_DESC"
+                       class="readonly"
+                       readonly="true"
+                       filter="unset" />
+                <!-- Ordering Field. Type: Numbers (joomla)-->
+                <field name="ordering"
+                       type="number"
+                       class="inputbox validate-ordering"
+                       label="COM_CUSTOMTABLES_FIELDS_ORDERING_LABEL"
+                       description=""
+                       default="0"
+                       size="6"
+                       required="false" />
+                <!-- Version Field. Type: Text (joomla)-->
+                <field name="version"
+                       type="text"
+                       class="readonly"
+                       label="COM_CUSTOMTABLES_FIELDS_VERSION_LABEL"
+                       description="COM_CUSTOMTABLES_FIELDS_VERSION_DESC"
+                       size="6"
+                       readonly="true"
+                       filter="unset" />
+                <!-- Dynamic Fields.-->
+                <!-- Fieldtitle Field. Type: Text. (joomla)-->
+                <field type="text"
+                       name="fieldtitle"
+                       label="COM_CUSTOMTABLES_FIELDS_FIELDTITLE_LABEL"
+                       maxlength="100"
+                       description="JFIELD_TITLE_DESC"
+                       required="true"
+                       filter="STRING"
+                       message="COM_CUSTOMTABLES_FIELDS_FIELDTITLE_MESSAGE"
+                       hint="COM_CUSTOMTABLES_FIELDS_FIELDTITLE_HINT"
+                       autocomplete="on" />
+                <!-- Fieldname Field. Type: Text. (joomla)-->
+                <field type="text"
+                       name="fieldname"
+                       label="COM_CUSTOMTABLES_FIELDS_FIELDNAME_LABEL"
+                       maxlength="50"
+                       description="COM_CUSTOMTABLES_FIELDS_FIELDNAME_DESCRIPTION"
+                       class="text_area"
+                       required="true"
+                       filter="CMD"
+                       message="COM_CUSTOMTABLES_FIELDS_FIELDNAME_MESSAGE"
+                       hint="COM_CUSTOMTABLES_FIELDS_FIELDNAME_HINT" />
+                <!-- Type Field. Type: List. (joomla)-->
+                <field type="list"
+                       name="type"
+                       label="COM_CUSTOMTABLES_FIELDS_TYPE_LABEL"
+                       class="list_class"
+                       multiple="false"
+                       required="true"
+                       default="string"
+			onchange="typeChanged();"
+>
+
+                        <!-- Option Set.-->
+                        <option value="checkbox">COM_CUSTOMTABLES_FIELDS_CHECKBOX</option>
+						<option value="date">COM_CUSTOMTABLES_FIELDS_DATE</option>
+						<option value="time">COM_CUSTOMTABLES_FIELDS_TIME</option>
+						<option value="email">COM_CUSTOMTABLES_FIELDS_EMAIL</option>
+						<option value="float">COM_CUSTOMTABLES_FIELDS_FLOAT</option>
+						<option value="googlemapcoordinates">COM_CUSTOMTABLES_FIELDS_GOOGLE_MAP_COORDINATES</option>
+						<option value="int">COM_CUSTOMTABLES_FIELDS_INTEGER</option>
+						<option value="string">COM_CUSTOMTABLES_FIELDS_STRING</option>
+                        <option value="text">COM_CUSTOMTABLES_FIELDS_TEXT</option>
+						<option value="alias">COM_CUSTOMTABLES_FIELDS_ALIAS</option>
+						<option value="color">COM_CUSTOMTABLES_FIELDS_COLOR</option>
+
+
+						<!--<option value="radio">COM_CUSTOMTABLES_FIELDS_RADIO_BUTTONS</option>-->
+
+
+
+
+						<option value="" disabled="disabled">_____ Multilingual _____</option>
+						<option value="multilangstring">COM_CUSTOMTABLES_FIELDS_MULTILANGSTRING</option>
+						<option value="multilangtext">COM_CUSTOMTABLES_FIELDS_MULTILANGTEXT</option>
+
+						<option value="" disabled="disabled">_____ Translation _____</option>
+						<option value="dummy">COM_CUSTOMTABLES_FIELDS_DUMMY_USED_FOR_TRANSLATION</option>
+
+
+                        <option value="" disabled="disabled">_____ Images and Files _____</option>
+                        <option value="image">COM_CUSTOMTABLES_FIELDS_IMAGE</option>
+                        <option value="imagegallery">COM_CUSTOMTABLES_FIELDS_IMAGE_GALLERY</option>
+
+                        <option value="file">COM_CUSTOMTABLES_FIELDS_FILE</option>
+						<option value="filebox">COM_CUSTOMTABLES_FIELDS_FILE_BOX</option>
+                        <option value="filelink">COM_CUSTOMTABLES_FIELDS_FILE_LINK</option>
+
+
+						<option value="" disabled="disabled">_____ Table Joins _____</option>
+                        <option value="sqljoin">COM_CUSTOMTABLES_FIELDS_SQL_JOIN</option>
+                        <option value="records">COM_CUSTOMTABLES_FIELDS_MULTI_SQL_JOIN</option>
+						<option value="customtables">COM_CUSTOMTABLES_FIELDS_EXTRA_SEARCH</option>
+
+
+						<option value="" disabled="disabled">_____ Automatic Values _____</option>
+						<option value="creationtime">COM_CUSTOMTABLES_FIELDS_AUTO_CREATION_DATE_TIME</option>
+                        <option value="changetime">COM_CUSTOMTABLES_FIELDS_AUTO_CHANGE_DATE_TIME</option>
+                        <option value="lastviewtime">COM_CUSTOMTABLES_FIELDS_AUTO_LAST_VIEW_DATE_TIME</option>
+                        <option value="viewcount">COM_CUSTOMTABLES_FIELDS_AUTO_VIEW_COUNT</option>
+                        <option value="userid">COM_CUSTOMTABLES_FIELDS_AUTO_AUTHOR_USER_ID</option>
+						<option value="server">COM_CUSTOMTABLES_FIELDS_SERVER</option>
+                        <option value="id">COM_CUSTOMTABLES_FIELDS_AUTO_ID</option>
+						<option value="md5">COM_CUSTOMTABLES_FIELDS_MDFIVE_HASH</option>
+
+
+
+						<option value="" disabled="disabled">_____ Users and Groups _____</option>
+						<option value="user">COM_CUSTOMTABLES_FIELDS_USER</option>
+                        <option value="usergroup">COM_CUSTOMTABLES_FIELDS_USER_GROUP</option>
+                        <option value="usergroups">COM_CUSTOMTABLES_FIELDS_USER_GROUPS</option>
+                        <option value="language">COM_CUSTOMTABLES_FIELDS_USER_LANGUAGE</option>
+
+
+						<option value="" disabled="disabled">_____ Articles _____</option>
+						<option value="article">COM_CUSTOMTABLES_FIELDS_ARTICLE_LINK</option>
+                        <option value="multilangarticle">COM_CUSTOMTABLES_FIELDS_MULTILINGUAL_ARTICLE</option>
+
+						<option value="" disabled="disabled">_____ Extra _____</option>
+                        <option value="log">COM_CUSTOMTABLES_FIELDS_MODIFICATION_LOG</option>
+						<!--<option value="post">COM_CUSTOMTABLES_FIELDS_HTTP_POST</option>-->
+
+						<option value="" disabled="disabled">_____ Obsolete _____</option>
+						<option value="phponadd">COM_CUSTOMTABLES_FIELDS_PHP_ONADD_SCRIPT</option>
+                        <option value="phponchange">COM_CUSTOMTABLES_FIELDS_PHP_ONCHANGE_SCRIPT</option>
+                        <option value="phponview">COM_CUSTOMTABLES_FIELDS_PHP_ONVIEW_SCRIPT</option>
+
+
+
+
+                </field>
+                <!-- Typeparams Field. Type: Text. (joomla)-->
+                <field type="text"
+                       name="typeparams"
+                       label="COM_CUSTOMTABLES_FIELDS_TYPEPARAMS_LABEL"
+                       maxlength="255"
+                       description="COM_CUSTOMTABLES_FIELDS_TYPEPARAMS_DESCRIPTION"
+                       class="text_area fullwidth"
+                       readonly="true"
+                       disabled="false"
+                       required="false"
+                       filter="STRING"
+                       message="COM_CUSTOMTABLES_FIELDS_TYPEPARAMS_MESSAGE"
+                       hint="COM_CUSTOMTABLES_FIELDS_TYPEPARAMS_HINT"
+                       autocomplete="on" />
+                <!-- Isrequired Field. Type: Radio. (joomla)-->
+                <field type="radio"
+                       name="isrequired"
+                       label="COM_CUSTOMTABLES_FIELDS_ISREQUIRED_LABEL"
+                       description="COM_CUSTOMTABLES_FIELDS_ISREQUIRED_DESCRIPTION"
+                       class="btn-group btn-group-yesno"
+                       default="0">
+                        <!-- Option Set.-->
+                        <option value="1">COM_CUSTOMTABLES_FIELDS_YES</option>
+                        <option value="0">COM_CUSTOMTABLES_FIELDS_NO</option>
+                </field>
+                <!-- Tableid Field. Type: Sql. (joomla)-->
+                <field type="cttable"
+                       name="tableid"
+                       label="COM_CUSTOMTABLES_FIELDS_TABLEID_LABEL"
+                       default="null"
+                       required="true"
+                       disabled="false"
+                       key_field="id"
+                       value_field="tabletitle">
+                        <!-- No Manual Options Were Added In Field Settings.-->
+                </field>
+                <!-- Defaultvalue Field. Type: Text. (joomla)-->
+                <field type="text"
+                       name="defaultvalue"
+                       label="COM_CUSTOMTABLES_FIELDS_DEFAULTVALUE_LABEL"
+                       maxlength="255"
+                       description="COM_CUSTOMTABLES_FIELDS_DEFAULTVALUE_DESCRIPTION"
+                       class="text_area"
+                       readonly="false"
+                       disabled="false"
+                       required="false"
+                       filter="STRING"
+                       autocomplete="on" />
+                <!-- Allowordering Field. Type: Radio. (joomla)-->
+                <field type="radio"
+                       name="allowordering"
+                       label="COM_CUSTOMTABLES_FIELDS_ALLOWORDERING_LABEL"
+                       description="COM_CUSTOMTABLES_FIELDS_ALLOWORDERING_DESCRIPTION"
+                       class="btn-group btn-group-yesno"
+                       default="1">
+                        <!-- Option Set.-->
+                        <option value="1">COM_CUSTOMTABLES_FIELDS_YES</option>
+                        <option value="0">COM_CUSTOMTABLES_FIELDS_NO</option>
+                </field>
+                <!-- Valuerule Field. Type: Text. (joomla)-->
+                <field type="text"
+                       name="valuerule"
+                       label="COM_CUSTOMTABLES_FIELDS_VALUERULE_LABEL"
+                       maxlength="255"
+                       default="Some text"
+                       description="COM_CUSTOMTABLES_FIELDS_VALUERULE_DESCRIPTION"
+                       class="text_area"
+                       readonly="false"
+                       filter="STRING"
+                       hint="COM_CUSTOMTABLES_FIELDS_VALUERULE_HINT"
+                       autocomplete="on" />
+                <!-- Parentid Field. Type: Sql. (joomla)-->
+                <field type="sql"
+                       name="parentid"
+                       label="COM_CUSTOMTABLES_FIELDS_PARENTID_LABEL"
+                       query="SELECT id, fieldtitle FROM #__customtables_fields"
+                       description="COM_CUSTOMTABLES_FIELDS_PARENTID_DESCRIPTION"
+                       key_field="id"
+                       value_field="fieldtitle">
+                        <!-- No Manual Options Were Added In Field Settings.-->
+                </field>
+        </fieldset>
+
+	<!-- Access Control Fields. -->
+	<fieldset name="accesscontrol">
+		<!-- Asset Id Field. Type: Hidden (joomla) -->
+		<field
+			name="asset_id"
+			type="hidden"
+			filter="unset"
+		/>
+		<!-- Rules Field. Type: Rules (joomla) -->
+		<field
+			name="rules"
+			type="rules"
+			label="Permissions in relation to this fields"
+			translate_label="false"
+			filter="rules"
+			validate="rules"
+			class="inputbox"
+			component="com_customtables"
+			section="fields"
+		/>
+	</fieldset>
+</form>

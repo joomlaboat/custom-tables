@@ -1,0 +1,703 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layouts>
+    <tagset name="general" label="General" description="Tags that can be used in any layout type." priority="2">
+
+        <tag name="currenturl" label="Current URL" startchar="{" endchar="}" hidedefaultexample="1"
+             description="Returns current URL or any query parameter, it can also be base64 encoded if you include that keyword.">
+            <params>
+                <param name="option" label="Option" type="list" description="Select on of the available options.">
+                    <option value="string" label="String"
+                            description="Converts the input to a plain text string; strips all tags / attributes."/>
+                    <option value="word" label="Word"
+                            description="Only allow characters a-z, and underscores."/>
+		<option value="cmd" label="Command" description="Allow a-z, 0-9, underscore, dot, dash. Also remove leading dots from result."/>
+		<option value="alnum" label="Alphanumeric" description="Allow a-z and 0-9 only."/>
+                    <option value="int" label="Integer" description="Returns the first integer found in the parameter value."/>
+			<option value="uint" label="Unsigned Integer" description="Returns an unsigned int."/>
+			<option value="float" label="Decimal" description="Only use the first floating point value."/>
+
+                    <option value="base64" label="Base64 Encode"
+                            description="Returns base64 encoded value of query parameter. Or returns encoded URL if no parameter specified."/>
+			<option value="base64decode" label="Base64 Decode"
+                            description="Returns decoded value of query parameter."/>
+                    <option value="set" label="Sets query value"
+                            description="Sets query value to communicate with different modules for example."/>
+                </param>
+                <param name="parameter" label="Parameter" type="string" description="Url query parameter" example="firstname" />
+                <param name="value" label="Value" type="string" description="Value to set Url query parameter"/>
+            </params>
+        </tag>
+        <tag name="currentuserid" label="Current User ID (Depricated)" startchar="{" endchar="}"
+             description="(Depricated) Returns Current User ID" proversion="1" depricated="1" /><!-- pro only -->
+        <tag name="currentusertype" label="Current User Type (Depricated)" startchar="{" endchar="}"
+             description="(Depricated) Returns Current User Type (Super Administrator, Editor, etc...)" proversion="1" depricated="1" /><!-- pro only -->
+        <tag name="date" label="Date" startchar="{" endchar="}"
+             description="Returns current date in" >
+            <params>
+                <param name="format" label="Format" type="string" description="i.e. 'Y-m-d' or Joomla defined format (language supported) if left empty." example="Y-m-d h:i:s" />
+            </params>
+        </tag>
+        <tag name="gobackbutton" label="Go Back Button" startchar="{" endchar="}" separator=":"
+             description="Renders a link to previous page.">
+            <params>
+                <param name="icon" label="Icon Image" type="string" description="Icon Image that will appear before text/label."/>
+                <param name="option" label="Option" type="string"
+                       description="HTML options like: style, class, onchange etc.)" example="style='border:1px solid red;'"/>
+                <param name="label" label="Label" type="string" description="What will be written after the icon." example="Click to go back to the previous page"/>
+                <param name="redirectlink" label="Custom Redirect Link" type="string" description="URL to redirect after processing the button click. Tip: user $get_listing_id keyword to get newly saved record id."/>
+            </params>
+        </tag>
+        <tag name="description" label="Table Description (Depricated)" startchar="{" endchar="}"
+             description="(Depricated) Returns table description." proversion="1" depricated="1" />
+
+
+	<tag name="format" label="Output Format" startchar="{" endchar="}" proversion="1"
+             description="The link to download the current page catalog records in specified format." hidedefaultexample="1">
+            <params>
+                <param name="format" label="Format" type="list" description="Select the output format.">
+                    <option value="csv" label="CSV" description="Generates CSV file"/>
+                    <option value="json" label="JSON" description="Generates JSON file."/>
+                    <option value="xml" label="XML" description="Generates XML file."/>
+                </param>
+            </params>
+        </tag>
+
+
+        <tag name="Itemid" label="Menu Itemid" startchar="{" endchar="}" description="Joomla menu item Itemid"/>
+
+
+        <tag name="returnto" label="Encoded Current Page Link (Depricated)" startchar="{" endchar="}"
+             description="(Depricated) Use {currenturl:base64} instead. Returns Base64 encrypted Link to catalog page with an anchor to a current record." proversion="1" depricated="1" />
+
+        <tag name="server" label="Server Info" startchar="{" endchar="}"
+             description="Returns Sanitized (String) Server Environment value - $_SERVER" proversion="1" hidedefaultexample="1"><!-- pro only -->
+            <params>
+                <param name="option" label="Option" type="list" description="Select what information to return.">
+                    <option value="REMOTE_ADDR" label="REMOTE_ADDR"
+                            description="The IP address from which the user is viewing the current page. "/>
+                    <option value="HTTP_REFERER" label="HTTP_REFERER"
+                            description="The address of the page (if any) which referred the user agent to the current page. This is set by the user agent. Not all user agents will set this, and some provide the ability to modify HTTP_REFERER as a feature. In short, it cannot really be trusted."/>
+
+                    <option value="REMOTE_HOST" label="REMOTE_HOST"
+                            description="The Host name from which the user is viewing the current page. The reverse dns lookup is based off the REMOTE_ADDR of the user."/>
+                    <option value="REMOTE_PORT" label="REMOTE_PORT"
+                            description="The port being used on the user's machine to communicate with the web server. "/>
+                    <option value="REMOTE_USER" label="REMOTE_USER" description="The authenticated user."/>
+
+                    <option value="PHP_SELF" label="PHP_SELF"
+                            description="The filename of the currently executing script, relative to the document root."/>
+                    <option value="GATEWAY_INTERFACE" label="GATEWAY_INTERFACE"
+                            description="Revision of the CGI specification the server is using; i.e. 'CGI/1.1'"/>
+                    <option value="SERVER_ADDR" label="SERVER_ADDR"
+                            description="The IP address of the server under which the current script is executing."/>
+                    <option value="SERVER_NAME" label="SERVER_NAME"
+                            description="The name of the server host under which the current script is executing. If the script is running on a virtual host, this will be the value defined for that virtual host."/>
+                    <option value="SERVER_SOFTWARE" label="SERVER_SOFTWARE"
+                            description="Server identification string, given in the headers when responding to requests."/>
+                    <option value="SERVER_PROTOCOL" label="SERVER_PROTOCOL"
+                            description="Name and revision of the information protocol via which the page was requested; i.e. 'HTTP/1.0'"/>
+                    <option value="REQUEST_METHOD" label="REQUEST_METHOD"
+                            description="Which request method was used to access the page; i.e. 'GET', 'HEAD', 'POST', 'PUT'."/>
+                    <option value="REQUEST_TIME" label="REQUEST_TIME"
+                            description="The timestamp of the start of the request. Available since PHP 5.1.0."/>
+                    <option value="REQUEST_TIME_FLOAT" label="REQUEST_TIME_FLOAT"
+                            description="The timestamp of the start of the request, with microsecond precision. Available since PHP 5.4.0."/>
+                    <option value="QUERY_STRING" label="QUERY_STRING"
+                            description="The query string, if any, via which the page was accessed. "/>
+                    <option value="DOCUMENT_ROOT" label="DOCUMENT_ROOT"
+                            description="The document root directory under which the current script is executing, as defined in the server's configuration file."/>
+                    <option value="HTTP_ACCEPT" label="HTTP_ACCEPT"
+                            description="Contents of the Accept: header from the current request, if there is one."/>
+                    <option value="HTTP_ACCEPT_CHARSET" label="HTTP_ACCEPT_CHARSET"
+                            description="Contents of the Accept-Charset: header from the current request, if there is one. Example: 'iso-8859-1,*,utf-8'."/>
+                    <option value="HTTP_ACCEPT_ENCODING" label="HTTP_ACCEPT_ENCODING"
+                            description="Contents of the Accept-Encoding: header from the current request, if there is one. Example: 'gzip'."/>
+                    <option value="HTTP_ACCEPT_LANGUAGE" label="HTTP_ACCEPT_LANGUAGE"
+                            description="Contents of the Accept-Language: header from the current request, if there is one. Example: 'en'."/>
+                    <option value="HTTP_CONNECTION" label="HTTP_CONNECTION"
+                            description="Contents of the Connection: header from the current request, if there is one. Example: 'Keep-Alive'. "/>
+                    <option value="HTTP_HOST" label="HTTP_HOST"
+                            description="Contents of the Host: header from the current request, if there is one. "/>
+                    <option value="HTTP_USER_AGENT" label="HTTP_USER_AGENT"
+                            description="Contents of the User-Agent: header from the current request, if there is one. This is a string denoting the user agent which is accessing the page. A typical example is: Mozilla/4.5 [en] (X11; U; Linux 2.2.9 i586). Among other things, you can use this value with get_browser() to tailor your page's output to the capabilities of the user agent."/>
+                    <option value="HTTPS" label="HTTPS"
+                            description="Set to a non-empty value if the script was queried through the HTTPS protocol."/>
+                    <option value="REDIRECT_REMOTE_USER" label="REDIRECT_REMOTE_USER"
+                            description="The authenticated user if the request is internally redirected. "/>
+                    <option value="SCRIPT_FILENAME" label="SCRIPT_FILENAME"
+                            description="The absolute pathname of the currently executing script."/>
+                    <option value="SERVER_ADMIN" label="SERVER_ADMIN"
+                            description="The value given to the SERVER_ADMIN (for Apache) directive in the web server configuration file. If the script is running on a virtual host, this will be the value defined for that virtual host. "/>
+                    <option value="SERVER_PORT" label="SERVER_PORT"
+                            description="The port on the server machine being used by the web server for communication. For default setups, this will be '80'; using SSL, for instance, will change this to whatever your defined secure HTTP port is."/>
+                    <option value="SERVER_SIGNATURE" label="SERVER_SIGNATURE"
+                            description="String containing the server version and virtual host name which are added to server-generated pages, if enabled."/>
+                    <option value="PATH_TRANSLATED" label="PATH_TRANSLATED"
+                            description="Filesystem- (not document root-) based path to the current script, after the server has done any virtual-to-real mapping."/>
+                    <option value="SCRIPT_NAME" label="SCRIPT_NAME"
+                            description="Contains the current script's path. This is useful for pages which need to point to themselves. The __FILE__ constant contains the full path and filename of the current (i.e. included) file. "/>
+                    <option value="REQUEST_URI" label="REQUEST_URI"
+                            description="The URI which was given in order to access this page; for instance, '/index.html'."/>
+                    <option value="PHP_AUTH_DIGEST" label="PHP_AUTH_DIGEST"
+                            description="When doing Digest HTTP authentication, this variable is set to the 'Authorization' header sent by the client (which you should then use to make the appropriate validation). "/>
+                    <option value="PHP_AUTH_USER" label="PHP_AUTH_USER"
+                            description="When doing HTTP authentication, this variable is set to the username provided by the user."/>
+                    <option value="PHP_AUTH_PW" label="PHP_AUTH_PW"
+                            description="When doing HTTP authentication, this variable is set to the password provided by the user. "/>
+                    <option value="AUTH_TYPE" label="AUTH_TYPE"
+                            description="When doing HTTP authentication, this variable is set to the authentication type. "/>
+                    <option value="PATH_INFO" label="PATH_INFO"
+                            description="Contains any client-provided pathname information trailing the actual script filename but preceding the query string, if available. For instance, if the current script was accessed via the URL http://www.example.com/php/path_info.php/some/stuff?foo=bar, then $_SERVER['PATH_INFO'] would contain /some/stuff. "/>
+                    <option value="ORIG_PATH_INFO" label="ORIG_PATH_INFO"
+                            description="Original version of 'PATH_INFO' before processed by PHP."/>
+                </param>
+            </params>
+        </tag>
+
+        <tag name="tabledescription" label="Table Description (Depricated)" startchar="{" endchar="}"
+             description="(Depricated) Returns a description of the current table" proversion="1" depricated="1">
+            <params>
+                <param name="box" label="Show in message box" description="Table description will appear in a message type box with [X] close button." type="radio" default=""
+                       options="|No,box|Yes"/>
+            </params>
+        </tag>
+
+        <tag name="tabletitle" label="Table Title (Depricated)" startchar="{" endchar="}"
+             description="(Depricated) Returns a title of the current table" proversion="1" depricated="1" />
+
+        <tag name="table" label="Table Info" startchar="{" endchar="}"
+             description="Returns the current table related information" hidedefaultexample="1">
+
+            <params>
+                <param name="option" label="Option" type="list" description="Select what to show.">
+                    <option value="title" label="Table Title" description="Returns current table title."/>
+                    <option value="description" label="Description" description="Returns current table description."/>
+					<option value="id" label="Table ID" description="Returns current table ID."/>
+                </param>
+                <param name="box" label="Show in message box" description="Table title/description will appear in a messge type box with [X] close button." type="radio" default=""
+                       options="|No,box|Yes"/>
+            </params>
+        </tag>
+
+
+        <tag name="today" label="Today Date (Depricated)" startchar="{" endchar="}"
+             description="(Depricated) Returns current date in format Y-m-d" proversion="1" depricated="1" /><!-- pro only -->
+
+
+        <tag name="user" label="User" startchar="{" endchar="}"
+             description="Returns current user info (if user is logged in)" hidedefaultexample="1">
+            <params>
+                <param name="option" label="Option" type="list" description="Select what user info to provide.">
+                    <option value="name" label="Name" description="Returns User full name."/>
+                    <option value="username" label="Username" description="Returns Username"/>
+                    <option value="email" label="Email" description="Returns User email address."/>
+                    <option value="id" label="User ID" description="Returns Current User ID."/>
+                    <option value="usergroups" label="User Group(s)" description="Returns Current User Group(s) (Registered, Editor, Super Administrator, etc...)" />
+                    <option value="usergroupsid" label="User Group(s) IDs" description="Returns Current User Group(s) IDs (2,4,8 etc...)" />
+
+                    <option value="lastvisitDate" label="Last Visit Date" description="Returns Current User Last Visit Date." />
+                    <option value="registerDate" label="Register Date" description="Returns Current User Registration Date." />
+
+                </param>
+                <param name="userid" label="User ID" description="To get info of specific user, not Current User. Leave it blank to get Current User info." hidden="false" default="" type="string" />
+            </params>
+        </tag>
+
+        <tag name="websiteroot" label="Website Root" startchar="{" endchar="}"
+             description="Returns website root path (http://example.com/)" >
+            <params>
+                 <param name="include_host" label="Include Host" description="Include Website protocol, host, port etc." type="radio" default=""
+                       options="|No,includehost|Include"/>
+		<param name="include_host" label="Add Trailing Slashe" description="Add common slash to the end of the host name. Example: https://example.com/" type="radio" default=""
+                       options="|Add,notrailingslash|No"/>
+            </params>
+        </tag>
+
+        <tag name="layout" label="Layout" startchar="{" endchar="}"
+             description="Includes the content of one layout to the parent layout." hidedefaultexample="0">
+            <params>
+                <param name="layoutname" label="Layout Name" type="layout" description="Layout Name." examplenoquotes="0" example="my_script_layout"/>
+            </params>
+        </tag>
+
+        <tag name="if" label="If statement" startchar="{" endchar="} html code {endif}"
+             description="Simple If statement." hidedefaultexample="1">
+            <params>
+                <param name="statement" label="Statement" type="string" description="Example: [price]>0" examplenoquotes="1" example="[price]!=0 and [count]!=0}  Mr.[name] show this HTML {endif" />
+            </params>
+        </tag>
+
+        <tag name="tab" label="Tabs" startchar="{" endchar="} html code {/tabs}"
+             description="" hidedefaultexample="1">
+            <params>
+                <param name="title" label="Title" type="string" description="Tab label" examplenoquotes="1" example="Tab 1} First Tab Content {tab:Tab 2} Second Tab content{/tabs"/>
+            </params>
+        </tag>
+
+
+
+    </tagset>
+
+    <tagset name="settags" label="Set Tags" description="Tags that may set system variables."
+            priority="4" proversion="1"><!-- pro only -->
+        <tag name="headtag" label="HTML Document Head Tag" startchar="{" endchar="}" hidedefaultexample="1"
+             description="Places whatever provided to HTML document head tag." proversion="1">
+            <params>
+                <param name="content" label="Content" type="string" example="&lt;script src='/components/com_oxfordsms/js/ajax.js' type='text/javascript'&gt;&lt;/script&gt;"
+                       description="You can add script or css link here or style tags. This will go to HTML document HEAD part."/>
+            </params>
+        </tag>
+
+        <tag name="metakeywords" label="Set Meta Keywords" startchar="{" endchar="}"
+             description="A command to place a meta keywords into the head of the page." proversion="1">
+            <params>
+                <param name="keywords" label="Keywords" type="string"
+                       description="List of keywords. You may include [fieldname] to get keywords from. "/>
+            </params>
+        </tag>
+
+        <tag name="metadescription" label="Set Meta Description" startchar="{" endchar="}"
+             description="A command to place a meta description into the head of the page." proversion="1">
+            <params>
+                <param name="description" label="Description" type="string" example="custom tables, the best joomla extension, [producttitle], database"
+                       description="Description text. You may include [fieldname] to get description from."/>
+            </params>
+        </tag>
+
+        <tag name="pagetitle" label="Set Page Title" startchar="{" endchar="}"
+             description="A command to set the Page Title." proversion="1">
+            <params>
+                <param name="title" label="Title" type="string" description="Type the Page Title here." example="JoomlaBoat - Custom Tables" />
+            </params>
+        </tag>
+
+    </tagset>
+
+    <tagset name="extra" label="Extra" description="Extra tags" priority="4" proversion="1"><!-- pro only -->
+        <tag name="php" label="Execute PHP" startchar="{" endchar="}" hidedefaultexample="1"
+             description="Executes PHP script and returns the result." proversion="1">
+            <params>
+                <param name="script" label="PHP Script" type="code" examplenoquotes="1" example="strtolower(&quot;[producttitle]&quot;)"
+                       description="PHP script will be executed and the value returned. Note that you cannot use ' (single quote) character. Also, you may have «return» in your script. Example:
+                       $a=&quot;[producttitle]&quot;
+                       $b=strtolower($a);
+                       return $b;
+                       "/>
+            </params>
+        </tag>
+
+
+        <!--<tag name="php_a" label="Execute PHP (2)" startchar="{" endchar="}"
+             description="Executes PHP script and returns the result. You may use it in sequence.">
+            <params>
+                <param name="script" label="PHP Script" type="code"
+                       description="Script will be replaced with «return [script];» Note that you cannot use ' (single quote) character."/>
+            </params>
+        </tag>
+        <tag name="php_b" label="Execute PHP (3)" startchar="{" endchar="}"
+             description="Executes PHP script and returns the result. You may use it in sequence.">
+            <params>
+                <param name="script" label="PHP Script" type="code"
+                       description="Script will be replaced with «returns [script];» Note that you cannot use ' (single quote) character."/>
+            </params>
+        </tag>
+        <tag name="php_c" label="Execute PHP (4)" startchar="{" endchar="}"
+             description="Executes PHP script and returns the result. You may use it in sequence.">
+
+            <params>
+                <param name="script" label="PHP Script" type="code"
+                       description="Script will be replaced with «return [script];» Note that you cannot use ' (single quote) character."/>
+            </params>
+        </tag>-->
+    </tagset>
+
+    <tagset name="simpletable" label="Simple Table" description="Renders HTML Table" layouttypes="1,8,9,10"
+            layouttypelabels="simple" priority="1">
+        <tag name="catalogtable" label="Simple Catalog" description="Renders Simple HTML Catalog Table" startchar="{"
+             endchar="}" separator=";">
+            <params>
+                <param type="catalogtable" name="fields" label="Fields" description="Provide Table settings, columns and cell content." />
+                <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)." />
+            </params>
+        </tag>
+    </tagset>
+
+    <tagset name="pageonly" label="Catalog Page Tags" description="Catalog Page specific Tags." layouttypes="5"
+            layouttypelabels="page" priority="1">
+        <tag name="catalog" label="Catalog" description="Renders Catalog Page" startchar="{" endchar="}" separator=":">
+            <params>
+                <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)." />
+                <param name="format" label="Format" description="Render Table in HTML Table format or return clean record output)" type="radio" default="notable"
+                       options="|HTML Table,notable|Div"/>
+                <param type="layout" name="layout" label="Record Layout" table="current" layoutype="catalogitem" />
+            </params>
+        </tag>
+        <tag name="recordlist" label="list of Records"
+             description="Comma separated list or record IDs. Example: 4,78,3,876" startchar="{" endchar="}"
+/><!-- separator="," -->
+    </tagset>
+
+    <tagset name="page" label="Catalog Tags"
+            description="Tags that can be used on both Catalog Page and HTML Table type layouts." layouttypes="1,5"
+            layouttypelabels="simple,page" priority="1">
+
+        <tag name="add" label="Add New" startchar="{" endchar="}"
+            description="Renders Add New Record Button">
+
+            <params>
+                <param type="string" name="alias" label="(Optional) Munu Itemid or Alias" description="To redirect to specific Menu Item." />
+                <param name="import" label="Import CSV" description="Render Import CSV file button" type="radio" default=""
+                       options="|Add record,importcsv|Import CSV"/>
+            </params>
+
+        </tag>
+
+        <tag name="count" label="Record Count (number)" startchar="{" endchar="}"
+             description="Same as {recordcount:numberonly}"/>
+
+        <tag name="navigation" label="Navigation" startchar="{" endchar="}"
+             description="Navigation / Breadcrumbs. Returns a value of the filter used.">
+            <params>
+                <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)." />
+                <param name="listtype" label="List Type" type="list">
+                    <option value="list" label="Unordered list [ul][li][/li]...[/ul]"/>
+                    <option value="comma" label="Comma Separated String"/>
+                </param>
+            </params>
+        </tag>
+
+
+
+        <tag name="batchtoolbar" label="Batch Toolbar" repeatative="1" startchar="{" endchar="}" description="Renders the batch toolbar" hidedefaultexample="1">
+            <params>
+                <param name="button" label="Button" type="list" example="edit" description="Select button type">
+                    <option value="" label="- None"/>
+                    <option value="refresh" label="Refresh"/>
+                    <option value="delete" label="Delete"/>
+                    <option value="publish" label="Publish"/>
+                    <option value="unpublish" label="Unpublish"/>
+                </param>
+
+            </params>
+        </tag>
+
+        <tag name="checkbox" label="Checkbox" startchar="{" endchar="}" description="Renders the checkbox for batch toolbar" />
+
+
+        <tag name="pagination" label="Pagination Tool" startchar="{" endchar="}"
+             description="renders Pagination Bar Tool.">
+            <params>
+                <param name="tool" label="Tool" type="list">
+                    <option value="pagination" label="Pagination"/>
+                    <option value="limit" label="Limit"/>
+                    <option value="order" label="Order"/>
+                </param>
+            </params>
+        </tag>
+
+        <tag name="print" label="Print Button" startchar="{" endchar="}"
+             description="A button that opens a new controlless window without template, only content."/>
+
+        <tag name="recordcount" label="Record Count" startchar="{" endchar="}"
+             description="Example: Found 23 record(s)">
+            <params>
+                <param name="format" label="Format" description="What to return." type="radio" options="|Text,numberonly|number"/>
+            </params>
+        </tag>
+        <!-- Renders Search Input/Select box. You may select multiple fields. Works like: field1 LIKE value OR field2 LIKE value. Having multiple tags works as AND condition. -->
+        <tag name="search" label="Search Box" startchar="{" endchar="}" description="">
+            <params>
+                <param type="field" name="field" label="Field(s)" description="Select Table Field to search in." repeatative="0" />
+                
+                <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS classes separated by space." />
+                
+                <param name="reload" label="On Change" description="Reload the page on change event. Applied to select boxes only." type="radio" default="" example="reload"
+                       options="|Do nothing,reload|Reload Page"/>
+                
+                <param name="improved" label="Improve Select Box" description="Improve Select box to include in-list search." type="radio" default="" example="reload"
+                       options="|Standard,improved|Improved"/>
+                
+            </params>
+        </tag>
+        <tag name="searchbutton" label="Search Button" startchar="{" endchar="}" description="Renders [Search] Button">
+            <params>
+                <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS classes separated by space." />
+            </params>
+        </tag>
+
+
+    </tagset>
+
+
+    <tagset name="edit" label="Edit Tags" description="Edit Form specific Tags." layouttypes="2" layouttypelabels="edit"
+            priority="1">
+
+        <tag name="button" label="Button" startchar="{" endchar="}" added="2019-05-28" hidedefaultexample="1"
+             description="Renders form submit button. ">
+            <params>
+                <param name="type" label="Type" type="list" example="save">
+                    
+                    <option value="save" label="Save" description=""/>
+                    <option value="saveandclose" label="Save &#38; Close" description="" />
+                    <option value="saveascopy" label="Save as Copy"/>
+                    <option value="cancel" label="Cancel"/>
+                    <option value="delete" label="Delete"/>
+                </param>
+                <param name="label" label="Button Label" type="string" example="Click here to save the form"
+                       description="The label of the button."/>
+                
+                <param name="redirectlink" label="Custom Redirect Link" type="string" description="URL to redirect after processing the button click."/>
+                
+                <param name="class" label="CSS Class" type="string" description="Name or names of CSS class(s)." example="registerButton" />
+            </params>
+        </tag>
+
+        <tag name="buttons" label="Buttons" startchar="{" endchar="}" depricated="1" hidedefaultexample="1"
+             description="Renders «save», «cancel» etc buttons. Similar to {button} tag, but it renders a set of buttons instead.">
+            <params>
+                <param name="buttonset" label="Button Set" type="list" example="apply" default="saveandclose.cancel">
+                    <option value="saveandclose.cancel" label="Save &#38; Close / Cancel"/>
+                    <option value="save.saveandclose.cancel" label="Save / Save &#38; Close / Cancel"/>
+                    <option value="saveandclose.saveascopy.cancel" label="Save &#38; Close / Save as New &#38; Close / Cancel"/>
+                    <option value="saveandclose" label="Save &#38; Close"/>
+                    <!--<option value="saveandprint" label="Save and Open a preview"/>-->
+                </param>
+                <param name="button1label" label="First Button Label" type="string" example="Click to register"
+                       description="The label of the first button in selected Button Set."/>
+                <param name="button2label" label="Second Button Label" type="string"
+                       description="The label of the second button in selected Button Set."/>
+                <param name="button3label" label="Third Button Label" type="string"
+                       description="The label of the third button in selected Button Set."/>
+
+                <param name="cancellink" label="Redirect Link in case of Cancel " type="string" description="URL where to redirect if visitor clicks a cancel button."/>
+                <param name="class" label="CSS Class" type="string" description="Name or names of CSS class(s)." example="registerButton" />
+            </params>
+        </tag>
+        
+
+
+        <tag name="captcha" label="Captcha" startchar="{" endchar="}"
+             description="Provides the use of a captcha plugin (if enabled)." proversion="1" />
+
+    </tagset>
+
+    <tagset name="record" label="Record Tags" description="Record specific Tags." layouttypes="6,3,4,7,2,8,9,10"
+            layouttypelabels="item,record,details,email,edit" priority="1">
+        <tag name="id" label="record ID" startchar="{" endchar="}" description="Returns record ID"/>
+        <tag name="published" label="Published" startchar="{" endchar="}"
+             description="Returns «Yes» word (language depended) if record is published and «No» if not.">
+            <params>
+                <param name="format" label="Format" description="What type of value to return." type="list">
+                    <option value="" label="Text (Yes/No)" description="Word 'Yes' will be returned if record is published. Or Word 'No' instead."/>
+                    <option value="number" label="Number (1/0)" description="Number '1' will be returned if record is published. Or number '0' instead."/>
+                    <option value="boolean" label="Boolean (true,false)" description="Word 'true' will be returned if record is published or word 'false' instead."/>
+                </param>
+            </params>
+        </tag>
+    </tagset>
+
+    <tagset name="item" label="Catalog Record" description="Catalog Record specific Tags." layouttypes="1,6,3,4,8,9,10"
+            layouttypelabels="item,record,details" priority="1">
+        <tag name="link" label="Link to detailed page" startchar="{" endchar="}" description="Link to record details page (Details Layout will be used, the one selected in current menu item.)"/>
+        <tag name="linknoreturn" label="No Return Link" startchar="{" endchar="}"
+             description="Link to detailed page without «returnto» link"/>
+        <tag name="number" label="Record Number" startchar="{" endchar="}"
+             description="Returns record number (in current order), not record id."/>
+        <tag name="toolbar" label="Toolbar" startchar="{" endchar="}" description="Renders the toolbar" hidedefaultexample="1" repeatative="1">
+            <params>
+                <param name="button" label="Button" type="list" example="edit">
+                    <option value="" label="- None"/>
+                    <option value="edit" label="Edit"/>
+                    <option value="refresh" label="Refresh"/>
+                    <option value="delete" label="Delete"/>
+                    <option value="publish" label="Publish/Unpublish"/>
+                    <option value="imagegallery" label="Image Gallery"/>
+                    <option value="filebox" label="File Box"/>
+                </param>
+            </params>
+        </tag>
+
+<!--
+      <tag name="createuser" label="Create User" startchar="{" endchar="}" proversion="1"
+             description="Button. Create user account using existing fields. Settings are in menu item."  >
+
+      </tag>
+-->
+    </tagset>
+
+    <tagset name="details" label="Details" description="Details Specific Tags." layouttypes="4"
+            layouttypelabels="details" priority="1">
+        <tag name="print" label="Print Button" startchar="{" endchar="}"
+             description="A button that opens a new controlless window without template, only content.">
+            <params>
+                <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)." />
+            </params>
+        </tag>
+    </tagset>
+
+
+    <tagset name="item" label="Record"
+            description="Tags that can be used in Record/Details Layouts also inside HTML Table cells."
+            layouttypes="1,6,3,4,7" layouttypelabels="simpletable,item,record,details,email" priority="1">
+
+
+        <tag name="resolve" label="Resolves Hierarchical Data" startchar="{" endchar="}"
+             description="Code to Textual Representation." proversion="1" />
+
+        <tag name="_value" label="Value" startchar="{" endchar="}" description="Returns 1 if record is published and 0 if unpublished." hidedefaultexample="1">
+            <params>
+                <param name="Parameter" label="Parameter" description="Returns value of what" type="list" example="published">
+                    <option value="published" label="Published"
+                            description="Returns «1» if record is published and «0» if not."/>
+                    <!-- ... -->
+                </param>
+            </params>
+        </tag>
+
+        <tag name="_value" label="Field Value" startchar="[" endchar="]" description="Returns unprocessed value of the field." hidedefaultexample="1" repeatative="0">
+            <params>
+                <param name="field" label="Field" description="Select Field" type="field" example="" />
+            </params>
+        </tag>
+
+        <tag name="_edit" label="Field Edit box" startchar="[" endchar="]" description="Renders input/select box for selected field. It works in all types of layout except Edit Form." hidedefaultexample="1" repeatative="0">
+            <params>
+                <param name="field" label="Field" description="Select Field" type="field" example="" />
+            </params>
+        </tag>
+
+
+        <tag name="sqljoin" label="Table Join" startchar="{" endchar="}"
+             description="Returns value of joined table field." hidedefaultexample="1">
+            <params>
+                <param name="function" label="Function" type="list" description="What to do with returned value(s)" example="count">
+                    <option value="count" label="Count" description="Counts the number of records that match."/>
+                    <option value="avg" label="Average" description="Calculate average value of all the records that match."/>
+                    <option value="min" label="Minimum" description="Finds minimum value of all the records that match."/>
+                    <option value="max" label="Maximum" description="Finds maximum value of all the records that match."/>
+                    <option value="sum" label="Sum" description="Summarizes values of selected field of all the records that match."/>
+                    <option value="value" label="Value" description="Returns the value of selected field of all the records that match."/>
+                    <option value="smart" label="Hierarchical" description="resolves value of selected field." proversion="1" />
+                </param>
+                <param name="tablename" label="Join With Table" type="string" description="Table Name to join with (Where to look)" example="sales" />
+                <param name="findwhat_field" label="Find What Field" type="string" example="_id"
+                       description="Findwhat: field of the current table. use '_id' to find current table record id."/>
+                <param name="lookwhere_field" label="Where to Look Field" type="string"
+                       description="Field of joined table" example="productid" />
+                <param name="value_of_field" label="Value Field" type="string"
+                       description="Value of joined table field." example="_id" />
+                <param name="additional filter" label="Additional Filter" type="string" description="Apply additional filter, ie. fieldname=some value. Use $get_queryparameter to get query parameter value. Example: $get_year" />
+
+            </params>
+        </tag>
+
+        <tag name="toolbar" label="Toolbar" startchar="{" endchar="}" description="Renders the toolbar" hidedefaultexample="1">
+            <params>
+                <param name="button1" label="Button 1" type="list" example="edit">
+                    <option value="" label="- None"/>
+                    <option value="edit" label="Edit"/>
+                    <option value="refresh" label="Refresh"/>
+                    <option value="delete" label="Delete"/>
+                    <option value="publish" label="Publish/Unpublish"/>
+                    <option value="imagegallery" label="Image Gallery"/>
+                    <option value="filebox" label="File Box"/>
+                </param>
+                <param name="button2" label="Button 2" type="list" example="publish">
+                    <option value="" label="- None"/>
+                    <option value="edit" label="Edit"/>
+                    <option value="refresh" label="Refresh"/>
+                    <option value="delete" label="Delete"/>
+                    <option value="publish" label="Publish/Unpublish"/>
+                    <option value="imagegallery" label="Image Gallery"/>
+                    <option value="filebox" label="File Box"/>
+                </param>
+                <param name="button3" label="Button 3" type="list" example="refresh">
+                    <option value="" label="- None"/>
+                    <option value="edit" label="Edit"/>
+                    <option value="refresh" label="Refresh"/>
+                    <option value="delete" label="Delete"/>
+                    <option value="publish" label="Publish/Unpublish"/>
+                    <option value="imagegallery" label="Image Gallery"/>
+                    <option value="filebox" label="File Box"/>
+                </param>
+                <param name="button4" label="Button 4" type="list" example="delete">
+                    <option value="" label="- None"/>
+                    <option value="edit" label="Edit"/>
+                    <option value="refresh" label="Refresh"/>
+                    <option value="delete" label="Delete"/>
+                    <option value="publish" label="Publish/Unpublish"/>
+                    <option value="imagegallery" label="Image Gallery"/>
+                    <option value="filebox" label="File Box"/>
+                </param>
+                <param name="button5" label="Button 5" type="list" example=" " examplenoquotes="1">
+                    <option value="" label="- None"/>
+                    <option value="edit" label="Edit"/>
+                    <option value="refresh" label="Refresh"/>
+                    <option value="delete" label="Delete"/>
+                    <option value="publish" label="Publish/Unpublish"/>
+                    <option value="imagegallery" label="Image Gallery"/>
+                    <option value="filebox" label="File Box"/>
+                </param>
+                <param name="button6" label="Button 6" type="list" example=" " examplenoquotes="1">
+                    <option value="" label="- None"/>
+                    <option value="edit" label="Edit"/>
+                    <option value="refresh" label="Refresh"/>
+                    <option value="delete" label="Delete"/>
+                    <option value="publish" label="Publish/Unpublish"/>
+                    <option value="imagegallery" label="Image Gallery" />
+                    <option value="filebox" label="File Box"/>
+                </param>
+
+            </params>
+        </tag>
+    </tagset>
+
+
+
+    <tagset name="plugins" label="Plugins" description="Custom Tables Plugins." priority="4" proversion="1">
+        <tag name="customtablescatalog" label="Custom Tables Catalog" startchar="{" endchar="}" separator="=" hidedefaultexample="1"
+             description="Returns a Custom Table catalog results into. Enable Content Plugins in menu item settings." proversion="1">
+            <params>
+                <param name="tablename" label="Table" type="table" description="Table Name" example="products" />
+
+                <param name="pagelayout" label="Page Layout" type="layout" description="Catalog Layout" example="productspage" table="0" layoutype="catalogpage,simplecatalog" />
+                <param name="itemlayout" label="Record Layout" type="layout" description="Record Layout" example="productrecord" table="0" layoutype="catalogitem,record" />
+
+                <param name="state" label="Publish State" description="What record states to show." type="radio" default="" example="1"
+                       options="2|Show All,1|Show Published,0|Show Unpublished"/>
+
+
+
+                <param name="filter" label="Filter" type="string" example="count>0" description="Additional filter, ie. fieldname=some value. field to search in = (or &#60; or &#60;= or &#62; or &#62;= or !=)
+		value (or special macro as {currentuserid} for example ) to have more then one equation use AND, OR
+		to get value from url query add '$get_' to parameter name, example 'username=$get_user' this will read value 'user' from url query."/>
+
+                <param name="columns" label="Columns" description="Leave it empty. This parameter no longer used" type="radio" default="" example=" " examplenoquotes="1" options="|"/>
+
+                <param type="string" name="sortby" default="" example="title" label="Sort by field" description="Type field name to sort by. Example 1: 'title desc' Example 2: 'title asc'. Note that keyword asc is not necessary." />
+
+                <param type="string" name="forceitemid" example=" " examplenoquotes="1" default="0" label="Force Itemid" description="Used to set parameters for edit form etc." />
+            </params>
+        </tag>
+        <tag name="customtablesrecord" label="Custom Tables Record" startchar="{" endchar="}" separator="=" hidedefaultexample="1"
+             description="Returns Custom Tables single Record by ID. Enable Content Plugins in menu item settings." proversion="1">
+            <params>
+		<param name="tablename" label="Table" type="table" description="Table Name" example="products" />
+		<param name="detailslayout" label="Layout" type="layout" description="Details Layout" example="productdetails" table="0" layoutype="details,record,catalogitem" />
+                <param name="recordid" label="Record ID or Filter" example="[productid]" description="Record ID or filter. Example 1: 2, Example 2: title=about, Example 3: title=$get_title" type="string" default="" />
+            </params>
+        </tag>
+    </tagset>
+
+
+
+    <layouttypes>
+        <type name="simple" label="Simple Catalog" id="1"/>
+        <type name="edit" label="Edit Record" id="2"/>
+        <type name="record" label="Record" id="3"/>
+        <type name="details" label="Details Page" id="4"/>
+        <type name="page" label="Catalog Page" id="5"/>
+        <type name="item" label="Catalog Record" id="6"/>
+        <type name="email" label="Email Message" id="7"/>
+    </layouttypes>
+</layouts>

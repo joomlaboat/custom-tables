@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+	<layout title="Catalog">
+		<message>Generate Custom Tables catalog according to the selected layout.
+		</message>
+	</layout>
+	
+		<name>Catalog</name>
+		<description>CustomTables Catalog Layout</description>
+		
+
+        <fields name="params" addfieldpath="/components/com_customtables/fields">
+			
+			<fieldset name="PARAMS"  addfieldpath="/components/com_customtables/fields">	
+				<field type="estable" name="establename" default="" label="Table" description="Select Table" />
+				
+				<field type="escataloglayout" name="escataloglayout" default="" label="Catalog Layout" description="Select Catalog Layout" />
+				<field type="esitemlayout" name="esitemlayout" default="" label="Record Layout" description="Select Record Layout" />
+				
+				
+				<field type="esdetailslayout" name="esdetailslayout" default="" label="Details Layout" description="Select Details Layout" />
+				
+				<field type="text" name="groupby" default="" label="Group By" description="Field name to group results by" />
+				<field type="text" name="sortby" default="" label="Default sort by field" description="Type field name to sort by and the order. Example 1: 'title desc' Example 2: 'title asc'. Note that keyword asc is not necessary." />
+				<field type="text" name="forcesortby" default="" label="Forced sort by field" 
+description="Type field name to sort by and the order. Example 1: 'title desc' Example 2: 'title asc'. Note that keyword asc is not necessary. Also, you may add MySql date_format() format specifiers. Example: 'birthdate:%m%d DESC' to sort by month and day. You can also use _id to sort by recird ID or _published to sort by Publish State" />
+
+				<field name="addusergroups" type="usergroup" default="-1" label="Who may add content" description="Select a user group that may add the records." />				
+				<field name="editusergroups" type="usergroup" default="-1" label="Who may edit content" description="Select a user group that may edit records." />
+				<field name="publishusergroups" type="usergroup" default="-1" label="Who may publish records" description="Select a user group that may publish/unpublish records." />
+				<field name="deleteusergroups" type="usergroup" default="-1" label="Who may delete records" description="Select a user group that may delete records." />
+				
+
+				<field type="radio" name="allowcontentplugins" default="0" label="Allow Content Plugins" description="" class="btn-group btn-group-yesno">				
+			      <option value="1">Yes</option>
+					<option value="0">No</option>
+				</field>
+		
+				<field type="text" name="forceitemid" default="0" label="Force Itemid" description="Used to set parameters for edit form etc." />
+
+
+			</fieldset>
+			
+			<fieldset name="FILTERS">
+				<field type="text" name="useridfield" default="" label="Custom UserID Field" description="Leave it blank if you have only one UserID field." />
+				<field type="text" name="filter" filter="raw" default="" label="Search Parameter"
+				description="
+		field to search in = (or &#60; or &#60;= or &#62; or &#62;= or != and == 'exact match') 
+		value (or special macro as {currentuserid} for example ) to have more then one equation use AND, OR
+		to get value from url query add '$get_' to parameter name, example 'username=$get_user' this will read value 'user' from url query.
+To get current date use {now} or {year},{month},{day}. Also you can format the date using MySql date_format() format specifiers, example 1: {now:%m}.
+Example 2: 'birthdate:%m%d DESC' to get the month and the day of the field value.
+" />
+				<field type="list" name="showpublished" default="0" label="Show published" description="" >
+				    <option value="0">Show Published Only</option>
+					<option value="1">Show Unpublished Only</option>
+					<option value="2">Show Any</option>
+				</field>
+				<field type="text" name="limit" default="0" label="Limit" description="" />				
+			</fieldset>
+            
+			
+			<fieldset name="EDITFORM">
+				<field type="eseditlayout" name="eseditlayout" default="" label="Edit Layout" description="Select Edit Layout" />
+
+				<field type="list" name="publishstatus" default="1" label="Publish" description="" >
+					<option value="1">Published</option>
+					<option value="0">Not Published</option>
+				</field>
+			
+				
+			
+				<field type="text" name="returnto" default="" size="70" label="Custom Return To" description="Visitor will be redireced to this link when form is complited. Active value (may include value(s) of field(s) use [fieldname] to get the value) " />
+            
+				<field type="list" name="guestcanaddnew" default="0" label="Guest can add new records" description="Enable this if you making Contact Us form or somthing publicly available. Do not forget to use Captcha in that case." >
+				    <option value="1">Guest can add new records</option>
+					<option value="0">Only registred can add new records</option>
+				</field>
+			
+			
+				<field type="text" name="requiredlabel" filter="raw" default="" size="70" label="Required Label" description="Character or a text to show next to required field if there is one." />
+			
+			
+				<field type="text" name="msgitemissaved" default="" size="70" label="Record Saved Message" description="This message will show up on the record being saved." />
+			
+			
+				<field type="list" name="onrecordaddsendemail" default="0" label="Send Email When record" description="" >
+		                	<option value="1">Added</option>
+					<option value="2">Saved</option>
+					<option value="3">On Conditions (Works on refresh too)</option>
+					<option value="0">Do not send</option>
+				</field>
+
+				<field type="text" name="sendemailcondition" default="" size="50" label="Send Email Condition" description="Example (That's PHP syntax): approved==1 or name==ivan" />
+
+
+				<field type="text" name="onrecordaddsendemailto" default="" size="50" label="On Record Add Send Email to" description="The email with the data filled in the form will be sent to this email. More than one email is ok. Separate them with the comma.
+						
+						Also you may use a value of the field of the table to send an email to.
+						To have your own Email Subject please type : after email and then the subject.
+						Example 1: [email]
+						Example 2: test@yahoo.com,test@gmail.com,[email]
+						Example 3: [email]:Thank you for participation
+				" />
+				
+				<field type="text" name="onrecordsavesendemailto" default="" size="50" label="On Record Edit Send Email to" description="The email with the data filled in the form will be sent to this email. More than one email is ok. Separate them with the comma.
+						
+						Also you may use a value of the field of the table to send an email to.
+						To have your own Email Subject please type : after email and then the subject.
+						Example 1: [email]
+						Example 2: test@yahoo.com,test@gmail.com,[email]
+						Example 3: [email]:Thank you for participation
+				" />
+			
+			
+			<field type="esemaillayout" name="onrecordaddsendemaillayout" default="" label="Email Layout" description="Email Layout" />
+			
+			<field type="string" name="emailsentstatusfield" default="" label="Email Sent Status Field" description="Field Name where to save the email sending status. Should be int or checkbox type. 1- sent, 0- not sent." />
+			
+			</fieldset>
+			
+<!--						
+			<fieldset name="SHOPPING_CART">
+				<field type="list" name="showcartitemsonly" default="0" label="Shoping Cart Only" description="Show Items in the Shoping Cart Only" >
+				    <option value="1">Yes</option>
+					<option value="0">No</option>
+				</field>
+				<field type="text" name="showcartitemsprefix" default="" size="50" label="Shopping Cart Prefix" description="" />
+				<field type="text" name="cart_returnto" default="" size="50" label="Cart Updated Return To" description="" />
+				<field type="text" name="cart_msgitemadded" default="" size="50" label="Message: Cart: Item Added" description="" />
+				<field type="text" name="cart_msgitemdeleted" default="" size="50" label="Message: Cart: Item Deleted" description="" />
+				<field type="text" name="cart_msgitemupdated" default="" size="50" label="Message: Cart: Updated" description="" />
+			</fieldset>
+-->			
+			
+			
+<!--			
+			<fieldset name="OBSOLETE">
+				
+				<field type="text" name="columns" default="1" label="Columns" description="Number of columns" />
+				<field type="list" name="linktodetails" default="0" label="Link to Detailed page" description="" >
+					<option value="1">Show</option>
+					<option value="0">Hide</option>
+				</field>
+				<field type="list" name="allowprint" default="0" label="Allow Print" description="If Yes then it will show the Print button in catalog and in detailed page if applicable" >
+				    <option value="1">Yes</option>
+					<option value="0">No</option>
+				</field>
+				<field type="list" name="shownavigation" default="1" label="Navigation" description="Navigation or filters" >
+				    <option value="1">Yes</option>
+					<option value="0">No</option>
+				</field>
+			
+				<field type="list" name="showpagination" default="1" label="Pagination" description="Pagination, show page (Previous 1.2.6 Next)" >
+				    <option value="1">Yes</option>
+					<option value="0">No</option>
+				</field>
+			
+				<field type="textarea" filter="raw" rows="10" cols="50"  name="pagelayout" default="" label="Custom Page Layout" description="" />
+				<field type="textarea" filter="raw" rows="10" cols="50"  name="cataloglayout" default="" label="Custom Card Layout" description="Custom Card layout, overwrites catalog layout." />
+			
+			</fieldset>
+-->
+        </fields>
+	
+</metadata>

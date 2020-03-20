@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+	<layout title="User activity history">
+		<message>
+Shows the history of user's activity.
+		</message>
+	</layout>
+	
+		<name>Log</name>
+		<description>CustomTables - Log</description>
+	
+</metadata>

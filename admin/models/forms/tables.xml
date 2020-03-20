@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form
+	addrulepath="/administrator/components/com_customtables/models/rules"
+	addfieldpath="/administrator/components/com_customtables/models/fields"
+>
+	<fieldset name="details">
+                <!-- Default Fields.-->
+                <!-- Id Field. Type: Text (joomla)-->
+                <field name="id"
+                       type="text"
+                       class="readonly"
+                       label="JGLOBAL_FIELD_ID_LABEL"
+                       description="JGLOBAL_FIELD_ID_DESC"
+                       size="10"
+                       default="0" />
+                <!-- Date Created Field. Type: Calendar (joomla)-->
+                <field name="created"
+                       type="calendar"
+                       label="COM_CUSTOMTABLES_TABLES_CREATED_DATE_LABEL"
+                       description="COM_CUSTOMTABLES_TABLES_CREATED_DATE_DESC"
+                       size="22"
+                       format="%Y-%m-%d %H:%M:%S"
+                       filter="user_utc" />
+                <!-- User Created Field. Type: User (joomla)-->
+                <field name="created_by"
+                       type="user"
+                       label="COM_CUSTOMTABLES_TABLES_CREATED_BY_LABEL"
+                       description="COM_CUSTOMTABLES_TABLES_CREATED_BY_DESC" />
+                <!-- Published Field. Type: List (joomla)-->
+                <field name="published"
+                       type="list"
+                       label="JSTATUS">
+                        <option value="1">JPUBLISHED</option>
+                        <option value="0">JUNPUBLISHED</option>
+                        <option value="2">JARCHIVED</option>
+                        <option value="-2">JTRASHED</option>
+                </field>
+                <!-- Date Modified Field. Type: Calendar (joomla)-->
+                <field name="modified"
+                       type="calendar"
+                       class="readonly"
+                       label="COM_CUSTOMTABLES_TABLES_MODIFIED_DATE_LABEL"
+                       description="COM_CUSTOMTABLES_TABLES_MODIFIED_DATE_DESC"
+                       size="22"
+                       readonly="true"
+                       format="%Y-%m-%d %H:%M:%S"
+                       filter="user_utc" />
+                <!-- User Modified Field. Type: User (joomla)-->
+                <field name="modified_by"
+                       type="user"
+                       label="COM_CUSTOMTABLES_TABLES_MODIFIED_BY_LABEL"
+                       description="COM_CUSTOMTABLES_TABLES_MODIFIED_BY_DESC"
+                       class="readonly"
+                       readonly="true"
+                       filter="unset" />
+                <!-- Ordering Field. Type: Numbers (joomla)-->
+                <field name="ordering"
+                       type="number"
+                       class="inputbox validate-ordering"
+                       label="COM_CUSTOMTABLES_TABLES_ORDERING_LABEL"
+                       description=""
+                       default="0"
+                       size="6"
+                       required="false" />
+                <!-- Version Field. Type: Text (joomla)-->
+                <field name="version"
+                       type="text"
+                       class="readonly"
+                       label="COM_CUSTOMTABLES_TABLES_VERSION_LABEL"
+                       description="COM_CUSTOMTABLES_TABLES_VERSION_DESC"
+                       size="6"
+                       readonly="true"
+                       filter="unset" />
+                <!-- Dynamic Fields.-->
+                <!-- Tablecategory Field. Type: Sql. (joomla)-->
+                <field type="sql"
+                       name="tablecategory"
+                       label="COM_CUSTOMTABLES_TABLES_TABLECATEGORY_LABEL"
+                       query="SELECT id AS value, categoryname AS tablecategory, categoryname AS categoryname FROM #__customtables_categories"
+                       default="null"
+                       required="false"
+                       value_field="categoryname">
+                        <!-- No Manual Options Were Added In Field Settings.-->
+                </field>
+                <!-- Tabletitle Field. Type: Text. (joomla)-->
+                <field type="text"
+                       name="tabletitle"
+                       label="COM_CUSTOMTABLES_TABLES_TABLETITLE_LABEL"
+                       maxlength="255"
+                       description="COM_CUSTOMTABLES_TABLES_TABLETITLE_DESCRIPTION"
+                       class="text_area"
+                       readonly="false"
+                       disabled="false"
+                       required="true"
+                       filter="STRING"
+                       message="COM_CUSTOMTABLES_TABLES_TABLETITLE_MESSAGE"
+                       hint="COM_CUSTOMTABLES_TABLES_TABLETITLE_HINT"
+                       autocomplete="on" />
+                <!-- Tablename Field. Type: Text. (joomla)-->
+                <field type="text"
+                       name="tablename"
+                       label="COM_CUSTOMTABLES_TABLES_TABLENAME_LABEL"
+                       required="true"
+                       filter="CMD"
+                       hint="COM_CUSTOMTABLES_TABLES_TABLENAME_HINT" />
+                <!-- Description Field. Type: Text. (joomla)-->
+<!--
+                <field 
+			type="hidden"
+                       name="description"
+                       label="COM_CUSTOMTABLES_TABLES_DESCRIPTION_LABEL"
+                       description="COM_CUSTOMTABLES_TABLES_DESCRIPTION_DESCRIPTION"
+                       class="text_area" />
+-->
+                <!-- Customphp Field. Type: Filelist. (joomla)-->
+                <field type="filelist"
+                       name="customphp"
+                       label="COM_CUSTOMTABLES_TABLES_CUSTOMPHP_LABEL"
+                       directory="/components/com_customtables/customphp" />
+
+                <field type="radio"
+                       name="allowimportcontent"
+                       label="COM_CUSTOMTABLES_FIELDS_ALLOWCONTENTIMPORT"
+                       description="COM_CUSTOMTABLES_FIELDS_ALLOWCONTENTIMPORT_DESCRIPTION"
+                       class="btn-group btn-group-yesno"
+                       default="0">
+                        <!-- Option Set.-->
+                        <option value="1">COM_CUSTOMTABLES_FIELDS_YES</option>
+                        <option value="0">COM_CUSTOMTABLES_FIELDS_NO</option>
+                </field>
+        </fieldset>
+	
+	<!-- Access Control Fields. -->
+	<fieldset name="accesscontrol">
+		<!-- Asset Id Field. Type: Hidden (joomla) -->
+		<field
+			name="asset_id"
+			type="hidden"
+			filter="unset"
+		/>
+		<!-- Rules Field. Type: Rules (joomla) -->
+		<field
+			name="rules"
+			type="rules"
+			label="Permissions in relation to this tables"
+			translate_label="false"
+			filter="rules"
+			validate="rules"
+			class="inputbox"
+			component="com_customtables"
+			section="tables"
+		/>
+	</fieldset>
+</form>

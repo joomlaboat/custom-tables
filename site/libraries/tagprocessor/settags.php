@@ -1,0 +1,106 @@
+<?php
+/**
+ * CustomTables Joomla! 3.x Native Component
+ * @version 1.6.1
+ * @author Ivan komlev <support@joomlaboat.com>
+ * @link http://www.joomlaboat.com
+ * @license GNU/GPL
+ **/
+
+
+// no direct access
+
+defined('_JEXEC') or die('Restricted access');
+require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'misc.php');
+
+class tagProcessor_Set
+{
+    public static function process(&$Model,&$pagelayout)
+    {
+        tagProcessor_Set::setHeadTag($pagelayout);
+        tagProcessor_Set::setMetaDescription($pagelayout);
+        tagProcessor_Set::setMetaKeywords($pagelayout);
+		tagProcessor_Set::setPageTitle($Model,$pagelayout);
+    }
+
+    protected static function setMetaKeywords(&$htmlresult)
+	{
+		$options=array();
+		$fList=JoomlaBasicMisc::getListToReplace('metakeywords',$options,$htmlresult,'{}');
+
+		$i=0;
+		foreach($fList as $fItem)
+		{
+			$opts=JoomlaBasicMisc::csv_explode(',',$options[$i],'"',false);
+
+			$doc = JFactory::getDocument();
+			$doc->setMetaData( 'keywords', $opts[0] );
+
+			$htmlresult=str_replace($fItem,'',$htmlresult);
+			$i++;
+		}
+
+	}
+
+	protected static function setMetaDescription(&$htmlresult)
+	{
+		$options=array();
+		$fList=JoomlaBasicMisc::getListToReplace('metadescription',$options,$htmlresult,'{}');
+
+		$i=0;
+		foreach($fList as $fItem)
+		{
+			$opts=JoomlaBasicMisc::csv_explode(',',$options[$i],'"',false);
+
+			$doc = JFactory::getDocument();
+			$doc->setMetaData( 'description', $opts[0] );
+
+			$htmlresult=str_replace($fItem,'',$htmlresult);
+			$i++;
+		}
+
+	}
+
+
+
+	protected static function setPageTitle(&$Model,&$htmlresult)
+	{
+		$options=array();
+		$fList=JoomlaBasicMisc::getListToReplace('pagetitle',$options,$htmlresult,'{}');
+        $mydoc = JFactory::getDocument();
+		$i=0;
+		foreach($fList as $fItem)
+		{
+			$opts=JoomlaBasicMisc::csv_explode(',',$options[$i],'"',false);
+            $mydoc->setTitle(JoomlaBasicMisc::JTextExtended($opts[0]));
+
+			$htmlresult=str_replace($fItem,'',$htmlresult);
+			$i++;
+		}
+
+        if(count($fList)==0)
+            $mydoc->setTitle(JoomlaBasicMisc::JTextExtended($Model->params->get( 'page_title' )));
+
+	}
+
+    protected static function setHeadTag(&$htmlresult)
+	{
+		$options=array();
+		$fList=JoomlaBasicMisc::getListToReplace('headtag',$options,$htmlresult,'{}');
+
+		$i=0;
+		foreach($fList as $fItem)
+		{
+			$opts=JoomlaBasicMisc::csv_explode(',',$options[$i],'"',false);
+
+			$document = JFactory::getDocument();
+			$document->addCustomTag($opts[0]);
+
+			$htmlresult=str_replace($fItem,'',$htmlresult);
+			$i++;
+		}
+
+	}
+
+
+}
