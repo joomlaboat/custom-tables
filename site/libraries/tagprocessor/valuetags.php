@@ -618,10 +618,10 @@ class tagProcessor_Value
 				
                     if(isset($params[1]) and $params[1]=='dynamic')
                     {
-                    	$phptagprocessor_file=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'protagprocessor'.DIRECTORY_SEPARATOR.'phptags.php';
-                        if(file_exists($phptagprocessor_file))
+                    	$phptagprocessor=JPATH_SITE.DIRECTORY_SEPARATOR.'plugins'.DIRECTORY_SEPARATOR.'content'.DIRECTORY_SEPARATOR.'customtables'.DIRECTORY_SEPARATOR.'protagprocessor'.DIRECTORY_SEPARATOR.'phptags.php';
+                        if(file_exists($phptagprocessor))
                         {
-                           	require_once($phptagprocessor_file);
+                           	require_once($phptagprocessor);
                            	$rowValue=tagProcessor_PHP::processTempValue($Model,$row,$fieldname,$params,true);
                         }
                     }

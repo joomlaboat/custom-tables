@@ -1832,7 +1832,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 	function doCustomPHP(&$row=array(),&$row_old=array())
 	{
-		$servertagprocessor_file=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'protagprocessor'.DIRECTORY_SEPARATOR.'servertags.php';
+		$servertagprocessor_file=JPATH_SITE.DIRECTORY_SEPARATOR.'plugins'.DIRECTORY_SEPARATOR.'content'.DIRECTORY_SEPARATOR.'customtables'.DIRECTORY_SEPARATOR.'protagprocessor'.DIRECTORY_SEPARATOR.'servertags.php';
 
 		if(!file_exists($servertagprocessor_file))
 			return;
