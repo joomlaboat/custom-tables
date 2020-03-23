@@ -115,11 +115,11 @@ class CustomtablesViewLayouts extends JViewLegacy
 					JToolBarHelper::save('layouts.save', 'JTOOLBAR_SAVE');
 					JToolBarHelper::custom('layouts.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
 				};
-				
-				JToolbarHelper::custom('layoutwizard', 'wizzardbutton', 'wizzardbutton', 'Layout Auto Creator', false);//Layout Wizard
-				JToolbarHelper::custom('addfieldtag', 'fieldtagbutton', 'fieldtagbutton', 'Add Field Tag', false);
-				JToolbarHelper::custom('addlayouttag', 'layouttagbutton', 'layouttagutton', 'Add Layout Tag', false);
-				
+
+				JToolbarHelper::custom('layoutwizard', 'wizzardbutton', 'wizzardbutton', 'COM_CUSTOMTABLES_BUTTON_LAYOUTAUTOCREATE', false);//Layout Wizard
+				JToolbarHelper::custom('addfieldtag', 'fieldtagbutton', 'fieldtagbutton', 'COM_CUSTOMTABLES_BUTTON_ADDFIELDTAG', false);
+				JToolbarHelper::custom('addlayouttag', 'layouttagbutton', 'layouttagutton', 'COM_CUSTOMTABLES_BUTTON_ADDLAYOUTTAG', false);
+
 				JToolBarHelper::cancel('layouts.cancel', 'JTOOLBAR_CANCEL');
 			}
 			else
@@ -141,9 +141,9 @@ class CustomtablesViewLayouts extends JViewLegacy
 					JToolBarHelper::custom('layouts.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
 				}
 				
-				JToolbarHelper::custom('layoutwizard', 'wizzardbutton', 'wizzardbutton', 'Layout Auto Creator', false);//Layout Wizard
-				JToolbarHelper::custom('addfieldtag', 'fieldtagbutton', 'fieldtagbutton', 'Add Field Tag', false);
-				JToolbarHelper::custom('addlayouttag', 'layouttagbutton', 'layouttagutton', 'Add Layout Tag', false);
+				JToolbarHelper::custom('layoutwizard', 'wizzardbutton', 'wizzardbutton', 'COM_CUSTOMTABLES_BUTTON_LAYOUTAUTOCREATE', false);//Layout Wizard
+				JToolbarHelper::custom('addfieldtag', 'fieldtagbutton', 'fieldtagbutton', 'COM_CUSTOMTABLES_BUTTON_ADDFIELDTAG', false);
+				JToolbarHelper::custom('addlayouttag', 'layouttagbutton', 'layouttagutton', 'COM_CUSTOMTABLES_BUTTON_ADDLAYOUTTAG', false);
 				
 				JToolBarHelper::cancel('layouts.cancel', 'JTOOLBAR_CLOSE');
 			}
