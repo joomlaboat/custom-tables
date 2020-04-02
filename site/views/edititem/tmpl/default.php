@@ -130,6 +130,8 @@ jQuery.noConflict()
 						$LayoutProc=new LayoutProcessor;
 						$LayoutProc->Model=$this->Model;
 						$LayoutProc->layout=$this->Model->pagelayout;
+						
+						//Better to run tag processor before rendering form edit elements because of IF statments that can exclude the part of the layout that contains form fields.
 						$this->Model->pagelayout=$LayoutProc->fillLayout($this->row,null,'','||',false,true);
 						
 						tagProcessor_Edit::process($this->Model,$this->Model->pagelayout,$listing_id);
@@ -139,7 +141,7 @@ jQuery.noConflict()
 						$items_to_replace=array();
 						renderFields($this->row,$this->Model,$this->Model->langpostfix,0,$esinputbox,$calendars,'',$fieldstosave,$replaceitecode,$items_to_replace);
 
-						
+						//Before 2020-04-01 we processed tags after rendering form elements.
 						//$LayoutProc->layout=$this->Model->pagelayout;
 						//$this->Model->pagelayout=$LayoutProc->fillLayout($this->row,null,'','||',false,true);
 

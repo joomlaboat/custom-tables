@@ -43,19 +43,42 @@ class ESLayouts
 		$db->setQuery( $query );
 		$rows = $db->loadAssocList();
 		if(count($rows)!=1)
-		{
 			return '';
-		}
-		$row=$rows[0];
 
+		$row=$rows[0];
         $type=(int)$row['layouttype'];
 
 		$content=ESLayouts::getLayoutFileContent($row['id'],$row['ts'],$layoutname);
 		if($content!='')
 			return $content;
 
-		return $row['layoutcode'];
+		//Get all layouts recursevly
+		$layoutcode=$row['layoutcode'];
+		ESLayouts::processLayoutTag($layoutcode);
+		return $layoutcode;
 	}
+	
+	public static function processLayoutTag(&$htmlresult)
+	{
+        $options=array();
+		$fList=JoomlaBasicMisc::getListToReplace('layout',$options,$htmlresult,'{}');
+        
+        if(count($fList)==0)
+            return false;
+        
+        require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'misc.php');
+        
+		$i=0;
+		foreach($fList as $fItem)
+		{
+            $layoutname=$options[$i];
+            $type='';
+            $layout=ESLayouts::getLayout($layoutname,$type);
+            
+			$htmlresult=str_replace($fItem,$layout,$htmlresult);
+			$i++;
+		}
+    }
 
 
 	public static function getLayoutFileContent($id=0,$db_layout_ts=0,$layoutname)

@@ -33,6 +33,8 @@ class tagProcessor_General
 
     }
 
+	/*
+	//NO LONGER NEEDED BECAUSE ITS BEING PROCESSED WHILE READING THE PARENT LAYOUT
     public static function processLayoutTag(&$htmlresult)
 	{
         $options=array();
@@ -54,6 +56,7 @@ class tagProcessor_General
 			$i++;
 		}
     }
+	*/
     
     protected static function WebsiteRoot(&$Model,&$htmlresult)
 	{

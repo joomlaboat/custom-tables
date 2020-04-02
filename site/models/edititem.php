@@ -200,6 +200,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		if($this->params->get('eseditlayout')!='')
 		{
 			$layouttype=0;
+			
 			$this->pagelayout=ESLayouts::getLayout($this->params->get('eseditlayout'),$layouttype);
 		}
 		else
