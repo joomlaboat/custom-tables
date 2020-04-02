@@ -126,6 +126,11 @@ jQuery.noConflict()
 						else
 							$listing_id=0;
 						
+						require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'layout.php');
+						$LayoutProc=new LayoutProcessor;
+						$LayoutProc->Model=$this->Model;
+						$LayoutProc->layout=$this->Model->pagelayout;
+						$this->Model->pagelayout=$LayoutProc->fillLayout($this->row,null,'','||',false,true);
 						
 						tagProcessor_Edit::process($this->Model,$this->Model->pagelayout,$listing_id);
 						
@@ -134,11 +139,9 @@ jQuery.noConflict()
 						$items_to_replace=array();
 						renderFields($this->row,$this->Model,$this->Model->langpostfix,0,$esinputbox,$calendars,'',$fieldstosave,$replaceitecode,$items_to_replace);
 
-							require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'layout.php');
-							$LayoutProc=new LayoutProcessor;
-							$LayoutProc->Model=$this->Model;
-							$LayoutProc->layout=$this->Model->pagelayout;
-							$this->Model->pagelayout=$LayoutProc->fillLayout($this->row,null,'','||',false,true);
+						
+						//$LayoutProc->layout=$this->Model->pagelayout;
+						//$this->Model->pagelayout=$LayoutProc->fillLayout($this->row,null,'','||',false,true);
 
 						foreach($items_to_replace as $item)
 							$this->Model->pagelayout=str_replace($item[0],$item[1],$this->Model->pagelayout);
