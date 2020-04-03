@@ -100,7 +100,7 @@ New Password: '.$password;
 		parent::display($tpl);
 
 		if($clean)
-			die;
+			die ;//clean exit
 	}
 
 	/*

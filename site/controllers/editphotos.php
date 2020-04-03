@@ -67,9 +67,6 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.
 
 									case 'delete' :
 
-										//echo 'delete';
-										//die;
-
 										$model = $this->getModel('editphotos');
 
 										if ($model->delete())

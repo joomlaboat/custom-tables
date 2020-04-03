@@ -200,7 +200,7 @@ function CustomTablesSave($task,&$this_)
 			if(JFactory::getApplication()->input->get('clean',0,'INT')==1)
 			{
 				echo 'saved';
-				die;
+				die ;//clean exit
 			}
 			elseif($link!='')
 			{

@@ -87,12 +87,10 @@ trait render_xml
             header("Expires: 0");
 
             echo $result;
-            die;
+            die ;//clean exit
         }
 */
         return $result;
     }
 
 }
-
-?>

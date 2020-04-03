@@ -256,8 +256,6 @@ function prepareSQLQuery($fieldList,$fields,$line_)
          
           if($vlu==false)
           {
-            
-            //die;
             //$sub_sets=findOneTableSQLRecordJoinFields($fieldList,$fields,$tablename,$line,'records');
             
             //addSQLJoinSets($tablename,$sub_sets);

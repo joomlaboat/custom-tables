@@ -139,7 +139,7 @@ function getRecord($tablename,$id)
 		$query='SELECT *, id  as  listing_id, published AS listing_published  FROM #__customtables_table_'.$tablename.' WHERE id='.$id.' LIMIT 1';
 
 		$db->setQuery($query);
-		if (!$db->query()) die;
+		if (!$db->query()) die( $db->stderr());
 
 		$records=$db->loadAssocList();
 

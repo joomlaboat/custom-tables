@@ -1,7 +1,6 @@
 <?php
 /**
  * CustomTables Joomla! 3.x Native Component
- * @version 1.6.1
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
  * @license GNU/GPL
@@ -27,8 +26,6 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.
 
 	$mydoc = JFactory::getDocument();
 
-
-
         if($this->Model->clean)
         {
 			if($this->Model->frmt=='csv')
@@ -45,7 +42,7 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.
 
 				echo mb_convert_encoding($results, 'UTF-16LE', 'UTF-8');
 
-				die;
+				die ;//clean exit
 
 			}
 			elseif($this->Model->frmt=='xml')
@@ -61,8 +58,8 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.
 				header("Expires: 0");
 			}
 
-            echo $results;
-            die;
+	        echo $results;
+		die ;//clean exit
         }
 
 if ($this->Model->params->get( 'show_page_heading', 1 ) ) : ?>

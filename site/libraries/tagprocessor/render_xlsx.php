@@ -138,7 +138,7 @@ trait render_xlsx
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
         $objWriter->save('php://output');
         exit;
-        die;
+        die ;//clean exit
     }
 
 

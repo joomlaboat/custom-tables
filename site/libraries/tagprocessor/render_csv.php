@@ -1,7 +1,6 @@
 <?php
 /**
  * CustomTables Joomla! 3.x Native Component
- * @version 1.6.1
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
  * @license GNU/GPL
@@ -86,7 +85,7 @@ trait render_csv
 
             echo chr(255).chr(254).mb_convert_encoding($result, 'UTF-16LE', 'UTF-8');
 
-            die;
+            die ;//clean exit
         }
 
         return $result;
@@ -158,13 +157,9 @@ trait render_csv
 			$results = $dispatcher->trigger('onContentPrepare', array ('com_content.article', &$o, &$params_, 0));
 			$result=$o->text;
 
-            //$mydoc->setTitle(JoomlaBasicMisc::JTextExtended($pagetitle)); //because content plugins may overwrite the title
+            	//$mydoc->setTitle(JoomlaBasicMisc::JTextExtended($pagetitle)); //because content plugins may overwrite the title
         }
-
-        //
-
-
-
+                
 		if (ob_get_contents())
 			ob_end_clean();
 
@@ -175,7 +170,7 @@ trait render_csv
 		header("Expires: 0");
 
         echo chr(255).chr(254).mb_convert_encoding($result, 'UTF-16LE', 'UTF-8');
-        die;
+        die ;//clean exit
     }
 
 

@@ -1,7 +1,6 @@
 <?php
 /**
  * CustomTables Joomla! 3.x Native Component
- * @version 1.6.1
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
  * @license GNU/GPL
@@ -81,7 +80,7 @@ class CustomTablesViewLog extends JViewLegacy
 		$query='SELECT #__users.id AS id, #__users.name AS name FROM #__customtables_log INNER JOIN #__users ON #__users.id=#__customtables_log.user GROUP BY #__users.id ORDER BY name';
 
 		$db->setQuery($query);
-		if (!$db->query()) die;
+		if (!$db->query()) die( $db->stderr());
 
 		$rows=$db->loadAssocList();
 
@@ -131,12 +130,6 @@ class CustomTablesViewLog extends JViewLegacy
 
 		$query='SELECT '.implode(',',$selects).' FROM #__customtables_log '.(count($where)>0 ? ' WHERE '.implode(' AND ',$where) : '').' ORDER BY datetime DESC';
 
-		//echo $the_limit;
-		//die;
-
-		//$db->setQuery($query);
-		//if (!$db->query()) die;
-		//$this->TotalRows=$db->getNumRows();
 		$this->TotalRows=1000;
 
 		$the_limit=$this->limit;
@@ -152,13 +145,10 @@ class CustomTablesViewLog extends JViewLegacy
 			$this->limitstart=0;
 
 		$db->setQuery($query, $this->limitstart, $the_limit);
-		if (!$db->query())    die;//( $db->stderr());
+		if (!$db->query())    die( $db->stderr());
 
 		$rows=$db->loadAssocList();
 
 		return $rows;
 	}
-
-
-
 }

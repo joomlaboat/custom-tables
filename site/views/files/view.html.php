@@ -1,7 +1,6 @@
  <?php
 /**
  * CustomTables Joomla! 3.x Native Component
- * @version 1.6.1
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
  * @license GNU/GPL
@@ -93,12 +92,10 @@ class CustomTablesViewFiles extends JViewLegacy
 	if($savefile)
 		@header("Content-Disposition: attachment; filename=\"".$filename."\"");
    
-   //header("Content-Length: ".filesize($file));
-   //ob_end_flush();
-   echo $content;
+	echo $content;
 
-   die;
- }
+	die ;//clean exit
+}
 
 
  function doCustomPHP($content,&$row)

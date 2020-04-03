@@ -50,7 +50,7 @@ class JHTMLESSQLJoinView
 				$db= JFactory::getDBO();
 				$db->setQuery($query);
 				if (!$db->query())
-					die;
+					die( $db->stderr());
 
 				$SearchResult=$db->loadAssocList();
 

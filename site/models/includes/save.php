@@ -98,9 +98,7 @@ class CTValue
                             $value=JFactory::getApplication()->input->get($comesfieldname,'','ALNUM');
 
                         
-  //                      echo '$value='.$value.'<br/>';
-//die;
-						if(isset($value))
+			if(isset($value))
                         {
                             $value=strtolower($value);
                             $value=str_replace('#','',$value);

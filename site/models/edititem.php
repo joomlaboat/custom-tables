@@ -1,7 +1,6 @@
 <?php
 /**
  * CustomTables Joomla! 3.x Native Component
- * @version 1.6.1
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
  * @license GNU/GPL
@@ -978,7 +977,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		if($isDebug)
 		{
 			echo 'Debug mode.';
-			die;
+			die ;//debug mode
 		}	
 		$jinput->setVar('listing_id',$listing_id);
 			
@@ -1126,8 +1125,6 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		$row=$this->getListingRowByID($listing_id);
 		$parsed_condition=$this->parseRowLayoutContent($row,$condition);
 		$thescript='return '.$parsed_condition.';';
-		//echo $thescript;
-		//die;
 		$value=eval($thescript);
 
 		if($value==1)

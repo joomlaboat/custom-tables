@@ -66,12 +66,10 @@ trait render_json
             header("Expires: 0");
 
             echo $result;
-            die;
+            die ;//clean exit
         }
 
         return $result;
     }
 
 }
-
-?>

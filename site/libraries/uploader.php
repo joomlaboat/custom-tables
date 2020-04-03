@@ -51,11 +51,6 @@ class ESFileUploader
 						require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'
 									 .DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'importcsv.php');
 						
-						//$filename='c:\\w.csv';
-
-						//$msg=importCSVfile($filename, $jinput->getInt('tableid',0));
-						
-						//die;
 				return  json_encode(['error'=>'Failed to open file.']);
 			}
 			
