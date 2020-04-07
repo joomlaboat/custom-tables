@@ -1,17 +1,13 @@
 <?php
-/*----------------------------------------------------------------------------------|  www.vdm.io  |----/
-				JoomlaBoat.com
-/-------------------------------------------------------------------------------------------------------/
-
-	@version		1.6.1
-	@build			19th July, 2018
-	@created		28th May, 2019
-	@package		Custom Tables
-	@subpackage		tables.php
-	@author			Ivan Komlev <https://joomlaboat.com>
-	@copyright		Copyright (C) 2018. All Rights Reserved
-	@license		GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
-/------------------------------------------------------------------------------------------------------*/
+/**
+ * CustomTables Joomla! 3.x Native Component
+ * @package Custom Tables
+ * @subpackage tables.php
+ * @author Ivan komlev <support@joomlaboat.com>
+ * @link http://www.joomlaboat.com
+ * @copyright Copyright (C) 2018-2020. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
+ **/
 
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
@@ -340,18 +336,6 @@ class CustomtablesModelTables extends JModelAdmin
 	}
 
 	/**
-	 * Method to get the unique fields of this table.
-	 *
-	 * @return  mixed  An array of field names, boolean false if none is set.
-	 *
-	 * @since   3.0
-	 */
-	protected function getUniqeFields()
-	{
-		return false;
-	}
-
-	/**
 	 * Method to delete one or more records.
 	 *
 	 * @param   array  &$pks  An array of record primary keys.
@@ -512,134 +496,8 @@ class CustomtablesModelTables extends JModelAdmin
 	 */
 	protected function batchCopy($values, $pks, $contexts)
 	{
-		if (empty($this->batchSet))
-		{
-			// Set some needed variables.
-			$this->user 		= JFactory::getUser();
-			$this->table 		= $this->getTable();
-			$this->tableClassName	= get_class($this->table);
-			$this->canDo		= CustomtablesHelper::getActions('tables');
-		}
-
-		if (!$this->canDo->get('core.create') || !$this->canDo->get('core.batch'))
-		{
-			return false;
-		}
-
-		// get list of uniqe fields
-		$uniqeFields = $this->getUniqeFields();
-		// remove move_copy from array
-		unset($values['move_copy']);
-
-		// make sure published is set
-		if (!isset($values['published']))
-		{
-			$values['published'] = 0;
-		}
-		elseif (isset($values['published']) && !$this->canDo->get('core.edit.state'))
-		{
-				$values['published'] = 0;
-		}
-
-		$newIds = array();
-		// Parent exists so let's proceed
-		while (!empty($pks))
-		{
-			// Pop the first ID off the stack
-			$pk = array_shift($pks);
-
-			$this->table->reset();
-
-			// only allow copy if user may edit this item.
-			if (!$this->user->authorise('core.edit', $contexts[$pk]))
-			{
-				// Not fatal error
-				$this->setError(JText::sprintf('JLIB_APPLICATION_ERROR_BATCH_MOVE_ROW_NOT_FOUND', $pk));
-				continue;
-			}
-
-			// Check that the row actually exists
-			if (!$this->table->load($pk))
-			{
-				if ($error = $this->table->getError())
-				{
-					// Fatal error
-					$this->setError($error);
-					return false;
-				}
-				else
-				{
-					// Not fatal error
-					$this->setError(JText::sprintf('JLIB_APPLICATION_ERROR_BATCH_MOVE_ROW_NOT_FOUND', $pk));
-					continue;
-				}
-			}
-
-			// Only for strings
-			if (CustomtablesHelper::checkString($this->table->tabletitle) && !is_numeric($this->table->tabletitle))
-			{
-				$this->table->tabletitle = $this->generateUniqe('tabletitle',$this->table->tabletitle);
-			}
-
-			// insert all set values
-			if (CustomtablesHelper::checkArray($values))
-			{
-				foreach ($values as $key => $value)
-				{
-					if (strlen($value) > 0 && isset($this->table->$key))
-					{
-						$this->table->$key = $value;
-					}
-				}
-			}
-
-			// update all uniqe fields
-			if (CustomtablesHelper::checkArray($uniqeFields))
-			{
-				foreach ($uniqeFields as $uniqeField)
-				{
-					$this->table->$uniqeField = $this->generateUniqe($uniqeField,$this->table->$uniqeField);
-				}
-			}
-
-			// Reset the ID because we are making a copy
-			$this->table->id = 0;
-
-			// TODO: Deal with ordering?
-			// $this->table->ordering = 1;
-
-			// Check the row.
-			if (!$this->table->check())
-			{
-				$this->setError($this->table->getError());
-
-				return false;
-			}
-
-			if (!empty($this->type))
-			{
-				$this->createTagsHelper($this->tagsObserver, $this->type, $pk, $this->typeAlias, $this->table);
-			}
-
-			// Store the row.
-			if (!$this->table->store())
-			{
-				$this->setError($this->table->getError());
-
-				return false;
-			}
-
-			// Get the new item ID
-			$newId = $this->table->get('id');
-
-			// Add the new ID to the array
-			$newIds[$pk] = $newId;
-		}
-
-		// Clean the cache
-		$this->cleanCache();
-
-		return $newIds;
+		die;
+		
 	}
 
 	/**
@@ -655,102 +513,8 @@ class CustomtablesModelTables extends JModelAdmin
 	 */
 	protected function batchMove($values, $pks, $contexts)
 	{
-		if (empty($this->batchSet))
-		{
-			// Set some needed variables.
-			$this->user		= JFactory::getUser();
-			$this->table		= $this->getTable();
-			$this->tableClassName	= get_class($this->table);
-			$this->canDo		= CustomtablesHelper::getActions('tables');
-		}
-
-		if (!$this->canDo->get('core.edit') && !$this->canDo->get('core.batch'))
-		{
-			$this->setError(JText::_('JLIB_APPLICATION_ERROR_BATCH_CANNOT_EDIT'));
-			return false;
-		}
-
-		// make sure published only updates if user has the permission.
-		if (isset($values['published']) && !$this->canDo->get('core.edit.state'))
-		{
-			unset($values['published']);
-		}
-		// remove move_copy from array
-		unset($values['move_copy']);
-
-		// Parent exists so we proceed
-		foreach ($pks as $pk)
-		{
-			if (!$this->user->authorise('core.edit', $contexts[$pk]))
-			{
-				$this->setError(JText::_('JLIB_APPLICATION_ERROR_BATCH_CANNOT_EDIT'));
-				return false;
-			}
-
-			// Check that the row actually exists
-			if (!$this->table->load($pk))
-			{
-				if ($error = $this->table->getError())
-				{
-					// Fatal error
-					$this->setError($error);
-					return false;
-				}
-				else
-				{
-					// Not fatal error
-					$this->setError(JText::sprintf('JLIB_APPLICATION_ERROR_BATCH_MOVE_ROW_NOT_FOUND', $pk));
-					continue;
-				}
-			}
-
-			// insert all set values.
-			if (CustomtablesHelper::checkArray($values))
-			{
-				foreach ($values as $key => $value)
-				{
-					// Do special action for access.
-					if ('access' === $key && strlen($value) > 0)
-					{
-						$this->table->$key = $value;
-					}
-					elseif (strlen($value) > 0 && isset($this->table->$key))
-					{
-						$this->table->$key = $value;
-					}
-				}
-			}
-
-
-			// Check the row.
-			if (!$this->table->check())
-			{
-				$this->setError($this->table->getError());
-
-				return false;
-			}
-
-			if (!empty($this->type))
-			{
-				$this->createTagsHelper($this->tagsObserver, $this->type, $pk, $this->typeAlias, $this->table);
-			}
-
-			// Store the row.
-			if (!$this->table->store())
-			{
-				$this->setError($this->table->getError());
-
-				return false;
-			}
-		}
-
-		// Clean the cache
-		$this->cleanCache();
-
-		return true;
+		die;
 	}
-
-
 
 	public function checkTableName($tablename)
 	{
@@ -776,18 +540,6 @@ class CustomtablesModelTables extends JModelAdmin
 		return $new_tablename;
 	}
 
-
-
-
-	/**
-	 * Method to save the form data.
-	 *
-	 * @param   array  $data  The form data.
-	 *
-	 * @return  boolean  True on success.
-	 *
-	 * @since   1.6
-	 */
 	public function save($data)
 	{
 		$conf = JFactory::getConfig();
@@ -799,28 +551,6 @@ class CustomtablesModelTables extends JModelAdmin
 		$filter	= JFilterInput::getInstance();
 
 		$db = JFactory::getDBO();
-		// set the metadata to the Item Data
-		/*
-		if (isset($data['metadata']) && isset($data['metadata']['author']))
-		{
-			$data['metadata']['author'] = $filter->clean($data['metadata']['author'], 'TRIM');
-
-			$metadata = new JRegistry;
-			$metadata->loadArray($data['metadata']);
-			$data['metadata'] = (string) $metadata;
-		}
-        */
-		// Set the Params Items to data
-		/*
-		if (isset($data['params']) && is_array($data['params']))
-		{
-			$params = new JRegistry;
-			$params->loadArray($data['params']);
-			$data['params'] = (string) $params;
-		}
-		*/
-
-
 
 		$data_extra = JFactory::getApplication()->input->get( 'jform',array(),'ARRAY');
 
@@ -877,29 +607,25 @@ class CustomtablesModelTables extends JModelAdmin
 
 			if($originaltableid!=0)
 			{
-				$tablename='copy_of_'.$tablename;
+				$old_tablename=ESTables::getTableName($originaltableid);	
+				
+				if($old_tablename==$tablename)
+					$tablename='copy_of_'.$tablename;
+				
+				while($this->checkIfTableNameExists($tablename)!=0)
+					$tablename='copy_of_'.$tablename;
+				
 				$data['tablename']=$tablename;
 			}
-
-			// Automatic handling of other uniqe fields
-			$uniqeFields = $this->getUniqeFields();
-			if (CustomtablesHelper::checkArray($uniqeFields))
-			{
-				foreach ($uniqeFields as $uniqeField)
-				{
-					$data[$uniqeField] = $this->generateUniqe($uniqeField,$data[$uniqeField]);
-				}
-			}
-
-
-			if($originaltableid!=0)
-				$this->copyTable($originaltableid,$tablename);
 		}
 
 		if (parent::save($data))
 		{
+			if($originaltableid!=0)
+				$this->copyTable($originaltableid,$tablename,$old_tablename);
 
 			$this->processDBTable($database,$dbprefix,$tablename,$tabletitle);
+
 			return true;
 		}
 		return false;
@@ -929,7 +655,6 @@ class CustomtablesModelTables extends JModelAdmin
 			}
 		}
 	}
-
 
 
 	function processDBTable($database,$dbprefix,$tablename,$tabletitle)
@@ -993,7 +718,7 @@ class CustomtablesModelTables extends JModelAdmin
 	}
 
 	/**
-	 * Method to generate a uniqe value.
+	 * Method to generate a unique value.
 	 *
 	 * @param   string  $field name.
 	 * @param   string  $value data.
@@ -1004,20 +729,29 @@ class CustomtablesModelTables extends JModelAdmin
 	 */
 
 
-	public function copyTable($tableid,$tablename)
+	function checkIfTableNameExists($tablename)
 	{
-		$old_table=ESTables::getTableName($tableid);
+		$db = $this->getDBO();
 
-		//old_table='.$old_table.'<br/>';
-		//tablename='.$tablename.'<br/>';
-		die;
-		/*
+		$query = 'SELECT id FROM #__customtables_tables WHERE tablename='.$db->quote($tablename).' LIMIT 1';
+		
+		$db->setQuery( $query );
+		if (!$db->query())    die ( $db->stderr());
+		$rows=$db->loadAssocList();
+		if(count($rows)!=1)
+			return 0;
+		
+		return $rows[0]['id'];
+	}
 
-		$new_table='copy_of_'.$old_table;
-
+	public function copyTable($originaltableid,$new_table,$old_table)
+	{
 		//Copy Table
 		$db = $this->getDBO();
 
+		//get ID of new table
+		$new_table_id=$this->checkIfTableNameExists($new_table);
+		
 		$query = 'CREATE TABLE #__customtables_table_'.$new_table.' SELECT * FROM #__customtables_table_'.$old_table.'';
 
 		$db->setQuery( $query );
@@ -1026,29 +760,26 @@ class CustomtablesModelTables extends JModelAdmin
 			//return false;
 		}
 
-
-		//die;
-		//get ID of new table
-
-		$query = 'SELECT * FROM #__customtables_tables ORDER BY id DESC LIMIT 1';
-		$db->setQuery( $query );
-		if (!$db->query())    die ( $db->stderr());
-		$rows=$db->loadAssocList();
-		if(count($rows)!=1)
-			die('ERROR: Table cannot be created.');
-
-		$row=$rows[0];
-		$new_table_id=$row['id'];
-
 		//Copy Fields
-
 		$fields=array('fieldname','type','typeparams','ordering','defaultvalue','allowordering','parentid','isrequired','hidden','valuerule');
 
-		for($i=1;$i<11;$i++)
-			$fields[]='fieldtitle_'.$i;
+		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'languages.php');
+		$LangMisc	= new ESLanguages;
+		$languages=$LangMisc->getLanguageList();
 
-		$query = 'SELECT * FROM #__customtables_fields WHERE tableid='.$id;
+		$morethanonelang=false;
+		foreach($languages as $lang)
+		{
+			$id='fieldtitle';
+			if($morethanonelang)
+				$id.='_'.$lang->sef;
+			else
+				$morethanonelang=true;
+			
+			$fields[]=$id;
+		}
 
+		$query = 'SELECT * FROM #__customtables_fields WHERE published=1 AND tableid='.$originaltableid;
 		$db->setQuery( $query );
 		if (!$db->query())    die ( $db->stderr());
 		$rows=$db->loadAssocList();
@@ -1071,54 +802,9 @@ class CustomtablesModelTables extends JModelAdmin
 			$iq='INSERT INTO #__customtables_fields SET '.implode(', ',$inserts);
 			$db->setQuery( $iq );
 			if (!$db->query())    die ( $db->stderr());
-
-
-
 		}
-
-		//die;
-
-	    return true;
-	    */
+		return true;
 	}
-
-
-	protected function generateUniqe($field,$value)
-	{
-
-		// set field value uniqe
-		$table = $this->getTable();
-
-		while ($table->load(array($field => $value)))
-		{
-			$value = JString::increment($value);
-		}
-
-		return $value;
-	}
-
-	/**
-	 * Method to change the title
-	 *
-	 * @param   string   $title   The title.
-	 *
-	 * @return	array  Contains the modified title and alias.
-	 *
-	 */
-	protected function _generateNewTitle($title)
-	{
-
-		// Alter the title
-		$table = $this->getTable();
-
-		while ($table->load(array('title' => $title)))
-		{
-			$title = JString::increment($title);
-		}
-
-		return $title;
-	}
-
 
 	public function export(&$cids)
 	{

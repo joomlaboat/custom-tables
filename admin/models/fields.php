@@ -1,19 +1,14 @@
 <?php
-/*----------------------------------------------------------------------------------|  www.vdm.io  |----/
-				JoomlaBoat.com
-/-------------------------------------------------------------------------------------------------------/
-
-	@version		1.6.1
-	@build			1st July, 2018
-	@created		28th May, 2019
-	@package		Custom Tables
-	@subpackage		fields.php
-	@author			Ivan Komlev <https://joomlaboat.com>
-	@copyright		Copyright (C) 2018. All Rights Reserved
-	@license		GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
-
-/------------------------------------------------------------------------------------------------------*/
-
+/**
+ * CustomTables Joomla! 3.x Native Component
+ * @package Custom Tables
+ * @subpackage fields.php
+ * @author Ivan komlev <support@joomlaboat.com>
+ * @link http://www.joomlaboat.com
+ * @copyright Copyright (C) 2018-2020. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
+ **/
+ 
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
@@ -580,7 +575,7 @@ class CustomtablesModelFields extends JModelAdmin
 			// Only for strings
 			if (CustomtablesHelper::checkString($this->table->fieldtitle) && !is_numeric($this->table->fieldtitle))
 			{
-				$this->table->fieldtitle = $this->generateUniqe('fieldtitle',$this->table->fieldtitle);
+				$this->table->fieldtitle = $this->generateUnique('fieldtitle',$this->table->fieldtitle);
 			}
 
 			// insert all set values
@@ -600,7 +595,7 @@ class CustomtablesModelFields extends JModelAdmin
 			{
 				foreach ($uniqeFields as $uniqeField)
 				{
-					$this->table->$uniqeField = $this->generateUniqe($uniqeField,$this->table->$uniqeField);
+					$this->table->$uniqeField = $this->generateUnique($uniqeField,$this->table->$uniqeField);
 				}
 			}
 
@@ -872,7 +867,7 @@ class CustomtablesModelFields extends JModelAdmin
 			{
 				foreach ($uniqeFields as $uniqeField)
 				{
-					$data[$uniqeField] = $this->generateUniqe($uniqeField,$data[$uniqeField]);
+					$data[$uniqeField] = $this->generateUnique($uniqeField,$data[$uniqeField]);
 				}
 			}
 		}
@@ -1008,7 +1003,7 @@ class CustomtablesModelFields extends JModelAdmin
 
 
 	/**
-	 * Method to generate a uniqe value.
+	 * Method to generate a unique value.
 	 *
 	 * @param   string  $field name.
 	 * @param   string  $value data.
@@ -1017,10 +1012,10 @@ class CustomtablesModelFields extends JModelAdmin
 	 *
 	 * @since   3.0
 	 */
-	protected function generateUniqe($field,$value)
+	protected function generateUnique($field,$value)
 	{
 
-		// set field value uniqe
+		// set field value unique
 		$table = $this->getTable();
 
 		while ($table->load(array($field => $value)))
