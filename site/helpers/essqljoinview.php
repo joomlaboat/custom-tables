@@ -74,29 +74,37 @@ class JHTMLESSQLJoinView
 						//$pair=JoomlaBasicMisc::csv_explode(':',$field,'"',false);
                                                 $pair=explode(':',$field);
 
-						if($pair[0]!='layout' and $pair[0]!='tablelesslayout')
+						if($pair[0]!='layout' and $pair[0]!='tablelesslayout' and $pair[0]!='value')
 								return '<p>unknown field/layout command "'.$field.'" should be like: "layout:'.$pair[1].'"..</p>';
 
 
 						$isTableLess=false;
-						if($pair[0]=='tablelesslayout')
+						if($pair[0]=='tablelesslayout' or $pair[0]=='value')
 							$isTableLess=true;
 
-						if(isset($pair[1]))
-								$layout_pair[0]=$pair[1];
+						if($pair[0]=='value')
+						{
+							$layoutcode='[_value:'.$pair[1].']';
+						}
 						else
+						{
+							//load layout
+							if(isset($pair[1]) or $pair[1]!='')
+								$layout_pair[0]=$pair[1];
+							else
 								return '<p>unknown field/layout command "'.$field.'" should be like: "layout:'.$pair[1].'".</p>';
 
-						if(isset($pair[2]))
+							if(isset($pair[2]))
 								$layout_pair[1]=$pair[2];
-						else
+							else
 								$layout_pair[1]=0;
 
-                                                $layouttype=0;
-						$layoutcode=ESLayouts::getLayout($layout_pair[0],$layouttype);
-						if($layoutcode=='')
+							$layouttype=0;
+							$layoutcode=ESLayouts::getLayout($layout_pair[0],$layouttype);
+							if($layoutcode=='')
 								return '<p>layout "'.$layout_pair[0].'" not found or is empty.</p>';
-
+						}
+						
 						$model->LayoutProc->layout=$layoutcode;
 
 
