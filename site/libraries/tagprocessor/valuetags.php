@@ -230,7 +230,14 @@ class tagProcessor_Value
                                         $new_replaceitecode.=$postfix;
                                     }
                                 }
-                                $attributes='onchange="ct_UpdateSingleValue(\''.$WebsiteRoot.'\','.$Model->Itemid.',\''.$ESField['fieldname'].'\','.$row['id'].',\''.$postfix.'\')"'.$style;
+								
+								//$onchange='';
+								//if($ESField['type']=='checkbox')
+									//$onchange='comes_'.$ESField['fieldname'].'_off.value=(this.checked === true ? 1 : 0);';// this is to save unchecked value as well.
+								
+								$onchange='ct_UpdateSingleValue(\''.$WebsiteRoot.'\','.$Model->Itemid.',\''.$ESField['fieldname'].'\','.$row['id'].',\''.$postfix.'\');';
+								
+                                $attributes='onchange="'.$onchange.'"'.$style;
                             
                                 $vlu='<div class="" id="'.$prefix.$ESField['fieldname'].$postfix.'_div">'
                                 .$esinputbox->renderFieldBox($Model,$prefix,$ESField,$row,$class_,$attributes,$value_option_list);
@@ -238,9 +245,6 @@ class tagProcessor_Value
                             }
                             else
                                 $vlu='';
-                    		
-                            
-                            
 
 							$items_to_replace[]=array($new_replaceitecode,$vlu);
 							$htmlresult=str_replace($pureValueList[$p],$new_replaceitecode,$htmlresult);
@@ -258,8 +262,6 @@ class tagProcessor_Value
 		
 		$items_to_replace=array();
 
-
-
 		$pureValueOptions=array();
 		$pureValueList=JoomlaBasicMisc::getListToReplace('_value',$pureValueOptions,$htmlresult,$tag_chars);
 		$p=0;
@@ -274,10 +276,8 @@ class tagProcessor_Value
 			{
                 $replaceitecode=md5(JoomlaBasicMisc::generateRandomString().(isset($row['listing_id']) ? $row['listing_id'] : '').$ESField['fieldname']);
                 
-                
 				if($pureValueOptionArr[0]==$ESField['fieldname'])
 				{
-
 					$fieldtype='';
 					$fieldname='';
 					$rowValue='';
@@ -287,14 +287,12 @@ class tagProcessor_Value
 					{
 						if(count($isGalleryLoaded)>0)
 						{
-
 							if(!isset($isGalleryLoaded[$fieldname]) or $isGalleryLoaded[$fieldname]==false)
 							{
 								//load if not loaded
 								$isGalleryLoaded[$fieldname]=true;
 								$getGalleryRows[$fieldname]=CT_FieldTypeTag_imagegallery::getGalleryRows($Model->establename,$fieldname,$row['listing_id']);
 							}
-
 						}
 						else
 						{
@@ -460,19 +458,13 @@ class tagProcessor_Value
 							$items_to_replace[]=array($new_replaceitecode,$vlu);
 							$htmlresult=str_replace($pureValueList[$p],$new_replaceitecode,$htmlresult);
 					}
-					//}
-
-
-
 				}
                 $i++;
 			}//foreach($Model->esfields as $ESField)
 			$p++;
 		}//foreach($pureValueOptions as $pureValueOption)
 
-
 		return $items_to_replace;
-
 
 	}//function
 

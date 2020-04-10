@@ -90,7 +90,7 @@ class CTValue
                                 $a=255*(float)$values[3];
                                 $value.=CTValue::toHex($a);
                             }
-                                                        
+
                         }
                         else
                             $value=JFactory::getApplication()->input->get($comesfieldname,'','ALNUM');

@@ -128,7 +128,7 @@
 
     function es_SearchBoxKeyPress(e)
 	{
-		if(e.keyCode==13)
+		if(e.keyCode==13)//enter key pressed
 		    es_SearchBoxDo();
 	}
 
@@ -174,8 +174,6 @@
 		var link=esPrepareLink(['where','task','listing_id','returnto'],["where="+Base64.encode(w.join(" and "))]);
 
         window.location.href = link;
-
-        //es_LinkLoading=false;
 	}
 
 
@@ -291,23 +289,22 @@
     {
         var fieldname=fieldname_.split('_')[0];
         var url=WebsiteRoot+'index.php?option=com_customtables&amp;view=edititem&amp;Itemid='+Itemid;
-        var http = null;//new XMLHttpRequest();
-        var vlu=document.getElementById("com_"+record_id+"_es_"+fieldname_).value;
-        var params = "comes_"+fieldname_+"="+vlu;
+        var http = null;
+		var params = "";
+		
+		var obj_checkbox_off=document.getElementById("com_"+record_id+"_es_"+fieldname_+"_off");
+		if(obj_checkbox_off)
+			params="comes_"+fieldname_+"_off="+obj_checkbox_off.value;
+		else
+			params="comes_"+fieldname_+"="+document.getElementById("com_"+record_id+"_es_"+fieldname_).value;
+		
         params+="&task=save";
         params+="&Itemid="+Itemid;
-        params+="&listing_id="+record_id;//+findMarkId(id);
+        params+="&listing_id="+record_id;
     
         var obj=document.getElementById("com_"+record_id+"_"+fieldname+postfix+"_div");
-        
-        //var InputElementType=ct_InputElementType("com_"+record_id+"_es_"+fieldname);
-
-        //if(InputElementType=='select')
-          //  obj.className = "ct_circle_loader ct_circle_loader_35";
-        //else if(InputElementType=='checkbox')
-          //  obj.className = "ct_circle_loader";
-        //else
-            obj.className = "ct_loader";
+		if(obj)
+			obj.className = "ct_loader";
 
         if (!http)
             http = CreateHTTPRequestObject ();   // defined in ajax.js

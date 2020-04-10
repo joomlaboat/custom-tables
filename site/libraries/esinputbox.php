@@ -276,7 +276,6 @@ class ESInputBox
 								
 									$id=$prefix.'es_'.$esfield['fieldname'];
 								
-									 //class="active"
 									$result.='<div style="position: absolute;visibility:hidden !important; display:none !important;"><input type="radio"'
 										.' id="'.$id.'0"'
 										.' name="'.$id.'" '
@@ -294,18 +293,22 @@ class ESInputBox
 										.((int)$value==0 ? ' checked="checked" ' : '')
 										.' ></div>'
 										.'<label class="btn'.((int)$value==0 ? ' active btn-danger' : '').'" for="'.$id.'1" id="'.$id.'1_label">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NO').'</label>';
-										// style="margin-left:5px;"
 										 
 									$result.='</fieldset>';
 								}
 								else
 								{
+									$onchange=$prefix.'es_'.$esfield['fieldname'].'_off.value=(this.checked === true ? 1 : 0);';// this is to save unchecked value as well.
+									
+									if(strpos($attributes,'onchange="')!==false)
+										$attributes=str_replace('onchange="','onchange="'.$onchange,$attributes);// onchange event already exists add one before
+									
 									$result.='<input type="checkbox"'
 										.' id="'.$prefix.'es_'.$esfield['fieldname'].'" '
 										.' name="'.$prefix.'es_'.$esfield['fieldname'].'" '
 										.' '.$attributes
 										.($value ? ' checked="checked" ' : '')
-										.' onchange="'.$prefix.'es_'.$esfield['fieldname'].'_off.value=(this.checked === true ? 1 : 0)" class="'.$class.'">';
+										.' class="'.$class.'">';
 										
 									$result.='<input type="hidden"'
 										.' id="'.$prefix.'es_'.$esfield['fieldname'].'_off" '
