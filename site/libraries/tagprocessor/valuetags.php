@@ -1,16 +1,13 @@
 <?php
 /**
  * CustomTables Joomla! 3.x Native Component
- * @version 1.2.6
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
  * @license GNU/GPL
  **/
 
-
 // no direct access
-
-//Types
+defined('_JEXEC') or die('Restricted access');
 
 $types_path=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fieldtypes'.DIRECTORY_SEPARATOR;
 require_once($types_path.'_type_ct.php');
@@ -237,7 +234,7 @@ class tagProcessor_Value
                             
                                 $vlu='<div class="" id="'.$prefix.$ESField['fieldname'].$postfix.'_div">'
                                 .$esinputbox->renderFieldBox($Model,$prefix,$ESField,$row,$class_,$attributes,$value_option_list);
-                                $vlu.='</div>';//div></div></
+                                $vlu.='</div>';
                             }
                             else
                                 $vlu='';

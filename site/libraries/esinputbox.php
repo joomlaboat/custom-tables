@@ -426,7 +426,24 @@ class ESInputBox
 
 							$attributes_=ESInputBox::prepareAttributes($att,$attributes);
 							
-							$result.= CTTypes::getField('color', $attributes_,$value)->input;
+							
+							$inputbox=CTTypes::getField('color', $attributes_,$value)->input;
+							
+							//Add onChange attribute if not added
+							$onChangeAttribute='';
+							foreach ($attributes_ as $key => $value)
+							{
+								if ('onChange' == $key)
+								{
+									$onChangeAttribute='onChange="'.$value.'"';
+									break;
+								}
+							}
+							if($onChangeAttribute!='' and strpos($inputbox,'onChange')===false)
+								$inputbox=str_replace('<input ','<input '.$onChangeAttribute,$inputbox);
+							
+							
+							$result.=$inputbox;
 
 							break;
 

@@ -1,17 +1,11 @@
 <?php
-/*-------------------------------------------------------------------------------------------------------/
-
-	@version		1.7.3
-	@build			3ed July, 2018
-	@created		30th May, 2018
-	@package		Custom Tables
-	@subpackage		types.php
-	@author			Ivan Komlev <http://joomlaboat.com>
-	@copyright		Copyright (C) 2018-2019. All Rights Reserved
-	@license		GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
-
-/------------------------------------------------------------------------------------------------------*/
-
+/**
+ * CustomTables Joomla! 3.x Native Component
+ * @author Ivan komlev <support@joomlaboat.com>
+ * @link http://www.joomlaboat.com
+ * @license GNU/GPL
+ **/
+ 
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
@@ -22,7 +16,7 @@ class CTTypes
         jimport('joomla.form.helper');
         JFormHelper::loadFieldClass($type);
 
-        try
+		try
         {
             $xml = new JXMLElement('<?xml version="1.0" encoding="utf-8"?><field />');
             foreach ($attributes as $key => $value)
@@ -37,8 +31,8 @@ class CTTypes
                 }
                 $xml->addAttribute($key, $value);
             }
-
-            $class = 'JFormField' . $type;
+			
+			$class = 'JFormField' . $type;
             $field = new $class();
 
             $field->setup($xml, $field_value);
