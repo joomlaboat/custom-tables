@@ -730,6 +730,7 @@
 			<params>
 				<param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)." />
 				<param type="string" name="attributes" label="Attributes" description="Optional attributes like: disabled, onclick, onchange etc." default="" />
+				<param name="filter" label="Filter" description="Overwrites field type filter parameter. Limits records using filter. Example: [age>30] where age is a field in joining table" default="" type="string" />
 			</params>
 		</editparams>
 </type>

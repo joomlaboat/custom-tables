@@ -551,6 +551,9 @@ class ESInputBox
 						case 'sqljoin':
 
 							$place_holder=$esfield['fieldtitle'.$this->langpostfix];
+							
+							if(isset($option_list[2]) and $option_list[2]!='')
+								$typeparams[2]=$option_list[2];//Overwrites field type filter parameter.
 
 							$result.=JHTML::_('ESSQLJoin.render',
 											  $typeparams,
