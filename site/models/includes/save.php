@@ -1,12 +1,10 @@
 <?php
 /**
  * CustomTables Joomla! 3.x Native Component
- * @version 1.6.1
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
  * @license GNU/GPL
  **/
-
 
 // no direct access
 defined('_JEXEC') or die('Restricted access');
@@ -17,7 +15,6 @@ class CTValue
 
     public static function getValue($id,&$es,&$esfield,&$savequery,$prefix,$establename,$LanguageList,&$fieldstosave)
     {
-
         $db = JFactory::getDBO();
         $esfieldname=$esfield['fieldname'];
         $comesfieldname=$prefix.'es_'.$esfieldname;
@@ -69,9 +66,10 @@ class CTValue
 
                 case 'color':
 
-                        $value=JFactory::getApplication()->input->getString($comesfieldname,'');
-    //                    echo '$value='.$value.'<br/>';
-                                                
+                    $value=JFactory::getApplication()->input->getString($comesfieldname,null);
+						
+					if(isset($value))
+                    {
                         if(strpos($value,'rgb')!==false)
                         {
                             $parts=str_replace('rgba(','',$value);
@@ -97,17 +95,15 @@ class CTValue
                         else
                             $value=JFactory::getApplication()->input->get($comesfieldname,'','ALNUM');
 
-                        
-			if(isset($value))
+                     
+                        $value=strtolower($value);
+                        $value=str_replace('#','',$value);
+                        if(ctype_xdigit($value) or $value=='')
                         {
-                            $value=strtolower($value);
-                            $value=str_replace('#','',$value);
-                            if(ctype_xdigit($value) or $value=='')
-                            {
-                                $value_found=true;
-                                $savequery[]='es_'.$esfieldname.'='.$db->Quote($value);
-                            }
+                            $value_found=true;
+                            $savequery[]='es_'.$esfieldname.'='.$db->Quote($value);
                         }
+                    }
 					break;
 
 				case 'alias':

@@ -1,10 +1,9 @@
 <?php
 /**
- * CustomTables Joomla! 3.0 Native Component
- * @version 1.6.1
- * @author Ivan Komlev< <support@joomlaboat.com>
+ * CustomTables Joomla! 3.x Native Component
+ * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @GNU General Public License
+ * @license GNU/GPL
  **/
 
 // Check to ensure this file is included in Joomla!
@@ -16,8 +15,6 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.
 
 class JHTMLESSQLJoinView
 {
-
-
         public static function render($value, $establename, $field, $filter,$langpostfix='')
         {
 				if($value==0 or $value=='' or $value==',' or $value==',,')

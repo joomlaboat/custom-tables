@@ -1305,7 +1305,6 @@ class tagProcessor_Value
 
 	}
 
-
     public static function ApplyQueryGetValue($str,$sj_tablename)
 	{
 		$list=explode('$get_',$str);
@@ -1319,7 +1318,6 @@ class tagProcessor_Value
 
 			if(strpos($v,','))
 			{
-
 				$f='#__customtables_table_'.$sj_tablename.'.es_'.str_replace('$get_'.$q,'',$str);
 				$values=explode(',',$v);
 
@@ -1331,12 +1329,7 @@ class tagProcessor_Value
 				}
 
 				$v='('.implode(' or ',$vls).')';
-
-
-
 				return $v;
-
-
 			}
 
 			return '#__customtables_table_'.$sj_tablename.'.es_'.str_replace('$get_'.$q,'"'.$v.'"',$str);
@@ -1350,7 +1343,5 @@ class tagProcessor_Value
         }
 
 		return '#__customtables_table_'.$sj_tablename.'.es_'.$str;
-
 	}
-
 }
