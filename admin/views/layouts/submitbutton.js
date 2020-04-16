@@ -27,6 +27,11 @@ Joomla.submitbutton = function(task)
 			return false;
 		}
 		
+		if (task == 'dependencies'){
+			showModalDependenciesList();
+			return false;
+		}
+
 		if (task == 'addlayouttag'){
 			showModalTagsList();
 			return false;

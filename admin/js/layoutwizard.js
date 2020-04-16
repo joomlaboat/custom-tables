@@ -1,3 +1,13 @@
+/**
+ * CustomTables Joomla! 3.x Native Component
+ * @package Custom Tables
+ * @subpackage administrator/components/com_customtables/js/layoutwizard.js
+ * @author Ivan komlev <support@joomlaboat.com>
+ * @link http://www.joomlaboat.com
+ * @copyright Copyright (C) 2018-2020. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
+ **/
+ 
 var tableselector_id="";
 var field_box_id="";
 var tableselector_obj=null;
@@ -338,6 +348,15 @@ function showModalTagsList(e)
 	showModal();
 	return;
 }
+
+function showModalDependenciesList(e)
+{
+	var modalcontentobj=document.getElementById("layouteditor_modal_content_box");	
+	modalcontentobj.innerHTML=document.getElementById("dependencies_content").innerHTML;
+	showModal();
+	return;
+}
+
 
 function showModalFieldTagsList(e)
 {

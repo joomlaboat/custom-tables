@@ -1,17 +1,16 @@
 <?php
-/*-------------------------------------------------------------------------------------------------------/
+/**
+ * CustomTables Joomla! 3.x Native Component
+ * @package Custom Tables
+ * @subpackage administrator/components/com_customtables/views/layouts/tmpl/edit.php
+ * @author Ivan komlev <support@joomlaboat.com>
+ * @link http://www.joomlaboat.com
+ * @copyright Copyright (C) 2018-2020. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
+ **/
+ 
 
-	@version		1.7.4
-	@build			19th July, 2018
-	@created		22th October, 2019
-	@package		Custom Tables
-	@subpackage		edit.php
-	@author			Ivan Komlev <https://joomlaboat.com>
-	@copyright		Ivan Komlev (C) 2019. All Rights Reserved
-	@license		GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
-
-/------------------------------------------------------------------------------------------------------*/
-
+		
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
@@ -87,5 +86,11 @@ $onPageLoads=array();
 		?>
 		
 		<div id="allLayoutRaw" style="display:none;"><?php echo json_encode($this->getLayouts()); ?></div>
+		<div id="dependencies_content" style="display:none;">
+		<?php 
+		require_once('dependencies.php');
+		echo renderDependencies($this->item); // this will be shown upon the click in the toolbar
+		?>
+		</div>
 	</form>
 </div>

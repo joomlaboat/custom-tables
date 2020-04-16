@@ -144,6 +144,7 @@ class CustomtablesViewLayouts extends JViewLegacy
 				JToolbarHelper::custom('layoutwizard', 'wizzardbutton', 'wizzardbutton', 'COM_CUSTOMTABLES_BUTTON_LAYOUTAUTOCREATE', false);//Layout Wizard
 				JToolbarHelper::custom('addfieldtag', 'fieldtagbutton', 'fieldtagbutton', 'COM_CUSTOMTABLES_BUTTON_ADDFIELDTAG', false);
 				JToolbarHelper::custom('addlayouttag', 'layouttagbutton', 'layouttagutton', 'COM_CUSTOMTABLES_BUTTON_ADDLAYOUTTAG', false);
+				JToolbarHelper::custom('dependencies', 'dependencies', 'dependencies', 'COM_CUSTOMTABLES_BUTTON_DEPENDENCIES', false);
 				
 				JToolBarHelper::cancel('layouts.cancel', 'JTOOLBAR_CLOSE');
 			}
@@ -259,7 +260,7 @@ class CustomtablesViewLayouts extends JViewLegacy
 			
 			if(count($recs)>0)
 			{
-				$result='<hr/><p>List of Menu Items that uses this layout:</p><ul>';
+				$result='<hr/><p>List of Menu Items that use this layout:</p><ul>';
 				foreach($recs as $r)
 				{
 					$link='/administrator/index.php?option=com_menus&view=item&layout=edit&id='.$r['id'];

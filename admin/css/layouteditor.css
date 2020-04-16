@@ -34,12 +34,26 @@
   color: rgba(0,0,0,0);
 }
 
+
+
 .button-layouttagbutton span:before{
 	content: "A";
 }
 
 .icon-layouttagbutton{
   background-image: url('/administrator/components/com_customtables/assets/images/layouttag.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  color: rgba(0,0,0,0);
+}
+
+
+.button-dependencies span:before{
+	content: "A";
+}
+
+.icon-dependencies{
+  background-image: url('/administrator/components/com_customtables/assets/images/dependencies.png');
   background-position: center;
   background-repeat: no-repeat;
   color: rgba(0,0,0,0);
