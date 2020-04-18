@@ -18,7 +18,7 @@ function renderDependencies($layout_row)
 	$db = JFactory::getDBO();
 	$layoutname=$layout_row->layoutname;
 
-    $result='';
+    $result='<div id="layouteditor_modal_content_box">';
 
 
 	$w1='('.$db->quoteName('type').'="sqljoin" OR '.$db->quoteName('type').'="records")';
@@ -58,6 +58,7 @@ function renderDependencies($layout_row)
         $result.=_renderMenuList($rows);
     }
 */
+	$result.='</div>';
 
     return $result;
 }

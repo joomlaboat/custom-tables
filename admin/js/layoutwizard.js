@@ -351,8 +351,9 @@ function showModalTagsList(e)
 
 function showModalDependenciesList(e)
 {
-	var modalcontentobj=document.getElementById("layouteditor_modal_content_box");	
-	modalcontentobj.innerHTML=document.getElementById("dependencies_content").innerHTML;
+	var result='<div class="dynamic_values">'+document.getElementById("dependencies_content").innerHTML+'</div>';
+	
+	modalcontentobj=document.getElementById("layouteditor_modal_content_box").innerHTML=result;
 	showModal();
 	return;
 }
