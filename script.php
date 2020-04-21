@@ -144,7 +144,6 @@ class com_customtablesInstallerScript
 		}
 
 		$file=JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'sql'.DIRECTORY_SEPARATOR.'_es2ct.php';
-		//echo $file;
 
 		if(file_exists($file))
 		{
