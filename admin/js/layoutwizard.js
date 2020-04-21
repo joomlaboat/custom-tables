@@ -34,10 +34,7 @@ function loadFields(tableselector_id_,field_box_id_)
 {
 	tableselector_id=tableselector_id_;
 	field_box_id=field_box_id_;
-
 	tableselector_obj=document.getElementById(tableselector_id);
-	//field_box_obj=document.getElementById(field_box_id);
-
 	loadFieldsUpdate();
 }
 
@@ -56,12 +53,7 @@ function loadFieldsData(tableid)
 	current_table_id=0;
 	tableid=parseInt(tableid);
 	if(isNaN(tableid) || tableid===0)
-	{
-		///field_box_obj.innerHTML='<p>The Table not selected.</p>';
-		return;
-	}
-
-	//field_box_obj.innerHTML='<p>Loading...</p>';
+		return;//table not selected
 
 	var url=websiteroot+"index.php?option=com_customtables&view=api&frmt=json&task=getfields&tableid="+tableid;
 
@@ -116,9 +108,7 @@ function loadFieldsData(tableid)
 			};
 			http.send(params);
 		}
-
 	}
-
 }
 
 function updateFieldsBox()
@@ -351,7 +341,8 @@ function showModalTagsList(e)
 
 function showModalDependenciesList(e)
 {
-	var result='<div class="dynamic_values">'+document.getElementById("dependencies_content").innerHTML+'</div>';
+	//var result='<div class="dynamic_values">'+document.getElementById("dependencies_content").innerHTML+'</div>';
+	var result=document.getElementById("dependencies_content").innerHTML;
 	
 	modalcontentobj=document.getElementById("layouteditor_modal_content_box").innerHTML=result;
 	showModal();
@@ -480,14 +471,9 @@ function addFieldTag(index_unused,tagstartchar,tagendchar,tag,param_count)
 		cm.focus();
 	}
 }
-
-
 			function FillLayout()
 			{
-
 				var editor = codemirror_editors[codemirror_active_index];
-
-
 				var t = parseInt(document.getElementById("jform_layouttype").value);
 				if(isNaN(t) || t===0)
 				{

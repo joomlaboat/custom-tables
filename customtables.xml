@@ -32,13 +32,6 @@
 	<!-- Runs on install/uninstall/update; New in Joomla 2.5 -->
 	<scriptfile>script.php</scriptfile>
 
-	<media destination="com_customtables" folder="media">
-		<filename>index.html</filename>
-		<folder>js</folder>
-		<folder>css</folder>
-		<folder>images</folder>###EXSTRA_MEDIA_FOLDERS###
-	</media>
-
 	<!-- Update Schema; New in Joomla 2.5 -->
 	<update>
 		<schemas>

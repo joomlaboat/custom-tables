@@ -1,3 +1,13 @@
+/**
+ * CustomTables Joomla! 3.x Native Component
+ * @package Custom Tables
+ * @subpackage administrator/components/com_customtables/js/layouteditor.js
+ * @author Ivan komlev <support@joomlaboat.com>
+ * @link http://www.joomlaboat.com
+ * @copyright Copyright (C) 2018-2020. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
+ **/
+ 
 var codemirror_editors=[];
 var codemirror_active_index=0;
 var temp_params_tag="";

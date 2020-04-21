@@ -87,10 +87,13 @@ $onPageLoads=array();
 		
 		<div id="allLayoutRaw" style="display:none;"><?php echo json_encode($this->getLayouts()); ?></div>
 		<div id="dependencies_content" style="display:none;">
+		
+		<h3><?php echo JText::_('COM_CUSTOMTABLES_LAYOUTS_WHAT_IS_USING_IT', true); ?></h3>
+		<div id="layouteditor_tagsContent0" class="dynamic_values_list dynamic_values">
 		<?php 
 		require_once('dependencies.php');
 		echo renderDependencies($this->item); // this will be shown upon the click in the toolbar
 		?>
-		</div>
+		</div></div>
 	</form>
 </div>
