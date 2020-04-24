@@ -560,7 +560,7 @@ class JoomlaBasicMisc
 			do{
 
 				$count++;
-				if($count>100)
+				if($count>1000)
 				{
 					echo 'too many quotes.';
 					die;
