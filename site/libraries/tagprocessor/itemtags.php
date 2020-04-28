@@ -1,7 +1,6 @@
 <?php
 /**
  * CustomTables Joomla! 3.x Native Component
- * @version 1.6.1
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
  * @license GNU/GPL
@@ -500,11 +499,16 @@ class tagProcessor_Item
 
                         $wheres=array();
 
+
 						if($Model->establename!=$sj_tablename)
 						{
 							//don't attach to specific record when it is the same table, example : to find averages
 							$wheres[]='#__customtables_table_'.$Model->establename.'.id='.$id;
 						}
+						else
+						{
+                            //$wheres[]='#__customtables_table_'.$sj_tablename.'.published=1';//to join with published record only, preferably set in parameters
+                        }
 
 
 						if($additional_where!='')
