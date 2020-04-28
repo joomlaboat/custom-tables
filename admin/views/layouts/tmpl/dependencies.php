@@ -193,7 +193,13 @@ function _getLayoutsThatUseThisLayout($layoutname)
 	$wheres=array();
 	$wheres[]='published=1';
 	
-	$layout_params=['layout:'.$layoutname,'tablelesslayout:'.$layoutname,','.$layoutname.',',':'.$layoutname];
+	$layout_params=['{layout:'.$layoutname.'}',	//example: {layout:layoutname}
+					':layout:'.$layoutname.',',	//example: [field:layout,someparameter]
+					':layout:'.$layoutname.']',	//example: [field:layout]
+					':tablelesslayout:'.$layoutname.',',	//example: [tablelesslayout:layout,someparameter]
+					':tablelesslayout:'.$layoutname.']',	//example: [tablelesslayout:layout]
+					','.$layoutname.','];		//For plugins
+					//':'.$layoutname];
 	$w=array();
 	foreach($layout_params as $l)
 	{
