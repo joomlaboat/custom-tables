@@ -1,10 +1,12 @@
 <?php
 /**
- * Custom Tables Joomla! 3.x Native Component
- * @version 1.6.1
+ * CustomTables Joomla! 3.x Native Component
+ * @package Custom Tables
+ * @subpackage libraries/fields.php
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @license GNU/GPL
+ * @copyright Copyright (C) 2018-2020. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
 // no direct access
@@ -483,8 +485,6 @@ class ESFields
 
     public static function addForeignKey($establename,$esfieldname,$new_typeparams='',$join_with_table_name='',$join_with_table_field='id',&$msg)
 	{
-//echo 'l;kj';
-//die;
 		$mysqltablename='#__customtables_table_'.$establename;
 		$mysqlfieldname='es_'.$esfieldname;
 
@@ -998,7 +998,8 @@ class ESFields
 			$db->setQuery($query);
 			if (!$db->query())    die( $db->stderr());
 
-			$query='ALTER TABLE '.$mysqltablename.' DROP '.$fieldname.';';
+			$query='ALTER TABLE '.$mysqltablename.' DROP '.$fieldname;
+
 			$db->setQuery( $query );
 
 			if (!$db->query())
@@ -1017,6 +1018,7 @@ class ESFields
 		$db = JFactory::getDBO();
 
         $query='ALTER TABLE '.$mysqltablename.' CHANGE '.$fieldname.' '.$fieldname.' '.$PureFieldType;
+
 		$db->setQuery( $query );
 
 		if (!$db->query())
