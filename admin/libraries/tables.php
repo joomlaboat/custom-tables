@@ -16,7 +16,7 @@ class ESTables
 	public static function getTableStatus($database,$dbprefix,$tablename)
 	{
 		$db = JFactory::getDBO();
-		$query = 'SHOW TABLE STATUS FROM '.$database.' LIKE "'.$dbprefix.'customtables_table_'.$tablename.'"';
+		$query = 'SHOW TABLE STATUS FROM '.$db->quoteName($database).' LIKE '.$db->quote($dbprefix.'customtables_table_'.$tablename);
 		$db->setQuery( $query );
 
 		if (!$db->query()) {
@@ -37,7 +37,7 @@ class ESTables
 
 		$t=str_replace('#__',$dbprefix,$mysqltablename);
 
-		$query = 'SELECT COUNT(*) AS c FROM information_schema.tables WHERE table_schema = "'.$database.'" AND table_name = "'.$t.'" LIMIT 1';
+		$query = 'SELECT COUNT(*) AS c FROM information_schema.tables WHERE table_schema = '.$db->quote($database).' AND table_name = '.$db->quote($t).' LIMIT 1';
 
 		$db->setQuery( $query );
 		if (!$db->query())    die ( $db->stderr());

@@ -644,7 +644,7 @@ class CustomtablesModelTables extends JModelAdmin
 
 			if(count($tablestatus)>0)
 			{
-				$query = 'RENAME TABLE '.$database.'.'.$dbprefix.'customtables_table_'.$old_tablename.' TO '.$database.'.'.$dbprefix.'customtables_table_'.$tablename.';';
+				$query = 'RENAME TABLE '.$db->quoteName($database.'.'.$dbprefix.'customtables_table_'.$old_tablename).' TO '.$db->quoteName($database.'.'.$dbprefix.'customtables_table_'.$tablename).';';
 
 				$db->setQuery( $query );
 

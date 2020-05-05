@@ -534,7 +534,7 @@ class ESFields
         {
             ESFields::cleanTableBeforeNormalization($establename,$esfieldname,$join_with_table_name,$join_with_table_field);
 
-            $query='ALTER TABLE '.$mysqltablename.' ADD FOREIGN KEY ('.$mysqlfieldname.') REFERENCES '.$database.'.'.$join_with_table_name.'('.$join_with_table_field.') ON DELETE RESTRICT ON UPDATE RESTRICT;';
+            $query='ALTER TABLE '.$db->quoteName($mysqltablename).' ADD FOREIGN KEY ('.$mysqlfieldname.') REFERENCES '.$db->quoteName($database.'.'.$join_with_table_name).' ('.$join_with_table_field.') ON DELETE RESTRICT ON UPDATE RESTRICT;';
 
             $db->setQuery( $query );
 
