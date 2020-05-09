@@ -643,7 +643,7 @@ JHtml::_('behavior.formvalidator');
     					if(count($exparams)>1)
     					{
     						$esroot=$exparams[0];
-    						$fieldlist[]='escombotree_'.$Model->establename.'_'.$fld['fieldname'].'_1:'.$fld['fieldname'].':'.$esroot;
+    						$fieldlist[]='es_search_box_escombotree_'.$Model->establename.'_'.$fld['fieldname'].'_1:'.$fld['fieldname'].':'.$esroot;
     					}
     				}
     				else
