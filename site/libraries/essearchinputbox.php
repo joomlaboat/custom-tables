@@ -1,8 +1,6 @@
 <?php
-
 /**
  * CustomTables Joomla! 3.x Native Component
- * @version 1.0.0
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
  * @license GNU/GPL
@@ -39,9 +37,7 @@ class ESSerachInputBox
 		if($value=='')
 			$value=$this->getWhereParameter($esfield['fieldname']);
 
-		$realFieldName='es_'.$objname;
 		$objname_=$prefix.$objname;
-
 
 		switch($esfield['type'])
 		{

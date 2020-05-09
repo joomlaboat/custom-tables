@@ -99,12 +99,12 @@ class ESInputBox
 
 								$v=trim($radiovalue);
 								$result.='<td valign="middle"><input type="radio"
-									name="'.$prefix.'es_'.$esfield['fieldname'].'"
-									id="'.$prefix.'es_'.$esfield['fieldname'].'_'.$i.'"
+									name="'.$prefix.$esfield['fieldname'].'"
+									id="'.$prefix.$esfield['fieldname'].'_'.$i.'"
 									value="'.$v.'" '
 								.($value==$v ? ' checked="checked" ' : '')
 								.' /></td>';
-								$result.='<td valign="middle"><label for="'.$prefix.'es_'.$esfield['fieldname'].'_'.$i.'">'.$v.'</label></td>';
+								$result.='<td valign="middle"><label for="'.$prefix.$esfield['fieldname'].'_'.$i.'">'.$v.'</label></td>';
 								$i++;
 							}
 							$result.='</tr></table>';
@@ -123,8 +123,8 @@ class ESInputBox
 							
 							$result.='<input '
 								.'type="text" '
-								.'name="'.$prefix.'es_'.$esfield['fieldname'].'" '
-								.'id="'.$prefix.'es_'.$esfield['fieldname'].'" '
+								.'name="'.$prefix.$esfield['fieldname'].'" '
+								.'id="'.$prefix.$esfield['fieldname'].'" '
 								.'label="'.$esfield['fieldname'].'" '
 								.'class="'.$class.'"'
 								.' '.$attributes
@@ -146,8 +146,8 @@ class ESInputBox
 							
 							$result.='<input '
 								.'type="text" '
-								.'name="'.$prefix.'es_'.$esfield['fieldname'].'" '
-								.'id="'.$prefix.'es_'.$esfield['fieldname'].'" '
+								.'name="'.$prefix.$esfield['fieldname'].'" '
+								.'id="'.$prefix.$esfield['fieldname'].'" '
 								.'class="'.$class.'" '
 								.' '.$attributes.' ';
 
@@ -179,8 +179,8 @@ class ESInputBox
 
 						case 'string':
 							$result.='<input type="text" '
-								.'name="'.$prefix.'es_'.$esfield['fieldname'].'" '
-								.'id="'.$prefix.'es_'.$esfield['fieldname'].'" '
+								.'name="'.$prefix.$esfield['fieldname'].'" '
+								.'id="'.$prefix.$esfield['fieldname'].'" '
 								.'label="'.$esfield['fieldname'].'" '
 								.'class="'.$class.'" '
 								.'value="'.$value.'" '.((int)$esfield['typeparams']>0 ? 'maxlength="'.(int)$esfield['typeparams'].'"' : 'maxlength="255"').' '.$attributes.' />';
@@ -189,8 +189,8 @@ class ESInputBox
 
 						case 'alias':
 							$result.='<input type="text" '
-								.'name="'.$prefix.'es_'.$esfield['fieldname'].'" '
-								.'id="'.$prefix.'es_'.$esfield['fieldname'].'" '
+								.'name="'.$prefix.$esfield['fieldname'].'" '
+								.'id="'.$prefix.$esfield['fieldname'].'" '
 								.'label="'.$esfield['fieldname'].'" '
 								.'class="'.$class.'" '
 								.' '.$attributes
@@ -200,16 +200,16 @@ class ESInputBox
 
 						case 'phponadd':
 							$result.='<input type="hidden" '
-								.'name="'.$prefix.'es_'.$esfield['fieldname'].'" '
-								.'id="'.$prefix.'es_'.$esfield['fieldname'].'" '
+								.'name="'.$prefix.$esfield['fieldname'].'" '
+								.'id="'.$prefix.$esfield['fieldname'].'" '
 								.'value="'.$value.'" />';
 
 							break;
 
 						case 'phponchange':
 							$result.='<input type="hidden" '
-								.'name="'.$prefix.'es_'.$esfield['fieldname'].'" '
-								.'id="'.$prefix.'es_'.$esfield['fieldname'].'" '
+								.'name="'.$prefix.$esfield['fieldname'].'" '
+								.'id="'.$prefix.$esfield['fieldname'].'" '
 								.'value="'.$value.'" />';
 
 							break;
@@ -222,7 +222,7 @@ class ESInputBox
 
 						case 'text':
 
-								$fname=$prefix.'es_'.$esfield['fieldname'];
+								$fname=$prefix.$esfield['fieldname'];
 
 								if(in_array('rich',$typeparams))
 								{
@@ -271,10 +271,10 @@ class ESInputBox
 								
 								if($format=="yesno")
 								{
-									$result.='<fieldset id="'.$prefix.'es_'.$esfield['fieldname'].'" class="'.$class.' btn-group radio btn-group-yesno" '
+									$result.='<fieldset id="'.$prefix.$esfield['fieldname'].'" class="'.$class.' btn-group radio btn-group-yesno" '
 									.'style="border:none !important;background:none !important;">';
 								
-									$id=$prefix.'es_'.$esfield['fieldname'];
+									$id=$prefix.$esfield['fieldname'];
 								
 									$result.='<div style="position: absolute;visibility:hidden !important; display:none !important;"><input type="radio"'
 										.' id="'.$id.'0"'
@@ -298,21 +298,21 @@ class ESInputBox
 								}
 								else
 								{
-									$onchange=$prefix.'es_'.$esfield['fieldname'].'_off.value=(this.checked === true ? 1 : 0);';// this is to save unchecked value as well.
+									$onchange=$prefix.$esfield['fieldname'].'_off.value=(this.checked === true ? 1 : 0);';// this is to save unchecked value as well.
 									
 									if(strpos($attributes,'onchange="')!==false)
 										$attributes=str_replace('onchange="','onchange="'.$onchange,$attributes);// onchange event already exists add one before
 									
 									$result.='<input type="checkbox"'
-										.' id="'.$prefix.'es_'.$esfield['fieldname'].'" '
-										.' name="'.$prefix.'es_'.$esfield['fieldname'].'" '
+										.' id="'.$prefix.$esfield['fieldname'].'" '
+										.' name="'.$prefix.$esfield['fieldname'].'" '
 										.' '.$attributes
 										.($value ? ' checked="checked" ' : '')
 										.' class="'.$class.'">';
 										
 									$result.='<input type="hidden"'
-										.' id="'.$prefix.'es_'.$esfield['fieldname'].'_off" '
-										.' name="'.$prefix.'es_'.$esfield['fieldname'].'_off" '
+										.' id="'.$prefix.$esfield['fieldname'].'_off" '
+										.' name="'.$prefix.$esfield['fieldname'].'_off" '
 										.($value ? ' value="1" ' : 'value="0"')
 										.' >';
 								}
@@ -360,7 +360,7 @@ class ESInputBox
 						case 'usergroups':
 
 							$result.=JHTML::_('ESUserGroups.render',
-											  $prefix.'es_'.$esfield['fieldname'],
+											  $prefix.$esfield['fieldname'],
 											  $value,
 											  $esfield['typeparams']
 											  );
@@ -380,7 +380,7 @@ class ESInputBox
 								$value=$langObj->getTag();
 							}
 
-							$attributes=array('name'=>$prefix.'es_'.$esfield['fieldname'],'id'=>$prefix.'es_'.$esfield['fieldname'], 'label'=>$esfield['fieldtitle'.$this->langpostfix],'readonly'=>false);
+							$attributes=array('name'=>$prefix.$esfield['fieldname'],'id'=>$prefix.$esfield['fieldname'], 'label'=>$esfield['fieldtitle'.$this->langpostfix],'readonly'=>false);
 							$result.= CTTypes::getField('language', $attributes,$value)->input;
 
 							break;
@@ -398,7 +398,7 @@ class ESInputBox
 							if($value=='')
 								$value='';
 
-							$att=array('name'=>$prefix.'es_'.$esfield['fieldname'],'id'=>$prefix.'es_'.$esfield['fieldname'], 'label'=>$esfield['fieldtitle'.$this->langpostfix]);
+							$att=array('name'=>$prefix.$esfield['fieldname'],'id'=>$prefix.$esfield['fieldname'], 'label'=>$esfield['fieldtitle'.$this->langpostfix]);
 							
 							if($option_list[0]=='transparent')
 							{
@@ -460,7 +460,7 @@ class ESInputBox
 							$result='';
 							//$attributes_=ESInputBox::prepareAttributes(array(),$attributes);//check it
 
-							$result.=JHTML::_('ESFileLink.render',$prefix.'es_'.$esfield['fieldname'], $value, '', $attributes, $esfield['typeparams']);
+							$result.=JHTML::_('ESFileLink.render',$prefix.$esfield['fieldname'], $value, '', $attributes, $esfield['typeparams']);
 
 							break;
 
@@ -539,8 +539,6 @@ class ESInputBox
 														  (isset($typeparams[3]) ? (int)$typeparams[3] : 1)
 														  );
 
-
-
 										$result.='</div>';
 								}
 								else
@@ -560,7 +558,7 @@ class ESInputBox
 											  $value,
 											  false,
 											  $this->langpostfix,
-											  $prefix.'es_'.$esfield['fieldname'],
+											  $prefix.$esfield['fieldname'],
 											  $place_holder,
 											  $class,
 											  $attributes);
@@ -606,7 +604,7 @@ class ESInputBox
 
 							$result.=JHTML::_('ESRecords.render',
 											  $typeparams,
-											  $prefix.'es_'.$esfield['fieldname'],
+											  $prefix.$esfield['fieldname'],
 											  $value,
 											  $esr_table,
 											  $esr_field,
@@ -625,15 +623,15 @@ class ESInputBox
 						case 'googlemapcoordinates':
 
 
-							$result.=JHTML::_('GoogleMapCoordinates.render',$prefix.'es_'.$esfield['fieldname'], $value  );
+							$result.=JHTML::_('GoogleMapCoordinates.render',$prefix.$esfield['fieldname'], $value  );
 
 						break;
 
 						case 'email';
 								$result.='<input '
 									.'type="text" '
-									.'name="'.$prefix.'es_'.$esfield['fieldname'].'" '
-									.'id="'.$prefix.'es_'.$esfield['fieldname'].'" '
+									.'name="'.$prefix.$esfield['fieldname'].'" '
+									.'id="'.$prefix.$esfield['fieldname'].'" '
 									.'class="'.$class.'" '
 									.'value="'.$value.'" '.((int)$esfield['typeparams']>0 ? 'maxlength="'.(int)$esfield['typeparams'].'"' : 'maxlength="255"')
 									.' '.$attributes.' '
@@ -649,12 +647,12 @@ class ESInputBox
 								$attributes_=ESInputBox::prepareAttributes(array('class'=>$class),$attributes);
 																
 
-								$result.=JHTML::calendar($value, $prefix.'es_'.$esfield['fieldname'], $prefix.'es_'.$esfield['fieldname'],
+								$result.=JHTML::calendar($value, $prefix.$esfield['fieldname'], $prefix.$esfield['fieldname'],
 														'%Y-%m-%d',$attributes_);
 
 						break;
 
-								$result.=JHTML::_('ESUserGroup.render',$prefix.'es_'.$esfield['fieldname'], $value, '', $attributes, '',$where);
+								$result.=JHTML::_('ESUserGroup.render',$prefix.$esfield['fieldname'], $value, '', $attributes, '',$where);
 
 						case 'time';
 							if(count($row)==0)
@@ -665,7 +663,7 @@ class ESInputBox
 							else
 								$value=(int)$value;
 
-								$result.=JHTML::_('CTTime.render',$prefix.'es_'.$esfield['fieldname'], $value, $class, $attributes, $typeparams,$option_list);
+								$result.=JHTML::_('CTTime.render',$prefix.$esfield['fieldname'], $value, $class, $attributes, $typeparams,$option_list);
 
 						break;
 								
@@ -674,7 +672,7 @@ class ESInputBox
 
 
 							$result.=JHTML::_('ESArticle.render',
-											  $prefix.'es_'.$esfield['fieldname'],
+											  $prefix.$esfield['fieldname'],
 											  $value,
 
 											  $class,
@@ -723,7 +721,7 @@ class ESInputBox
 									<td>';
 
 								$result.=JHTML::_('ESArticle.render',
-											  $prefix.'es_'.$fieldname,
+											  $prefix.$fieldname,
 											  $value,
 
 											  $class,
@@ -823,7 +821,7 @@ class ESInputBox
 									
 								
 									
-								$result='<input type="text" name="'.$prefix.'es_'.$fieldname.'" id="'.$prefix.'es_'.$fieldname.'" id="code" class="'.$class.'"
+								$result='<input type="text" name="'.$prefix.$fieldname.'" id="'.$prefix.$fieldname.'" id="code" class="'.$class.'"
 								value="'.$value.'" '.((int)$esfield['typeparams']>0 ? 'maxlength="'.(int)$esfield['typeparams'].'"' : 'maxlength="255"').$attributes_.' />';
 
 		return $result;
@@ -909,11 +907,11 @@ class ESInputBox
 
 		if($require_authorization)
 		{
-			$result.=JHTML::_('ESUser.render',$prefix.'es_'.$esfield['fieldname'], $value, '', $attributes, $usergroup,'',$where);
+			$result.=JHTML::_('ESUser.render',$prefix.$esfield['fieldname'], $value, '', $attributes, $usergroup,'',$where);
 		}
 		else
 		{
-			$result.=JHTML::_('ESUser.render',$prefix.'es_'.$esfield['fieldname'], $value, '', $attributes, $usergroup,'',$where);
+			$result.=JHTML::_('ESUser.render',$prefix.$esfield['fieldname'], $value, '', $attributes, $usergroup,'',$where);
 		}
 		return $result;
 	}
@@ -931,7 +929,7 @@ class ESInputBox
 		$where='';
 
 
-		$result.=JHTML::_('ESUserGroup.render',$prefix.'es_'.$esfield['fieldname'], $value, '', $attributes, '',$where);
+		$result.=JHTML::_('ESUserGroup.render',$prefix.$esfield['fieldname'], $value, '', $attributes, '',$where);
 
 		return $result;
 	}

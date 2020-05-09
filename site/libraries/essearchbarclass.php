@@ -1,7 +1,6 @@
 <?php
 /**
  * Custom Tables Joomla! 3.x Native Component
- * @version 1.0.0
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
  * @license GNU/GPL
@@ -634,7 +633,7 @@ class ESSearchBarClass
 					}
 					else
 					{
-						$outputresult_temp=$this->esinputbox->renderFieldBox('',$objname,$fld,
+						$outputresult_temp=$this->esinputbox->renderFieldBox(array(),'',$objname,$fld,
 										($fld['essb_style']!='' ? $fld['essb_style'] : 'margin:3px;padding:0px;'),
 										$count,$where,true,$wherelist,'');
 

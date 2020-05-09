@@ -292,11 +292,11 @@
         var http = null;
 		var params = "";
 		
-		var obj_checkbox_off=document.getElementById("com_"+record_id+"_es_"+fieldname_+"_off");
+		var obj_checkbox_off=document.getElementById("com_"+record_id+"_"+fieldname_+"_off");
 		if(obj_checkbox_off)
 			params="comes_"+fieldname_+"_off="+obj_checkbox_off.value;
 		else
-			params="comes_"+fieldname_+"="+document.getElementById("com_"+record_id+"_es_"+fieldname_).value;
+			params="comes_"+fieldname_+"="+document.getElementById("com_"+record_id+"_"+fieldname_).value;
 		
         params+="&task=save";
         params+="&Itemid="+Itemid;

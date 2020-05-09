@@ -1,7 +1,6 @@
 <?php
 /**
  * Custom Tables Joomla! 3.x Native Component
- * @version 1.6.1
  * @author JoomlaBoat.com <support@joomlaboat.com>
  * @link http://joomlaboat.com
  * @license GNU/GPL

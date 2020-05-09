@@ -1,7 +1,6 @@
 <?php
 /**
  * CustomTables Joomla! 3.x Native Component
- * @version 1.6.1
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
  * @license GNU/GPL
@@ -12,8 +11,7 @@ defined('_JEXEC') or die('Restricted access');
 function render_multilangtext(&$row,&$LanguageList,&$esfield,$RequiredLabel,$width,$prefix,$cssclass)
 {
     $result='';
-    //$result.='<table>';
-							
+						
 							$firstlanguage=true;
 							foreach($LanguageList as $lang)
 							{

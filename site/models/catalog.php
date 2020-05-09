@@ -1,10 +1,11 @@
 <?php
 /**
  * CustomTables Joomla! 3.x Native Component
- * @version 1.6.1
+ * @package Custom Tables
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @license GNU/GPL
+ * @copyright Copyright (C) 2018-2020. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
 // no direct access
@@ -26,12 +27,8 @@ require_once($sitelib.'logs.php');
 
 class CustomTablesModelCatalog extends JModelLegacy
 {
-
 		var $es;
-
-
 		var $filtering;
-
 		var $esTable;
 		var $TotalRows=0;
 		var $_pagination = null;
@@ -54,7 +51,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 		var $LangMisc;
 		var $langpostfix;
 
-		var $LayoutProc;
+		var $class="mag-phone mag-field formCol";
 		var $columns;
 
 		var $ShowDatailsLink;
@@ -77,7 +74,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 		var $Itemid;
 
 		var $layout;
-
+		
 		var $shownavigation;
 
 		var $limitstart;
