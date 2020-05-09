@@ -16,7 +16,7 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'co
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'layouts.php');
 
 $document = JFactory::getDocument();
-$document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/js/catalog111.js" type="text/javascript"></script>');
+$document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/js/catalog_187.js" type="text/javascript"></script>');
 $document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customtables/css/style.css" type="text/css" rel="stylesheet" >');
 
 $html_format=false;

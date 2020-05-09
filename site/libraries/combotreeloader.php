@@ -105,7 +105,7 @@ else
 }
 
 
-	JHTML::script('combotree16.js', 'components/com_customtables/js/customtables/');
+	JHTML::script('combotree_187.js', 'components/com_customtables/js/customtables/');
 
 class ESDynamicComboTree
 {
