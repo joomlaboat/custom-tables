@@ -1,3 +1,8 @@
+.required .star{
+color:red;
+}
+
+
 .ctFormLabel{display:inline-block !important;/*Somehow doesnt work*/}
 
 .multilangtext
