@@ -63,8 +63,6 @@ class com_customtablesInstallerScript
 	 */
 	function preflight($type, $parent)
 	{
-
-
 		// get application
 		$app = JFactory::getApplication();
 		// is redundant ...hmmm
@@ -140,7 +138,7 @@ class com_customtablesInstallerScript
 			echo '<a target="_blank" href="https://joomlaboat.com" title="Custom Tables">
 				<img src="'.JURI::root(true).'/administrator/components/com_customtables/assets/images/vdm-component.jpg"/>
 				</a>
-				<h3>Upgrade was Successful! Let us know if anything is not working as expected.</h3>';
+				<h3>Upgrade was Successful!</h3>';
 		}
 
 		$file=JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'sql'.DIRECTORY_SEPARATOR.'_es2ct.php';
@@ -151,7 +149,6 @@ class com_customtablesInstallerScript
 			require_once($file);
 			updateESTables();
 		}
-
 
 		if(!file_exists(JPATH_SITE.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'ct_images'))
 				mkdir(JPATH_SITE.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'ct_images');
