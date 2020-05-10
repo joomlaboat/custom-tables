@@ -206,7 +206,7 @@ class ESSearchBarClass
 			i=1;
 			do{
 
-				vo=document.getElementById("escombotree_'.$this->establename.'_'.$fld['fieldname'].'_"+i);
+				vo=document.getElementById("combotree_'.$this->establename.'_'.$fld['fieldname'].'_"+i);
 				if(vo == null)
 					break;
 

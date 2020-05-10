@@ -717,7 +717,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 
 		//	Fields
-		$prefix='com';
+		$prefix='comes_';
 
 		$phponchangefound=false;
 		$phponaddfound=false;
@@ -812,10 +812,10 @@ class CustomTablesModelEditItem extends JModelLegacy {
 			}
 
 			if($this->params->get('emailfield')!='' and $this->params->get('emailfield')==$fieldname)
-				$user_email=$jinput->getString($prefix.'es_'.$fieldname);
+				$user_email=$jinput->getString($prefix.$fieldname);
 
 			if($this->params->get('fullnamefield')!='' and $this->params->get('fullnamefield')==$fieldname)
-				$user_name=$jinput->getString($prefix.'es_'.$fieldname);
+				$user_name=$jinput->getString($prefix.$fieldname);
 
 
 		}//foreach($this->esfields as $esfield)
@@ -1270,24 +1270,24 @@ class CustomTablesModelEditItem extends JModelLegacy {
 						switch($selectorpair[0])
 						{
 							case 'single';
-									$value=JFactory::getApplication()->input->getString($prefix.'es_'.$fieldname);
+									$value=JFactory::getApplication()->input->getString($prefix.$fieldname);
 								break;
 
 							case 'multi';
-									$valuearray = JFactory::getApplication()->input->get( $prefix.'es_'.$fieldname, array(), 'post', 'array' );
+									$valuearray = JFactory::getApplication()->input->get( $prefix.$fieldname, array(), 'post', 'array' );
 									$value='"'.implode('","',$valuearray).'"';
 								break;
 							case 'multibox';
-									$valuearray = JFactory::getApplication()->input->get( $prefix.'es_'.$fieldname, array(), 'post', 'array' );
+									$valuearray = JFactory::getApplication()->input->get( $prefix.$fieldname, array(), 'post', 'array' );
 									$value='"'.implode('","',$valuearray).'"';
 								break;
 
 							case 'radio';
-									$value=JFactory::getApplication()->input->getString($prefix.'es_'.$fieldname);
+									$value=JFactory::getApplication()->input->getString($prefix.$fieldname);
 								break;
 
 							case 'checkbox';
-									$valuearray = JFactory::getApplication()->input->get( $prefix.'es_'.$fieldname, array(), 'post', 'array' );
+									$valuearray = JFactory::getApplication()->input->get( $prefix.$fieldname, array(), 'post', 'array' );
 									$value='"'.implode('","',$valuearray).'"';
 								break;
 						}
@@ -1296,15 +1296,15 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 					break;
 				case 'radio':
-						$value=JFactory::getApplication()->input->getString($prefix.'es_'.$fieldname);
+						$value=JFactory::getApplication()->input->getString($prefix.$fieldname);
 					break;
 
 				case 'googlemapcoordinates':
-						$value=JFactory::getApplication()->input->getString($prefix.'es_'.$fieldname);
+						$value=JFactory::getApplication()->input->getString($prefix.$fieldname);
 					break;
 
 				case 'string':
-						$value=JFactory::getApplication()->input->getString($prefix.'es_'.$fieldname);
+						$value=JFactory::getApplication()->input->getString($prefix.$fieldname);
 					break;
 
 				case 'multilangstring':
@@ -1320,7 +1320,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 						else
 							$postfix='_'.$lang->sef;
 
-						$valuearray[]=JFactory::getApplication()->input->getString($prefix.'es_'.$fieldname.$postfix);
+						$valuearray[]=JFactory::getApplication()->input->getString($prefix.$fieldname.$postfix);
 
 					}
 					$value='"'.implode('","',$valuearray).'"';
@@ -1328,7 +1328,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 
 				case 'text':
-					$value = JComponentHelper::filterText(JFactory::getApplication()->input->post->get($prefix.'es_'.$fieldname, '', 'raw'));
+					$value = JComponentHelper::filterText(JFactory::getApplication()->input->post->get($prefix.$fieldname, '', 'raw'));
 					break;
 
 				case 'multilangtext':
@@ -1344,7 +1344,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 						else
 							$postfix='_'.$lang->sef;
 
-						$value_ = JComponentHelper::filterText(JFactory::getApplication()->input->post->get($prefix.'es_'.$fieldname.$postfix, '', 'raw'));
+						$value_ = JComponentHelper::filterText(JFactory::getApplication()->input->post->get($prefix.$fieldname.$postfix, '', 'raw'));
 
 						$valuearray[]=$value_;
 
@@ -1353,20 +1353,20 @@ class CustomTablesModelEditItem extends JModelLegacy {
 					break;
 
 				case 'int':
-						$value=JFactory::getApplication()->input->getInt($prefix.'es_'.$fieldname,0);
+						$value=JFactory::getApplication()->input->getInt($prefix.$fieldname,0);
 					break;
 
 				case 'user':
-						$value=(int)JFactory::getApplication()->input->getInt($prefix.'es_'.$fieldname,0);
+						$value=(int)JFactory::getApplication()->input->getInt($prefix.$fieldname,0);
 					break;
 
 				case 'float':
-						$value=JFactory::getApplication()->input->get($prefix.'es_'.$fieldname,0,'FLOAT');
+						$value=JFactory::getApplication()->input->get($prefix.$fieldname,0,'FLOAT');
 					break;
 
 
 				case 'article':
-						$value=JFactory::getApplication()->input->getInt($prefix.'es_'.$fieldname,0);
+						$value=JFactory::getApplication()->input->getInt($prefix.$fieldname,0);
 					break;
 
 				case 'multilangarticle':
@@ -1382,7 +1382,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 						else
 							$postfix='_'.$lang->sef;
 
-						$valuearray[]=JFactory::getApplication()->input->getInt($prefix.'es_'.$fieldname.$postfix,0);
+						$valuearray[]=JFactory::getApplication()->input->getInt($prefix.$fieldname.$postfix,0);
 
 					}
 					$value='"'.implode('","',$valuearray).'"';
@@ -1394,22 +1394,22 @@ class CustomTablesModelEditItem extends JModelLegacy {
 						$optionname=$typeparams_arr[0];
 
 						if($typeparams_arr[1]=='multi')
-							$value=$this->getMultiString($optionname, $prefix.'esmulti_'.$this->establename.'_'.$fieldname);
+							$value=$this->getMultiString($optionname, $prefix.'multi_'.$this->establename.'_'.$fieldname);
 						elseif($typeparams_arr[1]=='single')
-							$value=$this->getComboString($optionname, $prefix.'escombotree_'.$this->establename.'_'.$fieldname);
+							$value=$this->getComboString($optionname, $prefix.'combotree_'.$this->establename.'_'.$fieldname);
 
 					break;
 
 				case 'email':
-						$value=JFactory::getApplication()->input->getString($prefix.'es_'.$fieldname);
+						$value=JFactory::getApplication()->input->getString($prefix.$fieldname);
 					break;
 
 				case 'checkbox':
-						$value=JFactory::getApplication()->input->getCmd($prefix.'es_'.$fieldname);
+						$value=JFactory::getApplication()->input->getCmd($prefix.$fieldname);
 					break;
 
 				case 'date':
-						$value=JFactory::getApplication()->input->getString($prefix.'es_'.$fieldname);
+						$value=JFactory::getApplication()->input->getString($prefix.$fieldname);
 					break;
 			}
 

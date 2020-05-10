@@ -144,7 +144,7 @@ function initialize($tablename,$fieldname,$optionname,$prefix)
 		$this->esfieldname=$fieldname;
 		$this->optionname=$optionname;
 		$this->listingtable='#__customtables_table_'.$this->establename;
-		$this->ObjectName=$this->prefix.'escombotree_'.$this->establename.'_'.$this->esfieldname;
+		$this->ObjectName=$this->prefix.'combotree_'.$this->establename.'_'.$this->esfieldname;
 }
 
 function getInstrWhereAdv($object_name,$temp_parent, &$filterwhere, &$urlwhere, &$filterwherearr,&$urlwherearr,$field)

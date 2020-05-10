@@ -17,7 +17,7 @@ class CTValue
     {
         $db = JFactory::getDBO();
         $esfieldname=$esfield['fieldname'];
-        $comesfieldname=$prefix.'es_'.$esfieldname;
+        $comesfieldname=$prefix.$esfieldname;
         $jinput=JFactory::getApplication()->input;
         $typeparams=$esfield['typeparams'];
         $value_found=false;
@@ -520,7 +520,7 @@ static public function get_customtables_type_language(&$savequery,$typeparams,$p
     $value_found=false;
 
     $db = JFactory::getDBO();
-    $comesfieldname=$prefix.'es_'.$esfieldname;
+    $comesfieldname=$prefix.$esfieldname;
     $jinput=JFactory::getApplication()->input;
     $value=$jinput->getCmd($comesfieldname,null);
 
@@ -536,7 +536,7 @@ static public function get_customtables_type_language(&$savequery,$typeparams,$p
 static public function get_customtables_type_value(&$es,&$savequery,$typeparams,$prefix,$esfieldname,$establename)
 {
     $value_found=false;
-    $comesfieldname=$prefix.'es_'.$esfieldname;
+    $comesfieldname=$prefix.$esfieldname;
     $db = JFactory::getDBO();
     $value='';
 
@@ -545,7 +545,7 @@ static public function get_customtables_type_value(&$es,&$savequery,$typeparams,
 
 					if($typeparams_arr[1]=='multi')
 					{
-							$value=CTValue::getMultiString($es,$optionname, $prefix.'esmulti_'.$establename.'_'.$esfieldname);
+							$value=CTValue::getMultiString($es,$optionname, $prefix.'multi_'.$establename.'_'.$esfieldname);
 
 							if($value!=null)
 							{
@@ -561,7 +561,7 @@ static public function get_customtables_type_value(&$es,&$savequery,$typeparams,
 					elseif($typeparams_arr[1]=='single')
 					{
 
-							$value=CTValue::getComboString($optionname, $prefix.'escombotree_'.$establename.'_'.$esfieldname);
+							$value=CTValue::getComboString($optionname, $prefix.'combotree_'.$establename.'_'.$esfieldname);
 
 
 							if($value!=null)
@@ -587,7 +587,7 @@ static public function get_customtables_type_value(&$es,&$savequery,$typeparams,
 static public function get_usergroups_type_value(&$savequery,$typeparams,$prefix,$esfieldname)
 {
         $value_found=false;
-        $comesfieldname=$prefix.'es_'.$esfieldname;
+        $comesfieldname=$prefix.$esfieldname;
         $db = JFactory::getDBO();
 
                         switch($typeparams)
@@ -655,7 +655,7 @@ static public function get_usergroups_type_value(&$savequery,$typeparams,$prefix
 
 static public function get_alias_type_value($id,$establename,&$savequery,$prefix,$esfieldname)
 {
-    $comesfieldname=$prefix.'es_'.$esfieldname;
+    $comesfieldname=$prefix.$esfieldname;
 
     $value=JFactory::getApplication()->input->getString($comesfieldname);
     if(!isset($value))
@@ -753,7 +753,7 @@ static public function get_record_type_value(&$savequery,$typeparams,$prefix,$es
 {
     $value_found=false;
 
-    $comesfieldname=$prefix.'es_'.$esfieldname;
+    $comesfieldname=$prefix.$esfieldname;
 
     $db = JFactory::getDBO();
     $typeparamsarray=explode(',',$typeparams);
