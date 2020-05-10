@@ -540,7 +540,7 @@ static public function get_customtables_type_value(&$es,&$savequery,$typeparams,
     $db = JFactory::getDBO();
     $value='';
 
-    				$typeparams_arr=explode(',',$typeparams);
+	$typeparams_arr=explode(',',$typeparams);
 					$optionname=$typeparams_arr[0];
 
 					if($typeparams_arr[1]=='multi')
