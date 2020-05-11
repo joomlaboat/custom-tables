@@ -122,7 +122,7 @@ class CT_FieldTypeTag_image
     {
         $value_found=false;
 
-                    $comesfieldname=$prefix.'es_'.$esfieldname;
+                    $comesfieldname=$prefix.$esfieldname;
     				$value=0;
 					$imagemethods=new CustomTablesImageMethods;
                     $mysqltablename='#__customtables_table_'.$establename;
@@ -208,7 +208,7 @@ class CT_FieldTypeTag_image
 						    $result.='<img src="'.$imagesrc.'" width="150" /><br/>';
 
 							if(!$esfield['isrequired'])
-								$result.='<input type="checkbox" name="'.$prefix.'es_'.$esfield['fieldname'].'_delete" id="'.$prefix.'es_'.$esfield['fieldname'].'_delete" value="true">'
+								$result.='<input type="checkbox" name="'.$prefix.$esfield['fieldname'].'_delete" id="'.$prefix.$esfield['fieldname'].'_delete" value="true">'
 								.' Delete '.($isShortcut ? 'Shortcut' : 'Image');
 
 				$result.='

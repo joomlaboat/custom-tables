@@ -201,7 +201,7 @@ class CT_FieldTypeTag_file
         $value_found=false;
         $jinput=JFactory::getApplication()->input;
         $mysqltablename='#__customtables_table_'.$establename;
-        $comesfieldname=$prefix.'es_'.$esfieldname;
+        $comesfieldname=$prefix.$esfieldname;
         $FileFolder=CT_FieldTypeTag_file::getFileFolder($typeparams);
 
         $fileid = $jinput->post->get($comesfieldname, '','STRING' );
@@ -426,7 +426,7 @@ class CT_FieldTypeTag_file
 						    $result.='<a href="'.$link.'" target="_blank" alt="'.$file.'" title="'.$file.'"><img src="'.$imagesrc.'" width="48" /></a><br/>';
 
 							if(!$esfield['isrequired'])
-								$result.='<input type="checkbox" name="'.$prefix.'es_'.$esfield['fieldname'].'_delete" id="'.$prefix.'es_'.$esfield['fieldname'].'_delete" value="true">'
+								$result.='<input type="checkbox" name="'.$prefix.$esfield['fieldname'].'_delete" id="'.$prefix.$esfield['fieldname'].'_delete" value="true">'
 								.' Delete File';
 
 				$result.='

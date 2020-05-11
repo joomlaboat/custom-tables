@@ -39,13 +39,13 @@ function render_multilangtext(&$row,&$LanguageList,&$esfield,$RequiredLabel,$wid
 								{
                                         $result.='<span class="language_label_rich">'.$lang->caption.'</span>';
 										$editor = JFactory::getEditor();
-										$result.=$editor->display($prefix.'es_'.$fieldname,$value, ($width>0 ? $width : '500'), '300', '60', '5');
+										$result.=$editor->display($prefix.$fieldname,$value, ($width>0 ? $width : '500'), '300', '60', '5');
 								}
 								else
 								{
 								
-										$result.='<textarea filter="raw" name="'.$prefix.'es_'.$fieldname.'" '
-											.'id="'.$prefix.'es_'.$fieldname.'" '
+										$result.='<textarea filter="raw" name="'.$prefix.$fieldname.'" '
+											.'id="'.$prefix.$fieldname.'" '
 											.'class="'.$cssclass.' '.($esfield['isrequired'] ? 'required' : '').'">'.$value.'</textarea>
                                             
                                             <span class="language_label">'.$lang->caption.'</span>
