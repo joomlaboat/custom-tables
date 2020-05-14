@@ -934,6 +934,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		if($this->onrecordaddsendemail==3 and ($this->onrecordsavesendemailto!='' or $this->onrecordaddsendemailto!=''))
 		{
 			//check conditions
+			
 				if($this->checkSendEmailConditions($listing_id,$this->sendemailcondition))
 				{
 					//Send email conditions met
@@ -1082,6 +1083,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		
 		if($this->onrecordaddsendemail==3 and ($this->onrecordsavesendemailto!='' or $this->onrecordaddsendemailto!=''))
 		{
+			
 			//check conditions
 			if($this->checkSendEmailConditions($id,$this->sendemailcondition))
 			{
@@ -1122,6 +1124,9 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 	function checkSendEmailConditions($listing_id,$condition)
 	{
+		if($condition=='')
+			return true; //if no conditions
+			
 		$row=$this->getListingRowByID($listing_id);
 		$parsed_condition=$this->parseRowLayoutContent($row,$condition);
 		$thescript='return '.$parsed_condition.';';
@@ -1535,8 +1540,6 @@ class CustomTablesModelEditItem extends JModelLegacy {
 			if($esfield['type']=='phponchange')
 			{
 						$parts=JoomlaBasicMisc::csv_explode(',', $esfield['typeparams'], '"', false);
-						//echo $esfield['typeparams'];
-						
 						
 						if(count($parts)==1 and strpos($esfield['typeparams'],'"')!==false and strpos($esfield['typeparams'],'****quote****')===false )
 						{
@@ -1610,47 +1613,38 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 	function parseRowLayoutContent(&$row,$content)
 	{
-
-
 		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'layout.php');
-
 		$LayoutProc=new LayoutProcessor;
 		$LayoutProc->Model=$this;
-
 		$LayoutProc->advancedtagprocessor=false;
-
-
 		$LayoutProc->layout=$content;
-		return $LayoutProc->fillLayout($row,'','');
-
+		$content=$LayoutProc->fillLayout($row,'','');
+		$LayoutProc->applyContentPlugins($content);
+		return $content;
 	}
 
 	function sendEmailNote($listing_id,$emails,$new_username,$new_password)
 	{
-		
-		
 		$mainframe = JFactory::getApplication('site');
-
 		$row=$this->getListingRowByID($listing_id);
-		$parsed_emails=$this->parseRowLayoutContent($row,$emails);
-
 		//Prepare Email List
 
-		$emails_raw=JoomlaBasicMisc::csv_explode(',', $parsed_emails, '"', true);
+		$emails_raw=JoomlaBasicMisc::csv_explode(',', $emails, '"', true);
 
 		$emails=array();
 		foreach($emails_raw as $SendToEmail)
 		{
 			$EmailPair=JoomlaBasicMisc::csv_explode(':', trim($SendToEmail), '"', false);
-			$EmailTo=$this->resolveEmail(trim($EmailPair[0]),$row);
+			
+			$EmailTo=$this->parseRowLayoutContent($row,trim($EmailPair[0]));
 			$Subject='Record added to "'.$this->tabletitle.'"';
+
 
 			if(isset($EmailPair[1]))
 			{
 				if($EmailPair[1]!='')
 				{
-
-					$Subject=$EmailPair[1];
+					$Subject=$this->parseRowLayoutContent($row,$EmailPair[1]);
 				}
 			}
 
@@ -1738,7 +1732,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		
 		return $status;
 	}
-
+/*
 	function resolveEmail($email,&$row)
 	{
 
@@ -1760,7 +1754,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		}
 		return '';
 	}
-
+*/
 
 
 
