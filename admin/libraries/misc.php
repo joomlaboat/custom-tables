@@ -452,9 +452,9 @@ class JoomlaBasicMisc
 			do{
 
 				$count++;
-				if($count>100)
+				if($count>1000)
 				{
-					echo 'count>100';
+					echo 'count>1000';
 					die;
 				}
 
