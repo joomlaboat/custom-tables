@@ -1718,56 +1718,21 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 			$sent = $mail->Send();
 
-			if($sent)
-			{
-				JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_EMAIL_SENT_TO').': '.$EmailTo.' ('.$Subject.')');
-				$status=1;
-			}
-			else
-			{
+			if ( $sent !== true ) {
+				echo 'Something went wrong. Email not sent.';
+				print_r($sent);
+				die;
 				JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_SENDING_EMAIL').': '.$EmailTo.' ('.$Subject.')', 'error');
 				$status=0;
+			}
+			else{
+				JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_EMAIL_SENT_TO').': '.$EmailTo.' ('.$Subject.')');
+				$status=1;
 			}
 		}
 		
 		return $status;
 	}
-/*
-	function resolveEmail($email,&$row)
-	{
-
-		if(strpos($email,'[')===false)
-			return $email;
-
-
-		foreach($this->esfields as $esfield)
-		{
-			$email=str_replace('[','',$email);
-			$email=str_replace(']','',$email);
-
-
-			if($esfield['fieldname']==$email)
-			{
-
-				return $row['es_'.$email];
-			}
-		}
-		return '';
-	}
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	function setPublishStatus($status)
 	{
