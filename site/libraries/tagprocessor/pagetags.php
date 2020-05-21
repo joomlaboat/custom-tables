@@ -94,7 +94,7 @@ class tagProcessor_Page
 
     				$alt='Save as '.strtoupper($format);
     				//add image anchor link
-    				$vlu='<a href="'.$link.'"><img src="'.$image.'" alt="'.$alt.'" title="'.$alt.'" width="'.$imagesize.'" height="'.$imagesize.'"></a>';
+    				$vlu='<a href="'.$link.'" target="_blank"><img src="'.$image.'" alt="'.$alt.'" title="'.$alt.'" width="'.$imagesize.'" height="'.$imagesize.'"></a>';
     			}
     			elseif($value=='_value')
     			{

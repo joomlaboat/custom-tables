@@ -65,16 +65,19 @@ trait render_csv
 		ob_start();
         header('Content-Disposition: attachment; filename="'.$filename.'"');
         header('Content-Type: text/csv; charset=utf-8');
-		header('Content-Type: text/plain; charset=utf-8');
+		//header('Content-Type: text/plain; charset=utf-8');
         header("Pragma: no-cache");
         header("Expires: 0");
 
 		//Output first chunk
 		echo self::renderCSVoutput($Model,$SearchResult);
-		ob_flush();
-
+		
 		if($Model->TotalRows>$Model->limitstart+$Model->limit)
 		{
+			flush();
+			ob_flush();//flush to not force the browser to wait
+			ob_start();
+			
 			for($limitstart=$Model->limitstart+$Model->limit;$limitstart<$Model->TotalRows;$limitstart+=$Model->limit)
 			{
 				$Model->limitstart=$limitstart;
@@ -84,7 +87,9 @@ trait render_csv
 				
 				echo "\r\n";//new line
 				echo self::renderCSVoutput($Model,$SearchResult);//output next chunk
+				flush();
 				ob_flush();//flush to not force the browser to wait
+				ob_start();
 			}
 		}
 
