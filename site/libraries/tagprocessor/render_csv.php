@@ -46,7 +46,7 @@ trait render_csv
 		}
 
         $recordline.='"'.implode('","',$line_fields).'"';
-		$result.='"'.implode('","',$header_fields).'"'."\r\n";
+		$result.='"'.implode('","',$header_fields).'"';//."\r\n";
 
         //Parse Header
         $Model->LayoutProc->layout=$result;
@@ -68,10 +68,17 @@ trait render_csv
 		//header('Content-Type: text/plain; charset=utf-8');
         header("Pragma: no-cache");
         header("Expires: 0");
-
-		//Output first chunk
-		echo self::renderCSVoutput($Model,$SearchResult);
 		
+		echo chr(255).chr(254).mb_convert_encoding($result, 'UTF-16LE', 'UTF-8');
+		
+		//Output first chunk
+		
+		flush();
+		ob_flush();//flush to not force the browser to wait
+		ob_start();
+			
+		echo self::renderCSVoutput($Model,$SearchResult);
+				
 		if($Model->TotalRows>$Model->limitstart+$Model->limit)
 		{
 			flush();
@@ -85,14 +92,12 @@ trait render_csv
 				if(count($SearchResult)==0)
 					break;//no records left - escape
 				
-				echo "\r\n";//new line
 				echo self::renderCSVoutput($Model,$SearchResult);//output next chunk
 				flush();
 				ob_flush();//flush to not force the browser to wait
 				ob_start();
 			}
 		}
-
         die;//clean exit
         //no return here
     }
@@ -103,14 +108,11 @@ trait render_csv
 		$tablecontent='';
 		foreach($SearchResult as $row)
 		{
-				$Model->LayoutProc->number=$number;
+			$Model->LayoutProc->number=$number;
 
-                if($tablecontent!="")
-                    $tablecontent.="\r\n";
-
-                $content=tagProcessor_Item::RenderResultLine($Model,$row,false);
-		        $tablecontent.=strip_tags($content);
-				$number++;
+            $content=strip_tags(tagProcessor_Item::RenderResultLine($Model,$row,false));
+	        $tablecontent.=mb_convert_encoding("\r\n".$content, 'UTF-16LE', 'UTF-8');
+			$number++;
 		}
         return $tablecontent;
 	}
