@@ -57,6 +57,30 @@ trait render_csv
 		$number=1+$Model->limitstart; //table row number, it maybe use in the layout as {number}
 		$Model->LayoutProc->layout=$recordline;
 
+		//Initiate the file output
+		$filename = JoomlaBasicMisc::makeNewFileName($Model->params->get('page_title'),'csv');
+
+            if (ob_get_contents())
+            	ob_end_clean();
+
+            //header('Content-Disposition: attachment; filename="'.$filename.'"'); temporary, later should stay
+            //header('Content-Type: text/csv; charset=utf-8');
+			header('Content-Type: text/plain; charset=utf-8');
+            header("Pragma: no-cache");
+            header("Expires: 0");
+
+            //echo chr(255).chr(254);
+			
+			print_r($Model);
+
+         die ;//clean exit
+		
+
+
+///---------------------
+//$SearchResult=$this->Model->getSearchResult();
+//-------------------------------
+
         $tablecontent='';
 		foreach($SearchResult as $row)
 		{

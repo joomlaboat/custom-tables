@@ -844,10 +844,18 @@ class JoomlaBasicMisc
 		// If you don't need to handle multi-byte characters
 		// you can use preg_replace rather than mb_ereg_replace
 		// Thanks @Łukasz Rysiak!
-		$filename = mb_ereg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '', $filename);
-		// Remove any runs of periods (thanks falstro!)
-
-		$filename = mb_ereg_replace("([\.]{2,})", '', $filename);
+		if(function_exists('mb_ereg_replace'))
+		{
+			$filename = mb_ereg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '', $filename);
+			// Remove any runs of periods (thanks falstro!)
+			$filename = mb_ereg_replace("([\.]{2,})", '', $filename);
+		}
+		else
+		{
+			$filename = preg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '', $filename);
+			// Remove any runs of periods (thanks falstro!)
+			$filename = preg_replace("([\.]{2,})", '', $filename);
+		}
 
 		if($format!='')
 			$filename.='.'.$format;
