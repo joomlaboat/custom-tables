@@ -77,8 +77,8 @@ class CustomTablesModelCatalog extends JModelLegacy
 		
 		var $shownavigation;
 
+		var $limit;
 		var $limitstart;
-
 		var $recordlist;
 
 
@@ -313,6 +313,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 						if((int)$this->params->get( 'limit' )>0)
 						{
 							$limit=(int)$this->params->get( 'limit' );
+							$this->limit=$limit;
 							$this->setState('limit', $limit);
 							$this->limitstart = JFactory::getApplication()->input->get('start',0,'INT');
 							$this->limitstart = ($limit != 0 ? (floor($this->limitstart / $limit) * $limit) : 0);
@@ -320,6 +321,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 						else
 						{
 							$this->setState('limit', 0);
+							$this->limit=0;
 							$this->limitstart=0;
 						}
 
@@ -332,13 +334,14 @@ class CustomTablesModelCatalog extends JModelLegacy
 								if((int)$this->params->get( 'limit' )>0)
 								{
 										$limit=(int)$this->params->get( 'limit' );
+										$this->limit=$limit;
 
 										$this->setState('limit', $limit);
 								}
 								else
 								{
 										$limit = $mainframe->getUserStateFromRequest('global.list.limit', 'limit', $mainframe->getCfg('list_limit'), 'int');
-
+										$this->limit=$limit;
 										$this->setState('limit', $limit);
 
 
@@ -752,11 +755,13 @@ class CustomTablesModelCatalog extends JModelLegacy
 				{
 						$the_limit=20000;
 				}
+				
+				$this->limit=$the_limit;
 
-				if(!$this->blockExternalVars  and $the_limit!=0)
+				if(!$this->blockExternalVars and $the_limit!=0)
 				{
-						if($this->TotalRows<$this->limitstart or $this->TotalRows<$the_limit)
-										$this->limitstart=0;
+					if($this->TotalRows<$this->limitstart or $this->TotalRows<$the_limit)
+						$this->limitstart=0;
 
 								$db->setQuery($query, $this->limitstart, $the_limit);
 								if (!$db->query())    die ;
