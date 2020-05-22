@@ -1,5 +1,5 @@
 # Custom Tables
-Custom Tables for Joomla. Add Tables, Fields, Layouts to create a catalog, edit form or details page.
+Custom Tables for Joomla. Allows you to sdd Tables, Fields and Layouts/pages to create a catalog, edit form or details page.
 Has 40 Field Types like Integer, Decimal, Text String, Date, Time, Email, Color, Image, File, Table Join, User, Language, etc.
 Edit Form Input boxes depend on the field type, Date field type will show a calendar, Color - Color Picker, Image - Image Uploader, etc.
 Tables can be connected using Table Join field type (LEFT JOIN).
