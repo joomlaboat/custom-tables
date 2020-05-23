@@ -42,44 +42,43 @@ class ESFileUploader
 
 		if($proversion)
 		{
-			//This will let PRO version user to upload zip files, please note that it will check if the file is zip or not (mime type).
+			//This will let PRO version users to upload zip files, please note that it will check if the file is zip or not (mime type).
 			//If not then regular Joomla input method will be used
 
 			if(!isset($_FILES[$fileid]))
 			{
-						require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'
-									 .DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'importcsv.php');
+				require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'
+				 .DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'importcsv.php');
 						
 				return  json_encode(['error'=>'Failed to open file.']);
 			}
-			
+
 			$file=$_FILES[$fileid];
 			if($file==null)
 				return  json_encode(['error'=>'File is empty.']);
-			$mime=mime_content_type ($file["tmp_name"]);
+			
+			$mime=mime_content_type ($file["tmp_name"]);//read mime typw
 
-			if($mime!='application/zip')
+			if($mime!='application/zip')//if not zip file
 			{
 				$file=$jinput->files->get($fileid); //not zip -  regular Joomla input method will be used
-				if($file==null)
+				
+				if(!is_array($file) or count($file)==0) //regular joomla imput method blocked custom table structure json file, because it may contain javascript
 				{
-					$file=$_FILES[$fileid];
-					$magicnumber='<customtablestableexport>';
+					$file=$_FILES[$fileid];//get file instance using php method - not safe, but we will validate it later
+					
+					$handle = fopen($file["tmp_name"], "rb");
+					if (FALSE === $handle)
+						return  json_encode(['error'=>'Failed to open file.']);
+					
+					$magicnumber='<customtablestableexport>';//to prove that this is Custom Tables Structure JSON file.
 					$l=strlen($magicnumber);
 					$file_content=fread($handle, $l);
 					fclose($handle);
 
-
-
-					$handle = fopen($file["tmp_name"], "rb");
-					if (FALSE === $handle)
-						return  json_encode(['error'=>'Failed to open file.']);
-
-
-
-
 					if($mime=='text/plain' and $file_content==$magicnumber)
 					{
+						//All good
 						//This is Custom Tables structure import file
 					}
 					else

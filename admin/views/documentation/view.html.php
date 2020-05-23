@@ -1,16 +1,11 @@
 <?php
-/*-------------------------------------------------------------------------------------------------------/
-
-	@version		1.3.0
-	@build			19th July, 2018
-	@created		28th May, 2019
-	@package		Custom Tables
-	@subpackage		view.html.php
-	@author			Ivan Komlev <https://joomlaboat.com>
-	@copyright		Copyright (C) 2018-2019. All Rights Reserved
-	@license		GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
-/------------------------------------------------------------------------------------------------------*/
-
+/**
+ * CustomTables Joomla! 3.x Native Component
+ * @author JoomlaBoat.com <support@joomlaboat.com>
+ * @link http://www.joomlaboat.com
+ * @license GNU/GPL
+ **/
+ 
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
@@ -30,6 +25,7 @@ class CustomtablesViewDocumentation extends JViewLegacy
 	
 	public function display($tpl = null)
 	{
+		$this->internal_use=true;
 
 		if ($this->getLayout() !== 'modal')
 		{
@@ -99,7 +95,7 @@ class CustomtablesViewDocumentation extends JViewLegacy
 	
 	function getFieldTypes()
 	{
-		$xml=$this->getXMLData('fieldtypes_130.xml');
+		$xml=$this->getXMLData('fieldtypes_156.xml');
 		if(count($xml)==0 or !isset($xml->type))
 			return '';
 

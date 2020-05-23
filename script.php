@@ -141,6 +141,7 @@ class com_customtablesInstallerScript
 				<h3>Upgrade was Successful!</h3>';
 		}
 
+/*
 		$file=JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'sql'.DIRECTORY_SEPARATOR.'_es2ct.php';
 
 		if(file_exists($file))
@@ -148,7 +149,7 @@ class com_customtablesInstallerScript
 			echo 'Updating Extrasearch Tables';
 			require_once($file);
 			updateESTables();
-		}
+		}*/
 
 		if(!file_exists(JPATH_SITE.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'ct_images'))
 				mkdir(JPATH_SITE.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'ct_images');
