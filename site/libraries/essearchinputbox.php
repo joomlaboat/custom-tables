@@ -182,7 +182,7 @@ class ESSerachInputBox
 
 							$typeparams=JoomlaBasicMisc::csv_explode(',',$esfield['typeparams'],'"',false);
 							$result.=JHTML::_('ESSQLJoin.render',$typeparams,$value,true,$this->langpostfix,$objname_,$esfield['fieldtitle'].$this->langpostfix,
-											  $cssclass.' inputbox es_class_sqljoin', $onchange);
+											  $cssclass.' inputbox es_class_sqljoin', $onchange,true);
 
 		return $result;
 	}

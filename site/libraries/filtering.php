@@ -490,6 +490,8 @@ class ESFiltering
 																	$ivLnew=(int)$vLnew;
 																	if($ivLnew==0)
 																		$cArr[]='('.$esr_table_full.'.es_'.$whr[0].'='.(int)$vLnew.' OR '.$esr_table_full.'.es_'.$whr[0].' IS NULL)';
+																	elseif($ivLnew==-1)
+																		$cArr[]='('.$esr_table_full.'.es_'.$whr[0].' IS NULL OR '.$esr_table_full.'.es_'.$whr[0].'=0)';
 																	else
 																		$cArr[]=$esr_table_full.'.es_'.$whr[0].'='.(int)$vLnew;
 
