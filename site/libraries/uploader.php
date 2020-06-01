@@ -304,7 +304,6 @@ class ESFileUploader
         'json' => 'application/json',
         'xml' => 'application/xml',
         'swf' => 'application/x-shockwave-flash',
-        'flv' => 'video/x-flv',
 
         // images
         'png' => 'image/png',
@@ -321,16 +320,34 @@ class ESFileUploader
 
         // archives
         'zip' => 'application/zip',
-        'rar' => 'application/x-rar-compressed',
-        'exe' => 'application/x-msdownload',
-        'msi' => 'application/x-msdownload',
-        'cab' => 'application/vnd.ms-cab-compressed',
+        'rar' => 'application/x-rar-compressed', //not allowed
+        'exe' => 'application/x-msdownload', //not allowed
+        'msi' => 'application/x-msdownload', //not allowed
+        'cab' => 'application/vnd.ms-cab-compressed', //not allowed
 
-        // audio/video
+        // audio
         'mp3' => 'audio/mpeg',
+		'flac' => 'audio/flac',
+		'aac' => 'audio/aac',
+		'wav' => 'audio/wav',
+		'ogg' => 'audio/ogg',
+
+		// video
+		'mp4' => 'video/mp4',
+		'm4a' => 'video/mp4',
+		'm4p' => 'video/mp4',
+		'm4b' => 'video/mp4',
+		'm4r' => 'video/mp4',
+		'm4v' => 'video/mp4',
+		'flv' => 'video/x-flv',
         'qt' => 'video/quicktime',
         'mov' => 'video/quicktime',
-
+		'3gp' => 'video/3gpp',
+		'avi' => 'video/x-msvideo',
+		'mpg' => 'video/mpeg',
+		'wmv' => 'video/x-ms-wmv',
+		'swf' => 'application/x-shockwave-flash',
+		
         // adobe
         'pdf' => 'application/pdf',
         'psd' => 'image/vnd.adobe.photoshop',
@@ -404,7 +421,12 @@ class ESFileUploader
     {
         $pair=explode(',',$typeparams);
 
-        $allowedExtensions='doc docx pdf txt xls xlsx psd ppt pptx mp3 wav ogg jpg bmp ico odg odp ods odt swf xcf jpeg png gif svg ai aac m4a wma flv mpg wmv mov flac txt avi csv accdb zip';
+        $allowedExtensions='doc docx pdf txt xls xlsx psd ppt pptx odg odp ods odt'
+		.' xcf ai txt avi csv accdb'
+		.' jpg bmp ico jpeg png gif svg ai'//Images
+		.' zip'//Archive
+		.' aac flac mp3 wav ogg'//Audio
+		.' mp4 m4a m4p m4b m4r m4v wma flv mpg 3gp wmv mov swf';//Video
 
 		$allowedExts=explode(' ',$allowedExtensions);
 		$file_formats=array();
