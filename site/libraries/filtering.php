@@ -29,7 +29,7 @@ class ESFiltering
 				$this->es= new CustomTablesMisc;
 				$where='';
 				$items=$this->ExplodeSmartParams($param);
-
+				
 				foreach($items as $item)
 				{
 						if($item[0]=='or' or $item[0]=='and')
@@ -426,8 +426,6 @@ class ESFiltering
 														break;
 												case 'sqljoin':
 
-
-
 														if($opr=='==')
 															$opr='=';
 
@@ -494,6 +492,8 @@ class ESFiltering
 																		$cArr[]='('.$esr_table_full.'.es_'.$whr[0].' IS NULL OR '.$esr_table_full.'.es_'.$whr[0].'=0)';
 																	else
 																		$cArr[]=$esr_table_full.'.es_'.$whr[0].'='.(int)$vLnew;
+																	
+																	
 
 
 																	$PathValue[]=$fieldrow['fieldtitle'
@@ -505,7 +505,7 @@ class ESFiltering
 																}
 															}
 														}
-
+														
 														if(count($cArr)==1)
 																$c=$cArr[0];
 														elseif(count($cArr)>1)

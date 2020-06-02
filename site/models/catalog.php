@@ -40,8 +40,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 		var $establename;
 		var $tablerow;
 		var $estableid;
-		//var $establetitle;
-		//var $establedescription;
+
 		var $esfields;
 		var $tablecustomphp;
 		var $LanguageList;
@@ -224,14 +223,6 @@ class CustomTablesModelCatalog extends JModelLegacy
 
 				$this->columns=0;//2(int)$this->params->get('columns');
 
-
-
-				//image misc
-
-				//$this->imagefolderweb='images/esimages';
-				//$this->imagefolder=JPATH_SITE.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'esimages';
-				//$this->imagegalleryprefix='g';
-
 				//Language
 
 				$this->LangMisc	= new ESLanguages;
@@ -241,21 +232,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 				//ExtreSearch Table staff
 				$this->esTable=new ESTables;
 
-/*
-				if($this->blockExternalVars)
-				{
-
-					$this->establename=$this->params->get( 'establename' );
-				}
-				else
-				{
-*/
-//					if(JFactory::getApplication()->input->get('establename','','CMD'))
-//						$this->establename=JFactory::getApplication()->input->get('establename','','CMD');
-//					else
 				$this->establename=$this->params->get( 'establename' );
-//				}
-
 
 				if($this->establename=='')
 				{
@@ -266,8 +243,6 @@ class CustomTablesModelCatalog extends JModelLegacy
 
 				$this->tablerow = $this->esTable->getTableRowByNameAssoc($this->establename);
 				$this->estableid=$this->tablerow['id'];
-				//$this->establetitle=$this->tablerow['tabletitle'.$this->langpostfix];
-				//$this->establedescription=$this->tablerow['description'.$this->langpostfix];
 
 				$this->tablecustomphp=$this->tablerow['customphp'];
 
@@ -451,15 +426,10 @@ class CustomTablesModelCatalog extends JModelLegacy
 		}
 
 
-
-
-
-
-
 		function getOrderBox()//$SelectedCategory
 		{
 				$result='<select name="esordering" id="esordering" onChange="this.form.submit()" class="inputbox">
-		';
+';
 
 				for($i=0;$i<count($this->order_values);$i++)
 				{
@@ -1104,8 +1074,6 @@ class CustomTablesModelCatalog extends JModelLegacy
 								}//elseif($esfield[type]=='imagegallery')
 						}//foreach($this->esfields as $esfield)
 
-
-
 						$query='DELETE FROM #__customtables_table_'.$this->establename.' WHERE id='.$objectid;
 						$db->setQuery($query);
 						if (!$db->query())    die ;
@@ -1133,13 +1101,8 @@ class CustomTablesModelCatalog extends JModelLegacy
 			return true;
 		}
 
-
-
-
-
 		function CleanUpPath($thePath)
 		{
-
 				$newPath=array();
 				if(count($thePath)==0)
 						return $newPath;
@@ -1164,13 +1127,11 @@ class CustomTablesModelCatalog extends JModelLegacy
 
 								if(!$found)
 										$newPath[]=$item;
-
 						}
 				}
 
 				return array_reverse ($newPath);
 		}
-
 
 		function FindItemidbyAlias($alias)
 		{
@@ -1186,8 +1147,4 @@ class CustomTablesModelCatalog extends JModelLegacy
 			$r=$recs[0];
 			return $r['id'];
 		}
-
-
-
-
 }
