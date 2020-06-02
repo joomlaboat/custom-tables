@@ -184,12 +184,14 @@ class ESFileUploader
 						require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'
 									 .DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'importcsv.php');
 						
+						
 						move_uploaded_file($file["tmp_name"],$newFileName);
 						$msg=importCSVfile($newFileName, $jinput->getInt('tableid',0));
 						if($msg!='' and $msg!='success')
 							$ret = ['error'=>$msg];
 						else
 							$ret = ['status'=>'success','filename'=>'ct_'.$t.'_'.$fileid.'_'.$fileName];
+
 					}
 					else
 					{
