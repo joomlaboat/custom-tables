@@ -2,6 +2,10 @@
 
 [![GitHub stars](https://img.shields.io/github/stars/joomlaboat/custom-tables.svg?style=social&label=Star&maxAge=2592000)](https://GitHub.com/joomlaboat/custom-tables/stargazers/)
 
+
+[![GitHub issues](https://img.shields.io/github/issues/joomlaboat/custom-tables.svg)](https://GitHub.com/joomlaboat/custom-tables/issues/)
+
+
 Custom Tables for Joomla. Allows you to add Tables, Fields and Layouts/Pages to create a catalog, edit form or details page.
 It has 40 Field Types like Integer, Decimal, Text String, Date, Time, Email, Color, Image, File, Table Join, User, Language, etc.
 Edit Form Input boxes depend on the field type, Date field type will show a calendar, Color - Color Picker, Image - Image Uploader, etc.
