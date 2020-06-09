@@ -3,7 +3,7 @@
 [![GitHub stars](https://img.shields.io/github/stars/joomlaboat/custom-tables.svg?style=social&label=Star&maxAge=2592000)](https://GitHub.com/joomlaboat/custom-tables/stargazers/)
 
 
-[![GitHub issues](https://img.shields.io/github/issues/joomlaboat/custom-tables.svg)](https://GitHub.com/joomlaboat/custom-tables/issues/) [![HitCount](http://hits.dwyl.io/custom-tables/badges.svg)](http://hits.dwyl.io/custom-tables/badges)
+[![GitHub issues](https://img.shields.io/github/issues/joomlaboat/custom-tables.svg)](https://GitHub.com/joomlaboat/custom-tables/issues/)
 
 
 Custom Tables for Joomla. Allows you to add Tables, Fields and Layouts/Pages to create a catalog, edit form or details page.
