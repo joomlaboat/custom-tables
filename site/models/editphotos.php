@@ -61,7 +61,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy {
 	{
 		$params = JComponentHelper::getParams( 'com_customtables' );
 
-		$this->maxfilesize=10000000;
+		$this->maxfilesize=JoomlaBasicMisc::file_upload_max_size();
 
 		$this->imagefolderword='esimages';
 		$this->imagefolderweb='images/esimages';
@@ -314,7 +314,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy {
 
 		//Check file
 		
-		if(!$this->imagemethods->CheckImage($uploadedfile,30000000))//$this->maxfilesize
+		if(!$this->imagemethods->CheckImage($uploadedfile,JoomlaBasicMisc::file_upload_max_size()))//$this->maxfilesize
 		{
 			JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_BROKEN_IMAGE'), 'error');
 			unlink($uploadedfile);

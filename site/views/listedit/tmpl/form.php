@@ -10,6 +10,7 @@ defined('_JEXEC') or die('Restricted access');
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'misc.php');
 JHTML::addIncludePath(JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'helpers');
 
+$max_file_size=JoomlaBasicMisc::file_upload_max_size();
 ?>
 
 
@@ -139,7 +140,7 @@ JHTML::addIncludePath(JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIREC
 						<?php
 							echo JHTML::_('ESOptions.options', $this->row->id, 'parentid',$this->optionRecord->parentid);
 						?>
-																								  
+
 					</td>
 				</tr>
 				
@@ -178,12 +179,12 @@ JHTML::addIncludePath(JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIREC
 		
 		<tr>
 			<td valign="top">
-				<input type="hidden" name="MAX_FILE_SIZE" value="3000000" />
+				<input type="hidden" name="MAX_FILE_SIZE" value="<?php echo $max_file_size; ?>" />
 				<input name="imagefile" type="file" />
 				<BR><BR>
 				<?php echo JoomlaBasicMisc::JTextExtended( "MIN SIZE" ); ?>: 10px x 10px<br/>
 				<?php echo JoomlaBasicMisc::JTextExtended( "MAX SIZE" ); ?>: 1000px x 1000px<br/>
-				<?php echo JoomlaBasicMisc::JTextExtended( "MAX FILE" ); ?>: 2.0mb<br/>
+				<?php echo JoomlaBasicMisc::JTextExtended( "COM_CUSTOMTABLES_PERMITED_MAX_FILE_SIZE" ).': '.JoomlaBasicMisc::formatSizeUnits($max_file_size); ?><br/>
 				<?php echo JoomlaBasicMisc::JTextExtended( "FORMAT" ); ?>: JPEG, GIF, PNG
 
 			</td>

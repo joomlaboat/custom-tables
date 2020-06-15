@@ -888,11 +888,6 @@ function ProportionalResize($src, $dst, $dst_width, $dst_height,$LevelMax, $over
 
 
 	$ms=$size[0]*$size [1]*4;
-	//if($ms>19000000) --- check this
-	//	return -1;
-
-
-
 
 	$width = $size[0];
 	$height = $size[1];
@@ -902,8 +897,6 @@ function ProportionalResize($src, $dst, $dst_width, $dst_height,$LevelMax, $over
 
 	if($dst_width==0)
 		$dst_width=floor($dst_height*($width/$height));
-
-
 
 
 	$rgb =$backgroundcolor;

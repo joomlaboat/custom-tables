@@ -162,7 +162,6 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.
 			
 			<td class="order" nowrap="nowrap">
 				<span><?php 
-//echo $row->parentid.'<br/>';
 echo $this->pagination->orderUpIcon( $i, $row->parentid == 0 || $row->parentid == @$rows[$i-1]->parentid, 'orderup', 'Move Up', $this->ordering); ?></span>
 				<span><?php echo $this->pagination->orderDownIcon( $i, $n, $row->parentid == 0 || $row->parentid == @$rows[$i+1]->parentid, 'orderdown', 'Move Down', $this->ordering ); ?></span>
 				

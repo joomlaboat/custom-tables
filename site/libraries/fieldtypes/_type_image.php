@@ -219,11 +219,13 @@ class CT_FieldTypeTag_image
 
     protected static function renderUploaderLimitations()
     {
+		$max_file_size=JoomlaBasicMisc::file_upload_max_size();
+		
             $result='
                 <div style="margin:10px; border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;vertical-align:top;">
 				'.JoomlaBasicMisc::JTextExtended( "MIN SIZE" ).': 10px x 10px<br/>
 				'.JoomlaBasicMisc::JTextExtended( "MAX SIZE" ).': 1000px x 1000px<br/>
-				'.JoomlaBasicMisc::JTextExtended( "MAX FILE" ).': 2.0mb<br/>
+				'.JoomlaBasicMisc::JTextExtended( "COM_CUSTOMTABLES_PERMITED_MAX_FILE_SIZE" ).': '.JoomlaBasicMisc::formatSizeUnits($max_file_size).'<br/>
 				'.JoomlaBasicMisc::JTextExtended( "FORMAT" ).': JPEG, GIF, PNG
 				</div>';
 

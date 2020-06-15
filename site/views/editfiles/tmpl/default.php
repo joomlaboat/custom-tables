@@ -9,7 +9,9 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'misc.php');    
+require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'misc.php');   
+
+	$max_file_size=JoomlaBasicMisc::file_upload_max_size(); 
 	$user = JFactory::getUser();
 	$userid = $user->get('id');
 		if((int)$userid==0)
@@ -130,13 +132,13 @@ function ShowAddFile()
 		<tr>
 			<td valign="top"><?php echo JoomlaBasicMisc::JTextExtended( "Upload File" ); ?>:<br/></td>
 			<td valign="top">
-				<input type="hidden" name="max File Size" value="23000000" />
+				<?php //<input type="hidden" name="max File Size" value="<?php echo $max_file_size;  ?>
 				<input name="uploadedfile" type="file" /><input type="button" class="button" value="Upload" onClick='this.form.task.value="add";this.form.submit()'>
 			</td>
 		</tr>
 		<tr>
 			<td colspan="2">
-				<?php echo JoomlaBasicMisc::JTextExtended( "Max File Size" ); ?>: <b>23.0mb</b><br/>
+				<?php echo JoomlaBasicMisc::JTextExtended( "COM_CUSTOMTABLES_PERMITED_MAX_FILE_SIZE" ).': '.JoomlaBasicMisc::formatSizeUnits($max_file_size); ?><br/>
 				<?php echo JoomlaBasicMisc::JTextExtended( "File Formats" ); ?>: <b><?php echo str_replace(' ',', ',$this->Model->allowedExtensions); ?></b>
 			</td>
 		</tr>

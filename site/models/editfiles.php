@@ -64,7 +64,7 @@ class CustomTablesModelEditFiles extends JModelLegacy {
 		$app		= JFactory::getApplication();
 		$params=$app->getParams();
 
-		$this->maxfilesize=100000000;
+		$this->maxfilesize=JoomlaBasicMisc::file_upload_max_size();
 
 
 		$this->es= new CustomTablesMisc;

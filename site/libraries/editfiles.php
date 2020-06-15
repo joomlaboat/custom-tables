@@ -46,8 +46,8 @@ class CustomTablesModelEditFiles extends JModelLegacy {
 		$this->allowedExtensions='gslides doc docx pdf txt xls xlsx psd ppt pptx png mp3 jpg jpeg accdb';
 
 		$params = JComponentHelper::getParams( 'com_customtables' );
-
-		$this->maxfilesize=100000000;
+		
+		$this->maxfilesize=$max_file_size=JoomlaBasicMisc::file_upload_max_size();
 
 		$this->es= new CustomTablesMisc;
 
