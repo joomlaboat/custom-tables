@@ -37,7 +37,6 @@ $document->addCustomTag('<script src="'.JURI::root(true).'/components/com_custom
 
 	echo '<p>This may import Table Structure from .txt (json encoded) file.</p>';
 
-    //<div class="esUploadFileBox" style="vertical-align:top;"></div>
 	echo '
 
     
@@ -64,6 +63,7 @@ $document->addCustomTag('<script src="'.JURI::root(true).'/components/com_custom
 	<input type="hidden" name="option" value="com_customtables" />
 	<!--<input type="hidden" name="controller" value="importtables" />-->
 	<input type="hidden" name="task" value="importtables.importtables" />
+'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PERMITED_MAX_FILE_SIZE').': '.JoomlaBasicMisc::formatSizeUnits($max_file_size).'
     '.JHtml::_('form.token').'
 	</form>
 	';

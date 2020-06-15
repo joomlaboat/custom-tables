@@ -326,8 +326,6 @@ class CT_FieldTypeTag_file
 	}
 
 
-
-
     static protected function getCleanAndAvailableFileName($filename,$FileFolder)
     {
 
@@ -461,16 +459,16 @@ class CT_FieldTypeTag_file
                     	ct_getUploader('.$fieldid.',urlstr,'.$max_file_size.',"'.$accepted_file_types.'","eseditForm",false,"ct_fileuploader_'.$esfieldname.'","ct_eventsmessage_'.$esfieldname.'","'.$fileid.'","'.$prefix.$esfieldname.'","ct_ubloadedfile_box_'.$esfieldname.'");
                     </script>
                     <input type="hidden" name="'.$prefix.$esfieldname.'" id="'.$prefix.$esfieldname.'" value="" />
-                    '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PERMITED_FILE_TYPES').': '.$accepted_file_types.'
+                    '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PERMITED_FILE_TYPES').': '.$accepted_file_types.'<br/>
+					'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PERMITED_MAX_FILE_SIZE').': '.JoomlaBasicMisc::formatSizeUnits($max_file_size).'
                 </div>
                 ';
 
         return $result;
 
     }
-
-
-    public static function getFileFolder($typeparams)
+	
+	public static function getFileFolder($typeparams)
     {
 
         $folder='';

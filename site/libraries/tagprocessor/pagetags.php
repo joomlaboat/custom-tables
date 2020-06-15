@@ -230,6 +230,7 @@ JHtml::_('behavior.formvalidator');
                         .$prefix.$objectname.'","ct_uploadedfile_box_'.$objectname.'");
                     </script>
                     <input type="hidden" name="'.$prefix.$objectname.'" id="'.$prefix.$objectname.'" value="" />
+			'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PERMITED_MAX_FILE_SIZE').': '.JoomlaBasicMisc::formatSizeUnits($max_file_size).'
                     </form>
                 </div>
                 ';

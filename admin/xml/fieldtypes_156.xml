@@ -381,7 +381,7 @@
 
 	<type ct_name="file" label="File" description="Provides File Upload functionality." priority="2" helplink="https://joomlaboat.com/custom-tables-documentation/33-field-types">
 		<params>
-			<param name="size" label="Max File Size" example="8" description="Maximum file size that can be uploaded to the server (in megabytes). Note: check your PHP settings as well." default="" type="int" min="1" max="1000" />
+			<param name="size" label="Max File Size" example="8" description="Obsolete. The max. upload file size is taken from PHP.ini file. No need to specify anything." default="" type="int" min="1" max="1000" />
 			<param name="folder" label="Folder" example="/images/user_files" description="Folder where all the files will be kept. By default /images" default="" type="folder" />
 			<param name="filetypes" label="File Types" example="doc docx" description="List of acceptable file types (list separated by space)" default="doc docx xls xlsx pdf pages ppt pptx" type="string" />
 			<param name="saveas" label="Save As File Name" description="Specify the name of a newly uploaded file. You may use field tags [fieldname]" default="" type="string" />

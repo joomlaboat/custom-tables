@@ -264,6 +264,7 @@ class CT_FieldTypeTag_image
 
                     </script>
                     <input type="hidden" name="'.$prefix.$esfieldname.'" id="'.$prefix.$esfieldname.'" value=""'.($esfield['isrequired'] ? ' class="required"' : '').' />
+			'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PERMITED_MAX_FILE_SIZE').': '.JoomlaBasicMisc::formatSizeUnits($max_file_size).'
                 </div>
                 ';
 

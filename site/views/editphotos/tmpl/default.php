@@ -13,6 +13,7 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.
  $document = JFactory::getDocument();
  $document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/js/imagegallery.js"></script>');
 
+$max_file_size=JoomlaBasicMisc::file_upload_max_size();
 
  $jinput = JFactory::getApplication()->input;
 
@@ -77,7 +78,7 @@ var idList = [<?php echo implode(',',$idList) ?>];
 		<tr>
 			<td valign="top"><?php echo JoomlaBasicMisc::JTextExtended( "COM_CUSTOMTABLES_UPLOAD_PHOTO" ); ?>:<br/></td>
 			<td valign="top">
-				<input type="hidden" name="MAX_FILE_SIZE" value="20000000" />
+				<input type="hidden" name="MAX_FILE_SIZE" value="<?php echo $max_file_size; ?>" />
 				<input name="uploadedfile" type="file" /><input type="button" class="button" value="<?php echo JoomlaBasicMisc::JTextExtended( "COM_CUSTOMTABLES_UPLOAD_PHOTO" ); ?>" onClick='this.form.task.value="add";this.form.submit()'>
 			</td>
 		</tr>
@@ -85,7 +86,7 @@ var idList = [<?php echo implode(',',$idList) ?>];
 			<td colspan="2">
 				<?php echo JoomlaBasicMisc::JTextExtended( "COM_CUSTOMTABLES_MIN_SIZE" ); ?>: 90px x 90px<br/>
 				<?php echo JoomlaBasicMisc::JTextExtended( "COM_CUSTOMTABLES_MAX_SIZE" ); ?>: 1000px x 1000px<br/>
-				<?php echo JoomlaBasicMisc::JTextExtended( "COM_CUSTOMTABLES_MAX_FILE_SIZE" ); ?>: 2.0mb<br/>
+				<?php echo JoomlaBasicMisc::JTextExtended( "COM_CUSTOMTABLES_PERMITED_MAX_FILE_SIZE" ).': '.JoomlaBasicMisc::formatSizeUnits($max_file_size); ?><br/>
 				<?php echo JoomlaBasicMisc::JTextExtended( "COM_CUSTOMTABLES_FORMAT" ); ?>: JPEG, GIF, PNG
 			</td>
 		</tr>
