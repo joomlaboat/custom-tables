@@ -251,6 +251,17 @@
 			</params>
 		</editparams>
 </type>
+
+<type ct_name="url" label="URL / Link" description="URL / Link to some website. Must start with http:// or https:// " priority="1">
+			<params>
+				<param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)." />
+				<param type="radio" name="httpsonly" label="HTTPS Only" description="Allow only secure URL links" default="" options="|No,true|Yes" />
+				<param type="string" name="mustincludedomainname" label="Domain Name" description="Must include following domain name, separate domain names with the comma. Example: youtube.com,youtu.be" />
+				<param type="radio" name="allowquery" label="Allow Query Parameters" description="Allow the URL links include query parameters like ?param1=blahblahblah" default="" options="|Yes,false|No" />
+			</params>
+</type>
+
+
 	<type ct_name="date" label="Date" description="Date Picker" priority="1">
 		<valueparams name="date" label="Date Format" description="This dictates how to format the date value of the field.">
 			<params>

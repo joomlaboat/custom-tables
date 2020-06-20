@@ -250,6 +250,10 @@ class ESFiltering
 
 														$c=$this->Search_String($whr, $PathValue, $fieldrow,$opr);
 														break;
+												case 'url':
+
+														$c=$this->Search_String($whr, $PathValue, $fieldrow,$opr);
+														break;
 
 												case 'date':
 

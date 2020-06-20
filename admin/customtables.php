@@ -23,11 +23,6 @@ JLoader::registerPrefix('J', JPATH_PLATFORM . '/cms');
 // Load joomla libraries without overwrite
 JLoader::registerPrefix('J', JPATH_PLATFORM . '/joomla',false);
 
-// Add CSS file for all pages
-$document = JFactory::getDocument();
-$document->addStyleSheet(JURI::root(true).'/administrator/components/com_customtables/assets/css/admin.css');
-$document->addScript(JURI::root(true).'/administrator/components/com_customtables/assets/js/admin.js');
-
 // require helper files
 JLoader::register('CustomtablesHelper', dirname(__FILE__) . '/helpers/customtables.php');
 JLoader::register('JHtmlBatch_', dirname(__FILE__) . '/helpers/html/batch_.php');

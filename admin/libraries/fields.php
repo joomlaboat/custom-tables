@@ -362,17 +362,18 @@ class ESFields
 				return 'varchar(255) NULL';
 				break;
 
+			case 'url':
+				return 'varchar(1024) NULL';
+				break;
+
+
 			case 'date':
 				return 'date NULL';
 				break;
             
-            case 'time':
+		        case 'time':
 				return 'int(11) NULL';
 				break;
-
-			//case 'published':
-				//return 'tinyint(1)';
-				//break;
 
 			case 'creationtime':
 				return 'datetime NULL';

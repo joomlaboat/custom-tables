@@ -315,7 +315,7 @@ class tagProcessor_General
 						$vlu=$user_row->email;
 						break;
 
-                    case 'id':
+					case 'id':
 						$vlu=$id;
 						break;
 

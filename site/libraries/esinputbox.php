@@ -633,7 +633,19 @@ class ESInputBox
 									.'name="'.$prefix.$esfield['fieldname'].'" '
 									.'id="'.$prefix.$esfield['fieldname'].'" '
 									.'class="'.$class.'" '
-									.'value="'.$value.'" '.((int)$esfield['typeparams']>0 ? 'maxlength="'.(int)$esfield['typeparams'].'"' : 'maxlength="255"')
+									.'value="'.$value.'" maxlength="255"'
+									.' '.$attributes.' '
+									.' />';
+
+						break;
+
+						case 'url';
+								$result.='<input '
+									.'type="text" '
+									.'name="'.$prefix.$esfield['fieldname'].'" '
+									.'id="'.$prefix.$esfield['fieldname'].'" '
+									.'class="'.$class.'" '
+									.'value="'.$value.'" maxlength="1024"'
 									.' '.$attributes.' '
 									.' />';
 

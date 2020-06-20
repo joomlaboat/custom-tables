@@ -333,7 +333,20 @@ class CTValue
 							else
 								$savequery[]='es_'.$esfieldname.'=""';
 
-                            $value_found=true;
+				                        $value_found=true;
+						}
+					break;
+
+				case 'url':
+						$value=trim($jinput->getString($comesfieldname,null));
+						if(isset($value))
+						{
+							if (filter_var($value, FILTER_VALIDATE_URL))
+								$savequery[]='es_'.$esfieldname.'='.$db->Quote($value);
+							else
+								$savequery[]='es_'.$esfieldname.'=""';
+
+				                        $value_found=true;
 						}
 					break;
 
@@ -838,7 +851,7 @@ static public function get_record_type_value(&$savequery,$typeparams,$prefix,$es
 		return ','.implode(',',$values).',';
 	}
 
-    static public function checkEmail($email)
+    	static public function checkEmail($email)
 	{
 		if(preg_match("/^([a-zA-Z0-9])+([a-zA-Z0-9\._-])*@([a-zA-Z0-9_-])+([a-zA-Z0-9\._-]+)+$/",  $email))
         {

@@ -301,7 +301,7 @@ class CTOrdering
         protected static function getOrderByFieldString(&$order_list,&$order_values,$fieldtype,$fieldname,$fieldtitle,$typeparams,$langpostfix)
 		{
 
-										if($fieldtype=='string' or $fieldtype=='email')
+										if($fieldtype=='string' or $fieldtype=='email' or $fieldtype=='url')
 										{
 												$order_list[]=$fieldtitle.' '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_AZ' );			$order_values[]=$fieldname;
 												$order_list[]=$fieldtitle.' '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ZA' );			$order_values[]=$fieldname.' desc';

@@ -153,7 +153,14 @@ class ESSerachInputBox
 								$result.='<input type="text" name="'.$objname_.'" id="'.$objname_.'" class="'.$cssclass.' inputbox" '
 								.' placeholder="'.$field_title.'"'
 								.' onkeypress="es_SearchBoxKeyPress(event)"'
-								.' value="'.$value.'" '.((int)$esfield['typeparams']>0 ? 'maxlength="'.(int)$esfield['typeparams'].'"' : 'maxlength="255"').' />';
+								.' value="'.$value.'" maxlength="255" />';
+
+						case 'url';
+								$result.='<input type="text" name="'.$objname_.'" id="'.$objname_.'" class="'.$cssclass.' inputbox" '
+								.' placeholder="'.$field_title.'"'
+								.' onkeypress="es_SearchBoxKeyPress(event)"'
+								.' value="'.$value.'" maxlength="255" />';
+
 
 						break;
 

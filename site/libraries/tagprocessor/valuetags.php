@@ -1076,6 +1076,11 @@ class tagProcessor_Value
 				case 'email':
 						return $rowValue;
 						break;
+
+				case 'url':
+						return $rowValue;
+						break;
+
 				case 'checkbox':
 						if($rowValue)
 							return JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YES');

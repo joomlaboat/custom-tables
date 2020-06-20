@@ -323,6 +323,12 @@ class CustomTablesKeywordSearch
 												$fieldtypefound=true;
 												break;
 
+										case 'url':
+
+												$where_arr[]=' INSTR(es_'.$fieldrow['fieldname'].', "'.$kw.'")';
+												$fieldtypefound=true;
+												break;
+
 										case 'string':
 
 												$where_arr[]=' INSTR(es_'.$fieldrow['fieldname'].', "'.$kw.'")';
