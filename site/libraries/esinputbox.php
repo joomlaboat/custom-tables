@@ -640,12 +640,23 @@ class ESInputBox
 						break;
 
 						case 'url';
+								$filters=array();
+								$filters[]='url';
+								$params=JoomlaBasicMisc::csv_explode(',',$esfield['typeparams'],'"',false);
+								if(isset($params[1]) and $params[1]=='true')
+									$filters[]='https';
+								
+								if(isset($params[2]) and $params[2]!='')
+									$filters[]='domain:'.$params[2];
+								
 								$result.='<input '
 									.'type="text" '
 									.'name="'.$prefix.$esfield['fieldname'].'" '
 									.'id="'.$prefix.$esfield['fieldname'].'" '
 									.'class="'.$class.'" '
 									.'value="'.$value.'" maxlength="1024"'
+									.'data-sanitizers="trim"'
+									.'data-filters="'.implode(',',$filters).'"'
 									.' '.$attributes.' '
 									.' />';
 
@@ -655,9 +666,7 @@ class ESInputBox
 								if($value=="0000-00-00")
 									$value='';
 
-								
 								$attributes_=ESInputBox::prepareAttributes(array('class'=>$class),$attributes);
-																
 
 								$result.=JHTML::calendar($value, $prefix.$esfield['fieldname'], $prefix.$esfield['fieldname'],
 														'%Y-%m-%d',$attributes_);

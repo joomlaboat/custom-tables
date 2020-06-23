@@ -70,9 +70,112 @@ function recaptchaCallback()
         obj2.removeAttribute('disabled');
 }
 
+
+function checkFilerts()
+{
+	var passed=true;
+	var inputs = document.getElementsByTagName('input');
+	
+	for(var i = 0; i < inputs.length; i++) {
+		var t=inputs[i].type.toLowerCase();
+		
+		if(t == 'text'){
+			var n=inputs[i].name.toString();
+			var d=inputs[i].dataset;
+			
+			if(d.sanitizers)
+				doSanitanization(inputs[i],d.sanitizers);
+				
+			if(d.filters)
+				passed=doFilters(inputs[i],d.filters);
+		}
+    }
+	return passed;
+}
+
+
+//https://stackoverflow.com/questions/5717093/check-if-a-javascript-string-is-a-url
+function isValidURL(str) {
+  var regex = /(http|https):\/\/(\w+:{0,1}\w*)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/;
+  if(!regex .test(str)) {
+    return false;
+  } else {
+    return true;
+  }
+}
+
+function doFilters(obj,filters_string)
+{
+	var filters=filters_string.split(",");
+	var value=obj.value;
+	
+	
+	for(var i = 0; i < filters.length; i++) {
+		var filter_parts=filters[i].split(':');
+		var filter=filter_parts[0];
+
+		if(filter=='url')
+		{
+			if(!isValidURL(value))
+			{
+				alert('The link "'+value+'" is not a valid URL.');
+				return false;
+			}
+		}
+		else if(filter=='https')
+		{
+			if(value.indexOf("https")!=0)
+			{
+				alert('The link "'+value+'" must be secure - must start with "https://".');
+				return false;
+			}
+		}
+		else if(filter=='domain' && filter_parts.length>1)
+		{
+			var domains=filter_parts[1].split(",");
+			var hostname = (new URL(value)).hostname;
+			
+			var found=false;
+			for(var f = 0; f < domains.length; f++){
+				
+				if(domains[f]==hostname)
+				{
+					found=true;
+					break;
+				}
+			}
+			
+			if(!found){
+				alert('The link domain "'+hostname+'" must match to this "'+filter_parts[1]+'".');
+				return false;
+			}
+		}
+		
+		//var url = 'http://www.youtube.com/watch?v=ClkQA2Lb_iE';
+//var hostname = (new URL(url)).hostname;
+	}
+
+	return true;
+}
+
+function doSanitanization(obj,sanitizers_string)
+{
+	var sanitizers=sanitizers_string.split(",");
+	var value=obj.value;
+	
+	for(var i = 0; i < sanitizers.length; i++) {
+		if(sanitizers[i]=='trim')
+			value=value.trim();
+	}
+
+	obj.value=value;
+}
+
 function checkRequiredFields()
 {
-
+	if(!checkFilerts())
+		return false;
+	
     var requiredFields=document.getElementsByClassName("required");
 
     for(var i=0;i<requiredFields.length;i++)
@@ -100,6 +203,8 @@ function checkRequiredFields()
 
                 if(n.indexOf("comes_")!=-1)
                 {
+					alert(requiredFields[i].type);
+					
                     var objname=n.replace('_selector','');
 
                     var lbln=objname.replace('[]','');
