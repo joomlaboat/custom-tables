@@ -200,7 +200,7 @@ class JHTMLESSqlJoin
 			return $list_values;
 		}
 
-                static protected function renderPrintResult($list_values,$current_value,$control_name)
+        static protected function renderPrintResult($list_values,$current_value,$control_name)
 		{
 			$htmlresult='';
 
@@ -208,7 +208,8 @@ class JHTMLESSqlJoin
 			{
 				if($list_value[0]==$current_value)
 				{
-					$htmlresult.='<input type="hidden" name="'.$control_name.'" id="'.$control_name.'" value="'.$list_value[0].'">';
+					
+					$htmlresult.='<input type="hidden" name="'.$control_name.'" id="'.$control_name.'" value="'.$list_value[0].'" >';
 					$htmlresult.=$list_value[1];
                                         break;
 				}
@@ -252,10 +253,9 @@ class JHTMLESSqlJoin
                         $htmlresult='';
 
                         $htmlresult_select='';
-                        $htmlresult_select.='<SELECT name="'.$control_name.'" id="'.$control_name.'" '.($cssclass!='' ? 'class="'.$cssclass.'"' : '').($attribute!='' ? ' '.$attribute.' ' : '').'>';
+						
+                        $htmlresult_select.='<SELECT name="'.$control_name.'" id="'.$control_name.'" '.($cssclass!='' ? 'class="'.$cssclass.'"' : '').($attribute!='' ? ' '.$attribute.' ' : '').' data-label="'.$place_holder.'">';
 
-		//	$htmlresult.='<option value="" disabled selected hidden>'.$place_holder.'</option>';
- //
 			$htmlresult_select.='<option value="">- '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT' ).' '.$place_holder.'</option>';
 
         		foreach($list_values as $list_value)

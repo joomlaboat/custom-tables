@@ -203,16 +203,18 @@ function checkRequiredFields()
 
                 if(n.indexOf("comes_")!=-1)
                 {
-					alert(requiredFields[i].type);
-					
                     var objname=n.replace('_selector','');
 
-                    var lbln=objname.replace('[]','');
-                    var lblobj=document.getElementById(lbln+"-lbl");
+                    //var lbln=objname.replace('[]','');
+                    //var lblobj=document.getElementById(lbln+"-lbl");
                     var label="One field";
 
-                    if (typeof lblobj != "undefined" && lblobj!=null)
-                        label=lblobj.innerHTML;
+                    //if (typeof lblobj != "undefined" && lblobj!=null)
+                        //label=lblobj.innerHTML;
+					
+					var d=requiredFields[i].dataset;
+					if(d.label)
+						label=d.label;
 
                     if(requiredFields[i].type=="select-one")
                     {
