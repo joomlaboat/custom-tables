@@ -22,8 +22,8 @@ JHtml::_('behavior.calendar');
 JHtml::_('bootstrap.popover');
 
 $document = JFactory::getDocument();
-$document->addScript(JURI::root(true).'/components/com_customtables/js/edit_187.js?v=1.8.6');
-$document->addScript(JURI::root(true).'/components/com_customtables/js/esmulti.js?v=1.8.6');
+$document->addScript(JURI::root(true).'/components/com_customtables/js/edit_193.js?v=1.9.3');
+$document->addScript(JURI::root(true).'/components/com_customtables/js/esmulti.js?v=1.9.3');
 $document->addScript(JURI::root(true)."/media/system/js/mootools-more.js");
 
 if (!$this->Model->BlockExternalVars and $this->Model->params->get( 'show_page_heading', 1 ) ) : ?>

@@ -657,6 +657,7 @@ class ESInputBox
 									.'value="'.$value.'" maxlength="1024"'
 									.'data-sanitizers="trim"'
 									.'data-filters="'.implode(',',$filters).'"'
+									.'data-label="'.$esfield['fieldtitle'.$this->langpostfix].'"'
 									.' '.$attributes.' '
 									.' />';
 

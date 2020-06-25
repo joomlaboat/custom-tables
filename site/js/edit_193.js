@@ -71,7 +71,7 @@ function recaptchaCallback()
 }
 
 
-function checkFilerts()
+function checkFilters()
 {
 	var passed=true;
 	var inputs = document.getElementsByTagName('input');
@@ -79,15 +79,18 @@ function checkFilerts()
 	for(var i = 0; i < inputs.length; i++) {
 		var t=inputs[i].type.toLowerCase();
 		
-		if(t == 'text'){
+		if(t == 'text' && inputs[i].value!=""){
 			var n=inputs[i].name.toString();
 			var d=inputs[i].dataset;
+			var label="";
+			if(d.label)
+				label=d.label;
 			
 			if(d.sanitizers)
 				doSanitanization(inputs[i],d.sanitizers);
 				
 			if(d.filters)
-				passed=doFilters(inputs[i],d.filters);
+				passed=doFilters(inputs[i],label,d.filters);
 		}
     }
 	return passed;
@@ -104,7 +107,7 @@ function isValidURL(str) {
   }
 }
 
-function doFilters(obj,filters_string)
+function doFilters(obj,label,filters_string)
 {
 	var filters=filters_string.split(",");
 	var value=obj.value;
@@ -118,7 +121,7 @@ function doFilters(obj,filters_string)
 		{
 			if(!isValidURL(value))
 			{
-				alert('The link "'+value+'" is not a valid URL.');
+				alert('The '+label+' "'+value+'" is not a valid URL.');
 				return false;
 			}
 		}
@@ -126,14 +129,23 @@ function doFilters(obj,filters_string)
 		{
 			if(value.indexOf("https")!=0)
 			{
-				alert('The link "'+value+'" must be secure - must start with "https://".');
+				alert('The '+label+' "'+value+'" must be secure - must start with "https://".');
 				return false;
 			}
 		}
 		else if(filter=='domain' && filter_parts.length>1)
 		{
 			var domains=filter_parts[1].split(",");
-			var hostname = (new URL(value)).hostname;
+			var hostname = "";
+			
+			
+			try {
+				hostname=(new URL(value)).hostname;
+			}
+			catch(err) {
+				alert('The '+label+' "'+value+'" is not a valid URL link.');
+				return false;
+			}
 			
 			var found=false;
 			for(var f = 0; f < domains.length; f++){
@@ -146,13 +158,10 @@ function doFilters(obj,filters_string)
 			}
 			
 			if(!found){
-				alert('The link domain "'+hostname+'" must match to this "'+filter_parts[1]+'".');
+				alert('The '+label+' domain "'+hostname+'" must match to "'+filter_parts[1]+'".');
 				return false;
 			}
 		}
-		
-		//var url = 'http://www.youtube.com/watch?v=ClkQA2Lb_iE';
-//var hostname = (new URL(url)).hostname;
 	}
 
 	return true;
@@ -173,7 +182,7 @@ function doSanitanization(obj,sanitizers_string)
 
 function checkRequiredFields()
 {
-	if(!checkFilerts())
+	if(!checkFilters())
 		return false;
 	
     var requiredFields=document.getElementsByClassName("required");
