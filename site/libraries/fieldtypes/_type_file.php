@@ -453,8 +453,6 @@ class CT_FieldTypeTag_file
                 	<script>
                         UploadFileCount=1;
 
-
-
                     	var urlstr="/index.php?option=com_customtables&view=fileuploader&tmpl=component&'.$esfieldname.'_fileid='.$fileid.'&Itemid='.$Itemid.'&fieldname='.$esfieldname.'";
                     	ct_getUploader('.$fieldid.',urlstr,'.$max_file_size.',"'.$accepted_file_types.'","eseditForm",false,"ct_fileuploader_'.$esfieldname.'","ct_eventsmessage_'.$esfieldname.'","'.$fileid.'","'.$prefix.$esfieldname.'","ct_ubloadedfile_box_'.$esfieldname.'");
                     </script>

@@ -138,16 +138,13 @@ class ESFileUploader
 
 		$accepted_types=ESFileUploader::getAcceptableMimeTypes($filetypes_str);
 
-
 		ESFileUploader::deleteOldFiles();
 
 		$output_dir=JPATH_SITE.DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR;
 		$t=time();
 
 		$jinput=JFactory::getApplication()->input;
-
 		$file=ESFileUploader::getfile_SafeMIME($fileid,$filetypes_str);
-
 
 		$accepted_types=ESFileUploader::getAcceptableMimeTypes($filetypes_str);
 
@@ -418,17 +415,16 @@ class ESFileUploader
 	    return $str;
 	}
 
-
 	public static function getAcceptedFileTypes($typeparams)
     {
         $pair=explode(',',$typeparams);
 
         $allowedExtensions='doc docx pdf txt xls xlsx psd ppt pptx odg odp ods odt'
-		.' xcf ai txt avi csv accdb'
+		.' xcf ai txt avi csv accdb htm html'
 		.' jpg bmp ico jpeg png gif svg ai'//Images
 		.' zip'//Archive
 		.' aac flac mp3 wav ogg'//Audio
-		.' mp4 m4a m4p m4b m4r m4v wma flv mpg 3gp wmv mov swf';//Video
+		.' mp4 m4a m4p m4b m4r m4v wma flv mpg 3gp wmv mov';//Video
 
 		$allowedExts=explode(' ',$allowedExtensions);
 		$file_formats=array();
