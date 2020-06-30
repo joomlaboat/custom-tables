@@ -130,7 +130,6 @@ class ESSerachInputBox
 
 						case 'user':
 							$result.=$this->getUserBox($esfield,$default_Action,$index,$where,$wherelist,$objname_,$value, $cssclass);
-
 							break;
 
 						case 'usergroup':
@@ -154,14 +153,14 @@ class ESSerachInputBox
 								.' placeholder="'.$field_title.'"'
 								.' onkeypress="es_SearchBoxKeyPress(event)"'
 								.' value="'.$value.'" maxlength="255" />';
+								
+						break;
 
 						case 'url';
 								$result.='<input type="text" name="'.$objname_.'" id="'.$objname_.'" class="'.$cssclass.' inputbox" '
 								.' placeholder="'.$field_title.'"'
 								.' onkeypress="es_SearchBoxKeyPress(event)"'
-								.' value="'.$value.'" maxlength="255" />';
-
-
+								.' value="'.$value.'" maxlength="1024" />';
 						break;
 
 						case 'date';
