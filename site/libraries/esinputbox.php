@@ -929,7 +929,7 @@ class ESInputBox
 
 		if($require_authorization)
 		{
-			$result.=JHTML::_('ESUser.render',$prefix.$esfield['fieldname'], $value, '', $attributes, $usergroup,'',$where);
+			$result.=JHTML::_('ESUser.render',$prefix.$esfield['fieldname'], $value, '', $attributes, $usergroup,'',$where);//check this, it should be disabled to edit
 		}
 		else
 		{

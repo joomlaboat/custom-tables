@@ -227,7 +227,13 @@ class tagProcessor_Value
                                 $vlu.='</div>';
                             }
                             else
-                                $vlu='';
+							{
+								$fieldtype='';
+								$fieldname='';
+								$rowValue='';
+								tagProcessor_Value::doMultiValues($Model,$ESField,$row,$fieldtype,$rowValue,$fieldname);
+                                $vlu=$rowValue;
+							}
 
 							$items_to_replace[]=array($new_replaceitecode,$vlu);
 							$htmlresult=str_replace($pureValueList[$p],$new_replaceitecode,$htmlresult);
