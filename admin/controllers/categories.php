@@ -293,5 +293,4 @@ class CustomtablesControllerCategories extends JControllerForm
 	{
 		return;
 	}
-
 }
