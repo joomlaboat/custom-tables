@@ -1,7 +1,6 @@
 <?php
 /**
  * CustomTables Joomla! 3.x Native Component
- * @version 1.6.1
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
  * @license GNU/GPL
@@ -139,9 +138,6 @@ class CustomTablesModelDetails extends JModelLegacy {
 				$this->filter=$this->params->get( 'filter' );
 		}
 
-
-
-
 		if($this->params->get( 'recordstable' )!='' and $this->params->get( 'recordsuseridfield' )!='' and $this->params->get( 'recordsfield' )!='')
 		{
 			if(!$this->checkRecordUserJoin($this->params->get( 'recordstable' ),$this->params->get( 'recordsuseridfield' ),$this->params->get( 'recordsfield' ),$id))
@@ -152,11 +148,7 @@ class CustomTablesModelDetails extends JModelLegacy {
 			}
 		}
 
-
 		$this->setId($id);
-
-
-
 		$this->establename=$this->params->get( 'establename' );
 
 		$this->tablerow = $this->esTable->getTableRowByNameAssoc($this->establename);
@@ -165,7 +157,6 @@ class CustomTablesModelDetails extends JModelLegacy {
 			return;
 
 		}
-
 
 		$this->estableid=$this->tablerow['id'];
 
@@ -182,9 +173,6 @@ class CustomTablesModelDetails extends JModelLegacy {
 
 		if($this->alias!='' and $this->alias_fieldname!='')
 			$this->filter=$this->alias_fieldname.'='.$this->alias;
-
-
-
 
 		$this->LayoutProc=new LayoutProcessor;
 		$this->LayoutProc->Model=$this;
@@ -223,28 +211,19 @@ class CustomTablesModelDetails extends JModelLegacy {
 		return true;
 	}
 
-
-
-
 	function setId($id)
 	{
-
 		$this->_id	= $id;
 		$this->_data	= null;
 	}
 
-
-
 	function & getData()
 	{
 		$db = JFactory::getDBO();
-
 		$tablename='#__customtables_table_'.$this->establename;
 
 		if($this->_id==0)
 		{
-
-
 			$this->_id	= 0;
 			$where='';
 
@@ -252,11 +231,10 @@ class CustomTablesModelDetails extends JModelLegacy {
 
 			if($this->filter!='')
 			{
-
-
 				$filtering=new ESFiltering;
 				$filtering->langpostfix=$this->langpostfix;
 				$filtering->es=$this->es;
+				$filtering->estable=$tablename;
 				$filtering->esfields=$this->esfields;
 
 				$PathValue=array();

@@ -1,7 +1,6 @@
 <?php
 /**
  * Custom Tables Joomla! 3.x Native Component
- * @version 1.6.1
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
  * @license GNU/GPL
@@ -13,19 +12,20 @@ defined('_JEXEC') or die('Restricted access');
 
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'misc.php');
 
+$jinput = JFactory::getApplication()->input;
 $encodedreturnto = base64_encode(JoomlaBasicMisc::curPageURL());
-$returnto = JFactory::getApplication()->input->get('returnto', '', 'BASE64');
+$returnto = $jinput->get('returnto', '', 'BASE64');
 $decodedreturnto = base64_decode($returnto);
 $user = JFactory::getUser();
 $userid = (int)$user->get('id');
-$jinput = JFactory::getApplication()->input;
-$clean = JFactory::getApplication()->input->get('clean', 0, 'INT');
+
+$clean = $jinput->getInt('clean');
 $WebsiteRoot = JURI::root(true);
 
 if($WebsiteRoot=='' or $WebsiteRoot[strlen($WebsiteRoot)- 1] != '/') //Root must have slash / in the end
 	$WebsiteRoot.= '/';
 
-$layout = JFactory::getApplication()->input->getCMD('layout', '');
+$layout = $jinput->getCmd('layout', '');
 
 if (($layout == 'currentuser' or $layout == 'customcurrentuser') and $userid == 0)
 {
@@ -34,66 +34,60 @@ if (($layout == 'currentuser' or $layout == 'customcurrentuser') and $userid == 
 }
 else
 {
-	$returnto = JFactory::getApplication()->input->get('returnto', '', 'BASE64');
-	$Itemid = JFactory::getApplication()->input->getInt('Itemid', 0);
+	$returnto = $jinput->get('returnto', '', 'BASE64');
+	$Itemid = $jinput->getInt('Itemid', 0);
 	if ($theview == 'home')
 	{
 		parent::display();
-		JFactory::getApplication()->input->set('homeparent', 'home');
-		JFactory::getApplication()->input->set('view', 'catalog');
+		$jinput->set('homeparent', 'home');
+		$jinput->set('view', 'catalog');
 	}
 
-	$task = JFactory::getApplication()->input->getCmd('task');
+	$task = $jinput->getCmd('task');
 	switch ($task)
 	{
-	case 'clear':
-		$model = $this->getModel('edititem');
-		if (!$model->CheckAuthorization(3)) //3 is to delete
-		{
-
-			// not authorized
-
-			$link = $WebsiteRoot . 'index.php?option=com_users&view=login&return=' . $encodedreturnto;
-			$this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
-			die ;
-		}
-		else
-		{
-			if ($returnto != '')
+		case 'clear':
+			$model = $this->getModel('edititem');
+			if (!$model->CheckAuthorization(3)) //3 is to delete
 			{
-				$link = $decodedreturnto;
-				if (strpos($link, 'http:') === false and strpos($link, 'https:') === false) $link.= $WebsiteRoot . $link;
+				// not authorized
+				$link = $WebsiteRoot . 'index.php?option=com_users&view=login&return=' . $encodedreturnto;
+				$this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
+				die ;
 			}
 			else
 			{
-				$link = $WebsiteRoot . 'index.php?Itemid=' . $Itemid;
-			}
+				if ($returnto != '')
+				{
+					$link = $decodedreturnto;
+					if (strpos($link, 'http:') === false and strpos($link, 'https:') === false) $link.= $WebsiteRoot . $link;
+				}
+				else
+					$link = $WebsiteRoot . 'index.php?Itemid=' . $Itemid;
 
-			$app = JFactory::getApplication();
-			$params = $app->getParams();
-			$model = $this->getModel('catalog');
-			$model->load($params, false);
+				$app = JFactory::getApplication();
+				$params = $app->getParams();
+				$model = $this->getModel('catalog');
+				$model->load($params, false);
 
-			if ($model->getSearchResult())
-			{
-				$msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_DELETED');
-				$this->setRedirect($link, $msg);
-			}
-			else
-			{
-				$msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_NOT_DELETED');
-				$this->setRedirect($link, $msg, 'error');
-			}
-		} //if(!$model->CheckAuthorization())
+				if ($model->getSearchResult())
+				{
+					$msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_DELETED');
+					$this->setRedirect($link, $msg);
+				}
+				else
+				{
+					$msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_NOT_DELETED');
+					$this->setRedirect($link, $msg, 'error');
+				}
+			} //if(!$model->CheckAuthorization())
 		break;
 
 	case 'delete':
 		$model = $this->getModel('edititem');
 		if (!$model->CheckAuthorization(3)) //3 is to delete
 		{
-
 			// not authorized
-
 			if ($clean == 1)
 			{
 				/** Alternatively you may use chaining */
@@ -158,9 +152,7 @@ else
 		$model = $this->getModel('edititem');
 		if (!$model->CheckAuthorization(1)) //3 is to delete
 		{
-
 			// not authorized
-
 			$link = $WebsiteRoot . 'index.php?option=com_users&view=login&return=' . $encodedreturnto;
 			$this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
 		}
@@ -177,7 +169,6 @@ else
 			$model->load($params);
 			if ($model->copy($msg, $link))
 			{
-
 				$msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_COPIED');
 				$this->setRedirect($link, $msg);
 			}
@@ -194,7 +185,6 @@ else
 		if (!$model->CheckAuthorization(1))
 		{
 			// not authorized
-
 			if ($clean == 1)
 			{
 				echo 'not authorized';
@@ -251,9 +241,7 @@ else
 		$model = $this->getModel('edititem');
 		if (!$model->CheckAuthorization(2)) //2 - publish
 		{
-
 			// not authorized
-
 			$link = $WebsiteRoot . 'index.php?option=com_users&view=login&return=' . $encodedreturnto;
 			$this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
 		}
@@ -387,5 +375,4 @@ else
 		else parent::display();
 		break;
 	}
-
 }

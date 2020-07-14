@@ -138,6 +138,7 @@ class CustomtablesModelListoffields extends JModelList
 				'checkbox' => 'COM_CUSTOMTABLES_FIELDS_CHECKBOX',
 				'radio' => 'COM_CUSTOMTABLES_FIELDS_RADIO_BUTTONS',
 				'email' => 'COM_CUSTOMTABLES_FIELDS_EMAIL',
+				'url' => 'COM_CUSTOMTABLES_FIELDS_URL',
 				'date' => 'COM_CUSTOMTABLES_FIELDS_DATE',
 				'time' => 'COM_CUSTOMTABLES_FIELDS_TIME',
 				'image' => 'COM_CUSTOMTABLES_FIELDS_IMAGE',

@@ -1,3 +1,13 @@
+/**
+ * CustomTables Joomla! 3.x Native Component
+ * @package Custom Tables
+ * @subpackage administrator/components/com_customtables/js/layouteditor.js
+ * @author Ivan komlev <support@joomlaboat.com>
+ * @link http://www.joomlaboat.com
+ * @copyright Copyright (C) 2018-2020. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
+ **/
+ 
 var codemirror_editors=[];
 var codemirror_active_index=0;
 var temp_params_tag="";
@@ -114,7 +124,7 @@ function loadTags(type_id,tags_box)
 
     //tags_box_obj.innerHTML='Loading...';
 
-    var url=websiteroot+"components/com_customtables/xml/tags_130.xml?v=1.3.0";
+    var url=websiteroot+"components/com_customtables/xml/tags_193.xml?v=1.3.0";
 
     var http = null;
     var params = "";

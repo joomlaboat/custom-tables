@@ -1,3 +1,8 @@
+.required .star{
+color:red;
+}
+
+
 .ctFormLabel{display:inline-block !important;/*Somehow doesnt work*/}
 
 .multilangtext
@@ -116,7 +121,7 @@ width:100%;
 }
 
 .datagrid {
- width: 100%;
+ width: 95%;
 	overflow: visible;
 background-color:white;
 position:relative;

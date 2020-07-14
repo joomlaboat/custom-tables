@@ -1,7 +1,6 @@
 <?php
 /**
  * CustomTables Joomla! 3.x Native Component
- * @version 1.6.1
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
  * @license GNU/GPL
@@ -302,7 +301,7 @@ class CTOrdering
         protected static function getOrderByFieldString(&$order_list,&$order_values,$fieldtype,$fieldname,$fieldtitle,$typeparams,$langpostfix)
 		{
 
-										if($fieldtype=='string' or $fieldtype=='email')
+										if($fieldtype=='string' or $fieldtype=='email' or $fieldtype=='url')
 										{
 												$order_list[]=$fieldtitle.' '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_AZ' );			$order_values[]=$fieldname;
 												$order_list[]=$fieldtitle.' '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ZA' );			$order_values[]=$fieldname.' desc';

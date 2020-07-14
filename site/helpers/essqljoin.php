@@ -1,7 +1,6 @@
 <?php
 /**
  * CustomTables Joomla! 3.0 Native Component
- * @version 1.6.1
  * @author Ivan Komlev< <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
  * @GNU General Public License
@@ -18,7 +17,7 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.
 
 class JHTMLESSqlJoin
 {
-        static public function render($typeparams, $value, $force_dropdown, $langpostfix,$control_name,$place_holder,$cssclass='', $attribute='')
+        static public function render($typeparams, $value, $force_dropdown, $langpostfix,$control_name,$place_holder,$cssclass='', $attribute='',$addNoValue=false)
         {
                 if(count($typeparams)<1)
                 {
@@ -94,7 +93,7 @@ class JHTMLESSqlJoin
 		elseif($selector=='dropdown' or $force_dropdown or $dynamic_filter)
                 {
                         $htmlresult.=JHTMLESSqlJoin::renderDynamicFilter($value,$SearchResults,$establename,$dynamic_filter,$control_name);
-                        $htmlresult.=JHTMLESSqlJoin::renderDropdownSelector_Box($list_values,$value,$control_name,$cssclass,$attribute,$place_holder,$dynamic_filter);
+                        $htmlresult.=JHTMLESSqlJoin::renderDropdownSelector_Box($list_values,$value,$control_name,$cssclass,$attribute,$place_holder,$dynamic_filter,$addNoValue);
                 }
 		else
                         $htmlresult.=JHTMLESSqlJoin::renderRadioSelector_Box($list_values,$value,$control_name,$cssclass,$attribute,$value_field);
@@ -201,7 +200,7 @@ class JHTMLESSqlJoin
 			return $list_values;
 		}
 
-                static protected function renderPrintResult($list_values,$current_value,$control_name)
+        static protected function renderPrintResult($list_values,$current_value,$control_name)
 		{
 			$htmlresult='';
 
@@ -209,7 +208,8 @@ class JHTMLESSqlJoin
 			{
 				if($list_value[0]==$current_value)
 				{
-					$htmlresult.='<input type="hidden" name="'.$control_name.'" id="'.$control_name.'" value="'.$list_value[0].'">';
+					
+					$htmlresult.='<input type="hidden" name="'.$control_name.'" id="'.$control_name.'" value="'.$list_value[0].'" >';
 					$htmlresult.=$list_value[1];
                                         break;
 				}
@@ -222,15 +222,15 @@ class JHTMLESSqlJoin
 		}
 
 
-                static protected function renderDropdownSelector_Box($list_values,$current_value,$control_name,$cssclass,$attribute,$place_holder,$dynamic_filter)
+                static protected function renderDropdownSelector_Box($list_values,$current_value,$control_name,$cssclass,$attribute,$place_holder,$dynamic_filter,$addNoValue=false)
                 {
                         if(strpos($cssclass,' ct_improved_selectbox')!==false)
                                 return JHTMLESSqlJoin::renderDropdownSelector_Box_improved($list_values,$current_value,$control_name,$cssclass,$attribute,$place_holder,$dynamic_filter);
                         else
-                                return JHTMLESSqlJoin::renderDropdownSelector_Box_simple($list_values,$current_value,$control_name,$cssclass,$attribute,$place_holder,$dynamic_filter);
+                                return JHTMLESSqlJoin::renderDropdownSelector_Box_simple($list_values,$current_value,$control_name,$cssclass,$attribute,$place_holder,$dynamic_filter,$addNoValue);
                 }
 
-                static protected function renderDropdownSelector_Box_improved($list_values,$current_value,$control_name,$cssclass,$attribute,$place_holder,$dynamic_filter)
+                static protected function renderDropdownSelector_Box_improved($list_values,$current_value,$control_name,$cssclass,$attribute,$place_holder,$dynamic_filter,$addNoValue=false)
                 {
                         /*
                         $options=array();
@@ -243,25 +243,24 @@ class JHTMLESSqlJoin
                         return JHtml::_('select.suggestionlist', $options, 'value', 'text', $current_value);
                 */
                         JHtml::_('formbehavior.chosen', '.ct_improved_selectbox');
-                        return JHTMLESSqlJoin::renderDropdownSelector_Box_simple($list_values,$current_value,$control_name,$cssclass,$attribute,$place_holder,$dynamic_filter);
+                        return JHTMLESSqlJoin::renderDropdownSelector_Box_simple($list_values,$current_value,$control_name,$cssclass,$attribute,$place_holder,$dynamic_filter,$addNoValue);
 
 
                 }
 
-                static protected function renderDropdownSelector_Box_simple($list_values,$current_value,$control_name,$cssclass,$attribute,$place_holder,$dynamic_filter)
+                static protected function renderDropdownSelector_Box_simple($list_values,$current_value,$control_name,$cssclass,$attribute,$place_holder,$dynamic_filter,$addNoValue=false)
                 {
                         $htmlresult='';
 
                         $htmlresult_select='';
-                        $htmlresult_select.='<SELECT name="'.$control_name.'" id="'.$control_name.'" '.($cssclass!='' ? 'class="'.$cssclass.'"' : '').($attribute!='' ? ' '.$attribute.' ' : '').'>';
+						
+                        $htmlresult_select.='<SELECT name="'.$control_name.'" id="'.$control_name.'" '.($cssclass!='' ? 'class="'.$cssclass.'"' : '').($attribute!='' ? ' '.$attribute.' ' : '').' data-label="'.$place_holder.'">';
 
-		//	$htmlresult.='<option value="" disabled selected hidden>'.$place_holder.'</option>';
- //
 			$htmlresult_select.='<option value="">- '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT' ).' '.$place_holder.'</option>';
 
         		foreach($list_values as $list_value)
                         {
-                                if($list_value[2]==0)
+                                if($list_value[2]==0)//if unpublished
                                         $style=' style="color:red"';
                                 else
                                         $style='';
@@ -269,6 +268,10 @@ class JHTMLESSqlJoin
                                 if($dynamic_filter=='')
                                         $htmlresult_select.='<option value="'.$list_value[0].'"'.($list_value[0]==$current_value ? ' selected="SELECTED"' : '').''.$style.'>'.strip_tags($list_value[1]).'</option>';
 			}
+			
+			if($addNoValue)
+				$htmlresult_select.='<option value="-1"'.((int)$current_value==-1 ? ' selected="SELECTED"' : '').'>- '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_SPECIFIED' ).'</option>';
+			
 			$htmlresult_select.='</SELECT>';
 
 

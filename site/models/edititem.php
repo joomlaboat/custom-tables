@@ -717,7 +717,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 
 		//	Fields
-		$prefix='com';
+		$prefix='comes_';
 
 		$phponchangefound=false;
 		$phponaddfound=false;
@@ -812,10 +812,10 @@ class CustomTablesModelEditItem extends JModelLegacy {
 			}
 
 			if($this->params->get('emailfield')!='' and $this->params->get('emailfield')==$fieldname)
-				$user_email=$jinput->getString($prefix.'es_'.$fieldname);
+				$user_email=$jinput->getString($prefix.$fieldname);
 
 			if($this->params->get('fullnamefield')!='' and $this->params->get('fullnamefield')==$fieldname)
-				$user_name=$jinput->getString($prefix.'es_'.$fieldname);
+				$user_name=$jinput->getString($prefix.$fieldname);
 
 
 		}//foreach($this->esfields as $esfield)
@@ -934,6 +934,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		if($this->onrecordaddsendemail==3 and ($this->onrecordsavesendemailto!='' or $this->onrecordaddsendemailto!=''))
 		{
 			//check conditions
+			
 				if($this->checkSendEmailConditions($listing_id,$this->sendemailcondition))
 				{
 					//Send email conditions met
@@ -1082,6 +1083,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		
 		if($this->onrecordaddsendemail==3 and ($this->onrecordsavesendemailto!='' or $this->onrecordaddsendemailto!=''))
 		{
+			
 			//check conditions
 			if($this->checkSendEmailConditions($id,$this->sendemailcondition))
 			{
@@ -1122,6 +1124,9 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 	function checkSendEmailConditions($listing_id,$condition)
 	{
+		if($condition=='')
+			return true; //if no conditions
+			
 		$row=$this->getListingRowByID($listing_id);
 		$parsed_condition=$this->parseRowLayoutContent($row,$condition);
 		$thescript='return '.$parsed_condition.';';
@@ -1270,24 +1275,24 @@ class CustomTablesModelEditItem extends JModelLegacy {
 						switch($selectorpair[0])
 						{
 							case 'single';
-									$value=JFactory::getApplication()->input->getString($prefix.'es_'.$fieldname);
+									$value=JFactory::getApplication()->input->getString($prefix.$fieldname);
 								break;
 
 							case 'multi';
-									$valuearray = JFactory::getApplication()->input->get( $prefix.'es_'.$fieldname, array(), 'post', 'array' );
+									$valuearray = JFactory::getApplication()->input->get( $prefix.$fieldname, array(), 'post', 'array' );
 									$value='"'.implode('","',$valuearray).'"';
 								break;
 							case 'multibox';
-									$valuearray = JFactory::getApplication()->input->get( $prefix.'es_'.$fieldname, array(), 'post', 'array' );
+									$valuearray = JFactory::getApplication()->input->get( $prefix.$fieldname, array(), 'post', 'array' );
 									$value='"'.implode('","',$valuearray).'"';
 								break;
 
 							case 'radio';
-									$value=JFactory::getApplication()->input->getString($prefix.'es_'.$fieldname);
+									$value=JFactory::getApplication()->input->getString($prefix.$fieldname);
 								break;
 
 							case 'checkbox';
-									$valuearray = JFactory::getApplication()->input->get( $prefix.'es_'.$fieldname, array(), 'post', 'array' );
+									$valuearray = JFactory::getApplication()->input->get( $prefix.$fieldname, array(), 'post', 'array' );
 									$value='"'.implode('","',$valuearray).'"';
 								break;
 						}
@@ -1296,15 +1301,15 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 					break;
 				case 'radio':
-						$value=JFactory::getApplication()->input->getString($prefix.'es_'.$fieldname);
+						$value=JFactory::getApplication()->input->getString($prefix.$fieldname);
 					break;
 
 				case 'googlemapcoordinates':
-						$value=JFactory::getApplication()->input->getString($prefix.'es_'.$fieldname);
+						$value=JFactory::getApplication()->input->getString($prefix.$fieldname);
 					break;
 
 				case 'string':
-						$value=JFactory::getApplication()->input->getString($prefix.'es_'.$fieldname);
+						$value=JFactory::getApplication()->input->getString($prefix.$fieldname);
 					break;
 
 				case 'multilangstring':
@@ -1320,7 +1325,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 						else
 							$postfix='_'.$lang->sef;
 
-						$valuearray[]=JFactory::getApplication()->input->getString($prefix.'es_'.$fieldname.$postfix);
+						$valuearray[]=JFactory::getApplication()->input->getString($prefix.$fieldname.$postfix);
 
 					}
 					$value='"'.implode('","',$valuearray).'"';
@@ -1328,7 +1333,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 
 				case 'text':
-					$value = JComponentHelper::filterText(JFactory::getApplication()->input->post->get($prefix.'es_'.$fieldname, '', 'raw'));
+					$value = JComponentHelper::filterText(JFactory::getApplication()->input->post->get($prefix.$fieldname, '', 'raw'));
 					break;
 
 				case 'multilangtext':
@@ -1344,7 +1349,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 						else
 							$postfix='_'.$lang->sef;
 
-						$value_ = JComponentHelper::filterText(JFactory::getApplication()->input->post->get($prefix.'es_'.$fieldname.$postfix, '', 'raw'));
+						$value_ = JComponentHelper::filterText(JFactory::getApplication()->input->post->get($prefix.$fieldname.$postfix, '', 'raw'));
 
 						$valuearray[]=$value_;
 
@@ -1353,20 +1358,20 @@ class CustomTablesModelEditItem extends JModelLegacy {
 					break;
 
 				case 'int':
-						$value=JFactory::getApplication()->input->getInt($prefix.'es_'.$fieldname,0);
+						$value=JFactory::getApplication()->input->getInt($prefix.$fieldname,0);
 					break;
 
 				case 'user':
-						$value=(int)JFactory::getApplication()->input->getInt($prefix.'es_'.$fieldname,0);
+						$value=(int)JFactory::getApplication()->input->getInt($prefix.$fieldname,0);
 					break;
 
 				case 'float':
-						$value=JFactory::getApplication()->input->get($prefix.'es_'.$fieldname,0,'FLOAT');
+						$value=JFactory::getApplication()->input->get($prefix.$fieldname,0,'FLOAT');
 					break;
 
 
 				case 'article':
-						$value=JFactory::getApplication()->input->getInt($prefix.'es_'.$fieldname,0);
+						$value=JFactory::getApplication()->input->getInt($prefix.$fieldname,0);
 					break;
 
 				case 'multilangarticle':
@@ -1382,7 +1387,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 						else
 							$postfix='_'.$lang->sef;
 
-						$valuearray[]=JFactory::getApplication()->input->getInt($prefix.'es_'.$fieldname.$postfix,0);
+						$valuearray[]=JFactory::getApplication()->input->getInt($prefix.$fieldname.$postfix,0);
 
 					}
 					$value='"'.implode('","',$valuearray).'"';
@@ -1394,22 +1399,22 @@ class CustomTablesModelEditItem extends JModelLegacy {
 						$optionname=$typeparams_arr[0];
 
 						if($typeparams_arr[1]=='multi')
-							$value=$this->getMultiString($optionname, $prefix.'esmulti_'.$this->establename.'_'.$fieldname);
+							$value=$this->getMultiString($optionname, $prefix.'multi_'.$this->establename.'_'.$fieldname);
 						elseif($typeparams_arr[1]=='single')
-							$value=$this->getComboString($optionname, $prefix.'escombotree_'.$this->establename.'_'.$fieldname);
+							$value=$this->getComboString($optionname, $prefix.'combotree_'.$this->establename.'_'.$fieldname);
 
 					break;
 
 				case 'email':
-						$value=JFactory::getApplication()->input->getString($prefix.'es_'.$fieldname);
+						$value=JFactory::getApplication()->input->getString($prefix.$fieldname);
 					break;
 
 				case 'checkbox':
-						$value=JFactory::getApplication()->input->getCmd($prefix.'es_'.$fieldname);
+						$value=JFactory::getApplication()->input->getCmd($prefix.$fieldname);
 					break;
 
 				case 'date':
-						$value=JFactory::getApplication()->input->getString($prefix.'es_'.$fieldname);
+						$value=JFactory::getApplication()->input->getString($prefix.$fieldname);
 					break;
 			}
 
@@ -1535,8 +1540,6 @@ class CustomTablesModelEditItem extends JModelLegacy {
 			if($esfield['type']=='phponchange')
 			{
 						$parts=JoomlaBasicMisc::csv_explode(',', $esfield['typeparams'], '"', false);
-						//echo $esfield['typeparams'];
-						
 						
 						if(count($parts)==1 and strpos($esfield['typeparams'],'"')!==false and strpos($esfield['typeparams'],'****quote****')===false )
 						{
@@ -1610,47 +1613,38 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 	function parseRowLayoutContent(&$row,$content)
 	{
-
-
 		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'layout.php');
-
 		$LayoutProc=new LayoutProcessor;
 		$LayoutProc->Model=$this;
-
-		$LayoutProc->advancedtagprocessor=false;
-
-
+		$LayoutProc->advancedtagprocessor=true;
 		$LayoutProc->layout=$content;
-		return $LayoutProc->fillLayout($row,'','');
-
+		$content=$LayoutProc->fillLayout($row,'','');
+		$LayoutProc->applyContentPlugins($content);
+		return $content;
 	}
 
 	function sendEmailNote($listing_id,$emails,$new_username,$new_password)
 	{
-		
-		
 		$mainframe = JFactory::getApplication('site');
-
 		$row=$this->getListingRowByID($listing_id);
-		$parsed_emails=$this->parseRowLayoutContent($row,$emails);
-
 		//Prepare Email List
 
-		$emails_raw=JoomlaBasicMisc::csv_explode(',', $parsed_emails, '"', true);
+		$emails_raw=JoomlaBasicMisc::csv_explode(',', $emails, '"', true);
 
 		$emails=array();
 		foreach($emails_raw as $SendToEmail)
 		{
 			$EmailPair=JoomlaBasicMisc::csv_explode(':', trim($SendToEmail), '"', false);
-			$EmailTo=$this->resolveEmail(trim($EmailPair[0]),$row);
+			
+			$EmailTo=$this->parseRowLayoutContent($row,trim($EmailPair[0]));
 			$Subject='Record added to "'.$this->tabletitle.'"';
+
 
 			if(isset($EmailPair[1]))
 			{
 				if($EmailPair[1]!='')
 				{
-
-					$Subject=$EmailPair[1];
+					$Subject=$this->parseRowLayoutContent($row,$EmailPair[1]);
 				}
 			}
 
@@ -1724,56 +1718,21 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 			$sent = $mail->Send();
 
-			if($sent)
-			{
-				JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_EMAIL_SENT_TO').': '.$EmailTo.' ('.$Subject.')');
-				$status=1;
-			}
-			else
-			{
+			if ( $sent !== true ) {
+				echo 'Something went wrong. Email not sent.';
+				print_r($sent);
+				die;
 				JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_SENDING_EMAIL').': '.$EmailTo.' ('.$Subject.')', 'error');
 				$status=0;
+			}
+			else{
+				JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_EMAIL_SENT_TO').': '.$EmailTo.' ('.$Subject.')');
+				$status=1;
 			}
 		}
 		
 		return $status;
 	}
-
-	function resolveEmail($email,&$row)
-	{
-
-		if(strpos($email,'[')===false)
-			return $email;
-
-
-		foreach($this->esfields as $esfield)
-		{
-			$email=str_replace('[','',$email);
-			$email=str_replace(']','',$email);
-
-
-			if($esfield['fieldname']==$email)
-			{
-
-				return $row['es_'.$email];
-			}
-		}
-		return '';
-	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	function setPublishStatus($status)
 	{

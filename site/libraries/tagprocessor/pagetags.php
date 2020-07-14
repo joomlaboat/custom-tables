@@ -1,15 +1,12 @@
 <?php
 /**
  * CustomTables Joomla! 3.x Native Component
- * @version 1.6.1
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
  * @license GNU/GPL
  **/
 
-
 // no direct access
-
 defined('_JEXEC') or die('Restricted access');
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'misc.php');
 
@@ -97,7 +94,7 @@ class tagProcessor_Page
 
     				$alt='Save as '.strtoupper($format);
     				//add image anchor link
-    				$vlu='<a href="'.$link.'"><img src="'.$image.'" alt="'.$alt.'" title="'.$alt.'" width="'.$imagesize.'" height="'.$imagesize.'"></a>';
+    				$vlu='<a href="'.$link.'" target="_blank"><img src="'.$image.'" alt="'.$alt.'" title="'.$alt.'" width="'.$imagesize.'" height="'.$imagesize.'"></a>';
     			}
     			elseif($value=='_value')
     			{
@@ -233,6 +230,7 @@ JHtml::_('behavior.formvalidator');
                         .$prefix.$objectname.'","ct_uploadedfile_box_'.$objectname.'");
                     </script>
                     <input type="hidden" name="'.$prefix.$objectname.'" id="'.$prefix.$objectname.'" value="" />
+			'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PERMITED_MAX_FILE_SIZE').': '.JoomlaBasicMisc::formatSizeUnits($max_file_size).'
                     </form>
                 </div>
                 ';
@@ -525,8 +523,6 @@ JHtml::_('behavior.formvalidator');
 							if($fld['fieldname']==$first_field_name)
 							{
 								$count++;
-								$objname='es_search_box_'.$first_field_name;
-
                                 if(count($list_of_fields)>1)
                                 {
                                     $fld['fields']=$list_of_fields;
@@ -560,10 +556,7 @@ JHtml::_('behavior.formvalidator');
                                 if(isset($opair[3]) and $opair[3]=='improved')
 									$cssclass.=' ct_improved_selectbox';
                                     
-                                    
-                                
-
-								$vlu=$ESSIB->renderFieldBox($Model,'',$objname,$fld,$cssclass,$count,'',false,'',$default_Action,$field_title);//action should be a space not empty or this.value=this.value
+								$vlu=$ESSIB->renderFieldBox($Model,'es_search_box_',$first_field_name,$fld,$cssclass,$count,'',false,'',$default_Action,$field_title);//action should be a space not empty or this.value=this.value
 
                                 if(!$firstFieldFound)
                                 {
@@ -576,15 +569,9 @@ JHtml::_('behavior.formvalidator');
 						}
 					}
 				}
-
-
-
-
 			}
 
-
 			$pagelayout=str_replace($fItem,$vlu,$pagelayout);
-
 			$i++;
 		}
 
@@ -657,7 +644,7 @@ JHtml::_('behavior.formvalidator');
     					if(count($exparams)>1)
     					{
     						$esroot=$exparams[0];
-    						$fieldlist[]='escombotree_'.$Model->establename.'_'.$fld['fieldname'].'_1:'.$fld['fieldname'].':'.$esroot;
+    						$fieldlist[]='es_search_box_combotree_'.$Model->establename.'_'.$fld['fieldname'].'_1:'.$fld['fieldname'].':'.$esroot;
     					}
     				}
     				else
@@ -681,12 +668,7 @@ JHtml::_('behavior.formvalidator');
                     
         //JavascriptFunction
         $vlu= '<input type=\'button\' value=\'SEARCH\' class=\''.$class.'\' onClick=\'es_SearchBoxDo()\' />';
-        //$fields2search=tagProcessor_Page::prepareSearchElements($Model,$pagelayout);
-        
-        //$vlu. '<input type=\'hidden\' id=\'esSearchBoxFields\' value=\''.implode(',',$fields2search).'\' />';       
-
-        
-        
+       
         return $vlu;
     }
     
@@ -793,13 +775,6 @@ JHtml::_('behavior.formvalidator');
 					//keyword search
 					$inputbox_name='eskeysearch_'.$moduleid ;
 					$link.='&'.$inputbox_name.'='.JFactory::getApplication()->input->getString($inputbox_name,'');
-
-
-					//$link.='&establename='.JFactory::getApplication()->input->get('establename','','CMD');
-					//$link.='&esfieldlist='.JFactory::getApplication()->input->getString('esfieldlist');
-
-
-
 			}
 
 
@@ -819,11 +794,6 @@ JHtml::_('behavior.formvalidator');
 			$i++;
 		}
 	}
-
-
-
-
-
 
         static protected function CleanUpPath($thePath)
 		{

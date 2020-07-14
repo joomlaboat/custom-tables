@@ -1,20 +1,13 @@
 <?php
-/*----------------------------------------------------------------------------------|  www.vdm.io  |----/
-				JoomlaBoat.com
-/-------------------------------------------------------------------------------------------------------/
+/**
+ * CustomTables Joomla! 3.x Native Component
+ * @author JoomlaBoat.com <support@joomlaboat.com>
+ * @link http://www.joomlaboat.com
+ * @license GNU/GPL
+ **/
 
-	@version		1.6.1
-	@build			19th July, 2018
-	@created		28th May, 2019
-	@package		Custom Tables
-	@subpackage		default.php
-	@author			Ivan Komlev <https://joomlaboat.com>
-	@copyright		Copyright (C) 2018. All Rights Reserved
-	@license		GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
-/------------------------------------------------------------------------------------------------------*/
-
-// No direct access to this file
-defined('_JEXEC') or die('Restricted Access');
+// no direct access
+defined('_JEXEC') or die('Restricted access');
 
 // load tooltip behavior
 JHtml::_('behavior.tooltip');
@@ -37,7 +30,6 @@ $document->addCustomTag('<script src="'.JURI::root(true).'/components/com_custom
 
 	echo '<p>This may import Table Structure from .txt (json encoded) file.</p>';
 
-    //<div class="esUploadFileBox" style="vertical-align:top;"></div>
 	echo '
 
     
@@ -64,6 +56,7 @@ $document->addCustomTag('<script src="'.JURI::root(true).'/components/com_custom
 	<input type="hidden" name="option" value="com_customtables" />
 	<!--<input type="hidden" name="controller" value="importtables" />-->
 	<input type="hidden" name="task" value="importtables.importtables" />
+'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PERMITED_MAX_FILE_SIZE').': '.JoomlaBasicMisc::formatSizeUnits($max_file_size).'
     '.JHtml::_('form.token').'
 	</form>
 	';

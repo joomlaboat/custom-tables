@@ -12,7 +12,7 @@ defined('_JEXEC') or die('Restricted access');
 
 trait render_csv
 {
-    protected static function get_CatalogTable_CSV(&$Model,$fields,&$SearchResult)
+    protected static function get_CatalogTable_CSV(&$Model,$fields,$SearchResult)
 	{
 		$catalogresult='';
 
@@ -22,7 +22,6 @@ trait render_csv
 		$fieldarray=JoomlaBasicMisc::csv_explode(',', $fields, '"', true);
 
         //prepare header and record layouts
-
 		$result='';
 
 		$recordline='';
@@ -47,7 +46,7 @@ trait render_csv
 		}
 
         $recordline.='"'.implode('","',$line_fields).'"';
-		$result.='"'.implode('","',$header_fields).'"'."\r\n";
+		$result.='"'.implode('","',$header_fields).'"';//."\r\n";
 
         //Parse Header
         $Model->LayoutProc->layout=$result;
@@ -57,39 +56,66 @@ trait render_csv
 		$number=1+$Model->limitstart; //table row number, it maybe use in the layout as {number}
 		$Model->LayoutProc->layout=$recordline;
 
-        $tablecontent='';
+		//Initiate the file output
+		$filename = JoomlaBasicMisc::makeNewFileName($Model->params->get('page_title'),'csv');
+
+        if (ob_get_contents())
+          	ob_end_clean();
+
+		ob_start();
+        header('Content-Disposition: attachment; filename="'.$filename.'"');
+        header('Content-Type: text/csv; charset=utf-8');
+		//header('Content-Type: text/plain; charset=utf-8');
+        header("Pragma: no-cache");
+        header("Expires: 0");
+		
+		echo chr(255).chr(254).mb_convert_encoding($result, 'UTF-16LE', 'UTF-8');
+		
+		//Output first chunk
+		
+		flush();
+		ob_flush();//flush to not force the browser to wait
+		ob_start();
+			
+		echo self::renderCSVoutput($Model,$SearchResult);
+				
+		if($Model->TotalRows>$Model->limitstart+$Model->limit)
+		{
+			flush();
+			ob_flush();//flush to not force the browser to wait
+			ob_start();
+			
+			for($limitstart=$Model->limitstart+$Model->limit;$limitstart<$Model->TotalRows;$limitstart+=$Model->limit)
+			{
+				$Model->limitstart=$limitstart;
+				$SearchResult=$Model->getSearchResult();//get records
+				if(count($SearchResult)==0)
+					break;//no records left - escape
+				
+				echo self::renderCSVoutput($Model,$SearchResult);//output next chunk
+				flush();
+				ob_flush();//flush to not force the browser to wait
+				ob_start();
+			}
+		}
+        die;//clean exit
+        //no return here
+    }
+	
+	protected static function renderCSVoutput(&$Model,&$SearchResult)
+	{
+		$number=1+$Model->limitstart; //table row number, it can be used in the layout as {number}
+		$tablecontent='';
 		foreach($SearchResult as $row)
 		{
-				$Model->LayoutProc->number=$number;
+			$Model->LayoutProc->number=$number;
 
-                if($tablecontent!="")
-                    $tablecontent.="\r\n";
-
-                $content=tagProcessor_Item::RenderResultLine($Model,$row,false);
-		        $tablecontent.=strip_tags($content);
-				$number++;
+            $content=strip_tags(tagProcessor_Item::RenderResultLine($Model,$row,false));
+	        $tablecontent.=mb_convert_encoding("\r\n".$content, 'UTF-16LE', 'UTF-8');
+			$number++;
 		}
-        $result.=$tablecontent;
-
-        if($Model->clean)
-        {
-            $filename = JoomlaBasicMisc::makeNewFileName($Model->params->get('page_title'),'csv');
-
-            if (ob_get_contents())
-            	ob_end_clean();
-
-            header('Content-Disposition: attachment; filename="'.$filename.'"');
-            header('Content-Type: text/csv; charset=utf-8');
-            header("Pragma: no-cache");
-            header("Expires: 0");
-
-            echo chr(255).chr(254).mb_convert_encoding($result, 'UTF-16LE', 'UTF-8');
-
-            die ;//clean exit
-        }
-
-        return $result;
-    }
+        return $tablecontent;
+	}
 
 
 	function get_CatalogTable_singleline_CSV(&$SearchResult,&$Model,$allowcontentplugins)

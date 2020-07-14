@@ -1,27 +1,24 @@
 <?php
 /**
  * CustomTables Joomla! 3.x Native Component
- * @version 1.6.1
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
  * @license GNU/GPL
  **/
 
-
 // no direct access
-
 defined('_JEXEC') or die('Restricted access');
 
 class tagProcessor_Field
 {
-    public static function process(&$Model,&$pagelayout,$add_label=false)
+    public static function process(&$Model,&$pagelayout,$add_label=false,$fieldNamePrefix='comes_')
     {
 
-        tagProcessor_Field::ProcessFieldTitles($Model,$pagelayout,$add_label);
+        tagProcessor_Field::ProcessFieldTitles($Model,$pagelayout,$add_label,$fieldNamePrefix);
 
     }
 
-    protected static function ProcessFieldTitles(&$Model,&$pagelayout,$add_label=false)
+    protected static function ProcessFieldTitles(&$Model,&$pagelayout,$add_label=false,$fieldNamePrefix)
 	{
 		//field title
         if($add_label)
@@ -38,7 +35,7 @@ class tagProcessor_Field
                     $description=str_replace('"','',$esfield['description'.$Model->langpostfix]);
                     $isrequired=(bool)$esfield['isrequired'];
 
-                    $field_label='<label id="comes_'.$esfield['fieldname'].'-lbl" for="comes_'.$esfield['fieldname'].'" ';
+                    $field_label='<label id="'.$fieldNamePrefix.$esfield['fieldname'].'-lbl" for="'.$fieldNamePrefix.$esfield['fieldname'].'" ';
                     $class=($description!='' ? 'hasPopover' : '').''.($isrequired ? ' required' : '');
 
                     if($class!='')

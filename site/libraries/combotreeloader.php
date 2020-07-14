@@ -1,7 +1,6 @@
 <?php
 /**
  * Custom Tables Joomla! 3.x Native Component
- * @version 1.6.1
  * @author JoomlaBoat.com <support@joomlaboat.com>
  * @link http://joomlaboat.com
  * @license GNU/GPL
@@ -106,7 +105,7 @@ else
 }
 
 
-	JHTML::script('combotree16.js', 'components/com_customtables/js/customtables/');
+	JHTML::script('combotree_187.js', 'components/com_customtables/js/customtables/');
 
 class ESDynamicComboTree
 {
@@ -145,7 +144,7 @@ function initialize($tablename,$fieldname,$optionname,$prefix)
 		$this->esfieldname=$fieldname;
 		$this->optionname=$optionname;
 		$this->listingtable='#__customtables_table_'.$this->establename;
-		$this->ObjectName=$this->prefix.'escombotree_'.$this->establename.'_'.$this->esfieldname;
+		$this->ObjectName=$this->prefix.'combotree_'.$this->establename.'_'.$this->esfieldname;
 }
 
 function getInstrWhereAdv($object_name,$temp_parent, &$filterwhere, &$urlwhere, &$filterwherearr,&$urlwherearr,$field)

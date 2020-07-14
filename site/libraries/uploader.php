@@ -1,7 +1,6 @@
 <?php
 /**
  * CustomTables Joomla! 3.x Native Component
- * @version 1.2.6
  * @author JoomlaBoat.com <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
  * @license GNU/GPL
@@ -43,44 +42,43 @@ class ESFileUploader
 
 		if($proversion)
 		{
-			//This will let PRO version user to upload zip files, please note that it will check if the file is zip or not (mime type).
+			//This will let PRO version users to upload zip files, please note that it will check if the file is zip or not (mime type).
 			//If not then regular Joomla input method will be used
 
 			if(!isset($_FILES[$fileid]))
 			{
-						require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'
-									 .DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'importcsv.php');
+				require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'
+				 .DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'importcsv.php');
 						
 				return  json_encode(['error'=>'Failed to open file.']);
 			}
-			
+
 			$file=$_FILES[$fileid];
 			if($file==null)
 				return  json_encode(['error'=>'File is empty.']);
-			$mime=mime_content_type ($file["tmp_name"]);
+			
+			$mime=mime_content_type ($file["tmp_name"]);//read mime typw
 
-			if($mime!='application/zip')
+			if($mime!='application/zip')//if not zip file
 			{
 				$file=$jinput->files->get($fileid); //not zip -  regular Joomla input method will be used
-				if($file==null)
+				
+				if(!is_array($file) or count($file)==0) //regular joomla imput method blocked custom table structure json file, because it may contain javascript
 				{
-					$file=$_FILES[$fileid];
-					$magicnumber='<customtablestableexport>';
+					$file=$_FILES[$fileid];//get file instance using php method - not safe, but we will validate it later
+					
+					$handle = fopen($file["tmp_name"], "rb");
+					if (FALSE === $handle)
+						return  json_encode(['error'=>'Failed to open file.']);
+					
+					$magicnumber='<customtablestableexport>';//to prove that this is Custom Tables Structure JSON file.
 					$l=strlen($magicnumber);
 					$file_content=fread($handle, $l);
 					fclose($handle);
 
-
-
-					$handle = fopen($file["tmp_name"], "rb");
-					if (FALSE === $handle)
-						return  json_encode(['error'=>'Failed to open file.']);
-
-
-
-
 					if($mime=='text/plain' and $file_content==$magicnumber)
 					{
+						//All good
 						//This is Custom Tables structure import file
 					}
 					else
@@ -140,16 +138,13 @@ class ESFileUploader
 
 		$accepted_types=ESFileUploader::getAcceptableMimeTypes($filetypes_str);
 
-
 		ESFileUploader::deleteOldFiles();
 
 		$output_dir=JPATH_SITE.DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR;
 		$t=time();
 
 		$jinput=JFactory::getApplication()->input;
-
 		$file=ESFileUploader::getfile_SafeMIME($fileid,$filetypes_str);
-
 
 		$accepted_types=ESFileUploader::getAcceptableMimeTypes($filetypes_str);
 
@@ -186,12 +181,14 @@ class ESFileUploader
 						require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'
 									 .DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'importcsv.php');
 						
+						
 						move_uploaded_file($file["tmp_name"],$newFileName);
 						$msg=importCSVfile($newFileName, $jinput->getInt('tableid',0));
 						if($msg!='' and $msg!='success')
 							$ret = ['error'=>$msg];
 						else
 							$ret = ['status'=>'success','filename'=>'ct_'.$t.'_'.$fileid.'_'.$fileName];
+
 					}
 					else
 					{
@@ -306,7 +303,6 @@ class ESFileUploader
         'json' => 'application/json',
         'xml' => 'application/xml',
         'swf' => 'application/x-shockwave-flash',
-        'flv' => 'video/x-flv',
 
         // images
         'png' => 'image/png',
@@ -323,16 +319,34 @@ class ESFileUploader
 
         // archives
         'zip' => 'application/zip',
-        'rar' => 'application/x-rar-compressed',
-        'exe' => 'application/x-msdownload',
-        'msi' => 'application/x-msdownload',
-        'cab' => 'application/vnd.ms-cab-compressed',
+        'rar' => 'application/x-rar-compressed', //not allowed
+        'exe' => 'application/x-msdownload', //not allowed
+        'msi' => 'application/x-msdownload', //not allowed
+        'cab' => 'application/vnd.ms-cab-compressed', //not allowed
 
-        // audio/video
+        // audio
         'mp3' => 'audio/mpeg',
+		'flac' => 'audio/flac',
+		'aac' => 'audio/aac',
+		'wav' => 'audio/wav',
+		'ogg' => 'audio/ogg',
+
+		// video
+		'mp4' => 'video/mp4',
+		'm4a' => 'video/mp4',
+		'm4p' => 'video/mp4',
+		'm4b' => 'video/mp4',
+		'm4r' => 'video/mp4',
+		'm4v' => 'video/mp4',
+		'flv' => 'video/x-flv',
         'qt' => 'video/quicktime',
         'mov' => 'video/quicktime',
-
+		'3gp' => 'video/3gpp',
+		'avi' => 'video/x-msvideo',
+		'mpg' => 'video/mpeg',
+		'wmv' => 'video/x-ms-wmv',
+		'swf' => 'application/x-shockwave-flash',
+		
         // adobe
         'pdf' => 'application/pdf',
         'psd' => 'image/vnd.adobe.photoshop',
@@ -401,12 +415,16 @@ class ESFileUploader
 	    return $str;
 	}
 
-
 	public static function getAcceptedFileTypes($typeparams)
     {
         $pair=explode(',',$typeparams);
 
-        $allowedExtensions='doc docx pdf txt xls xlsx psd ppt pptx mp3 wav ogg jpg bmp ico odg odp ods odt swf xcf jpeg png gif svg ai aac m4a wma flv mpg wmv mov flac txt avi csv accdb zip';
+        $allowedExtensions='doc docx pdf txt xls xlsx psd ppt pptx odg odp ods odt'
+		.' xcf ai txt avi csv accdb htm html'
+		.' jpg bmp ico jpeg png gif svg ai'//Images
+		.' zip'//Archive
+		.' aac flac mp3 wav ogg'//Audio
+		.' mp4 m4a m4p m4b m4r m4v wma flv mpg 3gp wmv mov';//Video
 
 		$allowedExts=explode(' ',$allowedExtensions);
 		$file_formats=array();

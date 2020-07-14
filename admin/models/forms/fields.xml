@@ -110,6 +110,7 @@
 						<option value="date">COM_CUSTOMTABLES_FIELDS_DATE</option>
 						<option value="time">COM_CUSTOMTABLES_FIELDS_TIME</option>
 						<option value="email">COM_CUSTOMTABLES_FIELDS_EMAIL</option>
+						<option value="url">COM_CUSTOMTABLES_FIELDS_url</option>
 						<option value="float">COM_CUSTOMTABLES_FIELDS_FLOAT</option>
 						<option value="googlemapcoordinates">COM_CUSTOMTABLES_FIELDS_GOOGLE_MAP_COORDINATES</option>
 						<option value="int">COM_CUSTOMTABLES_FIELDS_INTEGER</option>

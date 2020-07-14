@@ -1,7 +1,6 @@
 <?php
 /**
  * CustomTables Joomla! 3.x Native Component
- * @version 1.6.1
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
  * @license GNU/GPL
@@ -13,38 +12,69 @@ defined('_JEXEC') or die('Restricted access');
 class JoomlaBasicMisc
 {
 
-	public static function file_upload_max_size()
-	{
-      static $max_size = -1;
+	//https://stackoverflow.com/questions/13076480/php-get-actual-maximum-upload-size
+	public static function file_upload_max_size() {
+		static $max_size = -1;
 
 		if ($max_size < 0) {
-		// Start with post_max_size.
-		$post_max_size = JoomlaBasicMisc::parse_size(ini_get('post_max_size'));
-		if ($post_max_size > 0) {
-		  $max_size = $post_max_size;
+			// Start with post_max_size.
+			$post_max_size = JoomlaBasicMisc::parse_size(ini_get('post_max_size'));
+			if ($post_max_size > 0) {
+				$max_size = $post_max_size;
+			}
+
+			// If upload_max_size is less, then reduce. Except if upload_max_size is
+			// zero, which indicates no limit.
+			$upload_max = JoomlaBasicMisc::parse_size(ini_get('upload_max_filesize'));
+			if ($upload_max > 0 && $upload_max < $max_size) {
+				$max_size = $upload_max;
+			}
 		}
+		return $max_size;
+	}
 
-    // If upload_max_size is less, then reduce. Except if upload_max_size is
-    // zero, which indicates no limit.
-    $upload_max = JoomlaBasicMisc::parse_size(ini_get('upload_max_filesize'));
-    if ($upload_max > 0 && $upload_max < $max_size) {
-      $max_size = $upload_max;
-    }
-    }
-    return $max_size;
-    }
 
-    protected static function parse_size($size){
-      $unit = preg_replace('/[^bkmgtpezy]/i', '', $size); // Remove the non-unit characters from the size.
-      $size = preg_replace('/[^0-9\.]/', '', $size); // Remove the non-numeric characters from the size.
-      if ($unit) {
-        // Find the position of the unit in the ordered string which is the power of magnitude to multiply a kilobyte by.
-        return round($size * pow(1024, stripos('bkmgtpezy', $unit[0])));
-      }
-      else {
-        return round($size);
-      }
-    }
+	protected static function parse_size($size) {
+		$unit = preg_replace('/[^bkmgtpezy]/i', '', $size); // Remove the non-unit characters from the size.
+		$size = preg_replace('/[^0-9\.]/', '', $size); // Remove the non-numeric characters from the size.
+		if ($unit) {
+			// Find the position of the unit in the ordered string which is the power of magnitude to multiply a kilobyte by.
+			return round($size * pow(1024, stripos('bkmgtpezy', $unit[0])));
+		}
+		else
+			return round($size);
+	}
+	
+	// Snippet from PHP Share: http://www.phpshare.org
+	public static function formatSizeUnits($bytes)
+    {
+        if ($bytes >= 1073741824)
+        {
+            $bytes = number_format($bytes / 1073741824, 2) . ' GB';
+        }
+        elseif ($bytes >= 1048576)
+        {
+            $bytes = number_format($bytes / 1048576, 2) . ' MB';
+        }
+        elseif ($bytes >= 1024)
+        {
+            $bytes = number_format($bytes / 1024, 2) . ' KB';
+        }
+        elseif ($bytes > 1)
+        {
+            $bytes = $bytes . ' bytes';
+        }
+        elseif ($bytes == 1)
+        {
+            $bytes = $bytes . ' byte';
+        }
+        else
+        {
+            $bytes = '0 bytes';
+        }
+
+        return $bytes;
+	}
 
 
 	public static function generateRandomString($length = 32)
@@ -453,9 +483,9 @@ class JoomlaBasicMisc
 			do{
 
 				$count++;
-				if($count>100)
+				if($count>1000)
 				{
-					echo 'count>100';
+					echo 'count>1000';
 					die;
 				}
 
@@ -560,7 +590,7 @@ class JoomlaBasicMisc
 			do{
 
 				$count++;
-				if($count>100)
+				if($count>1000)
 				{
 					echo 'too many quotes.';
 					die;
@@ -845,10 +875,18 @@ class JoomlaBasicMisc
 		// If you don't need to handle multi-byte characters
 		// you can use preg_replace rather than mb_ereg_replace
 		// Thanks @Łukasz Rysiak!
-		$filename = mb_ereg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '', $filename);
-		// Remove any runs of periods (thanks falstro!)
-
-		$filename = mb_ereg_replace("([\.]{2,})", '', $filename);
+		if(function_exists('mb_ereg_replace'))
+		{
+			$filename = mb_ereg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '', $filename);
+			// Remove any runs of periods (thanks falstro!)
+			$filename = mb_ereg_replace("([\.]{2,})", '', $filename);
+		}
+		else
+		{
+			$filename = preg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '', $filename);
+			// Remove any runs of periods (thanks falstro!)
+			$filename = preg_replace("([\.]{2,})", '', $filename);
+		}
 
 		if($format!='')
 			$filename.='.'.$format;

@@ -1,9 +1,8 @@
 <?php
 /**
  * CustomTables Joomla! 3.x Native Component
- * @version 1.2.6
  * @author Ivan komlev <support@joomlaboat.com>
-  * @link http://www.joomlaboat.com
+ * @link http://www.joomlaboat.com
  * @license GNU/GPL
  **/
 
@@ -202,7 +201,7 @@ class CT_FieldTypeTag_file
         $value_found=false;
         $jinput=JFactory::getApplication()->input;
         $mysqltablename='#__customtables_table_'.$establename;
-        $comesfieldname=$prefix.'es_'.$esfieldname;
+        $comesfieldname=$prefix.$esfieldname;
         $FileFolder=CT_FieldTypeTag_file::getFileFolder($typeparams);
 
         $fileid = $jinput->post->get($comesfieldname, '','STRING' );
@@ -327,8 +326,6 @@ class CT_FieldTypeTag_file
 	}
 
 
-
-
     static protected function getCleanAndAvailableFileName($filename,$FileFolder)
     {
 
@@ -427,7 +424,7 @@ class CT_FieldTypeTag_file
 						    $result.='<a href="'.$link.'" target="_blank" alt="'.$file.'" title="'.$file.'"><img src="'.$imagesrc.'" width="48" /></a><br/>';
 
 							if(!$esfield['isrequired'])
-								$result.='<input type="checkbox" name="'.$prefix.'es_'.$esfield['fieldname'].'_delete" id="'.$prefix.'es_'.$esfield['fieldname'].'_delete" value="true">'
+								$result.='<input type="checkbox" name="'.$prefix.$esfield['fieldname'].'_delete" id="'.$prefix.$esfield['fieldname'].'_delete" value="true">'
 								.' Delete File';
 
 				$result.='
@@ -456,22 +453,20 @@ class CT_FieldTypeTag_file
                 	<script>
                         UploadFileCount=1;
 
-
-
                     	var urlstr="/index.php?option=com_customtables&view=fileuploader&tmpl=component&'.$esfieldname.'_fileid='.$fileid.'&Itemid='.$Itemid.'&fieldname='.$esfieldname.'";
                     	ct_getUploader('.$fieldid.',urlstr,'.$max_file_size.',"'.$accepted_file_types.'","eseditForm",false,"ct_fileuploader_'.$esfieldname.'","ct_eventsmessage_'.$esfieldname.'","'.$fileid.'","'.$prefix.$esfieldname.'","ct_ubloadedfile_box_'.$esfieldname.'");
                     </script>
                     <input type="hidden" name="'.$prefix.$esfieldname.'" id="'.$prefix.$esfieldname.'" value="" />
-                    '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PERMITED_FILE_TYPES').': '.$accepted_file_types.'
+                    '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PERMITED_FILE_TYPES').': '.$accepted_file_types.'<br/>
+					'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PERMITED_MAX_FILE_SIZE').': '.JoomlaBasicMisc::formatSizeUnits($max_file_size).'
                 </div>
                 ';
 
         return $result;
 
     }
-
-
-    public static function getFileFolder($typeparams)
+	
+	public static function getFileFolder($typeparams)
     {
 
         $folder='';

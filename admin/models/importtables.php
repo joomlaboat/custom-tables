@@ -1,18 +1,13 @@
 <?php
-/*----------------------------------------------------------------------------------|  www.vdm.io  |----/
-				JoomlaBoat.com
-/-------------------------------------------------------------------------------------------------------/
-
-	@version		1.6.1
-	@build			1st July, 2018
-	@created		28th May, 2019
-	@package		Custom Tables
-	@subpackage		fields.php
-	@author			Ivan Komlev <https://joomlaboat.com>
-	@copyright		Copyright (C) 2018. All Rights Reserved
-	@license		GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
-
-/------------------------------------------------------------------------------------------------------*/
+/**
+ * CustomTables Joomla! 3.x Native Component
+ * @package Custom Tables
+ * @subpackage importtables.php
+ * @author Ivan komlev <support@joomlaboat.com>
+ * @link http://www.joomlaboat.com
+ * @copyright Copyright (C) 2018-2020. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
+ **/
 
 // no direct access
 defined('_JEXEC') or die('Restricted access');
@@ -101,6 +96,9 @@ class CustomTablesModelImporttables extends JModelList
 					$result[]='"'.$values[$i].'"';
 
 				elseif($fieldtypepair[0]=='email' )
+					$result[]='"'.$values[$i].'"';
+
+				elseif($fieldtypepair[0]=='url' )
 					$result[]='"'.$values[$i].'"';
 
 				elseif($fieldtypepair[0]=='float' or $fieldtypepair[0]=='int')

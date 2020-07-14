@@ -2,7 +2,7 @@
 /**
  * CustomTables Joomla! 3.x Native Component
  * @package Custom Tables
- * @subpackage tables.php
+ * @subpackage models/tables.php
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
  * @copyright Copyright (C) 2018-2020. All Rights Reserved
@@ -644,7 +644,7 @@ class CustomtablesModelTables extends JModelAdmin
 
 			if(count($tablestatus)>0)
 			{
-				$query = 'RENAME TABLE '.$database.'.'.$dbprefix.'customtables_table_'.$old_tablename.' TO '.$database.'.'.$dbprefix.'customtables_table_'.$tablename.';';
+				$query = 'RENAME TABLE '.$db->quoteName($database.'.'.$dbprefix.'customtables_table_'.$old_tablename).' TO '.$db->quoteName($database.'.'.$dbprefix.'customtables_table_'.$tablename).';';
 
 				$db->setQuery( $query );
 

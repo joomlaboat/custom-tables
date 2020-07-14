@@ -1,7 +1,6 @@
 <?php
 /**
  * Custom Tables Joomla! 3.x Native Component
- * @version 1.7.5
  * @author JoomlaBoat.com <support@joomlaboat.com>
  * @link http://joomlaboat.com
  * @license GNU/GPL
@@ -47,7 +46,6 @@ function getLines($filename)
 
 function importCSVdata($filename,$ct_tableid)
 {
-  
     $arrayOfLines = getLines($filename);
     
     $tablerow=ESTables::getTableRowByID($ct_tableid);
@@ -59,6 +57,11 @@ function importCSVdata($filename,$ct_tableid)
     $line=JoomlaBasicMisc::csv_explode(',',$arrayOfLines[0],'"',false);
         
     $fieldList=prepareFieldList($line,$fields,$first_line_fieldnames);
+	foreach($fieldList as $f)
+	{
+		if($f==-2)
+			return JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FIELD_NAMES_DO_NOT_MATCH');		
+	}
 
     $offset=0;
     if($first_line_fieldnames)
@@ -115,6 +118,7 @@ function findSQLRecordJoin($tablename,$join_fieldname,$vlus_str)
     $wheres[]=$db->quoteName('es_'.$join_fieldname).'='.$db->quote($vlu);
   
   $query='SELECT id FROM #__customtables_table_'.$tablename.' WHERE published=1 AND ('.implode(' OR ',$wheres).')';
+  
   
   $db->setQuery($query);
 	if (!$db->query())    die( $db->stderr());
@@ -208,7 +212,9 @@ function prepareSQLQuery($fieldList,$fields,$line_)
   $db = JFactory::getDBO();
   $sets=array();
   $i=0;
-    
+
+
+  
 
   foreach($fieldList as $f_index)
   {
@@ -349,11 +355,11 @@ function prepareFieldList($fieldNames,$fields,&$first_line_fieldnames)
     
     foreach($fieldNames as $fieldName_)
     {
-
         $index=0;
         
         $fieldName=removeBomUtf8($fieldName_);
         $fieldName=preg_replace("/[^a-zA-Z1-9 #]/", "", $fieldName);
+		
         $found=false;
         foreach($fields as $field)
         {
@@ -367,7 +373,7 @@ function prepareFieldList($fieldNames,$fields,&$first_line_fieldnames)
                 $first_line_fieldnames=true;
                 break;
             }
-            else if((string)$clean_field_name==(string)$fieldName)
+            else if((string)$clean_field_name==(string)$fieldName or (string)$field->fieldname==(string)$fieldName)
             {
                 $first_line_fieldnames=true;
                 $fieldList[]=$index;

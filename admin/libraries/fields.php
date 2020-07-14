@@ -1,10 +1,12 @@
 <?php
 /**
- * Custom Tables Joomla! 3.x Native Component
- * @version 1.6.1
+ * CustomTables Joomla! 3.x Native Component
+ * @package Custom Tables
+ * @subpackage libraries/fields.php
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @license GNU/GPL
+ * @copyright Copyright (C) 2018-2020. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
 // no direct access
@@ -360,17 +362,18 @@ class ESFields
 				return 'varchar(255) NULL';
 				break;
 
+			case 'url':
+				return 'varchar(1024) NULL';
+				break;
+
+
 			case 'date':
 				return 'date NULL';
 				break;
             
-            case 'time':
+		        case 'time':
 				return 'int(11) NULL';
 				break;
-
-			//case 'published':
-				//return 'tinyint(1)';
-				//break;
 
 			case 'creationtime':
 				return 'datetime NULL';
@@ -441,7 +444,7 @@ class ESFields
 				break;
 
             case '_id':
-				return 'int(10) NOT NULL';
+				return 'int(10) UNSIGNED NOT NULL AUTO_INCREMENT';
 				break;
 
             case '_published':
@@ -483,8 +486,6 @@ class ESFields
 
     public static function addForeignKey($establename,$esfieldname,$new_typeparams='',$join_with_table_name='',$join_with_table_field='id',&$msg)
 	{
-//echo 'l;kj';
-//die;
 		$mysqltablename='#__customtables_table_'.$establename;
 		$mysqlfieldname='es_'.$esfieldname;
 
@@ -534,7 +535,7 @@ class ESFields
         {
             ESFields::cleanTableBeforeNormalization($establename,$esfieldname,$join_with_table_name,$join_with_table_field);
 
-            $query='ALTER TABLE '.$mysqltablename.' ADD FOREIGN KEY ('.$mysqlfieldname.') REFERENCES '.$database.'.'.$join_with_table_name.'('.$join_with_table_field.') ON DELETE RESTRICT ON UPDATE RESTRICT;';
+            $query='ALTER TABLE '.$db->quoteName($mysqltablename).' ADD FOREIGN KEY ('.$mysqlfieldname.') REFERENCES '.$db->quoteName($database.'.'.$join_with_table_name).' ('.$join_with_table_field.') ON DELETE RESTRICT ON UPDATE RESTRICT;';
 
             $db->setQuery( $query );
 
@@ -998,7 +999,8 @@ class ESFields
 			$db->setQuery($query);
 			if (!$db->query())    die( $db->stderr());
 
-			$query='ALTER TABLE '.$mysqltablename.' DROP '.$fieldname.';';
+			$query='ALTER TABLE '.$mysqltablename.' DROP '.$fieldname;
+
 			$db->setQuery( $query );
 
 			if (!$db->query())
@@ -1017,6 +1019,7 @@ class ESFields
 		$db = JFactory::getDBO();
 
         $query='ALTER TABLE '.$mysqltablename.' CHANGE '.$fieldname.' '.$fieldname.' '.$PureFieldType;
+
 		$db->setQuery( $query );
 
 		if (!$db->query())

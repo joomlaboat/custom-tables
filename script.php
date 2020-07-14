@@ -1,18 +1,13 @@
 <?php
-/*----------------------------------------------------------------------------------|  www.vdm.io  |----/
-				JoomlaBoat.com
-/-------------------------------------------------------------------------------------------------------/
-
-	@version		1.8.1
-	@build			19th July, 2018
-	@created		28th May, 2019
-	@package		Custom Tables
-	@subpackage		script.php
-	@author			Ivan Komlev <https://joomlaboat.com>
-	@copyright		Copyright (C) 2018. All Rights Reserved
-	@license		GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
-
-/------------------------------------------------------------------------------------------------------*/
+/**
+ * CustomTables Joomla! 3.x Native Component
+ * @package Custom Tables
+ * @subpackage script.php
+ * @author Ivan komlev <support@joomlaboat.com>
+ * @link http://www.joomlaboat.com
+ * @copyright Copyright (C) 2018-2020. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
+ **/
 
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
@@ -68,8 +63,6 @@ class com_customtablesInstallerScript
 	 */
 	function preflight($type, $parent)
 	{
-
-
 		// get application
 		$app = JFactory::getApplication();
 		// is redundant ...hmmm
@@ -145,19 +138,18 @@ class com_customtablesInstallerScript
 			echo '<a target="_blank" href="https://joomlaboat.com" title="Custom Tables">
 				<img src="'.JURI::root(true).'/administrator/components/com_customtables/assets/images/vdm-component.jpg"/>
 				</a>
-				<h3>Upgrade to Version 1.8.1 Was Successful! Let us know if anything is not working as expected.</h3>';
+				<h3>Upgrade was Successful!</h3>';
 		}
 
+/*
 		$file=JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'sql'.DIRECTORY_SEPARATOR.'_es2ct.php';
-		//echo $file;
 
 		if(file_exists($file))
 		{
 			echo 'Updating Extrasearch Tables';
 			require_once($file);
 			updateESTables();
-		}
-
+		}*/
 
 		if(!file_exists(JPATH_SITE.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'ct_images'))
 				mkdir(JPATH_SITE.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'ct_images');

@@ -1,7 +1,6 @@
 <?php
 /**
  * Custom Tables Joomla! 3.x Native Component
- * @version 1.6.1
  * @author JoomlaBoat.com <support@joomlaboat.com>
  * @link http://joomlaboat.com
  * @license GNU/GPL
@@ -47,8 +46,8 @@ class CustomTablesModelEditFiles extends JModelLegacy {
 		$this->allowedExtensions='gslides doc docx pdf txt xls xlsx psd ppt pptx png mp3 jpg jpeg accdb';
 
 		$params = JComponentHelper::getParams( 'com_customtables' );
-
-		$this->maxfilesize=100000000;
+		
+		$this->maxfilesize=$max_file_size=JoomlaBasicMisc::file_upload_max_size();
 
 		$this->es= new CustomTablesMisc;
 

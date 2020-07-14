@@ -1,9 +1,8 @@
 <?php
 /**
  * CustomTables Joomla! 3.x Native Component
- * @version 1.6.1
  * @author Ivan komlev <support@joomlaboat.com>
-  * @link http://www.joomlaboat.com
+ * @link http://www.joomlaboat.com
  * @license GNU/GPL
  **/
 
@@ -32,11 +31,9 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.
 class LayoutProcessor
 {
 	var $layout;
-
+	var $layoutType;//item layout type
 	var $number;
-
 	var $recordlist;
-
 	var $toolbar_array;
 	var $Model;
 	var $advancedtagprocessor;
@@ -49,7 +46,6 @@ class LayoutProcessor
 			require_once($phptagprocessor);
 			$this->advancedtagprocessor=true;
 
-
 		$servertagprocessor_file=JPATH_SITE.DIRECTORY_SEPARATOR.'plugins'.DIRECTORY_SEPARATOR.'content'.DIRECTORY_SEPARATOR.'customtables'.DIRECTORY_SEPARATOR.'protagprocessor'.DIRECTORY_SEPARATOR.'servertags.php';
 
 		if(file_exists($servertagprocessor_file))
@@ -58,12 +54,9 @@ class LayoutProcessor
 		}
 		else
 			$this->advancedtagprocessor=false;
-
-
-
 	}
 
-	function fillLayout($row,$aLink=null,$toolbar=array(),$tag_chars='[]',$disable_advanced_tags=false,$add_label=false)
+	function fillLayout($row,$aLink=null,$toolbar=array(),$tag_chars='[]',$disable_advanced_tags=false,$add_label=false,$fieldNamePrefix='comes_')
 	{
 
 		if(!is_array($toolbar) or count($toolbar)==0)
@@ -88,12 +81,9 @@ class LayoutProcessor
 		{
 			tagProcessor_If::process($this->Model,$htmlresult,$row,$this->recordlist,$this->number);
 
-
-
-
 			//Item must be before General to let the following: currenturl:set,paymentid,{id}}
 			tagProcessor_Value::processValues($this->Model,$row,$htmlresult,$tag_chars);//to let sqljoin function work
-			tagProcessor_Item::process($this->advancedtagprocessor,$this->Model,$row,$htmlresult,$aLink,$toolbar,$this->recordlist,$this->number,$add_label);
+			tagProcessor_Item::process($this->advancedtagprocessor,$this->Model,$row,$htmlresult,$aLink,$toolbar,$this->recordlist,$this->number,$add_label,$fieldNamePrefix);
 			tagProcessor_General::process($this->Model,$htmlresult,$row,$this->recordlist,$this->number);
 			tagProcessor_Page::process($this->Model,$htmlresult);
 

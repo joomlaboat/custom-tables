@@ -1,25 +1,24 @@
 <?php
 /**
  * CustomTables Joomla! 3.x Native Component
- * @version 1.6.1
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
  * @license GNU/GPL
  **/
 
 // no direct access
-
 defined('_JEXEC') or die('Restricted access');
+
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'misc.php');
 
 class tagProcessor_Item
 {
-    public static function process($advancedtagprocessor,&$Model,&$row,&$htmlresult,$aLink,$toolbar,$recordlist,$number,$add_label=false)
+    public static function process($advancedtagprocessor,&$Model,&$row,&$htmlresult,$aLink,$toolbar,$recordlist,$number,$add_label=false,$fieldNamePrefix='comes_')
 	{
         tagProcessor_Item::createUserButton($Model,$row,$htmlresult,$recordlist,$number);
         tagProcessor_Item::processLink($Model,$row,$htmlresult,$recordlist,$number,$aLink);
 
-		tagProcessor_Field::process($Model,$htmlresult,$add_label);
+		tagProcessor_Field::process($Model,$htmlresult,$add_label,$fieldNamePrefix);
 
 		if($advancedtagprocessor)
 			tagProcessor_Server::process($Model,$htmlresult);
@@ -48,10 +47,7 @@ class tagProcessor_Item
 			}
 		}
 
-
-
 		$htmlresult=str_replace('{recordlist}',$recordlist,$htmlresult);
-
 
         $id=0;
 		if(isset($row) and isset($row['listing_id']))
@@ -74,17 +70,12 @@ class tagProcessor_Item
 			tagProcessor_Item::GetCustomToolBar($htmlresult,$toolbar);
 
 		CT_FieldTypeTag_ct::ResolveStructure($Model,$htmlresult);
-
-
-
 	}
-
 
     public static function checkAccess(&$Model,$ug,&$row)
 	{
         if(!isset($Model->isUserAdministrator))
             return false;
-
 
 		$user = JFactory::getUser();
 
@@ -99,7 +90,6 @@ class tagProcessor_Item
 			$isok=true;
 		else
 		{
-
 			if(isset($row) and isset($row['published']) and  $Model->useridfieldname!='')
 			{
 				$uid=$row['es_'.$Model->useridfieldname];
@@ -128,7 +118,6 @@ class tagProcessor_Item
 		$delete_userGroup=(int)$Model->params->get( 'deleteusergroups' );
 		if($delete_userGroup==0)
 			$delete_userGroup=$edit_userGroup;
-
 
 		$isEditable=tagProcessor_Item::checkAccess($Model,$edit_userGroup,$row);
 		$isPublishable=tagProcessor_Item::checkAccess($Model,$publish_userGroup,$row);
@@ -188,7 +177,6 @@ class tagProcessor_Item
 		$toolbar['checkbox']='<input type="checkbox" name="esCheckbox'.$Model->estableid.'" id="'.$rid.'" value="'.$id.'" />';
 
 		return $toolbar;
-
 	}
 
 
@@ -211,10 +199,8 @@ class tagProcessor_Item
 		if(JFactory::getApplication()->input->get('tmpl','','CMD')!='')
 			$editlink.='&tmpl='.JFactory::getApplication()->input->get('tmpl','','CMD');
 
-
 		if($Model->Itemid>0)
 			$editlink.='&amp;Itemid='.$Model->Itemid;
-
 
         $alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_EDIT' );
 		$img='<img src="'.JURI::root(true).'/components/com_customtables/images/edit.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
@@ -223,8 +209,6 @@ class tagProcessor_Item
 		$link=$editlink;
 
 		return '<div id="'.$rid.'" class="toolbarIcons"><a href="'.$link.'">'.$img.'</a></div>';
-
-
 	}
 
 	protected static function renderImageGalleryIcon($imagegalleries,&$Model,&$row,$WebsiteRoot)
@@ -278,10 +262,8 @@ class tagProcessor_Item
 			$rid='esFileBoxIcon'.$Model->estableid.'x'.$id;
 
 			return '<div id="'.$rid.'" class="toolbarIcons"><a href="'.$WebsiteRoot.$filemanagerlink.'">'.$img.'</a></div>';
-
 		}
 	}
-
 
 	protected static function getFieldCleanValue4RDI(&$Model,&$row,&$mFld)
 	{
@@ -500,11 +482,16 @@ class tagProcessor_Item
 
                         $wheres=array();
 
+
 						if($Model->establename!=$sj_tablename)
 						{
 							//don't attach to specific record when it is the same table, example : to find averages
 							$wheres[]='#__customtables_table_'.$Model->establename.'.id='.$id;
 						}
+						else
+						{
+                            //$wheres[]='#__customtables_table_'.$sj_tablename.'.published=1';//to join with published record only, preferably set in parameters
+                        }
 
 
 						if($additional_where!='')
@@ -589,7 +576,8 @@ class tagProcessor_Item
 
 
 
-	protected static function GetCustomToolBar(&$htmlresult,$toolbar)
+	
+    protected static function GetCustomToolBar(&$htmlresult,$toolbar)
 	{
 
 		$options=array();
@@ -599,33 +587,21 @@ class tagProcessor_Item
 		foreach($fList as $fItem)
 		{
 			$vlu='';
-
-			//$vlu.='$options[$i]:'.$options[$i].',<br/>';
-
 			if($options[$i]=='')
-			{
-				//if(isset($row) and count($row)>0)
-
 				$modes=array('edit','gallery','publish','delete','refresh');
-			}
 			else
 				$modes=explode(',',$options[$i]);
 
-
 			foreach($modes as $mode)
 			{
-				//$vlu.='$mode:'.$mode.',<br/>';
 				if(isset($toolbar[$mode]))
 					$vlu.=$toolbar[$mode];
-
 			}
 
 			$htmlresult=str_replace($fItem,$vlu,$htmlresult);
 			$i++;
 		}
-
 	}
-
 
     protected static function processLink(&$Model,&$row,&$pagelayout,$recordlist,$number,$aLink)
 	{
@@ -706,7 +682,6 @@ class tagProcessor_Item
         return $viewlink;
     }
 
-
     public static function RenderResultLine(&$Model,&$row,$showanchor)
     {
         $jinput=JFactory::getApplication()->input;
@@ -733,14 +708,26 @@ class tagProcessor_Item
 			$toolbar=array();
 		else
 			$toolbar=tagProcessor_Item::getToolbar($Model->imagegalleries,$Model->fileboxes,$Model,$row);
+            
+        if($Model->LayoutProc->layoutType==2)
+        {
+            require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tagprocessor'.DIRECTORY_SEPARATOR.'edittags.php');
+            $pagelayout_temp=$Model->LayoutProc->layout;//Temporary remember original layout
+            $htmlresult=$pagelayout_temp;
 
+            $prefix='table_'.$Model->establename.'_'.$row['id'].'_';
+            tagProcessor_Edit::process($Model,$htmlresult,$row,$prefix);//Process edit form layout
+            
+            $Model->LayoutProc->layout=$htmlresult;//Temporary replace original layout with processed result
+			$htmlresult=$Model->LayoutProc->fillLayout($row,null,'','||',false,true,$prefix);//Process field values
 
-		$htmlresult.=$Model->LayoutProc->fillLayout($row,$viewlink,$toolbar,'[]',false);
+            $Model->LayoutProc->layout=$pagelayout_temp;//Set original layout as it was before, to process other records
+        }
+        else
+            $htmlresult.=$Model->LayoutProc->fillLayout($row,$viewlink,$toolbar,'[]',false);
 
 		return $htmlresult;
-
     }
-
 
     protected static function createUserButton(&$Model,&$row,&$pagelayout,$recordlist,$number)
 	{
@@ -762,7 +749,6 @@ class tagProcessor_Item
                 $user_name=preg_replace("/[^A-Za-z0-9 ]/", "", $parts[1]);//Sanitize user name
                 $alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_CREATEUSER' );
                 $img='<img src="'.JURI::root(true).'/components/com_customtables/images/key.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
-//                $vlu='<div class="toolbarIcons"><a href=\'javascript:ctCreateUser("'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_USERWILLBECREATED' ).' '.$user_name.'?", '.$row['listing_id'].','.$Model->Itemid.')\'>'.$img.'</a></div>';
                 $vlu='<div class="toolbarIcons"><a href=\'javascript:ctCreateUser("'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_USERWILLBECREATED' ).' '.$user_name.'?", '.$row['listing_id'].')\'>'.$img.'</a></div>';
             }
 
@@ -771,6 +757,4 @@ class tagProcessor_Item
 		}
 
 	}
-
-
 }

@@ -1,14 +1,13 @@
 <?php
-/*
-	@version		1.6.1
-	@build			3ed July, 2018
-	@created		28th May, 2019
-	@package		Custom Tables
-	@author			Ivan Komlev <https://joomlaboat.com>
-	@copyright		Copyright (C) 2018. All Rights Reserved
-	@license		GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
-
-*/
+/**
+ * CustomTables Joomla! 3.x Native Component
+ * @package Custom Tables
+ * @subpackage libraries/_checktable.php
+ * @author Ivan komlev <support@joomlaboat.com>
+ * @link http://www.joomlaboat.com
+ * @copyright Copyright (C) 2018-2020. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
+ **/
 
 defined('_JEXEC') or die('Restricted access');
 
@@ -230,7 +229,7 @@ function checkTableFields($establename,$tableid)
             $query = '
 			CREATE TABLE IF NOT EXISTS #__customtables_table_'.$tablename.'
 			(
-				id int(10) NOT NULL auto_increment,
+				id int(10) unsigned NOT NULL auto_increment,
 				published tinyint(1) DEFAULT "1",
 				PRIMARY KEY  (id)
 			) ENGINE=InnoDB COMMENT="'.$tabletitle.'" DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;

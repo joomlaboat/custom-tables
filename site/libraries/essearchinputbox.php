@@ -1,8 +1,6 @@
 <?php
-
 /**
  * CustomTables Joomla! 3.x Native Component
- * @version 1.0.0
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
  * @license GNU/GPL
@@ -39,9 +37,7 @@ class ESSerachInputBox
 		if($value=='')
 			$value=$this->getWhereParameter($esfield['fieldname']);
 
-		$realFieldName='es_'.$objname;
 		$objname_=$prefix.$objname;
-
 
 		switch($esfield['type'])
 		{
@@ -134,7 +130,6 @@ class ESSerachInputBox
 
 						case 'user':
 							$result.=$this->getUserBox($esfield,$default_Action,$index,$where,$wherelist,$objname_,$value, $cssclass);
-
 							break;
 
 						case 'usergroup':
@@ -157,8 +152,15 @@ class ESSerachInputBox
 								$result.='<input type="text" name="'.$objname_.'" id="'.$objname_.'" class="'.$cssclass.' inputbox" '
 								.' placeholder="'.$field_title.'"'
 								.' onkeypress="es_SearchBoxKeyPress(event)"'
-								.' value="'.$value.'" '.((int)$esfield['typeparams']>0 ? 'maxlength="'.(int)$esfield['typeparams'].'"' : 'maxlength="255"').' />';
+								.' value="'.$value.'" maxlength="255" />';
+								
+						break;
 
+						case 'url';
+								$result.='<input type="text" name="'.$objname_.'" id="'.$objname_.'" class="'.$cssclass.' inputbox" '
+								.' placeholder="'.$field_title.'"'
+								.' onkeypress="es_SearchBoxKeyPress(event)"'
+								.' value="'.$value.'" maxlength="1024" />';
 						break;
 
 						case 'date';
@@ -186,7 +188,7 @@ class ESSerachInputBox
 
 							$typeparams=JoomlaBasicMisc::csv_explode(',',$esfield['typeparams'],'"',false);
 							$result.=JHTML::_('ESSQLJoin.render',$typeparams,$value,true,$this->langpostfix,$objname_,$esfield['fieldtitle'].$this->langpostfix,
-											  $cssclass.' inputbox es_class_sqljoin', $onchange);
+											  $cssclass.' inputbox es_class_sqljoin', $onchange,true);
 
 		return $result;
 	}

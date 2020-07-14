@@ -111,7 +111,7 @@ function ct_getUploader(index,urlstr,maxFileSize,allowedTypes,UploaderForm,Submi
 							document.getElementById(p.esUploaderFormID).submit();
 					}
 					else
-						$("#"+EventMessageBox).html('Error: <span style="color:red;">'+res.error+'</span>');
+						$("#"+EventMessageBox).html('Error : <span style="color:red;">'+res.error+'</span>');
 
 				}
 

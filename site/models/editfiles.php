@@ -1,8 +1,6 @@
 <?php
-
 /**
  * Custom Tables Joomla! 3.x Native Component
- * @version 1.6.1
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
  * @license GNU/GPL
@@ -66,7 +64,7 @@ class CustomTablesModelEditFiles extends JModelLegacy {
 		$app		= JFactory::getApplication();
 		$params=$app->getParams();
 
-		$this->maxfilesize=100000000;
+		$this->maxfilesize=JoomlaBasicMisc::file_upload_max_size();
 
 
 		$this->es= new CustomTablesMisc;
