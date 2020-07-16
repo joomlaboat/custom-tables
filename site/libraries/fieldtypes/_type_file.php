@@ -284,15 +284,14 @@ class CT_FieldTypeTag_file
 				$uploadedfile=$dst;
 			}
 
-			//Delete Old File
-    		if($ExistingFile!='')
+			
+    		if($ExistingFile!='' and !CT_FieldTypeTag_file::checkIfTheFileBelongsToAnotherRecord($ExistingFile,$FileFolder,$establename,$esfieldname))
     		{
+				//Delete Old File
     			$filename_full=$FileFolder.DIRECTORY_SEPARATOR.$ExistingFile;
 
                 if(file_exists($filename_full))
                   	unlink($filename_full);
-
-
 			}
 
             $mime=mime_content_type ($uploadedfile);
@@ -320,11 +319,23 @@ class CT_FieldTypeTag_file
 				unlink($uploadedfile);
 				return false;
 			}
-
 		}
 		return '';
 	}
-
+	
+	static protected function checkIfTheFileBelongsToAnotherRecord($filename,$FileFolder,$establename,$esfieldname)
+	{
+		$mysqltablename='#__customtables_table_'.$establename;
+        $comesfieldname='es_'.$esfieldname;
+		
+		$db = JFactory::getDBO();
+		$query='SELECT id FROM '.$mysqltablename.' WHERE '.$comesfieldname.'='.$db->quote($filename).' LIMIT 2';
+		
+		$db->setQuery( $query );
+		if (!$db->query())    die ;
+		
+		return $db->getNumRows()>1;
+	}
 
     static protected function getCleanAndAvailableFileName($filename,$FileFolder)
     {
