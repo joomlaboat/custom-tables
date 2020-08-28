@@ -238,7 +238,7 @@ JHtml::_('behavior.formvalidator');
                     $vlu=$result;
                 }
                 else
-        			$vlu='<a href="'.JURI::root(true).$link.'"><img src="'.JURI::root(true).'/components/com_customtables/images/new.png" alt="Add New" title="Add New" /></a>';
+        			$vlu='<a href="'.JURI::root(true).$link.'" id="ctToolBarAddNew'.$Model->estableid.'" class="toolbarIcons"><img src="'.JURI::root(true).'/components/com_customtables/images/new.png" alt="Add New" title="Add New" /></a>';
             }
             else
                 $vlu='';
@@ -496,14 +496,16 @@ JHtml::_('behavior.formvalidator');
 					{
                         //this is for legacy purposes when {search:button} was used,
                         //now we have dedicated tag {searchbutton} to render the search button
-						$style='button';
+						$style='';
 
 						if(isset($opair[1]) and $opair[1]!='')
 							$style=$opair[1];
 
-						$class='button';
+						$class='ctSearchBox';
 						if(isset($opair[2]) and $opair[2]!='')
-							$class=$opair[2];
+							$class.=' '.$opair[2];
+						else
+							$class.=' btn button-apply btn-primary';
 
 						if($Model->print==1)
 							$vlu='';
@@ -544,11 +546,10 @@ JHtml::_('behavior.formvalidator');
                                     $field_title=$fld['fieldtitle'.$Model->langpostfix];
                                 }
 
+								$cssclass='ctSearchBox';
 								if(isset($opair[1]))
-									$cssclass=$opair[1];
-								else
-									$cssclass='';
-                                
+									$cssclass.=' '.$opair[1];
+
                                 $default_Action=" ";//action should be a space not empty or this.value=this.value    
                                 if(isset($opair[2]) and $opair[2]=='reload')
                                     $default_Action=' onChange="es_SearchBoxDo();"';
@@ -556,7 +557,7 @@ JHtml::_('behavior.formvalidator');
                                 if(isset($opair[3]) and $opair[3]=='improved')
 									$cssclass.=' ct_improved_selectbox';
                                     
-								$vlu=$ESSIB->renderFieldBox($Model,'es_search_box_',$first_field_name,$fld,$cssclass,$count,'',false,'',$default_Action,$field_title);//action should be a space not empty or this.value=this.value
+								$vlu=$ESSIB->renderFieldBox($Model,'es_search_box_',$first_field_name,$fld,$cssclass,$count,'',false,'',$default_Action,$field_title);//action should be a space not empty or 
 
                                 if(!$firstFieldFound)
                                 {
@@ -662,9 +663,11 @@ JHtml::_('behavior.formvalidator');
     
     static protected function renderSearchButton(&$Model,&$pagelayout,$class_)
     {
-        $class='btn button-apply btn-success';
+        $class='ctSearchBox';
 		if(isset($class_) and $class_!='')
-			$class=$class_;
+			$class.=' '.$class_;
+		else
+			$class.='  btn button-apply btn-primary';
                     
         //JavascriptFunction
         $vlu= '<input type=\'button\' value=\'SEARCH\' class=\''.$class.'\' onClick=\'es_SearchBoxDo()\' />';
@@ -730,7 +733,7 @@ JHtml::_('behavior.formvalidator');
 			if($numberonly)
 				return $Model->TotalRows;
 			else
-				return JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FOUND' ).': '.$Model->TotalRows.' '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RESULT_S' );
+				return '<span class="ctCatalogRecordCount">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FOUND' ).': '.$Model->TotalRows.' '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RESULT_S' ).'</span>';
 		}
 	}
 
@@ -782,7 +785,7 @@ JHtml::_('behavior.formvalidator');
 				$vlu='<p><a href="#" onclick="window.print();return false;"><img src="'.JURI::root(true).'/components/com_customtables/images/printButton.png" alt="'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PRINT').'"  /></a></p>	';
 			else
             {
-                $class='btn button';
+                $class='ctEditFormButton btn button';
 				if(isset($opair[0]) and $opair[0]!='')
 					$class=$opair[0];
 

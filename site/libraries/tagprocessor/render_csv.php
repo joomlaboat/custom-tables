@@ -47,6 +47,13 @@ trait render_csv
 
         $recordline.='"'.implode('","',$line_fields).'"';
 		$result.='"'.implode('","',$header_fields).'"';//."\r\n";
+		
+		echo 'j';
+		print_r($line_fields);
+		
+		
+		echo $result;
+		die;
 
         //Parse Header
         $Model->LayoutProc->layout=$result;

@@ -154,11 +154,10 @@ class tagProcessor_Edit
                                     tagProcessor_General::process($Model,$redirectlink,$_row,$_list,0);
                                 }
 
+								$optional_class='';
                                 if(isset($option[3]))
                                 	$optional_class=$option[3];
-                                else
-                                	$optional_class='';
-
+                                
                                 switch($type)
                                 {
                                     case 'save':
@@ -249,12 +248,12 @@ class tagProcessor_Edit
                                 else
                                 	$redirectlink=$Model->params->get( 'returnto' );
 
+								$optional_class='';
                                 if(isset($option[5]))
                                 	$optional_class=$option[5];
-                                else
-                                	$optional_class='';
 
                                 $b=tagProcessor_Edit::getToolbar($Model,$submitbuttons,$button1title,$button2title,$button3title,$redirectlink,$optional_class,$captcha_found,$listing_id);
+			
                             }
                             
 							$pagelayout=str_replace($buttons[$i], $b, $pagelayout);
@@ -268,14 +267,14 @@ class tagProcessor_Edit
             $attribute=' disabled="disabled"';
             
         if($optional_class!='')
-			$the_class=$optional_class;
+			$the_class='ctEditFormButton '.$optional_class;
 		else
-			$the_class='btn button-apply btn-success';
+			$the_class='ctEditFormButton btn button-apply btn-success';
             
         if($title=='')
             $title=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SAVE');
         
-        $onclick='setTask("saveandcontinue","'.$Model->encoded_current_url.'",false);';
+        $onclick='setTask("saveandcontinue","'.$Model->encoded_current_url.'",true);';
                 
 		return '<input id="customtables_button_save" type="submit" class="'.$the_class.' validate"'.$attribute.' onClick=\''.$onclick.'\' value="'.$title.'">';
     }
@@ -284,7 +283,7 @@ class tagProcessor_Edit
     {
         $attribute='onClick=\'';
         
-        $attribute.='setTask("save","'.base64_encode ($redirectlink).'",false);';
+        $attribute.='setTask("save","'.base64_encode ($redirectlink).'",true);';
             
         $attribute.='\'';
         
@@ -293,9 +292,9 @@ class tagProcessor_Edit
             $attribute.=' disabled="disabled"';
             
         if($optional_class!='')
-			$the_class=$optional_class;
+			$the_class='ctEditFormButton '.$optional_class;
 		else
-			$the_class='btn button-apply btn-success';
+			$the_class='ctEditFormButton btn button-apply btn-success';
             
         if($title=='')
             $title= JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SAVEANDCLOSE');
@@ -307,16 +306,16 @@ class tagProcessor_Edit
     protected static function renderSaveAndPrintButton($captcha_found,$optional_class,$title,$redirectlink)
     {
         $attribute='onClick=\'';
-        $attribute='setTask("saveandprint","'.base64_encode ($redirectlink).'",false);';
+        $attribute='setTask("saveandprint","'.base64_encode ($redirectlink).'",true);';
         $attribute.='\'';
         
         if($captcha_found)
             $attribute=' disabled="disabled"';
             
         if($optional_class!='')
-			$the_class=$optional_class;
+			$the_class='ctEditFormButton '.$optional_class;
 		else
-			$the_class='btn button-apply btn-success';
+			$the_class='ctEditFormButton btn button-apply btn-success';
             
         if($title=='')
             $title=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NEXT');
@@ -333,14 +332,14 @@ class tagProcessor_Edit
             $attribute=' disabled="disabled"';
             
         if($optional_class!='')
-			$the_class=$optional_class;
+			$the_class='ctEditFormButton '.$optional_class;
 		else
-			$the_class='btn button-apply btn-success';
+			$the_class='ctEditFormButton btn button-apply btn-success';
             
         if($title=='')
             $title=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SAVEASCOPYANDCLOSE');
             
-        $onclick='setTask("saveascopy","'.base64_encode ($redirectlink).'",false);';
+        $onclick='setTask("saveascopy","'.base64_encode ($redirectlink).'",true);';
         
         return '<input id="customtables_button_saveandcopy" type="submit" class="'.$the_class.' validate"'.$attribute.' onClick=\''.$onclick.'\' value="'.$title.'">';
     }
@@ -351,9 +350,9 @@ class tagProcessor_Edit
                 $title=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_CANCEL');
             
         	if($optional_class!='')
-                $cancel_class=$optional_class;
+                $cancel_class='ctEditFormButton '.$optional_class;
             else
-             	$cancel_class='btn button-cancel';
+             	$cancel_class='ctEditFormButton btn button-cancel';
 
             $onclick='setTask("cancel","'.base64_encode ($redirectlink).'",true);';
     		return '<input id="customtables_button_cancel" type="button" class="'.$cancel_class.'" value="'.$title.'" onClick=\''.$onclick.'\'>';
@@ -365,9 +364,9 @@ class tagProcessor_Edit
                 $title=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_DELETE');
             
         	if($optional_class!='')
-                $class=$optional_class;
+                $class='ctEditFormButton '.$optional_class;
             else
-             	$class='btn button-cancel';
+             	$class='ctEditFormButton btn button-cancel';
 
             $result='<input id="customtables_button_delete" type="button" class="'.$class.'" value="'.$title.'"
 				onClick=\'
