@@ -382,6 +382,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 		
 		function applyLimits()
 		{
+			$mainframe = JFactory::getApplication('site');
 			$jinput=JFactory::getApplication()->input;
 			
 			if($this->frmt!='html')
