@@ -17,7 +17,7 @@ class ESLanguages
 		$this->getLanguageList();
 	}
 	
-		 
+	
 	function getLangPostfix()
 	{
 		$langObj=JFactory::getLanguage();

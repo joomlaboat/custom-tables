@@ -34,8 +34,6 @@ jimport('joomla.application.component.controller');
 $controller = JControllerLegacy::getInstance('Customtables');
 
 // Perform the Request task
-//echo 'task='.JFactory::getApplication()->input->getCmd('task').'<br/>';
-//die;
 $controller->execute(JFactory::getApplication()->input->getCmd('task'));
 
 // Redirect if set by the controller

@@ -51,4 +51,3 @@ class CustomTablesControllerImportTables extends JControllerForm
 		}
 	}
 }
-?>
