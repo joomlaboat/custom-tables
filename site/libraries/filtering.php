@@ -28,6 +28,7 @@ class ESFiltering
 
 				$this->es= new CustomTablesMisc;
 				$where='';
+				
 				$items=$this->ExplodeSmartParams($param);
 				
 				foreach($items as $item)
@@ -82,12 +83,13 @@ class ESFiltering
 										else
 										{
 											$fieldrow=$this->getFieldRowByName($value1,$value2);
+											/*
 											if($value2=='')
 											{
 												if(isset($fieldrow['type']) and in_array($fieldrow['type'],$numerical_fields))
 													$value2='0';
 											}
-
+					*/
 										}
 								}
 
@@ -752,9 +754,16 @@ class ESFiltering
 		$cArr=array();
 		foreach($vList as $vL)
 		{
-			$cArr[]='es_'.$whr[0].''.$opr.(int)$vL;
-			$PathValue[]=$fieldrow['fieldtitle'.$this->langpostfix].' '.$opr.' '.(int)$vL;
+			if($vL!='')
+			{
+				$cArr[]='es_'.$whr[0].''.$opr.(int)$vL;
+				$PathValue[]=$fieldrow['fieldtitle'.$this->langpostfix].' '.$opr.' '.(int)$vL;
+			}
 		}
+		
+		if(count($cArr)==0)
+			return '';
+		
 		if(count($cArr)==1)
 			return $cArr[0];
 		else
@@ -799,11 +808,17 @@ class ESFiltering
 		$cArr=array();
 		foreach($vList as $vL)
 		{
-			$cArr[]='es_'.$whr[0].''.$opr.(int)$vL;
-			$filtertitle=JHTML::_('ESUserGroupView.render',  $vL);
-			$PathValue[]=$fieldrow['fieldtitle'.$this->langpostfix].' '.$opr.' '.$filtertitle;
+			if($vL!='')
+			{
+				$cArr[]='es_'.$whr[0].''.$opr.(int)$vL;
+				$filtertitle=JHTML::_('ESUserGroupView.render',  $vL);
+				$PathValue[]=$fieldrow['fieldtitle'.$this->langpostfix].' '.$opr.' '.$filtertitle;
+			}
 		}
-		if(count($cArr)==1)
+		
+		if(count($cArr)==0)
+			return '';
+		elseif(count($cArr)==1)
 			return $cArr[0];
 		else
 			return '('.implode(' AND ', $cArr).')';
@@ -811,28 +826,27 @@ class ESFiltering
 
 	function Search_User(&$whr, &$PathValue, &$fieldrow,$opr)
 	{
-
 		$v=$this->getString_vL($whr[1]);
-
-
 
 		$vList=explode(',',$v);
 		$cArr=array();
 		foreach($vList as $vL)
 		{
-			if((int)$vL==0 and $opr=='=')
-				$cArr[]='(es_'.$whr[0].'=0 OR es_'.$whr[0].' IS NULL)';
-			else
-				$cArr[]='es_'.$whr[0].''.$opr.(int)$vL;
-
-
-			$filtertitle=JHTML::_('ESUserView.render',  $vL);
-			$PathValue[]=$fieldrow['fieldtitle'.$this->langpostfix].' '.$opr.' '.$filtertitle;
+			if($vL!='')
+			{
+				if((int)$vL==0 and $opr=='=')
+					$cArr[]='(es_'.$whr[0].'=0 OR es_'.$whr[0].' IS NULL)';
+				else
+					$cArr[]='es_'.$whr[0].''.$opr.(int)$vL;
+			
+				$filtertitle=JHTML::_('ESUserView.render',  $vL);
+				$PathValue[]=$fieldrow['fieldtitle'.$this->langpostfix].' '.$opr.' '.$filtertitle;
+			}
 		}
-
-
-
-		if(count($cArr)==1)
+		
+		if(count($cArr)==0)
+			return '';
+		elseif(count($cArr)==1)
 			return $cArr[0];
 		else
 			return '('.implode(' AND ', $cArr).')';

@@ -19,6 +19,7 @@ class ESSerachInputBox
 
 	function renderFieldBox(&$Modal,$prefix,$objname,&$esfield,$cssclass,$index,$where,$innerjoin,$wherelist,$default_Action,$field_title=null)
 	{
+
 		if(!isset($esfield['fieldtitle'.$this->langpostfix]))
 		{
 			JFactory::getApplication()->enqueueMessage(
@@ -26,6 +27,8 @@ class ESSerachInputBox
 			
 			return '';	
 		}
+
+		$place_holder=$esfield['fieldtitle'.$this->langpostfix];
 	
 		if($field_title==null)
 			$field_title=$esfield['fieldtitle'.$this->langpostfix];
@@ -121,7 +124,7 @@ class ESSerachInputBox
 								break;
 
 						case 'customtables':
-								$result.=$this->getCustomTablesBox($prefix,$innerjoin,$esfield,$default_Action,$index,$where,$wherelist,$objname_,$value, $cssclass);
+								$result.=$this->getCustomTablesBox($prefix,$innerjoin,$esfield,$default_Action,$index,$where,$wherelist,$objname_,$value, $cssclass,$place_holder);
 								break;
 
 						case 'userid':
@@ -187,8 +190,8 @@ class ESSerachInputBox
 								$value=implode(',',$value);
 
 							$typeparams=JoomlaBasicMisc::csv_explode(',',$esfield['typeparams'],'"',false);
-							$result.=JHTML::_('ESSQLJoin.render',$typeparams,$value,true,$this->langpostfix,$objname_,$esfield['fieldtitle'].$this->langpostfix,
-											  $cssclass.' inputbox es_class_sqljoin', $onchange,true);
+							$result.='<div class="'.$cssclass.'">'.JHTML::_('ESSQLJoin.render',$typeparams,$value,true,$this->langpostfix,$objname_,$esfield['fieldtitle'].$this->langpostfix,
+											  ' inputbox es_class_sqljoin', $onchange,true).'</div>';
 
 		return $result;
 	}
@@ -220,6 +223,14 @@ class ESSerachInputBox
 							else
 								$esr_filter='';
 
+							$dynamic_filter='';
+							//if(isset($typeparams[4]))
+								//$dynamic_filter=$typeparams[4];//not yet used here
+
+							$sortbyfield='';
+							if(isset($typeparams[5]))
+								$sortbyfield=$typeparams[5];
+
 							$v=array();
 							$v[]=$index;
 							$v[]='this.value';
@@ -241,13 +252,14 @@ class ESSerachInputBox
 
 							$real_selector='single';
 
-							$result.=JHTML::_('ESRecords.render',$typeparams,$objname_, $value,$esr_table,$esr_field,$real_selector,$esr_filter,'', $cssclass, $onchange);
+							$result.=JHTML::_('ESRecords.render',$typeparams,$objname_, $value,$esr_table,$esr_field,$real_selector,$esr_filter,'',
+ $cssclass, $onchange,$dynamic_filter,$sortbyfield,$this->langpostfix,$esfield['fieldtitle'].$this->langpostfix);
 
 							return $result;
 
 	}
 
-	function getCustomTablesBox($prefix,$innerjoin,&$esfield,$default_Action,$index,$where,$wherelist,$objname_,$value, $cssclass)
+	function getCustomTablesBox($prefix,$innerjoin,&$esfield,$default_Action,$index,$where,$wherelist,$objname_,$value, $cssclass,$place_holder='')
 	{
 
 		$result='';
@@ -281,10 +293,10 @@ class ESSerachInputBox
 											  $optionname,
 											  $this->langpostfix,
 											  $value,
-											  '',
+											  $cssclass,
 											  $onchange,
 											  $where,
-											  $innerjoin,false,$requirementdepth);
+											  $innerjoin,false,$requirementdepth,$place_holder);
 
 		return $result;
 	}
@@ -484,10 +496,8 @@ class ESSerachInputBox
 
 		$mysqljoin='#__customtables_table_'.$this->establename.' ON #__customtables_table_'.$this->establename.'.es_'.$esfield['fieldname'].'=#__users.id';
 
-
 		$usergroup=$esfield['typeparams'];
-		$cssclass='class="inputbox" ';
-
+		
 		$user =  JFactory::getUser();
 
 		if($default_Action!='')
@@ -508,7 +518,7 @@ class ESSerachInputBox
 
 
 		if($user->id!=0)
-			$result=JHTML::_('ESUser.render',$objname_, $value, '', $cssclass, $usergroup, $onchange,$where, $mysqljoin);
+			$result=JHTML::_('ESUser.render',$objname_, $value, '', 'class="'.$cssclass.' inputbox" ', $usergroup, $onchange,$where, $mysqljoin);
 
 
 		return $result;

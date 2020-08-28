@@ -21,7 +21,7 @@ class ESMultiSelector
 
 	}
 
-	function getMultiSelector($parentid,$parentname,$langpostfix,$ObjectName,&$ItemList,&$count,$field_value)
+	function getMultiSelector($parentid,$parentname,$langpostfix,$ObjectName,&$ItemList,&$count,$field_value,$place_holder='')
 	{
 		$result='';
 		$rows=$this->getList($parentid, $langpostfix);
@@ -47,7 +47,7 @@ class ESMultiSelector
 				$optionnamefull=$parentname.'.'.$row->optionname;
 
 
-			$ChildHTML=$this->getMultiSelector($row->id,$optionnamefull,$langpostfix,$ObjectName,$temp_Ids,$count_child,$field_value);
+			$ChildHTML=$this->getMultiSelector($row->id,$optionnamefull,$langpostfix,$ObjectName,$temp_Ids,$count_child,$field_value,$place_holder);
 
 
 

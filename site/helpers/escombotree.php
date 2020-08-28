@@ -11,7 +11,7 @@ defined('_JEXEC') or die( 'Restricted access' );
 
 class JHTMLESComboTree
 {
-        static function render($prefix,$establename, $esfieldname, $optionname, $langpostfix, $value,$cssstyle="",$onchange="",$where="",$innerjoin=false,$isRequired=false,$requirementdepth=0)
+        static function render($prefix,$establename, $esfieldname, $optionname, $langpostfix, $value,$cssclass="",$onchange="",$where="",$innerjoin=false,$isRequired=false,$requirementdepth=0,$place_holder='')
         {
 				$jinput = JFactory::getApplication()->input;
 
@@ -19,7 +19,7 @@ class JHTMLESComboTree
 
 				$MyESDynCombo=new ESDynamicComboTree();
 				$MyESDynCombo->initialize($establename,$esfieldname,$optionname,$prefix);
-				$MyESDynCombo->cssstyle=$cssstyle;
+				$MyESDynCombo->cssclass=$cssclass;
 				$MyESDynCombo->onchange=$onchange;
 				$MyESDynCombo->innerjoin=$innerjoin;
 				$MyESDynCombo->langpostfix=$langpostfix;
@@ -60,7 +60,7 @@ class JHTMLESComboTree
 
 				$html_=
 				'<div id="'.$MyESDynCombo->ObjectName.'" name="'.$MyESDynCombo->ObjectName.'">'
-				.$MyESDynCombo->renderComboBox($filterwhere, $urlwhere, $filterwherearr, $urlwherearr, ($requirementdepth==1 ? true : false ),$value)
+				.$MyESDynCombo->renderComboBox($filterwhere, $urlwhere, $filterwherearr, $urlwherearr, ($requirementdepth==1 ? true : false ),$value,$place_holder)
 				.'</div>';
 
 

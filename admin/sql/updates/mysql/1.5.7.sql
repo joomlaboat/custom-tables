@@ -42,3 +42,45 @@ SET @preparedStatement = (SELECT IF(@w > 0,'SELECT "Field exists"',@a));
 PREPARE alterIfNotExists FROM @preparedStatement;
 EXECUTE alterIfNotExists;
 DEALLOCATE PREPARE alterIfNotExists;
+
+
+--------------------------------------------------------------------------------------------
+ALTER TABLE `#__customtables_tables` CHANGE `tablecategory` `tablecategory` int(11) NULL DEFAULT NULL;
+ALTER TABLE `#__customtables_tables` CHANGE `checked_out` `checked_out` int(11) UNSIGNED DEFAULT 0;
+ALTER TABLE `#__customtables_tables` CHANGE `ordering` `ordering` int(11) DEFAULT 0;
+
+ALTER TABLE `#__customtables_tables` CHANGE `asset_id` `asset_id` int(10) UNSIGNED DEFAULT 0;
+ALTER TABLE `#__customtables_tables` CHANGE `created_by` `created_by` int(10) UNSIGNED DEFAULT 0;
+ALTER TABLE `#__customtables_tables` CHANGE `modified_by` `modified_by` int(10) UNSIGNED DEFAULT 0;
+ALTER TABLE `#__customtables_tables` CHANGE `version` `version` int(10) UNSIGNED DEFAULT 1;
+ALTER TABLE `#__customtables_tables` CHANGE `hits` `hits` int(10) UNSIGNED DEFAULT 0;
+
+ALTER TABLE `#__customtables_tables` CHANGE `published` `published` tinyint(3) DEFAULT 1;
+
+ALTER TABLE `#__customtables_tables` CHANGE `allowimportcontent` `allowimportcontent` tinyint(1) DEFAULT 0;
+
+ALTER TABLE `#__customtables_tables` CHANGE `params` `params` test utf8_general_ci NULL DEFAULT NULL;
+
+ALTER TABLE `#__customtables_tables` CHANGE `created` `created` datetime NULL DEFAULT NULL;
+ALTER TABLE `#__customtables_tables` CHANGE `modified` `modified` datetime NULL DEFAULT NULL;
+                                                                
+
+
+--ALTER TABLE `epYmtLZXjos_customtables_tables` ADD `tablecategory` int(11) NULL DEFAULT NULL;
+--ALTER TABLE `epYmtLZXjos_customtables_tables` ADD `checked_out` int(11) UNSIGNED DEFAULT 0;
+--ALTER TABLE `epYmtLZXjos_customtables_tables` ADD `ordering` int(11) DEFAULT 0;
+
+--ALTER TABLE `epYmtLZXjos_customtables_tables` ADD `asset_id` int(10) UNSIGNED DEFAULT 0;
+--ALTER TABLE `epYmtLZXjos_customtables_tables` ADD `created_by` int(10) UNSIGNED DEFAULT 0;
+--ALTER TABLE `epYmtLZXjos_customtables_tables` ADD `modified_by`  int(10) UNSIGNED DEFAULT 0;
+--ALTER TABLE `epYmtLZXjos_customtables_tables` ADD `version` int(10) UNSIGNED DEFAULT 1;
+--ALTER TABLE `epYmtLZXjos_customtables_tables` ADD `hits` int(10) UNSIGNED DEFAULT 0;
+
+--ALTER TABLE `epYmtLZXjos_customtables_tables` ADD `published` tinyint(3) DEFAULT 1;
+
+--ALTER TABLE `epYmtLZXjos_customtables_tables` ADD `allowimportcontent` tinyint(1) DEFAULT 0;
+
+--ALTER TABLE `epYmtLZXjos_customtables_tables` ADD `params` TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL;
+
+--ALTER TABLE `epYmtLZXjos_customtables_tables` ADD `created` datetime NULL DEFAULT NULL;
+--ALTER TABLE `epYmtLZXjos_customtables_tables` ADD `modified` datetime NULL DEFAULT NULL;

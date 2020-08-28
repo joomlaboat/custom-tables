@@ -92,9 +92,9 @@ class tagProcessor_Page
     					$image='/components/com_customtables/images/fileformats/'.$imagesize.'px/'.$format_image.'.png';
 
 
-    				$alt='Save as '.strtoupper($format);
+    				$alt='Download '.strtoupper($format).' file';
     				//add image anchor link
-    				$vlu='<a href="'.$link.'" target="_blank"><img src="'.$image.'" alt="'.$alt.'" title="'.$alt.'" width="'.$imagesize.'" height="'.$imagesize.'"></a>';
+    				$vlu='<a href="'.$link.'" class="toolbarIcons" id="ctToolBarExport2CSV" target="_blank"><img src="'.$image.'" alt="'.$alt.'" title="'.$alt.'" width="'.$imagesize.'" height="'.$imagesize.'"></a>';
     			}
     			elseif($value=='_value')
     			{

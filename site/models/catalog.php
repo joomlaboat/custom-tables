@@ -212,12 +212,12 @@ class CustomTablesModelCatalog extends JModelLegacy
 						if($forceitemid!="0")
 							$this->Itemid=(int)JoomlaBasicMisc::FindItemidbyAlias($forceitemid);//Accepts menu Itemid and alias
 						else
-							$this->Itemid=JFactory::getApplication()->input->get('Itemid',0,'INT');
+							$this->Itemid=$jinput->get('Itemid',0,'INT');
 					}
 				}
 				else
 				{
-					$this->Itemid=JFactory::getApplication()->input->get('Itemid',0,'INT');
+					$this->Itemid=$jinput->get('Itemid',0,'INT');
 					$forceitemid=null;
 				}
 
@@ -282,54 +282,9 @@ class CustomTablesModelCatalog extends JModelLegacy
 				}
 
 				//Limit
-
-				if($this->blockExternalVars)
-				{
-						if((int)$this->params->get( 'limit' )>0)
-						{
-							$limit=(int)$this->params->get( 'limit' );
-							$this->limit=$limit;
-							$this->setState('limit', $limit);
-							$this->limitstart = JFactory::getApplication()->input->get('start',0,'INT');
-							$this->limitstart = ($limit != 0 ? (floor($this->limitstart / $limit) * $limit) : 0);
-						}
-						else
-						{
-							$this->setState('limit', 0);
-							$this->limit=0;
-							$this->limitstart=0;
-						}
-
-
-				}
-				else
-				{
-								$this->limitstart = JFactory::getApplication()->input->get('start',0,'INT');
-
-								if((int)$this->params->get( 'limit' )>0)
-								{
-										$limit=(int)$this->params->get( 'limit' );
-										$this->limit=$limit;
-
-										$this->setState('limit', $limit);
-								}
-								else
-								{
-										$limit = $mainframe->getUserStateFromRequest('global.list.limit', 'limit', $mainframe->getCfg('list_limit'), 'int');
-										$this->limit=$limit;
-										$this->setState('limit', $limit);
-
-
-
-								}
-								// In case limit has been changed, adjust it
-										$this->limitstart = ($limit != 0 ? (floor($this->limitstart / $limit) * $limit) : 0);
-
-				}//if($this->blockExternalVars)
-
-
+				$this->applyLimits();
+				
 				//Grouping
-
 				$this->groupby=$this->params->get('groupby');
 
 
@@ -362,8 +317,8 @@ class CustomTablesModelCatalog extends JModelLegacy
 				}
 				else
 				{
-						if(JFactory::getApplication()->input->get('filter','','STRING'))
-							$this->filterparam= str_replace(';','',JFactory::getApplication()->input->get('filter','','STRING'));
+						if($jinput->get('filter','','STRING'))
+							$this->filterparam= str_replace(';','',$jinput->get('filter','','STRING'));
 						else
 							$this->filterparam=$this->params->get( 'filter' );
 				}
@@ -379,9 +334,9 @@ class CustomTablesModelCatalog extends JModelLegacy
 				$this->filter='';
 				if(!$this->blockExternalVars)
 				{
-						if(JFactory::getApplication()->input->get('where','','BASE64'))
+						if($jinput->get('where','','BASE64'))
 						{
-							$this->filter=JFactory::getApplication()->input->get('where','','BASE64');;
+							$this->filter=$jinput->get('where','','BASE64');;
 							$decodedurl=urldecode($this->filter);
 							$decodedurl=str_replace(' ','+',$decodedurl);
 
@@ -424,7 +379,64 @@ class CustomTablesModelCatalog extends JModelLegacy
 
 				$this->prepareSEFLinkBase();
 		}
+		
+		function applyLimits()
+		{
+			$jinput=JFactory::getApplication()->input;
+			
+			if($this->frmt!='html')
+			{
+				//export all records if firmat is csv, xml etc.
+				$this->limit=0;
+				$this->setState('limit', $this->limit);
+				$this->limitstart=0;
+				return;
+			}
+			
+			if($this->blockExternalVars)
+			{
+						if((int)$this->params->get( 'limit' )>0)
+						{
+							$limit=(int)$this->params->get( 'limit' );
+							$this->limit=$limit;
+							$this->setState('limit', $limit);
+							$this->limitstart = $jinput->getInt('start',0);
+							$this->limitstart = ($limit != 0 ? (floor($this->limitstart / $limit) * $limit) : 0);
+						}
+						else
+						{
+							$this->setState('limit', 0);
+							$this->limit=0;
+							$this->limitstart=0;
+						}
 
+
+				}
+				else
+				{
+								$this->limitstart = $jinput->getInt('start',0);
+
+								if((int)$this->params->get( 'limit' )>0)
+								{
+										$limit=(int)$this->params->get( 'limit' );
+										$this->limit=$limit;
+
+										$this->setState('limit', $limit);
+								}
+								else
+								{
+										$limit = $mainframe->getUserStateFromRequest('global.list.limit', 'limit', $mainframe->getCfg('list_limit'), 'int');
+										$this->limit=$limit;
+										$this->setState('limit', $limit);
+
+
+
+								}
+								// In case limit has been changed, adjust it
+								$this->limitstart = ($limit != 0 ? (floor($this->limitstart / $limit) * $limit) : 0);
+
+				}//if($this->blockExternalVars)
+		}
 
 		function getOrderBox()//$SelectedCategory
 		{
@@ -465,8 +477,8 @@ class CustomTablesModelCatalog extends JModelLegacy
 						return;
 
 				$jinput = JFactory::getApplication()->input;
-				$esfieldtype=JFactory::getApplication()->input->get('esfieldtype','','CMD');
-				$esfieldname=JFactory::getApplication()->input->get('esfieldname','','CMD');
+				$esfieldtype=$jinput->get('esfieldtype','','CMD');
+				$esfieldname=$jinput->get('esfieldname','','CMD');
 
 				if($esfieldtype!='customtables')
 				{
@@ -480,13 +492,13 @@ class CustomTablesModelCatalog extends JModelLegacy
 				{
 						$db = JFactory::getDBO();
 
-						$parentid=$this->es->getOptionIdFull(JFactory::getApplication()->input->get('optionname','','STRING'));
+						$parentid=$this->es->getOptionIdFull($jinput->get('optionname','','STRING'));
 
 
 						$query = 'SELECT familytreestr, optionname '
 								.' FROM #__customtables_options'
 								.' WHERE INSTR(familytree,"-'.$parentid.'-") AND SUBSTRING(title'.$this->langpostfix.',1,1)="'.
-								JFactory::getApplication()->input->get('alpha','','STRING').'"'
+								$jinput->get('alpha','','STRING').'"'
 								.' ';
 
 						$db->setQuery( $query );
@@ -510,7 +522,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 						foreach($wherelist as $row)
 						{
 
-								$wherearr_[]='instr(es_'.JFactory::getApplication()->input->getCMD('esfieldname','').',"'.$row.'")';
+								$wherearr_[]='instr(es_'.$jinput->getCMD('esfieldname','').',"'.$row.'")';
 						}
 						$wherearr[]=' ('.implode(' OR ',$wherearr_).')';
 				}
@@ -552,14 +564,14 @@ class CustomTablesModelCatalog extends JModelLegacy
 
 		}
 
-		$moduleid=JFactory::getApplication()->input->get('moduleid',0,'INT');
+		$moduleid=$jinput->get('moduleid',0,'INT');
 
 		if(!$this->blockExternalVars)
 		{
 				if($moduleid!=0)
 				{
 
-					$eskeysearch_=JFactory::getApplication()->input->get('eskeysearch_'.$moduleid,'','STRING');
+					$eskeysearch_=$jinput->get('eskeysearch_'.$moduleid,'','STRING');
 					if($eskeysearch_!='')
 					{
 
@@ -592,9 +604,9 @@ class CustomTablesModelCatalog extends JModelLegacy
 
 								return $result_rows;
 						}
-						elseif(JFactory::getApplication()->input->get('alpha','','STRING')!='')
+						elseif($jinput->get('alpha','','STRING')!='')
 						{
-								$this->getAlphaWhere(JFactory::getApplication()->input->get('alpha','','STRING'),$wherearr);
+								$this->getAlphaWhere($jinput->get('alpha','','STRING'),$wherearr);
 
 
 						}
@@ -631,7 +643,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 		if($this->showcartitemsonly)
 		{
 				$jinput = JFactory::getApplication()->input;
-				$cookieValue = JFactory::getApplication()->input->cookie->get('es_'.$this->showcartitemsprefix.'_'.$this->establename);
+				$cookieValue = $jinput->cookie->get('es_'.$this->showcartitemsprefix.'_'.$this->establename);
 
 				if (isset($cookieValue))
 				{
@@ -673,7 +685,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 
 
 		//to fullfill the "Clear" task
-		if(JFactory::getApplication()->input->get('task','','CMD')=='clear')
+		if($jinput->get('task','','CMD')=='clear')
 		{
 				$cQuery='DELETE FROM '.$tablename.' '.$where;
 				$db->setQuery($cQuery);
@@ -772,11 +784,11 @@ class CustomTablesModelCatalog extends JModelLegacy
 		{
 				$app = JFactory::getApplication();
 				$jinput = $app->input;
-				$cart_prefix=JFactory::getApplication()->input->get('cartprefix','','CMD');
+				$cart_prefix=$jinput->get('cartprefix','','CMD');
 
 
 
-				JFactory::getApplication()->input->cookie->set('es_'.$cart_prefix.'_'.$this->establename, '', time()-3600, $app->get('cookie_path', '/'), $app->get('cookie_domain'), $app->isSSLConnection());
+				$jinput->cookie->set('es_'.$cart_prefix.'_'.$this->establename, '', time()-3600, $app->get('cookie_path', '/'), $app->get('cookie_domain'), $app->isSSLConnection());
 
 				return true;
 		}
@@ -784,7 +796,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 		function cart_deleteitem()
 		{
 				$jinput = JFactory::getApplication()->input;
-				if(JFactory::getApplication()->input->get('listing_id',0,'INT')==0)
+				if($jinput->get('listing_id',0,'INT')==0)
 						return false;
 
 				$this->cart_setitemcount(0);
@@ -795,16 +807,16 @@ class CustomTablesModelCatalog extends JModelLegacy
 		{
 				$jinput=JFactory::getApplication()->input;
 
-				if(!JFactory::getApplication()->input->get('listing_id',0,'INT'))
+				if(!$jinput->get('listing_id',0,'INT'))
 						return false;
 
-				$objectid=JFactory::getApplication()->input->get('listing_id',0,'INT');
+				$objectid=$jinput->get('listing_id',0,'INT');
 
-				$cart_prefix=JFactory::getApplication()->input->get('cartprefix','','CMD');
+				$cart_prefix=$jinput->get('cartprefix','','CMD');
 
 				if($itemcount==-1)
 				{
-					$itemcount=JFactory::getApplication()->input->get('itemcount',0,'INT');
+					$itemcount=$jinput->get('itemcount',0,'INT');
 				}
 
 				$app = JFactory::getApplication();
@@ -860,20 +872,20 @@ class CustomTablesModelCatalog extends JModelLegacy
 
 				$jinput = JFactory::getApplication()->input;
 
-				if(!JFactory::getApplication()->input->get('listing_id',0,'INT'))
+				if(!$jinput->get('listing_id',0,'INT'))
 						return false;
 
-				$objectid=JFactory::getApplication()->input->get('listing_id',0,'INT');
+				$objectid=$jinput->get('listing_id',0,'INT');
 
 
-				$cart_prefix=JFactory::getApplication()->input->get('cartprefix','','CMD');
+				$cart_prefix=$jinput->get('cartprefix','','CMD');
 
 				$app = JFactory::getApplication();
 
 
 				if($itemcount==-1)
 				{
-						$itemcount=JFactory::getApplication()->input->getInt('itemcount',0);
+						$itemcount=$jinput->getInt('itemcount',0);
 				}
 
 				$cookieValue = $app->input->cookie->get('es_'.$cart_prefix.'_'.$this->establename);
@@ -928,12 +940,12 @@ class CustomTablesModelCatalog extends JModelLegacy
 
 				$jinput=$app->input;
 
-				if(!JFactory::getApplication()->input->get('listing_id',0,'INT'))
+				if(!$jinput->get('listing_id',0,'INT'))
 						return false;
 
-				$objectid=JFactory::getApplication()->input->get('listing_id',0,'INT');
+				$objectid=$jinput->get('listing_id',0,'INT');
 
-				$cart_prefix=JFactory::getApplication()->input->get('cartprefix','','CMD');
+				$cart_prefix=$jinput->get('cartprefix','','CMD');
 
 
 				$cookieValue = $app->input->cookie->get('es_'.$cart_prefix.'_'.$this->establename);

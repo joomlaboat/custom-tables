@@ -55,7 +55,5 @@ class CT_FieldTypeTag_ct
 		}
 
 		return array_values($Result);
-
-
 	}
 }

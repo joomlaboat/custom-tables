@@ -31,6 +31,7 @@ class ESInputBox
 
 	function renderFieldBox(&$Model,$prefix,&$esfield,&$row,$class_,$attributes='',$option_list)
 	{
+		$place_holder=$esfield['fieldtitle'.$this->langpostfix];
 		$class=$class_.' inputbox'.($esfield['isrequired'] ? ' required' : '');
 
 		$realFieldName='es_'.$esfield['fieldname'];
@@ -504,7 +505,9 @@ class ESInputBox
 													  $this->langpostfix,
 													  $this->establename,
 													  $esfield['fieldname'],
-													  $fValue);
+													  $fValue,
+													'',
+													$place_holder);
 
 								}
 								elseif($typeparams[1]=='single')
@@ -536,7 +539,8 @@ class ESInputBox
 														  '',
 														  '',
 														  $esfield['isrequired'],
-														  (isset($typeparams[3]) ? (int)$typeparams[3] : 1)
+														  (isset($typeparams[3]) ? (int)$typeparams[3] : 1),
+															$place_holder
 														  );
 
 										$result.='</div>';
@@ -548,7 +552,7 @@ class ESInputBox
 
 						case 'sqljoin':
 
-							$place_holder=$esfield['fieldtitle'.$this->langpostfix];
+							//$place_holder=$esfield['fieldtitle'.$this->langpostfix];
 							
 							if(isset($option_list[2]) and $option_list[2]!='')
 								$typeparams[2]=$option_list[2];//Overwrites field type filter parameter.

@@ -13,7 +13,6 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.
 
 class ESLayouts
 {
-
     public static function getLayoutID($layoutname)
     {
 		$db = JFactory::getDBO();
@@ -38,7 +37,7 @@ class ESLayouts
 
 		$db = JFactory::getDBO();
 
-		$query = 'SELECT id, layoutcode, UNIX_TIMESTAMP(changetimestamp) AS ts, layouttype FROM #__customtables_layouts WHERE layoutname="'.$layoutname.'" LIMIT 1';
+		$query = 'SELECT id, layoutcode, UNIX_TIMESTAMP(modified) AS ts, layouttype FROM #__customtables_layouts WHERE layoutname="'.$layoutname.'" LIMIT 1';
 		$db->setQuery( $query );
 		$rows = $db->loadAssocList();
 		if(count($rows)!=1)
@@ -92,10 +91,11 @@ class ESLayouts
 			if($db_layout_ts==0)
 			{
 				$db = JFactory::getDBO();
-				$query = 'SELECT UNIX_TIMESTAMP(changetimestamp) AS ts FROM #__customtables_layouts WHERE id='.$id.' LIMIT 1';
+				$query = 'SELECT UNIX_TIMESTAMP(modified) AS ts FROM #__customtables_layouts WHERE id='.$id.' LIMIT 1';
 				$db->setQuery( $query );
 				if (!$db->query())    die( $db->stderr());
 				$recs = $db->loadAssocList( );
+				
                 if(count($recs)==0)
                     $db_layout_ts=0;
                 else
@@ -112,7 +112,7 @@ class ESLayouts
 
 				$db = JFactory::getDBO();
 
-				$query = 'UPDATE #__customtables_layouts SET layoutcode="'.addslashes($content).'",changetimestamp=FROM_UNIXTIME('.$file_ts.') WHERE id='.$id;
+				$query = 'UPDATE #__customtables_layouts SET layoutcode="'.addslashes($content).'",modified=FROM_UNIXTIME('.$file_ts.') WHERE id='.$id;
 
 				$db->setQuery( $query );
 
@@ -148,7 +148,7 @@ class ESLayouts
 				$id=ESLayouts::getLayoutID($data['layoutname']);
 
 			$db = JFactory::getDBO();
-			$query = 'UPDATE #__customtables_layouts SET changetimestamp=FROM_UNIXTIME('.$file_ts.') WHERE id='.$id;
+			$query = 'UPDATE #__customtables_layouts SET modified=FROM_UNIXTIME('.$file_ts.') WHERE id='.$id;
 				$db->setQuery( $query );
 
 			if (!$db->query())

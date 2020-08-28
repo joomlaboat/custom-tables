@@ -360,7 +360,7 @@ class CTValue
                         else
                             $value=0;
                         
-                        $savequery[]='es_'.$esfieldname.'='.$value;
+                        $savequery[]='es_'.$esfieldname.'='.(int)$value;
                         $value_found=true;
                     }
                     else
@@ -368,7 +368,7 @@ class CTValue
                         $value=$jinput->getCmd($comesfieldname.'_off');
                         if($value!=null)
                         {
-                            $savequery[]='es_'.$esfieldname.'='.(int)$value;
+                            $savequery[]='es_'.$esfieldname.'=0';
                             $value_found=true;
                         }
                     }

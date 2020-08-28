@@ -30,11 +30,12 @@ if (!$this->Model->BlockExternalVars and $this->Model->params->get( 'show_page_h
 <div class="page-header<?php echo $this->escape($this->Model->params->get('pageclass_sfx')); ?>">
 	<h2 itemprop="headline">
 		<?php echo JoomlaBasicMisc::JTextExtended($this->Model->params->get( 'page_title' ));
-
+/*
 			if(JFactory::getApplication()->input->get('listing_id',0,'INT')!=0)
 				echo ' - '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_EDIT' );
 			else
 				echo ' - '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ADD' );
+			*/
 		 ?>
 	</h2>
 </div>

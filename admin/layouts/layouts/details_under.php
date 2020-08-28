@@ -15,7 +15,7 @@ defined('_JEXEC') or die('Restricted access');
 $form = $displayData->getForm();
 
 $fields = array(
-	'changetimestamp'
+	'modified'
 );
 
 ?>

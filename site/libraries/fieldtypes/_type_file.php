@@ -220,7 +220,7 @@ class CT_FieldTypeTag_file
 
                         if($to_delete=='true')
 						{
-								if($ExistingFile!='')
+								if($ExistingFile!='' and !CT_FieldTypeTag_file::checkIfTheFileBelongsToAnotherRecord($ExistingFile,$FileFolder,$establename,$esfieldname))
 								{
 									$filename_full=$filepath.DIRECTORY_SEPARATOR.$ExistingFile;
 									if(file_exists($filename_full))
@@ -231,9 +231,7 @@ class CT_FieldTypeTag_file
 								$savequery[]='es_'.$esfieldname.'=""';
 						}
 						else
-						{
                             $value=CT_FieldTypeTag_file::UploadSingleFile($ExistingFile,$fileid, $esfieldname,JPATH_SITE.$FileFolder,$typeparams,$establename);
-						}
 					}
 
 					if($value!='')
@@ -364,7 +362,6 @@ class CT_FieldTypeTag_file
 			if(file_exists($FileFolder.DIRECTORY_SEPARATOR.$filename_new))
 			{
 				//increase index
-
 				$i++;
 				$filename_new=str_replace('.','-'.$i.'.',$filename);
 			}
@@ -375,12 +372,6 @@ class CT_FieldTypeTag_file
 
         return $filename_new;
     }
-
-
-
-
-
-
 
     public static function renderFileFieldBox($prefix,&$esfield,&$row,$realFieldName,$class)
 	{
@@ -428,7 +419,7 @@ class CT_FieldTypeTag_file
 
                 $imagesrc='/components/com_customtables/images/fileformats/48px/'.$fileextension.'.png';
 
-                $prefix='com';
+                $prefix='comes_';
                 $result='
                 <div style="margin:10px; border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;vertical-align:top;" id="ct_uploadedfile_box_'.$esfield['fieldname'].'">';
 

@@ -15,7 +15,7 @@ class JHTMLMultiSelector
 {
 	
 	//MultiSelector
-	public static function render($prefix,$parentid,$parentname,$langpostfix, $establename,$esfieldname,$field_value, $attribute='')
+	public static function render($prefix,$parentid,$parentname,$langpostfix, $establename,$esfieldname,$field_value, $attribute='',$place_holder='')
 	{
 		$ObjectName=$prefix.'esmulti_'.$establename.'_'.$esfieldname;
 		
@@ -28,7 +28,7 @@ class JHTMLMultiSelector
 		$ItemList="";
 		
 		$count=0;
-		$listhtml=$ms->getMultiSelector($parentid,$parentname,$langpostfix,$ObjectName,$ItemList,$count,$field_value);
+		$listhtml=$ms->getMultiSelector($parentid,$parentname,$langpostfix,$ObjectName,$ItemList,$count,$field_value,$place_holder);
 		
 		if($count>0)
 			$result.=$listhtml;

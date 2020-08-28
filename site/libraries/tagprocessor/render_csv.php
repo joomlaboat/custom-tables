@@ -48,13 +48,6 @@ trait render_csv
         $recordline.='"'.implode('","',$line_fields).'"';
 		$result.='"'.implode('","',$header_fields).'"';//."\r\n";
 		
-		echo 'j';
-		print_r($line_fields);
-		
-		
-		echo $result;
-		die;
-
         //Parse Header
         $Model->LayoutProc->layout=$result;
         $result=$Model->LayoutProc->fillLayout(array(), null, '');
@@ -125,14 +118,20 @@ trait render_csv
 	}
 
 
-	function get_CatalogTable_singleline_CSV(&$SearchResult,&$Model,$allowcontentplugins)
+	function get_CatalogTable_singleline_CSV(&$SearchResult,&$Model,$allowcontentplugins,$pagelayout)
 	{
 		$filename = JoomlaBasicMisc::makeNewFileName($Model->params->get('page_title'),'csv');
 
 		if (ob_get_contents())
 			ob_clean();
 
-		$result='';
+		//Header
+		$result=trim(strip_tags(html_entity_decode($pagelayout)));
+		$result=str_replace("\n",'',$result);
+		$result=str_replace("\r",'',$result);
+		if($result!='')
+			$result=$result.'\r\n';
+		
 
 		//Prepare line layout
 		$layout=$Model->LayoutProc->layout;
@@ -164,9 +163,6 @@ trait render_csv
 			$result.=$vlu.'
 ';
 		}
-
-
-        //
 
         if($allowcontentplugins)
         {
@@ -205,6 +201,4 @@ trait render_csv
         echo chr(255).chr(254).mb_convert_encoding($result, 'UTF-16LE', 'UTF-8');
         die ;//clean exit
     }
-
-
 }

@@ -45,23 +45,23 @@ function getColorDec($vlu)
 		return 0;
 
 	elseif($vlu=='white')
-		return hexdec('#ffffff');
+		return hexdec('ffffff');
 
 	elseif($vlu=='red')
-		return hexdec('#ff0000');
+		return hexdec('ff0000');
 
 	elseif($vlu=='green')
-		return hexdec('#00ff00');
+		return hexdec('00ff00');
 
 	elseif($vlu=='blue')
-		return hexdec('#0000ff');
+		return hexdec('0000ff');
 
 	elseif($vlu=='yellow')
-		return hexdec('#ffff00');
+		return hexdec('ffff00');
 
 	elseif(!(strpos($vlu,'#')===false))
 	{
-		return hexdec($vlu);
+		return hexdec(str_replace('#','',$vlu));//As of PHP 7.4.0 supplying any invalid characters is deprecated. 
 	}
 
 	else
@@ -919,8 +919,8 @@ function ProportionalResize($src, $dst, $dst_width, $dst_height,$LevelMax, $over
 				$rgb = imagecolorat($from, 0, 0);
 
 				//if destination is jpeg and background is transparent then replace it with white.
-				if($rgb==hexdec('#7FFFFFFF') and $fileExtension_dst=='jpg')
-					$rgb=hexdec('#ffffff');
+				if($rgb==hexdec('7FFFFFFF') and $fileExtension_dst=='jpg')
+					$rgb=hexdec('ffffff');
 			}
 
 

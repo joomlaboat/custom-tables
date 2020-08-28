@@ -245,7 +245,7 @@
         var toolbarboxid='esToolBar_'+task+'_box_'+tableid;
 
         var obj=document.getElementById(toolbarboxid);
-        obj.innerHTML='';
+        obj.style.visibility='hidden';
 
         var current_url=esPrepareLink(['returnto','ids'],[]);
         var returnto=btoa(current_url);

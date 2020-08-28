@@ -42,7 +42,10 @@ class tagProcessor_Catalog
 			$tableclass=$pair[0];
 
 			if($Model->frmt=='csv')
-				self::get_CatalogTable_singleline_CSV($SearchResult,$Model,$allowcontentplugins);
+			{
+				$pagelayout=str_replace($fItem,'',$pagelayout);//delete {catalog} tag
+				self::get_CatalogTable_singleline_CSV($SearchResult,$Model,$allowcontentplugins,$pagelayout);
+			}
 			if($Model->frmt=='image')
 				self::get_CatalogTable_singleline_IMAGE($pagelayout,$allowcontentplugins);
 			elseif(isset($pair[1]) and $pair[1]=='notable')

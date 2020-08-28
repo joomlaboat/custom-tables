@@ -19,9 +19,8 @@ class JHTMLESRecords
 
 
         static public function render($typeparams,$control_name, $value, $establename, $thefield, $selector, $filter,$style='',
-                                      $cssclass='', $attribute='', $dynamic_filter='',$sortbyfield='',$langpostfix='')
+                                      $cssclass='', $attribute='', $dynamic_filter='',$sortbyfield='',$langpostfix='',$place_holder='')
         {
-
 				$htmlresult='';
 				$fieldarray=explode(';',$thefield);
 				$field=$fieldarray[0];
@@ -138,7 +137,7 @@ class JHTMLESRecords
 								case 'single' :
 
 										$htmlresult.=JHTMLESRecords::getSingle($model, $model_nofilter,$SearchResult,$SearchResult_nofilter,$valuearray,$field,$selectorpair,$control_name,
-                                                                                                                       $style,$cssclass,$attribute,$value,$establename,$dynamic_filter,$langpostfix);
+                                                                                                                       $style,$cssclass,$attribute,$value,$establename,$dynamic_filter,$langpostfix,$place_holder);
 										break;
 
 								case 'multi' :
@@ -325,7 +324,7 @@ class JHTMLESRecords
         }
 
 	static protected function getSingle(&$model, &$model_nofiter,&$SearchResult,&$SearchResult_nofilter,&$valuearray,
-                                            $field,$selectorpair,$control_name,$style,$cssclass,$attribute,$value='',$establename,$dynamic_filter='',$langpostfix='')
+                                            $field,$selectorpair,$control_name,$style,$cssclass,$attribute,$value='',$establename,$dynamic_filter='',$langpostfix='',$place_holder='')
 	{
 		$htmlresult='';
 
@@ -359,11 +358,11 @@ class JHTMLESRecords
 .' '.($style!='' ? 'style="'.$style.'"' : '')
 				.' '.($cssclass!='' ? 'class="'.$cssclass.'"' : '');
 		$htmlresult.=	' '.$attribute;
-		$htmlresult.='>';
+		$htmlresult.=' data-label="'.$place_holder.'">';
 
 		if(strpos($control_name,'_selector')===false)
 		{
-			$htmlresult.='<option value="">- '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT' ).'</option>';
+			$htmlresult.='<option value="">- '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT' ).' '.$place_holder.'</option>';
 		}
 										if($value=='' or $value==',' or $value==',,')
 												$valuefound=true;

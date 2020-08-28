@@ -77,7 +77,7 @@ class LayoutProcessor
 			tagProcessor_PHP::process($this->Model,$htmlresult,$row,$this->recordlist,$this->number);
 		}
 		
-		if(strpos($htmlresult,'ct_doc_tagset_free')===false)
+		if(strpos($htmlresult,'ct_doc_tagset_free')===false)//explainf what is "ct_doc_tagset_free"
 		{
 			tagProcessor_If::process($this->Model,$htmlresult,$row,$this->recordlist,$this->number);
 

@@ -71,12 +71,14 @@ if($independat)
 	$MyESDynCombo=new ESDynamicComboTree();
 	$MyESDynCombo->initialize($establename,$esfieldname,$optionname,JFactory::getApplication()->input->getString('prefix'));
 	$MyESDynCombo->langpostfix=JFactory::getApplication()->input->getCmd('langpostfix','');
-	$MyESDynCombo->cssstyle=JFactory::getApplication()->input->getString('cssstyle');
+	$MyESDynCombo->cssclass=JFactory::getApplication()->input->getString('cssclass');
 	$MyESDynCombo->onchange=JFactory::getApplication()->input->getString('onchange');
 	$MyESDynCombo->innerjoin=JFactory::getApplication()->input->getInt('innerjoin');
 	$MyESDynCombo->isRequired=JFactory::getApplication()->input->get('isrequired',0,'INT');
 	$MyESDynCombo->requirementdepth=JFactory::getApplication()->input->getInt('requirementdepth');
 	$MyESDynCombo->where=JFactory::getApplication()->input->getString('where');
+	$MyESDynCombo->place_holder=JFactory::getApplication()->input->getString('place_holder');
+
 	$MyESDynCombo->parentname='';
 
 
@@ -85,7 +87,7 @@ if($independat)
 	$urlwhere='';
 	$urlwherearr=array();
 
-	$html_=$MyESDynCombo->renderComboBox($filterwhere, $urlwhere, $filterwherearr, $urlwherearr);
+	$html_=$MyESDynCombo->renderComboBox($filterwhere, $urlwhere, $filterwherearr, $urlwherearr,false,'',$MyESDynCombo->place_holder);
 
 
 
@@ -118,7 +120,7 @@ var $establename;
 var $esfieldname;
 var $listingtable;
 var $optionname;
-var $cssstyle='';
+var $cssclass='';
 var $onchange='';
 var $innerjoin;
 var $where;
@@ -126,6 +128,7 @@ var $parentname;
 var $prefix;
 var $isRequired;
 var $requirementdepth;
+var $place_holder;
 
 function __construct()
 {
@@ -186,7 +189,7 @@ function CleanLink($newparams, $deletewhat)
 }
 
 
-function renderSelectBox($objectname, $rows, $urlwhere, $optionalOptions, $simpleList=false,$value='')
+function renderSelectBox($objectname, $rows, $urlwhere, $optionalOptions, $simpleList=false,$value='',$place_holder='')
 {
     if(count($rows)==1)
     {
@@ -231,7 +234,7 @@ function renderSelectBox($objectname, $rows, $urlwhere, $optionalOptions, $simpl
 		.'\''.$this->esfieldname.'\', '
 		.'\''.$this->optionname.'\', '
 		.'\''.$this->innerjoin.'\', '
-		.'\''.urlencode($this->cssstyle).'\', '
+		.'\''.urlencode($this->cssclass).'\', '
 		.'\''.$this->parentname.'\', '
 		.'\''.urlencode($this->where).'\', '
 		.'\''.$this->langpostfix.'\', '
@@ -241,13 +244,13 @@ function renderSelectBox($objectname, $rows, $urlwhere, $optionalOptions, $simpl
 		.'\''.((int)$this->requirementdepth).'\'); '
 		.' " ';
 
-	$result.='<select name="'.$objectname.'" id="'.$objectname.'" style="'.$this->cssstyle.'"'.$onChange.' '.$optionalOptions.' >';
+	$result.='<select name="'.$objectname.'" id="'.$objectname.'" class="'.$this->cssclass.'"'.$onChange.' '.$optionalOptions.' data-label="'.$place_holder.'">';
 
 
-	if($this->isRequired)
-		$result.='<option value="" '.($value=="" ? ' SELECTED ':'').'>- '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT' ).'</option>';
-	else
-		$result.='<option value="" '.($value=="" ? ' SELECTED ':'').'>- '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ALL' ).'</option>';
+	//if($this->isRequired)
+	$result.='<option value="" '.($value=="" ? ' SELECTED ':'').'>- '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT').' '.$place_holder.'</option>';
+	//else
+		//$result.='<option value="" '.($value=="" ? ' SELECTED ':'').'>- '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ALL' ).'</option>';
 
 
     $count=0;
@@ -326,7 +329,7 @@ function getOptionListWhere($parentname, $langpostfix,$filterwhere, $listingfiel
 
 
 
-function renderComboBox(&$filterwhere, &$urlwhere, &$filterwherearr,&$urlwherearr, $simpleList=false,$value='')
+function renderComboBox(&$filterwhere, &$urlwhere, &$filterwherearr,&$urlwherearr, $simpleList=false,$value='',$place_holder='')
 {
 	$result='';
 
@@ -359,10 +362,10 @@ function renderComboBox(&$filterwhere, &$urlwhere, &$filterwherearr,&$urlwherear
 		if($i<=$this->requirementdepth and $this->isRequired)
 		{
 
-			$result.=$this->renderSelectBox($object_name, $rows,$urlwhere,'class="inputbox required"',$simpleList,$value);
+			$result.=$this->renderSelectBox($object_name, $rows,$urlwhere,'class="inputbox required"',$simpleList,$value,$place_holder);
 		}
 		else
-			$result.=$this->renderSelectBox($object_name, $rows,$urlwhere,'class="inputbox"',$simpleList,$value);
+			$result.=$this->renderSelectBox($object_name, $rows,$urlwhere,'class="inputbox"',$simpleList,$value,$place_holder);
 
 
 		if(JFactory::getApplication()->input->getCmd($object_name))

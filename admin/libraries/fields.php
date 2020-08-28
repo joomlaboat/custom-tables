@@ -1082,7 +1082,7 @@ class ESFields
         }
 
 		$db->setQuery( $query );
-		if (!$db->query())    die ( $db->stderr());
+		//if (!$db->query())    die ( $db->stderr());
 
         if($as_object)
             return $db->loadObjectList();
