@@ -392,7 +392,11 @@ class CTValue
 						$value=JFactory::getApplication()->input->getString($comesfieldname,null);
 						if(isset($value))
                         {
-							$savequery[]='es_'.$esfieldname.'='.(int)$value;
+							if($value=='')
+								$savequery[]='es_'.$esfieldname.'=NULL';
+							else
+								$savequery[]='es_'.$esfieldname.'='.(int)$value;
+							
                             $value_found=true;
                         } 
 

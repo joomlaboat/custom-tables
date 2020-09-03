@@ -97,7 +97,7 @@ class JHTMLCTTime
                     return $seconds;    
         }
         
-        static public function seconds2FormatedTime($seconds,$format)
+        static public function seconds2FormatedTime($seconds,$format='')
         {
                 date_default_timezone_set('UTC');
                 
