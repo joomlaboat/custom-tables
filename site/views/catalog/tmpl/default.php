@@ -56,15 +56,32 @@ if($layout_item_name!='')
 $catalogtablecode=JoomlaBasicMisc::generateRandomString();//this is temporary replace place holder. to not parse content result again
 
 //Process general tags before catalog tags to prepare headers for CSV etc output
-$this->Model->LayoutProc->layout=$pagelayout;
-$pagelayout=$this->Model->LayoutProc->fillLayout(array(), null, '');
-
-$catalogtablecontent=tagProcessor_CatalogTableView::process($this->Model,$pagelayout,$this->SearchResult,$catalogtablecode);
-if($catalogtablecontent=='')
+if($html_format)
 {
-    $this->Model->LayoutProc->layout=$itemlayout;
-    $catalogtablecontent=tagProcessor_Catalog::process($this->Model,$pagelayout,$this->SearchResult,$catalogtablecode);
+	$catalogtablecontent=tagProcessor_CatalogTableView::process($this->Model,$pagelayout,$this->SearchResult,$catalogtablecode);
+	if($catalogtablecontent=='')
+	{
+		$this->Model->LayoutProc->layout=$itemlayout;
+		$catalogtablecontent=tagProcessor_Catalog::process($this->Model,$pagelayout,$this->SearchResult,$catalogtablecode);
+	}
+	
+	$this->Model->LayoutProc->layout=$pagelayout;
+	$pagelayout=$this->Model->LayoutProc->fillLayout(array(), null, '');
+
 }
+else
+{
+	$this->Model->LayoutProc->layout=$pagelayout;
+	$pagelayout=$this->Model->LayoutProc->fillLayout(array(), null, '');
+
+	$catalogtablecontent=tagProcessor_CatalogTableView::process($this->Model,$pagelayout,$this->SearchResult,$catalogtablecode);
+	if($catalogtablecontent=='')
+	{
+		$this->Model->LayoutProc->layout=$itemlayout;
+		$catalogtablecontent=tagProcessor_Catalog::process($this->Model,$pagelayout,$this->SearchResult,$catalogtablecode);
+	}
+}
+
 
 
 $pagelayout=str_replace('&&&&quote&&&&','"',$pagelayout); // search boxes may return HTMl elemnts that contain placeholders with quotes like this: &&&&quote&&&&
