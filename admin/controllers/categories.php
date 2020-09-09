@@ -252,7 +252,7 @@ class CustomtablesControllerCategories extends JControllerForm
 		}
 
 		$saved = parent::save($key, $urlVar);
-
+		
 		if ($this->refid && $saved)
 		{
 			$redirect = '&view='.(string)$this->ref.'&layout=edit&id='.(int)$this->refid;

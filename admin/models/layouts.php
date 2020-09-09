@@ -280,11 +280,12 @@ class CustomtablesModelLayouts extends JModelAdmin
 		{
 			$table->name = htmlspecialchars_decode($table->name, ENT_QUOTES);
 		}
-
+/*
 		if (isset($table->alias) && empty($table->alias))
 		{
 			$table->generateAlias();
 		}
+		*/
 
 		if (empty($table->id))
 		{
@@ -437,11 +438,13 @@ class CustomtablesModelLayouts extends JModelAdmin
 			return false;
 		}
 
+/*
 		if ($this->type == false)
 		{
 			$type = new JUcmType;
 			$this->type = $type->getTypeByAlias($this->typeAlias);
 		}
+		*/
 
 		$this->tagsObserver = $this->table->getObserverOfClass('JTableObserverTags');
 
@@ -604,10 +607,11 @@ class CustomtablesModelLayouts extends JModelAdmin
 				return false;
 			}
 
+/*
 			if (!empty($this->type))
 			{
 				$this->createTagsHelper($this->tagsObserver, $this->type, $pk, $this->typeAlias, $this->table);
-			}
+			}*/
 
 			// Store the row.
 			if (!$this->table->store())
@@ -718,10 +722,12 @@ class CustomtablesModelLayouts extends JModelAdmin
 				return false;
 			}
 
+/*
 			if (!empty($this->type))
 			{
 				$this->createTagsHelper($this->tagsObserver, $this->type, $pk, $this->typeAlias, $this->table);
 			}
+			*/
 
 			// Store the row.
 			if (!$this->table->store())

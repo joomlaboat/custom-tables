@@ -33,8 +33,7 @@ class CustomtablesTableOptions extends JTable
 
 	var $familytree = null;
 
-	//function TableListEdit(& $db)
- function __construct(&$db)
+	function __construct(&$db)
 	{
 		parent::__construct('#__customtables_options', 'id', $db);
 	}

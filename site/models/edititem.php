@@ -87,10 +87,19 @@ class CustomTablesModelEditItem extends JModelLegacy {
 	var $params;
 	var $Itemid;
 	var $BlockExternalVars;
+	var $advancedtagprocessor;
 
 	function __construct()
 	{
 		parent::__construct();
+		$this->advancedtagprocessor=false;
+		
+		$phptagprocessor=JPATH_SITE.DIRECTORY_SEPARATOR.'plugins'.DIRECTORY_SEPARATOR.'content'.DIRECTORY_SEPARATOR.'customtables'.DIRECTORY_SEPARATOR.'protagprocessor'.DIRECTORY_SEPARATOR.'phptags.php';
+		if(file_exists($phptagprocessor))
+		{
+			//require_once($phptagprocessor);
+			$this->advancedtagprocessor=true;
+		}
 
 		$jinput=JFactory::getApplication()->input;
 
@@ -931,6 +940,9 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 		//Send email note if applicable
 		
+		$new_username='';
+		$new_password='';
+		
 		if($this->onrecordaddsendemail==3 and ($this->onrecordsavesendemailto!='' or $this->onrecordaddsendemailto!=''))
 		{
 			//check conditions
@@ -1616,7 +1628,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'layout.php');
 		$LayoutProc=new LayoutProcessor;
 		$LayoutProc->Model=$this;
-		$LayoutProc->advancedtagprocessor=true;
+		$LayoutProc->advancedtagprocessor=$this->advancedtagprocessor;
 		$LayoutProc->layout=$content;
 		$content=$LayoutProc->fillLayout($row,'','');
 		$LayoutProc->applyContentPlugins($content);
@@ -1719,9 +1731,9 @@ class CustomTablesModelEditItem extends JModelLegacy {
 			$sent = $mail->Send();
 
 			if ( $sent !== true ) {
-				echo 'Something went wrong. Email not sent.';
-				print_r($sent);
-				die;
+				//echo 'Something went wrong. Email not sent.';
+				//print_r($sent);
+				//die;
 				JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_SENDING_EMAIL').': '.$EmailTo.' ('.$Subject.')', 'error');
 				$status=0;
 			}

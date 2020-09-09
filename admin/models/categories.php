@@ -1,19 +1,13 @@
 <?php
-/*----------------------------------------------------------------------------------|  www.vdm.io  |----/
-				JoomlaBoat.com
-/-------------------------------------------------------------------------------------------------------/
-
-	@version		1.6.1
-	@build			19th July, 2018
-	@created		28th May, 2019
-	@package		Custom Tables
-	@subpackage		categories.php
-	@author			Ivan Komlev <https://joomlaboat.com>
-	@copyright		Copyright (C) 2018. All Rights Reserved
-	@license		GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
-
-/------------------------------------------------------------------------------------------------------*/
-
+/**
+ * CustomTables Joomla! 3.x Native Component
+ * @package Custom Tables
+ * @author Ivan komlev <support@joomlaboat.com>
+ * @link http://www.joomlaboat.com
+ * @copyright Copyright (C) 2018-2020. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
+ **/
+ 
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
@@ -747,30 +741,11 @@ class CustomtablesModelCategories extends JModelAdmin
 	 *
 	 * @since   1.6
 	 */
+	 
 	public function save($data)
 	{
 		$input	= JFactory::getApplication()->input;
-		$filter	= JFilterInput::getInstance();
 
-		// set the metadata to the Item Data
-		if (isset($data['metadata']) && isset($data['metadata']['author']))
-		{
-			$data['metadata']['author'] = $filter->clean($data['metadata']['author'], 'TRIM');
-
-			$metadata = new JRegistry;
-			$metadata->loadArray($data['metadata']);
-			$data['metadata'] = (string) $metadata;
-		}
-
-		// Set the Params Items to data
-		if (isset($data['params']) && is_array($data['params']))
-		{
-			$params = new JRegistry;
-			$params->loadArray($data['params']);
-			$data['params'] = (string) $params;
-		}
-
-		// Alter the uniqe field for save as copy
 		if ($input->get('task') === 'save2copy')
 		{
 			// Automatic handling of other uniqe fields
@@ -783,13 +758,13 @@ class CustomtablesModelCategories extends JModelAdmin
 				}
 			}
 		}
-
+		
 		if (parent::save($data))
-		{
 			return true;
-		}
+		
 		return false;
 	}
+	
 
 	/**
 	 * Method to generate a uniqe value.

@@ -280,10 +280,12 @@ class CustomtablesModelFields extends JModelAdmin
 			$table->name = htmlspecialchars_decode($table->name, ENT_QUOTES);
 		}
 
+/*
 		if (isset($table->alias) && empty($table->alias))
 		{
 			$table->generateAlias();
 		}
+		*/
 
 		if (empty($table->id))
 		{
