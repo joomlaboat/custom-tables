@@ -1140,7 +1140,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 			return true; //if no conditions
 			
 		$row=$this->getListingRowByID($listing_id);
-		$parsed_condition=$this->parseRowLayoutContent($row,$condition);
+		$parsed_condition=$this->parseRowLayoutContent($row,$condition,true);
 		$thescript='return '.$parsed_condition.';';
 		$value=eval($thescript);
 
@@ -1623,7 +1623,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		return $rows[0];
 	}
 
-	function parseRowLayoutContent(&$row,$content)
+	function parseRowLayoutContent(&$row,$content,$applyContentPlagins=true)
 	{
 		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'layout.php');
 		$LayoutProc=new LayoutProcessor;
@@ -1631,7 +1631,9 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		$LayoutProc->advancedtagprocessor=$this->advancedtagprocessor;
 		$LayoutProc->layout=$content;
 		$content=$LayoutProc->fillLayout($row,'','');
-		$LayoutProc->applyContentPlugins($content);
+		if($applyContentPlagins)
+			$LayoutProc->applyContentPlugins($content);
+		
 		return $content;
 	}
 
@@ -1648,7 +1650,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		{
 			$EmailPair=JoomlaBasicMisc::csv_explode(':', trim($SendToEmail), '"', false);
 			
-			$EmailTo=$this->parseRowLayoutContent($row,trim($EmailPair[0]));
+			$EmailTo=$this->parseRowLayoutContent($row,trim($EmailPair[0]),false);
 			$Subject='Record added to "'.$this->tabletitle.'"';
 
 
@@ -1656,7 +1658,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 			{
 				if($EmailPair[1]!='')
 				{
-					$Subject=$this->parseRowLayoutContent($row,$EmailPair[1]);
+					$Subject=$this->parseRowLayoutContent($row,$EmailPair[1],true);
 				}
 			}
 
@@ -1667,7 +1669,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		//-----------
 		$layouttype=0;
 		$message_layout_content=ESLayouts::getLayout($this->onrecordaddsendemaillayout,$layouttype);
-		$note=$this->parseRowLayoutContent($row,$message_layout_content);
+		$note=$this->parseRowLayoutContent($row,$message_layout_content,true);
 
 
 		$MailFrom 	= $mainframe->getCfg('mailfrom');
@@ -1707,12 +1709,15 @@ class CustomTablesModelEditItem extends JModelLegacy {
 			}
 
 
-
+//echo '$EmailTo='.$EmailTo.'<br/>';
+//echo '$MailFrom='.$MailFrom.'<br/>';
 			$mail->IsHTML(true);
 			$mail->addRecipient($EmailTo);
 			$mail->setSender( array($MailFrom,$FromName) );
 			$mail->setSubject( $Subject);
 			$mail->setBody( $note_final );
+			
+			//print_r($mail);
 
 
 			foreach($this->esfields as $esfield)
@@ -1733,7 +1738,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 			if ( $sent !== true ) {
 				//echo 'Something went wrong. Email not sent.';
 				//print_r($sent);
-				//die;
+	//			die;
 				JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_SENDING_EMAIL').': '.$EmailTo.' ('.$Subject.')', 'error');
 				$status=0;
 			}
