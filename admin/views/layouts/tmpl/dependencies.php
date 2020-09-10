@@ -56,6 +56,15 @@ function renderDependencies($layout_row)
 		$result.=_renderMenuList($menus);
         
     }
+	
+	$modules=_getModulesThatUseThisLayout($layout_row->layoutname);
+	if(count($modules)>0)
+    {
+		$count+=count($modules);
+        $result.='<h3>'.JText::_('COM_CUSTOMTABLES_LAYOUTS_MODULES', true).'</h3>';
+		$result.=_renderModuleList($modules);
+        
+    }
 
 	$layouts=_getLayoutsThatUseThisLayout($layout_row->layoutname);
     if(count($layouts)>0)
@@ -96,6 +105,21 @@ function _renderMenuList($menus)
     {
 		$link='/administrator/index.php?option=com_menus&view=item&client_id=0&layout=edit&id='.$menu['id'];
 		$result.='<li><a href="'.$link.'" target="_blank">'.$menu['title'].'</a></li>';
+	}
+		
+	$result.='</ul>';
+    return $result;
+}
+
+
+function _renderModuleList($modules)
+{
+    $result='<ul style="list-style-type:none;margin:0px;">';
+	
+    foreach($modules as $module)
+    {
+		$link='/administrator/index.php?option=com_modules&task=module.edit&id='.$module['id'];
+		$result.='<li><a href="'.$link.'" target="_blank">'.$module['title'].'</a></li>';
 	}
 		
 	$result.='</ul>';
@@ -180,6 +204,30 @@ function _getMenuItemsThatUseThisLayout($layoutname)
 	$wheres[]='('.implode(' OR ',$w).')';
 	
 	$query = 'SELECT id,title FROM #__menu WHERE '.implode(' AND ',$wheres);
+	
+	$db->setQuery( $query );
+	if (!$db->query())    echo ( $db->stderr());
+	return $db->loadAssocList();
+}
+
+function _getModulesThatUseThisLayout($layoutname)
+{
+    $db = JFactory::getDBO();
+
+	$wheres=array();
+	$wheres[]='published=1';
+	$wheres[]='module='.$db->quote('mod_ctcatalog');
+	
+	$layout_params=['ct_pagelayout','ct_itemlayout'];
+	$w=array();
+	foreach($layout_params as $l)
+	{
+		$toSearch='"'.$l.'":"'.$layoutname.'"';
+		$w[]='INSTR(params,'.$db->quote($toSearch).')';
+	}
+	$wheres[]='('.implode(' OR ',$w).')';
+	
+	$query = 'SELECT id,title FROM #__modules WHERE '.implode(' AND ',$wheres);
 	
 	$db->setQuery( $query );
 	if (!$db->query())    echo ( $db->stderr());
