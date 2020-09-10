@@ -126,33 +126,46 @@ trait render_csv
 			ob_clean();
 
 		//Header
+		$options=array();
+		$fList=JoomlaBasicMisc::getListToReplaceAdvanced('<style>','</style>',$options,$pagelayout);
+		foreach($fList as $fItem)
+			$pagelayout=str_replace($fItem,'',$pagelayout);
+			
+			
+		$options=array();
+		$fList=JoomlaBasicMisc::getListToReplaceAdvanced('</th>','<th>',$options,$pagelayout);
+		foreach($fList as $fItem)
+			$pagelayout=str_replace($fItem,',',$pagelayout);
+			
 		$result=trim(strip_tags(html_entity_decode($pagelayout)));
 		$result=str_replace("\n",'',$result);
 		$result=str_replace("\r",'',$result);
-		if($result!='')
-			$result=$result.'\r\n';
 		
+		if($result!='')
+			$result=$result.'
+';
 
 		//Prepare line layout
 		$layout=$Model->LayoutProc->layout;
 		$layout=str_replace("\n",'',$layout);
 		$layout=str_replace("\r",'',$layout);
-
-		$a=str_replace("</td>",',',$layout);
-
+		
 		$commaAdded=false;
-		if($layout!=$a)
+
+		$options=array();
+		$fList=JoomlaBasicMisc::getListToReplaceAdvanced('</td>','<td',$options,$layout);
+		foreach($fList as $fItem)
+		{
+			$layout=str_replace($fItem,',<td',$layout);
 			$commaAdded=true;
-
-
-		$layout=$a;
+		}
 
 		$Model->LayoutProc->layout=$layout;
 
 		foreach($SearchResult as $row)
 		{
 
-			$vlu=strip_tags(tagProcessor_Item::RenderResultLine($Model,$row,false));
+			$vlu=trim(strip_tags(tagProcessor_Item::RenderResultLine($Model,$row,false)));
 			$l=strlen($vlu);
 			if($commaAdded and $l>0)
 			{

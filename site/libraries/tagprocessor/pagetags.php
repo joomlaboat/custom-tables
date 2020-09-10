@@ -733,23 +733,27 @@ JHtml::_('behavior.formvalidator');
 			if($numberonly)
 				return $Model->TotalRows;
 			else
-				return '<span class="ctCatalogRecordCount">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FOUND' ).': '.$Model->TotalRows.' '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RESULT_S' ).'</span>';
+			{
+				if($Model->frmt=='csv')
+					return '';
+				else
+					return '<span class="ctCatalogRecordCount">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FOUND' ).': '.$Model->TotalRows.' '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RESULT_S' ).'</span>';
+			}
 		}
 	}
 
 	static protected function RecordCountValue(&$Model,&$pagelayout)
 	{
-
 		$options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('count',$options,$pagelayout,'{}');
 
-		$i=0;
-
+		if($Model->frmt=='csv')
+			$vlu='';
+		else
+			$vlu=$Model->TotalRows;
+	
 		foreach($fList as $fItem)
-		{
-			$pagelayout=str_replace($fItem,$Model->TotalRows,$pagelayout);
-			$i++;
-		}
+			$pagelayout=str_replace($fItem,$vlu,$pagelayout);
 	}
 
 
