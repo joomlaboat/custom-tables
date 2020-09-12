@@ -747,10 +747,9 @@ JHtml::_('behavior.formvalidator');
 		$options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('count',$options,$pagelayout,'{}');
 
-		if($Model->frmt=='csv')
-			$vlu='';
-		else
-			$vlu=$Model->TotalRows;
+		$vlu='';
+		if($Model->frmt!='csv'and isset($Model->TotalRows))
+			$vlu=$Model->TotalRows;	
 	
 		foreach($fList as $fItem)
 			$pagelayout=str_replace($fItem,$vlu,$pagelayout);
