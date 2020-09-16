@@ -556,7 +556,6 @@ class ESFiltering
 
 	function Search_Date(&$whr, &$PathValue, $opr,$esr_table_full)
 	{
-		//Breadcrumbs
 		$fieldrow1=$this->getFieldRowByName($whr[0]);
 		$title1='';
 		if(!$fieldrow1)
@@ -564,13 +563,21 @@ class ESFiltering
 		else
 			$title1=$whr[0];
 
+		if(!isset($whr[1]))
+			return '';
+		
+
 		$fieldrow2=$this->getFieldRowByName($whr[1]);
+
 		$title2='';
-		if(!$fieldrow2)
+		if($fieldrow2)
 			$title2=$fieldrow2['fieldtitle'.$this->langpostfix];
 		else
 			$title2=$whr[1];
 
+		$db = JFactory::getDBO();
+		
+		//Breadcrumbs
 		$PathValue[]=$title1.' '.$opr.' '.$title2;
 
 		$value1=$this->processDateSearchTags($whr[0],$fieldrow1,$esr_table_full);
@@ -580,7 +587,7 @@ class ESFiltering
 			$query=$value1.' IS NULL';
 		else
 			$query=$value1.' '.$opr.' '.$value2;
-
+		
 		return $query;
 	}
 
@@ -967,8 +974,7 @@ class ESFiltering
 		//normal fields
 		foreach($this->esfields as $fld)
 		{
-			$f=$fld['fieldname'];
-			if($f==$fieldname1)
+			if($fld['fieldname']==$fieldname1)
 				return $fld;
 		}
 		return false;

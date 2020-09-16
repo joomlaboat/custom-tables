@@ -744,15 +744,22 @@ JHtml::_('behavior.formvalidator');
 
 	static protected function RecordCountValue(&$Model,&$pagelayout)
 	{
+		if(!isset($Model->TotalRows))
+			return;
+		
 		$options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('count',$options,$pagelayout,'{}');
 
-		$vlu='';
-		if($Model->frmt!='csv'and isset($Model->TotalRows))
-			$vlu=$Model->TotalRows;	
+		if(count($fList)>0)
+		{
+			$vlu='';
+			
+			if($Model->frmt!='csv')
+				$vlu=$Model->TotalRows;	
 	
-		foreach($fList as $fItem)
-			$pagelayout=str_replace($fItem,$vlu,$pagelayout);
+			foreach($fList as $fItem)
+				$pagelayout=str_replace($fItem,$vlu,$pagelayout);
+		}
 	}
 
 
