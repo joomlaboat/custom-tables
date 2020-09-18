@@ -128,6 +128,8 @@ class CustomTablesModelListOfOptions extends JModelList
 		}
 
 		// second pass - get an indent list of the items
+		
+		
 
 		$list = JHTML::_('menu.treerecurse', 0, '', array(), $children, max( 0, $levellimit-1 ) );
 		$list = $this->treerecurse(0, '', array(), $children, max( 0, $levellimit-1 ) );
@@ -165,7 +167,7 @@ class CustomTablesModelListOfOptions extends JModelList
 
 	function treerecurse($id, $indent, $list, &$children, $maxlevel=9999, $level=0, $type=1)
 	{
-        if (@$children[$id] && $level <= $maxlevel)
+		if (@$children[$id] && $level <= $maxlevel)
         {
                 foreach ($children[$id] as $v)
                 {
@@ -187,8 +189,19 @@ class CustomTablesModelListOfOptions extends JModelList
                         $pt = $v->parentid;
                         $list[$id] = $v;
                         $list[$id]->treename = "$indent$txt";
-                        $list[$id]->children = count(@$children[$id]);
-                        $list = $this->treerecurse($id, $indent . $spacer, $list, $children, $maxlevel, $level+1, $type);
+						/*
+						if(!isset($children[$id]) or !is_array($children[$id]))
+						{
+							echo 'id='.$id.'<br/>';
+							print_r($children);
+							die;
+						}
+						*/
+						if(isset($children[$id]))
+						{
+							$list[$id]->children = count(@$children[$id]);
+							$list = $this->treerecurse($id, $indent . $spacer, $list, $children, $maxlevel, $level+1, $type);
+						}
                 }
         }
         return $list;
