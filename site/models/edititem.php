@@ -1775,8 +1775,6 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		if($id==0)
 			return false;
 
-
-
 		return $this->setPublishStatusSingleRecord($id,$status);
 	}
 
@@ -1798,8 +1796,6 @@ class CustomTablesModelEditItem extends JModelLegacy {
 			ESLogs::save($this->estableid,(int)$id,4);
 
 		$this->RefreshSingleRecord((int)$id,0);
-
-
 
 		return true;
 	}

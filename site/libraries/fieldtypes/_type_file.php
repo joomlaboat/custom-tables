@@ -234,7 +234,7 @@ class CT_FieldTypeTag_file
                             $value=CT_FieldTypeTag_file::UploadSingleFile($ExistingFile,$fileid, $esfieldname,JPATH_SITE.$FileFolder,$typeparams,$establename);
 					}
 
-					if($value!='')
+					if($value and $value!='')
                     {
                         $value_found=true;
 						$savequery[]='es_'.$esfieldname.'="'.$value.'"';
@@ -248,8 +248,6 @@ class CT_FieldTypeTag_file
 
     protected static function UploadSingleFile($ExistingFile, $file_id, $esfieldname,$FileFolder,$typeparams,$establename='-options')
     {
-
-
 		$jinput = JFactory::getApplication()->input;
 
 		if($file_id!='')
@@ -308,9 +306,20 @@ class CT_FieldTypeTag_file
                 $new_filename=CT_FieldTypeTag_file::getCleanAndAvailableFileName($file_id,$FileFolder);
                 $new_filename_path=str_replace('/',DIRECTORY_SEPARATOR,$FileFolder.DIRECTORY_SEPARATOR.$new_filename);
 
-                copy($uploadedfile,$new_filename_path);
-				unlink($uploadedfile);
-                return $new_filename;
+                if(@copy($uploadedfile,$new_filename_path))
+				{
+					unlink($uploadedfile);
+					
+					//Copied
+					return $new_filename;
+				}
+				else
+				{
+					unlink($uploadedfile);
+					
+					//Cannot copy
+					return false;
+				}
 			}
 			else
 			{
@@ -318,7 +327,7 @@ class CT_FieldTypeTag_file
 				return false;
 			}
 		}
-		return '';
+		return false;
 	}
 	
 	static protected function checkIfTheFileBelongsToAnotherRecord($filename,$FileFolder,$establename,$esfieldname)
