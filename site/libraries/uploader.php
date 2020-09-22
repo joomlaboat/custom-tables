@@ -192,8 +192,10 @@ class ESFileUploader
 					}
 					else
 					{
-						move_uploaded_file($file["tmp_name"],$newFileName);
-						$ret = ['status'=>'success','filename'=>'ct_'.$t.'_'.$fileid.'_'.$fileName];
+						if(@move_uploaded_file($file["tmp_name"],$newFileName))
+							$ret = ['status'=>'success','filename'=>'ct_'.$t.'_'.$fileid.'_'.$fileName];
+						else
+							$ret = ['error'=>'Unable to upload the file.'];
 					}
 				}
 				else
