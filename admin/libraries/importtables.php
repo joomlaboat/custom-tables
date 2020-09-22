@@ -501,7 +501,7 @@ class ImportTables
 
 
             //Alias,New ID, Old ID
-            $menus[]=[$menuitem_alias,$menuitemid,$menuitem_old['id']];
+            $menus[]=[$menuitem_alias,$menuitemid,0];
 
 
             $menuitemid=ImportTables::insertRecords('#__menu',$menuitem_new,false);
@@ -734,6 +734,91 @@ class ImportTables
 			return 0;
 
 		return $rows[0]['rgt'];
+	}
+	
+	public static function addMenu($title,$alias,$link,$menutype_or_title,$extension_name,$access_,$params_string,$home=0)
+	{
+		$menutype=JoomlaBasicMisc::slugify($menutype_or_title);
+		ImportTables::addMenutypeIfNotExist($menutype,$menutype_or_title);
+
+
+		if((int)$access_==0)
+		{
+			//Try to find id by name
+
+			$access_row=ImportTables::getRecordByField('#__viewlevels','title',$access_,false);
+			if(!is_array($access_row) or count($access_row)==0)
+			{
+				echo 'Cannot find access level "'.$access_.'"<br/>';
+				return false;
+			}
+			$access=$access_row['id'];
+
+		}
+		else
+			$access=$access_;
+
+		if($access==0)
+		{
+				echo 'Cannot find access level "'.$access_.'", found 0.<br/>';
+				return false;
+		}
+
+
+		$menuitem_new=array();
+		$menuitem_new['title']=$title;
+		$menuitem_new['link']=$link;
+		$menuitem_new['type']=($extension_name=='url' ? 'url' : 'component');
+			
+		$menuitem_new['published']=1;
+		$menuitem_new['access']=$access;
+		$menuitem_new['language']='*';
+		$menuitem_new['parent_id']=1; //TODO: Add menu parent functionality
+		$menuitem_new['menutype']=$menutype;
+
+		if($home==1)
+			OxfordSMSComponents::setAllMenuitemAsNotHome();
+
+		$menuitem_new['home']=$home;
+		$menuitem_new['level']=1;
+		$menuitem_new['lft']=null;
+		$menuitem_new['rgt']=null;
+		$menuitem_new['id']=null;
+		$menuitem_new['params']=$params_string;
+
+		if($extension_name=='url')
+			$component_id=0;
+		else
+		{
+			$component=ImportTables::getRecordByField('#__extensions','element',$extension_name,false);
+			$component_id=$component['extension_id'];
+		}
+
+
+		$menuitem_new['component_id']=$component_id;
+		$menuitem_new['alias']=$alias;
+
+
+		$menuitem_old=ImportTables::getRecordByField('#__menu','alias',$alias,false);
+
+		if(is_array($menuitem_old) and count($menuitem_old)>0)
+        {
+			echo 'Updating external menu Item "'.$alias.'"<br/>';
+
+			$menuitem_new['parent_id']=1; //TODO: Add menu parent functionality
+			$menuitem_new['level']=1;
+			$lft=ImportTables::menuGetMaxRgt()+1;
+			$menuitem_new['lft']=$lft;//this is to have separate menu branch
+			$menuitem_new['rgt']=$lft+1;
+			
+            ImportTables::updateRecords('#__menu',$menuitem_new,$menuitem_old,false);
+
+        }
+		else
+		{
+			echo 'Adding external menu Item "'.$alias.'"<br/>';
+			ImportTables::rebuildMenuTree($menuitem_new);//,'oxford-sms','tos-shared-files',$component_id);
+		}
 	}
 }
 
