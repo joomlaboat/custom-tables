@@ -267,7 +267,7 @@ class tagProcessor_Edit
             $attribute=' disabled="disabled"';
             
         if($optional_class!='')
-			$the_class='ctEditFormButton '.$optional_class;
+			$the_class=$optional_class;//$the_class='ctEditFormButton '.$optional_class;
 		else
 			$the_class='ctEditFormButton btn button-apply btn-success';
             
@@ -292,7 +292,7 @@ class tagProcessor_Edit
             $attribute.=' disabled="disabled"';
             
         if($optional_class!='')
-			$the_class='ctEditFormButton '.$optional_class;
+			$the_class=$optional_class;//$the_class='ctEditFormButton '.$optional_class;
 		else
 			$the_class='ctEditFormButton btn button-apply btn-success';
             
@@ -313,7 +313,7 @@ class tagProcessor_Edit
             $attribute=' disabled="disabled"';
             
         if($optional_class!='')
-			$the_class='ctEditFormButton '.$optional_class;
+			$the_class=$optional_class;//$the_class='ctEditFormButton '.$optional_class;
 		else
 			$the_class='ctEditFormButton btn button-apply btn-success';
             
@@ -332,7 +332,7 @@ class tagProcessor_Edit
             $attribute=' disabled="disabled"';
             
         if($optional_class!='')
-			$the_class='ctEditFormButton '.$optional_class;
+			$the_class=$optional_class;//$the_class='ctEditFormButton '.$optional_class;
 		else
 			$the_class='ctEditFormButton btn button-apply btn-success';
             
@@ -350,7 +350,7 @@ class tagProcessor_Edit
                 $title=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_CANCEL');
             
         	if($optional_class!='')
-                $cancel_class='ctEditFormButton '.$optional_class;
+                $cancel_class=$optional_class;//$cancel_class='ctEditFormButton '.$optional_class;
             else
              	$cancel_class='ctEditFormButton btn button-cancel';
 
@@ -364,7 +364,7 @@ class tagProcessor_Edit
                 $title=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_DELETE');
             
         	if($optional_class!='')
-                $class='ctEditFormButton '.$optional_class;
+                $class=$optional_class;//$class='ctEditFormButton '.$optional_class;
             else
              	$class='ctEditFormButton btn button-cancel';
 
