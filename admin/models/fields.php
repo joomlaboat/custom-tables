@@ -759,21 +759,29 @@ class CustomtablesModelFields extends JModelAdmin
 	 * @since   1.6
 	 */
 
-	public function checkFieldName($tableid,$fieldname)
+	public function checkFieldName($tableid,$fieldname)//,&$typeparams)
 	{
 		$new_fieldname=$fieldname;
-		$i=1;
+		//$i=1;
 		do
 		{
+		
 
-			$already_exists=ESFields::getFieldID($tableid, $fieldname);
+		//$typeparams='';
+
+			//$fieldrow=getFieldRowByName($fieldname, $tableid);
+			$already_exists=ESFields::getFieldID($tableid, $new_fieldname);
+			//if(count($fieldrow)>0)
 			if($already_exists!=0)
 			{
-				$pair=explode('_',$fieldname);
+				//$typeparams=$fieldrow->typeparams;
+				//return $fieldname.'copy';
+				
+				//$pair=explode('_',$fieldname);
 
-				$cleanfieldname=$pair[0];
-				$new_fieldname=$cleanfieldname.'_'.$i;
-				$i++;
+				//$cleanfieldname=$pair[0];
+				$new_fieldname.='copy';
+				//$i++;
 			}
 			else
 				break;
@@ -781,6 +789,7 @@ class CustomtablesModelFields extends JModelAdmin
 		}while(1==1);
 
 		return $new_fieldname;
+		//return $new_fieldname;
 	}
 
 
@@ -800,13 +809,25 @@ class CustomtablesModelFields extends JModelAdmin
 
 		$tableid=$data_extra['tableid'];
 		$fieldid=$data['id'];
+		
+		
+		
+		//$fieldrow=getFieldRowByName($esfieldname, $tableid);
 
 		if($fieldid==0)
 			$esfieldname=$this->checkFieldName($tableid,$esfieldname);
+		//{
+			
+		//}
+		//else
+		//{
+			//$fieldrow_old=ESFields::getFieldRow($fieldid);
+		//}
 
 		$data['fieldname']=$esfieldname;
 
 
+		//Add title translation fields in needed
 		$LangMisc	= new ESLanguages;
 		$languages=$LangMisc->getLanguageList();
 
@@ -872,6 +893,10 @@ class CustomtablesModelFields extends JModelAdmin
 					$data[$uniqeField] = $this->generateUnique($uniqeField,$data[$uniqeField]);
 				}
 			}
+		}
+		else
+		{
+			//Process image type field
 		}
 
 
@@ -951,6 +976,11 @@ class CustomtablesModelFields extends JModelAdmin
 			{
 				//Resize all images if neaded
 				//$this->doResizeImages($new_typeparams, $ex_typeparams,$this->establename,$esfieldname);
+				$input	= JFactory::getApplication()->input;
+				$input->set('extratask','updateimages');
+				$input->set('old_typeparams',base64_encode($ex_typeparams));
+				$input->set('new_typeparams',base64_encode($new_typeparams));
+				$input->set('fieldid',$fieldid);
 
 			}
 

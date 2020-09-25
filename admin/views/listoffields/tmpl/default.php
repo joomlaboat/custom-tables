@@ -1,24 +1,15 @@
 <?php
-/*----------------------------------------------------------------------------------|  www.vdm.io  |----/
-				JoomlaBoat.com 
-/-------------------------------------------------------------------------------------------------------/
-
-	@version		1.6.1
-	@build			1st July, 2018
-	@created		28th May, 2019
-	@package		Custom Tables
-	@subpackage		default.php
-	@author			Ivan Komlev <https://joomlaboat.com>	
-	@copyright		Copyright (C) 2018. All Rights Reserved
-	@license		GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
-
-/------------------------------------------------------------------------------------------------------*/
+/**
+ * CustomTables Joomla! 3.x Native Component
+ * @package Custom Tables
+ * @author Ivan komlev <support@joomlaboat.com>
+ * @link http://www.joomlaboat.com
+ * @copyright Copyright (C) 2018-2020. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
+ **/
 
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
-
-
-
 
 // load tooltip behavior
 JHtml::_('behavior.tooltip');
@@ -26,10 +17,20 @@ JHtml::_('behavior.multiselect');
 JHtml::_('dropdown.init');
 JHtml::_('formbehavior.chosen', 'select');
 
+
 if ($this->saveOrder)
 {
 	$saveOrderingUrl = 'index.php?option=com_customtables&task=listoffields.saveOrderAjax&tableid='.$this->tableid.'&tmpl=component';
 	JHtml::_('sortablelist.sortable', 'fieldsList', 'adminForm', strtolower($this->listDirn), $saveOrderingUrl);
+}
+
+$input	= JFactory::getApplication()->input;
+
+if($input->getCmd('extratask','')=='updateimages')
+{
+	$path=JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'extratasks'.DIRECTORY_SEPARATOR;
+	require_once($path.'extratasks.php');
+	extraTasks::prepareJS();
 }
 
 ?>
@@ -49,6 +50,7 @@ if ($this->saveOrder)
 		}
 		Joomla.tableOrdering(order, dirn, '');
 	}
+	
 </script>
 <?php
 
@@ -109,3 +111,13 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.
 
 <?php echo JHtml::_('form.token'); ?>
 </form>
+
+
+  <!-- Modal content -->
+  <div id="ctModal" class="ctModal">
+  <div id="ctModal_box" class="ctModal_content">
+    <span id="ctModal_close" class="ctModal_close">&times;</span>
+	<div id="ctModal_content"><p>Some text in the Modal..</p></div>
+  </div>
+	</div>
+  <!-- end of the modal -->

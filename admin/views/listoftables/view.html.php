@@ -241,7 +241,6 @@ class CustomtablesViewListoftables extends JViewLegacy
 			$this->document = JFactory::getDocument();
 		}
 		$this->document->setTitle(JText::_('COM_CUSTOMTABLES_LISTOFTABLES'));
-		$this->document->addStyleSheet(JURI::root(true)."/administrator/components/com_customtables/assets/css/listoftables.css", (CustomtablesHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
 	}
 
 	/**

@@ -1021,14 +1021,12 @@ function ProportionalResize($src, $dst, $dst_width, $dst_height,$LevelMax, $over
 
 
 	if($fileExtension_dst == "jpg" OR $fileExtension_dst == 'jpeg'){
-		imagejpeg($new, $dst, 70);
+		imagejpeg($new, $dst, 90);
 	}elseif ($fileExtension_dst == "gif"){
 		imagegif($new, $dst);
 	}elseif ($fileExtension_dst == 'png'){
 		imagepng($new, $dst);
 	}
-
-
 
 
 	return 1;
@@ -1081,7 +1079,3 @@ public static function getImageFolder($imageparams)
 
 }
 
-
-
-
-?>

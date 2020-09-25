@@ -190,7 +190,7 @@ function checkTableFields($establename,$tableid)
         else
         {
 
-            if($field_mysql_type!=$PureFieldType)
+            if(strtolower($field_mysql_type)!=strtolower($PureFieldType))
             {
                 if($task=='fixfieldtype' and $taskfieldname==$exst_field)
                 {

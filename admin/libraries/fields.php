@@ -444,7 +444,7 @@ class ESFields
 				break;
 
             case '_id':
-				return 'int(10) UNSIGNED NOT NULL AUTO_INCREMENT';
+				return 'int(10) UNSIGNED NOT NULL';// AUTO_INCREMENT';
 				break;
 
             case '_published':
@@ -1090,12 +1090,9 @@ class ESFields
             return $db->loadAssocList();
 	}
 
-	public static function getFieldRowByName($fieldname, $tableid='',$sj_tablename='')
+	public static function getFieldRowByName($fieldname, $tableid=0,$sj_tablename='')
 	{
 		$db = JFactory::getDBO();
-
-		//if($fieldname=='')
-			//$fieldname=JFactory::getApplication()->input->get('fieldname','','CMD');
 
 		if($fieldname=='')
 			return array();

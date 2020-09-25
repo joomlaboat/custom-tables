@@ -255,6 +255,15 @@ class CustomtablesControllerFields extends JControllerForm
 		// get the referal details
 		$this->ref 		= $this->input->get('ref', 0, 'word');
 		$this->refid 	= $this->input->get('refid', 0, 'int');
+		
+		$fieldid 	= $this->input->get('id', 0, 'int');
+		
+	//	echo '$this->task='.$this->task.'<br>';
+		
+//		echo '$this->ref='.$this->ref;
+		
+		//if($this->task!='apply' and $this->task!='save' and  $this->task!='save2new' and $this->task!='save2copy')
+			//die;
 
 		if ($this->ref || $this->refid)
 		{
@@ -264,28 +273,54 @@ class CustomtablesControllerFields extends JControllerForm
 
 		$saved = parent::save($key, $urlVar);
 
-		if ($this->refid && $saved)
+		
+		$redirect = 'index.php?option=' . $this->option;
+		
+		if($this->task=='apply' or $this->task=='save2new' or $this->task=='save2copy')
 		{
-			$redirect = '&view='.(string)$this->ref.'&layout=edit&tableid='.(int)$tableid.'&id='.(int)$this->refid;
+			//if((int)$this->refid!=0)
+				$redirect.='&view=fields&layout=edit&id='.(int)$fieldid.'&tableid='.(int)$tableid;
+			//else			
+				//$redirect.='&view=fields&layout=edit&fieldid='.(int)$fieldid;
+		}
+		else
+			$redirect.='&view=listoffields&tableid='.(int)$tableid;
+		
+		//Pospone extra task
+		//$extratask=$this->input->getCmd('newtask','');
+				
+		if($this->input->getCmd('extratask','')!='')
+		{
+			$redirect.='&extratask='.$this->input->getCmd('extratask','');
+			$redirect.='&old_typeparams='.$this->input->get('old_typeparams','','BASE64');
+			$redirect.='&new_typeparams='.$this->input->get('new_typeparams','','BASE64');
+			$redirect.='&fieldid='.$this->input->getInt('fieldid',0);
+		}
 
+		if ($saved)//$this->refid && 
+		{
+			//$redirect.='&layout=edit&id='.(int)$this->refid;
+			
 			// Redirect to the item screen.
 			$this->setRedirect(
 				JRoute::_(
-					'index.php?option=' . $this->option . $redirect, false
+					$redirect, false
 				)
 			);
 		}
+		/*
 		elseif ($this->ref && $saved)
 		{
-			$redirect = '&view='.(string)$this->ref.'&tableid='.(int)$tableid;
-
+			echo '2';
+			die;
 			// Redirect to the list screen.
 			$this->setRedirect(
 				JRoute::_(
-					'index.php?option=' . $this->option . $redirect, false
+					$redirect, false
 				)
 			);
 		}
+		*/
 		return $saved;
 	}
 

@@ -176,7 +176,7 @@ class CustomtablesViewTables extends JViewLegacy
 			$this->document = JFactory::getDocument();
 		}
 		$this->document->setTitle(JText::_($isNew ? 'COM_CUSTOMTABLES_TABLES_NEW' : 'COM_CUSTOMTABLES_TABLES_EDIT'));
-		$this->document->addStyleSheet(JURI::root(true)."/administrator/components/com_customtables/assets/css/tables.css", (CustomtablesHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
+
 		$this->document->addScript(JURI::root(true) . $this->script, (CustomtablesHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/javascript');
 		$this->document->addScript(JURI::root(true)."/administrator/components/com_customtables/views/tables/submitbutton.js", (CustomtablesHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/javascript');
 		JText::script('view not acceptable. Error');

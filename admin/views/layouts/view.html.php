@@ -1,16 +1,12 @@
 <?php
-/*-------------------------------------------------------------------------------------------------------/
-
-	@version		1.7.3
-	@build			28th November, 2019
-	@created		24th May, 2018
-	@package		Custom Tables
-	@subpackage		view.html.php
-	@author			Ivan Komlev <https://joomlaboat.com>	
-	@copyright		Copyright (C) 2018-2019. All Rights Reserved
-	@license		GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
-
-/------------------------------------------------------------------------------------------------------*/
+/**
+ * CustomTables Joomla! 3.x Native Component
+ * @package Custom Tables
+ * @author Ivan komlev <support@joomlaboat.com>
+ * @link http://www.joomlaboat.com
+ * @copyright Copyright (C) 2018-2020. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
+ **/
 
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
@@ -189,7 +185,6 @@ class CustomtablesViewLayouts extends JViewLegacy
 			$this->document = JFactory::getDocument();
 		}
 		$this->document->setTitle(JText::_($isNew ? 'COM_CUSTOMTABLES_LAYOUTS_NEW' : 'COM_CUSTOMTABLES_LAYOUTS_EDIT'));
-		$this->document->addStyleSheet(JURI::root(true)."/administrator/components/com_customtables/assets/css/layouts.css", (CustomtablesHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css'); 
 		$this->document->addScript(JURI::root(true) . $this->script, (CustomtablesHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/javascript');
 		$this->document->addScript(JURI::root(true)."/administrator/components/com_customtables/views/layouts/submitbutton.js", (CustomtablesHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/javascript'); 
 		JText::script('view not acceptable. Error');
