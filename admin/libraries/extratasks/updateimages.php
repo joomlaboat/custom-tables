@@ -45,6 +45,8 @@ class updateImages
 		if($startindex==0)
 		{
 			$count=updateImages::countImages($table_row->tablename,$field_row->fieldname);
+			if($stepsize>$count)
+				$stepsize=$count;
 		}
 		
 		$old_ImageFolder_=CustomTablesImageMethods::getImageFolder($old_typeparams);
