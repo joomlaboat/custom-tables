@@ -23,6 +23,16 @@ $document->addCustomTag('<link href="'.JURI::root(true).'/administrator/componen
 $document->addCustomTag('<script src="'.JURI::root(true).'/administrator/components/com_customtables/js/ajax.js"></script>');
 $document->addCustomTag('<script src="'.JURI::root(true).'/administrator/components/com_customtables/js/typeparams.js"></script>');
 
+$input	= JFactory::getApplication()->input;
+
+if($input->getCmd('extratask','')=='updateimages')
+{
+	$path=JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'extratasks'.DIRECTORY_SEPARATOR;
+	require_once($path.'extratasks.php');
+	extraTasks::prepareJS();
+}
+
+
 $componentParams = JComponentHelper::getParams('com_customtables');
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'languages.php');
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'types.php');
@@ -231,3 +241,12 @@ else
 
 </form>
 </div>
+
+  <!-- Modal content -->
+  <div id="ctModal" class="ctModal">
+  <div id="ctModal_box" class="ctModal_content">
+    <span id="ctModal_close" class="ctModal_close">&times;</span>
+	<div id="ctModal_content"><p>Some text in the Modal..</p></div>
+  </div>
+	</div>
+  <!-- end of the modal -->
