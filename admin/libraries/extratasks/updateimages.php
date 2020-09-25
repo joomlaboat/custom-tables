@@ -295,7 +295,7 @@ class updateImages
 		//Delete old files
 		foreach($image_sizes_to_delete as $img)
 		{
-			$status=updateImages::processImage_CustomSize_deleteFile($imgMethods,$rowValue,$old_ImageFolder, $prefix=$img[0],$imagefile_ext=$img[4],$original_image_file);
+			$status=updateImages::processImage_CustomSize_deleteFile($imgMethods,$rowValue,$new_ImageFolder, $prefix=$img[0],$imagefile_ext=$img[4],$original_image_file);
 			if($status!=null)
 				return $status;
 		}
