@@ -505,7 +505,7 @@ class CustomTablesKeywordSearch
 
 
 				$db->setQuery($query);
-				if (!$db->query())    die ;
+//				if (!$db->query())    die ;
 
 				$rows=$db->loadAssocList();
 

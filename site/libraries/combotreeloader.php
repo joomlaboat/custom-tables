@@ -287,7 +287,7 @@ function getOptionList($parentname, $langpostfix)
 
 
 	$db->setQuery($query);
-    if (!$db->query())    die( $db->stderr());
+//    if (!$db->query())    die( $db->stderr());
 		return $db->loadObjectList();
 }
 function getOptionListWhere($parentname, $langpostfix,$filterwhere, $listingfield)
@@ -322,7 +322,7 @@ function getOptionListWhere($parentname, $langpostfix,$filterwhere, $listingfiel
 
 
 	$db->setQuery($query);
-        if (!$db->query())    die( $db->stderr());
+//        if (!$db->query())    die( $db->stderr());
 
 	return $db->loadObjectList();
 }

@@ -115,7 +115,7 @@ class ESMultiSelector
      $query.=' ORDER BY ordering, title';
 
 		$db->setQuery($query);
-				if (!$db->query())	die( $db->stderr());
+//				if (!$db->query())	die( $db->stderr());
 
 		return $db->loadObjectList();
 	}

@@ -339,7 +339,8 @@ class CT_FieldTypeTag_file
 		$query='SELECT id FROM '.$mysqltablename.' WHERE '.$comesfieldname.'='.$db->quote($filename).' LIMIT 2';
 		
 		$db->setQuery( $query );
-		if (!$db->query())    die ;
+		$db->execute();
+//		if (!$db->query())    die ;
 		
 		return $db->getNumRows()>1;
 	}

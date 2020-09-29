@@ -37,7 +37,7 @@ class JHTMLESUserGroupsView
 				$query->orderby('title');
 				
 				$db->setQuery($query);
-				if (!$db->query())    die( $db->stderr());
+				//if (!$db->query())    die( $db->stderr());
 				
 				$options=$db->loadObjectList();
 				

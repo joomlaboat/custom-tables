@@ -49,7 +49,7 @@ class JHTMLESUser
 				$query->order('#__users.name');
 
 				$db->setQuery($query);
-				if (!$db->query())    die( $db->stderr());
+				//if (!$db->query())    die( $db->stderr());
 
 				$options=$db->loadObjectList();
 
@@ -61,5 +61,3 @@ class JHTMLESUser
 
 
 }
-
-?>

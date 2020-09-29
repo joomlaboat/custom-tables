@@ -93,7 +93,7 @@ class CustomTablesModelEditFiles extends JModelLegacy {
 		$query = 'SELECT fileid, file_ext FROM '.$this->fileboxtablename.' WHERE listingid='.$this->listing_id.' ORDER BY fileid';
 
 		$db->setQuery($query);
-		if (!$db->query())    die( $db->stderr());
+//		if (!$db->query())    die( $db->stderr());
 
 		$rows=$db->loadObjectList();
 
@@ -106,7 +106,7 @@ class CustomTablesModelEditFiles extends JModelLegacy {
 		$query = 'SELECT fieldtitle'.$this->langpostfix.' AS title,typeparams FROM #__customtables_fields WHERE published=1 AND fieldname="'.$this->fileboxname.'" AND type="filebox" LIMIT 1';
 
 		$db->setQuery($query);
-		if (!$db->query())    die( $db->stderr());
+//		if (!$db->query())    die( $db->stderr());
 
 		$rows=$db->loadObjectList();
 
@@ -131,7 +131,7 @@ class CustomTablesModelEditFiles extends JModelLegacy {
 		$query = 'SELECT * FROM #__customtables_table_'.$this->establename.' WHERE id='.$this->listing_id.' LIMIT 1';
 
 		$db->setQuery($query);
-		if (!$db->query())    die( $db->stderr());
+//		if (!$db->query())    die( $db->stderr());
 
 		$rows = $db->loadAssocList();
 
@@ -173,7 +173,7 @@ class CustomTablesModelEditFiles extends JModelLegacy {
 
 				$query = 'DELETE FROM '.$this->fileboxtablename.' WHERE listingid='.$this->listing_id.' AND fileid='.$fileid;
 				$db->setQuery($query);
-				if (!$db->query())    die( $db->stderr());
+//				if (!$db->query())    die( $db->stderr());
 
 			}
 		}
@@ -260,12 +260,12 @@ class CustomTablesModelEditFiles extends JModelLegacy {
 				.'listingid='.$this->listing_id;
 
 		$db->setQuery( $query );
-		if (!$db->query())    die( $db->stderr());
+//		if (!$db->query())    die( $db->stderr());
 
 
 		$query =' SELECT fileid FROM '.$this->fileboxtablename.' WHERE listingid='.$this->listing_id.' ORDER BY fileid DESC LIMIT 1';
 		$db->setQuery( $query );
-		if (!$db->query())    die( $db->stderr());
+//		if (!$db->query())    die( $db->stderr());
 
 		$espropertytype= $db->loadObjectList();
 		if(count($espropertytype)==1)

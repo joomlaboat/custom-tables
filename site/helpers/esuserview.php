@@ -22,7 +22,7 @@ class JHTMLESUserView
 				{
 						$query = 'SELECT userid FROM #__session WHERE userid='.(int)$value.' LIMIT 1';
 						$db->setQuery($query);
-						if (!$db->query())    die( $db->stderr());
+						//if (!$db->query())    die( $db->stderr());
 				
 						$options=$db->loadAssocList();
 						if(count($options)==0)
@@ -43,7 +43,7 @@ class JHTMLESUserView
 						$query = 'SELECT id, name, username, email, registerDate,lastvisitDate FROM #__users WHERE id='.(int)$value.' LIMIT 1';
 						
 						$db->setQuery($query);
-						if (!$db->query())    die( $db->stderr());
+						//if (!$db->query())    die( $db->stderr());
 				
 						$options=$db->loadAssocList();
 						if(count($options)!=0)
@@ -58,5 +58,3 @@ class JHTMLESUserView
 				return '';
         }
 }
-
-?>

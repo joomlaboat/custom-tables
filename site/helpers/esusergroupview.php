@@ -26,7 +26,7 @@ class JHTMLESUserGroupView
 				$query->limit('1');
 				
 				$db->setQuery($query);
-				if (!$db->query())    die( $db->stderr());
+				//if (!$db->query())    die( $db->stderr());
 				
 				$options=$db->loadObjectList();
 				
@@ -38,5 +38,3 @@ class JHTMLESUserGroupView
 
         }
 }
-
-?>

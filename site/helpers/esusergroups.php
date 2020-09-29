@@ -33,7 +33,7 @@ class JHTMLESUserGroups
 				$query->order('#__usergroups.title');
 				
 				$db->setQuery($query);
-				if (!$db->query())    die( $db->stderr());
+				//if (!$db->query())    die( $db->stderr());
 				
 				$SearchResult=$db->loadObjectList();
 				

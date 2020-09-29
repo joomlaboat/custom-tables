@@ -449,7 +449,7 @@ class tagProcessor_General
 		$query = 'SELECT * FROM #__users WHERE id='.(int)$id.' LIMIT 1';
 
 		$db->setQuery($query);
-		if (!$db->query())    die( $db->stderr());
+//		if (!$db->query())    die( $db->stderr());
         $rows=$db->loadObjectList();
 
 		if(count($rows)==0)

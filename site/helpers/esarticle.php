@@ -33,7 +33,7 @@ class JHTMLESArticle
 	 	$query->from('#__content');
 		$query->order('title');
 		$db->setQuery($query);
-		if (!$db->query())    die( $db->stderr());
+		//if (!$db->query())    die( $db->stderr());
 		$options=$db->loadObjectList();
 		$options=array_merge(array(array('id'=>'','title'=>'- '.JText ::_( 'COM_CUSTOMTABLES_SELECT' ))),$options);
 

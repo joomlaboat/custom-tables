@@ -503,8 +503,8 @@ class CustomTablesModelCatalog extends JModelLegacy
 								.' ';
 
 						$db->setQuery( $query );
-						if (!$db->query())    die ;
-						$rows=$db->loadAssocList();
+						//if (!$db->query())    die ;
+						//$rows=$db->loadAssocList();
 
 						$wherelist=array();
 						foreach($rows as $row)
@@ -690,8 +690,8 @@ class CustomTablesModelCatalog extends JModelLegacy
 		{
 				$cQuery='DELETE FROM '.$tablename.' '.$where;
 				$db->setQuery($cQuery);
-				if (!$db->query())
-					die ;
+				//if (!$db->query())
+					//die ;
 
 				return true;
 		}
@@ -718,11 +718,13 @@ class CustomTablesModelCatalog extends JModelLegacy
 						$query.=' ORDER BY '.implode(',',$ordering);
 
 
-
 				$db->setQuery($query);
+				$db->execute();
+				//$db->setQuery($query);
 
-				if (!$db->query())
-						die ;
+				//if (!
+				//$db->query())
+						//die ;
 
 
 				$this->TotalRows=$db->getNumRows();
@@ -747,7 +749,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 						$this->limitstart=0;
 
 								$db->setQuery($query, $this->limitstart, $the_limit);
-								if (!$db->query())    die ;
+								//if (!$db->query())    die ;
 						
 
 						$rows=$db->loadAssocList();
@@ -758,7 +760,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 						if($the_limit>0)
 						{
 							$db->setQuery($query, 0, $the_limit);
-							if (!$db->query())    die ;
+							//if (!$db->query())    die ;
 						}
 
 						$rows=$db->loadAssocList();
@@ -1034,7 +1036,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 						$query='SELECT * FROM #__customtables_table_'.$this->establename.' WHERE id='.$objectid;
 
 						$db->setQuery($query);
-						if (!$db->query())   die ;
+						//if (!$db->query())   die ;
 						$rows=$db->loadAssocList();
 
 
@@ -1068,7 +1070,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 
 										$query = 'SELECT photoid FROM '.$phototablename.' WHERE listingid='.$objectid;
 										$db->setQuery($query);
-										if (!$db->query())    die ;
+										//if (!$db->query())    die ;
 										$photorows=$db->loadObjectList();
 
 										foreach($photorows as $photorow)
@@ -1089,7 +1091,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 
 						$query='DELETE FROM #__customtables_table_'.$this->establename.' WHERE id='.$objectid;
 						$db->setQuery($query);
-						if (!$db->query())    die ;
+						//if (!$db->query())    die ;
 
 						ESLogs::save($this->estableid,$objectid,5);
 
@@ -1152,7 +1154,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 			$query = 'SELECT id FROM #__menu WHERE alias='.$db->Quote($alias);
 
 			$db->setQuery( $query );
-			if (!$db->query())    die( $db->stderr());
+			//if (!$db->query())    die( $db->stderr());
 			$recs = $db->loadAssocList( );
 			if(!$recs) return 0;
 			if (count($recs)<1) return 0;

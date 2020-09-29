@@ -20,7 +20,7 @@ class CT_FieldTypeTag_imagegallery{
 
 		$query = 'SELECT photoid, photo_ext FROM '.$phototablename.' WHERE listingid='.(int)$listing_id.' ORDER BY ordering, photoid';
 		$db->setQuery($query);
-		if (!$db->query())    die('getGalleryRows: '. $db->stderr());
+//		if (!$db->query())    die('getGalleryRows: '. $db->stderr());
         $photorows=$db->loadObjectList();
 
 		return $photorows;

@@ -46,8 +46,8 @@ class JHTMLESSQLJoinView
 				$query = 'SELECT *, id AS listing_id, published aS listing_published FROM '.$tablename.' WHERE id='.(int)$value;
 				$db= JFactory::getDBO();
 				$db->setQuery($query);
-				if (!$db->query())
-					die( $db->stderr());
+				//if (!$db->query())
+					//die( $db->stderr());
 
 				$SearchResult=$db->loadAssocList();
 

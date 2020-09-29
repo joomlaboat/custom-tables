@@ -81,7 +81,7 @@ function importCSVdata($filename,$ct_tableid)
      {
       $query='INSERT #__customtables_table_'.$tablerow->tablename.' SET '.implode(', ',$sets);
       $db->setQuery( $query );
-			if (!$db->query())    die( $db->stderr());
+//			if (!$db->query())    die( $db->stderr());
      }
     }
     
@@ -97,7 +97,7 @@ function findRecord($tablename,$sets)
   $query='SELECT id FROM #__customtables_table_'.$tablename.' WHERE published=1 AND '.$wheres.' LIMIT 1';
   
   $db->setQuery($query);
-	if (!$db->query())    die( $db->stderr());
+//	if (!$db->query())    die( $db->stderr());
 
 	$records=$db->loadAssocList();
   
@@ -121,7 +121,7 @@ function findSQLRecordJoin($tablename,$join_fieldname,$vlus_str)
   
   
   $db->setQuery($query);
-	if (!$db->query())    die( $db->stderr());
+//	if (!$db->query())    die( $db->stderr());
 
 	$records=$db->loadAssocList();
   
@@ -140,7 +140,7 @@ function findSQLJoin($tablename,$join_fieldname,$vlu)
   $db = JFactory::getDBO();
   $query='SELECT id FROM #__customtables_table_'.$tablename.' WHERE published=1 AND '.$db->quoteName('es_'.$join_fieldname).'='.$db->quote($vlu).' LIMIT 1';
   $db->setQuery($query);
-	if (!$db->query())    die( $db->stderr());
+//	if (!$db->query())    die( $db->stderr());
 
 	$records=$db->loadAssocList();
   
@@ -156,7 +156,7 @@ function addSQLJoin($tablename,$join_fieldname,$vlu)
   $query='INSERT #__customtables_table_'.$tablename.' SET '.$db->quoteName('es_'.$join_fieldname).'='.$db->quote($vlu);
  
   $db->setQuery($query);
-	if (!$db->query())    die( $db->stderr());
+//	if (!$db->query())    die( $db->stderr());
   
 }
 
@@ -166,7 +166,7 @@ function addSQLJoinSets($tablename,$sets)
   $query='INSERT #__customtables_table_'.$tablename.' SET '.implode(',',$sets);
  
   $db->setQuery($query);
-	if (!$db->query())    die( $db->stderr());
+//	if (!$db->query())    die( $db->stderr());
   
 }
 

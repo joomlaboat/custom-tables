@@ -42,6 +42,6 @@ class ESLogs
 		$query = 'INSERT INTO #__customtables_log (user,datetime,tableid,listingid,action,Itemid) VALUES ('.implode(',',$sets).')';
 
 		$db->setQuery($query);
-		if (!$db->query())    die( $db->stderr());
+//		if (!$db->query())    die( $db->stderr());
 	}
 }

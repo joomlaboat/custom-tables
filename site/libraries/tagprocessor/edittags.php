@@ -112,7 +112,7 @@ class tagProcessor_Edit
 		$query='SELECT params FROM #__extensions WHERE '.$db->quoteName("name").'='.$db->Quote("plg_captcha_recaptcha").' LIMIT 1';
 
 		$db->setQuery( $query );
-		if (!$db->query())    die( $db->stderr());
+//		if (!$db->query())    die( $db->stderr());
 		$rows=$db->loadObjectList();
 		if(count($rows)==0)
             return null;

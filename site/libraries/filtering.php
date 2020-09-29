@@ -1013,7 +1013,7 @@ class LinkJoinFilters
 		.' FROM #__customtables_table_'.$tablename.' WHERE published=1 ORDER BY es_'.$field;
 
 		$db->setQuery($query);
-		if (!$db->query())    die( $db->stderr());
+//		if (!$db->query())    die( $db->stderr());
 
 		$records=$db->loadAssocList();
 		$result.='
@@ -1154,7 +1154,7 @@ class LinkJoinFilters
 		.' WHERE tablename="'.$tablename.'" AND fieldname="'.$field.'"';
 
 		$db->setQuery($query);
-		if (!$db->query())    die( $db->stderr());
+//		if (!$db->query())    die( $db->stderr());
 
 		$records=$db->loadObjectList();
 		if(count($records)==0)

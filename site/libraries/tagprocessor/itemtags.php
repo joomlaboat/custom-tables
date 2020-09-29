@@ -509,12 +509,12 @@ class tagProcessor_Item
 
 					$db->setQuery($query);
 
-					if (!$db->query())
-                    {
-						$vlu='query error: '.$db->stderr();
-                    }
-					else
-					{
+//					if (!$db->query())
+//                    {
+//						$vlu='query error: '.$db->stderr();
+  //                  }
+//					else
+				//	{
 						$rows=$db->loadAssocList();
 
 						if(count($rows)==0)
@@ -552,7 +552,7 @@ class tagProcessor_Item
 							else
 								$vlu=$row['vlu'];
 						}
-					}
+				//	}
 
 
 				}//if($isOk)

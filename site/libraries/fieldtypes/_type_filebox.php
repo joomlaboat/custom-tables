@@ -18,7 +18,7 @@ class CT_FieldTypeTag_filebox
 
 		$query = 'SELECT fileid, file_ext FROM '.$fileboxtablename.' WHERE listingid='.(int)$listing_id.' ORDER BY fileid';
 		$db->setQuery($query);
-		if (!$db->query())    die('getFileBoxRows: '. $db->stderr());
+//		if (!$db->query())    die('getFileBoxRows: '. $db->stderr());
 		$filerows=$db->loadObjectList();
 		
 		return $filerows;

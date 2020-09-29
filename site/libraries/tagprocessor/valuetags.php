@@ -100,7 +100,7 @@ class tagProcessor_Value
 		$query='SELECT '.$field.' FROM #__content WHERE id='.(int)$articleid.' LIMIT 1';
 
 		$db->setQuery($query);
-	    if (!$db->query())    die( $db->stderr());
+//	    if (!$db->query())    die( $db->stderr());
 
 		$rows=$db->loadAssocList();
 
@@ -1188,7 +1188,7 @@ class tagProcessor_Value
 		$query = 'SELECT title FROM #__usergroups WHERE id='.(int)$id.' LIMIT 1';
 
 		$db->setQuery($query);
-		if (!$db->query())    die( $db->stderr());
+//		if (!$db->query())    die( $db->stderr());
 
 		$options=$db->loadAssocList();
 		if(count($options)!=0)
@@ -1217,7 +1217,7 @@ class tagProcessor_Value
 
 
 		$db->setQuery($query);
-		if (!$db->query())    die( $db->stderr());
+//		if (!$db->query())    die( $db->stderr());
 
 		$options=$db->loadAssocList();
 

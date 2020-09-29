@@ -1094,7 +1094,7 @@ class ESInputBox
 
 		$query='SELECT (SELECT title FROM #__usergroups WHERE id=group_id LIMIT 1) AS title FROM #__user_usergroup_map WHERE user_id='.$userid;
 	    $db->setQuery($query);
-		    if (!$db->query())    die( $db->stderr());
+//		    if (!$db->query())    die( $db->stderr());
 		    $records=$db->loadAssocList();
 	    if(count($records)==0)
 		    return '';
