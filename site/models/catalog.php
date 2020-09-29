@@ -1091,6 +1091,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 
 						$query='DELETE FROM #__customtables_table_'.$this->establename.' WHERE id='.$objectid;
 						$db->setQuery($query);
+						$db->execute();
 						//if (!$db->query())    die ;
 
 						ESLogs::save($this->estableid,$objectid,5);
