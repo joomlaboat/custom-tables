@@ -173,6 +173,7 @@ class CustomTablesModelEditFiles extends JModelLegacy {
 
 				$query = 'DELETE FROM '.$this->fileboxtablename.' WHERE listingid='.$this->listing_id.' AND fileid='.$fileid;
 				$db->setQuery($query);
+				$db->execute();
 //				if (!$db->query())    die( $db->stderr());
 
 			}

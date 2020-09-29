@@ -690,6 +690,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 		{
 				$cQuery='DELETE FROM '.$tablename.' '.$where;
 				$db->setQuery($cQuery);
+				$db->execute();
 				//if (!$db->query())
 					//die ;
 

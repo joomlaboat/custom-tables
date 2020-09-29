@@ -298,11 +298,12 @@ class CustomTablesModelListOfOptions extends JModelList
 			$where = 'WHERE id = ' . implode( ' OR id = ', $ids );
 
 			$query = 'DELETE FROM #__customtables_options ' . $where;
-			$db->setQuery( $query );
-			if (!$db->query()) {
-				$this->setError( $db->getErrorMsg() );
-				return false;
-			}
+			$db->execute();
+			//$db->setQuery( $query );
+//			if (!$db->query()) {
+//				$this->setError( $db->getErrorMsg() );
+//				return false;
+//			}
 		}
 
 

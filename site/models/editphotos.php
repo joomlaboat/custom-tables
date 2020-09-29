@@ -282,7 +282,8 @@ class CustomTablesModelEditPhotos extends JModelLegacy {
 
 				$query = 'DELETE FROM '.$this->phototablename.' WHERE listingid='.$this->listing_id.' AND photoid='.$photoid;
 				$db->setQuery($query);
-				if (!$db->query())    die( $db->stderr());
+				$db->execute();
+				//if (!$db->query())    die( $db->stderr());
 
 			}
 		}

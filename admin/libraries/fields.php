@@ -232,8 +232,9 @@ class ESFields
 				}
 
                 $query ='DELETE FROM #__customtables_fields WHERE published=1 AND id='.$fieldid;
-				$db->setQuery($query);
-				if (!$db->query())    die( $db->stderr());
+		$db->setQuery($query);
+		$db->execute();
+		//		if (!$db->query())    die( $db->stderr());
 
 
 

@@ -341,10 +341,11 @@ class CustomTablesModelList extends JModel
 
 			$query = 'DELETE FROM #__customtables_options ' . $where;
 			$db->setQuery( $query );
-			if (!$db->query()) {
-				$this->setError( $db->getErrorMsg() );
-				return false;
-			}
+			$db->execute();
+			//if (!$db->query()) {
+			//	$this->setError( $db->getErrorMsg() );
+			//	return false;
+//			}
 		}
 
 
