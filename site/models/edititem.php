@@ -668,11 +668,11 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 		$query='UPDATE tmp SET '.implode(',',$sets).' WHERE id = '.$id.';';
 		$db->setQuery( $query );
-		if (!$db->query())    die( $db->stderr());
+		$db->execute();
 
 		$query='INSERT INTO '.$this->tablename.' SELECT * FROM tmp WHERE id = '.$new_id.';';
 		$db->setQuery( $query );
-		if (!$db->query())    die( $db->stderr());
+		$db->execute();
 
 		$jinput->set('listing_id',$new_id);
 		$jinput->set('old_listing_id',$id);
@@ -873,7 +873,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		}
 
 		$db->setQuery( $query );
-		if (!$db->query())    die( $db->stderr());
+		$db->execute();
 
 		if($id==0)
 		{
@@ -1127,7 +1127,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 					$query='UPDATE '.$this->tablename.' SET es_'.$fieldname.'='.(int)$status.' WHERE id='.$listing_id;
 
 					$db->setQuery( $query );
-					if (!$db->query())    die( $db->stderr());
+					$db->execute();	
 					return;
 				}
 			}
@@ -1264,7 +1264,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 			$query='UPDATE '.$this->tablename.' SET '.implode(', ',$savequery).' WHERE id='.$id;
 
 			$db->setQuery( $query );
-			if (!$db->query())    die( $db->stderr());
+			$db->execute();
 		}
 	}
 
@@ -1526,7 +1526,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 						$query='UPDATE '.$this->tablename.' SET '.$savequery.' WHERE id='.$id;
 
 						$db->setQuery( $query );
-						if (!$db->query())    die( $db->stderr());
+						$db->execute();
 
 			}//if($esfield['type']=='phponadd')
 		}//foreach($this->esfields as $esfield)
@@ -1585,7 +1585,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 						$query='UPDATE '.$this->tablename.' SET '.$savequery.' WHERE id='.$id;
 
 						$db->setQuery( $query );
-						if (!$db->query())    die( $db->stderr());
+						$db->execute();
 			}//if($esfield['type']=='phponchange')
 		}//foreach($this->esfields as $esfield)
 
@@ -1788,7 +1788,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		$query = 'UPDATE '.$t.' SET published='.$status.' WHERE id='.(int)$id;
 
 	 	$db->setQuery($query);
-		if (!$db->query())	die( $db->stderr());
+		$db->execute();	
 
 		if($status==1)
 			ESLogs::save($this->estableid,(int)$id,3);

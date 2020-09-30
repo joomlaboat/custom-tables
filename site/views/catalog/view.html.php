@@ -87,7 +87,7 @@ class CustomTablesViewCatalog extends JViewLegacy
 				$query= 'UPDATE #__customtables_table_'.$this->Model->establename.' SET '.implode(', ', $updatefields).' WHERE id='.$rec['listing_id'];
 
 				$db->setQuery($query);
-			    if (!$db->query())    die( $db->stderr());
+				    $db->execute();
 
 		}
 

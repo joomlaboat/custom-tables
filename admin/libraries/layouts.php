@@ -116,10 +116,11 @@ class ESLayouts
 
 				$db->setQuery( $query );
 
-				if (!$db->query()) {
-					$this->setError( $db->getErrorMsg() );
-					return false;
-				}
+				$db->execute();
+				//if (!$db->query()) {
+					//$this->setError( $db->getErrorMsg() );
+					//return false;
+				//}
 
 				//$row->load($id);
 				return $content;
@@ -149,13 +150,15 @@ class ESLayouts
 
 			$db = JFactory::getDBO();
 			$query = 'UPDATE #__customtables_layouts SET modified=FROM_UNIXTIME('.$file_ts.') WHERE id='.$id;
-				$db->setQuery( $query );
+			$db->setQuery( $query );
 
-			if (!$db->query())
-			{
-				$this->setError( $db->getErrorMsg() );
-				return false;
-			}
+			$db->execute();
+
+			//if (!$db->query())
+			//{
+				//$this->setError( $db->getErrorMsg() );
+				//return false;
+			//}
 		}
 
 		return $file_ts;

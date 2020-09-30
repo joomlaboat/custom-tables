@@ -79,9 +79,9 @@ function importCSVdata($filename,$ct_tableid)
      $id=findRecord($tablerow->tablename,$sets);
      if($id==false)
      {
-      $query='INSERT #__customtables_table_'.$tablerow->tablename.' SET '.implode(', ',$sets);
-      $db->setQuery( $query );
-//			if (!$db->query())    die( $db->stderr());
+	$query='INSERT #__customtables_table_'.$tablerow->tablename.' SET '.implode(', ',$sets);
+	$db->setQuery( $query );
+	$db->execute();	
      }
     }
     
@@ -155,8 +155,8 @@ function addSQLJoin($tablename,$join_fieldname,$vlu)
   $db = JFactory::getDBO();
   $query='INSERT #__customtables_table_'.$tablename.' SET '.$db->quoteName('es_'.$join_fieldname).'='.$db->quote($vlu);
  
-  $db->setQuery($query);
-//	if (!$db->query())    die( $db->stderr());
+	$db->setQuery($query);
+	$db->execute();	
   
 }
 
@@ -165,8 +165,8 @@ function addSQLJoinSets($tablename,$sets)
   $db = JFactory::getDBO();
   $query='INSERT #__customtables_table_'.$tablename.' SET '.implode(',',$sets);
  
-  $db->setQuery($query);
-//	if (!$db->query())    die( $db->stderr());
+	$db->setQuery($query);
+	$db->execute();	
   
 }
 

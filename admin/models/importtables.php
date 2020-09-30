@@ -169,7 +169,7 @@ class CustomTablesModelImporttables extends JModelList
 				.$db->quoteName('title').'='.$db->quote($optionTitle);
 
 			$db->setQuery($query);
-			if (!$db->query())    die( $db->stderr());
+			$db->execute();
 
 			$fulloptionname=','.$optionname.'.'.$newoptionname.'.,';
 

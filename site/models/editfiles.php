@@ -205,8 +205,6 @@ class CustomTablesModelEditFiles extends JModelLegacy {
 				$query = 'DELETE FROM '.$this->fileboxtablename.' WHERE listingid='.$this->listing_id.' AND fileid='.$fileid;
 				$db->setQuery($query);
 				$db->execute();
-				//if (!$db->query())    die( $db->stderr());
-
 			}
 		}
 
@@ -295,12 +293,11 @@ class CustomTablesModelEditFiles extends JModelLegacy {
 				.'listingid='.$this->listing_id;
 
 		$db->setQuery( $query );
-		if (!$db->query())    die( $db->stderr());
+		$db->execute();	
 
 
 		$query =' SELECT fileid FROM '.$this->fileboxtablename.' WHERE listingid='.$this->listing_id.' ORDER BY fileid DESC LIMIT 1';
 		$db->setQuery( $query );
-		if (!$db->query())    die( $db->stderr());
 
 		$espropertytype= $db->loadObjectList();
 		if(count($espropertytype)==1)
@@ -310,12 +307,4 @@ class CustomTablesModelEditFiles extends JModelLegacy {
 
 		return -1;
 	}
-
-
-
-
-
-
-
-
 }

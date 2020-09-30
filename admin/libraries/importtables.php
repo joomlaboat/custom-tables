@@ -206,7 +206,7 @@ class ImportTables
 
 
 				$db->setQuery($query);
-				if (!$db->query())    die ( $db->stderr());
+				$db->execute();
 
 				$query = 'SELECT id FROM #__customtables_categories ORDER BY id DESC LIMIT 1';
 
@@ -229,8 +229,8 @@ class ImportTables
 
 			$query='UPDATE '.$mysqltablename.' SET tablecategory='.$categoryid.' WHERE id='.$tableid;
 
-            $db->setQuery($query);
-            if (!$db->query())    die ( $db->stderr());
+		        $db->setQuery($query);
+			$db->execute();
 		}
 
 	}
@@ -423,7 +423,7 @@ class ImportTables
 
 			$query='INSERT INTO #__menu_types SET '.implode(', ',$inserts);
 			$db->setQuery($query);
-			if (!$db->query())    die ( $db->stderr());
+			$db->execute();
 
 		}
 
@@ -544,7 +544,7 @@ class ImportTables
 			$query='INSERT INTO #__menu_types SET '.implode(', ',$inserts);
 
 			$db->setQuery($query);
-			if (!$db->query())    die ( $db->stderr());
+			$db->execute();
 
 		}
 	}
@@ -602,7 +602,7 @@ class ImportTables
             $query='UPDATE '.$mysqltablename.' SET '.implode(', ',$sets).' WHERE id='.$rows_old['id'];
 
             $db->setQuery($query);
-            if (!$db->query())    die ( $db->stderr());
+            $db->execute();
         }
     }
 
@@ -685,7 +685,7 @@ class ImportTables
         $query='INSERT INTO '.$mysqltablename.' SET '.implode(', ',$inserts);
 
 		$db->setQuery($query);
-		if (!$db->query())    die ( $db->stderr());
+		$db->execute();
 
 
         $query = 'SELECT id FROM '.$mysqltablename.' ORDER BY id DESC LIMIT 1';

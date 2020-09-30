@@ -234,10 +234,6 @@ class ESFields
                 $query ='DELETE FROM #__customtables_fields WHERE published=1 AND id='.$fieldid;
 		$db->setQuery($query);
 		$db->execute();
-		//		if (!$db->query())    die( $db->stderr());
-
-
-
                 return true;
 	}
 
@@ -776,7 +772,7 @@ class ESFields
 
 				$fixitquery= 'UPDATE '.$mysqltablename.' SET '.$mysqlfieldname.'="'.$newrow.'" WHERE id='.$fixrow->id;
 				$db->setQuery( $fixitquery);
-				$db->query();
+				$db->execute();
 
 			}
 		}
@@ -856,14 +852,9 @@ class ESFields
 		$query = 'UPDATE '.$mysqltablename.' SET '.$mysqlfieldname.'=NULL WHERE '.implode(' OR ',$ids).';';
 
 		$db->setQuery( $query );
-		if (!$db->query())
-			die( $db->stderr());
-
+		$db->execute();
 	}
-
-
-
-
+        
 
     public static function isLanguageFieldName($fieldname)
     {

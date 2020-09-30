@@ -235,7 +235,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy {
 			$query = 'UPDATE '.$this->phototablename.' SET ordering='.$i.', title'.$this->langpostfix.'="'.$safetitle.'" WHERE listingid='.$this->listing_id.' AND photoid='.$image->photoid;
 
 			$db->setQuery($query);
-			if (!$db->query())    die( $db->stderr());
+			$db->execute();	
 
 			$i++;
 		}
@@ -256,7 +256,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy {
 
 			$query = 'UPDATE '.$this->phototablename.' SET ordering='.$i.', title'.$this->langpostfix.'="'.$safetitle.'" WHERE listingid='.$this->listing_id.' AND photoid='.$image->photoid;
 			$db->setQuery($query);
-		if (!$db->query())    die( $db->stderr());
+			$db->execute();	
 			$i++;
 		}
 
@@ -283,8 +283,6 @@ class CustomTablesModelEditPhotos extends JModelLegacy {
 				$query = 'DELETE FROM '.$this->phototablename.' WHERE listingid='.$this->listing_id.' AND photoid='.$photoid;
 				$db->setQuery($query);
 				$db->execute();
-				//if (!$db->query())    die( $db->stderr());
-
 			}
 		}
 
@@ -418,7 +416,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy {
 				.'listingid='.$this->listing_id;
 
 		$db->setQuery( $query );
-		if (!$db->query())    die( $db->stderr());
+		$db->execute();
 
 		$this->AutoReorderPhotos();
 

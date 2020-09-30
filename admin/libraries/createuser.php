@@ -19,7 +19,7 @@ class CustomTablesCreateUser
 		$query = 'UPDATE #__customtables_table_'.$establename.' SET '.$fieldusreidname.'='.$userid.' WHERE id='.$id;
 
 		$db->setQuery( $query );
-		if (!$db->query())    die( $db->stderr());
+		$db->execute();
 
 
 	}
@@ -176,14 +176,11 @@ class CustomTablesCreateUser
 
 	static public function SetUserPassword($userid,$password)
 	{
-
 		$db = JFactory::getDBO();
 		$query='UPDATE #__users SET password=md5("'.$password.'"), requireReset=0 WHERE id='.$userid;
 
 		$db->setQuery( $query );
-		if (!$db->query())    die( $db->stderr());
-
-
+		$db->execute();
 		return $userid;
 	}
 
@@ -284,7 +281,7 @@ class CustomTablesCreateUser
 			$query = 'INSERT #__user_usergroup_map SET user_id='.$user->id.', group_id='.$group_id;
 
 			$db->setQuery( $query );
-			if (!$db->query())    die( $db->stderr());
+			$db->execute();
 		}
 
 		//---------------------------------------

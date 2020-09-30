@@ -342,10 +342,6 @@ class CustomTablesModelList extends JModel
 			$query = 'DELETE FROM #__customtables_options ' . $where;
 			$db->setQuery( $query );
 			$db->execute();
-			//if (!$db->query()) {
-			//	$this->setError( $db->getErrorMsg() );
-			//	return false;
-//			}
 		}
 
 
@@ -405,7 +401,7 @@ class CustomTablesModelList extends JModel
 		if($level == 0) {
 			$query 	= 'UPDATE #__customtables_options SET sublevel = 0 WHERE parentid = 0';
 			$db->setQuery($query);
-			$db->query();
+			$db->execute();	
 			$query 	= 'SELECT id FROM #__customtables_options WHERE parentid = 0';
 			$db->setQuery($query);
 			$cids 	= $db->loadResultArray(0);
@@ -413,7 +409,7 @@ class CustomTablesModelList extends JModel
 			$query	= 'UPDATE #__customtables_options SET sublevel = '.(int) $level
 					.' WHERE parentid IN ('.$ids.')';
 			$db->setQuery( $query );
-			$db->query();
+			$db->execute();
 			$query	= 'SELECT id FROM #__customtables_options WHERE parentid IN ('.$ids.')';
 			$db->setQuery( $query );
 			$cids 	= $db->loadResultArray( 0 );

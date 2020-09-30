@@ -350,6 +350,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 							$paramwhere=str_replace('select ','',$paramwhere);
 							$paramwhere=str_replace('delete ','',$paramwhere);
 							$paramwhere=str_replace('update ','',$paramwhere);
+							$paramwhere=str_replace('insert ','',$paramwhere);
 
 							//Parse using layout, has no effect to layout itself
 							$this->LayoutProc->layout=$paramwhere;
@@ -691,8 +692,6 @@ class CustomTablesModelCatalog extends JModelLegacy
 				$cQuery='DELETE FROM '.$tablename.' '.$where;
 				$db->setQuery($cQuery);
 				$db->execute();
-				//if (!$db->query())
-					//die ;
 
 				return true;
 		}
@@ -1093,7 +1092,6 @@ class CustomTablesModelCatalog extends JModelLegacy
 						$query='DELETE FROM #__customtables_table_'.$this->establename.' WHERE id='.$objectid;
 						$db->setQuery($query);
 						$db->execute();
-						//if (!$db->query())    die ;
 
 						ESLogs::save($this->estableid,$objectid,5);
 

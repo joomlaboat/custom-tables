@@ -157,7 +157,7 @@ function getESTables()
 
 
 				$db->setQuery( $query );
-				if (!$db->query())    die( $db->stderr());
+				$db->execute();
 
 				echo '<p>Layout #'.$record['id'].' updated.</p>';
 			}
@@ -212,7 +212,7 @@ function getESTables()
 		$query='UPDATE `#__customtables_fields` SET typeparams=CONCAT(\'"\',REPLACE(typeparams,\'|\',\'",\')) WHERE (`type`="image" OR `type`="imagegallery") AND INSTR(typeparams,\'|\')';
 
 		$db->setQuery( $query );
-		if (!$db->query())    die( $db->stderr());
+		$db->execute();
 	}
 
 	function updateMenuItems()
@@ -227,7 +227,7 @@ function getESTables()
 		.' WHERE instr(link,"com_extrasearch")';
 
 		$db->setQuery( $query );
-		if (!$db->query())    die( $db->stderr());
+		$db->execute();
 
 		$sets=array();
 
@@ -239,7 +239,7 @@ function getESTables()
 		.' WHERE instr(link,"com_customtables")';
 
 		$db->setQuery( $query );
-		if (!$db->query())    die( $db->stderr());
+		$db->execute();
 
 
 
@@ -251,7 +251,7 @@ function getESTables()
 		$query='UPDATE #__customtables_fields SET `type`="customtables" WHERE INSTR(`type`,"extrasearch")';
 
 		$db->setQuery( $query );
-		if (!$db->query())    die( $db->stderr());
+		$db->execute();
 	}
 
 	function updateLayouts()
@@ -260,7 +260,7 @@ function getESTables()
 		$query='UPDATE #__customtables_layouts set layoutcode=replace(layoutcode,"extrasearch","customtables") where instr(layoutcode,"extrasearch")';
 
 		$db->setQuery( $query );
-		if (!$db->query())    die( $db->stderr());
+		$db->execute();
 	}
 
 	function updateContent()
@@ -269,7 +269,7 @@ function getESTables()
 		$query='UPDATE #__content set introtext=replace(introtext,"{extrasearch","{customtables") where INSTR(introtext,"extrasearch")';
 
 		$db->setQuery( $query );
-		if (!$db->query())    die( $db->stderr());
+		$db->execute();
 	}
 
 

@@ -285,12 +285,12 @@ static protected function DeleteOriginalImage($ExistingImage, $ImageFolder, $est
 			//Null Parent
 			$query = 'UPDATE #__customtables_table_'.$establename.' SET es_'.$esfieldname.'=0 WHERE es_'.$esfieldname.'='.$ExistingImage;
 			$db->setQuery( $query );
-			if (!$db->query())    die( $db->stderr());
+			$db->execute();
 
 			//Convert Child to Parent
 			$query = 'UPDATE #__customtables_table_'.$establename.' SET es_'.$esfieldname.'='.$ExistingImage.' WHERE id='.$photorow->id;
 			$db->setQuery( $query );
-			if (!$db->query())    die( $db->stderr());
+			$db->execute();
 
 			return true;
 		}//if
@@ -315,7 +315,7 @@ static protected function DeleteOriginalImage($ExistingImage, $ImageFolder, $est
 		//Update Table
 		$query = 'UPDATE #__customtables_table_'.$establename.' SET es_'.$esfieldname.'=0 WHERE es_'.$esfieldname.'="'.$ExistingImage.'"';
 		$db->setQuery( $query );
-		if (!$db->query())    die( $db->stderr());
+		$db->execute();
 	}
 
 }
@@ -454,7 +454,7 @@ function CreateNewCustomImages($establename,$esfieldname, $ImageFolder,$imagepar
 							//Update Table
 							$query = 'UPDATE #__customtables_table_'.$establename.' SET es_'.$esfieldname.'='.$NewImageID.' WHERE es_'.$esfieldname.'='.$ImageID;
 							$db->setQuery( $query );
-							if (!$db->query())    die( $db->stderr());
+							$db->execute();
 						}
 					}//if
 				}//if

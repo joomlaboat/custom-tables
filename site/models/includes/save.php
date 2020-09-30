@@ -494,7 +494,7 @@ static public function Try2CreateUserAccount($Model,$field,$row)
         $db = JFactory::getDBO();
 		$query = 'UPDATE #__customtables_table_'.$tablename.' SET es_'.$useridfieldname.'='.$existing_user_id.' WHERE id='.$listing_id.' LIMIT 1';
 		$db->setQuery( $query );
-		if (!$db->query())    die( $db->stderr());
+		$db->execute();
 
 
     }
@@ -1042,7 +1042,7 @@ static public function get_record_type_value(&$savequery,$typeparams,$prefix,$es
 			$query='UPDATE #__customtables_table_'.$Model->establename.' SET '.implode(', ',$savequery).' WHERE id='.$id;
 
 			$db->setQuery( $query );
-			if (!$db->query())    die( $db->stderr());
+			$db->execute();
 		}
     }
 

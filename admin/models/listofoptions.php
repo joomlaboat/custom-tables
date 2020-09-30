@@ -299,11 +299,6 @@ class CustomTablesModelListOfOptions extends JModelList
 
 			$query = 'DELETE FROM #__customtables_options ' . $where;
 			$db->execute();
-			//$db->setQuery( $query );
-//			if (!$db->query()) {
-//				$this->setError( $db->getErrorMsg() );
-//				return false;
-//			}
 		}
 
 
@@ -363,7 +358,8 @@ class CustomTablesModelListOfOptions extends JModelList
 		if($level == 0) {
 			$query 	= 'UPDATE #__customtables_options SET sublevel = 0 WHERE parentid = 0';
 			$db->setQuery($query);
-			$db->query();
+			$db->execute();
+
 			$query 	= 'SELECT id FROM #__customtables_options WHERE parentid = 0';
 			$db->setQuery($query);
 			$cids 	= $db->loadResultArray(0);
@@ -371,7 +367,8 @@ class CustomTablesModelListOfOptions extends JModelList
 			$query	= 'UPDATE #__customtables_options SET sublevel = '.(int) $level
 					.' WHERE parentid IN ('.$ids.')';
 			$db->setQuery( $query );
-			$db->query();
+			$db->execute();
+
 			$query	= 'SELECT id FROM #__customtables_options WHERE parentid IN ('.$ids.')';
 			$db->setQuery( $query );
 			$cids 	= $db->loadResultArray( 0 );
@@ -457,7 +454,7 @@ class CustomTablesModelListOfOptions extends JModelList
 
 			$uquery='UPDATE #__customtables_options SET familytreestr="'.$familytreestr.'" WHERE id='.$row->id;
 			$db->setQuery( $uquery );
-		if (!$db->query())    die( $db->stderr());
+			$db->execute();
 		}
 
 		return true;

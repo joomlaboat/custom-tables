@@ -802,7 +802,7 @@ class CustomtablesModelTables extends JModelAdmin
 
 			$iq='INSERT INTO #__customtables_fields SET '.implode(', ',$inserts);
 			$db->setQuery( $iq );
-			if (!$db->query())    die ( $db->stderr());
+			$db->execute();
 		}
 		return true;
 	}
