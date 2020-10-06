@@ -294,9 +294,17 @@
 		
 		var obj_checkbox_off=document.getElementById("com_"+record_id+"_"+fieldname_+"_off");
 		if(obj_checkbox_off)
+		{
+			//Bit confusing. But this is needed to save Unchecked values
 			params="comes_"+fieldname_+"_off="+obj_checkbox_off.value;
+			
+			if(parseInt(obj_checkbox_off.value)==1)
+				params+="&comes_"+fieldname_+"="+document.getElementById("com_"+record_id+"_"+fieldname_).value;
+		}
 		else
-			params="comes_"+fieldname_+"="+document.getElementById("com_"+record_id+"_"+fieldname_).value;
+			params+="&comes_"+fieldname_+"="+document.getElementById("com_"+record_id+"_"+fieldname_).value;
+		
+		
 		
         params+="&task=save";
         params+="&Itemid="+Itemid;

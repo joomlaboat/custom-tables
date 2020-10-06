@@ -1010,7 +1010,7 @@ class tagProcessor_Value
 					else
 					{
 						if($rowValue!='')
-							return implode(',',$Model->es->getMultyValueTitles($rowValue,$Model->langpostfix,1, ' - '));
+							return implode(',',$Model->es->getMultyValueTitles($rowValue,$Model->langpostfix,1, ' - ',$TypeParams));
 						else
 							return '';
 

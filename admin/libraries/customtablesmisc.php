@@ -135,8 +135,16 @@ class CustomTablesMisc
 	
 	//getOptionTitle
 	
-	function getMultyValueTitles($PropertyTypes,$langpostfix,$StartFrom, $Separator)
+	function getMultyValueTitles($PropertyTypes,$langpostfix,$StartFrom, $Separator,$TypeParams='')
 	{
+		if(strpos($PropertyTypes,'.')===false)
+		{
+			//Try to complete the value
+			$paramslist=JoomlaBasicMisc::csv_explode(',', $TypeParams,'"', false);
+			
+			$PropertyTypes=','.$paramslist[0].'.'.$PropertyTypes.'.,';
+		}
+		
 		$RowPropertyTypes=explode(",", $PropertyTypes);
 
 		$titles=array();
