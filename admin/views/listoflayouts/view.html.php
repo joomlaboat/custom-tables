@@ -104,7 +104,7 @@ class CustomtablesViewListoflayouts extends JViewLegacy
 			{
 				JToolBarHelper::publishList('listoflayouts.publish');
 				JToolBarHelper::unpublishList('listoflayouts.unpublish');
-				JToolBarHelper::archiveList('listoflayouts.archive');
+				//JToolBarHelper::archiveList('listoflayouts.archive');
 
 				if ($this->canDo->get('core.admin'))
 				{

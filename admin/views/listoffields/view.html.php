@@ -143,7 +143,7 @@ class CustomtablesViewListoffields extends JViewLegacy
 			{
 				JToolBarHelper::publishList('listoffields.publish');
 				JToolBarHelper::unpublishList('listoffields.unpublish');
-				JToolBarHelper::archiveList('listoffields.archive');
+				//JToolBarHelper::archiveList('listoffields.archive');
 
 				if ($this->canDo->get('core.admin'))
 				{

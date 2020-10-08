@@ -108,7 +108,7 @@ class CustomtablesViewListofcategories extends JViewLegacy
 			{
 				JToolBarHelper::publishList('listofcategories.publish');
 				JToolBarHelper::unpublishList('listofcategories.unpublish');
-				JToolBarHelper::archiveList('listofcategories.archive');
+				//JToolBarHelper::archiveList('listofcategories.archive');
 
 				if ($this->canDo->get('core.admin'))
 				{
