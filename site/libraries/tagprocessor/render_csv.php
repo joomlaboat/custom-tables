@@ -111,7 +111,8 @@ trait render_csv
 			$Model->LayoutProc->number=$number;
 
             $content=strip_tags(tagProcessor_Item::RenderResultLine($Model,$row,false));
-	        $tablecontent.=mb_convert_encoding("\r\n".$content, 'UTF-16LE', 'UTF-8');
+	        $tablecontent.=mb_convert_encoding('
+'.$content, 'UTF-16LE', 'UTF-8');//New line
 			$number++;
 		}
         return $tablecontent;
