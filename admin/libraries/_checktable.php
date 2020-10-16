@@ -75,7 +75,7 @@ function checkTableFields($establename,$tableid)
     echo '<br/><hr/>';
 
     //Delete unnesesary fields:
-    $projected_fields[]=['thefieldname'=>'id','type'=>'_id','typeparams'=>''];
+    //$projected_fields[]=['thefieldname'=>'id','type'=>'_id','typeparams'=>''];
     $projected_fields[]=['thefieldname'=>'published','type'=>'_published','typeparams'=>''];
 
 
@@ -202,7 +202,7 @@ function checkTableFields($establename,$tableid)
                 else
                 {
                     echo '<p>Field "<span style="color:orange;">'.str_replace('es_','',$found_field).' ('.$found_fieldparams.')</span>"'
-                        .' has wrong type "<span style="color:red;">'.$field_mysql_type.'</span>" insteas of "<span style="color:green;">'.$PureFieldType.'</span>" <a href="'.$link.'&task=fixfieldtype&fieldname='.$exst_field.'">Fix?</a></p>';
+                        .' has wrong type "<span style="color:red;">'.$field_mysql_type.'</span>" instead of "<span style="color:green;">'.$PureFieldType.'</span>" <a href="'.$link.'&task=fixfieldtype&fieldname='.$exst_field.'">Fix?</a></p>';
                 }
             }
 
