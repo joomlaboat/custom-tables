@@ -75,7 +75,7 @@ function checkTableFields($establename,$tableid)
     echo '<br/><hr/>';
 
     //Delete unnesesary fields:
-    //$projected_fields[]=['thefieldname'=>'id','type'=>'_id','typeparams'=>''];
+    $projected_fields[]=['thefieldname'=>'id','type'=>'_id','typeparams'=>''];
     $projected_fields[]=['thefieldname'=>'published','type'=>'_published','typeparams'=>''];
 
 
