@@ -1,36 +1,20 @@
 <?php
-/*----------------------------------------------------------------------------------|  www.vdm.io  |----/
-				JoomlaBoat.com 
-/-------------------------------------------------------------------------------------------------------/
-
-	@version		1.6.1
-	@build			1st July, 2018
-	@created		28th May, 2019
-	@package		Custom Tables
-	@subpackage		default.php
-	@author			Ivan Komlev <https://joomlaboat.com>	
-	@copyright		Copyright (C) 2018. All Rights Reserved
-	@license		GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
-
-/------------------------------------------------------------------------------------------------------*/
-
-// No direct access to this file
+/**
+ * CustomTables Joomla! 3.x Native Component
+ * @package Custom Tables
+ * @author Ivan komlev <support@joomlaboat.com>
+ * @link http://www.joomlaboat.com
+ * @copyright Copyright (C) 2018-2020. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
+ **/
+// No direct access to this file access');
 defined('_JEXEC') or die('Restricted access');
-
-
-
 
 // load tooltip behavior
 JHtml::_('behavior.tooltip');
 JHtml::_('behavior.multiselect');
 JHtml::_('dropdown.init');
 JHtml::_('formbehavior.chosen', 'select');
-
-//if ($this->saveOrder)
-//{
-	//$saveOrderingUrl = 'index.php?option=com_customtables&task=listofrecords.saveOrderAjax&tableid='.$this->tableid.'&tmpl=component';
-	//JHtml::_('sortablelist.sortable', 'recordsList', 'adminForm', strtolower($this->listDirn), $saveOrderingUrl);
-//}
 
 ?>
 <script type="text/javascript">
@@ -70,7 +54,6 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.
         <?php //echo JText::_('JGLOBAL_NO_MATCHING_RESULTS'); ?>
     </div>
 <?php else : ?>
-		<?php //echo $this->loadTemplate('toolbar');?>
 		
 		<table class="table table-striped" id="recordsList">
 			<thead><?php echo $this->loadTemplate('head');?></thead>
@@ -101,9 +84,6 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.
 <input type="hidden" name="option" value="com_customtables" />
 <input type="hidden" name="task" value="" />
 <input type="hidden" name="tableid" value="<?php echo $this->tableid; ?>" />
-<input type="hidden" name="tablename" value="<?php echo $this->tablename; ?>" />
-
-
 
 <?php echo JHtml::_('form.token'); ?>
 </form>

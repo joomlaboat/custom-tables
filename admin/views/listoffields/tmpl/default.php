@@ -117,7 +117,7 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.
   <div id="ctModal" class="ctModal">
   <div id="ctModal_box" class="ctModal_content">
     <span id="ctModal_close" class="ctModal_close">&times;</span>
-	<div id="ctModal_content"><p>Some text in the Modal..</p></div>
+	<div id="ctModal_content"></div>
   </div>
 	</div>
   <!-- end of the modal -->

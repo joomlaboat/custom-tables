@@ -1,20 +1,13 @@
 <?php
-/*----------------------------------------------------------------------------------|  www.vdm.io  |----/
-				JoomlaBoat.com
-/-------------------------------------------------------------------------------------------------------/
-
-	@version		1.6.1
-	@build			1st July, 2018
-	@created		28th May, 2019
-	@package		Custom Tables
-	@subpackage		default_body.php
-	@author			Ivan Komlev <https://joomlaboat.com>
-	@copyright		Copyright (C) 2018. All Rights Reserved
-	@license		GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
-
-/------------------------------------------------------------------------------------------------------*/
-
-// No direct access to this file
+/**
+ * CustomTables Joomla! 3.x Native Component
+ * @package Custom Tables
+ * @author Ivan komlev <support@joomlaboat.com>
+ * @link http://www.joomlaboat.com
+ * @copyright Copyright (C) 2018-2020. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
+ **/
+// No direct access to this file access');
 defined('_JEXEC') or die('Restricted access');
 
 $edit = "index.php?option=com_customtables&view=listoffields&task=fields.edit";
@@ -88,11 +81,13 @@ $edit = "index.php?option=com_customtables&view=listoffields&task=fields.edit";
 					if($morethanonelang)
 						$id.='_'.$lang->sef;
 						
-						
-					if(!isset($item_array[$id]))
+					if(!array_key_exists($id,$item_array))
 					{
+						//Add field
+						//addField('#__customtables_table_fields',$fieldname,$fieldtype,$typeparams);
+					
 						JFactory::getApplication()->enqueueMessage(
-							JText::_('COM_CUSTOMTABLES_ERROR_LANGFIELDNOTFOUND' ), 'Error');
+							JText::_('COM_CUSTOMTABLES_ERROR_LANGFIELDNOTFOUND').' ('.$id.')', 'Error');
 			
 						$id='fieldtitle';
 					}

@@ -18,7 +18,8 @@ $fields = $displayData->get('fields') ?: array(
 	'isrequired',
 	'defaultvalue',
 	'allowordering',
-	'valuerule'
+	'valuerule',
+	'valuerulecaption'
 );
 
 $hiddenFields = $displayData->get('hidden_fields') ?: array();

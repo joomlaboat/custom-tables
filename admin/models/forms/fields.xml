@@ -248,13 +248,27 @@
                        name="valuerule"
                        label="COM_CUSTOMTABLES_FIELDS_VALUERULE_LABEL"
                        maxlength="255"
-                       default="Some text"
+                       default=""
                        description="COM_CUSTOMTABLES_FIELDS_VALUERULE_DESCRIPTION"
                        class="text_area"
                        readonly="false"
                        filter="STRING"
                        hint="COM_CUSTOMTABLES_FIELDS_VALUERULE_HINT"
                        autocomplete="on" />
+
+                <field type="text"
+                       name="valuerulecaption"
+                       label="COM_CUSTOMTABLES_FIELDS_VALUERULECAPTION_LABEL"
+                       maxlength="1024"
+                       default=""
+                       description="COM_CUSTOMTABLES_FIELDS_VALUERULECAPTION_DESCRIPTION"
+                       class="text_area"
+                       readonly="false"
+                       filter="STRING"
+                       hint="COM_CUSTOMTABLES_FIELDS_VALUERULECAPTION_HINT"
+                       autocomplete="on" />
+
+
                 <!-- Parentid Field. Type: Sql. (joomla)-->
                 <field type="sql"
                        name="parentid"

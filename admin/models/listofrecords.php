@@ -1,20 +1,13 @@
 <?php
-/*----------------------------------------------------------------------------------|  www.vdm.io  |----/
-				JoomlaBoat.com 
-/-------------------------------------------------------------------------------------------------------/
-
-	@version		1.6.1
-	@build			1st July, 2018
-	@created		28th May, 2019
-	@package		Custom Tables
-	@subpackage		listofrecords.php
-	@author			Ivan Komlev <https://joomlaboat.com>	
-	@copyright		Copyright (C) 2018. All Rights Reserved
-	@license		GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
-
-/------------------------------------------------------------------------------------------------------*/
-
-// No direct access to this file
+/**
+ * CustomTables Joomla! 3.x Native Component
+ * @package Custom Tables
+ * @author Ivan komlev <support@joomlaboat.com>
+ * @link http://www.joomlaboat.com
+ * @copyright Copyright (C) 2018-2020. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
+ **/
+// No direct access to this file access');
 defined('_JEXEC') or die('Restricted access');
 
 // import the Joomla modellist library
@@ -26,8 +19,7 @@ jimport('joomla.application.component.modellist');
 class CustomtablesModelListofRecords extends JModelList
 {
 	var $tableid;
-	var $tablename;
-	
+
 	public function __construct($config = array())
 	{
 		if (empty($config['filter_records']))
@@ -38,12 +30,31 @@ class CustomtablesModelListofRecords extends JModelList
 		parent::__construct($config);
 	}
 	
+	
 	/**
 	 * Method to auto-populate the model state.
 	 *
 	 * @return  void
 	 */
-	
+	protected function populateState($ordering = null, $direction = null)
+	{
+		$app = JFactory::getApplication();
+		
+		// Adjust the context to support modal layouts.
+		if ($layout = $app->input->get('layout'))
+		{
+			$this->context .= '.' . $layout;
+		}
+		
+		$published = $this->getUserStateFromRequest($this->context . '.filter.published', 'filter_published', '');
+		$this->setState('filter.published', $published);
+		
+		$type = $this->getUserStateFromRequest($this->context . '.filter.tableid', 'filter_tableid');
+		$this->setState('filter.tableid', $type);
+        
+		// List state information.
+		parent::populateState($ordering, $direction);
+	}
 	
 	/**
 	 * Method to get an array of data items.

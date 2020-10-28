@@ -1,20 +1,13 @@
 <?php
-/*----------------------------------------------------------------------------------|  www.vdm.io  |----/
-				JoomlaBoat.com
-/-------------------------------------------------------------------------------------------------------/
-
-	@version		1.6.1
-	@build			1st July, 2018
-	@created		28th May, 2019
-	@package		Custom Tables
-	@subpackage		records.php
-	@author			Ivan Komlev <https://joomlaboat.com>
-	@copyright		Copyright (C) 2018. All Rights Reserved
-	@license		GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
-
-/------------------------------------------------------------------------------------------------------*/
-
-// No direct access to this file
+/**
+ * CustomTables Joomla! 3.x Native Component
+ * @package Custom Tables
+ * @author Ivan komlev <support@joomlaboat.com>
+ * @link http://www.joomlaboat.com
+ * @copyright Copyright (C) 2018-2020. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
+ **/
+// No direct access to this file access');
 defined('_JEXEC') or die('Restricted access');
 
 use Joomla\Registry\Registry;
@@ -223,10 +216,10 @@ class CustomtablesModelRecords extends JModelAdmin
 	{
 		if (!empty($record->id))
 		{
-			if ($record->published != -2)
-			{
-				return;
-			}
+			//if ($record->published != -2)
+			//{
+				//return;
+			//}
 
 			$user = JFactory::getUser();
 			// The record has been set. Check the record permissions.
@@ -387,15 +380,38 @@ class CustomtablesModelRecords extends JModelAdmin
 		{
 			return false;
 		}
-
-		foreach($pks as $fieldid)
+/*
+		foreach($pks as $recordid)
 		{
-			$data=ESRecords::getFieldRow($fieldid);
-			$tableid=(int)$data['tableid'];
+			//require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fields.php');
+			echo '$recordid='.$recordid;
+			print_r($_POST);
+			die;
+			
+			$jinput = JFactory::getApplication()->input;
+			//$ids_str=$jinput->set('ids',);
+			
+			$app = JFactory::getApplication();
+			$params = $app->getParams();
+			$model = $this->getModel('catalog');
+			$model->load($params, false);
+			if ($model->delete())
+			{
+				$msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_DELETED');
+				$this->setRedirect($link, $msg);
+			}
+			else
+			{
+				$msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_NOT_DELETED');
+				$this->setRedirect($link, $msg);
+			}
+			
+			//$data=ESRecords::getFieldRow($fieldid);
+			//$tableid=(int)$data['tableid'];
 
-			ESRecords::deleteESField_byID($tableid,$fieldid);
+			//ESRecords::deleteESField_byID($tableid,$fieldid);
 		}
-
+*/
 
 
 		return true;

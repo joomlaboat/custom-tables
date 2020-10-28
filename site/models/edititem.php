@@ -111,13 +111,13 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 		$this->isUserAdministrator=JoomlaBasicMisc::isUserAdmin($this->userid);
 
-		$this->print=(bool)$jinput->get('print',0,'INT');
+		$this->print=(bool)$jinput->getInt('print',0);
 		$this->frmt=$jinput->getCmd('frmt','html');
 
 		$app = JFactory::getApplication();
 		$this->params=$app->getParams();
 
-		$this->Itemid=$jinput->get('Itemid',0,'INT');
+		$this->Itemid=$jinput->getInt('Itemid',0);
 
 		if((int)$this->params->get( 'customitemid' )!=0)
 		$this->Itemid=(int)$this->params->get( 'customitemid' );

@@ -107,7 +107,6 @@ $document->addCustomTag('<link rel="stylesheet" href="'.JURI::root(true).'/admin
   <div class="layouteditor_modal-content" id="layouteditor_modalbox">
     <span class="layouteditor_close">&times;</span>
 	<div id="layouteditor_modal_content_box">
-    <p>Some text in the Modal..</p>
 	</div>
   </div>
 

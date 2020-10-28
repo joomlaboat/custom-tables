@@ -39,6 +39,7 @@ class CustomtablesTableFields extends JTable
 	var $type = null;
 	var $typeparams = null;
 	var $valuerule = null;
+	var $valuerulecaption = null;
 	var $params = null;
 	var $published = null;
 	var $parentid = null;

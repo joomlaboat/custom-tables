@@ -28,12 +28,26 @@ class CustomtablesTableRecords extends JTable
 	 *
 	 * @param object Database connector object
 	 */
+
 	function __construct(&$db) 
 	{
 		$jinput=JFactory::getApplication()->input;
-		$tablename=$jinput->getCmd('tablename');
-		//echo $tablename;
-		//die;
+		//$tablename=$jinput->getCmd('tablename');
+		$tableid=$jinput->getInt('tableid',0);
+		
+		if($tableid!=0)
+		{
+			require_once(JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tables.php');
+			$table=ESTables::getTableRowByID($tableid);
+			if(!is_object($table) and $table==0)
+			{
+				JFactory::getApplication()->enqueueMessage('Table not found', 'error');
+				$this->tableid=0;
+				return null;
+			}
+			else
+				$tablename=$table->tablename;
+		}
 		
 		parent::__construct('#__customtables_table_'.$tablename, 'id', $db); 
 	}	

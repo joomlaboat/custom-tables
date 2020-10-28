@@ -1,20 +1,13 @@
 <?php
-/*----------------------------------------------------------------------------------|  www.vdm.io  |----/
-				JoomlaBoat.com
-/-------------------------------------------------------------------------------------------------------/
-
-	@version		1.6.1
-	@build			19th July, 2018
-	@created		28th May, 2019
-	@package		Custom Tables
-	@subpackage		default_body.php
-	@author			Ivan Komlev <https://joomlaboat.com>
-	@copyright		Copyright (C) 2018. All Rights Reserved
-	@license		GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
-
-/------------------------------------------------------------------------------------------------------*/
-
-// No direct access to this file
+/**
+ * CustomTables Joomla! 3.x Native Component
+ * @package Custom Tables
+ * @author Ivan komlev <support@joomlaboat.com>
+ * @link http://www.joomlaboat.com
+ * @copyright Copyright (C) 2018-2020. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
+ **/
+// No direct access to this file access');
 defined('_JEXEC') or die('Restricted access');
 
 $edit = "index.php?option=com_customtables&view=listoftables&task=tables.edit";
@@ -27,29 +20,6 @@ $edit = "index.php?option=com_customtables&view=listoftables&task=tables.edit";
 		$canDo = CustomtablesHelper::getActions('tables',$item,'listoftables');
 	?>
 	<tr class="row<?php echo $i % 2; ?>">
-		<td class="order nowrap center hidden-phone">
-		<?php if ($canDo->get('core.edit.state')): ?>
-			<?php
-				if ($this->saveOrder)
-				{
-					$iconClass = ' inactive';
-				}
-				else
-				{
-					$iconClass = ' inactive tip-top" hasTooltip" title="' . JHtml::tooltipText('JORDERINGDISABLED');
-				}
-			?>
-			<span class="sortable-handler<?php echo $iconClass; ?>">
-				<i class="icon-menu"></i>
-			</span>
-			<?php if ($this->saveOrder) : ?>
-				<input type="text" style="display:none" name="order[]" size="5"
-				value="<?php echo $item->ordering; ?>" class="width-20 text-area-order " />
-			<?php endif; ?>
-		<?php else: ?>
-			&#8942;
-		<?php endif; ?>
-		</td>
 		<td class="nowrap center">
 		<?php if ($canDo->get('core.edit')): ?>
 				<?php if ($item->checked_out) : ?>

@@ -66,7 +66,7 @@ function checkTableFields($establename,$tableid)
 
     $complete_table_name='#__customtables_table_'.$establename;
 
-    $link='/administrator/index.php?option=com_customtables&view=listoffields&tableid='.$tableid;
+    $link=JURI::root().'administrator/index.php?option=com_customtables&view=listoffields&tableid='.$tableid;
 
     $query = 'SELECT fieldname,CONCAT("es_",fieldname) AS thefieldname, type, typeparams FROM #__customtables_fields WHERE published=1 AND tableid='.$tableid.'';
     $db->setQuery( $query );
@@ -376,6 +376,8 @@ function checkTableFields($establename,$tableid)
 
     function checkField($ExistingFields,$tablename,$proj_field,$fieldtype,$typeparams,&$languages)
     {
+		//print_r($ExistingFields);
+		
         if($fieldtype=='multilangstring' or $fieldtype=='multilangtext')
         {
             $found=false;
@@ -385,6 +387,8 @@ function checkTableFields($establename,$tableid)
         		$fieldname=$proj_field;
         		if($morethanonelang)
         			$fieldname.='_'.$lang->sef;
+				
+				//echo '$fieldname='.$fieldname.'<br/>';
 
                 $found=false;
                 foreach($ExistingFields as $existing_field)

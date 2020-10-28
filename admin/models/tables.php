@@ -700,7 +700,7 @@ class CustomtablesModelTables extends JModelAdmin
 			$query = '
 			CREATE TABLE IF NOT EXISTS #__customtables_table_'.$tablename.'
 			(
-				id int(10) NOT NULL auto_increment,
+				id int(10) unsigned NOT NULL auto_increment,
 				published tinyint(1) DEFAULT "1",
 				PRIMARY KEY  (id)
 			) ENGINE=InnoDB COMMENT="'.$tabletitle.'" DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;

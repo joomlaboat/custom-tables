@@ -60,7 +60,7 @@ class tagProcessor_Field
         {
             foreach($Model->esfields as $esfield)
             {
-                if(!isset($esfield['fieldtitle'.$Model->langpostfix]))
+                if(!array_key_exists('fieldtitle'.$Model->langpostfix,$esfield))
 				{
 					JFactory::getApplication()->enqueueMessage(
 						JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_LANGFIELDNOTFOUND' ), 'Error');

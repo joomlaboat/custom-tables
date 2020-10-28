@@ -1,25 +1,14 @@
 <?php
-/*----------------------------------------------------------------------------------|  www.vdm.io  |----/
-				JoomlaBoat.com 
-/-------------------------------------------------------------------------------------------------------/
-
-	@version		1.2.6
-	@build			19th July, 2018
-	@created		28th May, 2019
-	@package		Custom Tables
-	@subpackage		default_body.php
-	@author			Ivan Komlev <https://joomlaboat.com>	
-	@copyright		Copyright (C) 2018. All Rights Reserved
-	@license		GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
-  ____  _____  _____  __  __  __      __       ___  _____  __  __  ____  _____  _  _  ____  _  _  ____ 
- (_  _)(  _  )(  _  )(  \/  )(  )    /__\     / __)(  _  )(  \/  )(  _ \(  _  )( \( )( ___)( \( )(_  _)
-.-_)(   )(_)(  )(_)(  )    (  )(__  /(__)\   ( (__  )(_)(  )    (  )___/ )(_)(  )  (  )__)  )  (   )(  
-\____) (_____)(_____)(_/\/\_)(____)(__)(__)   \___)(_____)(_/\/\_)(__)  (_____)(_)\_)(____)(_)\_) (__) 
-
-/------------------------------------------------------------------------------------------------------*/
-
-// No direct access to this file
-defined('_JEXEC') or die('Restricted access'); 
+/**
+ * CustomTables Joomla! 3.x Native Component
+ * @package Custom Tables
+ * @author Ivan komlev <support@joomlaboat.com>
+ * @link http://www.joomlaboat.com
+ * @copyright Copyright (C) 2018-2020. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
+ **/
+// No direct access to this file access');
+defined('_JEXEC') or die('Restricted access');
 
 $edit = "index.php?option=com_customtables&view=listofcategories&task=categories.edit";
 
@@ -31,6 +20,7 @@ $edit = "index.php?option=com_customtables&view=listofcategories&task=categories
 		$canDo = CustomtablesHelper::getActions('categories',$item,'listofcategories');
 	?>
 	<tr class="row<?php echo $i % 2; ?>">
+	<?php /*
 		<td class="order nowrap center hidden-phone">
 		<?php if ($canDo->get('core.edit.state')): ?>
 			<?php
@@ -54,6 +44,9 @@ $edit = "index.php?option=com_customtables&view=listofcategories&task=categories
 			&#8942;
 		<?php endif; ?>
 		</td>
+		
+		*/ ?>
+		
 		<td class="nowrap center">
 		<?php if ($canDo->get('core.edit')): ?>
 				<?php if ($item->checked_out) : ?>

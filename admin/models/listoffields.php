@@ -2,14 +2,12 @@
 /**
  * CustomTables Joomla! 3.x Native Component
  * @package Custom Tables
- * @subpackage listoffields.php
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
  * @copyright Copyright (C) 2018-2020. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
- 
-// No direct access to this file
+// No direct access to this file access');
 defined('_JEXEC') or die('Restricted access');
 
 // import the Joomla modellist library
@@ -36,10 +34,6 @@ class CustomtablesModelListoffields extends JModelList
 				'a.type','type'
 			);
 		}
-		
-		
-
-		
 
 		parent::__construct($config);
 	}
@@ -199,8 +193,7 @@ class CustomtablesModelListoffields extends JModelList
 	
 	protected function getListQuery()
 	{
-		
-				$jinput = JFactory::getApplication()->input;
+		$jinput = JFactory::getApplication()->input;
 		$this->tableid=$jinput->getInt('tableid',0);
 		
 		$state_tableid=(int)$this->getState('filter.tableid');

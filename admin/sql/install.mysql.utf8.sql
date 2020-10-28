@@ -115,6 +115,7 @@ CREATE TABLE IF NOT EXISTS `#__customtables_fields` (
 	`type` VARCHAR(50) NULL DEFAULT NULL,
 	`typeparams` VARCHAR(1024) NULL DEFAULT NULL,
 	`valuerule` VARCHAR(1024) NULL DEFAULT NULL,
+	`valuerulecaption` VARCHAR(1024) NULL DEFAULT NULL,
 	`params` text NULL DEFAULT NULL,
 	`published` TINYINT(3) NOT NULL DEFAULT 1,
 	`parentid` int(10) unsigned NOT NULL DEFAULT 0,

@@ -20,6 +20,7 @@ JHtml::_('behavior.keepalive');
 
 $document = JFactory::getDocument();
 $document->addCustomTag('<link href="'.JURI::root(true).'/administrator/components/com_customtables/css/fieldtypes.css" rel="stylesheet">');
+$document->addCustomTag('<link href="'.JURI::root(true).'/administrator/components/com_customtables/css/modal.css" rel="stylesheet">');
 $document->addCustomTag('<script src="'.JURI::root(true).'/administrator/components/com_customtables/js/ajax.js"></script>');
 $document->addCustomTag('<script src="'.JURI::root(true).'/administrator/components/com_customtables/js/typeparams.js"></script>');
 
@@ -246,7 +247,7 @@ else
   <div id="ctModal" class="ctModal">
   <div id="ctModal_box" class="ctModal_content">
     <span id="ctModal_close" class="ctModal_close">&times;</span>
-	<div id="ctModal_content"><p>Some text in the Modal..</p></div>
+	<div id="ctModal_content"></div>
   </div>
 	</div>
   <!-- end of the modal -->
