@@ -117,9 +117,9 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		$this->frmt=$jinput->getCmd('frmt','html');
 
 		$app = JFactory::getApplication();
-		if(isset($params))
-			$this->params=$params;
-		else
+		//if(isset($params))
+			//$this->params=$params;
+		//else
 			$this->params=$app->getParams();
 
 		$this->Itemid=$jinput->getInt('Itemid',0);
@@ -268,7 +268,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 			return $a;
 		}
 
-		$this->row=$rows[0];
+		//$this->row=$rows[0];
 		return $row['id'];
 
 	}
@@ -336,7 +336,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 			return $a;
 		}
 
-		$this->row=$rows[0];
+		//$this->row=$rows[0];
 		return $row['id'];
 	}
 	
