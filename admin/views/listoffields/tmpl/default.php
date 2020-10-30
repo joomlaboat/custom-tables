@@ -112,7 +112,7 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.
 <?php echo JHtml::_('form.token'); ?>
 </form>
 
-
+	<?php /*
   <!-- Modal content -->
   <div id="ctModal" class="ctModal">
   <div id="ctModal_box" class="ctModal_content">
@@ -121,3 +121,5 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.
   </div>
 	</div>
   <!-- end of the modal -->
+  
+  */ ?>

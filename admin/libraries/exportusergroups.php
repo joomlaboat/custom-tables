@@ -82,14 +82,14 @@ class ImportExportUserGroups
 			
 		$query = 'SELECT * FROM #__usergroups';
 		$db->setQuery( $query );
-		if (!$db->query())    die ( $db->stderr());
+
 		$usergroups=$db->loadAssocList();
 		if(count($usergroups)==0)
 			return false;
 		
         $query = 'SELECT * FROM #__viewlevels';
 		$db->setQuery( $query );
-		if (!$db->query())    die ( $db->stderr());
+		
 		$viewlevels=$db->loadAssocList();
 		if(count($viewlevels)==0)
 			return false;

@@ -41,7 +41,6 @@ class ESTables
 		$query = 'SELECT COUNT(*) AS c FROM information_schema.tables WHERE table_schema = '.$db->quote($database).' AND table_name = '.$db->quote($t).' LIMIT 1';
 
 		$db->setQuery( $query );
-		if (!$db->query())    die ( $db->stderr());
 
 		$rows = $db->loadObjectList();
 		if(count($rows)!=1)
@@ -65,7 +64,6 @@ class ESTables
 
 		$query = 'SELECT tablename FROM #__customtables_tables AS s WHERE id='.$tableid.' LIMIT 1';
 		$db->setQuery( $query );
-		if (!$db->query())    die ( $db->stderr());
 
 		$rows = $db->loadObjectList();
 		if(count($rows)!=1)
@@ -87,7 +85,6 @@ class ESTables
 		$query = 'SELECT id FROM #__customtables_tables AS s WHERE tablename='.$db->quote($tablename).' LIMIT 1';
 
 		$db->setQuery( $query );
-		if (!$db->query())    die ( $db->stderr());
 
 		$rows = $db->loadObjectList();
 		if(count($rows)!=1)
@@ -105,7 +102,6 @@ class ESTables
 
 		$query = 'SELECT * FROM #__customtables_tables AS s WHERE id="'.$tableid.'" LIMIT 1';
 		$db->setQuery( $query );
-		if (!$db->query())    die ( $db->stderr());
 
 		$rows = $db->loadObjectList();
 		if(count($rows)!=1)
@@ -123,7 +119,6 @@ class ESTables
 
 		$query = 'SELECT * FROM #__customtables_tables AS s WHERE id="'.$tableid.'" LIMIT 1';
 		$db->setQuery( $query );
-		if (!$db->query())    die ( $db->stderr());
 
 		$rows = $db->loadAssocList();
 		if(count($rows)!=1)
@@ -141,7 +136,6 @@ class ESTables
 
 		$query = 'SELECT * FROM #__customtables_tables AS s WHERE tablename="'.$tablename.'" LIMIT 1';
 		$db->setQuery( $query );
-		if (!$db->query())    die ( $db->stderr());
 
 		$rows = $db->loadObjectList();
 		if(count($rows)!=1)
@@ -158,7 +152,6 @@ class ESTables
 
 		$query = 'SELECT * FROM #__customtables_tables AS s WHERE tablename="'.$tablename.'" LIMIT 1';
 		$db->setQuery( $query );
-		if (!$db->query())    die ( $db->stderr());
 
 		$rows = $db->loadAssocList();
 		if(count($rows)!=1)
@@ -166,15 +159,4 @@ class ESTables
 
 		return $rows[0];
 	}
-
-
-
-
-
-
-
-
-
-
-
 }

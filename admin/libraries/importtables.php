@@ -211,7 +211,7 @@ class ImportTables
 				$query = 'SELECT id FROM #__customtables_categories ORDER BY id DESC LIMIT 1';
 
 				$db->setQuery( $query );
-				if (!$db->query())    die ( $db->stderr());
+
 				$rows=$db->loadAssocList();
 
 				if(count($rows)!=1)
@@ -691,7 +691,7 @@ class ImportTables
         $query = 'SELECT id FROM '.$mysqltablename.' ORDER BY id DESC LIMIT 1';
 
 		$db->setQuery( $query );
-		if (!$db->query())    die ( $db->stderr());
+
 		$rows=$db->loadAssocList();
 
         if(count($rows)!=1)
@@ -712,7 +712,6 @@ class ImportTables
 		$query= 'SELECT * FROM '.$mysqltablename.' WHERE '.$fieldname.'='.$db->Quote($value);
 
 		$db->setQuery( $query );
-		if (!$db->query())    die ( $db->stderr());
 
 		$rows = $db->loadAssocList();
 		if(count($rows)==0)
@@ -727,7 +726,6 @@ class ImportTables
 		$query= 'SELECT rgt FROM #__menu ORDER BY rgt DESC LIMIT 1';
 		
 		$db->setQuery( $query );
-		if (!$db->query())    die ( $db->stderr());
 
 		$rows = $db->loadAssocList();
 		if(count($rows)==0)

@@ -73,14 +73,9 @@ jQuery.noConflict()
     })();
 ';
 
-	$WebsiteRoot=JURI::root(true);
-	if($WebsiteRoot=='' or $WebsiteRoot[strlen($WebsiteRoot)-1]!='/') //Root must have slash / in the end
-		$WebsiteRoot.='/';
-
-	$theLink=$WebsiteRoot.'index.php?option=com_customtables&amp;view=edititem'.($this->Model->Itemid!=0 ? '&amp;Itemid='.$this->Model->Itemid : '');//.'&amp;lang='.$lang;
-
 ?>
-<form action="<?php echo $theLink; ?>" method="post" onsubmit="return checkRequiredFields();" name="eseditForm" id="eseditForm" class="form-validate form-horizontal well">
+<form action="<?php echo $this->formLink; ?>" method="post" name="<?php echo $this->formName; ?>" id="<?php echo $this->formName; ?>" class="<?php echo $this->formClass; ?>"<?php echo $this->formAttribute; ?>>
+
 <fieldset>
 <?php
 	//Calendars of the child should be built again, because when Dom was ready they didn't exist yet.
@@ -134,5 +129,6 @@ jQuery.noConflict()
 	<?php endif; ?>
 
     <input type="hidden" name="submitbutton" value="<?php echo $this->Model->submitbuttons; ?>" />
+	<?php echo JHtml::_('form.token'); ?>
 	</fieldset>
 </form>

@@ -28,6 +28,13 @@ class CustomtablesControllerListofRecords extends JControllerAdmin
 	{
 		$model = parent::getModel($name, $prefix, array('ignore_request' => true));
 		
+		//$app = JFactory::getApplication();
+		//$tableid 	= $app->input->get('tableid', 0, 'int');
+		
+		//$model->setState('filter.tableid', $tableid);
+		
 		return $model;
-	}  
+	}
+
+	
 }

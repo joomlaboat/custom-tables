@@ -26,10 +26,8 @@ class CustomtablesModelListofRecords extends JModelList
         {
 			$config['filter_records'] = array();
 		}
-		
 		parent::__construct($config);
 	}
-	
 	
 	/**
 	 * Method to auto-populate the model state.
@@ -39,19 +37,20 @@ class CustomtablesModelListofRecords extends JModelList
 	protected function populateState($ordering = null, $direction = null)
 	{
 		$app = JFactory::getApplication();
+		$jinput=$app->input;
 		
 		// Adjust the context to support modal layouts.
-		if ($layout = $app->input->get('layout'))
-		{
+		if ($layout = $jinput->get('layout'))
 			$this->context .= '.' . $layout;
-		}
 		
 		$published = $this->getUserStateFromRequest($this->context . '.filter.published', 'filter_published', '');
 		$this->setState('filter.published', $published);
 		
-		$type = $this->getUserStateFromRequest($this->context . '.filter.tableid', 'filter_tableid');
-		$this->setState('filter.tableid', $type);
-        
+		$tableid = $this->getUserStateFromRequest($this->context . '.filter.tableid', 'filter_tableid');
+		$this->setState('filter.tableid', $tableid);
+		
+		$jinput->set('tableid',$tableid);
+
 		// List state information.
 		parent::populateState($ordering, $direction);
 	}
@@ -66,6 +65,10 @@ class CustomtablesModelListofRecords extends JModelList
 		//$this->tablename=$tablename;
 		// load parent items
 		$items = parent::getItems(); 
+		
+		//$app = JFactory::getApplication();
+		//$tableid 	= $app->input->get('tableid', 0, 'int');
+		//$this->setState('filter.tableid', $tableid);
 
 		// return items
 		return $items;

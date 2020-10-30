@@ -49,24 +49,19 @@ class CustomtablesViewListofrecords extends JViewLegacy
 			CustomtablesHelper::addSubmenu('listofrecords');
 		}
 
-		// Assign data to the view
+		// Assign Table ID State
 		$jinput=$app->input;
-		$this->tableid=$jinput->getInt('tableid',0);
-		
+		$this->tableid=$jinput->get->getInt('tableid',0);
 		$this->state = $this->get('State');
-		$state_tableid=(int)$this->state->get('filter.tableid');
 		
-		if($state_tableid!=0)// and $tableid==0)
+		if($this->tableid==0)// and $tableid==0)
 		{
+			$state_tableid=(int)$this->state->get('filter.tableid');
 			$this->tableid=$state_tableid;
 			$jinput->set('tableid',$this->tableid);
-			$this->tableid=$jinput->getInt('tableid',0);
 		}
-		elseif($state_tableid==0 and $this->tableid!=0)
-		{
+		else
 			$this->state->set('filter.tableid',$this->tableid);
-		}
-		
 		
 		if($this->tableid!=0)
 		{
@@ -86,9 +81,8 @@ class CustomtablesViewListofrecords extends JViewLegacy
 			}
 		}
 		
-	
+
 		$jinput->set('tablename',$this->tablename);
-		
 
 		$this->items = $this->get('Items');
 		$this->pagination = $this->get('Pagination');
@@ -97,9 +91,9 @@ class CustomtablesViewListofrecords extends JViewLegacy
 		
 		// get global action permissions
 		$this->canDo = CustomtablesHelper::getActions('fields');
-		$this->canEdit = false;//$this->canDo->get('core.edit');
+		$this->canEdit = $this->canDo->get('core.edit');
 		$this->canState = $this->canDo->get('core.edit.state');
-		$this->canCreate = false;//$this->canDo->get('core.create');
+		$this->canCreate = $this->canDo->get('core.create');
 		$this->canDelete = $this->canDo->get('core.delete');
 		$this->canBatch = $this->canDo->get('core.batch');
 
@@ -107,12 +101,6 @@ class CustomtablesViewListofrecords extends JViewLegacy
 		{
 			$this->addToolbar();
 			$this->sidebar = JHtmlSidebar::render();
-		}
-
-		// Check for errors.
-		if (count($errors = $this->get('Errors')))
-		{
-			throw new Exception(implode("\n", $errors), 500);
 		}
 
 		// Display the template
@@ -133,7 +121,7 @@ class CustomtablesViewListofrecords extends JViewLegacy
 		{
 			require_once(JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tables.php');
 
-			JToolBarHelper::title('Table "'.$this->tabletitle.'" - '.JText::_('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
+			JToolBarHelper::title('Table "'.$this->tabletitle.'" - '.JText::_('COM_CUSTOMTABLES_LISTOFRECORDS'), 'joomla');
 		}
 		else
 			JToolBarHelper::title(JText::_('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
@@ -295,6 +283,4 @@ class CustomtablesViewListofrecords extends JViewLegacy
 		else
 			return 'CustomTables Record Not Found';
 	}
-	
-
 }

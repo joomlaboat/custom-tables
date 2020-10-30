@@ -54,7 +54,7 @@ class CustomTablesViewEditItem extends JViewLegacy {
 		$this->assignRef('langpostfix',$langpostfix);
 
 
-		$db = JFactory::getDBO();
+		//$db = JFactory::getDBO();
 
 
 		//	Fields
@@ -62,7 +62,7 @@ class CustomTablesViewEditItem extends JViewLegacy {
 
 
 		// Rocord
-
+/*
 		$row=array(); //Default is empty
 
 		if($Model->id!=0)
@@ -104,79 +104,24 @@ class CustomTablesViewEditItem extends JViewLegacy {
 			}
 		    }
 		}
+*/
+		$this->assignRef('row',$Model->row);
 
-		$this->assignRef('row',$row);
+		$WebsiteRoot=JURI::root(true);
+		if($WebsiteRoot=='' or $WebsiteRoot[strlen($WebsiteRoot)-1]!='/') //Root must have slash / in the end
+			$WebsiteRoot.='/';
 
-		// Compute selected asset permissions.
-		//$asset	= 'com_content.article.'.$Model->id;
-		//JFactory::getApplication()->input->set('asset',$asset);
+		$this->formLink=$WebsiteRoot.'index.php?option=com_customtables&amp;view=edititem'.($this->Model->Itemid!=0 ? '&amp;Itemid='.$this->Model->Itemid : '');//.'&amp;lang='.$lang;
+		$this->formName='eseditForm';
+		$this->formClass='form-validate form-horizontal well';
+		$this->formAttribute=' onsubmit="return checkRequiredFields();"';
+		
 
 
 		parent::display($tpl);
 	}
 
-	function makeEmptyRecord($id,$published)
-	{
-	    $row=array();
-	    $row['id']=$id;
-	    $row['published']=$published;
-
-
-	    foreach($this->Model->esfields as $ESField)
-		$row['es_'.$ESField['fieldname']]='';
-
-
-	    return $row;
-	}
-
-
-
-	function getTypeFieldName($type)
-	{
-		foreach($this->Model->esfields as $ESField)
-		{
-				if($ESField['type']==$type)
-					return 'es_'.$ESField['fieldname'];
-
-		}
-
-		return '';
-	}
-
-	function getVersionData(&$row,$log_field,$version)
-	{
-		$creation_time_field=$this->getTypeFieldName('changetime');
-
-		$versions=explode(';',$row[$log_field]);
-		if($version<=count($versions))
-		{
-					$data_editor=explode(',',$versions[$version-2]);
-					$data_content=explode(',',$versions[$version-1]);
-
-					if($data_content[3]!='')
-					{
-                        //record versions stored in database table text field as base64 encoded json object
-						$obj=json_decode(base64_decode($data_content[3]),true);
-						$new_row=$obj[0];
-						$new_row['published']=$row['published'];
-						$new_row['id']=$row['id'];
-						$new_row['listing_id']=$row['id'];
-						$new_row[$log_field]=$row[$log_field];
-
-
-						if($creation_time_field)
-						{
-							$timestamp = date('Y-m-d H:i:s', (int)$data_editor[0]);
-							$new_row[$creation_time_field]=$timestamp ;
-						}
-
-
-						return $new_row;
-					}
-		}
-
-		return array();
-	}
+	
 
 
 }//class

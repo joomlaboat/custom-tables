@@ -45,7 +45,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 	var $estableid;
 	var $tabletitle;
 	var $establedescription;
-	var $tablename;
+	var $tablename;//mysql table name
 	var $tablecustomphp;
 	var $tablerow;
 
@@ -88,8 +88,10 @@ class CustomTablesModelEditItem extends JModelLegacy {
 	var $Itemid;
 	var $BlockExternalVars;
 	var $advancedtagprocessor;
+	
+	var $row;
 
-	function __construct()
+	function __construct($params=null)
 	{
 		parent::__construct();
 		$this->advancedtagprocessor=false;
@@ -115,7 +117,10 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		$this->frmt=$jinput->getCmd('frmt','html');
 
 		$app = JFactory::getApplication();
-		$this->params=$app->getParams();
+		if(isset($params))
+			$this->params=$params;
+		else
+			$this->params=$app->getParams();
 
 		$this->Itemid=$jinput->getInt('Itemid',0);
 
@@ -234,6 +239,10 @@ class CustomTablesModelEditItem extends JModelLegacy {
 			//try to find record by userid
 			$this->id=$this->findRecordByUserID();
 		}
+		
+		if(isset($this->row))
+			$this->getSpecificVersionIfSet();
+		
 		return true;
 	}
 
@@ -244,7 +253,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		$wherearr[]='published=1';
 		$wherearr[]='es_'.$this->useridfield.'='.$this->userid;
 		$where = ' WHERE '.implode(" AND ",$wherearr);
-		$query = 'SELECT id FROM '.$this->tablename.' '.$where;
+		$query = 'SELECT * FROM '.$this->tablename.' '.$where;
 		$query.=' LIMIT 1';
 
 		$db->setQuery($query);
@@ -259,7 +268,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 			return $a;
 		}
 
-		$row=$rows[0];
+		$this->row=$rows[0];
 		return $row['id'];
 
 	}
@@ -271,8 +280,17 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		$id=$this->params->get('listingid');
 
 		if(is_numeric($id))
-			return $id;
+		{
+			$query = 'SELECT * FROM '.$this->tablename.' WHERE id='.(int)$id.' LIMIT 1';
+			$db->setQuery($query);
+			$rows=$db->loadAssocList();
+			if(count($rows)<1)
+				return -1;
 
+			$this->row=$rows[0];
+			$this->row['listing_id']=$id;
+			return $id;
+		}
 
 
 		$filter=$id;
@@ -308,9 +326,9 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 		$db->setQuery($query);
 
-		if (!$db->query())    die( $db->stderr());
-
+		
 		$rows=$db->loadAssocList();
+
 
 		if(count($rows)<1)
 		{
@@ -318,8 +336,94 @@ class CustomTablesModelEditItem extends JModelLegacy {
 			return $a;
 		}
 
-		$row=$rows[0];
+		$this->row=$rows[0];
 		return $row['id'];
+	}
+	
+	function getSpecificVersionIfSet()
+	{
+		//get specific Version if set
+		$version= JFactory::getApplication()->input->get('version',0,'INT');
+		if($version!=0)
+		{
+		    //get log field
+		    $log_field=$this->getTypeFieldName('log');;
+		    if($log_field!='')
+		    {
+		    	$new_row= $this->getVersionData($this->row,$log_field,$version);
+				if(count($new_row)>0)
+				{
+				    $this->row=$this->makeEmptyRecord($this->id,$new_row['published']);
+
+				    //Copy values
+				    foreach($this->esfields as $ESField)
+						$this->row['es_'.$ESField['fieldname']]=$new_row['es_'.$ESField['fieldname']];
+				}
+		    }
+		}
+	}
+	
+	function makeEmptyRecord($id,$published)
+	{
+	    $row=array();
+	    $row['id']=$id;
+	    $row['published']=$published;
+
+
+	    foreach($this->Model->esfields as $ESField)
+		$row['es_'.$ESField['fieldname']]='';
+
+
+	    return $row;
+	}
+
+
+
+	function getTypeFieldName($type)
+	{
+		foreach($this->Model->esfields as $ESField)
+		{
+				if($ESField['type']==$type)
+					return 'es_'.$ESField['fieldname'];
+
+		}
+
+		return '';
+	}
+
+	function getVersionData(&$row,$log_field,$version)
+	{
+		$creation_time_field=$this->getTypeFieldName('changetime');
+
+		$versions=explode(';',$row[$log_field]);
+		if($version<=count($versions))
+		{
+					$data_editor=explode(',',$versions[$version-2]);
+					$data_content=explode(',',$versions[$version-1]);
+
+					if($data_content[3]!='')
+					{
+                        //record versions stored in database table text field as base64 encoded json object
+						$obj=json_decode(base64_decode($data_content[3]),true);
+						$new_row=$obj[0];
+						$new_row['published']=$row['published'];
+						$new_row['id']=$row['id'];
+						$new_row['listing_id']=$row['id'];
+						$new_row[$log_field]=$row[$log_field];
+
+
+						if($creation_time_field)
+						{
+							$timestamp = date('Y-m-d H:i:s', (int)$data_editor[0]);
+							$new_row[$creation_time_field]=$timestamp ;
+						}
+
+
+						return $new_row;
+					}
+		}
+
+		return array();
 	}
 
 	function CheckAuthorization($action=1)
@@ -372,7 +476,8 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 		// --- This can be replaced by tableid
 
-		$this->establename=$this->params->get( 'establename' ); //-- use this only
+		if($this->establename=='')
+			$this->establename=$this->params->get( 'establename' ); //-- use this only
 
 		if($action==1)
 			$this->userGroup = $this->edit_userGroup;
@@ -431,7 +536,8 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		{
 			$Itemid=JFactory::getApplication()->input->getInt("Itemid");
 			$useridfield=JoomlaBasicMisc::getMenuParam('useridfield', $Itemid);
-			$this->establename=JoomlaBasicMisc::getMenuParam('establename', $Itemid);
+			if($this->establename=='')
+				$this->establename=JoomlaBasicMisc::getMenuParam('establename', $Itemid);
 		}
 		else
 		{
@@ -1002,8 +1108,11 @@ class CustomTablesModelEditItem extends JModelLegacy {
     {
         $db = JFactory::getDBO();
         $query='SELECT MAX(id) AS maxid FROM '.$establename.' LIMIT 1';
+
 		$db->setQuery( $query );
-		if (!$db->query())    die( $db->stderr());
+		
+		
+		//if (!$db->query())    die( $db->stderr());
 		$rows=$db->loadObjectList();
 		if(count($rows)!=0)
 		{

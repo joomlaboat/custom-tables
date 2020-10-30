@@ -32,7 +32,6 @@ class CustomtablesTableRecords extends JTable
 	function __construct(&$db) 
 	{
 		$jinput=JFactory::getApplication()->input;
-		//$tablename=$jinput->getCmd('tablename');
 		$tableid=$jinput->getInt('tableid',0);
 		
 		if($tableid!=0)
@@ -51,4 +50,5 @@ class CustomtablesTableRecords extends JTable
 		
 		parent::__construct('#__customtables_table_'.$tablename, 'id', $db); 
 	}	
+	
 }

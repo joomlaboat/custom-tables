@@ -216,7 +216,6 @@ class CustomTablesCreateUser
 		$query = 'SELECT id FROM #__usergroups WHERE '.implode(' OR ',$new_names);
 
 		$db->setQuery( $query );
-		if (!$db->query())    die ( $db->stderr());
 
 		$rows = $db->loadObjectList();
 		$ids=array();

@@ -55,6 +55,16 @@ class CustomtablesModelRecords extends JModelAdmin
 		return JTable::getInstance($type, $prefix, $config);
 	}
 
+	public function getItem($pk = null)
+	{
+		return null;
+	}
+	
+	public function getForm($data = array(), $loadData = true)
+	{
+		return null;
+	}
+
 	/**
 	 * Method to get a single record.
 	 *
@@ -64,36 +74,6 @@ class CustomtablesModelRecords extends JModelAdmin
 	 *
 	 * @since   1.6
 	 */
-	public function getItem($pk = null)
-	{
-		if ($item = parent::getItem($pk))
-		{
-
-			if (!empty($item->params) && !is_array($item->params))
-			{
-				// Convert the params field to an array.
-				$registry = new Registry;
-				$registry->loadString($item->params);
-				$item->params = $registry->toArray();
-			}
-
-			if (!empty($item->metadata))
-			{
-				// Convert the metadata field to an array.
-				$registry = new Registry;
-				$registry->loadString($item->metadata);
-				$item->metadata = $registry->toArray();
-			}
-
-			if (!empty($item->id))
-			{
-				$item->tags = new JHelperTags;
-				$item->tags->getTagIds($item->id, 'com_customtables.records');
-			}
-		}
-
-		return $item;
-	}
 
 	/**
 	 * Method to get the record form.
@@ -105,16 +85,7 @@ class CustomtablesModelRecords extends JModelAdmin
 	 *
 	 * @since   1.6
 	 */
-	public function getForm($data = array(), $loadData = true)
-	{
-		$form = $this->loadForm('com_customtables.records', 'records', array('control' => 'jform', 'load_data' => $loadData));
-		if (empty($form))
-		{
-			return false;
-		}
-		
-		return $form;
-	}
+
 	/*
 	public function getForm($data = array(), $loadData = true)
 	{
@@ -280,54 +251,7 @@ class CustomtablesModelRecords extends JModelAdmin
 	 *
 	 * @since   1.6
 	 */
-	protected function prepareTable($table)
-	{
-		$date = JFactory::getDate();
-		$user = JFactory::getUser();
-
-		if (isset($table->name))
-		{
-			$table->name = htmlspecialchars_decode($table->name, ENT_QUOTES);
-		}
-
-		if (isset($table->alias) && empty($table->alias))
-		{
-			$table->generateAlias();
-		}
-
-		if (empty($table->id))
-		{
-			$table->created = $date->toSql();
-			// set the user
-			if ($table->created_by == 0 || empty($table->created_by))
-			{
-				$table->created_by = $user->id;
-			}
-			// Set ordering to the last item if not set
-			if (empty($table->ordering))
-			{
-				$db = JFactory::getDbo();
-				$query = $db->getQuery(true)
-					->select('MAX(ordering)')
-					->from($db->quoteName('#__customtables_records'));
-				$db->setQuery($query);
-				$max = $db->loadResult();
-
-				$table->ordering = $max + 1;
-			}
-		}
-		else
-		{
-			$table->modified = $date->toSql();
-			$table->modified_by = $user->id;
-		}
-
-		if (!empty($table->id))
-		{
-			// Increment the items version number.
-			$table->version++;
-		}
-	}
+	
 
 	/**
 	 * Method to get the data that should be injected in the form.
@@ -336,20 +260,21 @@ class CustomtablesModelRecords extends JModelAdmin
 	 *
 	 * @since   1.6
 	 */
-	/*
+	
 	protected function loadFormData()
 	{
 		// Check the session for previously entered form data.
+		/*
 		$data = JFactory::getApplication()->getUserState('com_customtables.edit.records.data', array());
 
 		if (empty($data))
 		{
 			$data = $this->getItem();
 		}
-
-		return $data;
+*/
+		return null;//$data;
 	}
-	*/
+	
 
 	/**
 	 * Method to get the unique records of this table.
@@ -358,12 +283,12 @@ class CustomtablesModelRecords extends JModelAdmin
 	 *
 	 * @since   3.0
 	 */
-	/*
+	
 	protected function getUniqeRecords()
 	{
 		return false;
 	}
-	*/
+	
 
 	/**
 	 * Method to delete one or more records.
@@ -824,95 +749,11 @@ class CustomtablesModelRecords extends JModelAdmin
 	}
 	*/
 
-/*
+
 	public function save($data)
 	{
-		$input	= JFactory::getApplication()->input;
-		$filter	= JFilterInput::getInstance();
-
-
-		$data_extra = $input->get( 'jform',array(),'ARRAY');
-
-		//clean field name
-		$esfieldname=strtolower(trim(preg_replace("/[^a-zA-Z]/", "", $data_extra['fieldname'])));
-		if(strlen ( $esfieldname )>40)
-			$esfieldname=substr($esfieldname, 0, 40);
-
-
-		$tableid=$data_extra['tableid'];
-		$fieldid=$data['id'];
-
-		if($fieldid==0)
-			$esfieldname=$this->checkFieldName($tableid,$esfieldname);
-
-		$data['fieldname']=$esfieldname;
-
-
-		$LangMisc	= new ESLanguages;
-		$languages=$LangMisc->getLanguageList();
-
-
-			$morethanonelang=false;
-			$records=ESRecords::getListOfExistingRecords('#__customtables_records',false);
-			foreach($languages as $lang)
-			{
-				$id_title='fieldtitle';
-				$id_description='description';
-
-				if($morethanonelang)
-				{
-					$id_title.='_'.$lang->sef;
-					$id_description.='_'.$lang->sef;
-
-					if(!in_array($id_title,$records))
-						ESRecords::addLanguageField('#__customtables_records','fieldtitle',$id_title);
-
-					if(!in_array($id_description,$records))
-						ESRecords::addLanguageField('#__customtables_records','description',$id_description);
-
-				}
-
-				$data[$id_title] = $data_extra[$id_title];
-				$data[$id_description] = $data_extra[$id_description];
-				$morethanonelang=true; //More than one language installed
-			}
-
-
-
-
-		// set the metadata to the Item Data
-		
-
-		// Alter the uniqe field for save as copy
-		if ($input->get('task') === 'save2copy')
-		{
-			// Automatic handling of other uniqe records
-			$uniqeRecords = $this->getUniqeRecords();
-			if (CustomtablesHelper::checkArray($uniqeRecords))
-			{
-				foreach ($uniqeRecords as $uniqeField)
-				{
-					$data[$uniqeField] = $this->generateUniqe($uniqeField,$data[$uniqeField]);
-				}
-			}
-		}
-
-
-		if(!$this->update_physical_field($tableid,$fieldid,$data))
-		{
-			//Cannot create
-			return false;
-		}
-
-		if (parent::save($data))
-		{
-
-			return true;
-		}
-		return false;
+		return;
 	}
-
-*/
 
 	/**
 	 * Method to change the title

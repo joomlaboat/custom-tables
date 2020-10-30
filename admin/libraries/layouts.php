@@ -130,7 +130,69 @@ class ESLayouts
 		return '';
 	}
 
-    public static function storeAsFile(&$data)
+    public static function createDefaultLayout($fields,$type)
+	{
+		$result='';
+		switch($type)
+		{
+			case 'edit':
+				$result=ESLayouts::createDefaultLayout_Edit($fields);
+			break;
+			
+			default:
+				$result='';
+				break;
+		}
+		return $result;
+	}
+	
+	public static function createDefaultLayout_Edit(&$fields,$addToolbar=true)
+	{
+		$result='';
+
+		$result.='<div class="form-horizontal">
+
+';
+
+		$fieldtypes_to_skip=['log','phponview','phponchange','phponadd','md5','id','server','userid','viewcount','lastviewtime','changetime','creationtime','imagegallery','filebox','dummy'];
+
+		foreach ($fields as $field)
+		{
+			if(!in_array($field['type'],$fieldtypes_to_skip))
+			{
+				$result.='	<div class="control-group">
+';
+				$result.='		<div class="control-label">*'.$field['fieldname'].'*</div><div class="controls">['.$field['fieldname'].']</div>
+';
+				$result.='	</div>
+
+';
+			}
+		}
+
+		$result.='</div>
+
+';
+
+		foreach ($fields as $field)
+		{
+			if($field['type']==="dummy")
+			{
+				$result.='<p><span style="color: #FB1E3D; ">*</span> *'.$field['fieldname'].'*</p>
+';
+				break;
+			}
+		}
+
+		if($addToolbar)
+			$result.='<div style="text-align:center;">{button:save} {button:saveandclose} {button:saveascopy} {button:cancel}</div>
+';
+	
+		return $result;
+	}
+	
+	
+	public static function storeAsFile(&$data)
 	{
 		$path=JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'layouts';
 		$filename=$data['layoutname'].'.html';

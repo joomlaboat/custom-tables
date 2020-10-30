@@ -28,7 +28,6 @@ class ESFields
 		$query= 'SELECT id FROM #__customtables_fields WHERE published=1 AND tableid='.(int)$tableid.' AND fieldname="'.$esfieldname.'"';
 
 		$db->setQuery( $query );
-		if (!$db->query())    die ( $db->stderr());
 
 		$rows2 = $db->loadObjectList();
 		if(count($rows2)==0)
@@ -1032,7 +1031,6 @@ class ESFields
 
 		$query = 'SELECT fieldname FROM #__customtables_fields AS s WHERE s.published=1 AND s.id='.$fieldid.' LIMIT 1';
 		$db->setQuery( $query );
-		if (!$db->query())    die ( $db->stderr());
 
 		$rows = $db->loadObjectList();
 		if(count($rows)!=1)
@@ -1052,7 +1050,6 @@ class ESFields
 
 		$query = 'SELECT * FROM #__customtables_fields AS s WHERE published=1 AND id='.$fieldid.' LIMIT 1';
 		$db->setQuery( $query );
-		if (!$db->query())    die ( $db->stderr());
 
 		$rows = $db->loadObjectList();
 		if(count($rows)!=1)
@@ -1074,7 +1071,6 @@ class ESFields
         }
 
 		$db->setQuery( $query );
-		//if (!$db->query())    die ( $db->stderr());
 
         if($as_object)
             return $db->loadObjectList();
@@ -1101,8 +1097,6 @@ class ESFields
 
 
 		$db->setQuery( $query );
-		if (!$db->query())    die ( $db->stderr());
-
 
 		$rows = $db->loadObjectList();
 
@@ -1126,8 +1120,6 @@ class ESFields
 
 		$query = 'SELECT * FROM #__customtables_fields AS s WHERE s.published=1 AND tableid='.(int)$tableid.' AND fieldname="'.trim($fieldname).'" LIMIT 1';
 		$db->setQuery( $query );
-		if (!$db->query())    die ( $db->stderr());
-
 
 		$rows = $db->loadAssocList();
 		if(count($rows)!=1)
