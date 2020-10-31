@@ -91,7 +91,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 	
 	var $row;
 
-	function __construct($params=null)
+	function __construct()
 	{
 		parent::__construct();
 		$this->advancedtagprocessor=false;
@@ -116,30 +116,31 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		$this->print=(bool)$jinput->getInt('print',0);
 		$this->frmt=$jinput->getCmd('frmt','html');
 
-		$app = JFactory::getApplication();
-		//if(isset($params))
-			//$this->params=$params;
-		//else
-			$this->params=$app->getParams();
-
-		$this->Itemid=$jinput->getInt('Itemid',0);
-
-		if((int)$this->params->get( 'customitemid' )!=0)
-		$this->Itemid=(int)$this->params->get( 'customitemid' );
-
 	}
 
 
 	function load($params,$BlockExternalVars=false)
 	{
+		$app = JFactory::getApplication();
+		if(isset($params))
+			$this->params=$params;
+		else
+			$this->params=$app->getParams();
+		
+		$jinput=JFactory::getApplication()->input;
+		$this->Itemid=$jinput->getInt('Itemid',0);
+
+		if((int)$this->params->get( 'customitemid' )!=0)
+		$this->Itemid=(int)$this->params->get( 'customitemid' );
+		
 		$this->BlockExternalVars=$BlockExternalVars;
 
 		$this->useridfield='';
 		$this->useridfield_unique=false;
-		$this->params=$params;
+		
 
-		if((int)$this->params->get( 'customitemid' )!=0)
-		$this->Itemid=(int)$this->params->get( 'customitemid' );
+		//if((int)$this->params->get( 'customitemid' )!=0)
+		//$this->Itemid=(int)$this->params->get( 'customitemid' );
 
 		$this->es= new CustomTablesMisc;
 
@@ -229,11 +230,16 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		$this->esfields= ESFields::getFields($this->estableid);
 
 
-		$this->id=$this->processCustomListingID();
-
-		if($this->id==0 and !$BlockExternalVars and JFactory::getApplication()->input->getInt('listing_id',0))
-			$this->id= JFactory::getApplication()->input->getInt('listing_id', 0);
-
+		if($this->params->get('listingid')!=0)
+		{
+			$this->id=$this->processCustomListingID();
+		}
+		elseif(!$BlockExternalVars and $jinput->getInt('listing_id',0)!=0)
+		{
+			$this->id=$jinput->getInt('listing_id',0);
+			$this->id=$this->processCustomListingID();
+		}
+			
 		if($this->id==0 and $this->useridfield_uniqueusers and $this->useridfield!='')
 		{
 			//try to find record by userid
@@ -268,7 +274,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 			return $a;
 		}
 
-		//$this->row=$rows[0];
+		$this->row=$rows[0];
 		return $row['id'];
 
 	}
@@ -277,23 +283,24 @@ class CustomTablesModelEditItem extends JModelLegacy {
 	{
 		$db = JFactory::getDBO();
 
-		$id=$this->params->get('listingid');
+		if($this->id==0)
+			$this->id=$this->params->get('listingid');
 
-		if(is_numeric($id))
+		if(is_numeric($this->id))
 		{
-			$query = 'SELECT * FROM '.$this->tablename.' WHERE id='.(int)$id.' LIMIT 1';
+			$query = 'SELECT * FROM '.$this->tablename.' WHERE id='.(int)$this->id.' LIMIT 1';
 			$db->setQuery($query);
 			$rows=$db->loadAssocList();
 			if(count($rows)<1)
 				return -1;
 
 			$this->row=$rows[0];
-			$this->row['listing_id']=$id;
-			return $id;
+			$this->row['listing_id']=$this->id;
+			return $this->id;
 		}
 
 
-		$filter=$id;
+		$filter=$this->id;
 		if($filter=='')
 			return 0;
 
@@ -332,11 +339,11 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 		if(count($rows)<1)
 		{
-			$a=array();
-			return $a;
+			$this->row=array();;
+			return 0;
 		}
 
-		//$this->row=$rows[0];
+		$this->row=$rows[0];
 		return $row['id'];
 	}
 	
@@ -1817,18 +1824,12 @@ class CustomTablesModelEditItem extends JModelLegacy {
 				$i++;
 			}
 
-
-//echo '$EmailTo='.$EmailTo.'<br/>';
-//echo '$MailFrom='.$MailFrom.'<br/>';
 			$mail->IsHTML(true);
 			$mail->addRecipient($EmailTo);
 			$mail->setSender( array($MailFrom,$FromName) );
 			$mail->setSubject( $Subject);
 			$mail->setBody( $note_final );
 			
-			//print_r($mail);
-
-
 			foreach($this->esfields as $esfield)
 			{
 				if($esfield['type']=='file')
@@ -1846,8 +1847,6 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 			if ( $sent !== true ) {
 				//echo 'Something went wrong. Email not sent.';
-				//print_r($sent);
-	//			die;
 				JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_SENDING_EMAIL').': '.$EmailTo.' ('.$Subject.')', 'error');
 				$status=0;
 			}

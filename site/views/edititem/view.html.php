@@ -59,7 +59,7 @@ class CustomTablesViewEditItem extends JViewLegacy {
 
 		//	Fields
 		$this->assignRef('esfields',$Model->esfields);
-
+/*
 
 		// Rocord
 		$db = JFactory::getDBO();
@@ -104,9 +104,9 @@ class CustomTablesViewEditItem extends JViewLegacy {
 			}
 		    }
 		}
-
-		$this->assignRef('row',$row);
-		//$this->assignRef('row',$Model->row);
+*/
+		//$this->assignRef('row',$row);
+		$this->assignRef('row',$Model->row);
 
 		$WebsiteRoot=JURI::root(true);
 		if($WebsiteRoot=='' or $WebsiteRoot[strlen($WebsiteRoot)-1]!='/') //Root must have slash / in the end
