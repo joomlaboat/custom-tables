@@ -49,7 +49,12 @@ $edit = "index.php?option=com_customtables&view=listofrecords&task=records.edit"
 			$link='/administrator/index.php?option=com_customtables&view=records&task=records.edit&tableid='.$this->tableid.'&id='.$item->id;
 			
 			foreach($this->tablefields as $field)
-				$result.='<td><a href="'.$link.'">['.$field['fieldname'].']</a></td>';
+			{
+				if($field['type']=='text')
+					$result.='<td><a href="'.$link.'">['.$field['fieldname'].':words,50]</a></td>';
+				else
+					$result.='<td><a href="'.$link.'">['.$field['fieldname'].']</a></td>';
+			}
 		
 			$result=$this->processRecord($item_array,$result);
 				
