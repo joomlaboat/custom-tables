@@ -110,8 +110,6 @@ class JoomlaBasicMisc
 
 	}
 
-
-
 	public static function CreateUniqueID($categoryCode, $CreateDate)
 	{
 
@@ -133,14 +131,6 @@ class JoomlaBasicMisc
 		}while($db->getNumRows()>0);
 		return $ID;
 	}
-
-
-
-
-
-
-
-
 
 	public static function isUserAdmin()
 	{
@@ -178,7 +168,6 @@ class JoomlaBasicMisc
 
 
 	}
-
 
 	public static function getURLQueryOption($urlstr, $opt)
 	{
