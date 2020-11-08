@@ -113,7 +113,7 @@ class ESFields
 			if($fieldtype=='filebox')
 			{
 				//Create table
-				ESFields::CreateFileBoxTable($esfieldname);
+				ESFields::CreateFileBoxTable($esfieldname,$esfieldname);
 			}
 
 

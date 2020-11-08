@@ -39,6 +39,9 @@ class ESInputBox
 		$result='';
 
 		$value='';
+		
+		if($row==null)
+			$row=array();
 
 		if(count($row)==0)
 		{
