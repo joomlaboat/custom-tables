@@ -608,9 +608,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 						}
 						elseif($jinput->get('alpha','','STRING')!='')
 						{
-								$this->getAlphaWhere($jinput->get('alpha','','STRING'),$wherearr);
-
-
+							$this->getAlphaWhere($jinput->get('alpha','','STRING'),$wherearr);
 						}
 
 				}//if($moduleid!=0)
@@ -720,17 +718,8 @@ class CustomTablesModelCatalog extends JModelLegacy
 
 				$db->setQuery($query);
 				$db->execute();
-				//$db->setQuery($query);
-
-				//if (!
-				//$db->query())
-						//die ;
-
 
 				$this->TotalRows=$db->getNumRows();
-				//$rows=$db->loadObjectList();
-
-
 
 				$the_limit=(int)$this->getState('limit');
 				if($the_limit>20000)
@@ -990,117 +979,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 				return true;
 		}
 
-
-		function delete()
-		{
-			$jinput = JFactory::getApplication()->input;
-
-			$ids_str=$jinput->getString('ids','');
-			if($ids_str!='')
-			{
-				$ok=true;
-				$ids_=explode(',',$ids_str);
-				foreach($ids_ as $id)
-				{
-					if((int)$id!=0)
-					{
-						$id=(int)$id;
-						$isok=$this->deleteSingleRecord($id);
-						if(!$isok)
-						{
-							$ok=false;
-						}
-					}
-				}
-				return 	$ok;
-			}
-
-			if(!$jinput->getInt('listing_id',0))
-				return false;
-
-			$id=$jinput->getInt('listing_id',0);
-			if($id==0)
-				return false;
-
-			return $this->deleteSingleRecord($id);
-		}
-
-		protected function deleteSingleRecord($objectid)
-		{
-						$db = JFactory::getDBO();
-
-						//delete images if exist
-						require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'imagemethods.php');
-						$imagemethods=new CustomTablesImageMethods;
-
-						$query='SELECT * FROM #__customtables_table_'.$this->establename.' WHERE id='.$objectid;
-
-						$db->setQuery($query);
-						//if (!$db->query())   die ;
-						$rows=$db->loadAssocList();
-
-
-						if(count($rows)==0)
-						{
-
-								return false;
-						}
-
-						$row=$rows[0];
-
-
-						foreach($this->esfields as $esfield)
-						{
-								if($esfield['type']=='image')
-								{
-										//delete single image
-										$imagemethods->DeleteExistingSingleImage(
-												$row['es_'.$esfield['fieldname']],
-												$this->imagefolder,
-												$esfield['typeparams'],
-												$this->establename,
-												$esfield['fieldname']
-										);
-								}
-								elseif($esfield['type']=='imagegallery')
-								{
-										//delete gallery images if exist
-										$galleryname=$esfield['fieldname'];
-										$phototablename='#__customtables_gallery_'.$this->establename.'_'.$galleryname;
-
-										$query = 'SELECT photoid FROM '.$phototablename.' WHERE listingid='.$objectid;
-										$db->setQuery($query);
-										//if (!$db->query())    die ;
-										$photorows=$db->loadObjectList();
-
-										foreach($photorows as $photorow)
-										{
-												$imagemethods->DeleteExistingGalleryImage(
-														$this->imagefolder,
-														$this->imagegalleryprefix,
-														$this->estableid,
-														$galleryname,
-														$photorow->photoid,
-														$esfield['typeparams'],
-														true
-												);
-										}//foreach($photorows as $photorow)
-
-								}//elseif($esfield[type]=='imagegallery')
-						}//foreach($this->esfields as $esfield)
-
-						$query='DELETE FROM #__customtables_table_'.$this->establename.' WHERE id='.$objectid;
-						$db->setQuery($query);
-						$db->execute();
-
-						ESLogs::save($this->estableid,$objectid,5);
-
-						$this->doCustomPHP();
-
-						return true;
-
-		}
-
+/*
 		function doCustomPHP()
 		{
 			if($this->tablecustomphp!='')
@@ -1115,6 +994,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 			}
 			return true;
 		}
+		*/
 
 		function CleanUpPath($thePath)
 		{

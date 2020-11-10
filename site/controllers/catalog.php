@@ -44,274 +44,187 @@ else
 	}
 
 	$task = $jinput->getCmd('task');
+	
+	$app = JFactory::getApplication();
+	$params=$app->getParams();
+	$edit_model = $this->getModel('edititem');
+	$edit_model->params=$params;
+	
+	//Check Authorization
+	//3 - to delete
+	$PermissionIndexes=['clear'=>3,'delete'=>3,'copy'=>1,'refresh'=>1,'publish'=>2,'unpublish'=>2,'createuser'=>1];
+	$PermissionIndex=0;
+	if(in_array($task, $PermissionIndexes))
+		$PermissionIndex=$PermissionIndexes[$task];
+	
+	if (!$edit_model->CheckAuthorization($PermissionIndex))
+	{
+		// not authorized
+		if ($clean == 1)
+			die('not authorized');
+		else
+		{
+			JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
+			$link = $WebsiteRoot . 'index.php?option=com_users&view=login&return=' . $encodedreturnto;
+			$this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
+		}
+		die;// not authorized
+	}
+	
+	//Return link
+	if ($returnto != '')
+	{
+		$link = $decodedreturnto;
+		if (strpos($link, 'http:') === false and strpos($link, 'https:') === false)
+			$link.= $WebsiteRoot . $link;
+	}
+	else
+		$link = $WebsiteRoot . 'index.php?Itemid=' . $Itemid;
+	
+	//$link = JoomlaBasicMisc::curPageURL();
+	$link = str_replace('&task=refresh', '', $link);
+	$link = str_replace('?task=refresh', '?', $link);
+	$link = str_replace('&task=publish', '', $link);
+	$link = str_replace('?task=publish&', '?', $link);
+	
+	
+	$edit_model->load($params, false);
+		
 	switch ($task)
 	{
 		case 'clear':
-			$model = $this->getModel('edititem');
-			if (!$model->CheckAuthorization(3)) //3 is to delete
-			{
-				// not authorized
-				$link = $WebsiteRoot . 'index.php?option=com_users&view=login&return=' . $encodedreturnto;
-				$this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
-				die ;
-			}
+
+			$model = $this->getModel('catalog');
+			$model->load($params, false);
+
+			if ($model->getSearchResult())
+				$this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_DELETED'));
 			else
-			{
-				if ($returnto != '')
-				{
-					$link = $decodedreturnto;
-					if (strpos($link, 'http:') === false and strpos($link, 'https:') === false) $link.= $WebsiteRoot . $link;
-				}
-				else
-					$link = $WebsiteRoot . 'index.php?Itemid=' . $Itemid;
+				$this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_NOT_DELETED'), 'error');
 
-				$app = JFactory::getApplication();
-				$params = $app->getParams();
-				$model = $this->getModel('catalog');
-				$model->load($params, false);
-
-				if ($model->getSearchResult())
-				{
-					$msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_DELETED');
-					$this->setRedirect($link, $msg);
-				}
-				else
-				{
-					$msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_NOT_DELETED');
-					$this->setRedirect($link, $msg, 'error');
-				}
-			} //if(!$model->CheckAuthorization())
 		break;
 
 	case 'delete':
-		$model = $this->getModel('edititem');
-		if (!$model->CheckAuthorization(3)) //3 is to delete
+		
+		if ($edit_model->delete())
 		{
-			// not authorized
 			if ($clean == 1)
-			{
-				/** Alternatively you may use chaining */
-				JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
-				return;
-			}
+				die('deleted');
 			else
-			{
-				$link = $WebsiteRoot . 'index.php?option=com_users&view=login&return=' . $encodedreturnto;
-				$this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
-			}
-
-			die ;// not authorized
+				$this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_DELETED'));
 		}
 		else
 		{
-			if ($returnto != '')
-			{
-				$link = $decodedreturnto;
-				if (strpos($link, 'http:') === false and strpos($link, 'https:') === false) $link.= $WebsiteRoot . $link;
-			}
-			else $link = $WebsiteRoot . 'index.php?Itemid=' . $Itemid;
-			$app = JFactory::getApplication();
-			$params = $app->getParams();
-			$model = $this->getModel('catalog');
-			$model->load($params, false);
-			if ($model->delete())
-			{
-				if ($clean == 1)
-				{
-					echo 'deleted';
-					die ;
-				}
-				else
-				{
-					$msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_DELETED');
-					$this->setRedirect($link, $msg);
-				}
-			}
+			if ($clean == 1)
+				die('error');
 			else
-			{
-				if ($clean == 1)
-				{
-					echo 'error';
-					die ;
-				}
-				else
-				{
-					$msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_NOT_DELETED');
-					$this->setRedirect($link, $msg);
-				}
-			}
-		} //if(!$model->CheckAuthorization())
+				$this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_NOT_DELETED'), 'error');
+		}
+
 		break;
 
-	/*case 'getfile': UNUSED
-		require_once (JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'filelink.php');
-
-		getSecureFile();
-		*/
 	case 'copy':
-		$model = $this->getModel('edititem');
-		if (!$model->CheckAuthorization(1)) //3 is to delete
+		
+		if ($edit_model->copy($msg, $link))
 		{
-			// not authorized
-			$link = $WebsiteRoot . 'index.php?option=com_users&view=login&return=' . $encodedreturnto;
-			$this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
+			if ($clean == 1)
+				die('copied');
+			else
+				$this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_COPIED'));
 		}
 		else
 		{
-			if ($returnto != '')
-			{
-				$link = $decodedreturnto;
-				if (strpos($link, 'http:') === false and strpos($link, 'https:') === false) $link.= $WebsiteRoot . $link;
-			}
-			else $link = $WebsiteRoot . 'index.php?Itemid=' . $Itemid;
-			$app = JFactory::getApplication();
-			$params = $app->getParams();
-			$model->load($params);
-			if ($model->copy($msg, $link))
-			{
-				$msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_COPIED');
-				$this->setRedirect($link, $msg);
-			}
+			if ($clean == 1)
+				die('error');
 			else
-			{
-				$msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_NOT_COPIED');
-				$this->setRedirect($link, $msg, 'error');
-			}
-		} //if(!$model->CheckAuthorization())
+				$this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_NOT_COPIED'), 'error');
+		}
+
 		break;
 
 	case 'refresh':
-		$model = $this->getModel('edititem');
-		if (!$model->CheckAuthorization(1))
-		{
-			// not authorized
-			if ($clean == 1)
-			{
-				echo 'not authorized';
-				die ;
-			}
-			else
-			{
-				$link = $WebsiteRoot . 'index.php?option=com_users&view=login&return=' . $encodedreturnto;
-				$this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
-			}
 
-			die ;
+		if ($edit_model->Refresh())
+		{
+			if ($clean == 1)
+				die('refreshed');
+			else
+				$this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_REFRESHED'));
 		}
 		else
 		{
-			$link = JoomlaBasicMisc::curPageURL();
-			$link = str_replace('&task=refresh', '', $link);
-			$link = str_replace('?task=refresh', '?', $link);
-			$app = JFactory::getApplication();
-			$params = $app->getParams();
-
-			$model->load($params, false);
-			if ($model->Refresh())
-			{
-				if ($clean == 1)
-				{
-					echo 'refreshed';
-					die ;
-				}
-				else
-				{
-					$msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_REFRESHED');
-					$this->setRedirect($link, $msg);
-				}
-			}
+			if ($clean == 1)
+				die('error');
 			else
-			{
-				if ($clean == 1)
-				{
-					echo 'error';
-					die ;
-				}
-				else
-				{
-					$msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_NOT_REFRESHED');
-					$this->setRedirect($link, $msg, 'error');
-				}
-			}
-		} //if(!$model->CheckAuthorization())
-
+				$this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_NOT_REFRESHED'), 'error');
+		}
 		break;
 
 	case 'publish':
-		$model = $this->getModel('edititem');
-		if (!$model->CheckAuthorization(2)) //2 - publish
+
+		if ($edit_model->setPublishStatus(1))
 		{
-			// not authorized
-			$link = $WebsiteRoot . 'index.php?option=com_users&view=login&return=' . $encodedreturnto;
-			$this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
+			if ($clean == 1)
+				die('published');
+			else
+				$this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_PUBLISHED'));
 		}
 		else
 		{
-			$app = JFactory::getApplication();
-			$params = $app->getParams();
-			$model->load($params);
-			$model->setPublishStatus(1);
-			$link = JoomlaBasicMisc::curPageURL();
-			$link = str_replace('&task=publish', '', $link);
-			$link = str_replace('?task=publish&', '?', $link);
-			$this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_PUBLISHED'));
-		} //if(!$model->CheckAuthorization())
+			if ($clean == 1)
+				die('error');
+			else
+				$this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_NOT_PUBLISHED'), 'error');
+		}
+		
 		break;
 
 	case 'unpublish':
-		$model = $this->getModel('edititem');
-		if (!$model->CheckAuthorization(2))
+		
+		if ($edit_model->setPublishStatus(0))
 		{
-
-			// not authorized
-
-			$link = $WebsiteRoot . 'index.php?option=com_users&view=login&return=' . $encodedreturnto;
-			$this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
+			if ($clean == 1)
+				die('unpublished');
+			else
+				$this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_UNPUBLISHED'));
 		}
 		else
 		{
-			$app = JFactory::getApplication();
-			$params = $app->getParams();
-			$model->load($params);
-			$model->setPublishStatus(0);
-			$link = JoomlaBasicMisc::curPageURL();
-			$link = str_replace('&task=unpublish', '', $link);
-			$link = str_replace('?task=unpublish&', '?', $link);
-			$this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_UNPUBLISHED'));
-		} //if(!$model->CheckAuthorization())
+			if ($clean == 1)
+				die('error');
+			else
+				$this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_NOT_PUBLISHED'), 'error');
+		}
+		
 		break;
 
 	case 'createuser':
-		$model = $this->getModel('edititem');
-		if (!$model->CheckAuthorization(1)) //1 - edit permissions
+		
+		//publishing the record will refresh its field values and will create user account if conditions are met.
+		if ($edit_model->setPublishStatus(1))
 		{
-
-			// not authorized
-
-			$link = $WebsiteRoot . 'index.php?option=com_users&view=login&return=' . $encodedreturnto;
-			$this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
+			if ($clean == 1)
+				die('user created');
+			else
+				$this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_USER_CREATED'));
 		}
 		else
 		{
-			$app = JFactory::getApplication();
-			$params = $app->getParams();
-			$model->load($params);
-			$model->setPublishStatus(1);
-			$link = JoomlaBasicMisc::curPageURL();
-			$link = str_replace('&task=publish', '', $link);
-			$link = str_replace('?task=publish&', '?', $link);
-			$this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_PUBLISHED'));
-		} //if(!$model->CheckAuthorization())
+			if ($clean == 1)
+				die('error');
+			else
+				$this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_USER_NOT_CREATED'), 'error');
+		}
+
 		break;
 
 	default:
-		$app = JFactory::getApplication();
-		$params = $app->getParams();
+		
 		if ($task == 'cart_addtocart' or $task == 'cart_form_addtocart' or $task == 'cart_setitemcount' or $task == 'cart_deleteitem' or $task == 'cart_emptycart')
 		{
 			$model = $this->getModel('catalog');
 			$model->load($params, false);
-			if ($model->params->get('cart_returnto')) $link = $model->params->get('cart_returnto');
+			if ($params->get('cart_returnto')) $link = $params->get('cart_returnto');
 			else
 			{
 				$theLink = JoomlaBasicMisc::curPageURL();
@@ -331,27 +244,27 @@ else
 			{
 			case 'cart_addtocart':
 				$result = $model->cart_addtocart();
-				if ($model->params->get('cart_msgitemadded')) $param_msg = $model->params->get('cart_msgitemadded');
+				if ($params->get('cart_msgitemadded')) $param_msg = $params->get('cart_msgitemadded');
 				break;
 
 			case 'cart_form_addtocart':
 				$result = $model->cart_form_addtocart();
-				if ($model->params->get('cart_msgitemadded')) $param_msg = $model->params->get('cart_msgitemadded');
+				if ($params->get('cart_msgitemadded')) $param_msg = $params->get('cart_msgitemadded');
 				break;
 
 			case 'cart_setitemcount':
 				$result = $model->cart_setitemcount();
-				if ($model->params->get('cart_msgitemupdated')) $param_msg = $model->params->get('cart_msgitemupdated');
+				if ($params->get('cart_msgitemupdated')) $param_msg = $params->get('cart_msgitemupdated');
 				break;
 
 			case 'cart_deleteitem':
 				$result = $model->cart_deleteitem();
-				if ($model->params->get('cart_msgitemdeleted')) $param_msg = $model->params->get('cart_msgitemdeleted');
+				if ($params->get('cart_msgitemdeleted')) $param_msg = $params->get('cart_msgitemdeleted');
 				break;
 
 			case 'cart_emptycart':
 				$result = $model->cart_emptycart();
-				if ($model->params->get('cart_msgitemupdated')) $param_msg = $model->params->get('cart_msgitemupdated');
+				if ($params->get('cart_msgitemupdated')) $param_msg = $params->get('cart_msgitemupdated');
 				break;
 			}
 
@@ -372,7 +285,9 @@ else
 				$this->setRedirect($link, $msg, 'error');
 			}
 		}
-		else parent::display();
+		else
+			parent::display();
+		
 		break;
 	}
 }
