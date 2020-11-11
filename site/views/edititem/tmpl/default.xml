@@ -88,15 +88,26 @@
 		</fieldset>
 
 
+	<fieldset
+		name="permissions"
+		label="JCONFIG_PERMISSIONS_LABEL"
+		description="JCONFIG_PERMISSIONS_DESC"
+	>
 
-<!--
-		<fieldset name="CreateUser">
-			<field type="text" name="emailfield" default="" label="Email Field" description="" />
-			<field type="text" name="fullnamefield" default="" label="Fullname Field" description="" />
-			<field type="usergroup" name="user_group" default="" label="User Group" description="" />
+		<field name="asset_id" type="hidden" filter="unset" /> 
+<field
+			name="rules"
+			type="rules"
+			label="JCONFIG_PERMISSIONS_LABEL"
+			class="inputbox"
+			validate="rules"
+			filter="rules"
+			component="com_customtables"
+			section="catalog"
+			/>
+
 		</fieldset>
 
--->
 		</fields>
 
 

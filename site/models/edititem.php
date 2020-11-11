@@ -495,9 +495,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		if($action==4)
 			$this->userGroup = $this->add_userGroup;
 
-
 		$this->isAutorized=false;
-
 
 		if($this->userid==0)
 		{
@@ -530,7 +528,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 		if($theAnswerIs==false)
 		{
-			$this->isAutorized=JoomlaBasicMisc::checkUserGroupAccess($this->publish_userGroup);
+			$this->isAutorized=JoomlaBasicMisc::checkUserGroupAccess($this->userGroup);
 			return $this->isAutorized;
 		}
 
@@ -1846,7 +1844,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 			$sent = $mail->Send();
 
 			if ( $sent !== true ) {
-				//echo 'Something went wrong. Email not sent.';
+				//Something went wrong. Email not sent.
 				JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_SENDING_EMAIL').': '.$EmailTo.' ('.$Subject.')', 'error');
 				$status=0;
 			}

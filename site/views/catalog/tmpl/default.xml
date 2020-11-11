@@ -10,7 +10,7 @@
 		
 
         <fields name="params" addfieldpath="/components/com_customtables/fields">
-			
+
 			<fieldset name="PARAMS"  addfieldpath="/components/com_customtables/fields">	
 				<field type="estable" name="establename" default="" label="Table" description="Select Table" />
 				
@@ -42,7 +42,7 @@ description="Type field name to sort by and the order. Example 1: 'title desc' E
 			</fieldset>
 			
 			<fieldset name="FILTERS">
-				<field type="text" name="useridfield" default="" label="Custom UserID Field" description="Leave it blank if you have only one UserID field." />
+				<field type="text" name="useridfield" default="" label="COM_CUSTOMTABLES_MENU_CUSTOM_USERID_FIELD" description="Leave it blank if you have only one UserID field." />
 				<field type="text" name="filter" filter="raw" default="" label="Search Parameter"
 				description="
 		field to search in = (or &#60; or &#60;= or &#62; or &#62;= or != and == 'exact match') 
@@ -116,9 +116,32 @@ Example 2: 'birthdate:%m%d DESC' to get the month and the day of the field value
 			<field type="esemaillayout" name="onrecordaddsendemaillayout" default="" label="Email Layout" description="Email Layout" />
 			
 			<field type="string" name="emailsentstatusfield" default="" label="Email Sent Status Field" description="Field Name where to save the email sending status. Should be int or checkbox type. 1- sent, 0- not sent." />
+
+
 			
 			</fieldset>
 			
+
+	<fieldset
+		name="permissions"
+		label="JCONFIG_PERMISSIONS_LABEL"
+		description="JCONFIG_PERMISSIONS_DESC"
+	>
+
+		<field name="asset_id" type="hidden" filter="unset" /> 
+<field
+			name="rules"
+			type="rules"
+			label="JCONFIG_PERMISSIONS_LABEL"
+			class="inputbox"
+			validate="rules"
+			filter="rules"
+			component="com_customtables"
+			section="catalog"
+			/>
+
+		</fieldset>
+
 <!--						
 			<fieldset name="SHOPPING_CART">
 				<field type="list" name="showcartitemsonly" default="0" label="Shoping Cart Only" description="Show Items in the Shoping Cart Only" >
@@ -134,33 +157,7 @@ Example 2: 'birthdate:%m%d DESC' to get the month and the day of the field value
 -->			
 			
 			
-<!--			
-			<fieldset name="OBSOLETE">
-				
-				<field type="text" name="columns" default="1" label="Columns" description="Number of columns" />
-				<field type="list" name="linktodetails" default="0" label="Link to Detailed page" description="" >
-					<option value="1">Show</option>
-					<option value="0">Hide</option>
-				</field>
-				<field type="list" name="allowprint" default="0" label="Allow Print" description="If Yes then it will show the Print button in catalog and in detailed page if applicable" >
-				    <option value="1">Yes</option>
-					<option value="0">No</option>
-				</field>
-				<field type="list" name="shownavigation" default="1" label="Navigation" description="Navigation or filters" >
-				    <option value="1">Yes</option>
-					<option value="0">No</option>
-				</field>
-			
-				<field type="list" name="showpagination" default="1" label="Pagination" description="Pagination, show page (Previous 1.2.6 Next)" >
-				    <option value="1">Yes</option>
-					<option value="0">No</option>
-				</field>
-			
-				<field type="textarea" filter="raw" rows="10" cols="50"  name="pagelayout" default="" label="Custom Page Layout" description="" />
-				<field type="textarea" filter="raw" rows="10" cols="50"  name="cataloglayout" default="" label="Custom Card Layout" description="Custom Card layout, overwrites catalog layout." />
-			
-			</fieldset>
--->
+
         </fields>
 	
 </metadata>
