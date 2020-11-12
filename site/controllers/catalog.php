@@ -58,7 +58,7 @@ else
 		//$PermissionWord=$PermissionWords[$task];
 	
 	if (array_key_exists($task,$PermissionIndexes))
-		$PermissionWord=$PermissionIndexes[$task];
+		$PermissionIndex=$PermissionIndexes[$task];
 	
 	if($task!='')
 	{

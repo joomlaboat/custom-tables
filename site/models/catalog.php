@@ -533,8 +533,8 @@ class CustomTablesModelCatalog extends JModelLegacy
 
 
 
-		function getSearchResult($addition_filter='')
-		{
+	function getSearchResult($addition_filter='')
+	{
 
 			$this->PathValue='';
 			$jinput = JFactory::getApplication()->input;
@@ -678,98 +678,83 @@ class CustomTablesModelCatalog extends JModelLegacy
 
 		$inner=array();
 
-
-
-		$query = 'SELECT *, '.$tablename.'.id  as  listing_id, '.$tablename.'.published AS listing_published  ';
-
-
-
 		//to fullfill the "Clear" task
 		if($jinput->get('task','','CMD')=='clear')
 		{
-				$cQuery='DELETE FROM '.$tablename.' '.$where;
-				$db->setQuery($cQuery);
-				$db->execute();
+			$cQuery='DELETE FROM '.$tablename.' '.$where;
+			$db->setQuery($cQuery);
+			$db->execute();
 
-				return true;
+			return true;
 		}
 
 		$ordering=array();
+		
 		if($this->groupby!='')
 				$ordering[]='es_'.$this->groupby;
-
-
 
 
 		if($this->esordering)
 			CTOrdering::getOrderingQuery($ordering,$query,$inner,$this->esordering,$this->langpostfix,$tablename);
 
-				$query.=' FROM '.$tablename.' ';
+		$query_selects='*, '.$tablename.'.id  as  listing_id, '.$tablename.'.published AS listing_published';
+		$query='SELECT '.$query_selects.' FROM '.$tablename.' ';
+		$query.=implode(' ',$inner).' ';
+		$query.=$where.' ';
+		$query.=' GROUP BY listing_id ';
 
-				$query.=implode(' ',$inner).' ';
+		$query_analytical='SELECT COUNT(id) AS count FROM '.$tablename.' '.$where;
 
-				$query.=$where.' ';
+		if(count($ordering)>0)
+			$query.=' ORDER BY '.implode(',',$ordering);
 
-				$query.=' GROUP BY listing_id ';
+		$db->setQuery($query_analytical);
+		$rows=$db->loadObjectList();
+		if(count($rows)==0)
+			$this->TotalRows=0;
+		else
+			$this->TotalRows=$rows[0]->count;
+		
+		$this->recordlist=array();
+		
+		if($this->TotalRows>0)
+		{
+			$the_limit=(int)$this->getState('limit');
+			if($the_limit>20000)
+				$the_limit=20000;
 
-				if(count($ordering)>0)
-						$query.=' ORDER BY '.implode(',',$ordering);
-
-
-				$db->setQuery($query);
-				$db->execute();
-
-				$this->TotalRows=$db->getNumRows();
-
-				$the_limit=(int)$this->getState('limit');
-				if($the_limit>20000)
-						$the_limit=20000;
-
-				if($the_limit==0)
-				{
-						$the_limit=20000;
-				}
+			if($the_limit==0)
+				$the_limit=20000; //or we will run out of memory
 				
-				$this->limit=$the_limit;
+			$this->limit=$the_limit;
 
-				if(!$this->blockExternalVars and $the_limit!=0)
-				{
-					if($this->TotalRows<$this->limitstart or $this->TotalRows<$the_limit)
-						$this->limitstart=0;
+			if(!$this->blockExternalVars and $the_limit!=0)
+			{
+				if($this->TotalRows<$this->limitstart or $this->TotalRows<$the_limit)
+					$this->limitstart=0;
 
-								$db->setQuery($query, $this->limitstart, $the_limit);
-								//if (!$db->query())    die ;
-						
+				$db->setQuery($query, $this->limitstart, $the_limit);
+			}
+			else
+			{
+				if($the_limit>0)
+					$db->setQuery($query, 0, $the_limit);
+			}
 
-						$rows=$db->loadAssocList();
-
-				}
-				else
-				{
-						if($the_limit>0)
-						{
-							$db->setQuery($query, 0, $the_limit);
-							//if (!$db->query())    die ;
-						}
-
-						$rows=$db->loadAssocList();
-				}
-
-				$this->recordlist=array();
-				foreach($rows as $row)
-					$this->recordlist[]=$row['id'];
-
-				$this->LayoutProc->recordlist=implode(',',$this->recordlist);
-
-
-
-			$this->PathValue=$PathValue;
-
-				return $rows;
-
-
-
+			$rows=$db->loadAssocList();
+			
+			foreach($rows as $row)
+				$this->recordlist[]=$row['id'];
 		}
+		else
+			$rows=array();
+		
+		$this->LayoutProc->recordlist=implode(',',$this->recordlist);
+
+		$this->PathValue=$PathValue;
+
+		return $rows;
+	}
 
 
 		function cart_emptycart()
