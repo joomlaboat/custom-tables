@@ -117,31 +117,9 @@ Example 2: 'birthdate:%m%d DESC' to get the month and the day of the field value
 			
 			<field type="string" name="emailsentstatusfield" default="" label="Email Sent Status Field" description="Field Name where to save the email sending status. Should be int or checkbox type. 1- sent, 0- not sent." />
 
-
 			
 			</fieldset>
 			
-
-	<fieldset
-		name="permissions"
-		label="JCONFIG_PERMISSIONS_LABEL"
-		description="JCONFIG_PERMISSIONS_DESC"
-	>
-
-		<field name="asset_id" type="hidden" filter="unset" /> 
-<field
-			name="rules"
-			type="rules"
-			label="JCONFIG_PERMISSIONS_LABEL"
-			class="inputbox"
-			validate="rules"
-			filter="rules"
-			component="com_customtables"
-			section="catalog"
-			/>
-
-		</fieldset>
-
 <!--						
 			<fieldset name="SHOPPING_CART">
 				<field type="list" name="showcartitemsonly" default="0" label="Shoping Cart Only" description="Show Items in the Shoping Cart Only" >

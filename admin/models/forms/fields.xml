@@ -280,26 +280,4 @@
                         <!-- No Manual Options Were Added In Field Settings.-->
                 </field>
         </fieldset>
-
-	<!-- Access Control Fields. -->
-	<fieldset name="accesscontrol">
-		<!-- Asset Id Field. Type: Hidden (joomla) -->
-		<field
-			name="asset_id"
-			type="hidden"
-			filter="unset"
-		/>
-		<!-- Rules Field. Type: Rules (joomla) -->
-		<field
-			name="rules"
-			type="rules"
-			label="Permissions in relation to this fields"
-			translate_label="false"
-			filter="rules"
-			validate="rules"
-			class="inputbox"
-			component="com_customtables"
-			section="fields"
-		/>
-	</fieldset>
 </form>

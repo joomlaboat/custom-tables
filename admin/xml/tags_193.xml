@@ -511,7 +511,7 @@
                     <option value="refresh" label="Refresh"/>
                     <option value="delete" label="Delete"/>
                     <option value="publish" label="Publish/Unpublish"/>
-                    <option value="imagegallery" label="Image Gallery"/>
+                    <option value="gallery" label="Image Gallery"/>
                     <option value="filebox" label="File Box"/>
                 </param>
             </params>

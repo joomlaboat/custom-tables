@@ -28,6 +28,7 @@ class CustomtablesControllerTables extends JControllerForm
 	 * @note   Replaces _task.
 	 */
 	protected $task;
+	
 
 	public function __construct($config = array())
 	{
@@ -48,6 +49,9 @@ class CustomtablesControllerTables extends JControllerForm
 	{		// In the absense of better information, revert to the component permissions.
 		return parent::allowAdd($data);
 	}
+
+	
+
 
 	/**
 	 * Method override to check if you can edit an existing record.
@@ -175,6 +179,16 @@ class CustomtablesControllerTables extends JControllerForm
 
 		return parent::batch($model);
 	}
+
+/*
+	public function storepermissions($data = array())
+	{
+		$a=json_encode($_POST);
+		
+		echo '{"a":"'.base64_encode($a).'","text":"LLLLLNot Allowed (Inherited)","class":"label label-important","result":true}';
+		die;
+	}
+*/	
 
 	/**
 	 * Method to cancel an edit.

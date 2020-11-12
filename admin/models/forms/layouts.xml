@@ -62,23 +62,6 @@
                        default="0"
                        size="6"
                        required="false" />
-                <!-- Version Field. Type: Text (joomla)-->
-		<!--                <field name="version"
-                       type="text"
-                       class="readonly"
-                       label="COM_CUSTOMTABLES_LAYOUTS_VERSION_LABEL"
-                       description="COM_CUSTOMTABLES_LAYOUTS_VERSION_DESC"
-                       size="6"
-                       readonly="true"
-                       filter="unset" />-->
-                <!-- Dynamic Fields.-->
-                <!-- Tableid Field. Type: Sql. (joomla)-->
-
-<!--                       query="SELECT id, tabletitle AS title FROM #__customtables_tables"
-                       key_field="id"
-                       value_field="title"
-
--->
 
                 <field type="cttable"
                        name="tableid"
@@ -113,7 +96,6 @@
 			onchange="updateTagsParameters();"
 		>
                         <!-- Option Set.-->
-<!--			<option value="">COM_CUSTOMTABLES_FIELDS_SELECT_LABEL</option>-->
                         <option value="1">COM_CUSTOMTABLES_LAYOUTS_SIMPLE_CATALOG</option>
                         <option value="5">COM_CUSTOMTABLES_LAYOUTS_CATALOG_PAGE</option>
                         <option value="6">COM_CUSTOMTABLES_LAYOUTS_CATALOG_ITEM</option>
@@ -123,7 +105,7 @@
                         <option value="7">COM_CUSTOMTABLES_LAYOUTS_EMAIL_MESSAGE</option>
                         <option value="8">COM_CUSTOMTABLES_LAYOUTS_XML</option>
                         <option value="9">COM_CUSTOMTABLES_LAYOUTS_CSV</option>
-						<option value="10">COM_CUSTOMTABLES_LAYOUTS_JSON</option>
+			<option value="10">COM_CUSTOMTABLES_LAYOUTS_JSON</option>
 
                 </field>
                 <!-- Layoutcode Field. Type: Textarea. (joomla)-->
@@ -136,27 +118,4 @@
                        hint="COM_CUSTOMTABLES_LAYOUTS_LAYOUTCODE_HINT"
                        required="false" />
         </fieldset>
-
-	<!-- Access Control Fields. -->
-
-	<!--<fieldset name="accesscontrol">-->
-		<!-- Asset Id Field. Type: Hidden (joomla) -->
-		<!--<field
-			name="asset_id"
-			type="hidden"
-			filter="unset"
-		/>-->
-		<!-- Rules Field. Type: Rules (joomla) -->
-		<!--<field
-			name="rules"
-			type="rules"
-			label="Permissions in relation to this layouts"
-			translate_label="false"
-			filter="rules"
-			validate="rules"
-			class="inputbox"
-			component="com_customtables"
-			section="layouts"
-		/>
-	</fieldset>-->
 </form>

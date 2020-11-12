@@ -52,10 +52,6 @@ class CustomTablesModelEditPhotos extends JModelLegacy {
 	var $maxfilesize;
 
 	var $phototablename;
-	/*function load()
-	{
-
-	}*/
 
 	function __construct()
 	{
@@ -143,7 +139,10 @@ class CustomTablesModelEditPhotos extends JModelLegacy {
 
 		$this->imagefolderweb=$this->imagefolderword;
 		$this->imagefolder=JPATH_SITE.str_replace('/',DIRECTORY_SEPARATOR,$this->imagefolderword);
-
+		//Create folder if not exists
+		if (!file_exists($this->imagefolder))
+				mkdir($this->imagefolder, 0755, true);
+			
 		$this->GalleryParams=$row->typeparams;
 
 		return true;

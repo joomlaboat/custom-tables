@@ -1,15 +1,12 @@
-/*-------------------------------------------------------------------------------------------------------/
-
-	@version		1.7.4
-	@build			1st July, 2018
-	@created		24th May, 2018
-	@package		Custom Tables
-	@subpackage		submitbutton.js
-	@author			Ivan Komlev <https://joomlaboat.com>	
-	@copyright		Copyright (C) 2018. All Rights Reserved
-	@license		GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
-
-/------------------------------------------------------------------------------------------------------*/
+/**
+ * CustomTables Joomla! 3.x Native Component
+ * @package Custom Tables
+ * @subpackage view.html.php
+ * @author Ivan komlev <support@joomlaboat.com>
+ * @link http://www.joomlaboat.com
+ * @copyright Copyright (C) 2018-2020. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
+ **/
 
 Joomla.submitbutton = function(task)
 {

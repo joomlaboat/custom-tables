@@ -24,14 +24,13 @@
 		<action name="tables.dashboard_list" title="COM_CUSTOMTABLES_LISTOFTABLES_DASHBOARD_LIST" description="COM_CUSTOMTABLES_LISTOFTABLES_DASHBOARD_LIST_DESC" />
 		<action name="tables.submenu" title="COM_CUSTOMTABLES_LISTOFTABLES_SUBMENU" description="COM_CUSTOMTABLES_LISTOFTABLES_SUBMENU_DESC" />
 	</section>
-	<section name="catalog">
+	<section name="tables">
         <!-- Actions to be used in for unit -->
-		<action name="core.create" title="JACTION_CREATE" description="COM_CUSTOMTABLES_ACCESS_CREATE_DESC" />
-		<action name="core.edit" title="JACTION_EDIT" description="COM_CUSTOMTABLES_ACCESS_EDIT_DESC" />
-		<action name="core.edit.own" title="JACTION_EDITOWN" description="COM_CUSTOMTABLES_ACCESS_EDITOWN_DESC" />
-		<action name="core.edit.state" title="JACTION_EDITSTATE" description="COM_CUSTOMTABLES_ACCESS_EDITSTATE_DESC" />
-		<action name="core.delete" title="JACTION_DELETE" description="COM_CUSTOMTABLES_ACCESS_DELETE_DESC" />
-		<action name="core.update" title="COM_CUSTOMTABLES_REFRESH" description="COM_CUSTOMTABLES_ACCESS_REFRESH_DESC" />
+		<action name="record.create" title="JACTION_CREATE" description="COM_CUSTOMTABLES_ACCESS_CREATE_DESC" />
+		<action name="record.edit" title="JACTION_EDIT" description="COM_CUSTOMTABLES_ACCESS_EDIT_DESC" />
+		<action name="record.edit.own" title="JACTION_EDITOWN" description="COM_CUSTOMTABLES_ACCESS_EDITOWN_DESC" />
+		<action name="record.edit.state" title="JACTION_EDITSTATE" description="COM_CUSTOMTABLES_ACCESS_EDITSTATE_DESC" />
+		<action name="record.delete" title="JACTION_DELETE" description="COM_CUSTOMTABLES_ACCESS_DELETE_DESC" />
+		<action name="record.update" title="COM_CUSTOMTABLES_REFRESH" description="COM_CUSTOMTABLES_ACCESS_REFRESH_DESC" />
 	</section>    
-
 </access>

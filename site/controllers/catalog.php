@@ -12,7 +12,7 @@ defined('_JEXEC') or die('Restricted access');
 
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'misc.php');
 
-
+$jinput = JFactory::getApplication()->input;
 
 $clean = $jinput->getInt('clean');
 $WebsiteRoot = JURI::root(true);
@@ -40,22 +40,39 @@ else
 
 	$task = $jinput->getCmd('task');
 	
+	
+	
 	$app = JFactory::getApplication();
 	$params=$app->getParams();
 	$edit_model = $this->getModel('edititem');
 	$edit_model->params=$params;
-	$edit_model->id=$listing_id = $jinput->getInt('listing_id');
+	$edit_model->id = $jinput->getInt('listing_id');
 	
 	//Check Authorization
 	//3 - to delete
 	$PermissionIndexes=['clear'=>3,'delete'=>3,'copy'=>4,'refresh'=>1,'publish'=>2,'unpublish'=>2,'createuser'=>1];
+	//$PermissionWords=['clear'=>'core.delete','delete'=>'core.delete','copy'=>'core.create','refresh'=>'core.edit','publish'=>'core.edit.state','unpublish'=>'core.edit.state','createuser'=>'core.edit'];
 	$PermissionIndex=0;
+	//$PermissionWord='';
+	//if (array_key_exists($task,$PermissionWords))
+		//$PermissionWord=$PermissionWords[$task];
+	
 	if (array_key_exists($task,$PermissionIndexes))
-		$PermissionIndex=$PermissionIndexes[$task];
+		$PermissionWord=$PermissionIndexes[$task];
 	
 	if($task!='')
 	{
-		if ($edit_model->CheckAuthorization($PermissionIndex))
+		/*
+		if (JFactory::getUser()->authorise('core.admin', 'com_helloworld')) 
+					<action name="core.create" title="JACTION_CREATE" description="COM_CUSTOMTABLES_ACCESS_CREATE_DESC" />
+		<action name="core.edit" title="JACTION_EDIT" description="COM_CUSTOMTABLES_ACCESS_EDIT_DESC" />
+		<action name="core.edit.own" title="JACTION_EDITOWN" description="COM_CUSTOMTABLES_ACCESS_EDITOWN_DESC" />
+		<action name="core.edit.state" title="JACTION_EDITSTATE" description="COM_CUSTOMTABLES_ACCESS_EDITSTATE_DESC" />
+		<action name="core.delete" title="JACTION_DELETE" description="COM_CUSTOMTABLES_ACCESS_DELETE_DESC" />
+		<action name="core.update" title="COM_CUSTOMTABLES_REFRESH" description="COM_CUSTOMTABLES_ACCESS_REFRESH_DESC" />
+*/
+		//if ($edit_model->CheckAuthorizationACL($PermissionWord))
+		if ($edit_model->CheckAuthorization($PermissionWord))
 		{
 			$redirect=doTheTask($task,$params,$edit_model,$WebsiteRoot,$clean);
 			$this->setRedirect($redirect->link, $redirect->msg, $redirect->status);

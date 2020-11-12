@@ -534,6 +534,48 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 		return true;
 	}
+	
+	
+	function CheckAuthorizationACL($access)
+	{
+		echo '$access='.$access.'<br/>';
+		
+		$this->isAutorized=false;
+		$this->isUserAdministrator=false;
+		
+		if($access=='core.edit' and $this->id==0)
+			$access='core.create'; //add new
+
+
+		$user = JFactory::getUser();
+
+		if($this->establename=='')
+			$this->establename=$this->params->get( 'establename' ); //-- use this only
+
+		
+		if ($user->authorise($access, 'com_customtables')) 
+		{
+			$this->isAutorized=true;
+			return true;
+		}
+		
+		if($access!='core.edit')
+			return false;
+
+		if($this->useridfield!='')
+		{
+			if($this->checkIfItemBelongsToUser($this->useridfield))
+			{
+				if ($user->authorise('core.edit.own', 'com_customtables')) 
+				{
+					$this->isAutorized=true;
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
 
 	function findUserIDField()
 	{

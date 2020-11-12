@@ -49,7 +49,4 @@
 
         </fieldset>
 	
-	<!-- Access Control Fields. -->
-	<fieldset name="accesscontrol">
-	</fieldset>
 </form>

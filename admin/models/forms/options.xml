@@ -71,26 +71,4 @@
 
 
         </fieldset>
-
-	<!-- Access Control Fields. -->
-	<fieldset name="accesscontrol">
-		<!-- Asset Id Field. Type: Hidden (joomla) -->
-		<field
-			name="asset_id"
-			type="hidden"
-			filter="unset"
-		/>
-		<!-- Rules Field. Type: Rules (joomla) -->
-		<field
-			name="rules"
-			type="rules"
-			label="Permissions in relation to this tables"
-			translate_label="false"
-			filter="rules"
-			validate="rules"
-			class="inputbox"
-			component="com_customtables"
-			section="options"
-		/>
-	</fieldset>
 </form>

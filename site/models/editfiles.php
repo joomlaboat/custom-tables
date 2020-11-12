@@ -143,9 +143,11 @@ class CustomTablesModelEditFiles extends JModelLegacy {
 		$this->fileboxfolderweb='images/'.$pair[1];
 
 		$this->fileboxfolder=JPATH_SITE.DIRECTORY_SEPARATOR.str_replace('/',DIRECTORY_SEPARATOR,$this->fileboxfolderweb);
+		//Create folder if not exists
+		if (!file_exists($this->fileboxfolder))
+			mkdir($this->fileboxfolder, 0755, true);
 
 		$this->FileBoxTitle=$row->title;
-
 
 		return true;
 	}

@@ -137,6 +137,7 @@
 			name="asset_id"
 			type="hidden"
 			filter="unset"
+			ajaxuri="bugaba"
 		/>
 		<!-- Rules Field. Type: Rules (joomla) -->
 		<field

@@ -61,39 +61,6 @@ $componentParams = JComponentHelper::getParams('com_customtables');
 		</div>
 	<?php echo JHtml::_('bootstrap.endTab'); ?>
 
-	<?php /* if ($this->canDo->get('core.delete') || $this->canDo->get('core.edit.created_by') || $this->canDo->get('core.edit.state') || $this->canDo->get('core.edit.created')) : ?>
-	<?php echo JHtml::_('bootstrap.addTab', 'categoriesTab', 'publishing', JText::_('COM_CUSTOMTABLES_CATEGORIES_PUBLISHING', true)); ?>
-		<div class="row-fluid form-horizontal-desktop">
-			<div class="span6">
-				<?php echo JLayoutHelper::render('categories.publishing', $this); ?>
-			</div>
-			<div class="span6">
-				<?php echo JLayoutHelper::render('categories.publlshing', $this); ?>
-			</div>
-		</div>
-	<?php echo JHtml::_('bootstrap.endTab'); ?>
-	<?php endif;*/ ?>
-
-	<?php /* if ($this->canDo->get('core.admin')) : ?>
-	<?php echo JHtml::_('bootstrap.addTab', 'categoriesTab', 'permissions', JText::_('COM_CUSTOMTABLES_CATEGORIES_PERMISSION', true)); ?>
-		<div class="row-fluid form-horizontal-desktop">
-			<div class="span12">
-				<fieldset class="adminform">
-					<div class="adminformlist">
-					<?php foreach ($this->form->getFieldset('accesscontrol') as $field): ?>
-						<div>
-							<?php echo $field->label; echo $field->input;?>
-						</div>
-						<div class="clearfix"></div>
-					<?php endforeach; ?>
-					</div>
-				</fieldset>
-			</div>
-		</div>
-	<?php echo JHtml::_('bootstrap.endTab'); ?>
-
-	<?php endif; */ ?>
-
 	<?php echo JHtml::_('bootstrap.endTabSet'); ?>
 
 	<div>

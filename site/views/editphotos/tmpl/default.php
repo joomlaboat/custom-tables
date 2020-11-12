@@ -52,7 +52,7 @@ var idList = [<?php echo implode(',',$idList) ?>];
 	<div style="height:40px;">
 	<div style="float:left;">
 	<!--<input type="button" class="button" value="'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ADD_PHOTO').'" onClick=\'ShowAddPhoto()\'>-->
-	<input type="button" class="button" value="'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLERS_SAVE_ORDER').'" onClick=\'SaveOrder()\'>
+	<input type="button" class="button" value="'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SAVE_ORDER').'" onClick=\'SaveOrder()\'>
 	<input type="button" class="button" value="'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FINISH').'" onClick=\'this.form.task.value="cancel";this.form.submit()\'>
 	</div>
 	<div style="float:right;">

@@ -33,6 +33,12 @@ if(file_exists($phptagprocessor))
 else
 	$phptagprocessor=false;
 
+//$ajaxUri = JRoute::_('index.php?option=com_customtables&view=tables&layout=edit&id='.(int) $this->item->id.'&task=tables.storepermissions&format=json&' . JSession::getFormToken() . '=1');
+//$ajaxUri = JRoute::_('index.php?option=com_customtables&view=tables&id='.(int) $this->item->id.'&task=tables.storepermissions&' . JSession::getFormToken() . '=1');
+//$ajaxUri=str_replace('&amp;','&',$ajaxUri);//clean link
+
+//echo '$ajaxUri='.$ajaxUri.'<br/>';
+//document.getElementById('permissions-sliders').setAttribute('data-ajaxuri','<?php echo $ajaxUri; 
 ?>
 <script type="text/javascript">
 	// waiting spinner
@@ -54,11 +60,14 @@ else
 	jQuery(window).load(function() {
 		jQuery('#customtables_loader').fadeIn('fast');
 		jQuery('#loading').hide();
+		
+		
+		
 	});
 </script>
 <div id="customtables_loader" style="display: none;">
 <form action="<?php echo JRoute::_('index.php?option=com_customtables&layout=edit&id='.(int) $this->item->id.$this->referral); ?>" method="post" name="adminForm" id="adminForm" class="form-validate" enctype="multipart/form-data">
-
+<div id="jform_title"></div>
 <div class="form-horizontal">
 
 	<?php echo JHtml::_('bootstrap.startTabSet', 'tablesTab', array('active' => 'details')); ?>
@@ -208,26 +217,17 @@ else
 	</div>
 	<?php echo JHtml::_('bootstrap.endTab'); ?>
 
-	<?php /* if ($this->canDo->get('core.delete') || $this->canDo->get('core.edit.created_by') || $this->canDo->get('core.edit.state') || $this->canDo->get('core.edit.created')) : ?>
-	<?php echo JHtml::_('bootstrap.addTab', 'tablesTab', 'publishing', JText::_('COM_CUSTOMTABLES_TABLES_PUBLISHING', true)); ?>
-		<div class="row-fluid form-horizontal-desktop">
-			<div class="span6">
-				<?php echo JLayoutHelper::render('tables.publishing', $this); ?>
-			</div>
-			<div class="span6">
-				<?php echo JLayoutHelper::render('tables.publlshing', $this); ?>
-			</div>
-		</div>
-	<?php echo JHtml::_('bootstrap.endTab'); ?>
-	<?php endif; */ ?>
-
-	<?php /* if ($this->canDo->get('core.admin')) : ?>
+	<?php if ($this->canDo->get('core.admin')) : ?>
 	<?php echo JHtml::_('bootstrap.addTab', 'tablesTab', 'permissions', JText::_('COM_CUSTOMTABLES_TABLES_PERMISSION', true)); ?>
 		<div class="row-fluid form-horizontal-desktop">
 			<div class="span12">
 				<fieldset class="adminform">
 					<div class="adminformlist">
-					<?php foreach ($this->form->getFieldset('accesscontrol') as $field): ?>
+					
+					
+					<?php 
+					
+					foreach ($this->form->getFieldset('accesscontrol') as $field): ?>
 						<div>
 							<?php echo $field->label; echo $field->input;?>
 						</div>
@@ -238,7 +238,7 @@ else
 			</div>
 		</div>
 	<?php echo JHtml::_('bootstrap.endTab'); ?>
-	<?php endif; */ ?>
+	<?php endif; ?>
 
 	<?php echo '<!-- end tab set -->'.JHtml::_('bootstrap.endTabSet').'<!-- end of the end of the tab set ;-) -->'; ?>
 

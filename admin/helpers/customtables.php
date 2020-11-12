@@ -558,8 +558,10 @@ abstract class CustomtablesHelper
 	/**
 	*	Add to asset Table
 	*/
+	
 	public static function setAsset($id,$table)
 	{
+		/*
 		$parent = JTable::getInstance('Asset');
 		$parent->loadByName('com_customtables');
 
@@ -601,6 +603,8 @@ abstract class CustomtablesHelper
 				JFactory::getApplication()->enqueueMessage($asset->getError(), 'warning');
 				return false;
 			}
+			*/
+			/*
 			else
 			{
 				// Create an asset_id or heal one that is corrupted.
@@ -613,7 +617,8 @@ abstract class CustomtablesHelper
 				// Update their asset_id to link to the asset table.
 				return JFactory::getDbo()->updateObject('#__customtables_'.$table, $object, 'id');
 			}
-		}
+			*/
+		//}
 		return false;
 	}
 

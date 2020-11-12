@@ -514,8 +514,9 @@ class CT_FieldTypeTag_file
 			if($p=='/')
 				$folder=substr($folder,0,strlen($folder)-1);
 
-			//Create folder if not exists
+			
 			$folderPath=JPATH_SITE.str_replace('/',DIRECTORY_SEPARATOR,$folder); //relative path
+			//Create folder if not exists
 			if (!file_exists($folderPath))
 				mkdir($folderPath, 0755, true);
 		}
