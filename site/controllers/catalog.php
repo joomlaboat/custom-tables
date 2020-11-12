@@ -62,6 +62,9 @@ else
 	
 	if($task!='')
 	{
+		//echo $PermissionIndex;
+		//die;
+		
 		/*
 		if (JFactory::getUser()->authorise('core.admin', 'com_helloworld')) 
 					<action name="core.create" title="JACTION_CREATE" description="COM_CUSTOMTABLES_ACCESS_CREATE_DESC" />
