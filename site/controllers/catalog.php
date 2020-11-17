@@ -75,7 +75,7 @@ else
 		<action name="core.update" title="COM_CUSTOMTABLES_REFRESH" description="COM_CUSTOMTABLES_ACCESS_REFRESH_DESC" />
 */
 		//if ($edit_model->CheckAuthorizationACL($PermissionWord))
-		if ($edit_model->CheckAuthorization($PermissionWord))
+		if ($edit_model->CheckAuthorization($PermissionIndex))
 		{
 			$redirect=doTheTask($task,$params,$edit_model,$WebsiteRoot,$clean);
 			$this->setRedirect($redirect->link, $redirect->msg, $redirect->status);

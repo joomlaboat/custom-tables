@@ -573,13 +573,13 @@ class CT_FieldTypeTag_file
 
         $listing_id=$key_params_a[0];
         $fieldid=$key_params_a[1];
-        $tableid=$key_params_a[2];
+        //$tableid=$key_params_a[2];
 
         //set extracted parameters
         $jinput->set('listing_id', $listing_id);
         $jinput->set('fieldid', $fieldid);
         $jinput->set('security', $security);
-        $jinput->set('tableid', $tableid);
+        //$jinput->set('tableid', $tableid);
     }
 
     public static function makeTheKey($filepath,$security,$rec_id,$fieldid,$tableid)
