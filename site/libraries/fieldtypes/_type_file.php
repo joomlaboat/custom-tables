@@ -566,20 +566,27 @@ class CT_FieldTypeTag_file
         elseif(strpos($key_params,'g')!==false)        $security='g';//Time/Host Limited (1.5 - 4 hours)
         elseif(strpos($key_params,'h')!==false)        $security='h';//Time/Host/User Limited (8-24 minutes)
         elseif(strpos($key_params,'i')!==false)        $security='i';//Time/Host/User Limited (1.5 - 4 hours)
+		
+		$jinput->set('security', $security);
 
         $key_params_a=explode($security,$key_params);
         if(count($key_params_a)!=2)
             CT_FieldTypeTag_file::wrong();
 
         $listing_id=$key_params_a[0];
-        $fieldid=$key_params_a[1];
-        //$tableid=$key_params_a[2];
-
-        //set extracted parameters
-        $jinput->set('listing_id', $listing_id);
-        $jinput->set('fieldid', $fieldid);
-        $jinput->set('security', $security);
-        //$jinput->set('tableid', $tableid);
+		$jinput->set('listing_id', $listing_id);
+		
+		if(isset($key_params_a[1]))
+		{
+			$fieldid=$key_params_a[1];
+			$jinput->set('fieldid', $fieldid);
+		}
+		
+		if(isset($key_params_a[2]))
+		{
+			$tableid=$key_params_a[2];
+			$jinput->set('tableid', $tableid);
+		}
     }
 
     public static function makeTheKey($filepath,$security,$rec_id,$fieldid,$tableid)
