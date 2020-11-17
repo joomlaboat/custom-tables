@@ -20,15 +20,6 @@ $WebsiteRoot = JURI::root(true);
 if($WebsiteRoot=='' or $WebsiteRoot[strlen($WebsiteRoot)- 1] != '/') //Root must have slash / in the end
 	$WebsiteRoot.= '/';
 
-
-$layout = $jinput->getCmd('layout', '');
-if (($layout == 'currentuser' or $layout == 'customcurrentuser') and $userid == 0)
-{
-	$link = $WebsiteRoot . 'index.php?option=com_users&view=login&return=' . $encodedreturnto;
-	$this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
-}
-else
-{
 	$returnto = $jinput->get('returnto', '', 'BASE64');
 	$Itemid = $jinput->getInt('Itemid', 0);
 	if ($theview == 'home')
@@ -62,9 +53,6 @@ else
 	
 	if($task!='')
 	{
-		//echo $PermissionIndex;
-		//die;
-		
 		/*
 		if (JFactory::getUser()->authorise('core.admin', 'com_helloworld')) 
 					<action name="core.create" title="JACTION_CREATE" description="COM_CUSTOMTABLES_ACCESS_CREATE_DESC" />
@@ -88,7 +76,7 @@ else
 			else
 			{
 				JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
-				$link = $WebsiteRoot . 'index.php?option=com_users&view=login&return=' . $encodedreturnto;
+				$link = $WebsiteRoot . 'index.php?option=com_users&view=login&return=1' . base64_encode(JoomlaBasicMisc::curPageURL());
 				$this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
 				parent::display();
 			}
@@ -96,7 +84,6 @@ else
 	}
 	else
 		parent::display();
-}
 	
 function doTheTask($task,$params,$edit_model,$WebsiteRoot,$clean)	
 {
