@@ -440,7 +440,7 @@ class ESFields
 				break;
 
             case '_id':
-				return 'int(10) UNSIGNED NOT NULL';// AUTO_INCREMENT';
+				return 'int(10) NOT NULL';// AUTO_INCREMENT';UNSIGNED
 				break;
 
             case '_published':
