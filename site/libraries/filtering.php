@@ -678,16 +678,19 @@ class ESFiltering
 		if(strpos($vL,'$get_')!==false)
 		{
 			$getPar=str_replace('$get_','',$vL);
-			$v=JFactory::getApplication()->input->get($getPar,'','STRING');
+			//$v=JFactory::getApplication()->input->get($getPar,'','STRING');
+			$v=(string)preg_replace('/[^A-Z0-9_\.,-]/i', '', JFactory::getApplication()->input->getString($getPar));
 		}
 		else
 			$v=$vL;
 			
+		$v=str_replace('$','',$v);
 		$v=str_replace('"','',$v);
 		$v=str_replace("'",'',$v);
 		$v=str_replace('/','',$v);
 		$v=str_replace('\\','',$v);
 		$v=str_replace('&','',$v);
+		$v=str_replace('.','',$v);
 
 		return $v;
 	}
@@ -717,21 +720,25 @@ class ESFiltering
 
 		if($opr=='=' and $v!="")
 		{
-			//this method breaks search sentance to words and creates the LIKE where filter
-			$new_v_list=array();
-			$v_list=explode(' ',$v);
-			foreach($v_list as $vl)
+			$vList=explode(',',$v);
+			$cArr=array();
+			foreach($vList as $vL)
 			{
-				$new_v_list[]=$db->quoteName($field).' LIKE '.$db->quote('%'.$vl.'%');
-			}
-			$q=implode(' AND ',$new_v_list);
-			return $q;
-			/*
-			other possible serach options
-			return 'instr(es_'.$whr[0].',"'.$v.'")'; not usefull
-			return 'MATCH('.$db->quoteName('es_'.$whr[0]).') AGAINST ('.$db->quote('%'.$vl.'%').' IN NATURAL LANGUAGE MODE)'; requires mysql 5.6
-			*/
+				//this method breaks search sentance to words and creates the LIKE where filter
+				$new_v_list=array();
+				$v_list=explode(' ',$vL);
+				foreach($v_list as $vl)
+					$new_v_list[]=$db->quoteName($field).' LIKE '.$db->quote('%'.$vl.'%');
 
+
+				$cArr[]='('.implode(' AND ',$new_v_list).')';
+				/*
+				other possible serach options
+				return 'instr(es_'.$whr[0].',"'.$v.'")'; not usefull
+				return 'MATCH('.$db->quoteName('es_'.$whr[0]).') AGAINST ('.$db->quote('%'.$vl.'%').' IN NATURAL LANGUAGE MODE)'; requires mysql 5.6
+				*/
+			}
+			return '('.implode(' OR ',$cArr).')';
 		}
 		else
 		{
