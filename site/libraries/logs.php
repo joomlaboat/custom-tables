@@ -32,11 +32,11 @@ class ESLogs
 		$db = JFactory::getDBO();
 
 		$sets=array();
-		$sets[]=$userid;
+		$sets[]=(int)$userid;
 		$sets[]='NOW()';
-		$sets[]=$tableid;
-		$sets[]=$listing_id;
-		$sets[]=$action;
+		$sets[]=(int)$tableid;
+		$sets[]=(int)$listing_id;
+		$sets[]=(int)$action;
 		$sets[]=JFactory::getApplication()->input->get('Itemid',0,'INT');
 
 		$query = 'INSERT INTO #__customtables_log (user,datetime,tableid,listingid,action,Itemid) VALUES ('.implode(',',$sets).')';

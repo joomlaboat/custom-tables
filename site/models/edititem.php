@@ -2089,82 +2089,72 @@ class CustomTablesModelEditItem extends JModelLegacy {
 			return $this->deleteSingleRecord($id);
 		}
 
-		protected function deleteSingleRecord($objectid)
+	protected function deleteSingleRecord($objectid)
+	{
+		$db = JFactory::getDBO();
+
+		//delete images if exist
+		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'imagemethods.php');
+		$imagemethods=new CustomTablesImageMethods;
+
+		$query='SELECT * FROM #__customtables_table_'.$this->establename.' WHERE id='.$objectid;
+
+		$db->setQuery($query);
+		$rows=$db->loadAssocList();
+
+		if(count($rows)==0)
+			return false;
+
+		$row=$rows[0];
+
+		foreach($this->esfields as $esfield)
 		{
-						$db = JFactory::getDBO();
+			if($esfield['type']=='image')
+			{
+				//delete single image
+				$imagemethods->DeleteExistingSingleImage(
+					$row['es_'.$esfield['fieldname']],
+					$this->imagefolder,
+					$esfield['typeparams'],
+					$this->establename,
+					$esfield['fieldname']
+				);
+			}
+			elseif($esfield['type']=='imagegallery')
+			{
+				//delete gallery images if exist
+				$galleryname=$esfield['fieldname'];
+				$phototablename='#__customtables_gallery_'.$this->establename.'_'.$galleryname;
 
-						//delete images if exist
-						require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'imagemethods.php');
-						$imagemethods=new CustomTablesImageMethods;
+				$query = 'SELECT photoid FROM '.$phototablename.' WHERE listingid='.$objectid;
+				$db->setQuery($query);
+				
+				$photorows=$db->loadObjectList();
 
-						$query='SELECT * FROM #__customtables_table_'.$this->establename.' WHERE id='.$objectid;
+				foreach($photorows as $photorow)
+				{
+					$imagemethods->DeleteExistingGalleryImage(
+						$this->imagefolder,
+						$this->imagegalleryprefix,
+						$this->estableid,
+						$galleryname,
+						$photorow->photoid,
+						$esfield['typeparams'],
+						true
+					);
+				}//foreach($photorows as $photorow)
 
-						$db->setQuery($query);
-						//if (!$db->query())   die ;
-						$rows=$db->loadAssocList();
+			}//elseif($esfield[type]=='imagegallery')
+		}//foreach($this->esfields as $esfield)
 
+		$query='DELETE FROM #__customtables_table_'.$this->establename.' WHERE id='.$objectid;
+		$db->setQuery($query);
+		$db->execute();
 
-						if(count($rows)==0)
-						{
+		ESLogs::save($this->estableid,$objectid,5);
 
-								return false;
-						}
-
-						$row=$rows[0];
-
-
-						foreach($this->esfields as $esfield)
-						{
-								if($esfield['type']=='image')
-								{
-										//delete single image
-										$imagemethods->DeleteExistingSingleImage(
-												$row['es_'.$esfield['fieldname']],
-												$this->imagefolder,
-												$esfield['typeparams'],
-												$this->establename,
-												$esfield['fieldname']
-										);
-								}
-								elseif($esfield['type']=='imagegallery')
-								{
-										//delete gallery images if exist
-										$galleryname=$esfield['fieldname'];
-										$phototablename='#__customtables_gallery_'.$this->establename.'_'.$galleryname;
-
-										$query = 'SELECT photoid FROM '.$phototablename.' WHERE listingid='.$objectid;
-										$db->setQuery($query);
-										//if (!$db->query())    die ;
-										$photorows=$db->loadObjectList();
-
-										foreach($photorows as $photorow)
-										{
-												$imagemethods->DeleteExistingGalleryImage(
-														$this->imagefolder,
-														$this->imagegalleryprefix,
-														$this->estableid,
-														$galleryname,
-														$photorow->photoid,
-														$esfield['typeparams'],
-														true
-												);
-										}//foreach($photorows as $photorow)
-
-								}//elseif($esfield[type]=='imagegallery')
-						}//foreach($this->esfields as $esfield)
-
-						$query='DELETE FROM #__customtables_table_'.$this->establename.' WHERE id='.$objectid;
-						$db->setQuery($query);
-						$db->execute();
-
-						ESLogs::save($this->estableid,$objectid,5);
-
-						$new_row=array();
-						$this->doCustomPHP($new_row,$row);
-
-						return true;
-
-		}
-
-
+		$new_row=array();
+		$this->doCustomPHP($new_row,$row);
+		return true;
+	}
 }

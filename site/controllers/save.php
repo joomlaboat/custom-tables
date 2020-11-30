@@ -57,8 +57,10 @@ function CustomTablesDelete($task,&$this_)
 	
 	$app = JFactory::getApplication();
 	$edit_model = $this_->getModel('edititem');
-	$edit_model->params=$app->getParams();
+	$params=$app->getParams();
+	$edit_model->params=$params;
 	$edit_model->id = $jinput->getInt('listing_id');
+	$edit_model->load($params, false);
 	
 	$PermissionIndex=3;//delete
 	
