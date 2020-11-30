@@ -13,11 +13,8 @@ $jinput = JFactory::getApplication()->input;
 
 $task=$jinput->getCmd( 'task');
 
-
-
 switch ($task)
 {
-
 	case 'save' :
 		if(CustomTablesSave($task,$this))
 			parent::display();
@@ -37,12 +34,11 @@ switch ($task)
 		break;
 
 	case 'cancel':
-
+		
 		$msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_EDIT_CANCELED');
-		$link 	= $returnto=base64_decode (JFactory::getApplication()->input->get('returnto','','BASE64'));
-
+		$link 	= $returnto=base64_decode(JFactory::getApplication()->input->get('returnto','','BASE64'));
 		$this->setRedirect($link, $msg);
-
+		
 	break;
 
 	case 'delete':
@@ -57,66 +53,68 @@ switch ($task)
 
 function CustomTablesDelete($task,&$this_)
 {
-		$model = $this_->getModel('edititem');
-		if (!$model->CheckAuthorization(3)) //3 is to delete
+	$jinput = JFactory::getApplication()->input;
+	
+	$app = JFactory::getApplication();
+	$edit_model = $this_->getModel('edititem');
+	$edit_model->params=$app->getParams();
+	$edit_model->id = $jinput->getInt('listing_id');
+	
+	$PermissionIndex=3;//delete
+	
+	if (!$edit_model->CheckAuthorization($PermissionIndex))
+	{
+		// not authorized
+		if ($clean == 1)
 		{
-
-			// not authorized
-			if ($clean == 1)
-			{
-				JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
-				return;
-			}
-			else
-			{
-				$link = $WebsiteRoot . 'index.php?option=com_users&view=login&return=' . $encodedreturnto;
-				$this_->setRedirect($link,JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
-			}
-
-			die ;// not authorized
+			JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
+			return;
 		}
 		else
 		{
-			require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'misc.php');
-			$jinput = JFactory::getApplication()->input;
-			$encodedreturnto = base64_encode(JoomlaBasicMisc::curPageURL());
-			$returnto = $jinput->get('returnto', '', 'BASE64');
-			$decodedreturnto = base64_decode($returnto);
-			$WebsiteRoot = JURI::root(true);
+			$link = $WebsiteRoot . 'index.php?option=com_users&view=login&return=' . $encodedreturnto;
+			$this_->setRedirect($link,JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
+		}
+		return true;
+	}
+	else
+	{
+		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'misc.php');
+		
+		$encodedreturnto = base64_encode(JoomlaBasicMisc::curPageURL());
+		$returnto = $jinput->get('returnto', '', 'BASE64');
+		$decodedreturnto = base64_decode($returnto);
+		$WebsiteRoot = JURI::root(true);
 
-			if ($returnto != '')
+		if ($returnto != '')
+		{
+			$link = $decodedreturnto;
+			if (strpos($link, 'http:') === false and strpos($link, 'https:') === false) $link.= $WebsiteRoot . $link;
+		}
+		else
+			$link = $WebsiteRoot . 'index.php?Itemid=' . $Itemid;
+		
+		if ($edit_model->delete())
+		{
+			if ($clean == 1)
 			{
-				$link = $decodedreturnto;
-				if (strpos($link, 'http:') === false and strpos($link, 'https:') === false) $link.= $WebsiteRoot . $link;
+				echo 'deleted';
+				die ;
 			}
 			else
-				$link = $WebsiteRoot . 'index.php?Itemid=' . $Itemid;
-			
-			$app = JFactory::getApplication();
-			$params = $app->getParams();
-			$model = $this_->getModel('catalog');
-			$model->load($params, false);
-			if ($model->delete())
+				$this_->setRedirect($link,JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_DELETED'));
+		}
+		else
+		{
+			if ($clean == 1)
 			{
-				if ($clean == 1)
-				{
-					echo 'deleted';
-					die ;
-				}
-				else
-					$this_->setRedirect($link,JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_DELETED'));
+				echo 'error';
+				die ;
 			}
 			else
-			{
-				if ($clean == 1)
-				{
-					echo 'error';
-					die ;
-				}
-				else
-					$this_->setRedirect($link,JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_NOT_DELETED'));
-			}
-		} //if(!$model->CheckAuthorization())
+				$this_->setRedirect($link,JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_NOT_DELETED'));
+		}
+	} //if(!$model->CheckAuthorization())
 }
 
 function CustomTablesSave($task,&$this_)
