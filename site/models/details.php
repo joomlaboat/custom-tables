@@ -200,10 +200,8 @@ class CustomTablesModelDetails extends JModelLegacy {
 		$query='SELECT id FROM #__customtables_table_'.$recordstable.' WHERE es_'.$recordsuseridfield.'='.$userid.' AND INSTR(es_'.$recordsfield.',",'.$id.',")';
 		$db->setQuery($query);
 
-
-		if (!$db->query())    die( $db->stderr());
+                $db->execute();
 		$num_rows = $db->getNumRows();
-
 
 		if($num_rows==0)
 			return false;

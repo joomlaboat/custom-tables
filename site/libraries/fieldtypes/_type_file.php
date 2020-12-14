@@ -340,7 +340,6 @@ class CT_FieldTypeTag_file
 		
 		$db->setQuery( $query );
 		$db->execute();
-//		if (!$db->query())    die ;
 		
 		return $db->getNumRows()>1;
 	}

@@ -223,12 +223,6 @@ class CustomTablesModelImporttables extends JModelList
 
 		$db->setQuery( $query );
 
-		if (!$db->query())    die( $db->stderr());
-
-		$num_rows = $db->getNumRows();
-		if($num_rows==0)
-			return 0;
-
 		$maxidr= $db->loadObjectList();
 
 		if(count($maxidr)!=1)

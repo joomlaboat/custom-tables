@@ -125,7 +125,7 @@ class JoomlaBasicMisc
 			$query =' SELECT listing_id FROM listing WHERE esrecat_id="'.$ID.'"' ;
 
 			$db->setQuery( $query );
-			if (!$db->query())    die( $db->stderr());
+			$db->execute();
 
 			$n++;
 		}while($db->getNumRows()>0);

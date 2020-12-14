@@ -228,20 +228,19 @@ class CustomTablesModelStructure extends JModel
 		//echo $query;
 		
 		$db->setQuery($query);
-        if (!$db->query())    die( $db->stderr());			
+	        $db->execute();
 		
 		$this->TotalRows=$db->getNumRows();
 		
 		
 		
 		$db->setQuery($query, $this->getState('limitstart') , $this->getState('limit'));
-        if (!$db->query())    die( $db->stderr());
-		
+        			
 		$rows=$db->loadAssocList();
 		$newrows=array();
 		foreach($rows as $row)
 		{
-						$newrows[]=$row;
+			$newrows[]=$row;
 		}
 
 		

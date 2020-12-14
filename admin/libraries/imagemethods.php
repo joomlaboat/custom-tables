@@ -275,7 +275,7 @@ static protected function DeleteOriginalImage($ExistingImage, $ImageFolder, $est
 
 		$query = 'SELECT id FROM #__customtables_table_'.$establename.' WHERE es_'.$esfieldname.'=-'.$ExistingImage.' LIMIT 1';
 		$db->setQuery($query);
-		if (!$db->query())    die( $db->stderr());
+		$db->execute();
 
 		if($db->getNumRows()==1) //do not compare if there is a child
 		{
@@ -442,7 +442,7 @@ function CreateNewCustomImages($establename,$esfieldname, $ImageFolder,$imagepar
 					//check if the image has child or not
 					$query = 'SELECT id AS photoid FROM #__customtables_table_'.$establename.' WHERE es_'.$esfieldname.'=-'.$ImageID;
 					$db->setQuery($query);
-					if (!$db->query())    die( $db->stderr());
+					$db->execute();
 
 					if($db->getNumRows()==0) //do not compare if there is a child
 					{

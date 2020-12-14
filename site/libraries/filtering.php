@@ -300,6 +300,9 @@ class ESFiltering
 																//--------
 
 																$v=trim($vL);
+															if($v!='')
+															{
+															
 
 																//to fix the line
 																if($v[0]!=',')
@@ -324,7 +327,9 @@ class ESFiltering
 																	$vTitle=$this->es->getMultyValueTitles($v,$this->langpostfix,1, ' - ');
 																	$PathValue[]=$fieldrow['fieldtitle'.$this->langpostfix].': '.implode(',',$vTitle);
 																}
+															}
 														}
+														
 														if(count($cArr)==1)
 																$c=$cArr[0];
 														else

@@ -640,7 +640,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		$query='SELECT id FROM '.$this->tablename.' WHERE id='.$this->id.' AND es_'.$useridfield.'='.$this->userid.' LIMIT 1';
 
 		$db->setQuery( $query );
-		if (!$db->query())    die( $db->stderr());
+		$db->execute();
 
 		if($db->getNumRows()==1)
 		{
