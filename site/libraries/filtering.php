@@ -339,6 +339,8 @@ class ESFiltering
 
 												case 'records':
 
+			
+
 													$vList=explode(',',$this->getString_vL($whr[1]));
 
 														$cArr=array();
@@ -415,6 +417,7 @@ class ESFiltering
 																	$cArr[]=$esr_table_full.'.es_'.$whr[0].'='.$db->quote(','.$vLnew.',');//exact value
 																else
 																	$opt_title=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_UNKNOW_OPERATION' );
+																	
 
 																if($opr=='!=' or $opr=='=')
 																{
