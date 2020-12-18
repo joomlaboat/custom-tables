@@ -101,8 +101,12 @@ function checkTableFields($establename,$tableid)
         foreach($projected_fields as $projected_field)
         {
 
-
-            if($projected_field['type']=='multilangstring' or $projected_field['type']=='multilangtext')
+			if($projected_field['thefieldname']=='id')
+            {
+				$found=true;
+				$PureFieldType='_id';
+			}
+            else if($projected_field['type']=='multilangstring' or $projected_field['type']=='multilangtext')
             {
                 $morethanonelang=false;
 				foreach($languages as $lang)
@@ -190,7 +194,7 @@ function checkTableFields($establename,$tableid)
         else
         {
 
-            if(strtolower($field_mysql_type)!=strtolower($PureFieldType))
+            if($PureFieldType!='_id' and strtolower($field_mysql_type)!=strtolower($PureFieldType))
             {
                 if($task=='fixfieldtype' and $taskfieldname==$exst_field)
                 {

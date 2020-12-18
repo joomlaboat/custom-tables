@@ -439,9 +439,9 @@ class ESFields
 				return 'text NOT NULL';
 				break;
 
-            case '_id':
-				return 'int(10) NOT NULL';// AUTO_INCREMENT';UNSIGNED
-				break;
+//            case '_id':
+//				return 'int(10) NOT NULL';// AUTO_INCREMENT';UNSIGNED
+//				break;
 
             case '_published':
 				return 'tinyint(1) NULL DEFAULT 1';
