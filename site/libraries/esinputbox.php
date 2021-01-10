@@ -1054,25 +1054,12 @@ class ESInputBox
 			if($prefix=='')
 				$img_width=100;
 
-			$filesrclist=array();
-			$filetaglist_arr=array();
-			if(CT_FieldTypeTag_filebox::getFileBoxSRC($Model,$FileBoxRows, $listing_id,$fieldname,$TypeParams,$filesrclist,$filetaglist_arr))
+			if(count($FileBoxRows) > 0)
 			{
+				$vlu = CT_FieldTypeTag_filebox::process($Model,$FileBoxRows, $listing_id,
+									$fieldname,$TypeParams,['','icon-filename-link','32','_blank','ol']);
 
-
-				$filesrclist_arr=explode(';',$filesrclist);
-
-
-				$htmlout.='<div style="width:100%;overflow:scroll;background-image: url(\'components/com_customtables/images/bg.png\');">'
-					.'<ul>';
-
-				foreach($filetaglist_arr as $f)
-				{
-					$htmlout.='<li>'.$f.'</li>';
-				}
-
-				$htmlout.='</ul></div>';
-
+				$htmlout.='<div style="width:100%;overflow:scroll;background-image: url(\'components/com_customtables/images/bg.png\');">'.$vlu.'</div>';
 			}
 			else
 				return 'No Files';

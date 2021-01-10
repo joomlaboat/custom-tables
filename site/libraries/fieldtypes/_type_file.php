@@ -71,6 +71,10 @@ class CT_FieldTypeTag_file
                 return $filepath;
                 break;
             
+			case 'link':
+                //Link Only
+                return $filepath;
+                break;
             
             case 'icon-filename-link':
                 //Clickable Icon and File Name

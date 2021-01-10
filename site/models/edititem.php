@@ -138,10 +138,6 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		$this->useridfield='';
 		$this->useridfield_unique=false;
 		
-
-		//if((int)$this->params->get( 'customitemid' )!=0)
-		//$this->Itemid=(int)$this->params->get( 'customitemid' );
-
 		$this->es= new CustomTablesMisc;
 
 
@@ -189,10 +185,6 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 		if($this->params->get( 'msgitemissaved' ))
 		$this->msg_itemissaved=$this->params->get( 'msgitemissaved' );
-
-		//if(!$BlockExternalVars and $this->oklink!='')
-			//JFactory::getApplication()->input->set('returnto',base64_encode ($this->oklink));
-
 
 		$this->tablerow=ESTables::getTableRowByNameAssoc($this->establename);
 		$this->estableid=$this->tablerow['id'];
@@ -275,7 +267,8 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		}
 
 		$this->row=$rows[0];
-		return $row['id'];
+		$this->row['listing_id']=$this->row['id'];
+		return $this->row['id'];
 
 	}
 

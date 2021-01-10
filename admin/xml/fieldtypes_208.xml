@@ -412,7 +412,7 @@
 
 	<type ct_name="file" label="File" description="Provides File Upload functionality." priority="2" helplink="https://joomlaboat.com/custom-tables-documentation/33-field-types">
 		<params>
-			<param name="size" label="Max File Size" example="8" description="Obsolete. The max. upload file size is taken from PHP.ini file. No need to specify anything." default="" type="int" min="1" max="1000" />
+			<param name="size" label="Max File Size" example="8" description="Obsolete. The max. upload file size is taken from PHP.ini file. No need to specify anything." default="" type="int" min="1" max="1000" disabled="false" />
 			<param name="folder" label="Folder" example="/images/user_files" description="Folder where all the files will be kept. By default /images" default="" type="folder" />
 			<param name="filetypes" label="File Types" example="doc docx" description="List of acceptable file types (list separated by space)" default="doc docx xls xlsx pdf pages ppt pptx" type="string" />
 			<param name="saveas" label="Save As File Name" description="Specify the name of a newly uploaded file. You may use field tags [fieldname]" default="" type="string" />
@@ -470,12 +470,69 @@
 
 
 </type>
-	<type ct_name="filebox" label="File Box" description="Provides Multiple File Upload functionality. It also tracks versions." priority="3" proversion="1">
+	<type ct_name="filebox" label="File Box" description="Provides Multiple File Upload functionality. It also tracks versions." priority="3" proversion="1" >
 		<params>
-			<param name="size" label="Max File Size" example="20" description="Maximum file size that can be uploaded to the server (in megabytes). Note: check your PHP settings as well." default="" type="int" min="1" max="1000" />
+			<param name="size" label="Max File Size" example="20" description="Maximum file size that can be uploaded to the server (in megabytes). Note: check your PHP settings as well." default="" type="int" min="1" max="1000" disabled="false" />
 			<param name="folder" label="Folder" example="/images/userfiles" description="Folder where all the files will be kept. By default /images" default="" type="folder" />
 			<param name="filetypes" label="File Type" example="pdf ppt" description="List of acceptable file types (list separated by space)" default="doc docx xls xlsx pdf pages ppt pptx" type="string" />
 		</params>
+
+
+		<editparams name="filebox" label="Input Element Parameters" description="">
+			<params>
+				<param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)." />
+				<param name="attributes" label="Attributes" description="Optional attributes like: disabled, onclick, onchange etc." default="" type="string" />
+			</params>
+		</editparams>
+
+		<valueparams label="File link format" description="">
+			<params>
+				<param name="private" label="Security" example="timelimited" description="Encrypts the link to the file and limits access time to it." default="" type="list" disabled="false" >
+					<option value="" label="Public. Direct link to the file." />
+
+					<option value="timelimited" label="Time Limited (8-24 minutes)" code="d" />
+					<option value="timelimited_longterm" label="Time Limited (1.5 - 4 hours)" code="e" />
+					<option value="hostlimited" label="Time/Host Limited (8-24 minutes)" code="f" />
+					<option value="hostlimited_longterm" label="Time/Host Limited (1.5 - 4 hours)" code="g" />
+					<option value="private" label="Time/Host/User Limited (8-24 minutes)" code="h" />
+					<option value="private_longterm" label="Time/Host/User Limited (1.5 - 4 hours)" code="i" />
+				</param>
+                                        
+				<param name="format" label="Link" example="filename-link" description="How to render the link" default="icon-filename-link" type="list" >
+					<option value="icon-filename-link" label="Clickable Icon and File Name" />
+					<option value="icon-link" label="Clickable Icon" />
+					<option value="filename-link" label="Clickable File Name" />
+					<option value="link-anchor" label="Clickable Link" />
+					<option value="icon" label="Icon (IMG tag)" />
+					<option value="" label="Link Only" />
+					<option value="filename" label="File Name" />
+					<option value="link-to-icon" label="Link to Icon file" />
+					<option value="extension" label="Extension" />
+				</param>
+
+				<param name="icon" label="Icon" example="32" description="Select the icon size" default="32" type="list" >
+					<option value="16" label="16px X 16px Icon" />
+					<option value="32" label="32px X 32px Icon" />
+					<option value="48" label="48px X 48px Icon" />
+				</param>
+
+				<param name="target" label="Target Window" example="parent" description="Target browser window when opening the link." default="" type="list" >
+					<option value="" label="Parent" />
+					<option value="_blank" label="New Window With Navigation" />
+					<option value="savefile" label="Open Save File As Dialog Window" />
+				</param>
+
+				<param name="listformat" label="List Format" example="," description="How to the output list format." default="" type="list" >
+					<option value="" label="Ordered List &#60;OL&#62; and &#60;LI&#62; tags" />
+					<option value="ul" label="Unorderd List &#60;UL&#62; and &#60;LI&#62; tags" />
+					<option value="," label="Comma separated" />
+					<option value=";" label="Separated by semicolon" />
+				</param>
+			</params>
+		</valueparams>
+
+
+
 
 </type><!-- pro -->
 

@@ -248,6 +248,7 @@ class tagProcessor_Value
 
     public static function processPureValues(&$Model,&$htmlresult, &$row,&$isGalleryLoaded,&$getGalleryRows,&$isFileBoxLoaded,&$getFileBoxRows,$tag_chars='[]')
 	{
+		$id = (isset($row['listing_id']) ? $row['listing_id'] : 0);
 		
 		$items_to_replace=array();
 
@@ -263,6 +264,7 @@ class tagProcessor_Value
             $i=0;
 			foreach($Model->esfields as $ESField)
 			{
+				$TypeParams = $ESField['typeparams'];
                 $replaceitecode=md5(JoomlaBasicMisc::generateRandomString().(isset($row['listing_id']) ? $row['listing_id'] : '').$ESField['fieldname']);
                 
 				if($pureValueOptionArr[0]==$ESField['fieldname'])
@@ -394,11 +396,9 @@ class tagProcessor_Value
 								$vlu=$imagesrclist;
 							}
 							elseif($fieldtype=='filebox')
-							{
-								$fileboxtaglist='';
-								$fileboxsrclist='';
-								CT_FieldTypeTag_filebox::getFileBoxSRC($Model,$getFileBoxRows[$fieldname], $pureValueOptionArr[1],$row['listing_id'],$fieldname,$ESField['typeparams'],$fileboxsrclist,$fileboxtaglist);
-								$vlu=$fileboxsrclist;
+							{								
+								$vlu = CT_FieldTypeTag_filebox::process($Model,$getFileBoxRows[$fieldname], $id,
+									$fieldname,$TypeParams,['','link','32','_blank',';']);
 							}
 							elseif($fieldtype=='records')
 							{
@@ -860,8 +860,6 @@ class tagProcessor_Value
 						break;
 
 				case 'file':
-					$processor_file=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fieldtypes'.DIRECTORY_SEPARATOR.'_type_file.php';
-					require_once($processor_file);
 					return CT_FieldTypeTag_file::process($rowValue,$TypeParams,$option_list,$row['id'],$fieldid,$Model->estableid);
 					break;
 
@@ -930,12 +928,8 @@ class tagProcessor_Value
 					if($option_list[0]=='_count')
 						return count($getFileBoxRows);
 
-					$filesrclist='';
-					$filetaglist='';
+					return CT_FieldTypeTag_filebox::process($Model,$getFileBoxRows, $id,$FieldName,$TypeParams,$option_list,$fieldid,'');
 
-					CT_FieldTypeTag_filebox::getFileBoxSRC($Model,$getFileBoxRows, $id,$FieldName,$TypeParams,$filesrclist,$filetaglist);
-
-                    return $filetaglist;
     				break;
 
 				case 'customtables':

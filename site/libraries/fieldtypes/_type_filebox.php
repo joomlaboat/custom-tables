@@ -11,6 +11,53 @@ defined('_JEXEC') or die('Restricted access');
 
 class CT_FieldTypeTag_filebox
 {
+	public static function process(&$Model,$FileBoxRows, $id,$FieldName,$TypeParams,$option_list,$fieldid = 0)
+    {
+		$filesrclistarray=array();
+
+		foreach($FileBoxRows as $filerow)
+		{
+			$shortname=$Model->estableid.'_'.$FieldName.'_'.$filerow->fileid.'.'.$filerow->file_ext;
+			
+			$filesrclistarray[]=CT_FieldTypeTag_file::process($shortname,$TypeParams,$option_list,$id,$fieldid,$Model->estableid);
+		}
+		
+		$listformat = '';
+		if(isset($option_list[4]))
+			$listformat = $option_list[4];
+		
+		switch($listformat)
+		{
+			case 'ul':
+			
+				$filetaglistarray=array();
+
+				foreach($filesrclistarray as $filename)
+					$filetaglistarray[]='<li>'.$filename.'</li>';
+
+				return '<ul>'.implode('',$filetaglistarray).'</ul>';
+				break;
+				
+			case ',':
+				return implode(',',$filesrclistarray);
+				break;
+			
+			case ';':
+				return implode(';',$filesrclistarray);
+				break;
+			
+			default:
+				//INCLUDING OL
+				$filetaglistarray=array();
+
+				foreach($filesrclistarray as $filename)
+					$filetaglistarray[]='<li>'.$filename.'</li>';
+
+				return '<ol>'.implode('',$filetaglistarray).'</ol>';
+				break;
+		}
+    }
+	
 	public static function getFileBoxRows($establename,$fileboxname, $listing_id)
 	{
 		$db = JFactory::getDBO();
@@ -24,7 +71,7 @@ class CT_FieldTypeTag_filebox
 		return $filerows;
 	}
 
-	public static function getFileBoxSRC(&$Model,$FileBoxRows, $id,$fileboxname,$typeparams,&$filesrclist,&$filetaglist)
+	/*public static function getFileBoxSRC(&$Model,$FileBoxRows, $id,$fileboxname,$typeparams,&$filesrclist,&$filetaglist)
 	{
 
 		$pair=explode(',',$typeparams);
@@ -53,8 +100,8 @@ class CT_FieldTypeTag_filebox
 		}
 
 		$filesrclist=implode(';',$filesrclistarray);
-		$filetaglist='<ul>'.implode('',$filetaglistarray).'</ul?';
+		$filetaglist='<ul>'.implode('',$filetaglistarray).'</ul>';
 		return true;
 	}
-
+*/
 }
