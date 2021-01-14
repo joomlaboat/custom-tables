@@ -309,9 +309,6 @@ class CustomtablesModelRecords extends JModelAdmin
 		foreach($pks as $recordid)
 		{
 			//require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fields.php');
-			echo '$recordid='.$recordid;
-			print_r($_POST);
-			die;
 			
 			$jinput = JFactory::getApplication()->input;
 			//$ids_str=$jinput->set('ids',);

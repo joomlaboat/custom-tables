@@ -531,8 +531,6 @@ class CustomTablesModelEditItem extends JModelLegacy {
 	
 	function CheckAuthorizationACL($access)
 	{
-		echo '$access='.$access.'<br/>';
-		
 		$this->isAutorized=false;
 		$this->isUserAdministrator=false;
 		

@@ -33,12 +33,6 @@ if(file_exists($phptagprocessor))
 else
 	$phptagprocessor=false;
 
-//$ajaxUri = JRoute::_('index.php?option=com_customtables&view=tables&layout=edit&id='.(int) $this->item->id.'&task=tables.storepermissions&format=json&' . JSession::getFormToken() . '=1');
-//$ajaxUri = JRoute::_('index.php?option=com_customtables&view=tables&id='.(int) $this->item->id.'&task=tables.storepermissions&' . JSession::getFormToken() . '=1');
-//$ajaxUri=str_replace('&amp;','&',$ajaxUri);//clean link
-
-//echo '$ajaxUri='.$ajaxUri.'<br/>';
-//document.getElementById('permissions-sliders').setAttribute('data-ajaxuri','<?php echo $ajaxUri; 
 ?>
 <script type="text/javascript">
 	// waiting spinner

@@ -28,12 +28,14 @@ class CT_FieldTypeTag_image
 			//$onlylink=true;//this is wrong approach
 
 		$ImageFolder_=CustomTablesImageMethods::getImageFolder($TypeParams);
+		
+	
 		$ImageFolderWeb=str_replace(DIRECTORY_SEPARATOR,'/',$ImageFolder_);
 		$ImageFolder=str_replace('/',DIRECTORY_SEPARATOR,$ImageFolder_);
 
 		$imagesrc='';
 		$imagetag='';
-
+		
 		if($option=='' or $option=='_esthumb' or $option=='_thumb')
 		{
 
@@ -41,16 +43,11 @@ class CT_FieldTypeTag_image
 
 
 			$imagefile_ext='jpg';
-			$imagefileweb=$ImageFolderWeb.'/'.$prefix.'_'.$rowValue.'.'.$imagefile_ext;
+			$imagefileweb=JURI::root(false).$ImageFolderWeb.'/'.$prefix.'_'.$rowValue.'.'.$imagefile_ext;
 			$imagefile=$ImageFolder.DIRECTORY_SEPARATOR.$prefix.'_'.$rowValue.'.'.$imagefile_ext;
-			if(file_exists(JPATH_SITE.$imagefile))
+			if(file_exists(JPATH_SITE.DIRECTORY_SEPARATOR.$imagefile))
 			{
-				//if($onlylink)
-					//$imagetag=$imagefileweb;
-				//else
-					$imagetag='<img src="'.$imagefileweb.'" width="150" height="150" alt="'.$sitename.'" title="'.$sitename.'" />';
-
-
+				$imagetag='<img src="'.$imagefileweb.'" width="150" height="150" alt="'.$sitename.'" title="'.$sitename.'" />';
 				$imagesrc=$imagefileweb;
 				return true;
 			}
@@ -65,16 +62,12 @@ class CT_FieldTypeTag_image
 
 			$imgMethods= new CustomTablesImageMethods;
 
-			$imagefile_ext=$imgMethods->getImageExtention(JPATH_SITE.$imgname);
+			$imagefile_ext=$imgMethods->getImageExtention(JPATH_SITE.DIRECTORY_SEPARATOR.$imgname);
 
 			if($imagefile_ext!='')
 			{
-				$imagefileweb=$ImageFolderWeb.'/'.$prefix.'_'.$rowValue.'.'.$imagefile_ext;
-
-				//if($onlylink)
-					//$imagetag=$imagefileweb;
-				//else
-					$imagetag='<img src="'.$imagefileweb.'" alt="'.$sitename.'" title="'.$sitename.'" />';
+				$imagefileweb=JURI::root(false).$ImageFolderWeb.'/'.$prefix.'_'.$rowValue.'.'.$imagefile_ext;
+				$imagetag='<img src="'.$imagefileweb.'" alt="'.$sitename.'" title="'.$sitename.'" />';
 
 				$imagesrc=$imagefileweb;//$prefix.'_'.$rowValue.'.'.$imagefile_ext;
 				return true;
@@ -90,11 +83,9 @@ class CT_FieldTypeTag_image
 
 		$imgname=$ImageFolder.DIRECTORY_SEPARATOR.$prefix.'_'.$rowValue;
 
-		$imagefile_ext=$imgMethods->getImageExtention(JPATH_SITE.$imgname);
+		$imagefile_ext=$imgMethods->getImageExtention(JPATH_SITE.DIRECTORY_SEPARATOR.$imgname);
 		//--- WARNING - ERROR -- REAL EXT NEEDED - IT COMES FROM OPTIONS
-		$imagefile=$ImageFolderWeb.'/'.$prefix.'_'.$rowValue.'.'.$imagefile_ext;
-
-
+		$imagefile=JURI::root(false).$ImageFolderWeb.'/'.$prefix.'_'.$rowValue.'.'.$imagefile_ext;
 		$imagesizes=$imgMethods->getCustomImageOptions($TypeParams);
         
 		foreach($imagesizes as $img)
@@ -103,11 +94,7 @@ class CT_FieldTypeTag_image
 			{
 				if($imagefile!='')
 				{
-					//if($onlylink)
-						//$imagetag=$imagefile;
-					//else
-						$imagetag='<img src="'.$imagefile.'" '.($img[1]>0 ? 'width="'.$img[1].'"' : '').' '.($img[2]>0 ? 'height="'.$img[2].'"' : '').' alt="'.$sitename.'" title="'.$sitename.'" />';
-
+					$imagetag='<img src="'.$imagefile.'" '.($img[1]>0 ? 'width="'.$img[1].'"' : '').' '.($img[2]>0 ? 'height="'.$img[2].'"' : '').' alt="'.$sitename.'" title="'.$sitename.'" />';
 					$imagesrc=$imagefile;
 
 					return true;
@@ -122,7 +109,7 @@ class CT_FieldTypeTag_image
     {
         $value_found=false;
 
-                    $comesfieldname=$prefix.$esfieldname;
+        $comesfieldname=$prefix.$esfieldname;
     				$value=0;
 					$imagemethods=new CustomTablesImageMethods;
                     $mysqltablename='#__customtables_table_'.$establename;
@@ -140,7 +127,10 @@ class CT_FieldTypeTag_image
 					else
 					{
                         $to_delete = $jinput->post->get($comesfieldname.'_delete', '','CMD' );
+
+						
                         $ExistingImage=$es->isRecordExist($id,'id', 'es_'.$esfieldname, $mysqltablename);
+
 
 							if($to_delete=='true')
 							{
@@ -184,8 +174,9 @@ class CT_FieldTypeTag_image
     	$result='<div class="esUploadFileBox" style="vertical-align:top;">';
 
 
-        $result.=CT_FieldTypeTag_image::renderImageAndDeleteOption($imagefile,$imagesrc,$esfield,$isShortcut);
-        //$result.=CT_FieldTypeTag_image::renderUploaderLimitations();
+		if($imagefile!='')
+			$result.=CT_FieldTypeTag_image::renderImageAndDeleteOption($prefix,$imagesrc,$esfield,$isShortcut);
+    
 
         $result.=CT_FieldTypeTag_image::renderUploader($esfield);
 
@@ -194,27 +185,22 @@ class CT_FieldTypeTag_image
 
 	}
 
-    protected static function renderImageAndDeleteOption($imagefile,$imagesrc,&$esfield,$isShortcut)
+    protected static function renderImageAndDeleteOption($prefix,$imagesrc,&$esfield,$isShortcut)
     {
-        if($imagefile=='')
-            return '';
-
-
-                $prefix='com';
-                $style='margin:10px; border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;vertical-align:top;';
-                $result='
+        $style='margin:10px; border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;vertical-align:top;';
+        $result='
                 <div style="" id="ct_uploadedfile_box_'.$esfield['fieldname'].'">';
 
-						    $result.='<img src="'.$imagesrc.'" width="150" /><br/>';
+		$result.='<img src="'.$imagesrc.'" width="150" /><br/>';
 
-							if(!$esfield['isrequired'])
-								$result.='<input type="checkbox" name="'.$prefix.$esfield['fieldname'].'_delete" id="'.$prefix.$esfield['fieldname'].'_delete" value="true">'
-								.' Delete '.($isShortcut ? 'Shortcut' : 'Image');
+		if(!$esfield['isrequired'])
+			$result.='<input type="checkbox" name="'.$prefix.$esfield['fieldname'].'_delete" id="'.$prefix.$esfield['fieldname'].'_delete" value="true">'
+				.' Delete '.($isShortcut ? 'Shortcut' : 'Image');
 
-				$result.='
-                </div>';
+		$result.='
+        </div>';
 
-            return $result;
+        return $result;
     }
 
     protected static function renderUploaderLimitations()
@@ -297,13 +283,13 @@ class CT_FieldTypeTag_image
 					$imagesrc_='';
 				}
 
-				if(file_exists(JPATH_SITE.$imagefile_.'.jpg'))
+				if(file_exists(JPATH_SITE.DIRECTORY_SEPARATOR.$imagefile_.'.jpg'))
 				{
 					$imagefile=$imagefile_.'.jpg';
 					$imagesrc=$imagesrc_.'.jpg';
 
 				}
-				elseif(file_exists(JPATH_SITE.$imagefile_.'.png'))
+				elseif(file_exists(JPATH_SITE.DIRECTORY_SEPARATOR.$imagefile_.'.png'))
 				{
 					$imagefile=$imagefile_.'.png';
 					$imagesrc=$imagesrc_.'.png';
@@ -314,7 +300,7 @@ class CT_FieldTypeTag_image
 					$imagesrc='';
 				}
 
-        return $imagesrc;
+        return JURI::root(false).$imagesrc;
     }
 
     //Drupal has this implemented fairly elegantly:

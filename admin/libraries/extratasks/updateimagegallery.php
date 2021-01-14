@@ -65,7 +65,6 @@ class updateImageGallery
 		$query = 'SELECT count(id) AS c FROM #__customtables_table_'.$establename.' WHERE es_'.$esfieldname.'>0';
 	
 		$db->setQuery( $query );
-		//if (!$db->query())    die( $db->stderr());
 		
 		$recs=$db->loadAssocList();
 		
@@ -77,17 +76,12 @@ class updateImageGallery
 		$db = JFactory::getDBO();
 		$query = 'SELECT es_'.$esfieldname.' FROM #__customtables_table_'.$establename.' WHERE es_'.$esfieldname.'>0';
 		$db->setQuery($query);
-		//$db->setQuery($query, $startindex, $stepsize);
 
 		$imagelist=$db->loadAssocList();
 		
 		$imgMethods= new CustomTablesImageMethods;
 		$old_imagesizes=$imgMethods->getCustomImageOptions($old_typeparams);
 		$new_imagesizes=$imgMethods->getCustomImageOptions($new_typeparams);
-		
-		
-		//echo '$old_ImageFolder='.$old_ImageFolder.'<br/>';
-		//echo '$new_ImageFolder='.$new_ImageFolder.'<br/>';
 
 		foreach($imagelist as $img)
 		{
@@ -109,14 +103,8 @@ class updateImageGallery
 		$old_imagefile=$old_ImageFolder.DIRECTORY_SEPARATOR.$prefix.'_'.$rowValue.'.'.$imagefile_ext;
 		$new_imagefile=$new_ImageFolder.DIRECTORY_SEPARATOR.$prefix.'_'.$rowValue.'.'.$imagefile_ext;
 		
-		//echo '$old_ImageFolder='.$old_ImageFolder.'<br/>';
-			//echo '$new_ImageFolder='.$new_ImageFolder.'<br/>';
-			//echo '$old_imagefile='.$old_imagefile.'<br/>';
-			//echo '$new_imagefile='.$new_imagefile.'<br/>';
-		
 		if(file_exists(JPATH_SITE.$old_imagefile))
 		{
-			//echo 'Found<br/>';
 			if($old_ImageFolder!=$new_ImageFolder)
 			{
 				if(!@rename(JPATH_SITE.$old_imagefile,JPATH_SITE.$new_imagefile))
@@ -167,9 +155,6 @@ class updateImageGallery
 	protected static function processImage_CustomSize_MoveFile(&$imgMethods,$old_imagesize,$rowValue,$old_ImageFolder, $new_ImageFolder, $prefix,$imagefile_ext="",$original_image_file)
 	{
 		$old_imagefile=$old_ImageFolder.DIRECTORY_SEPARATOR.$prefix.'_'.$rowValue;
-		
-		//echo '1$old_imagefile='.$old_imagefile.'<br/>';
-		//echo '$imagefile_ext='.$imagefile_ext.'<br/>';
 		
 		if($imagefile_ext=='')
 			$imagefile_ext=$imgMethods->getImageExtention(JPATH_SITE.$original_image_file);//file extension is unknow - let's find out based on original file
@@ -236,8 +221,6 @@ class updateImageGallery
 		
 		if($status!=null)
 			return null;//Skip if original file not found
-		
-		//echo '$original_image_file='.$original_image_file.'<br/>';
 		
 		$status=updateImages::processImage_Thumbnail($imgMethods,$rowValue,$old_ImageFolder, $new_ImageFolder);
 		if($status!=null)

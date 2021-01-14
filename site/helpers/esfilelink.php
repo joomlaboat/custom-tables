@@ -18,11 +18,6 @@ class JHTMLESFileLink
 
         static public function render($control_name, $value,$style,$cssclass, $path='/images',  $attribute='')
         {
-			
-			echo '$path='.$path;
-				
-				
-				
 				if($path!='' and $path[0]!='/')
 					$path='/images/'.$path;
 				

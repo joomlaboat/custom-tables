@@ -36,9 +36,9 @@ class CT_FieldTypeTag_imagegallery{
 
 		if($imagefolder=='')
 		{
-			$imagefolder='esimages';
+			$imagefolder='ct_images';
 			$imagefolderserver=JPATH_SITE.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.str_replace('/',DIRECTORY_SEPARATOR,$imagefolder);
-			$imagefolderweb='/images/'.$imagefolder;
+			$imagefolderweb='images/'.$imagefolder;
 		}
 		else
 		{
@@ -53,13 +53,13 @@ class CT_FieldTypeTag_imagegallery{
 				else
 				{
 					$imagefolderserver=JPATH_SITE.DIRECTORY_SEPARATOR.str_replace('/',DIRECTORY_SEPARATOR,$imagefolder);
-					$imagefolderweb='/'.$imagefolder;
+					$imagefolderweb=$imagefolder;
 				}
 			}
 			else
 			{
 				$imagefolderserver=JPATH_SITE.DIRECTORY_SEPARATOR;
-				$imagefolderweb='/';
+				$imagefolderweb='';
 			}
 
 

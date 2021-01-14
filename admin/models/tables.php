@@ -816,12 +816,10 @@ class CustomtablesModelTables extends JModelAdmin
 
 		foreach( $cids as $id )
 	    {
-
 			$item =$this->getTable();
 			$item->load( $id );
 
 			$db = $this->getDBO();
-
 
 			$tables[]=$item->tablename;
 
@@ -898,7 +896,7 @@ class CustomtablesModelTables extends JModelAdmin
 
 			}while(1==1);
 
-			$link='/tmp/'.$filename_available;
+			$link=JURI::root(false).'tmp/'.$filename_available;
 			file_put_contents($tmp_path.$filename_available, $output_str);
 			$output_str=null;
 		}

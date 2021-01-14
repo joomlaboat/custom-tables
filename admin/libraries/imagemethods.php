@@ -970,38 +970,21 @@ function ProportionalResize($src, $dst, $dst_width, $dst_height,$LevelMax, $over
 		}
 	}
 
-
-
-
-
 	//Setting coordinates
 	$dst_x=round($dst_width/2-$dst_w/2);
 	$dst_y=round($dst_height/2-$dst_h/2);
 
-
-
-
-
 	imagecopyresampled ($new,  $from,  $dst_x, $dst_y,  0, 0 , $dst_w, $dst_h,  $width, $height);
-
 
 	if($watermark!='')
 	{
-
-
-
 		$watermark_Extension=$this->FileExtenssion($watermark);
 		if($watermark_Extension=='png')
 		{
-
-
-
 			$watermark_file=JPATH_SITE.DIRECTORY_SEPARATOR.str_replace('/',DIRECTORY_SEPARATOR,$watermark);
 
 			if(file_exists($watermark_file))
 			{
-
-
 				$watermark_from = imageCreateFromPNG($watermark_file);
 				$watermark_size = getImageSize($watermark_file);
 				if($dst_w>=$watermark_size[0] and $dst_h>=$watermark_size[1])
@@ -1030,15 +1013,13 @@ function ProportionalResize($src, $dst, $dst_width, $dst_height,$LevelMax, $over
 
 
 	return 1;
-
-
 }
 
 
 
-public static function getImageFolder($imageparams)
+	public static function getImageFolder($imageparams)
 	{
-		$ImageFolder='/images'.DIRECTORY_SEPARATOR.'esimages';
+		$ImageFolder='images'.DIRECTORY_SEPARATOR.'ct_images';
 		$pair=JoomlaBasicMisc::csv_explode(',',$imageparams,'"',false);
 
 		if(isset($pair[2]))
@@ -1049,33 +1030,30 @@ public static function getImageFolder($imageparams)
 
 			if(strlen($ImageFolder)>8)
 			{
-				$p=substr($ImageFolder,0,8);
-
-				if($p!='/images/')
-					$ImageFolder='/images'.$ImageFolder;
+				$p1=substr($ImageFolder,0,7);
+				$p2=substr($ImageFolder,0,8);
+				
+				if($p1!='images/' and $p2!='/images/')
+					$ImageFolder='images'.$ImageFolder;
+				
+				
+				if($p2=='/images/')
+					$ImageFolder=substr($ImageFolder,1);
 
 			}
 			else
-				$ImageFolder='/images'.$ImageFolder;
+				$ImageFolder='images'.$ImageFolder;
 		}
-
+		
 		if(strlen($ImageFolder)==0)
-			$ImageFolder='/images/';
+			$ImageFolder='images'.DIRECTORY_SEPARATOR.'ct_images';
 
-		if($ImageFolder[0]!='/')
-			$ImageFolder='/'.$ImageFolder;
-
-		$ImageFolderPath=JPATH_SITE.str_replace('/',DIRECTORY_SEPARATOR,$ImageFolder);
+		$ImageFolderPath=JPATH_SITE.DIRECTORY_SEPARATOR.str_replace('/',DIRECTORY_SEPARATOR,$ImageFolder);
 
 		if (!file_exists($ImageFolderPath))
-		{
 			mkdir($ImageFolderPath, 0755, true);
-		}
 
 		return $ImageFolder;
 	}
-
-
-
 }
 

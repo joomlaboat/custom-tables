@@ -356,7 +356,7 @@ class tagProcessor_Value
 							$htmlresult=str_replace($endifname,'',$htmlresult);
 
 							$vlu='';
-
+							
 							if($fieldtype=='image')
 							{
                                 $imagesrc='';
@@ -371,6 +371,7 @@ class tagProcessor_Value
                                 }
                                 
                                 CT_FieldTypeTag_image::getImageSRClayoutview($new_array,$rowValue,$ESField['typeparams'],$imagesrc,$imagetag);
+
 								$vlu=$imagesrc;
 							}
 							elseif($fieldtype=='imagegallery')
@@ -513,7 +514,7 @@ class tagProcessor_Value
 				$imagefile_ext='jpg';
 				$imagefile=$ImageFolder.DIRECTORY_SEPARATOR.$prefix.'_'.$rowValue.'.'.$imagefile_ext;
 
-				if(file_exists(JPATH_SITE.$imagefile))
+				if(file_exists(JPATH_SITE.DIRECTORY_SEPARATOR.$imagefile))
 					return false;
 				else
 					return true;

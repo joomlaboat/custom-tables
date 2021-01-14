@@ -258,13 +258,6 @@ class CustomtablesControllerFields extends JControllerForm
 		
 		$fieldid 	= $this->input->get('id', 0, 'int');
 		
-	//	echo '$this->task='.$this->task.'<br>';
-		
-//		echo '$this->ref='.$this->ref;
-		
-		//if($this->task!='apply' and $this->task!='save' and  $this->task!='save2new' and $this->task!='save2copy')
-			//die;
-
 		if ($this->ref || $this->refid)
 		{
 			// to make sure the item is checkedin on redirect

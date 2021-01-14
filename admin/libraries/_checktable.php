@@ -380,8 +380,6 @@ function checkTableFields($establename,$tableid)
 
     function checkField($ExistingFields,$tablename,$proj_field,$fieldtype,$typeparams,&$languages)
     {
-		//print_r($ExistingFields);
-		
         if($fieldtype=='multilangstring' or $fieldtype=='multilangtext')
         {
             $found=false;
@@ -391,8 +389,6 @@ function checkTableFields($establename,$tableid)
         		$fieldname=$proj_field;
         		if($morethanonelang)
         			$fieldname.='_'.$lang->sef;
-				
-				//echo '$fieldname='.$fieldname.'<br/>';
 
                 $found=false;
                 foreach($ExistingFields as $existing_field)
