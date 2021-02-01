@@ -255,9 +255,6 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		$query.=' LIMIT 1';
 
 		$db->setQuery($query);
-
-		if (!$db->query())    die( $db->stderr());
-
 		$rows=$db->loadAssocList();
 
 		if(count($rows)<1)
@@ -769,7 +766,6 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 		$query='SELECT MAX(id) AS maxid FROM '.$this->tablename.' LIMIT 1';
 		$db->setQuery( $query );
-		if (!$db->query())    die( $db->stderr());
 		$rows=$db->loadObjectList();
 		if(count($rows)==0)
 		{
@@ -950,7 +946,6 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 						$query='SELECT MAX(es_'.$fieldname.') AS maxid FROM '.$this->tablename.' LIMIT 1';
 						$db->setQuery( $query );
-						if (!$db->query())    die( $db->stderr());
 						$rows=$db->loadObjectList();
 						if(count($rows)!=0)
 						{
@@ -1001,7 +996,6 @@ class CustomTablesModelEditItem extends JModelLegacy {
 			//get old row
 			$query='SELECT *, id AS listing_id FROM '.$this->tablename.' WHERE id='.$id.' LIMIT 1';
 			$db->setQuery( $query );
-			if (!$db->query())    die( $db->stderr());
 			$rows = $db->loadAssocList();
 			if(count($rows)!=0)
 				$row_old=$rows[0];
@@ -1023,7 +1017,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		{
 			$query='SELECT *, id AS listing_id FROM '.$this->tablename.' ORDER BY id DESC LIMIT 1';
 			$db->setQuery( $query );
-			if (!$db->query())    die( $db->stderr());
+
 			$rows = $db->loadAssocList();
 			if(count($rows)!=0)
 			{
@@ -1053,7 +1047,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 				$query='SELECT *, id AS listing_id FROM '.$this->tablename.' WHERE id='.$id.' LIMIT 1';
 				$db->setQuery( $query );
-				if (!$db->query())    die( $db->stderr());
+
 				$rows = $db->loadAssocList();
 
 				if(count($rows)!=0)
@@ -1149,8 +1143,6 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 		$db->setQuery( $query );
 		
-		
-		//if (!$db->query())    die( $db->stderr());
 		$rows=$db->loadObjectList();
 		if(count($rows)!=0)
 		{
@@ -1198,7 +1190,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 			$db = JFactory::getDBO();
 			$query='SELECT *, id AS listing_id FROM '.$this->tablename.' WHERE id='.$id.' LIMIT 1';
 			$db->setQuery( $query );
-			if (!$db->query())    die( $db->stderr());
+
 			$rows = $db->loadAssocList();
 			if(count($rows)==0)
 				return false;
@@ -1385,7 +1377,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		$query = 'SELECT '.implode(',',$fields_to_save).' FROM #__customtables_table_'.$this->establename.' WHERE id='.$id.' LIMIT 1';
 
 	 	$db->setQuery($query);
-		if (!$db->query())	die( $db->stderr());
+
 		$rows = $db->loadAssocList();
 		if(count($rows)!=1)
 			return;
@@ -1610,7 +1602,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		$db = JFactory::getDBO();
 		$query = 'SELECT *, id AS listing_id FROM #__customtables_table_'.$this->establename.' ORDER BY id DESC LIMIT 1';
 	 	$db->setQuery($query);
-		if (!$db->query())	die( $db->stderr());
+
 		$rows = $db->loadAssocList();
 		if(count($rows)!=1)
 			return '';
@@ -1762,7 +1754,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		$db = JFactory::getDBO();
 		$query = 'SELECT *, id AS listing_id FROM #__customtables_table_'.$this->establename.' WHERE id='.$listing_id.' LIMIT 1';
 	 	$db->setQuery($query);
-		if (!$db->query())	die( $db->stderr());
+
 		$rows = $db->loadAssocList();
 		if(count($rows)!=1)
 			return false;
@@ -1817,8 +1809,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		$layouttype=0;
 		$message_layout_content=ESLayouts::getLayout($this->onrecordaddsendemaillayout,$layouttype);
 		$note=$this->parseRowLayoutContent($row,$message_layout_content,true);
-
-
+		
 		$MailFrom 	= $mainframe->getCfg('mailfrom');
 		$FromName 	= $mainframe->getCfg('fromname');
 
@@ -1829,8 +1820,6 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 		foreach($emails as $SendToEmail)
 		{
-			//$EmailTo='ivankomlev@gmail.com';
-
 			$Subject=$SendToEmail['subject'];
 
 			$mail = JFactory::getMailer();

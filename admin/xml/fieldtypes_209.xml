@@ -834,6 +834,11 @@
 	<type ct_name="dummy" label="Translation" description="Use field name to add translations of some terms in your layout. This doesn't store anything in the Data Base." priority="3">
 </type>
 	<type ct_name="article" label="Article" description="Select Article box." priority="3">
+
+		<params>
+				<param type="int" name="categoryid" label="Category ID" description="Category ID to allow selection from that category only." />
+               </params>
+
 		<editparams name="article" label="Input Element Parameters" description="">
 			<params>
 				<param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)." />

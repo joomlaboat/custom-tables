@@ -124,7 +124,7 @@ function loadTags(type_id,tags_box)
 
     //tags_box_obj.innerHTML='Loading...';
 
-    var url=websiteroot+"components/com_customtables/xml/tags_208.xml?v=1.3.0";
+    var url=websiteroot+"components/com_customtables/xml/tags_209.xml?v=1.3.0";
 
     var http = null;
     var params = "";
