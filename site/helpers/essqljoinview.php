@@ -169,13 +169,13 @@ class JHTMLESSQLJoinView
 
 				$o = new stdClass();
 				$o->text=$htmlresult;
-                                $o->created_by_alias = 0;
+                $o->created_by_alias = 0;
 
 				$dispatcher	= JDispatcher::getInstance();
 
 				JPluginHelper::importPlugin('content');
 
-				$r = $dispatcher->trigger('onContentPrepare', array ('com_content.article', &$o, &$params_, 0));
+				$r = $dispatcher->trigger('onContentPrepare', array ('com_content.article', &$o, &$_params, 0));
 
 
 				return $o->text;
