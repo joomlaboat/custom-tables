@@ -77,7 +77,7 @@
                        name="fieldtitle"
                        label="COM_CUSTOMTABLES_FIELDS_FIELDTITLE_LABEL"
                        maxlength="100"
-                       description="JFIELD_TITLE_DESC"
+                       description="COM_CUSTOMTABLES_FIELDS_FIELDTITLE_DESCRIPTION"
                        required="true"
                        filter="STRING"
                        message="COM_CUSTOMTABLES_FIELDS_FIELDTITLE_MESSAGE"
@@ -103,6 +103,7 @@
                        required="true"
                        default="string"
 			onchange="typeChanged();"
+			description="COM_CUSTOMTABLES_FIELDS_TYPE_DESCRIPTION"
 >
 
                         <!-- Option Set.-->
@@ -268,16 +269,21 @@
                        hint="COM_CUSTOMTABLES_FIELDS_VALUERULECAPTION_HINT"
                        autocomplete="on" />
 
-
-                <!-- Parentid Field. Type: Sql. (joomla)-->
                 <field type="sql"
                        name="parentid"
                        label="COM_CUSTOMTABLES_FIELDS_PARENTID_LABEL"
                        query="SELECT id, fieldtitle FROM #__customtables_fields"
                        description="COM_CUSTOMTABLES_FIELDS_PARENTID_DESCRIPTION"
                        key_field="id"
-                       value_field="fieldtitle">
-                        <!-- No Manual Options Were Added In Field Settings.-->
-                </field>
+                       value_field="fieldtitle" />
+
+                <field type="anytablefields"
+                       name="customfieldname"
+                       label="COM_CUSTOMTABLES_FIELDS_CUSTOMFIELDNAME_LABEL"
+                       description="COM_CUSTOMTABLES_FIELDS_CUSTOMFIELDNAME_DESCRIPTION"
+                       required="false"
+                       filter="CMD"
+                       hint="COM_CUSTOMTABLES_FIELDS_CUSTOMFIELDNAME_HINT" />
+
         </fieldset>
 </form>

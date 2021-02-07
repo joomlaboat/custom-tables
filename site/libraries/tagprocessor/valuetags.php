@@ -194,7 +194,7 @@ class tagProcessor_Value
                             if($isEditable)
                             {
                                 $postfix='';
-                                $prefix='com_'.$row['id'].'_';//.'_es_';//example: com_153_es_fieldname
+                                $prefix='com_'.$row['listing_id'].'_';//.'_es_';//example: com_153_es_fieldname
                             
                                 $value_option_list=array();
                                 if(isset($pureValueOptionArr[1]))
@@ -562,7 +562,7 @@ class tagProcessor_Value
             elseif($fieldtype=='phponview')
 			{
                 $fieldname=$ESField['fieldname'];
-                $rowValue=$row['es_'.$ESField['fieldname']];
+                $rowValue=$row[$ESField['realfieldname']];
                 
                 if(isset($row['_processing_field_values']))
                     return true;
@@ -584,7 +584,7 @@ class tagProcessor_Value
 			}
 			else
 			{
-				$rowValue=$row['es_'.$ESField['fieldname']];
+				$rowValue=$row[$ESField['realfieldname']];
 				$fieldname=$ESField['fieldname'];
 			}
 		}
@@ -617,8 +617,8 @@ class tagProcessor_Value
             else
                 $postfix=$Model->langpostfix; //front-end default language
                 
-    		$fieldname=$ESField['fieldname'].$postfix;
-			$rowValue=$row['es_'.$fieldname];
+    		$fieldname=$ESField['realfieldname'].$postfix;
+			$rowValue=$row[$fieldname];
 		}
 	}
 

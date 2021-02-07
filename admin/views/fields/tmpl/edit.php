@@ -114,10 +114,21 @@ else
 					<div class="control-label"><?php echo $this->form->getLabel('fieldname'); ?></div>
 					<div class="controls"><?php echo $this->form->getInput('fieldname'); ?></div>
 				</div>
+
+				<?php if($this->table_row->customtablename!=''): ?>
+				<hr/>
+				<p><?php echo JText::_('COM_CUSTOMTABLES_FIELDS_THIS_IS_THIRDPARTY_FIELD', true).': "'.$this->table_row->customtablename.'"';?></p>
+				<div class="control-group">
+					<div class="control-label"><?php echo $this->form->getLabel('customfieldname'); ?></div>
+					<div class="controls"><?php echo $this->form->getInput('customfieldname'); ?></div>
+				</div>
+				
+				<?php endif; ?>
+				
 				<hr/>
 
 				<?php
-
+				
 				$morethanonelang=false;
 				foreach($languages as $lang)
 				{

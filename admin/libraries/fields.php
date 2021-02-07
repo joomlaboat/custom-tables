@@ -25,7 +25,7 @@ class ESFields
     public static function getFieldID($tableid, $esfieldname)
 	{
 		$db = JFactory::getDBO();
-		$query= 'SELECT id FROM #__customtables_fields WHERE published=1 AND tableid='.(int)$tableid.' AND fieldname="'.$esfieldname.'"';
+		$query= 'SELECT id FROM #__customtables_fields WHERE published=1 AND tableid='.(int)$tableid.' AND fieldname='.$db->quote($esfieldname);
 
 		$db->setQuery( $query );
 
@@ -42,15 +42,23 @@ class ESFields
     public static function addLanguageField($tablename,$original_fieldname,$new_fieldname)
     {
         $fields=ESFields::getExistingFields($tablename,false);
+		
+		$db = JFactory::getDBO();
+		
+		if($db->serverType == 'postgresql')
+			$field_columns=(object)['columnname' => 'column_name', 'data_type'=>'data_type', 'is_nullable'=>'is_nullable'];
+		else
+			$field_columns=(object)['columnname' => 'Field', 'data_type'=>'Type', 'is_nullable'=>'Null'];
+		
         foreach($fields as $field)
         {
-            if($field['Field']==$original_fieldname)
+            if($field[$field_columns->columnname]==$original_fieldname)
             {
                 $AdditionOptions='';
-                if($field['Null']!='NO')
-                    $AdditionOptions='NULL';
+                if($field[$field_columns->is_nullable]!='NO')
+					$AdditionOptions='NULL';
 
-                ESFields::AddMySQLFieldNotExist($tablename, $new_fieldname, $field['Type'], $AdditionOptions);
+                ESFields::AddMySQLFieldNotExist($tablename, $new_fieldname, $field[$field_columns->data_type], $AdditionOptions);
                 return true;
             }
         }
@@ -76,9 +84,8 @@ class ESFields
 			{
 
 				$AdditionOptions='';
-
-
-				$AdditionOptions	.=' COMMENT '.$db->Quote($fieldtitle);
+				if($db->serverType != 'postgresql')
+					$AdditionOptions=' COMMENT '.$db->Quote($fieldtitle);
 
 				if($fieldtype!='dummy')
 					ESFields::AddMySQLFieldNotExist($mysqltablename, $mysqlfieldname, $PureFieldType, $AdditionOptions);
@@ -96,7 +103,10 @@ class ESFields
                     else
                         $postfix='_'.$lang->sef;
 
-					$AdditionOptions	=' COMMENT '.$db->Quote($fieldtitle);
+					$AdditionOptions='';
+					if($db->serverType != 'postgresql')
+						$AdditionOptions	=' COMMENT '.$db->Quote($fieldtitle);
+						
 					ESFields::AddMySQLFieldNotExist($mysqltablename, $mysqlfieldname.$postfix, $PureFieldType, $AdditionOptions);
 
                     $index++;
@@ -238,7 +248,8 @@ class ESFields
 
     public static function getPureFieldType($fieldtype,$typeparams)
 	{
-
+		$db = JFactory::getDBO();
+		
 		$t=trim($fieldtype);
 		switch($t)
 		{
@@ -291,17 +302,35 @@ class ESFields
 				break;
 
 			case 'int':
-				return 'int(11) NULL';
+				
+				if($db->serverType == 'postgresql')
+					return 'int NULL';
+				else
+					return 'int(11) NULL';
+				
 				break;
 
 			case 'float':
 				$typeparams_arr=explode(',',$typeparams);
-				if(count($typeparams_arr)==1)
-					return 'decimal(20,'.(int)$typeparams_arr[0].') NULL';
-				elseif(count($typeparams_arr)==2)
-					return 'decimal('.(int)$typeparams_arr[1].','.(int)$typeparams_arr[0].') NULL';
+				
+				if($db->serverType == 'postgresql')
+				{
+					if(count($typeparams_arr)==1)
+						return 'numeric(20,'.(int)$typeparams_arr[0].') NULL';
+					elseif(count($typeparams_arr)==2)
+						return 'numeric('.(int)$typeparams_arr[1].','.(int)$typeparams_arr[0].') NULL';
+					else
+						return 'numeric(20,2) NULL';
+				}
 				else
-					return 'decimal(20,2) NULL';
+				{
+					if(count($typeparams_arr)==1)
+						return 'decimal(20,'.(int)$typeparams_arr[0].') NULL';
+					elseif(count($typeparams_arr)==2)
+						return 'decimal('.(int)$typeparams_arr[1].','.(int)$typeparams_arr[0].') NULL';
+					else
+						return 'decimal(20,2) NULL';
+				}
 
 				break;
 
@@ -335,7 +364,11 @@ class ESFields
 				//break;
 
 			case 'sqljoin':
-				return 'int(10) NULL';
+				if($db->serverType == 'postgresql')
+					return 'int NULL';
+				else
+					return 'int(10) NULL';
+				
 				break;
 
 			case 'file':
@@ -343,11 +376,19 @@ class ESFields
 				break;
 
 			case 'image':
-				return 'bigint(20) NULL';
+				if($db->serverType == 'postgresql')
+					return 'BIGINT NULL';
+				else
+					return 'bigint(20) NULL';
+					
 				break;
 
 			case 'checkbox':
-				return 'tinyint(1) NOT NULL DEFAULT 0';
+				if($db->serverType == 'postgresql')
+					return 'SMALLINT NOT NULL DEFAULT 0';
+				else
+					return 'tinyint(1) NOT NULL DEFAULT 0';
+				
 				break;
 
 			case 'radio':
@@ -367,34 +408,64 @@ class ESFields
 				return 'date NULL';
 				break;
             
-		        case 'time':
-				return 'int(11) NULL';
+		    case 'time':
+				if($db->serverType == 'postgresql')
+					return 'int NULL';
+				else
+					return 'int(11) NULL';
+					
 				break;
 
 			case 'creationtime':
-				return 'datetime NULL';
+				if($db->serverType == 'postgresql')
+					return 'TIMESTAMP NULL';
+				else
+					return 'datetime NULL';
+					
 				break;
 
 			case 'changetime':
-				return 'datetime NULL';
+				if($db->serverType == 'postgresql')
+					return 'TIMESTAMP NULL';
+				else
+					return 'datetime NULL';
+					
 				break;
 
 			case 'lastviewtime':
-				return 'datetime NULL';
+				if($db->serverType == 'postgresql')
+					return 'TIMESTAMP NULL';
+				else
+					return 'datetime NULL';
+					
 				break;
 
 			case 'viewcount':
-				return 'bigint(20) unsigned NULL';
+				if($db->serverType == 'postgresql')
+					return 'BIGINT unsigned NULL';
+				else
+					return 'bigint(20) unsigned NULL';
+					
 				break;
 
 			case 'userid': //current user id (auto asigned)
-				return 'bigint(20) unsigned NULL';
+
+				if($db->serverType == 'postgresql')
+					return 'BIGINT unsigned NULL';
+				else
+					return 'bigint(20) unsigned NULL';
 
 			case 'user': //user (selection)
-				return 'bigint(20) unsigned NULL';
+				if($db->serverType == 'postgresql')
+					return 'BIGINT unsigned NULL';
+				else
+					return 'bigint(20) unsigned NULL';
 
 			case 'usergroup': //user group (selection)
-				return 'int(11) unsigned NULL';
+				if($db->serverType == 'postgresql')
+					return 'INT unsigned NULL';
+				else
+					return 'int(11) unsigned NULL';
 
 			case 'usergroups': //user groups (selection)
 				return 'varchar(255) NULL';
@@ -408,7 +479,11 @@ class ESFields
 				break;
 
 			case 'id':
-				return 'bigint(20) NULL';
+				if($db->serverType == 'postgresql')
+					return 'BIGINT unsigned NULL';
+				else
+					return 'bigint(20) unsigned NULL';
+					
 				break;
 
 			case 'dummy':
@@ -416,19 +491,35 @@ class ESFields
 				break;
 
 			case 'imagegallery':
-				return 'bigint(20) unsigned NULL';
+				if($db->serverType == 'postgresql')
+					return 'BIGINT unsigned NULL';
+				else
+					return 'bigint(20) unsigned NULL';
+					
 				break;
 
 			case 'filebox':
-				return 'bigint(20) unsigned NULL';
+				if($db->serverType == 'postgresql')
+					return 'BIGINT unsigned NULL';
+				else
+					return 'bigint(20) unsigned NULL';
+					
 				break;
 
 			case 'article':
-				return 'bigint(20) unsigned NULL';
+				if($db->serverType == 'postgresql')
+					return 'BIGINT unsigned NULL';
+				else
+					return 'bigint(20) unsigned NULL';
+					
 				break;
 
 			case 'multilangarticle':
-				return 'bigint(20) unsigned NULL';
+				if($db->serverType == 'postgresql')
+					return 'BIGINT unsigned NULL';
+				else
+					return 'bigint(20) unsigned NULL';
+					
 				break;
 
 			case 'md5':
@@ -439,12 +530,13 @@ class ESFields
 				return 'text NOT NULL';
 				break;
 
-//            case '_id':
-//				return 'int(10) NOT NULL';// AUTO_INCREMENT';UNSIGNED
-//				break;
-
             case '_published':
-				return 'tinyint(1) NULL DEFAULT 1';
+
+				if($db->serverType == 'postgresql')
+					return 'SMALLINT NOT NULL DEFAULT 1';
+				else
+					return 'tinyint(1) NOT NULL DEFAULT 1';
+					
 				break;
             
             case 'phponview':
@@ -466,12 +558,12 @@ class ESFields
 	}
 
 
-    public static function AddMySQLFieldNotExist($mysqltablename, $mysqlfieldname, $filedtype, $options)
+    public static function AddMySQLFieldNotExist($mysqltablename, $mysqlfieldname, $fieldtype, $options)
     {
 		$db = JFactory::getDBO();
 		if(!ESFields::checkIfFieldExists($mysqltablename,$mysqlfieldname,false))
 		{
-			$query='ALTER TABLE '.$mysqltablename.' ADD COLUMN '.$mysqlfieldname.' '.$filedtype.' '.$options;
+			$query='ALTER TABLE '.$mysqltablename.' ADD COLUMN '.$mysqlfieldname.' '.$fieldtype.' '.$options;
 
 			$db->setQuery($query);
 			if (!$db->query())    die('Cannot Add Column'. $db->stderr());
@@ -702,7 +794,7 @@ class ESFields
 
 		$mysqlfieldname='es_'.$esfieldname;
 
-        $unconvertable_types=array('dummy','image','imagegallery','file','filebox','sqljoin','records','customtables','log');
+        $unconvertable_types=array('dummy','image','imagegallery','file','filebox','records','customtables','log');
 
         if(in_array($new_type,$unconvertable_types) or in_array($ex_type,$unconvertable_types))
             return false;
@@ -901,8 +993,13 @@ class ESFields
 			$mysqltablename='#__customtables_table_'.$tablename;
 		else
 			$mysqltablename=$tablename;
-
-		$query = 'SHOW COLUMNS FROM '.$mysqltablename.' WHERE '.$db->quoteName('field').'='.$db->quote($fieldname);
+			
+		$mysqltablename=str_replace('#__',$db->getPrefix(),$mysqltablename);
+		
+		if($db->serverType == 'postgresql')
+			$query = 'SELECT data_type FROM information_schema.columns WHERE table_name = '.$db->quote($mysqltablename).' AND column_name='.$db->quote($fieldname);
+		else
+			$query = 'SHOW COLUMNS FROM '.$mysqltablename.' WHERE '.$db->quoteName('field').'='.$db->quote($fieldname);
 
 		$db->setQuery( $query );
 
@@ -912,11 +1009,15 @@ class ESFields
             return '';
 
         $rec=$recs[0];
-
-		return $rec['Type'];
+		
+		if($db->serverType == 'postgresql')
+			return $rec['data_type'];
+		else
+			return $rec['Type'];
 
 	}
 
+	//MySQL only
     public static function getExistingFields($tablename,$add_table_prefix=true)
 	{
 		$db = JFactory::getDBO();
@@ -926,7 +1027,18 @@ class ESFields
 		else
 			$mysqltablename=$tablename;
 
-		$query = 'SHOW COLUMNS FROM '.$mysqltablename;
+		if($db->serverType == 'postgresql')
+		{
+			//$conf = JFactory::getConfig();
+			//$database = $conf->get('db');
+			$mysqltablename=str_replace('#__',$db->getPrefix(),$mysqltablename);
+			$query = 'SELECT column_name, data_type, is_nullable FROM information_schema.columns WHERE table_name = '.$db->quote($mysqltablename);
+		}
+		else
+		{
+			$query = 'SHOW COLUMNS FROM '.$mysqltablename;
+		}
+
 		$db->setQuery( $query );
         if (!$db->query()) return false;
 
@@ -939,45 +1051,45 @@ class ESFields
 		$db = JFactory::getDBO();
 
 		if($add_table_prefix)
-			$mysqltablename='#__customtables_table_'.$tablename;
+			$mysqltablename=$db->getPrefix().'customtables_table_'.$tablename;
 		else
 			$mysqltablename=$tablename;
 
-		$query = 'SHOW COLUMNS FROM '.$mysqltablename;
+		if($db->serverType == 'postgresql')
+		{
+			//$conf = JFactory::getConfig();
+			//$database = $conf->get('db');
+			$mysqltablename=str_replace('#__',$db->getPrefix(),$mysqltablename);
+			$query = 'SELECT table_name, column_name, data_type FROM information_schema.columns WHERE table_name = '.$db->quote($mysqltablename);
+		}
+		else
+		{
+			$query = 'SHOW COLUMNS FROM '.$mysqltablename;
+		}
+     
+		$list=array();
+		
 		$db->setQuery( $query );
-        if (!$db->query()) return false;
-
-        $list=array();
-        $recs=$db->loadAssocList();
-        foreach($recs as $rec)
-        {
-            $list[]=$rec['Field'];
+		$recs=$db->loadAssocList();
+        
+        if($db->serverType == 'postgresql')
+		{
+			foreach($recs as $rec)
+				$list[]=$rec['column_name'];
+        }
+		else
+		{
+			foreach($recs as $rec)
+				$list[]=$rec['Field'];
         }
 		return $list;
-
 	}
 
-	public static function checkIfFieldExists($tablename,$field,$add_table_prefix=true)
+	public static function checkIfFieldExists($realtablename,$field)//,$add_table_prefix=true)
 	{
-		$fields=ESFields::getExistingFields($tablename,$add_table_prefix);
-		return ESFields::checkIfFieldExists_inArray($fields,$field);
+		$fields=ESFields::getListOfExistingFields($realtablename,false);
+		return in_array($field,$fields);
 	}
-
-	public static function checkIfFieldExists_inArray(&$existing_fields,$proj_field)
-	{
-
-	    foreach($existing_fields as $existing_field)
-	    {
-	        if($proj_field==$existing_field['Field'])
-	        {
-	            return true;
-	            break;
-	        }
-	    }
-
-	    return false;
-	}
-
 
 	public static function deleteMYSQLField($mysqltablename,$fieldname)
 	{
@@ -1062,12 +1174,18 @@ class ESFields
 	{
 		$db = JFactory::getDBO();
 
+		if($db->serverType == 'postgresql')
+			$realfieldname_query='CASE WHEN customfieldname!=\'\' THEN customfieldname ELSE CONCAT(\'es_\',fieldname) END AS realfieldname';
+		else
+			$realfieldname_query='CONCAT(\'es_\',fieldname) AS realfieldname';
+		
+
         if((int)$tableid_or_name>0)
-            $query = 'SELECT * FROM #__customtables_fields WHERE published=1 AND tableid='.(int)$tableid_or_name.' ORDER BY ordering, fieldname';
+            $query = 'SELECT *, '.$realfieldname_query.' FROM #__customtables_fields WHERE published=1 AND tableid='.(int)$tableid_or_name.' ORDER BY ordering, fieldname';
         else
         {
             $w1='(SELECT t.id FROM #__customtables_tables AS t WHERE t.tablename='.$db->quote($tableid_or_name).' LIMIT 1)';
-            $query = 'SELECT * FROM #__customtables_fields AS f WHERE f.published=1 AND f.tableid='.$w1.' ORDER BY f.ordering, f.fieldname';
+            $query = 'SELECT *, '.$realfieldname_query.' FROM #__customtables_fields AS f WHERE f.published=1 AND f.tableid='.$w1.' ORDER BY f.ordering, f.fieldname';
         }
 
 		$db->setQuery( $query );
@@ -1156,5 +1274,13 @@ class ESFields
 	}
 
 
-
+	public static function getRealFieldName($fieldname,&$esfields)
+	{
+		foreach($esfields as $row)
+		{
+			if($row['allowordering']==1 and $row['fieldname']==$fieldname)
+				return $row['realfieldname'];
+		}
+		return '';
+	}
 }

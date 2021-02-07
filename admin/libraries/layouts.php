@@ -36,8 +36,13 @@ class ESLayouts
 			return '';
 
 		$db = JFactory::getDBO();
-
-		$query = 'SELECT id, layoutcode, UNIX_TIMESTAMP(modified) AS ts, layouttype FROM #__customtables_layouts WHERE layoutname="'.$layoutname.'" LIMIT 1';
+		
+		
+		if($db->serverType == 'postgresql')
+			$query = 'SELECT id, layoutcode, extract(epoch FROM modified) AS ts, layouttype FROM #__customtables_layouts WHERE layoutname='.$db->quote($layoutname).' LIMIT 1';
+		else
+			$query = 'SELECT id, layoutcode, UNIX_TIMESTAMP(modified) AS ts, layouttype FROM #__customtables_layouts WHERE layoutname='.$db->quote($layoutname).'" LIMIT 1';
+			
 		$db->setQuery( $query );
 		$rows = $db->loadAssocList();
 		if(count($rows)!=1)

@@ -25,6 +25,7 @@ class CustomtablesViewFields extends JViewLegacy
 	 * @return void
 	 */
 	var $tableid;
+	var $table_row;
 	
 	public function display($tpl = null)
 	{
@@ -40,7 +41,8 @@ class CustomtablesViewFields extends JViewLegacy
 		else
 			$this->tableid=$this->item->tableid;
 		
-		
+		$this->table_row = ESTables::getTableRowByID($this->tableid);
+				
 		$this->script = $this->get('Script');
 		$this->state = $this->get('State');
 		// get action permissions

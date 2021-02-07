@@ -47,6 +47,7 @@ CREATE TABLE IF NOT EXISTS `#__customtables_tables` (
 	`description` TEXT NOT NULL,
 	`tablecategory` INT(11) NULL DEFAULT 0,
 	`tablename` VARCHAR(255) NOT NULL DEFAULT '',
+	`customtablename` VARCHAR(255) NOT NULL DEFAULT '',
 	`tabletitle` VARCHAR(255) NOT NULL DEFAULT '',
 	`params` text NOT NULL DEFAULT '',
 	`published` TINYINT(3) NOT NULL DEFAULT 1,
@@ -105,6 +106,7 @@ CREATE TABLE IF NOT EXISTS `#__customtables_fields` (
 	`allowordering` TINYINT(1) unsigned NOT NULL DEFAULT 0,
 	`defaultvalue` VARCHAR(1024) NOT NULL DEFAULT '',
 	`fieldname` VARCHAR(100) NOT NULL DEFAULT '',
+	`customfieldname` VARCHAR(100) NOT NULL DEFAULT '',
 	`fieldtitle` VARCHAR(1024) NOT NULL DEFAULT '',
 	`description` TEXT NULL DEFAULT NULL,
 	`isrequired` tinyint(1) unsigned NOT NULL default '1',
@@ -140,8 +142,8 @@ CREATE TABLE IF NOT EXISTS `#__customtables_fields` (
 
 
 CREATE TABLE IF NOT EXISTS `#__customtables_log` (
-  `id` int(10) UNSIGNED NOT NULL,
-  `user` int(10) UNSIGNED NOT NULL,
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `userid` int(10) UNSIGNED NOT NULL,
   `datetime` datetime NOT NULL,
   `tableid` int(10) UNSIGNED NOT NULL,
   `action` smallint(6) UNSIGNED NOT NULL,

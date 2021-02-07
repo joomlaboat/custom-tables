@@ -347,24 +347,36 @@ class CustomtablesModelTables extends JModelAdmin
 	 */
 	public function delete(&$pks)
 	{
-		$tables=array();
+		$db = JFactory::getDBO();
+
 		foreach($pks as $tableid)
 		{
-			$tablename=ESTables::getTableName($tableid);
-			$tables[]=$tablename;
-		}
+			$table_row=ESTables::getTableRowByID($tableid);
 
+			if(isset($table_row->tablename) and (!isset($table_row->customtablename) or $table_row->customtablename == '')) // do not delete third-party tables
+			{
+				$realtablename = $db->getPrefix().'customtables_table_'.$table_row->tablename; //not availabel for custom tablesnames
+				
+				if($db->serverType == 'postgresql')
+					$query = 'DROP TABLE IF EXISTS '.$realtablename;
+				else
+					$query = 'DROP TABLE IF EXISTS '.$db->quote($realtablename);
+					
+				$db->setQuery( $query );
+				$db->execute();
+					
+				if($db->serverType == 'postgresql')
+				{
+					$query = 'DROP SEQUENCE IF EXISTS '.$realtablename.'_seq CASCADE';
+					$db->setQuery( $query );
+					$db->execute();
+				}
+			}
+		}
+		
 		if (!parent::delete($pks))
 			return false;
 
-
-		$db = JFactory::getDBO();
-		foreach($tables as $tablename)
-		{
-			$query = 'DROP TABLE IF EXISTS #__customtables_table_'.$tablename;
-			$db->setQuery( $query );
-			if (!$db->query())    die ( $db->stderr());
-		}
 		return true;
 	}
 
@@ -561,6 +573,7 @@ class CustomtablesModelTables extends JModelAdmin
 		$languages=$LangMisc->getLanguageList();
 
 		$morethanonelang=false;
+		
 		$fields=ESFields::getListOfExistingFields('#__customtables_tables',false);
 		foreach($languages as $lang)
 		{
@@ -588,20 +601,21 @@ class CustomtablesModelTables extends JModelAdmin
 		$tableid=(int)$data['id'];
 
 		$tablename=strtolower(trim(preg_replace("/[^a-zA-Z]/", "", $data['tablename'])));
+		
+		//If its a new table, check if field name is unique or add number "_1" if its not.
 		if($tableid==0)
 			$tablename=$this->checkTableName($tablename);
 
-
 		$data['tablename']=$tablename;
 
-		if($tableid!=0)
+		if($tableid!=0 and $data['customtablename']=='')//do not rename real table if its a third-party table - not part of the Custom Tables
 		{
-
 			$this->getRenameTableIfNeeded($tableid,$database,$dbprefix,$tablename);
-
 		}
+		
+		$old_tablename='';
 
-		// Alter the uniqe field for save as copy
+		// Alter the unique field for save as copy
 		if (JFactory::getApplication()->input->get('task') === 'save2copy')
 		{
 			$originaltableid=JFactory::getApplication()->input->getInt( 'originaltableid',0);
@@ -622,10 +636,12 @@ class CustomtablesModelTables extends JModelAdmin
 
 		if (parent::save($data))
 		{
-			if($originaltableid!=0)
+			$originaltableid=JFactory::getApplication()->input->getInt( 'originaltableid',0);
+			
+			if($originaltableid!=0 and $old_tablename!='')
 				$this->copyTable($originaltableid,$tablename,$old_tablename);
 
-			$this->processDBTable($database,$dbprefix,$tablename,$tabletitle);
+			$this->processDBTable($database,$dbprefix,$tablename,$tabletitle,$data['customtablename']);
 
 			return true;
 		}
@@ -658,64 +674,84 @@ class CustomtablesModelTables extends JModelAdmin
 	}
 
 
-	function processDBTable($database,$dbprefix,$tablename,$tabletitle)
+	function processDBTable($database,$dbprefix,$tablename,$tabletitle,$complete_table_name='')
 	{
 		$db = JFactory::getDBO();
 
-		$rows2=ESTables::getTableStatus($database,$dbprefix,$tablename);
-
-
-		if(count($rows2)>0)
+		if($db->serverType == 'postgresql')
 		{
-
-				$row2=$rows2[0];
-
+			//PostgreSQL
+			//Check if table exists
+			if($complete_table_name=='')
 				$table_name=$dbprefix.'customtables_table_'.$tablename;
+			else
+				$table_name=$complete_table_name;// used for custom table names - to connect to third-part tables for example
+				
+			$fields = ESFields::getListOfExistingFields($table_name,false);
+			
+			if(count($fields)==0)
+			{
+				//create new table
+				$db->setQuery('CREATE SEQUENCE IF NOT EXISTS '.$table_name.'_seq');
+				$db->execute();
+				
+				
+				$query = '
+				CREATE TABLE IF NOT EXISTS '.$table_name.'
+				(
+					id int NOT NULL default nextval (\''.$table_name.'_seq\'),
+					published smallint NOT NULL DEFAULT 1,
+					PRIMARY KEY (id)
+				)';
 
-				if($row2->Engine!='InnoDB')
-				{
-					$query = 'ALTER TABLE '.$table_name.' ENGINE = InnoDB';
-					$db->setQuery( $query );
-					if (!$db->query()) {
-						$this->setError( $db->getErrorMsg() );
-						return false;
-					}
-
-
-				}
-
-
-				$query = 'ALTER TABLE '.$table_name.' COMMENT = "'.$tabletitle.'";';
 				$db->setQuery( $query );
-				if (!$db->query()) {
-					$this->setError( $db->getErrorMsg() );
-					return false;
-				}
-
+				$db->execute();
+				
+				$db->setQuery('ALTER SEQUENCE '.$table_name.'_seq RESTART WITH 1');
+				$db->execute();
+			}
 		}
 		else
 		{
+			//Mysql;
+			$rows2=ESTables::getTableStatus($database,$dbprefix,$tablename);
 
-
-			$query = '
-			CREATE TABLE IF NOT EXISTS #__customtables_table_'.$tablename.'
-			(
-				id int(10) unsigned NOT NULL auto_increment,
-				published tinyint(1) DEFAULT "1",
-				PRIMARY KEY  (id)
-			) ENGINE=InnoDB COMMENT="'.$tabletitle.'" DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
-			';
-
-			$db->setQuery( $query );
-			if (!$db->query())
+			if(count($rows2)>0)
 			{
-				$this->setError( $db->getErrorMsg() );
-				return false;
+				if($complete_table_name=='')
+				{
+					//do not medify third-party tables
+					$row2=$rows2[0];
+
+					$table_name=$dbprefix.'customtables_table_'.$tablename;
+
+					if($row2->Engine!='InnoDB')
+					{
+						$query = 'ALTER TABLE '.$table_name.' ENGINE = InnoDB';
+						$db->setQuery( $query );
+						$db->execute();
+					}
+
+					$query = 'ALTER TABLE '.$table_name.' COMMENT = "'.$tabletitle.'";';
+					$db->setQuery( $query );
+					$db->execute();
+				}
 			}
+			else
+			{
+				$query = '
+				CREATE TABLE IF NOT EXISTS #__customtables_table_'.$tablename.'
+				(
+					id int(10) unsigned NOT NULL auto_increment,
+					published tinyint(1) DEFAULT 1,
+					PRIMARY KEY  (id)
+				) ENGINE=InnoDB COMMENT="'.$tabletitle.'" DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
+				';
 
+				$db->setQuery( $query );
+				$db->execute();
+			}
 		}
-
-
 	}
 
 	/**
@@ -732,7 +768,7 @@ class CustomtablesModelTables extends JModelAdmin
 
 	function checkIfTableNameExists($tablename)
 	{
-		$db = $this->getDBO();
+		$db = JFactory::getDBO();
 
 		$query = 'SELECT id FROM #__customtables_tables WHERE tablename='.$db->quote($tablename).' LIMIT 1';
 		
@@ -748,18 +784,18 @@ class CustomtablesModelTables extends JModelAdmin
 	public function copyTable($originaltableid,$new_table,$old_table)
 	{
 		//Copy Table
-		$db = $this->getDBO();
+		$db = JFactory::getDBO();
 
 		//get ID of new table
 		$new_table_id=$this->checkIfTableNameExists($new_table);
 		
-		$query = 'CREATE TABLE #__customtables_table_'.$new_table.' SELECT * FROM #__customtables_table_'.$old_table.'';
+		if($db->serverType == 'postgresql')
+			$query = 'CREATE TABLE #__customtables_table_'.$new_table.' AS TABLE #__customtables_table_'.$old_table;
+		else
+			$query = 'CREATE TABLE #__customtables_table_'.$new_table.' SELECT * FROM #__customtables_table_'.$old_table;
 
 		$db->setQuery( $query );
-		if (!$db->query()) {
-			$this->setError( $db->getErrorMsg() );
-			//return false;
-		}
+		$db->execute();
 
 		//Copy Fields
 		$fields=array('fieldname','type','typeparams','ordering','defaultvalue','allowordering','parentid','isrequired','hidden','valuerule');
@@ -819,13 +855,13 @@ class CustomtablesModelTables extends JModelAdmin
 			$item =$this->getTable();
 			$item->load( $id );
 
-			$db = $this->getDBO();
+			$db = JFactory::getDBO();
 
 			$tables[]=$item->tablename;
 
 			//get table
 			$s1='(SELECT categoryname FROM #__customtables_categories WHERE #__customtables_categories.id=#__customtables_tables.tablecategory) AS categoryname';
-			$query = 'SELECT *,'.$s1.' FROM #__customtables_tables WHERE published=1 AND id='.$id.' LIMIT 1';
+			$query = 'SELECT *,'.$s1.' FROM #__customtables_tables WHERE published=1 AND id='.(int)$id.' LIMIT 1';
 			$db->setQuery( $query );
 			if (!$db->query())    echo ( $db->stderr());
 			$rows=$db->loadAssocList();
@@ -835,13 +871,13 @@ class CustomtablesModelTables extends JModelAdmin
 				$table=$rows[0];
 
 				//get fields
-				$query = 'SELECT * FROM #__customtables_fields WHERE published=1 AND tableid='.$id.'';
+				$query = 'SELECT * FROM #__customtables_fields WHERE published=1 AND tableid='.(int)$id.'';
 				$db->setQuery( $query );
 				if (!$db->query())    echo ( $db->stderr());
 				$fields=$db->loadAssocList();
 
 				//get layouts
-				$query = 'SELECT * FROM #__customtables_layouts WHERE published=1 AND tableid='.$id.'';
+				$query = 'SELECT * FROM #__customtables_layouts WHERE published=1 AND tableid='.(int)$id.'';
 				$db->setQuery( $query );
 				if (!$db->query())    echo ( $db->stderr());
 				$layouts=$db->loadAssocList();
@@ -849,8 +885,17 @@ class CustomtablesModelTables extends JModelAdmin
 				//get menu items
 				$wheres=array();
 				$wheres[]='published=1';
-				$wheres[]='INSTR(link,"index.php?option=com_customtables&view=")';
-				$wheres[]='INSTR(params,\'"establename":"'.$item->tablename.'"\')';
+				
+				if($db->serverType == 'postgresql')
+				{
+					$wheres[]='POSITION('.$db->quote("index.php?option=com_customtables&view=").' IN link)>0';
+					$wheres[]='POSITION('.$db->quote('"establename":"'.$item->tablename.'"').' IN params)>0';
+				}
+				else
+				{
+					$wheres[]='INSTR(link,'.$db->quote("index.php?option=com_customtables&view=").')';
+					$wheres[]='INSTR(params,'.$db->quote('"establename":"'.$item->tablename.'"').')';
+				}
 
 				$query = 'SELECT * FROM #__menu WHERE '.implode(' AND ',$wheres);
 

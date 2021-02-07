@@ -288,7 +288,6 @@ class CustomTablesModelDetails extends JModelLegacy {
 			$log_field=$this->getTypeFieldName('log');;
 			if($log_field!='')
 			{
-
 				$new_row= $this->getVersionData($row,$log_field,$version);
 				if(count($new_row)>0)
 				{
@@ -296,17 +295,12 @@ class CustomTablesModelDetails extends JModelLegacy {
 
 				    //Copy values
 				    foreach($this->esfields as $ESField)
-					$row['es_'.$ESField['fieldname']]=$new_row['es_'.$ESField['fieldname']];
-
-
+					$row[$ESField['realfieldname']]=$new_row[$ESField['realfieldname']];
 				}
-
-
 
 				return $this->getVersionData($row,$log_field,$version);
 			}
 		}
-
 
 		return $row;
 	}
@@ -318,10 +312,8 @@ class CustomTablesModelDetails extends JModelLegacy {
 	    $row['id']=$id;
 	    $row['published']=$published;
 
-
 	    foreach($this->esfields as $ESField)
-		$row['es_'.$ESField['fieldname']]='';
-
+		$row[$ESField['realfieldname']]='';
 
 	    return $row;
 	}
@@ -331,9 +323,8 @@ class CustomTablesModelDetails extends JModelLegacy {
 	{
 		foreach($this->esfields as $ESField)
 		{
-				if($ESField['type']==$type)
-					return 'es_'.$ESField['fieldname'];
-
+			if($ESField['type']==$type)
+				return $ESField['realfieldname'];
 		}
 
 		return '';
@@ -346,13 +337,8 @@ class CustomTablesModelDetails extends JModelLegacy {
 		$versions=explode(';',$row[$log_field]);
 		if($version<=count($versions))
 		{
-
-
 					$data_editor=explode(',',$versions[$version-2]);
 					$data_content=explode(',',$versions[$version-1]);
-
-
-
 
 					if($data_content[3]!='')
 					{

@@ -29,6 +29,7 @@ class CustomtablesTableFields extends JTable
 	var $allowordering = null;
 	var $defaultvalue = null;
 	var $fieldname = null;
+	var $customfieldname = null;
 	var $fieldtitle = null;
 	var $description = null;
 	var $isrequired = null;

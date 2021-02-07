@@ -942,7 +942,9 @@ text with <div>tags</div>
 		// transliterate
 
 		//$text = transliterator_transliterate('Any-Latin; Latin-ASCII; Lower()', $text);
-		$text = iconv('UTF-8', 'ISO-8859-1//TRANSLIT//IGNORE', $text);
+		if(function_exists('iconv'))
+			$text = iconv('UTF-8', 'ISO-8859-1//TRANSLIT//IGNORE', $text);
+			
 		//$text = iconv('utf-8', 'us-ascii//IGNORE//TRANSLIT', $text);
 		//$text = iconv('utf-8', 'ISO-8859-1//TRANSLIT', $text);
 

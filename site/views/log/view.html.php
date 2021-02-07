@@ -77,7 +77,7 @@ class CustomTablesViewLog extends JViewLegacy
 		$db = JFactory::getDBO();
 
 
-		$query='SELECT #__users.id AS id, #__users.name AS name FROM #__customtables_log INNER JOIN #__users ON #__users.id=#__customtables_log.user GROUP BY #__users.id ORDER BY name';
+		$query='SELECT #__users.id AS id, #__users.name AS name FROM #__customtables_log INNER JOIN #__users ON #__users.id=#__customtables_log.userid GROUP BY #__users.id ORDER BY name';
 
 		$db->setQuery($query);
 		if (!$db->query()) die( $db->stderr());
@@ -115,7 +115,7 @@ class CustomTablesViewLog extends JViewLegacy
 
 		$selects=array();
 		$selects[]='*';
-		$selects[]='(SELECT name FROM #__users WHERE id=user) AS UserName';
+		$selects[]='(SELECT name FROM #__users WHERE id=userid) AS UserName';
 		$selects[]='(SELECT tabletitle FROM #__customtables_tables WHERE id=tableid) AS TableName';
 		$selects[]='(SELECT fieldname FROM #__customtables_fields WHERE #__customtables_fields.published=1 AND #__customtables_fields.tableid=#__customtables_log.tableid '
 		.'ORDER BY ordering LIMIT 1) AS FieldName';

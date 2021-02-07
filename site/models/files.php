@@ -148,7 +148,6 @@ class CustomTablesModelFiles extends JModelLegacy
 			return $a;
 		}
 
-
 		$row=$rows[0];
 		$row['listing_id']=$row['id'];
 
@@ -161,11 +160,9 @@ class CustomTablesModelFiles extends JModelLegacy
 		foreach($this->esfields as $ESField)
 		{
 				if($ESField['type']==$type)
-					return 'es_'.$ESField['fieldname'];
-
+					return $ESField['realfieldname'];
 		}
 
 		return '';
 	}
-
 }

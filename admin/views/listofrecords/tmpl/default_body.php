@@ -46,7 +46,7 @@ $edit = "index.php?option=com_customtables&view=listofrecords&task=records.edit"
 			$result='';
 			
 			
-			$link='/administrator/index.php?option=com_customtables&view=records&task=records.edit&tableid='.$this->tableid.'&id='.$item->id;
+			$link=JURI::root(false).'administrator/index.php?option=com_customtables&view=records&task=records.edit&tableid='.$this->tableid.'&id='.$item->id;
 			
 			foreach($this->tablefields as $field)
 			{

@@ -11,6 +11,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 $edit = "index.php?option=com_customtables&view=listoftables&task=tables.edit";
+$db = JFactory::getDBO();
 
 ?>
 <?php foreach ($this->items as $i => $item): ?>
@@ -18,6 +19,15 @@ $edit = "index.php?option=com_customtables&view=listoftables&task=tables.edit";
 		$canCheckin = $this->user->authorise('core.manage', 'com_checkin') || $item->checked_out == $this->user->id || $item->checked_out == 0;
 		$userChkOut = JFactory::getUser($item->checked_out);
 		$canDo = CustomtablesHelper::getActions('tables',$item,'listoftables');
+		
+		
+		$realtablename = '';
+		if(isset($item->customtablename) and $item->customtablename !='')
+			$realtablename = $item->customtablename;
+		else
+			$realtablename = $db->getPrefix().'customtables_table_'.$item->tablename;
+			
+		$table_exists = ESTables::checkIfTableExists($realtablename);
 	?>
 	<tr class="row<?php echo $i % 2; ?>">
 		<td class="nowrap center">
@@ -37,7 +47,11 @@ $edit = "index.php?option=com_customtables&view=listoftables&task=tables.edit";
 		</td>
 		
 				<td class="hidden-phone"><a href="<?php echo $edit; ?>&id=<?php echo $item->id; ?>">
-			<?php echo $this->escape($item->tablename); ?>
+			<?php 
+				echo $this->escape($item->tablename);
+				echo '<br/><span style="color:grey;">'.$realtablename.'</span>';
+				
+				?>
 			<?php if ($canDo->get('core.edit')): ?>
 								<?php if ($item->checked_out): ?>
 						<?php echo JHtml::_('jgrid.checkedout', $i, $userChkOut->name, $item->checked_out_time, 'listoftables.', $canCheckin); ?>
@@ -87,12 +101,6 @@ $edit = "index.php?option=com_customtables&view=listoftables&task=tables.edit";
 </div></td>
 
 
-
-
-
-
-
-
 		<td class="hidden-phone">
 			<?php echo '<a href="'.JURI::root(true).'/administrator/index.php?option=com_customtables&view=listoffields&tableid='.$item->id.'">'
 			.JText::_('COM_CUSTOMTABLES_TABLES_FIELDS_LABEL')
@@ -100,9 +108,16 @@ $edit = "index.php?option=com_customtables&view=listoftables&task=tables.edit";
 		</td>
 		
 		<td class="hidden-phone">
-			<?php echo '<a href="'.JURI::root(true).'/administrator/index.php?option=com_customtables&view=listofrecords&tableid='.$item->id.'">'
-			.JText::_('COM_CUSTOMTABLES_TABLES_RECORDS_LABEL')
-			.' ('.$this->getNumberOfRecords($item->tablename).')</a>'; ?>
+			<?php 
+				if(!$table_exists)
+					echo JText::_('COM_CUSTOMTABLES_TABLES_TABLE_NOT_CREATED');
+				else
+				{
+					echo '<a href="'.JURI::root(true).'/administrator/index.php?option=com_customtables&view=listofrecords&tableid='.$item->id.'">'
+					.JText::_('COM_CUSTOMTABLES_TABLES_RECORDS_LABEL')
+					.' ('.$this->getNumberOfRecords($realtablename).')</a>';
+				}
+			?>
 		</td>
 
 		<td class="hidden-phone">

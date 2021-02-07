@@ -44,11 +44,16 @@ class CustomtablesTableRecords extends JTable
 				$this->tableid=0;
 				return null;
 			}
-			else
-				$tablename=$table->tablename;
 		}
 		
-		parent::__construct('#__customtables_table_'.$tablename, 'id', $db); 
+		if($table->customtablename !='')
+			$realtablename=$table->customtablename;
+		else
+			$realtablename = '#__customtables_table_'.$table->tablename;
+		
+		print_r($realtablename);
+		
+		parent::__construct($realtablename, 'id', $db); 
 	}	
 	
 }

@@ -17,6 +17,7 @@ class CTValue
     {
         $db = JFactory::getDBO();
         $esfieldname=$esfield['fieldname'];
+		$realfieldname=$esfield['realfieldname'];
         $comesfieldname=$prefix.$esfieldname;
         $jinput=JFactory::getApplication()->input;
         $typeparams=$esfield['typeparams'];
@@ -27,7 +28,7 @@ class CTValue
 			{
 				case 'records':
 
-					$value_found=CTValue::get_record_type_value($savequery,$typeparams,$prefix,$esfieldname);
+					$value_found=CTValue::get_record_type_value($savequery,$typeparams,$prefix,$esfieldname,$realfieldname);
 
 					break;
 				case 'sqljoin':
@@ -36,9 +37,9 @@ class CTValue
 					if(isset($value))
 					{
 						if($value==0)
-							$savequery[]='es_'.$esfieldname.'=NULL';
+							$savequery[]=$realfieldname.'=NULL';
 						else
-							$savequery[]='es_'.$esfieldname.'='.(int)$value;
+							$savequery[]=$realfieldname.'='.(int)$value;
 
                         $value_found=true;
 					}
@@ -50,7 +51,7 @@ class CTValue
 						if(isset($value))
                         {
                             $value_found=true;
-							$savequery[]='es_'.$esfieldname.'='.$db->Quote($value);
+							$savequery[]=$realfieldname.'='.$db->Quote($value);
                         }
 					break;
 
@@ -60,7 +61,7 @@ class CTValue
 						if(isset($value))
                         {
                             $value_found=true;
-							$savequery[]='es_'.$esfieldname.'='.$db->Quote($value);
+							$savequery[]=$realfieldname.'='.$db->Quote($value);
                         }
 					break;
 
@@ -101,7 +102,7 @@ class CTValue
                         if(ctype_xdigit($value) or $value=='')
                         {
                             $value_found=true;
-                            $savequery[]='es_'.$esfieldname.'='.$db->Quote($value);
+                            $savequery[]=$realfieldname.'='.$db->Quote($value);
                         }
                     }
 					break;
@@ -111,7 +112,7 @@ class CTValue
 
 						if(isset($value))
                         {
-                            $value_found=CTValue::get_alias_type_value($id,$establename,$savequery,$prefix,$esfieldname);
+                            $value_found=CTValue::get_alias_type_value($id,$establename,$savequery,$prefix,$esfieldname,$realfieldname);
                         }
 					break;
 
@@ -121,7 +122,7 @@ class CTValue
 						if(isset($value))
                         {
                             $value_found=true;
-							$savequery[]='es_'.$esfieldname.'='.$db->Quote($value);
+							$savequery[]=$realfieldname.'='.$db->Quote($value);
                         }
 					break;
 
@@ -143,7 +144,7 @@ class CTValue
 						if(isset($value))
                         {
                             $value_found=true;
-							$savequery[]='es_'.$esfieldname.$postfix.'='.$db->Quote($value);
+							$savequery[]=$realfieldname.$postfix.'='.$db->Quote($value);
                         }
 					}
 					break;
@@ -158,7 +159,7 @@ class CTValue
 						$value=stripslashes($value_);
 
                         $value_found=true;
-						$savequery[]='es_'.$esfieldname.'='.$db->Quote($value);
+						$savequery[]=$realfieldname.'='.$db->Quote($value);
 					}
 
 					break;
@@ -181,7 +182,7 @@ class CTValue
 						if(isset($value_))
 						{
                             $value_found=true;
-							$savequery[]='es_'.$esfieldname.$postfix.'='.$db->Quote($value_);
+							$savequery[]=$realfieldname.$postfix.'='.$db->Quote($value_);
 						}
 					}
 					break;
@@ -192,7 +193,7 @@ class CTValue
 						if(isset($value)) // always check with isset(). null doesnt work as 0 is null somehow in PHP
                         {
                             $value_found=true;
-							$savequery[]='es_'.$esfieldname.'='.(int)$value;
+							$savequery[]=$realfieldname.'='.(int)$value;
                         }
 
 					break;
@@ -205,14 +206,13 @@ class CTValue
                             $value=$jinput->getInt($comesfieldname);
                             if($value==0)
                             {
-                                $savequery[]='es_'.$esfieldname.'=null';
+                                $savequery[]=$realfieldname.'=null';
                             }
                             else
-                                $savequery[]='es_'.$esfieldname.'='.(int)$value;
+                                $savequery[]=$realfieldname.'='.(int)$value;
 
                             $value_found=true;
                         }
-
 
 					break;
 
@@ -224,7 +224,7 @@ class CTValue
                         {
 							if($value!=0)
                             {
-                                $savequery[]='es_'.$esfieldname.'='.(int)$value;
+                                $savequery[]=$realfieldname.'='.(int)$value;
                                 $value_found=true;
                             }
                         }
@@ -237,17 +237,17 @@ class CTValue
 						if(isset($value))
                         {
                             $value_found=true;
-							$savequery[]='es_'.$esfieldname.'='.(int)$value;
+							$savequery[]=$realfieldname.'='.(int)$value;
                         }
 					break;
 
 				case 'usergroups':
-					$value_found=CTValue::get_usergroups_type_value($savequery,$typeparams,$prefix,$esfieldname);
+					$value_found=CTValue::get_usergroups_type_value($savequery,$typeparams,$prefix,$esfieldname,$realfieldname);
 					break;
 
                 case 'language':
 
-                    $value_found=CTValue::get_customtables_type_language($savequery,$typeparams,$prefix,$esfieldname);
+                    $value_found=CTValue::get_customtables_type_language($savequery,$typeparams,$prefix,$esfieldname,$realfieldname);
 					break;
 
 				case 'filelink':
@@ -255,7 +255,7 @@ class CTValue
 						if(isset($value))
                         {
                             $value_found=true;
-							$savequery[]='es_'.$esfieldname.'='.$db->Quote($value);
+							$savequery[]=$realfieldname.'='.$db->Quote($value);
                         }
 					break;
 
@@ -267,7 +267,7 @@ class CTValue
 						if(isset($value))
                         {
                             $value_found=true;
-							$savequery[]='es_'.$esfieldname.'='.(float)$value;
+							$savequery[]=$realfieldname.'='.(float)$value;
                         }
 					break;
 
@@ -293,7 +293,7 @@ class CTValue
 						if(isset($value))
                         {
                             $value_found=true;
-							$savequery[]='es_'.$esfieldname.'='.$value;
+							$savequery[]=$realfieldname.'='.$value;
                         }
 					break;
 
@@ -314,13 +314,13 @@ class CTValue
 						if(isset($value))
                         {
                             $value_found=true;
-							$savequery[]='es_'.$esfieldname.$postfix.'='.$value;
+							$savequery[]=$realfieldname.$postfix.'='.$value;
                         }
 					}
 					break;
 
 				case 'customtables':
-                    $value_found=CTValue::get_customtables_type_value($es,$savequery,$typeparams,$prefix,$esfieldname,$establename);
+                    $value_found=CTValue::get_customtables_type_value($es,$savequery,$typeparams,$prefix,$esfieldname,$establename,$realfieldname);
 
 					break;
 
@@ -329,9 +329,9 @@ class CTValue
 						if(isset($value))
 						{
 							if(CTValue::checkEmail($value))
-								$savequery[]='es_'.$esfieldname.'='.$db->Quote($value);
+								$savequery[]=$realfieldname.'='.$db->Quote($value);
 							else
-								$savequery[]='es_'.$esfieldname.'=""';
+								$savequery[]=$realfieldname.'='.$db->Quote("");//PostgreSQL compatible
 
 				                        $value_found=true;
 						}
@@ -342,9 +342,9 @@ class CTValue
 						if(isset($value))
 						{
 							if (filter_var($value, FILTER_VALIDATE_URL))
-								$savequery[]='es_'.$esfieldname.'='.$db->Quote($value);
+								$savequery[]=$realfieldname.'='.$db->Quote($value);
 							else
-								$savequery[]='es_'.$esfieldname.'=""';
+								$savequery[]=$realfieldname.'='.$db->Quote("");//PostgreSQL compatible
 
 				                        $value_found=true;
 						}
@@ -360,7 +360,7 @@ class CTValue
                         else
                             $value=0;
                         
-                        $savequery[]='es_'.$esfieldname.'='.(int)$value;
+                        $savequery[]=$realfieldname.'='.(int)$value;
                         $value_found=true;
                     }
                     else
@@ -368,7 +368,7 @@ class CTValue
                         $value=$jinput->getCmd($comesfieldname.'_off');
                         if($value!=null)
                         {
-                            $savequery[]='es_'.$esfieldname.'=0';
+                            $savequery[]=$realfieldname.'=0';
                             $value_found=true;
                         }
                     }
@@ -378,7 +378,7 @@ class CTValue
 						$value=JFactory::getApplication()->input->getString($comesfieldname,null);
 						if(isset($value))
                         {
-							$savequery[]='es_'.$esfieldname.'='.$db->Quote($value);
+							$savequery[]=$realfieldname.'='.$db->Quote($value);
                             $value_found=true;
                         }
                         
@@ -393,9 +393,9 @@ class CTValue
 						if(isset($value))
                         {
 							if($value=='')
-								$savequery[]='es_'.$esfieldname.'=NULL';
+								$savequery[]=$realfieldname.'=NULL';
 							else
-								$savequery[]='es_'.$esfieldname.'='.(int)$value;
+								$savequery[]=$realfieldname.'='.(int)$value;
 							
                             $value_found=true;
                         } 
@@ -424,9 +424,9 @@ static public function toHex($n) {
 
 static public function Try2CreateUserAccount($Model,$field,$row)
 {
-    $useridfieldname=$field['fieldname'];
+    $useridfieldname=$field['realfieldname'];
 
-    $uid=(int)$row['es_'.$useridfieldname];
+    $uid=(int)$row[$useridfieldname];
     if($uid!=0)
     {
         $user = JFactory::getUser($uid);
@@ -532,7 +532,7 @@ static public function Try2CreateUserAccount($Model,$field,$row)
 
 	}
 
-static public function get_customtables_type_language(&$savequery,$typeparams,$prefix,$esfieldname)
+static public function get_customtables_type_language(&$savequery,$typeparams,$prefix,$esfieldname,$realfieldname)
 {
     $value_found=false;
 
@@ -544,13 +544,13 @@ static public function get_customtables_type_language(&$savequery,$typeparams,$p
 	if(isset($value))
     {
         $value_found=true;
-		$savequery[]='es_'.$esfieldname.'='.$db->Quote($value);
+		$savequery[]=$realfieldname.'='.$db->Quote($value);
     }
 
     return $value_found;
 }
 
-static public function get_customtables_type_value(&$es,&$savequery,$typeparams,$prefix,$esfieldname,$establename)
+static public function get_customtables_type_value(&$es,&$savequery,$typeparams,$prefix,$esfieldname,$establename,$realfieldname)
 {
     $value_found=false;
     $comesfieldname=$prefix.$esfieldname;
@@ -567,9 +567,9 @@ static public function get_customtables_type_value(&$es,&$savequery,$typeparams,
 							if($value!=null)
 							{
 								if($value!='')
-									$savequery[]='es_'.$esfieldname.'='.$db->Quote(','.$value.',');
+									$savequery[]=$realfieldname.'='.$db->Quote(','.$value.',');
 								else
-									$savequery[]='es_'.$esfieldname.'=""';
+									$savequery[]=$realfieldname.'=""';
 
                                 $value_found=true;
 							}
@@ -585,9 +585,9 @@ static public function get_customtables_type_value(&$es,&$savequery,$typeparams,
 							{
 
 								if($value!='')
-									$savequery[]='es_'.$esfieldname.'='.$db->Quote(','.$value.',');
+									$savequery[]=$realfieldname.'='.$db->Quote(','.$value.',');
 								else
-									$savequery[]='es_'.$esfieldname.'=""';
+									$savequery[]=$realfieldname.'=""';
 
                                 $value_found=true;
 							}
@@ -601,7 +601,7 @@ static public function get_customtables_type_value(&$es,&$savequery,$typeparams,
 
 
 
-static public function get_usergroups_type_value(&$savequery,$typeparams,$prefix,$esfieldname)
+static public function get_usergroups_type_value(&$savequery,$typeparams,$prefix,$esfieldname,$realfieldname)
 {
         $value_found=false;
         $comesfieldname=$prefix.$esfieldname;
@@ -616,7 +616,7 @@ static public function get_usergroups_type_value(&$savequery,$typeparams,$prefix
 								if(isset($value))
                                 {
                                     $value_found=true;
-									$savequery[]='es_'.$esfieldname.'='.$db->Quote(','.$value.',');
+									$savequery[]=$realfieldname.'='.$db->Quote(','.$value.',');
                                 }
 
 								break;
@@ -627,7 +627,7 @@ static public function get_usergroups_type_value(&$savequery,$typeparams,$prefix
 									if(isset($valuearray))
                                     {
                                         $value_found=true;
-										$savequery[]='es_'.$esfieldname.'='.$db->Quote(','.implode(',',$valuearray).',');
+										$savequery[]=$realfieldname.'='.$db->Quote(','.implode(',',$valuearray).',');
                                     }
 								break;
 
@@ -638,7 +638,7 @@ static public function get_usergroups_type_value(&$savequery,$typeparams,$prefix
 									if(isset($valuearray))
                                     {
                                         $value_found=true;
-										$savequery[]='es_'.$esfieldname.'='.$db->Quote(','.implode(',',$valuearray).',');
+										$savequery[]=$realfieldname.'='.$db->Quote(','.implode(',',$valuearray).',');
                                     }
 								break;
 
@@ -650,7 +650,7 @@ static public function get_usergroups_type_value(&$savequery,$typeparams,$prefix
 									if(isset($value))
                                     {
                                         $value_found=true;
-										$savequery[]='es_'.$esfieldname.'='.$db->Quote(','.$value.',');
+										$savequery[]=$realfieldname.'='.$db->Quote(','.$value.',');
                                     }
 								break;
 
@@ -660,7 +660,7 @@ static public function get_usergroups_type_value(&$savequery,$typeparams,$prefix
 								if(isset($valuearray))
                                 {
                                     $value_found=true;
-									$savequery[]='es_'.$esfieldname.'='.$db->Quote(','.implode(',',$valuearray).',');
+									$savequery[]=$realfieldname.'='.$db->Quote(','.implode(',',$valuearray).',');
                                 }
 
 								break;
@@ -670,7 +670,7 @@ static public function get_usergroups_type_value(&$savequery,$typeparams,$prefix
     }
 
 
-static public function get_alias_type_value($id,$establename,&$savequery,$prefix,$esfieldname)
+static public function get_alias_type_value($id,$establename,&$savequery,$prefix,$esfieldname,$realfieldname)
 {
     $comesfieldname=$prefix.$esfieldname;
 
@@ -678,16 +678,16 @@ static public function get_alias_type_value($id,$establename,&$savequery,$prefix
     if(!isset($value))
         return false;
     
-    $value=CTValue::prepare_alias_type_value($id,$establename,$esfieldname,$value);
+    $value=CTValue::prepare_alias_type_value($id,$establename,$esfieldname,$value,$realfieldname);
     if($value=='')
         return false;
 
     $db = JFactory::getDBO();
-    $savequery[]='es_'.$esfieldname.'='.$db->quote($value);
+    $savequery[]=$realfieldname.'='.$db->quote($value);
     return true;
 }
 
-static public function prepare_alias_type_value($id,$establename,$esfieldname,$value)
+static public function prepare_alias_type_value($id,$establename,$esfieldname,$value,$realfieldname)
 {
     $value=JoomlaBasicMisc::slugify($value);
 
@@ -695,7 +695,7 @@ static public function prepare_alias_type_value($id,$establename,$esfieldname,$v
         return '';
 
     $mysqltablename='#__customtables_table_'.$establename;
-    $mysqlfieldname='es_'.$esfieldname;
+    $mysqlfieldname=$realfieldname;
 
     if(!CTValue::checkIfAliasExists($id,$mysqltablename,$mysqlfieldname,$value))
         return $value;
@@ -766,7 +766,7 @@ static protected function checkIfAliasExists($exclude_id,$mysqltablename,$mysqlf
     return false;
 }
 
-static public function get_record_type_value(&$savequery,$typeparams,$prefix,$esfieldname)
+static public function get_record_type_value(&$savequery,$typeparams,$prefix,$esfieldname,$realfieldname)
 {
     $value_found=false;
 
@@ -788,7 +788,7 @@ static public function get_record_type_value(&$savequery,$typeparams,$prefix,$es
 									if(isset($value))
                                     {
                                         $value_found=true;
-										$savequery[]='es_'.$esfieldname.'='.(int)$value;
+										$savequery[]=$realfieldname.'='.(int)$value;
                                     }
 
 								break;
@@ -799,7 +799,7 @@ static public function get_record_type_value(&$savequery,$typeparams,$prefix,$es
 									if(isset($valuearray))
                                     {
                                         $value_found=true;
-										$savequery[]='es_'.$esfieldname.'='.$db->Quote(CTValue::getCleanRecordValue($valuearray));
+										$savequery[]=$realfieldname.'='.$db->Quote(CTValue::getCleanRecordValue($valuearray));
                                     }
 								break;
 
@@ -809,7 +809,7 @@ static public function get_record_type_value(&$savequery,$typeparams,$prefix,$es
 									if(isset($valuearray))
                                     {
                                         $value_found=true;
-										$savequery[]='es_'.$esfieldname.'='.$db->Quote(CTValue::getCleanRecordValue($valuearray));
+										$savequery[]=$realfieldname.'='.$db->Quote(CTValue::getCleanRecordValue($valuearray));
                                     }
 
 								break;
@@ -822,7 +822,7 @@ static public function get_record_type_value(&$savequery,$typeparams,$prefix,$es
 									if(isset($valuearray))
                                     {
                                         $value_found=true;
-										$savequery[]='es_'.$esfieldname.'='.$db->Quote(CTValue::getCleanRecordValue($valuearray));
+										$savequery[]=$realfieldname.'='.$db->Quote(CTValue::getCleanRecordValue($valuearray));
                                     }
 
 								break;
@@ -833,7 +833,7 @@ static public function get_record_type_value(&$savequery,$typeparams,$prefix,$es
 									if(isset($valuearray))
                                     {
                                         $value_found=true;
-										$savequery[]='es_'.$esfieldname.'='.$db->Quote(CTValue::getCleanRecordValue($valuearray));
+										$savequery[]=$realfieldname.'='.$db->Quote(CTValue::getCleanRecordValue($valuearray));
                                     }
 
 								break;
@@ -990,7 +990,7 @@ static public function get_record_type_value(&$savequery,$typeparams,$prefix,$es
             return $db->loadObjectList();
 	}
 
-    static protected function processDefaultValue($esfieldname,&$Model,$htmlresult,$type,&$row,&$savequery)
+    static protected function processDefaultValue($esfieldname,&$Model,$htmlresult,$type,&$row,&$savequery,$realfieldname)
     {
         $db = JFactory::getDBO();
 
@@ -1005,9 +1005,9 @@ static public function get_record_type_value(&$savequery,$typeparams,$prefix,$es
             LayoutProcessor::applyContentPlugins($htmlresult);
 
             if($type=='alias')
-                $htmlresult=CTValue::prepare_alias_type_value($row['id'],$Model->establename,$esfieldname,$htmlresult);
+                $htmlresult=CTValue::prepare_alias_type_value($row['id'],$Model->establename,$esfieldname,$htmlresult,$realfieldname);
 
-            $savequery[]='es_'.$esfieldname.'='.$db->quote($htmlresult);
+            $savequery[]=$realfieldname.'='.$db->quote($htmlresult);
         }
     }
 
@@ -1020,11 +1020,13 @@ static public function get_record_type_value(&$savequery,$typeparams,$prefix,$es
             $fieldname=$d[0];
             $value=$d[1];
             $type=$d[2];
+			$realfieldname=$d[3];
+			
 
-            $r=$row['es_'.$fieldname];
+            $r=$row[$realfieldname];
             if($r==null or $r=='' or $r==0)
             {
-                CTValue::processDefaultValue($fieldname,$Model,$value,$type,$row,$savequery);
+                CTValue::processDefaultValue($fieldname,$Model,$value,$type,$row,$savequery,$realfieldname);
 
             }
 		}
@@ -1045,5 +1047,4 @@ static public function get_record_type_value(&$savequery,$typeparams,$prefix,$es
 			$db->execute();
 		}
     }
-
 }

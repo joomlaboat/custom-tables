@@ -187,6 +187,13 @@ else
 					<div class="control-label"><?php echo $this->form->getLabel('allowimportcontent'); ?></div>
 					<div class="controls"><?php echo $this->form->getInput('allowimportcontent'); ?></div>
 				</div>
+				
+				<div class="control-group">
+					<div class="control-label"><?php echo $this->form->getLabel('customtablename'); ?></div>
+					<div class="controls"><?php echo $this->form->getInput('customtablename'); ?></div>
+				</div>
+				
+				
 			</div>
 	</div>
 

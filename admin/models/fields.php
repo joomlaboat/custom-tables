@@ -810,19 +810,8 @@ class CustomtablesModelFields extends JModelAdmin
 		$tableid=$data_extra['tableid'];
 		$fieldid=$data['id'];
 		
-		
-		
-		//$fieldrow=getFieldRowByName($esfieldname, $tableid);
-
 		if($fieldid==0)
 			$esfieldname=$this->checkFieldName($tableid,$esfieldname);
-		//{
-			
-		//}
-		//else
-		//{
-			//$fieldrow_old=ESFields::getFieldRow($fieldid);
-		//}
 
 		$data['fieldname']=$esfieldname;
 
@@ -830,12 +819,15 @@ class CustomtablesModelFields extends JModelAdmin
 		//Add title translation fields in needed
 		$LangMisc	= new ESLanguages;
 		$languages=$LangMisc->getLanguageList();
+		
+		
 
-
-			$morethanonelang=false;
-			$fields=ESFields::getListOfExistingFields('#__customtables_fields',false);
-			foreach($languages as $lang)
-			{
+		//Add language fields to the fields table if necessary
+		
+		$morethanonelang=false;
+		$fields=ESFields::getListOfExistingFields('#__customtables_fields',false);
+		foreach($languages as $lang)
+		{
 				$id_title='fieldtitle';
 				$id_description='description';
 
@@ -855,36 +847,12 @@ class CustomtablesModelFields extends JModelAdmin
 				$data[$id_title] = $data_extra[$id_title];
 				$data[$id_description] = $data_extra[$id_description];
 				$morethanonelang=true; //More than one language installed
-			}
-
-
-
-
-		// set the metadata to the Item Data
-		/*
-		if (isset($data['metadata']) && isset($data['metadata']['author']))
-		{
-			$data['metadata']['author'] = $filter->clean($data['metadata']['author'], 'TRIM');
-
-			$metadata = new JRegistry;
-			$metadata->loadArray($data['metadata']);
-			$data['metadata'] = (string) $metadata;
 		}
-
-		// Set the Params Items to data
-		if (isset($data['params']) && is_array($data['params']))
-		{
-			$params = new JRegistry;
-			$params->loadArray($data['params']);
-			$data['params'] = (string) $params;
-		}
-*/
-
 
 		// Alter the uniqe field for save as copy
 		if ($input->get('task') === 'save2copy')
 		{
-			// Automatic handling of other uniqe fields
+			// Automatic handling of other unique fields
 			$uniqeFields = $this->getUniqeFields();
 			if (CustomtablesHelper::checkArray($uniqeFields))
 			{
@@ -900,10 +868,21 @@ class CustomtablesModelFields extends JModelAdmin
 		}
 
 
-		if(!$this->update_physical_field($tableid,$fieldid,$data))
+		$table_row = ESTables::getTableRowByID($tableid);
+		
+		if(!is_object($table_row))
 		{
-			//Cannot create
+			JFactory::getApplication()->enqueueMessage('Table not found', 'error');
 			return false;
+		}
+		
+		if($table_row->customtablename=='') //do not create fields to third-purty tables
+		{
+			if(!$this->update_physical_field($table_row->tablename,$fieldid,$data))
+			{
+				//Cannot create
+				return false;
+			}
 		}
 
 		if (parent::save($data))
@@ -915,18 +894,10 @@ class CustomtablesModelFields extends JModelAdmin
 	}
 
 
-	protected function update_physical_field($tableid,$fieldid,$data)
+	protected function update_physical_field($establename,$fieldid,$data)
 	{
 
 		$db = JFactory::getDBO();
-
-		//Get Table Name
-		$establename= ESTables::getTableName($tableid); //without prefix
-		if($establename=='')
-		{
-			JFactory::getApplication()->enqueueMessage('Table not found', 'error');
-			return false;
-		}
 
 		$mysqltablename=$db->getPrefix().'customtables_table_'.$establename;
 

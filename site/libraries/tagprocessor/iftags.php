@@ -29,8 +29,8 @@ class tagProcessor_If
         if(isset($row) and count($row)>0)
 		{
 			//Row Publish Status IF,IFNOT statments
-			tagProcessor_If::IFStatment('[_if_published]','[_endif_published]',$htmlresult,!$row['published']==1);
-			tagProcessor_If::IFStatment('[_ifnot_published]','[_endifnot_published]',$htmlresult,$row['published']==1);
+			tagProcessor_If::IFStatment('[_if_published]','[_endif_published]',$htmlresult,!$row['listing_published']==1);
+			tagProcessor_If::IFStatment('[_ifnot_published]','[_endifnot_published]',$htmlresult,$row['listing_published']==1);
 		}
 
 		$user = JFactory::getUser();

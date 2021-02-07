@@ -38,6 +38,8 @@ class CustomTablesModelCatalog extends JModelLegacy
 		var $esordering;
 
 		var $establename;
+		var $realtablename;
+		var $published_field_found;
 		var $tablerow;
 		var $estableid;
 
@@ -61,9 +63,9 @@ class CustomTablesModelCatalog extends JModelLegacy
 		var $showdescription;
 
 		var $showpagination;
-		var $groupby;
+		var $groupby;	//is a real dtabase field name. example es_name
 
-		var $useridfieldname;
+		var $useridfieldname;	//is a real dtabase field name. example es_name
 
 		var $showpublished;
 
@@ -233,24 +235,38 @@ class CustomTablesModelCatalog extends JModelLegacy
 				$this->esTable=new ESTables;
 
 				$this->establename=$this->params->get( 'establename' );
-
+				
 				if($this->establename=='')
 				{
 					echo 'Table not selected';
 					die ;
 					return false;
 				}
-
+				
+				
 				$this->tablerow = $this->esTable->getTableRowByNameAssoc($this->establename);
+				
+
+				$this->published_field_found=true;
+				if($this->tablerow['customtablename']!='')
+				{
+					$this->realtablename=$this->tablerow['customtablename'];
+					$realfields=ESFields::getListOfExistingFields($this->realtablename,false);
+					if(!in_array('published',$realfields))
+						$this->published_field_found=false;
+						
+					
+				}
+				else
+					$this->realtablename='#__customtables_table_'.$this->establename;
+				
 				$this->estableid=$this->tablerow['id'];
 
 				$this->tablecustomphp=$this->tablerow['customphp'];
 
 				//	Fields
 				$this->esfields = ESFields::getFields($this->estableid);
-
-
-
+				
 				//sorting
 
 				$this->esordering=CTOrdering::loadOrderFields($this->blockExternalVars,$this->params,$this->esfields,$this->langpostfix,
@@ -263,7 +279,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 				//Get useridfield
 				if($this->params->get('useridfield'))
 				{
-					$this->useridfieldname=$this->params->get('useridfield');
+					$this->useridfieldname=ESFields::getRealFieldName($this->params->get('useridfield'),$esfields);
 				}
 				else
 				{
@@ -285,7 +301,10 @@ class CustomTablesModelCatalog extends JModelLegacy
 				$this->applyLimits();
 				
 				//Grouping
-				$this->groupby=$this->params->get('groupby');
+				if($this->params->get('groupby')!='')
+					$this->groupby=ESFields::getRealFieldName($this->params->get('groupby'),$esfields);
+				else
+					$this->groupby='';
 
 
 				//Layout
@@ -363,7 +382,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 				$this->filtering->langpostfix=$this->langpostfix;
 				$this->filtering->es=$this->es;
 				$this->filtering->esfields=$this->esfields;
-				$this->filtering->estable='#__customtables_table_'.$this->establename;
+				$this->filtering->estable=$this->realtablename;
 
 
 				if($this->params->get( 'showcartitemsonly' )!='')
@@ -550,18 +569,20 @@ class CustomTablesModelCatalog extends JModelLegacy
 
 		$PathValue=array();
 
-		if($this->showpublished==1)
-				$wherearr[]= '#__customtables_table_'.$this->establename.'.published=0';
-		elseif($this->showpublished!=2)
-				$wherearr[]= '#__customtables_table_'.$this->establename.'.published=1';
-
-
+		if($this->published_field_found)
+		{
+			if($this->showpublished==1)
+				$wherearr[]= $this->realtablename.'.published=0';
+			elseif($this->showpublished!=2)
+				$wherearr[]= $this->realtablename.'.published=1';
+		}
+				
 		if($this->layout=='currentuser' or $this->layout=='customcurrentuser')
 		{
 				if($this->useridfieldname!='')
 				{
 						$user = JFactory::getUser();
-						$wherearr[]= 'es_'.$this->useridfieldname.'='.(int)$user->get('id');
+						$wherearr[]= $this->useridfieldname.'='.(int)$user->get('id');
 				}
 
 		}
@@ -635,21 +656,18 @@ class CustomTablesModelCatalog extends JModelLegacy
 
 		}
 
-
-		$tablename='#__customtables_table_'.$this->establename;
-
 		//Shopping Cart
 
 		if($this->showcartitemsonly)
 		{
 				$jinput = JFactory::getApplication()->input;
-				$cookieValue = $jinput->cookie->get('es_'.$this->showcartitemsprefix.'_'.$this->establename);
+				$cookieValue = $jinput->cookie->get('ct_'.$this->showcartitemsprefix.'_'.$this->establename);
 
 				if (isset($cookieValue))
 				{
 
 						if($cookieValue=='')
-								$wherearr[]=$tablename.'.id=0';
+								$wherearr[]=$this->realtablename.'.id=0';
 						else
 						{
 								$items=explode(';',$cookieValue);
@@ -657,7 +675,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 								foreach($items as $item)
 								{
 										$pair=explode(',',$item);
-										$warr[]=$tablename.'.id='.$pair[0];
+										$warr[]=$this->realtablename.'.id='.$pair[0];
 								}
 
 
@@ -665,7 +683,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 						}
 				}
 				else
-						$wherearr[]=$tablename.'.id=0';
+						$wherearr[]=$this->realtablename.'.id=0';
 		}
 
 
@@ -681,7 +699,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 		//to fullfill the "Clear" task
 		if($jinput->get('task','','CMD')=='clear')
 		{
-			$cQuery='DELETE FROM '.$tablename.' '.$where;
+			$cQuery='DELETE FROM '.$this->realtablename.' '.$where;
 			$db->setQuery($cQuery);
 			$db->execute();
 
@@ -691,23 +709,29 @@ class CustomTablesModelCatalog extends JModelLegacy
 		$ordering=array();
 		
 		if($this->groupby!='')
-				$ordering[]='es_'.$this->groupby;
+				$ordering[]=$this->groupby;
 
 
 		if($this->esordering)
-			CTOrdering::getOrderingQuery($ordering,$query,$inner,$this->esordering,$this->langpostfix,$tablename);
+			CTOrdering::getOrderingQuery($ordering,$query,$inner,$this->esordering,$this->langpostfix,$this->realtablename,$this->esfields);
 
-		$query_selects='*, '.$tablename.'.id  as  listing_id, '.$tablename.'.published AS listing_published';
-		$query='SELECT '.$query_selects.' FROM '.$tablename.' ';
+		if($this->published_field_found)
+			$query_selects='*, '.$this->realtablename.'.id  as  listing_id, '.$this->realtablename.'.published AS listing_published';
+		else
+			$query_selects='*, '.$this->realtablename.'.id  as  listing_id, 1 AS listing_published';
+		
+		$query='SELECT '.$query_selects.' FROM '.$this->realtablename.' ';
 		$query.=implode(' ',$inner).' ';
 		$query.=$where.' ';
-		$query.=' GROUP BY listing_id ';
+		
+		//Not really necessary
+		//$query.=' GROUP BY '.$this->realtablename.'.id';
 
-		$query_analytical='SELECT COUNT(id) AS count FROM '.$tablename.' '.$where;
+		$query_analytical='SELECT COUNT(id) AS count FROM '.$this->realtablename.' '.$where;
 
 		if(count($ordering)>0)
 			$query.=' ORDER BY '.implode(',',$ordering);
-
+			
 		$db->setQuery($query_analytical);
 		$rows=$db->loadObjectList();
 		if(count($rows)==0)
@@ -765,7 +789,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 
 
 
-				$jinput->cookie->set('es_'.$cart_prefix.'_'.$this->establename, '', time()-3600, $app->get('cookie_path', '/'), $app->get('cookie_domain'), $app->isSSLConnection());
+				$jinput->cookie->set('ct_'.$cart_prefix.'_'.$this->establename, '', time()-3600, $app->get('cookie_path', '/'), $app->get('cookie_domain'), $app->isSSLConnection());
 
 				return true;
 		}
@@ -797,7 +821,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 				}
 
 				$app = JFactory::getApplication();
-				$cookieValue = $app->input->cookie->get('es_'.$cart_prefix.'_'.$this->establename);
+				$cookieValue = $app->input->cookie->get('ct_'.$cart_prefix.'_'.$this->establename);
 
 				if (isset($cookieValue))
 				{
@@ -839,7 +863,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 						$items=array($objectid.','.$itemcount); //add new
 
 				$nc=implode(';',$items);
-				setcookie('es_'.$cart_prefix.'_'.$this->establename, $nc, time()+3600*24);
+				setcookie('ct_'.$cart_prefix.'_'.$this->establename, $nc, time()+3600*24);
 
 				return true;
 		}
@@ -865,7 +889,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 						$itemcount=$jinput->getInt('itemcount',0);
 				}
 
-				$cookieValue = $app->input->cookie->get('es_'.$cart_prefix.'_'.$this->establename);
+				$cookieValue = $app->input->cookie->get('ct_'.$cart_prefix.'_'.$this->establename);
 
 				if (isset($cookieValue))
 				{
@@ -906,7 +930,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 						$items=array($objectid.','.$itemcount); //add new
 
 				$nc=implode(';',$items);
-				setcookie('es_'.$cart_prefix.'_'.$this->establename, $nc, time()+3600*24);
+				setcookie('ct_'.$cart_prefix.'_'.$this->establename, $nc, time()+3600*24);
 
 				return true;
 		}
@@ -925,7 +949,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 				$cart_prefix=$jinput->get('cartprefix','','CMD');
 
 
-				$cookieValue = $app->input->cookie->get('es_'.$cart_prefix.'_'.$this->establename);
+				$cookieValue = $app->input->cookie->get('ct_'.$cart_prefix.'_'.$this->establename);
 
 				if (isset($cookieValue))
 				{
@@ -959,27 +983,10 @@ class CustomTablesModelCatalog extends JModelLegacy
 
 				$nc=implode(';',$items);
 
-				$app->input->cookie->set('es_'.$cart_prefix.'_'.$this->establename, $nc, time()+3600*24, $app->get('cookie_path', '/'), $app->get('cookie_domain'), $app->isSSLConnection());
+				$app->input->cookie->set('ct_'.$cart_prefix.'_'.$this->establename, $nc, time()+3600*24, $app->get('cookie_path', '/'), $app->get('cookie_domain'), $app->isSSLConnection());
 
 				return true;
 		}
-
-/*
-		function doCustomPHP()
-		{
-			if($this->tablecustomphp!='')
-			{
-				$funcltionname='ESCustom_'.str_replace('.php','',$this->tablecustomphp);
-
-				require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'customphp'.DIRECTORY_SEPARATOR.$this->tablecustomphp);
-
-				$row1=array();
-				$row2=array();
-				call_user_func($funcltionname,$row1,$row2);
-			}
-			return true;
-		}
-		*/
 
 		function CleanUpPath($thePath)
 		{

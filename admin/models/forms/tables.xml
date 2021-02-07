@@ -128,6 +128,17 @@
                         <option value="1">COM_CUSTOMTABLES_FIELDS_YES</option>
                         <option value="0">COM_CUSTOMTABLES_FIELDS_NO</option>
                 </field>
+
+
+                <field type="anytables"
+                       name="customtablename"
+                       label="COM_CUSTOMTABLES_TABLES_CUSTOMTABLENAME_LABEL"
+                       description="COM_CUSTOMTABLES_TABLES_CUSTOMTABLENAME_DESCRIPTION"
+                       required="false"
+                       filter="CMD"
+                       hint="COM_CUSTOMTABLES_TABLES_CUSTOMTABLENAME_HINT" />
+
+
         </fieldset>
 	
 	<!-- Access Control Fields. -->

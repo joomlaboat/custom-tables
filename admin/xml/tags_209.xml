@@ -676,7 +676,7 @@
 
                 <param type="string" name="sortby" default="" example="title" label="Sort by field" description="Type field name to sort by. Example 1: 'title desc' Example 2: 'title asc'. Note that keyword asc is not necessary." />
 
-                <param type="string" name="forceitemid" example=" " examplenoquotes="1" default="0" label="Force Itemid" description="Used to set parameters for edit form etc." />
+                <param type="string" name="forceitemid" example=" " examplenoquotes="1" default="0" label="Force Menu Itemid" description="Used to set parameters for edit form etc." />
             </params>
         </tag>
         <tag name="customtablesrecord" label="Custom Tables Record" startchar="{" endchar="}" separator="=" hidedefaultexample="1"

@@ -160,7 +160,7 @@ class JHTMLESRecords
 										foreach($SearchResult as $row)
 										{
 
-                                                                                        if($row['published']==0)
+                                                                                        if($row['listing_published']==0)
                                                                                                         $style='style="color:red"';
                                                                                                 else
                                                                                                         $style='';
@@ -376,11 +376,11 @@ class JHTMLESRecords
 										{
 												if(in_array($row['listing_id'],$valuearray) and count($valuearray)>0 )
 												{
-														$htmlresult_.='<option value="'.$row['listing_id'].'" SELECTED '.($row['published']==0 ? ' disabled="disabled"' : '').'>';
+														$htmlresult_.='<option value="'.$row['listing_id'].'" SELECTED '.($row['listing_published']==0 ? ' disabled="disabled"' : '').'>';
 														$valuefound=true;
 												}
 												else
-														$htmlresult_.='<option value="'.$row['listing_id'].'" '.($row['published']==0 ? ' disabled="disabled"' : '').'>';
+														$htmlresult_.='<option value="'.$row['listing_id'].'" '.($row['listing_published']==0 ? ' disabled="disabled"' : '').'>';
 
 												$v=JoomlaBasicMisc::processValue($field,$model,$row,$langpostfix);
 												$htmlresult_.=$v;
@@ -390,7 +390,7 @@ class JHTMLESRecords
 														$elements[]='"'.$v.'"';
 														$elementsID[]=$row['listing_id'];
 														$elementsFilter[]='"'.$row['es_'.$dynamic_filter].'"';
-                                                                                                                $elementsPublished[]=(int)$row['published'];
+                                                                                                                $elementsPublished[]=(int)$row['listing_published'];
 												}
 
 												$htmlresult_.='</option>';
@@ -405,11 +405,11 @@ class JHTMLESRecords
 												{
 													if(in_array($row['listing_id'],$valuearray) and count($valuearray)>0 )
 													{
-														$htmlresult_nofilter.='<option value="'.$row['listing_id'].'" SELECTED '.($row['published']==0 ? ' disabled="disabled"' : '').'>';
+														$htmlresult_nofilter.='<option value="'.$row['listing_id'].'" SELECTED '.($row['listing_published']==0 ? ' disabled="disabled"' : '').'>';
 														$valuefound=true;
 													}
 													else
-														$htmlresult_.='<option value="'.$row['listing_id'].'" '.($row['published']==0 ? ' disabled="disabled"' : '').'>';
+														$htmlresult_.='<option value="'.$row['listing_id'].'" '.($row['listing_published']==0 ? ' disabled="disabled"' : '').'>';
 
 													$v=JoomlaBasicMisc::processValue($field,$model_nofilter,$row,$langpostfix);
 													$htmlresult_nofilter.=$v;
@@ -421,7 +421,7 @@ class JHTMLESRecords
 														$elements[]='"'.$v.'"';
 														$elementsID[]=$row['listing_id'];
 														$elementsFilter[]='"'.$row['es_'.$dynamic_filter].'"';
-                                                                                                                $elementsPublished[]=(int)$row['published'];
+                                                                                                                $elementsPublished[]=(int)$row['listing_published'];
 													}
 
 
@@ -482,7 +482,7 @@ class JHTMLESRecords
 					$htmlresult.='
 					'.$control_name.'_r['.$i.']="'.$row['listing_id'].'";
 					'.$control_name.'_v['.$i.']="'.$row[$real_field].'";
-                                        '.$control_name.'_p['.$i.']="'.(int)$row['published'].'";
+                                        '.$control_name.'_p['.$i.']="'.(int)$row['listing_published'].'";
 ';
 					$i++;
 				}

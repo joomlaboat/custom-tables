@@ -275,8 +275,8 @@ class updateImageGallery
 	function doResizeImageGalleryProcess()
 	{
 		
-		$this->estableid=	JRequest::getInt( 'tableid',0);
-		$this->establename= $this->ESTable->getTableName($this->estableid);
+		$this->estableid = JRequest::getInt( 'tableid',0);
+		$this->establename = $this->ESTable->getTableName($this->estableid);
 		
 		$galleryname = JRequest::getCmd( 'galleryname');
 		$imageparams = JRequest::getVar( 'imageparams');

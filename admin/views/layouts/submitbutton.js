@@ -15,21 +15,25 @@ Joomla.submitbutton = function(task)
 	} else {
 		
 		if (task == 'layoutwizard'){
+			event.preventDefault();
 			openLayoutWizard();
 			return false;
 		}
 		
 		if (task == 'addfieldtag'){
+			event.preventDefault();
 			showModalFieldTagsList();
 			return false;
 		}
 		
 		if (task == 'dependencies'){
+			event.preventDefault();
 			showModalDependenciesList();
 			return false;
 		}
 
 		if (task == 'addlayouttag'){
+			event.preventDefault();
 			showModalTagsList();
 			return false;
 		}
@@ -49,6 +53,7 @@ Joomla.submitbutton = function(task)
 			Joomla.submitform(task);
 			return true;
 		} else {
+			event.preventDefault();
 			alert(Joomla.JText._('layouts, some values are not acceptable.','Some values are unacceptable'));
 			return false;
 		}

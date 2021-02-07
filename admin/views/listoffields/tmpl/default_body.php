@@ -69,6 +69,15 @@ $edit = "index.php?option=com_customtables&view=listoffields&task=fields.edit";
 				<?php else: ?>
 					<?php echo $this->escape($item->fieldname); ?>
 				<?php endif; ?>
+				
+				
+				<?php 
+				
+				if($this->customtablename!='')
+					echo '<br/><span style="color:grey;">'.$this->customtablename.'.'.$item->customfieldname.'</span>';
+				
+				?>
+				
 		</td>
 				<?php
 					echo '<td class="nowrap"><div class="name">';

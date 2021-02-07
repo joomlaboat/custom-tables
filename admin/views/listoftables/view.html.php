@@ -282,12 +282,14 @@ class CustomtablesViewListoftables extends JViewLegacy
 		$db = JFactory::getDbo();
 
 		// Create a new query object.
-		$query = $db->getQuery(true);
+		//$query = $db->getQuery(true);
 
 		// Select the text.
-		$query->select($db->quoteName(array('id','categoryname')));
-		$query->from('#__customtables_categories');
-		$query->order($db->quoteName('categoryname') . ' ASC');
+		//$query->select($db->quoteName(array('id','categoryname')));
+		//$query->from('#__customtables_categories');
+		//$query->order($db->quoteName('categoryname') . ' ASC');
+
+		$query='SELECT id,categoryname FROM #__customtables_categories ORDER BY categoryname ASC';
 
 		// Reset the query using our newly populated query object.
 		$db->setQuery($query);
@@ -303,17 +305,16 @@ class CustomtablesViewListoftables extends JViewLegacy
 				// Now add the tableid and its text to the options array
 				$_filter[] = JHtml::_('select.option', $result->id, $result->categoryname);
 			}
-			return $_filter;
+			return $_filter;	
 		}
 		return false;
 	}
 
-	protected function getNumberOfRecords($tablename)
+	protected function getNumberOfRecords($realtablename)
 	{
 		$db = JFactory::getDBO();
-		$query='SELECT COUNT(id) AS count FROM #__customtables_table_'.$tablename.' LIMIT 1';
+		$query='SELECT COUNT(id) AS count FROM '.$realtablename.' LIMIT 1';
 		
-			
 		$db->setQuery( $query );
 		if (!$db->query())    die ( $db->stderr());
         $rows=$db->loadObjectList();

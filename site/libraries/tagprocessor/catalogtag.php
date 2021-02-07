@@ -95,7 +95,7 @@ class tagProcessor_Catalog
 				foreach($this->SearchResult as $row)
 				{
 
-						if($lastGroup!=$row['es_'.$Model->groupby] and $lastGroup!='')
+						if($lastGroup!=$row[$Model->groupby] and $lastGroup!='')
 						{
 								if($FieldRow['type']=='customtables')
 									$GroupTitle=implode(',',$Model->es->getMultyValueTitles($lastGroup,$Model->langpostfix,1, ' - '));
@@ -114,7 +114,7 @@ class tagProcessor_Catalog
                         $RealRows[]=tagProcessor_Item::RenderResultLine($Model,$row,$showtable==true); //3ed parameter is to show record HTML anchor or not
 						//$RealRows[]=$this->RenderResultLine($row,$showtable,$allowcontentplugins);//,$Itemid,$Model,$userid,$this->isUserAdministrator,$current_url,$print);
 
-						$lastGroup=$row['es_'.$Model->groupby];
+						$lastGroup=$row[$Model->groupby];
 
 					$number++;
 				}

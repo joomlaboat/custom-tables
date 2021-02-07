@@ -33,7 +33,7 @@ class CustomTablesModelListOfOptions extends JModelList
 			return $items;
 		}
 
-		$db = $this->getDBO();
+		$db = JFactory::getDBO();
 
 		$context= 'com_customtables.list.';
 
@@ -284,9 +284,8 @@ class CustomTablesModelListOfOptions extends JModelList
 				$this->_addChildren($id, $ids);
 			}
 
-			$db = &$this->getDBO();
-
-
+			$db = JFactory::getDBO();
+			
 			// Delete the menu items
 			$where = 'WHERE id = ' . implode( ' OR id = ', $ids );
 
@@ -305,7 +304,7 @@ class CustomTablesModelListOfOptions extends JModelList
 		$return = true;
 
 		// Get all rows with parentid of $id
-		$db =& $this->getDBO();
+		$db = JFactory::getDBO();
 		$query = 'SELECT id' .
 				' FROM #__customtables_options' .
 				' WHERE parentid = '.(int) $id;
@@ -345,7 +344,7 @@ class CustomTablesModelListOfOptions extends JModelList
 	function _rebuildSubLevel($cid = array(0), $level = 0)
 	{
 		JArrayHelper::toInteger($cid, array(0));
-		$db =& $this->getDBO();
+		$db = JFactory::getDBO();
 		$ids = implode( ',', $cid );
 		$cids = array();
 		if($level == 0) {
@@ -431,7 +430,7 @@ class CustomTablesModelListOfOptions extends JModelList
 	{
 		$es= new CustomTablesMisc;
 
-		$db =& $this->getDBO();
+		$db = JFactory::getDBO();
 
 		$query="SELECT id, optionname FROM #__customtables_options";// WHERE parentid!=0";
 		$db->setQuery( $query );

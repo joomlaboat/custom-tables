@@ -249,7 +249,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		$db = JFactory::getDBO();
 		$wherearr=array();
 		$wherearr[]='published=1';
-		$wherearr[]='es_'.$this->useridfield.'='.$this->userid;
+		$wherearr[]=$this->useridfield.'='.$this->userid;
 		$where = ' WHERE '.implode(" AND ",$wherearr);
 		$query = 'SELECT * FROM '.$this->tablename.' '.$where;
 		$query.=' LIMIT 1';
@@ -354,7 +354,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 				    //Copy values
 				    foreach($this->esfields as $ESField)
-						$this->row['es_'.$ESField['fieldname']]=$new_row['es_'.$ESField['fieldname']];
+						$this->row[$ESField['realfieldname']]=$new_row[$ESField['realfieldname']];
 				}
 		    }
 		}
@@ -365,24 +365,20 @@ class CustomTablesModelEditItem extends JModelLegacy {
 	    $row=array();
 	    $row['id']=$id;
 	    $row['published']=$published;
-
+		$row['listing_id']=$id;
+	    $row['listing_published']=$published;
 
 	    foreach($this->Model->esfields as $ESField)
-		$row['es_'.$ESField['fieldname']]='';
-
-
+		$row[$ESField['realfieldname']]='';
 	    return $row;
 	}
-
-
 
 	function getTypeFieldName($type)
 	{
 		foreach($this->Model->esfields as $ESField)
 		{
 				if($ESField['type']==$type)
-					return 'es_'.$ESField['fieldname'];
-
+					return $ESField['realfieldname'];
 		}
 
 		return '';
@@ -785,27 +781,6 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		$sets=array();
 		$sets[]='id='.$new_id;
 		
-		/*
-		foreach($this->esfields as $esfield)
-		{
-			//update "userid" type fields to assign new author to copied record.
-			if($esfield['type']=='userid')
-			{
-				$user = JFactory::getUser();
-					
-				if($user->id!=0)
-					$sets[]='es_'.$esfield['fieldname'].'='.$user->id;
-			}
-			
-			//update creation date if needed
-			if($esfield['type']=='creationtime')
-				$sets[]='es_'.$esfield['fieldname'].'='.$db->Quote(gmdate( 'Y-m-d H:i:s'));
-				
-				
-				//$this->doPHPonAdd($row);
-		}
-		*/
-
 		$query='UPDATE tmp SET '.implode(',',$sets).' WHERE id = '.$id.';';
 		$db->setQuery( $query );
 		$db->execute();
@@ -877,25 +852,25 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 		foreach($this->esfields as $esfield)
 		{
-			$fieldname=$esfield['fieldname'];
+			$realfieldname=$esfield['realfieldname'];
 
 			$value_found=false;
-			if(in_array($fieldname,$fieldstosave))
+			if(in_array($esfield['fieldname'],$fieldstosave))
 			{
 				$value_found=CTValue::getValue($id,$this->es,$esfield,$savequery,$prefix,$this->establename,$this->LanguageList,$fieldstosave);
 				if(!$value_found)
-					$default_fields_to_apply[]=array($fieldname,$esfield['defaultvalue'],$esfield['type']);
+					$default_fields_to_apply[]=array($esfield['fieldname'],$esfield['defaultvalue'],$esfield['type'],$esfield['realfieldname']);
 			}
 
 			switch($esfield['type'])
 			{
 				case 'creationtime':
 					if($id==0 or $isCopy)
-						$savequery[]='es_'.$fieldname.'='.$db->Quote(gmdate( 'Y-m-d H:i:s'));
+						$savequery[]=$realfieldname.'='.$db->Quote(gmdate( 'Y-m-d H:i:s'));
 					break;
 
 				case 'changetime':
-						$savequery[]='es_'.$fieldname.'='.$db->Quote(gmdate( 'Y-m-d H:i:s'));
+						$savequery[]=$realfieldname.'='.$db->Quote(gmdate( 'Y-m-d H:i:s'));
 					break;
 
 				case 'phponadd':
@@ -917,7 +892,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 						else
 							$value=$jinput->server->get($typeparams,'','STRING');
 
-						$savequery[]='es_'.$fieldname.'='.$db->Quote($value);
+						$savequery[]=$realfieldname.'='.$db->Quote($value);
 					break;
 
 				case 'userid':
@@ -927,9 +902,9 @@ class CustomTablesModelEditItem extends JModelLegacy {
 						$user = JFactory::getUser();
 
 						if($user->id!=0)
-							$savequery[]='es_'.$fieldname.'='.$user->id;
+							$savequery[]=$realfieldname.'='.$user->id;
 						else
-							$savequery[]='es_'.$fieldname.'=0';
+							$savequery[]=$realfieldname.'=0';
 					}
 
 					break;
@@ -953,7 +928,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 							if($i<$minid)
 								$i=$minid;
 
-							$savequery[]='es_'.$fieldname.'='.$i;
+							$savequery[]=$realfieldname.'='.$i;
 						}
 					}
 					break;
@@ -988,7 +963,22 @@ class CustomTablesModelEditItem extends JModelLegacy {
 			$id_temp=$this->getAvailableID($this->tablename);
 			$savequery[]='id='.$id_temp;
 
-			$query='INSERT '.$this->tablename.' SET '.implode(', ',$savequery);
+			$db = JFactory::getDBO();
+		
+			if($db->serverType == 'postgresql')
+			{
+				$set_fieldnames=array();
+				$set_values=array();
+				foreach($savequery as $set)
+				{
+					$break_sets = explode('=',$set);
+					$set_fieldnames[]=$break_sets[0];
+					$set_values[]=$break_sets[1];
+				}
+				$query='INSERT INTO '.$this->tablename.' ('.implode(',',$set_fieldnames).') VALUES ('.implode(',',$set_values).')';
+			}
+			else
+				$query='INSERT '.$this->tablename.' SET '.implode(', ',$savequery);
 		}
 
 		else
@@ -1296,7 +1286,6 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		$savequery=array();
 		foreach($this->esfields as $esfield)
 		{
-
 				if($esfield['type']=='md5')
 				{
 						$fieldstocount=explode(',',str_replace('"','',$esfield['typeparams']));//only field names, nothing else
@@ -1308,15 +1297,12 @@ class CustomTablesModelEditItem extends JModelLegacy {
 							foreach($this->esfields as $esfield_)
 							{
 								if($esfield_['fieldname']==$f and $esfield['fieldname']!=$f)
-									$flds[]='COALESCE(es_'.$f.')';
+									$flds[]='COALESCE('.$esfield_['realfieldname'].')';
 							}
 						}
 
 						if(count($flds)>1)
-							$savequery[]='es_'.$esfield['fieldname'].'=md5(CONCAT_WS('.implode(',',$flds).'))';
-						//else
-							//$savequery[]='es_'.$esfield['fieldname'].'=md5('.implode(',',$flds).')';
-
+							$savequery[]=$esfield['realfieldname'].'=md5(CONCAT_WS('.implode(',',$flds).'))';
 				}
 		}
 
@@ -1330,9 +1316,8 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		foreach($this->esfields as $esfield)
 		{
 			$fieldname=$esfield['fieldname'];
-			if($esfield['defaultvalue']!='' and $row['es_'.$fieldname]=='')
+			if($esfield['defaultvalue']!='' and $row[$esfield['realfieldname']]=='')
 				$default_fields_to_apply[]=array($fieldname,$esfield['defaultvalue'],$esfield['type']);
-
 		}
 
         CTValue::processDefaultValues($default_fields_to_apply,$this,$row);
@@ -1365,11 +1350,11 @@ class CustomTablesModelEditItem extends JModelLegacy {
 					else
 						$postfix='_'.$lang->sef;
 
-					$fields_to_save[]='es_'.$esfield['fieldname'].$postfix;
+					$fields_to_save[]=$esfield['realfieldname'].$postfix;
 				}
 			}
 			elseif($esfield['type']!='log' and $esfield['type']!='dummy')
-				$fields_to_save[]='es_'.$esfield['fieldname'];
+				$fields_to_save[]=$esfield['realfieldname'];
 
 		}
 		
@@ -1387,13 +1372,12 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		$savequery=array();
 		foreach($this->esfields as $esfield)
 		{
-
 				if($esfield['type']=='log')
 				{
 					$user = JFactory::getUser();
 					$userid = (int)$user->get('id');
 					$value=time().','.$userid.','.$this->getUserIP().','.$data.';';
-					$savequery[]='es_'.$esfield['fieldname'].'=CONCAT(es_'.$esfield['fieldname'].',"'.$value.'")';
+					$savequery[]=$esfield['realfieldname'].'=CONCAT('.$esfield['realfieldname'].',"'.$value.'")';
 				}
 		}
 
@@ -1628,7 +1612,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 		foreach($this->esfields as $esfield)
 		{
-			$fieldname=$esfield['fieldname'];
+			$realfieldname=$esfield['realfieldname'];
 			$typeparams=$esfield['typeparams'];
 
 			if($esfield['type']=='phponadd')
@@ -1659,9 +1643,9 @@ class CustomTablesModelEditItem extends JModelLegacy {
 							echo $thescript;
 						}
 						
-						$row['es_'.$fieldname]=$value;
+						$row[$realfieldname]=$value;
 
-						$savequery='es_'.$fieldname.'='.$db->quote($value);
+						$savequery=$realfieldname.'='.$db->quote($value);
 						$query='UPDATE '.$this->tablename.' SET '.$savequery.' WHERE id='.$id;
 
 						$db->setQuery( $query );
@@ -1686,7 +1670,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 		foreach($this->esfields as $esfield)
 		{
-			$fieldname=$esfield['fieldname'];
+			$realfieldname=$esfield['realfieldname'];
 
 			if($esfield['type']=='phponchange')
 			{
@@ -1718,32 +1702,25 @@ class CustomTablesModelEditItem extends JModelLegacy {
 							echo $thescript;
 						}
 						
-						$row['es_'.$fieldname]=$value;
+						$row[$realfieldname]=$value;
 
-						$savequery='es_'.$fieldname.'='.$db->quote($value);
+						$savequery=$realfieldname.'='.$db->quote($value);
 						$query='UPDATE '.$this->tablename.' SET '.$savequery.' WHERE id='.$id;
 
 						$db->setQuery( $query );
 						$db->execute();
 			}//if($esfield['type']=='phponchange')
 		}//foreach($this->esfields as $esfield)
-
-
 	}
 
 	function applyContentPlugins($pagelayout)
 	{
-
-				$o = new stdClass();
-				$o->text=$pagelayout;
-				$o->created_by_alias = 0;
-
-				$dispatcher	= JDispatcher::getInstance();
-
-				JPluginHelper::importPlugin('content');
-
-				$r = $dispatcher->trigger('onContentPrepare', array ('com_content.article', &$o, &$this->params_, 0));
-
+		$o = new stdClass();
+		$o->text=$pagelayout;
+		$o->created_by_alias = 0;
+		$dispatcher	= JDispatcher::getInstance();
+		JPluginHelper::importPlugin('content');
+		$r = $dispatcher->trigger('onContentPrepare', array ('com_content.article', &$o, &$this->params_, 0));
 		return $o->text;
 	}
 
@@ -1837,7 +1814,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 							$vlu='';
 				}
 				else
-					$vlu='<p>File not found.</p>';
+					$vlu='<p>File not found. Code: 21098s</p>';
 
 
 				$note_final=str_replace($fItem,'',$note);
@@ -1855,7 +1832,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 				if($esfield['type']=='file')
 				{
 
-					$filename='images/esfiles/'.$row['es_'.$esfield['fieldname']];
+					$filename='images/esfiles/'.$row[$esfield['realfieldname']];
 					if(file_exists($filename))
 							$mail->addAttachment($filename);
 
@@ -2093,7 +2070,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 			{
 				//delete single image
 				$imagemethods->DeleteExistingSingleImage(
-					$row['es_'.$esfield['fieldname']],
+					$row[$esfield['realfieldname']],
 					$this->imagefolder,
 					$esfield['typeparams'],
 					$this->establename,

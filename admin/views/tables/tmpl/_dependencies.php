@@ -82,11 +82,24 @@ function _renderTableList($rows)
 
 function _getTablesThisTableDependOn($table_id)
 {
+	if((int)$table_id==0)
+		return array();
+	
     $db = JFactory::getDBO();
 
-    $select_tablename='(SELECT tabletitle FROM #__customtables_tables AS t WHERE t.tablename LIKE SUBSTRING_INDEX(typeparams,",",1) LIMIT 1) ';
-    $query = 'SELECT id, tableid,fieldtitle,typeparams,'.$select_tablename.' AS tabletitle FROM #__customtables_fields AS f '
-    .'WHERE tableid='.(int)$table_id.' AND '.$db->quoteName('type').'="sqljoin" ORDER BY tabletitle';
+	if($db->serverType == 'postgresql')
+	{
+		$select_tablename='(SELECT tabletitle FROM #__customtables_tables AS t WHERE POSITION(CONCAT(t.tablename,\',\') IN typeparams)>0 LIMIT 1) ';
+		$query = 'SELECT id, tableid,fieldtitle,typeparams,'.$select_tablename.' AS tabletitle FROM #__customtables_fields AS f '
+		.'WHERE tableid='.(int)$table_id.' AND '.$db->quoteName('type').'=\'sqljoin\' ORDER BY tabletitle';
+	}
+	else
+	{
+		$select_tablename='(SELECT tabletitle FROM #__customtables_tables AS t WHERE t.tablename LIKE SUBSTRING_INDEX(typeparams,",",1) LIMIT 1) ';
+		$query = 'SELECT id, tableid,fieldtitle,typeparams,'.$select_tablename.' AS tabletitle FROM #__customtables_fields AS f '
+		.'WHERE tableid='.(int)$table_id.' AND '.$db->quoteName('type').'="sqljoin" ORDER BY tabletitle';
+	}
+
 
 	$db->setQuery( $query );
 	if (!$db->query())    die ( $db->stderr());
@@ -97,14 +110,21 @@ function _getTablesThisTableDependOn($table_id)
 
 function _getTablesThatDependOnThisTable($tablename)
 {
+	if($tablename=='')
+		return array();
+		
     $db = JFactory::getDBO();
 
     $select_tablename='(SELECT tabletitle FROM #__customtables_tables AS t WHERE t.id=f.tableid LIMIT 1)';
 
-    $query = 'SELECT id, tableid,fieldtitle,typeparams,'.$select_tablename.' AS tabletitle FROM #__customtables_fields AS f WHERE typeparams LIKE "'.$tablename.',%" ORDER BY tabletitle';
+	if($db->serverType == 'postgresql')
+		$where = 'typeparams LIKE \''.$tablename.',%\'';
+	else
+		$where = 'typeparams LIKE "'.$tablename.',%"';
+		
+	$query = 'SELECT id, tableid,fieldtitle,typeparams,'.$select_tablename.' AS tabletitle FROM #__customtables_fields AS f WHERE '.$where.' ORDER BY tabletitle';
 
 	$db->setQuery( $query );
-	if (!$db->query())    die ( $db->stderr($tablename));
 	$rows=$db->loadAssocList();
 
     return $rows;

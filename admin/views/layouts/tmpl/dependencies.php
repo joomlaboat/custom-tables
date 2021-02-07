@@ -14,18 +14,33 @@ defined('_JEXEC') or die('Restricted access');
 
 function renderDependencies($layout_row)
 {
-	$count=0;
 	$db = JFactory::getDBO();
+	
+	if($db->serverType == 'postgresql')
+		return '';
+		
+	$count=0;
 	$layoutname=$layout_row->layoutname;
 
     $result='<div id="layouteditor_modal_content_box">';
 
-
-	$w1='('.$db->quoteName('type').'="sqljoin" OR '.$db->quoteName('type').'="records")';
-	$w2a='INSTR(SUBSTRING_INDEX(typeparams,",",2),"layout:'.$layoutname.'")';
-	$w2b='INSTR(SUBSTRING_INDEX(typeparams,",",2),"tablelesslayout:'.$layoutname.'")';
-	$w2='('.$w2a.' OR '.$w2b.')';
-	$wF='f.published=1 AND f.tableid=t.id AND '.$w1.' AND '.$w2;
+	if($db->serverType == 'postgresql')
+	{
+		$w1='('.$db->quoteName('type').'=\'sqljoin\' OR '.$db->quoteName('type').'=\'records\')';
+		//$w2a='POSITOIN(\'layout:'.$layoutname.'\' IN SUBSTRING_INDEX(typeparams,",",2))>0';
+		//$w2b='POSITOIN(\'tablelesslayout:'.$layoutname.'\' IN SUBSTRING_INDEX(typeparams,",",2))>0';
+		$w2='('.$w2a.' OR '.$w2b.')';
+		$wF='f.published=1 AND f.tableid=t.id AND '.$w1.' AND '.$w2;
+	}
+	else
+	{
+		$w1='('.$db->quoteName('type').'="sqljoin" OR '.$db->quoteName('type').'="records")';
+		$w2a='INSTR(SUBSTRING_INDEX(typeparams,",",2),"layout:'.$layoutname.'")';
+		$w2b='INSTR(SUBSTRING_INDEX(typeparams,",",2),"tablelesslayout:'.$layoutname.'")';
+		$w2='('.$w2a.' OR '.$w2b.')';
+		$wF='f.published=1 AND f.tableid=t.id AND '.$w1.' AND '.$w2;
+	}
+	
     $rows=_getTablesThatUseThisLayout($layout_row->layoutname,$wF);
 
     if(count($rows)>0)
@@ -35,8 +50,17 @@ function renderDependencies($layout_row)
         $result.=_renderTableList($rows);
     }
 	
-	$w2a='INSTR(SUBSTRING_INDEX(defaultvalue,",",2),"layout:'.$layoutname.'")';
-	$w2b='INSTR(SUBSTRING_INDEX(defaultvalue,",",2),"tablelesslayout:'.$layoutname.'")';
+	if($db->serverType == 'postgresql')
+	{
+		$w2a='POSITION(\'layout:'.$layoutname.'\' IN SUBSTRING_INDEX(defaultvalue,",",2))>0';
+		$w2b='POSITION(\'tablelesslayout:'.$layoutname.'\' IN SUBSTRING_INDEX(defaultvalue,",",2))>0';
+	}
+	else
+	{
+		$w2a='INSTR(SUBSTRING_INDEX(defaultvalue,",",2),"layout:'.$layoutname.'")';
+		$w2b='INSTR(SUBSTRING_INDEX(defaultvalue,",",2),"tablelesslayout:'.$layoutname.'")';
+	}
+	
 	$wF='('.$w2a.' OR '.$w2b.')';
 	$rows=_getTablesThatUseThisLayout($layout_row->layoutname,$wF);
 

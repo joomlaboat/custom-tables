@@ -16,10 +16,14 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.
 
 function checkTableOnly($tables_rows)
 {
+	$db = JFactory::getDBO();
+	if($db->serverType == 'postgresql')
+		return; // do not check tables for PostgreeSQL
+		
     $conf = JFactory::getConfig();
     $dbprefix = $conf->get('dbprefix');
 
-    $db = JFactory::getDBO();
+    
 
     foreach($tables_rows as $row)
     {
@@ -41,11 +45,14 @@ function checkTableOnly($tables_rows)
 
 function checkTableFields($establename,$tableid)
 {
+	$db = JFactory::getDBO();
+	if($db->serverType == 'postgresql')
+		return;
     
     $conf = JFactory::getConfig();
 	$dbprefix = $conf->get('dbprefix');
 
-    $db = JFactory::getDBO();
+    
     $db->setQuery('SHOW TABLES LIKE "'.$dbprefix.'customtables_table_'.$establename.'"');
     if (!$db->query()) return false;
 

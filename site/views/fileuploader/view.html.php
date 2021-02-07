@@ -41,7 +41,7 @@ class CustomTablesViewFileUploader extends JViewLegacy
                 echo json_encode(['status'=>'Deleted']);
             }
             else
-                echo json_encode(['error'=>'File not found.']);
+                echo json_encode(['error'=>'File not found. Code: FU-1']);
         }
         else
             echo ESFileUploader::uploadFile($fileid);

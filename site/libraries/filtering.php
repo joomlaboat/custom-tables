@@ -459,7 +459,7 @@ class ESFiltering
 																$filtertitle.='field or layout not specified';
 
 															$esr_table=$typeparamsarray[0];
-															$esr_table_full=$this->estable;//'#__customtables_table_'.$esr_table;
+															$esr_table_full=$this->estable;
 															$esr_field=$typeparamsarray[1];
 
 
@@ -1028,7 +1028,6 @@ class LinkJoinFilters
 		.' FROM #__customtables_table_'.$tablename.' WHERE published=1 ORDER BY es_'.$field;
 
 		$db->setQuery($query);
-//		if (!$db->query())    die( $db->stderr());
 
 		$records=$db->loadAssocList();
 		$result.='

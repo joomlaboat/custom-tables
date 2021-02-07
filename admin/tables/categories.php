@@ -23,7 +23,8 @@ jimport('joomla.database.table');
 class CustomtablesTableCategories extends JTable
 {
    	var $id = null;
-    var $categoryname = null;
+    	var $categoryname = null;
+	var $asset_id = null;
 	
 	/**
 	 * Constructor

@@ -74,6 +74,7 @@ class CustomtablesViewListoffields extends JViewLegacy
 			{
 				$this->tablename=$table->tablename;
 				$this->tabletitle=$table->tabletitle;
+				$this->customtablename=$table->customtablename;
 			}
 		}
 

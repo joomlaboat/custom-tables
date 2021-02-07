@@ -194,7 +194,7 @@ class JHTMLESSqlJoin
                                 else
                                         $d='';
 
-                                $list_values[]=[$row['listing_id'],$v,(int)$row['published'],$d];
+                                $list_values[]=[$row['listing_id'],$v,(int)$row['listing_published'],$d];
                         }
 
 			return $list_values;

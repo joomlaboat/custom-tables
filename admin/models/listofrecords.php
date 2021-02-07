@@ -66,6 +66,10 @@ class CustomtablesModelListofRecords extends JModelList
 		// load parent items
 		$items = parent::getItems(); 
 		
+		echo '$items';
+		print_r($items);
+		die;
+		
 		//$app = JFactory::getApplication();
 		//$tableid 	= $app->input->get('tableid', 0, 'int');
 		//$this->setState('filter.tableid', $tableid);

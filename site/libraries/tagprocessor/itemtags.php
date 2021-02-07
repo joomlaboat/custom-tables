@@ -56,17 +56,17 @@ class tagProcessor_Item
 		$htmlresult=str_replace('{id}',$id,$htmlresult);
 		$htmlresult=str_replace('{number}',$number,$htmlresult);
 
-		if(isset($row) and isset($row['published']))
+		if(isset($row) and isset($row['listing_published']))
 		{
-			$htmlresult=str_replace('{published}',($row['published']==1 ? JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YES') : JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NO')),$htmlresult);
-			$htmlresult=str_replace('{_value:published}',$row['published']==1,$htmlresult);
+			$htmlresult=str_replace('{published}',($row['listing_published']==1 ? JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YES') : JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NO')),$htmlresult);
+			$htmlresult=str_replace('{_value:published}',$row['listing_published']==1,$htmlresult);
 		}
 
-		if(isset($row) and isset($row['published']))
+		if(isset($row) and isset($row['listing_published']))
 			tagProcessor_Item::GetSQLJoin($Model,$htmlresult,$row['listing_id']);
 
 
-		if(isset($row) and isset($row['published']))
+		if(isset($row) and isset($row['listing_published']))
 			tagProcessor_Item::GetCustomToolBar($htmlresult,$toolbar);
 
 		CT_FieldTypeTag_ct::ResolveStructure($Model,$htmlresult);
@@ -90,7 +90,7 @@ class tagProcessor_Item
 			$isok=true;
 		else
 		{
-			if(isset($row) and isset($row['published']) and  $Model->useridfieldname!='')
+			if(isset($row) and isset($row['listing_published']) and  $Model->useridfieldname!='')
 			{
 				$uid=$row['es_'.$Model->useridfieldname];
 
@@ -267,11 +267,11 @@ class tagProcessor_Item
 
 	protected static function getFieldCleanValue4RDI(&$Model,&$row,&$mFld)
 	{
-		$titlefield=$mFld['fieldname'];
+		$titlefield=$mFld['realfieldname'];
 		if(strpos($mFld['type'],'multi')!==false)
 			$titlefield.=$Model->langpostfix;
 
-		$fieldtitlevalue=$row['es_'.$titlefield];
+		$fieldtitlevalue=$row[$titlefield];
 		$deleteLabel=strip_tags($fieldtitlevalue);
 
 		$deleteLabel=trim(preg_replace("/[^a-zA-Z0-9 ,.]/", "", $deleteLabel));

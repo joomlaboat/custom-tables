@@ -170,18 +170,16 @@ class CustomTablesModelEditPhotos extends JModelLegacy {
 
 		foreach($this->esfields as $mFld)
 		{
-			$titlefield=$mFld['fieldname'];
-				if(!(strpos($mFld['type'],'multi')===false))
-					$titlefield.=$this->langpostfix;
+			$titlefield=$mFld['realfieldname'];
+			if(!(strpos($mFld['type'],'multi')===false))
+				$titlefield.=$this->langpostfix;
 
-				if($row['es_'.$titlefield]!='')
-				{
-					$this->Listing_Title=$row['es_'.$titlefield];
-					break;
-				}
+			if($row[$titlefield]!='')
+			{
+				$this->Listing_Title=$row[$titlefield];
+				break;
+			}
 		}
-
-
 	}
 
 	function reorder()

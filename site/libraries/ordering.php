@@ -12,7 +12,7 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.
 
 class CTOrdering
 {
-    public static function getOrderingQuery(&$ordering,&$query,&$inner,$esordering,$langpostfix,$tablename)
+    public static function getOrderingQuery(&$ordering,&$query,&$inner,$esordering,$langpostfix,$tablename,&$esfields)
 	{
 	
 						if(stripos($esordering,'.user')!==false)
@@ -22,16 +22,20 @@ class CTOrdering
 								$oPair2=explode('.',$oPair[0]);
 
 								$fieldname=$oPair2[0];
-								if(isset($oPair[1]))
+								$realfieldname=ESFields::getRealFieldName($fieldname,$esfields);
+								
+								if($realfieldname!='')
+								{
+									if(isset($oPair[1]))
 										$direction=$oPair[1];
-								else
+									else
 										$direction='';
 
-								$inner[]='LEFT JOIN #__users ON #__users.id=es_'.$fieldname.'';
+									$inner[]='LEFT JOIN #__users ON #__users.id='.$tablename.'.'.$realfieldname.'';
+									$query.=', name AS t1';
 
-								$query.=', name AS t1';
-
-								$ordering[]='#__users.name'.($direction!='' ? ' DESC' : '');
+									$ordering[]='#__users.name'.($direction!='' ? ' DESC' : '');
+								}
 
 						}
 						elseif(stripos($esordering,'.customtables')!==false)
@@ -49,22 +53,22 @@ class CTOrdering
 								$join_found=false;
 								foreach($inner as $i)
 								{
-										if(!(strpos($i,'#__customtables_options')===false))
-										{
-											$join_found=true;
-										}
+									if(!(strpos($i,'#__customtables_options')===false))
+									{
+										$join_found=true;
+									}
 								}
 
 								if(!$join_found)
 								{
-										$inner[]='LEFT JOIN #__customtables_options ON familytreestr=es_'.$fieldname.'';
+									$realfieldname=ESFields::getRealFieldName($fieldname,$esfields);
+									if($realfieldname!='')
+										$inner[]='LEFT JOIN #__customtables_options ON familytreestr='.$realfieldname.'';
 								}
 
-										$query.=', #__customtables_options.title'.$langpostfix.' AS t1';
+								$query.=', #__customtables_options.title'.$langpostfix.' AS t1';
 
-										$ordering[]='title'.$langpostfix.($direction!='' ? ' DESC' : '');
-
-
+								$ordering[]='title'.$langpostfix.($direction!='' ? ' DESC' : '');
 						}
 						elseif(stripos($esordering,'.sqljoin')!==false)
 						{		//sql join
@@ -85,34 +89,50 @@ class CTOrdering
 										$join_table=$typeparams[0];
 										$join_field='';
 										if(isset($typeparams[1]))
-												$join_field=$typeparams[1];
+											$join_field=$typeparams[1];
 
 										if($join_table!='' and $join_field!='')
 										{
-											$w='#__customtables_table_'.$join_table.'.id='.$tablename.'.es_'.$fieldname;
-											$ordering[]='(SELECT #__customtables_table_'.$join_table.'.es_'.$join_field.' FROM #__customtables_table_'.$join_table.' WHERE '.$w.') '.($direction!='' ? ' DESC' : '');
+											$real_joined_fieldname=$join_field;//CTOrdering::getRealFieldName($join_field,$esfields);
+											
+											$realfieldname=ESFields::getRealFieldName($fieldname,$esfields);
+											if($realfieldname!='' and $real_joined_fieldname!='')
+											{
+												$w='#__customtables_table_'.$join_table.'.id='.$tablename.'.'.$realfieldname;
+												$ordering[]='(SELECT #__customtables_table_'.$join_table.'.es_'.$real_joined_fieldname.' FROM #__customtables_table_'.$join_table.' WHERE '.$w.') '.($direction!='' ? ' DESC' : '');
+											}
 
 										}
 								}
 						}
 						else
 						{
-                                                        if(strpos($esordering,"DATE_FORMAT")!==false)
-                                                                $ordering[]=$esordering;
-                                                        else
-														{
-															if(strpos($esordering,'_')===false)
-																$ordering[]='es_'.$esordering;
-															else
-															{
-																$ordering[]=str_replace('_','',$esordering); //change "_id" to "id", "_published" to "published"
-															}
-														}
+							if(strpos($esordering,"DATE_FORMAT")!==false)
+							{
+								$ordering[]=$esordering;
+							}
+                            else
+							{
+								$oPair=explode(' ',$esordering);
+								
+								$fieldname=$oPair[0];
+								$realfieldname=ESFields::getRealFieldName($fieldname,$esfields);
+								
+								if($realfieldname!='')
+								{
+									if(isset($oPair[1]))
+										$direction=' '.$oPair[1];
+									else
+										$direction='';
+								
+									$ordering[]=$realfieldname.$direction;
+								}
+							}
 						}
 	}
 
 
-        public static function loadOrderFields($blockExternalVars,&$params,&$esfields,$langpostfix,&$order_list,&$order_values)
+    public static function loadOrderFields($blockExternalVars,&$params,&$esfields,$langpostfix,&$order_list,&$order_values)
 	{
 				//get sort field (and direction) example "price desc"
 				$jinput = JFactory::getApplication()->input;
@@ -191,7 +211,7 @@ class CTOrdering
 											if($order_params!='')
 											{
 												$db = JFactory::getDBO();
-												$esordering ='DATE_FORMAT(es_'.$fieldname.', '.$db->quote($order_params).')'.$desc;
+												$esordering ='DATE_FORMAT('.$row['realfieldname'].', '.$db->quote($order_params).')'.$desc;
 											}
 											else
 												$esordering = $fieldname.$desc;

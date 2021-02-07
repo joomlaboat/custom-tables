@@ -37,9 +37,9 @@ class ESLogs
 		$sets[]=(int)$tableid;
 		$sets[]=(int)$listing_id;
 		$sets[]=(int)$action;
-		$sets[]=JFactory::getApplication()->input->get('Itemid',0,'INT');
+		$sets[]=(int)JFactory::getApplication()->input->get('Itemid',0,'INT');
 
-		$query = 'INSERT INTO #__customtables_log (user,datetime,tableid,listingid,action,Itemid) VALUES ('.implode(',',$sets).')';
+		$query = 'INSERT INTO #__customtables_log (userid,datetime,tableid,listingid,action,Itemid) VALUES ('.implode(',',$sets).')';
 
 		$db->setQuery($query);
 		$db->execute();	

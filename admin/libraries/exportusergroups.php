@@ -33,7 +33,7 @@ class ImportExportUserGroups
         }
         else
         {
-            $msg='Uploaded file not found.';
+            $msg='Uploaded file not found. Code EX02';
 			
             return false;
         }

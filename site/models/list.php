@@ -29,7 +29,7 @@ class CustomTablesModelList extends JModel
 
 		static $items;
 
-		$db = $this->getDBO();
+		$db = JFactory::getDBO();
 
 		if($noState)
 		{
@@ -333,7 +333,7 @@ class CustomTablesModelList extends JModel
 				$this->_addChildren((int)$id, $ids);
 			}
 
-			$db = $this->getDBO();
+			$db = JFactory::getDBO();
 
 
 			// Delete the menu items
@@ -355,7 +355,7 @@ class CustomTablesModelList extends JModel
 		$return = true;
 
 		// Get all rows with parentid of $id
-		$db = $this->getDBO();
+		$db = JFactory::getDBO();
 		$query = 'SELECT id' .
 				' FROM #__customtables_options' .
 				' WHERE parentid = '.(int) $id;
@@ -395,7 +395,7 @@ class CustomTablesModelList extends JModel
 	function _rebuildSubLevel($cid = array(0), $level = 0)
 	{
 		JArrayHelper::toInteger($cid, array(0));
-		$db = $this->getDBO();
+		$db = JFactory::getDBO();
 		$ids = implode( ',', $cid );
 		$cids = array();
 		if($level == 0) {

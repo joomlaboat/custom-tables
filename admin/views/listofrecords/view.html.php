@@ -25,6 +25,7 @@ class CustomtablesViewListofrecords extends JViewLegacy
 
 	var $tableid;
 	var $tablename;
+	var $realtablename;
 	var $tabletitle;
 	var $languages;
 	var $tablefields;
@@ -40,6 +41,7 @@ class CustomtablesViewListofrecords extends JViewLegacy
 		$this->langpostfix=$LangMisc->getLangPostfix();
 		$app = JFactory::getApplication();
 		$this->tablename="";
+		$this->realtablename="";
 		$this->tabletitle="";
 		$this->tablefields=array();
 
@@ -78,6 +80,10 @@ class CustomtablesViewListofrecords extends JViewLegacy
 				$this->tablename=$table->tablename;
 				$this->tabletitle=$table->tabletitle;
 				$this->tablefields=ESFields::getFields($this->tableid);
+				if($row->customtablename !='')
+					$this->realtablename=$row->customtablename;
+				else
+					$this->realtablename = '#__customtables_table_'.$this->tablename;
 			}
 		}
 		

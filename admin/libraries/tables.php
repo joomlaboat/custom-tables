@@ -14,6 +14,7 @@ defined('_JEXEC') or die('Restricted access');
 class ESTables
 {
 
+	//This function works with MySQL not PostgreeSQL
 	public static function getTableStatus($database,$dbprefix,$tablename)
 	{
 		$db = JFactory::getDBO();
@@ -32,22 +33,21 @@ class ESTables
 	{
 		$conf = JFactory::getConfig();
 		$database = $conf->get('db');
-		$dbprefix = $conf->get('dbprefix');
 
 		$db = JFactory::getDBO();
 
-		$t=str_replace('#__',$dbprefix,$mysqltablename);
+		$mysqltablename=str_replace('#__',$db->getPrefix(),$mysqltablename);
 
-		$query = 'SELECT COUNT(*) AS c FROM information_schema.tables WHERE table_schema = '.$db->quote($database).' AND table_name = '.$db->quote($t).' LIMIT 1';
-
+		if($db->serverType == 'postgresql')
+			$query = 'SELECT COUNT(*) AS c FROM information_schema.columns WHERE table_name = '.$db->quote($mysqltablename).' LIMIT 1';
+		else
+			$query = 'SELECT COUNT(*) AS c FROM information_schema.tables WHERE table_schema = '.$db->quote($database).' AND table_name = '.$db->quote($mysqltablename).' LIMIT 1';
+		
 		$db->setQuery( $query );
-
 		$rows = $db->loadObjectList();
-		if(count($rows)!=1)
-			return false;
 
-		$c=$rows[0]->c;
-		if($c==1)
+		$c=(int)$rows[0]->c;
+		if($c>0)
 			return true;
 
 		return false;
@@ -62,7 +62,7 @@ class ESTables
 		if($tableid==0)
 			$tableid=JFactory::getApplication()->input->get('tableid',0,'INT');
 
-		$query = 'SELECT tablename FROM #__customtables_tables AS s WHERE id='.$tableid.' LIMIT 1';
+		$query = 'SELECT tablename FROM #__customtables_tables AS s WHERE id='.(int)$tableid.' LIMIT 1';
 		$db->setQuery( $query );
 
 		$rows = $db->loadObjectList();
@@ -70,6 +70,29 @@ class ESTables
 			return '';
 
 		return $rows[0]->tablename;
+	}
+	
+	public static function getRealTableName($tableid = 0)
+	{
+		$db = JFactory::getDBO();
+
+		$jinput = JFactory::getApplication()->input;
+
+		if($tableid==0)
+			$tableid=JFactory::getApplication()->input->get('tableid',0,'INT');
+
+		$query = 'SELECT tablename, customtablename FROM #__customtables_tables AS s WHERE id='.(int)$tableid.' LIMIT 1';
+		$db->setQuery( $query );
+
+		$rows = $db->loadObjectList();
+		if(count($rows)!=1)
+			return '';
+
+		$row = $rows[0];
+		if($row->customtablename !='')
+			return $row->customtablename;
+
+		return '#__customtables_table_'.$row->tablename;
 	}
 
 	public static function getTableID($tablename)
@@ -100,7 +123,7 @@ class ESTables
 		if($tableid==0)
 			return 0;
 
-		$query = 'SELECT * FROM #__customtables_tables AS s WHERE id="'.$tableid.'" LIMIT 1';
+		$query = 'SELECT * FROM #__customtables_tables AS s WHERE id='.(int)$tableid.' LIMIT 1';
 		$db->setQuery( $query );
 
 		$rows = $db->loadObjectList();
@@ -117,7 +140,7 @@ class ESTables
 		if($tableid==0)
 			return 0;
 
-		$query = 'SELECT * FROM #__customtables_tables AS s WHERE id="'.$tableid.'" LIMIT 1';
+		$query = 'SELECT * FROM #__customtables_tables AS s WHERE id='.(int)$tableid.' LIMIT 1';
 		$db->setQuery( $query );
 
 		$rows = $db->loadAssocList();
@@ -134,7 +157,7 @@ class ESTables
 		if($tablename=='')
 			return 0;
 
-		$query = 'SELECT * FROM #__customtables_tables AS s WHERE tablename="'.$tablename.'" LIMIT 1';
+		$query = 'SELECT * FROM #__customtables_tables AS s WHERE tablename='.$db->quote($tablename).' LIMIT 1';
 		$db->setQuery( $query );
 
 		$rows = $db->loadObjectList();
@@ -150,7 +173,7 @@ class ESTables
 		if($tablename=='')
 			return 0;
 
-		$query = 'SELECT * FROM #__customtables_tables AS s WHERE tablename="'.$tablename.'" LIMIT 1';
+		$query = 'SELECT * FROM #__customtables_tables AS s WHERE tablename='.$db->quote($tablename).' LIMIT 1';
 		$db->setQuery( $query );
 
 		$rows = $db->loadAssocList();
