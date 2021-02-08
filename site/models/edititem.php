@@ -1374,7 +1374,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		{
 			$fieldname=$esfield['fieldname'];
 			if($esfield['defaultvalue']!='' and $row[$esfield['realfieldname']]=='')
-				$default_fields_to_apply[]=array($fieldname,$esfield['defaultvalue'],$esfield['type']);
+				$default_fields_to_apply[]=array($fieldname,$esfield['defaultvalue'],$esfield['type'],$esfield['realfieldname']);
 		}
 
         CTValue::processDefaultValues($default_fields_to_apply,$this,$row);

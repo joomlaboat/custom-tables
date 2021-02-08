@@ -333,7 +333,7 @@ class CTValue
 							else
 								$savequery[]=$realfieldname.'='.$db->Quote("");//PostgreSQL compatible
 
-				                        $value_found=true;
+				            $value_found=true;
 						}
 					break;
 
@@ -985,7 +985,7 @@ static public function get_record_type_value(&$savequery,$typeparams,$prefix,$es
             return $db->loadObjectList();
 	}
 
-    static protected function processDefaultValue($esfieldname,&$Model,$htmlresult,$type,&$row,&$savequery,$realfieldname,$realtablename)
+    static protected function processDefaultValue($esfieldname,&$Model,$htmlresult,$type,&$row,&$savequery,$realfieldname)
     {
         $db = JFactory::getDBO();
 
@@ -1000,7 +1000,7 @@ static public function get_record_type_value(&$savequery,$typeparams,$prefix,$es
             LayoutProcessor::applyContentPlugins($htmlresult);
 
             if($type=='alias')
-                $htmlresult=CTValue::prepare_alias_type_value($row['id'],$Model->establename,$esfieldname,$htmlresult,$realfieldname,$realtablename);
+                $htmlresult=CTValue::prepare_alias_type_value($row['id'],$Model->establename,$esfieldname,$htmlresult,$realfieldname,$Model->realtablename);
 
             $savequery[]=$realfieldname.'='.$db->quote($htmlresult);
         }
@@ -1021,7 +1021,7 @@ static public function get_record_type_value(&$savequery,$typeparams,$prefix,$es
             $r=$row[$realfieldname];
             if($r==null or $r=='' or $r==0)
             {
-                CTValue::processDefaultValue($fieldname,$Model,$value,$type,$row,$savequery,$realfieldname,$Model->realtablename);
+                CTValue::processDefaultValue($fieldname,$Model,$value,$type,$row,$savequery,$realfieldname);
             }
 		}
 
@@ -1030,7 +1030,7 @@ static public function get_record_type_value(&$savequery,$typeparams,$prefix,$es
 
     static public function runQueries(&$Model,&$savequery,$id)
     {
-
+		
     	if(count($savequery)>0)
 		{
 			$db = JFactory::getDBO();
