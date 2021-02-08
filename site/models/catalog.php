@@ -40,6 +40,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 		var $establename;
 		var $realtablename;
 		var $published_field_found;
+		
 		var $tablerow;
 		var $estableid;
 
@@ -254,8 +255,6 @@ class CustomTablesModelCatalog extends JModelLegacy
 					$realfields=ESFields::getListOfExistingFields($this->realtablename,false);
 					if(!in_array('published',$realfields))
 						$this->published_field_found=false;
-						
-					
 				}
 				else
 					$this->realtablename='#__customtables_table_'.$this->establename;

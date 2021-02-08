@@ -36,6 +36,9 @@ class CustomTablesModelDetails extends JModelLegacy {
 	var $langpostfix;
 
 	var $establename;
+	var $realtablename;
+	var $published_field_found;
+		
 	var $estableid;
 	var $tablerow;
 	var $esfields;
@@ -153,12 +156,22 @@ class CustomTablesModelDetails extends JModelLegacy {
 
 		$this->tablerow = $this->esTable->getTableRowByNameAssoc($this->establename);
 		if(!isset($this->tablerow['id']))
-		{
 			return;
 
-		}
-
 		$this->estableid=$this->tablerow['id'];
+
+		//Real Table Name
+		$this->published_field_found=true;
+		if($this->tablerow['customtablename']!='')
+		{
+			$this->realtablename=$this->tablerow['customtablename'];
+			$realfields=ESFields::getListOfExistingFields($this->realtablename,false);
+			if(!in_array('published',$realfields))
+				$this->published_field_found=false;
+		}
+		else
+			$this->realtablename='#__customtables_table_'.$this->establename;
+
 
 		//	Fields
 		$this->esfields = ESFields::getFields($this->estableid);
@@ -218,8 +231,7 @@ class CustomTablesModelDetails extends JModelLegacy {
 	function & getData()
 	{
 		$db = JFactory::getDBO();
-		$tablename='#__customtables_table_'.$this->establename;
-
+		
 		if($this->_id==0)
 		{
 			$this->_id	= 0;
@@ -232,7 +244,7 @@ class CustomTablesModelDetails extends JModelLegacy {
 				$filtering=new ESFiltering;
 				$filtering->langpostfix=$this->langpostfix;
 				$filtering->es=$this->es;
-				$filtering->estable=$tablename;
+				$filtering->estable=$this->realtablename;
 				$filtering->esfields=$this->esfields;
 
 				$PathValue=array();
@@ -252,8 +264,12 @@ class CustomTablesModelDetails extends JModelLegacy {
 				$where = ' WHERE '.implode(" AND ",$wherearr);
 
 
-			$query = 'SELECT *, id AS listing_id, '.$tablename.'.published AS listing_published ';
-			$query.=' FROM '.$tablename.' '.$where;
+			if($this->published_field_found)
+				$query = 'SELECT *, id AS listing_id, '.$this->realtablename.'.published AS listing_published ';
+			else
+				$query = 'SELECT *, id AS listing_id, 1 AS listing_published ';
+			
+			$query.=' FROM '.$this->realtablename.' '.$where;
 
 			$query.=' ORDER BY id DESC'; //show last
 			$query.=' LIMIT 1';
@@ -261,13 +277,14 @@ class CustomTablesModelDetails extends JModelLegacy {
 		else
 		{
 			//show exact record
-			$query = 'SELECT *, id AS listing_id, '.$tablename.'.published AS listing_published ';
-			$query.=' FROM '.$tablename.' WHERE id='.$this->_id.' LIMIT 1';
+			if($this->published_field_found)
+				$query = 'SELECT *, id AS listing_id, '.$this->realtablename.'.published AS listing_published ';
+			else
+				$query = 'SELECT *, id AS listing_id, 1 AS listing_published ';
+				
+			$query.=' FROM '.$this->realtablename.' WHERE id='.$this->_id.' LIMIT 1';
 		}
 		$db->setQuery($query);
-
-		if (!$db->query())    die( $db->stderr());
-
 		$rows=$db->loadAssocList();
 
 		if(count($rows)<1)

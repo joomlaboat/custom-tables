@@ -985,7 +985,7 @@ static public function get_record_type_value(&$savequery,$typeparams,$prefix,$es
             return $db->loadObjectList();
 	}
 
-    static protected function processDefaultValue($esfieldname,&$Model,$htmlresult,$type,&$row,&$savequery,$realfieldname)
+    static protected function processDefaultValue($esfieldname,&$Model,$htmlresult,$type,&$row,&$savequery,$realfieldname,$realtablename)
     {
         $db = JFactory::getDBO();
 
@@ -1000,7 +1000,7 @@ static public function get_record_type_value(&$savequery,$typeparams,$prefix,$es
             LayoutProcessor::applyContentPlugins($htmlresult);
 
             if($type=='alias')
-                $htmlresult=CTValue::prepare_alias_type_value($row['id'],$Model->establename,$esfieldname,$htmlresult,$realfieldname);
+                $htmlresult=CTValue::prepare_alias_type_value($row['id'],$Model->establename,$esfieldname,$htmlresult,$realfieldname,$realtablename);
 
             $savequery[]=$realfieldname.'='.$db->quote($htmlresult);
         }
@@ -1021,13 +1021,11 @@ static public function get_record_type_value(&$savequery,$typeparams,$prefix,$es
             $r=$row[$realfieldname];
             if($r==null or $r=='' or $r==0)
             {
-                CTValue::processDefaultValue($fieldname,$Model,$value,$type,$row,$savequery,$realfieldname);
-
+                CTValue::processDefaultValue($fieldname,$Model,$value,$type,$row,$savequery,$realfieldname,$Model->realtablename);
             }
 		}
 
         CTValue::runQueries($Model,$savequery,$row['id']);
-
     }
 
     static public function runQueries(&$Model,&$savequery,$id)
