@@ -66,10 +66,6 @@ class CustomtablesModelListofRecords extends JModelList
 		// load parent items
 		$items = parent::getItems(); 
 		
-		echo '$items';
-		print_r($items);
-		die;
-		
 		//$app = JFactory::getApplication();
 		//$tableid 	= $app->input->get('tableid', 0, 'int');
 		//$this->setState('filter.tableid', $tableid);
@@ -90,8 +86,32 @@ class CustomtablesModelListofRecords extends JModelList
 		$this->tablename=$jinput->getCmd('tablename',0);
 		
 		if($this->tablename=="")
+		{
+			$this->setError('Table not specified.');
 			return null;
-				
+		}
+		
+		$tablerow = ESTables::getTableRowByNameAssoc($this->tablename);
+		
+		if(!is_array($tablerow))
+		{
+			$this->setError('Table not found.');
+			return null;
+		}
+		
+		$realtablename='';
+		
+		$published_field_found=true;
+		if($tablerow['customtablename']!='')
+		{
+			$realtablename=$tablerow['customtablename'];
+			$realfields=ESFields::getListOfExistingFields($realtablename,false);
+			if(!in_array('published',$realfields))
+				$published_field_found=false;
+		}
+		else
+			$realtablename='#__customtables_table_'.$this->tablename;
+		
 		
 		// Get the user object.
 		$user = JFactory::getUser();
@@ -99,62 +119,26 @@ class CustomtablesModelListofRecords extends JModelList
 		$db = JFactory::getDBO();
 		$query = $db->getQuery(true);
 
-		$query->select('a.*, a.id AS listing_id');
+		if($published_field_found)
+			$query_selects='a.*, a.id as listing_id, a.published AS listing_published';
+		else
+			$query_selects='a.*, a.id as listing_id, 1 AS listing_published';
+
+		$query->select($query_selects);
 
 		// From the customtables_item table
-		$query->from($db->quoteName('#__customtables_table_'.$this->tablename, 'a'));
-
+		$query->from($db->quoteName($realtablename, 'a'));
+		
 		// Filter by published state
-		$published = $this->getState('filter.published');
-		if (is_numeric($published))
+		if($published_field_found)
 		{
-			$query->where('a.published = ' . (int) $published);
+			$published = $this->getState('filter.published');
+			if (is_numeric($published))
+				$query->where('a.published = ' . (int) $published);
+			elseif ($published === '')
+				$query->where('(a.published = 0 OR a.published = 1)');
 		}
-		elseif ($published === '')
-		{
-			$query->where('(a.published = 0 OR a.published = 1)');
-		}
-		// Filter by search.
-		/*
-		$search = $this->getState('filter.search');
-		if (!empty($search))
-		{
-			if (stripos($search, 'id:') === 0)
-			{
-				$query->where('a.id = ' . (int) substr($search, 3));
-			}
-			else
-			{
-				$search = $db->quote('%' . $db->escape($search) . '%');
-				$query->where('(a.fieldtitle LIKE '.$search.')');
-			}
-		}
-*/
-		// Filter by Type.
-		/*
-		if ($type = $this->getState('filter.type'))
-		{
-			$query->where('a.type = ' . $db->quote($db->escape($type)));
-		}
-*/
 		
-		/*
-		if ($this->tableid!=0)
-		{
-			$query->where('a.tableid = ' . $db->quote($db->escape($this->tableid)));
-		}
-		*/
-		////$app = JFactory::getApplication();
-		//$this->tableid=$app->input->getint('tableid',0);
-		
-		// Add the list ordering clause.
-		//$orderCol = $this->state->get('list.ordering', 'a.id');
-		//$orderDirn = $this->state->get('list.direction', 'asc');	
-		//if ($orderCol != '')
-		//{
-			//$query->order($db->escape($orderCol . ' ' . $orderDirn));
-		//}
-
 		return $query;
 	} 
 	

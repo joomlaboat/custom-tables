@@ -13,7 +13,7 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.
 class CTValue
 {
 
-    public static function getValue($id,&$es,&$esfield,&$savequery,$prefix,$establename,$LanguageList,&$fieldstosave)
+    public static function getValue($id,&$es,&$esfield,&$savequery,$prefix,$establename,$LanguageList,&$fieldstosave,$realtablename)
     {
         $db = JFactory::getDBO();
         $esfieldname=$esfield['fieldname'];
@@ -112,7 +112,7 @@ class CTValue
 
 						if(isset($value))
                         {
-                            $value_found=CTValue::get_alias_type_value($id,$establename,$savequery,$prefix,$esfieldname,$realfieldname);
+                            $value_found=CTValue::get_alias_type_value($id,$establename,$savequery,$prefix,$esfieldname,$realfieldname,$realtablename);
                         }
 					break;
 
@@ -471,7 +471,7 @@ static public function Try2CreateUserAccount($Model,$field,$row)
 	{
         if(!$unique_users) //allow not unique record per users
         {
-            CTValue::UpdateUserField($Model->establename,$useridfieldname,$existing_user_id,$row['id']);
+            CTValue::UpdateUserField($Model->realtablename,$useridfieldname,$existing_user_id,$row['id']);
             JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORD_USER_UPDATED' ));
         }
         else
@@ -484,22 +484,20 @@ static public function Try2CreateUserAccount($Model,$field,$row)
 
 	}
     else
-        CTValue::CreateUser($user_email,$user_name,$user_groups,$row['id'],$useridfieldname,$Model->establename);
+        CTValue::CreateUser($user_email,$user_name,$user_groups,$row['id'],$useridfieldname,$Model->realtablename);
 
     return;
 }
 
-    static protected function UpdateUserField($tablename,$useridfieldname,$existing_user_id,$listing_id)
+    static protected function UpdateUserField($realtablename,$useridfieldname,$existing_user_id,$listing_id)
     {
         $db = JFactory::getDBO();
-		$query = 'UPDATE #__customtables_table_'.$tablename.' SET es_'.$useridfieldname.'='.$existing_user_id.' WHERE id='.$listing_id.' LIMIT 1';
+		$query = 'UPDATE '.$realtablename.' SET '.$useridfieldname.'='.$existing_user_id.' WHERE id='.$listing_id.' LIMIT 1';
 		$db->setQuery( $query );
 		$db->execute();
-
-
     }
 
-    static protected function CreateUser($email,$name,$usergroups,$listing_id,$useridfieldname,$tablename)
+    static protected function CreateUser($email,$name,$usergroups,$listing_id,$useridfieldname,$realtablename)
 	{
 		$msg='';
 		$password=strtolower(JUserHelper::genRandomPassword());
@@ -517,7 +515,7 @@ static public function Try2CreateUserAccount($Model,$field,$row)
 
 		if($realuserid!=0)
 		{
-                CTValue::UpdateUserField($tablename,$useridfieldname,$realuserid,$listing_id);
+                CTValue::UpdateUserField($realtablename,$useridfieldname,$realuserid,$listing_id);
 				JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_USER_CREATE_PSW_SENT' ));
 		}
 		else
@@ -670,7 +668,7 @@ static public function get_usergroups_type_value(&$savequery,$typeparams,$prefix
     }
 
 
-static public function get_alias_type_value($id,$establename,&$savequery,$prefix,$esfieldname,$realfieldname)
+static public function get_alias_type_value($id,$establename,&$savequery,$prefix,$esfieldname,$realfieldname,$realtablename)
 {
     $comesfieldname=$prefix.$esfieldname;
 
@@ -678,7 +676,7 @@ static public function get_alias_type_value($id,$establename,&$savequery,$prefix
     if(!isset($value))
         return false;
     
-    $value=CTValue::prepare_alias_type_value($id,$establename,$esfieldname,$value,$realfieldname);
+    $value=CTValue::prepare_alias_type_value($id,$establename,$esfieldname,$value,$realfieldname,$realtablename);
     if($value=='')
         return false;
 
@@ -687,17 +685,14 @@ static public function get_alias_type_value($id,$establename,&$savequery,$prefix
     return true;
 }
 
-static public function prepare_alias_type_value($id,$establename,$esfieldname,$value,$realfieldname)
+static public function prepare_alias_type_value($id,$establename,$esfieldname,$value,$realfieldname,$realtablename)
 {
     $value=JoomlaBasicMisc::slugify($value);
 
     if($value=='')
         return '';
 
-    $mysqltablename='#__customtables_table_'.$establename;
-    $mysqlfieldname=$realfieldname;
-
-    if(!CTValue::checkIfAliasExists($id,$mysqltablename,$mysqlfieldname,$value))
+    if(!CTValue::checkIfAliasExists($id,$realtablename,$realfieldname,$value))
         return $value;
 
     $val=CTValue::splitStringToStringAndNumber($value);
@@ -707,7 +702,7 @@ static public function prepare_alias_type_value($id,$establename,$esfieldname,$v
 
 	do
 	{
-		if(CTValue::checkIfAliasExists($id,$mysqltablename,$mysqlfieldname,$value_new))
+		if(CTValue::checkIfAliasExists($id,$realtablename,$realfieldname,$value_new))
 		{
 			//increase index
 			$i++;
@@ -1041,7 +1036,7 @@ static public function get_record_type_value(&$savequery,$typeparams,$prefix,$es
     	if(count($savequery)>0)
 		{
 			$db = JFactory::getDBO();
-			$query='UPDATE #__customtables_table_'.$Model->establename.' SET '.implode(', ',$savequery).' WHERE id='.$id;
+			$query='UPDATE '.$Model->realtablename.' SET '.implode(', ',$savequery).' WHERE id='.$id;
 
 			$db->setQuery( $query );
 			$db->execute();

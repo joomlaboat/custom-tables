@@ -76,7 +76,7 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.
 		
 		<?php
 		if($this->tableid!=0)
-			checkTableFields($this->tablename,$this->tableid);
+			checkTableFields($this->tableid,$this->tablename,$this->tabletitle,$this->customtablename);
 		?>
 		
 		<table class="table table-striped" id="fieldsList">

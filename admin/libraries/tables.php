@@ -13,7 +13,6 @@ defined('_JEXEC') or die('Restricted access');
 
 class ESTables
 {
-
 	//This function works with MySQL not PostgreeSQL
 	public static function getTableStatus($database,$dbprefix,$tablename)
 	{
@@ -181,5 +180,94 @@ class ESTables
 			return '';
 
 		return $rows[0];
+	}
+
+
+	public static function createTableIfNotExists($database,$dbprefix,$tablename,$tabletitle,$complete_table_name='')
+	{
+		$db = JFactory::getDBO();
+
+		if($db->serverType == 'postgresql')
+		{
+			//PostgreSQL
+			//Check if table exists
+			if($complete_table_name=='')
+				$table_name=$dbprefix.'customtables_table_'.$tablename;
+			else
+				$table_name=$complete_table_name;// used for custom table names - to connect to third-part tables for example
+				
+			$fields = ESFields::getListOfExistingFields($table_name,false);
+			
+			if(count($fields)==0)
+			{
+				//create new table
+				$db->setQuery('CREATE SEQUENCE IF NOT EXISTS '.$table_name.'_seq');
+				$db->execute();
+				
+				
+				$query = '
+				CREATE TABLE IF NOT EXISTS '.$table_name.'
+				(
+					id int NOT NULL default nextval (\''.$table_name.'_seq\'),
+					published smallint NOT NULL DEFAULT 1,
+					PRIMARY KEY (id)
+				)';
+
+				$db->setQuery( $query );
+				$db->execute();
+				
+				$db->setQuery('ALTER SEQUENCE '.$table_name.'_seq RESTART WITH 1');
+				$db->execute();
+				
+				return true;
+			}
+		}
+		else
+		{
+			//Mysql;
+			$rows2=ESTables::getTableStatus($database,$dbprefix,$tablename);
+
+			if(count($rows2)>0)
+			{
+				if($complete_table_name=='')
+				{
+					//do not medify third-party tables
+					$row2=$rows2[0];
+
+					$table_name=$dbprefix.'customtables_table_'.$tablename;
+
+					if($row2->Engine!='InnoDB')
+					{
+						$query = 'ALTER TABLE '.$table_name.' ENGINE = InnoDB';
+						$db->setQuery( $query );
+						$db->execute();
+					}
+
+					$query = 'ALTER TABLE '.$table_name.' COMMENT = "'.$tabletitle.'";';
+					$db->setQuery( $query );
+					$db->execute();
+					
+					return false;
+				}
+			}
+			else
+			{
+				$query = '
+				CREATE TABLE IF NOT EXISTS #__customtables_table_'.$tablename.'
+				(
+					id int(10) unsigned NOT NULL auto_increment,
+					published tinyint(1) DEFAULT 1,
+					PRIMARY KEY  (id)
+				) ENGINE=InnoDB COMMENT="'.$tabletitle.'" DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
+				';
+
+				$db->setQuery( $query );
+				$db->execute();
+				
+				return true;
+			}
+		}
+		
+		return false;
 	}
 }

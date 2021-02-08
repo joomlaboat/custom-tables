@@ -16,99 +16,88 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.
 
 function checkTableOnly($tables_rows)
 {
-	$db = JFactory::getDBO();
-	if($db->serverType == 'postgresql')
-		return; // do not check tables for PostgreeSQL
-		
     $conf = JFactory::getConfig();
     $dbprefix = $conf->get('dbprefix');
 
-    
-
     foreach($tables_rows as $row)
     {
-
-        $db->setQuery('SHOW TABLES LIKE "'.$dbprefix.'customtables_table_'.$row->tablename.'"');
-        if ($db->query())
+		if(!ESTables::checkIfTableExists($dbprefix.'customtables_table_'.$row->tablename))
         {
-            $a=$db->loadAssocList();
-            if(count($a)==0)
-            {
-
-                createTableIfNotExists($row->tablename,$row->tabletitle);
-                echo '<p>Table "<span style="color:green;">'.$row->tabletitle.'</span>" <span style="color:green;">added.</span></p>';
-            }
+			$conf = JFactory::getConfig();
+			$database = $conf->get('db');
+			$dbprefix = $conf->get('dbprefix');
+		
+			if(ESTables::createTableIfNotExists($database,$dbprefix,$row->tablename,$row->tabletitle,$row->customtablename))
+				echo '<p>Table "<span style="color:green;">'.$row->tabletitle.'</span>" <span style="color:green;">added.</span></p>';
         }
 
     }
 }
 
-function checkTableFields($establename,$tableid)
+function checkTableFields($tableid,$tablename,$tabletitle,$customtablename)
 {
 	$db = JFactory::getDBO();
-	if($db->serverType == 'postgresql')
-		return;
-    
     $conf = JFactory::getConfig();
+	$database = $conf->get('db');
 	$dbprefix = $conf->get('dbprefix');
 
+	if(ESTables::createTableIfNotExists($database,$dbprefix,$tablename,$tabletitle,$customtablename))
+		echo '<p>Table "<span style="color:green;">'.$tabletitle.'</span>" <span style="color:green;">added.</span></p>';
+
+	if($customtablename!='')
+		$realtablename=$customtablename;
+	else
+		$realtablename='#__customtables_table_'.$tablename;
     
-    $db->setQuery('SHOW TABLES LIKE "'.$dbprefix.'customtables_table_'.$establename.'"');
-    if (!$db->query()) return false;
-
-    $a=$db->loadAssocList();
-    if(count($a)==0)
-        createTableIfNotExists($establename,$establename);
-
-
-
-    $ExistingFields=ESFields::getExistingFields($establename);
-    $jinput = JFactory::getApplication()->input;
-
+    $ExistingFields=ESFields::getExistingFields($realtablename, false);
+	
+	$jinput = JFactory::getApplication()->input;
     $LangMisc	= new ESLanguages;
     $languages=$LangMisc->getLanguageList();
 
-
     checkOptionsTitleFields($languages);
-
-    $complete_table_name='#__customtables_table_'.$establename;
 
     $link=JURI::root().'administrator/index.php?option=com_customtables&view=listoffields&tableid='.$tableid;
 
-    $query = 'SELECT fieldname,CONCAT("es_",fieldname) AS thefieldname, type, typeparams FROM #__customtables_fields WHERE published=1 AND tableid='.$tableid.'';
-    $db->setQuery( $query );
-
-    $projected_fields = $db->loadAssocList();
-    echo '<br/><hr/>';
+	$projected_fields = ESFields::getFields($tableid,false);
 
     //Delete unnesesary fields:
-    $projected_fields[]=['thefieldname'=>'id','type'=>'_id','typeparams'=>''];
-    $projected_fields[]=['thefieldname'=>'published','type'=>'_published','typeparams'=>''];
+    $projected_fields[]=['realfieldname'=>'id','type'=>'_id','typeparams'=>''];
+    $projected_fields[]=['realfieldname'=>'published','type'=>'_published','typeparams'=>''];
 
 
     $task=$jinput->getCmd('task');
     $taskfieldname=$jinput->    getCmd('fieldname');
-
-    foreach($ExistingFields as $existing_field)
+	
+	
+	$db = JFactory::getDBO();
+		
+	if($db->serverType == 'postgresql')
+		$field_columns=(object)['columnname' => 'column_name', 'data_type'=>'data_type', 'is_nullable'=>'is_nullable', 'default'=>'column_default'];
+	else
+		$field_columns=(object)['columnname' => 'Field', 'data_type'=>'Type', 'is_nullable'=>'Null', 'default'=>'Default'];
+			
+	foreach($ExistingFields as $existing_field)
     {
-        $field_mysql_type=$existing_field['Type'];
-        if($existing_field['Null']=='YES')
+		
+		
+        $field_mysql_type=$existing_field[$field_columns->data_type];
+        if($existing_field[$field_columns->is_nullable]=='YES')
             $field_mysql_type.=' NULL';
         else
             $field_mysql_type.=' NOT NULL';
 
-        $default=$existing_field['Default'];
+        $default=$existing_field[$field_columns->default];
         if($default!=null)
             $field_mysql_type.=' DEFAULT '.$default;
 
-        $exst_field=$existing_field['Field'];
+        $exst_field=$existing_field[$field_columns->columnname];
         $found=false;
         $found_field='';
         $found_fieldparams='';
         foreach($projected_fields as $projected_field)
         {
-
-			if($projected_field['thefieldname']=='id')
+			if($projected_field['realfieldname']=='id')
             {
 				$found=true;
 				$PureFieldType='_id';
@@ -118,7 +107,7 @@ function checkTableFields($establename,$tableid)
                 $morethanonelang=false;
 				foreach($languages as $lang)
 				{
-					$fieldname=$projected_field['thefieldname'];
+					$fieldname=$projected_field['realfieldname'];
 					if($morethanonelang)
 						$fieldname.='_'.$lang->sef;
 
@@ -126,7 +115,7 @@ function checkTableFields($establename,$tableid)
                     if($exst_field==$fieldname)
                     {
                         $PureFieldType=ESFields::getPureFieldType($projected_field['type'], $projected_field['typeparams']);
-                        $found_field=$projected_field['thefieldname'];
+                        $found_field=$projected_field['realfieldname'];
                         $found_fieldparams=$projected_field['typeparams'];
                         $found=true;
                         break;
@@ -136,13 +125,13 @@ function checkTableFields($establename,$tableid)
             }
             elseif($projected_field['type']=='imagegallery')
             {
-                if($exst_field==$projected_field['thefieldname'])
+                if($exst_field==$projected_field['realfieldname'])
                 {
                     $gallery_table_name='#__customtables_gallery_'.$establename.'_'.$projected_field['fieldname'];//.'_imagegallery';
                     checkGalleryTitleFields($gallery_table_name,$languages,$establename,$projected_field['fieldname']);
 
                     $PureFieldType=ESFields::getPureFieldType($projected_field['type'], $projected_field['typeparams']);
-                    $found_field=$projected_field['thefieldname'];
+                    $found_field=$projected_field['realfieldname'];
                     $found_fieldparams=$projected_field['typeparams'];
                     $found=true;
                     break;
@@ -151,13 +140,13 @@ function checkTableFields($establename,$tableid)
             }
             elseif($projected_field['type']=='filebox')
             {
-                if($exst_field==$projected_field['thefieldname'])
+                if($exst_field==$projected_field['realfieldname'])
                 {
                     $filebox_table_name='#__customtables_filebox_'.$establename.'_'.$projected_field['fieldname'];
                     checkFilesTitleFields($filebox_table_name,$languages,$establename,$projected_field['fieldname']);
 
                     $PureFieldType=ESFields::getPureFieldType($projected_field['type'], $projected_field['typeparams']);
-                    $found_field=$projected_field['thefieldname'];
+                    $found_field=$projected_field['realfieldname'];
                     $found_fieldparams=$projected_field['typeparams'];
                     $found=true;
                     break;
@@ -166,7 +155,7 @@ function checkTableFields($establename,$tableid)
             }
             elseif($projected_field['type']=='dummy')
             {
-                if($exst_field==$projected_field['thefieldname'])
+                if($exst_field==$projected_field['realfieldname'])
                 {
                     $found=false;
                     break;
@@ -175,10 +164,10 @@ function checkTableFields($establename,$tableid)
             }
             else
             {
-                if($exst_field==$projected_field['thefieldname'])
+                if($exst_field==$projected_field['realfieldname'])
                 {
                     $PureFieldType=ESFields::getPureFieldType($projected_field['type'], $projected_field['typeparams']);
-                    $found_field=$projected_field['thefieldname'];
+                    $found_field=$projected_field['realfieldname'];
                     $found_fieldparams=$projected_field['typeparams'];
                     $found=true;
                     break;
@@ -224,74 +213,57 @@ function checkTableFields($establename,$tableid)
     //Add missing fields
     foreach($projected_fields as $projected_field)
     {
-        $proj_field=$projected_field['thefieldname'];
+        $proj_field=$projected_field['realfieldname'];
         $fieldtype=$projected_field['type'];
         if($fieldtype!='dummy')
         {
-            checkField($ExistingFields,$establename,$proj_field,$fieldtype,$projected_field['typeparams'],$languages);
+            checkField($ExistingFields,$tablename,$proj_field,$fieldtype,$projected_field['typeparams'],$languages);
 
         }
 
     }
 
 }
-    function createTableIfNotExists($tablename,$tabletitle)
-    {
-            $query = '
-			CREATE TABLE IF NOT EXISTS #__customtables_table_'.$tablename.'
-			(
-				id int(10) unsigned NOT NULL auto_increment,
-				published tinyint(1) DEFAULT "1",
-				PRIMARY KEY  (id)
-			) ENGINE=InnoDB COMMENT="'.$tabletitle.'" DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
-			';
-
-            $db = JFactory::getDBO();
-			$db->setQuery( $query );
-			if (!$db->query())
-			{
-				$this->setError( $db->getErrorMsg() );
-				return false;
-			}
-
-            return true;
-
-    }
-
     function checkOptionsTitleFields(&$languages)
     {
+		$db = JFactory::getDBO();
+		
+		$column_name_field='';
+		if($db->serverType == 'postgresql')
+			$column_name_field = 'column_name';
+		else
+			$column_name_field = 'Field';
+		
         $table_name='#__customtables_options';
 
-                    $g_ExistingFields=ESFields::getExistingFields($table_name,false);
+        $g_ExistingFields=ESFields::getExistingFields($table_name,false);
 
+        $morethanonelang=false;
+		foreach($languages as $lang)
+        {
+           	$g_fieldname='title';
+            if($morethanonelang)
+				$g_fieldname.='_'.$lang->sef;
 
-                    $morethanonelang=false;
-                    foreach($languages as $lang)
-                    {
-                    	$g_fieldname='title';
-                    	if($morethanonelang)
-                    		$g_fieldname.='_'.$lang->sef;
+            $g_found=false;
 
-                        $g_found=false;
+            foreach($g_ExistingFields as $g_existing_field)
+            {
+				$g_exst_field=$g_existing_field[$column_name_field];
+                if($g_exst_field==$g_fieldname)
+                {
+					$g_found=true;
+                    break;
+                }
+            }
 
-                        foreach($g_ExistingFields as $g_existing_field)
-                        {
-                            $g_exst_field=$g_existing_field['Field'];
-                            if($g_exst_field==$g_fieldname)
-                            {
-                                $g_found=true;
-                                break;
-                            }
-                        }
-
-                        if(!$g_found)
-                        {
-                            ESFields::AddMySQLFieldNotExist($table_name, $g_fieldname, 'varchar(100) NULL', '');
-                            echo '<p>Options Field "<span style="color:green;">'.$g_fieldname.'</span>" <span style="color:green;">added.</span></p>';
-                        }
-
-                        $morethanonelang=true;
-                    }
+            if(!$g_found)
+            {
+				ESFields::AddMySQLFieldNotExist($table_name, $g_fieldname, 'varchar(100) NULL', '');
+                echo '<p>Options Field "<span style="color:green;">'.$g_fieldname.'</span>" <span style="color:green;">added.</span></p>';
+            }
+			$morethanonelang=true;
+        }
     }
 
     function checkGalleryTitleFields($gallery_table_name,&$languages,$establename,$esfieldname)
@@ -338,10 +310,16 @@ function checkTableFields($establename,$tableid)
 
     function checkFilesTitleFields($filebox_table_name,&$languages,$establename,$esfieldname)
     {
+		$db = JFactory::getDBO();
+		
+		if($db->serverType == 'postgresql')
+			$field_columns=(object)['columnname' => 'column_name', 'data_type'=>'data_type', 'is_nullable'=>'is_nullable', 'default'=>'column_default'];
+		else
+			$field_columns=(object)['columnname' => 'Field', 'data_type'=>'Type', 'is_nullable'=>'Null', 'default'=>'Default'];
+		
 
         if(!ESTables::checkIfTableExists($filebox_table_name))
         {
-
             ESFields::CreateFileBoxTable($establename,$esfieldname);
             echo '<p>File Box Table "<span style="color:green;">'.$filebox_table_name.'</span>" <span style="color:green;">Created.</span></p>';
         }
@@ -359,7 +337,7 @@ function checkTableFields($establename,$tableid)
 
                         foreach($g_ExistingFields as $g_existing_field)
                         {
-                            $g_exst_field=$g_existing_field['Field'];
+                            $g_exst_field=$g_existing_field[$field_columns->columnname];
                             if($g_exst_field==$g_fieldname)
                             {
                                 $g_found=true;
@@ -387,6 +365,13 @@ function checkTableFields($establename,$tableid)
 
     function checkField($ExistingFields,$tablename,$proj_field,$fieldtype,$typeparams,&$languages)
     {
+		$db = JFactory::getDBO();
+		
+		if($db->serverType == 'postgresql')
+			$field_columns=(object)['columnname' => 'column_name', 'data_type'=>'data_type', 'is_nullable'=>'is_nullable', 'default'=>'column_default'];
+		else
+			$field_columns=(object)['columnname' => 'Field', 'data_type'=>'Type', 'is_nullable'=>'Null', 'default'=>'Default'];
+
         if($fieldtype=='multilangstring' or $fieldtype=='multilangtext')
         {
             $found=false;
@@ -400,7 +385,7 @@ function checkTableFields($establename,$tableid)
                 $found=false;
                 foreach($ExistingFields as $existing_field)
                 {
-                    if($fieldname==$existing_field['Field'])
+                    if($fieldname==$existing_field[$field_columns->columnname])
                     {
                         $found=true;
                         break;
@@ -421,7 +406,7 @@ function checkTableFields($establename,$tableid)
             $found=false;
             foreach($ExistingFields as $existing_field)
             {
-                if($proj_field==$existing_field['Field'])
+                if($proj_field==$existing_field[$field_columns->columnname])
                 {
                     $found=true;
                     break;
@@ -429,14 +414,6 @@ function checkTableFields($establename,$tableid)
             }
 
             if(!$found)
-            {
-                //Add field
                 addField($tablename,$proj_field,$fieldtype,$typeparams);
-
-            }
         }
     }
-
-
-
-?>

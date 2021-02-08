@@ -62,6 +62,8 @@ $edit = "index.php?option=com_customtables&view=listofrecords&task=records.edit"
 			?>
 
 		<td class="center">
+		<?php print_r($this->Model);?>
+		
 		<?php if ($canDo->get('core.edit.state')) : ?>
 				
 						<?php echo JHtml::_('jgrid.published', $item->published, $i, 'listofrecords.', true, 'cb'); ?>

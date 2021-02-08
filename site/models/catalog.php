@@ -244,7 +244,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 				}
 				
 				
-				$this->tablerow = $this->esTable->getTableRowByNameAssoc($this->establename);
+				$this->tablerow = ESTables::getTableRowByNameAssoc($this->establename);
 				
 
 				$this->published_field_found=true;
@@ -719,7 +719,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 			$query_selects='*, '.$this->realtablename.'.id  as  listing_id, '.$this->realtablename.'.published AS listing_published';
 		else
 			$query_selects='*, '.$this->realtablename.'.id  as  listing_id, 1 AS listing_published';
-		
+			
 		$query='SELECT '.$query_selects.' FROM '.$this->realtablename.' ';
 		$query.=implode(' ',$inner).' ';
 		$query.=$where.' ';

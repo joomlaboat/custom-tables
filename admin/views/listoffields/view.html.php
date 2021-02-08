@@ -60,6 +60,7 @@ class CustomtablesViewListoffields extends JViewLegacy
 
 		// We don't need toolbar in the modal window.
 		$this->tableid=$app->input->getInt('tableid',0);
+		$this->customtablename='';
 
 		if($this->tableid!=0)
 		{

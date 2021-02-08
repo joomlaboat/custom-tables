@@ -42,10 +42,13 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 	var $LangMisc;
 	var $establename;
+	var $realtablename;
+	var $published_field_found;
+	
 	var $estableid;
 	var $tabletitle;
 	var $establedescription;
-	var $tablename;//mysql table name
+	//var $tablename;//mysql table name deprictade
 	var $tablecustomphp;
 	var $tablerow;
 
@@ -198,7 +201,18 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 		$this->tabletitle=$this->tablerow['tabletitle'.$this->langpostfix];
 		$this->establedescription=$this->tablerow['description'.$this->langpostfix];
-		$this->tablename='#__customtables_table_'.$this->establename;
+		
+		
+		if($this->tablerow['customtablename']!='')
+		{
+			$this->realtablename=$this->tablerow['customtablename'];
+			$realfields=ESFields::getListOfExistingFields($this->realtablename,false);
+			if(!in_array('published',$realfields))
+				$this->published_field_found=false;
+		}
+		else
+			$this->realtablename='#__customtables_table_'.$this->establename;
+		
 		$this->tablecustomphp=$this->tablerow['customphp'];
 
 		$this->findUserIDField();
@@ -248,10 +262,20 @@ class CustomTablesModelEditItem extends JModelLegacy {
 	{
 		$db = JFactory::getDBO();
 		$wherearr=array();
-		$wherearr[]='published=1';
+		
+		if($this->published_field_found)
+			$wherearr[]='published=1';
+			
 		$wherearr[]=$this->useridfield.'='.$this->userid;
 		$where = ' WHERE '.implode(" AND ",$wherearr);
-		$query = 'SELECT * FROM '.$this->tablename.' '.$where;
+		
+		if($this->published_field_found)
+			$query_selects='*, '.$this->realtablename.'.id  as listing_id, '.$this->realtablename.'.published AS listing_published';
+		else
+			$query_selects='*, '.$this->realtablename.'.id  as listing_id, 1 AS listing_published';
+		
+		
+		$query = 'SELECT '.$query_selects.' FROM '.$this->realtablename.' '.$where;
 		$query.=' LIMIT 1';
 
 		$db->setQuery($query);
@@ -264,7 +288,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		}
 
 		$this->row=$rows[0];
-		$this->row['listing_id']=$this->row['id'];
+
 		return $this->row['id'];
 
 	}
@@ -278,14 +302,19 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 		if(is_numeric($this->id))
 		{
-			$query = 'SELECT * FROM '.$this->tablename.' WHERE id='.(int)$this->id.' LIMIT 1';
+			if($this->published_field_found)
+				$query_selects='*, '.$this->realtablename.'.id  as listing_id, '.$this->realtablename.'.published AS listing_published';
+			else
+				$query_selects='*, '.$this->realtablename.'.id  as listing_id, 1 AS listing_published';
+			
+			$query = 'SELECT '.$query_selects.' FROM '.$this->realtablename.' WHERE id='.(int)$this->id.' LIMIT 1';
 			$db->setQuery($query);
 			$rows=$db->loadAssocList();
 			if(count($rows)<1)
 				return -1;
 
 			$this->row=$rows[0];
-			$this->row['listing_id']=$this->id;
+
 			return $this->id;
 		}
 
@@ -315,7 +344,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 			if(count($wherearr)>0)
 				$where = ' WHERE '.implode(" AND ",$wherearr);
 
-			$query = 'SELECT id FROM '.$this->tablename.' '.$where;
+			$query = 'SELECT id FROM '.$this->realtablename.' '.$where;
 
 			$query.=' ORDER BY id DESC'; //show last
 			$query.=' LIMIT 1';
@@ -581,15 +610,15 @@ class CustomTablesModelEditItem extends JModelLegacy {
 			return '';
 		}
 
-
-
-		$this->tablename='#__customtables_table_'.$this->establename;
-
 		$this->tablerow=ESTables::getTableRowByNameAssoc($this->establename);
 
+		if($this->tablerow['customtablename']!='')
+			$this->realtablename=$this->tablerow['customtablename'];
+		else
+			$this->realtablename='#__customtables_table_'.$this->establename;
+	
 		$this->estableid=$this->tablerow['id'];
 		$this->esfields= ESFields::getFields($this->estableid);
-
 
 		if($useridfield!='')
 		{
@@ -621,7 +650,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		//check if the item belong to the user
 		$db = JFactory::getDBO();
 
-		$query='SELECT id FROM '.$this->tablename.' WHERE id='.$this->id.' AND es_'.$useridfield.'='.$this->userid.' LIMIT 1';
+		$query='SELECT id FROM '.$this->realtablename.' WHERE id='.$this->id.' AND es_'.$useridfield.'='.$this->userid.' LIMIT 1';
 
 		$db->setQuery( $query );
 		$db->execute();
@@ -760,7 +789,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 		$db = JFactory::getDBO();
 
-		$query='SELECT MAX(id) AS maxid FROM '.$this->tablename.' LIMIT 1';
+		$query='SELECT MAX(id) AS maxid FROM '.$this->realtablename.' LIMIT 1';
 		$db->setQuery( $query );
 		$rows=$db->loadObjectList();
 		if(count($rows)==0)
@@ -770,22 +799,41 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 		$new_id=(int)($rows[0]->maxid)+1;
 
-		$query='DROP TEMPORARY TABLE IF EXISTS tmp';
-		$db->setQuery( $query );
-		if (!$db->query())    die( $db->stderr());
+		if($db->serverType == 'postgresql')
+			$query='DROP TABLE IF EXISTS ct_tmp';
+		else
+			$query='DROP TEMPORARY TABLE IF EXISTS ct_tmp';
 
-		$query='CREATE TEMPORARY TABLE tmp SELECT * FROM '.$this->tablename.' WHERE id = '.$id.';';
 		$db->setQuery( $query );
-		if (!$db->query())    die( $db->stderr());
+		$db->execute();
+
+		if($db->serverType == 'postgresql')
+		{
+			$query = 'CREATE TEMPORARY TABLE ct_tmp AS TABLE '.$this->realtablename.' WITH NO DATA';
+			
+			$db->setQuery( $query );
+			$db->execute();
+			
+			$query = 'INSERT INTO ct_tmp (SELECT * FROM '.$this->realtablename.' WHERE id = '.$id.')';
+			
+			$db->setQuery( $query );
+			$db->execute();
+		}
+		else
+		{
+			$query='CREATE TEMPORARY TABLE ct_tmp SELECT * FROM '.$this->realtablename.' WHERE id = '.$id;
+			$db->setQuery( $query );
+			$db->execute();
+		}
 
 		$sets=array();
 		$sets[]='id='.$new_id;
 		
-		$query='UPDATE tmp SET '.implode(',',$sets).' WHERE id = '.$id.';';
+		$query='UPDATE ct_tmp SET '.implode(',',$sets).' WHERE id = '.$id.';';
 		$db->setQuery( $query );
 		$db->execute();
 
-		$query='INSERT INTO '.$this->tablename.' SELECT * FROM tmp WHERE id = '.$new_id.';';
+		$query='INSERT INTO '.$this->realtablename.' SELECT * FROM ct_tmp WHERE id = '.$new_id.';';
 		$db->setQuery( $query );
 		$db->execute();
 
@@ -794,9 +842,18 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		
 		
 
-		$query='DROP TEMPORARY TABLE IF EXISTS tmp';
-		$db->setQuery( $query );
-		if (!$db->query())    die( $db->stderr());
+		if($db->serverType == 'postgresql')
+		{
+			$query='DROP TABLE IF EXISTS ct_tmp';
+			$db->setQuery( $query );
+			$db->execute();
+		}
+		else
+		{
+			$query='DROP TEMPORARY TABLE IF EXISTS ct_tmp';
+			$db->setQuery( $query );
+			$db->execute();
+		}
 
 		return $this->store($msg,$link,true);
 
@@ -857,7 +914,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 			$value_found=false;
 			if(in_array($esfield['fieldname'],$fieldstosave))
 			{
-				$value_found=CTValue::getValue($id,$this->es,$esfield,$savequery,$prefix,$this->establename,$this->LanguageList,$fieldstosave);
+				$value_found=CTValue::getValue($id,$this->es,$esfield,$savequery,$prefix,$this->establename,$this->LanguageList,$fieldstosave,$this->realtablename);
 				if(!$value_found)
 					$default_fields_to_apply[]=array($esfield['fieldname'],$esfield['defaultvalue'],$esfield['type'],$esfield['realfieldname']);
 			}
@@ -919,7 +976,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 						$minid=(int)$typeparams;
 
 
-						$query='SELECT MAX(es_'.$fieldname.') AS maxid FROM '.$this->tablename.' LIMIT 1';
+						$query='SELECT MAX(es_'.$fieldname.') AS maxid FROM '.$this->realtablename.' LIMIT 1';
 						$db->setQuery( $query );
 						$rows=$db->loadObjectList();
 						if(count($rows)!=0)
@@ -960,7 +1017,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 			$savequery[]='published='.$publishstatus;
 
-			$id_temp=$this->getAvailableID($this->tablename);
+			$id_temp=$this->getAvailableID($this->realtablename);
 			$savequery[]='id='.$id_temp;
 
 			$db = JFactory::getDBO();
@@ -975,23 +1032,23 @@ class CustomTablesModelEditItem extends JModelLegacy {
 					$set_fieldnames[]=$break_sets[0];
 					$set_values[]=$break_sets[1];
 				}
-				$query='INSERT INTO '.$this->tablename.' ('.implode(',',$set_fieldnames).') VALUES ('.implode(',',$set_values).')';
+				$query='INSERT INTO '.$this->realtablename.' ('.implode(',',$set_fieldnames).') VALUES ('.implode(',',$set_values).')';
 			}
 			else
-				$query='INSERT '.$this->tablename.' SET '.implode(', ',$savequery);
+				$query='INSERT '.$this->realtablename.' SET '.implode(', ',$savequery);
 		}
 
 		else
 		{
 			//get old row
-			$query='SELECT *, id AS listing_id FROM '.$this->tablename.' WHERE id='.$id.' LIMIT 1';
+			$query='SELECT *, id AS listing_id FROM '.$this->realtablename.' WHERE id='.$id.' LIMIT 1';
 			$db->setQuery( $query );
 			$rows = $db->loadAssocList();
 			if(count($rows)!=0)
 				$row_old=$rows[0];
 
 			$this->updateLog($id);
-			$query='UPDATE '.$this->tablename.' SET '.implode(', ',$savequery).' WHERE id='.$id;
+			$query='UPDATE '.$this->realtablename.' SET '.implode(', ',$savequery).' WHERE id='.$id;
 		}
 
 		if(count($savequery)<1)
@@ -1005,7 +1062,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 		if($id==0)
 		{
-			$query='SELECT *, id AS listing_id FROM '.$this->tablename.' ORDER BY id DESC LIMIT 1';
+			$query='SELECT *, id AS listing_id FROM '.$this->realtablename.' ORDER BY id DESC LIMIT 1';
 			$db->setQuery( $query );
 
 			$rows = $db->loadAssocList();
@@ -1035,7 +1092,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 				ESLogs::save($this->estableid,$listing_id,2);
 
 
-				$query='SELECT *, id AS listing_id FROM '.$this->tablename.' WHERE id='.$id.' LIMIT 1';
+				$query='SELECT *, id AS listing_id FROM '.$this->realtablename.' WHERE id='.$id.' LIMIT 1';
 				$db->setQuery( $query );
 
 				$rows = $db->loadAssocList();
@@ -1178,7 +1235,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 	{
 
 			$db = JFactory::getDBO();
-			$query='SELECT *, id AS listing_id FROM '.$this->tablename.' WHERE id='.$id.' LIMIT 1';
+			$query='SELECT *, id AS listing_id FROM '.$this->realtablename.' WHERE id='.$id.' LIMIT 1';
 			$db->setQuery( $query );
 
 			$rows = $db->loadAssocList();
@@ -1253,7 +1310,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 				if($this->emailsentstatusfield==$fieldname)
 				{
 					$db = JFactory::getDBO();
-					$query='UPDATE '.$this->tablename.' SET es_'.$fieldname.'='.(int)$status.' WHERE id='.$listing_id;
+					$query='UPDATE '.$this->realtablename.' SET es_'.$fieldname.'='.(int)$status.' WHERE id='.$listing_id;
 
 					$db->setQuery( $query );
 					$db->execute();	
@@ -1384,7 +1441,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		if(count($savequery)>0)
 		{
 			$db = JFactory::getDBO();
-			$query='UPDATE '.$this->tablename.' SET '.implode(', ',$savequery).' WHERE id='.$id;
+			$query='UPDATE '.$this->realtablename.' SET '.implode(', ',$savequery).' WHERE id='.$id;
 
 			$db->setQuery( $query );
 			$db->execute();
@@ -1646,7 +1703,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 						$row[$realfieldname]=$value;
 
 						$savequery=$realfieldname.'='.$db->quote($value);
-						$query='UPDATE '.$this->tablename.' SET '.$savequery.' WHERE id='.$id;
+						$query='UPDATE '.$this->realtablename.' SET '.$savequery.' WHERE id='.$id;
 
 						$db->setQuery( $query );
 						$db->execute();
@@ -1705,7 +1762,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 						$row[$realfieldname]=$value;
 
 						$savequery=$realfieldname.'='.$db->quote($value);
-						$query='UPDATE '.$this->tablename.' SET '.$savequery.' WHERE id='.$id;
+						$query='UPDATE '.$this->realtablename.' SET '.$savequery.' WHERE id='.$id;
 
 						$db->setQuery( $query );
 						$db->execute();

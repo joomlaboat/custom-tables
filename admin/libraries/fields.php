@@ -167,7 +167,7 @@ class ESFields
 					$tName='#__customtables_gallery_'.$establename.'_'.$fieldrow->fieldname;
 					$query ='DROP TABLE IF EXISTS '.$tName.'';
 					$db->setQuery($query);
-					if (!$db->query())    die( $db->stderr());
+					$db->execute();
 
 				}
 				elseif($fieldrow->type=='filebox')
@@ -183,7 +183,7 @@ class ESFields
 					$tName='#__customtables_filebox_'.$establename.'_'.$fieldrow->fieldname;
 					$query ='DROP TABLE IF EXISTS '.$tName.'';
 					$db->setQuery($query);
-					if (!$db->query())    die( $db->stderr());
+					$db->execute();
 
 				}
 				elseif($fieldrow->type=='image')
@@ -566,7 +566,7 @@ class ESFields
 			$query='ALTER TABLE '.$mysqltablename.' ADD COLUMN '.$mysqlfieldname.' '.$fieldtype.' '.$options;
 
 			$db->setQuery($query);
-			if (!$db->query())    die('Cannot Add Column'. $db->stderr());
+			$db->execute();
 		}
 
     }
@@ -659,7 +659,7 @@ class ESFields
         $query='show create table '.$mysqltablename;
         
         $db->setQuery( $query );
-        if (!$db->query())    die( $db->stderr());
+        $db->execute();
         $tablecreatequery = $db->loadAssocList();
 
         if(count($tablecreatequery)==0)
@@ -691,7 +691,7 @@ class ESFields
         {
             $query ='SET foreign_key_checks = 0;';
             $db->setQuery($query);
-            if (!$db->query())    die( $db->stderr());
+            $db->execute();
 
             $query='ALTER TABLE '.$mysqltablename.' DROP FOREIGN KEY '.$constrance;
 
@@ -712,7 +712,7 @@ class ESFields
 
             $query ='SET foreign_key_checks = 1;';
             $db->setQuery($query);
-            if (!$db->query())    die( $db->stderr());
+            $db->execute();
         }
 
 		return false;
@@ -728,7 +728,7 @@ class ESFields
 		$db = JFactory::getDBO();
 		$query='SHOW INDEX FROM '.$mysqltablename.' WHERE Key_name = "'.$mysqlfieldname.'"';
 		$db->setQuery( $query );
-		if (!$db->query())    die ( $db->stderr());
+		$db->execute();
 
 		$rows2 = $db->loadObjectList();
 
@@ -738,7 +738,7 @@ class ESFields
 			$query='ALTER TABLE '.$mysqltablename.' ADD INDEX('.$mysqlfieldname.');';
 
 			$db->setQuery( $query );
-			if (!$db->query())    die ( $db->stderr());
+			$db->execute();
 		}
 
 
@@ -761,7 +761,7 @@ class ESFields
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 ';
 		$db->setQuery( $query );
-		if (!$db->query())    die( $db->stderr());
+		$db->execute();
 
 		return true;
 	}
@@ -782,7 +782,7 @@ class ESFields
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 ';
 		$db->setQuery( $query );
-		if (!$db->query())    die( $db->stderr());
+		$db->execute();
 
 		return true;
 	}
@@ -801,8 +801,6 @@ class ESFields
 
 
         			$PureFieldType_=$PureFieldType;
-					//if($new_type=='checkbox')
-						//$PureFieldType_	.=' NOT NULL DEFAULT "0"';
 
 					//Check and fix record
 					if($new_type=='customtables')
@@ -818,19 +816,36 @@ class ESFields
 
 					$db = JFactory::getDBO();
 
-					$query = 'ALTER TABLE #__customtables_table_'.$establename.' CHANGE '.$mysqlfieldname.' '.$mysqlfieldname.' '.$PureFieldType_;
+					if($db->serverType == 'postgresql')
+					{
+						$parts=explode(' ',$PureFieldType_);
+						$query = 'ALTER TABLE #__customtables_table_'.$establename
+							.' ALTER COLUMN '.$mysqlfieldname.' TYPE '.$parts[0];
+							
+						$db->setQuery( $query );
+						$db->execute();
+						/*
+						if(isset($parts[1]))
+						{
+							$PureFieldType__ = str_replace($parts[0].' ','',$PureFieldType_);
+							
+							$query = 'ALTER TABLE #__customtables_table_'.$establename
+								.' ALTER COLUMN '.$mysqlfieldname.' SET '.$PureFieldType__;
+								echo $query;
+							
+							$db->setQuery( $query );
+							$db->execute();
+						}
 
-					//if($new_type=='sqljoin' or $new_type=='user' or $new_type=='userid')
-						//	$AdditionOptions	.=' NULL DEFAULT NULL';
-
-					$query .= ' COMMENT "'.$fieldtitle.'";';
-
-					$db->setQuery( $query );
-					if (!$db->query())
-						die( $db->stderr());
-
-
-
+						*/
+					}
+					else
+					{
+						$query = 'ALTER TABLE #__customtables_table_'.$establename.' CHANGE '.$mysqlfieldname.' '.$mysqlfieldname.' '.$PureFieldType_;
+						$query .= ' COMMENT "'.$fieldtitle.'";';
+						$db->setQuery( $query );
+						$db->execute();
+					}
 		return true;
 	}
 
@@ -925,9 +940,7 @@ class ESFields
 
 
 		$db->setQuery( $query );
-
-		if (!$db->query())
-			die( $db->stderr());
+		$db->execute();
 
 		$rows = $db->loadObjectList();
 
@@ -1029,10 +1042,8 @@ class ESFields
 
 		if($db->serverType == 'postgresql')
 		{
-			//$conf = JFactory::getConfig();
-			//$database = $conf->get('db');
 			$mysqltablename=str_replace('#__',$db->getPrefix(),$mysqltablename);
-			$query = 'SELECT column_name, data_type, is_nullable FROM information_schema.columns WHERE table_name = '.$db->quote($mysqltablename);
+			$query = 'SELECT column_name, data_type, is_nullable, column_default FROM information_schema.columns WHERE table_name = '.$db->quote($mysqltablename);
 		}
 		else
 		{
@@ -1100,18 +1111,16 @@ class ESFields
 
             $query ='SET foreign_key_checks = 0;';
 			$db->setQuery($query);
-			if (!$db->query())    die( $db->stderr());
+			$db->execute();
 
 			$query='ALTER TABLE '.$mysqltablename.' DROP '.$fieldname;
 
 			$db->setQuery( $query );
-
-			if (!$db->query())
-					die( $db->stderr());
+			$db->execute();
 
             $query ='SET foreign_key_checks = 1;';
 			$db->setQuery($query);
-			if (!$db->query())    die( $db->stderr());
+			$db->execute();
 
 			return true;
 		}
@@ -1124,9 +1133,7 @@ class ESFields
         $query='ALTER TABLE '.$mysqltablename.' CHANGE '.$fieldname.' '.$fieldname.' '.$PureFieldType;
 
 		$db->setQuery( $query );
-
-		if (!$db->query())
-			die( $db->stderr());
+		$db->execute();
 
 		return true;
 	}
@@ -1177,9 +1184,8 @@ class ESFields
 		if($db->serverType == 'postgresql')
 			$realfieldname_query='CASE WHEN customfieldname!=\'\' THEN customfieldname ELSE CONCAT(\'es_\',fieldname) END AS realfieldname';
 		else
-			$realfieldname_query='CONCAT(\'es_\',fieldname) AS realfieldname';
+			$realfieldname_query='IF(customfieldname!=\'\', customfieldname, CONCAT(\'es_\',fieldname)) AS realfieldname';
 		
-
         if((int)$tableid_or_name>0)
             $query = 'SELECT *, '.$realfieldname_query.' FROM #__customtables_fields WHERE published=1 AND tableid='.(int)$tableid_or_name.' ORDER BY ordering, fieldname';
         else

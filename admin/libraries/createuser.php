@@ -20,8 +20,6 @@ class CustomTablesCreateUser
 
 		$db->setQuery( $query );
 		$db->execute();
-
-
 	}
 
 	static public function CheckIfUserNameExist($username)

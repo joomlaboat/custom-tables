@@ -823,7 +823,7 @@ class ESInputBox
 	}
 
 	
-	function getMultilangStringItem(&$Model,&$esfield,$prefix,$fieldname,&$row,$attributes,$class,$postfix)
+	function getMultilangStringItem(&$Model,&$esfield,$prefix,&$row,$attributes,$class,$postfix,$langsef)
 	{
 							$attributes_='';
 							$addDynamicEvent=false;
@@ -838,19 +838,16 @@ class ESInputBox
 							else
 								$attributes_=$attributes;
 								
-							
-
-								if(count($row)==0)
-									$value=JFactory::getApplication()->input->get('es_'.$fieldname,'','STRING');
+															if(count($row)==0)
+									$value=JFactory::getApplication()->input->get($prefix.$esfield['fieldname'].$postfix,'','STRING');
 								else
-									$value=$row['es_'.$fieldname];
+									$value=$row[$esfield['realfieldname'].$postfix];
+								
 
 								if($addDynamicEvent)
-									$attributes_=' onchange="ct_UpdateSingleValue(\''.$WebsiteRoot.'\','.$Model->Itemid.',\''.$fieldname.'\','.$row['id'].',\''.$postfix.'\')"';
+									$attributes_=' onchange="ct_UpdateSingleValue(\''.$WebsiteRoot.'\','.$Model->Itemid.',\''.$esfield['fieldname'].$postfix.'\','.$row['id'].',\''.$lang->sef.'\')"';
 									
-								
-									
-								$result='<input type="text" name="'.$prefix.$fieldname.'" id="'.$prefix.$fieldname.'" id="code" class="'.$class.'"
+								$result='<input type="text" name="'.$prefix.$esfield['fieldname'].$postfix.'" id="'.$prefix.$esfield['fieldname'].$postfix.'" id="code" class="'.$class.'"
 								value="'.$value.'" '.((int)$esfield['typeparams']>0 ? 'maxlength="'.(int)$esfield['typeparams'].'"' : 'maxlength="255"').$attributes_.' />';
 
 		return $result;
@@ -876,11 +873,8 @@ class ESInputBox
 					
 				if($language==$lang->sef)
 				{
-
 					//show single edit box
-					$fieldname=$esfield['fieldname'].$postfix;
-					return $this->getMultilangStringItem($Model,$esfield,$prefix,$fieldname,$row,$attributes,$class,$lang->sef);
-					
+					return $this->getMultilangStringItem($Model,$esfield,$prefix,$row,$attributes,$class,$postfix,$lang->sef);
 				}
 			}
 		}
@@ -899,14 +893,14 @@ class ESInputBox
 								else
 									$postfix='_'.$lang->sef;
 
-								$fieldname=$esfield['fieldname'].$postfix;
+								$realfieldname=$esfield['realfieldname'].$postfix;
 
 							
 								$result.='<div class="control-group">
 								<div class="control-label">'.$lang->caption.'</div>
 								<div class="controls">';
 								
-								$result.=$this->getMultilangStringItem($Model,$esfield,$prefix,$fieldname,$row,$attributes,$class,$lang->sef);								
+								$result.=$this->getMultilangStringItem($Model,$esfield,$prefix,$row,$attributes,$class,$postfix,$lang->sef);								
 								$result.='</div>
 								</div>';
 

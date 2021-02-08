@@ -51,8 +51,6 @@ class CustomtablesTableRecords extends JTable
 		else
 			$realtablename = '#__customtables_table_'.$table->tablename;
 		
-		print_r($realtablename);
-		
 		parent::__construct($realtablename, 'id', $db); 
 	}	
 	
