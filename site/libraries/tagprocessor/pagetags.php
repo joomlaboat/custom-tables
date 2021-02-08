@@ -656,7 +656,7 @@ JHtml::_('behavior.formvalidator');
             //$pagelayout=str_replace('&&&&fieldlist&&&&',implode(',',$fieldlist),$pagelayout
             
             $document = JFactory::getDocument();
-            $document->addCustomTag('<script src="/components/com_customtables/js/base64.js"></script>');
+			$document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/js/base64.js"></script>');
      
         return $fieldlist;       
     }

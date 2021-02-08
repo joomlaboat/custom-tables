@@ -282,7 +282,10 @@ class ESFiltering
 												case 'multilangstring':
 
 														$v=str_replace('"','',trim($whr[1]));
-														$c='instr(es_'.$whr[0].$this->langpostfix.',"'.$v.'")';
+														if($db->serverType == 'postgresql')
+															$c='POSITION('.$db->quote($v).' IN es_'.$whr[0].$this->langpostfix.')>0';
+														else
+															$c='instr(es_'.$whr[0].$this->langpostfix.','.$db->quote($v).')';
 
 														break;
 

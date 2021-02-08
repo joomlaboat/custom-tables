@@ -213,8 +213,6 @@ class tagProcessor_Item
 
 	protected static function renderImageGalleryIcon($imagegalleries,&$Model,&$row,$WebsiteRoot)
 	{
-
-
 		foreach($imagegalleries as $gallery)
 		{
 			$imagemanagerlink='index.php?option=com_customtables&amp;view=editphotos'

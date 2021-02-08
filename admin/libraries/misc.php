@@ -239,24 +239,21 @@ class JoomlaBasicMisc
 
 	}
 
-
-
 	public static function curPageURL() {
-		$pageURL = 'http';
-
-		if(isset($_SERVER["HTTPS"]))
+		
+		$WebsiteRoot = str_replace(JURI::root(true),'',JURI::root(false));
+		$RequestURL = $_SERVER["REQUEST_URI"];
+		
+		if($WebsiteRoot!='' and $WebsiteRoot[strlen($WebsiteRoot) - 1] == '/')
 		{
-			if ($_SERVER["HTTPS"] == "on") {$pageURL .= "s";}
+			if($RequestURL!='' and $RequestURL[0] == '/')
+			{
+				//Delete $WebsiteRoot end /
+				$WebsiteRoot = substr($WebsiteRoot,0,strlen($WebsiteRoot) -1 );
+			}
 		}
-
-
-		$pageURL .= "://";
-		if ($_SERVER["SERVER_PORT"] != "80") {
-			$pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
-		} else {
-			$pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
-		}
-		return $pageURL;
+			
+		return $WebsiteRoot.$RequestURL;
 	}
 
 	public static function curPageHost() {
@@ -270,10 +267,6 @@ class JoomlaBasicMisc
 		}
 		return $pageHost;
 	}
-
-
-
-
 
 	public static function getFirstImage($content)
 	{

@@ -733,7 +733,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 			$query.=' ORDER BY '.implode(',',$ordering);
 			
 		$db->setQuery($query_analytical);
-		$rows=$db->loadObjectList();
+		$rows=$db->loadObjectList();	
 		if(count($rows)==0)
 			$this->TotalRows=0;
 		else
