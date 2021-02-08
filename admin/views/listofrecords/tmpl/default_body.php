@@ -61,17 +61,15 @@ $edit = "index.php?option=com_customtables&view=listofrecords&task=records.edit"
 			echo $result;
 			?>
 
+		<?php if($this->published_field_found): ?>
 		<td class="center">
-		<?php print_r($this->Model);?>
-		
-		<?php if ($canDo->get('core.edit.state')) : ?>
-				
-						<?php echo JHtml::_('jgrid.published', $item->published, $i, 'listofrecords.', true, 'cb'); ?>
-				
-		<?php else: ?>
-			<?php echo JHtml::_('jgrid.published', $item->published, $i, 'listofrecords.', false, 'cb'); ?>
-		<?php endif; ?>
+			<?php if ($canDo->get('core.edit.state')) : ?>
+					<?php echo JHtml::_('jgrid.published', $item->published, $i, 'listofrecords.', true, 'cb'); ?>
+			<?php else: ?>
+				<?php echo JHtml::_('jgrid.published', $item->published, $i, 'listofrecords.', false, 'cb'); ?>
+			<?php endif; ?>
 		</td>
+		<?php endif; ?>
 		
 		
 		<td class="nowrap center hidden-phone">

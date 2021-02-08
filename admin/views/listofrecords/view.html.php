@@ -26,6 +26,8 @@ class CustomtablesViewListofrecords extends JViewLegacy
 	var $tableid;
 	var $tablename;
 	var $realtablename;
+	var $published_field_found;
+	
 	var $tabletitle;
 	var $languages;
 	var $tablefields;
@@ -80,14 +82,20 @@ class CustomtablesViewListofrecords extends JViewLegacy
 				$this->tablename=$table->tablename;
 				$this->tabletitle=$table->tabletitle;
 				$this->tablefields=ESFields::getFields($this->tableid);
-				if($row->customtablename !='')
-					$this->realtablename=$row->customtablename;
+				
+				$this->published_field_found=true;
+				if($table->customtablename !='')
+				{
+					$this->realtablename=$table->customtablename;
+					$realfields=ESFields::getListOfExistingFields($this->realtablename,false);
+					if(!in_array('published',$realfields))
+						$this->published_field_found = false;
+				}
 				else
 					$this->realtablename = '#__customtables_table_'.$this->tablename;
 			}
 		}
 		
-
 		$jinput->set('tablename',$this->tablename);
 
 		$this->items = $this->get('Items');
