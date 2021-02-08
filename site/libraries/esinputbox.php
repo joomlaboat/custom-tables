@@ -34,7 +34,7 @@ class ESInputBox
 		$place_holder=$esfield['fieldtitle'.$this->langpostfix];
 		$class=$class_.' inputbox'.($esfield['isrequired'] ? ' required' : '');
 
-		$realFieldName='es_'.$esfield['fieldname'];
+		$realFieldName=$esfield['realfieldname'];
 
 		$result='';
 

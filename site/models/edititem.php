@@ -1416,7 +1416,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		}
 		
 		//get data
-		$query = 'SELECT '.implode(',',$fields_to_save).' FROM #__customtables_table_'.$this->establename.' WHERE id='.$id.' LIMIT 1';
+		$query = 'SELECT '.implode(',',$fields_to_save).' FROM '.$this->realtablename.' WHERE id='.$id.' LIMIT 1';
 
 	 	$db->setQuery($query);
 
@@ -1641,7 +1641,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 
 		$db = JFactory::getDBO();
-		$query = 'SELECT *, id AS listing_id FROM #__customtables_table_'.$this->establename.' ORDER BY id DESC LIMIT 1';
+		$query = 'SELECT *, id AS listing_id FROM '.$this->realtablename.' ORDER BY id DESC LIMIT 1';
 	 	$db->setQuery($query);
 
 		$rows = $db->loadAssocList();
@@ -1786,7 +1786,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 	function getListingRowByID($listing_id)
 	{
 		$db = JFactory::getDBO();
-		$query = 'SELECT *, id AS listing_id FROM #__customtables_table_'.$this->establename.' WHERE id='.$listing_id.' LIMIT 1';
+		$query = 'SELECT *, id AS listing_id FROM '.$this->realtablename.' WHERE id='.$listing_id.' LIMIT 1';
 	 	$db->setQuery($query);
 
 		$rows = $db->loadAssocList();
@@ -1943,11 +1943,8 @@ class CustomTablesModelEditItem extends JModelLegacy {
 	protected function setPublishStatusSingleRecord($id,$status)
 	{
 		$db = JFactory::getDBO();
-		$t=$this->establename;
-		if(strpos('#__',$t)===false)
-			$t='#__customtables_table_'.$t;
 
-		$query = 'UPDATE '.$t.' SET published='.$status.' WHERE id='.(int)$id;
+		$query = 'UPDATE '.$this->realtablename.' SET published='.$status.' WHERE id='.(int)$id;
 
 	 	$db->setQuery($query);
 		$db->execute();	
@@ -2111,7 +2108,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'imagemethods.php');
 		$imagemethods=new CustomTablesImageMethods;
 
-		$query='SELECT * FROM #__customtables_table_'.$this->establename.' WHERE id='.$objectid;
+		$query='SELECT * FROM '.$this->realtablename.' WHERE id='.$objectid;
 
 		$db->setQuery($query);
 		$rows=$db->loadAssocList();
@@ -2161,7 +2158,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 			}//elseif($esfield[type]=='imagegallery')
 		}//foreach($this->esfields as $esfield)
 
-		$query='DELETE FROM #__customtables_table_'.$this->establename.' WHERE id='.$objectid;
+		$query='DELETE FROM '.$this->realtablename.' WHERE id='.$objectid;
 		$db->setQuery($query);
 		$db->execute();
 
