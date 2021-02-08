@@ -36,6 +36,9 @@ function checkTableOnly($tables_rows)
 
 function checkTableFields($tableid,$tablename,$tabletitle,$customtablename)
 {
+	if($customtablename!='')
+		return;
+		
 	$db = JFactory::getDBO();
     $conf = JFactory::getConfig();
 	$database = $conf->get('db');

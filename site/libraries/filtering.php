@@ -721,10 +721,9 @@ class ESFiltering
 
 	function Search_String(&$whr, &$PathValue, &$fieldrow,$opr)
 	{
-		
 		$db = JFactory::getDBO();
 
-		$field='es_'.$whr[0];
+		$realfieldname=$fieldrow['realfieldname'];//'es_'.$whr[0];
 		$v=$this->getString_vL($whr[1]);
 		
 		$PathValue[]=$fieldrow['fieldtitle'.$this->langpostfix].' '.$opr;
@@ -739,7 +738,13 @@ class ESFiltering
 				$new_v_list=array();
 				$v_list=explode(' ',$vL);
 				foreach($v_list as $vl)
-					$new_v_list[]=$db->quoteName($field).' LIKE '.$db->quote('%'.$vl.'%');
+				{
+					
+					if($db->serverType == 'postgresql')
+						$new_v_list[]='CAST ( '.$db->quoteName($realfieldname).' AS text ) LIKE '.$db->quote('%'.$vl.'%');
+					else
+						$new_v_list[]=$db->quoteName($realfieldname).' LIKE '.$db->quote('%'.$vl.'%');
+				}
 
 
 				$cArr[]='('.implode(' AND ',$new_v_list).')';
@@ -758,11 +763,11 @@ class ESFiltering
 				$opr='=';
 
 			if($v=='' and $opr=='=')
-				$where='('.$db->quoteName($field).' IS NULL OR '.$db->quoteName($field).'="")';
+				$where='('.$db->quoteName($realfieldname).' IS NULL OR '.$db->quoteName($realfieldname).'="")';
 			elseif($v=='' and $opr=='!=')
-				$where='('.$db->quoteName($field).' IS NOT NULL AND '.$db->quoteName($field).'!="")';
+				$where='('.$db->quoteName($realfieldname).' IS NOT NULL AND '.$db->quoteName($realfieldname).'!="")';
 			else
-				$where=$db->quoteName($field).$opr.$db->quote($v);
+				$where=$db->quoteName($realfieldname).$opr.$db->quote($v);
 			
 			return $where;
 		}
