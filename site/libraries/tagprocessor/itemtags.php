@@ -34,6 +34,7 @@ class tagProcessor_Item
 		}
 		else
 		{
+			//here we assume that the return to is always the last parameter
 			if($p)
 			{
 				$aLinkNoReturn=substr($aLink,0,$p);
@@ -507,12 +508,6 @@ class tagProcessor_Item
 
 					$db->setQuery($query);
 
-//					if (!$db->query())
-//                    {
-//						$vlu='query error: '.$db->stderr();
-  //                  }
-//					else
-				//	{
 						$rows=$db->loadAssocList();
 
 						if(count($rows)==0)
@@ -543,15 +538,10 @@ class tagProcessor_Item
 										break;
 									}
 								}
-
-
-
 							}
 							else
 								$vlu=$row['vlu'];
 						}
-				//	}
-
 
 				}//if($isOk)
 				else
@@ -621,7 +611,7 @@ class tagProcessor_Item
         }
     }
 
-    protected static function prepareDetailsLink($Model,$row,$menu_item_alias="")
+    protected static function prepareDetailsLink($Model,$row,$menu_item_alias="",$returnto='')
     {
         //if(strpos($Model->current_url,'option=com_customtables')!==false or $menu_item_alias!="")
         //{
@@ -666,6 +656,10 @@ class tagProcessor_Item
                 $menu_item_id=$Model->Itemid;
 
             $viewlink.='&Itemid='.$menu_item_id;//.'&amp;returnto='.$returnto;
+			
+			if($returnto!='')
+				$viewlink.='&returnto='.$returnto;
+			
             $viewlink=JRoute::_($viewlink);
         //}
         //else
@@ -689,7 +683,8 @@ class tagProcessor_Item
 		else
 		{
             $returnto=base64_encode($Model->current_url.'#a'.$row['listing_id']);
-			$viewlink=tagProcessor_Item::prepareDetailsLink($Model,$row);//$Model->WebsiteRoot.'index.php?option=com_customtables&amp;view=details&amp;listing_id='.$row['listing_id'].'&amp;Itemid='.$Model->Itemid;//.'&amp;returnto='.$returnto;
+			$viewlink=tagProcessor_Item::prepareDetailsLink($Model,$row,'',$returnto);
+			//$Model->WebsiteRoot.'index.php?option=com_customtables&amp;view=details&amp;listing_id='.$row['listing_id'].'&amp;Itemid='.$Model->Itemid;//.'&amp;returnto='.$returnto;
 
 			if($jinput->getCmd('tmpl')!='')
 				$viewlink.='&tmpl='.$jinput->getCmd('tmpl');

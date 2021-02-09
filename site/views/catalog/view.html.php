@@ -22,41 +22,21 @@ class CustomTablesViewCatalog extends JViewLegacy
 		$params=null;
 		$this->Model->load($params,false,JFactory::getApplication()->input->getCMD('layout',''));
 
-		//Is user super Admin?
-		//$this->isUserAdministrator=JoomlaBasicMisc::isUserAdmin($this->Model->userid);
-
 		$SearchResult=$this->Model->getSearchResult();
 
 		$this->assignRef('SearchResult',$SearchResult);
-//		$this->current_url=JoomlaBasicMisc::curPageURL();
-		//$this->imagegalleries=array();
-		//$this->fileboxes=array();
 
 		if(!isset($this->Model->esfields))
 				return false;
 
-/*
-		foreach($this->Model->esfields as $mFld)
-		{
-				if($mFld['type']=='imagegallery')
-					$this->imagegalleries[]=array($mFld['fieldname'],$mFld['fieldtitle'.$this->Model->langpostfix]);
-
-				if($mFld['type']=='filebox')
-					$this->fileboxes[]=array($mFld['fieldname'],$mFld['fieldtitle'.$this->Model->langpostfix]);
-		}
-*/
-
-
-
         parent::display($tpl);
 
 		//Save view log
-
 		$allowedfields=$this->SaveViewLog_CheckIfNeeded();
 		if(count($allowedfields)>0)
 		{
-				foreach($SearchResult as $rec)
-						$this->SaveViewLogForRecord($rec,$allowedfields);
+			foreach($SearchResult as $rec)
+				$this->SaveViewLogForRecord($rec,$allowedfields);
 		}
 
 		return;
@@ -71,24 +51,19 @@ class CustomTablesViewCatalog extends JViewLegacy
 				if(in_array($mFld['fieldname'],$allowedfields))
 				{
 						if($mFld['type']=='lastviewtime')
-							$updatefields[]='es_'.$mFld['fieldname'].'="'.date('Y-m-d H:i:s').'"';
+							$updatefields[]=$mFld['realfieldname'].'="'.date('Y-m-d H:i:s').'"';
 
 						if($mFld['type']=='viewcount')
-							$updatefields[]='es_'.$mFld['fieldname'].'="'.((int)($rec['es_'.$mFld['fieldname']])+1).'"';
+							$updatefields[]=$mFld['realfieldname'].'="'.((int)($rec['es_'.$mFld['fieldname']])+1).'"';
 				}
 		}
 
 		if(count($updatefields)>0)
 		{
-
-				$db = JFactory::getDBO();
-
-
-				$query= 'UPDATE #__customtables_table_'.$this->Model->establename.' SET '.implode(', ', $updatefields).' WHERE id='.$rec['listing_id'];
-
-				$db->setQuery($query);
-				    $db->execute();
-
+			$db = JFactory::getDBO();
+			$query= 'UPDATE '.$this->Model->realtablename.' SET '.implode(', ', $updatefields).' WHERE id='.$rec['listing_id'];
+			$db->setQuery($query);
+		    $db->execute();
 		}
 
 	}
@@ -134,7 +109,5 @@ class CustomTablesViewCatalog extends JViewLegacy
 	}
 
 
-
-
 }
-?>
+

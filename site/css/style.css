@@ -54,7 +54,7 @@ color:red;
 }
 
 .ct_goback div{
-  background-image: url('/components/com_customtables/images/arrow_rtl.png');
+  background-image: url('../images/arrow_rtl.png');
   background-position: left;
   background-repeat: no-repeat;
   padding-left: 20px;
