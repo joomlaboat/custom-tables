@@ -148,7 +148,8 @@ CREATE TABLE IF NOT EXISTS `#__customtables_log` (
   `tableid` int(10) UNSIGNED NOT NULL,
   `action` smallint(6) UNSIGNED NOT NULL,
   `listingid` int(10) UNSIGNED NOT NULL,
-  `Itemid` int(10) UNSIGNED NOT NULL
+  `Itemid` int(10) UNSIGNED NOT NULL,
+  PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 

@@ -1041,7 +1041,12 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		else
 		{
 			//get old row
-			$query='SELECT *, id AS listing_id FROM '.$this->realtablename.' WHERE id='.$id.' LIMIT 1';
+			if($this->published_field_found)
+				$query_selects='*, '.$this->realtablename.'.id  as listing_id, '.$this->realtablename.'.published AS listing_published';
+			else
+				$query_selects='*, '.$this->realtablename.'.id  as listing_id, 1 AS listing_published';
+			
+			$query='SELECT '.$query_selects.' FROM '.$this->realtablename.' WHERE id='.$id.' LIMIT 1';
 			$db->setQuery( $query );
 			$rows = $db->loadAssocList();
 			if(count($rows)!=0)
@@ -1062,7 +1067,12 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 		if($id==0)
 		{
-			$query='SELECT *, id AS listing_id FROM '.$this->realtablename.' ORDER BY id DESC LIMIT 1';
+			if($this->published_field_found)
+				$query_selects='*, '.$this->realtablename.'.id  as listing_id, '.$this->realtablename.'.published AS listing_published';
+			else
+				$query_selects='*, '.$this->realtablename.'.id  as listing_id, 1 AS listing_published';
+			
+			$query='SELECT '.$query_selects.' FROM '.$this->realtablename.' ORDER BY id DESC LIMIT 1';
 			$db->setQuery( $query );
 
 			$rows = $db->loadAssocList();
@@ -1091,8 +1101,12 @@ class CustomTablesModelEditItem extends JModelLegacy {
 				$listing_id=$id;
 				ESLogs::save($this->estableid,$listing_id,2);
 
+				if($this->published_field_found)
+					$query_selects='*, '.$this->realtablename.'.id  as listing_id, '.$this->realtablename.'.published AS listing_published';
+				else
+					$query_selects='*, '.$this->realtablename.'.id  as listing_id, 1 AS listing_published';
 
-				$query='SELECT *, id AS listing_id FROM '.$this->realtablename.' WHERE id='.$id.' LIMIT 1';
+				$query='SELECT '.$query_selects.' FROM '.$this->realtablename.' WHERE id='.$id.' LIMIT 1';
 				$db->setQuery( $query );
 
 				$rows = $db->loadAssocList();
@@ -1178,9 +1192,8 @@ class CustomTablesModelEditItem extends JModelLegacy {
 			die ;//debug mode
 		}	
 		$jinput->setVar('listing_id',$listing_id);
-			
-		return true;
 
+		return true;
 	}
 
 	function getAvailableID($establename)
@@ -1235,7 +1248,13 @@ class CustomTablesModelEditItem extends JModelLegacy {
 	{
 
 			$db = JFactory::getDBO();
-			$query='SELECT *, id AS listing_id FROM '.$this->realtablename.' WHERE id='.$id.' LIMIT 1';
+			
+			if($this->published_field_found)
+				$query_selects='*, '.$this->realtablename.'.id  as listing_id, '.$this->realtablename.'.published AS listing_published';
+			else
+				$query_selects='*, '.$this->realtablename.'.id  as listing_id, 1 AS listing_published';
+			
+			$query='SELECT '.$query_selects.' FROM '.$this->realtablename.' WHERE id='.$id.' LIMIT 1';
 			$db->setQuery( $query );
 
 			$rows = $db->loadAssocList();
@@ -1641,7 +1660,13 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 
 		$db = JFactory::getDBO();
-		$query = 'SELECT *, id AS listing_id FROM '.$this->realtablename.' ORDER BY id DESC LIMIT 1';
+		
+		if($this->published_field_found)
+			$query_selects='*, '.$this->realtablename.'.id  as listing_id, '.$this->realtablename.'.published AS listing_published';
+		else
+			$query_selects='*, '.$this->realtablename.'.id  as listing_id, 1 AS listing_published';
+		
+		$query = 'SELECT '.$query_selects.' FROM '.$this->realtablename.' ORDER BY id DESC LIMIT 1';
 	 	$db->setQuery($query);
 
 		$rows = $db->loadAssocList();
@@ -1786,7 +1811,13 @@ class CustomTablesModelEditItem extends JModelLegacy {
 	function getListingRowByID($listing_id)
 	{
 		$db = JFactory::getDBO();
-		$query = 'SELECT *, id AS listing_id FROM '.$this->realtablename.' WHERE id='.$listing_id.' LIMIT 1';
+		
+		if($this->published_field_found)
+			$query_selects='*, '.$this->realtablename.'.id  as listing_id, '.$this->realtablename.'.published AS listing_published';
+		else
+			$query_selects='*, '.$this->realtablename.'.id  as listing_id, 1 AS listing_published';
+		
+		$query = 'SELECT '.$query_selects.' FROM '.$this->realtablename.' WHERE id='.$listing_id.' LIMIT 1';
 	 	$db->setQuery($query);
 
 		$rows = $db->loadAssocList();
