@@ -777,9 +777,9 @@ class JoomlaBasicMisc
 
 
 																if($fieldrow['type']=="multilangstring" or $fieldrow['type']=="multilangtext")
-																	$real_fields='es_'.$field.$langpostfix;
+																	$real_fields=$fieldrow['realfieldname'].$langpostfix;
 																else
-																	$real_fields='es_'.$field;
+																	$real_fields=$fieldrow['realfieldname'];
 
 
 																$options_list=explode(',',$options);
@@ -800,9 +800,9 @@ class JoomlaBasicMisc
 															}
 															else
 															{
-																if(isset($row['es_'.$field]))
-																	$htmlresult=$row['es_'.$field];
-																else
+																//if(isset($row['es_'.$field]))
+																	//$htmlresult=$row['es_'.$field];
+																//else
 																	$htmlresult='Field "'.$field.'" not found.';
 															}
 														}//if($field=='_id' or $field=='_published')

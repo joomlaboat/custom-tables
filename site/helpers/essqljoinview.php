@@ -17,7 +17,7 @@ class JHTMLESSQLJoinView
 {
         public static function render($value, $establename, $field, $filter,$langpostfix='')
         {
-				if($value==0 or $value=='' or $value==',' or $value==',,')
+				if($value==0 or $value=='')// or $value==',' or $value==',,')
 						return '';
 
 				$htmlresult='';
@@ -40,30 +40,24 @@ class JHTMLESSQLJoinView
 				$model = JModelLegacy::getInstance('Catalog', 'CustomTablesModel', $config);
 				$model->load($_params, true);
 				$model->showpagination=false;
-
+				
 				//Get Row
-				$tablename='#__customtables_table_'.$establename;
-				$query = 'SELECT *, id AS listing_id, published aS listing_published FROM '.$tablename.' WHERE id='.(int)$value;
+				$query = 'SELECT '.$model->tablerow['query_selects'].' FROM '.$model->realtablename.' WHERE '.$model->tablerow['realidfieldname'].'='.(int)$value;
 				$db= JFactory::getDBO();
 				$db->setQuery($query);
-				//if (!$db->query())
-					//die( $db->stderr());
 
 				$SearchResult=$db->loadAssocList();
 
 
 				if(strpos($field,':')===false)
 				{
-						//without layout
-										$getGalleryRows=array();
-										foreach($SearchResult as $row)
-										{
-
-												if($row['listing_id']==$value)
-														$htmlresult.=JoomlaBasicMisc::processValue($field,$model,$row,$langpostfix);
-
-										}
-
+					//without layout
+					$getGalleryRows=array();
+					foreach($SearchResult as $row)
+					{
+						if($row['listing_id']==$value)
+							$htmlresult.=JoomlaBasicMisc::processValue($field,$model,$row,$langpostfix);
+					}
 				}
 				else
 				{

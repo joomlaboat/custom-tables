@@ -34,14 +34,11 @@ class CustomTablesModelHome extends JModel {
 		if (!$db->query())    die( $db->stderr());
 		
 		$rows=$db->loadObjectList();
-		//echo count($rows);
 		if(count($rows)==1)
 			return $rows[0];
 			
-		//echo 'ggg';
 		return null;	
 	}
-	
 	
 
 	function getOptionIdFull($optionname)

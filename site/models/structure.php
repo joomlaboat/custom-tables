@@ -225,13 +225,10 @@ class CustomTablesModelStructure extends JModel
 		}
 		
         
-		//echo $query;
-		
 		$db->setQuery($query);
 	        $db->execute();
 		
 		$this->TotalRows=$db->getNumRows();
-		
 		
 		
 		$db->setQuery($query, $this->getState('limitstart') , $this->getState('limit'));

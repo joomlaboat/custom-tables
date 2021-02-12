@@ -218,7 +218,7 @@ class tagProcessor_Value
                                     }
                                 }
 								
-								$onchange='ct_UpdateSingleValue(\''.$WebsiteRoot.'\','.$Model->Itemid.',\''.$ESField['fieldname'].'\','.$row['id'].',\''.$postfix.'\');';
+								$onchange='ct_UpdateSingleValue(\''.$WebsiteRoot.'\','.$Model->Itemid.',\''.$ESField['fieldname'].'\','.$row['listing_id'].',\''.$postfix.'\');';
 								
                                 $attributes='onchange="'.$onchange.'"'.$style;
                             
@@ -427,7 +427,7 @@ class tagProcessor_Value
                                             $new_array[]=$pureValueOptionArr[$i];
                                     }
                                     
-                                    $vlu=CT_FieldTypeTag_file::process($rowValue,$ESField['typeparams'],$new_array,$row['id'],$ESField['id'],$Model->estableid,true);
+                                    $vlu=CT_FieldTypeTag_file::process($rowValue,$ESField['typeparams'],$new_array,$row['listing_id'],$ESField['id'],$Model->estableid,true);
                                 }
                                 else
                                     $vlu=$rowValue;
@@ -567,7 +567,7 @@ class tagProcessor_Value
                 if(isset($row['_processing_field_values']))
                     return true;
                 
-                if(isset($row['id']))
+                if(isset($row['listing_id']))
                 {
                     $params=JoomlaBasicMisc::csv_explode(',',$ESField['typeparams'],'"',false);
 				
@@ -861,7 +861,7 @@ class tagProcessor_Value
 						break;
 
 				case 'file':
-					return CT_FieldTypeTag_file::process($rowValue,$TypeParams,$option_list,$row['id'],$fieldid,$Model->estableid);
+					return CT_FieldTypeTag_file::process($rowValue,$TypeParams,$option_list,$row['listing_id'],$fieldid,$Model->estableid);
 					break;
 
 				case 'image':
@@ -1048,7 +1048,7 @@ class tagProcessor_Value
 					$processor_file=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fieldtypes'.DIRECTORY_SEPARATOR.'_type_file.php';
 					require_once($processor_file);
 					
-					return CT_FieldTypeTag_file::process($rowValue,','.$TypeParams,$option_list,$row['id'],$fieldid,$Model->estableid); // "," is to be compatible with file field type params. Becuse first parameter is max file size there
+					return CT_FieldTypeTag_file::process($rowValue,','.$TypeParams,$option_list,$row['listing_id'],$fieldid,$Model->estableid); // "," is to be compatible with file field type params. Becuse first parameter is max file size there
 					break;
 
 						//return $TypeParams.'/'.$rowValue;
@@ -1263,6 +1263,8 @@ class tagProcessor_Value
             elseif(strpos($str,'_published')!==false)
                 return '#__customtables_table_'.$sj_tablename.'.'.str_replace('_published','published',$str);
         }
+
+		$str=str_replace('=null',' IS NULL',$str);
 
 		return '#__customtables_table_'.$sj_tablename.'.es_'.$str;
 	}

@@ -11,6 +11,9 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+$adminlib=JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR;
+require_once($adminlib.'fields.php');
+
 class ESTables
 {
 	//This function works with MySQL not PostgreeSQL
@@ -117,19 +120,14 @@ class ESTables
 
 	public static function getTableRowByID($tableid)
 	{
-		$db = JFactory::getDBO();
-
 		if($tableid==0)
 			return 0;
-
-		$query = 'SELECT * FROM #__customtables_tables AS s WHERE id='.(int)$tableid.' LIMIT 1';
-		$db->setQuery( $query );
-
-		$rows = $db->loadObjectList();
-		if(count($rows)!=1)
+			
+		$row = ESTables::getTableRowByIDAssoc($tableid);
+		if(!is_array($row))
 			return 0;
-
-		return $rows[0];
+		
+		return (object)$row;
 	}
 
 	public static function getTableRowByIDAssoc($tableid)
@@ -138,15 +136,8 @@ class ESTables
 
 		if($tableid==0)
 			return 0;
-
-		$query = 'SELECT * FROM #__customtables_tables AS s WHERE id='.(int)$tableid.' LIMIT 1';
-		$db->setQuery( $query );
-
-		$rows = $db->loadAssocList();
-		if(count($rows)!=1)
-			return 0;
-
-		return $rows[0];
+			
+		return ESTables::getTableRowByWhere('id='.(int)$tableid);
 	}
 
 	public static function getTableRowByName($tablename = '')
@@ -155,31 +146,73 @@ class ESTables
 
 		if($tablename=='')
 			return 0;
-
-		$query = 'SELECT * FROM #__customtables_tables AS s WHERE tablename='.$db->quote($tablename).' LIMIT 1';
-		$db->setQuery( $query );
-
-		$rows = $db->loadObjectList();
-		if(count($rows)!=1)
-			return '';
-
-		return $rows[0];
+			
+		$row = ESTables::getTableRowByNameAssoc($tablename);
+		if(!is_array($row))
+			return 0;
+		
+		return (object)$row;
 	}
+	
 	public static function getTableRowByNameAssoc($tablename = '')
 	{
-		$db = JFactory::getDBO();
-
 		if($tablename=='')
 			return 0;
-
-		$query = 'SELECT * FROM #__customtables_tables AS s WHERE tablename='.$db->quote($tablename).' LIMIT 1';
+			
+		$db = JFactory::getDBO();
+		
+		return ESTables::getTableRowByWhere('tablename='.$db->quote($tablename));
+	}
+		
+	public static function getTableRowByWhere($where)
+	{
+		$db = JFactory::getDBO();
+	
+			
+		$query = 'SELECT '.ESTables::getTableRowSelects().' FROM #__customtables_tables AS s WHERE '.$where.' LIMIT 1';
 		$db->setQuery( $query );
 
 		$rows = $db->loadAssocList();
 		if(count($rows)!=1)
-			return '';
+			return 0;
+			
+		$row=$rows[0];
+			
+		$published_field_found=true;
+		if($row['customtablename']!='')
+		{
+			$realfields=ESFields::getListOfExistingFields($row['realtablename'],false);
+			if(!in_array('published',$realfields))
+				$published_field_found=false;
+		}
+		$row['published_field_found'] = $published_field_found;
+				
+		if($published_field_found)
+			$query_selects='*, '.$row['realtablename'].'.'.$row['realidfieldname'].' AS listing_id, '.$row['realtablename'].'.published AS listing_published';
+		else
+			$query_selects='*, '.$row['realtablename'].'.'.$row['realidfieldname'].' AS listing_id, 1 AS listing_published';
+		
+		$row['query_selects']=$query_selects;
 
-		return $rows[0];
+		return $row;
+	}
+
+	protected static function getTableRowSelects()
+	{
+		$db = JFactory::getDBO();
+		
+		if($db->serverType == 'postgresql')
+		{
+			$realtablename_query='CASE WHEN customtablename!=\'\' THEN customtablename ELSE CONCAT(\'#__customtables_table_\', tablename END AS realtablename';
+			$realidfieldname_query='CASE WHEN customidfield!=\'\' THEN customidfield ELSE \'id\' END AS realidfieldname';
+		}
+		else
+		{
+			$realtablename_query='IF(customtablename!=\'\', customtablename, CONCAT(\'#__customtables_table_\', tablename)) AS realtablename';
+			$realidfieldname_query='IF(customidfield!=\'\', customidfield, \'id\') AS realidfieldname';
+		}
+			
+		return '*, '.$realtablename_query.','.$realidfieldname_query.', 1 AS published_field_found, \'\' AS query_selects';
 	}
 
 
@@ -256,7 +289,7 @@ class ESTables
 				CREATE TABLE IF NOT EXISTS #__customtables_table_'.$tablename.'
 				(
 					id int(10) unsigned NOT NULL auto_increment,
-					published tinyint(1) DEFAULT 1,
+					published tinyint(1) NOT NULL DEFAULT 1,
 					PRIMARY KEY  (id)
 				) ENGINE=InnoDB COMMENT="'.$tabletitle.'" DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
 				';

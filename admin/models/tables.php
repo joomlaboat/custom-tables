@@ -785,7 +785,6 @@ class CustomtablesModelTables extends JModelAdmin
 			$s1='(SELECT categoryname FROM #__customtables_categories WHERE #__customtables_categories.id=#__customtables_tables.tablecategory) AS categoryname';
 			$query = 'SELECT *,'.$s1.' FROM #__customtables_tables WHERE published=1 AND id='.(int)$id.' LIMIT 1';
 			$db->setQuery( $query );
-			if (!$db->query())    echo ( $db->stderr());
 			$rows=$db->loadAssocList();
 			if(count($rows)==1)
 			{
@@ -795,13 +794,12 @@ class CustomtablesModelTables extends JModelAdmin
 				//get fields
 				$query = 'SELECT * FROM #__customtables_fields WHERE published=1 AND tableid='.(int)$id.'';
 				$db->setQuery( $query );
-				if (!$db->query())    echo ( $db->stderr());
 				$fields=$db->loadAssocList();
 
 				//get layouts
 				$query = 'SELECT * FROM #__customtables_layouts WHERE published=1 AND tableid='.(int)$id.'';
 				$db->setQuery( $query );
-				if (!$db->query())    echo ( $db->stderr());
+
 				$layouts=$db->loadAssocList();
 
 				//get menu items
@@ -822,7 +820,7 @@ class CustomtablesModelTables extends JModelAdmin
 				$query = 'SELECT * FROM #__menu WHERE '.implode(' AND ',$wheres);
 
 				$db->setQuery( $query );
-				if (!$db->query())    echo ( $db->stderr());
+
 				$menu=$db->loadAssocList();
 
 
@@ -832,7 +830,7 @@ class CustomtablesModelTables extends JModelAdmin
 
 					$query = 'SELECT * FROM #__customtables_table_'.$tablename.' WHERE published=1';
 					$db->setQuery( $query );
-					if (!$db->query())    echo ( $db->stderr());
+
 					$records=$db->loadAssocList();
 
 					$output[]=['table'=>$table,'fields'=>$fields,'layouts'=>$layouts,'records'=>$records,'menu'=>$menu];

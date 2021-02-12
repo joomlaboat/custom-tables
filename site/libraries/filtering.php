@@ -82,14 +82,7 @@ class ESFiltering
 										}
 										else
 										{
-											$fieldrow=$this->getFieldRowByName($value1,$value2);
-											/*
-											if($value2=='')
-											{
-												if(isset($fieldrow['type']) and in_array($fieldrow['type'],$numerical_fields))
-													$value2='0';
-											}
-					*/
+											$fieldrow=$this->getFieldRowByName($value1);
 										}
 								}
 
@@ -191,12 +184,12 @@ class ESFiltering
 
 																if($vL=='true' or $vL=='1')
 																{
-																		$cArr[]='es_'.$whr[0].'=1';
+																		$cArr[]=$fieldrow['realfieldname'].'=1';
 																		$PathValue[]=$fieldrow['fieldtitle'.$this->langpostfix];
 																}
 																else
 																{
-																		$cArr[]='es_'.$whr[0].'=0';
+																		$cArr[]=$fieldrow['realfieldname'].'=0';
 
 																		$PathValue[]=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT').' '.$fieldrow['fieldtitle'.$this->langpostfix];
 																}
@@ -283,7 +276,7 @@ class ESFiltering
 
 														$v=str_replace('"','',trim($whr[1]));
 														if($db->serverType == 'postgresql')
-															$c='POSITION('.$db->quote($v).' IN es_'.$whr[0].$this->langpostfix.')>0';
+															$c='POSITION('.$db->quote($v).' IN '.$fieldrow['realfieldname'].$this->langpostfix.')>0';
 														else
 															$c='instr(es_'.$whr[0].$this->langpostfix.','.$db->quote($v).')';
 
@@ -317,7 +310,7 @@ class ESFiltering
 
 																if($opr=='=')
 																{
-																	$cArr[]='instr(es_'.$whr[0].',"'.$v.'")';
+																	$cArr[]='instr('.$fieldrow['realfieldname'].',"'.$v.'")';
 
 																	$vTitle=$this->es->getMultyValueTitles($v,$this->langpostfix,1, ' - ');
 																	$PathValue[]=$fieldrow['fieldtitle'.$this->langpostfix].': '.implode(',',$vTitle);
@@ -325,7 +318,7 @@ class ESFiltering
 
 																elseif($opr=='!=')
 																{
-																	$cArr[]='!instr(es_'.$whr[0].',"'.$v.'")';
+																	$cArr[]='!instr('.$fieldrow['realfieldname'].',"'.$v.'")';
 
 																	$vTitle=$this->es->getMultyValueTitles($v,$this->langpostfix,1, ' - ');
 																	$PathValue[]=$fieldrow['fieldtitle'.$this->langpostfix].': '.implode(',',$vTitle);
@@ -411,13 +404,13 @@ class ESFiltering
 
 										
 																if($opr=='!=')
-																	$cArr[]='!instr('.$esr_table_full.'.es_'.$whr[0].',",'.$vLnew.',")';
+																	$cArr[]='!instr('.$esr_table_full.'.'.$fieldrow['realfieldname'].',",'.$vLnew.',")';
 																elseif($opr=='!==')
-																	$cArr[]=$esr_table_full.'.es_'.$whr[0].'!='.$db->quote(','.$vLnew.',');//not exact value
+																	$cArr[]=$esr_table_full.'.'.$fieldrow['realfieldname'].'!='.$db->quote(','.$vLnew.',');//not exact value
 																elseif($opr=='=')
-																	$cArr[]='instr('.$esr_table_full.'.es_'.$whr[0].',",'.$vLnew.',")';
+																	$cArr[]='instr('.$esr_table_full.'.'.$fieldrow['realfieldname'].',",'.$vLnew.',")';
 																elseif($opr=='==')
-																	$cArr[]=$esr_table_full.'.es_'.$whr[0].'='.$db->quote(','.$vLnew.',');//exact value
+																	$cArr[]=$esr_table_full.'.'.$fieldrow['realfieldname'].'='.$db->quote(','.$vLnew.',');//exact value
 																else
 																	$opt_title=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_UNKNOW_OPERATION' );
 																	
@@ -491,7 +484,7 @@ class ESFiltering
 																{
 																	$opt_title=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT');
 
-																	$cArr[]=$esr_table_full.'.es_'.$whr[0].'!='.(int)$vLnew;
+																	$cArr[]=$esr_table_full.'.'.$fieldrow['realfieldname'].'!='.(int)$vLnew;
 																	$PathValue[]=$fieldrow['fieldtitle'.$this->langpostfix]
 																			.' '
 																			.$opt_title
@@ -504,11 +497,11 @@ class ESFiltering
 
 																	$ivLnew=(int)$vLnew;
 																	if($ivLnew==0)
-																		$cArr[]='('.$esr_table_full.'.es_'.$whr[0].'='.(int)$vLnew.' OR '.$esr_table_full.'.es_'.$whr[0].' IS NULL)';
+																		$cArr[]='('.$esr_table_full.'.'.$fieldrow['realfieldname'].'='.(int)$vLnew.' OR '.$esr_table_full.'.'.$fieldrow['realfieldname'].' IS NULL)';
 																	elseif($ivLnew==-1)
-																		$cArr[]='('.$esr_table_full.'.es_'.$whr[0].' IS NULL OR '.$esr_table_full.'.es_'.$whr[0].'=0)';
+																		$cArr[]='('.$esr_table_full.'.'.$fieldrow['realfieldname'].' IS NULL OR '.$esr_table_full.'.'.$fieldrow['realfieldname'].'=0)';
 																	else
-																		$cArr[]=$esr_table_full.'.es_'.$whr[0].'='.(int)$vLnew;
+																		$cArr[]=$esr_table_full.'.'.$fieldrow['realfieldname'].'='.(int)$vLnew;
 																	
 																	
 
@@ -621,10 +614,10 @@ class ESFiltering
 			{
 				$option=trim(preg_replace("/[^a-zA-Z-+% ,_]/", "", $options[1]));
 				//https://dev.mysql.com/doc/refman/5.7/en/date-and-time-functions.html#function_date-format
-			    return 'DATE_FORMAT('.$esr_table_full.'.es_'.$fieldrow['fieldname'].', '.$db->quote($option).')';//%m/%d/%Y %H:%i
+			    return 'DATE_FORMAT('.$esr_table_full.'.'.$fieldrow['realfieldname'].', '.$db->quote($option).')';//%m/%d/%Y %H:%i
 			}
 			else
-				return $esr_table_full.'.es_'.$fieldrow['fieldname'];
+				return $esr_table_full.'.'.$fieldrow['realfieldname'];
 
 		}
 		else
@@ -723,7 +716,7 @@ class ESFiltering
 	{
 		$db = JFactory::getDBO();
 
-		$realfieldname=$fieldrow['realfieldname'];//'es_'.$whr[0];
+		$realfieldname=$fieldrow['realfieldname'];
 		$v=$this->getString_vL($whr[1]);
 		
 		$PathValue[]=$fieldrow['fieldtitle'.$this->langpostfix].' '.$opr;
@@ -748,11 +741,6 @@ class ESFiltering
 
 
 				$cArr[]='('.implode(' AND ',$new_v_list).')';
-				/*
-				other possible serach options
-				return 'instr(es_'.$whr[0].',"'.$v.'")'; not usefull
-				return 'MATCH('.$db->quoteName('es_'.$whr[0]).') AGAINST ('.$db->quote('%'.$vl.'%').' IN NATURAL LANGUAGE MODE)'; requires mysql 5.6
-				*/
 			}
 			return '('.implode(' OR ',$cArr).')';
 		}
@@ -786,7 +774,7 @@ class ESFiltering
 		{
 			if($vL!='')
 			{
-				$cArr[]='es_'.$whr[0].''.$opr.(int)$vL;
+				$cArr[]=$fieldrow['realfieldname'].$opr.(int)$vL;
 				$PathValue[]=$fieldrow['fieldtitle'.$this->langpostfix].' '.$opr.' '.(int)$vL;
 			}
 		}
@@ -814,9 +802,9 @@ class ESFiltering
 		foreach($vList as $vL)
 		{
 			if($vL=="null" and $opr=='=')
-				$cArr[]='(es_'.$whr[0].'="" OR es_'.$whr[0].' IS NULL)';
+				$cArr[]='('.$fieldrow['realfieldname'].'="" OR '.$fieldrow['realfieldname'].' IS NULL)';
 			else
-				$cArr[]='es_'.$whr[0].''.$opr.$db->quote($vL);
+				$cArr[]=$fieldrow['realfieldname'].$opr.$db->quote($vL);
 
 			$PathValue[]=$fieldrow['fieldtitle'.$this->langpostfix].' '.$opr.' '.$vL;
 		}
@@ -840,7 +828,7 @@ class ESFiltering
 		{
 			if($vL!='')
 			{
-				$cArr[]='es_'.$whr[0].''.$opr.(int)$vL;
+				$cArr[]=$fieldrow['realfieldname'].$opr.(int)$vL;
 				$filtertitle=JHTML::_('ESUserGroupView.render',  $vL);
 				$PathValue[]=$fieldrow['fieldtitle'.$this->langpostfix].' '.$opr.' '.$filtertitle;
 			}
@@ -865,9 +853,9 @@ class ESFiltering
 			if($vL!='')
 			{
 				if((int)$vL==0 and $opr=='=')
-					$cArr[]='(es_'.$whr[0].'=0 OR es_'.$whr[0].' IS NULL)';
+					$cArr[]='('.$fieldrow['realfieldname'].'=0 OR es_'.$whr[0].' IS NULL)';
 				else
-					$cArr[]='es_'.$whr[0].''.$opr.(int)$vL;
+					$cArr[]=$fieldrow['realfieldname'].$opr.(int)$vL;
 			
 				$filtertitle=JHTML::_('ESUserView.render',  $vL);
 				$PathValue[]=$fieldrow['fieldtitle'.$this->langpostfix].' '.$opr.' '.$filtertitle;
@@ -1029,11 +1017,21 @@ class LinkJoinFilters
 			$field=$pair[1];
 		else
 			return '<p style="color:white;background-color:red;">sqljoin: field not set</p>';
+			
+		$tablerow = ESTables::getTableRowByNameAssoc($tablename);
+		if(!is_array($tablerow))
+			return '<p style="color:white;background-color:red;">sqljoin: table "'.$tablename.'" not found</p>';
+
+		$fieldrow=ESFields::getFieldRowByName($field, $tablerow['id']);
+		if(!is_object($fieldrow))
+			return '<p style="color:white;background-color:red;">sqljoin: field "'.$field.'" not found</p>';
 
 		$db = JFactory::getDBO();
+		$where = '';
+		if($tablerow['published_field_found'])
+			$where = 'WHERE published=1';
 
-		$query = 'SELECT id, es_'.$field
-		.' FROM #__customtables_table_'.$tablename.' WHERE published=1 ORDER BY es_'.$field;
+		$query = 'SELECT '.$tablerow['query_selects'].' FROM '.$tablerow['realtablename'].' '.$where.' ORDER BY '.$fieldrow->realfieldname;
 
 		$db->setQuery($query);
 
@@ -1155,10 +1153,10 @@ class LinkJoinFilters
 		$result.='<select id="'.$control_name.'SQLJoinLink" onchange="'.$control_name.'UpdateSQLJoinLink()">';
 		foreach($records as $row)
 		{
-			if($row['id']==$filtervalue or strpos($filtervalue,','.$row['id'].',')!==false)
-				$result.='<option value="'.$row['id'].'" selected>'.$row['es_'.$field].'</option>';
+			if($row['listing_id']==$filtervalue or strpos($filtervalue,','.$row['listing_id'].',')!==false)
+				$result.='<option value="'.$row['listing_id'].'" selected>'.$row['es_'.$field].'</option>';
 			else
-				$result.='<option value="'.$row['id'].'">'.$row['es_'.$field].'</option>';
+				$result.='<option value="'.$row['listing_id'].'">'.$row['es_'.$field].'</option>';
 		}
 		$result.='</select>
 ';
@@ -1176,7 +1174,6 @@ class LinkJoinFilters
 		.' WHERE tablename="'.$tablename.'" AND fieldname="'.$field.'"';
 
 		$db->setQuery($query);
-//		if (!$db->query())    die( $db->stderr());
 
 		$records=$db->loadObjectList();
 		if(count($records)==0)

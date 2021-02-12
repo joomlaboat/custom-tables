@@ -149,8 +149,6 @@ class CustomTablesModelFiles extends JModelLegacy
 		}
 
 		$row=$rows[0];
-		$row['listing_id']=$row['id'];
-
 		return $row;
 	}
 

@@ -27,6 +27,10 @@ $db = JFactory::getDBO();
 		else
 			$realtablename = $db->getPrefix().'customtables_table_'.$item->tablename;
 			
+		$realidfield = 'id';
+		if(isset($item->customidfield) and $item->customidfield!='')
+			$realidfield = $item->customidfield;
+		
 		$table_exists = ESTables::checkIfTableExists($realtablename);
 	?>
 	<tr class="row<?php echo $i % 2; ?>">
@@ -115,7 +119,7 @@ $db = JFactory::getDBO();
 				{
 					echo '<a href="'.JURI::root(true).'/administrator/index.php?option=com_customtables&view=listofrecords&tableid='.$item->id.'">'
 					.JText::_('COM_CUSTOMTABLES_TABLES_RECORDS_LABEL')
-					.' ('.$this->getNumberOfRecords($realtablename).')</a>';
+					.' ('.$this->getNumberOfRecords($realtablename,$realidfield).')</a>';
 				}
 			?>
 		</td>

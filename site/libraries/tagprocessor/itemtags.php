@@ -347,36 +347,86 @@ class tagProcessor_Item
 				$sj_function=$opts[0];
 
 				$sj_tablename=$opts[1];
-				if($sj_tablename=='')
-					$isOk=false;
 
+				if($sj_tablename=='')
+				{
+					$isOk=false;
+				}
+				else
+				{
+					$tablerow = ESTables::getTableRowByNameAssoc($sj_tablename);
+					if(!is_array($tablerow))
+						$isOk=false;
+				}
+				
 				//field1_findwhat
 				$field1_findwhat=$opts[2];
 				if($field1_findwhat=='')
 					$isOk=false;
 
-				if($field1_findwhat[0]!='_')
-					$field1_findwhat='es_'.$field1_findwhat;
-				else
-					$field1_findwhat=substr($field1_findwhat,1);
+				if($isOk)
+				{
+					if($field1_findwhat=='_id')
+					{
+						$field1_findwhat=$Model->tablerow['realidfieldname'];
+					}
+					elseif($field1_findwhat=='_published')
+					{
+						if($Model->tablerow['published_field_found'])
+							$field1_findwhat='published';
+						else
+						{
+							$field1_findwhat='';
+							$isOk=false;
+						}
+					}
+					else
+					{
+						$field1_row=ESFields::getFieldRowByName($field2_lookwhere, $Model->tablerow['id']);
+						if(is_object($field1_row))
+							$field1_findwhat=$field1_row->realfieldname;
+						else
+						{
+							$field1_findwhat='';
+							$isOk=false;
+						}
+					}
+				}
 
 				//field2_lookwhere
 				$field2_lookwhere=$opts[3];
 				if($field2_lookwhere=='')
 					$isOk=false;
-
-				if($field2_lookwhere[0]!='_')
+				
+				if($isOk)
 				{
-					$field2_type_row=ESFields::getFieldRowByName($field2_lookwhere, 0,$sj_tablename);
-
-					$field2_type=$field2_type_row->type;
-					$field2_lookwhere='es_'.$field2_lookwhere;
-
-				}
-				else
-				{
-					$field2_lookwhere=substr($field2_lookwhere,1);
-					$field2_type='';
+					if($field2_lookwhere=='_id')
+						$field2_lookwhere=$tablerow['realidfieldname'];
+					elseif($field2_lookwhere=='_published')
+					{
+						if($tablerow['published_field_found'])
+							$field2_lookwhere='published';
+						else
+						{
+							$field2_lookwhere='';
+							$isOk=false;
+						}
+					}
+					else
+					{
+						$field2_type_row=ESFields::getFieldRowByName($field2_lookwhere, $tablerow['id']);
+						if(is_object($field2_type_row))
+						{
+							$field2_type=$field2_type_row->type;
+							$field2_lookwhere=$field2_type_row->realfieldname;
+						}
+						else
+						{
+							$field2_type='';
+							$field2_lookwhere='';
+							$isOk=false;
+						}
+					}
 				}
 
 				$opt4_pair=JoomlaBasicMisc::csv_explode(':', $opts[4], '"', false);
@@ -392,12 +442,32 @@ class tagProcessor_Item
 					$isOk=false;
 				else
 				{
-					if($field3_readvalue[0]!='_')
-						$field3_readvalue='es_'.$field3_readvalue;
+					if($field3_readvalue=='_id')
+							$field3_readvalue=$tablerow['realidfieldname'];
+					elseif($field3_readvalue=='_published')
+					{
+						if($tablerow['published_field_found'])
+							$field3_readvalue='published';
+						else
+						{
+							$field3_readvalue='';
+							$isOk=false;
+						}
+					}
 					else
-						$field3_readvalue=substr($field3_readvalue,1);
+					{
+				
+						$field3_row=ESFields::getFieldRowByName($field3_readvalue, $tablerow['id']);
+						if(is_array($tablerow))
+							$field3_readvalue=$field3_row->realfieldname;
+						else
+						{
+							$field3_readvalue='';
+							$isOk=false;
+						}
+					}
 				}
-
+				
 				$additional_where='';
 				if(isset($opts[5]) and $opts[5]!='')
 				{
@@ -416,7 +486,6 @@ class tagProcessor_Item
 								//read $get_ values
 								$b=tagProcessor_Value::ApplyQueryGetValue($b,$sj_tablename);
 
-								//$w[]='#__customtables_table_'.$sj_tablename.'.es_'.$b;
 								$w[]=$b;
 							}
 							else
@@ -425,14 +494,15 @@ class tagProcessor_Item
 
 					}
 					$additional_where=implode(' ',$w);
-
-
 				}
-
                
 				//order by
 				if(isset($opts[6]) and $opts[6]!='')
+				{
 					$order_by_option=$opts[6];
+					$order_by_option_row=ESFields::getFieldRowByName($order_by_option, $tablerow['id']);
+					$order_by_option=$order_by_option_row->realfieldname;
+				}
 
 
 
@@ -440,42 +510,40 @@ class tagProcessor_Item
 				{
 
 					if($sj_function=='count')
-						$query = 'SELECT count(#__customtables_table_'.$sj_tablename.'.'.$field3_readvalue.') AS vlu ';
+						$query = 'SELECT count('.$tablerow['realtablename'].'.'.$field3_readvalue.') AS vlu ';
 					elseif($sj_function=='sum')
-						$query = 'SELECT sum(#__customtables_table_'.$sj_tablename.'.'.$field3_readvalue.') AS vlu ';
+						$query = 'SELECT sum('.$tablerow['realtablename'].'.'.$field3_readvalue.') AS vlu ';
 					elseif($sj_function=='avg')
-						$query = 'SELECT avg(#__customtables_table_'.$sj_tablename.'.'.$field3_readvalue.') AS vlu ';
+						$query = 'SELECT avg('.$tablerow['realtablename'].'.'.$field3_readvalue.') AS vlu ';
 					elseif($sj_function=='min')
-						$query = 'SELECT min(#__customtables_table_'.$sj_tablename.'.'.$field3_readvalue.') AS vlu ';
+						$query = 'SELECT min('.$tablerow['realtablename'].'.'.$field3_readvalue.') AS vlu ';
 					elseif($sj_function=='max')
-						$query = 'SELECT max(#__customtables_table_'.$sj_tablename.'.'.$field3_readvalue.') AS vlu ';
+						$query = 'SELECT max('.$tablerow['realtablename'].'.'.$field3_readvalue.') AS vlu ';
 
 					else
 					{
 						//need to resolve record value if it's "records" type
-
-						$query = 'SELECT #__customtables_table_'.$sj_tablename.'.'.$field3_readvalue.' AS vlu '; //value or smart
+						$query = 'SELECT '.$tablerow['realtablename'].'.'.$field3_readvalue.' AS vlu '; //value or smart
 					}
 
 
-					$query.=' FROM #__customtables_table_'.$Model->establename.' ';
+					$query.=' FROM '.$Model->realtablename.' ';
 
 					if($Model->establename!=$sj_tablename)
 					{
 						// Join not needed when we are in the same table
-						$query.=' LEFT JOIN #__customtables_table_'.$sj_tablename.' ON ';
+						$query.=' LEFT JOIN '.$tablerow['realtablename'].' ON ';
 
 						if($field2_type=='records')
 						{
-							$query.='INSTR(#__customtables_table_'.$sj_tablename.'.'.$field2_lookwhere.',  CONCAT(",",#__customtables_table_'.$Model->establename.'.'.$field1_findwhat.',","))' ;
+							$query.='INSTR('.$tablerow['realtablename'].'.'.$field2_lookwhere.',  CONCAT(",",'.$Model->realtablename.'.'.$field1_findwhat.',","))' ;
 
 						}
 						else
 						{
-							$query.=' #__customtables_table_'.$Model->establename.'.'.$field1_findwhat.' = '
-							.' #__customtables_table_'.$sj_tablename.'.'.$field2_lookwhere;
+							$query.=' '.$Model->realtablename.'.'.$field1_findwhat.' = '
+							.' '.$tablerow['realtablename'].'.'.$field2_lookwhere;
 						}
-
 					}
 
 
@@ -485,7 +553,7 @@ class tagProcessor_Item
 						if($Model->establename!=$sj_tablename)
 						{
 							//don't attach to specific record when it is the same table, example : to find averages
-							$wheres[]='#__customtables_table_'.$Model->establename.'.id='.$id;
+							$wheres[]=$Model->realtablename.'.'.$Model->tablerow['realidfieldname'].'='.$id;
 						}
 						else
 						{
@@ -501,7 +569,7 @@ class tagProcessor_Item
 
 						if($order_by_option!='')
 						{
-							$query.=' ORDER BY #__customtables_table_'.$sj_tablename.'.es_'.$order_by_option;
+							$query.=' ORDER BY '.$tablerow['realtablename'].'.'.$order_by_option;
 						}
 
 						$query.=' LIMIT 1';
@@ -518,16 +586,14 @@ class tagProcessor_Item
 
 							if($sj_function=='smart')
 							{
-
-
 								$getGalleryRows=array();
 								$getFileBoxRows=array();
 								$vlu=$row['vlu'];
 
-								$temp_esTable=new ESTables;
-								$temp_tablerow = $temp_esTable->getTableRowByNameAssoc($sj_tablename);
-								$temp_estableid=$temp_tablerow['id'];
-								$temp_esfields = ESFields::getFields($temp_estableid);
+								//$temp_esTable=new ESTables;
+								//$temp_tablerow = $temp_esTable->getTableRowByNameAssoc($sj_tablename);
+								//$temp_estableid=$temp_tablerow['id'];
+								$temp_esfields = ESFields::getFields($tablerow['id']);
 
 								foreach($temp_esfields as $ESField)
 								{
@@ -708,7 +774,7 @@ class tagProcessor_Item
             $pagelayout_temp=$Model->LayoutProc->layout;//Temporary remember original layout
             $htmlresult=$pagelayout_temp;
 
-            $prefix='table_'.$Model->establename.'_'.$row['id'].'_';
+            $prefix='table_'.$Model->establename.'_'.$row['listing_id'].'_';
             tagProcessor_Edit::process($Model,$htmlresult,$row,$prefix);//Process edit form layout
             
             $Model->LayoutProc->layout=$htmlresult;//Temporary replace original layout with processed result

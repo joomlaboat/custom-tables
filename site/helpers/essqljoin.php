@@ -133,7 +133,8 @@ class JHTMLESSqlJoin
 
                 return $model->getSearchResult();
         }
-        	static protected function renderDynamicFilter($value,&$SearchResult,$establename,$dynamic_filter,$control_name)
+        
+		static protected function renderDynamicFilter($value,&$SearchResult,$establename,$dynamic_filter,$control_name)
 		{
 			$htmlresult='';
 

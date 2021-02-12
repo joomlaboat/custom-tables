@@ -169,7 +169,7 @@ class CustomTablesModelList extends JModel
 			// replace full list with found items
 			$list = $list1;
 		}
-		//echo '3';
+
 		$total = count( $list );
 
 		if(!$noState)
@@ -178,10 +178,9 @@ class CustomTablesModelList extends JModel
 			$this->_pagination = new JPagination( $total, $limitstart, $limit );
 			$list = array_slice( $list, $this->_pagination->limitstart, $this->_pagination->limit );
 		}
-		//echo '4';
+
 		// slice out elements based on limits
 
-		//echo '5';
 		$items = $list;
 
 		return $items;
@@ -269,11 +268,8 @@ class CustomTablesModelList extends JModel
 	function setOrder($items)
 	{
 		$jinput = JFactory::getApplication()->input;
-
 		$total		= count( $items );
-
 		$row 		= JTable::getInstance('List', 'Table');
-		//echo $row;
 
 		$groupings	= array();
 
@@ -287,10 +283,10 @@ class CustomTablesModelList extends JModel
 		// update ordering values
 
 		for( $i=0; $i < $total; $i++ ) {
-			//echo '<br/>'.$items[$i].'<br/>';
+
 			$row->load( $items[$i] );
-			//echo '<br/>puchka<br/>';
-			//return true;
+
+
 			// track parents
 			$groupings[] = $row->parentid;
 

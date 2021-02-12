@@ -184,7 +184,7 @@ function checkTableFields($tableid,$tablename,$tabletitle,$customtablename)
             //Delete field
             if($task=='deleteurfield' and $taskfieldname==$exst_field)
             {
-                if(ESFields::deleteMYSQLField($complete_table_name,$exst_field))
+                if(ESFields::deleteMYSQLField($realtablename,$exst_field))
                     echo '<p>Field "<span style="color:green;">'.$exst_field.'</span>" not registered. <span style="color:green;">Deleted.</span></p>';
             }
             else
@@ -197,7 +197,7 @@ function checkTableFields($tableid,$tablename,$tabletitle,$customtablename)
             {
                 if($task=='fixfieldtype' and $taskfieldname==$exst_field)
                 {
-                    if(ESFields::fixMYSQLField($complete_table_name,$found_field,$PureFieldType))
+                    if(ESFields::fixMYSQLField($realtablename,$found_field,$PureFieldType))
                     {
                         echo '<p>Field "<span style="color:green;">'.str_replace('es_','',$found_field).'</span>" Fixed';
                     }

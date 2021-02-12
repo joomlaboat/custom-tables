@@ -294,8 +294,6 @@ class CustomTablesModelDetails extends JModelLegacy {
 		}
 
 		$row=$rows[0];
-		$row['listing_id']=$row['id'];
-
 
 		//get specific Version
 		$version= JFactory::getApplication()->input->get('version',0,'INT');
@@ -308,7 +306,7 @@ class CustomTablesModelDetails extends JModelLegacy {
 				$new_row= $this->getVersionData($row,$log_field,$version);
 				if(count($new_row)>0)
 				{
-				    $row=$this->makeEmptyRecord($row['id'],$new_row['published']);
+				    $row=$this->makeEmptyRecord($row['listing_id'],$new_row['listing_published']);
 
 				    //Copy values
 				    foreach($this->esfields as $ESField)
@@ -326,8 +324,8 @@ class CustomTablesModelDetails extends JModelLegacy {
 	function makeEmptyRecord($id,$published)
 	{
 	    $row=array();
-	    $row['id']=$id;
-	    $row['published']=$published;
+	    $row['listing_id']=$id;
+	    $row['listing_published']=$published;
 
 	    foreach($this->esfields as $ESField)
 		$row[$ESField['realfieldname']]='';
@@ -361,9 +359,8 @@ class CustomTablesModelDetails extends JModelLegacy {
 					{
 						$obj=json_decode(base64_decode($data_content[3]),true);
 						$new_row=$obj[0];
-						$new_row['published']=$row['published'];
-						$new_row['id']=$row['id'];
-						$new_row['listing_id']=$row['id'];
+						$new_row['listing_published']=$row['listing_published'];
+						$new_row['listing_id']=$row['listing_id'];
 						$new_row[$log_field]=$row[$log_field];
 
 

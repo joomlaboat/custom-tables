@@ -177,10 +177,7 @@ class updateImageGallery
 				$r=$imgMethods->ProportionalResize(JPATH_SITE.$original_image_file,JPATH_SITE.$old_imagefile, $width, $height,1,true, $color, $watermark);
 
 				if($r!=1)
-				{
-					//echo 'cannot create file: '.$old_imagefile;
 					return 'cannot create file: '.$old_imagefile;
-				}
 			}
 
 			if(file_exists(JPATH_SITE.$old_imagefile))

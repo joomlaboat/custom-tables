@@ -87,6 +87,7 @@ class CTOrdering
 										$typeparams=explode(',',$oPair2[2]);
 
 										$join_table=$typeparams[0];
+										
 										$join_field='';
 										if(isset($typeparams[1]))
 											$join_field=$typeparams[1];

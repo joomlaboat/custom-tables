@@ -292,8 +292,6 @@ class CustomtablesControllerFields extends JControllerForm
 
 		if ($saved)//$this->refid && 
 		{
-			//$redirect.='&layout=edit&id='.(int)$this->refid;
-			
 			// Redirect to the item screen.
 			$this->setRedirect(
 				JRoute::_(
@@ -304,8 +302,6 @@ class CustomtablesControllerFields extends JControllerForm
 		/*
 		elseif ($this->ref && $saved)
 		{
-			echo '2';
-			die;
 			// Redirect to the list screen.
 			$this->setRedirect(
 				JRoute::_(

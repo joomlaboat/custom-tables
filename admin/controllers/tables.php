@@ -184,9 +184,6 @@ class CustomtablesControllerTables extends JControllerForm
 	public function storepermissions($data = array())
 	{
 		$a=json_encode($_POST);
-		
-		echo '{"a":"'.base64_encode($a).'","text":"LLLLLNot Allowed (Inherited)","class":"label label-important","result":true}';
-		die;
 	}
 */	
 

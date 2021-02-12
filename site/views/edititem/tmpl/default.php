@@ -81,8 +81,8 @@ jQuery.noConflict()
 	//Calendars of the child should be built again, because when Dom was ready they didn't exist yet.
 	//$calendars=array();
 
-	if(isset($this->row['id']))
-		$listing_id=(int)$this->row['id'];
+	if(isset($this->row['listing_id']))
+		$listing_id=(int)$this->row['listing_id'];
 	else
 		$listing_id=0;
 						

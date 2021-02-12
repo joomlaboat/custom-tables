@@ -193,6 +193,11 @@ else
 					<div class="controls"><?php echo $this->form->getInput('customtablename'); ?></div>
 				</div>
 				
+				<div class="control-group">
+					<div class="control-label"><?php echo $this->form->getLabel('customidfield'); ?></div>
+					<div class="controls"><?php echo $this->form->getInput('customidfield'); ?></div>
+				</div>
+				
 				
 			</div>
 	</div>

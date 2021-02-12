@@ -182,14 +182,7 @@ class CustomTablesModelListOfOptions extends JModelList
                         $pt = $v->parentid;
                         $list[$id] = $v;
                         $list[$id]->treename = "$indent$txt";
-						/*
-						if(!isset($children[$id]) or !is_array($children[$id]))
-						{
-							echo 'id='.$id.'<br/>';
-							print_r($children);
-							die;
-						}
-						*/
+
 						if(isset($children[$id]))
 						{
 							$list[$id]->children = count(@$children[$id]);
@@ -377,7 +370,6 @@ class CustomTablesModelListOfOptions extends JModelList
 	{
 		foreach($AssociatedTable as $Ass)
 		{
-			//echo $Ass[0].':'.$Ass[1].'  looking for: '.$parentid.'<br/>';
 			if($Ass[0]==$parentid)
 				return $Ass[1];
 		}

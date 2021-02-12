@@ -409,7 +409,7 @@ class CTValue
 }
 
 static public function toHex($n) {
-    echo 'n='.$n.'<br/>';
+
     $n = intval($n);
     if (!$n)
         return '00';
@@ -471,7 +471,7 @@ static public function Try2CreateUserAccount($Model,$field,$row)
 	{
         if(!$unique_users) //allow not unique record per users
         {
-            CTValue::UpdateUserField($Model->realtablename,$useridfieldname,$existing_user_id,$row['id']);
+            CTValue::UpdateUserField($Model->realtablename,$useridfieldname,$existing_user_id,$row['listing_id']);
             JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORD_USER_UPDATED' ));
         }
         else
@@ -484,7 +484,7 @@ static public function Try2CreateUserAccount($Model,$field,$row)
 
 	}
     else
-        CTValue::CreateUser($user_email,$user_name,$user_groups,$row['id'],$useridfieldname,$Model->realtablename);
+        CTValue::CreateUser($user_email,$user_name,$user_groups,$row['listing_id'],$useridfieldname,$Model->realtablename);
 
     return;
 }
@@ -1000,7 +1000,7 @@ static public function get_record_type_value(&$savequery,$typeparams,$prefix,$es
             LayoutProcessor::applyContentPlugins($htmlresult);
 
             if($type=='alias')
-                $htmlresult=CTValue::prepare_alias_type_value($row['id'],$Model->establename,$esfieldname,$htmlresult,$realfieldname,$Model->realtablename);
+                $htmlresult=CTValue::prepare_alias_type_value($row['listing_id'],$Model->establename,$esfieldname,$htmlresult,$realfieldname,$Model->realtablename);
 
             $savequery[]=$realfieldname.'='.$db->quote($htmlresult);
         }
@@ -1025,7 +1025,7 @@ static public function get_record_type_value(&$savequery,$typeparams,$prefix,$es
             }
 		}
 
-        CTValue::runQueries($Model,$savequery,$row['id']);
+        CTValue::runQueries($Model,$savequery,$row['listing_id']);
     }
 
     static public function runQueries(&$Model,&$savequery,$id)
@@ -1034,7 +1034,7 @@ static public function get_record_type_value(&$savequery,$typeparams,$prefix,$es
     	if(count($savequery)>0)
 		{
 			$db = JFactory::getDBO();
-			$query='UPDATE '.$Model->realtablename.' SET '.implode(', ',$savequery).' WHERE id='.$id;
+			$query='UPDATE '.$Model->realtablename.' SET '.implode(', ',$savequery).' WHERE '.$Model->tablerow['realidfieldname'].'='.$id;
 
 			$db->setQuery( $query );
 			$db->execute();

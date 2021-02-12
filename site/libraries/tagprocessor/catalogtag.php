@@ -105,7 +105,7 @@ class tagProcessor_Catalog
 									$galleryrows=array();
 									$FileBoxRows=array();
 									$option=array();
-									$GroupTitle=$Model->LayoutProc->getValueByType($Model,$lastGroup,$FieldRow['fieldname'],$FieldRow['type'],$FieldRow['typeparams'],$option,$galleryrows,$FileBoxRows,$row['id']);
+									$GroupTitle=$Model->LayoutProc->getValueByType($Model,$lastGroup,$FieldRow['fieldname'],$FieldRow['type'],$FieldRow['typeparams'],$option,$galleryrows,$FileBoxRows,$row['listing_id']);
 								}
 
 								$CatGroups[]=array($GroupTitle,$RealRows);
@@ -128,7 +128,7 @@ class tagProcessor_Catalog
 						$FileBoxRows=array();
 						$option=array();
 
-						$GroupTitle=$Model->LayoutProc->getValueByType($Model,$lastGroup,$FieldRow['fieldname'],$FieldRow['type'],$FieldRow['typeparams'],$option,$galleryrows,$FileBoxRows,$row['id'],$FieldRow['id']);
+						$GroupTitle=$Model->LayoutProc->getValueByType($Model,$lastGroup,$FieldRow['fieldname'],$FieldRow['type'],$FieldRow['typeparams'],$option,$galleryrows,$FileBoxRows,$row['listing_id'],$FieldRow['id']);
 					}
 					$CatGroups[]=array($GroupTitle,$RealRows);
 				}

@@ -138,6 +138,14 @@
                        filter="CMD"
                        hint="COM_CUSTOMTABLES_TABLES_CUSTOMTABLENAME_HINT" />
 
+		<field type="text"
+                       name="customidfield"
+                       label="Custom ID Field"
+                       description="If third-party primary key field name is not id"
+                       required="false"
+                       filter="CMD"
+                       hint="" />
+
 
         </fieldset>
 	

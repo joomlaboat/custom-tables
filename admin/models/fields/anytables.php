@@ -61,7 +61,8 @@ class JFormFieldAnyTables extends JFormFieldList
 		{
 			$conf = JFactory::getConfig();
 			$database = $conf->get('db');
-		
+			
+
 			$wheres=array();
 			$wheres[]='table_schema=\''.$database.'\'';
 			$wheres[]='!INSTR(table_name,\''.$db->getPrefix().'customtables_\')';
@@ -78,9 +79,17 @@ class JFormFieldAnyTables extends JFormFieldList
 		$db->setQuery( $query );
 		$recs=$db->loadAssocList();
 		
-        foreach($recs as $rec)
-			$list[]=$rec['table_name'];
-        
+		if($db->serverType == 'postgresql')
+		{
+			foreach($recs as $rec)
+				$list[]=$rec['table_name'];
+		}
+		else
+		{
+			foreach($recs as $rec)
+				$list[]=$rec['TABLE_NAME'];
+		}
+		
 		return $list;
 	}
 }

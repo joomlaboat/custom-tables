@@ -310,10 +310,10 @@ class CustomtablesViewListoftables extends JViewLegacy
 		return false;
 	}
 
-	protected function getNumberOfRecords($realtablename)
+	protected function getNumberOfRecords($realtablename,$realidfield)
 	{
 		$db = JFactory::getDBO();
-		$query='SELECT COUNT(id) AS count FROM '.$realtablename.' LIMIT 1';
+		$query='SELECT COUNT('.$realidfield.') AS count FROM '.$realtablename.' LIMIT 1';
 		
 		$db->setQuery( $query );
 		if (!$db->query())    die ( $db->stderr());

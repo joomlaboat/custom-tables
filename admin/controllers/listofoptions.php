@@ -71,7 +71,6 @@ class CustomTablesControllerListOfOptions extends JControllerAdmin
 
 	public function getModel($name = 'List', $prefix = 'CustomTablesModel')
 	{
-		//echo 'solomka';
 		$model = parent::getModel($name, $prefix, array('ignore_request' => true));
 		return $model;
 	}

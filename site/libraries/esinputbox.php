@@ -68,7 +68,7 @@ class ESInputBox
 
 						if($esfield['type']=='alias')
 						{
-							$listing_id=isset($row['id']) ? $row['id'] : 0;
+							$listing_id=isset($row['listing_id']) ? $row['listing_id'] : 0;
 							$value=CTValue::prepare_alias_type_value($listing_id,$Model->establename,$esfield['fieldname'],$value,$esfield['realfieldname'],$Model->realtablename);
 						}
 			        }
@@ -373,7 +373,7 @@ class ESInputBox
 
 						case 'language':
 
-							if(count($row)!=0 and (int)$row['id']!=0)
+							if(count($row)!=0 and (int)$row['listing_id']!=0)
 							{
 								$value=JFactory::getApplication()->input->get('es_'.$esfield['fieldname'],'','STRING');
 							}
@@ -712,15 +712,15 @@ class ESInputBox
 
 						case 'imagegallery':
 
-							if(isset($row['id']))
-								$result.=$this->getImageGallery($esfield['fieldname'],$esfield['typeparams'],$row['id']);
+							if(isset($row['listing_id']))
+								$result.=$this->getImageGallery($esfield['fieldname'],$esfield['typeparams'],$row['listing_id']);
 
 						break;
 
 						case 'filebox':
 
-							if(isset($row['id']))
-								$result.=$this->getFileBox($Model,$esfield['fieldname'],$esfield['typeparams'],$row['id']);
+							if(isset($row['listing_id']))
+								$result.=$this->getFileBox($Model,$esfield['fieldname'],$esfield['typeparams'],$row['listing_id']);
 
 						break;
 
@@ -845,7 +845,7 @@ class ESInputBox
 								
 
 								if($addDynamicEvent)
-									$attributes_=' onchange="ct_UpdateSingleValue(\''.$WebsiteRoot.'\','.$Model->Itemid.',\''.$esfield['fieldname'].$postfix.'\','.$row['id'].',\''.$lang->sef.'\')"';
+									$attributes_=' onchange="ct_UpdateSingleValue(\''.$WebsiteRoot.'\','.$Model->Itemid.',\''.$esfield['fieldname'].$postfix.'\','.$row['listing_id'].',\''.$lang->sef.'\')"';
 									
 								$result='<input type="text" name="'.$prefix.$esfield['fieldname'].$postfix.'" id="'.$prefix.$esfield['fieldname'].$postfix.'" id="code" class="'.$class.'"
 								value="'.$value.'" '.((int)$esfield['typeparams']>0 ? 'maxlength="'.(int)$esfield['typeparams'].'"' : 'maxlength="255"').$attributes_.' />';

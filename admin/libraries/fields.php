@@ -824,20 +824,6 @@ class ESFields
 							
 						$db->setQuery( $query );
 						$db->execute();
-						/*
-						if(isset($parts[1]))
-						{
-							$PureFieldType__ = str_replace($parts[0].' ','',$PureFieldType_);
-							
-							$query = 'ALTER TABLE #__customtables_table_'.$establename
-								.' ALTER COLUMN '.$mysqlfieldname.' SET '.$PureFieldType__;
-								echo $query;
-							
-							$db->setQuery( $query );
-							$db->execute();
-						}
-
-						*/
 					}
 					else
 					{
@@ -1068,8 +1054,6 @@ class ESFields
 
 		if($db->serverType == 'postgresql')
 		{
-			//$conf = JFactory::getConfig();
-			//$database = $conf->get('db');
 			$mysqltablename=str_replace('#__',$db->getPrefix(),$mysqltablename);
 			$query = 'SELECT table_name, column_name, data_type FROM information_schema.columns WHERE table_name = '.$db->quote($mysqltablename);
 		}
@@ -1106,7 +1090,6 @@ class ESFields
 	{
 		if(ESFields::checkIfFieldExists($mysqltablename,$fieldname,false))
 		{
-
 			$db = JFactory::getDBO();
 
             $query ='SET foreign_key_checks = 0;';
@@ -1126,12 +1109,12 @@ class ESFields
 		}
 	}
 
-    public static function fixMYSQLField($mysqltablename,$fieldname,$PureFieldType)
+    public static function fixMYSQLField($realtablename,$fieldname,$PureFieldType)
 	{
 		$db = JFactory::getDBO();
 
-        $query='ALTER TABLE '.$mysqltablename.' CHANGE '.$fieldname.' '.$fieldname.' '.$PureFieldType;
-
+        $query='ALTER TABLE '.$realtablename.' CHANGE '.$fieldname.' '.$fieldname.' '.$PureFieldType;
+		
 		$db->setQuery( $query );
 		$db->execute();
 
@@ -1167,7 +1150,7 @@ class ESFields
 		if($fieldid==0)
 			$fieldid=JFactory::getApplication()->input->get('fieldid',0,'INT');
 
-		$query = 'SELECT * FROM #__customtables_fields AS s WHERE published=1 AND id='.$fieldid.' LIMIT 1';
+		$query = 'SELECT '.ESFields::getFieldRowSelects().' FROM #__customtables_fields AS s WHERE published=1 AND id='.$fieldid.' LIMIT 1';
 		$db->setQuery( $query );
 
 		$rows = $db->loadObjectList();
@@ -1181,17 +1164,12 @@ class ESFields
 	{
 		$db = JFactory::getDBO();
 
-		if($db->serverType == 'postgresql')
-			$realfieldname_query='CASE WHEN customfieldname!=\'\' THEN customfieldname ELSE CONCAT(\'es_\',fieldname) END AS realfieldname';
-		else
-			$realfieldname_query='IF(customfieldname!=\'\', customfieldname, CONCAT(\'es_\',fieldname)) AS realfieldname';
-		
         if((int)$tableid_or_name>0)
-            $query = 'SELECT *, '.$realfieldname_query.' FROM #__customtables_fields WHERE published=1 AND tableid='.(int)$tableid_or_name.' ORDER BY ordering, fieldname';
+            $query = 'SELECT '.ESFields::getFieldRowSelects().' FROM #__customtables_fields WHERE published=1 AND tableid='.(int)$tableid_or_name.' ORDER BY ordering, fieldname';
         else
         {
             $w1='(SELECT t.id FROM #__customtables_tables AS t WHERE t.tablename='.$db->quote($tableid_or_name).' LIMIT 1)';
-            $query = 'SELECT *, '.$realfieldname_query.' FROM #__customtables_fields AS f WHERE f.published=1 AND f.tableid='.$w1.' ORDER BY f.ordering, f.fieldname';
+            $query = 'SELECT '.ESFields::getFieldRowSelects().' FROM #__customtables_fields AS f WHERE f.published=1 AND f.tableid='.$w1.' ORDER BY f.ordering, f.fieldname';
         }
 
 		$db->setQuery( $query );
@@ -1210,10 +1188,10 @@ class ESFields
 			return array();
 
 		if($sj_tablename=='')
-			$query = 'SELECT * FROM #__customtables_fields AS s WHERE s.published=1 AND tableid='.(int)$tableid.' AND fieldname='.$db->quote(trim($fieldname)).' LIMIT 1';
+			$query = 'SELECT '.ESFields::getFieldRowSelects().' FROM #__customtables_fields AS s WHERE s.published=1 AND tableid='.(int)$tableid.' AND fieldname='.$db->quote(trim($fieldname)).' LIMIT 1';
 		else
 		{
-			$query = 'SELECT * FROM #__customtables_fields AS s
+			$query = 'SELECT '.ESFields::getFieldRowSelects().' FROM #__customtables_fields AS s
 
 			INNER JOIN #__customtables_tables AS t ON t.tablename='.$db->quote($sj_tablename).'
 			WHERE s.published=1 AND s.tableid=t.id AND s.fieldname='.$db->quote(trim($fieldname)).' LIMIT 1';
@@ -1242,7 +1220,7 @@ class ESFields
 		if($fieldname=='')
 			return array();
 
-		$query = 'SELECT * FROM #__customtables_fields AS s WHERE s.published=1 AND tableid='.(int)$tableid.' AND fieldname="'.trim($fieldname).'" LIMIT 1';
+		$query = 'SELECT '.ESFields::getFieldRowSelects().' FROM #__customtables_fields AS s WHERE s.published=1 AND tableid='.(int)$tableid.' AND fieldname="'.trim($fieldname).'" LIMIT 1';
 		$db->setQuery( $query );
 
 		$rows = $db->loadAssocList();
@@ -1289,4 +1267,17 @@ class ESFields
 		}
 		return '';
 	}
+	
+	protected static function getFieldRowSelects()
+	{
+		$db = JFactory::getDBO();
+
+		if($db->serverType == 'postgresql')
+			$realfieldname_query='CASE WHEN customfieldname!=\'\' THEN customfieldname ELSE CONCAT(\'es_\',fieldname) END AS realfieldname';
+		else
+			$realfieldname_query='IF(customfieldname!=\'\', customfieldname, CONCAT(\'es_\',fieldname)) AS realfieldname';
+		
+        return '*, '.$realfieldname_query;
+	}
+
 }

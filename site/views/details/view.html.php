@@ -109,7 +109,7 @@ class CustomTablesViewDetails extends JViewLegacy {
 
 	function UpdatePHPOnView($row)//,$allowedfields
 	{
-		if(!isset($row['id']))
+		if(!isset($row['listing_id']))
 			return false;
 		
 		$phptagprocessor_file=JPATH_SITE.DIRECTORY_SEPARATOR.'plugins'.DIRECTORY_SEPARATOR.'content'.DIRECTORY_SEPARATOR.'customtables'.DIRECTORY_SEPARATOR.'protagprocessor'.DIRECTORY_SEPARATOR.'phptags.php';
@@ -174,71 +174,5 @@ class CustomTablesViewDetails extends JViewLegacy {
 		}
 
 	}
-/*
-
-	function SaveViewLog_CheckIfNeeded()
-	{
-		$user = JFactory::getUser();
-		$usergroups = $user->get('groups');
-
-echo 'SaveViewLog_CheckIfNeeded<br/>';
-
-		$allowedfields=array();
-
-		foreach($this->Model->esfields as $mFld)
-		{
-
-				if($mFld['type']=='lastviewtime' or $mFld['type']=='viewcount' or $mFld['type']=='phponview')
-				{
-
-
-
-						//$pair=explode(',',$mFld['typeparams']);
-
-						//$usergroup='';
-
-						/*
-
-						if(isset($pair[1]))
-						{
-								if($pair[1]=='details')
-										$usergroup=$pair[0];
-						}
-						else
-								$usergroup=$pair[0];
-
-						*/
-
-
-						//if($usergroup!='')
-						//{
-						/*
-							if(count($usergroups))
-							{
-								$groupid=JoomlaBasicMisc::getGroupIdByTitle($usergroup);
-								if(in_array($groupid,$usergroups))
-										$allowedfields[]=$mFld['fieldname'];
-							}
-							else
-							{
-								if(strtolower($usergroup)=='public')
-									$allowedfields[]=$mFld['fieldname'];
-							}
-
-							
-						//	$allowedfields[]=$mFld['fieldname'];
-
-
-						//}//if($usergroup!='')
-
-				}
-		}//foreach($this->Model->esfields as $mFld)
-
-
-		return $allowedfields;
-	}
-
-*/
-
 }
 

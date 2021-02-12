@@ -15,8 +15,8 @@ class tagProcessor_Edit
 {
     public static function process(&$Model,&$pagelayout,&$row,$fieldNamePrefix)
     {
-        if(isset($row['id']))
-            $listing_id=(int)$row['id'];
+        if(isset($row['listing_id']))
+            $listing_id=(int)$row['listing_id'];
         else
         	$listing_id=0;
         

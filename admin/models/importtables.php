@@ -250,10 +250,4 @@ class CustomTablesModelImporttables extends JModelList
 
 		return $rows[0]->id;
 	}
-
-
-
-
 }
-
-?>

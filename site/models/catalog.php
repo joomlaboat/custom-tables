@@ -184,8 +184,8 @@ class CustomTablesModelCatalog extends JModelLegacy
 				}
 				else
 				{
-						$app		= JFactory::getApplication();
-						$this->params=$app->getParams();
+					$app		= JFactory::getApplication();
+					$this->params=$app->getParams();
 
 
 				}//if($this->blockExternalVars)
@@ -246,24 +246,17 @@ class CustomTablesModelCatalog extends JModelLegacy
 				
 				
 				$this->tablerow = ESTables::getTableRowByNameAssoc($this->establename);
-				
-
-				$this->published_field_found=true;
-				if($this->tablerow['customtablename']!='')
-				{
-					$this->realtablename=$this->tablerow['customtablename'];
-					$realfields=ESFields::getListOfExistingFields($this->realtablename,false);
-					if(!in_array('published',$realfields))
-						$this->published_field_found=false;
-				}
-				else
-					$this->realtablename='#__customtables_table_'.$this->establename;
+				if(!is_array($this->tablerow))
+					return false;
+					
+				$this->published_field_found=$this->tablerow['published_field_found'];
+				$this->realtablename=$this->tablerow['realtablename'];
 				
 				$this->estableid=$this->tablerow['id'];
 
 				$this->tablecustomphp=$this->tablerow['customphp'];
 
-				//	Fields
+				//Fields
 				$this->esfields = ESFields::getFields($this->estableid);
 				
 				//sorting
@@ -666,7 +659,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 				{
 
 						if($cookieValue=='')
-								$wherearr[]=$this->realtablename.'.id=0';
+								$wherearr[]=$this->realtablename.'.'.$this->tablerow['realidfieldname'].'=0';
 						else
 						{
 								$items=explode(';',$cookieValue);
@@ -674,7 +667,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 								foreach($items as $item)
 								{
 										$pair=explode(',',$item);
-										$warr[]=$this->realtablename.'.id='.$pair[0];
+										$warr[]=$this->realtablename.'.'.$this->tablerow['realidfieldname'].'='.$pair[0];
 								}
 
 
@@ -682,7 +675,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 						}
 				}
 				else
-						$wherearr[]=$this->realtablename.'.id=0';
+						$wherearr[]=$this->realtablename.'.'.$this->tablerow['realidfieldname'].'=0';
 		}
 
 
@@ -714,19 +707,15 @@ class CustomTablesModelCatalog extends JModelLegacy
 		if($this->esordering)
 			CTOrdering::getOrderingQuery($ordering,$query,$inner,$this->esordering,$this->langpostfix,$this->realtablename,$this->esfields);
 
-		if($this->published_field_found)
-			$query_selects='*, '.$this->realtablename.'.id  as  listing_id, '.$this->realtablename.'.published AS listing_published';
-		else
-			$query_selects='*, '.$this->realtablename.'.id  as  listing_id, 1 AS listing_published';
-			
-		$query='SELECT '.$query_selects.' FROM '.$this->realtablename.' ';
+		$query='SELECT '.$this->tablerow['query_selects'].' FROM '.$this->realtablename.' ';
 		$query.=implode(' ',$inner).' ';
 		$query.=$where.' ';
 		
 		//Not really necessary
 		//$query.=' GROUP BY '.$this->realtablename.'.id';
 
-		$query_analytical='SELECT COUNT(id) AS count FROM '.$this->realtablename.' '.$where;
+
+		$query_analytical='SELECT COUNT('.$this->tablerow['realidfieldname'].') AS count FROM '.$this->realtablename.' '.$where;
 
 		if(count($ordering)>0)
 			$query.=' ORDER BY '.implode(',',$ordering);
@@ -767,7 +756,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 			$rows=$db->loadAssocList();
 			
 			foreach($rows as $row)
-				$this->recordlist[]=$row['id'];
+				$this->recordlist[]=$row['listing_id'];
 		}
 		else
 			$rows=array();

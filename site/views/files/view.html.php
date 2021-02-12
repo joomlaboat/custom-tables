@@ -148,15 +148,18 @@ class CustomTablesViewFiles extends JViewLegacy
 
  function getFilePath()
  {
+	if(!isset($this->Model->fieldrow))
+		return '';
+	 
 	if($this->Model->fieldrow['type']=='filelink')
 		$TypeParams=','.$this->Model->fieldrow['typeparams']; //file link field type parameters have folder path as second parameter
 	else
 		$TypeParams=$this->Model->fieldrow['typeparams'];
 	
-  if(!isset($this->row['es_'.$this->Model->fieldrow['fieldname']]))
+  if(!isset($this->row[$this->Model->fieldrow['realfieldname']]))
    return '';
 
-  $rowValue=$this->row['es_'.$this->Model->fieldrow['fieldname']];
+  $rowValue=$this->row[$this->Model->fieldrow['realfieldname']];
 
   return CT_FieldTypeTag_file::getFileFolder($TypeParams).'/'.$rowValue;
 
