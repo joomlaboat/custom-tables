@@ -254,19 +254,19 @@ class ESFields
 		if($fieldtype1 == $fieldtype2)
 			return true;
 		
+		//Remove Text Between Parentheses
+		$fieldtype2_no_par = preg_replace("/\([^)]+\)/","",$fieldtype2); // replace "varchar(255) null" with "varchar null"
+		
 		$db = JFactory::getDBO();
 		if($db->serverType == 'postgresql')
 		{
-			if($fieldtype1=='character varying null')
-			{
-				//Remove Text Between Parentheses
-				$fieldtype2_no_par = preg_replace("/\([^)]+\)/","",$fieldtype2); // replace "varchar(255) null" with "varchar null"
-				if($fieldtype2_no_par == 'varchar null')
-					return true;
-			}				
+			if($fieldtype1=='character varying null' and $fieldtype2_no_par == 'varchar null')
+				return true;
 		}
 		else
 		{
+			if($fieldtype1=='int null' and $fieldtype2_no_par == 'int null')
+				return true;
 		}
 		
 		return false;
@@ -393,7 +393,7 @@ class ESFields
 				if($db->serverType == 'postgresql')
 					return 'int null';
 				else
-					return 'int(10) null';
+					return 'int null';
 				
 				break;
 
@@ -403,17 +403,17 @@ class ESFields
 
 			case 'image':
 				if($db->serverType == 'postgresql')
-					return 'BIGINT null';
+					return 'bigint null';
 				else
-					return 'bigint(20) null';
+					return 'bigint null';
 					
 				break;
 
 			case 'checkbox':
 				if($db->serverType == 'postgresql')
-					return 'SMALLINT not null default 0';
+					return 'samllint not null default 0';
 				else
-					return 'tinyint(1) not null default 0';
+					return 'tinyint not null default 0';
 				
 				break;
 
@@ -438,7 +438,7 @@ class ESFields
 				if($db->serverType == 'postgresql')
 					return 'int null';
 				else
-					return 'int(11) null';
+					return 'int null';
 					
 				break;
 
@@ -468,30 +468,30 @@ class ESFields
 
 			case 'viewcount':
 				if($db->serverType == 'postgresql')
-					return 'BIGINT unsigned null';
+					return 'bigint unsigned null';
 				else
-					return 'bigint(20) unsigned null';
+					return 'bigint unsigned null';
 					
 				break;
 
 			case 'userid': //current user id (auto asigned)
 
 				if($db->serverType == 'postgresql')
-					return 'BIGINT unsigned null';
+					return 'bigint unsigned null';
 				else
-					return 'bigint(20) unsigned null';
+					return 'bigint unsigned null';
 
 			case 'user': //user (selection)
 				if($db->serverType == 'postgresql')
-					return 'BIGINT unsigned null';
+					return 'bigint unsigned null';
 				else
-					return 'bigint(20) unsigned null';
+					return 'bigint unsigned null';
 
 			case 'usergroup': //user group (selection)
 				if($db->serverType == 'postgresql')
-					return 'INT unsigned null';
+					return 'int unsigned null';
 				else
-					return 'int(11) unsigned null';
+					return 'int unsigned null';
 
 			case 'usergroups': //user groups (selection)
 				return 'varchar(255) null';
@@ -506,9 +506,9 @@ class ESFields
 
 			case 'id':
 				if($db->serverType == 'postgresql')
-					return 'BIGINT unsigned null';
+					return 'bigint unsigned null';
 				else
-					return 'bigint(20) unsigned null';
+					return 'bigint unsigned null';
 					
 				break;
 
@@ -518,33 +518,33 @@ class ESFields
 
 			case 'imagegallery':
 				if($db->serverType == 'postgresql')
-					return 'BIGINT unsigned null';
+					return 'bigint unsigned null';
 				else
-					return 'bigint(20) unsigned null';
+					return 'bigint unsigned null';
 					
 				break;
 
 			case 'filebox':
 				if($db->serverType == 'postgresql')
-					return 'BIGINT unsigned null';
+					return 'bigint unsigned null';
 				else
-					return 'bigint(20) unsigned null';
+					return 'bigint unsigned null';
 					
 				break;
 
 			case 'article':
 				if($db->serverType == 'postgresql')
-					return 'BIGINT unsigned null';
+					return 'bigint unsigned null';
 				else
-					return 'bigint(20) unsigned null';
+					return 'bigint unsigned null';
 					
 				break;
 
 			case 'multilangarticle':
 				if($db->serverType == 'postgresql')
-					return 'BIGINT unsigned null';
+					return 'bigint unsigned null';
 				else
-					return 'bigint(20) unsigned null';
+					return 'bigint unsigned null';
 					
 				break;
 
@@ -559,9 +559,9 @@ class ESFields
             case '_published':
 
 				if($db->serverType == 'postgresql')
-					return 'SMALLINT not null default 1';
+					return 'samllint not null default 1';
 				else
-					return 'tinyint(1) not null default 1';
+					return 'tinyint not null default 1';
 					
 				break;
             
@@ -778,9 +778,9 @@ class ESFields
 		$db = JFactory::getDBO();
 
 		$query = 'CREATE TABLE IF not EXISTS '.$tName.' (
-  photoid bigint(20) not null auto_increment,
-  listingid bigint(20) not null,
-  ordering int(10) not null,
+  photoid bigint not null auto_increment,
+  listingid bigint not null,
+  ordering int not null,
   photo_ext varchar(10) not null,
   title varchar(100) not null,
    PRIMARY KEY  (photoid)
@@ -799,9 +799,9 @@ class ESFields
 		$db = JFactory::getDBO();
 
 		$query = 'CREATE TABLE IF not EXISTS '.$tName.' (
-  fileid bigint(20) not null auto_increment,
-  listingid bigint(20) not null,
-  ordering int(10) not null,
+  fileid bigint not null auto_increment,
+  listingid bigint not null,
+  ordering int not null,
   file_ext varchar(10) not null,
   title varchar(100) not null,
    PRIMARY KEY  (fileid)
