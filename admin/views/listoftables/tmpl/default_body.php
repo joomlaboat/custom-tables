@@ -21,11 +21,8 @@ $db = JFactory::getDBO();
 		$canDo = CustomtablesHelper::getActions('tables',$item,'listoftables');
 		
 		
-		$realtablename = '';
-		if(isset($item->customtablename) and $item->customtablename !='')
-			$realtablename = $item->customtablename;
-		else
-			$realtablename = $db->getPrefix().'customtables_table_'.$item->tablename;
+		$realtablename = $item->tablerow['realtablename'];
+		
 			
 		$realidfield = 'id';
 		if(isset($item->customidfield) and $item->customidfield!='')
@@ -77,8 +74,7 @@ $db = JFactory::getDBO();
 					if($morethanonelang)
 						$id.='_'.$lang->sef;
 
-					
-					if(!isset($item_array[$id]))
+					if(!array_key_exists($id,$item_array))
 					{
 						JFactory::getApplication()->enqueueMessage(
 							JText::_('COM_CUSTOMTABLES_ERROR_LANGTABLETTILENOTFOUND' ), 'Error');

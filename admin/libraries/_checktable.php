@@ -84,15 +84,15 @@ function checkTableFields($tableid,$tablename,$tabletitle,$customtablename)
     {
 		
 		
-        $field_mysql_type=$existing_field[$field_columns->data_type];
+        $field_mysql_type=strtolower($existing_field[$field_columns->data_type]);
         if($existing_field[$field_columns->is_nullable]=='YES')
-            $field_mysql_type.=' NULL';
+            $field_mysql_type.=' null';
         else
-            $field_mysql_type.=' NOT NULL';
+            $field_mysql_type.=' not null';
 
         $default=$existing_field[$field_columns->default];
         if($default!=null)
-            $field_mysql_type.=' DEFAULT '.$default;
+            $field_mysql_type.=' default '.$default;
 
         $exst_field=$existing_field[$field_columns->columnname];
         $found=false;
@@ -105,7 +105,12 @@ function checkTableFields($tableid,$tablename,$tabletitle,$customtablename)
 				$found=true;
 				$PureFieldType='_id';
 			}
-            else if($projected_field['type']=='multilangstring' or $projected_field['type']=='multilangtext')
+			elseif($projected_field['realfieldname']=='published')
+            {
+				$found=true;
+				$PureFieldType='_published';
+			}
+            elseif($projected_field['type']=='multilangstring' or $projected_field['type']=='multilangtext')
             {
                 $morethanonelang=false;
 				foreach($languages as $lang)
@@ -193,7 +198,7 @@ function checkTableFields($tableid,$tablename,$tabletitle,$customtablename)
         else
         {
 
-            if($PureFieldType!='_id' and strtolower($field_mysql_type)!=strtolower($PureFieldType))
+            if($PureFieldType!='_id' and $PureFieldType!='_published' and !ESFields::comparePureFieldTypes($field_mysql_type,$PureFieldType))
             {
                 if($task=='fixfieldtype' and $taskfieldname==$exst_field)
                 {
@@ -262,7 +267,7 @@ function checkTableFields($tableid,$tablename,$tabletitle,$customtablename)
 
             if(!$g_found)
             {
-				ESFields::AddMySQLFieldNotExist($table_name, $g_fieldname, 'varchar(100) NULL', '');
+				ESFields::AddMySQLFieldNotExist($table_name, $g_fieldname, 'varchar(100) null', '');
                 echo '<p>Options Field "<span style="color:green;">'.$g_fieldname.'</span>" <span style="color:green;">added.</span></p>';
             }
 			$morethanonelang=true;
@@ -303,7 +308,7 @@ function checkTableFields($tableid,$tablename,$tabletitle,$customtablename)
 
                         if(!$g_found)
                         {
-                            ESFields::AddMySQLFieldNotExist($gallery_table_name, $g_fieldname, 'varchar(100) NULL', '');
+                            ESFields::AddMySQLFieldNotExist($gallery_table_name, $g_fieldname, 'varchar(100) null', '');
                             echo '<p>Image Gallery Field "<span style="color:green;">'.$g_fieldname.'</span>" <span style="color:green;">Added.</span></p>';
                         }
 
@@ -350,7 +355,7 @@ function checkTableFields($tableid,$tablename,$tabletitle,$customtablename)
 
                         if(!$g_found)
                         {
-                            ESFields::AddMySQLFieldNotExist($filebox_table_name, $g_fieldname, 'varchar(100) NULL', '');
+                            ESFields::AddMySQLFieldNotExist($filebox_table_name, $g_fieldname, 'varchar(100) null', '');
                             echo '<p>File Box Field "<span style="color:green;">'.$g_fieldname.'</span>" <span style="color:green;">Added.</span></p>';
                         }
 
@@ -365,8 +370,8 @@ function checkTableFields($tableid,$tablename,$tabletitle,$customtablename)
 
         echo '<p>Field "<span style="color:green;">'.$fieldname.'</span>" <span style="color:green;">Added.</span></p>';
     }
-
-    function checkField($ExistingFields,$tablename,$proj_field,$fieldtype,$typeparams,&$languages)
+	
+	function checkField($ExistingFields,$tablename,$proj_field,$fieldtype,$typeparams,&$languages)
     {
 		$db = JFactory::getDBO();
 		
@@ -420,3 +425,5 @@ function checkTableFields($tableid,$tablename,$tabletitle,$customtablename)
                 addField($tablename,$proj_field,$fieldtype,$typeparams);
         }
     }
+
+    

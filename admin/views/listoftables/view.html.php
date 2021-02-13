@@ -42,7 +42,7 @@ class CustomtablesViewListoftables extends JViewLegacy
 			// Include helper submenu
 			CustomtablesHelper::addSubmenu('listoftables');
 		}
-
+		
 		// Assign data to the view
 		$this->items = $this->get('Items');
 		$this->pagination = $this->get('Pagination');

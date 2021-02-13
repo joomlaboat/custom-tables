@@ -56,7 +56,7 @@ class ESFields
             {
                 $AdditionOptions='';
                 if($field[$field_columns->is_nullable]!='NO')
-					$AdditionOptions='NULL';
+					$AdditionOptions='null';
 
                 ESFields::AddMySQLFieldNotExist($tablename, $new_fieldname, $field[$field_columns->data_type], $AdditionOptions);
                 return true;
@@ -246,6 +246,32 @@ class ESFields
                 return true;
 	}
 
+	public static function comparePureFieldTypes($fieldtype1_, $fieldtype2_)
+	{
+		$fieldtype1=strtolower($fieldtype1_);
+		$fieldtype2=strtolower($fieldtype2_);
+		
+		if($fieldtype1 == $fieldtype2)
+			return true;
+		
+		$db = JFactory::getDBO();
+		if($db->serverType == 'postgresql')
+		{
+			if($fieldtype1=='character varying null')
+			{
+				//Remove Text Between Parentheses
+				$fieldtype2_no_par = preg_replace("/\([^)]+\)/","",$fieldtype2); // replace "varchar(255) null" with "varchar null"
+				if($fieldtype2_no_par == 'varchar null')
+					return true;
+			}				
+		}
+		else
+		{
+		}
+		
+		return false;
+	}
+
     public static function getPureFieldType($fieldtype,$typeparams)
 	{
 		$db = JFactory::getDBO();
@@ -254,13 +280,13 @@ class ESFields
 		switch($t)
 		{
 			case 'phponadd':
-				return 'varchar(255) NULL';
+				return 'varchar(255) null';
 			case 'filelink':
-				return 'varchar(255) NULL';
+				return 'varchar(255) null';
             case 'alias':
-				return 'varchar(255) NULL';
+				return 'varchar(255) null';
             case 'color':
-				return 'varchar(8) NULL';
+				return 'varchar(8) null';
 			case 'string':
 				$l=(int)$typeparams;
 
@@ -273,7 +299,7 @@ class ESFields
 				if($l>1024)
 					$l=1024;
 
-				return 'varchar('.$l.') NULL';
+				return 'varchar('.$l.') null';
 
 			break;
 
@@ -290,23 +316,23 @@ class ESFields
 				if($l>1024)
 					$l=1024;
 
-				return 'varchar('.$l.') NULL';
+				return 'varchar('.$l.') null';
 
 			break;
 
 			case 'text':
-				return 'text NULL';
+				return 'text null';
 				break;
 			case 'multilangtext':
-				return 'text NULL';
+				return 'text null';
 				break;
 
 			case 'int':
 				
 				if($db->serverType == 'postgresql')
-					return 'int NULL';
+					return 'int null';
 				else
-					return 'int(11) NULL';
+					return 'int null';
 				
 				break;
 
@@ -316,20 +342,20 @@ class ESFields
 				if($db->serverType == 'postgresql')
 				{
 					if(count($typeparams_arr)==1)
-						return 'numeric(20,'.(int)$typeparams_arr[0].') NULL';
+						return 'numeric(20,'.(int)$typeparams_arr[0].') null';
 					elseif(count($typeparams_arr)==2)
-						return 'numeric('.(int)$typeparams_arr[1].','.(int)$typeparams_arr[0].') NULL';
+						return 'numeric('.(int)$typeparams_arr[1].','.(int)$typeparams_arr[0].') null';
 					else
-						return 'numeric(20,2) NULL';
+						return 'numeric(20,2) null';
 				}
 				else
 				{
 					if(count($typeparams_arr)==1)
-						return 'decimal(20,'.(int)$typeparams_arr[0].') NULL';
+						return 'decimal(20,'.(int)$typeparams_arr[0].') null';
 					elseif(count($typeparams_arr)==2)
-						return 'decimal('.(int)$typeparams_arr[1].','.(int)$typeparams_arr[0].') NULL';
+						return 'decimal('.(int)$typeparams_arr[1].','.(int)$typeparams_arr[0].') null';
 					else
-						return 'decimal(20,2) NULL';
+						return 'decimal(20,2) null';
 				}
 
 				break;
@@ -338,7 +364,7 @@ class ESFields
 				$typeparams_arr=explode(',',$typeparams);
 
 				if(count($typeparams_arr)<3)
-					return 'varchar(255) NULL';
+					return 'varchar(255) null';
 
 				$l=(int)$typeparams_arr[2];
 
@@ -351,138 +377,138 @@ class ESFields
 				if($l>65535)
 					$l=65535;
 
-				return 'varchar('.$l.') NULL';
+				return 'varchar('.$l.') null';
 
 				break;
 
 			case 'records':
-				return 'varchar(255) NULL';
+				return 'varchar(255) null';
 				break;
 
             //case 'post':
-				//return 'text NULL';
+				//return 'text null';
 				//break;
 
 			case 'sqljoin':
 				if($db->serverType == 'postgresql')
-					return 'int NULL';
+					return 'int null';
 				else
-					return 'int(10) NULL';
+					return 'int(10) null';
 				
 				break;
 
 			case 'file':
-				return 'varchar(255) NULL';
+				return 'varchar(255) null';
 				break;
 
 			case 'image':
 				if($db->serverType == 'postgresql')
-					return 'BIGINT NULL';
+					return 'BIGINT null';
 				else
-					return 'bigint(20) NULL';
+					return 'bigint(20) null';
 					
 				break;
 
 			case 'checkbox':
 				if($db->serverType == 'postgresql')
-					return 'SMALLINT NOT NULL DEFAULT 0';
+					return 'SMALLINT not null default 0';
 				else
-					return 'tinyint(1) NOT NULL DEFAULT 0';
+					return 'tinyint(1) not null default 0';
 				
 				break;
 
 			case 'radio':
-				return 'varchar(255) NULL';
+				return 'varchar(255) null';
 				break;
 
 			case 'email':
-				return 'varchar(255) NULL';
+				return 'varchar(255) null';
 				break;
 
 			case 'url':
-				return 'varchar(1024) NULL';
+				return 'varchar(1024) null';
 				break;
 
 
 			case 'date':
-				return 'date NULL';
+				return 'date null';
 				break;
             
 		    case 'time':
 				if($db->serverType == 'postgresql')
-					return 'int NULL';
+					return 'int null';
 				else
-					return 'int(11) NULL';
+					return 'int(11) null';
 					
 				break;
 
 			case 'creationtime':
 				if($db->serverType == 'postgresql')
-					return 'TIMESTAMP NULL';
+					return 'TIMESTAMP null';
 				else
-					return 'datetime NULL';
+					return 'datetime null';
 					
 				break;
 
 			case 'changetime':
 				if($db->serverType == 'postgresql')
-					return 'TIMESTAMP NULL';
+					return 'TIMESTAMP null';
 				else
-					return 'datetime NULL';
+					return 'datetime null';
 					
 				break;
 
 			case 'lastviewtime':
 				if($db->serverType == 'postgresql')
-					return 'TIMESTAMP NULL';
+					return 'TIMESTAMP null';
 				else
-					return 'datetime NULL';
+					return 'datetime null';
 					
 				break;
 
 			case 'viewcount':
 				if($db->serverType == 'postgresql')
-					return 'BIGINT unsigned NULL';
+					return 'BIGINT unsigned null';
 				else
-					return 'bigint(20) unsigned NULL';
+					return 'bigint(20) unsigned null';
 					
 				break;
 
 			case 'userid': //current user id (auto asigned)
 
 				if($db->serverType == 'postgresql')
-					return 'BIGINT unsigned NULL';
+					return 'BIGINT unsigned null';
 				else
-					return 'bigint(20) unsigned NULL';
+					return 'bigint(20) unsigned null';
 
 			case 'user': //user (selection)
 				if($db->serverType == 'postgresql')
-					return 'BIGINT unsigned NULL';
+					return 'BIGINT unsigned null';
 				else
-					return 'bigint(20) unsigned NULL';
+					return 'bigint(20) unsigned null';
 
 			case 'usergroup': //user group (selection)
 				if($db->serverType == 'postgresql')
-					return 'INT unsigned NULL';
+					return 'INT unsigned null';
 				else
-					return 'int(11) unsigned NULL';
+					return 'int(11) unsigned null';
 
 			case 'usergroups': //user groups (selection)
-				return 'varchar(255) NULL';
+				return 'varchar(255) null';
 
             case 'language':
-				return 'varchar(5) NULL';
+				return 'varchar(5) null';
 				break;
 
 			case 'server':
-				return 'varchar(255) NULL';
+				return 'varchar(255) null';
 				break;
 
 			case 'id':
 				if($db->serverType == 'postgresql')
-					return 'BIGINT unsigned NULL';
+					return 'BIGINT unsigned null';
 				else
-					return 'bigint(20) unsigned NULL';
+					return 'bigint(20) unsigned null';
 					
 				break;
 
@@ -492,50 +518,50 @@ class ESFields
 
 			case 'imagegallery':
 				if($db->serverType == 'postgresql')
-					return 'BIGINT unsigned NULL';
+					return 'BIGINT unsigned null';
 				else
-					return 'bigint(20) unsigned NULL';
+					return 'bigint(20) unsigned null';
 					
 				break;
 
 			case 'filebox':
 				if($db->serverType == 'postgresql')
-					return 'BIGINT unsigned NULL';
+					return 'BIGINT unsigned null';
 				else
-					return 'bigint(20) unsigned NULL';
+					return 'bigint(20) unsigned null';
 					
 				break;
 
 			case 'article':
 				if($db->serverType == 'postgresql')
-					return 'BIGINT unsigned NULL';
+					return 'BIGINT unsigned null';
 				else
-					return 'bigint(20) unsigned NULL';
+					return 'bigint(20) unsigned null';
 					
 				break;
 
 			case 'multilangarticle':
 				if($db->serverType == 'postgresql')
-					return 'BIGINT unsigned NULL';
+					return 'BIGINT unsigned null';
 				else
-					return 'bigint(20) unsigned NULL';
+					return 'bigint(20) unsigned null';
 					
 				break;
 
 			case 'md5':
-				return 'char(32) NULL';
+				return 'char(32) null';
 				break;
 
 			case 'log':
-				return 'text NOT NULL';
+				return 'text not null';
 				break;
 
             case '_published':
 
 				if($db->serverType == 'postgresql')
-					return 'SMALLINT NOT NULL DEFAULT 1';
+					return 'SMALLINT not null default 1';
 				else
-					return 'tinyint(1) NOT NULL DEFAULT 1';
+					return 'tinyint(1) not null default 1';
 					
 				break;
             
@@ -545,13 +571,13 @@ class ESFields
                 if(isset($typeparams_arr[1]) and $typeparams_arr[1]=='dynamic')
                     return ''; //do not store the field values
                 else
-                    return 'varchar(255) NULL';
+                    return 'varchar(255) null';
                 
                 break;
 
 			default:
 
-				return 'varchar(255) NULL';
+				return 'varchar(255) null';
 				break;
 		}
 
@@ -751,14 +777,14 @@ class ESFields
 		$tName='#__customtables_gallery_'.$establename.'_'.$esfieldname;
 		$db = JFactory::getDBO();
 
-		$query = 'CREATE TABLE IF NOT EXISTS '.$tName.' (
-  photoid bigint(20) NOT NULL auto_increment,
-  listingid bigint(20) NOT NULL,
-  ordering int(10) NOT NULL,
-  photo_ext varchar(10) NOT NULL,
-  title varchar(100) NOT NULL,
+		$query = 'CREATE TABLE IF not EXISTS '.$tName.' (
+  photoid bigint(20) not null auto_increment,
+  listingid bigint(20) not null,
+  ordering int(10) not null,
+  photo_ext varchar(10) not null,
+  title varchar(100) not null,
    PRIMARY KEY  (photoid)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  default CHARSET=utf8 AUTO_INCREMENT=1 ;
 ';
 		$db->setQuery( $query );
 		$db->execute();
@@ -772,14 +798,14 @@ class ESFields
 		$tName='#__customtables_filebox_'.$establename.'_'.$esfieldname;
 		$db = JFactory::getDBO();
 
-		$query = 'CREATE TABLE IF NOT EXISTS '.$tName.' (
-  fileid bigint(20) NOT NULL auto_increment,
-  listingid bigint(20) NOT NULL,
-  ordering int(10) NOT NULL,
-  file_ext varchar(10) NOT NULL,
-  title varchar(100) NOT NULL,
+		$query = 'CREATE TABLE IF not EXISTS '.$tName.' (
+  fileid bigint(20) not null auto_increment,
+  listingid bigint(20) not null,
+  ordering int(10) not null,
+  file_ext varchar(10) not null,
+  title varchar(100) not null,
    PRIMARY KEY  (fileid)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  default CHARSET=utf8 AUTO_INCREMENT=1 ;
 ';
 		$db->setQuery( $query );
 		$db->execute();
@@ -1279,5 +1305,35 @@ class ESFields
 		
         return '*, '.$realfieldname_query;
 	}
+	
+	
+	public static function checkField($ExistingFields,$realtablename,$proj_field,$type)
+    {
+		$db = JFactory::getDBO();
+		
+		if($db->serverType == 'postgresql')
+			$field_columns=(object)['columnname' => 'column_name', 'data_type'=>'data_type', 'is_nullable'=>'is_nullable', 'default'=>'column_default'];
+		else
+			$field_columns=(object)['columnname' => 'Field', 'data_type'=>'Type', 'is_nullable'=>'Null', 'default'=>'Default'];
+
+        $found=false;
+        foreach($ExistingFields as $existing_field)
+        {
+            if($proj_field==$existing_field[$field_columns->columnname])
+            {
+                $found=true;
+                break;
+            }
+        }
+
+        if(!$found)
+		{
+            echo $proj_field;
+			$query='ALTER TABLE '.$realtablename.' ADD COLUMN '.$proj_field.' '.$type;
+
+			$db->setQuery($query);
+			$db->execute();
+		}
+    }
 
 }

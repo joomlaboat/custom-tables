@@ -56,27 +56,28 @@ CREATE TABLE IF NOT EXISTS #__customtables_options (
 CREATE TABLE IF NOT EXISTS #__customtables_tables (
 	id INT NOT NULL DEFAULT NEXTVAL ('#__customtables_tables_seq'),
 	asset_id INT NOT NULL DEFAULT 0 ,
-	customphp VARCHAR(1024) NOT NULL DEFAULT '',
-	description TEXT NOT NULL,
-	tablecategory INT NULL DEFAULT 0,
+	customphp VARCHAR(1024) NULL DEFAULT NULL,
+	description TEXT NULL DEFAULT NULL,
+	tablecategory INT NULL DEFAULT NULL,
 	tablename VARCHAR(255) NOT NULL DEFAULT '',
-	customtablename VARCHAR(255) NOT NULL DEFAULT '',
-	tabletitle VARCHAR(255) NOT NULL DEFAULT '',
-	params text NOT NULL DEFAULT '',
+	customtablename VARCHAR(100) NULL DEFAULT NULL,
+	customidfield VARCHAR(100) NULL DEFAULT NULL,
+	tabletitle VARCHAR(255) NULL DEFAULT NULL,
+	params text NULL DEFAULT NULL,
 	published SMALLINT NOT NULL DEFAULT 1,
 	created_by INT NOT NULL DEFAULT 0,
 	modified_by INT NOT NULL DEFAULT 0,
 	created TIMESTAMP(0) NULL DEFAULT NULL,
 	modified TIMESTAMP(0) NULL DEFAULT NULL,
-	checked_out int NOT NULL DEFAULT 0,
+	checked_out INT NOT NULL DEFAULT 0,
 	checked_out_time TIMESTAMP(0) NULL DEFAULT NULL,
 	version INT NOT NULL DEFAULT 1,
 	hits INT NOT NULL DEFAULT 0,
 	ordering INT NOT NULL DEFAULT 0,
-	allowimportcontent smallint NOT NULL default '1',
+	allowimportcontent SMALLINT NOT NULL default 0,
 
 	PRIMARY KEY  (id)
-)  ;
+);
 
 CREATE TABLE IF NOT EXISTS #__customtables_fields (
 	id INT check (id > 0) NOT NULL DEFAULT NEXTVAL ('#__customtables_fields_seq'),
