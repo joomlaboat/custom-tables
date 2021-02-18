@@ -88,7 +88,8 @@ class CustomtablesController extends JControllerLegacy
 				'layouts' => 'listoflayouts',
 				'fields' => 'listoffields',
 				'records' => 'listofrecords',
-				'documentation' => 'documentation'
+				'documentation' => 'documentation',
+				'databasecheck' => 'databasecheck'
 					);
 			// check if this is a list view
 			if (in_array($view, $views))

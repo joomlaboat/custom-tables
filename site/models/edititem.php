@@ -31,7 +31,6 @@ require_once($site_libpath.'logs.php');
 $libpath=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tagprocessor'.DIRECTORY_SEPARATOR;
 require_once($libpath.'valuetags.php');
 
-
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'filtering.php');
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'misc.php');
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'models'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'save.php');
@@ -1005,26 +1004,8 @@ class CustomTablesModelEditItem extends JModelLegacy {
 				$savequery[]='published='.$publishstatus;
 
 			$db = JFactory::getDBO();
-		
-			if($db->serverType == 'postgresql')
-			{
-				$set_fieldnames=array();
-				$set_values=array();
-				foreach($savequery as $set)
-				{
-					$break_sets = explode('=',$set);
-					$set_fieldnames[]=$break_sets[0];
-					$set_values[]=$break_sets[1];
-				}
-				$query='INSERT INTO '.$this->realtablename.' ('.implode(',',$set_fieldnames).') VALUES ('.implode(',',$set_values).')';
-			}
-			else
-				$query='INSERT '.$this->realtablename.' SET '.implode(', ',$savequery);
-				
-			$db->setQuery( $query );
-			$db->execute();
 			
-			$id_temp = $db->insertid();
+			$id_temp = ESTables::insertRecords($this->realtablename,$this->tablerow['realidfieldname'],$savequery);
 		}
 
 		else

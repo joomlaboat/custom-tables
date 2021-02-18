@@ -11,62 +11,53 @@ defined('_JEXEC') or die('Restricted access');
 
 class CustomTablesFileMethods
 {
+	static public function FileExtenssion($src,$allowedExtensions='doc docx pdf txt xls xlsx psd ppt pptx png mp3')
+	{
+		$name = explode(".", strtolower($src));
+		if(count($name)<2)
+			return ''; //not allowed
+	
+		$file_ext = $name[count($name)-1];
+		$extensions = explode(" ", $allowedExtensions);
+	
+		if(!in_array($file_ext,$extensions))
+			return ''; //not allowed
 
-static public function FileExtenssion($src,$allowedExtensions='doc docx pdf txt xls xlsx psd ppt pptx png mp3')
-{
-	$name = explode(".", strtolower($src));
-	if(count($name)<2)
-		return ''; //not allowed
-	
-	$file_ext = $name[count($name)-1];
-	$extensions = explode(" ", $allowedExtensions);
-	
-	if(!in_array($file_ext,$extensions))
-		return ''; //not allowed
+		return $file_ext;
+	}
 
-	return $file_ext;
-}
+	static public function DeleteExistingFileBoxFile($filefolder, $estableid, $fileboxname, $fileid, $ext)
+	{
+		$filename=$filefolder.DIRECTORY_SEPARATOR.$estableid.'_'.$fileboxname.'_'.$fileid.'.'.$ext;
+	
+		if(file_exists($filename))
+			unlink($filename);
+	}
 
-static public function DeleteExistingFileBoxFile($filefolder, $estableid, $fileboxname, $fileid, $ext)
-{
+	static public function getFileExtByID($establename, $estableid, $fileboxname,$id)
+	{
+		$db = JFactory::getDBO();
 	
-	$filename=$filefolder.DIRECTORY_SEPARATOR.$estableid.'_'.$fileboxname.'_'.$fileid.'.'.$ext;
-	
-	if(file_exists($filename))
-		unlink($filename);
-	
-
-}
-
-static public function getFileExtByID($establename, $estableid, $fileboxname,$id)
-{
-	$db = JFactory::getDBO();
-	
-	$fileboxtablename='#__customtables_filebox_'.$establename.'_'.$fileboxname;
-	$query = 'SELECT file_ext FROM '.$fileboxtablename.' WHERE fileid='.(int)$id.' LIMIT 1';
-	$db->setQuery($query);
-	if (!$db->query())    die( $db->stderr());
-	$filerows=$db->loadObjectList();
-	if(count($filerows)!=1)
-		return '';
-	
-	$rec=$filerows[0];
-	
-	return $rec->file_ext;
-	
-}
-
-static public function DeleteFileBoxFiles($establename, $estableid, $fileboxname,$typeparams)
-{
+		$fileboxtablename='#__customtables_filebox_'.$establename.'_'.$fileboxname;
+		$query = 'SELECT file_ext FROM '.$fileboxtablename.' WHERE fileid='.(int)$id.' LIMIT 1';
+		$db->setQuery($query);
+		$filerows=$db->loadObjectList();
+		if(count($filerows)!=1)
+			return '';
 		
+		$rec=$filerows[0];
+		return $rec->file_ext;
+	}
+
+	static public function DeleteFileBoxFiles($filebox_table_name, $estableid, $fileboxname, $typeparams)
+	{
 		$filefolder=JPATH_SITE.DIRECTORY_SEPARATOR.str_replace('/',DIRECTORY_SEPARATOR,$typeparams);
 		
 		$db = JFactory::getDBO();
-		$fileboxtablename='#__customtables_filebox_'.$establename.'_'.$fileboxname;
-												
-		$query = 'SELECT fileid FROM '.$fileboxtablename;
+
+		$query = 'SELECT fileid FROM '.$filebox_table_name;
 		$db->setQuery($query);
-		if (!$db->query())    die( $db->stderr());
+
 		$filerows=$db->loadObjectList();
 										
 		foreach($filerows as $filerow)
@@ -79,7 +70,7 @@ static public function DeleteFileBoxFiles($establename, $estableid, $fileboxname
 				$filerow->file_ext
 			);
 		}
-}
+	}
 
 
 

@@ -372,12 +372,8 @@ class CustomtablesModelFields extends JModelAdmin
 		foreach($pks as $fieldid)
 		{
 			$data=ESFields::getFieldRow($fieldid);
-			$tableid=(int)$data['tableid'];
-
-			ESFields::deleteESField_byID($tableid,$fieldid);
+			ESFields::deleteESField_byID($fieldid);
 		}
-
-
 
 		return true;
 	}
@@ -878,7 +874,7 @@ class CustomtablesModelFields extends JModelAdmin
 		
 		if($table_row->customtablename=='') //do not create fields to third-purty tables
 		{
-			if(!$this->update_physical_field($table_row->tablename,$fieldid,$data))
+			if(!$this->update_physical_field($table_row,$fieldid,$data))
 			{
 				//Cannot create
 				return false;
@@ -887,42 +883,49 @@ class CustomtablesModelFields extends JModelAdmin
 
 		if (parent::save($data))
 		{
-
 			return true;
 		}
 		return false;
 	}
 
 
-	protected function update_physical_field($establename,$fieldid,$data)
+	protected function update_physical_field($table_row,$fieldid,$data)
 	{
 
 		$db = JFactory::getDBO();
 
-		$mysqltablename=$db->getPrefix().'customtables_table_'.$establename;
-
+		$realtablename=$table_row->realtablename;//$db->getPrefix().'customtables_table_'.$establename;
+		$realtablename=str_replace('#__',$db->getPrefix(),$realtablename);
 
 		if($fieldid!=0)
 		{
-			$old_data=ESFields::getFieldRow($fieldid);
-			$ex_type=$old_data->type;
-			$ex_typeparams=$old_data->typeparams;
+			$fieldrow=ESFields::getFieldRow($fieldid);
+			$ex_type=$fieldrow->type;
+			$ex_typeparams=$fieldrow->typeparams;
+			$realfieldname=$fieldrow->realfieldname;
 		}
 		else
 		{
 			$ex_type='';
 			$ex_typeparams='';
+			$realfieldname='';
+			
+			if($table_row->customtablename=='')
+				$realfieldname='es_'.$data['fieldname']; //Tablerow is not loaded and custom tables name not set so we assume that the field starts with es_
 		}
-
+		
 		$new_typeparams=$data['typeparams'];
 		$fieldtitle=$data['fieldtitle'];
-		$esfieldname=$data['fieldname'];
+		
 		//---------------------------------- Convert Field
 
 		$new_type=$data['type'];
 		$PureFieldType=ESFields::getPureFieldType($new_type, $new_typeparams);
 
-		$fieldfound=ESFields::checkIfFieldExists($mysqltablename,'es_'.$esfieldname,false);
+		if($realfieldname!='')
+			$fieldfound=ESFields::checkIfFieldExists($realtablename,$realfieldname,false);
+		else
+			$fieldfound=false;
 
 		if($fieldid!=0 and $fieldfound)
 		{
@@ -934,7 +937,7 @@ class CustomtablesModelFields extends JModelAdmin
 				$convert_ok=true;
 			}
 			else
-				$convert_ok=ESFields::ConvertFieldType($establename,$esfieldname,$ex_type, $ex_typeparams, $ex_PureFieldType, $new_type, $new_typeparams,$PureFieldType,$fieldtitle);
+				$convert_ok=ESFields::ConvertFieldType($realtablename,$realfieldname,$ex_type, $ex_typeparams, $ex_PureFieldType, $new_type, $new_typeparams,$PureFieldType,$fieldtitle);
 
 			if(!$convert_ok)
 			{
@@ -969,23 +972,22 @@ class CustomtablesModelFields extends JModelAdmin
 
 		$msg='';
 
-
-
 		if($fieldid==0 or !$fieldfound)
 		{
 			//Add Field
-			ESFields::addESField($establename,$esfieldname,$new_type,$PureFieldType,$fieldtitle);
+			
+			ESFields::addESField($realtablename,$realfieldname,$new_type,$PureFieldType,$fieldtitle);
 		}
 
 
 		if($new_type=='sqljoin')
 		{
 				//Create Index if needed
-				ESFields::addIndexIfNotExist($establename,$esfieldname);
+				ESFields::addIndexIfNotExist($realtablename,$realfieldname);
 
 				//Add Foreign Key
 				$msg='';
-				ESFields::addForeignKey($establename,$esfieldname,$new_typeparams,'','id',$msg);
+				ESFields::addForeignKey($realtablename,$realfieldname,$new_typeparams,'','id',$msg);
 
 
 		}
@@ -993,11 +995,11 @@ class CustomtablesModelFields extends JModelAdmin
 		if($new_type=='user' or $new_type=='userid')
 		{
 				//Create Index if needed
-				ESFields::addIndexIfNotExist($establename,$esfieldname);
+				ESFields::addIndexIfNotExist($realtablename,$realfieldname);
 
 				//Add Foreign Key
 				$msg='';
-				ESFields::addForeignKey($establename,$esfieldname,'','#__users','id',$msg);
+				ESFields::addForeignKey($realtablename,$realfieldname,'','#__users','id',$msg);
 
 
 		}

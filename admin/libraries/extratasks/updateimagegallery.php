@@ -71,10 +71,10 @@ class updateImageGallery
 		return (int)$recs[0]['c'];
 	}
 	
-	protected static function processImages($establename,$esfieldname,$old_typeparams, $new_typeparams, $old_ImageFolder, $new_ImageFolder, $startindex, $stepsize, $deleteOriginals=false)
+	protected static function processImages($realtablename,$realfieldname,$old_typeparams, $new_typeparams, $old_ImageFolder, $new_ImageFolder, $startindex, $stepsize, $deleteOriginals=false)
 	{
 		$db = JFactory::getDBO();
-		$query = 'SELECT es_'.$esfieldname.' FROM #__customtables_table_'.$establename.' WHERE es_'.$esfieldname.'>0';
+		$query = 'SELECT '.$realfieldname.' FROM '.$realtablename.' WHERE '.$realfieldname.'>0';
 		$db->setQuery($query);
 
 		$imagelist=$db->loadAssocList();
@@ -85,7 +85,7 @@ class updateImageGallery
 
 		foreach($imagelist as $img)
 		{
-			$status=updateImages::processImage($imgMethods,$old_imagesizes,$new_imagesizes,$img['es_'.$esfieldname],$old_ImageFolder, $new_ImageFolder);
+			$status=updateImages::processImage($imgMethods,$old_imagesizes,$new_imagesizes,$img[$realfieldname],$old_ImageFolder, $new_ImageFolder);
 			//if $status is null then all good, status is a text string with error message if any
 			if($status!=null)
 				return $status;
@@ -243,120 +243,4 @@ class updateImageGallery
 		return null;
 	
 	}
-	
-	function doResizeImageGallery($imageparams, $ex_typeparams,$galleryname)
-	{
-		$imagemethods=new ExtraSearchImageMethods;
-		
-		if(strlen($ex_typeparams)>0)
-		{
-			$imagemethods->DeleteGalleryImages($this->establename,$this->estableid,$galleryname,$ex_typeparams, false);
-		}
-		
-		$TypeParamsArr=explode('|',$imageparams);
-		$imagefolder=$TypeParamsArr[0];
-		if(!isset($TypeParamsArr[1]))
-			return false;
-		
-		//Schadule Resize Process
-		JRequest::setVar('view', 'tablefieldedit');
-		JRequest::setVar( 'task', 'galleryresizeprocess');
-		JRequest::setVar( 'galleryname',$galleryname);
-		JRequest::setVar( 'imageparams',str_replace('#','$',$imageparams));
-		
-		//$imagemethods->CreateNewGalleryImages($this->establename,$this->estableid, $galleryname, $imagefolder,$imageparams);
-		
-		
-	}
-	
-	function doResizeImageGalleryProcess()
-	{
-		
-		$this->estableid = JRequest::getInt( 'tableid',0);
-		$this->establename = $this->ESTable->getTableName($this->estableid);
-		
-		$galleryname = JRequest::getCmd( 'galleryname');
-		$imageparams = JRequest::getVar( 'imageparams');
-		$startindex = JRequest::getInt( 'startindex',0);
-		$total = JRequest::getInt( 'total',0);
-		
-		
-		
-		$imagemethods=new ExtraSearchImageMethods;
-		
-		$TypeParamsArr=explode('|',$imageparams);
-		
-		/*
-		if(!isset($TypeParamsArr[1]))
-		{
-			//this is about comparing images 
-			
-			return false;
-		}
-		*/
-		
-		if(!isset($TypeParamsArr[1]))
-			return true;
-		
-		$pair=explode(',',$TypeParamsArr[1]);
-		
-		if(!isset($pair[1]))
-			return true;
-		
-		$imagefolderword=$pair[1];
-		//$imagefolder=JPATH_SITE.DS.'images'.str_replace('/',DS,$imagefolderword);
-		$imagefolder=JPATH_SITE.DS.str_replace('/',DS,$imagefolderword);
-		
-		echo '<h1>Resize Image Gallery Process</h1>';
-
-		
-		$step=$this->imageprocstep;
-		$total=$imagemethods->CreateNewGalleryImages($this->establename,$this->estableid, $galleryname, $imagefolder,str_replace('$','#',$imageparams),$startindex,$step);
-		
-		$startindex+=$this->imageprocstep;
-		if($startindex>$total)
-			$startindex=$total;
-
-		echo '<h2>Progress: '.$startindex.' of '.$total.'</h2>';
-
-		
-		
-		if($startindex<$total)
-		{
-			$link 	= 'index.php?option=com_extrasearch'
-					.'&view=tablefieldedit'
-					.'&task=tablefieldedit.galleryresizeprocess'
-					.'&tableid='.$this->estableid
-					.'&galleryname='.$galleryname
-					.'&imageparams='.$imageparams
-					.'&total='.$total
-					.'&startindex='.$startindex
-					;
-
-		
-		echo '
-		<script language="javascript">
-		
-		function imageresizeerstart() {
-			window.location = "'.$link.'";
-		}
-		window.onload = imageresizeerstart;
-		</script> 
-		';
-		
-		
-		
-		}
-		
-		
-		
-		
-		JRequest::setVar( 'total',$total);
-		if($startindex>=$total)
-			return -1; //finished
-		
-		return $startindex;
-	}
-	
-
 }

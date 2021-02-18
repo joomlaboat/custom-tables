@@ -14,50 +14,42 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.
 
 class JHTMLESUser
 {
+	static public function render($control_name, $value,$style,$cssclass, $usergroup='', $attribute='',$mysqlwhere='',$mysqljoin='')
+    {
+		$db = JFactory::getDBO();
+		$query = $db->getQuery(true);
+		$query->select('#__users.id AS id, #__users.name AS name');
+		$query->from('#__users ');
 
+		if($usergroup!='')
+		{
+			$query->join('INNER', '#__user_usergroup_map ON user_id=id ');
+			$query->join('INNER', '#__usergroups ON #__usergroups.id = #__user_usergroup_map.group_id ');
+					
+			$ug=explode(",",$usergroup);
+			$w=array();
+			foreach($ug as $u)
+				$w[]='#__usergroups.title='.$db->quote($u);
 
-        static public function render($control_name, $value,$style,$cssclass, $usergroup='', $attribute='',$mysqlwhere='',$mysqljoin='')
-        {
-				$db = JFactory::getDBO();
+			if(count($w)>0)
+				$query->where(' '.implode(' OR ',$w).' ');
+		}
 
-				$query = $db->getQuery(true);
-				$query->select('#__users.id AS id, #__users.name AS name');
-	 			$query->from('#__users ');
+		if($mysqljoin!='')
+			$query->join('INNER', $mysqljoin);
 
-				if($usergroup!='')
-				{
-						$query->join('INNER', '#__user_usergroup_map ON user_id=id ');
-						$query->join('INNER', '#__usergroups ON #__usergroups.id = #__user_usergroup_map.group_id ');
+		if($mysqlwhere!='')
+			$query->where($mysqlwhere);
 
-						$ug=explode(",",$usergroup);
-						$w=array();
-						foreach($ug as $u)
-							$w[]='#__usergroups.title="'.$u.'"';
+		$query->group('#__users.id');
+		$query->order('#__users.name');
+				
+		$db->setQuery($query);
 
+		$options=$db->loadObjectList();
+		$options=array_merge(array(array('id'=>'','name'=>'- '.JText ::_( 'COM_CUSTOMTABLES_SELECT' ))),$options);
 
-						if(count($w)>0)
-							$query->where(' '.implode(' OR ',$w).' ');
-				}
+		return JHTML::_('select.genericlist', $options, $control_name, $cssclass.' style="'.$style.'" '.$attribute.' ', 'id', 'name', $value,$control_name);
 
-				if($mysqljoin!='')
-						$query->join('INNER', $mysqljoin);
-
-				if($mysqlwhere!='')
-						$query->where($mysqlwhere);
-
-				$query->group('#__users.id');
-				$query->order('#__users.name');
-
-				$db->setQuery($query);
-				//if (!$db->query())    die( $db->stderr());
-
-				$options=$db->loadObjectList();
-
-				$options=array_merge(array(array('id'=>'','name'=>'- '.JText ::_( 'COM_CUSTOMTABLES_SELECT' ))),$options);
-
-				return JHTML::_('select.genericlist', $options, $control_name, $cssclass.' style="'.$style.'" '.$attribute.' ', 'id', 'name', $value,$control_name);
-
-        }
-
-
+	}
 }

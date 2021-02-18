@@ -48,25 +48,20 @@ class ESSearchBarClass
 
 		$this->isLoader=$isLoader;
 
-
 		//Languages
 		$this->LangMisc	= new ESLanguages;
 		$this->LanguageList=$this->LangMisc->getLanguageList();
 
 		if($this->isLoader)
-		{
-
 			$this->langpostfix=$jinput->getCmd('langpostfix','');
-		}
 		else
 			$this->langpostfix=$this->LangMisc->getLangPostfix();
-
 
 		//get establename
 		if($jinput->get('establename','','CMD'))
 			$this->establename=$jinput->get('establename','','CMD');
 		else
-			$this->establename=strtolower(trim(preg_replace("/[^a-zA-Z]/", "", $params->get('establename'))));
+			$this->establename=strtolower(trim(preg_replace('/[^a-zA-Z]/', '', $params->get('establename'))));
 
 
 		$this->modulename='essearchbar_'.$this->moduleid;
@@ -126,8 +121,8 @@ class ESSearchBarClass
 		$jinput=JFactory::getApplication()->input;
 
 		$WebsiteRoot=JURI::root(true);
-		$WebsiteRoot=str_replace("/components/com_customtables/libraries/","",$WebsiteRoot);
-		$WebsiteRoot=str_replace("/components/com_customtables/libraries","",$WebsiteRoot);
+		$WebsiteRoot=str_replace('/components/com_customtables/libraries/','',$WebsiteRoot);
+		$WebsiteRoot=str_replace('/components/com_customtables/libraries','',$WebsiteRoot);
 
 		if($WebsiteRoot=='' or $WebsiteRoot[strlen($WebsiteRoot)-1]!='/') //Root must have slash / in the end
 			$WebsiteRoot.='/';
@@ -185,7 +180,6 @@ class ESSearchBarClass
 		}
 		function setWhereList()
 		{
-
 			var value="";
 			var t="";
 			var i=0;
@@ -382,7 +376,6 @@ class ESSearchBarClass
 		else
 			$this->where_arr=array();
 
-
 		$wherelist=$jinput->getString('wherelist');
 
 		if($wherelist!='')
@@ -392,23 +385,17 @@ class ESSearchBarClass
 		else
 			$this->wherelist_arr=array();
 
-
 		$value=$jinput->getCmd('value');
 		$fieldname=$jinput->getCmd('fieldname','');
 		$fieldraw=$this->getFieldRow($fieldname);
 
-
 		$where=$this->getWhereByFieldType($value, $fieldraw);
-
 
 		if($where!='')
 			$this->where_arr[]=$where;
 
 		if($value!='')
 			$this->wherelist_arr[]=$fieldname.'*'.$value;
-
-
-
 	}
 
 
@@ -462,8 +449,7 @@ class ESSearchBarClass
 
 	static protected function getJSForFieldType_sqljoin($modulename,$count,$fieldname)
 	{
-
-						echo '
+		echo '
 						var obj_records=document.getElementById("'.$modulename.'_'.$count.'_obj");
 						t=obj_records.value;
 						';
@@ -487,11 +473,8 @@ class ESSearchBarClass
 		$outputresult='';
 		$fieldindex=0;
 
-
 		foreach($this->fieldlist as $fld)
 		{
-
-
 			if($fld['parentid']==$parent)
 			{
 				$count++;
@@ -675,7 +658,7 @@ class ESSearchBarClass
 
 	function getWhereByFieldType($value, &$fieldrow)
 	{
-
+		$db = JFactory::getDBO();
 
 		if($value=='')
 			return '';
@@ -683,11 +666,11 @@ class ESSearchBarClass
 		switch($fieldrow['type'])
 		{
 			case 'user' :
-				return 'es_'.$fieldrow['fieldname'].'=='.(int)$value;
+				return $fieldrow['realfieldname'].'=='.(int)$value;
 				break;
 
 			case 'userid' :
-				return 'es_'.$fieldrow['fieldname'].'=='.(int)$value;
+				return $fieldrow['realfieldname'].'=='.(int)$value;
 				break;
 
 			case 'checkbox' :
@@ -697,87 +680,77 @@ class ESSearchBarClass
 				{
 					//This will work out situations when "All or Checked" is needed
 					if($value=='true')
-						return 'es_'.$fieldrow['fieldname'].'';
+						return $fieldrow['realfieldname'];
 				}
 				elseif($fieldrow['essb_option']=='false')
 				{
 					//This will work out situations when "Unchecked or All" is needed
 					if($value!='true')
-						return '!es_'.$fieldrow['fieldname'].'';
+						return '!'.$fieldrow['realfieldname'];
 				}
 				elseif($fieldrow['essb_option']=='any')
 				{
 					//This will work out situations when "Checked or Unchecked or All" is needed
 					if($value=='true')
-						return 'es_'.$fieldrow['fieldname'].'';
+						return $fieldrow['realfieldname'];
 
 					if($value=='false')
-						return '!es_'.$fieldrow['fieldname'].'';
+						return '!'.$fieldrow['realfieldname'];
 				}
 				else
 				{
 					if($value=='true')
-						return 'es_'.$fieldrow['fieldname'].'';
+						return $fieldrow['realfieldname'];
 					else
-						return '!es_'.$fieldrow['fieldname'].'';
+						return '!'.$fieldrow['realfieldname'];
 				}
 
 			break;
 
 
 			case 'string' :
-				return 'INSTR(es_'.$fieldrow['fieldname'].', "'.$value.'")';
+				return 'INSTR('.$fieldrow['realfieldname'].', '.$db->quote($value).')';
 
 			case 'phponadd' :
-				return 'INSTR(es_'.$fieldrow['fieldname'].', "'.$value.'")';
+				return 'INSTR('.$fieldrow['realfieldname'].', '.$db->quote($value).')';
 
 			case 'phponchange' :
-				return 'INSTR(es_'.$fieldrow['fieldname'].', "'.$value.'")';
+				return 'INSTR('.$fieldrow['realfieldname'].', '.$db->quote($value).')';
 
-			break;
 			case 'multilangstring' :
-				return 'INSTR(es_'.$fieldrow['fieldname'].$this->langpostfix.', "'.$value.'")';
+				return 'INSTR('.$fieldrow['realfieldname'].$this->langpostfix.', '.$db->quote($value).')';
 
 			break;
 
 			case 'customtables' :
 				$typeparams=explode(',',$fieldrow['typeparams']);
 				if($typeparams[0]!='')
-					return 'INSTR(es_'.$fieldrow['fieldname'].', ",'.$value.'.")';
+					return 'INSTR('.$fieldrow['realfieldname'].', '.$db->quote(','.$value.'.').')';
 
 			break;
 
-
-
 			case 'records' :
 
-				return 'INSTR(es_'.$fieldrow['fieldname'].', "'.$value.',")';
+				return 'INSTR('.$fieldrow['realfieldname'].', '.$db->quote($value).',)';
 				break;
 
 			case 'sqljoin' :
 
-				return 'es_'.$fieldrow['fieldname'].'='.(int)$value;
+				return $fieldrow['realfieldname'].'='.(int)$value;
 				break;
-
-
-
 		}
 		return '';
 	}
 
 	function getFieldRow($fieldname)
 	{
-
-
-
 		foreach($this->fieldlist as $fld)
-			{
+		{
 			if($fld['fieldname']==$fieldname)
 				return $fld;
 		}
 		return array();
 	}
-
 
 
 	function getCleanFieldList($fieldlist_str)
@@ -787,7 +760,6 @@ class ESSearchBarClass
 
 		foreach($fieldlist as $fieldnameraw_)
 		{
-
 			$fieldnamerawpair=JoomlaBasicMisc::csv_explode(':', $fieldnameraw_, $enclose='"', false);
 
 			$fieldnameraw=$fieldnamerawpair[0];
@@ -810,9 +782,7 @@ class ESSearchBarClass
 
 			//Example: price_r_price_t_Precio
 			$fieldnamearr=explode('_t_',$fieldnameraw);
-
-			$fieldname=strtolower(trim(preg_replace("/[^a-zA-Z,\-_]/", "", $fieldnamearr[0])));
-
+			$fieldname=strtolower(trim(preg_replace('/[^a-zA-Z,\-_]/', '', $fieldnamearr[0])));
 
 			if(strpos($fieldname,'_r_')===false)
 			{

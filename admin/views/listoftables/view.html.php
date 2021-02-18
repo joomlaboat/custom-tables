@@ -45,6 +45,7 @@ class CustomtablesViewListoftables extends JViewLegacy
 		
 		// Assign data to the view
 		$this->items = $this->get('Items');
+
 		$this->pagination = $this->get('Pagination');
 		$this->state = $this->get('State');
 		$this->user = JFactory::getUser();
@@ -319,7 +320,5 @@ class CustomtablesViewListoftables extends JViewLegacy
 		if (!$db->query())    die ( $db->stderr());
         $rows=$db->loadObjectList();
 		return $rows[0]->count;
-	
 	}
-
 }

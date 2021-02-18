@@ -108,9 +108,11 @@ abstract class CustomtablesHelper
 		{
 			//Pro Version
 			JHtmlSidebar::addEntry(JText::_('COM_CUSTOMTABLES_SUBMENU_LISTOFOPTIONS'), 'index.php?option=com_customtables&view=listofoptions', $submenu === 'listofoptions');
+			JHtmlSidebar::addEntry(JText::_('COM_CUSTOMTABLES_SUBMENU_DATABASECHECK'), 'index.php?option=com_customtables&view=databasecheck', $submenu === 'databasecheck');
 		}
 		
 		JHtmlSidebar::addEntry(JText::_('COM_CUSTOMTABLES_SUBMENU_DOCUMENTATION'), 'index.php?option=com_customtables&view=documentation', $submenu === 'documentation');
+		
 	}
 
 	/**

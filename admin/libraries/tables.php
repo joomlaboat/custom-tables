@@ -11,8 +11,7 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-$adminlib=JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR;
-require_once($adminlib.'fields.php');
+require_once('fields.php');
 
 class ESTables
 {
@@ -80,19 +79,19 @@ class ESTables
 		ESTables::checkComponentTable('#__customtables_tables', $tables_projected_fields);
 	}
 
-	public static function checkIfTableExists($mysqltablename)
+	public static function checkIfTableExists($realtablename)
 	{
 		$conf = JFactory::getConfig();
 		$database = $conf->get('db');
 
 		$db = JFactory::getDBO();
 
-		$mysqltablename=str_replace('#__',$db->getPrefix(),$mysqltablename);
+		$realtablename=str_replace('#__',$db->getPrefix(),$realtablename);
 
 		if($db->serverType == 'postgresql')
-			$query = 'SELECT COUNT(*) AS c FROM information_schema.columns WHERE table_name = '.$db->quote($mysqltablename).' LIMIT 1';
+			$query = 'SELECT COUNT(*) AS c FROM information_schema.columns WHERE table_name = '.$db->quote($realtablename).' LIMIT 1';
 		else
-			$query = 'SELECT COUNT(*) AS c FROM information_schema.tables WHERE table_schema = '.$db->quote($database).' AND table_name = '.$db->quote($mysqltablename).' LIMIT 1';
+			$query = 'SELECT COUNT(*) AS c FROM information_schema.tables WHERE table_schema = '.$db->quote($database).' AND table_name = '.$db->quote($realtablename).' LIMIT 1';
 		
 		$db->setQuery( $query );
 		$rows = $db->loadObjectList();
@@ -246,7 +245,7 @@ class ESTables
 		return $row;
 	}
 
-	protected static function getTableRowSelects()
+	public static function getTableRowSelects()
 	{
 		$db = JFactory::getDBO();
 		
@@ -351,5 +350,40 @@ class ESTables
 		}
 		
 		return false;
+	}
+	
+	public static function insertRecords($realtablename,$realidfieldname,$sets)
+	{
+		$db = JFactory::getDBO();
+		
+		if($db->serverType == 'postgresql')
+		{
+			$set_fieldnames=array();
+			$set_values=array();
+			foreach($sets as $set)
+			{
+				$break_sets = explode('=',$set);
+				$set_fieldnames[]=$break_sets[0];
+				$set_values[]=$break_sets[1];
+			}
+			
+			$query='INSERT INTO '.$realtablename.' ('.implode(',',$set_fieldnames).') VALUES ('.implode(',',$set_values).')';
+			$db->setQuery( $query );
+			$db->execute();
+			
+			//get last id
+			$query='SELECT '.$realidfieldname.' AS listing_id FROM '.$realtablename.' ORDER BY '.$realidfieldname.' DESC LIMIT 1';
+			$db->setQuery( $query );
+			$temp_rows = $db->loadObjectList();
+			return $temp_rows[0]->listing_id;
+		}
+		else
+		{
+			$query='INSERT '.$realtablename.' SET '.implode(', ',$sets);
+			$db->setQuery( $query );
+			$db->execute();
+			return $db->insertid();	
+		}
+		return 0;
 	}
 }

@@ -111,26 +111,15 @@ class JHTMLESRecords
 
                                         $SearchResult_nofilter=$model_nofilter->getSearchResult();
                                 }
-  /*      
-				if($selectorpair[0]!='single')
-				{
-						if(isset($fieldarray[2]))
-								$model_nofilter->es_ordering=$fieldarray[2];
-						else
-						{
-								if(strpos($field,':')===false)
-										$model_nofilter->es_ordering=$field;
-								else
-										$model_nofilter->es_ordering='';
-						}
 
-				}
-*/
 				$valuearray=explode(',',$value);
 
 				if(strpos($field,':')===false)
 				{
 						//without layout
+						
+						$real_field_row=ESFields::getFieldRowByName($field, '',$establename);
+						
 						switch($selectorpair[0])
 						{
 
@@ -143,13 +132,12 @@ class JHTMLESRecords
 								case 'multi' :
 
 										require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tables.php');
-										$real_field_row=ESFields::getFieldRowByName($field, '',$establename);
-
+										
 
 										if($real_field_row->type=="multilangstring" or $real_field_row->type=="multilangtext")
-												$real_field='es_'.$field.$langpostfix;
+												$real_field=$real_field_row->realfieldname.$langpostfix;
 										else
-												$real_field='es_'.$field;
+												$real_field=$real_field_row->realfieldname;
 
 
 										if(count($selectorpair)>1)
@@ -159,8 +147,7 @@ class JHTMLESRecords
 
 										foreach($SearchResult as $row)
 										{
-
-                                                                                        if($row['listing_published']==0)
+											if($row['listing_published']==0)
                                                                                                         $style='style="color:red"';
                                                                                                 else
                                                                                                         $style='';
@@ -192,7 +179,7 @@ class JHTMLESRecords
 														.' /></td>';
 
 												$htmlresult.='<td valign="middle">'
-														.'<label for="'.$control_name.'_'.$i.'">'.$row['es_'.$field].'</label>'
+														.'<label for="'.$control_name.'_'.$i.'">'.$row[$real_field_row->realfieldname].'</label>'
 														.'</td></tr>';
 												$i++;
 										}
@@ -200,11 +187,12 @@ class JHTMLESRecords
 										break;
 
 								case 'checkbox' :
-										$real_field_row=ESFields::getFieldRowByName($field, '',$establename);
-                                                                                if($real_field_row->type=="multilangstring" or $real_field_row->type=="multilangtext")
-												$real_field='es_'.$field.$langpostfix;
+										
+                                        
+										if($real_field_row->type=="multilangstring" or $real_field_row->type=="multilangtext")
+												$real_field=$real_field_row->realfieldname.$langpostfix;
 										else
-												$real_field='es_'.$field;
+												$real_field=$real_field_row->realfieldname.$field;
 
 										$htmlresult.='<table style="border:none;">';
 										$i=0;
@@ -218,11 +206,7 @@ class JHTMLESRecords
 														.((in_array($row['listing_id'],$valuearray) and count($valuearray)>0 ) ? ' checked="checked" ' : '')
 														.($cssclass!='' ? 'class="'.$cssclass.'"' : '')
 														.' /></td>';
-														/*
-												$htmlresult.='<td valign="middle">'
-														.'<label for="'.$control_name.'_'.$i.'">'.$row['es_'.$field].'</label>'
-														.'</td></tr>';
-                                                                                                                */
+
                                                                                                 $htmlresult.='<td valign="middle">'
 														.'<label for="'.$control_name.'_'.$i.'">'.$row[$real_field].'</label>'
 														.'</td></tr>';
@@ -324,7 +308,8 @@ class JHTMLESRecords
         }
 
 	static protected function getSingle(&$model, &$model_nofiter,&$SearchResult,&$SearchResult_nofilter,&$valuearray,
-                                            $field,$selectorpair,$control_name,$style,$cssclass,$attribute,$value='',$establename,$dynamic_filter='',$langpostfix='',$place_holder='')
+                                            $field,$selectorpair,$control_name,$style,$cssclass,$attribute,$value='',
+											$establename,$dynamic_filter='',$langpostfix='',$place_holder='')
 	{
 		$htmlresult='';
 
@@ -334,8 +319,7 @@ class JHTMLESRecords
 			$elements=array();
 			$elementsID=array();
 			$elementsFilter=array();
-                        $elementsPublished=array();
-
+            $elementsPublished=array();
 
 			$filtervalue='';
 			foreach($SearchResult_nofilter as $row)
@@ -350,10 +334,6 @@ class JHTMLESRecords
 
 		}
 
-                //if(strpos($cssclass,' ct_improved_selectbox')!==false)
-                      //  JHtml::_('formbehavior.chosen', '.ct_improved_selectbox');
-
-//$style.=' min-width:200px !important;';
 		$htmlresult.='<SELECT name="'.$control_name.'" id="'.$control_name.'"'
 .' '.($style!='' ? 'style="'.$style.'"' : '')
 				.' '.($cssclass!='' ? 'class="'.$cssclass.'"' : '');
@@ -460,12 +440,9 @@ class JHTMLESRecords
 		$real_field_row=ESFields::getFieldRowByName($field, '',$establename);
 
 		if($real_field_row->type=="multilangstring" or $real_field_row->type=="multilangtext")
-				$real_field='es_'.$field.$langpostfix;
+				$real_field=$real_field_row->realfieldname.$langpostfix;
 		else
-				$real_field='es_'.$field;
-
-
-
+				$real_field=$real_field_row->realfieldname;
 
 		$deleteimage='components/com_customtables/images/cancel_small.png';
 		$htmlresult='

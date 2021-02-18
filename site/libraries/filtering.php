@@ -310,7 +310,7 @@ class ESFiltering
 
 																if($opr=='=')
 																{
-																	$cArr[]='instr('.$fieldrow['realfieldname'].',"'.$v.'")';
+																	$cArr[]='instr('.$fieldrow['realfieldname'].','.$db->quote($v).')';
 
 																	$vTitle=$this->es->getMultyValueTitles($v,$this->langpostfix,1, ' - ');
 																	$PathValue[]=$fieldrow['fieldtitle'.$this->langpostfix].': '.implode(',',$vTitle);
@@ -318,7 +318,7 @@ class ESFiltering
 
 																elseif($opr=='!=')
 																{
-																	$cArr[]='!instr('.$fieldrow['realfieldname'].',"'.$v.'")';
+																	$cArr[]='!instr('.$fieldrow['realfieldname'].','.$db->quote($v).')';
 
 																	$vTitle=$this->es->getMultyValueTitles($v,$this->langpostfix,1, ' - ');
 																	$PathValue[]=$fieldrow['fieldtitle'.$this->langpostfix].': '.implode(',',$vTitle);
@@ -335,13 +335,10 @@ class ESFiltering
 
 												case 'records':
 
-			
-
 													$vList=explode(',',$this->getString_vL($whr[1]));
-
-														$cArr=array();
-														foreach($vList as $vL)
-														{
+													$cArr=array();
+													foreach($vList as $vL)
+													{
 															// Filter Title
 															$typeparamsarray=JoomlaBasicMisc::csv_explode(',',$fieldrow['typeparams'],'"',false);
 
@@ -404,11 +401,11 @@ class ESFiltering
 
 										
 																if($opr=='!=')
-																	$cArr[]='!instr('.$esr_table_full.'.'.$fieldrow['realfieldname'].',",'.$vLnew.',")';
+																	$cArr[]='!instr('.$esr_table_full.'.'.$fieldrow['realfieldname'].','.$db->quote(','.$vLnew.',').')';
 																elseif($opr=='!==')
 																	$cArr[]=$esr_table_full.'.'.$fieldrow['realfieldname'].'!='.$db->quote(','.$vLnew.',');//not exact value
 																elseif($opr=='=')
-																	$cArr[]='instr('.$esr_table_full.'.'.$fieldrow['realfieldname'].',",'.$vLnew.',")';
+																	$cArr[]='instr('.$esr_table_full.'.'.$fieldrow['realfieldname'].','.$db->quote(','.$vLnew.',').')';
 																elseif($opr=='==')
 																	$cArr[]=$esr_table_full.'.'.$fieldrow['realfieldname'].'='.$db->quote(','.$vLnew.',');//exact value
 																else
@@ -632,7 +629,7 @@ class ESFiltering
 			if($value=='{day}')
 				return 'day()';
 
-			if(trim(strtolower($value))=="null")
+			if(trim(strtolower($value))=='null')
 				return 'NULL';
 
 			$options=array();
@@ -658,7 +655,7 @@ class ESFiltering
 				return $value;
 			else
 
-				return '"'.$value.'"';//$db->quotes($value);
+				return $db->quotes($value);
 		}
 
 	}
@@ -751,9 +748,9 @@ class ESFiltering
 				$opr='=';
 
 			if($v=='' and $opr=='=')
-				$where='('.$db->quoteName($realfieldname).' IS NULL OR '.$db->quoteName($realfieldname).'="")';
+				$where='('.$db->quoteName($realfieldname).' IS NULL OR '.$db->quoteName($realfieldname).'='.$db->quote('').')';
 			elseif($v=='' and $opr=='!=')
-				$where='('.$db->quoteName($realfieldname).' IS NOT NULL AND '.$db->quoteName($realfieldname).'!="")';
+				$where='('.$db->quoteName($realfieldname).' IS NOT NULL AND '.$db->quoteName($realfieldname).'!='.$db->quote('').')';
 			else
 				$where=$db->quoteName($realfieldname).$opr.$db->quote($v);
 			
@@ -802,7 +799,7 @@ class ESFiltering
 		foreach($vList as $vL)
 		{
 			if($vL=="null" and $opr=='=')
-				$cArr[]='('.$fieldrow['realfieldname'].'="" OR '.$fieldrow['realfieldname'].' IS NULL)';
+				$cArr[]='('.$fieldrow['realfieldname'].'='.$db->quote('').' OR '.$fieldrow['realfieldname'].' IS NULL)';
 			else
 				$cArr[]=$fieldrow['realfieldname'].$opr.$db->quote($vL);
 
@@ -908,8 +905,8 @@ class ESFiltering
 
 				if($fieldrow['typeparams']=='date')
 				{
-					$valuearr_new[0]='"'.$valuearr[0].'"';
-					$valuearr_new[1]='"'.$valuearr[1].'"';
+					$valuearr_new[0]=$db->quote($valuearr[0]);
+					$valuearr_new[1]=$db->quote($valuearr[1]);
 				}
 				else
 				{
@@ -935,7 +932,6 @@ class ESFiltering
 						$to_field=$from_field;
 				}
 
-
 				if($from_field=='' and $to_field=='')
 					return '';
 
@@ -943,8 +939,8 @@ class ESFiltering
 
 				if($fieldrow['typeparams']=='date')
 				{
-					$v_min='"'.$valuearr[0].'"';
-					$v_max='"'.$valuearr[1].'"';
+					$v_min=$db->quote($valuearr[0]);
+					$v_max=$db->quote($valuearr[1]);
 				}
 				else
 				{
@@ -1171,7 +1167,7 @@ class LinkJoinFilters
 		$query = 'SELECT type, typeparams'
 		.' FROM #__customtables_tables'
 		.' INNER JOIN #__customtables_fields ON tableid=#__customtables_tables.id AND #__customtables_fields.published=1'
-		.' WHERE tablename="'.$tablename.'" AND fieldname="'.$field.'"';
+		.' WHERE tablename='.$db->quote($tablename).'" AND fieldname='.$db->quote($field).'"';
 
 		$db->setQuery($query);
 

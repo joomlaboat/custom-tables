@@ -59,7 +59,7 @@ ALTER TABLE `#__customtables_tables` CHANGE `published` `published` tinyint(3) D
 
 ALTER TABLE `#__customtables_tables` CHANGE `allowimportcontent` `allowimportcontent` tinyint(1) DEFAULT 0;
 
-ALTER TABLE `#__customtables_tables` CHANGE `params` `params` test utf8_general_ci NULL DEFAULT NULL;
+ALTER TABLE `#__customtables_tables` CHANGE `params` `params` text utf8_general_ci NULL DEFAULT NULL;
 
 ALTER TABLE `#__customtables_tables` CHANGE `created` `created` datetime NULL DEFAULT NULL;
 ALTER TABLE `#__customtables_tables` CHANGE `modified` `modified` datetime NULL DEFAULT NULL;

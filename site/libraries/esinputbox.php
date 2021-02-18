@@ -499,8 +499,8 @@ class ESInputBox
 
 									}
 
-									if(isset($row['es_'.$esfield['fieldname']]))
-										$fValue=$row['es_'.$esfield['fieldname']];
+									if(isset($row[$esfield['realfieldname']]))
+										$fValue=$row[$esfield['realfieldname']];
 
 										$result.=JHTML::_('MultiSelector.render',
 													  $prefix,
@@ -526,8 +526,8 @@ class ESInputBox
 
 										}
 
-										if(isset($row['es_'.$esfield['fieldname']]))
-											$v=$row['es_'.$esfield['fieldname']];
+										if(isset($row[$esfield['realfieldname']]))
+											$v=$row[$esfield['realfieldname']];
 
 										$result.='<div style="float:left;">';
 										$result.=JHTML::_('ESComboTree.render',
@@ -743,7 +743,7 @@ class ESInputBox
 								if(count($row)==0)
 									$value=JFactory::getApplication()->input->get('es_'.$fieldname,'','STRING');
 								else
-									$value=$row['es_'.$fieldname];
+									$value=$row[$esfield['realfieldname'].$postfix];
 
 								$result.='<tr>
 								<td>'.$lang->caption.'</td><td>:</td>
@@ -1078,8 +1078,8 @@ class ESInputBox
 
 		$query='SELECT (SELECT title FROM #__usergroups WHERE id=group_id LIMIT 1) AS title FROM #__user_usergroup_map WHERE user_id='.$userid;
 	    $db->setQuery($query);
-//		    if (!$db->query())    die( $db->stderr());
-		    $records=$db->loadAssocList();
+	    $records=$db->loadAssocList();
+		
 	    if(count($records)==0)
 		    return '';
 

@@ -74,10 +74,10 @@ class updateImages
 		return (int)$recs[0]['c'];
 	}
 	
-	protected static function processImages($establename,$esfieldname,$old_typeparams, $new_typeparams, $old_ImageFolder, $new_ImageFolder, $startindex, $stepsize, $deleteOriginals=false)
+	protected static function processImages($realtablename,$realfieldname,$old_typeparams, $new_typeparams, $old_ImageFolder, $new_ImageFolder, $startindex, $stepsize, $deleteOriginals=false)
 	{
 		$db = JFactory::getDBO();
-		$query = 'SELECT es_'.$esfieldname.' FROM #__customtables_table_'.$establename.' WHERE es_'.$esfieldname.'>0';
+		$query = 'SELECT '.$realfieldname.' FROM '.$realtablename.' WHERE '.$realfieldname.'>0';
 		$db->setQuery($query, $startindex, $stepsize);
 
 		$imagelist=$db->loadAssocList();
@@ -88,7 +88,7 @@ class updateImages
 		
 		foreach($imagelist as $img)
 		{
-			$status=updateImages::processImage($imgMethods,$old_imagesizes,$new_imagesizes,$img['es_'.$esfieldname],$old_ImageFolder, $new_ImageFolder);
+			$status=updateImages::processImage($imgMethods,$old_imagesizes,$new_imagesizes,$img[$realfieldname],$old_ImageFolder, $new_ImageFolder);
 			//if $status is null then all good, status is a text string with error message if any
 			if($status!=null)
 				return $status;

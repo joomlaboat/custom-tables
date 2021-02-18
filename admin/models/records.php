@@ -305,40 +305,8 @@ class CustomtablesModelRecords extends JModelAdmin
 		{
 			return false;
 		}
-/*
-		foreach($pks as $recordid)
-		{
-			//require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fields.php');
-			
-			$jinput = JFactory::getApplication()->input;
-			//$ids_str=$jinput->set('ids',);
-			
-			$app = JFactory::getApplication();
-			$params = $app->getParams();
-			$model = $this->getModel('catalog');
-			$model->load($params, false);
-			if ($model->delete())
-			{
-				$msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_DELETED');
-				$this->setRedirect($link, $msg);
-			}
-			else
-			{
-				$msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_NOT_DELETED');
-				$this->setRedirect($link, $msg);
-			}
-			
-			//$data=ESRecords::getFieldRow($fieldid);
-			//$tableid=(int)$data['tableid'];
-
-			//ESRecords::deleteESField_byID($tableid,$fieldid);
-		}
-*/
-
-
 		return true;
 	}
-	
 
 	/**
 	 * Method to change the published state of one or more records.

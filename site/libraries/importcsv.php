@@ -256,16 +256,12 @@ function prepareSQLQuery($fieldList,$fields,$line_)
         if(isset($params[1]))
         {
           $join_fieldname=$params[1];
-
          
           $vlu=findSQLRecordJoin($tablename,$join_fieldname,$line[$i]);
          
           if($vlu==false)
           {
-            //$sub_sets=findOneTableSQLRecordJoinFields($fieldList,$fields,$tablename,$line,'records');
             
-            //addSQLJoinSets($tablename,$sub_sets);
-            //$vlu=findSQLRecordJoin($tablename,$join_fieldname,$line[$i]);
           }
            
           if($vlu!=false)
@@ -306,9 +302,6 @@ function prepareSQLQuery($fieldList,$fields,$line_)
       }
         
     }
-    
-    
-    
     
     $i++;
   }

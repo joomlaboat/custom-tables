@@ -27,7 +27,7 @@
 }
 
 .icon-wizzardbutton{
-  background-image: url('/administrator/components/com_customtables/assets/images/wizard.png');
+  background-image: url('../assets/images/wizard.png');
   background-position: center;
   background-repeat: no-repeat;
   color: rgba(0,0,0,0);
@@ -38,7 +38,7 @@
 }
 
 .icon-fieldtagbutton{
-  background-image: url('/administrator/components/com_customtables/assets/images/fieldtag.png');
+  background-image: url('../assets/images/fieldtag.png');
   background-position: center;
   background-repeat: no-repeat;
   color: rgba(0,0,0,0);
@@ -51,7 +51,7 @@
 }
 
 .icon-layouttagbutton{
-  background-image: url('/administrator/components/com_customtables/assets/images/layouttag.png');
+  background-image: url('../assets/images/layouttag.png');
   background-position: center;
   background-repeat: no-repeat;
   color: rgba(0,0,0,0);
@@ -63,7 +63,7 @@
 }
 
 .icon-dependencies{
-  background-image: url('/administrator/components/com_customtables/assets/images/dependencies.png');
+  background-image: url('../assets/images/dependencies.png');
   background-position: center;
   background-repeat: no-repeat;
   color: rgba(0,0,0,0);

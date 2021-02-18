@@ -19,16 +19,7 @@ $db = JFactory::getDBO();
 		$canCheckin = $this->user->authorise('core.manage', 'com_checkin') || $item->checked_out == $this->user->id || $item->checked_out == 0;
 		$userChkOut = JFactory::getUser($item->checked_out);
 		$canDo = CustomtablesHelper::getActions('tables',$item,'listoftables');
-		
-		
-		$realtablename = $item->tablerow['realtablename'];
-		
-			
-		$realidfield = 'id';
-		if(isset($item->customidfield) and $item->customidfield!='')
-			$realidfield = $item->customidfield;
-		
-		$table_exists = ESTables::checkIfTableExists($realtablename);
+		$table_exists = ESTables::checkIfTableExists($item->realtablename);
 	?>
 	<tr class="row<?php echo $i % 2; ?>">
 		<td class="nowrap center">
@@ -50,7 +41,7 @@ $db = JFactory::getDBO();
 				<td class="hidden-phone"><a href="<?php echo $edit; ?>&id=<?php echo $item->id; ?>">
 			<?php 
 				echo $this->escape($item->tablename);
-				echo '<br/><span style="color:grey;">'.$realtablename.'</span>';
+				echo '<br/><span style="color:grey;">'.$item->realtablename.'</span>';
 				
 				?>
 			<?php if ($canDo->get('core.edit')): ?>
@@ -115,7 +106,7 @@ $db = JFactory::getDBO();
 				{
 					echo '<a href="'.JURI::root(true).'/administrator/index.php?option=com_customtables&view=listofrecords&tableid='.$item->id.'">'
 					.JText::_('COM_CUSTOMTABLES_TABLES_RECORDS_LABEL')
-					.' ('.$this->getNumberOfRecords($realtablename,$realidfield).')</a>';
+					.' ('.$this->getNumberOfRecords($item->realtablename,$item->realidfieldname).')</a>';
 				}
 			?>
 		</td>

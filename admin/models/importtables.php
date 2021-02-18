@@ -68,20 +68,9 @@ class CustomTablesModelImporttables extends JModelList
 	}
 	function parseLine(&$columns,&$allowedcolumns,$fieldtypes,$line,&$maxid)
 	{
-		//,&$parents,&$level,
 		$result=array();
-
-		//$values=explode(',',$line);
 		$values=$this->line_explode($line);
-
-
-
-
 		$maxid++;
-
-
-
-
 		$result[]=$maxid;								// id
 
 		$c=0;

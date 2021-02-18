@@ -715,101 +715,84 @@ class JoomlaBasicMisc
 	//-- only for "records" field type;
 	public static function processValue($field,&$model,&$row,$langpostfix)
 	{
-				$htmlresult='';
+		$htmlresult='';
+		$p=strpos($field,'->');
+		if(!($p===false))
+		{
+			$recursivefieldslist=substr($field,$p+2);
+			$field=substr($field,0,$p);
+		}
+		else
+			$recursivefieldslist=null;
 
+		//get options
+		$options='';
+		$p=strpos($field,'(');
 
-				$p=strpos($field,'->');
-				if(!($p===false))
+		if($p===false)
+		{
+		}
+		else
+		{
+			$e=strpos($field,'(',$p);
+			if($e===false)
+				return 'syntax error';
+
+			$options=substr($field,$p+1,$e-$p-1);
+			$field=substr($field,0,$p);
+		}
+
+		//getting filed row (we need field typeparams, to render formated value)
+		if($field=='_id' or $field=='_published')
+		{
+			$htmlresult=$row[str_replace('_','',$field)];
+		}
+		else
+		{
+			$fieldrow=ESFields::getFieldAsocByName_($field,$model->esfields);
+			if(count($fieldrow)>0)
+			{
+				if(isset($recursivefieldslist))
 				{
-						$recursivefieldslist=substr($field,$p+2);
-						$field=substr($field,0,$p);
+					$typeparams_=explode(',',$fieldrow['typeparams']);
+					$typeparams_[1]=$recursivefieldslist;
+					$typeparams=implode(',',$typeparams_);
 				}
 				else
-						$recursivefieldslist=null;
-
-														//get options
-														$options='';
-														$p=strpos($field,'(');
+					$typeparams=$fieldrow['typeparams'];
 
 
+				$getGalleryRows=array();
+				$getFileBoxRows=array();
 
-														if($p===false)
-														{
+				if($fieldrow['type']=="multilangstring" or $fieldrow['type']=="multilangtext")
+					$real_fields=$fieldrow['realfieldname'].$langpostfix;
+				else
+					$real_fields=$fieldrow['realfieldname'];
 
-														}
-														else
-														{
-															$e=strpos($field,'(',$p);
-															if($e===false)
-																return 'syntax error';
+				$options_list=explode(',',$options);
+				$v=tagProcessor_Value::getValueByType($model,
+					$row[$real_fields],
+					$field,
+					$fieldrow['type'],
+					$typeparams,
+					$options_list,
+					$getGalleryRows,
+					$getFileBoxRows,
+					$row['listing_id'],
+					$row,
+					$fieldrow['id']);
 
-															$options=substr($field,$p+1,$e-$p-1);
-															$field=substr($field,0,$p);
+				$htmlresult=$v;
+			}
+			else
+			{
+				$htmlresult='Field "'.$field.'" not found.';
+			}
+		}//if($field=='_id' or $field=='_published')
+		return $htmlresult;
 
-
-														}
-
-														//getting filed row (we need field typeparams, to render formated value)
-														if($field=='_id' or $field=='_published')
-														{
-															$htmlresult=$row[str_replace('_','',$field)];
-														}
-														else
-														{
-
-															$fieldrow=ESFields::getFieldAsocByName_($field,$model->esfields);
-															if(count($fieldrow)>0)
-															{
-
-																if(isset($recursivefieldslist))
-																{
-																		$typeparams_=explode(',',$fieldrow['typeparams']);
-																		$typeparams_[1]=$recursivefieldslist;
-																		$typeparams=implode(',',$typeparams_);
-																}
-																else
-																		$typeparams=$fieldrow['typeparams'];
-
-
-																$getGalleryRows=array();
-																$getFileBoxRows=array();
-
-
-
-																if($fieldrow['type']=="multilangstring" or $fieldrow['type']=="multilangtext")
-																	$real_fields=$fieldrow['realfieldname'].$langpostfix;
-																else
-																	$real_fields=$fieldrow['realfieldname'];
-
-
-																$options_list=explode(',',$options);
-																$v=tagProcessor_Value::getValueByType($model,
-																							  $row[$real_fields],
-																							  $field,
-																							  $fieldrow['type'],
-																							  $typeparams,
-																							  $options_list,
-																							  $getGalleryRows,
-																							  $getFileBoxRows,
-																							  $row['listing_id'],
-																							  $row,
-																							  $fieldrow['id']);
-
-
-																$htmlresult=$v;
-															}
-															else
-															{
-																//if(isset($row['es_'.$field]))
-																	//$htmlresult=$row['es_'.$field];
-																//else
-																	$htmlresult='Field "'.$field.'" not found.';
-															}
-														}//if($field=='_id' or $field=='_published')
-
-				return $htmlresult;
-		}//processValue()
-
+	}//processValue()
 
 
 	public static function getGroupIdByTitle($grouptitle)

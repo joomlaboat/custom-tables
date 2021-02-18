@@ -42,7 +42,7 @@ class ESLanguages
 	{
 		$db = JFactory::getDBO();
 		
-		$query ='SELECT lang_id AS id, lang_code AS language, title AS caption, title, sef FROM #__languages WHERE published=1 ORDER BY lang_id';
+		$query ='SELECT lang_id AS id, lang_code AS language, title AS caption, title, sef AS original_sef FROM #__languages WHERE published=1 ORDER BY lang_id';
 			
 		$db->setQuery( $query );
 		
@@ -50,9 +50,15 @@ class ESLanguages
 		
 		$rows = $db->loadObjectList();
 		
-		$this->LanguageList=$rows;
+		$this->LanguageList = array();
+		foreach($rows as $row)
+		{
+			$parts=explode('-',$row->original_sef);
+			$row->sef = $parts[0];
+			$this->LanguageList[] = $row;
+		}
 		
-		return $rows;
+		return $this->LanguageList;
 	}
 
 	function getLanguageTagByID($id)

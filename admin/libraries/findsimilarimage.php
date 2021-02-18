@@ -11,26 +11,22 @@ defined('_JEXEC') or die('Restricted access');
 
 class FindSimilarImage {
     
-    static public function find($uploadedfile,$identity,$tablename,$fieldname_,$ImageFolder)
+    static public function find($uploadedfile,$identity,$realtablename,$realfieldname_,$ImageFolder)
     {
-        $fieldname=str_replace('comes_','es_',$fieldname_);
-
         if($identity<0)
             $identity=0;
 	
         require_once('compareimages.php');
     	$ci=new compareImages;
+		
+		$ext_list=array('png','jpg');
 	
         $db = JFactory::getDBO();
         
-        $query = 'SELECT '.$fieldname.' AS photoid FROM #__customtables_table_'.$tablename.' WHERE '.$fieldname.'>0';
-        
+        $query = 'SELECT '.$realfieldname.' AS photoid FROM '.$realtablename.' WHERE '.$realfieldname.'>0';
     	$db->setQuery($query);
-    	if (!$db->query())    die( $db->stderr());
-        
-        $ext_list=array('png','jpg');
-
         $photorows=$db->loadObjectList();
+		
         foreach($photorows as $photorow)
         {
     	    $id=$photorow->photoid;
@@ -44,22 +40,13 @@ class FindSimilarImage {
                     {
                         if(file_exists($image_file))
                         {
-                         
                             $index=$ci->compare($uploadedfile,$image_file);
                             if($index<=$identity)
                                 return $id;
-                        
-                         
                         }
                     }
                 }//for each
             }//if
-            
-
         }//foreach($photorows as $photorow)
-        	
-	
     }//function
 }//class
-
-?>

@@ -12,11 +12,11 @@ defined('_JEXEC') or die('Restricted access');
 class CustomTablesCreateUser
 {
 
-	static public function UpdateUserLink($establename,$fieldusreidname,$userid,$id)
+	static public function UpdateUserLink($realtablename,$fieldusreidname,$userid,$id)
 	{
 		$db = JFactory::getDBO();
 
-		$query = 'UPDATE #__customtables_table_'.$establename.' SET '.$fieldusreidname.'='.$userid.' WHERE id='.$id;
+		$query = 'UPDATE '.$realtablename.' SET '.$fieldusreidname.'='.$userid.' WHERE id='.$id;
 
 		$db->setQuery( $query );
 		$db->execute();
@@ -85,10 +85,8 @@ class CustomTablesCreateUser
 
 	}
 
-
-
-
-	static public function CreateUser($fullname,$username,$password,$email,$groups,&$msg_warning,$email_content_article_id,$establename,$field_userid,$row_id)
+	/*
+	static public function CreateUser($fullname,$username,$password,$email,$groups,&$msg_warning,$email_content_article_id,$realtablename,$field_userid,$row_id)
 	{
 			//Create user
 			die;
@@ -106,7 +104,7 @@ class CustomTablesCreateUser
 				{
 					//If this exactlly user already exist, then just update the record
 					$msg_warning[]='Update User: "'.$username.'"';
-					CustomTablesCreateUser::UpdateUserLink($establename,$field_userid,$userid,$row_id);
+					CustomTablesCreateUser::UpdateUserLink($realtablename,$field_userid,$userid,$row_id);
 				}
 				elseif(CustomTablesCreateUser::CheckIfEmailExist($email,$existing_user,$existing_name))
 				{
@@ -139,7 +137,7 @@ class CustomTablesCreateUser
 					if($userid>0)
 					{
 
-						CustomTablesCreateUser::UpdateUserLink($establename,$field_userid,$userid,$row_id);
+						CustomTablesCreateUser::UpdateUserLink($realtablename,$field_userid,$userid,$row_id);
 
 					}
 					else
@@ -150,6 +148,7 @@ class CustomTablesCreateUser
 
 			}//if($email=='')
 	}
+	*/
 
 	static public function GetArticleContent($article_id,&$title)
 	{

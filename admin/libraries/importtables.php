@@ -9,10 +9,10 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tables.php');
-require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fields.php');
-require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'layouts.php');
-require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'misc.php');
+require_once('tables.php');
+require_once('fields.php');
+require_once('layouts.php');
+require_once('misc.php');
 
 class ImportTables
 {
@@ -202,22 +202,8 @@ class ImportTables
 				//Create Category
 				$inserts=array();
                 $inserts[]='categoryname='.$db->Quote($categoryname);
-				$query='INSERT INTO #__customtables_categories SET '.implode(', ',$inserts);
-
-
-				$db->setQuery($query);
-				$db->execute();
-
-				$query = 'SELECT id FROM #__customtables_categories ORDER BY id DESC LIMIT 1';
-
-				$db->setQuery( $query );
-
-				$rows=$db->loadAssocList();
-
-				if(count($rows)!=1)
-				    return 0; //could add record. something wrong
-
-				$categoryid=$rows[0]['id'];
+				
+				$categoryid = ESTables::insertRecords('#__customtables_categories','id',$inserts);
 			}
 		}
 
@@ -285,14 +271,11 @@ class ImportTables
                     $fieldtitle=$field_new['fieldtitle_1'];
 
 				$PureFieldType=ESFields::getPureFieldType($field_new['type'], $field_new['typeparams']);
-				ESFields::addESField($establename,$esfieldname,$field_new['type'],$PureFieldType, $field_new['fieldtitle']);
+				ESFields::addESField('#__customtables_table_'.$establename,'es_'.$esfieldname,$field_new['type'],$PureFieldType, $field_new['fieldtitle']);
             }
         }
-
         return $fieldid;
     }
-
-
 
 
     protected static function processRecords($establename,$records,&$msg)
@@ -420,11 +403,8 @@ class ImportTables
 			$inserts[]='menutype='.$db->Quote($new_menutype_alias);
             $inserts[]='title='.$db->Quote($new_menutype);
 			$inserts[]='description='.$db->Quote('Menu Type created by CustomTables');
-
-			$query='INSERT INTO #__menu_types SET '.implode(', ',$inserts);
-			$db->setQuery($query);
-			$db->execute();
-
+			
+			$menu_types_id = ESTables::insertRecords('#__menu_types','id',$inserts);
 		}
 
 			$menuitem_new['checked_out']=0;
@@ -540,12 +520,8 @@ class ImportTables
 			$inserts[]='menutype='.$db->Quote($menutype);
             $inserts[]='title='.$db->Quote($menutype_title);
 			$inserts[]='description='.$db->Quote('Menu Type created by CustomTables');
-
-			$query='INSERT INTO #__menu_types SET '.implode(', ',$inserts);
-
-			$db->setQuery($query);
-			$db->execute();
-
+			
+			$menu_types_id = ESTables::insertRecords('#__menu_types','id',$inserts);
 		}
 	}
 
@@ -682,22 +658,7 @@ class ImportTables
 
         }
 
-        $query='INSERT INTO '.$mysqltablename.' SET '.implode(', ',$inserts);
-
-		$db->setQuery($query);
-		$db->execute();
-
-
-        $query = 'SELECT id FROM '.$mysqltablename.' ORDER BY id DESC LIMIT 1';
-
-		$db->setQuery( $query );
-
-		$rows=$db->loadAssocList();
-
-        if(count($rows)!=1)
-            return 0; //could add record. somthing wrong
-
-        return $rows[0]['id'];
+		return ESTables::insertRecords($mysqltablename,'id',$inserts);
     }
 
 
