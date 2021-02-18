@@ -34,10 +34,12 @@ function checkTableOnly($tables_rows)
     }
 }
 
-function checkTableFields($tableid,$tablename,$tabletitle,$customtablename)
+function checkTableFields($tableid,$tablename,$tabletitle,$customtablename,$link)
 {
+	$result='';
+	
 	if($customtablename!='')
-		return;
+		return $result.'zoz';
 		
 	$db = JFactory::getDBO();
     $conf = JFactory::getConfig();
@@ -45,7 +47,7 @@ function checkTableFields($tableid,$tablename,$tabletitle,$customtablename)
 	$dbprefix = $conf->get('dbprefix');
 
 	if(ESTables::createTableIfNotExists($database,$dbprefix,$tablename,$tabletitle,$customtablename))
-		echo '<p>Table "<span style="color:green;">'.$tabletitle.'</span>" <span style="color:green;">added.</span></p>';
+		$result.='<p>Table "<span style="color:green;">'.$tabletitle.'</span>" <span style="color:green;">added.</span></p>';
 
 	if($customtablename!='')
 		$realtablename=$customtablename;
@@ -60,8 +62,6 @@ function checkTableFields($tableid,$tablename,$tabletitle,$customtablename)
 
     checkOptionsTitleFields($languages);
 
-    $link=JURI::root().'administrator/index.php?option=com_customtables&view=listoffields&tableid='.$tableid;
-
 	$projected_fields = ESFields::getFields($tableid,false);
 
     //Delete unnesesary fields:
@@ -70,7 +70,8 @@ function checkTableFields($tableid,$tablename,$tabletitle,$customtablename)
 
 
     $task=$jinput->getCmd('task');
-    $taskfieldname=$jinput->    getCmd('fieldname');
+    $taskfieldname=$jinput->getCmd('fieldname');
+	$tasktableid=$jinput->getInt('tableid');
 	
 	
 	$db = JFactory::getDBO();
@@ -188,13 +189,17 @@ function checkTableFields($tableid,$tablename,$tabletitle,$customtablename)
         if(!$found or $PureFieldType=='')
         {
             //Delete field
-            if($task=='deleteurfield' and $taskfieldname==$exst_field)
+            if($tableid == $tasktableid and $task=='deleteurfield' and $taskfieldname==$exst_field)
             {
-                if(ESFields::deleteMYSQLField($realtablename,$exst_field))
-                    echo '<p>Field "<span style="color:green;">'.$exst_field.'</span>" not registered. <span style="color:green;">Deleted.</span></p>';
+				$msg='';
+                if(ESFields::deleteMYSQLField($realtablename,$exst_field,$msg))
+                    $result.='<p>Field "<span style="color:green;">'.$exst_field.'</span>" not registered. <span style="color:green;">Deleted.</span></p>';
+					
+				if($msg!='')
+						$result.=$msg;
             }
             else
-                echo '<p>Field "<span style="color:red;">'.$exst_field.'</span>" not registered. <a href="'.$link.'&task=deleteurfield&fieldname='.$exst_field.'">Delete?</a></p>';
+                $result.='<p>Field "<span style="color:red;">'.$exst_field.'</span>" not registered. <a href="'.$link.'&task=deleteurfield&fieldname='.$exst_field.'">Delete?</a></p>';
         }
         else
         {
@@ -203,40 +208,46 @@ function checkTableFields($tableid,$tablename,$tabletitle,$customtablename)
 				//Check ID field auto increment param.
 				if($existing_field[$field_columns->is_nullable]=='YES' or $existing_field['Extra'] != 'auto_increment')
 				{
-					if(ESFields::fixMYSQLField($realtablename,$found_field,$PureFieldType))
-                    {
-                        echo '<p>Field "<span style="color:green;">id</span>" Fixed</p>';
-                    }
+					$msg='';
+					if(ESFields::fixMYSQLField($realtablename,$found_field,$PureFieldType,$msg))
+                        $result.=$msg.'<p>Field "<span style="color:green;">id</span>" fixed</p>';
+					
+					if($msg!='')
+						$result.=$msg;
 				}
 			}
 			elseif($PureFieldType=='_published')
 			{
 				if($existing_field[$field_columns->is_nullable]=='YES')
 				{
-					if(ESFields::fixMYSQLField($realtablename,$found_field,$PureFieldType))
-                    {
-                        echo '<p>Field "<span style="color:green;">published</span>" Fixed</p>';
-                    }
+					$msg='';
+					if(ESFields::fixMYSQLField($realtablename,$found_field,$PureFieldType,$msg))
+						$result.='<p>Field "<span style="color:green;">published</span>" fixed</p>';
+					
+					if($msg!='')
+						$result.=$msg;
 				}
 			}
             elseif(!ESFields::comparePureFieldTypes($field_mysql_type,$PureFieldType))
             {
-                if($task=='fixfieldtype' and $taskfieldname==$exst_field)
+                if($tableid == $tasktableid and $task=='fixfieldtype' and $taskfieldname==$exst_field)
                 {
-                    if(ESFields::fixMYSQLField($realtablename,$found_field,$PureFieldType))
-                    {
-                        echo '<p>Field "<span style="color:green;">'.str_replace('es_','',$found_field).'</span>" Fixed.</p>';
-                    }
+					$msg='';
+                    if(ESFields::fixMYSQLField($realtablename,$found_field,$PureFieldType,$msg))
+                        $result.='<p>Field "<span style="color:green;">'.str_replace('es_','',$found_field).'</span>" fixed.</p>';
+					
+					if($msg!='')
+						$result.=$msg;
                 }
                 else
                 {
-                    echo '<p>Field "<span style="color:orange;">'.str_replace('es_','',$found_field).' ('.$found_fieldparams.')</span>"'
+                    $result.='<p>Field "<span style="color:orange;">'.str_replace('es_','',$found_field).' ('.$found_fieldparams.')</span>"'
                         .' has wrong type "<span style="color:red;">'.$field_mysql_type.'</span>" instead of "<span style="color:green;">'.$PureFieldType.'</span>" <a href="'.$link.'&task=fixfieldtype&fieldname='.$exst_field.'">Fix?</a></p>';
                 }
             }
 
         }
-
+		
     }
 
     //Add missing fields
@@ -249,6 +260,8 @@ function checkTableFields($tableid,$tablename,$tabletitle,$customtablename)
             checkField($ExistingFields,$realtablename,$proj_field,$fieldtype,$projected_field['typeparams'],$languages);
         }
     }
+	
+	return $result;
 }
 	
 	
@@ -390,6 +403,7 @@ function checkTableFields($tableid,$tablename,$tabletitle,$customtablename)
 	
 	function checkField($ExistingFields,$realtablename,$proj_field,$fieldtype,$typeparams,&$languages)
     {
+		$result = '';
 		$db = JFactory::getDBO();
 		
 		if($db->serverType == 'postgresql')

@@ -76,7 +76,11 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.
 		
 		<?php
 		if($this->tableid!=0)
-			checkTableFields($this->tableid,$this->tablename,$this->tabletitle,$this->customtablename);
+		{
+			
+			$link=JURI::root().'administrator/index.php?option=com_customtables&view=listoffields&tableid='.$this->tableid;
+			echo checkTableFields($this->tableid,$this->tablename,$this->tabletitle,$this->customtablename,$link);
+		}
 		?>
 		
 		<table class="table table-striped" id="fieldsList">

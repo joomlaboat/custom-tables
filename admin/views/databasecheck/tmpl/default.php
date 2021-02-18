@@ -27,25 +27,37 @@ echo $this->sidebar; ?>
     
     
 	<?php 
+	$result='';
 	
-	echo '<ol>';
 	
 	foreach($this->tables as $table)
 	{
-		echo '<p><span style="font-size:1.3em;">'.$table['tabletitle'].'</span><br/><span style="color:gray;">'.$table['realtablename'].'</span></p>';
-	
-		checkTableFields($table['id'],$table['tablename'],$table['tabletitle'],$table['customtablename']);	
+		$link=JURI::root().'administrator/index.php?option=com_customtables&view=databasecheck&tableid='.$table['id'];
+		$content = checkTableFields($table['id'],$table['tablename'],$table['tabletitle'],$table['customtablename'],$link);	
 		
 		$zeroId=$this->getZeroRecordID($table['realtablename'],$table['realidfieldname']);
-		if($zeroId>0)
-		{
-			echo '<p style="font-size:1.3em;color:red;">Records with ID = 0 found. Please fix it manually.</p>';
-		}
 		
-		echo '<hr/>';
+		if($content !='' or $zeroId>0)
+		{
+			$result.='<li><p><span style="font-size:1.3em;">'.$table['tabletitle'].'</span><br/><span style="color:gray;">'.$table['realtablename'].'</span></p>';
+			
+			$result.=$content;
+	
+			if($zeroId>0)
+				$result.='<p style="font-size:1.3em;color:red;">Records with ID = 0 found. Please fix it manually.</p>';
+		
+			$result.='<hr/></li>';
+		}
 	}
 	
-	echo '</ol>';
+	if($result!='')
+	{
+		echo '<ol>'.$result.'</ol>';
+	}
+	else
+	{
+		echo '<p>Database table structure is up to date.</p>';
+	}
 	
 	?>
 </div>

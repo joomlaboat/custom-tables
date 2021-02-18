@@ -208,7 +208,10 @@ class ESFields
 		foreach($realfieldnames as $realfieldname)
 		{
 			if($fieldrow->type!='dummy')
-				ESFields::deleteMYSQLField($tablerow->realtablename,$realfieldname);
+			{
+				$msg='';
+				ESFields::deleteMYSQLField($tablerow->realtablename,$realfieldname,$msg);
+			}
 		}
 
 		//Delete field from the list
@@ -253,7 +256,10 @@ class ESFields
 				return true;
 			
 			if($fieldtype1_no_par=='bigint null' and $fieldtype2_no_par == 'bigint null')
-				return true;		
+				return true;
+			
+			if($fieldtype1_no_par=='int unsigned null' and $fieldtype2_no_par == 'int unsigned null')
+				return true;			
 		}
 		
 		return false;
@@ -1082,30 +1088,38 @@ class ESFields
 		return in_array($realfieldname,$realfieldnames);
 	}
 
-	public static function deleteMYSQLField($realtablename,$realfieldname)
+	public static function deleteMYSQLField($realtablename,$realfieldname,&$msg)
 	{
 		if(ESFields::checkIfFieldExists($realtablename,$realfieldname,false))
 		{
-			$db = JFactory::getDBO();
+			try
+			{
+				$db = JFactory::getDBO();
 
-            $query ='SET foreign_key_checks = 0;';
-			$db->setQuery($query);
-			$db->execute();
+				$query ='SET foreign_key_checks = 0;';
+				$db->setQuery($query);
+				$db->execute();
 
-			$query='ALTER TABLE '.$realtablename.' DROP '.$realfieldname;
+				$query='ALTER TABLE '.$realtablename.' DROP '.$realfieldname;
 
-			$db->setQuery( $query );
-			$db->execute();
+				$db->setQuery( $query );
+				$db->execute();
 
-            $query ='SET foreign_key_checks = 1;';
-			$db->setQuery($query);
-			$db->execute();
-
-			return true;
+				$query ='SET foreign_key_checks = 1;';
+				$db->setQuery($query);
+				$db->execute();
+				
+				return true;
+			}
+			catch (Exception $e)
+			{
+				$msg='<p style="color:red;">Caught exception: '.$e->getMessage().'</p>';
+				return false;
+			}
 		}
 	}
 
-    public static function fixMYSQLField($realtablename,$fieldname,$PureFieldType)
+    public static function fixMYSQLField($realtablename,$fieldname,$PureFieldType,&$msg)
 	{
 		try
 		{
@@ -1121,12 +1135,12 @@ class ESFields
 			$db->setQuery( $query );
 			$db->execute();
 			
+			$msg='';
 			return true;
 		}
 		catch (Exception $e)
 		{
-			echo '<p style="color:red;">Caught exception: ',  $e->getMessage(), "</p>";
-			
+			$msg='<p style="color:red;">Caught exception: '.$e->getMessage().'</p>';
 			return false;
 		}
 	}
