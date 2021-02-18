@@ -39,7 +39,7 @@ function checkTableFields($tableid,$tablename,$tabletitle,$customtablename,$link
 	$result='';
 	
 	if($customtablename!='')
-		return $result.'zoz';
+		return $result;
 		
 	$db = JFactory::getDBO();
     $conf = JFactory::getConfig();

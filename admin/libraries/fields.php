@@ -542,7 +542,7 @@ class ESFields
 				break;
 
 			case 'log':
-				return 'text not null';
+				return 'text null';
 				break;
 
             case '_published':
