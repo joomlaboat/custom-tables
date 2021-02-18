@@ -86,6 +86,7 @@ class CustomtablesViewDataBaseCheck extends JViewLegacy
 		// Select some fields
 		$categoryname='(SELECT categoryname FROM #__customtables_categories AS categories WHERE categories.id=a.tablecategory LIMIT 1)';
 		$fieldcount='(SELECT COUNT(fields.id) FROM #__customtables_fields AS fields WHERE fields.tableid=a.id AND fields.published=1 LIMIT 1)';
+		
 		$selects=array();
 		$selects[]=ESTables::getTableRowSelects();
 		$selects[]=$categoryname.' AS categoryname';
@@ -106,7 +107,22 @@ class CustomtablesViewDataBaseCheck extends JViewLegacy
 		
 		return $query;
 	}
+	
+	protected function getZeroRecordID($realtablename,$realidfieldname)
+	{
+		// Create a new query object.
+		$db = JFactory::getDBO();
+		$query = $db->getQuery(true);
 
-	
-	
+		$query->select('COUNT('.$realidfieldname.') AS cd_zeroIdRecords');
+		$query->from($db->quoteName($realtablename, 'a'));
+		$query->where($realidfieldname.' = 0');
+		$query->limit(1);
+		
+		$db->setQuery( $query );
+		$rows = $db->loadAssocList();
+		$row=$rows[0];
+		
+		return $row['cd_zeroIdRecords'];
+	}
 }

@@ -1125,7 +1125,7 @@ class ESFields
 		}
 		catch (Exception $e)
 		{
-			echo 'Caught exception: ',  $e->getMessage(), "\n";
+			echo '<p style="color:red;">Caught exception: ',  $e->getMessage(), "</p>";
 			
 			return false;
 		}

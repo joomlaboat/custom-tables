@@ -36,6 +36,12 @@ echo $this->sidebar; ?>
 	
 		checkTableFields($table['id'],$table['tablename'],$table['tabletitle'],$table['customtablename']);	
 		
+		$zeroId=$this->getZeroRecordID($table['realtablename'],$table['realidfieldname']);
+		if($zeroId>0)
+		{
+			echo '<p style="font-size:1.3em;color:red;">Records with ID = 0 found. Please fix it manually.</p>';
+		}
+		
 		echo '<hr/>';
 	}
 	
