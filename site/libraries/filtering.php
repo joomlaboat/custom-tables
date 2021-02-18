@@ -655,7 +655,7 @@ class ESFiltering
 				return $value;
 			else
 
-				return $db->quotes($value);
+				return $db->quote($value);
 		}
 
 	}
