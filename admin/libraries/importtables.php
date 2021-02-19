@@ -148,8 +148,6 @@ class ImportTables
 
 		ImportTables::updateTableCategory($tableid,$table_new,$categoryname);
 
-			//die;
-
         return $tableid;
     }
 

@@ -833,8 +833,9 @@ class ESFields
 					}
 					else
 					{
-						$query = 'ALTER TABLE '.$realtablename.' CHANGE '.$realtablename.' '.$realtablename.' '.$PureFieldType_;
-						$query .= ' COMMENT "'.$fieldtitle.'";';
+						$query = 'ALTER TABLE '.$realtablename.' CHANGE '.$realfieldname.' '.$realfieldname.' '.$PureFieldType_;
+						$query .= ' COMMENT '.$db->quote($fieldtitle);
+						
 						$db->setQuery( $query );
 						$db->execute();
 					}
@@ -1175,10 +1176,8 @@ class ESFields
 			$fieldid=JFactory::getApplication()->input->get('fieldid',0,'INT');
 
 		$query = 'SELECT '.ESFields::getFieldRowSelects().' FROM #__customtables_fields AS s WHERE published=1 AND id='.$fieldid.' LIMIT 1';
-		echo $query;
-		die;
-		$db->setQuery( $query );
 
+		$db->setQuery( $query );
 		$rows = $db->loadObjectList();
 		if(count($rows)!=1)
 			return array();

@@ -54,7 +54,7 @@ class updateImageGallery
 		$new_ImageFolder=str_replace('/',DIRECTORY_SEPARATOR,$new_ImageFolder_);
 		
 		$status=updateImages::processImages($table_row->tablename,$field_row->fieldname, $old_typeparams, $new_typeparams, $old_ImageFolder,$new_ImageFolder, $startindex, $stepsize);
-		die;
+
 		return array('count'=>$count,'success'=>(int)($status==null),'startindex'=>$startindex,'stepsize'=>$stepsize,'error'=>$status);
 		
 	}
