@@ -992,12 +992,13 @@ class LinkJoinFilters
 {
 	static public function getFilterBox($establename,$dynamic_filter,$control_name,$filtervalue)
 	{
-		$field=$dynamic_filter;
+		$fieldname=$dynamic_filter;
 		$db = JFactory::getDBO();
-		$typeparams='';
-		$fieldtype=LinkJoinFilters::getFilterFieldType($establename,$field,$typeparams);
-		if($fieldtype='sqljoin')
-			return LinkJoinFilters::getFilterElement_SqlJoin($typeparams,$control_name,$filtervalue);
+		
+		$fieldrow=ESFields::getFieldRowByName($fieldname, $tableid=0,$establename);
+
+		if($fieldrow->type=='sqljoin')
+			return LinkJoinFilters::getFilterElement_SqlJoin($fieldrow->typeparams,$control_name,$filtervalue);
 
 		return '';
 	}
@@ -1158,26 +1159,5 @@ class LinkJoinFilters
 ';
 
 		return $result;
-	}
-
-	static protected function getFilterFieldType($tablename,$field,&$typeparams)
-	{
-		$db = JFactory::getDBO();
-
-		$query = 'SELECT type, typeparams'
-		.' FROM #__customtables_tables'
-		.' INNER JOIN #__customtables_fields ON tableid=#__customtables_tables.id AND #__customtables_fields.published=1'
-		.' WHERE tablename='.$db->quote($tablename).'" AND fieldname='.$db->quote($field).'"';
-
-		$db->setQuery($query);
-
-		$records=$db->loadObjectList();
-		if(count($records)==0)
-			return '';
-
-		$records=$db->loadObjectList();
-		$row=$records[0];
-		$typeparams=$row->typeparams;
-		return $row->type;
 	}
 }
