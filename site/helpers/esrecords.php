@@ -218,9 +218,9 @@ class JHTMLESRecords
 										break;
 
 								case 'multibox' :
-
+		
 										$htmlresult.=JHTMLESRecords::getMultibox($model, $model_nofilter,$SearchResult,$SearchResult_nofilter,$valuearray,$field,$selectorpair,
-                                                                                                                         $control_name,$style,$cssclass,$attribute,$establename,$dynamic_filter,$langpostfix);
+											$control_name,$style,$cssclass,$attribute,$establename,$dynamic_filter,$langpostfix);
 
 										break;
 
@@ -311,6 +311,7 @@ class JHTMLESRecords
                                             $field,$selectorpair,$control_name,$style,$cssclass,$attribute,$value='',
 											$establename,$dynamic_filter='',$langpostfix='',$place_holder='')
 	{
+	
 		$htmlresult='';
 
 		if($dynamic_filter!='')
@@ -435,7 +436,6 @@ class JHTMLESRecords
 	static protected function getMultibox(&$model, &$model_nofilter,&$SearchResult,&$SearchResult_nofilter,&$valuearray,$field,$selectorpair,
                                               $control_name,$style,$cssclass,$attribute,$establename,$dynamic_filter,$langpostfix='')
 	{
-
 		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tables.php');
 		$real_field_row=ESFields::getFieldRowByName($field, '',$establename);
 

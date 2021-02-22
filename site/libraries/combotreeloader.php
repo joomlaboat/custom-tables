@@ -191,6 +191,7 @@ function CleanLink($newparams, $deletewhat)
 
 function renderSelectBox($objectname, $rows, $urlwhere, $optionalOptions, $simpleList=false,$value='',$place_holder='')
 {
+	
     if(count($rows)==1)
     {
 	  if($rows[0]->tempid=="na") //optionname

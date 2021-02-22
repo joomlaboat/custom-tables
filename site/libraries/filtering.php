@@ -996,8 +996,8 @@ class LinkJoinFilters
 		$db = JFactory::getDBO();
 		
 		$fieldrow=ESFields::getFieldRowByName($fieldname, $tableid=0,$establename);
-
-		if($fieldrow->type=='sqljoin')
+		
+		if($fieldrow->type=='sqljoin' or $fieldrow->type=='records')
 			return LinkJoinFilters::getFilterElement_SqlJoin($fieldrow->typeparams,$control_name,$filtervalue);
 
 		return '';

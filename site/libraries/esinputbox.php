@@ -93,14 +93,13 @@ class ESInputBox
 			$typeparams=JoomlaBasicMisc::csv_explode(',',$esfield['typeparams'],'"',false);
 
 			switch($esfield['type'])
-					{
+			{
 						case 'radio':
 
 							$result.='<table style="border:none;"><tr>';
 							$i=0;
 							foreach($typeparams as $radiovalue)
 							{
-
 								$v=trim($radiovalue);
 								$result.='<td valign="middle"><input type="radio"
 									name="'.$prefix.$esfield['fieldname'].'"
@@ -257,9 +256,6 @@ class ESInputBox
 									$document->addCustomTag('<script type="text/javascript">$Spelling.DefaultDictionary = "English";</script>');
 								}
 							break;
-
-
-
 
 						case 'multilangtext':
 
@@ -608,7 +604,7 @@ class ESInputBox
 								$sortbyfield=$typeparams[5];
 							else
 								$sortbyfield='';
-
+								
 							$result.=JHTML::_('ESRecords.render',
 											  $typeparams,
 											  $prefix.$esfield['fieldname'],
