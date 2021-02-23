@@ -841,7 +841,7 @@ class ESInputBox
 								
 
 								if($addDynamicEvent)
-									$attributes_=' onchange="ct_UpdateSingleValue(\''.$WebsiteRoot.'\','.$Model->Itemid.',\''.$esfield['fieldname'].$postfix.'\','.$row['listing_id'].',\''.$lang->sef.'\')"';
+									$attributes_=' onchange="ct_UpdateSingleValue(\''.$WebsiteRoot.'\','.$Model->Itemid.',\''.$esfield['fieldname'].$postfix.'\','.$row['listing_id'].',\''.$langsef.'\')"';
 									
 								$result='<input type="text" name="'.$prefix.$esfield['fieldname'].$postfix.'" id="'.$prefix.$esfield['fieldname'].$postfix.'" id="code" class="'.$class.'"
 								value="'.$value.'" '.((int)$esfield['typeparams']>0 ? 'maxlength="'.(int)$esfield['typeparams'].'"' : 'maxlength="255"').$attributes_.' />';
