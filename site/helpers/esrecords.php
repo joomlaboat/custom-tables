@@ -188,11 +188,10 @@ class JHTMLESRecords
 
 								case 'checkbox' :
 										
-                                        
 										if($real_field_row->type=="multilangstring" or $real_field_row->type=="multilangtext")
 												$real_field=$real_field_row->realfieldname.$langpostfix;
 										else
-												$real_field=$real_field_row->realfieldname.$field;
+												$real_field=$real_field_row->realfieldname;
 
 										$htmlresult.='<table style="border:none;">';
 										$i=0;
@@ -207,7 +206,7 @@ class JHTMLESRecords
 														.($cssclass!='' ? 'class="'.$cssclass.'"' : '')
 														.' /></td>';
 
-                                                                                                $htmlresult.='<td valign="middle">'
+                                                $htmlresult.='<td valign="middle">'
 														.'<label for="'.$control_name.'_'.$i.'">'.$row[$real_field].'</label>'
 														.'</td></tr>';
 
