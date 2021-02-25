@@ -2082,8 +2082,9 @@ class CustomTablesModelEditItem extends JModelLegacy {
 					$row[$esfield['realfieldname']],
 					$this->imagefolder,
 					$esfield['typeparams'],
-					$this->establename,
-					$esfield['fieldname']
+					$this->realtablename,
+					$esfield['realfieldname'],
+					$esfield['realidfieldname']
 				);
 			}
 			elseif($esfield['type']=='imagegallery')
