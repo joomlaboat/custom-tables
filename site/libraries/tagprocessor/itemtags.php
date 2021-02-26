@@ -382,7 +382,7 @@ class tagProcessor_Item
 					}
 					else
 					{
-						$field1_row=ESFields::getFieldRowByName($field2_lookwhere, $Model->tablerow['id']);
+						$field1_row=ESFields::getFieldRowByName($field1_findwhat, $Model->tablerow['id']);
 						if(is_object($field1_row))
 							$field1_findwhat=$field1_row->realfieldname;
 						else
