@@ -66,6 +66,7 @@ if($WebsiteRoot=='' or $WebsiteRoot[strlen($WebsiteRoot)- 1] != '/') //Root must
 		if ($edit_model->CheckAuthorization($PermissionIndex))
 		{
 			$redirect=doTheTask($task,$params,$edit_model,$WebsiteRoot,$clean);
+			JFactory::getApplication()->enqueueMessage($redirect->msg);
 			$this->setRedirect($redirect->link, $redirect->msg, $redirect->status);
 		}
 		else

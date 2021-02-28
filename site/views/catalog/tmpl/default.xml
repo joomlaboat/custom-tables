@@ -120,20 +120,19 @@ Example 2: 'birthdate:%m%d DESC' to get the month and the day of the field value
 			
 			</fieldset>
 			
-<!--						
+
 			<fieldset name="SHOPPING_CART">
 				<field type="list" name="showcartitemsonly" default="0" label="Shoping Cart Only" description="Show Items in the Shoping Cart Only" >
 				    <option value="1">Yes</option>
 					<option value="0">No</option>
 				</field>
-				<field type="text" name="showcartitemsprefix" default="" size="50" label="Shopping Cart Prefix" description="" />
+				<!--- <field type="text" name="showcartitemsprefix" default="" size="50" label="Shopping Cart Prefix" description="" />-->
 				<field type="text" name="cart_returnto" default="" size="50" label="Cart Updated Return To" description="" />
 				<field type="text" name="cart_msgitemadded" default="" size="50" label="Message: Cart: Item Added" description="" />
 				<field type="text" name="cart_msgitemdeleted" default="" size="50" label="Message: Cart: Item Deleted" description="" />
 				<field type="text" name="cart_msgitemupdated" default="" size="50" label="Message: Cart: Updated" description="" />
 			</fieldset>
--->			
-			
+		
 			
 
         </fields>

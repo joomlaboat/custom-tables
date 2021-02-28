@@ -28,39 +28,34 @@ class tagProcessor_Shopping
 				$theLink.='?';
 			else
 				$theLink.='&';
-
-			if(isset($option_pair[1]))
-				$cart_prefix=$option_pair[1];
-			else
-				$cart_prefix='';
-
-
+				
+			$cart_prefix='customtables_'; //We don't really need it, because it already contains the table name
+			
 			switch($option_pair[0])
 			{
 				case 'count' :
 
 					$app = JFactory::getApplication();
-					$cookieValue = $app->input->cookie->get('es_'.$cart_prefix.'_'.$Model->establename);
-
+					$cookieValue = $app->input->cookie->getVar($cart_prefix.'_'.$Model->establename);
+					
 					$vlu='0';
 					if (isset($cookieValue))
 					{
 						$items=explode(';',$cookieValue);
-						$cnt=count($items);
-						$found=false;
-						for($i=0;$i<$cnt;$i++)
+
+						foreach($items as $item)
 						{
-							$pair=explode(',',$items[$i]);
-							if(count($pair)==2) //otherwise ignore the shit
+							$pair=explode(',',$item);
+							if(count($pair)==2)//first is ID sencond - count: example 45,6 - 6 items with id 45
 							{
 								if((int)$pair[0]==$row['listing_id'])
+								{
 									$vlu=(int)$pair[1];
+									break;
+								}
 							}
-						}//for
-
-					}//if
-
-
+						}
+					}
 
 					$htmlresult=str_replace($fItem,$vlu,$htmlresult);
 					break;
@@ -72,7 +67,7 @@ class tagProcessor_Shopping
 
 				case 'form_addtocart' :
 
-					$cookieValue = $app->input->cookie->get('es_'.$cart_prefix.'_'.$Model->establename);
+					$cookieValue = $app->input->cookie->getVar($cart_prefix.'_'.$Model->establename);
 					if (isset($cookieValue))
 					{
 						$items=explode(';',$cookieValue);
@@ -92,32 +87,23 @@ class tagProcessor_Shopping
 					else
 						$vlu='0';
 
-					if(isset($option_pair[2]) and $option_pair[2]!='')
+					if(isset($option_pair[1]) and $option_pair[1]!='')
 						$button_label=$option_pair[2];
 					else
-						$button_label='Update';
+						$button_label='Add';
 
-					if(isset($option_pair[3]) and $option_pair[3]!='')
-						$input_style=$option_pair[3];
+					if(isset($option_pair[2]) and $option_pair[2]!='')
+						$button_class=$option_pair[2];
 					else
-						$input_style='width:60px;';
+						$button_class='btn';
 
-					if(isset($option_pair[4]) and $option_pair[4]!='')
-						$input_button='<input type="image" src="'.$option_pair[4].'" value="'.$button_label.'" alt="'.$button_label.'" title="'.$button_label.'">';
-					else
-						$input_button='<input type="submit" value="'.$button_label.'" class="button" />';
+					$input_button='<input type="submit" value="'.$button_label.'" class="'.$button_class.'" />';
 
-
-					$result='<form action="" method="post">
+					$result='<form action="" method="post" id="ct_addtocartform">
 					<input type="hidden" name="listing_id" value="'.$row['listing_id'].'" />
 					<input type="hidden" name="task" value="cart_form_addtocart" />
 					<input type="hidden" name="cartprefix" value="'.$cart_prefix.'" />
-					<table cellpadding="0" cellspacing="0" style="border:none;">
-					<tr>
-						<td style="border:none;"><input type="text" class="inputbox" style="'.$input_style.'" name="itemcount" value="1" /></td>
-						<td style="border:none;">'.$input_button.'</td>
-					</tr>
-					</table>
+					<input type="text" class="inputbox" style="'.$input_style.'" name="itemcount" value="1" />'.$input_button.'
 					</form>
 					';
 
@@ -129,7 +115,7 @@ class tagProcessor_Shopping
 
 				case 'setitemcount' :
 
-					$cookieValue = $app->input->cookie->get('es_'.$cart_prefix.'_'.$Model->establename);
+					$cookieValue = $app->input->cookie->getVar($cart_prefix.'_'.$Model->establename);
 					if (isset($cookieValue))
 					{
 						$items=explode(';',$cookieValue);
@@ -154,27 +140,19 @@ class tagProcessor_Shopping
 					else
 						$button_label='Update';
 
-					if(isset($option_pair[3]) and $option_pair[3]!='')
-						$input_style=$option_pair[3];
+					if(isset($option_pair[2]) and $option_pair[2]!='')
+						$button_class=$option_pair[2];
 					else
-						$input_style='width:60px;';
+						$button_class='btn';
 
-					if(isset($option_pair[4]) and $option_pair[4]!='')
-						$input_button='<input type="image" src="'.$option_pair[4].'" value="'.$button_label.'" alt="'.$button_label.'" title="'.$button_label.'">';
-					else
-						$input_button='<input type="submit" value="'.$button_label.'" class="button" />';
+					$input_button='<input type="submit" value="'.$button_label.'" class="'.$button_class.'" />';
 
-
-					$result='<form action="" method="post">
+					$result='
+					<form action="" method="post" id="ct_updatecartform">
 					<input type="hidden" name="listing_id" value="'.$row['listing_id'].'" />
 					<input type="hidden" name="task" value="cart_setitemcount" />
 					<input type="hidden" name="cartprefix" value="'.$cart_prefix.'" />
-					<table cellpadding="0" cellspacing="0" style="border:none;">
-					<tr>
-						<td style="border:none;"><input type="text" class="inputbox" style="'.$input_style.'" name="itemcount" value="'.$vlu.'" /></td>
-						<td style="border:none;">'.$input_button.'</td>
-					</tr>
-					</table>
+						<input type="text" class="inputbox" style="'.$input_style.'" name="itemcount" value="'.$vlu.'" />'.$input_button.'
 					</form>
 					';
 

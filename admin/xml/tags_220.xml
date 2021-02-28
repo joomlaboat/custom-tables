@@ -2,7 +2,7 @@
 <layouts>
     <tagset name="general" label="General" description="Tags that can be used in any layout type." priority="2">
 
-        <tag name="currenturl" label="Current URL" startchar="{" endchar="}" hidedefaultexample="1"
+	<tag name="currenturl" label="Current URL" startchar="{" endchar="}" hidedefaultexample="1"
              description="Returns current URL or any query parameter, it can also be base64 encoded if you include that keyword.">
             <params>
                 <param name="option" label="Option" type="list" description="Select on of the available options.">
@@ -516,6 +516,31 @@
                 </param>
             </params>
         </tag>
+
+
+
+	<tag name="cart" label="Shopping Cart" startchar="{" endchar="}" hidedefaultexample="1"
+             description="Returns Shoping Cart item count or renders Add to Shoping Cart button">
+            <params>
+                <param name="option" label="Option" type="list" description="Select on of the available options.">
+			<option value="count" label="Item count"
+                            description="Return the number of items in the Shopping Cart."/>
+			<option value="addtocart" label="Add to cart"
+                            description="Return the link that add current item to the Shopping Cart" />
+
+			<option value="deleteitem" label="Delete Item" description="Return the link that deletes current item from the Shopping Cart"/>
+			
+			<option value="form_addtocart" label="Add to cart form" description="Renders Add to Cart form with quantity input box." />
+
+			<option value="setitemcount" label="Set item count/quantity" description="Renders Update quantity form." />
+		        
+                </param>
+
+                <param name="label" label="Button Label" type="string" description="Add or Updated form button label. (Applicabale to Add to Cart form and Set item count/quantity)" example="Update" />
+                <param type="string" name="cssclass" label="Button CSS Class" description="Name or names of CSS class(s). (Applicabale to Add to cart form and Set item count/quantity)" />
+            </params>
+        </tag>
+
 
 <!--
       <tag name="createuser" label="Create User" startchar="{" endchar="}" proversion="1"

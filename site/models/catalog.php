@@ -378,7 +378,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 
 
 				if($this->params->get( 'showcartitemsonly' )!='')
-						$this->showcartitemsonly=(int)$this->params->get( 'showcartitemsonly' );
+						$this->showcartitemsonly=(bool)(int)$this->params->get( 'showcartitemsonly' );
 				else
 						$this->showcartitemsonly=false;
 
@@ -652,32 +652,29 @@ class CustomTablesModelCatalog extends JModelLegacy
 
 		if($this->showcartitemsonly)
 		{
-				$jinput = JFactory::getApplication()->input;
-				$cookieValue = $jinput->cookie->get('ct_'.$this->showcartitemsprefix.'_'.$this->establename);
+			$jinput = JFactory::getApplication()->input;
+			$this->showcartitemsprefix='customtables_';
+			$cookieValue = $jinput->cookie->getVar($this->showcartitemsprefix.'_'.$this->establename);
 
-				if (isset($cookieValue))
-				{
-
-						if($cookieValue=='')
-								$wherearr[]=$this->realtablename.'.'.$this->tablerow['realidfieldname'].'=0';
-						else
-						{
-								$items=explode(';',$cookieValue);
-								$warr=array();
-								foreach($items as $item)
-								{
-										$pair=explode(',',$item);
-										$warr[]=$this->realtablename.'.'.$this->tablerow['realidfieldname'].'='.$pair[0];
-								}
-
-
-								$wherearr[]='('.implode(' OR ', $warr).')';
-						}
-				}
+			if (isset($cookieValue))
+			{
+				if($cookieValue=='')
+					$wherearr[]=$this->realtablename.'.'.$this->tablerow['realidfieldname'].'=0';
 				else
-						$wherearr[]=$this->realtablename.'.'.$this->tablerow['realidfieldname'].'=0';
+				{
+					$items=explode(';',$cookieValue);
+					$warr=array();
+					foreach($items as $item)
+					{
+						$pair=explode(',',$item);
+						$warr[]=$this->realtablename.'.'.$this->tablerow['realidfieldname'].'='.(int)$pair[0];//id must be a number
+					}
+				$wherearr[]='('.implode(' OR ', $warr).')';
+			}
 		}
-
+		else
+			$wherearr[]=$this->realtablename.'.'.$this->tablerow['realidfieldname'].'=0';
+		}
 
 		if(count($wherearr)>0)
 				$where = ' WHERE '.implode(" AND ",$wherearr);
@@ -703,7 +700,6 @@ class CustomTablesModelCatalog extends JModelLegacy
 		if($this->groupby!='')
 				$ordering[]=$this->groupby;
 
-
 		if($this->esordering)
 			CTOrdering::getOrderingQuery($ordering,$query,$inner,$this->esordering,$this->langpostfix,$this->realtablename,$this->esfields);
 
@@ -712,9 +708,6 @@ class CustomTablesModelCatalog extends JModelLegacy
 		$query.=$where.' ';
 		
 		//Not really necessary
-		//$query.=' GROUP BY '.$this->realtablename.'.id';
-
-
 		$query_analytical='SELECT COUNT('.$this->tablerow['realidfieldname'].') AS count FROM '.$this->realtablename.' '.$where;
 
 		if(count($ordering)>0)
@@ -809,7 +802,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 				}
 
 				$app = JFactory::getApplication();
-				$cookieValue = $app->input->cookie->get('ct_'.$cart_prefix.'_'.$this->establename);
+				$cookieValue = $app->input->cookie->getVar($cart_prefix.'_'.$this->establename);
 
 				if (isset($cookieValue))
 				{
@@ -877,7 +870,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 						$itemcount=$jinput->getInt('itemcount',0);
 				}
 
-				$cookieValue = $app->input->cookie->get('ct_'.$cart_prefix.'_'.$this->establename);
+				$cookieValue = $app->input->cookie->getVar($cart_prefix.'_'.$this->establename);
 
 				if (isset($cookieValue))
 				{
@@ -937,7 +930,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 				$cart_prefix=$jinput->get('cartprefix','','CMD');
 
 
-				$cookieValue = $app->input->cookie->get('ct_'.$cart_prefix.'_'.$this->establename);
+				$cookieValue = $app->input->cookie->getVar($cart_prefix.'_'.$this->establename);
 
 				if (isset($cookieValue))
 				{
@@ -971,7 +964,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 
 				$nc=implode(';',$items);
 
-				$app->input->cookie->set('ct_'.$cart_prefix.'_'.$this->establename, $nc, time()+3600*24, $app->get('cookie_path', '/'), $app->get('cookie_domain'), $app->isSSLConnection());
+				$app->input->cookie->set($cart_prefix.'_'.$this->establename, $nc, time()+3600*24, $app->get('cookie_path', '/'), $app->get('cookie_domain'), $app->isSSLConnection());
 
 				return true;
 		}
