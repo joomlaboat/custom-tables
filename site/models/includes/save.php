@@ -275,6 +275,7 @@ class CTValue
 
                     $image_type_file=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fieldtypes'.DIRECTORY_SEPARATOR.'_type_image.php';
 					require_once($image_type_file);
+					
                     $value_found=CT_FieldTypeTag_image::get_image_type_value($id,$es,$savequery,$typeparams,$prefix.$esfieldname,$realfieldname,$realtablename,$realidfieldname);
 
 					break;
@@ -801,9 +802,10 @@ static public function get_record_type_value(&$savequery,$typeparams,$prefix,$es
 									if(isset($valuearray))
                                     {
                                         $value_found=true;
-										$savequery[]=$realfieldname.'='.$db->Quote(CTValue::getCleanRecordValue($valuearray));
+										$clean_value=CTValue::getCleanRecordValue($valuearray);
+										
+										$savequery[]=$realfieldname.'='.$db->Quote($clean_value);
                                     }
-
 								break;
 
 

@@ -125,7 +125,7 @@ class CustomTablesViewLog extends JViewLegacy
 			$where[]='action='.$action;
 
 		if($userid!=0)
-			$where[]='user='.$userid;
+			$where[]='userid='.$userid;
 
 
 		$query='SELECT '.implode(',',$selects).' FROM #__customtables_log '.(count($where)>0 ? ' WHERE '.implode(' AND ',$where) : '').' ORDER BY datetime DESC';
