@@ -13,6 +13,8 @@ class tagProcessor_Shopping
 {
     public static function getShoppingCartLink(&$Model,&$htmlresult,&$row)
 	{
+		$app = JFactory::getApplication();
+		
 		$options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('cart',$options,$htmlresult,'{}');
 
@@ -35,8 +37,7 @@ class tagProcessor_Shopping
 			{
 				case 'count' :
 
-					$app = JFactory::getApplication();
-					$cookieValue = $app->input->cookie->getVar($cart_prefix.'_'.$Model->establename);
+					$cookieValue = $app->input->cookie->getVar($cart_prefix.$Model->establename);
 					
 					$vlu='0';
 					if (isset($cookieValue))
@@ -61,13 +62,13 @@ class tagProcessor_Shopping
 					break;
 
 				case 'addtocart' :
-					$theLink.='task=cart_addtocart&cartprefix='.$cart_prefix.'&listing_id='.$row['listing_id'];
+					$theLink.='task=cart_addtocart&listing_id='.$row['listing_id'];
 					$htmlresult=str_replace($fItem,$theLink,$htmlresult);
 					break;
 
 				case 'form_addtocart' :
 
-					$cookieValue = $app->input->cookie->getVar($cart_prefix.'_'.$Model->establename);
+					$cookieValue = $app->input->cookie->getVar($cart_prefix.$Model->establename);
 					if (isset($cookieValue))
 					{
 						$items=explode(';',$cookieValue);
@@ -102,7 +103,6 @@ class tagProcessor_Shopping
 					$result='<form action="" method="post" id="ct_addtocartform">
 					<input type="hidden" name="listing_id" value="'.$row['listing_id'].'" />
 					<input type="hidden" name="task" value="cart_form_addtocart" />
-					<input type="hidden" name="cartprefix" value="'.$cart_prefix.'" />
 					<input type="text" class="inputbox" style="'.$input_style.'" name="itemcount" value="1" />'.$input_button.'
 					</form>
 					';
@@ -115,7 +115,7 @@ class tagProcessor_Shopping
 
 				case 'setitemcount' :
 
-					$cookieValue = $app->input->cookie->getVar($cart_prefix.'_'.$Model->establename);
+					$cookieValue = $app->input->cookie->getVar($cart_prefix.$Model->establename);
 					if (isset($cookieValue))
 					{
 						$items=explode(';',$cookieValue);
@@ -151,8 +151,7 @@ class tagProcessor_Shopping
 					<form action="" method="post" id="ct_updatecartform">
 					<input type="hidden" name="listing_id" value="'.$row['listing_id'].'" />
 					<input type="hidden" name="task" value="cart_setitemcount" />
-					<input type="hidden" name="cartprefix" value="'.$cart_prefix.'" />
-						<input type="text" class="inputbox" style="'.$input_style.'" name="itemcount" value="'.$vlu.'" />'.$input_button.'
+					<input type="text" class="inputbox" name="itemcount" value="'.$vlu.'" />'.$input_button.'
 					</form>
 					';
 
@@ -163,12 +162,10 @@ class tagProcessor_Shopping
 
 				case 'deleteitem' :
 
-					$theLink.='task=cart_deleteitem&cartprefix='.$cart_prefix.'&listing_id='.$row['listing_id'];
+					$theLink.='task=cart_deleteitem&listing_id='.$row['listing_id'];
 					$htmlresult=str_replace($fItem,$theLink,$htmlresult);
 
 					break;
-
-
 
 				default:
 
@@ -176,9 +173,6 @@ class tagProcessor_Shopping
 			}//switch($option_pair[0])
 
 			$opt_i++;
-
-
 		}
-
 	}
 }

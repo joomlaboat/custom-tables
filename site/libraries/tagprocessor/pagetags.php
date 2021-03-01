@@ -24,12 +24,10 @@ class tagProcessor_Page
 
         tagProcessor_Page::PageToolBar($Model,$pagelayout);
 
-
         tagProcessor_Page::PageToolBarCheckBox($Model,$pagelayout);
 
         tagProcessor_Page::SearchButton($Model,$pagelayout);
         tagProcessor_Page::SearchBOX($Model,$pagelayout);
-
 
         tagProcessor_Page::RecordCountValue($Model,$pagelayout);
 

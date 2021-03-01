@@ -415,7 +415,7 @@ class CustomTablesImageMethods
 	}
 
 
-	function UploadSingleImage($ExistingImage, $image_file_id, $realfieldname, $ImageFolder, $imageparams_full, $realtablename = '-options')
+	function UploadSingleImage($ExistingImage, $image_file_id, $realfieldname, $ImageFolder, $imageparams_full, $realtablename = '-options',$realidfieldname)
 	{
 		$jinput = JFactory::getApplication()->input;
 
@@ -440,7 +440,7 @@ class CustomTablesImageMethods
 
 			//Delete Old Logo
 			if($ExistingImage!=0)
-				$this->DeleteExistingSingleImage($ExistingImage,$ImageFolder,$imageparams_full,$realtablename,$realfieldname);
+				$this->DeleteExistingSingleImage($ExistingImage,$ImageFolder,$imageparams_full,$realtablename,$realfieldname,$realidfieldname);
 
 			$new_photo_ext=$this->FileExtenssion($uploadedfile);
 

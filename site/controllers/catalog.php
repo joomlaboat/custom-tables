@@ -65,7 +65,7 @@ if($WebsiteRoot=='' or $WebsiteRoot[strlen($WebsiteRoot)- 1] != '/') //Root must
 		//if ($edit_model->CheckAuthorizationACL($PermissionWord))
 		if ($edit_model->CheckAuthorization($PermissionIndex))
 		{
-			$redirect=doTheTask($task,$params,$edit_model,$WebsiteRoot,$clean);
+			$redirect=doTheTask($task,$params,$edit_model,$WebsiteRoot,$clean,$this);
 			JFactory::getApplication()->enqueueMessage($redirect->msg);
 			$this->setRedirect($redirect->link, $redirect->msg, $redirect->status);
 		}
@@ -86,7 +86,7 @@ if($WebsiteRoot=='' or $WebsiteRoot[strlen($WebsiteRoot)- 1] != '/') //Root must
 	else
 		parent::display();
 	
-function doTheTask($task,$params,$edit_model,$WebsiteRoot,$clean)	
+function doTheTask($task,$params,$edit_model,$WebsiteRoot,$clean,&$this_)	
 {
 	$user = JFactory::getUser();
 	$userid = (int)$user->get('id');
@@ -119,7 +119,7 @@ function doTheTask($task,$params,$edit_model,$WebsiteRoot,$clean)
 	{
 		case 'clear':
 
-			$model = $this->getModel('catalog');
+			$model = $this_->getModel('catalog');
 			$model->load($params, false);
 
 			if ($model->getSearchResult())
@@ -247,9 +247,12 @@ function doTheTask($task,$params,$edit_model,$WebsiteRoot,$clean)
 		
 		if ($task == 'cart_addtocart' or $task == 'cart_form_addtocart' or $task == 'cart_setitemcount' or $task == 'cart_deleteitem' or $task == 'cart_emptycart')
 		{
-			$model = $this->getModel('catalog');
+			$model = $this_->getModel('catalog');
 			$model->load($params, false);
-			if ($params->get('cart_returnto')) $link = $params->get('cart_returnto');
+			if ($params->get('cart_returnto'))
+			{
+				$link = $params->get('cart_returnto');
+			}
 			else
 			{
 				$theLink = JoomlaBasicMisc::curPageURL();

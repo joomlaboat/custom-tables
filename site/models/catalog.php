@@ -138,6 +138,8 @@ class CustomTablesModelCatalog extends JModelLegacy
 
 
 			$this->frmt=$jinput->getCmd('frmt','html');
+			
+			$this->showcartitemsprefix='customtables_';
 		}
 
 		function prepareSEFLinkBase()
@@ -376,18 +378,10 @@ class CustomTablesModelCatalog extends JModelLegacy
 				$this->filtering->esfields=$this->esfields;
 				$this->filtering->estable=$this->realtablename;
 
-
 				if($this->params->get( 'showcartitemsonly' )!='')
 						$this->showcartitemsonly=(bool)(int)$this->params->get( 'showcartitemsonly' );
 				else
 						$this->showcartitemsonly=false;
-
-
-				if($this->params->get( 'showcartitemsprefix' )!='')
-						$this->showcartitemsprefix=$this->params->get( 'showcartitemsprefix' );
-				else
-						$this->showcartitemsprefix='';
-
 
 				$this->prepareSEFLinkBase();
 		}
@@ -653,8 +647,8 @@ class CustomTablesModelCatalog extends JModelLegacy
 		if($this->showcartitemsonly)
 		{
 			$jinput = JFactory::getApplication()->input;
-			$this->showcartitemsprefix='customtables_';
-			$cookieValue = $jinput->cookie->getVar($this->showcartitemsprefix.'_'.$this->establename);
+			
+			$cookieValue = $jinput->cookie->getVar($this->showcartitemsprefix.$this->establename);
 
 			if (isset($cookieValue))
 			{
@@ -766,11 +760,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 		{
 				$app = JFactory::getApplication();
 				$jinput = $app->input;
-				$cart_prefix=$jinput->get('cartprefix','','CMD');
-
-
-
-				$jinput->cookie->set('ct_'.$cart_prefix.'_'.$this->establename, '', time()-3600, $app->get('cookie_path', '/'), $app->get('cookie_domain'), $app->isSSLConnection());
+				$jinput->cookie->set($this->showcartitemsprefix.$this->establename, '', time()-3600, $app->get('cookie_path', '/'), $app->get('cookie_domain'), $app->isSSLConnection());
 
 				return true;
 		}
@@ -792,17 +782,13 @@ class CustomTablesModelCatalog extends JModelLegacy
 				if(!$jinput->get('listing_id',0,'INT'))
 						return false;
 
-				$objectid=$jinput->get('listing_id',0,'INT');
-
-				$cart_prefix=$jinput->get('cartprefix','','CMD');
+				$objectid=$jinput->getInt('listing_id',0);
 
 				if($itemcount==-1)
-				{
-					$itemcount=$jinput->get('itemcount',0,'INT');
-				}
+					$itemcount=$jinput->getInt('itemcount',0);
 
 				$app = JFactory::getApplication();
-				$cookieValue = $app->input->cookie->getVar($cart_prefix.'_'.$this->establename);
+				$cookieValue = $app->input->cookie->getVar($this->showcartitemsprefix.$this->establename);
 
 				if (isset($cookieValue))
 				{
@@ -844,7 +830,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 						$items=array($objectid.','.$itemcount); //add new
 
 				$nc=implode(';',$items);
-				setcookie('ct_'.$cart_prefix.'_'.$this->establename, $nc, time()+3600*24);
+				setcookie($this->showcartitemsprefix.$this->establename, $nc, time()+3600*24);
 
 				return true;
 		}
@@ -859,18 +845,12 @@ class CustomTablesModelCatalog extends JModelLegacy
 
 				$objectid=$jinput->get('listing_id',0,'INT');
 
-
-				$cart_prefix=$jinput->get('cartprefix','','CMD');
-
 				$app = JFactory::getApplication();
 
-
 				if($itemcount==-1)
-				{
-						$itemcount=$jinput->getInt('itemcount',0);
-				}
+					$itemcount=$jinput->getInt('itemcount',0);
 
-				$cookieValue = $app->input->cookie->getVar($cart_prefix.'_'.$this->establename);
+				$cookieValue = $app->input->cookie->getVar($this->showcartitemsprefix.$this->establename);
 
 				if (isset($cookieValue))
 				{
@@ -911,7 +891,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 						$items=array($objectid.','.$itemcount); //add new
 
 				$nc=implode(';',$items);
-				setcookie('ct_'.$cart_prefix.'_'.$this->establename, $nc, time()+3600*24);
+				setcookie($this->showcartitemsprefix.$this->establename, $nc, time()+3600*24);
 
 				return true;
 		}
@@ -927,10 +907,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 
 				$objectid=$jinput->get('listing_id',0,'INT');
 
-				$cart_prefix=$jinput->get('cartprefix','','CMD');
-
-
-				$cookieValue = $app->input->cookie->getVar($cart_prefix.'_'.$this->establename);
+				$cookieValue = $app->input->cookie->getVar($this->showcartitemsprefix.$this->establename);
 
 				if (isset($cookieValue))
 				{
@@ -964,7 +941,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 
 				$nc=implode(';',$items);
 
-				$app->input->cookie->set($cart_prefix.'_'.$this->establename, $nc, time()+3600*24, $app->get('cookie_path', '/'), $app->get('cookie_domain'), $app->isSSLConnection());
+				$app->input->cookie->set($this->showcartitemsprefix.$this->establename, $nc, time()+3600*24, $app->get('cookie_path', '/'), $app->get('cookie_domain'), $app->isSSLConnection());
 
 				return true;
 		}

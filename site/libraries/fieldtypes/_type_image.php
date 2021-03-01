@@ -105,14 +105,12 @@ class CT_FieldTypeTag_image
 	}
 
 
-    static public function get_image_type_value($id,&$es,&$savequery,$typeparams,$prefix,$esfieldname,$establename)
+    static public function get_image_type_value($id,&$es,&$savequery,$typeparams,$comesfieldname,$realfieldname,$realtablename,$realidfieldname)
     {
         $value_found=false;
 
-        $comesfieldname=$prefix.$esfieldname;
     				$value=0;
 					$imagemethods=new CustomTablesImageMethods;
-                    $mysqltablename='#__customtables_table_'.$establename;
 
 					$ImageFolder=CustomTablesImageMethods::getImageFolder($typeparams);
 
@@ -122,28 +120,33 @@ class CT_FieldTypeTag_image
 
 					if($id==0)
 					{
-							$value=$imagemethods->UploadSingleImage(0, $fileid,$esfieldname,JPATH_SITE.DIRECTORY_SEPARATOR.$ImageFolder,$typeparams,$establename);
+							$value=$imagemethods->UploadSingleImage(0, $fileid,$realfieldname,JPATH_SITE.DIRECTORY_SEPARATOR.$ImageFolder,$typeparams,$realtablename,$realidfieldname);
 					}
 					else
 					{
                         $to_delete = $jinput->post->get($comesfieldname.'_delete', '','CMD' );
 
 						
-                        $ExistingImage=$es->isRecordExist($id,'id', 'es_'.$esfieldname, $mysqltablename);
-
+                        $ExistingImage=$es->isRecordExist($id,'id', $realfieldname, $realtablename);
 
 							if($to_delete=='true')
 							{
 								if($ExistingImage>0)
-									$imagemethods->DeleteExistingSingleImage($ExistingImage,JPATH_SITE.DIRECTORY_SEPARATOR.$ImageFolder,$typeparams,$establename,$esfieldname);
+									$imagemethods->DeleteExistingSingleImage(
+										$ExistingImage,
+										JPATH_SITE.DIRECTORY_SEPARATOR.$ImageFolder,
+										$typeparams,
+										$realtablename,
+										$realfieldname,
+										$realidfieldname);
 
                                 $value_found=true;
-								$savequery[]='es_'.$esfieldname.'='.$value;
+								$savequery[]=$realfieldname.'='.$value;
 							}
 							else
 							{
-
-								$value=$imagemethods->UploadSingleImage($ExistingImage,$fileid, $esfieldname,JPATH_SITE.DIRECTORY_SEPARATOR.$ImageFolder,$typeparams,$establename);
+								$value=$imagemethods->UploadSingleImage($ExistingImage,$fileid, $realfieldname,
+									JPATH_SITE.DIRECTORY_SEPARATOR.$ImageFolder,$typeparams,$realtablename,$realidfieldname);
 							}
 
 					}
@@ -151,7 +154,7 @@ class CT_FieldTypeTag_image
                     if($value!=0)
                     {
                             $value_found=true;
-							$savequery[]='es_'.$esfieldname.'='.$value;
+							$savequery[]=$realfieldname.'='.$value;
                     }
         return $value_found;
     }

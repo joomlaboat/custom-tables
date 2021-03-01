@@ -519,8 +519,8 @@
 
 
 
-	<tag name="cart" label="Shopping Cart" startchar="{" endchar="}" hidedefaultexample="1"
-             description="Returns Shoping Cart item count or renders Add to Shoping Cart button">
+	<tag name="cart" label="Shopping Cart" startchar="{" endchar="}" hidedefaultexample="1" layouttypes="1,6,3,4,8,9,10"
+             description="Returns Shopping Cart item count or renders Add to Shoping Cart button">
             <params>
                 <param name="option" label="Option" type="list" description="Select on of the available options.">
 			<option value="count" label="Item count"

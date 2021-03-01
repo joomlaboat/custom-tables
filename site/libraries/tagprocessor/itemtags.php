@@ -339,6 +339,7 @@ class tagProcessor_Item
 
 			if(count($opts)>=5) //dont even try if less than 5 parameters
 			{
+				$field2_type='';
 
 				$order_by_option='';
 

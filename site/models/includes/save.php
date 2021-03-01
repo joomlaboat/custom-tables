@@ -17,6 +17,8 @@ class CTValue
         $db = JFactory::getDBO();
         $esfieldname=$esfield['fieldname'];
 		$realfieldname=$esfield['realfieldname'];
+		$realidfieldname='id';
+		
         $comesfieldname=$prefix.$esfieldname;
         $jinput=JFactory::getApplication()->input;
         $typeparams=$esfield['typeparams'];
@@ -273,7 +275,7 @@ class CTValue
 
                     $image_type_file=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fieldtypes'.DIRECTORY_SEPARATOR.'_type_image.php';
 					require_once($image_type_file);
-                    $value_found=CT_FieldTypeTag_image::get_image_type_value($id,$es,$savequery,$typeparams,$prefix,$esfieldname,$establename);
+                    $value_found=CT_FieldTypeTag_image::get_image_type_value($id,$es,$savequery,$typeparams,$prefix.$esfieldname,$realfieldname,$realtablename,$realidfieldname);
 
 					break;
 
@@ -282,7 +284,7 @@ class CTValue
                     $file_type_file=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fieldtypes'.DIRECTORY_SEPARATOR.'_type_file.php';
 					require_once($file_type_file);
 
-					$value_found=CT_FieldTypeTag_file::get_file_type_value($id,$es,$savequery,$typeparams,$prefix,$esfieldname,$establename);
+					$value_found=CT_FieldTypeTag_file::get_file_type_value($id,$es,$savequery,$typeparams,$prefix,$realfieldname,$realtablename,$realidfieldname);
 					break;
 
 				case 'article':

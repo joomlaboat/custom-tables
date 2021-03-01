@@ -28,7 +28,7 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.
 class CustomTablesModelDetails extends JModelLegacy {
 
 	var $es;
-
+	var $TotalRows=0;
 	var $LangMisc;
 
 	var $esTable;
