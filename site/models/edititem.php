@@ -639,7 +639,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		//check if the item belong to the user
 		$db = JFactory::getDBO();
 
-		$query='SELECT id FROM '.$this->realtablename.' WHERE '.$this->tablerow['realidfieldname'].'='.$this->id.' AND es_'.$useridfield.'='.$this->userid.' LIMIT 1';
+		$query='SELECT id FROM '.$this->realtablename.' WHERE '.$this->tablerow['realidfieldname'].'='.$this->id.' AND '.$useridfield.'='.$this->userid.' LIMIT 1';
 
 		$db->setQuery( $query );
 		$db->execute();
@@ -2084,7 +2084,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 					$esfield['typeparams'],
 					$this->realtablename,
 					$esfield['realfieldname'],
-					$esfield['realidfieldname']
+					$this->tablerow['realidfieldname']
 				);
 			}
 			elseif($esfield['type']=='imagegallery')
