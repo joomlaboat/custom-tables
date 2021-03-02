@@ -79,16 +79,8 @@ class JFormFieldAnyTables extends JFormFieldList
 		$db->setQuery( $query );
 		$recs=$db->loadAssocList();
 		
-		if($db->serverType == 'postgresql')
-		{
-			foreach($recs as $rec)
-				$list[]=$rec['table_name'];
-		}
-		else
-		{
-			foreach($recs as $rec)
-				$list[]=$rec['TABLE_NAME'];
-		}
+		foreach($recs as $rec)
+			$list[]=$rec['table_name'];
 		
 		return $list;
 	}
