@@ -200,12 +200,13 @@ class CT_FieldTypeTag_file
             return $filepath;
     }
 
-    static public function get_file_type_value($id,&$es,&$savequery,$typeparams,$prefix,$esfieldname,$establename)
+    static public function get_file_type_value($id,&$es,&$savequery,$typeparams,$comesfieldname,$realfieldname,$realtablename,$realidfieldname)
     {
+		$db = JFactory::getDBO();
+		
         $value_found=false;
         $jinput=JFactory::getApplication()->input;
-        $mysqltablename='#__customtables_table_'.$establename;
-        $comesfieldname=$prefix.$esfieldname;
+        
         $FileFolder=CT_FieldTypeTag_file::getFileFolder($typeparams);
 
         $fileid = $jinput->post->get($comesfieldname, '','STRING' );
@@ -213,47 +214,43 @@ class CT_FieldTypeTag_file
 		$value='';
 		$filepath=JPATH_SITE.DIRECTORY_SEPARATOR.str_replace('/',DIRECTORY_SEPARATOR,$FileFolder);
 
-					if($id==0)
-                    {
-                        $value=CT_FieldTypeTag_file::UploadSingleFile('',$fileid, $esfieldname,JPATH_SITE.$FileFolder,$typeparams,$establename);
-                    }
-					else
-					{
-                        $to_delete = $jinput->post->get($comesfieldname.'_delete', '','CMD' );
-						$ExistingFile=$es->isRecordExist($id,'id', 'es_'.$esfieldname, $mysqltablename);
+		if($id==0)
+        {
+			$value=CT_FieldTypeTag_file::UploadSingleFile('',$fileid, $realfieldname,JPATH_SITE.$FileFolder,$typeparams,$realtablename);
+        }
+		else
+		{
+			$to_delete = $jinput->post->get($comesfieldname.'_delete', '','CMD' );
+			$ExistingFile=$es->isRecordExist($id,'id', $realfieldname, $realtablename);
 
-                        if($to_delete=='true')
-						{
-								if($ExistingFile!='' and !CT_FieldTypeTag_file::checkIfTheFileBelongsToAnotherRecord($ExistingFile,$FileFolder,$establename,$esfieldname))
-								{
-									$filename_full=$filepath.DIRECTORY_SEPARATOR.$ExistingFile;
-									if(file_exists($filename_full))
-										unlink($filename_full);
+            if($to_delete=='true')
+			{
+				if($ExistingFile!='' and !CT_FieldTypeTag_file::checkIfTheFileBelongsToAnotherRecord($ExistingFile,$FileFolder,$realtablename,$realfieldname))
+				{
+					$filename_full=$filepath.DIRECTORY_SEPARATOR.$ExistingFile;
+					if(file_exists($filename_full))
+						unlink($filename_full);
+				}
+            
+				$value_found=true;
+				$savequery[]=$realfieldname.'='.$db->quote('');
+			}
+			else
+				$value=CT_FieldTypeTag_file::UploadSingleFile($ExistingFile,$fileid, $realfieldname,JPATH_SITE.$FileFolder,$typeparams,$realtablename);
+		}
 
-								}
-                                $value_found=true;
-								$savequery[]='es_'.$esfieldname.'=""';
-						}
-						else
-                            $value=CT_FieldTypeTag_file::UploadSingleFile($ExistingFile,$fileid, $esfieldname,JPATH_SITE.$FileFolder,$typeparams,$establename);
-					}
-
-					if($value and $value!='')
-                    {
-                        $value_found=true;
-						$savequery[]='es_'.$esfieldname.'="'.$value.'"';
-                    }
+		if($value and $value!='')
+        {
+			$value_found=true;
+			$savequery[]=$realfieldname.'='.$db->quote($value);
+		}
 
         return $value_found;
     }
 
 
-
-
-    protected static function UploadSingleFile($ExistingFile, $file_id, $esfieldname,$FileFolder,$typeparams,$establename='-options')
+    protected static function UploadSingleFile($ExistingFile, $file_id, $realfieldname,$FileFolder,$typeparams,$realtablename='-options')
     {
-		$jinput = JFactory::getApplication()->input;
-
 		if($file_id!='')
 		{
             $accepted_file_types=explode(' ',ESFileUploader::getAcceptedFileTypes($typeparams));
@@ -283,9 +280,8 @@ class CT_FieldTypeTag_file
 				CustomTablesFileMethods::base64file_decode( $src, $dst );
 				$uploadedfile=$dst;
 			}
-
 			
-    		if($ExistingFile!='' and !CT_FieldTypeTag_file::checkIfTheFileBelongsToAnotherRecord($ExistingFile,$FileFolder,$establename,$esfieldname))
+    		if($ExistingFile!='' and !CT_FieldTypeTag_file::checkIfTheFileBelongsToAnotherRecord($ExistingFile,$FileFolder,$realtablename,$realfieldname))
     		{
 				//Delete Old File
     			$filename_full=$FileFolder.DIRECTORY_SEPARATOR.$ExistingFile;
@@ -334,13 +330,10 @@ class CT_FieldTypeTag_file
 		return false;
 	}
 	
-	static protected function checkIfTheFileBelongsToAnotherRecord($filename,$FileFolder,$establename,$esfieldname)
+	static protected function checkIfTheFileBelongsToAnotherRecord($filename,$FileFolder,$realtablename,$realfieldname)
 	{
-		$mysqltablename='#__customtables_table_'.$establename;
-        $comesfieldname='es_'.$esfieldname;
-		
 		$db = JFactory::getDBO();
-		$query='SELECT id FROM '.$mysqltablename.' WHERE '.$comesfieldname.'='.$db->quote($filename).' LIMIT 2';
+		$query='SELECT * FROM '.$realtablename.' WHERE '.$realfieldname.'='.$db->quote($filename).' LIMIT 2';
 		
 		$db->setQuery( $query );
 		$db->execute();

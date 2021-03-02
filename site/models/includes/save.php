@@ -112,7 +112,7 @@ class CTValue
 
 						if(isset($value))
                         {
-                            $value_found=CTValue::get_alias_type_value($id,$establename,$savequery,$prefix,$esfieldname,$realfieldname,$realtablename);
+                            $value_found=CTValue::get_alias_type_value($id,$establename,$savequery,$prefix,$esfieldname,$realfieldname,$realtablename,$realidfieldname);
                         }
 					break;
 
@@ -285,7 +285,7 @@ class CTValue
                     $file_type_file=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fieldtypes'.DIRECTORY_SEPARATOR.'_type_file.php';
 					require_once($file_type_file);
 
-					$value_found=CT_FieldTypeTag_file::get_file_type_value($id,$es,$savequery,$typeparams,$prefix,$realfieldname,$realtablename,$realidfieldname);
+					$value_found=CT_FieldTypeTag_file::get_file_type_value($id,$es,$savequery,$typeparams,$prefix.$esfieldname,$realfieldname,$realtablename,$realidfieldname);
 					break;
 
 				case 'article':
@@ -666,7 +666,7 @@ static public function get_usergroups_type_value(&$savequery,$typeparams,$prefix
     }
 
 
-static public function get_alias_type_value($id,$establename,&$savequery,$prefix,$esfieldname,$realfieldname,$realtablename)
+static public function get_alias_type_value($id,$establename,&$savequery,$prefix,$esfieldname,$realfieldname,$realtablename,$realidfieldname)
 {
     $comesfieldname=$prefix.$esfieldname;
 
@@ -674,7 +674,7 @@ static public function get_alias_type_value($id,$establename,&$savequery,$prefix
     if(!isset($value))
         return false;
     
-    $value=CTValue::prepare_alias_type_value($id,$establename,$esfieldname,$value,$realfieldname,$realtablename);
+    $value=CTValue::prepare_alias_type_value($id,$establename,$esfieldname,$value,$realfieldname,$realtablename,$realidfieldname);
     if($value=='')
         return false;
 
@@ -683,14 +683,14 @@ static public function get_alias_type_value($id,$establename,&$savequery,$prefix
     return true;
 }
 
-static public function prepare_alias_type_value($id,$establename,$esfieldname,$value,$realfieldname,$realtablename)
+static public function prepare_alias_type_value($id,$establename,$esfieldname,$value,$realfieldname,$realtablename,$realidfieldname)
 {
     $value=JoomlaBasicMisc::slugify($value);
 
     if($value=='')
         return '';
 
-    if(!CTValue::checkIfAliasExists($id,$realtablename,$realfieldname,$value))
+    if(!CTValue::checkIfAliasExists($id,$realtablename,$realfieldname,$value,$realidfieldname))
         return $value;
 
     $val=CTValue::splitStringToStringAndNumber($value);
@@ -700,7 +700,7 @@ static public function prepare_alias_type_value($id,$establename,$esfieldname,$v
 
 	do
 	{
-		if(CTValue::checkIfAliasExists($id,$realtablename,$realfieldname,$value_new))
+		if(CTValue::checkIfAliasExists($id,$realtablename,$realfieldname,$value_new,$realidfieldname))
 		{
 			//increase index
 			$i++;
@@ -738,11 +738,11 @@ static protected function splitStringToStringAndNumber($string)
     return $val;
 }
 
-static protected function checkIfAliasExists($exclude_id,$mysqltablename,$mysqlfieldname,$value)
+static protected function checkIfAliasExists($exclude_id,$realtablename,$realfieldname,$value,$realidfieldname)
 {
     $db = JFactory::getDBO();
 
-    $query = 'SELECT count(id) AS c FROM '.$mysqltablename.' WHERE id!='.$exclude_id.' AND '.$mysqlfieldname.'='.$db->quote($value).' LIMIT 1';
+    $query = 'SELECT count('.$realidfieldname.') AS c FROM '.$realtablename.' WHERE '.$realidfieldname.'!='.$exclude_id.' AND '.$realfieldname.'='.$db->quote($value).' LIMIT 1';
 	$db->setQuery( $query );
 	if (!$db->query())    die ( $db->stderr());
 

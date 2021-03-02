@@ -263,7 +263,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		
 		$query = 'SELECT '.$this->tablerow['query_selects'].' FROM '.$this->realtablename.' '.$where;
 		$query.=' LIMIT 1';
-
+		
 		$db->setQuery($query);
 		$rows=$db->loadAssocList();
 
@@ -617,7 +617,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 				if($esfield['fieldname']==$useridfield and ($esfield['type']=='userid' or $esfield['type']=='user'))
 				{
 
-					$this->useridfield=$esfield['fieldname'];
+					$this->useridfield=$esfield['realfieldname'];
 
 					$params=$esfield['typeparams'];
 					$parts=JoomlaBasicMisc::csv_explode(',', $params, '"', false);
