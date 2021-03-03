@@ -999,7 +999,14 @@ static public function get_record_type_value(&$savequery,$typeparams,$prefix,$es
             LayoutProcessor::applyContentPlugins($htmlresult);
 
             if($type=='alias')
-                $htmlresult=CTValue::prepare_alias_type_value($row['listing_id'],$Model->establename,$esfieldname,$htmlresult,$realfieldname,$Model->realtablename);
+                $htmlresult=CTValue::prepare_alias_type_value(
+					$row['listing_id'],
+					$Model->establename,
+					$esfieldname,
+					$htmlresult,
+					$realfieldname,
+					$Model->realtablename,
+					$Model->tablerow['realidfieldname']);
 
             $savequery[]=$realfieldname.'='.$db->quote($htmlresult);
         }
