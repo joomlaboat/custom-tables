@@ -963,7 +963,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 						$minid=(int)$typeparams;
 
 
-						$query='SELECT MAX(es_'.$fieldname.') AS maxid FROM '.$this->realtablename.' LIMIT 1';
+						$query='SELECT MAX('.$realfieldname.') AS maxid FROM '.$this->realtablename.' LIMIT 1';
 						$db->setQuery( $query );
 						$rows=$db->loadObjectList();
 						if(count($rows)!=0)

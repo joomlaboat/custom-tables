@@ -28,7 +28,7 @@ class CTValue
 			{
 				case 'records':
 
-					$value_found=CTValue::get_record_type_value($savequery,$typeparams,$prefix,$esfieldname,$realfieldname);
+					$value_found=CTValue::get_record_type_value($savequery,$typeparams,$comesfieldname,$realfieldname);
 
 					break;
 				case 'sqljoin':
@@ -112,7 +112,7 @@ class CTValue
 
 						if(isset($value))
                         {
-                            $value_found=CTValue::get_alias_type_value($id,$establename,$savequery,$prefix,$esfieldname,$realfieldname,$realtablename,$realidfieldname);
+                            $value_found=CTValue::get_alias_type_value($id,$comesfieldname,$savequery,$realfieldname,$realtablename,$realidfieldname);
                         }
 					break;
 
@@ -242,12 +242,12 @@ class CTValue
 					break;
 
 				case 'usergroups':
-					$value_found=CTValue::get_usergroups_type_value($savequery,$typeparams,$prefix,$esfieldname,$realfieldname);
+					$value_found=CTValue::get_usergroups_type_value($savequery,$typeparams,$comesfieldname,$realfieldname);
 					break;
 
                 case 'language':
 
-                    $value_found=CTValue::get_customtables_type_language($savequery,$typeparams,$prefix,$esfieldname,$realfieldname);
+                    $value_found=CTValue::get_customtables_type_language($savequery,$typeparams,$comesfieldname,$realfieldname);
 					break;
 
 				case 'filelink':
@@ -276,7 +276,7 @@ class CTValue
                     $image_type_file=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fieldtypes'.DIRECTORY_SEPARATOR.'_type_image.php';
 					require_once($image_type_file);
 					
-                    $value_found=CT_FieldTypeTag_image::get_image_type_value($id,$es,$savequery,$typeparams,$prefix.$esfieldname,$realfieldname,$realtablename,$realidfieldname);
+                    $value_found=CT_FieldTypeTag_image::get_image_type_value($id,$es,$savequery,$typeparams,$comesfieldname,$realfieldname,$realtablename,$realidfieldname);
 
 					break;
 
@@ -285,7 +285,7 @@ class CTValue
                     $file_type_file=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fieldtypes'.DIRECTORY_SEPARATOR.'_type_file.php';
 					require_once($file_type_file);
 
-					$value_found=CT_FieldTypeTag_file::get_file_type_value($id,$es,$savequery,$typeparams,$prefix.$esfieldname,$realfieldname,$realtablename,$realidfieldname);
+					$value_found=CT_FieldTypeTag_file::get_file_type_value($id,$es,$savequery,$typeparams,$comesfieldname,$realfieldname,$realtablename,$realidfieldname);
 					break;
 
 				case 'article':
@@ -528,12 +528,12 @@ static public function Try2CreateUserAccount($Model,$field,$row)
 
 	}
 
-static public function get_customtables_type_language(&$savequery,$typeparams,$prefix,$esfieldname,$realfieldname)
+static public function get_customtables_type_language(&$savequery,$typeparams,$comesfieldname,$realfieldname)
 {
     $value_found=false;
 
     $db = JFactory::getDBO();
-    $comesfieldname=$prefix.$esfieldname;
+
     $jinput=JFactory::getApplication()->input;
     $value=$jinput->getCmd($comesfieldname,null);
 
@@ -597,10 +597,10 @@ static public function get_customtables_type_value(&$es,&$savequery,$typeparams,
 
 
 
-static public function get_usergroups_type_value(&$savequery,$typeparams,$prefix,$esfieldname,$realfieldname)
+static public function get_usergroups_type_value(&$savequery,$typeparams,$comesfieldname,$realfieldname)
 {
         $value_found=false;
-        $comesfieldname=$prefix.$esfieldname;
+        
         $db = JFactory::getDBO();
 
                         switch($typeparams)
@@ -666,15 +666,14 @@ static public function get_usergroups_type_value(&$savequery,$typeparams,$prefix
     }
 
 
-static public function get_alias_type_value($id,$establename,&$savequery,$prefix,$esfieldname,$realfieldname,$realtablename,$realidfieldname)
-{
-    $comesfieldname=$prefix.$esfieldname;
 
+static public function get_alias_type_value($id,$comesfieldname,&$savequery,$realfieldname,$realtablename,$realidfieldname)
+{
     $value=JFactory::getApplication()->input->getString($comesfieldname);
     if(!isset($value))
         return false;
     
-    $value=CTValue::prepare_alias_type_value($id,$establename,$esfieldname,$value,$realfieldname,$realtablename,$realidfieldname);
+    $value=CTValue::prepare_alias_type_value($id,$value,$realtablename,$realfieldname,$realidfieldname);
     if($value=='')
         return false;
 
@@ -683,7 +682,7 @@ static public function get_alias_type_value($id,$establename,&$savequery,$prefix
     return true;
 }
 
-static public function prepare_alias_type_value($id,$establename,$esfieldname,$value,$realfieldname,$realtablename,$realidfieldname)
+static public function prepare_alias_type_value($id,$value,$realtablename,$realfieldname,$realidfieldname)
 {
     $value=JoomlaBasicMisc::slugify($value);
 
@@ -744,7 +743,6 @@ static protected function checkIfAliasExists($exclude_id,$realtablename,$realfie
 
     $query = 'SELECT count('.$realidfieldname.') AS c FROM '.$realtablename.' WHERE '.$realidfieldname.'!='.$exclude_id.' AND '.$realfieldname.'='.$db->quote($value).' LIMIT 1';
 	$db->setQuery( $query );
-	if (!$db->query())    die ( $db->stderr());
 
 	$rows = $db->loadObjectList();
     if(count($rows)==0)
@@ -759,11 +757,9 @@ static protected function checkIfAliasExists($exclude_id,$realtablename,$realfie
     return false;
 }
 
-static public function get_record_type_value(&$savequery,$typeparams,$prefix,$esfieldname,$realfieldname)
+static public function get_record_type_value(&$savequery,$typeparams,$comesfieldname,$realfieldname)
 {
     $value_found=false;
-
-    $comesfieldname=$prefix.$esfieldname;
 
     $db = JFactory::getDBO();
     $typeparamsarray=explode(',',$typeparams);
@@ -980,11 +976,10 @@ static public function get_record_type_value(&$savequery,$typeparams,$prefix,$es
 		$db = JFactory::getDBO();
 		$query = 'SELECT id, optionname FROM #__customtables_options WHERE parentid='.(int)$parentid;
 	 	$db->setQuery($query);
-		if (!$db->query())	die($db->stderr());
-            return $db->loadObjectList();
+        return $db->loadObjectList();
 	}
 
-    static protected function processDefaultValue($esfieldname,&$Model,$htmlresult,$type,&$row,&$savequery,$realfieldname)
+    static protected function processDefaultValue(&$Model,$htmlresult,$type,&$row,&$savequery,$realfieldname)
     {
         $db = JFactory::getDBO();
 
@@ -999,15 +994,14 @@ static public function get_record_type_value(&$savequery,$typeparams,$prefix,$es
             LayoutProcessor::applyContentPlugins($htmlresult);
 
             if($type=='alias')
+			{
                 $htmlresult=CTValue::prepare_alias_type_value(
 					$row['listing_id'],
-					$Model->establename,
-					$esfieldname,
 					$htmlresult,
-					$realfieldname,
 					$Model->realtablename,
+					$realfieldname,
 					$Model->tablerow['realidfieldname']);
-
+			}
             $savequery[]=$realfieldname.'='.$db->quote($htmlresult);
         }
     }
@@ -1027,7 +1021,7 @@ static public function get_record_type_value(&$savequery,$typeparams,$prefix,$es
             $r=$row[$realfieldname];
             if($r==null or $r=='' or $r==0)
             {
-                CTValue::processDefaultValue($fieldname,$Model,$value,$type,$row,$savequery,$realfieldname);
+                CTValue::processDefaultValue($Model,$value,$type,$row,$savequery,$realfieldname);
             }
 		}
 
