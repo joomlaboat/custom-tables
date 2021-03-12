@@ -425,9 +425,10 @@ static public function toHex($n) {
 
 static public function Try2CreateUserAccount($Model,$field,$row)
 {
-    $useridfieldname=$field['realfieldname'];
+	$useridfieldname=$field['realfieldname'];
 
     $uid=(int)$row[$useridfieldname];
+	
     if($uid!=0)
     {
         $user = JFactory::getUser($uid);
@@ -439,9 +440,11 @@ static public function Try2CreateUserAccount($Model,$field,$row)
 
     $params=$field['typeparams'];
     $parts=JoomlaBasicMisc::csv_explode(',', $params, '"', false);
-    if(count($parts)!=3)
-        return false;
+	
 
+    if(count($parts)<3)
+        return false;
+	
     //Try to create user
     $new_parts=array();
     foreach($parts as $part)
@@ -451,8 +454,8 @@ static public function Try2CreateUserAccount($Model,$field,$row)
     	tagProcessor_If::process($Model,$part,$row,'',0);
     	tagProcessor_Page::process($Model,$part);
     	tagProcessor_Value::processValues($Model,$row,$part,'[]');
-        if($part=="")
-            return false; //if any of the parameters empty then break;
+        //if($part=="")
+            //return false; //if any of the parameters empty then break;
 
         $new_parts[]=$part;
     }
@@ -460,6 +463,9 @@ static public function Try2CreateUserAccount($Model,$field,$row)
     $user_groups=$new_parts[0];
     $user_name=$new_parts[1];
     $user_email=$new_parts[2];
+	
+	if($user_groups=='' or $user_groups=='' or $user_email=='')
+		return false;
 
     $unique_users=false;
     if(isset($new_parts[4]) and $new_parts[4]=='unique')
@@ -468,6 +474,7 @@ static public function Try2CreateUserAccount($Model,$field,$row)
 
     require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'createuser.php');
     $existing_user_id=CustomTablesCreateUser::CheckIfEmailExist($user_email,$existing_user,$existing_name);
+	
     if($existing_user_id)
 	{
         if(!$unique_users) //allow not unique record per users
