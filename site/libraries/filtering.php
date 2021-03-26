@@ -584,6 +584,8 @@ class ESFiltering
 		$value1=$this->processDateSearchTags($whr[0],$fieldrow1,$esr_table_full);
 		$value2=$this->processDateSearchTags($whr[1],$fieldrow2,$esr_table_full);
 
+		
+
 		if($value2=='NULL' and $opr=='=')
 			$query=$value1.' IS NULL';
 		else

@@ -48,7 +48,7 @@ description="Type field name to sort by and the order. Example 1: 'title desc' E
 		field to search in = (or &#60; or &#60;= or &#62; or &#62;= or != and == 'exact match') 
 		value (or special macro as {currentuserid} for example ) to have more then one equation use AND, OR
 		to get value from url query add '$get_' to parameter name, example 'username=$get_user' this will read value 'user' from url query.
-To get current date use {now} or {year},{month},{day}. Also you can format the date using MySql date_format() format specifiers, example 1: {now:%m}.
+To get current date use {date:Ymd} or {date:Y} for the year or {date:n} for the month. If its about date field type you can use the following: {year}, {month}, {day}. Also you can format the date using MySql date_format() format specifiers, example 1: {now:%m}.
 Example 2: 'birthdate:%m%d DESC' to get the month and the day of the field value.
 " />
 				<field type="list" name="showpublished" default="0" label="Show published" description="" >

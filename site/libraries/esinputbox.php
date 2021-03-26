@@ -129,9 +129,10 @@ class ESInputBox
 								.'name="'.$prefix.$esfield['fieldname'].'" '
 								.'id="'.$prefix.$esfield['fieldname'].'" '
 								.'label="'.$esfield['fieldname'].'" '
-								.'class="'.$class.'"'
-								.' '.$attributes
-								.' value="'.$value.'" />';
+								.'class="'.$class.'" '
+								.$attributes.' '
+								.'data-label="'.$esfield['fieldtitle'.$this->langpostfix].'" '
+								.'value="'.$value.'" />';
 
 							break;
 
@@ -152,7 +153,8 @@ class ESInputBox
 								.'name="'.$prefix.$esfield['fieldname'].'" '
 								.'id="'.$prefix.$esfield['fieldname'].'" '
 								.'class="'.$class.'" '
-								.' '.$attributes.' ';
+								.'data-label="'.$esfield['fieldtitle'.$this->langpostfix].'" '
+								.$attributes.' ';
 
 							$decimals=intval($typeparams[0]);
 							if($decimals<0)
@@ -186,6 +188,7 @@ class ESInputBox
 								.'id="'.$prefix.$esfield['fieldname'].'" '
 								.'label="'.$esfield['fieldname'].'" '
 								.'class="'.$class.'" '
+								.'data-label="'.$esfield['fieldtitle'.$this->langpostfix].'" '
 								.'value="'.$value.'" '.((int)$esfield['typeparams']>0 ? 'maxlength="'.(int)$esfield['typeparams'].'"' : 'maxlength="255"').' '.$attributes.' />';
 
 							break;
@@ -197,6 +200,7 @@ class ESInputBox
 								.'label="'.$esfield['fieldname'].'" '
 								.'class="'.$class.'" '
 								.' '.$attributes
+								.'data-label="'.$esfield['fieldtitle'.$this->langpostfix].'" '
 								.'value="'.$value.'" '.((int)$esfield['typeparams']>0 ? 'maxlength="'.(int)$esfield['typeparams'].'"' : 'maxlength="255"').' '.$attributes.' />';
 
 							break;
@@ -242,8 +246,9 @@ class ESInputBox
 								{
 										$result.='<textarea name="'.$fname.'" '
 											.'id="'.$fname.'" '
-											.'class="'.$class.'"'
-											.' '.$attributes
+											.'class="'.$class.'" '
+											.$attributes.' '
+											.'data-label="'.$esfield['fieldtitle'.$this->langpostfix].'"'
 											.'>'.$value.'</textarea>';
 								}
 
@@ -276,20 +281,22 @@ class ESInputBox
 								
 									$id=$prefix.$esfield['fieldname'];
 								
-									$result.='<div style="position: absolute;visibility:hidden !important; display:none !important;"><input type="radio"'
-										.' id="'.$id.'0"'
-										.' name="'.$id.'" '
-										.' value="1"'
-										.' '.$attributes
+									$result.='<div style="position: absolute;visibility:hidden !important; display:none !important;"><input type="radio" '
+										.'id="'.$id.'0" '
+										.'name="'.$id.'" '
+										.'value="1" '
+										.'data-label="'.$esfield['fieldtitle'.$this->langpostfix].'" '
+										.$attributes.' '
 										.((int)$value==1 ? ' checked="checked" ' : '')
 										.' ></div>'
 										.'<label class="btn'.((int)$value==1 ? ' active btn-success' : '').'" for="'.$id.'0" id="'.$id.'0_label" >'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YES').'</label>';
 										
-									$result.='<div style="position: absolute;visibility:hidden !important; display:none !important;"><input type="radio"'
-										.' id="'.$id.'1"'
-										.' name="'.$id.'" '
-										.' '.$attributes
-										.' value="0"'
+									$result.='<div style="position: absolute;visibility:hidden !important; display:none !important;"><input type="radio" '
+										.'id="'.$id.'1" '
+										.'name="'.$id.'" '
+										.$attributes.' '
+										.'value="0" '
+										.'data-label="'.$esfield['fieldtitle'.$this->langpostfix].'" '
 										.((int)$value==0 ? ' checked="checked" ' : '')
 										.' ></div>'
 										.'<label class="btn'.((int)$value==0 ? ' active btn-danger' : '').'" for="'.$id.'1" id="'.$id.'1_label">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NO').'</label>';
@@ -303,10 +310,11 @@ class ESInputBox
 									if(strpos($attributes,'onchange="')!==false)
 										$attributes=str_replace('onchange="','onchange="'.$onchange,$attributes);// onchange event already exists add one before
 									
-									$result.='<input type="checkbox"'
-										.' id="'.$prefix.$esfield['fieldname'].'" '
-										.' name="'.$prefix.$esfield['fieldname'].'" '
-										.' '.$attributes
+									$result.='<input type="checkbox" '
+										.'id="'.$prefix.$esfield['fieldname'].'" '
+										.'name="'.$prefix.$esfield['fieldname'].'" '
+										.'data-label="'.$esfield['fieldtitle'.$this->langpostfix].'" '
+										.$attributes
 										.($value ? ' checked="checked" ' : '')
 										.' class="'.$class.'">';
 										
@@ -636,8 +644,9 @@ class ESInputBox
 									.'name="'.$prefix.$esfield['fieldname'].'" '
 									.'id="'.$prefix.$esfield['fieldname'].'" '
 									.'class="'.$class.'" '
-									.'value="'.$value.'" maxlength="255"'
-									.' '.$attributes.' '
+									.'value="'.$value.'" maxlength="255" '
+									.$attributes.' '
+									.'data-label="'.$esfield['fieldtitle'.$this->langpostfix].'"'
 									.' />';
 
 						break;
@@ -657,11 +666,11 @@ class ESInputBox
 									.'name="'.$prefix.$esfield['fieldname'].'" '
 									.'id="'.$prefix.$esfield['fieldname'].'" '
 									.'class="'.$class.'" '
-									.'value="'.$value.'" maxlength="1024"'
-									.'data-sanitizers="trim"'
-									.'data-filters="'.implode(',',$filters).'"'
-									.'data-label="'.$esfield['fieldtitle'.$this->langpostfix].'"'
-									.' '.$attributes.' '
+									.'value="'.$value.'" maxlength="1024" '
+									.'data-sanitizers="trim" '
+									.'data-filters="'.implode(',',$filters).'" '
+									.'data-label="'.$esfield['fieldtitle'.$this->langpostfix].'" '
+									.$attributes
 									.' />';
 
 						break;
@@ -843,8 +852,14 @@ class ESInputBox
 								if($addDynamicEvent)
 									$attributes_=' onchange="ct_UpdateSingleValue(\''.$WebsiteRoot.'\','.$Model->Itemid.',\''.$esfield['fieldname'].$postfix.'\','.$row['listing_id'].',\''.$langsef.'\')"';
 									
-								$result='<input type="text" name="'.$prefix.$esfield['fieldname'].$postfix.'" id="'.$prefix.$esfield['fieldname'].$postfix.'" id="code" class="'.$class.'"
-								value="'.$value.'" '.((int)$esfield['typeparams']>0 ? 'maxlength="'.(int)$esfield['typeparams'].'"' : 'maxlength="255"').$attributes_.' />';
+								$result='<input type="text" '
+									.'name="'.$prefix.$esfield['fieldname'].$postfix.'" '
+									.'id="'.$prefix.$esfield['fieldname'].$postfix.'" '
+									.'class="'.$class.'" '
+									.'value="'.$value.'" '
+									.'data-label="'.$esfield['fieldtitle'.$this->langpostfix].'" '
+									.((int)$esfield['typeparams']>0 ? 'maxlength="'.(int)$esfield['typeparams'].'" ' : 'maxlength="255" ')
+									.$attributes_.' />';
 
 		return $result;
 	}

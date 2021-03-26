@@ -1,29 +1,28 @@
 jQuery(function($) {
-	"use strict";
+    "use strict";
 
-	$(document)
-		.on('click', ".btn-group label:not(.active)", function() {
+    $(document)
+        .on('click', ".btn-group label:not(.active)", function() {
 
-			var $label = $(this);
-			var $input = $('#' + $label.attr('for'));
+            let $label = $(this);
+            let $input = $('#' + $label.attr('for'));
 
-			if ($input.prop('checked'))
-				return;
+            if ($input.prop('checked'))
+                return;
 
-			$label.closest('.btn-group').find("label").removeClass('active btn-success btn-danger btn-primary');
+            $label.closest('.btn-group').find("label").removeClass('active btn-success btn-danger btn-primary');
 
-			var btnClass = 'primary';
+            let btnClass = 'primary';
 
 
-			if ($input.val() != '')
-			{
-				var reversed = $label.closest('.btn-group').hasClass('btn-group-reversed');
-				btnClass = ($input.val() == 0 ? !reversed : reversed) ? 'danger' : 'success';
-			}
+            if ($input.val() != '') {
+                let reversed = $label.closest('.btn-group').hasClass('btn-group-reversed');
+                btnClass = ($input.val() == 0 ? !reversed : reversed) ? 'danger' : 'success';
+            }
 
-			$label.addClass('active btn-' + btnClass);
-			$input.prop('checked', true).trigger('change');
-		});
+            $label.addClass('active btn-' + btnClass);
+            $input.prop('checked', true).trigger('change');
+        });
 
 });
 
@@ -31,318 +30,272 @@ jQuery(function($) {
 /* ----------------------------------------------------------------------------------------------------------- */
 
 
-function setTask(task,returnlink,submitForm)
-{
- 
- if(returnlink!="")
- {
-		var obj=document.getElementById('returnto');
-		if(obj)
-			obj.value=returnlink;
- }
- 
-	var obj2=document.getElementById('task');
-	if(obj2)
-			obj2.value=task;
-		else
-			alert("Task Element not found.");
-	
-	if(submitForm)
-	{
-		var objForm=document.getElementById('eseditForm');
-		if(objForm)
-			objForm.submit();
-		else
-			alert("Form not found.");
-	}
-	
-	
+function setTask(task, returnlink, submitForm) {
+
+    if (returnlink != "") {
+        let obj = document.getElementById('returnto');
+        if (obj)
+            obj.value = returnlink;
+    }
+
+    let obj2 = document.getElementById('task');
+    if (obj2)
+        obj2.value = task;
+    else
+        alert("Task Element not found.");
+
+    if (submitForm) {
+        let objForm = document.getElementById('eseditForm');
+        if (objForm) {
+            if (checkRequiredFields()) {
+                objForm.submit();
+            }
+        } else
+            alert("Form not found.");
+    }
 }
 
-function recaptchaCallback()
-{
-    var obj1=document.getElementById("customtables_submitbutton");
+function recaptchaCallback() {
+    let obj1 = document.getElementById("customtables_submitbutton");
     if (typeof obj1 != "undefined")
         obj1.removeAttribute('disabled');
 
-    var obj2=document.getElementById("customtables_submitbuttonasnew");
+    let obj2 = document.getElementById("customtables_submitbuttonasnew");
     if (typeof obj2 != "undefined")
         obj2.removeAttribute('disabled');
 }
 
 
-function checkFilters()
-{
-	var passed=true;
-	var inputs = document.getElementsByTagName('input');
-	
-	for(var i = 0; i < inputs.length; i++) {
-		var t=inputs[i].type.toLowerCase();
-		
-		if(t == 'text' && inputs[i].value!=""){
-			var n=inputs[i].name.toString();
-			var d=inputs[i].dataset;
-			var label="";
-			if(d.label)
-				label=d.label;
-			
-			if(d.sanitizers)
-				doSanitanization(inputs[i],d.sanitizers);
-				
-			if(d.filters)
-				passed=doFilters(inputs[i],label,d.filters);
-		}
+function checkFilters() {
+    let passed = true;
+    let inputs = document.getElementsByTagName('input');
+
+    for (let i = 0; i < inputs.length; i++) {
+        let t = inputs[i].type.toLowerCase();
+
+        if (t == 'text' && inputs[i].value != "") {
+            let n = inputs[i].name.toString();
+            let d = inputs[i].dataset;
+            let label = "";
+
+            if (d.label)
+                label = d.label;
+
+            if (d.sanitizers)
+                doSanitanization(inputs[i], d.sanitizers);
+
+            if (d.filters)
+                passed = doFilters(inputs[i], label, d.filters);
+        }
     }
-	return passed;
+    return passed;
 }
 
 
 //https://stackoverflow.com/questions/5717093/check-if-a-javascript-string-is-a-url
 function isValidURL(str) {
-  var regex = /(http|https):\/\/(\w+:{0,1}\w*)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/;
-  if(!regex .test(str)) {
-    return false;
-  } else {
-    return true;
-  }
+    let regex = /(http|https):\/\/(\w+:{0,1}\w*)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/;
+    if (!regex.test(str)) {
+        return false;
+    } else {
+        return true;
+    }
 }
 
-function doFilters(obj,label,filters_string)
-{
-	var filters=filters_string.split(",");
-	var value=obj.value;
-	
-	
-	for(var i = 0; i < filters.length; i++) {
-		var filter_parts=filters[i].split(':');
-		var filter=filter_parts[0];
+function doFilters(obj, label, filters_string) {
+    let filters = filters_string.split(",");
+    let value = obj.value;
 
-		if(filter=='url')
-		{
-			if(!isValidURL(value))
-			{
-				alert('The '+label+' "'+value+'" is not a valid URL.');
-				return false;
-			}
-		}
-		else if(filter=='https')
-		{
-			if(value.indexOf("https")!=0)
-			{
-				alert('The '+label+' "'+value+'" must be secure - must start with "https://".');
-				return false;
-			}
-		}
-		else if(filter=='domain' && filter_parts.length>1)
-		{
-			var domains=filter_parts[1].split(",");
-			var hostname = "";
-			
-			
-			try {
-				hostname=(new URL(value)).hostname;
-			}
-			catch(err) {
-				alert('The '+label+' "'+value+'" is not a valid URL link.');
-				return false;
-			}
-			
-			var found=false;
-			for(var f = 0; f < domains.length; f++){
-				
-				if(domains[f]==hostname)
-				{
-					found=true;
-					break;
-				}
-			}
-			
-			if(!found){
-				alert('The '+label+' domain "'+hostname+'" must match to "'+filter_parts[1]+'".');
-				return false;
-			}
-		}
-	}
+    for (let i = 0; i < filters.length; i++) {
+        let filter_parts = filters[i].split(':');
+        let filter = filter_parts[0];
 
-	return true;
-}
-
-function doSanitanization(obj,sanitizers_string)
-{
-	var sanitizers=sanitizers_string.split(",");
-	var value=obj.value;
-	
-	for(var i = 0; i < sanitizers.length; i++) {
-		if(sanitizers[i]=='trim')
-			value=value.trim();
-	}
-
-	obj.value=value;
-}
-
-function checkRequiredFields()
-{
-	if(!checkFilters())
-		return false;
-	
-    var requiredFields=document.getElementsByClassName("required");
-
-    for(var i=0;i<requiredFields.length;i++)
-    {
-        if (typeof requiredFields[i].id != "undefined")
-        {
-            if (requiredFields[i].id.indexOf("sqljoin_table_comes_")!=-1)
-            {
-                if(!CheckSQLJoinRadioSelections(requiredFields[i].id))
-                    return false;
-
+        if (filter == 'url') {
+            if (!isValidURL(value)) {
+                alert('The ' + label + ' "' + value + '" is not a valid URL.');
+                return false;
             }
-            if (requiredFields[i].id.indexOf("ct_ubloadfile_box_")!=-1)
-            {
-                if(!CheckImageUploader(requiredFields[i].id))
-                    return false;
+        } else if (filter == 'https') {
+            if (value.indexOf("https") != 0) {
+                alert('The ' + label + ' "' + value + '" must be secure - must start with "https://".');
+                return false;
+            }
+        } else if (filter == 'domain' && filter_parts.length > 1) {
+            let domains = filter_parts[1].split(",");
+            let hostname = "";
 
+            try {
+                hostname = (new URL(value)).hostname;
+            } catch (err) {
+                alert('The ' + label + ' "' + value + '" is not a valid URL link.');
+                return false;
             }
 
-        }
+            let found = false;
+            for (let f = 0; f < domains.length; f++) {
 
-        if (typeof requiredFields[i].name != "undefined")
-        {
-                var n=requiredFields[i].name.toString();
-
-                if(n.indexOf("comes_")!=-1)
-                {
-                    var objname=n.replace('_selector','');
-
-                    //var lbln=objname.replace('[]','');
-                    //var lblobj=document.getElementById(lbln+"-lbl");
-                    var label="One field";
-
-                    //if (typeof lblobj != "undefined" && lblobj!=null)
-                        //label=lblobj.innerHTML;
-					
-					var d=requiredFields[i].dataset;
-					if(d.label)
-						label=d.label;
-
-                    if(requiredFields[i].type=="select-one")
-                    {
-                        var obj=document.getElementById(objname);
-                        var count=obj.options.length;
-
-                        if(count===0)
-                        {
-                            alert(label+" not selected.");
-                            return false;
-                        }
-                    }
-                    else if(requiredFields[i].type=="select-multiple")
-                    {
-                        var count_multiple_obj=document.getElementById(lbln);
-
-                        var options=count_multiple_obj.options;
-
-                        var count_multiple = 0;
-                        for (var i2=0; i2 < options.length; i2++)
-                        {
-                            if (options[i2].selected)
-                                count_multiple++;
-                        }
-
-                        if(count_multiple===0)
-                        {
-                            alert(label+" not selected.");
-                            return false;
-                        }
-                    }
-
-
-
-
+                if (domains[f] == hostname) {
+                    found = true;
+                    break;
                 }
+            }
+
+            if (!found) {
+                alert('The ' + label + ' domain "' + hostname + '" must match to "' + filter_parts[1] + '".');
+                return false;
+            }
         }
     }
 
     return true;
 }
 
-        function SetUsetInvalidClass(id,isOk)
-        {
-            var frameObj=document.getElementById(id);
+function doSanitanization(obj, sanitizers_string) {
+    let sanitizers = sanitizers_string.split(",");
+    let value = obj.value;
 
-            var c=frameObj.className;
-            if(c.indexOf("invalid")==-1)
-            {
-                if(!isOk)
-                {
-                    if(c=="")
-                        c="invalid";
-                    else
-                        c=c+" invalid";
-                }
+    for (let i = 0; i < sanitizers.length; i++) {
+        if (sanitizers[i] == 'trim')
+            value = value.trim();
+    }
+
+    obj.value = value;
+}
+
+function checkRequiredFields() {
+    if (!checkFilters()) {
+        return false;
+    }
+
+    let requiredFields = document.getElementsByClassName("required");
+
+    for (let i = 0; i < requiredFields.length; i++) {
+        if (typeof requiredFields[i].id != "undefined") {
+            if (requiredFields[i].id.indexOf("sqljoin_table_comes_") != -1) {
+                if (!CheckSQLJoinRadioSelections(requiredFields[i].id))
+                    return false;
 
             }
+            if (requiredFields[i].id.indexOf("ct_ubloadfile_box_") != -1) {
+                if (!CheckImageUploader(requiredFields[i].id))
+                    return false;
+
+            }
+
+        }
+
+        if (typeof requiredFields[i].name != "undefined") {
+            let n = requiredFields[i].name.toString();
+
+            if (n.indexOf("comes_") != -1) {
+                let objname = n.replace('_selector', '');
+
+                let label = "One field";
+
+                let d = requiredFields[i].dataset;
+                if (d.label)
+                    label = d.label;
+
+                if (requiredFields[i].type == "text") {
+                    let obj = document.getElementById(objname);
+                    if (obj.value == '') {
+                        alert(label + " required.");
+                        return false;
+                    }
+                } else if (requiredFields[i].type == "select-one") {
+                    let obj = document.getElementById(objname);
+                    let count = obj.options.length;
+
+                    if (count === 0) {
+                        alert(label + " not selected.");
+                        return false;
+                    }
+                } else if (requiredFields[i].type == "select-multiple") {
+                    let count_multiple_obj = document.getElementById(lbln);
+
+                    let options = count_multiple_obj.options;
+
+                    let count_multiple = 0;
+                    for (let i2 = 0; i2 < options.length; i2++) {
+                        if (options[i2].selected)
+                            count_multiple++;
+                    }
+
+                    if (count_multiple === 0) {
+                        alert(label + " not selected.");
+                        return false;
+                    }
+                }
+            }
+        }
+    }
+
+    return true;
+}
+
+function SetUsetInvalidClass(id, isOk) {
+    let frameObj = document.getElementById(id);
+
+    let c = frameObj.className;
+    if (c.indexOf("invalid") == -1) {
+        if (!isOk) {
+            if (c == "")
+                c = "invalid";
             else
-            {
-                if(isOk)
-                {
-                    c=c.replace("invalid","");
-                }
-            }
-
-            frameObj.className=c;
+                c = c + " invalid";
         }
 
-        function CheckImageUploader(id)
-        {
-
-            var objid=id.replace("ct_ubloadfile_box_","comes_");
-            var obj=document.getElementById(objid);
-            if(obj.value==="")
-            {
-                SetUsetInvalidClass(id,false);
-                return false;
-            }
-
-            SetUsetInvalidClass(id,true);
-            return true;
+    } else {
+        if (isOk) {
+            c = c.replace("invalid", "");
         }
+    }
 
-        function CheckSQLJoinRadioSelections(id)
-        {
-            var field_name=id.replace('sqljoin_table_comes_','');
-            var obj_name='comes_'+field_name;
-            var radios = document.getElementsByName(obj_name);
+    frameObj.className = c;
+}
 
-            var selected=false;
-            for(var i=0;i<radios.length;i++)
-            {
-                if (radios[i].type === 'radio' && radios[i].checked)
-                {
-                    selected=true;
-                    break;
-                }
-            }
+function CheckImageUploader(id) {
+    let objid = id.replace("ct_ubloadfile_box_", "comes_");
+    let obj = document.getElementById(objid);
+    if (obj.value === "") {
+        SetUsetInvalidClass(id, false);
+        return false;
+    }
 
-            if(!selected)
-            {
-                var lblobj=document.getElementById(obj_name+"-lbl");
-                var label=lblobj.innerHTML;
-                alert(label+" not selected.");
-                return false;
-            }
+    SetUsetInvalidClass(id, true);
+    return true;
+}
 
-            return true;
+function CheckSQLJoinRadioSelections(id) {
+    let field_name = id.replace('sqljoin_table_comes_', '');
+    let obj_name = 'comes_' + field_name;
+    let radios = document.getElementsByName(obj_name);
+
+    let selected = false;
+    for (let i = 0; i < radios.length; i++) {
+        if (radios[i].type === 'radio' && radios[i].checked) {
+            selected = true;
+            break;
         }
+    }
+
+    if (!selected) {
+        let lblobj = document.getElementById(obj_name + "-lbl");
+        let label = lblobj.innerHTML;
+        alert(label + " not selected.");
+        return false;
+    }
+
+    return true;
+}
 
 
-		function clearListingID()
-		{
+function clearListingID() {
 
-			var obj=document.getElementById("listing_id");
-			obj.value="";
+    let obj = document.getElementById("listing_id");
+    obj.value = "";
 
-			var frm=document.getElementById("eseditForm");
-			frm.submit();
+    let frm = document.getElementById("eseditForm");
+    frm.submit();
 
-		}
+}
