@@ -119,14 +119,8 @@ class ESLayouts
 				$query = 'UPDATE #__customtables_layouts SET layoutcode="'.addslashes($content).'",modified=FROM_UNIXTIME('.$file_ts.') WHERE id='.$id;
 
 				$db->setQuery( $query );
-
 				$db->execute();
-				//if (!$db->query()) {
-					//$this->setError( $db->getErrorMsg() );
-					//return false;
-				//}
 
-				//$row->load($id);
 				return $content;
 			}
 		}
