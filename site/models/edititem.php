@@ -253,16 +253,15 @@ class CustomTablesModelEditItem extends JModelLegacy {
 	function findRecordByUserID()
 	{
 		$db = JFactory::getDBO();
-		$wherearr=array();
+		$wheres=array();
 		
 		if($this->published_field_found)
-			$wherearr[]='published=1';
+			$wheres[]='published=1';
 			
-		$wherearr[]=$this->useridfield.'='.$this->userid;
-		$where = ' WHERE '.implode(" AND ",$wherearr);
+		$wheres_user=$this->UserIDField_BuildWheres($this->useridfield);
+		$wheres=array_merge($wheres,$wheres_user);
 		
-		$query = 'SELECT '.$this->tablerow['query_selects'].' FROM '.$this->realtablename.' '.$where;
-		$query.=' LIMIT 1';
+		$query='SELECT c.'.$this->tablerow['realidfieldname'].' FROM '.$this->realtablename.' AS c WHERE '.implode(' AND ',$wheres).' LIMIT 1';
 		
 		$db->setQuery($query);
 		$rows=$db->loadAssocList();
@@ -275,7 +274,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 		$this->row=$rows[0];
 
-		return $this->row['listing_id'];
+		return $this->row['c.'.$this->tablerow['realidfieldname']];
 
 	}
 
@@ -539,7 +538,6 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		return true;
 	}
 	
-	
 	function CheckAuthorizationACL($access)
 	{
 		$this->isAutorized=false;
@@ -611,35 +609,190 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 		if($useridfield!='')
 		{
-			//find selected field
-			foreach($this->esfields as $esfield)
+			$useridfields=array();
+			$statement_items=tagProcessor_If::ExplodeSmartParams($useridfield); //"and" and "or" as separators
+			
+			foreach($statement_items as $item)
 			{
-				if($esfield['fieldname']==$useridfield and ($esfield['type']=='userid' or $esfield['type']=='user'))
+				if($item[0]=='or' or $item[0]=='and')
 				{
+					$field=$item[1];
+					if(strpos($field,'.')===false)
+					{
+						//Current table field name
+						//find selected field
+						foreach($this->esfields as $esfield)
+						{
+							if($esfield['fieldname']==$field and ($esfield['type']=='userid' or $esfield['type']=='user'))
+							{
+								$useridfields[]=[$item[0],$item[1]];
+								
+								//Following applys to current table fields only and to only one (the last one in the statement)
+								$params=$esfield['typeparams'];
+								$parts=JoomlaBasicMisc::csv_explode(',', $params, '"', false);
 
-					$this->useridfield=$esfield['realfieldname'];
-
-					$params=$esfield['typeparams'];
-					$parts=JoomlaBasicMisc::csv_explode(',', $params, '"', false);
-
-					$this->useridfield_uniqueusers=false;
-					if(isset($parts[4]) and $parts[4]=='unique')
-						$this->useridfield_uniqueusers=true;
-
-					return $this->useridfield;
+								$this->useridfield_uniqueusers=false;
+								if(isset($parts[4]) and $parts[4]=='unique')
+									$this->useridfield_uniqueusers=true;
+									
+								break;
+							}
+						}
+					}
+					else
+					{
+						//Table join
+						//parents(children).user
+						$useridfields[]=[$item[0],$item[1]];
+					}
 				}
 			}
+			
+			$useridfields_str='';
+			$index=0;
+			foreach($useridfields as $field)
+			{
+				if($index==0)
+					$useridfields_str.=$field[1];
+				else
+					$useridfields_str.=' '.$field[0].' '.$field[1];
+				
+				$index+=1;
+			}
+			
+			$this->useridfield=$useridfields_str;
+
+			return $this->useridfield;
 		}
 
 		return '';
 	}
 
+	
+	function UserIDField_BuildWheres($useridfield)
+	{
+		$wheres=array();
+		
+		$statement_items=tagProcessor_If::ExplodeSmartParams($useridfield); //"and" and "or" as separators
+		
+		$wheres_owner=array();
+
+		foreach($statement_items as $item)
+		{
+			$field=$item[1];
+			if(strpos($field,'.')===false)
+			{
+				//example: user
+				//check if the record belong to the current user
+				$user_field_row=ESFields::FieldRowByName($field,$this->esfields);
+				$wheres_owner[]=[$item[0],'c.'.$user_field_row['realfieldname'].'='.$this->userid];
+			}
+			else
+			{
+				//example: parents(children).user
+				$statement_parts=explode('.',$field);
+				if(count($statement_parts)!=2)
+				{
+					JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('Menu Item - "UserID Field name" parameter has a syntax error. Error is about "." character - only one is permited. Correct example: parent(children).user'), 'error');
+					return false;
+				}
+				
+				$table_parts=explode('(',$statement_parts[0]);
+				if(count($table_parts)!=2)
+				{
+					JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('Menu Item - "UserID Field name" parameter has a syntax error. Error is about "(" character. Correct example: parent(children).user'), 'error');
+					return false;
+				}
+				
+				$parent_tablename=$table_parts[0];
+				$parent_join_field=str_replace(')','',$table_parts[1]);
+				$parent_user_field=$statement_parts[1];
+				
+				$parent_table_row=ESTables::getTableRowByName($parent_tablename);
+
+				if(!is_object($parent_table_row))
+				{
+					JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('Menu Item - "UserID Field name" parameter has an error: Table "'.$parent_tablename.'" not found.'), 'error');
+					return false;
+				}
+				
+				$parent_table_fields=ESFields::getFields($parent_table_row->id);
+				
+				$parent_join_field_row=ESFields::FieldRowByName($parent_join_field,$parent_table_fields);
+				
+				if(count($parent_join_field_row)==0)
+				{
+					JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('Menu Item - "UserID Field name" parameter has an error: Join field "'.$parent_join_field.'" not found.'), 'error');
+					return false;
+				}
+				
+				if($parent_join_field_row['type']!='sqljoin' and $parent_join_field_row['type']!='records')
+				{
+					JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('Menu Item - "UserID Field name" parameter has an error: Wrong join field type "'.$parent_join_field_row['type'].'". Accepted types: "sqljoin" and "records" .'), 'error');
+					return false;
+				}
+				
+				//User field
+				
+				$parent_user_field_row=ESFields::FieldRowByName($parent_user_field,$parent_table_fields);
+
+				if(count($parent_user_field_row)==0)
+				{
+					JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('Menu Item - "UserID Field name" parameter has an error: User field "'.$parent_user_field.'" not found.'), 'error');
+					return false;
+				}
+				
+				if($parent_user_field_row['type']!='userid' and $parent_user_field_row['type']!='user')
+				{
+					JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('Menu Item - "UserID Field name" parameter has an error: Wrong user field type "'.$parent_join_field_row['type'].'". Accepted types: "userid" and "user" .'), 'error');
+					return false;
+				}
+
+				$parent_wheres=array();
+				
+				$parent_wheres[]='p.'.$parent_user_field_row['realfieldname'].'='.$this->userid;
+				
+				if($parent_join_field_row['type']=='sqljoin')
+					$parent_wheres[]='p.'.$parent_join_field_row['realfieldname'].'=c.listing_id';
+				elseif($parent_join_field_row['type']=='records')
+					$parent_wheres[]='INSTR(p.'.$parent_join_field_row['realfieldname'].',CONCAT(",",c.'.$this->tablerow['realidfieldname'].',","))';
+				else
+					return false;
+				
+				
+				$q='(SELECT p.'.$parent_table_row->realidfieldname.' FROM '.$parent_table_row->realtablename.' AS p WHERE '.implode(' AND ',$parent_wheres).' LIMIT 1) IS NOT NULL';
+				
+				$wheres_owner[]=[$item[0],$q];
+			}
+		}
+		
+		$wheres_owner_str='';
+		$index=0;
+		foreach($wheres_owner as $field)
+		{
+			if($index==0)
+				$wheres_owner_str.=$field[1];
+			else
+				$wheres_owner_str.=' '.strtoupper($field[0]).' '.$field[1];
+		
+			$index+=1;
+		}
+		
+		$wheres[]='c.'.$this->tablerow['realidfieldname'].'='.$this->id;
+		
+		if($wheres_owner_str!='')
+			$wheres[]='('.$wheres_owner_str.')';
+			
+		return $wheres;
+	}
+	
+	
 	function checkIfItemBelongsToUser($useridfield)
 	{
-		//check if the item belong to the user
 		$db = JFactory::getDBO();
-
-		$query='SELECT id FROM '.$this->realtablename.' WHERE '.$this->tablerow['realidfieldname'].'='.$this->id.' AND '.$useridfield.'='.$this->userid.' LIMIT 1';
+		$wheres=$this->UserIDField_BuildWheres($useridfield);
+		
+		$query='SELECT c.'.$this->tablerow['realidfieldname'].' FROM '.$this->realtablename.' AS c WHERE '.implode(' AND ',$wheres).' LIMIT 1';
 
 		$db->setQuery( $query );
 		$db->execute();
@@ -654,16 +807,12 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		return false;
 	}
 
-
-	
-
 	function makeDescription($vlu)
 	{
 		//came from Category Block
 		return strip_tags($vlu);
 
 	}
-
 
 	function getCustomTablesBranch($optionname,$startfrom, $langpostfix, $defaultvalue)
 	{
@@ -734,10 +883,6 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		return $newpar;
 	}
 
-
-
-
-
 	function check_captcha()
 	{
 		$options=array();
@@ -764,10 +909,6 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		return true;
 
 	}
-
-
-
-
 
 	function copy(&$msg,&$link)
 	{
@@ -1243,7 +1384,6 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		return true;
 	}
 
-
 	function sendEmailIfAddressSet($listing_id,$new_username,$new_password)
 	{
 		$status=0;
@@ -1287,7 +1427,6 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 	}
 
-
 	function updateMD5($id)
 	{
 		$savequery=array();
@@ -1329,7 +1468,6 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
         CTValue::processDefaultValues($default_fields_to_apply,$this,$row);
 	}
-
 
 	function updateLog($id)
 	{
@@ -1400,7 +1538,6 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 	function CheckValueRule($prefix,$fieldname, $fieldtype, $typeparams)
 	{
-
 		$valuearray=array();
 		$value='';
 
@@ -1566,8 +1703,6 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		return eval($v);
 	}
 
-
-
 	function PrepareAcceptReturnToLink($artlink)
 	{
 		if($artlink=='')
@@ -1731,8 +1866,6 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		$r = $dispatcher->trigger('onContentPrepare', array ('com_content.article', &$o, &$this->params_, 0));
 		return $o->text;
 	}
-
-
 
 	function getListingRowByID($listing_id)
 	{
@@ -1951,16 +2084,9 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 	}
 
-
-
-
-
-
-
 	function getFieldsToSave()
 	{
 		$fields=array();
-
 
 		foreach($this->esfields as $esfield)
 		{
@@ -1998,7 +2124,6 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 	}
 
-
 	function getUserIP()
 	{
 		if( array_key_exists('HTTP_X_FORWARDED_FOR', $_SERVER) && !empty($_SERVER['HTTP_X_FORWARDED_FOR']) )
@@ -2019,41 +2144,39 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		}
 	}
 	
-	
-	//--------------
 	function delete()
-		{
-			$jinput = JFactory::getApplication()->input;
+	{
+		$jinput = JFactory::getApplication()->input;
 
-			$ids_str=$jinput->getString('ids','');
-			if($ids_str!='')
+		$ids_str=$jinput->getString('ids','');
+		if($ids_str!='')
+		{
+			$ok=true;
+			$ids_=explode(',',$ids_str);
+			foreach($ids_ as $id)
 			{
-				$ok=true;
-				$ids_=explode(',',$ids_str);
-				foreach($ids_ as $id)
+				if((int)$id!=0)
 				{
-					if((int)$id!=0)
+					$id=(int)$id;
+					$isok=$this->deleteSingleRecord($id);
+					if(!$isok)
 					{
-						$id=(int)$id;
-						$isok=$this->deleteSingleRecord($id);
-						if(!$isok)
-						{
-							$ok=false;
-						}
+						$ok=false;
 					}
 				}
-				return 	$ok;
 			}
-
-			if(!$jinput->getInt('listing_id',0))
-				return false;
-
-			$id=$jinput->getInt('listing_id',0);
-			if($id==0)
-				return false;
-
-			return $this->deleteSingleRecord($id);
+			return 	$ok;
 		}
+
+		if(!$jinput->getInt('listing_id',0))
+			return false;
+
+		$id=$jinput->getInt('listing_id',0);
+		if($id==0)
+			return false;
+
+		return $this->deleteSingleRecord($id);
+	}
 
 	protected function deleteSingleRecord($objectid)
 	{

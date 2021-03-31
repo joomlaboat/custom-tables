@@ -1270,7 +1270,7 @@ class ESFields
 
 
 
-	public static function FieldRowByName($fieldname,$esfields)
+	public static function FieldRowByName($fieldname,&$esfields)
 	{
 		foreach($esfields as $field)
 		{

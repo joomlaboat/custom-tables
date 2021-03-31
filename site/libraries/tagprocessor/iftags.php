@@ -226,31 +226,27 @@ class tagProcessor_If
 							return false;
     }
 
-    protected static function ExplodeSmartParams($param)
+    public static function ExplodeSmartParams($param)
 	{
-
-				$items=array();
-				$a=	explode(' and ',$param);
-				foreach($a as $b)
+		$items=array();
+		$a=	explode(' and ',$param);
+		foreach($a as $b)
+		{
+			$c=explode(' or ',$b);
+			if(count($c)==1)
+			{
+				$items[]=array('and', $b);
+			}
+			else
+			{
+				foreach($c as $d)
 				{
-						$c=explode(' or ',$b);
-						if(count($c)==1)
-						{
-								$items[]=array('and', $b);
-						}
-						else
-						{
-								foreach($c as $d)
-								{
-										$items[]=array('or', $d);
-								}
-						}
+					$items[]=array('or', $d);
 				}
-
-				return $items;
-
+			}
+		}
+		return $items;
 	}//function ExplodeSmartParams($param)
-
 
     protected static function getOpr($str)
 	{

@@ -16,7 +16,12 @@
 
 			<field type="estable" name="establename" default="" label="Select Table" description="Select Listing Table" />
 
-			<field type="text" name="useridfield" default="" label="Custom UserID Field" description="This to check if record belongs to user." />
+			<field type="text" name="useridfield" default="" label="UserID Field name" description="
+User type field name - to check if a record belongs to a current user. The table must contain the user type field.
+There is the option to find out if a record belongs to a current user through parent tables.
+Syntax example: 'user or parents(children).user'. 
+In this case, there will be two checks: the first one will check if the record belongs to the current user and the second one will check if the record belongs to any parent record
+ that belongs to the current user. At least one check must be positive." />
 
 			<field type="list" name="publishstatus" default="1" label="Publish it" description="" >
                 <option value="1">Published</option>
