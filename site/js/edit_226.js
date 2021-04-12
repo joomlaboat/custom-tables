@@ -23,14 +23,11 @@ jQuery(function($) {
             $label.addClass('active btn-' + btnClass);
             $input.prop('checked', true).trigger('change');
         });
-
 });
 
+function setTask(event, task, returnlink, submitForm) {
 
-/* ----------------------------------------------------------------------------------------------------------- */
-
-
-function setTask(task, returnlink, submitForm) {
+	event.preventDefault();
 
     if (returnlink != "") {
         let obj = document.getElementById('returnto');
@@ -47,9 +44,17 @@ function setTask(task, returnlink, submitForm) {
     if (submitForm) {
         let objForm = document.getElementById('eseditForm');
         if (objForm) {
-            if (checkRequiredFields()) {
+			
+			const tasks_with_validation = ['saveandcontinue', 'save', 'saveandprint', 'saveascopy'];
+			
+			if(tasks_with_validation.includes(task))
+			{
+				if (checkRequiredFields())
+					objForm.submit();
+			}
+			else
                 objForm.submit();
-            }
+
         } else
             alert("Form not found.");
     }
@@ -65,8 +70,8 @@ function recaptchaCallback() {
         obj2.removeAttribute('disabled');
 }
 
-
 function checkFilters() {
+	
     let passed = true;
     let inputs = document.getElementsByTagName('input');
 
@@ -85,12 +90,26 @@ function checkFilters() {
                 doSanitanization(inputs[i], d.sanitizers);
 
             if (d.filters)
+			{
                 passed = doFilters(inputs[i], label, d.filters);
+				if(!passed)
+					return false;
+			}
+				
+			if (d.valuerule)
+			{
+				let caption="";
+				if(d.valuerulecaption)
+					caption=d.valuerulecaption;
+				 
+				passed = doValuerules(inputs[i], label, d.valuerule,caption);
+				if(!passed)
+					return false;
+			}
         }
     }
     return passed;
 }
-
 
 //https://stackoverflow.com/questions/5717093/check-if-a-javascript-string-is-a-url
 function isValidURL(str) {
@@ -102,7 +121,50 @@ function isValidURL(str) {
     }
 }
 
-function doFilters(obj, label, filters_string) {
+function doValuerules(obj, label, valuerules,caption) {
+	
+	let valuerules_and_arguments=doValuerules_ParseValues(valuerules);
+	
+	if(valuerules_and_arguments == null)
+		return true;
+	
+	let rules = new Function("return " + valuerules_and_arguments.new_valuerules); // this |x| refers global |x|
+	
+	let result = rules(valuerules_and_arguments.new_args);
+	
+	if(result)
+		return true;
+		
+	if(caption == '')
+		caption = 'Invalid value for "' + label + '"';
+		
+	alert(caption);
+	
+	return false;
+}
+
+function doValuerules_ParseValues(valuerules)
+{
+	let matches=valuerules.match(/(?<=\[)[^\][]*(?=])/g);
+	
+	if(matches == null)
+		return null;
+		
+	let args=[];
+	
+	for(let i=0;i<matches.length;i++)
+	{
+		let obj = document.getElementById("comes_" + matches[i]);
+		if(obj){
+			valuerules = valuerules.replaceAll('[' + matches[i] + ']', 'arguments[0][' + i +']');
+			args[i] = obj.value;
+		}
+	}
+	return {new_valuerules : valuerules, new_args : args} ;
+}
+
+function doFilters(obj, label, filters_string)
+{
     let filters = filters_string.split(",");
     let value = obj.value;
 
@@ -146,7 +208,6 @@ function doFilters(obj, label, filters_string) {
             }
         }
     }
-
     return true;
 }
 
@@ -163,10 +224,10 @@ function doSanitanization(obj, sanitizers_string) {
 }
 
 function checkRequiredFields() {
-    if (!checkFilters()) {
+	
+    if (!checkFilters())
         return false;
-    }
-
+	
     let requiredFields = document.getElementsByClassName("required");
 
     for (let i = 0; i < requiredFields.length; i++) {
@@ -179,9 +240,7 @@ function checkRequiredFields() {
             if (requiredFields[i].id.indexOf("ct_ubloadfile_box_") != -1) {
                 if (!CheckImageUploader(requiredFields[i].id))
                     return false;
-
             }
-
         }
 
         if (typeof requiredFields[i].name != "undefined") {
@@ -289,7 +348,6 @@ function CheckSQLJoinRadioSelections(id) {
     return true;
 }
 
-
 function clearListingID() {
 
     let obj = document.getElementById("listing_id");
@@ -297,5 +355,4 @@ function clearListingID() {
 
     let frm = document.getElementById("eseditForm");
     frm.submit();
-
 }

@@ -16,10 +16,8 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.
 
 class JHTMLESRecords
 {
-
-
-        static public function render($typeparams,$control_name, $value, $establename, $thefield, $selector, $filter,$style='',
-                                      $cssclass='', $attribute='', $dynamic_filter='',$sortbyfield='',$langpostfix='',$place_holder='')
+    static public function render($typeparams,$control_name, $value, $establename, $thefield, $selector, $filter,$style='',
+                                $cssclass='', $attribute='', $dynamic_filter='',$sortbyfield='',$langpostfix='',$place_holder='')
         {
 				$htmlresult='';
 				$fieldarray=explode(';',$thefield);
@@ -334,11 +332,12 @@ class JHTMLESRecords
 
 		}
 
-		$htmlresult.='<SELECT name="'.$control_name.'" id="'.$control_name.'"'
-.' '.($style!='' ? 'style="'.$style.'"' : '')
-				.' '.($cssclass!='' ? 'class="'.$cssclass.'"' : '');
-		$htmlresult.=	' '.$attribute;
-		$htmlresult.=' data-label="'.$place_holder.'">';
+		$htmlresult.='<SELECT name="'.$control_name.'" id="'.$control_name.'" '
+				.($style!='' ? 'style="'.$style.'" ' : '')
+				.($cssclass!='' ? 'class="'.$cssclass.'" ' : '')
+				.$attribute.($attribute!='' ? ' ' : '')
+				.'data-label="'.$place_holder.'" '
+				.'>';
 
 		if(strpos($control_name,'_selector')===false)
 		{

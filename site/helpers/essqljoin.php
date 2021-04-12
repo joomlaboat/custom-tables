@@ -255,7 +255,13 @@ class JHTMLESSqlJoin
 
                         $htmlresult_select='';
 						
-                        $htmlresult_select.='<SELECT name="'.$control_name.'" id="'.$control_name.'" '.($cssclass!='' ? 'class="'.$cssclass.'"' : '').($attribute!='' ? ' '.$attribute.' ' : '').' data-label="'.$place_holder.'">';
+                        $htmlresult_select.='<SELECT '
+							.'name="'.$control_name.'" '
+							.'id="'.$control_name.'" '
+							.($cssclass!='' ? 'class="'.$cssclass.'" ' : '')
+							.($attribute!='' ? ' '.$attribute.' ' : '')
+							.'data-label="'.$place_holder.'" '
+							.'>';
 
 			$htmlresult_select.='<option value="">- '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT' ).' '.$place_holder.'</option>';
 

@@ -15,7 +15,6 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.
 
 class ESFiltering
 {
-
 	var $es;
 	var $esfields;
 	var $estable;
@@ -544,12 +543,8 @@ class ESFiltering
 										}//isset
 								}
 						}
-
-
-						}//if($item[0]=='or' or $item[0]=='and')
-
+					}//if($item[0]=='or' or $item[0]=='and')
 				}
-
 
 				return $where;
 	}//function getWhereExpression($param,&$PathValue)
@@ -567,7 +562,6 @@ class ESFiltering
 		if(!isset($whr[1]))
 			return '';
 		
-
 		$fieldrow2=$this->getFieldRowByName($whr[1]);
 
 		$title2='';
@@ -583,8 +577,6 @@ class ESFiltering
 
 		$value1=$this->processDateSearchTags($whr[0],$fieldrow1,$esr_table_full);
 		$value2=$this->processDateSearchTags($whr[1],$fieldrow2,$esr_table_full);
-
-		
 
 		if($value2=='NULL' and $opr=='=')
 			$query=$value1.' IS NULL';
@@ -617,7 +609,6 @@ class ESFiltering
 			}
 			else
 				return $esr_table_full.'.'.$fieldrow['realfieldname'];
-
 		}
 		else
 		{
@@ -693,14 +684,12 @@ class ESFiltering
 		$v=str_replace('/','',$v);
 		$v=str_replace('\\','',$v);
 		$v=str_replace('&','',$v);
-		$v=str_replace('.','',$v);
-
+		
 		return $v;
 	}
 
 	function getCmd_vL($vL)
 	{
-
 		if(strpos($vL,'$get_')!==false)
 		{
 			$getPar=str_replace('$get_','',$vL);
@@ -741,6 +730,7 @@ class ESFiltering
 
 				$cArr[]='('.implode(' AND ',$new_v_list).')';
 			}
+
 			return '('.implode(' OR ',$cArr).')';
 		}
 		else
@@ -814,11 +804,8 @@ class ESFiltering
 			return '('.implode(' AND ', $cArr).')';
 	}
 
-
-
 	function Search_UserGroup(&$whr, &$PathValue, &$fieldrow,$opr)
 	{
-
 		$v=$this->getString_vL($whr[1]);
 
 		$vList=explode(',',$v);
@@ -871,108 +858,106 @@ class ESFiltering
 
 	function ExplodeSmartParams($param)
 	{
-				$items=array();
+		$items=array();
 
-				$a=JoomlaBasicMisc::csv_explode(' and ',$param,'"',true);
-				foreach($a as $b)
-				{
-						$c=JoomlaBasicMisc::csv_explode(' or ',$b,'"',true);
+		$a=JoomlaBasicMisc::csv_explode(' and ',$param,'"',true);
+		foreach($a as $b)
+		{
+			$c=JoomlaBasicMisc::csv_explode(' or ',$b,'"',true);
 
-						if(count($c)==1)
-								$items[]=array('and', $b);
-						else
-						{
-							foreach($c as $d)
-								$items[]=array('or', $d);
-						}
-				}
+			if(count($c)==1)
+				$items[]=array('and', $b);
+			else
+			{
+				foreach($c as $d)
+					$items[]=array('or', $d);
+			}
+		}
+		return $items;
 
-				return $items;
-
-		}//function ExplodeSmartParams($param)
+	}//function ExplodeSmartParams($param)
 
 	function getRangeWhere(&$fieldrow,&$PathValue,$value)
+	{
+		$fieldTitle=$fieldrow['fieldtitle'.$this->langpostfix];
+
+		if($fieldrow['typeparams']=='date')
+			$valuearr=explode('-to-',$value);
+		else
+			$valuearr=explode('-',$value);
+
+		if($valuearr[0]=='' and $valuearr[1]=='')
+			return '';
+
+		if($fieldrow['typeparams']=='date')
 		{
-
-
-				$fieldTitle=$fieldrow['fieldtitle'.$this->langpostfix];
-
-				if($fieldrow['typeparams']=='date')
-					$valuearr=explode('-to-',$value);
-				else
-					$valuearr=explode('-',$value);
-
-				if($valuearr[0]=='' and $valuearr[1]=='')
-						return '';
-
-				if($fieldrow['typeparams']=='date')
-				{
-					$valuearr_new[0]=$db->quote($valuearr[0]);
-					$valuearr_new[1]=$db->quote($valuearr[1]);
-				}
-				else
-				{
-					$valuearr_new[0]=(float)$valuearr[0];
-					$valuearr_new[1]=(float)$valuearr[1];
-				}
-
-				$range=explode('_r_',$fieldrow['fieldname']);
-				if(count($range)==1)
-						return '';
-
-				$valueTitle='';
-				$rangewhere='';
-
-				$from_field='';
-				$to_field='';
-				if(isset($range[0]))
-				{
-					$from_field=$range[0];
-					if(isset($range[1]) and $range[1]!='')
-						$to_field=$range[1];
-					else
-						$to_field=$from_field;
-				}
-
-				if($from_field=='' and $to_field=='')
-					return '';
-
-				$innerwherearray='';
-
-				if($fieldrow['typeparams']=='date')
-				{
-					$v_min=$db->quote($valuearr[0]);
-					$v_max=$db->quote($valuearr[1]);
-				}
-				else
-				{
-					$v_min=(float)$valuearr[0];
-					$v_max=(float)$valuearr[1];
-				}
-
-				if($valuearr[0]!='' and $valuearr[1]!='')
-					$rangewhere='(es_'.$from_field.'>='.$v_min.' AND es_'.$to_field.'<='.$v_max.')';
-				elseif($valuearr[0]!='' and $valuearr[1]=='' )
-					$rangewhere='(es_'.$from_field.'>='.$v_min.')';
-				elseif($valuearr[1]!='' and $valuearr[0]=='' )
-					$rangewhere='(es_'.$from_field.'<='.$v_max.')';
-
-				if($rangewhere=='')
-					return '';
-
-				if($valuearr[0]!='')
-						$valueTitle.=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FROM').' '.$valuearr[0].' ';
-	
-				if($valuearr[1]!='')
-						$valueTitle.=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_TO').' '.$valuearr[1];
-	
-				$PathValue[]=$fieldTitle.': '.$valueTitle;
-
-				if(count($rangewhere)>0)
-					return $rangewhere;
-
-				return '';
+			$valuearr_new[0]=$db->quote($valuearr[0]);
+			$valuearr_new[1]=$db->quote($valuearr[1]);
 		}
+		else
+		{
+			$valuearr_new[0]=(float)$valuearr[0];
+			$valuearr_new[1]=(float)$valuearr[1];
+		}
+
+		$range=explode('_r_',$fieldrow['fieldname']);
+		if(count($range)==1)
+			return '';
+
+		$valueTitle='';
+		$rangewhere='';
+
+		$from_field='';
+		$to_field='';
+		if(isset($range[0]))
+		{
+			$from_field=$range[0];
+			if(isset($range[1]) and $range[1]!='')
+				$to_field=$range[1];
+			else
+				$to_field=$from_field;
+		}
+
+		if($from_field=='' and $to_field=='')
+			return '';
+
+		$innerwherearray='';
+
+		if($fieldrow['typeparams']=='date')
+		{
+			$v_min=$db->quote($valuearr[0]);
+			$v_max=$db->quote($valuearr[1]);
+		}
+		else
+		{
+			$v_min=(float)$valuearr[0];
+			$v_max=(float)$valuearr[1];
+		}
+
+		if($valuearr[0]!='' and $valuearr[1]!='')
+			$rangewhere='(es_'.$from_field.'>='.$v_min.' AND es_'.$to_field.'<='.$v_max.')';
+		elseif($valuearr[0]!='' and $valuearr[1]=='' )
+			$rangewhere='(es_'.$from_field.'>='.$v_min.')';
+		elseif($valuearr[1]!='' and $valuearr[0]=='' )
+			$rangewhere='(es_'.$from_field.'<='.$v_max.')';
+
+		if($rangewhere=='')
+			return '';
+
+		if($valuearr[0]!='')
+			$valueTitle.=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FROM').' '.$valuearr[0].' ';
+	
+		if($valuearr[1]!='')
+			$valueTitle.=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_TO').' '.$valuearr[1];
+	
+		$PathValue[]=$fieldTitle.': '.$valueTitle;
+
+		if(count($rangewhere)>0)
+			return $rangewhere;
+
+		return '';
+	}
+		
 	function getFieldRowByName($value1)
 	{
 		$parts=explode(':',$value1);

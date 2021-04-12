@@ -103,8 +103,6 @@ class tagProcessor_Edit
         return $found;
     }
 
-
-
     protected static function getReCaptchaParams()
     {
         $db = JFactory::getDBO();
@@ -112,7 +110,7 @@ class tagProcessor_Edit
 		$query='SELECT params FROM #__extensions WHERE '.$db->quoteName("name").'='.$db->Quote("plg_captcha_recaptcha").' LIMIT 1';
 
 		$db->setQuery( $query );
-//		if (!$db->query())    die( $db->stderr());
+
 		$rows=$db->loadObjectList();
 		if(count($rows)==0)
             return null;
@@ -274,7 +272,7 @@ class tagProcessor_Edit
         if($title=='')
             $title=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SAVE');
         
-        $onclick='setTask("saveandcontinue","'.$Model->encoded_current_url.'",true);';
+        $onclick='setTask(event, "saveandcontinue","'.$Model->encoded_current_url.'",true);';
                 
 		return '<input id="customtables_button_save" type="submit" class="'.$the_class.' validate"'.$attribute.' onClick=\''.$onclick.'\' value="'.$title.'">';
     }
@@ -283,7 +281,7 @@ class tagProcessor_Edit
     {
         $attribute='onClick=\'';
         
-        $attribute.='setTask("save","'.base64_encode ($redirectlink).'",true);';
+        $attribute.='setTask(event, "save","'.base64_encode ($redirectlink).'",true);';
             
         $attribute.='\'';
         
@@ -302,11 +300,10 @@ class tagProcessor_Edit
         return '<input id="customtables_button_saveandclose" type="submit" '.$attribute.' class="'.$the_class.' validate" value="'.$title.'" />';
     }
     
-
     protected static function renderSaveAndPrintButton($captcha_found,$optional_class,$title,$redirectlink)
     {
         $attribute='onClick=\'';
-        $attribute='setTask("saveandprint","'.base64_encode ($redirectlink).'",true);';
+        $attribute='setTask(event, "saveandprint","'.base64_encode ($redirectlink).'",true);';
         $attribute.='\'';
         
         if($captcha_found)
@@ -339,7 +336,7 @@ class tagProcessor_Edit
         if($title=='')
             $title=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SAVEASCOPYANDCLOSE');
             
-        $onclick='setTask("saveascopy","'.base64_encode ($redirectlink).'",true);';
+        $onclick='setTask(event, "saveascopy","'.base64_encode ($redirectlink).'",true);';
         
         return '<input id="customtables_button_saveandcopy" type="submit" class="'.$the_class.' validate"'.$attribute.' onClick=\''.$onclick.'\' value="'.$title.'">';
     }
@@ -354,7 +351,7 @@ class tagProcessor_Edit
             else
              	$cancel_class='ctEditFormButton btn button-cancel';
 
-            $onclick='setTask("cancel","'.base64_encode ($redirectlink).'",true);';
+            $onclick='setTask(event, "cancel","'.base64_encode ($redirectlink).'",true);';
     		return '<input id="customtables_button_cancel" type="button" class="'.$cancel_class.'" value="'.$title.'" onClick=\''.$onclick.'\'>';
     }
     
@@ -428,7 +425,6 @@ class tagProcessor_Edit
 		return $toolbar;
 
 	}//function
-
 
     protected static function renderFields(&$row,&$Model,&$pagelayout,$langpostfix,$parentid,&$esinputbox,&$calendars,$style='',$replaceitecode,&$items_to_replace,$fieldNamePrefix)
 	{
@@ -504,156 +500,4 @@ class tagProcessor_Edit
 		}
 		return $result;
 	}
-
-    //Not used
-    /*
-	protected static function renderChildBox(&$Model,&$firstItem,&$esfield,$langpostfix,&$row,&$esinputbox,&$realFieldName,$style='',&$fieldstosave)
-		{
-
-				$result='';
-				if($Model->showlines and !$firstItem and $Model->pagelayout=='')
-				$result.='<tr><td colspan="2"><hr/></td></tr>';
-
-
-
-						$firstItem=false;
-
-						if($Model->pagelayout=='')
-						{
-								$result.='<tr><td align="left" style="'.$style.'" >';
-
-								if(!$esfield['hidden'])
-										$result.='<label style="text-align:left;" for="es_'.$esfield['fieldname'].'"><b>'.$esfield['fieldtitle'.$langpostfix].'</b>:</label>';
-
-								$result.='</td><td>';
-						}
-
-						$calendars_=array();
-
-
-						$fieldBox='';
-
-						if($fieldBox!='')
-						{
-
-							$calendars=null;
-							$fieldBoxEmpty=tagProcessor_Edit::renderFields($blackRow,$Model,$langpostfix,$esfield['id'],$esinputbox,$calendars,'',$fieldstosave);
-
-
-							//child
-								$result.='
-						<input type="hidden"'
-							.' id="es_'.$esfield['fieldname'].'_data" '
-							.' name="es_'.$esfield['fieldname'].'_data"'
-							.' value="'.base64_encode($fieldBoxEmpty).'" />
-
-						<!--<script language="javascript"-->
-
-						<input type="checkbox"'
-										.' id="comes_'.$esfield['fieldname'].'" '
-										.' name="comes_'.$esfield['fieldname'].'" '
-										.' onClick=\'
-										var o=document.getElementById("comdiv_'.$esfield['fieldname'].'");
-										if(this.checked)
-										{
-											o.style.display="block";
-											var b=document.getElementById("es_'.$esfield['fieldname'].'_data").value;
-											o.innerHTML=Base64.decode(b);
-
-							';
-
-							//Calendars of the child should be built again, because when Dom was ready they didn't exist yet.
-							foreach($calendars_ as $calendar)
-							{
-								$result.='
-											Calendar.setup({
-        inputField     :    "com'.$calendar.'",     // id of the input field
-        ifFormat       :    "%Y-%m-%d",      // format of the input field
-        button         :    "com'.$calendar.'_img",  // trigger for the calendar (button ID)
-        align          :    "Tl",           // alignment (defaults to "Bl")
-        singleClick    :    true
-    });
-							';
-							}
-
-								$result.='			}
-										else
-										{
-											o.innerHTML="";
-											o.style.display="none";
-										}
-										\''
-										.($row[$realFieldName] ? ' checked="checked" ' : '')
-										.'/>';
-
-
-						$result.='
-						<div id="comdiv_'.$esfield['fieldname'].'" style="display:'.($row[$realFieldName] ? 'block;' : 'none').';">
-						<!-- child -->
-						<fieldset class="adminform" style="padding: 10px;">
-						<table class="admintable" cellspacing="1">
-								'.$fieldBox.'
-						</table>
-						</fieldset>
-						</div>
-						';
-
-			}//if($children!='')
-
-
-						else
-						{
-								$fieldBox=$esinputbox->renderFieldBox($Model,'com',$esfield,$row,$style,'');
-								if($fieldBox!='')
-								{
-										$result.=$fieldBox;
-								}
-
-						}//if($children!='')
-
-						if($Model->pagelayout=='')
-								$result.='</td></tr>';
-
-
-			return $result;
-
-		}
-
-	protected static function renderChildGroup(&$Model,&$firstItem,&$esfield,$langpostfix,&$row,&$esinputbox,&$realFieldName,$style='',&$fieldstosave)
-		{
-			$result='';
-			if($Model->showlines and !$firstItem and $Model->pagelayout=='')
-				$result.='<tr><td colspan="2"><hr/></td></tr>';
-
-							$firstItem=false;
-
-						$result.='
-					<tr>
-					<td colspan="2" align="left"  >
-
-					<input type="hidden" id="es_'.$esfield['fieldname'].'" name="es_'.$esfield['fieldname'].'" value="1" />';
-
-
-					$result.='<h3 style="text-align:left;" for="es_'.$esfield['fieldname'].'"><b>'.$esfield['fieldtitle'.$langpostfix].'</b>:</h3><hr>';
-
-
-
-						$calendars_=array();
-						$fieldBox=renderFields($row,$Model,$langpostfix,$esfield['id'],$esinputbox,$calendars_,$style,$fieldstosave);
-
-
-						if($fieldBox!='')
-						{
-							$result.=$fieldBox;
-
-						}//if($children!='')
-						$result.='
-					</td>
-					</tr>';
-
-			return $result;
-
-		}
-	*/
-
 }

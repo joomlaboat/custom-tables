@@ -132,11 +132,11 @@ class ESInputBox
 								.'class="'.$class.'" '
 								.$attributes.' '
 								.'data-label="'.$esfield['fieldtitle'.$this->langpostfix].'" '
+								.'data-valuerule="'.str_replace('"','&quot;',$esfield['valuerule']).'" '
+								.'data-valuerulecaption="'.str_replace('"','&quot;',$esfield['valuerulecaption']).'" '
 								.'value="'.$value.'" />';
 
 							break;
-
-
 
 						case 'float':
 							
@@ -154,6 +154,8 @@ class ESInputBox
 								.'id="'.$prefix.$esfield['fieldname'].'" '
 								.'class="'.$class.'" '
 								.'data-label="'.$esfield['fieldtitle'.$this->langpostfix].'" '
+								.'data-valuerule="'.str_replace('"','&quot;',$esfield['valuerule']).'" '
+								.'data-valuerulecaption="'.str_replace('"','&quot;',$esfield['valuerulecaption']).'" '
 								.$attributes.' ';
 
 							$decimals=intval($typeparams[0]);
@@ -189,6 +191,8 @@ class ESInputBox
 								.'label="'.$esfield['fieldname'].'" '
 								.'class="'.$class.'" '
 								.'data-label="'.$esfield['fieldtitle'.$this->langpostfix].'" '
+								.'data-valuerule="'.str_replace('"','&quot;',$esfield['valuerule']).'" '
+								.'data-valuerulecaption="'.str_replace('"','&quot;',$esfield['valuerulecaption']).'" '
 								.'value="'.$value.'" '.((int)$esfield['typeparams']>0 ? 'maxlength="'.(int)$esfield['typeparams'].'"' : 'maxlength="255"').' '.$attributes.' />';
 
 							break;
@@ -201,6 +205,8 @@ class ESInputBox
 								.'class="'.$class.'" '
 								.' '.$attributes
 								.'data-label="'.$esfield['fieldtitle'.$this->langpostfix].'" '
+								.'data-valuerule="'.str_replace('"','&quot;',$esfield['valuerule']).'" '
+								.'data-valuerulecaption="'.str_replace('"','&quot;',$esfield['valuerulecaption']).'" '
 								.'value="'.$value.'" '.((int)$esfield['typeparams']>0 ? 'maxlength="'.(int)$esfield['typeparams'].'"' : 'maxlength="255"').' '.$attributes.' />';
 
 							break;
@@ -249,6 +255,8 @@ class ESInputBox
 											.'class="'.$class.'" '
 											.$attributes.' '
 											.'data-label="'.$esfield['fieldtitle'.$this->langpostfix].'"'
+											.'data-valuerule="'.str_replace('"','&quot;',$esfield['valuerule']).'" '
+											.'data-valuerulecaption="'.str_replace('"','&quot;',$esfield['valuerulecaption']).'" '
 											.'>'.$value.'</textarea>';
 								}
 
@@ -286,6 +294,8 @@ class ESInputBox
 										.'name="'.$id.'" '
 										.'value="1" '
 										.'data-label="'.$esfield['fieldtitle'.$this->langpostfix].'" '
+										.'data-valuerule="'.str_replace('"','&quot;',$esfield['valuerule']).'" '
+										.'data-valuerulecaption="'.str_replace('"','&quot;',$esfield['valuerulecaption']).'" '
 										.$attributes.' '
 										.((int)$value==1 ? ' checked="checked" ' : '')
 										.' ></div>'
@@ -297,6 +307,8 @@ class ESInputBox
 										.$attributes.' '
 										.'value="0" '
 										.'data-label="'.$esfield['fieldtitle'.$this->langpostfix].'" '
+										.'data-valuerule="'.str_replace('"','&quot;',$esfield['valuerule']).'" '
+										.'data-valuerulecaption="'.str_replace('"','&quot;',$esfield['valuerulecaption']).'" '
 										.((int)$value==0 ? ' checked="checked" ' : '')
 										.' ></div>'
 										.'<label class="btn'.((int)$value==0 ? ' active btn-danger' : '').'" for="'.$id.'1" id="'.$id.'1_label">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NO').'</label>';
@@ -314,6 +326,8 @@ class ESInputBox
 										.'id="'.$prefix.$esfield['fieldname'].'" '
 										.'name="'.$prefix.$esfield['fieldname'].'" '
 										.'data-label="'.$esfield['fieldtitle'.$this->langpostfix].'" '
+										.'data-valuerule="'.str_replace('"','&quot;',$esfield['valuerule']).'" '
+										.'data-valuerulecaption="'.str_replace('"','&quot;',$esfield['valuerulecaption']).'" '
 										.$attributes
 										.($value ? ' checked="checked" ' : '')
 										.' class="'.$class.'">';
@@ -564,6 +578,10 @@ class ESInputBox
 							if(isset($option_list[2]) and $option_list[2]!='')
 								$typeparams[2]=$option_list[2];//Overwrites field type filter parameter.
 
+							$attributes.=' '
+								.'data-valuerule="'.str_replace('"','&quot;',$esfield['valuerule']).'" '
+								.'data-valuerulecaption="'.str_replace('"','&quot;',$esfield['valuerulecaption']).'" ';
+
 							$result.=JHTML::_('ESSQLJoin.render',
 											  $typeparams,
 											  $value,
@@ -613,6 +631,10 @@ class ESInputBox
 							else
 								$sortbyfield='';
 								
+							$attributes.=($attributes!='' ? ' ' : '')
+								.'data-valuerule="'.str_replace('"','&quot;',$esfield['valuerule']).'" '
+								.'data-valuerulecaption="'.str_replace('"','&quot;',$esfield['valuerulecaption']).'" ';
+								
 							$result.=JHTML::_('ESRecords.render',
 											  $typeparams,
 											  $prefix.$esfield['fieldname'],
@@ -633,7 +655,6 @@ class ESInputBox
 
 						case 'googlemapcoordinates':
 
-
 							$result.=JHTML::_('GoogleMapCoordinates.render',$prefix.$esfield['fieldname'], $value  );
 
 						break;
@@ -647,6 +668,8 @@ class ESInputBox
 									.'value="'.$value.'" maxlength="255" '
 									.$attributes.' '
 									.'data-label="'.$esfield['fieldtitle'.$this->langpostfix].'"'
+									.'data-valuerule="'.str_replace('"','&quot;',$esfield['valuerule']).'" '
+									.'data-valuerulecaption="'.str_replace('"','&quot;',$esfield['valuerulecaption']).'" '
 									.' />';
 
 						break;
@@ -670,6 +693,8 @@ class ESInputBox
 									.'data-sanitizers="trim" '
 									.'data-filters="'.implode(',',$filters).'" '
 									.'data-label="'.$esfield['fieldtitle'.$this->langpostfix].'" '
+									.'data-valuerule="'.str_replace('"','&quot;',$esfield['valuerule']).'" '
+									.'data-valuerulecaption="'.str_replace('"','&quot;',$esfield['valuerulecaption']).'" '
 									.$attributes
 									.' />';
 
@@ -858,6 +883,8 @@ class ESInputBox
 									.'class="'.$class.'" '
 									.'value="'.$value.'" '
 									.'data-label="'.$esfield['fieldtitle'.$this->langpostfix].'" '
+									.'data-valuerule="'.str_replace('"','&quot;',$esfield['valuerule']).'" '
+									.'data-valuerulecaption="'.str_replace('"','&quot;',$esfield['valuerulecaption']).'" '
 									.((int)$esfield['typeparams']>0 ? 'maxlength="'.(int)$esfield['typeparams'].'" ' : 'maxlength="255" ')
 									.$attributes_.' />';
 

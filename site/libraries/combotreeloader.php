@@ -245,14 +245,18 @@ function renderSelectBox($objectname, $rows, $urlwhere, $optionalOptions, $simpl
 		.'\''.((int)$this->requirementdepth).'\'); '
 		.' " ';
 
-	$result.='<select name="'.$objectname.'" id="'.$objectname.'" class="'.$this->cssclass.'"'.$onChange.' '.$optionalOptions.' data-label="'.$place_holder.'">';
+	$result.='<select '
+		.'name="'.$objectname.'" '
+		.'id="'.$objectname.'" '
+		.'class="'.$this->cssclass.'" '
+		.$onChange.' '
+		.$optionalOptions.' '
+		.'data-label="'.$place_holder.'" '
+		.'data-valuerule="'.str_replace('"','&quot;',$esfield['valuerule']).'" '
+		.'data-valuerulecaption="'.str_replace('"','&quot;',$esfield['valuerulecaption']).'" '
+		.'>';
 
-
-	//if($this->isRequired)
 	$result.='<option value="" '.($value=="" ? ' SELECTED ':'').'>- '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT').' '.$place_holder.'</option>';
-	//else
-		//$result.='<option value="" '.($value=="" ? ' SELECTED ':'').'>- '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ALL' ).'</option>';
-
 
     $count=0;
      foreach($rows as $row)
