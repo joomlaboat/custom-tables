@@ -726,7 +726,7 @@ class ESInputBox
 								$attributes_['required']=($esfield['isrequired'] ? 'required' : ''); //not working, don't know why.
 
 								$result.=JHTML::calendar($value, $prefix.$esfield['fieldname'], $prefix.$esfield['fieldname'],
-									'%Y-%m-%d1',$attributes_);
+									'%Y-%m-%d',$attributes_);
 
 						break;
 
