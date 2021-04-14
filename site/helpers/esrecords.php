@@ -124,7 +124,8 @@ class JHTMLESRecords
 								case 'single' :
 
 										$htmlresult.=JHTMLESRecords::getSingle($model, $model_nofilter,$SearchResult,$SearchResult_nofilter,$valuearray,$field,$selectorpair,$control_name,
-                                                                                                                       $style,$cssclass,$attribute,$value,$establename,$dynamic_filter,$langpostfix,$place_holder);
+                                            $style,$cssclass,$attribute,$value,$establename,$dynamic_filter,$langpostfix,$place_holder);
+											
 										break;
 
 								case 'multi' :
@@ -138,17 +139,23 @@ class JHTMLESRecords
 												$real_field=$real_field_row->realfieldname;
 
 
+										$htmlresult.='<SELECT name="'.$control_name.'[]" '
+											.'id="'.$control_name.'" MULTIPLE ';
+													
 										if(count($selectorpair)>1)
-												$htmlresult.='<SELECT name="'.$control_name.'[]" id="'.$control_name.'" MULTIPLE size="'.$selectorpair[1].'"'.($style!='' ? 'style="'.$style.'"' : '').' '.($cssclass!='' ? 'class="'.$cssclass.'"' : '').($attribute!='' ? ' '.$attribute.' ' : '').'>';
-										else
-												$htmlresult.='<SELECT name="'.$control_name.'[]" id="'.$control_name.'" MULTIPLE '.($style!='' ? 'style="'.$style.'"' : '').' '.($cssclass!='' ? 'class="'.$cssclass.'"' : '').($attribute!='' ? ' '.$attribute.' ' : '').'>';
-
+											$htmlresult.='size="'.$selectorpair[1].'" ';
+											
+										$htmlresult.=($style!='' ? 'style="'.$style.'" ' : '')
+													.($cssclass!='' ? 'class="'.$cssclass.'" ' : '')
+													.'data-label="'.$place_holder.'" '
+													.($attribute!='' ? ' '.$attribute.' ' : '').'>';
+										
 										foreach($SearchResult as $row)
 										{
 											if($row['listing_published']==0)
-                                                                                                        $style='style="color:red"';
-                                                                                                else
-                                                                                                        $style='';
+                                                $style='style="color:red"';
+                                            else
+                                                $style='';
 
 												$htmlresult.='<option value="'.$row['listing_id'].'" '
 														.((in_array($row['listing_id'],$valuearray) and count($valuearray)>0) ? ' SELECTED ' : '')
@@ -217,7 +224,7 @@ class JHTMLESRecords
 								case 'multibox' :
 		
 										$htmlresult.=JHTMLESRecords::getMultibox($model, $model_nofilter,$SearchResult,$SearchResult_nofilter,$valuearray,$field,$selectorpair,
-											$control_name,$style,$cssclass,$attribute,$establename,$dynamic_filter,$langpostfix);
+											$control_name,$style,$cssclass,$attribute,$establename,$dynamic_filter,$langpostfix,$place_holder);
 
 										break;
 
@@ -233,11 +240,8 @@ class JHTMLESRecords
 						if($pair[0]!='layout' and $pair[0]!='tablelesslayout')
 								return '<p>unknown field/layout command "'.$field.'" should be like: "layout:'.$pair[1].'".</p>';
 
-
-
-
-						//$pair[1] is layoutname
-                                                $layouttype=0;
+                        $layouttype=0;
+						
 						$layoutcode=ESLayouts::getLayout($pair[1],$layouttype);
 						if($layoutcode=='')
 							return '<p>layout "'.$pair[1].'" not found or is empty.</p>';
@@ -432,7 +436,7 @@ class JHTMLESRecords
 	}
 
 	static protected function getMultibox(&$model, &$model_nofilter,&$SearchResult,&$SearchResult_nofilter,&$valuearray,$field,$selectorpair,
-                                              $control_name,$style,$cssclass,$attribute,$establename,$dynamic_filter,$langpostfix='')
+                                              $control_name,$style,$cssclass,$attribute,$establename,$dynamic_filter,$langpostfix='',$place_holder='')
 	{
 		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tables.php');
 		$real_field_row=ESFields::getFieldRowByName($field, '',$establename);
@@ -473,27 +477,6 @@ class JHTMLESRecords
 			}
 			';
 
-			/*
-			function '.$control_name.'removeEmptyParents(selectobj)
-			{
-				alert("aa")
-				var selectobj = document.getElementById("'.$control_name.'_SQLJoinLink");
-
-				for(var i=0;i<selectobj.options.length;i++)
-				{
-						var r=selectobj.options[i].value;
-
-						for(var x=0;x<'.$control_name.'_r.length;x++)
-						{
-							if('.$control_name.'_r[x]==r)
-								selectobj.remove(i);
-
-						}
-				}
-
-			}
-			*/
-
 			$htmlresult.='
 
 			function '.$control_name.'addItem(index)
@@ -522,27 +505,6 @@ class JHTMLESRecords
 			}
 
 			';
-			/*
-			function '.$control_name.'DeleteExistingItems()
-			{
-				alert("aa")
-				var selectobj = document.getElementById("'.$control_name.'_selector");
-
-				for(var i=0;i<selectobj.options.length;i++)
-				{
-						var r=selectobj.options[i].value;
-
-						for(var x=0;x<'.$control_name.'_r.length;x++)
-						{
-							if('.$control_name.'_r[x]==r)
-								selectobj.remove(i);
-
-						}
-				}
-
-
-			}
-			*/
 
 			$htmlresult.='
 
@@ -673,7 +635,7 @@ class JHTMLESRecords
 		$single_box='';
 
 		$single_box.=JHTMLESRecords::getSingle($model, $model_nofilter,$SearchResult,$SearchResult_nofilter,$valuearray,$field,$selectorpair,
-                                                      $control_name.'_selector',$style,$cssclass,$attribute,'',$establename,$dynamic_filter,$langpostfix);
+                                                      $control_name.'_selector',$style,$cssclass,$attribute,'',$establename,$dynamic_filter,$langpostfix,$place_holder);
 
 		$htmlresult.='<div style="padding-bottom:20px;"><div style="width:90%;" id="'.$control_name.'_box"></div>'
 		.'<div style="height:30px;">'

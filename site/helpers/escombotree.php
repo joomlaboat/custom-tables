@@ -11,7 +11,8 @@ defined('_JEXEC') or die( 'Restricted access' );
 
 class JHTMLESComboTree
 {
-        static function render($prefix,$establename, $esfieldname, $optionname, $langpostfix, $value,$cssclass="",$onchange="",$where="",$innerjoin=false,$isRequired=false,$requirementdepth=0,$place_holder='')
+        static function render($prefix,$establename, $esfieldname, $optionname, $langpostfix, $value,$cssclass="",$onchange="",
+			$where="",$innerjoin=false,$isRequired=false,$requirementdepth=0,$place_holder='',$valuerule='',$valuerulecaption='')
         {
 				$jinput = JFactory::getApplication()->input;
 
@@ -28,39 +29,46 @@ class JHTMLESComboTree
 
 				$MyESDynCombo->where=$where;
 
-						$filterwhere='';
-						$filterwherearr=array();
+				$filterwhere='';
+				$filterwherearr=array();
 
-						$urlwhere='';
-						$urlwherearr=array();
+				$urlwhere='';
+				$urlwherearr=array();
 
 				//Set current value (count only firet one in case multi-value provided)
 				$value_arr=explode(',',$value);
 				if(count($value_arr)>0)
 				{
-						if(count($value_arr)<2)
-								$value_arr[1]='';
-						$i=1;
-						$option_arr=explode('.',$value_arr[1]);
-						$parent_arr=explode('.',$optionname);
-						if(count($option_arr)>count($parent_arr))
+					if(count($value_arr)<2)
+						$value_arr[1]='';
+					
+					$i=1;
+					$option_arr=explode('.',$value_arr[1]);
+					$parent_arr=explode('.',$optionname);
+					if(count($option_arr)>count($parent_arr))
+					{
+						for($p=count($parent_arr);$p<count($option_arr);$p++)
 						{
+							$opt=$option_arr[$p];
+							if($opt=='')
+								break;
 
-								for($p=count($parent_arr);$p<count($option_arr);$p++)
-								{
-										$opt=$option_arr[$p];
-										if($opt=='')
-											break;
-
-                                                                                $jinput->set($MyESDynCombo->ObjectName.'_'.$i, $opt);
-										$i++;
-								}
+							$jinput->set($MyESDynCombo->ObjectName.'_'.$i, $opt);
+							$i++;
 						}
+					}
 				}
 
 				$html_=
 				'<div id="'.$MyESDynCombo->ObjectName.'" name="'.$MyESDynCombo->ObjectName.'">'
-				.$MyESDynCombo->renderComboBox($filterwhere, $urlwhere, $filterwherearr, $urlwherearr, ($requirementdepth==1 ? true : false ),$value,$place_holder)
+				.$MyESDynCombo->renderComboBox($filterwhere, $urlwhere, $filterwherearr, $urlwherearr,
+					($requirementdepth==1 ? true : false ),
+					$value,
+					$place_holder,
+					$valuerule,
+					$valuerulecaption
+					)
+					
 				.'</div>';
 
 

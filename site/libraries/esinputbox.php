@@ -561,7 +561,9 @@ class ESInputBox
 														  '',
 														  $esfield['isrequired'],
 														  (isset($typeparams[3]) ? (int)$typeparams[3] : 1),
-															$place_holder
+															$place_holder,
+															$esfield['valuerule'],
+															$esfield['valuerulecaption']
 														  );
 
 										$result.='</div>';
@@ -648,7 +650,8 @@ class ESInputBox
 											  $attributes,
 											  $dynamic_filter,
 											  $sortbyfield,
-												$this->langpostfix
+												$this->langpostfix,
+												$place_holder
 											  );
 
 						break;
@@ -704,14 +707,28 @@ class ESInputBox
 								if($value=="0000-00-00")
 									$value='';
 
-								$attributes_=ESInputBox::prepareAttributes(array('class'=>$class),$attributes);
+								/*
+								$attributes.=($attributes!='' ? ' ' : '')
+								.'placeholder="'.$place_holder.'" '
+								.'data-valuerule="'.str_replace('"','&quot;',$esfield['valuerule']).'" '
+								.'data-valuerulecaption="'.str_replace('"','&quot;',$esfield['valuerulecaption']).'" ';
+								*/
+
+								$attributes_=[];
+								$attributes_['class']=$class;
+								$attributes_['placeholder']=$place_holder;
+								$attributes_['onChange']='" '
+									.'data-label="'.$place_holder.'" '
+									.'data-valuerule="'.str_replace('"','&quot;',$esfield['valuerule']).'" '
+									.'data-valuerulecaption="'.str_replace('"','&quot;',$esfield['valuerulecaption']); // closing quote is not needed because 
+									//public static function calendar($value, $name, $id, $format = '%Y-%m-%d', $attribs = array())  will add it.
+									
+								$attributes_['required']=($esfield['isrequired'] ? 'required' : ''); //not working, don't know why.
 
 								$result.=JHTML::calendar($value, $prefix.$esfield['fieldname'], $prefix.$esfield['fieldname'],
-														'%Y-%m-%d',$attributes_);
+									'%Y-%m-%d1',$attributes_);
 
 						break;
-
-								$result.=JHTML::_('ESUserGroup.render',$prefix.$esfield['fieldname'], $value, '', $attributes, '',$where);
 
 						case 'time';
 							if(count($row)==0)
@@ -721,8 +738,12 @@ class ESInputBox
 								$value=$esfield['defaultvalue'];
 							else
 								$value=(int)$value;
+								
+							$attributes.=($attributes!='' ? ' ' : '')
+								.'data-valuerule="'.str_replace('"','&quot;',$esfield['valuerule']).'" '
+								.'data-valuerulecaption="'.str_replace('"','&quot;',$esfield['valuerulecaption']).'" ';
 
-								$result.=JHTML::_('CTTime.render',$prefix.$esfield['fieldname'], $value, $class, $attributes, $typeparams,$option_list);
+							$result.=JHTML::_('CTTime.render',$prefix.$esfield['fieldname'], $value, $class, $attributes, $typeparams,$option_list);
 
 						break;
 								

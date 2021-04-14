@@ -296,7 +296,11 @@ class ESSerachInputBox
 											  $cssclass,
 											  $onchange,
 											  $where,
-											  $innerjoin,false,$requirementdepth,$place_holder);
+											  $innerjoin,false,$requirementdepth,
+											  $place_holder,
+											  '',
+											  ''
+											);
 
 		return $result;
 	}
