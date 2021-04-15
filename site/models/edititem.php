@@ -1909,17 +1909,12 @@ class CustomTablesModelEditItem extends JModelLegacy {
 			$EmailPair=JoomlaBasicMisc::csv_explode(':', trim($SendToEmail), '"', false);
 			
 			$EmailTo=$this->parseRowLayoutContent($row,trim($EmailPair[0]),false);
-			$Subject='Record added to "'.$this->tabletitle.'"';
-
-
-			if(isset($EmailPair[1]))
-			{
-				if($EmailPair[1]!='')
-				{
-					$Subject=$this->parseRowLayoutContent($row,$EmailPair[1],true);
-				}
-			}
-
+			
+			if(isset($EmailPair[1]) and $EmailPair[1]!='')
+				$Subject=$this->parseRowLayoutContent($row,$EmailPair[1],true);
+			else
+				$Subject='Record added to "'.$this->tabletitle.'"';
+			
 			if($EmailTo!='')
 				$emails[]=array('email' => $EmailTo, 'subject' => $Subject);
 		}
@@ -1952,12 +1947,11 @@ class CustomTablesModelEditItem extends JModelLegacy {
 				$filename=$options[$i];
 				if(file_exists($filename))
 				{
-							$mail->addAttachment($filename);
-							$vlu='';
+					$mail->addAttachment($filename);
+					$vlu='';
 				}
 				else
 					$vlu='<p>File not found. Code: 21098s</p>';
-
 
 				$note_final=str_replace($fItem,'',$note);
 				$i++;
@@ -1977,9 +1971,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 					$filename='images/esfiles/'.$row[$esfield['realfieldname']];
 					if(file_exists($filename))
 							$mail->addAttachment($filename);
-
 				}
-
 			}
 
 			$sent = $mail->Send();
@@ -2100,16 +2092,11 @@ class CustomTablesModelEditItem extends JModelLegacy {
 			
 			$fn_str[]='[_edit:'.$fn.':';
 
-
-
 			$found=false;
 			foreach($fn_str as $s)
 			{
-
-
 				if(strpos($this->pagelayout,$s)!==false)
 				{
-
 					$found=true;
 					break;
 				}
@@ -2117,7 +2104,6 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 			if($found)
 				$fields[]=$fn;
-
 		}
 
 		return $fields;
