@@ -128,8 +128,10 @@ function doValuerules(obj, label, valuerules,caption) {
 	if(valuerules_and_arguments == null)
 		return true;
 	
-	let rules = new Function("return " + valuerules_and_arguments.new_valuerules); // this |x| refers global |x|
+	let rules_str = "return " + valuerules_and_arguments.new_valuerules;
 	
+	let rules = new Function(rules_str); // this |x| refers global |x|
+		
 	let result = rules(valuerules_and_arguments.new_args);
 	
 	if(result)
@@ -145,7 +147,8 @@ function doValuerules(obj, label, valuerules,caption) {
 
 function doValuerules_ParseValues(valuerules)
 {
-	let matches=valuerules.match(/(?<=\[)[^\][]*(?=])/g);
+	//let matches=valuerules.match(/(?<=\[)[^\][]*(?=])/g);  Doesn't work on Safari
+	let matches=valuerules.match(/\[(.*?)\]/g); // return example: ["[subject]","[date]"]
 	
 	if(matches == null)
 		return null;
@@ -154,9 +157,12 @@ function doValuerules_ParseValues(valuerules)
 	
 	for(let i=0;i<matches.length;i++)
 	{
-		let obj = document.getElementById("comes_" + matches[i]);
+		let fieldname = matches[i].replace("[","").replace("]","");
+		let objID = "comes_" + fieldname;
+		let obj = document.getElementById(objID);
+		
 		if(obj){
-			valuerules = valuerules.replaceAll('[' + matches[i] + ']', 'arguments[0][' + i +']');
+			valuerules = valuerules.replaceAll("[" + fieldname + "]", 'arguments[0][' + i +']');
 			args[i] = obj.value;
 		}
 	}
