@@ -977,12 +977,11 @@ class ESFiltering
 
 class LinkJoinFilters
 {
-	static public function getFilterBox($establename,$dynamic_filter,$control_name,$filtervalue)
+	static public function getFilterBox($establename,$dynamic_filter_fieldname,$control_name,$filtervalue)
 	{
-		$fieldname=$dynamic_filter;
 		$db = JFactory::getDBO();
 		
-		$fieldrow=ESFields::getFieldRowByName($fieldname, $tableid=0,$establename);
+		$fieldrow=ESFields::getFieldRowByName($dynamic_filter_fieldname, $tableid=0,$establename);
 		
 		if($fieldrow->type=='sqljoin' or $fieldrow->type=='records')
 			return LinkJoinFilters::getFilterElement_SqlJoin($fieldrow->typeparams,$control_name,$filtervalue);
@@ -995,7 +994,7 @@ class LinkJoinFilters
 		$result='';
 
 		$pair=explode(',',$typeparams);
-
+		
 		$tablename=$pair[0];
 		if(isset($pair[1]))
 			$field=$pair[1];
@@ -1009,7 +1008,7 @@ class LinkJoinFilters
 		$fieldrow=ESFields::getFieldRowByName($field, $tablerow['id']);
 		if(!is_object($fieldrow))
 			return '<p style="color:white;background-color:red;">sqljoin: field "'.$field.'" not found</p>';
-
+			
 		$db = JFactory::getDBO();
 		$where = '';
 		if($tablerow['published_field_found'])
@@ -1039,8 +1038,6 @@ class LinkJoinFilters
 				c=0;
 				var v=selectobj.options[o].value;
 
-
-
 				for (var i = 0; i<'.$control_name.'elementsFilter.length; i++)
 				{
 					var f='.$control_name.'elementsFilter[i];
@@ -1053,7 +1050,6 @@ class LinkJoinFilters
 							if(f.indexOf(","+v+",")!=-1)
 								c++;
 						}
-
 					}
 				}
 			}
@@ -1135,12 +1131,14 @@ class LinkJoinFilters
 
 
 		$result.='<select id="'.$control_name.'SQLJoinLink" onchange="'.$control_name.'UpdateSQLJoinLink()">';
+		$result.='<option value="">- '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT' ).'</option>';
+		
 		foreach($records as $row)
 		{
 			if($row['listing_id']==$filtervalue or strpos($filtervalue,','.$row['listing_id'].',')!==false)
-				$result.='<option value="'.$row['listing_id'].'" selected>'.$row['es_'.$field].'</option>';
+				$result.='<option value="'.$row['listing_id'].'" selected>'.$row[$fieldrow->realfieldname].'</option>';
 			else
-				$result.='<option value="'.$row['listing_id'].'">'.$row['es_'.$field].'</option>';
+				$result.='<option value="'.$row['listing_id'].'">'.$row[$fieldrow->realfieldname].'</option>';
 		}
 		$result.='</select>
 ';

@@ -23,11 +23,12 @@ function getLines($filename)
 {
   $str=file_get_contents($filename);
   
-  if(ifBomUtf8($str))
-  {
-    $str=removeBomUtf8($str);
-  }
-  else
+  
+  //if(ifBomUtf8($str))
+  //{
+    //$str=removeBomUtf8($str);
+  //}
+  //else
     $str=mb_convert_encoding($str, 'UTF-8','UTF-16LE');
   
   //$lines= preg_split('/([\n\r]+)/', $str, null, PREG_SPLIT_DELIM_CAPTURE);
@@ -44,19 +45,57 @@ function getLines($filename)
 }
   
 
+function processFieldParams(&$fieldList, &$fields)
+{
+	foreach($fieldList as $f_index)
+	{
+		if($f_index>=0)
+		{
+			$fieldtype=$fields[$f_index]->type;
+			if($fieldtype=='sqljoin')
+			{
+				$params=JoomlaBasicMisc::csv_explode(',',$fields[$f_index]->typeparams,'"',false);
+			
+				$tablename=$params[0];
+				$fieldname=$params[1];
+				
+				$tablerow=ESTables::getTableRowByName($tablename);
+				if(!is_object($tablerow))
+				{
+					echo json_encode(['error' => 'sqljoin field('.$fields[$f_index]->fieldtitle.') table not found']);
+					die;
+				}
+				
+				$sqljoin_field = ESFields::getFieldRowByName($fieldname, $tablerow->id);
+
+				$fields[$f_index]->sqljoin=(object)[
+					'table'=>$tablerow->realtablename,
+					'field'=>$sqljoin_field->realfieldname,
+					'realidfieldname'=>$tablerow->realidfieldname,
+					'published_field_found'=>$tablerow->published_field_found];
+			}
+		}
+	}
+	
+	return $fields;
+	
+}
+
 function importCSVdata($filename,$ct_tableid)
 {
     $arrayOfLines = getLines($filename);
-    
+
     $tablerow=ESTables::getTableRowByID($ct_tableid);
-    $fields=ESFields::getFields($ct_tableid,true);
+    $fields = ESFields::getFields($ct_tableid,true);
 
     $first_line_fieldnames=false;
-    
-    
+      
     $line=JoomlaBasicMisc::csv_explode(',',$arrayOfLines[0],'"',false);
         
     $fieldList=prepareFieldList($line,$fields,$first_line_fieldnames);
+	
+	$fields = processFieldParams($fieldList,$fields);
+	
 	foreach($fieldList as $f)
 	{
 		if($f==-2)
@@ -65,248 +104,236 @@ function importCSVdata($filename,$ct_tableid)
 
     $offset=0;
     if($first_line_fieldnames)
-      $offset=1;
+		$offset=1;
       
     $db = JFactory::getDBO();
+
     for($i=0+$offset;$i<count($arrayOfLines);$i++)
     {
-      $str=trim($arrayOfLines[$i]);
+		$str=trim($arrayOfLines[$i]);
       
-      if($str!='')
-        $sets=prepareSQLQuery($fieldList,$fields,$arrayOfLines[$i]);
-     
-     
-     $id=findRecord($tablerow->tablename,$sets);
-     if($id==false)
-     {
-	$query='INSERT #__customtables_table_'.$tablerow->tablename.' SET '.implode(', ',$sets);
-	$db->setQuery( $query );
-	$db->execute();	
-     }
+		if($str!='')
+		{
+			$sets=prepareSQLQuery($fieldList,$fields,$arrayOfLines[$i]);
+			
+			$id=findRecord($tablerow->realtablename,$tablerow->realidfieldname,$tablerow->published_field_found,$sets);
+			if($id==false)
+			{
+				$query='INSERT '.$tablerow->realtablename.' SET '.implode(', ',$sets);
+				$db->setQuery( $query );
+				$db->execute();	
+			}
+		}
     }
-    
+
     return '';
 }
 
-function findRecord($tablename,$sets)
+function findRecord($realtablename,$realidfieldname,$published_field_found=true,$sets)
 {
-  $db = JFactory::getDBO();
-  
-  $wheres=implode(' AND ',$sets);
-  
-  $query='SELECT id FROM #__customtables_table_'.$tablename.' WHERE published=1 AND '.$wheres.' LIMIT 1';
-  
-  $db->setQuery($query);
-//	if (!$db->query())    die( $db->stderr());
-
+	$db = JFactory::getDBO();
+	$wheres=$sets;
+	
+	if($published_field_found)
+		$wheres[]='published=1';
+	
+	$query='SELECT '.$realidfieldname.' AS listing_id FROM '.$realtablename.' WHERE '.implode(' AND ',$wheres).' LIMIT 1';
+	
+	$db->setQuery($query);
 	$records=$db->loadAssocList();
-  
-  if(count($records)==0)
-    return false;
-    
-  return (int)$records[0]['id'];
-
+	
+	if(count($records)==0)
+		return false;
+		
+	return (int)$records[0]['listing_id'];
 }
 
-function findSQLRecordJoin($tablename,$join_fieldname,$vlus_str)
+function findSQLRecordJoin($realtablename,$join_realfieldname,$realidfieldname,$published_field_found=true,$vlus_str)
 {
-  $db = JFactory::getDBO();
-  
-  $vlus=explode(',',$vlus_str);
-  $wheres=array();
-  foreach($vlus as $vlu)
-    $wheres[]=$db->quoteName('es_'.$join_fieldname).'='.$db->quote($vlu);
-  
-  $query='SELECT id FROM #__customtables_table_'.$tablename.' WHERE published=1 AND ('.implode(' OR ',$wheres).')';
-  
-  
-  $db->setQuery($query);
-//	if (!$db->query())    die( $db->stderr());
-
+	$db = JFactory::getDBO();
+	$vlus=explode(',',$vlus_str);
+	$wheres_or=array();
+	foreach($vlus as $vlu)
+		$wheres_or[]=$db->quoteName($join_realfieldname).'='.$db->quote($vlu);
+		
+	$wheres[]='('.implode(' OR ',$wheres_or).')';
+		
+	if($published_field_found)
+		$wheres[]='published=1';
+	
+	$query='SELECT '.$realidfieldname.' AS listing_id FROM '.$realtablename.' WHERE '.implode(' AND ',$wheres);
+	$db->setQuery($query);
 	$records=$db->loadAssocList();
   
-  if(count($records)==0)
-    return false;
+	if(count($records)==0)
+		return false;
     
-  $ids=array();
-  foreach($records as $record)
-    $ids[]=$record['id'];
-    
-  return $ids;
+	$ids=array();
+	foreach($records as $record)
+		$ids[]=$record['listing_id'];
+	
+	return $ids;
 }
 
-function findSQLJoin($tablename,$join_fieldname,$vlu)
+function findSQLJoin($realtablename,$join_realfieldname,$realidfieldname,$published_field_found=true,$vlu)
 {
-  $db = JFactory::getDBO();
-  $query='SELECT id FROM #__customtables_table_'.$tablename.' WHERE published=1 AND '.$db->quoteName('es_'.$join_fieldname).'='.$db->quote($vlu).' LIMIT 1';
-  $db->setQuery($query);
-//	if (!$db->query())    die( $db->stderr());
-
+	$db = JFactory::getDBO();
+	$wheres=[];
+	if($published_field_found)
+		$wheres[]='published=1';
+		
+	$wheres[]=$db->quoteName($join_realfieldname).'='.$db->quote($vlu);
+	
+	$query='SELECT '.$realidfieldname.' AS listing_id FROM '.$realtablename.' WHERE '.implode(' AND ',$wheres).' LIMIT 1';
+	
+	$db->setQuery($query);
 	$records=$db->loadAssocList();
-  
-  if(count($records)==0)
-    return false;
+	
+	if(count($records)==0)
+		return false;
     
-  return $records[0]['id'];
+	return $records[0]['listing_id'];
 }
 
-function addSQLJoin($tablename,$join_fieldname,$vlu)
+function addSQLJoinSets($realtablename,$sets)
 {
-  $db = JFactory::getDBO();
-  $query='INSERT #__customtables_table_'.$tablename.' SET '.$db->quoteName('es_'.$join_fieldname).'='.$db->quote($vlu);
- 
+	$db = JFactory::getDBO();
+	$query='INSERT '.$realtablename.' SET '.implode(',',$sets);
+
 	$db->setQuery($query);
 	$db->execute();	
-  
-}
-
-function addSQLJoinSets($tablename,$sets)
-{
-  $db = JFactory::getDBO();
-  $query='INSERT #__customtables_table_'.$tablename.' SET '.implode(',',$sets);
- 
-	$db->setQuery($query);
-	$db->execute();	
-  
-}
-
-function findOneTableSQLJoinFields(&$fieldList,&$fields,$tablename_to_lookfor,$line,$type)
-{
-  $db = JFactory::getDBO();
-  $sub_sets=array();
-  $i=0;
-  
-  foreach($fieldList as $f_index)
-  {
-
-    
-    if($f_index!=-1)
-    {
-      
-      $fieldtype=$fields[$f_index]->type;
-      if($fieldtype==$type)//'sqljoin'
-      {
-        $params=JoomlaBasicMisc::csv_explode(',',$fields[$f_index]->typeparams,'"',false);
-        $tablename=$params[0];
-        
-        if(isset($params[1]))
-        {
-          $join_fieldname=$params[1];
-        
-          if($tablename==$tablename_to_lookfor)
-            $sub_sets[]=$db->quoteName('es_'.$join_fieldname).'='.$db->quote($line[$i]); 
-        }
-        
-      }
-      
-    }
-    $i++;
-  }
-  return $sub_sets;
 }
 
 function prepareSQLQuery($fieldList,$fields,$line_)
 {
-  $line=JoomlaBasicMisc::csv_explode(',',$line_,'"',false);
+	$line=JoomlaBasicMisc::csv_explode(',',$line_,'"',false);
   
-  $db = JFactory::getDBO();
-  $sets=array();
-  $i=0;
+	$db = JFactory::getDBO();
+	$sets=array();
+	$i=0;
 
-
-  
-
-  foreach($fieldList as $f_index)
-  {
-
-    if($f_index>=0)
-    {
-      
-      $fieldtype=$fields[$f_index]->type;
-      
-      if($fieldtype=='sqljoin')
-      {
-        $params=JoomlaBasicMisc::csv_explode(',',$fields[$f_index]->typeparams,'"',false);
-        $tablename=$params[0];
-        if(isset($params[1]))
-        {
-          $join_fieldname=$params[1];
-        
-          $vlu=findSQLJoin($tablename,$join_fieldname,$line[$i]);
+	foreach($fieldList as $f_index)
+	{
+		if($f_index>=0)
+		{
+			$fieldtype=$fields[$f_index]->type;
+     
+			if($fieldtype=='sqljoin')
+			{ 
+				if(isset($fields[$f_index]->sqljoin))
+				{
+					$realtablename = $fields[$f_index]->sqljoin->table;
+					
+					$vlu=findSQLJoin(
+						$realtablename,
+						$fields[$f_index]->sqljoin->field,
+						$fields[$f_index]->sqljoin->realidfieldname,
+						(bool)$fields[$f_index]->sqljoin->published_field_found,
+						$line[$i]);
           
-          if($vlu==false)
-          {
-            $sub_sets=findOneTableSQLJoinFields($fieldList,$fields,$tablename,$line,'sqljoin');
-            
-            addSQLJoinSets($tablename,$sub_sets);
-            $vlu=findSQLJoin($tablename,$join_fieldname,$line[$i]);
-          }
+					if($vlu==false)//Join table record doesnt exists 
+					{
+						$sub_sets=[];
+						$sub_sets[]=$db->quoteName($fields[$f_index]->sqljoin->field).'='.$db->quote($line[$i]); 
+						addSQLJoinSets($realtablename,$sub_sets);
+						
+						$vlu=findSQLJoin(
+						$realtablename,
+						$fields[$f_index]->sqljoin->field,
+						$fields[$f_index]->sqljoin->realidfieldname,
+						(bool)$fields[$f_index]->sqljoin->published_field_found,
+						$line[$i]);
+
+					}
           
-          if((int)$vlu>0)
-            $sets[]=$db->quoteName('es_'.$fields[$f_index]->fieldname).'='.(int)$vlu;
-          else
-            $sets[]=$db->quoteName('es_'.$fields[$f_index]->fieldname).'=NULL';
-          
-        }
-      }
-      elseif($fieldtype=='records')
-      {
-        $params=JoomlaBasicMisc::csv_explode(',',$fields[$f_index]->typeparams,'"',false);
-        $tablename=$params[0];
-        if(isset($params[1]))
-        {
-          $join_fieldname=$params[1];
+					if((int)$vlu>0)
+						$sets[]=$db->quoteName($fields[$f_index]->realfieldname).'='.(int)$vlu;
+					else
+						$sets[]=$db->quoteName($fields[$f_index]->realfieldname).'=NULL';
+				}
+			}
+			elseif($fieldtype=='records')
+			{
+				if(isset($fields[$f_index]->sqljoin))
+				{
+					$realtablename = $fields[$f_index]->sqljoin->table;
+					
+					$vlu=findSQLRecordJoin(
+						$realtablename,
+						$fields[$f_index]->sqljoin->field,
+						$fields[$f_index]->sqljoin->realidfieldname,
+						(bool)$fields[$f_index]->sqljoin->published_field_found,
+						$line[$i]);
          
-          $vlu=findSQLRecordJoin($tablename,$join_fieldname,$line[$i]);
-         
-          if($vlu==false)
-          {
-            
-          }
+					if($vlu==false)
+					{
+						$sub_sets=[];
+						$sub_sets[]=$db->quoteName($fields[$f_index]->sqljoin->field).'='.$db->quote($line[$i]); 
+						addSQLJoinSets($realtablename,$sub_sets);
+						
+						$vlu=findSQLRecordJoin(
+						$realtablename,
+						$fields[$f_index]->sqljoin->field,
+						$fields[$f_index]->sqljoin->realidfieldname,
+						(bool)$fields[$f_index]->sqljoin->published_field_found,
+						$line[$i]);
+					}
            
-          if($vlu!=false)
-            $sets[]=$db->quoteName('es_'.$fields[$f_index]->fieldname).'='.$db->quote(','.implode(',',$vlu).',');
-          else
-            $sets[]=$db->quoteName('es_'.$fields[$f_index]->fieldname).'=NULL';
-        }
-      }
-      elseif($fieldtype=='date' or $fieldtype=='creationtime' or $fieldtype=='changetime')
-      {
-        if(isset($line[$i]) and $line[$i]!='')
-          $sets[]=$db->quoteName('es_'.$fields[$f_index]->fieldname).'='.$db->quote($line[$i]);
-        else
-          $sets[]=$db->quoteName('es_'.$fields[$f_index]->fieldname).'=NULL';
-      }
-      elseif($fieldtype=='int' or $fieldtype=='user' or $fieldtype=='userid')
-      {
-        if(isset($line[$i]) and $line[$i]!='')
-          $sets[]=$db->quoteName('es_'.$fields[$f_index]->fieldname).'='.(int)$line[$i];
-        else
-          $sets[]=$db->quoteName('es_'.$fields[$f_index]->fieldname).'=NULL';
-      }
-      elseif($fieldtype=='float')
-      {
-        if(isset($line[$i]) and $line[$i]!='')
-          $sets[]=$db->quoteName('es_'.$fields[$f_index]->fieldname).'='.(float)$line[$i];
-        else
-          $sets[]=$db->quoteName('es_'.$fields[$f_index]->fieldname).'=NULL';
-      }
-      else
-      {
-
-        if(isset($line[$i]))//count($line)>$i and 
-        {
-          $vlu=$line[$i];
-          $sets[]=$db->quoteName('es_'.$fields[$f_index]->fieldname).'='.$db->quote($vlu);
-        }
-      }
-        
-    }
-    
-    $i++;
-  }
-
-  return $sets;
+					if($vlu!=false)
+						$sets[]=$db->quoteName($fields[$f_index]->realfieldname).'='.$db->quote(','.implode(',',$vlu).',');
+					else
+						$sets[]=$db->quoteName($fields[$f_index]->realfieldname).'=NULL';
+				}
+			}
+			elseif($fieldtype=='date' or $fieldtype=='creationtime' or $fieldtype=='changetime')
+			{
+				if(isset($line[$i]) and $line[$i]!='')
+					$sets[]=$db->quoteName($fields[$f_index]->realfieldname).'='.$db->quote($line[$i]);
+				else
+					$sets[]=$db->quoteName($fields[$f_index]->realfieldname).'=NULL';
+			}
+			elseif($fieldtype=='int' or $fieldtype=='user' or $fieldtype=='userid')
+			{
+				if(isset($line[$i]) and $line[$i]!='')
+					$sets[]=$db->quoteName($fields[$f_index]->realfieldname).'='.(int)$line[$i];
+				else
+					$sets[]=$db->quoteName($fields[$f_index]->realfieldname).'=NULL';
+			}
+			elseif($fieldtype=='float')
+			{
+				if(isset($line[$i]) and $line[$i]!='')
+					$sets[]=$db->quoteName($fields[$f_index]->realfieldname).'='.(float)$line[$i];
+				else
+					$sets[]=$db->quoteName($fields[$f_index]->realfieldname).'=NULL';
+			}
+			elseif($fieldtype=='checkbox')
+			{
+				if(isset($line[$i]) and $line[$i]!='')
+				{
+					if($line[$i]=='Yes' or $line[$i]=='1')
+						$vlu = 1;
+					else
+						$vlu = 0;
+						
+					$sets[]=$db->quoteName($fields[$f_index]->realfieldname).'='.(int)$vlu;
+				}
+				else
+					$sets[]=$db->quoteName($fields[$f_index]->realfieldname).'=NULL';
+			}
+			else
+			{
+				if(isset($line[$i]))//count($line)>$i and 
+				{
+					$vlu=$line[$i];
+					$sets[]=$db->quoteName($fields[$f_index]->realfieldname).'='.$db->quote($vlu);
+				}
+			}
+		}
+		
+		$i++;
+	}
+	
+	return $sets;
 }
 
 

@@ -1230,7 +1230,7 @@ class ESFields
 
 		if(count($rows)!=1)
 		{
-			return array();
+			return null;
 		}
 		return $rows[0];
 	}
