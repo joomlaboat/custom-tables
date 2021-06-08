@@ -58,14 +58,10 @@ class tagProcessor_Item
 		$htmlresult=str_replace('{number}',$number,$htmlresult);
 
 		if(isset($row) and isset($row['listing_published']))
-		{
-			$htmlresult=str_replace('{published}',($row['listing_published']==1 ? JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YES') : JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NO')),$htmlresult);
-			$htmlresult=str_replace('{_value:published}',$row['listing_published']==1,$htmlresult);
-		}
+			tagProcessor_Item::processPublishStatus($Model,$row,$htmlresult);
 
 		if(isset($row) and isset($row['listing_published']))
 			tagProcessor_Item::GetSQLJoin($Model,$htmlresult,$row['listing_id']);
-
 
 		if(isset($row) and isset($row['listing_published']))
 			tagProcessor_Item::GetCustomToolBar($htmlresult,$toolbar);
@@ -629,7 +625,29 @@ class tagProcessor_Item
 
 
 
+	protected static function processPublishStatus(&$Model,&$row,&$htmlresult)
+	{
+		$htmlresult=str_replace('{_value:published}',$row['listing_published']==1,$htmlresult);
 
+		$options=array();
+		$fList=JoomlaBasicMisc::getListToReplace('published',$options,$htmlresult,'{}');
+
+		$i=0;
+		foreach($fList as $fItem)
+		{
+			$vlu='';
+			if($options[$i]=='number')
+				$vlu = (int)$row['listing_published'];
+			elseif($options[$i]=='boolean')
+				$vlu = $row['listing_published']==1 ? 'true' : 'false';
+			else
+				$vlu = $row['listing_published']==1 ? JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YES') : JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NO');
+			
+			$htmlresult=str_replace($fItem,$vlu,$htmlresult);
+			
+			$i++;
+		}
+	}
 
 	
     protected static function GetCustomToolBar(&$htmlresult,$toolbar)
