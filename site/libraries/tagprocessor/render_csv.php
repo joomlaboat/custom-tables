@@ -109,7 +109,7 @@ trait render_csv
 		foreach($SearchResult as $row)
 		{
 			$Model->LayoutProc->number=$number;
-
+		
             $content=strip_tags(tagProcessor_Item::RenderResultLine($Model,$row,false));
 	        $tablecontent.=mb_convert_encoding('
 '.$content, 'UTF-16LE', 'UTF-8');//New line
@@ -206,11 +206,11 @@ trait render_csv
 		if (ob_get_contents())
 			ob_end_clean();
 
-		header("Content-type: text/csv");
-		header('Content-Disposition: attachment; filename="'.$filename.'"');
-		header('Content-Type: text/html; charset=utf-8');
-		header("Pragma: no-cache");
-		header("Expires: 0");
+		@header("Content-type: text/csv");
+		@header('Content-Disposition: attachment; filename="'.$filename.'"');
+		@header('Content-Type: text/html; charset=utf-8');
+		@header("Pragma: no-cache");
+		@header("Expires: 0");
 
         echo chr(255).chr(254).mb_convert_encoding($result, 'UTF-16LE', 'UTF-8');
         die ;//clean exit

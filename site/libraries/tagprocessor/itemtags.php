@@ -50,12 +50,11 @@ class tagProcessor_Item
 
 		$htmlresult=str_replace('{recordlist}',$recordlist,$htmlresult);
 
-        $id=0;
 		if(isset($row) and isset($row['listing_id']))
-            $id=(int)$row['listing_id'];
-
-		$htmlresult=str_replace('{id}',$id,$htmlresult);
-		$htmlresult=str_replace('{number}',$number,$htmlresult);
+		{
+			$htmlresult=str_replace('{id}',(int)$row['listing_id'],$htmlresult);
+			$htmlresult=str_replace('{number}',$number,$htmlresult);
+		}
 
 		if(isset($row) and isset($row['listing_published']))
 			tagProcessor_Item::processPublishStatus($Model,$row,$htmlresult);
@@ -587,9 +586,6 @@ class tagProcessor_Item
 								$getFileBoxRows=array();
 								$vlu=$row['vlu'];
 
-								//$temp_esTable=new ESTables;
-								//$temp_tablerow = $temp_esTable->getTableRowByNameAssoc($sj_tablename);
-								//$temp_estableid=$temp_tablerow['id'];
 								$temp_esfields = ESFields::getFields($tablerow['id']);
 
 								foreach($temp_esfields as $ESField)

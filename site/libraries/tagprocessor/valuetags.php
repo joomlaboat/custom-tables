@@ -1259,7 +1259,7 @@ class tagProcessor_Value
         else
         {
             if(strpos($str,'_id')!==false)
-                return '#__customtables_table_'.$sj_tablename.'.'.str_replace('_id','id',$str);
+                return '#__customtables_table_'.$sj_tablename.'.'.str_replace('_id','listing_id',$str);
             elseif(strpos($str,'_published')!==false)
                 return '#__customtables_table_'.$sj_tablename.'.'.str_replace('_published','published',$str);
         }

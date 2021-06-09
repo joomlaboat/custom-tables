@@ -32,8 +32,6 @@ class tagProcessor_CatalogTableView
     {
         $vlu='';
 
-        //$allowcontentplugins=$Model->params->get( 'allowcontentplugins' );
-
         //Catalog Table View
 		$options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('catalogtable',$options,$pagelayout,'{}');
