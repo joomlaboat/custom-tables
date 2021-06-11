@@ -37,7 +37,6 @@ class ESFields
 		return $row->id;
 	}
 
-
     public static function addLanguageField($tablename,$original_fieldname,$new_fieldname)
     {
         $fields=ESFields::getExistingFields($tablename,false);
@@ -107,7 +106,8 @@ class ESFields
 		{
 			//Create table
 			//get CT table name if possible
-			$establename=str_replace('#__customtables_table','',$realtablename);
+			
+			$establename=str_replace($db->getPrefix().'customtables_table','',$realtablename);
 			$esfieldname=str_replace('es_','',$realfieldname);
 			ESFields::CreateImageGalleryTable($establename,$esfieldname);
 		}

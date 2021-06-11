@@ -38,9 +38,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy {
 	var $listing_id;
 	var $Listing_Title;
 
-
 	var $galleryname;
-
 
 	var $GalleryTitle;
 	var $GalleryParams;
@@ -71,10 +69,8 @@ class CustomTablesModelEditPhotos extends JModelLegacy {
 		$this->esTable=new ESTables;
 		$this->imagemethods=new CustomTablesImageMethods;
 
-
 		$this->LanguageList=$this->LangMisc->getLanguageList();
 		$this->langpostfix=$this->LangMisc->getLangPostfix();
-
 
 		if(JFactory::getApplication()->input->get('establename','','CMD'))
 			$this->establename=JFactory::getApplication()->input->get('establename','','CMD');
@@ -103,8 +99,6 @@ class CustomTablesModelEditPhotos extends JModelLegacy {
 
 	function getPhotoList()
 	{
-
-
 		// get database handle
 		$db = JFactory::getDBO();
 
@@ -138,10 +132,17 @@ class CustomTablesModelEditPhotos extends JModelLegacy {
 		$this->imagefolderword=CustomTablesImageMethods::getImageFolder($row->typeparams);
 
 		$this->imagefolderweb=$this->imagefolderword;
-		$this->imagefolder=JPATH_SITE.str_replace('/',DIRECTORY_SEPARATOR,$this->imagefolderword);
+		
+		$this->imagefolder=JPATH_SITE;
+		if($this->imagefolder[strlen($this->imagefolder)-1]!='/' and $this->imagefolderword[0]!='/')
+		$this->imagefolder.='/';
+		$this->imagefolder.=str_replace('/',DIRECTORY_SEPARATOR,$this->imagefolderword);
 		//Create folder if not exists
 		if (!file_exists($this->imagefolder))
-				mkdir($this->imagefolder, 0755, true);
+		{
+			JFactory::getApplication()->enqueueMessage('Path '.$this->imagefolder.' not found.', 'error');
+			mkdir($this->imagefolder, 0755, true);
+		}
 			
 		$this->GalleryParams=$row->typeparams;
 
@@ -216,8 +217,6 @@ class CustomTablesModelEditPhotos extends JModelLegacy {
 					$image->ordering++;
 			}
 
-
-
 		}while(!$nonegative);
 
 		$db = JFactory::getDBO();
@@ -263,9 +262,6 @@ class CustomTablesModelEditPhotos extends JModelLegacy {
 
 	function delete()
 	{
-
-	//	$this->GalleryParams
-
 		$db = JFactory::getDBO();
 
 		$photoids=JFactory::getApplication()->input->getString('photoids','');
@@ -304,28 +300,19 @@ class CustomTablesModelEditPhotos extends JModelLegacy {
 			$uploadedfile=$dst;
 		}
 
-
-
 		$es= new CustomTablesMisc;
 
 		//Check file
-		
 		if(!$this->imagemethods->CheckImage($uploadedfile,JoomlaBasicMisc::file_upload_max_size()))//$this->maxfilesize
 		{
 			JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_BROKEN_IMAGE'), 'error');
 			unlink($uploadedfile);
 			return false;
 		}
-		//Save to DB
 
+		//Save to DB
 		$photo_ext=$this->imagemethods->FileExtenssion($uploadedfile);
 		$photoid=$this->addPhotoRecord($photo_ext);
-
-
-
-
-
-
 
 		$isOk=true;
 
@@ -336,19 +323,14 @@ class CustomTablesModelEditPhotos extends JModelLegacy {
 		if($r!=1)
 			$isOk=false;
 
-
-
 		$customsizes=$this->imagemethods->getCustomImageOptions($this->GalleryParams);
-
 
 		foreach($customsizes as $imagesize)
 		{
-
 			$prefix=$imagesize[0];
 			$width=(int)$imagesize[1];
 			$height=(int)$imagesize[2];
 			$color=(int)$imagesize[3];
-
 
 			//save as extention
 			if($imagesize[4]!='')
@@ -363,7 +345,6 @@ class CustomTablesModelEditPhotos extends JModelLegacy {
 				$isOk=false;
 
 		}
-
 
 		if($isOk)
 		{
@@ -380,8 +361,6 @@ class CustomTablesModelEditPhotos extends JModelLegacy {
 			unlink($uploadedfile);
 			return false;
 		}
-
-
 
 		unlink($uploadedfile);
 
@@ -431,12 +410,10 @@ class CustomTablesModelEditPhotos extends JModelLegacy {
 		return -1;
 	}
 
-
 	function DoAutoResize($uploadedfile,$folder_resized,$image_width,$image_height,$photoid,$fileext)
 	{
 		if(!file_exists($uploadedfile))
 			return false;
-
 
 		$newfilename=$folder_resized.$photoid.'.'.$fileext;
 
@@ -447,9 +424,4 @@ class CustomTablesModelEditPhotos extends JModelLegacy {
 
 		return true;
 	}
-
-
-
-
-
 }
