@@ -131,7 +131,7 @@ var idList = [<?php echo implode(',',$idList) ?>];
 		$htmlout='
 
 		<h2>'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_LIST_OF_FOTOS' ).'</h2>
-		<table width="100%" border="0">
+		<table width="100%" border="0" cellpadding="5" cellspacing="5">
 			<thead>
 			<tr>
 			<td valign="top" align="center"><input type="checkbox" name="SelectAllBox" id="SelectAllBox" onClick=SelectAll(this.checked) align="left" style="vertical-align:top";></td>
@@ -150,7 +150,7 @@ var idList = [<?php echo implode(',',$idList) ?>];
 		foreach($images as $image)
 		{
 
-				$htmlout.='<tr>';
+			$htmlout.='<tr>';
 
 			$imagefile=$Model->imagefolderweb.'/'.$Model->imagemainprefix.$Model->estableid.'_'.$Model->galleryname.'__esthumb_'.$image->photoid.'.jpg';
 			$imagefileoriginal=$Model->imagefolderweb.'/'.$Model->imagemainprefix.$Model->estableid.'_'.$Model->galleryname.'__original_'.$image->photoid.'.'.$image->photo_ext;
@@ -161,19 +161,19 @@ var idList = [<?php echo implode(',',$idList) ?>];
 			<input type="checkbox" name="esphoto'.$image->photoid.'" id="esphoto'.$image->photoid.'" align="left" style="vertical-align:top";>
 			</td>
 
-			<td'.($c==0 ? ' class="MainImage" ' : '').' width="160" align="center">
+			<td'.($c==0 ? ' class="MainImage" ' : '').' width="170" align="center">
 			<a href="'.$imagefileoriginal.'" rel="shadowbox"><img src="'.$imagefile.'" border="0" alt="'.$image->title.'" title="'.$image->title.'" width="150" height="150" /></a>
 			</td>
 
 			<td valign="top" align="left">
 
-			<table border="0" cellpadding="5">';
+			<table border="0" cellpadding="5" style="margin-left:5px;">';
 
 			$htmlout.='<tr>
 			<td>'.JoomlaBasicMisc::JTextExtended( "COM_CUSTOMTABLES_TITLE" ).': </td><td><input type="text"  style="width: 150px;" name="esphototitle'.$image->photoid.'" id="esphototitle'.$image->photoid.'" value="'.$image->title.'"></td>
 			</tr>
 			<tr>
-			<td>'.JoomlaBasicMisc::JTextExtended( "COM_CUSTOMTABLES_ORDER" ).': </td><td><input type="text"  style="width: 30px;" name="esphotoorder'.$image->photoid.'" id="esphotoorder'.$image->photoid.'" value="'.$image->ordering.'"></td>
+			<td>'.JoomlaBasicMisc::JTextExtended( "COM_CUSTOMTABLES_ORDER" ).': </td><td><input type="text"  style="width: 50px;" name="esphotoorder'.$image->photoid.'" id="esphotoorder'.$image->photoid.'" value="'.$image->ordering.'"></td>
 			</tr>
 			</table>
 
