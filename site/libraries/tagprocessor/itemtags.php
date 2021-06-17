@@ -50,11 +50,13 @@ class tagProcessor_Item
 
 		$htmlresult=str_replace('{recordlist}',$recordlist,$htmlresult);
 
+		$listing_id = 0;
+		
 		if(isset($row) and isset($row['listing_id']))
-		{
-			$htmlresult=str_replace('{id}',(int)$row['listing_id'],$htmlresult);
-			$htmlresult=str_replace('{number}',$number,$htmlresult);
-		}
+			$listing_id = (int)$row['listing_id'];
+			
+		$htmlresult=str_replace('{id}',$listing_id,$htmlresult);
+		$htmlresult=str_replace('{number}',$number,$htmlresult);
 
 		if(isset($row) and isset($row['listing_published']))
 			tagProcessor_Item::processPublishStatus($Model,$row,$htmlresult);
