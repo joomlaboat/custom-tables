@@ -362,3 +362,16 @@ function clearListingID() {
     let frm = document.getElementById("eseditForm");
     frm.submit();
 }
+
+
+function recaptchaCallback()
+{
+	let buttons=['save','saveandclose','saveandprint','saveandcopy','delete'];
+	for(let i=0;i<buttons.length;i++){
+		let button = 'customtables_button_' + buttons[i];
+		let obj = document.getElementById(button);
+
+		if(obj)
+			obj.disabled=false;
+	}
+}

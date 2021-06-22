@@ -21,6 +21,7 @@ class tagProcessor_Edit
         	$listing_id=0;
         
         $captcha_found=tagProcessor_Edit::process_captcha($Model,$pagelayout);
+		
         tagProcessor_Edit::process_button($Model,$pagelayout,$captcha_found,$listing_id);
         tagProcessor_Edit::process_buttons($Model,$pagelayout,$captcha_found,$listing_id);
         
@@ -52,38 +53,36 @@ class tagProcessor_Edit
 
     protected static function process_captcha(&$Model,&$pagelayout)
     {
-            $found=false;
-                        $options=array();
-						$captcha=JoomlaBasicMisc::getListToReplace('captcha',$options,$pagelayout,'{}');
+        $found=false;
+        $options=array();
+		$captcha=JoomlaBasicMisc::getListToReplace('captcha',$options,$pagelayout,'{}');
 
-                        if(count($captcha)>0)
-                        {
-                            if($Model->frmt!='csv')
-                            {
-                                $p=tagProcessor_Edit::getReCaptchaParams();
-                                if($p!=null)
-                                {
-                                    JPluginHelper::importPlugin('captcha');
-                                    $dispatcher = JEventDispatcher::getInstance();
-                                    $dispatcher->trigger('onInit','my_captcha_div');
+        if(count($captcha)>0)
+        {
+			if($Model->frmt!='csv')
+            {
+				$p=tagProcessor_Edit::getReCaptchaParams();
+                if($p!=null)
+                {
+					JPluginHelper::importPlugin('captcha');
+					$dispatcher = JEventDispatcher::getInstance();
+                    $dispatcher->trigger('onInit','my_captcha_div');
 
-                                    $reCaptchaParams=json_decode($p->params);
-                                }
-                                else
-                                    $reCaptchaParams=null;
-                            }
-                        }
+                    $reCaptchaParams=json_decode($p->params);
+                }
+                else
+					$reCaptchaParams=null;
+            }
+        }
 
-						for($i=0;$i<count($captcha);$i++)
-						{
-                            $captcha_code='';
-                            if($Model->frmt!='csv')
-                            {
-                                if($reCaptchaParams!=null)
-                                {
-                                    if($reCaptchaParams!=null and $reCaptchaParams->public_key!="" and isset($reCaptchaParams->size))
-                                    {
-                                        $captcha_code='
+		for($i=0;$i<count($captcha);$i++)
+		{
+			$captcha_code='';
+            if($Model->frmt!='csv')
+            {
+				if($reCaptchaParams!=null and $reCaptchaParams->public_key!="" and isset($reCaptchaParams->size))
+                {
+					$captcha_code='
     <div id="my_captcha_div"
     class="g-recaptcha"
     data-sitekey="'.$reCaptchaParams->public_key.'"
@@ -91,24 +90,20 @@ class tagProcessor_Edit
     data-size="'.$reCaptchaParams->size.'"
     data-callback="recaptchaCallback"
     ></div>';
-                                    }
-                                    else
-                                        $found =true;
-                                }
-                            }
-							$pagelayout=str_replace($captcha,$captcha_code,$pagelayout);
-
-							$i++;
-						}
+					$found =true;
+                }
+				$pagelayout=str_replace($captcha,$captcha_code,$pagelayout);
+				$i++;
+			}
+		}
+		
         return $found;
     }
 
     protected static function getReCaptchaParams()
     {
         $db = JFactory::getDBO();
-
 		$query='SELECT params FROM #__extensions WHERE '.$db->quoteName("name").'='.$db->Quote("plg_captcha_recaptcha").' LIMIT 1';
-
 		$db->setQuery( $query );
 
 		$rows=$db->loadObjectList();
@@ -285,12 +280,11 @@ class tagProcessor_Edit
             
         $attribute.='\'';
         
-        
-        if($captcha_found)
+		if($captcha_found)
             $attribute.=' disabled="disabled"';
             
         if($optional_class!='')
-			$the_class=$optional_class;//$the_class='ctEditFormButton '.$optional_class;
+			$the_class=$optional_class;
 		else
 			$the_class='ctEditFormButton btn button-apply btn-success';
             
@@ -310,7 +304,7 @@ class tagProcessor_Edit
             $attribute=' disabled="disabled"';
             
         if($optional_class!='')
-			$the_class=$optional_class;//$the_class='ctEditFormButton '.$optional_class;
+			$the_class=$optional_class;
 		else
 			$the_class='ctEditFormButton btn button-apply btn-success';
             
