@@ -43,7 +43,7 @@ class ESInputBox
 		if($row==null)
 			$row=array();
 
-		if(count($row)==0)
+		if(count($row)==0 or $row['listing_id'] == 0)
 		{
 			$value=JFactory::getApplication()->input->getString($realFieldName);
 			if($value=='')
@@ -87,7 +87,7 @@ class ESInputBox
 		$isAdmin=$this->isAdmin();
 
 		$allowEditAuthior=false;
-		if($isAdmin and $esfield['type']=='userid' and count($row)!=0)
+		if($isAdmin and $esfield['type']=='userid' and count($row)!=0 and $row['listing_id'] != 0)
 			$allowEditAuthior=true;
 			
 			$typeparams=JoomlaBasicMisc::csv_explode(',',$esfield['typeparams'],'"',false);

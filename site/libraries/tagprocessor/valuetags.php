@@ -630,7 +630,7 @@ class tagProcessor_Value
 		$isFileBoxLoaded=array();
 		$getFileBoxRows=array();
 
-		if(isset($row) and count($row)>0)
+		if(isset($row) and count($row)>0 and $row['listing_id'] != 0)
 		{
 			foreach($Model->esfields as $ESField)
 			{

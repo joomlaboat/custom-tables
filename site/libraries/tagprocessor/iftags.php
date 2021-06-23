@@ -11,7 +11,6 @@ defined('_JEXEC') or die('Restricted access');
 
 class tagProcessor_If
 {
-
     public static function process(&$Model,&$htmlresult,&$row,$recordlist,$number)
     {
 			$options=array();
@@ -26,7 +25,7 @@ class tagProcessor_If
             }
 
              //outdated - absolete
-        if(isset($row) and count($row)>0)
+        if(isset($row) and count($row)>0 and $row['listing_id'] != 0)
 		{
 			//Row Publish Status IF,IFNOT statments
 			tagProcessor_If::IFStatment('[_if_published]','[_endif_published]',$htmlresult,!$row['listing_published']==1);

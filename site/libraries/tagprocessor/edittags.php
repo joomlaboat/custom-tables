@@ -180,12 +180,12 @@ class tagProcessor_Edit
                                             $title=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_CANCEL');
                 
                 
-                                        $b=tagProcessor_Edit::renderCancelButton($captcha_found,$optional_class,$title,$redirectlink);
+                                        $b=tagProcessor_Edit::renderCancelButton($optional_class,$title,$redirectlink);
                                         break;
                                     
                                     case 'close':
                                         
-                                        $b=tagProcessor_Edit::renderCancelButton($captcha_found,$optional_class,$title,$redirectlink);
+                                        $b=tagProcessor_Edit::renderCancelButton($optional_class,$title,$redirectlink);
                                         break;
                                     
                                     case 'delete':
@@ -260,7 +260,7 @@ class tagProcessor_Edit
             $attribute=' disabled="disabled"';
             
         if($optional_class!='')
-			$the_class=$optional_class;//$the_class='ctEditFormButton '.$optional_class;
+			$the_class=$optional_class;
 		else
 			$the_class='ctEditFormButton btn button-apply btn-success';
             
@@ -335,7 +335,7 @@ class tagProcessor_Edit
         return '<input id="customtables_button_saveandcopy" type="submit" class="'.$the_class.' validate"'.$attribute.' onClick=\''.$onclick.'\' value="'.$title.'">';
     }
     
-    protected static function renderCancelButton($captcha_found,$optional_class,$title,$redirectlink)
+    protected static function renderCancelButton($optional_class,$title,$redirectlink)
     {
             if($title=='')
                 $title=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_CANCEL');
@@ -397,14 +397,14 @@ class tagProcessor_Edit
             if($listing_id!=0)
                 $toolbar.=tagProcessor_Edit::renderSaveAsCopyButton($captcha_found,$optional_class,$button2title,$redirectlink);
                 
-            $toolbar.=tagProcessor_Edit::renderCancelButton($captcha_found,$optional_class,$button3title,$redirectlink);
+            $toolbar.=tagProcessor_Edit::renderCancelButton($optional_class,$button3title,$redirectlink);
         }
         elseif($submitbuttons=='applysavecancel' or $submitbuttons=='save.saveandclose.cancel')//applysavecancel -  legacy support
         {
             //Save / Save & Close / Cancel
             $toolbar=tagProcessor_Edit::renderSaveButton($Model,$captcha_found,$optional_class,$button1title).' ';
             $toolbar.=tagProcessor_Edit::renderSaveAndCloseButton($captcha_found,$optional_class,$button2title,$redirectlink).' ';
-            $toolbar.=tagProcessor_Edit::renderCancelButton($captcha_found,$optional_class,$button3title,$redirectlink);
+            $toolbar.=tagProcessor_Edit::renderCancelButton($optional_class,$button3title,$redirectlink);
 
 		}
         else
@@ -413,7 +413,7 @@ class tagProcessor_Edit
             //Default
             //Save & Close / Save as New & Close / Cancel
 			$toolbar=tagProcessor_Edit::renderSaveAndCloseButton($captcha_found,$optional_class,$button1title,$redirectlink);
-            $toolbar.=tagProcessor_Edit::renderCancelButton($captcha_found,$optional_class,$button3title,$redirectlink);
+            $toolbar.=tagProcessor_Edit::renderCancelButton($optional_class,$button3title,$redirectlink);
         }
 
 		return $toolbar;

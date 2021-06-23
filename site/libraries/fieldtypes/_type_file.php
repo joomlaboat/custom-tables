@@ -387,21 +387,14 @@ class CT_FieldTypeTag_file
         $document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/js/jquery.form.js"></script>');
         $document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/js/uploader.js"></script>');
 
-
-        if(count($row)>0)
+        if(count($row)>0 and $row['listing_id'] != 0)
             $file=$row[$realFieldName];
         else
             $file='';
 
-
-        //$isShortcut=false;
-		//$imagesrc=CT_FieldTypeTag_image::getImageSRC($row,$realFieldName,$ImageFolder,$imagefile,$isShortcut);
-
     	$result='<div class="esUploadFileBox" style="vertical-align:top;">';
 
-
         $result.=CT_FieldTypeTag_file::renderFileAndDeleteOption($file,$esfield);
-
         $result.=CT_FieldTypeTag_file::renderUploader((int)$esfield['id'],$esfield['fieldname'],$esfield['typeparams']);
 
    		$result.='</div>';

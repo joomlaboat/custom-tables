@@ -230,12 +230,14 @@ class CustomTablesModelEditItem extends JModelLegacy {
 
 		if($this->params->get('listingid')!=0)
 		{
-			$this->id=$this->processCustomListingID();
+			if($this->id==0)
+			$this->id=$this->params->get('listingid');
+			$this->processCustomListingID();
 		}
 		elseif(!$BlockExternalVars and $jinput->getInt('listing_id',0)!=0)
 		{
 			$this->id=$jinput->getInt('listing_id',0);
-			$this->id=$this->processCustomListingID();
+			$this->processCustomListingID();
 		}
 			
 		if($this->id==0 and $this->useridfield_uniqueusers and $this->useridfield!='')
@@ -246,6 +248,11 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		
 		if(isset($this->row))
 			$this->getSpecificVersionIfSet();
+		else
+		{
+			//default record values
+			$this->row = ['listing_id' => 0,'listing_published' =>0];
+		}
 		
 		return true;
 	}
@@ -282,9 +289,6 @@ class CustomTablesModelEditItem extends JModelLegacy {
 	{
 		$db = JFactory::getDBO();
 
-		if($this->id==0)
-			$this->id=$this->params->get('listingid');
-
 		if(is_numeric($this->id))
 		{
 			$query = 'SELECT '.$this->tablerow['query_selects'].' FROM '.$this->realtablename.' WHERE '.$this->tablerow['realidfieldname'].'='.(int)$this->id.' LIMIT 1';
@@ -298,7 +302,6 @@ class CustomTablesModelEditItem extends JModelLegacy {
 			return $this->id;
 		}
 
-
 		$filter=$this->id;
 		if($filter=='')
 			return 0;
@@ -308,34 +311,30 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		$LayoutProc->layout=$filter;
 		$filter=$LayoutProc->fillLayout(array(),null,array(),'[]',true);
 
-				$filtering=new ESFiltering;
-				$filtering->langpostfix=$this->langpostfix;
-				$filtering->es=$this->es;
-				$filtering->esfields=$this->esfields;
+		$filtering=new ESFiltering;
+		$filtering->langpostfix=$this->langpostfix;
+		$filtering->es=$this->es;
+		$filtering->esfields=$this->esfields;
 
-				$PathValue=array();
-				$paramwhere=$filtering->getWhereExpression($filter,$PathValue);
+		$PathValue=array();
+		$paramwhere=$filtering->getWhereExpression($filter,$PathValue);
 
-				if($paramwhere!='')
-						$wherearr[]=' ('.$paramwhere.' )';
+		if($paramwhere!='')
+			$wherearr[]=' ('.$paramwhere.' )';
 
-			if($this->tablerow['published_field_found'])
-				$wherearr[]='published=1';
+		if($this->tablerow['published_field_found'])
+			$wherearr[]='published=1';
 
-			if(count($wherearr)>0)
-				$where = ' WHERE '.implode(" AND ",$wherearr);
+		if(count($wherearr)>0)
+			$where = ' WHERE '.implode(" AND ",$wherearr);
 
-			$query = 'SELECT '.$this->tablerow['realidfieldname'].' AS listing_id FROM '.$this->realtablename.' '.$where;
+		$query = 'SELECT '.$this->tablerow['realidfieldname'].' AS listing_id FROM '.$this->realtablename.' '.$where;
 
-			$query.=' ORDER BY '.$this->tablerow['realidfieldname'].' DESC'; //show last
-			$query.=' LIMIT 1';
-
+		$query.=' ORDER BY '.$this->tablerow['realidfieldname'].' DESC'; //show last
+		$query.=' LIMIT 1';
 
 		$db->setQuery($query);
-
-		
 		$rows=$db->loadAssocList();
-
 
 		if(count($rows)<1)
 		{
@@ -344,7 +343,6 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		}
 
 		$this->row=$rows[0];
-		return $row['listing_id'];
 	}
 	
 	function getSpecificVersionIfSet()
