@@ -55,7 +55,7 @@ class updateImages
 		$new_ImageFolder_=CustomTablesImageMethods::getImageFolder($new_typeparams);
 		$new_ImageFolder=str_replace('/',DIRECTORY_SEPARATOR,$new_ImageFolder_);
 		
-		$status=updateImages::processImages($table_row->tablename,$field_row->fieldname, $old_typeparams, $new_typeparams, $old_ImageFolder,$new_ImageFolder, $startindex, $stepsize);
+		$status=updateImages::processImages($table_row->realtablename,$field_row->realfieldname, $old_typeparams, $new_typeparams, $old_ImageFolder,$new_ImageFolder, $startindex, $stepsize);
 
 		return array('count'=>$count,'success'=>(int)($status==null),'startindex'=>$startindex,'stepsize'=>$stepsize,'error'=>$status);
 		
@@ -106,11 +106,11 @@ class updateImages
 		$old_imagefile=$old_ImageFolder.DIRECTORY_SEPARATOR.$prefix.'_'.$rowValue.'.'.$imagefile_ext;
 		$new_imagefile=$new_ImageFolder.DIRECTORY_SEPARATOR.$prefix.'_'.$rowValue.'.'.$imagefile_ext;
 		
-		if(file_exists(JPATH_SITE.$old_imagefile))
+		if(file_exists(JPATH_SITE.DIRECTORY_SEPARATOR.$old_imagefile))
 		{
 			if($old_ImageFolder!=$new_ImageFolder)
 			{
-				if(!@rename(JPATH_SITE.$old_imagefile,JPATH_SITE.$new_imagefile))
+				if(!@rename(JPATH_SITE.$old_imagefile,JPATH_SITE.DIRECTORY_SEPARATOR.$new_imagefile))
 					return 'cannot move file to '.$new_imagefile;
 			}
 
@@ -128,17 +128,18 @@ class updateImages
 		//Check original image file
 		$prefix='_original';
 		$old_imagefile=$old_ImageFolder.DIRECTORY_SEPARATOR.$prefix.'_'.$rowValue;
-		$imagefile_ext=$imgMethods->getImageExtention(JPATH_SITE.$old_imagefile);//file extension is unknow - let's find out
+
+		$imagefile_ext=$imgMethods->getImageExtention(JPATH_SITE.DIRECTORY_SEPARATOR.$old_imagefile);//file extension is unknow - let's find out
 
 		if($imagefile_ext!='')
 		{
 			$old_imagefile=$old_ImageFolder.DIRECTORY_SEPARATOR.$prefix.'_'.$rowValue.'.'.$imagefile_ext;
 			$new_imagefile=$new_ImageFolder.DIRECTORY_SEPARATOR.$prefix.'_'.$rowValue.'.'.$imagefile_ext;
-			if(file_exists(JPATH_SITE.$old_imagefile))
+			if(file_exists(JPATH_SITE.DIRECTORY_SEPARATOR.$old_imagefile))
 			{
 				if($old_ImageFolder!=$new_ImageFolder)
 				{
-					if(!@rename(JPATH_SITE.$old_imagefile,JPATH_SITE.$new_imagefile))
+					if(!@rename(JPATH_SITE.DIRECTORY_SEPARATOR.$old_imagefile,JPATH_SITE.DIRECTORY_SEPARATOR.$new_imagefile))
 						return 'cannot move file to '.$new_imagefile;
 					else
 						$original_image_file=$new_imagefile;
@@ -159,17 +160,15 @@ class updateImages
 	{
 		$old_imagefile=$old_ImageFolder.DIRECTORY_SEPARATOR.$prefix.'_'.$rowValue;
 		
-	
 		if($imagefile_ext=='')
-			$imagefile_ext=$imgMethods->getImageExtention(JPATH_SITE.$original_image_file);//file extension is unknow - let's find out based on original file
-		
-
+			$imagefile_ext=$imgMethods->getImageExtention(JPATH_SITE.DIRECTORY_SEPARATOR.$original_image_file);//file extension is unknow - let's find out based on original file
+	
 		if($imagefile_ext!='')
 		{
 			$old_imagefile=$old_ImageFolder.DIRECTORY_SEPARATOR.$prefix.'_'.$rowValue.'.'.$imagefile_ext;
 			$new_imagefile=$new_ImageFolder.DIRECTORY_SEPARATOR.$prefix.'_'.$rowValue.'.'.$imagefile_ext;
 			
-			if(!file_exists(JPATH_SITE.$old_imagefile))
+			if(!file_exists(JPATH_SITE.DIRECTORY_SEPARATOR.$old_imagefile))
 			{
 				//Custom size file not found, create it
 				$width=(int)$old_imagesize[1];
@@ -178,18 +177,18 @@ class updateImages
 				$color=(int)$old_imagesize[3];
 				$watermark=$old_imagesize[5];
 
-				$r=$imgMethods->ProportionalResize(JPATH_SITE.$original_image_file,JPATH_SITE.$old_imagefile, $width, $height,1,true, $color, $watermark);
+				$r=$imgMethods->ProportionalResize(JPATH_SITE.DIRECTORY_SEPARATOR.$original_image_file,JPATH_SITE.$old_imagefile, $width, $height,1,true, $color, $watermark);
 
 				if($r!=1)
 					return 'cannot create file: '.$old_imagefile;
 			}
 
-			if(file_exists(JPATH_SITE.$old_imagefile))
+			if(file_exists(JPATH_SITE.DIRECTORY_SEPARATOR.$old_imagefile))
 			{
 				if($old_ImageFolder!=$new_ImageFolder)
 				{
 					//Move exiting custom size file to new folder
-					if(!@rename(JPATH_SITE.$old_imagefile,JPATH_SITE.$new_imagefile))
+					if(!@rename(JPATH_SITE.DIRECTORY_SEPARATOR.$old_imagefile,JPATH_SITE.DIRECTORY_SEPARATOR.$new_imagefile))
 						return 'cannot move file to '.$new_imagefile;
 				}
 			}
@@ -207,13 +206,13 @@ class updateImages
 		$new_imagefile=$new_ImageFolder.DIRECTORY_SEPARATOR.$prefix.'_'.$rowValue;
 	
 		if($imagefile_ext=='')
-			$imagefile_ext=$imgMethods->getImageExtention(JPATH_SITE.$original_image_file);//file extension is unknow - let's find out based on original file
+			$imagefile_ext=$imgMethods->getImageExtention(JPATH_SITE.DIRECTORY_SEPARATOR.$original_image_file);//file extension is unknow - let's find out based on original file
 
 		if($imagefile_ext!='')
 		{
 			$new_imagefile=$new_ImageFolder.DIRECTORY_SEPARATOR.$prefix.'_'.$rowValue.'.'.$imagefile_ext;
 			
-			if(!file_exists(JPATH_SITE.$new_imagefile))
+			if(!file_exists(JPATH_SITE.DIRECTORY_SEPARATOR.$new_imagefile))
 			{
 				//Custom size file not found, create it
 				$width=(int)$new_imagesize[1];
@@ -222,7 +221,7 @@ class updateImages
 				$color=(int)$new_imagesize[3];
 				$watermark=$new_imagesize[5];
 
-				$r=$imgMethods->ProportionalResize(JPATH_SITE.$original_image_file,JPATH_SITE.$new_imagefile, $width, $height,1,true, $color, $watermark);
+				$r=$imgMethods->ProportionalResize(JPATH_SITE.DIRECTORY_SEPARATOR.$original_image_file,JPATH_SITE.DIRECTORY_SEPARATOR.$new_imagefile, $width, $height,1,true, $color, $watermark);
 
 				if($r!=1)
 					return 'cannot create file: '.$new_imagefile;
@@ -237,15 +236,15 @@ class updateImages
 		$old_imagefile=$old_ImageFolder.DIRECTORY_SEPARATOR.$prefix.'_'.$rowValue;
 		
 		if($imagefile_ext=='')
-			$imagefile_ext=$imgMethods->getImageExtention(JPATH_SITE.$original_image_file);//file extension is unknow - let's find out based on original file
+			$imagefile_ext=$imgMethods->getImageExtention(JPATH_SITE.DIRECTORY_SEPARATOR.$original_image_file);//file extension is unknow - let's find out based on original file
 		
 		if($imagefile_ext!='')
 		{
 			$old_imagefile=$old_ImageFolder.DIRECTORY_SEPARATOR.$prefix.'_'.$rowValue.'.'.$imagefile_ext;
 			
-			if(file_exists(JPATH_SITE.$old_imagefile))
+			if(file_exists(JPATH_SITE.DIRECTORY_SEPARATOR.$old_imagefile))
 			{
-				if (!@unlink(JPATH_SITE.$old_imagefile))
+				if (!@unlink(JPATH_SITE.DIRECTORY_SEPARATOR.$old_imagefile))
 					return 'cannot delete old file: '.$old_imagefile;
 			}
 		}
@@ -269,8 +268,9 @@ class updateImages
 	protected static function processImage(&$imgMethods,&$old_imagesizes,&$new_imagesizes,$rowValue,$old_ImageFolder, $new_ImageFolder)
 	{
 		$original_image_file='';
-		$status=updateImages::processImage_Original($imgMethods,$rowValue,$old_ImageFolder, $new_ImageFolder,$original_image_file);
 		
+		$status=updateImages::processImage_Original($imgMethods,$rowValue,$old_ImageFolder, $new_ImageFolder,$original_image_file);
+	
 		if($status!=null)
 			return null;//Skip if original file not found
 		
@@ -278,7 +278,7 @@ class updateImages
 		if($status!=null)
 		{
 			//Create Thumbnail file
-			$r=$imgMethods->ProportionalResize(JPATH_SITE.$original_image_file,JPATH_SITE.$new_ImageFolder.DIRECTORY_SEPARATOR.'_esthumb_'.$rowValue.'.jpg', 150, 150,1,true, -1, '');
+			$r=$imgMethods->ProportionalResize(JPATH_SITE.DIRECTORY_SEPARATOR.$original_image_file,JPATH_SITE.DIRECTORY_SEPARATOR.$new_ImageFolder.DIRECTORY_SEPARATOR.'_esthumb_'.$rowValue.'.jpg', 150, 150,1,true, -1, '');
 
 			if($r!=1)
 			{

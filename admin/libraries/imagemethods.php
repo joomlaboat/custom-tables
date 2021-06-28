@@ -299,7 +299,9 @@ class CustomTablesImageMethods
 		$available_ext=array('jpg','png','gif','jpeg');
 		foreach($available_ext as $photo_ext)
 		{
-			if(file_exists($ImageName_noExt.'.'.$photo_ext))
+			$filename = $ImageName_noExt.'.'.$photo_ext;
+
+			if(file_exists($filename))
 				return $photo_ext;
 		}
 		return '';

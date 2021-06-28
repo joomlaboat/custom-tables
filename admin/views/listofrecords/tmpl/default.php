@@ -37,7 +37,7 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.
 		
 		<table class="table table-striped" id="recordsList">
 			<thead><?php echo $this->loadTemplate('head');?></thead>
-			<tfoot><?php //echo $this->loadTemplate('foot');?></tfoot>
+			<tfoot><?php echo $this->loadTemplate('foot');?></tfoot>
 			<tbody><?php echo $this->loadTemplate('body');?></tbody>
 		</table>
 		<?php //Load the batch processing form. ?>
