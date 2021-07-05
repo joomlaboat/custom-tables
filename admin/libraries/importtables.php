@@ -563,11 +563,8 @@ class ImportTables
 
             if($fieldname!='' and ESFields::checkIfFieldExists($mysqltablename,$fieldname,false))
             {
-
-                    if($rows_new[$key]!=$rows_old[$key] and $rows_new[$key]!=null)
-                        $sets[]=$fieldname.'='.$db->Quote($rows_new[$key]);
-
-
+                if($rows_new[$key]!=$rows_old[$key])// and $rows_new[$key]!=null)
+                    $sets[]=$fieldname.'='.$db->Quote($rows_new[$key]);
             }
         }
 
