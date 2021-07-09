@@ -613,7 +613,19 @@ class CustomTablesImageMethods
 				if($rgb==hexdec('7FFFFFFF') and $fileExtension_dst=='jpg')
 					$rgb=hexdec('ffffff');
 			}
-		}//if($fileExtension == "jpg" OR $fileExtension=='jpeg'){
+		}
+		elseif($fileExtension == 'png')
+		{
+			$from = imagecreatefromwebp($src);
+			if($rgb==-1)
+			{
+				$rgb = imagecolorat($from, 0, 0);
+
+				//if destination is jpeg and background is transparent then replace it with white.
+				if($rgb==hexdec('7FFFFFFF') and $fileExtension_dst=='jpg')
+					$rgb=hexdec('ffffff');
+			}
+		}
 
 		$new = ImageCreateTrueColor ($dst_width,$dst_height);
 

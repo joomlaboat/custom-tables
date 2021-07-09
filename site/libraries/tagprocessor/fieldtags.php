@@ -13,9 +13,7 @@ class tagProcessor_Field
 {
     public static function process(&$Model,&$pagelayout,$add_label=false,$fieldNamePrefix='comes_')
     {
-
         tagProcessor_Field::ProcessFieldTitles($Model,$pagelayout,$add_label,$fieldNamePrefix);
-
     }
 
     protected static function ProcessFieldTitles(&$Model,&$pagelayout,$add_label=false,$fieldNamePrefix)

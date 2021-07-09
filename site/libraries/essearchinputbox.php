@@ -19,7 +19,6 @@ class ESSerachInputBox
 
 	function renderFieldBox(&$Modal,$prefix,$objname,&$esfield,$cssclass,$index,$where,$innerjoin,$wherelist,$default_Action,$field_title=null)
 	{
-
 		if(!isset($esfield['fieldtitle'.$this->langpostfix]))
 		{
 			JFactory::getApplication()->enqueueMessage(
@@ -36,9 +35,16 @@ class ESSerachInputBox
 		$result='';
 
 		$value=JFactory::getApplication()->input->getCmd($prefix.$objname);
-
+		
 		if($value=='')
-			$value=$this->getWhereParameter($esfield['fieldname']);
+		{
+			if(isset($esfield['fields']) and count($esfield['fields'])>0)
+				$where_name = implode(';',$esfield['fields']);
+			else
+				$where_name = $esfield['fieldname'];
+				
+			$value=$this->getWhereParameter($where_name);
+		}
 
 		$objname_=$prefix.$objname;
 
@@ -190,7 +196,8 @@ class ESSerachInputBox
 								$value=implode(',',$value);
 
 							$typeparams=JoomlaBasicMisc::csv_explode(',',$esfield['typeparams'],'"',false);
-							$result.='<div class="'.$cssclass.'">'.JHTML::_('ESSQLJoin.render',$typeparams,$value,true,$this->langpostfix,$objname_,$esfield['fieldtitle'].$this->langpostfix,
+							$result.='<div class="'.$cssclass.'">'.JHTML::_('ESSQLJoin.render',$typeparams,$value,true,$this->langpostfix,$objname_,
+								$esfield['fieldtitle'].$this->langpostfix,
 											  ' inputbox es_class_sqljoin', $onchange,true).'</div>';
 
 		return $result;
@@ -199,7 +206,7 @@ class ESSerachInputBox
 	function getRecordsBox(&$esfield,$default_Action,$index,$where,$wherelist,$objname_,$value, $cssclass)
 	{
 		$result='';
-		//$typeparams=explode(',',$esfield['typeparams']);
+
 		$typeparams=JoomlaBasicMisc::csv_explode(',',$esfield['typeparams'],'"',false);
 
 							if(count($typeparams)<1)
@@ -224,8 +231,6 @@ class ESSerachInputBox
 								$esr_filter='';
 
 							$dynamic_filter='';
-							//if(isset($typeparams[4]))
-								//$dynamic_filter=$typeparams[4];//not yet used here
 
 							$sortbyfield='';
 							if(isset($typeparams[5]))
@@ -243,7 +248,6 @@ class ESSerachInputBox
 								$onchange=$default_Action;
 							else
 								$onchange=' onkeypress="es_SearchBoxKeyPress(event)"';
-//							$onchange=' onChange=\''.$this->modulename.'_onChange ('.implode(',',$v).')\'';
 
 							if(is_array($value))
 								$value=implode(',',$value);
@@ -261,7 +265,6 @@ class ESSerachInputBox
 
 	function getCustomTablesBox($prefix,$innerjoin,&$esfield,$default_Action,$index,$where,$wherelist,$objname_,$value, $cssclass,$place_holder='')
 	{
-
 		$result='';
 		$typeparams=explode(',',$esfield['typeparams']);
 							$optionname=$typeparams[0];
@@ -530,8 +533,7 @@ class ESSerachInputBox
 
 	function getWhereParameter($field)
 	{
-		$f=str_replace('es_','',$field);
-
+		$f=str_replace('es_','',$field);//legacy support
 
 		$list=$this->getWhereParameters();
 

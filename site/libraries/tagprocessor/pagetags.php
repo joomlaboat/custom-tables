@@ -14,7 +14,6 @@ class tagProcessor_Page
 {
     public static function process(&$Model,&$pagelayout)
     {
-
         tagProcessor_Page::FormatLink($Model,$pagelayout);//{format:xls}  the link to the same page but in xls format
 
         tagProcessor_Page::PathValue($Model,$pagelayout);
@@ -390,7 +389,6 @@ JHtml::_('behavior.formvalidator');
 
             if($Model->print==0)
             {
-
                 if($options[$i]=='')
                 	$modes=$available_modes;
                 else
@@ -398,9 +396,6 @@ JHtml::_('behavior.formvalidator');
 
                 foreach($modes as $mode)
                 {
-                    
-                    
-                    
                 	if(in_array($mode,$available_modes))
                 	{
                 		$rid='esToolBar_'.$mode.'_box_'.$Model->estableid;
@@ -416,7 +411,6 @@ JHtml::_('behavior.formvalidator');
             }
 
 			$pagelayout=str_replace($fItem,$vlu,$pagelayout);
-
 
 			$i++;
 		}
@@ -448,11 +442,19 @@ JHtml::_('behavior.formvalidator');
         $fieldtitles=array();
         foreach($list_of_fields as $fieldname)
         {
-            foreach($Model->esfields as $fld)
-            {
-				if($fld['fieldname']==$fieldname)
-                    $fieldtitles[]=$fld['fieldtitle'.$Model->langpostfix];
-            }
+			if($fieldname=='_id')
+				$fieldtitles[] = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ID');
+			else						
+			{
+				foreach($Model->esfields as $fld)
+				{
+					if($fld['fieldname']==$fieldname)
+					{
+						$fieldtitles[]=$fld['fieldtitle'.$Model->langpostfix];
+						break;
+					}
+				}
+			}
         }
         return $fieldtitles;
     }
@@ -462,7 +464,6 @@ JHtml::_('behavior.formvalidator');
     	$options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('search',$options,$pagelayout,'{}');
 
-		$fields=array();
 		if(count($fList))
 		{
 			require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'essearchinputbox.php');
@@ -472,8 +473,9 @@ JHtml::_('behavior.formvalidator');
 			$ESSIB->establename=$Model->establename;
 			$ESSIB->modulename='esSearchBox';
 		}
-
-
+		
+		$fields=array();
+		
 		$i=0;
 		$count=0;
         $firstFieldFound=false;
@@ -486,8 +488,6 @@ JHtml::_('behavior.formvalidator');
 
 			if($o!='' and $Model->print==0 and $Model->frmt!='csv')
 			{
-
-
 				if($o!='')
 				{
 					if($o=='button')
@@ -509,62 +509,118 @@ JHtml::_('behavior.formvalidator');
 							$vlu='';
 						else
 							$vlu= '<input type=\'button\' value=\''.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SEARCH' ).'\' style=\''.$style.'\' class=\''.$class.'\' onClick=\'es_SearchBoxDo()\' />';
-
-						
 					}
 					else
 					{
                         //In case of multifield search:
-                        $list_of_fields=explode(',',$o);
-                        $first_field_name=$list_of_fields[0];
-                        
-						foreach($Model->esfields as $fld)
+                        $list_of_fields_string_array=explode(',',$o);
+						
+						//Clean list of fields
+						$list_of_fields=[];
+						foreach($list_of_fields_string_array as $field_name_string)
 						{
-							if($fld['fieldname']==$first_field_name)
+							if($field_name_string=='_id')
 							{
-								$count++;
-                                if(count($list_of_fields)>1)
-                                {
-                                    $fld['fields']=$list_of_fields;
-                                    $fields[]=$fld;
-                                    $fieldtitles=tagProcessor_Page::getFieldTitles($Model,$list_of_fields);
-                                    $field_title=implode(' '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_OR' ).' ',$fieldtitles);
-                                }
-                                else
-                                {
-                                    if($fld['type']=='date')
-                                    {
-                                    	$fld['typeparams']='date';
-                                    	$fld['type']='range';
-                                    	$fields[]=$fld;
-                                    }
-                                    else
-                                    	$fields[]=$fld;
-                                        
-                                    $field_title=$fld['fieldtitle'.$Model->langpostfix];
-                                }
-
-								$cssclass='ctSearchBox';
-								if(isset($opair[1]))
-									$cssclass.=' '.$opair[1];
-
-                                $default_Action=" ";//action should be a space not empty or this.value=this.value    
-                                if(isset($opair[2]) and $opair[2]=='reload')
-                                    $default_Action=' onChange="es_SearchBoxDo();"';
-
-                                if(isset($opair[3]) and $opair[3]=='improved')
-									$cssclass.=' ct_improved_selectbox';
-                                    
-								$vlu=$ESSIB->renderFieldBox($Model,'es_search_box_',$first_field_name,$fld,$cssclass,$count,'',false,'',$default_Action,$field_title);//action should be a space not empty or 
-
-                                if(!$firstFieldFound)
-                                {
-                                    $vlu.= '<input type=\'hidden\' id=\'esSearchBoxFields\' value=\'&&&&fieldlist&&&&\' />';
-                                    $firstFieldFound=true;
-                                }
-                                
-								$vlu=str_replace('"','&&&&quote&&&&',$vlu);
+								$list_of_fields[] = '_id';
 							}
+							else
+							{
+								//Check if field name is exist in selected table
+								$fld = ESFields::FieldRowByName($field_name_string,$Model->esfields);
+								if(count($fld)>0)
+									$list_of_fields[]=$field_name_string;
+							}
+						}
+						
+						if(count($list_of_fields)>0)
+						{
+							$fld=[];
+							
+							$first_fld=$fld;
+							$first_field_type='';
+							
+							foreach($list_of_fields as $field_name_string)
+							{
+								if($field_name_string=='_id')
+								{
+									$fld=array(
+										'fieldname' => '_id',
+										'type' => '_id',
+										'typeparams' => '',
+										'fieldtitle'.$Model->langpostfix => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ID')
+									);
+								}
+								else
+								{
+									//Date search no implemented yet. It will be range search
+									$fld = ESFields::FieldRowByName($field_name_string,$Model->esfields);
+									if($fld['type']=='date')
+									{
+										$fld['typeparams']='date';
+										$fld['type']='range';
+									}
+								}
+								
+								if($first_field_type == '')
+								{
+									$first_field_type = $fld['type'];
+									$first_fld = $fld;
+								}
+								else
+								{
+									// If field types are mixed then use string search
+									if($first_field_type != $fld['type'])
+										$first_field_type = 'string';
+								}
+							}
+							
+							$first_fld['type']=$first_field_type;
+							
+							if(count($list_of_fields)>1)
+							{
+								$first_fld['fields']=$list_of_fields;
+								$first_fld['typeparams']='';
+							}
+							
+							$fields[]=$first_fld;
+							
+							//Add control elements
+							$fieldtitles=tagProcessor_Page::getFieldTitles($Model,$list_of_fields);
+							$field_title=implode(' '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_OR' ).' ',$fieldtitles);
+
+							$cssclass='ctSearchBox';
+							if(isset($opair[1]))
+								$cssclass.=' '.$opair[1];
+
+							$default_Action=" ";//action should be a space not empty or this.value=this.value    
+							if(isset($opair[2]) and $opair[2]=='reload')
+								$default_Action=' onChange="es_SearchBoxDo();"';
+
+							if(isset($opair[3]) and $opair[3]=='improved')
+								$cssclass.=' ct_improved_selectbox';
+                                    
+							//if(isset($first_fld['fields']) and count($first_fld['fields'])>0)
+								//$objectname = implode('_',$first_fld['fields']);
+							//else
+							$objectname = $first_fld['fieldname'];
+							
+							$vlu=$ESSIB->renderFieldBox($Model,'es_search_box_',$objectname,$first_fld,
+								$cssclass,$count,
+								'',false,'',$default_Action,$field_title);//action should be a space not empty or 
+								
+							$vlu=str_replace('"','&&&&quote&&&&',$vlu);
+							if(!$firstFieldFound)
+							{
+								$vlu.= '<input type=\'hidden\' id=\'esSearchBoxFields\' value=\'&&&&fieldlist&&&&\' />';
+								$firstFieldFound = true;
+							}
+							
+							$count++;
+						}
+						else
+						{
+							//Field names are wrong
+							$vlu='Search field name is wrong';
 						}
 					}
 				}
@@ -573,8 +629,8 @@ JHtml::_('behavior.formvalidator');
 			$pagelayout=str_replace($fItem,$vlu,$pagelayout);
 			$i++;
 		}
-
-        if($count>0 and $Model->print==0 and $Model->frmt!='csv')
+		
+		if($count>0 and $Model->print==0 and $Model->frmt!='csv')
         {
             $field2search=tagProcessor_Page::prepareSearchElements($Model,$pagelayout,$fields);
             $pagelayout=str_replace('&&&&fieldlist&&&&',implode(',',$field2search),$pagelayout);
@@ -583,57 +639,18 @@ JHtml::_('behavior.formvalidator');
             $pagelayout=str_replace('&&&&fieldlist&&&&','',$pagelayout);
 
 	}
-
-    /*
-    static protected function SearchButton_GetFieldList(&$Model,&$pagelayout)
-    {
-        $options=array();
-		$fList=JoomlaBasicMisc::getListToReplace('search',$options,$pagelayout,'{}');
-
-		$fields=array();
-        $i=0;
-
-		foreach($fList as $fItem)
-		{
-			$opair=explode(',',$options[$i]);
-			$o=$opair[0];
-
-
-
-			if($o!='')
-			{
-				$vlu='';
-
-						foreach($Model->esfields as $fld)
-						{
-							if($fld['fieldname']==$o)
-									$fields[]=$fld;
-						}
-			}
-			$i++;
-		}
-
-
-        return $fields;
-
-    }
-*/
-    
     
     static protected function prepareSearchElements(&$Model,&$pagelayout,$fields)
     {
         $url=JoomlaBasicMisc::deleteURLQueryOption($Model->current_url, 'where');
 
-			$fieldlist=array();
-            //if($fields==null)
-                //$fields=tagProcessor_Page::SearchButton_GetFieldList($Model,$pagelayout);
+		$fieldlist=array();
 
-			foreach($fields as $fld)
-			{
+		foreach($fields as $fld)
+		{
                 if(isset($fld['fields']) and count($fld['fields'])>0)
                 {
-                    $fieldlist[]='es_search_box_'.$fld['fieldname'].':'.implode('_',$fld['fields']).':';
-                    //$fieldlist[]='es_search_box_'.$fld['fieldname'].':'.$fld['fieldname'].':';
+                    $fieldlist[]='es_search_box_'.$fld['fieldname'].':'.implode(';',$fld['fields']).':';
                 }
                 else
                 {
@@ -651,8 +668,6 @@ JHtml::_('behavior.formvalidator');
                 }
 			}
 
-            //$pagelayout=str_replace('&&&&fieldlist&&&&',implode(',',$fieldlist),$pagelayout
-            
             $document = JFactory::getDocument();
 			$document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/js/base64.js"></script>');
      
@@ -760,7 +775,6 @@ JHtml::_('behavior.formvalidator');
 		}
 	}
 
-
     static protected function PrintButton(&$Model,&$pagelayout)
 	{
 
@@ -808,7 +822,6 @@ JHtml::_('behavior.formvalidator');
 
         static protected function CleanUpPath($thePath)
 		{
-
 				$newPath=array();
 				if(count($thePath)==0)
 						return $newPath;

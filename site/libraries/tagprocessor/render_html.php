@@ -56,8 +56,7 @@ trait render_html
 		$number=1+$Model->limitstart; //table row number, it maybe use in the layout as {number}
 
 		$Model->LayoutProc->layout=$recordline;
-        
-        
+		
         $tablecontent='';
 		foreach($SearchResult as $row)
 		{

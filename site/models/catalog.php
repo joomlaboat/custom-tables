@@ -319,26 +319,26 @@ class CustomTablesModelCatalog extends JModelLegacy
 				$this->LayoutProc->imagegalleryprefix=$this->imagegalleryprefix;
 				$this->LayoutProc->Itemid=$this->Itemid;
 
-
 				//filtering set in back-end
 
 				$this->filterparam='';
 				if($this->blockExternalVars)
 				{
-
-						$this->filterparam=$this->params->get( 'filter' );
+					$this->filterparam=$this->params->get( 'filter' );
 				}
 				else
 				{
-						if($jinput->get('filter','','STRING'))
-							$this->filterparam= str_replace(';','',$jinput->get('filter','','STRING'));
-						else
-							$this->filterparam=$this->params->get( 'filter' );
+					if($jinput->get('filter','','STRING'))
+						$this->filterparam=$jinput->get('filter','','STRING');
+					else
+						$this->filterparam=$this->params->get( 'filter' );
 				}
 
 				if($this->filterparam!='')
 				{
 					//Parse using layout, has no effect to layout itself
+					$this->filterparam = $this->sanitizeAndParseFilter($this->filterparam);
+					
 					$this->LayoutProc->layout=$this->filterparam;
 					$this->filterparam=$this->LayoutProc->fillLayout(array(),null,'');
 				}
@@ -347,29 +347,13 @@ class CustomTablesModelCatalog extends JModelLegacy
 				$this->filter='';
 				if(!$this->blockExternalVars)
 				{
-						if($jinput->get('where','','BASE64'))
-						{
-							$this->filter=$jinput->get('where','','BASE64');;
-							$decodedurl=urldecode($this->filter);
-							$decodedurl=str_replace(' ','+',$decodedurl);
-
-							$bas=base64_decode($decodedurl);
-
-							$paramwhere=str_replace('*','=',$bas);
-							$paramwhere=str_replace('\\','',$bas);
-
-							$paramwhere=str_replace(';','',$paramwhere);
-							$paramwhere=str_replace('drop ','',$paramwhere);
-							$paramwhere=str_replace('select ','',$paramwhere);
-							$paramwhere=str_replace('delete ','',$paramwhere);
-							$paramwhere=str_replace('update ','',$paramwhere);
-							$paramwhere=str_replace('insert ','',$paramwhere);
-
-							//Parse using layout, has no effect to layout itself
-							$this->LayoutProc->layout=$paramwhere;
-							$this->filter=$this->LayoutProc->fillLayout(array(),null,'');
-
-						}
+					if($jinput->get('where','','BASE64'))
+					{
+						$decodedurl=$jinput->get('where','','BASE64');;
+						$decodedurl=urldecode($decodedurl);
+						$decodedurl=str_replace(' ','+',$decodedurl);
+						$this->filter = $this->sanitizeAndParseFilter(base64_decode($decodedurl));
+					}
 				}//if(!$this->blockExternalVars)
 
 				$this->filtering= new ESFiltering;
@@ -384,6 +368,26 @@ class CustomTablesModelCatalog extends JModelLegacy
 						$this->showcartitemsonly=false;
 
 				$this->prepareSEFLinkBase();
+		}
+		
+		
+		function sanitizeAndParseFilter($paramwhere)
+		{
+			$paramwhere=str_ireplace('*','=',$paramwhere);
+			$paramwhere=str_ireplace('\\','',$paramwhere);
+
+			//$paramwhere=str_replace(';','',$paramwhere);
+			$paramwhere=str_ireplace('drop ','',$paramwhere);
+			$paramwhere=str_ireplace('select ','',$paramwhere);
+			$paramwhere=str_ireplace('delete ','',$paramwhere);
+			$paramwhere=str_ireplace('update ','',$paramwhere);
+			$paramwhere=str_ireplace('insert ','',$paramwhere);
+
+			//Parse using layout, has no effect to layout itself
+			$this->LayoutProc->layout=$paramwhere;
+			$filter = $this->LayoutProc->fillLayout(array(),null,'');
+			
+			return $filter;
 		}
 		
 		function applyLimits()
@@ -445,38 +449,31 @@ class CustomTablesModelCatalog extends JModelLegacy
 				}//if($this->blockExternalVars)
 		}
 
-		function getOrderBox()//$SelectedCategory
-		{
-				$result='<select name="esordering" id="esordering" onChange="this.form.submit()" class="inputbox">
+	function getOrderBox()//$SelectedCategory
+	{
+		$result='<select name="esordering" id="esordering" onChange="this.form.submit()" class="inputbox">
 ';
-
-				for($i=0;$i<count($this->order_values);$i++)
-				{
-
-						$result.='<option value="'.$this->order_values[$i].'" '.($this->esordering==$this->order_values[$i] ? ' selected ' : '').'>'.$this->order_list[$i].'</option>
-						';
-				}
-				$result.='</select>
-				';
-				return $result;
-		}
-
-		function getPagination()
+		for($i=0;$i<count($this->order_values);$i++)
 		{
-				// Load the content if it doesn't already exist
-				if (empty($this->_pagination))
-				{
-
-
-						require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'pagination.php');
-
-						$a= new JESPagination($this->TotalRows, $this->limitstart, $this->getState('limit') );
-
-						return $a;
-
-				}
-				return $this->_pagination;
+			$result.='<option value="'.$this->order_values[$i].'" '.($this->esordering==$this->order_values[$i] ? ' selected ' : '').'>'.$this->order_list[$i].'</option>
+';
 		}
+
+		$result.='</select>
+';
+		return $result;
+	}
+
+	function getPagination()
+	{
+		// Load the content if it doesn't already exist
+		if (empty($this->_pagination))
+		{
+			require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'pagination.php');
+			return new JESPagination($this->TotalRows, $this->limitstart, $this->getState('limit') );
+		}
+		return $this->_pagination;
+	}
 
 		function getAlphaWhere($alpha,&$wherearr)
 		{
@@ -621,25 +618,20 @@ class CustomTablesModelCatalog extends JModelLegacy
 				}//if($moduleid!=0)
 		}//if(!$this->blockExternalVars)
 
-
 		$paramwhere=$this->filtering->getWhereExpression($this->filterparam,$PathValue);
 
 		if($addition_filter!='')
-				$wherearr[]=$addition_filter;
+			$wherearr[]=$addition_filter;
 
-				if($paramwhere!='')
-						$wherearr[]=' ('.$paramwhere.' )';
-
+		if($paramwhere!='')
+			$wherearr[]=$paramwhere;
 
 		if($this->filter!='' and !$this->blockExternalVars)
 		{
-				$paramwhere=$this->filter;
+			$paramwhere=$this->filtering->getWhereExpression($this->filter,$PathValue);
 
-				$paramwhere=$this->filtering->getWhereExpression($paramwhere,$PathValue);
-
-				if($paramwhere!='')
-						$wherearr[]=' ('.$paramwhere.' )';
-
+			if($paramwhere!='')
+				$wherearr[]=$paramwhere;
 		}
 
 		//Shopping Cart
@@ -671,9 +663,9 @@ class CustomTablesModelCatalog extends JModelLegacy
 		}
 
 		if(count($wherearr)>0)
-				$where = ' WHERE '.implode(" AND ",$wherearr);
+			$where = ' WHERE '.implode(' AND ',$wherearr);
 		else
-				$where='';
+			$where='';
 
 		$where=str_replace('\\','',$where);
 
