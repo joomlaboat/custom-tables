@@ -557,17 +557,18 @@ class ESFiltering
 
 	function Search_Date($fieldname, $value, &$PathValue, $comparison_operator,$esr_table_full)
 	{
-		$fieldrow1=$this->getFieldRowByName($fieldname);
+		$fieldrow1 = ESFields::FieldRowByName($fieldname,$this->esfields);
+
 		$title1='';
-		if(!$fieldrow1)
+		if(count($fieldrow1)>0)
 			$title1=$fieldrow1['fieldtitle'.$this->langpostfix];
 		else
 			$title1=$fieldname;
 
-		$fieldrow2=$this->getFieldRowByName($value);
+		$fieldrow2 = ESFields::FieldRowByName($value,$this->esfields);
 
 		$title2='';
-		if($fieldrow2)
+		if(count($fieldrow1)>0)
 			$title2=$fieldrow2['fieldtitle'.$this->langpostfix];
 		else
 			$title2=$value;
@@ -965,25 +966,7 @@ class ESFiltering
 
 		return '';
 	}
-		
-	/*
-	function getFieldRowByName($value1)
-	{
-		$parts=explode(':',$value1);
-		
-		$second_parts=explode('_',$parts[0]);
-		$fieldname1=trim(preg_replace("/[^a-zA-Z,\-_=]/", "", $second_parts[0]));
 
-		//normal fields
-		foreach($this->esfields as $fld)
-		{
-			if($fld['fieldname']==$fieldname1)
-				return $fld;
-		}
-		return false;
-	}
-	*/
-	
 }//end class
 
 class LinkJoinFilters
