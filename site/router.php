@@ -42,7 +42,7 @@ class CustomTablesRouter extends JComponentRouterView
 					if(count($parts)>=2 and strlen($parts[0])>0 and strlen($parts[1])>0)
 					{
 						//probably a file
-						$allowedExtensions=explode(' ','gslides doc docx pdf txt xls xlsx psd ppt pptx mp3 wav ogg jpg bmp ico odg odp ods swf xcf jpeg png gif svg ai aac m4a wma flv mpg wmv mov flac txt avi csv accdb zip');
+						$allowedExtensions=explode(' ','gslides doc docx pdf txt xls xlsx psd ppt pptx mp3 wav ogg jpg bmp ico odg odp ods swf xcf jpeg png gif webp svg ai aac m4a wma flv mpg wmv mov flac txt avi csv accdb zip');
 						$ext=$parts[count($parts)-1];
 						if(in_array($ext,$allowedExtensions))
 						{

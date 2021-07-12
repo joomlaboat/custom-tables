@@ -257,7 +257,7 @@ class ESFileUploader
 			$esfield=ESFields::getFieldAsocByName($fieldname, $estableid);
 
 			if($esfield['type']=='image')
-				return array('image/gif', 'image/png', 'image/jpeg','image/svg+xml');
+				return array('image/gif', 'image/png', 'image/jpeg','image/svg+xml','image/webp');
 
 			$fieldparams=$esfield['typeparams'];
 			$parts=JoomlaBasicMisc::csv_explode(',',$fieldparams,'"',false);
@@ -308,6 +308,7 @@ class ESFileUploader
 
         // images
         'png' => 'image/png',
+	'webp' => 'image/webp',
         'jpe' => 'image/jpeg',
         'jpeg' => 'image/jpeg',
         'jpg' => 'image/jpeg',
@@ -423,7 +424,7 @@ class ESFileUploader
 
         $allowedExtensions='doc docx pdf txt xls xlsx psd ppt pptx odg odp ods odt'
 		.' xcf ai txt avi csv accdb htm html'
-		.' jpg bmp ico jpeg png gif svg ai'//Images
+		.' jpg bmp ico jpeg png webp gif svg ai'//Images
 		.' zip'//Archive
 		.' aac flac mp3 wav ogg'//Audio
 		.' mp4 m4a m4p m4b m4r m4v wma flv mpg 3gp wmv mov';//Video

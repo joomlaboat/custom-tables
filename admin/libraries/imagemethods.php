@@ -11,26 +11,26 @@ defined('_JEXEC') or die('Restricted access');
 
 class CustomTablesImageMethods
 {
-	function FileExtenssion($src){
+	const allowedExtensions = ['jpg','png','gif','jpeg','webp'];
 	
-	$fileExtension='';
-	$name = explode(".", strtolower($src));
-	$currentExtensions = $name[count($name)-1];
-	$allowedExtensions = 'jpg jpeg gif png';
-	$extensions = explode(" ", $allowedExtensions);
-	for($i=0; count($extensions)>$i; $i=$i+1){
-		if($extensions[$i]==$currentExtensions)
+	function FileExtenssion($src)
+	{
+		$fileExtension='';
+		$name = explode(".", strtolower($src));
+		$currentExtensions = $name[count($name)-1];
+	
+		for($i=0; count(CustomTablesImageMethods::allowedExtensions)>$i; $i=$i+1)
 		{
-			$extensionOK=1;
-			$fileExtension=$extensions[$i];
+			if(CustomTablesImageMethods::allowedExtensions==$currentExtensions)
+			{
+				$extensionOK=1;
+				$fileExtension=CustomTablesImageMethods::allowedExtensions[$i];
 
-			return $fileExtension;
-			break;
+				return $fileExtension;
+			}
 		}
+		return $fileExtension;
 	}
-	return $fileExtension;
-}
-
 
 	function getColorDec($vlu)
 	{
@@ -73,7 +73,6 @@ class CustomTablesImageMethods
 		$cleanOptions=array();
 		//custom images
 		$imagesizes=explode(';',$imageparams);
-		$allowedExtensions = array('jpg','jpeg', 'gif', 'png');
 
 		foreach($imagesizes as $imagesize)
 		{
@@ -101,7 +100,7 @@ class CustomTablesImageMethods
 
 					if($imageoptions[4]!='')
 					{
-						if(!in_array($imageoptions[4],$allowedExtensions))
+						if(!in_array($imageoptions[4],CustomTablesImageMethods::allowedExtensions))
 							$imageoptions[4]='';
 					}
 					else
@@ -139,8 +138,7 @@ class CustomTablesImageMethods
 
 		$customsizes=$this->getCustomImageOptions($imageparams);
 
-		$available_ext=array('jpg','png','gif','jpeg');
-		foreach($available_ext as $photo_ext)
+		foreach(CustomTablesImageMethods::allowedExtensions as $photo_ext)
 		{
 			//delete orginal full size images
 			if($deleteOriginals)
@@ -241,9 +239,7 @@ class CustomTablesImageMethods
 		}
 		//--------------------------------
 
-		$available_ext=array('jpg','png','gif','jpeg');
-
-		foreach($available_ext as $photo_ext)
+		foreach(CustomTablesImageMethods::allowedExtensions as $photo_ext)
 		{
 			if(file_exists($ImageFolder.DIRECTORY_SEPARATOR.'_original_'.$ExistingImage.'.'.$photo_ext))
 				unlink($ImageFolder.DIRECTORY_SEPARATOR.'_original_'.$ExistingImage.'.'.$photo_ext);
@@ -264,9 +260,7 @@ class CustomTablesImageMethods
 	
 	static protected function DeleteCustomImage($ExistingImage, $ImageFolder, $CustomSize)
 	{
-		$available_ext=array('jpg','png','gif','jpeg');
-
-		foreach($available_ext as $photo_ext)
+		foreach(CustomTablesImageMethods::allowedExtensions as $photo_ext)
 		{
 			if(file_exists($ImageFolder.DIRECTORY_SEPARATOR.$CustomSize.'_'.$ExistingImage.'.'.$photo_ext))
 				unlink($ImageFolder.DIRECTORY_SEPARATOR.$CustomSize.'_'.$ExistingImage.'.'.$photo_ext);
@@ -296,8 +290,7 @@ class CustomTablesImageMethods
 
 	function getImageExtention($ImageName_noExt)
 	{
-		$available_ext=array('jpg','png','gif','jpeg');
-		foreach($available_ext as $photo_ext)
+		foreach(CustomTablesImageMethods::allowedExtensions as $photo_ext)
 		{
 			$filename = $ImageName_noExt.'.'.$photo_ext;
 
@@ -563,7 +556,6 @@ class CustomTablesImageMethods
 		$fileExtension=$this->FileExtenssion($src);
 		$fileExtension_dst=$this->FileExtenssion($dst);
 
-
 		if(!$fileExtension!='')
 			return -1;
 
@@ -614,7 +606,7 @@ class CustomTablesImageMethods
 					$rgb=hexdec('ffffff');
 			}
 		}
-		elseif($fileExtension == 'png')
+		elseif($fileExtension == 'webp')
 		{
 			$from = imagecreatefromwebp($src);
 			if($rgb==-1)
@@ -699,7 +691,9 @@ class CustomTablesImageMethods
 			imagegif($new, $dst);
 		elseif($fileExtension_dst == 'png')
 			imagepng($new, $dst);
-	
+		elseif($fileExtension_dst == 'webp')
+			imagewebp($new, $dst, 90);
+			
 		return 1;
 	}
 

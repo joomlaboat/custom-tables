@@ -58,7 +58,7 @@ class CustomTablesModelEditFiles extends JModelLegacy {
     {
 		parent::__construct();
 
-		$this->allowedExtensions='doc docx pdf txt xls xlsx psd ppt pptx png mp3 jpg jpeg csv accdb';
+		$this->allowedExtensions='doc docx pdf txt xls xlsx psd ppt pptx webp png mp3 jpg jpeg csv accdb';
 
 		//$params = JComponentHelper::getParams( 'com_customtables' );
 		$app		= JFactory::getApplication();

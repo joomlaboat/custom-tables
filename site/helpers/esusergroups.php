@@ -320,8 +320,4 @@ class JHTMLESUserGroups
 		return $htmlresult;
 		
 	}
-		
-	
 }
-
-?>

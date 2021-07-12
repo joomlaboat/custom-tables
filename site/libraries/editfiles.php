@@ -43,7 +43,7 @@ class CustomTablesModelEditFiles extends JModelLegacy {
 
 	function __construct()
     {
-		$this->allowedExtensions='gslides doc docx pdf txt xls xlsx psd ppt pptx png mp3 jpg jpeg accdb';
+		$this->allowedExtensions='gslides doc docx pdf txt xls xlsx psd ppt pptx png mp3 jpg jpeg webp accdb';
 
 		$params = JComponentHelper::getParams( 'com_customtables' );
 		
@@ -183,7 +183,6 @@ class CustomTablesModelEditFiles extends JModelLegacy {
 
 	function add()
 	{
-		//$allowed_ext=['doc','docx','xls','xlsx','ppt','pptx','jpg','jpeg','pdf','.png','psd','mp3'];
 		$jinput=JFactory::getApplication()->input;
 
 		$file = $jinput->input->getVar('uploadedfile', '', 'files', 'array');

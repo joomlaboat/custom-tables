@@ -215,7 +215,7 @@ class CT_FieldTypeTag_image
 				'.JoomlaBasicMisc::JTextExtended( "MIN SIZE" ).': 10px x 10px<br/>
 				'.JoomlaBasicMisc::JTextExtended( "MAX SIZE" ).': 1000px x 1000px<br/>
 				'.JoomlaBasicMisc::JTextExtended( "COM_CUSTOMTABLES_PERMITED_MAX_FILE_SIZE" ).': '.JoomlaBasicMisc::formatSizeUnits($max_file_size).'<br/>
-				'.JoomlaBasicMisc::JTextExtended( "FORMAT" ).': JPEG, GIF, PNG
+				'.JoomlaBasicMisc::JTextExtended( "FORMAT" ).': JPEG, GIF, PNG, WEBP
 				</div>';
 
             return $result;
@@ -251,7 +251,7 @@ class CT_FieldTypeTag_image
                         tempFileName="'.$fileid.'";
                         fieldValueInputBox="'.$prefix.$esfieldname.'";
                     	var urlstr="/index.php?option=com_customtables&view=fileuploader&tmpl=component&'.$esfieldname.'_fileid='.$fileid.'&Itemid='.$Itemid.'&fieldname='.$esfieldname.'";
-                    	ct_getUploader('.$fieldid.',urlstr,'.$max_file_size.',"jpg jpeg png gif svg","eseditForm",false,"ct_fileuploader_'.$esfieldname.'","ct_eventsmessage_'.$esfieldname.'","'.$fileid.'","'.$prefix.$esfieldname.'","ct_ubloadedfile_box_'.$esfieldname.'");
+                    	ct_getUploader('.$fieldid.',urlstr,'.$max_file_size.',"jpg jpeg png gif svg webp","eseditForm",false,"ct_fileuploader_'.$esfieldname.'","ct_eventsmessage_'.$esfieldname.'","'.$fileid.'","'.$prefix.$esfieldname.'","ct_ubloadedfile_box_'.$esfieldname.'");
 
                     </script>
                     <input type="hidden" name="'.$prefix.$esfieldname.'" id="'.$prefix.$esfieldname.'" value=""'.($esfield['isrequired'] ? ' class="required"' : '').' />
@@ -311,6 +311,4 @@ class CT_FieldTypeTag_image
 
     // Returns a file size limit in bytes based on the PHP upload_max_filesize
     // and post_max_size
-
-
 }

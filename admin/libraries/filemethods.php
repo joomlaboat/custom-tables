@@ -11,7 +11,7 @@ defined('_JEXEC') or die('Restricted access');
 
 class CustomTablesFileMethods
 {
-	static public function FileExtenssion($src,$allowedExtensions='doc docx pdf txt xls xlsx psd ppt pptx png mp3')
+	static public function FileExtenssion($src,$allowedExtensions='doc docx pdf txt xls xlsx psd ppt pptx png jpg jpeg gif webp mp3')
 	{
 		$name = explode(".", strtolower($src));
 		if(count($name)<2)

@@ -74,7 +74,7 @@
 
 </type>
 
-	<type ct_name="signature" name="signature" label="Signature" description="A signature pad that allows users to draw smooth signatures on canvas element and export the signatures to PNG/JPG/SVG images." ct_alias="signature" disabled="false" ct_special="false" priority="2" >
+	<type ct_name="signature" name="signature" label="Signature" description="A signature pad that allows users to draw smooth signatures on canvas element and export the signatures to PNG/JPG/SVG/WebP images." ct_alias="signature" disabled="false" ct_special="false" priority="2" >
 		<editparams name="size" label="Size" description="Width and height.">
 		<params>
 			<param name="width" label="Width" description="Width in pixels" default="" type="text" options="" />
@@ -86,9 +86,10 @@
 			<params>
 				<param name="pathortag" label="Image tag or Link" description="Show as HTML IMG tag or a link to the image." default="" type="radio" options="|Image Tag,link|Link" />
 				<param name="format" label="Image Format" description="" hidden="false" default="" type="list">
-					<option value="svg" label="Show as SVG image" />
-					<option value="png" label="Show as PNG image" />
 					<option value="jpg" label="Show as JPG image" />
+					<option value="png" label="Show as PNG image" />					
+					<option value="svg" label="Show as SVG image" />
+					<option value="webp" label="Show as WEBP image" />
 				</param>
 			</params>
                 </valueparams>
@@ -332,6 +333,7 @@
 					<option value="jpg" label="JPEG" />
 					<option value="gif" label="GIF" />
 					<option value="png" label="PNG" />
+					<option value="webp" label="WEBP" />
 				</sizeparam>
 			</param>
 			<param name="additionalparams" label="Image Processing Methods" description="Image processing methods that will be applied to newly uploaded image. This option available in Pro Version Only." default="" type="multiselect" >
@@ -378,6 +380,7 @@
 					<option value="jpg" label="JPEG" />
 					<option value="gif" label="GIF" />
 					<option value="png" label="PNG" />
+					<option value="webp" label="WEBP" />
 				</sizeparam>
 			</param>
 			<param name="additionalparams" label="Image Processing Methods" description="Image processing methods that will be applied to a newly uploaded image. This option availabel in Pro Version Only." default="" type="multiselect" >

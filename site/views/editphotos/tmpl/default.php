@@ -87,7 +87,7 @@ var idList = [<?php echo implode(',',$idList) ?>];
 				<?php echo JoomlaBasicMisc::JTextExtended( "COM_CUSTOMTABLES_MIN_SIZE" ); ?>: 90px x 90px<br/>
 				<?php echo JoomlaBasicMisc::JTextExtended( "COM_CUSTOMTABLES_MAX_SIZE" ); ?>: 1000px x 1000px<br/>
 				<?php echo JoomlaBasicMisc::JTextExtended( "COM_CUSTOMTABLES_PERMITED_MAX_FILE_SIZE" ).': '.JoomlaBasicMisc::formatSizeUnits($max_file_size); ?><br/>
-				<?php echo JoomlaBasicMisc::JTextExtended( "COM_CUSTOMTABLES_FORMAT" ); ?>: JPEG, GIF, PNG
+				<?php echo JoomlaBasicMisc::JTextExtended( "COM_CUSTOMTABLES_FORMAT" ); ?>: JPEG, GIF, PNG, WEBP
 			</td>
 		</tr>
   </tbody>

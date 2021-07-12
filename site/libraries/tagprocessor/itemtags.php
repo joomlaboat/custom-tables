@@ -130,7 +130,7 @@ class tagProcessor_Item
 
 			//Refresh
 			$rid='esRefreshIcon'.$Model->estableid.'x'.$id;
-            $alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_REFRESH' );
+		        $alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_REFRESH' );
 			$img='<img src="'.JURI::root(true).'/components/com_customtables/images/refresh.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 			$toolbar['refresh']='<div id="'.$rid.'" class="toolbarIcons"><a href="javascript:esRefreshObject('.$id.', \''.$rid.'\');">'.$img.'</a></div>';
 

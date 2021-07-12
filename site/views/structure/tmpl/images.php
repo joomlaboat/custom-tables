@@ -63,6 +63,8 @@ defined('_JEXEC') or die('Restricted access');
 						$imagefile=$imagefile_.'.jpg';
 				elseif(file_exists($imagefile_.'.png'))
 						$imagefile=$imagefile_.'.png';
+				elseif(file_exists($imagefile_.'.webp'))
+						$imagefile=$imagefile_.'.webp';
 				else
 						$imagefile='';
 		
