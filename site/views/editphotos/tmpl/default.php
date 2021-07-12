@@ -173,7 +173,7 @@ var idList = [<?php echo implode(',',$idList) ?>];
 			<td>'.JoomlaBasicMisc::JTextExtended( "COM_CUSTOMTABLES_TITLE" ).': </td><td><input type="text"  style="width: 150px;" name="esphototitle'.$image->photoid.'" id="esphototitle'.$image->photoid.'" value="'.$image->title.'"></td>
 			</tr>
 			<tr>
-			<td>'.JoomlaBasicMisc::JTextExtended( "COM_CUSTOMTABLES_ORDER" ).': </td><td><input type="text"  style="width: 50px;" name="esphotoorder'.$image->photoid.'" id="esphotoorder'.$image->photoid.'" value="'.$image->ordering.'"></td>
+			<td>'.JoomlaBasicMisc::JTextExtended( "COM_CUSTOMTABLES_ORDER" ).': </td><td><input type="text"  style="width: 100px;" name="esphotoorder'.$image->photoid.'" id="esphotoorder'.$image->photoid.'" value="'.$image->ordering.'"></td>
 			</tr>
 			</table>
 

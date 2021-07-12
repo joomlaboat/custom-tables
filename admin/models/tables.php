@@ -275,12 +275,6 @@ class CustomtablesModelTables extends JModelAdmin
 		{
 			$table->name = htmlspecialchars_decode($table->name, ENT_QUOTES);
 		}
-/*
-		if (isset($table->alias) && empty($table->alias))
-		{
-			$table->generateAlias();
-		}
-		*/
 
 		if (empty($table->id))
 		{
@@ -360,7 +354,7 @@ class CustomtablesModelTables extends JModelAdmin
 				if($db->serverType == 'postgresql')
 					$query = 'DROP TABLE IF EXISTS '.$realtablename;
 				else
-					$query = 'DROP TABLE IF EXISTS '.$db->quote($realtablename);
+					$query = 'DROP TABLE IF EXISTS '.$db->quoteName($realtablename);
 					
 				$db->setQuery( $query );
 				$db->execute();
@@ -661,20 +655,15 @@ class CustomtablesModelTables extends JModelAdmin
 
 			if(count($tablestatus)>0)
 			{
-				$query = 'RENAME TABLE '.$db->quoteName($database.'.'.$dbprefix.'customtables_table_'.$old_tablename).' TO '.$db->quoteName($database.'.'.$dbprefix.'customtables_table_'.$tablename).';';
+				$query = 'RENAME TABLE '.$db->quoteName($database.'.'.$dbprefix.'customtables_table_'.$old_tablename).' TO '
+					.$db->quoteName($database.'.'.$dbprefix.'customtables_table_'.$tablename).';';
 
 				$db->setQuery( $query );
 
-				if (!$db->query()) {
-					$this->setError( $db->getErrorMsg() );
-					return false;
-				}
+				$db->execute();
 			}
 		}
 	}
-
-
-	
 
 	/**
 	 * Method to generate a unique value.
@@ -714,14 +703,23 @@ class CustomtablesModelTables extends JModelAdmin
 		if($db->serverType == 'postgresql')
 			$query = 'CREATE TABLE #__customtables_table_'.$new_table.' AS TABLE #__customtables_table_'.$old_table;
 		else
-			$query = 'CREATE TABLE #__customtables_table_'.$new_table.' SELECT * FROM #__customtables_table_'.$old_table;
+			$query = 'CREATE TABLE #__customtables_table_'.$new_table.' AS SELECT * FROM #__customtables_table_'.$old_table;
 
+		$db->setQuery( $query );
+		$db->execute();
+		
+		$query='ALTER TABLE #__customtables_table_'.$new_table.' ADD PRIMARY KEY (id)';
+		$db->setQuery( $query );
+		$db->execute();
+		
+		$query='ALTER TABLE #__customtables_table_'.$new_table.' CHANGE id id INT UNSIGNED NOT NULL AUTO_INCREMENT';
 		$db->setQuery( $query );
 		$db->execute();
 
 		//Copy Fields
-		$fields=array('fieldname','type','typeparams','ordering','defaultvalue','allowordering','parentid','isrequired','hidden','valuerule');
-
+		$fields=array('fieldname','type','typeparams','ordering','defaultvalue','allowordering','parentid','isrequired','valuerulecaption','valuerule');
+		//unused fields: isdisabled,savevalue,alwaysupdatevalue
+	
 		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'languages.php');
 		$LangMisc	= new ESLanguages;
 		$languages=$LangMisc->getLanguageList();
@@ -731,11 +729,12 @@ class CustomtablesModelTables extends JModelAdmin
 		{
 			$id='fieldtitle';
 			if($morethanonelang)
-				$id.='_'.$lang->sef;
+			{
+				$fields[]='fieldtitle'.'_'.$lang->sef;
+				$fields[]='description'.'_'.$lang->sef;
+			}
 			else
 				$morethanonelang=true;
-			
-			$fields[]=$id;
 		}
 
 		$query = 'SELECT * FROM #__customtables_fields WHERE published=1 AND tableid='.$originaltableid;
@@ -759,6 +758,7 @@ class CustomtablesModelTables extends JModelAdmin
 			}
 
 			$iq='INSERT INTO #__customtables_fields SET '.implode(', ',$inserts);
+			
 			$db->setQuery( $iq );
 			$db->execute();
 		}
