@@ -108,7 +108,7 @@ class ESFiltering
 				$wheres[]='('.implode(' OR ',$multy_field_where).')';
 		}
 
-		return implode(' AND ',$wheres);
+		return implode(' '.$logic_operator.' ',$wheres);
 	}//function getWhereExpression($param,&$PathValue)
 
 
