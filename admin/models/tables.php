@@ -504,7 +504,6 @@ class CustomtablesModelTables extends JModelAdmin
 	protected function batchCopy($values, $pks, $contexts)
 	{
 		die;
-		
 	}
 
 	/**
@@ -647,7 +646,6 @@ class CustomtablesModelTables extends JModelAdmin
 		$db = JFactory::getDBO();
 		$old_tablename=ESTables::getTableName($tableid);
 
-
 		if($old_tablename!=$tablename)
 		{
 				//rename table
@@ -725,16 +723,22 @@ class CustomtablesModelTables extends JModelAdmin
 		$languages=$LangMisc->getLanguageList();
 
 		$morethanonelang=false;
+		
 		foreach($languages as $lang)
 		{
-			$id='fieldtitle';
 			if($morethanonelang)
 			{
 				$fields[]='fieldtitle'.'_'.$lang->sef;
 				$fields[]='description'.'_'.$lang->sef;
 			}
 			else
-				$morethanonelang=true;
+			{
+				$fields[]='fieldtitle';
+				$fields[]='description';
+				
+				$morethanonelang = true;
+			}
+			
 		}
 
 		$query = 'SELECT * FROM #__customtables_fields WHERE published=1 AND tableid='.$originaltableid;
@@ -788,7 +792,6 @@ class CustomtablesModelTables extends JModelAdmin
 			$rows=$db->loadAssocList();
 			if(count($rows)==1)
 			{
-
 				$table=$rows[0];
 
 				//get fields
@@ -822,7 +825,6 @@ class CustomtablesModelTables extends JModelAdmin
 				$db->setQuery( $query );
 
 				$menu=$db->loadAssocList();
-
 
 				if(intval($table['allowimportcontent'])==1)
 				{
@@ -866,8 +868,6 @@ class CustomtablesModelTables extends JModelAdmin
 			$output_str=null;
 		}
 
-
 		return $link;
 	}
-
 }
