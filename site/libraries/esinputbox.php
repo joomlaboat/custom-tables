@@ -28,16 +28,18 @@ class ESInputBox
 	var $estableid;
 	var $width=0;
 	var $requiredlabel='';
+	
+	var $Model;
 
 	function renderFieldBox(&$Model,$prefix,&$esfield,&$row,$class_,$attributes='',$option_list)
 	{
+		$this->Model = $Model;
+		
 		$place_holder=$esfield['fieldtitle'.$this->langpostfix];
 		$class=$class_.' inputbox'.($esfield['isrequired'] ? ' required' : '');
 
 		$realFieldName=$esfield['realfieldname'];
-
 		$result='';
-
 		$value='';
 		
 		if($row==null)
@@ -72,11 +74,8 @@ class ESInputBox
 							$value=CTValue::prepare_alias_type_value($listing_id,$value,$Model->realtablename,$esfield['realfieldname'],$Model->tablerow['realidfieldname']);
 						}
 			        }
-
 				}
-				
 			}
-			
 		}
 		else
 		{
@@ -185,16 +184,8 @@ class ESInputBox
 							break;
 
 						case 'string':
-							$result.='<input type="text" '
-								.'name="'.$prefix.$esfield['fieldname'].'" '
-								.'id="'.$prefix.$esfield['fieldname'].'" '
-								.'label="'.$esfield['fieldname'].'" '
-								.'class="'.$class.'" '
-								.'data-label="'.$esfield['fieldtitle'.$this->langpostfix].'" '
-								.'data-valuerule="'.str_replace('"','&quot;',$esfield['valuerule']).'" '
-								.'data-valuerulecaption="'.str_replace('"','&quot;',$esfield['valuerulecaption']).'" '
-								.'value="'.$value.'" '.((int)$esfield['typeparams']>0 ? 'maxlength="'.(int)$esfield['typeparams'].'"' : 'maxlength="255"').' '.$attributes.' />';
 
+							$result.=$this->getTextBox($prefix,$esfield,$class,$value,$attributes,$option_list);
 							break;
 
 						case 'alias':
@@ -873,7 +864,6 @@ class ESInputBox
 		return $list;
 	}
 
-	
 	function getMultilangStringItem(&$Model,&$esfield,$prefix,&$row,$attributes,$class,$postfix,$langsef)
 	{
 							$attributes_='';
@@ -969,6 +959,40 @@ class ESInputBox
 		return $result;
 		
 	}
+	
+	protected function getTextBox($prefix,&$esfield,$class,$value,$attributes,&$option_list)
+	{
+		$autocomplete = false;
+		if(isset($option_list[2]) and $option_list[2]=='autocomplete')
+			$autocomplete = true;
+		
+		$result = '<input type="text" '
+								.'name="'.$prefix.$esfield['fieldname'].'" '
+								.'id="'.$prefix.$esfield['fieldname'].'" '
+								.'label="'.$esfield['fieldname'].'" '
+								.($autocomplete ? 'list="'.$prefix.$esfield['fieldname'].'_datalist" ' : '')
+								.'class="'.$class.'" '
+								.'data-label="'.$esfield['fieldtitle'.$this->langpostfix].'" '
+								.'data-valuerule="'.str_replace('"','&quot;',$esfield['valuerule']).'" '
+								.'data-valuerulecaption="'.str_replace('"','&quot;',$esfield['valuerulecaption']).'" '
+								.'value="'.$value.'" '.((int)$esfield['typeparams']>0 ? 'maxlength="'.(int)$esfield['typeparams'].'"' : 'maxlength="255"').' '.$attributes.' />';
+								
+		if($autocomplete)
+		{
+			$db = JFactory::getDBO();
+
+			$query='SELECT '.$esfield['realfieldname'].' FROM '.$this->Model->realtablename.' GROUP BY '.$esfield['realfieldname'].' ORDER BY '.$esfield['realfieldname'];
+			$db->setQuery($query);
+			$records=$db->loadColumn();
+			
+			$result.='<datalist id="'.$prefix.$esfield['fieldname'].'_datalist">'
+				.(count($records) > 0 ? '<option value="'.implode('"><option value="',$records).'">' : '')
+				.'</datalist>';
+		}
+
+		return $result;
+	}
+	
 	
 	function getUserBox($prefix,&$esfield,$class,$value,$require_authorization,$attributes)
 	{
@@ -1073,7 +1097,6 @@ class ESInputBox
 
 
 	}//function
-
 
 	function getFileBox(&$Model,$fieldname,$TypeParams,$listing_id)
 	{

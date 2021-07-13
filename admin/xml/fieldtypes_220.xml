@@ -22,6 +22,7 @@
 			<params>
 				<param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)." example="my_CSS_class" />
 				<param name="attributes" label="Attributes" description="Optional attributes like: disabled, onclick, onchange etc." default="" type="string" example="onclick='alert(1);'" />
+				<param name="autocomplete" label="Autocomplete" description="Generate autocomplete data list using table records" default="" type="radio" options="|No,autocomplete|Yes" />
 			</params>
 		</editparams>
 </type>

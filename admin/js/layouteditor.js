@@ -309,8 +309,6 @@ function showModalForm(tagstartchar,tagendchar,tag,top,left,line,positions,isnew
         //field tags
         showModalFieldTagForm(tagstartchar,tagendchar,tag,top,left,line,positions,isnew);
     }
-
-
 }
 
 function showModalTagForm(tagstartchar,tagendchar,tag,top,left,line,positions,isnew)
@@ -357,8 +355,6 @@ function showModalTagForm(tagstartchar,tagendchar,tag,top,left,line,positions,is
 
 function addTag(index_unused,tagstartchar,tagendchar,tag,param_count)
 {
-
-    
     var cm=codemirror_editors[0];
     
     if(param_count>0)
@@ -648,17 +644,8 @@ function updateCodeMirror(text)
     }
 
 
-    /*
-    function renderTagSets()
-    {
-        layouttypeid=type_obj.value;
-    }
-    */
-
 function render_current_TagSets()
 {
-    //var result=do_render_current_TagSets();
-    //tags_box_obj.innerHTML=result;
 }
 
 
@@ -704,12 +691,10 @@ function renderTags(index,tagset)
         var tag_object=tags[i];
         var tag=tag_object["@attributes"];
 
-        //if (typeof(tag)!== "undefined" && typeof(tag['proversion']) !== "undefined")
         if (proversion || typeof(tag.proversion) === "undefined" || tag.proversion==="0")
         {
             var t="";
-            //var params=[];
-            //if(typeof(tag_object.params) != "undefined")
+
             var params=getParamOptions(tag_object.params,'param');
 
             if(params.length==0)
@@ -780,9 +765,7 @@ function adjustEditorHeight()
     var editor=editors[0];//use the first one, there shouldn't be more than one anyway
     var h = window.innerHeight;
     var rect = editor.getBoundingClientRect();
-    //console.log(rect.top, rect.right, rect.bottom, rect.left);
     var editorHeight=h-rect.top-40;
-
 
     editor.style.height = editorHeight+'px';
 }

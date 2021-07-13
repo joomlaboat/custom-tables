@@ -73,7 +73,6 @@ function loadFieldsData(tableid)
 			else
 			{
 				console.log('Network request for products.json failed with response ' + response.status + ': ' + response.statusText);
-				//tags_box_obj.innerHTML='<p class="msg_error">'+'Network request for products.json failed with response ' + response.status + ': ' + response.statusText+'</p>';
 			}
 		}).catch(function(err)
 		{
@@ -253,8 +252,6 @@ function renderFieldTags(startchar,endchar,fieldtypes_to_skip,param_group)
 
 	var l=wizardFields.length;
 
-
-
 	for (var index=0;index<l;index++)
 	{
 		var field=wizardFields[index];
@@ -321,8 +318,6 @@ function getParamGroup(tagstartchar,tagendchar)
 		param_group='titleparams';
 	else if(a.indexOf(current_layout_type)!==-1 && tagstartchar==='[' && tagendchar===']')
 		param_group='valueparams';
-	//else if(a.indexOf(current_layout_type)!==-1 && tagstartchar==='[_value:' && tagendchar===']')
-//		param_group='';//TODO: fix it for image,sqljoin and imagegallery types
 	else if(current_layout_type===2)
 		param_group='editparams';
 
@@ -341,7 +336,6 @@ function showModalTagsList(e)
 
 function showModalDependenciesList(e)
 {
-	//var result='<div class="dynamic_values">'+document.getElementById("dependencies_content").innerHTML+'</div>';
 	var result=document.getElementById("dependencies_content").innerHTML;
 	
 	modalcontentobj=document.getElementById("layouteditor_modal_content_box").innerHTML=result;
@@ -431,7 +425,6 @@ function showModalFieldTagForm(tagstartchar,tagendchar,tag,top,left,line,positio
 
     jQuery(function($)
     {
-        //container ||
         $(modalcontentobj).find(".hasPopover").popover({"html": true,"trigger": "hover focus","layouteditor_modal_content_box": "body"});
     });
 
@@ -440,14 +433,8 @@ function showModalFieldTagForm(tagstartchar,tagendchar,tag,top,left,line,positio
     showModal();
  }
 
-
-
-
-
-
 function addFieldTag(index_unused,tagstartchar,tagendchar,tag,param_count)
 {
-
     var index=0;
 	var cm=codemirror_editors[index];
     
@@ -608,12 +595,10 @@ function addFieldTag(index_unused,tagstartchar,tagendchar,tag,param_count)
 					var field=wizardFields[index];
 
 					if(fieldtypes_to_skip.indexOf(field.type)===-1)
-					{
-						result+='<td style=\'text-align:center;\'>['+field.fieldname+']</td>\r\n';
-					}
+						result+='<td>['+field.fieldname+']</td>\r\n';
 				}
 
-				return result;
+				return '<tr>\r\n' + result + '</tr>\r\n';
 			}
 
 
@@ -663,7 +648,7 @@ function addFieldTag(index_unused,tagstartchar,tagendchar,tag,param_count)
 
 				var l=wizardFields.length;
 
-				result+='<div class="form-horizontal">\r\n\r\n';
+				result+='<legend>{table:title}</legend>\r\n\r\n<div class="form-horizontal">\r\n\r\n';
 
 				var fieldtypes_to_skip=['log','phponview','phponchange','phponadd','md5','id','server','userid','viewcount','lastviewtime','changetime','creationtime','imagegallery','filebox','dummy'];
 
