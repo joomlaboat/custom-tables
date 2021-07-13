@@ -607,13 +607,13 @@ function addFieldTag(index_unused,tagstartchar,tagendchar,tag,param_count)
 				var result="";
 				var l=wizardFields.length;
 
-				result+='<style>\r\n.datagrid th{text-align:center;}\r\n.datagrid td{text-align:center;}\r\n</style>\r\n';
+				result+='<style>\r\n.datagrid th{text-align:left;}\r\n.datagrid td{text-align:left;}\r\n</style>\r\n';
 				result+='<div style="float:right;">{recordcount}</div>\r\n';
 				result+='<div style="float:left;">{add}</div>\r\n';
 				result+='\r\n';
 				result+='<div style="text-align:center;">{print}</div>\r\n';
 				result+='<div class="datagrid">\r\n';
-				result+='<div>{batchtoolbar:edit,publish,unpublish,refresh,delete}</div>';
+				result+='<div>{batchtoolbar:publish,unpublish,refresh,delete}</div>';
 				result+='\r\n\r\n{catalogtable:\r\n';
 				result+='"#<br/>{checkbox}":"{id}<br/>{toolbar:checkbox}",\r\n';
 
@@ -633,7 +633,7 @@ function addFieldTag(index_unused,tagstartchar,tagendchar,tag,param_count)
 					}
 				}
 
-				result+='"Action<br/>{searchbutton}":"{toolbar:edit,publish,refresh,delete}";\r\n';
+				result+='"Action<br/>{search:button}":"{toolbar:edit,publish,refresh,delete}";\r\n';
 				result+='css_class_name\r\n';
 				result+='}\r\n';
 				result+='</div>\r\n';
