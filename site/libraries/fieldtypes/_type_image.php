@@ -12,7 +12,6 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.
 
 class CT_FieldTypeTag_image
 {
-
     static public function getImageSRClayoutview($option_list,$rowValue,$TypeParams,&$imagesrc,&$imagetag)//,$onlylink=false)
 	{
 		if(strpos($rowValue,'-')!==false)
@@ -23,12 +22,7 @@ class CT_FieldTypeTag_image
 
 		$option=$option_list[0];
 
-		//$onlylink=false;
-		//if(isset($option_list[1]) and $option_list[1]=='link')
-			//$onlylink=true;//this is wrong approach
-
 		$ImageFolder_=CustomTablesImageMethods::getImageFolder($TypeParams);
-		
 	
 		$ImageFolderWeb=str_replace(DIRECTORY_SEPARATOR,'/',$ImageFolder_);
 		$ImageFolder=str_replace('/',DIRECTORY_SEPARATOR,$ImageFolder_);
@@ -147,15 +141,23 @@ class CT_FieldTypeTag_image
 							{
 								$value=$imagemethods->UploadSingleImage($ExistingImage,$fileid, $realfieldname,
 									JPATH_SITE.DIRECTORY_SEPARATOR.$ImageFolder,$typeparams,$realtablename,$realidfieldname);
+									
+								//echo '$value='.$value.'*';
+								//die;
 							}
-
 					}
 
-                    if($value!=0)
+                    if($value != 0 and $value != -1 and $value != 2)
                     {
-                            $value_found=true;
-							$savequery[]=$realfieldname.'='.$value;
+                        $value_found=true;
+						$savequery[]=$realfieldname.'='.$value;
                     }
+					else
+					{
+						// -1 if file extension not supported
+						// 2 if file already exists
+						JFactory::getApplication()->enqueueMessage('Could not upload image file.', 'error');
+					}
         return $value_found;
     }
 
@@ -296,6 +298,12 @@ class CT_FieldTypeTag_image
 				{
 					$imagefile=$imagefile_.'.png';
 					$imagesrc=$imagesrc_.'.png';
+				}
+				elseif(file_exists(JPATH_SITE.DIRECTORY_SEPARATOR.$imagefile_.'.webp'))
+				{
+					$imagefile=$imagefile_.'.webp';
+					$imagesrc=$imagesrc_.'.webp';
+					$imagesrc=$imagesrc_.'.webp';
 				}
 				else
 				{

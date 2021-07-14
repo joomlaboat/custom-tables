@@ -15,21 +15,13 @@ class CustomTablesImageMethods
 	
 	function FileExtenssion($src)
 	{
-		$fileExtension='';
-		$name = explode(".", strtolower($src));
-		$currentExtensions = $name[count($name)-1];
-	
-		for($i=0; count(CustomTablesImageMethods::allowedExtensions)>$i; $i=$i+1)
-		{
-			if(CustomTablesImageMethods::allowedExtensions==$currentExtensions)
-			{
-				$extensionOK=1;
-				$fileExtension=CustomTablesImageMethods::allowedExtensions[$i];
-
-				return $fileExtension;
-			}
-		}
-		return $fileExtension;
+		$ext_list = explode('.', strtolower($src));
+		$ext = end($ext_list);
+		
+		if(in_array($ext,CustomTablesImageMethods::allowedExtensions))
+			return $ext;
+		
+		return '';
 	}
 
 	function getColorDec($vlu)
@@ -442,6 +434,7 @@ class CustomTablesImageMethods
 			$ImageID=0;
 
 			$pair=explode(':',$additional_params);
+
 			if($realtablename!='-options' and ($pair[0]=='compare' or $pair[0]=='compareexisting'))
 			{
 				$identity=4;
@@ -450,7 +443,7 @@ class CustomTablesImageMethods
 
 				require_once('findsimilarimage.php');
 				$ImageID=-FindSimilarImage::find($uploadedfile,$identity,$realtablename,$realfieldname,$ImageFolder);
-
+			
 				if($ImageID!=0)
 				{
 					unlink($uploadedfile);
@@ -458,7 +451,7 @@ class CustomTablesImageMethods
 				}
 			}
 
-			//Get New Logo id
+			//Get new file name and avoid possible duplicate
 			do
 			{
 				//there is possible error, check all possible ext
@@ -468,37 +461,36 @@ class CustomTablesImageMethods
 			$isOk=true;
 
 			//es Thumb
-
 			$r=$this->ProportionalResize($uploadedfile,$ImageFolder.DIRECTORY_SEPARATOR.'_esthumb_'.$ImageID.'.jpg', 150, 150,1,true, -1, '');
-
+			
 			if($r!=1)
 				$isOk=false;
 
 			//custom images
-
-			$customsizes=$this->getCustomImageOptions($imageparams_full);
-
-			foreach($customsizes as $imagesize)
+			if($isOk)
 			{
+				$customsizes=$this->getCustomImageOptions($imageparams_full);
 
-				$prefix=$imagesize[0];
-				$width=(int)$imagesize[1];
-				$height=(int)$imagesize[2];
+				foreach($customsizes as $imagesize)
+				{
+					$prefix=$imagesize[0];
+					$width=(int)$imagesize[1];
+					$height=(int)$imagesize[2];
 
-				$color=(int)$imagesize[3];
-				$watermark=$imagesize[5];
+					$color=(int)$imagesize[3];
+					$watermark=$imagesize[5];
 
-				//save as extention
-				if($imagesize[4]!='')
-					$ext=$imagesize[4];
-				else
-					$ext=$new_photo_ext;
+					//save as extention
+					if($imagesize[4]!='')
+						$ext=$imagesize[4];
+					else
+						$ext=$new_photo_ext;
 
-				$r=$this->ProportionalResize($uploadedfile,$ImageFolder.DIRECTORY_SEPARATOR.$prefix.'_'.$ImageID.'.'.$ext, $width, $height,1,true, $color, $watermark);
+					$r=$this->ProportionalResize($uploadedfile,$ImageFolder.DIRECTORY_SEPARATOR.$prefix.'_'.$ImageID.'.'.$ext, $width, $height,1,true, $color, $watermark);
 
-				if($r!=1)
-					$isOk=false;
-
+					if($r!=1)
+						$isOk=false;
+				}
 			}
 
 			if($isOk)
@@ -553,18 +545,29 @@ class CustomTablesImageMethods
 
 	function ProportionalResize($src, $dst, $dst_width, $dst_height,$LevelMax, $overwrite,$backgroundcolor, $watermark)
 	{
+		//Returns:
+		// 1 if everything is ok
+		// -1 if file extension not supported
+		// 2 if file already exists
+		
 		$fileExtension=$this->FileExtenssion($src);
 		$fileExtension_dst=$this->FileExtenssion($dst);
 
-		if(!$fileExtension!='')
+		if($fileExtension == '')
+		{
+			JFactory::getApplication()->enqueueMessage('File type ('.$fileExtension.') not supported.', 'error');
 			return -1;
+		}
 
 		if($LevelMax>1)
 			$LevelMax=1;
 
-		//Check if destination already complited
-		if(file_exists($dst))
+		//Check if destination file already exists
+		if(file_exists($dst)) //Just in case
+		{
+			JFactory::getApplication()->enqueueMessage('File with the same name ('.$dst.') already exists.', 'error');
 			return 2;
+		}
 	
 		$size = getImageSize($src);
 

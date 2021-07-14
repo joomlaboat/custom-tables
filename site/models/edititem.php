@@ -12,8 +12,6 @@ defined('_JEXEC') or die('Restricted access');
 
 jimport('joomla.application.component.model');
 
-
-
 JTable::addIncludePath(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'tables');
 
 $site_libpath=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR;
@@ -35,8 +33,8 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'co
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'misc.php');
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'models'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'save.php');
 
-class CustomTablesModelEditItem extends JModelLegacy {
-
+class CustomTablesModelEditItem extends JModelLegacy
+{
 	var $es;
 
 	var $LangMisc;
@@ -47,7 +45,7 @@ class CustomTablesModelEditItem extends JModelLegacy {
 	var $estableid;
 	var $tabletitle;
 	var $establedescription;
-	//var $tablename;//mysql table name deprictade
+
 	var $tablecustomphp;
 	var $tablerow;
 
@@ -2105,7 +2103,6 @@ class CustomTablesModelEditItem extends JModelLegacy {
 		}
 
 		return $fields;
-
 	}
 
 	function getUserIP()
