@@ -147,16 +147,20 @@ class CT_FieldTypeTag_image
 							}
 					}
 
-                    if($value != 0 and $value != -1 and $value != 2)
+					if($value == -1 or $value == 2)
+					{
+						// -1 if file extension not supported
+						// 2 if file already exists
+						JFactory::getApplication()->enqueueMessage('Could not upload image file.', 'error');
+					}
+                    elseif($value != 0)
                     {
                         $value_found=true;
 						$savequery[]=$realfieldname.'='.$value;
                     }
 					else
 					{
-						// -1 if file extension not supported
-						// 2 if file already exists
-						JFactory::getApplication()->enqueueMessage('Could not upload image file.', 'error');
+						// Do nothing
 					}
         return $value_found;
     }
