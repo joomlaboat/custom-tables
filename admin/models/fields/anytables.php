@@ -65,13 +65,13 @@ class JFormFieldAnyTables extends JFormFieldList
 
 			$wheres=array();
 			$wheres[]='table_schema=\''.$database.'\'';
-			$wheres[]='!INSTR(table_name,\''.$db->getPrefix().'customtables_\')';
-			$wheres[]='table_name!=\''.$db->getPrefix().'user_keys\'';
-			$wheres[]='table_name!=\''.$db->getPrefix().'user_usergroup_map\'';
-			$wheres[]='table_name!=\''.$db->getPrefix().'usergroups\'';
-			$wheres[]='table_name!=\''.$db->getPrefix().'users\'';
+			$wheres[]='!INSTR(TABLE_NAME,\''.$db->getPrefix().'customtables_\')';
+			$wheres[]='TABLE_NAME!=\''.$db->getPrefix().'user_keys\'';
+			$wheres[]='TABLE_NAME!=\''.$db->getPrefix().'user_usergroup_map\'';
+			$wheres[]='TABLE_NAME!=\''.$db->getPrefix().'usergroups\'';
+			$wheres[]='TABLE_NAME!=\''.$db->getPrefix().'users\'';
 			
-			$query = 'SELECT table_name FROM information_schema.tables WHERE '.implode(' AND ',$wheres).' ORDER BY table_name';
+			$query = 'SELECT TABLE_NAME AS table_name FROM information_schema.tables WHERE '.implode(' AND ',$wheres).' ORDER BY TABLE_NAME';
 		}
      
 		$list=array();

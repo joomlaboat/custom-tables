@@ -27,7 +27,6 @@ function ctExtraUpdateImages(old_params,new_params,fieldid,tabletitle,fieldtitle
 	result+='<div class="progress progress-striped active"><div id="ct_progressbar" class="bar" role="progressbar" style="width: 0%;"></div></div><br/><p>Please keep this window open.</p>';
 	
 	ctShowPopUp(result,false);
-	
 	ctQueryAPI(old_params,new_params,fieldid);
 }
 
@@ -46,7 +45,6 @@ function ctQueryAPI(old_params,new_params,fieldid)
 			{
 				response.json().then(function(json)
 				{
-					
 					if(json.success==1)
 					{
 						if(ct_updateimages_count==0)
@@ -72,7 +70,6 @@ function ctQueryAPI(old_params,new_params,fieldid)
 						
 						if(ct_updateimages_startindex==ct_updateimages_count)
 						{
-							
 							setTimeout(function(){ 
 							
 								document.getElementById("ctStatus").innerHTML="Completed.";
@@ -94,7 +91,6 @@ function ctQueryAPI(old_params,new_params,fieldid)
 					{
 						document.getElementById("ctStatus").innerHTML="ERROR: "+JSON.stringify(json);
 					}
-					
 				});
 			}
 			else

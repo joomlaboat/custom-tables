@@ -198,7 +198,7 @@ class CustomTablesImageMethods
 	static protected function DeleteOriginalImage($ExistingImage, $ImageFolder, $realtablename, $realfieldname, $realidfield)
 	{
 		//This function deletes original images in case image not ocupied by another record.
-		
+
 		//---------- find child ----------
 		//check if the image has child or not
 		if($realtablename!='-options')
@@ -208,28 +208,31 @@ class CustomTablesImageMethods
 			if($ExistingImage=='')
 				$ExistingImage=0;
 
-			$query = 'SELECT id FROM '.$realtablename.' WHERE '.$realfieldname.'=-'.$ExistingImage.' LIMIT 1';
-			$db->setQuery($query);
-			$db->execute();
-
-			if($db->getNumRows()==1) //do not compare if there is a child
+			if($ExistingImage > 0)
 			{
-				$photorows=$db->loadObjectList();
-				$photorow=$photorows[0];
+				//If its an original image not duplicate, find one duplicate and convert it to original
+				$query = 'SELECT '.$realidfield.' FROM '.$realtablename.' WHERE '.$realfieldname.'=-'.$ExistingImage.' LIMIT 1';
+				$db->setQuery($query);
+				$photorows=$db->loadAssocList();
+				
+				if(count($photorows)==1) //do not compare if there is a child
+				{
+					$photorow=$photorows[0];
 
-				//Null Parent
-				$query = 'UPDATE '.$realtablename.' SET '.$realfieldname.'=0 WHERE '.$realfieldname.'='.$ExistingImage;
-				$db->setQuery( $query );
-				$db->execute();
+					//Null Parent
+					$query = 'UPDATE '.$realtablename.' SET '.$realfieldname.'=0 WHERE '.$realfieldname.'='.$ExistingImage;
+					$db->setQuery( $query );
+					$db->execute();
 
-				//Convert Child to Parent
-				$query = 'UPDATE '.$realtablename.' SET '.$realfieldname.'='.$ExistingImage.' WHERE '.$realidfield.'='.$photorow->id;
-				$db->setQuery( $query );
-				$db->execute();
-				return true;
+					//Convert Child to Parent
+					$query = 'UPDATE '.$realtablename.' SET '.$realfieldname.'='.$ExistingImage.' WHERE '.$realidfield.'='.(int)$photorow[$realidfield];
+
+					$db->setQuery( $query );
+					$db->execute();
+					return true;
+				}
 			}//if
 		}
-		//--------------------------------
 
 		foreach(CustomTablesImageMethods::allowedExtensions as $photo_ext)
 		{
@@ -238,14 +241,6 @@ class CustomTablesImageMethods
 
 			if(file_exists($ImageFolder.DIRECTORY_SEPARATOR.'_esthumb_'.$ExistingImage.'.'.$photo_ext))
 				unlink($ImageFolder.DIRECTORY_SEPARATOR.'_esthumb_'.$ExistingImage.'.'.$photo_ext);
-		}
-
-		if($realtablename!='-options')
-		{
-			//Update Table
-			$query = 'UPDATE '.$realtablename.' SET '.$realfieldname.'=0 WHERE '.$realfieldname.'='.$db->quote($ExistingImage);
-			$db->setQuery( $query );
-			$db->execute();
 		}
 	}
 	
@@ -297,7 +292,7 @@ class CustomTablesImageMethods
 		$count=0;
 		$db = JFactory::getDBO();
 
-		$query = ' SELECT '.$realfieldname.' FROM '.$realtablename.' WHERE '.$realfieldname.'>0';
+		$query = 'SELECT '.$realfieldname.' FROM '.$realtablename.' WHERE '.$realfieldname.'>0';
 		$db->setQuery( $query );
 		$imagelist=$db->loadAssocList();
 
@@ -401,11 +396,13 @@ class CustomTablesImageMethods
 		return count($imagelist);
 	}
 
-
 	function UploadSingleImage($ExistingImage, $image_file_id, $realfieldname, $ImageFolder, $imageparams_full, $realtablename = '-options',$realidfieldname)
 	{
-		$jinput = JFactory::getApplication()->input;
-
+		if(is_object('JFactory::getApplication()'))
+			$jinput = JFactory::getApplication()->input;
+		else
+			$jinput = null;
+			
 		if($image_file_id!='')
 		{
 			$pair=JoomlaBasicMisc::csv_explode(',',$imageparams_full,'"',false);
@@ -413,10 +410,17 @@ class CustomTablesImageMethods
 			$additional_params='';
 			if(isset($pair[1]))
 				$additional_params=$pair[1];
-
-			$uploadedfile= JPATH_SITE.DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR.$image_file_id;
-
-			$is_base64encoded=JFactory::getApplication()->input->get('base64encoded','','CMD');
+				
+			if(strpos($image_file_id,DIRECTORY_SEPARATOR)===false)//in case when other applications pass full path to the file
+				$uploadedfile = JPATH_SITE.DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR.$image_file_id;
+			else
+				$uploadedfile = $image_file_id;
+		
+			if(is_object('JFactory::getApplication()'))		
+				$is_base64encoded = JFactory::getApplication()->input->get('base64encoded','','CMD');
+			else
+				$is_base64encoded = '';
+				
 			if($is_base64encoded=="true")
 			{
 				$src = $uploadedfile;
@@ -440,10 +444,23 @@ class CustomTablesImageMethods
 				$identity=4;
 				if(isset($pair[1]))
 					$identity=(int)$pair[1];
-
+					
+				$additional_filter='';
+				
+				if(isset($pair[2]))
+					$additional_filter=$pair[2];
+					
+				//A bit of sanitation
+				$additional_filter=str_replace('"','',$additional_filter);
+				$additional_filter=str_replace("'",'',$additional_filter);
+				$additional_filter=str_replace(";",'',$additional_filter);
+				$additional_filter=str_replace("/",'',$additional_filter);
+				$additional_filter=str_replace("\\",'',$additional_filter);
+				
+				//echo 'Compare images ';
 				require_once('findsimilarimage.php');
-				$ImageID=-FindSimilarImage::find($uploadedfile,$identity,$realtablename,$realfieldname,$ImageFolder);
-			
+				$ImageID=-FindSimilarImage::find($uploadedfile,$identity,$realtablename,$realfieldname,$ImageFolder,$additional_filter);
+				
 				if($ImageID!=0)
 				{
 					unlink($uploadedfile);
@@ -452,11 +469,16 @@ class CustomTablesImageMethods
 			}
 
 			//Get new file name and avoid possible duplicate
+			
+			$i=0;
 			do
 			{
+				$ImageID=date("YmdHis").($i>0 ? $i : '');
 				//there is possible error, check all possible ext
-				$ImageID=date("YmdHIs");
-				$image_file=$ImageFolder.DIRECTORY_SEPARATOR.'_original_'.$ImageID.'.'.$new_photo_ext;
+				$image_file=$ImageFolder.DIRECTORY_SEPARATOR.'_esthumb_'.$ImageID.'.jpg';
+				$original_image_file=$ImageFolder.DIRECTORY_SEPARATOR.'_original_'.$ImageID.'.'.$new_photo_ext;
+				
+				$i++;
 			}while(file_exists($image_file));
 			$isOk=true;
 
@@ -495,14 +517,15 @@ class CustomTablesImageMethods
 
 			if($isOk)
 			{
-				copy($uploadedfile,$image_file);
+				
+				copy($uploadedfile,$original_image_file);
 				unlink($uploadedfile);
 				return $ImageID;
 			}
 			else
 			{
-				if(file_exists($ImageFolder.DIRECTORY_SEPARATOR.'_original_'.$ImageID.'.'.$new_photo_ext))
-					unlink($ImageFolder.DIRECTORY_SEPARATOR.'_original_'.$ImageID.'.'.$new_photo_ext);
+				if(file_exists($original_image_file))
+					unlink($original_image_file);
 
 
 				unlink($uploadedfile);
@@ -511,7 +534,6 @@ class CustomTablesImageMethods
 		}
 		return 0;
 	}
-
 
 	function base64file_decode( $inputfile, $outputfile )
 	{
@@ -526,7 +548,6 @@ class CustomTablesImageMethods
 		/* return output filename */
 		return( $outputfile );
 	}
-
 
 	function CheckImage($src,$memorylimit)
 	{
@@ -555,7 +576,8 @@ class CustomTablesImageMethods
 
 		if($fileExtension == '')
 		{
-			JFactory::getApplication()->enqueueMessage('File type ('.$fileExtension.') not supported.', 'error');
+			//echo 'File type ('.$fileExtension.') not supported.';
+			//JFactory::getApplication()->enqueueMessage('File type ('.$fileExtension.') not supported.', 'error');
 			return -1;
 		}
 
@@ -565,13 +587,14 @@ class CustomTablesImageMethods
 		//Check if destination file already exists
 		if(file_exists($dst)) //Just in case
 		{
-			JFactory::getApplication()->enqueueMessage('File with the same name ('.$dst.') already exists.', 'error');
+			//echo 'File with the same name ('.$dst.') already exists.';
+			//JFactory::getApplication()->enqueueMessage('File with the same name ('.$dst.') already exists.', 'error');
 			return 2;
 		}
 	
 		$size = getImageSize($src);
 
-		$ms=$size[0]*$size [1]*4;
+		$ms=$size[0]*$size[1]*4;
 
 		$width = $size[0];
 		$height = $size[1];

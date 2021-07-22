@@ -11,7 +11,7 @@ defined('_JEXEC') or die('Restricted access');
 
 class FindSimilarImage {
     
-    static public function find($uploadedfile,$identity,$realtablename,$realfieldname_,$ImageFolder)
+    static public function find($uploadedfile,$identity,$realtablename,$realfieldname,$ImageFolder,$additional_filter='')
     {
         if($identity<0)
             $identity=0;
@@ -23,10 +23,11 @@ class FindSimilarImage {
 	
         $db = JFactory::getDBO();
         
-        $query = 'SELECT '.$realfieldname.' AS photoid FROM '.$realtablename.' WHERE '.$realfieldname.'>0';
+        $query = 'SELECT '.$realfieldname.' AS photoid FROM '.$realtablename.' WHERE '.$realfieldname.'>0'.($additional_filter!='' ? ' AND '.$additional_filter : '');
+
     	$db->setQuery($query);
         $photorows=$db->loadObjectList();
-		
+
         foreach($photorows as $photorow)
         {
     	    $id=$photorow->photoid;

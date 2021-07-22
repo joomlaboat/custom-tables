@@ -97,7 +97,6 @@ class updateImages
 		return null;
 	}
 	
-	
 	protected static function processImage_Thumbnail(&$imgMethods,$rowValue,$old_ImageFolder, $new_ImageFolder)
 	{
 		//Check thumbnail
@@ -110,16 +109,13 @@ class updateImages
 		{
 			if($old_ImageFolder!=$new_ImageFolder)
 			{
-				if(!@rename(JPATH_SITE.$old_imagefile,JPATH_SITE.DIRECTORY_SEPARATOR.$new_imagefile))
+				if(!@rename(JPATH_SITE.DIRECTORY_SEPARATOR.$old_imagefile,JPATH_SITE.DIRECTORY_SEPARATOR.$new_imagefile))
 					return 'cannot move file to '.$new_imagefile;
 			}
-
 		}
 		else
-		{
 			return 'file not found';
-		}
-			
+	
 		return null;
 	}
 	
@@ -177,7 +173,7 @@ class updateImages
 				$color=(int)$old_imagesize[3];
 				$watermark=$old_imagesize[5];
 
-				$r=$imgMethods->ProportionalResize(JPATH_SITE.DIRECTORY_SEPARATOR.$original_image_file,JPATH_SITE.$old_imagefile, $width, $height,1,true, $color, $watermark);
+				$r=$imgMethods->ProportionalResize(JPATH_SITE.DIRECTORY_SEPARATOR.$original_image_file,JPATH_SITE.DIRECTORY_SEPARATOR.$old_imagefile, $width, $height,1,true, $color, $watermark);
 
 				if($r!=1)
 					return 'cannot create file: '.$old_imagefile;
@@ -281,9 +277,7 @@ class updateImages
 			$r=$imgMethods->ProportionalResize(JPATH_SITE.DIRECTORY_SEPARATOR.$original_image_file,JPATH_SITE.DIRECTORY_SEPARATOR.$new_ImageFolder.DIRECTORY_SEPARATOR.'_esthumb_'.$rowValue.'.jpg', 150, 150,1,true, -1, '');
 
 			if($r!=1)
-			{
 				$isOk=false;
-			}
 		}
 		
 		//Move custom size files to new folder, or create if custom size file in original folder is missing

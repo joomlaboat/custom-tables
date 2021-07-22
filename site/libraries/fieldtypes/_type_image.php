@@ -32,9 +32,7 @@ class CT_FieldTypeTag_image
 		
 		if($option=='' or $option=='_esthumb' or $option=='_thumb')
 		{
-
 			$prefix='_esthumb';
-
 
 			$imagefile_ext='jpg';
 			$imagefileweb=JURI::root(false).$ImageFolderWeb.'/'.$prefix.'_'.$rowValue.'.'.$imagefile_ext;
@@ -49,7 +47,6 @@ class CT_FieldTypeTag_image
 		}
 		elseif($option=='_original')
 		{
-
 			$prefix='_original';
 			$imagefile_ext='jpg';
 			$imgname=$ImageFolder.DIRECTORY_SEPARATOR.$prefix.'_'.$rowValue;
@@ -69,12 +66,8 @@ class CT_FieldTypeTag_image
 			return false;
 		}
 
-
 		$prefix=$option;
-
 		$imgMethods= new CustomTablesImageMethods;
-
-
 		$imgname=$ImageFolder.DIRECTORY_SEPARATOR.$prefix.'_'.$rowValue;
 
 		$imagefile_ext=$imgMethods->getImageExtention(JPATH_SITE.DIRECTORY_SEPARATOR.$imgname);
@@ -98,70 +91,65 @@ class CT_FieldTypeTag_image
 		return false;
 	}
 
-
     static public function get_image_type_value($id,&$es,&$savequery,$typeparams,$comesfieldname,$realfieldname,$realtablename,$realidfieldname)
     {
         $value_found=false;
 
-    				$value=0;
-					$imagemethods=new CustomTablesImageMethods;
+		$value=0;
+		$imagemethods=new CustomTablesImageMethods;
 
-					$ImageFolder=CustomTablesImageMethods::getImageFolder($typeparams);
+		$ImageFolder=CustomTablesImageMethods::getImageFolder($typeparams);
 
-                    $jinput=JFactory::getApplication()->input;
-                    $fileid = $jinput->post->get($comesfieldname, '','STRING' );
+		$jinput=JFactory::getApplication()->input;
+        $fileid = $jinput->post->get($comesfieldname, '','STRING' );
 
+		if($id==0)
+		{
+			$value=$imagemethods->UploadSingleImage(0, $fileid,$realfieldname,JPATH_SITE.DIRECTORY_SEPARATOR.$ImageFolder,$typeparams,$realtablename,$realidfieldname);
+		}
+		else
+		{
+			$to_delete = $jinput->post->get($comesfieldname.'_delete', '','CMD' );
+			$ExistingImage=$es->isRecordExist($id,'id', $realfieldname, $realtablename);
 
-					if($id==0)
-					{
-							$value=$imagemethods->UploadSingleImage(0, $fileid,$realfieldname,JPATH_SITE.DIRECTORY_SEPARATOR.$ImageFolder,$typeparams,$realtablename,$realidfieldname);
-					}
-					else
-					{
-                        $to_delete = $jinput->post->get($comesfieldname.'_delete', '','CMD' );
-
-						
-                        $ExistingImage=$es->isRecordExist($id,'id', $realfieldname, $realtablename);
-
-							if($to_delete=='true')
-							{
-								if($ExistingImage>0)
-									$imagemethods->DeleteExistingSingleImage(
+			if($to_delete=='true')
+			{
+				if($ExistingImage>0)
+				{
+					$imagemethods->DeleteExistingSingleImage(
 										$ExistingImage,
 										JPATH_SITE.DIRECTORY_SEPARATOR.$ImageFolder,
 										$typeparams,
 										$realtablename,
 										$realfieldname,
 										$realidfieldname);
+				}
+ 
+				$value_found=true;
+				$savequery[]=$realfieldname.'='.$value;
+			}
+			else
+			{
+				$value=$imagemethods->UploadSingleImage($ExistingImage,$fileid, $realfieldname,
+					JPATH_SITE.DIRECTORY_SEPARATOR.$ImageFolder,$typeparams,$realtablename,$realidfieldname);
+			}
+		}
 
-                                $value_found=true;
-								$savequery[]=$realfieldname.'='.$value;
-							}
-							else
-							{
-								$value=$imagemethods->UploadSingleImage($ExistingImage,$fileid, $realfieldname,
-									JPATH_SITE.DIRECTORY_SEPARATOR.$ImageFolder,$typeparams,$realtablename,$realidfieldname);
-									
-								//echo '$value='.$value.'*';
-								//die;
-							}
-					}
-
-					if($value == -1 or $value == 2)
-					{
-						// -1 if file extension not supported
-						// 2 if file already exists
-						JFactory::getApplication()->enqueueMessage('Could not upload image file.', 'error');
-					}
-                    elseif($value != 0)
-                    {
-                        $value_found=true;
-						$savequery[]=$realfieldname.'='.$value;
-                    }
-					else
-					{
-						// Do nothing
-					}
+		if($value == -1 or $value == 2)
+		{
+			// -1 if file extension not supported
+			// 2 if file already exists
+			JFactory::getApplication()->enqueueMessage('Could not upload image file.', 'error');
+		}
+        elseif($value != 0)
+        {
+			$value_found=true;
+			$savequery[]=$realfieldname.'='.$value;
+        }
+		else
+		{
+			// Do nothing
+		}
         return $value_found;
     }
 
@@ -269,51 +257,48 @@ class CT_FieldTypeTag_image
 
     }
 
-
     public static function getImageSRC($row,$realFieldName,$ImageFolder,&$imagefile,&$isShortcut)
     {
-        //-------------------------------------- IMAGE ----------------------------------
-				$isShortcut=false;
-				if(isset($row[$realFieldName]))
-				{
-					$img=$row[$realFieldName];
-					if(strpos($img,'-')!==false)
-					{
-						$isShortcut=true;
-						$img=str_replace('-','',$img);
-					}
+		$isShortcut=false;
+		if(isset($row[$realFieldName]))
+		{
+			$img=$row[$realFieldName];
+			if(strpos($img,'-')!==false)
+			{
+				$isShortcut=true;
+				$img=str_replace('-','',$img);
+			}
 
-					$imagefile_=$ImageFolder.DIRECTORY_SEPARATOR.'_esthumb_'.$img;
-					$imagesrc_=str_replace(DIRECTORY_SEPARATOR,'/',$ImageFolder).'/_esthumb_'.$img;
-				}
-				else
-				{
-					$imagefile_='';
-					$imagesrc_='';
-				}
+			$imagefile_=$ImageFolder.DIRECTORY_SEPARATOR.'_esthumb_'.$img;
+			$imagesrc_=str_replace(DIRECTORY_SEPARATOR,'/',$ImageFolder).'/_esthumb_'.$img;
+		}
+		else
+		{
+			$imagefile_='';
+			$imagesrc_='';
+		}
 
-				if(file_exists(JPATH_SITE.DIRECTORY_SEPARATOR.$imagefile_.'.jpg'))
-				{
-					$imagefile=$imagefile_.'.jpg';
-					$imagesrc=$imagesrc_.'.jpg';
-
-				}
-				elseif(file_exists(JPATH_SITE.DIRECTORY_SEPARATOR.$imagefile_.'.png'))
-				{
-					$imagefile=$imagefile_.'.png';
-					$imagesrc=$imagesrc_.'.png';
-				}
-				elseif(file_exists(JPATH_SITE.DIRECTORY_SEPARATOR.$imagefile_.'.webp'))
-				{
-					$imagefile=$imagefile_.'.webp';
-					$imagesrc=$imagesrc_.'.webp';
-					$imagesrc=$imagesrc_.'.webp';
-				}
-				else
-				{
-					$imagefile='';
-					$imagesrc='';
-				}
+		if(file_exists(JPATH_SITE.DIRECTORY_SEPARATOR.$imagefile_.'.jpg'))
+		{
+			$imagefile=$imagefile_.'.jpg';
+			$imagesrc=$imagesrc_.'.jpg';
+		}
+		elseif(file_exists(JPATH_SITE.DIRECTORY_SEPARATOR.$imagefile_.'.png'))
+		{
+			$imagefile=$imagefile_.'.png';
+			$imagesrc=$imagesrc_.'.png';
+		}
+		elseif(file_exists(JPATH_SITE.DIRECTORY_SEPARATOR.$imagefile_.'.webp'))
+		{
+			$imagefile=$imagefile_.'.webp';
+			$imagesrc=$imagesrc_.'.webp';
+			$imagesrc=$imagesrc_.'.webp';
+		}
+		else
+		{
+			$imagefile='';
+			$imagesrc='';
+		}
 
         return JURI::root(false).$imagesrc;
     }

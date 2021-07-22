@@ -338,8 +338,8 @@
 				</sizeparam>
 			</param>
 			<param name="additionalparams" label="Image Processing Methods" description="Image processing methods that will be applied to newly uploaded image. This option available in Pro Version Only." default="" type="multiselect" >
-				<!--<option value="" label="- Keep it as it is" />-->
-				<!--<option value="compare" label="Compare With Existing Images" description="Compares images, pixel by pixel, to avoid saving duplicates, shortcuts will be used. " hasextra="true" proversion="1">
+				<option value="" label="- Keep it as it is" />
+				<option value="compare" label="Compare with existing images" description="Compares images, pixel by pixel, to avoid saving duplicates, shortcuts will be created. " hasextra="true" proversion="1">
 					<extraoptions label="Tolerance Level" >
 						<extraoption value="0" label="Identical" />
 						<extraoption value="1" label="95 % Hm.. Identical" />
@@ -355,7 +355,7 @@
 						<extraoption value="21" label="Far from identical" />
 					</extraoptions>
 				</option>
-				-->
+				
 			</param>
 			<param name="folder" example="/images/product_photos" label="Folder" description="Folder where all the files will be kept. By default /images" default="" type="folder" />
 		</params>

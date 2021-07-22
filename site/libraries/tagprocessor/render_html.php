@@ -61,7 +61,7 @@ trait render_html
 		foreach($SearchResult as $row)
 		{
 				$Model->LayoutProc->number=$number;
-		        $tablecontent.='<!-- record -->'.tagProcessor_Item::RenderResultLine($Model,$row,true).'<!-- end of record -->';
+		        $tablecontent.=tagProcessor_Item::RenderResultLine($Model,$row,true);
 				$number++;
 		}
         $result.=$tablecontent.'</tbody></table><!-- end of table view -->';

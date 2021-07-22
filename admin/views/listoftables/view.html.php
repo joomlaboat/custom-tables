@@ -317,7 +317,6 @@ class CustomtablesViewListoftables extends JViewLegacy
 		$query='SELECT COUNT('.$realidfield.') AS count FROM '.$realtablename.' LIMIT 1';
 		
 		$db->setQuery( $query );
-		if (!$db->query())    die ( $db->stderr());
         $rows=$db->loadObjectList();
 		return $rows[0]->count;
 	}

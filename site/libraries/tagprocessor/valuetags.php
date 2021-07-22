@@ -111,7 +111,6 @@ class tagProcessor_Value
 		return $row[$field];
 	}
 
-
     public static function getFieldTypeByName($fieldname)
 	{
 		foreach($Model->esfields as $ESField)
@@ -511,8 +510,15 @@ class tagProcessor_Value
 
 				$prefix='_esthumb';
 
+				$img=$rowValue;
+				if(strpos($img,'-')!==false)
+				{
+					//$isShortcut=true;
+					$img=str_replace('-','',$img);
+				}
+
 				$imagefile_ext='jpg';
-				$imagefile=$ImageFolder.DIRECTORY_SEPARATOR.$prefix.'_'.$rowValue.'.'.$imagefile_ext;
+				$imagefile=$ImageFolder.DIRECTORY_SEPARATOR.$prefix.'_'.$img.'.'.$imagefile_ext;
 
 				if(file_exists(JPATH_SITE.DIRECTORY_SEPARATOR.$imagefile))
 					return false;
