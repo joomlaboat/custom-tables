@@ -561,14 +561,16 @@ class ESFiltering
 
 		$title1='';
 		if(count($fieldrow1)>0)
+		{
 			$title1=$fieldrow1['fieldtitle'.$this->langpostfix];
+		}
 		else
 			$title1=$fieldname;
 
 		$fieldrow2 = ESFields::FieldRowByName($value,$this->esfields);
 
 		$title2='';
-		if(count($fieldrow1)>0)
+		if(count($fieldrow2)>0)
 			$title2=$fieldrow2['fieldtitle'.$this->langpostfix];
 		else
 			$title2=$value;
