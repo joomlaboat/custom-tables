@@ -9,6 +9,10 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 class CustomTablesImageMethods
 {
 	const allowedExtensions = ['jpg','png','gif','jpeg','webp'];
@@ -437,37 +441,7 @@ class CustomTablesImageMethods
 
 			$ImageID=0;
 
-			$pair=explode(':',$additional_params);
-
-			if($realtablename!='-options' and ($pair[0]=='compare' or $pair[0]=='compareexisting'))
-			{
-				$identity=4;
-				if(isset($pair[1]))
-					$identity=(int)$pair[1];
-					
-				$additional_filter='';
-				
-				if(isset($pair[2]))
-					$additional_filter=$pair[2];
-					
-				//A bit of sanitation
-				$additional_filter=str_replace('"','',$additional_filter);
-				$additional_filter=str_replace("'",'',$additional_filter);
-				$additional_filter=str_replace(";",'',$additional_filter);
-				$additional_filter=str_replace("/",'',$additional_filter);
-				$additional_filter=str_replace("\\",'',$additional_filter);
-				
-				//echo 'Compare images ';
-				require_once('findsimilarimage.php');
-				$ImageID=-FindSimilarImage::find($uploadedfile,$identity,$realtablename,$realfieldname,$ImageFolder,$additional_filter);
-				
-				if($ImageID!=0)
-				{
-					unlink($uploadedfile);
-					return $ImageID;
-				}
-			}
-
+			
 			//Get new file name and avoid possible duplicate
 			
 			$i=0;
@@ -475,18 +449,28 @@ class CustomTablesImageMethods
 			{
 				$ImageID=date("YmdHis").($i>0 ? $i : '');
 				//there is possible error, check all possible ext
-				$image_file=$ImageFolder.DIRECTORY_SEPARATOR.'_esthumb_'.$ImageID.'.jpg';
+				$thumbnail_image_file=$ImageFolder.DIRECTORY_SEPARATOR.'_esthumb_'.$ImageID.'.jpg';
 				$original_image_file=$ImageFolder.DIRECTORY_SEPARATOR.'_original_'.$ImageID.'.'.$new_photo_ext;
 				
 				$i++;
-			}while(file_exists($image_file));
+			}while(file_exists($thumbnail_image_file));
 			$isOk=true;
 
 			//es Thumb
-			$r=$this->ProportionalResize($uploadedfile,$ImageFolder.DIRECTORY_SEPARATOR.'_esthumb_'.$ImageID.'.jpg', 150, 150,1,true, -1, '');
+			$r=$this->ProportionalResize($uploadedfile,$thumbnail_image_file, 150, 150,1,true, -1, '');
 			
 			if($r!=1)
 				$isOk=false;
+				
+			//--------- compare thumbnails	
+			
+			$duplicateImageID = $this->compareThumbs($additional_params, $realtablename, $realfieldname, $ImageFolder, $uploadedfile, $thumbnail_image_file);
+			
+			if($duplicateImageID!=0)
+				return $duplicateImageID;
+			
+			//--------- end of compare thumbnails
+			
 
 			//custom images
 			if($isOk)
@@ -517,7 +501,6 @@ class CustomTablesImageMethods
 
 			if($isOk)
 			{
-				
 				copy($uploadedfile,$original_image_file);
 				unlink($uploadedfile);
 				return $ImageID;
@@ -527,9 +510,43 @@ class CustomTablesImageMethods
 				if(file_exists($original_image_file))
 					unlink($original_image_file);
 
-
 				unlink($uploadedfile);
 				return -1;
+			}
+		}
+		return 0;
+	}
+	
+	function compareThumbs($additional_params, $realtablename, $realfieldname, $ImageFolder, $uploadedfile, $thumbFileName)
+	{
+		$pair=explode(':',$additional_params);
+
+		if($realtablename!='-options' and ($pair[0]=='compare' or $pair[0]=='compareexisting'))
+		{
+			$identity=2;
+			if(isset($pair[1]))
+				$identity=(int)$pair[1];
+					
+			$additional_filter='';
+				
+			if(isset($pair[2]))
+				$additional_filter=$pair[2];
+					
+			//A bit of sanitation
+			$additional_filter=str_replace('"','',$additional_filter);
+			$additional_filter=str_replace("'",'',$additional_filter);
+			$additional_filter=str_replace(";",'',$additional_filter);
+			$additional_filter=str_replace("/",'',$additional_filter);
+			$additional_filter=str_replace("\\",'',$additional_filter);
+				
+			require_once('findsimilarimage.php');
+			$ImageID = -FindSimilarImage::find($uploadedfile,$identity,$realtablename,$realfieldname,$ImageFolder,$additional_filter);
+				
+			if($ImageID!=0)
+			{
+				unlink($uploadedfile);
+				unlink($thumbFileName);
+				return $ImageID;
 			}
 		}
 		return 0;

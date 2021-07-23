@@ -19,7 +19,7 @@ class FindSimilarImage {
         require_once('compareimages.php');
     	$ci=new compareImages;
 		
-		$ext_list=array('png','jpg');
+		//$ext_list=array('png','jpg');
 	
         $db = JFactory::getDBO();
         
@@ -34,9 +34,9 @@ class FindSimilarImage {
 
             if($id!=0)
             {
-                foreach($ext_list as $ext)
-                {
-                    $image_file=$ImageFolder.DIRECTORY_SEPARATOR.'_original_'.$id.'.'.$ext;
+                //foreach($ext_list as $ext)
+                //{
+                    $image_file=$ImageFolder.DIRECTORY_SEPARATOR.'_esthumb_'.$id.'.jpg';///.$ext;
                     if($image_file!=$uploadedfile)
                     {
                         if(file_exists($image_file))
@@ -46,7 +46,7 @@ class FindSimilarImage {
                                 return $id;
                         }
                     }
-                }//for each
+                //}//for each
             }//if
         }//foreach($photorows as $photorow)
     }//function
