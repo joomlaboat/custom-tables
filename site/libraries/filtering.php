@@ -34,7 +34,6 @@ class ESFiltering
 			$logic_operator = $item[0];
 			$comparison_operator_str = $item[1];
 			$comparison_operator='';
-			
 			$multy_field_where=[];
 			
 			if($logic_operator=='or' or $logic_operator=='and')
