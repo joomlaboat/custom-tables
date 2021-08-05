@@ -94,7 +94,11 @@ class ESFiltering
 								$fieldrow = ESFields::FieldRowByName($fieldname,$this->esfields);
 
 							if(count($fieldrow)>0)
-								$multy_field_where[] = $this->processSingleFieldWhereSyntax($fieldrow,$comparison_operator,$fieldname,$value,$PathValue);
+							{
+								$w = $this->processSingleFieldWhereSyntax($fieldrow,$comparison_operator,$fieldname,$value,$PathValue);
+								if($w!='')
+									$multy_field_where[] = $w;
+							}
 						}
 					}
 				}
@@ -106,7 +110,11 @@ class ESFiltering
 				$wheres[]='('.implode(' OR ',$multy_field_where).')';
 		}
 
-		return implode(' '.$logic_operator.' ',$wheres);
+		if($logic_operator == 'or' and count($wheres) > 1)
+			return '('.implode(' '.$logic_operator.' ',$wheres).')';
+		else
+			return implode(' '.$logic_operator.' ',$wheres);
+			
 	}//function getWhereExpression($param,&$PathValue)
 
 
@@ -585,7 +593,7 @@ class ESFiltering
 			$query=$value1.' IS NULL';
 		else
 			$query=$value1.' '.$comparison_operator.' '.$value2;
-		
+			
 		return $query;
 	}
 
@@ -647,7 +655,7 @@ class ESFiltering
 				$i++;
 			}
 
-			if(count($fList)>0 or trim(strtolower($value))=="null")
+			if(count($fList)>0)// or trim(strtolower($value))=="null")
 				return $value;
 			else
 
