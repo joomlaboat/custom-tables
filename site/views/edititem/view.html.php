@@ -30,10 +30,10 @@ class CustomTablesViewEditItem extends JViewLegacy {
 		$this->assignRef('userid',$userid);
 
 		//------ end user info
-
+		
 		$Model = $this->getModel();
         $Model->load($params);
-
+		
         if(!$Model->CheckAuthorization(1))
     	{
     		//not authorized

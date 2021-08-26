@@ -114,7 +114,7 @@ jQuery.noConflict()
 
 	if($listing_id==0)
 	{
-		$this->params = JComponentHelper::getParams( 'com_customtables' );
+		//$this->params = JComponentHelper::getParams( 'com_customtables' );
 		$publishstatus=$this->params->get( 'publishstatus' );
 		echo '<input type="hidden" name="published" value="'.(int)$publishstatus.'" />';
 	}

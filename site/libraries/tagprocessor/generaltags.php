@@ -28,10 +28,12 @@ class tagProcessor_General
         tagProcessor_General::WebsiteRoot($Model,$pagelayout);
         tagProcessor_General::getGoBackButton($Model,$pagelayout);
 
+		ESLayouts::processLayoutTag($pagelayout);
     }
 
-	/*
+	
 	//NO LONGER NEEDED BECAUSE ITS BEING PROCESSED WHILE READING THE PARENT LAYOUT
+	/*
     public static function processLayoutTag(&$htmlresult)
 	{
         $options=array();

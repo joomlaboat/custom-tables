@@ -10,6 +10,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 require_once('layouts.php');
+require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'layouts.php');
 
 class ESLayouts
 {
@@ -29,7 +30,7 @@ class ESLayouts
 		return $rows[0]->id;
 	}
 
-    public static function getLayout($layoutname,&$type)
+    public static function getLayout($layoutname,&$type,$processLayoutTag = true)
 	{
 
 		if($layoutname=='')
@@ -57,7 +58,10 @@ class ESLayouts
 
 		//Get all layouts recursevly
 		$layoutcode=$row['layoutcode'];
-		ESLayouts::processLayoutTag($layoutcode);
+		
+		if($processLayoutTag)
+			ESLayouts::processLayoutTag($layoutcode);
+			
 		return $layoutcode;
 	}
 	
@@ -74,9 +78,18 @@ class ESLayouts
 		$i=0;
 		foreach($fList as $fItem)
 		{
-            $layoutname=$options[$i];
+			$optpair=JoomlaBasicMisc::csv_explode(',',$options[$i],'"',false);
+            $layoutname=$optpair[0];
+			
+			$ProcessContentPlugins = false;
+			if(isset($optpair[1]) and $optpair[1] == 'process')
+				$ProcessContentPlugins = true;
+			
             $type='';
-            $layout=ESLayouts::getLayout($layoutname,$type);
+            $layout = ESLayouts::getLayout($layoutname,$type);
+			
+			if($ProcessContentPlugins)
+				LayoutProcessor::applyContentPlugins($layout);
             
 			$htmlresult=str_replace($fItem,$layout,$htmlresult);
 			$i++;

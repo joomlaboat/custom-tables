@@ -31,7 +31,7 @@ $layout_catalog_name=$this->Model->params->get( 'escataloglayout' );
 if($layout_catalog_name!='')
 {
     $layouttype=0;
-	$pagelayout=ESLayouts::getLayout($layout_catalog_name,$layouttype);
+	$pagelayout=ESLayouts::getLayout($layout_catalog_name,$layouttype,$processLayoutTag = false); //It is safier to process layout after rendering the table
 
     if($layouttype==8)
         $this->Model->frmt='xml';
@@ -46,12 +46,12 @@ else
 $layout_item_name=$this->Model->params->get('esitemlayout');
 
 $itemlayout='';
+
 if($layout_item_name!='')
 {
     $layouttype=0;
 	$itemlayout=ESLayouts::getLayout($layout_item_name,$layouttype);
 }
-
 
 $catalogtablecode=JoomlaBasicMisc::generateRandomString();//this is temporary replace place holder. to not parse content result again
 
@@ -71,8 +71,7 @@ if($html_format)
 }
 else
 {
-	$this->Model->LayoutProc->layout=$pagelayout;
-	$pagelayout=$this->Model->LayoutProc->fillLayout(array(), null, '');
+
 
 	$catalogtablecontent=tagProcessor_CatalogTableView::process($this->Model,$pagelayout,$this->SearchResult,$catalogtablecode);
 	if($catalogtablecontent=='')
@@ -80,6 +79,9 @@ else
 		$this->Model->LayoutProc->layout=$itemlayout;
 		$catalogtablecontent=tagProcessor_Catalog::process($this->Model,$pagelayout,$this->SearchResult,$catalogtablecode);
 	}
+
+	$this->Model->LayoutProc->layout=$pagelayout;
+	$pagelayout=$this->Model->LayoutProc->fillLayout(array(), null, '');
 }
 
 

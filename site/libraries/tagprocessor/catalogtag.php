@@ -46,6 +46,11 @@ class tagProcessor_Catalog
 				$pagelayout=str_replace($fItem,'',$pagelayout);//delete {catalog} tag
 				self::get_CatalogTable_singleline_CSV($SearchResult,$Model,$allowcontentplugins,$pagelayout);
 			}
+			elseif($Model->frmt=='json')
+			{
+				$pagelayout=str_replace($fItem,'',$pagelayout);//delete {catalog} tag
+				self::get_CatalogTable_singleline_JSON($SearchResult,$Model,$allowcontentplugins,$pagelayout);
+			}
 			if($Model->frmt=='image')
 				self::get_CatalogTable_singleline_IMAGE($pagelayout,$allowcontentplugins);
 			elseif(isset($pair[1]) and $pair[1]=='notable')
@@ -216,9 +221,6 @@ class tagProcessor_Catalog
 
 
 
-
-
-
     protected static function reorderCatGroups(&$CatGroups)
 	{
 		$newCat=array();
@@ -242,16 +244,5 @@ class tagProcessor_Catalog
 
 		return $newCat;
 	}
-
-/*
-    	function renderDeleteFunction()
-	{
-		if($this->isDeleteFunctionRendered)
-			return false;
-
-
-		$this->isDeleteFunctionRendered=true;
-	}
-    */
 
 }

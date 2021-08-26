@@ -114,10 +114,10 @@ class CustomTablesModelEditItem extends JModelLegacy
 		$this->isUserAdministrator=JoomlaBasicMisc::isUserAdmin($this->userid);
 
 		$this->print=(bool)$jinput->getInt('print',0);
-		$this->frmt=$jinput->getCmd('frmt','html');
-
+		$this->frmt = $jinput->getCmd('frmt','html');
+		if($jinput->getCmd('layout','') == 'json')
+			$this->frmt = 'json';
 	}
-
 
 	function load($params,$BlockExternalVars=false)
 	{

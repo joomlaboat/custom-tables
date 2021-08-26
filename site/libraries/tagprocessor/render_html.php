@@ -22,7 +22,7 @@ trait render_html
 
         //prepare header and record layouts
 
-		$result='<!-- table view --><table'.($class!='' ? ' class="'.$class.'" ': '').'><thead><tr>';
+		$result='<table'.($class!='' ? ' class="'.$class.'" ': '').'><thead><tr>';
 
 		$recordline='<tr>';
 
@@ -64,7 +64,7 @@ trait render_html
 		        $tablecontent.=tagProcessor_Item::RenderResultLine($Model,$row,true);
 				$number++;
 		}
-        $result.=$tablecontent.'</tbody></table><!-- end of table view -->';
+        $result.='<tbody>'.$tablecontent.'</tbody></table>';
 
 		return $result;
 	}

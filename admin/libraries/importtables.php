@@ -642,7 +642,8 @@ class ImportTables
                             //Get non langauge field type
                             $nonLanguageFieldName=ESFields::getLanguagelessFieldName($key);
                             $filedtype=ESFields::getFieldType($mysqltablename,false,$nonLanguageFieldName);
-                            ESFields::AddMySQLFieldNotExist($mysqltablename, $key, $filedtype, '');
+							
+							ESFields::AddMySQLFieldNotExist($mysqltablename, $key, $filedtype, '');
 
                             $inserts[]=$fieldname.'='.$db->Quote($rows[$key]);
                         }
