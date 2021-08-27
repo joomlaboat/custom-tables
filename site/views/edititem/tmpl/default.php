@@ -22,20 +22,13 @@ JHtml::_('behavior.calendar');
 JHtml::_('bootstrap.popover');
 
 $document = JFactory::getDocument();
-$document->addScript(JURI::root(true).'/components/com_customtables/js/edit_227.js?v=2.2.3');
-$document->addScript(JURI::root(true).'/components/com_customtables/js/esmulti.js?v=2.2.3');
+$document->addScript(JURI::root(true).'/components/com_customtables/js/edit_227.js');
+$document->addScript(JURI::root(true).'/components/com_customtables/js/esmulti.js');
 
 if (!$this->Model->BlockExternalVars and $this->Model->params->get( 'show_page_heading', 1 ) ) : ?>
 <div class="page-header<?php echo $this->escape($this->Model->params->get('pageclass_sfx')); ?>">
 	<h2 itemprop="headline">
-		<?php echo JoomlaBasicMisc::JTextExtended($this->Model->params->get( 'page_title' ));
-/*
-			if(JFactory::getApplication()->input->get('listing_id',0,'INT')!=0)
-				echo ' - '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_EDIT' );
-			else
-				echo ' - '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ADD' );
-			*/
-		 ?>
+		<?php echo JoomlaBasicMisc::JTextExtended($this->Model->params->get( 'page_title' )); ?>
 	</h2>
 </div>
 <?php endif;

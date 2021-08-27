@@ -451,10 +451,8 @@ class tagProcessor_Edit
     protected static function renderFields(&$row,&$Model,&$pagelayout,$langpostfix,$parentid,&$esinputbox,&$calendars,$style='',$replaceitecode,&$items_to_replace,$fieldNamePrefix)
 	{
 		$field_objects = [];
-		
 		$calendars=array();
-		//$result='';
-		
+
 		//custom layout
 		if(!isset($Model->esfields) or !is_array($Model->esfields))
 			return [];
@@ -513,23 +511,14 @@ class tagProcessor_Edit
 
 	protected static function renderField(&$row,&$Model,$langpostfix,$parentid,&$esinputbox,&$calendars,&$esfield, $class='',$attributes='',$option_list,$fieldNamePrefix)
 	{
-		//$result='';
-
-		//$fieldBox='';
 		if($esfield['parentid']==$parentid or $parentid==-1)
 		{
-			//$realFieldName='es_'.$esfield['fieldname'];
 			if($esfield['type']=='date')
 				$calendars[]='es_'.$esfield['fieldname'];
 
-			//$fieldBox='';
 			if($esfield['type']!='dummy')
 				return $esinputbox->renderFieldBox($Model,$fieldNamePrefix,$esfield,$row, $class,$attributes,$option_list);
-
-			
-			//$result.=$fieldBox;
-
 		}
-		return '';//$result;
+		return '';
 	}
 }

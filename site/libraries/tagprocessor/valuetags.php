@@ -630,6 +630,8 @@ class tagProcessor_Value
 
     public static function processValues(&$Model,&$row,&$htmlresult,$tag_chars='[]')
 	{
+		$fields_used=[];//Fields found in the layout.
+		
 		$items_to_replace=array();
 		$isGalleryLoaded=array();
 		$getGalleryRows=array();

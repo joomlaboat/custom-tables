@@ -1334,5 +1334,42 @@ class ESFields
 			$db->execute();
 		}
     }
+	
+	
+	public static function shortFieldObjects(&$esfields)
+	{
+		$field_objects = [];
+		
+		foreach($esfields as $esfield)
+			$field_objects[] = ESFields::shortFieldObject($esfield,null,[]);
+
+		return $field_objects;
+	}
+	
+	public static function shortFieldObject(&$esfield,$value,$options)
+	{
+		$field = [];
+		$field['fieldname'] = $esfield['fieldname'];
+		$field['title'] = $esfield['fieldtitle'];
+		$field['defaultvalue'] = $esfield['defaultvalue'];
+		$field['description'] = $esfield['description'];
+		$field['isrequired'] = $esfield['isrequired'];
+		$field['isdisabled'] = $esfield['isdisabled'];
+		$field['type'] = $esfield['type'];
+		
+		$typeparams=JoomlaBasicMisc::csv_explode(',',$esfield['typeparams'],'"',false);
+		$field['typeparams'] = $typeparams;
+		$field['valuerule'] = $esfield['valuerule'];
+		$field['valuerulecaption'] = $esfield['valuerulecaption'];
+		
+		$field['value'] = $value;
+		
+		if(count($options) == 1 and $options[0] == '')
+			$field['options'] = null;
+		else
+			$field['options'] = $options;
+		
+		return $field;
+	}
 
 }

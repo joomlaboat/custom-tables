@@ -48,7 +48,7 @@ trait render_json
 		}
 
         $result=json_encode($records);
-
+/*
         //if($Model->clean)
         //{
         $filename = JoomlaBasicMisc::makeNewFileName($Model->params->get('page_title'),'json');
@@ -64,8 +64,8 @@ trait render_json
         echo $result;
         die ;//clean exit
         //}
-
-        return;
+*/
+        return $result;
     }
 
 }

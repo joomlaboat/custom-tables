@@ -93,39 +93,36 @@ $pagelayout=str_replace($catalogtablecode,$catalogtablecontent,$pagelayout);
 if($html_format)
     LayoutProcessor::applyContentPlugins($pagelayout);
 
-if($this->Model->clean==1)
+if($this->Model->frmt=='xml')
+{
+	if (ob_get_contents()) ob_end_clean();
+	
+    $filename = JoomlaBasicMisc::makeNewFileName($this->Model->params->get('page_title'),'xml');
+    header('Content-Disposition: attachment; filename="'.$filename.'"');
+    header('Content-Type: text/xml; charset=utf-8');
+    header("Pragma: no-cache");
+    header("Expires: 0");
+	echo $pagelayout;
+	die ;//clean exit
+}
+elseif($this->Model->frmt=='csv')
+{
+	if (ob_get_contents()) ob_end_clean();
+
+	$filename = JoomlaBasicMisc::makeNewFileName($this->Model->params->get('page_title'),'csv');
+    header('Content-Disposition: attachment; filename="'.$filename.'"');
+    header('Content-Type: text/csv; charset=utf-8');
+    header("Pragma: no-cache");
+    header("Expires: 0");
+
+    echo chr(255).chr(254).mb_convert_encoding($pagelayout, 'UTF-16LE', 'UTF-8');
+    die ;//clean exit
+}
+elseif($this->Model->clean==1)
 {
     if (ob_get_contents()) ob_end_clean();
     echo $pagelayout;
-
-    if($this->Model->frmt=='xml')
-    {
-        $filename = JoomlaBasicMisc::makeNewFileName($this->Model->params->get('page_title'),'xml');
-        header('Content-Disposition: attachment; filename="'.$filename.'"');
-        header('Content-Type: text/xml; charset=utf-8');
-        header("Pragma: no-cache");
-        header("Expires: 0");
-    }
-    
-
-    die ;//clean exit
+	die ;//clean exit
 }
-
-if($this->Model->clean==0 and $this->Model->frmt=='csv')
-{
-            $filename = JoomlaBasicMisc::makeNewFileName($this->Model->params->get('page_title'),'csv');
-
-            if (ob_get_contents())
-            	ob_end_clean();
-
-            header('Content-Disposition: attachment; filename="'.$filename.'"');
-            header('Content-Type: text/csv; charset=utf-8');
-            header("Pragma: no-cache");
-            header("Expires: 0");
-
-            echo chr(255).chr(254).mb_convert_encoding($pagelayout, 'UTF-16LE', 'UTF-8');
-
-            die ;//clean exit
-}
-
-echo $pagelayout;
+else
+	echo $pagelayout;

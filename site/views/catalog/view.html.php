@@ -29,8 +29,6 @@ class CustomTablesViewCatalog extends JViewLegacy
 		if(!isset($this->Model->esfields))
 				return false;
 
-        parent::display($tpl);
-
 		//Save view log
 		$allowedfields=$this->SaveViewLog_CheckIfNeeded();
 		if(count($allowedfields)>0)
@@ -39,7 +37,10 @@ class CustomTablesViewCatalog extends JViewLegacy
 				$this->SaveViewLogForRecord($rec,$allowedfields);
 		}
 
-		return;
+		if($this->Model->frmt == 'json')
+			require_once('tmpl'.DIRECTORY_SEPARATOR.'json.php');
+		else
+			parent::display($tpl);
 	}
 
 	function SaveViewLogForRecord($rec,$allowedfields)

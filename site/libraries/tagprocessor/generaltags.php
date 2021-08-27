@@ -111,7 +111,6 @@ class tagProcessor_General
 		{
             $vlu='';
 
-
             $opts=explode(',',$options[$i]);
             $extraopt='';
             if($default=='')
@@ -133,7 +132,8 @@ class tagProcessor_General
                 $vlu=$Model->tablerow['tabletitle'.$Model->langpostfix];
             elseif($task=='description')
                 $vlu=$Model->tablerow['description'.$Model->langpostfix];
-
+			elseif($task=='fields')
+                $vlu=json_encode(ESFields::shortFieldObjects($Model->esfields));
 
             if($extraopt=='box')
             {

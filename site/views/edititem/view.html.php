@@ -62,6 +62,9 @@ class CustomTablesViewEditItem extends JViewLegacy {
 		//Non need because submit button (settask function) does it.
 		$this->formAttribute='';// onsubmit="return checkRequiredFields(event);"';
 		
-		parent::display($tpl);
+		if($Model->frmt == 'json')
+			require_once('tmpl'.DIRECTORY_SEPARATOR.'json.php');
+		else
+			parent::display($tpl);
 	}
 }

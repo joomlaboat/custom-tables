@@ -31,33 +31,6 @@ class ESInputBox
 	
 	var $Model;
 
-
-	function shortFieldObject(&$esfield,$value,$options)
-	{
-		$field = [];
-		$field['fieldname'] = $esfield['fieldname'];
-		$field['title'] = $esfield['fieldtitle'];
-		$field['defaultvalue'] = $esfield['defaultvalue'];
-		$field['description'] = $esfield['description'];
-		$field['isrequired'] = $esfield['isrequired'];
-		$field['isdisabled'] = $esfield['isdisabled'];
-		$field['type'] = $esfield['type'];
-		
-		$typeparams=JoomlaBasicMisc::csv_explode(',',$esfield['typeparams'],'"',false);
-		$field['typeparams'] = $typeparams;
-		$field['valuerule'] = $esfield['valuerule'];
-		$field['valuerulecaption'] = $esfield['valuerulecaption'];
-		
-		$field['value'] = $value;
-		
-		if(count($options) == 1 and $options[0] == '')
-			$field['options'] = null;
-		else
-			$field['options'] = $options;
-		
-		return $field;
-	}
-
 	function renderFieldBox(&$Model,$prefix,&$esfield,&$row,$class_,$attributes='',$option_list)
 	{
 		$this->Model = $Model;
@@ -65,7 +38,7 @@ class ESInputBox
 		$realFieldName=$esfield['realfieldname'];
 
 		if($this->Model->frmt == 'json')
-			return ESInputBox::shortFieldObject($esfield,(isset($row[$realFieldName]) ? $row[$realFieldName] : null),$option_list);
+			return ESFields::shortFieldObject($esfield,(isset($row[$realFieldName]) ? $row[$realFieldName] : null),$option_list);
 		
 		$place_holder=$esfield['fieldtitle'.$this->langpostfix];
 		$class=$class_.' inputbox'.($esfield['isrequired'] ? ' required' : '');

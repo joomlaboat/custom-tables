@@ -65,8 +65,6 @@ class LayoutProcessor
 
 		$htmlresult=$this->layout;
 
-
-
 		if($this->advancedtagprocessor and !$disable_advanced_tags)
 		{
 			tagProcessor_If::process($this->Model,$htmlresult,$row,$this->recordlist,$this->number);
