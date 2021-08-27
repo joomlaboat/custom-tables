@@ -409,30 +409,30 @@ class tagProcessor_Edit
 		if($submitbuttons=='apply' or $submitbuttons=='saveandclose')
 		{
             //Save and close
-			$toolbar=tagProcessor_Edit::renderSaveAndCloseButton($captcha_found,$optional_class,$button1title,$redirectlink);
+			$toolbar=tagProcessor_Edit::renderSaveAndCloseButton($Model,$captcha_found,$optional_class,$button1title,$redirectlink);
 		}
 		elseif($submitbuttons=='nextprint' or $submitbuttons=='saveandprint')
 		{
             //Save and Open Print preview
-			$toolbar=tagProcessor_Edit::renderSaveAndPrintButton($captcha_found,$optional_class,$button1title,$redirectlink);
+			$toolbar=tagProcessor_Edit::renderSaveAndPrintButton($Model,$captcha_found,$optional_class,$button1title,$redirectlink);
 		}
         
 		elseif($submitbuttons=='savecancelsavenew' or $submitbuttons=='saveandclose.saveascopy.cancel')//savecancelsavenew - legacy support 
 		{
             //Save & Close / Save as New & Close / Cancel
-			$toolbar=tagProcessor_Edit::renderSaveAndCloseButton($captcha_found,$optional_class,$button1title,$redirectlink).' ';
+			$toolbar=tagProcessor_Edit::renderSaveAndCloseButton($Model,$captcha_found,$optional_class,$button1title,$redirectlink).' ';
             
             if($listing_id!=0)
-                $toolbar.=tagProcessor_Edit::renderSaveAsCopyButton($captcha_found,$optional_class,$button2title,$redirectlink);
+                $toolbar.=tagProcessor_Edit::renderSaveAsCopyButton($Model,$captcha_found,$optional_class,$button2title,$redirectlink);
                 
-            $toolbar.=tagProcessor_Edit::renderCancelButton($optional_class,$button3title,$redirectlink);
+            $toolbar.=tagProcessor_Edit::renderCancelButton($Model,$optional_class,$button3title,$redirectlink);
         }
         elseif($submitbuttons=='applysavecancel' or $submitbuttons=='save.saveandclose.cancel')//applysavecancel -  legacy support
         {
             //Save / Save & Close / Cancel
             $toolbar=tagProcessor_Edit::renderSaveButton($Model,$captcha_found,$optional_class,$button1title).' ';
-            $toolbar.=tagProcessor_Edit::renderSaveAndCloseButton($captcha_found,$optional_class,$button2title,$redirectlink).' ';
-            $toolbar.=tagProcessor_Edit::renderCancelButton($optional_class,$button3title,$redirectlink);
+            $toolbar.=tagProcessor_Edit::renderSaveAndCloseButton($Model,$captcha_found,$optional_class,$button2title,$redirectlink).' ';
+            $toolbar.=tagProcessor_Edit::renderCancelButton($Model,$optional_class,$button3title,$redirectlink);
 
 		}
         else
@@ -440,8 +440,8 @@ class tagProcessor_Edit
             //savecancel or saveandclose.cancel
             //Default
             //Save & Close / Save as New & Close / Cancel
-			$toolbar=tagProcessor_Edit::renderSaveAndCloseButton($captcha_found,$optional_class,$button1title,$redirectlink);
-            $toolbar.=tagProcessor_Edit::renderCancelButton($optional_class,$button3title,$redirectlink);
+			$toolbar=tagProcessor_Edit::renderSaveAndCloseButton($Model,$captcha_found,$optional_class,$button1title,$redirectlink);
+            $toolbar.=tagProcessor_Edit::renderCancelButton($Model,$optional_class,$button3title,$redirectlink);
         }
 
 		return $toolbar;

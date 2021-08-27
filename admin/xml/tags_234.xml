@@ -170,9 +170,10 @@
 
             <params>
                 <param name="option" label="Option" type="list" description="Select what to show.">
-                    <option value="title" label="Table Title" description="Returns current table title."/>
-                    <option value="description" label="Description" description="Returns current table description."/>
-					<option value="id" label="Table ID" description="Returns current table ID."/>
+			<option value="title" label="Table Title" description="Returns current table title."/>
+			<option value="description" label="Description" description="Returns current table description."/>
+			<option value="id" label="Table ID" description="Returns current table ID."/>
+			<option value="fields" label="Fields" description="Returns list of fields as JSON array."/>
                 </param>
                 <param name="box" label="Show in message box" description="Table title/description will appear in a messge type box with [X] close button." type="radio" default=""
                        options="|No,box|Yes"/>
@@ -217,6 +218,8 @@
              description="Includes the content of one layout to the parent layout." hidedefaultexample="0">
             <params>
                 <param name="layoutname" label="Layout Name" type="layout" description="Layout Name." examplenoquotes="0" example="my_script_layout"/>
+		<param name="process" label="Process content" description="Process content plugins such as Content - Email Cloaking etc." type="radio" default=""
+                       options="|No,process|Process"/>
             </params>
         </tag>
 

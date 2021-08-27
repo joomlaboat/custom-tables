@@ -22,7 +22,7 @@ JHtml::_('behavior.calendar');
 JHtml::_('bootstrap.popover');
 
 $document = JFactory::getDocument();
-$document->addScript(JURI::root(true).'/components/com_customtables/js/edit_227.js');
+$document->addScript(JURI::root(true).'/components/com_customtables/js/edit_234.js');
 $document->addScript(JURI::root(true).'/components/com_customtables/js/esmulti.js');
 
 if (!$this->Model->BlockExternalVars and $this->Model->params->get( 'show_page_heading', 1 ) ) : ?>
