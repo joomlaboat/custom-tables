@@ -183,7 +183,6 @@ class CustomtablesControllerTables extends JControllerForm
 /*
 	public function storepermissions($data = array())
 	{
-		$a=json_encode($_POST);
 	}
 */	
 

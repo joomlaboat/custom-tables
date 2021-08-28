@@ -25,38 +25,13 @@ class CustomTablesModelOptions extends JModelAdmin
 	public $typeAlias = 'com_customtables.options';
 
 	public $es;
-	public $imagefolder;//="images/esoptimages";
-/*
-	public function getForm($data = array(), $loadData = true)
-        {
-                // Get the form.
-
-                $form = $this->loadForm('com_customtables.options', 'options', array('control' => 'jform', 'load_data' => $loadData)); //$loadData
-                if (empty($form))
-                {
-                        return false;
-                }
-
-                return $form;
-        }
-		*/
+	public $imagefolder;//images/esoptimages
 
 	public function getTable($type = 'options', $prefix = 'CustomtablesTable', $config = array())
 	{
 		return JTable::getInstance($type, $prefix, $config);
 	}
-/*
-    function __construct()
-    {
-		parent::__construct();
-		//$array = JRequest::getVar('cid',  0, '', 'array');
-		$id = JFactory::getApplication()->input->get('id', 0, 'INT');
 
-		$this->setId((int)$id);
-
-		$this->es= new CustomTablesMisc;
-    }
-*/
 	public function getItem($pk = null)
 	{
 
@@ -88,15 +63,6 @@ class CustomTablesModelOptions extends JModelAdmin
 
 		return $item;
 	}
-/*
-	function setId($id)
-	{
-		// Set id and wipe data
-
-		$this->_id	= $id;
-		$this->_data	= null;
-	}
-	*/
 
 	public function getForm($data = array(), $loadData = true)
 	{
@@ -180,27 +146,7 @@ class CustomTablesModelOptions extends JModelAdmin
 	{
 		//return JURI::root(true).'/administrator/components/com_customtables/models/forms/options.js';
 	}
-/*
-	function &getData()
-	{
-		$db = JFactory::getDBO();
 
-		$query = 'SELECT * FROM #__customtables_options AS s WHERE id='.(int)$this->_id;
-
-		$db->setQuery( $query );
-		if (!$db->query())    die ( $db->stderr());
-
-		$rows = $db->loadObjectList();
-		if(count($rows)==0)
-		{
-			$row=array();
-			return $row;
-		}
-
-		return $rows[0];
-	}
-
-*/
 	protected function canDelete($record)
 	{
 		if (!empty($record->id))
@@ -272,28 +218,6 @@ class CustomTablesModelOptions extends JModelAdmin
 		$filter	= JFilterInput::getInstance();
 
 		$db = JFactory::getDBO();
-		// set the metadata to the Item Data
-		/*
-		if (isset($data['metadata']) && isset($data['metadata']['author']))
-		{
-			$data['metadata']['author'] = $filter->clean($data['metadata']['author'], 'TRIM');
-
-			$metadata = new JRegistry;
-			$metadata->loadArray($data['metadata']);
-			$data['metadata'] = (string) $metadata;
-		}
-        */
-		// Set the Params Items to data
-		/*
-		if (isset($data['params']) && is_array($data['params']))
-		{
-			$params = new JRegistry;
-			$params->loadArray($data['params']);
-			$data['params'] = (string) $params;
-		}
-		*/
-
-
 
 		$data_extra = JFactory::getApplication()->input->get( 'jform',array(),'ARRAY');
 
@@ -346,7 +270,9 @@ class CustomTablesModelOptions extends JModelAdmin
 
 	function deleteItem()
 	{
-		$cids = JRequest::getVar( 'cid', array(0), 'post', 'array' );
+		$input	= JFactory::getApplication()->input;
+		$cids = $input->post('cid',array(),'ARRAY');
+		
 		$row =& $this->getTable();
 
 		if (count( $cids ))
@@ -361,6 +287,4 @@ class CustomTablesModelOptions extends JModelAdmin
 		}
 		return true;
 	}
-
-
 }

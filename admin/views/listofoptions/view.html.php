@@ -18,17 +18,10 @@ jimport('joomla.application.component.view');
 
 class CustomTablesViewListOfOptions extends JViewLegacy
 {
-	//var $_name = 'list';
 	var $languages;
 
 	function display($tpl=null)
 	{
-
-		//$mainframe = JFactory::getApplication();
-
-		//$this->_layout = 'default';
-
-
 		// Set toolbar items for the page
 		CustomtablesHelper::addSubmenu('Options');
 		
@@ -42,7 +35,9 @@ class CustomTablesViewListOfOptions extends JViewLegacy
 		$document =  JFactory::getDocument();
 		$document->setTitle(JText::_('View List Items'));
 
-		$limitstart = JRequest::getVar('limitstart', '0', '', 'int');
+		$input	= JFactory::getApplication()->input;
+
+		$limitstart = $input->getInt('limitstart', '0');
 		$items		= $this->get('Items');
 		$pagination	= $this->get('Pagination');
 		$lists		= $this->_getViewLists();
@@ -79,7 +74,7 @@ class CustomTablesViewListOfOptions extends JViewLegacy
 
 
 	protected function addToolBar()
-        {
+    {
 		JToolBarHelper::title( JText::_( 'Custom Tables - List' ), 'menu.png' );
 
 
@@ -88,10 +83,7 @@ class CustomTablesViewListOfOptions extends JViewLegacy
 
 		JToolBarHelper::custom( 'listofoptions.copy', 'copy.png', 'copy_f2.png', 'Copy', true);
 		JToolBarHelper::deleteList('', 'listofoptions.delete');
-
-        }
-
-
+	}
 
 	function &_getViewLists()
 	{

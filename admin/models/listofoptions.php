@@ -17,8 +17,6 @@ require_once (JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR
 
 class CustomTablesModelListOfOptions extends JModelList
 {
-
-	/** @var object JTable object */
 	var $_table = null;
 
 	var $_pagination = null;
@@ -84,21 +82,11 @@ class CustomTablesModelListOfOptions extends JModelList
    		$WhereStr='';
 		if(count($where)>0)
 		{
-
-			//foreach($where  as $and)
-			//{
-			//	if($WhereStr!='')$WhereStr.=' AND ';
-			//
-			//	$WhereStr.=$and;
-			//}
 			$WhereStr=' WHERE '.implode(' AND ',$where);//$WhereStr;
-
 		}
 
 		$LangMisc	= new ESLanguages;
 		$titlelist='title'.$LangMisc->getLangPostfix();
-
-		//$query = 'SELECT m.id AS id, m.optionname AS name, '.$titlelist.' , m.ordering AS ordering, m.isselectable AS isselectable, '.
 
 		$query = 'SELECT m.*, parentid AS parent_id, title AS title ' .
 				' FROM #__customtables_options AS m' .
@@ -121,8 +109,6 @@ class CustomTablesModelListOfOptions extends JModelList
 		}
 
 		// second pass - get an indent list of the items
-		
-		
 
 		$list = JHTML::_('menu.treerecurse', 0, '', array(), $children, max( 0, $levellimit-1 ) );
 		$list = $this->treerecurse(0, '', array(), $children, max( 0, $levellimit-1 ) );
@@ -193,7 +179,6 @@ class CustomTablesModelListOfOptions extends JModelList
         return $list;
 	}
 
-
 	function &getPagination()
 	{
 		if ($this->_pagination == null) {
@@ -202,13 +187,8 @@ class CustomTablesModelListOfOptions extends JModelList
 		return $this->_pagination;
 	}
 
-
-
-
 	function orderItem($item, $movement)
 	{
-
-
 		$row =& JTable::getInstance('List', 'Table');
 		$row->load( $item );
 
@@ -216,18 +196,18 @@ class CustomTablesModelListOfOptions extends JModelList
 			$this->setError($row->getError());
 			return false;
 		}
-
-
 		return true;
 	}
-
 
 	function setOrder($items)
 	{
 		$total		= count( $items );
 		$row 		=& JTable::getInstance('List', 'Table');
 		$groupings	= array();
-		$order		= JRequest::getVar( 'order', array(), 'post', 'array' );
+		
+		$input	= JFactory::getApplication()->input;
+		$order = $input->post( 'order',array(),'ARRAY');
+		
 		JArrayHelper::toInteger($order);
 		// update ordering values
 		for( $i=0; $i < $total; $i++ )
@@ -246,8 +226,6 @@ class CustomTablesModelListOfOptions extends JModelList
 				}
 			} // if
 		} // for
-
-
 
 		// execute updateOrder for each parentid group
 		$groupings = array_unique( $groupings );
@@ -285,11 +263,8 @@ class CustomTablesModelListOfOptions extends JModelList
 			$query = 'DELETE FROM #__customtables_options ' . $where;
 			$db->execute();
 		}
-
-
 		return true;
 	}
-
 
 	function _addChildren($id, &$list)
 	{
@@ -329,6 +304,7 @@ class CustomTablesModelListOfOptions extends JModelList
 		}
 		return $return;
 	}
+	
 	/*
 	 * Rebuild the sublevel field for items in the menu (if called with 2nd param = 0 or no params, it will rebuild entire menu tree's sublevel
 	 * @param array of menu item ids to change level to
@@ -363,9 +339,6 @@ class CustomTablesModelListOfOptions extends JModelList
 		}
 	}
 
-
-
-
 	function GetNewParentID($parentid,&$AssociatedTable)
 	{
 		foreach($AssociatedTable as $Ass)
@@ -376,8 +349,6 @@ class CustomTablesModelListOfOptions extends JModelList
 		return -1;
 	}
 
-
-
 	function getAllRootParents()
 	{
 		$db = JFactory::getDBO();
@@ -387,33 +358,26 @@ class CustomTablesModelListOfOptions extends JModelList
 		$available_rootparents = $db->loadObjectList();
 		CustomTablesMisc::array_insert($available_rootparents,array("id" => 0, "optionname" => JText::_( '-Select Parent' ), "parent_id" =>0),0);
 		return $available_rootparents;
-
 	}
 
 	function copyItem($cid)
 	{
-
 	    $item =& $this->getTable();
-
 
 	    foreach( $cid as $id )
 	    {
+			$item->load( $id );
+			$item->id 	= NULL;
+			$item->optionname 	= 'Copy of '.$item->optionname;
 
-		$item->load( $id );
-		$item->id 	= NULL;
-		$item->optionname 	= 'Copy of '.$item->optionname;
+			if (!$item->check()) {
+				JFactory::getApplication()->enqueueMessage($item->getError(), 'error');
+			}
 
-
-
-		if (!$item->check()) {
-			JError::raiseError(500, $item->getError());
-		}
-
-		if (!$item->store()) {
-			JError::raiseError(500, $item->getError());
-		}
-		$item->checkin();
-
+			if (!$item->store()) {
+				JFactory::getApplication()->enqueueMessage($item->getError(), 'error');
+			}
+			$item->checkin();
 	    }
 	    return true;
 	}
@@ -440,9 +404,6 @@ class CustomTablesModelListOfOptions extends JModelList
 			$db->setQuery( $uquery );
 			$db->execute();
 		}
-
 		return true;
 	}
-
-
 }

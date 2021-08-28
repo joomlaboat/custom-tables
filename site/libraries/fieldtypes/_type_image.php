@@ -244,7 +244,7 @@ class CT_FieldTypeTag_image
                         ct_eventsmessage_element="ct_eventsmessage";
                         tempFileName="'.$fileid.'";
                         fieldValueInputBox="'.$prefix.$esfieldname.'";
-                    	var urlstr="/index.php?option=com_customtables&view=fileuploader&tmpl=component&'.$esfieldname.'_fileid='.$fileid.'&Itemid='.$Itemid.'&fieldname='.$esfieldname.'";
+                    	var urlstr="'.JURI::root(true).'/index.php?option=com_customtables&view=fileuploader&tmpl=component&'.$esfieldname.'_fileid='.$fileid.'&Itemid='.$Itemid.'&fieldname='.$esfieldname.'";
                     	ct_getUploader('.$fieldid.',urlstr,'.$max_file_size.',"jpg jpeg png gif svg webp","eseditForm",false,"ct_fileuploader_'.$esfieldname.'","ct_eventsmessage_'.$esfieldname.'","'.$fileid.'","'.$prefix.$esfieldname.'","ct_ubloadedfile_box_'.$esfieldname.'");
 
                     </script>

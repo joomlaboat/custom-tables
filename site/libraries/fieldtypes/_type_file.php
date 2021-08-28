@@ -411,15 +411,15 @@ class CT_FieldTypeTag_file
 
         $FileFolder=CT_FieldTypeTag_file::getFileFolder($esfield['typeparams']);
 
-                $link=$FileFolder.'/'.$file;
+        $link=$FileFolder.'/'.$file;
 
-                $parts=explode('.',$file);
-                $fileextension=end($parts);
+        $parts=explode('.',$file);
+        $fileextension=end($parts);
 
-                $imagesrc='/components/com_customtables/images/fileformats/48px/'.$fileextension.'.png';
+        $imagesrc=JURI::root(true).'/components/com_customtables/images/fileformats/48px/'.$fileextension.'.png';
 
-                $prefix='comes_';
-                $result='
+        $prefix='comes_';
+        $result='
                 <div style="margin:10px; border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;vertical-align:top;" id="ct_uploadedfile_box_'.$esfield['fieldname'].'">';
 
 						    $result.='<a href="'.$link.'" target="_blank" alt="'.$file.'" title="'.$file.'"><img src="'.$imagesrc.'" width="48" /></a><br/>';
@@ -428,10 +428,10 @@ class CT_FieldTypeTag_file
 								$result.='<input type="checkbox" name="'.$prefix.$esfield['fieldname'].'_delete" id="'.$prefix.$esfield['fieldname'].'_delete" value="true">'
 								.' Delete File';
 
-				$result.='
+		$result.='
                 </div>';
 
-            return $result;
+        return $result;
     }
 
     protected static function renderUploader($fieldid,$esfieldname,$typeparams)
@@ -454,7 +454,7 @@ class CT_FieldTypeTag_file
                 	<script>
                         UploadFileCount=1;
 
-                    	var urlstr="/index.php?option=com_customtables&view=fileuploader&tmpl=component&'.$esfieldname.'_fileid='.$fileid.'&Itemid='.$Itemid.'&fieldname='.$esfieldname.'";
+                    	var urlstr="'.JURI::root(true).'/index.php?option=com_customtables&view=fileuploader&tmpl=component&'.$esfieldname.'_fileid='.$fileid.'&Itemid='.$Itemid.'&fieldname='.$esfieldname.'";
                     	ct_getUploader('.$fieldid.',urlstr,'.$max_file_size.',"'.$accepted_file_types.'","eseditForm",false,"ct_fileuploader_'.$esfieldname.'","ct_eventsmessage_'.$esfieldname.'","'.$fileid.'","'.$prefix.$esfieldname.'","ct_ubloadedfile_box_'.$esfieldname.'");
                     </script>
                     <input type="hidden" name="'.$prefix.$esfieldname.'" id="'.$prefix.$esfieldname.'" value="" />
@@ -469,13 +469,11 @@ class CT_FieldTypeTag_file
 	
 	public static function getFileFolder($typeparams)
     {
-
         $folder='';
         $pair=explode(',',$typeparams);
 
 		if(isset($pair[1]))
 			$folder=$pair[1];
-
         
 		if($folder=='')
 			$folder='/images';	//default folder
@@ -502,22 +500,19 @@ class CT_FieldTypeTag_file
 			$p=substr($folder,strlen($folder)-1,1);
 			if($p=='/')
 				$folder=substr($folder,0,strlen($folder)-1);
-
 			
 			$folderPath=JPATH_SITE.str_replace('/',DIRECTORY_SEPARATOR,$folder); //relative path
 			//Create folder if not exists
 			if (!file_exists($folderPath))
 				mkdir($folderPath, 0755, true);
 		}
-
 		return $folder;
     }
-
     
     public static function wrong()
     {
-    		JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
-			return false;
+    	JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
+		return false;
     }
 
     public static function process_file_link($filename)
@@ -609,9 +604,5 @@ class CT_FieldTypeTag_file
         $m4=$m3.$m2;
 
         return $m4;
-
     }
-
-
-
 }
