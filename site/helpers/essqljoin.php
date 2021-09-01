@@ -65,6 +65,8 @@ class JHTMLESSqlJoin
 		{
 			if($typeparams[6]=='radio')
 				$selector='radio';
+			if($typeparams[6]=='json')
+				$selector='json';
 			else
 				$selector='dropdown';
 		}
@@ -98,6 +100,18 @@ class JHTMLESSqlJoin
         {
 			$htmlresult.=JHTMLESSqlJoin::renderPrintResult($list_values,$value,$control_name);
         }
+		elseif($selector=='json')
+		{
+			//$list_value[0] - value
+			//$list_value[1] - title
+			//$list_value[2] - published
+			//$list_value[3] - filter
+			$new_list = [];
+			foreach($list_values as $value)
+				$new_list[] = (object)['value' => $value[0], 'title' => $value[1]];
+			
+			return $new_list;
+		}
 		elseif($selector=='dropdown' or $force_dropdown or $dynamic_filter)
         {
 			$htmlresult.=JHTMLESSqlJoin::renderDynamicFilter($value,$SearchResults,$establename,$dynamic_filter,$control_name);

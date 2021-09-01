@@ -38,11 +38,43 @@ class ESInputBox
 		$realFieldName=$esfield['realfieldname'];
 
 		if($this->Model->frmt == 'json')
-			return ESFields::shortFieldObject($esfield,(isset($row[$realFieldName]) ? $row[$realFieldName] : null),$option_list);
+		{
+			//This is the field options for JSON output
+			
+			$shortFieldObject = ESFields::shortFieldObject($esfield,(isset($row[$realFieldName]) ? $row[$realFieldName] : null),$option_list);
+			
+			if($esfield['type'] == 'sqljoin')
+			{
+				$typeparams=JoomlaBasicMisc::csv_explode(',',$esfield['typeparams'],'"',false);
+							
+				if(isset($option_list[2]) and $option_list[2]!='')
+					$typeparams[2]=$option_list[2];//Overwrites field type filter parameter.
+				
+				$typeparams[6] = 'json'; // to get the Object instead of the HTML element.
+				
+				$attributes = '';
+				$value = '';
+				$place_holder = '';
+				$class = '';
+
+				$list_of_values = JHTML::_('ESSQLJoin.render',
+											  $typeparams,
+											  $value,
+											  false,
+											  $this->langpostfix,
+											  $prefix.$esfield['fieldname'],
+											  $place_holder,
+											  $class,
+											  $attributes);
+			
+				$shortFieldObject['value_options'] = $list_of_values;
+			}
+			
+			return $shortFieldObject;
+		}
 		
 		$place_holder=$esfield['fieldtitle'.$this->langpostfix];
 		$class=$class_.' inputbox'.($esfield['isrequired'] ? ' required' : '');
-
 		
 		$result='';
 		$value='';
@@ -117,6 +149,7 @@ class ESInputBox
 							$result.='</tr></table>';
 
 							break;
+
 						case 'int':
 							
 							if(count($row)==0)
@@ -126,7 +159,6 @@ class ESInputBox
 								$value=(int)$esfield['defaultvalue'];
 							else
 								$value=(int)$value;
-
 							
 							$result.='<input '
 								.'type="text" '
@@ -410,8 +442,6 @@ class ESInputBox
 
 							if($value=='')
 								$value=$esfield['defaultvalue'];
-
-
 
 							if($value=='')
 								$value='';

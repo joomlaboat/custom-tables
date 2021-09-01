@@ -21,6 +21,9 @@ if($layout_catalog_name!='')
 {
     $layouttype=0;
 	$pagelayout=ESLayouts::getLayout($layout_catalog_name,$layouttype,$processLayoutTag = false); //It is safier to process layout after rendering the table
+	$pagelayout=str_replace("\n",'',$pagelayout);
+	$pagelayout=str_replace("\r",'',$pagelayout);
+	$pagelayout=str_replace("\t",'',$pagelayout);
 }
 else
     $pagelayout='{catalog:,notable}';
@@ -33,6 +36,9 @@ if($layout_item_name!='')
 {
     $layouttype=0;
 	$itemlayout=ESLayouts::getLayout($layout_item_name,$layouttype);
+	$itemlayout=str_replace("\n",'',$itemlayout);
+	$itemlayout=str_replace("\r",'',$itemlayout);
+	$itemlayout=str_replace("\t",'',$itemlayout);
 }
 
 $catalogtablecode=JoomlaBasicMisc::generateRandomString();//this is temporary replace place holder. to not parse content result again
@@ -42,6 +48,9 @@ if($catalogtablecontent=='')
 {
 	$this->Model->LayoutProc->layout=$itemlayout;
 	$catalogtablecontent=tagProcessor_Catalog::process($this->Model,$pagelayout,$this->SearchResult,$catalogtablecode);
+	$catalogtablecontent=str_replace("\n",'',$catalogtablecontent);
+	$catalogtablecontent=str_replace("\r",'',$catalogtablecontent);
+	$catalogtablecontent=str_replace("\t",'',$catalogtablecontent);
 }
 
 $this->Model->LayoutProc->layout=$pagelayout;
