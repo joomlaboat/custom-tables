@@ -17,38 +17,11 @@ $edit = "index.php?option=com_customtables&view=listofcategories&task=categories
 	<?php
 		$canCheckin = $this->user->authorise('core.manage', 'com_checkin') || $item->checked_out == $this->user->id || $item->checked_out == 0;
 		$userChkOut = JFactory::getUser($item->checked_out);
-		$canDo = CustomtablesHelper::getActions('categories',$item,'listofcategories');
 	?>
 	<tr class="row<?php echo $i % 2; ?>">
-	<?php /*
-		<td class="order nowrap center hidden-phone">
-		<?php if ($canDo->get('core.edit.state')): ?>
-			<?php
-				if ($this->saveOrder)
-				{
-					$iconClass = ' inactive';
-				}
-				else
-				{
-					$iconClass = ' inactive tip-top" hasTooltip" title="' . JHtml::tooltipText('JORDERINGDISABLED');
-				}
-			?>
-			<span class="sortable-handler<?php echo $iconClass; ?>">
-				<i class="icon-menu"></i>
-			</span>
-			<?php if ($this->saveOrder) : ?>
-				<input type="text" style="display:none" name="order[]" size="5"
-				value="<?php echo $item->ordering; ?>" class="width-20 text-area-order " />
-			<?php endif; ?>
-		<?php else: ?>
-			&#8942;
-		<?php endif; ?>
-		</td>
-		
-		*/ ?>
-		
+	
 		<td class="nowrap center">
-		<?php if ($canDo->get('core.edit')): ?>
+		<?php if ($this->canEdit): ?>
 				<?php if ($item->checked_out) : ?>
 					<?php if ($canCheckin) : ?>
 						<?php echo JHtml::_('grid.id', $i, $item->id); ?>
@@ -58,13 +31,11 @@ $edit = "index.php?option=com_customtables&view=listofcategories&task=categories
 				<?php else: ?>
 					<?php echo JHtml::_('grid.id', $i, $item->id); ?>
 				<?php endif; ?>
-		<?php else: ?>
-			&#9633;
 		<?php endif; ?>
 		</td>
 		<td class="nowrap">
 			<div class="name">
-				<?php if ($canDo->get('core.edit')): ?>
+				<?php if ($this->canEdit): ?>
 					<a href="<?php echo $edit; ?>&id=<?php echo $item->id; ?>"><?php echo $this->escape($item->categoryname); ?></a>
 					<?php if ($item->checked_out): ?>
 						<?php echo JHtml::_('jgrid.checkedout', $i, $userChkOut->name, $item->checked_out_time, 'listofcategories.', $canCheckin); ?>
@@ -75,7 +46,7 @@ $edit = "index.php?option=com_customtables&view=listofcategories&task=categories
 			</div>
 		</td>
 		<td class="center">
-		<?php if ($canDo->get('core.edit.state')) : ?>
+		<?php if ($this->canState) : ?>
 				<?php if ($item->checked_out) : ?>
 					<?php if ($canCheckin) : ?>
 						<?php echo JHtml::_('jgrid.published', $item->published, $i, 'listofcategories.', true, 'cb'); ?>

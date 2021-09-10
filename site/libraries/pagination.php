@@ -409,7 +409,8 @@ class JESPagination extends JObject
 		$selected = $this->_viewall ? 0 : $this->limit;
 
 		// Build the select list.
-		if ($app->isAdmin()) {
+		if($app->isClient('administrator'))
+		{
 			$html = JHtml::_('select.genericlist',  $limits, $this->prefix . 'limit', 'class="inputbox" size="1" onchange="Joomla.submitform();"', 'value', 'text', $selected);
 		}
 		else {
@@ -522,7 +523,7 @@ class JESPagination extends JObject
 	protected function _item_active(&$item)
 	{
 		$app = JFactory::getApplication();
-		if ($app->isAdmin())
+		if($app->isClient('administrator'))
 		{
 			if ($item->base > 0) {
 				return "<a title=\"".$item->text."\" onclick=\"document.adminForm." . $this->prefix . "start.value=".$item->base."; Joomla.submitform();return false;\">".$item->text."</a>";
@@ -547,12 +548,10 @@ class JESPagination extends JObject
 	protected function _item_inactive(&$item)
 	{
 		$app = JFactory::getApplication();
-		if ($app->isAdmin()) {
+		if($app->isClient('administrator'))
 			return "<span>".$item->text."</span>";
-		}
-		else {
+		else
 			return "<span class=\"pagenav\">".$item->text."</span>";
-		}
 	}
 
 	/**

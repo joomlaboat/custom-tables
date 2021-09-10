@@ -16,6 +16,7 @@ JHtml::_('behavior.multiselect');
 JHtml::_('dropdown.init');
 JHtml::_('formbehavior.chosen', 'select');
 
+/*
 if ($this->saveOrder)
 {
 	$saveOrderingUrl = 'index.php?option=com_customtables&task=listoftables.saveOrderAjax&tmpl=component';
@@ -41,7 +42,7 @@ if ($this->saveOrder)
 	};
 </script>
 
-
+*/ ?>
 
 <form action="<?php echo JRoute::_('index.php?option=com_customtables&view=listoftables'); ?>" method="post" name="adminForm" id="adminForm">
 <?php if(!empty( $this->sidebar)): ?>

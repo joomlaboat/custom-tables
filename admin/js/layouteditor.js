@@ -154,8 +154,10 @@ function loadTags(type_id,tags_box)
                     return;
                 }
                 //tags_box_obj.innerHTML='Loaded.';
-                var s=Array.from(xmlToJson(xmlDoc));
-                layout_tags=s[0].layouts.tagset;
+                //var s=Array.from(xmlToJson(xmlDoc));
+				var s = xmlToJson(xmlDoc);
+				
+                layout_tags=s.layouts.tagset;
 
                 layout_tags_loaded=true;
                 loadTagParams(type_id,tags_box);

@@ -503,12 +503,8 @@ class CustomTablesKeywordSearch
 				if(count($ordering)>0)
 						$query.=' ORDER BY '.implode(',',$ordering);
 
-
 				$db->setQuery($query);
-//				if (!$db->query())    die ;
-
 				$rows=$db->loadAssocList();
-
 
 				foreach($rows as $row)
 				{

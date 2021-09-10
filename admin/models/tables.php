@@ -682,7 +682,7 @@ class CustomtablesModelTables extends JModelAdmin
 		$query = 'SELECT id FROM #__customtables_tables WHERE tablename='.$db->quote($tablename).' LIMIT 1';
 		
 		$db->setQuery( $query );
-		if (!$db->query())    die ( $db->stderr());
+
 		$rows=$db->loadAssocList();
 		if(count($rows)!=1)
 			return 0;
@@ -743,7 +743,7 @@ class CustomtablesModelTables extends JModelAdmin
 
 		$query = 'SELECT * FROM #__customtables_fields WHERE published=1 AND tableid='.$originaltableid;
 		$db->setQuery( $query );
-		if (!$db->query())    die ( $db->stderr());
+
 		$rows=$db->loadAssocList();
 
 		if(count($rows)==0)

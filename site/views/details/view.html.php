@@ -28,68 +28,54 @@ class CustomTablesViewDetails extends JViewLegacy {
 		if(!isset($this->Model->LayoutProc))
 			return;
 
-		$app		= JFactory::getApplication();
-		$params=$app->getParams();
-
-
-		$this->assignRef('params',$params);
+		$app = JFactory::getApplication();
+		$this->params = $app->getParams();
 
 		$layout_catalog='';
 
-
-		if($params->get('esdetailslayout')!='')
+		if($this->params->get('esdetailslayout')!='')
 		{
 			$layouttype=0;
-			$layout_catalog=ESLayouts::getLayout($params->get('esdetailslayout'),$layouttype);
-				if($layouttype==8)
-        $this->Model->frmt='xml';
-    elseif($layouttype==9)
-        $this->Model->frmt='csv';
-    elseif($layouttype==10)
-        $this->Model->frmt='json';
+			$layout_catalog=ESLayouts::getLayout($this->params->get('esdetailslayout'),$layouttype);
+				
+			if($layouttype==8)
+				$this->Model->frmt='xml';
+			elseif($layouttype==9)
+				$this->Model->frmt='csv';
+			elseif($layouttype==10)
+				$this->Model->frmt='json';
 
 			$this->Model->LayoutProc->layout=$layout_catalog;
 		}
 
-
-
-
-
 		$this->row = $this->get('Data');
-
 
 		if(count($this->row)>0)
 		{
-
-
 			if((!isset($this->row['listing_id']) or (int)$this->row['listing_id']==0) and $this->Model->redirectto!='')
 			{
 				$mainframe->redirect($this->Model->redirectto);
 			}
 
-
 			if ($this->Model->print)
 			{
-
 				$document	= JFactory::getDocument();
 				$document->setMetaData('robots', 'noindex, nofollow');
 			}
 
-
-
-			$AllowPrint=(bool)$params->get('allowprint');
-			$this->assignRef('AllowPrint', $AllowPrint);
+			$this->AllowPrint=(bool)$this->params->get('allowprint');
 
 			$this->current_url=JoomlaBasicMisc::curPageURL();
 
 			$this->imagegalleries=array();
 			$this->useridfieldname='';
+
 			foreach($this->Model->esfields as $mFld)
 			{
 				if($mFld['type']=='imagegallery')
 					$this->imagegalleries[]=array($mFld['fieldname'],$mFld['fieldtitle'.$this->Model->langpostfix]);
 
-    if($mFld['type']=='filebox')
+				if($mFld['type']=='filebox')
 					$this->fileboxes[]=array($mFld['fieldname'],$mFld['fieldtitle'.$this->Model->langpostfix]);
 
 				if($mFld['type']=='userid')

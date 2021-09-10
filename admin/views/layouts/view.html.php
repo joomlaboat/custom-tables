@@ -11,9 +11,8 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
-// import Joomla view library
-jimport('joomla.application.component.view');
-
+use Joomla\CMS\Helper\ContentHelper;
+use Joomla\CMS\Version;
 /**
  * Layouts View class
  */
@@ -25,17 +24,25 @@ class CustomtablesViewLayouts extends JViewLegacy
 	 */
 	public function display($tpl = null)
 	{
+		$version = new Version;
+		$this->version = (int)$version->getShortVersion();
+		
 		// Assign the variables
 		$this->form = $this->get('Form');
 		$this->item = $this->get('Item');
 		$this->script = $this->get('Script');
 		$this->state = $this->get('State');
 		// get action permissions
-		$this->canDo = CustomtablesHelper::getActions('layouts',$this->item);
+
+		$this->canDo = ContentHelper::getActions('com_customtables', 'tables',$this->item->id);
+		$this->canCreate = $this->canDo->get('layouts.create');
+		$this->canEdit = $this->canDo->get('layouts.edit');
+		
 		// get input
+		
 		$jinput = JFactory::getApplication()->input;
-		$this->ref = JFactory::getApplication()->input->get('ref', 0, 'word');
-		$this->refid = JFactory::getApplication()->input->get('refid', 0, 'int');
+		$this->ref = $jinput->get('ref', 0, 'word');
+		$this->refid = $jinput->get('refid', 0, 'int');
 		$this->referral = '';
 		if ($this->refid)
 		{
@@ -77,14 +84,15 @@ class CustomtablesViewLayouts extends JViewLegacy
 
 		JToolbarHelper::title( JText::_($isNew ? 'COM_CUSTOMTABLES_LAYOUTS_NEW' : 'COM_CUSTOMTABLES_LAYOUTS_EDIT'), 'pencil-2 article-add');
 		// Built the actions for new and existing records.
+		/*
 		if ($this->refid || $this->ref)
 		{
-			if ($this->canDo->get('core.create') && $isNew)
+			if ($this->canCreate && $isNew)
 			{
 				// We can create the record.
 				JToolBarHelper::save('layouts.save', 'JTOOLBAR_SAVE');
 			}
-			elseif ($this->canDo->get('core.edit'))
+			elseif ($this->canEdit)
 			{
 				// We can save the record.
 				JToolBarHelper::save('layouts.save', 'JTOOLBAR_SAVE');
@@ -102,10 +110,11 @@ class CustomtablesViewLayouts extends JViewLegacy
 		}
 		else
 		{
+			*/
 			if ($isNew)
 			{
 				// For new records, check the create permission.
-				if ($this->canDo->get('core.create'))
+				if ($this->canCreate)
 				{
 					JToolBarHelper::apply('layouts.apply', 'JTOOLBAR_APPLY');
 					JToolBarHelper::save('layouts.save', 'JTOOLBAR_SAVE');
@@ -120,19 +129,19 @@ class CustomtablesViewLayouts extends JViewLegacy
 			}
 			else
 			{
-				if ($this->canDo->get('core.edit'))
+				if ($this->canEdit)
 				{
 					// We can save the new record
 					JToolBarHelper::apply('layouts.apply', 'JTOOLBAR_APPLY');
 					JToolBarHelper::save('layouts.save', 'JTOOLBAR_SAVE');
 					// We can save this record, but check the create permission to see
 					// if we can return to make a new one.
-					if ($this->canDo->get('core.create'))
+					if ($this->canCreate)
 					{
 						JToolBarHelper::custom('layouts.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
 					}
 				}
-				if ($this->canDo->get('core.create'))
+				if ($this->canCreate)
 				{
 					JToolBarHelper::custom('layouts.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
 				}
@@ -144,14 +153,14 @@ class CustomtablesViewLayouts extends JViewLegacy
 				
 				JToolBarHelper::cancel('layouts.cancel', 'JTOOLBAR_CLOSE');
 			}
-		}
+		//}
 		JToolbarHelper::divider();
 		// set help url for this view if found
-		$help_url = CustomtablesHelper::getHelpUrl('layouts');
-		if (CustomtablesHelper::checkString($help_url))
-		{
-			JToolbarHelper::help('COM_CUSTOMTABLES_HELP_MANAGER', false, $help_url);
-		}
+		//$help_url = CustomtablesHelper::getHelpUrl('layouts');
+		//if (CustomtablesHelper::checkString($help_url))
+		//{
+			//JToolbarHelper::help('COM_CUSTOMTABLES_HELP_MANAGER', false, $help_url);
+		//}
 	}
 
 	/**
@@ -181,11 +190,12 @@ class CustomtablesViewLayouts extends JViewLegacy
 	{
 		$isNew = ($this->item->id < 1);
 		if (!isset($this->document))
-		{
 			$this->document = JFactory::getDocument();
-		}
+		
 		$this->document->setTitle(JText::_($isNew ? 'COM_CUSTOMTABLES_LAYOUTS_NEW' : 'COM_CUSTOMTABLES_LAYOUTS_EDIT'));
-		$this->document->addScript(JURI::root(true)."/administrator/components/com_customtables/views/layouts/submitbutton.js", (CustomtablesHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/javascript'); 
+
+		$this->document->addScript(JURI::root(true)."/administrator/components/com_customtables/views/layouts/submitbutton.js"); 
+			
 		JText::script('view not acceptable. Error');
 	}
 	
@@ -249,7 +259,7 @@ class CustomtablesViewLayouts extends JViewLegacy
 			$query='SELECT id,title FROM #__menu WHERE '.implode(' OR ',$where);
 
 			$db->setQuery( $query );
-			if (!$db->query())    die( $db->stderr());
+
 			$recs = $db->loadAssocList( );
 			
 			if(count($recs)>0)

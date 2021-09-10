@@ -12,6 +12,8 @@ defined('_JEXEC') or die('Restricted access');
 // import Joomla view library
 jimport('joomla.application.component.view');
 
+use Joomla\CMS\Version;
+
 /**
  * Tables View class
  */
@@ -25,6 +27,9 @@ class CustomtablesViewDocumentation extends JViewLegacy
 	
 	public function display($tpl = null)
 	{
+		$version = new Version;
+		$this->version = (int)$version->getShortVersion();
+		
 		$this->internal_use=true;
 
 		if ($this->getLayout() !== 'modal')
@@ -32,9 +37,10 @@ class CustomtablesViewDocumentation extends JViewLegacy
 			// Include helper submenu
 			CustomtablesHelper::addSubmenu('documentation');
 			$this->addToolBar();
-			$this->sidebar = JHtmlSidebar::render();
+			
+			if($this->version < 4)
+				$this->sidebar = JHtmlSidebar::render();
 		}
-		
 		
 		$internal_use=true;
 		
@@ -42,20 +48,15 @@ class CustomtablesViewDocumentation extends JViewLegacy
 		$this->setDocument();
 		
 		/*
-
 		// Display the template
 		*/
 		parent::display($tpl);
-
-		
 	}
 	
 	protected function addToolBar()
 	{
-	
 		JToolBarHelper::title(JText::_('COM_CUSTOMTABLES_DOCUMENTATION'), 'joomla');
 		JHtmlSidebar::setAction('index.php?option=com_customtables&view=documentation');
-		
 	}
 
 	protected function setDocument()
@@ -65,7 +66,7 @@ class CustomtablesViewDocumentation extends JViewLegacy
 			$this->document = JFactory::getDocument();
 		}
 		$this->document->setTitle(JText::_('COM_CUSTOMTABLES_DOCUMENTATION'));
-		$this->document->addStyleSheet(JURI::root(true)."/administrator/components/com_customtables/css/fieldtypes.css", (CustomtablesHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
+		$this->document->addStyleSheet(JURI::root(true)."/administrator/components/com_customtables/css/fieldtypes.css");
 		
 		
 		$script='
@@ -90,7 +91,6 @@ class CustomtablesViewDocumentation extends JViewLegacy
 		';
 		
 		$this->document->addCustomTag($script);
-		
 	}
 	
 	function getFieldTypes()
@@ -136,7 +136,7 @@ class CustomtablesViewDocumentation extends JViewLegacy
 			
 			
 				
-			$result.='<p>'.$tagset_att->description.'</p><hr/>';
+			$result.='<p>'.$tagset_att->description.'</p>';
 			
 			$result.=$this->renderTags($tagset->tag);
 
@@ -168,8 +168,6 @@ class CustomtablesViewDocumentation extends JViewLegacy
 				if($is4Pro)
 					$class='ct_doc_pro';
 					
-					
-				
 				if($this->internal_use)
 				{
 					$result.='<div class="'.$class.' ct_readmoreClosed" id="ctDocTag_'.$tag_att->name.'">';
@@ -199,12 +197,9 @@ class CustomtablesViewDocumentation extends JViewLegacy
 				$result.='</div>';
 			}
 		}
-		
-	
+
 		return $result;
 	}
-	
-	
 
 	function renderFieldTypes(&$types)
 	{
@@ -235,14 +230,12 @@ class CustomtablesViewDocumentation extends JViewLegacy
 					$result.='<div class="'.$class.'" id="ctDocType_'.$type_att->ct_name.'">';
 					$result.='<h4>'.$type_att->ct_name.' - <span>'.$type_att->label.'</span>';
 				}
-			
 				
 				if($is4Pro)
 					$result.='<div class="ct_doc_pro_label"><a href="https://joomlaboat.com/custom-tables#buy-extension" target="_blank">'.JText::_('COM_CUSTOMTABLES_AVAILABLE').'</a></div>';
 			
 				$result.='</h4>';
-			
-				
+
 				$result.='<p>'.$type_att->description.'</p>';
 			
 				if(!empty($type->params) and count($type->params)>0)
@@ -253,7 +246,6 @@ class CustomtablesViewDocumentation extends JViewLegacy
 						
 					$content=null;
 				}
-				
 				
 				if(!empty($type->editparams))
 				{
@@ -344,24 +336,22 @@ class CustomtablesViewDocumentation extends JViewLegacy
 	function prepareExample($param)
 	{
 		$chars=array(',',':','{','}','[',']',' ');
-
 		
 		$found=false;
 				
-				foreach($chars as $c)
-				{
-					if(strpos($param,$c)!==false)
-					{
-						$found=true;
-						break;
-					}
-				}
+		foreach($chars as $c)
+		{
+			if(strpos($param,$c)!==false)
+			{
+				$found=true;
+				break;
+			}
+		}
 				
-				if($found)
-					return '"'.$param.'"';
+		if($found)
+			return '"'.$param.'"';
 				
-				return $param;
-					
+		return $param;
 	}
 	
 	function cleanParams($params)
@@ -378,14 +368,12 @@ class CustomtablesViewDocumentation extends JViewLegacy
 				for($i=1;$i<$count;$i++)
 					$new_params[]='';
 						
-				
 				$param=str_replace('<','&lt;',$param);
 				$param=str_replace('>','&gt;',$param);
 				$new_params[]=$param;
 					
 				$count=0;
 			}
-			
 		}
 		return $new_params;
 	}
@@ -396,98 +384,88 @@ class CustomtablesViewDocumentation extends JViewLegacy
 		
 		if(!empty($param_att->example))
 		{
-						if((bool)(int)$param_att->examplenoquotes)
-							$value_example=$param_att->example;
-						else
-							$value_example=$this->prepareExample($param_att->example);
-						
+			if((bool)(int)$param_att->examplenoquotes)
+				$value_example=$param_att->example;
+			else
+				$value_example=$this->prepareExample($param_att->example);
 		}		
 		
 		switch($param_att->type)
 		{
+			case 'number':
 
-				
-				case 'number':
-					$result.='<ul class="ct_doc_param_options">
+				$result.='<ul class="ct_doc_param_options">
 					<li><b>'.JText::_('COM_CUSTOMTABLES_DEFAULT').'</b>: '.$param_att->default.'</li>
-					';
-					
-					if(!empty($param_att->min))
-						$result.='<li><b>'.JText::_('COM_CUSTOMTABLES_MIN').'</b>: '.$param_att->min.'</li>';
+';
+				if(!empty($param_att->min))
+					$result.='<li><b>'.JText::_('COM_CUSTOMTABLES_MIN').'</b>: '.$param_att->min.'</li>';
 						
-					if(!empty($param_att->max))
-						$result.='<li><b>'.JText::_('COM_CUSTOMTABLES_MAX').'</b>: '.$param_att->max.'</li>';
+				if(!empty($param_att->max))
+					$result.='<li><b>'.JText::_('COM_CUSTOMTABLES_MAX').'</b>: '.$param_att->max.'</li>';
 					
-					$result.='</ul>';
+				$result.='</ul>';
 					
-					if(!empty($param_att->example))
+				if(!empty($param_att->example))
+					$value_example=$param_att->example;
+				else
+					$value_example=$param_att->min;
+					
+				break;
+				
+			case 'radio':
+				$options=explode(',',$param_att->options);
+				$value_example='';
+					
+				$result.='<p>'.JText::_('COM_CUSTOMTABLES_OPTIONS').':</p><ul class="ct_doc_param_options">';
+				foreach($options as $option)
+				{
+					$parts=explode('|',$option);
+					$result.='<li><b>'.$parts[0].'</b>: '.$parts[1].'</li>';
+
+					if($value_example=='')
+						$value_example=$parts[0];
+				}
+
+				$result.='</ul>';
+				break;
+				
+			case 'list':
+
+				$options=$param->option;
+				$value_example='';
+					
+				if(!empty($param_att->example))
+				{
+					if((bool)(int)$param_att->examplenoquotes)
 						$value_example=$param_att->example;
 					else
-						$value_example=$param_att->min;
+						$value_example=$this->prepareExample($param_att->example);
+				}
 					
-					break;
+				$result.='<p>'.JText::_('COM_CUSTOMTABLES_OPTIONS').':</p><ul class="ct_doc_param_options">';
+				foreach($options as $option)
+				{
+					$option_att=$option->attributes();
+					
+					if($option_att->value==$option_att->label)
+						$result.='<li><b>'.$option_att->value.'</b>';
+					else
+						$result.='<li><b>'.$option_att->value.'</b>: '.$option_att->label;
 				
-				case 'radio':
-					$options=explode(',',$param_att->options);
-					$value_example='';
-					
-					$result.='<p>'.JText::_('COM_CUSTOMTABLES_OPTIONS').':</p><ul class="ct_doc_param_options">';
-					foreach($options as $option)
-					{
-						$parts=explode('|',$option);
-						$result.='<li><b>'.$parts[0].'</b>: '.$parts[1].'</li>';
+					if(!empty($param_att->description))
+						$result.='<p>'.$option_att->description.'</p>';
+						
+					$result.='</li>';
+						
+					if($value_example=='')
+						$value_example=$option_att->value;
+				}
 
-						if($value_example=='')
-							$value_example=$parts[0];
-					}
-
-					$result.='</ul>';
-					
-					
-					break;
-				
-				case 'list':
-					$options=$param->option;
-					$value_example='';
-					
-					if(!empty($param_att->example))
-					{
-						if((bool)(int)$param_att->examplenoquotes)
-							$value_example=$param_att->example;
-						else
-							$value_example=$this->prepareExample($param_att->example);
-						
-					}
-					
-					$result.='<p>'.JText::_('COM_CUSTOMTABLES_OPTIONS').':</p><ul class="ct_doc_param_options">';
-					foreach($options as $option)
-					{
-						$option_att=$option->attributes();
-						
-						if($option_att->value==$option_att->label)
-							$result.='<li><b>'.$option_att->value.'</b>';
-						else
-							$result.='<li><b>'.$option_att->value.'</b>: '.$option_att->label;
-						
-						if(!empty($param_att->description))
-							$result.='<p>'.$option_att->description.'</p>';
-						
-						$result.='</li>';
-						
-						if($value_example=='')
-							$value_example=$option_att->value;
-					}
-
-					$result.='</ul>';
-					
-					
-					break;
+				$result.='</ul>';
+				break;
 		}
-		
 		return $result;
-;
 	}
-	
 	
 	function reIndexArray($arrays)
 	{
@@ -498,7 +476,6 @@ class CustomtablesViewDocumentation extends JViewLegacy
 			$array[$i]=$item;
 		    unset($arrays[$k]);
 		    $i++;
-
 		}
 		return $array;
     }
@@ -511,7 +488,5 @@ class CustomtablesViewDocumentation extends JViewLegacy
 			$xml=simplexml_load_string($xml_content) or die('Cannot load or parse "'.$file.'" file.');
 		}
 		return $xml;
-        
     }
-	
 }

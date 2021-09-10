@@ -12,9 +12,7 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.
 require_once (JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'languages.php');
 require_once (JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'toolbar.php');
 
-
 jimport('joomla.application.component.view');
-
 
 class CustomTablesViewList extends JView
 {
@@ -29,17 +27,16 @@ class CustomTablesViewList extends JView
 		$this->_layout = 'default';
 
 		$LangMisc	= new ESLanguages;
-		$LanguageList=$LangMisc->getLanguageList();
-		$this->assignRef('LanguageList',		$LanguageList);
-
-		$limitstart = JFactory::getApplication()->input->getInt('limitstart','0');
-		$items		= $this->get('Items');
-		$pagination	= $this->get('Pagination');
-		$lists		= $this->_getViewLists();
-		$user		= JFactory::getUser();
+		$this->LanguageList=$LangMisc->getLanguageList();
+		
+		$this->limitstart = JFactory::getApplication()->input->getInt('limitstart','0');
+		$this->items		= $this->get('Items');
+		$this->pagination	= $this->get('Pagination');
+		$this->lists		= $this->_getViewLists();
+		$this->user		= JFactory::getUser();
 
 		// Ensure ampersands and double quotes are encoded in item titles
-		foreach ($items as $i => $item) {
+		foreach($this->items as $i => $item) {
 			$treename = $item->treename;
 			$treename = JFilterOutput::ampReplace($treename);
 			$treename = str_replace('"', '&quot;', $treename);
@@ -47,24 +44,12 @@ class CustomTablesViewList extends JView
 		}
 
 		//Ordering allowed ?
-		$ordering = ($lists['order'] == 'm.ordering');
+		$this->ordering = ($lists['order'] == 'm.ordering');
 
 		JHTML::_('behavior.tooltip');
 
-		$this->assignRef('items', $items);
-		$this->assignRef('pagination', $pagination);
-		$this->assignRef('lists', $lists);
-		$this->assignRef('user', $user);
-
-		$this->assignRef('ordering', $ordering);
-		$this->assignRef('limitstart', $limitstart);
-
 		parent::display($tpl);
 	}
-
-
-
-
 
 	function &_getViewLists()
 	{

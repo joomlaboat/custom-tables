@@ -110,7 +110,7 @@ class ESLayouts
 				$db = JFactory::getDBO();
 				$query = 'SELECT UNIX_TIMESTAMP(modified) AS ts FROM #__customtables_layouts WHERE id='.$id.' LIMIT 1';
 				$db->setQuery( $query );
-				if (!$db->query())    die( $db->stderr());
+
 				$recs = $db->loadAssocList( );
 				
                 if(count($recs)==0)
@@ -225,16 +225,8 @@ class ESLayouts
 			$db->setQuery( $query );
 
 			$db->execute();
-
-			//if (!$db->query())
-			//{
-				//$this->setError( $db->getErrorMsg() );
-				//return false;
-			//}
 		}
 
 		return $file_ts;
-
 	}
-
 }

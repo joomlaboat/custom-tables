@@ -12,6 +12,21 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Editor\Editor;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+
+
+if($this->version < 4)
+{
+}
+else
+{
+	HTMLHelper::_('behavior.formvalidator');
+	HTMLHelper::_('behavior.keepalive');
+}
+
 $document = JFactory::getDocument();
 $document->addCustomTag('<link src="'.JURI::root(true).'/components/com_customtables/css/style.css" type="text/css" rel="stylesheet" >');
 

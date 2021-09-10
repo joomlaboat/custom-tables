@@ -436,11 +436,9 @@ function getSelectValues(select)
 
 function getRadioValue(objectname)
 {
-    //alert(objectname);
     var radios = document.getElementsByName(objectname);
     var v="";
     var length=radios.length;
-    //alert(length);
 
     for (var i = 0; i < length; i++)
     {
@@ -452,19 +450,7 @@ function getRadioValue(objectname)
         if (radios[i].checked)
         {
             v=radios[i].value;
-
-
-            //var c=label_class+" btn-success active";
-            //if(v=="")
-              //  c+=" btn-danger";//active 
-            //else
-                //c+=" btn-success";//active 
-//alert(c);
-            //label_obj.className=c;
-
         }
-        //else
-          //  label_obj.className=label_class;
 
     }
 
@@ -990,22 +976,7 @@ function renderInput_Radio(objname,param,value,onchange)
                             if(option.tableid!=currentTable)
                                 ok=false;
                         }
-                        /*
-                        else
-                        {
-                            var paramIndex=parseInt(layout_table);
-                            if(!isNaN(paramIndex))
-                            {
-                                //alert('fieldtype_param_'+paramIndex);
-                                //var p=document.getElementById('fieldtype_param_'+paramIndex).value; //param index can be set in XML file
-                                //alert(p);
-                                
-                                //if(option.tableid!=p)//if layout not belong to selected table the do not show it
-                                    //ok=false;
-                            }
-                            
-                        }*/
-                              
+
                         if(ok)
                         {   //table checked not checking layout type
                             if(renderInput_Layout_checktype(layout_type,parseInt(option.layouttype)))
@@ -1160,9 +1131,6 @@ function findTheType(typename)
 
 function loadTypes_silent(processMessageBox)
 {
-    //var processMessageBox_obj=document.getElementById(processMessageBox);
-    //processMessageBox_obj.innerHTML='Loading Fields Types...';
-
     var url=websiteroot+"components/com_customtables/xml/fieldtypes_234.xml";
 
     var http = null;
@@ -1192,8 +1160,9 @@ function loadTypes_silent(processMessageBox)
                     return;
                 }
 
-                var s=Array.from(xmlToJson(xmlDoc));
-                field_types=s[0].fieldtypes.type;
+                //var s=Array.from(xmlToJson(xmlDoc));
+				var s=xmlToJson(xmlDoc);
+                field_types=s.fieldtypes.type;
 
                 field_type_loaded=true;
                 //processMessageBox_obj.innerHTML="";
@@ -1232,23 +1201,31 @@ function loadTypes(typeparams_box_obj,jform_type,jform_typeparams,typeparams_box
 
             if (http.readyState == 4)
             {
+				let res = http.response;;
+				
+                let parser = new DOMParser();
 
-                //field_types=XML2jsobj(http.responseXML.documentElement);
-
-                var res=http.response;
-
-                var parser = new DOMParser();
-
-                var xmlDoc = parser.parseFromString(res,"text/xml");
-
+                //var xmlDoc = parser.parseFromString(res,"text/xml");
+				let xmlDoc = parser.parseFromString(res,"application/xml");
+				
+				
                 if(xmlDoc.getElementsByTagName('parsererror').length)
                 {
                     typeparams_box_obj.innerHTML='<p class="msg_error">Error: '+(new XMLSerializer()).serializeToString(xmlDoc)+'</p>';
                     return;
                 }
+				
+				let json_object = xmlToJson(xmlDoc);
+				//let json_string = JSON.stringify(json_object);
+				//json_object = JSON.parse(json_string)
 
-                var s=Array.from(xmlToJson(xmlDoc));
-                field_types=s[0].fieldtypes.type;
+                //let s2 = JSON.parse(json_string);//Array.from(json_object);
+				//let s = Array.from(json_object);
+				//var s = xmlToJson(xmlDoc);
+
+
+                field_types = json_object.fieldtypes.type;
+
 
                 field_type_loaded=true;
                 updateTypeParams(jform_type,jform_typeparams,typeparams_box);

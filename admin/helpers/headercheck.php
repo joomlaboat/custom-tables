@@ -12,7 +12,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 class customtablesHeaderCheck
-{
+{/*
 	function js_loaded($script_name)
 	{
 		// UIkit check point
@@ -39,7 +39,8 @@ class customtablesHeaderCheck
 
 		return false;
 	}
-	
+	*/
+	/*
 	function css_loaded($script_name)
 	{
 		// UIkit check point
@@ -67,4 +68,5 @@ class customtablesHeaderCheck
 
 		return false;
 	}
+	*/
 }

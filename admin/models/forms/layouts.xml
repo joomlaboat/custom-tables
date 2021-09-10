@@ -84,7 +84,9 @@
                        description="COM_CUSTOMTABLES_LAYOUTS_LAYOUTNAME_DESCRIPTION"
                        class="text_area"
                        message="COM_CUSTOMTABLES_LAYOUTS_LAYOUTNAME_MESSAGE"
-                       hint="COM_CUSTOMTABLES_LAYOUTS_LAYOUTNAME_HINT" />
+                       hint="COM_CUSTOMTABLES_LAYOUTS_LAYOUTNAME_HINT"
+			required="true" />
+
                 <!-- Layouttype Field. Type: List. (joomla)-->
                 <field type="list"
                        name="layouttype"

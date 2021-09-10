@@ -12,18 +12,43 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
-JHtml::addIncludePath(JPATH_COMPONENT.'/helpers/html');
-JHtml::_('behavior.tooltip');
-JHtml::_('behavior.formvalidation');
-JHtml::_('formbehavior.chosen', 'select');
-JHtml::_('behavior.keepalive');
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Editor\Editor;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+
+$document = JFactory::getDocument();
+$document->addCustomTag('<link href="'.JURI::root(true).'/administrator/components/com_customtables/css/fieldtypes.css" rel="stylesheet">');
+$document->addCustomTag('<link href="'.JURI::root(true).'/administrator/components/com_customtables/css/modal.css" rel="stylesheet">');
+$document->addCustomTag('<script src="'.JURI::root(true).'/administrator/components/com_customtables/js/ajax.js"></script>');
+
+if($this->version < 4)
+{
+	//JHtml::addIncludePath(JPATH_COMPONENT.'/helpers/html');
+	//JHtml::addIncludePath(JPATH_COMPONENT.'/helpers/html');
+	JHtml::_('behavior.tooltip');
+	JHtml::_('behavior.formvalidation');
+	JHtml::_('formbehavior.chosen', 'select');
+	
+	$document->addCustomTag('<script src="'.JURI::root(true).'/administrator/components/com_customtables/js/typeparams.js"></script>');
+}
+else
+{
+	HTMLHelper::_('behavior.formvalidator');
+	
+	$document->addCustomTag('<script src="'.JURI::root(true).'/administrator/components/com_customtables/js/typeparams_j4.js"></script>');
+}
+
+HTMLHelper::_('behavior.keepalive');
+
+
 $componentParams = JComponentHelper::getParams('com_customtables');
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'layouteditor.php');
 $onPageLoads=array();
 
 ?>
 <script type="text/javascript">
-
+/*
 	// waiting spinner
 	var outerDiv = jQuery('body');
 	jQuery('<div id="loading"></div>')
@@ -46,9 +71,10 @@ $onPageLoads=array();
 		
 		<?php echo 'all_tables='.$this->getAllTables().';'; ?>
 	});
+	*/
 </script>
 
-<div id="customtables_loader" style="display: none;">
+<!--<div id="customtables_loader" style="display: none;">-->
 	<form action="<?php echo JRoute::_('index.php?option=com_customtables&layout=edit&id='.(int) $this->item->id.$this->referral); ?>" method="post" name="adminForm" id="adminForm" class="form-validate" enctype="multipart/form-data">
 	<?php echo JLayoutHelper::render('layouts.details_above', $this); ?>
 		<div class="form-horizontal">
@@ -94,4 +120,4 @@ $onPageLoads=array();
 		?>
 		</div></div>
 	</form>
-</div>
+<!--</div>-->

@@ -15,169 +15,140 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.
 
 class JHTMLESSQLJoinView
 {
-        public static function render($value, $establename, $field, $filter,$langpostfix='')
-        {
-				if($value==0 or $value=='')// or $value==',' or $value==',,')
-						return '';
+    public static function render($value, $establename, $field, $filter,$langpostfix='')
+    {
+		if($value==0 or $value=='')// or $value==',' or $value==',,')
+			return '';
 
-				$htmlresult='';
+		$htmlresult='';
 
-				$config=array();
+		$config=array();
 
-				$paramsArray=array();
-				$paramsArray['limit']=0;
-				$paramsArray['establename']=$establename;
-				$paramsArray['filter']=$filter;
-				$paramsArray['showpublished']=0;
-				$paramsArray['showpagination']=0;
-				$paramsArray['groupby']='';
-				$paramsArray['shownavigation']=0;
-				$paramsArray['sortby']='';
+		$paramsArray=array();
+		$paramsArray['limit']=0;
+		$paramsArray['establename']=$establename;
+		$paramsArray['filter']=$filter;
+		$paramsArray['showpublished']=0;
+		$paramsArray['showpagination']=0;
+		$paramsArray['groupby']='';
+		$paramsArray['shownavigation']=0;
+		$paramsArray['sortby']='';
 
-				$_params= new JRegistry;
-				$_params->loadArray($paramsArray);
+		$_params= new JRegistry;
+		$_params->loadArray($paramsArray);
 
-				$model = JModelLegacy::getInstance('Catalog', 'CustomTablesModel', $config);
-				$model->load($_params, true);
-				$model->showpagination=false;
+		$model = JModelLegacy::getInstance('Catalog', 'CustomTablesModel', $config);
+		$model->load($_params, true);
+		$model->showpagination=false;
 				
-				//Get Row
-				$query = 'SELECT '.$model->tablerow['query_selects'].' FROM '.$model->realtablename.' WHERE '.$model->tablerow['realidfieldname'].'='.(int)$value;
-				$db= JFactory::getDBO();
-				$db->setQuery($query);
+		//Get Row
+		$query = 'SELECT '.$model->tablerow['query_selects'].' FROM '.$model->realtablename.' WHERE '.$model->tablerow['realidfieldname'].'='.(int)$value;
+		$db= JFactory::getDBO();
+		$db->setQuery($query);
 
-				$SearchResult=$db->loadAssocList();
+		$SearchResult=$db->loadAssocList();
+
+		if(strpos($field,':')===false)
+		{
+			//without layout
+			$getGalleryRows=array();
+			foreach($SearchResult as $row)
+			{
+				if($row['listing_id']==$value)
+					$htmlresult.=JoomlaBasicMisc::processValue($field,$model,$row,$langpostfix);
+			}
+		}
+		else
+		{
+			$pair=explode(':',$field);
+
+			if($pair[0]!='layout' and $pair[0]!='tablelesslayout' and $pair[0]!='value')
+				return '<p>unknown field/layout command "'.$field.'" should be like: "layout:'.$pair[1].'"..</p>';
 
 
-				if(strpos($field,':')===false)
-				{
-					//without layout
-					$getGalleryRows=array();
-					foreach($SearchResult as $row)
-					{
-						if($row['listing_id']==$value)
-							$htmlresult.=JoomlaBasicMisc::processValue($field,$model,$row,$langpostfix);
-					}
-				}
+			$isTableLess=false;
+			if($pair[0]=='tablelesslayout' or $pair[0]=='value')
+				$isTableLess=true;
+
+			if($pair[0]=='value')
+			{
+				$layoutcode='[_value:'.$pair[1].']';
+			}
+			else
+			{
+				//load layout
+				if(isset($pair[1]) or $pair[1]!='')
+					$layout_pair[0]=$pair[1];
 				else
-				{
+					return '<p>unknown field/layout command "'.$field.'" should be like: "layout:'.$pair[1].'".</p>';
 
-						//$pair=JoomlaBasicMisc::csv_explode(':',$field,'"',false);
-                                                $pair=explode(':',$field);
+				if(isset($pair[2]))
+					$layout_pair[1]=$pair[2];
+				else
+					$layout_pair[1]=0;
 
-						if($pair[0]!='layout' and $pair[0]!='tablelesslayout' and $pair[0]!='value')
-								return '<p>unknown field/layout command "'.$field.'" should be like: "layout:'.$pair[1].'"..</p>';
+				$layouttype=0;
+				$layoutcode=ESLayouts::getLayout($layout_pair[0],$layouttype);
+		
+				if($layoutcode=='')
+					return '<p>layout "'.$layout_pair[0].'" not found or is empty.</p>';
+			}
 
+			$model->LayoutProc->layout=$layoutcode;
 
-						$isTableLess=false;
-						if($pair[0]=='tablelesslayout' or $pair[0]=='value')
-							$isTableLess=true;
+			$valuearray=explode(',',$value);
 
-						if($pair[0]=='value')
-						{
-							$layoutcode='[_value:'.$pair[1].']';
-						}
-						else
-						{
-							//load layout
-							if(isset($pair[1]) or $pair[1]!='')
-								$layout_pair[0]=$pair[1];
-							else
-								return '<p>unknown field/layout command "'.$field.'" should be like: "layout:'.$pair[1].'".</p>';
+			if(!$isTableLess)
+				$htmlresult.='<table style="border:none;">';
 
-							if(isset($pair[2]))
-								$layout_pair[1]=$pair[2];
-							else
-								$layout_pair[1]=0;
+			$number=1;
+			if(isset($layout_pair[1]) and (int)$layout_pair[1]>0)
+				$columns=(int)$layout_pair[1];
+			else
+				$columns=1;
 
-							$layouttype=0;
-							$layoutcode=ESLayouts::getLayout($layout_pair[0],$layouttype);
-							if($layoutcode=='')
-								return '<p>layout "'.$layout_pair[0].'" not found or is empty.</p>';
-						}
-						
-						$model->LayoutProc->layout=$layoutcode;
+			$tr=0;
 
+			$CleanSearchResult=array();
+			foreach($SearchResult as $row)
+			{
+				if(in_array($row['listing_id'],$valuearray))
+					$CleanSearchResult[]=$row;
+			}
 
-						$valuearray=explode(',',$value);
+			$result_count=count($CleanSearchResult);
 
-						if(!$isTableLess)
-							$htmlresult.='<!-- records view : table --><table style="border:none;">';
+			foreach($CleanSearchResult as $row)
+			{
+				if($tr==$columns)
+					$tr	= 0;
 
-						$number=1;
-						if(isset($layout_pair[1]) and (int)$layout_pair[1]>0)
-								$columns=(int)$layout_pair[1];
-						else
-								$columns=1;
+				if(!$isTableLess and $tr==0)
+					$htmlresult.='<tr>';
 
-						$tr=0;
+				//process layout
+				$model->LayoutProc->number=$number;
 
-						$CleanSearchResult=array();
-						foreach($SearchResult as $row)
-						{
-								if(in_array($row['listing_id'],$valuearray))
-								{
-										$CleanSearchResult[]=$row;
-								}
-						}
-						$result_count=count($CleanSearchResult);
+				if($isTableLess)
+					$htmlresult.=$model->LayoutProc->fillLayout($row,'','');
+				else
+					$htmlresult.='<td valign="middle" style="border:none;">'.$model->LayoutProc->fillLayout($row,'','').'</td>';
 
-						foreach($CleanSearchResult as $row)
-						{
-								if($tr==$columns)
-								{
-										$tr	= 0;
-								}
+				$tr++;
+				if(!$isTableLess and $tr==$columns)
+					$htmlresult.='</tr>';
 
-								if(!$isTableLess and $tr==0)
-										$htmlresult.='<tr>';
+				$number++;
+			}
 
-								//process layout
-								$model->LayoutProc->number=$number;
+			if(!$isTableLess and $tr<$columns)
+				$htmlresult.='</tr>';
 
-								if($isTableLess)
-									$htmlresult.=$model->LayoutProc->fillLayout($row,'','');
-								else
-									$htmlresult.='<td valign="middle" style="border:none;">'.$model->LayoutProc->fillLayout($row,'','').'</td>';
+			if(!$isTableLess)
+				$htmlresult.='</table>';
+		}
 
-								$tr++;
-								if(!$isTableLess and $tr==$columns)
-								{
-										$htmlresult.='</tr>';
-										//if($number+1<$result_count)
-												//$htmlresult.='<tr>';
-
-
-								}
-								$number++;
-
-						}
-						if(!$isTableLess and $tr<$columns)
-								$htmlresult.='</tr>';
-
-						if(!$isTableLess)
-							$htmlresult.='</table><!-- records view : end of table -->';
-
-				}
-
-
-				$o = new stdClass();
-				$o->text=$htmlresult;
-                $o->created_by_alias = 0;
-
-				$dispatcher	= JDispatcher::getInstance();
-
-				JPluginHelper::importPlugin('content');
-
-				$r = $dispatcher->trigger('onContentPrepare', array ('com_content.article', &$o, &$_params, 0));
-
-
-				return $o->text;
-
-
-
-        }
-
-
-
+		LayoutProcessor::applyContentPlugins($htmlresult);
+		return $htmlresult;
+	}
 }

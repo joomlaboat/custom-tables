@@ -19,9 +19,9 @@ if (!JFactory::getUser()->authorise('core.manage', 'com_customtables'))
 };
 
 // Load cms libraries
-JLoader::registerPrefix('J', JPATH_PLATFORM . '/cms');
+//JLoader::registerPrefix('J', JPATH_PLATFORM . '/cms');
 // Load joomla libraries without overwrite
-JLoader::registerPrefix('J', JPATH_PLATFORM . '/joomla',false);
+//JLoader::registerPrefix('J', JPATH_PLATFORM . '/joomla',false);
 
 // require helper files
 JLoader::register('CustomtablesHelper', dirname(__FILE__) . '/helpers/customtables.php');

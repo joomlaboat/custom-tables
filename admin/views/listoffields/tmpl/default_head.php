@@ -36,28 +36,6 @@ defined('_JEXEC') or die('Restricted access');
 				<?php echo JHtml::_('grid.sort', 'COM_CUSTOMTABLES_FIELDS_FIELDTITLE_LABEL', 'fieldtitle', $this->listDirn, $this->listOrder); ?>
 					</th>
 
-		<?php
-/*
-				$morethanonelang=false;
-				foreach($this->languages as $lang)
-				{
-					$id='fieldtitle';
-					if($morethanonelang)
-						$id.='_'.$lang->sef;
-
-					echo '
-					<th class="nowrap" >
-					'.JHtml::_('grid.sort', 'COM_CUSTOMTABLES_FIELDS_FIELDTITLE_LABEL', $id, $this->listDirn, $this->listOrder).' ('.$lang->title.')
-					</th>
-					';
-
-					$morethanonelang=true; //More than one language installed
-
-				}
-*/
-				?>
-
-
 	<th class="nowrap hidden-phone" >
 			<?php echo JHtml::_('grid.sort', 'COM_CUSTOMTABLES_FIELDS_TYPE_LABEL', 'type', $this->listDirn, $this->listOrder); ?>
 	</th>

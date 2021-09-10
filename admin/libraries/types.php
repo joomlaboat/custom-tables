@@ -9,16 +9,26 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Version;
+
 class CTTypes
 {
     public static function getField($type, $attributes, $field_value = '')
     {
+		$version_object = new Version;
+		$version = (int)$version_object->getShortVersion();
+		
         jimport('joomla.form.helper');
         JFormHelper::loadFieldClass($type);
 
 		try
         {
-            $xml = new JXMLElement('<?xml version="1.0" encoding="utf-8"?><field />');
+			
+			if($version < 4)
+				$xml = new JXMLElement('<?xml version="1.0" encoding="utf-8"?><field />');
+			else
+				$xml = new SimpleXMLElement('<?xml version="1.0" encoding="utf-8"?><field />');
+				
             foreach ($attributes as $key => $value)
             {
                 if ('_options' == $key)

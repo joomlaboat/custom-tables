@@ -28,12 +28,13 @@ class CustomtablesModelListoflayouts extends JModelList
 				'a.id','id',
 				'a.published','published',
 				'a.ordering','ordering',
-				'a.created_by','created_by',
-				'a.modified_by','modified_by',
 				'a.layoutname','layoutname',
 				'a.layouttype','layouttype',
 				'a.tableid','tableid'
 			);
+			
+					//		'a.created_by','created_by',
+				//'a.modified_by','modified_by',
 		}
 
 		parent::__construct($config);

@@ -22,9 +22,7 @@ class CustomTablesViewCatalog extends JViewLegacy
 		$params=null;
 		$this->Model->load($params,false,JFactory::getApplication()->input->getCMD('layout',''));
 
-		$SearchResult=$this->Model->getSearchResult();
-
-		$this->assignRef('SearchResult',$SearchResult);
+		$this->SearchResult = $this->Model->getSearchResult();
 
 		if(!isset($this->Model->esfields))
 				return false;
@@ -33,7 +31,7 @@ class CustomTablesViewCatalog extends JViewLegacy
 		$allowedfields=$this->SaveViewLog_CheckIfNeeded();
 		if(count($allowedfields)>0)
 		{
-			foreach($SearchResult as $rec)
+			foreach($this->SearchResult as $rec)
 				$this->SaveViewLogForRecord($rec,$allowedfields);
 		}
 

@@ -963,8 +963,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 		$jinput->set('listing_id',$new_id);
 		$jinput->set('old_listing_id',$id);
-		
-		
+		$this->id = $new_id;
 
 		if($db->serverType == 'postgresql')
 		{
@@ -979,11 +978,11 @@ class CustomTablesModelEditItem extends JModelLegacy
 			$db->execute();
 		}
 
-		return $this->store($msg,$link,true);
+		return $this->store($msg,$link,true,$new_id);
 
 	}
 
-	function store(&$msg,&$link,$isCopy=false)
+	function store(&$msg,&$link,$isCopy=false,$id=0)
 	{
 		$jinput = JFactory::getApplication()->input;
 
@@ -1005,7 +1004,8 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 		$isDebug=$jinput->getInt( 'debug',0);
 
-		$id=(int)$this->params->get('listingid');
+		if($id==0)
+			$id=(int)$this->params->get('listingid');
 
 		if($id==0)
 			$id= $jinput->getInt('listing_id', 0); //TODO : this inconsistancy must be fixed
@@ -1135,7 +1135,15 @@ class CustomTablesModelEditItem extends JModelLegacy
 			if($this->params->get('eseditlayout')!='')
 				$publishstatus=1; //Pubished by default
 			else
-				$publishstatus=(int)$this->params->get( 'publishstatus' );
+			{
+				$publishstatus = $this->params->get( 'publishstatus' );
+				if(is_null($publishstatus))
+				{
+					$publishstatus = $jinput->getInt('published');
+				}
+				else
+					$publishstatus = (int)$publishstatus;
+			}
 
 			if($this->tablerow['published_field_found'])
 				$savequery[]='published='.$publishstatus;
@@ -1283,7 +1291,8 @@ class CustomTablesModelEditItem extends JModelLegacy
 			echo 'Debug mode.';
 			die ;//debug mode
 		}	
-		$jinput->setVar('listing_id',$listing_id);
+		
+		$jinput->set('listing_id',(int)$listing_id);
 
 		return true;
 	}
@@ -2013,7 +2022,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 		return $this->setPublishStatusSingleRecord($id,$status);
 	}
 
-	protected function setPublishStatusSingleRecord($id,$status)
+	public function setPublishStatusSingleRecord($id,$status)
 	{
 		if(!$this->tablerow['published_field_found'])
 			return false;
@@ -2143,6 +2152,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 					if(!$isok)
 					{
 						$ok=false;
+						break;
 					}
 				}
 			}
@@ -2159,7 +2169,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 		return $this->deleteSingleRecord($id);
 	}
 
-	protected function deleteSingleRecord($objectid)
+	public function deleteSingleRecord($objectid)
 	{
 		$db = JFactory::getDBO();
 
@@ -2181,10 +2191,12 @@ class CustomTablesModelEditItem extends JModelLegacy
 		{
 			if($esfield['type']=='image')
 			{
+				$ImageFolder_=CustomTablesImageMethods::getImageFolder($esfield['typeparams']);
+
 				//delete single image
 				$imagemethods->DeleteExistingSingleImage(
 					$row[$esfield['realfieldname']],
-					$this->imagefolder,
+					$ImageFolder_,
 					$esfield['typeparams'],
 					$this->realtablename,
 					$esfield['realfieldname'],
@@ -2193,6 +2205,8 @@ class CustomTablesModelEditItem extends JModelLegacy
 			}
 			elseif($esfield['type']=='imagegallery')
 			{
+				$ImageFolder_=CustomTablesImageMethods::getImageFolder($esfield['typeparams']);
+				
 				//delete gallery images if exist
 				$galleryname=$esfield['fieldname'];
 				$phototablename='#__customtables_gallery_'.$this->establename.'_'.$galleryname;
@@ -2205,7 +2219,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 				foreach($photorows as $photorow)
 				{
 					$imagemethods->DeleteExistingGalleryImage(
-						$this->imagefolder,
+						$ImageFolder_,
 						$this->imagegalleryprefix,
 						$this->estableid,
 						$galleryname,

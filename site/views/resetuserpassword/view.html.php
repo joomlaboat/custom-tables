@@ -147,21 +147,17 @@ New Password: '.$password;
 
 
 
-        protected static function getRow($id,$tablename)
+    protected static function getRow($id,$tablename)
 	{
 		$db = JFactory::getDBO();
 		$query = 'SELECT * FROM '.$tablename.' WHERE id='.$id.' LIMIT 1';
 		$db->setQuery( $query );
-		if (!$db->query())    die( $db->stderr());
+	
 		$recs = $db->loadAssocList( );
 		if(!$recs) return array();
 		if (count($recs)<1) return array();
+
 		$r=$recs[0];
 		return $r;
 	}
-
-
-
-
 }
-?>

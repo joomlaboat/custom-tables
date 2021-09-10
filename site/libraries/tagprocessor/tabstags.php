@@ -9,12 +9,55 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Version;
+
 class tagProcessor_Tabs
 {
-    public static function process(&$Model,&$htmlresult)
+	public static function process(&$Model,&$htmlresult)
     {
+		$version_object = new Version;
+		$version = (int)$version_object->getShortVersion();
+		
+		if($version < 4)
+			tagProcessor_Tabs::process_3($Model,$htmlresult);
+		else
+			tagProcessor_Tabs::process_4($Model,$htmlresult);
+	}
+	
+	public static function process_4(&$Model,&$htmlresult)
+    {
+			$options=array();
+            $fList=JoomlaBasicMisc::getListToReplace('tab',$options,$htmlresult,'{}');
 
+            $i=0;
+            $objname='CTtab';
 
+            foreach($fList as $fItem)
+            {
+                $option=$options[$i];
+                $name=JoomlaBasicMisc::slugify($option);
+
+                $tab='';
+                if($i==0)
+					$tab=HTMLHelper::_('uitab.startTabSet', $objname, ['active' => $name, 'recall' => true, 'breakpoint' => 768]);
+                else
+					$tab=HTMLHelper::_('uitab.endTab');
+
+				$tab.=HTMLHelper::_('uitab.addTab', $objname, $name, $option);
+
+                $htmlresult=str_replace($fItem,$tab,$htmlresult);
+				$i++;
+            }
+
+            $endtab=HTMLHelper::_('uitab.endTab');
+			$endtab.=HTMLHelper::_('uitab.endTabSet');
+            
+            $htmlresult=str_replace('{/tabs}',$endtab,$htmlresult);
+	}
+	
+    public static function process_3(&$Model,&$htmlresult)
+    {
 			$options=array();
             $fList=JoomlaBasicMisc::getListToReplace('tab',$options,$htmlresult,'{}');
 

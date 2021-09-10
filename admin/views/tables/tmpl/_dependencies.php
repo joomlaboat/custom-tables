@@ -16,9 +16,6 @@ function renderDependencies($table_id,$tablename)
 {
     $result='';
 
-
-
-
     $rows=_getTablesThatDependOnThisTable($tablename);
 
     if(count($rows)==0)
@@ -28,8 +25,6 @@ function renderDependencies($table_id,$tablename)
         $result.='<h3>'.JText::_('COM_CUSTOMTABLES_TABLES_TABLES_THAT_DEPEND_ON_THIS_TABLE', true).'</h3>';
         $result.=_renderTableList($rows);
     }
-
-
 
     $result.='<hr/>';
     $rows=_getTablesThisTableDependOn($table_id);
@@ -41,10 +36,7 @@ function renderDependencies($table_id,$tablename)
         $result.=_renderTableList($rows);
     }
 
-    $result.='
-    <p><a href="https://www.essentialsql.com/get-ready-to-learn-sql-database-normalization-explained-in-simple-english/" target="_blank">
-    '.JText::_('COM_CUSTOMTABLES_TABLES_DATABASE_NORMALIZATION_EXPLAINED_IN_SIMPLE_ENGLISH', true).'</a></p>
-    ';
+    $result.=JText::_('COM_CUSTOMTABLES_TABLES_DATABASE_NORMALIZATION_EXPLAINED_IN_SIMPLE_ENGLISH', true);
 
 
     return $result;
@@ -100,9 +92,7 @@ function _getTablesThisTableDependOn($table_id)
 		.'WHERE tableid='.(int)$table_id.' AND '.$db->quoteName('type').'="sqljoin" ORDER BY tabletitle';
 	}
 
-
 	$db->setQuery( $query );
-	if (!$db->query())    die ( $db->stderr());
 	$rows=$db->loadAssocList();
 
     return $rows;

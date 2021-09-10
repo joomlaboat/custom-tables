@@ -24,7 +24,10 @@ class CustomtablesModelListofRecords extends JModelList
 	{
 		if (empty($config['filter_records']))
         {
-			$config['filter_records'] = array();
+			$config['filter_fields'] = array(
+				'a.id','id',
+				'a.published','published'
+			);
 		}
 		parent::__construct($config);
 	}
@@ -60,19 +63,15 @@ class CustomtablesModelListofRecords extends JModelList
 	 *
 	 * @return  mixed  An array of data items on success, false on failure.
 	 */
+	 
 	public function getItems()
 	{
-		//$this->tablename=$tablename;
 		// load parent items
 		$items = parent::getItems(); 
-		
-		//$app = JFactory::getApplication();
-		//$tableid 	= $app->input->get('tableid', 0, 'int');
-		//$this->setState('filter.tableid', $tableid);
 
-		// return items
 		return $items;
 	}
+
 
 	/**
 	 * Method to convert selection values to translatable string.
@@ -129,14 +128,52 @@ class CustomtablesModelListofRecords extends JModelList
 		// From the customtables_item table
 		$query->from($db->quoteName($realtablename, 'a'));
 		
+		
+		$wheres_and = [];
 		// Filter by published state
 		if($published_field_found)
 		{
 			$published = $this->getState('filter.published');
+			
 			if (is_numeric($published))
-				$query->where('a.published = ' . (int) $published);
+				$wheres_and[] = 'a.published = ' . (int) $published;
 			elseif ($published === '')
-				$query->where('(a.published = 0 OR a.published = 1)');
+				$wheres_and[] = '(a.published = 0 OR a.published = 1)';
+		}
+		
+		
+		// Filter by search.
+		$search = $this->getState('filter.search');
+		
+		if($search!='')
+		{
+			$esfields = ESFields::getFields($this->tablename);
+			$wheres=[];
+		
+			foreach ($esfields as $esfield)
+			{	
+				if($esfield['type'] == 'string')
+				{
+					$realfieldname = $esfield['realfieldname'];
+					$where = $db->quote('%' . $db->escape($search) . '%');
+					$wheres[] = ('(a.'.$realfieldname.' LIKE '.$where.')');
+				}
+			}
+			$wheres_and[] = '('.implode(' OR ',$wheres).')';
+		}
+		
+		if(count($wheres_and)>0)
+		{
+			$where_str = implode(' AND ',$wheres_and);
+			$query->where($where_str);
+		}
+		
+		// Add the list ordering clause.
+		$orderCol = $this->state->get('list.ordering', 'a.id');
+		$orderDirn = $this->state->get('list.direction', 'asc');
+		if ($orderCol != '')
+		{
+			$query->order($db->escape($orderCol . ' ' . $orderDirn));
 		}
 		
 		return $query;
@@ -152,13 +189,7 @@ class CustomtablesModelListofRecords extends JModelList
 	{
 		// Compile the store id.
 		$id .= ':' . $this->getState('filter.id');
-		//$id .= ':' . $this->getState('filter.search');
 		$id .= ':' . $this->getState('filter.published');
-		//$id .= ':' . $this->getState('filter.ordering');
-		//$id .= ':' . $this->getState('filter.created_by');
-		//$id .= ':' . $this->getState('filter.modified_by');
-		//$id .= ':' . $this->getState('filter.fieldtitle');
-		//$id .= ':' . $this->getState('filter.type');
 
 		return parent::getStoreId($id);
 	}

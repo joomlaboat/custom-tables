@@ -10,10 +10,20 @@
  **/
 
 // No direct access to this file
-defined('_JEXEC') or die('Restricted access');
+\defined('_JEXEC') or die;
 
-// import Joomla view library
-jimport('joomla.application.component.view');
+use Joomla\CMS\Version;
+
+use Joomla\CMS\Factory;
+use Joomla\CMS\Helper\ContentHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\GenericDataException;
+use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
+use Joomla\CMS\Object\CMSObject;
+use Joomla\CMS\Toolbar\Toolbar;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\Database\DatabaseDriver;
+use Joomla\Component\Content\Administrator\Extension\ContentComponent;
 
 /**
  * Customtables View class for the Listofcategories
@@ -24,12 +34,25 @@ class CustomtablesViewListofcategories extends JViewLegacy
 	 * Listofcategories view display method
 	 * @return void
 	 */
+	private $isEmptyState = false;
+	 
 	function display($tpl = null)
 	{
+		$version = new Version;
+		$this->version = (int)$version->getShortVersion();
+		
 		if ($this->getLayout() !== 'modal')
 		{
 			// Include helper submenu
 			CustomtablesHelper::addSubmenu('listofcategories');
+		}
+		
+				
+		
+		if($this->version >= 4)
+		{
+			$this->filterForm    = $this->get('FilterForm');
+			$this->activeFilters = $this->get('ActiveFilters');
 		}
 
 		// Assign data to the view
@@ -41,18 +64,28 @@ class CustomtablesViewListofcategories extends JViewLegacy
 		$this->listDirn = $this->escape($this->state->get('list.direction'));
 		$this->saveOrder = $this->listOrder == 'ordering';
 		// get global action permissions
-		$this->canDo = CustomtablesHelper::getActions('categories');
-		$this->canEdit = $this->canDo->get('core.edit');
-		$this->canState = $this->canDo->get('core.edit.state');
-		$this->canCreate = $this->canDo->get('core.create');
-		$this->canDelete = $this->canDo->get('core.delete');
-		$this->canBatch = $this->canDo->get('core.batch');
+
+		$this->canDo = ContentHelper::getActions('com_customtables', 'categories');
+		
+		$this->canCreate = $this->canDo->get('categories.create');
+		$this->canEdit = $this->canDo->get('categories.edit');
+		$this->canState = $this->canDo->get('categories.edit.state');
+		$this->canDelete = $this->canDo->get('categories.delete');
+		
+		$this->isEmptyState = $this->get('IsEmptyState');
+		//$this->canBatch = $this->canDo->get('core.batch');
 
 		// We don't need toolbar in the modal window.
 		if ($this->getLayout() !== 'modal')
 		{
-			$this->addToolbar();
-			$this->sidebar = JHtmlSidebar::render();
+			if($this->version < 4)
+			{
+				$this->addToolbar_3();
+				$this->sidebar = JHtmlSidebar::render();
+			}
+			else
+				$this->addToolbar_4();
+			
 			// load the batch html
 			if ($this->canCreate && $this->canEdit && $this->canState)
 			{
@@ -67,25 +100,73 @@ class CustomtablesViewListofcategories extends JViewLegacy
 		}
 
 		// Display the template
-		parent::display($tpl);
+		if($this->version < 4)
+			parent::display($tpl);
+		else
+			parent::display('quatro');
 
 		// Set the document
 		$this->setDocument();
 	}
 
-	/**
-	 * Setting the toolbar
-	 */
-	protected function addToolBar()
+	protected function addToolbar_4()
+	{
+		$canDo = $this->canDo;
+		$user  = Factory::getUser();
+
+		// Get the toolbar object instance
+		$toolbar = Toolbar::getInstance('toolbar');
+
+		ToolbarHelper::title(Text::_('COM_CUSTOMTABLES_LISTOFCATEGORIES'), 'joomla');
+
+		if ($this->canCreate)
+			$toolbar->addNew('categories.add');
+
+		$dropdown = $toolbar->dropdownButton('status-group')
+			->text('JTOOLBAR_CHANGE_STATUS')
+			->toggleSplit(false)
+			->icon('icon-ellipsis-h')
+			->buttonClass('btn btn-action')
+			->listCheck(true);
+
+		$childBar = $dropdown->getChildToolbar();
+		
+		if ($this->canState)
+		{
+			$childBar->publish('listofcategories.publish')->listCheck(true);
+			$childBar->unpublish('listofcategories.unpublish')->listCheck(true);
+		}
+		
+		if ($this->canDo->get('core.admin'))
+		{
+			$childBar->checkin('listoflayouts.checkin');
+		}
+
+		if(($this->canState && $this->canDelete))
+		{
+			if ($this->state->get('filter.published') != ContentComponent::CONDITION_TRASHED)
+			{
+				$childBar->trash('listofcategories.trash')->listCheck(true);
+			}
+
+			if (!$this->isEmptyState && $this->state->get('filter.published') == ContentComponent::CONDITION_TRASHED && $this->canDelete)
+			{
+				$toolbar->delete('listofcategories.delete')
+					->text('JTOOLBAR_EMPTY_TRASH')
+					->message('JGLOBAL_CONFIRM_DELETE')
+					->listCheck(true);
+			}
+		}
+	}
+
+	protected function addToolBar_3()
 	{
 		JToolBarHelper::title(JText::_('COM_CUSTOMTABLES_LISTOFCATEGORIES'), 'joomla');
 		JHtmlSidebar::setAction('index.php?option=com_customtables&view=listofcategories');
 		JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/fields');
 
 		if ($this->canCreate)
-		{
 			JToolBarHelper::addNew('categories.add');
-		}
 
 		// Only load if there are items
 		if (CustomtablesHelper::checkArray($this->items))
@@ -99,15 +180,16 @@ class CustomtablesViewListofcategories extends JViewLegacy
 			{
 				JToolBarHelper::publishList('listofcategories.publish');
 				JToolBarHelper::unpublishList('listofcategories.unpublish');
-				//JToolBarHelper::archiveList('listofcategories.archive');
-
-				if ($this->canDo->get('core.admin'))
-				{
-					JToolBarHelper::checkin('listofcategories.checkin');
-				}
 			}
 
+			if ($this->canDo->get('core.admin'))
+			{
+				JToolBarHelper::checkin('listofcategories.checkin');
+			}
+
+
 			// Add a batch button
+			/*
 			if ($this->canBatch && $this->canCreate && $this->canEdit && $this->canState)
 			{
 				// Get the toolbar object instance
@@ -119,7 +201,8 @@ class CustomtablesViewListofcategories extends JViewLegacy
 				// add the button to the page
 				$dhtml = $layout->render(array('title' => $title));
 				$bar->appendButton('Custom', $dhtml, 'batch');
-			} 
+			}
+			*/			
 
 			if ($this->state->get('filter.published') == -2 && ($this->canState && $this->canDelete))
 			{
@@ -132,17 +215,21 @@ class CustomtablesViewListofcategories extends JViewLegacy
 		} 
 
 		// set help url for this view if found
+		/*
 		$help_url = CustomtablesHelper::getHelpUrl('listofcategories');
 		if (CustomtablesHelper::checkString($help_url))
 		{
 				JToolbarHelper::help('COM_CUSTOMTABLES_HELP_MANAGER', false, $help_url);
 		}
+		*/
 
 		// add the options comp button
+		/*
 		if ($this->canDo->get('core.admin') || $this->canDo->get('core.options'))
 		{
 			JToolBarHelper::preferences('com_customtables');
 		}
+		*/
 
 		if ($this->canState)
 		{
@@ -152,6 +239,7 @@ class CustomtablesViewListofcategories extends JViewLegacy
 				JHtml::_('select.options', JHtml::_('jgrid.publishedOptions'), 'value', 'text', $this->state->get('filter.published'), true)
 			);
 			// only load if batch allowed
+			/*
 			if ($this->canBatch)
 			{
 				JHtmlBatch_::addListSelection(
@@ -160,6 +248,7 @@ class CustomtablesViewListofcategories extends JViewLegacy
 					JHtml::_('select.options', JHtml::_('jgrid.publishedOptions', array('all' => false)), 'value', 'text', '', true)
 				);
 			}
+			*/
 		}
 
 		JHtmlSidebar::addFilter(
@@ -168,6 +257,7 @@ class CustomtablesViewListofcategories extends JViewLegacy
 			JHtml::_('select.options', JHtml::_('access.assetgroups'), 'value', 'text', $this->state->get('filter.access'))
 		);
 
+		/*
 		if ($this->canBatch && $this->canCreate && $this->canEdit)
 		{
 			JHtmlBatch_::addListSelection(
@@ -176,6 +266,7 @@ class CustomtablesViewListofcategories extends JViewLegacy
 				JHtml::_('select.options', JHtml::_('access.assetgroups'), 'value', 'text')
 			);
 		} 
+		*/
 	}
 
 	/**

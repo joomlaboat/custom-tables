@@ -9,6 +9,9 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Editor\Editor;
+use Joomla\CMS\Factory;
+
 JHTML::addIncludePath(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'helpers');
 
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'misc.php');
@@ -272,7 +275,9 @@ class ESInputBox
 									$c=0;
 									$l=0;
 
-										$editor = JFactory::getEditor();
+										//$editor = JFactory::getEditor();
+										$editor_name = Factory::getApplication()->get('editor');
+										$editor = Editor::getInstance($editor_name);
 
 										$result.='<div>'.$editor->display($fname,$value, $w, $h, $c, $l).'</div>';
 								}

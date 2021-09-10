@@ -105,7 +105,6 @@ class CustomTablesModelEditPhotos extends JModelLegacy {
 		$query = 'SELECT ordering, photoid,  title'.$this->langpostfix.' AS title, photo_ext FROM '.$this->phototablename.' WHERE listingid='.$this->listing_id.' ORDER BY ordering, photoid';
 
 		$db->setQuery($query);
-		if (!$db->query())    die( $db->stderr());
 
 		$rows=$db->loadObjectList();
 
@@ -118,7 +117,6 @@ class CustomTablesModelEditPhotos extends JModelLegacy {
 		$query = 'SELECT id, fieldtitle'.$this->langpostfix.' AS title,typeparams FROM #__customtables_fields WHERE published=1 AND tableid='.$this->estableid.' AND  fieldname="'.$this->galleryname.'" AND type="imagegallery" LIMIT 1';
 
 		$db->setQuery($query);
-		if (!$db->query())    die( $db->stderr());
 
 		$rows=$db->loadObjectList();
 
@@ -157,7 +155,6 @@ class CustomTablesModelEditPhotos extends JModelLegacy {
 		$query = 'SELECT * FROM #__customtables_table_'.$this->establename.' WHERE id='.$this->listing_id.' LIMIT 1';
 
 		$db->setQuery($query);
-		if (!$db->query())    die( $db->stderr());
 
 		$rows = $db->loadAssocList();
 
@@ -399,7 +396,6 @@ class CustomTablesModelEditPhotos extends JModelLegacy {
 
 		$query =' SELECT photoid FROM '.$this->phototablename.' WHERE listingid='.$this->listing_id.' ORDER BY photoid DESC LIMIT 1';
 		$db->setQuery( $query );
-		if (!$db->query())    die( $db->stderr());
 
 		$espropertytype= $db->loadObjectList();
 		if(count($espropertytype)==1)

@@ -9,8 +9,8 @@ CREATE TABLE IF NOT EXISTS `#__customtables_options` (
   `parentid` int(10) NOT NULL,
   `sublevel` int(10) NOT NULL,
   `isselectable` tinyint(1) NOT NULL default '1',
-  `optionalcode` text NOT NULL,
-  `link` text NOT NULL,
+  `optionalcode` text NULL,
+  `link` text NULL,
   `familytree` varchar(255) NOT NULL,
   `familytreestr` varchar(255) NOT NULL,
 
@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS `#__customtables_categories` (
 	`id` INT(11) NOT NULL AUTO_INCREMENT,
 	`asset_id` INT(10) unsigned NOT NULL DEFAULT 0 COMMENT '',
 	`categoryname` VARCHAR(255) NOT NULL DEFAULT '',
-	`params` text NOT NULL DEFAULT '',
+	`params` text NULL,
 	`published` TINYINT(3) NOT NULL DEFAULT 1,
 	`created_by` INT(10) unsigned NOT NULL DEFAULT 0,
 	`modified_by` INT(10) unsigned NOT NULL DEFAULT 0,
@@ -44,13 +44,13 @@ CREATE TABLE IF NOT EXISTS `#__customtables_tables` (
 	`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
 	`asset_id` INT UNSIGNED NOT NULL DEFAULT 0,
 	`customphp` VARCHAR(1024) NULL DEFAULT NULL,
-	`description` TEXT NOT NULL,
+	`description` TEXT NULL,
 	`tablecategory` INT NULL DEFAULT NULL,
 	`tablename` VARCHAR(255) NOT NULL DEFAULT 'customidfield',
 	`customtablename` VARCHAR(255) NULL DEFAULT NULL,
 	`customidfield` VARCHAR(255) NULL DEFAULT NULL,
 	`tabletitle` VARCHAR(255) NULL DEFAULT NULL,
-	`params` text NULL DEFAULT NULL,
+	`params` text NULL,
 	`published` TINYINT NOT NULL DEFAULT 1,
 	`created_by` INT UNSIGNED NOT NULL DEFAULT 0,
 	`modified_by` INT UNSIGNED NOT NULL DEFAULT 0,
@@ -75,11 +75,11 @@ CREATE TABLE IF NOT EXISTS `#__customtables_layouts` (
 	`id` INT(11) NOT NULL AUTO_INCREMENT,
 	`asset_id` INT(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '',
 	`changetimestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	`layoutcode` MEDIUMTEXT NOT NULL,
+	`layoutcode` MEDIUMTEXT NULL,
 	`layoutname` VARCHAR(255) NOT NULL DEFAULT '',
 	`layouttype` INT(7) NOT NULL DEFAULT 0,
 	`tableid` INT(10) NULL DEFAULT NULL,
-	`params` text NULL DEFAULT NULL,
+	`params` text NULL,
 	`published` TINYINT(3) NOT NULL DEFAULT 1,
 	`created_by` INT(10) UNSIGNED NULL DEFAULT NULL,
 	`modified_by` INT(10) UNSIGNED NULL DEFAULT NULL,
@@ -109,7 +109,7 @@ CREATE TABLE IF NOT EXISTS `#__customtables_fields` (
 	`fieldname` VARCHAR(100) NOT NULL DEFAULT '',
 	`customfieldname` VARCHAR(100) NOT NULL DEFAULT '',
 	`fieldtitle` VARCHAR(1024) NOT NULL DEFAULT '',
-	`description` TEXT NULL DEFAULT NULL,
+	`description` TEXT NULL,
 	`isrequired` tinyint(1) UNSIGNED NOT NULL default '1',
   `isdisabled` tinyint(1) UNSIGNED NOT NULL default '0',
   `savevalue` tinyint(1) UNSIGNED NOT NULL default '1' COMMENT 'If set to 0 then the value will be recalculated (updated) on every view and mysql field will not be created.',
@@ -119,9 +119,9 @@ CREATE TABLE IF NOT EXISTS `#__customtables_fields` (
 	`typeparams` VARCHAR(1024) NULL DEFAULT NULL,
 	`valuerule` VARCHAR(1024) NULL DEFAULT NULL,
 	`valuerulecaption` VARCHAR(1024) NULL DEFAULT NULL,
-	`params` text NULL DEFAULT NULL,
+	`params` text NULL,
 	`published` TINYINT(3) NOT NULL DEFAULT 1,
-	`parentid` int(10) UNSIGNED NOT NULL DEFAULT 0,
+	`parentid` int(10) UNSIGNED NULL,
 	`created_by` INT(10) UNSIGNED NULL DEFAULT NULL,
 	`modified_by` INT(10) UNSIGNED NULL DEFAULT NULL,
 	`created` DATETIME NULL DEFAULT NULL,
@@ -159,7 +159,7 @@ CREATE TABLE IF NOT EXISTS `#__customtables_log` (
 --
 -- Always insure this column rules is large enough for all the access control values.
 --
-ALTER TABLE `#__assets` CHANGE `rules` `rules` MEDIUMTEXT NOT NULL COMMENT 'JSON encoded access control.';
+ALTER TABLE `#__assets` CHANGE `rules` `rules` MEDIUMTEXT NULL COMMENT 'JSON encoded access control.';
 
 --
 -- Always insure this column name is large enough for long component and view names.

@@ -72,6 +72,7 @@ class CustomtablesController extends JControllerLegacy
 				return false;
 			}
 		}
+		
 
 		return parent::display($cachable, $urlparams);
 	}

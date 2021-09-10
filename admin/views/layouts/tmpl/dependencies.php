@@ -204,7 +204,7 @@ function _getTablesThatUseThisLayout($layoutname,$wF)
     $query = 'SELECT id AS tableid, tabletitle,tablename, '.$fields.' FROM #__customtables_tables AS t WHERE '.$w.' ORDER BY tablename';
 
 	$db->setQuery( $query );
-	if (!$db->query())    die ( $db->stderr());
+
 	$rows=$db->loadAssocList();
 
     return $rows;
@@ -230,7 +230,7 @@ function _getMenuItemsThatUseThisLayout($layoutname)
 	$query = 'SELECT id,title FROM #__menu WHERE '.implode(' AND ',$wheres);
 	
 	$db->setQuery( $query );
-	if (!$db->query())    echo ( $db->stderr());
+	
 	return $db->loadAssocList();
 }
 
@@ -254,7 +254,7 @@ function _getModulesThatUseThisLayout($layoutname)
 	$query = 'SELECT id,title FROM #__modules WHERE '.implode(' AND ',$wheres);
 	
 	$db->setQuery( $query );
-	if (!$db->query())    echo ( $db->stderr());
+	
 	return $db->loadAssocList();
 }
 
@@ -282,8 +282,7 @@ function _getLayoutsThatUseThisLayout($layoutname)
 	
 	$query = 'SELECT id,layoutname FROM #__customtables_layouts WHERE '.implode(' AND ',$wheres);
 	
-	
 	$db->setQuery( $query );
-	if (!$db->query())    echo ( $db->stderr());
+	
 	return $db->loadAssocList();
 }

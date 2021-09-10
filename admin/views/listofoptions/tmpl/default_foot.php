@@ -14,7 +14,7 @@ defined('_JEXEC') or die('Restricted Access');
 
 <tfoot>
 		<tr>
-			<td colspan="<?php echo (count($this->LanguageList)+4); ?>">
+			<td colspan="<?php echo (count($this->languages)+4); ?>">
 				<?php echo $this->pagination->getListFooter(); ?>
 			</td>
 		</tr>

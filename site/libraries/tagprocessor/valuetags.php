@@ -96,11 +96,8 @@ class tagProcessor_Value
 	{
     	// get database handle
 		$db = JFactory::getDBO();
-
 		$query='SELECT '.$field.' FROM #__content WHERE id='.(int)$articleid.' LIMIT 1';
-
 		$db->setQuery($query);
-//	    if (!$db->query())    die( $db->stderr());
 
 		$rows=$db->loadAssocList();
 
@@ -1191,7 +1188,6 @@ class tagProcessor_Value
 		$query = 'SELECT title FROM #__usergroups WHERE id='.(int)$id.' LIMIT 1';
 
 		$db->setQuery($query);
-//		if (!$db->query())    die( $db->stderr());
 
 		$options=$db->loadAssocList();
 		if(count($options)!=0)
@@ -1218,21 +1214,18 @@ class tagProcessor_Value
 
 		$query = 'SELECT title FROM #__usergroups WHERE '.implode(' OR ',$where).' ORDER BY title';
 
-
 		$db->setQuery($query);
-//		if (!$db->query())    die( $db->stderr());
 
 		$options=$db->loadAssocList();
 
 		if(count($options)==0)
-					return '';
+			return '';
 
-				$groups=array();
-				foreach($options as $opt)
-					$groups[]=$opt['title'];
+		$groups=array();
+		foreach($options as $opt)
+			$groups[]=$opt['title'];
 
-				return implode(',',$groups);
-
+		return implode(',',$groups);
 	}
 
     public static function ApplyQueryGetValue($str,$sj_tablename)

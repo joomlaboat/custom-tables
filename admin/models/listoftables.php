@@ -93,7 +93,6 @@ class CustomtablesModelListoftables extends JModelList
 		// load parent items
 		$items = parent::getItems();
 
-		// return items
 		return $items;
 	}
 
@@ -181,9 +180,6 @@ class CustomtablesModelListoftables extends JModelList
 		$id .= ':' . $this->getState('filter.id');
 		$id .= ':' . $this->getState('filter.search');
 		$id .= ':' . $this->getState('filter.published');
-		$id .= ':' . $this->getState('filter.ordering');
-		$id .= ':' . $this->getState('filter.created_by');
-		$id .= ':' . $this->getState('filter.modified_by');
 		$id .= ':' . $this->getState('filter.tabletitle');
 		$id .= ':' . $this->getState('filter.category');
 

@@ -142,7 +142,6 @@ class ImportTables
                 ';
 
                 $db->setQuery( $query );
-                if (!$db->query())    die ( $db->stderr());
             }
         }
 

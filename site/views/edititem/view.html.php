@@ -20,36 +20,30 @@ class CustomTablesViewEditItem extends JViewLegacy {
 		$document->addCustomTag('<link src="'.JURI::root(true).'/components/com_customtables/css/style.css" type="text/css" rel="stylesheet" >');
 
 		$app = JFactory::getApplication();
-		$params =$app->getParams();
-
-		$this->assignRef('params',$params);
+		$this->params =$app->getParams();
 
 	    //========= User info
 		$user = JFactory::getUser();
-		$userid = (int)$user->get('id');
-		$this->assignRef('userid',$userid);
-
+		$this->userid = (int)$user->get('id');
+		
 		//------ end user info
 		
-		$Model = $this->getModel();
-        $Model->load($params);
+		$this->Model = $this->getModel();
+        $this->Model->load($this->params);
 		
-        if(!$Model->CheckAuthorization(1))
+        if(!$this->Model->CheckAuthorization(1))
     	{
     		//not authorized
             JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
     		return false;
         }
 
-        if(!isset($Model->esfields) or !is_array($Model->esfields))
+        if(!isset($this->Model->esfields) or !is_array($this->Model->esfields))
             return false;
 
-		$this->assignRef('Model',$Model);
-
-		$langpostfix=$Model->langpostfix;
-		$this->assignRef('langpostfix',$langpostfix);
-		$this->assignRef('esfields',$Model->esfields);
-		$this->assignRef('row',$Model->row);
+		$this->langpostfix = $this->Model->langpostfix;
+		$this->esfields = $this->Model->esfields;
+		$this->row = $this->Model->row;
 
 		$WebsiteRoot=JURI::root(true);
 		if($WebsiteRoot=='' or $WebsiteRoot[strlen($WebsiteRoot)-1]!='/') //Root must have slash / in the end
@@ -62,7 +56,7 @@ class CustomTablesViewEditItem extends JViewLegacy {
 		//Non need because submit button (settask function) does it.
 		$this->formAttribute='';// onsubmit="return checkRequiredFields(event);"';
 		
-		if($Model->frmt == 'json')
+		if($this->Model->frmt == 'json')
 			require_once('tmpl'.DIRECTORY_SEPARATOR.'json.php');
 		else
 			parent::display($tpl);

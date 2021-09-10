@@ -216,7 +216,6 @@
                        label="COM_CUSTOMTABLES_FIELDS_TABLEID_LABEL"
                        default="null"
                        required="true"
-                       disabled="false"
                        key_field="id"
                        value_field="tabletitle">
                         <!-- No Manual Options Were Added In Field Settings.-->

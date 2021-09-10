@@ -20,7 +20,6 @@ class CustomTablesViewOptions extends JViewLegacy
 {
     function display($tpl = null)
     {
-
         $this->form = $this->get('Form');
 
         // Assign the variables
@@ -57,8 +56,7 @@ class CustomTablesViewOptions extends JViewLegacy
 		}
 
         $LangMisc	= new ESLanguages;
-		$LanguageList=$LangMisc->getLanguageList();
-		$this->assignRef('LanguageList',		$LanguageList);
+		$this->languages=$LangMisc->getLanguageList();
 
 		// Display the template
 		parent::display($tpl);

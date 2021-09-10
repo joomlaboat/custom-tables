@@ -14,34 +14,27 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.
 
 class JHTMLESUserGroup
 {
-        static public function render($control_name, $value,$style,$cssclass, $attribute='',$mysqlwhere='',$mysqljoin='')
-        {
+    static public function render($control_name, $value,$style,$cssclass, $attribute='',$mysqlwhere='',$mysqljoin='')
+    {
+		$db = JFactory::getDBO();
 
-				$db = JFactory::getDBO();
+		$query = $db->getQuery(true);
+		$query->select('#__usergroups.id AS id, #__usergroups.title AS name');
+	 	$query->from('#__usergroups');
 
-				$query = $db->getQuery(true);
-				$query->select('#__usergroups.id AS id, #__usergroups.title AS name');
-	 			$query->from('#__usergroups');
+		if($mysqljoin!='')
+			$query->join('INNER', $mysqljoin);
 
-				if($mysqljoin!='')
-						$query->join('INNER', $mysqljoin);
+		if($mysqlwhere!='')
+			$query->where($mysqlwhere);
 
-				if($mysqlwhere!='')
-						$query->where($mysqlwhere);
+		$query->order('#__usergroups.title');
 
-				$query->order('#__usergroups.title');
+		$db->setQuery($query);
 
-				$db->setQuery($query);
-				//if (!$db->query())    die( $db->stderr());
+		$options=$db->loadObjectList();
+		$options=array_merge(array(array('id'=>'','name'=>'- '.JText ::_( 'COM_CUSTOMTABLES_SELECT' ))),$options);
 
-				$options=$db->loadObjectList();
-
-				$options=array_merge(array(array('id'=>'','name'=>'- '.JText ::_( 'COM_CUSTOMTABLES_SELECT' ))),$options);
-
-
-				return JHTML::_('select.genericlist', $options, $control_name, $cssclass.' style="'.$style.'" '.$attribute.' ', 'id', 'name', $value,$control_name);
-
-        }
-
-
+		return JHTML::_('select.genericlist', $options, $control_name, $cssclass.' style="'.$style.'" '.$attribute.' ', 'id', 'name', $value,$control_name);
+    }
 }

@@ -106,26 +106,25 @@ class LayoutProcessor
 
 	public static function applyContentPlugins(&$htmlresult)
 	{
-		$mydoc = JFactory::getDocument();
-		$pagetitle=$mydoc->getTitle(); //because content plugins may overwrite the title
+		$mainframe = JFactory::getApplication('site');
 
+		if(method_exists($mainframe,'getParams'))
+		{
+			$mydoc = JFactory::getDocument();
+			$pagetitle=$mydoc->getTitle(); //because content plugins may overwrite the title
 
-							$mainframe = JFactory::getApplication('site');
-							$params_ = $mainframe->getParams('com_content');
+			$params_ = $mainframe->getParams('com_content');
 
-							$o = new stdClass();
-							$o->text = $htmlresult;
-							$o->created_by_alias = 0;
-
-							$dispatcher	= JDispatcher::getInstance();
-
-							JPluginHelper::importPlugin('content');
-
-
-							$results = $dispatcher->trigger('onContentPrepare', array ('com_content.article', &$o, &$params_, 0));
-							$htmlresult=$o->text;
-
-		$mydoc->setTitle(JoomlaBasicMisc::JTextExtended($pagetitle)); //because content plugins may overwrite the title
+			$o = new stdClass();
+			$o->text = $htmlresult;
+			$o->created_by_alias = 0;
+		
+			JPluginHelper::importPlugin( 'content' );
+			$results = JFactory::getApplication()->triggerEvent( 'onContentPrepare',array ('com_content.article', &$o, &$params_, 0));
+			$htmlresult=$o->text;
+		
+			$mydoc->setTitle(JoomlaBasicMisc::JTextExtended($pagetitle)); //because content plugins may overwrite the title
+		}
 	}
 
 

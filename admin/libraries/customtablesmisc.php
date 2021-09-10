@@ -77,11 +77,8 @@ class CustomTablesMisc
 	    $query.= ' ORDER BY title';
 		
 		$db->setQuery($query);
-		if (!$db->query())    die( $db->stderr());
 		
-	    $rows= $db->loadObjectList();
-		
-		return $rows;
+		return $db->loadObjectList();
 	}
 	
 	function getAllChild($optionid,$parentid,$level)
@@ -228,7 +225,6 @@ class CustomTablesMisc
 		$query = 'SELECT id, title'.$langpostfix.' AS title FROM #__customtables_options WHERE parentid='.$parentid.' AND optionname="'.$optionname.'" LIMIT 1';
 		
 		$db->setQuery($query);
-		if (!$db->query())    die( $db->stderr());
                 
 		$rows=$db->loadObjectList();
 	
@@ -503,7 +499,6 @@ class CustomTablesMisc
 		$query = 'SELECT id, optionname, title'.$langpostfix.' AS title FROM #__customtables_options WHERE parentid='.(int)$parentid;
 		$query.=' ORDER BY ordering, title';
 		$db->setQuery($query);
-		if (!$db->query())	die( $db->stderr());
                 
 		return $db->loadObjectList();
 	}
@@ -549,8 +544,7 @@ class CustomTablesMisc
 	$query = 'SELECT id FROM #__customtables_options WHERE parentid='.$parentid.' AND optionname="'.$optionname.'" LIMIT 1';
 		
 	$db->setQuery($query);
-        if (!$db->query())    die( $db->stderr());
-                
+
 	$rows=$db->loadObjectList();
 	
 	if(count($rows)!=1)return 0;
@@ -570,18 +564,14 @@ class CustomTablesMisc
 		$query = 'SELECT link FROM #__customtables_options WHERE id='.$optid.' LIMIT 1';
 		
 		$db->setQuery($query);
-		    if (!$db->query())    die( $db->stderr());
-                
+
 		$rows=$db->loadObjectList();
 	
-		if(count($rows)!=1)return "";
-		
+		if(count($rows)!=1)
+			return "";
 		
 		return $rows[0]->link;
 	}
-
-
-	
 	
 	function isRecordExist($checkvalue,$checkfield, $resultfield, $table)
 	{
@@ -589,37 +579,26 @@ class CustomTablesMisc
 		$query =' SELECT '.$resultfield.' AS resultfield FROM '.$table.' WHERE '.$checkfield.'="'.$checkvalue.'" LIMIT 1';
 		$db->setQuery( $query );
 
-		
-		if (!$db->query())    die( $db->stderr());
 		$espropertytype= $db->loadObjectList();
 
 		if(count($espropertytype)>0)
-		{
 			return $espropertytype[0]->resultfield;	
-		}
 		
 		return "";
 	}
 
-	
-	
 	function getOptionsByID($parentid=0)
 	{
 		if($parentid=='')
 			return array();
 			
-		
 		$db = JFactory::getDBO();
-		
 			
 		$query = 'SELECT * FROM #__customtables_options WHERE parentid="'.$parentid.'" ORDER BY ordering';
 		
 		$db->setQuery($query);
-		if (!$db->query())    die( $db->stderr());
-                
-		$rows=$db->loadAssocList();
-		
-		return $rows;
+
+		return $db->loadAssocList();
 	}
 	
 	function getHeritageInfo($parentid, $fieldname)
@@ -631,7 +610,6 @@ class CustomTablesMisc
 		
 		$query = 'SELECT id, '.$fieldname.' FROM #__customtables_options WHERE parentid="'.$parentid.'" LIMIT 1';
 		$db->setQuery($query);
-		if (!$db->query())    die( $db->stderr());
 		
 		$rows=$db->loadAssocList();
 		if(count($rows)==1)
@@ -640,13 +618,9 @@ class CustomTablesMisc
 			$vlu=$row[$fieldname];
 			
 			if(strlen($vlu)>0)
-			{
 				return $vlu;
-			}
 			else
-			{
 				return $this->getHeritageInfo($row[id], $fieldname);
-			}
 		}
 		else
 			return '';
@@ -663,7 +637,6 @@ class CustomTablesMisc
 			.($where!='' ? ' AND '.$where : '')
 			.($limit!='' ? ' LIMIT '.$limit : '');
 		$db->setQuery($query);
-		if (!$db->query())    die( $db->stderr());
 		
 		$rows=$db->loadAssocList();
 		return $rows;
@@ -680,13 +653,13 @@ class CustomTablesMisc
 		return '';
 		
 	}
+	
 	function getFamilyTree($optionid,$level)
 	{
 				
 		$db = JFactory::getDBO();
 		$query = 'SELECT parentid FROM #__customtables_options WHERE id="'.$optionid.'" LIMIT 1';
 		$db->setQuery($query);
-		if (!$db->query())    die( $db->stderr());
 
 		$rows=$db->loadObjectList();
 		if(count($rows)!=1)
@@ -715,7 +688,6 @@ class CustomTablesMisc
 		$db = JFactory::getDBO();
 		$query = 'SELECT parentid, optionname FROM #__customtables_options WHERE id="'.$optionid.'" LIMIT 1';
 		$db->setQuery($query);
-		if (!$db->query())    die( $db->stderr());
 
 		$rows=$db->loadObjectList();
 		if(count($rows)!=1)

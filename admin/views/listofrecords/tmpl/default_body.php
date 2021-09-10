@@ -15,36 +15,17 @@ $edit = "index.php?option=com_customtables&view=listofrecords&task=records.edit"
 ?>
 <?php foreach ($this->items as $i => $item): ?>
 
-	<?php
-		//canCheckin = $this->user->authorise('core.manage', 'com_checkin') || $item->checked_out == $this->user->id || $item->checked_out == 0;
-		//$userChkOut = JFactory::getUser($item->checked_out);
-		//$canDo = CustomtablesHelper::getActions('fields',$item,'listoffields');
-	?>
-	
-	<?php
-		//$canCheckin = $this->user->authorise('core.manage', 'com_checkin') || $item->checked_out == $this->user->id || $item->checked_out == 0;
-		//$userChkOut = JFactory::getUser($item->checked_out);
-		$canDo = CustomtablesHelper::getActions('records',$item,'listofrecords');
-	?>
 	<tr class="row<?php echo $i % 2; ?>">
 	
 		<td class="nowrap center">
-		<?php if ($canDo->get('core.edit')): ?>
+		<?php if ($this->canEdit): ?>
 			<?php echo JHtml::_('grid.id', $i, $item->id); ?>
-		<?php else: ?>
-			&#9633;
 		<?php endif; ?>
 		</td>
 		
-		
-	
-	
-
-
-				<?php
+		<?php
 			$item_array =  (array) $item;
 			$result='';
-			
 			
 			$link=JURI::root(false).'administrator/index.php?option=com_customtables&view=records&task=records.edit&tableid='.$this->tableid.'&id='.$item->id;
 			
@@ -63,7 +44,7 @@ $edit = "index.php?option=com_customtables&view=listofrecords&task=records.edit"
 
 		<?php if($this->published_field_found): ?>
 		<td class="center">
-			<?php if ($canDo->get('core.edit.state')) : ?>
+			<?php if ($this->canState) : ?>
 					<?php echo JHtml::_('jgrid.published', $item->published, $i, 'listofrecords.', true, 'cb'); ?>
 			<?php else: ?>
 				<?php echo JHtml::_('jgrid.published', $item->published, $i, 'listofrecords.', false, 'cb'); ?>

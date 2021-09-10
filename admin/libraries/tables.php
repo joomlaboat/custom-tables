@@ -22,11 +22,6 @@ class ESTables
 		$query = 'SHOW TABLE STATUS FROM '.$db->quoteName($database).' LIKE '.$db->quote($dbprefix.'customtables_table_'.$tablename);
 		$db->setQuery( $query );
 
-		if (!$db->query()) {
-			$this->setError( $db->getErrorMsg() );
-			return false;
-		}
-
 		return $db->loadObjectList();
 	}
 	

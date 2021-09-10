@@ -12,6 +12,8 @@ defined('_JEXEC') or die('Restricted access');
 // import Joomla view library
 jimport('joomla.application.component.view');
 
+use Joomla\CMS\Version;
+
 /**
  * Tables View class
  */
@@ -25,29 +27,28 @@ class CustomtablesViewDataBaseCheck extends JViewLegacy
 	
 	public function display($tpl = null)
 	{
+		$version = new Version;
+		$this->version = (int)$version->getShortVersion();
+		
 		if ($this->getLayout() !== 'modal')
 		{
 			// Include helper submenu
 			CustomtablesHelper::addSubmenu('databasecheck');
 			$this->addToolBar();
-			$this->sidebar = JHtmlSidebar::render();
+			if($this->version < 4)
+				$this->sidebar = JHtmlSidebar::render();
 		}
+
 		// Set the document
 		$this->setDocument();
-		
 		$this->tables = $this->getTables();
-
 		parent::display($tpl);
-
-		
 	}
 	
 	protected function addToolBar()
 	{
-	
 		JToolBarHelper::title(JText::_('COM_CUSTOMTABLES_DATABASECHECK'), 'joomla');
 		JHtmlSidebar::setAction('index.php?option=com_customtables&view=databasecheck');
-		
 	}
 
 	protected function setDocument()
@@ -57,9 +58,7 @@ class CustomtablesViewDataBaseCheck extends JViewLegacy
 			$this->document = JFactory::getDocument();
 		}
 		$this->document->setTitle(JText::_('COM_CUSTOMTABLES_DATABASECHECK'));
-		$this->document->addStyleSheet(JURI::root(true)."/administrator/components/com_customtables/css/fieldtypes.css", (CustomtablesHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/css');
-		
-		
+		$this->document->addStyleSheet(JURI::root(true)."/administrator/components/com_customtables/css/fieldtypes.css");
 	}
 	
 	protected function getTables()
@@ -96,9 +95,7 @@ class CustomtablesViewDataBaseCheck extends JViewLegacy
 
 		// From the customtables_item table
 		$query->from($db->quoteName('#__customtables_tables', 'a'));
-
 		$query->where('a.published = 1');
-		
 		
 		// Add the list ordering clause.
 		$orderCol = 'tablename';
@@ -117,7 +114,7 @@ class CustomtablesViewDataBaseCheck extends JViewLegacy
 		$query->select('COUNT('.$realidfieldname.') AS cd_zeroIdRecords');
 		$query->from($db->quoteName($realtablename, 'a'));
 		$query->where($realidfieldname.' = 0');
-		$query->limit(1);
+		$query->setLimit(1);
 		
 		$db->setQuery( $query );
 		$rows = $db->loadAssocList();

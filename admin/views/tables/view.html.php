@@ -13,7 +13,10 @@
 defined('_JEXEC') or die('Restricted access');
 
 // import Joomla view library
-jimport('joomla.application.component.view');
+//jimport('joomla.application.component.view');
+
+use Joomla\CMS\Helper\ContentHelper;
+use Joomla\CMS\Version;
 
 /**
  * Tables View class
@@ -26,6 +29,8 @@ class CustomtablesViewTables extends JViewLegacy
 	 */
 	public function display($tpl = null)
 	{
+		$version = new Version;
+		$this->version = (int)$version->getShortVersion();
 
 		// Assign the variables
 		$this->form = $this->get('Form');
@@ -33,8 +38,14 @@ class CustomtablesViewTables extends JViewLegacy
 		$this->script = $this->get('Script');
 		$this->state = $this->get('State');
 		// get action permissions
-		$this->canDo = CustomtablesHelper::getActions('tables',$this->item);
+		$this->canDo = ContentHelper::getActions('com_customtables', 'tables',$this->item->id);
+		$this->canCreate = $this->canDo->get('tables.create');
+		$this->canEdit = $this->canDo->get('tables.edit');
+		//$this->canState = $this->canDo->get('tables.edit.state');
+		//$this->canDelete = $this->canDo->get('tables.delete');
+		
 		// get input
+		
 		$jinput = JFactory::getApplication()->input;
 		$this->ref = JFactory::getApplication()->input->get('ref', 0, 'word');
 		$this->refid = JFactory::getApplication()->input->get('refid', 0, 'int');
@@ -60,7 +71,10 @@ class CustomtablesViewTables extends JViewLegacy
 		}
 
 		// Display the template
-		parent::display($tpl);
+		if($this->version < 4)
+			parent::display($tpl);
+		else
+			parent::display('quatro');
 
 		// Set the document
 		$this->setDocument();
@@ -79,6 +93,7 @@ class CustomtablesViewTables extends JViewLegacy
 
 		JToolbarHelper::title( JText::_($isNew ? 'COM_CUSTOMTABLES_TABLES_NEW' : 'COM_CUSTOMTABLES_TABLES_EDIT'), 'pencil-2 article-add');
 		// Built the actions for new and existing records.
+		/*
 		if ($this->refid || $this->ref)
 		{
 			if ($this->canDo->get('core.create') && $isNew)
@@ -104,10 +119,11 @@ class CustomtablesViewTables extends JViewLegacy
 		}
 		else
 		{
+			*/
 			if ($isNew)
 			{
 				// For new records, check the create permission.
-				if ($this->canDo->get('core.create'))
+				if ($this->canCreate)
 				{
 					JToolBarHelper::apply('tables.apply', 'JTOOLBAR_APPLY');
 					JToolBarHelper::save('tables.save', 'JTOOLBAR_SAVE');
@@ -117,32 +133,32 @@ class CustomtablesViewTables extends JViewLegacy
 			}
 			else
 			{
-				if ($this->canDo->get('core.edit'))
+				if ($this->canEdit)
 				{
 					// We can save the new record
 					JToolBarHelper::apply('tables.apply', 'JTOOLBAR_APPLY');
 					JToolBarHelper::save('tables.save', 'JTOOLBAR_SAVE');
 					// We can save this record, but check the create permission to see
 					// if we can return to make a new one.
-					if ($this->canDo->get('core.create'))
+					if ($this->canCreate)
 					{
 						JToolBarHelper::custom('tables.save2new', 'save-new.png', 'save-new_f2.png', 'JTOOLBAR_SAVE_AND_NEW', false);
 					}
 				}
-				if ($this->canDo->get('core.create'))
+				if ($this->canCreate)
 				{
 					JToolBarHelper::custom('tables.save2copy', 'save-copy.png', 'save-copy_f2.png', 'JTOOLBAR_SAVE_AS_COPY', false);
 				}
 				JToolBarHelper::cancel('tables.cancel', 'JTOOLBAR_CLOSE');
 			}
-		}
+		//}
 		JToolbarHelper::divider();
 		// set help url for this view if found
-		$help_url = CustomtablesHelper::getHelpUrl('tables');
-		if (CustomtablesHelper::checkString($help_url))
-		{
-			JToolbarHelper::help('COM_CUSTOMTABLES_HELP_MANAGER', false, $help_url);
-		}
+		//$help_url = CustomtablesHelper::getHelpUrl('tables');
+		//if (CustomtablesHelper::checkString($help_url))
+		//{
+			//JToolbarHelper::help('COM_CUSTOMTABLES_HELP_MANAGER', false, $help_url);
+		//}
 	}
 
 	/**
@@ -176,7 +192,7 @@ class CustomtablesViewTables extends JViewLegacy
 			$this->document = JFactory::getDocument();
 		}
 		$this->document->setTitle(JText::_($isNew ? 'COM_CUSTOMTABLES_TABLES_NEW' : 'COM_CUSTOMTABLES_TABLES_EDIT'));
-		$this->document->addScript(JURI::root(true)."/administrator/components/com_customtables/views/tables/submitbutton.js", (CustomtablesHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/javascript');
+		$this->document->addScript(JURI::root(true)."/administrator/components/com_customtables/views/tables/submitbutton.js");
 		JText::script('view not acceptable. Error');
 	}
 }

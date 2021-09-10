@@ -29,7 +29,7 @@ class CustomTablesCreateUser
 		$query = 'SELECT id FROM #__users WHERE username="'.$username.'" LIMIT 1';
 
 		$db->setQuery( $query );
-		if (!$db->query())    die( $db->stderr());
+
 		$recs = $db->loadAssocList();
 		if(count($recs)==1)
 			return true;
@@ -42,23 +42,17 @@ class CustomTablesCreateUser
 	static public function CheckIfUserExist($username, $email)
 	{
 		$db = JFactory::getDBO();
-
-
 		$query = 'SELECT id FROM #__users WHERE username="'.$username.'" AND email="'.$email.'" LIMIT 1';
 
-
 		$db->setQuery( $query );
-		if (!$db->query())    die( $db->stderr());
+
 		$recs = $db->loadAssocList();
 		if(count($recs)!=1)
 			return 0;
 
 		$rec=$recs[0];
-
 		return $rec['id'];
-
 	}
-
 
 	static public function CheckIfEmailExist($email,&$existing_user,&$existing_name)
 	{
@@ -69,7 +63,7 @@ class CustomTablesCreateUser
 		$query = 'SELECT id, username, name FROM #__users WHERE email="'.$email.'" LIMIT 1';
 
 		$db->setQuery( $query );
-		if (!$db->query())    die( $db->stderr());
+
 		$recs = $db->loadAssocList();
 		if(count($recs)==1)
 		{
@@ -80,11 +74,7 @@ class CustomTablesCreateUser
 		}
 
 		return false;
-
-
-
 	}
-
 
 	static public function GetArticleContent($article_id,&$title)
 	{
@@ -93,7 +83,7 @@ class CustomTablesCreateUser
 		$query = 'SELECT id, title, introtext FROM #__content WHERE id='.(int)$article_id.' LIMIT 1';
 
 		$db->setQuery( $query );
-		if (!$db->query())    die( $db->stderr());
+
 		$recs = $db->loadAssocList();
 		if(count($recs)==1)
 		{
@@ -124,7 +114,6 @@ class CustomTablesCreateUser
 		$query='SELECT * FROM #__users WHERE id='.$userid;
 
 		$db->setQuery( $query );
-		if (!$db->query())    die( $db->stderr());
 
 		$recs=$db->loadAssocList();
 		if(count($recs)==0)

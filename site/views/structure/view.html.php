@@ -10,30 +10,19 @@
 defined('_JEXEC') or die('Restricted access');
 
 jimport( 'joomla.application.component.view');
-class CustomTablesViewStructure extends JView {
-        var $catid=0;
+
+class CustomTablesViewStructure extends JView
+{
 	function display($tpl = null)
 	{
 		$mainframe = JFactory::getApplication('site');
 		
+		$this->Model = $this->getModel();
 		
-		$Model = $this->getModel();
-		$this->assignRef('Model',$Model);
+		$this->rows=$this->Model->getStructure();
 		
+		$this->pagination=$Model->getPagination();
 		
-		$rows=$Model->getStructure();
-		
-		$this->assignRef('rows',$rows);
-		
-		$pagination=$Model->getPagination();
-		$this->assignRef('pagination', $pagination);
-
-
         parent::display($tpl);
 	}
-	
-
-
-	
 }
-?>

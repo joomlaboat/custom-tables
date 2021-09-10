@@ -12,13 +12,31 @@
 defined('_JEXEC') or die('Restricted access');
 
 JHtml::addIncludePath(JPATH_COMPONENT.'/helpers/html');
-JHtml::_('behavior.tooltip');
-JHtml::_('behavior.formvalidation');
-JHtml::_('formbehavior.chosen', 'select');
-JHtml::_('behavior.keepalive');
-$componentParams = JComponentHelper::getParams('com_customtables');
+//JHtml::_('behavior.tooltip');
+// < 4
+
+
+if($this->version >= 4)
+{
+	$wa = $this->document->getWebAssetManager();
+	$wa->useScript('keepalive')
+		->useScript('form.validate');
+}
+else
+{
+	//JHtml::_('formbehavior.chosen', 'select');
+	JHtml::_('behavior.keepalive');
+	JHtml::_('behavior.formvalidation');
+}
+	//->useScript('com_banners.admin-banner-edit');
+
+//JHtml::_('formbehavior.chosen', 'select');
+//JHtml::_('behavior.keepalive');
+//$componentParams = JComponentHelper::getParams('com_customtables');
 ?>
+
 <script type="text/javascript">
+/*
 	// waiting spinner
 	var outerDiv = jQuery('body');
 	jQuery('<div id="loading"></div>')
@@ -39,23 +57,24 @@ $componentParams = JComponentHelper::getParams('com_customtables');
 		jQuery('#customtables_loader').fadeIn('fast');
 		jQuery('#loading').hide();
 	});
+	*/
 </script>
-<div id="customtables_loader" style="display: none;">
-<form action="<?php echo JRoute::_('index.php?option=com_customtables&layout=edit&id='.(int) $this->item->id.$this->referral); ?>" method="post" name="adminForm" id="adminForm" class="form-validate" enctype="multipart/form-data">
 
+<!--<div id="customtables_loader" style="display: none;">-->
+<form action="<?php echo JRoute::_('index.php?option=com_customtables&layout=edit&id='.(int) $this->item->id.$this->referral); ?>" method="post" name="adminForm" id="adminForm" class="form-validate" enctype="multipart/form-data">
 <div class="form-horizontal">
 
-	<?php echo JHtml::_('bootstrap.startTabSet', 'categoriesTab', array('active' => 'general')); ?>
+	<?php //echo JHtml::_('bootstrap.startTabSet', 'categoriesTab', array('active' => 'general')); ?>
 
-	<?php echo JHtml::_('bootstrap.addTab', 'categoriesTab', 'general', JText::_('COM_CUSTOMTABLES_CATEGORIES_GENERAL', true)); ?>
+	<?php //echo JHtml::_('bootstrap.addTab', 'categoriesTab', 'general', JText::_('COM_CUSTOMTABLES_CATEGORIES_GENERAL', true)); ?>
 		<div class="row-fluid form-horizontal-desktop">
 			<div class="span12">
 				<?php echo JLayoutHelper::render('categories.general_left', $this); ?>
 			</div>
 		</div>
-	<?php echo JHtml::_('bootstrap.endTab'); ?>
+	<?php //echo JHtml::_('bootstrap.endTab'); ?>
 
-	<?php echo JHtml::_('bootstrap.endTabSet'); ?>
+	<?php //echo JHtml::_('bootstrap.endTabSet'); ?>
 
 	<div>
 		<input type="hidden" name="task" value="categories.edit" />
@@ -63,4 +82,4 @@ $componentParams = JComponentHelper::getParams('com_customtables');
 	</div>
 </div>
 </form>
-</div>
+<!--</div>-->

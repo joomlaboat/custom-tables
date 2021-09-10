@@ -12,16 +12,18 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+
+$document = JFactory::getDocument();
+$document->addCustomTag('<link href="'.JURI::root(true).'/administrator/components/com_customtables/css/fieldtypes.css" rel="stylesheet">');
+$document->addCustomTag('<link href="'.JURI::root(true).'/administrator/components/com_customtables/css/modal.css" rel="stylesheet">');
+$document->addCustomTag('<script src="'.JURI::root(true).'/administrator/components/com_customtables/js/ajax.js"></script>');
+
 JHtml::addIncludePath(JPATH_COMPONENT.'/helpers/html');
 JHtml::_('behavior.tooltip');
 JHtml::_('behavior.formvalidation');
 JHtml::_('formbehavior.chosen', 'select');
 JHtml::_('behavior.keepalive');
 
-$document = JFactory::getDocument();
-$document->addCustomTag('<link href="'.JURI::root(true).'/administrator/components/com_customtables/css/fieldtypes.css" rel="stylesheet">');
-$document->addCustomTag('<link href="'.JURI::root(true).'/administrator/components/com_customtables/css/modal.css" rel="stylesheet">');
-$document->addCustomTag('<script src="'.JURI::root(true).'/administrator/components/com_customtables/js/ajax.js"></script>');
 $document->addCustomTag('<script src="'.JURI::root(true).'/administrator/components/com_customtables/js/typeparams.js"></script>');
 
 $input	= JFactory::getApplication()->input;
@@ -99,7 +101,8 @@ else
 
 <div class="form-horizontal">
 
-	<?php echo JHtml::_('bootstrap.startTabSet', 'fieldsTab', array('active' => 'general')); ?>
+	<?php 	
+	echo JHtml::_('bootstrap.startTabSet', 'fieldsTab', array('active' => 'general')); ?>
 
 	<?php echo JHtml::_('bootstrap.addTab', 'fieldsTab', 'general', JText::_('COM_CUSTOMTABLES_FIELDS_GENERAL', true)); ?>
 		<div class="row-fluid form-horizontal-desktop">
@@ -151,10 +154,15 @@ else
 
 					if(isset($item_array[$id]))
 						$vlu=$item_array[$id];
+						
+					if($morethanonelang)
+						$field_label = JText::_('COM_CUSTOMTABLES_FIELDS_FIELDTITLE', true);
+					else
+						$field_label = $this->form->getLabel('fieldtitle');
 
 					echo '
 					<div class="control-group">
-						<div class="control-label">'.$this->form->getLabel('fieldtitle').'</div>
+						<div class="control-label">'.$field_label.'</div>
 						<div class="controls">
 							<input type="text" name="jform['.$id.']" id="jform_'.$id.'"  value="'.$vlu.'" class="'.$cssclass.'"     placeholder="Field Title"   maxlength="255" '.$att.'  />
 							<b>'.$lang->title.'</b>

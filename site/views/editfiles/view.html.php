@@ -12,7 +12,6 @@ defined('_JEXEC') or die('Restricted access');
 jimport( 'joomla.application.component.view'); //Important to get menu parameters
 class CustomTablesViewEditFiles extends JViewLegacy
 {
-    
 	function display($tpl = null)
 	{
 		$mainframe = JFactory::getApplication('site');
@@ -20,13 +19,10 @@ class CustomTablesViewEditFiles extends JViewLegacy
 		$user = JFactory::getUser();
 		$userid = $user->get('id');
 		if((int)$userid==0)
-				return false;
+			return false;
 		
-		$Model = $this->getModel();
-		$this->assignRef('Model',$Model);
-		
+		$this->Model = $this->getModel();
+				
 		parent::display($tpl);
 	}
-	
 }
-?>

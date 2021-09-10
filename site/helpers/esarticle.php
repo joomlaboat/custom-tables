@@ -14,8 +14,6 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.
 
 class JHTMLESArticle
 {
-
-
 	static public function render($control_name, $value,$cssclass, $TypeParams, $attribute='')
         {
 		$p=explode(',',$TypeParams);
@@ -33,14 +31,9 @@ class JHTMLESArticle
 	 	$query->from('#__content');
 		$query->order('title');
 		$db->setQuery($query);
-		//if (!$db->query())    die( $db->stderr());
 		$options=$db->loadObjectList();
 		$options=array_merge(array(array('id'=>'','title'=>'- '.JText ::_( 'COM_CUSTOMTABLES_SELECT' ))),$options);
 
 		return JHTML::_('select.genericlist', $options, $control_name, 'class="'.$cssclass.'" '.$attribute.' ', 'id', 'title', $value,$control_name);
-
-        }
-
+    }
 }
-
-?>

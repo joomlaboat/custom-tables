@@ -43,10 +43,7 @@ class ESLanguages
 		$db = JFactory::getDBO();
 		
 		$query ='SELECT lang_id AS id, lang_code AS language, title AS caption, title, sef AS original_sef FROM #__languages WHERE published=1 ORDER BY lang_id';
-			
 		$db->setQuery( $query );
-		
-		if (!$db->query())    die( $db->stderr());
 		
 		$rows = $db->loadObjectList();
 		

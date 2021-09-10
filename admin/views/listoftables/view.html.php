@@ -10,10 +10,24 @@
  **/
  
 // No direct access to this file
-defined('_JEXEC') or die('Restricted access');
-
+\defined('_JEXEC') or die;
 // import Joomla view library
-jimport('joomla.application.component.view');
+
+//jimport('joomla.application.component.view');
+use Joomla\CMS\Version;
+
+use Joomla\CMS\Factory;
+use Joomla\CMS\Helper\ContentHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\GenericDataException;
+use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
+use Joomla\CMS\Object\CMSObject;
+use Joomla\CMS\Toolbar\Toolbar;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\Database\DatabaseDriver;
+use Joomla\Component\Content\Administrator\Extension\ContentComponent;
+// import Joomla view library
+//jimport('joomla.application.component.view');
 
 /**
  * Customtables View class for the Listoftables
@@ -29,6 +43,9 @@ class CustomtablesViewListoftables extends JViewLegacy
 
 	function display($tpl = null)
 	{
+		$version = new Version;
+		$this->version = (int)$version->getShortVersion();
+		
 		$phptagprocessor=JPATH_SITE.DIRECTORY_SEPARATOR.'plugins'.DIRECTORY_SEPARATOR.'content'.DIRECTORY_SEPARATOR.'customtables'.DIRECTORY_SEPARATOR.'protagprocessor'.DIRECTORY_SEPARATOR.'phptags.php';
 		
 		if(file_exists($phptagprocessor))
@@ -43,6 +60,12 @@ class CustomtablesViewListoftables extends JViewLegacy
 			CustomtablesHelper::addSubmenu('listoftables');
 		}
 		
+		if($this->version >= 4)
+		{
+			$this->filterForm    = $this->get('FilterForm');
+			$this->activeFilters = $this->get('ActiveFilters');
+		}
+		
 		// Assign data to the view
 		$this->items = $this->get('Items');
 
@@ -53,23 +76,32 @@ class CustomtablesViewListoftables extends JViewLegacy
 		$this->listDirn = $this->escape($this->state->get('list.direction'));
 		$this->saveOrder = $this->listOrder == 'ordering';
 		// get global action permissions
-		$this->canDo = CustomtablesHelper::getActions('tables');
-		$this->canEdit = $this->canDo->get('core.edit');
-		$this->canState = $this->canDo->get('core.edit.state');
-		$this->canCreate = $this->canDo->get('core.create');
-		$this->canDelete = $this->canDo->get('core.delete');
-		$this->canBatch = false;//$this->canDo->get('core.batch');
+
+		$this->canDo = ContentHelper::getActions('com_customtables', 'tables');
+		$this->canCreate = $this->canDo->get('tables.create');
+		$this->canEdit = $this->canDo->get('tables.edit');
+		$this->canState = $this->canDo->get('tables.edit.state');
+		$this->canDelete = $this->canDo->get('tables.delete');
+		
+		$this->isEmptyState = $this->get('IsEmptyState');
+		//$this->canBatch = false;//$this->canDo->get('core.batch');
 
 		// We don't need toolbar in the modal window.
 		if ($this->getLayout() !== 'modal')
 		{
-			$this->addToolbar();
-			$this->sidebar = JHtmlSidebar::render();
-			// load the batch html
-			if ($this->canCreate && $this->canEdit && $this->canState)
+			if($this->version < 4)
 			{
-				$this->batchDisplay = JHtmlBatch_::render();
+				$this->addToolbar_3();
+				$this->sidebar = JHtmlSidebar::render();
 			}
+			else
+				$this->addToolbar_4();
+			
+			// load the batch html
+			//if ($this->canCreate && $this->canEdit && $this->canState)
+			//{
+				//$this->batchDisplay = JHtmlBatch_::render();
+			//}
 		}
 
 		// Check for errors.
@@ -78,28 +110,73 @@ class CustomtablesViewListoftables extends JViewLegacy
 			throw new Exception(implode("\n", $errors), 500);
 		}
 
-
-
-
-
 		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'languages.php');
 		$LangMisc	= new ESLanguages;
 		$this->languages=$LangMisc->getLanguageList();
 
-
-
-
 		// Display the template
-		parent::display($tpl);
+		if($this->version < 4)
+			parent::display($tpl);
+		else
+			parent::display('quatro');
+
 
 		// Set the document
 		$this->setDocument();
 	}
 
-	/**
-	 * Setting the toolbar
-	 */
-	protected function addToolBar()
+
+	protected function addToolbar_4()
+	{
+		$canDo = $this->canDo;
+		$user  = Factory::getUser();
+
+		// Get the toolbar object instance
+		$toolbar = Toolbar::getInstance('toolbar');
+
+		ToolbarHelper::title(Text::_('COM_CUSTOMTABLES_LISTOFTABLES'), 'joomla');
+
+		if ($this->canCreate)
+			$toolbar->addNew('tables.add');
+
+		$dropdown = $toolbar->dropdownButton('status-group')
+			->text('JTOOLBAR_CHANGE_STATUS')
+			->toggleSplit(false)
+			->icon('icon-ellipsis-h')
+			->buttonClass('btn btn-action')
+			->listCheck(true);
+
+		$childBar = $dropdown->getChildToolbar();
+			
+		if ($this->canState)
+		{
+			$childBar->publish('listoftables.publish')->listCheck(true);
+			$childBar->unpublish('listoftables.unpublish')->listCheck(true);
+		}
+		
+		if ($this->canDo->get('core.admin'))
+		{
+			$childBar->checkin('listoftables.checkin');
+		}
+
+		if(($this->canState && $this->canDelete))
+		{
+			if ($this->state->get('filter.published') != ContentComponent::CONDITION_TRASHED)
+			{
+				$childBar->trash('listoftables.trash')->listCheck(true);
+			}
+
+			if (!$this->isEmptyState && $this->state->get('filter.published') == ContentComponent::CONDITION_TRASHED && $this->canDelete)
+			{
+				$toolbar->delete('listoftables.delete')
+					->text('JTOOLBAR_EMPTY_TRASH')
+					->message('JGLOBAL_CONFIRM_DELETE')
+					->listCheck(true);
+			}
+		}
+	}
+
+	protected function addToolBar_3()
 	{
 		JToolBarHelper::title(JText::_('COM_CUSTOMTABLES_LISTOFTABLES'), 'joomla');
 		JHtmlSidebar::setAction('index.php?option=com_customtables&view=listoftables');
@@ -122,15 +199,15 @@ class CustomtablesViewListoftables extends JViewLegacy
 			{
 				JToolBarHelper::publishList('listoftables.publish');
 				JToolBarHelper::unpublishList('listoftables.unpublish');
-				//JToolBarHelper::archiveList('listoftables.archive');
-
-				if ($this->canDo->get('core.admin'))
-				{
-					JToolBarHelper::checkin('listoftables.checkin');
-				}
 			}
 
+			if ($this->canDo->get('core.admin'))
+			{
+				JToolBarHelper::checkin('listoftables.checkin');
+			}
+			
 			// Add a batch button
+			/*
 			if ($this->canBatch && $this->canCreate && $this->canEdit && $this->canState)
 			{
 				// Get the toolbar object instance
@@ -143,6 +220,7 @@ class CustomtablesViewListoftables extends JViewLegacy
 				$dhtml = $layout->render(array('title' => $title));
 				$bar->appendButton('Custom', $dhtml, 'batch');
 			}
+			*/
 
 			if ($this->state->get('filter.published') == -2 && ($this->canState && $this->canDelete))
 			{
@@ -158,18 +236,21 @@ class CustomtablesViewListoftables extends JViewLegacy
 			JToolBarHelper::custom('tables.export','download.png','','Export');
 
 		// set help url for this view if found
+		/*
 		$help_url = CustomtablesHelper::getHelpUrl('listoftables');
 		if (CustomtablesHelper::checkString($help_url))
 		{
 				JToolbarHelper::help('COM_CUSTOMTABLES_HELP_MANAGER', false, $help_url);
 		}
+		*/
 
 		// add the options comp button
+		/*
 		if ($this->canDo->get('core.admin') || $this->canDo->get('core.options'))
 		{
 			JToolBarHelper::preferences('com_customtables');
 		}
-
+*/
 		if ($this->canState)
 		{
 			JHtmlSidebar::addFilter(
@@ -178,6 +259,7 @@ class CustomtablesViewListoftables extends JViewLegacy
 				JHtml::_('select.options', JHtml::_('jgrid.publishedOptions'), 'value', 'text', $this->state->get('filter.published'), true)
 			);
 			// only load if batch allowed
+			/*
 			if ($this->canBatch)
 			{
 				JHtmlBatch_::addListSelection(
@@ -186,6 +268,7 @@ class CustomtablesViewListoftables extends JViewLegacy
 					JHtml::_('select.options', JHtml::_('jgrid.publishedOptions', array('all' => false)), 'value', 'text', '', true)
 				);
 			}
+			*/
 		}
 
 		JHtmlSidebar::addFilter(
@@ -194,6 +277,7 @@ class CustomtablesViewListoftables extends JViewLegacy
 			JHtml::_('select.options', JHtml::_('access.assetgroups'), 'value', 'text', $this->state->get('filter.access'))
 		);
 
+		/*
 		if ($this->canBatch && $this->canCreate && $this->canEdit)
 		{
 			JHtmlBatch_::addListSelection(
@@ -202,8 +286,7 @@ class CustomtablesViewListoftables extends JViewLegacy
 				JHtml::_('select.options', JHtml::_('access.assetgroups'), 'value', 'text')
 			);
 		}
-
-
+		*/
 
 		// Set Tableid Selection
 		$this->categoryidOptions = $this->getCategorySelections();
@@ -217,6 +300,7 @@ class CustomtablesViewListoftables extends JViewLegacy
 				JHtml::_('select.options', $this->categoryidOptions, 'value', 'text', $this->state->get('filter.category'))
 			);
 
+			/*
 			if ($this->canBatch && $this->canCreate && $this->canEdit)
 			{
 				// Tableid Batch Selection
@@ -226,6 +310,7 @@ class CustomtablesViewListoftables extends JViewLegacy
 					JHtml::_('select.options', $this->categoryidOptions, 'value', 'text')
 				);
 			}
+			*/
 		}
 
 	}
@@ -269,10 +354,10 @@ class CustomtablesViewListoftables extends JViewLegacy
 	 */
 	protected function getSortFields()
 	{
+					//'a.sorting' => JText::_('JGRID_HEADING_ORDERING'),
 		return array(
-			'a.sorting' => JText::_('JGRID_HEADING_ORDERING'),
 			'a.published' => JText::_('JSTATUS'),
-			'a.tabletitle' => JText::_('COM_CUSTOMTABLES_TABLES_TABLETITLE_LABEL'),
+			'a.tablename' => JText::_('COM_CUSTOMTABLES_TABLES_TABLENAME_LABEL'),
 			'a.id' => JText::_('JGRID_HEADING_ID')
 		);
 	}

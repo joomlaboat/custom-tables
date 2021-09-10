@@ -133,9 +133,6 @@ class CustomTablesModelList extends JModel
 		$query.=$orderby;
 
 		$db->setQuery( $query );
-		if (!$db->query())    die( $db->stderr());
-
-
 
 		$rows = $db->loadObjectList();
 

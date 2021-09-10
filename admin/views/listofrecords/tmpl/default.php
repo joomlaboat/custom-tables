@@ -17,7 +17,7 @@ JHtml::_('dropdown.init');
 JHtml::_('formbehavior.chosen', 'select');
 
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'_checktable.php');
-//&tableid='.$this->tableid
+
 ?>
 <form action="<?php echo JRoute::_('index.php?option=com_customtables&view=listofrecords'); ?>" method="post" name="adminForm" id="adminForm">
 <?php if(!empty( $this->sidebar)): ?>

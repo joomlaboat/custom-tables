@@ -12,7 +12,6 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
-JHTML::_('behavior.modal');
 jimport('joomla.installer.installer');
 jimport('joomla.installer.helper');
 

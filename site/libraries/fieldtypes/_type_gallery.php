@@ -9,18 +9,15 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-class CT_FieldTypeTag_imagegallery{
-    
-
+class CT_FieldTypeTag_imagegallery
+{
 	public static function getGalleryRows($establename,$galleryname, $listing_id)
 	{
-
 		$db = JFactory::getDBO();
 		$phototablename='#__customtables_gallery_'.$establename.'_'.$galleryname;
 
 		$query = 'SELECT photoid, photo_ext FROM '.$phototablename.' WHERE listingid='.(int)$listing_id.' ORDER BY ordering, photoid';
 		$db->setQuery($query);
-//		if (!$db->query())    die('getGalleryRows: '. $db->stderr());
         $photorows=$db->loadObjectList();
 
 		return $photorows;

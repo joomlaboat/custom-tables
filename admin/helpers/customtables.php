@@ -11,6 +11,7 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Helper\ContentHelper;
 /**
  * Customtables component helper.
  */
@@ -19,6 +20,7 @@ abstract class CustomtablesHelper
 	/**
 	*	Load the Component xml manifest.
 	**/
+
 	public static function manifest()
 	{
 		$manifestUrl = JPATH_ADMINISTRATOR."/components/com_customtables/customtables.xml";
@@ -28,11 +30,12 @@ abstract class CustomtablesHelper
 	/**
 	*	Joomla version object
 	**/
-	protected static $JVersion;
+	//protected static $JVersion;
 
 	/**
 	*	set/get Joomla version
 	**/
+	/*
 	public static function jVersion()
 	{
 		// check if set
@@ -42,10 +45,11 @@ abstract class CustomtablesHelper
 		}
 		return self::$JVersion;
 	}
-
+*/
 	/**
 	*	Load the Contributors details.
 	**/
+	
 	public static function getContributors()
 	{
 		// get params
@@ -84,10 +88,12 @@ abstract class CustomtablesHelper
 	/**
 	 *	Can be used to build help urls.
 	 **/
+	 /*
 	public static function getHelpUrl($view)
 	{
 		return false;
 	}
+	*/
 
 	/**
 	*	Configure the Linkbar.
@@ -103,13 +109,13 @@ abstract class CustomtablesHelper
 		JHtmlSidebar::addEntry(JText::_('COM_CUSTOMTABLES_SUBMENU_LISTOFLAYOUTS'), 'index.php?option=com_customtables&view=listoflayouts', $submenu === 'listoflayouts');
 	
 		
-		$phptagprocessor=JPATH_SITE.DIRECTORY_SEPARATOR.'plugins'.DIRECTORY_SEPARATOR.'content'.DIRECTORY_SEPARATOR.'customtables'.DIRECTORY_SEPARATOR.'protagprocessor'.DIRECTORY_SEPARATOR.'phptags.php';
-		if(file_exists($phptagprocessor))
-		{
+		//$phptagprocessor=JPATH_SITE.DIRECTORY_SEPARATOR.'plugins'.DIRECTORY_SEPARATOR.'content'.DIRECTORY_SEPARATOR.'customtables'.DIRECTORY_SEPARATOR.'protagprocessor'.DIRECTORY_SEPARATOR.'phptags.php';
+		//if(file_exists($phptagprocessor))
+		//{
 			//Pro Version
-			JHtmlSidebar::addEntry(JText::_('COM_CUSTOMTABLES_SUBMENU_LISTOFOPTIONS'), 'index.php?option=com_customtables&view=listofoptions', $submenu === 'listofoptions');
+			//JHtmlSidebar::addEntry(JText::_('COM_CUSTOMTABLES_SUBMENU_LISTOFOPTIONS'), 'index.php?option=com_customtables&view=listofoptions', $submenu === 'listofoptions');
 			JHtmlSidebar::addEntry(JText::_('COM_CUSTOMTABLES_SUBMENU_DATABASECHECK'), 'index.php?option=com_customtables&view=databasecheck', $submenu === 'databasecheck');
-		}
+		//}
 		
 		JHtmlSidebar::addEntry(JText::_('COM_CUSTOMTABLES_SUBMENU_DOCUMENTATION'), 'index.php?option=com_customtables&view=documentation', $submenu === 'documentation');
 		
@@ -128,6 +134,7 @@ abstract class CustomtablesHelper
 	 * @return  mix string/int/float
 	 *
 	 */
+	 /*
 	public static function getVar($table, $where = null, $whereString = 'user', $what = 'id', $operator = '=', $main = 'customtables')
 	{
 		if(!$where)
@@ -167,7 +174,7 @@ abstract class CustomtablesHelper
 		}
 		return false;
 	}
-
+*/
 	/**
 	 * Get array of variables
 	 *
@@ -324,6 +331,7 @@ abstract class CustomtablesHelper
 	/**
 	*	Get the actions permissions
 	**/
+	/*
 	public static function getActions($view,&$record = null,$views = null)
 	{
 		jimport('joomla.access.access');
@@ -336,7 +344,7 @@ abstract class CustomtablesHelper
 			$views = self::safeString($views);
  		}
 		// get all actions from component
-		$actions = JAccess::getActions('com_customtables', 'component');
+		$actions = (array)ContentHelper::getActions('com_customtables', 'component');
 		// set acctions only set in component settiongs
 		$componentActions = array('core.admin','core.manage','core.options','core.export');
 		// loop the actions and set the permissions
@@ -512,10 +520,11 @@ abstract class CustomtablesHelper
 		}
 		return $result;
 	}
-
+*/
 	/**
 	*	Get any component's model
 	**/
+	/*
 	public static function getModel($name, $path = JPATH_COMPONENT_ADMINISTRATOR, $component = 'Customtables', $config = array())
 	{
 		// fix the name
@@ -556,13 +565,13 @@ abstract class CustomtablesHelper
 		}
 		return $model;
 	}
-
+*/
 	/**
 	*	Add to asset Table
 	*/
 	
-	public static function setAsset($id,$table)
-	{
+	//public static function setAsset($id,$table)
+	//{
 		/*
 		$parent = JTable::getInstance('Asset');
 		$parent->loadByName('com_customtables');
@@ -621,12 +630,13 @@ abstract class CustomtablesHelper
 			}
 			*/
 		//}
-		return false;
-	}
+		//return false;
+	//}
 
 	/**
 	 *	Gets the default asset Rules for a component/view.
 	 */
+	 /*
 	protected static function getDefaultAssetRules($component,$view)
 	{
 		// Need to find the asset id by the name of the component.
@@ -675,7 +685,7 @@ abstract class CustomtablesHelper
 		}
 		return JAccess::getAssetRules(0);
 	}
-
+*/
 	/**
 	 * xmlAppend
 	 *
@@ -830,6 +840,7 @@ abstract class CustomtablesHelper
 	*
 	*	@returns bool true on success
 	**/
+	/*
 	public static function checkJson($string)
 	{
 		if (self::checkString($string))
@@ -847,6 +858,7 @@ abstract class CustomtablesHelper
 	*
 	*	@returns bool true on success
 	**/
+	
 	public static function checkObject($object)
 	{
 		if (isset($object) && is_object($object))
@@ -863,6 +875,7 @@ abstract class CustomtablesHelper
 	*
 	*	@returns bool true on success
 	**/
+	
 	public static function checkArray($array, $removeEmptyString = false)
 	{
 		if (isset($array) && is_array($array) && count((array)$array) > 0)
@@ -891,6 +904,7 @@ abstract class CustomtablesHelper
 	*
 	*	@returns bool true on success
 	**/
+	
 	public static function checkString($string)
 	{
 		if (isset($string) && is_string($string) && strlen($string) > 0)
@@ -906,6 +920,8 @@ abstract class CustomtablesHelper
 	*
 	*	@returns bool true on success
 	**/
+	
+	/*
 	public static function isConnected()
 	{
 		// If example.com is down, then probably the whole internet is down, since IANA maintains the domain. Right?
@@ -932,6 +948,7 @@ abstract class CustomtablesHelper
 	*
 	*	@returns array on success
 	**/
+	/*
 	public static function mergeArrays($arrays)
 	{
 		if(self::checkArray($arrays))
@@ -962,6 +979,8 @@ abstract class CustomtablesHelper
 	*
 	*	@returns string on success
 	**/
+	
+	
 	public static function shorten($string, $length = 40, $addTip = true)
 	{
 		if (self::checkString($string))
@@ -1003,6 +1022,7 @@ abstract class CustomtablesHelper
 	*
 	*	@returns string on success
 	**/
+	
 	public static function safeString($string, $type = 'L', $spacer = '_', $replaceNumbers = true)
 	{
 		if ($replaceNumbers === true)
@@ -1138,6 +1158,8 @@ abstract class CustomtablesHelper
 	*	@input	an int
 	*	@returns a string
 	**/
+	
+	/*
 	public static function numberToString($x)
 	{
 		$nwords = array( "zero", "one", "two", "three", "four", "five", "six", "seven",
@@ -1227,6 +1249,8 @@ abstract class CustomtablesHelper
 	*
 	*	@returns a string
 	**/
+	
+	/*
 	public static function randomkey($size)
 	{
 		$bag = "abcefghijknopqrstuwxyzABCDDEFGHIJKLLMMNOPQRSTUVVWXYZabcddefghijkllmmnopqrstuvvwxyzABCEFGHIJKNOPQRSTUWXYZ";
@@ -1239,4 +1263,5 @@ abstract class CustomtablesHelper
 		}
 		return implode($key);
 	}
+	*/
 }

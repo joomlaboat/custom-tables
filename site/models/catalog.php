@@ -4,7 +4,7 @@
  * @package Custom Tables
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @copyright Copyright (C) 2018-2020. All Rights Reserved
+ * @copyright Copyright (C) 2018-2021. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
@@ -506,8 +506,8 @@ class CustomTablesModelCatalog extends JModelLegacy
 								.' ';
 
 						$db->setQuery( $query );
-						//if (!$db->query())    die ;
-						//$rows=$db->loadAssocList();
+						
+						$rows=$db->loadAssocList();
 
 						$wherelist=array();
 						foreach($rows as $row)
@@ -976,7 +976,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 			$query = 'SELECT id FROM #__menu WHERE alias='.$db->Quote($alias);
 
 			$db->setQuery( $query );
-			//if (!$db->query())    die( $db->stderr());
+
 			$recs = $db->loadAssocList( );
 			if(!$recs) return 0;
 			if (count($recs)<1) return 0;

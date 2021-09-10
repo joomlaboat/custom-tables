@@ -653,12 +653,9 @@ class JoomlaBasicMisc
 		{
 			$db = JFactory::getDBO();
 
-
 			$query = 'SELECT params FROM #__menu WHERE id='.(int)$Itemid.' LIMIT 1';
 
-
 			$db->setQuery($query);
-			if (!$db->query())	die( $db->stderr());
 
 			$rows= $db->loadObjectList();
 
@@ -808,7 +805,6 @@ class JoomlaBasicMisc
 
 		// Execute the query and load the rules from the result.
 		$db->setQuery($query);
-		if (!$db->query())	die( $db->stderr());
 
 		$rows= $db->loadObjectList();
 		if(count($rows)<1)
@@ -944,9 +940,13 @@ text with <div>tags</div>
 		return $text;
 	}
 
-    public static function JTextExtended($text)
+    public static function JTextExtended($text,$value = null)
     {
-        $new_text=JText::_($text);
+		if(is_null($value))
+			$new_text = JText::_($text);
+		else
+			$new_text = JText::sprintf($text,$value);
+
         if($new_text==$text)
         {
             $parts=explode('_',$text);
@@ -963,7 +963,10 @@ text with <div>tags</div>
                 $lang = JFactory::getLanguage();
                 $lang->load($extension,JPATH_BASE);
 
-                return JText::_($text);
+				if(is_null($value))
+					return JText::_($text);
+				else
+					return JText::sprintf($text,$value);
 			}
             else
                 return $text;
@@ -979,7 +982,6 @@ text with <div>tags</div>
 			$query = 'SELECT id FROM #__menu WHERE published=1 AND alias='.$db->Quote($alias);
 
 			$db->setQuery( $query );
-			if (!$db->query())    die( $db->stderr());
 			$recs = $db->loadAssocList( );
 			if(!$recs) return 0;
 			if (count($recs)<1) return 0;
@@ -994,7 +996,7 @@ text with <div>tags</div>
 			$query = 'SELECT * FROM #__menu WHERE published=1 AND alias='.$db->Quote($alias);
 
 			$db->setQuery( $query );
-			if (!$db->query())    die( $db->stderr());
+
 			$recs = $db->loadAssocList( );
 			if(!$recs) return 0;
 			if (count($recs)<1) return 0;

@@ -64,14 +64,20 @@ width:98%;
 
 .ct_readmoreClosed{
     overflow: hidden;
-        height: 30px;
+    height: 40px;
+    box-sizing: border-box;
 }
  
 
 .ct_readmoreClose{
     overflow: hidden;
-        height: 30px;
+    height: 40px;
+    box-sizing: border-box;
     -webkit-animation: ct_readmoreClose_ani 0.3s linear;
+}
+
+#layouttags h3{
+	margin-top:40px;
 }
 
 @-webkit-keyframes ct_readmoreClose_ani {
@@ -119,7 +125,7 @@ width:98%;
     border-bottom: 2px solid #aaaaee;
     margin-bottom: 10px;
     background-color: #efefff;
-    border-radius: 5px;
+    /* border-radius: 5px; */
 }
 
 .ct_doc_pro_label{

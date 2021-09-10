@@ -451,7 +451,6 @@ class tagProcessor_General
 		$query = 'SELECT * FROM #__users WHERE id='.(int)$id.' LIMIT 1';
 
 		$db->setQuery($query);
-//		if (!$db->query())    die( $db->stderr());
         $rows=$db->loadObjectList();
 
 		if(count($rows)==0)
@@ -460,32 +459,18 @@ class tagProcessor_General
 		return $rows[0];
 	}
 
-    /*
-    function deleteGoBackButton(&$layout_code,&$Model,$returnto)
-		{
-			$options=array();
-			$fList=JoomlaBasicMisc::getListToReplace('gobackbutton',$options,$layout_code,'{}');
-			$i=0;
-			foreach($fList as $fItem)
-			{
-				$layout_code=str_replace($fItem,'',$layout_code);
-				$i++;
-			}
-		}
-    */
-
-
 	public static function getGoBackButton(&$Model,&$layout_code)
 	{
         $jinput = JFactory::getApplication()->input;
         $returnto =base64_decode(JFactory::getApplication()->input->get('returnto','','BASE64'));
 
+		$options=array();
+		$fList=JoomlaBasicMisc::getListToReplace('gobackbutton',$options,$layout_code,'{}');
 
-			$options=array();
-			$fList=JoomlaBasicMisc::getListToReplace('gobackbutton',$options,$layout_code,'{}');
-			$i=0;
-			foreach($fList as $fItem)
-			{
+		$i=0;
+
+		foreach($fList as $fItem)
+		{
 				$opt='';
 
 				$title=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_GO_BACK');
@@ -517,7 +502,7 @@ class tagProcessor_General
 
 				$layout_code=str_replace($fItem,$gobackbutton,$layout_code);
 				$i++;
-			}
+		}
 	}
 
 	protected static function renderGoBackButton($returnto,$title)

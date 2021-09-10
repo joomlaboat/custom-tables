@@ -67,7 +67,6 @@ class updateImages
 		$query = 'SELECT count(id) AS c FROM #__customtables_table_'.$establename.' WHERE es_'.$esfieldname.'>0';
 	
 		$db->setQuery( $query );
-		//if (!$db->query())    die( $db->stderr());
 		
 		$recs=$db->loadAssocList();
 		

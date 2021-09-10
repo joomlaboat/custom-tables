@@ -27,10 +27,10 @@ class CustomtablesModelListoffields extends JModelList
 			$config['filter_fields'] = array(
 				'a.id','id',
 				'a.published','published',
-				'a.ordering','ordering',
-				'a.created_by','created_by',
-				'a.modified_by','modified_by',
-				'a.fieldtitle','fieldtitle',
+				//'a.ordering','ordering',
+				//'a.created_by','created_by',
+				//'a.modified_by','modified_by',
+				//'a.fieldtitle','fieldtitle',
 				'a.type','type'
 			);
 		}
@@ -52,33 +52,35 @@ class CustomtablesModelListoffields extends JModelList
 		{
 			$this->context .= '.' . $layout;
 		}
-		$fieldtitle = $this->getUserStateFromRequest($this->context . '.filter.fieldtitle', 'filter_fieldtitle');
-		$this->setState('filter.fieldtitle', $fieldtitle);
+		//$fieldtitle = $this->getUserStateFromRequest($this->context . '.filter.fieldtitle', 'filter_fieldtitle');
+		//$this->setState('filter.fieldtitle', $fieldtitle);
 
-		$type = $this->getUserStateFromRequest($this->context . '.filter.type', 'filter_type');
-		$this->setState('filter.type', $type);
+		//$type = $this->getUserStateFromRequest($this->context . '.filter.type', 'filter_type');
+		//$this->setState('filter.type', $type);
 		
-		$type = $this->getUserStateFromRequest($this->context . '.filter.tableid', 'filter_tableid');
-		$this->setState('filter.tableid', $type);
+		//$tableid = $this->getUserStateFromRequest($this->context . '.filter.tableid', 'filter_tableid');
+		//$this->setState('filter.tableid', $tableid);
         
-		$sorting = $this->getUserStateFromRequest($this->context . '.filter.sorting', 'filter_sorting', 0, 'int');
-		$this->setState('filter.sorting', $sorting);
+		//$sorting = $this->getUserStateFromRequest($this->context . '.filter.sorting', 'filter_sorting', 0, 'int');
+		//$this->setState('filter.sorting', $sorting);
         
-		$access = $this->getUserStateFromRequest($this->context . '.filter.access', 'filter_access', 0, 'int');
-		$this->setState('filter.access', $access);
+		//$access = $this->getUserStateFromRequest($this->context . '.filter.access', 'filter_access', 0, 'int');
+		//$this->setState('filter.access', $access);
         
-		$search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
-		$this->setState('filter.search', $search);
+		//$search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
+		//$this->setState('filter.search', $search);
 
-		$published = $this->getUserStateFromRequest($this->context . '.filter.published', 'filter_published', '');
-		$this->setState('filter.published', $published);
+		//$published = $this->getUserStateFromRequest($this->context . '.filter.published', 'filter_published', '');
+		//$this->setState('filter.published', $published);
         
-		$created_by = $this->getUserStateFromRequest($this->context . '.filter.created_by', 'filter_created_by', '');
-		$this->setState('filter.created_by', $created_by);
+		//$created_by = $this->getUserStateFromRequest($this->context . '.filter.created_by', 'filter_created_by', '');
+		//$this->setState('filter.created_by', $created_by);
 
-		$created = $this->getUserStateFromRequest($this->context . '.filter.created', 'filter_created');
-		$this->setState('filter.created', $created);
+		//$created = $this->getUserStateFromRequest($this->context . '.filter.created', 'filter_created');
+		//$this->setState('filter.created', $created);
 
+		//$jinput->set('tableid',$tableid);
+		
 		// List state information.
 		parent::populateState($ordering, $direction);
 	}
@@ -296,10 +298,6 @@ class CustomtablesModelListoffields extends JModelList
 		$id .= ':' . $this->getState('filter.search');
 		$id .= ':' . $this->getState('filter.published');
 		$id .= ':' . $this->getState('filter.ordering');
-		$id .= ':' . $this->getState('filter.created_by');
-		$id .= ':' . $this->getState('filter.modified_by');
-		$id .= ':' . $this->getState('filter.fieldtitle');
-		$id .= ':' . $this->getState('filter.type');
 
 		return parent::getStoreId($id);
 	}

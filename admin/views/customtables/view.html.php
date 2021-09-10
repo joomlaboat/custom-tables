@@ -13,6 +13,7 @@ defined('_JEXEC') or die('Restricted access');
 
 // import Joomla view library
 jimport('joomla.application.component.view');
+use Joomla\CMS\Helper\ContentHelper;
 
 /**
  * Customtables View class
@@ -53,15 +54,18 @@ class CustomtablesViewCustomtables extends JViewLegacy
 	 */
 	protected function addToolBar()
 	{
-		$canDo = CustomtablesHelper::getActions('customtables');
+		$canDo = ContentHelper::getActions('com_customtables', '');
+		//$canDo = CustomtablesHelper::getActions('customtables');
 		JToolBarHelper::title(JText::_('COM_CUSTOMTABLES_DASHBOARD'), 'grid-2');
 
 		// set help url for this view if found
+		/*
 		$help_url = CustomtablesHelper::getHelpUrl('customtables');
 		if (CustomtablesHelper::checkString($help_url))
 		{
 			JToolbarHelper::help('COM_CUSTOMTABLES_HELP_MANAGER', false, $help_url);
 		}
+		*/
 
 		if ($canDo->get('core.admin') || $canDo->get('core.options'))
 		{

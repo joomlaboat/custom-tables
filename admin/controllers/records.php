@@ -222,41 +222,49 @@ class CustomtablesControllerRecords extends JControllerForm
 		$_params= new JRegistry;
 		$_params->loadArray($paramsArray);
 		
-		$config=array();
+		//$config=array();
 		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'models'.DIRECTORY_SEPARATOR.'edititem.php');
 		$editModel = JModelLegacy::getInstance('EditItem', 'CustomTablesModel', $_params);
 		$editModel->load($_params,true);
 		$editModel->pagelayout=ESLayouts::createDefaultLayout_Edit($editModel->esfields,false);
 
 		// get the referal details
+		/*
 		$this->ref 		= $this->input->get('ref', 0, 'word');
 		$this->refid 	= $this->input->get('refid', 0, 'int');
-		
+		*/
 		
 
 		$msg_='';
-		$saved=$editModel->store($msg_,$link);	
 
+		if($this->task=='save2copy')
+			$saved=$editModel->copy($msg_, $link);
+		elseif($this->task=='save' or $this->task=='apply' or $this->task=='save2new')
+			$saved=$editModel->store($msg_,$link);
 		
 		$redirect = 'index.php?option=' . $this->option;
-		
-		if($this->task=='apply' or $this->task=='save2new' or $this->task=='save2copy')
+				
+		if($this->task=='apply')
 		{
+			JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORD_SAVED'),'success');
 			$redirect.='&view=records&layout=edit&id='.(int)$recordid.'&tableid='.(int)$tableid;
 		}
-		else
-			$redirect.='&view=listofrecords&tableid='.(int)$tableid;
-		
-		//Pospone extra task
-			
-		if($this->input->getCmd('extratask','')!='')
+		elseif($this->task=='save2copy')
 		{
-			$redirect.='&extratask='.$this->input->getCmd('extratask','');
-			$redirect.='&old_typeparams='.$this->input->get('old_typeparams','','BASE64');
-			$redirect.='&new_typeparams='.$this->input->get('new_typeparams','','BASE64');
-			$redirect.='&recordid='.$this->input->getInt('recordid',0);
+			JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_COPIED'),'success');
+			$redirect.='&view=records&task=records.edit&tableid='.(int)$tableid.'&id='.(int)$editModel->id;
 		}
-
+		elseif($this->task=='save2new')
+		{
+			JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORD_SAVED'),'success');
+			$redirect.='&view=records&task=records.edit&tableid='.(int)$tableid;
+		}
+		else
+		{
+			JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORD_SAVED'),'success');
+			$redirect.='&view=listofrecords&tableid='.(int)$tableid;
+		}
+		
 		if ($saved)
 		{
 			// Redirect to the item screen.

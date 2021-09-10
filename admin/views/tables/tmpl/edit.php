@@ -12,13 +12,12 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
-JHtml::addIncludePath(JPATH_COMPONENT.'/helpers/html');
 JHtml::_('behavior.tooltip');
 JHtml::_('behavior.formvalidation');
 JHtml::_('formbehavior.chosen', 'select');
 JHtml::_('behavior.keepalive');
-$componentParams = JComponentHelper::getParams('com_customtables');
 
+$componentParams = JComponentHelper::getParams('com_customtables');
 
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'languages.php');
 $LangMisc	= new ESLanguages;
@@ -34,6 +33,7 @@ else
 	$phptagprocessor=false;
 
 ?>
+<?php /*
 <script type="text/javascript">
 	// waiting spinner
 	var outerDiv = jQuery('body');
@@ -59,7 +59,8 @@ else
 		
 	});
 </script>
-<div id="customtables_loader" style="display: none;">
+*/ ?>
+<!--<div id="customtables_loader" style="display: none;">-->
 <form action="<?php echo JRoute::_('index.php?option=com_customtables&layout=edit&id='.(int) $this->item->id.$this->referral); ?>" method="post" name="adminForm" id="adminForm" class="form-validate" enctype="multipart/form-data">
 <div id="jform_title"></div>
 <div class="form-horizontal">
@@ -115,30 +116,18 @@ else
 
 					$morethanonelang=true; //More than one language installed
 				}
-
-
 				?>
-
-
 				<hr/>
-
 				<div class="control-group">
 					<div class="control-label"><?php echo $this->form->getLabel('tablecategory'); ?></div>
 					<div class="controls"><?php echo $this->form->getInput('tablecategory'); ?></div>
 				</div>
-
-
-				<?php // echo JLayoutHelper::render('tables.details_left', $this); ?>
 			</div>
 		</div>
-
 	<?php echo JHtml::_('bootstrap.endTab'); ?>
 
 
 	<?php
-
-
-
 		$morethanonelang=false;
 		foreach($languages as $lang)
 		{
@@ -146,11 +135,12 @@ else
 			if($morethanonelang)
 				$id.='_'.$lang->sef;
 
-			JHtml::_('bootstrap.addTab', 'tablesTab', $id, JText::_('COM_CUSTOMTABLES_TABLES_DESCRIPTION', true).' <b>'.$lang->title.'</b>');
+			echo JHtml::_('bootstrap.addTab', 'tablesTab', $id, JText::_('COM_CUSTOMTABLES_TABLES_DESCRIPTION', true).' <b>'.$lang->title.'</b>');
 			echo '
 			<div id="'.$id.'" class="tab-pane">
 				<div class="row-fluid form-horizontal-desktop">
 					<div class="span12">';
+
 
 			$editor = JFactory::getEditor();
 
@@ -167,12 +157,15 @@ else
 				</div>
 			</div>';
 			$morethanonelang=true; //More than one language installed
+			
+			echo JHtml::_('bootstrap.endTab');
 		}
 
 	?>
 
 	<?php
 	if($phptagprocessor):
+		
 	echo JHtml::_('bootstrap.addTab', 'tablesTab', 'advanced', JText::_('COM_CUSTOMTABLES_TABLES_ADVANCED', true)); ?>
 
 	<div class="row-fluid form-horizontal-desktop">
@@ -202,7 +195,6 @@ else
 			</div>
 	</div>
 
-
 	<?php echo JHtml::_('bootstrap.endTab');
 	endif;
 	?>
@@ -223,7 +215,9 @@ else
 	</div>
 	<?php echo JHtml::_('bootstrap.endTab'); ?>
 
-	<?php if ($this->canDo->get('core.admin')) : ?>
+	<?php 
+	/*
+	if ($this->canDo->get('core.admin')) : ?>
 	<?php echo JHtml::_('bootstrap.addTab', 'tablesTab', 'permissions', JText::_('COM_CUSTOMTABLES_TABLES_PERMISSION', true)); ?>
 		<div class="row-fluid form-horizontal-desktop">
 			<div class="span12">
@@ -234,9 +228,9 @@ else
 					<?php 
 					
 					foreach ($this->form->getFieldset('accesscontrol') as $field): ?>
-						<div>
+						<!--<div>-->
 							<?php echo $field->label; echo $field->input;?>
-						</div>
+						<!--</div>-->
 						<div class="clearfix"></div>
 					<?php endforeach; ?>
 					</div>
@@ -244,9 +238,10 @@ else
 			</div>
 		</div>
 	<?php echo JHtml::_('bootstrap.endTab'); ?>
-	<?php endif; ?>
+	<?php endif; 
+	*/ ?>
 
-	<?php echo '<!-- end tab set -->'.JHtml::_('bootstrap.endTabSet').'<!-- end of the end of the tab set ;-) -->'; ?>
+	<?php JHtml::_('bootstrap.endTabSet'); ?>
 
 	<div>
 		<input type="hidden" name="task" value="tables.edit" />
@@ -258,4 +253,4 @@ else
 <div class="clearfix"></div>
 <?php echo JLayoutHelper::render('tables.details_under', $this); ?>
 </form>
-</div>
+<!--</div>-->

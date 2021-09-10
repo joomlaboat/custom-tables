@@ -95,7 +95,6 @@ class CustomTablesModelListOfOptions extends JModelList
 
 
 		$db->setQuery( $query );
-		if (!$db->query())    die( $db->stderr());
 
 		$rows = $db->loadObjectList();
 		$children = array();
@@ -390,7 +389,7 @@ class CustomTablesModelListOfOptions extends JModelList
 
 		$query="SELECT id, optionname FROM #__customtables_options";// WHERE parentid!=0";
 		$db->setQuery( $query );
-		if (!$db->query())    die( $db->stderr());
+
 		$rows = $db->loadObjectList();
 		foreach($rows as $row)
 		{

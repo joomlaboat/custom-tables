@@ -29,22 +29,21 @@ class CustomTablesViewListOfOptions extends JViewLegacy
 		$this->sidebar = JHtmlSidebar::render();
 
 		$LangMisc	= new ESLanguages;
-		$LanguageList=$LangMisc->getLanguageList();
-		$this->assignRef('LanguageList',		$LanguageList);
+		$this->languages=$LangMisc->getLanguageList();
 
 		$document =  JFactory::getDocument();
 		$document->setTitle(JText::_('View List Items'));
 
 		$input	= JFactory::getApplication()->input;
 
-		$limitstart = $input->getInt('limitstart', '0');
-		$items		= $this->get('Items');
-		$pagination	= $this->get('Pagination');
-		$lists		= $this->_getViewLists();
-		$user		= JFactory::getUser();
+		$this->limitstart = $input->getInt('limitstart', '0');
+		$this->items		= $this->get('Items');
+		$this->pagination	= $this->get('Pagination');
+		$this->lists		= $this->_getViewLists();
+		$this->user		= JFactory::getUser();
 
 		// Ensure ampersands and double quotes are encoded in item titles
-		foreach ($items as $i => $item) {
+		foreach ($this->items as $i => $item) {
 			$treename = $item->treename;
 			$treename = JFilterOutput::ampReplace($treename);
 			$treename = str_replace('"', '&quot;', $treename);
@@ -52,22 +51,11 @@ class CustomTablesViewListOfOptions extends JViewLegacy
 		}
 
 		//Ordering allowed ?
-		$ordering = ($lists['order'] == 'm.ordering');
+		$this->ordering = ($lists['order'] == 'm.ordering');
 
 		JHTML::_('behavior.tooltip');
 
-		$this->assignRef('items', $items);
-		$this->assignRef('pagination', $pagination);
-		$this->assignRef('lists', $lists);
-		$this->assignRef('user', $user);
-
-		$this->assignRef('ordering', $ordering);
-		$this->assignRef('limitstart', $limitstart);
-		$isselectable=true;
-		$this->assignRef('isselectable', $isselectable);
-
-		$LangMisc	= new ESLanguages;
-		$this->languages=$LangMisc->getLanguageList();
+		$this->isselectable=true;
 
 		parent::display($tpl);
 	}

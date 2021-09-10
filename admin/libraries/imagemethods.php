@@ -173,14 +173,14 @@ class CustomTablesImageMethods
 		//check if table exists
 		$query = 'SHOW TABLES LIKE "'.$gallery_table_name.'"';
 		$db->setQuery($query);
-		if (!$db->query())    die( $db->stderr());
+		
 		$recs=$db->loadObjectList();
 
 		if(count($recs)>0)
 		{
 			$query = 'SELECT photoid FROM '.$gallery_table_name;
 			$db->setQuery($query);
-			if (!$db->query())    die( $db->stderr());
+			
 			$photorows=$db->loadObjectList();
 
 			foreach($photorows as $photorow)
@@ -197,7 +197,6 @@ class CustomTablesImageMethods
 			}//foreach($photorows as $photorow)
 		}
 	}
-
 
 	static protected function DeleteOriginalImage($ExistingImage, $ImageFolder, $realtablename, $realfieldname, $realidfield)
 	{

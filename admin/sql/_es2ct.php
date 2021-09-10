@@ -29,7 +29,6 @@ function getESTables()
     $query='SHOW TABLES';
     $db = JFactory::getDBO();
     $db->setQuery( $query );
-    if (!$db->query())    die( $db->stderr());
 
     $tables=$db->loadAssocList();
 
@@ -46,20 +45,16 @@ function getESTables()
 
 			$query='DROP TABLE IF EXISTS '.$new_tablename;
 			$db->setQuery( $query );
-			if (!$db->query())    die( $db->stderr());
-
-
+			$db->execute();
 
 			$query='RENAME TABLE '.$tablename.' TO '.$new_tablename;
 			$db->setQuery( $query );
-			if (!$db->query())    die( $db->stderr());
+			$db->execute();
 
 			if(fixFields($new_tablename))
 			{
-			//	die;
+			
 			}
-
-
 		}
 		elseif(strpos($tablename,'_customtables_')!==false)
 		{
@@ -99,7 +94,7 @@ function getESTables()
 			//rename field
 			$query='ALTER TABLE `'.$tablename.'` CHANGE `catid` `tablecategory` int(11);';
 			$db->setQuery( $query );
-			if (!$db->query())    die( $db->stderr());
+			$db->execute();
 
 		}
 		elseif(is_array($tablecategory) and is_array($catid))
@@ -107,11 +102,11 @@ function getESTables()
 			//delete tablecategory
 			$query='ALTER TABLE `'.$tablename.'` DROP column `tablecategory`';
 			$db->setQuery( $query );
-			if (!$db->query())    die( $db->stderr());
+			$db->execute();
 
 			$query='ALTER TABLE `'.$tablename.'` CHANGE `catid` `tablecategory` int(11);';
 			$db->setQuery( $query );
-			if (!$db->query())    die( $db->stderr());
+			$db->execute();
 		}
 
 	}
@@ -326,10 +321,8 @@ function getESTables()
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;';
 
 		$db->setQuery( $query );
-		if (!$db->query())    die( $db->stderr());
-
+		$db->execute();
 	}
-
 
 	function updateFields($new_tablename)
 	{
@@ -451,8 +444,7 @@ function getESTables()
 					}
 
 					$db->setQuery( $query );
-					if (!$db->query())    die( $db->stderr());
-
+					$db->execute();
 
 					$found=true;
 					break;

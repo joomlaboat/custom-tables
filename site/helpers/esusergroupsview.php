@@ -14,44 +14,40 @@ defined('_JEXEC') or die( 'Restricted access' );
 
 class JHTMLESUserGroupsView
 {
-        public static function render($valuearray_str,$field='')
-        {
+    public static function render($valuearray_str,$field='')
+    {
 		
 		$db = JFactory::getDBO();
 				
-				$query = $db->getQuery(true);
-				$query->select('#__usergroups.title AS name');
-	 			$query->from('#__usergroups');
+		$query = $db->getQuery(true);
+		$query->select('#__usergroups.title AS name');
+	 	$query->from('#__usergroups');
 				
-				$where=array();
-				$valuearray=explode(',',$valuearray_str);
-				foreach($valuearray as $value)
-				{
-					if($value!='')
-					{
-						$where[]='id='.(int)$value;
-					}
-				}
+		$where=array();
+		$valuearray=explode(',',$valuearray_str);
+		
+		foreach($valuearray as $value)
+		{
+			if($value!='')
+			{
+				$where[]='id='.(int)$value;
+			}
+		}
 				
-				$query->where(implode(' OR ',$where));
-				$query->orderby('title');
+		$query->where(implode(' OR ',$where));
+		$query->orderby('title');
 				
-				$db->setQuery($query);
-				//if (!$db->query())    die( $db->stderr());
+		$db->setQuery($query);
 				
-				$options=$db->loadObjectList();
+		$options=$db->loadObjectList();
+		
+		if(count($options)==0)
+			return '';
 				
-				if(count($options)==0)
-					return '';
+		$groups=array();
+		foreach($options as $opt)
+			$groups[]=$opt->name;
 				
-				$groups=array();
-				foreach($options as $opt)
-					$groups[]=$opt->name;
-				
-				return implode(',',$groups);
-				
-
-        }
+		return implode(',',$groups);
+    }
 }
-
-?>

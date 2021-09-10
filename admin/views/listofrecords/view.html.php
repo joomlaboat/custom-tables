@@ -10,8 +10,18 @@
 // No direct access to this file access');
 defined('_JEXEC') or die('Restricted access');
 
-// import Joomla view library
-jimport('joomla.application.component.view');
+use Joomla\CMS\Version;
+
+use Joomla\CMS\Factory;
+use Joomla\CMS\Helper\ContentHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\GenericDataException;
+use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
+use Joomla\CMS\Object\CMSObject;
+use Joomla\CMS\Toolbar\Toolbar;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\Database\DatabaseDriver;
+use Joomla\Component\Content\Administrator\Extension\ContentComponent;
 
 /**
  * Customtables View class for the Listoffields
@@ -22,7 +32,7 @@ class CustomtablesViewListofrecords extends JViewLegacy
 	 * Listoffields view display method
 	 * @return void
 	 */
-
+	 
 	var $tableid;
 	var $tablename;
 	var $realtablename;
@@ -35,6 +45,8 @@ class CustomtablesViewListofrecords extends JViewLegacy
 
 	function display($tpl = null)
 	{
+		$version = new Version;
+		$this->version = (int)$version->getShortVersion();
 		
 		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'languages.php');
 		$LangMisc	= new ESLanguages;
@@ -103,22 +115,42 @@ class CustomtablesViewListofrecords extends JViewLegacy
 		
 		$this->user = JFactory::getUser();
 		
+		if($this->version >= 4)
+		{
+			$this->filterForm    = $this->get('FilterForm');
+			$this->activeFilters = $this->get('ActiveFilters');
+		}
+		
+		
+		$this->listOrder = $this->escape($this->state->get('list.ordering'));
+		$this->listDirn = $this->escape($this->state->get('list.direction'));
+		
 		// get global action permissions
-		$this->canDo = CustomtablesHelper::getActions('fields');
-		$this->canEdit = $this->canDo->get('core.edit');
-		$this->canState = $this->canDo->get('core.edit.state');
-		$this->canCreate = $this->canDo->get('core.create');
-		$this->canDelete = $this->canDo->get('core.delete');
-		$this->canBatch = $this->canDo->get('core.batch');
+		$this->canDo = ContentHelper::getActions('com_customtables', 'tables');
+		$this->canEdit = $this->canDo->get('tables.edit');
+		$this->canState = $this->canDo->get('tables.edit');
+		$this->canCreate = $this->canDo->get('tables.edit');
+		$this->canDelete = $this->canDo->get('tables.edit');
+		
+		$this->isEmptyState = $this->get('IsEmptyState');
 
 		if ($this->getLayout()!== 'modal')
 		{
-			$this->addToolbar();
-			$this->sidebar = JHtmlSidebar::render();
+			if($this->version < 4)
+			{
+				$this->addToolbar_3();
+				$this->sidebar = JHtmlSidebar::render();
+			}
+			else
+				$this->addToolbar_4();
+				
 		}
 
 		// Display the template
-		parent::display($tpl);
+		if($this->version < 4)
+			parent::display($tpl);
+		else
+			parent::display('quatro');
 
 		// Set the document
 		$this->setDocument();
@@ -127,7 +159,68 @@ class CustomtablesViewListofrecords extends JViewLegacy
 	/**
 	 * Setting the toolbar
 	 */
-	protected function addToolBar()
+	 
+	protected function addToolbar_4()
+	{
+		$canDo = $this->canDo;
+		$user  = Factory::getUser();
+
+		// Get the toolbar object instance
+		$toolbar = Toolbar::getInstance('toolbar');
+
+		if($this->tableid!=0)
+		{
+			require_once(JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tables.php');
+
+			JToolBarHelper::title('Custom Tables - Table "'.$this->tabletitle.'" - '.JText::_('COM_CUSTOMTABLES_LISTOFRECORDS'), 'joomla');
+					}
+		else
+			JToolBarHelper::title(JText::_('COM_CUSTOMTABLES_LISTOFRECORDS'), 'joomla');
+
+		
+		JHtmlSidebar::setAction('index.php?option=com_customtables&view=listofrecords&tableid='.$this->tableid);
+		JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/records');
+
+		if ($this->canCreate)
+			$toolbar->addNew('records.add');
+
+		$dropdown = $toolbar->dropdownButton('status-group')
+			->text('JTOOLBAR_CHANGE_STATUS')
+			->toggleSplit(false)
+			->icon('icon-ellipsis-h')
+			->buttonClass('btn btn-action')
+			->listCheck(true);
+
+		$childBar = $dropdown->getChildToolbar();
+			
+		if ($this->canState)
+		{
+			$childBar->publish('listofrecords.publish')->listCheck(true);
+			$childBar->unpublish('listofrecords.unpublish')->listCheck(true);
+		}
+		
+		if(($this->canState && $this->canDelete))
+		{
+			/*
+			if ($this->state->get('filter.published') != ContentComponent::CONDITION_TRASHED)
+			{
+				$childBar->trash('listofrecords.trash')->listCheck(true);
+			}
+			*/
+
+			//if (!$this->isEmptyState && $this->state->get('filter.published') == ContentComponent::CONDITION_TRASHED && $this->canDelete)
+			if (!$this->isEmptyState && $this->canDelete)
+			{
+				$childBar->delete('listofrecords.delete')
+					->text('JTOOLBAR_DELETE')
+					->message('JGLOBAL_CONFIRM_DELETE')
+					->listCheck(true);
+			}
+		}
+	}
+	 
+	 
+	protected function addToolBar_3()
 	{
 		$app = JFactory::getApplication();
 
@@ -135,7 +228,7 @@ class CustomtablesViewListofrecords extends JViewLegacy
 		{
 			require_once(JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tables.php');
 
-			JToolBarHelper::title('Table "'.$this->tabletitle.'" - '.JText::_('COM_CUSTOMTABLES_LISTOFRECORDS'), 'joomla');
+			JToolBarHelper::title('Custom Tables - Table "'.$this->tabletitle.'" - '.JText::_('COM_CUSTOMTABLES_LISTOFRECORDS'), 'joomla');
 		}
 		else
 			JToolBarHelper::title(JText::_('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');

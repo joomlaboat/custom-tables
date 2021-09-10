@@ -109,16 +109,10 @@ class CustomTablesModelEditFiles extends JModelLegacy {
 
 	function getFileList()
 	{
-
-
 		// get database handle
 		$db = JFactory::getDBO();
-
 		$query = 'SELECT fileid, file_ext FROM '.$this->fileboxtablename.' WHERE listingid='.$this->listing_id.' ORDER BY fileid';
-
 		$db->setQuery($query);
-		if (!$db->query())    die( $db->stderr());
-
 		$rows=$db->loadObjectList();
 
 		return $rows;
@@ -130,7 +124,6 @@ class CustomTablesModelEditFiles extends JModelLegacy {
 		$query = 'SELECT fieldtitle'.$this->langpostfix.' AS title,typeparams FROM #__customtables_fields WHERE published=1 AND tableid='.(int)$this->estableid.' AND fieldname="'.$this->fileboxname.'" AND type="filebox" LIMIT 1';
 
 		$db->setQuery($query);
-		if (!$db->query())    die( $db->stderr());
 
 		$rows=$db->loadObjectList();
 
@@ -160,7 +153,6 @@ class CustomTablesModelEditFiles extends JModelLegacy {
 		$query = 'SELECT * FROM #__customtables_table_'.$this->establename.' WHERE id='.(int)$this->listing_id.' LIMIT 1';
 
 		$db->setQuery($query);
-		if (!$db->query())    die( $db->stderr());
 
 		$rows = $db->loadAssocList();
 

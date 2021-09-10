@@ -12,7 +12,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 // load tooltip behavior
-JHtml::_('behavior.tooltip');
+//JHtml::_('behavior.tooltip');
 JHtml::_('behavior.multiselect');
 JHtml::_('dropdown.init');
 JHtml::_('formbehavior.chosen', 'select');
@@ -58,7 +58,7 @@ if ($this->saveOrder)
 <?php else : ?>
 		<?php echo $this->loadTemplate('toolbar');?>
 		<table class="table table-striped" id="layoutsList">
-			<thead><?php echo $this->loadTemplate('head');?></thead>
+			<thead><?php include('default_head.php');?></thead>
 			<tfoot><?php echo $this->loadTemplate('foot');?></tfoot>
 			<tbody><?php echo $this->loadTemplate('body');?></tbody>
 		</table>

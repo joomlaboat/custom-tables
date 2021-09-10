@@ -14,14 +14,11 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.
 
 class JHTMLESUserGroups
 {
-
-
         static public function render($control_name, $value,$selector)
         {
 				$htmlresult='';
 				
 				$valuearray=explode(',',$value);
-				
 				
 				$db = JFactory::getDBO();
 				
@@ -29,18 +26,13 @@ class JHTMLESUserGroups
 				$query->select('#__usergroups.id AS id, #__usergroups.title AS name');
 	 			$query->from('#__usergroups');
 				
-				
 				$query->order('#__usergroups.title');
 				
 				$db->setQuery($query);
-				//if (!$db->query())    die( $db->stderr());
 				
 				$SearchResult=$db->loadObjectList();
-				
-		
+	
 				$valuearray=explode(',',$value);
-				
-				
 				
 						switch($selector)
 						{

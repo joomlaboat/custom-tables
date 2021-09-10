@@ -17,11 +17,10 @@ $edit = "index.php?option=com_customtables&view=listoffields&task=fields.edit";
 	<?php
 		$canCheckin = $this->user->authorise('core.manage', 'com_checkin') || $item->checked_out == $this->user->id || $item->checked_out == 0;
 		$userChkOut = JFactory::getUser($item->checked_out);
-		$canDo = CustomtablesHelper::getActions('fields',$item,'listoffields');
 	?>
 	<tr class="row<?php echo $i % 2; ?>">
 		<td class="order nowrap center hidden-phone">
-		<?php if ($canDo->get('core.edit.state')): ?>
+		<?php if ($this->canState or $this->canDelete): ?>
 			<?php
 				if ($this->saveOrder)
 				{
@@ -44,7 +43,7 @@ $edit = "index.php?option=com_customtables&view=listoffields&task=fields.edit";
 		<?php endif; ?>
 		</td>
 		<td class="nowrap center">
-		<?php if ($canDo->get('core.edit')): ?>
+		<?php if ($this->canEdit): ?>
 				<?php if ($item->checked_out) : ?>
 					<?php if ($canCheckin) : ?>
 						<?php echo JHtml::_('grid.id', $i, $item->id); ?>
@@ -61,7 +60,7 @@ $edit = "index.php?option=com_customtables&view=listoffields&task=fields.edit";
 
 		<td class="hidden-phone">
 			
-			<?php if ($canDo->get('core.edit')): ?>
+			<?php if ($this->canEdit): ?>
 					<a href="<?php echo $edit; ?>&tableid=<?php echo $item->tableid; ?>&id=<?php echo $item->id; ?>"><?php echo $this->escape($item->fieldname); ?></a>
 					<?php if ($item->checked_out): ?>
 						<?php echo JHtml::_('jgrid.checkedout', $i, $userChkOut->name, $item->checked_out_time, 'listoffields.', $canCheckin); ?>
@@ -93,8 +92,6 @@ $edit = "index.php?option=com_customtables&view=listoffields&task=fields.edit";
 					if(!array_key_exists($id,$item_array))
 					{
 						//Add field
-						//addField('#__customtables_table_fields',$fieldname,$fieldtype,$typeparams);
-					
 						JFactory::getApplication()->enqueueMessage(
 							JText::_('COM_CUSTOMTABLES_ERROR_LANGFIELDNOTFOUND').' ('.$id.')', 'Error');
 			
@@ -132,7 +129,7 @@ $edit = "index.php?option=com_customtables&view=listoffields&task=fields.edit";
 			<?php echo $this->escape($item->tabletitle); ?>
 		</td>
 		<td class="center">
-		<?php if ($canDo->get('core.edit.state')) : ?>
+		<?php if ($this->canState) : ?>
 				<?php if ($item->checked_out) : ?>
 					<?php if ($canCheckin) : ?>
 						<?php echo JHtml::_('jgrid.published', $item->published, $i, 'listoffields.', true, 'cb'); ?>

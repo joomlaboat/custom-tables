@@ -201,14 +201,9 @@ class CustomtablesModelCategories extends JModelAdmin
 	{
 		if (!empty($record->id))
 		{
-			if ($record->published != -2)
-			{
-				return;
-			}
-
 			$user = JFactory::getUser();
 			// The record has been set. Check the record permissions.
-			return $user->authorise('core.delete', 'com_customtables.categories.' . (int) $record->id);
+			return $user->authorise('categories.delete', 'com_customtables.categories.' . (int) $record->id);
 		}
 		return false;
 	}
@@ -230,7 +225,7 @@ class CustomtablesModelCategories extends JModelAdmin
 		if ($recordId)
 		{
 			// The record has been set. Check the record permissions.
-			$permission = $user->authorise('core.edit.state', 'com_customtables.categories.' . (int) $recordId);
+			$permission = $user->authorise('categories.edit.state', 'com_customtables.categories.' . (int) $recordId);
 			if (!$permission && !is_null($permission))
 			{
 				return false;
@@ -253,7 +248,7 @@ class CustomtablesModelCategories extends JModelAdmin
 	{
 		// Check specific edit permission then general edit permission.
 
-		return JFactory::getUser()->authorise('core.edit', 'com_customtables.categories.'. ((int) isset($data[$key]) ? $data[$key] : 0)) or parent::allowEdit($data, $key);
+		return JFactory::getUser()->authorise('categories.edit', 'com_customtables.categories.'. ((int) isset($data[$key]) ? $data[$key] : 0)) or parent::allowEdit($data, $key);
 	}
 
 	/**

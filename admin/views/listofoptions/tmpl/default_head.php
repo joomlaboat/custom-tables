@@ -26,7 +26,7 @@ defined('_JEXEC') or die('Restricted Access');
 			
 				<?php
 			
-			foreach($this->LanguageList as $lang)
+			foreach($this->languages as $lang)
 			{
 				?>
 				

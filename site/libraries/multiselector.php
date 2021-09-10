@@ -101,22 +101,12 @@ class ESMultiSelector
 		return $result;
 	}
 
-
-
-
-
-	function getList($parentid, $langpostfix) {
-
-
-     $db = JFactory::getDBO();
-
-     $query = 'SELECT id, optionname, title'.$langpostfix.' AS title FROM #__customtables_options WHERE parentid='.(int)$parentid;
-
-     $query.=' ORDER BY ordering, title';
-
+	function getList($parentid, $langpostfix)
+	{
+		$db = JFactory::getDBO();
+		$query = 'SELECT id, optionname, title'.$langpostfix.' AS title FROM #__customtables_options WHERE parentid='.(int)$parentid;
+		$query.=' ORDER BY ordering, title';
 		$db->setQuery($query);
-//				if (!$db->query())	die( $db->stderr());
-
 		return $db->loadObjectList();
 	}
 }

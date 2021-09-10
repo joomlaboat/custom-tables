@@ -85,7 +85,6 @@ $document->addCustomTag('<link rel="stylesheet" href="'.JURI::root(true).'/admin
 	{
 		$db=JFactory::getDbo();
 		$db->setQuery('SELECT sef, title_native FROM #__languages ORDER BY sef ASC');
-		if (!$db->query())    die( $db->stderr());
 		
 		$list=array();
 		$rows=$db->loadObjectList();

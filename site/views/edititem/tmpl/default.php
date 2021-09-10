@@ -16,10 +16,10 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tagprocessor'.DIRECTORY_SEPARATOR.'edittags.php');
 
 jimport('joomla.html.html.bootstrap');
-JHtml::_('behavior.keepalive');
-JHtml::_('behavior.formvalidator');
-JHtml::_('behavior.calendar');
-JHtml::_('bootstrap.popover');
+//JHtml::_('behavior.keepalive');
+//JHtml::_('behavior.formvalidator');
+//JHtml::_('behavior.calendar');
+//JHtml::_('bootstrap.popover');
 
 $document = JFactory::getDocument();
 $document->addScript(JURI::root(true).'/components/com_customtables/js/edit_234.js');

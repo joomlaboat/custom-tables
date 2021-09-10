@@ -13,19 +13,9 @@ defined('_JEXEC') or die('Restricted access');
 
 ?>
 <tr>
-	<?php if ($this->canEdit&& $this->canState): ?>
-		<th width="1%" class="nowrap center hidden-phone">
-			<?php echo JHtml::_('grid.sort', '<i class="icon-menu-2"></i>', 'ordering', $this->listDirn, $this->listOrder, null, 'asc', 'JGRID_HEADING_ORDERING'); ?>
-		</th>
+	<?php if ($this->canEdit && $this->canState): ?>
 		<th width="20" class="nowrap center">
 			<?php echo JHtml::_('grid.checkall'); ?>
-		</th>
-	<?php else: ?>
-		<th width="20" class="nowrap center hidden-phone">
-			&#9662;
-		</th>
-		<th width="20" class="nowrap center">
-			&#9632;
 		</th>
 	<?php endif; ?>
 	<th class="nowrap" >

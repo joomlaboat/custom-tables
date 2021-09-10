@@ -14,20 +14,174 @@ defined('_JEXEC') or die('Restricted access');
 // import Joomla controlleradmin library
 jimport('joomla.application.component.controlleradmin');
 
+use Joomla\Utilities\ArrayHelper;
+
+require_once(JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'misc.php');
+
 /**
  * Listoffields Controller
  */
 class CustomtablesControllerListoffields extends JControllerAdmin
 {
 	protected $text_prefix = 'COM_CUSTOMTABLES_LISTOFFIELDS';
-	/**
-	 * Proxy for getModel.
-	 * @since	2.5
-	 */
+
 	public function getModel($name = 'Fields', $prefix = 'CustomtablesModel', $config = array())
 	{
 		$model = parent::getModel($name, $prefix, array('ignore_request' => true));
 		
 		return $model;
 	}  
+	
+	
+	public function publish()
+	{
+		if($this->task == 'publish')
+			$status = 1;
+		elseif($this->task == 'unpublish')
+			$status = 0;
+		elseif($this->task == 'trash')
+			$status = -2;
+		else
+			return;
+				
+		$tableid 	= $this->input->get('tableid', 0, 'int');
+		
+		if($tableid!=0)
+		{
+			require_once(JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tables.php');
+			
+			$table=ESTables::getTableRowByID($tableid);
+			if(!is_object($table) and $table==0)
+			{
+				JFactory::getApplication()->enqueueMessage('Table not found', 'error');
+				return;
+			}
+			else
+			{
+				$tablename=$table->tablename;
+			}
+		}
+		
+		$cid	= JFactory::getApplication()->input->post->get('cid',array(),'array');
+		$cid = ArrayHelper::toInteger($cid);
+		
+		$ok=true;
+		
+		foreach($cid as $id)
+		{
+			if((int)$id!=0)
+			{
+				$id=(int)$id;
+				$isok=$this->setPublishStatusSingleRecord($id,$status);
+				if(!$isok)
+				{
+					$ok=false;
+					break;
+				}
+			}
+		}
+		
+		$redirect = 'index.php?option=' . $this->option;
+		$redirect.='&view=listoffields&tableid='.(int)$tableid;
+		
+		if($this->task == 'trash')
+			$msg = 'COM_CUSTOMTABLES_LISTOFFIELDS_N_ITEMS_TRASHED';
+		elseif($this->task == 'publish')
+			$msg = 'COM_CUSTOMTABLES_LISTOFFIELDS_N_ITEMS_PUBLISHED';
+		else
+			$msg = 'COM_CUSTOMTABLES_LISTOFFIELDS_N_ITEMS_UNPUBLISHED';
+			
+		if(count($cid) == 1)
+			$msg.='_1';
+		
+		JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended($msg,count($cid)),'success');
+
+		// Redirect to the item screen.
+		$this->setRedirect(
+			JRoute::_(
+				$redirect, false
+			)
+		);
+	}
+	
+	public function delete()
+	{
+		$tableid = $this->input->get('tableid', 0, 'int');
+		
+		if($tableid!=0)
+		{
+			require_once(JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tables.php');
+			
+			$table=ESTables::getTableRowByID($tableid);
+			if(!is_object($table) and $table==0)
+			{
+				JFactory::getApplication()->enqueueMessage('Table not found', 'error');
+				return;
+			}
+			else
+			{
+				$tablename=$table->tablename;
+			}
+		}
+		
+		$cid	= JFactory::getApplication()->input->post->get('cid',array(),'array');
+		$cid = ArrayHelper::toInteger($cid);
+		
+		$ok=true;
+		
+		foreach($cid as $id)
+		{
+			if((int)$id!=0)
+			{
+				$id=(int)$id;
+				$isok=$this->deleteSingleRecord($id);
+				if(!$isok)
+				{
+					$ok=false;
+					break;
+				}
+			}
+		}
+		
+		$redirect = 'index.php?option=' . $this->option;
+		$redirect.='&view=listoffields&tableid='.(int)$tableid;
+		
+		$msg ='COM_CUSTOMTABLES_LISTOFFIELDS_N_ITEMS_DELETED';
+		if(count($cid) == 1)
+			$msg.='_1';
+		
+		JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended($msg,count($cid)),'success');
+		
+		// Redirect to the item screen.
+		$this->setRedirect(
+			JRoute::_(
+				$redirect, false
+			)
+		);
+	}
+	
+	protected function setPublishStatusSingleRecord($id,$status)
+	{
+		$db = JFactory::getDBO();
+
+		$query = 'UPDATE #__customtables_fields SET published='.(int)$status.' WHERE id='.(int)$id;
+
+	 	$db->setQuery($query);
+		$db->execute();	
+
+		return true;
+	}
+	
+	protected function deleteSingleRecord($id)
+	{
+		$db = JFactory::getDBO();
+
+		$query = 'DELETE FROM #__customtables_fields WHERE id='.(int)$id;
+
+	 	$db->setQuery($query);
+		$db->execute();	
+
+		return true;
+	}
+
 }

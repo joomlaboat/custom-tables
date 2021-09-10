@@ -18,12 +18,11 @@ $db = JFactory::getDBO();
 	<?php
 		$canCheckin = $this->user->authorise('core.manage', 'com_checkin') || $item->checked_out == $this->user->id || $item->checked_out == 0;
 		$userChkOut = JFactory::getUser($item->checked_out);
-		$canDo = CustomtablesHelper::getActions('tables',$item,'listoftables');
 		$table_exists = ESTables::checkIfTableExists($item->realtablename);
 	?>
 	<tr class="row<?php echo $i % 2; ?>">
 		<td class="nowrap center">
-		<?php if ($canDo->get('core.edit')): ?>
+		<?php if ($this->canState or $this->canDelete): ?>	
 				<?php if ($item->checked_out) : ?>
 					<?php if ($canCheckin) : ?>
 						<?php echo JHtml::_('grid.id', $i, $item->id); ?>
@@ -44,7 +43,7 @@ $db = JFactory::getDBO();
 				echo '<br/><span style="color:grey;">'.$item->realtablename.'</span>';
 				
 				?>
-			<?php if ($canDo->get('core.edit')): ?>
+			<?php if ($this->canEdit): ?>
 								<?php if ($item->checked_out): ?>
 						<?php echo JHtml::_('jgrid.checkedout', $i, $userChkOut->name, $item->checked_out_time, 'listoftables.', $canCheckin); ?>
 					<?php endif; ?>
@@ -52,7 +51,7 @@ $db = JFactory::getDBO();
 			</a>
 		</td>
 		
-<td class="nowrap"><div class="name"><ul style="list-style: none;margin-left:0;">
+		<td class="nowrap"><div class="name"><ul style="list-style: none;margin-left:0;">
 		<?php
 
 				$item_array =  (array) $item;
@@ -116,7 +115,7 @@ $db = JFactory::getDBO();
 		</td>
 
 		<td class="center">
-		<?php if ($canDo->get('core.edit.state')) : ?>
+		<?php if ($this->canState) : ?>
 				<?php if ($item->checked_out) : ?>
 					<?php if ($canCheckin) : ?>
 						<?php echo JHtml::_('jgrid.published', $item->published, $i, 'listoftables.', true, 'cb'); ?>

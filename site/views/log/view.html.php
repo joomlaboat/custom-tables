@@ -21,31 +21,23 @@ class CustomTablesViewLog extends JViewLegacy
 
 	function display($tpl = null)
 	{
-
 		$user = JFactory::getUser();
 		$this->userid=$user->id;
 
-		$action=JFactory::getApplication()->input->getString('action', '');
-		if($action=='')
-			$action=-1;
+		$this->action=JFactory::getApplication()->input->getString('action', '');
+		if($this->action=='')
+			$this->action=-1;
 
-		$userid=JFactory::getApplication()->input->get('user',0,'INT');
+		$this->userid=JFactory::getApplication()->input->get('user',0,'INT');
 
 		//Is user super Admin?
 		$this->isUserAdministrator=JoomlaBasicMisc::isUserAdmin($this->userid);
 
+		$this->records=$this->getRecords($this->action,$this->userid);
 
-		$records=$this->getRecords($action,$userid);
-		$this->assignRef('records',$records);
-		$this->assignRef('action',$action);
-		$this->assignRef('userid',$userid);
+		$this->actionSelector=$this->ActionFilter($this->action);
 
-
-		$actionSelector=$this->ActionFilter($action);
-		$this->assignRef('actionSelector',$actionSelector);
-
-		$userSelector=$this->getUsers($userid);
-		$this->assignRef('userSelector',$userSelector);
+		$this->userSelector=$this->getUsers($this->userid);
 
 		parent::display($tpl);
 
@@ -55,9 +47,7 @@ class CustomTablesViewLog extends JViewLegacy
 	function ActionFilter($action)
 	{
 		$actions=['New','Edit','Publish','Unpublish','Delete','Image Uploaded','Image Deleted','File Uploaded','File Deleted','Refreshed'];
-
 		$result='<select onchange="ActionFilterChanged(this)">';
-
 		$result.='<option value="-1" '.($action==-1 ? 'selected="SELECTED"' : '').'>- '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT' ).'</option>';
 
 		$v=1;
@@ -68,7 +58,6 @@ class CustomTablesViewLog extends JViewLegacy
 		}
 
 		$result.='</select>';
-
 		return $result;
 	}
 
@@ -76,18 +65,14 @@ class CustomTablesViewLog extends JViewLegacy
 	{
 		$db = JFactory::getDBO();
 
-
 		$query='SELECT #__users.id AS id, #__users.name AS name FROM #__customtables_log INNER JOIN #__users ON #__users.id=#__customtables_log.userid GROUP BY #__users.id ORDER BY name';
 
 		$db->setQuery($query);
-		if (!$db->query()) die( $db->stderr());
 
 		$rows=$db->loadAssocList();
 
 		$result='';
-
 		$result.='<select onchange="UserFilterChanged(this)">';
-
 		$result.='<option value="0" '.($userid==0 ? 'selected="SELECTED"' : '').'>- '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT' ).'</option>';
 
 		foreach($rows as $row)
@@ -139,13 +124,10 @@ class CustomTablesViewLog extends JViewLegacy
 		if($the_limit==0)
 			$the_limit=500;
 
-
-
 		if($this->TotalRows<$this->limitstart or $this->TotalRows<$the_limit)
 			$this->limitstart=0;
 
 		$db->setQuery($query, $this->limitstart, $the_limit);
-		if (!$db->query())    die( $db->stderr());
 
 		$rows=$db->loadAssocList();
 

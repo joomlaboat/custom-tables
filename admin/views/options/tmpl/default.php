@@ -14,34 +14,7 @@ JHTML::addIncludePath(JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIREC
 $isNew = $this->item->id == 0;
 ?>
 
-<?php 
-
-
-/*
-<script language="javascript" type="text/javascript">
-	function submitbutton(pressbutton)
-	{
-		var form = document.adminForm;
-		if (pressbutton == 'cancel') {
-			submitform( pressbutton );
-			return;
-		}
-
-		// do field validation
-		if (trim(form.optionname.value) == "") {
-			alert( "<?php echo JText::_( 'You Must Provide a Option Name.', true ); ?>" );
-		}
-		else {
-			submitform( pressbutton );
-		}
-	}
-
-</script>
-*/ ?>
-<?php // echo JRoute::_('index.php?option=com_customtables'); ?>
-
 <form id="adminForm" action="index.php" method="post" class="form-inline" enctype="multipart/form-data">
-<?php /* <form action="index.php" method="post" name="adminForm" id="adminForm" enctype="multipart/form-data">*/ ?>
 
 		<legend><?php echo JText::_( 'Custom Tables - Option Details' ); ?></legend>
 
@@ -54,7 +27,7 @@ $isNew = $this->item->id == 0;
 				<?php
 				$row_lang=(array)$this->item;
 				$morethanonelang=false;
-				foreach($this->LanguageList as $lang)
+				foreach($this->languages as $lang)
 				{
 					$id='title';
 					if($morethanonelang)

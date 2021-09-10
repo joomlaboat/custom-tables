@@ -31,7 +31,6 @@ class CustomTablesModelHome extends JModel {
 		
 		$query = 'SELECT * FROM #__customtables_options WHERE id='.$id.' LIMIT 1';
 		$db->setQuery($query);
-		if (!$db->query())    die( $db->stderr());
 		
 		$rows=$db->loadObjectList();
 		if(count($rows)==1)
@@ -43,33 +42,29 @@ class CustomTablesModelHome extends JModel {
 
 	function getOptionIdFull($optionname)
 	{
-	$names=explode(".",$optionname);
-	$parentid=0;
+		$names=explode(".",$optionname);
+		$parentid=0;
 	
-	foreach($names as $name)
-	{
-	    $parentid=$this->getOptionId($name,$parentid);
-	}
-    
-	return $parentid;
+		foreach($names as $name)
+			$parentid=$this->getOptionId($name,$parentid);
+	    
+		return $parentid;
 	}
 	
 	
 	function getOptionId($optionname,$parentid)
 	{
-	// get database handle
-	$db = JFactory::getDBO();
+		// get database handle
+		$db = JFactory::getDBO();
 		
-	$query = 'SELECT id FROM #__customtables_options WHERE parentid='.$parentid.' AND optionname="'.$optionname.'" LIMIT 1';
+		$query = 'SELECT id FROM #__customtables_options WHERE parentid='.$parentid.' AND optionname="'.$optionname.'" LIMIT 1';
 		
-	$db->setQuery($query);
-        if (!$db->query())    die( $db->stderr());
-                
-	$rows=$db->loadObjectList();
+		$db->setQuery($query);
+		$rows=$db->loadObjectList();
 	
-	if(count($rows)!=1)return 0;
+		if(count($rows)!=1)
+			return 0;
 	
-	return $rows[0]->id;
+		return $rows[0]->id;
     }
-
 }

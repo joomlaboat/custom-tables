@@ -636,14 +636,10 @@ class ESFields
             $query='ALTER TABLE '.$db->quoteName($realtablename).' ADD FOREIGN KEY ('.$realfieldname.') REFERENCES '
 				.$db->quoteName($database.'.'.$join_with_table_name).' ('.$join_with_table_field.') ON DELETE RESTRICT ON UPDATE RESTRICT;';
 
-            $db->setQuery( $query );
-
             try
             {
                 $db->setQuery($query);
-    
-            	if (!$db->query())
-            		$msg=$db->getErrorMsg();
+				$db->execute();
             }
             catch (RuntimeException $e)
             {
@@ -704,14 +700,10 @@ class ESFields
 
             $query='ALTER TABLE '.$realtablename.' DROP FOREIGN KEY '.$constrance;
 
-            $db->setQuery( $query );
-
             try
             {
                 $db->setQuery($query);
-
-            	if (!$db->query())
-            		$msg=$db->getErrorMsg();
+				$db->execute();
             }
             catch (RuntimeException $e)
             {
@@ -858,7 +850,6 @@ class ESFields
 
 		$db->setQuery( $fixquery );
 
-		$db->query();
 		$fixrows = $db->loadObjectList();
 		foreach($fixrows as $fixrow)
 		{
@@ -1040,7 +1031,6 @@ class ESFields
 		}
 
 		$db->setQuery( $query );
-        if (!$db->query()) return false;
 
 		return $db->loadAssocList();
 

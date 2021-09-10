@@ -11,6 +11,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 use Joomla\Registry\Registry;
+use Joomla\CMS\Helper\ContentHelper;
 
 // import Joomla modelform library
 jimport('joomla.application.component.modeladmin');
@@ -422,10 +423,14 @@ class CustomtablesModelLayouts extends JModelAdmin
 		$this->tableClassName		= get_class($this->table);
 		$this->contentType		= new JUcmType;
 		$this->type			= $this->contentType->getTypeByTable($this->tableClassName);
-		$this->canDo			= CustomtablesHelper::getActions('layouts');
+		//$this->canDo			= CustomtablesHelper::getActions('layouts');
+		$this->canDo = ContentHelper::getActions('com_customtables', 'layouts');
+		
 		$this->batchSet			= true;
 
-		if (!$this->canDo->get('core.batch'))
+		print_r($this->canDo);
+
+		if (!$this->canDo['core.batch']==0)
 		{
 			$this->setError(JText::_('JLIB_APPLICATION_ERROR_INSUFFICIENT_BATCH_INFORMATION'));
 			return false;
@@ -502,10 +507,11 @@ class CustomtablesModelLayouts extends JModelAdmin
 			$this->user 		= JFactory::getUser();
 			$this->table 		= $this->getTable();
 			$this->tableClassName	= get_class($this->table);
-			$this->canDo		= CustomtablesHelper::getActions('layouts');
+			$this->canDo = ContentHelper::getActions('com_customtables', 'layouts');
+			//$this->canDo		= CustomtablesHelper::getActions('layouts');
 		}
 
-		if (!$this->canDo->get('core.create') || !$this->canDo->get('core.batch'))
+		if (!$this->canDo['core.create'] || !$this->canDo['core.batch'])
 		{
 			return false;
 		}
@@ -520,7 +526,7 @@ class CustomtablesModelLayouts extends JModelAdmin
 		{
 			$values['published'] = 0;
 		}
-		elseif (isset($values['published']) && !$this->canDo->get('core.edit.state'))
+		elseif (isset($values['published']) && !$this->canDo['core.edit.state'])
 		{
 				$values['published'] = 0;
 		}
@@ -646,10 +652,11 @@ class CustomtablesModelLayouts extends JModelAdmin
 			$this->user		= JFactory::getUser();
 			$this->table		= $this->getTable();
 			$this->tableClassName	= get_class($this->table);
-			$this->canDo		= CustomtablesHelper::getActions('layouts');
+			//$this->canDo		= CustomtablesHelper::getActions('layouts');
+			$this->canDo = ContentHelper::getActions('com_customtables', 'layouts');
 		}
 
-		if (!$this->canDo->get('core.edit') && !$this->canDo->get('core.batch'))
+		if (!$this->canDo['core.edit'] && !$this->canDo['core.batch'])
 		{
 			$this->setError(JText::_('JLIB_APPLICATION_ERROR_BATCH_CANNOT_EDIT'));
 			return false;

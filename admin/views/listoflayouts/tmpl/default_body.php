@@ -18,11 +18,11 @@ $edit = "index.php?option=com_customtables&view=listoflayouts&task=layouts.edit"
 	<?php
 		$canCheckin = $this->user->authorise('core.manage', 'com_checkin') || $item->checked_out == $this->user->id || $item->checked_out == 0;
 		$userChkOut = JFactory::getUser($item->checked_out);
-		$canDo = CustomtablesHelper::getActions('layouts',$item,'listoflayouts');
 	?>
 	<tr class="row<?php echo $i % 2; ?>">
+		<?php /*
 		<td class="order nowrap center hidden-phone">
-		<?php if ($canDo->get('core.edit.state')): ?>
+		<?php if ($this->canDo['core.edit.state']): ?>
 			<?php
 				if ($this->saveOrder)
 				{
@@ -44,8 +44,10 @@ $edit = "index.php?option=com_customtables&view=listoflayouts&task=layouts.edit"
 			&#8942;
 		<?php endif; ?>
 		</td>
+		*/ ?>
+		
+		<?php if ($this->canState or $this->canDelete): ?>	
 		<td class="nowrap center">
-		<?php if ($canDo->get('core.edit')): ?>
 				<?php if ($item->checked_out) : ?>
 					<?php if ($canCheckin) : ?>
 						<?php echo JHtml::_('grid.id', $i, $item->id); ?>
@@ -55,13 +57,12 @@ $edit = "index.php?option=com_customtables&view=listoflayouts&task=layouts.edit"
 				<?php else: ?>
 					<?php echo JHtml::_('grid.id', $i, $item->id); ?>
 				<?php endif; ?>
-		<?php else: ?>
-			&#9633;
-		<?php endif; ?>
 		</td>
+		<?php endif; ?>
+		
 		<td class="nowrap">
 			<div class="name">
-				<?php if ($canDo->get('core.edit')): ?>
+				<?php if ($this->canEdit): ?>
 					<a href="<?php echo $edit; ?>&id=<?php echo $item->id; ?>"><?php echo $this->escape($item->layoutname); ?></a>
 					<?php if ($item->checked_out): ?>
 						<?php echo JHtml::_('jgrid.checkedout', $i, $userChkOut->name, $item->checked_out_time, 'listoflayouts.', $canCheckin); ?>
@@ -78,7 +79,7 @@ $edit = "index.php?option=com_customtables&view=listoflayouts&task=layouts.edit"
 			<?php echo $item->tabletitle; ?>
 		</td>
 		<td class="center">
-		<?php if ($canDo->get('core.edit.state')) : ?>
+		<?php if ($this->canState) : ?>
 				<?php if ($item->checked_out) : ?>
 					<?php if ($canCheckin) : ?>
 						<?php echo JHtml::_('jgrid.published', $item->published, $i, 'listoflayouts.', true, 'cb'); ?>
