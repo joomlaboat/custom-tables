@@ -26,7 +26,6 @@ require_once($libpath.'valuetags.php');
 require_once($libpath.'shopingtags.php');
 
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fieldtypes'.DIRECTORY_SEPARATOR.'_type_ct.php');
-require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'misc.php');
 
 class LayoutProcessor
 {
@@ -132,8 +131,6 @@ class LayoutProcessor
 	{
 		if ( $Model->params->get( 'show_page_heading', 1 ) )
 		{
-			require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'misc.php');
-			//$title=$Model->params->get( 'page_title' );
 			$title=JoomlaBasicMisc::JTextExtended($Model->params->get( 'page_title' ));
 			echo '
 			<div class="page-header'.LayoutProcessor::htmlEscape($Model->params->get('pageclass_sfx'), 'UTF-8').'">

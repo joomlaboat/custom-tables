@@ -10,8 +10,6 @@
 defined('_JEXEC') or die('Restricted access');
 jimport('joomla.html.pane');
 
-require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'layouts.php');
-
 jimport( 'joomla.application.component.view'); //Important to get menu parameters
 class CustomTablesViewDetails extends JViewLegacy {
 	var $catid=0;
@@ -103,7 +101,6 @@ class CustomTablesViewDetails extends JViewLegacy {
 			return false;
 		
 		require_once($phptagprocessor_file);
-		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'misc.php');
 		
 		foreach($this->Model->esfields as $mFld)
 		{

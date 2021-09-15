@@ -28,7 +28,9 @@ $input	= JFactory::getApplication()->input;
 
 if($input->getCmd('extratask','')=='updateimages')
 {
-	$path=JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'extratasks'.DIRECTORY_SEPARATOR;
+	$path=JPATH_SITE . DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR
+		.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'customtables'.DIRECTORY_SEPARATOR.'extratasks'.DIRECTORY_SEPARATOR;
+
 	require_once($path.'extratasks.php');
 	extraTasks::prepareJS();
 }
@@ -52,11 +54,7 @@ if($input->getCmd('extratask','')=='updateimages')
 	}
 	
 </script>
-<?php
 
-require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'_checktable.php');
-
-?>
 <form action="<?php echo JRoute::_('index.php?option=com_customtables&view=listoffields&tableid='.$this->tableid); ?>" method="post" name="adminForm" id="adminForm">
 <?php if(!empty( $this->sidebar)): ?>
 	<div id="j-sidebar-container" class="span2">

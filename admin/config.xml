@@ -6,10 +6,27 @@
 		name="global_config"
 		label="COM_CUSTOMTABLES_CONFIG_GLOBAL_LABEL"
 		description="COM_CUSTOMTABLES_CONFIG_GLOBAL_DESC">
-		<field name="autorTitle"
+
+<!--		
+                <field
+			name="row_format"
+			type="list"
+			label="InnoDB Row Formats"
+			default="COMPACT"
+			description="The row format of a table determines how its rows are physically stored, which in turn can affect the performance of queries and DML operations. As more rows fit into a single disk page, queries and index lookups can work faster, less cache memory is required in the buffer pool, and less I/O is required to write out updated values. Changing the parameter will affect new tables only."
+			>
+			<option value="REDUNDANT">REDUNDANT Row Format</option>
+			<option value="COMPACT">COMPACT Row Format</option>
+			<option value="DYNAMIC">DYNAMIC Row Format</option>
+			<option value="COMPRESSED">COMPRESSED Row Format</option>
+		</field>
+
+-->
+<!--		<field name="autorTitle"
 			type="spacer"
 			label="COM_CUSTOMTABLES_CONFIG_AUTHOR"
 		/>
+-->
 		<field name="autorName"
 			type="text"
 			label="COM_CUSTOMTABLES_CONFIG_AUTHOR_NAME_LABEL"
@@ -19,6 +36,7 @@
 			readonly="true"
 			class="readonly"
 		/>
+
 		<field name="autorEmail"
 			type="email"
 			label="COM_CUSTOMTABLES_CONFIG_AUTHOR_EMAIL_LABEL"
@@ -28,6 +46,7 @@
 			readonly="true"
 			class="readonly"
 		/>
+                
 	</fieldset>
 	<fieldset
 		name="permissions"

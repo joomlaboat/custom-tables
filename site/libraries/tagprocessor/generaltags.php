@@ -9,8 +9,6 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'misc.php');
-
 class tagProcessor_General
 {
     public static function process(&$Model,&$pagelayout,&$row,$recordlist,$number)
@@ -31,31 +29,6 @@ class tagProcessor_General
 		ESLayouts::processLayoutTag($pagelayout);
     }
 
-	
-	//NO LONGER NEEDED BECAUSE ITS BEING PROCESSED WHILE READING THE PARENT LAYOUT
-	/*
-    public static function processLayoutTag(&$htmlresult)
-	{
-        $options=array();
-		$fList=JoomlaBasicMisc::getListToReplace('layout',$options,$htmlresult,'{}');
-        
-        if(count($fList)==0)
-            return false;
-        
-        require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'misc.php');
-        
-		$i=0;
-		foreach($fList as $fItem)
-		{
-            $layoutname=$options[$i];
-            $type='';
-            $layout=ESLayouts::getLayout($layoutname,$type);
-            
-			$htmlresult=str_replace($fItem,$layout,$htmlresult);
-			$i++;
-		}
-    }
-	*/
     
     protected static function WebsiteRoot(&$Model,&$htmlresult)
 	{

@@ -8,7 +8,7 @@
 
 // no direct access
 defined('_JEXEC') or die('Restricted access');
-require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'misc.php');
+
 $jinput = JFactory::getApplication()->input;
 
 $task=$jinput->getCmd( 'task');
@@ -81,8 +81,6 @@ function CustomTablesDelete($task,&$this_)
 	}
 	else
 	{
-		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'misc.php');
-		
 		$encodedreturnto = base64_encode(JoomlaBasicMisc::curPageURL());
 		$returnto = $jinput->get('returnto', '', 'BASE64');
 		$decodedreturnto = base64_decode($returnto);

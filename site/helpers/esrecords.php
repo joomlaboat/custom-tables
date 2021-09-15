@@ -10,9 +10,7 @@
 defined('_JEXEC') or die( 'Restricted access' );
 
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'models'.DIRECTORY_SEPARATOR.'catalog.php');
-require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'misc.php');
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'filtering.php');
-require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'layouts.php');
 
 class JHTMLESRecords
 {
@@ -129,9 +127,6 @@ class JHTMLESRecords
 										break;
 
 								case 'multi' :
-
-										require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tables.php');
-										
 
 										if($real_field_row->type=="multilangstring" or $real_field_row->type=="multilangtext")
 												$real_field=$real_field_row->realfieldname.$langpostfix;
@@ -438,7 +433,6 @@ class JHTMLESRecords
 	static protected function getMultibox(&$model, &$model_nofilter,&$SearchResult,&$SearchResult_nofilter,&$valuearray,$field,$selectorpair,
                                               $control_name,$style,$cssclass,$attribute,$establename,$dynamic_filter,$langpostfix='',$place_holder='')
 	{
-		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tables.php');
 		$real_field_row=ESFields::getFieldRowByName($field, '',$establename);
 
 		if($real_field_row->type=="multilangstring" or $real_field_row->type=="multilangtext")

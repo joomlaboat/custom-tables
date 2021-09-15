@@ -15,14 +15,6 @@ jimport('joomla.application.component.model');
 JTable::addIncludePath(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'tables');
 
 $site_libpath=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR;
-$admin_libpath=JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR;
-require_once($admin_libpath.'customtablesmisc.php');
-require_once($admin_libpath.'misc.php');
-require_once($admin_libpath.'imagemethods.php');
-require_once($admin_libpath.'languages.php');
-require_once($admin_libpath.'tables.php');
-require_once($admin_libpath.'fields.php');
-require_once($admin_libpath.'layouts.php');
 require_once($site_libpath.'layout.php');
 require_once($site_libpath.'logs.php');
 
@@ -30,7 +22,6 @@ $libpath=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_cu
 require_once($libpath.'valuetags.php');
 
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'filtering.php');
-require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'misc.php');
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'models'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'save.php');
 
 class CustomTablesModelEditItem extends JModelLegacy
@@ -2174,7 +2165,6 @@ class CustomTablesModelEditItem extends JModelLegacy
 		$db = JFactory::getDBO();
 
 		//delete images if exist
-		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'imagemethods.php');
 		$imagemethods=new CustomTablesImageMethods;
 
 		$query='SELECT * FROM '.$this->realtablename.' WHERE '.$this->tablerow['realidfieldname'].'='.$objectid;

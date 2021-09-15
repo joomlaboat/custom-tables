@@ -9,10 +9,6 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-//jimport( 'joomla.application.component.view');
-
-require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'misc.php');
-
 class CustomTablesViewLog extends JViewLegacy
 {
 	var $limit;

@@ -193,6 +193,6 @@ class CustomtablesViewTables extends JViewLegacy
 		}
 		$this->document->setTitle(JText::_($isNew ? 'COM_CUSTOMTABLES_TABLES_NEW' : 'COM_CUSTOMTABLES_TABLES_EDIT'));
 		$this->document->addScript(JURI::root(true)."/administrator/components/com_customtables/views/tables/submitbutton.js");
-		JText::script('view not acceptable. Error');
+//		JText::script('view not acceptable. Error');
 	}
 }

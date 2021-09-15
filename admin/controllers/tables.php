@@ -306,7 +306,7 @@ class CustomtablesControllerTables extends JControllerForm
 	}
 
 
-
+	/*
 	public function export()
 	{
 
@@ -328,5 +328,6 @@ class CustomtablesControllerTables extends JControllerForm
 	    $link 	= 'index.php?option=com_customtables&view=listoftables';
 	    $this->setRedirect($link, $msg);
 	}
+	*/
 
 }

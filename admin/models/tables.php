@@ -16,7 +16,7 @@ use Joomla\Registry\Registry;
 
 // import Joomla modelform library
 jimport('joomla.application.component.modeladmin');
-require_once(JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tables.php');
+
 /**
  * Customtables Tables Model
  */
@@ -560,8 +560,6 @@ class CustomtablesModelTables extends JModelAdmin
 
 		$data_extra = JFactory::getApplication()->input->get( 'jform',array(),'ARRAY');
 
-		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'languages.php');
-		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fields.php');
 		$LangMisc	= new ESLanguages;
 		$languages=$LangMisc->getLanguageList();
 
@@ -718,7 +716,6 @@ class CustomtablesModelTables extends JModelAdmin
 		$fields=array('fieldname','type','typeparams','ordering','defaultvalue','allowordering','parentid','isrequired','valuerulecaption','valuerule');
 		//unused fields: isdisabled,savevalue,alwaysupdatevalue
 	
-		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'languages.php');
 		$LangMisc	= new ESLanguages;
 		$languages=$LangMisc->getLanguageList();
 
@@ -768,7 +765,7 @@ class CustomtablesModelTables extends JModelAdmin
 		}
 		return true;
 	}
-
+	
 	public function export(&$cids)
 	{
 		$link='';
@@ -867,7 +864,6 @@ class CustomtablesModelTables extends JModelAdmin
 			file_put_contents($tmp_path.$filename_available, $output_str);
 			$output_str=null;
 		}
-
 		return $link;
 	}
 }

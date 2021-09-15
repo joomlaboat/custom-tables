@@ -11,10 +11,7 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-require_once ('components/com_customtables/libraries/languages.php');
-
 jimport('joomla.application.component.view');
-
 
 class CustomTablesViewListOfOptions extends JViewLegacy
 {

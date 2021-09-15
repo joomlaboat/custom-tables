@@ -47,8 +47,6 @@ class CustomtablesControllerListofRecords extends JControllerAdmin
 		
 		if($tableid!=0)
 		{
-			require_once(JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tables.php');
-			
 			$table=ESTables::getTableRowByID($tableid);
 			if(!is_object($table) and $table==0)
 			{
@@ -111,8 +109,6 @@ class CustomtablesControllerListofRecords extends JControllerAdmin
 		
 		if($tableid!=0)
 		{
-			require_once(JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tables.php');
-			
 			$table=ESTables::getTableRowByID($tableid);
 			if(!is_object($table) and $table==0)
 			{

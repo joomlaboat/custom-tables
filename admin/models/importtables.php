@@ -15,8 +15,6 @@ defined('_JEXEC') or die('Restricted access');
 // Import Joomla! libraries
 jimport('joomla.application.component.model');
 
-require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'customtablesmisc.php');
-require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tables.php');
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'uploader.php');
 
 class CustomTablesModelImporttables extends JModelList
@@ -28,10 +26,7 @@ class CustomTablesModelImporttables extends JModelList
 
 	function importtables(&$msg)
 	{
-		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'importtables.php');
-
-
-            $jinput=JFactory::getApplication()->input;
+		$jinput=JFactory::getApplication()->input;
 
 			$fileid = $jinput->getCmd( 'fileid', '' );
 

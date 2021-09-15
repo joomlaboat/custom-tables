@@ -110,7 +110,6 @@ class CustomtablesViewListoftables extends JViewLegacy
 			throw new Exception(implode("\n", $errors), 500);
 		}
 
-		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'languages.php');
 		$LangMisc	= new ESLanguages;
 		$this->languages=$LangMisc->getLanguageList();
 
@@ -158,14 +157,20 @@ class CustomtablesViewListoftables extends JViewLegacy
 		{
 			$childBar->checkin('listoftables.checkin');
 		}
-
+		
 		if(($this->canState && $this->canDelete))
 		{
 			if ($this->state->get('filter.published') != ContentComponent::CONDITION_TRASHED)
 			{
 				$childBar->trash('listoftables.trash')->listCheck(true);
 			}
+		}
+		
+		if($this->advanced_options)
+			$toolbar->appendButton('Standard', 'download', 'Export', 'listoftables.export', $listSelect = true, $formId = null);
 
+		if(($this->canState && $this->canDelete))
+		{
 			if (!$this->isEmptyState && $this->state->get('filter.published') == ContentComponent::CONDITION_TRASHED && $this->canDelete)
 			{
 				$toolbar->delete('listoftables.delete')

@@ -85,7 +85,6 @@ class CustomtablesViewListoffields extends JViewLegacy
 
 		if($this->tableid!=0)
 		{
-			require_once(JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tables.php');
 			$table=ESTables::getTableRowByID($this->tableid);
 			if(!is_object($table) and $table==0)
 			{
@@ -124,7 +123,6 @@ class CustomtablesViewListoffields extends JViewLegacy
 		}
 
 
-		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'languages.php');
 		$LangMisc	= new ESLanguages;
 		$this->languages=$LangMisc->getLanguageList();
 
@@ -152,8 +150,6 @@ class CustomtablesViewListoffields extends JViewLegacy
 
 		if($this->tableid!=0)
 		{
-			require_once(JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tables.php');
-
 			JToolBarHelper::title('Custom Tables - Table "'.$this->tabletitle.'" - '.JText::_('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
 		}
 		else
@@ -209,8 +205,6 @@ class CustomtablesViewListoffields extends JViewLegacy
 
 		if($this->tableid!=0)
 		{
-			require_once(JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tables.php');
-
 			JToolBarHelper::title('Table "'.$this->tabletitle.'" - '.JText::_('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
 		}
 		else

@@ -41,7 +41,6 @@ class CustomtablesViewDataBaseCheck extends JViewLegacy
 
 		// Set the document
 		$this->setDocument();
-		$this->tables = $this->getTables();
 		parent::display($tpl);
 	}
 	
@@ -54,72 +53,9 @@ class CustomtablesViewDataBaseCheck extends JViewLegacy
 	protected function setDocument()
 	{
 		if (!isset($this->document))
-		{
 			$this->document = JFactory::getDocument();
-		}
+
 		$this->document->setTitle(JText::_('COM_CUSTOMTABLES_DATABASECHECK'));
 		$this->document->addStyleSheet(JURI::root(true)."/administrator/components/com_customtables/css/fieldtypes.css");
-	}
-	
-	protected function getTables()
-	{
-		// Create a new query object.
-		$db = JFactory::getDBO();
-		$query = $this->getTablesQuery();
-		
-		$db->setQuery( $query );
-		$rows = $db->loadAssocList();
-		
-		return $rows;
-	}
-	
-	protected function getTablesQuery()
-	{
-		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR
-			.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tables.php');
-		
-		// Create a new query object.
-		$db = JFactory::getDBO();
-		$query = $db->getQuery(true);
-
-		// Select some fields
-		$categoryname='(SELECT categoryname FROM #__customtables_categories AS categories WHERE categories.id=a.tablecategory LIMIT 1)';
-		$fieldcount='(SELECT COUNT(fields.id) FROM #__customtables_fields AS fields WHERE fields.tableid=a.id AND fields.published=1 LIMIT 1)';
-		
-		$selects=array();
-		$selects[]=ESTables::getTableRowSelects();
-		$selects[]=$categoryname.' AS categoryname';
-		$selects[]=$fieldcount.' AS fieldcount';
-		
-		$query->select(implode(',',$selects));
-
-		// From the customtables_item table
-		$query->from($db->quoteName('#__customtables_tables', 'a'));
-		$query->where('a.published = 1');
-		
-		// Add the list ordering clause.
-		$orderCol = 'tablename';
-		$orderDirn = 'asc';
-		$query->order($db->escape($orderCol . ' ' . $orderDirn));
-		
-		return $query;
-	}
-	
-	protected function getZeroRecordID($realtablename,$realidfieldname)
-	{
-		// Create a new query object.
-		$db = JFactory::getDBO();
-		$query = $db->getQuery(true);
-
-		$query->select('COUNT('.$realidfieldname.') AS cd_zeroIdRecords');
-		$query->from($db->quoteName($realtablename, 'a'));
-		$query->where($realidfieldname.' = 0');
-		$query->setLimit(1);
-		
-		$db->setQuery( $query );
-		$rows = $db->loadAssocList();
-		$row=$rows[0];
-		
-		return $row['cd_zeroIdRecords'];
 	}
 }

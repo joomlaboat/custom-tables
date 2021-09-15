@@ -28,6 +28,6 @@ else
 }
 
 $document = JFactory::getDocument();
-$document->addCustomTag('<link src="'.JURI::root(true).'/components/com_customtables/css/style.css" type="text/css" rel="stylesheet" >');
+$document->addStyleSheet(JURI::root(true)."/components/com_customtables/css/style.css");
 
 require(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.'edititem'.DIRECTORY_SEPARATOR.'tmpl'.DIRECTORY_SEPARATOR.'default.php');

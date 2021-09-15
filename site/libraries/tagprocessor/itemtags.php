@@ -9,8 +9,6 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'misc.php');
-
 class tagProcessor_Item
 {
     public static function process($advancedtagprocessor,&$Model,&$row,&$htmlresult,$aLink,$toolbar,$recordlist,$number,$add_label=false,$fieldNamePrefix='comes_')
@@ -321,8 +319,6 @@ class tagProcessor_Item
 
     protected static function GetSQLJoin(&$Model,&$htmlresult,$id)
 	{
-		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tables.php');
-
 		$options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('sqljoin',$options,$htmlresult,'{}');
 		if(count($fList)==0)

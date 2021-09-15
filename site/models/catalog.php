@@ -13,12 +13,6 @@ defined('_JEXEC') or die('Restricted access');
 
 jimport('joomla.application.component.model');
 
-$adminlib=JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR;
-require_once($adminlib.'customtablesmisc.php');
-require_once($adminlib.'misc.php');
-require_once($adminlib.'languages.php');
-require_once($adminlib.'tables.php');
-require_once($adminlib.'fields.php');
 $sitelib=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR;
 require_once($sitelib.'layout.php');
 require_once($sitelib.'filtering.php');

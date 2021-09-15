@@ -407,6 +407,7 @@ class ESSerachInputBox
 		//'.$this->modulename.'_onChange('.$index.',v_min+"'.$d.'"+v_max,"'.$esfield['fieldname'].'","'.urlencode($where).'","'.urlencode($wherelist).'");
 	}
 ';
+
 								$document->addScriptDeclaration($js);
 								//end of header function
 

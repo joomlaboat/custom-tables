@@ -12,12 +12,6 @@ defined('_JEXEC') or die( 'Restricted access' );
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'models'.DIRECTORY_SEPARATOR.'catalog.php');
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'filtering.php');
 
-$admin_lib=JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries';
-
-require_once($admin_lib.DIRECTORY_SEPARATOR.'misc.php');
-require_once($admin_lib.DIRECTORY_SEPARATOR.'layouts.php');
-require_once($admin_lib.DIRECTORY_SEPARATOR.'tables.php');
-
 class JHTMLESSqlJoin
 {
     static public function render($typeparams, $value, $force_dropdown, $langpostfix,$control_name,$place_holder,$cssclass='', $attribute='',$addNoValue=false)

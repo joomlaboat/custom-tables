@@ -15,31 +15,8 @@
 		<p>Created by <a href="https://joomlaboat.com" target="_blank">Ivan Komlev</a><br /><small>Development started in 2010</small></p>
 	]]></description>
 
-	<!-- Runs on install; New in Joomla 1.5 -->
-	<install>
-		<sql>
-			<file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
-			<file driver="postgresql" charset="utf8">sql/install.postgresql.utf8.sql</file>
-		</sql>
-	</install>
-
-	<!-- Runs on uninstall; New in Joomla 1.5 -->
-	<uninstall>
-		<sql>
-			<file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
-			<file driver="postgresql" charset="utf8">sql/uninstall.postgresql.utf8.sql</file>
-		</sql>
-	</uninstall>
-
 	<!-- Runs on install/uninstall/update; New in Joomla 2.5 -->
 	<scriptfile>script.php</scriptfile>
-
-	<!-- Update Schema; New in Joomla 2.5 -->
-	<update>
-		<schemas>
-			<schemapath type="mysql">sql/updates/mysql/</schemapath>
-		</schemas>
-	</update>
 
 	<files folder="site">
 		<filename>controller.php</filename>
@@ -93,13 +70,11 @@
 			<folder>css</folder>
 			<folder>forms</folder>
 			<folder>helpers</folder>
+			<folder>layouts</folder>
 			<folder>js</folder>
-			<folder>libraries</folder>
 			<folder>models</folder>
-			<folder>sql</folder>
 			<folder>tables</folder>
 			<folder>views</folder>
-			<folder>layouts</folder>###EXSTRA_ADMIN_FOLDERS###
 			<folder>xml</folder>
 		</files>
 

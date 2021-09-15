@@ -40,7 +40,9 @@ class CustomtablesTableTables extends JTable
 	var $hits = null;
 	var $ordering = null;
 	var $allowimportcontent = null;
-
+	var $customtablename = null;
+	var $customidfield = null;
+	
 	/**
 	 * Constructor
 	 *

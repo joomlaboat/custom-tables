@@ -9,11 +9,14 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
-// load tooltip behavior
-//JHtml::_('behavior.tooltip');
+/*
 JHtml::_('behavior.multiselect');
 JHtml::_('dropdown.init');
 JHtml::_('formbehavior.chosen', 'select');
+*/
+
+use CustomTables\IntegrityChecks;
+
 ?>
 
 <?php if($this->version < 4): ?>
@@ -22,43 +25,15 @@ JHtml::_('formbehavior.chosen', 'select');
 	</div>
 <?php endif; ?>
 
-<?php 
-require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR
-	.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'_checktable.php');
-?>
-
 <div id="j-main-container" class="ct_doc">
 
 	<?php 
-	$result='';
+	$result = IntegrityChecks::check();
 	
-	foreach($this->tables as $table)
-	{
-		$link=JURI::root().'administrator/index.php?option=com_customtables&view=databasecheck&tableid='.$table['id'];
-		$content = checkTableFields($table['id'],$table['tablename'],$table['tabletitle'],$table['customtablename'],$link);	
-		
-		$zeroId=$this->getZeroRecordID($table['realtablename'],$table['realidfieldname']);
-		
-		if($content !='' or $zeroId>0)
-		{
-			$result.='<li><p><span style="font-size:1.3em;">'.$table['tabletitle'].'</span><br/><span style="color:gray;">'.$table['realtablename'].'</span></p>';
-			$result.=$content;
-	
-			if($zeroId>0)
-				$result.='<p style="font-size:1.3em;color:red;">Records with ID = 0 found. Please fix it manually.</p>';
-		
-			$result.='<hr/></li>';
-		}
-	}
-	
-	if($result!='')
-	{
-		echo '<ol>'.$result.'</ol>';
-	}
+	if(count($result)>0)
+		echo '<ol><li>'.implode('</li><li>',$result).'</li></ol>';
 	else
-	{
 		echo '<p>Database table structure is up to date.</p>';
-	}
 	
 	?>
 </div>

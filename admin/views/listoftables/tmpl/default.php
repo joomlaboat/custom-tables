@@ -62,7 +62,6 @@ if ($this->saveOrder)
 		<?php echo $this->loadTemplate('toolbar');?>
 
 		<?php
-			require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'_checktable.php');
 			checkTableOnly($this->items);
 		?>
 

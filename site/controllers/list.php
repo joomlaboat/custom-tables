@@ -10,7 +10,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 $layout=JFactory::getApplication()->input->get('layout','','CMD');
-require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'misc.php');
+
 
 	switch(JFactory::getApplication()->input->get('task','','CMD'))
 	{

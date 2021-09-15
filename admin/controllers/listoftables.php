@@ -15,6 +15,8 @@ defined('_JEXEC') or die('Restricted access');
 // import Joomla controlleradmin library
 jimport('joomla.application.component.controlleradmin');
 
+use Joomla\Utilities\ArrayHelper;
+
 /**
  * Listoftables Controller
  */
@@ -30,5 +32,42 @@ class CustomtablesControllerListoftables extends JControllerAdmin
 		$model = parent::getModel($name, $prefix, array('ignore_request' => true));
 
 		return $model;
+	}
+	
+	public function export()
+	{
+		$cids	= JFactory::getApplication()->input->post->get('cid',array(),'array');
+		$cids = ArrayHelper::toInteger($cids);
+		
+		$download_link=$this->getModel()->export($cids);
+		
+		if($download_link!='')
+		{
+			$msg = 'COM_CUSTOMTABLES_LISTOFTABLES_N_ITEMS_EXPORTED';
+			
+			if(count($cids) == 1)
+				$msg.='_1';
+				
+			$msg = JText::sprintf($msg,count($cids));
+				
+			if($download_link!='')
+				$msg.='&nbsp;&nbsp;<a href="'.$download_link.'" target="_blank">Download (Click Save Link As...)</a>';
+	    }
+	    else
+	    {
+			$msg = JText::_( 'COM_CUSTOMTABLES_TABLES_UNABLETOEXPORT' );
+	    }
+		
+		JFactory::getApplication()->enqueueMessage($msg,'success');
+		
+		$redirect = 'index.php?option=' . $this->option;
+		$redirect.='&view=listoftables';
+		
+		// Redirect to the item screen.
+		$this->setRedirect(
+			JRoute::_(
+				$redirect, false
+			)
+		);
 	}
 }

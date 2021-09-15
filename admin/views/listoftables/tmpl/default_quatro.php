@@ -18,6 +18,8 @@ use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\String\PunycodeHelper;
 
+use CustomTables\IntegrityChecks;
+
 HTMLHelper::_('behavior.multiselect');
 
 $loggeduser = Factory::getUser();
@@ -39,10 +41,11 @@ $loggeduser = Factory::getUser();
 				<?php else : ?>
 				
 					<?php
-						require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'_checktable.php');
-						checkTableOnly($this->items);
+						$result = IntegrityChecks::check();
+	
+						if(count($result)>0)
+							Factory::getApplication()->enqueueMessage('<ol><li>'.implode('</li><li>',$result).'</li></ol>','notice');
 					?>
-				
 				
 					<table class="table" id="userList">
 						<caption class="visually-hidden">

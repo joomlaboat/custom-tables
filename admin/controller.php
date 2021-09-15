@@ -2,7 +2,7 @@
 /**
  * CustomTables Joomla! 3.x Native Component
  * @package Custom Tables
- * @subpackage administrator/components/com_customtables/controller.css
+ * @subpackage administrator/components/com_customtables/controller
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
  * @copyright Copyright (C) 2018-2020. All Rights Reserved
@@ -11,6 +11,8 @@
 
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
+
+use \Joomla\CMS\Factory;
 
 // import Joomla controller library
 jimport('joomla.application.component.controller');
@@ -46,8 +48,9 @@ class CustomtablesController extends JControllerLegacy
 			if ($data['edit'] && $layout == 'edit' && !$this->checkEditId('com_customtables.edit.'.$data['view'], $id))
 			{
 				// Somehow the person just went to the form - we don't allow that.
-				$this->setError(JText::sprintf('JLIB_APPLICATION_ERROR_UNHELD_ID', $id));
-				$this->setMessage($this->getError(), 'error');
+				
+				Factory::getApplication()->enqueueMessage(JText::sprintf('JLIB_APPLICATION_ERROR_UNHELD_ID', $id),'error');
+				
 				// check if item was opened from other then its own list view
 				$ref 	= $this->input->getCmd('ref', 0);
 				$refid 	= $this->input->getInt('refid', 0);

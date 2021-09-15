@@ -9,10 +9,6 @@
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die( 'Restricted access' );
 
-require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'misc.php');
-require_once (JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'languages.php');
-
-
 jimport( 'joomla.html.html.menu' );
 
 class CustomTablesModelList extends JModel
@@ -111,8 +107,6 @@ class CustomTablesModelList extends JModel
 		{
 			$query.=' GROUP BY m.id ';
 
-
-			require_once (JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tables.php');
 			$fieldrow=ESFields::getFieldRowByName($connect_with_field, '',$connect_with_table);
 
 			$typeparams_pair=explode(',',$fieldrow->typeparams);
@@ -120,8 +114,6 @@ class CustomTablesModelList extends JModel
 
 			if($structure_parent_name!='')
 			{
-				require_once (JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'customtablesmisc.php');
-
 				$parentid=JoomlaBasicMisc::getOptionIdFull($structure_parent_name);
 			}
 			else

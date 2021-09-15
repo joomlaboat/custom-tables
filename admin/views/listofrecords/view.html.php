@@ -48,7 +48,6 @@ class CustomtablesViewListofrecords extends JViewLegacy
 		$version = new Version;
 		$this->version = (int)$version->getShortVersion();
 		
-		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'languages.php');
 		$LangMisc	= new ESLanguages;
 		$this->languages=$LangMisc->getLanguageList();
 		
@@ -81,7 +80,6 @@ class CustomtablesViewListofrecords extends JViewLegacy
 		
 		if($this->tableid!=0)
 		{
-			require_once(JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tables.php');
 			$table=ESTables::getTableRowByID($this->tableid);
 			if(!is_object($table) and $table==0)
 			{
@@ -90,7 +88,6 @@ class CustomtablesViewListofrecords extends JViewLegacy
 			}
 			else
 			{
-				require_once(JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fields.php');
 				$this->tablename=$table->tablename;
 				$this->tabletitle=$table->tabletitle;
 				$this->tablefields=ESFields::getFields($this->tableid);
@@ -170,8 +167,6 @@ class CustomtablesViewListofrecords extends JViewLegacy
 
 		if($this->tableid!=0)
 		{
-			require_once(JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tables.php');
-
 			JToolBarHelper::title('Custom Tables - Table "'.$this->tabletitle.'" - '.JText::_('COM_CUSTOMTABLES_LISTOFRECORDS'), 'joomla');
 					}
 		else
@@ -226,8 +221,6 @@ class CustomtablesViewListofrecords extends JViewLegacy
 
 		if($this->tableid!=0)
 		{
-			require_once(JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tables.php');
-
 			JToolBarHelper::title('Custom Tables - Table "'.$this->tabletitle.'" - '.JText::_('COM_CUSTOMTABLES_LISTOFRECORDS'), 'joomla');
 		}
 		else

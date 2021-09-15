@@ -19,7 +19,6 @@ JHtml::_('behavior.keepalive');
 
 $componentParams = JComponentHelper::getParams('com_customtables');
 
-require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'languages.php');
 $LangMisc	= new ESLanguages;
 $languages=$LangMisc->getLanguageList();
 
@@ -201,7 +200,7 @@ else
 
 	<?php
 	echo JHtml::_('bootstrap.addTab', 'tablesTab', 'dependencies', JText::_('COM_CUSTOMTABLES_TABLES_DEPENDENCIES', true));
-	require_once('_dependencies.php');
+	include ('_dependencies.php');
 	?>
 
 	<div class="row-fluid form-horizontal-desktop">

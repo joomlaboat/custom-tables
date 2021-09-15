@@ -43,7 +43,9 @@ HTMLHelper::_('behavior.keepalive');
 
 
 $componentParams = JComponentHelper::getParams('com_customtables');
-require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'layouteditor.php');
+require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR
+	.'libraries'.DIRECTORY_SEPARATOR .'customtables'. DIRECTORY_SEPARATOR . 'layouteditor' .DIRECTORY_SEPARATOR.'layouteditor.php');
+
 $onPageLoads=array();
 
 ?>
@@ -115,7 +117,7 @@ $onPageLoads=array();
 		<h3><?php echo JText::_('COM_CUSTOMTABLES_LAYOUTS_WHAT_IS_USING_IT', true); ?></h3>
 		<div id="layouteditor_tagsContent0" class="dynamic_values_list dynamic_values">
 		<?php 
-		require_once('dependencies.php');
+		require('dependencies.php');
 		echo renderDependencies($this->item); // this will be shown upon the click in the toolbar
 		?>
 		</div></div>

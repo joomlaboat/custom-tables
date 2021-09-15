@@ -18,7 +18,7 @@ jimport('joomla.application.component.modellist');
 /**
  * Listoftables Model
  */
-class CustomtablesModelListoftables extends JModelList
+class CustomtablesModelListofTables extends JModelList
 {
 	public function __construct($config = array())
 	{
@@ -36,8 +36,6 @@ class CustomtablesModelListoftables extends JModelList
 
 		parent::__construct($config);
 		
-		//Check tables
-		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tables.php');
 		ESTables::checkComponentTables();
 	}
 
@@ -167,7 +165,7 @@ class CustomtablesModelListoftables extends JModelList
 
 		return $query;
 	}
-
+	
 	/**
 	 * Method to get a store id based on model configuration state.
 	 *

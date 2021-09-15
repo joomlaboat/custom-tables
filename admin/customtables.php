@@ -18,10 +18,9 @@ if (!JFactory::getUser()->authorise('core.manage', 'com_customtables'))
 	JFactory::getApplication()->enqueueMessage(JText::_('JERROR_ALERTNOAUTHOR'), 'error');
 };
 
-// Load cms libraries
-//JLoader::registerPrefix('J', JPATH_PLATFORM . '/cms');
-// Load joomla libraries without overwrite
-//JLoader::registerPrefix('J', JPATH_PLATFORM . '/joomla',false);
+$path = JPATH_COMPONENT_SITE . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR;
+require_once($path.'loader.php');
+CTLoader();
 
 // require helper files
 JLoader::register('CustomtablesHelper', dirname(__FILE__) . '/helpers/customtables.php');

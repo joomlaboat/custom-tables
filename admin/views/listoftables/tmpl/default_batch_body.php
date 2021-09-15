@@ -14,4 +14,4 @@ defined('_JEXEC') or die('Restricted access');
 ?>
 
 <p><?php echo JText::_('COM_CUSTOMTABLES_LISTOFTABLES_BATCH_TIP'); ?></p>
-<?php echo $this->batchDisplay; ?>
+<?php //echo $this->batchDisplay; ?>
