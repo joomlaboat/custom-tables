@@ -9,6 +9,8 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Version;
+
 JHTML::addIncludePath(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'helpers');
 
 // Include library dependencies
@@ -36,9 +38,13 @@ class LayoutProcessor
 	var $toolbar_array;
 	var $Model;
 	var $advancedtagprocessor;
+	var $version = 0;
 
 	function __construct()
 	{
+		$version = new Version;
+		$this->version = (int)$version->getShortVersion();
+		
 		$phptagprocessor=JPATH_SITE.DIRECTORY_SEPARATOR.'plugins'.DIRECTORY_SEPARATOR.'content'.DIRECTORY_SEPARATOR.'customtables'.DIRECTORY_SEPARATOR.'protagprocessor'.DIRECTORY_SEPARATOR.'phptags.php';
 		if(file_exists($phptagprocessor))
 		{
@@ -102,9 +108,11 @@ class LayoutProcessor
 		return $htmlresult;
 	}
 
-
 	public static function applyContentPlugins(&$htmlresult)
 	{
+		$version_object = new Version;
+		$version = (int)$version_object->getShortVersion();
+
 		$mainframe = JFactory::getApplication('site');
 
 		if(method_exists($mainframe,'getParams'))
@@ -119,13 +127,20 @@ class LayoutProcessor
 			$o->created_by_alias = 0;
 		
 			JPluginHelper::importPlugin( 'content' );
-			$results = JFactory::getApplication()->triggerEvent( 'onContentPrepare',array ('com_content.article', &$o, &$params_, 0));
-			$htmlresult=$o->text;
+		
+			if($version < 4)
+			{
+				$dispatcher	= JDispatcher::getInstance();
+				$results = $dispatcher->trigger('onContentPrepare', array ('com_content.article', &$o, &$params_, 0));
+			}
+			else
+				$results = JFactory::getApplication()->triggerEvent( 'onContentPrepare',array ('com_content.article', &$o, &$params_, 0));
+			
+			$htmlresult = $o->text;
 		
 			$mydoc->setTitle(JoomlaBasicMisc::JTextExtended($pagetitle)); //because content plugins may overwrite the title
 		}
 	}
-
 
 	public static function renderPageHeader(&$Model)
 	{
@@ -150,7 +165,7 @@ class LayoutProcessor
 			$string = $filter->clean(html_entity_decode(htmlentities($var, ENT_COMPAT, $charset)), 'HTML');
 			if ($shorten)
 			{
-                                return self::shorten($string,$length);
+				return self::shorten($string,$length);
 			}
 			return $string;
 		}
@@ -159,7 +174,6 @@ class LayoutProcessor
 			return '';
 		}
 	}
-
 
 	protected static function shorten($string, $length = 40, $addTip = true)
 	{
@@ -194,5 +208,4 @@ class LayoutProcessor
 		}
 		return $string;
 	}
-
 }

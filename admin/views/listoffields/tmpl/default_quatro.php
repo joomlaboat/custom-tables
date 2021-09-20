@@ -20,8 +20,6 @@ use Joomla\CMS\String\PunycodeHelper;
 
 use CustomTables\Integrity\IntegrityFields;
 
-//HTMLHelper::_('behavior.multiselect');
-
 $loggeduser = Factory::getUser();
 
 if ($this->saveOrder)
@@ -81,7 +79,6 @@ if($input->getCmd('extratask','')=='updateimages')
 				<?php
 		if($this->tableid!=0)
 		{
-			
 			$link=JURI::root().'administrator/index.php?option=com_customtables&view=listoffields&tableid='.$this->tableid;
 			echo IntegrityFields::checkFields($this->tableid,$this->tablename,$this->tabletitle,$this->customtablename,$link);
 		}

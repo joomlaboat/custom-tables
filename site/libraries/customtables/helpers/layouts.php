@@ -94,6 +94,7 @@ class ESLayouts
 
 	public static function getLayoutFileContent($id=0,$db_layout_ts=0,$layoutname)
 	{
+		$path=JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'layouts';
 		$filename=$layoutname.'.html';
 
 		if (file_exists($path.DIRECTORY_SEPARATOR.$filename))

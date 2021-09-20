@@ -605,7 +605,7 @@ class ImportTables
         return '';
     }
 
-    public static function insertRecords($table,$rows,$addprefix=true,$exceptions=array(),$force_id=false)
+    public static function insertRecords($table,$rows,$addprefix=true,$exceptions=array(),$force_id=false, $add_field_prefix = '' , $field_conversion_map = array())
     {
 		if($addprefix)
 			$mysqltablename='#__customtables_'.$table;
@@ -620,47 +620,94 @@ class ImportTables
 		
 		$ignore_fileds = ['asset_id','created_by','modified_by','created','modified','checked_out',
 			'checked_out_time','version','hits','publish_up','publish_down','checked_out_time'];
-
+			
+		$core_fields = ['id','published'];
+		
         foreach($keys as $key)
         {
-			if(!in_array($key, $ignore_fileds))
+			$isok = false;
+			$type = '';
+
+			if(isset($field_conversion_map[$key]))
 			{
-				$fieldname=ImportTables::checkFieldName($key,$force_id,$exceptions);
-
-				if($fieldname!='')
+				$isok = true;
+				if(is_array($field_conversion_map[$key]))
 				{
-					//Check iffield exists
-				
-					if(!ESFields::checkIfFieldExists($mysqltablename,$key,false))
-					{
-						//Add field
-						$isLanguageFieldName=ESFields::isLanguageFieldName($key);
+					$fieldname = $field_conversion_map[$key]['name'];
+					$type = $field_conversion_map[$key]['type'];
+				}
+				else
+					$fieldname = $field_conversion_map[$key];
+			}
+			elseif(count($field_conversion_map)>0 and in_array($key,$field_conversion_map))
+			{
+				$isok = true;
+				if(in_array($key,$core_fields))
+					$fieldname = $key;
+				else
+					$fieldname = $add_field_prefix.$key;
+			}
+			else
+			{
+				$fieldname = ImportTables::checkFieldName($key,$force_id,$exceptions);
+				if($fieldname != '')
+				{
+					$isok = true;
+					if(!in_array($fieldname,$core_fields))
+						$fieldname = $add_field_prefix.$fieldname;
+				}
+			}
+			
+			if($isok)
+			{
+				if(!ESFields::checkIfFieldExists($mysqltablename,$fieldname,false))
+				{
+					//Add field
+					$isLanguageFieldName=ESFields::isLanguageFieldName($fieldname);
 
-                        if($isLanguageFieldName)
-                        {
-                            //Add language field
-                            //Get non langauge field type
+					if($isLanguageFieldName)
+                    {
+						//Add language field
+                        //Get non langauge field type
 
-                            $nonLanguageFieldName=ESFields::getLanguagelessFieldName($key);
+                        $nonLanguageFieldName=ESFields::getLanguagelessFieldName($key);
 
-                            $filedtype=ESFields::getFieldType($mysqltablename,false,$nonLanguageFieldName);
+                        $filedtype=ESFields::getFieldType($mysqltablename,false,$nonLanguageFieldName);
 							
-							if($filedtype != '')
-							{
-								ESFields::AddMySQLFieldNotExist($mysqltablename, $key, $filedtype, '');
-								$inserts[]=$fieldname.'='.$db->Quote($rows[$key]);
-							}
-                        }
+						if($filedtype != '')
+						{
+							ESFields::AddMySQLFieldNotExist($mysqltablename, $key, $filedtype, '');
+							$inserts[]=$fieldname.'='.$db->Quote($rows[$key]);
+						}
+					}
+					else
+						$inserts[]=$fieldname.'='.ImportTables::dbQuoteByType($rows[$key],$type);
                 }
                 else
-                    $inserts[]=$fieldname.'='.$db->Quote($rows[$key]);
-					
+				{
+                    $inserts[]=$fieldname.'='.ImportTables::dbQuoteByType($rows[$key],$type);
 				}
 			}
         }
 
 		return ESTables::insertRecords($mysqltablename,'id',$inserts);
     }
+	
+	protected static function dbQuoteByType($value, $type = '')
+	{
+		$db = Factory::getDBO();
+		
+		if($type == '' or  $type == 'string')
+			return $db->Quote($value);
+			
+		if($type == 'int')
+			return (int)$value;
+			
+		if($type == 'float')
+			return (float)$value;
+			
+		return null;
+	}
 
 	public static function getRecordByField($table,$fieldname,$value,$addprefix=true)
 	{

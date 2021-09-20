@@ -16,33 +16,9 @@ JHtml::_('behavior.multiselect');
 JHtml::_('dropdown.init');
 JHtml::_('formbehavior.chosen', 'select');
 
-/*
-if ($this->saveOrder)
-{
-	$saveOrderingUrl = 'index.php?option=com_customtables&task=listoftables.saveOrderAjax&tmpl=component';
-	JHtml::_('sortablelist.sortable', 'tablesList', 'adminForm', strtolower($this->listDirn), $saveOrderingUrl);
-}
+use CustomTables\IntegrityChecks;
 
 ?>
-<script type="text/javascript">
-	Joomla.orderTable = function()
-	{
-		table = document.getElementById("sortTable");
-		direction = document.getElementById("directionTable");
-		order = table.options[table.selectedIndex].value;
-		if (order != '<?php echo $this->listOrder; ?>')
-		{
-			dirn = 'asc';
-		}
-		else
-		{
-			dirn = direction.options[direction.selectedIndex].value;
-		}
-		Joomla.tableOrdering(order, dirn, '');
-	};
-</script>
-
-*/ ?>
 
 <form action="<?php echo JRoute::_('index.php?option=com_customtables&view=listoftables'); ?>" method="post" name="adminForm" id="adminForm">
 <?php if(!empty( $this->sidebar)): ?>
@@ -62,9 +38,8 @@ if ($this->saveOrder)
 		<?php echo $this->loadTemplate('toolbar');?>
 
 		<?php
-			checkTableOnly($this->items);
+			$result = IntegrityChecks::check();
 		?>
-
 
 		<table class="table table-striped" id="tablesList">
 			<thead><?php echo $this->loadTemplate('head');?></thead>

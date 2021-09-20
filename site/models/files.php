@@ -29,6 +29,10 @@ class CustomTablesModelFiles extends JModelLegacy
 
 	function __construct()
 	{
+		$path = JPATH_COMPONENT_SITE . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR;
+		require_once($path.'loader.php');
+		CTLoader();
+
 		parent::__construct();
 
 		$app		= JFactory::getApplication();

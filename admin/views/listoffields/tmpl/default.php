@@ -17,6 +17,7 @@ JHtml::_('behavior.multiselect');
 JHtml::_('dropdown.init');
 JHtml::_('formbehavior.chosen', 'select');
 
+use CustomTables\Integrity\IntegrityFields;
 
 if ($this->saveOrder)
 {
@@ -75,9 +76,8 @@ if($input->getCmd('extratask','')=='updateimages')
 		<?php
 		if($this->tableid!=0)
 		{
-			
 			$link=JURI::root().'administrator/index.php?option=com_customtables&view=listoffields&tableid='.$this->tableid;
-			echo checkTableFields($this->tableid,$this->tablename,$this->tabletitle,$this->customtablename,$link);
+			echo IntegrityFields::checkFields($this->tableid,$this->tablename,$this->tabletitle,$this->customtablename,$link);
 		}
 		?>
 		

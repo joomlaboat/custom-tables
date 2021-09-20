@@ -405,9 +405,10 @@ class CustomtablesViewListoffields extends JViewLegacy
 	 * @return  array  Array containing the field name to sort by as the key and display text as value
 	 */
 	 
-	 /*
+
 	protected function getSortFields()
 	{
+		//Joomla 3 only
 		return array(
 			'a.sorting' => JText::_('JGRID_HEADING_ORDERING'),
 			'a.published' => JText::_('JSTATUS'),
@@ -416,7 +417,6 @@ class CustomtablesViewListoffields extends JViewLegacy
 			'a.id' => JText::_('JGRID_HEADING_ID')
 		);
 	}
-	*/
 
 	protected function getTheTypeSelections()
 	{

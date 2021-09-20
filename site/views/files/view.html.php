@@ -68,9 +68,10 @@ class CustomTablesViewFiles extends JViewLegacy
 
    $content=file_get_contents($file);
 
-   $parts=explode('/',$file);
-   $filename=end($parts);
-   $fileextension=end($filename);
+   $parts = explode('/',$file);
+   $filename = end($parts);
+   $filename_parts = explode('.',$filename);
+   $fileextension=end($filename_parts);
 
    $content=$this->doCustomPHP($content,$row);
 

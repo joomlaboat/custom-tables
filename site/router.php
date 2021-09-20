@@ -34,6 +34,9 @@ class CustomTablesRouter extends JComponentRouterView
 
 	protected function CheckIfFile2download(&$segments,&$vars)
 	{
+		$path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components'. DIRECTORY_SEPARATOR .'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR;
+		require_once($path.'loader.php');
+		CTLoader();
 
 				if(strpos(end($segments),'.')!==false)
 				{

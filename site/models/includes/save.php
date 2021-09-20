@@ -469,8 +469,10 @@ static public function Try2CreateUserAccount($Model,$field,$row)
     $unique_users=false;
     if(isset($new_parts[4]) and $new_parts[4]=='unique')
         $unique_users=true;
-
-
+		
+	$path = JPATH_COMPONENT_SITE . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'helpers' . DIRECTORY_SEPARATOR; 
+	require_once($path.'createuser.php');
+	
     $existing_user_id=CustomTablesCreateUser::CheckIfEmailExist($user_email,$existing_user,$existing_name);
 	
     if($existing_user_id)
@@ -505,6 +507,9 @@ static public function Try2CreateUserAccount($Model,$field,$row)
 
     static protected function CreateUser($email,$name,$usergroups,$listing_id,$useridfieldname,$realtablename)
 	{
+		$path = JPATH_COMPONENT_SITE . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'helpers' . DIRECTORY_SEPARATOR; 
+		require_once($path.'createuser.php');
+		
 		$msg='';
 		$password=strtolower(JUserHelper::genRandomPassword());
 
