@@ -21,20 +21,20 @@ $document->addCustomTag('<script src="'.JURI::root(true).'/administrator/compone
 $document->addCustomTag('<script src="'.JURI::root(true).'/administrator/components/com_customtables/js/layouteditor.js"></script>');
 $document->addCustomTag('<link href="'.JURI::root(true).'/administrator/components/com_customtables/css/layouteditor.css" rel="stylesheet">');
 
-$document->addCustomTag('<link rel="stylesheet" href="'.JURI::root(true).'/administrator/components/com_customtables/libraries/codemirror/lib/codemirror.css">');
-$document->addCustomTag('<link rel="stylesheet" href="'.JURI::root(true).'/administrator/components/com_customtables/libraries/codemirror/addon/hint/show-hint.css">');
+$document->addCustomTag('<link rel="stylesheet" href="'.JURI::root(true).'/components/com_customtables/libraries/codemirror/lib/codemirror.css">');
+$document->addCustomTag('<link rel="stylesheet" href="'.JURI::root(true).'/components/com_customtables/libraries/codemirror/addon/hint/show-hint.css">');
 
-$document->addCustomTag('<script src="'.JURI::root(true).'/administrator/components/com_customtables/libraries/codemirror/lib/codemirror.js"></script>');
-$document->addCustomTag('<script src="'.JURI::root(true).'/administrator/components/com_customtables/libraries/codemirror/addon/mode/overlay.js"></script>');
+$document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/libraries/codemirror/lib/codemirror.js"></script>');
+$document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/libraries/codemirror/addon/mode/overlay.js"></script>');
 
-$document->addCustomTag('<script src="'.JURI::root(true).'/administrator/components/com_customtables/libraries/codemirror/addon/hint/show-hint.js"></script>');
-$document->addCustomTag('<script src="'.JURI::root(true).'/administrator/components/com_customtables/libraries/codemirror/addon/hint/xml-hint.js"></script>');
-$document->addCustomTag('<script src="'.JURI::root(true).'/administrator/components/com_customtables/libraries/codemirror/addon/hint/html-hint.js"></script>');
-$document->addCustomTag('<script src="'.JURI::root(true).'/administrator/components/com_customtables/libraries/codemirror/mode/xml/xml.js"></script>');
-$document->addCustomTag('<script src="'.JURI::root(true).'/administrator/components/com_customtables/libraries/codemirror/mode/javascript/javascript.js"></script>');
-$document->addCustomTag('<script src="'.JURI::root(true).'/administrator/components/com_customtables/libraries/codemirror/mode/css/css.js"></script>');
-$document->addCustomTag('<script src="'.JURI::root(true).'/administrator/components/com_customtables/libraries/codemirror/mode/htmlmixed/htmlmixed.js"></script>');
-$document->addCustomTag('<link rel="stylesheet" href="'.JURI::root(true).'/administrator/components/com_customtables/libraries/codemirror/theme/'.$theme.'.css">');
+$document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/libraries/codemirror/addon/hint/show-hint.js"></script>');
+$document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/libraries/codemirror/addon/hint/xml-hint.js"></script>');
+$document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/libraries/codemirror/addon/hint/html-hint.js"></script>');
+$document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/libraries/codemirror/mode/xml/xml.js"></script>');
+$document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/libraries/codemirror/mode/javascript/javascript.js"></script>');
+$document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/libraries/codemirror/mode/css/css.js"></script>');
+$document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/libraries/codemirror/mode/htmlmixed/htmlmixed.js"></script>');
+$document->addCustomTag('<link rel="stylesheet" href="'.JURI::root(true).'/components/com_customtables/libraries/codemirror/theme/'.$theme.'.css">');
 
 
 		function renderEditor($textareacode,$textareaid,$typeboxid,$textareatabid,&$onPageLoads)
