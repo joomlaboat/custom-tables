@@ -15,109 +15,89 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'co
 
 class CustomTablesViewFiles extends JViewLegacy
 {
-
- var $Model;
- var $row;
+	var $Model;
+	var $row;
 
 	function display($tpl = null)
 	{
-
 		$this->Model = $this->getModel();
+		$this->row = $this->get('Data');
+		$filepath=$this->getFilePath();
+		if($filepath=='')
+		{
+			JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
+		}
+		
+		$key=$this->Model->key;
+		$test_key=CT_FieldTypeTag_file::makeTheKey($filepath,$this->Model->security,$this->Model->_id,$this->Model->esfieldid,$this->Model->estableid);
 
-  $this->row = $this->get('Data');
+		if($key==$test_key)
+			$this->render_file_output($this->row,$filepath);
+		else
+			JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_DOWNLOAD_LINK_IS_EXPIRED'), 'error');
+ 	}
 
-
-
-  $filepath=$this->getFilePath();
-  
-
-  if($filepath=='')
-  {
-   JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
-  }
-
-  $key=$this->Model->key;
-
-  $test_key=CT_FieldTypeTag_file::makeTheKey($filepath,$this->Model->security,$this->Model->_id,$this->Model->esfieldid,$this->Model->estableid);
-
- if($key==$test_key)
-    $this->render_file_output($this->row,$filepath);
- else
-	JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_DOWNLOAD_LINK_IS_EXPIRED'), 'error');
- 
-	}
-
-
- function render_file_output($row,$filepath)
- {
-	$jinput=JFactory::getApplication()->input;
-	$savefile=$jinput->getInt('savefile',0);
+	function render_file_output($row,$filepath)
+	{
+		$jinput=JFactory::getApplication()->input;
+		$savefile=$jinput->getInt('savefile',0);
+	 	$jinput = JFactory::getApplication()->input;
 	
- 	$jinput = JFactory::getApplication()->input;
-	
-	if(strlen($filepath)>8 and substr($filepath,0,8)=='/images/')
-		$file=JPATH_SITE.str_replace('/',DIRECTORY_SEPARATOR,$filepath);
-	else
-		$file=str_replace('/',DIRECTORY_SEPARATOR,$filepath);
+		if(strlen($filepath)>8 and substr($filepath,0,8)=='/images/')
+			$file=JPATH_SITE.str_replace('/',DIRECTORY_SEPARATOR,$filepath);
+		else
+			$file=str_replace('/',DIRECTORY_SEPARATOR,$filepath);
 
-   if(!file_exists($file))
-   {
-    JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FILE_NOT_FOUND'), 'error');
-    return;
-   }
+		if(!file_exists($file))
+		{
+			JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FILE_NOT_FOUND'), 'error');
+			return;
+		}
 
-   $content=file_get_contents($file);
+		$content=file_get_contents($file);
 
-   $parts = explode('/',$file);
-   $filename = end($parts);
-   $filename_parts = explode('.',$filename);
-   $fileextension=end($filename_parts);
+		$parts = explode('/',$file);
+		$filename = end($parts);
+		$filename_parts = explode('.',$filename);
+		$fileextension=end($filename_parts);
 
-   $content=$this->doCustomPHP($content,$row);
+		$content=$this->doCustomPHP($content,$row);
 
-   if (ob_get_contents()) ob_end_clean();
+		if (ob_get_contents()) ob_end_clean();
 
-   $mt=mime_content_type($file);
+		$mt=mime_content_type($file);
    
-    @header('Content-Type: '.$mt);
-	@header("Pragma: public");
-	@header("Expires: 0");
-	@header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-	@header("Cache-Control: public");
-	@header("Content-Description: File Transfer");
-	/*header("Content-type: application/octet-stream");*/
-	
-	@header("Content-Transfer-Encoding: binary");
-   
-	if($savefile)
+		@header('Content-Type: '.$mt);
+		@header("Pragma: public");
+		@header("Expires: 0");
+		@header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+		@header("Cache-Control: public");
+		@header("Content-Description: File Transfer");
+		@header("Content-Transfer-Encoding: binary");
 		@header("Content-Disposition: attachment; filename=\"".$filename."\"");
    
-	echo $content;
+		echo $content;
 
-	die ;//clean exit
-}
+		die ;//clean exit
+	}
 
-
- function doCustomPHP($content,&$row)
+	function doCustomPHP($content,&$row)
 	{
-
-  $servertagprocessor_file=JPATH_SITE.DIRECTORY_SEPARATOR.'plugins'.DIRECTORY_SEPARATOR.'content'.DIRECTORY_SEPARATOR.'customtables'.DIRECTORY_SEPARATOR.'protagprocessor'.DIRECTORY_SEPARATOR.'servertags.php';
+		$servertagprocessor_file=JPATH_SITE.DIRECTORY_SEPARATOR.'plugins'.DIRECTORY_SEPARATOR.'content'.DIRECTORY_SEPARATOR.'customtables'.DIRECTORY_SEPARATOR.'protagprocessor'.DIRECTORY_SEPARATOR.'servertags.php';
 
 		if(!file_exists($servertagprocessor_file))
 			return $content;
 
-  $TypeParams=$this->Model->fieldrow['typeparams'];
-  $param_parts=JoomlaBasicMisc::csv_explode(',', $TypeParams, '"', false);
-  if(!isset($param_parts[4]))
-   return $content;
+		$TypeParams=$this->Model->fieldrow['typeparams'];
+		$param_parts=JoomlaBasicMisc::csv_explode(',', $TypeParams, '"', false);
+		if(!isset($param_parts[4]))
+			return $content;
 
-  $customphpfile=$param_parts[4];
+		$customphpfile=$param_parts[4];
 
-
-  if($customphpfile!='')
+		if($customphpfile!='')
 		{
-
-   $parts=explode('/',$customphpfile); //just a security check
+			$parts=explode('/',$customphpfile); //just a security check
 			if(count($parts)>1)
 				return $content;
 
@@ -128,66 +108,27 @@ class CustomTablesViewFiles extends JViewLegacy
 				$function_name='CTProcessFile_'.str_replace('.php','',$customphpfile);
 
 				if(function_exists ($function_name))
-				{
-      return call_user_func($function_name,$content,$row,$this->Model->estableid,$this->Model->esfieldid);
-
-				}
-
+					return call_user_func($function_name,$content,$row,$this->Model->estableid,$this->Model->esfieldid);
 			}
 		}
 		return $content;
-
 	}
 
-
-
-
-
- function getFilePath()
- {
-	if(!isset($this->Model->fieldrow))
-		return '';
+	function getFilePath()
+	{
+		if(!isset($this->Model->fieldrow))
+			return '';
 	 
-	if($this->Model->fieldrow['type']=='filelink')
-		$TypeParams=','.$this->Model->fieldrow['typeparams']; //file link field type parameters have folder path as second parameter
-	else
-		$TypeParams=$this->Model->fieldrow['typeparams'];
-	
-  if(!isset($this->row[$this->Model->fieldrow['realfieldname']]))
-   return '';
-
-  $rowValue=$this->row[$this->Model->fieldrow['realfieldname']];
-
-  return CT_FieldTypeTag_file::getFileFolder($TypeParams).'/'.$rowValue;
-
- }
-
- /*
- function getRealFilePath()
- {
-  $TypeParams=$this->Model->fieldrow['typeparams'];
-
-
-  $rowValue=$this->row['es_'.$this->Model->fieldrow['fieldname']];
-
-  $pair=explode(',',$TypeParams);
-		//$pair[1] - the folder
-		//$options[0] - how to process
-
-		if(isset($pair[1]))
-            $filepath=$pair[1].'/'.$rowValue;
+		if($this->Model->fieldrow['type']=='filelink')
+			$TypeParams=','.$this->Model->fieldrow['typeparams']; //file link field type parameters have folder path as second parameter
 		else
-            $filepath='images/esfiles/'.$rowValue;
+			$TypeParams=$this->Model->fieldrow['typeparams'];
+	
+		if(!isset($this->row[$this->Model->fieldrow['realfieldname']]))
+			return '';
 
-   if($filepath[0]!='/');
-    $filepath='/'.$filepath;
+		$rowValue=$this->row[$this->Model->fieldrow['realfieldname']];
 
-  return $filepath;
- }
- */
-
+		return CT_FieldTypeTag_file::getFileFolder($TypeParams).'/'.$rowValue;
+	}
 }
-
-
-
-?>
