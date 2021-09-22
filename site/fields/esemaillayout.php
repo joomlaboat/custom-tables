@@ -18,6 +18,10 @@ class JFormFieldESEmailLayout extends JFormFieldList
 
 	protected function getOptions()
 	{
+		$path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR;
+		require_once($path.'loader.php');
+		CTLoader();
+		
         $db = JFactory::getDBO();
 		$query = $db->getQuery(true);
 		$query->select('id,layoutname, (SELECT tablename FROM #__customtables_tables WHERE id=tableid) AS tablename');

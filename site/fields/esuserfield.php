@@ -26,6 +26,9 @@ class JFormFieldESTable extends JFormFieldList
 	
 	protected function getOptions()//$name, $value, &$node, $control_name)
 	{
+		$path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR;
+		require_once($path.'loader.php');
+		CTLoader();
 	
         $db = JFactory::getDBO();
 		$query = $db->getQuery(true);
