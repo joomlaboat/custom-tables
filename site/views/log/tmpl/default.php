@@ -116,12 +116,12 @@ function getRecordValue($listing_id,$Itemid,$FieldName)
 		$model = new CustomTablesModelDetails;
 		$model->load($menuparams,$listing_id,true);
 
-		if($model->establename=='')
-			return "Table ".$model->establename."not found.";
+		if($model->ct->Table->tablename=='')
+			return "Table ".$model->ct->Table->tablename."not found.";
 
 		$model->LayoutProc->layout='['.$FieldName.']';
 
-		$tablename=$model->establename;
+		$tablename=$model->ct->Table->tablename;
 
 		$row=getRecord($tablename,$listing_id);
 

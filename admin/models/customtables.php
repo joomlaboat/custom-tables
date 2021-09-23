@@ -15,11 +15,15 @@ defined('_JEXEC') or die('Restricted access');
 jimport('joomla.application.component.modellist');
 jimport('joomla.application.component.helper');
 
+use CustomTables\CT;
+
 /**
  * Customtables Model
  */
 class CustomtablesModelCustomtables extends JModelList
 {
+	var $ct;
+	
 	public function getIcons()
 	{
 		// load user for access menus

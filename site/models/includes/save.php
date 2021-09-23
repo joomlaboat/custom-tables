@@ -11,7 +11,7 @@ defined('_JEXEC') or die('Restricted access');
 
 class CTValue
 {
-    public static function getValue($id,&$es,&$esfield,&$savequery,$prefix,$establename,$LanguageList,&$fieldstosave,$realtablename)
+    public static function getValue($id,&$esfield,&$savequery,$prefix,$establename,$LanguageList,&$fieldstosave,$realtablename)
     {
         $db = JFactory::getDBO();
         $esfieldname=$esfield['fieldname'];
@@ -424,9 +424,7 @@ static public function toHex($n) {
 
 static public function Try2CreateUserAccount($Model,$field,$row)
 {
-	$useridfieldname=$field['realfieldname'];
-
-    $uid=(int)$row[$useridfieldname];
+    $uid=(int)$row[$field['realfieldname']];
 	
     if($uid!=0)
     {
@@ -479,7 +477,7 @@ static public function Try2CreateUserAccount($Model,$field,$row)
 	{
         if(!$unique_users) //allow not unique record per users
         {
-            CTValue::UpdateUserField($Model->realtablename,$useridfieldname,$existing_user_id,$row['listing_id']);
+            CTValue::UpdateUserField($Model->ct->Table->realtablename,$field['realfieldname'],$existing_user_id,$row['listing_id']);
             JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORD_USER_UPDATED' ));
         }
         else
@@ -492,7 +490,7 @@ static public function Try2CreateUserAccount($Model,$field,$row)
 
 	}
     else
-        CTValue::CreateUser($user_email,$user_name,$user_groups,$row['listing_id'],$useridfieldname,$Model->realtablename);
+        CTValue::CreateUser($user_email,$user_name,$user_groups,$row['listing_id'],$field['realfieldname'],$Model->ct->Table->realtablename);
 
     return;
 }
@@ -1008,9 +1006,9 @@ static public function get_record_type_value(&$savequery,$typeparams,$comesfield
                 $htmlresult=CTValue::prepare_alias_type_value(
 					$row['listing_id'],
 					$htmlresult,
-					$Model->realtablename,
+					$Model->ct->Table->realtablename,
 					$realfieldname,
-					$Model->tablerow['realidfieldname']);
+					$Model->ct->Table->realidfieldname);
 			}
             $savequery[]=$realfieldname.'='.$db->quote($htmlresult);
         }
@@ -1044,7 +1042,7 @@ static public function get_record_type_value(&$savequery,$typeparams,$comesfield
     	if(count($savequery)>0)
 		{
 			$db = JFactory::getDBO();
-			$query='UPDATE '.$Model->realtablename.' SET '.implode(', ',$savequery).' WHERE '.$Model->tablerow['realidfieldname'].'='.$id;
+			$query='UPDATE '.$Model->ct->Table->realtablename.' SET '.implode(', ',$savequery).' WHERE '.$Model->ct->Table->realidfieldname.'='.$id;
 
 			$db->setQuery( $query );
 			$db->execute();

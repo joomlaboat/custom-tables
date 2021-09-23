@@ -41,7 +41,7 @@ defined('_JEXEC') or die('Restricted access');
 
 		$content_width=100;
 		$column_width=floor($content_width/$number_of_columns);
-		$aLink='index.php?option=com_customtables&view=catalog&Itemid='.$Itemid.'&essearchbar=true&establename='.$this->Model->establename;
+		$aLink='index.php?option=com_customtables&view=catalog&Itemid='.$Itemid.'&essearchbar=true&establename='.$this->Model->ct->Table->tablename;
 
         foreach($this->rows as $row)
         {

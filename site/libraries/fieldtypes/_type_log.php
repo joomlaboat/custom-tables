@@ -11,8 +11,6 @@ defined('_JEXEC') or die('Restricted access');
 
 class CT_FieldTypeTag_log
 {
-
-
 	public static function getLogVersionLinks(&$Model,$rowValue,&$row)
 	{
 		$current_json_data_size=CT_FieldTypeTag_log::getVersionDataSize($Model,$row);
@@ -31,7 +29,7 @@ class CT_FieldTypeTag_log
 		$version_size=0;
 
 		//get creation date
-		foreach($Model->esfields as $ESField)
+		foreach($Model->ct->Table->fields as $ESField)
 		{
 			if($ESField['type']=='creationtime')
 			{
@@ -41,7 +39,7 @@ class CT_FieldTypeTag_log
 		}
 
 		//get original author
-		foreach($Model->esfields as $ESField)
+		foreach($Model->ct->Table->fields as $ESField)
 		{
 			if($ESField['type']=='userid')
 			{
@@ -163,7 +161,7 @@ class CT_FieldTypeTag_log
 	{
 		$version_size=0;
 
-		foreach($Model->esfields as $ESField)
+		foreach($Model->ct->Table->fields as $ESField)
 		{
 			if($ESField['type']!='log' and $ESField['type']!='dummy')
 			{

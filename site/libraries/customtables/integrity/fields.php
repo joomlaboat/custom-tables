@@ -18,14 +18,13 @@ use CustomTables\Fields;
 use \Joomla\CMS\Factory;
 
 use \ESTables;
-use \ESLanguages;
 
 use CustomTables\Integrity\IntegrityFieldType_FileBox;
 use CustomTables\Integrity\IntegrityFieldType_Gallery;
 
 class IntegrityFields extends \CustomTables\IntegrityChecks
 {
-	public static function checkFields($tableid,$tablename,$tabletitle,$customtablename,$link)
+	public static function checkFields(&$ct,$tableid,$tablename,$tabletitle,$customtablename,$link)
 	{
 		require_once('fieldtype_filebox.php');
 		require_once('fieldtype_gallery.php');
@@ -51,8 +50,6 @@ class IntegrityFields extends \CustomTables\IntegrityChecks
 		$ExistingFields=Fields::getExistingFields($realtablename, false);
 	
 		$jinput = Factory::getApplication()->input;
-		$LangMisc	= new ESLanguages;
-		$languages=$LangMisc->getLanguageList();
   
 		$projected_fields = Fields::getFields($tableid,false);
 
@@ -107,7 +104,7 @@ class IntegrityFields extends \CustomTables\IntegrityChecks
 				elseif($projected_field['type']=='multilangstring' or $projected_field['type']=='multilangtext')
 				{
 					$morethanonelang=false;
-					foreach($languages as $lang)
+					foreach($ct->Languages->LanguageList as $lang)
 					{
 						$fieldname=$projected_field['realfieldname'];
 						if($morethanonelang)
@@ -143,7 +140,7 @@ class IntegrityFields extends \CustomTables\IntegrityChecks
 					if($exst_field==$projected_field['realfieldname'])
 					{
 						$filebox_table_name='#__customtables_filebox_'.$tablename.'_'.$projected_field['fieldname'];
-						IntegrityFieldType_FileBox::checkFileBox($filebox_table_name,$languages,$tablename,$projected_field['fieldname']);
+						IntegrityFieldType_FileBox::checkFileBox($ct,$filebox_table_name,$tablename,$projected_field['fieldname']);
 
 						$PureFieldType=Fields::getPureFieldType($projected_field['type'], $projected_field['typeparams']);
 						$found_field=$projected_field['realfieldname'];
@@ -242,14 +239,14 @@ class IntegrityFields extends \CustomTables\IntegrityChecks
 			$proj_field=$projected_field['realfieldname'];
 			$fieldtype=$projected_field['type'];
 			if($fieldtype!='dummy')
-				IntegrityFields::checkField($ExistingFields,$realtablename,$proj_field,$fieldtype,$projected_field['typeparams'],$languages);
+				IntegrityFields::checkField($ct,$ExistingFields,$realtablename,$proj_field,$fieldtype,$projected_field['typeparams']);
         }
 	
 		return $result;
 	}
 	
 		
-	protected static function checkField($ExistingFields,$realtablename,$proj_field,$fieldtype,$typeparams,&$languages)
+	protected static function checkField(&$ct,$ExistingFields,$realtablename,$proj_field,$fieldtype,$typeparams)
     {
 		$result = '';
 		$db = Factory::getDBO();
@@ -263,7 +260,7 @@ class IntegrityFields extends \CustomTables\IntegrityChecks
         {
             $found=false;
             $morethanonelang=false;
-        	foreach($languages as $lang)
+        	foreach($ct->Languages->LanguageList as $lang)
         	{
         		$fieldname=$proj_field;
         		if($morethanonelang)
@@ -282,7 +279,7 @@ class IntegrityFields extends \CustomTables\IntegrityChecks
                 if(!$found)
                 {
                     //Add field
-                    addField($realtablename,$fieldname,$fieldtype,$typeparams);
+                    IntegrityFields::addField($realtablename,$fieldname,$fieldtype,$typeparams);
                 }
 
                 $morethanonelang=true;

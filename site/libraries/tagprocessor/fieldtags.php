@@ -21,7 +21,7 @@ class tagProcessor_Field
 		//field title
         if($add_label)
         {
-            foreach($Model->esfields as $esfield)
+            foreach($Model->ct->Table->fields as $esfield)
             {
                 if($esfield['type']=='dummy')
                 {
@@ -56,7 +56,7 @@ class tagProcessor_Field
         }
         else
         {
-            foreach($Model->esfields as $esfield)
+            foreach($Model->ct->Table->fields as $esfield)
             {
                 if(!array_key_exists('fieldtitle'.$Model->ct->Languages->Postfix,$esfield))
 				{

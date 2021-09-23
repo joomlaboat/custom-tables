@@ -21,7 +21,7 @@ use \ESTables;
 
 class IntegrityFieldType_FileBox extends \CustomTables\IntegrityChecks
 {
-	public static function checkFileBox($filebox_table_name,&$languages,$tablename,$fieldname)
+	public static function checkFileBox(&$ct,$filebox_table_name,$tablename,$fieldname)
 	{
 		$db = Factory::getDBO();
 		
@@ -36,11 +36,10 @@ class IntegrityFieldType_FileBox extends \CustomTables\IntegrityChecks
             Fields::CreateFileBoxTable($tablename,$fieldname);
             echo '<p>File Box Table "<span style="color:green;">'.$filebox_table_name.'</span>" <span style="color:green;">Created.</span></p>';
         }
-
                     $g_ExistingFields=Fields::getExistingFields($filebox_table_name,false);
 
                     $morethanonelang=false;
-                    foreach($languages as $lang)
+                    foreach($ct->Languages->LanguageList as $lang)
                     {
                     	$g_fieldname='title';
                     	if($morethanonelang)

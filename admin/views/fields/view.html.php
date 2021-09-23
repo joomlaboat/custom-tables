@@ -23,6 +23,8 @@ class CustomtablesViewFields extends JViewLegacy
 	 * display method of View
 	 * @return void
 	 */
+	var $ct;
+		
 	var $tableid;
 	var $table_row;
 	
@@ -33,6 +35,8 @@ class CustomtablesViewFields extends JViewLegacy
 		
 		$app = JFactory::getApplication();
 		
+		$model = $this->getModel();
+		$this->ct = $model->ct;
 		
 		// Assign the variables
 		$this->form = $this->get('Form');

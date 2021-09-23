@@ -111,7 +111,6 @@ var idList = [<?php echo implode(',',$idList) ?>];
 	<input type="hidden" name="task" id="photoedit_task" value="" />
 	<input type="hidden" name="photoids" id="photoids" value="" />
 	<input type="hidden" name="listing_id" id="listing_id" value="<?php echo $this->Model->listing_id; ?>" />
-	<input type="hidden" name="establename" id="establename" value="<?php echo $this->Model->establename; ?>" />
 	<input type="hidden" name="galleryname" id="galleryname" value="<?php echo $this->Model->galleryname; ?>" />
 
 	</fieldset>
@@ -151,8 +150,8 @@ var idList = [<?php echo implode(',',$idList) ?>];
 
 			$htmlout.='<tr>';
 
-			$imagefile=$Model->imagefolderweb.'/'.$Model->imagemainprefix.$Model->estableid.'_'.$Model->galleryname.'__esthumb_'.$image->photoid.'.jpg';
-			$imagefileoriginal=$Model->imagefolderweb.'/'.$Model->imagemainprefix.$Model->estableid.'_'.$Model->galleryname.'__original_'.$image->photoid.'.'.$image->photo_ext;
+			$imagefile=$Model->imagefolderweb.'/'.$Model->imagemainprefix.$Model->ct->Table->tableid.'_'.$Model->galleryname.'__esthumb_'.$image->photoid.'.jpg';
+			$imagefileoriginal=$Model->imagefolderweb.'/'.$Model->imagemainprefix.$Model->ct->Table->tableid.'_'.$Model->galleryname.'__original_'.$image->photoid.'.'.$image->photo_ext;
 
 
 			$htmlout.='

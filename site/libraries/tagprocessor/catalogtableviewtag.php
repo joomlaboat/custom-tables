@@ -39,22 +39,22 @@ class tagProcessor_CatalogTableView
 			$pair=JoomlaBasicMisc::csv_explode(';', $options[$i], '"', true);
 			$fields=$pair[0];
 
-			if($Model->frmt=='csv')
+			if($Model->ct->Env->frmt=='csv')
 			{
 				$vlu=self::get_CatalogTable_CSV($Model,$fields,$SearchResult);
                 $pagelayout=str_replace($fItem,$new_replaceitecode,$pagelayout);
 			}
-            elseif($Model->frmt=='json')
+            elseif($Model->ct->Env->frmt=='json')
 			{
 				$vlu=self::get_CatalogTable_JSON($Model,$fields,$SearchResult);
                 $pagelayout=str_replace($fItem,$new_replaceitecode,$pagelayout);
 			}
-            elseif($Model->frmt=='xml')
+            elseif($Model->ct->Env->frmt=='xml')
 			{
 				$vlu=self::get_CatalogTable_XML($Model,$fields,$SearchResult);
                 $pagelayout=str_replace($fItem,$new_replaceitecode,$pagelayout);
 			}
-			elseif($Model->frmt=='xlsx')
+			elseif($Model->ct->Env->frmt=='xlsx')
 			{
 				self::get_CatalogTable_XLSX($fields);
 			}

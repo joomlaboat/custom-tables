@@ -10,6 +10,8 @@
 
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\CT;
+
 use Joomla\Registry\Registry;
 use Joomla\CMS\Helper\ContentHelper;
 
@@ -21,6 +23,8 @@ jimport('joomla.application.component.modeladmin');
  */
 class CustomtablesModelLayouts extends JModelAdmin
 {
+	var $ct;
+	
 	/**
 	 * @var        string    The prefix to use with controller messages.
 	 * @since   1.6

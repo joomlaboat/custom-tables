@@ -59,7 +59,7 @@ class Fields
         return false;
     }
 
-    public static function addESField($realtablename,$realfieldname,$fieldtype,$PureFieldType,$fieldtitle)
+    public static function addField(&$ct,$realtablename,$realfieldname,$fieldtype,$PureFieldType,$fieldtitle)
 	{
         if($PureFieldType=='')
             return '';
@@ -77,11 +77,8 @@ class Fields
 		}
 		else
 		{
-			$LangMisc	= new ESLanguages;
-			$languages=$LangMisc->getLanguageList();
-
 			$index=0;
-			foreach($languages as $lang)
+			foreach($this->ct->Languages->LanguageList as $lang)
 			{
 				if($index==0)
 					$postfix='';
@@ -117,7 +114,7 @@ class Fields
 		}
 	}
 
-	public static function deleteESField_byID($fieldid)
+	public static function deleteField_byID(&$ct,$fieldid)
 	{
 		$db = Factory::getDBO();
 
@@ -184,11 +181,8 @@ class Fields
 		}
 		else
 		{
-			$LangMisc	= new ESLanguages;
-			$languages=$LangMisc->getLanguageList();
-
             $index=0;
-            foreach($languages as $lang)
+            foreach($this->ct->Languages->LanguageList as $lang)
             {
 				if($index==0)
 					$postfix='';
@@ -1251,9 +1245,9 @@ class Fields
 
 	}
 
-	public static function FieldRowByName($fieldname,&$esfields)
+	public static function FieldRowByName($fieldname,&$ctfields)
 	{
-		foreach($esfields as $field)
+		foreach($ctfields as $field)
 		{
 			if($field['fieldname']==$fieldname)
 			{
@@ -1264,9 +1258,9 @@ class Fields
 	}
 
 
-	public static function getRealFieldName($fieldname,&$esfields)
+	public static function getRealFieldName($fieldname,&$ctfields)
 	{
-		foreach($esfields as $row)
+		foreach($ctfields as $row)
 		{
 			if($row['allowordering']==1 and $row['fieldname']==$fieldname)
 				return $row['realfieldname'];
@@ -1316,11 +1310,11 @@ class Fields
     }
 	
 	
-	public static function shortFieldObjects(&$esfields)
+	public static function shortFieldObjects(&$ctfields)
 	{
 		$field_objects = [];
 		
-		foreach($esfields as $esfield)
+		foreach($ctfields as $esfield)
 			$field_objects[] = Fields::shortFieldObject($esfield,null,[]);
 
 		return $field_objects;

@@ -9,6 +9,8 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\CT;
+
 jimport('joomla.application.component.model');
 
 JTable::addIncludePath(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'tables');
@@ -20,11 +22,6 @@ class CustomTablesModelEditFiles extends JModelLegacy
 	var $ct;
 
 	var $filemethods;
-
-	var $esTable;
-	var $establename;
-	var $estableid;
-	var $esfields;
 
 	var $listing_id;
 	var $Listing_Title;
@@ -59,21 +56,16 @@ class CustomTablesModelEditFiles extends JModelLegacy
 
 		$this->maxfilesize=JoomlaBasicMisc::file_upload_max_size();
 
-		$this->esTable=new ESTables;
 		$this->filemethods=new CustomTablesFileMethods;
 
-
-		$this->establename=$params->get( 'establename' );
-		if($this->establename=='')
+		$this->ct->getTable($params->get( 'establename' ), null);
+				
+		if($this->ct->Table->tablename=='')
 		{
 			$Itemid=JFactory::getApplication()->input->getInt('Itemid', 0);
-
-			JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('establename not set.'), 'error');
+			JFactory::getApplication()->enqueueMessage('Table not selected.', 'error');
 			return;
 		}
-
-		$tablerow = $this->esTable->getTableRowByName($this->establename);
-		$this->estableid=$tablerow->id;
 
 		$this->listing_id=JFactory::getApplication()->input->getInt('listing_id', 0);
 		if(!JFactory::getApplication()->input->getCmd('fileboxname'))
@@ -87,7 +79,7 @@ class CustomTablesModelEditFiles extends JModelLegacy
 
 		$this->getObject();
 
-		$this->fileboxtablename='#__customtables_filebox_'.$this->establename.'_'.$this->fileboxname;
+		$this->fileboxtablename='#__customtables_filebox_'.$this->ct->Table->tablename.'_'.$this->fileboxname;
 
 		parent::__construct();
 	}
@@ -107,7 +99,8 @@ class CustomTablesModelEditFiles extends JModelLegacy
 	function getFileBox()
 	{
 		$db = JFactory::getDBO();
-		$query = 'SELECT fieldtitle'.$this->ct->Languages->Postfix.' AS title,typeparams FROM #__customtables_fields WHERE published=1 AND tableid='.(int)$this->estableid.' AND fieldname="'.$this->fileboxname.'" AND type="filebox" LIMIT 1';
+		$query = 'SELECT fieldtitle'.$this->ct->Languages->Postfix.' AS title,typeparams FROM #__customtables_fields WHERE published=1 AND tableid='
+			.(int)$this->ct->Table->tableid.' AND fieldname="'.$this->fileboxname.'" AND type="filebox" LIMIT 1';
 
 		$db->setQuery($query);
 
@@ -133,10 +126,8 @@ class CustomTablesModelEditFiles extends JModelLegacy
 
 	function getObject()
 	{
-		$this->esfields = Fields::getFields($this->estableid);
-
 		$db = JFactory::getDBO();
-		$query = 'SELECT * FROM #__customtables_table_'.$this->establename.' WHERE id='.(int)$this->listing_id.' LIMIT 1';
+		$query = 'SELECT * FROM #__customtables_table_'.$this->ct->Table->tablename.' WHERE id='.(int)$this->listing_id.' LIMIT 1';
 
 		$db->setQuery($query);
 
@@ -149,7 +140,7 @@ class CustomTablesModelEditFiles extends JModelLegacy
 
 		$this->Listing_Title='';
 
-		foreach($this->esfields as $mFld)
+		foreach($this->ct->Table->fields as $mFld)
 		{
 			$titlefield=$mFld['realfieldname'];
 			if(!(strpos($mFld['type'],'multi')===false))
@@ -174,9 +165,9 @@ class CustomTablesModelEditFiles extends JModelLegacy
 		{
 			if($fileid!='')
 			{
-				$file_ext=CustomTablesFileMethods::getFileExtByID($this->establename, $this->estableid, $this->fileboxname,$fileid);
+				$file_ext=CustomTablesFileMethods::getFileExtByID($this->ct->Table->tablename, $this->ct->Table->tableid, $this->fileboxname,$fileid);
 
-				CustomTablesFileMethods::DeleteExistingFileBoxFile($this->fileboxfolder, $this->estableid, $this->fileboxname, $fileid, $file_ext);
+				CustomTablesFileMethods::DeleteExistingFileBoxFile($this->fileboxfolder, $this->ct->Table->tableid, $this->fileboxname, $fileid, $file_ext);
 
 				$query = 'DELETE FROM '.$this->fileboxtablename.' WHERE listingid='.$this->listing_id.' AND fileid='.$fileid;
 				$db->setQuery($query);
@@ -184,7 +175,7 @@ class CustomTablesModelEditFiles extends JModelLegacy
 			}
 		}
 
-		ESLogs::save($this->estableid,$this->listing_id,9);
+		ESLogs::save($this->ct->Table->tableid,$this->listing_id,9);
 
 		return true;
 	}
@@ -229,7 +220,7 @@ class CustomTablesModelEditFiles extends JModelLegacy
 		$isOk=true;
 
 		//es Thumb
-		$newfilename=$this->fileboxfolder.DIRECTORY_SEPARATOR.$this->estableid.'_'.$this->fileboxname.'_'.$fileid.".".$file_ext;
+		$newfilename=$this->fileboxfolder.DIRECTORY_SEPARATOR.$this->ct->Table->tableid.'_'.$this->fileboxname.'_'.$fileid.".".$file_ext;
 
 		if($isOk)
 		{
@@ -250,7 +241,7 @@ class CustomTablesModelEditFiles extends JModelLegacy
 
 		unlink($uploadedfile);
 
-		ESLogs::save($this->estableid,$this->listing_id,8);
+		ESLogs::save($this->ct->Table->tableid,$this->listing_id,8);
 		return true;
 	}
 

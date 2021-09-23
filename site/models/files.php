@@ -9,19 +9,15 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\CT;
 use CustomTables\Fields;
 
 jimport('joomla.application.component.model');
 
 class CustomTablesModelFiles extends JModelLegacy
 {
+	var $ct;
 
-	var $esTable;
-	var $establename;
-
-	var $estableid;
-	var $tablerow;
-	var $esfields;
 	var $Itemid;
 
 	var $esfieldid;
@@ -34,6 +30,8 @@ class CustomTablesModelFiles extends JModelLegacy
 		$path = JPATH_COMPONENT_SITE . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR;
 		require_once($path.'loader.php');
 		CTLoader();
+		
+		$this->ct = new CT;
 
 		parent::__construct();
 
@@ -44,12 +42,12 @@ class CustomTablesModelFiles extends JModelLegacy
 		$id= $jinput->getInt('listing_id', 0);
 
 		$this->Itemid=$jinput->getInt('Itemid',0);
-		$this->estableid=$jinput->getInt('tableid',0);
+
 		$this->esfieldid = JFactory::getApplication()->input->getInt('fieldid', 0);
 		$this->security = JFactory::getApplication()->input->getCmd('security', 'd');
 		$this->key = JFactory::getApplication()->input->getCmd('key','');
 
-		if($id==0 or $this->esfieldid==0 or $this->estableid==0)
+		if($id==0 or $this->esfieldid==0)
 		{
 			JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
 
@@ -66,28 +64,20 @@ class CustomTablesModelFiles extends JModelLegacy
 		if($id==0)
 			return false;
 
-
 		$jinput=JFactory::getApplication()->input;
 
-		$this->esTable=new ESTables;
-
-
-		$this->setId($id);
-
-		$this->tablerow = ESTables::getTableRowByIDAssoc($this->estableid);
-
-		if(!isset($this->tablerow['id']))
+		$this->ct->getTable($jinput->getInt('tableid',0), null);
+				
+		if($this->ct->Table->tablename=='')
 		{
-			JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
+			$Itemid=JFactory::getApplication()->input->getInt('Itemid', 0);
+			JFactory::getApplication()->enqueueMessage('Table not selected.', 'error');
 			return;
 		}
 
-		$this->establename=$this->tablerow['tablename'];
+		$this->setId($id);
 
-		//	Fields
-		$this->esfields = Fields::getFields($this->estableid);
-
-		foreach($this->esfields as $f)
+		foreach($this->ct->Table->fields as $f)
 		{
 			if($f['id']==$this->esfieldid)
 			{
@@ -95,15 +85,10 @@ class CustomTablesModelFiles extends JModelLegacy
 				break;
 			}
 		}
-
 	}
-
-
-
 
 	function setId($id)
 	{
-
 		$this->_id	= $id;
 		$this->_data	= null;
 	}
@@ -120,10 +105,8 @@ class CustomTablesModelFiles extends JModelLegacy
 
 		$db = JFactory::getDBO();
 
-		$tablename='#__customtables_table_'.$this->establename;
-
 		$query = 'SELECT *, id AS listing_id ';
-		$query.=' FROM '.$tablename.' WHERE id='.(int)$this->_id.' LIMIT 1';
+		$query.=' FROM '.$this->ct->Table->realtablename.' WHERE id='.(int)$this->_id.' LIMIT 1';
 
 		$db->setQuery($query);
 
@@ -142,7 +125,7 @@ class CustomTablesModelFiles extends JModelLegacy
 
 	function getTypeFieldName($type)
 	{
-		foreach($this->esfields as $ESField)
+		foreach($this->ct->Table->fields as $ESField)
 		{
 				if($ESField['type']==$type)
 					return $ESField['realfieldname'];

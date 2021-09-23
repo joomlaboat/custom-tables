@@ -52,9 +52,6 @@ class CustomTablesViewOptions extends JViewLegacy
 			throw new Exception(implode("\n", $errors), 500);
 		}
 
-        $LangMisc	= new ESLanguages;
-		$this->languages=$LangMisc->getLanguageList();
-
 		// Display the template
 		parent::display($tpl);
 

@@ -9,6 +9,8 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\CT;
+
 jimport('joomla.application.component.view');
 
 class CustomTablesViewList extends JView
@@ -18,14 +20,9 @@ class CustomTablesViewList extends JView
 	function display($tpl=null)
 	{
 		$jinput = JFactory::getApplication()->input;
-
 		$mainframe = JFactory::getApplication();
-
 		$this->_layout = 'default';
 
-		$LangMisc	= new ESLanguages;
-		$this->LanguageList=$LangMisc->getLanguageList();
-		
 		$this->limitstart = JFactory::getApplication()->input->getInt('limitstart','0');
 		$this->items		= $this->get('Items');
 		$this->pagination	= $this->get('Pagination');

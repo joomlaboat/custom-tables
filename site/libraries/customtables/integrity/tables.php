@@ -20,7 +20,7 @@ use \ESTables;
 
 class IntegrityTables extends \CustomTables\IntegrityChecks
 {
-	public static function checkTables()
+	public static function checkTables(&$ct)
 	{
 		$tables = IntegrityTables::getTables();
 
@@ -33,9 +33,9 @@ class IntegrityTables extends \CustomTables\IntegrityChecks
 			//$link=JURI::root().'administrator/index.php?option=com_customtables&view=databasecheck&tableid='.$table['id'];
 			$link=Uri::root().'administrator/index.php?option=com_customtables&view=databasecheck&tableid='.$table['id'];
 			
-			$content = IntegrityFields::checkFields($table['id'],$table['tablename'],$table['tabletitle'],$table['customtablename'],$link);	
+			$content = IntegrityFields::checkFields($ct,$table['id'],$table['tablename'],$table['tabletitle'],$table['customtablename'],$link);	
 		
-			IntegrityOptions::checkOptions();
+			IntegrityOptions::checkOptions($ct);
 		
 			$zeroId=IntegrityTables::getZeroRecordID($table['realtablename'],$table['realidfieldname']);
 		

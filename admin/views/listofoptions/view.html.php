@@ -25,8 +25,10 @@ class CustomTablesViewListOfOptions extends JViewLegacy
 		$this->addToolBar();
 		$this->sidebar = JHtmlSidebar::render();
 
-		$LangMisc	= new ESLanguages;
-		$this->languages=$LangMisc->getLanguageList();
+		$model = $this->getModel();
+		$this->ct = $model->ct;
+		
+		$this->languages=$this->ct->Languages->LanguageList;
 
 		$document =  JFactory::getDocument();
 		$document->setTitle(JText::_('View List Items'));

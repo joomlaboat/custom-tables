@@ -71,23 +71,6 @@ trait render_xml
 				$number++;
 		}
         $result.=$tablecontent;
-/*
-        if($Model->clean)
-        {
-            $filename = JoomlaBasicMisc::makeNewFileName($Model->params->get('page_title'),'xml');
-
-            if (ob_get_contents())
-            	ob_end_clean();
-
-            header('Content-Disposition: attachment; filename="'.$filename.'"');
-            header('Content-Type: text/xml; charset=utf-8');
-            header("Pragma: no-cache");
-            header("Expires: 0");
-
-            echo $result;
-            die ;//clean exit
-        }
-*/
         return $result;
     }
 

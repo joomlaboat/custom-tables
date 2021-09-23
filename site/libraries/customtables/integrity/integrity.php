@@ -20,16 +20,16 @@ use CustomTables\Integrity\IntegrityOptions;
 
 class IntegrityChecks
 {
-	public static function check($check_core_tables = true, $check_custom_tables = true)
+	public static function check(&$ct,$check_core_tables = true, $check_custom_tables = true)
 	{
 		$result = []; //Status array
 		
 		if($check_core_tables)
-			IntegrityCoreTables::checkCoreTables();
+			IntegrityCoreTables::checkCoreTables($ct);
 		
 		
 		if($check_custom_tables)
-			$result = IntegrityTables::checkTables();
+			$result = IntegrityTables::checkTables($ct);
 		
 		return $result;
 	}

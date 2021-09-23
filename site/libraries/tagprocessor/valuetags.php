@@ -109,7 +109,7 @@ class tagProcessor_Value
 
     public static function getFieldTypeByName($fieldname)
 	{
-		foreach($Model->esfields as $ESField)
+		foreach($Model->ct->Table->fields as $ESField)
 		{
 			if($ESField['fieldname']==$fieldname)
 				return $ESField['type'];
@@ -134,9 +134,7 @@ class tagProcessor_Value
                             
             	$esinputbox = new ESInputBox;
 				$esinputbox->Model = $Model;
-                
-                $esinputbox->establename=$Model->establename;
-                $esinputbox->estableid=$Model->estableid;
+
                 $esinputbox->requiredlabel='COM_CUSTOMTABLES_REQUIREDLABEL';
                 
                	$WebsiteRoot=JURI::root(true);
@@ -176,7 +174,7 @@ class tagProcessor_Value
                 $style=' style="width:auto; !important;border:none !important;box-shadow:none;"';
 
             $i=0;
-			foreach($Model->esfields as $ESField)
+			foreach($Model->ct->Table->fields as $ESField)
 			{
                 $replaceitecode=md5(JoomlaBasicMisc::generateRandomString().(isset($row['listing_id']) ? $row['listing_id'] : '').$ESField['fieldname']);
                 
@@ -256,7 +254,7 @@ class tagProcessor_Value
 				$pureValueOptionArr[1]='';
 
             $i=0;
-			foreach($Model->esfields as $ESField)
+			foreach($Model->ct->Table->fields as $ESField)
 			{
 				$TypeParams = $ESField['typeparams'];
                 $replaceitecode=md5(JoomlaBasicMisc::generateRandomString().(isset($row['listing_id']) ? $row['listing_id'] : '').$ESField['fieldname']);
@@ -276,14 +274,14 @@ class tagProcessor_Value
 							{
 								//load if not loaded
 								$isGalleryLoaded[$fieldname]=true;
-								$getGalleryRows[$fieldname]=CT_FieldTypeTag_imagegallery::getGalleryRows($Model->establename,$fieldname,$row['listing_id']);
+								$getGalleryRows[$fieldname]=CT_FieldTypeTag_imagegallery::getGalleryRows($Model->ct->Table->tablename,$fieldname,$row['listing_id']);
 							}
 						}
 						else
 						{
 							//load if not loaded
 							$isGalleryLoaded[$fieldname]=true;
-							$getGalleryRows[$fieldname]=CT_FieldTypeTag_imagegallery::getGalleryRows($Model->establename,$fieldname,$row['listing_id']);
+							$getGalleryRows[$fieldname]=CT_FieldTypeTag_imagegallery::getGalleryRows($Model->ct->Table->tablename,$fieldname,$row['listing_id']);
 						}
 
 						if(count($getGalleryRows[$fieldname])==0)
@@ -299,7 +297,7 @@ class tagProcessor_Value
 							{
 								//load if not loaded
 								$isFileBoxLoaded[$fieldname]=true;
-								$getFileBoxRows[$fieldname]=CT_FieldTypeTag_filebox::getFileBoxRows($Model->establename,$fieldname,$row['listing_id']);
+								$getFileBoxRows[$fieldname]=CT_FieldTypeTag_filebox::getFileBoxRows($Model->ct->Table->tablename,$fieldname,$row['listing_id']);
 							}
 
 						}
@@ -307,7 +305,7 @@ class tagProcessor_Value
 						{
 							//load if not loaded
 							$isFileBoxLoaded[$fieldname]=true;
-							$getFileBoxRows[$fieldname]=CT_FieldTypeTag_filebox::getFileBoxRows($Model->establename,$fieldname,$row['listing_id']);
+							$getFileBoxRows[$fieldname]=CT_FieldTypeTag_filebox::getFileBoxRows($Model->ct->Table->tablename,$fieldname,$row['listing_id']);
 						}
 
 						if(count($getFileBoxRows[$fieldname])==0)
@@ -385,7 +383,7 @@ class tagProcessor_Value
                                 {
                                     $option=$new_array[0];
                                     CT_FieldTypeTag_imagegallery::getImageGallerySRC($getGalleryRows[$fieldname],
-                                    			$option,$row['listing_id'],$fieldname,$ESField['typeparams'],$imagesrclist,$imagetaglist,$Model->estableid);
+                                    			$option,$row['listing_id'],$fieldname,$ESField['typeparams'],$imagesrclist,$imagetaglist,$Model->ct->Table->tableid);
                                 }
 
 								$vlu=$imagesrclist;
@@ -421,7 +419,7 @@ class tagProcessor_Value
                                             $new_array[]=$pureValueOptionArr[$i];
                                     }
                                     
-                                    $vlu=CT_FieldTypeTag_file::process($rowValue,$ESField['typeparams'],$new_array,$row['listing_id'],$ESField['id'],$Model->estableid,true);
+                                    $vlu=CT_FieldTypeTag_file::process($rowValue,$ESField['typeparams'],$new_array,$row['listing_id'],$ESField['id'],$Model->ct->Table->tableid,true);
                                 }
                                 else
                                     $vlu=$rowValue;
@@ -437,9 +435,9 @@ class tagProcessor_Value
 					}
 				}
                 $i++;
-			}//foreach($Model->esfields as $ESField)
+			}
 			$p++;
-		}//foreach($pureValueOptions as $pureValueOption)
+		}
 
 		return $items_to_replace;
 
@@ -635,7 +633,7 @@ class tagProcessor_Value
 
 		if(isset($row) and count($row)>0 and $row['listing_id'] != 0)
 		{
-			foreach($Model->esfields as $ESField)
+			foreach($Model->ct->Table->fields as $ESField)
 			{
                 $replaceitecode=md5(JoomlaBasicMisc::generateRandomString().(isset($row['listing_id']) ? $row['listing_id'] : '').$ESField['fieldname']);
                 
@@ -660,7 +658,7 @@ class tagProcessor_Value
 						if(!isset($isGalleryLoaded[$fieldname]) or $isGalleryLoaded[$fieldname]==false)
 						{
 							$isGalleryLoaded[$fieldname]=true;
-							$r=CT_FieldTypeTag_imagegallery::getGalleryRows($Model->establename,$fieldname,$row['listing_id']);
+							$r=CT_FieldTypeTag_imagegallery::getGalleryRows($Model->ct->Table->tablename,$fieldname,$row['listing_id']);
 							$getGalleryRows[$fieldname]=$r;
 						}
 
@@ -678,13 +676,13 @@ class tagProcessor_Value
 							if($isFileBoxLoaded[$fieldname]==false)
 							{
 								$isFileBoxLoaded[$fieldname]=true;
-								$getFileBoxRows[$fieldname]=CT_FieldTypeTag_filebox::getFileBoxRows($Model->establename,$fieldname,$row['listing_id']);
+								$getFileBoxRows[$fieldname]=CT_FieldTypeTag_filebox::getFileBoxRows($Model->ct->Table->tablename,$fieldname,$row['listing_id']);
 							}
 						}
 						else
 						{
 							$isFileBoxLoaded[$fieldname]=true;
-							$getFileBoxRows[$fieldname]=CT_FieldTypeTag_filebox::getFileBoxRows($Model->establename,$fieldname,$row['listing_id']);
+							$getFileBoxRows[$fieldname]=CT_FieldTypeTag_filebox::getFileBoxRows($Model->ct->Table->tablename,$fieldname,$row['listing_id']);
 						}
 
 
@@ -734,7 +732,7 @@ class tagProcessor_Value
 					}
 			//process field names
 
-			}//foreach($Model->esfields as $ESField)
+			}
 		}//isset
 
 		//replace temprary items with values
@@ -864,7 +862,7 @@ class tagProcessor_Value
 						break;
 
 				case 'file':
-					return CT_FieldTypeTag_file::process($rowValue,$TypeParams,$option_list,$row['listing_id'],$fieldid,$Model->estableid);
+					return CT_FieldTypeTag_file::process($rowValue,$TypeParams,$option_list,$row['listing_id'],$fieldid,$Model->ct->Table->tableid);
 					break;
 
 				case 'image':
@@ -922,7 +920,7 @@ class tagProcessor_Value
 					$imagetaglist='';
 
 
-					CT_FieldTypeTag_imagegallery::getImageGallerySRC($getGalleryRows,$option_list[0],$id,$FieldName,$TypeParams,$imagesrclist,$imagetaglist,$Model->estableid);
+					CT_FieldTypeTag_imagegallery::getImageGallerySRC($getGalleryRows,$option_list[0],$id,$FieldName,$TypeParams,$imagesrclist,$imagetaglist,$Model->ct->Table->tableid);
 					return $imagetaglist;
 
 						break;
@@ -1051,7 +1049,7 @@ class tagProcessor_Value
 					$processor_file=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fieldtypes'.DIRECTORY_SEPARATOR.'_type_file.php';
 					require_once($processor_file);
 					
-					return CT_FieldTypeTag_file::process($rowValue,','.$TypeParams,$option_list,$row['listing_id'],$fieldid,$Model->estableid); // "," is to be compatible with file field type params. Becuse first parameter is max file size there
+					return CT_FieldTypeTag_file::process($rowValue,','.$TypeParams,$option_list,$row['listing_id'],$fieldid,$Model->ct->Table->tableid); // "," is to be compatible with file field type params. Becuse first parameter is max file size there
 					break;
 
 						//return $TypeParams.'/'.$rowValue;

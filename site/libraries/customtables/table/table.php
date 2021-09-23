@@ -1,0 +1,117 @@
+<?php
+/**
+ * CustomTables Joomla! 3.x Native Component
+ * @package Custom Tables
+ * @author Ivan komlev <support@joomlaboat.com>
+ * @link http://www.joomlaboat.com
+ * @copyright Copyright (C) 2018-2021. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
+ **/
+
+namespace CustomTables;
+ 
+// no direct access
+defined('_JEXEC') or die('Restricted access');
+
+use CustomTables\Fields;
+
+use \ESTables;
+use \ESFields;
+
+class Table
+{
+	var $Languages;
+	var $Env;
+	
+	
+	var $tableid;
+	var $tablerow;
+	var $tablename;
+	var $published_field_found;
+	var $realtablename;
+	var $realidfieldname;
+		
+	var $tabletitle;
+	
+	var $alias_fieldname;
+	
+	var $useridfieldname;
+	var $useridrealfieldname;
+	
+	var $fields;
+	var $record;
+	
+	function __construct(&$Languages, &$Env, $tablename_or_id_not_sanitized, $useridfieldname = null)
+	{
+		$this->Languages = $Languages;
+		$this->Env = $Env;
+		
+		if($tablename_or_id_not_sanitized == null or $tablename_or_id_not_sanitized == '')
+			return;
+		elseif((int)$tablename_or_id_not_sanitized)
+			$this->tablerow = ESTables::getTableRowByIDAssoc((int)$tablename_or_id_not_sanitized);// int sanitizes the input
+		else
+		{
+			$tablename_or_id = strtolower(trim(preg_replace('/[^a-zA-Z]/', '', $tablename_or_id_not_sanitized)));
+			$this->tablerow = ESTables::getTableRowByNameAssoc($tablename_or_id);
+		}
+			
+		if(!isset($this->tablerow['id']))
+			return;
+
+		$this->tablename = $this->tablerow['tablename'];
+
+		$this->tableid=$this->tablerow['id'];
+
+		$this->published_field_found=$this->tablerow['published_field_found'];
+		$this->realtablename=$this->tablerow['realtablename'];
+		$this->realidfieldname=$this->tablerow['realidfieldname'];
+			
+		$this->tabletitle=$this->tablerow['tabletitle'.$this->Languages->Postfix];
+		
+		$this->alias_fieldname='';
+		$this->imagegalleries=array();
+		$this->fileboxes=array();
+		$this->useridfieldname='';
+		
+		//Fields
+		$this->fields = Fields::getFields($this->tableid);
+		foreach($this->fields as $fld)
+		{
+			switch($fld['type'])
+			{
+				case 'alias':
+					$this->alias_fieldname=$fld['fieldname'];
+					break;
+				case 'imagegallery':
+					$this->imagegalleries[]=array($fld['fieldname'],$fld['fieldtitle'.$this->ct->Languages->Postfix]);
+					break;
+				case 'filebox':
+					$this->fileboxes[]=array($fld['fieldname'],$fld['fieldtitle'.$this->ct->Languages->Postfix]);
+					break;
+				case 'userid':
+				
+					if($useridfieldname == null or $useridfieldname == $fld['fieldname'])
+					{
+						$this->useridfieldname=$fld['fieldname'];
+						$this->useridrealfieldname=$fld['realfieldname'];;
+					}
+						
+					break;
+			}
+		}
+	}
+	
+	protected static function loadRecord($id)
+	{
+		$db = JFactory::getDBO();
+		$query = 'SELECT '.$this->tablerow['query_selects'].' FROM '.$db->queryName($realtablename).' WHERE id='.(int)$id.' LIMIT 1';
+		$db->setQuery( $query );
+	
+		$recs = $db->loadAssocList( );
+		if(!$recs) return $this->record = null;
+		if (count($recs)<1) $this->record = null;
+
+		$this->record = $recs[0];
+	}
+}

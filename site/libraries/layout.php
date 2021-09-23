@@ -98,7 +98,7 @@ class LayoutProcessor
 				tagProcessor_Set::process($this->Model,$htmlresult);
 
 
-			if($this->Model->print==1)
+			if($this->Model->ct->Env->print==1)
 			{
 				$htmlresult=str_replace('<a href','<span link',$htmlresult);
 				$htmlresult=str_replace('</a>','</span>',$htmlresult);
@@ -140,6 +140,8 @@ class LayoutProcessor
 		
 			$mydoc->setTitle(JoomlaBasicMisc::JTextExtended($pagetitle)); //because content plugins may overwrite the title
 		}
+		
+		return $htmlresult;
 	}
 
 	public static function renderPageHeader(&$Model)

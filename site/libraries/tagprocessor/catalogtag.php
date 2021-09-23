@@ -40,17 +40,17 @@ class tagProcessor_Catalog
 
 			$tableclass=$pair[0];
 
-			if($Model->frmt=='csv')
+			if($Model->ct->Env->frmt=='csv')
 			{
 				$pagelayout=str_replace($fItem,'',$pagelayout);//delete {catalog} tag
 				self::get_CatalogTable_singleline_CSV($SearchResult,$Model,$allowcontentplugins,$pagelayout);
 			}
-			elseif($Model->frmt=='json')
+			elseif($Model->ct->Env->frmt=='json')
 			{
 				$pagelayout=str_replace($fItem,'',$pagelayout);//delete {catalog} tag
 				self::get_CatalogTable_singleline_JSON($SearchResult,$Model,$allowcontentplugins,$pagelayout);
 			}
-			if($Model->frmt=='image')
+			if($Model->ct->Env->frmt=='image')
 				self::get_CatalogTable_singleline_IMAGE($pagelayout,$allowcontentplugins);
 			elseif(isset($pair[1]) and $pair[1]=='notable')
 				$vlu=self::get_Catalog($Model,$SearchResult,$tableclass,false,false,$allowcontentplugins);
@@ -89,7 +89,7 @@ class tagProcessor_Catalog
 		{
 				//Group Results
 
-				$FieldRow=$Model->esTable->FieldRowByName($Model->groupby,$Model->esfields);
+				$FieldRow=ESFields::FieldRowByName($Model->groupby,$Model->ct->Table->fields);
 
 
 				$RealRows=array();

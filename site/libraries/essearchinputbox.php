@@ -15,8 +15,7 @@ JHTML::addIncludePath(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPA
 class ESSerachInputBox
 {
 	var $ct;
-	
-	var $establename;
+
 	var $modulename;
 
 	function renderFieldBox(&$Modal,$prefix,$objname,&$esfield,$cssclass,$index,$where,$innerjoin,$wherelist,$default_Action,$field_title=null)
@@ -295,7 +294,7 @@ class ESSerachInputBox
 
 							$result.=JHTML::_('ESComboTree.render',
 											  $prefix,
-											  $this->establename,
+											  $this->ct->Table->tablename,
 											  $esfield['fieldname'],
 											  $optionname,
 											  $this->ct->Languages->Postfix,
@@ -473,7 +472,7 @@ class ESSerachInputBox
 	{
 		$result='';
 
-		$mysqljoin='#__customtables_table_'.$this->establename.' ON #__customtables_table_'.$this->establename.'.es_'.$esfield['fieldname'].'=#__usergroups.id';
+		$mysqljoin='#__customtables_table_'.$this->ct->Table->tablename.' ON #__customtables_table_'.$this->ct->Table->tablename.'.es_'.$esfield['fieldname'].'=#__usergroups.id';
 
 		$usergroup=$esfield['typeparams'];
 		$cssclass='class="inputbox '.$cssclass.'" ';
@@ -506,7 +505,7 @@ class ESSerachInputBox
 	{
 		$result='';
 
-		$mysqljoin='#__customtables_table_'.$this->establename.' ON #__customtables_table_'.$this->establename.'.es_'.$esfield['fieldname'].'=#__users.id';
+		$mysqljoin='#__customtables_table_'.$this->ct->Table->tablename.' ON #__customtables_table_'.$this->ct->Table->tablename.'.es_'.$esfield['fieldname'].'=#__users.id';
 
 		$usergroup=$esfield['typeparams'];
 		

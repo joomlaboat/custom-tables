@@ -22,10 +22,6 @@ class CustomTablesModelEditFiles extends JModelLegacy {
 
 	var $filemethods;
 
-	var $esTable;
-	var $establename;
-	var $estableid;
-	var $esfields;
 	var $listing_id;
 	var $Listing_Title;
 	var $fileboxname;
@@ -46,17 +42,10 @@ class CustomTablesModelEditFiles extends JModelLegacy {
 
 		$this->ct = new CT;
 
-		$this->esTable=new ESTables;
 		$this->filemethods=new CustomTablesFileMethods;
 
-		if(JFactory::getApplication()->input->get('establename','','CMD'))
-			$this->establename=JFactory::getApplication()->input->get('establename','','CMD');
-		else
-			$this->establename=$params->get( 'establename' );
-
-		$tablerow = $this->esTable->getTableRowByName($this->establename);
-		$this->estableid=$tablerow->id;
-
+		$this->ct->getTable($this->params->get( 'establename' ), $this->params->get('useridfield'));
+		
 		$this->listing_id=JFactory::getApplication()->input->getInt('listing_id', 0);
 		if(!JFactory::getApplication()->input->getCmd('fileboxname'))
 			return false;
@@ -68,7 +57,7 @@ class CustomTablesModelEditFiles extends JModelLegacy {
 
 		$this->getObject();
 
-		$this->fileboxtablename='#__customtables_filebox_'.$this->establename.'_'.$this->fileboxname;
+		$this->fileboxtablename='#__customtables_filebox_'.$this->ct->Table->tablename.'_'.$this->fileboxname;
 
 		parent::__construct();
 	}
@@ -110,10 +99,8 @@ class CustomTablesModelEditFiles extends JModelLegacy {
 
 	function getObject()
 	{
-		$this->esfields = Fields::getFields($this->estableid);
-
 		$db = JFactory::getDBO();
-		$query = 'SELECT * FROM #__customtables_table_'.$this->establename.' WHERE id='.$this->listing_id.' LIMIT 1';
+		$query = 'SELECT * FROM #__customtables_table_'.$this->ct->Table->tablename.' WHERE id='.$this->listing_id.' LIMIT 1';
 
 		$db->setQuery($query);
 
@@ -126,7 +113,7 @@ class CustomTablesModelEditFiles extends JModelLegacy {
 
 		$this->Listing_Title='';
 
-		foreach($this->esfields as $mFld)
+		foreach($this->ct->Table->fields as $mFld)
 		{
 			$titlefield=$mFld['fieldname'];
 				if(!(strpos($mFld['type'],'multi')===false))
@@ -151,9 +138,9 @@ class CustomTablesModelEditFiles extends JModelLegacy {
 		{
 			if($fileid!='')
 			{
-				$file_ext=CustomTablesFileMethods::getFileExtByID($this->establename, $this->estableid, $this->fileboxname,$fileid);
+				$file_ext=CustomTablesFileMethods::getFileExtByID($this->ct->Table->tablename, $this->ct->Table->tableid, $this->fileboxname,$fileid);
 
-				CustomTablesFileMethods::DeleteExistingFileBoxFile($this->fileboxfolder, $this->estableid, $this->fileboxname, $fileid, $file_ext);
+				CustomTablesFileMethods::DeleteExistingFileBoxFile($this->fileboxfolder, $this->ct->Table->tableid, $this->fileboxname, $fileid, $file_ext);
 
 				$query = 'DELETE FROM '.$this->fileboxtablename.' WHERE listingid='.$this->listing_id.' AND fileid='.$fileid;
 				$db->setQuery($query);
@@ -205,7 +192,7 @@ class CustomTablesModelEditFiles extends JModelLegacy {
 		$isOk=true;
 
 		//es Thumb
-		$newfilename=$this->fileboxfolder.DIRECTORY_SEPARATOR.$this->estableid.'_'.$this->fileboxname.'_'.$fileid.".".$file_ext;
+		$newfilename=$this->fileboxfolder.DIRECTORY_SEPARATOR.$this->ct->Table->tableid.'_'.$this->fileboxname.'_'.$fileid.".".$file_ext;
 
 		if($isOk)
 		{

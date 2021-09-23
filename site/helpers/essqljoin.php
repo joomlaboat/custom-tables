@@ -92,7 +92,7 @@ class JHTMLESSqlJoin
 
         $htmlresult='';
         //Output slection box
-        if($model->print==1)
+        if($model->ct->Env->print==1)
         {
 			$htmlresult.=JHTMLESSqlJoin::renderPrintResult($list_values,$value,$control_name);
         }

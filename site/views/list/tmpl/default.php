@@ -70,7 +70,7 @@ defined('_JEXEC') or die('Restricted access');
 			
 			
 				$firstlanguage=true;
-				foreach($LanguageList as $lang)
+				foreach($this->ct->Languages->LanguageList as $lang)
 				{
 					if($firstlanguage)
 					{
@@ -141,7 +141,7 @@ defined('_JEXEC') or die('Restricted access');
 				$row_array = (array) $row;
 			
 				$firstlanguage=true;
-				foreach($LanguageList as $lang)
+				foreach($this->ct->Languages->LanguageList as $lang)
 				{
 					if($firstlanguage)
 					{

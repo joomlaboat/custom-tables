@@ -28,7 +28,7 @@ use CustomTables\IntegrityChecks;
 <div id="j-main-container" class="ct_doc">
 
 	<?php 
-	$result = IntegrityChecks::check();
+	$result = IntegrityChecks::check($this->ct);
 	
 	if(count($result)>0)
 		echo '<ol><li>'.implode('</li><li>',$result).'</li></ol>';

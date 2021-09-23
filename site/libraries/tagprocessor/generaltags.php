@@ -104,13 +104,13 @@ class tagProcessor_General
             }
 
             if($task=='id')
-                $vlu=$Model->tablerow['id'];
+                $vlu=$Model->ct->Table->tablerow['id'];
             elseif($task=='title')
-                $vlu=$Model->tablerow['tabletitle'.$Model->ct->Languages->Postfix];
+                $vlu=$Model->ct->Table->tablerow['tabletitle'.$Model->ct->Languages->Postfix];
             elseif($task=='description')
-                $vlu=$Model->tablerow['description'.$Model->ct->Languages->Postfix];
+                $vlu=$Model->ct->Table->tablerow['description'.$Model->ct->Languages->Postfix];
 			elseif($task=='fields')
-                $vlu=json_encode(Fields::shortFieldObjects($Model->esfields));
+                $vlu=json_encode(Fields::shortFieldObjects($Model->ct->Table->fields));
 
             if($extraopt=='box')
             {
@@ -196,13 +196,13 @@ class tagProcessor_General
                 switch($optpair[0])
                 {
                     case '':
-                        $value=$Model->current_url;
+                        $value=$Model->ct->Env->current_url;
                         break;
                     case 'base64':
-                        $value=base64_encode($Model->current_url);
+                        $value=base64_encode($Model->ct->Env->current_url);
                         break;
                     case 'base64encode':
-                        $value=base64_encode($Model->current_url);
+                        $value=base64_encode($Model->ct->Env->current_url);
                         break;
                     default:
                         $value='Output type not selected.';
@@ -226,7 +226,7 @@ class tagProcessor_General
 
 		foreach($fList as $fItem)
 		{
-			$pagelayout=str_replace($fItem,$Model->encoded_current_url,$pagelayout);
+			$pagelayout=str_replace($fItem,$Model->ct->Env->encoded_current_url,$pagelayout);
 			$i++;
 		}
 	}
@@ -472,7 +472,7 @@ class tagProcessor_General
                 if(isset($pair[3]) and $pair[3]!='')
                     $returnto=$pair[3];
 
-				if($Model->print==1)
+				if($Model->ct->Env->print==1)
                     $gobackbutton='';
                 else
                     $gobackbutton=tagProcessor_General::renderGoBackButton($returnto,$title);

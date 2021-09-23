@@ -21,7 +21,7 @@ $document->addCustomTag('<script src="'.JURI::root(true).'/components/com_custom
 $document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customtables/css/style.css" type="text/css" rel="stylesheet" >');
 
 $html_format=false;
-if($this->Model->frmt=='html' or $this->Model->frmt=='')
+if($this->Model->ct->Env->frmt=='html' or $this->Model->ct->Env->frmt=='')
     $html_format=true;
 
 if($html_format)
@@ -35,11 +35,11 @@ if($layout_catalog_name!='')
 	$pagelayout=Layouts::getLayout($layout_catalog_name,$layouttype,$processLayoutTag = false); //It is safier to process layout after rendering the table
 
     if($layouttype==8)
-        $this->Model->frmt='xml';
+        $this->Model->ct->Env->frmt='xml';
     elseif($layouttype==9)
-        $this->Model->frmt='csv';
+        $this->Model->ct->Env->frmt='csv';
     elseif($layouttype==10)
-        $this->Model->frmt='json';
+        $this->Model->ct->Env->frmt='json';
 }
 else
     $pagelayout='{catalog:,notable}';
@@ -94,7 +94,7 @@ $pagelayout=str_replace($catalogtablecode,$catalogtablecontent,$pagelayout);
 if($html_format)
     LayoutProcessor::applyContentPlugins($pagelayout);
 
-if($this->Model->frmt=='xml')
+if($this->Model->ct->Env->frmt=='xml')
 {
 	if (ob_get_contents()) ob_end_clean();
 	
@@ -106,7 +106,7 @@ if($this->Model->frmt=='xml')
 	echo $pagelayout;
 	die ;//clean exit
 }
-elseif($this->Model->frmt=='csv')
+elseif($this->Model->ct->Env->frmt=='csv')
 {
 	if (ob_get_contents()) ob_end_clean();
 
@@ -119,7 +119,7 @@ elseif($this->Model->frmt=='csv')
     echo chr(255).chr(254).mb_convert_encoding($pagelayout, 'UTF-16LE', 'UTF-8');
     die ;//clean exit
 }
-elseif($this->Model->clean==1)
+elseif($this->Model->ct->Env->clean==1)
 {
     if (ob_get_contents()) ob_end_clean();
     echo $pagelayout;

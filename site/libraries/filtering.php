@@ -18,9 +18,6 @@ class ESFiltering
 {
 	var $ct;
 	
-	var $esfields;
-	var $estable;
-	
 	function __construct(&$ct)
 	{
 		$this->ct = $ct;
@@ -97,7 +94,7 @@ class ESFiltering
 								);
 							}
 							else
-								$fieldrow = Fields::FieldRowByName($fieldname,$this->esfields);
+								$fieldrow = Fields::FieldRowByName($fieldname,$this->ct->Table->fields);
 
 							if(count($fieldrow)>0)
 							{
@@ -288,7 +285,7 @@ class ESFiltering
 
 												case 'date':
 
-														$c=$this->Search_Date($fieldname,$value,$PathValue,$comparison_operator,$this->estable);
+														$c=$this->Search_Date($fieldname,$value,$PathValue,$comparison_operator,$this->ct->Table->realtablename);
 														break;
 
 												case 'creationtime':
@@ -389,7 +386,7 @@ class ESFiltering
 																$filtertitle.='selector not specified';
 
 															$esr_table=$typeparamsarray[0];
-															$esr_table_full=$this->estable;
+															$esr_table_full=$this->ct->Table->realtablename;
 															$esr_field=$typeparamsarray[1];
 															$esr_selector=$typeparamsarray[2];
 
@@ -487,7 +484,7 @@ class ESFiltering
 																$filtertitle.='field or layout not specified';
 
 															$esr_table=$typeparamsarray[0];
-															$esr_table_full=$this->estable;
+															$esr_table_full=$this->ct->Table->realtablename;
 															$esr_field=$typeparamsarray[1];
 
 
@@ -569,7 +566,7 @@ class ESFiltering
 
 	function Search_Date($fieldname, $value, &$PathValue, $comparison_operator,$esr_table_full)
 	{
-		$fieldrow1 = Fields::FieldRowByName($fieldname,$this->esfields);
+		$fieldrow1 = Fields::FieldRowByName($fieldname,$this->ct->Table->fields);
 
 		$title1='';
 		if(count($fieldrow1)>0)
@@ -579,7 +576,7 @@ class ESFiltering
 		else
 			$title1=$fieldname;
 
-		$fieldrow2 = Fields::FieldRowByName($value,$this->esfields);
+		$fieldrow2 = Fields::FieldRowByName($value,$this->ct->Table->fields);
 
 		$title2='';
 		if(count($fieldrow2)>0)

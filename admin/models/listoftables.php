@@ -12,6 +12,8 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\CT;
+
 // import the Joomla modellist library
 jimport('joomla.application.component.modellist');
 
@@ -20,6 +22,8 @@ jimport('joomla.application.component.modellist');
  */
 class CustomtablesModelListofTables extends JModelList
 {
+	var $ct;
+	
 	public function __construct($config = array())
 	{
 		if (empty($config['filter_fields']))
@@ -36,7 +40,7 @@ class CustomtablesModelListofTables extends JModelList
 
 		parent::__construct($config);
 		
-		ESTables::checkComponentTables();
+		$this->ct = new CT;
 	}
 
 	/**

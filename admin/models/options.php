@@ -11,6 +11,7 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\CT;
 use CustomTables\Fields;
 
 // Import Joomla! libraries
@@ -19,11 +20,20 @@ jimport('joomla.application.component.modeladmin');
 
 class CustomTablesModelOptions extends JModelAdmin
 {
+	var $ct;
+	
 	protected $text_prefix = 'COM_CUSTOMTABLES';
 	public $typeAlias = 'com_customtables.options';
 
 	public $es;
 	public $imagefolder;//images/esoptimages
+	
+	public function __construct($config = array())
+	{
+		parent::__construct($config);
+		
+		$this->ct = new CT;
+	}
 
 	public function getTable($type = 'options', $prefix = 'CustomtablesTable', $config = array())
 	{
@@ -219,12 +229,9 @@ class CustomTablesModelOptions extends JModelAdmin
 
 		$data_extra = JFactory::getApplication()->input->get( 'jform',array(),'ARRAY');
 
-		$LangMisc	= new ESLanguages;
-		$languages=$LangMisc->getLanguageList();
-
 		$morethanonelang=false;
 		$fields=Fields::getListOfExistingFields('#__customtables_options',false);
-		foreach($languages as $lang)
+		foreach($this->ct->Languages->LanguageList as $lang)
 		{
 			$id_title='title';
 			if($morethanonelang)

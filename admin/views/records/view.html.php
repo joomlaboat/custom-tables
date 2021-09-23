@@ -40,39 +40,23 @@ class CustomtablesViewRecords extends JViewLegacy
 		$this->tableid=$app->input->getint('tableid',0);
 		$this->listing_id=$app->input->getint('id',0);
 	
-		if($this->tableid!=0)
-		{
-			$table=ESTables::getTableRowByID($this->tableid);
-			if(!is_object($table) and $table==0)
-			{
-				JFactory::getApplication()->enqueueMessage('Table not found', 'error');
-				$this->tableid=0;
-				return;
-			}
-			else
-			{
-				$this->tablename=$table->tablename;
-				$this->tabletitle=$table->tabletitle;
-			}
-		}
-		
 		$paramsArray=$this->getRecordParams();
-		
+
 		$this->params= new JRegistry;
 		$this->params->loadArray($paramsArray);
+
 		
 		$config=array();
 		$this->Model = JModelLegacy::getInstance('EditItem', 'CustomTablesModel', $this->params);
 		$this->Model->load($this->params,true);
-		$this->Model->pagelayout=Layouts::createDefaultLayout_Edit($this->Model->esfields,false);
+		
+		$this->Model->pagelayout=Layouts::createDefaultLayout_Edit($this->Model->ct->Table->fields,false);
 		
 		$this->row=array();
-		$this->esfields=$this->Model->esfields;
 
-		$user =  JFactory::getUser();
+		$user = JFactory::getUser();
 		$this->userid = (int)$user->get('id');
-		
-		$this->esfields = $this->Model->esfields;
+
 		$this->row = $this->Model->row;
 
 		$this->state = $this->get('State');
@@ -124,8 +108,7 @@ class CustomtablesViewRecords extends JViewLegacy
 	{
 		$paramsArray=array();
 		$paramsArray['listingid']=$this->listing_id;
-		$paramsArray['estableid']=$this->tableid;
-		$paramsArray['establename']=$this->tablename;
+		$paramsArray['tableid']=$this->tableid;
 		$paramsArray['publishstatus']=1;
 
 		return $paramsArray;

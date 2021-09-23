@@ -8,6 +8,7 @@
 
 namespace CustomTables;
 
+use CustomTables\CT;
 use CustomTables\Fields;
 
 use \Joomla\CMS\Factory;
@@ -215,6 +216,8 @@ class ImportTables
 
     protected static function processFields($tableid,$establename,$fields,&$msg)
     {
+		$ct = new CT;
+		
         foreach($fields as $field)
         {
             $fieldid=ImportTables::processField($tableid,$establename,$field,$msg);
@@ -232,7 +235,7 @@ class ImportTables
 		return true;
     }
 
-    protected static function processField($tableid,$establename,&$field_new,&$msg)
+    protected static function processField(&$ct,$tableid,$establename,&$field_new,&$msg)
     {
         //This function creates the table field and returns field's id.
         //If field with same name already exists then existing field will be updated and it's ID will be returned.
@@ -263,7 +266,7 @@ class ImportTables
                     $fieldtitle=$field_new['fieldtitle_1'];
 
 				$PureFieldType=Fields::getPureFieldType($field_new['type'], $field_new['typeparams']);
-				Fields::addESField('#__customtables_table_'.$establename,'es_'.$esfieldname,$field_new['type'],$PureFieldType, $field_new['fieldtitle']);
+				Fields::addField($ct,'#__customtables_table_'.$establename,'es_'.$esfieldname,$field_new['type'],$PureFieldType, $field_new['fieldtitle']);
             }
         }
         return $fieldid;

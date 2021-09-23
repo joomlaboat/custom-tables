@@ -22,10 +22,6 @@ class CustomTablesViewListEdit extends JView
 		$this->ListEditModel = $this->getModel();
 	
 		$filter_rootparent = $mainframe->getUserStateFromRequest( "com_customtables.filter_rootparent",'filter_rootparent','','int' );
-
-	
-		$LangMisc	= new ESLanguages;
-		$this->LanguageList=$LangMisc->getLanguageList();
 			
         parent::display($tpl);
     }

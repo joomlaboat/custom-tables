@@ -38,7 +38,7 @@ use CustomTables\IntegrityChecks;
 		<?php echo $this->loadTemplate('toolbar');?>
 
 		<?php
-			$result = IntegrityChecks::check();
+			$result = IntegrityChecks::check($this->ct);
 		?>
 
 		<table class="table table-striped" id="tablesList">

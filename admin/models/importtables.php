@@ -12,6 +12,8 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\CT;
+
 // Import Joomla! libraries
 jimport('joomla.application.component.model');
 
@@ -19,6 +21,8 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'co
 
 class CustomTablesModelImporttables extends JModelList
 {
+	var $ct;
+	
     function __construct()
     {
 		parent::__construct();

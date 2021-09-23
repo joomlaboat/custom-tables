@@ -12,6 +12,8 @@ defined('_JEXEC') or die('Restricted access');
 // import Joomla view library
 jimport('joomla.application.component.view');
 
+use CustomTables\CT;
+
 use Joomla\CMS\Version;
 
 /**
@@ -23,12 +25,16 @@ class CustomtablesViewDataBaseCheck extends JViewLegacy
 	 * display method of View
 	 * @return void
 	 */
+	var $ct;
+	 
 	var $tables=false;
 	
 	public function display($tpl = null)
 	{
 		$version = new Version;
 		$this->version = (int)$version->getShortVersion();
+		
+		$this->ct = new CT;
 		
 		if ($this->getLayout() !== 'modal')
 		{
@@ -38,7 +44,7 @@ class CustomtablesViewDataBaseCheck extends JViewLegacy
 			if($this->version < 4)
 				$this->sidebar = JHtmlSidebar::render();
 		}
-
+		
 		// Set the document
 		$this->setDocument();
 		parent::display($tpl);

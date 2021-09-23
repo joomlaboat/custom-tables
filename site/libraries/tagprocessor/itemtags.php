@@ -72,7 +72,7 @@ class tagProcessor_Item
 
     public static function checkAccess(&$Model,$ug,&$row)
 	{
-        if(!isset($Model->isUserAdministrator))
+        if(!isset($Model->ct->Env->isUserAdministrator))
             return false;
 
 		$user = JFactory::getUser();
@@ -84,15 +84,15 @@ class tagProcessor_Item
 
 		$isok=false;
 
-		if($Model->isUserAdministrator or in_array($ug,$usergroups))
+		if($Model->ct->Env->isUserAdministrator or in_array($ug,$usergroups))
 			$isok=true;
 		else
 		{
-			if(isset($row) and isset($row['listing_published']) and  $Model->useridfieldname!='')
+			if(isset($row) and isset($row['listing_published']) and $Model->ct->Table->useridfieldname!='')
 			{
-				$uid=$row['es_'.$Model->useridfieldname];
+				$uid=$row[$Model->ct->Table->useridrealfieldname];
 
-				if($uid==$Model->userid and $Model->userid!=0)
+				if($uid==$Model->ct->Env->userid and $Model->ct->Env->userid!=0)
 					$isok=true;
 			}
 		}
@@ -100,7 +100,7 @@ class tagProcessor_Item
 		return $isok;
 	}
 
-    public static function getToolbar(&$imagegalleries,&$fileboxes,&$Model,&$row)
+    public static function getToolbar(&$Model,&$row)
 	{
 		$WebsiteRoot=JURI::root(true);
 		if($WebsiteRoot=='' or $WebsiteRoot[strlen($WebsiteRoot)-1]!='/') //Root must have slash / in the end
@@ -129,18 +129,18 @@ class tagProcessor_Item
 			$toolbar['edit']=tagProcessor_Item::renderEditIcon($Model,$row);
 
 			//Refresh
-			$rid='esRefreshIcon'.$Model->estableid.'x'.$id;
+			$rid='esRefreshIcon'.$Model->ct->Table->tableid.'x'.$id;
 		        $alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_REFRESH' );
 			$img='<img src="'.JURI::root(true).'/components/com_customtables/images/refresh.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 			$toolbar['refresh']='<div id="'.$rid.'" class="toolbarIcons"><a href="javascript:esRefreshObject('.$id.', \''.$rid.'\');">'.$img.'</a></div>';
 
 			//Image Gallery
-			if(count($imagegalleries)>0)
-				$toolbar['gallery']=tagProcessor_Item::renderImageGalleryIcon($imagegalleries,$Model,$row,$WebsiteRoot,$Model->current_url);
+			if(is_array($Model->ct->Table->imagegalleries) and count($Model->ct->Table->imagegalleries)>0)
+				$toolbar['gallery']=tagProcessor_Item::renderImageGalleryIcon($Model,$row,$WebsiteRoot,$Model->ct->Env->current_url);
 
 			//Filebox
-			if(is_array($fileboxes) and count($fileboxes)>0)
-				$toolbar['filebox']=tagProcessor_Item::renderFileBoxIcon($id,$fileboxes,$Model,$row,$WebsiteRoot,$Model->current_url);
+			if(is_array($Model->ct->Table->fileboxes) and count($Model->ct->Table->fileboxes)>0)
+				$toolbar['filebox']=tagProcessor_Item::renderFileBoxIcon($id,$Model,$row,$WebsiteRoot,$Model->ct->Env->current_url);
 		}
 
 		if($isDeletable)
@@ -148,7 +148,7 @@ class tagProcessor_Item
 
 		if($isPublishable)
 		{
-			$rid='esPublishIcon'.$Model->estableid.'x'.$id;
+			$rid='esPublishIcon'.$Model->ct->Table->tableid.'x'.$id;
 
 			if($row['listing_published'])
 			{
@@ -171,8 +171,8 @@ class tagProcessor_Item
 		}
 
 
-		$rid='esCheckbox'.$Model->estableid.'x'.$id;
-		$toolbar['checkbox']='<input type="checkbox" name="esCheckbox'.$Model->estableid.'" id="'.$rid.'" value="'.$id.'" />';
+		$rid='esCheckbox'.$Model->ct->Table->tableid.'x'.$id;
+		$toolbar['checkbox']='<input type="checkbox" name="esCheckbox'.$Model->ct->Table->tableid.'" id="'.$rid.'" value="'.$id.'" />';
 
 		return $toolbar;
 	}
@@ -191,7 +191,7 @@ class tagProcessor_Item
 		$WebsiteRoot.='/';
 
 		$editlink=$WebsiteRoot.'index.php?option=com_customtables&amp;view=edititem'
-						.'&amp;returnto='.$Model->encoded_current_url
+						.'&amp;returnto='.$Model->ct->Env->encoded_current_url
 						.'&amp;listing_id='.$row['listing_id'];
 
 		if(JFactory::getApplication()->input->get('tmpl','','CMD')!='')
@@ -203,21 +203,21 @@ class tagProcessor_Item
         $alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_EDIT' );
 		$img='<img src="'.JURI::root(true).'/components/com_customtables/images/edit.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 
-		$rid='esEditIcon'.$Model->estableid.'x'.$id;
+		$rid='esEditIcon'.$Model->ct->Table->tableid.'x'.$id;
 		$link=$editlink;
 
 		return '<div id="'.$rid.'" class="toolbarIcons"><a href="'.$link.'">'.$img.'</a></div>';
 	}
 
-	protected static function renderImageGalleryIcon($imagegalleries,&$Model,&$row,$WebsiteRoot)
+	protected static function renderImageGalleryIcon(&$Model,&$row,$WebsiteRoot)
 	{
-		foreach($imagegalleries as $gallery)
+		foreach($Model->ct->Table->imagegalleries as $gallery)
 		{
 			$imagemanagerlink='index.php?option=com_customtables&amp;view=editphotos'
-				.'&amp;establename='.$Model->establename
+				.'&amp;establename='.$Model->ct->Table->tablename
 				.'&amp;galleryname='.$gallery[0]
 				.'&amp;listing_id='.$row['listing_id']
-				.'&amp;returnto='.$Model->encoded_current_url;
+				.'&amp;returnto='.$Model->ct->Env->encoded_current_url;
 
 			if(JFactory::getApplication()->input->get('tmpl','','CMD')!='')
 				$imagemanagerlink.='&tmpl='.JFactory::getApplication()->input->get('tmpl','','CMD');
@@ -225,7 +225,7 @@ class tagProcessor_Item
 			if($Model->Itemid>0)
 				$imagemanagerlink.='&amp;Itemid='.$Model->Itemid;
 
-			$rid='esImageGalleryIcon'.$Model->estableid.'x'.$row['listing_id'];
+			$rid='esImageGalleryIcon'.$Model->ct->Table->tableid.'x'.$row['listing_id'];
             $alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PHOTO_MANAGER' ).' ('.$gallery[1].')';
 			$img='<img src="'.JURI::root(true).'/components/com_customtables/images/photomanager.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 
@@ -234,15 +234,15 @@ class tagProcessor_Item
 		}
 	}
 
-	protected static function renderFileBoxIcon($id,&$fileboxes,&$Model,&$row,$WebsiteRoot)
+	protected static function renderFileBoxIcon($id,&$Model,&$row,$WebsiteRoot)
 	{
-		foreach($fileboxes as $filebox)
+		foreach($Model->ct->Table->fileboxes as $filebox)
 		{
 			$filemanagerlink='index.php?option=com_customtables&amp;view=editfiles'
-				.'&amp;establename='.$Model->establename
+				.'&amp;establename='.$Model->ct->Table->tablename
 				.'&amp;fileboxname='.$filebox[0]
 				.'&amp;listing_id='.$row['listing_id']
-				.'&amp;returnto='.$Model->encoded_current_url;
+				.'&amp;returnto='.$Model->ct->Env->encoded_current_url;
 
 			if(JFactory::getApplication()->input->get('tmpl','','CMD')!='')
 				$filemanagerlink.='&tmpl='.JFactory::getApplication()->input->get('tmpl','','CMD');
@@ -255,7 +255,7 @@ class tagProcessor_Item
 							.'alt="'.$alt.'" '
 							.'title="'.$alt.'">';
 
-			$rid='esFileBoxIcon'.$Model->estableid.'x'.$id;
+			$rid='esFileBoxIcon'.$Model->ct->Table->tableid.'x'.$id;
 
 			return '<div id="'.$rid.'" class="toolbarIcons"><a href="'.$WebsiteRoot.$filemanagerlink.'">'.$img.'</a></div>';
 		}
@@ -284,7 +284,7 @@ class tagProcessor_Item
 
 				//First, find default field
 				$selectedfiled=array();
-				foreach($Model->esfields as $mFld)
+				foreach($Model->ct->Table->fields as $mFld)
 				{
 					$ordering=(int)$mFld['ordering'];
 					if($ordering==-1)
@@ -298,7 +298,7 @@ class tagProcessor_Item
 				if($fieldtitlevalue=='') //Default field not found
 				{
 					//Find any available field
-					foreach($Model->esfields as $mFld)
+					foreach($Model->ct->Table->fields as $mFld)
 					{
 						if($mFld['type']!='dummy')
 						{
@@ -311,7 +311,7 @@ class tagProcessor_Item
 
 				$deleteLabel=substr($fieldtitlevalue,-100);
 
-				$rid='esDeleteIcon'.$Model->estableid.'x'.$id;
+				$rid='esDeleteIcon'.$Model->ct->Table->tableid.'x'.$id;
                 $alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_DELETE' );
 				$img='<img src="'.JURI::root(true).'/components/com_customtables/images/delete.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 
@@ -364,11 +364,11 @@ class tagProcessor_Item
 				{
 					if($field1_findwhat=='_id')
 					{
-						$field1_findwhat=$Model->tablerow['realidfieldname'];
+						$field1_findwhat=$Model->ct->Table->tablerow['realidfieldname'];
 					}
 					elseif($field1_findwhat=='_published')
 					{
-						if($Model->tablerow['published_field_found'])
+						if($Model->ct->Table->tablerow['published_field_found'])
 							$field1_findwhat='published';
 						else
 						{
@@ -378,7 +378,7 @@ class tagProcessor_Item
 					}
 					else
 					{
-						$field1_row=Fields::getFieldRowByName($field1_findwhat, $Model->tablerow['id']);
+						$field1_row=Fields::getFieldRowByName($field1_findwhat, $Model->ct->Table->tablerow['id']);
 						if(is_object($field1_row))
 							$field1_findwhat=$field1_row->realfieldname;
 						else
@@ -523,21 +523,21 @@ class tagProcessor_Item
 					}
 
 
-					$query.=' FROM '.$Model->realtablename.' ';
+					$query.=' FROM '.$Model->ct->Table->realtablename.' ';
 
-					if($Model->establename!=$sj_tablename)
+					if($Model->ct->Table->tablename!=$sj_tablename)
 					{
 						// Join not needed when we are in the same table
 						$query.=' LEFT JOIN '.$tablerow['realtablename'].' ON ';
 
 						if($field2_type=='records')
 						{
-							$query.='INSTR('.$tablerow['realtablename'].'.'.$field2_lookwhere.',  CONCAT(",",'.$Model->realtablename.'.'.$field1_findwhat.',","))' ;
+							$query.='INSTR('.$tablerow['realtablename'].'.'.$field2_lookwhere.',  CONCAT(",",'.$Model->ct->Table->realtablename.'.'.$field1_findwhat.',","))' ;
 
 						}
 						else
 						{
-							$query.=' '.$Model->realtablename.'.'.$field1_findwhat.' = '
+							$query.=' '.$Model->ct->Table->realtablename.'.'.$field1_findwhat.' = '
 							.' '.$tablerow['realtablename'].'.'.$field2_lookwhere;
 						}
 					}
@@ -546,10 +546,10 @@ class tagProcessor_Item
                         $wheres=array();
 
 
-						if($Model->establename!=$sj_tablename)
+						if($Model->ct->Table->tablename!=$sj_tablename)
 						{
 							//don't attach to specific record when it is the same table, example : to find averages
-							$wheres[]=$Model->realtablename.'.'.$Model->tablerow['realidfieldname'].'='.$id;
+							$wheres[]=$Model->ct->Table->realtablename.'.'.$Model->ct->Table->tablerow['realidfieldname'].'='.$id;
 						}
 						else
 						{
@@ -586,9 +586,9 @@ class tagProcessor_Item
 								$getFileBoxRows=array();
 								$vlu=$row['vlu'];
 
-								$temp_esfields = Fields::getFields($tablerow['id']);
+								$temp_ctfields = Fields::getFields($tablerow['id']);
 
-								foreach($temp_esfields as $ESField)
+								foreach($temp_ctfields as $ESField)
 								{
 									if($ESField['fieldname']==$FieldName)
 									{
@@ -694,8 +694,6 @@ class tagProcessor_Item
 
     protected static function prepareDetailsLink($Model,$row,$menu_item_alias="",$returnto='')
     {
-        //if(strpos($Model->current_url,'option=com_customtables')!==false or $menu_item_alias!="")
-        //{
             //SEF Off
             $menu_item_id=0;
             $viewlink='';
@@ -723,12 +721,12 @@ class tagProcessor_Item
             if($viewlink=='')
             {
                 $viewlink='index.php?option=com_customtables';//&amp;view=details';
-                if($Model->alias_fieldname=='' or $row['es_'.$Model->alias_fieldname]=='')
+                if($Model->ct->Table->alias_fieldname=='' or $row['es_'.$Model->ct->Table->alias_fieldname]=='')
                     $viewlink.='&view=details';
             }
 
-            if($Model->alias_fieldname!='' and $row['es_'.$Model->alias_fieldname]!='')
-                $viewlink.='&alias='.$row['es_'.$Model->alias_fieldname];
+            if($Model->ct->Table->alias_fieldname!='' and $row['es_'.$Model->ct->Table->alias_fieldname]!='')
+                $viewlink.='&alias='.$row['es_'.$Model->ct->Table->alias_fieldname];
             else
                 $viewlink.='&listing_id='.$row['listing_id'];
 
@@ -742,15 +740,6 @@ class tagProcessor_Item
 				$viewlink.='&returnto='.$returnto;
 			
             $viewlink=JRoute::_($viewlink);
-        //}
-        //else
-        //{
-          //  $pair=explode('?',$Model->current_url);
-            //$viewlink=$Model->current_sef_url.$row['es_'.$Model->alias_fieldname];
-            //if($Model->current_sef_url_query!='')
-              //  $viewlink.=$Model->current_sef_url_query;
-        //}
-
 
         return $viewlink;
     }
@@ -759,13 +748,12 @@ class tagProcessor_Item
     {
         $jinput=JFactory::getApplication()->input;
 
-		if($Model->print)
+		if($Model->ct->Env->print)
 				$viewlink='#z';
 		else
 		{
-            $returnto=base64_encode($Model->current_url.'#a'.$row['listing_id']);
+            $returnto=base64_encode($Model->ct->Env->current_url.'#a'.$row['listing_id']);
 			$viewlink=tagProcessor_Item::prepareDetailsLink($Model,$row,'',$returnto);
-			//$Model->WebsiteRoot.'index.php?option=com_customtables&amp;view=details&amp;listing_id='.$row['listing_id'].'&amp;Itemid='.$Model->Itemid;//.'&amp;returnto='.$returnto;
 
 			if($jinput->getCmd('tmpl')!='')
 				$viewlink.='&tmpl='.$jinput->getCmd('tmpl');
@@ -778,10 +766,10 @@ class tagProcessor_Item
 
 		$layout='';
 
-		if($Model->print==1)
+		if($Model->ct->Env->print==1)
 			$toolbar=array();
 		else
-			$toolbar=tagProcessor_Item::getToolbar($Model->imagegalleries,$Model->fileboxes,$Model,$row);
+			$toolbar=tagProcessor_Item::getToolbar($Model,$row);
             
         if($Model->LayoutProc->layoutType==2)
         {
@@ -789,7 +777,7 @@ class tagProcessor_Item
             $pagelayout_temp=$Model->LayoutProc->layout;//Temporary remember original layout
             $htmlresult=$pagelayout_temp;
 
-            $prefix='table_'.$Model->establename.'_'.$row['listing_id'].'_';
+            $prefix='table_'.$Model->ct->Table->tablename.'_'.$row['listing_id'].'_';
             tagProcessor_Edit::process($Model,$htmlresult,$row,$prefix);//Process edit form layout
             
             $Model->LayoutProc->layout=$htmlresult;//Temporary replace original layout with processed result

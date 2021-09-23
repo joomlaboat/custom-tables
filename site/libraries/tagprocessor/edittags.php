@@ -32,9 +32,7 @@ class tagProcessor_Edit
         
     	$esinputbox = new ESInputBox;
 		$esinputbox->Model=$Model;
-    	
-        $esinputbox->establename=$Model->establename;
-    	$esinputbox->estableid=$Model->estableid;
+
         $esinputbox->requiredlabel=$Model->params->get( 'requiredlabel' );
         
         //Calendars of the child should be built again, because when Dom was ready they didn't exist yet.
@@ -58,7 +56,7 @@ class tagProcessor_Edit
 
         if(count($captcha)>0)
         {
-			if($Model->frmt!='csv')
+			if($Model->ct->Env->frmt!='csv')
             {
 				$p=tagProcessor_Edit::getReCaptchaParams();
                 if($p!=null)
@@ -77,7 +75,7 @@ class tagProcessor_Edit
 		for($i=0;$i<count($captcha);$i++)
 		{
 			$captcha_code='';
-            if($Model->frmt!='csv')
+            if($Model->ct->Env->frmt!='csv')
             {
 				if($reCaptchaParams!=null and $reCaptchaParams->public_key!="" and isset($reCaptchaParams->size))
                 {
@@ -122,7 +120,7 @@ class tagProcessor_Edit
 		for($i=0;$i<count($buttons);$i++)
 		{
 			$b='';
-			if($Model->frmt!='csv' and $Model->print==0)
+			if($Model->ct->Env->frmt!='csv' and $Model->ct->Env->print==0)
             {
                 $option=JoomlaBasicMisc::csv_explode(',', $options[$i], '"', false);
 
@@ -197,7 +195,7 @@ class tagProcessor_Edit
                     
 					}//switch
 
-				if($Model->frmt == 'json')
+				if($Model->ct->Env->frmt == 'json')
 				{
 					$button_objects[] = ['type' => $type, 'title' => $b, 'redirectlink' => $redirectlink];
 					$b = '';
@@ -220,7 +218,7 @@ class tagProcessor_Edit
 						for($i=0;$i<count($buttons);$i++)
 						{
                             $b='';
-                            if($Model->frmt!='csv' and $Model->print==0)
+                            if($Model->ct->Env->frmt!='csv' and $Model->ct->Env->print==0)
                             {
                                 $option=JoomlaBasicMisc::csv_explode(',', $options[$i], '"', false);
 
@@ -266,7 +264,7 @@ class tagProcessor_Edit
 		if($title=='')
             $title=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SAVE');
 			
-		if($Model->frmt == 'json')
+		if($Model->ct->Env->frmt == 'json')
 			return $title;
 
         $attribute='';
@@ -278,7 +276,7 @@ class tagProcessor_Edit
 		else
 			$the_class='ctEditFormButton btn button-apply btn-success';
         
-        $onclick='setTask(event, "saveandcontinue","'.$Model->encoded_current_url.'",true);';
+        $onclick='setTask(event, "saveandcontinue","'.$Model->ct->Env->encoded_current_url.'",true);';
 		
 		return '<input id="customtables_button_save" type="submit" class="'.$the_class.' validate"'.$attribute.' onClick=\''.$onclick.'\' value="'.$title.'">';
     }
@@ -288,7 +286,7 @@ class tagProcessor_Edit
 		if($title=='')
             $title= JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SAVEANDCLOSE');
 			
-		if($Model->frmt == 'json')
+		if($Model->ct->Env->frmt == 'json')
 			return $title;
 			
         $attribute='onClick=\'';
@@ -314,7 +312,7 @@ class tagProcessor_Edit
 		if($title=='')
             $title=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NEXT');
 			
-		if($Model->frmt == 'json')
+		if($Model->ct->Env->frmt == 'json')
 			return $title;
 			
         $attribute='onClick=\'';
@@ -337,7 +335,7 @@ class tagProcessor_Edit
 		if($title=='')
             $title=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SAVEASCOPYANDCLOSE');
 			
-		if($Model->frmt == 'json')
+		if($Model->ct->Env->frmt == 'json')
 			return $title;
 			
         $attribute='';//onClick="return checkRequiredFields();"';
@@ -359,7 +357,7 @@ class tagProcessor_Edit
         if($title=='')
             $title=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_CANCEL');
 		
-		if($Model->frmt == 'json')
+		if($Model->ct->Env->frmt == 'json')
 			return $title;
             
         if($optional_class!='')
@@ -376,7 +374,7 @@ class tagProcessor_Edit
         if($title=='')
 			$title=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_DELETE');
 				
-		if($Model->frmt == 'json')
+		if($Model->ct->Env->frmt == 'json')
 			return $title;
             
         if($optional_class!='')
@@ -451,12 +449,12 @@ class tagProcessor_Edit
 		$calendars=array();
 
 		//custom layout
-		if(!isset($Model->esfields) or !is_array($Model->esfields))
+		if(!isset($Model->ct->Table->fields) or !is_array($Model->ct->Table->fields))
 			return [];
 			
-    	for($f=0;$f<count($Model->esfields);$f++ )
+    	for($f=0;$f<count($Model->ct->Table->fields);$f++ )
 		{
-			$esfield=$Model->esfields[$f];
+			$esfield=$Model->ct->Table->fields[$f];
 			$options=array();
 			$entries=JoomlaBasicMisc::getListToReplace($esfield['fieldname'],$options,$pagelayout,'[]');
 
@@ -485,7 +483,7 @@ class tagProcessor_Edit
 
 					$result=tagProcessor_Edit::renderField($row,$Model,$langpostfix,-1,$esinputbox,$calendars,$esfield,$class,$attribute,$option_list,$fieldNamePrefix);
 					
-					if($Model->frmt == 'json')
+					if($Model->ct->Env->frmt == 'json')
 					{
 						$field_objects[] = $result;
 						$result = '';
@@ -497,11 +495,8 @@ class tagProcessor_Edit
 					$pagelayout=str_replace($entries[$i],$new_replaceitecode,$pagelayout);
 					
 				}
-
-				//$fieldstosave[]=$esfield['fieldname'];
-
 			}
-		}//for($f=0;$f<count($Model->esfields);$f++ )
+		}
 		
 		return $field_objects;
 	}

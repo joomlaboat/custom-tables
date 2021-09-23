@@ -15,11 +15,15 @@ defined('_JEXEC') or die('Restricted access');
 // import the Joomla modellist library
 jimport('joomla.application.component.modellist');
 
+use CustomTables\CT;
+
 /**
  * Listoflayouts Model
  */
 class CustomtablesModelListoflayouts extends JModelList
 {
+	var $ct;
+	
 	public function __construct($config = array())
 	{
 		if (empty($config['filter_fields']))

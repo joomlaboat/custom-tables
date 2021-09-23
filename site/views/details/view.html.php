@@ -14,17 +14,16 @@ use CustomTables\Layouts;
 jimport('joomla.html.pane');
 
 jimport( 'joomla.application.component.view'); //Important to get menu parameters
-class CustomTablesViewDetails extends JViewLegacy {
+class CustomTablesViewDetails extends JViewLegacy
+{
 	var $catid=0;
 	var $Model;
 	var $row;
-	var $useridfieldname;
- var $imagegalleries;
+	var $imagegalleries;
 	var $fileboxes;
 
 	function display($tpl = null)
 	{
-
 		$this->Model = $this->getModel();
 		if(!isset($this->Model->LayoutProc))
 			return;
@@ -40,11 +39,11 @@ class CustomTablesViewDetails extends JViewLegacy {
 			$layout_catalog=Layouts::getLayout($this->params->get('esdetailslayout'),$layouttype);
 				
 			if($layouttype==8)
-				$this->Model->frmt='xml';
+				$this->Model->ct->Env->frmt='xml';
 			elseif($layouttype==9)
-				$this->Model->frmt='csv';
+				$this->Model->ct->Env->frmt='csv';
 			elseif($layouttype==10)
-				$this->Model->frmt='json';
+				$this->Model->ct->Env->frmt='json';
 
 			$this->Model->LayoutProc->layout=$layout_catalog;
 		}
@@ -58,29 +57,10 @@ class CustomTablesViewDetails extends JViewLegacy {
 				$mainframe->redirect($this->Model->redirectto);
 			}
 
-			if ($this->Model->print)
+			if ($this->Model->ct->Env->print)
 			{
 				$document	= JFactory::getDocument();
 				$document->setMetaData('robots', 'noindex, nofollow');
-			}
-
-			$this->AllowPrint=(bool)$this->params->get('allowprint');
-
-			$this->current_url=JoomlaBasicMisc::curPageURL();
-
-			$this->imagegalleries=array();
-			$this->useridfieldname='';
-
-			foreach($this->Model->esfields as $mFld)
-			{
-				if($mFld['type']=='imagegallery')
-					$this->imagegalleries[]=array($mFld['fieldname'],$mFld['fieldtitle'.$this->Model->ct->Languages->Postfix]);
-
-				if($mFld['type']=='filebox')
-					$this->fileboxes[]=array($mFld['fieldname'],$mFld['fieldtitle'.$this->Model->ct->Languages->Postfix]);
-
-				if($mFld['type']=='userid')
-						$this->useridfieldname=$mFld['fieldname'];
 			}
 
 			$document = JFactory::getDocument();
@@ -100,25 +80,20 @@ class CustomTablesViewDetails extends JViewLegacy {
 			return false;
 		
 		$phptagprocessor_file=JPATH_SITE.DIRECTORY_SEPARATOR.'plugins'.DIRECTORY_SEPARATOR.'content'.DIRECTORY_SEPARATOR.'customtables'.DIRECTORY_SEPARATOR.'protagprocessor'.DIRECTORY_SEPARATOR.'phptags.php';
-  if(!file_exists($phptagprocessor_file))
+		if(!file_exists($phptagprocessor_file))
 			return false;
 		
 		require_once($phptagprocessor_file);
 		
-		foreach($this->Model->esfields as $mFld)
+		foreach($this->Model->ct->Table->fields as $mFld)
 		{
 			if($mFld['type']=='phponview')
 			{
 				$fieldname=$mFld['fieldname'];
 				$params=JoomlaBasicMisc::csv_explode(',',$mFld['typeparams'],'"',false);
 				tagProcessor_PHP::processTempValue($this->Model,$row,$fieldname,$params,false);
-    
-				}
-				
 			}
-		
-		
-		
+		}
 	}
 
 	function SaveViewLogForRecord($rec)//,$allowedfields
@@ -127,7 +102,7 @@ class CustomTablesViewDetails extends JViewLegacy {
 
 		$allwedTypes=['lastviewtime','viewcount'];
 
-		foreach($this->Model->esfields as $mFld)
+		foreach($this->Model->ct->Table->fields as $mFld)
 		{
 				$t=$mFld['type'];
 				if(in_array($t,$allwedTypes))
@@ -136,7 +111,7 @@ class CustomTablesViewDetails extends JViewLegacy {
 					$allow_count=true;
 					$author_user_field=$mFld['typeparams'];
 
-					if(!isset($author_user_field) or $author_user_field=='' or $rec['es_'.$author_user_field]==$this->Model->userid)
+					if(!isset($author_user_field) or $author_user_field=='' or $rec['es_'.$author_user_field]==$this->Model->ct->Env->userid)
 						$allow_count=false;
 
 					if($allow_count)
@@ -153,7 +128,7 @@ class CustomTablesViewDetails extends JViewLegacy {
 		if(count($updatefields)>0)
 		{
 				$db = JFactory::getDBO();
-				$query= 'UPDATE #__customtables_table_'.$this->Model->establename.' SET '.implode(', ', $updatefields).' WHERE id='.$rec['listing_id'];
+				$query= 'UPDATE #__customtables_table_'.$this->Model->ct->Table->tablename.' SET '.implode(', ', $updatefields).' WHERE id='.$rec['listing_id'];
 
 				$db->setQuery($query);
 				$db->execute();	

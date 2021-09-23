@@ -16,11 +16,15 @@ use Joomla\Registry\Registry;
 // import Joomla modelform library
 jimport('joomla.application.component.modeladmin');
 
+use CustomTables\CT;
+
 /**
  * Customtables Categories Model
  */
 class CustomtablesModelCategories extends JModelAdmin
 {
+	var $ct;
+	
 	/**
 	 * @var        string    The prefix to use with controller messages.
 	 * @since   1.6

@@ -14,7 +14,7 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'co
 	if(strpos($this->Model->LayoutProc->layout,'{toolbar')===false)
 		$toolbar_array=array();
 	else
-		$toolbar_array= tagProcessor_Item::getToolbar($this->imagegalleries,$this->fileboxes,$this->Model,$this->row);
+		$toolbar_array= tagProcessor_Item::getToolbar($this->Model,$this->row);
 
 	$this->Model->LayoutProc->toolbar_array=$toolbar_array;
 	$results = $this->Model->LayoutProc->fillLayout($this->row);
@@ -22,12 +22,11 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'co
 	if($this->params->get( 'allowcontentplugins' ))
 		LayoutProcessor::applyContentPlugins($results);
 
-
 	$mydoc = JFactory::getDocument();
 
-        if($this->Model->clean)
+        if($this->Model->ct->Env->clean)
         {
-			if($this->Model->frmt=='csv')
+			if($this->Model->ct->Env->frmt=='csv')
 			{
 				$filename = JoomlaBasicMisc::makeNewFileName($mydoc->getTitle(),'csv');
 
@@ -44,7 +43,7 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'co
 				die ;//clean exit
 
 			}
-			elseif($this->Model->frmt=='xml')
+			elseif($this->Model->ct->Env->frmt=='xml')
 			{
 				$filename = JoomlaBasicMisc::makeNewFileName($mydoc->getTitle(),'xml');
 

@@ -226,7 +226,7 @@ class CustomtablesControllerRecords extends JControllerForm
 		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'models'.DIRECTORY_SEPARATOR.'edititem.php');
 		$editModel = JModelLegacy::getInstance('EditItem', 'CustomTablesModel', $_params);
 		$editModel->load($_params,true);
-		$editModel->pagelayout=Layouts::createDefaultLayout_Edit($editModel->esfields,false);
+		$editModel->pagelayout=Layouts::createDefaultLayout_Edit($editModel->ct->Table->fields,false);
 
 		// get the referal details
 		/*

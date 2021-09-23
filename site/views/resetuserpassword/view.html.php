@@ -10,14 +10,19 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\CT;
 use CustomTables\Fields;
 
 jimport( 'joomla.application.component.view');
 
-class CustomTablesViewResetUserPassword extends JViewLegacy {
+class CustomTablesViewResetUserPassword extends JViewLegacy
+{
+	var $ct;
 
 	function display($tpl = null)
 	{
+		$this->ct = new CT;
+		
 		$jinput=JFactory::getApplication()->input;
 
 		$clean=(bool)$jinput->getInt('clean',0);
@@ -29,45 +34,34 @@ class CustomTablesViewResetUserPassword extends JViewLegacy {
 		$app		= JFactory::getApplication();
 		$params=$app->getParams();
 
-		$userid=JFactory::getApplication()->input->get('listing_id',0,'INT');
-		if($userid==0)
+		$user_listing_id=JFactory::getApplication()->input->get('listing_id',0,'INT');
+		if($user_listing_id==0)
 		{
 				echo '<p style="padding:3px;color:white;background-color:red;">User ID not set.</p>';
 				return;
 		}
 
 		//get Table
-		$establename=$params->get( 'establename' );
-		if($establename=='')
+		$this->ct->getTable($params->get( 'establename' ), null);
+				
+		if($this->ct->Table->tablename=='')
 		{
-				echo '<p style="padding:3px;color:white;background-color:red;">Table not set.</p>';
-				return;
+			$Itemid=JFactory::getApplication()->input->getInt('Itemid', 0);
+			JFactory::getApplication()->enqueueMessage('Table not selected.', 'error');
+			return;
 		}
 
-
-
-
-		$esTable=new ESTables;
-		$tablerow=$esTable->getTableRowByNameAssoc($establename);
-		$estableid=$tablerow['id'];
-		$tablename='#__customtables_table_'.$establename;
-
-		$esfields = Fields::getFields($estableid);
-
-		$useridfieldname=CustomTablesViewResetUserPassword::getUserField($params->get('useridfield'),$esfields);
-
-		$row=CustomTablesViewResetUserPassword::getRow($userid,$tablename);
-		if(count($row)==0)
+		$this->ct->Table->loadRecord($userid);
+		
+		if($this->ct->Table->record == null)
 		{
-				echo '<p style="padding:3px;color:white;background-color:red;">User ID: "'.$userid.'" not found.</p>';
-				return;
+			echo '<p style="padding:3px;color:white;background-color:red;">User record ID: "'.$user_listing_id.'" not found.</p>';
+			return;
 		}
-
-
 
 		$password=strtolower(JUserHelper::genRandomPassword());
 
-		$realuserid=$row['es_'.$useridfieldname];
+		$realuserid=$this->ct->Table->record[$this->ct->Table->useridrealfieldname];
 
 		$realuserid=CustomTablesCreateUser::SetUserPassword($realuserid,$password);
 
@@ -90,7 +84,6 @@ class CustomTablesViewResetUserPassword extends JViewLegacy {
 
 		echo '
 New Password: '.$password;
-
 
 		parent::display($tpl);
 
@@ -121,41 +114,4 @@ New Password: '.$password;
 	}
 	*/
 
-
-	protected static function getUserField($uf,&$esfields)
-	{
-		if($uf)
-		{
-					return $uf;
-		}
-		else
-		{
-				foreach($esfields as $fld)
-				{
-						if($fld['type']=='userid')
-						{
-							return $fld['fieldname'];
-							break;
-
-						}
-				}
-		}
-		return '';
-	}
-
-
-
-    protected static function getRow($id,$tablename)
-	{
-		$db = JFactory::getDBO();
-		$query = 'SELECT * FROM '.$tablename.' WHERE id='.$id.' LIMIT 1';
-		$db->setQuery( $query );
-	
-		$recs = $db->loadAssocList( );
-		if(!$recs) return array();
-		if (count($recs)<1) return array();
-
-		$r=$recs[0];
-		return $r;
-	}
 }

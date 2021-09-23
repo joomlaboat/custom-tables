@@ -12,6 +12,7 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\CT;
 use CustomTables\Fields;
 
 use Joomla\Registry\Registry;
@@ -24,6 +25,8 @@ jimport('joomla.application.component.modeladmin');
  */
 class CustomtablesModelTables extends JModelAdmin
 {
+	var $ct;
+	
 	/**
 	 * @var        string    The prefix to use with controller messages.
 	 * @since   1.6
@@ -37,6 +40,14 @@ class CustomtablesModelTables extends JModelAdmin
 	 * @since    3.2
 	 */
 	public $typeAlias = 'com_customtables.tables';
+
+
+	public function __construct($config = array())
+	{
+		parent::__construct($config);
+		
+		$this->ct = new CT;
+	}
 
 	/**
 	 * Returns a Table object, always creating it
@@ -562,13 +573,10 @@ class CustomtablesModelTables extends JModelAdmin
 
 		$data_extra = JFactory::getApplication()->input->get( 'jform',array(),'ARRAY');
 
-		$LangMisc	= new ESLanguages;
-		$languages=$LangMisc->getLanguageList();
-
 		$morethanonelang=false;
 		
 		$fields=Fields::getListOfExistingFields('#__customtables_tables',false);
-		foreach($languages as $lang)
+		foreach($this->ct->Languages->LanguageList as $lang)
 		{
 			$id_title='tabletitle';
 			$id_desc='description';
@@ -718,12 +726,9 @@ class CustomtablesModelTables extends JModelAdmin
 		$fields=array('fieldname','type','typeparams','ordering','defaultvalue','allowordering','parentid','isrequired','valuerulecaption','valuerule');
 		//unused fields: isdisabled,savevalue,alwaysupdatevalue
 	
-		$LangMisc	= new ESLanguages;
-		$languages=$LangMisc->getLanguageList();
-
 		$morethanonelang=false;
 		
-		foreach($languages as $lang)
+		foreach($this->ct->Languages->LanguageList as $lang)
 		{
 			if($morethanonelang)
 			{

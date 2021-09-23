@@ -42,9 +42,6 @@ if($input->getCmd('extratask','')=='updateimages')
 
 $componentParams = JComponentHelper::getParams('com_customtables');
 
-$LangMisc	= new ESLanguages;
-$languages=$LangMisc->getLanguageList();
-
 $phptagprocessor=JPATH_SITE.DIRECTORY_SEPARATOR.'plugins'.DIRECTORY_SEPARATOR.'content'.DIRECTORY_SEPARATOR.'customtables'.DIRECTORY_SEPARATOR.'protagprocessor'.DIRECTORY_SEPARATOR.'phptags.php';
 
 if(file_exists($phptagprocessor))
@@ -115,7 +112,7 @@ else
 				<?php
 				
 				$morethanonelang=false;
-				foreach($languages as $lang)
+				foreach($this->ct->Languages->LanguageList as $lang)
 				{
 					$id='fieldtitle';
 					if($morethanonelang)
@@ -195,7 +192,7 @@ else
 	<?php 
 
 		$morethanonelang=false;
-		foreach($languages as $lang)
+		foreach($this->ct->Languages->LanguageList as $lang)
 		{
 			$id='description';
 			if($morethanonelang)

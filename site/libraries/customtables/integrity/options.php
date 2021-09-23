@@ -16,20 +16,17 @@ defined('_JEXEC') or die('Restricted access');
 use CustomTables\Fields;
 
 use \Joomla\CMS\Factory;
-use \ESLanguages;
 
 class IntegrityOptions extends \CustomTables\IntegrityChecks
 {
-	public static function checkOptions()
+	public static function checkOptions(&$ct)
 	{
 		$jinput = Factory::getApplication()->input;
-		$LangMisc	= new ESLanguages;
-		$languages=$LangMisc->getLanguageList();
 		
-		IntegrityOptions::checkOptionsTitleFields($languages);
+		IntegrityOptions::checkOptionsTitleFields($ct);
 	}
 	
-	protected static function checkOptionsTitleFields(&$languages)
+	protected static function checkOptionsTitleFields(&$ct)
     {
 		$db = Factory::getDBO();
 		
@@ -44,7 +41,7 @@ class IntegrityOptions extends \CustomTables\IntegrityChecks
         $g_ExistingFields=Fields::getExistingFields($table_name,false);
 
         $morethanonelang=false;
-		foreach($languages as $lang)
+		foreach($ct->Languages->LanguageList as $lang)
         {
            	$g_fieldname='title';
             if($morethanonelang)

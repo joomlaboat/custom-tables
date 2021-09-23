@@ -38,6 +38,8 @@ class CustomtablesViewListoftables extends JViewLegacy
 	 * Listoftables view display method
 	 * @return void
 	 */
+	var $ct;
+	 
 	var $advanced_options;
 	var $languages;
 
@@ -65,6 +67,9 @@ class CustomtablesViewListoftables extends JViewLegacy
 			$this->filterForm    = $this->get('FilterForm');
 			$this->activeFilters = $this->get('ActiveFilters');
 		}
+		
+		$model = $this->getModel();
+		$this->ct = $model->ct;
 		
 		// Assign data to the view
 		$this->items = $this->get('Items');
@@ -110,8 +115,7 @@ class CustomtablesViewListoftables extends JViewLegacy
 			throw new Exception(implode("\n", $errors), 500);
 		}
 
-		$LangMisc	= new ESLanguages;
-		$this->languages=$LangMisc->getLanguageList();
+		$this->languages=$this->ct->Languages->LanguageList;
 
 		// Display the template
 		if($this->version < 4)

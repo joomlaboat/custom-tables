@@ -202,7 +202,7 @@ function ShowAddFile()
 		{
 			$htmlout.='<tr>';
 
-			$filename=$Model->estableid.'_'.$Model->fileboxname.'_'.$file->fileid.'.'.$file->file_ext;
+			$filename=$Model->ct->Table->tableid.'_'.$Model->fileboxname.'_'.$file->fileid.'.'.$file->file_ext;
 			$filepath=$Model->fileboxfolderweb.'/'.$filename;
 			
 			

@@ -23,6 +23,8 @@ use Joomla\CMS\Version;
  */
 class CustomtablesViewTables extends JViewLegacy
 {
+	var $ct;
+	
 	/**
 	 * display method of View
 	 * @return void
@@ -31,6 +33,9 @@ class CustomtablesViewTables extends JViewLegacy
 	{
 		$version = new Version;
 		$this->version = (int)$version->getShortVersion();
+
+		$model = $this->getModel();
+		$this->ct = $model->ct;
 
 		// Assign the variables
 		$this->form = $this->get('Form');

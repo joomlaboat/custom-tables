@@ -42,7 +42,7 @@ class JHTMLESSQLJoinView
 		$model->showpagination=false;
 				
 		//Get Row
-		$query = 'SELECT '.$model->tablerow['query_selects'].' FROM '.$model->realtablename.' WHERE '.$model->tablerow['realidfieldname'].'='.(int)$value;
+		$query = 'SELECT '.$model->ct->Table->tablerow['query_selects'].' FROM '.$model->ct->Table->realtablename.' WHERE '.$model->ct->Table->tablerow['realidfieldname'].'='.(int)$value;
 		$db= JFactory::getDBO();
 		$db->setQuery($query);
 

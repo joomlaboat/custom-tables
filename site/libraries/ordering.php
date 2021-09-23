@@ -13,7 +13,7 @@ use CustomTables\Fields;
 
 class CTOrdering
 {
-    public static function getOrderingQuery(&$ordering,&$query,&$inner,$esordering,$langpostfix,$tablename,&$esfields)
+    public static function getOrderingQuery(&$ordering,&$query,&$inner,$esordering,$langpostfix,$tablename,&$ctfields)
 	{
 	
 						if(stripos($esordering,'.user')!==false)
@@ -23,7 +23,7 @@ class CTOrdering
 								$oPair2=explode('.',$oPair[0]);
 
 								$fieldname=$oPair2[0];
-								$realfieldname=Fields::getRealFieldName($fieldname,$esfields);
+								$realfieldname=Fields::getRealFieldName($fieldname,$ctfields);
 								
 								if($realfieldname!='')
 								{
@@ -62,7 +62,7 @@ class CTOrdering
 
 								if(!$join_found)
 								{
-									$realfieldname=Fields::getRealFieldName($fieldname,$esfields);
+									$realfieldname=Fields::getRealFieldName($fieldname,$ctfields);
 									if($realfieldname!='')
 										$inner[]='LEFT JOIN #__customtables_options ON familytreestr='.$realfieldname.'';
 								}
@@ -95,9 +95,9 @@ class CTOrdering
 
 										if($join_table!='' and $join_field!='')
 										{
-											$real_joined_fieldname=$join_field;//CTOrdering::getRealFieldName($join_field,$esfields);
+											$real_joined_fieldname=$join_field;
 											
-											$realfieldname=Fields::getRealFieldName($fieldname,$esfields);
+											$realfieldname=Fields::getRealFieldName($fieldname,$ctfields);
 											if($realfieldname!='' and $real_joined_fieldname!='')
 											{
 												$w='#__customtables_table_'.$join_table.'.id='.$tablename.'.'.$realfieldname;
@@ -118,7 +118,7 @@ class CTOrdering
 								$oPair=explode(' ',$esordering);
 								
 								$fieldname=$oPair[0];
-								$realfieldname=Fields::getRealFieldName($fieldname,$esfields);
+								$realfieldname=Fields::getRealFieldName($fieldname,$ctfields);
 								
 								if($realfieldname!='')
 								{
@@ -134,7 +134,7 @@ class CTOrdering
 	}
 
 
-    public static function loadOrderFields($blockExternalVars,&$params,&$esfields,$langpostfix,&$order_list,&$order_values)
+    public static function loadOrderFields($blockExternalVars,&$params,&$ctfields,$langpostfix,&$order_list,&$order_values)
 	{
 				//get sort field (and direction) example "price desc"
 				$jinput = JFactory::getApplication()->input;
@@ -190,7 +190,7 @@ class CTOrdering
 
 		$esordering ='';
 		$found=false;
-		foreach($esfields as $row)
+		foreach($ctfields as $row)
 		{
             if($row['allowordering']==1)// and $row['hidden']==0
 			{
@@ -252,7 +252,7 @@ class CTOrdering
 						}
 						else
 						{
-							foreach($esfields as $row)
+							foreach($ctfields as $row)
 							{
 								$fieldtype=$row['type'];
 
@@ -281,7 +281,7 @@ class CTOrdering
 				//prepare list of available fields to sort by
 				if(!$blockExternalVars and $fieldname!='_id')
 				{
-						foreach($esfields as $row)
+						foreach($ctfields as $row)
 						{
 								if($row['allowordering']==1)
 								{

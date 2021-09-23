@@ -14,14 +14,22 @@ namespace CustomTables;
 defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\Languages;
+use CustomTables\Environment;
 
 class CT
 {
 	var $Languages;
+	var $Env;
 	var $Table;
 	
 	function __construct()
 	{
 		$this->Languages = new Languages;
+		$this->Env = new Environment;
+	}
+	
+	function getTable($tablename_or_id, $useridfieldname = null)
+	{
+		$this->Table = new Table($this->Languages, $this->Env, $tablename_or_id, $useridfieldname);
 	}
 }

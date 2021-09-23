@@ -88,35 +88,20 @@ class CustomtablesModelListofRecords extends JModelList
 	protected function getListQuery()
 	{
 		$jinput=JFactory::getApplication()->input;
-		$this->tablename=$jinput->getCmd('tablename',0);
+
+		$this->ct->getTable($jinput->getCmd('tablename',0), null);
 		
-		if($this->tablename=="")
+		if($this->ct->Table->tablename=='')
 		{
-			$this->setError('Table not specified.');
-			return null;
+			JFactory::getApplication()->enqueueMessage('Table not selected.', 'error');
+			return;
 		}
 		
-		$tablerow = ESTables::getTableRowByNameAssoc($this->tablename);
-		
-		if(!is_array($tablerow))
+		if(!is_array($this->ct->Table->tablerow))
 		{
 			$this->setError('Table not found.');
 			return null;
 		}
-		
-		$realtablename='';
-		
-		$published_field_found=true;
-		if($tablerow['customtablename']!='')
-		{
-			$realtablename=$tablerow['customtablename'];
-			$realfields=Fields::getListOfExistingFields($realtablename,false);
-			if(!in_array('published',$realfields))
-				$published_field_found=false;
-		}
-		else
-			$realtablename='#__customtables_table_'.$this->tablename;
-		
 		
 		// Get the user object.
 		$user = JFactory::getUser();
@@ -124,7 +109,7 @@ class CustomtablesModelListofRecords extends JModelList
 		$db = JFactory::getDBO();
 		$query = $db->getQuery(true);
 
-		if($published_field_found)
+		if($this->ct->Table->published_field_found)
 			$query_selects='a.*, a.id as listing_id, a.published AS listing_published';
 		else
 			$query_selects='a.*, a.id as listing_id, 1 AS listing_published';
@@ -132,12 +117,12 @@ class CustomtablesModelListofRecords extends JModelList
 		$query->select($query_selects);
 
 		// From the customtables_item table
-		$query->from($db->quoteName($realtablename, 'a'));
+		$query->from($db->quoteName($this->ct->Table->realtablename, 'a'));
 		
 		
 		$wheres_and = [];
 		// Filter by published state
-		if($published_field_found)
+		if($this->ct->Table->published_field_found)
 		{
 			$published = $this->getState('filter.published');
 			
@@ -153,10 +138,9 @@ class CustomtablesModelListofRecords extends JModelList
 		
 		if($search!='')
 		{
-			$esfields = Fields::getFields($this->tablename);
 			$wheres=[];
 		
-			foreach ($esfields as $esfield)
+			foreach ($this->ct->Table->fields as $esfield)
 			{	
 				if($esfield['type'] == 'string')
 				{

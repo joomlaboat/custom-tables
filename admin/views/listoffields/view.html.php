@@ -32,6 +32,7 @@ class CustomtablesViewListoffields extends JViewLegacy
 	 * Listoffields view display method
 	 * @return void
 	 */
+	var $ct;
 
 	var $tableid;
 	var $tablename;
@@ -60,6 +61,9 @@ class CustomtablesViewListoffields extends JViewLegacy
 			$this->filterForm    = $this->get('FilterForm');
 			$this->activeFilters = $this->get('ActiveFilters');
 		}
+		
+		$model = $this->getModel();
+		$this->ct = $model->ct;
 
 		$this->items = $this->get('Items');
 		$this->pagination = $this->get('Pagination');
@@ -122,9 +126,7 @@ class CustomtablesViewListoffields extends JViewLegacy
 			throw new Exception(implode("\n", $errors), 500);
 		}
 
-
-		$LangMisc	= new ESLanguages;
-		$this->languages=$LangMisc->getLanguageList();
+		$this->languages=$this->ct->Languages->LanguageList;
 
 		// Display the template
 		if($this->version < 4)

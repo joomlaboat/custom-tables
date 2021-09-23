@@ -15,10 +15,8 @@ class CustomTablesKeywordSearch
 {
 	var $ct;
 	
-		var $establename;
-		var $esfields;
-		var $groupby;
-		var $esordering;
+	var $groupby;
+	var $esordering;
 		
 	function __construct(&$ct)
 	{
@@ -136,7 +134,7 @@ class CustomTablesKeywordSearch
 										$esr_table='#__customtables_table_'.$typeparamsarray[0];
 										$esr_field=$typeparamsarray[1];
 
-										$inner='INNER JOIN '.$esr_table.' ON instr(#__customtables_table_'.$this->establename.'.es_'.$fieldname.',concat(",",'.$esr_table.'.id,","))';
+										$inner='INNER JOIN '.$esr_table.' ON instr(#__customtables_table_'.$this->ct->Table->tablename.'.es_'.$fieldname.',concat(",",'.$esr_table.'.id,","))';
 										$where=' '.$esr_table.'.es_'.$esr_field.' REGEXP "'.$regexpression.'"';
 
 								break;
@@ -149,7 +147,7 @@ class CustomTablesKeywordSearch
 
 										$esr_table='#__customtables_options';
 
-										$inner='INNER JOIN '.$esr_table.' ON instr('.$esr_table.'.familytreestr, #__customtables_table_'.$this->establename.'.es_'.$fieldname.')';
+										$inner='INNER JOIN '.$esr_table.' ON instr('.$esr_table.'.familytreestr, #__customtables_table_'.$this->ct->Table->tablename.'.es_'.$fieldname.')';
 
 										$where=' '.$esr_table.'.title'.$this->ct->Languages->Postfix.' REGEXP "'.$regexpression.'"';
 
@@ -157,14 +155,14 @@ class CustomTablesKeywordSearch
 
 								case 'user':
 
-										$inner='INNER JOIN #__users ON #__users.id=#__customtables_table_'.$this->establename.'.es_'.$fieldname;
+										$inner='INNER JOIN #__users ON #__users.id=#__customtables_table_'.$this->ct->Table->tablename.'.es_'.$fieldname;
 										$where=' #__users.name REGEXP "'.$regexpression.'"';
 
 								break;
 
 								case 'userid':
 
-										$inner='INNER JOIN #__users ON #__users.id=#__customtables_table_'.$this->establename.'.es_'.$fieldname;
+										$inner='INNER JOIN #__users ON #__users.id=#__customtables_table_'.$this->ct->Table->tablename.'.es_'.$fieldname;
 										$where=' #__users.name REGEXP "'.$regexpression.'"';
 
 								break;
@@ -200,7 +198,7 @@ class CustomTablesKeywordSearch
 
 
 
-						$fieldrow=ESTables::FieldRowByName($f,$this->esfields);//2011.6.1
+						$fieldrow=ESTables::FieldRowByName($f,$this->ct->Table->fields);//2011.6.1
 
 
 						//exact match
@@ -298,7 +296,7 @@ class CustomTablesKeywordSearch
 
 						$where='';
 						$f=trim($mod_field);
-						$fieldrow=ESTables::FieldRowByName($f,$this->esfields);//2011.6.1
+						$fieldrow=ESTables::FieldRowByName($f,$this->ct->Table->fields);//2011.6.1
 
 						//any
 						$keyword_arr=explode(' ',$keywords);
@@ -385,7 +383,7 @@ class CustomTablesKeywordSearch
 												$esr_table='#__customtables_table_'.$typeparamsarray[0];
 												$esr_field=$typeparamsarray[1];
 
-												$inner='INNER JOIN '.$esr_table.' ON instr(#__customtables_table_'.$this->establename.'.es_'.$fieldrow['fieldname'].',concat(",",'.$esr_table.'.id,","))';
+												$inner='INNER JOIN '.$esr_table.' ON instr(#__customtables_table_'.$this->ct->Table->tablename.'.es_'.$fieldrow['fieldname'].',concat(",",'.$esr_table.'.id,","))';
 												if(!in_array($inner,$inner_arr))
 														$inner_arr[]=$inner;
 
@@ -412,7 +410,7 @@ class CustomTablesKeywordSearch
 												$esr_table='#__customtables_table_'.$typeparamsarray[0];
 												$esr_field=$typeparamsarray[1];
 
-												$inner='INNER JOIN '.$esr_table.' ON instr(#__customtables_table_'.$this->establename.'.es_'.$fieldrow['fieldname'].',concat(",",'.$esr_table.'.id,","))';
+												$inner='INNER JOIN '.$esr_table.' ON instr(#__customtables_table_'.$this->ct->Table->tablename.'.es_'.$fieldrow['fieldname'].',concat(",",'.$esr_table.'.id,","))';
 												if(!in_array($inner,$inner_arr))
 														$inner_arr[]=$inner;
 
@@ -425,7 +423,7 @@ class CustomTablesKeywordSearch
 										case 'customtables':
 
 
-												$inner='INNER JOIN #__customtables_options ON instr(#__customtables_options.familytreestr, #__customtables_table_'.$this->establename.'.es_'.$fieldrow['fieldname'].')';
+												$inner='INNER JOIN #__customtables_options ON instr(#__customtables_options.familytreestr, #__customtables_table_'.$this->ct->Table->tablename.'.es_'.$fieldrow['fieldname'].')';
 												if(!in_array($inner,$inner_arr))
 														$inner_arr[]=$inner;
 
@@ -436,7 +434,7 @@ class CustomTablesKeywordSearch
 
 										case 'user':
 
-												$inner='INNER JOIN #__users ON #__users.id=#__customtables_table_'.$this->establename.'.es_'.$fieldrow['fieldname'];
+												$inner='INNER JOIN #__users ON #__users.id=#__customtables_table_'.$this->ct->Table->tablename.'.es_'.$fieldrow['fieldname'];
 												if(!in_array($inner,$inner_arr))
 														$inner_arr[]=$inner;
 
@@ -449,7 +447,7 @@ class CustomTablesKeywordSearch
 
 										case 'userid':
 
-												$inner='INNER JOIN #__users ON #__users.id=#__customtables_table_'.$this->establename.'.es_'.$fieldrow['fieldname'];
+												$inner='INNER JOIN #__users ON #__users.id=#__customtables_table_'.$this->ct->Table->tablename.'.es_'.$fieldrow['fieldname'];
 												if(!in_array($inner,$inner_arr))
 														$inner_arr[]=$inner;
 
@@ -482,7 +480,7 @@ class CustomTablesKeywordSearch
 
 				$db = JFactory::getDBO();
 				$inner=array($inner_str);
-				$tablename='#__customtables_table_'.$this->establename;
+				$tablename='#__customtables_table_'.$this->ct->Table->tablename;
 				$query = 'SELECT *, '.$tablename.'.id AS listing_id, '.$tablename.'.published As  listing_published ';
 
 				$ordering=array();

@@ -48,23 +48,6 @@ trait render_json
 		}
 
         $result=json_encode($records);
-/*
-        //if($Model->clean)
-        //{
-        $filename = JoomlaBasicMisc::makeNewFileName($Model->params->get('page_title'),'json');
-
-        if (ob_get_contents())
-          	ob_end_clean();
-
-        header('Content-Disposition: attachment; filename="'.$filename.'"');
-        header('Content-Type: application/json; charset=utf-8');
-        header("Pragma: no-cache");
-        header("Expires: 0");
-
-        echo $result;
-        die ;//clean exit
-        //}
-*/
         return $result;
     }
 

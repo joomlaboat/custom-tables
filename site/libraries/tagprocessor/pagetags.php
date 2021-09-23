@@ -45,9 +45,9 @@ class tagProcessor_Page
 
 		foreach($fList as $fItem)
 		{
-            if($Model->frmt!='csv')
+            if($Model->ct->Env->frmt!='csv')
             {
-    			$link=JoomlaBasicMisc::deleteURLQueryOption($Model->current_url, 'frmt');
+    			$link=JoomlaBasicMisc::deleteURLQueryOption($Model->ct->Env->current_url, 'frmt');
     			if(strpos($link,'?')===false)
     				$link.='?';
     			else
@@ -172,16 +172,16 @@ class tagProcessor_Page
 
 		foreach($fList as $fItem)
 		{
-            if($isEditable and $Model->print==0)
+            if($isEditable and $Model->ct->Env->print==0)
             {
                 $opt=explode(',',$options[$i]);
 
                 if((int)$opt[0]>0)
-                	$link='/index.php?option=com_customtables&view=edititem&returnto='.$Model->encoded_current_url.'&Itemid='.$opt[0];
+                	$link='/index.php?option=com_customtables&view=edititem&returnto='.$Model->ct->Env->encoded_current_url.'&Itemid='.$opt[0];
                 if($opt[0]!='')
-                	$link='/index.php/'.$opt[0].'?returnto='.$Model->encoded_current_url;
+                	$link='/index.php/'.$opt[0].'?returnto='.$Model->ct->Env->encoded_current_url;
                 else
-                	$link='/index.php?option=com_customtables&view=edititem&returnto='.$Model->encoded_current_url.'&Itemid='.$Model->Itemid;
+                	$link='/index.php?option=com_customtables&view=edititem&returnto='.$Model->ct->Env->encoded_current_url.'&Itemid='.$Model->Itemid;
 
     			if($jinput->getCmd('tmpl','')!='')
     				$link.='&tmpl='.$jinput->get('tmpl','','CMD');
@@ -220,7 +220,7 @@ JHtml::_('behavior.formvalidator');
                         UploadFileCount=1;
 
                     	var urlstr="/index.php?option=com_customtables&view=fileuploader&tmpl=component&'
-                        .'tableid='.$Model->estableid.'&'
+                        .'tableid='.$Model->ct->Table->tableid.'&'
                         .'task=importcsv&'
                         .$objectname.'_fileid='.$fileid.'&Itemid='.$Itemid.'&fieldname='.$objectname.'";
                         
@@ -236,7 +236,7 @@ JHtml::_('behavior.formvalidator');
                     $vlu=$result;
                 }
                 else
-        			$vlu='<a href="'.JURI::root(true).$link.'" id="ctToolBarAddNew'.$Model->estableid.'" class="toolbarIcons"><img src="'.JURI::root(true).'/components/com_customtables/images/new.png" alt="Add New" title="Add New" /></a>';
+        			$vlu='<a href="'.JURI::root(true).$link.'" id="ctToolBarAddNew'.$Model->ct->Table->tableid.'" class="toolbarIcons"><img src="'.JURI::root(true).'/components/com_customtables/images/new.png" alt="Add New" title="Add New" /></a>';
             }
             else
                 $vlu='';
@@ -260,7 +260,7 @@ JHtml::_('behavior.formvalidator');
 		{
 			$minRecords=0;//(int)$options[$i];
 			$vlu='';
-            if($Model->print==0)
+            if($Model->ct->Env->print==0)
             {
                 $a=tagProcessor_Page::get_Pagination($Model,$minRecords,$options[$i]);
                 $vlu=$a;
@@ -388,7 +388,7 @@ JHtml::_('behavior.formvalidator');
 		{
 			$vlu='';
 
-            if($Model->print==0)
+            if($Model->ct->Env->print==0)
             {
                 if($options[$i]=='')
                 	$modes=$available_modes;
@@ -399,10 +399,10 @@ JHtml::_('behavior.formvalidator');
                 {
                 	if(in_array($mode,$available_modes))
                 	{
-                		$rid='esToolBar_'.$mode.'_box_'.$Model->estableid;
+                		$rid='esToolBar_'.$mode.'_box_'.$Model->ct->Table->tableid;
                 		$alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_'.strtoupper($mode).'_SELECTED' );
                    		$img='<img src="'.JURI::root(true).'/components/com_customtables/images/'.$mode.'.png" border="0" alt="'.$alt.'" title="'.$alt.'" />';
-                		$link='javascript:esToolBarDO("'.$mode.'", '.$Model->estableid.')';
+                		$link='javascript:esToolBarDO("'.$mode.'", '.$Model->ct->Table->tableid.')';
                 		$vlu.='<div id="'.$rid.'" class="toolbarIcons"><a href=\''.$link.'\'>'.$img.'</a></div>';
                 	}
                 }
@@ -428,8 +428,8 @@ JHtml::_('behavior.formvalidator');
 
 		foreach($fList as $fItem)
 		{
-            if($Model->print==0 and $Model->frmt!='csv')
-                $vlu='<input type="checkbox" id="esCheckboxAll'.$Model->estableid.'" onChange="esCheckboxAllclicked('.$Model->estableid.')" />';
+            if($Model->ct->Env->print==0 and $Model->ct->Env->frmt!='csv')
+                $vlu='<input type="checkbox" id="esCheckboxAll'.$Model->ct->Table->tableid.'" onChange="esCheckboxAllclicked('.$Model->ct->Table->tableid.')" />';
             else
                 $vlu='';
 
@@ -447,7 +447,7 @@ JHtml::_('behavior.formvalidator');
 				$fieldtitles[] = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ID');
 			else						
 			{
-				foreach($Model->esfields as $fld)
+				foreach($Model->ct->Table->fields as $fld)
 				{
 					if($fld['fieldname']==$fieldname)
 					{
@@ -469,8 +469,6 @@ JHtml::_('behavior.formvalidator');
 		{
 			require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'essearchinputbox.php');
 			$ESSIB=new ESSerachInputBox;
-
-			$ESSIB->establename=$Model->establename;
 			$ESSIB->modulename='esSearchBox';
 		}
 		
@@ -486,7 +484,7 @@ JHtml::_('behavior.formvalidator');
 
             $vlu='';
 
-			if($o!='' and $Model->print==0 and $Model->frmt!='csv')
+			if($o!='' and $Model->ct->Env->print==0 and $Model->ct->Env->frmt!='csv')
 			{
 				if($o!='')
 				{
@@ -505,7 +503,7 @@ JHtml::_('behavior.formvalidator');
 						else
 							$class.=' btn button-apply btn-primary';
 
-						if($Model->print==1)
+						if($Model->ct->Env->print==1)
 							$vlu='';
 						else
 							$vlu= '<input type=\'button\' value=\''.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SEARCH' ).'\' style=\''.$style.'\' class=\''.$class.'\' onClick=\'es_SearchBoxDo()\' />';
@@ -526,7 +524,7 @@ JHtml::_('behavior.formvalidator');
 							else
 							{
 								//Check if field name is exist in selected table
-								$fld = Fields::FieldRowByName($field_name_string,$Model->esfields);
+								$fld = Fields::FieldRowByName($field_name_string,$Model->ct->Table->fields);
 								if(count($fld)>0)
 									$list_of_fields[]=$field_name_string;
 							}
@@ -553,7 +551,7 @@ JHtml::_('behavior.formvalidator');
 								else
 								{
 									//Date search no implemented yet. It will be range search
-									$fld = Fields::FieldRowByName($field_name_string,$Model->esfields);
+									$fld = Fields::FieldRowByName($field_name_string,$Model->ct->Table->fields);
 									if($fld['type']=='date')
 									{
 										$fld['typeparams']='date';
@@ -630,7 +628,7 @@ JHtml::_('behavior.formvalidator');
 			$i++;
 		}
 		
-		if($count>0 and $Model->print==0 and $Model->frmt!='csv')
+		if($count>0 and $Model->ct->Env->print==0 and $Model->ct->Env->frmt!='csv')
         {
             $field2search=tagProcessor_Page::prepareSearchElements($Model,$pagelayout,$fields);
             $pagelayout=str_replace('&&&&fieldlist&&&&',implode(',',$field2search),$pagelayout);
@@ -642,7 +640,7 @@ JHtml::_('behavior.formvalidator');
     
     static protected function prepareSearchElements(&$Model,&$pagelayout,$fields)
     {
-        $url=JoomlaBasicMisc::deleteURLQueryOption($Model->current_url, 'where');
+        $url=JoomlaBasicMisc::deleteURLQueryOption($Model->ct->Env->current_url, 'where');
 
 		$fieldlist=array();
 
@@ -660,7 +658,7 @@ JHtml::_('behavior.formvalidator');
     					if(count($exparams)>1)
     					{
     						$esroot=$exparams[0];
-    						$fieldlist[]='es_search_box_combotree_'.$Model->establename.'_'.$fld['fieldname'].'_1:'.$fld['fieldname'].':'.$esroot;
+    						$fieldlist[]='es_search_box_combotree_'.$Model->ct->Table->tablename.'_'.$fld['fieldname'].'_1:'.$fld['fieldname'].':'.$esroot;
     					}
     				}
     				else
@@ -695,7 +693,7 @@ JHtml::_('behavior.formvalidator');
         
         if(count($fList)>0)
         {
-            if($Model->print==1 or $Model->frmt=='csv')
+            if($Model->ct->Env->print==1 or $Model->ct->Env->frmt=='csv')
             {
                 foreach($fList as $fItem)
                     $pagelayout=str_replace($fItem,'',$pagelayout);
@@ -747,7 +745,7 @@ JHtml::_('behavior.formvalidator');
 				return $Model->TotalRows;
 			else
 			{
-				if($Model->frmt=='csv')
+				if($Model->ct->Env->frmt=='csv')
 					return '';
 				else
 					return '<span class="ctCatalogRecordCount">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FOUND' ).': '.$Model->TotalRows.' '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RESULT_S' ).'</span>';
@@ -767,7 +765,7 @@ JHtml::_('behavior.formvalidator');
 		{
 			$vlu='';
 			
-			if($Model->frmt!='csv')
+			if($Model->ct->Env->frmt!='csv')
 				$vlu=$Model->TotalRows;	
 	
 			foreach($fList as $fItem)
@@ -785,7 +783,7 @@ JHtml::_('behavior.formvalidator');
 
 		foreach($fList as $fItem)
 		{
-			$link=$Model->current_url.(strpos($Model->current_url,'?')===false ? '?' : '&').'tmpl=component&print=1';
+			$link=$Model->ct->Env->current_url.(strpos($Model->ct->Env->current_url,'?')===false ? '?' : '&').'tmpl=component&print=1';
 
 
 			if(JFactory::getApplication()->input->get('moduleid',0,'INT')!=0)
@@ -803,7 +801,7 @@ JHtml::_('behavior.formvalidator');
 			}
 
 
-			if($Model->print==1)
+			if($Model->ct->Env->print==1)
 				$vlu='<p><a href="#" onclick="window.print();return false;"><img src="'.JURI::root(true).'/components/com_customtables/images/printButton.png" alt="'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PRINT').'"  /></a></p>	';
 			else
             {

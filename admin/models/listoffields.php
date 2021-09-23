@@ -13,11 +13,15 @@ defined('_JEXEC') or die('Restricted access');
 // import the Joomla modellist library
 jimport('joomla.application.component.modellist');
 
+use CustomTables\CT;
+
 /**
  * Listoffields Model
  */
 class CustomtablesModelListoffields extends JModelList
 {
+	var $ct;
+	
 	var $tableid;
 	
 	public function __construct($config = array())
@@ -36,6 +40,8 @@ class CustomtablesModelListoffields extends JModelList
 		}
 
 		parent::__construct($config);
+		
+		$this->ct = new CT;
 	}
 	
 	/**

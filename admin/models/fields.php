@@ -12,6 +12,7 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\CT;
 use CustomTables\Fields;
 
 use Joomla\Registry\Registry;
@@ -24,6 +25,15 @@ jimport('joomla.application.component.modeladmin');
  */
 class CustomtablesModelFields extends JModelAdmin
 {
+	var $ct;
+	
+	public function __construct($config = array())
+	{
+		parent::__construct($config);
+		
+		$this->ct = new CT;
+	}
+	
 	/**
 	 * @var        string    The prefix to use with controller messages.
 	 * @since   1.6
@@ -370,7 +380,7 @@ class CustomtablesModelFields extends JModelAdmin
 		foreach($pks as $fieldid)
 		{
 			$data=Fields::getFieldRow($fieldid);
-			Fields::deleteESField_byID($fieldid);
+			Fields::deleteField_byID($ct,$fieldid);
 		}
 
 		return true;
@@ -796,18 +806,11 @@ class CustomtablesModelFields extends JModelAdmin
 
 		$data['fieldname']=$esfieldname;
 
-
-		//Add title translation fields in needed
-		$LangMisc	= new ESLanguages;
-		$languages=$LangMisc->getLanguageList();
-		
-		
-
 		//Add language fields to the fields table if necessary
 		
 		$morethanonelang=false;
 		$fields=Fields::getListOfExistingFields('#__customtables_fields',false);
-		foreach($languages as $lang)
+		foreach($this->ct->Languages->LanguageList as $lang)
 		{
 				$id_title='fieldtitle';
 				$id_description='description';
@@ -961,7 +964,7 @@ class CustomtablesModelFields extends JModelAdmin
 		{
 			//Add Field
 			
-			Fields::addESField($realtablename,$realfieldname,$new_type,$PureFieldType,$fieldtitle);
+			Fields::addField($ct,$realtablename,$realfieldname,$new_type,$PureFieldType,$fieldtitle);
 		}
 
 

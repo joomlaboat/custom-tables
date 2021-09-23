@@ -38,10 +38,9 @@ class CustomTablesViewEditItem extends JViewLegacy {
     		return false;
         }
 
-        if(!isset($this->Model->esfields) or !is_array($this->Model->esfields))
+        if(!isset($this->Model->ct->Table->fields) or !is_array($this->Model->ct->Table->fields))
             return false;
 
-		$this->esfields = $this->Model->esfields;
 		$this->row = $this->Model->row;
 
 		$WebsiteRoot=JURI::root(true);
@@ -55,7 +54,7 @@ class CustomTablesViewEditItem extends JViewLegacy {
 		//Non need because submit button (settask function) does it.
 		$this->formAttribute='';// onsubmit="return checkRequiredFields(event);"';
 		
-		if($this->Model->frmt == 'json')
+		if($this->Model->ct->Env->frmt == 'json')
 			require_once('tmpl'.DIRECTORY_SEPARATOR.'json.php');
 		else
 			parent::display($tpl);

@@ -17,7 +17,6 @@ class ESSearchBarClass
 	
 	var $isLoader;
 
-	var $establename;
 	var $orientation;
 	var $moduleid;
 	var $modulename;
@@ -48,29 +47,19 @@ class ESSearchBarClass
 		$this->isLoader=$isLoader;
 
 		//get establename
-		if($jinput->get('establename','','CMD'))
-			$this->establename=$jinput->get('establename','','CMD');
-		else
-			$this->establename=strtolower(trim(preg_replace('/[^a-zA-Z]/', '', $params->get('establename'))));
-
-
 		$this->modulename='essearchbar_'.$this->moduleid;
 		
 		$this->ct = new CT;
-
-		$this->esTable= new ESTables;
-		$TableRow=$this->esTable->getTableRowByNameAssoc($this->establename);
-		$this->TableID=$TableRow['id'];
-		if($this->TableID==0)
-			die('incorrect table id');
-
+		$this->ct->getTable($this->params->get( 'establename' ), $this->params->get('useridfield'));
+		if($this->ct->Table->tablename=='')
+		{
+			echo 'Table not selected';
+			die ;
+		}
 
 		$this->esinputbox= new ESSerachInputBox;
 		$this->esinputbox->Model = $this;
-		$this->esinputbox->establename=$this->establename;
 		$this->esinputbox->modulename=$this->modulename;
-
-		$this->Fields=Fields::getFields($this->TableID);
 
 		//get field list
 		if($jinput->getString('fieldlist'))
@@ -188,7 +177,7 @@ class ESSearchBarClass
 			i=1;
 			do{
 
-				vo=document.getElementById("combotree_'.$this->establename.'_'.$fld['fieldname'].'_"+i);
+				vo=document.getElementById("combotree_'.$this->ct->Table->tablename.'_'.$fld['fieldname'].'_"+i);
 				if(vo == null)
 					break;
 
@@ -775,7 +764,7 @@ class ESSearchBarClass
 			if(strpos($fieldname,'_r_')===false)
 			{
 				//normal fields
-				foreach($this->Fields  as $fld)
+				foreach($this->ct->Table->fields  as $fld)
 				{
 
 					if($fld['fieldname']==$fieldname)
@@ -797,7 +786,7 @@ class ESSearchBarClass
 
 						$cleanfieldlist[]=$fld;
 					}
-				}//foreach($this->Fields  as $fld)
+				}
 
 			}
 			else
@@ -814,7 +803,7 @@ class ESSearchBarClass
 					$currentfld=array();
 
 					$fFld=$fRange[0];
-					foreach($this->Fields as $fld)
+					foreach($this->ct->Table->fields as $fld)
 					{
 						if($fld['fieldname']==$fFld)
 						{
@@ -845,7 +834,7 @@ class ESSearchBarClass
 						$currentfld=array();
 						$fFld=$fRange[1];
 
-						foreach($this->Fields as $fld)
+						foreach($this->ct->Table->ields as $fld)
 						{
 							if($fld['fieldname']==$fFld and ($fld['type']=='int' or $fld['type']=='float' or $fld['type']=='date'))
 							{

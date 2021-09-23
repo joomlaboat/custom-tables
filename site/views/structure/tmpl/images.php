@@ -86,7 +86,7 @@ use CustomTables\DataTypes\Tree;
 								else
 										$aLink.='Itemid='.JFactory::getApplication()->input->getInt('Itemid',  0).'&';
 								
-								$aLink.='&establename='.$this->Model->establename;
+								$aLink.='&establename='.$this->Model->ct->Table->tablename;
 								$aLink.='&filter='.$this->Model->esfieldname.urlencode('=').$this->Model->optionname;
 								
 								if($row['optionname']!='')

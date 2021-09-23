@@ -24,8 +24,6 @@ $document->addCustomTag('<script src="'.JURI::root(true).'/components/com_custom
 
 class ESInputBox
 {
-	var $establename;
-	var $estableid;
 	var $width=0;
 	var $requiredlabel='';
 	
@@ -37,7 +35,7 @@ class ESInputBox
 		
 		$realFieldName=$esfield['realfieldname'];
 
-		if($this->Model->frmt == 'json')
+		if($this->Model->ct->Env->frmt == 'json')
 		{
 			//This is the field options for JSON output
 			
@@ -108,7 +106,7 @@ class ESInputBox
 						if($esfield['type']=='alias')
 						{
 							$listing_id=isset($row['listing_id']) ? $row['listing_id'] : 0;
-							$value=CTValue::prepare_alias_type_value($listing_id,$value,$Model->realtablename,$esfield['realfieldname'],$Model->tablerow['realidfieldname']);
+							$value=CTValue::prepare_alias_type_value($listing_id,$value,$Model->ct->Table->realtablename,$esfield['realfieldname'],$Model->ct->Table->realidfieldname);
 						}
 			        }
 				}
@@ -552,7 +550,7 @@ class ESInputBox
 													  $prefix,
 													  $parentid,$optionname,
 													  $this->Model->ct->Languages->Postfix,
-													  $this->establename,
+													  $this->Model->ct->Table->tablename,
 													  $esfield['fieldname'],
 													  $fValue,
 													'',
@@ -578,7 +576,7 @@ class ESInputBox
 										$result.='<div style="float:left;">';
 										$result.=JHTML::_('ESComboTree.render',
 														  $prefix,
-														  $this->establename,
+														  $this->Model->ct->Table->tablename,
 														  $esfield['fieldname'],
 														  $optionname,
 														  $this->Model->ct->Languages->Postfix,
@@ -1017,7 +1015,7 @@ class ESInputBox
 		{
 			$db = JFactory::getDBO();
 
-			$query='SELECT '.$esfield['realfieldname'].' FROM '.$this->Model->realtablename.' GROUP BY '.$esfield['realfieldname'].' ORDER BY '.$esfield['realfieldname'];
+			$query='SELECT '.$esfield['realfieldname'].' FROM '.$this->Model->ct->Table->realtablename.' GROUP BY '.$esfield['realfieldname'].' ORDER BY '.$esfield['realfieldname'];
 			$db->setQuery($query);
 			$records=$db->loadColumn();
 			
@@ -1080,7 +1078,7 @@ class ESInputBox
 	{
 		$htmlout='';
 
-		$getGalleryRows=CT_FieldTypeTag_imagegallery::getGalleryRows($this->establename,$fieldname,$listing_id);
+		$getGalleryRows=CT_FieldTypeTag_imagegallery::getGalleryRows($this->Model->ct->Table->tablename,$fieldname,$listing_id);
 
 		$htmlout.='
 		';
@@ -1098,7 +1096,7 @@ class ESInputBox
 		$imagesrclist=array();
 		$imagetaglist=array();
 
-		if(CT_FieldTypeTag_imagegallery::getImageGallerySRC($getGalleryRows, $prefix,$listing_id,$fieldname,$TypeParams,$imagesrclist,$imagetaglist,$this->estableid))
+		if(CT_FieldTypeTag_imagegallery::getImageGallerySRC($getGalleryRows, $prefix,$listing_id,$fieldname,$TypeParams,$imagesrclist,$imagetaglist,$this->Model->ct->Table->tableid))
 		{
 			$imagesrclist_arr=explode(';',$imagesrclist);
 
@@ -1139,7 +1137,7 @@ class ESInputBox
 		$htmlout='';
 
 
-		$FileBoxRows=CT_FieldTypeTag_filebox::getFileBoxRows($this->establename,$fieldname,$listing_id);
+		$FileBoxRows=CT_FieldTypeTag_filebox::getFileBoxRows($this->Model->ct->Table->tablename,$fieldname,$listing_id);
 
 		if($TypeParams=='')
 			$filefolder='images/esfilebox';

@@ -769,7 +769,7 @@ class JoomlaBasicMisc
 		}
 		else
 		{
-			$fieldrow=Fields::getFieldAsocByName_($field,$model->esfields);
+			$fieldrow=Fields::getFieldAsocByName_($field,$model->ct->Table->fields);
 			if(count($fieldrow)>0)
 			{
 				if(isset($recursivefieldslist))

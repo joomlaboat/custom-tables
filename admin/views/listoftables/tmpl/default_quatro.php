@@ -41,7 +41,7 @@ $loggeduser = Factory::getUser();
 				<?php else : ?>
 				
 					<?php
-						$result = IntegrityChecks::check();
+						$result = IntegrityChecks::check($this->ct);
 	
 						if(count($result)>0)
 							Factory::getApplication()->enqueueMessage('<ol><li>'.implode('</li><li>',$result).'</li></ol>','notice');

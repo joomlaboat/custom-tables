@@ -16,15 +16,15 @@ function CTLoader($inclide_utilities = false)
 	
 	$path_helpers = $path . DIRECTORY_SEPARATOR . 'helpers' . DIRECTORY_SEPARATOR;
 	
-	require_once($path_helpers.'customtablesmisc.php');
-	require_once($path_helpers.'fields.php');
+	//require_once($path_helpers.'customtablesmisc.php');
+	//require_once($path_helpers.'fields.php');
 	require_once($path_helpers.'imagemethods.php');
-	require_once($path_helpers.'languages.php');
+	//require_once($path_helpers.'languages.php');
 	require_once($path_helpers.'misc.php');
 	require_once($path_helpers.'tables.php');
 	require_once($path_helpers.'compareimages.php');
 	require_once($path_helpers.'findsimilarimage.php');
-	require_once($path_helpers.'layouts.php');
+	//require_once($path_helpers.'layouts.php');
 	require_once($path_helpers.'types.php');
 	
 	if($inclide_utilities)
@@ -36,6 +36,7 @@ function CTLoader($inclide_utilities = false)
 	
 	$path_datatypes = $path . DIRECTORY_SEPARATOR . 'ct' . DIRECTORY_SEPARATOR;
 	require_once($path_datatypes.'ct.php');
+	require_once($path_datatypes.'environment.php');
 	
 	$path_datatypes = $path . DIRECTORY_SEPARATOR . 'datatypes' . DIRECTORY_SEPARATOR;
 	require_once($path_datatypes.'filemethods.php');
@@ -43,6 +44,9 @@ function CTLoader($inclide_utilities = false)
 	
 	$path_datatypes = $path . DIRECTORY_SEPARATOR . 'layouts' . DIRECTORY_SEPARATOR;
 	require_once($path_datatypes.'layouts.php');
+	
+	$path_datatypes = $path . DIRECTORY_SEPARATOR . 'table' . DIRECTORY_SEPARATOR;
+	require_once($path_datatypes.'table.php');
 	
 	$path_datatypes = $path . DIRECTORY_SEPARATOR . 'tables' . DIRECTORY_SEPARATOR;
 	require_once($path_datatypes.'tables.php');

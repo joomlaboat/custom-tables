@@ -24,7 +24,7 @@ class CustomTablesViewCatalog extends JViewLegacy
 
 		$this->SearchResult = $this->Model->getSearchResult();
 
-		if(!isset($this->Model->esfields))
+		if(!isset($this->Model->ct->Table->fields))
 				return false;
 
 		//Save view log
@@ -35,7 +35,7 @@ class CustomTablesViewCatalog extends JViewLegacy
 				$this->SaveViewLogForRecord($rec,$allowedfields);
 		}
 
-		if($this->Model->frmt == 'json')
+		if($this->Model->ct->Env->frmt == 'json')
 			require_once('tmpl'.DIRECTORY_SEPARATOR.'json.php');
 		else
 			parent::display($tpl);
@@ -45,7 +45,7 @@ class CustomTablesViewCatalog extends JViewLegacy
 	{
 		$updatefields=array();
 
-		foreach($this->Model->esfields as $mFld)
+		foreach($this->Model->ct->Table->fields as $mFld)
 		{
 				if(in_array($mFld['fieldname'],$allowedfields))
 				{
@@ -60,7 +60,7 @@ class CustomTablesViewCatalog extends JViewLegacy
 		if(count($updatefields)>0)
 		{
 			$db = JFactory::getDBO();
-			$query= 'UPDATE '.$this->Model->realtablename.' SET '.implode(', ', $updatefields).' WHERE id='.$rec['listing_id'];
+			$query= 'UPDATE '.$this->Model->ct->Table->realtablename.' SET '.implode(', ', $updatefields).' WHERE id='.$rec['listing_id'];
 			$db->setQuery($query);
 		    $db->execute();
 		}
@@ -75,7 +75,7 @@ class CustomTablesViewCatalog extends JViewLegacy
 
 		$allowedfields=array();
 
-		foreach($this->Model->esfields as $mFld)
+		foreach($this->Model->ct->Table->fields as $mFld)
 		{
 				if($mFld['type']=='lastviewtime' or $mFld['type']=='viewcount' or $mFld['type']=='phponview')
 				{
@@ -102,11 +102,8 @@ class CustomTablesViewCatalog extends JViewLegacy
 
 						}//if($usergroup!='')
 				}
-		}//foreach($this->Model->esfields as $mFld)
+		}
 
 		return $allowedfields;
 	}
-
-
 }
-
