@@ -11,6 +11,8 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\DataTypes\Tree;
+
 require_once('render_html.php');
 require_once('render_xlsx.php');
 require_once('render_csv.php');
@@ -100,7 +102,7 @@ class tagProcessor_Catalog
 						if($lastGroup!=$row[$Model->groupby] and $lastGroup!='')
 						{
 								if($FieldRow['type']=='customtables')
-									$GroupTitle=implode(',',$Model->es->getMultyValueTitles($lastGroup,$Model->langpostfix,1, ' - '));
+									$GroupTitle=implode(',',Tree::getMultyValueTitles($lastGroup,$Model->ct->Languages->Postfix,1, ' - '));
 								else
 								{
 									$Model->LayoutProc->number=$number;
@@ -123,7 +125,7 @@ class tagProcessor_Catalog
 				if(count($RealRows)>0)
 				{
 					if($FieldRow['type']=='customtables')
-						$GroupTitle=implode(',',$Model->es->getMultyValueTitles($lastGroup,$Model->langpostfix,1, ' - '));
+						$GroupTitle=implode(',',Tree::getMultyValueTitles($lastGroup,$Model->ct->Languages->Postfix,1, ' - '));
 					else
 					{
 						$galleryrows=array();

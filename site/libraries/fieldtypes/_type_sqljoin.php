@@ -13,10 +13,7 @@ class CT_FieldTypeTag_sqljoin
 {
     public static function resolveSQLJoinType(&$Model,$rowValue, $TypeParams, $option_list)
 	{
-
-		//records : table, [fieldname || layout:layoutname], [selector: multi || single], filter, |datalength|
         $typeparams=JoomlaBasicMisc::csv_explode(',',$TypeParams,'"',false);
-		//$typeparams=explode(',',$TypeParams);
 
 		if(count($typeparams)<1)
 			$result.='table not specified';
@@ -41,7 +38,7 @@ class CT_FieldTypeTag_sqljoin
 		//this is important because it has been selected some how.
 		$esr_filter='';
 
-		return JHTML::_('ESSQLJoinView.render',$rowValue,$esr_table,$esr_field,$esr_filter,$Model->langpostfix,'');
+		return JHTML::_('ESSQLJoinView.render',$rowValue,$esr_table,$esr_field,$esr_filter,$Model->ct->Languages->Postfix,'');
 
 	}
 }

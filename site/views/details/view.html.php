@@ -8,6 +8,9 @@
 
 // no direct access
 defined('_JEXEC') or die('Restricted access');
+
+use CustomTables\Layouts;
+
 jimport('joomla.html.pane');
 
 jimport( 'joomla.application.component.view'); //Important to get menu parameters
@@ -34,7 +37,7 @@ class CustomTablesViewDetails extends JViewLegacy {
 		if($this->params->get('esdetailslayout')!='')
 		{
 			$layouttype=0;
-			$layout_catalog=ESLayouts::getLayout($this->params->get('esdetailslayout'),$layouttype);
+			$layout_catalog=Layouts::getLayout($this->params->get('esdetailslayout'),$layouttype);
 				
 			if($layouttype==8)
 				$this->Model->frmt='xml';
@@ -71,10 +74,10 @@ class CustomTablesViewDetails extends JViewLegacy {
 			foreach($this->Model->esfields as $mFld)
 			{
 				if($mFld['type']=='imagegallery')
-					$this->imagegalleries[]=array($mFld['fieldname'],$mFld['fieldtitle'.$this->Model->langpostfix]);
+					$this->imagegalleries[]=array($mFld['fieldname'],$mFld['fieldtitle'.$this->Model->ct->Languages->Postfix]);
 
 				if($mFld['type']=='filebox')
-					$this->fileboxes[]=array($mFld['fieldname'],$mFld['fieldtitle'.$this->Model->langpostfix]);
+					$this->fileboxes[]=array($mFld['fieldname'],$mFld['fieldtitle'.$this->Model->ct->Languages->Postfix]);
 
 				if($mFld['type']=='userid')
 						$this->useridfieldname=$mFld['fieldname'];

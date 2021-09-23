@@ -13,12 +13,16 @@ defined('_JEXEC') or die( 'Restricted access' );
 
 class CustomTablesModelListOfOptions extends JModelList
 {
+	var $ct;
+	
 	var $_table = null;
 
 	var $_pagination = null;
 
 	function &getItems()
 	{
+		$this->ct = new CT;
+		
 		$mainframe = JFactory::getApplication();
 
 		static $items;
@@ -81,8 +85,7 @@ class CustomTablesModelListOfOptions extends JModelList
 			$WhereStr=' WHERE '.implode(' AND ',$where);//$WhereStr;
 		}
 
-		$LangMisc	= new ESLanguages;
-		$titlelist='title'.$LangMisc->getLangPostfix();
+		$titlelist='title'.$this->ct->Languages->Postfix;
 
 		$query = 'SELECT m.*, parentid AS parent_id, title AS title ' .
 				' FROM #__customtables_options AS m' .
@@ -344,17 +347,6 @@ class CustomTablesModelListOfOptions extends JModelList
 		return -1;
 	}
 
-	function getAllRootParents()
-	{
-		$db = JFactory::getDBO();
-
-		$query = "SELECT id, optionname FROM #__customtables_options WHERE parentid=0 ORDER BY optionname";
-		$db->setQuery( $query );
-		$available_rootparents = $db->loadObjectList();
-		CustomTablesMisc::array_insert($available_rootparents,array("id" => 0, "optionname" => JText::_( '-Select Parent' ), "parent_id" =>0),0);
-		return $available_rootparents;
-	}
-
 	function copyItem($cid)
 	{
 	    $item =& $this->getTable();
@@ -379,8 +371,6 @@ class CustomTablesModelListOfOptions extends JModelList
 
 	function RefreshFamily()
 	{
-		$es= new CustomTablesMisc;
-
 		$db = JFactory::getDBO();
 
 		$query="SELECT id, optionname FROM #__customtables_options";// WHERE parentid!=0";

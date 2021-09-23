@@ -16,6 +16,7 @@ defined('_JEXEC') or die('Restricted access');
 jimport('joomla.application.component.controlleradmin');
 
 use Joomla\Utilities\ArrayHelper;
+use CustomTables\ExportTables;
 
 /**
  * Listoftables Controller
@@ -39,7 +40,7 @@ class CustomtablesControllerListoftables extends JControllerAdmin
 		$cids	= JFactory::getApplication()->input->post->get('cid',array(),'array');
 		$cids = ArrayHelper::toInteger($cids);
 		
-		$download_link=$this->getModel()->export($cids);
+		$download_link=ExportTables::export($cids);
 		
 		if($download_link!='')
 		{

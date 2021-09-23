@@ -4,15 +4,15 @@
  * @package Custom Tables
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @copyright Copyright (C) 2018-2020. All Rights Reserved
+ * @copyright Copyright (C) 2018-2021. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
-// No direct access to this file access');
+ 
+namespace CustomTables;
+
 defined('_JEXEC') or die('Restricted access');
 
-$colspan=9+count($this->ct->Languages->LanguageList);
+class Categories
+{
 
-?>
-<tr>
-	<td colspan="<?php echo $colspan; ?>"><?php echo $this->pagination->getListFooter(); ?></td>
-</tr>
+}

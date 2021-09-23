@@ -8,18 +8,22 @@
 
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\DataTypes\Tree;
+
 JHTML::addIncludePath(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'helpers');
 
 class ESSerachInputBox
 {
-	var $es;
+	var $ct;
+	
 	var $establename;
 	var $modulename;
-	var $langpostfix;
 
 	function renderFieldBox(&$Modal,$prefix,$objname,&$esfield,$cssclass,$index,$where,$innerjoin,$wherelist,$default_Action,$field_title=null)
 	{
-		if(!isset($esfield['fieldtitle'.$this->langpostfix]))
+		$this->ct = $Modal->ct;
+		
+		if(!isset($esfield['fieldtitle'.$this->ct->Languages->Postfix]))
 		{
 			JFactory::getApplication()->enqueueMessage(
 				JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_LANGFIELDNOTFOUND' ), 'Error');
@@ -27,10 +31,10 @@ class ESSerachInputBox
 			return '';	
 		}
 
-		$place_holder=$esfield['fieldtitle'.$this->langpostfix];
+		$place_holder=$esfield['fieldtitle'.$this->ct->Languages->Postfix];
 	
 		if($field_title==null)
-			$field_title=$esfield['fieldtitle'.$this->langpostfix];
+			$field_title=$esfield['fieldtitle'.$this->ct->Languages->Postfix];
 
 		$result='';
 
@@ -196,8 +200,8 @@ class ESSerachInputBox
 								$value=implode(',',$value);
 
 							$typeparams=JoomlaBasicMisc::csv_explode(',',$esfield['typeparams'],'"',false);
-							$result.='<div class="'.$cssclass.'">'.JHTML::_('ESSQLJoin.render',$typeparams,$value,true,$this->langpostfix,$objname_,
-								$esfield['fieldtitle'].$this->langpostfix,
+							$result.='<div class="'.$cssclass.'">'.JHTML::_('ESSQLJoin.render',$typeparams,$value,true,$this->ct->Languages->Postfix,$objname_,
+								$esfield['fieldtitle'].$this->ct->Languages->Postfix,
 											  ' inputbox es_class_sqljoin', $onchange,true).'</div>';
 
 		return $result;
@@ -242,7 +246,7 @@ class ESSerachInputBox
 							$v[]='"'.$esfield['fieldname'].'"';
 							$v[]='"'.urlencode($where).'"';
 							$v[]='"'.urlencode($wherelist).'"';
-							$v[]='"'.$this->langpostfix.'"';
+							$v[]='"'.$this->ct->Languages->Postfix.'"';
 
 							if($default_Action!='' and $default_Action!=' ')
 								$onchange=$default_Action;
@@ -257,7 +261,7 @@ class ESSerachInputBox
 							$real_selector='single';
 
 							$result.=JHTML::_('ESRecords.render',$typeparams,$objname_, $value,$esr_table,$esr_field,$real_selector,$esr_filter,'',
- $cssclass, $onchange,$dynamic_filter,$sortbyfield,$this->langpostfix,$esfield['fieldtitle'].$this->langpostfix);
+ $cssclass, $onchange,$dynamic_filter,$sortbyfield,$this->ct->Languages->Postfix,$esfield['fieldtitle'].$this->ct->Languages->Postfix);
 
 							return $result;
 
@@ -269,7 +273,7 @@ class ESSerachInputBox
 		$typeparams=explode(',',$esfield['typeparams']);
 							$optionname=$typeparams[0];
 
-							$parentid=$this->es->getOptionIdFull($optionname);
+							$parentid=Tree::getOptionIdFull($optionname);
 
 							if($default_Action!='')
 							{
@@ -284,7 +288,7 @@ class ESSerachInputBox
 									.'\''.$esfield['fieldname'].'\','
 									.'\''.urlencode($where).'\','
 									.'\''.urlencode($wherelist).'\','
-									.'\''.$this->langpostfix.'\''
+									.'\''.$this->ct->Languages->Postfix.'\''
 									.')';
 								$requirementdepth=0;
 							}
@@ -294,7 +298,7 @@ class ESSerachInputBox
 											  $this->establename,
 											  $esfield['fieldname'],
 											  $optionname,
-											  $this->langpostfix,
+											  $this->ct->Languages->Postfix,
 											  $value,
 											  $cssclass,
 											  $onchange,
@@ -324,7 +328,7 @@ class ESSerachInputBox
 										.'\''.$esfield['fieldname'].'\','
 										.'\''.urlencode($where).'\','
 										.'\''.urlencode($wherelist).'\','
-										.'\''.$this->langpostfix.'\''
+										.'\''.$this->ct->Languages->Postfix.'\''
 										.')"';
 
 
@@ -351,7 +355,7 @@ class ESSerachInputBox
 										.'\''.$esfield['fieldname'].'\','
 										.'\''.urlencode($where).'\','
 										.'\''.urlencode($wherelist).'\','
-										.'\''.$this->langpostfix.'\''
+										.'\''.$this->ct->Languages->Postfix.'\''
 										.')"';
 									}
 
@@ -488,7 +492,7 @@ class ESSerachInputBox
 									.'\''.$esfield['fieldname'].'\','
 									.'\''.urlencode($where).'\','
 									.'\''.urlencode($wherelist).'\','
-									.'\''.$this->langpostfix.'\''
+									.'\''.$this->ct->Languages->Postfix.'\''
 									.')"';
 		}
 
@@ -520,7 +524,7 @@ class ESSerachInputBox
 									.'\''.$esfield['fieldname'].'\','
 									.'\''.urlencode($where).'\','
 									.'\''.urlencode($wherelist).'\','
-									.'\''.$this->langpostfix.'\''
+									.'\''.$this->ct->Languages->Postfix.'\''
 									.')"';
 		}
 

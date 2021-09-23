@@ -220,7 +220,7 @@ class CT_FieldTypeTag_file
 		else
 		{
 			$to_delete = $jinput->post->get($comesfieldname.'_delete', '','CMD' );
-			$ExistingFile=$es->isRecordExist($id,'id', $realfieldname, $realtablename);
+			$ExistingFile=Tree::isRecordExist($id,'id', $realfieldname, $realtablename);
 
             if($to_delete=='true')
 			{

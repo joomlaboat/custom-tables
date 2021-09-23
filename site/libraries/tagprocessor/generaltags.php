@@ -9,6 +9,10 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\Fields;
+
+use CustomTables\Layouts;
+
 class tagProcessor_General
 {
     public static function process(&$Model,&$pagelayout,&$row,$recordlist,$number)
@@ -26,7 +30,7 @@ class tagProcessor_General
         tagProcessor_General::WebsiteRoot($Model,$pagelayout);
         tagProcessor_General::getGoBackButton($Model,$pagelayout);
 
-		ESLayouts::processLayoutTag($pagelayout);
+		Layouts::processLayoutTag($pagelayout);
     }
 
     
@@ -102,11 +106,11 @@ class tagProcessor_General
             if($task=='id')
                 $vlu=$Model->tablerow['id'];
             elseif($task=='title')
-                $vlu=$Model->tablerow['tabletitle'.$Model->langpostfix];
+                $vlu=$Model->tablerow['tabletitle'.$Model->ct->Languages->Postfix];
             elseif($task=='description')
-                $vlu=$Model->tablerow['description'.$Model->langpostfix];
+                $vlu=$Model->tablerow['description'.$Model->ct->Languages->Postfix];
 			elseif($task=='fields')
-                $vlu=json_encode(ESFields::shortFieldObjects($Model->esfields));
+                $vlu=json_encode(Fields::shortFieldObjects($Model->esfields));
 
             if($extraopt=='box')
             {

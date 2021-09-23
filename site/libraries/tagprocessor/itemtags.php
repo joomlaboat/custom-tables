@@ -9,6 +9,8 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\Fields;
+
 class tagProcessor_Item
 {
     public static function process($advancedtagprocessor,&$Model,&$row,&$htmlresult,$aLink,$toolbar,$recordlist,$number,$add_label=false,$fieldNamePrefix='comes_')
@@ -263,7 +265,7 @@ class tagProcessor_Item
 	{
 		$titlefield=$mFld['realfieldname'];
 		if(strpos($mFld['type'],'multi')!==false)
-			$titlefield.=$Model->langpostfix;
+			$titlefield.=$Model->ct->Languages->Postfix;
 
 		$fieldtitlevalue=$row[$titlefield];
 		$deleteLabel=strip_tags($fieldtitlevalue);
@@ -376,7 +378,7 @@ class tagProcessor_Item
 					}
 					else
 					{
-						$field1_row=ESFields::getFieldRowByName($field1_findwhat, $Model->tablerow['id']);
+						$field1_row=Fields::getFieldRowByName($field1_findwhat, $Model->tablerow['id']);
 						if(is_object($field1_row))
 							$field1_findwhat=$field1_row->realfieldname;
 						else
@@ -408,7 +410,7 @@ class tagProcessor_Item
 					}
 					else
 					{
-						$field2_type_row=ESFields::getFieldRowByName($field2_lookwhere, $tablerow['id']);
+						$field2_type_row=Fields::getFieldRowByName($field2_lookwhere, $tablerow['id']);
 						if(is_object($field2_type_row))
 						{
 							$field2_type=$field2_type_row->type;
@@ -451,7 +453,7 @@ class tagProcessor_Item
 					else
 					{
 				
-						$field3_row=ESFields::getFieldRowByName($field3_readvalue, $tablerow['id']);
+						$field3_row=Fields::getFieldRowByName($field3_readvalue, $tablerow['id']);
 						if(is_array($tablerow))
 							$field3_readvalue=$field3_row->realfieldname;
 						else
@@ -494,7 +496,7 @@ class tagProcessor_Item
 				if(isset($opts[6]) and $opts[6]!='')
 				{
 					$order_by_option=$opts[6];
-					$order_by_option_row=ESFields::getFieldRowByName($order_by_option, $tablerow['id']);
+					$order_by_option_row=Fields::getFieldRowByName($order_by_option, $tablerow['id']);
 					$order_by_option=$order_by_option_row->realfieldname;
 				}
 
@@ -584,7 +586,7 @@ class tagProcessor_Item
 								$getFileBoxRows=array();
 								$vlu=$row['vlu'];
 
-								$temp_esfields = ESFields::getFields($tablerow['id']);
+								$temp_esfields = Fields::getFields($tablerow['id']);
 
 								foreach($temp_esfields as $ESField)
 								{

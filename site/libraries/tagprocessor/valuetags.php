@@ -9,6 +9,8 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\DataTypes\Tree;
+
 $types_path=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fieldtypes'.DIRECTORY_SEPARATOR;
 require_once($types_path.'_type_ct.php');
 require_once($types_path.'_type_file.php');
@@ -131,9 +133,8 @@ class tagProcessor_Value
                     .DIRECTORY_SEPARATOR.'esinputbox.php');
                             
             	$esinputbox = new ESInputBox;
-                $esinputbox->es=$Model->es;
-                $esinputbox->LanguageList=$Model->LanguageList;
-                $esinputbox->langpostfix=$Model->langpostfix;
+				$esinputbox->Model = $Model;
+                
                 $esinputbox->establename=$Model->establename;
                 $esinputbox->estableid=$Model->estableid;
                 $esinputbox->requiredlabel='COM_CUSTOMTABLES_REQUIREDLABEL';
@@ -199,7 +200,7 @@ class tagProcessor_Value
                                     {
                                         //multilang field specific language
                                         $firstlanguage=true;
-                                        foreach($Model->LanguageList as $lang)
+                                        foreach($Model->ct->Languages->LanguageList as $lang)
                                         {
                                             if($lang->sef==$value_option_list[4])
                                             {
@@ -599,7 +600,7 @@ class tagProcessor_Value
             if($specific_lang!='')
             {
                 $i=0;
-                foreach($Model->LanguageList as $l)
+                foreach($Model->ct->Languages->LanguageList as $l)
                 {
                     if($l->sef==$specific_lang)
                     {
@@ -615,7 +616,7 @@ class tagProcessor_Value
 
             }
             else
-                $postfix=$Model->langpostfix; //front-end default language
+                $postfix=$Model->ct->Languages->Postfix; //front-end default language
                 
     		$fieldname=$ESField['realfieldname'].$postfix;
 			$rowValue=$row[$fieldname];
@@ -994,7 +995,7 @@ class tagProcessor_Value
 								sort ($vlus);
 
 								$temp_index=0;
-								$vlu=$Model->es->BuildULHtmlList($vlus,$temp_index,$Model->langpostfix);
+								$vlu=Tree::BuildULHtmlList($vlus,$temp_index,$Model->ct->Languages->Postfix);
 
 								return $vlu;
 							}
@@ -1007,7 +1008,7 @@ class tagProcessor_Value
 					else
 					{
 						if($rowValue!='')
-							return implode(',',$Model->es->getMultyValueTitles($rowValue,$Model->langpostfix,1, ' - ',$TypeParams));
+							return implode(',',Tree::getMultyValueTitles($rowValue,$Model->ct->Languages->Postfix,1, ' - ',$TypeParams));
 						else
 							return '';
 

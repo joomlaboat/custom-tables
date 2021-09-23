@@ -1,26 +1,34 @@
 <?php
 /**
  * CustomTables Joomla! 3.x Native Component
+ * @package Custom Tables
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @license GNU/GPL
+ * @copyright Copyright (C) 2018-2021. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
-
+ 
+namespace CustomTables;
+ 
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-class ESLanguages
+use \Joomla\CMS\Factory;
+
+class Languages
 {
 	var $LanguageList;
+	var $Postfix;
+	
 	function __construct()
 	{
-		$this->getLanguageList();
+		$this->LanguageList = $this->getLanguageList();
+		$this->Postfix = $this->getLangPostfix();
 	}
 	
-		 
 	function getLangPostfix()
 	{
-		$langObj=JFactory::getLanguage();
+		$langObj=Factory::getLanguage();
 		$nowLang=$langObj->getTag();
 		$index=0;
 		foreach($this->LanguageList as $lang)
@@ -40,7 +48,7 @@ class ESLanguages
 	
 	function getLanguageList()
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		
 		$query ='SELECT lang_id AS id, lang_code AS language, title AS caption, title, sef AS original_sef FROM #__languages WHERE published=1 ORDER BY lang_id';
 		$db->setQuery( $query );
@@ -74,15 +82,12 @@ class ESLanguages
 		$db = JFactory::getDBO();
 		
 		$query = ' SELECT lang_id AS id FROM #__languages WHERE lang_code="'.$code.'" LIMIT 1';
-			
-		
+
 		$db->setQuery( $query );
 		$rows= $db->loadObjectList();
 		if(count($rows)!=1)
 			return -1;
 		
 		return $rows[0]->id;
-	}
+	}	
 }
-
-?>

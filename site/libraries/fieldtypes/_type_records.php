@@ -15,8 +15,6 @@ class CT_FieldTypeTag_records
 	{
 		$typeparams=JoomlaBasicMisc::csv_explode(',',$TypeParams,'"',false);
 
-
-
 		$sortbyfield='';
 
 
@@ -63,7 +61,7 @@ class CT_FieldTypeTag_records
 		//this is important because it has been selected some how.
 		$esr_filter='';
 
-		return JHTML::_('ESRecordsView.render',$rowValue,$esr_table,$esr_field,$esr_selector,$esr_filter,$Model->langpostfix,$sortbyfield);
+		return JHTML::_('ESRecordsView.render',$rowValue,$esr_table,$esr_field,$esr_selector,$esr_filter,$Model->ct->Languages->Postfix,$sortbyfield);
 
 	}
 }

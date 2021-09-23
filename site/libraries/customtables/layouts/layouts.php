@@ -1,19 +1,27 @@
 <?php
 /**
  * CustomTables Joomla! 3.x Native Component
+ * @package Custom Tables
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @license GNU/GPL
+ * @copyright Copyright (C) 2018-2021. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
+namespace CustomTables;
+ 
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-class ESLayouts
+use \Joomla\CMS\Factory;
+use \JoomlaBasicMisc;
+
+class Layouts
 {
-    public static function getLayoutID($layoutname)
+	/*
+	protected static function getLayoutID($layoutname)
     {
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		if($tablename=='')
 			return 0;
@@ -26,6 +34,7 @@ class ESLayouts
 
 		return $rows[0]->id;
 	}
+	*/
 
     public static function getLayout($layoutname,&$type,$processLayoutTag = true)
 	{
@@ -33,7 +42,7 @@ class ESLayouts
 		if($layoutname=='')
 			return '';
 
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		
 		
 		if($db->serverType == 'postgresql')
@@ -49,7 +58,7 @@ class ESLayouts
 		$row=$rows[0];
         $type=(int)$row['layouttype'];
 
-		$content=ESLayouts::getLayoutFileContent($row['id'],$row['ts'],$layoutname);
+		$content=Layouts::getLayoutFileContent($row['id'],$row['ts'],$layoutname);
 		if($content!='')
 			return $content;
 
@@ -57,7 +66,7 @@ class ESLayouts
 		$layoutcode=$row['layoutcode'];
 		
 		if($processLayoutTag)
-			ESLayouts::processLayoutTag($layoutcode);
+			Layouts::processLayoutTag($layoutcode);
 			
 		return $layoutcode;
 	}
@@ -82,7 +91,7 @@ class ESLayouts
 				$ProcessContentPlugins = true;
 			
             $type='';
-            $layout = ESLayouts::getLayout($layoutname,$type);
+            $layout = Layouts::getLayout($layoutname,$type);
 			
 			if($ProcessContentPlugins)
 				LayoutProcessor::applyContentPlugins($layout);
@@ -103,7 +112,7 @@ class ESLayouts
 
 			if($db_layout_ts==0)
 			{
-				$db = JFactory::getDBO();
+				$db = Factory::getDBO();
 				$query = 'SELECT UNIX_TIMESTAMP(modified) AS ts FROM #__customtables_layouts WHERE id='.$id.' LIMIT 1';
 				$db->setQuery( $query );
 
@@ -123,7 +132,7 @@ class ESLayouts
 
 				$content=file_get_contents($path.DIRECTORY_SEPARATOR.$filename);
 
-				$db = JFactory::getDBO();
+				$db = Factory::getDBO();
 
 				$query = 'UPDATE #__customtables_layouts SET layoutcode="'.addslashes($content).'",modified=FROM_UNIXTIME('.$file_ts.') WHERE id='.$id;
 
@@ -143,7 +152,7 @@ class ESLayouts
 		switch($type)
 		{
 			case 'edit':
-				$result=ESLayouts::createDefaultLayout_Edit($fields);
+				$result=Layouts::createDefaultLayout_Edit($fields);
 			break;
 			
 			default:
@@ -214,9 +223,9 @@ class ESLayouts
 		{
 			$id=(int)$data['id'];
 			if($id==0)
-				$id=ESLayouts::getLayoutID($data['layoutname']);
+				$id=Layouts::getLayoutID($data['layoutname']);
 
-			$db = JFactory::getDBO();
+			$db = Factory::getDBO();
 			$query = 'UPDATE #__customtables_layouts SET modified=FROM_UNIXTIME('.$file_ts.') WHERE id='.$id;
 			$db->setQuery( $query );
 

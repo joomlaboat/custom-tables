@@ -13,11 +13,15 @@ namespace CustomTables\Integrity;
  
 defined('_JEXEC') or die('Restricted access');
 
-use \ESFields;
+use CustomTables\Fields;
+
+use \Joomla\CMS\Factory;
+
+use \ESTables;
 
 class IntegrityFieldType_FileBox extends \CustomTables\IntegrityChecks
 {
-	public static function checkFileBoxs($filebox_table_name,&$languages,$tablename,$fieldname)
+	public static function checkFileBox($filebox_table_name,&$languages,$tablename,$fieldname)
 	{
 		$db = Factory::getDBO();
 		
@@ -29,11 +33,11 @@ class IntegrityFieldType_FileBox extends \CustomTables\IntegrityChecks
 
         if(!ESTables::checkIfTableExists($filebox_table_name))
         {
-            ESFields::CreateFileBoxTable($tablename,$fieldname);
+            Fields::CreateFileBoxTable($tablename,$fieldname);
             echo '<p>File Box Table "<span style="color:green;">'.$filebox_table_name.'</span>" <span style="color:green;">Created.</span></p>';
         }
 
-                    $g_ExistingFields=ESFields::getExistingFields($filebox_table_name,false);
+                    $g_ExistingFields=Fields::getExistingFields($filebox_table_name,false);
 
                     $morethanonelang=false;
                     foreach($languages as $lang)
@@ -56,7 +60,7 @@ class IntegrityFieldType_FileBox extends \CustomTables\IntegrityChecks
 
                         if(!$g_found)
                         {
-                            ESFields::AddMySQLFieldNotExist($filebox_table_name, $g_fieldname, 'varchar(100) null', '');
+                            Fields::AddMySQLFieldNotExist($filebox_table_name, $g_fieldname, 'varchar(100) null', '');
                             echo '<p>File Box Field "<span style="color:green;">'.$g_fieldname.'</span>" <span style="color:green;">Added.</span></p>';
                         }
 

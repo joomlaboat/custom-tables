@@ -72,9 +72,7 @@ class CustomTablesViewList extends JView
 		// Category List
 		$javascript = 'onchange="document.adminForm.submit();"';
 
-
-		$ListModel = $this->getModel();
-		$available_rootparents=$ListModel->getAllRootParents();
+		$available_rootparents=Tree::getAllRootParents();
 		$lists['rootparent']=JHTML::_('select.genericlist', $available_rootparents, 'filter_rootparent', $javascript ,'id','optionname', $filter_rootparent);
 
 		// table ordering

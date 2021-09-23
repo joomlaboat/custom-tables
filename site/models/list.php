@@ -9,6 +9,8 @@
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die( 'Restricted access' );
 
+use CustomTables\Fields;
+
 jimport( 'joomla.html.html.menu' );
 
 class CustomTablesModelList extends JModel
@@ -107,7 +109,7 @@ class CustomTablesModelList extends JModel
 		{
 			$query.=' GROUP BY m.id ';
 
-			$fieldrow=ESFields::getFieldRowByName($connect_with_field, '',$connect_with_table);
+			$fieldrow=Fields::getFieldRowByName($connect_with_field, '',$connect_with_table);
 
 			$typeparams_pair=explode(',',$fieldrow->typeparams);
 			$structure_parent_name=$typeparams_pair[0];
@@ -416,46 +418,6 @@ class CustomTablesModelList extends JModel
 				return $Ass[1];
 		}
 		return -1;
-	}
-
-
-
-	function getAllRootParents()
-	{
-		$db = JFactory::getDBO();
-
-		$query = "SELECT id, optionname FROM #__customtables_options WHERE parentid=0 ORDER BY optionname";
-		$db->setQuery( $query );
-		$available_rootparents = $db->loadObjectList();
-		$this->array_insert($available_rootparents,array("id" => 0, "optionname" => '-'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT_PARENT' )),0);
-		return $available_rootparents;
-
-	}
-	function array_insert(&$array, $insert, $position = -1)
-	{
-	    $position = ($position == -1) ? (count($array)) : $position ;
-	    if($position != (count($array)))
-		{
-			$ta = $array;
-			for($i = $position; $i < (count($array)); $i++)
-			{
-               if(!isset($array[$i]))
-			   {
-                    die("Invalid array: All keys must be numerical and in sequence.");
-               }
-               $tmp[$i+1] = $array[$i];
-               unset($ta[$i]);
-			}
-			$ta[$position] = $insert;
-			$array = $ta + $tmp;
-
-	    }
-		else
-		{
-	         $array[$position] = $insert;
-	    }
-	    ksort($array);
-	    return true;
 	}
 
 	function copyItem($cid)

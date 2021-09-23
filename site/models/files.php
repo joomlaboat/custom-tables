@@ -9,6 +9,8 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\Fields;
+
 jimport('joomla.application.component.model');
 
 class CustomTablesModelFiles extends JModelLegacy
@@ -83,7 +85,7 @@ class CustomTablesModelFiles extends JModelLegacy
 		$this->establename=$this->tablerow['tablename'];
 
 		//	Fields
-		$this->esfields = ESFields::getFields($this->estableid);
+		$this->esfields = Fields::getFields($this->estableid);
 
 		foreach($this->esfields as $f)
 		{

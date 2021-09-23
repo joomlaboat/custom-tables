@@ -13,7 +13,11 @@ namespace CustomTables\Integrity;
  
 defined('_JEXEC') or die('Restricted access');
 
-use \ESFields;
+use CustomTables\Fields;
+
+use \Joomla\CMS\Factory;
+
+use \ESTables;
 
 class IntegrityFieldType_Gallery extends \CustomTables\IntegrityChecks
 {

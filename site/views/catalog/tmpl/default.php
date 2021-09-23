@@ -10,6 +10,8 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\Layouts;
+
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'layout.php');
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tagprocessor'.DIRECTORY_SEPARATOR.'catalogtag.php');
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tagprocessor'.DIRECTORY_SEPARATOR.'catalogtableviewtag.php');
@@ -30,7 +32,7 @@ $layout_catalog_name=$this->Model->params->get( 'escataloglayout' );
 if($layout_catalog_name!='')
 {
     $layouttype=0;
-	$pagelayout=ESLayouts::getLayout($layout_catalog_name,$layouttype,$processLayoutTag = false); //It is safier to process layout after rendering the table
+	$pagelayout=Layouts::getLayout($layout_catalog_name,$layouttype,$processLayoutTag = false); //It is safier to process layout after rendering the table
 
     if($layouttype==8)
         $this->Model->frmt='xml';
@@ -49,7 +51,7 @@ $itemlayout='';
 if($layout_item_name!='')
 {
     $layouttype=0;
-	$itemlayout=ESLayouts::getLayout($layout_item_name,$layouttype);
+	$itemlayout=Layouts::getLayout($layout_item_name,$layouttype);
 }
 
 $catalogtablecode=JoomlaBasicMisc::generateRandomString();//this is temporary replace place holder. to not parse content result again

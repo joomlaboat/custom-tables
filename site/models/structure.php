@@ -9,16 +9,16 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\DataTypes\Tree;
+
 jimport('joomla.application.component.model');
 
 class CustomTablesModelStructure extends JModel
 {
-		var $es;
-		var $LangMisc;
+	var $ct;
 
 		var $TotalRows=0;
 	
-		var $langpostfix;
 		var $optionname;
 		var $parentid;
 		
@@ -32,29 +32,23 @@ class CustomTablesModelStructure extends JModel
 		var $estableid;
 		var $fieldname;
 		var $fieldtype;
-		var $LanguageList;
+
 		var $ListingJoin;
 
 		
 		
 		function __construct()
 		{
-				$this->LangMisc	= new ESLanguages;
-				
+			$this->ct = new CT;
+			
 				$this->esTable=new ESTables;
 				
-				$this->es= new CustomTablesMisc;
-
-		
 		        parent::__construct();
 				$mainframe = JFactory::getApplication('site');
 				
 				 
 				$params = JComponentHelper::getParams( 'com_customtables' );
 				 
-				$this->langpostfix=$this->LangMisc->getLangPostfix();
-				
-				
 				if(JFactory::getApplication()->input->get('establename','','CMD'))
 						$this->establename=JFactory::getApplication()->input->get('establename','','CMD');
 				else
@@ -166,13 +160,11 @@ class CustomTablesModelStructure extends JModel
 		
 		if(JFactory::getApplication()->input->getString('alpha'))
 		{
-				$parentid=$this->es->getOptionIdFull($this->optionname);
-				$wherearr[]='INSTR(familytree,"-'.$parentid.'-") AND SUBSTRING(title'.$this->langpostfix.',1,1)="'.JFactory::getApplication()->input->getString('alpha').'"';
+				$parentid=Tree::getOptionIdFull($this->optionname);
+				$wherearr[]='INSTR(familytree,"-'.$parentid.'-") AND SUBSTRING(title'.$this->ct->Languages->Postfix.',1,1)="'.JFactory::getApplication()->input->getString('alpha').'"';
 		}
 		else
 		{
-				$es=new CustomTablesMisc;
-
 				$this->parentid=$es->getOptionIdFull($this->optionname);
 				$wherearr[]='parentid='.(int)$this->parentid;
 		}
@@ -190,7 +182,7 @@ class CustomTablesModelStructure extends JModel
 		{
 				$query = 'SELECT optionname, '
 						.'CONCAT("",familytreestr,".",optionname) as theoptionname, '
-						.'CONCAT( title'.$this->langpostfix.'," (",COUNT(#__customtables_table_'.$this->establename.'.id),")") AS optiontitle, '
+						.'CONCAT( title'.$this->ct->Languages->Postfix.'," (",COUNT(#__customtables_table_'.$this->establename.'.id),")") AS optiontitle, '
 						.'image, '
 						.'imageparams '
 						
@@ -199,7 +191,7 @@ class CustomTablesModelStructure extends JModel
 						.' ON INSTR(es_'.$this->esfieldname.', CONCAT(familytreestr,".",optionname))'
 						.' '.$where
 						.' GROUP BY #__customtables_options.id'
-						.' ORDER BY title'.$this->langpostfix;
+						.' ORDER BY title'.$this->ct->Languages->Postfix;
 						
 
 		}
@@ -207,13 +199,13 @@ class CustomTablesModelStructure extends JModel
 		{
 				$query = 'SELECT optionname, '
 						.'CONCAT("",familytreestr,".",optionname) as theoptionname, '
-						.'title'.$this->langpostfix.' AS optiontitle, '
+						.'title'.$this->ct->Languages->Postfix.' AS optiontitle, '
 						.'image, '
 						.'imageparams '
 						
 						.'FROM #__customtables_options '
 						.' '.$where
-						.' ORDER BY title'.$this->langpostfix;
+						.' ORDER BY title'.$this->ct->Languages->Postfix;
 				
 
 		}

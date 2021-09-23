@@ -12,6 +12,8 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\Fields;
+
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Editor\Editor;
 use Joomla\CMS\Factory;
@@ -53,7 +55,7 @@ else
 	$phptagprocessor=false;
 
 ?>
-<div id="fieldsData" style="display:none;"><?php echo json_encode(ESFields::getFields($this->tableid,true)); ?></div>
+<div id="fieldsData" style="display:none;"><?php echo json_encode(Fields::getFields($this->tableid,true)); ?></div>
 <script type="text/javascript">
 	//websiteroot="<?php echo JURI::root(true); ?>";
 

@@ -11,6 +11,8 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\Fields;
+
 class extraTasks
 {
 	public static function prepareJS()
@@ -21,7 +23,7 @@ class extraTasks
 		if($fieldid==0)
 			return;
 		
-		$field_row=ESFields::getFieldRow($fieldid);
+		$field_row=Fields::getFieldRow($fieldid);
 		$tableid=$field_row->tableid;
 		$table_row=ESTables::getTableRowByID($tableid);
 		

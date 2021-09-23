@@ -9,6 +9,8 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\Fields;
+
 class CTOrdering
 {
     public static function getOrderingQuery(&$ordering,&$query,&$inner,$esordering,$langpostfix,$tablename,&$esfields)
@@ -21,7 +23,7 @@ class CTOrdering
 								$oPair2=explode('.',$oPair[0]);
 
 								$fieldname=$oPair2[0];
-								$realfieldname=ESFields::getRealFieldName($fieldname,$esfields);
+								$realfieldname=Fields::getRealFieldName($fieldname,$esfields);
 								
 								if($realfieldname!='')
 								{
@@ -60,7 +62,7 @@ class CTOrdering
 
 								if(!$join_found)
 								{
-									$realfieldname=ESFields::getRealFieldName($fieldname,$esfields);
+									$realfieldname=Fields::getRealFieldName($fieldname,$esfields);
 									if($realfieldname!='')
 										$inner[]='LEFT JOIN #__customtables_options ON familytreestr='.$realfieldname.'';
 								}
@@ -95,7 +97,7 @@ class CTOrdering
 										{
 											$real_joined_fieldname=$join_field;//CTOrdering::getRealFieldName($join_field,$esfields);
 											
-											$realfieldname=ESFields::getRealFieldName($fieldname,$esfields);
+											$realfieldname=Fields::getRealFieldName($fieldname,$esfields);
 											if($realfieldname!='' and $real_joined_fieldname!='')
 											{
 												$w='#__customtables_table_'.$join_table.'.id='.$tablename.'.'.$realfieldname;
@@ -116,7 +118,7 @@ class CTOrdering
 								$oPair=explode(' ',$esordering);
 								
 								$fieldname=$oPair[0];
-								$realfieldname=ESFields::getRealFieldName($fieldname,$esfields);
+								$realfieldname=Fields::getRealFieldName($fieldname,$esfields);
 								
 								if($realfieldname!='')
 								{

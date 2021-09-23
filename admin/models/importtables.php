@@ -143,7 +143,7 @@ class CustomTablesModelImporttables extends JModelList
 					break;
 			}while(1==1);
 
-			$familytree=$this->esmisc->getFamilyTreeByParentID($parentid).'-';
+			$familytree=Tree::getFamilyTreeByParentID($parentid).'-';
 
 			$db = JFactory::getDBO();
 			$query = 'INSERT #__customtables_options SET '

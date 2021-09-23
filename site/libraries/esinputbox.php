@@ -9,6 +9,9 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\Fields;
+use CustomTables\DataTypes\Tree;
+
 use Joomla\CMS\Editor\Editor;
 use Joomla\CMS\Factory;
 
@@ -21,9 +24,6 @@ $document->addCustomTag('<script src="'.JURI::root(true).'/components/com_custom
 
 class ESInputBox
 {
-	var $es;
-	var $LanguageList;
-	var $langpostfix;
 	var $establename;
 	var $estableid;
 	var $width=0;
@@ -41,7 +41,7 @@ class ESInputBox
 		{
 			//This is the field options for JSON output
 			
-			$shortFieldObject = ESFields::shortFieldObject($esfield,(isset($row[$realFieldName]) ? $row[$realFieldName] : null),$option_list);
+			$shortFieldObject = Fields::shortFieldObject($esfield,(isset($row[$realFieldName]) ? $row[$realFieldName] : null),$option_list);
 			
 			if($esfield['type'] == 'sqljoin')
 			{
@@ -61,7 +61,7 @@ class ESInputBox
 											  $typeparams,
 											  $value,
 											  false,
-											  $this->langpostfix,
+											  $this->Model->ct->Languages->Postfix,
 											  $prefix.$esfield['fieldname'],
 											  $place_holder,
 											  $class,
@@ -73,7 +73,7 @@ class ESInputBox
 			return $shortFieldObject;
 		}
 		
-		$place_holder=$esfield['fieldtitle'.$this->langpostfix];
+		$place_holder=$esfield['fieldtitle'.$this->Model->ct->Languages->Postfix];
 		$class=$class_.' inputbox'.($esfield['isrequired'] ? ' required' : '');
 		
 		$result='';
@@ -167,7 +167,7 @@ class ESInputBox
 								.'label="'.$esfield['fieldname'].'" '
 								.'class="'.$class.'" '
 								.$attributes.' '
-								.'data-label="'.$esfield['fieldtitle'.$this->langpostfix].'" '
+								.'data-label="'.$esfield['fieldtitle'.$this->Model->ct->Languages->Postfix].'" '
 								.'data-valuerule="'.str_replace('"','&quot;',$esfield['valuerule']).'" '
 								.'data-valuerulecaption="'.str_replace('"','&quot;',$esfield['valuerulecaption']).'" '
 								.'value="'.$value.'" />';
@@ -189,7 +189,7 @@ class ESInputBox
 								.'name="'.$prefix.$esfield['fieldname'].'" '
 								.'id="'.$prefix.$esfield['fieldname'].'" '
 								.'class="'.$class.'" '
-								.'data-label="'.$esfield['fieldtitle'.$this->langpostfix].'" '
+								.'data-label="'.$esfield['fieldtitle'.$this->Model->ct->Languages->Postfix].'" '
 								.'data-valuerule="'.str_replace('"','&quot;',$esfield['valuerule']).'" '
 								.'data-valuerulecaption="'.str_replace('"','&quot;',$esfield['valuerulecaption']).'" '
 								.$attributes.' ';
@@ -232,7 +232,7 @@ class ESInputBox
 								.'label="'.$esfield['fieldname'].'" '
 								.'class="'.$class.'" '
 								.' '.$attributes
-								.'data-label="'.$esfield['fieldtitle'.$this->langpostfix].'" '
+								.'data-label="'.$esfield['fieldtitle'.$this->Model->ct->Languages->Postfix].'" '
 								.'data-valuerule="'.str_replace('"','&quot;',$esfield['valuerule']).'" '
 								.'data-valuerulecaption="'.str_replace('"','&quot;',$esfield['valuerulecaption']).'" '
 								.'value="'.$value.'" '.((int)$esfield['typeparams']>0 ? 'maxlength="'.(int)$esfield['typeparams'].'"' : 'maxlength="255"').' '.$attributes.' />';
@@ -284,7 +284,7 @@ class ESInputBox
 											.'id="'.$fname.'" '
 											.'class="'.$class.'" '
 											.$attributes.' '
-											.'data-label="'.$esfield['fieldtitle'.$this->langpostfix].'"'
+											.'data-label="'.$esfield['fieldtitle'.$this->Model->ct->Languages->Postfix].'"'
 											.'data-valuerule="'.str_replace('"','&quot;',$esfield['valuerule']).'" '
 											.'data-valuerulecaption="'.str_replace('"','&quot;',$esfield['valuerulecaption']).'" '
 											.'>'.$value.'</textarea>';
@@ -303,7 +303,7 @@ class ESInputBox
 						case 'multilangtext':
 
 							require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fieldtypes'.DIRECTORY_SEPARATOR.'multilangtext.php');
-							$result.=render_multilangtext($row,$this->LanguageList,$esfield,'',$this->width,$prefix,$class);
+							$result.=render_multilangtext($row,$this->Model->ct->Languages->LanguageList,$esfield,'',$this->width,$prefix,$class);
 							break;
 
 						case 'checkbox':
@@ -323,7 +323,7 @@ class ESInputBox
 										.'id="'.$id.'0" '
 										.'name="'.$id.'" '
 										.'value="1" '
-										.'data-label="'.$esfield['fieldtitle'.$this->langpostfix].'" '
+										.'data-label="'.$esfield['fieldtitle'.$this->Model->ct->Languages->Postfix].'" '
 										.'data-valuerule="'.str_replace('"','&quot;',$esfield['valuerule']).'" '
 										.'data-valuerulecaption="'.str_replace('"','&quot;',$esfield['valuerulecaption']).'" '
 										.$attributes.' '
@@ -336,7 +336,7 @@ class ESInputBox
 										.'name="'.$id.'" '
 										.$attributes.' '
 										.'value="0" '
-										.'data-label="'.$esfield['fieldtitle'.$this->langpostfix].'" '
+										.'data-label="'.$esfield['fieldtitle'.$this->Model->ct->Languages->Postfix].'" '
 										.'data-valuerule="'.str_replace('"','&quot;',$esfield['valuerule']).'" '
 										.'data-valuerulecaption="'.str_replace('"','&quot;',$esfield['valuerulecaption']).'" '
 										.((int)$value==0 ? ' checked="checked" ' : '')
@@ -355,7 +355,7 @@ class ESInputBox
 									$result.='<input type="checkbox" '
 										.'id="'.$prefix.$esfield['fieldname'].'" '
 										.'name="'.$prefix.$esfield['fieldname'].'" '
-										.'data-label="'.$esfield['fieldtitle'.$this->langpostfix].'" '
+										.'data-label="'.$esfield['fieldtitle'.$this->Model->ct->Languages->Postfix].'" '
 										.'data-valuerule="'.str_replace('"','&quot;',$esfield['valuerule']).'" '
 										.'data-valuerulecaption="'.str_replace('"','&quot;',$esfield['valuerulecaption']).'" '
 										.$attributes
@@ -432,7 +432,7 @@ class ESInputBox
 								$value=$langObj->getTag();
 							}
 
-							$attributes=array('name'=>$prefix.$esfield['fieldname'],'id'=>$prefix.$esfield['fieldname'], 'label'=>$esfield['fieldtitle'.$this->langpostfix],'readonly'=>false);
+							$attributes=array('name'=>$prefix.$esfield['fieldname'],'id'=>$prefix.$esfield['fieldname'], 'label'=>$esfield['fieldtitle'.$this->Model->ct->Languages->Postfix],'readonly'=>false);
 							$result.= CTTypes::getField('language', $attributes,$value)->input;
 
 							break;
@@ -448,7 +448,7 @@ class ESInputBox
 							if($value=='')
 								$value='';
 
-							$att=array('name'=>$prefix.$esfield['fieldname'],'id'=>$prefix.$esfield['fieldname'], 'label'=>$esfield['fieldtitle'.$this->langpostfix]);
+							$att=array('name'=>$prefix.$esfield['fieldname'],'id'=>$prefix.$esfield['fieldname'], 'label'=>$esfield['fieldtitle'.$this->Model->ct->Languages->Postfix]);
 							
 							if($option_list[0]=='transparent')
 							{
@@ -524,7 +524,7 @@ class ESInputBox
 
 							$optionname=$typeparams[0];
 
-							$parentid=$this->es->getOptionIdFull($optionname);
+							$parentid=Tree::getOptionIdFull($optionname);
 
 							//$typeparams[0] is structure parent
 							//$typeparams[1] is selector type (multi or single)
@@ -551,7 +551,7 @@ class ESInputBox
 										$result.=JHTML::_('MultiSelector.render',
 													  $prefix,
 													  $parentid,$optionname,
-													  $this->langpostfix,
+													  $this->Model->ct->Languages->Postfix,
 													  $this->establename,
 													  $esfield['fieldname'],
 													  $fValue,
@@ -581,7 +581,7 @@ class ESInputBox
 														  $this->establename,
 														  $esfield['fieldname'],
 														  $optionname,
-														  $this->langpostfix,
+														  $this->Model->ct->Languages->Postfix,
 														  $v,
 														  '',
 														  '',
@@ -603,8 +603,7 @@ class ESInputBox
 
 						case 'sqljoin':
 
-							//$place_holder=$esfield['fieldtitle'.$this->langpostfix];
-							
+	
 							if(isset($option_list[2]) and $option_list[2]!='')
 								$typeparams[2]=$option_list[2];//Overwrites field type filter parameter.
 
@@ -616,7 +615,7 @@ class ESInputBox
 											  $typeparams,
 											  $value,
 											  false,
-											  $this->langpostfix,
+											  $this->Model->ct->Languages->Postfix,
 											  $prefix.$esfield['fieldname'],
 											  $place_holder,
 											  $class,
@@ -678,7 +677,7 @@ class ESInputBox
 											  $attributes,
 											  $dynamic_filter,
 											  $sortbyfield,
-												$this->langpostfix,
+												$this->Model->ct->Languages->Postfix,
 												$place_holder
 											  );
 
@@ -698,7 +697,7 @@ class ESInputBox
 									.'class="'.$class.'" '
 									.'value="'.$value.'" maxlength="255" '
 									.$attributes.' '
-									.'data-label="'.$esfield['fieldtitle'.$this->langpostfix].'"'
+									.'data-label="'.$esfield['fieldtitle'.$this->Model->ct->Languages->Postfix].'"'
 									.'data-valuerule="'.str_replace('"','&quot;',$esfield['valuerule']).'" '
 									.'data-valuerulecaption="'.str_replace('"','&quot;',$esfield['valuerulecaption']).'" '
 									.' />';
@@ -723,7 +722,7 @@ class ESInputBox
 									.'value="'.$value.'" maxlength="1024" '
 									.'data-sanitizers="trim" '
 									.'data-filters="'.implode(',',$filters).'" '
-									.'data-label="'.$esfield['fieldtitle'.$this->langpostfix].'" '
+									.'data-label="'.$esfield['fieldtitle'.$this->Model->ct->Languages->Postfix].'" '
 									.'data-valuerule="'.str_replace('"','&quot;',$esfield['valuerule']).'" '
 									.'data-valuerulecaption="'.str_replace('"','&quot;',$esfield['valuerulecaption']).'" '
 									.$attributes
@@ -807,7 +806,7 @@ class ESInputBox
 							$result.='<table>';
 
 							$firstlanguage=true;
-							foreach($LanguageList as $lang)
+							foreach($this->Model->ct->Languages->LanguageList as $lang)
 							{
 								if($firstlanguage)
 								{
@@ -930,7 +929,7 @@ class ESInputBox
 									.'id="'.$prefix.$esfield['fieldname'].$postfix.'" '
 									.'class="'.$class.'" '
 									.'value="'.$value.'" '
-									.'data-label="'.$esfield['fieldtitle'.$this->langpostfix].'" '
+									.'data-label="'.$esfield['fieldtitle'.$this->Model->ct->Languages->Postfix].'" '
 									.'data-valuerule="'.str_replace('"','&quot;',$esfield['valuerule']).'" '
 									.'data-valuerulecaption="'.str_replace('"','&quot;',$esfield['valuerulecaption']).'" '
 									.((int)$esfield['typeparams']>0 ? 'maxlength="'.(int)$esfield['typeparams'].'" ' : 'maxlength="255" ')
@@ -947,7 +946,7 @@ class ESInputBox
 			$language=$option_list[4];
 
 			$firstlanguage=true;
-			foreach($this->LanguageList as $lang)
+			foreach($this->Model->ct->Languages->LanguageList as $lang)
 			{
 				if($firstlanguage)
 				{
@@ -969,7 +968,7 @@ class ESInputBox
 							$result.='<div class="form-horizontal">';
 
 							$firstlanguage=true;
-							foreach($this->LanguageList as $lang)
+							foreach($this->Model->ct->Languages->LanguageList as $lang)
 							{
 								if($firstlanguage)
 								{
@@ -1009,7 +1008,7 @@ class ESInputBox
 								.'label="'.$esfield['fieldname'].'" '
 								.($autocomplete ? 'list="'.$prefix.$esfield['fieldname'].'_datalist" ' : '')
 								.'class="'.$class.'" '
-								.'data-label="'.$esfield['fieldtitle'.$this->langpostfix].'" '
+								.'data-label="'.$esfield['fieldtitle'.$this->Model->ct->Languages->Postfix].'" '
 								.'data-valuerule="'.str_replace('"','&quot;',$esfield['valuerule']).'" '
 								.'data-valuerulecaption="'.str_replace('"','&quot;',$esfield['valuerulecaption']).'" '
 								.'value="'.$value.'" '.((int)$esfield['typeparams']>0 ? 'maxlength="'.(int)$esfield['typeparams'].'"' : 'maxlength="255"').' '.$attributes.' />';

@@ -9,12 +9,12 @@
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die( 'Restricted access' );
 
+use CustomTables\Layouts;
+
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'models'.DIRECTORY_SEPARATOR.'catalog.php');
 
 class JHTMLESRecordsView
 {
-
-
         public static function render($value, $establename, $field, $selector, $filter,$langpostfix='',$sortbyfield="")
         {
 				if($value=='' or $value==',' or $value==',,')
@@ -149,7 +149,7 @@ class JHTMLESRecordsView
 
 
                                                 $layouttype=0;
-						$layoutcode=ESLayouts::getLayout($layout_pair[0],$layouttype);
+						$layoutcode=Layouts::getLayout($layout_pair[0],$layouttype);
 						if($layoutcode=='')
 								return '<p>layout "'.$layout_pair[0].'" not found or is empty.</p>';
 

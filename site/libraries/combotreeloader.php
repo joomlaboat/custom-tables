@@ -9,6 +9,9 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\CT;
+use CustomTables\DataTypes\Tree;
+
 	$independat=false;
 
 	if(!defined('_JEXEC'))
@@ -90,10 +93,9 @@ $document->addScript('combotree_234.js');
 
 class ESDynamicComboTree
 {
-	var $es;
-	var $LangMisc;
+	var $ct;
+	
 	var $ObjectName;
-	var $langpostfix;
 	var $establename;
 	var $esfieldname;
 	var $listingtable;
@@ -110,15 +112,14 @@ class ESDynamicComboTree
 
 	function __construct()
 	{
+		$this->ct = new CT;
 	}
 
 	function initialize($tablename,$fieldname,$optionname,$prefix)
 	{
 		$this->requirementdepth=0;
 		$this->prefix=$prefix;
-		$this->es= new CustomTablesMisc;
-		$this->LangMisc	= new ESLanguages;
-		$this->langpostfix=$this->LangMisc->getLangPostfix();
+
 		$this->establename=$tablename;
 		$this->esfieldname=$fieldname;
 		$this->optionname=$optionname;
@@ -141,28 +142,6 @@ class ESDynamicComboTree
 		}
 	}
 
-	function CleanLink($newparams, $deletewhat)
-	{
-		$i=0;
-		do
-		{
-		    if(!(strpos($newparams[$i],$deletewhat)===false))
-		    {
-			unset($newparams[$i]);
-			$newparams=array_values($newparams);
-			if(count($newparams)==0) return $newparams;
-
-			$i=0;
-
-		    }
-		    else
-			$i++;
-
-		}while($i<count($newparams));
-
-		return $newparams;
-	}
-
 	function renderSelectBox($objectname, $rows, $urlwhere, $optionalOptions, $simpleList=false,$value='',$place_holder='',$valuerule='',$valuerulecaption='')
 	{
 	    if(count($rows)==1)
@@ -172,7 +151,7 @@ class ESDynamicComboTree
 		}elseif(count($rows)==0)
 			return "";
 
-		$optionalarr=$this->CleanLink(explode("&",$urlwhere), $objectname);
+		$optionalarr=Tree::CleanLink(explode("&",$urlwhere), $objectname);
 		$optional=implode("&", $optionalarr);
 
 		if($value=='')
@@ -203,7 +182,7 @@ class ESDynamicComboTree
 				.'\''.urlencode($this->cssclass).'\', '
 				.'\''.$this->parentname.'\', '
 				.'\''.urlencode($this->where).'\', '
-				.'\''.$this->langpostfix.'\', '
+				.'\''.$this->ct->Languages->Postfix.'\', '
 				.'\''.urlencode($this->onchange).'\', '
 				.'\''.urlencode($this->prefix).'\', '
 				.'\''.((int)$this->isRequired).'\', '
@@ -241,15 +220,15 @@ class ESDynamicComboTree
 		return $result;
 	}
 
-	function getOptionList($parentname, $langpostfix)
+	function getOptionList($parentname)
 	{
-		$parentid=$this->es->getOptionIdFull($parentname);
+		$parentid=Tree::getOptionIdFull($parentname);
 		$db = JFactory::getDBO();
 
 		$query = 'SELECT '
 				.' id AS optionid, '
 				.' optionname AS tempid, '
-				.' title'.$this->langpostfix.' AS optiontitle '
+				.' title'.$this->ct->Languages->Postfix.' AS optiontitle '
 				.' FROM #__customtables_options '
 				.' WHERE parentid='.$parentid.' ';
 
@@ -259,15 +238,15 @@ class ESDynamicComboTree
 		return $db->loadObjectList();
 	}
 	
-	function getOptionListWhere($parentname, $langpostfix,$filterwhere, $listingfield)
+	function getOptionListWhere($parentname, $filterwhere, $listingfield)
 	{
-		$parentid=$this->es->getOptionIdFull($parentname);
+		$parentid=Tree::getOptionIdFull($parentname);
 		$db = JFactory::getDBO();
 
 		$query = 'SELECT '
 				.' #__customtables_options.id AS optionid, '
 				.' optionname AS tempid, '
-				.' #__customtables_options.title'.$this->langpostfix.' AS optiontitle, '
+				.' #__customtables_options.title'.$this->ct->Languages->Postfix.' AS optiontitle, '
 				.' COUNT('.$this->listingtable.'.id) AS listingcount'
 				.' FROM #__customtables_options'
 				.' INNER JOIN '.$this->listingtable.' ON INSTR('.$this->listingtable.'.es_'.$listingfield.',concat(",'.$parentname.'.",optionname,"."))';
@@ -303,9 +282,9 @@ class ESDynamicComboTree
 		do
 		{
 			if($this->innerjoin)
-				$rows=$this->getOptionListWhere($temp_parent, $this->langpostfix,$filterwhere,$this->esfieldname);
+				$rows=$this->getOptionListWhere($temp_parent, $filterwhere,$this->esfieldname);
 			else
-				$rows=$this->getOptionList($temp_parent, $this->langpostfix);
+				$rows=$this->getOptionList($temp_parent);
 
 			$object_name=$this->ObjectName.'_'.$i;
 

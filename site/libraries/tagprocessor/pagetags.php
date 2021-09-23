@@ -9,6 +9,8 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\Fields;
+
 class tagProcessor_Page
 {
     public static function process(&$Model,&$pagelayout)
@@ -449,7 +451,7 @@ JHtml::_('behavior.formvalidator');
 				{
 					if($fld['fieldname']==$fieldname)
 					{
-						$fieldtitles[]=$fld['fieldtitle'.$Model->langpostfix];
+						$fieldtitles[]=$fld['fieldtitle'.$Model->ct->Languages->Postfix];
 						break;
 					}
 				}
@@ -467,8 +469,7 @@ JHtml::_('behavior.formvalidator');
 		{
 			require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'essearchinputbox.php');
 			$ESSIB=new ESSerachInputBox;
-			$ESSIB->langpostfix=$Model->langpostfix;
-			$ESSIB->es=$Model->es;
+
 			$ESSIB->establename=$Model->establename;
 			$ESSIB->modulename='esSearchBox';
 		}
@@ -525,7 +526,7 @@ JHtml::_('behavior.formvalidator');
 							else
 							{
 								//Check if field name is exist in selected table
-								$fld = ESFields::FieldRowByName($field_name_string,$Model->esfields);
+								$fld = Fields::FieldRowByName($field_name_string,$Model->esfields);
 								if(count($fld)>0)
 									$list_of_fields[]=$field_name_string;
 							}
@@ -546,13 +547,13 @@ JHtml::_('behavior.formvalidator');
 										'fieldname' => '_id',
 										'type' => '_id',
 										'typeparams' => '',
-										'fieldtitle'.$Model->langpostfix => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ID')
+										'fieldtitle'.$Model->ct->Languages->Postfix => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ID')
 									);
 								}
 								else
 								{
 									//Date search no implemented yet. It will be range search
-									$fld = ESFields::FieldRowByName($field_name_string,$Model->esfields);
+									$fld = Fields::FieldRowByName($field_name_string,$Model->esfields);
 									if($fld['type']=='date')
 									{
 										$fld['typeparams']='date';

@@ -12,6 +12,8 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\Fields;
+
 use Joomla\Registry\Registry;
 
 // import Joomla modelform library
@@ -565,7 +567,7 @@ class CustomtablesModelTables extends JModelAdmin
 
 		$morethanonelang=false;
 		
-		$fields=ESFields::getListOfExistingFields('#__customtables_tables',false);
+		$fields=Fields::getListOfExistingFields('#__customtables_tables',false);
 		foreach($languages as $lang)
 		{
 			$id_title='tabletitle';
@@ -576,10 +578,10 @@ class CustomtablesModelTables extends JModelAdmin
 				$id_desc.='_'.$lang->sef;
 
 				if(!in_array($id_title,$fields))
-					ESFields::addLanguageField('#__customtables_tables','tabletitle',$id_title);
+					Fields::addLanguageField('#__customtables_tables','tabletitle',$id_title);
 
 				if(!in_array($id_desc,$fields))
-					ESFields::addLanguageField('#__customtables_tables','description',$id_desc);
+					Fields::addLanguageField('#__customtables_tables','description',$id_desc);
 			}
 
 			$data[$id_title] = $data_extra[$id_title];
@@ -766,104 +768,5 @@ class CustomtablesModelTables extends JModelAdmin
 		return true;
 	}
 	
-	public function export(&$cids)
-	{
-		$link='';
-
-		$tables=array();
-		$output=array();
-
-		foreach( $cids as $id )
-	    {
-			$item =$this->getTable();
-			$item->load( $id );
-
-			$db = JFactory::getDBO();
-
-			$tables[]=$item->tablename;
-
-			//get table
-			$s1='(SELECT categoryname FROM #__customtables_categories WHERE #__customtables_categories.id=#__customtables_tables.tablecategory) AS categoryname';
-			$query = 'SELECT *,'.$s1.' FROM #__customtables_tables WHERE published=1 AND id='.(int)$id.' LIMIT 1';
-			$db->setQuery( $query );
-			$rows=$db->loadAssocList();
-			if(count($rows)==1)
-			{
-				$table=$rows[0];
-
-				//get fields
-				$query = 'SELECT * FROM #__customtables_fields WHERE published=1 AND tableid='.(int)$id.'';
-				$db->setQuery( $query );
-				$fields=$db->loadAssocList();
-
-				//get layouts
-				$query = 'SELECT * FROM #__customtables_layouts WHERE published=1 AND tableid='.(int)$id.'';
-				$db->setQuery( $query );
-
-				$layouts=$db->loadAssocList();
-
-				//get menu items
-				$wheres=array();
-				$wheres[]='published=1';
-				
-				if($db->serverType == 'postgresql')
-				{
-					$wheres[]='POSITION('.$db->quote("index.php?option=com_customtables&view=").' IN link)>0';
-					$wheres[]='POSITION('.$db->quote('"establename":"'.$item->tablename.'"').' IN params)>0';
-				}
-				else
-				{
-					$wheres[]='INSTR(link,'.$db->quote("index.php?option=com_customtables&view=").')';
-					$wheres[]='INSTR(params,'.$db->quote('"establename":"'.$item->tablename.'"').')';
-				}
-
-				$query = 'SELECT * FROM #__menu WHERE '.implode(' AND ',$wheres);
-
-				$db->setQuery( $query );
-
-				$menu=$db->loadAssocList();
-
-				if(intval($table['allowimportcontent'])==1)
-				{
-					$tablename=$table['tablename'];
-
-					$query = 'SELECT * FROM #__customtables_table_'.$tablename.' WHERE published=1';
-					$db->setQuery( $query );
-
-					$records=$db->loadAssocList();
-
-					$output[]=['table'=>$table,'fields'=>$fields,'layouts'=>$layouts,'records'=>$records,'menu'=>$menu];
-				}
-				else
-					$output[]=['table'=>$table,'fields'=>$fields,'layouts'=>$layouts,'menu'=>$menu];
-			}
-		}
-
-		if(count($output)>0)
-		{
-			$output_str='<customtablestableexport>'.json_encode($output);
-
-			$tmp_path=JPATH_SITE.DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR;
-			$filename=implode('_',$tables);
-			$filename_available=$filename;
-			$a='';
-			$i=0;
-			do{
-				if(!file_exists($tmp_path.$filename.$a.'.txt'))
-				{
-					$filename_available=$filename.$a.'.txt';
-					break;
-				}
-
-				$i++;
-				$a=$i.'';
-
-			}while(1==1);
-
-			$link=JURI::root(false).'tmp/'.$filename_available;
-			file_put_contents($tmp_path.$filename_available, $output_str);
-			$output_str=null;
-		}
-		return $link;
-	}
+	
 }

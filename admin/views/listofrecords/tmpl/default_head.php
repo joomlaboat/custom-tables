@@ -24,8 +24,8 @@ defined('_JEXEC') or die('Restricted access');
 				$id='fieldtitle';
 				$title=$field[$id];
 				
-				if($this->langpostfix!='')
-					$id.='_'.$this->langpostfix;
+				if($this->ct->Languages->Postfix!='')
+					$id.='_'.$this->ct->Languages->Postfix;
 				
 				if(isset($field[$id]))
 					$title=$field[$id];

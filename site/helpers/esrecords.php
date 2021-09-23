@@ -9,6 +9,9 @@
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die( 'Restricted access' );
 
+use CustomTables\Fields;
+use CustomTables\Layouts;
+
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'models'.DIRECTORY_SEPARATOR.'catalog.php');
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'filtering.php');
 
@@ -114,7 +117,7 @@ class JHTMLESRecords
 				{
 						//without layout
 						
-						$real_field_row=ESFields::getFieldRowByName($field, '',$establename);
+						$real_field_row=Fields::getFieldRowByName($field, '',$establename);
 						
 						switch($selectorpair[0])
 						{
@@ -237,7 +240,7 @@ class JHTMLESRecords
 
                         $layouttype=0;
 						
-						$layoutcode=ESLayouts::getLayout($pair[1],$layouttype);
+						$layoutcode=Layouts::getLayout($pair[1],$layouttype);
 						if($layoutcode=='')
 							return '<p>layout "'.$pair[1].'" not found or is empty.</p>';
 
@@ -433,7 +436,7 @@ class JHTMLESRecords
 	static protected function getMultibox(&$model, &$model_nofilter,&$SearchResult,&$SearchResult_nofilter,&$valuearray,$field,$selectorpair,
                                               $control_name,$style,$cssclass,$attribute,$establename,$dynamic_filter,$langpostfix='',$place_holder='')
 	{
-		$real_field_row=ESFields::getFieldRowByName($field, '',$establename);
+		$real_field_row=Fields::getFieldRowByName($field, '',$establename);
 
 		if($real_field_row->type=="multilangstring" or $real_field_row->type=="multilangtext")
 				$real_field=$real_field_row->realfieldname.$langpostfix;

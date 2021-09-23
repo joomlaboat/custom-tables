@@ -43,7 +43,7 @@ class CustomtablesViewAPI extends JViewLegacy
 				}
 				else
 				{
-					$result=ESFields::getFields($tableid,true);
+					$result=Fields::getFields($tableid,true);
 				}
 				
 				

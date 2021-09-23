@@ -9,21 +9,19 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\Fields;
+
 jimport('joomla.application.component.model');
 
 JTable::addIncludePath(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'tables');
 
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'logs.php');
 
-class CustomTablesModelEditPhotos extends JModelLegacy {
-
-	var $es;
+class CustomTablesModelEditPhotos extends JModelLegacy
+{
+	var $ct;
 
 	var $imagemethods;
-	var $LangMisc;
-
-	var $LanguageList;
-	var $langpostfix=0;
 
 	var $esTable;
 	var $establename;
@@ -48,6 +46,8 @@ class CustomTablesModelEditPhotos extends JModelLegacy {
 
 	function __construct()
 	{
+		$this->ct = new CT;
+		
 		$params = JComponentHelper::getParams( 'com_customtables' );
 
 		$this->maxfilesize=JoomlaBasicMisc::file_upload_max_size();
@@ -58,14 +58,8 @@ class CustomTablesModelEditPhotos extends JModelLegacy {
 
 		$this->imagemainprefix='g';
 
-		$this->es= new CustomTablesMisc;
-
-		$this->LangMisc	= new ESLanguages;
 		$this->esTable=new ESTables;
 		$this->imagemethods=new CustomTablesImageMethods;
-
-		$this->LanguageList=$this->LangMisc->getLanguageList();
-		$this->langpostfix=$this->LangMisc->getLangPostfix();
 
 		if(JFactory::getApplication()->input->get('establename','','CMD'))
 			$this->establename=JFactory::getApplication()->input->get('establename','','CMD');
@@ -97,7 +91,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy {
 		// get database handle
 		$db = JFactory::getDBO();
 
-		$query = 'SELECT ordering, photoid,  title'.$this->langpostfix.' AS title, photo_ext FROM '.$this->phototablename.' WHERE listingid='.$this->listing_id.' ORDER BY ordering, photoid';
+		$query = 'SELECT ordering, photoid,  title'.$this->ct->Languages->Postfix.' AS title, photo_ext FROM '.$this->phototablename.' WHERE listingid='.$this->listing_id.' ORDER BY ordering, photoid';
 
 		$db->setQuery($query);
 
@@ -109,7 +103,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy {
 	function getGallery()
 	{
 		$db = JFactory::getDBO();
-		$query = 'SELECT id, fieldtitle'.$this->langpostfix.' AS title,typeparams FROM #__customtables_fields WHERE published=1 AND tableid='.$this->estableid.' AND  fieldname="'.$this->galleryname.'" AND type="imagegallery" LIMIT 1';
+		$query = 'SELECT id, fieldtitle'.$this->ct->Languages->Postfix.' AS title,typeparams FROM #__customtables_fields WHERE published=1 AND tableid='.$this->estableid.' AND  fieldname="'.$this->galleryname.'" AND type="imagegallery" LIMIT 1';
 
 		$db->setQuery($query);
 
@@ -144,7 +138,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy {
 
 	function getObject()
 	{
-		$this->esfields = ESFields::getFields($this->estableid);
+		$this->esfields = Fields::getFields($this->estableid);
 
 		$db = JFactory::getDBO();
 		$query = 'SELECT * FROM #__customtables_table_'.$this->establename.' WHERE id='.$this->listing_id.' LIMIT 1';
@@ -165,7 +159,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy {
 		{
 			$titlefield=$mFld['realfieldname'];
 			if(!(strpos($mFld['type'],'multi')===false))
-				$titlefield.=$this->langpostfix;
+				$titlefield.=$this->ct->Languages->Postfix;
 
 			if($row[$titlefield]!='')
 			{
@@ -220,7 +214,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy {
 			$safetitle=JFactory::getApplication()->input->getString('esphototitle'.$image->photoid);
 			$safetitle=str_replace('"',"",$safetitle);
 
-			$query = 'UPDATE '.$this->phototablename.' SET ordering='.$i.', title'.$this->langpostfix.'="'.$safetitle.'" WHERE listingid='.$this->listing_id.' AND photoid='.$image->photoid;
+			$query = 'UPDATE '.$this->phototablename.' SET ordering='.$i.', title'.$this->ct->Languages->Postfix.'="'.$safetitle.'" WHERE listingid='.$this->listing_id.' AND photoid='.$image->photoid;
 
 			$db->setQuery($query);
 			$db->execute();	
@@ -231,7 +225,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy {
 	}
 	function AutoReorderPhotos()
 	{
-		$images=$this->getPhotoList($this->listing_id, $this->langpostfix);
+		$images=$this->getPhotoList();
 
 		$db = JFactory::getDBO();
 
@@ -242,7 +236,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy {
 			$safetitle=JFactory::getApplication()->input->getString('esphototitle'.$image->photoid);
 			$safetitle=str_replace('"',"",$safetitle);
 
-			$query = 'UPDATE '.$this->phototablename.' SET ordering='.$i.', title'.$this->langpostfix.'="'.$safetitle.'" WHERE listingid='.$this->listing_id.' AND photoid='.$image->photoid;
+			$query = 'UPDATE '.$this->phototablename.' SET ordering='.$i.', title'.$this->ct->Languages->Postfix.'="'.$safetitle.'" WHERE listingid='.$this->listing_id.' AND photoid='.$image->photoid;
 			$db->setQuery($query);
 			$db->execute();	
 			$i++;
@@ -291,8 +285,6 @@ class CustomTablesModelEditPhotos extends JModelLegacy {
 			$this->base64file_decode( $src, $dst );
 			$uploadedfile=$dst;
 		}
-
-		$es= new CustomTablesMisc;
 
 		//Check file
 		if(!$this->imagemethods->CheckImage($uploadedfile,JoomlaBasicMisc::file_upload_max_size()))//$this->maxfilesize

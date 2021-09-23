@@ -10,6 +10,9 @@
 // No direct access to this file access');
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\CT;
+use CustomTables\Fields;
+
 // import the Joomla modellist library
 jimport('joomla.application.component.modellist');
 
@@ -18,10 +21,13 @@ jimport('joomla.application.component.modellist');
  */
 class CustomtablesModelListofRecords extends JModelList
 {
+	var $ct;
 	var $tableid;
 
 	public function __construct($config = array())
 	{
+		$this->ct = new CT;
+		
 		if (empty($config['filter_records']))
         {
 			$config['filter_fields'] = array(
@@ -104,7 +110,7 @@ class CustomtablesModelListofRecords extends JModelList
 		if($tablerow['customtablename']!='')
 		{
 			$realtablename=$tablerow['customtablename'];
-			$realfields=ESFields::getListOfExistingFields($realtablename,false);
+			$realfields=Fields::getListOfExistingFields($realtablename,false);
 			if(!in_array('published',$realfields))
 				$published_field_found=false;
 		}
@@ -147,7 +153,7 @@ class CustomtablesModelListofRecords extends JModelList
 		
 		if($search!='')
 		{
-			$esfields = ESFields::getFields($this->tablename);
+			$esfields = Fields::getFields($this->tablename);
 			$wheres=[];
 		
 			foreach ($esfields as $esfield)

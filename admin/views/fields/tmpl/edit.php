@@ -12,6 +12,7 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\Fields;
 
 $document = JFactory::getDocument();
 $document->addCustomTag('<link href="'.JURI::root(true).'/administrator/components/com_customtables/css/fieldtypes.css" rel="stylesheet">');
@@ -49,7 +50,7 @@ else
 	$phptagprocessor=false;
 
 ?>
-<div id="fieldsData" style="display:none;"><?php echo json_encode(ESFields::getFields($this->tableid,true)); ?></div>
+<div id="fieldsData" style="display:none;"><?php echo json_encode(Fields::getFields($this->tableid,true)); ?></div>
 <script type="text/javascript">
 	//websiteroot="<?php echo JURI::root(true); ?>";
 	// waiting spinner

@@ -11,6 +11,8 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\Fields;
+
 class updateImages
 {
     public static function process()
@@ -29,7 +31,7 @@ class updateImages
 			return array('error'=>'fieldid not set');
 		
 		
-		$field_row=ESFields::getFieldRow($fieldid);
+		$field_row=Fields::getFieldRow($fieldid);
 		$tableid=$field_row->tableid;
 		$table_row=ESTables::getTableRowByID($tableid);
 		

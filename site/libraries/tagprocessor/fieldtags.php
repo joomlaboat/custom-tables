@@ -25,12 +25,12 @@ class tagProcessor_Field
             {
                 if($esfield['type']=='dummy')
                 {
-                    $field_label=$esfield['fieldtitle'.$Model->langpostfix];
+                    $field_label=$esfield['fieldtitle'.$Model->ct->Languages->Postfix];
                 }
                 else
                 {
-                    $title=$esfield['fieldtitle'.$Model->langpostfix];
-                    $description=str_replace('"','',$esfield['description'.$Model->langpostfix]);
+                    $title=$esfield['fieldtitle'.$Model->ct->Languages->Postfix];
+                    $description=str_replace('"','',$esfield['description'.$Model->ct->Languages->Postfix]);
                     $isrequired=(bool)$esfield['isrequired'];
 
                     $field_label='<label id="'.$fieldNamePrefix.$esfield['fieldname'].'-lbl" for="'.$fieldNamePrefix.$esfield['fieldname'].'" ';
@@ -58,15 +58,15 @@ class tagProcessor_Field
         {
             foreach($Model->esfields as $esfield)
             {
-                if(!array_key_exists('fieldtitle'.$Model->langpostfix,$esfield))
+                if(!array_key_exists('fieldtitle'.$Model->ct->Languages->Postfix,$esfield))
 				{
 					JFactory::getApplication()->enqueueMessage(
 						JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_LANGFIELDNOTFOUND' ), 'Error');
                                         
-                    $pagelayout=str_replace('*'.$esfield['fieldname'].'*','*fieldtitle'.$Model->langpostfix.' - not found*',$pagelayout);
+                    $pagelayout=str_replace('*'.$esfield['fieldname'].'*','*fieldtitle'.$Model->ct->Languages->Postfix.' - not found*',$pagelayout);
 				}
                 else
-                    $pagelayout=str_replace('*'.$esfield['fieldname'].'*',$esfield['fieldtitle'.$Model->langpostfix],$pagelayout);
+                    $pagelayout=str_replace('*'.$esfield['fieldname'].'*',$esfield['fieldtitle'.$Model->ct->Languages->Postfix],$pagelayout);
             }
         }
 		return $pagelayout;

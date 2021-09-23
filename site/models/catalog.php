@@ -11,6 +11,10 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\CT;
+use CustomTables\Fields;
+use CustomTables\DataTypes\Tree;
+
 jimport('joomla.application.component.model');
 
 $sitelib=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR;
@@ -21,7 +25,8 @@ require_once($sitelib.'logs.php');
 
 class CustomTablesModelCatalog extends JModelLegacy
 {
-		var $es;
+	var $ct;
+	
 		var $filtering;
 		var $esTable;
 		var $TotalRows=0;
@@ -40,12 +45,8 @@ class CustomTablesModelCatalog extends JModelLegacy
 
 		var $esfields;
 		var $tablecustomphp;
-		var $LanguageList;
 
 		var $filterparam;
-
-		var $LangMisc;
-		var $langpostfix;
 
 		var $class="mag-phone mag-field formCol";
 		var $columns;
@@ -102,6 +103,8 @@ class CustomTablesModelCatalog extends JModelLegacy
 
 		function __construct()
 		{
+			$this->ct = new CT;
+			
 			parent::__construct();
 			$jinput=JFactory::getApplication()->input;
 
@@ -166,12 +169,6 @@ class CustomTablesModelCatalog extends JModelLegacy
 				$mainframe = JFactory::getApplication('site');
 				$db = JFactory::getDBO();
 
-
-				//libraries
-				$this->es= new CustomTablesMisc;
-
-
-
 				//get params
 				if($this->blockExternalVars or (isset($params) and count($params)>1))
 				{
@@ -222,12 +219,6 @@ class CustomTablesModelCatalog extends JModelLegacy
 
 				$this->columns=0;//2(int)$this->params->get('columns');
 
-				//Language
-
-				$this->LangMisc	= new ESLanguages;
-				$this->LanguageList=$this->LangMisc->getLanguageList();
-				$this->langpostfix=$this->LangMisc->getLangPostfix();
-
 				//ExtreSearch Table staff
 				$this->esTable=new ESTables;
 
@@ -253,11 +244,11 @@ class CustomTablesModelCatalog extends JModelLegacy
 				$this->tablecustomphp=$this->tablerow['customphp'];
 
 				//Fields
-				$this->esfields = ESFields::getFields($this->estableid);
+				$this->esfields = Fields::getFields($this->estableid);
 				
 				//sorting
 
-				$this->esordering=CTOrdering::loadOrderFields($this->blockExternalVars,$this->params,$this->esfields,$this->langpostfix,
+				$this->esordering=CTOrdering::loadOrderFields($this->blockExternalVars,$this->params,$this->esfields,$this->ct->Languages->Postfix,
 									      $this->order_list,$this->order_values);
 
 				$this->imagegalleries=array();
@@ -267,17 +258,17 @@ class CustomTablesModelCatalog extends JModelLegacy
 				//Get useridfield
 				if($this->params->get('useridfield'))
 				{
-					$this->useridfieldname=ESFields::getRealFieldName($this->params->get('useridfield'),$esfields);
+					$this->useridfieldname=Fields::getRealFieldName($this->params->get('useridfield'),$esfields);
 				}
 				else
 				{
 						foreach($this->esfields as $fld)
 						{
 							if($fld['type']=='imagegallery')
-								$this->imagegalleries[]=array($fld['fieldname'],$fld['fieldtitle'.$this->langpostfix]);
+								$this->imagegalleries[]=array($fld['fieldname'],$fld['fieldtitle'.$this->ct->Languages->Postfix]);
 
 							if($fld['type']=='filebox')
-								$this->fileboxes[]=array($fld['fieldname'],$fld['fieldtitle'.$this->langpostfix]);
+								$this->fileboxes[]=array($fld['fieldname'],$fld['fieldtitle'.$this->ct->Languages->Postfix]);
 
 							if($fld['type']=='userid')
 								$this->useridfieldname=$fld['fieldname'];
@@ -290,7 +281,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 				
 				//Grouping
 				if($this->params->get('groupby')!='')
-					$this->groupby=ESFields::getRealFieldName($this->params->get('groupby'),$esfields);
+					$this->groupby=Fields::getRealFieldName($this->params->get('groupby'),$esfields);
 				else
 					$this->groupby='';
 
@@ -299,11 +290,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 
 				$this->LayoutProc=new LayoutProcessor;
 				$this->LayoutProc->Model=$this;
-				$this->LayoutProc->langpostfix=$this->langpostfix;
 				$this->LayoutProc->fields=$this->esfields;
-
-
-				$this->LayoutProc->es=$this->es;
 
 				$this->LayoutProc->ShowDatailsLink=$this->ShowDatailsLink;
 				$this->LayoutProc->establename=$this->establename;
@@ -350,9 +337,8 @@ class CustomTablesModelCatalog extends JModelLegacy
 					}
 				}//if(!$this->blockExternalVars)
 
-				$this->filtering= new ESFiltering;
-				$this->filtering->langpostfix=$this->langpostfix;
-				$this->filtering->es=$this->es;
+				$this->filtering = new ESFiltering($this->ct);
+				
 				$this->filtering->esfields=$this->esfields;
 				$this->filtering->estable=$this->realtablename;
 
@@ -482,7 +468,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 				{
 						$fName=$esfieldname;
 						if(!(strpos($esfieldname,'multi')===false))
-							$fName.=$this->langpostfix;
+							$fName.=$this->ct->Languages->Postfix;
 
 						$wherearr[]='SUBSTRING(es_'.$fName.',1,1)="'.$alpha.'"';
 				}
@@ -490,12 +476,12 @@ class CustomTablesModelCatalog extends JModelLegacy
 				{
 						$db = JFactory::getDBO();
 
-						$parentid=$this->es->getOptionIdFull($jinput->get('optionname','','STRING'));
+						$parentid=Tree::getOptionIdFull($jinput->get('optionname','','STRING'));
 
 
 						$query = 'SELECT familytreestr, optionname '
 								.' FROM #__customtables_options'
-								.' WHERE INSTR(familytree,"-'.$parentid.'-") AND SUBSTRING(title'.$this->langpostfix.',1,1)="'.
+								.' WHERE INSTR(familytree,"-'.$parentid.'-") AND SUBSTRING(title'.$this->ct->Languages->Postfix.',1,1)="'.
 								$jinput->get('alpha','','STRING').'"'
 								.' ';
 
@@ -577,11 +563,11 @@ class CustomTablesModelCatalog extends JModelLegacy
 
 								require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'keywordsearch.php');
 
-								$KeywordSearcher=new CustomTablesKeywordSearch;
+								$KeywordSearcher=new CustomTablesKeywordSearch($this->ct);
 
 								$KeywordSearcher->groupby=$this->groupby;
 								$KeywordSearcher->esordering=$this->esordering;
-								$KeywordSearcher->langpostfix=$this->langpostfix;
+
 								$KeywordSearcher->establename=$this->establename;
 								$KeywordSearcher->esfields=$this->esfields;
 
@@ -681,7 +667,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 				$ordering[]=$this->groupby;
 
 		if($this->esordering)
-			CTOrdering::getOrderingQuery($ordering,$query,$inner,$this->esordering,$this->langpostfix,$this->realtablename,$this->esfields);
+			CTOrdering::getOrderingQuery($ordering,$query,$inner,$this->esordering,$this->ct->Languages->Postfix,$this->realtablename,$this->esfields);
 
 		$query='SELECT '.$this->tablerow['query_selects'].' FROM '.$this->realtablename.' ';
 		$query.=implode(' ',$inner).' ';

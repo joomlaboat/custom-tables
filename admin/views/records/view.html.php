@@ -12,6 +12,8 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\Layouts;
+
 use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\Version;
 
@@ -62,7 +64,7 @@ class CustomtablesViewRecords extends JViewLegacy
 		$config=array();
 		$this->Model = JModelLegacy::getInstance('EditItem', 'CustomTablesModel', $this->params);
 		$this->Model->load($this->params,true);
-		$this->Model->pagelayout=ESLayouts::createDefaultLayout_Edit($this->Model->esfields,false);
+		$this->Model->pagelayout=Layouts::createDefaultLayout_Edit($this->Model->esfields,false);
 		
 		$this->row=array();
 		$this->esfields=$this->Model->esfields;
@@ -70,7 +72,6 @@ class CustomtablesViewRecords extends JViewLegacy
 		$user =  JFactory::getUser();
 		$this->userid = (int)$user->get('id');
 		
-		$this->langpostfix = $this->Model->langpostfix;
 		$this->esfields = $this->Model->esfields;
 		$this->row = $this->Model->row;
 

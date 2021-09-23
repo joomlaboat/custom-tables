@@ -9,6 +9,8 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\Fields;
+
 function importCSVfile($filename, $ct_tableid)
 {
     if(file_exists($filename))
@@ -64,7 +66,7 @@ function processFieldParams(&$fieldList, &$fields)
 					die;
 				}
 				
-				$sqljoin_field = ESFields::getFieldRowByName($fieldname, $tablerow->id);
+				$sqljoin_field = Fields::getFieldRowByName($fieldname, $tablerow->id);
 
 				$fields[$f_index]->sqljoin=(object)[
 					'table'=>$tablerow->realtablename,
@@ -84,7 +86,7 @@ function importCSVdata($filename,$ct_tableid)
     $arrayOfLines = getLines($filename);
 
     $tablerow=ESTables::getTableRowByID($ct_tableid);
-    $fields = ESFields::getFields($ct_tableid,true);
+    $fields = Fields::getFields($ct_tableid,true);
 
     $first_line_fieldnames=false;
       

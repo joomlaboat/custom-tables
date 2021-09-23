@@ -8,6 +8,8 @@
 
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\DataTypes\Tree;
+
 $max_file_size=JoomlaBasicMisc::file_upload_max_size();
 ?>
 
@@ -235,7 +237,7 @@ $max_file_size=JoomlaBasicMisc::file_upload_max_size();
 					if(strlen($imageparams)==0)
 					{
 						$pid=$this->optionRecord->parentid;
-						$imageparams=$this->Model->es->getHeritageInfo($pid, 'imageparams');
+						$imageparams=Tree::getHeritageInfo($pid, 'imageparams');
 					}	
 					/*	
 					if($imageparams!='')

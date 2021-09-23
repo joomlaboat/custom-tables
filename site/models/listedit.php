@@ -9,11 +9,12 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\DataTypes\Tree;
+
 jimport('joomla.application.component.model');
 
 class CustomTablesModelListEdit extends JModel
 {
-	var $es=CustomTablesMisc;
 	var $imagefolder="images/esoptimages";
 	
     function __construct()
@@ -24,8 +25,6 @@ class CustomTablesModelListEdit extends JModel
 		$array = $jinput->get('cid',array(),'array');
 
 		$this->setId((int)$array[0]);
-		
-		$this->es= new CustomTablesMisc;
     }
 
 	function setId($id)
@@ -72,7 +71,7 @@ class CustomTablesModelListEdit extends JModel
 				$imageparams=$jinput->get('imageparams','','string');
 				
 				if(strlen($imageparams)==0)
-					$imageparams=$this->es->getHeritageInfo(JFactory::getApplication()->input->get('parentid',0,'INT'), 'imageparams');
+					$imageparams=Tree::getHeritageInfo(JFactory::getApplication()->input->get('parentid',0,'INT'), 'imageparams');
 			
 				$value=$imagemethods->UploadSingleImage(0, $fieldname,$imagefolder,$imageparams,'-options');
 			}
@@ -80,7 +79,7 @@ class CustomTablesModelListEdit extends JModel
 		else
 		{
 			
-			$ExistingImage=$this->es->isRecordExist($id,'id', 'image', '#__customtables_options');
+			$ExistingImage=Tree::isRecordExist($id,'id', 'image', '#__customtables_options');
 			$file = $jinput->getVar($fieldname, '', 'files', 'array');
 			
 			$filename=$file['name'];
@@ -99,7 +98,7 @@ class CustomTablesModelListEdit extends JModel
 			{
 				$imageparams=$jinput->getString('imageparams');
 				if(strlen($imageparams)==0)
-					$imageparams=$this->es->getHeritageInfo($jinput->get('parentid',0,'INT'), 'imageparams');
+					$imageparams=Tree::getHeritageInfo($jinput->get('parentid',0,'INT'), 'imageparams');
 					
 				$value=$imagemethods->UploadSingleImage($ExistingImage, $fieldname,$imagefolder,$imageparams,'-options');
 			}
@@ -139,8 +138,8 @@ class CustomTablesModelListEdit extends JModel
 		$row->load( $id );
 	
 		// Store
-		$row->familytree='-'.$this->es->getFamilyTree($id,0).'-';
-		$familytreestr=$this->es->getFamilyTreeString($id,0);
+		$row->familytree='-'.Tree::getFamilyTree($id,0).'-';
+		$familytreestr=Tree::getFamilyTreeString($id,0);
 		if($familytreestr!='')
 			$row->familytreestr=','.$familytreestr.'.'.$row->optionname.'.';
 		else
@@ -175,28 +174,4 @@ class CustomTablesModelListEdit extends JModel
 		}
 		return true;
 	}
-	
-	function array_insert(&$array, $insert, $position = -1) {
-	    $position = ($position == -1) ? (count($array)) : $position ;
-	    if($position != (count($array))) {
-	    $ta = $array;
-	    for($i = $position; $i < (count($array)); $i++) {
-               if(!isset($array[$i])) {
-                    die("Invalid array: All keys must be numerical and in sequence.");
-               }
-               $tmp[$i+1] = $array[$i];
-               unset($ta[$i]);
-	    }
-	    $ta[$position] = $insert;
-	    $array = $ta + $tmp;
-
-	    } else {
-	         $array[$position] = $insert;
-	    }
-	    ksort($array);
-	    return true;
-	}
-	
-	
-
 }

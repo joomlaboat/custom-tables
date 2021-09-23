@@ -11,12 +11,10 @@
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die( 'Restricted access' );
 
-
-class JHTMLESFields
+class JHTMLCTFields
 {
         public static function fields($tableid, $currentfieldid, $control_name, $value)
         {
-				
 				$db = JFactory::getDBO();
 
 				$query = 'SELECT id, fieldname '
@@ -32,8 +30,5 @@ class JHTMLESFields
 				$fields[]=array('id'=>'0','fieldname'=>'- ROOT');
 				
 				return JHTML::_('select.genericlist',  $fields, $control_name, 'class="inputbox"', 'id', 'fieldname', $value);
-		
-				
         }
-	
 }

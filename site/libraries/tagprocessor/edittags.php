@@ -31,9 +31,8 @@ class tagProcessor_Edit
         require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'esinputbox.php');
         
     	$esinputbox = new ESInputBox;
-    	$esinputbox->es=$Model->es;
-    	$esinputbox->LanguageList=$Model->LanguageList;
-        $esinputbox->langpostfix=$Model->langpostfix;
+		$esinputbox->Model=$Model;
+    	
         $esinputbox->establename=$Model->establename;
     	$esinputbox->estableid=$Model->estableid;
         $esinputbox->requiredlabel=$Model->params->get( 'requiredlabel' );
@@ -43,7 +42,7 @@ class tagProcessor_Edit
         $replaceitecode=JoomlaBasicMisc::generateRandomString();
 		$items_to_replace=array();
         
-		$field_objects = tagProcessor_Edit::renderFields($row,$Model,$pagelayout,$Model->langpostfix,0,$esinputbox,$calendars,'',$replaceitecode,$items_to_replace,$fieldNamePrefix);
+		$field_objects = tagProcessor_Edit::renderFields($row,$Model,$pagelayout,$Model->ct->Languages->Postfix,0,$esinputbox,$calendars,'',$replaceitecode,$items_to_replace,$fieldNamePrefix);
         
 		foreach($items_to_replace as $item)
 			$pagelayout=str_replace($item[0],$item[1],$pagelayout);

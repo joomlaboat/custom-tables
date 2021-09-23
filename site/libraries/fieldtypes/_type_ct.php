@@ -9,11 +9,12 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\DataTypes\Tree;
+
 class CT_FieldTypeTag_ct
 {
     public static function ResolveStructure(&$Model,&$htmlresult)
 	{
-
 		$options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('resolve',$options,$htmlresult,'{}');
 
@@ -23,9 +24,7 @@ class CT_FieldTypeTag_ct
 		{
 			$value=$options[$i];
 
-
-
-			$vlu=implode(',',$Model->es->getMultyValueTitles($value,$Model->langpostfix,1, ' - '));
+			$vlu=implode(',',Tree::getMultyValueTitles($value,$Model->ct->Languages->Postfix,1, ' - '));
 			$htmlresult=str_replace($fItem,$vlu,$htmlresult);
 			$i++;
 		}
@@ -47,9 +46,9 @@ class CT_FieldTypeTag_ct
 					if(!in_array($TriName[1],$GroupNames))
 					{
 						$GroupNames[]=$TriName[1];
-						$Result[$TriName[1]][] =$Model->es->getOptionTitleFull($rootparent.'.'.$TriName[1].'.',$Model->langpostfix);
+						$Result[$TriName[1]][] = Tree::getOptionTitleFull($rootparent.'.'.$TriName[1].'.',$Model->ct->Languages->Postfix);
 					}
-					$Result[$TriName[1]][] = $Model->es->getOptionTitleFull($rootparent.'.'.$TriName[1].'.'.$TriName[2].'.',$Model->langpostfix);
+					$Result[$TriName[1]][] = Tree::getOptionTitleFull($rootparent.'.'.$TriName[1].'.'.$TriName[2].'.',$Model->ct->Languages->Postfix);
 				}
 			}
 		}

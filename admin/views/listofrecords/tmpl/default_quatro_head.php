@@ -36,8 +36,8 @@ HTMLHelper::_('behavior.multiselect');
 		$id='fieldtitle';
 		$title=$field[$id];
 				
-		if($this->langpostfix!='')
-			$id.='_'.$this->langpostfix;
+		if($this->Model->ct->Languages->Postfix!='')
+			$id.='_'.$this->Model->ct->Languages->Postfix;
 		
 		if(isset($field[$id]))
 			$title=$field[$id];

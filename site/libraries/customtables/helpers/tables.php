@@ -11,6 +11,8 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\Fields;
+
 class ESTables
 {
 	//This function works with MySQL not PostgreeSQL
@@ -27,7 +29,7 @@ class ESTables
 	{
 		$db = JFactory::getDBO();
 		
-		$ExistingFields=ESFields::getExistingFields($realtablename, false);
+		$ExistingFields=Fields::getExistingFields($realtablename, false);
 		
 		if($db->serverType == 'postgresql')
 			$type_field_name='postgresql_type';
@@ -39,7 +41,7 @@ class ESTables
 			$proj_field=$projected_field['name'];
 			$fieldtype=$projected_field[$type_field_name];
         
-			ESFields::checkField($ExistingFields,$realtablename,$projected_field['name'],$projected_field[$type_field_name]);
+			Fields::checkField($ExistingFields,$realtablename,$projected_field['name'],$projected_field[$type_field_name]);
 		}
 	}
 	
@@ -221,7 +223,7 @@ class ESTables
 		$published_field_found=true;
 		if($row['customtablename']!='')
 		{
-			$realfields=ESFields::getListOfExistingFields($row['realtablename'],false);
+			$realfields=Fields::getListOfExistingFields($row['realtablename'],false);
 			if(!in_array('published',$realfields))
 				$published_field_found=false;
 		}
@@ -269,7 +271,7 @@ class ESTables
 			else
 				$table_name=$complete_table_name;// used for custom table names - to connect to third-part tables for example
 				
-			$fields = ESFields::getListOfExistingFields($table_name,false);
+			$fields = Fields::getListOfExistingFields($table_name,false);
 			
 			if(count($fields)==0)
 			{

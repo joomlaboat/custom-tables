@@ -12,6 +12,8 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\Fields;
+
 use Joomla\Registry\Registry;
 
 // import Joomla modelform library
@@ -367,8 +369,8 @@ class CustomtablesModelFields extends JModelAdmin
 
 		foreach($pks as $fieldid)
 		{
-			$data=ESFields::getFieldRow($fieldid);
-			ESFields::deleteESField_byID($fieldid);
+			$data=Fields::getFieldRow($fieldid);
+			Fields::deleteESField_byID($fieldid);
 		}
 
 		return true;
@@ -754,26 +756,14 @@ class CustomtablesModelFields extends JModelAdmin
 	public function checkFieldName($tableid,$fieldname)//,&$typeparams)
 	{
 		$new_fieldname=$fieldname;
-		//$i=1;
+
 		do
 		{
-		
+			$already_exists=Fields::getFieldID($tableid, $new_fieldname);
 
-		//$typeparams='';
-
-			//$fieldrow=getFieldRowByName($fieldname, $tableid);
-			$already_exists=ESFields::getFieldID($tableid, $new_fieldname);
-			//if(count($fieldrow)>0)
 			if($already_exists!=0)
 			{
-				//$typeparams=$fieldrow->typeparams;
-				//return $fieldname.'copy';
-				
-				//$pair=explode('_',$fieldname);
-
-				//$cleanfieldname=$pair[0];
 				$new_fieldname.='copy';
-				//$i++;
 			}
 			else
 				break;
@@ -781,7 +771,6 @@ class CustomtablesModelFields extends JModelAdmin
 		}while(1==1);
 
 		return $new_fieldname;
-		//return $new_fieldname;
 	}
 
 
@@ -817,7 +806,7 @@ class CustomtablesModelFields extends JModelAdmin
 		//Add language fields to the fields table if necessary
 		
 		$morethanonelang=false;
-		$fields=ESFields::getListOfExistingFields('#__customtables_fields',false);
+		$fields=Fields::getListOfExistingFields('#__customtables_fields',false);
 		foreach($languages as $lang)
 		{
 				$id_title='fieldtitle';
@@ -829,10 +818,10 @@ class CustomtablesModelFields extends JModelAdmin
 					$id_description.='_'.$lang->sef;
 
 					if(!in_array($id_title,$fields))
-						ESFields::addLanguageField('#__customtables_fields','fieldtitle',$id_title);
+						Fields::addLanguageField('#__customtables_fields','fieldtitle',$id_title);
 
 					if(!in_array($id_description,$fields))
-						ESFields::addLanguageField('#__customtables_fields','description',$id_description);
+						Fields::addLanguageField('#__customtables_fields','description',$id_description);
 
 				}
 
@@ -895,7 +884,7 @@ class CustomtablesModelFields extends JModelAdmin
 
 		if($fieldid!=0)
 		{
-			$fieldrow=ESFields::getFieldRow($fieldid);
+			$fieldrow=Fields::getFieldRow($fieldid);
 			$ex_type=$fieldrow->type;
 			$ex_typeparams=$fieldrow->typeparams;
 			$realfieldname=$fieldrow->realfieldname;
@@ -916,16 +905,16 @@ class CustomtablesModelFields extends JModelAdmin
 		//---------------------------------- Convert Field
 
 		$new_type=$data['type'];
-		$PureFieldType=ESFields::getPureFieldType($new_type, $new_typeparams);
+		$PureFieldType=Fields::getPureFieldType($new_type, $new_typeparams);
 
 		if($realfieldname!='')
-			$fieldfound=ESFields::checkIfFieldExists($realtablename,$realfieldname,false);
+			$fieldfound=Fields::checkIfFieldExists($realtablename,$realfieldname,false);
 		else
 			$fieldfound=false;
 
 		if($fieldid!=0 and $fieldfound)
 		{
-			$ex_PureFieldType=ESFields::getPureFieldType($ex_type, $ex_typeparams);
+			$ex_PureFieldType=Fields::getPureFieldType($ex_type, $ex_typeparams);
 
 			if($PureFieldType=='')
 			{
@@ -933,7 +922,7 @@ class CustomtablesModelFields extends JModelAdmin
 				$convert_ok=true;
 			}
 			else
-				$convert_ok=ESFields::ConvertFieldType($realtablename,$realfieldname,$ex_type, $ex_typeparams, $ex_PureFieldType, $new_type, $new_typeparams,$PureFieldType,$fieldtitle);
+				$convert_ok=Fields::ConvertFieldType($realtablename,$realfieldname,$ex_type, $ex_typeparams, $ex_PureFieldType, $new_type, $new_typeparams,$PureFieldType,$fieldtitle);
 
 			if(!$convert_ok)
 			{
@@ -972,18 +961,18 @@ class CustomtablesModelFields extends JModelAdmin
 		{
 			//Add Field
 			
-			ESFields::addESField($realtablename,$realfieldname,$new_type,$PureFieldType,$fieldtitle);
+			Fields::addESField($realtablename,$realfieldname,$new_type,$PureFieldType,$fieldtitle);
 		}
 
 
 		if($new_type=='sqljoin')
 		{
 				//Create Index if needed
-				ESFields::addIndexIfNotExist($realtablename,$realfieldname);
+				Fields::addIndexIfNotExist($realtablename,$realfieldname);
 
 				//Add Foreign Key
 				$msg='';
-				ESFields::addForeignKey($realtablename,$realfieldname,$new_typeparams,'','id',$msg);
+				Fields::addForeignKey($realtablename,$realfieldname,$new_typeparams,'','id',$msg);
 
 
 		}
@@ -991,13 +980,11 @@ class CustomtablesModelFields extends JModelAdmin
 		if($new_type=='user' or $new_type=='userid')
 		{
 				//Create Index if needed
-				ESFields::addIndexIfNotExist($realtablename,$realfieldname);
+				Fields::addIndexIfNotExist($realtablename,$realfieldname);
 
 				//Add Foreign Key
 				$msg='';
-				ESFields::addForeignKey($realtablename,$realfieldname,'','#__users','id',$msg);
-
-
+				Fields::addForeignKey($realtablename,$realfieldname,'','#__users','id',$msg);
 		}
 		return true;
 	}

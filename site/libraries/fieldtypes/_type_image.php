@@ -9,6 +9,9 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\CT;
+use CustomTables\DataTypes\Tree;
+
 class CT_FieldTypeTag_image
 {
     static public function getImageSRClayoutview($option_list,$rowValue,$TypeParams,&$imagesrc,&$imagetag)//,$onlylink=false)
@@ -109,7 +112,7 @@ class CT_FieldTypeTag_image
 		else
 		{
 			$to_delete = $jinput->post->get($comesfieldname.'_delete', '','CMD' );
-			$ExistingImage=$es->isRecordExist($id,'id', $realfieldname, $realtablename);
+			$ExistingImage=Tree::isRecordExist($id,'id', $realfieldname, $realtablename);
 
 			if($to_delete=='true')
 			{

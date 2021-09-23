@@ -8,6 +8,8 @@
 
 // no direct access
 defined('_JEXEC') or die('Restricted access');
+
+use CustomTables\DataTypes\Tree;
     
     JHTML::stylesheet("default.css", JURI::root(true)."/components/com_customtables/views/catalog/tmpl/");
 
@@ -34,7 +36,7 @@ defined('_JEXEC') or die('Restricted access');
 				if(count($this->rows)>0)
 				{
 					$row=$this->rows[0];
-					$imageparams=$this->Model->es->getHeritageInfo($row[parentid], 'imageparams');
+					$imageparams=Tree::getHeritageInfo($row[parentid], 'imageparams');
 				
 					$cleanOptions=$imagemethods->getCustomImageOptions($imageparams);
 				

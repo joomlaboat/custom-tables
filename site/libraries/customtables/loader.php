@@ -2,7 +2,7 @@
 
 defined('JPATH_PLATFORM') or die;
 
-function CTLoader()
+function CTLoader($inclide_utilities = false)
 {
 	$path = dirname(__FILE__) . DIRECTORY_SEPARATOR;
 	
@@ -27,10 +27,29 @@ function CTLoader()
 	require_once($path_helpers.'layouts.php');
 	require_once($path_helpers.'types.php');
 	
-		
-	$path_utilities = $path . DIRECTORY_SEPARATOR . 'utilities' . DIRECTORY_SEPARATOR;
-	require_once($path_utilities.'importtables.php');
+	if($inclide_utilities)
+	{
+		$path_utilities = $path . DIRECTORY_SEPARATOR . 'utilities' . DIRECTORY_SEPARATOR;
+		require_once($path_utilities.'importtables.php');
+		require_once($path_utilities.'exporttables.php');
+	}
+	
+	$path_datatypes = $path . DIRECTORY_SEPARATOR . 'ct' . DIRECTORY_SEPARATOR;
+	require_once($path_datatypes.'ct.php');
 	
 	$path_datatypes = $path . DIRECTORY_SEPARATOR . 'datatypes' . DIRECTORY_SEPARATOR;
 	require_once($path_datatypes.'filemethods.php');
+	require_once($path_datatypes.'tree.php');
+	
+	$path_datatypes = $path . DIRECTORY_SEPARATOR . 'layouts' . DIRECTORY_SEPARATOR;
+	require_once($path_datatypes.'layouts.php');
+	
+	$path_datatypes = $path . DIRECTORY_SEPARATOR . 'tables' . DIRECTORY_SEPARATOR;
+	require_once($path_datatypes.'tables.php');
+	
+	$path_datatypes = $path . DIRECTORY_SEPARATOR . 'fields' . DIRECTORY_SEPARATOR;
+	require_once($path_datatypes.'fields.php');
+	
+	$path_datatypes = $path . DIRECTORY_SEPARATOR . 'languages' . DIRECTORY_SEPARATOR;
+	require_once($path_datatypes.'languages.php');
 }

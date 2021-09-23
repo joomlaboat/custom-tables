@@ -15,15 +15,11 @@ JTable::addIncludePath(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEP
 
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'logs.php');
 
-class CustomTablesModelEditFiles extends JModelLegacy {
-
-	var $es;
+class CustomTablesModelEditFiles extends JModelLegacy
+{
+	var $ct;
 
 	var $filemethods;
-	var $LangMisc;
-
-	var $LanguageList;
-	var $langpostfix='';
 
 	var $esTable;
 	var $establename;
@@ -51,6 +47,8 @@ class CustomTablesModelEditFiles extends JModelLegacy {
 
 	function __construct()
     {
+		$this->ct = new CT;
+		
 		parent::__construct();
 
 		$this->allowedExtensions='doc docx pdf txt xls xlsx psd ppt pptx webp png mp3 jpg jpeg csv accdb';
@@ -61,16 +59,9 @@ class CustomTablesModelEditFiles extends JModelLegacy {
 
 		$this->maxfilesize=JoomlaBasicMisc::file_upload_max_size();
 
-
-		$this->es= new CustomTablesMisc;
-
-		$this->LangMisc	= new ESLanguages;
 		$this->esTable=new ESTables;
 		$this->filemethods=new CustomTablesFileMethods;
 
-
-		$this->LanguageList=$this->LangMisc->getLanguageList();
-		$this->langpostfix=$this->LangMisc->getLangPostfix();
 
 		$this->establename=$params->get( 'establename' );
 		if($this->establename=='')
@@ -116,7 +107,7 @@ class CustomTablesModelEditFiles extends JModelLegacy {
 	function getFileBox()
 	{
 		$db = JFactory::getDBO();
-		$query = 'SELECT fieldtitle'.$this->langpostfix.' AS title,typeparams FROM #__customtables_fields WHERE published=1 AND tableid='.(int)$this->estableid.' AND fieldname="'.$this->fileboxname.'" AND type="filebox" LIMIT 1';
+		$query = 'SELECT fieldtitle'.$this->ct->Languages->Postfix.' AS title,typeparams FROM #__customtables_fields WHERE published=1 AND tableid='.(int)$this->estableid.' AND fieldname="'.$this->fileboxname.'" AND type="filebox" LIMIT 1';
 
 		$db->setQuery($query);
 
@@ -142,7 +133,7 @@ class CustomTablesModelEditFiles extends JModelLegacy {
 
 	function getObject()
 	{
-		$this->esfields = ESFields::getFields($this->estableid);
+		$this->esfields = Fields::getFields($this->estableid);
 
 		$db = JFactory::getDBO();
 		$query = 'SELECT * FROM #__customtables_table_'.$this->establename.' WHERE id='.(int)$this->listing_id.' LIMIT 1';
@@ -162,7 +153,7 @@ class CustomTablesModelEditFiles extends JModelLegacy {
 		{
 			$titlefield=$mFld['realfieldname'];
 			if(!(strpos($mFld['type'],'multi')===false))
-				$titlefield.=$this->langpostfix;
+				$titlefield.=$this->ct->Languages->Postfix;
 
 			if($row[$titlefield]!='')
 			{
@@ -218,10 +209,6 @@ class CustomTablesModelEditFiles extends JModelLegacy {
 			CustomTablesFileMethods::base64file_decode( $src, $dst );
 			$uploadedfile=$dst;
 		}
-
-
-
-		$es= new CustomTablesMisc;
 
 		//Save to DB
 

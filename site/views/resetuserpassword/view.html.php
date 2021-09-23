@@ -10,6 +10,8 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\Fields;
+
 jimport( 'joomla.application.component.view');
 
 class CustomTablesViewResetUserPassword extends JViewLegacy {
@@ -50,7 +52,7 @@ class CustomTablesViewResetUserPassword extends JViewLegacy {
 		$estableid=$tablerow['id'];
 		$tablename='#__customtables_table_'.$establename;
 
-		$esfields = ESFields::getFields($estableid);
+		$esfields = Fields::getFields($estableid);
 
 		$useridfieldname=CustomTablesViewResetUserPassword::getUserField($params->get('useridfield'),$esfields);
 

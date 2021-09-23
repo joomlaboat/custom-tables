@@ -10,6 +10,8 @@
 // No direct access to this file access');
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\Fields;
+
 use Joomla\CMS\Version;
 
 use Joomla\CMS\Factory;
@@ -23,6 +25,8 @@ use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\Database\DatabaseDriver;
 use Joomla\Component\Content\Administrator\Extension\ContentComponent;
 
+use CustomTables\CT;
+
 /**
  * Customtables View class for the Listoffields
  */
@@ -32,6 +36,7 @@ class CustomtablesViewListofrecords extends JViewLegacy
 	 * Listoffields view display method
 	 * @return void
 	 */
+	var $ct;
 	 
 	var $tableid;
 	var $tablename;
@@ -39,25 +44,24 @@ class CustomtablesViewListofrecords extends JViewLegacy
 	var $published_field_found;
 	
 	var $tabletitle;
-	var $languages;
+
 	var $tablefields;
-	var $langpostfix;
+	
 
 	function display($tpl = null)
 	{
+		$this->ct = new CT;
+		
+		
 		$version = new Version;
 		$this->version = (int)$version->getShortVersion();
 		
-		$LangMisc	= new ESLanguages;
-		$this->languages=$LangMisc->getLanguageList();
-		
-		$this->langpostfix=$LangMisc->getLangPostfix();
 		$app = JFactory::getApplication();
 		$this->tablename="";
 		$this->realtablename="";
 		$this->tabletitle="";
 		$this->tablefields=array();
-
+		
 		if ($this->getLayout() !== 'modal')
 		{
 			// Include helper submenu
@@ -90,13 +94,13 @@ class CustomtablesViewListofrecords extends JViewLegacy
 			{
 				$this->tablename=$table->tablename;
 				$this->tabletitle=$table->tabletitle;
-				$this->tablefields=ESFields::getFields($this->tableid);
+				$this->tablefields=Fields::getFields($this->tableid);
 				
 				$this->published_field_found=true;
 				if($table->customtablename !='')
 				{
 					$this->realtablename=$table->customtablename;
-					$realfields=ESFields::getListOfExistingFields($this->realtablename,false);
+					$realfields=Fields::getListOfExistingFields($this->realtablename,false);
 					if(!in_array('published',$realfields))
 						$this->published_field_found = false;
 				}

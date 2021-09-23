@@ -9,6 +9,9 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\CT;
+use CustomTables\Fields;
+
 jimport('joomla.application.component.model');
 //jimport('joomla.application.component.controller');
 
@@ -17,15 +20,13 @@ JTable::addIncludePath(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEP
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'layout.php');
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'filtering.php');
 
-class CustomTablesModelDetails extends JModelLegacy {
+class CustomTablesModelDetails extends JModelLegacy
+{
+	var $ct;
 
-	var $es;
 	var $TotalRows=0;
-	var $LangMisc;
 
 	var $esTable;
-
-	var $langpostfix;
 
 	var $establename;
 	var $realtablename;
@@ -34,7 +35,7 @@ class CustomTablesModelDetails extends JModelLegacy {
 	var $estableid;
 	var $tablerow;
 	var $esfields;
-	var $LanguageList;
+
 	var $LayoutProc;
 
 
@@ -61,6 +62,8 @@ class CustomTablesModelDetails extends JModelLegacy {
 
 	function __construct()
 	{
+		$this->ct = new CT;
+		
 		parent::__construct();
 
 		$jinput=JFactory::getApplication()->input;
@@ -104,10 +107,8 @@ class CustomTablesModelDetails extends JModelLegacy {
 		$this->imagefolderweb='images/esimages';
 		$this->imagefolder=JPATH_SITE.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'esimages';
 		$this->imagegalleryprefix='g';
-		$this->es= new CustomTablesMisc;
-		$this->LangMisc	= new ESLanguages;
+		
 		$this->esTable=new ESTables;
-		$this->langpostfix=$this->LangMisc->getLangPostfix();
 
 		//sort by field
 		if(!$params_only and $jinput->getCmd('sortby'))
@@ -157,7 +158,7 @@ class CustomTablesModelDetails extends JModelLegacy {
 		if($this->tablerow['customtablename']!='')
 		{
 			$this->realtablename=$this->tablerow['customtablename'];
-			$realfields=ESFields::getListOfExistingFields($this->realtablename,false);
+			$realfields=Fields::getListOfExistingFields($this->realtablename,false);
 			if(!in_array('published',$realfields))
 				$this->published_field_found=false;
 		}
@@ -166,7 +167,7 @@ class CustomTablesModelDetails extends JModelLegacy {
 
 
 		//	Fields
-		$this->esfields = ESFields::getFields($this->estableid);
+		$this->esfields = Fields::getFields($this->estableid);
 		foreach($this->esfields as $fld)
 		{
 			if($fld['type']=='alias')
@@ -191,8 +192,6 @@ class CustomTablesModelDetails extends JModelLegacy {
 
 		$this->redirectto=$this->params->get( 'redirectto' );
 		$this->LayoutProc->layout='';
-		$this->LanguageList=$this->LangMisc->getLanguageList();
-
 	}
 
 	function checkRecordUserJoin($recordstable, $recordsuseridfield, $recordsfield, $id)
@@ -233,9 +232,8 @@ class CustomTablesModelDetails extends JModelLegacy {
 
 			if($this->filter!='')
 			{
-				$filtering=new ESFiltering;
-				$filtering->langpostfix=$this->langpostfix;
-				$filtering->es=$this->es;
+				$this->filtering = new ESFiltering($this->ct);
+				
 				$filtering->estable=$this->realtablename;
 				$filtering->esfields=$this->esfields;
 

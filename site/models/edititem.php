@@ -6,9 +6,13 @@
  * @license GNU/GPL
  **/
 
-
 // no direct access
 defined('_JEXEC') or die('Restricted access');
+
+use CustomTables\CT;
+use CustomTables\Fields;
+use CustomTables\Layouts;
+use CustomTables\DataTypes\Tree;
 
 jimport('joomla.application.component.model');
 
@@ -26,9 +30,8 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'co
 
 class CustomTablesModelEditItem extends JModelLegacy
 {
-	var $es;
-
-	var $LangMisc;
+	var $ct;
+	
 	var $establename;
 	var $realtablename;
 	var $published_field_found;
@@ -50,8 +53,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 	var $layout_catalog;
 	var $layout_details;
 	var $id;
-	var $LanguageList;
-	var $langpostfix;
+
 	var $esfields;
 	var $showlines;
 	//var $oklink;
@@ -84,6 +86,8 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 	function __construct()
 	{
+		$this->ct = new CT;
+		
 		parent::__construct();
 		$this->advancedtagprocessor=false;
 		
@@ -128,15 +132,6 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 		$this->useridfield='';
 		$this->useridfield_unique=false;
-		
-		$this->es= new CustomTablesMisc;
-
-
-		$this->LangMisc	= new ESLanguages;
-		$this->LanguageList=$this->LangMisc->getLanguageList();
-		$this->langpostfix=$this->LangMisc->getLangPostfix();
-
-
 
 		$this->edit_userGroup=(int)$this->params->get( 'editusergroups' );
 		$this->publish_userGroup=(int)$this->params->get( 'publishusergroups' );
@@ -187,8 +182,8 @@ class CustomTablesModelEditItem extends JModelLegacy
 		$this->sendemailcondition=$this->params->get('sendemailcondition');
 		$this->emailsentstatusfield=$this->params->get('emailsentstatusfield');
 
-		$this->tabletitle=$this->tablerow['tabletitle'.$this->langpostfix];
-		$this->establedescription=$this->tablerow['description'.$this->langpostfix];
+		$this->tabletitle=$this->tablerow['tabletitle'.$this->ct->Languages->Postfix];
+		$this->establedescription=$this->tablerow['description'.$this->ct->Languages->Postfix];
 		
 		
 		$this->published_field_found=$this->tablerow['published_field_found'];
@@ -202,7 +197,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 		{
 			$layouttype=0;
 			
-			$this->pagelayout=ESLayouts::getLayout($this->params->get('eseditlayout'),$layouttype);
+			$this->pagelayout=Layouts::getLayout($this->params->get('eseditlayout'),$layouttype);
 		}
 		else
 			$this->pagelayout='';
@@ -214,7 +209,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 
 		//	Fields
-		$this->esfields= ESFields::getFields($this->estableid);
+		$this->esfields= Fields::getFields($this->estableid);
 
 
 		if($this->params->get('listingid')!=0)
@@ -300,9 +295,8 @@ class CustomTablesModelEditItem extends JModelLegacy
 		$LayoutProc->layout=$filter;
 		$filter=$LayoutProc->fillLayout(array(),null,array(),'[]',true);
 
-		$filtering=new ESFiltering;
-		$filtering->langpostfix=$this->langpostfix;
-		$filtering->es=$this->es;
+		$this->filtering = new ESFiltering($this->ct);
+		
 		$filtering->esfields=$this->esfields;
 
 		$PathValue=array();
@@ -592,7 +586,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 			$this->realtablename='#__customtables_table_'.$this->establename;
 	
 		$this->estableid=$this->tablerow['id'];
-		$this->esfields= ESFields::getFields($this->estableid);
+		$this->esfields= Fields::getFields($this->estableid);
 
 		if($useridfield!='')
 		{
@@ -671,7 +665,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 			{
 				//example: user
 				//check if the record belong to the current user
-				$user_field_row=ESFields::FieldRowByName($field,$this->esfields);
+				$user_field_row=Fields::FieldRowByName($field,$this->esfields);
 				$wheres_owner[]=[$item[0],'c.'.$user_field_row['realfieldname'].'='.$this->userid];
 			}
 			else
@@ -703,9 +697,9 @@ class CustomTablesModelEditItem extends JModelLegacy
 					return false;
 				}
 				
-				$parent_table_fields=ESFields::getFields($parent_table_row->id);
+				$parent_table_fields=Fields::getFields($parent_table_row->id);
 				
-				$parent_join_field_row=ESFields::FieldRowByName($parent_join_field,$parent_table_fields);
+				$parent_join_field_row=Fields::FieldRowByName($parent_join_field,$parent_table_fields);
 				
 				if(count($parent_join_field_row)==0)
 				{
@@ -721,7 +715,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 				
 				//User field
 				
-				$parent_user_field_row=ESFields::FieldRowByName($parent_user_field,$parent_table_fields);
+				$parent_user_field_row=Fields::FieldRowByName($parent_user_field,$parent_table_fields);
 
 				if(count($parent_user_field_row)==0)
 				{
@@ -804,11 +798,11 @@ class CustomTablesModelEditItem extends JModelLegacy
 	function getCustomTablesBranch($optionname,$startfrom, $langpostfix, $defaultvalue)
 	{
 		$optionid=0;
-		$filter_rootparent=$this->es->getOptionIdFull($optionname);
+		$filter_rootparent=Tree::getOptionIdFull($optionname);
 
 		if($optionname)
 		{
-		    $available_categories=$this->getAllChild($optionid,$filter_rootparent,1, $langpostfix,$optionname);
+		    $available_categories=Tree::getChildren($optionid,$filter_rootparent,1, $langpostfix,$optionname);
 
 		    $db = JFactory::getDBO();
 		    $query = ' SELECT optionname, id, title_'.$langpostfix.' AS title FROM #__customtables_options WHERE ';
@@ -821,7 +815,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 			if($startfrom==0)
 			{
 			if(count($rpname)==1)
-				$this->array_insert(
+				JoomlaBasicMisc::array_insert(
 			    $available_categories,
 			    array(
 						"id" => $filter_rootparent,
@@ -833,10 +827,10 @@ class CustomTablesModelEditItem extends JModelLegacy
 		}
 		else
 		{
-		    $available_categories=$this->getAllChild($optionid,0,1, $langpostfix,'');
+		    $available_categories=Tree::getChildren($optionid,0,1, $langpostfix,'');
 		}
 		if($defaultvalue)
-			$this->es->array_insert(
+			JoomlaBasicMisc::array_insert(
 			    $available_categories,
 			    array(
 						"id" => 0,
@@ -848,7 +842,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 
 		if($startfrom==0)
-		$this->array_insert($available_categories,
+		JoomlaBasicMisc::array_insert($available_categories,
 								array(	"id" => 0,
 										"name" => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ROOT'),
 										"fullpath" => ''),
@@ -1029,7 +1023,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 			$value_found=false;
 			if(in_array($esfield['fieldname'],$fieldstosave))
 			{
-				$value_found=CTValue::getValue($id,$this->es,$esfield,$savequery,$prefix,$this->establename,$this->LanguageList,$fieldstosave,$this->realtablename);
+				$value_found=CTValue::getValue($id,$this->es,$esfield,$savequery,$prefix,$this->establename,$this->ct->Languages->Postfix,$fieldstosave,$this->realtablename);
 				if(!$value_found)
 					$default_fields_to_apply[]=array($esfield['fieldname'],$esfield['defaultvalue'],$esfield['type'],$esfield['realfieldname']);
 			}
@@ -1481,7 +1475,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 			{
 				$firstlanguage=true;
 
-				foreach($this->LangMisc->LanguageList as $lang)
+				foreach($this->ct->Languages->LanguageList as $lang)
 				{
 					if($firstlanguage)
 					{
@@ -1917,7 +1911,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 		//-----------
 		$layouttype=0;
-		$message_layout_content=ESLayouts::getLayout($this->onrecordaddsendemaillayout,$layouttype);
+		$message_layout_content=Layouts::getLayout($this->onrecordaddsendemaillayout,$layouttype);
 		$note=$this->parseRowLayoutContent($row,$message_layout_content,true);
 		
 		$MailFrom 	= $mainframe->getCfg('mailfrom');

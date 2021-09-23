@@ -13,6 +13,8 @@ namespace CustomTables\Integrity;
  
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\Fields;
+
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Uri\Uri;
 
@@ -336,7 +338,7 @@ class IntegrityCoreTables extends \CustomTables\IntegrityChecks
 		{
 			//PostgreSQL
 
-			$fields = ESFields::getListOfExistingFields($table->realtablename, false);
+			$fields = Fields::getListOfExistingFields($table->realtablename, false);
 			
 			if(count($fields)==0)
 			{

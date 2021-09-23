@@ -6,41 +6,24 @@
  * @license GNU/GPL
  **/
 
+namespace CustomTables\DataTypes;
+
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-class CustomTablesMisc
-{
-	static public function array_insert(&$array, $insert, $position = -1)
-	{
-	    $position = ($position == -1) ? (count($array)) : $position ;
-	    if($position != (count($array))) {
-	    $ta = $array;
-	    for($i = $position; $i < (count($array)); $i++) {
-               if(!isset($array[$i])) {
-                    die("Invalid array: All keys must be numerical and in sequence.");
-               }
-               $tmp[$i+1] = $array[$i];
-               unset($ta[$i]);
-	    }
-	    $ta[$position] = $insert;
-	    $array = $ta + $tmp;
+use \Joomla\CMS\Factory;
 
-	    } else {
-	         $array[$position] = $insert;
-	    }
-	    ksort($array);
-	    return true;
-	}
-	
-	function getAllParents($optionid,$filter_rootparent)
+class Tree
+{
+	/*
+	public static function getAllParents($optionid,$filter_rootparent)
 	{
 		
 		if($filter_rootparent)
 		{
-		    $available_categories=$this->getAllChild($optionid,$filter_rootparent,1);
+		    $available_categories=Tree::getChildren($optionid,$filter_rootparent,1);
 		    
-		    $db = JFactory::getDBO();
+		    $db = Factory::getDBO();
 		    $query = ' SELECT optionname, id AS id FROM #__customtables_options WHERE ';
 		    $query.= ' id='.$filter_rootparent.' LIMIT 1';
 	    
@@ -48,31 +31,30 @@ class CustomTablesMisc
 		
 		    $rpname= $db->loadObjectList();
 		    if(count($rpname)==1)
-			$this->array_insert(
+			Tree::array_insert(
 			    $available_categories,
 			    array("id" => $filter_rootparent, "name" => strtoupper($rpname[0]->optionname)),0);
 		}
 		else
 		{
-		    $available_categories=$this->getAllChild($optionid,0,1);
+		    $available_categories=Tree::getChildren($optionid,0,1);
 		}
 				
 		
 	
 		
-		$this->array_insert($available_categories,array("id" => 0, "name" => JText::_( 'ROOT' )),count($available_categories));
+		Tree::array_insert($available_categories,array("id" => 0, "name" => JText::_( 'ROOT' )),count($available_categories));
 		
 		
 				
 		return $available_categories;
 
 	}
-	
-	
-	
-	function getAllChildren($parentid,$langpostfix)
+	*/
+	/*
+	public static function getAllChildren($parentid,$langpostfix)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		$query = ' SELECT id, optionname, title_'.$langpostfix.' AS title FROM #__customtables_options WHERE parentid='.$parentid;
 	    $query.= ' ORDER BY title';
 		
@@ -80,14 +62,13 @@ class CustomTablesMisc
 		
 		return $db->loadObjectList();
 	}
-	
-	function getAllChild($optionid,$parentid,$level)
+	*/
+	//public
+	public static function getChildren($optionid,$parentid,$level)
 	{
-	    $db = JFactory::getDBO();
+	    $db = Factory::getDBO();
 	    
 	    $result=array();
-	    
-	    
 	    
 	    $query = ' SELECT concat("'.str_repeat('- ',$level).'", optionname) AS name, id FROM #__customtables_options WHERE id!='.$optionid.' ';
 	    $query.= ' AND parentid='.$parentid;
@@ -102,37 +83,32 @@ class CustomTablesMisc
 	    foreach($rows as $item)
 	    {
 		
-			$this->array_insert($result,array("id" => $item->id, "name" => $item->name),count($result));
+			JoomlaBasicMisc::array_insert($result,array("id" => $item->id, "name" => $item->name),count($result));
 		
 		
-			$childs=$this->getAllChild($optionid,$item->id,$level+1);
+			$childs=Tree::getChildren($optionid,$item->id,$level+1);
 			if(count($childs)>0)
 			{
 			    $result=array_merge($result,$childs);
 			}
 	    }
-
-
-	    
 	
 	    return $result;
 	}
     
-	function getAllRootParents()
+	public static function getAllRootParents()
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		
 		$query = "SELECT id, optionname FROM #__customtables_options WHERE parentid=0 ORDER BY optionname";
 		$db->setQuery( $query );
 		$available_rootparents = $db->loadObjectList();
-		$this->array_insert($available_rootparents,array("id" => 0, "optionname" => JText::_( '-Select Parent' )),0);
+		JoomlaBasicMisc::array_insert($available_rootparents,array("id" => 0, "optionname" => JText::_( '-Select Parent' )),0);
 		return $available_rootparents;
 
 	}
 	
-	//getOptionTitle
-	
-	function getMultyValueTitles($PropertyTypes,$langpostfix,$StartFrom, $Separator,$TypeParams='')
+	public static function getMultyValueTitles($PropertyTypes,$langpostfix,$StartFrom, $Separator,$TypeParams='')
 	{
 		if(strpos($PropertyTypes,'.')===false)
 		{
@@ -150,14 +126,15 @@ class CustomTablesMisc
 			$a=trim($row);
 			if(strlen($a)>0)
 			{
-				$b=$this->	getOptionTitleFullMulti($a,$langpostfix,$StartFrom);
+				$b=Tree::getOptionTitleFullMulti($a,$langpostfix,$StartFrom);
 				$titles[]=implode($Separator, $b);
 			}
 		}
 		return $titles;
 	}
 	
-	function getMultyValueFinalTitles($PropertyTypes,$langpostfix,$StartFrom)
+	/*
+	public static function getMultyValueFinalTitles($PropertyTypes,$langpostfix,$StartFrom)
 	{
 		$RowPropertyTypes=explode(",", $PropertyTypes);
 
@@ -167,17 +144,17 @@ class CustomTablesMisc
 			$a=trim($row);
 			if(strlen($a)>0)
 			{
-				$b=$this->	getOptionTitleFullMulti($a,$langpostfix,$StartFrom);
+				$b=Tree::	getOptionTitleFullMulti($a,$langpostfix,$StartFrom);
 				if(count($b)>0)
 					$titles[]=$b[count($b)-1];
 			}
 		}
 		return $titles;
 	}
+	*/
 	
 	
-	
-	function getOptionTitleFullMulti($optionname,$langpostfix,$StartFrom)
+	public static function getOptionTitleFullMulti($optionname,$langpostfix,$StartFrom)
 	{
 		$names=explode(".",$optionname);
 		$parentid=0;
@@ -190,7 +167,7 @@ class CustomTablesMisc
 				break;
 			
 			$a="";
-		    $parentid=$this->getOptionTitle($optionname,$parentid,$a,$langpostfix);
+		    $parentid=Tree::getOptionTitle($optionname,$parentid,$a,$langpostfix);
 			if($i>=$StartFrom)
 				$title[]=$a;
 			$i++;
@@ -198,7 +175,8 @@ class CustomTablesMisc
     
 		return $title;
 	}
-	function getOptionTitleFull($optionname,$langpostfix)
+	
+	public static function getOptionTitleFull($optionname,$langpostfix)
 	{
 		$names=explode(".",$optionname);
 		$parentid=0;
@@ -211,16 +189,16 @@ class CustomTablesMisc
 				break;
 			
 
-		    $parentid=$this->getOptionTitle($optionname,$parentid,$title,$langpostfix);
+		    $parentid=Tree::getOptionTitle($optionname,$parentid,$title,$langpostfix);
 		}
     
 		return $title;
 	}
 	
-	function getOptionTitle($optionname,$parentid,&$title,$langpostfix)
+	protected static function getOptionTitle($optionname,$parentid,&$title,$langpostfix)
 	{
 		// get database handle
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 			
 		$query = 'SELECT id, title'.$langpostfix.' AS title FROM #__customtables_options WHERE parentid='.$parentid.' AND optionname="'.$optionname.'" LIMIT 1';
 		
@@ -239,7 +217,7 @@ class CustomTablesMisc
 
 	
 	
-	
+	/*
 	function getParamValue($pars,$lookfor)
 	{
 		$r=explode('.',$lookfor);
@@ -259,7 +237,9 @@ class CustomTablesMisc
 		
 		return "";
 	}
+	*/
 	
+	/*
 	function getParamFullValue($pars,$lookfor)
 	{
 		foreach($pars as $par)
@@ -276,17 +256,20 @@ class CustomTablesMisc
 		
 		return "";
 	}
+	*/
 
+	/*
 	function CleanLinkMulti($newparams, $deletewhat)
 	{
 		foreach($deletewhat as $what)
 		{
-			$newparams=$this->CleanLink($newparams, $what);
+			$newparams=Tree::CleanLink($newparams, $what);
 		}
 		return $newparams;
 	}
+	*/
 	
-	function CleanLink($newparams, $deletewhat)
+	public static function CleanLink($newparams, $deletewhat)
 	{
 	
 		$i=0;
@@ -310,7 +293,31 @@ class CustomTablesMisc
 		return $newparams;
     
 	}
+	/*
+	function CleanLink($newparams, $deletewhat)
+	{
+		$i=0;
+		do
+		{
+		    if(!(strpos($newparams[$i],$deletewhat)===false))
+		    {
+			unset($newparams[$i]);
+			$newparams=array_values($newparams);
+			if(count($newparams)==0) return $newparams;
 
+			$i=0;
+
+		    }
+		    else
+			$i++;
+
+		}while($i<count($newparams));
+
+		return $newparams;
+	}
+	*/
+
+	/*
 	function getOnlyOneParam($vlu)
 	{
 		
@@ -326,7 +333,9 @@ class CustomTablesMisc
 		}
 		return '';
 	}
+	*/
 	
+	/*
 	function ShortenParam($vlu, $count)
 	{
 		$vluarr=explode('.',$vlu);
@@ -341,7 +350,9 @@ class CustomTablesMisc
 		}
 		return implode('.',$parms);
 	}
+	*/
 	
+	/*
 	function ShortenParambyOne($vlu)
 	{
 		$vluarr=explode('.',$vlu);
@@ -363,26 +374,27 @@ class CustomTablesMisc
 
 		return implode('.',$parms);
 	}
+	*/
 	
-	function BuildULHtmlList(&$vlus,&$index,$langpostfix, $isFirstElement=true,$last='')
+	public static function BuildULHtmlList(&$vlus,&$index,$langpostfix, $isFirstElement=true,$last='')
 	{
 		$parent='topics';
-		$parentid=$this->getOptionIdFull($parent);
+		$parentid=Tree::getOptionIdFull($parent);
 		$count=0;
 		$field_value=implode(',',$vlus);
 		$ItemList='';
-		return $this->getMultiSelector($parentid,$parent,$langpostfix,$ItemList,$count,$field_value);
+		return Tree::getMultiSelector($parentid,$parent,$langpostfix,$ItemList,$count,$field_value);
 	}
 	
 	//--------------------------
 
-	
-	function getMultiSelector($parentid,$parentname,$langpostfix,&$ItemList,&$count,$field_value)
+	//maybe not used
+	public static function getMultiSelector($parentid,$parentname,$langpostfix,&$ItemList,&$count,$field_value)
 	{
 		$ObjectName='temp_object';
 		
 		$result='';
-		$rows=$this->getList($parentid, $langpostfix);
+		$rows=Tree::getList($parentid, $langpostfix);
 
 		if(count($rows)<1)
 			return "";
@@ -405,7 +417,7 @@ class CustomTablesMisc
 				$optionnamefull=$parentname.'.'.$row->optionname;
 				
 			
-			$ChildHTML=$this->getMultiSelector($row->id,$optionnamefull,$langpostfix,$temp_Ids,$count_child,$field_value);
+			$ChildHTML=Tree::getMultiSelector($row->id,$optionnamefull,$langpostfix,$temp_Ids,$count_child,$field_value);
 			
 			
 			
@@ -491,11 +503,9 @@ class CustomTablesMisc
 	
 	
 	
-	
-	
-	function getList($parentid, $langpostfix)
+	public static function getList($parentid, $langpostfix)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		$query = 'SELECT id, optionname, title'.$langpostfix.' AS title FROM #__customtables_options WHERE parentid='.(int)$parentid;
 		$query.=' ORDER BY ordering, title';
 		$db->setQuery($query);
@@ -504,6 +514,7 @@ class CustomTablesMisc
 	}
 
 	
+	/*
 	function getESValue(&$a, &$innerrows)
 	{
 		if(!$a)return false;
@@ -518,28 +529,28 @@ class CustomTablesMisc
 		}
 		return false;
 	}
-
+	*/
 
 
 	//Get Option ID
-	function getOptionIdFull($optionname)
+	public static function getOptionIdFull($optionname)
 	{
 	$names=explode(".",$optionname);
 	$parentid=0;
 	
 	foreach($names as $name)
 	{
-	    $parentid=$this->getOptionId($name,$parentid);
+	    $parentid=Tree::getOptionId($name,$parentid);
 	}
     
 	return $parentid;
 	}
 	
 	
-	function getOptionId($optionname,$parentid)
+	public static function getOptionId($optionname,$parentid)
 	{
 	// get database handle
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		
 	$query = 'SELECT id FROM #__customtables_options WHERE parentid='.$parentid.' AND optionname="'.$optionname.'" LIMIT 1';
 		
@@ -552,15 +563,16 @@ class CustomTablesMisc
 	return $rows[0]->id;
     }
 
-	function getOptionLinkFull($optionname)
+	/*
+	public static function getOptionLinkFull($optionname)
 	{
-		$optid=$this->getOptionIdFull($optionname);
+		$optid=Tree::getOptionIdFull($optionname);
 		
 		if($optid==0)
 			return "";
 		
 		
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		$query = 'SELECT link FROM #__customtables_options WHERE id='.$optid.' LIMIT 1';
 		
 		$db->setQuery($query);
@@ -572,10 +584,13 @@ class CustomTablesMisc
 		
 		return $rows[0]->link;
 	}
+	*/
 	
-	function isRecordExist($checkvalue,$checkfield, $resultfield, $table)
+	//Used in variouse files
+	//TODO: replace - Very outdated
+	public static function isRecordExist($checkvalue,$checkfield, $resultfield, $table)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		$query =' SELECT '.$resultfield.' AS resultfield FROM '.$table.' WHERE '.$checkfield.'="'.$checkvalue.'" LIMIT 1';
 		$db->setQuery( $query );
 
@@ -587,12 +602,13 @@ class CustomTablesMisc
 		return "";
 	}
 
+	/*
 	function getOptionsByID($parentid=0)
 	{
 		if($parentid=='')
 			return array();
 			
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 			
 		$query = 'SELECT * FROM #__customtables_options WHERE parentid="'.$parentid.'" ORDER BY ordering';
 		
@@ -600,13 +616,15 @@ class CustomTablesMisc
 
 		return $db->loadAssocList();
 	}
+	*/
 	
-	function getHeritageInfo($parentid, $fieldname)
+	//Used many times
+	public static function getHeritageInfo($parentid, $fieldname)
 	{
 		if((int)$parentid==0)
 			return '';
 		
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		
 		$query = 'SELECT id, '.$fieldname.' FROM #__customtables_options WHERE parentid="'.$parentid.'" LIMIT 1';
 		$db->setQuery($query);
@@ -620,18 +638,19 @@ class CustomTablesMisc
 			if(strlen($vlu)>0)
 				return $vlu;
 			else
-				return $this->getHeritageInfo($row[id], $fieldname);
+				return Tree::getHeritageInfo($row[id], $fieldname);
 		}
 		else
 			return '';
 	}
 	
-	function getHeritage($parentid, $where='', $limit)
+	//Used many times
+	public static function getHeritage($parentid, $where='', $limit)
 	{
 		if((int)$parentid==0)
 			return array();
 		
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		
 		$query = 'SELECT * FROM #__customtables_options WHERE parentid="'.$parentid.'" '
 			.($where!='' ? ' AND '.$where : '')
@@ -642,22 +661,24 @@ class CustomTablesMisc
 		return $rows;
 	}
 
-	function getFamilyTreeByParentID($parentid)
+	//Used in import
+	public static function getFamilyTreeByParentID($parentid)
 	{
 		
 		if($parentid!=0)
 		{
-			return $this->getFamilyTree($parentid,0).'-'.$parentid;
+			return Tree::getFamilyTree($parentid,0).'-'.$parentid;
 			
 		}
 		return '';
 		
 	}
 	
-	function getFamilyTree($optionid,$level)
+	//Used many times
+	public static function getFamilyTree($optionid,$level)
 	{
 				
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		$query = 'SELECT parentid FROM #__customtables_options WHERE id="'.$optionid.'" LIMIT 1';
 		$db->setQuery($query);
 
@@ -668,7 +689,7 @@ class CustomTablesMisc
 		$id=$rows[0]->parentid;
 		if($id!=0)
 		{
-			$parentid=$this->getFamilyTree($id,$level+1);
+			$parentid=Tree::getFamilyTree($id,$level+1);
 			if($level>0)
 				$parentid.='-'.$optionid;
 		}
@@ -682,10 +703,11 @@ class CustomTablesMisc
 	}
 
 	
-	function getFamilyTreeString($optionid,$level)
+	//Used many times
+	public static function getFamilyTreeString($optionid,$level)
 	{
 				
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		$query = 'SELECT parentid, optionname FROM #__customtables_options WHERE id="'.$optionid.'" LIMIT 1';
 		$db->setQuery($query);
 
@@ -696,7 +718,7 @@ class CustomTablesMisc
 		$id=$rows[0]->parentid;
 		if($id!=0)
 		{
-			$parentstring=$this->getFamilyTreeString($id,$level+1);
+			$parentstring=Tree::getFamilyTreeString($id,$level+1);
 			if($level>0)
 				$parentstring.='.'.$rows[0]->optionname;
 		}

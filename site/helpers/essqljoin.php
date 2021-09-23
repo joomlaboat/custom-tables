@@ -9,6 +9,8 @@
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die( 'Restricted access' );
 
+use CustomTables\Layouts;
+
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'models'.DIRECTORY_SEPARATOR.'catalog.php');
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'filtering.php');
 
@@ -186,7 +188,7 @@ class JHTMLESSqlJoin
             }
 
             $layouttype=0;
-            $layoutcode=ESLayouts::getLayout($pair[1],$layouttype);
+            $layoutcode=Layouts::getLayout($pair[1],$layouttype);
             if(!isset($layoutcode) or $layoutcode=='')
             {
 				JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_LAYOUT_NOT_FOUND').' "'.$pair[1].'"', 'error');

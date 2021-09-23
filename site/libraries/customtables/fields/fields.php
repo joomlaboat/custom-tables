@@ -2,21 +2,24 @@
 /**
  * CustomTables Joomla! 3.x Native Component
  * @package Custom Tables
- * @subpackage libraries/fields.php
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
  * @copyright Copyright (C) 2018-2020. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
+namespace CustomTables;
+
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-class ESFields
+use \Joomla\CMS\Factory;
+
+class Fields
 {
     public static function getFieldID($tableid, $fieldname)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		$query= 'SELECT id FROM #__customtables_fields WHERE published=1 AND tableid='.(int)$tableid.' AND fieldname='.$db->quote($fieldname);
 
 		$db->setQuery( $query );
@@ -32,9 +35,9 @@ class ESFields
 
     public static function addLanguageField($tablename,$original_fieldname,$new_fieldname)
     {
-        $fields=ESFields::getExistingFields($tablename,false);
+        $fields=Fields::getExistingFields($tablename,false);
 		
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		
 		if($db->serverType == 'postgresql')
 			$field_columns=(object)['columnname' => 'column_name', 'data_type'=>'data_type', 'is_nullable'=>'is_nullable'];
@@ -49,7 +52,7 @@ class ESFields
                 if($field[$field_columns->is_nullable]!='NO')
 					$AdditionOptions='null';
 
-                ESFields::AddMySQLFieldNotExist($tablename, $new_fieldname, $field[$field_columns->data_type], $AdditionOptions);
+                Fields::AddMySQLFieldNotExist($tablename, $new_fieldname, $field[$field_columns->data_type], $AdditionOptions);
                 return true;
             }
         }
@@ -61,7 +64,7 @@ class ESFields
         if($PureFieldType=='')
             return '';
         
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		if(strpos($fieldtype,'multilang')===false)
 		{
@@ -70,7 +73,7 @@ class ESFields
 				$AdditionOptions=' COMMENT '.$db->Quote($fieldtitle);
 
 			if($fieldtype!='dummy')
-				ESFields::AddMySQLFieldNotExist($realtablename, $realfieldname, $PureFieldType, $AdditionOptions);
+				Fields::AddMySQLFieldNotExist($realtablename, $realfieldname, $PureFieldType, $AdditionOptions);
 		}
 		else
 		{
@@ -89,7 +92,7 @@ class ESFields
 				if($db->serverType != 'postgresql')
 					$AdditionOptions	=' COMMENT '.$db->Quote($fieldtitle);
 
-				ESFields::AddMySQLFieldNotExist($realtablename, $realfieldname.$postfix, $PureFieldType, $AdditionOptions);
+				Fields::AddMySQLFieldNotExist($realtablename, $realfieldname.$postfix, $PureFieldType, $AdditionOptions);
 
 				$index++;
 			}
@@ -102,7 +105,7 @@ class ESFields
 			
 			$establename=str_replace($db->getPrefix().'customtables_table','',$realtablename);
 			$esfieldname=str_replace('es_','',$realfieldname);
-			ESFields::CreateImageGalleryTable($establename,$esfieldname);
+			Fields::CreateImageGalleryTable($establename,$esfieldname);
 		}
 		elseif($fieldtype=='filebox')
 		{
@@ -110,17 +113,17 @@ class ESFields
 			//get CT table name if possible
 			$establename=str_replace('#__customtables_table','',$realtablename);
 			$esfieldname=str_replace('es_','',$realfieldname);
-			ESFields::CreateFileBoxTable($establename,$esfieldname);
+			Fields::CreateFileBoxTable($establename,$esfieldname);
 		}
 	}
 
 	public static function deleteESField_byID($fieldid)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		$ImageFolder=JPATH_SITE.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'esimages';
 
-		$fieldrow=ESFields::getFieldRow($fieldid);
+		$fieldrow=Fields::getFieldRow($fieldid);
 
     	if(!is_object($fieldrow) or count($fieldrow)==0)
 			return false;
@@ -155,7 +158,7 @@ class ESFields
 		}
 		elseif($fieldrow->type=='image')
 		{
-			if(ESFields::checkIfFieldExists($tablerow->realtablename,$fieldrow->realfieldname))
+			if(Fields::checkIfFieldExists($tablerow->realtablename,$fieldrow->realfieldname))
 			{
 				$imagemethods=new CustomTablesImageMethods;
 				$imageparams=str_replace('|compare','|delete:',$fieldrow->typeparams); //disable image comparision if set
@@ -164,7 +167,7 @@ class ESFields
 		}
 		elseif($fieldrow->type=='user' or $fieldrow->type=='userid' or $fieldrow->type=='sqljoin')
 		{
-			ESFields::removeForeignKey($tablerow->realtablename,$fieldrow->realfieldname);//,'','#__users','id',$msg);
+			Fields::removeForeignKey($tablerow->realtablename,$fieldrow->realfieldname);//,'','#__users','id',$msg);
 		}
         elseif($fieldrow->type=='file')
 		{
@@ -203,7 +206,7 @@ class ESFields
 			if($fieldrow->type!='dummy')
 			{
 				$msg='';
-				ESFields::deleteMYSQLField($tablerow->realtablename,$realfieldname,$msg);
+				Fields::deleteMYSQLField($tablerow->realtablename,$realfieldname,$msg);
 			}
 		}
 
@@ -226,7 +229,7 @@ class ESFields
 		$fieldtype1_no_par = preg_replace("/\([^)]+\)/","",$fieldtype1); // replace "varchar(255) null" with "varchar null"
 		$fieldtype2_no_par = preg_replace("/\([^)]+\)/","",$fieldtype2); // replace "varchar(255) null" with "varchar null"
 		
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		if($db->serverType == 'postgresql')
 		{
 			if($fieldtype1=='character varying null' and $fieldtype2_no_par == 'varchar null')
@@ -258,7 +261,7 @@ class ESFields
 
     public static function getPureFieldType($fieldtype,$typeparams)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		
 		$t=trim($fieldtype);
 		switch($t)
@@ -566,8 +569,8 @@ class ESFields
 
     public static function AddMySQLFieldNotExist($realtablename, $realfieldname, $fieldtype, $options)
     {
-		$db = JFactory::getDBO();
-		if(!ESFields::checkIfFieldExists($realtablename,$realfieldname,false))
+		$db = Factory::getDBO();
+		if(!Fields::checkIfFieldExists($realtablename,$realfieldname,false))
 		{
 			$query='ALTER TABLE '.$realtablename.' ADD COLUMN '.$realfieldname.' '.$fieldtype.' '.$options;
 
@@ -610,11 +613,11 @@ class ESFields
 			$join_with_table_field=$tablerow->realidfieldname;
 		}
         
-        $db = JFactory::getDBO();
-        $conf = JFactory::getConfig();
+        $db = Factory::getDBO();
+        $conf = Factory::getConfig();
         $database = $conf->get('db');
         
-        ESFields::removeForeignKey($realtablename,$realfieldname);
+        Fields::removeForeignKey($realtablename,$realfieldname);
         
         if(isset($params[7]) and $params[7]=='noforignkey')
         {
@@ -622,7 +625,7 @@ class ESFields
         }
         else
         {
-            ESFields::cleanTableBeforeNormalization($realtablename,$realfieldname,$join_with_table_name,$join_with_table_field);
+            Fields::cleanTableBeforeNormalization($realtablename,$realfieldname,$join_with_table_name,$join_with_table_field);
 
             $query='ALTER TABLE '.$db->quoteName($realtablename).' ADD FOREIGN KEY ('.$realfieldname.') REFERENCES '
 				.$db->quoteName($database.'.'.$join_with_table_name).' ('.$join_with_table_field.') ON DELETE RESTRICT ON UPDATE RESTRICT;';
@@ -643,12 +646,12 @@ class ESFields
 
     public static function removeForeignKey($realtablename,$realfieldname)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		
 		if($db->serverType == 'postgresql')
 			return false;
 		
-		$conf = JFactory::getConfig();
+		$conf = Factory::getConfig();
 		$database = $conf->get('db');
 
         //get constarnt name
@@ -712,7 +715,7 @@ class ESFields
 
     public static function addIndexIfNotExist($realtablename,$realfieldname)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		
 		if($db->serverType == 'postgresql')
 		{
@@ -720,7 +723,7 @@ class ESFields
 		}
 		else
 		{
-			$db = JFactory::getDBO();
+			$db = Factory::getDBO();
 			$query='SHOW INDEX FROM '.$realtablename.' WHERE Key_name = "'.$realfieldname.'"';
 			$db->setQuery( $query );
 			$db->execute();
@@ -742,7 +745,7 @@ class ESFields
     public static function CreateImageGalleryTable($tablename,$fieldname)
 	{
 		$image_gallery_table='#__customtables_gallery_'.$tablename.'_'.$fieldname;
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		$query = 'CREATE TABLE IF not EXISTS '.$image_gallery_table.' (
   photoid bigint not null auto_increment,
@@ -763,7 +766,7 @@ class ESFields
     public static function CreateFileBoxTable($tablename,$fieldname)
 	{
 		$filebox_gallery_table='#__customtables_filebox_'.$tablename.'_'.$fieldname;
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		$query = 'CREATE TABLE IF not EXISTS '.$filebox_gallery_table.' (
   fileid bigint not null auto_increment,
@@ -800,10 +803,10 @@ class ESFields
 						$typeparamsarr=explode(',',$new_typeparams);
 						$optionname=$typeparamsarr[0];
 
-						ESFields::FixCustomTablesRecords($realtablename,$realfieldname,$optionname, $maxlength );
+						Fields::FixCustomTablesRecords($realtablename,$realfieldname,$optionname, $maxlength );
 					}
 
-					$db = JFactory::getDBO();
+					$db = Factory::getDBO();
 
 					if($db->serverType == 'postgresql')
 					{
@@ -830,9 +833,8 @@ class ESFields
 		//CutomTables field type
 		if($db->serverType == 'postgresql')
 			return;
-		
-		$es=new CustomTablesMisc;
-		$db = JFactory::getDBO();
+
+		$db = Factory::getDBO();
 
 		$fixcount=0;
 
@@ -845,7 +847,7 @@ class ESFields
 		foreach($fixrows as $fixrow)
 		{
 
-			$newrow	=ESFields::FixCustomTablesRecord($fixrow->fldvalue, $optionname, $maxlenght);
+			$newrow	=Fields::FixCustomTablesRecord($fixrow->fldvalue, $optionname, $maxlenght);
 
 			if($fixrow->fldvalue!=$newrow)
 			{
@@ -901,7 +903,7 @@ class ESFields
 
 	public static function cleanTableBeforeNormalization($realtablename,$realfieldname,$join_with_table_name,$join_with_table_field)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		
 		if($db->serverType == 'postgresql')
 			return;
@@ -972,7 +974,7 @@ class ESFields
 
     public static function getFieldType($tablename,$add_table_prefix=true,$realfieldname)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		if($add_table_prefix)
 			$realtablename='#__customtables_table_'.$tablename;
@@ -1004,7 +1006,7 @@ class ESFields
 	//MySQL only
     public static function getExistingFields($tablename,$add_table_prefix=true)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		if($add_table_prefix)
 			$realtablename='#__customtables_table_'.$tablename;
@@ -1029,7 +1031,7 @@ class ESFields
 
     public static function getListOfExistingFields($tablename,$add_table_prefix=true)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		if($add_table_prefix)
 			$realtablename=$db->getPrefix().'customtables_table_'.$tablename;
@@ -1066,17 +1068,17 @@ class ESFields
 
 	public static function checkIfFieldExists($realtablename,$realfieldname)//,$add_table_prefix=true)
 	{
-		$realfieldnames=ESFields::getListOfExistingFields($realtablename,false);
+		$realfieldnames=Fields::getListOfExistingFields($realtablename,false);
 		return in_array($realfieldname,$realfieldnames);
 	}
 
 	public static function deleteMYSQLField($realtablename,$realfieldname,&$msg)
 	{
-		if(ESFields::checkIfFieldExists($realtablename,$realfieldname,false))
+		if(Fields::checkIfFieldExists($realtablename,$realfieldname,false))
 		{
 			try
 			{
-				$db = JFactory::getDBO();
+				$db = Factory::getDBO();
 
 				$query ='SET foreign_key_checks = 0;';
 				$db->setQuery($query);
@@ -1105,7 +1107,7 @@ class ESFields
 	{
 		try
 		{
-			$db = JFactory::getDBO();
+			$db = Factory::getDBO();
 
 			if($PureFieldType=='_id')
 				$query='ALTER TABLE '.$realtablename.' CHANGE id id INT UNSIGNED NOT NULL AUTO_INCREMENT';
@@ -1130,12 +1132,12 @@ class ESFields
 
     public static function getFieldName($fieldid)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 
 		if($fieldid==0)
-			$fieldid=JFactory::getApplication()->input->get('fieldid',0,'INT');
+			$fieldid=Factory::getApplication()->input->get('fieldid',0,'INT');
 
 		$query = 'SELECT fieldname FROM #__customtables_fields AS s WHERE s.published=1 AND s.id='.$fieldid.' LIMIT 1';
 		$db->setQuery( $query );
@@ -1149,14 +1151,14 @@ class ESFields
 
 	public static function getFieldRow($fieldid = 0)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 
 		if($fieldid==0)
-			$fieldid=JFactory::getApplication()->input->get('fieldid',0,'INT');
+			$fieldid=Factory::getApplication()->input->get('fieldid',0,'INT');
 
-		$query = 'SELECT '.ESFields::getFieldRowSelects().' FROM #__customtables_fields AS s WHERE published=1 AND id='.$fieldid.' LIMIT 1';
+		$query = 'SELECT '.Fields::getFieldRowSelects().' FROM #__customtables_fields AS s WHERE published=1 AND id='.$fieldid.' LIMIT 1';
 
 		$db->setQuery( $query );
 		$rows = $db->loadObjectList();
@@ -1168,14 +1170,14 @@ class ESFields
 
 	public static function getFields($tableid_or_name,$as_object=false)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
         if((int)$tableid_or_name>0)
-            $query = 'SELECT '.ESFields::getFieldRowSelects().' FROM #__customtables_fields WHERE published=1 AND tableid='.(int)$tableid_or_name.' ORDER BY ordering, fieldname';
+            $query = 'SELECT '.Fields::getFieldRowSelects().' FROM #__customtables_fields WHERE published=1 AND tableid='.(int)$tableid_or_name.' ORDER BY ordering, fieldname';
         else
         {
             $w1='(SELECT t.id FROM #__customtables_tables AS t WHERE t.tablename='.$db->quote($tableid_or_name).' LIMIT 1)';
-            $query = 'SELECT '.ESFields::getFieldRowSelects().' FROM #__customtables_fields AS f WHERE f.published=1 AND f.tableid='.$w1.' ORDER BY f.ordering, f.fieldname';
+            $query = 'SELECT '.Fields::getFieldRowSelects().' FROM #__customtables_fields AS f WHERE f.published=1 AND f.tableid='.$w1.' ORDER BY f.ordering, f.fieldname';
         }
 
 		$db->setQuery( $query );
@@ -1188,16 +1190,16 @@ class ESFields
 
 	public static function getFieldRowByName($fieldname, $tableid=0,$sj_tablename='')
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		if($fieldname=='')
 			return array();
 
 		if($sj_tablename=='')
-			$query = 'SELECT '.ESFields::getFieldRowSelects().' FROM #__customtables_fields AS s WHERE s.published=1 AND tableid='.(int)$tableid.' AND fieldname='.$db->quote(trim($fieldname)).' LIMIT 1';
+			$query = 'SELECT '.Fields::getFieldRowSelects().' FROM #__customtables_fields AS s WHERE s.published=1 AND tableid='.(int)$tableid.' AND fieldname='.$db->quote(trim($fieldname)).' LIMIT 1';
 		else
 		{
-			$query = 'SELECT '.ESFields::getFieldRowSelects().' FROM #__customtables_fields AS s
+			$query = 'SELECT '.Fields::getFieldRowSelects().' FROM #__customtables_fields AS s
 
 			INNER JOIN #__customtables_tables AS t ON t.tablename='.$db->quote($sj_tablename).'
 			WHERE s.published=1 AND s.tableid=t.id AND s.fieldname='.$db->quote(trim($fieldname)).' LIMIT 1';
@@ -1218,15 +1220,15 @@ class ESFields
 
 	public static function getFieldAsocByName($fieldname, $tableid)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		if($fieldname=='')
-			$fieldname=JFactory::getApplication()->input->get('fieldname','','CMD');
+			$fieldname=Factory::getApplication()->input->get('fieldname','','CMD');
 
 		if($fieldname=='')
 			return array();
 
-		$query = 'SELECT '.ESFields::getFieldRowSelects().' FROM #__customtables_fields AS s WHERE s.published=1 AND tableid='.(int)$tableid.' AND fieldname="'.trim($fieldname).'" LIMIT 1';
+		$query = 'SELECT '.Fields::getFieldRowSelects().' FROM #__customtables_fields AS s WHERE s.published=1 AND tableid='.(int)$tableid.' AND fieldname="'.trim($fieldname).'" LIMIT 1';
 		$db->setQuery( $query );
 
 		$rows = $db->loadAssocList();
@@ -1248,8 +1250,6 @@ class ESFields
 		return array();
 
 	}
-
-
 
 	public static function FieldRowByName($fieldname,&$esfields)
 	{
@@ -1276,7 +1276,7 @@ class ESFields
 	
 	protected static function getFieldRowSelects()
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		if($db->serverType == 'postgresql')
 			$realfieldname_query='CASE WHEN customfieldname!=\'\' THEN customfieldname ELSE CONCAT(\'es_\',fieldname) END AS realfieldname';
@@ -1289,7 +1289,7 @@ class ESFields
 	
 	public static function checkField($ExistingFields,$realtablename,$proj_field,$type)
     {
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		
 		if($db->serverType == 'postgresql')
 			$field_columns=(object)['columnname' => 'column_name', 'data_type'=>'data_type', 'is_nullable'=>'is_nullable', 'default'=>'column_default'];
@@ -1321,7 +1321,7 @@ class ESFields
 		$field_objects = [];
 		
 		foreach($esfields as $esfield)
-			$field_objects[] = ESFields::shortFieldObject($esfield,null,[]);
+			$field_objects[] = Fields::shortFieldObject($esfield,null,[]);
 
 		return $field_objects;
 	}

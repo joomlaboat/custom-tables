@@ -238,7 +238,7 @@ class CustomtablesViewListoftables extends JViewLegacy
 		}
 
 		if($this->advanced_options)
-			JToolBarHelper::custom('tables.export','download.png','','Export');
+			JToolBarHelper::custom('listoftables.export','download.png','','Export');
 
 		// set help url for this view if found
 		/*

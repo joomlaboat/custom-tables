@@ -8,10 +8,11 @@
 
 namespace CustomTables;
 
+use CustomTables\Fields;
+
 use \Joomla\CMS\Factory;
 
-use \ESFields;
-use \ESLayouts;
+use CustomTables\Layouts;
 use \ESTables;
 use \JoomlaBasicMisc;
 
@@ -242,7 +243,7 @@ class ImportTables
         $esfieldname=$field_new['fieldname'];
         $fieldid=0;
 
-        $field_old=ESFields::getFieldAsocByName($esfieldname, $tableid);
+        $field_old=Fields::getFieldAsocByName($esfieldname, $tableid);
         if(is_array($field_old) and count($field_old)>0)
         {
             $fieldid=$field_old['id'];
@@ -261,8 +262,8 @@ class ImportTables
                 else
                     $fieldtitle=$field_new['fieldtitle_1'];
 
-				$PureFieldType=ESFields::getPureFieldType($field_new['type'], $field_new['typeparams']);
-				ESFields::addESField('#__customtables_table_'.$establename,'es_'.$esfieldname,$field_new['type'],$PureFieldType, $field_new['fieldtitle']);
+				$PureFieldType=Fields::getPureFieldType($field_new['type'], $field_new['typeparams']);
+				Fields::addESField('#__customtables_table_'.$establename,'es_'.$esfieldname,$field_new['type'],$PureFieldType, $field_new['fieldtitle']);
             }
         }
         return $fieldid;
@@ -321,13 +322,13 @@ class ImportTables
         {
             $layoutid=$layout_old['id'];
             ImportTables::updateRecords('layouts',$layout_new,$layout_old);
-			ESLayouts::storeAsFile($layout_new);
+			Layouts::storeAsFile($layout_new);
         }
         else
         {
             //Create layout record
             $layoutid=ImportTables::insertRecords('layouts',$layout_new);
-			ESLayouts::storeAsFile($layout_new);
+			Layouts::storeAsFile($layout_new);
         }
 
         return $layoutid;
@@ -553,7 +554,7 @@ class ImportTables
 			{
 				$fieldname=ImportTables::checkFieldName($key,$force_id,$exceptions);
 
-				if($fieldname!='' and ESFields::checkIfFieldExists($mysqltablename,$fieldname,false))
+				if($fieldname!='' and Fields::checkIfFieldExists($mysqltablename,$fieldname,false))
 				{
 					if($rows_new[$key]!=$rows_old[$key])// and $rows_new[$key]!=null)
 						$sets[]=$fieldname.'='.$db->Quote($rows_new[$key]);
@@ -660,23 +661,23 @@ class ImportTables
 			
 			if($isok)
 			{
-				if(!ESFields::checkIfFieldExists($mysqltablename,$fieldname,false))
+				if(!Fields::checkIfFieldExists($mysqltablename,$fieldname,false))
 				{
 					//Add field
-					$isLanguageFieldName=ESFields::isLanguageFieldName($fieldname);
+					$isLanguageFieldName=Fields::isLanguageFieldName($fieldname);
 
 					if($isLanguageFieldName)
                     {
 						//Add language field
                         //Get non langauge field type
 
-                        $nonLanguageFieldName=ESFields::getLanguagelessFieldName($key);
+                        $nonLanguageFieldName=Fields::getLanguagelessFieldName($key);
 
-                        $filedtype=ESFields::getFieldType($mysqltablename,false,$nonLanguageFieldName);
+                        $filedtype=Fields::getFieldType($mysqltablename,false,$nonLanguageFieldName);
 							
 						if($filedtype != '')
 						{
-							ESFields::AddMySQLFieldNotExist($mysqltablename, $key, $filedtype, '');
+							Fields::AddMySQLFieldNotExist($mysqltablename, $key, $filedtype, '');
 							$inserts[]=$fieldname.'='.$db->Quote($rows[$key]);
 						}
 					}

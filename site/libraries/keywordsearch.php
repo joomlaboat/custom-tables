@@ -13,12 +13,17 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'co
 
 class CustomTablesKeywordSearch
 {
-
+	var $ct;
+	
 		var $establename;
-		var $langpostfix;
 		var $esfields;
 		var $groupby;
 		var $esordering;
+		
+	function __construct(&$ct)
+	{
+		$this->ct = $ct;
+	}
 
 		function getRowsByKeywords($keywords,&$PathValue,&$TotalRows,$limit,$limitstart)
 		{
@@ -112,12 +117,12 @@ class CustomTablesKeywordSearch
 
 								case 'multilangstring':
 
-										$where=' es_'.$fieldname.$this->langpostfix.' REGEXP "'.$regexpression.'"';
+										$where=' es_'.$fieldname.$this->ct->Languages->Postfix.' REGEXP "'.$regexpression.'"';
 										break;
 
 								case 'multilangtext':
 
-										$where=' es_'.$fieldname.$this->langpostfix.' REGEXP "'.$regexpression.'"';
+										$where=' es_'.$fieldname.$this->ct->Languages->Postfix.' REGEXP "'.$regexpression.'"';
 										break;
 
 
@@ -146,7 +151,7 @@ class CustomTablesKeywordSearch
 
 										$inner='INNER JOIN '.$esr_table.' ON instr('.$esr_table.'.familytreestr, #__customtables_table_'.$this->establename.'.es_'.$fieldname.')';
 
-										$where=' '.$esr_table.'.title'.$this->langpostfix.' REGEXP "'.$regexpression.'"';
+										$where=' '.$esr_table.'.title'.$this->ct->Languages->Postfix.' REGEXP "'.$regexpression.'"';
 
 								break;
 
@@ -201,7 +206,7 @@ class CustomTablesKeywordSearch
 						//exact match
 						$fields=array();
 						if(isset($fieldrow['type']) and isset($fieldrow['fieldname']))
-								$where=$this->getRowsByKeywords_ProcessTypes($fieldrow['type'],$fieldrow['fieldname'],$fieldrow['typeparams'],'[[:<:]]'.$keywords.'[[:>:]]',$inner,$this->langpostfix);
+								$where=$this->getRowsByKeywords_ProcessTypes($fieldrow['type'],$fieldrow['fieldname'],$fieldrow['typeparams'],'[[:<:]]'.$keywords.'[[:>:]]',$inner,$this->ct->Languages->Postfix);
 
 						if($where!='')
 								$this->getKeywordSearch($inner, $where,$result_rows,$count,$idList);
@@ -287,8 +292,8 @@ class CustomTablesKeywordSearch
 				// -------------------
 				foreach($mod_fieldlist as $mod_field)
 				{
-						if(isset($fieldrow['fieldtitle'.$this->langpostfix]) )
-								$fields[]=$fieldrow['fieldtitle'.$this->langpostfix];
+						if(isset($fieldrow['fieldtitle'.$this->ct->Languages->Postfix]) )
+								$fields[]=$fieldrow['fieldtitle'.$this->ct->Languages->Postfix];
 
 
 						$where='';
@@ -353,13 +358,13 @@ class CustomTablesKeywordSearch
 
 										case 'multilangstring':
 
-												$where_arr[]=' INSTR(es_'.$fieldrow['fieldname'].$this->langpostfix.', "'.$kw.'")';
+												$where_arr[]=' INSTR(es_'.$fieldrow['fieldname'].$this->ct->Languages->Postfix.', "'.$kw.'")';
 												$fieldtypefound=true;
 												break;
 
 										case 'multilangtext':
 
-												$where_arr[]=' INSTR(es_'.$fieldrow['fieldname'].$this->langpostfix.', "'.$kw.'")';
+												$where_arr[]=' INSTR(es_'.$fieldrow['fieldname'].$this->ct->Languages->Postfix.', "'.$kw.'")';
 												$fieldtypefound=true;
 												break;
 
@@ -424,7 +429,7 @@ class CustomTablesKeywordSearch
 												if(!in_array($inner,$inner_arr))
 														$inner_arr[]=$inner;
 
-												$where_arr[]='instr(#__customtables_options.title'.$this->langpostfix.',"'.$kw.'")';
+												$where_arr[]='instr(#__customtables_options.title'.$this->ct->Languages->Postfix.',"'.$kw.'")';
 												$fieldtypefound=true;
 
 										break;
@@ -486,7 +491,7 @@ class CustomTablesKeywordSearch
 						$ordering[]='es_'.$this->groupby;
 
 				if($this->esordering)
-						CTOrdering::getOrderingQuery($ordering,$query,$inner,$this->esordering,$this->langpostfix,$tablename);
+						CTOrdering::getOrderingQuery($ordering,$query,$inner,$this->esordering,$this->ct->Languages->Postfix,$tablename);
 
 				$query.=' FROM '.$tablename.' ';
 

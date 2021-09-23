@@ -9,6 +9,8 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\Fields;
+
 class ESFileUploader
 {
 	public static function getFileNameByID($fileid)
@@ -250,7 +252,7 @@ class ESFileUploader
 			$tablerow=ESFileUploader::getTableRawByItemid();
 			$estableid=$tablerow['id'];
 
-			$esfield=ESFields::getFieldAsocByName($fieldname, $estableid);
+			$esfield=Fields::getFieldAsocByName($fieldname, $estableid);
 
 			if($esfield['type']=='image')
 				return array('image/gif', 'image/png', 'image/jpeg','image/svg+xml','image/webp');

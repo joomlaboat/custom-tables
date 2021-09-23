@@ -9,21 +9,28 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\Fields;
+use CustomTables\DataTypes\Tree;
+
 JHTML::addIncludePath(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'helpers');
 
 class ESFiltering
 {
-	var $es;
+	var $ct;
+	
 	var $esfields;
 	var $estable;
-	var $langpostfix;
+	
+	function __construct(&$ct)
+	{
+		$this->ct = $ct;
+	}
 
 	function getWhereExpression($param,&$PathValue)
 	{
 		$db = JFactory::getDBO();
 		$numerical_fields=['int','float','checkbox','viewcount','userid','user','id','sqljoin','article','multilangarticle'];
 
-		$this->es= new CustomTablesMisc;
 		$wheres=[];
 				
 		$items=$this->ExplodeSmartParams($param);
@@ -90,7 +97,7 @@ class ESFiltering
 								);
 							}
 							else
-								$fieldrow = ESFields::FieldRowByName($fieldname,$this->esfields);
+								$fieldrow = Fields::FieldRowByName($fieldname,$this->esfields);
 
 							if(count($fieldrow)>0)
 							{
@@ -214,13 +221,13 @@ class ESFiltering
 																if($vL=='true' or $vL=='1')
 																{
 																		$cArr[]=$fieldrow['realfieldname'].'=1';
-																		$PathValue[]=$fieldrow['fieldtitle'.$this->langpostfix];
+																		$PathValue[]=$fieldrow['fieldtitle'.$this->ct->Languages->Postfix];
 																}
 																else
 																{
 																		$cArr[]=$fieldrow['realfieldname'].'=0';
 
-																		$PathValue[]=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT').' '.$fieldrow['fieldtitle'.$this->langpostfix];
+																		$PathValue[]=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT').' '.$fieldrow['fieldtitle'.$this->ct->Languages->Postfix];
 																}
 														}
 														if(count($cArr)==1)
@@ -305,9 +312,9 @@ class ESFiltering
 
 														$v=str_replace('"','',$value);
 														if($db->serverType == 'postgresql')
-															$c='POSITION('.$db->quote($v).' IN '.$fieldrow['realfieldname'].$this->langpostfix.')>0';
+															$c='POSITION('.$db->quote($v).' IN '.$fieldrow['realfieldname'].$this->ct->Languages->Postfix.')>0';
 														else
-															$c='instr('.$realfieldname.$this->langpostfix.','.$db->quote($v).')';
+															$c='instr('.$realfieldname.$this->ct->Languages->Postfix.','.$db->quote($v).')';
 
 														break;
 
@@ -341,16 +348,16 @@ class ESFiltering
 																{
 																	$cArr[]='instr('.$fieldrow['realfieldname'].','.$db->quote($v).')';
 
-																	$vTitle=$this->es->getMultyValueTitles($v,$this->langpostfix,1, ' - ');
-																	$PathValue[]=$fieldrow['fieldtitle'.$this->langpostfix].': '.implode(',',$vTitle);
+																	$vTitle=Tree::getMultyValueTitles($v,$this->ct->Languages->Postfix,1, ' - ');
+																	$PathValue[]=$fieldrow['fieldtitle'.$this->ct->Languages->Postfix].': '.implode(',',$vTitle);
 																}
 
 																elseif($comparison_operator=='!=')
 																{
 																	$cArr[]='!instr('.$fieldrow['realfieldname'].','.$db->quote($v).')';
 
-																	$vTitle=$this->es->getMultyValueTitles($v,$this->langpostfix,1, ' - ');
-																	$PathValue[]=$fieldrow['fieldtitle'.$this->langpostfix].': '.implode(',',$vTitle);
+																	$vTitle=Tree::getMultyValueTitles($v,$this->ct->Languages->Postfix,1, ' - ');
+																	$PathValue[]=$fieldrow['fieldtitle'.$this->ct->Languages->Postfix].': '.implode(',',$vTitle);
 																}
 															}
 														}
@@ -443,7 +450,7 @@ class ESFiltering
 																if($comparison_operator=='!=' or $comparison_operator=='=')
 																{
 																	$PathValue[]=$fieldrow['fieldtitle'
-																			.$this->langpostfix]
+																			.$this->ct->Languages->Postfix]
 																			.' '
 																			.$opt_title
 																			.' '
@@ -498,7 +505,7 @@ class ESFiltering
 																					   $esr_table,
 																					   $esr_field,
 																					   $esr_filter,
-																					   $this->langpostfix);
+																					   $this->ct->Languages->Postfix);
 
 															$opt_title='';
 
@@ -510,7 +517,7 @@ class ESFiltering
 																	$opt_title=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT');
 
 																	$cArr[]=$esr_table_full.'.'.$fieldrow['realfieldname'].'!='.(int)$vLnew;
-																	$PathValue[]=$fieldrow['fieldtitle'.$this->langpostfix]
+																	$PathValue[]=$fieldrow['fieldtitle'.$this->ct->Languages->Postfix]
 																			.' '
 																			.$opt_title
 																			.' '
@@ -532,7 +539,7 @@ class ESFiltering
 
 
 																	$PathValue[]=$fieldrow['fieldtitle'
-																			.$this->langpostfix]
+																			.$this->ct->Languages->Postfix]
 																			.' '
 																			.$opt_title
 																			.' '
@@ -553,7 +560,7 @@ class ESFiltering
 													break;
 
 												case 'multilangtext':
-													$c=$this->Search_String($value, $PathValue, $fieldrow,$comparison_operator,$this->langpostfix);
+													$c=$this->Search_String($value, $PathValue, $fieldrow,$comparison_operator,$this->ct->Languages->Postfix);
 													break;
 
 										}
@@ -562,21 +569,21 @@ class ESFiltering
 
 	function Search_Date($fieldname, $value, &$PathValue, $comparison_operator,$esr_table_full)
 	{
-		$fieldrow1 = ESFields::FieldRowByName($fieldname,$this->esfields);
+		$fieldrow1 = Fields::FieldRowByName($fieldname,$this->esfields);
 
 		$title1='';
 		if(count($fieldrow1)>0)
 		{
-			$title1=$fieldrow1['fieldtitle'.$this->langpostfix];
+			$title1=$fieldrow1['fieldtitle'.$this->ct->Languages->Postfix];
 		}
 		else
 			$title1=$fieldname;
 
-		$fieldrow2 = ESFields::FieldRowByName($value,$this->esfields);
+		$fieldrow2 = Fields::FieldRowByName($value,$this->esfields);
 
 		$title2='';
 		if(count($fieldrow2)>0)
-			$title2=$fieldrow2['fieldtitle'.$this->langpostfix];
+			$title2=$fieldrow2['fieldtitle'.$this->ct->Languages->Postfix];
 		else
 			$title2=$value;
 
@@ -709,15 +716,15 @@ class ESFiltering
 		return $vL;
 	}
 
-	function Search_String($value, &$PathValue, &$fieldrow,$comparison_operator,$langpostfix = '')
+	function Search_String($value, &$PathValue, &$fieldrow,$comparison_operator)
 	{
 		$db = JFactory::getDBO();
 
-		$realfieldname=$fieldrow['realfieldname'].$langpostfix;
+		$realfieldname=$fieldrow['realfieldname'].$this->ct->Languages->Postfix;
 		
 		$v=$this->getString_vL($value);
 		
-		$PathValue[]=$fieldrow['fieldtitle'.$this->langpostfix].' '.$comparison_operator;
+		$PathValue[]=$fieldrow['fieldtitle'.$this->ct->Languages->Postfix].' '.$comparison_operator;
 
 		if($comparison_operator=='=' and $v!="")
 		{
@@ -780,7 +787,7 @@ class ESFiltering
 			if($vL!='')
 			{
 				$cArr[]=$fieldrow['realfieldname'].$comparison_operator.(int)$vL;
-				$PathValue[]=$fieldrow['fieldtitle'.$this->langpostfix].' '.$comparison_operator.' '.(int)$vL;
+				$PathValue[]=$fieldrow['fieldtitle'.$this->ct->Languages->Postfix].' '.$comparison_operator.' '.(int)$vL;
 			}
 		}
 		
@@ -811,7 +818,7 @@ class ESFiltering
 			else
 				$cArr[]=$fieldrow['realfieldname'].$comparison_operator.$db->quote($vL);
 
-			$PathValue[]=$fieldrow['fieldtitle'.$this->langpostfix].' '.$comparison_operator.' '.$vL;
+			$PathValue[]=$fieldrow['fieldtitle'.$this->ct->Languages->Postfix].' '.$comparison_operator.' '.$vL;
 		}
 
 		if(count($cArr)==1)
@@ -832,7 +839,7 @@ class ESFiltering
 			{
 				$cArr[]=$fieldrow['realfieldname'].$comparison_operator.(int)$vL;
 				$filtertitle=JHTML::_('ESUserGroupView.render',  $vL);
-				$PathValue[]=$fieldrow['fieldtitle'.$this->langpostfix].' '.$comparison_operator.' '.$filtertitle;
+				$PathValue[]=$fieldrow['fieldtitle'.$this->ct->Languages->Postfix].' '.$comparison_operator.' '.$filtertitle;
 			}
 		}
 		
@@ -860,7 +867,7 @@ class ESFiltering
 					$cArr[]=$fieldrow['realfieldname'].$comparison_operator.(int)$vL;
 			
 				$filtertitle=JHTML::_('ESUserView.render',  $vL);
-				$PathValue[]=$fieldrow['fieldtitle'.$this->langpostfix].' '.$comparison_operator.' '.$filtertitle;
+				$PathValue[]=$fieldrow['fieldtitle'.$this->ct->Languages->Postfix].' '.$comparison_operator.' '.$filtertitle;
 			}
 		}
 		
@@ -895,7 +902,7 @@ class ESFiltering
 
 	function getRangeWhere(&$fieldrow,&$PathValue,$value)
 	{
-		$fieldTitle=$fieldrow['fieldtitle'.$this->langpostfix];
+		$fieldTitle=$fieldrow['fieldtitle'.$this->ct->Languages->Postfix];
 
 		if($fieldrow['typeparams']=='date')
 			$valuearr=explode('-to-',$value);
@@ -982,7 +989,7 @@ class LinkJoinFilters
 	{
 		$db = JFactory::getDBO();
 		
-		$fieldrow=ESFields::getFieldRowByName($dynamic_filter_fieldname, $tableid=0,$establename);
+		$fieldrow=Fields::getFieldRowByName($dynamic_filter_fieldname, $tableid=0,$establename);
 		
 		if($fieldrow->type=='sqljoin' or $fieldrow->type=='records')
 			return LinkJoinFilters::getFilterElement_SqlJoin($fieldrow->typeparams,$control_name,$filtervalue);
@@ -1006,7 +1013,7 @@ class LinkJoinFilters
 		if(!is_array($tablerow))
 			return '<p style="color:white;background-color:red;">sqljoin: table "'.$tablename.'" not found</p>';
 
-		$fieldrow=ESFields::getFieldRowByName($field, $tablerow['id']);
+		$fieldrow=Fields::getFieldRowByName($field, $tablerow['id']);
 		if(!is_object($fieldrow))
 			return '<p style="color:white;background-color:red;">sqljoin: field "'.$field.'" not found</p>';
 			

@@ -9,8 +9,32 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\Fields;
+
 class JoomlaBasicMisc
 {
+	static public function array_insert(&$array, $insert, $position = -1)
+	{
+	    $position = ($position == -1) ? (count($array)) : $position ;
+	    if($position != (count($array))) {
+	    $ta = $array;
+	    for($i = $position; $i < (count($array)); $i++) {
+               if(!isset($array[$i])) {
+                    die("Invalid array: All keys must be numerical and in sequence.");
+               }
+               $tmp[$i+1] = $array[$i];
+               unset($ta[$i]);
+	    }
+	    $ta[$position] = $insert;
+	    $array = $ta + $tmp;
+
+	    } else {
+	         $array[$position] = $insert;
+	    }
+	    ksort($array);
+	    return true;
+	}
+	
 	//https://stackoverflow.com/questions/13076480/php-get-actual-maximum-upload-size
 	public static function file_upload_max_size() {
 		static $max_size = -1;
@@ -745,7 +769,7 @@ class JoomlaBasicMisc
 		}
 		else
 		{
-			$fieldrow=ESFields::getFieldAsocByName_($field,$model->esfields);
+			$fieldrow=Fields::getFieldAsocByName_($field,$model->esfields);
 			if(count($fieldrow)>0)
 			{
 				if(isset($recursivefieldslist))

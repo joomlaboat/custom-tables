@@ -41,7 +41,6 @@ class CustomTablesViewEditItem extends JViewLegacy {
         if(!isset($this->Model->esfields) or !is_array($this->Model->esfields))
             return false;
 
-		$this->langpostfix = $this->Model->langpostfix;
 		$this->esfields = $this->Model->esfields;
 		$this->row = $this->Model->row;
 
@@ -49,7 +48,7 @@ class CustomTablesViewEditItem extends JViewLegacy {
 		if($WebsiteRoot=='' or $WebsiteRoot[strlen($WebsiteRoot)-1]!='/') //Root must have slash / in the end
 			$WebsiteRoot.='/';
 
-		$this->formLink=$WebsiteRoot.'index.php?option=com_customtables&amp;view=edititem'.($this->Model->Itemid!=0 ? '&amp;Itemid='.$this->Model->Itemid : '');//.'&amp;lang='.$lang;
+		$this->formLink=$WebsiteRoot.'index.php?option=com_customtables&amp;view=edititem'.($this->Model->Itemid!=0 ? '&amp;Itemid='.$this->Model->Itemid : '');
 		$this->formName='eseditForm';
 		$this->formClass='form-validate form-horizontal well';
 		

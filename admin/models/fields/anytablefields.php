@@ -9,6 +9,8 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\Fields;
+
 jimport('joomla.form.helper');
 JFormHelper::loadFieldClass('list');
 
@@ -38,7 +40,7 @@ class JFormFieldAnyTableFields extends JFormFieldList
 			$table_row = ESTables::getTableRowByID($tableid);
 			if($table_row->customtablename!='')
 			{
-				$fields = ESFields::getExistingFields($table_row->customtablename,false);
+				$fields = Fields::getExistingFields($table_row->customtablename,false);
 				
 				$db = JFactory::getDBO();
 				

@@ -8,14 +8,15 @@
 
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\CT;
+use CustomTables\Fields;
+
 class ESSearchBarClass
 {
-	var $es;
-
+	var $ct;
+	
 	var $isLoader;
-	var $LangMisc;
-	var $LanguageList;
-	var $langpostfix;
+
 	var $establename;
 	var $orientation;
 	var $moduleid;
@@ -46,15 +47,6 @@ class ESSearchBarClass
 
 		$this->isLoader=$isLoader;
 
-		//Languages
-		$this->LangMisc	= new ESLanguages;
-		$this->LanguageList=$this->LangMisc->getLanguageList();
-
-		if($this->isLoader)
-			$this->langpostfix=$jinput->getCmd('langpostfix','');
-		else
-			$this->langpostfix=$this->LangMisc->getLangPostfix();
-
 		//get establename
 		if($jinput->get('establename','','CMD'))
 			$this->establename=$jinput->get('establename','','CMD');
@@ -63,8 +55,8 @@ class ESSearchBarClass
 
 
 		$this->modulename='essearchbar_'.$this->moduleid;
-		$this->es=new CustomTablesMisc;
-
+		
+		$this->ct = new CT;
 
 		$this->esTable= new ESTables;
 		$TableRow=$this->esTable->getTableRowByNameAssoc($this->establename);
@@ -74,13 +66,11 @@ class ESSearchBarClass
 
 
 		$this->esinputbox= new ESSerachInputBox;
-		$this->esinputbox->langpostfix=$this->langpostfix;
-		$this->esinputbox->es=$this->es;
-
+		$this->esinputbox->Model = $this;
 		$this->esinputbox->establename=$this->establename;
 		$this->esinputbox->modulename=$this->modulename;
 
-		$this->Fields=ESFields::getFields($this->TableID);
+		$this->Fields=Fields::getFields($this->TableID);
 
 		//get field list
 		if($jinput->getString('fieldlist'))
@@ -493,7 +483,7 @@ class ESSearchBarClass
 							if($pair[0]==$fld_start['fieldname'])
 							{
 
-								$where=$this->getWhereByFieldType($pair[1], $fld_start,$this->langpostfix);
+								$where=$this->getWhereByFieldType($pair[1], $fld_start,$this->ct->Languages->Postfix);
 
 								if($where!='')
 								{
@@ -575,8 +565,8 @@ class ESSearchBarClass
 						{
 							if($fld['essb_option']=='any')
 							{
-								if($fld['fieldtitle'.$this->langpostfix]!='')
-									$outputresult.='<span>'.$fld['fieldtitle'.$this->langpostfix].':</span>';
+								if($fld['fieldtitle'.$this->ct->Languages->Postfix]!='')
+									$outputresult.='<span>'.$fld['fieldtitle'.$this->ct->Languages->Postfix].':</span>';
 
 								if($this->orientation!='clean')
 									$outputresult.='<br/>';
@@ -590,7 +580,7 @@ class ESSearchBarClass
 								else
 									$outputresult.=$outputresult_temp;
 
-								$outputresult.='<span>'.$fld['fieldtitle'.$this->langpostfix].':</span>';
+								$outputresult.='<span>'.$fld['fieldtitle'.$this->ct->Languages->Postfix].':</span>';
 							}
 
 						}//if($outputresult_temp!='')
@@ -632,9 +622,9 @@ class ESSearchBarClass
 
 						if($outputresult_temp!='')
 						{
-							if($fld['fieldtitle'.$this->langpostfix]!='')
+							if($fld['fieldtitle'.$this->ct->Languages->Postfix]!='')
 							{
-								$outputresult.='<span>'.$fld['fieldtitle'.$this->langpostfix].':</span>';
+								$outputresult.='<span>'.$fld['fieldtitle'.$this->ct->Languages->Postfix].':</span>';
 								if($this->orientation!='clean')
 									$outputresult.='<br/>';
 							}
@@ -716,7 +706,7 @@ class ESSearchBarClass
 				return 'INSTR('.$fieldrow['realfieldname'].', '.$db->quote($value).')';
 
 			case 'multilangstring' :
-				return 'INSTR('.$fieldrow['realfieldname'].$this->langpostfix.', '.$db->quote($value).')';
+				return 'INSTR('.$fieldrow['realfieldname'].$this->ct->Languages->Postfix.', '.$db->quote($value).')';
 
 			break;
 
@@ -791,14 +781,14 @@ class ESSearchBarClass
 					if($fld['fieldname']==$fieldname)
 					{
 						if(isset($fieldnamearr[1]))
-							$fld['fieldtitle'.$this->langpostfix]=$fieldnamearr[1];
+							$fld['fieldtitle'.$this->ct->Languages->Postfix]=$fieldnamearr[1];
 
 						if($fld['type']=='checkbox')
 						{
 							if($fieldnamerawoption=='true')
-								$fld['fieldtitle'.$this->langpostfix]=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ONLY' ).' '.$fld['fieldtitle'.$this->langpostfix];
+								$fld['fieldtitle'.$this->ct->Languages->Postfix]=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ONLY' ).' '.$fld['fieldtitle'.$this->ct->Languages->Postfix];
 							elseif($fieldnamerawoption=='false')
-								$fld['fieldtitle'.$this->langpostfix]=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_INCLUDING' ).' '.$fld['fieldtitle'.$this->langpostfix];
+								$fld['fieldtitle'.$this->ct->Languages->Postfix]=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_INCLUDING' ).' '.$fld['fieldtitle'.$this->ct->Languages->Postfix];
 						}
 
 						$fld['essb_style']=$fieldnamerawstyle;
@@ -888,7 +878,7 @@ class ESSearchBarClass
 					$f=array(
 								'id'=>$currentfld['id'],
 								'fieldname' => $fieldname,
-								'fieldtitle'.$this->langpostfix=>$fieldtitle,
+								'fieldtitle'.$this->ct->Languages->Postfix=>$fieldtitle,
 								'typeparams' => $new_field_type,
 								'type'=>'range',
 								'parentid'=>$currentfld['parentid'],

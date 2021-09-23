@@ -9,14 +9,15 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\DataTypes\Tree;
+
 class ESMultiSelector
 {
 	function getMultiString($parent, $prefix)
 	{
-		$parentid=$this->es->getOptionIdFull($parent);
+		$parentid=Tree::getOptionIdFull($parent);
 		$a=$this->getMultiSelector($parentid,$parent, $prefix);
 		return implode(',',$a);
-
 	}
 
 	function getMultiSelector($parentid,$parentname,$langpostfix,$ObjectName,&$ItemList,&$count,$field_value,$place_holder='')
