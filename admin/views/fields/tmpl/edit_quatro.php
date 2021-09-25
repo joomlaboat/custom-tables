@@ -47,7 +47,7 @@ $componentParams = JComponentHelper::getParams('com_customtables');
 
 	<?php
 
-	if($ct->advancedtagprocessor)
+	if($ct->Env->advancedtagprocessor)
 	{
 		echo '
 		proversion=true;

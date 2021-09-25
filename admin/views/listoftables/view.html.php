@@ -162,7 +162,7 @@ class CustomtablesViewListoftables extends JViewLegacy
 			}
 		}
 		
-		if($ct->advancedtagprocessor)
+		if($ct->Env->advancedtagprocessor)
 			$toolbar->appendButton('Standard', 'download', 'Export', 'listoftables.export', $listSelect = true, $formId = null);
 
 		if(($this->canState && $this->canDelete))
@@ -233,7 +233,7 @@ class CustomtablesViewListoftables extends JViewLegacy
 			}
 		}
 
-		if($ct->advancedtagprocessor)
+		if($this->ct->Env->advancedtagprocessor)
 			JToolBarHelper::custom('listoftables.export','download.png','','Export');
 
 		// set help url for this view if found

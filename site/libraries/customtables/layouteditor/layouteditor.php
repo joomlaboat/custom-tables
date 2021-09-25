@@ -41,7 +41,7 @@ $document->addCustomTag('<link rel="stylesheet" href="'.JURI::root(true).'/compo
 
 	function renderEditor($textareacode,$textareaid,$typeboxid,$textareatabid,&$onPageLoads)
 	{
-		$this->ct = new CT;
+		$ct = new CT;
 		
 			$index=count($onPageLoads);
 			$result='<div class="customlayoutform layouteditorbox">'.$textareacode.'</div><div id="'.$textareatabid.'"></div>';
@@ -72,7 +72,7 @@ $document->addCustomTag('<link rel="stylesheet" href="'.JURI::root(true).'/compo
 
 	';
 
-		if($ct->advancedtagprocessor)
+		if($ct->Env->advancedtagprocessor)
 		{
 			$code.='
 		proversion=true;

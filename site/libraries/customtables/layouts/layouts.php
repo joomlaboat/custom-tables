@@ -13,8 +13,11 @@ namespace CustomTables;
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-use \Joomla\CMS\Factory;
+use \LayoutProcessor;
 use \JoomlaBasicMisc;
+
+use \Joomla\CMS\Factory;
+
 
 class Layouts
 {

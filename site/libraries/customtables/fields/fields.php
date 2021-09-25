@@ -13,9 +13,10 @@ namespace CustomTables;
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-use \Joomla\CMS\Factory;
-
+use \JoomlaBasicMisc;
 use \ESTables;
+
+use \Joomla\CMS\Factory;
 
 class Fields
 {

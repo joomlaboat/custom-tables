@@ -29,7 +29,7 @@ class IntegrityCoreTables extends \CustomTables\IntegrityChecks
 		IntegrityCoreTables::createCoreTableIfNotExists($ct,IntegrityCoreTables::getCoreTableFields_Layouts());
 		IntegrityCoreTables::createCoreTableIfNotExists($ct,IntegrityCoreTables::getCoreTableFields_Categories());
 		
-		if($ct->advancedtagprocessor)
+		if($ct->Env->advancedtagprocessor)
 		{
 			IntegrityCoreTables::createCoreTableIfNotExists($ct,IntegrityCoreTables::getCoreTableFields_Log());
 			IntegrityCoreTables::createCoreTableIfNotExists($ct,IntegrityCoreTables::getCoreTableFields_Options());
