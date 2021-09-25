@@ -5,7 +5,7 @@
  * @subpackage views/fields/tmpl/edit.php
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @copyright Copyright (C) 2018-2020. All Rights Reserved
+ * @copyright Copyright (C) 2018-2021. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
@@ -37,6 +37,7 @@ if($input->getCmd('extratask','')=='updateimages')
 $componentParams = JComponentHelper::getParams('com_customtables');
 
 ?>
+
 <div id="fieldsData" style="display:none;"><?php echo json_encode(Fields::getFields($this->tableid,true)); ?></div>
 <script type="text/javascript">
 	//websiteroot="<?php echo JURI::root(true); ?>";
@@ -64,7 +65,7 @@ $componentParams = JComponentHelper::getParams('com_customtables');
 
 	<?php
 
-	if($ct->Env->advancedtagprocessor)
+	if($this->ct->Env->advancedtagprocessor)
 	{
 		echo '
 		proversion=true;

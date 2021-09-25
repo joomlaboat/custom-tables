@@ -54,12 +54,7 @@ class CustomtablesViewListoftables extends JViewLegacy
 			CustomtablesHelper::addSubmenu('listoftables');
 		}
 		
-		if($this->version >= 4)
-		{
-			$this->filterForm    = $this->get('FilterForm');
-			$this->activeFilters = $this->get('ActiveFilters');
-		}
-		
+
 		$model = $this->getModel();
 		$this->ct = $model->ct;
 		
@@ -69,9 +64,17 @@ class CustomtablesViewListoftables extends JViewLegacy
 		$this->pagination = $this->get('Pagination');
 		$this->state = $this->get('State');
 		$this->user = JFactory::getUser();
+
+		if($this->version >= 4)
+		{
+			$this->filterForm    = $this->get('FilterForm');
+			$this->activeFilters = $this->get('ActiveFilters');
+		}
+
 		$this->listOrder = $this->escape($this->state->get('list.ordering'));
 		$this->listDirn = $this->escape($this->state->get('list.direction'));
 		$this->saveOrder = $this->listOrder == 'ordering';
+		
 		// get global action permissions
 
 		$this->canDo = ContentHelper::getActions('com_customtables', 'tables');
@@ -162,7 +165,7 @@ class CustomtablesViewListoftables extends JViewLegacy
 			}
 		}
 		
-		if($ct->Env->advancedtagprocessor)
+		if($this->ct->Env->advancedtagprocessor)
 			$toolbar->appendButton('Standard', 'download', 'Export', 'listoftables.export', $listSelect = true, $formId = null);
 
 		if(($this->canState && $this->canDelete))

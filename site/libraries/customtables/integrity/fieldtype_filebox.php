@@ -25,12 +25,6 @@ class IntegrityFieldType_FileBox extends \CustomTables\IntegrityChecks
 	{
 		$db = Factory::getDBO();
 		
-		if($db->serverType == 'postgresql')
-			$field_columns=(object)['columnname' => 'column_name', 'data_type'=>'data_type', 'is_nullable'=>'is_nullable', 'default'=>'column_default'];
-		else
-			$field_columns=(object)['columnname' => 'Field', 'data_type'=>'Type', 'is_nullable'=>'Null', 'default'=>'Default'];
-		
-
         if(!ESTables::checkIfTableExists($filebox_table_name))
         {
             Fields::CreateFileBoxTable($tablename,$fieldname);
@@ -49,7 +43,7 @@ class IntegrityFieldType_FileBox extends \CustomTables\IntegrityChecks
 
                         foreach($g_ExistingFields as $g_existing_field)
                         {
-                            $g_exst_field=$g_existing_field[$field_columns->columnname];
+                            $g_exst_field=$g_existing_field['column_name'];
                             if($g_exst_field==$g_fieldname)
                             {
                                 $g_found=true;

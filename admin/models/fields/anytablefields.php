@@ -43,14 +43,9 @@ class JFormFieldAnyTableFields extends JFormFieldList
 				$fields = Fields::getExistingFields($table_row->customtablename,false);
 				
 				$db = JFactory::getDBO();
-				
-				if($db->serverType == 'postgresql')
-					$field_columns=(object)['columnname' => 'column_name', 'data_type'=>'data_type', 'is_nullable'=>'is_nullable'];
-				else
-					$field_columns=(object)['columnname' => 'Field', 'data_type'=>'Type', 'is_nullable'=>'Null'];
-					
+									
 				foreach($fields as $field)
-					$options[] = JHtml::_('select.option', $field[$field_columns->columnname], $field[$field_columns->columnname].' ('.$field[$field_columns->data_type].')');
+					$options[] = JHtml::_('select.option', $field['column_name'], $field['column_name'].' ('.$field['data_type'].')');
             }
         }
 		

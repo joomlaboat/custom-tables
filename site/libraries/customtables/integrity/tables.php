@@ -35,7 +35,7 @@ class IntegrityTables extends \CustomTables\IntegrityChecks
 			//$link=JURI::root().'administrator/index.php?option=com_customtables&view=databasecheck&tableid='.$table['id'];
 			$link=Uri::root().'administrator/index.php?option=com_customtables&view=databasecheck&tableid='.$table['id'];
 			
-			$content = IntegrityFields::checkFields($ct,$table['id'],$table['tablename'],$table['tabletitle'],$table['customtablename'],$link);	
+			$content = IntegrityFields::checkFields($ct,$link);	
 		
 			IntegrityOptions::checkOptions($ct);
 		

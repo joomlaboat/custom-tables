@@ -30,11 +30,7 @@ class IntegrityOptions extends \CustomTables\IntegrityChecks
     {
 		$db = Factory::getDBO();
 		
-		$column_name_field='';
-		if($db->serverType == 'postgresql')
-			$column_name_field = 'column_name';
-		else
-			$column_name_field = 'Field';
+		$column_name_field = 'column_name';
 		
         $table_name='#__customtables_options';
 
@@ -62,7 +58,7 @@ class IntegrityOptions extends \CustomTables\IntegrityChecks
             if(!$g_found)
             {
 				Fields::AddMySQLFieldNotExist($table_name, $g_fieldname, 'varchar(100) null', '');
-				Factory::getApplication()->enqueueMessage('Options Field "'.g_fieldname.'" added.','notice');
+				Factory::getApplication()->enqueueMessage('Options Field "'.$g_fieldname.'" added.','notice');
             }
 			$morethanonelang=true;
         }

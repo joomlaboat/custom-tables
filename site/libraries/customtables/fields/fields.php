@@ -42,20 +42,15 @@ class Fields
 		
 		$db = Factory::getDBO();
 		
-		if($db->serverType == 'postgresql')
-			$field_columns=(object)['columnname' => 'column_name', 'data_type'=>'data_type', 'is_nullable'=>'is_nullable'];
-		else
-			$field_columns=(object)['columnname' => 'Field', 'data_type'=>'Type', 'is_nullable'=>'Null'];
-		
         foreach($fields as $field)
         {
-            if($field[$field_columns->columnname]==$original_fieldname)
+            if($field['column_name']==$original_fieldname)
             {
                 $AdditionOptions='';
-                if($field[$field_columns->is_nullable]!='NO')
+                if($field['is_nullable']!='NO')
 					$AdditionOptions='null';
 
-                Fields::AddMySQLFieldNotExist($tablename, $new_fieldname, $field[$field_columns->data_type], $AdditionOptions);
+                Fields::AddMySQLFieldNotExist($tablename, $new_fieldname, $field['data_type'], $AdditionOptions);
                 return true;
             }
         }
@@ -214,363 +209,237 @@ class Fields
         return true;
 	}
 
-	public static function comparePureFieldTypes($fieldtype1_, $fieldtype2_)
+	public static function makeProjectedFieldType($ct_fieldtype_array)
 	{
-		$fieldtype1=strtolower($fieldtype1_);
-		$fieldtype2=strtolower($fieldtype2_);
-		
-		if($fieldtype1 == $fieldtype2)
-			return true;
-		
-		//Remove Text Between Parentheses
-		$fieldtype1_no_par = preg_replace("/\([^)]+\)/","",$fieldtype1); // replace "varchar(255) null" with "varchar null"
-		$fieldtype2_no_par = preg_replace("/\([^)]+\)/","",$fieldtype2); // replace "varchar(255) null" with "varchar null"
-		
-		$db = Factory::getDBO();
-		if($db->serverType == 'postgresql')
-		{
-			if($fieldtype1=='character varying null' and $fieldtype2_no_par == 'varchar null')
-				return true;
-				
-			if($fieldtype1=='integer null' and $fieldtype2_no_par == 'int null')
-				return true;
-		}
-		else
-		{
-			if($fieldtype1_no_par=='int null' and $fieldtype2_no_par == 'int null')
-				return true;
-				
-			if($fieldtype1_no_par=='tinyint not null default 0' and $fieldtype2_no_par == 'tinyint not null default 0')
-				return true;
-				
-			if($fieldtype1_no_par=='bigint unsigned null' and $fieldtype2_no_par == 'bigint unsigned null')
-				return true;
-			
-			if($fieldtype1_no_par=='bigint null' and $fieldtype2_no_par == 'bigint null')
-				return true;
-			
-			if($fieldtype1_no_par=='int unsigned null' and $fieldtype2_no_par == 'int unsigned null')
-				return true;			
-		}
-		
-		return false;
-	}
+		$type = (object)$ct_fieldtype_array; 
 
-    public static function getPureFieldType($fieldtype,$typeparams)
-	{
-		//$version_object = new Version;
-		//$version = (int)$version_object->getShortVersion();
-		
 		$db = Factory::getDBO();
 		
-		$t=trim($fieldtype);
-		switch($t)
+		$elements=[];
+		
+		switch($type->data_type)
 		{
-			case 'phponadd':
-				return 'varchar(255) null';
-			case 'filelink':
-				return 'varchar(255) null';
-            case 'alias':
-				return 'varchar(255) null';
-            case 'color':
-				return 'varchar(8) null';
-			case 'string':
-				$l=(int)$typeparams;
-
-				if($l==0)
-					$l=255;
-
-				if($l<1)
-					$l=1;
-
-				if($l>1024)
-					$l=1024;
-
-				return 'varchar('.$l.') null';
-
-			break;
-
-			case 'multilangstring':
-
-				$l=(int)$typeparams;
-
-				if($l==0)
-					$l=255;
-
-				if($l<1)
-					$l=1;
-
-				if($l>1024)
-					$l=1024;
-
-				return 'varchar('.$l.') null';
-
-			break;
-
+			case null:
+				return '';
+				
+			case 'varchar':
+				$elements[]='varchar('.$type->length.')';
+				break;
+				
 			case 'text':
-				return 'text null';
+				$elements[]='text';
 				break;
-			case 'multilangtext':
-				return 'text null';
+				
+			case 'char':
+				$elements[]='char('.$type->length.')';
 				break;
-
+				
 			case 'int':
+				$elements[]='int';
 				
-				if($db->serverType == 'postgresql')
-					return 'int null';
-				else
-					return 'int null';
+				if($db->serverType != 'postgresql')
+				{
+					if($type->is_nullable != null and $type->is_unsigned)
+						$elements[]='unsigned';
+				}
+				break;
 				
+			case 'bigint':
+				$elements[]='bigint';
+				
+				if($db->serverType != 'postgresql')
+				{
+					if($type->is_nullable != null and $type->is_unsigned)
+						$elements[]='unsigned';
+				}
 				break;
 
+			case 'decimal':
+				if($db->serverType == 'postgresql')
+					$elements[]='numeric('.$type->length.')';
+				else
+					$elements[]='decimal('.$type->length.')';
+					
+				break;
+				
+			case 'tinyint':
+				if($db->serverType == 'postgresql')
+					$elements[]='smallint';
+				else
+					$elements[]='tinyint';
+					
+				break;
+				
+			case 'date':
+				$elements[]='date';
+				break;
+				
+			case 'datetime':
+				if($db->serverType == 'postgresql')
+					$elements[]='TIMESTAMP';
+				else
+					$elements[]='datetime';
+					
+				break;
+				
+			default:
+				return '';
+		}
+		
+		if($type->is_nullable)
+			$elements[]='null';
+		else
+			$elements[]='not null';
+			
+		if($type->default !== null)
+			$elements[]='default '.(is_numeric($type->default) ? $type->default : $db->quote($type->default));
+			
+		if($type->extra !== null)
+			$elements[]=$type->extra;
+		
+		return implode(' ',$elements);
+	}
+	
+	public static function getProjectedFieldType($ct_fieldtype,$typeparams)
+	{
+		//Returns an array of mysql column parameters
+		switch(trim($ct_fieldtype))
+		{
+			case '_id':
+				return ['data_type' => 'int','is_nullable' => false, 'is_unsigned' => true, 'length' => null, 'default' => null, 'extra' => 'auto_increment'];
+				
+			case '_published':
+				return ['data_type' => 'tinyint','is_nullable' => false, 'is_unsigned' => false, 'length' => null, 'default' => 1, 'extra' => null];
+				
+			case 'filelink':
+			case 'file':
+			case 'url':
+				return ['data_type' => 'varchar','is_nullable'=> true, 'is_unsigned' => null, 'length' => 1024, 'default' => null, 'extra' => null];
+			case 'alias':
+			case 'records':
+			case 'radio':
+			case 'email':
+			case 'server':
+			case 'usergroups':
+				return ['data_type' => 'varchar','is_nullable'=> true, 'is_unsigned' => null, 'length' => 255, 'default' => null, 'extra' => null];
+			case 'color':
+				return ['data_type' => 'varchar','is_nullable'=> true, 'is_unsigned' => null, 'length' => 8, 'default' => null, 'extra' => null];
+			case 'string':
+			case 'multilangstring':
+				$l=(int)$typeparams;
+				return ['data_type' => 'varchar','is_nullable'=> true, 'is_unsigned' => null, 'length' => ($l < 1 ? 255 : ($l > 1024 ? 1024 : $l)), 'default' => null, 'extra' => null];
+			case 'text':
+			case 'multilangtext':
+			case 'log':
+				return ['data_type' => 'text','is_nullable'=> true, 'is_unsigned' => null, 'length' => null, 'default' => null, 'extra' => null];
+			case 'int':
+				return ['data_type' => 'int','is_nullable'=> true, 'is_unsigned' => false, 'length' => null, 'default' => null, 'extra' => null];
 			case 'float':
-				$typeparams_arr=explode(',',$typeparams);
 				
-				if($db->serverType == 'postgresql')
-				{
-					if(count($typeparams_arr)==1)
-						return 'numeric(20,'.(int)$typeparams_arr[0].') null';
-					elseif(count($typeparams_arr)==2)
-						return 'numeric('.(int)$typeparams_arr[1].','.(int)$typeparams_arr[0].') null';
-					else
-						return 'numeric(20,2) null';
-				}
+				$typeparams_arr=explode(',',$typeparams);
+			
+				if(count($typeparams_arr)==1)
+					$l='20,'.(int)$typeparams_arr[0];
+				elseif(count($typeparams_arr)==2)
+					$l=(int)$typeparams_arr[1].','.(int)$typeparams_arr[0];
 				else
-				{
-					if(count($typeparams_arr)==1)
-						return 'decimal(20,'.(int)$typeparams_arr[0].') null';
-					elseif(count($typeparams_arr)==2)
-						return 'decimal('.(int)$typeparams_arr[1].','.(int)$typeparams_arr[0].') null';
-					else
-						return 'decimal(20,2) null';
-				}
-
-				break;
+					$l='20,2';
+				return ['data_type' => 'decimal','is_nullable'=> true, 'is_unsigned' => false, 'length' => $l, 'default' => null, 'extra' => null];
 
 			case 'customtables':
 				$typeparams_arr=explode(',',$typeparams);
 
-				if(count($typeparams_arr)<3)
-					return 'varchar(255) null';
-
-				$l=(int)$typeparams_arr[2];
-
-				if($l==0)
+				if(count($typeparams_arr)<255)
 					$l=255;
-
-				if($l<64)
-					$l=64;
+				else
+					$l=(int)$typeparams_arr[2];
 
 				if($l>65535)
 					$l=65535;
 
-				return 'varchar('.$l.') null';
+				return ['data_type' => 'varchar','is_nullable'=> true, 'is_unsigned' => null, 'length' => $l, 'default' => null, 'extra' => null];
 
-				break;
-
-			case 'records':
-				return 'varchar(255) null';
-				break;
-
+			case 'userid':
+			case 'user':
+			case 'usergroup':
 			case 'sqljoin':
-				if($db->serverType == 'postgresql')
-					return 'int null';
-				else
-					return 'int unsigned null';
-				
-				break;
-
-			case 'file':
-				return 'varchar(255) null';
-				break;
+			case 'article':
+			case 'multilangarticle':
+				return ['data_type' => 'int','is_nullable'=> true, 'is_unsigned' => true, 'length' => null, 'default' => null, 'extra' => null];
 
 			case 'image':
-				if($db->serverType == 'postgresql')
-					return 'bigint null';
-				else
-					return 'bigint null';
-					
-				break;
+				return ['data_type' => 'bigint','is_nullable'=> true, 'is_unsigned' => false, 'length' => null, 'default' => null, 'extra' => null];
 
 			case 'checkbox':
-				if($db->serverType == 'postgresql')
-					return 'smallint not null default 0';
-				else
-					return 'tinyint not null default 0';
-				
-				break;
-
-			case 'radio':
-				return 'varchar(255) null';
-				break;
-
-			case 'email':
-				return 'varchar(255) null';
-				break;
-
-			case 'url':
-				return 'varchar(1024) null';
-				break;
+				return ['data_type' => 'tinyint','is_nullable'=> false, 'is_unsigned' => false, 'length' => null, 'default' => 0, 'extra' => null];
 
 			case 'date':
-				return 'date null';
-				break;
+				return ['data_type' => 'date','is_nullable'=> true, 'is_unsigned' => null, 'length' => null, 'default' => null, 'extra' => null];
             
 		    case 'time':
-				if($db->serverType == 'postgresql')
-					return 'int null';
-				else
-					return 'int null';
-					
-				break;
+				return ['data_type' => 'int','is_nullable'=> true, 'is_unsigned' => false, 'length' => null, 'default' => null, 'extra' => null];
 
 			case 'creationtime':
-				if($db->serverType == 'postgresql')
-					return 'TIMESTAMP null';
-				else
-					return 'datetime null';
-					
-				break;
-
 			case 'changetime':
-				if($db->serverType == 'postgresql')
-					return 'TIMESTAMP null';
-				else
-					return 'datetime null';
-					
-				break;
-
 			case 'lastviewtime':
-				if($db->serverType == 'postgresql')
-					return 'TIMESTAMP null';
-				else
-					return 'datetime null';
-					
-				break;
+				return ['data_type' => 'datetime','is_nullable'=> true, 'is_unsigned' => false, 'length' => null, 'default' => null, 'extra' => null];
 
 			case 'viewcount':
-				if($db->serverType == 'postgresql')
-					return 'bigint null';
-				else
-					return 'bigint unsigned null';
-					
-				break;
-
-			case 'userid': //current user id (auto asigned)
-
-				/*
-				if($version < 4)
-				{
-				}
-				else
-				{
-					*/
-				if($db->serverType == 'postgresql')
-					return 'int null';
-				else
-					return 'int unsigned null';
-				//}
-
-			case 'user': //user (selection)
-				if($db->serverType == 'postgresql')
-					return 'int null';
-				else
-					return 'int unsigned null';
-
-			case 'usergroup': //user group (selection)
-				if($db->serverType == 'postgresql')
-					return 'int null';
-				else
-					return 'int unsigned null';
-
-			case 'usergroups': //user groups (selection)
-				return 'varchar(255) null';
+			case 'imagegallery':
+			case 'filebox':
+				return ['data_type' => 'bigint','is_nullable'=> true, 'is_unsigned' => true, 'length' => null, 'default' => null, 'extra' => null];
 
             case 'language':
-				return 'varchar(5) null';
-				break;
-
-			case 'server':
-				return 'varchar(255) null';
-				break;
+				return ['data_type' => 'varchar','is_nullable'=> true, 'is_unsigned' => null, 'length' => 5, 'default' => null, 'extra' => null];
 
 			case 'id':
-				if($db->serverType == 'postgresql')
-					return 'bigint null';
-				else
-					return 'bigint unsigned null';
-					
-				break;
+				return ['data_type' => 'bigint','is_nullable'=> true, 'is_unsigned' => true, 'length' => null, 'default' => null, 'extra' => null];
 
 			case 'dummy':
-				return '';
-				break;
-
-			case 'imagegallery':
-				if($db->serverType == 'postgresql')
-					return 'bigint null';
-				else
-					return 'bigint unsigned null';
-					
-				break;
-
-			case 'filebox':
-				if($db->serverType == 'postgresql')
-					return 'bigint null';
-				else
-					return 'bigint unsigned null';
-					
-				break;
-
-			case 'article':
-				if($db->serverType == 'postgresql')
-					return 'bigint null';
-				else
-					return 'bigint unsigned null';
-					
-				break;
-
-			case 'multilangarticle':
-				if($db->serverType == 'postgresql')
-					return 'bigint null';
-				else
-					return 'bigint unsigned null';
-					
+				return ['data_type' => null,'is_nullable'=> null, 'is_unsigned' => null, 'length' => null, 'default' => null, 'extra' => null];
 				break;
 
 			case 'md5':
-				return 'char(32) null';
-				break;
+				return ['data_type' => 'char','is_nullable'=> true, 'is_unsigned' => null, 'length' => 32, 'default' => null, 'extra' => null];
 
-			case 'log':
-				return 'text null';
-				break;
-
-            case '_published':
-
-				if($db->serverType == 'postgresql')
-					return 'samllint not null default 1';
-				else
-					return 'tinyint not null default 1';
-					
-				break;
-            
+			case 'phponadd':
+			case 'phponchange':
             case 'phponview':
                 $typeparams_arr=explode(',',$typeparams);
                 
                 if(isset($typeparams_arr[1]) and $typeparams_arr[1]=='dynamic')
-                    return ''; //do not store the field values
+                    return ['data_type' => null,'is_nullable'=> null, 'is_unsigned' => null, 'length' => null, 'default' => null, 'extra' => null]; //do not store field values
                 else
-                    return 'varchar(255) null';
+                    return ['data_type' => 'varchar','is_nullable'=> true, 'is_unsigned' => null, 'length' => 255, 'default' => null, 'extra' => null];
                 
                 break;
 
 			default:
 
-				return 'varchar(255) null';
+				return ['data_type' => 'varchar','is_nullable'=> true, 'is_unsigned' => null, 'length' => 255, 'default' => null, 'extra' => null];
 				break;
 		}
-
+	}
+	
+	public static function getPureFieldType($ct_fieldtype,$typeparams)
+	{
+		//echo '<br/>';
+		
+		$ct_fieldtype_array = Fields::getProjectedFieldType($ct_fieldtype,$typeparams);
+		
+		//print_r($ct_fieldtype_array);
+		
+		//echo '<br/>';
+		
+		$type = Fields::makeProjectedFieldType($ct_fieldtype_array);
+		
+		/*
+		echo '$ct_fieldtype='.$ct_fieldtype.'<br/>';
+		echo '$typeparams='.$typeparams.'<br/>';
+		echo '$type='.$type.'<br/>';
+		echo '<hr/>';
+		*/
+		return $type;
 	}
 
 
@@ -658,9 +527,8 @@ class Fields
         }
 	}
 
-
-    public static function removeForeignKey($realtablename,$realfieldname)
-	{
+	protected static function getTableConstrances($realtablename,$realfieldname)
+	{	
 		$db = Factory::getDBO();
 		
 		if($db->serverType == 'postgresql')
@@ -694,35 +562,51 @@ class Fields
             if(strpos($line,'CONSTRAINT')!==false)
             {
                 $pair=explode(' ',$line);
-                if($pair[4]=='('.$realfieldname.')')
-                {
+                
+				if($realfieldname == '')
+					$constrances[]=$pair;
+				elseif($pair[4]=='('.$realfieldname.')')
                     $constrances[]=$pair[1];
-                }
             }
         }
+		
+		return $constrances;
+	}
+
+	protected static function removeForeignKeyConstrance($realtablename,$constrance)
+	{
+		$db = Factory::getDBO();
+		
+		$query ='SET foreign_key_checks = 0;';
+        $db->setQuery($query);
+        $db->execute();
+
+        $query='ALTER TABLE '.$realtablename.' DROP FOREIGN KEY '.$constrance;
+
+        try
+        {
+			$db->setQuery($query);
+			$db->execute();
+        }
+        catch (RuntimeException $e)
+        {
+			Factory::getApplication()->enqueueMessage($e->getMessage(),'error');
+		}
+
+        $query ='SET foreign_key_checks = 1;';
+        $db->setQuery($query);
+        $db->execute();
+	}
+
+    public static function removeForeignKey($realtablename,$realfieldname)
+	{
+		$db = Factory::getDBO();
+		
+		$constrances = Fields::getTableConstrances($realtablename,$realfieldname);
 
         foreach($constrances as $constrance)
         {
-            $query ='SET foreign_key_checks = 0;';
-            $db->setQuery($query);
-            $db->execute();
-
-            $query='ALTER TABLE '.$realtablename.' DROP FOREIGN KEY '.$constrance;
-
-            try
-            {
-                $db->setQuery($query);
-				$db->execute();
-            }
-            catch (RuntimeException $e)
-            {
-            	$msg=$e->getMessage();
-            }
-
-
-            $query ='SET foreign_key_checks = 1;';
-            $db->setQuery($query);
-            $db->execute();
+            Fields::removeForeignKey($realtablename,$constrance);
         }
 
 		return false;
@@ -756,7 +640,6 @@ class Fields
 		}
 	}
 
-
     public static function CreateImageGalleryTable($tablename,$fieldname)
 	{
 		$image_gallery_table='#__customtables_gallery_'.$tablename.'_'.$fieldname;
@@ -776,7 +659,6 @@ class Fields
 
 		return true;
 	}
-
 
     public static function CreateFileBoxTable($tablename,$fieldname)
 	{
@@ -1033,13 +915,27 @@ class Fields
 		}
 		else
 		{
-			$query = 'SHOW COLUMNS FROM '.$realtablename;
+			$realtablename=str_replace('#__',$db->getPrefix(),$realtablename);
+			
+			//$query = 'SHOW COLUMNS FROM '.$realtablename;
+			//$db->setQuery( $query );
+			
+			$conf = Factory::getConfig();
+			$database = $conf->get('db');
+			
+			$query = 'SELECT COLUMN_NAME AS column_name,'
+				.'DATA_TYPE AS data_type,'
+				.'COLUMN_TYPE AS column_type,'
+				.'IF(COLUMN_TYPE LIKE \'%unsigned\', \'YES\', \'NO\') AS is_unsigned,'
+				.'IS_NULLABLE AS is_nullable,'
+				.'COLUMN_DEFAULT AS column_default,'
+				.'EXTRA AS extra'
+				.' FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='.$db->quote($database).' AND TABLE_NAME='.$db->quote($realtablename);
+
 		}
 
 		$db->setQuery( $query );
-
 		return $db->loadAssocList();
-
 	}
 
     public static function getListOfExistingFields($tablename,$add_table_prefix=true)
@@ -1066,16 +962,9 @@ class Fields
 		$db->setQuery( $query );
 		$recs=$db->loadAssocList();
         
-        if($db->serverType == 'postgresql')
-		{
-			foreach($recs as $rec)
-				$list[]=$rec['column_name'];
-        }
-		else
-		{
-			foreach($recs as $rec)
-				$list[]=$rec['Field'];
-        }
+		foreach($recs as $rec)
+			$list[]=$rec['column_name'];
+
 		return $list;
 	}
 
@@ -1118,20 +1007,38 @@ class Fields
 
     public static function fixMYSQLField($realtablename,$fieldname,$PureFieldType,&$msg)
 	{
-		try
+		$db = Factory::getDBO();
+
+		if($PureFieldType=='_id')
 		{
-			$db = Factory::getDBO();
+			$constrances = Fields::getTableConstrances($realtablename,'');
+			
+			//Delete same table child-parent constrances
+			
+		    foreach($constrances as $constrance)
+			{
+				if($constrance[7]=='(id)')
+					Fields::removeForeignKeyConstrance($realtablename,$constrance[1]);
+			}
 
-			if($PureFieldType=='_id')
-				$query='ALTER TABLE '.$realtablename.' CHANGE id id INT UNSIGNED NOT NULL AUTO_INCREMENT';
-			elseif($PureFieldType=='_published')
-				$query='ALTER TABLE '.$realtablename.' CHANGE published published TINYINT NOT NULL DEFAULT 1';
-			else
-				$query='ALTER TABLE '.$realtablename.' CHANGE '.$fieldname.' '.$fieldname.' '.$PureFieldType;
-
+			$query='ALTER TABLE '.$realtablename.' CHANGE id id INT UNSIGNED NOT NULL AUTO_INCREMENT';
+			
 			$db->setQuery( $query );
 			$db->execute();
 			
+			$msg='';
+			return true;
+		}
+		elseif($PureFieldType=='_published')
+			$query='ALTER TABLE '.$realtablename.' CHANGE published published TINYINT NOT NULL DEFAULT 1';
+		else
+			$query='ALTER TABLE '.$realtablename.' CHANGE '.$fieldname.' '.$fieldname.' '.$PureFieldType;
+
+		try
+		{
+			$db->setQuery( $query );
+			$db->execute();
+				
 			$msg='';
 			return true;
 		}
@@ -1300,16 +1207,12 @@ class Fields
 	public static function checkField($ExistingFields,$realtablename,$proj_field,$type)
     {
 		$db = Factory::getDBO();
-		
-		if($db->serverType == 'postgresql')
-			$field_columns=(object)['columnname' => 'column_name', 'data_type'=>'data_type', 'is_nullable'=>'is_nullable', 'default'=>'column_default'];
-		else
-			$field_columns=(object)['columnname' => 'Field', 'data_type'=>'Type', 'is_nullable'=>'Null', 'default'=>'Default'];
 
-        $found=false;
+		$found=false;
+
         foreach($ExistingFields as $existing_field)
         {
-            if($proj_field==$existing_field[$field_columns->columnname])
+            if($proj_field==$existing_field['column_name'])
             {
                 $found=true;
                 break;
