@@ -11,6 +11,8 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\CT;
+
 $theme='eclipse';
 $document = JFactory::getDocument();
 
@@ -37,8 +39,10 @@ $document->addCustomTag('<script src="'.JURI::root(true).'/components/com_custom
 $document->addCustomTag('<link rel="stylesheet" href="'.JURI::root(true).'/components/com_customtables/libraries/codemirror/theme/'.$theme.'.css">');
 
 
-		function renderEditor($textareacode,$textareaid,$typeboxid,$textareatabid,&$onPageLoads)
-		{
+	function renderEditor($textareacode,$textareaid,$typeboxid,$textareatabid,&$onPageLoads)
+	{
+		$this->ct = new CT;
+		
 			$index=count($onPageLoads);
 			$result='<div class="customlayoutform layouteditorbox">'.$textareacode.'</div><div id="'.$textareatabid.'"></div>';
 			$languages = getKnownLanguages();
@@ -68,9 +72,7 @@ $document->addCustomTag('<link rel="stylesheet" href="'.JURI::root(true).'/compo
 
 	';
 
-		$phptagprocessor=JPATH_SITE.DIRECTORY_SEPARATOR.'plugins'.DIRECTORY_SEPARATOR.'content'.DIRECTORY_SEPARATOR.'customtables'.DIRECTORY_SEPARATOR.'protagprocessor'.DIRECTORY_SEPARATOR.'phptags.php';
-
-		if(file_exists($phptagprocessor))
+		if($ct->advancedtagprocessor)
 		{
 			$code.='
 		proversion=true;

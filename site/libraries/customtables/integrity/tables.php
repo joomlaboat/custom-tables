@@ -30,6 +30,8 @@ class IntegrityTables extends \CustomTables\IntegrityChecks
 
 		foreach($tables as $table)
 		{
+			$ct->setTable($table, $useridfieldname = null, $load_fields = false);
+			
 			//$link=JURI::root().'administrator/index.php?option=com_customtables&view=databasecheck&tableid='.$table['id'];
 			$link=Uri::root().'administrator/index.php?option=com_customtables&view=databasecheck&tableid='.$table['id'];
 			

@@ -19,15 +19,6 @@ JHtml::_('behavior.keepalive');
 
 $componentParams = JComponentHelper::getParams('com_customtables');
 
-$phptagprocessor=JPATH_SITE.DIRECTORY_SEPARATOR.'plugins'.DIRECTORY_SEPARATOR.'content'.DIRECTORY_SEPARATOR.'customtables'.DIRECTORY_SEPARATOR.'protagprocessor'.DIRECTORY_SEPARATOR.'phptags.php';
-
-if(file_exists($phptagprocessor))
-{
-	$phptagprocessor=true;
-}
-else
-	$phptagprocessor=false;
-
 ?>
 <?php /*
 <script type="text/javascript">
@@ -160,7 +151,7 @@ else
 	?>
 
 	<?php
-	if($phptagprocessor):
+	if($ct->advancedtagprocessor):
 		
 	echo JHtml::_('bootstrap.addTab', 'tablesTab', 'advanced', JText::_('COM_CUSTOMTABLES_TABLES_ADVANCED', true)); ?>
 

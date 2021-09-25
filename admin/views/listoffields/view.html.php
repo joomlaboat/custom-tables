@@ -75,8 +75,10 @@ class CustomtablesViewListoffields extends JViewLegacy
 		// get global action permissions
 		
 		$this->canDo = ContentHelper::getActions('com_customtables', 'tables');
+		
 		$this->canEdit = $this->canDo->get('tables.edit');
 		$this->canState = $this->canDo->get('tables.edit');
+		
 		$this->canCreate = $this->canDo->get('tables.edit');
 		$this->canDelete = $this->canDo->get('tables.edit');
 		//$this->canBatch = $this->canDo->get('tables.edit');
@@ -89,7 +91,7 @@ class CustomtablesViewListoffields extends JViewLegacy
 
 		if($this->tableid!=0)
 		{
-			$table=ESTables::getTableRowByID($this->tableid);
+			$table=ESTables::getTableRowByIDAssoc($this->tableid);
 			if(!is_object($table) and $table==0)
 			{
 				JFactory::getApplication()->enqueueMessage('Table not found', 'error');
@@ -97,9 +99,11 @@ class CustomtablesViewListoffields extends JViewLegacy
 			}
 			else
 			{
-				$this->tablename=$table->tablename;
-				$this->tabletitle=$table->tabletitle;
-				$this->customtablename=$table->customtablename;
+				$this->ct->setTable($table, $useridfieldname = null, $load_fields = false);
+				
+				$this->tablename=$table['tablename'];
+				$this->tabletitle=$table['tabletitle'];
+				$this->customtablename=$table['customtablename'];
 			}
 		}
 
@@ -301,11 +305,13 @@ class CustomtablesViewListoffields extends JViewLegacy
 			*/
 		}
 
+/*
 		JHtmlSidebar::addFilter(
 			JText::_('JOPTION_SELECT_ACCESS'),
 			'filter_access',
 			JHtml::_('select.options', JHtml::_('access.assetgroups'), 'value', 'text', $this->state->get('filter.access'))
 		);
+		*/
 
 		/*
 		if ($this->canBatch && $this->canCreate && $this->canEdit)

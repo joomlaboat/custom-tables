@@ -34,17 +34,7 @@ if($input->getCmd('extratask','')=='updateimages')
 	extraTasks::prepareJS();
 }
 
-
 $componentParams = JComponentHelper::getParams('com_customtables');
-
-$phptagprocessor=JPATH_SITE.DIRECTORY_SEPARATOR.'plugins'.DIRECTORY_SEPARATOR.'content'.DIRECTORY_SEPARATOR.'customtables'.DIRECTORY_SEPARATOR.'protagprocessor'.DIRECTORY_SEPARATOR.'phptags.php';
-
-if(file_exists($phptagprocessor))
-{
-	$phptagprocessor=true;
-}
-else
-	$phptagprocessor=false;
 
 ?>
 <div id="fieldsData" style="display:none;"><?php echo json_encode(Fields::getFields($this->tableid,true)); ?></div>
@@ -74,7 +64,7 @@ else
 
 	<?php
 
-	if($phptagprocessor)
+	if($ct->advancedtagprocessor)
 	{
 		echo '
 		proversion=true;

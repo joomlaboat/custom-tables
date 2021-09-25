@@ -19,37 +19,27 @@ use \Joomla\CMS\Factory;
 use \Joomla\CMS\Uri\Uri;
 
 use \ESTables;
-use \ESLanguages;
 
 class IntegrityCoreTables extends \CustomTables\IntegrityChecks
 {
-	public static function checkCoreTables()
+	public static function checkCoreTables(&$ct)
 	{
-		$phptagprocessor=JPATH_SITE.DIRECTORY_SEPARATOR.'plugins'.DIRECTORY_SEPARATOR.'content'.DIRECTORY_SEPARATOR.'customtables'.DIRECTORY_SEPARATOR.'protagprocessor'.DIRECTORY_SEPARATOR.'phptags.php';
-
-		if(file_exists($phptagprocessor))
-		{
-			$phptagprocessor=true;
-		}
-		else
-			$phptagprocessor=false;
+		IntegrityCoreTables::createCoreTableIfNotExists($ct,IntegrityCoreTables::getCoreTableFields_Tables());
+		IntegrityCoreTables::createCoreTableIfNotExists($ct,IntegrityCoreTables::getCoreTableFields_Fields());
+		IntegrityCoreTables::createCoreTableIfNotExists($ct,IntegrityCoreTables::getCoreTableFields_Layouts());
+		IntegrityCoreTables::createCoreTableIfNotExists($ct,IntegrityCoreTables::getCoreTableFields_Categories());
 		
-		IntegrityCoreTables::createCoreTableIfNotExists(IntegrityCoreTables::getCoreTableFields_Tables());
-		IntegrityCoreTables::createCoreTableIfNotExists(IntegrityCoreTables::getCoreTableFields_Fields());
-		IntegrityCoreTables::createCoreTableIfNotExists(IntegrityCoreTables::getCoreTableFields_Layouts());
-		IntegrityCoreTables::createCoreTableIfNotExists(IntegrityCoreTables::getCoreTableFields_Categories());
-		
-		if($phptagprocessor)
+		if($ct->advancedtagprocessor)
 		{
-			IntegrityCoreTables::createCoreTableIfNotExists(IntegrityCoreTables::getCoreTableFields_Log());
-			IntegrityCoreTables::createCoreTableIfNotExists(IntegrityCoreTables::getCoreTableFields_Options());
+			IntegrityCoreTables::createCoreTableIfNotExists($ct,IntegrityCoreTables::getCoreTableFields_Log());
+			IntegrityCoreTables::createCoreTableIfNotExists($ct,IntegrityCoreTables::getCoreTableFields_Options());
 		}
 	}
 		
-	protected static function createCoreTableIfNotExists($table)
+	protected static function createCoreTableIfNotExists(&$ct,$table)
 	{
 		if(!ESTables::checkIfTableExists($table->realtablename))
-			IntegrityCoreTables::createCoreTable($table);
+			IntegrityCoreTables::createCoreTable($ct,$table);
 		else
 			IntegrityCoreTables::checkComponentTable($table->realtablename,$table->fields);
 	}
@@ -273,12 +263,9 @@ class IntegrityCoreTables extends \CustomTables\IntegrityChecks
 			'comment' => 'Hierarchical structure records (Custom Tables field type)'];
 	}
 	
-	protected static function prepareAddFieldQuery($fields,$db_type)
+	protected static function prepareAddFieldQuery(&$ct,$fields,$db_type)
 	{
 		$db = Factory::getDBO();
-		
-		$LangMisc	= new ESLanguages;
-		$languages=$LangMisc->getLanguageList();
 		
 		$fields_sql=[];
 		foreach($fields as $field)
@@ -286,7 +273,7 @@ class IntegrityCoreTables extends \CustomTables\IntegrityChecks
 			if(isset($field['multilang']) and $field['multilang'] == true)
 			{
 				$morethanonelang=false;
-				foreach($languages as $lang)
+				foreach($ct->Languages->LanguageList as $lang)
 				{
 					$fieldname = $field['name'];
 					
@@ -322,7 +309,7 @@ class IntegrityCoreTables extends \CustomTables\IntegrityChecks
 		return $indexes_sql;
 	}
 
-	protected static function createCoreTable($table)
+	protected static function createCoreTable(&$ct,$table)
 	{
 		//TODO:
 		//Add InnoDB Row Formats to config file
@@ -333,7 +320,7 @@ class IntegrityCoreTables extends \CustomTables\IntegrityChecks
 
 		$db = Factory::getDBO();
 		
-		$fields_sql = IntegrityCoreTables::prepareAddFieldQuery($table->fields,($db->serverType == 'postgresql' ? 'postgresql_type' : 'mysql_type'));
+		$fields_sql = IntegrityCoreTables::prepareAddFieldQuery($ct,$table->fields,($db->serverType == 'postgresql' ? 'postgresql_type' : 'mysql_type'));
 		$indexes_sql = IntegrityCoreTables::prepareAddIndexQuery($table->indexes);
 
 		if($db->serverType == 'postgresql')

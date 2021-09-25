@@ -24,14 +24,15 @@ use CustomTables\Integrity\IntegrityFieldType_Gallery;
 
 class IntegrityFields extends \CustomTables\IntegrityChecks
 {
-	public static function checkFields(&$ct,$tableid,$tablename,$tabletitle,$customtablename,$link)
+	public static function checkFields(&$ct,$link)
 	{
 		require_once('fieldtype_filebox.php');
 		require_once('fieldtype_gallery.php');
 		
 		$result='';
 	
-		if($customtablename!='')
+		//Do not check third-party tables
+		if($ct->Table->customtablename!='')
 			return $result;
 		
 		$db = Factory::getDBO();
@@ -39,19 +40,15 @@ class IntegrityFields extends \CustomTables\IntegrityChecks
 		$database = $conf->get('db');
 		$dbprefix = $conf->get('dbprefix');
 
-		if(ESTables::createTableIfNotExists($database,$dbprefix,$tablename,$tabletitle,$customtablename))
-			$result.='<p>Table "<span style="color:green;">'.$tabletitle.'</span>" <span style="color:green;">added.</span></p>';
+		if(ESTables::createTableIfNotExists($database,$dbprefix,$ct->Table->tablename,$ct->Table->tabletitle,$ct->Table->customtablename))
+			$result.='<p>Table "<span style="color:green;">'.$ct->Table->tabletitle.'</span>" <span style="color:green;">added.</span></p>';
 
-		if($customtablename!='')
-			$realtablename=$customtablename;
-		else
-			$realtablename='#__customtables_table_'.$tablename;
-    
-		$ExistingFields=Fields::getExistingFields($realtablename, false);
+   
+		$ExistingFields=Fields::getExistingFields($ct->Table->realtablename, false);
 	
 		$jinput = Factory::getApplication()->input;
   
-		$projected_fields = Fields::getFields($tableid,false);
+		$projected_fields = Fields::getFields($ct->Table->tableid,false);
 
 		//Delete unnesesary fields:
 		$projected_fields[]=['realfieldname'=>'id','type'=>'_id','typeparams'=>''];
@@ -125,8 +122,8 @@ class IntegrityFields extends \CustomTables\IntegrityChecks
 				{
 					if($exst_field==$projected_field['realfieldname'])
 					{
-						$gallery_table_name='#__customtables_gallery_'.$tablename.'_'.$projected_field['fieldname'];
-						IntegrityFieldType_Gallery::checkGallery($gallery_table_name,$languages,$tablename,$projected_field['fieldname']);
+						$gallery_table_name='#__customtables_gallery_'.$ct->Table->tablename.'_'.$projected_field['fieldname'];
+						IntegrityFieldType_Gallery::checkGallery($gallery_table_name,$languages,$ct->Table->tablename,$projected_field['fieldname']);
 
 						$PureFieldType=Fields::getPureFieldType($projected_field['type'], $projected_field['typeparams']);
 						$found_field=$projected_field['realfieldname'];
@@ -139,8 +136,8 @@ class IntegrityFields extends \CustomTables\IntegrityChecks
 				{
 					if($exst_field==$projected_field['realfieldname'])
 					{
-						$filebox_table_name='#__customtables_filebox_'.$tablename.'_'.$projected_field['fieldname'];
-						IntegrityFieldType_FileBox::checkFileBox($ct,$filebox_table_name,$tablename,$projected_field['fieldname']);
+						$filebox_table_name='#__customtables_filebox_'.$ct->Table->tablename.'_'.$projected_field['fieldname'];
+						IntegrityFieldType_FileBox::checkFileBox($ct,$filebox_table_name,$ct->Table->tablename,$projected_field['fieldname']);
 
 						$PureFieldType=Fields::getPureFieldType($projected_field['type'], $projected_field['typeparams']);
 						$found_field=$projected_field['realfieldname'];
@@ -173,10 +170,12 @@ class IntegrityFields extends \CustomTables\IntegrityChecks
 			if(!$found or $PureFieldType=='')
 			{
 				//Delete field
-				if($tableid == $tasktableid and $task=='deleteurfield' and $taskfieldname==$exst_field)
+				if($ct->Table->tableid == $tasktableid and $task=='deleteurfield' and $taskfieldname==$exst_field)
 				{
+					Fields::removeForeignKey($ct->Table->realtablename,$exst_field);
+					
 					$msg='';
-					if(Fields::deleteMYSQLField($realtablename,$exst_field,$msg))
+					if(Fields::deleteMYSQLField($ct->Table->realtablename,$exst_field,$msg))
 						$result.='<p>Field "<span style="color:green;">'.$exst_field.'</span>" not registered. <span style="color:green;">Deleted.</span></p>';
 					
 					if($msg!='')
@@ -193,7 +192,7 @@ class IntegrityFields extends \CustomTables\IntegrityChecks
 					if($existing_field[$field_columns->is_nullable]=='YES' or $existing_field['Extra'] != 'auto_increment')
 					{
 						$msg='';
-						if(Fields::fixMYSQLField($realtablename,$found_field,$PureFieldType,$msg))
+						if(Fields::fixMYSQLField($ct->Table->realtablename,$found_field,$PureFieldType,$msg))
 							$result.=$msg.'<p>Field "<span style="color:green;">id</span>" fixed</p>';
 					
 						if($msg!='')
@@ -205,7 +204,7 @@ class IntegrityFields extends \CustomTables\IntegrityChecks
 					if($existing_field[$field_columns->is_nullable]=='YES')
 					{
 						$msg='';
-						if(Fields::fixMYSQLField($realtablename,$found_field,$PureFieldType,$msg))
+						if(Fields::fixMYSQLField($ct->Table->realtablename,$found_field,$PureFieldType,$msg))
 							$result.='<p>Field "<span style="color:green;">published</span>" fixed</p>';
 					
 						if($msg!='')
@@ -214,10 +213,10 @@ class IntegrityFields extends \CustomTables\IntegrityChecks
 				}
 				elseif(!Fields::comparePureFieldTypes($field_mysql_type,$PureFieldType))
 				{
-					if($tableid == $tasktableid and $task=='fixfieldtype' and $taskfieldname==$exst_field)
+					if($ct->Table->tableid == $tasktableid and $task=='fixfieldtype' and $taskfieldname==$exst_field)
 					{
 						$msg='';
-						if(Fields::fixMYSQLField($realtablename,$found_field,$PureFieldType,$msg))
+						if(Fields::fixMYSQLField($ct->Table->realtablename,$found_field,$PureFieldType,$msg))
 							$result.='<p>Field "<span style="color:green;">'.str_replace('es_','',$found_field).'</span>" fixed.</p>';
 					
 						if($msg!='')
@@ -239,14 +238,14 @@ class IntegrityFields extends \CustomTables\IntegrityChecks
 			$proj_field=$projected_field['realfieldname'];
 			$fieldtype=$projected_field['type'];
 			if($fieldtype!='dummy')
-				IntegrityFields::checkField($ct,$ExistingFields,$realtablename,$proj_field,$fieldtype,$projected_field['typeparams']);
+				IntegrityFields::checkField($ct,$ExistingFields,$proj_field,$fieldtype,$projected_field['typeparams']);
         }
 	
 		return $result;
 	}
 	
 		
-	protected static function checkField(&$ct,$ExistingFields,$realtablename,$proj_field,$fieldtype,$typeparams)
+	protected static function checkField(&$ct,$ExistingFields,$proj_field,$fieldtype,$typeparams)
     {
 		$result = '';
 		$db = Factory::getDBO();
@@ -279,7 +278,7 @@ class IntegrityFields extends \CustomTables\IntegrityChecks
                 if(!$found)
                 {
                     //Add field
-                    IntegrityFields::addField($realtablename,$fieldname,$fieldtype,$typeparams);
+                    IntegrityFields::addField($ct->Table->realtablename,$fieldname,$fieldtype,$typeparams);
                 }
 
                 $morethanonelang=true;
@@ -298,7 +297,7 @@ class IntegrityFields extends \CustomTables\IntegrityChecks
             }
 
             if(!$found)
-                IntegrityFields::addField($realtablename,$proj_field,$fieldtype,$typeparams);
+                IntegrityFields::addField($ct->Table->realtablename,$proj_field,$fieldtype,$typeparams);
         }
     }
 	

@@ -17,11 +17,13 @@ use CustomTables\Languages;
 
 use \JoomlaBasicMisc;
 
+use \Joomla\CMS\Version;
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Uri\Uri;
 
 class Environment
 {
+	var $version;
 	var $current_url;
 	var $encoded_current_url;
 	var $userid;
@@ -34,6 +36,9 @@ class Environment
 	
 	function __construct()
 	{
+		$version_object = new Version;
+		$this->version = (int)$version_object->getShortVersion();
+		
 		$jinput=Factory::getApplication()->input;
 
 		$this->current_url=JoomlaBasicMisc::curPageURL();

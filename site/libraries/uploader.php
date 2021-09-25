@@ -9,6 +9,7 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\CT;
 use CustomTables\Fields;
 
 class ESFileUploader
@@ -29,16 +30,11 @@ class ESFileUploader
 
 	public static function getfile_SafeMIME($fileid)
 	{
+		$this->ct = new CT;
+		
 		$jinput=JFactory::getApplication()->input;
 
-		$phptagprocessor=JPATH_SITE.DIRECTORY_SEPARATOR.'plugins'.DIRECTORY_SEPARATOR.'content'.DIRECTORY_SEPARATOR.'customtables'.DIRECTORY_SEPARATOR.'protagprocessor'.DIRECTORY_SEPARATOR.'phptags.php';
-		
-		if(file_exists($phptagprocessor))
-			$proversion=true;
-		else
-			$proversion=false;
-
-		if($proversion)
+		if($this->ct->advancedtagprocessor)
 		{
 			//This will let PRO version users to upload zip files, please note that it will check if the file is zip or not (mime type).
 			//If not then regular Joomla input method will be used

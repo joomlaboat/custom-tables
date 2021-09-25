@@ -48,14 +48,6 @@ class CustomtablesViewListoftables extends JViewLegacy
 		$version = new Version;
 		$this->version = (int)$version->getShortVersion();
 		
-		$phptagprocessor=JPATH_SITE.DIRECTORY_SEPARATOR.'plugins'.DIRECTORY_SEPARATOR.'content'.DIRECTORY_SEPARATOR.'customtables'.DIRECTORY_SEPARATOR.'protagprocessor'.DIRECTORY_SEPARATOR.'phptags.php';
-		
-		if(file_exists($phptagprocessor))
-			$this->advanced_options=true;
-		else
-			$this->advanced_options=false;
-
-
 		if ($this->getLayout() !== 'modal')
 		{
 			// Include helper submenu
@@ -170,7 +162,7 @@ class CustomtablesViewListoftables extends JViewLegacy
 			}
 		}
 		
-		if($this->advanced_options)
+		if($ct->advancedtagprocessor)
 			$toolbar->appendButton('Standard', 'download', 'Export', 'listoftables.export', $listSelect = true, $formId = null);
 
 		if(($this->canState && $this->canDelete))
@@ -241,7 +233,7 @@ class CustomtablesViewListoftables extends JViewLegacy
 			}
 		}
 
-		if($this->advanced_options)
+		if($ct->advancedtagprocessor)
 			JToolBarHelper::custom('listoftables.export','download.png','','Export');
 
 		// set help url for this view if found

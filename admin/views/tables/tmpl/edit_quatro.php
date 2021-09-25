@@ -22,15 +22,6 @@ HTMLHelper::_('behavior.keepalive');
 
 $componentParams = JComponentHelper::getParams('com_customtables');
 
-$phptagprocessor=JPATH_SITE.DIRECTORY_SEPARATOR.'plugins'.DIRECTORY_SEPARATOR.'content'.DIRECTORY_SEPARATOR.'customtables'.DIRECTORY_SEPARATOR.'protagprocessor'.DIRECTORY_SEPARATOR.'phptags.php';
-
-if(file_exists($phptagprocessor))
-{
-	$phptagprocessor=true;
-}
-else
-	$phptagprocessor=false;
-
 ?>
 
 <form action="<?php echo JRoute::_('index.php?option=com_customtables&layout=edit&id='.(int) $this->item->id.$this->referral); ?>" method="post" name="adminForm" id="adminForm" class="form-validate" enctype="multipart/form-data">
@@ -144,7 +135,7 @@ else
 			echo HTMLHelper::_('uitab.endTab');
 		}
 
-	if($phptagprocessor):
+	if($ct->advancedtagprocessor):
 	
 	echo HTMLHelper::_('uitab.addTab', 'tablesTab', 'advanced', Text::_('COM_CUSTOMTABLES_TABLES_ADVANCED')); ?>
 	

@@ -30,8 +30,6 @@ $document->addCustomTag('<link href="'.JURI::root(true).'/administrator/componen
 $document->addCustomTag('<script src="'.JURI::root(true).'/administrator/components/com_customtables/js/ajax.js"></script>');
 $document->addCustomTag('<script src="'.JURI::root(true).'/administrator/components/com_customtables/js/typeparams_j4.js"></script>');
 
-
-
 $input	= JFactory::getApplication()->input;
 
 if($input->getCmd('extratask','')=='updateimages')
@@ -42,15 +40,6 @@ if($input->getCmd('extratask','')=='updateimages')
 
 $componentParams = JComponentHelper::getParams('com_customtables');
 
-$phptagprocessor=JPATH_SITE.DIRECTORY_SEPARATOR.'plugins'.DIRECTORY_SEPARATOR.'content'.DIRECTORY_SEPARATOR.'customtables'.DIRECTORY_SEPARATOR.'protagprocessor'.DIRECTORY_SEPARATOR.'phptags.php';
-
-if(file_exists($phptagprocessor))
-{
-	$phptagprocessor=true;
-}
-else
-	$phptagprocessor=false;
-
 ?>
 <div id="fieldsData" style="display:none;"><?php echo json_encode(Fields::getFields($this->tableid,true)); ?></div>
 <script type="text/javascript">
@@ -58,7 +47,7 @@ else
 
 	<?php
 
-	if($phptagprocessor)
+	if($ct->advancedtagprocessor)
 	{
 		echo '
 		proversion=true;

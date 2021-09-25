@@ -22,12 +22,13 @@ class Table
 {
 	var $Languages;
 	var $Env;
-	
-	
+		
 	var $tableid;
 	var $tablerow;
 	var $tablename;
 	var $published_field_found;
+	
+	var $customtablename;
 	var $realtablename;
 	var $realidfieldname;
 		
@@ -59,11 +60,22 @@ class Table
 		if(!isset($this->tablerow['id']))
 			return;
 
+		$this->setTable($this->tablerow, $useridfieldname, $load_fields = true);
+		
+	}
+	
+	function setTable(&$tablerow, $useridfieldname = null, $load_fields = true)
+	{
+		$this->tablerow = $tablerow;
+		
 		$this->tablename = $this->tablerow['tablename'];
 
 		$this->tableid=$this->tablerow['id'];
 
 		$this->published_field_found=$this->tablerow['published_field_found'];
+		
+		$this->customtablename=$this->tablerow['customtablename'];
+		
 		$this->realtablename=$this->tablerow['realtablename'];
 		$this->realidfieldname=$this->tablerow['realidfieldname'];
 			
@@ -84,10 +96,10 @@ class Table
 					$this->alias_fieldname=$fld['fieldname'];
 					break;
 				case 'imagegallery':
-					$this->imagegalleries[]=array($fld['fieldname'],$fld['fieldtitle'.$this->ct->Languages->Postfix]);
+					$this->imagegalleries[]=array($fld['fieldname'],$fld['fieldtitle'.$this->Languages->Postfix]);
 					break;
 				case 'filebox':
-					$this->fileboxes[]=array($fld['fieldname'],$fld['fieldtitle'.$this->ct->Languages->Postfix]);
+					$this->fileboxes[]=array($fld['fieldname'],$fld['fieldtitle'.$this->Languages->Postfix]);
 					break;
 				case 'userid':
 				
@@ -102,7 +114,7 @@ class Table
 		}
 	}
 	
-	protected static function loadRecord($id)
+	function loadRecord($id)
 	{
 		$db = JFactory::getDBO();
 		$query = 'SELECT '.$this->tablerow['query_selects'].' FROM '.$db->queryName($realtablename).' WHERE id='.(int)$id.' LIMIT 1';

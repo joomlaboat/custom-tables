@@ -60,24 +60,26 @@ class CustomtablesModelListoffields extends JModelList
 		}
 		//$fieldtitle = $this->getUserStateFromRequest($this->context . '.filter.fieldtitle', 'filter_fieldtitle');
 		//$this->setState('filter.fieldtitle', $fieldtitle);
-
-		//$type = $this->getUserStateFromRequest($this->context . '.filter.type', 'filter_type');
-		//$this->setState('filter.type', $type);
 		
-		//$tableid = $this->getUserStateFromRequest($this->context . '.filter.tableid', 'filter_tableid');
-		//$this->setState('filter.tableid', $tableid);
+		//Important for Joomla 3
+
+		$type = $this->getUserStateFromRequest($this->context . '.filter.type', 'filter_type');
+		$this->setState('filter.type', $type);
+		
+		$tableid = $this->getUserStateFromRequest($this->context . '.filter.tableid', 'filter_tableid');
+		$this->setState('filter.tableid', $tableid);
         
-		//$sorting = $this->getUserStateFromRequest($this->context . '.filter.sorting', 'filter_sorting', 0, 'int');
-		//$this->setState('filter.sorting', $sorting);
+		$sorting = $this->getUserStateFromRequest($this->context . '.filter.sorting', 'filter_sorting', 0, 'int');
+		$this->setState('filter.sorting', $sorting);
         
 		//$access = $this->getUserStateFromRequest($this->context . '.filter.access', 'filter_access', 0, 'int');
 		//$this->setState('filter.access', $access);
         
-		//$search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
-		//$this->setState('filter.search', $search);
+		$search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
+		$this->setState('filter.search', $search);
 
-		//$published = $this->getUserStateFromRequest($this->context . '.filter.published', 'filter_published', '');
-		//$this->setState('filter.published', $published);
+		$published = $this->getUserStateFromRequest($this->context . '.filter.published', 'filter_published', '');
+		$this->setState('filter.published', $published);
         
 		//$created_by = $this->getUserStateFromRequest($this->context . '.filter.created_by', 'filter_created_by', '');
 		//$this->setState('filter.created_by', $created_by);

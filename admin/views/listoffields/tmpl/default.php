@@ -77,7 +77,7 @@ if($input->getCmd('extratask','')=='updateimages')
 		if($this->tableid!=0)
 		{
 			$link=JURI::root().'administrator/index.php?option=com_customtables&view=listoffields&tableid='.$this->tableid;
-			echo IntegrityFields::checkFields($this->ct,$this->tableid,$this->tablename,$this->tabletitle,$this->customtablename,$link);
+			echo IntegrityFields::checkFields($this->ct,$link);
 		}
 		?>
 		

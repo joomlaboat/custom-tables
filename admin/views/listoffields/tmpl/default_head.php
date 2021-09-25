@@ -29,12 +29,11 @@ defined('_JEXEC') or die('Restricted access');
 	<?php endif; ?>
 
 	<th class="nowrap hidden-phone" >
-			<?php echo JText::_('COM_CUSTOMTABLES_FIELDS_FIELDNAME_LABEL'); ?>
+		<?php echo JHtml::_('grid.sort', 'COM_CUSTOMTABLES_FIELDS_FIELDNAME_LABEL', 'fieldname', $this->listDirn, $this->listOrder); ?>
 	</th>
-
-					<th class="nowrap" >
-				<?php echo JHtml::_('grid.sort', 'COM_CUSTOMTABLES_FIELDS_FIELDTITLE_LABEL', 'fieldtitle', $this->listDirn, $this->listOrder); ?>
-					</th>
+	<th class="nowrap" >
+		<?php echo JText::_('COM_CUSTOMTABLES_FIELDS_FIELDTITLE_LABEL'); ?>
+	</th>
 
 	<th class="nowrap hidden-phone" >
 			<?php echo JHtml::_('grid.sort', 'COM_CUSTOMTABLES_FIELDS_TYPE_LABEL', 'type', $this->listDirn, $this->listOrder); ?>

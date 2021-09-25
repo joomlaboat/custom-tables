@@ -79,12 +79,9 @@ class CustomTablesViewDetails extends JViewLegacy
 		if(!isset($row['listing_id']))
 			return false;
 		
-		$phptagprocessor_file=JPATH_SITE.DIRECTORY_SEPARATOR.'plugins'.DIRECTORY_SEPARATOR.'content'.DIRECTORY_SEPARATOR.'customtables'.DIRECTORY_SEPARATOR.'protagprocessor'.DIRECTORY_SEPARATOR.'phptags.php';
-		if(!file_exists($phptagprocessor_file))
+		if(!$this->Model->ct->loadAdvancedProcessor())
 			return false;
-		
-		require_once($phptagprocessor_file);
-		
+				
 		foreach($this->Model->ct->Table->fields as $mFld)
 		{
 			if($mFld['type']=='phponview')

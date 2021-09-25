@@ -16,6 +16,7 @@ use \Joomla\CMS\Factory;
 use CustomTables\Layouts;
 use \ESTables;
 use \JoomlaBasicMisc;
+use \JTableNested;
 
 // no direct access
 defined('_JEXEC') or die('Restricted access');
@@ -220,7 +221,7 @@ class ImportTables
 		
         foreach($fields as $field)
         {
-            $fieldid=ImportTables::processField($tableid,$establename,$field,$msg);
+            $fieldid=ImportTables::processField($ct,$tableid,$establename,$field,$msg);
             if($fieldid!=0)
             {
 				//Good

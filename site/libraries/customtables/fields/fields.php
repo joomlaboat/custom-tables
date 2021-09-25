@@ -15,6 +15,8 @@ defined('_JEXEC') or die('Restricted access');
 
 use \Joomla\CMS\Factory;
 
+use \ESTables;
+
 class Fields
 {
     public static function getFieldID($tableid, $fieldname)
@@ -164,7 +166,7 @@ class Fields
 		}
 		elseif($fieldrow->type=='user' or $fieldrow->type=='userid' or $fieldrow->type=='sqljoin')
 		{
-			Fields::removeForeignKey($tablerow->realtablename,$fieldrow->realfieldname);//,'','#__users','id',$msg);
+			Fields::removeForeignKey($tablerow->realtablename,$fieldrow->realfieldname);
 		}
         elseif($fieldrow->type=='file')
 		{
@@ -255,6 +257,9 @@ class Fields
 
     public static function getPureFieldType($fieldtype,$typeparams)
 	{
+		//$version_object = new Version;
+		//$version = (int)$version_object->getShortVersion();
+		
 		$db = Factory::getDBO();
 		
 		$t=trim($fieldtype);
@@ -370,7 +375,7 @@ class Fields
 				if($db->serverType == 'postgresql')
 					return 'int null';
 				else
-					return 'int null';
+					return 'int unsigned null';
 				
 				break;
 
@@ -405,7 +410,6 @@ class Fields
 			case 'url':
 				return 'varchar(1024) null';
 				break;
-
 
 			case 'date':
 				return 'date null';
@@ -453,16 +457,24 @@ class Fields
 
 			case 'userid': //current user id (auto asigned)
 
-				if($db->serverType == 'postgresql')
-					return 'bigint null';
+				/*
+				if($version < 4)
+				{
+				}
 				else
-					return 'bigint unsigned null';
+				{
+					*/
+				if($db->serverType == 'postgresql')
+					return 'int null';
+				else
+					return 'int unsigned null';
+				//}
 
 			case 'user': //user (selection)
 				if($db->serverType == 'postgresql')
-					return 'bigint null';
+					return 'int null';
 				else
-					return 'bigint unsigned null';
+					return 'int unsigned null';
 
 			case 'usergroup': //user group (selection)
 				if($db->serverType == 'postgresql')
@@ -574,8 +586,15 @@ class Fields
     }
 
 
-    public static function addForeignKey($realtablename, $realfieldname, $new_typeparams='', $join_with_table_name='',$join_with_table_field='',&$msg)
+    public static function addForeignKey($realtablename_, $realfieldname, $new_typeparams='', $join_with_table_name ='',$join_with_table_field='',&$msg)
 	{
+		$db = Factory::getDBO();
+		
+		$conf = Factory::getConfig();
+		$dbprefix = $conf->get('dbprefix');
+		
+		$realtablename = str_replace('#__',$dbprefix,$realtablename_);
+		
 		if($db->serverType == 'postgresql')
 			return false;
 			
@@ -606,8 +625,9 @@ class Fields
             $join_with_table_name=$tablerow->realtablename;
 			$join_with_table_field=$tablerow->realidfieldname;
 		}
-        
-        $db = Factory::getDBO();
+		
+		$join_with_table_name = str_replace('#__',$dbprefix,$join_with_table_name);
+
         $conf = Factory::getConfig();
         $database = $conf->get('db');
         
@@ -894,7 +914,6 @@ class Fields
 		return $newrow;
 	}
 
-
 	public static function cleanTableBeforeNormalization($realtablename,$realfieldname,$join_with_table_name,$join_with_table_field)
 	{
 		$db = Factory::getDBO();
@@ -927,7 +946,6 @@ class Fields
 		$db->execute();
 	}
         
-
     public static function isLanguageFieldName($fieldname)
     {
         $parts=explode('_',$fieldname);
@@ -1043,7 +1061,7 @@ class Fields
 		}
      
 		$list=array();
-		
+
 		$db->setQuery( $query );
 		$recs=$db->loadAssocList();
         
@@ -1122,7 +1140,6 @@ class Fields
 			return false;
 		}
 	}
-
 
     public static function getFieldName($fieldid)
 	{
@@ -1257,7 +1274,6 @@ class Fields
 		return array();
 	}
 
-
 	public static function getRealFieldName($fieldname,&$ctfields)
 	{
 		foreach($ctfields as $row)
@@ -1279,7 +1295,6 @@ class Fields
 		
         return '*, '.$realfieldname_query;
 	}
-	
 	
 	public static function checkField($ExistingFields,$realtablename,$proj_field,$type)
     {
@@ -1308,7 +1323,6 @@ class Fields
 			$db->execute();
 		}
     }
-	
 	
 	public static function shortFieldObjects(&$ctfields)
 	{

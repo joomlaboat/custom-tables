@@ -512,7 +512,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 		if($this->useridfield!='')
 		{
 			$useridfields=array();
-			$statement_items=tagProcessor_If::ExplodeSmartParams($useridfield); //"and" and "or" as separators
+			$statement_items=tagProcessor_If::ExplodeSmartParams($this->useridfield); //"and" and "or" as separators
 			
 			foreach($statement_items as $item)
 			{
