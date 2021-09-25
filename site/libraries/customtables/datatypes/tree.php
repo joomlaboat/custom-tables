@@ -11,6 +11,7 @@ namespace CustomTables\DataTypes;
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use \JoomlaBasicMisc;
 use \Joomla\CMS\Factory;
 
 class Tree

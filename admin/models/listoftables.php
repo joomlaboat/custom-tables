@@ -14,6 +14,8 @@ defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\CT;
 
+use Joomla\CMS\Component\ComponentHelper;
+
 // import the Joomla modellist library
 jimport('joomla.application.component.modellist');
 
@@ -49,7 +51,7 @@ class CustomtablesModelListofTables extends JModelList
 	 * @return  void
 	 */
 	protected function populateState($ordering = null, $direction = null)
-	{
+	{/*
 		$app = JFactory::getApplication();
 
 		// Adjust the context to support modal layouts.
@@ -57,14 +59,14 @@ class CustomtablesModelListofTables extends JModelList
 		{
 			$this->context .= '.' . $layout;
 		}
-		$tabletitle = $this->getUserStateFromRequest($this->context . '.filter.tabletitle', 'filter_tabletitle');
-		$this->setState('filter.tabletitle', $tabletitle);
+		//$tabletitle = $this->getUserStateFromRequest($this->context . '.filter.tabletitle', 'filter_tabletitle');
+		//$this->setState('filter.tabletitle', $tabletitle);
 
 		$sorting = $this->getUserStateFromRequest($this->context . '.filter.sorting', 'filter_sorting', 0, 'int');
 		$this->setState('filter.sorting', $sorting);
 
-		$access = $this->getUserStateFromRequest($this->context . '.filter.access', 'filter_access', 0, 'int');
-		$this->setState('filter.access', $access);
+		//$access = $this->getUserStateFromRequest($this->context . '.filter.access', 'filter_access', 0, 'int');
+		//$this->setState('filter.access', $access);
 
 		$search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
 		$this->setState('filter.search', $search);
@@ -72,14 +74,18 @@ class CustomtablesModelListofTables extends JModelList
 		$published = $this->getUserStateFromRequest($this->context . '.filter.published', 'filter_published', '');
 		$this->setState('filter.published', $published);
 
-		$created_by = $this->getUserStateFromRequest($this->context . '.filter.created_by', 'filter_created_by', '');
-		$this->setState('filter.created_by', $created_by);
+		//$created_by = $this->getUserStateFromRequest($this->context . '.filter.created_by', 'filter_created_by', '');
+		//$this->setState('filter.created_by', $created_by);
 
-		$created = $this->getUserStateFromRequest($this->context . '.filter.created', 'filter_created');
-		$this->setState('filter.created', $created);
+		//$created = $this->getUserStateFromRequest($this->context . '.filter.created', 'filter_created');
+		//$this->setState('filter.created', $created);
 		
 		$category = $this->getUserStateFromRequest($this->context . '.filter.category', 'filter_category');
 		$this->setState('filter.category', $category);
+*/
+
+		// Load the parameters.
+		$this->setState('params', ComponentHelper::getParams('com_customtables'));
 
 		// List state information.
 		parent::populateState($ordering, $direction);

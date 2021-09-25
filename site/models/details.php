@@ -175,7 +175,7 @@ class CustomTablesModelDetails extends JModelLegacy
 				$this->filtering = new ESFiltering($this->ct);
 
 				$PathValue=array();
-				$paramwhere=$filtering->getWhereExpression($this->filter,$PathValue);
+				$paramwhere=$this->filtering->getWhereExpression($this->filter,$PathValue);
 
 				if($paramwhere!='')
 						$wherearr[]=' ('.$paramwhere.' )';
