@@ -423,22 +423,10 @@ class Fields
 	
 	public static function getPureFieldType($ct_fieldtype,$typeparams)
 	{
-		//echo '<br/>';
-		
 		$ct_fieldtype_array = Fields::getProjectedFieldType($ct_fieldtype,$typeparams);
-		
-		//print_r($ct_fieldtype_array);
-		
-		//echo '<br/>';
-		
+
 		$type = Fields::makeProjectedFieldType($ct_fieldtype_array);
-		
-		/*
-		echo '$ct_fieldtype='.$ct_fieldtype.'<br/>';
-		echo '$typeparams='.$typeparams.'<br/>';
-		echo '$type='.$type.'<br/>';
-		echo '<hr/>';
-		*/
+
 		return $type;
 	}
 
@@ -940,6 +928,8 @@ class Fields
 
     public static function getListOfExistingFields($tablename,$add_table_prefix=true)
 	{
+		$realfieldnames=Fields::getExistingFields($tablename,$add_table_prefix);
+		/*
 		$db = Factory::getDBO();
 
 		if($add_table_prefix)
@@ -961,8 +951,8 @@ class Fields
 
 		$db->setQuery( $query );
 		$recs=$db->loadAssocList();
-        
-		foreach($recs as $rec)
+        */
+		foreach($realfieldnames as $rec)
 			$list[]=$rec['column_name'];
 
 		return $list;
@@ -971,6 +961,7 @@ class Fields
 	public static function checkIfFieldExists($realtablename,$realfieldname)//,$add_table_prefix=true)
 	{
 		$realfieldnames=Fields::getListOfExistingFields($realtablename,false);
+		
 		return in_array($realfieldname,$realfieldnames);
 	}
 

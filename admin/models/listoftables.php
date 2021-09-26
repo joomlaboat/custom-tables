@@ -33,10 +33,11 @@ class CustomtablesModelListofTables extends JModelList
 			$config['filter_fields'] = array(
 				'a.id','id',
 				'a.published','published',
-				'a.ordering','ordering',
-				'a.created_by','created_by',
-				'a.modified_by','modified_by',
-				'a.tabletitle','tabletitle'
+				//'a.ordering','ordering',
+				//'a.created_by','created_by',
+				//'a.modified_by','modified_by',
+				'a.tablecategory','tablecategory',
+				'a.tablename','tablename'
 			);
 		}
 
@@ -62,17 +63,9 @@ class CustomtablesModelListofTables extends JModelList
 		//$tabletitle = $this->getUserStateFromRequest($this->context . '.filter.tabletitle', 'filter_tabletitle');
 		//$this->setState('filter.tabletitle', $tabletitle);
 
-		$sorting = $this->getUserStateFromRequest($this->context . '.filter.sorting', 'filter_sorting', 0, 'int');
-		$this->setState('filter.sorting', $sorting);
+		
 
-		//$access = $this->getUserStateFromRequest($this->context . '.filter.access', 'filter_access', 0, 'int');
-		//$this->setState('filter.access', $access);
-
-		$search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
-		$this->setState('filter.search', $search);
-
-		$published = $this->getUserStateFromRequest($this->context . '.filter.published', 'filter_published', '');
-		$this->setState('filter.published', $published);
+		
 
 		//$created_by = $this->getUserStateFromRequest($this->context . '.filter.created_by', 'filter_created_by', '');
 		//$this->setState('filter.created_by', $created_by);
@@ -83,9 +76,20 @@ class CustomtablesModelListofTables extends JModelList
 		$category = $this->getUserStateFromRequest($this->context . '.filter.category', 'filter_category');
 		$this->setState('filter.category', $category);
 */
+		//This lines are important for joomla 3
+		/*
+		$published = $this->getUserStateFromRequest($this->context . '.filter.published', 'filter_published', '');
+		$this->setState('filter.published', $published);
 
+		$search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
+		$this->setState('filter.search', $search);
+		*/
+		
+		//$sorting = $this->getUserStateFromRequest($this->context . '.filter.sorting', 'filter_sorting', 0, 'int');
+		//$this->setState('filter.sorting', $sorting);
+		
 		// Load the parameters.
-		$this->setState('params', ComponentHelper::getParams('com_customtables'));
+		//$this->setState('params', ComponentHelper::getParams('com_customtables'));
 
 		// List state information.
 		parent::populateState($ordering, $direction);
@@ -188,8 +192,8 @@ class CustomtablesModelListofTables extends JModelList
 		$id .= ':' . $this->getState('filter.id');
 		$id .= ':' . $this->getState('filter.search');
 		$id .= ':' . $this->getState('filter.published');
-		$id .= ':' . $this->getState('filter.tabletitle');
-		$id .= ':' . $this->getState('filter.category');
+		$id .= ':' . $this->getState('filter.tablename');
+		$id .= ':' . $this->getState('filter.tablecategory');
 
 		return parent::getStoreId($id);
 	}

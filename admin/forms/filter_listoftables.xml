@@ -33,6 +33,8 @@
 			<option value="">JGLOBAL_SORT_BY</option>
 			<option value="a.tablename ASC">COM_CUSTOMTABLES_TABLES_HEADING_NAME_ASC</option>
 			<option value="a.tablename DESC">COM_CUSTOMTABLES_TABLES_HEADING_NAME_DESC</option>
+			<option value="a.tablecategory ASC">COM_CUSTOMTABLES_TABLES_CATEGORY_ASC</option>
+			<option value="a.tablecategory DESC">COM_CUSTOMTABLES_TABLES_CATEGORY_DESC</option>
 			<option value="a.published ASC">COM_CUSTOMTABLES_TABLES_STATE_ASC</option>
 			<option value="a.published DESC">COM_CUSTOMTABLES_TABLES_STATE_DESC</option>
 			<option value="a.id ASC">JGRID_HEADING_ID_ASC</option>

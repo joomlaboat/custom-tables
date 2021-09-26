@@ -135,7 +135,7 @@ $componentParams = JComponentHelper::getParams('com_customtables');
 			echo HTMLHelper::_('uitab.endTab');
 		}
 
-	if($ct->Env->advancedtagprocessor):
+	if($this->ct->Env->advancedtagprocessor):
 	
 	echo HTMLHelper::_('uitab.addTab', 'tablesTab', 'advanced', Text::_('COM_CUSTOMTABLES_TABLES_ADVANCED')); ?>
 	

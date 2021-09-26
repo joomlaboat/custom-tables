@@ -34,7 +34,7 @@ defined('_JEXEC') or die('Restricted access');
 	</th>
 
 	<th class="nowrap hidden-phone" >
-			<?php echo JText::_('COM_CUSTOMTABLES_TABLES_TABLECATEGORY_LABEL'); ?>
+			<?php echo JHtml::_('grid.sort', 'COM_CUSTOMTABLES_TABLES_TABLECATEGORY_LABEL', 'tablecategory', $this->listDirn, $this->listOrder); ?>
 	</th>
 
 	<th width="10" class="nowrap center" >

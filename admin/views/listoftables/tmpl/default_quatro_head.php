@@ -45,7 +45,7 @@ HTMLHelper::_('behavior.multiselect');
 	</th>
 
 	<th scope="col">
-		<?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_TABLES_TABLECATEGORY_LABEL', 'categoryname', $this->listDirn, $this->listOrder); ?>
+		<?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_TABLES_TABLECATEGORY_LABEL', 'tablecategory', $this->listDirn, $this->listOrder); ?>
 	</th>
 	
 	<th scope="col" class="text-center d-none d-md-table-cell" >

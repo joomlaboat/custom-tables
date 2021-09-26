@@ -151,7 +151,7 @@ $componentParams = JComponentHelper::getParams('com_customtables');
 	?>
 
 	<?php
-	if($ct->Env->advancedtagprocessor):
+	if($this->ct->Env->advancedtagprocessor):
 		
 	echo JHtml::_('bootstrap.addTab', 'tablesTab', 'advanced', JText::_('COM_CUSTOMTABLES_TABLES_ADVANCED', true)); ?>
 
