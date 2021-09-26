@@ -8,7 +8,7 @@
 
 // no direct access
 defined('_JEXEC') or die('Restricted access');
-
+/*
 use CustomTables\Fields;
 
 jimport('joomla.form.helper');
@@ -17,13 +17,6 @@ JFormHelper::loadFieldClass('list');
 
 class JFormFieldAnyTableFields extends JFormFieldList
 {
-	/**
-	 * Element name
-	 *
-	 * @access	protected
-	 * @var		string
-	 *  
-	 */
 	protected $type = 'anytablefields';
 	
 	//Returns the Options object with the list of any table (specified by table id in url)
@@ -54,3 +47,4 @@ class JFormFieldAnyTableFields extends JFormFieldList
 
 	}
 }
+*/

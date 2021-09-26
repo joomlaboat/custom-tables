@@ -61,31 +61,22 @@ class CustomtablesModelListofTables extends JModelList
 		}
 		//$tabletitle = $this->getUserStateFromRequest($this->context . '.filter.tabletitle', 'filter_tabletitle');
 		//$this->setState('filter.tabletitle', $tabletitle);
-
 		
-
-		
-
-		//$created_by = $this->getUserStateFromRequest($this->context . '.filter.created_by', 'filter_created_by', '');
-		//$this->setState('filter.created_by', $created_by);
-
-		//$created = $this->getUserStateFromRequest($this->context . '.filter.created', 'filter_created');
-		//$this->setState('filter.created', $created);
-		
-		$category = $this->getUserStateFromRequest($this->context . '.filter.category', 'filter_category');
-		$this->setState('filter.category', $category);
 */
-		//This lines are important for joomla 3
-		/*
-		$published = $this->getUserStateFromRequest($this->context . '.filter.published', 'filter_published', '');
-		$this->setState('filter.published', $published);
-
-		$search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
-		$this->setState('filter.search', $search);
-		*/
 		
 		//$sorting = $this->getUserStateFromRequest($this->context . '.filter.sorting', 'filter_sorting', 0, 'int');
 		//$this->setState('filter.sorting', $sorting);
+		if($this->ct->Env->version < 4)
+		{
+			$search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
+			$this->setState('filter.search', $search);
+			
+			$category = $this->getUserStateFromRequest($this->context . '.filter.tablecategory', 'filter_tablecategory');
+			$this->setState('filter.tablecategory', $category);
+			
+			$published = $this->getUserStateFromRequest($this->context . '.filter.published', 'filter_published', '');
+			$this->setState('filter.published', $published);
+		}
 		
 		// Load the parameters.
 		$this->setState('params', ComponentHelper::getParams('com_customtables'));
@@ -160,9 +151,9 @@ class CustomtablesModelListofTables extends JModelList
 			}
 		}
 		
-		$search = $this->getState('filter.category');
+		$search = $this->getState('filter.tablecategory');
 		// Filter by Tableid.
-		if ($category = $this->getState('filter.category'))
+		if ($category = $this->getState('filter.tablecategory'))
 		{
 			$query->where('a.tablecategory = ' . $db->quote((int)$category));
 		}

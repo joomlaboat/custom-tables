@@ -12,18 +12,18 @@
 defined('_JEXEC') or die('Restricted access'); 
 
 // load tooltip behavior
-//JHtml::_('behavior.tooltip');
+JHtml::_('behavior.tooltip');
 JHtml::_('behavior.multiselect');
 JHtml::_('dropdown.init');
 JHtml::_('formbehavior.chosen', 'select');
 
+/*
 if ($this->saveOrder)
 {
 	$saveOrderingUrl = 'index.php?option=com_customtables&task=listofcategories.saveOrderAjax&tmpl=component';
 	JHtml::_('sortablelist.sortable', 'categoriesList', 'adminForm', strtolower($this->listDirn), $saveOrderingUrl);
 }
 
-?>
 <script type="text/javascript">
 	Joomla.orderTable = function()
 	{
@@ -41,6 +41,7 @@ if ($this->saveOrder)
 		Joomla.tableOrdering(order, dirn, '');
 	}
 </script>
+*/ ?>
 <form action="<?php echo JRoute::_('index.php?option=com_customtables&view=listofcategories'); ?>" method="post" name="adminForm" id="adminForm">
 <?php if(!empty( $this->sidebar)): ?>
 	<div id="j-sidebar-container" class="span2">

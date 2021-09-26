@@ -42,6 +42,8 @@ class CustomtablesModelListoflayouts extends JModelList
 		}
 
 		parent::__construct($config);
+		
+		$this->ct = new CT;
 	}
 
 	/**
@@ -62,30 +64,28 @@ class CustomtablesModelListoflayouts extends JModelList
 		$layoutname = $this->getUserStateFromRequest($this->context . '.filter.layoutname', 'filter_layoutname');
 		$this->setState('filter.layoutname', $layoutname);
 
-		$layouttype = $this->getUserStateFromRequest($this->context . '.filter.layouttype', 'filter_layouttype');
-		$this->setState('filter.layouttype', $layouttype);
+		
 
-		$tableid = $this->getUserStateFromRequest($this->context . '.filter.tableid', 'filter_tableid');
-		$this->setState('filter.tableid', $tableid);
+		
 
-		$sorting = $this->getUserStateFromRequest($this->context . '.filter.sorting', 'filter_sorting', 0, 'int');
-		$this->setState('filter.sorting', $sorting);
-
-		$access = $this->getUserStateFromRequest($this->context . '.filter.access', 'filter_access', 0, 'int');
-		$this->setState('filter.access', $access);
-
-		$search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
-		$this->setState('filter.search', $search);
-
-		$published = $this->getUserStateFromRequest($this->context . '.filter.published', 'filter_published', '');
-		$this->setState('filter.published', $published);
-
-		$created_by = $this->getUserStateFromRequest($this->context . '.filter.created_by', 'filter_created_by', '');
-		$this->setState('filter.created_by', $created_by);
-
-		$created = $this->getUserStateFromRequest($this->context . '.filter.created', 'filter_created');
-		$this->setState('filter.created', $created);
 		*/
+		if($this->ct->Env->version < 4)
+		{
+			$layouttype = $this->getUserStateFromRequest($this->context . '.filter.layouttype', 'filter_layouttype');
+			$this->setState('filter.layouttype', $layouttype);
+
+			$tableid = $this->getUserStateFromRequest($this->context . '.filter.tableid', 'filter_tableid');
+			$this->setState('filter.tableid', $tableid);
+
+			$sorting = $this->getUserStateFromRequest($this->context . '.filter.sorting', 'filter_sorting', 0, 'int');
+			$this->setState('filter.sorting', $sorting);
+
+			$search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
+			$this->setState('filter.search', $search);
+		
+			$published = $this->getUserStateFromRequest($this->context . '.filter.published', 'filter_published', '');
+			$this->setState('filter.published', $published);
+		}
 		
 		$this->setState('params', ComponentHelper::getParams('com_customtables'));
 

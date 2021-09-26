@@ -79,7 +79,7 @@ class CustomtablesViewListoftables extends JViewLegacy
 			if($this->ct->Env->version < 4)
 			{
 				$this->addToolbar_3();
-				//$this->sidebar = JHtmlSidebar::render();
+				$this->sidebar = JHtmlSidebar::render();
 			}
 			else
 				$this->addToolbar_4();
@@ -260,42 +260,14 @@ class CustomtablesViewListoftables extends JViewLegacy
 			*/
 		}
 
-		/*
-		if ($this->canBatch && $this->canCreate && $this->canEdit)
-		{
-			JHtmlBatch_::addListSelection(
-				JText::_('COM_CUSTOMTABLES_KEEP_ORIGINAL_ACCESS'),
-				'batch[access]',
-				JHtml::_('select.options', JHtml::_('access.assetgroups'), 'value', 'text')
-			);
-		}
-		*/
+		$CTCategory = JFormHelper::loadFieldType('CTCategory', false);
+		$CTCategoryOptions=$CTCategory->getOptions(false); // works only if you set your field getOptions on public!!
 
-		// Set Tableid Selection
-		$this->categoryidOptions = $this->getCategorySelections();
-
-		if ($this->categoryidOptions)
-		{
-			// Tableid Filter
-			JHtmlSidebar::addFilter(
-				'- Select '.JText::_('COM_CUSTOMTABLES_LAYOUTS_CATEGORY_LABEL').' -',
-				'filter_category',
-				JHtml::_('select.options', $this->categoryidOptions, 'value', 'text', $this->state->get('filter.category'))
-			);
-
-			/*
-			if ($this->canBatch && $this->canCreate && $this->canEdit)
-			{
-				// Tableid Batch Selection
-				JHtmlBatch_::addListSelection(
-					'- Keep Original '.JText::_('COM_CUSTOMTABLES_LAYOUTS_CATEGORY_LABEL').' -',
-					'batch[category]',
-					JHtml::_('select.options', $this->categoryidOptions, 'value', 'text')
-				);
-			}
-			*/
-		}
-
+		JHtmlSidebar::addFilter(
+		JText::_('COM_CUSTOMTABLES_TABLES_CATEGORY_SELECT'),
+		'filter_tablecategory',
+		JHtml::_('select.options', $CTCategoryOptions, 'value', 'text', $this->state->get('filter.tablecategory'))
+		);
 	}
 
 	/**
@@ -344,32 +316,6 @@ class CustomtablesViewListoftables extends JViewLegacy
 			'a.tablecategory' => JText::_('COM_CUSTOMTABLES_TABLES_TABLECATEGORY_LABEL'),
 			'a.id' => JText::_('JGRID_HEADING_ID')
 		);
-	}
-
-	protected function getCategorySelections()
-	{
-		// Get a db connection.
-		$db = JFactory::getDbo();
-
-		// Create a new query object.
-		$query='SELECT id,categoryname FROM #__customtables_categories ORDER BY categoryname ASC';
-
-		// Reset the query using our newly populated query object.
-		$db->setQuery($query);
-
-		$results = $db->loadObjectList();
-
-		if ($results)
-		{
-			$_filter = array();
-			foreach ($results as $result)
-			{
-				// Now add the tableid and its text to the options array
-				$_filter[] = JHtml::_('select.option', $result->id, $result->categoryname);
-			}
-			return $_filter;	
-		}
-		return false;
 	}
 
 	protected function getNumberOfRecords($realtablename,$realidfield)

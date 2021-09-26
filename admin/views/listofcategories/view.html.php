@@ -79,7 +79,7 @@ class CustomtablesViewListofcategories extends JViewLegacy
 			if($this->version < 4)
 			{
 				$this->addToolbar_3();
-				//$this->sidebar = JHtmlSidebar::render();
+				$this->sidebar = JHtmlSidebar::render();
 			}
 			else
 				$this->addToolbar_4();
@@ -247,23 +247,6 @@ class CustomtablesViewListofcategories extends JViewLegacy
 			}
 			*/
 		}
-
-		JHtmlSidebar::addFilter(
-			JText::_('JOPTION_SELECT_ACCESS'),
-			'filter_access',
-			JHtml::_('select.options', JHtml::_('access.assetgroups'), 'value', 'text', $this->state->get('filter.access'))
-		);
-
-		/*
-		if ($this->canBatch && $this->canCreate && $this->canEdit)
-		{
-			JHtmlBatch_::addListSelection(
-				JText::_('COM_CUSTOMTABLES_KEEP_ORIGINAL_ACCESS'),
-				'batch[access]',
-				JHtml::_('select.options', JHtml::_('access.assetgroups'), 'value', 'text')
-			);
-		} 
-		*/
 	}
 
 	/**

@@ -14,18 +14,18 @@ use CustomTables\Layouts;
 jimport('joomla.form.helper');
 JFormHelper::loadFieldClass('list');
 
-class JFormFieldCTLayoutTYpe extends JFormFieldList
+class JFormFieldCTLayoutType extends JFormFieldList
 {
 	/**
 	 * Element name
 	 *
-	 * @access	protected
+	 * @access	public
 	 * @var		string
 	 *  
 	 */
-	protected $type = 'ctlayouttype';
+	public $type = 'ctlayouttype';
 	
-	protected function getOptions()//$name, $value, &$node, $control_name)
+	public function getOptions()//$name, $value, &$node, $control_name)
 	{
 		// Get a db connection.
 		$db = JFactory::getDbo();

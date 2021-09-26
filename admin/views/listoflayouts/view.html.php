@@ -25,6 +25,8 @@ use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\Database\DatabaseDriver;
 use Joomla\Component\Content\Administrator\Extension\ContentComponent;
 
+JForm::addFieldPath(JPATH_COMPONENT . '/models/fields');
+
 /**
  * Customtables View class for the Listoflayouts
  */
@@ -251,33 +253,14 @@ class CustomtablesViewListoflayouts extends JViewLegacy
 			*/
 		}
 
+		$CTLayoutType = JFormHelper::loadFieldType('CTLayoutType', false);
+		$CTLayoutTypeOptions=$CTLayoutType->getOptions(); // works only if you set your field getOptions on public!!
+
 		JHtmlSidebar::addFilter(
-			JText::_('JOPTION_SELECT_ACCESS'),
-			'filter_access',
-			JHtml::_('select.options', JHtml::_('access.assetgroups'), 'value', 'text', $this->state->get('filter.access'))
+		JText::_('COM_CUSTOMTABLES_LAYOUTS_LAYOUTTYPE_SELECT'),
+		'filter_layouttype',
+		JHtml::_('select.options', $CTLayoutTypeOptions, 'value', 'text', $this->state->get('filter.layouttype'))
 		);
-
-		/*
-		if ($this->canBatch && $this->canCreate && $this->canEdit)
-		{
-			JHtmlBatch_::addListSelection(
-				JText::_('COM_CUSTOMTABLES_KEEP_ORIGINAL_ACCESS'),
-				'batch[access]',
-				JHtml::_('select.options', JHtml::_('access.assetgroups'), 'value', 'text')
-			);
-		}
-		*/
-
-		// Set Layouttype Selection
-		$this->layouttypeOptions = $this->getTheLayouttypeSelections();
-		if ($this->layouttypeOptions)
-		{
-			// Layouttype Filter
-			JHtmlSidebar::addFilter(
-				JText::_('COM_CUSTOMTABLES_LAYOUTS_LAYOUTTYPE_SELECT'),
-				'filter_layouttype',
-				JHtml::_('select.options', $this->layouttypeOptions, 'value', 'text', $this->state->get('filter.layouttype'))
-			);
 
 			/*
 			if ($this->canBatch && $this->canCreate && $this->canEdit)
@@ -290,32 +273,18 @@ class CustomtablesViewListoflayouts extends JViewLegacy
 				);
 			}
 			*/
-		}
+		//}
 
 		// Set Tableid Selection
-		$this->tableidOptions = $this->getTheTableidSelections();
+		$CTTable = JFormHelper::loadFieldType('CTTable', false);
+		$CTTableOptions=$CTTable->getOptions(false); // works only if you set your field getOptions on public!!
 
-		if ($this->tableidOptions)
-		{
-			// Tableid Filter
-			JHtmlSidebar::addFilter(
-				JText::_('COM_CUSTOMTABLES_LAYOUTS_TABLEID_SELECT'),
-				'filter_tableid',
-				JHtml::_('select.options', $this->tableidOptions, 'value', 'text', $this->state->get('filter.tableid'))
-			);
+		JHtmlSidebar::addFilter(
+		JText::_('COM_CUSTOMTABLES_LAYOUTS_TABLEID_SELECT'),
+		'filter_tableid',
+		JHtml::_('select.options', $CTTableOptions, 'value', 'text', $this->state->get('filter.tableid'))
+		);
 
-			/*
-			if ($this->canBatch && $this->canCreate && $this->canEdit)
-			{
-				// Tableid Batch Selection
-				JHtmlBatch_::addListSelection(
-					'- Keep Original '.JText::_('COM_CUSTOMTABLES_LAYOUTS_TABLEID_LABEL').' -',
-					'batch[tableid]',
-					JHtml::_('select.options', $this->tableidOptions, 'value', 'text')
-				);
-			}
-			*/
-		}
 	}
 
 	/**
@@ -360,49 +329,12 @@ class CustomtablesViewListoflayouts extends JViewLegacy
 		return array(
 			'a.published' => JText::_('JSTATUS'),
 			'a.layoutname' => JText::_('COM_CUSTOMTABLES_LAYOUTS_LAYOUTNAME_LABEL'),
+			'a.layouttype' => JText::_('COM_CUSTOMTABLES_LAYOUTS_LAYOUTTYPE_SELECT'),
 			'a.id' => JText::_('JGRID_HEADING_ID')
 		);
 	}
 
-	protected function getTheLayouttypeSelections()
-	{
-		// Get a db connection.
-		$db = JFactory::getDbo();
-
-		// Create a new query object.
-		$query = $db->getQuery(true);
-
-		// Select the text.
-		$query->select($db->quoteName('layouttype'));
-		$query->from($db->quoteName('#__customtables_layouts'));
-		$query->order($db->quoteName('layouttype') . ' ASC');
-
-		// Reset the query using our newly populated query object.
-		$db->setQuery($query);
-
-		$results = $db->loadColumn();
-
-		if ($results)
-		{
-			// get model
-			$model = $this->getModel();
-			$results = array_unique($results);
-			$_filter = array();
-			foreach ($results as $layouttype)
-			{
-				// Translate the layouttype selection
-				if((int)$layouttype!=0)
-				{
-					$text = $model->selectionTranslation($layouttype,'layouttype');
-					// Now add the layouttype and its text to the options array
-					$_filter[] = JHtml::_('select.option', $layouttype, JText::_($text));
-				}
-			}
-			return $_filter;
-		}
-		return false;
-	}
-
+/*
 	protected function getTheTableidSelections()
 	{
 		// Get a db connection.
@@ -434,4 +366,5 @@ class CustomtablesViewListoflayouts extends JViewLegacy
 		}
 		return false;
 	}
+	*/
 }

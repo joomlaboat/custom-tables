@@ -8,20 +8,14 @@
 
 // no direct access
 defined('_JEXEC') or die('Restricted access');
-
+/*
 jimport('joomla.form.helper');
 JFormHelper::loadFieldClass('list');
 
 
 class JFormFieldAnyTables extends JFormFieldList
 {
-	/**
-	 * Element name
-	 *
-	 * @access	protected
-	 * @var		string
-	 *  
-	 */
+
 	protected $type = 'anytables';
 	
 	//Returns the Options object with the list of tables (specified by table id in url)
@@ -85,3 +79,4 @@ class JFormFieldAnyTables extends JFormFieldList
 		return $list;
 	}
 }
+*/
