@@ -79,8 +79,7 @@ class CustomtablesControllerListofRecords extends JControllerAdmin
 			if((int)$id!=0)
 			{
 				$id=(int)$id;
-				$isok=$editModel->setPublishStatusSingleRecord($id,$status);
-				if(!$isok)
+				if($editModel->setPublishStatusSingleRecord($id,$status) == -1)
 				{
 					$ok=false;
 					break;
@@ -91,9 +90,12 @@ class CustomtablesControllerListofRecords extends JControllerAdmin
 		$redirect = 'index.php?option=' . $this->option;
 		$redirect.='&view=listofrecords&tableid='.(int)$tableid;
 		
-		$msg = $this->task == 'publish' ? 'COM_CUSTOMTABLES_RECORDS_PUBLISHED' : 'COM_CUSTOMTABLES_RECORDS_UNPUBLISHED';
+		$msg = $this->task == 'publish' ? 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_PUBLISHED' : 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_UNPUBLISHED';
 		
-		JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended($msg),'success');
+		if(count($cid) == 1)
+			$msg.='_1';
+		
+		JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended($msg,count($cid)),'success');
 
 		// Redirect to the item screen.
 		$this->setRedirect(
@@ -153,8 +155,12 @@ class CustomtablesControllerListofRecords extends JControllerAdmin
 		$redirect = 'index.php?option=' . $this->option;
 		$redirect.='&view=listofrecords&tableid='.(int)$tableid;
 		
+		$msg = 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_DELETED';
+			
+		if(count($cid) == 1)
+			$msg.='_1';
 		
-		JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_DELETED'),'success');
+		JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended($msg,count($cid)),'success');
 		
 		// Redirect to the item screen.
 		$this->setRedirect(

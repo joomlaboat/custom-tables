@@ -5,7 +5,7 @@
  * @subpackage view.html.php
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @copyright Copyright (C) 2018-2020. All Rights Reserved
+ * @copyright Copyright (C) 2018-2021. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
@@ -13,7 +13,6 @@
 \defined('_JEXEC') or die;
 
 use Joomla\CMS\Version;
-
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\Language\Text;
@@ -47,19 +46,18 @@ class CustomtablesViewListofcategories extends JViewLegacy
 			CustomtablesHelper::addSubmenu('listofcategories');
 		}
 		
-				
+		// Assign data to the view
+		$this->items = $this->get('Items');
+		$this->pagination = $this->get('Pagination');
+		$this->state = $this->get('State');
+		$this->user = JFactory::getUser();
 		
 		if($this->version >= 4)
 		{
 			$this->filterForm    = $this->get('FilterForm');
 			$this->activeFilters = $this->get('ActiveFilters');
 		}
-
-		// Assign data to the view
-		$this->items = $this->get('Items');
-		$this->pagination = $this->get('Pagination');
-		$this->state = $this->get('State');
-		$this->user = JFactory::getUser();
+		
 		$this->listOrder = $this->escape($this->state->get('list.ordering'));
 		$this->listDirn = $this->escape($this->state->get('list.direction'));
 		$this->saveOrder = $this->listOrder == 'ordering';
@@ -81,7 +79,7 @@ class CustomtablesViewListofcategories extends JViewLegacy
 			if($this->version < 4)
 			{
 				$this->addToolbar_3();
-				$this->sidebar = JHtmlSidebar::render();
+				//$this->sidebar = JHtmlSidebar::render();
 			}
 			else
 				$this->addToolbar_4();
@@ -111,7 +109,6 @@ class CustomtablesViewListofcategories extends JViewLegacy
 
 	protected function addToolbar_4()
 	{
-		$canDo = $this->canDo;
 		$user  = Factory::getUser();
 
 		// Get the toolbar object instance
@@ -309,7 +306,6 @@ class CustomtablesViewListofcategories extends JViewLegacy
 	protected function getSortFields()
 	{
 		return array(
-			'a.sorting' => JText::_('JGRID_HEADING_ORDERING'),
 			'a.published' => JText::_('JSTATUS'),
 			'a.categoryname' => JText::_('COM_CUSTOMTABLES_CATEGORIES_CATEGORYNAME_LABEL'),
 			'a.id' => JText::_('JGRID_HEADING_ID')

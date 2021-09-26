@@ -13,6 +13,8 @@ defined('_JEXEC') or die( 'Restricted access' );
 
 use CustomTables\CT;
 
+use Joomla\CMS\Component\ComponentHelper;
+
 class CustomTablesModelListOfOptions extends JModelList
 {
 	var $ct;

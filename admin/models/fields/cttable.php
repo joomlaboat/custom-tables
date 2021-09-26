@@ -42,7 +42,7 @@ class JFormFieldCTTable extends JFormFieldList
         $options = array();
         if ($records)
         {
-			$options[] = JHtml::_('select.option', '', JText::_('COM_CUSTOMTABLES_FIELDS_SELECT_LABEL'));
+			$options[] = JHtml::_('select.option', '', JText::_('COM_CUSTOMTABLES_LAYOUTS_TABLEID_SELECT'));
             foreach($records as $rec) 
             {
                 $options[] = JHtml::_('select.option', $rec->id, $rec->tabletitle);

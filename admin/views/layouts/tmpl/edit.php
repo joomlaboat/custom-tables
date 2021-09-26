@@ -78,7 +78,30 @@ $onPageLoads=array();
 
 <!--<div id="customtables_loader" style="display: none;">-->
 	<form action="<?php echo JRoute::_('index.php?option=com_customtables&layout=edit&id='.(int) $this->item->id.$this->referral); ?>" method="post" name="adminForm" id="adminForm" class="form-validate" enctype="multipart/form-data">
-	<?php echo JLayoutHelper::render('layouts.details_above', $this); ?>
+	
+	<?php //echo JLayoutHelper::render('layouts.details_above', $this); ?>
+	
+	<div class="row-fluid form-horizontal-desktop">
+			<div class="span12">
+
+				<div class="control-group">
+					<div class="control-label"><?php echo $this->form->getLabel('layoutname'); ?></div>
+					<div class="controls"><?php echo $this->form->getInput('layoutname'); ?></div>
+				</div>
+				
+				<div class="control-group">
+					<div class="control-label"><?php echo $this->form->getLabel('layouttype'); ?></div>
+					<div class="controls"><?php echo $this->form->getInput('layouttype'); ?></div>
+				</div>
+				
+				<div class="control-group">
+					<div class="control-label"><?php echo $this->form->getLabel('tableid'); ?></div>
+					<div class="controls"><?php echo $this->form->getInput('tableid'); ?></div>
+				</div>
+			</div>
+	</div>
+
+	
 		<div class="form-horizontal">
 			<div class="row-fluid form-horizontal-desktop"></div>
 			<div class="row-fluid form-horizontal-desktop">

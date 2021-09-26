@@ -2,15 +2,15 @@
 /**
  * CustomTables Joomla! 3.x Native Component
  * @package Custom Tables
+ * @subpackage view.html.php
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @copyright Copyright (C) 2018-2020. All Rights Reserved
+ * @copyright Copyright (C) 2018-2021. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
-// No direct access to this file
-defined('_JEXEC') or die('Restricted access');
 
-use Joomla\CMS\Version;
+// No direct access to this file
+\defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
@@ -41,11 +41,7 @@ class CustomtablesViewListoffields extends JViewLegacy
 
 	function display($tpl = null)
 	{
-		$version = new Version;
-		$this->version = (int)$version->getShortVersion();
-		
 		$app = JFactory::getApplication();
-
 
 		if ($this->getLayout() !== 'modal')
 		{
@@ -53,15 +49,6 @@ class CustomtablesViewListoffields extends JViewLegacy
 			CustomtablesHelper::addSubmenu('listoffields');
 		}
 
-		// Assign data to the view
-		//$model = $this->model;
-		//$this->tableid = $this->tableid+100;
-		if($this->version >= 4)
-		{
-			$this->filterForm    = $this->get('FilterForm');
-			$this->activeFilters = $this->get('ActiveFilters');
-		}
-		
 		$model = $this->getModel();
 		$this->ct = $model->ct;
 
@@ -69,6 +56,13 @@ class CustomtablesViewListoffields extends JViewLegacy
 		$this->pagination = $this->get('Pagination');
 		$this->state = $this->get('State');
 		$this->user = JFactory::getUser();
+
+		if($this->ct->Env->version >= 4)
+		{
+			$this->filterForm    = $this->get('FilterForm');
+			$this->activeFilters = $this->get('ActiveFilters');
+		}
+		
 		$this->listOrder = $this->escape($this->state->get('list.ordering'));
 		$this->listDirn = $this->escape($this->state->get('list.direction'));
 		$this->saveOrder = $this->listOrder == 'ordering';
@@ -109,10 +103,10 @@ class CustomtablesViewListoffields extends JViewLegacy
 
 		if ($this->getLayout() !== 'modal')
 		{
-			if($this->version < 4)
+			if($this->ct->Env->version < 4)
 			{
 				$this->addToolbar_3();
-				$this->sidebar = JHtmlSidebar::render();
+				//$this->sidebar = JHtmlSidebar::render();
 			}
 			else
 				$this->addToolbar_4();
@@ -133,7 +127,7 @@ class CustomtablesViewListoffields extends JViewLegacy
 		$this->languages=$this->ct->Languages->LanguageList;
 
 		// Display the template
-		if($this->version < 4)
+		if($this->ct->Env->version < 4)
 			parent::display($tpl);
 		else
 			parent::display('quatro');
@@ -148,7 +142,6 @@ class CustomtablesViewListoffields extends JViewLegacy
 	 
 	protected function addToolbar_4()
 	{
-		$canDo = $this->canDo;
 		$user  = Factory::getUser();
 
 		// Get the toolbar object instance
@@ -305,14 +298,6 @@ class CustomtablesViewListoffields extends JViewLegacy
 			*/
 		}
 
-/*
-		JHtmlSidebar::addFilter(
-			JText::_('JOPTION_SELECT_ACCESS'),
-			'filter_access',
-			JHtml::_('select.options', JHtml::_('access.assetgroups'), 'value', 'text', $this->state->get('filter.access'))
-		);
-		*/
-
 		/*
 		if ($this->canBatch && $this->canCreate && $this->canEdit)
 		{
@@ -418,7 +403,7 @@ class CustomtablesViewListoffields extends JViewLegacy
 	{
 		//Joomla 3 only
 		return array(
-			'a.sorting' => JText::_('JGRID_HEADING_ORDERING'),
+			'a.ordering' => JText::_('JGRID_HEADING_ORDERING'),
 			'a.published' => JText::_('JSTATUS'),
 			'a.fieldname' => JText::_('COM_CUSTOMTABLES_FIELDS_FIELDNAME_LABEL'),
 			'a.type' => JText::_('COM_CUSTOMTABLES_FIELDS_TYPE_LABEL'),

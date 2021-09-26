@@ -15,6 +15,8 @@ jimport('joomla.application.component.modellist');
 
 use CustomTables\CT;
 
+use Joomla\CMS\Component\ComponentHelper;
+
 /**
  * Listoffields Model
  */
@@ -31,10 +33,8 @@ class CustomtablesModelListoffields extends JModelList
 			$config['filter_fields'] = array(
 				'a.id','id',
 				'a.published','published',
-				//'a.ordering','ordering',
-				//'a.created_by','created_by',
-				//'a.modified_by','modified_by',
-				//'a.fieldtitle','fieldtitle',
+				'a.tableid','tableid',
+				'a.fieldname','fieldname',
 				'a.type','type'
 			);
 		}
@@ -51,6 +51,7 @@ class CustomtablesModelListoffields extends JModelList
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
+		/*
 		$app = JFactory::getApplication();
 		
 		// Adjust the context to support modal layouts.
@@ -88,6 +89,9 @@ class CustomtablesModelListoffields extends JModelList
 		//$this->setState('filter.created', $created);
 
 		//$jinput->set('tableid',$tableid);
+		*/
+		
+		$this->setState('params', ComponentHelper::getParams('com_customtables'));
 		
 		// List state information.
 		parent::populateState($ordering, $direction);
@@ -133,7 +137,7 @@ class CustomtablesModelListoffields extends JModelList
 			$typeArray = array(
 				'string' => 'COM_CUSTOMTABLES_FIELDS_STRING',
 				'multilangstring' => 'COM_CUSTOMTABLES_FIELDS_MULTILANGSTRING',
-				'textText' => 'COM_CUSTOMTABLES_FIELDS_TEXTTEXT',
+				'text' => 'COM_CUSTOMTABLES_FIELDS_TEXTTEXT',
 				'multilangtext' => 'COM_CUSTOMTABLES_FIELDS_MULTILANGTEXT',
 				'int' => 'COM_CUSTOMTABLES_FIELDS_INTEGER',
 				'float' => 'COM_CUSTOMTABLES_FIELDS_FLOAT',
@@ -306,7 +310,10 @@ class CustomtablesModelListoffields extends JModelList
 		$id .= ':' . $this->getState('filter.search');
 		$id .= ':' . $this->getState('filter.published');
 		$id .= ':' . $this->getState('filter.ordering');
-
+		$id .= ':' . $this->getState('filter.tableid');
+		$id .= ':' . $this->getState('filter.fieldname');
+		$id .= ':' . $this->getState('filter.type');
+		
 		return parent::getStoreId($id);
 	}
 }

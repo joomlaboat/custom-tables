@@ -136,7 +136,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 		if($this->ct->Table->tablename=='')
 		{
 			JFactory::getApplication()->enqueueMessage('Table not selected.', 'error');
-			return;
+			return false;
 		}
 
 		$this->applybuttontitle=$this->getParam_safe( 'applybuttontitle' );
@@ -1049,7 +1049,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 					$publishstatus = (int)$publishstatus;
 			}
 
-			if($this->tablerow['published_field_found'])
+			if($this->ct->Table->tablerow['published_field_found'])
 				$savequery[]='published='.$publishstatus;
 
 			$db = JFactory::getDBO();
@@ -1198,96 +1198,6 @@ class CustomTablesModelEditItem extends JModelLegacy
 		
 		$jinput->set('listing_id',(int)$listing_id);
 
-		return true;
-	}
-
-	function Refresh($save_log=1)
-	{
-		$ids_str=JFactory::getApplication()->input->getString('ids', '');
-
-		if($ids_str!='')
-		{
-			$ok=true;
-			$ids_=explode(',',$ids_str);
-			foreach($ids_ as $id)
-			{
-				if((int)$id!=0)
-				{
-					$id=(int)$id;
-					$isok=$this->RefreshSingleRecord($id,$save_log);
-					if(!$isok)
-						$ok=false;
-				}
-			}
-			return 	$ok;
-		}
-
-		$id= JFactory::getApplication()->input->getInt('listing_id', 0);
-
-		if($id==0)
-			return false;
-
-		return $this->RefreshSingleRecord($id,$save_log);
-	}
-
-	protected function RefreshSingleRecord($id,$save_log)
-	{
-
-			$db = JFactory::getDBO();
-			
-			$query='SELECT '.$this->tablerow['query_selects'].' FROM '.$this->ct->Table->realtablename.' WHERE '.$this->ct->Table->realidfieldname.'='.$id.' LIMIT 1';
-			$db->setQuery( $query );
-
-			$rows = $db->loadAssocList();
-			if(count($rows)==0)
-				return false;
-
-			$row=$rows[0];
-			JFactory::getApplication()->input->set('listing_id',$id);
-
-			$this->doPHPonChange($row);
-
-			//update MD5s
-			$this->updateMD5($id);
-
-			if($save_log==1)
-				ESLogs::save($this->ct->Table->tableid,(int)$id,10);
-
-			$this->updateDefaultValues($row);
-
-
-			if($this->ct->Table->tablerow['tablecustomphp']!='')
-				$this->doCustomPHP($row, $row);
-
-		$create_new_user=null;
-
-		foreach($this->ct->Table->fields as $esfield)
-		{
-			if($esfield['type']=='user')
-			{
-				$create_new_user=$esfield;
-				break;
-			}
-		}
-
-		if($create_new_user!=null and (int)$row['listing_published']==1)
-			CTValue::Try2CreateUserAccount($this,$create_new_user,$row);
-
-		
-		
-		//Send email note if applicable
-		
-		if($this->onrecordaddsendemail==3 and ($this->onrecordsavesendemailto!='' or $this->onrecordaddsendemailto!=''))
-		{
-			
-			//check conditions
-			if($this->checkSendEmailConditions($id,$this->sendemailcondition))
-			{
-				//Send email conditions met
-				$this->sendEmailIfAddressSet($id,$new_username,$new_password);
-			}
-		}
-		
 		return true;
 	}
 
@@ -1882,29 +1792,114 @@ class CustomTablesModelEditItem extends JModelLegacy
 		return $status;
 	}
 
-	function setPublishStatus($status)
+	function Refresh($save_log=1)
 	{
 		$ids_str=JFactory::getApplication()->input->getString('ids', '');
+
 		if($ids_str!='')
 		{
-			$ok=true;
 			$ids_=explode(',',$ids_str);
 			foreach($ids_ as $id)
 			{
 				if((int)$id!=0)
 				{
 					$id=(int)$id;
-					$isok=$this->setPublishStatusSingleRecord($id,$status);
-					if(!$isok)
-						$ok=false;
+					if($this->RefreshSingleRecord($id,$save_log) == -1)
+						return -count($ids_); //negative value means that there is an error
 				}
 			}
-			return 	$ok;
+			return count($ids_);
 		}
 
-		$id= $this->id;
+		$id= JFactory::getApplication()->input->getInt('listing_id', 0);
+
 		if($id==0)
-			return false;
+			return 0;
+
+		return $this->RefreshSingleRecord($id,$save_log);
+	}
+	
+	protected function RefreshSingleRecord($id,$save_log)
+	{
+			$db = JFactory::getDBO();
+			
+			$query='SELECT '.$this->ct->Table->tablerow['query_selects'].' FROM '.$this->ct->Table->realtablename.' WHERE '.$this->ct->Table->realidfieldname.'='.$id.' LIMIT 1';
+			$db->setQuery( $query );
+
+			$rows = $db->loadAssocList();
+			if(count($rows)==0)
+				return -1;
+
+			$row=$rows[0];
+			JFactory::getApplication()->input->set('listing_id',$id);
+
+			$this->doPHPonChange($row);
+
+			//update MD5s
+			$this->updateMD5($id);
+
+			if($save_log==1)
+				ESLogs::save($this->ct->Table->tableid,(int)$id,10);
+
+			$this->updateDefaultValues($row);
+
+
+			if($this->ct->Table->tablerow['tablecustomphp']!='')
+				$this->doCustomPHP($row, $row);
+
+		$create_new_user=null;
+
+		foreach($this->ct->Table->fields as $esfield)
+		{
+			if($esfield['type']=='user')
+			{
+				$create_new_user=$esfield;
+				break;
+			}
+		}
+
+		if($create_new_user!=null and (int)$row['listing_published']==1)
+			CTValue::Try2CreateUserAccount($this,$create_new_user,$row);
+
+		
+		
+		//Send email note if applicable
+		
+		if($this->onrecordaddsendemail==3 and ($this->onrecordsavesendemailto!='' or $this->onrecordaddsendemailto!=''))
+		{
+			
+			//check conditions
+			if($this->checkSendEmailConditions($id,$this->sendemailcondition))
+			{
+				//Send email conditions met
+				$this->sendEmailIfAddressSet($id,$new_username,$new_password);
+			}
+		}
+		
+		return 1;
+	}
+	
+	function setPublishStatus($status)
+	{
+		$ids_str=JFactory::getApplication()->input->getString('ids', '');
+		if($ids_str!='')
+		{
+			$ids_=explode(',',$ids_str);
+			foreach($ids_ as $id)
+			{
+				if((int)$id!=0)
+				{
+					$id=(int)$id;
+					if($this->setPublishStatusSingleRecord($id,$status) == -1)
+						return -count($ids_); //negative value means that there is an error
+				}
+			}
+			return count($ids_);
+		}
+
+		$id = $this->id;
+		if($id==0)
+			return 0;
 
 		return $this->setPublishStatusSingleRecord($id,$status);
 	}
@@ -1912,12 +1907,12 @@ class CustomTablesModelEditItem extends JModelLegacy
 	public function setPublishStatusSingleRecord($id,$status)
 	{
 		if(!$this->ct->Table->published_field_found)
-			return false;
+			return -1;
 		
 		$db = JFactory::getDBO();
 
-		$query = 'UPDATE '.$this->ct->Table->realtablename.' SET published='.$status.' WHERE '.$this->ct->Table->ct->Table->realidfieldname.'='.(int)$id;
-
+		$query = 'UPDATE '.$this->ct->Table->realtablename.' SET published='.(int)$status.' WHERE '.$this->ct->Table->realidfieldname.'='.(int)$id;
+		
 	 	$db->setQuery($query);
 		$db->execute();	
 
@@ -1928,7 +1923,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 		$this->RefreshSingleRecord((int)$id,0);
 
-		return true;
+		return 1;
 	}
 
 	function doCustomPHP(&$row=array(),&$row_old=array())
@@ -2039,23 +2034,19 @@ class CustomTablesModelEditItem extends JModelLegacy
 				if((int)$id!=0)
 				{
 					$id=(int)$id;
-					$isok=$this->deleteSingleRecord($id);
-					if(!$isok)
-					{
-						$ok=false;
-						break;
-					}
+					if($this->deleteSingleRecord($id) == -1)
+						return -count($ids_); //negative value means that there is an error
 				}
 			}
-			return 	$ok;
+			return count($ids_);
 		}
 
 		if(!$jinput->getInt('listing_id',0))
-			return false;
+			return 0;
 
 		$id=$jinput->getInt('listing_id',0);
 		if($id==0)
-			return false;
+			return 0;
 
 		return $this->deleteSingleRecord($id);
 	}
@@ -2073,7 +2064,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 		$rows=$db->loadAssocList();
 
 		if(count($rows)==0)
-			return false;
+			return -1;
 
 		$row=$rows[0];
 
@@ -2130,6 +2121,6 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 		$new_row=array();
 		$this->doCustomPHP($new_row,$row);
-		return true;
+		return 1;
 	}
 }

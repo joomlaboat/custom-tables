@@ -13,6 +13,8 @@ defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\CT;
 
+use Joomla\CMS\Component\ComponentHelper;
+
 // import the Joomla modellist library
 jimport('joomla.application.component.modellist');
 
@@ -30,9 +32,6 @@ class CustomtablesModelListofcategories extends JModelList
 			$config['filter_fields'] = array(
 				'a.id','id',
 				'a.published','published',
-				'a.ordering','ordering',
-				'a.created_by','created_by',
-				'a.modified_by','modified_by',
 				'a.categoryname','categoryname'
 			);
 		}
@@ -47,6 +46,7 @@ class CustomtablesModelListofcategories extends JModelList
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
+		/*
 		$app = JFactory::getApplication();
 
 		// Adjust the context to support modal layouts.
@@ -74,6 +74,9 @@ class CustomtablesModelListofcategories extends JModelList
 
 		$created = $this->getUserStateFromRequest($this->context . '.filter.created', 'filter_created');
 		$this->setState('filter.created', $created);
+		*/
+		
+		$this->setState('params', ComponentHelper::getParams('com_customtables'));
 
 		// List state information.
 		parent::populateState($ordering, $direction);
@@ -161,9 +164,6 @@ class CustomtablesModelListofcategories extends JModelList
 		$id .= ':' . $this->getState('filter.id');
 		$id .= ':' . $this->getState('filter.search');
 		$id .= ':' . $this->getState('filter.published');
-		$id .= ':' . $this->getState('filter.ordering');
-		$id .= ':' . $this->getState('filter.created_by');
-		$id .= ':' . $this->getState('filter.modified_by');
 		$id .= ':' . $this->getState('filter.categoryname');
 
 		return parent::getStoreId($id);

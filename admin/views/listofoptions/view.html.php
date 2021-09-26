@@ -2,14 +2,15 @@
 /**
  * CustomTables Joomla! 3.x Native Component
  * @package Custom Tables
+ * @subpackage view.html.php
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @copyright Copyright (C) 2018-2020. All Rights Reserved
+ * @copyright Copyright (C) 2018-2021. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
-// no direct access
-defined('_JEXEC') or die('Restricted access');
+// No direct access to this file
+\defined('_JEXEC') or die;
 
 jimport('joomla.application.component.view');
 

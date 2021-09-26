@@ -5,16 +5,12 @@
  * @subpackage view.html.php
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @copyright Copyright (C) 2018-2020. All Rights Reserved
+ * @copyright Copyright (C) 2018-2021. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
  
 // No direct access to this file
 \defined('_JEXEC') or die;
-// import Joomla view library
-
-//jimport('joomla.application.component.view');
-use Joomla\CMS\Version;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
@@ -26,8 +22,6 @@ use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\Database\DatabaseDriver;
 use Joomla\Component\Content\Administrator\Extension\ContentComponent;
-// import Joomla view library
-//jimport('joomla.application.component.view');
 
 /**
  * Customtables View class for the Listoftables
@@ -40,41 +34,34 @@ class CustomtablesViewListoftables extends JViewLegacy
 	 */
 	var $ct;
 	 
-	var $advanced_options;
 	var $languages;
 
 	function display($tpl = null)
 	{
-		$version = new Version;
-		$this->version = (int)$version->getShortVersion();
-		
 		if ($this->getLayout() !== 'modal')
 		{
 			// Include helper submenu
 			CustomtablesHelper::addSubmenu('listoftables');
 		}
 		
-
 		$model = $this->getModel();
 		$this->ct = $model->ct;
 		
 		// Assign data to the view
 		$this->items = $this->get('Items');
-
 		$this->pagination = $this->get('Pagination');
 		$this->state = $this->get('State');
 		$this->user = JFactory::getUser();
 
-		if($this->version >= 4)
+		if($this->ct->Env->version >= 4)
 		{
 			$this->filterForm    = $this->get('FilterForm');
 			$this->activeFilters = $this->get('ActiveFilters');
 		}
 
-		$this->listOrder = $this->escape($this->state->get('list.ordering'));
+		$this->listOrder = $this->state->get('list.ordering');
 		$this->listDirn = $this->escape($this->state->get('list.direction'));
-		$this->saveOrder = $this->listOrder == 'ordering';
-		
+
 		// get global action permissions
 
 		$this->canDo = ContentHelper::getActions('com_customtables', 'tables');
@@ -89,10 +76,10 @@ class CustomtablesViewListoftables extends JViewLegacy
 		// We don't need toolbar in the modal window.
 		if ($this->getLayout() !== 'modal')
 		{
-			if($this->version < 4)
+			if($this->ct->Env->version < 4)
 			{
 				$this->addToolbar_3();
-				$this->sidebar = JHtmlSidebar::render();
+				//$this->sidebar = JHtmlSidebar::render();
 			}
 			else
 				$this->addToolbar_4();
@@ -113,20 +100,17 @@ class CustomtablesViewListoftables extends JViewLegacy
 		$this->languages=$this->ct->Languages->LanguageList;
 
 		// Display the template
-		if($this->version < 4)
+		if($this->ct->Env->version < 4)
 			parent::display($tpl);
 		else
 			parent::display('quatro');
-
 
 		// Set the document
 		$this->setDocument();
 	}
 
-
 	protected function addToolbar_4()
 	{
-		$canDo = $this->canDo;
 		$user  = Factory::getUser();
 
 		// Get the toolbar object instance
@@ -165,7 +149,7 @@ class CustomtablesViewListoftables extends JViewLegacy
 			}
 		}
 		
-		if($this->ct->Env->advancedtagprocessor)
+		if(!$this->isEmptyState and $this->state->get('filter.published') != ContentComponent::CONDITION_TRASHED and $this->ct->Env->advancedtagprocessor)
 			$toolbar->appendButton('Standard', 'download', 'Export', 'listoftables.export', $listSelect = true, $formId = null);
 
 		if(($this->canState && $this->canDelete))
@@ -237,6 +221,7 @@ class CustomtablesViewListoftables extends JViewLegacy
 		}
 
 		if($this->ct->Env->advancedtagprocessor)
+		if(!$this->isEmptyState and $this->state->get('filter.published') != -2 and $this->ct->Env->advancedtagprocessor)
 			JToolBarHelper::custom('listoftables.export','download.png','','Export');
 
 		// set help url for this view if found
@@ -274,12 +259,6 @@ class CustomtablesViewListoftables extends JViewLegacy
 			}
 			*/
 		}
-
-		JHtmlSidebar::addFilter(
-			JText::_('JOPTION_SELECT_ACCESS'),
-			'filter_access',
-			JHtml::_('select.options', JHtml::_('access.assetgroups'), 'value', 'text', $this->state->get('filter.access'))
-		);
 
 		/*
 		if ($this->canBatch && $this->canCreate && $this->canEdit)
@@ -362,6 +341,7 @@ class CustomtablesViewListoftables extends JViewLegacy
 		return array(
 			'a.published' => JText::_('JSTATUS'),
 			'a.tablename' => JText::_('COM_CUSTOMTABLES_TABLES_TABLENAME_LABEL'),
+			'a.tablecategory' => JText::_('COM_CUSTOMTABLES_TABLES_TABLECATEGORY_LABEL'),
 			'a.id' => JText::_('JGRID_HEADING_ID')
 		);
 	}
@@ -372,13 +352,6 @@ class CustomtablesViewListoftables extends JViewLegacy
 		$db = JFactory::getDbo();
 
 		// Create a new query object.
-		//$query = $db->getQuery(true);
-
-		// Select the text.
-		//$query->select($db->quoteName(array('id','categoryname')));
-		//$query->from('#__customtables_categories');
-		//$query->order($db->quoteName('categoryname') . ' ASC');
-
 		$query='SELECT id,categoryname FROM #__customtables_categories ORDER BY categoryname ASC';
 
 		// Reset the query using our newly populated query object.
@@ -388,7 +361,6 @@ class CustomtablesViewListoftables extends JViewLegacy
 
 		if ($results)
 		{
-			//$results = array_unique($results);
 			$_filter = array();
 			foreach ($results as $result)
 			{

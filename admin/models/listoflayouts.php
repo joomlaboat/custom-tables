@@ -12,10 +12,14 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\Layouts;
+
 // import the Joomla modellist library
 jimport('joomla.application.component.modellist');
 
 use CustomTables\CT;
+
+use Joomla\CMS\Component\ComponentHelper;
 
 /**
  * Listoflayouts Model
@@ -31,14 +35,10 @@ class CustomtablesModelListoflayouts extends JModelList
 			$config['filter_fields'] = array(
 				'a.id','id',
 				'a.published','published',
-				'a.ordering','ordering',
 				'a.layoutname','layoutname',
 				'a.layouttype','layouttype',
 				'a.tableid','tableid'
 			);
-			
-					//		'a.created_by','created_by',
-				//'a.modified_by','modified_by',
 		}
 
 		parent::__construct($config);
@@ -51,6 +51,7 @@ class CustomtablesModelListoflayouts extends JModelList
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
+		/*
 		$app = JFactory::getApplication();
 
 		// Adjust the context to support modal layouts.
@@ -84,6 +85,9 @@ class CustomtablesModelListoflayouts extends JModelList
 
 		$created = $this->getUserStateFromRequest($this->context . '.filter.created', 'filter_created');
 		$this->setState('filter.created', $created);
+		*/
+		
+		$this->setState('params', ComponentHelper::getParams('com_customtables'));
 
 		// List state information.
 		parent::populateState($ordering, $direction);
@@ -102,11 +106,12 @@ class CustomtablesModelListoflayouts extends JModelList
 		// set selection value to a translatable value
 		if (CustomtablesHelper::checkArray($items))
 		{
+			$translations = Layouts::layoutTypeTranslation();
 
 			foreach ($items as $nr => &$item)
 			{
 				// convert layouttype
-				$item->layouttype = $this->selectionTranslation($item->layouttype, 'layouttype');
+				$item->layouttype = $translations[$item->layouttype];
 			}
 		}
 
@@ -115,37 +120,7 @@ class CustomtablesModelListoflayouts extends JModelList
 		return $items;
 	}
 
-	/**
-	 * Method to convert selection values to translatable string.
-	 *
-	 * @return translatable string
-	 */
-	public function selectionTranslation($value,$name)
-	{
-		// Array of layouttype language strings
-		if ($name === 'layouttype')
-		{
-			$layouttypeArray = array(
-				1 => 'COM_CUSTOMTABLES_LAYOUTS_SIMPLE_CATALOG',
-				5 => 'COM_CUSTOMTABLES_LAYOUTS_CATALOG_PAGE',
-				6 => 'COM_CUSTOMTABLES_LAYOUTS_CATALOG_ITEM',
-				2 => 'COM_CUSTOMTABLES_LAYOUTS_EDIT_FORM',
-				4 => 'COM_CUSTOMTABLES_LAYOUTS_DETAILS',
-				3 => 'COM_CUSTOMTABLES_LAYOUTS_RECORD_LINK',
-				7 => 'COM_CUSTOMTABLES_LAYOUTS_EMAIL_MESSAGE',
-				8 => 'COM_CUSTOMTABLES_LAYOUTS_XML',
-				9 => 'COM_CUSTOMTABLES_LAYOUTS_CSV',
-				10 => 'COM_CUSTOMTABLES_LAYOUTS_JSON'
-			);
-			// Now check if value is found in this array
-			if (isset($layouttypeArray[$value]) && CustomtablesHelper::checkString($layouttypeArray[$value]))
-			{
-				return $layouttypeArray[$value];
-			}
-		}
-		return $value;
-	}
-
+	
 	/**
 	 * Method to build an SQL query to load the list data.
 	 *
@@ -225,9 +200,6 @@ class CustomtablesModelListoflayouts extends JModelList
 		$id .= ':' . $this->getState('filter.id');
 		$id .= ':' . $this->getState('filter.search');
 		$id .= ':' . $this->getState('filter.published');
-		$id .= ':' . $this->getState('filter.ordering');
-		$id .= ':' . $this->getState('filter.created_by');
-		$id .= ':' . $this->getState('filter.modified_by');
 		$id .= ':' . $this->getState('filter.layoutname');
 		$id .= ':' . $this->getState('filter.layouttype');
 		$id .= ':' . $this->getState('filter.tableid');

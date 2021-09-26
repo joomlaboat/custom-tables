@@ -2,19 +2,15 @@
 /**
  * CustomTables Joomla! 3.x Native Component
  * @package Custom Tables
+ * @subpackage view.html.php
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @copyright Copyright (C) 2018-2020. All Rights Reserved
+ * @copyright Copyright (C) 2018-2021. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
 // No direct access to this file
-//defined('_JEXEC') or die('Restricted access');
 \defined('_JEXEC') or die;
-
-// import Joomla view library
-//jimport('joomla.application.component.view');
-//use Joomla\CMS\Helper\ContentHelper;
 
 use Joomla\CMS\Version;
 
@@ -49,17 +45,18 @@ class CustomtablesViewListoflayouts extends JViewLegacy
 			CustomtablesHelper::addSubmenu('listoflayouts');
 		}
 
+		// Assign data to the view
+		$this->items = $this->get('Items');
+		$this->pagination = $this->get('Pagination');
+		$this->state = $this->get('State');
+		$this->user = JFactory::getUser();
+		
 		if($this->version >= 4)
 		{
 			$this->filterForm    = $this->get('FilterForm');
 			$this->activeFilters = $this->get('ActiveFilters');
 		}
 		
-		// Assign data to the view
-		$this->items = $this->get('Items');
-		$this->pagination = $this->get('Pagination');
-		$this->state = $this->get('State');
-		$this->user = JFactory::getUser();
 		$this->listOrder = $this->escape($this->state->get('list.ordering'));
 		$this->listDirn = $this->escape($this->state->get('list.direction'));
 		$this->saveOrder = $this->listOrder == 'ordering';
@@ -115,7 +112,6 @@ class CustomtablesViewListoflayouts extends JViewLegacy
 	 
 	protected function addToolbar_4()
 	{
-		$canDo = $this->canDo;
 		$user  = Factory::getUser();
 
 		// Get the toolbar object instance
@@ -362,7 +358,6 @@ class CustomtablesViewListoflayouts extends JViewLegacy
 	protected function getSortFields()
 	{
 		return array(
-			'a.sorting' => JText::_('JGRID_HEADING_ORDERING'),
 			'a.published' => JText::_('JSTATUS'),
 			'a.layoutname' => JText::_('COM_CUSTOMTABLES_LAYOUTS_LAYOUTNAME_LABEL'),
 			'a.id' => JText::_('JGRID_HEADING_ID')

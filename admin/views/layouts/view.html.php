@@ -7,9 +7,9 @@
  * @copyright Copyright (C) 2018-2020. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
-
-// No direct access to this file
+// No direct access to this file access');
 defined('_JEXEC') or die('Restricted access');
+
 
 use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\Version;

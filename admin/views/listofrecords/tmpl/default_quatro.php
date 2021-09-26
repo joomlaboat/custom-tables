@@ -1,13 +1,15 @@
 <?php
 /**
- * @package     Joomla.Administrator
- * @subpackage  com_users
- *
- * @copyright   (C) 2007 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
- */
+ * CustomTables Joomla! 3.x Native Component
+ * @package Custom Tables
+ * @author Ivan komlev <support@joomlaboat.com>
+ * @link http://www.joomlaboat.com
+ * @copyright Copyright (C) 2018-2021. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
+ **/
+// No direct access to this file access');
+defined('_JEXEC') or die('Restricted access');
 
-defined('_JEXEC') or die;
 
 use Joomla\CMS\Access\Access;
 use Joomla\CMS\Factory;
@@ -20,7 +22,7 @@ use Joomla\CMS\String\PunycodeHelper;
 
 HTMLHelper::_('behavior.multiselect');
 
-$loggeduser = Factory::getUser();
+//$loggeduser = Factory::getUser(); used fo batch
 
 ?>
 <form action="<?php echo Route::_('index.php?option=com_customtables&view=listofrecords&tableid='.$this->tableid); ?>" method="post" name="adminForm" id="adminForm">

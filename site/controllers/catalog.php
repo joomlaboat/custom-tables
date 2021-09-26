@@ -64,7 +64,7 @@ if($WebsiteRoot=='' or $WebsiteRoot[strlen($WebsiteRoot)- 1] != '/') //Root must
 		if ($edit_model->CheckAuthorization($PermissionIndex))
 		{
 			$redirect=doTheTask($task,$params,$edit_model,$WebsiteRoot,$clean,$this);
-			JFactory::getApplication()->enqueueMessage($redirect->msg);
+			//JFactory::getApplication()->enqueueMessage($redirect->msg);
 			$this->setRedirect($redirect->link, $redirect->msg, $redirect->status);
 		}
 		else
@@ -74,9 +74,9 @@ if($WebsiteRoot=='' or $WebsiteRoot[strlen($WebsiteRoot)- 1] != '/') //Root must
 				die('not authorized');
 			else
 			{
-				JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
+				//JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
 				$link = $WebsiteRoot . 'index.php?option=com_users&view=login&return=1' . base64_encode(JoomlaBasicMisc::curPageURL());
-				$this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
+				$this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'));
 				parent::display();
 			}
 		}
@@ -129,19 +129,35 @@ function doTheTask($task,$params,$edit_model,$WebsiteRoot,$clean,&$this_)
 
 	case 'delete':
 		
-		if ($edit_model->delete())
+		$count = $edit_model->delete();
+		if ($count > 0)
 		{
 			if ($clean == 1)
 				die('deleted');
 			else
-				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_DELETED'), 'status' => null);
+			{
+				$msg = 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_DELETED';
+				if($count == 1)
+					$msg.='_1';
+				
+				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended($msg,$count), 'status' => null);
+				//COM_CUSTOMTABLES_RECORDS_DELETED
+			}
 		}
-		else
+		elseif($count < 0)
 		{
 			if ($clean == 1)
 				die('error');
 			else
-				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_NOT_DELETED'), 'status' => 'error');
+			{
+				$msg = 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_NOT_DELETED';
+				if(abs($count) == 1)
+					$msg.='_1';
+					
+				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended($msg,abs($count)), 'status' => 'error');
+				
+				//return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_NOT_DELETED'), 'status' => 'error');
+			}
 		}
 
 		break;
@@ -153,7 +169,7 @@ function doTheTask($task,$params,$edit_model,$WebsiteRoot,$clean,&$this_)
 			if ($clean == 1)
 				die('copied');
 			else
-				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_REFRESHED'), 'status' => null);
+				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_COPIED'), 'status' => null);
 		}
 		else
 		{
@@ -167,56 +183,95 @@ function doTheTask($task,$params,$edit_model,$WebsiteRoot,$clean,&$this_)
 
 	case 'refresh':
 
-		if ($edit_model->Refresh())
+		$count = $edit_model->Refresh();
+		if ($count > 0)
 		{
 			if ($clean == 1)
 				die('refreshed');
 			else
-				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_REFRESHED'), 'status' => null);
+			{
+				$msg = 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_REFRESHED';
+				if($count == 1)
+					$msg.='_1';
+				
+				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended($msg,$count), 'status' => null);
+			}
 		}
 		else
 		{
 			if ($clean == 1)
 				die('error');
 			else
-				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_NOT_REFRESHED'), 'status' => 'error');
+			{
+				$msg = 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_NOT_REFRESHED';
+				if(abs($count) == 1)
+					$msg.='_1';
+					
+				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended($msg,abs($count)), 'status' => 'error');
+			}
 		}
 		break;
 
 	case 'publish':
 
-		if ($edit_model->setPublishStatus(1))
+		$count = $edit_model->setPublishStatus(1);
+		if ($count > 0)
 		{
 			if ($clean == 1)
 				die('published');
 			else
-				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_PUBLISHED'), 'status' => null);
+			{
+				$msg = 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_PUBLISHED';
+				if($count == 1)
+					$msg.='_1';
+				
+				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended($msg,$count), 'status' => null);
+			}
 		}
-		else
+		elseif($count < 0)
 		{
 			if ($clean == 1)
 				die('error');
 			else
-				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_NOT_PUBLISHED'), 'status' => 'error');
+			{
+				$msg = 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_NOT_PUBLISHED';
+				if(abs($count) == 1)
+					$msg.='_1';
+					
+				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended($msg,abs($count)), 'status' => 'error');
+			}
 		}
 		
 		break;
 
 	case 'unpublish':
 		
-		if ($edit_model->setPublishStatus(0))
+		$count = $edit_model->setPublishStatus(0);
+		if ($count > 0)
 		{
 			if ($clean == 1)
 				die('unpublished');
 			else
-				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_UNPUBLISHED'), 'status' => null);
+			{
+				$msg = 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_UNPUBLISHED';
+				if($count == 1)
+					$msg.='_1';
+				
+				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended($msg,$count), 'status' => null);
+			}
 		}
-		else
+		elseif($count < 0)
 		{
 			if ($clean == 1)
 				die('error');
 			else
-				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_NOT_PUBLISHED'), 'status' => 'error');
+			{
+				$msg = 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_NOT_UNPUBLISHED';
+				if(abs($count) == 1)
+					$msg.='_1';
+					
+				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended($msg,abs($count)), 'status' => 'error');
+			}
 		}
 		
 		break;

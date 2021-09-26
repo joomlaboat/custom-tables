@@ -2,17 +2,17 @@
 /**
  * CustomTables Joomla! 3.x Native Component
  * @package Custom Tables
+ * @subpackage view.html.php
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @copyright Copyright (C) 2018-2020. All Rights Reserved
+ * @copyright Copyright (C) 2018-2021. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
-// No direct access to this file access');
-defined('_JEXEC') or die('Restricted access');
+
+// No direct access to this file
+\defined('_JEXEC') or die;
 
 use CustomTables\Fields;
-
-use Joomla\CMS\Version;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
@@ -51,10 +51,6 @@ class CustomtablesViewListofrecords extends JViewLegacy
 	function display($tpl = null)
 	{
 		$this->ct = new CT;
-		
-		
-		$version = new Version;
-		$this->version = (int)$version->getShortVersion();
 		
 		$app = JFactory::getApplication();
 		$this->tablename="";
@@ -116,7 +112,7 @@ class CustomtablesViewListofrecords extends JViewLegacy
 		
 		$this->user = JFactory::getUser();
 		
-		if($this->version >= 4)
+		if($this->ct->Env->version >= 4)
 		{
 			$this->filterForm    = $this->get('FilterForm');
 			$this->activeFilters = $this->get('ActiveFilters');
@@ -137,10 +133,10 @@ class CustomtablesViewListofrecords extends JViewLegacy
 
 		if ($this->getLayout()!== 'modal')
 		{
-			if($this->version < 4)
+			if($this->ct->Env->version < 4)
 			{
 				$this->addToolbar_3();
-				$this->sidebar = JHtmlSidebar::render();
+				//$this->sidebar = JHtmlSidebar::render();
 			}
 			else
 				$this->addToolbar_4();
@@ -148,7 +144,7 @@ class CustomtablesViewListofrecords extends JViewLegacy
 		}
 
 		// Display the template
-		if($this->version < 4)
+		if($this->ct->Env->version < 4)
 			parent::display($tpl);
 		else
 			parent::display('quatro');
@@ -163,7 +159,6 @@ class CustomtablesViewListofrecords extends JViewLegacy
 	 
 	protected function addToolbar_4()
 	{
-		$canDo = $this->canDo;
 		$user  = Factory::getUser();
 
 		// Get the toolbar object instance

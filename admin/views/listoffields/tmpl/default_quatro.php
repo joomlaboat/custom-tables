@@ -1,13 +1,15 @@
 <?php
 /**
- * @package     Joomla.Administrator
- * @subpackage  com_users
- *
- * @copyright   (C) 2007 Open Source Matters, Inc. <https://www.joomla.org>
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
- */
+ * CustomTables Joomla! 3.x Native Component
+ * @package Custom Tables
+ * @author Ivan komlev <support@joomlaboat.com>
+ * @link http://www.joomlaboat.com
+ * @copyright Copyright (C) 2018-2021. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
+ **/
+// No direct access to this file access');
+defined('_JEXEC') or die('Restricted access');
 
-defined('_JEXEC') or die;
 
 use Joomla\CMS\Access\Access;
 use Joomla\CMS\Factory;
@@ -20,13 +22,7 @@ use Joomla\CMS\String\PunycodeHelper;
 
 use CustomTables\Integrity\IntegrityFields;
 
-$loggeduser = Factory::getUser();
-
-if ($this->saveOrder)
-{
-	$saveOrderingUrl = 'index.php?option=com_customtables&task=listoffields.saveOrderAjax&tableid='.$this->tableid.'&tmpl=component';
-	JHtml::_('sortablelist.sortable', 'fieldsList', 'adminForm', strtolower($this->listDirn), $saveOrderingUrl);
-}
+//$loggeduser = Factory::getUser(); used fo batch
 
 $input	= JFactory::getApplication()->input;
 
@@ -42,24 +38,6 @@ if($input->getCmd('extratask','')=='updateimages')
 
 
 ?>
-<script type="text/javascript">
-	Joomla.orderTable = function()
-	{
-		table = document.getElementById("sortTable");
-		direction = document.getElementById("directionTable");
-		order = table.options[table.selectedIndex].value;
-		if (order != '<?php echo $this->listOrder; ?>')
-		{
-			dirn = 'asc';
-		}
-		else
-		{
-			dirn = direction.options[direction.selectedIndex].value;
-		}
-		Joomla.tableOrdering(order, dirn, '');
-	}
-	
-</script>
 
 <form action="<?php echo Route::_('index.php?option=com_customtables&view=listoffields&tableid='.$this->tableid); ?>" method="post" name="adminForm" id="adminForm">
 	<div class="row">
@@ -76,22 +54,22 @@ if($input->getCmd('extratask','')=='updateimages')
 					</div>
 				<?php else : ?>
 				
-				<?php
-		if($this->tableid!=0)
-		{
-			$link=JURI::root().'administrator/index.php?option=com_customtables&view=listoffields&tableid='.$this->tableid;
-			echo IntegrityFields::checkFields($this->ct,$this->tableid,$this->tablename,$this->tabletitle,$this->customtablename,$link);
-		}
-		?>
+					<?php
+				
+					if($this->tableid!=0)
+					{
+						$link=JURI::root().'administrator/index.php?option=com_customtables&view=listoffields&tableid='.$this->tableid;
+						echo IntegrityFields::checkFields($this->ct,$this->tableid,$this->tablename,$this->tabletitle,$this->customtablename,$link);
+					}
+					?>
 				
 				
 					<table class="table" id="userList">
-						<!--<caption class="visually-hidden">
+						<caption class="visually-hidden">
 							<?php echo Text::_('COM_USERS_USERS_TABLE_CAPTION'); ?>,
 							<span id="orderedBy"><?php echo Text::_('JGLOBAL_SORTED_BY'); ?> </span>,
 							<span id="filteredBy"><?php echo Text::_('JGLOBAL_FILTERED_BY'); ?></span>
 						</caption>
-						-->
 						<thead>
 							<?php include('default_quatro_head.php');?>
 						</thead>

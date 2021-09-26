@@ -36,8 +36,8 @@ HTMLHelper::_('behavior.multiselect');
 		$id='fieldtitle';
 		$title=$field[$id];
 				
-		if($this->Model->ct->Languages->Postfix!='')
-			$id.='_'.$this->Model->ct->Languages->Postfix;
+		if($this->ct->Languages->Postfix!='')
+			$id.='_'.$this->ct->Languages->Postfix;
 		
 		if(isset($field[$id]))
 			$title=$field[$id];
@@ -50,11 +50,10 @@ HTMLHelper::_('behavior.multiselect');
 	?>
 	
 	<th scope="col" class="text-center d-none d-md-table-cell" >
-		<?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_TABLES_STATUS', 'published', $this->listDirn, $this->listOrder); ?>
+		<?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_TABLES_STATUS', 'a.published', $this->listDirn, $this->listOrder); ?>
 	</th>
 	
 	<th scope="col" class="w-12 d-none d-xl-table-cell" >
-			<?php //echo JHtml::_('grid.sort', 'COM_CUSTOMTABLES_CATEGORIES_ID', 'id', $this->listDirn, $this->listOrder); ?>
-			<?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_TABLES_ID', 'id', $this->listDirn, $this->listOrder); ?>
+		<?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_TABLES_ID', 'a.id', $this->listDirn, $this->listOrder); ?>
 	</th>
 </tr>

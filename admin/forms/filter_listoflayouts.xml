@@ -11,6 +11,26 @@
 		/>
 
 		<field
+			name="tableid"
+			type="CTTable"
+			label="COM_CUSTOMTABLES_LAYOUTS_TABLEID_SELECT"
+			onchange="this.form.submit();"
+			extension="com_customtables"
+			>
+			<!--<option value="">COM_CUSTOMTABLES_LAYOUTS_TABLEID_SELECT</option>-->
+		</field>
+
+		<field
+			name="layouttype"
+			type="CTLayoutType"
+			label="COM_CUSTOMTABLES_LAYOUTS_LAYOUTTYPE_SELECT"
+			onchange="this.form.submit();"
+			extension="com_customtables"
+			>
+			<!--<option value="">COM_CUSTOMTABLES_LAYOUTS_LAYOUTTYPE_SELECT</option>-->
+		</field>
+
+		<field
 			name="published"
 			type="CTStatus"
 			label="JOPTION_SELECT_PUBLISHED"

@@ -5,7 +5,7 @@
  * @subpackage listoftables.php
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @copyright Copyright (C) 2018-2020. All Rights Reserved
+ * @copyright Copyright (C) 2018-2021. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
  
@@ -33,7 +33,6 @@ class CustomtablesModelListofTables extends JModelList
 			$config['filter_fields'] = array(
 				'a.id','id',
 				'a.published','published',
-				//'a.ordering','ordering',
 				//'a.created_by','created_by',
 				//'a.modified_by','modified_by',
 				'a.tablecategory','tablecategory',
@@ -51,7 +50,7 @@ class CustomtablesModelListofTables extends JModelList
 	 *
 	 * @return  void
 	 */
-	protected function populateState($ordering = null, $direction = null)
+	protected function populateState($ordering = 'a.id', $direction = 'asc')
 	{/*
 		$app = JFactory::getApplication();
 
@@ -89,7 +88,7 @@ class CustomtablesModelListofTables extends JModelList
 		//$this->setState('filter.sorting', $sorting);
 		
 		// Load the parameters.
-		//$this->setState('params', ComponentHelper::getParams('com_customtables'));
+		$this->setState('params', ComponentHelper::getParams('com_customtables'));
 
 		// List state information.
 		parent::populateState($ordering, $direction);

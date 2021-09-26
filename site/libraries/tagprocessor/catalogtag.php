@@ -7,8 +7,7 @@
  * @copyright Copyright (C) 2018-2020. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
-
-// no direct access
+// No direct access to this file access');
 defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\DataTypes\Tree;

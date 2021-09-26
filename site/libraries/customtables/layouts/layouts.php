@@ -237,4 +237,23 @@ class Layouts
 
 		return $file_ts;
 	}
+	
+	
+	public static function layoutTypeTranslation()
+	{
+		$layouttypeArray = array(
+				1 => 'COM_CUSTOMTABLES_LAYOUTS_SIMPLE_CATALOG',
+				5 => 'COM_CUSTOMTABLES_LAYOUTS_CATALOG_PAGE',
+				6 => 'COM_CUSTOMTABLES_LAYOUTS_CATALOG_ITEM',
+				2 => 'COM_CUSTOMTABLES_LAYOUTS_EDIT_FORM',
+				4 => 'COM_CUSTOMTABLES_LAYOUTS_DETAILS',
+				3 => 'COM_CUSTOMTABLES_LAYOUTS_RECORD_LINK',
+				7 => 'COM_CUSTOMTABLES_LAYOUTS_EMAIL_MESSAGE',
+				8 => 'COM_CUSTOMTABLES_LAYOUTS_XML',
+				9 => 'COM_CUSTOMTABLES_LAYOUTS_CSV',
+				10 => 'COM_CUSTOMTABLES_LAYOUTS_JSON'
+		);
+		
+		return $layouttypeArray;
+	}
 }
