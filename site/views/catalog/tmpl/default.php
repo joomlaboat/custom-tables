@@ -104,7 +104,7 @@ if($this->Model->ct->Env->frmt=='xml')
     header("Pragma: no-cache");
     header("Expires: 0");
 	echo $pagelayout;
-	die ;//clean exit
+	die;//clean exit
 }
 elseif($this->Model->ct->Env->frmt=='csv')
 {
@@ -117,7 +117,7 @@ elseif($this->Model->ct->Env->frmt=='csv')
     header("Expires: 0");
 
     echo chr(255).chr(254).mb_convert_encoding($pagelayout, 'UTF-16LE', 'UTF-8');
-    die ;//clean exit
+    die;//clean exit
 }
 elseif($this->Model->ct->Env->clean==1)
 {

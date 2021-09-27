@@ -888,6 +888,7 @@ class CustomtablesModelFields extends JModelAdmin
 		if($fieldid!=0)
 		{
 			$fieldrow=Fields::getFieldRow($fieldid);
+			
 			$ex_type=$fieldrow->type;
 			$ex_typeparams=$fieldrow->typeparams;
 			$realfieldname=$fieldrow->realfieldname;

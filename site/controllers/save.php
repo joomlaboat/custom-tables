@@ -99,7 +99,7 @@ function CustomTablesDelete($task,&$this_)
 			if ($clean == 1)
 			{
 				echo 'deleted';
-				die ;
+				die;
 			}
 			else
 				$this_->setRedirect($link,JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_DELETED'));
@@ -109,7 +109,7 @@ function CustomTablesDelete($task,&$this_)
 			if ($clean == 1)
 			{
 				echo 'error';
-				die ;
+				die;
 			}
 			else
 				$this_->setRedirect($link,JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_NOT_DELETED'));
@@ -195,7 +195,7 @@ function CustomTablesSave($task,&$this_)
 			if(JFactory::getApplication()->input->get('clean',0,'INT')==1)
 			{
 				echo 'saved';
-				die ;//clean exit
+				die;//clean exit
 			}
 			elseif($link!='')
 			{

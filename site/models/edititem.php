@@ -20,7 +20,6 @@ JTable::addIncludePath(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEP
 
 $site_libpath=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR;
 require_once($site_libpath.'layout.php');
-require_once($site_libpath.'logs.php');
 
 $libpath=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tagprocessor'.DIRECTORY_SEPARATOR;
 require_once($libpath.'valuetags.php');
@@ -1101,14 +1100,14 @@ class CustomTablesModelEditItem extends JModelLegacy
 				$listing_id=$row['listing_id'];
 			}
 
-
-			ESLogs::save($this->ct->Table->tableid,$listing_id,1);
+			$this->ct->Table->saveLog($listing_id,1);
 
 		}
 		else
 		{
 				$listing_id=$id;
-				ESLogs::save($this->ct->Table->tableid,$listing_id,2);
+
+				$this->ct->Table->saveLog($listing_id,2);
 
 				$query='SELECT '.$this->ct->Table->tablerow['query_selects'].' FROM '.$this->ct->Table->realtablename.' WHERE '.$this->ct->Table->realidfieldname.'='.$id.' LIMIT 1';
 				$db->setQuery( $query );
@@ -1120,7 +1119,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 					$row=$rows[0];
 					JFactory::getApplication()->input->set('listing_id',$row['listing_id']);
 
-					if($phponchangefound or $this->ct->Table->tablerow['tablecustomphp']!='')
+					if($phponchangefound or $this->ct->Table->tablerow['customphp']!='')
 						$this->doPHPonChange($row);
 						
 					if($phponaddfound and $isCopy)
@@ -1187,13 +1186,13 @@ class CustomTablesModelEditItem extends JModelLegacy
 		//Refresh menu if needed
 		$msg= $this->itemaddedtext;
 
-		if($this->ct->Table->tablerow['tablecustomphp']!='')
+		if($this->ct->Table->tablerow['customphp']!='')
 			$this->doCustomPHP($row,$row_old);
 
 		if($isDebug)
 		{
 			echo 'Debug mode.';
-			die ;//debug mode
+			die;//debug mode
 		}	
 		
 		$jinput->set('listing_id',(int)$listing_id);
@@ -1839,12 +1838,12 @@ class CustomTablesModelEditItem extends JModelLegacy
 			$this->updateMD5($id);
 
 			if($save_log==1)
-				ESLogs::save($this->ct->Table->tableid,(int)$id,10);
+				$this->ct->Table->saveLog((int)$id,10);
 
 			$this->updateDefaultValues($row);
 
 
-			if($this->ct->Table->tablerow['tablecustomphp']!='')
+			if($this->ct->Table->tablerow['customphp']!='')
 				$this->doCustomPHP($row, $row);
 
 		$create_new_user=null;
@@ -1917,9 +1916,9 @@ class CustomTablesModelEditItem extends JModelLegacy
 		$db->execute();	
 
 		if($status==1)
-			ESLogs::save($this->ct->Table->tableid,(int)$id,3);
+			$this->ct->Table->saveLog((int)$id,3);
 		else
-			ESLogs::save($this->ct->Table->tableid,(int)$id,4);
+			$this->ct->Table->saveLog((int)$id,4);
 
 		$this->RefreshSingleRecord((int)$id,0);
 
@@ -1933,7 +1932,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 		if(!file_exists($servertagprocessor_file))
 			return;
 			
-		$tablecustomphp = $this->ct->Table->tablerow['tablecustomphp'];
+		$tablecustomphp = $this->ct->Table->tablerow['customphp'];
 
 		if($tablecustomphp!='')
 		{
@@ -2117,7 +2116,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 		$db->setQuery($query);
 		$db->execute();
 
-		ESLogs::save($this->ct->Table->tableid,$objectid,5);
+		$this->ct->Table->saveLog((int)$objectid,5);
 
 		$new_row=array();
 		$this->doCustomPHP($new_row,$row);

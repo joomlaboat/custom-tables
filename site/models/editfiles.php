@@ -15,8 +15,6 @@ jimport('joomla.application.component.model');
 
 JTable::addIncludePath(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'tables');
 
-require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'logs.php');
-
 class CustomTablesModelEditFiles extends JModelLegacy
 {
 	var $ct;
@@ -175,7 +173,7 @@ class CustomTablesModelEditFiles extends JModelLegacy
 			}
 		}
 
-		ESLogs::save($this->ct->Table->tableid,$this->listing_id,9);
+		$this->ct->Table->saveLog($this->listing_id,9);
 
 		return true;
 	}
@@ -241,7 +239,7 @@ class CustomTablesModelEditFiles extends JModelLegacy
 
 		unlink($uploadedfile);
 
-		ESLogs::save($this->ct->Table->tableid,$this->listing_id,8);
+		$this->ct->Table->saveLog($this->listing_id,8);
 		return true;
 	}
 

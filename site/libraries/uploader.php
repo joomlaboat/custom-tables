@@ -30,11 +30,11 @@ class ESFileUploader
 
 	public static function getfile_SafeMIME($fileid)
 	{
-		$this->ct = new CT;
+		$ct = new CT;
 		
 		$jinput=JFactory::getApplication()->input;
 
-		if($this->ct->Env->advancedtagprocessor)
+		if($ct->Env->advancedtagprocessor)
 		{
 			//This will let PRO version users to upload zip files, please note that it will check if the file is zip or not (mime type).
 			//If not then regular Joomla input method will be used

@@ -54,7 +54,7 @@ class ESSearchBarClass
 		if($this->ct->Table->tablename=='')
 		{
 			echo 'Table not selected';
-			die ;
+			die;
 		}
 
 		$this->esinputbox= new ESSerachInputBox;

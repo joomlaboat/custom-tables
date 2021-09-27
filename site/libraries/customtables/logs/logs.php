@@ -1,20 +1,23 @@
 <?php
 /**
  * CustomTables Joomla! 3.x Native Component
+ * @package Custom Tables
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @license GNU/GPL
+ * @copyright Copyright (C) 2018-2021. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
+
+namespace CustomTables;
+
+use \Joomla\CMS\Factory;
 
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-JHTML::addIncludePath(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'helpers');
-
-class ESLogs
+trait Logs
 {
-
-	public static function save($tableid,$listing_id,$action)
+	public function saveLog($listing_id,$action)
 	{
 		// 1 - New
 		// 2 - Edit
@@ -26,18 +29,15 @@ class ESLogs
 		// 8 - File Uploaded
 		// 9 - File Deleted
 
-		$user = JFactory::getUser();
-		$userid = (int)$user->get('id');
-
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		$sets=array();
-		$sets[]=(int)$userid;
+		$sets[]=(int)$this->Env->userid;
 		$sets[]='NOW()';
-		$sets[]=(int)$tableid;
+		$sets[]=(int)$this->tableid;
 		$sets[]=(int)$listing_id;
 		$sets[]=(int)$action;
-		$sets[]=(int)JFactory::getApplication()->input->get('Itemid',0,'INT');
+		$sets[]=(int)Factory::getApplication()->input->get('Itemid',0,'INT');
 
 		$query = 'INSERT INTO #__customtables_log (userid,datetime,tableid,listingid,action,Itemid) VALUES ('.implode(',',$sets).')';
 

@@ -78,7 +78,7 @@ class CustomTablesViewFiles extends JViewLegacy
    
 		echo $content;
 
-		die ;//clean exit
+		die;//clean exit
 	}
 
 	function doCustomPHP($content,&$row)

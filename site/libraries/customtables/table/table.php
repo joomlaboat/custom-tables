@@ -20,6 +20,8 @@ use \ESFields;
 
 class Table
 {
+	use Logs;
+	
 	var $Languages;
 	var $Env;
 		

@@ -71,6 +71,6 @@ trait render_image
 		$IG->setInstructions('',false);
 		$obj=$IG->render(true,$obj);
 
-        die ;//clean exit
+        die;//clean exit
     }
 }

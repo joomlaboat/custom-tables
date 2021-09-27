@@ -32,7 +32,7 @@ switch ($task)
 			$link = str_replace('&task=publish', '', $link);
 			
 			$msg = ($count > 0 ? 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_PUBLISHED' : 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_NOT_PUBLISHED');
-			if($count) == 1)
+			if($count == 1)
 				$msg.='_1';
 			
 			$this->setRedirect($link, JoomlaBasicMisc::JTextExtended($msg,abs($count)));
@@ -59,7 +59,7 @@ switch ($task)
 			$link = str_replace('&task=unpublish', '', $link);
 			
 			$msg = ($count > 0 ? 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_UNPUBLISHED' : 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_NOT_UNPUBLISHED');
-			if($count) == 1)
+			if($count == 1)
 				$msg.='_1';
 			
 			$this->setRedirect($link, JoomlaBasicMisc::JTextExtended($msg,abs($count)));

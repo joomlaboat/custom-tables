@@ -46,6 +46,6 @@ class CustomTablesViewFileUploader extends JViewLegacy
         else
             echo ESFileUploader::uploadFile($fileid);
 
-		die ; //to stop rendering template and staff
+		die; //to stop rendering template and staff
 	}
 }

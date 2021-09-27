@@ -45,6 +45,14 @@ function CTLoader($inclide_utilities = false)
 	$path_datatypes = $path . DIRECTORY_SEPARATOR . 'layouts' . DIRECTORY_SEPARATOR;
 	require_once($path_datatypes.'layouts.php');
 	
+	
+	$path_datatypes = $path . 'logs' . DIRECTORY_SEPARATOR;
+	require_once($path_datatypes.'logs.php');
+	
+	
+	
+	
+	
 	$path_datatypes = $path . DIRECTORY_SEPARATOR . 'table' . DIRECTORY_SEPARATOR;
 	require_once($path_datatypes.'table.php');
 	
@@ -56,4 +64,9 @@ function CTLoader($inclide_utilities = false)
 	
 	$path_datatypes = $path . DIRECTORY_SEPARATOR . 'languages' . DIRECTORY_SEPARATOR;
 	require_once($path_datatypes.'languages.php');
+	
+	//$path_datatypes = $path . DIRECTORY_SEPARATOR . 'logs' . DIRECTORY_SEPARATOR;
+	//require_once($path_datatypes.'Logs.php');
+	
+
 }

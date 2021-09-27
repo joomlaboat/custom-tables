@@ -88,7 +88,7 @@ New Password: '.$password;
 		parent::display($tpl);
 
 		if($clean)
-			die ;//clean exit
+			die;//clean exit
 	}
 
 	/*

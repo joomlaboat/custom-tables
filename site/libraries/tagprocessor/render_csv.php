@@ -213,6 +213,6 @@ trait render_csv
 		@header("Expires: 0");
 
         echo chr(255).chr(254).mb_convert_encoding($result, 'UTF-16LE', 'UTF-8');
-        die ;//clean exit
+        die;//clean exit
     }
 }

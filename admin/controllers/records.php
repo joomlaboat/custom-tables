@@ -236,7 +236,7 @@ class CustomtablesControllerRecords extends JControllerForm
 		
 
 		$msg_='';
-
+		
 		if($this->task=='save2copy')
 			$saved=$editModel->copy($msg_, $link);
 		elseif($this->task=='save' or $this->task=='apply' or $this->task=='save2new')

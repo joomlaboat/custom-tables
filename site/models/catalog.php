@@ -21,7 +21,6 @@ $sitelib=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_cu
 require_once($sitelib.'layout.php');
 require_once($sitelib.'filtering.php');
 require_once($sitelib.'ordering.php');
-require_once($sitelib.'logs.php');
 
 class CustomTablesModelCatalog extends JModelLegacy
 {

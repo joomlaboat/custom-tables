@@ -1068,7 +1068,7 @@ class Fields
 		if($fieldid==0)
 			$fieldid=Factory::getApplication()->input->get('fieldid',0,'INT');
 
-		$query = 'SELECT '.Fields::getFieldRowSelects().' FROM #__customtables_fields AS s WHERE published=1 AND id='.$fieldid.' LIMIT 1';
+		$query = 'SELECT '.Fields::getFieldRowSelects().' FROM #__customtables_fields AS s WHERE id='.$fieldid.' LIMIT 1';//published=1 AND 
 
 		$db->setQuery( $query );
 		$rows = $db->loadObjectList();

@@ -54,7 +54,7 @@ function ct_getUploader(index,urlstr,maxFileSize,allowedTypes,UploaderForm,Submi
 		
 		//$(document).ready(function()
 		//{
-		
+
 		$("#"+FileUploaderBox).uploadFile({
 
 			url:urlstr,

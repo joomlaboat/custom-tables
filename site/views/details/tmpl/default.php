@@ -40,7 +40,7 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'co
 
 				echo mb_convert_encoding($results, 'UTF-16LE', 'UTF-8');
 
-				die ;//clean exit
+				die;//clean exit
 
 			}
 			elseif($this->Model->ct->Env->frmt=='xml')
@@ -57,7 +57,7 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'co
 			}
 
 	        echo $results;
-		die ;//clean exit
+		die;//clean exit
         }
 
 if ($this->Model->params->get( 'show_page_heading', 1 ) ) : ?>

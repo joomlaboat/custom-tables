@@ -1,3 +1,4 @@
+/*
 jQuery(function($) {
     "use strict";
 
@@ -24,6 +25,7 @@ jQuery(function($) {
             $input.prop('checked', true).trigger('change');
         });
 });
+*/
 
 function setTask(event, task, returnlink, submitForm) {
 
