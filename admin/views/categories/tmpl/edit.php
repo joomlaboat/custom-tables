@@ -66,13 +66,27 @@ else
 
 	<?php //echo JHtml::_('bootstrap.startTabSet', 'categoriesTab', array('active' => 'general')); ?>
 
-	<?php //echo JHtml::_('bootstrap.addTab', 'categoriesTab', 'general', JText::_('COM_CUSTOMTABLES_CATEGORIES_GENERAL', true)); ?>
+
+	<div class="row-fluid form-horizontal-desktop">
+			<div class="span12">
+
+				<div class="control-group">
+					<div class="control-label"><?php echo $this->form->getLabel('categoryname'); ?></div>
+					<div class="controls"><?php echo $this->form->getInput('categoryname'); ?></div>
+				</div>
+
+			</div>
+	</div>
+
+
+	<?php //echo JHtml::_('bootstrap.addTab', 'categoriesTab', 'general', JText::_('COM_CUSTOMTABLES_CATEGORIES_GENERAL', true));
+	/*  
 		<div class="row-fluid form-horizontal-desktop">
 			<div class="span12">
 				<?php echo JLayoutHelper::render('categories.general_left', $this); ?>
 			</div>
 		</div>
-	<?php //echo JHtml::_('bootstrap.endTab'); ?>
+	 */ //echo JHtml::_('bootstrap.endTab'); ?>
 
 	<?php //echo JHtml::_('bootstrap.endTabSet'); ?>
 

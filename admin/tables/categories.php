@@ -24,7 +24,7 @@ class CustomtablesTableCategories extends JTable
 {
    	var $id = null;
     	var $categoryname = null;
-	var $asset_id = null;
+	//var $asset_id = null;
 	
 	/**
 	 * Constructor
