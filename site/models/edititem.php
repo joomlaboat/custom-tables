@@ -1660,7 +1660,9 @@ class CustomTablesModelEditItem extends JModelLegacy
 						
 						$LayoutProc->layout=$thescript;
 
-						$thescript='return '.LayoutProcessor::applyContentPlugins($LayoutProc->fillLayout($row,'',array(),'[]',true)).';';
+						//function fillLayout($row,$aLink=null,$toolbar=array(),$tag_chars='[]',$disable_advanced_tags=false,$add_label=false,$fieldNamePrefix='comes_')
+						$htmlresult = $LayoutProc->fillLayout($row,'',array(),'[]',true);
+						$thescript='return '.LayoutProcessor::applyContentPlugins($htmlresult).';';
 				
 						try
 						{
@@ -1939,7 +1941,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 		return 1;
 	}
 
-	function doCustomPHP(&$row=array(),&$row_old=array())
+	function doCustomPHP(&$row,&$row_old)
 	{
 		$servertagprocessor_file=JPATH_SITE.DIRECTORY_SEPARATOR.'plugins'.DIRECTORY_SEPARATOR.'content'.DIRECTORY_SEPARATOR.'customtables'.DIRECTORY_SEPARATOR.'protagprocessor'.DIRECTORY_SEPARATOR.'servertags.php';
 
