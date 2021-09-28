@@ -25,7 +25,7 @@ jimport('joomla.application.component.modellist');
 class CustomtablesModelListofRecords extends JModelList
 {
 	var $ct;
-	var $tableid;
+	//var $tableid;
 
 	public function __construct($config = array())
 	{
@@ -36,10 +36,21 @@ class CustomtablesModelListofRecords extends JModelList
 			$config['filter_fields'] = array(
 				'a.id','id',
 				'a.published','published',
-				'a.tableid','tableid'
+				//'a.tableid','tableid'
 			);
 		}
 		parent::__construct($config);
+		
+		
+		$jinput=JFactory::getApplication()->input;
+
+		$this->ct->getTable($jinput->getInt('tableid',0), null);
+		
+		if($this->ct->Table->tablename=='')
+		{
+			JFactory::getApplication()->enqueueMessage('Table not selected.', 'error');
+			return;
+		}
 	}
 	
 	/**
@@ -49,21 +60,20 @@ class CustomtablesModelListofRecords extends JModelList
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
-		//$app = JFactory::getApplication();
-		//$jinput=$app->input;
-		/*
-		// Adjust the context to support modal layouts.
-		if ($layout = $jinput->get('layout'))
-			$this->context .= '.' . $layout;
+		if($this->ct->Env->version < 4)
+		{
+			//$tableid = $this->getUserStateFromRequest($this->context . '.filter.tableid', 'filter_tableid');
+			//$this->setState('filter.tableid', $tableid);
+
+			//$sorting = $this->getUserStateFromRequest($this->context . '.filter.sorting', 'filter_sorting', 0, 'int');
+			//$this->setState('filter.sorting', $sorting);
+
+			$search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
+			$this->setState('filter.search', $search);
 		
-		$published = $this->getUserStateFromRequest($this->context . '.filter.published', 'filter_published', '');
-		$this->setState('filter.published', $published);
-		*/
-		
-		//$tableid = $this->getUserStateFromRequest($this->context . '.filter.tableid', 'filter_tableid');
-		//$this->setState('filter.tableid', $tableid);
-		
-		//$jinput->set('tableid',$tableid);
+			$published = $this->getUserStateFromRequest($this->context . '.filter.published', 'filter_published', '');
+			$this->setState('filter.published', $published);
+		}
 		
 		$this->setState('params', ComponentHelper::getParams('com_customtables'));
 
@@ -94,22 +104,7 @@ class CustomtablesModelListofRecords extends JModelList
 	
 	protected function getListQuery()
 	{
-		$jinput=JFactory::getApplication()->input;
-
-		$this->ct->getTable($jinput->getCmd('tablename',0), null);
-		
-		if($this->ct->Table->tablename=='')
-		{
-			JFactory::getApplication()->enqueueMessage('Table not selected.', 'error');
-			return;
-		}
-		
-		if(!is_array($this->ct->Table->tablerow))
-		{
-			$this->setError('Table not found.');
-			return null;
-		}
-		
+		//echo 'sssssssss';
 		// Get the user object.
 		$user = JFactory::getUser();
 		// Create a new query object.
@@ -122,10 +117,10 @@ class CustomtablesModelListofRecords extends JModelList
 			$query_selects='a.*, a.id as listing_id, 1 AS listing_published';
 
 		$query->select($query_selects);
+		//$query->select($this->ct->Table->tablerow['query_selects']);
 
 		// From the customtables_item table
 		$query->from($db->quoteName($this->ct->Table->realtablename, 'a'));
-		
 		
 		$wheres_and = [];
 		// Filter by published state
@@ -187,7 +182,7 @@ class CustomtablesModelListofRecords extends JModelList
 		// Compile the store id.
 		$id .= ':' . $this->getState('filter.id');
 		$id .= ':' . $this->getState('filter.published');
-		$id .= ':' . $this->getState('filter.tableid');
+		//$id .= ':' . $this->getState('filter.tableid');
 
 		return parent::getStoreId($id);
 	}

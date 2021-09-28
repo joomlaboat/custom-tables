@@ -14,6 +14,7 @@ defined('_JEXEC') or die('Restricted access');
 jimport('joomla.application.component.modellist');
 
 use CustomTables\CT;
+use CustomTables\DataTypes;
 
 use Joomla\CMS\Component\ComponentHelper;
 
@@ -33,7 +34,7 @@ class CustomtablesModelListoffields extends JModelList
 			$config['filter_fields'] = array(
 				'a.id','id',
 				'a.published','published',
-				'a.tableid','tableid',
+				//'a.tableid','tableid',
 				'a.fieldname','fieldname',
 				'a.type','type'
 			);
@@ -51,45 +52,25 @@ class CustomtablesModelListoffields extends JModelList
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
-		/*
-		$app = JFactory::getApplication();
-		
-		// Adjust the context to support modal layouts.
-		if ($layout = $app->input->get('layout'))
+		if($this->ct->Env->version < 4)
 		{
-			$this->context .= '.' . $layout;
+			$search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
+			$this->setState('filter.search', $search);
+			
+			
+			//$tableid = $this->getUserStateFromRequest($this->context . '.filter.tableid', 'filter_tableid');
+			//$app = JFactory::getApplication();
+			//$this->tableid=$jinput->get->getInt('tableid',0);
+			
+			//$this->setState('filter.tableid', $tableid);
+			
+			
+			$type = $this->getUserStateFromRequest($this->context . '.filter.type', 'filter_type');
+			$this->setState('filter.type', $type);
+			
+			$published = $this->getUserStateFromRequest($this->context . '.filter.published', 'filter_published', '');
+			$this->setState('filter.published', $published);
 		}
-		//$fieldtitle = $this->getUserStateFromRequest($this->context . '.filter.fieldtitle', 'filter_fieldtitle');
-		//$this->setState('filter.fieldtitle', $fieldtitle);
-		
-		//Important for Joomla 3
-
-		$type = $this->getUserStateFromRequest($this->context . '.filter.type', 'filter_type');
-		$this->setState('filter.type', $type);
-		
-		$tableid = $this->getUserStateFromRequest($this->context . '.filter.tableid', 'filter_tableid');
-		$this->setState('filter.tableid', $tableid);
-        
-		$sorting = $this->getUserStateFromRequest($this->context . '.filter.sorting', 'filter_sorting', 0, 'int');
-		$this->setState('filter.sorting', $sorting);
-        
-		//$access = $this->getUserStateFromRequest($this->context . '.filter.access', 'filter_access', 0, 'int');
-		//$this->setState('filter.access', $access);
-        
-		$search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
-		$this->setState('filter.search', $search);
-
-		$published = $this->getUserStateFromRequest($this->context . '.filter.published', 'filter_published', '');
-		$this->setState('filter.published', $published);
-        
-		//$created_by = $this->getUserStateFromRequest($this->context . '.filter.created_by', 'filter_created_by', '');
-		//$this->setState('filter.created_by', $created_by);
-
-		//$created = $this->getUserStateFromRequest($this->context . '.filter.created', 'filter_created');
-		//$this->setState('filter.created', $created);
-
-		//$jinput->set('tableid',$tableid);
-		*/
 		
 		$this->setState('params', ComponentHelper::getParams('com_customtables'));
 		
@@ -106,6 +87,9 @@ class CustomtablesModelListoffields extends JModelList
 	{ 
 		// load parent items
 		$items = parent::getItems(); 
+		
+		$translations = DataTypes::fieldTypeTranslation();
+		$isrequiredTranslation = DataTypes::isrequiredTranslation();
 
 		// set selection value to a translatable value
 		if (CustomtablesHelper::checkArray($items))
@@ -113,9 +97,20 @@ class CustomtablesModelListoffields extends JModelList
 			foreach ($items as $nr => &$item)
 			{
 				// convert type
-				$item->type = $this->selectionTranslation($item->type, 'type');
+				if(isset($translations[$item->type]))
+				{
+					$item->type = $translations[$item->type];
+				}
+				else
+				{
+					$item->type = '<span style="color:red;">NOT SELECTED</span>';
+				}
+				
 				// convert isrequired
-				$item->isrequired = $this->selectionTranslation($item->isrequired, 'isrequired');
+				if(isset($isrequiredTranslation[$item->isrequired]))
+				{
+					$item->isrequired = $isrequiredTranslation[$item->isrequired];
+				}
 			}
 		}
  
@@ -124,81 +119,6 @@ class CustomtablesModelListoffields extends JModelList
 		return $items;
 	}
 
-	/**
-	 * Method to convert selection values to translatable string.
-	 *
-	 * @return translatable string
-	 */
-	public function selectionTranslation($value,$name)
-	{
-		// Array of type language strings
-		if ($name === 'type')
-		{
-			$typeArray = array(
-				'string' => 'COM_CUSTOMTABLES_FIELDS_STRING',
-				'multilangstring' => 'COM_CUSTOMTABLES_FIELDS_MULTILANGSTRING',
-				'text' => 'COM_CUSTOMTABLES_FIELDS_TEXTTEXT',
-				'multilangtext' => 'COM_CUSTOMTABLES_FIELDS_MULTILANGTEXT',
-				'int' => 'COM_CUSTOMTABLES_FIELDS_INTEGER',
-				'float' => 'COM_CUSTOMTABLES_FIELDS_FLOAT',
-				'customtables' => 'COM_CUSTOMTABLES_FIELDS_EXTRA_SEARCH',
-				'records' => 'COM_CUSTOMTABLES_FIELDS_MULTI_SQL_JOIN',
-				'checkbox' => 'COM_CUSTOMTABLES_FIELDS_CHECKBOX',
-				'radio' => 'COM_CUSTOMTABLES_FIELDS_RADIO_BUTTONS',
-				'email' => 'COM_CUSTOMTABLES_FIELDS_EMAIL',
-				'url' => 'COM_CUSTOMTABLES_FIELDS_URL',
-				'date' => 'COM_CUSTOMTABLES_FIELDS_DATE',
-				'time' => 'COM_CUSTOMTABLES_FIELDS_TIME',
-				'image' => 'COM_CUSTOMTABLES_FIELDS_IMAGE',
-				'imagegallery' => 'COM_CUSTOMTABLES_FIELDS_IMAGE_GALLERY',
-				'filebox' => 'COM_CUSTOMTABLES_FIELDS_FILE_BOX',
-				'file' => 'COM_CUSTOMTABLES_FIELDS_FILE',
-				'filelink' => 'COM_CUSTOMTABLES_FIELDS_FILE_LINK',
-				'creationtime' => 'COM_CUSTOMTABLES_FIELDS_AUTO_CREATION_DATE_TIME',
-				'changetime' => 'COM_CUSTOMTABLES_FIELDS_AUTO_CHANGE_DATE_TIME',
-				'lastviewtime' => 'COM_CUSTOMTABLES_FIELDS_AUTO_LAST_VIEW_DATE_TIME',
-				'viewcount' => 'COM_CUSTOMTABLES_FIELDS_AUTO_VIEW_COUNT',
-				'userid' => 'COM_CUSTOMTABLES_FIELDS_AUTO_AUTHOR_USER_ID',
-				'user' => 'COM_CUSTOMTABLES_FIELDS_USER',
-				'server' => 'COM_CUSTOMTABLES_FIELDS_SERVER',
-				'alias' => 'COM_CUSTOMTABLES_FIELDS_ALIAS',
-				'color' => 'COM_CUSTOMTABLES_FIELDS_COLOR',
-				'id' => 'COM_CUSTOMTABLES_FIELDS_AUTO_ID',
-				'phponadd' => 'COM_CUSTOMTABLES_FIELDS_PHP_ONADD_SCRIPT',
-				'phponchange' => 'COM_CUSTOMTABLES_FIELDS_PHP_ONCHANGE_SCRIPT',
-				'phponview' => 'COM_CUSTOMTABLES_FIELDS_PHP_ONVIEW_SCRIPT',
-				'sqljoin' => 'COM_CUSTOMTABLES_FIELDS_SQL_JOIN',
-				'googlemapcoordinates' => 'COM_CUSTOMTABLES_FIELDS_GOOGLE_MAP_COORDINATES',
-				'dummy' => 'COM_CUSTOMTABLES_FIELDS_DUMMY_USED_FOR_TRANSLATION',
-				'article' => 'COM_CUSTOMTABLES_FIELDS_ARTICLE_LINK',
-				'multilangarticle' => 'COM_CUSTOMTABLES_FIELDS_MULTILINGUAL_ARTICLE',
-				'md5' => 'COM_CUSTOMTABLES_FIELDS_MDFIVE_HASH',
-				'log' => 'COM_CUSTOMTABLES_FIELDS_MODIFICATION_LOG',
-				'usergroup' => 'COM_CUSTOMTABLES_FIELDS_USER_GROUP',
-				'usergroups' => 'COM_CUSTOMTABLES_FIELDS_USER_GROUPS'
-			);
-			// Now check if value is found in this array
-			if (isset($typeArray[$value]) && CustomtablesHelper::checkString($typeArray[$value]))
-			{
-				return $typeArray[$value];
-			}
-		}
-		// Array of isrequired language strings
-		if ($name === 'isrequired')
-		{
-			$isrequiredArray = array(
-				1 => 'COM_CUSTOMTABLES_FIELDS_YES',
-				0 => 'COM_CUSTOMTABLES_FIELDS_NO'
-			);
-			// Now check if value is found in this array
-			if (isset($isrequiredArray[$value]) && CustomtablesHelper::checkString($isrequiredArray[$value]))
-			{
-				return $isrequiredArray[$value];
-			}
-		}
-		return $value;
-	}
-	
 	/**
 	 * Method to build an SQL query to load the list data.
 	 *
@@ -209,7 +129,7 @@ class CustomtablesModelListoffields extends JModelList
 	{
 		$jinput = JFactory::getApplication()->input;
 		$this->tableid=$jinput->getInt('tableid',0);
-		
+		/*
 		$state_tableid=(int)$this->getState('filter.tableid');
 	
 		if($state_tableid!=0)// and $tableid==0)
@@ -226,7 +146,7 @@ class CustomtablesModelListoffields extends JModelList
 		{
 			$this->tableid=0;
 		}
-		
+		*/
 		//-0---------------------------------------------
 		
 		
@@ -310,7 +230,7 @@ class CustomtablesModelListoffields extends JModelList
 		$id .= ':' . $this->getState('filter.search');
 		$id .= ':' . $this->getState('filter.published');
 		$id .= ':' . $this->getState('filter.ordering');
-		$id .= ':' . $this->getState('filter.tableid');
+		//$id .= ':' . $this->getState('filter.tableid');
 		$id .= ':' . $this->getState('filter.fieldname');
 		$id .= ':' . $this->getState('filter.type');
 		

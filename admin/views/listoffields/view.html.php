@@ -106,7 +106,7 @@ class CustomtablesViewListoffields extends JViewLegacy
 			if($this->ct->Env->version < 4)
 			{
 				$this->addToolbar_3();
-				//$this->sidebar = JHtmlSidebar::render();
+				$this->sidebar = JHtmlSidebar::render();
 			}
 			else
 				$this->addToolbar_4();
@@ -237,22 +237,6 @@ class CustomtablesViewListoffields extends JViewLegacy
 				JToolBarHelper::checkin('listoffields.checkin');
 			}
 
-			// Add a batch button
-			/*
-			if ($this->canBatch && $this->canCreate && $this->canEdit && $this->canState)
-			{
-				// Get the toolbar object instance
-				$bar = JToolBar::getInstance('toolbar');
-				// set the batch button name
-				$title = JText::_('JTOOLBAR_BATCH');
-				// Instantiate a new JLayoutFile instance and render the batch button
-				$layout = new JLayoutFile('joomla.toolbar.batch');
-				// add the button to the page
-				$dhtml = $layout->render(array('title' => $title));
-				$bar->appendButton('Custom', $dhtml, 'batch');
-			}
-			*/
-
 			if ($this->state->get('filter.published') == -2 && ($this->canState && $this->canDelete))
 			{
 				JToolbarHelper::deleteList('', 'listoffields.delete', 'JTOOLBAR_EMPTY_TRASH');
@@ -263,15 +247,6 @@ class CustomtablesViewListoffields extends JViewLegacy
 			}
 		}
 
-		// set help url for this view if found
-		/*
-		$help_url = CustomtablesHelper::getHelpUrl('listoffields');
-		if (CustomtablesHelper::checkString($help_url))
-		{
-			JToolbarHelper::help('COM_CUSTOMTABLES_HELP_MANAGER', false, $help_url);
-		}
-		*/
-
 		// add the options comp button
 		if ($this->canDo->get('core.admin') || $this->canDo->get('core.options'))
 		{
@@ -280,36 +255,27 @@ class CustomtablesViewListoffields extends JViewLegacy
 
 		if ($this->canState)
 		{
+			/*
 			JHtmlSidebar::addFilter(
 				JText::_('JOPTION_SELECT_PUBLISHED'),
 				'filter_published',
 				JHtml::_('select.options', JHtml::_('jgrid.publishedOptions'), 'value', 'text', $this->state->get('filter.published'), true)
 			);
-			// only load if batch allowed
-			/*
-			if ($this->canBatch)
-			{
-				JHtmlBatch_::addListSelection(
-					JText::_('COM_CUSTOMTABLES_KEEP_ORIGINAL_STATE'),
-					'batch[published]',
-					JHtml::_('select.options', JHtml::_('jgrid.publishedOptions', array('all' => false)), 'value', 'text', '', true)
-				);
-			}
 			*/
-		}
+			
+			$CTJStatus = JFormHelper::loadFieldType('CTJStatus', false);
+			$CTJStatusOptions=$CTJStatus->getOptions(false); // works only if you set your field getOptions on public!!
 
-		/*
-		if ($this->canBatch && $this->canCreate && $this->canEdit)
-		{
-			JHtmlBatch_::addListSelection(
-				JText::_('COM_CUSTOMTABLES_KEEP_ORIGINAL_ACCESS'),
-				'batch[access]',
-				JHtml::_('select.options', JHtml::_('access.assetgroups'), 'value', 'text')
-			);
+
+			JHtmlSidebar::addFilter(
+				JText::_('JOPTION_SELECT_PUBLISHED'),
+				'filter_published',
+				JHtml::_('select.options', $CTJStatusOptions, 'value', 'text', $this->state->get('filter.published'))
+				);
 		}
-		*/
 
 		// Set Type Selection
+		/*
 		$this->typeOptions = $this->getTheTypeSelections();
 		if ($this->typeOptions)
 		{
@@ -319,45 +285,31 @@ class CustomtablesViewListoffields extends JViewLegacy
 				'filter_type',
 				JHtml::_('select.options', $this->typeOptions, 'value', 'text', $this->state->get('filter.type'))
 			);
-
-			/*
-			if ($this->canBatch && $this->canCreate && $this->canEdit)
-			{
-				// Type Batch Selection
-				JHtmlBatch_::addListSelection(
-					'- Keep Original '.JText::_('COM_CUSTOMTABLES_FIELDS_TYPE_LABEL').' -',
-					'batch[type]',
-					JHtml::_('select.options', $this->typeOptions, 'value', 'text')
-				);
-			}
-			*/
 		}
+		*/
+		
+		$CTField = JFormHelper::loadFieldType('CTField', false);
+			$CTFieldOptions=$CTField->getOptions(false); // works only if you set your field getOptions on public!!
 
-		// Set Tableid Selection
-		$this->tableidOptions = $this->getTheTableidSelections();
-
-
-		if ($this->tableidOptions)
-		{
-			// Tableid Filter
-			JHtmlSidebar::addFilter(
-				'- Select '.JText::_('COM_CUSTOMTABLES_FIELDS_TABLE_LABEL').' -',
-				'filter_tableid',
-				JHtml::_('select.options', $this->tableidOptions, 'value', 'text', $this->state->get('filter.tableid'))
+		JHtmlSidebar::addFilter(
+			'- Select '.JText::_('COM_CUSTOMTABLES_FIELDS_TYPE_LABEL').' -',
+			'filter_type',
+			JHtml::_('select.options', $CTFieldOptions, 'value', 'text', $this->state->get('filter.type'))
 			);
 
-			/*
-			if ($this->canBatch && $this->canCreate && $this->canEdit)
-			{
-				// Tableid Batch Selection
-				JHtmlBatch_::addListSelection(
-					'- Keep Original '.JText::_('COM_CUSTOMTABLES_FIELDS_TABLE_LABEL').' -',
-					'batch[tableid]',
-					JHtml::_('select.options', $this->tableidOptions, 'value', 'text')
-				);
-			}
-			*/
-		}
+		// Set Tableid Selection
+		/*
+		$CTTable = JFormHelper::loadFieldType('CTTable', false);
+		$CTTableOptions=$CTTable->getOptions(false); // works only if you set your field getOptions on public!!
+
+		JHtmlSidebar::addFilter(
+		JText::_('COM_CUSTOMTABLES_LAYOUTS_TABLEID_SELECT'),
+		'filter_tableid',
+		JHtml::_('select.options', $CTTableOptions, 'value', 'text', $this->state->get('filter.tableid'))
+		);
+		
+		$this->tableidOptions = $this->getTheTableidSelections();
+		*/
 	}
 
 	/**
@@ -397,7 +349,6 @@ class CustomtablesViewListoffields extends JViewLegacy
 	 *
 	 * @return  array  Array containing the field name to sort by as the key and display text as value
 	 */
-	 
 
 	protected function getSortFields()
 	{
@@ -441,38 +392,6 @@ class CustomtablesViewListoffields extends JViewLegacy
 				$text = $model->selectionTranslation($type,'type');
 				// Now add the type and its text to the options array
 				$_filter[] = JHtml::_('select.option', $type, JText::_($text));
-			}
-			return $_filter;
-		}
-		return false;
-	}
-
-	protected function getTheTableidSelections()
-	{
-		// Get a db connection.
-		$db = JFactory::getDbo();
-
-		// Create a new query object.
-		$query = $db->getQuery(true);
-
-		// Select the text.
-		$query->select($db->quoteName(array('id','tabletitle')));
-		$query->from('#__customtables_tables');
-		$query->order($db->quoteName('tabletitle') . ' ASC');
-
-		// Reset the query using our newly populated query object.
-		$db->setQuery($query);
-
-		$results = $db->loadObjectList();
-
-		if ($results)
-		{
-			//$results = array_unique($results);
-			$_filter = array();
-			foreach ($results as $result)
-			{
-				// Now add the tableid and its text to the options array
-				$_filter[] = JHtml::_('select.option', $result->id, $result->tabletitle);
 			}
 			return $_filter;
 		}

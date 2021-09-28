@@ -309,7 +309,6 @@ class CustomtablesViewListoftables extends JViewLegacy
 	 */
 	protected function getSortFields()
 	{
-					//'a.sorting' => JText::_('JGRID_HEADING_ORDERING'),
 		return array(
 			'a.published' => JText::_('JSTATUS'),
 			'a.tablename' => JText::_('COM_CUSTOMTABLES_TABLES_TABLENAME_LABEL'),

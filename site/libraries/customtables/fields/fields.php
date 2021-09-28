@@ -1000,7 +1000,7 @@ class Fields
 	{
 		$db = Factory::getDBO();
 
-		if($PureFieldType=='_id')
+		if($fieldname=='id')
 		{
 			$constrances = Fields::getTableConstrances($realtablename,'');
 			
@@ -1013,14 +1013,14 @@ class Fields
 			}
 
 			$query='ALTER TABLE '.$realtablename.' CHANGE id id INT UNSIGNED NOT NULL AUTO_INCREMENT';
-			
+
 			$db->setQuery( $query );
 			$db->execute();
 			
 			$msg='';
 			return true;
 		}
-		elseif($PureFieldType=='_published')
+		elseif($fieldname=='published')
 			$query='ALTER TABLE '.$realtablename.' CHANGE published published TINYINT NOT NULL DEFAULT 1';
 		else
 			$query='ALTER TABLE '.$realtablename.' CHANGE '.$fieldname.' '.$fieldname.' '.$PureFieldType;

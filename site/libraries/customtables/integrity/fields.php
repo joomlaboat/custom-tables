@@ -198,7 +198,13 @@ class IntegrityFields extends \CustomTables\IntegrityChecks
 							$real_field_name=$found_field;
 						
 						if(Fields::fixMYSQLField($ct->Table->realtablename,$real_field_name,$PureFieldType,$msg))
+						{
 							$result.='<p>Field <span style="color:green;">'.$nice_field_name.'</span> fixed.</p>';
+						}
+						else
+						{
+							Factory::getApplication()->enqueueMessage($msg,'error');
+						}
 					
 						if($msg!='')
 							$result.=$msg;
@@ -315,13 +321,43 @@ class IntegrityFields extends \CustomTables\IntegrityChecks
 		}
 			
 		if(($existing->is_nullable == 'YES') != $projected->is_nullable)
+		{
+			echo '$existing:<br/>';
+			print_r($existing);
+			echo '$projected:<br/>';
+			print_r($projected);
+					
 			return false;
+		}
 			
-		if(($existing->is_unsigned == 'YES') != $projected->is_unsigned)
-			return false;
+		if($projected->is_unsigned !== null)
+		{
+			if(($existing->is_unsigned == 'YES') != $projected->is_unsigned)
+			{
+				if($existing->column_name !='id')
+				{
+					echo '$existing:<br/>';
+					print_r($existing);
+					echo '$projected:<br/>';
+					print_r($projected);
+					echo 'UNSIGNED';
+					//die;
+				}
+				return false;
+			}
+		}
 		
-		if($existing->column_default != $projected->default)
+		if($projected->default !== null and $existing->column_default != $projected->default)
+		{
+			echo '$existing:<br/>';
+			print_r($existing);
+			echo '$projected:<br/>';
+			print_r($projected);
+			echo 'DEFAULT';
+			die;
+					
 			return false;		
+		}
 			
 		if($existing->extra != $projected->extra)
 			return false;		

@@ -27,7 +27,7 @@ $edit = "index.php?option=com_customtables&view=listofrecords&task=records.edit"
 			$item_array =  (array) $item;
 			$result='';
 			
-			$link=JURI::root(false).'administrator/index.php?option=com_customtables&view=records&task=records.edit&tableid='.$this->tableid.'&id='.$item->id;
+			$link=JURI::root(false).'administrator/index.php?option=com_customtables&view=records&task=records.edit&tableid='.$this->ct->Table->tableid.'&id='.$item->id;
 			
 			foreach($this->tablefields as $field)
 			{
@@ -42,7 +42,7 @@ $edit = "index.php?option=com_customtables&view=listofrecords&task=records.edit"
 			echo $result;
 			?>
 
-		<?php if($this->published_field_found): ?>
+		<?php if($this->ct->Table->published_field_found): ?>
 		<td class="center">
 			<?php if ($this->canState) : ?>
 					<?php echo JHtml::_('jgrid.published', $item->published, $i, 'listofrecords.', true, 'cb'); ?>

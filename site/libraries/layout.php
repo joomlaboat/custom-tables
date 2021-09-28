@@ -63,7 +63,6 @@ class LayoutProcessor
 
 	function fillLayout($row,$aLink=null,$toolbar=array(),$tag_chars='[]',$disable_advanced_tags=false,$add_label=false,$fieldNamePrefix='comes_')
 	{
-
 		if(!is_array($toolbar) or count($toolbar)==0)
 			$toolbar=$this->toolbar_array;
 

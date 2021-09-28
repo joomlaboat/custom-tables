@@ -13,6 +13,9 @@ use CustomTables\CT;
 use CustomTables\Fields;
 use CustomTables\Layouts;
 use CustomTables\DataTypes\Tree;
+use CustomTables\CustomPHP\CleanExecute;
+
+use \Joomla\CMS\Factory;
 
 jimport('joomla.application.component.model');
 
@@ -29,6 +32,8 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'co
 
 class CustomTablesModelEditItem extends JModelLegacy
 {
+	
+	
 	var $ct;
 	
 	var $itemaddedtext;
@@ -586,7 +591,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 				//example: user
 				//check if the record belong to the current user
 				$user_field_row=Fields::FieldRowByName($field,$this->ct->Table->fields);
-				$wheres_owner[]=[$item[0],'c.'.$user_field_row['realfieldname'].'='.$this->$this->ct->Env->userid];
+				$wheres_owner[]=[$item[0],'c.'.$user_field_row['realfieldname'].'='.$this->ct->Env->userid];
 			}
 			else
 			{
@@ -693,7 +698,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 		$db = JFactory::getDBO();
 		$wheres=$this->UserIDField_BuildWheres($useridfield);
 		
-		$query='SELECT c.'.$this->ct->Table->realidfieldname.' FROM '.$this->realtablename.' AS c WHERE '.implode(' AND ',$wheres).' LIMIT 1';
+		$query='SELECT c.'.$this->ct->Table->realidfieldname.' FROM '.$this->ct->Table->realtablename.' AS c WHERE '.implode(' AND ',$wheres).' LIMIT 1';
 
 		$db->setQuery( $query );
 		$db->execute();
@@ -1233,10 +1238,19 @@ class CustomTablesModelEditItem extends JModelLegacy
 			
 		$row=$this->getListingRowByID($listing_id);
 		$parsed_condition=$this->parseRowLayoutContent($row,$condition,true);
-		$thescript='return '.$parsed_condition.';';
-		$value=eval($thescript);
+		
+		$parsed_condition = '('.$parsed_condition.' ? 1 : 0)';
 
-		if($value==1)
+		$error = '';
+		$value = CleanExecute::execute($parsed_condition,$error);
+		
+		if($error!='')
+		{
+			Factory::getApplication()->enqueueMessage($error,'error');
+			return false;
+		}
+
+		if((int)$value==1)
 			return true;
 
 		return false;

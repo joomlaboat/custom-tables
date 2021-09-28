@@ -42,7 +42,7 @@ HTMLHelper::_('behavior.multiselect');
 				<?php else : ?>
 				
 					<?php
-						$result = IntegrityChecks::check($this->ct);
+						$result = IntegrityChecks::check($this->ct,true,false);
 	
 						if(count($result)>0)
 							echo '<ol><li>'.implode('</li><li>',$result).'</li></ol>';

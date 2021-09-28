@@ -26,7 +26,7 @@ defined('_JEXEC') or die('Restricted access');
 			$item_array =  (array) $item;
 			$result='';
 			
-			$link=JURI::root(false).'administrator/index.php?option=com_customtables&view=records&task=records.edit&tableid='.$this->tableid.'&id='.$item->id;
+			$link=JURI::root(false).'administrator/index.php?option=com_customtables&view=records&task=records.edit&tableid='.$this->ct->Table->tableid.'&id='.$item->id;
 			
 			foreach($this->tablefields as $field)
 			{
@@ -38,7 +38,8 @@ defined('_JEXEC') or die('Restricted access');
 		
 			echo $this->processRecord($item_array,$result);
 		?>
-				
+		
+		<?php if($this->ct->Table->published_field_found): ?>
 		<td class="text-center btns d-none d-md-table-cell">
 		<?php if ($this->canState) : ?>
 			<?php echo JHtml::_('jgrid.published', $item->published, $i, 'listofrecords.', true, 'cb'); ?>
@@ -46,6 +47,9 @@ defined('_JEXEC') or die('Restricted access');
 			<?php echo JHtml::_('jgrid.published', $item->published, $i, 'listofrecords.', false, 'cb'); ?>
 		<?php endif; ?>
 		</td>
+		<?php endif; ?>
+		
+		
 		<td class="d-none d-md-table-cell">
 			<?php echo $item->id; ?>
 		</td>

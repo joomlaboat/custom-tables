@@ -38,36 +38,42 @@ class CustomtablesViewListofrecords extends JViewLegacy
 	 */
 	var $ct;
 	 
-	var $tableid;
-	var $tablename;
-	var $realtablename;
-	var $published_field_found;
+	//v//ar $tableid;
+	//var $tablename;
+	//var $realtablename;
+	//var $published_field_found;
 	
-	var $tabletitle;
+	//var $tabletitle;
 
 	var $tablefields;
 	
 
 	function display($tpl = null)
 	{
-		$this->ct = new CT;
-		
-		$app = JFactory::getApplication();
-		$this->tablename="";
-		$this->realtablename="";
-		$this->tabletitle="";
-		$this->tablefields=array();
-		
 		if ($this->getLayout() !== 'modal')
 		{
 			// Include helper submenu
 			CustomtablesHelper::addSubmenu('listofrecords');
 		}
+		
+		//$this->ct = new CT;
+		$model = $this->getModel();
+		$this->ct = $model->ct;
+		
+		$app = JFactory::getApplication();
+		//$this->tablename="";
+		//$this->realtablename="";
+		//$this->tabletitle="";
+		$this->tablefields=array();
+		
+		
+		$this->state = $this->get('State');
+		/*
 
 		// Assign Table ID State
 		$jinput=$app->input;
 		$this->tableid=$jinput->get->getInt('tableid',0);
-		$this->state = $this->get('State');
+		
 		
 		if($this->tableid==0)// and $tableid==0)
 		{
@@ -90,7 +96,7 @@ class CustomtablesViewListofrecords extends JViewLegacy
 			{
 				$this->tablename=$table->tablename;
 				$this->tabletitle=$table->tabletitle;
-				$this->tablefields=Fields::getFields($this->tableid);
+				
 				
 				$this->published_field_found=true;
 				if($table->customtablename !='')
@@ -106,10 +112,12 @@ class CustomtablesViewListofrecords extends JViewLegacy
 		}
 		
 		$jinput->set('tablename',$this->tablename);
+		*/
+		$this->tablefields=Fields::getFields($this->ct->Table->tableid);
 
 		$this->items = $this->get('Items');
-		$this->pagination = $this->get('Pagination');
 		
+		$this->pagination = $this->get('Pagination');
 		$this->user = JFactory::getUser();
 		
 		if($this->ct->Env->version >= 4)
@@ -117,7 +125,6 @@ class CustomtablesViewListofrecords extends JViewLegacy
 			$this->filterForm    = $this->get('FilterForm');
 			$this->activeFilters = $this->get('ActiveFilters');
 		}
-		
 		
 		$this->listOrder = $this->escape($this->state->get('list.ordering'));
 		$this->listDirn = $this->escape($this->state->get('list.direction'));
@@ -136,7 +143,7 @@ class CustomtablesViewListofrecords extends JViewLegacy
 			if($this->ct->Env->version < 4)
 			{
 				$this->addToolbar_3();
-				//$this->sidebar = JHtmlSidebar::render();
+				$this->sidebar = JHtmlSidebar::render();
 			}
 			else
 				$this->addToolbar_4();
@@ -164,15 +171,15 @@ class CustomtablesViewListofrecords extends JViewLegacy
 		// Get the toolbar object instance
 		$toolbar = Toolbar::getInstance('toolbar');
 
-		if($this->tableid!=0)
+		if($this->ct->Table->tableid!=0)
 		{
-			JToolBarHelper::title('Custom Tables - Table "'.$this->tabletitle.'" - '.JText::_('COM_CUSTOMTABLES_LISTOFRECORDS'), 'joomla');
+			JToolBarHelper::title('Custom Tables - Table "'.$this->ct->Table->tabletitle.'" - '.JText::_('COM_CUSTOMTABLES_LISTOFRECORDS'), 'joomla');
 					}
 		else
 			JToolBarHelper::title(JText::_('COM_CUSTOMTABLES_LISTOFRECORDS'), 'joomla');
 
 		
-		JHtmlSidebar::setAction('index.php?option=com_customtables&view=listofrecords&tableid='.$this->tableid);
+		JHtmlSidebar::setAction('index.php?option=com_customtables&view=listofrecords&tableid='.$this->ct->Table->tableid);
 		JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/records');
 
 		if ($this->canCreate)
@@ -195,14 +202,6 @@ class CustomtablesViewListofrecords extends JViewLegacy
 		
 		if(($this->canState && $this->canDelete))
 		{
-			/*
-			if ($this->state->get('filter.published') != ContentComponent::CONDITION_TRASHED)
-			{
-				$childBar->trash('listofrecords.trash')->listCheck(true);
-			}
-			*/
-
-			//if (!$this->isEmptyState && $this->state->get('filter.published') == ContentComponent::CONDITION_TRASHED && $this->canDelete)
 			if (!$this->isEmptyState && $this->canDelete)
 			{
 				$childBar->delete('listofrecords.delete')
@@ -213,20 +212,21 @@ class CustomtablesViewListofrecords extends JViewLegacy
 		}
 	}
 	 
-	 
 	protected function addToolBar_3()
 	{
+		JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/fields');
+
 		$app = JFactory::getApplication();
 
-		if($this->tableid!=0)
+		if($this->ct->Table->tableid!=0)
 		{
-			JToolBarHelper::title('Custom Tables - Table "'.$this->tabletitle.'" - '.JText::_('COM_CUSTOMTABLES_LISTOFRECORDS'), 'joomla');
+			JToolBarHelper::title('Custom Tables - Table "'.$this->ct->Table->tabletitle.'" - '.JText::_('COM_CUSTOMTABLES_LISTOFRECORDS'), 'joomla');
 		}
 		else
 			JToolBarHelper::title(JText::_('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
 
 
-		JHtmlSidebar::setAction('index.php?option=com_customtables&view=listofrecords&tableid='.$this->tableid);
+		JHtmlSidebar::setAction('index.php?option=com_customtables&view=listofrecords&tableid='.$this->ct->Table->tableid);
 		JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/records');
 
 		if ($this->canCreate)
@@ -261,8 +261,7 @@ class CustomtablesViewListofrecords extends JViewLegacy
 			$options[]      = JHtml::_('select.option', '1', 'COM_CUSTOMTABLES_PUBLISHED');
 			$options[]      = JHtml::_('select.option', '0', 'COM_CUSTOMTABLES_UNPUBLISHED');
 			$options[]      = JHtml::_('select.option', '*', 'COM_CUSTOMTABLES_ALL');
-			
-			
+
 			JHtmlSidebar::addFilter(
 				JText::_('JOPTION_SELECT_PUBLISHED'),
 				'filter_published',
@@ -272,18 +271,16 @@ class CustomtablesViewListofrecords extends JViewLegacy
 		}
 
 		// Set Tableid Selection
-		$this->tableidOptions = $this->getTheTableidSelections();
+		/*
+		$CTTable = JFormHelper::loadFieldType('CTTable', false);
+		$CTTableOptions=$CTTable->getOptions(false); // works only if you set your field getOptions on public!!
 
-		if ($this->tableidOptions)
-		{
-			// Tableid Filter
-			JHtmlSidebar::addFilter(
-				'- Select '.JText::_('COM_CUSTOMTABLES_FIELDS_TABLE_LABEL').' -',
-				'filter_tableid',
-				JHtml::_('select.options', $this->tableidOptions, 'value', 'text', $this->state->get('filter.tableid'))
-			);
-
-		}
+		JHtmlSidebar::addFilter(
+		JText::_('COM_CUSTOMTABLES_LAYOUTS_TABLEID_SELECT'),
+		'filter_tableid',
+		JHtml::_('select.options', $CTTableOptions, 'value', 'text', $this->state->get('filter.tableid'))
+		);
+		*/
 	}
 
 	/**
@@ -317,45 +314,13 @@ class CustomtablesViewListofrecords extends JViewLegacy
 		// use the helper htmlEscape method instead.
 		return CustomtablesHelper::htmlEscape($var, $this->_charset);
 	}
-
-	protected function getTheTableidSelections()
-	{
-		// Get a db connection.
-		$db = JFactory::getDbo();
-
-		// Create a new query object.
-		$query = $db->getQuery(true);
-
-		// Select the text.
-		$query->select($db->quoteName(array('id','tabletitle')));
-		$query->from('#__customtables_tables');
-		$query->order($db->quoteName('tabletitle') . ' ASC');
-
-		// Reset the query using our newly populated query object.
-		$db->setQuery($query);
-
-		$results = $db->loadObjectList();
-
-		if ($results)
-		{
-			//$results = array_unique($results);
-			$_filter = array();
-			foreach ($results as $result)
-			{
-				// Now add the tableid and its text to the options array
-				$_filter[] = JHtml::_('select.option', $result->id, $result->tabletitle);
-			}
-			return $_filter;
-		}
-		return false;
-	}
 	
 	protected function processRecord($row,$detailsLayout)
 	{
 		$jinput=JFactory::getApplication()->input;
 
 		$paramsArray=array();
-		$paramsArray['establename']=$this->tablename;
+		$paramsArray['establename']=$this->ct->Table->tablename;
 		$paramsArray['listingid']=(int)$row['id'];
 		$paramsArray['custom_where']='';
 		

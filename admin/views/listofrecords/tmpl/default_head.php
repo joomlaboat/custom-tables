@@ -37,9 +37,9 @@ defined('_JEXEC') or die('Restricted access');
 
 	?>
 	
-	<?php if($this->published_field_found): ?>
+	<?php if($this->ct->Table->published_field_found): ?>
 	<th class="nowrap hidden-phone center">
-			<?php echo JText::_('COM_CUSTOMTABLES_RECORDS_STATUS'); ?>
+		<?php echo JText::_('COM_CUSTOMTABLES_RECORDS_STATUS'); ?>
 	</th>
 	<?php endif; ?>
 	

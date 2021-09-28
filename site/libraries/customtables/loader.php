@@ -6,7 +6,7 @@ function CTLoader($inclide_utilities = false)
 {
 	$path = dirname(__FILE__) . DIRECTORY_SEPARATOR;
 	
-	$path_integrity = $path . DIRECTORY_SEPARATOR . 'integrity' . DIRECTORY_SEPARATOR;
+	$path_integrity = $path . 'integrity' . DIRECTORY_SEPARATOR;
 
 	require_once($path_integrity.'integrity.php');
 	require_once($path_integrity.'fields.php');
@@ -14,7 +14,7 @@ function CTLoader($inclide_utilities = false)
 	require_once($path_integrity.'coretables.php');
 	require_once($path_integrity.'tables.php');
 	
-	$path_helpers = $path . DIRECTORY_SEPARATOR . 'helpers' . DIRECTORY_SEPARATOR;
+	$path_helpers = $path . 'helpers' . DIRECTORY_SEPARATOR;
 	
 	//require_once($path_helpers.'customtablesmisc.php');
 	//require_once($path_helpers.'fields.php');
@@ -29,40 +29,43 @@ function CTLoader($inclide_utilities = false)
 	
 	if($inclide_utilities)
 	{
-		$path_utilities = $path . DIRECTORY_SEPARATOR . 'utilities' . DIRECTORY_SEPARATOR;
+		$path_utilities = $path . 'utilities' . DIRECTORY_SEPARATOR;
 		require_once($path_utilities.'importtables.php');
 		require_once($path_utilities.'exporttables.php');
 	}
 	
-	$path_datatypes = $path . DIRECTORY_SEPARATOR . 'ct' . DIRECTORY_SEPARATOR;
+	$path_datatypes = $path . 'ct' . DIRECTORY_SEPARATOR;
 	require_once($path_datatypes.'ct.php');
 	require_once($path_datatypes.'environment.php');
 	
-	$path_datatypes = $path . DIRECTORY_SEPARATOR . 'datatypes' . DIRECTORY_SEPARATOR;
+	$path_datatypes = $path . 'datatypes' . DIRECTORY_SEPARATOR;
+	require_once($path_datatypes.'datatypes.php');
 	require_once($path_datatypes.'filemethods.php');
 	require_once($path_datatypes.'tree.php');
 	
-	$path_datatypes = $path . DIRECTORY_SEPARATOR . 'layouts' . DIRECTORY_SEPARATOR;
+	$path_datatypes = $path . 'layouts' . DIRECTORY_SEPARATOR;
 	require_once($path_datatypes.'layouts.php');
 	
 	
 	$path_datatypes = $path . 'logs' . DIRECTORY_SEPARATOR;
 	require_once($path_datatypes.'logs.php');
 	
+	$path_datatypes = $path . 'customphp' . DIRECTORY_SEPARATOR;
+	require_once($path_datatypes.'customphp.php');
 	
 	
 	
 	
-	$path_datatypes = $path . DIRECTORY_SEPARATOR . 'table' . DIRECTORY_SEPARATOR;
+	$path_datatypes = $path . 'table' . DIRECTORY_SEPARATOR;
 	require_once($path_datatypes.'table.php');
 	
-	$path_datatypes = $path . DIRECTORY_SEPARATOR . 'tables' . DIRECTORY_SEPARATOR;
+	$path_datatypes = $path . 'tables' . DIRECTORY_SEPARATOR;
 	require_once($path_datatypes.'tables.php');
 	
-	$path_datatypes = $path . DIRECTORY_SEPARATOR . 'fields' . DIRECTORY_SEPARATOR;
+	$path_datatypes = $path . 'fields' . DIRECTORY_SEPARATOR;
 	require_once($path_datatypes.'fields.php');
 	
-	$path_datatypes = $path . DIRECTORY_SEPARATOR . 'languages' . DIRECTORY_SEPARATOR;
+	$path_datatypes = $path . 'languages' . DIRECTORY_SEPARATOR;
 	require_once($path_datatypes.'languages.php');
 	
 	//$path_datatypes = $path . DIRECTORY_SEPARATOR . 'logs' . DIRECTORY_SEPARATOR;

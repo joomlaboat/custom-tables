@@ -10,15 +10,14 @@
 			hint="JSEARCH_FILTER"
 		/>
 
-		<field
+<!--		<field
 			name="tableid"
 			type="CTTable"
 			label="COM_CUSTOMTABLES_LAYOUTS_TABLEID_SELECT"
 			onchange="this.form.submit();"
 			extension="com_customtables"
 			>
-			<!--<option value="">COM_CUSTOMTABLES_LAYOUTS_TABLEID_SELECT</option>-->
-		</field>
+		</field>      -->
 
 		<field
 			name="layouttype"

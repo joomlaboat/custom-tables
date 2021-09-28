@@ -7,21 +7,14 @@
  * @copyright Copyright (C) 2018-2020. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
-
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
 // load tooltip behavior
-//JHtml::_('behavior.tooltip');
+JHtml::_('behavior.tooltip');
 JHtml::_('behavior.multiselect');
 JHtml::_('dropdown.init');
 JHtml::_('formbehavior.chosen', 'select');
-
-if ($this->saveOrder)
-{
-	$saveOrderingUrl = 'index.php?option=com_customtables&task=listoflayouts.saveOrderAjax&tmpl=component';
-	JHtml::_('sortablelist.sortable', 'layoutsList', 'adminForm', strtolower($this->listDirn), $saveOrderingUrl);
-}
 
 ?>
 <script type="text/javascript">

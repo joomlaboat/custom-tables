@@ -53,22 +53,6 @@ class CustomtablesModelListoflayouts extends JModelList
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
-		/*
-		$app = JFactory::getApplication();
-
-		// Adjust the context to support modal layouts.
-		if ($layout = $app->input->get('layout'))
-		{
-			$this->context .= '.' . $layout;
-		}
-		$layoutname = $this->getUserStateFromRequest($this->context . '.filter.layoutname', 'filter_layoutname');
-		$this->setState('filter.layoutname', $layoutname);
-
-		
-
-		
-
-		*/
 		if($this->ct->Env->version < 4)
 		{
 			$layouttype = $this->getUserStateFromRequest($this->context . '.filter.layouttype', 'filter_layouttype');
@@ -77,8 +61,8 @@ class CustomtablesModelListoflayouts extends JModelList
 			$tableid = $this->getUserStateFromRequest($this->context . '.filter.tableid', 'filter_tableid');
 			$this->setState('filter.tableid', $tableid);
 
-			$sorting = $this->getUserStateFromRequest($this->context . '.filter.sorting', 'filter_sorting', 0, 'int');
-			$this->setState('filter.sorting', $sorting);
+			//$sorting = $this->getUserStateFromRequest($this->context . '.filter.sorting', 'filter_sorting', 0, 'int');
+			//$this->setState('filter.sorting', $sorting);
 
 			$search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
 			$this->setState('filter.search', $search);
@@ -111,7 +95,14 @@ class CustomtablesModelListoflayouts extends JModelList
 			foreach ($items as $nr => &$item)
 			{
 				// convert layouttype
-				$item->layouttype = $translations[$item->layouttype];
+				if(isset($translations[$item->layouttype]))
+				{
+					$item->layouttype = $translations[$item->layouttype];
+				}
+				else
+				{
+					$item->layouttype = '<span style="color:red;">NOT SELECTED</span>';
+				}
 			}
 		}
 

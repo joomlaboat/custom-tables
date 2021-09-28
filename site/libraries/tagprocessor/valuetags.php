@@ -425,7 +425,9 @@ class tagProcessor_Value
                                     $vlu=$rowValue;
                             }
 							else
+							{
 								$vlu=$rowValue;
+							}
 
 							//this is temporary replace string - part of the mechanism to avoid getting values of another fields
 							$new_replaceitecode=$replaceitecode.str_pad($ESField['id'], 9, '0', STR_PAD_LEFT).str_pad($i, 4, '0', STR_PAD_LEFT);

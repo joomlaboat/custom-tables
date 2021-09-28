@@ -49,11 +49,14 @@ HTMLHelper::_('behavior.multiselect');
 
 	?>
 	
-	<th scope="col" class="text-center d-none d-md-table-cell" >
-		<?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_TABLES_STATUS', 'a.published', $this->listDirn, $this->listOrder); ?>
+	<?php if($this->ct->Table->published_field_found): ?>
+	<th class="nowrap hidden-phone center">
+		<?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_RECORDS_STATUS', 'a.published', $this->listDirn, $this->listOrder); ?>
 	</th>
+	<?php endif; ?>
 	
-	<th scope="col" class="w-12 d-none d-xl-table-cell" >
-		<?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_TABLES_ID', 'a.id', $this->listDirn, $this->listOrder); ?>
+	<th width="5" class="nowrap center hidden-phone" >
+		<?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_RECORDS_ID', 'a.id', $this->listDirn, $this->listOrder); ?>
+		<?php echo JText::_('COM_CUSTOMTABLES_RECORDS_ID'); ?>
 	</th>
 </tr>
