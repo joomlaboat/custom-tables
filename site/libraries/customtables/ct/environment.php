@@ -64,13 +64,23 @@ class Environment
 		else
 			$this->WebsiteRoot='';
 			
-				$this->advancedtagprocessor=false;
+			$this->advancedtagprocessor=false;
 		
 		$phptagprocessor=JPATH_SITE.DIRECTORY_SEPARATOR.'plugins'.DIRECTORY_SEPARATOR.'content'.DIRECTORY_SEPARATOR.'customtables'.DIRECTORY_SEPARATOR.'protagprocessor'.DIRECTORY_SEPARATOR.'phptags.php';
 		if(file_exists($phptagprocessor))
 		{
 			//require_once($phptagprocessor);
 			$this->advancedtagprocessor=true;
+			
+			
+			$file=JPATH_SITE.DIRECTORY_SEPARATOR.'plugins'.DIRECTORY_SEPARATOR.'content'.DIRECTORY_SEPARATOR.'customtables'.DIRECTORY_SEPARATOR.'protagprocessor'.DIRECTORY_SEPARATOR.'phptags.php';
+			if(file_exists($file))
+				require_once($file);
+			
+		
+			$file=JPATH_SITE.DIRECTORY_SEPARATOR.'plugins'.DIRECTORY_SEPARATOR.'content'.DIRECTORY_SEPARATOR.'customtables'.DIRECTORY_SEPARATOR.'protagprocessor'.DIRECTORY_SEPARATOR.'customphp.php';
+			if(file_exists($file))
+				require_once($file);
 		}
 	}
 }

@@ -61,7 +61,7 @@ class CustomTablesViewFiles extends JViewLegacy
 		$filename_parts = explode('.',$filename);
 		$fileextension=end($filename_parts);
 
-		$content=$this->doCustomPHP($content,$row);
+		$content=$this->ProcessContentWithCustomPHP($content,$row);
 
 		if (ob_get_contents()) ob_end_clean();
 
@@ -81,7 +81,7 @@ class CustomTablesViewFiles extends JViewLegacy
 		die;//clean exit
 	}
 
-	function doCustomPHP($content,&$row)
+	function ProcessContentWithCustomPHP($content,&$row)
 	{
 		$servertagprocessor_file=JPATH_SITE.DIRECTORY_SEPARATOR.'plugins'.DIRECTORY_SEPARATOR.'content'.DIRECTORY_SEPARATOR.'customtables'.DIRECTORY_SEPARATOR.'protagprocessor'.DIRECTORY_SEPARATOR.'servertags.php';
 

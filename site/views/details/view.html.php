@@ -79,9 +79,6 @@ class CustomTablesViewDetails extends JViewLegacy
 		if(!isset($row['listing_id']))
 			return false;
 		
-		if(!$this->Model->ct->loadAdvancedProcessor())
-			return false;
-				
 		foreach($this->Model->ct->Table->fields as $mFld)
 		{
 			if($mFld['type']=='phponview')

@@ -1191,8 +1191,8 @@ class CustomTablesModelEditItem extends JModelLegacy
 		//Refresh menu if needed
 		$msg= $this->itemaddedtext;
 
-		if($this->ct->Table->tablerow['customphp']!='')
-			$this->doCustomPHP($row,$row_old);
+		if($this->ct->Env->advancedtagprocessor)
+			CleanExecute::executeCustomPHPfile($this->ct->Table->tablerow['customphp'],$row,$row_old);
 
 		if($isDebug)
 		{
@@ -1366,6 +1366,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 		}
 	}
 
+/*
 	function CheckValueRule($prefix,$fieldname, $fieldtype, $typeparams)
 	{
 		$valuearray=array();
@@ -1529,9 +1530,10 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 		if($value=='')
 			$value='""';
-
-		return eval($v);
+			
+		return;
 	}
+	*/
 
 	function PrepareAcceptReturnToLink($artlink)
 	{
@@ -1539,7 +1541,6 @@ class CustomTablesModelEditItem extends JModelLegacy
 			return '';
 
 		$artlink=base64_decode ($artlink);
-
 
 		if($artlink=='')
 			return '';
@@ -1550,10 +1551,8 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 		$LayoutProc=new LayoutProcessor;
 
-
 		$LayoutProc->layout=$artlink;
 		$LayoutProc->Model=$this;
-
 
 		$db = JFactory::getDBO();
 		
@@ -1569,7 +1568,6 @@ class CustomTablesModelEditItem extends JModelLegacy
 		$processed_link=$LayoutProc->fillLayout($row,"",array(),'[]',true);
 
 		return $processed_link;
-
 	}
 
 	function doPHPonAdd(&$row)
@@ -1605,13 +1603,13 @@ class CustomTablesModelEditItem extends JModelLegacy
 						
 						$thescript='return '.LayoutProcessor::applyContentPlugins($LayoutProc->fillLayout($row,'',array(),'[]',true)).';';
 
-						try
+						$error = '';
+						$value = CleanExecute::execute($thescript,$error);
+		
+						if($error!='')
 						{
-							$value=@eval($thescript);
-						}
-						catch (Exception $e)
-						{
-							echo $thescript;
+							Factory::getApplication()->enqueueMessage($error,'error');
+							return false;
 						}
 						
 						$row[$realfieldname]=$value;
@@ -1664,13 +1662,13 @@ class CustomTablesModelEditItem extends JModelLegacy
 						$htmlresult = $LayoutProc->fillLayout($row,'',array(),'[]',true);
 						$thescript='return '.LayoutProcessor::applyContentPlugins($htmlresult).';';
 				
-						try
+						$error = '';
+						$value = CleanExecute::execute($thescript,$error);
+		
+						if($error!='')
 						{
-							$value=@eval($thescript);
-						}
-						catch (Exception $e)
-						{
-							echo $thescript;
+							Factory::getApplication()->enqueueMessage($error,'error');
+							return false;
 						}
 						
 						$row[$realfieldname]=$value;
@@ -1858,9 +1856,8 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 			$this->updateDefaultValues($row);
 
-
-			if($this->ct->Table->tablerow['customphp']!='')
-				$this->doCustomPHP($row, $row);
+			if($this->ct->Env->advancedtagprocessor)
+				CleanExecute::executeCustomPHPfile($this->ct->Table->tablerow['customphp'],$row,$row);
 
 		$create_new_user=null;
 
@@ -1939,47 +1936,6 @@ class CustomTablesModelEditItem extends JModelLegacy
 		$this->RefreshSingleRecord((int)$id,0);
 
 		return 1;
-	}
-
-	function doCustomPHP(&$row,&$row_old)
-	{
-		$servertagprocessor_file=JPATH_SITE.DIRECTORY_SEPARATOR.'plugins'.DIRECTORY_SEPARATOR.'content'.DIRECTORY_SEPARATOR.'customtables'.DIRECTORY_SEPARATOR.'protagprocessor'.DIRECTORY_SEPARATOR.'servertags.php';
-
-		if(!file_exists($servertagprocessor_file))
-			return;
-			
-		$tablecustomphp = $this->ct->Table->tablerow['customphp'];
-
-		if($tablecustomphp!='')
-		{
-			$parts=explode('/',$tablecustomphp); //just a security check
-			if(count($parts)>1)
-				return;
-
-			$file=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'customphp'.DIRECTORY_SEPARATOR
-				.$tablecustomphp;
-				
-			if(file_exists($file))
-			{
-				require_once($file);
-				$function_name='CTCustom_'.str_replace('.php','',$tablecustomphp);
-
-				if(function_exists ($function_name))
-				{
-					call_user_func($function_name,$row,$row_old);
-					return true;
-				}
-
-				$function_name='ESCustom_'.str_replace('.php','',$tablecustomphp);
-				if(function_exists ($function_name))
-				{
-					call_user_func($function_name,$row,$row_old);
-					return true;
-				}
-			}
-		}
-		return false;
-
 	}
 
 	function getFieldsToSave()
@@ -2135,7 +2091,10 @@ class CustomTablesModelEditItem extends JModelLegacy
 		$this->ct->Table->saveLog((int)$objectid,5);
 
 		$new_row=array();
-		$this->doCustomPHP($new_row,$row);
+
+		if($this->ct->Env->advancedtagprocessor)
+			CleanExecute::executeCustomPHPfile($this->ct->Table->tablerow['customphp'],$new_row,$row);
+			
 		return 1;
 	}
 }

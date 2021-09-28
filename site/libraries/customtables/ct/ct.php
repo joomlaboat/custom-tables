@@ -38,16 +38,4 @@ class CT
 		$this->Table = new Table($this->Languages, $this->Env, 0);
 		$this->Table->setTable($tablerow, $useridfieldname, $load_fields);
 	}
-	
-	function loadAdvancedProcessor()
-	{
-		$file=JPATH_SITE.DIRECTORY_SEPARATOR.'plugins'.DIRECTORY_SEPARATOR.'content'.DIRECTORY_SEPARATOR.'customtables'.DIRECTORY_SEPARATOR.'protagprocessor'.DIRECTORY_SEPARATOR.'phptags.php';
-		if(file_exists($file))
-		{
-			require_once($file);
-			return true;
-		}
-		
-		return false;
-	}
 }

@@ -322,11 +322,12 @@ class IntegrityFields extends \CustomTables\IntegrityChecks
 			
 		if(($existing->is_nullable == 'YES') != $projected->is_nullable)
 		{
+			/*
 			echo '$existing:<br/>';
 			print_r($existing);
 			echo '$projected:<br/>';
 			print_r($projected);
-					
+					*/
 			return false;
 		}
 			
@@ -334,28 +335,31 @@ class IntegrityFields extends \CustomTables\IntegrityChecks
 		{
 			if(($existing->is_unsigned == 'YES') != $projected->is_unsigned)
 			{
-				if($existing->column_name !='id')
-				{
+				//if($existing->column_name !='id')
+				//{
+					/*
 					echo '$existing:<br/>';
 					print_r($existing);
 					echo '$projected:<br/>';
 					print_r($projected);
 					echo 'UNSIGNED';
 					//die;
-				}
+					*/
+				//}
 				return false;
 			}
 		}
 		
 		if($projected->default !== null and $existing->column_default != $projected->default)
 		{
+			/*
 			echo '$existing:<br/>';
 			print_r($existing);
 			echo '$projected:<br/>';
 			print_r($projected);
 			echo 'DEFAULT';
 			die;
-					
+					*/
 			return false;		
 		}
 			

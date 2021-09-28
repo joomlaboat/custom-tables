@@ -724,7 +724,6 @@ class CustomtablesModelTables extends JModelAdmin
 
 		//Copy Fields
 		$fields=array('fieldname','type','typeparams','ordering','defaultvalue','allowordering','parentid','isrequired','valuerulecaption','valuerule');
-		//unused fields: isdisabled,savevalue,alwaysupdatevalue
 	
 		$morethanonelang=false;
 		

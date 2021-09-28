@@ -578,7 +578,7 @@ class tagProcessor_Value
                         if(file_exists($phptagprocessor))
                         {
                            	require_once($phptagprocessor);
-                           	$rowValue=tagProcessor_PHP::processTempValue($Model,$row,$fieldname,$params,true);
+                           	$rowValue=tagProcessor_PHP::processTempValue($Model,$row,$ESField['realfieldname'],$params,true);
                         }
                     }
                 }
