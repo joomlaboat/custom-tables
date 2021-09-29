@@ -432,21 +432,12 @@ class CustomtablesModelLayouts extends JModelAdmin
 		
 		$this->batchSet			= true;
 
-		print_r($this->canDo);
 
 		if (!$this->canDo['core.batch']==0)
 		{
 			$this->setError(JText::_('JLIB_APPLICATION_ERROR_INSUFFICIENT_BATCH_INFORMATION'));
 			return false;
 		}
-
-/*
-		if ($this->type == false)
-		{
-			$type = new JUcmType;
-			$this->type = $type->getTypeByAlias($this->typeAlias);
-		}
-		*/
 
 		$this->tagsObserver = $this->table->getObserverOfClass('JTableObserverTags');
 
