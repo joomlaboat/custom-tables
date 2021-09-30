@@ -62,12 +62,6 @@ class CustomtablesModelListofRecords extends JModelList
 	{
 		if($this->ct->Env->version < 4)
 		{
-			//$tableid = $this->getUserStateFromRequest($this->context . '.filter.tableid', 'filter_tableid');
-			//$this->setState('filter.tableid', $tableid);
-
-			//$sorting = $this->getUserStateFromRequest($this->context . '.filter.sorting', 'filter_sorting', 0, 'int');
-			//$this->setState('filter.sorting', $sorting);
-
 			$search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
 			$this->setState('filter.search', $search);
 		

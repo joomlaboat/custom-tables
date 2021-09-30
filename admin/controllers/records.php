@@ -222,18 +222,11 @@ class CustomtablesControllerRecords extends JControllerForm
 		$_params= new JRegistry;
 		$_params->loadArray($paramsArray);
 		
-		//$config=array();
 		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'models'.DIRECTORY_SEPARATOR.'edititem.php');
 		$editModel = JModelLegacy::getInstance('EditItem', 'CustomTablesModel', $_params);
 		$editModel->load($_params,true);
-		$editModel->pagelayout=Layouts::createDefaultLayout_Edit($editModel->ct->Table->fields,false);
-
-		// get the referal details
-		/*
-		$this->ref 		= $this->input->get('ref', 0, 'word');
-		$this->refid 	= $this->input->get('refid', 0, 'int');
-		*/
 		
+		$editModel->pagelayout=Layouts::createDefaultLayout_Edit($editModel->ct->Table->fields,false);
 
 		$msg_='';
 		

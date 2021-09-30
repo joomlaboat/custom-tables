@@ -56,12 +56,13 @@ JHtml::_('formbehavior.chosen', 'select');
 		<input type="hidden" name="filter_order_Dir" value="" />
 		<input type="hidden" name="boxchecked" value="0" />
 		
-	</div>
-<?php endif; ?>
 
+<?php endif; ?>
+</div>
+	
 <input type="hidden" name="option" value="com_customtables" />
 <input type="hidden" name="task" value="" />
-<input type="hidden" name="tableid" value="<?php echo $this->tableid; ?>" />
+<input type="hidden" name="tableid" value="<?php echo $this->ct->Table->tableid; ?>" />
 
 <?php echo JHtml::_('form.token'); ?>
 </form>

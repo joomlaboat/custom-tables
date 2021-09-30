@@ -61,8 +61,9 @@ use CustomTables\IntegrityChecks;
 		<input type="hidden" name="filter_order" value="" />
 		<input type="hidden" name="filter_order_Dir" value="" />
 		<input type="hidden" name="boxchecked" value="0" />
-	</div>
+
 <?php endif; ?>
+</div>
 <input type="hidden" name="task" value="" />
 <?php echo JHtml::_('form.token'); ?>
 </form>

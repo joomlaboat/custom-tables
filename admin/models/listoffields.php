@@ -57,14 +57,6 @@ class CustomtablesModelListoffields extends JModelList
 			$search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
 			$this->setState('filter.search', $search);
 			
-			
-			//$tableid = $this->getUserStateFromRequest($this->context . '.filter.tableid', 'filter_tableid');
-			//$app = JFactory::getApplication();
-			//$this->tableid=$jinput->get->getInt('tableid',0);
-			
-			//$this->setState('filter.tableid', $tableid);
-			
-			
 			$type = $this->getUserStateFromRequest($this->context . '.filter.type', 'filter_type');
 			$this->setState('filter.type', $type);
 			

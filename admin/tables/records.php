@@ -40,7 +40,7 @@ class CustomtablesTableRecords extends JTable
 			if(!is_object($table) and $table==0)
 			{
 				JFactory::getApplication()->enqueueMessage('Table not found', 'error');
-				$this->tableid=0;
+				$tableid=0;
 				return null;
 			}
 		}
