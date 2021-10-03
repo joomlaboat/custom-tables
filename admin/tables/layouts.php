@@ -23,13 +23,11 @@ jimport('joomla.database.table');
 class CustomtablesTableLayouts extends JTable
 {
 	var $id = null;
-	//var $asset_id = null;
 	var $changetimestamp = null;
 	var $layoutcode = null;
 	var $layoutname = null;
 	var $layouttype = null;
 	var $tableid = null;
-	//var $params` text NULL DEFAULT NULL,
 	var $published = null;
 	var $created_by = null;
 	var $modified_by = null;
@@ -37,9 +35,6 @@ class CustomtablesTableLayouts extends JTable
 	var $modified = null;
 	var $checked_out = null;
 	var $checked_out_time = null;
-	var $version = null;
-	//var $hits = null;
-	var $ordering = null;
 
 	//protected $_jsonEncode = array('params', 'metadata');
     

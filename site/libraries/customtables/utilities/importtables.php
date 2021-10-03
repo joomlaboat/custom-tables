@@ -10,6 +10,7 @@ namespace CustomTables;
 
 use CustomTables\CT;
 use CustomTables\Fields;
+use CustomTables\IntegrityChecks;
 
 use \Joomla\CMS\Factory;
 
@@ -25,6 +26,8 @@ class ImportTables
 {
     public static function processFile($filename,$menutype,&$msg,$category='',$importfields=true,$importlayouts=true,$importmenu=true)
     {
+		$ct = new CT;
+				
         if(file_exists($filename))
         {
             $data=file_get_contents($filename);
@@ -34,7 +37,7 @@ class ImportTables
                 return false;
             }
 
-			return ImportTables::processContent($data,$menutype,$msg,$category,$importfields,$importlayouts,$importmenu);
+			return ImportTables::processContent($ct,$data,$menutype,$msg,$category,$importfields,$importlayouts,$importmenu);
         }
         else
         {
@@ -43,7 +46,7 @@ class ImportTables
         }
     }
 
-	public static function processContent($data,$menutype,&$msg,$category='',$importfields=true,$importlayouts=true,$importmenu=true)
+	public static function processContent(&$ct,$data,$menutype,&$msg,$category='',$importfields=true,$importlayouts=true,$importmenu=true)
 	{
             $keyword='<customtablestableexport>';
 			if(strpos($data,$keyword)===false)
@@ -60,10 +63,10 @@ class ImportTables
 			
 			
 
-            return ImportTables::processData($jsondata,$menutype,$msg,$category,$importfields,$importlayouts,$importmenu);
+            return ImportTables::processData($ct,$jsondata,$menutype,$msg,$category,$importfields,$importlayouts,$importmenu);
 	}
 
-    protected static function processData($jsondata,$menutype,&$msg,$category,$importfields,$importlayouts,$importmenu)
+    protected static function processData(&$ct,$jsondata,$menutype,&$msg,$category,$importfields,$importlayouts,$importmenu)
     {
 		foreach($jsondata as $table)
         {
@@ -77,11 +80,14 @@ class ImportTables
 				if($importfields)
 					ImportTables::processFields($tableid,$table['table']['tablename'],$table['fields'],$msg);
 
+
 				if($importlayouts)
 					ImportTables::processLayouts($tableid,$table['layouts'],$msg);
 
 				if($importmenu)
 					ImportTables::processMenu($table['menu'],$menutype,$msg);
+				
+				$result = IntegrityChecks::check($ct,$check_core_tables = false, $check_custom_tables = true);
 
                 if(isset($table['records']))
                     ImportTables::processRecords($table['table']['tablename'],$table['records'],$msg);
@@ -119,29 +125,26 @@ class ImportTables
         {
             //Create table reacord
             $tableid=ImportTables::insertRecords('tables',$table_new,true,['categoryname']);
+		}
 			
-            if($tableid!=0)
-            {
-                //Create mysql table
-                $tabletitle='';
-                if(isset($table_new['tabletitle']))
-                    $tabletitle=$table_new['tabletitle'];
-                else
-                    $tabletitle=$table_new['tabletitle_1'];
+		//Create mysql table
+        $tabletitle='';
+        if(isset($table_new['tabletitle']))
+			$tabletitle=$table_new['tabletitle'];
+		else
+			$tabletitle=$table_new['tabletitle_1'];
 
-                $query = '
+        $query = '
                 CREATE TABLE IF NOT EXISTS #__customtables_table_'.$tablename.'
                 (
                 	id int(10) NOT NULL auto_increment,
                 	published tinyint(1) DEFAULT "1",
                 	PRIMARY KEY  (id)
                 ) ENGINE=InnoDB COMMENT="'.$tabletitle.'" DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AUTO_INCREMENT=1;
-                ';
+        ';
 
-                $db->setQuery( $query );
-				$db->execute();
-            }
-        }
+        $db->setQuery( $query );
+		$db->execute();
 
 		ImportTables::updateTableCategory($tableid,$table_new,$categoryname);
 
@@ -390,9 +393,9 @@ class ImportTables
 			//Create new menu type
 			$db = Factory::getDBO();
 			$inserts=array();
-            $inserts[]='asset_id=0';
+		        $inserts[]='asset_id=0';
 			$inserts[]='menutype='.$db->Quote($new_menutype_alias);
-            $inserts[]='title='.$db->Quote($new_menutype);
+		        $inserts[]='title='.$db->Quote($new_menutype);
 			$inserts[]='description='.$db->Quote('Menu Type created by CustomTables');
 			
 			$menu_types_id = ESTables::insertRecords('#__menu_types','id',$inserts);
@@ -549,19 +552,31 @@ class ImportTables
         $sets=array();
         $keys=array_keys($rows_new);
 		
-		$ignore_fileds = ['asset_id','created_by','modified_by','created','modified','checked_out',
+		//$ignore_fields = ['asset_id','created_by','modified_by','created','modified','checked_out',
+		//	'checked_out_time','version','hits','publish_up','publish_down','checked_out_time'];
+		
+		$ignore_fields = ['asset_id','created_by','modified_by','checked_out',
 			'checked_out_time','version','hits','publish_up','publish_down','checked_out_time'];
 				
         foreach($keys as $key)
         {
-			if(!in_array($key, $ignore_fileds))
+			$type = null;
+			
+			if(!in_array($key, $ignore_fields))
 			{
 				$fieldname=ImportTables::checkFieldName($key,$force_id,$exceptions);
 
 				if($fieldname!='' and Fields::checkIfFieldExists($mysqltablename,$fieldname,false))
 				{
 					if($rows_new[$key]!=$rows_old[$key])// and $rows_new[$key]!=null)
-						$sets[]=$fieldname.'='.$db->Quote($rows_new[$key]);
+					{
+						if($rows_new[$key] == null)
+						{
+
+						}
+						
+						$sets[]=$fieldname.'='.ImportTables::dbQuoteByType($rows_new[$key],$type);
+					}
 				}
 			}
         }
@@ -579,8 +594,8 @@ class ImportTables
     {
         	$ok=true;
 
-            $extraexceptions=['layout_catalog','layout_details','layout_edit','layout_email','recordaddednote','itemaddedtext','tablecategory','hidden'];
-            $exceptions=array_merge($exceptions,$extraexceptions);
+            //$extraexceptions=['layout_catalog','layout_details','layout_edit','layout_email','recordaddednote','itemaddedtext','tablecategory','hidden'];
+            //$exceptions=array_merge($exceptions,$extraexceptions);
 
             if(strpos($key,'itemaddedtext')!==false)
                 $ok=false;
@@ -623,7 +638,7 @@ class ImportTables
 
         $keys=array_keys($rows);
 		
-		$ignore_fileds = ['asset_id','created_by','modified_by','created','modified','checked_out',
+		$ignore_fields = ['asset_id','created_by','modified_by','checked_out',
 			'checked_out_time','version','hits','publish_up','publish_down','checked_out_time'];
 			
 		$core_fields = ['id','published'];
@@ -631,7 +646,7 @@ class ImportTables
         foreach($keys as $key)
         {
 			$isok = false;
-			$type = '';
+			$type = null;
 
 			if(isset($field_conversion_map[$key]))
 			{
@@ -663,7 +678,7 @@ class ImportTables
 				}
 			}
 			
-			if($isok)
+			if($isok and !in_array($fieldname, $ignore_fields))
 			{
 				if(!Fields::checkIfFieldExists($mysqltablename,$fieldname,false))
 				{
@@ -682,11 +697,16 @@ class ImportTables
 						if($filedtype != '')
 						{
 							Fields::AddMySQLFieldNotExist($mysqltablename, $key, $filedtype, '');
-							$inserts[]=$fieldname.'='.$db->Quote($rows[$key]);
+							if($rows[$key] == null)
+							{
+
+							}
+
+							$inserts[]=$fieldname.'='.ImportTables::dbQuoteByType($rows[$key],$type);
 						}
 					}
-					else
-						$inserts[]=$fieldname.'='.ImportTables::dbQuoteByType($rows[$key],$type);
+					//else
+						//$inserts[]=$fieldname.'='.ImportTables::dbQuoteByType($rows[$key],$type);
                 }
                 else
 				{
@@ -698,9 +718,27 @@ class ImportTables
 		return ESTables::insertRecords($mysqltablename,'id',$inserts);
     }
 	
-	protected static function dbQuoteByType($value, $type = '')
+	
+	
+	protected static function dbQuoteByType($value, $type = null)
 	{
 		$db = Factory::getDBO();
+		
+		if($type === null)
+		{
+			if($value === null)
+				return 'NULL';
+			
+			if(is_numeric( $value ))
+			{
+				if(floor( $value ) != $value)
+					$type = 'float';
+				else
+					$type = 'int';
+			}
+			else
+				$type = 'string';
+		}
 		
 		if($type == '' or  $type == 'string')
 			return $db->Quote($value);

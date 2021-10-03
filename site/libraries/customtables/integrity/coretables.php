@@ -14,6 +14,7 @@ namespace CustomTables\Integrity;
 defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\Fields;
+//use CustomTables\Integrity\IntegrityFields;
 
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Uri\Uri;
@@ -41,7 +42,7 @@ class IntegrityCoreTables extends \CustomTables\IntegrityChecks
 		if(!ESTables::checkIfTableExists($table->realtablename))
 			IntegrityCoreTables::createCoreTable($ct,$table);
 		else
-			IntegrityCoreTables::checkComponentTable($table->realtablename,$table->fields);
+			IntegrityCoreTables::checkCoreTable($ct,$table->realtablename,$table->fields);
 	}
 	
 	protected static function getCoreTableFields_Tables()
@@ -59,7 +60,6 @@ class IntegrityCoreTables extends \CustomTables\IntegrityChecks
 		$tables_projected_fields[]=['name'=>'description','mysql_type'=>'TEXT NULL DEFAULT NULL','postgresql_type'=>'TEXT NULL DEFAULT NULL','multilang'=>true];
 
 		//Not used inside Custom Tables
-		//$tables_projected_fields[]=['name'=>'asset_id','mysql_type'=>'INT UNSIGNED NOT NULL DEFAULT 0','postgresql_type'=>'INT NOT NULL DEFAULT 0'];
 		
 		$tables_projected_fields[]=['name'=>'tablecategory','mysql_type'=>'INT NULL DEFAULT NULL','postgresql_type'=>'INT NULL DEFAULT NULL'];
 		
@@ -74,15 +74,7 @@ class IntegrityCoreTables extends \CustomTables\IntegrityChecks
 		$tables_projected_fields[]=['name'=>'modified','mysql_type'=>'DATETIME NULL DEFAULT NULL','postgresql_type'=>'TIMESTAMP(0) NULL DEFAULT NULL'];
 		$tables_projected_fields[]=['name'=>'checked_out','mysql_type'=>'int UNSIGNED NOT NULL DEFAULT 0','postgresql_type'=>'INT NOT NULL DEFAULT 0'];
 		$tables_projected_fields[]=['name'=>'checked_out_time','mysql_type'=>'DATETIME NULL DEFAULT NULL','postgresql_type'=>'TIMESTAMP(0) NULL DEFAULT NULL'];
-		
-		//Never used inside Custom Tables
-		//$tables_projected_fields[]=['name'=>'version','mysql_type'=>'INT UNSIGNED NOT NULL DEFAULT 1,','postgresql_type'=>'INT NOT NULL DEFAULT 1'];
-		//$tables_projected_fields[]=['name'=>'hits','mysql_type'=>'INT UNSIGNED NOT NULL DEFAULT 0','postgresql_type'=>'INT NOT NULL DEFAULT 0'];
-		//$tables_projected_fields[]=['name'=>'ordering','mysql_type'=>'INT NOT NULL DEFAULT 0','postgresql_type'=>'INT NOT NULL DEFAULT 0'];
-		
-		//Not used inside Custom Tables
-		//$tables_projected_fields[]=['name'=>'params','mysql_type'=>'text NULL DEFAULT NULL','postgresql_type'=>'text NULL DEFAULT NULL'];
-		
+
 		$tables_projected_indexes=[];
 		$tables_projected_indexes[]=['name'=>'idx_published','field'=>'published'];
 		$tables_projected_indexes[]=['name'=>'idx_tablename','field'=>'tablename'];
@@ -101,32 +93,34 @@ class IntegrityCoreTables extends \CustomTables\IntegrityChecks
 		
 		$tables_projected_fields=array();
 		
-		$tables_projected_fields[]=['name'=>'id','mysql_type'=>'INT UNSIGNED NOT NULL AUTO_INCREMENT','postgresql_type'=>'id INT check (id > 0) NOT NULL DEFAULT NEXTVAL (\'#__customtables_options_seq\')'];
-		$tables_projected_fields[]=['name'=>'published','mysql_type'=>'TINYINT NOT NULL DEFAULT 1','postgresql_type'=>'SMALLINT NOT NULL DEFAULT 1'];
-		$tables_projected_fields[]=['name'=>'tableid','mysql_type'=>'INT UNSIGNED NOT NULL','postgresql_type'=>'INT NOT NULL'];		
+		$tables_projected_fields[]=['name'=>'id','ct_fieldtype'=>'_id','mysql_type'=>'INT UNSIGNED NOT NULL AUTO_INCREMENT','postgresql_type'=>'id INT check (id > 0) NOT NULL DEFAULT NEXTVAL (\'#__customtables_options_seq\')'];
+		$tables_projected_fields[]=['name'=>'published','ct_fieldtype'=>'_published','mysql_type'=>'TINYINT NOT NULL DEFAULT 1','postgresql_type'=>'SMALLINT NOT NULL DEFAULT 1'];
+		$tables_projected_fields[]=['name'=>'tableid','ct_fieldtype'=>'','mysql_type'=>'INT UNSIGNED NOT NULL','postgresql_type'=>'INT NOT NULL'];		
 		
-		$tables_projected_fields[]=['name'=>'fieldname','mysql_type'=>'VARCHAR(100) NOT NULL DEFAULT "tablename"','postgresql_type'=>'VARCHAR(100) NOT NULL DEFAULT \'\''];
-		$tables_projected_fields[]=['name'=>'fieldtitle','mysql_type'=>'VARCHAR(255) NULL DEFAULT NULL','postgresql_type'=>'VARCHAR(255) NULL DEFAULT NULL','multilang'=>true];
-		$tables_projected_fields[]=['name'=>'description','mysql_type'=>'TEXT NULL DEFAULT NULL','postgresql_type'=>'TEXT NULL DEFAULT NULL','multilang'=>true];
+		$tables_projected_fields[]=['name'=>'fieldname','ct_fieldtype'=>'','mysql_type'=>'VARCHAR(100) NOT NULL','postgresql_type'=>'VARCHAR(100) NOT NULL'];
+		$tables_projected_fields[]=['name'=>'fieldtitle','ct_fieldtype'=>'','mysql_type'=>'VARCHAR(255) NULL','postgresql_type'=>'VARCHAR(255) NULL DEFAULT NULL','multilang'=>true];
+		$tables_projected_fields[]=['name'=>'description','ct_fieldtype'=>'','mysql_type'=>'TEXT NULL','postgresql_type'=>'TEXT NULL DEFAULT NULL','multilang'=>true];
 		
-		$tables_projected_fields[]=['name'=>'allowordering','mysql_type'=>'TINYINT NOT NULL DEFAULT 1','postgresql_type'=>'SMALLINT NOT NULL DEFAULT 1'];
-		$tables_projected_fields[]=['name'=>'isrequired','mysql_type'=>'TINYINT NOT NULL DEFAULT 1','postgresql_type'=>'SMALLINT NOT NULL DEFAULT 1'];
-		$tables_projected_fields[]=['name'=>'isdisabled','mysql_type'=>'TINYINT NOT NULL DEFAULT 0','postgresql_type'=>'SMALLINT NOT NULL DEFAULT 0'];
-		$tables_projected_fields[]=['name'=>'alwaysupdatevalue','mysql_type'=>'TINYINT NOT NULL DEFAULT 0','postgresql_type'=>'SMALLINT NOT NULL DEFAULT 0','comment'=>'Update default value every time record is edited.'];
+		$tables_projected_fields[]=['name'=>'allowordering','ct_fieldtype'=>'','mysql_type'=>'TINYINT NOT NULL DEFAULT 1','postgresql_type'=>'SMALLINT NOT NULL DEFAULT 1'];
+		$tables_projected_fields[]=['name'=>'isrequired','ct_fieldtype'=>'','mysql_type'=>'TINYINT NOT NULL DEFAULT 1','postgresql_type'=>'SMALLINT NOT NULL DEFAULT 1'];
+		$tables_projected_fields[]=['name'=>'isdisabled','ct_fieldtype'=>'','mysql_type'=>'TINYINT NOT NULL DEFAULT 0','postgresql_type'=>'SMALLINT NOT NULL DEFAULT 0'];
+		$tables_projected_fields[]=['name'=>'alwaysupdatevalue','ct_fieldtype'=>'checkbox','mysql_type'=>'TINYINT NOT NULL DEFAULT 0','postgresql_type'=>'SMALLINT NOT NULL DEFAULT 0','comment'=>'Update default value every time record is edited.'];
+		
+		$tables_projected_fields[]=['name'=>'ordering','ct_fieldtype'=>'','mysql_type'=>'INT UNSIGNED NOT NULL','postgresql_type'=>'INT NOT NULL'];		
 
-		$tables_projected_fields[]=['name'=>'defaultvalue','mysql_type'=>'VARCHAR(1024) NOT NULL DEFAULT "tablename"','postgresql_type'=>'VARCHAR(1024) NOT NULL DEFAULT \'\''];
-		$tables_projected_fields[]=['name'=>'customfieldname','mysql_type'=>'VARCHAR(100) NOT NULL DEFAULT "tablename"','postgresql_type'=>'VARCHAR(100) NOT NULL DEFAULT \'\''];
-		$tables_projected_fields[]=['name'=>'type','mysql_type'=>'VARCHAR(50) NOT NULL DEFAULT "tablename"','postgresql_type'=>'VARCHAR(50) NOT NULL DEFAULT \'\''];
-		$tables_projected_fields[]=['name'=>'typeparams','mysql_type'=>'VARCHAR(1024) NOT NULL DEFAULT "tablename"','postgresql_type'=>'VARCHAR(1024) NOT NULL DEFAULT \'\''];
-		$tables_projected_fields[]=['name'=>'valuerule','mysql_type'=>'VARCHAR(1024) NOT NULL DEFAULT "tablename"','postgresql_type'=>'VARCHAR(1024) NOT NULL DEFAULT \'\''];
-		$tables_projected_fields[]=['name'=>'valuerulecaption','mysql_type'=>'VARCHAR(1024) NOT NULL DEFAULT "tablename"','postgresql_type'=>'VARCHAR(1024) NOT NULL DEFAULT \'\''];
+		$tables_projected_fields[]=['name'=>'defaultvalue','ct_fieldtype'=>'','mysql_type'=>'VARCHAR(1024) NULL','postgresql_type'=>'VARCHAR(1024) NULL'];
+		$tables_projected_fields[]=['name'=>'customfieldname','ct_fieldtype'=>'','mysql_type'=>'VARCHAR(100) NULL','postgresql_type'=>'VARCHAR(100) NULL'];
+		$tables_projected_fields[]=['name'=>'type','ct_fieldtype'=>'','mysql_type'=>'VARCHAR(50) NULL','postgresql_type'=>'VARCHAR(50) NULL'];
+		$tables_projected_fields[]=['name'=>'typeparams','ct_fieldtype'=>'','mysql_type'=>'VARCHAR(1024) NULL','postgresql_type'=>'VARCHAR(1024) NULL'];
+		$tables_projected_fields[]=['name'=>'valuerule','ct_fieldtype'=>'','mysql_type'=>'VARCHAR(1024) NULL','postgresql_type'=>'VARCHAR(1024) NULL'];
+		$tables_projected_fields[]=['name'=>'valuerulecaption','ct_fieldtype'=>'string','ct_typeparams'=>'1024','mysql_type'=>'VARCHAR(1024) NULL','postgresql_type'=>'VARCHAR(1024) NULL'];
 
-		$tables_projected_fields[]=['name'=>'created_by','mysql_type'=>'INT UNSIGNED NOT NULL DEFAULT 0','postgresql_type'=>'INT NOT NULL DEFAULT 0'];
-		$tables_projected_fields[]=['name'=>'modified_by','mysql_type'=>'INT UNSIGNED NOT NULL DEFAULT 0','postgresql_type'=>'INT NOT NULL DEFAULT 0'];
-		$tables_projected_fields[]=['name'=>'created','mysql_type'=>'DATETIME NULL DEFAULT NULL','postgresql_type'=>'TIMESTAMP(0) NULL DEFAULT NULL'];
-		$tables_projected_fields[]=['name'=>'modified','mysql_type'=>'DATETIME NULL DEFAULT NULL','postgresql_type'=>'TIMESTAMP(0) NULL DEFAULT NULL'];
-		$tables_projected_fields[]=['name'=>'checked_out','mysql_type'=>'int UNSIGNED NOT NULL DEFAULT 0','postgresql_type'=>'INT NOT NULL DEFAULT 0'];
-		$tables_projected_fields[]=['name'=>'checked_out_time','mysql_type'=>'DATETIME NULL DEFAULT NULL','postgresql_type'=>'TIMESTAMP(0) NULL DEFAULT NULL'];
+		$tables_projected_fields[]=['name'=>'created_by','ct_fieldtype'=>'','mysql_type'=>'INT UNSIGNED NOT NULL DEFAULT 0','postgresql_type'=>'INT NOT NULL DEFAULT 0'];
+		$tables_projected_fields[]=['name'=>'modified_by','ct_fieldtype'=>'','mysql_type'=>'INT UNSIGNED NOT NULL DEFAULT 0','postgresql_type'=>'INT NOT NULL DEFAULT 0'];
+		$tables_projected_fields[]=['name'=>'created','ct_fieldtype'=>'','mysql_type'=>'DATETIME NULL','postgresql_type'=>'TIMESTAMP(0) NULL'];
+		$tables_projected_fields[]=['name'=>'modified','ct_fieldtype'=>'','mysql_type'=>'DATETIME NULL','postgresql_type'=>'TIMESTAMP(0) NULL'];
+		$tables_projected_fields[]=['name'=>'checked_out','ct_fieldtype'=>'','mysql_type'=>'int UNSIGNED NOT NULL DEFAULT 0','postgresql_type'=>'INT NOT NULL DEFAULT 0'];
+		$tables_projected_fields[]=['name'=>'checked_out_time','ct_fieldtype'=>'','mysql_type'=>'DATETIME NULL DEFAULT NULL','postgresql_type'=>'TIMESTAMP(0) NULL DEFAULT NULL'];
 		  
 		$tables_projected_indexes=[];
 		$tables_projected_indexes[]=['name'=>'idx_published','field'=>'published'];
@@ -146,23 +140,23 @@ class IntegrityCoreTables extends \CustomTables\IntegrityChecks
 		
 		$tables_projected_fields=array();
 		
-		$tables_projected_fields[]=['name'=>'id','mysql_type'=>'INT UNSIGNED NOT NULL AUTO_INCREMENT','postgresql_type'=>'id INT check (id > 0) NOT NULL DEFAULT NEXTVAL (\'#__customtables_options_seq\')'];
-		$tables_projected_fields[]=['name'=>'published','mysql_type'=>'TINYINT NOT NULL DEFAULT 1','postgresql_type'=>'SMALLINT NOT NULL DEFAULT 1'];
-		$tables_projected_fields[]=['name'=>'tableid','mysql_type'=>'INT UNSIGNED NOT NULL','postgresql_type'=>'INT NOT NULL'];	
+		$tables_projected_fields[]=['name'=>'id','ct_fieldtype'=>'','mysql_type'=>'INT UNSIGNED NOT NULL AUTO_INCREMENT','postgresql_type'=>'id INT check (id > 0) NOT NULL DEFAULT NEXTVAL (\'#__customtables_options_seq\')'];
+		$tables_projected_fields[]=['name'=>'published','ct_fieldtype'=>'','mysql_type'=>'TINYINT NOT NULL DEFAULT 1','postgresql_type'=>'SMALLINT NOT NULL DEFAULT 1'];
+		$tables_projected_fields[]=['name'=>'tableid','ct_fieldtype'=>'','mysql_type'=>'INT UNSIGNED NOT NULL','postgresql_type'=>'INT NOT NULL'];	
 		
-		$tables_projected_fields[]=['name'=>'layoutname','mysql_type'=>'VARCHAR(512) NOT NULL DEFAULT "tablename"','postgresql_type'=>'VARCHAR(512) NOT NULL DEFAULT \'\''];
-		$tables_projected_fields[]=['name'=>'layouttype','mysql_type'=>'INT UNSIGNED NOT NULL DEFAULT 0','postgresql_type'=>'INT NOT NULL DEFAULT 0'];		
+		$tables_projected_fields[]=['name'=>'layoutname','ct_fieldtype'=>'','mysql_type'=>'VARCHAR(512) NOT NULL DEFAULT "tablename"','postgresql_type'=>'VARCHAR(512) NOT NULL DEFAULT \'\''];
+		$tables_projected_fields[]=['name'=>'layouttype','ct_fieldtype'=>'','mysql_type'=>'INT UNSIGNED NOT NULL DEFAULT 0','postgresql_type'=>'INT NOT NULL DEFAULT 0'];		
 		
-		$tables_projected_fields[]=['name'=>'layoutcode','mysql_type'=>'MEDIUMTEXT NULL DEFAULT NULL','postgresql_type'=>'TEXT NULL DEFAULT NULL'];
+		$tables_projected_fields[]=['name'=>'layoutcode','ct_fieldtype'=>'','mysql_type'=>'MEDIUMTEXT NULL DEFAULT NULL','postgresql_type'=>'TEXT NULL DEFAULT NULL'];
 		
-		$tables_projected_fields[]=['name'=>'changetimestamp','mysql_type'=>'TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP','postgresql_type'=>'TIMESTAMP(0) NULL DEFAULT NULL'];
+		$tables_projected_fields[]=['name'=>'changetimestamp','ct_fieldtype'=>'','mysql_type'=>'TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP','postgresql_type'=>'TIMESTAMP(0) NULL DEFAULT NULL'];
 		
-		$tables_projected_fields[]=['name'=>'created_by','mysql_type'=>'INT UNSIGNED NOT NULL DEFAULT 0','postgresql_type'=>'INT NOT NULL DEFAULT 0'];
-		$tables_projected_fields[]=['name'=>'modified_by','mysql_type'=>'INT UNSIGNED NOT NULL DEFAULT 0','postgresql_type'=>'INT NOT NULL DEFAULT 0'];
-		$tables_projected_fields[]=['name'=>'created','mysql_type'=>'DATETIME NULL DEFAULT NULL','postgresql_type'=>'TIMESTAMP(0) NULL DEFAULT NULL'];
-		$tables_projected_fields[]=['name'=>'modified','mysql_type'=>'DATETIME NULL DEFAULT NULL','postgresql_type'=>'TIMESTAMP(0) NULL DEFAULT NULL'];
-		$tables_projected_fields[]=['name'=>'checked_out','mysql_type'=>'int UNSIGNED NOT NULL DEFAULT 0','postgresql_type'=>'INT NOT NULL DEFAULT 0'];
-		$tables_projected_fields[]=['name'=>'checked_out_time','mysql_type'=>'DATETIME NULL DEFAULT NULL','postgresql_type'=>'TIMESTAMP(0) NULL DEFAULT NULL'];
+		$tables_projected_fields[]=['name'=>'created_by','ct_fieldtype'=>'','mysql_type'=>'INT UNSIGNED NOT NULL DEFAULT 0','postgresql_type'=>'INT NOT NULL DEFAULT 0'];
+		$tables_projected_fields[]=['name'=>'modified_by','ct_fieldtype'=>'','mysql_type'=>'INT UNSIGNED NOT NULL DEFAULT 0','postgresql_type'=>'INT NOT NULL DEFAULT 0'];
+		$tables_projected_fields[]=['name'=>'created','ct_fieldtype'=>'','mysql_type'=>'DATETIME NULL DEFAULT NULL','postgresql_type'=>'TIMESTAMP(0) NULL DEFAULT NULL'];
+		$tables_projected_fields[]=['name'=>'modified','ct_fieldtype'=>'','mysql_type'=>'DATETIME NULL DEFAULT NULL','postgresql_type'=>'TIMESTAMP(0) NULL DEFAULT NULL'];
+		$tables_projected_fields[]=['name'=>'checked_out','ct_fieldtype'=>'','mysql_type'=>'int UNSIGNED NOT NULL DEFAULT 0','postgresql_type'=>'INT NOT NULL DEFAULT 0'];
+		$tables_projected_fields[]=['name'=>'checked_out_time','ct_fieldtype'=>'','mysql_type'=>'DATETIME NULL DEFAULT NULL','postgresql_type'=>'TIMESTAMP(0) NULL DEFAULT NULL'];
 				
 		$tables_projected_indexes=[];
 		$tables_projected_indexes[]=['name'=>'idx_published','field'=>'published'];
@@ -182,17 +176,17 @@ class IntegrityCoreTables extends \CustomTables\IntegrityChecks
 		
 		$tables_projected_fields=array();
 		
-		$tables_projected_fields[]=['name'=>'id','mysql_type'=>'INT UNSIGNED NOT NULL AUTO_INCREMENT','postgresql_type'=>'id INT check (id > 0) NOT NULL DEFAULT NEXTVAL (\'#__customtables_options_seq\')'];
-		$tables_projected_fields[]=['name'=>'published','mysql_type'=>'TINYINT NOT NULL DEFAULT 1','postgresql_type'=>'SMALLINT NOT NULL DEFAULT 1'];
+		$tables_projected_fields[]=['name'=>'id','ct_fieldtype'=>'','mysql_type'=>'INT UNSIGNED NOT NULL AUTO_INCREMENT','postgresql_type'=>'id INT check (id > 0) NOT NULL DEFAULT NEXTVAL (\'#__customtables_options_seq\')'];
+		$tables_projected_fields[]=['name'=>'published','ct_fieldtype'=>'','mysql_type'=>'TINYINT NOT NULL DEFAULT 1','postgresql_type'=>'SMALLINT NOT NULL DEFAULT 1'];
 		
-		$tables_projected_fields[]=['name'=>'categoryname','mysql_type'=>'VARCHAR(255) NOT NULL DEFAULT "tablename"','postgresql_type'=>'VARCHAR(255) NOT NULL DEFAULT \'\''];
+		$tables_projected_fields[]=['name'=>'categoryname','ct_fieldtype'=>'','mysql_type'=>'VARCHAR(255) NOT NULL DEFAULT "tablename"','postgresql_type'=>'VARCHAR(255) NOT NULL DEFAULT \'\''];
 		
-		$tables_projected_fields[]=['name'=>'created_by','mysql_type'=>'INT UNSIGNED NOT NULL DEFAULT 0','postgresql_type'=>'INT NOT NULL DEFAULT 0'];
-		$tables_projected_fields[]=['name'=>'modified_by','mysql_type'=>'INT UNSIGNED NOT NULL DEFAULT 0','postgresql_type'=>'INT NOT NULL DEFAULT 0'];
-		$tables_projected_fields[]=['name'=>'created','mysql_type'=>'DATETIME NULL DEFAULT NULL','postgresql_type'=>'TIMESTAMP(0) NULL DEFAULT NULL'];
-		$tables_projected_fields[]=['name'=>'modified','mysql_type'=>'DATETIME NULL DEFAULT NULL','postgresql_type'=>'TIMESTAMP(0) NULL DEFAULT NULL'];
-		$tables_projected_fields[]=['name'=>'checked_out','mysql_type'=>'int UNSIGNED NOT NULL DEFAULT 0','postgresql_type'=>'INT NOT NULL DEFAULT 0'];
-		$tables_projected_fields[]=['name'=>'checked_out_time','mysql_type'=>'DATETIME NULL DEFAULT NULL','postgresql_type'=>'TIMESTAMP(0) NULL DEFAULT NULL'];
+		$tables_projected_fields[]=['name'=>'created_by','ct_fieldtype'=>'','mysql_type'=>'INT UNSIGNED NOT NULL DEFAULT 0','postgresql_type'=>'INT NOT NULL DEFAULT 0'];
+		$tables_projected_fields[]=['name'=>'modified_by','ct_fieldtype'=>'','mysql_type'=>'INT UNSIGNED NOT NULL DEFAULT 0','postgresql_type'=>'INT NOT NULL DEFAULT 0'];
+		$tables_projected_fields[]=['name'=>'created','ct_fieldtype'=>'','mysql_type'=>'DATETIME NULL DEFAULT NULL','postgresql_type'=>'TIMESTAMP(0) NULL DEFAULT NULL'];
+		$tables_projected_fields[]=['name'=>'modified','ct_fieldtype'=>'','mysql_type'=>'DATETIME NULL DEFAULT NULL','postgresql_type'=>'TIMESTAMP(0) NULL DEFAULT NULL'];
+		$tables_projected_fields[]=['name'=>'checked_out','ct_fieldtype'=>'','mysql_type'=>'int UNSIGNED NOT NULL DEFAULT 0','postgresql_type'=>'INT NOT NULL DEFAULT 0'];
+		$tables_projected_fields[]=['name'=>'checked_out_time','ct_fieldtype'=>'','mysql_type'=>'DATETIME NULL DEFAULT NULL','postgresql_type'=>'TIMESTAMP(0) NULL DEFAULT NULL'];
 		
 		$tables_projected_indexes=[];
 		$tables_projected_indexes[]=['name'=>'idx_published','field'=>'published'];
@@ -211,13 +205,13 @@ class IntegrityCoreTables extends \CustomTables\IntegrityChecks
 		
 		$tables_projected_fields=array();
 		
-		$tables_projected_fields[]=['name'=>'id','mysql_type'=>'INT UNSIGNED NOT NULL AUTO_INCREMENT','postgresql_type'=>'id INT check (id > 0) NOT NULL DEFAULT NEXTVAL (\'#__customtables_options_seq\')'];
-		$tables_projected_fields[]=['name'=>'userid','mysql_type'=>'INT UNSIGNED NOT NULL DEFAULT 0','postgresql_type'=>'INT NOT NULL DEFAULT 0'];		
-		$tables_projected_fields[]=['name'=>'datetime','mysql_type'=>'DATETIME NULL DEFAULT NULL','postgresql_type'=>'TIMESTAMP(0) NULL DEFAULT NULL'];
-		$tables_projected_fields[]=['name'=>'tableid','mysql_type'=>'INT UNSIGNED NOT NULL DEFAULT 0','postgresql_type'=>'INT NOT NULL DEFAULT 0'];		
-		$tables_projected_fields[]=['name'=>'action','mysql_type'=>'SMALLINT UNSIGNED NOT NULL DEFAULT 0','postgresql_type'=>'MALLINT NOT NULL DEFAULT 0'];		
-		$tables_projected_fields[]=['name'=>'listingid','mysql_type'=>'INT UNSIGNED NOT NULL DEFAULT 0','postgresql_type'=>'INT NOT NULL DEFAULT 0'];
-		$tables_projected_fields[]=['name'=>'Itemid','mysql_type'=>'INT UNSIGNED NOT NULL DEFAULT 0','postgresql_type'=>'INT NOT NULL DEFAULT 0'];
+		$tables_projected_fields[]=['name'=>'id','ct_fieldtype'=>'','mysql_type'=>'INT UNSIGNED NOT NULL AUTO_INCREMENT','postgresql_type'=>'id INT check (id > 0) NOT NULL DEFAULT NEXTVAL (\'#__customtables_options_seq\')'];
+		$tables_projected_fields[]=['name'=>'userid','ct_fieldtype'=>'','mysql_type'=>'INT UNSIGNED NOT NULL DEFAULT 0','postgresql_type'=>'INT NOT NULL DEFAULT 0'];		
+		$tables_projected_fields[]=['name'=>'datetime','ct_fieldtype'=>'','mysql_type'=>'DATETIME NULL DEFAULT NULL','postgresql_type'=>'TIMESTAMP(0) NULL DEFAULT NULL'];
+		$tables_projected_fields[]=['name'=>'tableid','ct_fieldtype'=>'','mysql_type'=>'INT UNSIGNED NOT NULL DEFAULT 0','postgresql_type'=>'INT NOT NULL DEFAULT 0'];		
+		$tables_projected_fields[]=['name'=>'action','ct_fieldtype'=>'','mysql_type'=>'SMALLINT UNSIGNED NOT NULL DEFAULT 0','postgresql_type'=>'MALLINT NOT NULL DEFAULT 0'];		
+		$tables_projected_fields[]=['name'=>'listingid','ct_fieldtype'=>'','mysql_type'=>'INT UNSIGNED NOT NULL DEFAULT 0','postgresql_type'=>'INT NOT NULL DEFAULT 0'];
+		$tables_projected_fields[]=['name'=>'Itemid','ct_fieldtype'=>'','mysql_type'=>'INT UNSIGNED NOT NULL DEFAULT 0','postgresql_type'=>'INT NOT NULL DEFAULT 0'];
 		  
 		$tables_projected_indexes=[];
 		$tables_projected_indexes[]=['name'=>'idx_userid','field'=>'userid'];
@@ -235,21 +229,21 @@ class IntegrityCoreTables extends \CustomTables\IntegrityChecks
 		$dbprefix = $conf->get('dbprefix');
 		
 		$tables_projected_fields=array();
-		$tables_projected_fields[]=['name'=>'id','mysql_type'=>'INT UNSIGNED NOT NULL AUTO_INCREMENT','postgresql_type'=>'id INT check (id > 0) NOT NULL DEFAULT NEXTVAL (\'#__customtables_options_seq\')'];
-		$tables_projected_fields[]=['name'=>'published','mysql_type'=>'TINYINT NOT NULL DEFAULT 1','postgresql_type'=>'SMALLINT NOT NULL DEFAULT 1'];
-		$tables_projected_fields[]=['name'=>'optionname','mysql_type'=>'VARCHAR(50) NULL DEFAULT NULL','postgresql_type'=>'VARCHAR(50) CHARACTER SET latin1 COLLATE latin1_general_ci NULL DEFAULT NULL'];
-		$tables_projected_fields[]=['name'=>'title','mysql_type'=>'VARCHAR(100) NULL DEFAULT NULL','postgresql_type'=>'VARCHAR(100) NULL DEFAULT NULL','multilang'=>true];
+		$tables_projected_fields[]=['name'=>'id','ct_fieldtype'=>'','mysql_type'=>'INT UNSIGNED NOT NULL AUTO_INCREMENT','postgresql_type'=>'id INT check (id > 0) NOT NULL DEFAULT NEXTVAL (\'#__customtables_options_seq\')'];
+		$tables_projected_fields[]=['name'=>'published','ct_fieldtype'=>'','mysql_type'=>'TINYINT NOT NULL DEFAULT 1','postgresql_type'=>'SMALLINT NOT NULL DEFAULT 1'];
+		$tables_projected_fields[]=['name'=>'optionname','ct_fieldtype'=>'','mysql_type'=>'VARCHAR(50) NULL DEFAULT NULL','postgresql_type'=>'VARCHAR(50) CHARACTER SET latin1 COLLATE latin1_general_ci NULL DEFAULT NULL'];
+		$tables_projected_fields[]=['name'=>'title','ct_fieldtype'=>'','mysql_type'=>'VARCHAR(100) NULL DEFAULT NULL','postgresql_type'=>'VARCHAR(100) NULL DEFAULT NULL','multilang'=>true];
 		
-		$tables_projected_fields[]=['name'=>'image','mysql_type'=>'BIGINT NULL','postgresql_type'=>'BIGINT NULL'];
-		$tables_projected_fields[]=['name'=>'imageparams','mysql_type'=>'VARCHAR(100) NULL DEFAULT NULL','postgresql_type'=>'VARCHAR(100) NULL DEFAULT NULL'];
-		$tables_projected_fields[]=['name'=>'ordering','mysql_type'=>'INT UNSIGNED NOT NULL DEFAULT 0','postgresql_type'=>'INT NOT NULL DEFAULT 0'];
-		$tables_projected_fields[]=['name'=>'parentid','mysql_type'=>'INT UNSIGNED NULL','postgresql_type'=>'INT NULL DEFAULT NULL'];
-		$tables_projected_fields[]=['name'=>'sublevel','mysql_type'=>'INT NULL','postgresql_type'=>'INT NULL DEFAULT NULL'];
-		$tables_projected_fields[]=['name'=>'isselectable','mysql_type'=>'TINYINT NOT NULL DEFAULT 1','postgresql_type'=>'SMALLINT NOT NULL DEFAULT 1'];
-		$tables_projected_fields[]=['name'=>'optionalcode','mysql_type'=>'TEXT NULL DEFAULT NULL','postgresql_type'=>'TEXT NULL DEFAULT NULL'];
-		$tables_projected_fields[]=['name'=>'link','mysql_type'=>'VARCHAR(1024) NULL DEFAULT NULL','postgresql_type'=>'VARCHAR(1024) NULL DEFAULT NULL'];
-		$tables_projected_fields[]=['name'=>'familytree','mysql_type'=>'VARCHAR(1024) CHARACTER SET latin1 COLLATE latin1_general_ci NULL DEFAULT NULL','postgresql_type'=>'VARCHAR(1024) NULL DEFAULT NULL'];
-		$tables_projected_fields[]=['name'=>'familytreestr','mysql_type'=>'VARCHAR(1024) CHARACTER SET latin1 COLLATE latin1_general_ci NULL DEFAULT NULL','postgresql_type'=>'VARCHAR(1024) NULL DEFAULT NULL'];
+		$tables_projected_fields[]=['name'=>'image','ct_fieldtype'=>'','mysql_type'=>'BIGINT NULL','postgresql_type'=>'BIGINT NULL'];
+		$tables_projected_fields[]=['name'=>'imageparams','ct_fieldtype'=>'','mysql_type'=>'VARCHAR(100) NULL DEFAULT NULL','postgresql_type'=>'VARCHAR(100) NULL DEFAULT NULL'];
+		$tables_projected_fields[]=['name'=>'ordering','ct_fieldtype'=>'','mysql_type'=>'INT UNSIGNED NOT NULL DEFAULT 0','postgresql_type'=>'INT NOT NULL DEFAULT 0'];
+		$tables_projected_fields[]=['name'=>'parentid','ct_fieldtype'=>'','mysql_type'=>'INT UNSIGNED NULL','postgresql_type'=>'INT NULL DEFAULT NULL'];
+		$tables_projected_fields[]=['name'=>'sublevel','ct_fieldtype'=>'','mysql_type'=>'INT NULL','postgresql_type'=>'INT NULL DEFAULT NULL'];
+		$tables_projected_fields[]=['name'=>'isselectable','ct_fieldtype'=>'','mysql_type'=>'TINYINT NOT NULL DEFAULT 1','postgresql_type'=>'SMALLINT NOT NULL DEFAULT 1'];
+		$tables_projected_fields[]=['name'=>'optionalcode','ct_fieldtype'=>'','mysql_type'=>'TEXT NULL DEFAULT NULL','postgresql_type'=>'TEXT NULL DEFAULT NULL'];
+		$tables_projected_fields[]=['name'=>'link','ct_fieldtype'=>'','mysql_type'=>'VARCHAR(1024) NULL DEFAULT NULL','postgresql_type'=>'VARCHAR(1024) NULL DEFAULT NULL'];
+		$tables_projected_fields[]=['name'=>'familytree','ct_fieldtype'=>'','mysql_type'=>'VARCHAR(1024) CHARACTER SET latin1 COLLATE latin1_general_ci NULL DEFAULT NULL','postgresql_type'=>'VARCHAR(1024) NULL DEFAULT NULL'];
+		$tables_projected_fields[]=['name'=>'familytreestr','ct_fieldtype'=>'','mysql_type'=>'VARCHAR(1024) CHARACTER SET latin1 COLLATE latin1_general_ci NULL DEFAULT NULL','postgresql_type'=>'VARCHAR(1024) NULL DEFAULT NULL'];
   
 		$tables_projected_indexes=[];
 		$tables_projected_indexes[]=['name'=>'idx_published','field'=>'published'];
@@ -380,37 +374,42 @@ class IntegrityCoreTables extends \CustomTables\IntegrityChecks
 		return false;
 	}
 	
-	/*
-	public static function checkComponentTables()
+	public static function checkCoreTableFields(&$ct,$realtablename, $ExistingFields, $realfieldname, $ct_fieldtype, $ct_typeparams = '')
 	{
-		$tables_projected_fields=array();
-		$tables_projected_fields[]=['name'=>'id','mysql_type'=>'INT UNSIGNED NOT NULL AUTO_INCREMENT','postgresql_type'=>'id INT check (id > 0) NOT NULL DEFAULT NEXTVAL (\'#__customtables_tables_seq\')'];
-//		$tables_projected_fields[]=['name'=>'asset_id','mysql_type'=>'INT UNSIGNED NOT NULL DEFAULT 0','postgresql_type'=>'INT NOT NULL DEFAULT 0'];
-		$tables_projected_fields[]=['name'=>'customphp','mysql_type'=>'VARCHAR(1024) NULL DEFAULT NULL','postgresql_type'=>'VARCHAR(1024) NULL DEFAULT NULL'];
-		$tables_projected_fields[]=['name'=>'description','mysql_type'=>'TEXT NULL DEFAULT NULL','postgresql_type'=>'TEXT NULL DEFAULT NULL'];
-		$tables_projected_fields[]=['name'=>'tablecategory','mysql_type'=>'INT NULL DEFAULT NULL','postgresql_type'=>'INT NULL DEFAULT NULL'];
-		$tables_projected_fields[]=['name'=>'tablename','mysql_type'=>'VARCHAR(255) NOT NULL DEFAULT "tablename"','postgresql_type'=>'VARCHAR(255) NOT NULL DEFAULT \'\''];
-		$tables_projected_fields[]=['name'=>'customtablename','mysql_type'=>'VARCHAR(100) NULL DEFAULT NULL','postgresql_type'=>'VARCHAR(100) NULL DEFAULT NULL'];
-		$tables_projected_fields[]=['name'=>'customidfield','mysql_type'=>'VARCHAR(100) NULL DEFAULT NULL','postgresql_type'=>'VARCHAR(100) NULL DEFAULT NULL'];
-		$tables_projected_fields[]=['name'=>'tabletitle','mysql_type'=>'VARCHAR(255) NULL DEFAULT NULL','postgresql_type'=>'VARCHAR(255) NULL DEFAULT NULL'];
-		//$tables_projected_fields[]=['name'=>'params','mysql_type'=>'text NULL DEFAULT NULL','postgresql_type'=>'text NULL DEFAULT NULL'];
-		$tables_projected_fields[]=['name'=>'published','mysql_type'=>'TINYINT NOT NULL DEFAULT 1','postgresql_type'=>'SMALLINT NOT NULL DEFAULT 1'];
-		$tables_projected_fields[]=['name'=>'created_by','mysql_type'=>'INT UNSIGNED NOT NULL DEFAULT 0','postgresql_type'=>'INT NOT NULL DEFAULT 0'];
-		$tables_projected_fields[]=['name'=>'modified_by','mysql_type'=>'INT UNSIGNED NOT NULL DEFAULT 0','postgresql_type'=>'INT NOT NULL DEFAULT 0'];
-		$tables_projected_fields[]=['name'=>'created','mysql_type'=>'DATETIME NULL DEFAULT NULL','postgresql_type'=>'TIMESTAMP(0) NULL DEFAULT NULL'];
-		$tables_projected_fields[]=['name'=>'modified','mysql_type'=>'DATETIME NULL DEFAULT NULL','postgresql_type'=>'TIMESTAMP(0) NULL DEFAULT NULL'];
-		$tables_projected_fields[]=['name'=>'checked_out','mysql_type'=>'int UNSIGNED NOT NULL DEFAULT 0','postgresql_type'=>'INT NOT NULL DEFAULT 0'];
-		$tables_projected_fields[]=['name'=>'checked_out_time','mysql_type'=>'DATETIME NULL DEFAULT NULL','postgresql_type'=>'TIMESTAMP(0) NULL DEFAULT NULL'];
-		//$tables_projected_fields[]=['name'=>'version','mysql_type'=>'INT UNSIGNED NOT NULL DEFAULT 1','postgresql_type'=>'INT NOT NULL DEFAULT 1'];
-		//$tables_projected_fields[]=['name'=>'hits','mysql_type'=>'INT UNSIGNED NOT NULL DEFAULT 0','postgresql_type'=>'INT NOT NULL DEFAULT 0'];
-		//$tables_projected_fields[]=['name'=>'ordering','mysql_type'=>'INT NOT NULL DEFAULT 0','postgresql_type'=>'INT NOT NULL DEFAULT 0'];
-		$tables_projected_fields[]=['name'=>'allowimportcontent','mysql_type'=>'TINYINT NOT NULL DEFAULT 0','postgresql_type'=>'SMALLINT NOT NULL DEFAULT 0'];
+		$exst_field=null;
+		foreach($ExistingFields as $existing_field)
+		{
+			if($existing_field['column_name']==$realfieldname)
+			{
+				$exst_field = $existing_field;
+				break;
+			}
+		}
 		
-		ESTables::checkComponentTable('#__customtables_tables', $tables_projected_fields);
+		if($exst_field == null)
+		{
+			echo 'field not created j648u';
+			die;
+			return false;
+		}
+		
+		$projected_data_type = Fields::getProjectedFieldType($ct_fieldtype, $ct_typeparams);
+		
+		if(!IntegrityFields::compareFieldTypes($existing_field,$projected_data_type))
+		{
+			$PureFieldType = Fields::makeProjectedFieldType($projected_data_type);
+
+			if(!Fields::fixMYSQLField($realtablename,$realfieldname,$PureFieldType,$msg))
+			{
+				Factory::getApplication()->enqueueMessage($msg,'error');
+				return false;
+			}
+		}
+
+		return true;
 	}
-	*/
 	
-	public static function checkComponentTable($realtablename, $projected_fields)
+	public static function checkCoreTable(&$ct,$realtablename, $projected_fields)
 	{
 		$db = Factory::getDBO();
 		
@@ -425,8 +424,29 @@ class IntegrityCoreTables extends \CustomTables\IntegrityChecks
 		{
 			$proj_field=$projected_field['name'];
 			$fieldtype=$projected_field[$type_field_name];
+			
+			$fieldtype = '';
+			$typeparams = '';
+			
+			if(isset($projected_field['multilang']) and $projected_field['multilang'] == true)
+			{
+				if(stripos($projected_field[$type_field_name],'text')!==false)
+					$fieldtype = 'multilangtext';
+				else
+					$fieldtype = 'multilangstring';
+			}
+			
+
+			IntegrityFields::addFieldIfNotExists($ct,$ExistingFields,$proj_field,$fieldtype,$typeparams,$projected_field[$type_field_name]);
         
-			Fields::checkField($ExistingFields,$realtablename,$projected_field['name'],$projected_field[$type_field_name]);
+			if(isset($projected_field['ct_fieldtype']) and $projected_field['ct_fieldtype']!='')
+			{
+				$typeparams='';
+				if(isset($projected_field['ct_typeparams']) and $projected_field['ct_typeparams']!='')
+					$typeparams = $projected_field['ct_typeparams'];
+				
+				IntegrityCoreTables::checkCoreTableFields($ct,$realtablename, $ExistingFields, $proj_field, $projected_field['ct_fieldtype'],$typeparams);
+			}
 		}
 	}
 }

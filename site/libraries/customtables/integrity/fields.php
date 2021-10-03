@@ -26,6 +26,11 @@ class IntegrityFields extends \CustomTables\IntegrityChecks
 {
 	public static function checkFields(&$ct,$link)
 	{
+		if(strpos($link,'?')===false)
+			$link.='?';
+		else
+			$link.='&';
+				
 		require_once('fieldtype_filebox.php');
 		require_once('fieldtype_gallery.php');
 		
@@ -48,7 +53,7 @@ class IntegrityFields extends \CustomTables\IntegrityChecks
 	
 		$jinput = Factory::getApplication()->input;
   
-		$projected_fields = Fields::getFields($ct->Table->tableid,false);
+		$projected_fields = Fields::getFields($ct->Table->tableid,false,false);
 
 		//Delete unnesesary fields:
 		$projected_fields[]=['realfieldname'=>'id','type'=>'_id','typeparams'=>''];
@@ -149,7 +154,7 @@ class IntegrityFields extends \CustomTables\IntegrityChecks
 					}
 				}
 			}
-
+			
 			if(!$found)
 			{
 				if($found_field!='')
@@ -167,7 +172,7 @@ class IntegrityFields extends \CustomTables\IntegrityChecks
 							$result.=$msg;
 					}
 					else
-						$result.='<p>Field <span style="color:red;">'.$exst_field.'</span> not registered. <a href="'.$link.'&task=deleteurfield&fieldname='.$exst_field.'">Delete?</a></p>';
+						$result.='<p>Field <span style="color:red;">'.$exst_field.'</span> not registered. <a href="'.$link.'task=deleteurfield&fieldname='.$exst_field.'">Delete?</a></p>';
 				}
 			}
 			else
@@ -213,7 +218,7 @@ class IntegrityFields extends \CustomTables\IntegrityChecks
 					{
 						$result.='<p>Field <span style="color:orange;">'.$nice_field_name.'</span>'
 							.' has wrong type <span style="color:red;">'.strtolower($existing_field['column_type']).'</span> instead of <span style="color:green;">'
-							.$PureFieldType.'</span> <a href="'.$link.'&task=fixfieldtype&fieldname='.$exst_field.'">Fix?</a></p>';
+							.$PureFieldType.'</span> <a href="'.$link.'task=fixfieldtype&fieldname='.$exst_field.'">Fix?</a></p>';
 					}
 				}
 			}
@@ -225,14 +230,14 @@ class IntegrityFields extends \CustomTables\IntegrityChecks
 			$proj_field=$projected_field['realfieldname'];
 			$fieldtype=$projected_field['type'];
 			if($fieldtype!='dummy')
-				IntegrityFields::checkField($ct,$ExistingFields,$proj_field,$fieldtype,$projected_field['typeparams']);
+				IntegrityFields::addFieldIfNotExists($ct,$ExistingFields,$proj_field,$fieldtype,$projected_field['typeparams']);
         }
 	
 		return $result;
 	}
 	
 		
-	protected static function checkField(&$ct,$ExistingFields,$proj_field,$fieldtype,$typeparams)
+	public static function addFieldIfNotExists(&$ct,$ExistingFields,$proj_field,$fieldtype,$typeparams)
     {
 		$result = '';
 		$db = Factory::getDBO();

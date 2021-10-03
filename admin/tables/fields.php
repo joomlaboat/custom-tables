@@ -24,8 +24,6 @@ class CustomtablesTableFields extends JTable
 {
 	var $id = null;
 	var $tableid = null;
-	var $asset_id = null;
-	//var $alias = null;
 	var $allowordering = null;
 	var $defaultvalue = null;
 	var $fieldname = null;
@@ -36,12 +34,10 @@ class CustomtablesTableFields extends JTable
 	var $isdisabled = null;
 	var $savevalue = null;
 	var $alwaysupdatevalue = null;
-  
 	var $type = null;
 	var $typeparams = null;
 	var $valuerule = null;
 	var $valuerulecaption = null;
-	var $params = null;
 	var $published = null;
 	var $parentid = null;
 	var $created_by = null;
@@ -50,8 +46,6 @@ class CustomtablesTableFields extends JTable
 	var $modified = null;
 	var $checked_out = null;
 	var $checked_out_time = null;
-	var $version = null;
-	var $hits = null;
 	var $ordering = null;
 
 	/**

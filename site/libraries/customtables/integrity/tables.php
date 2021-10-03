@@ -37,7 +37,8 @@ class IntegrityTables extends \CustomTables\IntegrityChecks
 			
 			$content = IntegrityFields::checkFields($ct,$link);	
 		
-			IntegrityOptions::checkOptions($ct);
+			if($ct->Env->advancedtagprocessor)
+				IntegrityOptions::checkOptions($ct);
 		
 			$zeroId=IntegrityTables::getZeroRecordID($table['realtablename'],$table['realidfieldname']);
 		

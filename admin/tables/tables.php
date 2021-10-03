@@ -22,13 +22,11 @@ jimport('joomla.database.table');
 class CustomtablesTableTables extends JTable
 {
 	var $id = null;
-	var $asset_id = null;
 	var $customphp = null;
 	var $description = null;
 	var $tablecategory = null;
 	var $tablename = null;
 	var $tabletitle = null;
-	var $params = null;
 	var $published = null;
 	var $created_by = null;
 	var $modified_by = null;
@@ -36,9 +34,6 @@ class CustomtablesTableTables extends JTable
 	var $modified = null;
 	var $checked_out = null;
 	var $checked_out_time = null;
-	var $version = null;
-	var $hits = null;
-	var $ordering = null;
 	var $allowimportcontent = null;
 	var $customtablename = null;
 	var $customidfield = null;

@@ -1078,16 +1078,21 @@ class Fields
 		return $rows[0];
 	}
 
-	public static function getFields($tableid_or_name,$as_object=false)
+	public static function getFields($tableid_or_name,$as_object=false,$order_fields = true)
 	{
 		$db = Factory::getDBO();
+		
+		if($order_fields)
+			$order=' ORDER BY f.ordering, f.fieldname';
+		else
+			$order='';
 
         if((int)$tableid_or_name>0)
-            $query = 'SELECT '.Fields::getFieldRowSelects().' FROM #__customtables_fields WHERE published=1 AND tableid='.(int)$tableid_or_name.' ORDER BY ordering, fieldname';
+            $query = 'SELECT '.Fields::getFieldRowSelects().' FROM #__customtables_fields AS f WHERE f.published=1 AND f.tableid='.(int)$tableid_or_name.$order;
         else
         {
             $w1='(SELECT t.id FROM #__customtables_tables AS t WHERE t.tablename='.$db->quote($tableid_or_name).' LIMIT 1)';
-            $query = 'SELECT '.Fields::getFieldRowSelects().' FROM #__customtables_fields AS f WHERE f.published=1 AND f.tableid='.$w1.' ORDER BY f.ordering, f.fieldname';
+            $query = 'SELECT '.Fields::getFieldRowSelects().' FROM #__customtables_fields AS f WHERE f.published=1 AND f.tableid='.$w1.$order;
         }
 
 		$db->setQuery( $query );
@@ -1195,6 +1200,7 @@ class Fields
         return '*, '.$realfieldname_query;
 	}
 	
+	/*
 	public static function checkField($ExistingFields,$realtablename,$proj_field,$type)
     {
 		$db = Factory::getDBO();
@@ -1218,6 +1224,7 @@ class Fields
 			$db->execute();
 		}
     }
+	*/
 	
 	public static function shortFieldObjects(&$ctfields)
 	{
