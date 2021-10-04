@@ -215,9 +215,25 @@ class Layouts
 		$path=JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'layouts';
 		$filename=$data['layoutname'].'.html';
 
-		file_put_contents($path.DIRECTORY_SEPARATOR.$filename, $data['layoutcode']);
+		try
+        {
+			@file_put_contents($path.DIRECTORY_SEPARATOR.$filename, $data['layoutcode']);
+		}
+        catch (RuntimeException $e)
+        {
+			//$msg=$e->getMessage();
+		}
 
-		$file_ts=filemtime ($path.DIRECTORY_SEPARATOR.$filename);
+		try
+        {
+			@$file_ts=filemtime ($path.DIRECTORY_SEPARATOR.$filename);
+		}
+        catch (RuntimeException $e)
+        {
+			//$msg=$e->getMessage();
+			$file_ts='';
+		}
+
 		if($file_ts=='')
 		{
 			//No permission -  file not saved

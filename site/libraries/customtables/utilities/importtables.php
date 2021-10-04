@@ -373,9 +373,12 @@ class ImportTables
 
 
 		$component=ImportTables::getRecordByField('#__extensions','element','com_customtables',false);
-		$component_id=$component['extension_id'];
+		if(!is_array($component))
+			return false;
+			
+		$component_id=(int)$component['extension_id'];
 
-		$menuitem_new['component_id']=$component_id;
+		$menuitem_new['component_id']=(int)$component_id;
 
 		if($menutype!='' and $menutype!=$menuitem_new['menutype'])
 			$new_menutype=$menutype;
@@ -466,7 +469,7 @@ class ImportTables
 			$menuitem_new['link']=str_replace('com_extrasearch','com_customtables',$menuitem_new['link']);
 			$menuitem_new['id']=null;
 
-			$menuitem_new['component_id']=$component_id;
+			$menuitem_new['component_id']=(int)$component_id;
 			$menuitem_new['alias']=$menuitem_alias;
 			$menuitem_new['menytype']=$new_menutype_alias;
 
@@ -837,10 +840,10 @@ class ImportTables
 		else
 		{
 			$component=ImportTables::getRecordByField('#__extensions','element',$extension_name,false);
-			$component_id=$component['extension_id'];
+			$component_id=(int)$component['extension_id'];
 		}
 
-		$menuitem_new['component_id']=$component_id;
+		$menuitem_new['component_id']=(int)$component_id;
 		$menuitem_new['alias']=$alias;
 
 		$menuitem_old=ImportTables::getRecordByField('#__menu','alias',$alias,false);
