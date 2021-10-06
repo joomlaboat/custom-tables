@@ -28,7 +28,6 @@ $libpath=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_cu
 require_once($libpath.'valuetags.php');
 
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'filtering.php');
-require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'models'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'save.php');
 
 class CustomTablesModelEditItem extends JModelLegacy
 {
@@ -904,8 +903,6 @@ class CustomTablesModelEditItem extends JModelLegacy
 		if(in_array($USER_IP,$IP_Black_List))
 			return true;
 
-
-
 		if(!$this->check_captcha())
 		{
 			$msg='Incorrect Captcha';
@@ -933,6 +930,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 		//	Fields
 		$prefix='comes_';
+		$this->ct->Table->prefix = $prefix;
 
 		$phponchangefound=false;
 		$phponaddfound=false;
@@ -948,8 +946,11 @@ class CustomTablesModelEditItem extends JModelLegacy
 			$value_found=false;
 			if(in_array($esfield['fieldname'],$fieldstosave))
 			{
-				$value_found=CTValue::getValue($id,$esfield,$savequery,$prefix,$this->ct->Table->tablename,$this->ct->Languages->Postfix,$fieldstosave,$this->ct->Table->realtablename);
-				if(!$value_found)
+				$saveFieldSet = $this->ct->Table->getSaveFieldSet($id,$esfield);
+				
+				if($saveFieldSet != null)
+					$savequery[] = $saveFieldSet;
+				else
 					$default_fields_to_apply[]=array($esfield['fieldname'],$esfield['defaultvalue'],$esfield['type'],$esfield['realfieldname']);
 			}
 
@@ -1046,9 +1047,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 			{
 				$publishstatus = $this->params->get( 'publishstatus' );
 				if(is_null($publishstatus))
-				{
 					$publishstatus = $jinput->getInt('published');
-				}
 				else
 					$publishstatus = (int)$publishstatus;
 			}
@@ -1069,12 +1068,18 @@ class CustomTablesModelEditItem extends JModelLegacy
 			$rows = $db->loadAssocList();
 			if(count($rows)!=0)
 				$row_old=$rows[0];
+			
+			$this->updateLog($id);			
+			$this->ct->Table->runUpdateQuery($savequery,$id);
 
-			$this->updateLog($id);
+			/*
 			$query='UPDATE '.$this->ct->Table->realtablename.' SET '.implode(', ',$savequery).' WHERE '.$this->ct->Table->realidfieldname.'='.$id;
+			echo $query;
+			die;
 			
 			$db->setQuery( $query );
 			$db->execute();
+			*/
 		}
 
 		if(count($savequery)<1)
@@ -1137,11 +1142,11 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 		//update MD5s
 		$this->updateMD5($listing_id);
-		CTValue::processDefaultValues($default_fields_to_apply,$this,$row);
+		$this->ct->Table->processDefaultValues($default_fields_to_apply,$this,$row);
 
 		if($create_new_user!=null and (int)$row['listing_published']==1)
 		{
-			CTValue::Try2CreateUserAccount($this,$create_new_user,$row);
+			$this->ct->Table->Try2CreateUserAccount($this,$create_new_user,$row);
 
 		}
 
@@ -1282,7 +1287,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 				}
 		}
 
-        CTValue::runQueries($this,$savequery,$id);
+		$this->ct->Table->runUpdateQuery($savequery,$id);
 	}
 
 	function updateDefaultValues($row)
@@ -1296,7 +1301,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 				$default_fields_to_apply[]=array($fieldname,$esfield['defaultvalue'],$esfield['type'],$esfield['realfieldname']);
 		}
 
-        CTValue::processDefaultValues($default_fields_to_apply,$this,$row);
+        $this->ct->Table->processDefaultValues($default_fields_to_apply,$this,$row);
 	}
 
 	function updateLog($id)
@@ -1357,13 +1362,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 		}
 
 		if(count($savequery)>0)
-		{
-			$db = JFactory::getDBO();
-			$query='UPDATE '.$this->ct->Table->realtablename.' SET '.implode(', ',$savequery).' WHERE '.$this->ct->Table->realidfieldname.'='.$id;
-
-			$db->setQuery( $query );
-			$db->execute();
-		}
+			$this->ct->Table->runUpdateQuery($savequery,$id);
 	}
 
 /*
@@ -1871,7 +1870,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 		}
 
 		if($create_new_user!=null and (int)$row['listing_published']==1)
-			CTValue::Try2CreateUserAccount($this,$create_new_user,$row);
+			$this->ct->Table->Try2CreateUserAccount($this,$create_new_user,$row);
 
 		
 		

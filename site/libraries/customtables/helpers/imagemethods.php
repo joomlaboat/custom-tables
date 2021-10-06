@@ -586,7 +586,6 @@ class CustomTablesImageMethods
 
 		if($fileExtension == '')
 		{
-			//echo 'File type ('.$fileExtension.') not supported.';
 			//JFactory::getApplication()->enqueueMessage('File type ('.$fileExtension.') not supported.', 'error');
 			return -1;
 		}
@@ -597,7 +596,6 @@ class CustomTablesImageMethods
 		//Check if destination file already exists
 		if(file_exists($dst)) //Just in case
 		{
-			//echo 'File with the same name ('.$dst.') already exists.';
 			//JFactory::getApplication()->enqueueMessage('File with the same name ('.$dst.') already exists.', 'error');
 			return 2;
 		}

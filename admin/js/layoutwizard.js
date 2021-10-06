@@ -40,10 +40,11 @@ function loadFields(tableselector_id_,field_box_id_)
 
 function loadFieldsUpdate()
 {
+	
 	var tableid=tableselector_obj.value;
-
 	if(tableid!==current_table_id)
 	{
+		
 		loadFieldsData(tableid);
 	}
 }
@@ -56,7 +57,7 @@ function loadFieldsData(tableid)
 		return;//table not selected
 
 	var url=websiteroot+"index.php?option=com_customtables&view=api&frmt=json&task=getfields&tableid="+tableid;
-
+	
 	if (typeof fetch === "function")
 	{
 		fetch(url, {method: 'GET',mode: 'no-cors',credentials: 'same-origin' }).then(function(response)

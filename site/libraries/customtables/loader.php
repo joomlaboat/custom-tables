@@ -50,6 +50,9 @@ function CTLoader($inclide_utilities = false)
 	$path_datatypes = $path . 'logs' . DIRECTORY_SEPARATOR;
 	require_once($path_datatypes.'logs.php');
 	
+	$path_datatypes = $path . 'records' . DIRECTORY_SEPARATOR;
+	require_once($path_datatypes.'savefieldqueryset.php');
+	
 	//$path_datatypes = $path . 'customphp' . DIRECTORY_SEPARATOR;
 	//require_once($path_datatypes.'customphp.php');
 	

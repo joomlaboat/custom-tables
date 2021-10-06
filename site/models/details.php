@@ -116,6 +116,12 @@ class CustomTablesModelDetails extends JModelLegacy
 		$this->setId($id);
 		
 		$this->ct->getTable($this->params->get( 'establename' ), $this->params->get('useridfield'));
+		
+		if($this->ct->Table->tablename=='')
+		{
+			JFactory::getApplication()->enqueueMessage('Table not selected.', 'error');
+			return;
+		}
 
 		if($this->alias!='' and $this->ct->Table->alias_fieldname!='')
 			$this->filter=$this->ct->Table->alias_fieldname.'='.$this->alias;
@@ -127,6 +133,7 @@ class CustomTablesModelDetails extends JModelLegacy
 		{
 			//Parse using layout
 			$this->LayoutProc->layout=$this->filter;
+
 			$this->filter=$this->LayoutProc->fillLayout(array(),null,array(),'[]',true);
 		}
 
@@ -173,12 +180,13 @@ class CustomTablesModelDetails extends JModelLegacy
 			if($this->filter!='')
 			{
 				$this->filtering = new ESFiltering($this->ct);
-
+				
 				$PathValue=array();
 				$paramwhere=$this->filtering->getWhereExpression($this->filter,$PathValue);
+				
 
 				if($paramwhere!='')
-						$wherearr[]=' ('.$paramwhere.' )';
+					$wherearr[]=' ('.$paramwhere.' )';
 			}
 			else
 			{
@@ -211,6 +219,7 @@ class CustomTablesModelDetails extends JModelLegacy
 				
 			$query.=' FROM '.$this->ct->Table->realtablename.' WHERE id='.$this->_id.' LIMIT 1';
 		}
+
 		$db->setQuery($query);
 		$rows=$db->loadAssocList();
 

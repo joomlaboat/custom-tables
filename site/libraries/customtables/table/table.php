@@ -13,6 +13,8 @@ namespace CustomTables;
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+
+use \Joomla\CMS\Factory;
 use CustomTables\Fields;
 
 use \ESTables;
@@ -21,6 +23,7 @@ use \ESFields;
 class Table
 {
 	use Logs;
+	use SaveFieldQuerySet;
 	
 	var $Languages;
 	var $Env;
@@ -44,8 +47,12 @@ class Table
 	var $fields;
 	var $record;
 	
+	var $db;
+	
 	function __construct(&$Languages, &$Env, $tablename_or_id_not_sanitized, $useridfieldname = null)
 	{
+		$this->db = Factory::getDBO();
+				
 		$this->Languages = $Languages;
 		$this->Env = $Env;
 		
@@ -118,8 +125,7 @@ class Table
 	
 	function loadRecord($id)
 	{
-		$db = JFactory::getDBO();
-		$query = 'SELECT '.$this->tablerow['query_selects'].' FROM '.$db->queryName($realtablename).' WHERE id='.(int)$id.' LIMIT 1';
+		$query = 'SELECT '.$this->tablerow['query_selects'].' FROM '.$this->db->queryName($realtablename).' WHERE id='.(int)$id.' LIMIT 1';
 		$db->setQuery( $query );
 	
 		$recs = $db->loadAssocList( );

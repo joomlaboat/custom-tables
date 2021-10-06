@@ -41,7 +41,7 @@ class JHTMLESSqlJoin
             $filter=$typeparams[2];
 		else
             $filter='';
-
+			
 		if(isset($typeparams[3]))
 			$dynamic_filter=$typeparams[3];
 		else
@@ -144,7 +144,7 @@ class JHTMLESSqlJoin
 
         $_params= new JRegistry;
 		$_params->loadArray($paramsArray);
-
+		
 		$model->load($_params, true);
 		$model->showpagination=false;
 

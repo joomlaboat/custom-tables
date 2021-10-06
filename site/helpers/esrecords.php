@@ -33,7 +33,7 @@ class JHTMLESRecords
 
 				//With filter
 				$paramsArray=array();
-				$paramsArray['limit']=0;
+				$paramsArray['limit']=10000;
 				$paramsArray['establename']=$establename;
 				$paramsArray['filter']=str_replace('****quote****','"',$filter);
 
@@ -51,6 +51,7 @@ class JHTMLESRecords
                                         $paramsArray['sortby']=$sortbyfield;
 
 				$model = JModelLegacy::getInstance('Catalog', 'CustomTablesModel', $config);
+				
 
 				if($selectorpair[0]=='single')
 						$model->es_ordering=$field;
@@ -72,8 +73,9 @@ class JHTMLESRecords
                                 
    				$model->load($_params, true);
 				$model->showpagination=false;
-
+				
 				$SearchResult=$model->getSearchResult();
+			
                                 
 				//Without filter
                                 if($selectorpair[0]=='single' or $selectorpair[0]=='multibox')

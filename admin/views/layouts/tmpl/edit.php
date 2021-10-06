@@ -71,9 +71,11 @@ $onPageLoads=array();
 		jQuery('#customtables_loader').fadeIn('fast');
 		jQuery('#loading').hide();
 		
-		<?php echo 'all_tables='.$this->getAllTables().';'; ?>
+		
 	});
 	*/
+	
+	<?php echo 'all_tables='.$this->getAllTables().';'; ?>
 </script>
 
 <!--<div id="customtables_loader" style="display: none;">-->

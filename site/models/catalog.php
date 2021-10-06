@@ -225,8 +225,8 @@ class CustomTablesModelCatalog extends JModelLegacy
 				if($this->filterparam!='')
 				{
 					//Parse using layout, has no effect to layout itself
+					$this->LayoutProc->applyContentPlugins($this->filterparam);
 					$this->filterparam = $this->sanitizeAndParseFilter($this->filterparam);
-					
 					$this->LayoutProc->layout=$this->filterparam;
 					$this->filterparam=$this->LayoutProc->fillLayout(array(),null,'');
 				}
@@ -245,7 +245,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 				}//if(!$this->blockExternalVars)
 
 				$this->filtering = new ESFiltering($this->ct);
-
+				
 				if($this->params->get( 'showcartitemsonly' )!='')
 						$this->showcartitemsonly=(bool)(int)$this->params->get( 'showcartitemsonly' );
 				else
@@ -421,14 +421,11 @@ class CustomTablesModelCatalog extends JModelLegacy
 
 	function getSearchResult($addition_filter='')
 	{
+		$this->PathValue='';
+		$jinput = JFactory::getApplication()->input;
 
-			$this->PathValue='';
-			$jinput = JFactory::getApplication()->input;
-
-			if(!isset($this->ct->Table->tableid))
-				return array();
-
-
+		if(!isset($this->ct->Table->tableid))
+			return array();
 
 		$this->TotalRows=0;
 		$db= JFactory::getDBO();
@@ -501,8 +498,10 @@ class CustomTablesModelCatalog extends JModelLegacy
 		$paramwhere=$this->filtering->getWhereExpression($this->filterparam,$PathValue);
 
 		if($addition_filter!='')
+		{
 			$wherearr[]=$addition_filter;
-
+		}
+		
 		if($paramwhere!='')
 			$wherearr[]=$paramwhere;
 
@@ -600,6 +599,8 @@ class CustomTablesModelCatalog extends JModelLegacy
 				$the_limit=20000; //or we will run out of memory
 				
 			$this->limit=$the_limit;
+			
+			
 
 			if(!$this->blockExternalVars and $the_limit!=0)
 			{

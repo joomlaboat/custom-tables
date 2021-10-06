@@ -175,7 +175,7 @@ class IntegrityFields extends \CustomTables\IntegrityChecks
 						$result.='<p>Field <span style="color:red;">'.$exst_field.'</span> not registered. <a href="'.$link.'task=deleteurfield&fieldname='.$exst_field.'">Delete?</a></p>';
 				}
 			}
-			else
+			elseif($found_field!='')
 			{
 				if(!IntegrityFields::compareFieldTypes($existing_field,$projected_data_type))
 				{
@@ -327,12 +327,6 @@ class IntegrityFields extends \CustomTables\IntegrityChecks
 			
 		if(($existing->is_nullable == 'YES') != $projected->is_nullable)
 		{
-			/*
-			echo '$existing:<br/>';
-			print_r($existing);
-			echo '$projected:<br/>';
-			print_r($projected);
-					*/
 			return false;
 		}
 			
@@ -340,31 +334,12 @@ class IntegrityFields extends \CustomTables\IntegrityChecks
 		{
 			if(($existing->is_unsigned == 'YES') != $projected->is_unsigned)
 			{
-				//if($existing->column_name !='id')
-				//{
-					/*
-					echo '$existing:<br/>';
-					print_r($existing);
-					echo '$projected:<br/>';
-					print_r($projected);
-					echo 'UNSIGNED';
-					//die;
-					*/
-				//}
 				return false;
 			}
 		}
 		
 		if($projected->default !== null and $existing->column_default != $projected->default)
 		{
-			/*
-			echo '$existing:<br/>';
-			print_r($existing);
-			echo '$projected:<br/>';
-			print_r($projected);
-			echo 'DEFAULT';
-			die;
-					*/
 			return false;		
 		}
 			

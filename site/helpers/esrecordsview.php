@@ -46,8 +46,6 @@ class JHTMLESRecordsView
 				$model->load($_params, true);
 				$model->showpagination=false;
 
-
-
 				$SearchResult=$model->getSearchResult($value_where_filter);
 
 				$selectorpair=explode(':',$selector);

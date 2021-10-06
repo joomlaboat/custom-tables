@@ -106,7 +106,7 @@ class ESInputBox
 						if($esfield['type']=='alias')
 						{
 							$listing_id=isset($row['listing_id']) ? $row['listing_id'] : 0;
-							$value=CTValue::prepare_alias_type_value($listing_id,$value,$Model->ct->Table->realtablename,$esfield['realfieldname'],$Model->ct->Table->realidfieldname);
+							$value=$Model->ct->Table->prepare_alias_type_value($listing_id,$value,$Model->ct->Table->realtablename,$esfield['realfieldname'],$Model->ct->Table->realidfieldname);
 						}
 			        }
 				}
@@ -678,6 +678,7 @@ class ESInputBox
 												$this->Model->ct->Languages->Postfix,
 												$place_holder
 											  );
+									
 
 						break;
 

@@ -1168,6 +1168,9 @@ class Fields
 
 	public static function FieldRowByName($fieldname,&$ctfields)
 	{
+		//trigger_error("Cannot divide by zero", E_USER_ERROR);
+		//$this->db->setQuery( '1');
+		
 		foreach($ctfields as $field)
 		{
 			if($field['fieldname']==$fieldname)

@@ -93,26 +93,24 @@ class CT_FieldTypeTag_image
 		return false;
 	}
 
-    static public function get_image_type_value($id,&$es,&$savequery,$typeparams,$comesfieldname,$realfieldname,$realtablename,$realidfieldname)
+    static public function get_image_type_value(&$ctTable, $id)
     {
-        $value_found=false;
-
 		$value=0;
 		$imagemethods=new CustomTablesImageMethods;
 
-		$ImageFolder=CustomTablesImageMethods::getImageFolder($typeparams);
+		$ImageFolder=CustomTablesImageMethods::getImageFolder($ctTable->typeparams);
 
 		$jinput=JFactory::getApplication()->input;
-        $fileid = $jinput->post->get($comesfieldname, '','STRING' );
+        $fileid = $jinput->post->get($ctTable->comesfieldname, '','STRING' );
 
 		if($id==0)
 		{
-			$value=$imagemethods->UploadSingleImage(0, $fileid,$realfieldname,JPATH_SITE.DIRECTORY_SEPARATOR.$ImageFolder,$typeparams,$realtablename,$realidfieldname);
+			$value=$imagemethods->UploadSingleImage(0, $fileid,$ctTable->realfieldname,JPATH_SITE.DIRECTORY_SEPARATOR.$ImageFolder,$ctTable->typeparams,$ctTable->realtablename,$ctTable->realidfieldname);
 		}
 		else
 		{
-			$to_delete = $jinput->post->get($comesfieldname.'_delete', '','CMD' );
-			$ExistingImage=Tree::isRecordExist($id,'id', $realfieldname, $realtablename);
+			$to_delete = $jinput->post->get($ctTable->comesfieldname.'_delete', '','CMD' );
+			$ExistingImage=Tree::isRecordExist($id,'id', $ctTable->realfieldname, $ctTable->realtablename);
 
 			if($to_delete=='true')
 			{
@@ -121,19 +119,18 @@ class CT_FieldTypeTag_image
 					$imagemethods->DeleteExistingSingleImage(
 										$ExistingImage,
 										JPATH_SITE.DIRECTORY_SEPARATOR.$ImageFolder,
-										$typeparams,
-										$realtablename,
-										$realfieldname,
-										$realidfieldname);
+										$ctTable->typeparams,
+										$ctTable->realtablename,
+										$ctTable->realfieldname,
+										$ctTable->realidfieldname);
 				}
  
-				$value_found=true;
-				$savequery[]=$realfieldname.'='.$value;
+				return $ctTable->realfieldname.'='.$value;
 			}
 			else
 			{
-				$value=$imagemethods->UploadSingleImage($ExistingImage,$fileid, $realfieldname,
-					JPATH_SITE.DIRECTORY_SEPARATOR.$ImageFolder,$typeparams,$realtablename,$realidfieldname);
+				$value=$imagemethods->UploadSingleImage($ExistingImage,$fileid, $ctTable->realfieldname,
+					JPATH_SITE.DIRECTORY_SEPARATOR.$ImageFolder,$ctTable->typeparams,$ctTable->realtablename,$ctTable->realidfieldname);
 			}
 		}
 
@@ -144,15 +141,9 @@ class CT_FieldTypeTag_image
 			JFactory::getApplication()->enqueueMessage('Could not upload image file.', 'error');
 		}
         elseif($value != 0)
-        {
-			$value_found=true;
-			$savequery[]=$realfieldname.'='.$value;
-        }
-		else
-		{
-			// Do nothing
-		}
-        return $value_found;
+			return $ctTable->realfieldname.'='.$value;
+
+        return null;
     }
 
     public static function renderImageFieldBox($prefix,&$esfield,&$row,$realFieldName,$class,$optinal_parameter)

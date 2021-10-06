@@ -10,10 +10,10 @@
 
 namespace CustomTables;
 
-use \Joomla\CMS\Factory;
-
 // no direct access
 defined('_JEXEC') or die('Restricted access');
+
+use \Joomla\CMS\Factory;
 
 trait Logs
 {

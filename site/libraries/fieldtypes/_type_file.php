@@ -201,7 +201,7 @@ class CT_FieldTypeTag_file
             return $filepath;
     }
 
-    static public function get_file_type_value($id,&$es,&$savequery,$typeparams,$comesfieldname,$realfieldname,$realtablename,$realidfieldname)
+    static public function get_file_type_value($id,&$savequery,$typeparams,$comesfieldname,$realfieldname,$realtablename,$realidfieldname)
     {
 		$db = JFactory::getDBO();
 		

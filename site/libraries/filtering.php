@@ -94,7 +94,9 @@ class ESFiltering
 								);
 							}
 							else
+							{
 								$fieldrow = Fields::FieldRowByName($fieldname,$this->ct->Table->fields);
+							}
 
 							if(count($fieldrow)>0)
 							{
