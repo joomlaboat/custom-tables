@@ -20,8 +20,6 @@ use Joomla\CMS\Language\Text;
 HTMLHelper::_('behavior.formvalidator');
 HTMLHelper::_('behavior.keepalive');
 
-$componentParams = JComponentHelper::getParams('com_customtables');
-
 ?>
 
 <form action="<?php echo JRoute::_('index.php?option=com_customtables&layout=edit&id='.(int) $this->item->id.$this->referral); ?>" method="post" name="adminForm" id="adminForm" class="form-validate" enctype="multipart/form-data">

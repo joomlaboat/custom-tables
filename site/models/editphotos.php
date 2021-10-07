@@ -12,6 +12,8 @@ defined('_JEXEC') or die('Restricted access');
 use CustomTables\CT;
 use CustomTables\Fields;
 
+use \Joomla\CMS\Component\ComponentHelper;
+
 jimport('joomla.application.component.model');
 
 JTable::addIncludePath(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'tables');
@@ -42,7 +44,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy
 	{
 		$this->ct = new CT;
 		
-		$params = JComponentHelper::getParams( 'com_customtables' );
+		$params = ComponentHelper::getParams( 'com_customtables' );
 
 		$this->maxfilesize=JoomlaBasicMisc::file_upload_max_size();
 

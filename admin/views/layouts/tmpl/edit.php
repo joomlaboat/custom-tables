@@ -41,8 +41,6 @@ else
 
 HTMLHelper::_('behavior.keepalive');
 
-
-$componentParams = JComponentHelper::getParams('com_customtables');
 require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR
 	.'libraries'.DIRECTORY_SEPARATOR .'customtables'. DIRECTORY_SEPARATOR . 'layouteditor' .DIRECTORY_SEPARATOR.'layouteditor.php');
 

@@ -201,32 +201,32 @@ class CT_FieldTypeTag_file
             return $filepath;
     }
 
-    static public function get_file_type_value($id,&$savequery,$typeparams,$comesfieldname,$realfieldname,$realtablename,$realidfieldname)
+    //static public function get_file_type_value($id,&$savequery,$typeparams,$comesfieldname,$realfieldname,$realtablename,$realidfieldname)
+	static public function get_file_type_value(&$ctTable, $id)
     {
 		$db = JFactory::getDBO();
 		
-        $value_found=false;
         $jinput=JFactory::getApplication()->input;
         
-        $FileFolder=CT_FieldTypeTag_file::getFileFolder($typeparams);
+        $FileFolder=CT_FieldTypeTag_file::getFileFolder($ctTable->typeparams);
 
-        $fileid = $jinput->post->get($comesfieldname, '','STRING' );
+        $fileid = $jinput->post->get($ctTable->comesfieldname, '','STRING' );
 
 		$value='';
 		$filepath=JPATH_SITE.DIRECTORY_SEPARATOR.str_replace('/',DIRECTORY_SEPARATOR,$FileFolder);
 
 		if($id==0)
         {
-			$value=CT_FieldTypeTag_file::UploadSingleFile('',$fileid, $realfieldname,JPATH_SITE.$FileFolder,$typeparams,$realtablename);
+			$value=CT_FieldTypeTag_file::UploadSingleFile('',$fileid, $ctTable->realfieldname,JPATH_SITE.$FileFolder,$ctTable->typeparams,$ctTable->realtablename);
         }
 		else
 		{
-			$to_delete = $jinput->post->get($comesfieldname.'_delete', '','CMD' );
-			$ExistingFile=Tree::isRecordExist($id,'id', $realfieldname, $realtablename);
+			$to_delete = $jinput->post->get($ctTable->comesfieldname.'_delete', '','CMD' );
+			$ExistingFile=Tree::isRecordExist($id,'id', $ctTable->realfieldname, $ctTable->realtablename);
 
             if($to_delete=='true')
 			{
-				if($ExistingFile!='' and !CT_FieldTypeTag_file::checkIfTheFileBelongsToAnotherRecord($ExistingFile,$FileFolder,$realtablename,$realfieldname))
+				if($ExistingFile!='' and !CT_FieldTypeTag_file::checkIfTheFileBelongsToAnotherRecord($ExistingFile,$FileFolder,$ctTable->realtablename,$ctTable->realfieldname))
 				{
 					$filename_full=$filepath.DIRECTORY_SEPARATOR.$ExistingFile;
 					if(file_exists($filename_full))
@@ -234,21 +234,17 @@ class CT_FieldTypeTag_file
 				}
             
 				$value_found=true;
-				$savequery[]=$realfieldname.'='.$db->quote('');
+				$savequery[]=$ctTable->realfieldname.'='.$db->quote('');
 			}
 			else
-				$value=CT_FieldTypeTag_file::UploadSingleFile($ExistingFile,$fileid, $realfieldname,JPATH_SITE.$FileFolder,$typeparams,$realtablename);
+				$value=CT_FieldTypeTag_file::UploadSingleFile($ExistingFile,$fileid, $ctTable->realfieldname,JPATH_SITE.$FileFolder,$ctTable->typeparams,$ctTable->realtablename);
 		}
 
 		if($value and $value!='')
-        {
-			$value_found=true;
-			$savequery[]=$realfieldname.'='.$db->quote($value);
-		}
+			return $ctTable->realfieldname.'='.$db->quote($value);
 
-        return $value_found;
+        return null;
     }
-
 
     protected static function UploadSingleFile($ExistingFile, $file_id, $realfieldname,$FileFolder,$typeparams,$realtablename='-options')
     {

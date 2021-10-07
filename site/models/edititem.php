@@ -15,6 +15,7 @@ use CustomTables\Layouts;
 use CustomTables\DataTypes\Tree;
 use CustomTables\CustomPHP\CleanExecute;
 
+use \Joomla\CMS\Component\ComponentHelper;
 use \Joomla\CMS\Factory;
 
 jimport('joomla.application.component.model');
@@ -1442,7 +1443,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 
 				case 'text':
-					$value = JComponentHelper::filterText(JFactory::getApplication()->input->post->get($prefix.$fieldname, '', 'raw'));
+					$value = ComponentHelper::filterText(JFactory::getApplication()->input->post->get($prefix.$fieldname, '', 'raw'));
 					break;
 
 				case 'multilangtext':
@@ -1458,7 +1459,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 						else
 							$postfix='_'.$lang->sef;
 
-						$value_ = JComponentHelper::filterText(JFactory::getApplication()->input->post->get($prefix.$fieldname.$postfix, '', 'raw'));
+						$value_ = ComponentHelper::filterText(JFactory::getApplication()->input->post->get($prefix.$fieldname.$postfix, '', 'raw'));
 
 						$valuearray[]=$value_;
 

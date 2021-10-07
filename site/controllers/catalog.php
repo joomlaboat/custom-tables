@@ -307,7 +307,8 @@ function doTheTask($task,$params,$edit_model,$WebsiteRoot,$clean,&$this_)
 		$orderby=trim(preg_replace("/[^a-zA-Z-+%.: ,_]/", "",$orderby));
 		
 		$mainframe = Factory::getApplication();
-		$mainframe->setUserState( 'com_customtables.esorderby',$orderby);
+		$Itemid = $jinput->getInt('Itemid', 0);
+		$mainframe->setUserState('com_customtables.orderby_'.$Itemid,$orderby);
 		
 		$link = JoomlaBasicMisc::deleteURLQueryOption($link, 'task');
 		$link = JoomlaBasicMisc::deleteURLQueryOption($link, 'orderby');

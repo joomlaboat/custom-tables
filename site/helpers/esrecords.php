@@ -37,36 +37,21 @@ class JHTMLESRecords
 				$paramsArray['establename']=$establename;
 				$paramsArray['filter']=str_replace('****quote****','"',$filter);
 
-                                if($allowunpublished)//0 - published only; 1 - hidden only; 2 - Any
-                                        $paramsArray['showpublished']=2;
-                                else
-                                        $paramsArray['showpublished']=0;
+                if($allowunpublished)//0 - published only; 1 - hidden only; 2 - Any
+					$paramsArray['showpublished']=2;
+                else
+					$paramsArray['showpublished']=0;
 
 				$paramsArray['showpagination']=0;
 				$paramsArray['groupby']='';
 				$paramsArray['shownavigation']=0;
-                                if($sortbyfield=='')
-                                        $paramsArray['sortby']=$field;
-                                else
-                                        $paramsArray['sortby']=$sortbyfield;
+                if($sortbyfield!='')
+					$paramsArray['forcesortby']=$sortbyfield;
+				elseif(strpos($field,':')===false) //cannot sort by layout only by field name
+					$paramsArray['forcesortby']=$field;
+					
 
 				$model = JModelLegacy::getInstance('Catalog', 'CustomTablesModel', $config);
-				
-
-				if($selectorpair[0]=='single')
-						$model->es_ordering=$field;
-				else
-				{
-						if(isset($fieldarray[2]))
-								$model->es_ordering=$fieldarray[2];
-						else
-						{
-								if(strpos($field,':')===false)
-										$model->es_ordering=$field;
-								else
-										$model->es_ordering='';
-						}
-				}
 
 				$_params= new JRegistry;
 				$_params->loadArray($paramsArray);
@@ -86,7 +71,7 @@ class JHTMLESRecords
                                         $paramsArray_nofilter['limit']=0;
                                         $paramsArray_nofilter['establename']=$establename;
                                         $paramsArray_nofilter['filter']=''; //!IMPORTANT - NO FILTER
-                                        //$paramsArray_nofilter['showpublished']=0;//only published
+
                                         $paramsArray_nofilter['showpagination']=0;
 
                                         if($allowunpublished)
@@ -96,13 +81,11 @@ class JHTMLESRecords
 
                                         $paramsArray_nofilter['groupby']='';
                                         $paramsArray_nofilter['shownavigation']=0;
-                                        
-                                        if($sortbyfield=='')
-                                                $paramsArray_nofilter['sortby']=$field;
-                                        else
-                                                $paramsArray_nofilter['sortby']=$sortbyfield;
-                                        
-                                        $model_nofilter->es_ordering=$field;
+										
+										if($sortbyfield!='')
+											$paramsArray_nofilter['forcesortby']=$sortbyfield;
+										elseif(strpos($field,':')===false) //cannot sort by layout only by field name
+											$paramsArray_nofilter['forcesortby']=$field;
                                         
                                         $_params_nofilter= new JRegistry;
                                         $_params_nofilter->loadArray($paramsArray_nofilter);

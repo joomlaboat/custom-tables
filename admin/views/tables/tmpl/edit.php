@@ -17,8 +17,6 @@ JHtml::_('behavior.formvalidation');
 JHtml::_('formbehavior.chosen', 'select');
 JHtml::_('behavior.keepalive');
 
-$componentParams = JComponentHelper::getParams('com_customtables');
-
 ?>
 <?php /*
 <script type="text/javascript">

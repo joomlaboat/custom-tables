@@ -11,10 +11,9 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
-JHtml::addIncludePath(JPATH_COMPONENT.'/helpers/html');
-//JHtml::_('behavior.tooltip');
-// < 4
+use \Joomla\CMS\Component\ComponentHelper;
 
+JHtml::addIncludePath(JPATH_COMPONENT.'/helpers/html');
 
 if($this->version >= 4)
 {
@@ -24,15 +23,10 @@ if($this->version >= 4)
 }
 else
 {
-	//JHtml::_('formbehavior.chosen', 'select');
 	JHtml::_('behavior.keepalive');
 	JHtml::_('behavior.formvalidation');
 }
-	//->useScript('com_banners.admin-banner-edit');
 
-//JHtml::_('formbehavior.chosen', 'select');
-//JHtml::_('behavior.keepalive');
-//$componentParams = JComponentHelper::getParams('com_customtables');
 ?>
 
 <script type="text/javascript">

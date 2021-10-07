@@ -11,6 +11,7 @@ defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\CT;
 use CustomTables\Fields;
+use \Joomla\CMS\Component\ComponentHelper;
 
 jimport('joomla.application.component.model');
 
@@ -36,7 +37,7 @@ class CustomTablesModelEditFiles extends JModelLegacy {
     {
 		$this->allowedExtensions='gslides doc docx pdf txt xls xlsx psd ppt pptx png mp3 jpg jpeg webp accdb';
 
-		$params = JComponentHelper::getParams( 'com_customtables' );
+		$params = ComponentHelper::getParams( 'com_customtables' );
 		
 		$this->maxfilesize=$max_file_size=JoomlaBasicMisc::file_upload_max_size();
 

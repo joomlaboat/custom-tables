@@ -11,6 +11,7 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+use \Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Helper\ContentHelper;
 /**
  * Customtables component helper.
@@ -30,7 +31,7 @@ abstract class CustomtablesHelper
 	public static function getContributors()
 	{
 		// get params
-		$params	= JComponentHelper::getParams('com_customtables');
+		$params	= ComponentHelper::getParams('com_customtables');
 		// start contributors array
 		$contributors = array();
 		// get all Contributors (max 20)

@@ -13,9 +13,6 @@ use CustomTables\DataTypes\Tree;
     
     JHTML::stylesheet("default.css", JURI::root(true)."/components/com_customtables/views/catalog/tmpl/");
 
-
-	$params = JComponentHelper::getParams( 'com_customtables' );
-  
 		$catalogresult='<table width="100%" align="center">';
 		
         $tr=0;

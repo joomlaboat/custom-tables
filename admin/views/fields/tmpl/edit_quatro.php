@@ -37,9 +37,6 @@ if($input->getCmd('extratask','')=='updateimages')
 	extraTasks::prepareJS();
 }
 
-
-$componentParams = JComponentHelper::getParams('com_customtables');
-
 ?>
 <div id="fieldsData" style="display:none;"><?php echo json_encode(Fields::getFields($this->tableid,true)); ?></div>
 <script type="text/javascript">

@@ -22,8 +22,6 @@ JHtml::_('bootstrap.popover');
 
 use Joomla\CMS\Session\Session;
 
-
-
 if (!$this->Model->BlockExternalVars and $this->Model->params->get('show_page_heading', 1 ) )
 	$response_object['page_title'] = JoomlaBasicMisc::JTextExtended($this->Model->params->get( 'page_title' ));
 
@@ -48,17 +46,6 @@ if (ob_get_contents())
 	$this->Model->pagelayout=$LayoutProc->fillLayout($this->row,null,'','||',false,true);
 						
 	$form_items = tagProcessor_Edit::process($this->Model,$this->Model->pagelayout,$this->row,'comes_');
-	
-	
-	//if($this->params->get( 'allowcontentplugins' )==1)
-	//	LayoutProcessor::applyContentPlugins($this->Model->pagelayout);
-
-	//$result .= $this->Model->pagelayout;
-
-
-
-
-
 
 	$response_object=[];
 
@@ -73,25 +60,15 @@ if (ob_get_contents())
 
 	if($listing_id==0)
 	{
-		//$this->params = JComponentHelper::getParams( 'com_customtables' );
-		//$this->params = JComponentHelper::getParams( 'com_customtables' );
 		$publishstatus=$this->params->get( 'publishstatus' );
-		
 		$response_object['published'] = (int)$publishstatus;
 	}
 
-	//$response_object['task'] = 'save';
 	$response_object['form'] = $form_items;
 	$response_object['returnto'] = $encoded_returnto;
-	//$response_object['listing_id'] = $listing_id;
-	
-
-	//$response_object['submitbutton'] = $this->Model->submitbuttons;
 	$response_object['token'] = Session::getFormToken();
 
-
 	$filename = JoomlaBasicMisc::makeNewFileName($this->Model->params->get('page_title'),'json');
-
 
     header('Content-Disposition: attachment; filename="'.$filename.'"');
     header('Content-Type: application/json; charset=utf-8');

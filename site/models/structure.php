@@ -9,6 +9,7 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use \Joomla\CMS\Component\ComponentHelper;
 use CustomTables\DataTypes\Tree;
 
 jimport('joomla.application.component.model');
@@ -47,7 +48,7 @@ class CustomTablesModelStructure extends JModel
 				$mainframe = JFactory::getApplication('site');
 				
 				 
-				$params = JComponentHelper::getParams( 'com_customtables' );
+				$params = ComponentHelper::getParams( 'com_customtables' );
 				 
 				if(JFactory::getApplication()->input->get('establename','','CMD'))
 						$this->establename=JFactory::getApplication()->input->get('establename','','CMD');

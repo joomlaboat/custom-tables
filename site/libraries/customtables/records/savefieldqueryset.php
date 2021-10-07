@@ -12,6 +12,8 @@ namespace CustomTables;
 defined('_JEXEC') or die('Restricted access');
 
 use \Joomla\CMS\Factory;
+use \Joomla\CMS\Component\ComponentHelper;
+
 use CT_FieldTypeTag_image;
 use CT_FieldTypeTag_file;
 use CustomTables\DataTypes\Tree;
@@ -158,7 +160,7 @@ trait SaveFieldQuerySet
 
 				case 'text':
 
-					$value_= JComponentHelper::filterText($this->jinput->post->get($this->comesfieldname, null, 'raw'));
+					$value_= ComponentHelper::filterText($this->jinput->post->get($this->comesfieldname, null, 'raw'));
 
 					if(isset($value_))
 						return $this->realfieldname.'='.$this->db->Quote(stripslashes($value_));
@@ -178,7 +180,7 @@ trait SaveFieldQuerySet
 						else
 						$postfix='_'.$lang->sef;
 
-						$value_= JComponentHelper::filterText($this->jinput->post->get($this->comesfieldname.$postfix, null, 'raw'));
+						$value_= ComponentHelper::filterText($this->jinput->post->get($this->comesfieldname.$postfix, null, 'raw'));
 
 						if(isset($value_))
 							return $this->realfieldname.$postfix.'='.$this->db->Quote($value_);
@@ -263,7 +265,7 @@ trait SaveFieldQuerySet
 
                     $file_type_file=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fieldtypes'.DIRECTORY_SEPARATOR.'_type_file.php';
 					require_once($file_type_file);
-					return CT_FieldTypeTag_file::get_file_type_value($id);
+					return CT_FieldTypeTag_file::get_file_type_value($this, $id);
 
 				case 'article':
 						$value=$this->jinput->getInt($this->comesfieldname,null);

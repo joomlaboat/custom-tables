@@ -133,9 +133,9 @@ class JHTMLESSqlJoin
         $paramsArray['showpagination']=0;
         $paramsArray['groupby']='';
         $paramsArray['shownavigation']=0;
-        $paramsArray['sortby']=$order_by_field;
-        $paramsArray['forcesortby']=$order_by_field;
-        $model->es_ordering=$order_by_field;
+		
+		if(strpos($order_by_field,':')===false) //cannot sort by layout only by field name
+			$paramsArray['forcesortby']=$order_by_field;
 
         if($filter!='')
 			$paramsArray['filter']=str_replace('|',',',str_replace('****quote****','"',$filter));

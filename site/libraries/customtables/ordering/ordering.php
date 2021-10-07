@@ -155,7 +155,8 @@ class Ordering
 			}
 			else
 			{
-				$ordering_param_string = $mainframe->getUserState( 'com_customtables.esorderby','' );
+				$Itemid = $jinput->getInt('Itemid', 0);
+				$ordering_param_string = $mainframe->getUserState( 'com_customtables.orderby_'.$Itemid,'' );
 
 				if($ordering_param_string=='')
 				{

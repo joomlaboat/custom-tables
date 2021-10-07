@@ -9,6 +9,8 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use \Joomla\CMS\Component\ComponentHelper;
+
 class CustomTablesCreateUser
 {
 
@@ -158,7 +160,7 @@ class CustomTablesCreateUser
 		$useractivation=0;//alreadey activated
 
 		$config = JFactory::getConfig();
-		$params = JComponentHelper::getParams('com_users');
+		$params = ComponentHelper::getParams('com_users');
 
 		// Initialise the table with JUser.
 		$user = new JUser;
