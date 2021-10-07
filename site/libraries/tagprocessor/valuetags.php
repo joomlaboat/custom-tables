@@ -1263,6 +1263,7 @@ class tagProcessor_Value
                 return '#__customtables_table_'.$sj_tablename.'.'.str_replace('_published','published',$str);
         }
 
+		$str=str_replace('!=null',' IS NOT NULL',$str);
 		$str=str_replace('=null',' IS NULL',$str);
 
 		return '#__customtables_table_'.$sj_tablename.'.es_'.$str;

@@ -114,11 +114,14 @@ class ESFiltering
 			elseif(count($multy_field_where)>1)
 				$wheres[]='('.implode(' OR ',$multy_field_where).')';
 		}
+		
+		
 
 		if($logic_operator == 'or' and count($wheres) > 1)
 			return '('.implode(' '.$logic_operator.' ',$wheres).')';
 		else
 			return implode(' '.$logic_operator.' ',$wheres);
+			
 			
 	}//function getWhereExpression($param,&$PathValue)
 
@@ -287,22 +290,22 @@ class ESFiltering
 
 												case 'date':
 
-														$c=$this->Search_Date($fieldname,$value,$PathValue,$comparison_operator,$this->ct->Table->realtablename);
+														$c=$this->Search_Date($fieldname,$value,$PathValue,$comparison_operator);
 														break;
 
 												case 'creationtime':
 
-														$c=$this->Search_Date($fieldname,$value, $PathValue, $fieldrow,$comparison_operator);
+														$c=$this->Search_Date($fieldname,$value, $PathValue, $comparison_operator);
 														break;
 
 												case 'changetime':
 
-														$c=$this->Search_Date($fieldname,$value, $PathValue, $fieldrow,$comparison_operator);
+														$c=$this->Search_Date($fieldname,$value, $PathValue, $comparison_operator);
 														break;
 
 												case 'lastviewtime':
 
-														$c=$this->Search_Date($fieldname,$value, $PathValue, $fieldrow,$comparison_operator);
+														$c=$this->Search_Date($fieldname,$value, $PathValue, $comparison_operator);
 														break;
 
 
@@ -566,7 +569,7 @@ class ESFiltering
 		return $c;
 	}
 
-	function Search_Date($fieldname, $value, &$PathValue, $comparison_operator,$esr_table_full)
+	function Search_Date($fieldname, $value, &$PathValue, $comparison_operator)
 	{
 		$fieldrow1 = Fields::FieldRowByName($fieldname,$this->ct->Table->fields);
 
@@ -591,14 +594,16 @@ class ESFiltering
 		//Breadcrumbs
 		$PathValue[]=$title1.' '.$comparison_operator.' '.$title2;
 
-		$value1=$this->processDateSearchTags($fieldname,$fieldrow1,$esr_table_full);
-		$value2=$this->processDateSearchTags($value,$fieldrow2,$esr_table_full);
+		$value1=$this->processDateSearchTags($fieldname,$fieldrow1,$this->ct->Table->realtablename);
+		$value2=$this->processDateSearchTags($value,$fieldrow2,$this->ct->Table->realtablename);
 
 		if($value2=='NULL' and $comparison_operator=='=')
 			$query=$value1.' IS NULL';
+		elseif($value2=='NULL' and $comparison_operator=='!=')
+			$query=$value1.' IS NOT NULL';
 		else
 			$query=$value1.' '.$comparison_operator.' '.$value2;
-			
+
 		return $query;
 	}
 

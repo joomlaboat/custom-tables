@@ -467,7 +467,6 @@ class tagProcessor_Item
 				$additional_where='';
 				if(isset($opts[5]) and $opts[5]!='')
 				{
-
 					$w=array();
 					$af=explode(' ',$opts[5]);
 					foreach($af as $a)
@@ -500,8 +499,6 @@ class tagProcessor_Item
 					$order_by_option=$order_by_option_row->realfieldname;
 				}
 
-
-
 				if($isOk)
 				{
 
@@ -515,13 +512,11 @@ class tagProcessor_Item
 						$query = 'SELECT min('.$tablerow['realtablename'].'.'.$field3_readvalue.') AS vlu ';
 					elseif($sj_function=='max')
 						$query = 'SELECT max('.$tablerow['realtablename'].'.'.$field3_readvalue.') AS vlu ';
-
 					else
 					{
 						//need to resolve record value if it's "records" type
 						$query = 'SELECT '.$tablerow['realtablename'].'.'.$field3_readvalue.' AS vlu '; //value or smart
 					}
-
 
 					$query.=' FROM '.$Model->ct->Table->realtablename.' ';
 
@@ -533,7 +528,6 @@ class tagProcessor_Item
 						if($field2_type=='records')
 						{
 							$query.='INSTR('.$tablerow['realtablename'].'.'.$field2_lookwhere.',  CONCAT(",",'.$Model->ct->Table->realtablename.'.'.$field1_findwhat.',","))' ;
-
 						}
 						else
 						{
@@ -542,9 +536,7 @@ class tagProcessor_Item
 						}
 					}
 
-
                         $wheres=array();
-
 
 						if($Model->ct->Table->tablename!=$sj_tablename)
 						{
@@ -564,13 +556,11 @@ class tagProcessor_Item
                             $query.=' WHERE '.implode(' AND ', $wheres);
 
 						if($order_by_option!='')
-						{
 							$query.=' ORDER BY '.$tablerow['realtablename'].'.'.$order_by_option;
-						}
 
 						$query.=' LIMIT 1';
 
-					$db->setQuery($query);
+						$db->setQuery($query);
 
 						$rows=$db->loadAssocList();
 

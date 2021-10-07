@@ -23,7 +23,6 @@ jimport('joomla.application.component.model');
 $sitelib=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR;
 require_once($sitelib.'layout.php');
 require_once($sitelib.'filtering.php');
-require_once($sitelib.'ordering.php');
 
 class CustomTablesModelCatalog extends JModelLegacy
 {
