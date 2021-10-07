@@ -11,8 +11,11 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+
+
 use CustomTables\CT;
 use CustomTables\Fields;
+use CustomTables\Ordering;
 use CustomTables\DataTypes\Tree;
 
 jimport('joomla.application.component.model');
@@ -31,9 +34,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 		var $TotalRows=0;
 		var $_pagination = null;
 
-		var $order_list;
-		var $order_values;
-		var $esordering;
+		var $ordering=null;
 
 		var $filterparam;
 
@@ -181,9 +182,10 @@ class CustomTablesModelCatalog extends JModelLegacy
 					
 
 				//sorting
+				$this->ordering = new CustomTables\Ordering($this->ct->Table);
 
-				$this->esordering=CTOrdering::loadOrderFields($this->blockExternalVars,$this->params,$this->ct->Table->fields,$this->ct->Languages->Postfix,
-									      $this->order_list,$this->order_values);
+				$this->ordering->parseOrderByParam($this->blockExternalVars,$this->params);
+
 
 				//Limit
 				$this->applyLimits();
@@ -333,21 +335,6 @@ class CustomTablesModelCatalog extends JModelLegacy
 				}//if($this->blockExternalVars)
 		}
 
-	function getOrderBox()//$SelectedCategory
-	{
-		$result='<select name="esordering" id="esordering" onChange="this.form.submit()" class="inputbox">
-';
-		for($i=0;$i<count($this->order_values);$i++)
-		{
-			$result.='<option value="'.$this->order_values[$i].'" '.($this->esordering==$this->order_values[$i] ? ' selected ' : '').'>'.$this->order_list[$i].'</option>
-';
-		}
-
-		$result.='</select>
-';
-		return $result;
-	}
-
 	function getPagination()
 	{
 		// Load the content if it doesn't already exist
@@ -467,7 +454,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 								$KeywordSearcher=new CustomTablesKeywordSearch($this->ct);
 
 								$KeywordSearcher->groupby=$this->groupby;
-								$KeywordSearcher->esordering=$this->esordering;
+								$KeywordSearcher->esordering=$this->ordering->ordering_processed_string;
 
 								$result_rows=$KeywordSearcher->getRowsByKeywords(
 																	  $eskeysearch_,
@@ -548,7 +535,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 
 		$where=str_replace('\\','',$where);
 
-		$inner=array();
+		
 
 		//to fullfill the "Clear" task
 		if($jinput->get('task','','CMD')=='clear')
@@ -565,12 +552,28 @@ class CustomTablesModelCatalog extends JModelLegacy
 		if($this->groupby!='')
 				$ordering[]=$this->groupby;
 
-		if($this->esordering)
-			CTOrdering::getOrderingQuery($ordering,$query,$inner,$this->esordering,$this->ct->Languages->Postfix,$this->ct->Table->realtablename,$this->ct->Table->fields);
+		$selects = [$this->ct->Table->tablerow['query_selects']];
+		
+		
+		
+		if($this->ordering->ordering_processed_string!=null)
+		{
+			$this->ordering->parseOrderByString();
 
-		$query='SELECT '.$this->ct->Table->tablerow['query_selects'].' FROM '.$this->ct->Table->realtablename.' ';
-		$query.=implode(' ',$inner).' ';
-		$query.=$where.' ';
+			if($this->ordering->orderby!=null)
+			{
+				if($this->ordering->selects!=null)
+				$selects[]=$this->ordering->selects;
+				$ordering[]=$this->ordering->orderby;
+			}
+		}
+
+		$query='SELECT '.implode(',',$selects).' FROM '.$this->ct->Table->realtablename.' ';
+		
+		if($this->ordering->inner!=null)
+			$query.=' '.implode(' ',$this->ordering->inner).' ';
+			
+		$query.=$where;
 		
 		//Not really necessary
 		$query_analytical='SELECT COUNT('.$this->ct->Table->tablerow['realidfieldname'].') AS count FROM '.$this->ct->Table->realtablename.' '.$where;
@@ -578,7 +581,6 @@ class CustomTablesModelCatalog extends JModelLegacy
 		if(count($ordering)>0)
 			$query.=' ORDER BY '.implode(',',$ordering);
 			
-		
 		$db->setQuery($query_analytical);
 		$rows=$db->loadObjectList();	
 		if(count($rows)==0)

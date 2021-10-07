@@ -79,6 +79,16 @@
         return;
     }
 
+	function ctOrderChanged(object)
+    {
+		//var returnto=btoa(window.location.href);
+		var current_url=esPrepareLink(['returnto','task','orderby'],[]);
+        var returnto=btoa(current_url);
+		
+        var link=esPrepareLink(['task'],['task=setorderby','orderby=' + object.value,'returnto='+returnto]);
+        window.location.href = link;
+	}
+
     function esPublishObject(objid, toolbarboxid,publish)
     {
         if(es_LinkLoading)

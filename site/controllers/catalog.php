@@ -10,6 +10,8 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use \Joomla\CMS\Factory;
+
 $jinput = JFactory::getApplication()->input;
 
 $clean = $jinput->getInt('clean');
@@ -102,7 +104,10 @@ function doTheTask($task,$params,$edit_model,$WebsiteRoot,$clean,&$this_)
 			$link.= $WebsiteRoot . $link;
 	}
 	else
+	{
+		$Itemid = $jinput->getInt('Itemid', 0);
 		$link = $WebsiteRoot . 'index.php?Itemid=' . $Itemid;
+	}
 	
 	//$link = JoomlaBasicMisc::curPageURL();
 	$link = str_replace('&task=refresh', '', $link);
@@ -293,6 +298,21 @@ function doTheTask($task,$params,$edit_model,$WebsiteRoot,$clean,&$this_)
 			else
 				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_USER_NOT_CREATED'), 'status' => 'error');
 		}
+
+		break;
+		
+	case 'setorderby':
+
+		$orderby=$jinput->getString('orderby','');
+		$orderby=trim(preg_replace("/[^a-zA-Z-+%.: ,_]/", "",$orderby));
+		
+		$mainframe = Factory::getApplication();
+		$mainframe->setUserState( 'com_customtables.esorderby',$orderby);
+		
+		$link = JoomlaBasicMisc::deleteURLQueryOption($link, 'task');
+		$link = JoomlaBasicMisc::deleteURLQueryOption($link, 'orderby');
+		
+		return (object) array('link' => $link, 'msg' => null, 'status' => null);
 
 		break;
 

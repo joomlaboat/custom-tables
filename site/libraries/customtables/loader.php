@@ -2,7 +2,7 @@
 
 defined('JPATH_PLATFORM') or die;
 
-function CTLoader($inclide_utilities = false)
+function CTLoader($inclide_utilities = false, $include_html = false)
 {
 	$path = dirname(__FILE__) . DIRECTORY_SEPARATOR;
 	
@@ -49,6 +49,15 @@ function CTLoader($inclide_utilities = false)
 	
 	$path_datatypes = $path . 'logs' . DIRECTORY_SEPARATOR;
 	require_once($path_datatypes.'logs.php');
+	
+	$path_datatypes = $path . 'ordering' . DIRECTORY_SEPARATOR;
+	require_once($path_datatypes.'ordering.php');
+	
+	if($include_html)
+	{
+		$path_datatypes = $path . 'ordering' . DIRECTORY_SEPARATOR;
+		require_once($path_datatypes.'html.php');
+	}
 	
 	$path_datatypes = $path . 'records' . DIRECTORY_SEPARATOR;
 	require_once($path_datatypes.'savefieldqueryset.php');

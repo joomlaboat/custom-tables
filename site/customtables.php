@@ -14,7 +14,7 @@ defined('_JEXEC') or die('Restricted access');
 
 $path = JPATH_COMPONENT_SITE . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR;
 require_once($path.'loader.php');
-CTLoader();
+CTLoader($inclide_utilities = false, $include_html = true);
 
 // Require the base controller
 require_once JPATH_COMPONENT.DIRECTORY_SEPARATOR.'controller.php';

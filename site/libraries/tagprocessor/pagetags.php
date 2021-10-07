@@ -302,14 +302,14 @@ JHtml::_('behavior.formvalidator');
 					return '<div class="pagination">'.$pagination->getPagesLinks("").'</div>';
 					break;
 				case 'order' :
-					return JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ORDER_BY' ).': '.$Model->getOrderBox($SelectedCategory);
+					return JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ORDER_BY' ).': '.CustomTables\OrderingHTML::getOrderBox($Model->ordering);
 					break;
 				case 'limitorder' :
 					return '
 			<table cellpadding="0" cellspacing="0" width="100%" >
 		    <tr height="30">
                 <td width="140" valign="top">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SHOW' ).': '.$pagination->getLimitBox($number_of_columns).'</td>
-                <td align="right" valign="top">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ORDER_BY' ).': '.$Model->getOrderBox($SelectedCategory).'</td>
+                <td align="right" valign="top">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ORDER_BY' ).': '.CustomTables\OrderingHTML::getOrderBox($Model->ordering).'</td>
 		    </tr>
 		    </table>
 		';
@@ -333,7 +333,8 @@ JHtml::_('behavior.formvalidator');
 		    <tr height="30">
                 <td width="230" valign="top" style="border:none;">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SHOW' ).': '.$pagination->getLimitBox($number_of_columns).'</td>
                 <td align="center" valign="top" style="border:none;"><div class="pagination">'.$pagination->getPagesLinks("").'</div></td>
-                <td width="230" align="right" valign="top" style="border:none;">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ORDER_BY' ).': '.$Model->getOrderBox($SelectedCategory).'</td>
+                <td width="230" align="right" valign="top" style="border:none;">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ORDER_BY' ).': '
+					.CustomTables\OrderingHTML::getOrderBox($Model->ordering).'</td>
 		    </tr>
 		    </table>
 		';
@@ -342,7 +343,7 @@ JHtml::_('behavior.formvalidator');
 					case 'paginationorder' :
 						return '
 					<table cellpadding="0" cellspacing="0" width="100%" >
-					    <tr><td valign="top" align="right">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ORDER_BY').': '.$Model->getOrderBox($SelectedCategory).'</td></tr>
+					    <tr><td valign="top" align="right">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ORDER_BY').': '.CustomTables\OrderingHTML::getOrderBox($Model->ordering).'</td></tr>
 						<tr><td valign="top" align="center"><br/></td></tr>
 						<tr><td valign="top" align="center"><div class="pagination">'.$pagination->getPagesLinks("").'</div></td></tr>
 				    </table>';
