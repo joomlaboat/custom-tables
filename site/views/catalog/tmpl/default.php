@@ -72,13 +72,14 @@ if($html_format)
 }
 else
 {
-
-
 	$catalogtablecontent=tagProcessor_CatalogTableView::process($this->Model,$pagelayout,$this->SearchResult,$catalogtablecode);
+		
 	if($catalogtablecontent=='')
 	{
 		$this->Model->LayoutProc->layout=$itemlayout;
 		$catalogtablecontent=tagProcessor_Catalog::process($this->Model,$pagelayout,$this->SearchResult,$catalogtablecode);
+		
+		
 	}
 
 	$this->Model->LayoutProc->layout=$pagelayout;
@@ -86,9 +87,7 @@ else
 }
 
 
-
-$pagelayout=str_replace('&&&&quote&&&&','"',$pagelayout); // search boxes may return HTMl elemnts that contain placeholders with quotes like this: &&&&quote&&&&
-
+$pagelayout=str_replace('&&&&quote&&&&','"',$pagelayout); // search boxes may return HTML elemnts that contain placeholders with quotes like this: &&&&quote&&&&
 $pagelayout=str_replace($catalogtablecode,$catalogtablecontent,$pagelayout);
 
 if($html_format)

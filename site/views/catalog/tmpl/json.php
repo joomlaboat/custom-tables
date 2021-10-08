@@ -45,10 +45,12 @@ if($layout_item_name!='')
 $catalogtablecode=JoomlaBasicMisc::generateRandomString();//this is temporary replace place holder. to not parse content result again
 
 $catalogtablecontent=tagProcessor_CatalogTableView::process($this->Model,$pagelayout,$this->SearchResult,$catalogtablecode);
+
 if($catalogtablecontent=='')
 {
 	$this->Model->LayoutProc->layout=$itemlayout;
 	$catalogtablecontent=tagProcessor_Catalog::process($this->Model,$pagelayout,$this->SearchResult,$catalogtablecode);
+	
 	$catalogtablecontent=str_replace("\n",'',$catalogtablecontent);
 	$catalogtablecontent=str_replace("\r",'',$catalogtablecontent);
 	$catalogtablecontent=str_replace("\t",'',$catalogtablecontent);

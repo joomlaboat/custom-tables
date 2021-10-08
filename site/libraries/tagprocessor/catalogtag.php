@@ -15,6 +15,7 @@ use CustomTables\DataTypes\Tree;
 require_once('render_html.php');
 require_once('render_xlsx.php');
 require_once('render_csv.php');
+require_once('render_json.php');
 require_once('render_image.php');
 
 class tagProcessor_Catalog
@@ -22,6 +23,7 @@ class tagProcessor_Catalog
     use render_html;
 	use render_xlsx;
 	use render_csv;
+	use render_json;
 	use render_image;
 
     public static function process(&$Model,&$pagelayout,&$SearchResult,$new_replaceitecode)
@@ -46,10 +48,10 @@ class tagProcessor_Catalog
 			}
 			elseif($Model->ct->Env->frmt=='json')
 			{
-				$pagelayout=str_replace($fItem,'',$pagelayout);//delete {catalog} tag
-				self::get_CatalogTable_singleline_JSON($SearchResult,$Model,$allowcontentplugins,$pagelayout);
+				//$pagelayout=str_replace($fItem,'',$pagelayout);//delete {catalog} tag
+				$vlu=self::get_CatalogTable_singleline_JSON($SearchResult,$Model,$allowcontentplugins,$pagelayout);
 			}
-			if($Model->ct->Env->frmt=='image')
+			elseif($Model->ct->Env->frmt=='image')
 				self::get_CatalogTable_singleline_IMAGE($pagelayout,$allowcontentplugins);
 			elseif(isset($pair[1]) and $pair[1]=='notable')
 				$vlu=self::get_Catalog($Model,$SearchResult,$tableclass,false,false,$allowcontentplugins);
