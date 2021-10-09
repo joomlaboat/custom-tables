@@ -14,60 +14,27 @@ defined('_JEXEC') or die('Restricted access');
 // import Joomla controllerform library
 jimport('joomla.application.component.controllerform');
 
-/**
- * Fields Controller
- */
 class CustomtablesControllerFields extends JControllerForm
 {
-	/**
-	 * Current or most recently performed task.
-	 *
-	 * @var    string
-	 * @since  12.2
-	 * @note   Replaces _task.
-	 */
 	protected $task;
 
 	public function __construct($config = array())
 	{
-		//$jinput = JFactory::getApplication()->input;
-		//$tableid=JFactory::getApplication()->input->getint('tableid',0);
-
 		$this->view_list = 'listoffields'; // safeguard for setting the return view listing to the main view.
 		parent::__construct($config);
 	}
 
-        /**
-	 * Method override to check if you can add a new record.
-	 *
-	 * @param   array  $data  An array of input data.
-	 *
-	 * @return  boolean
-	 *
-	 * @since   1.6
-	 */
 	protected function allowAdd($data = array())
 	{		// In the absense of better information, revert to the component permissions.
 		return parent::allowAdd($data);
 	}
 
-	/**
-	 * Method override to check if you can edit an existing record.
-	 *
-	 * @param   array   $data  An array of input data.
-	 * @param   string  $key   The name of the key for the primary key.
-	 *
-	 * @return  boolean
-	 *
-	 * @since   1.6
-	 */
 	protected function allowEdit($data = array(), $key = 'id')
 	{
 		// get user object.
 		$user = JFactory::getUser();
 		// get record id.
 		$recordId = (int) isset($data[$key]) ? $data[$key] : 0;
-
 
 		if ($recordId)
 		{
@@ -107,16 +74,6 @@ class CustomtablesControllerFields extends JControllerForm
 		return parent::allowEdit($data, $key);
 	}
 
-	/**
-	 * Gets the URL arguments to append to an item redirect.
-	 *
-	 * @param   integer  $recordId  The primary key id for the item.
-	 * @param   string   $urlVar    The name of the URL variable for the id.
-	 *
-	 * @return  string  The arguments to append to the redirect URL.
-	 *
-	 * @since   12.2
-	 */
 	protected function getRedirectToItemAppend($recordId = null, $urlVar = 'id')
 	{
 		$tmpl   = $this->input->get('tmpl');
@@ -159,15 +116,6 @@ class CustomtablesControllerFields extends JControllerForm
 		return $append;
 	}
 
-	/**
-	 * Method to run batch operations.
-	 *
-	 * @param   object  $model  The model.
-	 *
-	 * @return  boolean   True if successful, false otherwise and internal error is set.
-	 *
-	 * @since   2.5
-	 */
 	public function batch($model = null)
 	{
 		$tableid 	= $this->input->get('tableid', 0, 'int');
@@ -177,77 +125,26 @@ class CustomtablesControllerFields extends JControllerForm
 		$model = $this->getModel('Fields', '', array());
 
 		// Preset the redirect
-		//&tableid='.(int)$tableid
 		$this->setRedirect(JRoute::_('index.php?option=com_customtables&view=listoffields'. $this->getRedirectToListAppend(), false));
 
 		return parent::batch($model);
 	}
 
-	/**
-	 * Method to cancel an edit.
-	 *
-	 * @param   string  $key  The name of the primary key of the URL variable.
-	 *
-	 * @return  boolean  True if access level checks pass, false otherwise.
-	 *
-	 * @since   12.2
-	 */
 	public function cancel($key = null)
 	{
-		// get the referal details
-		$this->ref 		= $this->input->get('ref', 0, 'word');
-		$this->refid 	= $this->input->get('refid', 0, 'int');
 		$tableid 	= $this->input->get('tableid', 0, 'int');
-
+		
 		$cancel = parent::cancel($key);
 
-		if ($cancel)
-		{
-			if ($this->refid)
-			{
-				$redirect = '&view='.(string)$this->ref.'&layout=edit&tableid='.(int)$tableid.'&id='.(int)$this->refid;
+		$this->setRedirect(
+			JRoute::_(
+				'index.php?option=' . $this->option . '&view=listoffields&tableid='.(int)$tableid, false
+			)
+		);
 
-				// Redirect to the item screen.
-				$this->setRedirect(
-					JRoute::_(
-						'index.php?option=' . $this->option . $redirect, false
-					)
-				);
-			}
-			elseif ($this->ref)
-			{
-				$redirect = '&view='.(string)$this->ref.'&tableid='.(int)$tableid;
-
-				// Redirect to the list screen.
-				$this->setRedirect(
-					JRoute::_(
-						'index.php?option=' . $this->option . $redirect, false
-					)
-				);
-			}
-		}
-		else
-		{
-			// Redirect to the items screen.
-			$this->setRedirect(
-				JRoute::_(
-					'index.php?option=' . $this->option . '&view=' . $this->view_list.'&tableid='.(int)$tableid, false
-				)
-			);
-		}
 		return $cancel;
 	}
 
-	/**
-	 * Method to save a record.
-	 *
-	 * @param   string  $key     The name of the primary key of the URL variable.
-	 * @param   string  $urlVar  The name of the URL variable if different from the primary key (sometimes required to avoid router collisions).
-	 *
-	 * @return  boolean  True if successful, false otherwise.
-	 *
-	 * @since   12.2
-	 */
 	public function save($key = null, $urlVar = null)
 	{
 		$tableid 	= $this->input->get('tableid', 0, 'int');
@@ -258,6 +155,7 @@ class CustomtablesControllerFields extends JControllerForm
 		
 		$fieldid 	= $this->input->get('id', 0, 'int');
 		
+	
 		if ($this->ref || $this->refid)
 		{
 			// to make sure the item is checkedin on redirect
@@ -271,16 +169,12 @@ class CustomtablesControllerFields extends JControllerForm
 		
 		if($this->task=='apply' or $this->task=='save2new' or $this->task=='save2copy')
 		{
-			//if((int)$this->refid!=0)
-				$redirect.='&view=fields&layout=edit&id='.(int)$fieldid.'&tableid='.(int)$tableid;
-			//else			
-				//$redirect.='&view=fields&layout=edit&fieldid='.(int)$fieldid;
+			$redirect.='&view=fields&layout=edit&id='.(int)$fieldid.'&tableid='.(int)$tableid;
 		}
 		else
 			$redirect.='&view=listoffields&tableid='.(int)$tableid;
 		
 		//Pospone extra task
-		//$extratask=$this->input->getCmd('newtask','');
 				
 		if($this->input->getCmd('extratask','')!='')
 		{
@@ -290,7 +184,7 @@ class CustomtablesControllerFields extends JControllerForm
 			$redirect.='&fieldid='.$this->input->getInt('fieldid',0);
 		}
 
-		if ($saved)//$this->refid && 
+		if ($saved)
 		{
 			// Redirect to the item screen.
 			$this->setRedirect(
@@ -299,34 +193,12 @@ class CustomtablesControllerFields extends JControllerForm
 				)
 			);
 		}
-		/*
-		elseif ($this->ref && $saved)
-		{
-			// Redirect to the list screen.
-			$this->setRedirect(
-				JRoute::_(
-					$redirect, false
-				)
-			);
-		}
-		*/
+		
 		return $saved;
 	}
 
-	/**
-	 * Function that allows child controller access to model data
-	 * after the data has been saved.
-	 *
-	 * @param   JModel  &$model     The data model object.
-	 * @param   array   $validData  The validated data.
-	 *
-	 * @return  void
-	 *
-	 * @since   11.1
-	 */
 	protected function postSaveHook(JModelLegacy $model, $validData = array())
 	{
 		return;
 	}
-
 }

@@ -15,6 +15,9 @@ defined('_JEXEC') or die('Restricted access');
 jimport('joomla.installer.installer');
 jimport('joomla.installer.helper');
 
+use CustomTables\CT;
+use CustomTables\IntegrityChecks;
+
 /**
  * Script File of Customtables Component
  */
@@ -132,5 +135,55 @@ class com_customtablesInstallerScript
 
 		if(!file_exists(JPATH_SITE.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'ct_images'))
 				mkdir(JPATH_SITE.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'ct_images');
+				
+		$path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR;
+		$loader_file = $path.'loader.php';
+		require_once($loader_file);
+		CTLoader(true);
+		$ct = new CT;
+		
+		$result = IntegrityChecks::check($ct,true,false);
+		if(count($result)>0)
+			echo '<ol><li>'.implode('</li><li>',$result).'</li></ol>';
+			
+		//if(!$ct->Env->advancedtagprocessor)
+			//$this->hideCategorySubMenu();
 	}
+	/*
+	function hideCategorySubMenu()
+	{
+		$db = JFactory::getDbo();
+        $query = $db->getQuery(true);
+
+        $fields = array(
+            //$db->quoteName('published') . ' = 0',
+			$db->quoteName('client_id') . ' = 99' //imposible client id to hide the menu item
+        );
+
+        $conditions = array(
+            $db->quoteName('alias') . ' = ' . $db->quote('com-customtables-submenu-listofcategories'), 
+            $db->quoteName('link') . ' = ' . $db->quote('index.php?option=com_customtables&view=listofcategories'),
+        );
+	
+        $query->update($db->quoteName('#__menu'))->set($fields)->where($conditions);
+
+        $db->setQuery($query);   
+        $db->execute();     
+	}
+	
+	function deleteCategorySubMenu()
+	{
+		$db = JFactory::getDbo();
+        
+        $conditions = array(
+            $db->quoteName('alias') . ' = ' . $db->quote('com-customtables-submenu-listofcategories'), 
+            $db->quoteName('link') . ' = ' . $db->quote('index.php?option=com_customtables&view=listofcategories'),
+        );
+	
+        $query= 'DELETE FROM #__menu WHERE '.implode(' AND ',$conditions);
+
+        $db->setQuery($query);   
+        $db->execute();     
+	}
+	*/
 }

@@ -46,9 +46,9 @@ class CustomtablesViewFields extends JViewLegacy
 			$this->tableid=$app->input->getint('tableid',0);
 		else
 			$this->tableid=$this->item->tableid;
-		
+
 		$this->table_row = ESTables::getTableRowByID($this->tableid);
-				
+
 		$this->script = $this->get('Script');
 		$this->state = $this->get('State');
 		// get action permissions
@@ -203,8 +203,8 @@ class CustomtablesViewFields extends JViewLegacy
 
 		$this->document->setTitle(JText::_($isNew ? 'COM_CUSTOMTABLES_FIELDS_NEW' : 'COM_CUSTOMTABLES_FIELDS_EDIT'));
 		
-		if($this->version < 4)
-			$this->document->addScript(JURI::root(true)."/administrator/components/com_customtables/views/fields/submitbutton.js"); 
+		//if($this->version < 4)
+		$this->document->addScript(JURI::root(true)."/administrator/components/com_customtables/views/fields/submitbutton.js"); 
 			
 		JText::script('view not acceptable. Error');
 	}

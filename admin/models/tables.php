@@ -145,10 +145,8 @@ class CustomtablesModelTables extends JModelAdmin
 			|| ($id == 0 && !$user->authorise('core.edit.state', 'com_customtables')))
 		{
 			// Disable fields for display.
-			$form->setFieldAttribute('ordering', 'disabled', 'true');
 			$form->setFieldAttribute('published', 'disabled', 'true');
 			// Disable fields while saving.
-			$form->setFieldAttribute('ordering', 'filter', 'unset');
 			$form->setFieldAttribute('published', 'filter', 'unset');
 		}
 		// If this is a new item insure the greated by is set.
@@ -296,18 +294,6 @@ class CustomtablesModelTables extends JModelAdmin
 			if ($table->created_by == 0 || empty($table->created_by))
 			{
 				$table->created_by = $user->id;
-			}
-			// Set ordering to the last item if not set
-			if (empty($table->ordering))
-			{
-				$db = JFactory::getDbo();
-				$query = $db->getQuery(true)
-					->select('MAX(ordering)')
-					->from($db->quoteName('#__customtables_tables'));
-				$db->setQuery($query);
-				$max = $db->loadResult();
-
-				$table->ordering = $max + 1;
 			}
 		}
 		else
@@ -723,7 +709,8 @@ class CustomtablesModelTables extends JModelAdmin
 		$db->execute();
 
 		//Copy Fields
-		$fields=array('fieldname','type','typeparams','ordering','defaultvalue','allowordering','parentid','isrequired','valuerulecaption','valuerule');
+		$fields=array('fieldname','type','typeparams','ordering','defaultvalue','allowordering','parentid','isrequired','valuerulecaption','valuerule',
+				'customfieldname','isdisabled','savevalue','alwaysupdatevalue','valuerulecaption','created_by','modified_by','created','modified');
 	
 		$morethanonelang=false;
 		

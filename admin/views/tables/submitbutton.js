@@ -30,3 +30,12 @@ Joomla.submitbutton = function(task)
 		}
 	}
 }
+
+function disableProField(object_name)
+{
+	let object = document.getElementById(object_name);
+	
+	object.value = "Available in Pro version";
+	
+	object.disabled = true;
+}

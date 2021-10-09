@@ -60,27 +60,9 @@ defined('_JEXEC') or die('Restricted Access');
 
 				?>
 
-<?php /*
-
-			<td class="order" nowrap="nowrap">
-				<span><?php
-//echo $row->parentid.'<br/>';
-echo $this->pagination->orderUpIcon( $i, $row->parentid == 0 || $row->parentid == @$rows[$i-1]->parentid, 'orderup', 'Move Up', $this->ordering); ?></span>
-				<span><?php echo $this->pagination->orderDownIcon( $i, $n, $row->parentid == 0 || $row->parentid == @$rows[$i+1]->parentid, 'orderdown', 'Move Down', $this->ordering ); ?></span>
-				<?php $disabled = $this->ordering ?  '' : 'disabled="disabled"'; ?>
-				<input type="text" name="order[]" size="5" value="<?php echo $row->ordering; ?>" <?php echo $disabled ?> class="text_area" style="text-align: center" />
-			</td>
-*/ ?>
 			<td align="center">
 				<?php echo $row->isselectable; ?>
 			</td>
-<!--
-			<td align="center">
-				<?php //echo $row->id; ?>
-			</td>--?>
-			<!--<td align="left">
-				<?php// echo $row->familytree; ?>
-			</td>-->
 			<td align="left">
 				<?php echo $row->familytreestr; ?>
 			</td>

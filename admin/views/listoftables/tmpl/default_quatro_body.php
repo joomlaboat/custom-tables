@@ -92,21 +92,26 @@ $edit = "index.php?option=com_customtables&view=listoftables&task=tables.edit";
 
 		</td>
 		
-		<td scope="row">
-			<?php echo '<a href="'.JURI::root(true).'/administrator/index.php?option=com_customtables&view=listoffields&tableid='.$item->id.'">'
-			.JText::_('COM_CUSTOMTABLES_TABLES_FIELDS_LABEL')
-			.' ('.$item->fieldcount.')</a>'; ?>
+		<td scope="row" class="text-center btns d-none d-md-table-cell itemnumber">
+		
+
+		
+			<?php echo '<a class="btn btn-success" aria-describedby="tip-tablefields'.$item->id.'" href="'.JURI::root(true).'/administrator/index.php?option=com_customtables&view=listoffields&tableid='.$item->id.'">'
+			.$item->fieldcount.'</a>'; ?>
+			<div role="tooltip" id="tip-tablefields<?php echo $item->id; ?>"><?php echo JText::_('COM_CUSTOMTABLES_TABLES_FIELDS_LABEL'); ?></div>
+			
+			
 		</td>
 		
-		<td scope="row">
+		<td scope="row" class="text-center btns d-none d-md-table-cell itemnumber">
 			<?php 
 				if(!$table_exists)
 					echo JText::_('COM_CUSTOMTABLES_TABLES_TABLE_NOT_CREATED');
 				else
 				{
-					echo '<a href="'.JURI::root(true).'/administrator/index.php?option=com_customtables&view=listofrecords&tableid='.$item->id.'">'
-					.JText::_('COM_CUSTOMTABLES_TABLES_RECORDS_LABEL')
-					.' ('.$this->getNumberOfRecords($item->realtablename,$item->realidfieldname).')</a>';
+					echo '<a class="btn btn-secondary" aria-describedby="tip-tablerecords'.$item->id.'" href="'.JURI::root(true).'/administrator/index.php?option=com_customtables&view=listofrecords&tableid='.$item->id.'">'
+					.$this->getNumberOfRecords($item->realtablename,$item->realidfieldname).'</a>'
+					.'<div role="tooltip" id="tip-tablerecords'.$item->id.'">'.JText::_('COM_CUSTOMTABLES_TABLES_RECORDS_LABEL').'</div>';
 				}
 			?>
 		</td>

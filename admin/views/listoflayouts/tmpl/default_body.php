@@ -20,31 +20,6 @@ $edit = "index.php?option=com_customtables&view=listoflayouts&task=layouts.edit"
 		$userChkOut = JFactory::getUser($item->checked_out);
 	?>
 	<tr class="row<?php echo $i % 2; ?>">
-		<?php /*
-		<td class="order nowrap center hidden-phone">
-		<?php if ($this->canDo['core.edit.state']): ?>
-			<?php
-				if ($this->saveOrder)
-				{
-					$iconClass = ' inactive';
-				}
-				else
-				{
-					$iconClass = ' inactive tip-top" hasTooltip" title="' . JHtml::tooltipText('JORDERINGDISABLED');
-				}
-			?>
-			<span class="sortable-handler<?php echo $iconClass; ?>">
-				<i class="icon-menu"></i>
-			</span>
-			<?php if ($this->saveOrder) : ?>
-				<input type="text" style="display:none" name="order[]" size="5"
-				value="<?php echo $item->ordering; ?>" class="width-20 text-area-order " />
-			<?php endif; ?>
-		<?php else: ?>
-			&#8942;
-		<?php endif; ?>
-		</td>
-		*/ ?>
 		
 		<?php if ($this->canState or $this->canDelete): ?>	
 		<td class="nowrap center">

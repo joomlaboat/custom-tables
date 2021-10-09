@@ -173,8 +173,8 @@ class CustomtablesControllerRecords extends JControllerForm
 	public function cancel($key = null)
 	{
 		// get the referal details
-		$this->ref 		= $this->input->get('ref', 0, 'word');
-		$this->refid 	= $this->input->get('refid', 0, 'int');
+		//$this->ref 		= $this->input->get('ref', 0, 'word');
+		//$this->refid 	= $this->input->get('refid', 0, 'int');
 		$tableid 	= $this->input->get('tableid', 0, 'int');
 
 		// Redirect to the items screen.

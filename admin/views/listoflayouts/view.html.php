@@ -60,7 +60,6 @@ class CustomtablesViewListoflayouts extends JViewLegacy
 		
 		$this->listOrder = $this->escape($this->state->get('list.ordering'));
 		$this->listDirn = $this->escape($this->state->get('list.direction'));
-		//$this->saveOrder = $this->listOrder == 'ordering';
 
 		// get global action permissions
 		$this->canDo = ContentHelper::getActions('com_customtables', 'listoflayouts');

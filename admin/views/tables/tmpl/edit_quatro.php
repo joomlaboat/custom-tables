@@ -20,6 +20,9 @@ use Joomla\CMS\Language\Text;
 HTMLHelper::_('behavior.formvalidator');
 HTMLHelper::_('behavior.keepalive');
 
+$document = JFactory::getDocument();
+$document->addCustomTag('<link href="'.JURI::root(true).'/administrator/components/com_customtables/css/style.css" rel="stylesheet">');
+
 ?>
 
 <form action="<?php echo JRoute::_('index.php?option=com_customtables&layout=edit&id='.(int) $this->item->id.$this->referral); ?>" method="post" name="adminForm" id="adminForm" class="form-validate" enctype="multipart/form-data">
@@ -50,13 +53,13 @@ HTMLHelper::_('behavior.keepalive');
 					{
 						$id.='_'.$lang->sef;
 
-						$cssclass='text_area';
+						$cssclass='form-control valid form-control-success';
 						$att='';
 					}
 					else
 					{
-						$cssclass='text_area required';
-						$att=' required aria-required="true"';
+						$cssclass='form-control required valid form-control-success';
+						$att=' required ';//aria-required="true"';
 					}
 
 					$item_array=(array)$this->item;
@@ -85,9 +88,14 @@ HTMLHelper::_('behavior.keepalive');
 
 				<hr/>
 
-				<div class="control-group">
+				<div class="control-group<?php echo (!$this->ct->Env->advancedtagprocessor ? ' ct_pro' : ''); ?>">
 					<div class="control-label"><?php echo $this->form->getLabel('tablecategory'); ?></div>
-					<div class="controls"><?php echo $this->form->getInput('tablecategory'); ?></div>
+					<div class="controls"><?php 
+						if(!$this->ct->Env->advancedtagprocessor)
+							echo '<input type="text" value="Available in Pro Version" disabled="disabled" class="form-control valid form-control-success" />';
+						else
+							echo $this->form->getInput('tablecategory'); 
+					?></div>
 				</div>
 
 			</div>
@@ -133,29 +141,36 @@ HTMLHelper::_('behavior.keepalive');
 			echo HTMLHelper::_('uitab.endTab');
 		}
 
-	if($this->ct->Env->advancedtagprocessor):
+	//if($this->ct->Env->advancedtagprocessor):
 	
 	echo HTMLHelper::_('uitab.addTab', 'tablesTab', 'advanced', Text::_('COM_CUSTOMTABLES_TABLES_ADVANCED')); ?>
 	
 	<div class="row-fluid form-horizontal-desktop">
 			<div class="span12">
 
-				<div class="control-group">
+				<div class="control-group<?php echo (!$this->ct->Env->advancedtagprocessor ? ' ct_pro' : ''); ?>">
 					<div class="control-label"><?php echo $this->form->getLabel('customphp'); ?></div>
-					<div class="controls"><?php echo $this->form->getInput('customphp'); ?></div>
+					<div class="controls"><?php 
+					
+						if(!$this->ct->Env->advancedtagprocessor)
+							echo '<input type="text" value="Available in Pro Version" disabled="disabled" class="form-control valid form-control-success" />';
+						else
+							echo $this->form->getInput('customphp'); 
+					
+					?></div>
 				</div>
 
-				<div class="control-group">
+				<div class="control-group<?php echo (!$this->ct->Env->advancedtagprocessor ? ' ct_pro' : ''); ?>">
 					<div class="control-label"><?php echo $this->form->getLabel('allowimportcontent'); ?></div>
 					<div class="controls"><?php echo $this->form->getInput('allowimportcontent'); ?></div>
 				</div>
 				
-				<div class="control-group">
+				<div class="control-group<?php echo (!$this->ct->Env->advancedtagprocessor ? ' ct_pro' : ''); ?>">
 					<div class="control-label"><?php echo $this->form->getLabel('customtablename'); ?></div>
 					<div class="controls"><?php echo $this->form->getInput('customtablename'); ?></div>
 				</div>
 				
-				<div class="control-group">
+				<div class="control-group<?php echo (!$this->ct->Env->advancedtagprocessor ? ' ct_pro' : ''); ?>">
 					<div class="control-label"><?php echo $this->form->getLabel('customidfield'); ?></div>
 					<div class="controls"><?php echo $this->form->getInput('customidfield'); ?></div>
 				</div>
@@ -167,7 +182,7 @@ HTMLHelper::_('behavior.keepalive');
 	<?php 
 	
 		echo HTMLHelper::_('uitab.endTab');
-	endif;
+	//endif;
 
 	echo HTMLHelper::_('uitab.addTab', 'tablesTab', 'dependencies', Text::_('COM_CUSTOMTABLES_TABLES_DEPENDENCIES'));
 	
@@ -221,4 +236,12 @@ HTMLHelper::_('behavior.keepalive');
 
 <div class="clearfix"></div>
 <?php echo JLayoutHelper::render('tables.details_under', $this); ?>
+
+<?php if(!$this->ct->Env->advancedtagprocessor): ?>
+<script>
+		disableProField("jform_customtablename");
+		disableProField("jform_customidfield");
+</script>
+<?php endif; ?>
+
 </form>

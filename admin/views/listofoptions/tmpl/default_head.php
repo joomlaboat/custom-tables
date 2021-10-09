@@ -14,9 +14,6 @@ defined('_JEXEC') or die('Restricted Access');
 
 
 		<tr>
-			<!--<th width="20">
-				<?php echo JText::_( 'NUM' ); ?>
-			</th>-->
 			<th width="20">
 				<input type="checkbox" name="checkall-toggle" value="" title="Check All" onclick="Joomla.checkAll(this)" />
 			</th>
@@ -39,24 +36,11 @@ defined('_JEXEC') or die('Restricted Access');
 
 			?>
 			
-			<!--
-			<th width="8%" nowrap="nowrap">
-				<?php //echo JHTML::_('grid.sort',   'Order by', 'm.ordering', @$this->lists['order_Dir'], @$this->lists['order'] ); ?>
-				<?php //echo JHTML::_('grid.order',  $this->items ); ?>
-				<?php //able) echo JHTML::_('grid.order',  $this->items ); ?>
-				<?php //echo JHTML::_('grid.sort',   'Itemid', 'id', @$this->lists['order_Dir'], @$this->lists['order'] ); ?>
-			</th>
-			-->
-			
 			<th width="8%" nowrap="nowrap">
 				<?php echo JHTML::_('grid.sort',   'Is Selectable', 'm.isselectable', @$this->lists['order_Dir'], @$this->lists['order'] ); ?>
 				
 			</th>
 
-			<!--
-			<th width="1%" nowrap="nowrap">
-				Family Tree #
-			</th>-->
 			<th width="1%" nowrap="nowrap">
 				Family Tree
 			</th>

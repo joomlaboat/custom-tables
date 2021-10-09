@@ -12,6 +12,8 @@
 // No direct access to this file
 \defined('_JEXEC') or die;
 
+use CustomTables\CT;
+
 use Joomla\CMS\Version;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
@@ -33,13 +35,13 @@ class CustomtablesViewListofcategories extends JViewLegacy
 	 * Listofcategories view display method
 	 * @return void
 	 */
-	private $isEmptyState = false;
+	var $ct;
+	var $isEmptyState = false;
 	 
 	function display($tpl = null)
 	{
-		$version = new Version;
-		$this->version = (int)$version->getShortVersion();
-		
+		$this->ct = new CT;
+				
 		if ($this->getLayout() !== 'modal')
 		{
 			// Include helper submenu
@@ -52,7 +54,7 @@ class CustomtablesViewListofcategories extends JViewLegacy
 		$this->state = $this->get('State');
 		$this->user = JFactory::getUser();
 		
-		if($this->version >= 4)
+		if($this->ct->Env->version >= 4)
 		{
 			$this->filterForm    = $this->get('FilterForm');
 			$this->activeFilters = $this->get('ActiveFilters');
@@ -76,7 +78,7 @@ class CustomtablesViewListofcategories extends JViewLegacy
 		// We don't need toolbar in the modal window.
 		if ($this->getLayout() !== 'modal')
 		{
-			if($this->version < 4)
+			if($this->ct->Env->version < 4)
 			{
 				$this->addToolbar_3();
 				$this->sidebar = JHtmlSidebar::render();
@@ -98,7 +100,7 @@ class CustomtablesViewListofcategories extends JViewLegacy
 		}
 
 		// Display the template
-		if($this->version < 4)
+		if($this->ct->Env->version < 4)
 			parent::display($tpl);
 		else
 			parent::display('quatro');
@@ -116,7 +118,7 @@ class CustomtablesViewListofcategories extends JViewLegacy
 
 		ToolbarHelper::title(Text::_('COM_CUSTOMTABLES_LISTOFCATEGORIES'), 'joomla');
 
-		if ($this->canCreate)
+		if ($this->canCreate and $this->ct->Env->advancedtagprocessor)
 			$toolbar->addNew('categories.add');
 
 		$dropdown = $toolbar->dropdownButton('status-group')

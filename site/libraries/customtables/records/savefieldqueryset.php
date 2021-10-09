@@ -13,6 +13,7 @@ defined('_JEXEC') or die('Restricted access');
 
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Component\ComponentHelper;
+use \Joomla\CMS\User\UserHelper;
 
 use CT_FieldTypeTag_image;
 use CT_FieldTypeTag_file;
@@ -435,7 +436,7 @@ public function Try2CreateUserAccount(&$Model,$field,$row)
 	{
         if(!$unique_users) //allow not unique record per users
         {
-            $this->UpdateUserField($this->realtablename,$field['realfieldname'],$existing_user_id,$row['listing_id']);
+            $this->UpdateUserField($field['realfieldname'],$existing_user_id,$row['listing_id']);
             Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORD_USER_UPDATED' ));
         }
         else
@@ -453,7 +454,7 @@ public function Try2CreateUserAccount(&$Model,$field,$row)
     return;
 }
 
-    static protected function UpdateUserField($useridfieldname,$existing_user_id,$listing_id)
+    protected function UpdateUserField($useridfieldname,$existing_user_id,$listing_id)
     {
 		$query = 'UPDATE '.$this->realtablename.' SET '.$useridfieldname.'='.$existing_user_id.' WHERE '.$this->realidfieldname.'='.$listing_id.' LIMIT 1';
 		$this->db->setQuery( $query );
@@ -466,7 +467,7 @@ public function Try2CreateUserAccount(&$Model,$field,$row)
 		require_once($path.'createuser.php');
 		
 		$msg='';
-		$password=strtolower(JUserHelper::genRandomPassword());
+		$password=strtolower(UserHelper::genRandomPassword());
 
 		$new_password=$password;
 

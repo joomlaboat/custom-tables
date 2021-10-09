@@ -15,6 +15,8 @@ defined('_JEXEC') or die('Restricted access');
 use CustomTables\Fields;
 
 $document = JFactory::getDocument();
+
+$document->addCustomTag('<link href="'.JURI::root(true).'/administrator/components/com_customtables/css/style.css" rel="stylesheet">');
 $document->addCustomTag('<link href="'.JURI::root(true).'/administrator/components/com_customtables/css/fieldtypes.css" rel="stylesheet">');
 $document->addCustomTag('<link href="'.JURI::root(true).'/administrator/components/com_customtables/css/modal.css" rel="stylesheet">');
 $document->addCustomTag('<script src="'.JURI::root(true).'/administrator/components/com_customtables/js/ajax.js"></script>');
@@ -72,6 +74,9 @@ if($input->getCmd('extratask','')=='updateimages')
 	;
 	
 	echo 'all_tables='.$this->getAllTables().';';
+	
+	
+	
 	?>
 
 	var json=JSON.parse(document.getElementById("fieldsData").innerHTML);
@@ -185,7 +190,30 @@ if($input->getCmd('extratask','')=='updateimages')
 	<?php echo JHtml::_('bootstrap.addTab', 'fieldsTab', 'optional', JText::_('COM_CUSTOMTABLES_FIELDS_OPTIONAL', true)); ?>
 		<div class="row-fluid form-horizontal-desktop">
 			<div class="span12">
-				<?php echo JLayoutHelper::render('fields.optional_left', $this); ?>
+				<div class="control-group">
+					<div class="control-label"><?php echo $this->form->getLabel('isrequired'); ?></div>
+					<div class="controls"><?php echo $this->form->getInput('isrequired'); ?></div>
+				</div>
+				
+				<div class="control-group<?php echo (!$this->ct->Env->advancedtagprocessor ? ' ct_pro' : ''); ?>">
+					<div class="control-label"><?php echo $this->form->getLabel('defaultvalue'); ?></div>
+					<div class="controls"><?php echo $this->form->getInput('defaultvalue'); ?></div>
+				</div>
+				
+				<div class="control-group">
+					<div class="control-label"><?php echo $this->form->getLabel('allowordering'); ?></div>
+					<div class="controls"><?php echo $this->form->getInput('allowordering'); ?></div>
+				</div>
+				
+				<div class="control-group<?php echo (!$this->ct->Env->advancedtagprocessor ? ' ct_pro' : ''); ?>">
+					<div class="control-label"><?php echo $this->form->getLabel('valuerule'); ?></div>
+					<div class="controls"><?php echo $this->form->getInput('valuerule'); ?></div>
+				</div>
+				
+				<div class="control-group<?php echo (!$this->ct->Env->advancedtagprocessor ? ' ct_pro' : ''); ?>">
+					<div class="control-label"><?php echo $this->form->getLabel('valuerulecaption'); ?></div>
+					<div class="controls"><?php echo $this->form->getInput('valuerulecaption'); ?></div>
+				</div>
 			</div>
 		</div>
 	<?php echo JHtml::_('bootstrap.endTab'); ?>
@@ -214,7 +242,7 @@ if($input->getCmd('extratask','')=='updateimages')
 				$vlu=$item_array[$id];
 
 				echo '<textarea rows="10" cols="20" name="jform['.$id.']" id="jform_'.$id.'" style="width:100%;height:100%;"
-				class="text_area"  placeholder="Field Description" >'.$vlu.'</textarea>';
+				class="text_area" placeholder="Field Description" >'.$vlu.'</textarea>';
 
 			echo '
 					</div>
@@ -233,6 +261,11 @@ if($input->getCmd('extratask','')=='updateimages')
 
 	<script>
 		updateTypeParams("jform_type","jform_typeparams","typeparams_box");
+		<?php if(!$this->ct->Env->advancedtagprocessor): ?>
+			disableProField("jform_defaultvalue");
+			disableProField("jform_valuerule");
+			disableProField("jform_valuerulecaption");
+		<?php endif; ?>
 	</script>
 
 </div>

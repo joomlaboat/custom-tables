@@ -50,9 +50,6 @@ class CustomTablesViewListOfOptions extends JViewLegacy
 			$items[$i]->treename = $treename;
 		}
 
-		//Ordering allowed ?
-		$this->ordering = ($lists['order'] == 'm.ordering');
-
 		JHTML::_('behavior.tooltip');
 
 		$this->isselectable=true;

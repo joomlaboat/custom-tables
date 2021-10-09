@@ -221,8 +221,6 @@ class CustomtablesModelListoffields extends JModelList
 		$id .= ':' . $this->getState('filter.id');
 		$id .= ':' . $this->getState('filter.search');
 		$id .= ':' . $this->getState('filter.published');
-		$id .= ':' . $this->getState('filter.ordering');
-		//$id .= ':' . $this->getState('filter.tableid');
 		$id .= ':' . $this->getState('filter.fieldname');
 		$id .= ':' . $this->getState('filter.type');
 		

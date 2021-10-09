@@ -135,10 +135,8 @@ class CustomtablesModelLayouts extends JModelAdmin
 			|| ($id == 0 && !$user->authorise('core.edit.state', 'com_customtables')))
 		{
 			// Disable fields for display.
-			$form->setFieldAttribute('ordering', 'disabled', 'true');
 			$form->setFieldAttribute('published', 'disabled', 'true');
 			// Disable fields while saving.
-			$form->setFieldAttribute('ordering', 'filter', 'unset');
 			$form->setFieldAttribute('published', 'filter', 'unset');
 		}
 		// If this is a new item insure the greated by is set.
@@ -292,18 +290,6 @@ class CustomtablesModelLayouts extends JModelAdmin
 			if ($table->created_by == 0 || empty($table->created_by))
 			{
 				$table->created_by = $user->id;
-			}
-			// Set ordering to the last item if not set
-			if (empty($table->ordering))
-			{
-				$db = JFactory::getDbo();
-				$query = $db->getQuery(true)
-					->select('MAX(ordering)')
-					->from($db->quoteName('#__customtables_layouts'));
-				$db->setQuery($query);
-				$max = $db->loadResult();
-
-				$table->ordering = $max + 1;
 			}
 		}
 		else
@@ -589,9 +575,6 @@ class CustomtablesModelLayouts extends JModelAdmin
 
 			// Reset the ID because we are making a copy
 			$this->table->id = 0;
-
-			// TODO: Deal with ordering?
-			// $this->table->ordering = 1;
 
 			// Check the row.
 			if (!$this->table->check())

@@ -11,6 +11,8 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\CT;
+
 use \Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Helper\ContentHelper;
 /**
@@ -68,11 +70,16 @@ abstract class CustomtablesHelper
 	**/
 	public static function addSubmenu($submenu)
 	{
+		$ct = new CT;
+		
 		// load user for access menus
 		$user = JFactory::getUser();
 		// load the submenus to sidebar
 		JHtmlSidebar::addEntry(JText::_('COM_CUSTOMTABLES_SUBMENU_DASHBOARD'), 'index.php?option=com_customtables&view=customtables', $submenu === 'customtables');
-		JHtmlSidebar::addEntry(JText::_('COM_CUSTOMTABLES_SUBMENU_LISTOFCATEGORIES'), 'index.php?option=com_customtables&view=listofcategories', $submenu === 'listofcategories');
+		
+		if($ct->Env->advancedtagprocessor)
+			JHtmlSidebar::addEntry(JText::_('COM_CUSTOMTABLES_SUBMENU_LISTOFCATEGORIES'), 'index.php?option=com_customtables&view=listofcategories', $submenu === 'listofcategories');
+		
 		JHtmlSidebar::addEntry(JText::_('COM_CUSTOMTABLES_SUBMENU_LISTOFTABLES'), 'index.php?option=com_customtables&view=listoftables', $submenu === 'listoftables');
 		JHtmlSidebar::addEntry(JText::_('COM_CUSTOMTABLES_SUBMENU_LISTOFLAYOUTS'), 'index.php?option=com_customtables&view=listoflayouts', $submenu === 'listoflayouts');
 	

@@ -26,14 +26,27 @@ class CustomtablesModelCustomtables extends JModelList
 	
 	public function getIcons()
 	{
+		$this->ct = new CT;
+		
 		// load user for access menus
 		$user = JFactory::getUser();
 		// reset icon array
 		$icons  = array();
 		// view groups array
-		$viewGroups = array(
-			'main' => array('png.listoftables', 'png.listoflayouts','png.listofcategories', 'png.importtables','png.documentation')
-		);
+		
+		if(!$this->ct->Env->advancedtagprocessor)
+		{
+			$viewGroups = array(
+				'main' => array('png.listoftables', 'png.listoflayouts','png.documentation')
+			);
+		}
+		else
+		{
+			$viewGroups = array(
+				'main' => array('png.listoftables', 'png.listoflayouts','png.listofcategories', 'png.importtables','png.documentation')
+			);
+		}
+		
 		// view access array
 		$viewAccess = array(
 			'listofcategories.submenu' => 'categories.submenu',

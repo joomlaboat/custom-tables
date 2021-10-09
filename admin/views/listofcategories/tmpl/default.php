@@ -17,31 +17,10 @@ JHtml::_('behavior.multiselect');
 JHtml::_('dropdown.init');
 JHtml::_('formbehavior.chosen', 'select');
 
-/*
-if ($this->saveOrder)
-{
-	$saveOrderingUrl = 'index.php?option=com_customtables&task=listofcategories.saveOrderAjax&tmpl=component';
-	JHtml::_('sortablelist.sortable', 'categoriesList', 'adminForm', strtolower($this->listDirn), $saveOrderingUrl);
-}
+?>
 
-<script type="text/javascript">
-	Joomla.orderTable = function()
-	{
-		table = document.getElementById("sortTable");
-		direction = document.getElementById("directionTable");
-		order = table.options[table.selectedIndex].value;
-		if (order != '<?php echo $this->listOrder; ?>')
-		{
-			dirn = 'asc';
-		}
-		else
-		{
-			dirn = direction.options[direction.selectedIndex].value;
-		}
-		Joomla.tableOrdering(order, dirn, '');
-	}
-</script>
-*/ ?>
+
+
 <form action="<?php echo JRoute::_('index.php?option=com_customtables&view=listofcategories'); ?>" method="post" name="adminForm" id="adminForm">
 <?php if(!empty( $this->sidebar)): ?>
 	<div id="j-sidebar-container" class="span2">
@@ -51,6 +30,16 @@ if ($this->saveOrder)
 <?php else : ?>
 	<div id="j-main-container">
 <?php endif; ?>
+
+<h3>Categories provide an optional method for organizing your Tables.</h3>
+
+<p>Here's how it works. A Category contains Tables. One Table can only be in one Category.</p>
+<p>
+If you will have a large number of tables on your site, the reason to use categories is to simply group the tables so you can find them.
+For example, on the Custom Tables/Tables page, you can filter tables based on Category. So if you have 100 tables in your site, you can find a Tables more easily if you know its Category.</p>
+</p>
+<?php if(!$this->ct->Env->advancedtagprocessor): ?><p>AVAILABE IN PRO VERSION ONLY</p><?php endif; ?>
+
 <?php if (empty($this->items)): ?>
 	<?php echo $this->loadTemplate('toolbar');?>
     <div class="alert alert-no-items">
@@ -58,6 +47,7 @@ if ($this->saveOrder)
     </div>
 <?php else : ?>
 		<?php echo $this->loadTemplate('toolbar');?>
+		
 		<table class="table table-striped" id="categoriesList">
 			<thead><?php echo $this->loadTemplate('head');?></thead>
 			<tfoot><?php echo $this->loadTemplate('foot');?></tfoot>

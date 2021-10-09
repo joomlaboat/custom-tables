@@ -39,10 +39,10 @@ HTMLHelper::_('behavior.multiselect');
 		<?php echo JText::_('COM_CUSTOMTABLES_TABLES_TABLETITLE_LABEL'); ?>
 	</th>
 	
-	<th scope="col">
+	<th scope="col" class="text-center">
 			<?php echo JText::_('COM_CUSTOMTABLES_TABLES_FIELDS_LABEL'); ?>
 	</th>
-	<th scope="col">
+	<th scope="col" class="text-center">
 			<?php echo JText::_('COM_CUSTOMTABLES_TABLES_RECORDS_LABEL'); ?>
 	</th>
 

@@ -21,7 +21,6 @@ var all_fields=[];
 
 var proversion=false;
 
-
 function typeChanged()
 {
     if(typeparams_obj != null)
