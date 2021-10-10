@@ -54,7 +54,7 @@ For example, on the Custom Tables/Tables page, you can filter tables based on Ca
 			<tbody><?php echo $this->loadTemplate('body');?></tbody>
 		</table>
 		<?php //Load the batch processing form. ?>
-        <?php if ($this->canCreate && $this->canEdit) : ?>
+        <?php /* if ($this->canCreate && $this->canEdit) : ?>
             <?php echo JHtml::_(
                 'bootstrap.renderModal',
                 'collapseModal',
@@ -64,7 +64,7 @@ For example, on the Custom Tables/Tables page, you can filter tables based on Ca
                 ),
                 $this->loadTemplate('batch_body')
             ); ?>
-        <?php endif; ?>
+        <?php endif; */ ?>
 		<input type="hidden" name="filter_order" value="" />
 		<input type="hidden" name="filter_order_Dir" value="" />
 		<input type="hidden" name="boxchecked" value="0" />

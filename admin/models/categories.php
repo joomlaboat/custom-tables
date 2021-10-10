@@ -292,11 +292,13 @@ class CustomtablesModelCategories extends JModelAdmin
 			$table->modified_by = $user->id;
 		}
 
+/*
 		if (!empty($table->id))
 		{
 			// Increment the items version number.
 			$table->version++;
 		}
+		*/
 	}
 
 	/**
