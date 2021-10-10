@@ -324,6 +324,7 @@ class CustomtablesViewListoftables extends JViewLegacy
 		
 		$db->setQuery( $query );
         $rows=$db->loadObjectList();
+
 		return $rows[0]->count;
 	}
 }

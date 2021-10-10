@@ -43,10 +43,7 @@ class JFormFieldCTCategory extends JFormFieldList
 				$options[] = JHtml::_('select.option', '', JText::_('COM_CUSTOMTABLES_TABLES_CATEGORY_SELECT'));
 				
             foreach($records as $rec) 
-            {
                 $options[] = JHtml::_('select.option', $rec->id, $rec->categoryname);
-                                
-            }
         }
         return $options;
 	}

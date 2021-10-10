@@ -45,13 +45,14 @@ class JFormFieldCTField extends JFormFieldList
 		$results = $db->loadColumn();
 		
 		$translations = DataTypes::fieldTypeTranslation();
-
+		$_filter = array();
+		
 		if ($results)
 		{
 			// get model
 			//$model = $this->getModel();
 			$results = array_unique($results);
-			$_filter = array();
+			
 			foreach ($results as $type)
 			{
 				// Translate the type selection
@@ -59,10 +60,7 @@ class JFormFieldCTField extends JFormFieldList
 				// Now add the type and its text to the options array
 				$_filter[] = JHtml::_('select.option', $type, JText::_($text));
 			}
-			return $_filter;
 		}
-		return false;
-		
+		return $_filter;
 	}
-	
 }

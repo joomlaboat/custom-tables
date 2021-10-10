@@ -177,6 +177,8 @@ class CustomtablesControllerRecords extends JControllerForm
 		//$this->refid 	= $this->input->get('refid', 0, 'int');
 		$tableid 	= $this->input->get('tableid', 0, 'int');
 
+		$cancel = parent::cancel($key);
+	
 		// Redirect to the items screen.
 		$this->setRedirect(
 			JRoute::_(
@@ -184,7 +186,7 @@ class CustomtablesControllerRecords extends JControllerForm
 			)
 		);
 
-		return;
+		return $cancel;
 	}
 
 	/**

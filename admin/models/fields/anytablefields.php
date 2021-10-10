@@ -8,12 +8,11 @@
 
 // no direct access
 defined('_JEXEC') or die('Restricted access');
-/*
+
 use CustomTables\Fields;
 
 jimport('joomla.form.helper');
 JFormHelper::loadFieldClass('list');
-
 
 class JFormFieldAnyTableFields extends JFormFieldList
 {
@@ -41,10 +40,6 @@ class JFormFieldAnyTableFields extends JFormFieldList
 					$options[] = JHtml::_('select.option', $field['column_name'], $field['column_name'].' ('.$field['data_type'].')');
             }
         }
-		
-        $options = array_merge(parent::getOptions(), $options);
         return $options;
-
 	}
 }
-*/

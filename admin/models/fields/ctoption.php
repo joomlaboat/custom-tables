@@ -47,13 +47,8 @@ class JFormFieldCTOption extends JFormFieldList
         {
 			$options[] = JHtml::_('select.option', '', JText::_('COM_CUSTOMTABLES_FIELDS_SELECT_LABEL'));
             foreach($records as $rec)
-            {
                 $options[] = JHtml::_('select.option', $rec->id, $rec->title);
-
-            }
         }
-        $options = array_merge(parent::getOptions(), $options);
         return $options;
-
 	}
 }

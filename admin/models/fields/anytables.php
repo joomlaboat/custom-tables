@@ -8,10 +8,9 @@
 
 // no direct access
 defined('_JEXEC') or die('Restricted access');
-/*
+
 jimport('joomla.form.helper');
 JFormHelper::loadFieldClass('list');
-
 
 class JFormFieldAnyTables extends JFormFieldList
 {
@@ -30,7 +29,6 @@ class JFormFieldAnyTables extends JFormFieldList
 		foreach($tables as $table)
 			$options[] = JHtml::_('select.option', $table, $table);
         
-        $options = array_merge(parent::getOptions(), $options);
         return $options;
 	}
 	
@@ -79,4 +77,3 @@ class JFormFieldAnyTables extends JFormFieldList
 		return $list;
 	}
 }
-*/

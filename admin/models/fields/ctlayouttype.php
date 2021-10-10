@@ -43,13 +43,12 @@ class JFormFieldCTLayoutType extends JFormFieldList
 
 		$results = $db->loadColumn();
 
-		$_filter = array();
+		$options = array();
 		if ($results)
 		{
 			$translations = Layouts::layoutTypeTranslation();
-			
 			$results = array_unique($results);
-			$_filter = array();
+			
 			foreach ($results as $layouttype)
 			{
 				// Translate the layouttype selection
@@ -57,13 +56,10 @@ class JFormFieldCTLayoutType extends JFormFieldList
 				{
 					$text = $translations[$layouttype];
 					// Now add the layouttype and its text to the options array
-					$_filter[] = JHtml::_('select.option', $layouttype, JText::_($text));
+					$options[] = JHtml::_('select.option', $layouttype, JText::_($text));
 				}
 			}
-			return $_filter;
 		}
-		
-		$options = array_merge(parent::getOptions(), $_filter);
-	
+		return $options;
 	}
 }
