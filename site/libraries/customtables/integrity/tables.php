@@ -44,7 +44,14 @@ class IntegrityTables extends \CustomTables\IntegrityChecks
 		
 			if($content !='' or $zeroId>0)
 			{
-				$result[]='<p><span style="font-size:1.3em;">'.$table['tabletitle'].'</span><br/><span style="color:gray;">'.$table['realtablename'].'</span></p>'
+				if(strpos($link,'?')===false)
+					$link.='?';
+				else
+					$link.='&';
+				
+				$result[]='<p><span style="font-size:1.3em;">'.$table['tabletitle'].'</span><br/><span style="color:gray;">'.$table['realtablename'].'</span>'
+				.' <a href="'.$link.'task=fixfieldtype&fieldname=all_fields">Fix all fields</a>'
+				.'</p>'
 					.$content
 					.($zeroId > 0 ? '<p style="font-size:1.3em;color:red;">Records with ID = 0 found. Please fix it manually.</p>' : '');
 			}

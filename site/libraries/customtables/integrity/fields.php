@@ -191,7 +191,7 @@ class IntegrityFields extends \CustomTables\IntegrityChecks
 							.($projected_field['typeparams']!='' ? ' ('.$projected_field['typeparams'].')' : '');
 					}
 					
-					if($ct->Table->tableid == $tasktableid and $task=='fixfieldtype' and $taskfieldname==$exst_field)
+					if($ct->Table->tableid == $tasktableid and $task=='fixfieldtype' and ($taskfieldname==$exst_field or $taskfieldname=='all_fields'))
 					{
 						$msg='';
 						

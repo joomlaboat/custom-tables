@@ -20,7 +20,8 @@ class CustomTablesModelFiles extends JModelLegacy
 
 	var $Itemid;
 
-	var $esfieldid;
+	var $tableid;
+	var $fieldid;
 	var $fieldrow;
 	var $security;
 	var $key;
@@ -43,11 +44,14 @@ class CustomTablesModelFiles extends JModelLegacy
 
 		$this->Itemid=$jinput->getInt('Itemid',0);
 
-		$this->esfieldid = JFactory::getApplication()->input->getInt('fieldid', 0);
-		$this->security = JFactory::getApplication()->input->getCmd('security', 'd');
-		$this->key = JFactory::getApplication()->input->getCmd('key','');
+		$this->tableid = $jinput->getInt('tableid',0);
+		$this->fieldid = $jinput->getInt('fieldid',0);
+		
+		
+		$this->security = $jinput->getCmd('security', 'd');
+		$this->key = $jinput->getCmd('key','');
 
-		if($id==0 or $this->esfieldid==0)
+		if($id==0 or $this->fieldid==0)
 		{
 			JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
 
@@ -66,7 +70,8 @@ class CustomTablesModelFiles extends JModelLegacy
 
 		$jinput=JFactory::getApplication()->input;
 
-		$this->ct->getTable($jinput->getInt('tableid',0), null);
+		$this->tableid = $jinput->getInt('tableid',0);
+		$this->ct->getTable($this->tableid, null);
 				
 		if($this->ct->Table->tablename=='')
 		{
@@ -79,7 +84,7 @@ class CustomTablesModelFiles extends JModelLegacy
 
 		foreach($this->ct->Table->fields as $f)
 		{
-			if($f['id']==$this->esfieldid)
+			if($f['id']==$this->fieldid)
 			{
 				$this->fieldrow=$f;
 				break;

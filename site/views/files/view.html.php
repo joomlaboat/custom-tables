@@ -29,7 +29,7 @@ class CustomTablesViewFiles extends JViewLegacy
 		}
 		
 		$key=$this->Model->key;
-		$test_key=CT_FieldTypeTag_file::makeTheKey($filepath,$this->Model->security,$this->Model->_id,$this->Model->esfieldid,$this->Model->ct->Table->tableid);
+		$test_key=CT_FieldTypeTag_file::makeTheKey($filepath,$this->Model->security,$this->Model->_id,$this->Model->fieldid,$this->Model->tableid);
 
 		if($key==$test_key)
 			$this->render_file_output($this->row,$filepath);
@@ -108,7 +108,7 @@ class CustomTablesViewFiles extends JViewLegacy
 				$function_name='CTProcessFile_'.str_replace('.php','',$customphpfile);
 
 				if(function_exists ($function_name))
-					return call_user_func($function_name,$content,$row,$this->Model->ct->Table->tableid,$this->Model->esfieldid);
+					return call_user_func($function_name,$content,$row,$this->Model->ct->Table->tableid,$this->Model->fieldid);
 			}
 		}
 		return $content;
