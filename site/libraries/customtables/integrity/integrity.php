@@ -26,8 +26,7 @@ class IntegrityChecks
 		
 		if($check_core_tables)
 			IntegrityCoreTables::checkCoreTables($ct);
-		
-		
+
 		if($check_custom_tables)
 			$result = IntegrityTables::checkTables($ct);
 		

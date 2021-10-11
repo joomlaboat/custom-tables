@@ -29,10 +29,10 @@ class IntegrityCoreTables extends \CustomTables\IntegrityChecks
 		IntegrityCoreTables::createCoreTableIfNotExists($ct,IntegrityCoreTables::getCoreTableFields_Fields());
 		IntegrityCoreTables::createCoreTableIfNotExists($ct,IntegrityCoreTables::getCoreTableFields_Layouts());
 		IntegrityCoreTables::createCoreTableIfNotExists($ct,IntegrityCoreTables::getCoreTableFields_Categories());
+		IntegrityCoreTables::createCoreTableIfNotExists($ct,IntegrityCoreTables::getCoreTableFields_Log());
 		
 		if($ct->Env->advancedtagprocessor)
 		{
-			IntegrityCoreTables::createCoreTableIfNotExists($ct,IntegrityCoreTables::getCoreTableFields_Log());
 			IntegrityCoreTables::createCoreTableIfNotExists($ct,IntegrityCoreTables::getCoreTableFields_Options());
 		}
 	}
@@ -106,6 +106,7 @@ class IntegrityCoreTables extends \CustomTables\IntegrityChecks
 		$tables_projected_fields[]=['name'=>'isdisabled','ct_fieldtype'=>'','mysql_type'=>'TINYINT NOT NULL DEFAULT 0','postgresql_type'=>'SMALLINT NOT NULL DEFAULT 0'];
 		$tables_projected_fields[]=['name'=>'alwaysupdatevalue','ct_fieldtype'=>'checkbox','mysql_type'=>'TINYINT NOT NULL DEFAULT 0','postgresql_type'=>'SMALLINT NOT NULL DEFAULT 0','comment'=>'Update default value every time record is edited.'];
 		
+		$tables_projected_fields[]=['name'=>'parentid','ct_fieldtype'=>'sqljoin','mysql_type'=>'INT NULL','postgresql_type'=>'INT NULL'];		
 		$tables_projected_fields[]=['name'=>'ordering','ct_fieldtype'=>'','mysql_type'=>'INT UNSIGNED NOT NULL','postgresql_type'=>'INT NOT NULL'];		
 
 		$tables_projected_fields[]=['name'=>'defaultvalue','ct_fieldtype'=>'','mysql_type'=>'VARCHAR(1024) NULL','postgresql_type'=>'VARCHAR(1024) NULL'];
@@ -393,16 +394,19 @@ class IntegrityCoreTables extends \CustomTables\IntegrityChecks
 			return false;
 		}
 		
-		$projected_data_type = Fields::getProjectedFieldType($ct_fieldtype, $ct_typeparams);
-		
-		if(!IntegrityFields::compareFieldTypes($existing_field,$projected_data_type))
+		if($ct_fieldtype != null and $ct_fieldtype != '')
 		{
-			$PureFieldType = Fields::makeProjectedFieldType($projected_data_type);
-
-			if(!Fields::fixMYSQLField($realtablename,$realfieldname,$PureFieldType,$msg))
+			$projected_data_type = Fields::getProjectedFieldType($ct_fieldtype, $ct_typeparams);
+		
+			if(!IntegrityFields::compareFieldTypes($existing_field,$projected_data_type))
 			{
-				Factory::getApplication()->enqueueMessage($msg,'error');
-				return false;
+				$PureFieldType = Fields::makeProjectedFieldType($projected_data_type);
+
+				if(!Fields::fixMYSQLField($realtablename,$realfieldname,$PureFieldType,$msg))
+				{
+					Factory::getApplication()->enqueueMessage($msg,'error');
+					return false;
+				}
 			}
 		}
 
@@ -415,37 +419,33 @@ class IntegrityCoreTables extends \CustomTables\IntegrityChecks
 		
 		$ExistingFields=Fields::getExistingFields($realtablename, false);
 		
+		/*
 		if($db->serverType == 'postgresql')
 			$type_field_name='postgresql_type';
 		else
 			$type_field_name='mysql_type';
+			*/
 		
 		foreach($projected_fields as $projected_field)
 		{
-			$proj_field=$projected_field['name'];
-			$fieldtype=$projected_field[$type_field_name];
 			
-			$fieldtype = '';
-			$typeparams = '';
-			
-			if(isset($projected_field['multilang']) and $projected_field['multilang'] == true)
-			{
-				if(stripos($projected_field[$type_field_name],'text')!==false)
-					$fieldtype = 'multilangtext';
-				else
-					$fieldtype = 'multilangstring';
-			}
-			
-
-			IntegrityFields::addFieldIfNotExists($ct,$ExistingFields,$proj_field,$fieldtype,$typeparams,$projected_field[$type_field_name]);
-        
 			if(isset($projected_field['ct_fieldtype']) and $projected_field['ct_fieldtype']!='')
 			{
-				$typeparams='';
-				if(isset($projected_field['ct_typeparams']) and $projected_field['ct_typeparams']!='')
-					$typeparams = $projected_field['ct_typeparams'];
+				$proj_field=$projected_field['name'];
+				$fieldtype=$projected_field['ct_fieldtype'];
 				
-				IntegrityCoreTables::checkCoreTableFields($ct,$realtablename, $ExistingFields, $proj_field, $projected_field['ct_fieldtype'],$typeparams);
+				$typeparams = '';
+
+				IntegrityFields::addFieldIfNotExists($ct,$realtablename,$ExistingFields,$proj_field,$fieldtype,$typeparams);//,$projected_field[$type_field_name]);
+        
+				if(isset($projected_field['ct_fieldtype']) and $projected_field['ct_fieldtype']!='')
+				{
+					$typeparams='';
+					if(isset($projected_field['ct_typeparams']) and $projected_field['ct_typeparams']!='')
+						$typeparams = $projected_field['ct_typeparams'];
+				
+					IntegrityCoreTables::checkCoreTableFields($ct,$realtablename, $ExistingFields, $proj_field, $projected_field['ct_fieldtype'],$typeparams);
+				}
 			}
 		}
 	}

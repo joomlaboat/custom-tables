@@ -11,8 +11,6 @@ defined('_JEXEC') or die( 'Restricted access' );
 
 class JHTMLCTTime
 {
-
-
         static public function render($control_name, $value,$class, $attribute='',$typeparams,$option_list)
         {
                 $options=array(array('id'=>'','name'=>'- '.JText ::_( 'COM_CUSTOMTABLES_SELECT' )));
@@ -58,15 +56,7 @@ class JHTMLCTTime
 		return JHTML::_('select.genericlist', $options, $control_name, $cssclass.$attribute.' ', 'id', 'name', $value,$control_name);
 
         }
-
-        /*
-        static public function seconds2hms($seconds)
-        {
-                $t = round($seconds);
-                return sprintf('%02d:%02d:%02d', ($t/3600),($t/60%60), $t%60);
-        }
-        */
-        
+       
         static public function ticks2Seconds($number_of_ticks,$typeparams)
         {
                 $from=JHTMLCTTime::durationToSeconds($typeparams[0]);
@@ -99,29 +89,24 @@ class JHTMLCTTime
         
         static public function seconds2FormatedTime($seconds,$format='')
         {
-                date_default_timezone_set('UTC');
+            date_default_timezone_set('UTC');
                 
-                if($format!='')
-                    return date($format, $seconds);
-                else
-                
-                    return date('H:i:s', $seconds);
+            if($format!='')
+				return date($format, $seconds);
+			else
+                return date('H:i:s', $seconds);
         }
 
         static public function durationToSeconds($duration)
         {
-                if($duration=='' or $duration=='0')
-                        $duration='0h';
+            if($duration=='' or $duration=='0')
+				$duration='0h';
                 
-                $interval = new DateInterval('PT' . strtoupper($duration));
+            $interval = new DateInterval('PT' . strtoupper($duration));
                 
-                
-                $reference = new DateTimeImmutable;
-                $endTime = $reference->add($interval);
+            $reference = new DateTimeImmutable;
+            $endTime = $reference->add($interval);
 
-                return $endTime->getTimestamp() - $reference->getTimestamp();
+            return $endTime->getTimestamp() - $reference->getTimestamp();
         }
-
-        
-
 }

@@ -229,7 +229,8 @@ class Ordering
 			}
 		}
 		
-		Factory::getApplication()->enqueueMessage('Order By parameter "'.$ordering_param_string.'" is incorrect or the field doesnt exist.', 'Error');
+		//Enable in developer mode
+		//Factory::getApplication()->enqueueMessage('Order By parameter "'.$ordering_param_string.'" is incorrect or the field doesnt exist.', 'Error');
 					
 		return null;
 	}

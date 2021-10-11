@@ -36,7 +36,6 @@ class JFormFieldCTUserGroup extends JFormFieldList
             foreach($records as $record) 
                 $options[] = JHtml::_('select.option', $record->id, $record->title);
         }
-		//return array_merge(array(array('id'=>'','name'=>'- '.JText ::_( 'COM_CUSTOMTABLES_SELECT' ))),$options);
 		return $options;
     }
 }

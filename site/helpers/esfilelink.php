@@ -13,8 +13,6 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'co
 
 class JHTMLESFileLink
 {
-
-
         static public function render($control_name, $value,$style,$cssclass, $path='/images',  $attribute='')
         {
 				if($path!='' and $path[0]!='/')

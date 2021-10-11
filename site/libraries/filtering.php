@@ -311,13 +311,15 @@ class ESFiltering
 
 
 												case 'multilangstring':
-
+													
+													$c=$this->Search_String($value, $PathValue, $fieldrow,$comparison_operator,true);
+													/*
 														$v=str_replace('"','',$value);
 														if($db->serverType == 'postgresql')
 															$c='POSITION('.$db->quote($v).' IN '.$fieldrow['realfieldname'].$this->ct->Languages->Postfix.')>0';
 														else
 															$c='instr('.$realfieldname.$this->ct->Languages->Postfix.','.$db->quote($v).')';
-
+*/
 														break;
 
 												case 'customtables':
@@ -562,7 +564,7 @@ class ESFiltering
 													break;
 
 												case 'multilangtext':
-													$c=$this->Search_String($value, $PathValue, $fieldrow,$comparison_operator,$this->ct->Languages->Postfix);
+													$c=$this->Search_String($value, $PathValue, $fieldrow,$comparison_operator,true);
 													break;
 
 										}
@@ -720,11 +722,11 @@ class ESFiltering
 		return $vL;
 	}
 
-	function Search_String($value, &$PathValue, &$fieldrow,$comparison_operator)
+	function Search_String($value, &$PathValue, &$fieldrow,$comparison_operator,$isMultilingual = false)
 	{
 		$db = JFactory::getDBO();
 
-		$realfieldname=$fieldrow['realfieldname'].$this->ct->Languages->Postfix;
+		$realfieldname=$fieldrow['realfieldname'].($isMultilingual ? $this->ct->Languages->Postfix : '');
 		
 		$v=$this->getString_vL($value);
 		

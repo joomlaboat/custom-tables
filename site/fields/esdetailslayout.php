@@ -39,7 +39,6 @@ class JFormFieldESDetailsLayout extends JFormFieldList
         {
             foreach($messages as $message)
                 $options[] = JHtml::_('select.option', $message->layoutname, $message->tablename.': '.$message->layoutname);
-
         }
         return $options;
 	}
