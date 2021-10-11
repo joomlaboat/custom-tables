@@ -42,15 +42,8 @@ class JFormFieldESTable extends JFormFieldList
         if ($messages)
         {
             foreach($messages as $message) 
-            {
                 $options[] = JHtml::_('select.option', $message->tablename, $message->tablename);
-                                
-            }
         }
-        $options = array_merge(parent::getOptions(), $options);
         return $options;
-
 	}
 }
-
-?>

@@ -19,7 +19,7 @@
 			<field type="estable" name="establename" default="" label="Select Table" description="Select Custom Table" />
 			<field type="text" name="listingid" default="0" label="Listing ID" description="Optional Value" />
 
-					<field name="editusergroups" type="usergroup" default="" label="Who may edit content" description="Select a user group that may edit the records?" />
+					<field name="editusergroups" type="CTUserGroup" default="8" label="Who may edit content" description="Select a user group that may edit the records?" />
 					<field type="esdetailslayout" name="esdetailslayout" default="" label="Details Layout" description="Select Details Layout" />
 
 

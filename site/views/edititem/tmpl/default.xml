@@ -28,10 +28,10 @@ In this case, there will be two checks: the first one will check if the record b
 				<option value="0">Not Published</option>
 			</field>
 
-			<field name="addusergroups" type="usergroup" default="" label="Who may add content" description="Select a user group that may add the records." />
-			<field name="editusergroups" type="usergroup" default="" label="Who may edit content" description="Select a user group that may edit records." />
-			<field name="publishusergroups" type="usergroup" default="" label="Who may publish records (Admin)" description="Select a user group that may publish/unpublish records." />
-			<field name="deleteusergroups" type="usergroup" default="" label="Who may delete records" description="Select a user group that may delete records." />
+			<field name="addusergroups" type="CTUserGroup" default="8" label="Who may add content" description="Select a user group that may add the records." />
+			<field name="editusergroups" type="CTUserGroup" default="8" label="Who may edit content" description="Select a user group that may edit records." />
+			<field name="publishusergroups" type="CTUserGroup" default="8" label="Who may publish records (Admin)" description="Select a user group that may publish/unpublish records." />
+			<field name="deleteusergroups" type="CTUserGroup" default="8" label="Who may delete records" description="Select a user group that may delete records." />
 
 
 			<field type="text" name="customitemid" default="" size="70" label="Custom Itemid" description="" />

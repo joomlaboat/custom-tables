@@ -38,13 +38,9 @@ class JFormFieldESItemLayout extends JFormFieldList
         if ($messages)
         {
             foreach($messages as $message)
-            {
                 $options[] = JHtml::_('select.option', $message->layoutname, $message->tablename.': '.$message->layoutname);
-
-            }
         }
-        $options = array_merge(parent::getOptions(), $options);
-        return $options;
 
+        return $options;
 	}
 }
