@@ -138,13 +138,17 @@ class com_customtablesInstallerScript
 				
 		$path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR;
 		$loader_file = $path.'loader.php';
-		require_once($loader_file);
-		CTLoader(true);
-		$ct = new CT;
+		if(file_exists($loader_file))
+		{
+			//Do not run in on uninstall
+			require_once($loader_file);
+			CTLoader(true);
+			$ct = new CT;
 		
-		$result = IntegrityChecks::check($ct,true,false);
-		if(count($result)>0)
-			echo '<ol><li>'.implode('</li><li>',$result).'</li></ol>';
+			$result = IntegrityChecks::check($ct,true,false);
+			if(count($result)>0)
+				echo '<ol><li>'.implode('</li><li>',$result).'</li></ol>';
+		}
 			
 		//if(!$ct->Env->advancedtagprocessor)
 			//$this->hideCategorySubMenu();
