@@ -611,21 +611,21 @@ public function get_alias_type_value($id)
     if(!isset($value))
         return null;
     
-    $value=$this->prepare_alias_type_value($id,$value);
+    $value=$this->prepare_alias_type_value($id,$value,$this->realfieldname);
     if($value=='')
         return null;
 
     return $this->realfieldname.'='.$this->db->quote($value);
 }
 
-public function prepare_alias_type_value($id,$value)
+public function prepare_alias_type_value($id,$value,$realfieldname)
 {
     $value=JoomlaBasicMisc::slugify($value);
 
     if($value=='')
         return '';
 
-    if(!$this->checkIfAliasExists($id,$value))
+    if(!$this->checkIfAliasExists($id,$value,$realfieldname))
         return $value;
 
     $val=$this->splitStringToStringAndNumber($value);
@@ -635,7 +635,7 @@ public function prepare_alias_type_value($id,$value)
 
 	do
 	{
-		if($this->checkIfAliasExists($id,$value_new))
+		if($this->checkIfAliasExists($id,$value_new,$realfieldname))
 		{
 			//increase index
 			$i++;
@@ -673,11 +673,13 @@ protected function splitStringToStringAndNumber($string)
     return $val;
 }
 
-protected function checkIfAliasExists($exclude_id,$value)
+protected function checkIfAliasExists($exclude_id,$value,$realfieldname)
 {
     $query = 'SELECT count('.$this->realidfieldname.') AS c FROM '.$this->realtablename.' WHERE '
-		.$this->realidfieldname.'!='.$exclude_id.' AND '.$this->realfieldname.'='.$this->db->quote($value).' LIMIT 1';
+		.$this->realidfieldname.'!='.(int)$exclude_id.' AND '.$realfieldname.'='.$this->db->quote($value).' LIMIT 1';
 		
+		echo $query;
+		die;
 	$this->db->setQuery( $query );
 
 	$rows = $this->db->loadObjectList();
@@ -915,9 +917,7 @@ protected function get_record_type_value()
                 $htmlresult=$this->prepare_alias_type_value(
 					$row['listing_id'],
 					$htmlresult,
-					$this->realtablename,
-					$this->realfieldname,
-					$this->realidfieldname);
+					$this->realfieldname);
 			}
             return $this->realfieldname.'='.$this->db->quote($htmlresult);
         }

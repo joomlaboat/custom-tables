@@ -106,7 +106,7 @@ class ESInputBox
 						if($esfield['type']=='alias')
 						{
 							$listing_id=isset($row['listing_id']) ? $row['listing_id'] : 0;
-							$value=$Model->ct->Table->prepare_alias_type_value($listing_id,$value,$Model->ct->Table->realtablename,$esfield['realfieldname'],$Model->ct->Table->realidfieldname);
+							$value=$Model->ct->Table->prepare_alias_type_value($listing_id,$value,$esfield['realfieldname']);
 						}
 			        }
 				}
