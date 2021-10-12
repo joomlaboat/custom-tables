@@ -618,7 +618,7 @@ public function get_alias_type_value($id)
     return $this->realfieldname.'='.$this->db->quote($value);
 }
 
-protected function prepare_alias_type_value($id,$value)
+public function prepare_alias_type_value($id,$value)
 {
     $value=JoomlaBasicMisc::slugify($value);
 
