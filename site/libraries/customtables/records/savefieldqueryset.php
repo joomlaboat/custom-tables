@@ -678,8 +678,6 @@ protected function checkIfAliasExists($exclude_id,$value,$realfieldname)
     $query = 'SELECT count('.$this->realidfieldname.') AS c FROM '.$this->realtablename.' WHERE '
 		.$this->realidfieldname.'!='.(int)$exclude_id.' AND '.$realfieldname.'='.$this->db->quote($value).' LIMIT 1';
 		
-		echo $query;
-		die;
 	$this->db->setQuery( $query );
 
 	$rows = $this->db->loadObjectList();
