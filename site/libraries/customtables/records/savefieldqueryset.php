@@ -31,9 +31,7 @@ use \LayoutProcessor;
 
 trait SaveFieldQuerySet
 {
-    //public static function getValue($id,&$esfield,&$savequery,$prefix,$establename,$LanguageList,&$fieldstosave,$realtablename)
-	
-	var $fieldname;
+    var $fieldname;
 	var $realfieldname;
 	var $comesfieldname;
 	var $typeparams;
@@ -297,7 +295,7 @@ trait SaveFieldQuerySet
 					break;
 
 				case 'customtables':
-                    $value_found=$this->get_customtables_type_value();
+                    return $this->get_customtables_type_value();
 
 					break;
 
@@ -368,19 +366,19 @@ trait SaveFieldQuerySet
 
 }
 
-protected function toHex($n) {
+	protected function toHex($n)
+	{
+		$n = intval($n);
+		if (!$n)
+			return '00';
 
-    $n = intval($n);
-    if (!$n)
-        return '00';
+		$n = max(0, min($n, 255)); // make sure the $n is not bigger than 255 and not less than 0
+		$index1 = (int) ($n - ($n % 16)) / 16;
+		$index2 = (int) $n % 16;
 
-    $n = max(0, min($n, 255)); // make sure the $n is not bigger than 255 and not less than 0
-    $index1 = (int) ($n - ($n % 16)) / 16;
-    $index2 = (int) $n % 16;
-
-    return substr("0123456789ABCDEF", $index1, 1) 
-        . substr("0123456789ABCDEF", $index2, 1);
-}
+		return substr("0123456789ABCDEF", $index1, 1) 
+			. substr("0123456789ABCDEF", $index2, 1);
+	}
 
 public function Try2CreateUserAccount(&$Model,$field,$row)
 {
@@ -495,67 +493,55 @@ public function Try2CreateUserAccount(&$Model,$field,$row)
 
 	}
 
-protected function get_customtables_type_language()
-{
-    $value=$this->jinput->getCmd($this->comesfieldname,null);
+	protected function get_customtables_type_language()
+	{
+		$value=$this->jinput->getCmd($this->comesfieldname,null);
 
-	if(isset($value))
-		return $this->realfieldname.'='.$this->db->Quote($value);
+		if(isset($value))
+			return $this->realfieldname.'='.$this->db->Quote($value);
 
-    return null;
-}
+		return null;
+	}
 
-protected function get_customtables_type_value()
-{
-    $value='';
+	protected function get_customtables_type_value()
+	{
+		$value='';
 
-	$typeparams_arr=explode(',',$this->typeparams);
-					$optionname=$typeparams_arr[0];
+		$typeparams_arr=explode(',',$this->typeparams);
+		$optionname=$typeparams_arr[0];
 
-					if($typeparams_arr[1]=='multi')
-					{
-							$value=$this->getMultiString($optionname, $this->prefix.'multi_'.$this->tablename.'_'.$this->fieldname);
+		if($typeparams_arr[1]=='multi')
+		{
+			$value=$this->getMultiString($optionname, $this->prefix.'multi_'.$this->tablename.'_'.$this->fieldname);
 
-							if($value!=null)
-							{
-								if($value!='')
-									return $this->realfieldname.'='.$this->db->Quote(','.$value.',');
-								else
-									return $this->realfieldname.'=""';
-							}
+			if($value!=null)
+			{
+				if($value!='')
+					return $this->realfieldname.'='.$this->db->Quote(','.$value.',');
+				else
+					return $this->realfieldname.'=""';
+			}
+		}
+		elseif($typeparams_arr[1]=='single')
+		{
+			$value=$this->getComboString($optionname, $this->prefix.'combotree_'.$this->tablename.'_'.$this->fieldname);
 
-					}
-					elseif($typeparams_arr[1]=='single')
-					{
-
-							$value=$this->getComboString($optionname, $this->prefix.'combotree_'.$this->tablename.'_'.$this->fieldname);
-
-
-							if($value!=null)
-							{
-
-								if($value!='')
-									return $this->realfieldname.'='.$this->db->Quote(','.$value.',');
-								else
-									return $this->realfieldname.'=""';
-
-                                $value_found=true;
-							}
-					}
-
-					// commas characters here are for the compatibility purpose, to let same algoritms search in multi value strings as well as in single value
-        return $value_found;
+			if($value!=null)
+			{
+				if($value!='')
+					return $this->realfieldname.'='.$this->db->Quote(','.$value.',');
+				else
+					return $this->realfieldname.'=""';
+			}
+		}
+        return null;
     }
 
-
-
-
-
-protected function get_usergroups_type_value()
-{
-                       switch($this->typeparams)
-						{
-							case 'single';
+	protected function get_usergroups_type_value()
+	{
+		switch($this->typeparams)
+		{
+			case 'single';
 
 								$value=$this->jinput->getString($this->comesfieldname,null);
 
@@ -605,49 +591,49 @@ protected function get_usergroups_type_value()
 
 
 
-public function get_alias_type_value($id)
-{
-    $value=$this->jinput->getString($this->comesfieldname);
-    if(!isset($value))
-        return null;
-    
-    $value=$this->prepare_alias_type_value($id,$value,$this->realfieldname);
-    if($value=='')
-        return null;
-
-    return $this->realfieldname.'='.$this->db->quote($value);
-}
-
-public function prepare_alias_type_value($id,$value,$realfieldname)
-{
-    $value=JoomlaBasicMisc::slugify($value);
-
-    if($value=='')
-        return '';
-
-    if(!$this->checkIfAliasExists($id,$value,$realfieldname))
-        return $value;
-
-    $val=$this->splitStringToStringAndNumber($value);
-
-	$value_new=$val[0];
-    $i=$val[1];
-
-	do
+	public function get_alias_type_value($id)
 	{
-		if($this->checkIfAliasExists($id,$value_new,$realfieldname))
+		$value=$this->jinput->getString($this->comesfieldname);
+		if(!isset($value))
+			return null;
+    
+		$value=$this->prepare_alias_type_value($id,$value,$this->realfieldname);
+		if($value=='')
+			return null;
+
+		return $this->realfieldname.'='.$this->db->quote($value);
+	}
+
+	public function prepare_alias_type_value($id,$value,$realfieldname)
+	{
+		$value=JoomlaBasicMisc::slugify($value);
+
+		if($value=='')
+			return '';
+
+		if(!$this->checkIfAliasExists($id,$value,$realfieldname))
+			return $value;
+
+		$val=$this->splitStringToStringAndNumber($value);
+
+		$value_new=$val[0];
+		$i=$val[1];
+
+		do
 		{
-			//increase index
-			$i++;
-			$value_new=$val[0].'-'.$i;
-		}
-		else
-			break;
+			if($this->checkIfAliasExists($id,$value_new,$realfieldname))
+			{
+				//increase index
+				$i++;
+				$value_new=$val[0].'-'.$i;
+			}
+			else
+				break;
 
-	}while(1==1);
+		}while(1==1);
 
-    return $value_new;
-}
+		return $value_new;
+	}
 
 protected function splitStringToStringAndNumber($string)
 {
