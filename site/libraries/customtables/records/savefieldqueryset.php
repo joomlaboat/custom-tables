@@ -27,6 +27,7 @@ use tagProcessor_Value;
 
 use \JoomlaBasicMisc;
 use \CustomTablesCreateUser;
+use \LayoutProcessor;
 
 trait SaveFieldQuerySet
 {
@@ -461,7 +462,7 @@ public function Try2CreateUserAccount(&$Model,$field,$row)
 		$this->db->execute();
     }
 
-    static protected function CreateUser($email,$name,$usergroups,$listing_id,$useridfieldname)
+    protected function CreateUser($email,$name,$usergroups,$listing_id,$useridfieldname)
 	{
 		$path = JPATH_COMPONENT_SITE . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'helpers' . DIRECTORY_SEPARATOR; 
 		require_once($path.'createuser.php');
@@ -897,7 +898,7 @@ protected function get_record_type_value()
         return $this->db->loadObjectList();
 	}
 
-    static protected function processDefaultValue(&$Model,$htmlresult,$type,&$row)
+    function processDefaultValue(&$Model,$htmlresult,$type,&$row)
     {
         tagProcessor_General::process($Model,$htmlresult,$row,'',1);
 		tagProcessor_Item::process(false,$Model,$row,$htmlresult,'',array(),'',0);
