@@ -809,8 +809,8 @@
 				<option value="radio" label="Radio" />
 			</param>
 
-			<param name="addforeignkey" label="Add Foreign Key" example="noforignkey" description="A FOREIGN KEY is a key used to link two tables together. The FOREIGN KEY constraint is used to prevent actions that would destroy links between tables. Like deleting table records. Enabled by default." default="" type="list" proversion="1">
-				<option value="" label="Add Foreign Key" />
+			<param name="addforeignkey" label="Add Foreign Key" example="noforignkey" description="A FOREIGN KEY is a key used to link two tables together. The FOREIGN KEY constraint is used to prevent actions that would destroy links between tables. Like deleting table records. Enabled by default." default="noforignkey" type="list" proversion="1">
+				<option value="addforignkey" label="Add Foreign Key" />
 				<option value="noforignkey" label="No Foreign Key" />
 			</param>
 

@@ -491,11 +491,7 @@ class Fields
         
         Fields::removeForeignKey($realtablename,$realfieldname);
         
-        if(isset($params[7]) and $params[7]=='noforignkey')
-        {
-			//Do nothing
-        }
-        else
+        if(isset($params[7]) and $params[7]=='addforignkey')
         {
             Fields::cleanTableBeforeNormalization($realtablename,$realfieldname,$join_with_table_name,$join_with_table_field);
 
