@@ -54,7 +54,7 @@ class IntegrityCoreTables extends \CustomTables\IntegrityChecks
 		$tables_projected_fields[]=['name'=>'id','mysql_type'=>'INT UNSIGNED NOT NULL AUTO_INCREMENT','postgresql_type'=>'id INT check (id > 0) NOT NULL DEFAULT NEXTVAL (\'#__customtables_tables_seq\')'];
 		$tables_projected_fields[]=['name'=>'published','mysql_type'=>'TINYINT NOT NULL DEFAULT 1','postgresql_type'=>'SMALLINT NOT NULL DEFAULT 1'];
 		
-		$tables_projected_fields[]=['name'=>'tablename','mysql_type'=>'VARCHAR(255) NOT NULL DEFAULT "tablename"','postgresql_type'=>'VARCHAR(255) NOT NULL DEFAULT \'\''];
+		$tables_projected_fields[]=['name'=>'tablename','mysql_type'=>'VARCHAR(100) NOT NULL DEFAULT "tablename"','postgresql_type'=>'VARCHAR(100) NOT NULL DEFAULT \'\''];
 		
 		$tables_projected_fields[]=['name'=>'tabletitle','mysql_type'=>'VARCHAR(255) NULL DEFAULT NULL','postgresql_type'=>'VARCHAR(255) NULL DEFAULT NULL','multilang'=>true];
 		$tables_projected_fields[]=['name'=>'description','mysql_type'=>'TEXT NULL DEFAULT NULL','postgresql_type'=>'TEXT NULL DEFAULT NULL','multilang'=>true];
@@ -78,7 +78,6 @@ class IntegrityCoreTables extends \CustomTables\IntegrityChecks
 		$tables_projected_indexes=[];
 		$tables_projected_indexes[]=['name'=>'idx_published','field'=>'published'];
 		$tables_projected_indexes[]=['name'=>'idx_tablename','field'=>'tablename'];
-		$tables_projected_indexes[]=['name'=>'idx_tabletitle','field'=>'tabletitle'];
 		
 		return (object)['realtablename' => $dbprefix . 'customtables_tables',
 			'fields' => $tables_projected_fields,
@@ -145,7 +144,7 @@ class IntegrityCoreTables extends \CustomTables\IntegrityChecks
 		$tables_projected_fields[]=['name'=>'published','ct_fieldtype'=>'','mysql_type'=>'TINYINT NOT NULL DEFAULT 1','postgresql_type'=>'SMALLINT NOT NULL DEFAULT 1'];
 		$tables_projected_fields[]=['name'=>'tableid','ct_fieldtype'=>'','mysql_type'=>'INT UNSIGNED NOT NULL','postgresql_type'=>'INT NOT NULL'];	
 		
-		$tables_projected_fields[]=['name'=>'layoutname','ct_fieldtype'=>'','mysql_type'=>'VARCHAR(512) NOT NULL DEFAULT "tablename"','postgresql_type'=>'VARCHAR(512) NOT NULL DEFAULT \'\''];
+		$tables_projected_fields[]=['name'=>'layoutname','ct_fieldtype'=>'','mysql_type'=>'VARCHAR(100) NOT NULL DEFAULT "tablename"','postgresql_type'=>'VARCHAR(100) NOT NULL DEFAULT \'\''];
 		$tables_projected_fields[]=['name'=>'layouttype','ct_fieldtype'=>'','mysql_type'=>'INT UNSIGNED NOT NULL DEFAULT 0','postgresql_type'=>'INT NOT NULL DEFAULT 0'];		
 		
 		$tables_projected_fields[]=['name'=>'layoutcode','ct_fieldtype'=>'','mysql_type'=>'MEDIUMTEXT NULL DEFAULT NULL','postgresql_type'=>'TEXT NULL DEFAULT NULL'];
@@ -180,7 +179,7 @@ class IntegrityCoreTables extends \CustomTables\IntegrityChecks
 		$tables_projected_fields[]=['name'=>'id','ct_fieldtype'=>'','mysql_type'=>'INT UNSIGNED NOT NULL AUTO_INCREMENT','postgresql_type'=>'id INT check (id > 0) NOT NULL DEFAULT NEXTVAL (\'#__customtables_options_seq\')'];
 		$tables_projected_fields[]=['name'=>'published','ct_fieldtype'=>'','mysql_type'=>'TINYINT NOT NULL DEFAULT 1','postgresql_type'=>'SMALLINT NOT NULL DEFAULT 1'];
 		
-		$tables_projected_fields[]=['name'=>'categoryname','ct_fieldtype'=>'','mysql_type'=>'VARCHAR(255) NOT NULL DEFAULT "tablename"','postgresql_type'=>'VARCHAR(255) NOT NULL DEFAULT \'\''];
+		$tables_projected_fields[]=['name'=>'categoryname','ct_fieldtype'=>'','mysql_type'=>'VARCHAR(100) NOT NULL DEFAULT "tablename"','postgresql_type'=>'VARCHAR(100) NOT NULL DEFAULT \'\''];
 		
 		$tables_projected_fields[]=['name'=>'created_by','ct_fieldtype'=>'','mysql_type'=>'INT UNSIGNED NOT NULL DEFAULT 0','postgresql_type'=>'INT NOT NULL DEFAULT 0'];
 		$tables_projected_fields[]=['name'=>'modified_by','ct_fieldtype'=>'','mysql_type'=>'INT UNSIGNED NOT NULL DEFAULT 0','postgresql_type'=>'INT NOT NULL DEFAULT 0'];
@@ -249,8 +248,9 @@ class IntegrityCoreTables extends \CustomTables\IntegrityChecks
 		$tables_projected_indexes=[];
 		$tables_projected_indexes[]=['name'=>'idx_published','field'=>'published'];
 		$tables_projected_indexes[]=['name'=>'idx_optionname','field'=>'optionname'];
-		$tables_projected_indexes[]=['name'=>'idx_familytree','field'=>'familytree'];
-		$tables_projected_indexes[]=['name'=>'idx_familytreestr','field'=>'familytreestr'];
+		//Specified key was too long; max key length is 767 bytes
+		//$tables_projected_indexes[]=['name'=>'idx_familytree','field'=>'familytree'];
+		//$tables_projected_indexes[]=['name'=>'idx_familytreestr','field'=>'familytreestr'];
   
 		return (object)['realtablename' => $dbprefix . 'customtables_options',
 			'fields' => $tables_projected_fields,
