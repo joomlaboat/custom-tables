@@ -110,6 +110,8 @@ class Table
 				case 'filebox':
 					$this->fileboxes[]=array($fld['fieldname'],$fld['fieldtitle'.$this->Languages->Postfix]);
 					break;
+				
+				case 'user':
 				case 'userid':
 				
 					if($useridfieldname == null or $useridfieldname == $fld['fieldname'])
@@ -125,10 +127,11 @@ class Table
 	
 	function loadRecord($id)
 	{
-		$query = 'SELECT '.$this->tablerow['query_selects'].' FROM '.$this->db->queryName($realtablename).' WHERE id='.(int)$id.' LIMIT 1';
-		$db->setQuery( $query );
+		$query = 'SELECT '.$this->tablerow['query_selects'].' FROM '.$this->realtablename.' WHERE id='.(int)$id.' LIMIT 1';
+
+		$this->db->setQuery( $query );
 	
-		$recs = $db->loadAssocList( );
+		$recs = $this->db->loadAssocList( );
 		if(!$recs) return $this->record = null;
 		if (count($recs)<1) $this->record = null;
 

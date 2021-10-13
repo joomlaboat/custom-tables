@@ -12,6 +12,7 @@ defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\CT;
 use CustomTables\Fields;
+use \CustomTablesCreateUser;
 
 jimport( 'joomla.application.component.view');
 
@@ -50,8 +51,15 @@ class CustomTablesViewResetUserPassword extends JViewLegacy
 			JFactory::getApplication()->enqueueMessage('Table not selected.', 'error');
 			return;
 		}
+		
+		if($this->ct->Table->useridrealfieldname==null or $this->ct->Table->useridrealfieldname=='')
+		{
+			$Itemid=JFactory::getApplication()->input->getInt('Itemid', 0);
+			JFactory::getApplication()->enqueueMessage('User ID field not found.', 'error');
+			return;
+		}
 
-		$this->ct->Table->loadRecord($userid);
+		$this->ct->Table->loadRecord($user_listing_id);
 		
 		if($this->ct->Table->record == null)
 		{
@@ -62,7 +70,7 @@ class CustomTablesViewResetUserPassword extends JViewLegacy
 		$password=strtolower(JUserHelper::genRandomPassword());
 
 		$realuserid=$this->ct->Table->record[$this->ct->Table->useridrealfieldname];
-
+		
 		$realuserid=CustomTablesCreateUser::SetUserPassword($realuserid,$password);
 
 		$userrow=CustomTablesCreateUser::GetUserRow($realuserid);
