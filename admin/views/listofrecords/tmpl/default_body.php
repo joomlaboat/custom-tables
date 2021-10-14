@@ -31,10 +31,13 @@ $edit = "index.php?option=com_customtables&view=listofrecords&task=records.edit"
 			
 			foreach($this->tablefields as $field)
 			{
-				if($field['type']=='text')
-					$result.='<td><a href="'.$link.'">['.$field['fieldname'].':words,50]</a></td>';
-				else
-					$result.='<td><a href="'.$link.'">['.$field['fieldname'].']</a></td>';
+				if($field['type'] != 'dummy' and $field['type'] != 'log')
+				{
+					if($field['type']=='text')
+						$result.='<td><a href="'.$link.'">['.$field['fieldname'].':words,50]</a></td>';
+					else
+						$result.='<td><a href="'.$link.'">['.$field['fieldname'].']</a></td>';
+				}
 			}
 		
 			$result=$this->processRecord($item_array,$result);

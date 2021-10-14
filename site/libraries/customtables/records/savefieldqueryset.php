@@ -300,9 +300,10 @@ trait SaveFieldQuerySet
 					break;
 
 				case 'email':
-						$value=trim($this->jinput->getString($this->comesfieldname,null));
+						$value=$this->jinput->getString($this->comesfieldname);
 						if(isset($value))
 						{
+							$value = trim($value);
 							if($this->checkEmail($value))
 								return $this->realfieldname.'='.$this->db->Quote($value);
 							else
@@ -311,9 +312,11 @@ trait SaveFieldQuerySet
 					break;
 
 				case 'url':
-						$value=trim($this->jinput->getString($this->comesfieldname,null));
+						$value=$this->jinput->getString($this->comesfieldname);
 						if(isset($value))
 						{
+							$value = trim($value);
+							
 							if (filter_var($value, FILTER_VALIDATE_URL))
 								return $this->realfieldname.'='.$this->db->Quote($value);
 							else
@@ -474,11 +477,24 @@ public function Try2CreateUserAccount(&$Model,$field,$row)
 
 		$articleid=0;
 		$msg='';
+		//CreateUserAccount($fullname,$username,$password,$email,$group_names,&$msg,$email_content_article_id)
+		
+		if(!$this->checkEmail($email))
+		{
+			Factory::getApplication()->enqueueMessage('Incorrect email "'.$email.'"', 'error');
+			return false;
+		}
+		
 		$realuserid=CustomTablesCreateUser::CreateUserAccount($name,$email,$password,$email,$usergroups,$msg,$articleid);
+		if($msg!='')
+		{
+			Factory::getApplication()->enqueueMessage($msg, 'error');
+			return false;
+		}
 
 		if($realuserid!=0)
 		{
-                $this->UpdateUserField($this->realtablename,$useridfieldname,$realuserid,$listing_id);
+                $this->UpdateUserField($useridfieldname,$realuserid,$listing_id);
 				Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_USER_CREATE_PSW_SENT' ));
 		}
 		else

@@ -30,10 +30,13 @@ defined('_JEXEC') or die('Restricted access');
 			
 			foreach($this->tablefields as $field)
 			{
-				if($field['type']=='text')
-					$result.='<td scope="row"><a href="'.$link.'">['.$field['fieldname'].':words,50]</a></td>';
-				else
-					$result.='<td scope="row"><a href="'.$link.'">['.$field['fieldname'].']</a></td>';
+				if($field['type'] != 'dummy' and $field['type'] != 'log')
+				{
+					if($field['type']=='text')
+						$result.='<td scope="row"><a href="'.$link.'">['.$field['fieldname'].':words,50]</a></td>';
+					else
+						$result.='<td scope="row"><a href="'.$link.'">['.$field['fieldname'].']</a></td>';
+				}
 			}
 		
 			echo $this->processRecord($item_array,$result);

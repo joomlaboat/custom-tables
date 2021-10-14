@@ -276,7 +276,7 @@ class CustomTablesCreateUser
 		$mailer->addRecipient($email);
 		$mailer->setSubject($emailSubject);
 		$mailer->setBody($emailBody);
-		$mailer->isHTML(false);
+		$mailer->isHTML(true);
 
 		$send = $mailer->Send();
 

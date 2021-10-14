@@ -135,24 +135,38 @@ display: table;
 
 
 .datagrid table tbody tr:nth-child(odd) {background: #fafbfc;border-bottom:1px solid #ddd;border-right:1px solid #ddd;}/*{background: #f2f2f2}*/
-.datagrid table tbody tr:nth-child(even) {background: #ffffff;border-bottom:1px solid #ddd;}/*{background: #fafafa}*/
+.datagrid table tbody tr:nth-child(even) {background: #ffffff;border-bottom:1px solid #ddd;border-right:1px solid #ddd;}/*{background: #fafafa}*/
 
 .datagrid table tbody tr:nth-child(odd) td {border-right:1px solid #f0f6fc;}
+.datagrid table tbody tr:nth-child(even) td {border-right:1px solid #f0f6fc;}
 
 .datagrid {font: normal 12px/150% Arial, Helvetica, sans-serif; background: #fff; overflow: hidden; border: 2px solid #FFFFFF; }
 
-
-
-.datagrid table td, .datagrid table th { padding: 3px 3px;
-
-
-
-
-min-width:100px;
+.datagrid thead tr th:first-child,
+.datagrid tbody tr td:first-child {
+	width:30px;
+	text-align:center;
+	
+	vertical-align:middle;
 }
+
+.datagrid table td:not(:first-child), .datagrid table th:not(:first-child) { padding: 3px 3px;
+min-width:100px;
+padding:5px 1px 5px 3px !important;
+border-left: 0px solid #FFFFFF;
+vertical-align:bottom;
+}
+
+.datagrid thead tr th:last-child,
+.datagrid tbody tr td:last-child {
+	text-align:center;
+}
+
+
+
 .datagrid table thead th {
-    vertical-align:bottom;
-	padding:5px 1px 5px 3px !important;
+    
+	
 	/*background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #E0E0E0), color-stop(1, #CBCBCB) );
 	background:-moz-linear-gradient( center top, #E0E0E0 5%, #CBCBCB 100% );
 	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#E0E0E0', endColorstr='#CBCBCB');*/
@@ -161,12 +175,13 @@ min-width:100px;
 	/*text-transform: uppercase;*/
 	font-size: 15px;
 	font-weight: bold;
-	border-left: 0px solid #FFFFFF;
-    text-align:center;
+	
 }
 
+/*
 .datagrid table thead th:first-child { border: none;text-align:left; min-width:30px !important;
 }
+*/
 .datagrid table tbody td { color: #545454; font-size: 12px;font-weight: normal;
 /*border-left: 2px solid #FFFFFF;*/
  /* Non standard for webkit */

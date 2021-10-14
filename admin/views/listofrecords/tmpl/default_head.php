@@ -20,19 +20,21 @@ defined('_JEXEC') or die('Restricted access');
 
 			foreach($this->tablefields as $field)
 			{
-				
-				$id='fieldtitle';
-				$title=$field[$id];
-				
-				if($this->ct->Languages->Postfix!='')
-					$id.='_'.$this->ct->Languages->Postfix;
-				
-				if(isset($field[$id]))
+				if($field['type'] != 'dummy' and $field['type'] != 'log')
+				{
+					$id='fieldtitle';
 					$title=$field[$id];
 				
-				echo '
-					<th class="nowrap" >'.$title.'</th>
-				';
+					if($this->ct->Languages->Postfix!='')
+						$id.='_'.$this->ct->Languages->Postfix;
+				
+					if(isset($field[$id]))
+						$title=$field[$id];
+				
+					echo '
+						<th class="nowrap" >'.$title.'</th>
+					';
+				}
 			}
 
 	?>

@@ -542,6 +542,14 @@ function addFieldTag(index_unused,tagstartchar,tagendchar,tag,param_count)
 				var result="";
 				var l=wizardFields.length;
 
+				result+='<style>\r\n';
+				result+='.datagrid th{text-align:left;}\r\n';
+				result+='.datagrid td{text-align:left;}\r\n';
+				result+='</style>\r\n';
+				
+				result+='<legend>{table:title}</legend>\r\n';
+				
+				
 				result+='<div style="float:right;">{recordcount}</div>\r\n';
 				result+='<div style="float:left;">{add}</div>\r\n';
 				result+='\r\n';
@@ -554,6 +562,9 @@ function addFieldTag(index_unused,tagstartchar,tagendchar,tag,param_count)
 				var fieldtypes_to_skip=['log','imagegallery','filebox','dummy'];
 				var fieldtypes_withsearch=['email','string','multilangstring','text','multilangtext','int','float','sqljoin','records'];
 
+				result+='<th>{checkbox}</th>\r\n';
+				result+='<th>#</th>\r\n';
+
 				for (var index=0;index<l;index++)
 				{
 					var field=wizardFields[index];
@@ -561,18 +572,18 @@ function addFieldTag(index_unused,tagstartchar,tagendchar,tag,param_count)
 					if(fieldtypes_to_skip.indexOf(field.type)===-1)
 					{
 						if(fieldtypes_withsearch.indexOf(field.type)===-1)
-							result+='<td style=\'text-align:center;\'>*'+field.fieldname+'*</td>\r\n';
+							result+='<th>*'+field.fieldname+'*</th>\r\n';
 						else
-							result+='<td style=\'text-align:center;\'>*'+field.fieldname+'*<br/>{search:'+field.fieldname+'}</td>\r\n';
+							result+='<th>*'+field.fieldname+'*<br/>{search:'+field.fieldname+'}</th>\r\n';
 					}
 				}
 
-				result+='<td style=\'text-align:center;\'>Action<br/>{searchbutton}</td>\r\n';
+				result+='<th>Action<br/>{search:button}</th>\r\n';
 
 				result+='</tr></thead>\r\n\r\n';
 				result+='<tbody>\r\n\r\n';
 
-				result+='{catalog}\r\n\r\n';
+				result+='{catalog:,notable}\r\n\r\n';
 
 				result+='</tbody>\r\n';
 				result+='</table>\r\n';
@@ -590,6 +601,12 @@ function addFieldTag(index_unused,tagstartchar,tagendchar,tag,param_count)
 				var l=wizardFields.length;
 
 				var fieldtypes_to_skip=['log','imagegallery','filebox','dummy'];
+				var user_fieldtypes=['user','userid'];
+				
+				result+='<td>{toolbar:checkbox}</td>\r\n';
+				result+='<td>{id}</td>\r\n';
+				
+				let user_field = '';
 
 				for (var index=0;index<l;index++)
 				{
@@ -597,7 +614,25 @@ function addFieldTag(index_unused,tagstartchar,tagendchar,tag,param_count)
 
 					if(fieldtypes_to_skip.indexOf(field.type)===-1)
 						result+='<td>['+field.fieldname+']</td>\r\n';
+						
+					if(user_fieldtypes.indexOf(field.type)!==-1)
+						user_field = field.fieldname;
 				}
+				
+				if(user_field=='')
+					result+='<td>{toolbar:edit,publish,refresh,delete}</td>\r\n';
+				else
+				{
+					result+='<td>\r\n';
+					result+='\t<!-- The "if" statement is to show the toolbar to the record author only. -->\r\n';
+					result+='\t{if:"[_value:' + user_field + ']"="{currentuserid}"} <!-- Where "' + user_field + '" is the user type field name. -->\r\n';
+					result+='\t\t<!-- toolbar -->\r\n';
+					result+='\t\t{toolbar:edit,publish,refresh,delete}\r\n';
+					result+='\t\t<!-- end of toolbar -->\r\n';
+					result+='\t{endif}\r\n';
+					result+='</td>\r\n';
+				}
+
 
 				return '<tr>\r\n' + result + '</tr>\r\n';
 			}

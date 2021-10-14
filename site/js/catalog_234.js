@@ -9,7 +9,7 @@
             var link=esPrepareLink(['task','listing_id','returnto','ids'],['task=createuser','listing_id='+listing_id,'returnto='+returnto]);
             window.location.href = link;
         }
-
+ 
     }
 
     function esPrepareLink(deleteParams,addParams)
@@ -337,7 +337,7 @@
                 if (http.readyState == 4)
                 {
                     var res=http.response;
-                
+
                     if(res=="saved")
                     {
                         obj.className = "ct_checkmark ct_checkmark_hidden";//+css_class;
