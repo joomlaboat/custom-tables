@@ -68,6 +68,11 @@ class CustomTablesModelDetails extends JModelLegacy
 			$this->load($params,$id);
 		}
 	}
+	
+	function setFrmt($frmt)
+	{
+		$this->ct->Env->frmt=$frmt;
+	}
 
 	function load($params,$id,$params_only=false,$custom_where='')
 	{

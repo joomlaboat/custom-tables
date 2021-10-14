@@ -92,6 +92,11 @@ class CustomTablesModelEditItem extends JModelLegacy
 		*/
 		return $this->params->get($param);
 	}
+	
+	function setFrmt($frmt)
+	{
+		$this->ct->Env->frmt=$frmt;
+	}
 
 	function load($params,$BlockExternalVars=false)
 	{

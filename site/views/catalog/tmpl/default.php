@@ -73,9 +73,11 @@ if($html_format)
 else
 {
 	$catalogtablecontent=tagProcessor_CatalogTableView::process($this->Model,$pagelayout,$this->SearchResult,$catalogtablecode);
-		
+
 	if($catalogtablecontent=='')
 	{
+		
+		
 		$this->Model->LayoutProc->layout=$itemlayout;
 		$catalogtablecontent=tagProcessor_Catalog::process($this->Model,$pagelayout,$this->SearchResult,$catalogtablecode);
 		

@@ -63,20 +63,19 @@ trait render_csv
           	ob_end_clean();
 
 		ob_start();
-        header('Content-Disposition: attachment; filename="'.$filename.'"');
-        header('Content-Type: text/csv; charset=utf-8');
-		//header('Content-Type: text/plain; charset=utf-8');
-        header("Pragma: no-cache");
-        header("Expires: 0");
+        @header('Content-Disposition: attachment; filename="'.$filename.'"');
+        @header('Content-Type: text/csv; charset=utf-8');
+        @header("Pragma: no-cache");
+        @header("Expires: 0");
 		
 		echo chr(255).chr(254).mb_convert_encoding($result, 'UTF-16LE', 'UTF-8');
-		
+	
 		//Output first chunk
 		
 		flush();
 		ob_flush();//flush to not force the browser to wait
 		ob_start();
-			
+						
 		echo self::renderCSVoutput($Model,$SearchResult);
 				
 		if($Model->TotalRows>$Model->limitstart+$Model->limit)
@@ -89,6 +88,9 @@ trait render_csv
 			{
 				$Model->limitstart=$limitstart;
 				$SearchResult=$Model->getSearchResult();//get records
+				
+				print_r($SearchResult);
+				
 				if(count($SearchResult)==0)
 					break;//no records left - escape
 				
@@ -98,6 +100,7 @@ trait render_csv
 				ob_start();
 			}
 		}
+
         die;//clean exit
         //no return here
     }
@@ -106,6 +109,7 @@ trait render_csv
 	{
 		$number=1+$Model->limitstart; //table row number, it can be used in the layout as {number}
 		$tablecontent='';
+
 		foreach($SearchResult as $row)
 		{
 			$Model->LayoutProc->number=$number;
@@ -113,18 +117,16 @@ trait render_csv
             $content=strip_tags(tagProcessor_Item::RenderResultLine($Model,$row,false));
 	        $tablecontent.=mb_convert_encoding('
 '.$content, 'UTF-16LE', 'UTF-8');//New line
+
 			$number++;
 		}
         return $tablecontent;
 	}
 
 
-	function get_CatalogTable_singleline_CSV(&$SearchResult,&$Model,$allowcontentplugins,$pagelayout)
+	public static function get_CatalogTable_singleline_CSV(&$SearchResult,&$Model,$allowcontentplugins,$pagelayout)
 	{
 		$filename = JoomlaBasicMisc::makeNewFileName($Model->params->get('page_title'),'csv');
-
-		if (ob_get_contents())
-			ob_clean();
 
 		//Header
 		$options=array();
@@ -163,6 +165,9 @@ trait render_csv
 
 		$Model->LayoutProc->layout=$layout;
 
+		if (ob_get_contents())
+			ob_end_clean();
+
 		foreach($SearchResult as $row)
 		{
 
@@ -179,40 +184,15 @@ trait render_csv
 		}
 
         if($allowcontentplugins)
-        {
-            $jinput=JFactory::getApplication()->input;
-            $jinput->set('frmt','');
-        	//$mydoc = JFactory::getDocument();
-        	//$pagetitle=$mydoc->getTitle(); //because content plugins may overwrite the title
-
-
-			$mainframe = JFactory::getApplication('site');
-			$params_ = $mainframe->getParams('com_content');
-
-			$o = new stdClass();
-			$o->text = $result;
-            $o->created_by_alias = 0;
-
-			$dispatcher	= JDispatcher::getInstance();
-			JPluginHelper::importPlugin('content');
-
-
-			$results = $dispatcher->trigger('onContentPrepare', array ('com_content.article', &$o, &$params_, 0));
-			$result=$o->text;
-
-            	//$mydoc->setTitle(JoomlaBasicMisc::JTextExtended($pagetitle)); //because content plugins may overwrite the title
-        }
+			$result = LayoutProcessor::applyContentPlugins($result);
                 
-		if (ob_get_contents())
-			ob_end_clean();
-
-		@header("Content-type: text/csv");
+		@header('Content-Type: text/csv; charset=utf-8');
 		@header('Content-Disposition: attachment; filename="'.$filename.'"');
-		@header('Content-Type: text/html; charset=utf-8');
 		@header("Pragma: no-cache");
 		@header("Expires: 0");
 
         echo chr(255).chr(254).mb_convert_encoding($result, 'UTF-16LE', 'UTF-8');
+		
         die;//clean exit
     }
 }

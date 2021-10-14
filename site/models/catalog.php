@@ -81,6 +81,8 @@ class CustomTablesModelCatalog extends JModelLegacy
 		var $alias_fieldname;
 
 		var $WebsiteRoot;
+		
+
 
 		function __construct()
 		{
@@ -113,6 +115,11 @@ class CustomTablesModelCatalog extends JModelLegacy
 			}
 		}
 
+		function setFrmt($frmt)
+		{
+			$this->ct->Env->frmt=$frmt;
+		}
+		
 		function load(&$params,$blockExternalVars=false,$layout='')
 		{
 				$this->blockExternalVars=$blockExternalVars;
