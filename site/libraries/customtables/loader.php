@@ -1,6 +1,6 @@
 <?php
 
-defined('JPATH_PLATFORM') or die;
+defined('_JEXEC') or die('Restricted access');
 
 function CTLoader($inclide_utilities = false, $include_html = false)
 {

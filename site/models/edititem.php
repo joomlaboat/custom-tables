@@ -1078,14 +1078,6 @@ class CustomTablesModelEditItem extends JModelLegacy
 			$this->updateLog($id);			
 			$this->ct->Table->runUpdateQuery($savequery,$id);
 
-			/*
-			$query='UPDATE '.$this->ct->Table->realtablename.' SET '.implode(', ',$savequery).' WHERE '.$this->ct->Table->realidfieldname.'='.$id;
-			echo $query;
-			die;
-			
-			$db->setQuery( $query );
-			$db->execute();
-			*/
 		}
 
 		if(count($savequery)<1)
@@ -1207,8 +1199,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 		if($isDebug)
 		{
-			echo 'Debug mode.';
-			die;//debug mode
+			die('Debug mode.');//debug mode
 		}	
 		
 		$jinput->set('listing_id',(int)$listing_id);

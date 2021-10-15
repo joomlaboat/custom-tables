@@ -389,8 +389,7 @@ class IntegrityCoreTables extends \CustomTables\IntegrityChecks
 		
 		if($exst_field == null)
 		{
-			echo 'field not created j648u';
-			die;
+			die('field not created j648u');
 			return false;
 		}
 		
