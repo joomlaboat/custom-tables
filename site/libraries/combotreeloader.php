@@ -89,7 +89,7 @@ else
 }
 
 $document = JFactory::getDocument();
-$document->addScript('combotree_234.js');
+$document->addScript(JURI::root(true).'/components/com_customtables/js/combotree_234.js');
 
 class ESDynamicComboTree
 {
