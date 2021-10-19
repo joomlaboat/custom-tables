@@ -454,9 +454,9 @@ class tagProcessor_Item
 			else
 			{
 				$modes = explode(',',$options[$i]);
-				if(count($modes)==0)
+				if(count($modes)==0 or $options[$i] == '')
 					$modes = ['edit','refresh','publish','delete'];
-				
+
 				$icons=[];
 				foreach($modes as $mode)
 					$icons[] = $RecordToolbar->render($row,$mode);
