@@ -447,13 +447,16 @@ class tagProcessor_Item
 		$i=0;
 		foreach($fList as $fItem)
 		{
-			$modes = explode(',',$options[$i]);
-			if(count($modes)==0 or $Model->ct->Env->print==1)
+			if($Model->ct->Env->print==1)
 			{
 				$htmlresult=str_replace($fItem,'',$htmlresult);
 			}
 			else
 			{
+				$modes = explode(',',$options[$i]);
+				if(count($modes)==0)
+					$modes = ['edit','refresh','publish','delete'];
+				
 				$icons=[];
 				foreach($modes as $mode)
 					$icons[] = $RecordToolbar->render($row,$mode);
