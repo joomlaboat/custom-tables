@@ -236,7 +236,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 					$this->LayoutProc->applyContentPlugins($this->filterparam);
 					$this->filterparam = $this->sanitizeAndParseFilter($this->filterparam);
 					$this->LayoutProc->layout=$this->filterparam;
-					$this->filterparam=$this->LayoutProc->fillLayout(array(),null,'');
+					$this->filterparam=$this->LayoutProc->fillLayout();
 				}
 
 				//user filtering from module
@@ -277,7 +277,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 
 			//Parse using layout, has no effect to layout itself
 			$this->LayoutProc->layout=$paramwhere;
-			$filter = $this->LayoutProc->fillLayout(array(),null,'');
+			$filter = $this->LayoutProc->fillLayout();
 			
 			return $filter;
 		}

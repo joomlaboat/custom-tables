@@ -10,6 +10,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\CT;
+use CustomTables\Email;
 use CustomTables\Fields;
 use CustomTables\Layouts;
 use CustomTables\DataTypes\Tree;
@@ -265,7 +266,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 		$LayoutProc=new LayoutProcessor;
 		$LayoutProc->Model=$this;
 		$LayoutProc->layout=$filter;
-		$filter=$LayoutProc->fillLayout(array(),null,array(),'[]',true);
+		$filter=$LayoutProc->fillLayout(array(),null,'[]',true);
 
 		$this->filtering = new ESFiltering($this->ct);
 
@@ -941,7 +942,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 		$phponchangefound=false;
 		$phponaddfound=false;
 
-		$create_new_user=null;
+		//$create_new_user=null;
 
 		$default_fields_to_apply=array();
 
@@ -1007,7 +1008,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 					break;
 				case 'user':
-					$create_new_user=$esfield;
+					//$create_new_user=$esfield;
 					break;
 
 				case 'id':
@@ -1142,16 +1143,17 @@ class CustomTablesModelEditItem extends JModelLegacy
 		$this->updateMD5($listing_id);
 		$this->ct->Table->processDefaultValues($default_fields_to_apply,$this,$row);
 
+		/*
 		if($create_new_user!=null and (int)$row['listing_published']==1)
 		{
 			$this->ct->Table->Try2CreateUserAccount($this,$create_new_user,$row);
-
 		}
+		*/
 
 		//Send email note if applicable
 		
-		$new_username='';
-		$new_password='';
+		//$new_username='';
+		//$new_password='';
 		
 		if($this->onrecordaddsendemail==3 and ($this->onrecordsavesendemailto!='' or $this->onrecordaddsendemailto!=''))
 		{
@@ -1160,7 +1162,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 				if($this->checkSendEmailConditions($listing_id,$this->sendemailcondition))
 				{
 					//Send email conditions met
-					$this->sendEmailIfAddressSet($listing_id,$new_username,$new_password);
+					$this->sendEmailIfAddressSet($listing_id);//,$new_username,$new_password);
 				}
 		}
 		else
@@ -1169,7 +1171,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 			{
 				//New record
 				if($this->onrecordaddsendemail==1 or $this->onrecordaddsendemail==2)
-					$this->sendEmailIfAddressSet($listing_id,$new_username,$new_password);
+					$this->sendEmailIfAddressSet($listing_id);//,$new_username,$new_password);
 
 			}
 			else
@@ -1177,7 +1179,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 				//Old record
 				if($this->onrecordaddsendemail==2)
 				{
-					$this->sendEmailIfAddressSet($listing_id,$new_username,$new_password);
+					$this->sendEmailIfAddressSet($listing_id);//,$new_username,$new_password);
 				}
 
 			}
@@ -1207,13 +1209,13 @@ class CustomTablesModelEditItem extends JModelLegacy
 		return true;
 	}
 
-	function sendEmailIfAddressSet($listing_id,$new_username,$new_password)
+	function sendEmailIfAddressSet($listing_id)//,$new_username,$new_password)
 	{
 		$status=0;
 		if($this->onrecordaddsendemailto!='')
-			$status=$this->sendEmailNote($listing_id,$this->onrecordaddsendemailto,$new_username,$new_password);
+			$status=$this->sendEmailNote($listing_id,$this->onrecordaddsendemailto);//,$new_username,$new_password);
 		else
-			$status=$this->sendEmailNote($listing_id,$this->onrecordsavesendemailto,$new_username,$new_password);
+			$status=$this->sendEmailNote($listing_id,$this->onrecordsavesendemailto);//,$new_username,$new_password);
 		
 		if($this->emailsentstatusfield!='')
 		{
@@ -1561,7 +1563,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 		$row=$rows[0];
 
-		$processed_link=$LayoutProc->fillLayout($row,"",array(),'[]',true);
+		$processed_link=$LayoutProc->fillLayout($row,"",'[]',true);
 
 		return $processed_link;
 	}
@@ -1597,7 +1599,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 						
 						$LayoutProc->layout=$thescript;
 						
-						$thescript='return '.LayoutProcessor::applyContentPlugins($LayoutProc->fillLayout($row,'',array(),'[]',true)).';';
+						$thescript='return '.LayoutProcessor::applyContentPlugins($LayoutProc->fillLayout($row,'','[]',true)).';';
 
 						$error = '';
 						$value = CleanExecute::execute($thescript,$error);
@@ -1654,8 +1656,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 						
 						$LayoutProc->layout=$thescript;
 
-						//function fillLayout($row,$aLink=null,$toolbar=array(),$tag_chars='[]',$disable_advanced_tags=false,$add_label=false,$fieldNamePrefix='comes_')
-						$htmlresult = $LayoutProc->fillLayout($row,'',array(),'[]',true);
+						$htmlresult = $LayoutProc->fillLayout($row,'','[]',true);
 						$thescript='return '.LayoutProcessor::applyContentPlugins($htmlresult).';';
 				
 						$error = '';
@@ -1699,14 +1700,14 @@ class CustomTablesModelEditItem extends JModelLegacy
 		$LayoutProc->Model=$this;
 		$LayoutProc->advancedtagprocessor=$this->ct->Env->advancedtagprocessor;
 		$LayoutProc->layout=$content;
-		$content=$LayoutProc->fillLayout($row,'','');
+		$content=$LayoutProc->fillLayout($row);
 		if($applyContentPlagins)
 			LayoutProcessor::applyContentPlugins($content);
 		
 		return $content;
 	}
 
-	function sendEmailNote($listing_id,$emails,$new_username,$new_password)
+	function sendEmailNote($listing_id,$emails)//,$new_username,$new_password)
 	{
 		$mainframe = JFactory::getApplication('site');
 		$row=$this->getListingRowByID($listing_id);
@@ -1738,8 +1739,8 @@ class CustomTablesModelEditItem extends JModelLegacy
 		$MailFrom 	= $mainframe->getCfg('mailfrom');
 		$FromName 	= $mainframe->getCfg('fromname');
 
-		$note=str_replace('[_username]',$new_username,$note);
-		$note=str_replace('[_password]',$new_password,$note);
+		//$note=str_replace('[_username]',$new_username,$note);
+		//$note=str_replace('[_password]',$new_password,$note);
 		
 		$status=0;
 
@@ -1747,7 +1748,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 		{
 			$Subject=$SendToEmail['subject'];
 
-			$mail = JFactory::getMailer();
+			//$mail = JFactory::getMailer();
 
 			$options=array();
 			$fList=JoomlaBasicMisc::getListToReplace('attachment',$options,$note,'{}');
@@ -1767,13 +1768,8 @@ class CustomTablesModelEditItem extends JModelLegacy
 				$note_final=str_replace($fItem,'',$note);
 				$i++;
 			}
-
-			$mail->IsHTML(true);
-			$mail->addRecipient($EmailTo);
-			$mail->setSender( array($MailFrom,$FromName) );
-			$mail->setSubject( $Subject);
-			$mail->setBody( $note_final );
 			
+			$attachments=[];
 			foreach($this->ct->Table->fields as $esfield)
 			{
 				if($esfield['type']=='file')
@@ -1781,12 +1777,21 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 					$filename='images/esfiles/'.$row[$esfield['realfieldname']];
 					if(file_exists($filename))
-							$mail->addAttachment($filename);
+							$attachments[] = $filename;
 				}
 			}
-
+			
+			$sent = Email::sendEmail($EmailTo,$Subject,$note_final,$isHTML = true,$attachments);
+/*
+			$mail->IsHTML(true);
+			$mail->addRecipient($EmailTo);
+			$mail->setSender( array($MailFrom,$FromName) );
+			$mail->setSubject( $Subject);
+			$mail->setBody( $note_final );
+			
+			
 			$sent = $mail->Send();
-
+*/
 			if ( $sent !== true ) {
 				//Something went wrong. Email not sent.
 				JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_SENDING_EMAIL').': '.$EmailTo.' ('.$Subject.')', 'error');
@@ -1855,8 +1860,8 @@ class CustomTablesModelEditItem extends JModelLegacy
 			if($this->ct->Env->advancedtagprocessor)
 				CleanExecute::executeCustomPHPfile($this->ct->Table->tablerow['customphp'],$row,$row);
 
-		$create_new_user=null;
-
+		//$create_new_user=null;
+/*
 		foreach($this->ct->Table->fields as $esfield)
 		{
 			if($esfield['type']=='user')
@@ -1865,10 +1870,11 @@ class CustomTablesModelEditItem extends JModelLegacy
 				break;
 			}
 		}
-
+		*/
+/*
 		if($create_new_user!=null and (int)$row['listing_published']==1)
 			$this->ct->Table->Try2CreateUserAccount($this,$create_new_user,$row);
-
+*/
 		
 		
 		//Send email note if applicable
@@ -1880,7 +1886,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 			if($this->checkSendEmailConditions($id,$this->sendemailcondition))
 			{
 				//Send email conditions met
-				$this->sendEmailIfAddressSet($id,$new_username,$new_password);
+				$this->sendEmailIfAddressSet($id);//,$new_username,$new_password);
 			}
 		}
 		

@@ -39,7 +39,7 @@ trait render_json
                 foreach($header_fields as $header_field)
                 {
                     $Model->LayoutProc->layout=$line_fields[$i];
-                    $vlus[$header_field] = $Model->LayoutProc->fillLayout($row,null,'','[]',false,false);
+                    $vlus[$header_field] = $Model->LayoutProc->fillLayout($row,null,'[]',false,false);
                     $i++;
                 }
 

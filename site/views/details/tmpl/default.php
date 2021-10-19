@@ -11,12 +11,6 @@ defined('_JEXEC') or die('Restricted access');
 
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tagprocessor'.DIRECTORY_SEPARATOR.'itemtags.php');
 
-	if(strpos($this->Model->LayoutProc->layout,'{toolbar')===false)
-		$toolbar_array=array();
-	else
-		$toolbar_array= tagProcessor_Item::getToolbar($this->Model,$this->row);
-
-	$this->Model->LayoutProc->toolbar_array=$toolbar_array;
 	$results = $this->Model->LayoutProc->fillLayout($this->row);
 
 	if($this->params->get( 'allowcontentplugins' ))

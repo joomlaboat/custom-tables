@@ -10,26 +10,24 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\CT;
+use CustomTables\Fields;
+use CustomTables\CTUser;
 use \Joomla\CMS\Factory;
 
-$jinput = JFactory::getApplication()->input;
+$ct = new CT;
 
-$clean = $jinput->getInt('clean');
-$WebsiteRoot = JURI::root(true);
 
-if($WebsiteRoot=='' or $WebsiteRoot[strlen($WebsiteRoot)- 1] != '/') //Root must have slash / in the end
-	$WebsiteRoot.= '/';
-
-	$returnto = $jinput->get('returnto', '', 'BASE64');
-	$Itemid = $jinput->getInt('Itemid', 0);
+	$returnto = $ct->Env->jinput->get('returnto', '', 'BASE64');
+	$Itemid = $ct->Env->jinput->getInt('Itemid', 0);
 	if ($theview == 'home')
 	{
 		parent::display();
-		$jinput->set('homeparent', 'home');
-		$jinput->set('view', 'catalog');
+		$ct->Env->jinput->set('homeparent', 'home');
+		$ct->Env->jinput->set('view', 'catalog');
 	}
 
-	$task = $jinput->getCmd('task');
+	$task = $ct->Env->jinput->getCmd('task');
 	
 	
 	
@@ -37,11 +35,11 @@ if($WebsiteRoot=='' or $WebsiteRoot[strlen($WebsiteRoot)- 1] != '/') //Root must
 	$params=$app->getParams();
 	$edit_model = $this->getModel('edititem');
 	$edit_model->params=$params;
-	$edit_model->id = $jinput->getInt('listing_id');
+	$edit_model->id = $ct->Env->jinput->getInt('listing_id');
 	
 	//Check Authorization
 	//3 - to delete
-	$PermissionIndexes=['clear'=>3,'delete'=>3,'copy'=>4,'refresh'=>1,'publish'=>2,'unpublish'=>2,'createuser'=>1];
+	$PermissionIndexes=['clear'=>3,'delete'=>3,'copy'=>4,'refresh'=>1,'publish'=>2,'unpublish'=>2,'createuser'=>1,'resetpassword'=>1];
 	//$PermissionWords=['clear'=>'core.delete','delete'=>'core.delete','copy'=>'core.create','refresh'=>'core.edit','publish'=>'core.edit.state','unpublish'=>'core.edit.state','createuser'=>'core.edit'];
 	$PermissionIndex=0;
 	//$PermissionWord='';
@@ -65,7 +63,7 @@ if($WebsiteRoot=='' or $WebsiteRoot[strlen($WebsiteRoot)- 1] != '/') //Root must
 		//if ($edit_model->CheckAuthorizationACL($PermissionWord))
 		if ($edit_model->CheckAuthorization($PermissionIndex))
 		{
-			$redirect=doTheTask($task,$params,$edit_model,$WebsiteRoot,$clean,$this);
+			$redirect=doTheTask($ct,$task,$params,$edit_model,$this);
 			//JFactory::getApplication()->enqueueMessage($redirect->msg);
 			$this->setRedirect($redirect->link, $redirect->msg, $redirect->status);
 		}
@@ -77,7 +75,7 @@ if($WebsiteRoot=='' or $WebsiteRoot[strlen($WebsiteRoot)- 1] != '/') //Root must
 			else
 			{
 				//JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
-				$link = $WebsiteRoot . 'index.php?option=com_users&view=login&return=1' . base64_encode(JoomlaBasicMisc::curPageURL());
+				$link = $ct->Env->WebsiteRoot . 'index.php?option=com_users&view=login&return=1' . base64_encode(JoomlaBasicMisc::curPageURL());
 				$this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'));
 				parent::display();
 			}
@@ -86,14 +84,10 @@ if($WebsiteRoot=='' or $WebsiteRoot[strlen($WebsiteRoot)- 1] != '/') //Root must
 	else
 		parent::display();
 	
-function doTheTask($task,$params,$edit_model,$WebsiteRoot,$clean,&$this_)	
+function doTheTask(&$ct,$task,$params,$edit_model,&$this_)	
 {
-	$user = JFactory::getUser();
-	$userid = (int)$user->get('id');
-
-	$jinput = JFactory::getApplication()->input;
 	$encodedreturnto = base64_encode(JoomlaBasicMisc::curPageURL());
-	$returnto = $jinput->get('returnto', '', 'BASE64');
+	$returnto = $ct->Env->jinput->get('returnto', '', 'BASE64');
 	$decodedreturnto = base64_decode($returnto);
 	
 	//Return link
@@ -101,20 +95,15 @@ function doTheTask($task,$params,$edit_model,$WebsiteRoot,$clean,&$this_)
 	{
 		$link = $decodedreturnto;
 		if (strpos($link, 'http:') === false and strpos($link, 'https:') === false)
-			$link.= $WebsiteRoot . $link;
+			$link.= $ct->Env->WebsiteRoot . $link;
 	}
 	else
 	{
-		$Itemid = $jinput->getInt('Itemid', 0);
-		$link = $WebsiteRoot . 'index.php?Itemid=' . $Itemid;
+		$Itemid = $ct->Env->jinput->getInt('Itemid', 0);
+		$link = $ct->Env->WebsiteRoot . 'index.php?Itemid=' . $Itemid;
 	}
 	
-	//$link = JoomlaBasicMisc::curPageURL();
-	$link = str_replace('&task=refresh', '', $link);
-	$link = str_replace('?task=refresh', '?', $link);
-	$link = str_replace('&task=publish', '', $link);
-	$link = str_replace('?task=publish&', '?', $link);
-	
+	$link = JoomlaBasicMisc::deleteURLQueryOption($link, 'task');
 	
 	$edit_model->load($params, false);
 		
@@ -283,31 +272,61 @@ function doTheTask($task,$params,$edit_model,$WebsiteRoot,$clean,&$this_)
 
 	case 'createuser':
 		
-		//publishing the record will refresh its field values and will create user account if conditions are met.
-		if ($edit_model->setPublishStatus(1))
+		$ct->getTable($params->get( 'establename' ), null);
+		if($ct->Table->tablename=='')
+			return (object) array('link' => $link, 'msg' => 'Table not selected.', 'status' => 'error');
+			
+		if($ct->Table->useridfieldname == null)
+			return (object) array('link' => $link, 'msg' => 'User field not found.', 'status' => 'error');
+			
+		$listing_id = $ct->Env->jinput->getInt('listing_id');
+		$ct->Table->loadRecord($listing_id);
+		if($ct->Table->record == null)
+		{
+			Factory::getApplication()->enqueueMessage('User record ID: "'.$user_listing_id.'" not found.', 'error');
+			return (object) array('link' => $link, 'status' => 'error');
+		}
+			
+		$esfield = Fields::getFieldAsocByName($ct->Table->useridfieldname,$ct->Table->tableid);
+
+		if($ct->Table->Try2CreateUserAccount($edit_model,$esfield,$ct->Table->record))
+			return (object) array('link' => $link, 'status' => null);
+		else
+			return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_USER_NOTCREATED'), 'status' => 'error');
+
+		break;
+		
+	case 'resetpassword':
+		
+		$ct->getTable($params->get( 'establename' ), null);
+		if($ct->Table->tablename=='')
+			return (object) array('link' => $link, 'msg' => 'Table not selected.', 'status' => 'error');
+
+		$listing_id = $ct->Env->jinput->getInt('listing_id');
+		if(CTUser::ResetPassword($ct,$listing_id))
 		{
 			if ($clean == 1)
-				die('user created');
+				die('password has been reset');
 			else
-				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_USER_CREATED'), 'status' => null);
+				return (object) array('link' => $link, 'status' => null);
 		}
 		else
 		{
 			if ($clean == 1)
 				die('error');
 			else
-				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_USER_NOT_CREATED'), 'status' => 'error');
+				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_USERS_RESET_COMPLETE_ERROR'), 'status' => 'error');
 		}
 
 		break;
 		
 	case 'setorderby':
 
-		$orderby=$jinput->getString('orderby','');
+		$orderby=$ct->Env->jinput->getString('orderby','');
 		$orderby=trim(preg_replace("/[^a-zA-Z-+%.: ,_]/", "",$orderby));
 		
 		$mainframe = Factory::getApplication();
-		$Itemid = $jinput->getInt('Itemid', 0);
+		$Itemid = $ct->Env->jinput->getInt('Itemid', 0);
 		$mainframe->setUserState('com_customtables.orderby_'.$Itemid,$orderby);
 		
 		$link = JoomlaBasicMisc::deleteURLQueryOption($link, 'task');

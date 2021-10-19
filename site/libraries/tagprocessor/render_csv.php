@@ -50,7 +50,7 @@ trait render_csv
 		
         //Parse Header
         $Model->LayoutProc->layout=$result;
-        $result=$Model->LayoutProc->fillLayout(array(), null, '');
+        $result=$Model->LayoutProc->fillLayout();
         $result=str_replace('&&&&quote&&&&','"',$result);
 
 		$number=1+$Model->limitstart; //table row number, it maybe use in the layout as {number}

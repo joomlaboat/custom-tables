@@ -264,7 +264,7 @@ class tagProcessor_General
 				$id_value=$opts[1];
 
                 tagProcessor_Value::processValues($Model,$row,$id_value,'[]');
-                tagProcessor_Item::process(false,$Model,$row,$id_value,'',array(),$recordlist,$number);
+                tagProcessor_Item::process(false,$Model,$row,$id_value,'',$recordlist,$number);
                 tagProcessor_General::process($Model,$id_value,$row,$recordlist,$number);
                 tagProcessor_Page::process($Model,$id_value);
                 $id=(int)$id_value;

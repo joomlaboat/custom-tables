@@ -1,15 +1,30 @@
 
     var es_LinkLoading=false;
 
-    function ctCreateUser(msg,listing_id)
+    function ctCreateUser(msg,listing_id, toolbarboxid)
     {
         if (confirm(msg))
         {
+			var obj=document.getElementById(toolbarboxid);
+			obj.innerHTML='';
+			
             var returnto=btoa(window.location.href);
             var link=esPrepareLink(['task','listing_id','returnto','ids'],['task=createuser','listing_id='+listing_id,'returnto='+returnto]);
             window.location.href = link;
         }
- 
+    }
+	
+	function ctResetPassword(msg,listing_id, toolbarboxid)
+    {
+        if (confirm(msg))
+        {
+			var obj=document.getElementById(toolbarboxid);
+			obj.innerHTML='';
+					
+            var returnto=btoa(window.location.href);
+            var link=esPrepareLink(['task','listing_id','returnto','ids'],['task=resetpassword','listing_id='+listing_id,'returnto='+returnto]);
+            window.location.href = link;
+        }
     }
 
     function esPrepareLink(deleteParams,addParams)
@@ -115,14 +130,14 @@
     }
 
 
-    function esDeleteObject(ObjectName, objid, toolbarboxid)
+    function esDeleteObject(msg, objid, toolbarboxid)
     {
         if(es_LinkLoading)
             return;
 
         es_LinkLoading=true;
 
-        if (confirm('Do you want to delete "'+ObjectName+'" ?'))
+        if (confirm(msg))
         {
                     var obj=document.getElementById(toolbarboxid);
                     obj.innerHTML='';

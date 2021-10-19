@@ -139,7 +139,7 @@ class CustomTablesModelDetails extends JModelLegacy
 			//Parse using layout
 			$this->LayoutProc->layout=$this->filter;
 
-			$this->filter=$this->LayoutProc->fillLayout(array(),null,array(),'[]',true);
+			$this->filter=$this->LayoutProc->fillLayout(array(),null,'[]',true);
 		}
 
 		$this->redirectto=$this->params->get( 'redirectto' );

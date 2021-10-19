@@ -10,12 +10,12 @@
 defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\Fields;
+use CustomTables\RecordToolbar;
 
 class tagProcessor_Item
 {
-    public static function process($advancedtagprocessor,&$Model,&$row,&$htmlresult,$aLink,$toolbar,$recordlist,$number,$add_label=false,$fieldNamePrefix='comes_')
+    public static function process($advancedtagprocessor,&$Model,&$row,&$htmlresult,$aLink,$recordlist,$number,$add_label=false,$fieldNamePrefix='comes_')
 	{
-        tagProcessor_Item::createUserButton($Model,$row,$htmlresult,$recordlist,$number);
         tagProcessor_Item::processLink($Model,$row,$htmlresult,$recordlist,$number,$aLink);
 
 		tagProcessor_Field::process($Model,$htmlresult,$add_label,$fieldNamePrefix);
@@ -65,7 +65,7 @@ class tagProcessor_Item
 			tagProcessor_Item::GetSQLJoin($Model,$htmlresult,$row['listing_id']);
 
 		if(isset($row) and isset($row['listing_published']))
-			tagProcessor_Item::GetCustomToolBar($htmlresult,$toolbar);
+			tagProcessor_Item::GetCustomToolBar($Model,$htmlresult,$row);
 
 		CT_FieldTypeTag_ct::ResolveStructure($Model,$htmlresult);
 	}
@@ -100,224 +100,7 @@ class tagProcessor_Item
 		return $isok;
 	}
 
-    public static function getToolbar(&$Model,&$row)
-	{
-		$WebsiteRoot=JURI::root(true);
-		if($WebsiteRoot=='' or $WebsiteRoot[strlen($WebsiteRoot)-1]!='/') //Root must have slash / in the end
-			$WebsiteRoot.='/';
-
-		$toolbar=array();
-
-        $edit_userGroup=(int)$Model->params->get( 'editusergroups' );
-		$publish_userGroup=(int)$Model->params->get( 'publishusergroups' );
-		if($publish_userGroup==0)
-			$publish_userGroup=$edit_userGroup;
-
-		$delete_userGroup=(int)$Model->params->get( 'deleteusergroups' );
-		if($delete_userGroup==0)
-			$delete_userGroup=$edit_userGroup;
-
-		$isEditable=tagProcessor_Item::checkAccess($Model,$edit_userGroup,$row);
-		$isPublishable=tagProcessor_Item::checkAccess($Model,$publish_userGroup,$row);
-		$isDeletable=tagProcessor_Item::checkAccess($Model,$delete_userGroup,$row);
-
-		$id=$row['listing_id'];
-
-		if($isEditable)
-		{
-			//Edit
-			$toolbar['edit']=tagProcessor_Item::renderEditIcon($Model,$row);
-
-			//Refresh
-			$rid='esRefreshIcon'.$Model->ct->Table->tableid.'x'.$id;
-		        $alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_REFRESH' );
-			$img='<img src="'.JURI::root(true).'/components/com_customtables/images/refresh.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
-			$toolbar['refresh']='<div id="'.$rid.'" class="toolbarIcons"><a href="javascript:esRefreshObject('.$id.', \''.$rid.'\');">'.$img.'</a></div>';
-
-			//Image Gallery
-			if(is_array($Model->ct->Table->imagegalleries) and count($Model->ct->Table->imagegalleries)>0)
-				$toolbar['gallery']=tagProcessor_Item::renderImageGalleryIcon($Model,$row,$WebsiteRoot,$Model->ct->Env->current_url);
-
-			//Filebox
-			if(is_array($Model->ct->Table->fileboxes) and count($Model->ct->Table->fileboxes)>0)
-				$toolbar['filebox']=tagProcessor_Item::renderFileBoxIcon($id,$Model,$row,$WebsiteRoot,$Model->ct->Env->current_url);
-		}
-
-		if($isDeletable)
-			$toolbar['delete']=tagProcessor_Item::renderDeleteIcon($Model,$row);
-
-		if($isPublishable)
-		{
-			$rid='esPublishIcon'.$Model->ct->Table->tableid.'x'.$id;
-
-			if($row['listing_published'])
-			{
-				$link='javascript:esPublishObject('.$id.', \''.$rid.'\',0);';
-                $alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_UNPUBLISH' );
-				$img='<img src="'.JURI::root(true).'/components/com_customtables/images/publish.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
-			}
-			else
-			{
-				$link='javascript:esPublishObject('.$id.', \''.$rid.'\',1);';
-                $alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PUBLISH' );
-				$img='<img src="'.JURI::root(true).'/components/com_customtables/images/unpublish.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
-			}
-			$toolbar['publish']='<div id="'.$rid.'" class="toolbarIcons"><a href="'.$link.'">'.$img.'</a></div>';
-		}
-		else
-		{
-			if(!$row['listing_published'])
-				$toolbar['publish']=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PUBLISHED');
-		}
-
-
-		$rid='esCheckbox'.$Model->ct->Table->tableid.'x'.$id;
-		$toolbar['checkbox']='<input type="checkbox" name="esCheckbox'.$Model->ct->Table->tableid.'" id="'.$rid.'" value="'.$id.'" />';
-
-		return $toolbar;
-	}
-
-
-    protected static function renderEditIcon(&$Model,&$row)
-	{
-		$id=$row['listing_id'];
-
-		$WebsiteRoot=JURI::root(true);
-			if($WebsiteRoot=='' or $WebsiteRoot[strlen($WebsiteRoot)-1]!='/') //Root must have slash / in the end
-				$WebsiteRoot.='/';
-
-		$WebsiteRoot=JURI::root(true);
-		if($WebsiteRoot=='' or $WebsiteRoot[strlen($WebsiteRoot)-1]!='/') //Root must have slash / in the end
-		$WebsiteRoot.='/';
-
-		$editlink=$WebsiteRoot.'index.php?option=com_customtables&amp;view=edititem'
-						.'&amp;returnto='.$Model->ct->Env->encoded_current_url
-						.'&amp;listing_id='.$row['listing_id'];
-
-		if(JFactory::getApplication()->input->get('tmpl','','CMD')!='')
-			$editlink.='&tmpl='.JFactory::getApplication()->input->get('tmpl','','CMD');
-
-		if($Model->Itemid>0)
-			$editlink.='&amp;Itemid='.$Model->Itemid;
-
-        $alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_EDIT' );
-		$img='<img src="'.JURI::root(true).'/components/com_customtables/images/edit.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
-
-		$rid='esEditIcon'.$Model->ct->Table->tableid.'x'.$id;
-		$link=$editlink;
-
-		return '<div id="'.$rid.'" class="toolbarIcons"><a href="'.$link.'">'.$img.'</a></div>';
-	}
-
-	protected static function renderImageGalleryIcon(&$Model,&$row,$WebsiteRoot)
-	{
-		foreach($Model->ct->Table->imagegalleries as $gallery)
-		{
-			$imagemanagerlink='index.php?option=com_customtables&amp;view=editphotos'
-				.'&amp;establename='.$Model->ct->Table->tablename
-				.'&amp;galleryname='.$gallery[0]
-				.'&amp;listing_id='.$row['listing_id']
-				.'&amp;returnto='.$Model->ct->Env->encoded_current_url;
-
-			if(JFactory::getApplication()->input->get('tmpl','','CMD')!='')
-				$imagemanagerlink.='&tmpl='.JFactory::getApplication()->input->get('tmpl','','CMD');
-
-			if($Model->Itemid>0)
-				$imagemanagerlink.='&amp;Itemid='.$Model->Itemid;
-
-			$rid='esImageGalleryIcon'.$Model->ct->Table->tableid.'x'.$row['listing_id'];
-            $alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PHOTO_MANAGER' ).' ('.$gallery[1].')';
-			$img='<img src="'.JURI::root(true).'/components/com_customtables/images/photomanager.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
-
-			return '<div id="'.$rid.'" class="toolbarIcons"><a href="'.$WebsiteRoot.$imagemanagerlink.'">'.$img.'</a></div>';
-
-		}
-	}
-
-	protected static function renderFileBoxIcon($id,&$Model,&$row,$WebsiteRoot)
-	{
-		foreach($Model->ct->Table->fileboxes as $filebox)
-		{
-			$filemanagerlink='index.php?option=com_customtables&amp;view=editfiles'
-				.'&amp;establename='.$Model->ct->Table->tablename
-				.'&amp;fileboxname='.$filebox[0]
-				.'&amp;listing_id='.$row['listing_id']
-				.'&amp;returnto='.$Model->ct->Env->encoded_current_url;
-
-			if(JFactory::getApplication()->input->get('tmpl','','CMD')!='')
-				$filemanagerlink.='&tmpl='.JFactory::getApplication()->input->get('tmpl','','CMD');
-
-			if($Model->Itemid>0)
-				$filemanagerlink.='&amp;Itemid='.$Model->Itemid;
-
-            $alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FILE_MANAGER').' ('.$filebox[1].')';
-			$img='<img src="'.JURI::root(true).'/components/com_customtables/images/filemanager.png" border="0" '
-							.'alt="'.$alt.'" '
-							.'title="'.$alt.'">';
-
-			$rid='esFileBoxIcon'.$Model->ct->Table->tableid.'x'.$id;
-
-			return '<div id="'.$rid.'" class="toolbarIcons"><a href="'.$WebsiteRoot.$filemanagerlink.'">'.$img.'</a></div>';
-		}
-	}
-
-	protected static function getFieldCleanValue4RDI(&$Model,&$row,&$mFld)
-	{
-		$titlefield=$mFld['realfieldname'];
-		if(strpos($mFld['type'],'multi')!==false)
-			$titlefield.=$Model->ct->Languages->Postfix;
-
-		$fieldtitlevalue=$row[$titlefield];
-		$deleteLabel=strip_tags($fieldtitlevalue);
-
-		$deleteLabel=trim(preg_replace("/[^a-zA-Z0-9 ,.]/", "", $deleteLabel));
-		$deleteLabel = preg_replace('/\s{3,}/',' ', $deleteLabel);
-
-		return $deleteLabel;
-	}
-
-	protected static function renderDeleteIcon(&$Model,&$row)
-	{
-		$id=$row['listing_id'];
-
-				$fieldtitlevalue='';
-
-				//First, find default field
-				$selectedfiled=array();
-				foreach($Model->ct->Table->fields as $mFld)
-				{
-					$ordering=(int)$mFld['ordering'];
-					if($ordering==-1)
-					{
-						$fieldtitlevalue=tagProcessor_Item::getFieldCleanValue4RDI($Model,$row,$mFld);
-						if($fieldtitlevalue!='')
-							break;
-					}
-				}
-
-				if($fieldtitlevalue=='') //Default field not found
-				{
-					//Find any available field
-					foreach($Model->ct->Table->fields as $mFld)
-					{
-						if($mFld['type']!='dummy')
-						{
-							$fieldtitlevalue=tagProcessor_Item::getFieldCleanValue4RDI($Model,$row,$mFld);
-							if($fieldtitlevalue!='')
-								break;
-						}
-					}
-				}
-
-				$deleteLabel=substr($fieldtitlevalue,-100);
-
-				$rid='esDeleteIcon'.$Model->ct->Table->tableid.'x'.$id;
-                $alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_DELETE' );
-				$img='<img src="'.JURI::root(true).'/components/com_customtables/images/delete.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
-
-				return '<div id="'.$rid.'" class="toolbarIcons"><a href=\'javascript:esDeleteObject("'.$deleteLabel.'", '.$row['listing_id'].', "'.$rid.'")\'>'.$img.'</a></div>';
-
-	}
+    
 
     protected static function GetSQLJoin(&$Model,&$htmlresult,$id)
 	{
@@ -636,28 +419,49 @@ class tagProcessor_Item
 	}
 
 	
-    protected static function GetCustomToolBar(&$htmlresult,$toolbar)
+    protected static function GetCustomToolBar(&$Model,&$htmlresult,&$row)
 	{
 
 		$options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('toolbar',$options,$htmlresult,'{}');
+		
+		if(count($fList) == 0)
+			return;
+		
+		
+		$edit_userGroup=(int)$Model->params->get( 'editusergroups' );
+		$publish_userGroup=(int)$Model->params->get( 'publishusergroups' );
+		if($publish_userGroup==0)
+			$publish_userGroup=$edit_userGroup;
+
+		$delete_userGroup=(int)$Model->params->get( 'deleteusergroups' );
+		if($delete_userGroup==0)
+			$delete_userGroup=$edit_userGroup;
+		
+		$isEditable=tagProcessor_Item::checkAccess($Model,$edit_userGroup,$row);
+		$isPublishable=tagProcessor_Item::checkAccess($Model,$publish_userGroup,$row);
+		$isDeletable=tagProcessor_Item::checkAccess($Model,$delete_userGroup,$row);
+		
+		$RecordToolbar = new RecordToolbar($Model->ct,$isEditable, $isPublishable, $isDeletable, $Model->Itemid);
 
 		$i=0;
 		foreach($fList as $fItem)
 		{
-			$vlu='';
-			if($options[$i]=='')
-				$modes=array('edit','gallery','publish','delete','refresh');
-			else
-				$modes=explode(',',$options[$i]);
-
-			foreach($modes as $mode)
+			$modes = explode(',',$options[$i]);
+			if(count($modes)==0 or $Model->ct->Env->print==1)
 			{
-				if(isset($toolbar[$mode]))
-					$vlu.=$toolbar[$mode];
+				$htmlresult=str_replace($fItem,'',$htmlresult);
 			}
-
-			$htmlresult=str_replace($fItem,$vlu,$htmlresult);
+			else
+			{
+				$icons=[];
+				foreach($modes as $mode)
+					$icons[] = $RecordToolbar->render($row,$mode);
+				
+				$vlu = implode('',$icons);
+				$htmlresult=str_replace($fItem,$vlu,$htmlresult);
+			}
+			
 			$i++;
 		}
 	}
@@ -756,12 +560,7 @@ class tagProcessor_Item
 
 		$layout='';
 
-		if($Model->ct->Env->print==1)
-			$toolbar=array();
-		else
-			$toolbar=tagProcessor_Item::getToolbar($Model,$row);
-            
-        if($Model->LayoutProc->layoutType==2)
+		if($Model->LayoutProc->layoutType==2)
         {
             require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tagprocessor'.DIRECTORY_SEPARATOR.'edittags.php');
             $pagelayout_temp=$Model->LayoutProc->layout;//Temporary remember original layout
@@ -771,17 +570,18 @@ class tagProcessor_Item
             tagProcessor_Edit::process($Model,$htmlresult,$row,$prefix);//Process edit form layout
             
             $Model->LayoutProc->layout=$htmlresult;//Temporary replace original layout with processed result
-			$htmlresult=$Model->LayoutProc->fillLayout($row,null,'','||',false,true,$prefix);//Process field values
+			$htmlresult=$Model->LayoutProc->fillLayout($row,null,'||',false,true,$prefix);//Process field values
 
             $Model->LayoutProc->layout=$pagelayout_temp;//Set original layout as it was before, to process other records
         }
         else
-            $htmlresult.=$Model->LayoutProc->fillLayout($row,$viewlink,$toolbar,'[]',false);
+            $htmlresult.=$Model->LayoutProc->fillLayout($row,$viewlink,'[]',false);
 
 		return $htmlresult;
     }
 
-    protected static function createUserButton(&$Model,&$row,&$pagelayout,$recordlist,$number)
+    /*
+	protected static function createUserButton(&$Model,&$row,&$pagelayout,$recordlist,$number)
 	{
         $options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('createuser',$options,$pagelayout,'{}',':','"');
@@ -809,4 +609,5 @@ class tagProcessor_Item
 		}
 
 	}
+	*/
 }

@@ -44,7 +44,7 @@ trait render_html
 
         //Parse Header
         $Model->LayoutProc->layout=$result;
-        $result=$Model->LayoutProc->fillLayout(array(), null, '');
+        $result=$Model->LayoutProc->fillLayout();
         $result=str_replace('&&&&quote&&&&','"',$result);
 
         //Complete record layout

@@ -271,7 +271,7 @@ class JHTMLESRecords
 
 								//process layout
 								$htmlresult.='<label for="'.$control_name.'_'.$i.'">';
-								$htmlresult.=$model->LayoutProc->fillLayout($row,'','');
+								$htmlresult.=$model->LayoutProc->fillLayout($row);
 								$htmlresult.='</label>';
 
 

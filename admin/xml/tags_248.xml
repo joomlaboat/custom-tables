@@ -516,6 +516,8 @@
                     <option value="publish" label="Publish/Unpublish"/>
                     <option value="gallery" label="Image Gallery"/>
                     <option value="filebox" label="File Box"/>
+			<option value="copy" label="Copy" proversion="1" />
+			<option value="resetpassword" label="Reset Password" proversion="1" />
                 </param>
             </params>
         </tag>

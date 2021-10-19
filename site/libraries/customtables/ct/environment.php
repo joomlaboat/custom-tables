@@ -27,31 +27,34 @@ class Environment
 	var $current_url;
 	var $encoded_current_url;
 	var $userid;
+	var $user;
 	var $isUserAdministrator;
 	var $print;
 	var $clean;
 	var $frmt;
 	var $WebsiteRoot;
 	var $advancedtagprocessor;
+	var $jinput;
 	
 	function __construct()
 	{
 		$version_object = new Version;
 		$this->version = (int)$version_object->getShortVersion();
 		
-		$jinput=Factory::getApplication()->input;
+		$this->jinput=Factory::getApplication()->input;
 
 		$this->current_url=JoomlaBasicMisc::curPageURL();
 		$this->encoded_current_url=base64_encode($this->current_url);
 
-		$user = Factory::getUser();
-		$this->userid=$user->id;
+		$this->user = Factory::getUser();
+		$this->userid=$this->user->id;
+
 
 		$this->isUserAdministrator=JoomlaBasicMisc::isUserAdmin($this->userid);
-		$this->print=(bool)$jinput->getInt('print',0);
-		$this->clean=(bool)$jinput->getInt('clean',0);
-		$this->frmt=$jinput->getCmd('frmt','html');
-		if($jinput->getCmd('layout','') == 'json')
+		$this->print=(bool)$this->jinput->getInt('print',0);
+		$this->clean=(bool)$this->jinput->getInt('clean',0);
+		$this->frmt=$this->jinput->getCmd('frmt','html');
+		if($this->jinput->getCmd('layout','') == 'json')
 			$this->frmt = 'json';
 		
 		$mainframe = Factory::getApplication();
@@ -60,6 +63,8 @@ class Environment
 			$this->WebsiteRoot=Uri::root(true);
 			if($this->WebsiteRoot=='' or $this->WebsiteRoot[strlen($this->WebsiteRoot)-1]!='/') //Root must have slash / in the end
 				$this->WebsiteRoot.='/';
+				
+
 		}
 		else
 			$this->WebsiteRoot='';

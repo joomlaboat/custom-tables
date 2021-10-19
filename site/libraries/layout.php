@@ -35,7 +35,6 @@ class LayoutProcessor
 	var $layoutType;//item layout type
 	var $number;
 	var $recordlist;
-	var $toolbar_array;
 	var $Model;
 	var $advancedtagprocessor;
 	var $version = 0;
@@ -61,12 +60,8 @@ class LayoutProcessor
 			$this->advancedtagprocessor=false;
 	}
 
-	function fillLayout($row,$aLink=null,$toolbar=array(),$tag_chars='[]',$disable_advanced_tags=false,$add_label=false,$fieldNamePrefix='comes_')
+	function fillLayout($row=array(),$aLink=null,$tag_chars='[]',$disable_advanced_tags=false,$add_label=false,$fieldNamePrefix='comes_')
 	{
-		if(!is_array($toolbar) or count($toolbar)==0)
-			$toolbar=$this->toolbar_array;
-
-
 		$htmlresult=$this->layout;
 
 		if($this->advancedtagprocessor and !$disable_advanced_tags)
@@ -85,7 +80,7 @@ class LayoutProcessor
 
 			//Item must be before General to let the following: currenturl:set,paymentid,{id}}
 			tagProcessor_Value::processValues($this->Model,$row,$htmlresult,$tag_chars);//to let sqljoin function work
-			tagProcessor_Item::process($this->advancedtagprocessor,$this->Model,$row,$htmlresult,$aLink,$toolbar,$this->recordlist,$this->number,$add_label,$fieldNamePrefix);
+			tagProcessor_Item::process($this->advancedtagprocessor,$this->Model,$row,$htmlresult,$aLink,$this->recordlist,$this->number,$add_label,$fieldNamePrefix);
 			tagProcessor_General::process($this->Model,$htmlresult,$row,$this->recordlist,$this->number);
 			tagProcessor_Page::process($this->Model,$htmlresult);
 

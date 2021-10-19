@@ -1197,6 +1197,8 @@ class tagProcessor_Value
 
 	public static function showUserGroups($valuearray_str)
 	{
+		if($valuearray_str=='')
+			return '';
 
 		$db = JFactory::getDBO();
 

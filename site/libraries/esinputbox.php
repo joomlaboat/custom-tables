@@ -94,7 +94,7 @@ class ESInputBox
 				if($value!='')
 				{
 					tagProcessor_General::process($Model,$value,$row,'',1);
-					tagProcessor_Item::process(false,$Model,$row,$value,'',array(),'',0);
+					tagProcessor_Item::process(false,$Model,$row,$value,'','',0);
 					tagProcessor_If::process($Model,$value,$row,'',0);
 					tagProcessor_Page::process($Model,$value);
 					tagProcessor_Value::processValues($Model,$row,$value,'[]');

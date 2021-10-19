@@ -9,6 +9,9 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+
+//------------- CURRENTLY UNUSED
+
 class ImportExportUserGroups
 {
     

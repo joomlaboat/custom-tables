@@ -18,9 +18,10 @@ function CTLoader($inclide_utilities = false, $include_html = false)
 	
 	//require_once($path_helpers.'customtablesmisc.php');
 	//require_once($path_helpers.'fields.php');
-	require_once($path_helpers.'createuser.php');
+
 	require_once($path_helpers.'imagemethods.php');
-	//require_once($path_helpers.'languages.php');
+	require_once($path_helpers.'email.php');
+	require_once($path_helpers.'user.php');
 	require_once($path_helpers.'misc.php');
 	require_once($path_helpers.'tables.php');
 	require_once($path_helpers.'compareimages.php');
@@ -71,6 +72,9 @@ function CTLoader($inclide_utilities = false, $include_html = false)
 	
 	$path_datatypes = $path . 'table' . DIRECTORY_SEPARATOR;
 	require_once($path_datatypes.'table.php');
+	
+	$path_datatypes = $path . 'html' . DIRECTORY_SEPARATOR;
+	require_once($path_datatypes.'toolbar.php');
 	
 	$path_datatypes = $path . 'tables' . DIRECTORY_SEPARATOR;
 	require_once($path_datatypes.'tables.php');

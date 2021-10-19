@@ -57,7 +57,7 @@ if($catalogtablecontent=='')
 }
 
 $this->Model->LayoutProc->layout=$pagelayout;
-$pagelayout=$this->Model->LayoutProc->fillLayout(array(), null, '');
+$pagelayout=$this->Model->LayoutProc->fillLayout();
 
 
 $pagelayout=str_replace('&&&&quote&&&&','"',$pagelayout); // search boxes may return HTMl elemnts that contain placeholders with quotes like this: &&&&quote&&&&

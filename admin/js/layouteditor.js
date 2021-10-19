@@ -4,7 +4,7 @@
  * @subpackage administrator/components/com_customtables/js/layouteditor.js
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @copyright Copyright (C) 2018-2020. All Rights Reserved
+ * @copyright Copyright (C) 2018-2021. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
  
@@ -124,7 +124,7 @@ function loadTags(type_id,tags_box)
 
     //tags_box_obj.innerHTML='Loading...';
 
-    var url=websiteroot+"components/com_customtables/xml/tags_234.xml";
+    var url=websiteroot+"components/com_customtables/xml/tags_248.xml";
 
     var http = null;
     var params = "";

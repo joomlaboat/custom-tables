@@ -67,7 +67,7 @@ if($html_format)
 	}
 	
 	$this->Model->LayoutProc->layout=$pagelayout;
-	$pagelayout=$this->Model->LayoutProc->fillLayout(array(), null, '');
+	$pagelayout=$this->Model->LayoutProc->fillLayout();
 
 }
 else
@@ -85,7 +85,7 @@ else
 	}
 
 	$this->Model->LayoutProc->layout=$pagelayout;
-	$pagelayout=$this->Model->LayoutProc->fillLayout(array(), null, '');
+	$pagelayout=$this->Model->LayoutProc->fillLayout();
 }
 
 

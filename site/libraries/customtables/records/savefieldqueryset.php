@@ -18,6 +18,7 @@ use \Joomla\CMS\User\UserHelper;
 use CT_FieldTypeTag_image;
 use CT_FieldTypeTag_file;
 use CustomTables\DataTypes\Tree;
+use CustomTables\Email;
 
 use tagProcessor_General;
 use tagProcessor_Item;
@@ -26,7 +27,7 @@ use tagProcessor_Page;
 use tagProcessor_Value;
 
 use \JoomlaBasicMisc;
-use \CustomTablesCreateUser;
+use CustomTables\CTUser;
 use \LayoutProcessor;
 
 trait SaveFieldQuerySet
@@ -304,7 +305,7 @@ trait SaveFieldQuerySet
 						if(isset($value))
 						{
 							$value = trim($value);
-							if($this->checkEmail($value))
+							if(Email::checkEmail($value))
 								return $this->realfieldname.'='.$this->db->Quote($value);
 							else
 								return $this->realfieldname.'='.$this->db->Quote("");//PostgreSQL compatible
@@ -392,23 +393,28 @@ public function Try2CreateUserAccount(&$Model,$field,$row)
         $user = Factory::getUser($uid);
         $email=$user->email.'';
         if($email!='')
-            return 0; //all good, user already assigned.
+		{
+			Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_ALREADY_EXISTS','error' ));
+            return false; //all good, user already assigned.
+		}
 
     }
 
     $params=$field['typeparams'];
     $parts=JoomlaBasicMisc::csv_explode(',', $params, '"', false);
-	
 
     if(count($parts)<3)
+	{
+		Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('User field name parameters count is less than 3.','error' ));
         return false;
+	}
 	
     //Try to create user
     $new_parts=array();
     foreach($parts as $part)
     {
         tagProcessor_General::process($Model,$part,$row,'',1);
-    	tagProcessor_Item::process(false,$Model,$row,$part,'',array(),'',0);
+    	tagProcessor_Item::process(false,$Model,$row,$part,'','',0);
     	tagProcessor_If::process($Model,$part,$row,'',0);
     	tagProcessor_Page::process($Model,$part);
     	tagProcessor_Value::processValues($Model,$row,$part,'[]');
@@ -422,23 +428,23 @@ public function Try2CreateUserAccount(&$Model,$field,$row)
     $user_name=$new_parts[1];
     $user_email=$new_parts[2];
 	
-	if($user_groups=='' or $user_groups=='' or $user_email=='')
+	if($user_groups=='' or $user_name=='' or $user_email=='')
+	{
+		Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('User group field, user name and user email fields not set.' ));
 		return false;
+	}
 
     $unique_users=false;
     if(isset($new_parts[4]) and $new_parts[4]=='unique')
         $unique_users=true;
 		
-	$path = JPATH_COMPONENT_SITE . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'helpers' . DIRECTORY_SEPARATOR; 
-	require_once($path.'createuser.php');
-	
-    $existing_user_id=CustomTablesCreateUser::CheckIfEmailExist($user_email,$existing_user,$existing_name);
+	$existing_user_id=CTUser::CheckIfEmailExist($user_email,$existing_user,$existing_name);
 	
     if($existing_user_id)
 	{
         if(!$unique_users) //allow not unique record per users
         {
-            $this->UpdateUserField($field['realfieldname'],$existing_user_id,$row['listing_id']);
+            CTUser::UpdateUserField($Model->ct->Table->realtablename, $Model->ct->Table->realidfieldname,$field['realfieldname'],$existing_user_id,$row['listing_id']);
             Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORD_USER_UPDATED' ));
         }
         else
@@ -451,63 +457,10 @@ public function Try2CreateUserAccount(&$Model,$field,$row)
 
 	}
     else
-        $this->CreateUser($user_email,$user_name,$user_groups,$row['listing_id'],$field['realfieldname'],$this->realtablename);
+        CTUser::CreateUser($Model->ct->Table->realtablename, $Model->ct->Table->realidfieldname,$user_email,$user_name,$user_groups,$row['listing_id'],$field['realfieldname'],$this->realtablename);
 
-    return;
+    return true;
 }
-
-    protected function UpdateUserField($useridfieldname,$existing_user_id,$listing_id)
-    {
-		$query = 'UPDATE '.$this->realtablename.' SET '.$useridfieldname.'='.$existing_user_id.' WHERE '.$this->realidfieldname.'='.$listing_id.' LIMIT 1';
-		$this->db->setQuery( $query );
-		$this->db->execute();
-    }
-
-    protected function CreateUser($email,$name,$usergroups,$listing_id,$useridfieldname)
-	{
-		$path = JPATH_COMPONENT_SITE . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'helpers' . DIRECTORY_SEPARATOR; 
-		require_once($path.'createuser.php');
-		
-		$msg='';
-		$password=strtolower(UserHelper::genRandomPassword());
-
-		$new_password=$password;
-
-		$realuserid=0;
-
-		$articleid=0;
-		$msg='';
-		//CreateUserAccount($fullname,$username,$password,$email,$group_names,&$msg,$email_content_article_id)
-		
-		if(!$this->checkEmail($email))
-		{
-			Factory::getApplication()->enqueueMessage('Incorrect email "'.$email.'"', 'error');
-			return false;
-		}
-		
-		$realuserid=CustomTablesCreateUser::CreateUserAccount($name,$email,$password,$email,$usergroups,$msg,$articleid);
-		if($msg!='')
-		{
-			Factory::getApplication()->enqueueMessage($msg, 'error');
-			return false;
-		}
-
-		if($realuserid!=0)
-		{
-                $this->UpdateUserField($useridfieldname,$realuserid,$listing_id);
-				Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_USER_CREATE_PSW_SENT' ));
-		}
-		else
-		{
-
-				$msg=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_USER_NOTCREATED');
-				if(count($msg_warning)>0)
-					$msg.='<br/><ul><li>'.implode('</li><li>',$msg_warning).'</li></ul>';
-
-				Factory::getApplication()->enqueueMessage($msg, 'error');
-		}
-
-	}
 
 	protected function get_customtables_type_language()
 	{
@@ -767,27 +720,6 @@ protected function get_record_type_value()
 		return ','.implode(',',$values).',';
 	}
 
-    	protected function checkEmail($email)
-	{
-		if(preg_match("/^([a-zA-Z0-9])+([a-zA-Z0-9\._-])*@([a-zA-Z0-9_-])+([a-zA-Z0-9\._-]+)+$/",  $email))
-        {
-            if($this->domain_exists($email))
-                return true;
-            else
-                return false;
-		}
-		return false;
-	}
-
-    protected function domain_exists($email, $record = 'MX')
-    {
-    	$pair = explode('@', $email);
-        if(count($pair)==1)
-            return false;
-
-    	return checkdnsrr(end($pair), $record);
-    }
-
 	protected function getMultiString($parent, $prefix)
 	{
 		$parentid=Tree::getOptionIdFull($parent);
@@ -903,7 +835,7 @@ protected function get_record_type_value()
     function processDefaultValue(&$Model,$htmlresult,$type,&$row)
     {
         tagProcessor_General::process($Model,$htmlresult,$row,'',1);
-		tagProcessor_Item::process(false,$Model,$row,$htmlresult,'',array(),'',0);
+		tagProcessor_Item::process(false,$Model,$row,$htmlresult,'','',0);
 		tagProcessor_If::process($Model,$htmlresult,$row,'',0);
 		tagProcessor_Page::process($Model,$htmlresult);
 		tagProcessor_Value::processValues($Model,$row,$htmlresult,'[]');

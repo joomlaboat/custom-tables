@@ -71,8 +71,6 @@ trait render_xlsx
 
 			// Output Rows
 
-			$toolbar=array();
-
 			$recordline=str_replace('|(','{',$fieldpair[1]);
 			$recordline=str_replace(')|','}',$recordline);
 			$recordline=str_replace('\'','"',$recordline);
@@ -90,7 +88,7 @@ trait render_xlsx
 
 
 
-				$htmlresult=$this->Model->LayoutProc->fillLayout($row,'');
+				$htmlresult=$this->Model->LayoutProc->fillLayout($row);
 
 				$htmlresult=JoomlaBasicMisc::strip_tags_content($htmlresult, '<a><center><p><br><i><u><b><span>', FALSE);
 				$htmlresult=strip_tags($htmlresult);//, '<center><p><br><i><u><b><span>');

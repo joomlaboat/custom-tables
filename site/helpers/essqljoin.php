@@ -203,7 +203,7 @@ class JHTMLESSqlJoin
 		foreach($SearchResult as $row)
         {
 			if($layout_mode)
-				$v=$model->LayoutProc->fillLayout($row,'','');
+				$v=$model->LayoutProc->fillLayout($row);
             else
 				$v=JoomlaBasicMisc::processValue($field,$model,$row,$langpostfix);
 

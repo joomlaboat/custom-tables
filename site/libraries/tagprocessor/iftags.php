@@ -45,7 +45,7 @@ class tagProcessor_If
 
         tagProcessor_General::process($Model,$value,$row,$recordlist,$number);
         tagProcessor_Page::process($Model,$value);
-        tagProcessor_Item::process(false,$Model,$row,$value,'',array(),$recordlist,$number);
+        tagProcessor_Item::process(false,$Model,$row,$value,'',$recordlist,$number);
         tagProcessor_Value::processValues($Model,$row,$value,'[]');
 
         return $value;

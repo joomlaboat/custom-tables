@@ -189,7 +189,7 @@ function CustomTablesSave($task,&$this_)
 			$LayoutProc=new LayoutProcessor;
 			$LayoutProc->Model=$model;
 			$LayoutProc->layout=$msg;
-			$msg=$LayoutProc->fillLayout(array(),null,array(),'[]',true);
+			$msg=$LayoutProc->fillLayout(array(),null,'[]',true);
 
 
 			if(JFactory::getApplication()->input->get('clean',0,'INT')==1)

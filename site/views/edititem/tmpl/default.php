@@ -80,7 +80,7 @@ jQuery.noConflict()
 	$LayoutProc->layout=$this->Model->pagelayout;
 						
 	//Better to run tag processor before rendering form edit elements because of IF statments that can exclude the part of the layout that contains form fields.
-	$this->Model->pagelayout=$LayoutProc->fillLayout($this->row,null,'','||',false,true);
+	$this->Model->pagelayout=$LayoutProc->fillLayout($this->row,null,'||',false,true);
 						
 	tagProcessor_Edit::process($this->Model,$this->Model->pagelayout,$this->row,'comes_');
 	

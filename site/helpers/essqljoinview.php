@@ -130,9 +130,9 @@ class JHTMLESSQLJoinView
 				$model->LayoutProc->number=$number;
 
 				if($isTableLess)
-					$htmlresult.=$model->LayoutProc->fillLayout($row,'','');
+					$htmlresult.=$model->LayoutProc->fillLayout($row);
 				else
-					$htmlresult.='<td valign="middle" style="border:none;">'.$model->LayoutProc->fillLayout($row,'','').'</td>';
+					$htmlresult.='<td valign="middle" style="border:none;">'.$model->LayoutProc->fillLayout($row).'</td>';
 
 				$tr++;
 				if(!$isTableLess and $tr==$columns)
