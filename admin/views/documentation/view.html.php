@@ -104,7 +104,7 @@ class CustomtablesViewDocumentation extends JViewLegacy
 	
 	function getLayoutTags()
 	{
-		$xml=$this->getXMLData('tags_248.xml');
+		$xml=$this->getXMLData('tags_249.xml');
 
 		if(count($xml)==0)
 			return '';

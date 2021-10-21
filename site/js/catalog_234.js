@@ -27,9 +27,14 @@
         }
     }
 
-    function esPrepareLink(deleteParams,addParams)
+    function esPrepareLink(deleteParams,addParams,custom_link)
     {
-        var link=window.location.href;
+        var link='';
+		
+		if(custom_link && custom_link!=='')
+			link = custom_link;
+		else
+			link = window.location.href;
 
         var pair=link.split('#');
         link=pair[0];
@@ -130,7 +135,7 @@
     }
 
 
-    function esDeleteObject(msg, objid, toolbarboxid)
+    function esDeleteObject(msg, objid, toolbarboxid, custom_link)
     {
         if(es_LinkLoading)
             return;
@@ -143,7 +148,9 @@
                     obj.innerHTML='';
                     var returnto=btoa(window.location.href);
 
-                    var link=esPrepareLink(['task','listing_id','returnto','ids'],['task=delete','listing_id='+objid,'returnto='+returnto]);
+
+
+                    var link=esPrepareLink(['task','listing_id','returnto','ids'],['task=delete','listing_id='+objid,'returnto='+returnto],custom_link);
 
 	            window.location.href = link;
         }

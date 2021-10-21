@@ -28,6 +28,20 @@ class JHTMLESUserView
 						else
 								return 1;
 				}
+				elseif($field=='usergroups')
+				{
+					$selects = '(SELECT title FROM #__usergroups AS g WHERE g.id = m.group_id LIMIT 1) AS group_title';
+					$query = 'SELECT '.$selects.' FROM #__user_usergroup_map AS m WHERE user_id='.(int)$value;
+					$db->setQuery($query);
+				
+					$groups=$db->loadObjectList();
+					
+					$group_list=[];
+					foreach($groups as $group)
+						$group_list[] = $group->group_title;
+					
+					return implode(',',$group_list);
+				}
 				else
 				{
 						$allowedFields=array('id','name','email','username','registerDate','lastvisitDate');

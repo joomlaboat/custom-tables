@@ -103,19 +103,21 @@ class RecordToolbar
 	{
 		if($this->isPublishable)
 		{
+			$rid = 'esPublishIcon'.$this->rid;
+			
 			if($this->row['listing_published'])
 			{
-				$link='javascript:esPublishObject('.$this->id.', \''.$this->rid.'\',0);';
+				$link='javascript:esPublishObject('.$this->id.', \''.$rid.'\',0);';
                 $alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_UNPUBLISH' );
 				$img='<img src="'.$this->iconPath.'publish.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 			}
 			else
 			{
-				$link='javascript:esPublishObject('.$this->id.', \''.$this->rid.'\',1);';
+				$link='javascript:esPublishObject('.$this->id.', \''.$rid.'\',1);';
                 $alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PUBLISH' );
 				$img='<img src="'.$this->iconPath.'unpublish.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 			}
-			return '<div id="esPublishIcon'.$this->rid.'" class="toolbarIcons"><a href="'.$link.'">'.$img.'</a></div>';
+			return '<div id="'.$rid.'" class="toolbarIcons"><a href="'.$link.'">'.$img.'</a></div>';
 		}
 		else
 		{

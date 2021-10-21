@@ -66,13 +66,19 @@ class ESFiltering
 					
 					if(count($whr)==2)
 					{
-						$fieldnames_string=trim(preg_replace("/[^a-zA-Z,\-_;]/", "",trim($whr[0])));
+						$fieldnames_string=trim(preg_replace("/[^a-zA-Z,:\-_;]/", "",trim($whr[0])));
 
 						$fieldnames = explode(';',$fieldnames_string);
 						$value = trim($whr[1]);
 						
-						foreach($fieldnames as $fieldname)
+						foreach($fieldnames as $fieldname_)
 						{
+							$fieldname_parts = explode(':',$fieldname_);
+							$fieldname = $fieldname_parts[0];
+							$field_extra_param = '';
+							if(isset($fieldname_parts[1]))
+								$field_extra_param = $fieldname_parts[1];
+							
 							$fieldrow = array();
 							
 							if($fieldname=='_id')
@@ -100,7 +106,7 @@ class ESFiltering
 
 							if(count($fieldrow)>0)
 							{
-								$w = $this->processSingleFieldWhereSyntax($fieldrow,$comparison_operator,$fieldname,$value,$PathValue);
+								$w = $this->processSingleFieldWhereSyntax($fieldrow,$comparison_operator,$fieldname,$value,$PathValue,$field_extra_param);
 								if($w!='')
 									$multy_field_where[] = $w;
 							}
@@ -126,7 +132,7 @@ class ESFiltering
 	}//function getWhereExpression($param,&$PathValue)
 
 
-	function processSingleFieldWhereSyntax(&$fieldrow,$comparison_operator,$fieldname,$value,&$PathValue)
+	function processSingleFieldWhereSyntax(&$fieldrow,$comparison_operator,$fieldname,$value,&$PathValue,$field_extra_param = '')
 	{
 		$db = JFactory::getDBO();
 		
@@ -172,14 +178,14 @@ class ESFiltering
 														if($comparison_operator=='==')
 															$comparison_operator='=';
 
-														$c=$this->Search_User($value, $PathValue, $fieldrow,$comparison_operator);
+														$c=$this->Search_User($value, $PathValue, $fieldrow,$comparison_operator, $field_extra_param);
 														break;
 
 												case 'userid':
 														if($comparison_operator=='==')
 															$comparison_operator='=';
 
-														$c=$this->Search_User($value, $PathValue, $fieldrow,$comparison_operator);
+														$c=$this->Search_User($value, $PathValue, $fieldrow,$comparison_operator, $field_extra_param);
 														break;
 
 												case 'usergroup':
@@ -857,23 +863,44 @@ class ESFiltering
 			return '('.implode(' AND ', $cArr).')';
 	}
 
-	function Search_User($value, &$PathValue, &$fieldrow,$comparison_operator)
+	function Search_User($value, &$PathValue, &$fieldrow,$comparison_operator, $field_extra_param = '')
 	{
+		$db = JFactory::getDBO();
+		
 		$v=$this->getString_vL($value);
 
 		$vList=explode(',',$v);
 		$cArr=array();
-		foreach($vList as $vL)
+		
+		if($field_extra_param == 'usergroups')
 		{
-			if($vL!='')
+			foreach($vList as $vL)
 			{
-				if((int)$vL==0 and $comparison_operator=='=')
-					$cArr[]='('.$fieldrow['realfieldname'].'=0 OR '.$fieldrow['realfieldname'].' IS NULL)';
-				else
-					$cArr[]=$fieldrow['realfieldname'].$comparison_operator.(int)$vL;
+				if($vL!='')
+				{
+					$select1 = '(SELECT title FROM #__usergroups AS g WHERE g.id = m.group_id LIMIT 1)';
+					$cArr[]='(SELECT m.group_id FROM #__user_usergroup_map AS m WHERE user_id='.$fieldrow['realfieldname'].' AND '
+						.$select1.$comparison_operator.$db->quote($v).')';
+					
+					$filtertitle=JHTML::_('ESUserView.render',  $vL);
+					$PathValue[]=$fieldrow['fieldtitle'.$this->ct->Languages->Postfix].' '.$comparison_operator.' '.$filtertitle;
+				}
+			}
+		}
+		else
+		{
+			foreach($vList as $vL)
+			{
+				if($vL!='')
+				{
+					if((int)$vL==0 and $comparison_operator=='=')
+						$cArr[]='('.$fieldrow['realfieldname'].'=0 OR '.$fieldrow['realfieldname'].' IS NULL)';
+					else
+						$cArr[]=$fieldrow['realfieldname'].$comparison_operator.(int)$vL;
 			
-				$filtertitle=JHTML::_('ESUserView.render',  $vL);
-				$PathValue[]=$fieldrow['fieldtitle'.$this->ct->Languages->Postfix].' '.$comparison_operator.' '.$filtertitle;
+					$filtertitle=JHTML::_('ESUserView.render',  $vL);
+					$PathValue[]=$fieldrow['fieldtitle'.$this->ct->Languages->Postfix].' '.$comparison_operator.' '.$filtertitle;
+				}
 			}
 		}
 		
