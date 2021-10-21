@@ -775,7 +775,7 @@ class tagProcessor_Value
 
 						$decimals=(int)$option_list[0];
 						$decimals_sep='.';
-						$thousand_sep=',';
+						$thousand_sep='';
 
                         if($decimals==0 and $TypeParams!='')
 						{
