@@ -319,7 +319,7 @@ class JESPagination extends JObject
 				$list['pages'][$i]['data'] = ($itemOverride) ? pagination_item_active($page) : $this->_item_active($page);
 			} else {
 				$list['pages'][$i]['active'] = false;
-				$list['pages'][$i]['data'] = ($itemOverride) ? pagination_item_inactive($page) : $this->_item_inactive($page);
+				$list['pages'][$i]['data'] = ($itemOverride) ? pagination_item_inactive($page) : $this->_item_inactive($page,$current_page = true);
 			}
 		}
 
@@ -545,13 +545,13 @@ class JESPagination extends JObject
 	 * @return   string
 	 * @since    11.1
 	 */
-	protected function _item_inactive(&$item)
+	protected function _item_inactive(&$item, $current_page = false)
 	{
 		$app = JFactory::getApplication();
 		if($app->isClient('administrator'))
 			return "<span>".$item->text."</span>";
 		else
-			return "<span class=\"pagenav\">".$item->text."</span>";
+			return "<span class=\"pagenav".($current_page ? ' active' : '')."\">".$item->text."</span>";
 	}
 
 	/**
@@ -574,12 +574,34 @@ class JESPagination extends JObject
 				$params .= '&'.$key.'='.$value;
 			}
 		}
+		
+		$paramsPlusPrefix = JoomlaBasicMisc::curPageURL();
+		$paramsPlusPrefix = JoomlaBasicMisc::deleteURLQueryOption($paramsPlusPrefix, 'start');
+			
+		if($params!='')
+			$paramsPlusPrefix .= (strpos($paramsPlusPrefix,'?')===false ? '?' : '&') . $this->prefix;
+			
+		if($this->prefix!='')
+			$paramsPlusPrefix .= (strpos($paramsPlusPrefix,'?')===false ? '?' : '&') . $this->prefix;
+		
+		
+		
+		//echo '$paramsPlusPrefix='.$paramsPlusPrefix;
+		//die;
 
 		$data->all = new JESPaginationObject(JoomlaBasicMisc::JTextExtended('JLIB_HTML_VIEW_ALL'), $this->prefix);
 		if (!$this->_viewall) {
 			$data->all->base	= '0';
-			$data->all->link	= JRoute::_($params.'&'.$this->prefix.'start=');
+			//$data->all->link	= JRoute::_($params.'&'.$this->prefix.'start=');
+			$data->all->link	= JRoute::_($paramsPlusPrefix);
 		}
+		
+		//$data->all->link = JoomlaBasicMisc::deleteURLQueryOption($data->all->link, 'start');
+		
+		//echo '$this->prefix='.$this->prefix;
+		
+		//print_r($data);
+		//die;
 
 		// Set the start and previous data objects.
 		$data->start	= new JESPaginationObject(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_START'), $this->prefix);
@@ -593,9 +615,13 @@ class JESPagination extends JObject
 			//$page = $page == 0 ? '' : $page;
 
 			$data->start->base	= '0';
-			$data->start->link	= JRoute::_($params.'&'.$this->prefix.'start=0');
+			$data->start->link	= JRoute::_($paramsPlusPrefix);
 			$data->previous->base	= $page;
-			$data->previous->link	= JRoute::_($params.'&'.$this->prefix.'start='.$page);
+			
+			if($page == 0)
+				$data->previous->link	= JRoute::_($paramsPlusPrefix);
+			else
+				$data->previous->link	= JRoute::_($paramsPlusPrefix.(strpos($paramsPlusPrefix,'?')===false ? '?' : '&') .'start='.$page);
 		}
 
 		// Set the next and end data objects.
@@ -608,9 +634,9 @@ class JESPagination extends JObject
 			$end  = ($this->get('pages.total') -1) * $this->limit;
 
 			$data->next->base	= $next;
-			$data->next->link	= JRoute::_($params.'&'.$this->prefix.'start='.$next);
+			$data->next->link	= JRoute::_($paramsPlusPrefix.(strpos($paramsPlusPrefix,'?')===false ? '?' : '&') .'start='.$next);
 			$data->end->base	= $end;
-			$data->end->link	= JRoute::_($params.'&'.$this->prefix.'start='.$end);
+			$data->end->link	= JRoute::_($paramsPlusPrefix.(strpos($paramsPlusPrefix,'?')===false ? '?' : '&') .'start='.$end);
 		}
 
 		$data->pages = array();
@@ -624,7 +650,10 @@ class JESPagination extends JObject
 			if ($i != $this->get('pages.current') || $this->_viewall)
 			{
 				$data->pages[$i]->base	= $offset;
-				$data->pages[$i]->link	= JRoute::_($params.'&'.$this->prefix.'start='.$offset);
+				if($offset == 0)
+					$data->pages[$i]->link	= JRoute::_($paramsPlusPrefix);
+				else
+					$data->pages[$i]->link	= JRoute::_($paramsPlusPrefix.(strpos($paramsPlusPrefix,'?')===false ? '?' : '&') .'start='.$offset);
 			}
 		}
 		return $data;
