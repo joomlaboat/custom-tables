@@ -510,6 +510,7 @@
             <params>
                 <param name="button" label="Button" type="list" example="edit">
                     <option value="" label="- None"/>
+			<option value="checkbox" label="Checkbox"/>
                     <option value="edit" label="Edit"/>
                     <option value="refresh" label="Refresh"/>
                     <option value="delete" label="Delete"/>

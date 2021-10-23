@@ -47,24 +47,8 @@ function updateParameters()
 
         jQuery(function($)
         {
-            //container ||
-            //$(typeparams_box_obj).find(".hasPopover").popover({"html": true,"trigger": "hover focus","container": "body"});
-			
 			const popoverElement = $(typeparams_box_obj).find(".hasPopover");
-			//pluginTitleTableCell.querySelector('.hasPopover');
-/*
-          if (popoverElement) {
-            popoverElement.style.cursor = 'pointer'; // eslint-disable-next-line no-new
-
-            new bootstrap.Popover(popoverElement, {
-              placement: 'top',
-              html: true,
-              trigger: 'focus'
-            });
-          }
-*/
-			
-			
+		
         });
 
         var param_att=typeparams["@attributes"];
