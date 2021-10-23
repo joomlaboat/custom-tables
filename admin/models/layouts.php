@@ -25,6 +25,13 @@ class CustomtablesModelLayouts extends JModelAdmin
 {
 	var $ct;
 	
+	public function __construct($config = array())
+	{
+		parent::__construct($config);
+		
+		$this->ct = new CT;
+	}
+	
 	/**
 	 * @var        string    The prefix to use with controller messages.
 	 * @since   1.6

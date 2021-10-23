@@ -16,10 +16,13 @@ var current_table_id=0;
 var wizardFields=[];
 var wizardLayouts=[];
 
+var joomlaVersion = 3;
+
 var languages=[];
 
-function loadLayout()
+function loadLayout(version)
 {
+	joomlaVersion = version;
 	var obj=document.getElementById("allLayoutRaw");
 	if(obj)
 		wizardLayouts=JSON.parse(obj.innerHTML);
@@ -120,6 +123,54 @@ function updateFieldsBox()
 	
 }
 
+function renderTabs(tabset_id, tabs)
+{
+	// Tabs is the the array of tab elements [{"title":"Tab Title","id":"Tab Name","content":"Tab Content"}...]
+	
+	if(joomlaVersion < 4)
+	{
+		let result_li='';
+		let result_div='';
+		//let activeTabSet=true;
+	
+		for(let i=0;i<tabs.length;i++)
+		{
+			let tab = tabs[i];
+		
+			let cssclass="";
+			if(i==0)
+				cssclass="active";
+			
+			result_li+='<li' + (cssclass != '' ? ' class="' + cssclass + '"' : '') + '><a href="#' + tab.id + '" onclick="resizeModalBox();" data-toggle="tab">' + tab.title + '</a></li>';
+			result_div+='<div id="' + tab.id + '" class="tab-pane' + (i==0 != '' ? ' active' : '') + '">'+tab.content+'</div>';
+		}
+	
+		return '<ul class="nav nav-tabs" >'+result_li+'</ul>\n\n<div class="tab-content" id="' + tabset_id + '">'+result_div+'</div>';
+	}
+	else
+	{
+		let result_li='';
+		let result_div='';
+
+		for(let i=0;i<tabs.length;i++)
+		{
+			let tab = tabs[i];
+			
+			let cssclass="";
+			if(i==0)
+				cssclass="active";
+				
+			//result_li = result_li + '<button aria-controls="' + tab.id + '" role="tab" type="button" ' + (i==0 ? ' aria-expanded="true"' : '')+ '>'+tab.title+'</button>';
+				
+			result_div += '<joomla-tab-element' + (i==0 ? ' active' : '') +' id="' + tab.id + '" name="'+tab.title+'">'+tab.content+'</joomla-tab-element>';
+		}
+		
+		let result_div_li='<div role="tablist">'+result_li+'</div>';
+		//result_div_li +
+		return '<joomla-tab id="' + tabset_id + '" orientation="horizontal" recall="" breakpoint="768">' + result_div + '</joomla-tab>';
+	}
+}
+
 function renderFieldsBox()
 {
 	//1 - Simple Catalog
@@ -133,8 +184,7 @@ function renderFieldsBox()
 	//9 - CSV File
 	//10 - JSON - File
 
-	var result_li='';
-    var result_div='';
+	let tabs = [];
 
 	current_table_id=parseInt(current_table_id);
 	if(isNaN(current_table_id) || current_table_id===0)
@@ -157,79 +207,49 @@ function renderFieldsBox()
 	
 	var fieldtypes_to_skip=['log','phponview','phponchange','phponadd','md5','id','server','userid','viewcount','lastviewtime','changetime','creationtime','imagegallery','filebox','dummy'];
 
-	var activeTabSet=false;
 	if(a.indexOf(current_layout_type)!==-1)
 	{
-		result_li+='<li class="active"><a href="#layouteditor_fields_value" onclick="resizeModalBox();" data-toggle="tab">Field Values</a></li>';
-		
-		var result_temp2='<p>Dynamic Field Tags that produce Field Values:</p>';
-		result_temp2+=renderFieldTags('[',']',['dummy'],'valueparams');
-		result_div+='<div id="layouteditor_fields_value" class="tab-pane active">'+result_temp2+'</div>';
-		activeTabSet=true;
+		tabs.push({'id':'layouteditor_fields_value','title':'Field Values',
+			'content':'<p>Dynamic Field Tags that produce Field Values:</p>'+renderFieldTags('[',']',['dummy'],'valueparams')
+		});
 	}
 
-	//if(current_layout_type!==0) //Any Layout Type ()
-	//{
-		result_li+='<li><a href="#layouteditor_fields_titles" onclick="resizeModalBox();" data-toggle="tab">Field Titles</a></li>';
-		
-		var result_temp='<p>Dynamic Field Tags that produce Field Titles (Language dependable):</p>';
-		result_temp+=renderFieldTags('*','*',[],'titleparams');
-		//result_temp+='<div class="FieldTagWizard"></div>';
-		
-		if(activeTabSet)
-			result_div+='<div id="layouteditor_fields_titles" class="tab-pane">'+result_temp+'</div>';
-		else
-		{
-			result_div+='<div id="layouteditor_fields_titles" class="tab-pane active">'+result_temp+'</div>';
-			activeTabSet=true;
-		}
-	//}
+	//Any Layout Type
+	tabs.push({'id':'layouteditor_fields_titles','title':'Field Titles',
+			'content':'<p>Dynamic Field Tags that produce Field Titles (Language dependable):</p>' + renderFieldTags('*','*',[],'titleparams')
+	});
 
 	if(a.indexOf(current_layout_type)!==-1)
 	{
-	
-		result_li+='<li class=""><a href="#layouteditor_fields_purevalue" onclick="resizeModalBox();" data-toggle="tab">Field Pure Values</a></li>';
-		var result_temp3='<p>Dynamic Field Tags that returns pure Field Values (as it stored in database):</p>';
-		result_temp3+=renderFieldTags('[_value:',']',['string','md5','changetime','creationtime','lastviewtime','viewcount','id','phponadd','phponchange','phponview','server','multilangstring','text','multilangtext','int','float','email','date','filelink','creationtime','dummy'],'');
-		result_div+='<div id="layouteditor_fields_purevalue" class="tab-pane">'+result_temp3+'</div>';
+		tabs.push({'id':'layouteditor_fields_purevalue','title':'Field Pure Values',
+			'content':'<p>Dynamic Field Tags that returns pure Field Values (as it stored in database):</p>' + renderFieldTags('[_value:',']',['string','md5','changetime','creationtime','lastviewtime','viewcount','id','phponadd','phponchange','phponview','server','multilangstring','text','multilangtext','int','float','email','date','filelink','creationtime','dummy'],'')
+		});
 		
-		result_li+='<li class=""><a href="#layouteditor_fields_ajaxedit" onclick="resizeModalBox();" data-toggle="tab">Input Edit (Update on change)</a></li>';
-		var result_temp6='<p>Renders input/select box for selected field. It works in all types of layout except Edit Form:</p>';
-		result_temp6+=renderFieldTags('[_edit:',']',fieldtypes_to_skip,'');
-		result_div+='<div id="layouteditor_fields_ajaxedit" class="tab-pane">'+result_temp6+'</div>';
+		tabs.push({'id':'layouteditor_fields_ajaxedit','title':'Input Edit (Update on change)',
+			'content':'<p>Renders input/select box for selected field. It works in all types of layout except Edit Form:</p>' + renderFieldTags('[_edit:',']',fieldtypes_to_skip,'')
+		});
 	}
 	
 	
 	if(current_layout_type===2)
 	{
-		result_li+='<li class=""><a href="#layouteditor_fields_edit" onclick="resizeModalBox();" data-toggle="tab">Input/Edit</a></li>';
-	
-		var fieldtypes_to_skip=['log','phponview','phponchange','phponadd','md5','id','server','userid','viewcount','lastviewtime','changetime','creationtime','imagegallery','filebox','dummy'];
-
-		var result_temp4='<p>Dynamic Field Tags that renders an input field where the user can enter data.<span style="font-weight:bold;color:darkgreen;">(if it\'s not clear, please click <a href="https://joomlaboat.com/support/custom-tables">here</a>)</span></p>';
-		result_temp4+=renderFieldTags('[',']',fieldtypes_to_skip,'editparams');
-		result_div+='<div id="layouteditor_fields_edit" class="tab-pane">'+result_temp4+'</div>';
-
-		result_li+='<li class=""><a href="#layouteditor_fields_valueineditform" onclick="resizeModalBox();" data-toggle="tab">Fields Values inside Edit form</a></li>';
+		let fieldtypes_to_skip=['log','phponview','phponchange','phponadd','md5','id','server','userid','viewcount','lastviewtime','changetime','creationtime','imagegallery','filebox','dummy'];
 		
-		var result_temp5='<p>Dynamic Field Tags that produce Field Values (if the record is alredy created ID!=0):</p>';
-		result_temp5+=renderFieldTags('|','|',['dummy'],'valueparams');
-		result_div+='<div id="layouteditor_fields_valueineditform" class="tab-pane">'+result_temp5+'</div>';
-		
+		let label = '<p>Dynamic Field Tags that renders an input field where the user can enter data.<span style="font-weight:bold;color:darkgreen;">(if it\'s not clear, please click <a href="https://joomlaboat.com/support/custom-tables">here</a>)</span></p>';
+		tabs.push({'id':'layouteditor_fields_edit','title':'Input/Edit',
+			'content':label + renderFieldTags('[',']',fieldtypes_to_skip,'editparams')
+		});
+
+
+		tabs.push({'id':'layouteditor_fields_valueineditform','title':'Fields Values inside Edit form',
+			'content':'<p>Dynamic Field Tags that produce Field Values (if the record is alredy created ID!=0):</p>' + renderFieldTags('|','|',['dummy'],'valueparams')
+		});
 	}
 	
-	
-	result+='<ul class="nav nav-tabs" >'+result_li+'</ul>';
-	result+='<div class="tab-content" id="layouteditor_fields">'+result_div+'</div>';
-	
-	
-
-	if(result==='')
-		result='<div class="FieldTagWizard"><p>No Field Tags available for this Layout Type</p></div>';
-	
-
-	return result;		
-
+	if(tabs.length >0)
+		return renderTabs('layouteditor_fields', tabs);
+	else
+		return '<div class="FieldTagWizard"><p>No Field Tags available for this Layout Type</p></div>';
 }
 
 function findFieldObjectByName(fieldname)
@@ -297,7 +317,13 @@ function renderFieldTags(startchar,endchar,fieldtypes_to_skip,param_group)
 
 	        result+='<div style="vertical-align:top;display:inline-block;">';
 			result+='<div style="display:inline-block;">';
-		    result+='<a href=\'javascript:addFieldTag("0","'+startchar+'","'+endchar+'","'+btoa(field.fieldname)+'",'+p+');\' class="btn" alt="'+alt+'" title="'+alt+'">'+button_value+'</a>';
+			
+			if(joomlaVersion < 4)
+				result+='<a href=\'javascript:addFieldTag("0","'+startchar+'","'+endchar+'","'+btoa(field.fieldname)+'",'+p+');\' class="btn" alt="'+alt+'" title="'+alt+'">'+button_value+'</a>';
+			else
+				result+='<a href=\'javascript:addFieldTag("0","'+startchar+'","'+endchar+'","'+btoa(field.fieldname)+'",'+p+');\' class="btn-primary" alt="'+alt+'" title="'+alt+'">'+button_value+'</a>';
+			
+			
 		    result+='</div>';
 	                //result+='<div style="display:inline-block;">'+tag.description+'</div>';
 	        result+='</div>';

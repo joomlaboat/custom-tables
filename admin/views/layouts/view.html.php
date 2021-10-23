@@ -22,10 +22,13 @@ class CustomtablesViewLayouts extends JViewLegacy
 	 * display method of View
 	 * @return void
 	 */
+	 
+	var $ct;
+	 
 	public function display($tpl = null)
 	{
-		$version = new Version;
-		$this->version = (int)$version->getShortVersion();
+		$model = $this->getModel();
+		$this->ct = $model->ct;
 		
 		// Assign the variables
 		$this->form = $this->get('Form');
@@ -65,7 +68,10 @@ class CustomtablesViewLayouts extends JViewLegacy
 		}
 
 		// Display the template
-		parent::display($tpl);
+		if($this->ct->Env->version < 4)
+			parent::display($tpl);
+		else
+			parent::display('quatro');
 
 		// Set the document
 		$this->setDocument();

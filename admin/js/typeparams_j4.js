@@ -286,18 +286,6 @@ function inputBoxPreRender(proversion,param, param_count,i,vlu,att,typeparams_bo
     return result;
 }
 
-/*
-function ct_initPopovers (event)
-{
-    jQuery(function($)
-    {
-        //container ||
-        $(document).find(".hasPopover").popover({"html": true,"trigger": "hover focus","container": "body"});
-    });
-
-}
-*/
-
 function getInputType(obj)
 {
     if (obj && typeof(obj)== "object" && obj.childNodes && typeof(obj.childNodes)!== "undefined")
@@ -350,6 +338,8 @@ function updateParamString(inputboxid,countlist,countparams,objectid,e,rawquotes
 
            objectname+=i;
 
+		
+
            var obj=document.getElementById(objectname);
            if(obj)
            {
@@ -363,7 +353,7 @@ function updateParamString(inputboxid,countlist,countparams,objectid,e,rawquotes
                else
                    v=obj.value;
 
-                if(!rawquotes)//if raw quotes is set to true then don't change it
+                if(!rawquotes && v!='')//if raw quotes is set to true then don't change it
                 {
                     var q=false;
                     if(v.indexOf('"')!=-1)
@@ -451,11 +441,9 @@ function getSelectValues(select)
 
 function getRadioValue(objectname)
 {
-    //alert(objectname);
     var radios = document.getElementsByName(objectname);
     var v="";
     var length=radios.length;
-    //alert(length);
 
     for (var i = 0; i < length; i++)
     {
@@ -467,20 +455,7 @@ function getRadioValue(objectname)
         if (radios[i].checked)
         {
             v=radios[i].value;
-
-
-            //var c=label_class+" btn-success active";
-            //if(v=="")
-              //  c+=" btn-danger";//active 
-            //else
-                //c+=" btn-success";//active 
-//alert(c);
-            //label_obj.className=c;
-
         }
-        //else
-          //  label_obj.className=label_class;
-
     }
 
     return v;
@@ -491,7 +466,10 @@ function renderInput_Radio(objname,param,value,onchange)
     {
         var param_att=param["@attributes"];
 
-        var result='<fieldset id="'+objname+'" class="btn-group btn-group-yesno radio">';//
+		var result='<fieldset>';
+		result += '<legend class="visually-hidden">Label3</legend>';
+		result += '<div class="switcher" id="'+objname+'">';
+
         var options= param_att.options.split(",");
 
                     for(var o=0;o<options.length;o++)
@@ -499,33 +477,16 @@ function renderInput_Radio(objname,param,value,onchange)
                         var opt=options[o].split("|");
                         var id=objname+""+o;
 
-                        var c='btn';
-                        if(opt[0]==value)
-                        {
-                            result+='<input type="radio" id="'+id+'" name="'+objname+'" value="'+opt[0]+'" checked="checked" '+onchange+' />';
+                        var c='';
+                        if(opt[0]=='')
+							c+='active ';
 
-                            c+=' active';
-                        }
-                        else
-                        {
-                            result+='<input type="radio" id="'+id+'" name="'+objname+'" value="'+opt[0]+'" '+onchange+'  />';
+						let cssclass = '';//c + (opt[0]==value ? 'valid form-control-success': 'valid');
 
-                        }
-
-                        if(opt[0]==value)
-                        {
-                            if(opt[0]!='' && opt[0]!='0')
-                                c+=' btn-success';
-                            else
-                                c+=' btn-danger';
-                        }
-
-                        result+='<label class="'+c+'" for="'+id+'" id="'+id+'_label" >'+opt[1]+'</label>';
-
-
+						result+='<input type="radio" id="'+id+'" name="'+objname+'" value="'+opt[0]+'"' + (opt[0]==value ? ' checked="checked"': '') + onchange + ' class="'+cssclass+'" aria-invalid="false">';
+						result+='<label for="'+id+'" id="'+id+'_label" >'+opt[1]+'</label>		<span class="toggle-outside"><span class="toggle-inside"></span></span>';
                     }
-
-                    result+='</fieldset>';
+                    result+='</div></fieldset>';
 
         return result;
     }
@@ -1005,22 +966,7 @@ function renderInput_Radio(objname,param,value,onchange)
                             if(option.tableid!=currentTable)
                                 ok=false;
                         }
-                        /*
-                        else
-                        {
-                            var paramIndex=parseInt(layout_table);
-                            if(!isNaN(paramIndex))
-                            {
-                                //alert('fieldtype_param_'+paramIndex);
-                                //var p=document.getElementById('fieldtype_param_'+paramIndex).value; //param index can be set in XML file
-                                //alert(p);
-                                
-                                //if(option.tableid!=p)//if layout not belong to selected table the do not show it
-                                    //ok=false;
-                            }
-                            
-                        }*/
-                              
+
                         if(ok)
                         {   //table checked not checking layout type
                             if(renderInput_Layout_checktype(layout_type,parseInt(option.layouttype)))

@@ -175,7 +175,7 @@
 			<param name="decimals" label="Decimals" example="2" description="Number of digits to the right of the decimal point (the scale). Must be no larger than Precision Number of digits." default="2" type="number" min="1" max="30" />
 			<param name="numberofdigits" label="Precision" description="Maximum number of digits (the precision)." default="20" type="number" min="1" max="65" />
 			<param name="smart" label="Smart Imput" description="Allows input without pressing decimal point key. Example: to type [12.67]  just type [1267] The decimal point will be placed by itself."
-				   default="" type="radio" options="smart|Yes,|No" example="smart" />
+				   default="" type="radio" options="|No,smart|Yes" example="smart" />
 		</params>
 
 

@@ -11,13 +11,21 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+use \Joomla\CMS\Version;
 use CustomTables\CT;
 
 $theme='eclipse';
 $document = JFactory::getDocument();
 
 $document->addCustomTag('<script src="'.JURI::root(true).'/administrator/components/com_customtables/js/ajax.js"></script>');
-$document->addCustomTag('<script src="'.JURI::root(true).'/administrator/components/com_customtables/js/typeparams.js"></script>');
+
+$version_object = new Version;
+$version = (int)$version_object->getShortVersion();
+
+if($version < 4)
+	$document->addCustomTag('<script src="'.JURI::root(true).'/administrator/components/com_customtables/js/typeparams.js"></script>');
+else
+	$document->addCustomTag('<script src="'.JURI::root(true).'/administrator/components/com_customtables/js/typeparams_j4.js"></script>');
 
 $document->addCustomTag('<script src="'.JURI::root(true).'/administrator/components/com_customtables/js/layoutwizard.js"></script>');
 $document->addCustomTag('<script src="'.JURI::root(true).'/administrator/components/com_customtables/js/layouteditor.js"></script>');
@@ -38,18 +46,19 @@ $document->addCustomTag('<script src="'.JURI::root(true).'/components/com_custom
 $document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/libraries/codemirror/mode/htmlmixed/htmlmixed.js"></script>');
 $document->addCustomTag('<link rel="stylesheet" href="'.JURI::root(true).'/components/com_customtables/libraries/codemirror/theme/'.$theme.'.css">');
 
+$document->addCustomTag('<link rel="stylesheet" href="'.JURI::root(true).'/media/system/css/fields/switcher.css">');
 
 	function renderEditor($textareacode,$textareaid,$typeboxid,$textareatabid,&$onPageLoads)
 	{
 		$ct = new CT;
 		
-			$index=count($onPageLoads);
-			$result='<div class="customlayoutform layouteditorbox">'.$textareacode.'</div><div id="'.$textareatabid.'"></div>';
-			$languages = getKnownLanguages();
+		$index=count($onPageLoads);
+		$result='<div class="customlayoutform layouteditorbox">'.$textareacode.'</div><div id="'.$textareatabid.'"></div>';
+		$languages = getKnownLanguages();
 
 			$code='
 		languages=['.$languages.'];
-		
+		text_areas.push(["'.$textareaid.'",'.$index.']);
         codemirror_editors['.$index.'] = CodeMirror.fromTextArea(document.getElementById("'.$textareaid.'"), {
           mode: "layouteditor",
 	   lineNumbers: true,
@@ -67,7 +76,7 @@ $document->addCustomTag('<link rel="stylesheet" href="'.JURI::root(true).'/compo
 
 		loadTagParams("'.$typeboxid.'","'.$textareatabid.'");
 		loadFields("jform_tableid","fieldWizardBox");
-		loadLayout();
+		loadLayout('.$ct->Env->version.');
 		addExtraEvents();
 
 	';
@@ -129,6 +138,8 @@ $document->addCustomTag('<link rel="stylesheet" href="'.JURI::root(true).'/compo
 		adjustEditorHeight();
 
     };
+	
+	setTimeout(addTabExtraEvents, 100);
 
     </script>';
 

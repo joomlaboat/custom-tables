@@ -99,12 +99,9 @@ function findTagSets(layouttypeid,priority)
 
 function loadTagParams(type_id,tags_box)
 {
-    //type_obj_id=type_id;
-
     current_params_count=0;
 
     type_obj=document.getElementById(type_id);
-    //tags_box_obj=document.getElementById(tags_box);
 
     if(!layout_tags_loaded)
     {
@@ -120,9 +117,6 @@ function loadTagParams(type_id,tags_box)
 function loadTags(type_id,tags_box)
 {
     type_obj=document.getElementById(type_id);
-    //tags_box_obj=document.getElementById(tags_box);
-
-    //tags_box_obj.innerHTML='Loading...';
 
     var url=websiteroot+"components/com_customtables/xml/tags_249.xml";
 
@@ -392,7 +386,9 @@ function updateCodeMirror(text)
     {
         for(var i=0;i<text_areas.length;i++)
         {
-        	if(text_areas[i][0]==code)
+			let a = text_areas[i][0];
+			
+        	if(a == 'jform_' +code)
         		return text_areas[i][1];
         }
         return -1;
@@ -716,6 +712,39 @@ function renderTags(index,tagset)
     return result;
 }
 
+
+function addTabExtraEvent(id)
+{
+	let tab_object=document.querySelectorAll('[aria-controls="' + id + '-tab"]');
+	for (let i = 0; i < tab_object.length; i++)  
+	{
+		tab_object[i].addEventListener("click",  function(){ 
+
+			let index=textarea_findindex(id);
+			
+			setTimeout(function()
+                               {
+                                    codemirror_active_index=index;
+                                    let cm=codemirror_editors[index];
+                                    cm.refresh();
+                               }, 100);
+		}); 
+	}
+}
+
+function addTabExtraEvents()
+{
+	let tabs = ['layoutcode']
+	setTimeout(function()
+    {
+        codemirror_active_index=0;
+        let cm=codemirror_editors[0];
+        cm.refresh();
+    }, 100);
+
+	for (let i = 0; i < tabs.length; i++)  
+		addTabExtraEvent(tabs[i]);
+}
 
 function addExtraEvents()
 {

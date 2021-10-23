@@ -35,16 +35,18 @@ class CustomtablesViewListoflayouts extends JViewLegacy
 	 * Listoflayouts view display method
 	 * @return void
 	 */
+	var $ct;
+	 
 	function display($tpl = null)
 	{
-		$version = new Version;
-		$this->version = (int)$version->getShortVersion();
-		
 		if ($this->getLayout() !== 'modal')
 		{
 			// Include helper submenu
 			CustomtablesHelper::addSubmenu('listoflayouts');
 		}
+
+		$model = $this->getModel();
+		$this->ct = $model->ct;
 
 		// Assign data to the view
 		$this->items = $this->get('Items');
@@ -52,7 +54,7 @@ class CustomtablesViewListoflayouts extends JViewLegacy
 		$this->state = $this->get('State');
 		$this->user = JFactory::getUser();
 		
-		if($this->version >= 4)
+		if($this->ct->Env->version >= 4)
 		{
 			$this->filterForm    = $this->get('FilterForm');
 			$this->activeFilters = $this->get('ActiveFilters');
@@ -75,7 +77,7 @@ class CustomtablesViewListoflayouts extends JViewLegacy
 		// We don't need toolbar in the modal window.
 		if ($this->getLayout() !== 'modal')
 		{
-			if($this->version < 4)
+			if($this->ct->Env->version < 4)
 			{
 				$this->addToolbar_3();
 				$this->sidebar = JHtmlSidebar::render();
@@ -97,7 +99,7 @@ class CustomtablesViewListoflayouts extends JViewLegacy
 		}
 
 		// Display the template
-		if($this->version < 4)
+		if($this->ct->Env->version < 4)
 			parent::display($tpl);
 		else
 			parent::display('quatro');
