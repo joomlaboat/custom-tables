@@ -118,7 +118,7 @@ function loadTags(type_id,tags_box)
 {
     type_obj=document.getElementById(type_id);
 
-    var url=websiteroot+"components/com_customtables/xml/tags_249.xml";
+    var url=websiteroot+"components/com_customtables/xml/tags_250.xml";
 
     var http = null;
     var params = "";

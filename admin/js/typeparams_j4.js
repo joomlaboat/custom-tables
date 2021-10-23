@@ -1124,7 +1124,7 @@ function loadTypes_silent(processMessageBox)
     //var processMessageBox_obj=document.getElementById(processMessageBox);
     //processMessageBox_obj.innerHTML='Loading Fields Types...';
 
-    var url=websiteroot+"components/com_customtables/xml/fieldtypes_248.xml";
+    var url=websiteroot+"components/com_customtables/xml/fieldtypes_250.xml";
 
     var http = null;
     var params = "";
@@ -1174,7 +1174,7 @@ function loadTypes(typeparams_box_obj,jform_type,jform_typeparams,typeparams_box
 {
     typeparams_box_obj.innerHTML='Loading...';
 
-    var url=websiteroot+"components/com_customtables/xml/fieldtypes_248.xml";
+    var url=websiteroot+"components/com_customtables/xml/fieldtypes_250.xml";
 
     var http = null;
     var params = "";
