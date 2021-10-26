@@ -13,7 +13,6 @@ class JHTMLESUserGroupsView
 {
     public static function render($valuearray_str,$field='')
     {
-		
 		$db = JFactory::getDBO();
 				
 		$query = $db->getQuery(true);

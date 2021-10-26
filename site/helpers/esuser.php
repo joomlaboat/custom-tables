@@ -42,13 +42,12 @@ class JHTMLESUser
 
 		$query->group('#__users.id');
 		$query->order('#__users.name');
-				
+
 		$db->setQuery($query);
 
 		$options=$db->loadObjectList();
 		$options=array_merge(array(array('id'=>'','name'=>'- '.JText ::_( 'COM_CUSTOMTABLES_SELECT' ))),$options);
 
 		return JHTML::_('select.genericlist', $options, $control_name, $cssclass.' style="'.$style.'" '.$attribute.' ', 'id', 'name', $value,$control_name);
-
 	}
 }

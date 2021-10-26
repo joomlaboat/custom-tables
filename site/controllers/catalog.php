@@ -29,8 +29,6 @@ $ct = new CT;
 
 	$task = $ct->Env->jinput->getCmd('task');
 	
-	
-	
 	$app = JFactory::getApplication();
 	$params=$app->getParams();
 	$edit_model = $this->getModel('edititem');
@@ -70,7 +68,7 @@ $ct = new CT;
 		else
 		{
 			// not authorized
-			if ($clean == 1)
+			if ($ct->Env->clean == 1)
 				die('not authorized');
 			else
 			{
@@ -124,9 +122,10 @@ function doTheTask(&$ct,$task,$params,$edit_model,&$this_)
 	case 'delete':
 		
 		$count = $edit_model->delete();
+
 		if ($count > 0)
 		{
-			if ($clean == 1)
+			if ($ct->Env->clean == 1)
 				die('deleted');
 			else
 			{
@@ -140,7 +139,7 @@ function doTheTask(&$ct,$task,$params,$edit_model,&$this_)
 		}
 		elseif($count < 0)
 		{
-			if ($clean == 1)
+			if ($ct->Env->clean == 1)
 				die('error');
 			else
 			{
@@ -149,8 +148,6 @@ function doTheTask(&$ct,$task,$params,$edit_model,&$this_)
 					$msg.='_1';
 					
 				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended($msg,abs($count)), 'status' => 'error');
-				
-				//return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_NOT_DELETED'), 'status' => 'error');
 			}
 		}
 
@@ -160,14 +157,14 @@ function doTheTask(&$ct,$task,$params,$edit_model,&$this_)
 		
 		if ($edit_model->copy($msg, $link))
 		{
-			if ($clean == 1)
+			if ($ct->Env->clean == 1)
 				die('copied');
 			else
 				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_COPIED'), 'status' => null);
 		}
 		else
 		{
-			if ($clean == 1)
+			if ($ct->Env->clean == 1)
 				die('error');
 			else
 				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_NOT_COPIED'), 'status' => 'error');
@@ -180,7 +177,7 @@ function doTheTask(&$ct,$task,$params,$edit_model,&$this_)
 		$count = $edit_model->Refresh();
 		if ($count > 0)
 		{
-			if ($clean == 1)
+			if ($ct->Env->clean == 1)
 				die('refreshed');
 			else
 			{
@@ -193,7 +190,7 @@ function doTheTask(&$ct,$task,$params,$edit_model,&$this_)
 		}
 		else
 		{
-			if ($clean == 1)
+			if ($ct->Env->clean == 1)
 				die('error');
 			else
 			{
@@ -211,7 +208,7 @@ function doTheTask(&$ct,$task,$params,$edit_model,&$this_)
 		$count = $edit_model->setPublishStatus(1);
 		if ($count > 0)
 		{
-			if ($clean == 1)
+			if ($ct->Env->clean == 1)
 				die('published');
 			else
 			{
@@ -224,7 +221,7 @@ function doTheTask(&$ct,$task,$params,$edit_model,&$this_)
 		}
 		elseif($count < 0)
 		{
-			if ($clean == 1)
+			if ($ct->Env->clean == 1)
 				die('error');
 			else
 			{
@@ -243,7 +240,7 @@ function doTheTask(&$ct,$task,$params,$edit_model,&$this_)
 		$count = $edit_model->setPublishStatus(0);
 		if ($count > 0)
 		{
-			if ($clean == 1)
+			if ($ct->Env->clean == 1)
 				die('unpublished');
 			else
 			{
@@ -256,7 +253,7 @@ function doTheTask(&$ct,$task,$params,$edit_model,&$this_)
 		}
 		elseif($count < 0)
 		{
-			if ($clean == 1)
+			if ($ct->Env->clean == 1)
 				die('error');
 			else
 			{
@@ -305,14 +302,14 @@ function doTheTask(&$ct,$task,$params,$edit_model,&$this_)
 		$listing_id = $ct->Env->jinput->getInt('listing_id');
 		if(CTUser::ResetPassword($ct,$listing_id))
 		{
-			if ($clean == 1)
+			if ($ct->Env->clean == 1)
 				die('password has been reset');
 			else
 				return (object) array('link' => $link, 'status' => null);
 		}
 		else
 		{
-			if ($clean == 1)
+			if ($ct->Env->clean == 1)
 				die('error');
 			else
 				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_USERS_RESET_COMPLETE_ERROR'), 'status' => 'error');

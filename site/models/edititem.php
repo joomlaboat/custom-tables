@@ -933,8 +933,6 @@ class CustomTablesModelEditItem extends JModelLegacy
 		$user_email='';
 		$user_name='';
 
-
-
 		//	Fields
 		$prefix='comes_';
 		$this->ct->Table->prefix = $prefix;
@@ -1048,21 +1046,15 @@ class CustomTablesModelEditItem extends JModelLegacy
 		if($id==0)
 		{
 			$isitnewrecords	=true;
-			if($this->params->get('eseditlayout')!='')
-				$publishstatus=1; //Pubished by default
+
+			$publishstatus = $this->params->get( 'publishstatus' );
+			if(is_null($publishstatus))
+				$publishstatus = $jinput->getInt('published');
 			else
-			{
-				$publishstatus = $this->params->get( 'publishstatus' );
-				if(is_null($publishstatus))
-					$publishstatus = $jinput->getInt('published');
-				else
-					$publishstatus = (int)$publishstatus;
-			}
+				$publishstatus = (int)$publishstatus;
 
 			if($this->ct->Table->tablerow['published_field_found'])
 				$savequery[]='published='.$publishstatus;
-
-			$db = JFactory::getDBO();
 			
 			$id_temp = ESTables::insertRecords($this->ct->Table->realtablename,$this->ct->Table->realidfieldname,$savequery);
 		}
@@ -1078,7 +1070,6 @@ class CustomTablesModelEditItem extends JModelLegacy
 			
 			$this->updateLog($id);			
 			$this->ct->Table->runUpdateQuery($savequery,$id);
-
 		}
 
 		if(count($savequery)<1)

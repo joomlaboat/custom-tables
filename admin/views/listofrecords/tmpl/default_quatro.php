@@ -25,7 +25,7 @@ HTMLHelper::_('behavior.multiselect');
 //$loggeduser = Factory::getUser(); used fo batch
 
 ?>
-<form action="<?php echo Route::_('index.php?option=com_customtables&view=listofrecords&tableid='.$this->tableid); ?>" method="post" name="adminForm" id="adminForm">
+<form action="<?php echo Route::_('index.php?option=com_customtables&view=listofrecords&tableid='.$this->ct->Table->tableid); ?>" method="post" name="adminForm" id="adminForm">
 	<div class="row">
 		<div class="col-md-12">
 			<div id="j-main-container" class="j-main-container">

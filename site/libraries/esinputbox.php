@@ -388,7 +388,7 @@ class ESInputBox
 
 						case 'userid':
 
-							$result.=$this->getUserBox($prefix,$esfield,$class,$value,false,$attributes);
+							$result.=$this->getUserBox($Model,$row,$prefix,$esfield,$class,$value,false,$attributes);
 							break;
 
 						case 'user':
@@ -396,7 +396,7 @@ class ESInputBox
 							if(count($row)==0)
 								$value=JFactory::getApplication()->input->get('es_'.$esfield['fieldname'],'','STRING');
 
-							$result.=$this->getUserBox($prefix,$esfield,$class,$value,true,$attributes);
+							$result.=$this->getUserBox($Model,$row,$prefix,$esfield,$class,$value,true,$attributes);
 							break;
 
 						case 'usergroup':
@@ -1029,7 +1029,7 @@ class ESInputBox
 	}
 	
 	
-	function getUserBox($prefix,&$esfield,$class,$value,$require_authorization,$attributes)
+	function getUserBox(&$Model,&$row,$prefix,&$esfield,$class,$value,$require_authorization,$attributes)
 	{
 		$result='';
 
@@ -1041,7 +1041,13 @@ class ESInputBox
 
 		$pair=JoomlaBasicMisc::csv_explode(',', $esfield['typeparams'], '"', false);
 		$usergroup=$pair[0];
-
+		
+		tagProcessor_General::process($Model,$usergroup,$row,'',1);
+		tagProcessor_Item::process(false,$Model,$row,$usergroup,'','',0);
+		tagProcessor_If::process($Model,$usergroup,$row,'',0);
+		tagProcessor_Page::process($Model,$usergroup);
+		tagProcessor_Value::processValues($Model,$row,$usergroup,'[]');
+		
 		$where='';
 		if(isset($pair[3]))
 			$where='INSTR(name,"'.$pair[3].'")';
