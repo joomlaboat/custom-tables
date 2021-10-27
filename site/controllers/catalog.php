@@ -120,7 +120,7 @@ function doTheTask(&$ct,$task,$params,$edit_model,&$this_)
 		break;
 
 	case 'delete':
-		
+
 		$count = $edit_model->delete();
 
 		if ($count > 0)

@@ -144,15 +144,12 @@
 
         if (confirm(msg))
         {
-                    var obj=document.getElementById(toolbarboxid);
-                    obj.innerHTML='';
-                    var returnto=btoa(window.location.href);
+			let obj=document.getElementById(toolbarboxid).innerHTML='';
 
+            let returnto=btoa(window.location.href);
+			let link=esPrepareLink(['task','listing_id','returnto','ids'],['task=delete','listing_id='+objid,'returnto='+returnto],custom_link);
 
-
-                    var link=esPrepareLink(['task','listing_id','returnto','ids'],['task=delete','listing_id='+objid,'returnto='+returnto],custom_link);
-
-	            window.location.href = link;
+	        window.location.href = link;
         }
         else
             es_LinkLoading=false;
