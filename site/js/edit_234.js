@@ -103,7 +103,7 @@ function checkFilters() {
 				let caption="";
 				if(d.valuerulecaption)
 					caption=d.valuerulecaption;
-				 
+					
 				passed = doValuerules(inputs[i], label, d.valuerule,caption);
 				if(!passed)
 					return false;
@@ -123,17 +123,16 @@ function isValidURL(str) {
     }
 }
 
-function doValuerules(obj, label, valuerules,caption) {
-	
-	let valuerules_and_arguments=doValuerules_ParseValues(valuerules);
+function doValuerules(obj, label, valuerules,caption)
+{
+	let ct_fielname = obj.name.replaceAll('comes_', '');
+	let valuerules_and_arguments=doValuerules_ParseValues(valuerules,ct_fielname);
 	
 	if(valuerules_and_arguments == null)
 		return true;
 	
 	let rules_str = "return " + valuerules_and_arguments.new_valuerules;
-	
 	let rules = new Function(rules_str); // this |x| refers global |x|
-		
 	let result = rules(valuerules_and_arguments.new_args);
 	
 	if(result)
@@ -147,13 +146,19 @@ function doValuerules(obj, label, valuerules,caption) {
 	return false;
 }
 
-function doValuerules_ParseValues(valuerules)
+function doValuerules_ParseValues(valuerules,ct_fielname)
 {
 	//let matches=valuerules.match(/(?<=\[)[^\][]*(?=])/g);  Doesn't work on Safari
 	let matches=valuerules.match(/\[(.*?)\]/g); // return example: ["[subject]","[date]"]
 	
 	if(matches == null)
-		return null;
+	{
+		valuerules = '[' + ct_fielname + ']' + valuerules;
+		matches=valuerules.match(/\[(.*?)\]/g); // return example: ["[subject]","[date]"]
+		
+		if(matches == null)
+			return null;
+	}
 		
 	let args=[];
 	
@@ -231,15 +236,16 @@ function doSanitanization(obj, sanitizers_string) {
     obj.value = value;
 }
 
-function checkRequiredFields() {
-	
+function checkRequiredFields()
+{
     if (!checkFilters())
         return false;
 	
     let requiredFields = document.getElementsByClassName("required");
 
-    for (let i = 0; i < requiredFields.length; i++) {
-        if (typeof requiredFields[i].id != "undefined") {
+    for (let i = 0; i < requiredFields.length; i++)
+	{
+		if (typeof requiredFields[i].id != "undefined") {
             if (requiredFields[i].id.indexOf("sqljoin_table_comes_") != -1) {
                 if (!CheckSQLJoinRadioSelections(requiredFields[i].id))
                     return false;
@@ -255,13 +261,16 @@ function checkRequiredFields() {
             let n = requiredFields[i].name.toString();
 
             if (n.indexOf("comes_") != -1) {
-                let objname = n.replace('_selector', '');
+				
+				let objname = n.replace('_selector', '');
 
                 let label = "One field";
 
                 let d = requiredFields[i].dataset;
                 if (d.label)
                     label = d.label;
+					
+				
 
                 if (requiredFields[i].type == "text") {
                     let obj = document.getElementById(objname);
@@ -271,9 +280,9 @@ function checkRequiredFields() {
                     }
                 } else if (requiredFields[i].type == "select-one") {
                     let obj = document.getElementById(objname);
-                    let count = obj.options.length;
-
-                    if (count === 0) {
+					let v = obj.value;
+					
+                    if (obj.value === null || obj.value == '') {
                         alert(label + " not selected.");
                         return false;
                     }
