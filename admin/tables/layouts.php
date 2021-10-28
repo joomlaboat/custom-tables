@@ -24,7 +24,12 @@ class CustomtablesTableLayouts extends JTable
 {
 	var $id = null;
 	var $changetimestamp = null;
+	
 	var $layoutcode = null;
+	var $layoutmobile = null;
+	var $layoutcss = null;
+	var $layoutjs = null;
+	
 	var $layoutname = null;
 	var $layouttype = null;
 	var $tableid = null;

@@ -90,7 +90,8 @@ class CustomtablesModelListoflayouts extends JModelList
 		// set selection value to a translatable value
 		if (CustomtablesHelper::checkArray($items))
 		{
-			$translations = Layouts::layoutTypeTranslation();
+			$Layouts = new Layouts($this->ct);
+			$translations = $Layouts->layoutTypeTranslation();
 
 			foreach ($items as $nr => &$item)
 			{
@@ -154,7 +155,13 @@ class CustomtablesModelListoflayouts extends JModelList
 			else
 			{
 				$search_clean = $db->quote('%' . $db->escape($search) . '%');
-				$query->where('((a.layoutname LIKE '.$search_clean.') OR INSTR(a.layoutcode,'.$db->quote($search).'))');
+				$query->where('(
+					(a.layoutname LIKE '.$search_clean.') OR 
+					INSTR(a.layoutcode,'.$db->quote($search).') OR 
+					INSTR(a.layoutmobile,'.$db->quote($search).') OR 
+					INSTR(a.layoutcss,'.$db->quote($search).') OR
+					INSTR(a.layoutjs,'.$db->quote($search).')
+					)');
 			}
 		}
 

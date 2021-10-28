@@ -17,13 +17,6 @@ use Joomla\CMS\Editor\Editor;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 
-//----------------
-
-//$wa = $this->document->getWebAssetManager();
-//$wa->useScript('keepalive')
-	//->useScript('form.validate');
-//-----------------	
-
 $document = JFactory::getDocument();
 $document->addCustomTag('<link href="'.JURI::root(true).'/administrator/components/com_customtables/css/fieldtypes.css" rel="stylesheet">');
 $document->addCustomTag('<link href="'.JURI::root(true).'/administrator/components/com_customtables/css/modal.css" rel="stylesheet">');
@@ -40,6 +33,7 @@ require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components'.DIRECTORY_SEPARATOR
 	.'libraries'.DIRECTORY_SEPARATOR .'customtables'. DIRECTORY_SEPARATOR . 'layouteditor' .DIRECTORY_SEPARATOR.'layouteditor.php');
 
 $onPageLoads=array();
+$typeboxid="jform_layouttype";
 
 ?>
 <script type="text/javascript">
@@ -48,6 +42,11 @@ $onPageLoads=array();
 
 <!--<div id="customtables_loader" style="display: none;">-->
 	<form action="<?php echo JRoute::_('index.php?option=com_customtables&layout=edit&id='.(int) $this->item->id.$this->referral); ?>" method="post" name="adminForm" id="adminForm" class="form-validate" enctype="multipart/form-data">
+	
+	<!--
+	<div class="form-horizontal">
+		<div class="row-fluid form-horizontal-desktop">
+		-->
 	
 		<?php echo HTMLHelper::_('uitab.startTabSet', 'layouteditorTabs', ['active' => 'general', 'recall' => true, 'breakpoint' => 768]); ?>
 	
@@ -74,49 +73,42 @@ $onPageLoads=array();
 		<?php echo HTMLHelper::_('uitab.endTab'); ?>
 
 		<?php echo HTMLHelper::_('uitab.addTab', 'layouteditorTabs', 'layoutcode-tab', Text::_('COM_CUSTOMTABLES_LAYOUTS_HTML')); ?>
-		<div class="form-horizontal">
-			<div class="row-fluid form-horizontal-desktop"></div>
-			<div class="row-fluid form-horizontal-desktop">
-				<div class="span12">
-					<div class="control-group">
-						<div style="width: 100%;position: relative;">
-							<?php
-							
-							if($this->item->layoutcode!="")
-								echo '<div class="ct_tip">TIP: Double Click on a Layout Tag to edit parameters.</div>'; ?>
-						</div>
-						<?php
-							$textareacode='<textarea name="jform[layoutcode]" id="jform_layoutcode" filter="raw" style="width:100%" rows="30">'.$this->item->layoutcode.'</textarea>';
-							$textareaid='jform_layoutcode';
-							$textareatabid="layouttagbox";
-							$typeboxid="jform_layouttype";
-							echo renderEditor($textareacode,$textareaid,$typeboxid,$textareatabid,$onPageLoads);
-						?>
-					
-					</div>
-				</div>
-			<input type="hidden" name="task" value="layouts.edit" />
-			<?php echo JHtml::_('form.token'); ?>
-	
-			</div>
-		</div>
-		
+		<?php echo $this->renderTextArea($this->item->layoutcode,'layoutcode',$typeboxid,$onPageLoads); ?>
 		<?php echo HTMLHelper::_('uitab.endTab'); ?>
 		
-		
-		<?php /* 
-		
-		This will be used in furture version
-		echo HTMLHelper::_('uitab.addTab', 'layouteditorTabs', 'layoutcss-tab', Text::_('COM_CUSTOMTABLES_LAYOUTS_CSS')); ?>
+		<?php echo HTMLHelper::_('uitab.addTab', 'layouteditorTabs', 'layoutmobile-tab', Text::_('COM_CUSTOMTABLES_LAYOUTS_HTML_MOBILE')); ?>
+		<?php 
+			if($this->ct->Env->advancedtagprocessor)
+				echo $this->renderTextArea($this->item->layoutmobile,'layoutmobile',$typeboxid,$onPageLoads);
+			else
+				echo Text::_('COM_CUSTOMTABLES_AVAILABLE');
+		?>
 		<?php echo HTMLHelper::_('uitab.endTab'); ?>
 		
+		<?php echo HTMLHelper::_('uitab.addTab', 'layouteditorTabs', 'layoutcss-tab', Text::_('COM_CUSTOMTABLES_LAYOUTS_CSS')); ?>
+		<?php 
+			if($this->ct->Env->advancedtagprocessor)
+				echo $this->renderTextArea($this->item->layoutcss,'layoutcss',$typeboxid,$onPageLoads);
+			else
+				echo Text::_('COM_CUSTOMTABLES_AVAILABLE');
+		?>
+		<?php echo HTMLHelper::_('uitab.endTab'); ?>
 		
 		<?php echo HTMLHelper::_('uitab.addTab', 'layouteditorTabs', 'layoutjs-tab', Text::_('COM_CUSTOMTABLES_LAYOUTS_JS')); ?>
+		<?php 
+			if($this->ct->Env->advancedtagprocessor)
+				echo $this->renderTextArea($this->item->layoutjs,'layoutjs',$typeboxid,$onPageLoads); 
+			else
+				echo Text::_('COM_CUSTOMTABLES_AVAILABLE');
+		?>
 		<?php echo HTMLHelper::_('uitab.endTab'); ?>
 		
-		<?php echo HTMLHelper::_('uitab.endTabSet'); */ ?>
+		<?php echo HTMLHelper::_('uitab.endTabSet'); ?>
 
 		
+		
+		<input type="hidden" name="task" value="layouts.edit" />
+		<?php echo JHtml::_('form.token'); ?>
 		
 		<div class="clearfix"></div>
 		<?php echo JLayoutHelper::render('layouts.details_under', $this);
@@ -133,6 +125,6 @@ $onPageLoads=array();
 		require('dependencies.php');
 		echo renderDependencies($this->item); // this will be shown upon the click in the toolbar
 		?>
-		</div></div>
+		<!--</div></div>-->
 	</form>
 <!--</div>-->

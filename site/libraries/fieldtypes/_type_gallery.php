@@ -168,5 +168,3 @@ class CT_FieldTypeTag_imagegallery
 	}
     
 }
-
-?>

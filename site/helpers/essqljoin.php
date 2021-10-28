@@ -187,8 +187,9 @@ class JHTMLESSqlJoin
                 return array();
             }
 
-            $layouttype=0;
-            $layoutcode=Layouts::getLayout($pair[1],$layouttype);
+			$Layouts = new Layouts($model->ct);
+			$layoutcode = $Layouts->getLayout($pair[1]);
+
             if(!isset($layoutcode) or $layoutcode=='')
             {
 				JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_LAYOUT_NOT_FOUND').' "'.$pair[1].'"', 'error');

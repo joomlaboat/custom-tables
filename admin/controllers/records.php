@@ -228,7 +228,9 @@ class CustomtablesControllerRecords extends JControllerForm
 		$editModel = JModelLegacy::getInstance('EditItem', 'CustomTablesModel', $_params);
 		$editModel->load($_params,true);
 		
-		$editModel->pagelayout=Layouts::createDefaultLayout_Edit($editModel->ct->Table->fields,false);
+		$Layouts = new Layouts($editModel->ct);
+			
+		$editModel->pagelayout = $Layouts->createDefaultLayout_Edit($editModel->ct->Table->fields,false);
 
 		$msg_='';
 		

@@ -23,8 +23,11 @@ class ESFiltering
 		$this->ct = $ct;
 	}
 
-	function getWhereExpression($param,&$PathValue)
+	function getWhereExpression(string $param,&$PathValue)
 	{
+		if($param == '')
+			return '';
+			
 		$db = JFactory::getDBO();
 		$numerical_fields=['int','float','checkbox','viewcount','userid','user','id','sqljoin','article','multilangarticle'];
 
@@ -32,6 +35,8 @@ class ESFiltering
 				
 		$items=$this->ExplodeSmartParams($param);
 				
+		$logic_operator = '';
+		
 		foreach($items as $item)
 		{
 			$logic_operator = $item[0];
@@ -121,6 +126,11 @@ class ESFiltering
 				$wheres[]='('.implode(' OR ',$multy_field_where).')';
 		}
 		
+		if($logic_operator =='')
+		{
+			JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('Search parameter "'.$param.'" is incorrect'), 'error');
+			return '';
+		}
 		
 
 		if($logic_operator == 'or' and count($wheres) > 1)
@@ -915,7 +925,10 @@ class ESFiltering
 	function ExplodeSmartParams($param)
 	{
 		$items=array();
-
+		
+		if($param == null)
+			return $items;
+		
 		$a=JoomlaBasicMisc::csv_explode(' and ',$param,'"',true);
 		foreach($a as $b)
 		{

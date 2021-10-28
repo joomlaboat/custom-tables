@@ -50,7 +50,8 @@ class CustomtablesViewRecords extends JViewLegacy
 		$this->Model = JModelLegacy::getInstance('EditItem', 'CustomTablesModel', $this->params);
 		$this->Model->load($this->params,true);
 		
-		$this->Model->pagelayout=Layouts::createDefaultLayout_Edit($this->Model->ct->Table->fields,false);
+		$Layouts = new Layouts($this->Model->ct);
+		$this->Model->pagelayout = $Layout->createDefaultLayout_Edit($this->Model->ct->Table->fields,false);
 		
 		$this->row=array();
 

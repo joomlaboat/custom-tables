@@ -488,7 +488,10 @@ class CustomTablesModelCatalog extends JModelLegacy
 				}//if($moduleid!=0)
 		}//if(!$this->blockExternalVars)
 
-		$paramwhere=$this->filtering->getWhereExpression($this->filterparam,$PathValue);
+		if($this->filterparam != null)
+			$paramwhere = $this->filtering->getWhereExpression($this->filterparam,$PathValue);
+		else
+			$paramwhere = '';
 
 		if($addition_filter!='')
 		{

@@ -171,9 +171,8 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 		if($this->getParam_safe('eseditlayout')!='')
 		{
-			$layouttype=0;
-			
-			$this->pagelayout=Layouts::getLayout($this->getParam_safe('eseditlayout'),$layouttype);
+			$Layouts = new Layouts($this->ct);
+			$this->pagelayout = $Layouts->getLayout($this->getParam_safe('eseditlayout'));
 		}
 		else
 			$this->pagelayout='';
@@ -1723,8 +1722,9 @@ class CustomTablesModelEditItem extends JModelLegacy
 		}
 
 		//-----------
-		$layouttype=0;
-		$message_layout_content=Layouts::getLayout($this->onrecordaddsendemaillayout,$layouttype);
+		$Layouts = new Layouts($this->ct);
+		$message_layout_content = $Layouts->getLayout($this->onrecordaddsendemaillayout);
+			
 		$note=$this->parseRowLayoutContent($row,$message_layout_content,true);
 		
 		$MailFrom 	= $mainframe->getCfg('mailfrom');

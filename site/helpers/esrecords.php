@@ -9,6 +9,7 @@
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die( 'Restricted access' );
 
+use CustomTables\CT;
 use CustomTables\Fields;
 use CustomTables\Layouts;
 
@@ -222,17 +223,16 @@ class JHTMLESRecords
 						$pair=JoomlaBasicMisc::csv_explode(':',$field,'"',false);
 						if($pair[0]!='layout' and $pair[0]!='tablelesslayout')
 								return '<p>unknown field/layout command "'.$field.'" should be like: "layout:'.$pair[1].'".</p>';
-
-                        $layouttype=0;
 						
-						$layoutcode=Layouts::getLayout($pair[1],$layouttype);
+						$ct = new CT;
+						
+						$Layouts = new Layouts($ct);
+						$layoutcode = $Layouts->getLayout($pair[1]);
+						
 						if($layoutcode=='')
 							return '<p>layout "'.$pair[1].'" not found or is empty.</p>';
 
-
-
 						$model->LayoutProc->layout=$layoutcode;
-
 
 						$htmlresult.='<table style="border:none;" id="sqljoin_table_'.$control_name.'">';
 						$i=0;
@@ -292,7 +292,7 @@ class JHTMLESRecords
         }
 
 	static protected function getSingle(&$model, &$model_nofiter,&$SearchResult,&$SearchResult_nofilter,&$valuearray,
-                                            $field,$selectorpair,$control_name,$style,$cssclass,$attribute,$value='',
+                                            $field,$selectorpair,$control_name,$style,$cssclass,$attribute,string $value,
 											$establename,$dynamic_filter='',$langpostfix='',$place_holder='')
 	{
 	

@@ -444,7 +444,7 @@ class Fields
     }
 
 
-    public static function addForeignKey($realtablename_, $realfieldname, $new_typeparams='', $join_with_table_name ='',$join_with_table_field='',&$msg)
+    public static function addForeignKey($realtablename_, $realfieldname, string $new_typeparams, string $join_with_table_name, string $join_with_table_field,&$msg)
 	{
 		$db = Factory::getDBO();
 		
@@ -851,7 +851,7 @@ class Fields
             return '';
     }
 
-    public static function getFieldType($tablename,$add_table_prefix=true,$realfieldname)
+    public static function getFieldType($tablename, bool $add_table_prefix,$realfieldname)
 	{
 		$db = Factory::getDBO();
 

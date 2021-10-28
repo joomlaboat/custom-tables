@@ -266,6 +266,7 @@ class IntegrityFields extends \CustomTables\IntegrityChecks
                 {
                     //Add field
                     IntegrityFields::addField($realtablename,$fieldname,$fieldtype,$typeparams);
+					return true;
                 }
 
                 $morethanonelang=true;
@@ -286,8 +287,11 @@ class IntegrityFields extends \CustomTables\IntegrityChecks
             if(!$found)
 			{
 				IntegrityFields::addField($realtablename,$proj_field,$fieldtype,$typeparams);
+				return true;
 			}
         }
+		
+		return false;
     }
 	
 	protected static function addField($realtablename,$realfieldname,$fieldtype,$typeparams)

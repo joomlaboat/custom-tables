@@ -502,7 +502,7 @@ function addFieldTag(index_unused,tagstartchar,tagendchar,tag,param_count)
 					return;
 				}
 
-				var layout_obj = document.getElementById("jform_layoutcode");
+				var layout_obj = document.getElementById(codemirror_active_areatext_id);
 				layout_obj.value=editor.getValue();
 
 				var v=layout_obj.value;

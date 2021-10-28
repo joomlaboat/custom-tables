@@ -398,7 +398,7 @@ class tagProcessor_Edit
         return $result;
     }
     
-    protected static function getToolbar(&$Model,$submitbuttons,$button1title,$button2title,$button3title,$redirectlink,$optional_class='',$captcha_found=false,$listing_id=0)
+    protected static function getToolbar(&$Model,$submitbuttons,$button1title,$button2title,$button3title,$redirectlink,$optional_class='',bool $captcha_found=false,int $listing_id=0)
 	{
         //will be depricated by July 2019
 		$toolbar='';
@@ -445,7 +445,7 @@ class tagProcessor_Edit
 
 	}//function
 
-    protected static function renderFields(&$row,&$Model,&$pagelayout,$langpostfix,$parentid,&$esinputbox,&$calendars,$style='',$replaceitecode,&$items_to_replace,$fieldNamePrefix)
+    protected static function renderFields(&$row,&$Model,&$pagelayout,$langpostfix,$parentid,&$esinputbox,&$calendars,string $style,$replaceitecode,&$items_to_replace,$fieldNamePrefix)
 	{
 		$field_objects = [];
 		$calendars=array();
@@ -503,7 +503,7 @@ class tagProcessor_Edit
 		return $field_objects;
 	}
 
-	protected static function renderField(&$row,&$Model,$langpostfix,$parentid,&$esinputbox,&$calendars,&$esfield, $class='',$attributes='',$option_list,$fieldNamePrefix)
+	protected static function renderField(&$row,&$Model,$langpostfix,$parentid,&$esinputbox,&$calendars,&$esfield, string $class, string $attributes,$option_list,$fieldNamePrefix)
 	{
 		if($esfield['parentid']==$parentid or $parentid==-1)
 		{

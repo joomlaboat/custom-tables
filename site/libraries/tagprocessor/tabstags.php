@@ -14,18 +14,18 @@ use Joomla\CMS\Version;
 
 class tagProcessor_Tabs
 {
-	public static function process(&$Model,&$htmlresult)
+	public static function process(&$htmlresult)
     {
 		$version_object = new Version;
 		$version = (int)$version_object->getShortVersion();
 		
 		if($version < 4)
-			tagProcessor_Tabs::process_3($Model,$htmlresult);
+			tagProcessor_Tabs::process_3($htmlresult);
 		else
-			tagProcessor_Tabs::process_4($Model,$htmlresult);
+			tagProcessor_Tabs::process_4($htmlresult);
 	}
 	
-	public static function process_4(&$Model,&$htmlresult)
+	public static function process_4(&$htmlresult)
     {
 			$options=array();
             $fList=JoomlaBasicMisc::getListToReplace('tab',$options,$htmlresult,'{}');
@@ -56,16 +56,13 @@ class tagProcessor_Tabs
             $htmlresult=str_replace('{/tabs}',$endtab,$htmlresult);
 	}
 	
-    public static function process_3(&$Model,&$htmlresult)
+    public static function process_3(&$htmlresult)
     {
 			$options=array();
             $fList=JoomlaBasicMisc::getListToReplace('tab',$options,$htmlresult,'{}');
 
             if(count($fList))
             {
-                //if((bool)$Model->params->get("loadBootstrap",1))
-                //JHTML::_('stylesheet','media/jui/css/bootstrap.min.css',false);
-
                 $document = JFactory::getDocument();
         		$document->addCustomTag('
                 <script>

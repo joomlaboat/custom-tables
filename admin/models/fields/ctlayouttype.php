@@ -9,6 +9,7 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\CT;
 use CustomTables\Layouts;
 
 jimport('joomla.form.helper');
@@ -27,6 +28,8 @@ class JFormFieldCTLayoutType extends JFormFieldList
 	
 	public function getOptions()//$name, $value, &$node, $control_name)
 	{
+		$ct = new CT;
+		
 		// Get a db connection.
 		$db = JFactory::getDbo();
 
@@ -46,7 +49,8 @@ class JFormFieldCTLayoutType extends JFormFieldList
 		$options = array();
 		if ($results)
 		{
-			$translations = Layouts::layoutTypeTranslation();
+			$Layouts = new Layouts($ct);
+			$translations = $Layouts->layoutTypeTranslation();
 			$results = array_unique($results);
 			
 			foreach ($results as $layouttype)

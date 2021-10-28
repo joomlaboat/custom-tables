@@ -29,7 +29,7 @@ class ESInputBox
 	
 	var $Model;
 
-	function renderFieldBox(&$Model,$prefix,&$esfield,&$row,$class_,$attributes='',$option_list)
+	function renderFieldBox(&$Model,$prefix,&$esfield,&$row,$class_, string $attributes,$option_list)
 	{
 		$this->Model = $Model;
 		
@@ -291,10 +291,16 @@ class ESInputBox
 
 								if(in_array('spellcheck',$typeparams))
 								{
-									$document = JFactory::getDocument();
-									$document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/thirdparty/jsc/include.js"></script>');
-									$document->addCustomTag('<script type="text/javascript">$Spelling.SpellCheckAsYouType("'.$fname.'");</script>');
-									$document->addCustomTag('<script type="text/javascript">$Spelling.DefaultDictionary = "English";</script>');
+									$file_path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables'.DIRECTORY_SEPARATOR . 'thirdparty'
+										. DIRECTORY_SEPARATOR . 'jsc' . DIRECTORY_SEPARATOR . 'include.js';
+									
+									if(file_exists($file_path))
+									{
+										$document = JFactory::getDocument();
+										$document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/thirdparty/jsc/include.js"></script>');
+										$document->addCustomTag('<script type="text/javascript">$Spelling.SpellCheckAsYouType("'.$fname.'");</script>');
+										$document->addCustomTag('<script type="text/javascript">$Spelling.DefaultDictionary = "English";</script>');
+									}
 								}
 							break;
 

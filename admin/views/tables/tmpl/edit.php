@@ -188,7 +188,7 @@ $document->addCustomTag('<link href="'.JURI::root(true).'/administrator/componen
 	</div>
 	<?php echo JHtml::_('bootstrap.endTab'); ?>
 
-	<?php JHtml::_('bootstrap.endTabSet'); ?>
+	<?php echo JHtml::_('bootstrap.endTabSet'); ?>
 
 	<div>
 		<input type="hidden" name="task" value="tables.edit" />

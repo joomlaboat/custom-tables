@@ -10,31 +10,31 @@
 defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\Fields;
-
 use CustomTables\Layouts;
 
 class tagProcessor_General
 {
     public static function process(&$Model,&$pagelayout,&$row,$recordlist,$number)
     {
-
-        tagProcessor_General::TableInfo($Model,$pagelayout);
+		$ct = $Model->ct;
+        tagProcessor_General::TableInfo($ct,$pagelayout);
         $pagelayout=str_replace('{today}',date( 'Y-m-d', time() ),$pagelayout);
 
-        tagProcessor_General::getDate($Model,$pagelayout);
+        tagProcessor_General::getDate($pagelayout);
         tagProcessor_General::getUser($Model,$pagelayout,$row,$recordlist,$number);
-        tagProcessor_General::userid($Model,$pagelayout);
-        tagProcessor_General::Itemid($Model,$pagelayout);
-        tagProcessor_General::CurrentURL($Model,$pagelayout);
-        tagProcessor_General::ReturnTo($Model,$pagelayout);
-        tagProcessor_General::WebsiteRoot($Model,$pagelayout);
-        tagProcessor_General::getGoBackButton($Model,$pagelayout);
-
-		Layouts::processLayoutTag($pagelayout);
+        tagProcessor_General::userid($pagelayout);
+        tagProcessor_General::Itemid($Model->Itemid,$pagelayout);
+        tagProcessor_General::CurrentURL($ct,$pagelayout);
+        tagProcessor_General::ReturnTo($ct,$pagelayout);
+        tagProcessor_General::WebsiteRoot($pagelayout);
+        tagProcessor_General::getGoBackButton($ct,$pagelayout);
+		
+		$Layouts = new Layouts($ct);
+		$Layouts->processLayoutTag($pagelayout);
     }
 
     
-    protected static function WebsiteRoot(&$Model,&$htmlresult)
+    protected static function WebsiteRoot(&$htmlresult)
 	{
 		$options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('websiteroot',$options,$htmlresult,'{}');
@@ -71,15 +71,15 @@ class tagProcessor_General
 
 	}
 
-    protected static function TableInfo(&$Model,&$pagelayout)
+    protected static function TableInfo(&$ct,&$pagelayout)
     {
-        tagProcessor_General::tableDesc($Model,$pagelayout,'table');
-        tagProcessor_General::tableDesc($Model,$pagelayout,'tabletitle','title');
-        tagProcessor_General::tableDesc($Model,$pagelayout,'description','description');
-        tagProcessor_General::tableDesc($Model,$pagelayout,'tabledescription','description');
+        tagProcessor_General::tableDesc($ct,$pagelayout,'table');
+        tagProcessor_General::tableDesc($ct,$pagelayout,'tabletitle','title');
+        tagProcessor_General::tableDesc($ct,$pagelayout,'description','description');
+        tagProcessor_General::tableDesc($ct,$pagelayout,'tabledescription','description');
 
     }
-    protected static function tableDesc(&$Model,&$pagelayout,$tag,$default='')
+    protected static function tableDesc(&$ct,&$pagelayout,$tag,$default='')
     {
         $options=array();
 		$fList=JoomlaBasicMisc::getListToReplace($tag,$options,$pagelayout,'{}');
@@ -104,13 +104,13 @@ class tagProcessor_General
             }
 
             if($task=='id')
-                $vlu=$Model->ct->Table->tablerow['id'];
+                $vlu=$ct->Table->tablerow['id'];
             elseif($task=='title')
-                $vlu=$Model->ct->Table->tablerow['tabletitle'.$Model->ct->Languages->Postfix];
+                $vlu=$ct->Table->tablerow['tabletitle'.$ct->Languages->Postfix];
             elseif($task=='description')
-                $vlu=$Model->ct->Table->tablerow['description'.$Model->ct->Languages->Postfix];
+                $vlu=$ct->Table->tablerow['description'.$ct->Languages->Postfix];
 			elseif($task=='fields')
-                $vlu=json_encode(Fields::shortFieldObjects($Model->ct->Table->fields));
+                $vlu=json_encode(Fields::shortFieldObjects($ct->Table->fields));
 
             if($extraopt=='box')
             {
@@ -124,7 +124,7 @@ class tagProcessor_General
 		}
     }
 
-    public static function CurrentURL(&$Model,&$pagelayout)
+    protected static function CurrentURL(&$ct,&$pagelayout)
 	{
 		$jinput = JFactory::getApplication()->input;
 
@@ -196,13 +196,13 @@ class tagProcessor_General
                 switch($optpair[0])
                 {
                     case '':
-                        $value=$Model->ct->Env->current_url;
+                        $value=$ct->Env->current_url;
                         break;
                     case 'base64':
-                        $value=base64_encode($Model->ct->Env->current_url);
+                        $value=base64_encode($ct->Env->current_url);
                         break;
                     case 'base64encode':
-                        $value=base64_encode($Model->ct->Env->current_url);
+                        $value=base64_encode($ct->Env->current_url);
                         break;
                     default:
                         $value='Output type not selected.';
@@ -216,7 +216,7 @@ class tagProcessor_General
 		}
 	}
 
-    protected static function ReturnTo(&$Model,&$pagelayout)
+    protected static function ReturnTo(&$ct,&$pagelayout)
 	{
 		//Depricated. Use 	{currenturl:base64} instead
 		$options=array();
@@ -226,12 +226,12 @@ class tagProcessor_General
 
 		foreach($fList as $fItem)
 		{
-			$pagelayout=str_replace($fItem,$Model->ct->Env->encoded_current_url,$pagelayout);
+			$pagelayout=str_replace($fItem,$ct->Env->encoded_current_url,$pagelayout);
 			$i++;
 		}
 	}
 
-    protected static function Itemid(&$Model,&$pagelayout)
+    protected static function Itemid(&$Itemid,&$pagelayout)
 	{
 
 		$options=array();
@@ -241,13 +241,11 @@ class tagProcessor_General
 
 		foreach($fList as $fItem)
 		{
-			$vlu=$Model->Itemid;
+			$vlu=$Itemid;
 			$pagelayout=str_replace($fItem,$vlu,$pagelayout);
 			$i++;
 		}
 	}
-
-
 
     protected static function getUser(&$Model,&$pagelayout,&$row,$recordlist,$number)
 	{
@@ -355,7 +353,7 @@ class tagProcessor_General
 		}
 	}
 
-    protected static function userid(&$Model,&$pagelayout)
+    protected static function userid(&$pagelayout)
 	{
         $user = JFactory::getUser();
 		$currentuserid=(int)$user->get('id');
@@ -381,11 +379,8 @@ class tagProcessor_General
 		}
 	}
 
-
-    protected static function getDate(&$Model,&$pagelayout)
+    protected static function getDate(&$pagelayout)
 	{
-
-  
 		$options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('date',$options,$pagelayout,'{}');
 
@@ -404,24 +399,6 @@ class tagProcessor_General
 		}
 	}
 
-    protected static function TableTitle(&$Model,&$pagelayout,$establetitle)
-    {
-
-		$options=array();
-		$fList=JoomlaBasicMisc::getListToReplace('tabletitle',$options,$pagelayout,'{}');
-
-		$i=0;
-
-		foreach($fList as $fItem)
-		{
-			$pagelayout=str_replace($fItem,$establetitle,$pagelayout);
-			$i++;
-		}
-	}
-
-
-
-
 	public static function getUserRowByID($id)
 	{
 		$db = JFactory::getDBO();
@@ -436,7 +413,7 @@ class tagProcessor_General
 		return $rows[0];
 	}
 
-	public static function getGoBackButton(&$Model,&$layout_code)
+	public static function getGoBackButton(&$ct,&$layout_code)
 	{
         $jinput = JFactory::getApplication()->input;
         $returnto =base64_decode(JFactory::getApplication()->input->get('returnto','','BASE64'));
@@ -472,7 +449,7 @@ class tagProcessor_General
                 if(isset($pair[3]) and $pair[3]!='')
                     $returnto=$pair[3];
 
-				if($Model->ct->Env->print==1)
+				if($ct->Env->print==1)
                     $gobackbutton='';
                 else
                     $gobackbutton=tagProcessor_General::renderGoBackButton($returnto,$title);
@@ -495,6 +472,4 @@ class tagProcessor_General
 		}
 		return $gobackbutton;
 	}
-
-
 }

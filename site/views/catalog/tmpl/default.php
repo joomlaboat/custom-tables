@@ -27,18 +27,19 @@ if($this->Model->ct->Env->frmt=='html' or $this->Model->ct->Env->frmt=='')
 if($html_format)
     LayoutProcessor::renderPageHeader($this->Model);
 
+$Layouts = new Layouts($this->Model->ct);
+
 $pagelayout='';
 $layout_catalog_name=$this->Model->params->get( 'escataloglayout' );
 if($layout_catalog_name!='')
 {
-    $layouttype=0;
-	$pagelayout=Layouts::getLayout($layout_catalog_name,$layouttype,$processLayoutTag = false); //It is safier to process layout after rendering the table
-
-    if($layouttype==8)
+	$pagelayout = $Layouts->getLayout($layout_catalog_name,false);//It is safier to process layout after rendering the table
+		
+    if($Layouts->layouttype==8)
         $this->Model->ct->Env->frmt='xml';
-    elseif($layouttype==9)
+    elseif($Layouts->layouttype==9)
         $this->Model->ct->Env->frmt='csv';
-    elseif($layouttype==10)
+    elseif($Layouts->layouttype==10)
         $this->Model->ct->Env->frmt='json';
 }
 else
@@ -49,10 +50,7 @@ $layout_item_name=$this->Model->params->get('esitemlayout');
 $itemlayout='';
 
 if($layout_item_name!='')
-{
-    $layouttype=0;
-	$itemlayout=Layouts::getLayout($layout_item_name,$layouttype);
-}
+	$itemlayout = $Layouts->getLayout($layout_item_name);
 
 $catalogtablecode=JoomlaBasicMisc::generateRandomString();//this is temporary replace place holder. to not parse content result again
 

@@ -82,7 +82,7 @@ class ImportTables
 
 
 				if($importlayouts)
-					ImportTables::processLayouts($tableid,$table['layouts'],$msg);
+					ImportTables::processLayouts($ct,$tableid,$table['layouts'],$msg);
 
 				if($importmenu)
 					ImportTables::processMenu($table['menu'],$menutype,$msg);
@@ -293,12 +293,12 @@ class ImportTables
 		return true;
     }
 
-    protected static function processLayouts($tableid,$layouts,&$msg)
+    protected static function processLayouts(&$ct, $tableid,$layouts,&$msg)
     {
 
 		foreach($layouts as $layout)
         {
-            $layoutid=ImportTables::processLayout($tableid,$layout,$msg);
+            $layoutid=ImportTables::processLayout($ct,$tableid,$layout,$msg);
             if($layoutid!=0)
             {
                 //All Good
@@ -314,7 +314,7 @@ class ImportTables
 
     }
 
-	protected static function processLayout($tableid,&$layout_new,&$msg)
+	protected static function processLayout(&$ct, $tableid,&$layout_new,&$msg)
     {
         //This function creates layout and returns it's id.
         //If layout with same name already exists then existing layout will be updated and it's ID will be returned.
@@ -325,17 +325,20 @@ class ImportTables
         $layoutid=0;
 
 		$layout_old=ImportTables::getRecordByField('layouts','layoutname',$layoutname);
+		
+		$Layouts = new Layouts($ct);
+		
         if(is_array($layout_old) and count($layout_old)>0)
         {
             $layoutid=$layout_old['id'];
             ImportTables::updateRecords('layouts',$layout_new,$layout_old);
-			Layouts::storeAsFile($layout_new);
+			$Layouts->storeAsFile($layout_new);
         }
         else
         {
             //Create layout record
             $layoutid=ImportTables::insertRecords('layouts',$layout_new);
-			Layouts::storeAsFile($layout_new);
+			$Layouts->storeAsFile($layout_new);
         }
 
         return $layoutid;

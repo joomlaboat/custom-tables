@@ -340,5 +340,3 @@ class tagProcessor_If
 		}
 	}
 }
-
-?>

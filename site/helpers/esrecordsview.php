@@ -9,6 +9,7 @@
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die( 'Restricted access' );
 
+use CustomTables\CT;
 use CustomTables\Layouts;
 
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'models'.DIRECTORY_SEPARATOR.'catalog.php');
@@ -125,7 +126,7 @@ class JHTMLESRecordsView
 				else
 				{
 
-                                                $pair=JoomlaBasicMisc::csv_explode(':',$field,'"',false);
+                        $pair=JoomlaBasicMisc::csv_explode(':',$field,'"',false);
 
 						if($pair[0]!='layout' and $pair[0]!='tablelesslayout')
 								return '<p>unknown field/layout command "'.$field.'" should be like: "layout:'.$pair[1].'".</p>';
@@ -145,9 +146,11 @@ class JHTMLESRecordsView
 						else
 								$layout_pair[1]=0;
 
-
-                                                $layouttype=0;
-						$layoutcode=Layouts::getLayout($layout_pair[0],$layouttype);
+						$ct = new CT;
+						
+						$Layouts = new Layouts($ct);
+						$layoutcode = $Layouts->getLayout($layout_pair[0]);
+						
 						if($layoutcode=='')
 								return '<p>layout "'.$layout_pair[0].'" not found or is empty.</p>';
 

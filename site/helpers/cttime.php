@@ -11,7 +11,7 @@ defined('_JEXEC') or die( 'Restricted access' );
 
 class JHTMLCTTime
 {
-        static public function render($control_name, $value,$class, $attribute='',$typeparams,$option_list)
+        static public function render($control_name, $value,$class, string $attribute,$typeparams,$option_list)
         {
                 $options=array(array('id'=>'','name'=>'- '.JText ::_( 'COM_CUSTOMTABLES_SELECT' )));
                 

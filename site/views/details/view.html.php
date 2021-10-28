@@ -35,14 +35,14 @@ class CustomTablesViewDetails extends JViewLegacy
 
 		if($this->params->get('esdetailslayout')!='')
 		{
-			$layouttype=0;
-			$layout_catalog=Layouts::getLayout($this->params->get('esdetailslayout'),$layouttype);
+			$Layouts = new Layouts($this->Model->ct);
+			$layout_catalog = $Layouts->getLayout($this->params->get('esdetailslayout'));
 				
-			if($layouttype==8)
+			if($Layouts->layouttype==8)
 				$this->Model->ct->Env->frmt='xml';
-			elseif($layouttype==9)
+			elseif($Layouts->layouttype==9)
 				$this->Model->ct->Env->frmt='csv';
-			elseif($layouttype==10)
+			elseif($Layouts->layouttype==10)
 				$this->Model->ct->Env->frmt='json';
 
 			$this->Model->LayoutProc->layout=$layout_catalog;

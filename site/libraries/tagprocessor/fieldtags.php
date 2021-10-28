@@ -11,12 +11,12 @@ defined('_JEXEC') or die('Restricted access');
 
 class tagProcessor_Field
 {
-    public static function process(&$Model,&$pagelayout,$add_label=false,$fieldNamePrefix='comes_')
+    public static function process(&$Model,&$pagelayout,bool $add_label=false, string $fieldNamePrefix = 'comes_')
     {
         tagProcessor_Field::ProcessFieldTitles($Model,$pagelayout,$add_label,$fieldNamePrefix);
     }
 
-    protected static function ProcessFieldTitles(&$Model,&$pagelayout,$add_label=false,$fieldNamePrefix)
+    protected static function ProcessFieldTitles(&$Model,&$pagelayout, bool $add_label=false, $fieldNamePrefix = 'comes_')
 	{
 		//field title
         if($add_label)

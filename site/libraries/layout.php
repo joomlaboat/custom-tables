@@ -66,11 +66,7 @@ class LayoutProcessor
 
 		if($this->advancedtagprocessor and !$disable_advanced_tags)
 		{
-			tagProcessor_If::process($this->Model,$htmlresult,$row,$this->recordlist,$this->number);
-			
-			//NO LONGER NEEDED BECAUSE ITS BEING PROCESSED WHILE READING THE PARENT LAYOUT
-			//tagProcessor_General::processLayoutTag($htmlresult);
-			
+			tagProcessor_If::process($this->Model,$htmlresult,$row,$this->recordlist,$this->number);			
 			tagProcessor_PHP::process($this->Model,$htmlresult,$row,$this->recordlist,$this->number);
 		}
 		
@@ -84,7 +80,7 @@ class LayoutProcessor
 			tagProcessor_General::process($this->Model,$htmlresult,$row,$this->recordlist,$this->number);
 			tagProcessor_Page::process($this->Model,$htmlresult);
 
-			tagProcessor_Tabs::process($this->Model,$htmlresult);
+			tagProcessor_Tabs::process($htmlresult);
 
 
 

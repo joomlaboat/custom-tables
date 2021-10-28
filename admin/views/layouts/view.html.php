@@ -316,4 +316,32 @@ class CustomtablesViewLayouts extends JViewLegacy
 		
 		return '['.implode(',',$items).']';
 	}
+	
+	public function renderTextArea($value,$id,$typeboxid,&$onPageLoads)
+	{/*	<div class="span12">
+					<div class="control-group"></div>
+				</div>*/
+		$result = '
+			
+						<div style="width: 100%;position: relative;">
+						';
+					
+							if($value!="")
+		$result .= '				<div class="ct_tip">TIP: Double Click on a Layout Tag to edit parameters.</div>';
+		$result .= '	</div>
+						';
+						
+						$textareaid='jform_'.$id;
+						
+							$textareacode='<textarea name="jform['.$id.']" id="'.$textareaid.'" filter="raw" style="width:100%" rows="30">'.$value.'</textarea>';
+							
+							$textareatabid=$id.'-tab';
+							
+							$result .=renderEditor($textareacode,$textareaid,$typeboxid,$textareatabid,$onPageLoads);
+						$result .= '
+						
+		';
+		
+		return $result;
+	}
 }

@@ -13,20 +13,12 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'co
 
 class JHTMLMultiSelector
 {
-	
-	//MultiSelector
 	public static function render($prefix,$parentid,$parentname,$langpostfix, $establename,$esfieldname,$field_value, $attribute='',$place_holder='')
 	{
 		$ObjectName=$prefix.'esmulti_'.$establename.'_'.$esfieldname;
-		
-		
 		$ms=new ESMultiSelector;
-		
 		$result='';
-		
-		
 		$ItemList="";
-		
 		$count=0;
 		$listhtml=$ms->getMultiSelector($parentid,$parentname,$langpostfix,$ObjectName,$ItemList,$count,$field_value,$place_holder);
 		
@@ -35,8 +27,4 @@ class JHTMLMultiSelector
 		
 		return $result;
 	}
-
-	
-	
-	
 }

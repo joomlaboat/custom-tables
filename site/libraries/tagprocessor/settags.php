@@ -58,8 +58,6 @@ class tagProcessor_Set
 
 	}
 
-
-
 	protected static function setPageTitle(&$Model,&$htmlresult)
 	{
 		$options=array();
@@ -77,7 +75,6 @@ class tagProcessor_Set
 
         if(count($fList)==0)
             $mydoc->setTitle(JoomlaBasicMisc::JTextExtended($Model->params->get( 'page_title' )));
-
 	}
 
     protected static function setHeadTag(&$htmlresult)

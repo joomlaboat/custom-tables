@@ -22,7 +22,7 @@ trait render_image
 
 		$IG=new IG();
 
-		$IG->filename = JoomlaBasicMisc::makeNewFileName($this->Model->params->get('page_title'),'');
+		$IG->filename = JoomlaBasicMisc::makeNewFileName($Model->params->get('page_title'),'');
 		$IG->setImageGeneratorProfileFromText($pagelayout);
 
 		$image_width=$IG->width;
@@ -32,9 +32,9 @@ trait render_image
 		$obj=null;
 
 		//set canvas width
-		$IG->width=$image_width*$this->Model->columns+10;
+		$IG->width=$image_width*$Model->columns+10;
 		//set canvas height
-		$IG->height=$image_height*ceil(count($this->SearchResult)/$this->Model->columns)+10;
+		$IG->height=$image_height*ceil(count($this->SearchResult)/$Model->columns)+10;
 
 		$obj=$IG->render(false,$obj);
 
@@ -59,7 +59,7 @@ trait render_image
 			//break;
 			$x_offset+=$image_width;
 			$c++;
-			if($c>=$this->Model->columns)
+			if($c>=$Model->columns)
 			{
 				$c=0;
 				$x_offset=5;

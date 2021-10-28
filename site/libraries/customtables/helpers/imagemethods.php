@@ -109,8 +109,10 @@ class CustomTablesImageMethods
 	}
 
 
-	function DeleteExistingSingleImage($ExistingImage,$ImageFolder,$imageparams, $realtablename='-options', $realfieldname, $realidfield)
+	function DeleteExistingSingleImage($ExistingImage,$ImageFolder,$imageparams, $realtablename, $realfieldname, $realidfield)
 	{
+		//$realtablename='-options'
+		
 		$customsizes=$this->getCustomImageOptions($imageparams);
 		CustomTablesImageMethods::DeleteOriginalImage($ExistingImage, $ImageFolder, $realtablename, $realfieldname, $realidfield);
 
@@ -394,8 +396,10 @@ class CustomTablesImageMethods
 		return count($imagelist);
 	}
 
-	function UploadSingleImage($ExistingImage, $image_file_id, $realfieldname, $ImageFolder, $imageparams_full, $realtablename = '-options',$realidfieldname)
+	function UploadSingleImage($ExistingImage, $image_file_id, $realfieldname, $ImageFolder, $imageparams_full, $realtablename,$realidfieldname)
 	{
+		//$realtablename = '-options'
+		
 		if(is_object('JFactory::getApplication()'))
 			$jinput = JFactory::getApplication()->input;
 		else

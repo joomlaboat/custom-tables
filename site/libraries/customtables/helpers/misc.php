@@ -713,8 +713,10 @@ class JoomlaBasicMisc
 	}//function getMenuParam($param, $Itemid,$rawparams='')
 
 
-	public static function csv_explode($delim=',', $str, $enclose='"', $preserve=false)
+	public static function csv_explode(string $delim, string $str, string $enclose='"', bool $preserve = false)
 	{
+		//$delim=','
+		
 		$resArr = array();
 		$n = 0;
 		$expEncArr = explode($enclose, $str);

@@ -6,7 +6,6 @@
  * @license GNU/GPL
  **/
 
-
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
@@ -16,12 +15,14 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'co
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tagprocessor'.DIRECTORY_SEPARATOR.'catalogtag.php');
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tagprocessor'.DIRECTORY_SEPARATOR.'catalogtableviewtag.php');
 
+$Layouts = new Layouts($this->Model->ct);
+
 $pagelayout='';
 $layout_catalog_name=$this->Model->params->get( 'escataloglayout' );
 if($layout_catalog_name!='')
 {
-    $layouttype=0;
-	$pagelayout=Layouts::getLayout($layout_catalog_name,$layouttype,$processLayoutTag = false); //It is safier to process layout after rendering the table
+	$pagelayout = $Layouts->getLayout($layout_catalog_name,false); //It is safier to process layout after rendering the table
+	
 	$pagelayout=str_replace("\n",'',$pagelayout);
 	$pagelayout=str_replace("\r",'',$pagelayout);
 	$pagelayout=str_replace("\t",'',$pagelayout);
@@ -35,8 +36,7 @@ $itemlayout='';
 
 if($layout_item_name!='')
 {
-    $layouttype=0;
-	$itemlayout=Layouts::getLayout($layout_item_name,$layouttype);
+	$itemlayout = $Layouts->getLayout($layout_item_name);
 	$itemlayout=str_replace("\n",'',$itemlayout);
 	$itemlayout=str_replace("\r",'',$itemlayout);
 	$itemlayout=str_replace("\t",'',$itemlayout);

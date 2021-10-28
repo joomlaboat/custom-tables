@@ -15,43 +15,32 @@ defined('_JEXEC') or die('Restricted access');
 
 use \LayoutProcessor;
 use \JoomlaBasicMisc;
-
 use \Joomla\CMS\Factory;
 
 
 class Layouts
 {
-	/*
-	protected static function getLayoutID($layoutname)
-    {
-		$db = Factory::getDBO();
-
-		if($tablename=='')
-			return 0;
-
-		$query = 'SELECT id FROM #__customtables_layouts AS s WHERE layoutname="'.$layoutname.'" LIMIT 1';
-		$db->setQuery( $query );
-		$rows = $db->loadObjectList();
-		if(count($rows)!=1)
-            return 0;
-
-		return $rows[0]->id;
-	}
-	*/
-
-    public static function getLayout($layoutname,&$type,$processLayoutTag = true)
+	var $ct;
+	var $layouttype;
+	
+	function __construct(&$ct)
 	{
-
+		$this->ct = $ct;
+	}
+	
+    function getLayout(string $layoutname, bool $processLayoutTag = true)
+	{
 		if($layoutname=='')
 			return '';
+			
+		$code_field = 'layoutcode';
 
 		$db = Factory::getDBO();
 		
-		
 		if($db->serverType == 'postgresql')
-			$query = 'SELECT id, layoutcode, extract(epoch FROM modified) AS ts, layouttype FROM #__customtables_layouts WHERE layoutname='.$db->quote($layoutname).' LIMIT 1';
+			$query = 'SELECT id, layoutcode, layoutmobile, layoutcss, layoutjs, extract(epoch FROM modified) AS ts, layouttype FROM #__customtables_layouts WHERE layoutname='.$db->quote($layoutname).' LIMIT 1';
 		else
-			$query = 'SELECT id, layoutcode, UNIX_TIMESTAMP(modified) AS ts, layouttype FROM #__customtables_layouts WHERE layoutname='.$db->quote($layoutname).' LIMIT 1';
+			$query = 'SELECT id, layoutcode, layoutmobile, layoutcss, layoutjs, UNIX_TIMESTAMP(modified) AS ts, layouttype FROM #__customtables_layouts WHERE layoutname='.$db->quote($layoutname).' LIMIT 1';
 			
 		$db->setQuery( $query );
 		$rows = $db->loadAssocList();
@@ -59,22 +48,37 @@ class Layouts
 			return '';
 
 		$row=$rows[0];
-        $type=(int)$row['layouttype'];
+        $this->layouttype=(int)$row['layouttype'];
 
-		$content=Layouts::getLayoutFileContent($row['id'],$row['ts'],$layoutname);
+		$content=$this->getLayoutFileContent($row['id'],$row['ts'],$layoutname);
 		if($content!='')
 			return $content;
 
 		//Get all layouts recursevly
-		$layoutcode=$row['layoutcode'];
+		if($this->ct->Env->isMobile and trim($layoutcode=$row['layoutmobile']))
+			$layoutcode=$row['layoutmobile'];
+		else
+			$layoutcode=$row['layoutcode'];
 		
 		if($processLayoutTag)
-			Layouts::processLayoutTag($layoutcode);
+			$this->processLayoutTag($layoutcode);
+			
+		$this->addCSSandJSIfNeeded($row);
 			
 		return $layoutcode;
 	}
 	
-	public static function processLayoutTag(&$htmlresult)
+	protected function addCSSandJSIfNeeded(&$row)
+	{
+		$document = Factory::getDocument();
+		if(trim($row['layoutcss'])!='')
+			$document->addCustomTag('<style>'.trim($row['layoutcss']).'</style>');
+
+		if(trim($row['layoutjs'])!='')
+			$document->addScriptDeclaration(trim($row['layoutjs']));
+	}
+	
+	function processLayoutTag(&$htmlresult)
 	{
         $options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('layout',$options,$htmlresult,'{}');
@@ -93,8 +97,7 @@ class Layouts
 			if(isset($optpair[1]) and $optpair[1] == 'process')
 				$ProcessContentPlugins = true;
 			
-            $type='';
-            $layout = Layouts::getLayout($layoutname,$type);
+            $layout = $this->getLayout($layoutname);
 			
 			if($ProcessContentPlugins)
 				LayoutProcessor::applyContentPlugins($layout);
@@ -104,7 +107,7 @@ class Layouts
 		}
     }
 
-	public static function getLayoutFileContent($id=0,$db_layout_ts=0,$layoutname)
+	protected function getLayoutFileContent(int $id, $db_layout_ts,$layoutname)
 	{
 		$path=JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'layouts';
 		$filename=$layoutname.'.html';
@@ -149,23 +152,7 @@ class Layouts
 		return '';
 	}
 
-    public static function createDefaultLayout($fields,$type)
-	{
-		$result='';
-		switch($type)
-		{
-			case 'edit':
-				$result=Layouts::createDefaultLayout_Edit($fields);
-			break;
-			
-			default:
-				$result='';
-				break;
-		}
-		return $result;
-	}
-	
-	public static function createDefaultLayout_Edit(&$fields,$addToolbar=true)
+	function createDefaultLayout_Edit(&$fields,$addToolbar=true)
 	{
 		$result='';
 
@@ -210,7 +197,7 @@ class Layouts
 		return $result;
 	}
 	
-	public static function storeAsFile(&$data)
+	public function storeAsFile(&$data)
 	{
 		$path=JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'layouts';
 		$filename=$data['layoutname'].'.html';
@@ -240,14 +227,16 @@ class Layouts
 		}
 		else
 		{
-			$id=(int)$data['id'];
-			if($id==0)
-				$id=Layouts::getLayoutID($data['layoutname']);
-
 			$db = Factory::getDBO();
-			$query = 'UPDATE #__customtables_layouts SET modified=FROM_UNIXTIME('.$file_ts.') WHERE id='.$id;
+			
+			$id=(int)$data['id'];
+			
+			if($id==0)
+				$query = 'UPDATE #__customtables_layouts SET modified=FROM_UNIXTIME('.$file_ts.') WHERE layoutname='.$db->quote($data['layoutname']);
+			else
+				$query = 'UPDATE #__customtables_layouts SET modified=FROM_UNIXTIME('.$file_ts.') WHERE id='.$id;
+			
 			$db->setQuery( $query );
-
 			$db->execute();
 		}
 
@@ -255,7 +244,7 @@ class Layouts
 	}
 	
 	
-	public static function layoutTypeTranslation()
+	public function layoutTypeTranslation()
 	{
 		$layouttypeArray = array(
 				1 => 'COM_CUSTOMTABLES_LAYOUTS_SIMPLE_CATALOG',

@@ -129,7 +129,7 @@ function importCSVdata($filename,$ct_tableid)
     return '';
 }
 
-function findRecord($realtablename,$realidfieldname,$published_field_found=true,$sets)
+function findRecord($realtablename,$realidfieldname,bool $published_field_found,$sets)
 {
 	$db = JFactory::getDBO();
 	$wheres=$sets;
@@ -148,7 +148,7 @@ function findRecord($realtablename,$realidfieldname,$published_field_found=true,
 	return (int)$records[0]['listing_id'];
 }
 
-function findSQLRecordJoin($realtablename,$join_realfieldname,$realidfieldname,$published_field_found=true,$vlus_str)
+function findSQLRecordJoin($realtablename,$join_realfieldname,$realidfieldname,bool $published_field_found,$vlus_str)
 {
 	$db = JFactory::getDBO();
 	$vlus=explode(',',$vlus_str);
@@ -175,7 +175,7 @@ function findSQLRecordJoin($realtablename,$join_realfieldname,$realidfieldname,$
 	return $ids;
 }
 
-function findSQLJoin($realtablename,$join_realfieldname,$realidfieldname,$published_field_found=true,$vlu)
+function findSQLJoin($realtablename,$join_realfieldname,$realidfieldname,bool $published_field_found,$vlu)
 {
 	$db = JFactory::getDBO();
 	$wheres=[];

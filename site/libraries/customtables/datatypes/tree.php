@@ -630,7 +630,7 @@ class Tree
 	}
 	
 	//Used many times
-	public static function getHeritage($parentid, $where='', $limit)
+	public static function getHeritage($parentid, string $where, $limit)
 	{
 		if((int)$parentid==0)
 			return array();

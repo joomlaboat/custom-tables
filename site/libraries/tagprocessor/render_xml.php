@@ -15,9 +15,6 @@ trait render_xml
 	{
 		$catalogresult='';
 
-		//$fields=str_replace("\n",'',$fields);
-		//$fields=str_replace("\r",'',$fields);
-
 		$fieldarray=JoomlaBasicMisc::csv_explode(',', $fields, '"', true);
 
         //prepare header and record layouts

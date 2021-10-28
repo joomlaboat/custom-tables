@@ -117,7 +117,30 @@
                        description="COM_CUSTOMTABLES_LAYOUTS_LAYOUTCODE_DESCRIPTION"
                        class="text_area text_area_full"
                        filter="raw"
-                       hint="COM_CUSTOMTABLES_LAYOUTS_LAYOUTCODE_HINT"
+                       required="false" />
+
+		<field type="textarea"
+                       name="layoutmobile"
+                       label="COM_CUSTOMTABLES_LAYOUTS_LAYOUTMOBILE_LABEL"
+                       description="COM_CUSTOMTABLES_LAYOUTS_LAYOUTMOBILE_DESCRIPTION"
+                       class="text_area text_area_full"
+                       filter="raw"
+                       required="false" />
+		
+		<field type="textarea"
+                       name="layoutcss"
+                       label="COM_CUSTOMTABLES_LAYOUTS_LAYOUTCSS_LABEL"
+                       description="COM_CUSTOMTABLES_LAYOUTS_LAYOUTCSS_DESCRIPTION"
+                       class="text_area text_area_full"
+                       filter="raw"
+                       required="false" />
+
+		<field type="textarea"
+                       name="layoutjs"
+                       label="COM_CUSTOMTABLES_LAYOUTS_LAYOUTJS_LABEL"
+                       description="COM_CUSTOMTABLES_LAYOUTS_LAYOUTJS_DESCRIPTION"
+                       class="text_area text_area_full"
+                       filter="raw"
                        required="false" />
         </fieldset>
 </form>

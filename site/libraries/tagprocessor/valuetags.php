@@ -743,7 +743,7 @@ class tagProcessor_Value
 
 	}
 
-    static public function getValueByType(&$Model,$rowValue,$FieldName, $FieldType,$TypeParams,$option_list,&$getGalleryRows,&$getFileBoxRows,$id,&$row=array(),$fieldid)
+    static public function getValueByType(&$Model,$rowValue,$FieldName, $FieldType,$TypeParams,$option_list,&$getGalleryRows,&$getFileBoxRows,$id, array &$row=array(), int $fieldid = 0)
 	{
 		switch($FieldType)
 		{

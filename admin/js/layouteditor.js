@@ -10,6 +10,7 @@
  
 var codemirror_editors=[];
 var codemirror_active_index=0;
+var codemirror_active_areatext_id=null;
 var temp_params_tag="";
 
 var parts=location.href.split("/administrator/");
@@ -713,7 +714,45 @@ function renderTags(index,tagset)
 }
 
 
-function addTabExtraEvent(id)
+
+function addTabExtraEvents3()
+{
+    jQuery(function($)
+    {
+		$(".nav-tabs a").click(function (e)
+        {
+           	let a=e.target.href;
+			
+           	let codepair=a.split("#");
+           	let code=codepair[1].replace('-tab','');
+			
+			var index=textarea_findindex(code);
+			
+            if(index!=-1)
+            {
+				tagsets=findTagSets(code);
+                    
+                setTimeout(function()
+                {
+					codemirror_active_index=index;
+					codemirror_active_areatext_id='jform_' + code;
+                    let cm=codemirror_editors[index];
+                    cm.refresh();
+					/*
+					var h = window.innerHeight;
+					var rect = cm.getBoundingClientRect();
+					var editorHeight=h-rect.top-40;
+					cm.style.height = editorHeight+'px';
+					*/
+					adjustEditorHeight();
+					
+                }, 100);
+            }
+        });
+    });
+}
+
+function addTabExtraEvent4(id)
 {
 	let tab_object=document.querySelectorAll('[aria-controls="' + id + '-tab"]');
 	for (let i = 0; i < tab_object.length; i++)  
@@ -725,6 +764,7 @@ function addTabExtraEvent(id)
 			setTimeout(function()
                                {
                                     codemirror_active_index=index;
+									codemirror_active_areatext_id='jform_' + id;
                                     let cm=codemirror_editors[index];
                                     cm.refresh();
                                }, 100);
@@ -734,16 +774,23 @@ function addTabExtraEvent(id)
 
 function addTabExtraEvents()
 {
-	let tabs = ['layoutcode']
-	setTimeout(function()
-    {
-        codemirror_active_index=0;
-        let cm=codemirror_editors[0];
-        cm.refresh();
-    }, 100);
+	if(joomlaVersion<4)
+	{
+		addTabExtraEvents3();
+	}
+	else
+	{
+		let tabs = ['layoutcode','layoutmobile','layoutcss','layoutjs']
+		setTimeout(function()
+		{
+			codemirror_active_index=0;
+			let cm=codemirror_editors[0];
+			cm.refresh();
+		}, 100);
 
-	for (let i = 0; i < tabs.length; i++)  
-		addTabExtraEvent(tabs[i]);
+		for (let i = 0; i < tabs.length; i++)
+			addTabExtraEvent4(tabs[i]);
+	}
 }
 
 function addExtraEvents()
@@ -793,10 +840,12 @@ function adjustEditorHeight()
     if(editors.length==0)
         return false;//editor not found
     
-    var editor=editors[0];//use the first one, there shouldn't be more than one anyway
-    var h = window.innerHeight;
-    var rect = editor.getBoundingClientRect();
-    var editorHeight=h-rect.top-40;
-
-    editor.style.height = editorHeight+'px';
+	for(let i=0;i<editors.length;i++)
+	{
+		let editor=editors[i];
+		let h = window.innerHeight;
+		let rect = editor.getBoundingClientRect();
+		let editorHeight=h-rect.top-40;
+		editor.style.height = editorHeight+'px';
+	}
 }

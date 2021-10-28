@@ -147,7 +147,10 @@ class IntegrityCoreTables extends \CustomTables\IntegrityChecks
 		$tables_projected_fields[]=['name'=>'layoutname','ct_fieldtype'=>'string','ct_typeparams'=>100,'mysql_type'=>'VARCHAR(100) NOT NULL DEFAULT "tablename"','postgresql_type'=>'VARCHAR(100) NOT NULL DEFAULT \'\''];
 		$tables_projected_fields[]=['name'=>'layouttype','ct_fieldtype'=>'','mysql_type'=>'INT UNSIGNED NOT NULL DEFAULT 0','postgresql_type'=>'INT NOT NULL DEFAULT 0'];		
 		
-		$tables_projected_fields[]=['name'=>'layoutcode','ct_fieldtype'=>'','mysql_type'=>'MEDIUMTEXT NULL DEFAULT NULL','postgresql_type'=>'TEXT NULL DEFAULT NULL'];
+		$tables_projected_fields[]=['name'=>'layoutcode','ct_fieldtype'=>'text','mysql_type'=>'MEDIUMTEXT NULL DEFAULT NULL','postgresql_type'=>'TEXT NULL DEFAULT NULL'];
+		$tables_projected_fields[]=['name'=>'layoutmobile','ct_fieldtype'=>'text','mysql_type'=>'MEDIUMTEXT NULL DEFAULT NULL','postgresql_type'=>'TEXT NULL DEFAULT NULL'];
+		$tables_projected_fields[]=['name'=>'layoutcss','ct_fieldtype'=>'text','mysql_type'=>'MEDIUMTEXT NULL DEFAULT NULL','postgresql_type'=>'TEXT NULL DEFAULT NULL'];
+		$tables_projected_fields[]=['name'=>'layoutjs','ct_fieldtype'=>'text','mysql_type'=>'MEDIUMTEXT NULL DEFAULT NULL','postgresql_type'=>'TEXT NULL DEFAULT NULL'];
 		
 		$tables_projected_fields[]=['name'=>'changetimestamp','ct_fieldtype'=>'','mysql_type'=>'TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP','postgresql_type'=>'TIMESTAMP(0) NULL DEFAULT NULL'];
 		
@@ -389,7 +392,7 @@ class IntegrityCoreTables extends \CustomTables\IntegrityChecks
 		
 		if($exst_field == null)
 		{
-			die('field not created j648u');
+			die('field not created '.$realfieldname);
 			return false;
 		}
 		
@@ -418,13 +421,6 @@ class IntegrityCoreTables extends \CustomTables\IntegrityChecks
 		
 		$ExistingFields=Fields::getExistingFields($realtablename, false);
 		
-		/*
-		if($db->serverType == 'postgresql')
-			$type_field_name='postgresql_type';
-		else
-			$type_field_name='mysql_type';
-			*/
-		
 		foreach($projected_fields as $projected_field)
 		{
 			
@@ -435,7 +431,8 @@ class IntegrityCoreTables extends \CustomTables\IntegrityChecks
 				
 				$typeparams = '';
 
-				IntegrityFields::addFieldIfNotExists($ct,$realtablename,$ExistingFields,$projected_realfieldname,$fieldtype,$typeparams);//,$projected_field[$type_field_name]);
+				if(IntegrityFields::addFieldIfNotExists($ct,$realtablename,$ExistingFields,$projected_realfieldname,$fieldtype,$typeparams))
+					$ExistingFields=Fields::getExistingFields($realtablename, false);//reload list of existing fields if one field has been added.
         
 				if(isset($projected_field['ct_fieldtype']) and $projected_field['ct_fieldtype']!='')
 				{
