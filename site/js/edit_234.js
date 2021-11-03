@@ -131,10 +131,17 @@ function doValuerules(obj, label, valuerules,caption)
 	if(valuerules_and_arguments == null)
 		return true;
 	
-	let rules_str = "return " + valuerules_and_arguments.new_valuerules;
-	let rules = new Function(rules_str); // this |x| refers global |x|
-	let result = rules(valuerules_and_arguments.new_args);
+	let result = false;
 	
+	let rules_str = "return " + valuerules_and_arguments.new_valuerules;
+	
+	try {
+		let rules = new Function(rules_str); // this |x| refers global |x|
+		result = rules(valuerules_and_arguments.new_args);
+	} catch (error) {
+		alert('Validation rule "' + valuerules +'" has an error: ' + error);
+	}
+
 	if(result)
 		return true;
 		
