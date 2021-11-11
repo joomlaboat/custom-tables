@@ -9,6 +9,8 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\Layouts;
+
 class CustomTablesViewCatalog extends JViewLegacy
 {
 	var $Model;
@@ -34,8 +36,52 @@ class CustomTablesViewCatalog extends JViewLegacy
 			foreach($this->SearchResult as $rec)
 				$this->SaveViewLogForRecord($rec,$allowedfields);
 		}
+		
+		$this->catalogtablecode=JoomlaBasicMisc::generateRandomString();//this is temporary replace place holder. to not parse content result again
+		
+		$Layouts = new Layouts($this->Model->ct);
 
-		if($this->Model->ct->Env->frmt == 'json')
+		$this->pagelayout='';
+		$layout_catalog_name=$this->Model->params->get( 'escataloglayout' );
+		if($layout_catalog_name!='')
+		{
+			$this->pagelayout = $Layouts->getLayout($layout_catalog_name,false);//It is safier to process layout after rendering the table
+		
+			if($Layouts->layouttype==8)
+				$this->Model->ct->Env->frmt='xml';
+			elseif($Layouts->layouttype==9)
+				$this->Model->ct->Env->frmt='csv';
+			elseif($Layouts->layouttype==10)
+				$this->Model->ct->Env->frmt='json';
+		}
+		else
+			$this->pagelayout='{catalog:,notable}';
+		
+		$this->itemlayout='';
+		$layout_item_name=$this->Model->params->get('esitemlayout');
+		if($layout_item_name!='')
+			$this->itemlayout = $Layouts->getLayout($layout_item_name);
+		
+		if($this->Model->ct->Env->frmt == 'csv')
+		{
+			if(function_exists('mb_convert_encoding'))
+			{
+				require_once('tmpl'.DIRECTORY_SEPARATOR.'csv.php');
+			}
+			else
+			{
+				$msg = '"mbstring" PHP exntension not installed.<br/>
+				You need to install this extension. It depends on of your operating system, here are some examples:<br/><br/>
+				sudo apt-get install php-mbstring  # Debian, Ubuntu<br/>
+				sudo yum install php-mbstring  # RedHat, Fedora, CentOS<br/><br/>
+				Uncomment the following line in php.ini, and restart the Apache server:<br/>
+				extension=mbstring<br/><br/>
+				Then restart your webs server. Example:<br/>service apache2 restart';
+				
+				JFactory::getApplication()->enqueueMessage($msg, 'error');
+			}
+		}
+		elseif($this->Model->ct->Env->frmt == 'json')
 			require_once('tmpl'.DIRECTORY_SEPARATOR.'json.php');
 		else
 			parent::display($tpl);

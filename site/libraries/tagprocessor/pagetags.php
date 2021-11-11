@@ -45,39 +45,49 @@ class tagProcessor_Page
 
 		foreach($fList as $fItem)
 		{
-            if($Model->ct->Env->frmt!='csv')
+            if($Model->ct->Env->frmt=='' or $Model->ct->Env->frmt=='html')
             {
-    			$link=JoomlaBasicMisc::deleteURLQueryOption($Model->ct->Env->current_url, 'frmt');
-    			if(strpos($link,'?')===false)
-    				$link.='?';
-    			else
-    				$link.='&';
+    			
+    			
 
     			$option_list=explode(',',$options[$i]);
     			$format=$option_list[0];
-
+				
+				if(isset($option_list[4]))
+				{
+					$menu_item_alias = $option_list[4];
+					$menu_item=JoomlaBasicMisc::FindMenuItemRowByAlias($menu_item_alias);//Accepts menu Itemid and alias
+					if($menu_item!=0)
+					{
+						$menu_item_id=(int)$menu_item['id'];
+						$link=$menu_item['link'];
+					}
+					
+					$link.='&Itemid='.$menu_item_id;//.'&amp;returnto='.$returnto;
+				}
+				else
+				{
+					$link=JoomlaBasicMisc::deleteURLQueryOption($Model->ct->Env->current_url, 'frmt');
+				}
+				
+				$link = JRoute::_($link);
+				
     			//check if format supported
-    			$allowed_formats=['csv','xlsx','pdf','image'];
+    			$allowed_formats=['csv','json','xml','xlsx','pdf','image'];
     			if($format=='' or !in_array($format,$allowed_formats))
-				$format='csv';
-
-    			$link.='frmt='.$format.'&clean=1';
+					$format='csv';
+				
+    			$link.=(strpos($link,'?')===false ? '?' : '&').'frmt='.$format.'&clean=1';
     			$vlu='';
 
-
     			$value=(isset($option_list[1]) ? $option_list[1] : '');
-
-
-
-
-
 
     			if($value=='anchor' or $value=='')
     			{
     				$image=(isset($option_list[2]) ? $option_list[2] : '');
     				$imagesize=(isset($option_list[3]) ? $option_list[3] : '');
 
-    				$allowed_sizes=['16','32','48','512'];
+    				$allowed_sizes=['16','32','48'];
     				if($imagesize=='' or !in_array($imagesize,$allowed_sizes))
     					$imagesize=32;
 
@@ -94,7 +104,7 @@ class tagProcessor_Page
     				//add image anchor link
     				$vlu='<a href="'.$link.'" class="toolbarIcons" id="ctToolBarExport2CSV" target="_blank"><img src="'.$image.'" alt="'.$alt.'" title="'.$alt.'" width="'.$imagesize.'" height="'.$imagesize.'"></a>';
     			}
-    			elseif($value=='_value')
+    			elseif($value == '_value' or $value == 'linkonly')
     			{
     				//link only
     				$vlu=$link;
@@ -172,7 +182,7 @@ class tagProcessor_Page
 
 		foreach($fList as $fItem)
 		{
-            if($isEditable and $Model->ct->Env->print==0)
+            if($isEditable and $Model->ct->Env->print==0 and ($Model->ct->Env->frmt=='html' or $Model->ct->Env->frmt==''))
             {
                 $opt=explode(',',$options[$i]);
 
@@ -190,8 +200,11 @@ class tagProcessor_Page
                 {
                     $document = JFactory::getDocument();
 					
-					$document->addCustomTag('<script src="'.JURI::root(true).'/media/jui/js/jquery.min.js"></script>');
-					$document->addCustomTag('<script src="'.JURI::root(true).'/media/jui/js/bootstrap.min.js"></script>');
+					if($Model->ct->Env->version < 4)
+					{
+						$document->addCustomTag('<script src="'.JURI::root(true).'/media/jui/js/jquery.min.js"></script>');
+						$document->addCustomTag('<script src="'.JURI::root(true).'/media/jui/js/bootstrap.min.js"></script>');
+					}
 		
                     $document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customtables/css/uploadfile.css" rel="stylesheet">');
                     $document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/js/jquery.uploadfile.min.js"></script>');
@@ -204,18 +217,11 @@ class tagProcessor_Page
                     $fileid=JoomlaBasicMisc::generateRandomString();
                     $fieldid='99';//$fileid;//some unique number
                     $objectname='importcsv';
-                    // class="esUploadFileBox"
-                    $result='<div>';
-                    
 
-                    
-  //                  jimport('joomla.html.html.bootstrap');
-//JHtml::_('behavior.keepalive');
-JHtml::_('behavior.formvalidator');
-//JHtml::_('behavior.calendar');
-//JHtml::_('bootstrap.popover');
-                    
-                    
+                    $result='<div>';
+
+					JHtml::_('behavior.formvalidator');
+    
                     $result.='
                     <div id="ct_fileuploader_'.$objectname.'"></div>
                     <div id="ct_eventsmessage_'.$objectname.'"></div>
@@ -393,7 +399,7 @@ JHtml::_('behavior.formvalidator');
 		{
 			$vlu='';
 
-            if($Model->ct->Env->print==0)
+            if($Model->ct->Env->print==0 and ($Model->ct->Env->frmt=='html' or $Model->ct->Env->frmt==''))
             {
                 if($options[$i]=='')
                 	$modes=$available_modes;

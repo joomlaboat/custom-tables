@@ -822,13 +822,10 @@ class JoomlaBasicMisc
 		$db = JFactory::getDbo();
 
 		// Build the database query to get the rules for the asset.
-		$query	= $db->getQuery(true);
-		$query->select('id');
-		$query->from('#__usergroups');
-		$query->where('title='.$db->quote(trim($grouptitle)));
-		$query->limit(1);
+		$query	= 'SELECT id FROM #__usergroups WHERE title='.$db->quote(trim($grouptitle)).' LIMIT 1';
 
 		// Execute the query and load the rules from the result.
+		
 		$db->setQuery($query);
 
 		$rows= $db->loadObjectList();
@@ -836,7 +833,6 @@ class JoomlaBasicMisc
 			return '';
 
 		$row=$rows[0];
-
 
 		return $row->id;
 	}

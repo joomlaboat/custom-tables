@@ -12,14 +12,10 @@ var codemirror_editors=[];
 var codemirror_active_index=0;
 var codemirror_active_areatext_id=null;
 var temp_params_tag="";
-
 var parts=location.href.split("/administrator/");
 var websiteroot=parts[0]+"/administrator/";
-
 var layout_tags=[];
 var layout_tags_loaded=false;
-
-//var tags_box_obj=null;
 var tagsets=[];
 
 var current_layout_type=0;
@@ -119,7 +115,7 @@ function loadTags(type_id,tags_box)
 {
     type_obj=document.getElementById(type_id);
 
-    var url=websiteroot+"components/com_customtables/xml/tags_250.xml";
+    var url=websiteroot+"components/com_customtables/xml/tags_254.xml";
 
     var http = null;
     var params = "";
@@ -643,15 +639,9 @@ function updateCodeMirror(text)
     }
 
 
-function render_current_TagSets()
-{
-}
-
-
 function do_render_current_TagSets()
 {
     layouttypeid=type_obj.value;
-
 
     var result_li='';
     var result_div='';
@@ -717,6 +707,10 @@ function renderTags(index,tagset)
 
 function addTabExtraEvents3()
 {
+	//let layoutcode_textarea = document.getElementById('jform_layoutcode');
+	//window.location.href = "#layoutcode-tab";
+	//layoutcode-tab
+	
     jQuery(function($)
     {
 		$(".nav-tabs a").click(function (e)
@@ -730,8 +724,6 @@ function addTabExtraEvents3()
 			
             if(index!=-1)
             {
-				tagsets=findTagSets(code);
-                    
                 setTimeout(function()
                 {
 					codemirror_active_index=index;

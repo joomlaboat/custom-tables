@@ -376,12 +376,15 @@ class CT_FieldTypeTag_file
         return $filename_new;
     }
 
-    public static function renderFileFieldBox($prefix,&$esfield,&$row,$realFieldName,$class)
+    public static function renderFileFieldBox(&$ct, $prefix,&$esfield,&$row,$realFieldName,$class)
 	{
         $document = JFactory::getDocument();
 
-		$document->addCustomTag('<script src="'.JURI::root(true).'/media/jui/js/jquery.min.js"></script>');
-		$document->addCustomTag('<script src="'.JURI::root(true).'/media/jui/js/bootstrap.min.js"></script>');
+		if($ct->Env->version < 4)
+		{
+			$document->addCustomTag('<script src="'.JURI::root(true).'/media/jui/js/jquery.min.js"></script>');
+			$document->addCustomTag('<script src="'.JURI::root(true).'/media/jui/js/bootstrap.min.js"></script>');
+		}
 		
         $document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customtables/css/uploadfile.css" rel="stylesheet">');
         $document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/js/jquery.uploadfile.min.js"></script>');

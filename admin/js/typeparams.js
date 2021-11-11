@@ -1130,7 +1130,7 @@ function findTheType(typename)
 
 function loadTypes_silent(processMessageBox)
 {
-    var url=websiteroot+"components/com_customtables/xml/fieldtypes_250.xml";
+    var url=websiteroot+"components/com_customtables/xml/fieldtypes_254.xml";
 
     var http = null;
     var params = "";
@@ -1181,7 +1181,7 @@ function loadTypes(typeparams_box_obj,jform_type,jform_typeparams,typeparams_box
 {
     typeparams_box_obj.innerHTML='Loading...';
 
-    var url=websiteroot+"components/com_customtables/xml/fieldtypes_250.xml";
+    var url=websiteroot+"components/com_customtables/xml/fieldtypes_254.xml";
 
     var http = null;
     var params = "";

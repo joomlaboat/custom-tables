@@ -380,7 +380,7 @@ class ESInputBox
 								$image_type_file=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fieldtypes'.DIRECTORY_SEPARATOR.'_type_image.php';
 								require_once($image_type_file);
 
-								$result.=CT_FieldTypeTag_image::renderImageFieldBox($prefix,$esfield,$row,$realFieldName,$class,$attributes);
+								$result.=CT_FieldTypeTag_image::renderImageFieldBox($this->Model->ct, $prefix,$esfield,$row,$realFieldName,$class,$attributes);
 
 							break;
 
@@ -388,7 +388,7 @@ class ESInputBox
 
 								$file_type_file=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fieldtypes'.DIRECTORY_SEPARATOR.'_type_file.php';
 								require_once($file_type_file);
-								$result.=CT_FieldTypeTag_file::renderFileFieldBox($prefix,$esfield,$row,$realFieldName,$class);
+								$result.=CT_FieldTypeTag_file::renderFileFieldBox($this->Model->ct, $prefix,$esfield,$row,$realFieldName,$class);
 
 							break;
 

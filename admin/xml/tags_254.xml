@@ -59,6 +59,21 @@
                     <option value="json" label="JSON" description="Generates JSON file."/>
                     <option value="xml" label="XML" description="Generates XML file."/>
                 </param>
+
+                <param name="linktype" label="Icon" type="list" description="Render HTML anchor with an icon or just a link.">
+                    <option value="" label="Link with an icon" />
+                    <option value="linkonly" label="Link only" />
+                </param>
+
+		<param type="string" name="image" label="(Optional) Path to a custom icon" description="Leave it empty to use available file format icon." />
+
+                <param name="size" label="Icon Size" type="list" description="Select the icon size in pixels.">
+                    <option value="16" label="16 x 16" />
+                    <option value="32" label="32 x 32" />
+                    <option value="48" label="48 x 48" />
+                </param>
+		
+		<param type="string" name="alias" label="(Optional) Munu Itemid or Alias" description="To redirect to specific Menu Item." />
             </params>
         </tag>
 

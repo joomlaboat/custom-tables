@@ -10,8 +10,6 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-use CustomTables\Layouts;
-
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'layout.php');
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tagprocessor'.DIRECTORY_SEPARATOR.'catalogtag.php');
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tagprocessor'.DIRECTORY_SEPARATOR.'catalogtableviewtag.php');
@@ -27,71 +25,40 @@ if($this->Model->ct->Env->frmt=='html' or $this->Model->ct->Env->frmt=='')
 if($html_format)
     LayoutProcessor::renderPageHeader($this->Model);
 
-$Layouts = new Layouts($this->Model->ct);
-
-$pagelayout='';
-$layout_catalog_name=$this->Model->params->get( 'escataloglayout' );
-if($layout_catalog_name!='')
-{
-	$pagelayout = $Layouts->getLayout($layout_catalog_name,false);//It is safier to process layout after rendering the table
-		
-    if($Layouts->layouttype==8)
-        $this->Model->ct->Env->frmt='xml';
-    elseif($Layouts->layouttype==9)
-        $this->Model->ct->Env->frmt='csv';
-    elseif($Layouts->layouttype==10)
-        $this->Model->ct->Env->frmt='json';
-}
-else
-    $pagelayout='{catalog:,notable}';
-
-$layout_item_name=$this->Model->params->get('esitemlayout');
-
-$itemlayout='';
-
-if($layout_item_name!='')
-	$itemlayout = $Layouts->getLayout($layout_item_name);
-
-$catalogtablecode=JoomlaBasicMisc::generateRandomString();//this is temporary replace place holder. to not parse content result again
-
 //Process general tags before catalog tags to prepare headers for CSV etc output
 if($html_format)
 {
-	$catalogtablecontent=tagProcessor_CatalogTableView::process($this->Model,$pagelayout,$this->SearchResult,$catalogtablecode);
+	$catalogtablecontent=tagProcessor_CatalogTableView::process($this->Model,$this->pagelayout,$this->SearchResult,$this->catalogtablecode);
 	if($catalogtablecontent=='')
 	{
-		$this->Model->LayoutProc->layout=$itemlayout;
-		$catalogtablecontent=tagProcessor_Catalog::process($this->Model,$pagelayout,$this->SearchResult,$catalogtablecode);
+		$this->Model->LayoutProc->layout=$this->itemlayout;
+		$catalogtablecontent=tagProcessor_Catalog::process($this->Model,$this->pagelayout,$this->SearchResult,$this->catalogtablecode);
 	}
 	
-	$this->Model->LayoutProc->layout=$pagelayout;
-	$pagelayout=$this->Model->LayoutProc->fillLayout();
+	$this->Model->LayoutProc->layout=$this->pagelayout;
+	$this->pagelayout=$this->Model->LayoutProc->fillLayout();
 
 }
 else
 {
-	$catalogtablecontent=tagProcessor_CatalogTableView::process($this->Model,$pagelayout,$this->SearchResult,$catalogtablecode);
+	$catalogtablecontent=tagProcessor_CatalogTableView::process($this->Model,$this->pagelayout,$this->SearchResult,$this->catalogtablecode);
 
 	if($catalogtablecontent=='')
 	{
-		
-		
 		$this->Model->LayoutProc->layout=$itemlayout;
-		$catalogtablecontent=tagProcessor_Catalog::process($this->Model,$pagelayout,$this->SearchResult,$catalogtablecode);
-		
-		
+		$catalogtablecontent=tagProcessor_Catalog::process($this->Model,$this->pagelayout,$this->SearchResult,$this->catalogtablecode);
 	}
 
-	$this->Model->LayoutProc->layout=$pagelayout;
-	$pagelayout=$this->Model->LayoutProc->fillLayout();
+	$this->Model->LayoutProc->layout=$this->pagelayout;
+	$this->pagelayout=$this->Model->LayoutProc->fillLayout();
 }
 
 
-$pagelayout=str_replace('&&&&quote&&&&','"',$pagelayout); // search boxes may return HTML elemnts that contain placeholders with quotes like this: &&&&quote&&&&
-$pagelayout=str_replace($catalogtablecode,$catalogtablecontent,$pagelayout);
+$this->pagelayout=str_replace('&&&&quote&&&&','"',$this->pagelayout); // search boxes may return HTML elemnts that contain placeholders with quotes like this: &&&&quote&&&&
+$this->pagelayout=str_replace($this->catalogtablecode,$catalogtablecontent,$this->pagelayout);
 
 if($html_format)
-    LayoutProcessor::applyContentPlugins($pagelayout);
+    LayoutProcessor::applyContentPlugins($this->pagelayout);
 
 if($this->Model->ct->Env->frmt=='xml')
 {
@@ -102,27 +69,14 @@ if($this->Model->ct->Env->frmt=='xml')
     header('Content-Type: text/xml; charset=utf-8');
     header("Pragma: no-cache");
     header("Expires: 0");
-	echo $pagelayout;
+	echo $this->pagelayout;
 	die;//clean exit
-}
-elseif($this->Model->ct->Env->frmt=='csv')
-{
-	if (ob_get_contents()) ob_end_clean();
-
-	$filename = JoomlaBasicMisc::makeNewFileName($this->Model->params->get('page_title'),'csv');
-    header('Content-Disposition: attachment; filename="'.$filename.'"');
-    header('Content-Type: text/csv; charset=utf-8');
-    header("Pragma: no-cache");
-    header("Expires: 0");
-
-    echo chr(255).chr(254).mb_convert_encoding($pagelayout, 'UTF-16LE', 'UTF-8');
-    die;//clean exit
 }
 elseif($this->Model->ct->Env->clean==1)
 {
     if (ob_get_contents()) ob_end_clean();
-    echo $pagelayout;
+    echo $this->pagelayout;
 	die ;//clean exit
 }
 else
-	echo $pagelayout;
+	echo $this->pagelayout;

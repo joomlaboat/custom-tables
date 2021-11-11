@@ -53,7 +53,19 @@ $typeboxid="jform_layouttype";
 
 	<form action="<?php echo JRoute::_('index.php?option=com_customtables&layout=edit&id='.(int) $this->item->id.$this->referral); ?>" method="post" name="adminForm" id="adminForm" class="form-validate" enctype="multipart/form-data">
 	
-		<?php echo JHtml::_('bootstrap.startTabSet', 'layoutsTab', array('active' => 'general')); ?>
+		<?php
+			$active_tab = 'general';
+			if($this->item->layoutcode != '')
+				$active_tab = 'layoutcode-tab';
+			elseif($this->item->layoutmobile != '')
+				$active_tab = 'layoutmobile-tab';
+			elseif($this->item->layoutcss != '')
+				$active_tab = 'layoutcss-tab';
+			elseif($this->item->layoutjs != '')
+				$active_tab = 'layoutjs-tab';
+			
+			echo JHtml::_('bootstrap.startTabSet', 'layoutsTab', array('active' => $active_tab));
+		?>
 		
 		<?php echo JHtml::_('bootstrap.addTab', 'layoutsTab', 'general', JText::_('COM_CUSTOMTABLES_LAYOUTS_GENERAL', true)); ?>
 	

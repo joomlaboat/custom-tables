@@ -30,15 +30,10 @@ trait render_csv
         $line_fields=array();
 		foreach($fieldarray as $field)
 		{
-
 			$fieldpair=JoomlaBasicMisc::csv_explode(':', $field, '"', false);
             $header_fields[]=trim(strip_tags(html_entity_decode($fieldpair[0])));//header
             if(isset($fieldpair[1]))
-            {
                 $vlu=str_replace('"','',$fieldpair[1]);
-                if(strpos($vlu,',')!==false)
-                    $vlu='"'.$vlu.'"';
-            }
             else
                 $vlu="";
 
@@ -47,7 +42,7 @@ trait render_csv
 
         $recordline.='"'.implode('","',$line_fields).'"';
 		$result.='"'.implode('","',$header_fields).'"';//."\r\n";
-		
+
         //Parse Header
         $Model->LayoutProc->layout=$result;
         $result=$Model->LayoutProc->fillLayout();
@@ -59,50 +54,23 @@ trait render_csv
 		//Initiate the file output
 		$filename = JoomlaBasicMisc::makeNewFileName($Model->params->get('page_title'),'csv');
 
-        if (ob_get_contents())
-          	ob_end_clean();
-
-		ob_start();
-        @header('Content-Disposition: attachment; filename="'.$filename.'"');
-        @header('Content-Type: text/csv; charset=utf-8');
-        @header("Pragma: no-cache");
-        @header("Expires: 0");
-		
-		echo chr(255).chr(254).mb_convert_encoding($result, 'UTF-16LE', 'UTF-8');
-	
-		//Output first chunk
-		
-		flush();
-		ob_flush();//flush to not force the browser to wait
-		ob_start();
-						
-		echo self::renderCSVoutput($Model,$SearchResult);
+		$result.= self::renderCSVoutput($Model,$SearchResult);
 				
 		if($Model->TotalRows>$Model->limitstart+$Model->limit)
 		{
-			flush();
-			ob_flush();//flush to not force the browser to wait
-			ob_start();
-			
 			for($limitstart=$Model->limitstart+$Model->limit;$limitstart<$Model->TotalRows;$limitstart+=$Model->limit)
 			{
 				$Model->limitstart=$limitstart;
 				$SearchResult=$Model->getSearchResult();//get records
-				
-				print_r($SearchResult);
-				
+
 				if(count($SearchResult)==0)
 					break;//no records left - escape
 				
-				echo self::renderCSVoutput($Model,$SearchResult);//output next chunk
-				flush();
-				ob_flush();//flush to not force the browser to wait
-				ob_start();
+				$result.= self::renderCSVoutput($Model,$SearchResult);//output next chunk
 			}
 		}
 
-        die;//clean exit
-        //no return here
+        return $result;
     }
 	
 	protected static function renderCSVoutput(&$Model,&$SearchResult)
@@ -114,15 +82,13 @@ trait render_csv
 		{
 			$Model->LayoutProc->number=$number;
 		
-            $content=strip_tags(tagProcessor_Item::RenderResultLine($Model,$row,false));
-	        $tablecontent.=mb_convert_encoding('
-'.$content, 'UTF-16LE', 'UTF-8');//New line
+            $tablecontent.='
+'.strip_tags(tagProcessor_Item::RenderResultLine($Model,$row,false));
 
 			$number++;
 		}
         return $tablecontent;
 	}
-
 
 	public static function get_CatalogTable_singleline_CSV(&$SearchResult,&$Model,$allowcontentplugins,$pagelayout)
 	{
@@ -165,12 +131,8 @@ trait render_csv
 
 		$Model->LayoutProc->layout=$layout;
 
-		if (ob_get_contents())
-			ob_end_clean();
-
 		foreach($SearchResult as $row)
 		{
-
 			$vlu=trim(strip_tags(tagProcessor_Item::RenderResultLine($Model,$row,false)));
 			$l=strlen($vlu);
 			if($commaAdded and $l>0)
@@ -186,13 +148,6 @@ trait render_csv
         if($allowcontentplugins)
 			$result = LayoutProcessor::applyContentPlugins($result);
                 
-		@header('Content-Type: text/csv; charset=utf-8');
-		@header('Content-Disposition: attachment; filename="'.$filename.'"');
-		@header("Pragma: no-cache");
-		@header("Expires: 0");
-
-        echo chr(255).chr(254).mb_convert_encoding($result, 'UTF-16LE', 'UTF-8');
-		
-        die;//clean exit
+		return $result;
     }
 }

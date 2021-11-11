@@ -540,7 +540,7 @@
 
 </type><!-- pro -->
 
-	<type ct_name="filelink" label="File Link" description="Path to a folder on the server. Provides selection of the file at provided path." priority="3">
+	<type ct_name="filelink" label="File Link" description="Path to a folder on the server. Provides file selection from particular folder." priority="3">
 		
 		<params>
 			<param name="folder" label="Folder" example="/images/userfiles" description="Folder a user can select a file from." default="" type="folder"  />
@@ -768,7 +768,7 @@
 
 </type>
 
-	<type ct_name="phponadd" label="PHP On Add" description="Executes PHP script on record added event." rawquotes="0" priority="3" proversion="1"><!-- pro -->
+	<type ct_name="phponadd" label="PHP On Add" description="Executes PHP script after record has been added saves the return value." rawquotes="0" priority="3" proversion="1"><!-- pro -->
 		<params>
 			<param name="phpcode" example="&quot;Time is &quot;.(time()+3600)" examplenoquotes="1" label="PHP Script" description='Note that you cannot use single quote symbol.
 			In addition you may use any field value, to do so, just type [fieldname], see more about table catalog layout.' default="" type="string"  />
@@ -776,7 +776,7 @@
 
 </type>
 
-	<type ct_name="phponchange" label="PHP On Change" description="Executes PHP script on record change event." rawquotes="0" priority="3" proversion="1"><!-- pro -->
+	<type ct_name="phponchange" label="PHP On Change" description="Executes PHP script after record has been changed saves the return value." rawquotes="0" priority="3" proversion="1"><!-- pro -->
 		<params>
 			<param name="phpcode" label="PHP Script" example="&quot;[firstname]&quot;.&quot;[lastname]&quot;" examplenoquotes="1" description='Note that you cannot use single quote symbol. In addition you may use any field value, to do so, just type [fieldname], see more about table catalog layout.' default="" type="string"  />
 		</params>

@@ -146,12 +146,15 @@ class CT_FieldTypeTag_image
         return null;
     }
 
-    public static function renderImageFieldBox($prefix,&$esfield,&$row,$realFieldName,$class,$optinal_parameter)
+    public static function renderImageFieldBox(&$ct, $prefix,&$esfield,&$row,$realFieldName,$class,$optinal_parameter)
 	{
         $document = JFactory::getDocument();
 
-		$document->addCustomTag('<script src="'.JURI::root(true).'/media/jui/js/jquery.min.js"></script>');
-		$document->addCustomTag('<script src="'.JURI::root(true).'/media/jui/js/bootstrap.min.js"></script>');
+		if($ct->Env->version < 4)
+		{
+			$document->addCustomTag('<script src="'.JURI::root(true).'/media/jui/js/jquery.min.js"></script>');
+			$document->addCustomTag('<script src="'.JURI::root(true).'/media/jui/js/bootstrap.min.js"></script>');
+		}
 
         $document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customtables/css/uploadfile.css" rel="stylesheet">');
         $document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/js/jquery.uploadfile.min.js"></script>');

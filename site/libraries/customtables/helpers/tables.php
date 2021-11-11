@@ -316,12 +316,15 @@ class ESTables
 			$query='INSERT INTO '.$realtablename.' ('.implode(',',$set_fieldnames).') VALUES ('.implode(',',$set_values).')';
 			$db->setQuery( $query );
 			$db->execute();
+			return $db->insertid();
 			
 			//get last id
+			/*
 			$query='SELECT '.$realidfieldname.' AS listing_id FROM '.$realtablename.' ORDER BY '.$realidfieldname.' DESC LIMIT 1';
 			$db->setQuery( $query );
 			$temp_rows = $db->loadObjectList();
 			return $temp_rows[0]->listing_id;
+			*/
 		}
 		else
 		{

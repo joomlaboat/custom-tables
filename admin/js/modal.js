@@ -26,12 +26,6 @@ function ctResizeModalBox()
             modal.style.top="50px";
             modal.style.height=content_height+"px";
             
-			/*
-            let content = document.getElementById('layouteditor_tagsContent0');
-            if(content)
-                content.style.height=(h-250)+"px";
-			*/
-                
             modalBoxHeightChanged=true;
         }
         else
@@ -39,20 +33,6 @@ function ctResizeModalBox()
     
         if(modalBoxHeightChanged)
         {
-			/*
-            let contentbox_rect = modal.getBoundingClientRect();
-            let contentbox = document.getElementById('modalParamList');
-            if(contentbox)
-            {
-                contentbox.style.height=(content_height-contentbox_rect.top-30-120)+"px";
-            }
-            
-            let contentbox = document.getElementById('layouteditor_fields');
-            if(contentbox)
-            {
-                contentbox.style.height=(content_height-contentbox_rect.top-30-10)+"px";
-            }
-            */
             
         }
     

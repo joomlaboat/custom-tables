@@ -663,7 +663,6 @@ function addFieldTag(index_unused,tagstartchar,tagendchar,tag,param_count)
 				return '<tr>\r\n' + result + '</tr>\r\n';
 			}
 
-
 			function getLayout_SimpleCatalog()
 			{
 				var result="";
