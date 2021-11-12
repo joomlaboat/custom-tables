@@ -10,7 +10,6 @@
 // No direct access to this file access');
 defined('_JEXEC') or die('Restricted access');
 
-
 class tagProcessor_Edit
 {
     public static function process(&$Model,&$pagelayout,&$row,$fieldNamePrefix)
@@ -20,8 +19,8 @@ class tagProcessor_Edit
         else
         	$listing_id=0;
         
-        $captcha_found=tagProcessor_Edit::process_captcha($Model,$pagelayout);
-		
+        $captcha_found=tagProcessor_Edit::process_captcha($Model->ct,$pagelayout);
+	
         $buttons = tagProcessor_Edit::process_button($Model,$pagelayout,$captcha_found,$listing_id);
         $buttons_obsolete = tagProcessor_Edit::process_buttons($Model,$pagelayout,$captcha_found,$listing_id);
         $fields = tagProcessor_Edit::process_fields($Model,$pagelayout,$row,$fieldNamePrefix);
@@ -50,22 +49,33 @@ class tagProcessor_Edit
 		return $field_objects;
     }
 
-    protected static function process_captcha(&$Model,&$pagelayout)
+    protected static function process_captcha(&$ct,&$pagelayout)
     {
         $found=false;
         $options=array();
 		$captcha=JoomlaBasicMisc::getListToReplace('captcha',$options,$pagelayout,'{}');
-
-        if(count($captcha)>0)
+		
+		if(count($captcha)>0)
         {
-			if($Model->ct->Env->frmt!='csv')
+			JHtml::_('behavior.keepalive');
+			
+			if($ct->Env->frmt!='csv')
             {
 				$p=tagProcessor_Edit::getReCaptchaParams();
                 if($p!=null)
                 {
 					JPluginHelper::importPlugin('captcha');
-					$dispatcher = JEventDispatcher::getInstance();
-                    $dispatcher->trigger('onInit','my_captcha_div');
+					
+					if($ct->Env->version < 4)
+					{
+						$dispatcher = JEventDispatcher::getInstance();
+						$dispatcher->trigger('onInit','my_captcha_div');
+					}
+					else
+					{
+						JFactory::getApplication()->triggerEvent('onInit', array(null, 'my_captcha_div', 'class=""'));
+						//JFactory::getApplication()->triggerEvent( 'onInit','my_captcha_div');
+					}
 
                     $reCaptchaParams=json_decode($p->params);
                 }
@@ -77,7 +87,7 @@ class tagProcessor_Edit
 		for($i=0;$i<count($captcha);$i++)
 		{
 			$captcha_code='';
-            if($Model->ct->Env->frmt!='csv')
+            if($ct->Env->frmt!='csv')
             {
 				if($reCaptchaParams!=null and $reCaptchaParams->public_key!="" and isset($reCaptchaParams->size))
                 {
@@ -129,7 +139,7 @@ class tagProcessor_Edit
                 if($option[0]!='')
 					$type=$option[0];//button set
                 else
-					$type='save';//$Model->submitbuttons;
+					$type='save';
 
                 if(isset($option[1]))
 					$title=$option[1];
@@ -158,15 +168,15 @@ class tagProcessor_Edit
 				switch($type)
                 {
 						case 'save':
-                            $b=tagProcessor_Edit::renderSaveButton($Model,$captcha_found,$optional_class,$title);
+                            $b=tagProcessor_Edit::renderSaveButton($Model->ct,$captcha_found,$optional_class,$title);
                         break;
                                     
                         case 'saveandclose':
-							$b=tagProcessor_Edit::renderSaveAndCloseButton($Model,$captcha_found,$optional_class,$title,$redirectlink);
+							$b=tagProcessor_Edit::renderSaveAndCloseButton($Model->ct,$captcha_found,$optional_class,$title,$redirectlink);
                         break;
                                     
                         case 'saveandprint':
-                            $b=tagProcessor_Edit::renderSaveAndPrintButton($Model,$captcha_found,$optional_class,$title,$redirectlink);
+                            $b=tagProcessor_Edit::renderSaveAndPrintButton($Model->ct,$captcha_found,$optional_class,$title,$redirectlink);
                         break;
                                     
                         case 'saveascopy':
@@ -174,20 +184,20 @@ class tagProcessor_Edit
                             if($listing_id==0)
                                 $b='';
                             else
-                                $b=tagProcessor_Edit::renderSaveAsCopyButton($Model,$captcha_found,$optional_class,$title,$redirectlink);
+                                $b=tagProcessor_Edit::renderSaveAsCopyButton($Model->ct,$captcha_found,$optional_class,$title,$redirectlink);
                         break;
                                     
                         case 'cancel':
-							$b=tagProcessor_Edit::renderCancelButton($Model,$optional_class,$title,$redirectlink);
+							$b=tagProcessor_Edit::renderCancelButton($Model->ct,$optional_class,$title,$redirectlink);
                         break;
                                     
                         case 'close':
-                            $b=tagProcessor_Edit::renderCancelButton($Model,$optional_class,$title,$redirectlink);
+                            $b=tagProcessor_Edit::renderCancelButton($Model->ct,$optional_class,$title,$redirectlink);
                         break;
                                     
                         case 'delete':
 
-							$b=tagProcessor_Edit::renderDeleteButton($Model,$captcha_found,$optional_class,$title,$redirectlink);
+							$b=tagProcessor_Edit::renderDeleteButton($Model->ct,$captcha_found,$optional_class,$title,$redirectlink);
 							
 						break;
 
@@ -253,7 +263,7 @@ class tagProcessor_Edit
                                 if(isset($option[5]))
                                 	$optional_class=$option[5];
 
-                                $b=tagProcessor_Edit::getToolbar($Model,$submitbuttons,$button1title,$button2title,$button3title,$redirectlink,$optional_class,$captcha_found,$listing_id);
+                                $b=tagProcessor_Edit::getToolbar($Model->ct,$submitbuttons,$button1title,$button2title,$button3title,$redirectlink,$optional_class,$captcha_found,$listing_id);
 			
                             }
                             
@@ -261,12 +271,12 @@ class tagProcessor_Edit
 						}
     }
     
-    protected static function renderSaveButton(&$Model,$captcha_found,$optional_class,$title)
+    protected static function renderSaveButton(&$ct,$captcha_found,$optional_class,$title)
     {
 		if($title=='')
             $title=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SAVE');
 			
-		if($Model->ct->Env->frmt == 'json')
+		if($ct->Env->frmt == 'json')
 			return $title;
 
         $attribute='';
@@ -278,17 +288,17 @@ class tagProcessor_Edit
 		else
 			$the_class='ctEditFormButton btn button-apply btn-success';
         
-        $onclick='setTask(event, "saveandcontinue","'.$Model->ct->Env->encoded_current_url.'",true);';
+        $onclick='setTask(event, "saveandcontinue","'.$ct->Env->encoded_current_url.'",true);';
 		
 		return '<input id="customtables_button_save" type="submit" class="'.$the_class.' validate"'.$attribute.' onClick=\''.$onclick.'\' value="'.$title.'">';
     }
     
-    protected static function renderSaveAndCloseButton(&$Model,$captcha_found,$optional_class,$title,$redirectlink)
+    protected static function renderSaveAndCloseButton(&$ct,$captcha_found,$optional_class,$title,$redirectlink)
     {
 		if($title=='')
             $title= JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SAVEANDCLOSE');
 			
-		if($Model->ct->Env->frmt == 'json')
+		if($ct->Env->frmt == 'json')
 			return $title;
 			
         $attribute='onClick=\'';
@@ -309,12 +319,12 @@ class tagProcessor_Edit
         return '<input id="customtables_button_saveandclose" type="submit" '.$attribute.' class="'.$the_class.' validate" value="'.$title.'" />';
     }
     
-    protected static function renderSaveAndPrintButton(&$Model,$captcha_found,$optional_class,$title,$redirectlink)
+    protected static function renderSaveAndPrintButton(&$ct,$captcha_found,$optional_class,$title,$redirectlink)
     {
 		if($title=='')
             $title=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NEXT');
 			
-		if($Model->ct->Env->frmt == 'json')
+		if($ct->Env->frmt == 'json')
 			return $title;
 			
         $attribute='onClick=\'';
@@ -332,12 +342,12 @@ class tagProcessor_Edit
         return '<input id="customtables_button_saveandprint" type="submit" '.$attribute.' class="'.$the_class.' validate" value="'.$title.'" />';
     }
     
-    protected static function renderSaveAsCopyButton(&$Model,$captcha_found,$optional_class,$title,$redirectlink)
+    protected static function renderSaveAsCopyButton(&$ct,$captcha_found,$optional_class,$title,$redirectlink)
     {
 		if($title=='')
             $title=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SAVEASCOPYANDCLOSE');
 			
-		if($Model->ct->Env->frmt == 'json')
+		if($ct->Env->frmt == 'json')
 			return $title;
 			
         $attribute='';//onClick="return checkRequiredFields();"';
@@ -354,12 +364,12 @@ class tagProcessor_Edit
         return '<input id="customtables_button_saveandcopy" type="submit" class="'.$the_class.' validate"'.$attribute.' onClick=\''.$onclick.'\' value="'.$title.'">';
     }
     
-    protected static function renderCancelButton(&$Model,$optional_class,$title,$redirectlink)
+    protected static function renderCancelButton(&$ct,$optional_class,$title,$redirectlink)
     {
         if($title=='')
             $title=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_CANCEL');
 		
-		if($Model->ct->Env->frmt == 'json')
+		if($ct->Env->frmt == 'json')
 			return $title;
             
         if($optional_class!='')
@@ -371,12 +381,12 @@ class tagProcessor_Edit
     	return '<input id="customtables_button_cancel" type="button" class="'.$cancel_class.'" value="'.$title.'" onClick=\''.$onclick.'\'>';
     }
     
-    protected static function renderDeleteButton(&$Model,$captcha_found,$optional_class,$title,$redirectlink)
+    protected static function renderDeleteButton(&$ct,$captcha_found,$optional_class,$title,$redirectlink)
     {
         if($title=='')
 			$title=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_DELETE');
 				
-		if($Model->ct->Env->frmt == 'json')
+		if($ct->Env->frmt == 'json')
 			return $title;
             
         if($optional_class!='')
@@ -398,7 +408,7 @@ class tagProcessor_Edit
         return $result;
     }
     
-    protected static function getToolbar(&$Model,$submitbuttons,$button1title,$button2title,$button3title,$redirectlink,$optional_class='',bool $captcha_found=false,int $listing_id=0)
+    protected static function getToolbar(&$ct,$submitbuttons,$button1title,$button2title,$button3title,$redirectlink,$optional_class='',bool $captcha_found=false,int $listing_id=0)
 	{
         //will be depricated by July 2019
 		$toolbar='';
@@ -406,30 +416,30 @@ class tagProcessor_Edit
 		if($submitbuttons=='apply' or $submitbuttons=='saveandclose')
 		{
             //Save and close
-			$toolbar=tagProcessor_Edit::renderSaveAndCloseButton($Model,$captcha_found,$optional_class,$button1title,$redirectlink);
+			$toolbar=tagProcessor_Edit::renderSaveAndCloseButton($ct,$captcha_found,$optional_class,$button1title,$redirectlink);
 		}
 		elseif($submitbuttons=='nextprint' or $submitbuttons=='saveandprint')
 		{
             //Save and Open Print preview
-			$toolbar=tagProcessor_Edit::renderSaveAndPrintButton($Model,$captcha_found,$optional_class,$button1title,$redirectlink);
+			$toolbar=tagProcessor_Edit::renderSaveAndPrintButton($ct,$captcha_found,$optional_class,$button1title,$redirectlink);
 		}
         
 		elseif($submitbuttons=='savecancelsavenew' or $submitbuttons=='saveandclose.saveascopy.cancel')//savecancelsavenew - legacy support 
 		{
             //Save & Close / Save as New & Close / Cancel
-			$toolbar=tagProcessor_Edit::renderSaveAndCloseButton($Model,$captcha_found,$optional_class,$button1title,$redirectlink).' ';
+			$toolbar=tagProcessor_Edit::renderSaveAndCloseButton($ct,$captcha_found,$optional_class,$button1title,$redirectlink).' ';
             
             if($listing_id!=0)
-                $toolbar.=tagProcessor_Edit::renderSaveAsCopyButton($Model,$captcha_found,$optional_class,$button2title,$redirectlink);
+                $toolbar.=tagProcessor_Edit::renderSaveAsCopyButton($ct,$captcha_found,$optional_class,$button2title,$redirectlink);
                 
-            $toolbar.=tagProcessor_Edit::renderCancelButton($Model,$optional_class,$button3title,$redirectlink);
+            $toolbar.=tagProcessor_Edit::renderCancelButton($ct,$optional_class,$button3title,$redirectlink);
         }
         elseif($submitbuttons=='applysavecancel' or $submitbuttons=='save.saveandclose.cancel')//applysavecancel -  legacy support
         {
             //Save / Save & Close / Cancel
-            $toolbar=tagProcessor_Edit::renderSaveButton($Model,$captcha_found,$optional_class,$button1title).' ';
-            $toolbar.=tagProcessor_Edit::renderSaveAndCloseButton($Model,$captcha_found,$optional_class,$button2title,$redirectlink).' ';
-            $toolbar.=tagProcessor_Edit::renderCancelButton($Model,$optional_class,$button3title,$redirectlink);
+            $toolbar=tagProcessor_Edit::renderSaveButton($ct,$captcha_found,$optional_class,$button1title).' ';
+            $toolbar.=tagProcessor_Edit::renderSaveAndCloseButton($ct,$captcha_found,$optional_class,$button2title,$redirectlink).' ';
+            $toolbar.=tagProcessor_Edit::renderCancelButton($ct,$optional_class,$button3title,$redirectlink);
 
 		}
         else
@@ -437,8 +447,8 @@ class tagProcessor_Edit
             //savecancel or saveandclose.cancel
             //Default
             //Save & Close / Save as New & Close / Cancel
-			$toolbar=tagProcessor_Edit::renderSaveAndCloseButton($Model,$captcha_found,$optional_class,$button1title,$redirectlink);
-            $toolbar.=tagProcessor_Edit::renderCancelButton($Model,$optional_class,$button3title,$redirectlink);
+			$toolbar=tagProcessor_Edit::renderSaveAndCloseButton($ct,$captcha_found,$optional_class,$button1title,$redirectlink);
+            $toolbar.=tagProcessor_Edit::renderCancelButton($ct,$optional_class,$button3title,$redirectlink);
         }
 
 		return $toolbar;

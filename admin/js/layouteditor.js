@@ -335,11 +335,14 @@ function showModalTagForm(tagstartchar,tagendchar,tag,top,left,line,positions,is
     var obj=document.getElementById("layouteditor_modal_content_box");
     obj.innerHTML=form_content;
     
-    jQuery(function($)
-    {
-        //container ||
-        $(obj).find(".hasPopover").popover({"html": true,"trigger": "hover focus","layouteditor_modal_content_box": "body"});
-    });
+    if(joomlaVersion < 4)
+	{
+		jQuery(function($)
+		{
+			//container ||
+			$(obj).find(".hasPopover").popover({"html": true,"trigger": "hover focus","layouteditor_modal_content_box": "body"});
+		});
+	}
 
     updateParamString("fieldtype_param_",1,countparams,"current_tagparameter",null,false,false,tagstartchar);
     

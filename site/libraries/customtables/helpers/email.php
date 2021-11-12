@@ -47,7 +47,6 @@ class Email
 		);
 
 		$mailer->setSender($sender);
-
 		$mailer->addRecipient($email);
 		$mailer->setSubject($emailSubject);
 		$mailer->setBody($emailBody);
@@ -56,7 +55,16 @@ class Email
 		foreach($attachments as $attachment)
 			$mail->addAttachment($attachment);
 
-		$send = $mailer->Send();
+		try
+        {
+			$send = @$mailer->Send();
+        }
+        catch (RuntimeException $e)
+        {
+			$msg = $e->getMessage();
+			Factory::getApplication()->enqueueMessage($msg, 'error');			
+			return false;
+        }
 
 		if ( $send !== true )
 			return false;
