@@ -124,7 +124,7 @@ class CustomTablesModelDetails extends JModelLegacy
 		
 		if($this->ct->Table->tablename=='')
 		{
-			JFactory::getApplication()->enqueueMessage('Table not selected.', 'error');
+			//JFactory::getApplication()->enqueueMessage('Table not selected (127).', 'error');
 			return;
 		}
 

@@ -182,7 +182,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 				
 				if($this->ct->Table->tablename=='')
 				{
-					JFactory::getApplication()->enqueueMessage('Table not selected.', 'error');
+					JFactory::getApplication()->enqueueMessage('Table not selected (185).', 'error');
 					return;
 				}
 					

@@ -60,7 +60,7 @@ class CustomTablesModelEditFiles extends JModelLegacy
 		if($this->ct->Table->tablename=='')
 		{
 			$Itemid=JFactory::getApplication()->input->getInt('Itemid', 0);
-			JFactory::getApplication()->enqueueMessage('Table not selected.', 'error');
+			JFactory::getApplication()->enqueueMessage('Table not selected (63).', 'error');
 			return;
 		}
 

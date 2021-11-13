@@ -145,7 +145,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 				
 		if($this->ct->Table->tablename=='')
 		{
-			JFactory::getApplication()->enqueueMessage('Table not selected.', 'error');
+			JFactory::getApplication()->enqueueMessage('Table not selected (148).', 'error');
 			return false;
 		}
 

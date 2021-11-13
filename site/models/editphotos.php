@@ -59,7 +59,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy
 				
 		if($this->ct->Table->tablename=='')
 		{
-			JFactory::getApplication()->enqueueMessage('Table not selected.', 'error');
+			JFactory::getApplication()->enqueueMessage('Table not selected (62).', 'error');
 			return;
 		}
 
