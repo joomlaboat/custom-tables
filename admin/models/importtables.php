@@ -13,6 +13,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\CT;
+use CustomTables\ImportTables;
 
 // Import Joomla! libraries
 jimport('joomla.application.component.model');

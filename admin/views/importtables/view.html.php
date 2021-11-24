@@ -15,17 +15,20 @@ defined('_JEXEC') or die('Restricted access');
 // Import Joomla! libraries
 jimport( 'joomla.application.component.view');
 
+use Joomla\CMS\Version;
+
 class CustomTablesViewImportTables extends JViewLegacy
 {
     var $catalogview;
 
     function display($tpl = null)
     {
+		$version = new Version;
+		$this->version = (int)$version->getShortVersion();
 
 		JToolBarHelper::title(   JText::_( 'Custom Tables - Import Tables', 'generic.png' ));//
 
 		parent::display($tpl);
-
 	}
 
 	function generateRandomString($length = 32)
@@ -34,11 +37,8 @@ class CustomTablesViewImportTables extends JViewLegacy
 		$charactersLength = strlen($characters);
 		$randomString = '';
 		for ($i = 0; $i < $length; $i++)
-		{
 		    $randomString .= $characters[rand(0, $charactersLength - 1)];
-		}
+
 		return $randomString;
 	}
 }
-
-?>

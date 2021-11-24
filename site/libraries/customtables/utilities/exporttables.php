@@ -20,7 +20,7 @@ class ExportTables
 	//Records can be exported too, if it set in table parameters
 	//file is creaated in /tmp folder or as set in $path parameter
 	
-	public function export(&$table_ids, $path = 'tmp')
+	public static function export(&$table_ids, $path = 'tmp')
 	{
 		$db = Factory::getDBO();
 

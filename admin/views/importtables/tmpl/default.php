@@ -10,9 +10,18 @@
 defined('_JEXEC') or die('Restricted access');
 
 // load tooltip behavior
-JHtml::_('behavior.tooltip');
+if($this->version < 4)
+{
+	JHtml::_('behavior.tooltip');
+}
+
 JHtml::_('behavior.formvalidator');
 $document = JFactory::getDocument();
+
+if($this->version >= 4)
+{
+	$document->addCustomTag('<script src="'.JURI::root(true).'/media/vendor/jquery/js/jquery.min.js"></script>');
+}
 
 $document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customtables/css/uploadfile.css" rel="stylesheet">');
 $document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customtables/css/style.css" rel="stylesheet">');

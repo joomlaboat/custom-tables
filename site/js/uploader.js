@@ -36,8 +36,8 @@ function ct_getUploader(index,urlstr,maxFileSize,allowedTypes,UploaderForm,Submi
 	uploaderParams[index]={files_uploaded:0,ct_uploader_url:urlstr,esUploaderFormID:UploaderForm,AutoSubmitForm:SubmitForm,UploadFileCount:1,fieldValueInputBox:fieldValueInputBox,uploadedFileBox:uploadedFileBox};
 
 	////http://hayageek.com/docs/jquery-upload-file.php#doc
-    jQuery(function($)
-    {
+    //jQuery(function($)
+    //{
 		
 		var showFileCounter_=true;
 		var multiple_=true;
@@ -49,12 +49,14 @@ function ct_getUploader(index,urlstr,maxFileSize,allowedTypes,UploaderForm,Submi
 		}
 
 		
-		document.getElementById(FileUploaderBox).innerHTML="ff";
+		let uploadFileObject = document.getElementById(FileUploaderBox);
 		
 		
 		//$(document).ready(function()
 		//{
 
+		
+		//uploadFileObject.uploadFile({
 		$("#"+FileUploaderBox).uploadFile({
 
 			url:urlstr,
@@ -185,6 +187,6 @@ function ct_getUploader(index,urlstr,maxFileSize,allowedTypes,UploaderForm,Submi
 
 
 		});
-	});
+	//});
 	//});//Document ready
 }
