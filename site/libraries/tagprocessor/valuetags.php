@@ -585,7 +585,7 @@ class tagProcessor_Value
 			}
 			else
 			{
-				$rowValue=$row[$ESField['realfieldname']];
+				$rowValue=isset($row[$ESField['realfieldname']]) ? $row[$ESField['realfieldname']] : null;
 				$fieldname=$ESField['fieldname'];
 			}
 		}
@@ -632,8 +632,8 @@ class tagProcessor_Value
 		$getGalleryRows=array();
 		$isFileBoxLoaded=array();
 		$getFileBoxRows=array();
-
-		if(isset($row) and count($row)>0 and $row['listing_id'] != 0)
+		 //and isset($row['listing_id']) and $row['listing_id'] != 0
+		if(isset($row) and count($row)>0)
 		{
 			foreach($Model->ct->Table->fields as $ESField)
 			{

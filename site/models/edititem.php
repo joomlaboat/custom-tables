@@ -220,13 +220,14 @@ class CustomTablesModelEditItem extends JModelLegacy
 			$wheres[]='published=1';
 			
 		$wheres_user=$this->UserIDField_BuildWheres($this->useridfield);
+
 		$wheres=array_merge($wheres,$wheres_user);
 		
-		$query='SELECT c.'.$this->ct->Table->realidfieldname.' FROM '.$this->ct->Table->realtablename.' AS c WHERE '.implode(' AND ',$wheres).' LIMIT 1';
-		
+		$query='SELECT '.$this->ct->Table->tablerow['query_selects'].' FROM '.$this->ct->Table->realtablename.' WHERE '.implode(' AND ',$wheres).' LIMIT 1';
+
 		$db->setQuery($query);
 		$rows=$db->loadAssocList();
-
+		
 		if(count($rows)<1)
 		{
 			$a=array();//for compatibility
@@ -235,8 +236,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 		$this->row=$rows[0];
 
-		return $this->row['c.'.$this->ct->Table->realidfieldname];
-
+		return $this->row[$this->ct->Table->realidfieldname];
 	}
 
 	function processCustomListingID()
@@ -596,7 +596,8 @@ class CustomTablesModelEditItem extends JModelLegacy
 				//example: user
 				//check if the record belong to the current user
 				$user_field_row=Fields::FieldRowByName($field,$this->ct->Table->fields);
-				$wheres_owner[]=[$item[0],'c.'.$user_field_row['realfieldname'].'='.$this->ct->Env->userid];
+				$wheres_owner[]=[$item[0],$user_field_row['realfieldname'].'='.$this->ct->Env->userid];
+				//$wheres_owner[]=[$item[0],'c.'.$user_field_row['realfieldname'].'='.$this->ct->Env->userid];
 			}
 			else
 			{
@@ -689,7 +690,9 @@ class CustomTablesModelEditItem extends JModelLegacy
 			$index+=1;
 		}
 		
-		$wheres[]='c.'.$this->ct->Table->realidfieldname.'='.$this->id;
+		if((int)$this->id != 0)
+			$wheres[]=$this->ct->Table->realidfieldname.'='.$this->id;
+			//$wheres[]='c.'.$this->ct->Table->realidfieldname.'='.$this->id;
 		
 		if($wheres_owner_str!='')
 			$wheres[]='('.$wheres_owner_str.')';

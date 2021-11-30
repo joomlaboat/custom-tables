@@ -635,10 +635,11 @@ class CustomTablesImageMethods
 		elseif($fileExtension == 'png')
 		{
 			$from = imageCreateFromPNG($src);
+
 			if($rgb==-1)
 			{
 				$rgb = imagecolorat($from, 0, 0);
-
+			
 				//if destination is jpeg and background is transparent then replace it with white.
 				if($rgb==hexdec('7FFFFFFF') and $fileExtension_dst=='jpg')
 					$rgb=hexdec('ffffff');

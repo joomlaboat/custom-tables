@@ -18,11 +18,6 @@ class JHTMLESSQLJoinView
 {
     public static function render($value, $establename, $field, $filter,$langpostfix='')
     {
-		if($value==0 or $value=='')// or $value==',' or $value==',,')
-			return '';
-
-		$htmlresult='';
-
 		$config=array();
 
 		$paramsArray=array();
@@ -37,10 +32,24 @@ class JHTMLESSQLJoinView
 
 		$_params= new JRegistry;
 		$_params->loadArray($paramsArray);
-
+		
 		$model = JModelLegacy::getInstance('Catalog', 'CustomTablesModel', $config);
 		$model->load($_params, true);
 		$model->showpagination=false;
+		
+		if($model->ct->Table->realtablename == null or $model->ct->Table->realtablename=='')
+		{
+			JFactory::getApplication()->enqueueMessage('SQL Join field: Table no set.', 'error');
+			return '';
+		}
+		if($value==0 or $value=='')// or $value==',' or $value==',,')
+			return '';
+
+		$htmlresult='';
+
+		
+
+		
 				
 		//Get Row
 		$query = 'SELECT '.$model->ct->Table->tablerow['query_selects'].' FROM '.$model->ct->Table->realtablename.' WHERE '.$model->ct->Table->tablerow['realidfieldname'].'='.(int)$value;

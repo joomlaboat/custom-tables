@@ -76,7 +76,7 @@ class Fields
 		else
 		{
 			$index=0;
-			foreach($this->ct->Languages->LanguageList as $lang)
+			foreach($ct->Languages->LanguageList as $lang)
 			{
 				if($index==0)
 					$postfix='';
@@ -180,7 +180,7 @@ class Fields
 		else
 		{
             $index=0;
-            foreach($this->ct->Languages->LanguageList as $lang)
+            foreach($ct->Languages->LanguageList as $lang)
             {
 				if($index==0)
 					$postfix='';
@@ -1165,7 +1165,6 @@ class Fields
 	public static function FieldRowByName($fieldname,&$ctfields)
 	{
 		//trigger_error("Cannot divide by zero", E_USER_ERROR);
-		//$this->db->setQuery( '1');
 		
 		foreach($ctfields as $field)
 		{

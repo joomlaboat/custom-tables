@@ -147,7 +147,7 @@ class CustomtablesModelListofTables extends JModelList
 			else
 			{
 				$search = $db->quote('%' . $db->escape($search) . '%');
-				$query->where('(a.tabletitle LIKE '.$search.')');
+				$query->where('(a.tablename LIKE '.$search.')');
 			}
 		}
 		

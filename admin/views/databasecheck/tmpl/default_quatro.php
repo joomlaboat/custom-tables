@@ -9,16 +9,13 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
-/*
-JHtml::_('behavior.multiselect');
-JHtml::_('dropdown.init');
-JHtml::_('formbehavior.chosen', 'select');
-*/
-
 use CustomTables\IntegrityChecks;
 
-$tables = $this->prepareTables();
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
 
+$tables = $this->prepareTables();
+	
 $document = JFactory::getDocument();
 
 $document->addCustomTag('<script src="'.JURI::root(true).'/media/vendor/jquery/js/jquery.min.js"></script>');
@@ -29,29 +26,26 @@ $document->addCustomTag('<script src="'.JURI::root(true).'/administrator/compone
 
 ?>
 
-<style type="text/css">  
-        #canvas_container {  
-            width: 100%;  
-			min-height: <?php echo (count($tables)>50 ? '4000' : '2000'); ?>px;  
-            border: 1px solid #aaa;  
-        }  
-</style>  
 
-<div id="j-sidebar-container" class="span2">
-<?php echo $this->sidebar; ?>
+        <style type="text/css">  
+            #canvas_container {  
+                width: 100%;  
+				min-height: <?php echo (count($tables)>50 ? '4000' : '2000'); ?>px;  
+                border: 1px solid #aaa;  
+            }  
+        </style>  
 
-</div>
-<div id="j-main-container" class="ct_doc">
-
-	<?php echo JHtml::_('bootstrap.startTabSet', 'schemaTab', array('active' => 'diagram'));
-
-	echo JHtml::_('bootstrap.addTab', 'schemaTab', 'diagram', JText::_('COM_CUSTOMTABLES_TABLES_DIAGRAM', true));
-	echo '<div id="canvas_container"></div>';
+<?php echo HTMLHelper::_('uitab.startTabSet', 'schemaTab', ['active' => 'diagram', 'recall' => true, 'breakpoint' => 768]); ?>
 	
-	echo JHtml::_('bootstrap.endTab'); 
+	<?php echo HTMLHelper::_('uitab.addTab', 'schemaTab', 'diagram', Text::_('COM_CUSTOMTABLES_TABLES_DIAGRAM')); ?>
 	
-	echo JHtml::_('bootstrap.addTab', 'schemaTab', 'checks', JText::_('COM_CUSTOMTABLES_TABLES_CHECKS', true));
+	<div id="canvas_container"></div>
 	
+	<?php echo HTMLHelper::_('uitab.endTab'); ?>
+	
+	<?php echo HTMLHelper::_('uitab.addTab', 'schemaTab', 'checks', Text::_('COM_CUSTOMTABLES_TABLES_CHECKS')); ?>
+
+	<?php 
 	$result = IntegrityChecks::check($this->ct);
 	
 	if(count($result)>0)
@@ -59,15 +53,19 @@ $document->addCustomTag('<script src="'.JURI::root(true).'/administrator/compone
 	else
 		echo '<p>Database table structure is up to date.</p>';
 	
-	echo JHtml::_('bootstrap.endTab');
+	?>
 	
-	echo JHtml::_('bootstrap.endTabSet');
-
-		
+	<?php echo HTMLHelper::_('uitab.endTab'); ?>
+	
+	<?php echo HTMLHelper::_('uitab.endTabSet'); ?>
+	
+	
+	<?php 
+	
 	echo '<script>
 	
 	AllTables = '.json_encode($tables).';
 	
 	</script>';
 	
-	?></div>
+	?>

@@ -13,23 +13,28 @@ class tagProcessor_If
 {
     public static function process(&$Model,&$htmlresult,&$row,$recordlist,$number)
     {
-			$options=array();
-            $fList=JoomlaBasicMisc::getListToReplace('if',$options,$htmlresult,'{}');
+		$options=array();
+        $fList=JoomlaBasicMisc::getListToReplace('if',$options,$htmlresult,'{}');
 
-            $i=0;
+        $i=0;
 
-            foreach($fList as $fItem)
-            {
-				tagProcessor_If::parseIfStatements($options[$i],$Model,$htmlresult,$row,$recordlist,$number);
-				$i++;
-            }
+        foreach($fList as $fItem)
+        {
+			tagProcessor_If::parseIfStatements($options[$i],$Model,$htmlresult,$row,$recordlist,$number);
+			$i++;
+        }
 
-             //outdated - absolete
-        if(isset($row) and count($row)>0 and $row['listing_id'] != 0)
+		//outdated - absolete
+		if(isset($row) and count($row)>0 and isset($row['listing_id']) and $row['listing_id'] != 0)
 		{
 			//Row Publish Status IF,IFNOT statments
 			tagProcessor_If::IFStatment('[_if_published]','[_endif_published]',$htmlresult,!$row['listing_published']==1);
 			tagProcessor_If::IFStatment('[_ifnot_published]','[_endifnot_published]',$htmlresult,$row['listing_published']==1);
+		}
+		else
+		{
+			tagProcessor_If::IFStatment('[_if_published]','[_endif_published]',$htmlresult,false);
+			tagProcessor_If::IFStatment('[_ifnot_published]','[_endifnot_published]',$htmlresult,true);
 		}
 
 		$user = JFactory::getUser();

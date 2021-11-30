@@ -80,7 +80,7 @@ class ESInputBox
 		if($row==null)
 			$row=array();
 
-		if(count($row)==0 or $row['listing_id'] == 0)
+		if(count($row)==0 or (isset($row['listing_id']) and $row['listing_id'] == 0))
 		{
 			$value=JFactory::getApplication()->input->getString($realFieldName);
 			if($value=='')
@@ -115,7 +115,9 @@ class ESInputBox
 		else
 		{
 			if($esfield['type']!='multilangstring' and $esfield['type']!='multilangtext' and $esfield['type']!='multilangarticle')
-				$value=$row[$realFieldName];
+			{
+				$value = isset($row[$realFieldName]) ? $row[$realFieldName] : null;
+			}
 		}
 
 		$isAdmin=$this->isAdmin();
@@ -920,10 +922,12 @@ class ESInputBox
 							else
 								$attributes_=$attributes;
 								
-															if(count($row)==0)
+								if(count($row)==0)
 									$value=JFactory::getApplication()->input->get($prefix.$esfield['fieldname'].$postfix,'','STRING');
 								else
-									$value=$row[$esfield['realfieldname'].$postfix];
+								{
+									$value=isset($row[$esfield['realfieldname'].$postfix]) ? $row[$esfield['realfieldname'].$postfix] : null;
+								}
 								
 
 								if($addDynamicEvent)
