@@ -623,7 +623,10 @@ class tagProcessor_Value
                 $postfix=$Model->ct->Languages->Postfix; //front-end default language
                 
     		$fieldname=$ESField['realfieldname'].$postfix;
-			$rowValue=$row[$fieldname];
+			if(isset($row[$fieldname]))
+				$rowValue = $row[$fieldname];
+			else
+				$rowValue = null;
 		}
 	}
 
