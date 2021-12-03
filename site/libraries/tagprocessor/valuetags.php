@@ -313,8 +313,15 @@ class tagProcessor_Value
 							else
 								$isEmpty=false;
 					}
-                    else
+                    elseif($fieldtype == 'checkbox')
+					{
+						$isEmpty=false;
+					}
+					else
+					{
 						$isEmpty=tagProcessor_Value::isEmpty($rowValue,$fieldtype,$ESField['typeparams']);
+						
+					}
 
 					$ifname='[_if:_value:'.$ESField['fieldname'].']';
 					$endifname='[_endif:_value:'.$ESField['fieldname'].']';
@@ -545,16 +552,13 @@ class tagProcessor_Value
 			else
 				return false;
 		}
-
 	}
-
 
 	public static function doMultiValues(&$Model,&$ESField, &$row,&$fieldtype,&$rowValue,&$fieldname,$specific_lang='')
 	{
 		$fieldtype=$ESField['type'];
 		if(strpos($fieldtype,'multilang')===false)
 		{
-
 			if($fieldtype=='dummy')
 			{
 				$rowValue='';
