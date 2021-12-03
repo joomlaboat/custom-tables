@@ -206,7 +206,7 @@ class tagProcessor_If
 								if($value1<$value2)
 									return true;
 							}
-							elseif($operation=='=')
+							elseif($operation=='=' or $operation=='==')
 							{
 								if($value1==$value2)
 									return true;
@@ -254,26 +254,24 @@ class tagProcessor_If
 
     protected static function getOpr($str)
 	{
-							$opr='';
+		$opr='';
 
-							if(strpos($str,'<=')!==false)
-								$opr='<=';
-							elseif(strpos($str,'>=')!==false)
-								$opr='>=';
-							elseif(strpos($str,'!=')!==false)
-								$opr='!=';
-							elseif(strpos($str,'==')!==false)
-								$opr='=';
-							elseif(strpos($str,'=')!==false)
-								$opr='=';
-							elseif(strpos($str,'<')!==false)
-								$opr='<';
-							elseif(strpos($str,'>')!==false)
-								$opr='>';
-
-							return $opr;
+		if(strpos($str,'<=')!==false)
+			$opr='<=';
+		elseif(strpos($str,'>=')!==false)
+			$opr='>=';
+		elseif(strpos($str,'!=')!==false)
+			$opr='!=';
+		elseif(strpos($str,'==')!==false)
+			$opr='==';
+		elseif(strpos($str,'=')!==false)
+			$opr='=';
+		elseif(strpos($str,'<')!==false)
+			$opr='<';
+		elseif(strpos($str,'>')!==false)
+			$opr='>';
+		return $opr;
 	}
-
 
     //---------------------- old
     public static function IFUserTypeStatment(&$htmlresult,&$user,$currentuserid)

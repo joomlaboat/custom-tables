@@ -859,7 +859,7 @@ protected function get_record_type_value()
     public function processDefaultValues($default_fields_to_apply,&$Model,&$row)
     {
         $savequery=array();
-        
+		
         foreach($default_fields_to_apply as $d)
 		{
             $fieldname=$d[0];
@@ -867,14 +867,15 @@ protected function get_record_type_value()
             $type=$d[2];
 			$this->realfieldname=$d[3];
 			
-
             $r=$row[$this->realfieldname];
             if($r==null or $r=='' or $r==0)
-            {
-                $this->processDefaultValue($Model,$value,$type,$row,$savequery,$this->realfieldname);
-            }
+			{
+				$q = $this->processDefaultValue($Model,$value,$type,$row);
+				if($q != null)
+					$savequery[] = $q;
+			}
 		}
-
+		
         $this->runUpdateQuery($savequery,$row['listing_id']);
     }
 
@@ -883,7 +884,7 @@ protected function get_record_type_value()
     	if(count($savequery)>0)
 		{
 			$query='UPDATE '.$this->realtablename.' SET '.implode(', ',$savequery).' WHERE '.$this->realidfieldname.'='.$id;
-
+			
 			$this->db->setQuery( $query );
 			$this->db->execute();
 		}
