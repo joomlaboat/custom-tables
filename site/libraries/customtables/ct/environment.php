@@ -64,29 +64,21 @@ class Environment
 			$this->WebsiteRoot=Uri::root(true);
 			if($this->WebsiteRoot=='' or $this->WebsiteRoot[strlen($this->WebsiteRoot)-1]!='/') //Root must have slash / in the end
 				$this->WebsiteRoot.='/';
-				
-
 		}
 		else
 			$this->WebsiteRoot='';
 			
 			$this->advancedtagprocessor=false;
 		
-		$phptagprocessor=JPATH_SITE.DIRECTORY_SEPARATOR.'plugins'.DIRECTORY_SEPARATOR.'content'.DIRECTORY_SEPARATOR.'customtables'.DIRECTORY_SEPARATOR.'protagprocessor'.DIRECTORY_SEPARATOR.'phptags.php';
+		$path = JPATH_SITE . DIRECTORY_SEPARATOR . 'plugins' . DIRECTORY_SEPARATOR . 'content' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'protagprocessor' . DIRECTORY_SEPARATOR;
+		$phptagprocessor=$path . 'phptags.php';
 		if(file_exists($phptagprocessor))
 		{
-			//require_once($phptagprocessor);
 			$this->advancedtagprocessor=true;
-			
-			
-			$file=JPATH_SITE.DIRECTORY_SEPARATOR.'plugins'.DIRECTORY_SEPARATOR.'content'.DIRECTORY_SEPARATOR.'customtables'.DIRECTORY_SEPARATOR.'protagprocessor'.DIRECTORY_SEPARATOR.'phptags.php';
-			if(file_exists($file))
-				require_once($file);
-			
-		
-			$file=JPATH_SITE.DIRECTORY_SEPARATOR.'plugins'.DIRECTORY_SEPARATOR.'content'.DIRECTORY_SEPARATOR.'customtables'.DIRECTORY_SEPARATOR.'protagprocessor'.DIRECTORY_SEPARATOR.'customphp.php';
-			if(file_exists($file))
-				require_once($file);
+
+			require_once($phptagprocessor);
+			require_once($path . 'customphp.php');
+			require_once($path . 'servertags.php');
 		}
 		
 		$this->isMobile = $this->check_user_agent('mobile');

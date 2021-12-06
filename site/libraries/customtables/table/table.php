@@ -71,6 +71,7 @@ class Table
 
 		$this->setTable($this->tablerow, $useridfieldname, $load_fields = true);
 		
+		$this->record = array(1);
 	}
 	
 	function setTable(&$tablerow, $useridfieldname = null, $load_fields = true)

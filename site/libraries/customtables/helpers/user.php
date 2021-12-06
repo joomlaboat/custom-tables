@@ -19,6 +19,7 @@ use \JoomlaBasicMisc;
 use \JUserHelper;
 use \Joomla\CMS\Uri\Uri;
 use \Joomla\CMS\Factory;
+use \Joomla\CMS\Access\Access;
 use \JText;
 
 class CTUser
@@ -111,7 +112,7 @@ class CTUser
 	static public function GetUserRow($userid)
 	{
 		$db = Factory::getDBO();
-		$query='SELECT * FROM #__users WHERE id='.$userid;
+		$query='SELECT * FROM #__users WHERE id='.$userid.' LIMIT 1';
 
 		$db->setQuery( $query );
 
@@ -121,7 +122,25 @@ class CTUser
 		else
 			return $recs[0];
 	}
+	
+	static public function GetUserGroups($userid)
+	{
+		$db = Factory::getDBO();
 
+        $groups = Access::getGroupsByUser($userid);
+		$groupid_list		= '(' . implode(',', $groups) . ')';
+        $query  = $db->getQuery(true);
+        $query->select('title');
+        $query->from('#__usergroups');
+        $query->where('id IN ' .$groupid_list);
+        $db->setQuery($query);
+        $rows	= $db->loadRowList();
+        $grouplist	= array();
+		foreach($rows as $group)
+			$grouplist[]=$group[0];
+
+        return implode(',',$grouplist);
+	}
 
 	//------------- USER CREATION
 	

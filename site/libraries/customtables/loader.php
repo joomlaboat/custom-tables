@@ -47,6 +47,8 @@ function CTLoader($inclide_utilities = false, $include_html = false)
 	
 	$path_datatypes = $path . 'layouts' . DIRECTORY_SEPARATOR;
 	require_once($path_datatypes.'layouts.php');
+	require_once($path_datatypes.'twig.php');
+	require_once($path_datatypes.'general_tags.php');
 	
 	
 	$path_datatypes = $path . 'logs' . DIRECTORY_SEPARATOR;
@@ -75,6 +77,7 @@ function CTLoader($inclide_utilities = false, $include_html = false)
 	
 	$path_datatypes = $path . 'html' . DIRECTORY_SEPARATOR;
 	require_once($path_datatypes.'toolbar.php');
+	require_once($path_datatypes.'forms.php');
 	
 	$path_datatypes = $path . 'tables' . DIRECTORY_SEPARATOR;
 	require_once($path_datatypes.'tables.php');

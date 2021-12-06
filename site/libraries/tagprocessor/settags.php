@@ -10,6 +10,8 @@
 
 defined('_JEXEC') or die('Restricted access');
 
+/* All tags already implemented using Twig */
+
 class tagProcessor_Set
 {
     public static function process(&$Model,&$pagelayout)

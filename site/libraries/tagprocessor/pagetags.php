@@ -11,6 +11,15 @@ defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\Fields;
 
+/* Not sll tags already implemented using Twig
+
+Implemented:
+
+{print} - {{ document.print() }}
+
+
+ */
+
 class tagProcessor_Page
 {
     public static function process(&$Model,&$pagelayout)
@@ -37,7 +46,6 @@ class tagProcessor_Page
 
     public static function FormatLink(&$Model,&$pagelayout)
 	{
-		//Depricated. Use 	{currenturl:base64} instead
 		$options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('format',$options,$pagelayout,'{}');
 

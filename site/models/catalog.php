@@ -205,7 +205,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 
 				//Layout
 
-				$this->LayoutProc=new LayoutProcessor;
+				$this->LayoutProc=new LayoutProcessor($this->ct);
 				$this->LayoutProc->Model=$this;
 				$this->LayoutProc->fields=$this->ct->Table->fields;
 

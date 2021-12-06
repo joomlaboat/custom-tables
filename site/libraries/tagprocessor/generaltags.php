@@ -11,6 +11,9 @@ defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\Fields;
 use CustomTables\Layouts;
+use CustomTables\CTUser;
+
+/* All tags already implemented using Twig */
 
 class tagProcessor_General
 {
@@ -166,7 +169,6 @@ class tagProcessor_General
                         $value=$jinput->get($optpair[1],'','ALNUM');
                         break;
                     case 'cmd':
-                        break;
                         $value=$jinput->getCmd($optpair[1],'');
                         break;
                     case 'base64decode':
@@ -276,7 +278,7 @@ class tagProcessor_General
 			if($id!=0)
 			{
 
-				$user_row=tagProcessor_General::getUserRowByID($id);
+				$user_row = (object)CTUser::GetUserRow($id);
 
 				switch($opts[0])
 				{
@@ -319,26 +321,8 @@ class tagProcessor_General
 						break;
 
                     case 'usergroups':
-
-                        $db = JFactory::getDBO();
-
-                        $groups = JAccess::getGroupsByUser($id);
-                        $groupid_list		= '(' . implode(',', $groups) . ')';
-                        $query  = $db->getQuery(true);
-                        $query->select('title');
-                        $query->from('#__usergroups');
-                        $query->where('id IN ' .$groupid_list);
-                        $db->setQuery($query);
-                        $rows	= $db->loadRowList();
-                        $grouplist	= array();
-                        foreach($rows as $group)
-                           $grouplist[]=$group[0];
-
-                        $vlu=implode(',',$grouplist);
-
+						$vlu=CTUser::GetUserGroups($id);
 						break;
-
-
 
 					default:
 						$vlu='';
@@ -399,20 +383,6 @@ class tagProcessor_General
 		}
 	}
 
-	public static function getUserRowByID($id)
-	{
-		$db = JFactory::getDBO();
-		$query = 'SELECT * FROM #__users WHERE id='.(int)$id.' LIMIT 1';
-
-		$db->setQuery($query);
-        $rows=$db->loadObjectList();
-
-		if(count($rows)==0)
-			return array();
-
-		return $rows[0];
-	}
-
 	public static function getGoBackButton(&$ct,&$layout_code)
 	{
         $jinput = JFactory::getApplication()->input;
@@ -452,14 +422,14 @@ class tagProcessor_General
 				if($ct->Env->print==1)
                     $gobackbutton='';
                 else
-                    $gobackbutton=tagProcessor_General::renderGoBackButton($returnto,$title);
+                    $gobackbutton=tagProcessor_General::renderGoBackButton($returnto,$title,$opt);
 
 				$layout_code=str_replace($fItem,$gobackbutton,$layout_code);
 				$i++;
 		}
 	}
 
-	protected static function renderGoBackButton($returnto,$title)
+	protected static function renderGoBackButton($returnto,$title,$opt)
 	{
 		$gobackbutton='';
 		if ($returnto=='')
@@ -468,7 +438,7 @@ class tagProcessor_General
 		}
 		else
 		{
-			$gobackbutton='<a href="'.$returnto.'" class="ct_goback"><div>'.$title.'</div></a>';
+			$gobackbutton='<a href="'.$returnto.'" class="ct_goback" '.$opt.'><div>'.$title.'</div></a>';
 		}
 		return $gobackbutton;
 	}

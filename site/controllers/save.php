@@ -186,7 +186,7 @@ function CustomTablesSave($task,&$this_)
 			$site_libpath=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR;
 			require_once($site_libpath.'layout.php');
 
-			$LayoutProc=new LayoutProcessor;
+			$LayoutProc=new LayoutProcessor($model->ct);
 			$LayoutProc->Model=$model;
 			$LayoutProc->layout=$msg;
 			$msg=$LayoutProc->fillLayout(array(),null,'[]',true);

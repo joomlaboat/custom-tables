@@ -262,7 +262,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 		if($filter=='')
 			return 0;
 
-		$LayoutProc=new LayoutProcessor;
+		$LayoutProc=new LayoutProcessor($this->ct);
 		$LayoutProc->Model=$this;
 		$LayoutProc->layout=$filter;
 		$filter=$LayoutProc->fillLayout(array(),null,'[]',true);
@@ -1540,7 +1540,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'layout.php');
 
-		$LayoutProc=new LayoutProcessor;
+		$LayoutProc=new LayoutProcessor($this->ct);
 
 		$LayoutProc->layout=$artlink;
 		$LayoutProc->Model=$this;
@@ -1566,7 +1566,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 		$id=$row['listing_id'];
 		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'layout.php');
 
-		$LayoutProc=new LayoutProcessor;
+		$LayoutProc=new LayoutProcessor($this->ct);
 		$LayoutProc->Model=$this;
 
 		$savequery='';
@@ -1623,7 +1623,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 		$id=$row['listing_id'];
 		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'layout.php');
 
-		$LayoutProc=new LayoutProcessor;
+		$LayoutProc=new LayoutProcessor($this->ct);
 		$LayoutProc->Model=$this;//ok
 
 		$db = JFactory::getDBO();
@@ -1689,9 +1689,8 @@ class CustomTablesModelEditItem extends JModelLegacy
 	function parseRowLayoutContent(&$row,$content,$applyContentPlagins=true)
 	{
 		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'layout.php');
-		$LayoutProc=new LayoutProcessor;
+		$LayoutProc=new LayoutProcessor($this->ct);
 		$LayoutProc->Model=$this;
-		$LayoutProc->advancedtagprocessor=$this->ct->Env->advancedtagprocessor;
 		$LayoutProc->layout=$content;
 		$content=$LayoutProc->fillLayout($row);
 		if($applyContentPlagins)

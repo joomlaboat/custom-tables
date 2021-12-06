@@ -131,7 +131,7 @@ class CustomTablesModelDetails extends JModelLegacy
 		if($this->alias!='' and $this->ct->Table->alias_fieldname!='')
 			$this->filter=$this->ct->Table->alias_fieldname.'='.$this->alias;
 
-		$this->LayoutProc=new LayoutProcessor;
+		$this->LayoutProc=new LayoutProcessor($this->ct);
 		$this->LayoutProc->Model=$this;
 
 		if($this->filter!='' and $this->alias=='')

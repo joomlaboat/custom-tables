@@ -18,10 +18,10 @@ class tagProcessor_Item
 	{
         tagProcessor_Item::processLink($Model,$row,$htmlresult,$recordlist,$number,$aLink);
 
-		tagProcessor_Field::process($Model,$htmlresult,$add_label,$fieldNamePrefix);
+		tagProcessor_Field::process($Model->ct,$htmlresult,$add_label,$fieldNamePrefix);
 
 		if($advancedtagprocessor)
-			tagProcessor_Server::process($Model,$htmlresult);
+			tagProcessor_Server::process($htmlresult);
 
 		tagProcessor_Shopping::getShoppingCartLink($Model,$htmlresult,$row);
 
@@ -59,7 +59,7 @@ class tagProcessor_Item
 		$htmlresult=str_replace('{number}',$number,$htmlresult);
 
 		if(isset($row) and isset($row['listing_published']))
-			tagProcessor_Item::processPublishStatus($Model,$row,$htmlresult);
+			tagProcessor_Item::processPublishStatus($row,$htmlresult);
 
 		if(isset($row) and isset($row['listing_published']))
 			tagProcessor_Item::GetSQLJoin($Model,$htmlresult,$row['listing_id']);
@@ -104,6 +104,7 @@ class tagProcessor_Item
 
     protected static function GetSQLJoin(&$Model,&$htmlresult,$id)
 	{
+		$ct = $Model->ct;
 		$options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('sqljoin',$options,$htmlresult,'{}');
 		if(count($fList)==0)
@@ -147,11 +148,11 @@ class tagProcessor_Item
 				{
 					if($field1_findwhat=='_id')
 					{
-						$field1_findwhat=$Model->ct->Table->tablerow['realidfieldname'];
+						$field1_findwhat=$ct->Table->tablerow['realidfieldname'];
 					}
 					elseif($field1_findwhat=='_published')
 					{
-						if($Model->ct->Table->tablerow['published_field_found'])
+						if($ct->Table->tablerow['published_field_found'])
 							$field1_findwhat='published';
 						else
 						{
@@ -161,7 +162,7 @@ class tagProcessor_Item
 					}
 					else
 					{
-						$field1_row=Fields::getFieldRowByName($field1_findwhat, $Model->ct->Table->tablerow['id']);
+						$field1_row=Fields::getFieldRowByName($field1_findwhat, $ct->Table->tablerow['id']);
 						if(is_object($field1_row))
 							$field1_findwhat=$field1_row->realfieldname;
 						else
@@ -301,30 +302,30 @@ class tagProcessor_Item
 						$query = 'SELECT '.$tablerow['realtablename'].'.'.$field3_readvalue.' AS vlu '; //value or smart
 					}
 
-					$query.=' FROM '.$Model->ct->Table->realtablename.' ';
+					$query.=' FROM '.$ct->Table->realtablename.' ';
 
-					if($Model->ct->Table->tablename!=$sj_tablename)
+					if($ct->Table->tablename!=$sj_tablename)
 					{
 						// Join not needed when we are in the same table
 						$query.=' LEFT JOIN '.$tablerow['realtablename'].' ON ';
 
 						if($field2_type=='records')
 						{
-							$query.='INSTR('.$tablerow['realtablename'].'.'.$field2_lookwhere.',  CONCAT(",",'.$Model->ct->Table->realtablename.'.'.$field1_findwhat.',","))' ;
+							$query.='INSTR('.$tablerow['realtablename'].'.'.$field2_lookwhere.',  CONCAT(",",'.$ct->Table->realtablename.'.'.$field1_findwhat.',","))' ;
 						}
 						else
 						{
-							$query.=' '.$Model->ct->Table->realtablename.'.'.$field1_findwhat.' = '
+							$query.=' '.$ct->Table->realtablename.'.'.$field1_findwhat.' = '
 							.' '.$tablerow['realtablename'].'.'.$field2_lookwhere;
 						}
 					}
 
                         $wheres=array();
 
-						if($Model->ct->Table->tablename!=$sj_tablename)
+						if($ct->Table->tablename!=$sj_tablename)
 						{
 							//don't attach to specific record when it is the same table, example : to find averages
-							$wheres[]=$Model->ct->Table->realtablename.'.'.$Model->ct->Table->tablerow['realidfieldname'].'='.$id;
+							$wheres[]=$ct->Table->realtablename.'.'.$ct->Table->tablerow['realidfieldname'].'='.$id;
 						}
 						else
 						{
@@ -394,7 +395,7 @@ class tagProcessor_Item
 
 
 
-	protected static function processPublishStatus(&$Model,&$row,&$htmlresult)
+	protected static function processPublishStatus(&$row,&$htmlresult)
 	{
 		$htmlresult=str_replace('{_value:published}',$row['listing_published']==1,$htmlresult);
 
@@ -582,35 +583,4 @@ class tagProcessor_Item
 
 		return $htmlresult;
     }
-
-    /*
-	protected static function createUserButton(&$Model,&$row,&$pagelayout,$recordlist,$number)
-	{
-        $options=array();
-		$fList=JoomlaBasicMisc::getListToReplace('createuser',$options,$pagelayout,'{}',':','"');
-
-		$i=0;
-
-		foreach($fList as $fItem)
-		{
-            $parts=JoomlaBasicMisc::csv_explode(",",$options[$i],'"', false);//true
-
-            if(count($parts)!=5)
-            {
-                $vlu=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_ALL_PARAMETERS_PROVIDED' );
-            }
-            else
-            {
-                $user_name=preg_replace("/[^A-Za-z0-9 ]/", "", $parts[1]);//Sanitize user name
-                $alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_CREATEUSER' );
-                $img='<img src="'.JURI::root(true).'/components/com_customtables/images/key.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
-                $vlu='<div class="toolbarIcons"><a href=\'javascript:ctCreateUser("'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_USERWILLBECREATED' ).' '.$user_name.'?", '.$row['listing_id'].')\'>'.$img.'</a></div>';
-            }
-
-			$pagelayout=str_replace($fItem,$vlu,$pagelayout);
-			$i++;
-		}
-
-	}
-	*/
 }

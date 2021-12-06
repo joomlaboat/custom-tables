@@ -38,7 +38,7 @@ if (ob_get_contents())
 		$listing_id=0;
 						
 	require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'layout.php');
-	$LayoutProc=new LayoutProcessor;
+	$LayoutProc=new LayoutProcessor($this->Model->ct);
 	$LayoutProc->Model=$this->Model;
 	$LayoutProc->layout=$this->Model->pagelayout;
 						

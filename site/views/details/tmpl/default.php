@@ -9,9 +9,18 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\TwigProcessor;
+
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tagprocessor'.DIRECTORY_SEPARATOR.'itemtags.php');
 
 	$results = $this->Model->LayoutProc->fillLayout($this->row);
+	
+	if($this->Model->ct->Env->advancedtagprocessor)
+	{
+		$twig = new TwigProcessor($this->Model->ct, $results);
+		$results = $twig->process($this->row);
+	}
+	
 
 	if($this->params->get( 'allowcontentplugins' ))
 		LayoutProcessor::applyContentPlugins($results);

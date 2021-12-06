@@ -9,6 +9,8 @@
  **/
 
 namespace CustomTables;
+
+/* All tags already implemented using Twig */
  
 // no direct access
 defined('_JEXEC') or die('Restricted access');
@@ -16,7 +18,6 @@ defined('_JEXEC') or die('Restricted access');
 use \LayoutProcessor;
 use \JoomlaBasicMisc;
 use \Joomla\CMS\Factory;
-
 
 class Layouts
 {

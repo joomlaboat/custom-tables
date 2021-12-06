@@ -16,10 +16,10 @@ JHTML::addIncludePath(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPA
 // Include library dependencies
 
 $libpath=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tagprocessor'.DIRECTORY_SEPARATOR;
-require_once($libpath.'generaltags.php');
-require_once($libpath.'fieldtags.php');
-require_once($libpath.'settags.php');
-require_once($libpath.'iftags.php');
+require_once($libpath.'generaltags.php');//added to twig
+require_once($libpath.'fieldtags.php');//added to twig
+require_once($libpath.'settags.php'); //added to twig
+require_once($libpath.'iftags.php'); //comes with twig
 require_once($libpath.'tabstags.php');
 
 require_once($libpath.'pagetags.php');
@@ -38,26 +38,14 @@ class LayoutProcessor
 	var $Model;
 	var $advancedtagprocessor;
 	var $version = 0;
+	
+	var $ct;
 
-	function __construct()
+	function __construct(&$ct)
 	{
-		$version = new Version;
-		$this->version = (int)$version->getShortVersion();
-		
-		$phptagprocessor=JPATH_SITE.DIRECTORY_SEPARATOR.'plugins'.DIRECTORY_SEPARATOR.'content'.DIRECTORY_SEPARATOR.'customtables'.DIRECTORY_SEPARATOR.'protagprocessor'.DIRECTORY_SEPARATOR.'phptags.php';
-		if(file_exists($phptagprocessor))
-		{
-			require_once($phptagprocessor);
-			$this->advancedtagprocessor=true;
-
-		$servertagprocessor_file=JPATH_SITE.DIRECTORY_SEPARATOR.'plugins'.DIRECTORY_SEPARATOR.'content'.DIRECTORY_SEPARATOR.'customtables'.DIRECTORY_SEPARATOR.'protagprocessor'.DIRECTORY_SEPARATOR.'servertags.php';
-
-		if(file_exists($servertagprocessor_file))
-			require_once($servertagprocessor_file);
-
-		}
-		else
-			$this->advancedtagprocessor=false;
+		$this->ct = $ct;
+		$this->version = $this->ct->Env->version;
+		$this->advancedtagprocessor = $this->version = $this->ct->Env->advancedtagprocessor;
 	}
 
 	function fillLayout($row=array(),$aLink=null,$tag_chars='[]',$disable_advanced_tags=false,$add_label=false,$fieldNamePrefix='comes_')
@@ -82,11 +70,8 @@ class LayoutProcessor
 
 			tagProcessor_Tabs::process($htmlresult);
 
-
-
 			if($this->advancedtagprocessor and !$disable_advanced_tags)
 				tagProcessor_Set::process($this->Model,$htmlresult);
-
 
 			if($this->Model->ct->Env->print==1)
 			{
