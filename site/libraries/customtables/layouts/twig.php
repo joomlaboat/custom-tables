@@ -116,19 +116,15 @@ class fieldObject
 		$this->field = $field;
 	}
 	
-	public function __get(string $name)
-	{
-		return 's';
-	}
-	
 	public function __toString()
     {
 		$rfn = $this->field['realfieldname'];
-        return $this->ct->Table->record[$rfn];
+        return strval($this->ct->Table->record[$rfn]);
     }
 	
 	public function __call($name, $arguments)
     {
+		//for jsl join fields
         return '*'.$name.'*['.$arguments[0].']';
     }
 	

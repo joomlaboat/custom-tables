@@ -19,7 +19,7 @@ use \Joomla\CMS\Factory;
 
 class Forms
 {
-	public function renderFieldLabel(&$ct, &$esfield)
+	public static function renderFieldLabel(&$ct, &$esfield, $fieldNamePrefix = 'comes_')
 	{
 		if($esfield['type']=='dummy')
         {

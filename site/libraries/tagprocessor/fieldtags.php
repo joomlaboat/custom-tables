@@ -9,6 +9,8 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use \CustomTables\Forms;
+
 class tagProcessor_Field
 {
     public static function process(&$ct,&$pagelayout,bool $add_label=false, string $fieldNamePrefix = 'comes_')
@@ -23,7 +25,7 @@ class tagProcessor_Field
         {
             foreach($ct->Table->fields as $esfield)
             {
-				$field_label = Forms::renderFieldLabel($ct, $esfield);
+				$field_label = Forms::renderFieldLabel($ct, $esfield, $fieldNamePrefix);
 				
             	$pagelayout=str_replace('*'.$esfield['fieldname'].'*',$field_label,$pagelayout);
             }

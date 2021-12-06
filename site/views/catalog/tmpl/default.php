@@ -10,6 +10,8 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\TwigProcessor;
+
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'layout.php');
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tagprocessor'.DIRECTORY_SEPARATOR.'catalogtag.php');
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tagprocessor'.DIRECTORY_SEPARATOR.'catalogtableviewtag.php');
@@ -25,6 +27,7 @@ if($this->Model->ct->Env->frmt=='html' or $this->Model->ct->Env->frmt=='')
 if($html_format)
     LayoutProcessor::renderPageHeader($this->Model);
 
+
 //Process general tags before catalog tags to prepare headers for CSV etc output
 if($html_format)
 {
@@ -38,6 +41,11 @@ if($html_format)
 	$this->Model->LayoutProc->layout=$this->pagelayout;
 	$this->pagelayout=$this->Model->LayoutProc->fillLayout();
 
+	if($this->Model->ct->Env->advancedtagprocessor)
+	{
+		$twig = new TwigProcessor($this->Model->ct, $this->pagelayout);
+		$this->pagelayout = $twig->process();
+	}
 }
 else
 {

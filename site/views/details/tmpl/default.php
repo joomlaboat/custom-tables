@@ -11,6 +11,9 @@ defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\TwigProcessor;
 
+$document = JFactory::getDocument();
+$document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customtables/css/style.css" type="text/css" rel="stylesheet" >');
+
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tagprocessor'.DIRECTORY_SEPARATOR.'itemtags.php');
 
 	$results = $this->Model->LayoutProc->fillLayout($this->row);

@@ -12,6 +12,8 @@
 
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\TwigProcessor;
+
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tagprocessor'.DIRECTORY_SEPARATOR.'edittags.php');
 
 jimport('joomla.html.html.bootstrap');
@@ -20,6 +22,9 @@ $document = JFactory::getDocument();
 
 $document->addScript(JURI::root(true).'/components/com_customtables/js/edit_234.js');
 $document->addScript(JURI::root(true).'/components/com_customtables/js/esmulti.js');
+
+$document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customtables/css/style.css" type="text/css" rel="stylesheet" >');
+
 
 if (!$this->Model->BlockExternalVars and $this->Model->params->get( 'show_page_heading', 1 ) ) : ?>
 <div class="page-header<?php echo $this->escape($this->Model->params->get('pageclass_sfx')); ?>">
@@ -81,8 +86,14 @@ jQuery.noConflict()
 						
 	//Better to run tag processor before rendering form edit elements because of IF statments that can exclude the part of the layout that contains form fields.
 	$this->Model->pagelayout=$LayoutProc->fillLayout($this->row,null,'||',false,true);
-						
+
 	tagProcessor_Edit::process($this->Model,$this->Model->pagelayout,$this->row,'comes_');
+	
+	if($this->Model->ct->Env->advancedtagprocessor)
+	{
+		$twig = new TwigProcessor($this->Model->ct, $this->Model->pagelayout);
+		$this->Model->pagelayout = $twig->process($this->row);
+	}
 	
 	if($this->params->get( 'allowcontentplugins' )==1)
 		LayoutProcessor::applyContentPlugins($this->Model->pagelayout);
