@@ -29,12 +29,17 @@ class TwigProcessor
 
 	public function __construct(&$ct, $htmlresult)
 	{
-		$file = JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'customtables'.DIRECTORY_SEPARATOR.'libraries'
+		$file = JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'
 			. DIRECTORY_SEPARATOR. 'twig' . DIRECTORY_SEPARATOR . 'vendor'. DIRECTORY_SEPARATOR .'autoload.php';
 			
 		$this->loaded = false;
 		if(!file_exists($file))
+		{
+			Factory::getApplication()->enqueueMessage(
+				JoomlaBasicMisc::JTextExtended('Twig library not found.' ), 'Error');
+					
 			return false;
+		}
 		
 		$this->ct = $ct;
 		
