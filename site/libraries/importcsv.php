@@ -29,7 +29,17 @@ function getLines($filename)
     //$str=removeBomUtf8($str);
   //}
   //else
-    $str=mb_convert_encoding($str, 'UTF-8','UTF-16LE');
+	  
+	if (mb_check_encoding($str,"UTF-8"))
+	{
+		$str=mb_convert_encoding($str, 'UTF-8','auto');
+		//$str=mb_convert_encoding($str, 'UTF-8','UTF-16LE');
+	}
+	else
+	{
+		$str=mb_convert_encoding($str, 'UTF-8','ANSI');
+	}
+   
   
   //$lines= preg_split('/([\n\r]+)/', $str, null, PREG_SPLIT_DELIM_CAPTURE);
   //$str= str_replace("\n\r","\r", $str);
@@ -91,10 +101,12 @@ function importCSVdata($filename,$ct_tableid)
     $first_line_fieldnames=false;
       
     $line=JoomlaBasicMisc::csv_explode(',',$arrayOfLines[0],'"',false);
-        
+    
     $fieldList=prepareFieldList($line,$fields,$first_line_fieldnames);
 	
 	$fields = processFieldParams($fieldList,$fields);
+	
+	
 	
 	foreach($fieldList as $f)
 	{
@@ -114,9 +126,11 @@ function importCSVdata($filename,$ct_tableid)
       
 		if($str!='')
 		{
-			$sets=prepareSQLQuery($fieldList,$fields,$arrayOfLines[$i]);
 			
+			$sets=prepareSQLQuery($fieldList,$fields,$str);
+
 			$id=findRecord($tablerow->realtablename,$tablerow->realidfieldname,$tablerow->published_field_found,$sets);
+
 			if($id==false)
 			{
 				$query='INSERT '.$tablerow->realtablename.' SET '.implode(', ',$sets);
