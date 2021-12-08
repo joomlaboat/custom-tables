@@ -24,6 +24,9 @@ $document->addScript(JURI::root(true).'/components/com_customtables/js/edit_234.
 $document->addScript(JURI::root(true).'/components/com_customtables/js/esmulti.js');
 
 $document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customtables/css/style.css" type="text/css" rel="stylesheet" >');
+$document->addCustomTag('<link href="/oxfordsms/media/system/css/fields/switcher.css?852c3c99beb07406033f85429263d74798ef3b15" rel="stylesheet" data-asset-name="switcher" />');
+
+
 
 
 if (!$this->Model->BlockExternalVars and $this->Model->params->get( 'show_page_heading', 1 ) ) : ?>
@@ -69,8 +72,11 @@ jQuery.noConflict()
 ?>
 <form action="<?php echo $this->formLink; ?>" method="post" name="<?php echo $this->formName; ?>" id="<?php echo $this->formName; ?>" class="<?php echo $this->formClass; ?>"<?php echo $this->formAttribute; ?>>
 
-<fieldset>
+
 <?php
+
+	echo ($this->Model->ct->Env->version < 4 ? '<fieldset>' : '<fieldset class="options-form">');
+
 	//Calendars of the child should be built again, because when Dom was ready they didn't exist yet.
 	//$calendars=array();
 

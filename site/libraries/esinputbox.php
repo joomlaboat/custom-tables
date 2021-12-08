@@ -72,7 +72,9 @@ class ESInputBox
 		}
 		
 		$place_holder=$esfield['fieldtitle'.$this->Model->ct->Languages->Postfix];
-		$class=$class_.' inputbox'.($esfield['isrequired'] ? ' required' : '');
+		$class=$class_.($this->Model->ct->Env->version < 4 ? ' inputbox' : ' form-control').($esfield['isrequired'] ? ' required' : '');
+		
+		
 		
 		$result='';
 		$value='';
@@ -313,19 +315,23 @@ class ESInputBox
 							break;
 
 						case 'checkbox':
-							
+						
 								$format="";
 								if(isset($option_list[2]) and $option_list[2]=='yesno')
 									$format="yesno";
 								
 								if($format=="yesno")
 								{
-									$result.='<fieldset id="'.$prefix.$esfield['fieldname'].'" class="'.$class.' btn-group radio btn-group-yesno" '
-									.'style="border:none !important;background:none !important;">';
-								
 									$id=$prefix.$esfield['fieldname'];
+									if($this->Model->ct->Env->version < 4)
+									{
+									
+										$result.='<fieldset id="'.$prefix.$esfield['fieldname'].'" class="'.$class.' btn-group radio btn-group-yesno" '
+											.'style="border:none !important;background:none !important;">';
 								
-									$result.='<div style="position: absolute;visibility:hidden !important; display:none !important;"><input type="radio" '
+										
+								
+										$result.='<div style="position: absolute;visibility:hidden !important; display:none !important;"><input type="radio" '
 										.'id="'.$id.'0" '
 										.'name="'.$id.'" '
 										.'value="1" '
@@ -337,7 +343,7 @@ class ESInputBox
 										.' ></div>'
 										.'<label class="btn'.((int)$value==1 ? ' active btn-success' : '').'" for="'.$id.'0" id="'.$id.'0_label" >'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YES').'</label>';
 										
-									$result.='<div style="position: absolute;visibility:hidden !important; display:none !important;"><input type="radio" '
+										$result.='<div style="position: absolute;visibility:hidden !important; display:none !important;"><input type="radio" '
 										.'id="'.$id.'1" '
 										.'name="'.$id.'" '
 										.$attributes.' '
@@ -349,7 +355,19 @@ class ESInputBox
 										.' ></div>'
 										.'<label class="btn'.((int)$value==0 ? ' active btn-danger' : '').'" for="'.$id.'1" id="'.$id.'1_label">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NO').'</label>';
 										 
-									$result.='</fieldset>';
+										$result.='</fieldset>';
+									
+									}
+									else
+									{
+										$result.='<div class="switcher">
+					<input type="radio" id="'.$id.'0" name="'.$id.'" value="0" class="active " '.((int)$value==0 ? ' checked="checked" ' : '').' >
+					<label for="'.$id.'0">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NO').'</label>
+					<input type="radio" id="'.$id.'1" name="'.$id.'" value="1" '.((int)$value==1 ? ' checked="checked" ' : '').' >
+					<label for="'.$id.'1">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YES').'</label>
+					<span class="toggle-outside"><span class="toggle-inside"></span></span>
+	</div>';
+									}
 								}
 								else
 								{
@@ -358,21 +376,37 @@ class ESInputBox
 									if(strpos($attributes,'onchange="')!==false)
 										$attributes=str_replace('onchange="','onchange="'.$onchange,$attributes);// onchange event already exists add one before
 									
-									$result.='<input type="checkbox" '
-										.'id="'.$prefix.$esfield['fieldname'].'" '
-										.'name="'.$prefix.$esfield['fieldname'].'" '
-										.'data-label="'.$esfield['fieldtitle'.$this->Model->ct->Languages->Postfix].'" '
-										.'data-valuerule="'.str_replace('"','&quot;',$esfield['valuerule']).'" '
-										.'data-valuerulecaption="'.str_replace('"','&quot;',$esfield['valuerulecaption']).'" '
-										.$attributes
-										.($value ? ' checked="checked" ' : '')
-										.' class="'.$class.'">';
+									if($this->Model->ct->Env->version < 4)
+									{
+									
+										$result.='<input type="checkbox" '
+											.'id="'.$prefix.$esfield['fieldname'].'" '
+											.'name="'.$prefix.$esfield['fieldname'].'" '
+											.'data-label="'.$esfield['fieldtitle'.$this->Model->ct->Languages->Postfix].'" '
+											.'data-valuerule="'.str_replace('"','&quot;',$esfield['valuerule']).'" '
+											.'data-valuerulecaption="'.str_replace('"','&quot;',$esfield['valuerulecaption']).'" '
+											.$attributes
+											.($value ? ' checked="checked" ' : '')
+											.' class="'.$class.'">';
 										
-									$result.='<input type="hidden"'
-										.' id="'.$prefix.$esfield['fieldname'].'_off" '
-										.' name="'.$prefix.$esfield['fieldname'].'_off" '
-										.($value ? ' value="1" ' : 'value="0"')
-										.' >';
+										$result.='<input type="hidden"'
+											.' id="'.$prefix.$esfield['fieldname'].'_off" '
+											.' name="'.$prefix.$esfield['fieldname'].'_off" '
+											.($value ? ' value="1" ' : 'value="0"')
+											.' >';
+									}
+									else
+									{
+										$id=$prefix.$esfield['fieldname'];
+										
+										$result.='<div class="switcher">
+					<input type="radio" id="'.$id.'0" name="'.$id.'" value="0" class="active " '.((int)$value==0 ? ' checked="checked" ' : '').' >
+					<label for="'.$id.'0">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NO').'</label>
+					<input type="radio" id="'.$id.'1" name="'.$id.'" value="1" '.((int)$value==1 ? ' checked="checked" ' : '').' >
+					<label for="'.$id.'1">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YES').'</label>
+					<span class="toggle-outside"><span class="toggle-inside"></span></span>
+	</div>';
+									}
 								}
 
 								break;
