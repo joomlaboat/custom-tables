@@ -173,7 +173,7 @@ class tagProcessor_Page
                     $Itemid=$jinput->getInt('Itemid',0);
                     $prefix='comes_';
                     $fileid=JoomlaBasicMisc::generateRandomString();
-                    $fieldid='99';//$fileid;//some unique number
+                    $fieldid='9999';//some unique number
                     $objectname='importcsv';
 
                     $result='<div>';

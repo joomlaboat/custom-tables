@@ -50,7 +50,7 @@ trait render_csv
         $result=$Model->LayoutProc->fillLayout();
         $result=str_replace('&&&&quote&&&&','"',$result);
 
-		$number=1+$Model->limitstart; //table row number, it maybe use in the layout as {number}
+		//$number=1+$Model->limitstart; //table row number, it maybe use in the layout as {number}
 		$Model->LayoutProc->layout=$recordline;
 
 		//Initiate the file output
@@ -84,7 +84,7 @@ trait render_csv
 
 		foreach($SearchResult as $row)
 		{
-			$Model->LayoutProc->number=$number;
+			$row['_number']=$number;
 		
             $tablecontent.='
 '.strip_tags(tagProcessor_Item::RenderResultLine($Model,$twig,$row,false));

@@ -69,7 +69,6 @@ trait render_html
 		
 		foreach($SearchResult as $row)
 		{
-			$Model->LayoutProc->number=$number;
 			$row['_number'] = $number;
 		    $tablecontent.=tagProcessor_Item::RenderResultLine($Model,$twig,$row,true);
 			

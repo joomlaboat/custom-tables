@@ -138,7 +138,7 @@ class JHTMLESSQLJoinView
 					$htmlresult.='<tr>';
 
 				//process layout
-				$model->LayoutProc->number=$number;
+				$row['_number'] = $number;
 
 				if($isTableLess)
 					$htmlresult.=$model->LayoutProc->fillLayout($row);

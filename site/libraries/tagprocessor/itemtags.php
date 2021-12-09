@@ -14,9 +14,9 @@ use CustomTables\RecordToolbar;
 
 class tagProcessor_Item
 {
-    public static function process($advancedtagprocessor,&$Model,&$row,&$htmlresult,$aLink,$recordlist,$number,$add_label=false,$fieldNamePrefix='comes_')
+    public static function process($advancedtagprocessor,&$Model,&$row,&$htmlresult,$aLink,$add_label=false,$fieldNamePrefix='comes_')
 	{
-        tagProcessor_Item::processLink($Model,$row,$htmlresult,$recordlist,$number,$aLink);
+        tagProcessor_Item::processLink($Model,$row,$htmlresult,$aLink);
 
 		tagProcessor_Field::process($Model->ct,$htmlresult,$add_label,$fieldNamePrefix);
 
@@ -48,7 +48,7 @@ class tagProcessor_Item
 			}
 		}
 
-		$htmlresult=str_replace('{recordlist}',$recordlist,$htmlresult);
+		$htmlresult=str_replace('{recordlist}',(isset($this->ct->Table) and isset($this->ct->Table->recordlist) ? implode(',',$this->ct->Table->recordlist : ''),$htmlresult);
 
 		$listing_id = 0;
 		
@@ -56,7 +56,7 @@ class tagProcessor_Item
 			$listing_id = (int)$row['listing_id'];
 			
 		$htmlresult=str_replace('{id}',$listing_id,$htmlresult);
-		$htmlresult=str_replace('{number}',$number,$htmlresult);
+		$htmlresult=str_replace('{number}',(isset($row['_number']) ? $row['_number'] : ''),$htmlresult);
 
 		if(isset($row) and isset($row['listing_published']))
 			tagProcessor_Item::processPublishStatus($row,$htmlresult);
@@ -417,7 +417,6 @@ class tagProcessor_Item
 
     protected static function GetCustomToolBar(&$Model,&$htmlresult,&$row)
 	{
-
 		$options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('toolbar',$options,$htmlresult,'{}');
 		
@@ -465,7 +464,7 @@ class tagProcessor_Item
 		}
 	}
 
-    protected static function processLink(&$Model,&$row,&$pagelayout,$recordlist,$number,$aLink)
+    protected static function processLink(&$Model,&$row,&$pagelayout,$aLink)
 	{
         $options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('link',$options,$pagelayout,'{}',':','"');

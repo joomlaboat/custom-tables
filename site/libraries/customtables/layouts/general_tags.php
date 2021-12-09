@@ -114,6 +114,26 @@ class Twig_Record_Tags
 		else
 			return $this->ct->Table->recordcount;
 	}
+	
+	function list()
+	{
+		if($this->ct->Env->frmt == 'csv')
+			return '';	
+			
+		if(!isset($this->ct->Table))
+		{
+			Factory::getApplication()->enqueueMessage('{{ record.count }} - Table not loaded.', 'error');
+			return '';
+		}
+		
+		if(!isset($this->ct->Table->records))
+		{
+			Factory::getApplication()->enqueueMessage('{{ record.list }} - Records not loaded.', 'error');
+			return '';
+		}
+		
+		return implode(',',$this->ct->Table->recordlist);
+	}
 }
 
 class Twig_Field_Tags

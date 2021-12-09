@@ -35,7 +35,7 @@ trait render_json
         $records=array();
 		foreach($SearchResult as $row)
 		{
-				$Model->LayoutProc->number=$number;
+				$row['_number'] = $number;
                 $i=0;
                 $vlus=array();
                 foreach($header_fields as $header_field)

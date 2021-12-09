@@ -63,8 +63,6 @@ class CustomTablesModelCatalog extends JModelLegacy
 
 		var $limit;
 		var $limitstart;
-		var $recordlist;
-
 
 		var $showcartitemsonly;
 		var $showcartitemsprefix;
@@ -603,7 +601,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 			$this->TotalRows=$rows[0]->count;
 		}
 		
-		$this->recordlist=array();
+		$recordlist=array();
 		
 		
 		if($this->ct->Table->recordcount > 0)
@@ -633,18 +631,16 @@ class CustomTablesModelCatalog extends JModelLegacy
 			$rows=$db->loadAssocList();
 			
 			foreach($rows as $row)
-				$this->recordlist[]=$row['listing_id'];
+				$recordlist[]=$row['listing_id'];
 		}
 		else
 			$rows=array();
 		
-		$this->LayoutProc->recordlist=implode(',',$this->recordlist);
-
 		$this->PathValue=$PathValue;
 		
 		
 		$this->ct->Table->records = $rows;
-		$this->ct->Table->recordlist = $this->recordlist;
+		$this->ct->Table->recordlist = $recordlist;
 
 		return $rows;
 	}

@@ -62,10 +62,10 @@ trait render_xml
         $tablecontent='';
 		foreach($SearchResult as $row)
 		{
-				$Model->LayoutProc->number=$number;
+			$row['_number'] = $number;
 
-                if($tablecontent!="")
-                    $tablecontent.="\r\n";
+            if($tablecontent!="")
+                $tablecontent.="\r\n";
 
 		        $vlu=tagProcessor_Item::RenderResultLine($Model,$twig,$row,false);
                 $tablecontent.=str_replace('&','&amp;',$vlu);

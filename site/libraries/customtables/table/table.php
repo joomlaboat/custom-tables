@@ -73,9 +73,6 @@ class Table
 			return;
 
 		$this->setTable($this->tablerow, $useridfieldname, $load_fields = true);
-		
-		//$this->record = null;
-		//$this->recordlist = null;
 	}
 	
 	function setTable(&$tablerow, $useridfieldname = null, $load_fields = true)

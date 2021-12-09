@@ -33,8 +33,6 @@ class LayoutProcessor
 {
 	var $layout;
 	var $layoutType;//item layout type
-	var $number;
-	var $recordlist;
 	var $Model;
 	var $advancedtagprocessor;
 	var $version = 0;
@@ -54,18 +52,18 @@ class LayoutProcessor
 
 		if($this->advancedtagprocessor and !$disable_advanced_tags)
 		{
-			tagProcessor_If::process($this->Model,$htmlresult,$row,$this->recordlist,$this->number);			
-			tagProcessor_PHP::process($this->Model,$htmlresult,$row,$this->recordlist,$this->number);
+			tagProcessor_If::process($this->Model,$htmlresult,$row);			
+			tagProcessor_PHP::process($this->Model,$htmlresult,$row);
 		}
 		
 		if(strpos($htmlresult,'ct_doc_tagset_free')===false)//explainf what is "ct_doc_tagset_free"
 		{
-			tagProcessor_If::process($this->Model,$htmlresult,$row,$this->recordlist,$this->number);
+			tagProcessor_If::process($this->Model,$htmlresult,$row);
 
 			//Item must be before General to let the following: currenturl:set,paymentid,{id}}
 			tagProcessor_Value::processValues($this->Model,$row,$htmlresult,$tag_chars);//to let sqljoin function work
-			tagProcessor_Item::process($this->advancedtagprocessor,$this->Model,$row,$htmlresult,$aLink,$this->recordlist,$this->number,$add_label,$fieldNamePrefix);
-			tagProcessor_General::process($this->Model,$htmlresult,$row,$this->recordlist,$this->number);
+			tagProcessor_Item::process($this->advancedtagprocessor,$this->Model,$row,$htmlresult,$aLink,$add_label,$fieldNamePrefix);
+			tagProcessor_General::process($this->Model,$htmlresult,$row);
 			tagProcessor_Page::process($this->Model,$htmlresult);
 
 			tagProcessor_Tabs::process($htmlresult);

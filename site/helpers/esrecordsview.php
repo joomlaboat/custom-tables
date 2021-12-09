@@ -191,7 +191,7 @@ class JHTMLESRecordsView
 										$htmlresult.='<tr>';
 
 								//process layout
-								$model->LayoutProc->number=$number;
+								$row['_number'] = $number;
 
 								if($isTableLess)
 									$htmlresult.=$model->LayoutProc->fillLayout($row);
@@ -201,11 +201,7 @@ class JHTMLESRecordsView
 								$tr++;
 								if(!$isTableLess and $tr==$columns)
 								{
-										$htmlresult.='</tr>';
-										//if($number+1<$result_count)
-												//$htmlresult.='<tr>';
-
-
+									$htmlresult.='</tr>';
 								}
 								$number++;
 

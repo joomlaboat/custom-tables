@@ -85,7 +85,7 @@ class tagProcessor_Catalog
 								
 				foreach($SearchResult as $row)
 				{
-						$Model->LayoutProc->number=$number;
+						$row['_number'] = $number;
 				        $RealRows[]=tagProcessor_Item::RenderResultLine($Model,$twig,$row,$showtable==true); //3ed parameter is to show record HTML anchor or not
 						$number++;
 				}
@@ -111,7 +111,7 @@ class tagProcessor_Catalog
 									$GroupTitle=implode(',',Tree::getMultyValueTitles($lastGroup,$Model->ct->Languages->Postfix,1, ' - '));
 								else
 								{
-									$Model->LayoutProc->number=$number;
+									$row['_number'] = $number;
 									$galleryrows=array();
 									$FileBoxRows=array();
 									$option=array();
