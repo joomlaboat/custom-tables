@@ -77,6 +77,9 @@ class CustomTablesModelEditItem extends JModelLegacy
 	{
 		$this->ct = new CT;
 		
+		$app = JFactory::getApplication();
+		$this->params=$app->getParams();
+		
 		parent::__construct();
 	}
 	

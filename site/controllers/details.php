@@ -29,7 +29,7 @@ switch ($task)
 			$model->load($params);
 			$count = $model->setPublishStatus(1);
 			$link = JoomlaBasicMisc::curPageURL();
-			$link = str_replace('&task=publish', '', $link);
+			$link = JoomlaBasicMisc::deleteURLQueryOption($link, 'task');
 			
 			$msg = ($count > 0 ? 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_PUBLISHED' : 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_NOT_PUBLISHED');
 			if($count == 1)
@@ -56,7 +56,7 @@ switch ($task)
 			$model->load($params);
 			$count = $model->setPublishStatus(0);
 			$link = JoomlaBasicMisc::curPageURL();
-			$link = str_replace('&task=unpublish', '', $link);
+			$link = JoomlaBasicMisc::deleteURLQueryOption($link, 'task');
 			
 			$msg = ($count > 0 ? 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_UNPUBLISHED' : 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_NOT_UNPUBLISHED');
 			if($count == 1)

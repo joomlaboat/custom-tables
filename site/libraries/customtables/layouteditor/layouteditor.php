@@ -47,7 +47,7 @@ $document->addCustomTag('<script src="'.JURI::root(true).'/components/com_custom
 $document->addCustomTag('<link rel="stylesheet" href="'.JURI::root(true).'/components/com_customtables/libraries/codemirror/theme/'.$theme.'.css">');
 
 if($version >= 4)
-$document->addCustomTag('<link rel="stylesheet" href="'.JURI::root(true).'/media/system/css/fields/switcher.css">');
+	$document->addCustomTag('<link rel="stylesheet" href="'.JURI::root(true).'/media/system/css/fields/switcher.css">');
 
 	function renderEditor($textareacode,$textareaid,$typeboxid,$textareatabid,&$onPageLoads)
 	{

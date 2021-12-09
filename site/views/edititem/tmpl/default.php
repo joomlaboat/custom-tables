@@ -24,8 +24,7 @@ $document->addScript(JURI::root(true).'/components/com_customtables/js/edit_234.
 $document->addScript(JURI::root(true).'/components/com_customtables/js/esmulti.js');
 
 $document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customtables/css/style.css" type="text/css" rel="stylesheet" >');
-$document->addCustomTag('<link href="/oxfordsms/media/system/css/fields/switcher.css?852c3c99beb07406033f85429263d74798ef3b15" rel="stylesheet" data-asset-name="switcher" />');
-
+$document->addCustomTag('<link rel="stylesheet" href="'.JURI::root(true).'/media/system/css/fields/switcher.css">');
 
 
 
