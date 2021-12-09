@@ -15,12 +15,106 @@ defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\Fields;
 use CustomTables\Layouts;
+use CustomTables\SearchInputBox;
 
 use \JoomlaBasicMisc;
 
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Uri\Uri;
 use \Joomla\CMS\Router\Route;
+
+class Twig_Record_Tags
+{
+	var $ct;
+
+	function __construct(&$ct)
+	{
+		$this->ct = $ct;
+	}
+	
+	function id()
+	{
+		if(!isset($this->ct->Table))
+		{
+			Factory::getApplication()->enqueueMessage('{{ record.id }} - Table not loaded.', 'error');
+			return '';
+		}
+		
+		if(!isset($this->ct->Table->record))
+		{
+			Factory::getApplication()->enqueueMessage('{{ record.id }} - Record not loaded.', 'error');
+			return '';
+		}
+		
+		return (int)$this->ct->Table->record['listing_id'];
+	}
+	
+	function published()
+	{
+		if(!isset($this->ct->Table))
+		{
+			Factory::getApplication()->enqueueMessage('{{ record.published }} - Table not loaded.', 'error');
+			return '';
+		}
+		
+		if(!isset($this->ct->Table->record))
+		{
+			Factory::getApplication()->enqueueMessage('{{ record.published }} - Record not loaded.', 'error');
+			return '';
+		}
+		
+		return (int)$this->ct->Table->record['published'];
+	}
+	
+	function number()
+	{
+		if(!isset($this->ct->Table))
+		{
+			Factory::getApplication()->enqueueMessage('{{ record.number }} - Table not loaded.', 'error');
+			return '';
+		}
+		
+		if(!isset($this->ct->Table->record))
+		{
+			Factory::getApplication()->enqueueMessage('{{ record.number }} - Record not loaded.', 'error');
+			return '';
+		}
+		
+		if(!isset($this->ct->Table->record['_number']))
+		{
+			Factory::getApplication()->enqueueMessage('{{ record.number }} - Record number not set.', 'error');
+			return '';
+		}
+		
+		return (int)$this->ct->Table->record['_number'];
+	}
+	
+	function count($full_sentence = false)
+	{
+		if($this->ct->Env->frmt == 'csv')
+			return '';	
+			
+		if(!isset($this->ct->Table))
+		{
+			Factory::getApplication()->enqueueMessage('{{ record.count }} - Table not loaded.', 'error');
+			return '';
+		}
+		
+		if(!isset($this->ct->Table->records))
+		{
+			Factory::getApplication()->enqueueMessage('{{ record.count }} - Records not loaded.', 'error');
+			return '';
+		}
+		
+		if($full_sentence)
+		{
+			return '<span class="ctCatalogRecordCount">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FOUND' ).': '.$this->ct->Table->recordcount
+				.' '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RESULT_S' ).'</span>';
+		}
+		else
+			return $this->ct->Table->recordcount;
+	}
+}
 
 class Twig_Field_Tags
 {
@@ -300,6 +394,193 @@ class Twig_Html_Tags
 			
 		return $vlu;
 	}
+	
+	protected function getFieldTitles($list_of_fields)
+    {
+        $fieldtitles=array();
+        foreach($list_of_fields as $fieldname)
+        {
+			if($fieldname=='_id')
+				$fieldtitles[] = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ID');
+			else						
+			{
+				foreach($this->ct->Table->fields as $fld)
+				{
+					if($fld['fieldname']==$fieldname)
+					{
+						$fieldtitles[]=$fld['fieldtitle'.$this->ct->Languages->Postfix];
+						break;
+					}
+				}
+			}
+        }
+        return $fieldtitles;
+    }
+	
+	protected function prepareSearchElement($fld)
+    {
+		if(isset($fld['fields']) and count($fld['fields'])>0)
+        {
+			return 'es_search_box_'.$fld['fieldname'].':'.implode(';',$fld['fields']).':';
+        }
+        else
+        {
+			if($fld['type']=='customtables')
+            {
+				$exparams=explode(',',$fld['typeparams']);
+    			if(count($exparams)>1)
+    			{
+					$esroot=$exparams[0];
+    				return 'es_search_box_combotree_'.$this->ct->Table->tablename.'_'.$fld['fieldname'].'_1:'.$fld['fieldname'].':'.$esroot;
+    			}
+			}
+    		else
+    			return 'es_search_box_'.$fld['fieldname'].':'.$fld['fieldname'].':';
+		}
+		
+        return '';       
+    }
+	
+	function search($list_of_fields_string_or_array, $class = '', $reload = false, $improved = false)
+	{
+		if($this->ct->Env->print == 1 or $this->ct->Env->frmt == 'csv')
+			return '';
+				
+		if(is_array($list_of_fields_string_or_array))
+			$list_of_fields_string_array = $list_of_fields_string_or_array;
+		else
+			$list_of_fields_string_array = explode(',',$list_of_fields_string_or_array);
+		
+		if(count($list_of_fields_string_array) == 0)
+		{
+			Factory::getApplication()->enqueueMessage('Search box: Please specify a field name.', 'error');
+			return '';
+		}
+		
+		//Clean list of fields
+		$list_of_fields=[];
+		foreach($list_of_fields_string_array as $field_name_string)
+		{
+			if($field_name_string=='_id')
+			{
+				$list_of_fields[] = '_id';
+			}
+			else
+			{
+				//Check if field name is exist in selected table
+				$fld = Fields::FieldRowByName($field_name_string,$this->ct->Table->fields);
+				if(count($fld)>0)
+					$list_of_fields[]=$field_name_string;
+			}
+		}
+
+		if(count($list_of_fields) == 0)
+		{
+			Factory::getApplication()->enqueueMessage('Search box: Field name not found.', 'error');
+			return '';
+		}
+		
+		$vlu='Search field name is wrong';
+		
+		require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR.'libraries'
+			. DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . 'searchinputbox.php');
+			
+		$SearchBox = new SearchInputBox($this->ct, 'esSearchBox');
+		
+		$fld=[];
+						
+		$first_fld=$fld;
+		$first_field_type='';
+							
+		foreach($list_of_fields as $field_name_string)
+		{
+			if($field_name_string=='_id')
+			{
+				$fld=array(
+					'fieldname' => '_id',
+					'type' => '_id',
+					'typeparams' => '',
+					'fieldtitle'.$this->ct->Languages->Postfix => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ID')
+				);
+			}
+			else
+			{
+				//Date search no implemented yet. It will be range search
+				$fld = Fields::FieldRowByName($field_name_string,$this->ct->Table->fields);
+				if($fld['type']=='date')
+				{
+					$fld['typeparams']='date';
+					$fld['type']='range';
+				}
+			}
+
+			if($first_field_type == '')
+			{
+				$first_field_type = $fld['type'];
+				$first_fld = $fld;
+			}
+			else
+			{
+				// If field types are mixed then use string search
+				if($first_field_type != $fld['type'])
+					$first_field_type = 'string';
+			}
+		}
+
+		$first_fld['type']=$first_field_type;
+
+		if(count($list_of_fields)>1)
+		{
+			$first_fld['fields']=$list_of_fields;
+			$first_fld['typeparams']='';
+		}
+
+		//Add control elements
+		$fieldtitles=$this->getFieldTitles($list_of_fields);
+		$field_title=implode(' '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_OR' ).' ',$fieldtitles);
+
+		$cssclass='ctSearchBox';
+		if($class!='')
+			$cssclass.=' '.$class;
+		
+		if($improved)
+			$cssclass.=' ct_improved_selectbox';
+
+		$default_Action = $reload ? ' onChange="ctSearchBoxDo();"' : ' ';//action should be a space not empty or this.value=this.value    
+
+		$objectname = $first_fld['fieldname'];
+							
+		$vlu = $SearchBox->renderFieldBox('es_search_box_',$objectname,$first_fld,
+			$cssclass,'0',
+			'',false,'',$default_Action,$field_title);//action should be a space not empty or 
+		//0 because its not an edit box and we pass onChange value even " " is the value;
+			
+		//$vlu=str_replace('"','&&&&quote&&&&',$vlu);
+								
+		$field2search = $this->prepareSearchElement($first_fld);
+		$vlu.= '<input type=\'hidden\' ctSearchBoxField=\''.$field2search.'\' />';
+		
+		return $vlu;
+	}
+	
+	function searchbutton($class_ = '')
+	{
+		if($this->ct->Env->print==1 or $this->ct->Env->frmt=='csv')
+			return '';
+		
+		$class = 'ctSearchBox';
+		
+		if(isset($class_) and $class_!='')
+			$class.=' '.$class_;
+		else
+			$class.=' btn button-apply btn-primary';
+                    
+        //JavascriptFunction
+        $vlu= '<input type=\'button\' value=\'SEARCH\' class=\''.$class.'\' onClick=\'ctSearchBoxDo()\' />';
+       
+        return $vlu;
+	}
+	
 	
 	function format($format, $link_type = 'anchor', $image = '', $imagesize = '', $menu_item_alias = '', $csv_column_separator = ',')
 	{

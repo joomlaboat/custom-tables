@@ -6,25 +6,34 @@
  * @license GNU/GPL
  **/
 
+namespace CustomTables;
+
 defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\DataTypes\Tree;
+use \JoomlaBasicMisc;
+
+use \Joomla\CMS\Factory;
+use \JHTML;
 
 JHTML::addIncludePath(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'helpers');
 
-class ESSerachInputBox
+class SearchInputBox
 {
 	var $ct;
-
 	var $modulename;
-
-	function renderFieldBox(&$Modal,$prefix,$objname,&$esfield,$cssclass,$index,$where,$innerjoin,$wherelist,$default_Action,$field_title=null)
+	
+	function __construct(&$ct, $modulename)
 	{
-		$this->ct = $Modal->ct;
-		
+		$this->ct = $ct;
+		$this->modulename = $modulename;
+	}
+
+	function renderFieldBox($prefix,$objname,&$esfield,$cssclass,$index,$where,$innerjoin,$wherelist,$default_Action,$field_title=null)
+	{
 		if(!isset($esfield['fieldtitle'.$this->ct->Languages->Postfix]))
 		{
-			JFactory::getApplication()->enqueueMessage(
+			Factory::getApplication()->enqueueMessage(
 				JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_LANGFIELDNOTFOUND' ), 'Error');
 			
 			return '';	
@@ -37,7 +46,7 @@ class ESSerachInputBox
 
 		$result='';
 
-		$value=JFactory::getApplication()->input->getCmd($prefix.$objname);
+		$value=Factory::getApplication()->input->getCmd($prefix.$objname);
 		
 		if($value=='')
 		{
@@ -50,11 +59,16 @@ class ESSerachInputBox
 		}
 
 		$objname_=$prefix.$objname;
+		
+		if($this->ct->Env->version < 4)
+			$default_class='inputbox';
+		else
+			$default_class='form-control';
 
 		switch($esfield['type'])
 		{
 						case 'int':
-							$result.='<input type="text" name="'.$objname_.'" id="'.$objname_.'" class="'.$cssclass.' inputbox"
+							$result.='<input type="text" name="'.$objname_.'" id="'.$objname_.'" class="'.$cssclass.' '.$default_class.'"
 							value="'.$value.'" placeholder="'.$field_title.'"'
 							.' onkeypress="es_SearchBoxKeyPress(event)"  />';
 
@@ -62,14 +76,14 @@ class ESSerachInputBox
 							break;
 
 						case 'float':
-							$result.='<input type="text" name="'.$objname_.'" id="'.$objname_.'" class="'.$cssclass.' inputbox" value="'.$value.'"
+							$result.='<input type="text" name="'.$objname_.'" id="'.$objname_.'" class="'.$cssclass.' '.$default_class.'" value="'.$value.'"
 							value="'.$value.'" placeholder="'.$field_title.'"'
 							.' onkeypress="es_SearchBoxKeyPress(event)" />';
 
 							break;
 
 						case 'string':
-							$result.='<input type="text" name="'.$objname_.'" id="'.$objname_.'" class="'.$cssclass.' inputbox" '
+							$result.='<input type="text" name="'.$objname_.'" id="'.$objname_.'" class="'.$cssclass.' '.$default_class.'" '
 							.' value="'.$value.'" '.((int)$esfield['typeparams']>0 ? 'maxlength="'.(int)$esfield['typeparams'].'"' : 'maxlength="255"')
 							.' placeholder="'.$field_title.'"'
 							.' onkeypress="es_SearchBoxKeyPress(event)"'
@@ -78,7 +92,7 @@ class ESSerachInputBox
 							break;
 
 						case 'phponchange':
-							$result.='<input type="text" name="'.$objname_.'" id="'.$objname_.'" class="'.$cssclass.' inputbox" '
+							$result.='<input type="text" name="'.$objname_.'" id="'.$objname_.'" class="'.$cssclass.' '.$default_class.'" '
 							.' value="'.$value.'" '.((int)$esfield['typeparams']>0 ? 'maxlength="'.(int)$esfield['typeparams'].'"' : 'maxlength="255"')
 							.' placeholder="'.$field_title.'"'
 							.' onkeypress="es_SearchBoxKeyPress(event)"'
@@ -87,7 +101,7 @@ class ESSerachInputBox
 							break;
 
 						case 'phponadd':
-							$result.='<input type="text" name="'.$objname_.'" id="'.$objname_.'" class="'.$cssclass.' inputbox" '
+							$result.='<input type="text" name="'.$objname_.'" id="'.$objname_.'" class="'.$cssclass.' '.$default_class.'" '
 							.' value="'.$value.'" '.((int)$esfield['typeparams']>0 ? 'maxlength="'.(int)$esfield['typeparams'].'"' : 'maxlength="255"')
 							.' placeholder="'.$field_title.'"'
 							.' onkeypress="es_SearchBoxKeyPress(event)"'
@@ -97,7 +111,7 @@ class ESSerachInputBox
 
 						case 'multilangstring':
 
-								$result.='<input type="text" name="'.$objname_.'" id="'.$objname_.'" class="'.$cssclass.' inputbox" '
+								$result.='<input type="text" name="'.$objname_.'" id="'.$objname_.'" class="'.$cssclass.' '.$default_class.'" '
 								.' value="'.$value.'" '.((int)$esfield['typeparams']>0 ? 'maxlength="'.(int)$esfield['typeparams'].'"' : 'maxlength="255"')
 								.' placeholder="'.$field_title.'"'
 								.' onkeypress="es_SearchBoxKeyPress(event)"'
@@ -106,7 +120,7 @@ class ESSerachInputBox
 							break;
 
 						case 'text':
-								$result.='<input type="text" name="'.$objname_.'" id="'.$objname_.'" class="'.$cssclass.' inputbox" '
+								$result.='<input type="text" name="'.$objname_.'" id="'.$objname_.'" class="'.$cssclass.' '.$default_class.'" '
 								.' value="'.$value.'" '.((int)$esfield['typeparams']>0 ? 'maxlength="'.(int)$esfield['typeparams'].'"' : 'maxlength="255"')
 								.' placeholder="'.$field_title.'"'
 								.' onkeypress="es_SearchBoxKeyPress(event)"'
@@ -118,7 +132,7 @@ class ESSerachInputBox
 
 						case 'multilangtext':
 
-								$result.='<input type="text" name="'.$objname_.'" id="'.$objname_.'" class="'.$cssclass.' inputbox" '
+								$result.='<input type="text" name="'.$objname_.'" id="'.$objname_.'" class="'.$cssclass.' '.$default_class.'" '
 								.' value="'.$value.'" '.((int)$esfield['typeparams']>0 ? 'maxlength="'.(int)$esfield['typeparams'].'"' : 'maxlength="255"')
 								.' placeholder="'.$field_title.'" onkeypress="es_SearchBoxKeyPress(event)" />';
 
@@ -161,7 +175,7 @@ class ESSerachInputBox
 						break;
 
 						case 'email';
-								$result.='<input type="text" name="'.$objname_.'" id="'.$objname_.'" class="'.$cssclass.' inputbox" '
+								$result.='<input type="text" name="'.$objname_.'" id="'.$objname_.'" class="'.$cssclass.' '.$default_class.'" '
 								.' placeholder="'.$field_title.'"'
 								.' onkeypress="es_SearchBoxKeyPress(event)"'
 								.' value="'.$value.'" maxlength="255" />';
@@ -169,7 +183,7 @@ class ESSerachInputBox
 						break;
 
 						case 'url';
-								$result.='<input type="text" name="'.$objname_.'" id="'.$objname_.'" class="'.$cssclass.' inputbox" '
+								$result.='<input type="text" name="'.$objname_.'" id="'.$objname_.'" class="'.$cssclass.' '.$default_class.'" '
 								.' placeholder="'.$field_title.'"'
 								.' onkeypress="es_SearchBoxKeyPress(event)"'
 								.' value="'.$value.'" maxlength="1024" />';
@@ -190,18 +204,23 @@ class ESSerachInputBox
 
 		$typeparams=JoomlaBasicMisc::csv_explode(',',$esfield['typeparams'],'"',false);
 
-							if($default_Action!='' and $default_Action!=' ')
-								$onchange=$default_Action;
-							else
-								$onchange=' onkeypress="es_SearchBoxKeyPress(event)"';
+		if($default_Action!='' and $default_Action!=' ')
+			$onchange=$default_Action;
+		else
+			$onchange=' onkeypress="es_SearchBoxKeyPress(event)"';
 
-							if(is_array($value))
-								$value=implode(',',$value);
+		if(is_array($value))
+			$value=implode(',',$value);
 
-							$typeparams=JoomlaBasicMisc::csv_explode(',',$esfield['typeparams'],'"',false);
-							$result.='<div class="'.$cssclass.'">'.JHTML::_('ESSQLJoin.render',$typeparams,$value,true,$this->ct->Languages->Postfix,$objname_,
-								$esfield['fieldtitle'].$this->ct->Languages->Postfix,
-											  ' inputbox es_class_sqljoin', $onchange,true).'</div>';
+		if($this->ct->Env->version < 4)
+			$default_class='inputbox';
+		else
+			$default_class='form-control';
+
+		$typeparams=JoomlaBasicMisc::csv_explode(',',$esfield['typeparams'],'"',false);
+		$result.='<div class="'.$cssclass.'">'.JHTML::_('ESSQLJoin.render',$typeparams,$value,true,$this->ct->Languages->Postfix,$objname_,
+				$esfield['fieldtitle'].$this->ct->Languages->Postfix,
+			  ' '.$default_class.' es_class_sqljoin', $onchange,true).'</div>';
 
 		return $result;
 	}
@@ -314,6 +333,12 @@ class ESSerachInputBox
 	function getCheckBox(&$esfield,$default_Action,$index,$where,$wherelist,$objname_,$value, $cssclass)
 	{
 		$result='';
+		
+		if($this->ct->Env->version < 4)
+			$default_class='inputbox';
+		else
+			$default_class='form-control';
+		
 								if($esfield['essb_option']=='any')
 								{
 									if($esfield['essb_option2']!='')
@@ -332,7 +357,7 @@ class ESSerachInputBox
 
 
 										$result.='
-									<select id="'.$objname_.'" name="'.$objname_.'" '.$onchange.' class="'.$cssclass.' inputbox" >
+									<select id="'.$objname_.'" name="'.$objname_.'" '.$onchange.' class="'.$cssclass.' '.$default_class.'" >
 										<option value="" '.($value=='' ? 'SELECTED' : '').'>'.$translations[0].'</option>
 										<option value="true" '.($value=='true' ? 'SELECTED' : '').'>'.$translations[1].'</option>
 										<option value="false" '.($value=='false' ? 'SELECTED' : '').'>'.$translations[2].'</option>
@@ -358,7 +383,7 @@ class ESSerachInputBox
 										.')"';
 									}
 
-									$result.='<input type="checkbox" class="'.$cssclass.' inputbox" '
+									$result.='<input type="checkbox" class="'.$cssclass.' '.$default_class.'" '
 										.' id="'.$objname_.'" '
 										.' name="'.$objname_.'" '
 										.($value=='on' ? ' checked="checked" ' : '')
@@ -374,11 +399,16 @@ class ESSerachInputBox
 
 	function getRangeBox(&$esfield,$index,$where,$wherelist,$objname_,$value, $cssclass)
 	{
-		$jinput=JFactory::getApplication()->input;
+		$jinput=Factory::getApplication()->input;
 		$result='';
+		
+		if($this->ct->Env->version < 4)
+			$default_class='inputbox';
+		else
+			$default_class='form-control';
 
-			$value_min='';
-								$value_max='';
+		$value_min='';
+		$value_max='';
 
 								if($esfield['typeparams']=='date')
 									$d='-to-';
@@ -398,7 +428,7 @@ class ESSerachInputBox
 									$value_max=$jinput->getString($objname_.'_max');
 
 								//header function
-								$document = JFactory::getDocument();
+								$document = Factory::getDocument();
 								$js='
 	function Update'.$objname_.'Values()
 	{
@@ -414,7 +444,7 @@ class ESSerachInputBox
 								$document->addScriptDeclaration($js);
 								//end of header function
 
-								$attribs='onChange="Update'.$objname_.'Values()" class="inputbox" ';
+								$attribs='onChange="Update'.$objname_.'Values()" class="'.$default_class.'" ';
 
 
 								$result.='<input type="hidden"'
@@ -475,9 +505,14 @@ class ESSerachInputBox
 		$mysqljoin='#__customtables_table_'.$this->ct->Table->tablename.' ON #__customtables_table_'.$this->ct->Table->tablename.'.es_'.$esfield['fieldname'].'=#__usergroups.id';
 
 		$usergroup=$esfield['typeparams'];
-		$cssclass='class="inputbox '.$cssclass.'" ';
+		
+		if($this->ct->Env->version < 4)
+			$cssclass='class="inputbox '.$cssclass.'" ';
+		else
+			$cssclass='class="form-control '.$cssclass.'" ';
+			
 
-		$user =  JFactory::getUser();
+		$user =  Factory::getUser();
 
 		if($default_Action!='')
 		{
@@ -509,7 +544,7 @@ class ESSerachInputBox
 
 		$usergroup=$esfield['typeparams'];
 		
-		$user =  JFactory::getUser();
+		$user =  Factory::getUser();
 
 		if($default_Action!='')
 		{
@@ -527,9 +562,13 @@ class ESSerachInputBox
 									.')"';
 		}
 
+		if($this->ct->Env->version < 4)
+			$default_class='inputbox';
+		else
+			$default_class='form-control';
 
 		if($user->id!=0)
-			$result=JHTML::_('ESUser.render',$objname_, $value, '', 'class="'.$cssclass.' inputbox" ', $usergroup, $onchange,$where, $mysqljoin);
+			$result=JHTML::_('ESUser.render',$objname_, $value, '', 'class="'.$cssclass.' '.$default_class.'" ', $usergroup, $onchange,$where, $mysqljoin);
 
 
 		return $result;
@@ -556,7 +595,7 @@ class ESSerachInputBox
 
 	function getWhereParameters()
 	{
-		$value=JFactory::getApplication()->input->getString('where');
+		$value=Factory::getApplication()->input->getString('where');
 		$value=str_replace('update','',$value);
 		$value=str_replace('select','',$value);
 		$value=str_replace('drop','',$value);

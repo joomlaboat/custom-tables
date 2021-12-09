@@ -18,6 +18,8 @@ require_once('render_csv.php');
 require_once('render_json.php');
 require_once('render_image.php');
 
+use CustomTables\TwigProcessor;
+
 class tagProcessor_Catalog
 {
     use render_html;
@@ -74,14 +76,17 @@ class tagProcessor_Catalog
 			return '';
 
 		$CatGroups=array();
+		
+		$twig = new TwigProcessor($Model->ct, $Model->LayoutProc->layout);
 
 		if($Model->groupby=='')
 		{
 				$number=1+$Model->limitstart;
+								
 				foreach($SearchResult as $row)
 				{
 						$Model->LayoutProc->number=$number;
-				        $RealRows[]=tagProcessor_Item::RenderResultLine($Model,$row,$showtable==true); //3ed parameter is to show record HTML anchor or not
+				        $RealRows[]=tagProcessor_Item::RenderResultLine($Model,$twig,$row,$showtable==true); //3ed parameter is to show record HTML anchor or not
 						$number++;
 				}
 				$CatGroups[]=array('',$RealRows);
@@ -116,7 +121,7 @@ class tagProcessor_Catalog
 								$CatGroups[]=array($GroupTitle,$RealRows);
 								$RealRows=array();
 						}
-                        $RealRows[]=tagProcessor_Item::RenderResultLine($Model,$row,$showtable==true); //3ed parameter is to show record HTML anchor or not
+                        $RealRows[]=tagProcessor_Item::RenderResultLine($Model,$twig,$row,$showtable==true); //3ed parameter is to show record HTML anchor or not
 						//$RealRows[]=$this->RenderResultLine($row,$showtable,$allowcontentplugins);//,$Itemid,$Model,$userid,$this->isUserAdministrator,$current_url,$print);
 
 						$lastGroup=$row[$Model->groupby];

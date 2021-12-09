@@ -10,6 +10,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\Fields;
+use CustomTables\SearchInputBox;
 
 /* Not sll tags already implemented using Twig
 
@@ -19,13 +20,20 @@ Implemented:
 
 
  */
+ 
+ 
+use \CustomTables\Twig_Html_Tags;
+use \CustomTables\Twig_Record_Tags;
 
 class tagProcessor_Page
 {
     public static function process(&$Model,&$pagelayout)
     {
-        tagProcessor_Page::FormatLink($Model,$pagelayout);//{format:xls}  the link to the same page but in xls format
-
+		$ct_html = new Twig_Html_Tags($Model->ct);
+		$ct_record = new Twig_Record_Tags($Model->ct);
+		
+        tagProcessor_Page::FormatLink($ct_html,$pagelayout);//{format:xls}  the link to the same page but in xls format
+		
         tagProcessor_Page::PathValue($Model,$pagelayout);
         tagProcessor_Page::AddNew($Model,$pagelayout);
 
@@ -35,16 +43,16 @@ class tagProcessor_Page
 
         tagProcessor_Page::PageToolBarCheckBox($Model,$pagelayout);
 
-        tagProcessor_Page::SearchButton($Model,$pagelayout);
-        tagProcessor_Page::SearchBOX($Model,$pagelayout);
+        tagProcessor_Page::SearchButton($ct_html,$pagelayout);
+        tagProcessor_Page::SearchBOX($ct_html,$pagelayout);
 
-        tagProcessor_Page::RecordCountValue($Model,$pagelayout);
+        tagProcessor_Page::RecordCountValue($ct_record,$pagelayout);
+        tagProcessor_Page::RecordCount($ct_record,$pagelayout);
 
-        tagProcessor_Page::RecordCount($Model,$pagelayout);
-        tagProcessor_Page::PrintButton($Model,$pagelayout);
+        tagProcessor_Page::PrintButton($ct_html,$pagelayout);
     }
 
-    public static function FormatLink(&$Model,&$pagelayout)
+    public static function FormatLink(&$ct_html,&$pagelayout)
 	{
 		$options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('format',$options,$pagelayout,'{}');
@@ -53,75 +61,17 @@ class tagProcessor_Page
 
 		foreach($fList as $fItem)
 		{
-            if($Model->ct->Env->frmt=='' or $Model->ct->Env->frmt=='html')
-            {
-    			
-    			
-
-    			$option_list=explode(',',$options[$i]);
-    			$format=$option_list[0];
-				
-				if(isset($option_list[4]))
-				{
-					$menu_item_alias = $option_list[4];
-					$menu_item=JoomlaBasicMisc::FindMenuItemRowByAlias($menu_item_alias);//Accepts menu Itemid and alias
-					if($menu_item!=0)
-					{
-						$menu_item_id=(int)$menu_item['id'];
-						$link=$menu_item['link'];
-					}
-					
-					$link.='&Itemid='.$menu_item_id;//.'&amp;returnto='.$returnto;
-				}
-				else
-				{
-					$link=JoomlaBasicMisc::deleteURLQueryOption($Model->ct->Env->current_url, 'frmt');
-				}
-				
-				$link = JRoute::_($link);
-				
-    			//check if format supported
-    			$allowed_formats=['csv','json','xml','xlsx','pdf','image'];
-    			if($format=='' or !in_array($format,$allowed_formats))
-					$format='csv';
-				
-    			$link.=(strpos($link,'?')===false ? '?' : '&').'frmt='.$format.'&clean=1';
-    			$vlu='';
-
-    			$value=(isset($option_list[1]) ? $option_list[1] : '');
-
-    			if($value=='anchor' or $value=='')
-    			{
-    				$image=(isset($option_list[2]) ? $option_list[2] : '');
-    				$imagesize=(isset($option_list[3]) ? $option_list[3] : '');
-
-    				$allowed_sizes=['16','32','48'];
-    				if($imagesize=='' or !in_array($imagesize,$allowed_sizes))
-    					$imagesize=32;
-
-    				if($format=='image')
-    					$format_image='jpg';
-    				else
-    					$format_image=$format;
-
-    				if($image=='')
-    					$image='/components/com_customtables/images/fileformats/'.$imagesize.'px/'.$format_image.'.png';
-
-
-    				$alt='Download '.strtoupper($format).' file';
-    				//add image anchor link
-    				$vlu='<a href="'.$link.'" class="toolbarIcons" id="ctToolBarExport2CSV" target="_blank"><img src="'.$image.'" alt="'.$alt.'" title="'.$alt.'" width="'.$imagesize.'" height="'.$imagesize.'"></a>';
-    			}
-    			elseif($value == '_value' or $value == 'linkonly')
-    			{
-    				//link only
-    				$vlu=$link;
-    			}
-            }
-            else
-            {
-                $vlu='';
-            }
+			$option_list=explode(',',$options[$i]);
+    		$format=$option_list[0];
+			
+			//$format, $link_type = 'anchor', $image = '', $imagesize = '', $menu_item_alias = '', $csv_column_separator = ','
+			
+			$link_type = isset($option_list[1]) ? $option_list[1] : '';
+			$image = isset($option_list[2]) ? $option_list[2] : '';			
+			$imagesize = isset($option_list[3]) ? $option_list[3] : '';
+			$menu_item_alias = isset($option_list[4]) ? $option_list[4] : '';
+			
+			$vlu = $ct_html->format($format, $link_type, $image, $imagesize, $menu_item_alias, ',');
 
 			$pagelayout=str_replace($fItem,$vlu,$pagelayout);
 			$i++;
@@ -457,282 +407,56 @@ class tagProcessor_Page
 
 	}
 
-    static protected function getFieldTitles(&$Model,$list_of_fields)
-    {
-        $fieldtitles=array();
-        foreach($list_of_fields as $fieldname)
-        {
-			if($fieldname=='_id')
-				$fieldtitles[] = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ID');
-			else						
-			{
-				foreach($Model->ct->Table->fields as $fld)
-				{
-					if($fld['fieldname']==$fieldname)
-					{
-						$fieldtitles[]=$fld['fieldtitle'.$Model->ct->Languages->Postfix];
-						break;
-					}
-				}
-			}
-        }
-        return $fieldtitles;
-    }
-    
-    static protected function SearchBOX(&$Model,&$pagelayout)
+       
+    static protected function SearchBOX(&$ct_html,&$pagelayout)
 	{
     	$options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('search',$options,$pagelayout,'{}');
 
-		if(count($fList))
-		{
-			require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'essearchinputbox.php');
-			$ESSIB=new ESSerachInputBox;
-			$ESSIB->modulename='esSearchBox';
-		}
-		
-		$fields=array();
+		if(count($fList) == 0)
+			return false;
 		
 		$i=0;
-		$count=0;
-        $firstFieldFound=false;
+		
 		foreach($fList as $fItem)
 		{
-            $opair=JoomlaBasicMisc::csv_explode(',',$options[$i],'"',false);
-			$o=$opair[0];
-
-            $vlu='';
-
-			if($o!='' and $Model->ct->Env->print==0 and $Model->ct->Env->frmt!='csv')
+			$vlu='';
+			
+			if($options[$i]!='')
 			{
-				if($o!='')
-				{
-					if($o=='button')
-					{
-                        //this is for legacy purposes when {search:button} was used,
-                        //now we have dedicated tag {searchbutton} to render the search button
-						$style='';
-
-						if(isset($opair[1]) and $opair[1]!='')
-							$style=$opair[1];
-
-						$class='ctSearchBox';
-						if(isset($opair[2]) and $opair[2]!='')
-							$class.=' '.$opair[2];
-						else
-							$class.=' btn button-apply btn-primary';
-
-						if($Model->ct->Env->print==1)
-							$vlu='';
-						else
-							$vlu= '<input type=\'button\' value=\''.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SEARCH' ).'\' style=\''.$style.'\' class=\''.$class.'\' onClick=\'es_SearchBoxDo()\' />';
-					}
-					else
-					{
-                        //In case of multifield search:
-                        $list_of_fields_string_array=explode(',',$o);
-						
-						//Clean list of fields
-						$list_of_fields=[];
-						foreach($list_of_fields_string_array as $field_name_string)
-						{
-							if($field_name_string=='_id')
-							{
-								$list_of_fields[] = '_id';
-							}
-							else
-							{
-								//Check if field name is exist in selected table
-								$fld = Fields::FieldRowByName($field_name_string,$Model->ct->Table->fields);
-								if(count($fld)>0)
-									$list_of_fields[]=$field_name_string;
-							}
-						}
-						
-						if(count($list_of_fields)>0)
-						{
-							$fld=[];
-							
-							$first_fld=$fld;
-							$first_field_type='';
-							
-							foreach($list_of_fields as $field_name_string)
-							{
-								if($field_name_string=='_id')
-								{
-									$fld=array(
-										'fieldname' => '_id',
-										'type' => '_id',
-										'typeparams' => '',
-										'fieldtitle'.$Model->ct->Languages->Postfix => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ID')
-									);
-								}
-								else
-								{
-									//Date search no implemented yet. It will be range search
-									$fld = Fields::FieldRowByName($field_name_string,$Model->ct->Table->fields);
-									if($fld['type']=='date')
-									{
-										$fld['typeparams']='date';
-										$fld['type']='range';
-									}
-								}
-								
-								if($first_field_type == '')
-								{
-									$first_field_type = $fld['type'];
-									$first_fld = $fld;
-								}
-								else
-								{
-									// If field types are mixed then use string search
-									if($first_field_type != $fld['type'])
-										$first_field_type = 'string';
-								}
-							}
-							
-							$first_fld['type']=$first_field_type;
-							
-							if(count($list_of_fields)>1)
-							{
-								$first_fld['fields']=$list_of_fields;
-								$first_fld['typeparams']='';
-							}
-							
-							$fields[]=$first_fld;
-							
-							//Add control elements
-							$fieldtitles=tagProcessor_Page::getFieldTitles($Model,$list_of_fields);
-							$field_title=implode(' '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_OR' ).' ',$fieldtitles);
-
-							$cssclass='ctSearchBox';
-							if(isset($opair[1]))
-								$cssclass.=' '.$opair[1];
-
-							$default_Action=" ";//action should be a space not empty or this.value=this.value    
-							if(isset($opair[2]) and $opair[2]=='reload')
-								$default_Action=' onChange="es_SearchBoxDo();"';
-
-							if(isset($opair[3]) and $opair[3]=='improved')
-								$cssclass.=' ct_improved_selectbox';
-                                    
-							//if(isset($first_fld['fields']) and count($first_fld['fields'])>0)
-								//$objectname = implode('_',$first_fld['fields']);
-							//else
-							$objectname = $first_fld['fieldname'];
-							
-							$vlu=$ESSIB->renderFieldBox($Model,'es_search_box_',$objectname,$first_fld,
-								$cssclass,$count,
-								'',false,'',$default_Action,$field_title);//action should be a space not empty or 
-								
-							$vlu=str_replace('"','&&&&quote&&&&',$vlu);
-							if(!$firstFieldFound)
-							{
-								$vlu.= '<input type=\'hidden\' id=\'esSearchBoxFields\' value=\'&&&&fieldlist&&&&\' />';
-								$firstFieldFound = true;
-							}
-							
-							$count++;
-						}
-						else
-						{
-							//Field names are wrong
-							$vlu='Search field name is wrong';
-						}
-					}
-				}
+				$opair=JoomlaBasicMisc::csv_explode(',',$options[$i],'"',false);
+			
+				$list_of_fields_string_array=explode(',',$opair[0]);
+				
+				$class = $opair[1] ?? '';
+				$reload = isset($opair[2]) and $opair[2]=='reload';
+				$improved = isset($opair[3]) and $opair[3]=='improved';
+				
+				$vlu = $ct_html->search($list_of_fields_string_array, $class, $reload, $improved);
 			}
 
 			$pagelayout=str_replace($fItem,$vlu,$pagelayout);
 			$i++;
 		}
-		
-		if($count>0 and $Model->ct->Env->print==0 and $Model->ct->Env->frmt!='csv')
-        {
-            $field2search=tagProcessor_Page::prepareSearchElements($Model,$pagelayout,$fields);
-            $pagelayout=str_replace('&&&&fieldlist&&&&',implode(',',$field2search),$pagelayout);
-        }
-        else
-            $pagelayout=str_replace('&&&&fieldlist&&&&','',$pagelayout);
-
 	}
-    
-    static protected function prepareSearchElements(&$Model,&$pagelayout,$fields)
-    {
-        $url=JoomlaBasicMisc::deleteURLQueryOption($Model->ct->Env->current_url, 'where');
-
-		$fieldlist=array();
-
-		foreach($fields as $fld)
-		{
-                if(isset($fld['fields']) and count($fld['fields'])>0)
-                {
-                    $fieldlist[]='es_search_box_'.$fld['fieldname'].':'.implode(';',$fld['fields']).':';
-                }
-                else
-                {
-                    if($fld['type']=='customtables')
-                    {
-    					$exparams=explode(',',$fld['typeparams']);
-    					if(count($exparams)>1)
-    					{
-    						$esroot=$exparams[0];
-    						$fieldlist[]='es_search_box_combotree_'.$Model->ct->Table->tablename.'_'.$fld['fieldname'].'_1:'.$fld['fieldname'].':'.$esroot;
-    					}
-    				}
-    				else
-    					$fieldlist[]='es_search_box_'.$fld['fieldname'].':'.$fld['fieldname'].':';
-                }
-			}
-
-            $document = JFactory::getDocument();
-			$document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/js/base64.js"></script>');
-     
-        return $fieldlist;       
-    }
-    
-    static protected function renderSearchButton(&$Model,&$pagelayout,$class_)
-    {
-        $class='ctSearchBox';
-		if(isset($class_) and $class_!='')
-			$class.=' '.$class_;
-		else
-			$class.='  btn button-apply btn-primary';
-                    
-        //JavascriptFunction
-        $vlu= '<input type=\'button\' value=\'SEARCH\' class=\''.$class.'\' onClick=\'es_SearchBoxDo()\' />';
-       
-        return $vlu;
-    }
-    
-    static protected function SearchButton(&$Model,&$pagelayout)
+	
+    static protected function SearchButton(&$ct_html,&$pagelayout)
 	{
     	$options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('searchbutton',$options,$pagelayout,'{}');
         
         if(count($fList)>0)
         {
-            if($Model->ct->Env->print==1 or $Model->ct->Env->frmt=='csv')
-            {
-                foreach($fList as $fItem)
-                    $pagelayout=str_replace($fItem,'',$pagelayout);
-            
-                return true;
-            }
+			$opair=explode(',',$options[0]);
+			$vlu = $ct_html->searchbutton($opair[0]);
         
-            //Only one search button possible, the rest button will look similar
-            $opair=explode(',',$options[0]);
-            $vlu=tagProcessor_Page::renderSearchButton($Model,$pagelayout,$opair[0]);
-            
             foreach($fList as $fItem)
                 $pagelayout=str_replace($fItem,$vlu,$pagelayout);
         }
 	}
 
-
-    static protected function RecordCount(&$Model,&$pagelayout)
+    static protected function RecordCount(&$ct_record,&$pagelayout)
 	{
-
 		$options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('recordcount',$options,$pagelayout,'{}');
 
@@ -740,61 +464,30 @@ class tagProcessor_Page
 
 		foreach($fList as $fItem)
 		{
-			if($options[$i]=='numberonly')
-				$vlu=tagProcessor_Page::get_RecordCount($Model,true);
-			elseif($options[$i]=='pagelimit')
-				$vlu=tagProcessor_Page::get_RecordCount($Model,true,true);
-			else
-				$vlu=tagProcessor_Page::get_RecordCount($Model);
+			$full_sentence = ! ($options[$i]=='numberonly');
+			
+			$vlu = $ct_record->count($full_sentence);
 
 			$pagelayout=str_replace($fItem,$vlu,$pagelayout);
 			$i++;
 		}
 	}
 
-    static protected function get_RecordCount(&$Model,$numberonly=false,$pagelimit=false)
-	{
-		if($pagelimit)
-		{
-			return (int)$Model->params->get( 'limit' );
-		}
-		else
-		{
-			if($numberonly)
-				return $Model->TotalRows;
-			else
-			{
-				if($Model->ct->Env->frmt=='csv')
-					return '';
-				else
-					return '<span class="ctCatalogRecordCount">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FOUND' ).': '.$Model->TotalRows.' '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RESULT_S' ).'</span>';
-			}
-		}
-	}
 
-	static protected function RecordCountValue(&$Model,&$pagelayout)
+	static protected function RecordCountValue(&$ct_record,&$pagelayout)
 	{
-		if(!isset($Model->TotalRows))
-			return;
-		
 		$options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('count',$options,$pagelayout,'{}');
 
-		if(count($fList)>0)
+		foreach($fList as $fItem)
 		{
-			$vlu='';
-			
-			if($Model->ct->Env->frmt!='csv')
-				$vlu=$Model->TotalRows;	
-	
-			foreach($fList as $fItem)
-				$pagelayout=str_replace($fItem,$vlu,$pagelayout);
+			$vlu = $ct_record->count(false);
+			$pagelayout=str_replace($fItem,$vlu,$pagelayout);
 		}
 	}
 
-    static protected function PrintButton(&$Model,&$pagelayout)
+    static protected function PrintButton(&$ct_html,&$pagelayout)
 	{
-
 		$options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('print',$options,$pagelayout,'{}');
 
@@ -802,36 +495,12 @@ class tagProcessor_Page
 
 		foreach($fList as $fItem)
 		{
-			$link=$Model->ct->Env->current_url.(strpos($Model->ct->Env->current_url,'?')===false ? '?' : '&').'tmpl=component&print=1';
-
-
-			if(JFactory::getApplication()->input->get('moduleid',0,'INT')!=0)
-			{
-					//search module
-
-					$moduleid = JFactory::getApplication()->input->get('moduleid',0,'INT');
-
-
-					$link.='&moduleid='.$moduleid;
-
-					//keyword search
-					$inputbox_name='eskeysearch_'.$moduleid ;
-					$link.='&'.$inputbox_name.'='.JFactory::getApplication()->input->getString($inputbox_name,'');
-			}
-
-
-			if($Model->ct->Env->print==1)
-				$vlu='<p><a href="#" onclick="window.print();return false;"><img src="'.JURI::root(true).'/components/com_customtables/images/printButton.png" alt="'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PRINT').'"  /></a></p>	';
-			else
-            {
-                $class='ctEditFormButton btn button';
-				if(isset($opair[0]) and $opair[0]!='')
-					$class=$opair[0];
-
-				$vlu='<input type="button" class="'.$class.'" value="'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PRINT' ).'" onClick=\'window.open("'.$link.'","win2","status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=no,resizable=yes,width=640,height=480,directories=no,location=no"); return false; \'> ';
-            }
-
-
+			$class='ctEditFormButton btn button';
+			if(isset($opair[0]) and $opair[0]!='')
+				$class=$opair[0];
+			
+			$vlu = $ct_html->print($class);
+			
 			$pagelayout=str_replace($fItem,$vlu,$pagelayout);
 			$i++;
 		}

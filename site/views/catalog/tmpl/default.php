@@ -17,7 +17,9 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'co
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tagprocessor'.DIRECTORY_SEPARATOR.'catalogtableviewtag.php');
 
 $document = JFactory::getDocument();
-$document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/js/catalog_234.js" type="text/javascript"></script>');
+
+$document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/js/base64.js"></script>');
+$document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/js/catalog.js" type="text/javascript"></script>');
 $document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customtables/css/style.css" type="text/css" rel="stylesheet" >');
 
 $html_format=false;
@@ -41,11 +43,8 @@ if($html_format)
 	$this->Model->LayoutProc->layout=$this->pagelayout;
 	$this->pagelayout=$this->Model->LayoutProc->fillLayout();
 
-	if($this->Model->ct->Env->advancedtagprocessor)
-	{
-		$twig = new TwigProcessor($this->Model->ct, $this->pagelayout);
-		$this->pagelayout = $twig->process();
-	}
+	$twig = new TwigProcessor($this->Model->ct, $this->pagelayout);
+	$this->pagelayout = $twig->process();
 }
 else
 {

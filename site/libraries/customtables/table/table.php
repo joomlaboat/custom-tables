@@ -46,6 +46,9 @@ class Table
 	
 	var $fields;
 	var $record;
+	var $records;
+	var $recordcount;
+	var $recordlist;
 	
 	var $db;
 	
@@ -71,7 +74,8 @@ class Table
 
 		$this->setTable($this->tablerow, $useridfieldname, $load_fields = true);
 		
-		$this->record = array(1);
+		//$this->record = null;
+		//$this->recordlist = null;
 	}
 	
 	function setTable(&$tablerow, $useridfieldname = null, $load_fields = true)

@@ -100,8 +100,6 @@ class tagProcessor_Item
 		return $isok;
 	}
 
-    
-
     protected static function GetSQLJoin(&$Model,&$htmlresult,$id)
 	{
 		$ct = $Model->ct;
@@ -393,8 +391,6 @@ class tagProcessor_Item
 
 	}//function GetSQLJoin(&$htmlresult)
 
-
-
 	protected static function processPublishStatus(&$row,&$htmlresult)
 	{
 		$htmlresult=str_replace('{_value:published}',$row['listing_published']==1,$htmlresult);
@@ -419,7 +415,6 @@ class tagProcessor_Item
 		}
 	}
 
-	
     protected static function GetCustomToolBar(&$Model,&$htmlresult,&$row)
 	{
 
@@ -542,7 +537,7 @@ class tagProcessor_Item
         return $viewlink;
     }
 
-    public static function RenderResultLine(&$Model,&$row,$showanchor)
+    public static function RenderResultLine(&$Model,&$twig, &$row,$showanchor)
     {
         $jinput=JFactory::getApplication()->input;
 
@@ -557,30 +552,50 @@ class tagProcessor_Item
 				$viewlink.='&tmpl='.$jinput->getCmd('tmpl');
 		}
 
-		if($showanchor)
-			$htmlresult='<a name="a'.$row['listing_id'].'"></a>';
-		else
-			$htmlresult='';
-
 		$layout='';
+		
+		//$twig->ct->Table->record = $row;
+		
+		//print_r($twig->ct->Table->record);
+		
+		$htmlresult = '';
 
 		if($Model->LayoutProc->layoutType==2)
         {
             require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tagprocessor'.DIRECTORY_SEPARATOR.'edittags.php');
-            $pagelayout_temp=$Model->LayoutProc->layout;//Temporary remember original layout
-            $htmlresult=$pagelayout_temp;
+			
+			//$pagelayout_temp = $twig->process();
+			$htmlresult = $twig->process($row);
+            //$pagelayout_temp=$Model->LayoutProc->layout;//Temporary remember original layout
+            //$htmlresult=$pagelayout_temp;
 
             $prefix='table_'.$Model->ct->Table->tablename.'_'.$row['listing_id'].'_';
             tagProcessor_Edit::process($Model,$htmlresult,$row,$prefix);//Process edit form layout
             
+			
+			
+			
+			
+			
             $Model->LayoutProc->layout=$htmlresult;//Temporary replace original layout with processed result
+			
+			
+			
 			$htmlresult=$Model->LayoutProc->fillLayout($row,null,'||',false,true,$prefix);//Process field values
-
-            $Model->LayoutProc->layout=$pagelayout_temp;//Set original layout as it was before, to process other records
+			
+            //$Model->LayoutProc->layout=$pagelayout_temp;//Set original layout as it was before, to process other records
         }
         else
-            $htmlresult.=$Model->LayoutProc->fillLayout($row,$viewlink,'[]',false);
-
-		return $htmlresult;
+		{	
+			$htmlresult = $twig->process($row);
+			$Model->LayoutProc->layout=$htmlresult;//Layout was modified by Twig
+	
+            $htmlresult = $Model->LayoutProc->fillLayout($row,$viewlink,'[]',false);
+		}
+		
+		if($showanchor)
+			return '<a name="a'.$row['listing_id'].'"></a>' . $htmlresult;
+		else
+			return $htmlresult;
     }
 }

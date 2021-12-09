@@ -10,6 +10,8 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\TwigProcessor;
+
 trait render_csv
 {
     protected static function get_CatalogTable_CSV(&$Model,$fields,$SearchResult)
@@ -75,6 +77,8 @@ trait render_csv
 	
 	protected static function renderCSVoutput(&$Model,&$SearchResult)
 	{
+		$twig = new TwigProcessor($Model->ct, $Model->LayoutProc->layout);
+		
 		$number=1+$Model->limitstart; //table row number, it can be used in the layout as {number}
 		$tablecontent='';
 
@@ -83,7 +87,7 @@ trait render_csv
 			$Model->LayoutProc->number=$number;
 		
             $tablecontent.='
-'.strip_tags(tagProcessor_Item::RenderResultLine($Model,$row,false));
+'.strip_tags(tagProcessor_Item::RenderResultLine($Model,$twig,$row,false));
 
 			$number++;
 		}
@@ -129,11 +133,13 @@ trait render_csv
 			$commaAdded=true;
 		}
 
-		$Model->LayoutProc->layout=$layout;
+		$twig = new TwigProcessor($Model->ct, $layout);
+
+		//$Model->LayoutProc->layout=$layout;
 
 		foreach($SearchResult as $row)
 		{
-			$vlu=trim(strip_tags(tagProcessor_Item::RenderResultLine($Model,$row,false)));
+			$vlu=trim(strip_tags(tagProcessor_Item::RenderResultLine($Model,$twig,$row,false)));
 			$l=strlen($vlu);
 			if($commaAdded and $l>0)
 			{

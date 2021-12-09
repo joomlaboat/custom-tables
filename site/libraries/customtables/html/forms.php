@@ -19,33 +19,40 @@ use \Joomla\CMS\Factory;
 
 class Forms
 {
-	public static function renderFieldLabel(&$ct, &$esfield, $fieldNamePrefix = 'comes_')
+	var $ct;
+
+	function __construct(&$ct)
+	{
+		$this->ct = $ct;
+	}
+	
+	function renderFieldLabel(&$esfield, $fieldNamePrefix = 'comes_')
 	{
 		if($esfield['type']=='dummy')
         {
-			$field_label=$esfield['fieldtitle'.$ct->Languages->Postfix];
+			$field_label=$esfield['fieldtitle'.$this->ct->Languages->Postfix];
         }
         else
         {
-			if(!array_key_exists('fieldtitle'.$ct->Languages->Postfix,$esfield))
+			if(!array_key_exists('fieldtitle'.$this->ct->Languages->Postfix,$esfield))
 			{
 				Factory::getApplication()->enqueueMessage(
 					JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_LANGFIELDNOTFOUND' ), 'Error');
                                         
-				$title = '*fieldtitle'.$ct->Languages->Postfix.' - not found*';
+				$title = '*fieldtitle'.$this->ct->Languages->Postfix.' - not found*';
 			}
 			else	
-				$title = $esfield['fieldtitle'.$ct->Languages->Postfix];
+				$title = $esfield['fieldtitle'.$this->ct->Languages->Postfix];
 			
-			if(!array_key_exists('description'.$ct->Languages->Postfix,$esfield))
+			if(!array_key_exists('description'.$this->ct->Languages->Postfix,$esfield))
 			{
 				Factory::getApplication()->enqueueMessage(
 					JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_LANGFIELDNOTFOUND' ), 'Error');
                                         
-				$description = '*description'.$ct->Languages->Postfix.' - not found*';
+				$description = '*description'.$this->ct->Languages->Postfix.' - not found*';
 			}
 			else	
-				$description = str_replace('"','',$esfield['description'.$ct->Languages->Postfix]);
+				$description = str_replace('"','',$esfield['description'.$this->ct->Languages->Postfix]);
 			
 			$isrequired=(bool)$esfield['isrequired'];
 
@@ -70,4 +77,6 @@ class Forms
 		
 		return $field_label;
 	}
+	
+	
 }

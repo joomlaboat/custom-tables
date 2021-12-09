@@ -25,7 +25,8 @@ class tagProcessor_Field
         {
             foreach($ct->Table->fields as $esfield)
             {
-				$field_label = Forms::renderFieldLabel($ct, $esfield, $fieldNamePrefix);
+				$forms = new Forms($ct);
+				$field_label = $forms->renderFieldLabel($esfield, $fieldNamePrefix);
 				
             	$pagelayout=str_replace('*'.$esfield['fieldname'].'*',$field_label,$pagelayout);
             }

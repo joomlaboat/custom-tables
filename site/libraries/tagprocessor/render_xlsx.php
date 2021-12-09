@@ -14,7 +14,7 @@ trait render_xlsx
 
     protected static function get_CatalogTable_XLSX(&$SearchResult,&$Model,$fields)
 	{
-		$filename = JoomlaBasicMisc::makeNewFileName($this->Model->params->get('page_title'),'xlsx');
+		$filename = JoomlaBasicMisc::makeNewFileName($Model->params->get('page_title'),'xlsx');
 
         if (ob_get_contents()) ob_end_clean();
         /** Include PHPExcel */
@@ -29,7 +29,7 @@ trait render_xlsx
 
 		$fieldarray=JoomlaBasicMisc::csv_explode(',', $fields, '"', true);
 
-        $sheet_name=$this->Model->params->get('menu-anchor_title');
+        $sheet_name=$Model->params->get('menu-anchor_title');
 
         // Set document properties
         $objPHPExcel->getProperties()->setCreator("CustomTables")
@@ -78,7 +78,7 @@ trait render_xlsx
 
 
 
-			$this->Model->LayoutProc->layout=$recordline;
+			$Model->LayoutProc->layout=$recordline;
 
 
 			$records=array();
@@ -88,7 +88,7 @@ trait render_xlsx
 
 
 
-				$htmlresult=$this->Model->LayoutProc->fillLayout($row);
+				$htmlresult=$Model->LayoutProc->fillLayout($row);
 
 				$htmlresult=JoomlaBasicMisc::strip_tags_content($htmlresult, '<a><center><p><br><i><u><b><span>', FALSE);
 				$htmlresult=strip_tags($htmlresult);//, '<center><p><br><i><u><b><span>');

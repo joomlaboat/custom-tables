@@ -57,9 +57,7 @@ class ESSearchBarClass
 			die;
 		}
 
-		$this->esinputbox= new ESSerachInputBox;
-		$this->esinputbox->Model = $this;
-		$this->esinputbox->modulename=$this->modulename;
+		$this->esinputbox= new SearchInputBox($this->ct,$this->modulename);
 
 		//get field list
 		if($jinput->getString('fieldlist'))

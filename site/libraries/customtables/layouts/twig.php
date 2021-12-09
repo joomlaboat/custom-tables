@@ -57,6 +57,7 @@ class TwigProcessor
 		$this->twig->addGlobal('url', new Twig_Url_Tags($ct) );
 		$this->twig->addGlobal('html', new Twig_Html_Tags($ct) );
 		$this->twig->addGlobal('document', new Twig_Document_Tags($ct) );
+		$this->twig->addGlobal('record', new Twig_Record_Tags($ct) );
 		
 		$this->variables = [];
 		
@@ -133,6 +134,12 @@ class fieldObject
         return $this->field['fieldname'];
     }
 	
+	public function _value()
+    {
+		$rfn = $this->field['realfieldname'];
+		return $this->ct->Table->record[$rfn];
+	}
+	
 	public function _title()
     {
 		if(!array_key_exists('fieldtitle'.$this->ct->Languages->Postfix,$this->field))
@@ -148,7 +155,8 @@ class fieldObject
 	
 	public function _label()
     {
-        return Forms::renderFieldLabel($ct, $this->field);
+		$forms = new Forms($this->ct);
+        return $forms->renderFieldLabel($this->field);
     }
 	
 	public function _description()

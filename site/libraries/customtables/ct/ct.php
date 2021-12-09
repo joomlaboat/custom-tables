@@ -21,6 +21,7 @@ class CT
 	var $Languages;
 	var $Env;
 	var $Table;
+	var $Records;
 	
 	function __construct()
 	{

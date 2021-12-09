@@ -9,6 +9,8 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\TwigProcessor;
+
 trait render_html
 {
     protected static function get_CatalogTable_HTML(&$Model,$fields,$class,&$SearchResult)
@@ -46,6 +48,9 @@ trait render_html
         $Model->LayoutProc->layout=$result;
         $result=$Model->LayoutProc->fillLayout();
         $result=str_replace('&&&&quote&&&&','"',$result);
+		
+		$twig = new TwigProcessor($Model->ct, $result);
+		$result = $htmlresult = $twig->process();
 
         //Complete record layout
 		$recordline.='</tr>';
@@ -55,14 +60,20 @@ trait render_html
 
 		$number=1+$Model->limitstart; //table row number, it maybe use in the layout as {number}
 
-		$Model->LayoutProc->layout=$recordline;
+		//$Model->LayoutProc->layout=$recordline;
 		
         $tablecontent='';
+		
+		
+		$twig = new TwigProcessor($Model->ct, $recordline);
+		
 		foreach($SearchResult as $row)
 		{
-				$Model->LayoutProc->number=$number;
-		        $tablecontent.=tagProcessor_Item::RenderResultLine($Model,$row,true);
-				$number++;
+			$Model->LayoutProc->number=$number;
+			$row['_number'] = $number;
+		    $tablecontent.=tagProcessor_Item::RenderResultLine($Model,$twig,$row,true);
+			
+			$number++;
 		}
         $result.='<tbody>'.$tablecontent.'</tbody></table>';
 

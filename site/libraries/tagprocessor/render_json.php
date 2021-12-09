@@ -9,6 +9,8 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\TwigProcessor;
+
 trait render_json
 {
     protected static function get_CatalogTable_JSON(&$Model,$fields,&$SearchResult)
@@ -61,12 +63,14 @@ trait render_json
 		$layout=str_replace("\n",'',$layout);
 		$layout=str_replace("\r",'',$layout);
 
-		$Model->LayoutProc->layout=$layout;
+		//$Model->LayoutProc->layout=$layout;
+		
+		$twig = new TwigProcessor($Model->ct, $layout);
 		
 		$records=[];
 
 		foreach($SearchResult as $row)
-			$records[]=trim(strip_tags(tagProcessor_Item::RenderResultLine($Model,$row,false)));
+			$records[]=trim(strip_tags(tagProcessor_Item::RenderResultLine($Model,$twig, $row,false)));
 		
 		$result = implode(',',$records);
 

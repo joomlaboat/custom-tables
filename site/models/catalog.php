@@ -593,14 +593,20 @@ class CustomTablesModelCatalog extends JModelLegacy
 		$db->setQuery($query_analytical);
 		$rows=$db->loadObjectList();	
 		if(count($rows)==0)
+		{
+			$this->ct->Table->recordcount = 0;
 			$this->TotalRows=0;
+		}
 		else
+		{
+			$this->ct->Table->recordcount = $rows[0]->count;
 			$this->TotalRows=$rows[0]->count;
+		}
 		
 		$this->recordlist=array();
 		
 		
-		if($this->TotalRows>0)
+		if($this->ct->Table->recordcount > 0)
 		{
 			$the_limit=(int)$this->getState('limit');
 			if($the_limit>20000)
@@ -611,8 +617,6 @@ class CustomTablesModelCatalog extends JModelLegacy
 				
 			$this->limit=$the_limit;
 			
-			
-
 			if(!$this->blockExternalVars and $the_limit!=0)
 			{
 				if($this->TotalRows<$this->limitstart or $this->TotalRows<$the_limit)
@@ -637,6 +641,10 @@ class CustomTablesModelCatalog extends JModelLegacy
 		$this->LayoutProc->recordlist=implode(',',$this->recordlist);
 
 		$this->PathValue=$PathValue;
+		
+		
+		$this->ct->Table->records = $rows;
+		$this->ct->Table->recordlist = $this->recordlist;
 
 		return $rows;
 	}

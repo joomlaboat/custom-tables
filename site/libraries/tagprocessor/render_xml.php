@@ -9,6 +9,8 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\TwigProcessor;
+
 trait render_xml
 {
     protected static function get_CatalogTable_XML(&$Model,$fields,&$SearchResult)
@@ -53,7 +55,9 @@ trait render_xml
         $result=str_replace('&&&&quote&&&&','"',$result);
 
 		$number=1+$Model->limitstart; //table row number, it maybe use in the layout as {number}
-		$Model->LayoutProc->layout=$recordline;
+		//$Model->LayoutProc->layout=$recordline;
+		
+		$twig = new TwigProcessor($Model->ct, $recordline);
 
         $tablecontent='';
 		foreach($SearchResult as $row)
@@ -63,7 +67,7 @@ trait render_xml
                 if($tablecontent!="")
                     $tablecontent.="\r\n";
 
-		        $vlu=tagProcessor_Item::RenderResultLine($Model,$row,false);
+		        $vlu=tagProcessor_Item::RenderResultLine($Model,$twig,$row,false);
                 $tablecontent.=str_replace('&','&amp;',$vlu);
 				$number++;
 		}

@@ -158,24 +158,26 @@
     function es_SearchBoxKeyPress(e)
 	{
 		if(e.keyCode==13)//enter key pressed
-		    es_SearchBoxDo();
+		    ctSearchBoxDo();
 	}
 
 
-    function es_SearchBoxDo()
+    function ctSearchBoxDo()
 	{
         if(es_LinkLoading)
             return;
 
         es_LinkLoading=true;
 
-		var w=[];
-		var elt = document.getElementById("esSearchBoxFields").value;
-		var flds=elt.split(",");
-		for(var i=0;i<flds.length;i++)
+		let w=[];
+		
+		let allSearchElements = document.querySelectorAll('[ctSearchBoxField]');
+		
+		for(let i=0;i<allSearchElements.length;i++)
 		{
-			var n=flds[i].split(":");
-			var obj = document.getElementById(n[0]);
+			let n=allSearchElements[i].getAttribute('ctSearchBoxField').split(":");
+			let obj = document.getElementById(n[0]);
+			
 			if(obj)
 			{
 				var o=obj.value;
@@ -204,7 +206,6 @@
 
         window.location.href = link;
 	}
-
 
     function esCheckboxAllclicked(tableid)
     {
