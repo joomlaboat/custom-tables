@@ -12,6 +12,16 @@ defined('_JEXEC') or die('Restricted access');
 use CustomTables\Fields;
 use CustomTables\RecordToolbar;
 
+/* Not sll tags already implemented using Twig
+
+Implemented:
+
+{id} - {{ record.id }}
+{number} - {{ record.number }}
+{recordlist} - {{ record.list }}
+
+ */
+
 class tagProcessor_Item
 {
     public static function process($advancedtagprocessor,&$Model,&$row,&$htmlresult,$aLink,$add_label=false,$fieldNamePrefix='comes_')
@@ -48,7 +58,7 @@ class tagProcessor_Item
 			}
 		}
 
-		$htmlresult=str_replace('{recordlist}',(isset($this->ct->Table) and isset($this->ct->Table->recordlist) ? implode(',',$this->ct->Table->recordlist : ''),$htmlresult);
+		$htmlresult=str_replace('{recordlist}',(isset($Model->ct->Table) and isset($Model->ct->Table->recordlist) ? implode(',',$Model->ct->Table->recordlist) : ''),$htmlresult);
 
 		$listing_id = 0;
 		
@@ -70,9 +80,9 @@ class tagProcessor_Item
 		CT_FieldTypeTag_ct::ResolveStructure($Model,$htmlresult);
 	}
 
-    public static function checkAccess(&$Model,$ug,&$row)
+    public static function checkAccess(&$ct,$ug,&$row)
 	{
-        if(!isset($Model->ct->Env->isUserAdministrator))
+        if(!isset($ct->Env->isUserAdministrator))
             return false;
 
 		$user = JFactory::getUser();
@@ -84,15 +94,15 @@ class tagProcessor_Item
 
 		$isok=false;
 
-		if($Model->ct->Env->isUserAdministrator or in_array($ug,$usergroups))
+		if($ct->Env->isUserAdministrator or in_array($ug,$usergroups))
 			$isok=true;
 		else
 		{
-			if(isset($row) and isset($row['listing_published']) and $Model->ct->Table->useridfieldname!='')
+			if(isset($row) and isset($row['listing_published']) and $ct->Table->useridfieldname!='')
 			{
-				$uid=$row[$Model->ct->Table->useridrealfieldname];
+				$uid=$row[$ct->Table->useridrealfieldname];
 
-				if($uid==$Model->ct->Env->userid and $Model->ct->Env->userid!=0)
+				if($uid==$ct->Env->userid and $ct->Env->userid!=0)
 					$isok=true;
 			}
 		}
@@ -433,9 +443,9 @@ class tagProcessor_Item
 		if($delete_userGroup==0)
 			$delete_userGroup=$edit_userGroup;
 		
-		$isEditable=tagProcessor_Item::checkAccess($Model,$edit_userGroup,$row);
-		$isPublishable=tagProcessor_Item::checkAccess($Model,$publish_userGroup,$row);
-		$isDeletable=tagProcessor_Item::checkAccess($Model,$delete_userGroup,$row);
+		$isEditable=tagProcessor_Item::checkAccess($Model->ct,$edit_userGroup,$row);
+		$isPublishable=tagProcessor_Item::checkAccess($Model->ct,$publish_userGroup,$row);
+		$isDeletable=tagProcessor_Item::checkAccess($Model->ct,$delete_userGroup,$row);
 		
 		$RecordToolbar = new RecordToolbar($Model->ct,$isEditable, $isPublishable, $isDeletable, $Model->Itemid);
 

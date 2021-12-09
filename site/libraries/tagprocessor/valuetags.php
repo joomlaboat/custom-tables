@@ -152,7 +152,7 @@ class tagProcessor_Value
                     .DIRECTORY_SEPARATOR.'itemtags.php');
 
                 $edit_userGroup=(int)$Model->params->get( 'editusergroups' );
-                $isEditable=tagProcessor_Item::checkAccess($Model,$edit_userGroup,$row);
+                $isEditable=tagProcessor_Item::checkAccess($Model->ct,$edit_userGroup,$row);
         }
         else
         {

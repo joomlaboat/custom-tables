@@ -108,8 +108,10 @@ class Twig_Record_Tags
 		
 		if($full_sentence)
 		{
-			return '<span class="ctCatalogRecordCount">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FOUND' ).': '.$this->ct->Table->recordcount
+			$vlu = '<span class="ctCatalogRecordCount">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FOUND' ).': '.$this->ct->Table->recordcount
 				.' '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RESULT_S' ).'</span>';
+				
+			return new \Twig\Markup($vlu, 'UTF-8' );
 		}
 		else
 			return $this->ct->Table->recordcount;
@@ -384,7 +386,8 @@ class Twig_Html_Tags
 		if($attribute == '')
 			$attribute = 'class="ct_goback"';
 		
-		return '<a href="'.$returnto.'" '.$attribute.'><div>'.$label.'</div></a>';
+		$vlu = '<a href="'.$returnto.'" '.$attribute.'><div>'.$label.'</div></a>';
+		return new \Twig\Markup($vlu, 'UTF-8' );
 	}
 	
 	function print($class='ctEditFormButton btn button')
@@ -412,7 +415,7 @@ class Twig_Html_Tags
 			$vlu='<input type="button" class="'.$class.'" value="'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PRINT' ).'" onClick=\'window.open("'.$link.'","win2","status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=no,resizable=yes,width=640,height=480,directories=no,location=no"); return false; \'> ';
         }
 			
-		return $vlu;
+		return new \Twig\Markup($vlu, 'UTF-8' );
 	}
 	
 	protected function getFieldTitles($list_of_fields)
@@ -580,7 +583,7 @@ class Twig_Html_Tags
 		$field2search = $this->prepareSearchElement($first_fld);
 		$vlu.= '<input type=\'hidden\' ctSearchBoxField=\''.$field2search.'\' />';
 		
-		return $vlu;
+		return new \Twig\Markup($vlu, 'UTF-8' );
 	}
 	
 	function searchbutton($class_ = '')
@@ -598,7 +601,7 @@ class Twig_Html_Tags
         //JavascriptFunction
         $vlu= '<input type=\'button\' value=\'SEARCH\' class=\''.$class.'\' onClick=\'ctSearchBoxDo()\' />';
        
-        return $vlu;
+        return new \Twig\Markup($vlu, 'UTF-8' );
 	}
 	
 	
@@ -653,7 +656,8 @@ class Twig_Html_Tags
 
    				$alt='Download '.strtoupper($format).' file';
    				//add image anchor link
-   				return '<a href="'.$link.'" class="toolbarIcons" id="ctToolBarExport2CSV" target="_blank"><img src="'.$image.'" alt="'.$alt.'" title="'.$alt.'" width="'.$imagesize.'" height="'.$imagesize.'"></a>';
+   				$vlu = '<a href="'.$link.'" class="toolbarIcons" id="ctToolBarExport2CSV" target="_blank"><img src="'.$image.'" alt="'.$alt.'" title="'.$alt.'" width="'.$imagesize.'" height="'.$imagesize.'"></a>';
+				return new \Twig\Markup($vlu, 'UTF-8' );
    			}
    			elseif($link_type == '_value' or $link_type == 'linkonly')
    			{

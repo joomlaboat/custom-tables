@@ -63,11 +63,13 @@ class TwigProcessor
 		
 		if(isset($ct->Table))
 		{
+			$description = $ct->Table->tablerow['description'.$ct->Table->Languages->Postfix];
+						
 			$this->variables['table'] = [
 			'id'=>$ct->Table->tableid,
 			'name' => $ct->Table->tablename,
 			'title' => $ct->Table->tabletitle,
-			'description'=>$ct->Table->tablerow['description'.$ct->Table->Languages->Postfix]
+			'description'=> new \Twig\Markup($description, 'UTF-8' )
 			];
 		}
 

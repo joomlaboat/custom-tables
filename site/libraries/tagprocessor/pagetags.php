@@ -16,8 +16,12 @@ use CustomTables\SearchInputBox;
 
 Implemented:
 
-{print} - {{ document.print() }}
-
+{print} - {{ html.print() }}
+{format:csv} - {{ html.format('csv') }}
+{searchbutton} - {{ html.searchbutton }}
+{search:email} - {{ html.search('email') }}
+{recordcount} - {{ record.count(true) }}
+{count} - {{ record.count }}
 
  */
  
@@ -136,7 +140,7 @@ class tagProcessor_Page
             $edit_userGroup=0;
 
         $row=array();
-        $isEditable=tagProcessor_Item::checkAccess($Model,$edit_userGroup,$row);
+        $isEditable=tagProcessor_Item::checkAccess($Model->ct,$edit_userGroup,$row);
 
 		foreach($fList as $fItem)
 		{
@@ -389,7 +393,6 @@ class tagProcessor_Page
 			tagProcessor_Page::PageToolBarCheckBox($Model,$pagelayout);
 	}
 
-
     static protected function PageToolBarCheckBox(&$Model,&$pagelayout)
 	{
 		$options=array();
@@ -404,9 +407,7 @@ class tagProcessor_Page
 
 			$pagelayout=str_replace($fItem,$vlu,$pagelayout);
 		}
-
 	}
-
        
     static protected function SearchBOX(&$ct_html,&$pagelayout)
 	{
