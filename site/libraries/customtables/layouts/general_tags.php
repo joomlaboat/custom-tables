@@ -63,7 +63,7 @@ class Twig_Record_Tags
 			return '';
 		}
 		
-		return (int)$this->ct->Table->record['published'];
+		return (int)$this->ct->Table->record['listing_published'];
 	}
 	
 	function number()
