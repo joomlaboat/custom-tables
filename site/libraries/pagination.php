@@ -566,34 +566,28 @@ class JESPagination extends JObject
 		$data = new stdClass;
 
 		// Build the additional URL parameters string.
-		$params = '';
+		$query_params = '';
 		if (!empty($this->_additionalUrlParams))
 		{
 			foreach($this->_additionalUrlParams as $key => $value)
 			{
-				$params .= '&'.$key.'='.$value;
+				$query_params .= '&'.$key.'='.$value;
 			}
 		}
 		
-		$paramsPlusPrefix = JoomlaBasicMisc::curPageURL();
-		$paramsPlusPrefix = JoomlaBasicMisc::deleteURLQueryOption($paramsPlusPrefix, 'start');
+		$query_paramsPlusPrefix = JoomlaBasicMisc::curPageURL();
+		$query_paramsPlusPrefix = JoomlaBasicMisc::deleteURLQueryOption($query_paramsPlusPrefix, 'start');
 			
-		if($params!='')
-			$paramsPlusPrefix .= (strpos($paramsPlusPrefix,'?')===false ? '?' : '&') . $this->prefix;
+		if($query_params!='')
+			$query_paramsPlusPrefix .= (strpos($query_paramsPlusPrefix,'?')===false ? '?' : '&') . $this->prefix;
 			
 		if($this->prefix!='')
-			$paramsPlusPrefix .= (strpos($paramsPlusPrefix,'?')===false ? '?' : '&') . $this->prefix;
+			$query_paramsPlusPrefix .= (strpos($query_paramsPlusPrefix,'?')===false ? '?' : '&') . $this->prefix;
 		
-		
-		
-		//echo '$paramsPlusPrefix='.$paramsPlusPrefix;
-		//die;
-
 		$data->all = new JESPaginationObject(JoomlaBasicMisc::JTextExtended('JLIB_HTML_VIEW_ALL'), $this->prefix);
 		if (!$this->_viewall) {
 			$data->all->base	= '0';
-			//$data->all->link	= JRoute::_($params.'&'.$this->prefix.'start=');
-			$data->all->link	= JRoute::_($paramsPlusPrefix);
+			$data->all->link	= JRoute::_($query_paramsPlusPrefix);
 		}
 		
 		//$data->all->link = JoomlaBasicMisc::deleteURLQueryOption($data->all->link, 'start');
@@ -615,13 +609,13 @@ class JESPagination extends JObject
 			//$page = $page == 0 ? '' : $page;
 
 			$data->start->base	= '0';
-			$data->start->link	= JRoute::_($paramsPlusPrefix);
+			$data->start->link	= JRoute::_($query_paramsPlusPrefix);
 			$data->previous->base	= $page;
 			
 			if($page == 0)
-				$data->previous->link	= JRoute::_($paramsPlusPrefix);
+				$data->previous->link	= JRoute::_($query_paramsPlusPrefix);
 			else
-				$data->previous->link	= JRoute::_($paramsPlusPrefix.(strpos($paramsPlusPrefix,'?')===false ? '?' : '&') .'start='.$page);
+				$data->previous->link	= JRoute::_($query_paramsPlusPrefix.(strpos($query_paramsPlusPrefix,'?')===false ? '?' : '&') .'start='.$page);
 		}
 
 		// Set the next and end data objects.
@@ -634,9 +628,9 @@ class JESPagination extends JObject
 			$end  = ($this->get('pages.total') -1) * $this->limit;
 
 			$data->next->base	= $next;
-			$data->next->link	= JRoute::_($paramsPlusPrefix.(strpos($paramsPlusPrefix,'?')===false ? '?' : '&') .'start='.$next);
+			$data->next->link	= JRoute::_($query_paramsPlusPrefix.(strpos($query_paramsPlusPrefix,'?')===false ? '?' : '&') .'start='.$next);
 			$data->end->base	= $end;
-			$data->end->link	= JRoute::_($paramsPlusPrefix.(strpos($paramsPlusPrefix,'?')===false ? '?' : '&') .'start='.$end);
+			$data->end->link	= JRoute::_($query_paramsPlusPrefix.(strpos($query_paramsPlusPrefix,'?')===false ? '?' : '&') .'start='.$end);
 		}
 
 		$data->pages = array();
@@ -651,9 +645,9 @@ class JESPagination extends JObject
 			{
 				$data->pages[$i]->base	= $offset;
 				if($offset == 0)
-					$data->pages[$i]->link	= JRoute::_($paramsPlusPrefix);
+					$data->pages[$i]->link	= JRoute::_($query_paramsPlusPrefix);
 				else
-					$data->pages[$i]->link	= JRoute::_($paramsPlusPrefix.(strpos($paramsPlusPrefix,'?')===false ? '?' : '&') .'start='.$offset);
+					$data->pages[$i]->link	= JRoute::_($query_paramsPlusPrefix.(strpos($query_paramsPlusPrefix,'?')===false ? '?' : '&') .'start='.$offset);
 			}
 		}
 		return $data;

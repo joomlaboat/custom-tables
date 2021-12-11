@@ -57,10 +57,10 @@ function CustomTablesDelete($task,&$this_)
 	
 	$app = JFactory::getApplication();
 	$edit_model = $this_->getModel('edititem');
-	$params=$app->getParams();
-	$edit_model->params=$params;
+	$menu_params=$app->getParams();
+	$edit_model->params=$menu_params;
 	$edit_model->id = $jinput->getInt('listing_id');
-	$edit_model->load($params, false);
+	$edit_model->load($menu_params, false);
 	
 	$PermissionIndex=3;//delete
 	
@@ -74,7 +74,7 @@ function CustomTablesDelete($task,&$this_)
 		}
 		else
 		{
-			$link = $WebsiteRoot . 'index.php?option=com_users&view=login&return=' . $encodedreturnto;
+			$link = $edit_model->ct->Env->WebsiteRoot . 'index.php?option=com_users&view=login&return=' . $encodedreturnto;
 			$this_->setRedirect($link,JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
 		}
 		return true;
@@ -84,15 +84,14 @@ function CustomTablesDelete($task,&$this_)
 		$encodedreturnto = base64_encode(JoomlaBasicMisc::curPageURL());
 		$returnto = $jinput->get('returnto', '', 'BASE64');
 		$decodedreturnto = base64_decode($returnto);
-		$WebsiteRoot = JURI::root(true);
 
 		if ($returnto != '')
 		{
 			$link = $decodedreturnto;
-			if (strpos($link, 'http:') === false and strpos($link, 'https:') === false) $link.= $WebsiteRoot . $link;
+			if (strpos($link, 'http:') === false and strpos($link, 'https:') === false) $link.= $edit_model->ct->Env->WebsiteRoot . $link;
 		}
 		else
-			$link = $WebsiteRoot . 'index.php?Itemid=' . $Itemid;
+			$link = $edit_model->ct->Env->WebsiteRoot . 'index.php?Itemid=' . $Itemid;
 		
 		if ($edit_model->delete())
 		{
@@ -123,24 +122,18 @@ function CustomTablesSave($task,&$this_)
 	$returnto=$jinput->get('returnto','','BASE64');
 	$link 	= base64_decode ($returnto);
 
-	$WebsiteRoot=JURI::root(true);
-	if($WebsiteRoot=='' or $WebsiteRoot[strlen($WebsiteRoot)-1]!='/') //Root must have slash / in the end
-		$WebsiteRoot.='/';
-
-
 	$jinput->set('task','');
 
 	$model = $this_->getModel('edititem');
 	$app		= JFactory::getApplication();
-	$params=$app->getParams();
+	$menu_params=$app->getParams();
 
-
-	if(!$model->load($params))
+	if(!$model->load($menu_params))
 	{
 	}
 	elseif(!$model->CheckAuthorization(1))
 	{
-		$link =$WebsiteRoot.'index.php?option=com_users&view=login&return='.base64_encode(JoomlaBasicMisc::curPageURL());
+		$link =$model->ct->Env->WebsiteRoot.'index.php?option=com_users&view=login&return='.base64_encode(JoomlaBasicMisc::curPageURL());
 
 		$this_->setRedirect($link,JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
 	}
@@ -226,7 +219,7 @@ function CustomTablesSave($task,&$this_)
 			{
 				if(JFactory::getApplication()->input->get('submitbutton','','CMD')=='nextprint')
 				{
-				    $link 	= $WebsiteRoot.'index.php?option=com_customtables&view=details'
+				    $link = $model->ct->Env->WebsiteRoot.'index.php?option=com_customtables&view=details'
 												.'&Itemid='.JFactory::getApplication()->input->get('Itemid',0,'INT')
 												.'&listing_id='.JFactory::getApplication()->input->get('listing_id',0,'INT')
 												.'&tmpl=component'
@@ -250,14 +243,12 @@ function CustomTablesSave($task,&$this_)
 				}//if(JFactory::getApplication()->input->get('submitbutton','','CMD')=='nextprint')
 				else
 				{
-					$link 	= $WebsiteRoot.'index.php?option=com_customtables&view=catalog&Itemid='.JFactory::getApplication()->input->get('Itemid',0,'INT');
-
-
+					$link = $model->ct->Env->WebsiteRoot.'index.php?option=com_customtables&view=catalog&Itemid='.JFactory::getApplication()->input->get('Itemid',0,'INT');
 					
-						if($msg!='')
-							$this_->setRedirect($link, $msg);
-						else
-							$this_->setRedirect($link);
+					if($msg!='')
+						$this_->setRedirect($link, $msg);
+					else
+						$this_->setRedirect($link);
 					
 
 				}//if(JFactory::getApplication()->input->get('submitbutton','','CMD')=='nextprint')

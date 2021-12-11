@@ -36,7 +36,8 @@ class JoomlaBasicMisc
 	}
 	
 	//https://stackoverflow.com/questions/13076480/php-get-actual-maximum-upload-size
-	public static function file_upload_max_size() {
+	public static function file_upload_max_size()
+	{
 		static $max_size = -1;
 
 		if ($max_size < 0) {
@@ -194,11 +195,7 @@ class JoomlaBasicMisc
 
 	public static function getURLQueryOption($urlstr, $opt)
 	{
-
-		$params = array();
-
 		$query=explode('&',$urlstr);
-
 		$newquery=array();
 
 		for($q=0;$q<count($query);$q++)
@@ -665,13 +662,8 @@ class JoomlaBasicMisc
 		return $fList;
 	}
 
-
-
-
-
 	public static function getMenuParam($param, $Itemid,$rawparams='')
     {
-
 		if($rawparams=='')
 		{
 			$db = JFactory::getDBO();
@@ -698,9 +690,9 @@ class JoomlaBasicMisc
 
 			$rawparams=substr($rawparams,1,strlen($rawparams)-2);
 
-			$paramslist=JoomlaBasicMisc::csv_explode(',', $rawparams,'"', true);
+			$list_of_params=JoomlaBasicMisc::csv_explode(',', $rawparams,'"', true);
 
-			foreach($paramslist as $pl)
+			foreach($list_of_params as $pl)
 		    {
 				$pair=JoomlaBasicMisc::csv_explode(':', $pl,'"', false);
 
@@ -735,7 +727,7 @@ class JoomlaBasicMisc
 
 
 	//-- only for "records" field type;
-	public static function processValue($field,&$model,&$row,$langpostfix)
+	public static function processValue($field,&$ct,&$row,$langpostfix)
 	{
 		$htmlresult='';
 		$p=strpos($field,'->');
@@ -771,7 +763,7 @@ class JoomlaBasicMisc
 		}
 		else
 		{
-			$fieldrow=Fields::getFieldAsocByName_($field,$model->ct->Table->fields);
+			$fieldrow=Fields::getFieldAsocByName_($field,$ct->Table->fields);
 			if(count($fieldrow)>0)
 			{
 				if(isset($recursivefieldslist))
@@ -793,7 +785,7 @@ class JoomlaBasicMisc
 					$real_fields=$fieldrow['realfieldname'];
 
 				$options_list=explode(',',$options);
-				$v=tagProcessor_Value::getValueByType($model,
+				$v=tagProcessor_Value::getValueByType($ct,
 					$row[$real_fields],
 					$field,
 					$fieldrow['type'],

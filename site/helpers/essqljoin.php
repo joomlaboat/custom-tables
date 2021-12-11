@@ -10,9 +10,9 @@
 defined('_JEXEC') or die( 'Restricted access' );
 
 use CustomTables\Layouts;
+use CustomTables\LinkJoinFilters;
 
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'models'.DIRECTORY_SEPARATOR.'catalog.php');
-require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'filtering.php');
 
 class JHTMLESSqlJoin
 {
@@ -85,10 +85,10 @@ class JHTMLESSqlJoin
         $model = JModelLegacy::getInstance('Catalog', 'CustomTablesModel', $config);
 
         //Get Database records
-		$SearchResults=JHTMLESSqlJoin::get_searchresult($model,$filter, $establename, $order_by_field,$allowunpublished);
+		JHTMLESSqlJoin::get_searchresult($model,$filter, $establename, $order_by_field,$allowunpublished);
 
         //Process records depending on field type and layout
-        $list_values=JHTMLESSqlJoin::get_List_Values($model,$value_field,$SearchResults,$langpostfix,$dynamic_filter);
+        $list_values=JHTMLESSqlJoin::get_List_Values($model,$value_field,$langpostfix,$dynamic_filter);
 
         $htmlresult='';
         //Output slection box
@@ -110,7 +110,7 @@ class JHTMLESSqlJoin
 		}
 		elseif($selector=='dropdown' or $force_dropdown or $dynamic_filter)
         {
-			$htmlresult.=JHTMLESSqlJoin::renderDynamicFilter($value,$SearchResults,$establename,$dynamic_filter,$control_name);
+			$htmlresult.=JHTMLESSqlJoin::renderDynamicFilter($model->ct,$value,$establename,$dynamic_filter,$control_name);
             $htmlresult.=JHTMLESSqlJoin::renderDropdownSelector_Box($list_values,$value,$control_name,$cssclass,$attribute,$place_holder,$dynamic_filter,$addNoValue);
         }
 		else
@@ -119,8 +119,9 @@ class JHTMLESSqlJoin
 		return $htmlresult;
     }
 
-    static protected function get_searchresult($model,$filter, $establename, $order_by_field,$allowunpublished)
+    static protected function get_searchresult(&$model,$filter, $establename, $order_by_field,$allowunpublished)
     {
+		
 		$paramsArray=array();
 
         $paramsArray['limit']=0;
@@ -145,24 +146,31 @@ class JHTMLESSqlJoin
         $_params= new JRegistry;
 		$_params->loadArray($paramsArray);
 		
-		$model->load($_params, true);
-		$model->showpagination=false;
-
-        return $model->getSearchResult();
+		if(!$model->load($_params, true))
+		{
+			echo 'could not load table [152].';
+		}
+		else
+		{
+			if(!$model->getSearchResult())
+			{
+				echo 'could not load records [164].';
+			}
+		}
     }
         
-	static protected function renderDynamicFilter($value,&$SearchResult,$establename,$dynamic_filter,$control_name)
+	static protected function renderDynamicFilter(&$ct, $value,$establename,$dynamic_filter,$control_name)
 	{
 		$htmlresult='';
 
 		if($dynamic_filter!='')
 		{
 			$filtervalue='';
-			foreach($SearchResult as $row)
+			foreach($ct->Records as $row)
 			{
 				if($row['listing_id']==$value)
 				{
-					$filtervalue=$row['es_'.$dynamic_filter];
+					$filtervalue=$row[$ct->Env->field_prefix.$dynamic_filter];
 					break;
 				}
 			}
@@ -173,7 +181,7 @@ class JHTMLESSqlJoin
 		return $htmlresult;
 	}
 
-    static protected function get_List_Values(&$model,$field,&$SearchResult,$langpostfix,$dynamic_filter)
+    static protected function get_List_Values(&$model,$field,$langpostfix,$dynamic_filter)
 	{
 		$layout_mode=false;
 
@@ -196,20 +204,20 @@ class JHTMLESSqlJoin
 				return array();
             }
 
-			$model->LayoutProc->layout=$layoutcode;
+			$model->ct->LayoutProc->layout=$layoutcode;
         }
 
         $list_values=array();
 
-		foreach($SearchResult as $row)
+		foreach($model->ct->Records as $row)
         {
 			if($layout_mode)
-				$v=$model->LayoutProc->fillLayout($row);
+				$v=$model->ct->LayoutProc->fillLayout($row);
             else
-				$v=JoomlaBasicMisc::processValue($field,$model,$row,$langpostfix);
+				$v=JoomlaBasicMisc::processValue($field,$model->ct,$row,$langpostfix);
 
             if($dynamic_filter!='')
-				$d=$row['es_'.$dynamic_filter];
+				$d=$row[$model->ct->Env->field_prefix.$dynamic_filter];
             else
 				$d='';
 

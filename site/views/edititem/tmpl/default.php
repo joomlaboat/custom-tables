@@ -20,18 +20,17 @@ jimport('joomla.html.html.bootstrap');
 
 $document = JFactory::getDocument();
 
+$document->addScript(JURI::root(true).'/components/com_customtables/js/base64.js');
 $document->addScript(JURI::root(true).'/components/com_customtables/js/edit_234.js');
 $document->addScript(JURI::root(true).'/components/com_customtables/js/esmulti.js');
 
 $document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customtables/css/style.css" type="text/css" rel="stylesheet" >');
 $document->addCustomTag('<link rel="stylesheet" href="'.JURI::root(true).'/media/system/css/fields/switcher.css">');
 
-
-
-if (!$this->Model->BlockExternalVars and $this->Model->params->get( 'show_page_heading', 1 ) ) : ?>
-<div class="page-header<?php echo $this->escape($this->Model->params->get('pageclass_sfx')); ?>">
+if (!$this->BlockExternalVars and $this->ct->Env->menu_params->get( 'show_page_heading', 1 ) ) : ?>
+<div class="page-header<?php echo $this->escape($this->ct->Env->menu_params->get('pageclass_sfx')); ?>">
 	<h2 itemprop="headline">
-		<?php echo JoomlaBasicMisc::JTextExtended($this->Model->params->get( 'page_title' )); ?>
+		<?php echo JoomlaBasicMisc::JTextExtended($this->ct->Env->menu_params->get( 'page_title' )); ?>
 	</h2>
 </div>
 <?php endif;
@@ -74,7 +73,7 @@ jQuery.noConflict()
 
 <?php
 
-	echo ($this->Model->ct->Env->version < 4 ? '<fieldset>' : '<fieldset class="options-form">');
+	echo ($this->ct->Env->version < 4 ? '<fieldset>' : '<fieldset class="options-form">');
 
 	//Calendars of the child should be built again, because when Dom was ready they didn't exist yet.
 	//$calendars=array();
@@ -85,25 +84,23 @@ jQuery.noConflict()
 		$listing_id=0;
 						
 	require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'layout.php');
-	$LayoutProc=new LayoutProcessor($this->Model->ct);
-	$LayoutProc->Model=$this->Model;
-	$LayoutProc->layout=$this->Model->pagelayout;
-						
-	//Better to run tag processor before rendering form edit elements because of IF statments that can exclude the part of the layout that contains form fields.
-	$this->Model->pagelayout=$LayoutProc->fillLayout($this->row,null,'||',false,true);
+	$LayoutProc=new LayoutProcessor($this->ct,$this->pagelayout);
 
-	tagProcessor_Edit::process($this->Model,$this->Model->pagelayout,$this->row,'comes_');
+	//Better to run tag processor before rendering form edit elements because of IF statments that can exclude the part of the layout that contains form fields.
+	$this->pagelayout = $LayoutProc->fillLayout($this->row,null,'||',false,true);
+
+	tagProcessor_Edit::process($this->ct,$this->pagelayout,$this->row,'comes_');
 	
-	if($this->Model->ct->Env->advancedtagprocessor)
+	if($this->ct->Env->advancedtagprocessor)
 	{
-		$twig = new TwigProcessor($this->Model->ct, $this->Model->pagelayout);
-		$this->Model->pagelayout = $twig->process($this->row);
+		$twig = new TwigProcessor($this->ct, $this->pagelayout);
+		$this->pagelayout = $twig->process($this->row);
 	}
 	
 	if($this->params->get( 'allowcontentplugins' )==1)
-		LayoutProcessor::applyContentPlugins($this->Model->pagelayout);
+		LayoutProcessor::applyContentPlugins($this->pagelayout);
 
-	echo $this->Model->pagelayout;
+	echo $this->pagelayout;
 
 	$returnto='';
 
@@ -128,7 +125,6 @@ jQuery.noConflict()
 	<input type="hidden" name="tmpl" value="<?php echo JFactory::getApplication()->input->getCmd('tmpl',''); ?>" />
 	<?php endif; ?>
 
-    <input type="hidden" name="submitbutton" value="<?php echo $this->Model->submitbuttons; ?>" />
 	<?php echo JHtml::_('form.token'); ?>
 	</fieldset>
 </form>

@@ -13,7 +13,7 @@ defined('_JEXEC') or die('Restricted access');
 trait render_image
 {
 
-    protected static function get_CatalogTable_singleline_IMAGE(&$SearchResult,&$Model,&$pagelayout,$allowcontentplugins)
+    protected static function get_CatalogTable_singleline_IMAGE(&$ct,&$pagelayout,$allowcontentplugins)
 	{
 		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_imagegenerator'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'include.php');
 		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_imagegenerator'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'misc.php');
@@ -22,7 +22,7 @@ trait render_image
 
 		$IG=new IG();
 
-		$IG->filename = JoomlaBasicMisc::makeNewFileName($Model->params->get('page_title'),'');
+		$IG->filename = JoomlaBasicMisc::makeNewFileName($ct->Env->menu_params->get('page_title'),'');
 		$IG->setImageGeneratorProfileFromText($pagelayout);
 
 		$image_width=$IG->width;
@@ -32,9 +32,9 @@ trait render_image
 		$obj=null;
 
 		//set canvas width
-		$IG->width=$image_width*$Model->columns+10;
+		$IG->width=$image_width*3+10;
 		//set canvas height
-		$IG->height=$image_height*ceil(count($this->SearchResult)/$Model->columns)+10;
+		$IG->height=$image_height*ceil(count($ct->Records)/3)+10;
 
 		$obj=$IG->render(false,$obj);
 
@@ -47,25 +47,20 @@ trait render_image
 		$y_offset=5;
 		$c=0;
 
-		foreach($this->SearchResult as $row)
+		foreach($ct->Records as $row)
 		{
-
 			$vlu=$this->RenderResultLine($row,false,$allowcontentplugins);
-
-
 			$IG->setInstructions($vlu,true);
-
 			$obj=$IG->render(false,$obj,$x_offset,$y_offset);
 			//break;
 			$x_offset+=$image_width;
 			$c++;
-			if($c>=$Model->columns)
+			if($c>=3)
 			{
 				$c=0;
 				$x_offset=5;
 				$y_offset+=$image_height;
 			}
-
 		}
 		
 		$IG->setInstructions('',false);

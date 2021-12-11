@@ -13,7 +13,7 @@ use CustomTables\TwigProcessor;
 
 trait render_html
 {
-    protected static function get_CatalogTable_HTML(&$Model,$fields,$class,&$SearchResult)
+    protected static function get_CatalogTable_HTML(&$ct,$fields,$class)
 	{
 		$catalogresult='';
 
@@ -45,11 +45,11 @@ trait render_html
 		$result.='</tr></thead>';
 
         //Parse Header
-        $Model->LayoutProc->layout=$result;
-        $result=$Model->LayoutProc->fillLayout();
+        $ct->LayoutProc->layout=$result;
+        $result=$ct->LayoutProc->fillLayout();
         $result=str_replace('&&&&quote&&&&','"',$result);
 		
-		$twig = new TwigProcessor($Model->ct, $result);
+		$twig = new TwigProcessor($ct, $result);
 		$result = $htmlresult = $twig->process();
 
         //Complete record layout
@@ -58,19 +58,16 @@ trait render_html
 		$recordline=str_replace(')|','}',$recordline);//to support old parsing way
 		$recordline=str_replace('&&&&quote&&&&','"',$recordline);
 
-		$number=1+$Model->limitstart; //table row number, it maybe use in the layout as {number}
+		$number = 1 + $ct->LimitStart; //table row number, it maybe use in the layout as {number}
 
-		//$Model->LayoutProc->layout=$recordline;
-		
         $tablecontent='';
 		
+		$twig = new TwigProcessor($ct, $recordline);
 		
-		$twig = new TwigProcessor($Model->ct, $recordline);
-		
-		foreach($SearchResult as $row)
+		foreach($ct->Records as $row)
 		{
 			$row['_number'] = $number;
-		    $tablecontent.=tagProcessor_Item::RenderResultLine($Model,$twig,$row,true);
+		    $tablecontent.=tagProcessor_Item::RenderResultLine($ct,$twig,$row,true);
 			
 			$number++;
 		}

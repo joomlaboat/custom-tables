@@ -18,48 +18,49 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'co
 
 $document = JFactory::getDocument();
 
-$document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/js/base64.js"></script>');
+$document->addScript(JURI::root(true).'/components/com_customtables/js/base64.js');
 $document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/js/catalog.js" type="text/javascript"></script>');
 $document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customtables/css/style.css" type="text/css" rel="stylesheet" >');
 
 $html_format=false;
-if($this->Model->ct->Env->frmt=='html' or $this->Model->ct->Env->frmt=='')
+if($this->ct->Env->frmt=='html' or $this->ct->Env->frmt=='')
     $html_format=true;
 
 if($html_format)
-    LayoutProcessor::renderPageHeader($this->Model);
+    LayoutProcessor::renderPageHeader($this->ct);
 
 
 //Process general tags before catalog tags to prepare headers for CSV etc output
 if($html_format)
 {
-	$catalogtablecontent=tagProcessor_CatalogTableView::process($this->Model,$this->pagelayout,$this->SearchResult,$this->catalogtablecode);
+	$catalogtablecontent=tagProcessor_CatalogTableView::process($this->ct,$this->pagelayout,$this->catalogtablecode);
 	if($catalogtablecontent=='')
 	{
-		$this->Model->LayoutProc->layout=$this->itemlayout;
-		$catalogtablecontent=tagProcessor_Catalog::process($this->Model,$this->pagelayout,$this->SearchResult,$this->catalogtablecode);
+		$this->ct->LayoutProc->layout=$this->itemlayout;
+		$catalogtablecontent=tagProcessor_Catalog::process($this->ct,$this->pagelayout,$this->catalogtablecode);
 	}
 	
-	$this->Model->LayoutProc->layout=$this->pagelayout;
-	$this->pagelayout=$this->Model->LayoutProc->fillLayout();
+	$this->ct->LayoutProc->layout=$this->pagelayout;
+	$this->pagelayout=$this->ct->LayoutProc->fillLayout();
 
-	$twig = new TwigProcessor($this->Model->ct, $this->pagelayout);
-	$this->pagelayout = $twig->process();
 }
 else
 {
-	$catalogtablecontent=tagProcessor_CatalogTableView::process($this->Model,$this->pagelayout,$this->SearchResult,$this->catalogtablecode);
+	$catalogtablecontent=tagProcessor_CatalogTableView::process($this->ct,$this->pagelayout,$this->catalogtablecode);
 
 	if($catalogtablecontent=='')
 	{
-		$this->Model->LayoutProc->layout=$itemlayout;
-		$catalogtablecontent=tagProcessor_Catalog::process($this->Model,$this->pagelayout,$this->SearchResult,$this->catalogtablecode);
+		$this->ct->LayoutProc->layout=$itemlayout;
+		$catalogtablecontent=tagProcessor_Catalog::process($this->ct,$this->pagelayout,$this->catalogtablecode);
 	}
 
-	$this->Model->LayoutProc->layout=$this->pagelayout;
-	$this->pagelayout=$this->Model->LayoutProc->fillLayout();
+	$this->ct->LayoutProc->layout=$this->pagelayout;
+	$this->pagelayout=$this->ct->LayoutProc->fillLayout();
 }
 
+$twig = new TwigProcessor($this->ct, $this->pagelayout);
+
+$this->pagelayout = $twig->process();
 
 $this->pagelayout=str_replace('&&&&quote&&&&','"',$this->pagelayout); // search boxes may return HTML elemnts that contain placeholders with quotes like this: &&&&quote&&&&
 $this->pagelayout=str_replace($this->catalogtablecode,$catalogtablecontent,$this->pagelayout);
@@ -67,11 +68,11 @@ $this->pagelayout=str_replace($this->catalogtablecode,$catalogtablecontent,$this
 if($html_format)
     LayoutProcessor::applyContentPlugins($this->pagelayout);
 
-if($this->Model->ct->Env->frmt=='xml')
+if($this->ct->Env->frmt=='xml')
 {
 	if (ob_get_contents()) ob_end_clean();
 	
-    $filename = JoomlaBasicMisc::makeNewFileName($this->Model->params->get('page_title'),'xml');
+    $filename = JoomlaBasicMisc::makeNewFileName($this->ct->Env->menu_params->get('page_title'),'xml');
     header('Content-Disposition: attachment; filename="'.$filename.'"');
     header('Content-Type: text/xml; charset=utf-8');
     header("Pragma: no-cache");
@@ -79,7 +80,7 @@ if($this->Model->ct->Env->frmt=='xml')
 	echo $this->pagelayout;
 	die;//clean exit
 }
-elseif($this->Model->ct->Env->clean==1)
+elseif($this->ct->Env->clean==1)
 {
     if (ob_get_contents()) ob_end_clean();
     echo $this->pagelayout;

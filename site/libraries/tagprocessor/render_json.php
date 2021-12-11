@@ -13,7 +13,7 @@ use CustomTables\TwigProcessor;
 
 trait render_json
 {
-    protected static function get_CatalogTable_JSON(&$Model,$fields,&$SearchResult)
+    protected static function get_CatalogTable_JSON(&$ct,$fields)
 	{
 		$fields=str_replace("\n",'',$fields);
 		$fields=str_replace("\r",'',$fields);
@@ -31,17 +31,17 @@ trait render_json
 			$line_fields[]=$vlu;//content
 		}
 
-		$number=1+$Model->limitstart; //table row number, it maybe use in the layout as {number}
+		$number=1 + $ct->LimitStart; //table row number, it maybe use in the layout as {number}
         $records=array();
-		foreach($SearchResult as $row)
+		foreach($ct->Records as $row)
 		{
 				$row['_number'] = $number;
                 $i=0;
                 $vlus=array();
                 foreach($header_fields as $header_field)
                 {
-                    $Model->LayoutProc->layout=$line_fields[$i];
-                    $vlus[$header_field] = $Model->LayoutProc->fillLayout($row,null,'[]',false,false);
+                    $ct->LayoutProc->layout=$line_fields[$i];
+                    $vlus[$header_field] = $ct->LayoutProc->fillLayout($row,null,'[]',false,false);
                     $i++;
                 }
 
@@ -53,24 +53,22 @@ trait render_json
         return $result;
     }
 	
-	function get_CatalogTable_singleline_JSON(&$SearchResult,&$Model,$allowcontentplugins,$pagelayout)
+	function get_CatalogTable_singleline_JSON(&$ct,$allowcontentplugins,$pagelayout)
 	{
 		if (ob_get_contents())
 			ob_clean();
 
 		//Prepare line layout
-		$layout=$Model->LayoutProc->layout;
+		$layout=$ct->LayoutProc->layout;
 		$layout=str_replace("\n",'',$layout);
 		$layout=str_replace("\r",'',$layout);
 
-		//$Model->LayoutProc->layout=$layout;
-		
-		$twig = new TwigProcessor($Model->ct, $layout);
+		$twig = new TwigProcessor($ct, $layout);
 		
 		$records=[];
 
-		foreach($SearchResult as $row)
-			$records[]=trim(strip_tags(tagProcessor_Item::RenderResultLine($Model,$twig, $row,false)));
+		foreach($ct->Records as $row)
+			$records[]=trim(strip_tags(tagProcessor_Item::RenderResultLine($ct,$twig, $row,false)));
 		
 		$result = implode(',',$records);
 

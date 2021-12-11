@@ -46,7 +46,7 @@ class Table
 	
 	var $fields;
 	var $record;
-	var $records;
+
 	var $recordcount;
 	var $recordlist;
 	

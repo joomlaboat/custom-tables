@@ -29,12 +29,8 @@ require_once($site_libpath.'layout.php');
 $libpath=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tagprocessor'.DIRECTORY_SEPARATOR;
 require_once($libpath.'valuetags.php');
 
-require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'filtering.php');
-
 class CustomTablesModelEditItem extends JModelLegacy
 {
-	
-	
 	var $ct;
 	
 	var $itemaddedtext;
@@ -43,13 +39,9 @@ class CustomTablesModelEditItem extends JModelLegacy
 	var $sendemailcondition;
 	var $emailsentstatusfield;
 
-
 	var $layout_catalog;
 	var $layout_details;
 	var $id;
-
-	var $showlines;
-	//var $oklink;
 
 	var $isAutorized;
 	var $guestcanaddnew;
@@ -67,7 +59,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 	var $isUserAdministrator;
 	
 	var $params;
-	var $Itemid;
+
 	var $BlockExternalVars;
 	var $advancedtagprocessor;
 	
@@ -80,20 +72,13 @@ class CustomTablesModelEditItem extends JModelLegacy
 		$app = JFactory::getApplication();
 		$this->params=$app->getParams();
 		
+		$this->ct->Env->menu_params = $this->params;
+		
 		parent::__construct();
 	}
 	
 	function getParam_safe($param)
 	{
-		/*
-		if($this->params == null)
-		{
-			$jinput=JFactory::getApplication()->input;
-			$this->Itemid=$jinput->getInt('Itemid',0);
-			return JoomlaBasicMisc::getMenuParam($param, $this->Itemid);
-		}
-		else
-		*/
 		return $this->params->get($param);
 	}
 	
@@ -106,19 +91,16 @@ class CustomTablesModelEditItem extends JModelLegacy
 	{
 		$app = JFactory::getApplication();
 		if(isset($params))
-		{
-			$this->params=$params;
-		}
+			$this->params = $params;
 		else
-		{
-			$this->params=$app->getParams();
-		}
+			$this->params = $app->getParams();
+
+		$this->ct->Env->menu_params = $this->params;
 		
 		$jinput=JFactory::getApplication()->input;
-		$this->Itemid=$jinput->getInt('Itemid',0);
 
 		if((int)$this->getParam_safe( 'customitemid' )!=0)
-		$this->Itemid=(int)$this->getParam_safe( 'customitemid' );
+		$this->ct->Env->Itemid = (int)$this->getParam_safe( 'customitemid' );
 		
 		$this->BlockExternalVars=$BlockExternalVars;
 
@@ -153,10 +135,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 		}
 
 		$this->applybuttontitle=$this->getParam_safe( 'applybuttontitle' );
-
 		$this->guestcanaddnew=$this->getParam_safe( 'guestcanaddnew' );
-
-		$this->submitbuttons=$this->getParam_safe( 'submitbuttons' );
 
 		if($this->params->get( 'msgitemissaved' ))
 			$this->msg_itemissaved=$this->getParam_safe( 'msgitemissaved' );
@@ -266,7 +245,6 @@ class CustomTablesModelEditItem extends JModelLegacy
 			return 0;
 
 		$LayoutProc=new LayoutProcessor($this->ct);
-		$LayoutProc->Model=$this;
 		$LayoutProc->layout=$filter;
 		$filter=$LayoutProc->fillLayout(array(),null,'[]',true);
 
@@ -402,8 +380,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 				$action=4; //add new
 		}
 
-		$Itemid=JFactory::getApplication()->input->getInt("Itemid");
-		$guestcanaddnew=JoomlaBasicMisc::getMenuParam('guestcanaddnew', $Itemid);
+		$guestcanaddnew=JoomlaBasicMisc::getMenuParam('guestcanaddnew', $this->ct->Env->Itemid);
 
 
 		if($guestcanaddnew==1)
@@ -1137,7 +1114,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 		//update MD5s
 		$this->updateMD5($listing_id);
-		$this->ct->Table->processDefaultValues($default_fields_to_apply,$this,$row);
+		$this->ct->Table->processDefaultValues($default_fields_to_apply,$this->ct,$row);
 
 		/*
 		if($create_new_user!=null and (int)$row['listing_published']==1)
@@ -1544,9 +1521,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'layout.php');
 
 		$LayoutProc=new LayoutProcessor($this->ct);
-
 		$LayoutProc->layout=$artlink;
-		$LayoutProc->Model=$this;
 
 		$db = JFactory::getDBO();
 		
@@ -1627,7 +1602,6 @@ class CustomTablesModelEditItem extends JModelLegacy
 		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'layout.php');
 
 		$LayoutProc=new LayoutProcessor($this->ct);
-		$LayoutProc->Model=$this;//ok
 
 		$db = JFactory::getDBO();
 
@@ -1693,7 +1667,6 @@ class CustomTablesModelEditItem extends JModelLegacy
 	{
 		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'layout.php');
 		$LayoutProc=new LayoutProcessor($this->ct);
-		$LayoutProc->Model=$this;
 		$LayoutProc->layout=$content;
 		$content=$LayoutProc->fillLayout($row);
 		if($applyContentPlagins)

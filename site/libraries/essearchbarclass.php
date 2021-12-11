@@ -30,8 +30,6 @@ class ESSearchBarClass
 	var $fieldlist_style;
 	var $fieldlist_option;
 
-	var $Itemid;
-
 	var $where_arr;
 	var $wherelist_arr;
 
@@ -40,30 +38,32 @@ class ESSearchBarClass
 
 	var $wherelist_arr_start;
 
-	function Loadme_Step1($isLoader,&$params)
+	function Loadme_Step1($isLoader,&$forign_params)
 	{
-		$jinput=JFactory::getApplication()->input;
-
 		$this->isLoader=$isLoader;
 
 		//get establename
 		$this->modulename='essearchbar_'.$this->moduleid;
 		
 		$this->ct = new CT;
-		$this->ct->getTable($this->params->get( 'establename' ), $this->params->get('useridfield'));
+		$this->ct->Env->menu_params = $forign_params;
+		
+		$this->ct->getTable($this->ct->Env->menu_params->get( 'establename' ), $this->ct->Env->menu_params ->get('useridfield'));
 		if($this->ct->Table->tablename=='')
 		{
 			echo 'Table not selected';
 			die;
 		}
+		
+		
 
 		$this->esinputbox= new SearchInputBox($this->ct,$this->modulename);
 
 		//get field list
-		if($jinput->getString('fieldlist'))
-			$this->raw_fieldlist=trim($jinput->getString('fieldlist'));
+		if($this->ct->Env->jinput->getString('fieldlist'))
+			$this->raw_fieldlist=trim($this->ct->Env->jinput->getString('fieldlist'));
 		else
-			$this->raw_fieldlist=trim($params->get('fieldlist'));
+			$this->raw_fieldlist=trim($this->ct->Env->menu_params->get('fieldlist'));
 
 		$this->raw_fieldlist=str_replace("\n",'',$this->raw_fieldlist);
 		$this->raw_fieldlist=str_replace("\r",'',$this->raw_fieldlist);
@@ -71,7 +71,7 @@ class ESSearchBarClass
 		$this->getCleanFieldList($this->raw_fieldlist);
 
 		$row=array();		//-----------------
-		$this->startindex=$jinput->getInt('index',1);
+		$this->startindex=$this->ct->Env->jinput->getInt('index',1);
 
 		if($this->orientation=='horizontal')
 		{
@@ -93,23 +93,12 @@ class ESSearchBarClass
 
 	function renderJavascriptNeeded_Step2()
 	{
-		$jinput=JFactory::getApplication()->input;
-
-		$WebsiteRoot=JURI::root(true);
-		$WebsiteRoot=str_replace('/components/com_customtables/libraries/','',$WebsiteRoot);
-		$WebsiteRoot=str_replace('/components/com_customtables/libraries','',$WebsiteRoot);
-
-		if($WebsiteRoot=='' or $WebsiteRoot[strlen($WebsiteRoot)-1]!='/') //Root must have slash / in the end
-			$WebsiteRoot.='/';
-
 		if(!$this->isLoader)
 		{
-
-
 			$qLink='modules/mod_essearchbar/mod_essearchbar.php?'
 			.'&fieldlist='.urlencode($this->raw_fieldlist)
 			.'&orientation='.$this->orientation
-			.'&Itemid='.$this->Itemid
+			.'&Itemid='.$ct->Env->Itemid
 			.'&moduleid='.$this->moduleid
 			;
 		echo '
@@ -123,7 +112,7 @@ class ESSearchBarClass
 				var newindex=index+1;
 
 
-				var q="'.$WebsiteRoot.$qLink.'&index="+newindex+"&value="+value+"&fieldname="+fieldname+"&where="+where+"&wherelist="+wherelist+"&langpostfix="+langpostfix;
+				var q="'.$this->ct->Env->WebsiteRoot.$qLink.'&index="+newindex+"&value="+value+"&fieldname="+fieldname+"&where="+where+"&wherelist="+wherelist+"&langpostfix="+langpostfix;
 
 		        if (window.XMLHttpRequest)
 		        {
@@ -317,9 +306,9 @@ class ESSearchBarClass
 	</script>
 	';
 
-		if($jinput->get('where','','BASE64'))
+		if($this->ct->Env->jinput->get('where','','BASE64'))
 		{
-			$decodedurl=urldecode($jinput->get('where','','BASE64'));
+			$decodedurl=urldecode($this->ct->Env->jinput->get('where','','BASE64'));
 
 			$this->wherelist_arr_start=explode(' and ',base64_decode($decodedurl));
 		}
@@ -344,14 +333,14 @@ class ESSearchBarClass
 	}
 	else
 	{
-		if($jinput->getString('where'))
+		if($this->ct->Env->jinput->getString('where'))
 		{
-			$this->where_arr=explode(' AND ',$jinput->('where'));
+			$this->where_arr=explode(' AND ',$this->ct->Env->jinput->('where'));
 		}
 		else
 			$this->where_arr=array();
 
-		$wherelist=$jinput->getString('wherelist');
+		$wherelist=$this->ct->Env->jinput->getString('wherelist');
 
 		if($wherelist!='')
 		{
@@ -360,8 +349,8 @@ class ESSearchBarClass
 		else
 			$this->wherelist_arr=array();
 
-		$value=$jinput->getCmd('value');
-		$fieldname=$jinput->getCmd('fieldname','');
+		$value=$this->ct->Env->jinput->getCmd('value');
+		$fieldname=$this->ct->Env->jinput->getCmd('fieldname','');
 		$fieldraw=$this->getFieldRow($fieldname);
 
 		$where=$this->getWhereByFieldType($value, $fieldraw);
@@ -576,7 +565,7 @@ class ESSearchBarClass
 						//child
 						if($childs!='')
 						{
-							$value=$jinput->getCmd($objname);
+							$value=$this->ct->Env->jinput->getCmd($objname);
 
 							if($value=='on')
 								$display='block';

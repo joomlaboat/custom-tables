@@ -270,7 +270,7 @@ class ImportTables
                     $fieldtitle=$field_new['fieldtitle_1'];
 
 				$PureFieldType=Fields::getPureFieldType($field_new['type'], $field_new['typeparams']);
-				Fields::addField($ct,'#__customtables_table_'.$establename,'es_'.$esfieldname,$field_new['type'],$PureFieldType, $field_new['fieldtitle']);
+				Fields::addField($ct,'#__customtables_table_'.$establename,$ct->Env->field_prefix.$esfieldname,$field_new['type'],$PureFieldType, $field_new['fieldtitle']);
             }
         }
         return $fieldid;
@@ -791,7 +791,7 @@ class ImportTables
 		return $rows[0]['rgt'];
 	}
 	
-	public static function addMenu($title,$alias,$link,$menutype_or_title,$extension_name,$access_,$params_string,$home=0)
+	public static function addMenu($title,$alias,$link,$menutype_or_title,$extension_name,$access_,$menu_params_string,$home=0)
 	{
 		$menutype=JoomlaBasicMisc::slugify($menutype_or_title);
 		ImportTables::addMenutypeIfNotExist($menutype,$menutype_or_title);
@@ -836,7 +836,7 @@ class ImportTables
 		$menuitem_new['lft']=null;
 		$menuitem_new['rgt']=null;
 		$menuitem_new['id']=null;
-		$menuitem_new['params']=$params_string;
+		$menuitem_new['params']=$menu_params_string;
 
 		if($extension_name=='url')
 			$component_id=0;

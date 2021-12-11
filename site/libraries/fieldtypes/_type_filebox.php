@@ -11,15 +11,15 @@ defined('_JEXEC') or die('Restricted access');
 
 class CT_FieldTypeTag_filebox
 {
-	public static function process(&$Model,$FileBoxRows, $id,$FieldName,$TypeParams,$option_list,$fieldid = 0)
+	public static function process(&$tableid,$FileBoxRows, $id,$FieldName,$TypeParams,$option_list,$fieldid = 0)
     {
 		$filesrclistarray=array();
 
 		foreach($FileBoxRows as $filerow)
 		{
-			$shortname=$Model->ct->Table->tableid.'_'.$FieldName.'_'.$filerow->fileid.'.'.$filerow->file_ext;
+			$shortname=$tableid.'_'.$FieldName.'_'.$filerow->fileid.'.'.$filerow->file_ext;
 			
-			$filesrclistarray[]=CT_FieldTypeTag_file::process($shortname,$TypeParams,$option_list,$id,$fieldid,$Model->ct->Table->tableid);
+			$filesrclistarray[]=CT_FieldTypeTag_file::process($shortname,$TypeParams,$option_list,$id,$fieldid,$tableid);
 		}
 		
 		$listformat = '';

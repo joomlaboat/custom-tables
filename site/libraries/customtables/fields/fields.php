@@ -99,7 +99,7 @@ class Fields
 			//get CT table name if possible
 			
 			$establename=str_replace($db->getPrefix().'customtables_table','',$realtablename);
-			$esfieldname=str_replace('es_','',$realfieldname);
+			$esfieldname=str_replace($ct->Env->field_prefix,'',$realfieldname);
 			Fields::CreateImageGalleryTable($establename,$esfieldname);
 		}
 		elseif($fieldtype=='filebox')
@@ -107,7 +107,7 @@ class Fields
 			//Create table
 			//get CT table name if possible
 			$establename=str_replace('#__customtables_table','',$realtablename);
-			$esfieldname=str_replace('es_','',$realfieldname);
+			$esfieldname=str_replace($ct->Env->field_prefix,'',$realfieldname);
 			Fields::CreateFileBoxTable($establename,$esfieldname);
 		}
 	}
@@ -457,7 +457,7 @@ class Fields
 			return false;
 			
 		//Create Key only if possible
-        $params=explode(',',$new_typeparams);
+        $typeparams=explode(',',$new_typeparams);
 
 		if($join_with_table_name=='')
 		{
@@ -467,13 +467,13 @@ class Fields
 				return false; //Exit if parameters not set
 			}
 
-			if(count($params)<2)
+			if(count($typeparams)<2)
 			{
 				$msg='Parameters not complete.';
 				return false;	// Exit if field not set (just in case)
 			}
 
-			$tablerow = ESTables::getTableRowByName($params[0]); //$params[0] - is tablename
+			$tablerow = ESTables::getTableRowByName($typeparams[0]); //[0] - is tablename
 			if(!is_object($tablerow))
 			{
 				$msg='Join with table "'.$join_with_table_name.'" not found.';
@@ -491,7 +491,7 @@ class Fields
         
         Fields::removeForeignKey($realtablename,$realfieldname);
         
-        if(isset($params[7]) and $params[7]=='addforignkey')
+        if(isset($typeparams[7]) and $typeparams[7]=='addforignkey')
         {
             Fields::cleanTableBeforeNormalization($realtablename,$realfieldname,$join_with_table_name,$join_with_table_field);
 

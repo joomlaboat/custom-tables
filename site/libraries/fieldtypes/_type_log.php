@@ -11,9 +11,9 @@ defined('_JEXEC') or die('Restricted access');
 
 class CT_FieldTypeTag_log
 {
-	public static function getLogVersionLinks(&$Model,$rowValue,&$row)
+	public static function getLogVersionLinks(&$ct,$rowValue,&$row)
 	{
-		$current_json_data_size=CT_FieldTypeTag_log::getVersionDataSize($Model,$row);
+		$current_json_data_size=CT_FieldTypeTag_log::getVersionDataSize($ct,$row);
 
 		$url=JoomlaBasicMisc::curPageURL();
 		$new_url=JoomlaBasicMisc::deleteURLQueryOption($url, 'version');
@@ -29,25 +29,24 @@ class CT_FieldTypeTag_log
 		$version_size=0;
 
 		//get creation date
-		foreach($Model->ct->Table->fields as $ESField)
+		foreach($ct->Table->fields as $ESField)
 		{
 			if($ESField['type']=='creationtime')
 			{
-				$version_date=strtotime($row['es_'.$ESField['fieldname']]);
+				$version_date=strtotime($row[$ct->Env->field_prefix.$ESField['fieldname']]);
 				break;
 			}
 		}
 
 		//get original author
-		foreach($Model->ct->Table->fields as $ESField)
+		foreach($ct->Table->fields as $ESField)
 		{
 			if($ESField['type']=='userid')
 			{
-				$version_author=JHTML::_('ESUserView.render',$row['es_'.$ESField['fieldname']],'');
+				$version_author=JHTML::_('ESUserView.render',$row[$ct->Env->field_prefix.$ESField['fieldname']],'');
 				break;
 			}
 		}
-
 
 		if(count($versions)>1)
 		{
@@ -74,7 +73,7 @@ class CT_FieldTypeTag_log
 
 							$decoded_data_row=$decoded_data_rows[0];
 
-							$current_version_size=CT_FieldTypeTag_log::getVersionDataSize($Model,$decoded_data_row);
+							$current_version_size=CT_FieldTypeTag_log::getVersionDataSize($ct,$decoded_data_row);
 
 
 						}
@@ -138,16 +137,12 @@ class CT_FieldTypeTag_log
 							$decoded_data_rows=json_decode(base64_decode($data[3]),true);
 							$decoded_data_row=$decoded_data_rows[0];
 
-							$version_size=CT_FieldTypeTag_log::getVersionDataSize($Model,$decoded_data_row);
-
-
-
+							$version_size=CT_FieldTypeTag_log::getVersionDataSize($ct,$decoded_data_row);
 						}
 						else
 							$version_size=0;
 
 					}
-				//}
 			}
 			$result.='</ol>';
 		}
@@ -157,15 +152,15 @@ class CT_FieldTypeTag_log
 	}
 
 
-	public static function getVersionDataSize(&$Model,$decoded_data_row)
+	public static function getVersionDataSize(&$ct,$decoded_data_row)
 	{
 		$version_size=0;
 
-		foreach($Model->ct->Table->fields as $ESField)
+		foreach($ct->Table->fields as $ESField)
 		{
 			if($ESField['type']!='log' and $ESField['type']!='dummy')
 			{
-				$field_name='es_'.$ESField['fieldname'];
+				$field_name=$ct->Env->field_prefix.$ESField['fieldname'];
 				if(isset($decoded_data_row[$field_name]))
 					$version_size+=strlen($decoded_data_row[$field_name]);
 			}

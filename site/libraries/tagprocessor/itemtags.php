@@ -24,16 +24,16 @@ Implemented:
 
 class tagProcessor_Item
 {
-    public static function process($advancedtagprocessor,&$Model,&$row,&$htmlresult,$aLink,$add_label=false,$fieldNamePrefix='comes_')
+    public static function process(&$ct,&$row,&$htmlresult,$aLink,$add_label=false)
 	{
-        tagProcessor_Item::processLink($Model,$row,$htmlresult,$aLink);
+        tagProcessor_Item::processLink($ct,$row,$htmlresult,$aLink);
 
-		tagProcessor_Field::process($Model->ct,$htmlresult,$add_label,$fieldNamePrefix);
+		tagProcessor_Field::process($ct,$htmlresult,$add_label);
 
-		if($advancedtagprocessor)
+		if($ct->Env->advancedtagprocessor)
 			tagProcessor_Server::process($htmlresult);
 
-		tagProcessor_Shopping::getShoppingCartLink($Model,$htmlresult,$row);
+		tagProcessor_Shopping::getShoppingCartLink($ct,$htmlresult,$row);
 
 		$p=strpos($aLink,'&returnto');
 		$p2=strpos($aLink,'&amp;returnto');
@@ -58,7 +58,7 @@ class tagProcessor_Item
 			}
 		}
 
-		$htmlresult=str_replace('{recordlist}',(isset($Model->ct->Table) and isset($Model->ct->Table->recordlist) ? implode(',',$Model->ct->Table->recordlist) : ''),$htmlresult);
+		$htmlresult=str_replace('{recordlist}',(isset($ct->Table) and isset($ct->Table->recordlist) ? implode(',',$ct->Table->recordlist) : ''),$htmlresult);
 
 		$listing_id = 0;
 		
@@ -72,12 +72,12 @@ class tagProcessor_Item
 			tagProcessor_Item::processPublishStatus($row,$htmlresult);
 
 		if(isset($row) and isset($row['listing_published']))
-			tagProcessor_Item::GetSQLJoin($Model,$htmlresult,$row['listing_id']);
+			tagProcessor_Item::GetSQLJoin($ct,$htmlresult,$row['listing_id']);
 
 		if(isset($row) and isset($row['listing_published']))
-			tagProcessor_Item::GetCustomToolBar($Model,$htmlresult,$row);
+			tagProcessor_Item::GetCustomToolBar($ct,$htmlresult,$row);
 
-		CT_FieldTypeTag_ct::ResolveStructure($Model,$htmlresult);
+		CT_FieldTypeTag_ct::ResolveStructure($ct,$htmlresult);
 	}
 
     public static function checkAccess(&$ct,$ug,&$row)
@@ -110,9 +110,8 @@ class tagProcessor_Item
 		return $isok;
 	}
 
-    protected static function GetSQLJoin(&$Model,&$htmlresult,$id)
+    protected static function GetSQLJoin(&$ct,&$htmlresult,$id)
 	{
-		$ct = $Model->ct;
 		$options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('sqljoin',$options,$htmlresult,'{}');
 		if(count($fList)==0)
@@ -375,7 +374,7 @@ class tagProcessor_Item
 									if($ESField['fieldname']==$FieldName)
 									{
                                         $value_option_list=explode(',',$field_option);
-										$vlu=tagProcessor_Value::getValueByType($Model,$row['vlu'],$FieldName, $ESField['type'],$ESField['typeparams'],$value_option_list,$getGalleryRows,$getFileBoxRows,0,$row,$ESField['id']);
+										$vlu=tagProcessor_Value::getValueByType($ct,$row['vlu'],$FieldName, $ESField['type'],$ESField['typeparams'],$value_option_list,$getGalleryRows,$getFileBoxRows,0,$row,$ESField['id']);
 										break;
 									}
 								}
@@ -425,7 +424,7 @@ class tagProcessor_Item
 		}
 	}
 
-    protected static function GetCustomToolBar(&$Model,&$htmlresult,&$row)
+    protected static function GetCustomToolBar(&$ct,&$htmlresult,&$row)
 	{
 		$options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('toolbar',$options,$htmlresult,'{}');
@@ -434,25 +433,25 @@ class tagProcessor_Item
 			return;
 		
 		
-		$edit_userGroup=(int)$Model->params->get( 'editusergroups' );
-		$publish_userGroup=(int)$Model->params->get( 'publishusergroups' );
+		$edit_userGroup=(int)$ct->Env->menu_params->get( 'editusergroups' );
+		$publish_userGroup=(int)$ct->Env->menu_params->get( 'publishusergroups' );
 		if($publish_userGroup==0)
 			$publish_userGroup=$edit_userGroup;
 
-		$delete_userGroup=(int)$Model->params->get( 'deleteusergroups' );
+		$delete_userGroup=(int)$ct->Env->menu_params->get( 'deleteusergroups' );
 		if($delete_userGroup==0)
 			$delete_userGroup=$edit_userGroup;
 		
-		$isEditable=tagProcessor_Item::checkAccess($Model->ct,$edit_userGroup,$row);
-		$isPublishable=tagProcessor_Item::checkAccess($Model->ct,$publish_userGroup,$row);
-		$isDeletable=tagProcessor_Item::checkAccess($Model->ct,$delete_userGroup,$row);
+		$isEditable=tagProcessor_Item::checkAccess($ct,$edit_userGroup,$row);
+		$isPublishable=tagProcessor_Item::checkAccess($ct,$publish_userGroup,$row);
+		$isDeletable=tagProcessor_Item::checkAccess($ct,$delete_userGroup,$row);
 		
-		$RecordToolbar = new RecordToolbar($Model->ct,$isEditable, $isPublishable, $isDeletable, $Model->Itemid);
+		$RecordToolbar = new RecordToolbar($ct,$isEditable, $isPublishable, $isDeletable, $ct->Env->Itemid);
 
 		$i=0;
 		foreach($fList as $fItem)
 		{
-			if($Model->ct->Env->print==1)
+			if($ct->Env->print==1)
 			{
 				$htmlresult=str_replace($fItem,'',$htmlresult);
 			}
@@ -474,7 +473,7 @@ class tagProcessor_Item
 		}
 	}
 
-    protected static function processLink(&$Model,&$row,&$pagelayout,$aLink)
+    protected static function processLink(&$ct,&$row,&$pagelayout,$aLink)
 	{
         $options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('link',$options,$pagelayout,'{}',':','"');
@@ -487,14 +486,14 @@ class tagProcessor_Item
             if($opt=='')
                 $vlu=$aLink;
             else
-                $vlu=tagProcessor_Item::prepareDetailsLink($Model,$row,$opt);
+                $vlu=tagProcessor_Item::prepareDetailsLink($ct,$row,$opt);
 
             $pagelayout=str_replace($fItem,$vlu,$pagelayout);
 			$i++;
         }
     }
 
-    protected static function prepareDetailsLink($Model,$row,$menu_item_alias="",$returnto='')
+    protected static function prepareDetailsLink($ct,$row,$menu_item_alias="",$returnto='')
     {
             //SEF Off
             $menu_item_id=0;
@@ -523,18 +522,18 @@ class tagProcessor_Item
             if($viewlink=='')
             {
                 $viewlink='index.php?option=com_customtables';//&amp;view=details';
-                if($Model->ct->Table->alias_fieldname=='' or $row['es_'.$Model->ct->Table->alias_fieldname]=='')
+                if($ct->Table->alias_fieldname=='' or $row[$ct->Env->field_prefix.$ct->Table->alias_fieldname]=='')
                     $viewlink.='&view=details';
             }
 
-            if($Model->ct->Table->alias_fieldname!='' and $row['es_'.$Model->ct->Table->alias_fieldname]!='')
-                $viewlink.='&alias='.$row['es_'.$Model->ct->Table->alias_fieldname];
+            if($ct->Table->alias_fieldname!='' and $row[$ct->Env->field_prefix.$ct->Table->alias_fieldname]!='')
+                $viewlink.='&alias='.$row[$ct->Env->field_prefix.$ct->Table->alias_fieldname];
             else
                 $viewlink.='&listing_id='.$row['listing_id'];
 
 
             if($menu_item_id==0)
-                $menu_item_id=$Model->Itemid;
+                $menu_item_id=$ct->Env->Itemid;
 
             $viewlink.='&Itemid='.$menu_item_id;//.'&amp;returnto='.$returnto;
 			
@@ -546,60 +545,43 @@ class tagProcessor_Item
         return $viewlink;
     }
 
-    public static function RenderResultLine(&$Model,&$twig, &$row,$showanchor)
+    public static function RenderResultLine(&$ct,&$twig, &$row,$showanchor)
     {
-        $jinput=JFactory::getApplication()->input;
-
-		if($Model->ct->Env->print)
-				$viewlink='#z';
+		if($ct->Env->print)
+			$viewlink='#z';
 		else
 		{
-            $returnto=base64_encode($Model->ct->Env->current_url.'#a'.$row['listing_id']);
-			$viewlink=tagProcessor_Item::prepareDetailsLink($Model,$row,'',$returnto);
+            $returnto=base64_encode($ct->Env->current_url.'#a'.$row['listing_id']);
+			$viewlink=tagProcessor_Item::prepareDetailsLink($ct,$row,'',$returnto);
 
-			if($jinput->getCmd('tmpl')!='')
-				$viewlink.='&tmpl='.$jinput->getCmd('tmpl');
+			if($ct->Env->jinput->getCmd('tmpl')!='')
+				$viewlink.='&tmpl='.$ct->Env->jinput->getCmd('tmpl');
 		}
 
 		$layout='';
 		
-		//$twig->ct->Table->record = $row;
-		
-		//print_r($twig->ct->Table->record);
-		
 		$htmlresult = '';
 
-		if($Model->LayoutProc->layoutType==2)
+		if($ct->LayoutProc->layoutType==2)
         {
             require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tagprocessor'.DIRECTORY_SEPARATOR.'edittags.php');
-			
-			//$pagelayout_temp = $twig->process();
-			$htmlresult = $twig->process($row);
-            //$pagelayout_temp=$Model->LayoutProc->layout;//Temporary remember original layout
-            //$htmlresult=$pagelayout_temp;
 
-            $prefix='table_'.$Model->ct->Table->tablename.'_'.$row['listing_id'].'_';
-            tagProcessor_Edit::process($Model,$htmlresult,$row,$prefix);//Process edit form layout
-            
+			$htmlresult = $twig->process($row);
+
+            $prefix='table_'.$ct->Table->tablename.'_'.$row['listing_id'].'_';
+            tagProcessor_Edit::process($ct,$htmlresult,$row,$prefix);//Process edit form layout
+            			
 			
+            $ct->LayoutProc->layout=$htmlresult;//Temporary replace original layout with processed result
 			
-			
-			
-			
-            $Model->LayoutProc->layout=$htmlresult;//Temporary replace original layout with processed result
-			
-			
-			
-			$htmlresult=$Model->LayoutProc->fillLayout($row,null,'||',false,true,$prefix);//Process field values
-			
-            //$Model->LayoutProc->layout=$pagelayout_temp;//Set original layout as it was before, to process other records
+			$htmlresult=$ct->LayoutProc->fillLayout($row,null,'||',false,true);//Process field values
         }
         else
 		{	
 			$htmlresult = $twig->process($row);
-			$Model->LayoutProc->layout=$htmlresult;//Layout was modified by Twig
+			$ct->LayoutProc->layout=$htmlresult;//Layout was modified by Twig
 	
-            $htmlresult = $Model->LayoutProc->fillLayout($row,$viewlink,'[]',false);
+            $htmlresult = $ct->LayoutProc->fillLayout($row,$viewlink,'[]',false);
 		}
 		
 		if($showanchor)

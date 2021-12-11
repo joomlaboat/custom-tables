@@ -31,21 +31,21 @@ use \CustomTables\Twig_Record_Tags;
 
 class tagProcessor_Page
 {
-    public static function process(&$Model,&$pagelayout)
+    public static function process(&$ct,&$pagelayout)
     {
-		$ct_html = new Twig_Html_Tags($Model->ct);
-		$ct_record = new Twig_Record_Tags($Model->ct);
+		$ct_html = new Twig_Html_Tags($ct);
+		$ct_record = new Twig_Record_Tags($ct);
 		
         tagProcessor_Page::FormatLink($ct_html,$pagelayout);//{format:xls}  the link to the same page but in xls format
 		
-        tagProcessor_Page::PathValue($Model,$pagelayout);
-        tagProcessor_Page::AddNew($Model,$pagelayout);
+        tagProcessor_Page::PathValue($ct,$pagelayout);
+        tagProcessor_Page::AddNew($ct,$pagelayout);
 
-        tagProcessor_Page::Pagination($Model,$pagelayout);
+        tagProcessor_Page::Pagination($ct,$pagelayout);
 
-        tagProcessor_Page::PageToolBar($Model,$pagelayout);
+        tagProcessor_Page::PageToolBar($ct,$pagelayout);
 
-        tagProcessor_Page::PageToolBarCheckBox($Model,$pagelayout);
+        tagProcessor_Page::PageToolBarCheckBox($ct,$pagelayout);
 
         tagProcessor_Page::SearchButton($ct_html,$pagelayout);
         tagProcessor_Page::SearchBOX($ct_html,$pagelayout);
@@ -82,7 +82,7 @@ class tagProcessor_Page
 		}
 	}
 
-    public static function PathValue(&$Model,&$pagelayout)
+    public static function PathValue(&$ct,&$pagelayout)
 	{
 		$options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('navigation',$options,$pagelayout,'{}');
@@ -91,7 +91,7 @@ class tagProcessor_Page
 
 		foreach($fList as $fItem)
 		{
-            $PathValue=tagProcessor_Page::CleanUpPath($Model->PathValue);
+            $PathValue=tagProcessor_Page::CleanUpPath($ct->Filter->PathValue);
 			if(count($PathValue)==0)
 				$vlu='';
 			else
@@ -125,7 +125,7 @@ class tagProcessor_Page
 		}
 	}
 
-    protected static function AddNew(&$Model,&$pagelayout)
+    protected static function AddNew(&$ct,&$pagelayout)
 	{
         $jinput=JFactory::getApplication()->input;
 
@@ -134,26 +134,26 @@ class tagProcessor_Page
 
 		$i=0;
 
-        if(isset($Model->params))
-            $edit_userGroup=(int)$Model->params->get( 'editusergroups' );
+        if(isset($ct->Env->menu_params))
+            $edit_userGroup=(int)$ct->Env->menu_params->get( 'editusergroups' );
         else
             $edit_userGroup=0;
 
         $row=array();
-        $isEditable=tagProcessor_Item::checkAccess($Model->ct,$edit_userGroup,$row);
+        $isEditable=tagProcessor_Item::checkAccess($ct,$edit_userGroup,$row);
 
 		foreach($fList as $fItem)
 		{
-            if($isEditable and $Model->ct->Env->print==0 and ($Model->ct->Env->frmt=='html' or $Model->ct->Env->frmt==''))
+            if($isEditable and $ct->Env->print==0 and ($ct->Env->frmt=='html' or $ct->Env->frmt==''))
             {
                 $opt=explode(',',$options[$i]);
 
                 if((int)$opt[0]>0)
-                	$link='/index.php?option=com_customtables&view=edititem&returnto='.$Model->ct->Env->encoded_current_url.'&Itemid='.$opt[0];
+                	$link='/index.php?option=com_customtables&view=edititem&returnto='.$ct->Env->encoded_current_url.'&Itemid='.$opt[0];
                 if($opt[0]!='')
-                	$link='/index.php/'.$opt[0].'?returnto='.$Model->ct->Env->encoded_current_url;
+                	$link='/index.php/'.$opt[0].'?returnto='.$ct->Env->encoded_current_url;
                 else
-                	$link='/index.php?option=com_customtables&view=edititem&returnto='.$Model->ct->Env->encoded_current_url.'&Itemid='.$Model->Itemid;
+                	$link='/index.php?option=com_customtables&view=edititem&returnto='.$ct->Env->encoded_current_url.'&Itemid='.$ct->Env->Itemid;
 
     			if($jinput->getCmd('tmpl','')!='')
     				$link.='&tmpl='.$jinput->get('tmpl','','CMD');
@@ -162,7 +162,7 @@ class tagProcessor_Page
                 {
                     $document = JFactory::getDocument();
 					
-					if($Model->ct->Env->version < 4)
+					if($ct->Env->version < 4)
 					{
 						$document->addCustomTag('<script src="'.JURI::root(true).'/media/jui/js/jquery.min.js"></script>');
 						$document->addCustomTag('<script src="'.JURI::root(true).'/media/jui/js/bootstrap.min.js"></script>');
@@ -174,7 +174,6 @@ class tagProcessor_Page
                     $document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/js/uploader.js"></script>');
                     $max_file_size=JoomlaBasicMisc::file_upload_max_size();
                     
-                    $Itemid=$jinput->getInt('Itemid',0);
                     $prefix='comes_';
                     $fileid=JoomlaBasicMisc::generateRandomString();
                     $fieldid='9999';//some unique number
@@ -192,9 +191,9 @@ class tagProcessor_Page
                         UploadFileCount=1;
 
                     	var urlstr="/index.php?option=com_customtables&view=fileuploader&tmpl=component&'
-                        .'tableid='.$Model->ct->Table->tableid.'&'
+                        .'tableid='.$ct->Table->tableid.'&'
                         .'task=importcsv&'
-                        .$objectname.'_fileid='.$fileid.'&Itemid='.$Itemid.'&fieldname='.$objectname.'";
+                        .$objectname.'_fileid='.$fileid.'&Itemid='.$ct->Env->Itemid.'&fieldname='.$objectname.'";
                         
                     	ct_getUploader('.$fieldid.',urlstr,'.$max_file_size.',"csv","ctUploadCSVForm",true,"ct_fileuploader_'.$objectname.'","ct_eventsmessage_'.$objectname.'","'.$fileid.'","'
                         .$prefix.$objectname.'","ct_uploadedfile_box_'.$objectname.'");
@@ -208,7 +207,7 @@ class tagProcessor_Page
                     $vlu=$result;
                 }
                 else
-        			$vlu='<a href="'.JURI::root(true).$link.'" id="ctToolBarAddNew'.$Model->ct->Table->tableid.'" class="toolbarIcons"><img src="'.JURI::root(true).'/components/com_customtables/images/new.png" alt="Add New" title="Add New" /></a>';
+        			$vlu='<a href="'.JURI::root(true).$link.'" id="ctToolBarAddNew'.$ct->Table->tableid.'" class="toolbarIcons"><img src="'.JURI::root(true).'/components/com_customtables/images/new.png" alt="Add New" title="Add New" /></a>';
             }
             else
                 $vlu='';
@@ -218,7 +217,8 @@ class tagProcessor_Page
 		}
 	}
 
-    protected static function Pagination(&$Model,&$pagelayout)
+    
+	protected static function Pagination(&$ct,&$pagelayout)
 	{
 		$PaginationFound=false;
 
@@ -232,9 +232,9 @@ class tagProcessor_Page
 		{
 			$minRecords=0;//(int)$options[$i];
 			$vlu='';
-            if($Model->ct->Env->print==0)
+            if($ct->Env->print==0)
             {
-                $a=tagProcessor_Page::get_Pagination($Model,$minRecords,$options[$i]);
+                $a=tagProcessor_Page::get_Pagination($ct,$minRecords,$options[$i]);
                 $vlu=$a;
             }
 
@@ -248,18 +248,16 @@ class tagProcessor_Page
 	}
 
 
-    protected static function get_Pagination(&$Model,$minRecords,$option)
+    protected static function get_Pagination(&$ct,$minRecords,$option)
 	{
-		if($Model->TotalRows>$minRecords)
+		if($ct->Table->recordcount > $minRecords)
 		{
-			$number_of_columns=$Model->columns;
-			if($number_of_columns<1)
-				$number_of_columns=3;
-
-			//if($pagination == null)
-			$pagination=$Model->getPagination();
-
-			$SelectedCategory='';// ???????????????????????????
+			$number_of_columns=3;
+	
+			require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'
+				.DIRECTORY_SEPARATOR.'pagination.php');
+				
+			$pagination = new JESPagination($ct->Table->recordcount, $ct->LimitStart, $ct->Limit);
 
 			switch($option)
 			{
@@ -270,14 +268,14 @@ class tagProcessor_Page
 					return '<div class="pagination">'.$pagination->getPagesLinks("").'</div>';
 					break;
 				case 'order' :
-					return JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ORDER_BY' ).': '.CustomTables\OrderingHTML::getOrderBox($Model->ordering);
+					return JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ORDER_BY' ).': '.CustomTables\OrderingHTML::getOrderBox($ct->Ordering);
 					break;
 				case 'limitorder' :
 					return '
 			<table cellpadding="0" cellspacing="0" width="100%" >
 		    <tr height="30">
                 <td width="140" valign="top">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SHOW' ).': '.$pagination->getLimitBox($number_of_columns).'</td>
-                <td align="right" valign="top">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ORDER_BY' ).': '.CustomTables\OrderingHTML::getOrderBox($Model->ordering).'</td>
+                <td align="right" valign="top">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ORDER_BY' ).': '.CustomTables\OrderingHTML::getOrderBox($ct->Ordering).'</td>
 		    </tr>
 		    </table>
 		';
@@ -302,7 +300,7 @@ class tagProcessor_Page
                 <td width="230" valign="top" style="border:none;">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SHOW' ).': '.$pagination->getLimitBox($number_of_columns).'</td>
                 <td align="center" valign="top" style="border:none;"><div class="pagination">'.$pagination->getPagesLinks("").'</div></td>
                 <td width="230" align="right" valign="top" style="border:none;">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ORDER_BY' ).': '
-					.CustomTables\OrderingHTML::getOrderBox($Model->ordering).'</td>
+					.CustomTables\OrderingHTML::getOrderBox($ct->Ordering).'</td>
 		    </tr>
 		    </table>
 		';
@@ -311,7 +309,7 @@ class tagProcessor_Page
 					case 'paginationorder' :
 						return '
 					<table cellpadding="0" cellspacing="0" width="100%" >
-					    <tr><td valign="top" align="right">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ORDER_BY').': '.CustomTables\OrderingHTML::getOrderBox($Model->ordering).'</td></tr>
+					    <tr><td valign="top" align="right">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ORDER_BY').': '.CustomTables\OrderingHTML::getOrderBox($ct->Ordering).'</td></tr>
 						<tr><td valign="top" align="center"><br/></td></tr>
 						<tr><td valign="top" align="center"><div class="pagination">'.$pagination->getPagesLinks("").'</div></td></tr>
 				    </table>';
@@ -327,7 +325,7 @@ class tagProcessor_Page
 		}
 	}
 
-    protected static function PageToolBar(&$Model,&$pagelayout)
+    protected static function PageToolBar(&$ct,&$pagelayout)
 	{
 		$options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('batchtoolbar',$options,$pagelayout,'{}');
@@ -337,18 +335,18 @@ class tagProcessor_Page
         $user = JFactory::getUser();
 		if($user->id!=0)
         {
-            $publish_userGroup=(int)$Model->params->get( 'publishusergroups' );
+            $publish_userGroup=(int)$ct->Env->menu_params->get( 'publishusergroups' );
             if(JoomlaBasicMisc::checkUserGroupAccess($publish_userGroup))
             {
                 $available_modes[]='publish';
                 $available_modes[]='unpublish';
             }
             
-            $edit_userGroup=(int)$Model->params->get( 'editusergroups' );
+            $edit_userGroup=(int)$ct->Env->menu_params->get( 'editusergroups' );
             if(JoomlaBasicMisc::checkUserGroupAccess($edit_userGroup))
                 $available_modes[]='refresh';
                 
-            $delete_userGroup=(int)$Model->params->get( 'deleteusergroups' );
+            $delete_userGroup=(int)$ct->Env->menu_params->get( 'deleteusergroups' );
             if(JoomlaBasicMisc::checkUserGroupAccess($delete_userGroup))
                 $available_modes[]='delete';
         }
@@ -361,7 +359,7 @@ class tagProcessor_Page
 		{
 			$vlu='';
 
-            if($Model->ct->Env->print==0 and ($Model->ct->Env->frmt=='html' or $Model->ct->Env->frmt==''))
+            if($ct->Env->print==0 and ($ct->Env->frmt=='html' or $ct->Env->frmt==''))
             {
                 if($options[$i]=='')
                 	$modes=$available_modes;
@@ -372,10 +370,10 @@ class tagProcessor_Page
                 {
                 	if(in_array($mode,$available_modes))
                 	{
-                		$rid='esToolBar_'.$mode.'_box_'.$Model->ct->Table->tableid;
+                		$rid='esToolBar_'.$mode.'_box_'.$ct->Table->tableid;
                 		$alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_'.strtoupper($mode).'_SELECTED' );
                    		$img='<img src="'.JURI::root(true).'/components/com_customtables/images/'.$mode.'.png" border="0" alt="'.$alt.'" title="'.$alt.'" />';
-                		$link='javascript:esToolBarDO("'.$mode.'", '.$Model->ct->Table->tableid.')';
+                		$link='javascript:esToolBarDO("'.$mode.'", '.$ct->Table->tableid.')';
                 		$vlu.='<div id="'.$rid.'" class="toolbarIcons"><a href=\''.$link.'\'>'.$img.'</a></div>';
                 	}
                 }
@@ -390,18 +388,18 @@ class tagProcessor_Page
 		}
 
 		if($found)
-			tagProcessor_Page::PageToolBarCheckBox($Model,$pagelayout);
+			tagProcessor_Page::PageToolBarCheckBox($ct,$pagelayout);
 	}
 
-    static protected function PageToolBarCheckBox(&$Model,&$pagelayout)
+    static protected function PageToolBarCheckBox(&$ct,&$pagelayout)
 	{
 		$options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('checkbox',$options,$pagelayout,'{}');
 
 		foreach($fList as $fItem)
 		{
-            if($Model->ct->Env->print==0 and $Model->ct->Env->frmt!='csv')
-                $vlu='<input type="checkbox" id="esCheckboxAll'.$Model->ct->Table->tableid.'" onChange="esCheckboxAllclicked('.$Model->ct->Table->tableid.')" />';
+            if($ct->Env->print==0 and $ct->Env->frmt!='csv')
+                $vlu='<input type="checkbox" id="esCheckboxAll'.$ct->Table->tableid.'" onChange="esCheckboxAllclicked('.$ct->Table->tableid.')" />';
             else
                 $vlu='';
 

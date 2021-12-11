@@ -6,7 +6,6 @@
  * @license GNU/GPL
  **/
 
-
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
@@ -14,7 +13,7 @@ use CustomTables\TwigProcessor;
 
 trait render_csv
 {
-    protected static function get_CatalogTable_CSV(&$Model,$fields,$SearchResult)
+    protected static function get_CatalogTable_CSV(&$ct,$fields)
 	{
 		$catalogresult='';
 
@@ -46,57 +45,57 @@ trait render_csv
 		$result.='"'.implode('","',$header_fields).'"';//."\r\n";
 
         //Parse Header
-        $Model->LayoutProc->layout=$result;
-        $result=$Model->LayoutProc->fillLayout();
+        $ct->LayoutProc->layout=$result;
+        $result=$ct->LayoutProc->fillLayout();
         $result=str_replace('&&&&quote&&&&','"',$result);
 
-		//$number=1+$Model->limitstart; //table row number, it maybe use in the layout as {number}
-		$Model->LayoutProc->layout=$recordline;
+		//table row number, it maybe use in the layout as {number}
+		$ct->LayoutProc->layout = $recordline;
 
 		//Initiate the file output
-		$filename = JoomlaBasicMisc::makeNewFileName($Model->params->get('page_title'),'csv');
+		$filename = JoomlaBasicMisc::makeNewFileName($ct->Env->menu_params->get('page_title'),'csv');
 
-		$result.= self::renderCSVoutput($Model,$SearchResult);
+		$result.= self::renderCSVoutput($ct);
 				
-		if($Model->TotalRows>$Model->limitstart+$Model->limit)
+		if($ct->Table->recordcount > $ct->LimitStart + $ct->Limit)
 		{
-			for($limitstart=$Model->limitstart+$Model->limit;$limitstart<$Model->TotalRows;$limitstart+=$Model->limit)
+			for($limitstart = $ct->LimitStart + $ct->Limit; $limitstart < $ct->Table->recordcount; $limitstart+=$ct->Limit)
 			{
-				$Model->limitstart=$limitstart;
-				$SearchResult=$Model->getSearchResult();//get records
+				$ct->LimitStart=$limitstart;
+				$ct->Records=$ct->getRecords();//get records
 
-				if(count($SearchResult)==0)
+				if(count($ct->Records)==0)
 					break;//no records left - escape
 				
-				$result.= self::renderCSVoutput($Model,$SearchResult);//output next chunk
+				$result.= self::renderCSVoutput($ct);//output next chunk
 			}
 		}
 
         return $result;
     }
 	
-	protected static function renderCSVoutput(&$Model,&$SearchResult)
+	protected static function renderCSVoutput(&$ct)
 	{
-		$twig = new TwigProcessor($Model->ct, $Model->LayoutProc->layout);
+		$twig = new TwigProcessor($ct, $ct->LayoutProc->layout);
 		
-		$number=1+$Model->limitstart; //table row number, it can be used in the layout as {number}
+		$number = 1 + $ct->LimitStart; //table row number, it can be used in the layout as {number}
 		$tablecontent='';
 
-		foreach($SearchResult as $row)
+		foreach($ct->Records as $row)
 		{
 			$row['_number']=$number;
 		
             $tablecontent.='
-'.strip_tags(tagProcessor_Item::RenderResultLine($Model,$twig,$row,false));
+'.strip_tags(tagProcessor_Item::RenderResultLine($ct,$twig,$row,false));
 
 			$number++;
 		}
         return $tablecontent;
 	}
 
-	public static function get_CatalogTable_singleline_CSV(&$SearchResult,&$Model,$allowcontentplugins,$pagelayout)
+	public static function get_CatalogTable_singleline_CSV(&$ct,$allowcontentplugins,$pagelayout)
 	{
-		$filename = JoomlaBasicMisc::makeNewFileName($Model->params->get('page_title'),'csv');
+		$filename = JoomlaBasicMisc::makeNewFileName($ct->Env->menu_params->get('page_title'),'csv');
 
 		//Header
 		$options=array();
@@ -119,7 +118,7 @@ trait render_csv
 ';
 
 		//Prepare line layout
-		$layout=$Model->LayoutProc->layout;
+		$layout=$ct->LayoutProc->layout;
 		$layout=str_replace("\n",'',$layout);
 		$layout=str_replace("\r",'',$layout);
 		
@@ -133,13 +132,11 @@ trait render_csv
 			$commaAdded=true;
 		}
 
-		$twig = new TwigProcessor($Model->ct, $layout);
+		$twig = new TwigProcessor($ct, $layout);
 
-		//$Model->LayoutProc->layout=$layout;
-
-		foreach($SearchResult as $row)
+		foreach($ct->Records as $row)
 		{
-			$vlu=trim(strip_tags(tagProcessor_Item::RenderResultLine($Model,$twig,$row,false)));
+			$vlu=trim(strip_tags(tagProcessor_Item::RenderResultLine($ct,$twig,$row,false)));
 			$l=strlen($vlu);
 			if($commaAdded and $l>0)
 			{

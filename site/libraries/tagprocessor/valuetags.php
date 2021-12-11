@@ -107,19 +107,8 @@ class tagProcessor_Value
 		return $row[$field];
 	}
 
-    public static function getFieldTypeByName($fieldname)
+    public static function processEditValues(&$ct,&$htmlresult, &$row,&$isGalleryLoaded,&$getGalleryRows,&$isFileBoxLoaded,&$getFileBoxRows,$tag_chars='[]')
 	{
-		foreach($Model->ct->Table->fields as $ESField)
-		{
-			if($ESField['fieldname']==$fieldname)
-				return $ESField['type'];
-		}
-		return '';
-	}
-    
-    public static function processEditValues(&$Model,&$htmlresult, &$row,&$isGalleryLoaded,&$getGalleryRows,&$isFileBoxLoaded,&$getFileBoxRows,$tag_chars='[]')
-	{
-		
 		$items_to_replace=array();
 		$pureValueOptions=array();
 		$pureValueList=JoomlaBasicMisc::getListToReplace('_edit',$pureValueOptions,$htmlresult,$tag_chars);
@@ -132,15 +121,10 @@ class tagProcessor_Value
                     .DIRECTORY_SEPARATOR.'libraries'
                     .DIRECTORY_SEPARATOR.'esinputbox.php');
                             
-            	$esinputbox = new ESInputBox;
-				$esinputbox->Model = $Model;
+            	$esinputbox = new ESInputBox($ct);
+				if($ct->Env->menu_params->get('requiredlabel')!='')
+					$esinputbox->requiredlabel=$ct->Env->menu_params->get( 'requiredlabel' );	
 
-                $esinputbox->requiredlabel='COM_CUSTOMTABLES_REQUIREDLABEL';
-                
-               	$WebsiteRoot=JURI::root(true);
-                if($WebsiteRoot=='' or $WebsiteRoot[strlen($WebsiteRoot)-1]!='/') //Root must have slash / in the end
-                    $WebsiteRoot.='/';
-                    
                 $document = JFactory::getDocument();
                 $document->addCustomTag('<script src="'.JURI::root(true).'/administrator/components/com_customtables/js/ajax.js"></script>');
                 
@@ -151,15 +135,11 @@ class tagProcessor_Value
                     .DIRECTORY_SEPARATOR.'tagprocessor'
                     .DIRECTORY_SEPARATOR.'itemtags.php');
 
-                $edit_userGroup=(int)$Model->params->get( 'editusergroups' );
-                $isEditable=tagProcessor_Item::checkAccess($Model->ct,$edit_userGroup,$row);
+                $edit_userGroup=(int)$ct->Env->menu_params->get( 'editusergroups' );
+                $isEditable=tagProcessor_Item::checkAccess($ct,$edit_userGroup,$row);
         }
         else
-        {
             $isEditable=false;
-            $WebsiteRoot='';
-        }
-        
         
 		$p=0;
 		foreach($pureValueOptions as $pureValueOption)
@@ -174,7 +154,7 @@ class tagProcessor_Value
                 $style=' style="width:auto; !important;border:none !important;box-shadow:none;"';
 
             $i=0;
-			foreach($Model->ct->Table->fields as $ESField)
+			foreach($ct->Table->fields as $ESField)
 			{
                 $replaceitecode=md5(JoomlaBasicMisc::generateRandomString().(isset($row['listing_id']) ? $row['listing_id'] : '').$ESField['fieldname']);
                 
@@ -186,7 +166,7 @@ class tagProcessor_Value
                             if($isEditable)
                             {
                                 $postfix='';
-                                $prefix='com_'.$row['listing_id'].'_';//.'_es_';//example: com_153_es_fieldname
+                                $ajax_prefix = 'com_'.$row['listing_id'].'_';//example: com_153_es_fieldname or com_153_ct_fieldname
                             
                                 $value_option_list=array();
                                 if(isset($pureValueOptionArr[1]))
@@ -198,7 +178,7 @@ class tagProcessor_Value
                                     {
                                         //multilang field specific language
                                         $firstlanguage=true;
-                                        foreach($Model->ct->Languages->LanguageList as $lang)
+                                        foreach($ct->Languages->LanguageList as $lang)
                                         {
                                             if($lang->sef==$value_option_list[4])
                                             {
@@ -210,12 +190,12 @@ class tagProcessor_Value
                                     }
                                 }
 								
-								$onchange='ct_UpdateSingleValue(\''.$WebsiteRoot.'\','.$Model->Itemid.',\''.$ESField['fieldname'].'\','.$row['listing_id'].',\''.$postfix.'\');';
+								$onchange='ct_UpdateSingleValue(\''.$ct->Env->WebsiteRoot.'\','.$ct->Env->Itemid.',\''.$ESField['fieldname'].'\','.$row['listing_id'].',\''.$postfix.'\');';
 								
                                 $attributes='onchange="'.$onchange.'"'.$style;
                             
-                                $vlu='<div class="" id="'.$prefix.$ESField['fieldname'].$postfix.'_div">'
-                                .$esinputbox->renderFieldBox($Model,$prefix,$ESField,$row,$class_,$attributes,$value_option_list);
+                                $vlu='<div class="" id="'.$ajax_prefix.$ESField['fieldname'].$postfix.'_div">'
+                                .$esinputbox->renderFieldBox($ESField,$row,$class_,$attributes,$value_option_list);
                                 $vlu.='</div>';
                             }
                             else
@@ -223,7 +203,7 @@ class tagProcessor_Value
 								$fieldtype='';
 								$fieldname='';
 								$rowValue='';
-								tagProcessor_Value::doMultiValues($Model,$ESField,$row,$fieldtype,$rowValue,$fieldname);
+								tagProcessor_Value::doMultiValues($ct,$ESField,$row,$fieldtype,$rowValue,$fieldname);
                                 $vlu=$rowValue;
 							}
 
@@ -238,7 +218,7 @@ class tagProcessor_Value
         return $items_to_replace;
     }
 
-    public static function processPureValues(&$Model,&$htmlresult, &$row,&$isGalleryLoaded,&$getGalleryRows,&$isFileBoxLoaded,&$getFileBoxRows,$tag_chars='[]')
+    public static function processPureValues(&$ct,&$htmlresult, &$row,&$isGalleryLoaded,&$getGalleryRows,&$isFileBoxLoaded,&$getFileBoxRows,$tag_chars='[]')
 	{
 		$id = (isset($row['listing_id']) ? $row['listing_id'] : 0);
 		
@@ -254,7 +234,7 @@ class tagProcessor_Value
 				$pureValueOptionArr[1]='';
 
             $i=0;
-			foreach($Model->ct->Table->fields as $ESField)
+			foreach($ct->Table->fields as $ESField)
 			{
 				$TypeParams = $ESField['typeparams'];
                 $replaceitecode=md5(JoomlaBasicMisc::generateRandomString().(isset($row['listing_id']) ? $row['listing_id'] : '').$ESField['fieldname']);
@@ -264,7 +244,7 @@ class tagProcessor_Value
 					$fieldtype='';
 					$fieldname='';
 					$rowValue='';
-					tagProcessor_Value::doMultiValues($Model,$ESField,$row,$fieldtype,$rowValue,$fieldname);
+					tagProcessor_Value::doMultiValues($ct,$ESField,$row,$fieldtype,$rowValue,$fieldname);
 
 					if($fieldtype=='imagegallery')
 					{
@@ -274,14 +254,14 @@ class tagProcessor_Value
 							{
 								//load if not loaded
 								$isGalleryLoaded[$fieldname]=true;
-								$getGalleryRows[$fieldname]=CT_FieldTypeTag_imagegallery::getGalleryRows($Model->ct->Table->tablename,$fieldname,$row['listing_id']);
+								$getGalleryRows[$fieldname]=CT_FieldTypeTag_imagegallery::getGalleryRows($ct->Table->tablename,$fieldname,$row['listing_id']);
 							}
 						}
 						else
 						{
 							//load if not loaded
 							$isGalleryLoaded[$fieldname]=true;
-							$getGalleryRows[$fieldname]=CT_FieldTypeTag_imagegallery::getGalleryRows($Model->ct->Table->tablename,$fieldname,$row['listing_id']);
+							$getGalleryRows[$fieldname]=CT_FieldTypeTag_imagegallery::getGalleryRows($ct->Table->tablename,$fieldname,$row['listing_id']);
 						}
 
 						if(count($getGalleryRows[$fieldname])==0)
@@ -297,7 +277,7 @@ class tagProcessor_Value
 							{
 								//load if not loaded
 								$isFileBoxLoaded[$fieldname]=true;
-								$getFileBoxRows[$fieldname]=CT_FieldTypeTag_filebox::getFileBoxRows($Model->ct->Table->tablename,$fieldname,$row['listing_id']);
+								$getFileBoxRows[$fieldname]=CT_FieldTypeTag_filebox::getFileBoxRows($ct->Table->tablename,$fieldname,$row['listing_id']);
 							}
 
 						}
@@ -305,7 +285,7 @@ class tagProcessor_Value
 						{
 							//load if not loaded
 							$isFileBoxLoaded[$fieldname]=true;
-							$getFileBoxRows[$fieldname]=CT_FieldTypeTag_filebox::getFileBoxRows($Model->ct->Table->tablename,$fieldname,$row['listing_id']);
+							$getFileBoxRows[$fieldname]=CT_FieldTypeTag_filebox::getFileBoxRows($ct->Table->tablename,$fieldname,$row['listing_id']);
 						}
 
 						if(count($getFileBoxRows[$fieldname])==0)
@@ -390,14 +370,14 @@ class tagProcessor_Value
                                 {
                                     $option=$new_array[0];
                                     CT_FieldTypeTag_imagegallery::getImageGallerySRC($getGalleryRows[$fieldname],
-                                    			$option,$row['listing_id'],$fieldname,$ESField['typeparams'],$imagesrclist,$imagetaglist,$Model->ct->Table->tableid);
+                                    			$option,$row['listing_id'],$fieldname,$ESField['typeparams'],$imagesrclist,$imagetaglist,$ct->Table->tableid);
                                 }
 
 								$vlu=$imagesrclist;
 							}
 							elseif($fieldtype=='filebox')
 							{								
-								$vlu = CT_FieldTypeTag_filebox::process($Model,$getFileBoxRows[$fieldname], $id,
+								$vlu = CT_FieldTypeTag_filebox::process($ct->Table->tableid,$getFileBoxRows[$fieldname], $id,
 									$fieldname,$TypeParams,['','link','32','_blank',';']);
 							}
 							elseif($fieldtype=='records')
@@ -426,7 +406,8 @@ class tagProcessor_Value
                                             $new_array[]=$pureValueOptionArr[$i];
                                     }
                                     
-                                    $vlu=CT_FieldTypeTag_file::process($rowValue,$ESField['typeparams'],$new_array,$row['listing_id'],$ESField['id'],$Model->ct->Table->tableid,true);
+                                    $vlu=CT_FieldTypeTag_file::process($rowValue,$ESField['typeparams'],$new_array,$row['listing_id'],$ESField['id']
+										,$ct->Table->tableid,true);
                                 }
                                 else
                                     $vlu=$rowValue;
@@ -510,7 +491,7 @@ class tagProcessor_Value
 
 				$ImageFolder=str_replace('/',DIRECTORY_SEPARATOR,$ImageFolder_);
 
-				$prefix='_esthumb';
+				$image_prefix='_esthumb';
 
 				$img=$rowValue;
 				if(strpos($img,'-')!==false)
@@ -520,7 +501,7 @@ class tagProcessor_Value
 				}
 
 				$imagefile_ext='jpg';
-				$imagefile=$ImageFolder.DIRECTORY_SEPARATOR.$prefix.'_'.$img.'.'.$imagefile_ext;
+				$imagefile=$ImageFolder.DIRECTORY_SEPARATOR.$image_prefix.'_'.$img.'.'.$imagefile_ext;
 
 				if(file_exists(JPATH_SITE.DIRECTORY_SEPARATOR.$imagefile))
 					return false;
@@ -554,7 +535,7 @@ class tagProcessor_Value
 		}
 	}
 
-	public static function doMultiValues(&$Model,&$ESField, &$row,&$fieldtype,&$rowValue,&$fieldname,$specific_lang='')
+	public static function doMultiValues(&$ct,&$ESField, &$row,&$fieldtype,&$rowValue,&$fieldname,$specific_lang='')
 	{
 		$fieldtype=$ESField['type'];
 		if(strpos($fieldtype,'multilang')===false)
@@ -574,15 +555,15 @@ class tagProcessor_Value
                 
                 if(isset($row['listing_id']))
                 {
-                    $params=JoomlaBasicMisc::csv_explode(',',$ESField['typeparams'],'"',false);
+                    $type_params=JoomlaBasicMisc::csv_explode(',',$ESField['typeparams'],'"',false);
 				
-                    if(isset($params[1]) and $params[1]=='dynamic')
+                    if(isset($type_params[1]) and $type_params[1]=='dynamic')
                     {
                     	$phptagprocessor=JPATH_SITE.DIRECTORY_SEPARATOR.'plugins'.DIRECTORY_SEPARATOR.'content'.DIRECTORY_SEPARATOR.'customtables'.DIRECTORY_SEPARATOR.'protagprocessor'.DIRECTORY_SEPARATOR.'phptags.php';
                         if(file_exists($phptagprocessor))
                         {
                            	require_once($phptagprocessor);
-                           	$rowValue=tagProcessor_PHP::processTempValue($Model,$row,$ESField['realfieldname'],$params,true);
+                           	$rowValue=tagProcessor_PHP::processTempValue($ct,$row,$ESField['realfieldname'],$type_params,true);
                         }
                     }
                 }
@@ -604,7 +585,7 @@ class tagProcessor_Value
             if($specific_lang!='')
             {
                 $i=0;
-                foreach($Model->ct->Languages->LanguageList as $l)
+                foreach($ct->Languages->LanguageList as $l)
                 {
                     if($l->sef==$specific_lang)
                     {
@@ -620,7 +601,7 @@ class tagProcessor_Value
 
             }
             else
-                $postfix=$Model->ct->Languages->Postfix; //front-end default language
+                $postfix=$ct->Languages->Postfix; //front-end default language
                 
     		$fieldname=$ESField['realfieldname'].$postfix;
 			if(isset($row[$fieldname]))
@@ -630,7 +611,7 @@ class tagProcessor_Value
 		}
 	}
 
-    public static function processValues(&$Model,&$row,&$htmlresult,$tag_chars='[]')
+    public static function processValues(&$ct,&$row,&$htmlresult,$tag_chars='[]')
 	{
 		$fields_used=[];//Fields found in the layout.
 		
@@ -642,15 +623,15 @@ class tagProcessor_Value
 		 //and isset($row['listing_id']) and $row['listing_id'] != 0
 		if(isset($row) and count($row)>0)
 		{
-			foreach($Model->ct->Table->fields as $ESField)
+			foreach($ct->Table->fields as $ESField)
 			{
                 $replaceitecode=md5(JoomlaBasicMisc::generateRandomString().(isset($row['listing_id']) ? $row['listing_id'] : '').$ESField['fieldname']);
                 
-				$temp_items_to_replace=tagProcessor_Value::processPureValues($Model,$htmlresult,$row,$isGalleryLoaded,$getGalleryRows,$isFileBoxLoaded,$getFileBoxRows,$tag_chars);
+				$temp_items_to_replace=tagProcessor_Value::processPureValues($ct,$htmlresult,$row,$isGalleryLoaded,$getGalleryRows,$isFileBoxLoaded,$getFileBoxRows,$tag_chars);
 				if(count($temp_items_to_replace)!=0)
 					$items_to_replace=array_merge($items_to_replace,$temp_items_to_replace);
                     
-                $temp_items_to_replace=tagProcessor_Value::processEditValues($Model,$htmlresult,$row,$isGalleryLoaded,$getGalleryRows,$isFileBoxLoaded,$getFileBoxRows,$tag_chars);
+                $temp_items_to_replace=tagProcessor_Value::processEditValues($ct,$htmlresult,$row,$isGalleryLoaded,$getGalleryRows,$isFileBoxLoaded,$getFileBoxRows,$tag_chars);
 				if(count($temp_items_to_replace)!=0)
 					$items_to_replace=array_merge($items_to_replace,$temp_items_to_replace);
 
@@ -660,14 +641,14 @@ class tagProcessor_Value
 					$fieldtype='';
 					$fieldname='';
 					$rowValue='';
-					tagProcessor_Value::doMultiValues($Model,$ESField,$row,$fieldtype,$rowValue,$fieldname,'');
+					tagProcessor_Value::doMultiValues($ct,$ESField,$row,$fieldtype,$rowValue,$fieldname,'');
 
 					if($fieldtype=='imagegallery')
 					{
 						if(!isset($isGalleryLoaded[$fieldname]) or $isGalleryLoaded[$fieldname]==false)
 						{
 							$isGalleryLoaded[$fieldname]=true;
-							$r=CT_FieldTypeTag_imagegallery::getGalleryRows($Model->ct->Table->tablename,$fieldname,$row['listing_id']);
+							$r=CT_FieldTypeTag_imagegallery::getGalleryRows($ct->Table->tablename,$fieldname,$row['listing_id']);
 							$getGalleryRows[$fieldname]=$r;
 						}
 
@@ -685,13 +666,13 @@ class tagProcessor_Value
 							if($isFileBoxLoaded[$fieldname]==false)
 							{
 								$isFileBoxLoaded[$fieldname]=true;
-								$getFileBoxRows[$fieldname]=CT_FieldTypeTag_filebox::getFileBoxRows($Model->ct->Table->tablename,$fieldname,$row['listing_id']);
+								$getFileBoxRows[$fieldname]=CT_FieldTypeTag_filebox::getFileBoxRows($ct->Table->tablename,$fieldname,$row['listing_id']);
 							}
 						}
 						else
 						{
 							$isFileBoxLoaded[$fieldname]=true;
-							$getFileBoxRows[$fieldname]=CT_FieldTypeTag_filebox::getFileBoxRows($Model->ct->Table->tablename,$fieldname,$row['listing_id']);
+							$getFileBoxRows[$fieldname]=CT_FieldTypeTag_filebox::getFileBoxRows($ct->Table->tablename,$fieldname,$row['listing_id']);
 						}
 
 
@@ -726,9 +707,9 @@ class tagProcessor_Value
                             $value_option_list=JoomlaBasicMisc::csv_explode(',',$ValueOption,'"',false);
                             
                             if(count($value_option_list)>=5)
-                                tagProcessor_Value::doMultiValues($Model,$ESField,$row,$fieldtype,$rowValue,$fieldname,$value_option_list[4]);
+                                tagProcessor_Value::doMultiValues($ct,$ESField,$row,$fieldtype,$rowValue,$fieldname,$value_option_list[4]);
 
-							$vlu=tagProcessor_Value::getValueByType($Model,$rowValue,$fieldname,$fieldtype,$ESField['typeparams'],$value_option_list,$getGalleryRows[$fieldname],$getFileBoxRows[$fieldname],$row['listing_id'],$row,$ESField['id']);
+							$vlu=tagProcessor_Value::getValueByType($ct,$rowValue,$fieldname,$fieldtype,$ESField['typeparams'],$value_option_list,$getGalleryRows[$fieldname],$getFileBoxRows[$fieldname],$row['listing_id'],$row,$ESField['id']);
 
 							//this is temporary replace string - part of the mechanism to avoid getting values of another fields
 							$new_replaceitecode=$replaceitecode.str_pad($ESField['id'], 9, '0', STR_PAD_LEFT).str_pad($i, 4, '0', STR_PAD_LEFT);
@@ -750,7 +731,7 @@ class tagProcessor_Value
 
 	}
 
-    static public function getValueByType(&$Model,$rowValue,$FieldName, $FieldType,$TypeParams,$option_list,&$getGalleryRows,&$getFileBoxRows,$id, array &$row=array(), int $fieldid = 0)
+    static public function getValueByType(&$ct,$rowValue,$FieldName, $FieldType,$TypeParams,$option_list,&$getGalleryRows,&$getFileBoxRows,$id, array &$row=array(), int $fieldid = 0)
 	{
 		switch($FieldType)
 		{
@@ -871,7 +852,7 @@ class tagProcessor_Value
 						break;
 
 				case 'file':
-					return CT_FieldTypeTag_file::process($rowValue,$TypeParams,$option_list,$row['listing_id'],$fieldid,$Model->ct->Table->tableid);
+					return CT_FieldTypeTag_file::process($rowValue,$TypeParams,$option_list,$row['listing_id'],$fieldid,$ct->Table->tableid);
 					break;
 
 				case 'image':
@@ -929,7 +910,9 @@ class tagProcessor_Value
 					$imagetaglist='';
 
 
-					CT_FieldTypeTag_imagegallery::getImageGallerySRC($getGalleryRows,$option_list[0],$id,$FieldName,$TypeParams,$imagesrclist,$imagetaglist,$Model->ct->Table->tableid);
+					CT_FieldTypeTag_imagegallery::getImageGallerySRC($getGalleryRows,$option_list[0],$id,$FieldName,$TypeParams,$imagesrclist
+						,$imagetaglist,$ct->Table->tableid);
+						
 					return $imagetaglist;
 
 						break;
@@ -939,7 +922,7 @@ class tagProcessor_Value
 					if($option_list[0]=='_count')
 						return count($getFileBoxRows);
 
-					return CT_FieldTypeTag_filebox::process($Model,$getFileBoxRows, $id,$FieldName,$TypeParams,$option_list,$fieldid,'');
+					return CT_FieldTypeTag_filebox::process($ct->Table->tableid,$getFileBoxRows, $id,$FieldName,$TypeParams,$option_list,$fieldid,'');
 
     				break;
 
@@ -956,7 +939,7 @@ class tagProcessor_Value
 							if(isset($option_list[1]) and $option_list[1]=='vertical')
 								$orientation=1;// vertical
 
-							$grouparray=CT_FieldTypeTag_ct::groupCustomTablesParents($Model,$rowValue,$rootparent);
+							$grouparray=CT_FieldTypeTag_ct::groupCustomTablesParents($ct,$rowValue,$rootparent);
 
 
 							$vlu='';
@@ -1002,7 +985,7 @@ class tagProcessor_Value
 								sort ($vlus);
 
 								$temp_index=0;
-								$vlu=Tree::BuildULHtmlList($vlus,$temp_index,$Model->ct->Languages->Postfix);
+								$vlu=Tree::BuildULHtmlList($vlus,$temp_index,$ct->Languages->Postfix);
 
 								return $vlu;
 							}
@@ -1015,7 +998,7 @@ class tagProcessor_Value
 					else
 					{
 						if($rowValue!='')
-							return implode(',',Tree::getMultyValueTitles($rowValue,$Model->ct->Languages->Postfix,1, ' - ',$TypeParams));
+							return implode(',',Tree::getMultyValueTitles($rowValue,$ct->Languages->Postfix,1, ' - ',$TypeParams));
 						else
 							return '';
 
@@ -1024,11 +1007,11 @@ class tagProcessor_Value
 
 				case 'records':
 
-						return CT_FieldTypeTag_records::resolveRecordType($Model,$rowValue, $TypeParams, $option_list);
+						return CT_FieldTypeTag_records::resolveRecordType($ct,$rowValue, $TypeParams, $option_list);
 						break;
 
 				case 'sqljoin':
-						return CT_FieldTypeTag_sqljoin::resolveSQLJoinType($Model,$rowValue, $TypeParams, $option_list);
+						return CT_FieldTypeTag_sqljoin::resolveSQLJoinType($ct,$rowValue, $TypeParams, $option_list);
 						break;
 
 				case 'userid':
@@ -1058,7 +1041,7 @@ class tagProcessor_Value
 					$processor_file=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fieldtypes'.DIRECTORY_SEPARATOR.'_type_file.php';
 					require_once($processor_file);
 					
-					return CT_FieldTypeTag_file::process($rowValue,','.$TypeParams,$option_list,$row['listing_id'],$fieldid,$Model->ct->Table->tableid); // "," is to be compatible with file field type params. Becuse first parameter is max file size there
+					return CT_FieldTypeTag_file::process($rowValue,','.$TypeParams,$option_list,$row['listing_id'],$fieldid,$ct->Table->tableid); // "," is to be compatible with file field type params. Becuse first parameter is max file size there
 					break;
 
 						//return $TypeParams.'/'.$rowValue;
@@ -1073,7 +1056,7 @@ class tagProcessor_Value
 						break;
 
 				case 'log':
-						return CT_FieldTypeTag_log::getLogVersionLinks($Model,$rowValue,$row);
+						return CT_FieldTypeTag_log::getLogVersionLinks($ct,$rowValue,$row);
 						break;
 
 				case 'multilangstring':

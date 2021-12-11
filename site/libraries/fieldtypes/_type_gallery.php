@@ -23,7 +23,7 @@ class CT_FieldTypeTag_imagegallery
 		return $photorows;
 	}
     
-    public static function getImageGallerySRC($photorows, $prefix,$id,$galleryname,$TypeParams,&$imagesrclist,&$imagetaglist,$estableid)
+    public static function getImageGallerySRC($photorows, $image_prefix,$id,$galleryname,$TypeParams,&$imagesrclist,&$imagetaglist,$estableid)
 	{
         $imagegalleryprefix='g';
         
@@ -88,7 +88,7 @@ class CT_FieldTypeTag_imagegallery
 			}
 
 
-			if($prefix=='')
+			if($image_prefix=='')
 			{
 				$imagefile_ext='jpg';
 
@@ -102,19 +102,19 @@ class CT_FieldTypeTag_imagegallery
 					$imagesrclistarray[]=$imagegalleryprefix.$estableid.'_'.$galleryname.'__esthumb_'.$photorow_photoid.'.jpg';
 				}
 			}
-			elseif($prefix=='_original')
+			elseif($image_prefix=='_original')
 			{
 				$imagefile_ext='jpg';
-				$imgname=$imagefolderserver.DIRECTORY_SEPARATOR.$imagegalleryprefix.$estableid.'_'.$galleryname.'_'.$prefix.'_'.$photorow_photoid;
+				$imgname=$imagefolderserver.DIRECTORY_SEPARATOR.$imagegalleryprefix.$estableid.'_'.$galleryname.'_'.$image_prefix.'_'.$photorow_photoid;
 				$imagefile_ext=$imgMethods->getImageExtention($imgname);
 
 				$imagefile=$imgname.'.'.$imagefile_ext;
 
-				$imagefileweb=$imagefolderweb.'/'.$imagegalleryprefix.$estableid.'_'.$galleryname.'_'.$prefix.'_'.$photorow_photoid.'.jpg';
+				$imagefileweb=$imagefolderweb.'/'.$imagegalleryprefix.$estableid.'_'.$galleryname.'_'.$image_prefix.'_'.$photorow_photoid.'.jpg';
 				if($imagefile!='')
 				{
 					$imagetaglistarray[]='<img src="'.$imagefileweb.'" alt="'.$sitename.'" title="'.$sitename.'" />';
-					$imagesrclistarray[]=$imagegalleryprefix.$estableid.'_'.$galleryname.'_'.$prefix.'_'.$photorow_photoid.'.'.$imagefile_ext;
+					$imagesrclistarray[]=$imagegalleryprefix.$estableid.'_'.$galleryname.'_'.$image_prefix.'_'.$photorow_photoid.'.'.$imagefile_ext;
 				}
 			}
 			else
@@ -129,10 +129,10 @@ class CT_FieldTypeTag_imagegallery
 				foreach($imagesizes as $img)
 				{
 
-					if($img[0]==$prefix)
+					if($img[0]==$image_prefix)
 					{
 
-						$imgname=$imagefolderserver.DIRECTORY_SEPARATOR.$imagegalleryprefix.$estableid.'_'.$galleryname.'_'.$prefix.'_'.$photorow_photoid;
+						$imgname=$imagefolderserver.DIRECTORY_SEPARATOR.$imagegalleryprefix.$estableid.'_'.$galleryname.'_'.$image_prefix.'_'.$photorow_photoid;
 
 
 						$imagefile_ext=$imgMethods->getImageExtention($imgname);
@@ -141,10 +141,10 @@ class CT_FieldTypeTag_imagegallery
 
 						if($imagefile_ext!='')
 						{
-							$imgnameweb=$imagefolderweb.'/'.$imagegalleryprefix.$estableid.'_'.$galleryname.'_'.$prefix.'_'.$photorow_photoid.'.'.$imagefile_ext;
+							$imgnameweb=$imagefolderweb.'/'.$imagegalleryprefix.$estableid.'_'.$galleryname.'_'.$image_prefix.'_'.$photorow_photoid.'.'.$imagefile_ext;
 
 							$imagetaglistarray[]='<img src="'.$imgnameweb.'" '.($img[1]>0 ? 'width="'.$img[1].'"' : '').' '.($img[2]>0 ? 'height="'.$img[2].'"' : '').' alt="'.$sitename.'" title="'.$sitename.'" />';
-							$imagesrclistarray[]=$imagegalleryprefix.$estableid.'_'.$galleryname.'_'.$prefix.'_'.$photorow_photoid.'.'.$imagefile_ext;
+							$imagesrclistarray[]=$imagegalleryprefix.$estableid.'_'.$galleryname.'_'.$image_prefix.'_'.$photorow_photoid.'.'.$imagefile_ext;
 							$foundimgsize=true;
 							break;
 						}
@@ -157,7 +157,7 @@ class CT_FieldTypeTag_imagegallery
 					$imagetaglistarray[]='filenotfound';
 					$imagesrclistarray[]='filenotfound';
 				}
-			}//if($prefix=='')
+			}//if($image_prefix=='')
 		}//foreach($photorows as $photorow)
 
 

@@ -13,15 +13,27 @@ jimport( 'joomla.application.component.view');
 
 class CustomTablesViewStructure extends JView
 {
+	var $ct;
+	
 	function display($tpl = null)
 	{
-		$mainframe = JFactory::getApplication('site');
-		
 		$this->Model = $this->getModel();
 		
-		$this->rows=$this->Model->getStructure();
+		$this->ct = $this->Model->ct;
 		
-		$this->pagination=$Model->getPagination();
+		$this->rows=$this->Model->getStructure();
+		$this->pagination=$this->Model->getPagination();
+		
+		$this->record_count = $this->Model->record_count;
+		
+		$this->linkable = $this->Model->linkable;
+		
+		$this->esfieldname = $this->Model->esfieldname;
+		
+		$this->row_break = $this->Model->row_break;
+		
+		$this->image_prefix = $this->Model->image_prefix;
+		$this->optionname = $this->Model->optionname;
 		
         parent::display($tpl);
 	}

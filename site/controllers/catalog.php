@@ -17,22 +17,21 @@ use \Joomla\CMS\Factory;
 
 $ct = new CT;
 
+$returnto = $ct->Env->jinput->get('returnto', '', 'BASE64');
 
-	$returnto = $ct->Env->jinput->get('returnto', '', 'BASE64');
-	$Itemid = $ct->Env->jinput->getInt('Itemid', 0);
-	if ($theview == 'home')
-	{
-		parent::display();
-		$ct->Env->jinput->set('homeparent', 'home');
-		$ct->Env->jinput->set('view', 'catalog');
-	}
+if ($theview == 'home')
+{
+	parent::display();
+	$ct->Env->jinput->set('homeparent', 'home');
+	$ct->Env->jinput->set('view', 'catalog');
+}
 
 	$task = $ct->Env->jinput->getCmd('task');
 	
 	$app = JFactory::getApplication();
-	$params=$app->getParams();
+	$menu_params=$app->getParams();
 	$edit_model = $this->getModel('edititem');
-	$edit_model->params=$params;
+	$edit_model->params=$menu_params;
 	$edit_model->id = $ct->Env->jinput->getInt('listing_id');
 	
 	//Check Authorization
@@ -61,7 +60,7 @@ $ct = new CT;
 		//if ($edit_model->CheckAuthorizationACL($PermissionWord))
 		if ($edit_model->CheckAuthorization($PermissionIndex))
 		{
-			$redirect=doTheTask($ct,$task,$params,$edit_model,$this);
+			$redirect=doTheTask($ct,$task,$menu_params,$edit_model,$this);
 			//JFactory::getApplication()->enqueueMessage($redirect->msg);
 			$this->setRedirect($redirect->link, $redirect->msg, $redirect->status);
 		}
@@ -82,7 +81,7 @@ $ct = new CT;
 	else
 		parent::display();
 	
-function doTheTask(&$ct,$task,$params,$edit_model,&$this_)	
+function doTheTask(&$ct,$task,$menu_params,$edit_model,&$this_)	
 {
 	$encodedreturnto = base64_encode(JoomlaBasicMisc::curPageURL());
 	$returnto = $ct->Env->jinput->get('returnto', '', 'BASE64');
@@ -96,23 +95,20 @@ function doTheTask(&$ct,$task,$params,$edit_model,&$this_)
 			$link.= $ct->Env->WebsiteRoot . $link;
 	}
 	else
-	{
-		$Itemid = $ct->Env->jinput->getInt('Itemid', 0);
-		$link = $ct->Env->WebsiteRoot . 'index.php?Itemid=' . $Itemid;
-	}
+		$link = $ct->Env->WebsiteRoot . 'index.php?Itemid=' . $ct->Env->Itemid;
 	
 	$link = JoomlaBasicMisc::deleteURLQueryOption($link, 'task');
 	
-	$edit_model->load($params, false);
+	$edit_model->load($menu_params, false);
 		
 	switch ($task)
 	{
 		case 'clear':
-
+			//Review this task - its insecure and disbaled
 			$model = $this_->getModel('catalog');
-			$model->load($params, false);
+			$model->load($menu_params, false);
 
-			if ($model->getSearchResult())
+			if ($model->ct->Records !== null)
 				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_DELETED'), 'status' => null);
 			else
 				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_NOT_DELETED'), 'status' => 'error');
@@ -269,7 +265,7 @@ function doTheTask(&$ct,$task,$params,$edit_model,&$this_)
 
 	case 'createuser':
 		
-		$ct->getTable($params->get( 'establename' ), null);
+		$ct->getTable($menu_params->get( 'establename' ), null);
 		if($ct->Table->tablename=='')
 			return (object) array('link' => $link, 'msg' => 'Table not selected.', 'status' => 'error');
 			
@@ -295,7 +291,7 @@ function doTheTask(&$ct,$task,$params,$edit_model,&$this_)
 		
 	case 'resetpassword':
 		
-		$ct->getTable($params->get( 'establename' ), null);
+		$ct->getTable($menu_params->get( 'establename' ), null);
 		if($ct->Table->tablename=='')
 			return (object) array('link' => $link, 'msg' => 'Table not selected.', 'status' => 'error');
 
@@ -323,8 +319,8 @@ function doTheTask(&$ct,$task,$params,$edit_model,&$this_)
 		$orderby=trim(preg_replace("/[^a-zA-Z-+%.: ,_]/", "",$orderby));
 		
 		$mainframe = Factory::getApplication();
-		$Itemid = $ct->Env->jinput->getInt('Itemid', 0);
-		$mainframe->setUserState('com_customtables.orderby_'.$Itemid,$orderby);
+
+		$mainframe->setUserState('com_customtables.orderby_'.$ct->Env->Itemid,$orderby);
 		
 		$link = JoomlaBasicMisc::deleteURLQueryOption($link, 'task');
 		$link = JoomlaBasicMisc::deleteURLQueryOption($link, 'orderby');
@@ -338,10 +334,10 @@ function doTheTask(&$ct,$task,$params,$edit_model,&$this_)
 		if ($task == 'cart_addtocart' or $task == 'cart_form_addtocart' or $task == 'cart_setitemcount' or $task == 'cart_deleteitem' or $task == 'cart_emptycart')
 		{
 			$model = $this_->getModel('catalog');
-			$model->load($params, false);
-			if ($params->get('cart_returnto'))
+			$model->load($menu_params, false);
+			if ($menu_params->get('cart_returnto'))
 			{
-				$link = $params->get('cart_returnto');
+				$link = $menu_params->get('cart_returnto');
 			}
 			else
 			{
@@ -362,27 +358,27 @@ function doTheTask(&$ct,$task,$params,$edit_model,&$this_)
 			{
 			case 'cart_addtocart':
 				$result = $model->cart_addtocart();
-				if ($params->get('cart_msgitemadded')) $param_msg = $params->get('cart_msgitemadded');
+				if ($menu_params->get('cart_msgitemadded')) $param_msg = $menu_params->get('cart_msgitemadded');
 				break;
 
 			case 'cart_form_addtocart':
 				$result = $model->cart_form_addtocart();
-				if ($params->get('cart_msgitemadded')) $param_msg = $params->get('cart_msgitemadded');
+				if ($menu_params->get('cart_msgitemadded')) $param_msg = $menu_params->get('cart_msgitemadded');
 				break;
 
 			case 'cart_setitemcount':
 				$result = $model->cart_setitemcount();
-				if ($params->get('cart_msgitemupdated')) $param_msg = $params->get('cart_msgitemupdated');
+				if ($menu_params->get('cart_msgitemupdated')) $param_msg = $menu_params->get('cart_msgitemupdated');
 				break;
 
 			case 'cart_deleteitem':
 				$result = $model->cart_deleteitem();
-				if ($params->get('cart_msgitemdeleted')) $param_msg = $params->get('cart_msgitemdeleted');
+				if ($menu_params->get('cart_msgitemdeleted')) $param_msg = $menu_params->get('cart_msgitemdeleted');
 				break;
 
 			case 'cart_emptycart':
 				$result = $model->cart_emptycart();
-				if ($params->get('cart_msgitemupdated')) $param_msg = $params->get('cart_msgitemupdated');
+				if ($menu_params->get('cart_msgitemupdated')) $param_msg = $menu_params->get('cart_msgitemupdated');
 				break;
 			}
 

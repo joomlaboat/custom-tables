@@ -28,10 +28,10 @@ class tagProcessor_Catalog
 	use render_json;
 	use render_image;
 
-    public static function process(&$Model,&$pagelayout,&$SearchResult,$new_replaceitecode)
+    public static function process(&$ct,&$pagelayout,$new_replaceitecode)
     {
         $vlu='';
-        $allowcontentplugins=$Model->params->get( 'allowcontentplugins' );
+        $allowcontentplugins=$ct->Env->menu_params->get( 'allowcontentplugins' );
 
         $options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('catalog',$options,$pagelayout,'{}');
@@ -43,22 +43,22 @@ class tagProcessor_Catalog
 
 			$tableclass=$pair[0];
 
-			if($Model->ct->Env->frmt=='csv')
+			if($ct->Env->frmt=='csv')
 			{
 				$pagelayout=str_replace($fItem,'',$pagelayout);//delete {catalog} tag
-				self::get_CatalogTable_singleline_CSV($SearchResult,$Model,$allowcontentplugins,$pagelayout);
+				self::get_CatalogTable_singleline_CSV($ct,$allowcontentplugins,$pagelayout);
 			}
-			elseif($Model->ct->Env->frmt=='json')
+			elseif($ct->Env->frmt=='json')
 			{
 				//$pagelayout=str_replace($fItem,'',$pagelayout);//delete {catalog} tag
-				$vlu=self::get_CatalogTable_singleline_JSON($SearchResult,$Model,$allowcontentplugins,$pagelayout);
+				$vlu=self::get_CatalogTable_singleline_JSON($ct,$allowcontentplugins,$pagelayout);
 			}
-			elseif($Model->ct->Env->frmt=='image')
+			elseif($ct->Env->frmt=='image')
 				self::get_CatalogTable_singleline_IMAGE($pagelayout,$allowcontentplugins);
 			elseif(isset($pair[1]) and $pair[1]=='notable')
-				$vlu=self::get_Catalog($Model,$SearchResult,$tableclass,false,false,$allowcontentplugins);
+				$vlu=self::get_Catalog($ct,$tableclass,false,false,$allowcontentplugins);
 			else
-				$vlu=self::get_Catalog($Model,$SearchResult,$tableclass,false,true,$allowcontentplugins);
+				$vlu=self::get_Catalog($ct,$tableclass,false,true,$allowcontentplugins);
 
 			$pagelayout=str_replace($fItem,$new_replaceitecode,$pagelayout);
 			$i++;
@@ -68,85 +68,88 @@ class tagProcessor_Catalog
     }
 
 
-    protected static function get_Catalog(&$Model,&$SearchResult,$tableclass,$showhr=true,$showtable=true,$allowcontentplugins=false)
+    protected static function get_Catalog(&$ct,$tableclass,$showhr=true,$showtable=true,$allowcontentplugins=false)
 	{
 		$catalogresult='';
 
-		if(count($SearchResult)==0)
+		if($ct->Records == null or count($ct->Records)==0)
 			return '';
 
 		$CatGroups=array();
 		
-		$twig = new TwigProcessor($Model->ct, $Model->LayoutProc->layout);
+		$twig = new TwigProcessor($ct, $ct->LayoutProc->layout);
+		
+		//Grouping
+		if($ct->Env->menu_params->get('groupby')!='')
+			$groupby=Fields::getRealFieldName($ct->Env->menu_params->get('groupby'),$ct->Table->fields);
+		else
+			$groupby='';
 
-		if($Model->groupby=='')
+		if($groupby=='')
 		{
-				$number=1+$Model->limitstart;
+				$number=1+$ct->LimitStart;
 								
-				foreach($SearchResult as $row)
+				foreach($ct->Records as $row)
 				{
 						$row['_number'] = $number;
-				        $RealRows[]=tagProcessor_Item::RenderResultLine($Model,$twig,$row,$showtable==true); //3ed parameter is to show record HTML anchor or not
+				        $RealRows[]=tagProcessor_Item::RenderResultLine($ct,$twig,$row,$showtable==true); //3ed parameter is to show record HTML anchor or not
 						$number++;
 				}
 				$CatGroups[]=array('',$RealRows);
 		}
 		else
 		{
-				//Group Results
+			//Group Results
 
-				$FieldRow=ESFields::FieldRowByName($Model->groupby,$Model->ct->Table->fields);
+			$FieldRow=ESFields::FieldRowByName($ct->groupby,$ct->Table->fields);
 
 
-				$RealRows=array();
+			$RealRows=array();
 				$lastGroup='';
 
-				$number=1+$Model->limitstart;
-				foreach($this->SearchResult as $row)
+				$number = 1 + $ct->LimitStart;
+				foreach($ct->Records as $row)
 				{
 
-						if($lastGroup!=$row[$Model->groupby] and $lastGroup!='')
+						if($lastGroup!=$row[$ct->groupby] and $lastGroup!='')
 						{
 								if($FieldRow['type']=='customtables')
-									$GroupTitle=implode(',',Tree::getMultyValueTitles($lastGroup,$Model->ct->Languages->Postfix,1, ' - '));
+									$GroupTitle=implode(',',Tree::getMultyValueTitles($lastGroup,$ct->Languages->Postfix,1, ' - '));
 								else
 								{
 									$row['_number'] = $number;
 									$galleryrows=array();
 									$FileBoxRows=array();
 									$option=array();
-									$GroupTitle=$Model->LayoutProc->getValueByType($Model,$lastGroup,$FieldRow['fieldname'],$FieldRow['type'],$FieldRow['typeparams'],$option,$galleryrows,$FileBoxRows,$row['listing_id']);
+									$GroupTitle=$ct->LayoutProc->getValueByType($ct,$lastGroup,$FieldRow['fieldname'],$FieldRow['type'],$FieldRow['typeparams'],$option,$galleryrows,$FileBoxRows,$row['listing_id']);
 								}
 
 								$CatGroups[]=array($GroupTitle,$RealRows);
 								$RealRows=array();
 						}
-                        $RealRows[]=tagProcessor_Item::RenderResultLine($Model,$twig,$row,$showtable==true); //3ed parameter is to show record HTML anchor or not
-						//$RealRows[]=$this->RenderResultLine($row,$showtable,$allowcontentplugins);//,$Itemid,$Model,$userid,$this->isUserAdministrator,$current_url,$print);
+                        $RealRows[]=tagProcessor_Item::RenderResultLine($ct,$twig,$row,$showtable==true); //3ed parameter is to show record HTML anchor or not
 
-						$lastGroup=$row[$Model->groupby];
+						$lastGroup=$row[$ct->groupby];
 
 					$number++;
 				}
 				if(count($RealRows)>0)
 				{
 					if($FieldRow['type']=='customtables')
-						$GroupTitle=implode(',',Tree::getMultyValueTitles($lastGroup,$Model->ct->Languages->Postfix,1, ' - '));
+						$GroupTitle=implode(',',Tree::getMultyValueTitles($lastGroup,$ct->Languages->Postfix,1, ' - '));
 					else
 					{
 						$galleryrows=array();
 						$FileBoxRows=array();
 						$option=array();
 
-						$GroupTitle=$Model->LayoutProc->getValueByType($Model,$lastGroup,$FieldRow['fieldname'],$FieldRow['type'],$FieldRow['typeparams'],$option,$galleryrows,$FileBoxRows,$row['listing_id'],$FieldRow['id']);
+						$GroupTitle=$ct->LayoutProc->getValueByType($ct,$lastGroup,$FieldRow['fieldname'],$FieldRow['type'],$FieldRow['typeparams'],$option,$galleryrows,$FileBoxRows,$row['listing_id'],$FieldRow['id']);
 					}
 					$CatGroups[]=array($GroupTitle,$RealRows);
 				}
-		}//if($Model->groupby=='')
-
+		}
 
 		$CatGroups=self::reorderCatGroups($CatGroups);
-
 
 	if($showtable)
 	{
@@ -156,9 +159,7 @@ class tagProcessor_Catalog
 ';
 	}
 
-		$number_of_columns=$Model->columns;
-		if($number_of_columns<1)
-				$number_of_columns=3;
+		$number_of_columns=3;
 
 		$content_width=100;
 		$column_width=floor($content_width/$number_of_columns);

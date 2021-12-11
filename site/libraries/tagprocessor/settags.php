@@ -14,12 +14,12 @@ defined('_JEXEC') or die('Restricted access');
 
 class tagProcessor_Set
 {
-    public static function process(&$Model,&$pagelayout)
+    public static function process(&$ct,&$pagelayout)
     {
         tagProcessor_Set::setHeadTag($pagelayout);
         tagProcessor_Set::setMetaDescription($pagelayout);
         tagProcessor_Set::setMetaKeywords($pagelayout);
-		tagProcessor_Set::setPageTitle($Model,$pagelayout);
+		tagProcessor_Set::setPageTitle($ct,$pagelayout);
     }
 
     protected static function setMetaKeywords(&$htmlresult)
@@ -60,7 +60,7 @@ class tagProcessor_Set
 
 	}
 
-	protected static function setPageTitle(&$Model,&$htmlresult)
+	protected static function setPageTitle(&$ct,&$htmlresult)
 	{
 		$options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('pagetitle',$options,$htmlresult,'{}');
@@ -76,7 +76,7 @@ class tagProcessor_Set
 		}
 
         if(count($fList)==0)
-            $mydoc->setTitle(JoomlaBasicMisc::JTextExtended($Model->params->get( 'page_title' )));
+            $mydoc->setTitle(JoomlaBasicMisc::JTextExtended($ct->Env->menu_params->get( 'page_title' )));
 	}
 
     protected static function setHeadTag(&$htmlresult)

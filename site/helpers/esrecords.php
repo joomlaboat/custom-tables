@@ -12,15 +12,15 @@ defined('_JEXEC') or die( 'Restricted access' );
 use CustomTables\CT;
 use CustomTables\Fields;
 use CustomTables\Layouts;
+use CustomTables\LinkJoinFilters;
 
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'models'.DIRECTORY_SEPARATOR.'catalog.php');
-require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'filtering.php');
 
 class JHTMLESRecords
 {
     static public function render($typeparams,$control_name, $value, $establename, $thefield, $selector, $filter,$style='',
                                 $cssclass='', $attribute='', $dynamic_filter='',$sortbyfield='',$langpostfix='',$place_holder='')
-        {
+    {
 				$htmlresult='';
 				$fieldarray=explode(';',$thefield);
 				$field=$fieldarray[0];
@@ -43,9 +43,8 @@ class JHTMLESRecords
                 else
 					$paramsArray['showpublished']=0;
 
-				$paramsArray['showpagination']=0;
 				$paramsArray['groupby']='';
-				$paramsArray['shownavigation']=0;
+
                 if($sortbyfield!='')
 					$paramsArray['forcesortby']=$sortbyfield;
 				elseif(strpos($field,':')===false) //cannot sort by layout only by field name
@@ -58,9 +57,8 @@ class JHTMLESRecords
 				$_params->loadArray($paramsArray);
                                 
    				$model->load($_params, true);
-				$model->showpagination=false;
 				
-				$SearchResult=$model->getSearchResult();
+				$model->getSearchResult();
 			
                                 
 				//Without filter
@@ -73,15 +71,12 @@ class JHTMLESRecords
                                         $paramsArray_nofilter['establename']=$establename;
                                         $paramsArray_nofilter['filter']=''; //!IMPORTANT - NO FILTER
 
-                                        $paramsArray_nofilter['showpagination']=0;
-
                                         if($allowunpublished)
                                                 $paramsArray_nofilter['showpublished']=2;//0 - published only; 1 - hidden only; 2 - Any
                                         else
                                                 $paramsArray_nofilter['showpublished']=0;//0 - published only; 1 - hidden only; 2 - Any
 
                                         $paramsArray_nofilter['groupby']='';
-                                        $paramsArray_nofilter['shownavigation']=0;
 										
 										if($sortbyfield!='')
 											$paramsArray_nofilter['forcesortby']=$sortbyfield;
@@ -91,10 +86,9 @@ class JHTMLESRecords
                                         $_params_nofilter= new JRegistry;
                                         $_params_nofilter->loadArray($paramsArray_nofilter);
 
-                                        $model_nofilter->showpagination=false;
                                         $model_nofilter->load($_params_nofilter, true);
 
-                                        $SearchResult_nofilter=$model_nofilter->getSearchResult();
+                                        $model_nofilter->getSearchResult();
                                 }
 
 				$valuearray=explode(',',$value);
@@ -110,7 +104,7 @@ class JHTMLESRecords
 
 								case 'single' :
 
-										$htmlresult.=JHTMLESRecords::getSingle($model, $model_nofilter,$SearchResult,$SearchResult_nofilter,$valuearray,$field,$selectorpair,$control_name,
+										$htmlresult.=JHTMLESRecords::getSingle($model, $model_nofilter,$valuearray,$field,$selectorpair,$control_name,
                                             $style,$cssclass,$attribute,$value,$establename,$dynamic_filter,$langpostfix,$place_holder);
 											
 										break;
@@ -134,7 +128,7 @@ class JHTMLESRecords
 													.'data-label="'.$place_holder.'" '
 													.($attribute!='' ? ' '.$attribute.' ' : '').'>';
 										
-										foreach($SearchResult as $row)
+										foreach($model->ct->Records as $row)
 										{
 											if($row['listing_published']==0)
                                                 $style='style="color:red"';
@@ -155,9 +149,8 @@ class JHTMLESRecords
 
 										$htmlresult.='<table style="border:none;" id="sqljoin_table_'.$control_name.'">';
 										$i=0;
-										foreach($SearchResult as $row)
+										foreach($model->ct->Records as $row)
 										{
-
 												$htmlresult.='<tr><td valign="middle">'
 														.'<input type="radio" '
 														.'name="'.$control_name.'" '
@@ -184,7 +177,7 @@ class JHTMLESRecords
 
 										$htmlresult.='<table style="border:none;">';
 										$i=0;
-										foreach($SearchResult as $row)
+										foreach($model->ct->Records as $row)
 										{
 												$htmlresult.='<tr><td valign="middle">'
 														.'<input type="checkbox" '
@@ -207,7 +200,7 @@ class JHTMLESRecords
 
 								case 'multibox' :
 		
-										$htmlresult.=JHTMLESRecords::getMultibox($model, $model_nofilter,$SearchResult,$SearchResult_nofilter,$valuearray,$field,$selectorpair,
+										$htmlresult.=JHTMLESRecords::getMultibox($model, $model_nofilter,$valuearray,$field,$selectorpair,
 											$control_name,$style,$cssclass,$attribute,$establename,$dynamic_filter,$langpostfix,$place_holder);
 
 										break;
@@ -232,15 +225,12 @@ class JHTMLESRecords
 						if($layoutcode=='')
 							return '<p>layout "'.$pair[1].'" not found or is empty.</p>';
 
-						$model->LayoutProc->layout=$layoutcode;
+						$model->ct->LayoutProc->layout=$layoutcode;
 
 						$htmlresult.='<table style="border:none;" id="sqljoin_table_'.$control_name.'">';
 						$i=0;
-						foreach($SearchResult as $row)
+						foreach($model->ct->Records as $row)
 						{
-
-
-
 								$htmlresult.='<tr><td valign="middle">';
 
 								if($selectorpair[0]=='multi' or $selectorpair[0]=='checkbox')
@@ -271,7 +261,7 @@ class JHTMLESRecords
 
 								//process layout
 								$htmlresult.='<label for="'.$control_name.'_'.$i.'">';
-								$htmlresult.=$model->LayoutProc->fillLayout($row);
+								$htmlresult.=$model->ct->LayoutProc->fillLayout($row);
 								$htmlresult.='</label>';
 
 
@@ -291,7 +281,7 @@ class JHTMLESRecords
 
         }
 
-	static protected function getSingle(&$model, &$model_nofiter,&$SearchResult,&$SearchResult_nofilter,&$valuearray,
+	static protected function getSingle(&$model, &$model_nofilter,&$valuearray,
                                             $field,$selectorpair,$control_name,$style,$cssclass,$attribute,string $value,
 											$establename,$dynamic_filter='',$langpostfix='',$place_holder='')
 	{
@@ -307,11 +297,11 @@ class JHTMLESRecords
             $elementsPublished=array();
 
 			$filtervalue='';
-			foreach($SearchResult_nofilter as $row)
+			foreach($model_nofilter->ct->Records as $row)
 			{
 				if($row['listing_id']==$value)
 				{
-					$filtervalue=$row['es_'.$dynamic_filter];
+					$filtervalue=$row[$model->ct->Env->field_prefix.$dynamic_filter];
 					break;
 				}
 			}
@@ -338,7 +328,7 @@ class JHTMLESRecords
 
 
 										$htmlresult_='';
-										foreach($SearchResult as $row)
+										foreach($model->ct->Records as $row)
 										{
 												if(in_array($row['listing_id'],$valuearray) and count($valuearray)>0 )
 												{
@@ -348,14 +338,14 @@ class JHTMLESRecords
 												else
 														$htmlresult_.='<option value="'.$row['listing_id'].'" '.($row['listing_published']==0 ? ' disabled="disabled"' : '').'>';
 
-												$v=JoomlaBasicMisc::processValue($field,$model,$row,$langpostfix);
+												$v=JoomlaBasicMisc::processValue($field,$model->ct,$row,$langpostfix);
 												$htmlresult_.=$v;
 
 												if($dynamic_filter!='')
 												{
 														$elements[]='"'.$v.'"';
 														$elementsID[]=$row['listing_id'];
-														$elementsFilter[]='"'.$row['es_'.$dynamic_filter].'"';
+														$elementsFilter[]='"'.$row[$model->ct->Env->field_prefix.$dynamic_filter].'"';
                                                                                                                 $elementsPublished[]=(int)$row['listing_published'];
 												}
 
@@ -367,7 +357,7 @@ class JHTMLESRecords
 												//_nofilter
 
 												$htmlresult_nofilter='';
-												foreach($SearchResult_nofilter as $row)
+												foreach($model_nofilter->ct->Records as $row)
 												{
 													if(in_array($row['listing_id'],$valuearray) and count($valuearray)>0 )
 													{
@@ -377,7 +367,7 @@ class JHTMLESRecords
 													else
 														$htmlresult_.='<option value="'.$row['listing_id'].'" '.($row['listing_published']==0 ? ' disabled="disabled"' : '').'>';
 
-													$v=JoomlaBasicMisc::processValue($field,$model_nofilter,$row,$langpostfix);
+													$v=JoomlaBasicMisc::processValue($field,$model_nofilter->ct,$row,$langpostfix);
 													$htmlresult_nofilter.=$v;
 
 
@@ -386,7 +376,7 @@ class JHTMLESRecords
 													{
 														$elements[]='"'.$v.'"';
 														$elementsID[]=$row['listing_id'];
-														$elementsFilter[]='"'.$row['es_'.$dynamic_filter].'"';
+														$elementsFilter[]='"'.$row[$model->ct->Env->field_prefix.$dynamic_filter].'"';
                                                                                                                 $elementsPublished[]=(int)$row['listing_published'];
 													}
 
@@ -418,7 +408,7 @@ class JHTMLESRecords
 		return $htmlresult;
 	}
 
-	static protected function getMultibox(&$model, &$model_nofilter,&$SearchResult,&$SearchResult_nofilter,&$valuearray,$field,$selectorpair,
+	static protected function getMultibox(&$model, &$model_nofilter,&$valuearray,$field,$selectorpair,
                                               $control_name,$style,$cssclass,$attribute,$establename,$dynamic_filter,$langpostfix='',$place_holder='')
 	{
 		$real_field_row=Fields::getFieldRowByName($field, '',$establename);
@@ -436,7 +426,7 @@ class JHTMLESRecords
 			var '.$control_name.'_p=new Array();
 			';
 			$i=0;
-			foreach($SearchResult as $row)
+			foreach($model->ct->Records as $row)
 			{
 				if(in_array($row['listing_id'],$valuearray) and count($valuearray)>0)
 				{
@@ -616,7 +606,7 @@ class JHTMLESRecords
 		$value='';
 		$single_box='';
 
-		$single_box.=JHTMLESRecords::getSingle($model, $model_nofilter,$SearchResult,$SearchResult_nofilter,$valuearray,$field,$selectorpair,
+		$single_box.=JHTMLESRecords::getSingle($model, $model_nofilter,$valuearray,$field,$selectorpair,
                                                       $control_name.'_selector',$style,$cssclass,$attribute,'',$establename,$dynamic_filter,$langpostfix,$place_holder);
 
 		$htmlresult.='<div style="padding-bottom:20px;"><div style="width:90%;" id="'.$control_name.'_box"></div>'

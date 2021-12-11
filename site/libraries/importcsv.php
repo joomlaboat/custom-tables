@@ -64,10 +64,10 @@ function processFieldParams(&$fieldList, &$fields)
 			$fieldtype=$fields[$f_index]->type;
 			if($fieldtype=='sqljoin')
 			{
-				$params=JoomlaBasicMisc::csv_explode(',',$fields[$f_index]->typeparams,'"',false);
+				$type_params=JoomlaBasicMisc::csv_explode(',',$fields[$f_index]->typeparams,'"',false);
 			
-				$tablename=$params[0];
-				$fieldname=$params[1];
+				$tablename=$type_params[0];
+				$fieldname=$type_params[1];
 				
 				$tablerow=ESTables::getTableRowByName($tablename);
 				if(!is_object($tablerow))

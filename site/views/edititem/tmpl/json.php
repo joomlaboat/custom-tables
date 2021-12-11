@@ -22,8 +22,8 @@ JHtml::_('bootstrap.popover');
 
 use Joomla\CMS\Session\Session;
 
-if (!$this->Model->BlockExternalVars and $this->Model->params->get('show_page_heading', 1 ) )
-	$response_object['page_title'] = JoomlaBasicMisc::JTextExtended($this->Model->params->get( 'page_title' ));
+if (!$this->BlockExternalVars and $this->ct->Env->menu_params->get('show_page_heading', 1 ) )
+	$response_object['page_title'] = JoomlaBasicMisc::JTextExtended($this->ct->Env->menu_params->get( 'page_title' ));
 
 if (ob_get_contents())
       	ob_end_clean();
@@ -38,14 +38,12 @@ if (ob_get_contents())
 		$listing_id=0;
 						
 	require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'layout.php');
-	$LayoutProc=new LayoutProcessor($this->Model->ct);
-	$LayoutProc->Model=$this->Model;
-	$LayoutProc->layout=$this->Model->pagelayout;
-						
+	$LayoutProc=new LayoutProcessor($this->ct, $this->pagelayout);
+
 	//Better to run tag processor before rendering form edit elements because of IF statments that can exclude the part of the layout that contains form fields.
-	$this->Model->pagelayout=$LayoutProc->fillLayout($this->row,null,'||',false,true);
+	$this->pagelayout=$LayoutProc->fillLayout($this->row,null,'||',false,true);
 						
-	$form_items = tagProcessor_Edit::process($this->Model,$this->Model->pagelayout,$this->row,'comes_');
+	$form_items = tagProcessor_Edit::process($this->ct,$this->pagelayout,$this->row,'comes_');
 
 	$response_object=[];
 
@@ -68,17 +66,12 @@ if (ob_get_contents())
 	$response_object['returnto'] = $encoded_returnto;
 	$response_object['token'] = Session::getFormToken();
 
-	$filename = JoomlaBasicMisc::makeNewFileName($this->Model->params->get('page_title'),'json');
+	$filename = JoomlaBasicMisc::makeNewFileName($this->ct->Env->menu_params->get('page_title'),'json');
 
     header('Content-Disposition: attachment; filename="'.$filename.'"');
     header('Content-Type: application/json; charset=utf-8');
     header("Pragma: no-cache");
     header("Expires: 0");
-
 	
 	echo json_encode($response_object);
-	
-	
 	die;
-	
-

@@ -13,12 +13,12 @@ use \CustomTables\Forms;
 
 class tagProcessor_Field
 {
-    public static function process(&$ct,&$pagelayout,bool $add_label=false, string $fieldNamePrefix = 'comes_')
+    public static function process(&$ct,&$pagelayout,bool $add_label=false)
     {
-        tagProcessor_Field::ProcessFieldTitles($ct,$pagelayout,$add_label,$fieldNamePrefix);
+        tagProcessor_Field::ProcessFieldTitles($ct,$pagelayout,$add_label);
     }
 
-    protected static function ProcessFieldTitles(&$ct,&$pagelayout, bool $add_label=false, $fieldNamePrefix = 'comes_')
+    protected static function ProcessFieldTitles(&$ct,&$pagelayout, bool $add_label=false)
 	{
 		//field title
         if($add_label)
@@ -26,7 +26,7 @@ class tagProcessor_Field
             foreach($ct->Table->fields as $esfield)
             {
 				$forms = new Forms($ct);
-				$field_label = $forms->renderFieldLabel($esfield, $fieldNamePrefix);
+				$field_label = $forms->renderFieldLabel($esfield);
 				
             	$pagelayout=str_replace('*'.$esfield['fieldname'].'*',$field_label,$pagelayout);
             }

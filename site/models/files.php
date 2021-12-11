@@ -17,9 +17,6 @@ jimport('joomla.application.component.model');
 class CustomTablesModelFiles extends JModelLegacy
 {
 	var $ct;
-
-	var $Itemid;
-
 	var $tableid;
 	var $fieldid;
 	var $fieldrow;
@@ -41,8 +38,6 @@ class CustomTablesModelFiles extends JModelLegacy
 
 		$jinput=JFactory::getApplication()->input;
 		$id= $jinput->getInt('listing_id', 0);
-
-		$this->Itemid=$jinput->getInt('Itemid',0);
 
 		$this->tableid = $jinput->getInt('tableid',0);
 		$this->fieldid = $jinput->getInt('fieldid',0);
@@ -75,7 +70,6 @@ class CustomTablesModelFiles extends JModelLegacy
 				
 		if($this->ct->Table->tablename=='')
 		{
-			$Itemid=JFactory::getApplication()->input->getInt('Itemid', 0);
 			JFactory::getApplication()->enqueueMessage('Table not selected (79).', 'error');
 			return;
 		}

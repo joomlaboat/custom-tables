@@ -16,55 +16,6 @@ use \Joomla\CMS\Factory;
 
 class Tree
 {
-	/*
-	public static function getAllParents($optionid,$filter_rootparent)
-	{
-		
-		if($filter_rootparent)
-		{
-		    $available_categories=Tree::getChildren($optionid,$filter_rootparent,1);
-		    
-		    $db = Factory::getDBO();
-		    $query = ' SELECT optionname, id AS id FROM #__customtables_options WHERE ';
-		    $query.= ' id='.$filter_rootparent.' LIMIT 1';
-	    
-		    $db->setQuery( $query );
-		
-		    $rpname= $db->loadObjectList();
-		    if(count($rpname)==1)
-			Tree::array_insert(
-			    $available_categories,
-			    array("id" => $filter_rootparent, "name" => strtoupper($rpname[0]->optionname)),0);
-		}
-		else
-		{
-		    $available_categories=Tree::getChildren($optionid,0,1);
-		}
-				
-		
-	
-		
-		Tree::array_insert($available_categories,array("id" => 0, "name" => JText::_( 'ROOT' )),count($available_categories));
-		
-		
-				
-		return $available_categories;
-
-	}
-	*/
-	/*
-	public static function getAllChildren($parentid,$langpostfix)
-	{
-		$db = Factory::getDBO();
-		$query = ' SELECT id, optionname, title_'.$langpostfix.' AS title FROM #__customtables_options WHERE parentid='.$parentid;
-	    $query.= ' ORDER BY title';
-		
-		$db->setQuery($query);
-		
-		return $db->loadObjectList();
-	}
-	*/
-	//public
 	public static function getChildren($optionid,$parentid,$level)
 	{
 	    $db = Factory::getDBO();
@@ -114,9 +65,9 @@ class Tree
 		if(strpos($PropertyTypes,'.')===false)
 		{
 			//Try to complete the value
-			$paramslist=JoomlaBasicMisc::csv_explode(',', $TypeParams,'"', false);
+			$list_of_params=JoomlaBasicMisc::csv_explode(',', $TypeParams,'"', false);
 			
-			$PropertyTypes=','.$paramslist[0].'.'.$PropertyTypes.'.,';
+			$PropertyTypes=','.$list_of_params[0].'.'.$PropertyTypes.'.,';
 		}
 		
 		$RowPropertyTypes=explode(",", $PropertyTypes);

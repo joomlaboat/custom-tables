@@ -384,7 +384,7 @@ trait SaveFieldQuerySet
 			. substr("0123456789ABCDEF", $index2, 1);
 	}
 
-public function Try2CreateUserAccount(&$Model,$field,$row)
+public function Try2CreateUserAccount(&$ct,$field,$row)
 {
     $uid=(int)$row[$field['realfieldname']];
 	
@@ -400,8 +400,8 @@ public function Try2CreateUserAccount(&$Model,$field,$row)
 
     }
 
-    $params=$field['typeparams'];
-    $parts=JoomlaBasicMisc::csv_explode(',', $params, '"', false);
+    $type_params=$field['typeparams'];
+    $parts=JoomlaBasicMisc::csv_explode(',', $type_params, '"', false);
 
     if(count($parts)<3)
 	{
@@ -413,13 +413,11 @@ public function Try2CreateUserAccount(&$Model,$field,$row)
     $new_parts=array();
     foreach($parts as $part)
     {
-        tagProcessor_General::process($Model,$part,$row,'',1);
-    	tagProcessor_Item::process(false,$Model,$row,$part,'','',0);
-    	tagProcessor_If::process($Model,$part,$row,'',0);
-    	tagProcessor_Page::process($Model,$part);
-    	tagProcessor_Value::processValues($Model,$row,$part,'[]');
-        //if($part=="")
-            //return false; //if any of the parameters empty then break;
+        tagProcessor_General::process($ct,$part,$row,'',1);
+    	tagProcessor_Item::process($ct,$row,$part,'','',0);
+    	tagProcessor_If::process($ct,$part,$row,'',0);
+    	tagProcessor_Page::process($ct,$part);
+    	tagProcessor_Value::processValues($ct,$row,$part,'[]');
 
         $new_parts[]=$part;
     }
@@ -444,7 +442,7 @@ public function Try2CreateUserAccount(&$Model,$field,$row)
 	{
         if(!$unique_users) //allow not unique record per users
         {
-            CTUser::UpdateUserField($Model->ct->Table->realtablename, $Model->ct->Table->realidfieldname,$field['realfieldname'],$existing_user_id,$row['listing_id']);
+            CTUser::UpdateUserField($ct->Table->realtablename, $ct->Table->realidfieldname,$field['realfieldname'],$existing_user_id,$row['listing_id']);
             Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORD_USER_UPDATED' ));
         }
         else
@@ -457,7 +455,7 @@ public function Try2CreateUserAccount(&$Model,$field,$row)
 
 	}
     else
-        CTUser::CreateUser($Model->ct->Table->realtablename, $Model->ct->Table->realidfieldname,$user_email,$user_name,$user_groups,$row['listing_id'],$field['realfieldname'],$this->realtablename);
+        CTUser::CreateUser($ct->Table->realtablename, $ct->Table->realidfieldname,$user_email,$user_name,$user_groups,$row['listing_id'],$field['realfieldname'],$this->realtablename);
 
     return true;
 }
@@ -832,13 +830,13 @@ protected function get_record_type_value()
         return $this->db->loadObjectList();
 	}
 
-    function processDefaultValue(&$Model,$htmlresult,$type,&$row)
+    function processDefaultValue(&$ct,$htmlresult,$type,&$row)
     {
-        tagProcessor_General::process($Model,$htmlresult,$row,'',1);
-		tagProcessor_Item::process(false,$Model,$row,$htmlresult,'','',0);
-		tagProcessor_If::process($Model,$htmlresult,$row,'',0);
-		tagProcessor_Page::process($Model,$htmlresult);
-		tagProcessor_Value::processValues($Model,$row,$htmlresult,'[]');
+        tagProcessor_General::process($ct,$htmlresult,$row,'',1);
+		tagProcessor_Item::process($ct,$row,$htmlresult,'','',0);
+		tagProcessor_If::process($ct,$htmlresult,$row,'',0);
+		tagProcessor_Page::process($ct,$htmlresult);
+		tagProcessor_Value::processValues($ct,$row,$htmlresult,'[]');
 
         if($htmlresult!='')
         {
@@ -856,7 +854,7 @@ protected function get_record_type_value()
 		return null;
     }
 
-    public function processDefaultValues($default_fields_to_apply,&$Model,&$row)
+    public function processDefaultValues($default_fields_to_apply,&$ct,&$row)
     {
         $savequery=array();
 		
@@ -870,7 +868,7 @@ protected function get_record_type_value()
             $r=$row[$this->realfieldname];
             if($r==null or $r=='' or $r==0)
 			{
-				$q = $this->processDefaultValue($Model,$value,$type,$row);
+				$q = $this->processDefaultValue($ct,$value,$type,$row);
 				if($q != null)
 					$savequery[] = $q;
 			}

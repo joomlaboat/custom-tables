@@ -381,10 +381,10 @@ class ESFileUploader
 
 		$menuItem = $app->getMenu()->getItem($Itemid);
 		// Get params for menuItem
-		$params = $menuItem->params;
+		$menu_params = $menuItem->params;
 
 		$esTable=new ESTables;
-		$establename=$params->get( 'establename' );
+		$establename=$menu_params->get( 'establename' );
 		if($establename=='')
 			return 0;
 

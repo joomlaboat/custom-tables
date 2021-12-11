@@ -12,8 +12,13 @@ defined('_JEXEC') or die('Restricted access');
 jimport('joomla.html.pane');
 jimport( 'joomla.application.component.view'); //Important to get menu parameters
 
-class CustomTablesViewEditItem extends JViewLegacy {
+class CustomTablesViewEditItem extends JViewLegacy
+{
+	var $ct;
     var $catid=0;
+	var $pagelayout;
+	var $BlockExternalVars;
+	
 	function display($tpl = null)
 	{
 	    $document = JFactory::getDocument();
@@ -31,6 +36,11 @@ class CustomTablesViewEditItem extends JViewLegacy {
 		$this->Model = $this->getModel();
         $this->Model->load($this->params);
 		
+		$this->ct = $this->Model->ct;
+		
+		$this->pagelayout = $this->Model->pagelayout;
+		$this->BlockExternalVars = $this->Model->BlockExternalVars;
+		
         if(!$this->Model->CheckAuthorization(1))
     	{
     		//not authorized
@@ -43,11 +53,7 @@ class CustomTablesViewEditItem extends JViewLegacy {
 
 		$this->row = $this->Model->row;
 
-		$WebsiteRoot=JURI::root(true);
-		if($WebsiteRoot=='' or $WebsiteRoot[strlen($WebsiteRoot)-1]!='/') //Root must have slash / in the end
-			$WebsiteRoot.='/';
-
-		$this->formLink=$WebsiteRoot.'index.php?option=com_customtables&amp;view=edititem'.($this->Model->Itemid!=0 ? '&amp;Itemid='.$this->Model->Itemid : '');
+		$this->formLink=$this->Model->ct->Env->WebsiteRoot.'index.php?option=com_customtables&amp;view=edititem'.($this->Model->ct->Env->Itemid!=0 ? '&amp;Itemid='.$this->Model->ct->Env->Itemid : '');
 		$this->formName='eseditForm';
 		$this->formClass='form-validate form-horizontal well';
 		

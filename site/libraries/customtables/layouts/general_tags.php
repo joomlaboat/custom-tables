@@ -100,7 +100,7 @@ class Twig_Record_Tags
 			return '';
 		}
 		
-		if(!isset($this->ct->Table->records))
+		if(!isset($this->ct->Records))
 		{
 			Factory::getApplication()->enqueueMessage('{{ record.count }} - Records not loaded.', 'error');
 			return '';
@@ -128,11 +128,14 @@ class Twig_Record_Tags
 			return '';
 		}
 		
-		if(!isset($this->ct->Table->records))
+		if(!isset($this->ct->Records))
 		{
 			Factory::getApplication()->enqueueMessage('{{ record.list }} - Records not loaded.', 'error');
 			return '';
 		}
+		
+		if($this->ct->Table->recordlist == null)
+			$this->ct->getRecordList();
 		
 		return implode(',',$this->ct->Table->recordlist);
 	}

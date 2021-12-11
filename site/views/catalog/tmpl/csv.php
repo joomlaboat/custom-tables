@@ -17,24 +17,20 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'co
 
 $itemlayout=str_replace("\n",'',$this->itemlayout);
 
-$catalogtablecontent=tagProcessor_CatalogTableView::process($this->Model,$this->pagelayout,$this->SearchResult,$this->catalogtablecode);
+$catalogtablecontent=tagProcessor_CatalogTableView::process($this->ct,$this->pagelayout,$this->catalogtablecode);
 
 if($catalogtablecontent=='')
 {
-	$this->Model->LayoutProc->layout=$itemlayout;
+	$this->ct->LayoutProc->layout=$itemlayout;
 	
-	$catalogtablecontent=tagProcessor_Catalog::process($this->Model,$this->pagelayout,$this->SearchResult,$this->catalogtablecode);
+	$catalogtablecontent=tagProcessor_Catalog::process($this->ct,$this->pagelayout,$this->catalogtablecode);
 	$catalogtablecontent=str_replace("\n",'',$catalogtablecontent);
 	$catalogtablecontent=str_replace("\r",'',$catalogtablecontent);
 	$catalogtablecontent=str_replace("\t",'',$catalogtablecontent);
-	
-	//$catalogtablecontent=trim(strip_tags(html_entity_decode($catalogtablecontent)));//header
 }
 
-//$this->pagelayout=trim(strip_tags(html_entity_decode($this->pagelayout)));//header
-
-$this->Model->LayoutProc->layout=$this->pagelayout;
-$this->pagelayout=$this->Model->LayoutProc->fillLayout();
+$this->ct->LayoutProc->layout=$this->pagelayout;
+$this->pagelayout=$this->ct->LayoutProc->fillLayout();
 
 $this->pagelayout=str_replace('&&&&quote&&&&','"',$this->pagelayout); // search boxes may return HTMl elemnts that contain placeholders with quotes like this: &&&&quote&&&&
 $this->pagelayout=str_replace($this->catalogtablecode,$catalogtablecontent,$this->pagelayout);
@@ -43,7 +39,7 @@ LayoutProcessor::applyContentPlugins($this->pagelayout);
 
 if (ob_get_contents()) ob_end_clean();
 
-$filename = JoomlaBasicMisc::makeNewFileName($this->Model->params->get('page_title'),'csv');
+$filename = JoomlaBasicMisc::makeNewFileName($this->ct->Env->menu_params->get('page_title'),'csv');
 header('Content-Disposition: attachment; filename="'.$filename.'"');
 header('Content-Type: text/csv; charset=utf-8');
 header("Pragma: no-cache");

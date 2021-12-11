@@ -25,8 +25,7 @@ class RecordToolbar
 	var $isDeletable;
 	
 	var $jinput;
-	var $Itemid;
-	
+
 	var $id;
 	var $rid;
 	
@@ -34,7 +33,7 @@ class RecordToolbar
 	
 	var $iconPath;
 	
-	function __construct(&$ct, $isEditable, $isPublishable, $isDeletable , $Itemid)
+	function __construct(&$ct, $isEditable, $isPublishable, $isDeletable)
 	{
 		$this->ct = $ct;
 		$this->Table = $ct->Table;
@@ -44,9 +43,7 @@ class RecordToolbar
 		$this->isDeletable = $isDeletable;
 		
 		$this->jinput = Factory::getApplication()->input;
-		
-		$this->Itemid = $Itemid;
-		
+
 		$this->iconPath = Uri::root(true).'/components/com_customtables/libraries/customtables/html/images/';
 	}
 	
@@ -136,8 +133,8 @@ class RecordToolbar
 		if($this->jinput->get('tmpl','','CMD')!='')
 			$editlink.='&tmpl='.$this->jinput->get('tmpl','','CMD');
 
-		if($this->Itemid>0)
-			$editlink.='&amp;Itemid='.$this->Itemid;
+		if($this->ct->Env->Itemid>0)
+			$editlink.='&amp;Itemid='.$this->ct->Env->Itemid;
 
         $alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_EDIT' );
 		$img='<img src="'.$this->iconPath.'edit.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
@@ -161,8 +158,8 @@ class RecordToolbar
 			if($this->jinput->get('tmpl','','CMD')!='')
 				$imagemanagerlink.='&tmpl='.$this->jinput->get('tmpl','','CMD');
 
-			if($this->Itemid>0)
-				$imagemanagerlink.='&amp;Itemid='.$this->Itemid;
+			if($this->ct->Env->Itemid>0)
+				$imagemanagerlink.='&amp;Itemid='.$this->ct->Env->Itemid;
 
             $alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PHOTO_MANAGER' ).' ('.$gallery[1].')';
 			$img='<img src="'.$this->iconPath.'photomanager.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
@@ -188,8 +185,8 @@ class RecordToolbar
 			if($this->jinput->get('tmpl','','CMD')!='')
 				$filemanagerlink.='&tmpl='.$this->jinput->get('tmpl','','CMD');
 
-			if($this->Itemid>0)
-				$filemanagerlink.='&amp;Itemid='.$this->Itemid;
+			if($this->ct->Env->Itemid>0)
+				$filemanagerlink.='&amp;Itemid='.$this->ct->Env->Itemid;
 
             $alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FILE_MANAGER').' ('.$filebox[1].')';
 			$img='<img src="'.$this->iconPath.'filemanager.png" border="0" '

@@ -12,36 +12,36 @@ defined('_JEXEC') or die('Restricted access');
 
 class tagProcessor_Edit
 {
-    public static function process(&$Model,&$pagelayout,&$row,$fieldNamePrefix)
+    public static function process(&$ct,&$pagelayout,&$row)
     {
         if(isset($row['listing_id']))
             $listing_id=(int)$row['listing_id'];
         else
         	$listing_id=0;
         
-        $captcha_found=tagProcessor_Edit::process_captcha($Model->ct,$pagelayout);
+        $captcha_found=tagProcessor_Edit::process_captcha($ct,$pagelayout);
 	
-        $buttons = tagProcessor_Edit::process_button($Model,$pagelayout,$captcha_found,$listing_id);
-        $buttons_obsolete = tagProcessor_Edit::process_buttons($Model,$pagelayout,$captcha_found,$listing_id);
-        $fields = tagProcessor_Edit::process_fields($Model,$pagelayout,$row,$fieldNamePrefix);
+        $buttons = tagProcessor_Edit::process_button($ct,$pagelayout,$captcha_found,$listing_id);
+        
+        $fields = tagProcessor_Edit::process_fields($ct,$pagelayout,$row);
 		return ['fields' => $fields,'buttons' => $buttons];
     }
     
-    protected static function process_fields(&$Model,&$pagelayout,&$row,$fieldNamePrefix)
+    protected static function process_fields(&$ct,&$pagelayout,&$row)
     {
         require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'esinputbox.php');
         
-    	$esinputbox = new ESInputBox;
-		$esinputbox->Model=$Model;
-
-        $esinputbox->requiredlabel=$Model->params->get( 'requiredlabel' );
+    	$esinputbox = new ESInputBox($ct);
+		
+		if($ct->Env->menu_params->get('requiredlabel')!='')
+			$esinputbox->requiredlabel=$ct->Env->menu_params->get( 'requiredlabel' );	
         
         //Calendars of the child should be built again, because when Dom was ready they didn't exist yet.
         $calendars=array();
         $replaceitecode=JoomlaBasicMisc::generateRandomString();
 		$items_to_replace=array();
         
-		$field_objects = tagProcessor_Edit::renderFields($row,$Model,$pagelayout,$Model->ct->Languages->Postfix,0,$esinputbox,$calendars,'',$replaceitecode,$items_to_replace,$fieldNamePrefix);
+		$field_objects = tagProcessor_Edit::renderFields($row,$pagelayout,0,$esinputbox,$calendars,'',$replaceitecode,$items_to_replace);
         
 		foreach($items_to_replace as $item)
 			$pagelayout=str_replace($item[0],$item[1],$pagelayout);
@@ -122,7 +122,7 @@ class tagProcessor_Edit
         return $rows[0];
     }
 
-    protected static function process_button(&$Model,&$pagelayout,$captcha_found,$listing_id)
+    protected static function process_button(&$ct,&$pagelayout,$captcha_found,$listing_id)
     {
 		$button_objects = [];
 		
@@ -132,7 +132,7 @@ class tagProcessor_Edit
 		for($i=0;$i<count($buttons);$i++)
 		{
 			$b='';
-			if($Model->ct->Env->frmt!='csv' and $Model->ct->Env->print==0)
+			if($ct->Env->frmt!='csv' and $ct->Env->print==0)
             {
                 $option=JoomlaBasicMisc::csv_explode(',', $options[$i], '"', false);
 
@@ -149,13 +149,13 @@ class tagProcessor_Edit
 				if(isset($option[2]))
 					$redirectlink=$option[2];
                 else
-					$redirectlink=$Model->params->get( 'returnto' );
+					$redirectlink=$ct->Env->menu_params->get( 'returnto' );
                                     
                 if($redirectlink!='')
 				{
 					$_row=array();
                     $_list=array();
-                    tagProcessor_General::process($Model,$redirectlink,$_row,$_list,0);
+                    tagProcessor_General::process($ct,$redirectlink,$_row,$_list,0);
 				}
 
 				
@@ -168,15 +168,15 @@ class tagProcessor_Edit
 				switch($type)
                 {
 						case 'save':
-                            $b=tagProcessor_Edit::renderSaveButton($Model->ct,$captcha_found,$optional_class,$title);
+                            $b=tagProcessor_Edit::renderSaveButton($ct,$captcha_found,$optional_class,$title);
                         break;
                                     
                         case 'saveandclose':
-							$b=tagProcessor_Edit::renderSaveAndCloseButton($Model->ct,$captcha_found,$optional_class,$title,$redirectlink);
+							$b=tagProcessor_Edit::renderSaveAndCloseButton($ct,$captcha_found,$optional_class,$title,$redirectlink);
                         break;
                                     
                         case 'saveandprint':
-                            $b=tagProcessor_Edit::renderSaveAndPrintButton($Model->ct,$captcha_found,$optional_class,$title,$redirectlink);
+                            $b=tagProcessor_Edit::renderSaveAndPrintButton($ct,$captcha_found,$optional_class,$title,$redirectlink);
                         break;
                                     
                         case 'saveascopy':
@@ -184,20 +184,20 @@ class tagProcessor_Edit
                             if($listing_id==0)
                                 $b='';
                             else
-                                $b=tagProcessor_Edit::renderSaveAsCopyButton($Model->ct,$captcha_found,$optional_class,$title,$redirectlink);
+                                $b=tagProcessor_Edit::renderSaveAsCopyButton($ct,$captcha_found,$optional_class,$title,$redirectlink);
                         break;
                                     
                         case 'cancel':
-							$b=tagProcessor_Edit::renderCancelButton($Model->ct,$optional_class,$title,$redirectlink);
+							$b=tagProcessor_Edit::renderCancelButton($ct,$optional_class,$title,$redirectlink);
                         break;
                                     
                         case 'close':
-                            $b=tagProcessor_Edit::renderCancelButton($Model->ct,$optional_class,$title,$redirectlink);
+                            $b=tagProcessor_Edit::renderCancelButton($ct,$optional_class,$title,$redirectlink);
                         break;
                                     
                         case 'delete':
 
-							$b=tagProcessor_Edit::renderDeleteButton($Model->ct,$captcha_found,$optional_class,$title,$redirectlink);
+							$b=tagProcessor_Edit::renderDeleteButton($ct,$captcha_found,$optional_class,$title,$redirectlink);
 							
 						break;
 
@@ -207,7 +207,7 @@ class tagProcessor_Edit
                     
 					}//switch
 
-				if($Model->ct->Env->frmt == 'json')
+				if($ct->Env->frmt == 'json')
 				{
 					$button_objects[] = ['type' => $type, 'title' => $b, 'redirectlink' => $redirectlink];
 					$b = '';
@@ -222,55 +222,6 @@ class tagProcessor_Edit
 		return $button_objects;
     }
 
-    protected static function process_buttons(&$Model,&$pagelayout,$captcha_found,$listing_id)
-    {
-                        $options=array();
-						$buttons=JoomlaBasicMisc::getListToReplace('buttons',$options,$pagelayout,'{}');
-
-						for($i=0;$i<count($buttons);$i++)
-						{
-                            $b='';
-                            if($Model->ct->Env->frmt!='csv' and $Model->ct->Env->print==0)
-                            {
-                                $option=JoomlaBasicMisc::csv_explode(',', $options[$i], '"', false);
-
-                                if($option[0]!='')
-                                	$submitbuttons=$option[0];//button set
-                                else
-                                	$submitbuttons=$Model->submitbuttons;
-
-                                if(isset($option[1]))
-                                	$button1title=$option[1];
-                                else
-                                	$button1title=$Model->applybuttontitle;
-
-                                if(isset($option[2]))
-                                	$button2title=$option[2];
-                                else
-                                    $button2title=$Model->applybuttontitle;
-
-                                if(isset($option[3]))
-                                	$button3title=$option[3];
-                                else
-                                	$button3title=$Model->applybuttontitle;
-
-                                if(isset($option[4]))
-                                	$redirectlink=$option[4];
-                                else
-                                	$redirectlink=$Model->params->get( 'returnto' );
-
-								$optional_class='';
-                                if(isset($option[5]))
-                                	$optional_class=$option[5];
-
-                                $b=tagProcessor_Edit::getToolbar($Model->ct,$submitbuttons,$button1title,$button2title,$button3title,$redirectlink,$optional_class,$captcha_found,$listing_id);
-			
-                            }
-                            
-							$pagelayout=str_replace($buttons[$i], $b, $pagelayout);
-						}
-    }
-    
     protected static function renderSaveButton(&$ct,$captcha_found,$optional_class,$title)
     {
 		if($title=='')
@@ -408,65 +359,18 @@ class tagProcessor_Edit
         return $result;
     }
     
-    protected static function getToolbar(&$ct,$submitbuttons,$button1title,$button2title,$button3title,$redirectlink,$optional_class='',bool $captcha_found=false,int $listing_id=0)
-	{
-        //will be depricated by July 2019
-		$toolbar='';
-        
-		if($submitbuttons=='apply' or $submitbuttons=='saveandclose')
-		{
-            //Save and close
-			$toolbar=tagProcessor_Edit::renderSaveAndCloseButton($ct,$captcha_found,$optional_class,$button1title,$redirectlink);
-		}
-		elseif($submitbuttons=='nextprint' or $submitbuttons=='saveandprint')
-		{
-            //Save and Open Print preview
-			$toolbar=tagProcessor_Edit::renderSaveAndPrintButton($ct,$captcha_found,$optional_class,$button1title,$redirectlink);
-		}
-        
-		elseif($submitbuttons=='savecancelsavenew' or $submitbuttons=='saveandclose.saveascopy.cancel')//savecancelsavenew - legacy support 
-		{
-            //Save & Close / Save as New & Close / Cancel
-			$toolbar=tagProcessor_Edit::renderSaveAndCloseButton($ct,$captcha_found,$optional_class,$button1title,$redirectlink).' ';
-            
-            if($listing_id!=0)
-                $toolbar.=tagProcessor_Edit::renderSaveAsCopyButton($ct,$captcha_found,$optional_class,$button2title,$redirectlink);
-                
-            $toolbar.=tagProcessor_Edit::renderCancelButton($ct,$optional_class,$button3title,$redirectlink);
-        }
-        elseif($submitbuttons=='applysavecancel' or $submitbuttons=='save.saveandclose.cancel')//applysavecancel -  legacy support
-        {
-            //Save / Save & Close / Cancel
-            $toolbar=tagProcessor_Edit::renderSaveButton($ct,$captcha_found,$optional_class,$button1title).' ';
-            $toolbar.=tagProcessor_Edit::renderSaveAndCloseButton($ct,$captcha_found,$optional_class,$button2title,$redirectlink).' ';
-            $toolbar.=tagProcessor_Edit::renderCancelButton($ct,$optional_class,$button3title,$redirectlink);
-
-		}
-        else
-        {
-            //savecancel or saveandclose.cancel
-            //Default
-            //Save & Close / Save as New & Close / Cancel
-			$toolbar=tagProcessor_Edit::renderSaveAndCloseButton($ct,$captcha_found,$optional_class,$button1title,$redirectlink);
-            $toolbar.=tagProcessor_Edit::renderCancelButton($ct,$optional_class,$button3title,$redirectlink);
-        }
-
-		return $toolbar;
-
-	}//function
-
-    protected static function renderFields(&$row,&$Model,&$pagelayout,$langpostfix,$parentid,&$esinputbox,&$calendars,string $style,$replaceitecode,&$items_to_replace,$fieldNamePrefix)
+	protected static function renderFields(&$row,&$pagelayout,$parentid,&$esinputbox,&$calendars,string $style,$replaceitecode,&$items_to_replace)
 	{
 		$field_objects = [];
 		$calendars=array();
 
 		//custom layout
-		if(!isset($Model->ct->Table->fields) or !is_array($Model->ct->Table->fields))
+		if(!isset($esinputbox->ct->Table->fields) or !is_array($esinputbox->ct->Table->fields))
 			return [];
 			
-    	for($f=0;$f<count($Model->ct->Table->fields);$f++ )
+    	for($f=0;$f<count($esinputbox->ct->Table->fields);$f++ )
 		{
-			$esfield=$Model->ct->Table->fields[$f];
+			$esfield=$esinputbox->ct->Table->fields[$f];
 			$options=array();
 			$entries=JoomlaBasicMisc::getListToReplace($esfield['fieldname'],$options,$pagelayout,'[]');
 
@@ -493,9 +397,9 @@ class tagProcessor_Edit
 						$class='';
 					}
 
-					$result=tagProcessor_Edit::renderField($row,$Model,$langpostfix,-1,$esinputbox,$calendars,$esfield,$class,$attribute,$option_list,$fieldNamePrefix);
+					$result=tagProcessor_Edit::renderField($row,-1,$esinputbox,$calendars,$esfield,$class,$attribute,$option_list);
 					
-					if($Model->ct->Env->frmt == 'json')
+					if($esinputbox->ct->Env->frmt == 'json')
 					{
 						$field_objects[] = $result;
 						$result = '';
@@ -513,15 +417,15 @@ class tagProcessor_Edit
 		return $field_objects;
 	}
 
-	protected static function renderField(&$row,&$Model,$langpostfix,$parentid,&$esinputbox,&$calendars,&$esfield, string $class, string $attributes,$option_list,$fieldNamePrefix)
+	protected static function renderField(&$row,$parentid,&$esinputbox,&$calendars,&$esfield, string $class, string $attributes,$option_list)
 	{
 		if($esfield['parentid']==$parentid or $parentid==-1)
 		{
 			if($esfield['type']=='date')
-				$calendars[]='es_'.$esfield['fieldname'];
+				$calendars[]=$esinputbox->ct->Env->field_prefix.$esfield['fieldname'];
 
 			if($esfield['type']!='dummy')
-				return $esinputbox->renderFieldBox($Model,$fieldNamePrefix,$esfield,$row, $class,$attributes,$option_list);
+				return $esinputbox->renderFieldBox($esfield,$row, $class,$attributes,$option_list);
 		}
 		return '';
 	}

@@ -14,28 +14,29 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'co
 class CustomTablesKeywordSearch
 {
 	var $ct;
-	
+	var $PathValue;
 	var $groupby;
 	var $esordering;
-		
+	
 	function __construct(&$ct)
 	{
 		$this->ct = $ct;
+		$this->PathValue = [];
+		
+		$KeywordSearcher->groupby='';
+		$KeywordSearcher->esordering='';
 	}
 
-		function getRowsByKeywords($keywords,&$PathValue,&$TotalRows,$limit,$limitstart)
-		{
+	function getRowsByKeywords($keywords,&$record_count,$limit,$limitstart)
+	{
+		$result_rows=array();
+		$idList=array();
 
+		if(!JFactory::getApplication()->input->getString('esfieldlist',''))
+			return $result_rows;
 
-
-				$result_rows=array();
-				$idList=array();
-
-				if(!JFactory::getApplication()->input->getString('esfieldlist',''))
-						return $result_rows;
-
-				if($keywords=='')
-						return $result_rows;
+		if($keywords=='')
+			return $result_rows;
 
 
 				$keywords=trim(preg_replace("/[^a-zA-Z0-9áéíóúýñÁÉÍÓÚÝÑ [:punct:]]/", "", $keywords));
@@ -46,15 +47,15 @@ class CustomTablesKeywordSearch
 				$mod_fieldlist=explode(',',JFactory::getApplication()->input->getString('esfieldlist',''));
 
 				//Strict (all words in a serash must be there)
-				$result_rows=$this->getRowsByKeywords_Processor($keywords,$PathValue,$mod_fieldlist,'AND');
+				$result_rows=$this->getRowsByKeywords_Processor($keywords,$mod_fieldlist,'AND');
 
 
 				//At least one word is match
 				if(count($result_rows)==0)
-						$result_rows=$this->getRowsByKeywords_Processor($keywords,$PathValue,$mod_fieldlist,'OR');
+						$result_rows=$this->getRowsByKeywords_Processor($keywords,$mod_fieldlist,'OR');
 
 
-				$TotalRows=count($result_rows);
+				$record_count=count($result_rows);
 
 
 				//Process Limit
@@ -63,6 +64,7 @@ class CustomTablesKeywordSearch
 
 				return $result_rows;
 		}
+		
 		function processLimit($result_rows,$limit,$limitstart)
 		{
 
@@ -81,7 +83,7 @@ class CustomTablesKeywordSearch
 
 			return $result_rows_new;
 		}
-
+		
 		function getRowsByKeywords_ProcessTypes($fieldtype,$fieldname,$typeparams, $regexpression,&$inner)
 		{
 				$where='';
@@ -173,11 +175,11 @@ class CustomTablesKeywordSearch
 		}
 
 
-		function getRowsByKeywords_Processor($keywords,&$PathValue,$mod_fieldlist,$AndOrOr)
+		function getRowsByKeywords_Processor($keywords,$mod_fieldlist,$AndOrOr)
 		{
 				$keyword_arr=explode(' ',$keywords);
 
-				$count=0;//TotalRows;
+				$count=0;
 
 				$result_rows=array();
 				$idList=array();
@@ -209,7 +211,7 @@ class CustomTablesKeywordSearch
 						if($where!='')
 								$this->getKeywordSearch($inner, $where,$result_rows,$count,$idList);
 
-						$PathValue[]=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_CONTAINS').' "'.$keywords.'"';
+						$this->PathValue[]=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_CONTAINS').' "'.$keywords.'"';
 
 						if(count($keyword_arr)>1) //Do not search because there is only one keyword, and it's already checked
 						{
@@ -244,7 +246,7 @@ class CustomTablesKeywordSearch
 								$this->getKeywordSearch($inner, $where,$result_rows,$count,$idList);
 
 
-							$PathValue[]=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_CONTAINS').' "'.implode('" '.$AndOrOr_text.' "',$kw_text_array).'"';
+							$this->PathValue[]=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_CONTAINS').' "'.implode('" '.$AndOrOr_text.' "',$kw_text_array).'"';
 						}
 
 						$where='';
@@ -284,7 +286,7 @@ class CustomTablesKeywordSearch
 						if($where!='')
 								$this->getKeywordSearch($inner, $where,$result_rows,$count,$idList);
 
-						$PathValue[]=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_CONTAINS').' "'.implode('" '.$AndOrOr_text.' "',$kw_text_array).'"';
+						$this->PathValue[]=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_CONTAINS').' "'.implode('" '.$AndOrOr_text.' "',$kw_text_array).'"';
 
 				}
 				// -------------------
@@ -467,7 +469,7 @@ class CustomTablesKeywordSearch
 								if($where!='')
 									$this->getKeywordSearch($inner, $where,$result_rows,$count,$idList);
 
-								$PathValue[]=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_CONTAINS').' "'.implode('" '.$AndOrOr_text.' "',$kw_text_array).'"';
+								$this->PathValue[]=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_CONTAINS').' "'.implode('" '.$AndOrOr_text.' "',$kw_text_array).'"';
 				}
 
 
@@ -477,7 +479,6 @@ class CustomTablesKeywordSearch
 
 		function getKeywordSearch($inner_str,$where,&$result_rows,&$count,&$idList)
 		{
-
 				$db = JFactory::getDBO();
 				$inner=array($inner_str);
 				$tablename='#__customtables_table_'.$this->ct->Table->tablename;
@@ -486,7 +487,7 @@ class CustomTablesKeywordSearch
 				$ordering=array();
 
 				if($this->groupby!='')
-						$ordering[]='es_'.$this->groupby;
+					$ordering[]=$this->ct->Env->field_prefix.$this->groupby;
 
 				if($this->esordering)
 						CTOrdering::getOrderingQuery($ordering,$query,$inner,$this->esordering,$this->ct->Languages->Postfix,$tablename);
@@ -496,8 +497,6 @@ class CustomTablesKeywordSearch
 				$query.=implode(' ',$inner).' ';
 
 				$query.=' WHERE '.$where.' ';
-
-
 
 				$query.=' GROUP BY listing_id ';
 
@@ -509,7 +508,6 @@ class CustomTablesKeywordSearch
 
 				foreach($rows as $row)
 				{
-
 						if(in_array($row['listing_id'],$idList))
 								$exist=true;
 						else

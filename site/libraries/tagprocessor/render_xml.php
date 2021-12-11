@@ -13,7 +13,7 @@ use CustomTables\TwigProcessor;
 
 trait render_xml
 {
-    protected static function get_CatalogTable_XML(&$Model,$fields,&$SearchResult)
+    protected static function get_CatalogTable_XML(&$ct,$fields)
 	{
 		$catalogresult='';
 
@@ -50,24 +50,23 @@ trait render_xml
 		$result.=implode('',$header_fields);//."\r\n";
 
         //Parse Header
-        $Model->LayoutProc->layout=$result;
-        $result=$Model->LayoutProc->fillLayout();
+        $ct->LayoutProc->layout=$result;
+        $result=$ct->LayoutProc->fillLayout();
         $result=str_replace('&&&&quote&&&&','"',$result);
 
-		$number=1+$Model->limitstart; //table row number, it maybe use in the layout as {number}
-		//$Model->LayoutProc->layout=$recordline;
+		$number = 1 + $ct->LimitStart; //table row number, it maybe use in the layout as {number}
 		
-		$twig = new TwigProcessor($Model->ct, $recordline);
+		$twig = new TwigProcessor($ct, $recordline);
 
         $tablecontent='';
-		foreach($SearchResult as $row)
+		foreach($ct->Records as $row)
 		{
 			$row['_number'] = $number;
 
             if($tablecontent!="")
                 $tablecontent.="\r\n";
 
-		        $vlu=tagProcessor_Item::RenderResultLine($Model,$twig,$row,false);
+		        $vlu=tagProcessor_Item::RenderResultLine($ct,$twig,$row,false);
                 $tablecontent.=str_replace('&','&amp;',$vlu);
 				$number++;
 		}

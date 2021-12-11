@@ -1,4 +1,4 @@
-<?php
+	<?php
 /**
  * Custom Tables Joomla! 3.x Native Component
  * @author Ivan komlev <support@joomlaboat.com>
@@ -18,27 +18,16 @@ JTable::addIncludePath(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEP
 class CustomTablesModelEditFiles extends JModelLegacy
 {
 	var $ct;
-
 	var $filemethods;
-
 	var $listing_id;
 	var $Listing_Title;
-
-
 	var $fileboxname;
-
-
 	var $FileBoxTitle;
-
 	var $fileboxfolder;
 	var $fileboxfolderweb;
-
 	var $maxfilesize;
-
 	var $fileboxtablename;
-
 	var $allowedExtensions;
-
 
 	function __construct()
     {
@@ -48,8 +37,10 @@ class CustomTablesModelEditFiles extends JModelLegacy
 
 		$this->allowedExtensions='doc docx pdf txt xls xlsx psd ppt pptx webp png mp3 jpg jpeg csv accdb';
 
-		$app		= JFactory::getApplication();
-		$params=$app->getParams();
+		$app = JFactory::getApplication();
+		$params = $app->getParams();
+		
+		$this->ct->Env->menu_params = $params;
 
 		$this->maxfilesize=JoomlaBasicMisc::file_upload_max_size();
 
@@ -59,17 +50,16 @@ class CustomTablesModelEditFiles extends JModelLegacy
 				
 		if($this->ct->Table->tablename=='')
 		{
-			$Itemid=JFactory::getApplication()->input->getInt('Itemid', 0);
 			JFactory::getApplication()->enqueueMessage('Table not selected (63).', 'error');
 			return;
 		}
 
-		$this->listing_id=JFactory::getApplication()->input->getInt('listing_id', 0);
-		if(!JFactory::getApplication()->input->getCmd('fileboxname'))
+		$this->listing_id=$this->ct->Env->jinput->getInt('listing_id', 0);
+		if(!$this->ct->Env->jinput->getCmd('fileboxname'))
 			return false;
 
 
-		$this->fileboxname=JFactory::getApplication()->input->getCmd('fileboxname');
+		$this->fileboxname=$this->ct->Env->jinput->getCmd('fileboxname');
 
 		if(!$this->getFileBox())
 			return false;
@@ -80,7 +70,6 @@ class CustomTablesModelEditFiles extends JModelLegacy
 
 		parent::__construct();
 	}
-
 
 	function getFileList()
 	{
@@ -155,7 +144,7 @@ class CustomTablesModelEditFiles extends JModelLegacy
 	{
 		$db = JFactory::getDBO();
 
-		$fileids=JFactory::getApplication()->input->getString('fileids','');
+		$fileids=$this->ct->Env->jinput->getString('fileids','');
 		$file_arr=explode('*',$fileids);
 
 		foreach($file_arr as $fileid)
@@ -180,9 +169,7 @@ class CustomTablesModelEditFiles extends JModelLegacy
 
 	function add()
 	{
-		$jinput=JFactory::getApplication()->input;
-		//$file = JFactory::getApplication()->input->getVar('uploadedfile', '', 'files', 'array');
-		$file=$jinput->files->get('uploadedfile'); //not zip -  regular Joomla input method will be used
+		$file=$this->ct->Env->jinput->files->get('uploadedfile'); //not zip -  regular Joomla input method will be used
 
 		$uploadedfile= "tmp/".basename( $file['name']);
 
@@ -190,7 +177,7 @@ class CustomTablesModelEditFiles extends JModelLegacy
 			return false;
 
 
-		if(JFactory::getApplication()->input->getCmd( 'base64ecnoded', '')=="true")
+		if($this->ct->Env->jinput->getCmd( 'base64ecnoded', '')=="true")
 		{
 			$src = $uploadedfile;
 			$dst = "tmp/decoded_".basename( $file['name']);
@@ -212,8 +199,6 @@ class CustomTablesModelEditFiles extends JModelLegacy
 
 		$fileid=$this->addFileRecord($file_ext);
 
-
-
 		$isOk=true;
 
 		//es Thumb
@@ -221,7 +206,6 @@ class CustomTablesModelEditFiles extends JModelLegacy
 
 		if($isOk)
 		{
-
 			if (!copy($uploadedfile, $newfilename))
 			{
 				unlink($uploadedfile);
@@ -233,8 +217,6 @@ class CustomTablesModelEditFiles extends JModelLegacy
 			unlink($uploadedfile);
 			return false;
 		}
-
-
 
 		unlink($uploadedfile);
 
@@ -248,13 +230,11 @@ class CustomTablesModelEditFiles extends JModelLegacy
 		$db = JFactory::getDBO();
 
 		$query = 'INSERT '.$this->fileboxtablename.' SET '
-
-				.'file_ext="'.$file_ext.'", '
-				.'listingid='.$this->listing_id;
+			.'file_ext="'.$file_ext.'", '
+			.'listingid='.$this->listing_id;
 
 		$db->setQuery( $query );
 		$db->execute();	
-
 
 		$query =' SELECT fileid FROM '.$this->fileboxtablename.' WHERE listingid='.$this->listing_id.' ORDER BY fileid DESC LIMIT 1';
 		$db->setQuery( $query );

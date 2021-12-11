@@ -12,8 +12,6 @@ defined('_JEXEC') or die( 'Restricted access' );
 jimport('joomla.form.helper');
 JFormHelper::loadFieldClass('list');
 
-//require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'models'.DIRECTORY_SEPARATOR.'catalog.php');
-
 class JFormFieldCTUserGroup extends JFormFieldList
 {
 	public $type = 'CTUserGroup';

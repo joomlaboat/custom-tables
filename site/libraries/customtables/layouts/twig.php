@@ -29,22 +29,7 @@ class TwigProcessor
 
 	public function __construct(&$ct, $htmlresult)
 	{
-		$file = JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'
-			. DIRECTORY_SEPARATOR. 'twig' . DIRECTORY_SEPARATOR . 'vendor'. DIRECTORY_SEPARATOR .'autoload.php';
-			
-		$this->loaded = false;
-		if(!file_exists($file))
-		{
-			Factory::getApplication()->enqueueMessage(
-				JoomlaBasicMisc::JTextExtended('Twig library not found.' ), 'Error');
-					
-			return false;
-		}
-		
 		$this->ct = $ct;
-		
-		require_once ($file);
-		$this->loaded = true;
 
 		$loader = new \Twig\Loader\ArrayLoader([
 			'index' => $htmlresult,
@@ -97,12 +82,10 @@ class TwigProcessor
 		}
 	}
 	
-	public function process($row = array())
+	public function process($row = null)
 	{
-		if(!$this->loaded)
-			return null;
-		
-		$this->ct->Table->record = $row;
+		if($row !== null)
+			$this->ct->Table->record = $row;
 		
 		return @$this->twig->render('index', $this->variables);
 	}

@@ -33,45 +33,46 @@ class LayoutProcessor
 {
 	var $layout;
 	var $layoutType;//item layout type
-	var $Model;
 	var $advancedtagprocessor;
 	var $version = 0;
 	
 	var $ct;
 
-	function __construct(&$ct)
+	function __construct(&$ct, $layout = null, $layoutType = null)
 	{
 		$this->ct = $ct;
 		$this->version = $this->ct->Env->version;
 		$this->advancedtagprocessor = $this->version = $this->ct->Env->advancedtagprocessor;
+		
+		$this->layout = $layout;
 	}
 
-	function fillLayout($row=array(),$aLink=null,$tag_chars='[]',$disable_advanced_tags=false,$add_label=false,$fieldNamePrefix='comes_')
+	function fillLayout($row=array(),$aLink=null,$tag_chars='[]',$disable_advanced_tags=false,$add_label=false)
 	{
 		$htmlresult=$this->layout;
 
 		if($this->advancedtagprocessor and !$disable_advanced_tags)
 		{
-			tagProcessor_If::process($this->Model,$htmlresult,$row);			
-			tagProcessor_PHP::process($this->Model,$htmlresult,$row);
+			tagProcessor_If::process($this->ct,$htmlresult,$row);			
+			tagProcessor_PHP::process($this->ct,$htmlresult,$row);
 		}
 		
 		if(strpos($htmlresult,'ct_doc_tagset_free')===false)//explainf what is "ct_doc_tagset_free"
 		{
-			tagProcessor_If::process($this->Model,$htmlresult,$row);
+			tagProcessor_If::process($this->ct,$htmlresult,$row);
 
 			//Item must be before General to let the following: currenturl:set,paymentid,{id}}
-			tagProcessor_Value::processValues($this->Model,$row,$htmlresult,$tag_chars);//to let sqljoin function work
-			tagProcessor_Item::process($this->advancedtagprocessor,$this->Model,$row,$htmlresult,$aLink,$add_label,$fieldNamePrefix);
-			tagProcessor_General::process($this->Model,$htmlresult,$row);
-			tagProcessor_Page::process($this->Model,$htmlresult);
+			tagProcessor_Value::processValues($this->ct,$row,$htmlresult,$tag_chars);//to let sqljoin function work
+			tagProcessor_Item::process($this->ct,$row,$htmlresult,$aLink,$add_label);
+			tagProcessor_General::process($this->ct,$htmlresult,$row);
+			tagProcessor_Page::process($this->ct,$htmlresult);
 
 			tagProcessor_Tabs::process($htmlresult);
 
 			if($this->advancedtagprocessor and !$disable_advanced_tags)
-				tagProcessor_Set::process($this->Model,$htmlresult);
+				tagProcessor_Set::process($this->ct,$htmlresult);
 
-			if($this->Model->ct->Env->print==1)
+			if($this->ct->Env->print==1)
 			{
 				$htmlresult=str_replace('<a href','<span link',$htmlresult);
 				$htmlresult=str_replace('</a>','</span>',$htmlresult);
@@ -93,7 +94,7 @@ class LayoutProcessor
 			$mydoc = JFactory::getDocument();
 			$pagetitle=$mydoc->getTitle(); //because content plugins may overwrite the title
 
-			$params_ = $mainframe->getParams('com_content');
+			$content_params = $mainframe->getParams('com_content');
 
 			$o = new stdClass();
 			$o->text = $htmlresult;
@@ -104,10 +105,10 @@ class LayoutProcessor
 			if($version < 4)
 			{
 				$dispatcher	= JDispatcher::getInstance();
-				$results = $dispatcher->trigger('onContentPrepare', array ('com_content.article', &$o, &$params_, 0));
+				$results = $dispatcher->trigger('onContentPrepare', array ('com_content.article', &$o, &$content_params, 0));
 			}
 			else
-				$results = JFactory::getApplication()->triggerEvent( 'onContentPrepare',array ('com_content.article', &$o, &$params_, 0));
+				$results = JFactory::getApplication()->triggerEvent( 'onContentPrepare',array ('com_content.article', &$o, &$content_params, 0));
 			
 			$htmlresult = $o->text;
 		
@@ -117,13 +118,13 @@ class LayoutProcessor
 		return $htmlresult;
 	}
 
-	public static function renderPageHeader(&$Model)
+	public static function renderPageHeader(&$ct)
 	{
-		if ( $Model->params->get( 'show_page_heading', 1 ) )
+		if ($ct->Env->menu_params->get( 'show_page_heading', 1 ) )
 		{
-			$title=JoomlaBasicMisc::JTextExtended($Model->params->get( 'page_title' ));
+			$title=JoomlaBasicMisc::JTextExtended($ct->Env->menu_params->get( 'page_title' ));
 			echo '
-			<div class="page-header'.LayoutProcessor::htmlEscape($Model->params->get('pageclass_sfx'), 'UTF-8').'">
+			<div class="page-header'.LayoutProcessor::htmlEscape($ct->Env->menu_params->get('pageclass_sfx'), 'UTF-8').'">
 				<h2 itemprop="headline">
 					'.$title.'
 				</h2>

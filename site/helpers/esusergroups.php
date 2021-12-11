@@ -29,7 +29,7 @@ class JHTMLESUserGroups
 				
 				$db->setQuery($query);
 				
-				$SearchResult=$db->loadObjectList();
+				$records=$db->loadObjectList();
 	
 				$valuearray=explode(',',$value);
 				
@@ -37,7 +37,7 @@ class JHTMLESUserGroups
 						{
 								
 								case 'single' :
-										$htmlresult=JHTMLESUserGroups::getSingle($SearchResult,$control_name,$valuearray);
+										$htmlresult=JHTMLESUserGroups::getSingle($records,$control_name,$valuearray);
 										
 										break;
 								
@@ -46,7 +46,7 @@ class JHTMLESUserGroups
 										
 										$htmlresult.='<SELECT name="'.$control_name.'[]" id="'.$control_name.'" MULTIPLE >';
 												
-										foreach($SearchResult as $row)
+										foreach($records as $row)
 										{
 												$htmlresult.='<option value="'.$row->id.'" '
 														.((in_array($row->id,$valuearray) and count($valuearray)>0) ? ' SELECTED ' : '')
@@ -62,7 +62,7 @@ class JHTMLESUserGroups
 
 										$htmlresult.='<table style="border:none;" id="usergroups_table_'.$control_name.'">';
 										$i=0;
-										foreach($SearchResult as $row)
+										foreach($records as $row)
 										{
 										
 												$htmlresult.='<tr><td valign="middle">'
@@ -85,7 +85,7 @@ class JHTMLESUserGroups
 										
 										$htmlresult.='<table style="border:none;">';
 										$i=0;
-										foreach($SearchResult as $row)
+										foreach($records as $row)
 										{
 												$htmlresult.='<tr><td valign="middle">'
 														.'<input type="checkbox" '
@@ -106,7 +106,7 @@ class JHTMLESUserGroups
 								
 								case 'multibox' :
 									
-										$htmlresult.=JHTMLESUserGroups::getMultibox($SearchResult,$valuearray,$selector,$control_name);
+										$htmlresult.=JHTMLESUserGroups::getMultibox($records,$valuearray,$selector,$control_name);
 										
 										break;
 								
@@ -121,11 +121,11 @@ class JHTMLESUserGroups
 				
         }
 	
-	static protected function getSingle(&$SearchResult,$control_name,$valuearray)
+	static protected function getSingle(&$records,$control_name,$valuearray)
 	{
 		$htmlresult='<SELECT name="'.$control_name.'[]" id="'.$control_name.'">';
 												
-										foreach($SearchResult as $row)
+										foreach($records as $row)
 										{
 												$htmlresult.='<option value="'.$row->id.'" '
 														.((in_array($row->id,$valuearray) and count($valuearray)>0) ? ' SELECTED ' : '')
@@ -140,7 +140,7 @@ class JHTMLESUserGroups
 	}
 	
 	
-	static protected function getMultibox(&$SearchResult,&$valuearray,$selector,$control_name)
+	static protected function getMultibox(&$records,&$valuearray,$selector,$control_name)
 	{
 		
 		
@@ -152,7 +152,7 @@ class JHTMLESUserGroups
 			var '.$control_name.'_v=new Array();
 			';
 			$i=0;
-			foreach($SearchResult as $row)
+			foreach($records as $row)
 			{
 				if(in_array($row->id,$valuearray) and count($valuearray)>0)
 				{
@@ -288,7 +288,7 @@ class JHTMLESUserGroups
 		$single_box='';
 		
 		
-		$single_box.=JHTMLESUserGroups::getSingle($SearchResult,$control_name.'_selector',$valuearray);
+		$single_box.=JHTMLESUserGroups::getSingle($records,$control_name.'_selector',$valuearray);
 		
 		$htmlresult.='<div style="padding-bottom:20px;"><div style="width:90%;" id="'.$control_name.'_box"></div>'
 		.'<div style="height:30px;">'

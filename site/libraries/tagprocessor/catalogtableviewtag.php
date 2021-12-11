@@ -25,7 +25,7 @@ class tagProcessor_CatalogTableView
     use render_xml;
 	use render_image;
 
-    public static function process(&$Model,&$pagelayout,&$SearchResult,$new_replaceitecode)
+    public static function process(&$ct,&$pagelayout,$new_replaceitecode)
     {
         $vlu='';
 
@@ -39,22 +39,22 @@ class tagProcessor_CatalogTableView
 			$pair=JoomlaBasicMisc::csv_explode(';', $options[$i], '"', true);
 			$fields=$pair[0];
 
-			if($Model->ct->Env->frmt=='csv')
+			if($ct->Env->frmt=='csv')
 			{
-				$vlu=self::get_CatalogTable_CSV($Model,$fields,$SearchResult);
+				$vlu=self::get_CatalogTable_CSV($ct,$fields);
                 $pagelayout=str_replace($fItem,$new_replaceitecode,$pagelayout);
 			}
-            elseif($Model->ct->Env->frmt=='json')
+            elseif($ct->Env->frmt=='json')
 			{
-				$vlu=self::get_CatalogTable_JSON($Model,$fields,$SearchResult);
+				$vlu=self::get_CatalogTable_JSON($ct,$fields);
                 $pagelayout=str_replace($fItem,$new_replaceitecode,$pagelayout);
 			}
-            elseif($Model->ct->Env->frmt=='xml')
+            elseif($ct->Env->frmt=='xml')
 			{
-				$vlu=self::get_CatalogTable_XML($Model,$fields,$SearchResult);
+				$vlu=self::get_CatalogTable_XML($ct,$fields);
                 $pagelayout=str_replace($fItem,$new_replaceitecode,$pagelayout);
 			}
-			elseif($Model->ct->Env->frmt=='xlsx')
+			elseif($ct->Env->frmt=='xlsx')
 			{
 				self::get_CatalogTable_XLSX($fields);
 			}
@@ -65,7 +65,7 @@ class tagProcessor_CatalogTableView
 				else
 					$class='';
 
-				$vlu=self::get_CatalogTable_HTML($Model,$fields,$class,$SearchResult);
+				$vlu=self::get_CatalogTable_HTML($ct,$fields,$class);
 				$pagelayout=str_replace($fItem,$new_replaceitecode,$pagelayout);
 			}
 

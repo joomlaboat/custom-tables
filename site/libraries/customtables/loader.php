@@ -2,8 +2,18 @@
 
 defined('_JEXEC') or die('Restricted access');
 
+use \Joomla\CMS\Factory;
+
 function CTLoader($inclide_utilities = false, $include_html = false)
 {
+	//-- TWIG
+	
+	$twig_file = JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'
+			. DIRECTORY_SEPARATOR. 'twig' . DIRECTORY_SEPARATOR . 'vendor'. DIRECTORY_SEPARATOR .'autoload.php';
+	
+	require_once ($twig_file);
+	
+	
 	$path = dirname(__FILE__) . DIRECTORY_SEPARATOR;
 	
 	$path_integrity = $path . 'integrity' . DIRECTORY_SEPARATOR;
@@ -78,6 +88,7 @@ function CTLoader($inclide_utilities = false, $include_html = false)
 	$path_datatypes = $path . 'html' . DIRECTORY_SEPARATOR;
 	require_once($path_datatypes.'toolbar.php');
 	require_once($path_datatypes.'forms.php');
+	require_once($path_datatypes.'inputbox.php');
 	
 	$path_datatypes = $path . 'tables' . DIRECTORY_SEPARATOR;
 	require_once($path_datatypes.'tables.php');
@@ -88,8 +99,14 @@ function CTLoader($inclide_utilities = false, $include_html = false)
 	$path_datatypes = $path . 'languages' . DIRECTORY_SEPARATOR;
 	require_once($path_datatypes.'languages.php');
 	
+	$path_datatypes = $path . 'filter' . DIRECTORY_SEPARATOR;
+	require_once($path_datatypes.'filtering.php');
+	//require_once($path_datatypes.'keywords.php');
+	
 	//$path_datatypes = $path . DIRECTORY_SEPARATOR . 'logs' . DIRECTORY_SEPARATOR;
 	//require_once($path_datatypes.'Logs.php');
+	
+	
 	
 
 }

@@ -25,26 +25,47 @@ class Environment
 {
 	var $version;
 	var $current_url;
+	var $current_sef_url;
+	
 	var $encoded_current_url;
 	var $userid;
 	var $user;
 	var $isUserAdministrator;
-	var $print;
-	var $clean;
-	var $frmt;
-	var $WebsiteRoot;
+	var $print; // ok
+	var $clean; // ok
+	var $frmt; // ok
+	var $WebsiteRoot; // ok
 	var $advancedtagprocessor;
 	var $jinput;
-	var $isMobile;
-	
+	var $isMobile; // ok
+	var $Itemid; // ok
+	var $field_prefix; // ok
+	var $field_input_prefix; // ok
+	var $menu_params; // ok, other menu marameters are part of modl. class, also you can find it in cintroller files
+
 	function __construct()
 	{
+		$this->field_prefix = 'es_';
+		$this->field_input_prefix = 'com' . $this->field_prefix;
+		
 		$version_object = new Version;
 		$this->version = (int)$version_object->getShortVersion();
 		
 		$this->jinput=Factory::getApplication()->input;
 
 		$this->current_url=JoomlaBasicMisc::curPageURL();
+		
+		if(strpos($this->current_url,'option=com_customtables')===false)
+		{
+			$pair=explode('?',$this->current_url);
+			$this->current_sef_url=$pair[0].'/';
+			if(isset($pair[1]))
+				$this->current_sef_url='?'.$pair[1];
+		}
+		else 
+			$this->current_sef_url = $this->current_url;
+		
+		
 		$this->encoded_current_url=base64_encode($this->current_url);
 
 		$this->user = Factory::getUser();
@@ -82,6 +103,10 @@ class Environment
 		}
 		
 		$this->isMobile = $this->check_user_agent('mobile');
+		
+		$this->Itemid = $this->jinput->getInt('Itemid',0);
+		
+		$this->menu_params = null;
 	}
 	
 	

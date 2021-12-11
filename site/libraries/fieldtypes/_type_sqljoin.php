@@ -11,7 +11,7 @@ defined('_JEXEC') or die('Restricted access');
 
 class CT_FieldTypeTag_sqljoin
 {
-    public static function resolveSQLJoinType(&$Model,$rowValue, $TypeParams, $option_list)
+    public static function resolveSQLJoinType(&$ct,$rowValue, $TypeParams, $option_list)
 	{
         $typeparams=JoomlaBasicMisc::csv_explode(',',$TypeParams,'"',false);
 
@@ -38,7 +38,7 @@ class CT_FieldTypeTag_sqljoin
 		//this is important because it has been selected some how.
 		$esr_filter='';
 
-		return JHTML::_('ESSQLJoinView.render',$rowValue,$esr_table,$esr_field,$esr_filter,$Model->ct->Languages->Postfix,'');
+		return JHTML::_('ESSQLJoinView.render',$rowValue,$esr_table,$esr_field,$esr_filter,$ct->Languages->Postfix,'');
 
 	}
 }

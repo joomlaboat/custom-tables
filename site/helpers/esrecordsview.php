@@ -11,6 +11,7 @@ defined('_JEXEC') or die( 'Restricted access' );
 
 use CustomTables\CT;
 use CustomTables\Layouts;
+use CustomTables\LinkJoinFilters;
 
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'models'.DIRECTORY_SEPARATOR.'catalog.php');
 
@@ -47,7 +48,7 @@ class JHTMLESRecordsView
 				$model->load($_params, true);
 				$model->showpagination=false;
 
-				$SearchResult=$model->getSearchResult($value_where_filter);
+				$model->getSearchResult($value_where_filter);
 
 				$selectorpair=explode(':',$selector);
 
@@ -60,12 +61,10 @@ class JHTMLESRecordsView
 								case 'single' :
 
 										$getGalleryRows=array();
-										foreach($SearchResult as $row)
+										foreach($model->ct->Records as $row)
 										{
-
-												if(in_array($row['listing_id'],$valuearray) )
-														$htmlresult.=JoomlaBasicMisc::processValue($field,$model,$row,$langpostfix);
-
+											if(in_array($row['listing_id'],$valuearray) )
+												$htmlresult.=JoomlaBasicMisc::processValue($field,$model->ct,$row,$langpostfix);
 										}
 
 										break;
@@ -73,10 +72,10 @@ class JHTMLESRecordsView
 								case 'multi' :
 										$vArray=array();
 
-										foreach($SearchResult as $row)
+										foreach($model->ct->Records as $row)
 										{
 												if(in_array($row['listing_id'],$valuearray) )
-														$vArray[]=JoomlaBasicMisc::processValue($field,$model,$row,$langpostfix);
+														$vArray[]=JoomlaBasicMisc::processValue($field,$model->ct,$row,$langpostfix);
 										}
 										$htmlresult.=implode(',',$vArray);
 
@@ -84,10 +83,10 @@ class JHTMLESRecordsView
 
 								case 'radio' :
 
-										foreach($SearchResult as $row)
+										foreach($model->ct->Records as $row)
 										{
 												if(in_array($row['listing_id'],$valuearray) )
-														$htmlresult.=JoomlaBasicMisc::processValue($field,$model,$row,$langpostfix);
+														$htmlresult.=JoomlaBasicMisc::processValue($field,$model->ct,$row,$langpostfix);
 										}
 
 
@@ -98,10 +97,10 @@ class JHTMLESRecordsView
 
 										$vArray=array();
 
-										foreach($SearchResult as $row)
+										foreach($model->ct->Records as $row)
 										{
 												if(in_array($row['listing_id'],$valuearray) )
-														$vArray[]=JoomlaBasicMisc::processValue($field,$model,$row,$langpostfix);
+														$vArray[]=JoomlaBasicMisc::processValue($field,$model->ct,$row,$langpostfix);
 										}
 										$htmlresult.=implode(',',$vArray);
 										break;
@@ -109,10 +108,10 @@ class JHTMLESRecordsView
 								case 'multibox' :
 										$vArray=array();
 
-										foreach($SearchResult as $row)
+										foreach($model->ct->Records as $row)
 										{
 												if(in_array($row['listing_id'],$valuearray) )
-														$vArray[]=JoomlaBasicMisc::processValue($field,$model,$row,$langpostfix);
+														$vArray[]=JoomlaBasicMisc::processValue($field,$model->ct,$row,$langpostfix);
 										}
 										$htmlresult.=implode(',',$vArray);
 										break;
@@ -154,7 +153,7 @@ class JHTMLESRecordsView
 						if($layoutcode=='')
 								return '<p>layout "'.$layout_pair[0].'" not found or is empty.</p>';
 
-						$model->LayoutProc->layout=$layoutcode;
+						$model->ct->LayoutProc->layout=$layoutcode;
 
 
 						$valuearray=explode(',',$value);
@@ -171,7 +170,7 @@ class JHTMLESRecordsView
 						$tr=0;
 
 						$CleanSearchResult=array();
-						foreach($SearchResult as $row)
+						foreach($model->ct->Records as $row)
 						{
 								if(in_array($row['listing_id'],$valuearray))
 								{
@@ -194,9 +193,9 @@ class JHTMLESRecordsView
 								$row['_number'] = $number;
 
 								if($isTableLess)
-									$htmlresult.=$model->LayoutProc->fillLayout($row);
+									$htmlresult.=$model->ct->LayoutProc->fillLayout($row);
 								else
-									$htmlresult.='<td valign="middle" style="border:none;">'.$model->LayoutProc->fillLayout($row).'</td>';
+									$htmlresult.='<td valign="middle" style="border:none;">'.$model->ct->LayoutProc->fillLayout($row).'</td>';
 
 								$tr++;
 								if(!$isTableLess and $tr==$columns)

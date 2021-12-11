@@ -12,27 +12,25 @@ defined('_JEXEC') or die('Restricted access');
 use CustomTables\TwigProcessor;
 
 $document = JFactory::getDocument();
+$document->addScript(JURI::root(true).'/components/com_customtables/js/base64.js');
 $document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customtables/css/style.css" type="text/css" rel="stylesheet" >');
 
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tagprocessor'.DIRECTORY_SEPARATOR.'itemtags.php');
 
-	$results = $this->Model->LayoutProc->fillLayout($this->row);
+	$results = $this->ct->LayoutProc->fillLayout($this->row);
 	
-	if($this->Model->ct->Env->advancedtagprocessor)
+	if($this->ct->Env->advancedtagprocessor)
 	{
-		$twig = new TwigProcessor($this->Model->ct, $results);
+		$twig = new TwigProcessor($this->ct, $results);
 		$results = $twig->process($this->row);
 	}
 	
-
-	if($this->params->get( 'allowcontentplugins' ))
+	if($this->ct->Env->menu_params->get( 'allowcontentplugins' ))
 		LayoutProcessor::applyContentPlugins($results);
 
-	$mydoc = JFactory::getDocument();
-
-        if($this->Model->ct->Env->clean)
+        if($this->ct->Env->clean)
         {
-			if($this->Model->ct->Env->frmt=='csv')
+			if($this->ct->Env->frmt=='csv')
 			{
 				$filename = JoomlaBasicMisc::makeNewFileName($mydoc->getTitle(),'csv');
 
@@ -49,7 +47,7 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'co
 				die;//clean exit
 
 			}
-			elseif($this->Model->ct->Env->frmt=='xml')
+			elseif($this->ct->Env->frmt=='xml')
 			{
 				$filename = JoomlaBasicMisc::makeNewFileName($mydoc->getTitle(),'xml');
 
@@ -63,12 +61,12 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'co
 			}
 
 	        echo $results;
-		die;//clean exit
+			die;//clean exit
         }
 
-if ($this->Model->params->get( 'show_page_heading', 1 ) ) : ?>
-<div class="page-header<?php echo $this->escape($this->Model->params->get('pageclass_sfx')); ?>">
-	<h2 itemprop="headline"><?php echo JoomlaBasicMisc::JTextExtended($mydoc->getTitle()); ?></h2>
+if ($this->ct->Env->menu_params->get( 'show_page_heading', 1 ) ) : ?>
+<div class="page-header<?php echo $this->escape($this->ct->Env->menu_params->get('pageclass_sfx')); ?>">
+	<h2 itemprop="headline"><?php echo JoomlaBasicMisc::JTextExtended($document->getTitle()); ?></h2>
 </div>
 <?php endif;
 

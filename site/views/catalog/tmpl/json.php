@@ -19,21 +19,20 @@ $itemlayout=str_replace("\n",'',$this->itemlayout);
 $itemlayout=str_replace("\r",'',$itemlayout);
 $itemlayout=str_replace("\t",'',$itemlayout);
 
-$catalogtablecontent=tagProcessor_CatalogTableView::process($this->Model,$this->pagelayout,$this->SearchResult,$this->catalogtablecode);
+$catalogtablecontent=tagProcessor_CatalogTableView::process($this->ct,$this->pagelayout,$this->catalogtablecode);
 
 if($catalogtablecontent=='')
 {
-	$this->Model->LayoutProc->layout=$itemlayout;
-	$catalogtablecontent=tagProcessor_Catalog::process($this->Model,$this->pagelayout,$this->SearchResult,$this->catalogtablecode);
+	$this->ct->LayoutProc->layout=$itemlayout;
+	$catalogtablecontent=tagProcessor_Catalog::process($this->ct,$this->pagelayout,$this->catalogtablecode);
 	
 	$catalogtablecontent=str_replace("\n",'',$catalogtablecontent);
 	$catalogtablecontent=str_replace("\r",'',$catalogtablecontent);
 	$catalogtablecontent=str_replace("\t",'',$catalogtablecontent);
 }
 
-$this->Model->LayoutProc->layout=$pagelayout;
-$pagelayout=$this->Model->LayoutProc->fillLayout();
-
+$this->ct->LayoutProc->layout=$pagelayout;
+$pagelayout=$this->ct->LayoutProc->fillLayout();
 
 $pagelayout=str_replace('&&&&quote&&&&','"',$pagelayout); // search boxes may return HTMl elemnts that contain placeholders with quotes like this: &&&&quote&&&&
 $pagelayout=str_replace($this->catalogtablecode,$catalogtablecontent,$this->pagelayout);
@@ -42,7 +41,7 @@ LayoutProcessor::applyContentPlugins($this->pagelayout);
 
 if (ob_get_contents()) ob_end_clean();
 
-$filename = JoomlaBasicMisc::makeNewFileName($this->Model->params->get('page_title'),'json');
+$filename = JoomlaBasicMisc::makeNewFileName($this->ct->Env->menu_params->get('page_title'),'json');
 
 header('Content-Disposition: attachment; filename="'.$filename.'"');
 header('Content-Type: application/json; charset=utf-8');

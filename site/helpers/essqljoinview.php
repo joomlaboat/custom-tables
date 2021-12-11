@@ -11,6 +11,7 @@ defined('_JEXEC') or die( 'Restricted access' );
 
 use CustomTables\CT;
 use CustomTables\Layouts;
+use CustomTables\LinkJoinFilters;
 
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'models'.DIRECTORY_SEPARATOR.'catalog.php');
 
@@ -56,16 +57,16 @@ class JHTMLESSQLJoinView
 		$db= JFactory::getDBO();
 		$db->setQuery($query);
 
-		$SearchResult=$db->loadAssocList();
+		$records=$db->loadAssocList();
 
 		if(strpos($field,':')===false)
 		{
 			//without layout
 			$getGalleryRows=array();
-			foreach($SearchResult as $row)
+			foreach($records as $row)
 			{
 				if($row['listing_id']==$value)
-					$htmlresult.=JoomlaBasicMisc::processValue($field,$model,$row,$langpostfix);
+					$htmlresult.=JoomlaBasicMisc::processValue($field,$model->ct,$row,$langpostfix);
 			}
 		}
 		else
@@ -105,7 +106,7 @@ class JHTMLESSQLJoinView
 					return '<p>layout "'.$layout_pair[0].'" not found or is empty.</p>';
 			}
 
-			$model->LayoutProc->layout=$layoutcode;
+			$model->ct->LayoutProc->layout=$layoutcode;
 
 			$valuearray=explode(',',$value);
 
@@ -121,7 +122,7 @@ class JHTMLESSQLJoinView
 			$tr=0;
 
 			$CleanSearchResult=array();
-			foreach($SearchResult as $row)
+			foreach($records as $row)
 			{
 				if(in_array($row['listing_id'],$valuearray))
 					$CleanSearchResult[]=$row;
@@ -141,9 +142,9 @@ class JHTMLESSQLJoinView
 				$row['_number'] = $number;
 
 				if($isTableLess)
-					$htmlresult.=$model->LayoutProc->fillLayout($row);
+					$htmlresult.=$model->ct->LayoutProc->fillLayout($row);
 				else
-					$htmlresult.='<td valign="middle" style="border:none;">'.$model->LayoutProc->fillLayout($row).'</td>';
+					$htmlresult.='<td valign="middle" style="border:none;">'.$model->ct->LayoutProc->fillLayout($row).'</td>';
 
 				$tr++;
 				if(!$isTableLess and $tr==$columns)

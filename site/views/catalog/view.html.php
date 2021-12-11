@@ -16,53 +16,56 @@ class CustomTablesViewCatalog extends JViewLegacy
 	var $Model;
 	var $imagegalleries;
 	var $fileboxes;
-
+	var $ct;
+	
 	function display($tpl = null)
 	{
 		$this->Model = $this->getModel();
+		
+		$menu_params=null;
+		$this->Model->load($menu_params,false,JFactory::getApplication()->input->getCMD('layout',''));
+		
+		$this->Model->getSearchResult();
+		
+		$this->ct = $this->Model->ct;
 
-		$params=null;
-		$this->Model->load($params,false,JFactory::getApplication()->input->getCMD('layout',''));
-
-		$this->SearchResult = $this->Model->getSearchResult();
-
-		if(!isset($this->Model->ct->Table->fields))
-				return false;
+		if(!isset($this->ct->Table->fields))
+			return false;
 
 		//Save view log
 		$allowedfields=$this->SaveViewLog_CheckIfNeeded();
-		if(count($allowedfields)>0)
+		if(count($allowedfields)>0 and $this->ct->Records !== null)
 		{
-			foreach($this->SearchResult as $rec)
+			foreach($this->ct->Records as $rec)
 				$this->SaveViewLogForRecord($rec,$allowedfields);
 		}
 		
 		$this->catalogtablecode=JoomlaBasicMisc::generateRandomString();//this is temporary replace place holder. to not parse content result again
 		
-		$Layouts = new Layouts($this->Model->ct);
+		$Layouts = new Layouts($this->ct);
 
 		$this->pagelayout='';
-		$layout_catalog_name=$this->Model->params->get( 'escataloglayout' );
-		if($layout_catalog_name!='')
+		$layout_catalog_name = $this->ct->Env->menu_params->get( 'escataloglayout' );
+		if($layout_catalog_name != '')
 		{
 			$this->pagelayout = $Layouts->getLayout($layout_catalog_name,false);//It is safier to process layout after rendering the table
 		
 			if($Layouts->layouttype==8)
-				$this->Model->ct->Env->frmt='xml';
+				$this->ct->Env->frmt='xml';
 			elseif($Layouts->layouttype==9)
-				$this->Model->ct->Env->frmt='csv';
+				$this->ct->Env->frmt='csv';
 			elseif($Layouts->layouttype==10)
-				$this->Model->ct->Env->frmt='json';
+				$this->ct->Env->frmt='json';
 		}
 		else
 			$this->pagelayout='{catalog:,notable}';
 		
 		$this->itemlayout='';
-		$layout_item_name=$this->Model->params->get('esitemlayout');
+		$layout_item_name=$this->ct->Env->menu_params->get('esitemlayout');
 		if($layout_item_name!='')
 			$this->itemlayout = $Layouts->getLayout($layout_item_name);
 		
-		if($this->Model->ct->Env->frmt == 'csv')
+		if($this->ct->Env->frmt == 'csv')
 		{
 			if(function_exists('mb_convert_encoding'))
 			{
@@ -81,7 +84,7 @@ class CustomTablesViewCatalog extends JViewLegacy
 				JFactory::getApplication()->enqueueMessage($msg, 'error');
 			}
 		}
-		elseif($this->Model->ct->Env->frmt == 'json')
+		elseif($this->ct->Env->frmt == 'json')
 			require_once('tmpl'.DIRECTORY_SEPARATOR.'json.php');
 		else
 			parent::display($tpl);
@@ -91,7 +94,7 @@ class CustomTablesViewCatalog extends JViewLegacy
 	{
 		$updatefields=array();
 
-		foreach($this->Model->ct->Table->fields as $mFld)
+		foreach($this->ct->Table->fields as $mFld)
 		{
 				if(in_array($mFld['fieldname'],$allowedfields))
 				{
@@ -99,20 +102,18 @@ class CustomTablesViewCatalog extends JViewLegacy
 							$updatefields[]=$mFld['realfieldname'].'="'.date('Y-m-d H:i:s').'"';
 
 						if($mFld['type']=='viewcount')
-							$updatefields[]=$mFld['realfieldname'].'="'.((int)($rec['es_'.$mFld['fieldname']])+1).'"';
+							$updatefields[]=$mFld['realfieldname'].'="'.((int)($rec[$this->ct->Env->field_prefix.$mFld['fieldname']])+1).'"';
 				}
 		}
 
 		if(count($updatefields)>0)
 		{
 			$db = JFactory::getDBO();
-			$query= 'UPDATE '.$this->Model->ct->Table->realtablename.' SET '.implode(', ', $updatefields).' WHERE id='.$rec['listing_id'];
+			$query= 'UPDATE '.$this->ct->Table->realtablename.' SET '.implode(', ', $updatefields).' WHERE id='.$rec['listing_id'];
 			$db->setQuery($query);
 		    $db->execute();
 		}
-
 	}
-
 
 	function SaveViewLog_CheckIfNeeded()
 	{
@@ -121,7 +122,7 @@ class CustomTablesViewCatalog extends JViewLegacy
 
 		$allowedfields=array();
 
-		foreach($this->Model->ct->Table->fields as $mFld)
+		foreach($this->ct->Table->fields as $mFld)
 		{
 				if($mFld['type']=='lastviewtime' or $mFld['type']=='viewcount' or $mFld['type']=='phponview')
 				{

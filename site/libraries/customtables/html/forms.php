@@ -26,7 +26,7 @@ class Forms
 		$this->ct = $ct;
 	}
 	
-	function renderFieldLabel(&$esfield, $fieldNamePrefix = 'comes_')
+	function renderFieldLabel(&$esfield)
 	{
 		if($esfield['type']=='dummy')
         {
@@ -56,7 +56,7 @@ class Forms
 			
 			$isrequired=(bool)$esfield['isrequired'];
 
-			$field_label='<label id="'.$fieldNamePrefix.$esfield['fieldname'].'-lbl" for="'.$fieldNamePrefix.$esfield['fieldname'].'" ';
+			$field_label='<label id="'.$this->ct->Env->field_input_prefix.$esfield['fieldname'].'-lbl" for="'.$this->ct->Env->field_input_prefix.$esfield['fieldname'].'" ';
 			$class=($description!='' ? 'hasPopover' : '').''.($isrequired ? ' required' : '');
 
 			if($class!='')

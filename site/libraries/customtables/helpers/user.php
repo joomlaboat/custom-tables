@@ -37,7 +37,6 @@ class CTUser
 		
 		if($ct->Table->useridrealfieldname==null or $ct->Table->useridrealfieldname=='')
 		{
-			//$Itemid=$ct->Env->jinput->getInt('Itemid', 0);
 			Factory::getApplication()->enqueueMessage('User ID field not found.', 'error');
 			return;
 		}
@@ -187,7 +186,7 @@ class CTUser
 
 	}
 
-	static protected function UpdateUserField($realtablename, $realidfieldname, $useridfieldname,$existing_user_id,$listing_id)
+	static public function UpdateUserField($realtablename, $realidfieldname, $useridfieldname,$existing_user_id,$listing_id)
     {
 		$db = Factory::getDBO();
 		
@@ -294,11 +293,8 @@ class CTUser
 		$useractivation=0;//alreadey activated
 
 		$config = Factory::getConfig();
-		$params = ComponentHelper::getParams('com_users');
 
 		// Initialise the table with JUser.
-		$user = Factory::getUser();
-		
 		$user = Factory::getUser(0);
 		
 		$data = array();

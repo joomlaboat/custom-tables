@@ -11,7 +11,7 @@ defined('_JEXEC') or die('Restricted access');
 
 class tagProcessor_Shopping
 {
-    public static function getShoppingCartLink(&$Model,&$htmlresult,&$row)
+    public static function getShoppingCartLink(&$ct,&$htmlresult,&$row)
 	{
 		$app = JFactory::getApplication();
 		
@@ -37,7 +37,7 @@ class tagProcessor_Shopping
 			{
 				case 'count' :
 
-					$cookieValue = $app->input->cookie->getVar($cart_prefix.$Model->ct->Table->tablename);
+					$cookieValue = $app->input->cookie->getVar($cart_prefix.$ct->Table->tablename);
 					
 					$vlu='0';
 					if (isset($cookieValue))
@@ -68,7 +68,7 @@ class tagProcessor_Shopping
 
 				case 'form_addtocart' :
 
-					$cookieValue = $app->input->cookie->getVar($cart_prefix.$Model->ct->Table->tablename);
+					$cookieValue = $app->input->cookie->getVar($cart_prefix.$ct->Table->tablename);
 					if (isset($cookieValue))
 					{
 						$items=explode(';',$cookieValue);
@@ -115,7 +115,7 @@ class tagProcessor_Shopping
 
 				case 'setitemcount' :
 
-					$cookieValue = $app->input->cookie->getVar($cart_prefix.$Model->ct->Table->tablename);
+					$cookieValue = $app->input->cookie->getVar($cart_prefix.$ct->Table->tablename);
 					if (isset($cookieValue))
 					{
 						$items=explode(';',$cookieValue);

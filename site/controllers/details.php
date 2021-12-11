@@ -25,8 +25,8 @@ switch ($task)
 		else
 		{
 			$app = JFactory::getApplication();
-			$params = $app->getParams();
-			$model->load($params);
+			$menu_params = $app->getParams();
+			$model->load($menu_params);
 			$count = $model->setPublishStatus(1);
 			$link = JoomlaBasicMisc::curPageURL();
 			$link = JoomlaBasicMisc::deleteURLQueryOption($link, 'task');
@@ -52,8 +52,8 @@ switch ($task)
 		else
 		{
 			$app = JFactory::getApplication();
-			$params = $app->getParams();
-			$model->load($params);
+			$menu_params = $app->getParams();
+			$model->load($menu_params);
 			$count = $model->setPublishStatus(0);
 			$link = JoomlaBasicMisc::curPageURL();
 			$link = JoomlaBasicMisc::deleteURLQueryOption($link, 'task');
@@ -71,7 +71,7 @@ switch ($task)
 		if ($task == 'cart_addtocart' or $task == 'cart_form_addtocart' or $task == 'cart_setitemcount' or $task == 'cart_deleteitem' or $task == 'cart_emptycart')
 		{
 			$model = $this->getModel('catalog');
-			$model->load($params, false);
+			$model->load($menu_params, false);
 			if ($model->params->get('cart_returnto'))
 			{
 				$link = $model->params->get('cart_returnto');

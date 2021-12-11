@@ -13,10 +13,12 @@ class CustomTablesViewLog extends JViewLegacy
 {
 	var $limit;
 	var $limitstart;
-	var $TotalRows;
+	var $record_count;
 
 	function display($tpl = null)
 	{
+		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'models'.DIRECTORY_SEPARATOR.'details.php');
+		
 		$user = JFactory::getUser();
 		$this->userid=$user->id;
 
@@ -111,7 +113,7 @@ class CustomTablesViewLog extends JViewLegacy
 
 		$query='SELECT '.implode(',',$selects).' FROM #__customtables_log '.(count($where)>0 ? ' WHERE '.implode(' AND ',$where) : '').' ORDER BY datetime DESC';
 
-		$this->TotalRows=1000;
+		$this->record_count = 1000;
 
 		$the_limit=$this->limit;
 		if($the_limit>500)
@@ -120,7 +122,7 @@ class CustomTablesViewLog extends JViewLegacy
 		if($the_limit==0)
 			$the_limit=500;
 
-		if($this->TotalRows<$this->limitstart or $this->TotalRows<$the_limit)
+		if($this->record_count < $this->limitstart or $this->record_count < $the_limit)
 			$this->limitstart=0;
 
 		$db->setQuery($query, $this->limitstart, $the_limit);
@@ -128,5 +130,91 @@ class CustomTablesViewLog extends JViewLegacy
 		$rows=$db->loadAssocList();
 
 		return $rows;
+	}
+	
+	function renderLogLine($rec)
+	{
+		$actions=['New','Edit','Publish','Unpublish','Delete','Image Uploaded','Image Deleted','File Uploaded','File Deleted','Refreshed'];
+		$action_images=['new.png','edit.png','publish.png','unpublish.png','delete.png','photomanager.png','photomanager.png','filemanager.png','filemanager.png','refresh.png'];
+		$action_image_path='/components/com_customtables/images/';
+
+		$a=(int)$rec['action']-1;
+		$alt=$actions[$a];
+		
+		$result = '';
+
+		$result.= '<tr>'
+			.'<td>';
+
+		if($a==1 or $a==2)
+		{
+			$link='/index.php?option=com_customtables&view=edititem&listing_id='.$rec['listingid'].'&Itemid='.$rec['Itemid'];
+			$result.= '<a href="'.$link.'" target="_blank"><img src="'.$action_image_path.$action_images[$a].'" alt='.$alt.' title='.$alt.' width="16" height="16" /></a>';
+		}
+		else
+			$result.= '<img src="'.$action_image_path.$action_images[$a].'" alt='.$alt.' title='.$alt.' width="16" height="16" />';
+
+		$result.= '</td>'
+		.'<td>'.$rec['UserName'].'</td>';
+
+		$link='/index.php?option=com_customtables&view=details&listing_id='.$rec['listingid'].'&Itemid='.$rec['Itemid'];
+
+		$result.= '<td><a href="'.$link.'" target="_blank">'.$rec['datetime'].'</a></td>'
+
+			.'<td>'.$rec['TableName'].'</td>'
+			.'<td>'.$this->getRecordValue($rec['listingid'],$rec['Itemid'],$rec['FieldName']).'<br/>(id: '.$rec['listingid'].')</td>'
+			.'<td>'.$alt.'</td>'
+		.'</tr>';
+
+		return $result;
+	}
+
+	function getRecordValue($listing_id,$Itemid,$FieldName)
+	{
+		if(!isset($FieldName) or $FieldName=='')
+			return "Table/Field not found.";
+
+		$app= JFactory::getApplication();
+		$jinput = JFactory::getApplication()->input;
+		$jinput->set('listing_id', $listing_id);
+		$jinput->set('Itemid', $Itemid);
+
+		$menu = $app->getMenu();
+		$menuparams = $menu->getParams($Itemid);
+
+		$model = new CustomTablesModelDetails;
+		$model->load($menuparams,$listing_id,true);
+
+		if($model->ct->Table->tablename=='')
+			return "Table ".$model->ct->Table->tablename."not found.";
+
+		$model->ct->LayoutProc->layout='['.$FieldName.']';
+
+		$tablename=$model->ct->Table->tablename;
+
+		$row=$this->getRecord($tablename,$listing_id);
+
+		return $model->ct->LayoutProc->fillLayout($row);
+	}
+
+	function getRecord($tablename,$id)
+	{
+		if($tablename!='')
+		{
+			$db = JFactory::getDBO();
+			$query='SELECT *, id  as  listing_id, published AS listing_published  FROM #__customtables_table_'.$tablename.' WHERE id='.$id.' LIMIT 1';
+
+			$db->setQuery($query);
+
+			$records=$db->loadAssocList();
+
+			if(count($records)==0)
+				return array();
+
+		return $records[0];
+
+		}
+		else
+			return array();//"table not found;"
 	}
 }

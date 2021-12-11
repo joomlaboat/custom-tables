@@ -17,16 +17,15 @@ use CustomTables\CTUser;
 
 class tagProcessor_General
 {
-    public static function process(&$Model,&$pagelayout,&$row)
+    public static function process(&$ct,&$pagelayout,&$row)
     {
-		$ct = $Model->ct;
         tagProcessor_General::TableInfo($ct,$pagelayout);
         $pagelayout=str_replace('{today}',date( 'Y-m-d', time() ),$pagelayout);
 
         tagProcessor_General::getDate($pagelayout);
-        tagProcessor_General::getUser($Model,$pagelayout,$row);
+        tagProcessor_General::getUser($ct,$pagelayout,$row);
         tagProcessor_General::userid($pagelayout);
-        tagProcessor_General::Itemid($Model->Itemid,$pagelayout);
+        tagProcessor_General::Itemid($ct->Env->Itemid,$pagelayout);
         tagProcessor_General::CurrentURL($ct,$pagelayout);
         tagProcessor_General::ReturnTo($ct,$pagelayout);
         tagProcessor_General::WebsiteRoot($pagelayout);
@@ -249,7 +248,7 @@ class tagProcessor_General
 		}
 	}
 
-    protected static function getUser(&$Model,&$pagelayout,&$row)
+    protected static function getUser(&$ct,&$pagelayout,&$row)
 	{
 		$options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('user',$options,$pagelayout,'{}');
@@ -263,10 +262,10 @@ class tagProcessor_General
             {
 				$id_value=$opts[1];
 
-                tagProcessor_Value::processValues($Model,$row,$id_value,'[]');
-                tagProcessor_Item::process(false,$Model,$row,$id_value,'');
-                tagProcessor_General::process($Model,$id_value,$row);
-                tagProcessor_Page::process($Model,$id_value);
+                tagProcessor_Value::processValues($ct,$row,$id_value,'[]');
+                tagProcessor_Item::process($ct,$row,$id_value,'');
+                tagProcessor_General::process($ct,$id_value,$row);
+                tagProcessor_Page::process($ct,$id_value);
                 $id=(int)$id_value;
             }
 			else

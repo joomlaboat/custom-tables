@@ -128,7 +128,7 @@ class Ordering
 		
 	}
 	
-	function parseOrderByParam($blockExternalVars,&$params)
+	function parseOrderByParam($blockExternalVars,&$menu_params)
 	{
 		//get sort field (and direction) example "price desc"
 		$jinput = Factory::getApplication()->input;
@@ -139,14 +139,14 @@ class Ordering
 		if($blockExternalVars)
 		{
 			//module or plugin
-			if($params->get( 'sortby' )!='')
-				$ordering_param_string=$params->get( 'sortby' );
+			if($menu_params->get( 'sortby' )!='')
+				$ordering_param_string=$menu_params->get( 'sortby' );
 		}
 		else
 		{
-			if($params->get( 'forcesortby' )!='')
+			if($menu_params->get( 'forcesortby' )!='')
 			{
-				$ordering_param_string=$params->get( 'forcesortby' );
+				$ordering_param_string=$menu_params->get( 'forcesortby' );
 			}
 			elseif($jinput->get('esordering','','CMD'))
 			{
@@ -160,8 +160,8 @@ class Ordering
 
 				if($ordering_param_string=='')
 				{
-					if($params->get( 'sortby' )!='')
-						$ordering_param_string=$params->get( 'sortby' );
+					if($menu_params->get( 'sortby' )!='')
+						$ordering_param_string=$menu_params->get( 'sortby' );
 				}
 			}
 		}

@@ -20,27 +20,15 @@ jimport('joomla.application.component.model');
 JTable::addIncludePath(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'tables');
 
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'layout.php');
-require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'filtering.php');
 
 class CustomTablesModelDetails extends JModelLegacy
 {
 	var $ct;
 
-	var $TotalRows=0;
-
-	var $LayoutProc;
-
-	var $imagefolder;
-	var $imagefolderweb;
-	var $imagegalleryprefix;
-
 	var $storby;
 	var $showpublished;
 	var $filter;
-	var $redirectto;
-	var $ShowDatailsLink;
 
-	var $Itemid;
 	var $params;
 
 	function __construct()
@@ -54,17 +42,16 @@ class CustomTablesModelDetails extends JModelLegacy
 		if(method_exists(JFactory::getApplication(),"getParams"))
 		{
 			$params=JFactory::getApplication()->getParams();
+			$this->ct->Env->menu_params = $params;
 		
 			if($params->get( 'clean' )==1)
 				$this->ct->Env->clean=1;
 
-			if($jinput->getInt('listing_id',0) and $jinput->getInt('listing_id',0)!=0)
-				$id= $jinput->getInt('listing_id', 0);
+			if($this->ct->Env->jinput->getInt('listing_id',0) and $jinput->getInt('listing_id',0)!=0)
+				$id= $this->ct->Env->jinput->getInt('listing_id', 0);
 			else
 				$id=(int)$params->get( 'listingid' );
 
-			$this->Itemid=$jinput->getInt('Itemid',0);
-	
 			$this->load($params,$id);
 		}
 	}
@@ -77,17 +64,11 @@ class CustomTablesModelDetails extends JModelLegacy
 	function load($params,$id,$params_only=false,$custom_where='')
 	{
 		$this->params=$params;
-
-		$jinput=JFactory::getApplication()->input;
-
-		$this->imagefolderweb='images/esimages';
-		$this->imagefolder=JPATH_SITE.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'esimages';
-		$this->imagegalleryprefix='g';
-		
+		$this->ct->Env->menu_params = $this->params;
 
 		//sort by field
-		if(!$params_only and $jinput->getCmd('sortby'))
-			$this->sortby=strtolower($jinput->getCmd('sortby'));
+		if(!$params_only and $this->ct->Env->jinput->getCmd('sortby'))
+			$this->sortby=strtolower($this->ct->Env->jinput->getCmd('sortby'));
 		else
 			$this->sortby=strtolower($this->params->get( 'sortby' ));
 
@@ -100,10 +81,10 @@ class CustomTablesModelDetails extends JModelLegacy
 		}
 		else
 		{
-			$this->alias=JoomlaBasicMisc::slugify($jinput->getString('alias'));
+			$this->alias=JoomlaBasicMisc::slugify($this->ct->Env->jinput->getString('alias'));
 
-			if(!$params_only and $jinput->getString('filter',''))
-				$this->filter=$jinput->getString('filter','');
+			if(!$params_only and $this->ct->Env->jinput->getString('filter',''))
+				$this->filter=$this->ct->Env->jinput->getString('filter','');
 			else
 				$this->filter=$this->params->get( 'filter' );
 		}
@@ -131,19 +112,17 @@ class CustomTablesModelDetails extends JModelLegacy
 		if($this->alias!='' and $this->ct->Table->alias_fieldname!='')
 			$this->filter=$this->ct->Table->alias_fieldname.'='.$this->alias;
 
-		$this->LayoutProc=new LayoutProcessor($this->ct);
-		$this->LayoutProc->Model=$this;
-
+		$this->ct->LayoutProc=new LayoutProcessor($this->ct);
+		
 		if($this->filter!='' and $this->alias=='')
 		{
 			//Parse using layout
-			$this->LayoutProc->layout=$this->filter;
+			$this->ct->LayoutProc->layout=$this->filter;
 
-			$this->filter=$this->LayoutProc->fillLayout(array(),null,'[]',true);
+			$this->filter=$this->ct->LayoutProc->fillLayout(array(),null,'[]',true);
 		}
 
-		$this->redirectto=$this->params->get( 'redirectto' );
-		$this->LayoutProc->layout='';
+		$this->ct->LayoutProc->layout='';
 	}
 
 	function checkRecordUserJoin($recordstable, $recordsuseridfield, $recordsfield, $id)
@@ -178,54 +157,33 @@ class CustomTablesModelDetails extends JModelLegacy
 		if($this->_id==0)
 		{
 			$this->_id	= 0;
-			$where='';
-
-			$wherearr=array();
-
+			
 			if($this->filter!='')
 			{
-				$this->filtering = new ESFiltering($this->ct);
-				
-				$PathValue=array();
-				$paramwhere=$this->filtering->getWhereExpression($this->filter,$PathValue);
-				
-
-				if($paramwhere!='')
-					$wherearr[]=' ('.$paramwhere.' )';
+				$this->ct->setFilter($this->filter, $this->ct->Env->menu_params->get('showpublished'));
 			}
 			else
 			{
-				$a=array(); //field not found. compatibility trick
 				JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_NOFILTER'), 'error');
-				return $a;
+				return [];//field not found. compatibility trick
 			}
 
-			if(count($wherearr)>0)
-				$where = ' WHERE '.implode(" AND ",$wherearr);
+			$where = count($this->ct->Filter->where) > 0 ? ' WHERE '.implode(" AND ",$this->ct->Filter->where) : '';
 
-
-			if($this->ct->Table->published_field_found)
-				$query = 'SELECT *, id AS listing_id, '.$this->ct->Table->realtablename.'.published AS listing_published ';
-			else
-				$query = 'SELECT *, id AS listing_id, 1 AS listing_published ';
-			
-			$query.=' FROM '.$this->ct->Table->realtablename.' '.$where;
-
-			$query.=' ORDER BY id DESC'; //show last
+			$this->ct->Ordering->orderby = 'id DESC';
+			$query = $this->ct->buildQuery($where);
 			$query.=' LIMIT 1';
 		}
 		else
 		{
 			//show exact record
-			if($this->ct->Table->published_field_found)
-				$query = 'SELECT *, id AS listing_id, '.$this->ct->Table->realtablename.'.published AS listing_published ';
-			else
-				$query = 'SELECT *, id AS listing_id, 1 AS listing_published ';
-				
-			$query.=' FROM '.$this->ct->Table->realtablename.' WHERE id='.$this->_id.' LIMIT 1';
+			
+			$query = $this->ct->buildQuery('WHERE id='.$this->_id);
+			$query.=' LIMIT 1';
 		}
 
 		$db->setQuery($query);
+		
 		$rows=$db->loadAssocList();
 
 		if(count($rows)<1)
@@ -251,10 +209,14 @@ class CustomTablesModelDetails extends JModelLegacy
 
 				    //Copy values
 				    foreach($this->ct->Table->fields as $ESField)
-						$row[$ESField['realfieldname']]=$new_row[$ESField['realfieldname']];
+					{
+						if(isset($new_row[$ESField['realfieldname']]))
+							$row[$ESField['realfieldname']]=$new_row[$ESField['realfieldname']];
+					}
 				}
 
-				return $this->getVersionData($row,$log_field,$version);
+				$versioned_data = $this->getVersionData($row,$log_field,$version);
+				return $versioned_data;
 			}
 		}
 
@@ -291,10 +253,15 @@ class CustomTablesModelDetails extends JModelLegacy
 		$creation_time_field=$this->getTypeFieldName('changetime');
 
 		$versions=explode(';',$row[$log_field]);
+		//print_r($versions);
 		if($version<=count($versions))
 		{
-					$data_editor=explode(',',$versions[$version-2]);
-					$data_content=explode(',',$versions[$version-1]);
+			if(count($versions)>1 and $version>1)
+				$data_editor=explode(',',$versions[$version-2]);
+			else
+				$data_editor=[''];
+			
+			$data_content=explode(',',$versions[$version-1]); // version 1, 1 - 1 = 0; where 0 is the index
 
 					if($data_content[3]!='')
 					{

@@ -332,7 +332,11 @@
 				params+="&comes_"+fieldname_+"="+document.getElementById("com_"+record_id+"_"+fieldname_).value;
 		}
 		else
-			params+="&comes_"+fieldname_+"="+document.getElementById("com_"+record_id+"_"+fieldname_).value;
+		{
+			let objectName = "com_"+record_id+"_"+fieldname_;
+			alert(objectName);
+			params+="&comes_"+fieldname_+"="+document.getElementById(objectName).value;
+		}
 		
 		
 		

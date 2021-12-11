@@ -12,9 +12,9 @@ defined('_JEXEC') or die('Restricted access');
 trait render_xlsx
 {
 
-    protected static function get_CatalogTable_XLSX(&$SearchResult,&$Model,$fields)
+    protected static function get_CatalogTable_XLSX(&$ct,$fields)
 	{
-		$filename = JoomlaBasicMisc::makeNewFileName($Model->params->get('page_title'),'xlsx');
+		$filename = JoomlaBasicMisc::makeNewFileName($ct->Env->menu_params->get('page_title'),'xlsx');
 
         if (ob_get_contents()) ob_end_clean();
         /** Include PHPExcel */
@@ -29,7 +29,7 @@ trait render_xlsx
 
 		$fieldarray=JoomlaBasicMisc::csv_explode(',', $fields, '"', true);
 
-        $sheet_name=$Model->params->get('menu-anchor_title');
+        $sheet_name=$ct->Env->menu_params->get('menu-anchor_title');
 
         // Set document properties
         $objPHPExcel->getProperties()->setCreator("CustomTables")
@@ -76,19 +76,13 @@ trait render_xlsx
 			$recordline=str_replace('\'','"',$recordline);
 			$recordline=str_replace('&&&&quote&&&&','"',$recordline);
 
-
-
-			$Model->LayoutProc->layout=$recordline;
-
+			$ct->LayoutProc->layout=$recordline;
 
 			$records=array();
 
-			foreach($this->SearchResult as $row)
+			foreach($ct->Records as $row)
 			{
-
-
-
-				$htmlresult=$Model->LayoutProc->fillLayout($row);
+				$htmlresult=$ct->LayoutProc->fillLayout($row);
 
 				$htmlresult=JoomlaBasicMisc::strip_tags_content($htmlresult, '<a><center><p><br><i><u><b><span>', FALSE);
 				$htmlresult=strip_tags($htmlresult);//, '<center><p><br><i><u><b><span>');
@@ -98,21 +92,16 @@ trait render_xlsx
 			}
 			$allrecords[]=$records;
 
-
-
-
-	            $column++;
-
+            $column++;
 		}
 
-			for($r=count($records)-1;$r>=0;$r--)
+		for($r=count($records)-1;$r>=0;$r--)
+		{
+			for($c=count($allrecords)-1;$c>=0;$c--)
 			{
-				for($c=count($allrecords)-1;$c>=0;$c--)
-				{
-					$objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($c, $r+2, $allrecords[$c][$r]);
-				}
+				$objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($c, $r+2, $allrecords[$c][$r]);
 			}
-
+		}
 
         // Set active sheet index to the first sheet, so Excel opens this as the first sheet
         $objPHPExcel->setActiveSheetIndex(0);

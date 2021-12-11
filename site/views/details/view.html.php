@@ -18,6 +18,7 @@ class CustomTablesViewDetails extends JViewLegacy
 {
 	var $catid=0;
 	var $Model;
+	var $ct;
 	var $row;
 	var $imagegalleries;
 	var $fileboxes;
@@ -25,46 +26,45 @@ class CustomTablesViewDetails extends JViewLegacy
 	function display($tpl = null)
 	{
 		$this->Model = $this->getModel();
-		if(!isset($this->Model->LayoutProc))
+		
+		$this->ct = $this->Model->ct;
+		
+		if(!isset($this->ct->LayoutProc))
 			return;
-
-		$app = JFactory::getApplication();
-		$this->params = $app->getParams();
 
 		$layout_catalog='';
 
-		if($this->params->get('esdetailslayout')!='')
+		if($this->ct->Env->menu_params->get('esdetailslayout')!='')
 		{
-			$Layouts = new Layouts($this->Model->ct);
-			$layout_catalog = $Layouts->getLayout($this->params->get('esdetailslayout'));
+			$Layouts = new Layouts($this->ct);
+			$layout_catalog = $Layouts->getLayout($this->ct->Env->menu_params->get('esdetailslayout'));
 				
 			if($Layouts->layouttype==8)
-				$this->Model->ct->Env->frmt='xml';
+				$this->ct->Env->frmt='xml';
 			elseif($Layouts->layouttype==9)
-				$this->Model->ct->Env->frmt='csv';
+				$this->ct->Env->frmt='csv';
 			elseif($Layouts->layouttype==10)
-				$this->Model->ct->Env->frmt='json';
+				$this->ct->Env->frmt='json';
 
-			$this->Model->LayoutProc->layout=$layout_catalog;
+			$this->ct->LayoutProc->layout=$layout_catalog;
 		}
 
 		$this->row = $this->get('Data');
 
 		if(count($this->row)>0)
 		{
-			if((!isset($this->row['listing_id']) or (int)$this->row['listing_id']==0) and $this->Model->redirectto!='')
+			$redirectto = $this->ct->Env->menu_params->get( 'redirectto' );
+			
+			if((!isset($this->row['listing_id']) or (int)$this->row['listing_id']==0) and $redirectto != '')
 			{
-				$mainframe->redirect($this->Model->redirectto);
+				$mainframe->redirect($redirectto);
 			}
 
-			if ($this->Model->ct->Env->print)
+			if ($this->ct->Env->print)
 			{
 				$document	= JFactory::getDocument();
 				$document->setMetaData('robots', 'noindex, nofollow');
 			}
-
-			$document = JFactory::getDocument();
-			$document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customtables/css/style.css" type="text/css" rel="stylesheet" />');
 
 			parent::display($tpl);
 
@@ -79,13 +79,13 @@ class CustomTablesViewDetails extends JViewLegacy
 		if(!isset($row['listing_id']))
 			return false;
 		
-		foreach($this->Model->ct->Table->fields as $mFld)
+		foreach($this->ct->Table->fields as $mFld)
 		{
 			if($mFld['type']=='phponview')
 			{
 				$fieldname=$mFld['fieldname'];
-				$params=JoomlaBasicMisc::csv_explode(',',$mFld['typeparams'],'"',false);
-				tagProcessor_PHP::processTempValue($this->Model,$row,$fieldname,$params,false);
+				$type_params=JoomlaBasicMisc::csv_explode(',',$mFld['typeparams'],'"',false);
+				tagProcessor_PHP::processTempValue($this->Model,$row,$fieldname,$type_params,false);
 			}
 		}
 	}
@@ -96,7 +96,7 @@ class CustomTablesViewDetails extends JViewLegacy
 
 		$allwedTypes=['lastviewtime','viewcount'];
 
-		foreach($this->Model->ct->Table->fields as $mFld)
+		foreach($this->ct->Table->fields as $mFld)
 		{
 				$t=$mFld['type'];
 				if(in_array($t,$allwedTypes))
@@ -105,12 +105,12 @@ class CustomTablesViewDetails extends JViewLegacy
 					$allow_count=true;
 					$author_user_field=$mFld['typeparams'];
 
-					if(!isset($author_user_field) or $author_user_field=='' or $rec['es_'.$author_user_field]==$this->Model->ct->Env->userid)
+					if(!isset($author_user_field) or $author_user_field=='' or $rec[$this->ct->Env->field_prefix.$author_user_field]==$this->ct->Env->userid)
 						$allow_count=false;
 
 					if($allow_count)
 					{
-						$n='es_'.$mFld['fieldname'];
+						$n=$this->ct->Env->field_prefix.$mFld['fieldname'];
 						if($t=='lastviewtime')
 							$updatefields[]=$n.'="'.date('Y-m-d H:i:s').'"';
 						elseif($t=='viewcount')
@@ -122,7 +122,7 @@ class CustomTablesViewDetails extends JViewLegacy
 		if(count($updatefields)>0)
 		{
 				$db = JFactory::getDBO();
-				$query= 'UPDATE #__customtables_table_'.$this->Model->ct->Table->tablename.' SET '.implode(', ', $updatefields).' WHERE id='.$rec['listing_id'];
+				$query= 'UPDATE #__customtables_table_'.$this->ct->Table->tablename.' SET '.implode(', ', $updatefields).' WHERE id='.$rec['listing_id'];
 
 				$db->setQuery($query);
 				$db->execute();	

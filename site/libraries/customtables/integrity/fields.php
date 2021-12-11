@@ -187,7 +187,7 @@ class IntegrityFields extends \CustomTables\IntegrityChecks
 						$nice_field_name = $ct->Table->realtablename.'.published';
 					else
 					{
-						$nice_field_name = str_replace('es_','',$found_field)
+						$nice_field_name = str_replace($ct->Env->field_prefix,'',$found_field)
 							.($projected_field['typeparams']!='' ? ' ('.$projected_field['typeparams'].')' : '');
 					}
 					

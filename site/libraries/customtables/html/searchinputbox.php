@@ -574,9 +574,9 @@ class SearchInputBox
 		return $result;
 	}
 
-	function getWhereParameter($field)
+	protected function getWhereParameter($field)
 	{
-		$f=str_replace('es_','',$field);//legacy support
+		$f=str_replace($this->ct->Env->field_prefix,'',$field);//legacy support
 
 		$list=$this->getWhereParameters();
 
@@ -593,7 +593,7 @@ class SearchInputBox
 		return '';
 	}
 
-	function getWhereParameters()
+	protected function getWhereParameters()
 	{
 		$value=Factory::getApplication()->input->getString('where');
 		$value=str_replace('update','',$value);

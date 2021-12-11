@@ -6,29 +6,86 @@
  * @license GNU/GPL
  **/
 
+namespace CustomTables;
+
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\Fields;
 use CustomTables\DataTypes\Tree;
 
+use \ESTables;
+use \JoomlaBasicMisc;
+use \LayoutProcessor;
+
+use \Joomla\CMS\Factory;
+
+use \JHTML;
+
 JHTML::addIncludePath(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'helpers');
 
-class ESFiltering
+class Filtering
 {
 	var $ct;
+	var $PathValue;
+	var $where;
+	var $showpublished;
 	
-	function __construct(&$ct)
+	function __construct(&$ct, $showpublished = 0)
 	{
 		$this->ct = $ct;
+		$this->PathValue = [];
+		$this->where = [];
+		$this->showpublished = $showpublished;
+		
+		if($this->ct->Table->published_field_found)
+		{
+			//$showpublished = 0 - show published
+			//$showpublished = 1 - show unpublished
+			//$showpublished = 2 - show any
+			
+			if($this->showpublished==1)
+				$this->where[] = $this->ct->Table->realtablename.'.published=0';
+			elseif($this->showpublished!=2)
+				$this->where[] = $this->ct->Table->realtablename.'.published=1';
+		}
 	}
-
-	function getWhereExpression(string $param,&$PathValue)
+	
+	function addMenuParamFilter()
+	{
+		if($this->ct->Env->menu_params->get( 'filter' ) !== null)
+		{
+			$filter_string = $this->ct->Env->menu_params->get( 'filter' );
+			
+			//Parse using layout, has no effect to layout itself
+			$filter_string = LayoutProcessor::applyContentPlugins($filter_string);
+			$filter_string = $this->sanitizeAndParseFilter($filter_string, true);
+			
+			if($filter_string!='')
+				$this->addWhereExpression($filter_string);
+		}
+	}
+	
+	function addQueryWhereFilter()
+	{
+		if($this->ct->Env->jinput->get('where','','BASE64'))
+		{
+			$decodedurl = $this->ct->Env->jinput->get('where','','BASE64');
+			$decodedurl=urldecode($decodedurl);
+			$decodedurl=str_replace(' ','+',$decodedurl);
+			$filter_string = $this->sanitizeAndParseFilter(base64_decode($decodedurl));
+			
+			if($filter_string!='')
+				$this->addWhereExpression($filter_string);
+		}
+	}
+	
+	function addWhereExpression(string $param)
 	{
 		if($param == '')
-			return '';
+			return;
 			
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		$numerical_fields=['int','float','checkbox','viewcount','userid','user','id','sqljoin','article','multilangarticle'];
 
 		$wheres=[];
@@ -111,7 +168,7 @@ class ESFiltering
 
 							if(count($fieldrow)>0)
 							{
-								$w = $this->processSingleFieldWhereSyntax($fieldrow,$comparison_operator,$fieldname,$value,$PathValue,$field_extra_param);
+								$w = $this->processSingleFieldWhereSyntax($fieldrow,$comparison_operator,$fieldname,$value,$field_extra_param);
 								if($w!='')
 									$multy_field_where[] = $w;
 							}
@@ -128,23 +185,22 @@ class ESFiltering
 		
 		if($logic_operator =='')
 		{
-			JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('Search parameter "'.$param.'" is incorrect'), 'error');
-			return '';
+			Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('Search parameter "'.$param.'" is incorrect'), 'error');
+			return;
 		}
-		
 
-		if($logic_operator == 'or' and count($wheres) > 1)
-			return '('.implode(' '.$logic_operator.' ',$wheres).')';
-		else
-			return implode(' '.$logic_operator.' ',$wheres);
-			
-			
-	}//function getWhereExpression($param,&$PathValue)
+		if(count($wheres) > 0)
+		{
+			if($logic_operator == 'or' and count($wheres) > 1)
+				$this->where[] = '('.implode(' '.$logic_operator.' ',$wheres).')';
+			else
+				$this->where[] = implode(' '.$logic_operator.' ',$wheres);
+		}
+	}
 
-
-	function processSingleFieldWhereSyntax(&$fieldrow,$comparison_operator,$fieldname,$value,&$PathValue,$field_extra_param = '')
+	function processSingleFieldWhereSyntax(&$fieldrow,$comparison_operator,$fieldname,$value,$field_extra_param = '')
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		
 		$c = '';
 		
@@ -163,7 +219,7 @@ class ESFiltering
 														{
 																$cArr[]='id'.$comparison_operator.(int)$vL;
 
-																$PathValue[]='ID '.$comparison_operator.' '.(int)$vL;
+																$this->PathValue[]='ID '.$comparison_operator.' '.(int)$vL;
 														}
 														if(count($cArr)==1)
 																$c=$cArr[0];
@@ -179,7 +235,7 @@ class ESFiltering
 
 														$c='published'.$comparison_operator.(int)$value;
 
-														$PathValue[]='Published '.$comparison_operator.' '.(int)$value;
+														$this->PathValue[]='Published '.$comparison_operator.' '.(int)$value;
 														$c=$cArr[0];
 
 														break;
@@ -188,42 +244,42 @@ class ESFiltering
 														if($comparison_operator=='==')
 															$comparison_operator='=';
 
-														$c=$this->Search_User($value, $PathValue, $fieldrow,$comparison_operator, $field_extra_param);
+														$c=$this->Search_User($value, $fieldrow,$comparison_operator, $field_extra_param);
 														break;
 
 												case 'userid':
 														if($comparison_operator=='==')
 															$comparison_operator='=';
 
-														$c=$this->Search_User($value, $PathValue, $fieldrow,$comparison_operator, $field_extra_param);
+														$c=$this->Search_User($value, $fieldrow,$comparison_operator, $field_extra_param);
 														break;
 
 												case 'usergroup':
 														if($comparison_operator=='==')
 															$comparison_operator='=';
 
-														$c=$this->Search_UserGroup($value, $PathValue, $fieldrow,$comparison_operator);
+														$c=$this->Search_UserGroup($value, $fieldrow,$comparison_operator);
 														break;
 
 												case 'int':
 														if($comparison_operator=='==')
 															$comparison_operator='=';
 
-														$c=$this->Search_Number($value, $PathValue, $fieldrow,$comparison_operator);
+														$c=$this->Search_Number($value, $fieldrow,$comparison_operator);
 														break;
 												
 												case 'image':
 														if($comparison_operator=='==')
 															$comparison_operator='=';
 
-														$c=$this->Search_Number($value, $PathValue, $fieldrow,$comparison_operator);
+														$c=$this->Search_Number($value, $fieldrow,$comparison_operator);
 														break;
 
 												case 'viewcount':
 														if($comparison_operator=='==')
 															$comparison_operator='=';
 
-														$c=$this->Search_Number($value, $PathValue, $fieldrow,$comparison_operator);
+														$c=$this->Search_Number($value, $fieldrow,$comparison_operator);
 														break;
 
 												case 'checkbox':
@@ -239,13 +295,13 @@ class ESFiltering
 																if($vL=='true' or $vL=='1')
 																{
 																		$cArr[]=$fieldrow['realfieldname'].'=1';
-																		$PathValue[]=$fieldrow['fieldtitle'.$this->ct->Languages->Postfix];
+																		$this->PathValue[]=$fieldrow['fieldtitle'.$this->ct->Languages->Postfix];
 																}
 																else
 																{
 																		$cArr[]=$fieldrow['realfieldname'].'=0';
 
-																		$PathValue[]=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT').' '.$fieldrow['fieldtitle'.$this->ct->Languages->Postfix];
+																		$this->PathValue[]=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT').' '.$fieldrow['fieldtitle'.$this->ct->Languages->Postfix];
 																}
 														}
 														if(count($cArr)==1)
@@ -259,84 +315,77 @@ class ESFiltering
 														if($comparison_operator=='==')
 															$comparison_operator='=';
 
-														$c=$this->getRangeWhere($fieldrow,$PathValue,$value);
+														$c=$this->getRangeWhere($fieldrow,$value);
 														break;
 
 												case 'float':
 														if($comparison_operator=='==')
 															$comparison_operator='=';
 
-														$c=$this->Search_Number($value, $PathValue, $fieldrow,$comparison_operator);
+														$c=$this->Search_Number($value, $fieldrow,$comparison_operator);
 														break;
 
 												case 'phponadd':
 
-														$c=$this->Search_String($value, $PathValue, $fieldrow,$comparison_operator);
+														$c=$this->Search_String($value, $fieldrow,$comparison_operator);
 														break;
 
 												case 'phponchange':
 
-														$c=$this->Search_String($value, $PathValue, $fieldrow,$comparison_operator);
+														$c=$this->Search_String($value, $fieldrow,$comparison_operator);
 														break;
 
 												case 'string':
 
-														$c=$this->Search_String($value, $PathValue, $fieldrow,$comparison_operator);
+														$c=$this->Search_String($value, $fieldrow,$comparison_operator);
 														break;
 
 												case 'alias':
 
-														$c=$this->Search_Alias($value, $PathValue, $fieldrow,$comparison_operator);
+														$c=$this->Search_Alias($value, $fieldrow,$comparison_operator);
 														break;
 
 												case 'md5':
 
-														$c=$this->Search_Alias($value, $PathValue, $fieldrow,$comparison_operator);
+														$c=$this->Search_Alias($value, $fieldrow,$comparison_operator);
 
 														break;
 
 												case 'email':
 
-														$c=$this->Search_String($value, $PathValue, $fieldrow,$comparison_operator);
+														$c=$this->Search_String($value, $fieldrow,$comparison_operator);
 														break;
 												case 'url':
 
-														$c=$this->Search_String($value, $PathValue, $fieldrow,$comparison_operator);
+														$c=$this->Search_String($value, $fieldrow,$comparison_operator);
 														break;
 
 												case 'date':
 
-														$c=$this->Search_Date($fieldname,$value,$PathValue,$comparison_operator);
+														$c=$this->Search_Date($fieldname, $value, $comparison_operator);
 														break;
 
 												case 'creationtime':
 
-														$c=$this->Search_Date($fieldname,$value, $PathValue, $comparison_operator);
+														$c=$this->Search_Date($fieldname,$value, $comparison_operator);
 														break;
 
 												case 'changetime':
 
-														$c=$this->Search_Date($fieldname,$value, $PathValue, $comparison_operator);
+														$c=$this->Search_Date($fieldname,$value, $comparison_operator);
 														break;
 
 												case 'lastviewtime':
 
-														$c=$this->Search_Date($fieldname,$value, $PathValue, $comparison_operator);
+														$c=$this->Search_Date($fieldname,$value, $comparison_operator);
 														break;
 
 
 
 												case 'multilangstring':
 													
-													$c=$this->Search_String($value, $PathValue, $fieldrow,$comparison_operator,true);
-													/*
-														$v=str_replace('"','',$value);
-														if($db->serverType == 'postgresql')
-															$c='POSITION('.$db->quote($v).' IN '.$fieldrow['realfieldname'].$this->ct->Languages->Postfix.')>0';
-														else
-															$c='instr('.$realfieldname.$this->ct->Languages->Postfix.','.$db->quote($v).')';
-*/
-														break;
+													$c=$this->Search_String($value, $fieldrow,$comparison_operator,true);
+													break;
 
 												case 'customtables':
 
@@ -369,7 +418,7 @@ class ESFiltering
 																	$cArr[]='instr('.$fieldrow['realfieldname'].','.$db->quote($v).')';
 
 																	$vTitle=Tree::getMultyValueTitles($v,$this->ct->Languages->Postfix,1, ' - ');
-																	$PathValue[]=$fieldrow['fieldtitle'.$this->ct->Languages->Postfix].': '.implode(',',$vTitle);
+																	$this->PathValue[]=$fieldrow['fieldtitle'.$this->ct->Languages->Postfix].': '.implode(',',$vTitle);
 																}
 
 																elseif($comparison_operator=='!=')
@@ -377,7 +426,7 @@ class ESFiltering
 																	$cArr[]='!instr('.$fieldrow['realfieldname'].','.$db->quote($v).')';
 
 																	$vTitle=Tree::getMultyValueTitles($v,$this->ct->Languages->Postfix,1, ' - ');
-																	$PathValue[]=$fieldrow['fieldtitle'.$this->ct->Languages->Postfix].': '.implode(',',$vTitle);
+																	$this->PathValue[]=$fieldrow['fieldtitle'.$this->ct->Languages->Postfix].': '.implode(',',$vTitle);
 																}
 															}
 														}
@@ -469,7 +518,7 @@ class ESFiltering
 
 																if($comparison_operator=='!=' or $comparison_operator=='=')
 																{
-																	$PathValue[]=$fieldrow['fieldtitle'
+																	$this->PathValue[]=$fieldrow['fieldtitle'
 																			.$this->ct->Languages->Postfix]
 																			.' '
 																			.$opt_title
@@ -537,7 +586,7 @@ class ESFiltering
 																	$opt_title=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT');
 
 																	$cArr[]=$esr_table_full.'.'.$fieldrow['realfieldname'].'!='.(int)$vLnew;
-																	$PathValue[]=$fieldrow['fieldtitle'.$this->ct->Languages->Postfix]
+																	$this->PathValue[]=$fieldrow['fieldtitle'.$this->ct->Languages->Postfix]
 																			.' '
 																			.$opt_title
 																			.' '
@@ -549,7 +598,10 @@ class ESFiltering
 
 																	$ivLnew=(int)$vLnew;
 																	if($ivLnew==0)
-																		$cArr[]='('.$esr_table_full.'.'.$fieldrow['realfieldname'].'='.(int)$vLnew.' OR '.$esr_table_full.'.'.$fieldrow['realfieldname'].' IS NULL)';
+																	{
+																		$cArr[]='('.$esr_table_full.'.'.$fieldrow['realfieldname'].'='.(int)$vLnew.' OR '
+																			.$esr_table_full.'.'.$fieldrow['realfieldname'].' IS NULL)';
+																	}
 																	elseif($ivLnew==-1)
 																		$cArr[]='('.$esr_table_full.'.'.$fieldrow['realfieldname'].' IS NULL OR '.$esr_table_full.'.'.$fieldrow['realfieldname'].'=0)';
 																	else
@@ -558,7 +610,7 @@ class ESFiltering
 																	
 
 
-																	$PathValue[]=$fieldrow['fieldtitle'
+																	$this->PathValue[]=$fieldrow['fieldtitle'
 																			.$this->ct->Languages->Postfix]
 																			.' '
 																			.$opt_title
@@ -576,18 +628,18 @@ class ESFiltering
 													break;
 
 												case 'text':
-													$c=$this->Search_String($value, $PathValue, $fieldrow,$comparison_operator);
+													$c=$this->Search_String($value, $fieldrow,$comparison_operator);
 													break;
 
 												case 'multilangtext':
-													$c=$this->Search_String($value, $PathValue, $fieldrow,$comparison_operator,true);
+													$c=$this->Search_String($value, $fieldrow,$comparison_operator,true);
 													break;
 
 										}
 		return $c;
 	}
 
-	function Search_Date($fieldname, $value, &$PathValue, $comparison_operator)
+	function Search_Date($fieldname, $value, $comparison_operator)
 	{
 		$fieldrow1 = Fields::FieldRowByName($fieldname,$this->ct->Table->fields);
 
@@ -607,10 +659,10 @@ class ESFiltering
 		else
 			$title2=$value;
 
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		
 		//Breadcrumbs
-		$PathValue[]=$title1.' '.$comparison_operator.' '.$title2;
+		$this->PathValue[]=$title1.' '.$comparison_operator.' '.$title2;
 
 		$value1=$this->processDateSearchTags($fieldname,$fieldrow1,$this->ct->Table->realtablename);
 		$value2=$this->processDateSearchTags($value,$fieldrow2,$this->ct->Table->realtablename);
@@ -633,7 +685,7 @@ class ESFiltering
 		$v=str_replace('\\','',$v);
 		$value=str_replace('&','',$v);
 
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		if($fieldrow)
 		{
@@ -697,10 +749,10 @@ class ESFiltering
 		if(strpos($vL,'$get_')!==false)
 		{
 			$getPar=str_replace('$get_','',$vL);
-			$a=JFactory::getApplication()->input->get($getPar,'','CMD');
+			$a=Factory::getApplication()->input->get($getPar,'','CMD');
 			if($a=='')
 				return '';
-			return JFactory::getApplication()->input->getInt($getPar);
+			return Factory::getApplication()->input->getInt($getPar);
 		}
 
 		return $vL;
@@ -711,8 +763,8 @@ class ESFiltering
 		if(strpos($vL,'$get_')!==false)
 		{
 			$getPar=str_replace('$get_','',$vL);
-			//$v=JFactory::getApplication()->input->get($getPar,'','STRING');
-			$v=(string)preg_replace('/[^A-Z0-9_\.,-]/i', '', JFactory::getApplication()->input->getString($getPar));
+			//$v=Factory::getApplication()->input->get($getPar,'','STRING');
+			$v=(string)preg_replace('/[^A-Z0-9_\.,-]/i', '', Factory::getApplication()->input->getString($getPar));
 		}
 		else
 			$v=$vL;
@@ -732,21 +784,21 @@ class ESFiltering
 		if(strpos($vL,'$get_')!==false)
 		{
 			$getPar=str_replace('$get_','',$vL);
-			return JFactory::getApplication()->input->get($getPar,'','CMD');
+			return Factory::getApplication()->input->get($getPar,'','CMD');
 		}
 
 		return $vL;
 	}
 
-	function Search_String($value, &$PathValue, &$fieldrow,$comparison_operator,$isMultilingual = false)
+	function Search_String($value, &$fieldrow,$comparison_operator,$isMultilingual = false)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		$realfieldname=$fieldrow['realfieldname'].($isMultilingual ? $this->ct->Languages->Postfix : '');
 		
 		$v=$this->getString_vL($value);
 		
-		$PathValue[]=$fieldrow['fieldtitle'.$this->ct->Languages->Postfix].' '.$comparison_operator;
+		$this->PathValue[]=$fieldrow['fieldtitle'.$this->ct->Languages->Postfix].' '.$comparison_operator;
 
 		if($comparison_operator=='=' and $v!="")
 		{
@@ -795,7 +847,7 @@ class ESFiltering
 		}
 	}
 
-	function Search_Number($value, &$PathValue, &$fieldrow,$comparison_operator)
+	function Search_Number($value, &$fieldrow,$comparison_operator)
 	{
 		if($comparison_operator=='==')
 				$comparison_operator='=';
@@ -809,7 +861,7 @@ class ESFiltering
 			if($vL!='')
 			{
 				$cArr[]=$fieldrow['realfieldname'].$comparison_operator.(int)$vL;
-				$PathValue[]=$fieldrow['fieldtitle'.$this->ct->Languages->Postfix].' '.$comparison_operator.' '.(int)$vL;
+				$this->PathValue[]=$fieldrow['fieldtitle'.$this->ct->Languages->Postfix].' '.$comparison_operator.' '.(int)$vL;
 			}
 		}
 		
@@ -822,12 +874,12 @@ class ESFiltering
 			return '('.implode(' OR ', $cArr).')';
 	}
 
-	function Search_Alias($value, &$PathValue, &$fieldrow,$comparison_operator)
+	function Search_Alias($value, &$fieldrow,$comparison_operator)
 	{
 		if($comparison_operator=='==')
 				$comparison_operator='=';
 
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		$v=$this->getString_vL($value);
 
@@ -840,7 +892,7 @@ class ESFiltering
 			else
 				$cArr[]=$fieldrow['realfieldname'].$comparison_operator.$db->quote($vL);
 
-			$PathValue[]=$fieldrow['fieldtitle'.$this->ct->Languages->Postfix].' '.$comparison_operator.' '.$vL;
+			$this->PathValue[]=$fieldrow['fieldtitle'.$this->ct->Languages->Postfix].' '.$comparison_operator.' '.$vL;
 		}
 
 		if(count($cArr)==1)
@@ -849,7 +901,7 @@ class ESFiltering
 			return '('.implode(' AND ', $cArr).')';
 	}
 
-	function Search_UserGroup($value, &$PathValue, &$fieldrow,$comparison_operator)
+	function Search_UserGroup($value, &$fieldrow,$comparison_operator)
 	{
 		$v=$this->getString_vL($value);
 
@@ -861,7 +913,7 @@ class ESFiltering
 			{
 				$cArr[]=$fieldrow['realfieldname'].$comparison_operator.(int)$vL;
 				$filtertitle=JHTML::_('ESUserGroupView.render',  $vL);
-				$PathValue[]=$fieldrow['fieldtitle'.$this->ct->Languages->Postfix].' '.$comparison_operator.' '.$filtertitle;
+				$this->PathValue[]=$fieldrow['fieldtitle'.$this->ct->Languages->Postfix].' '.$comparison_operator.' '.$filtertitle;
 			}
 		}
 		
@@ -873,9 +925,9 @@ class ESFiltering
 			return '('.implode(' AND ', $cArr).')';
 	}
 
-	function Search_User($value, &$PathValue, &$fieldrow,$comparison_operator, $field_extra_param = '')
+	function Search_User($value, &$fieldrow,$comparison_operator, $field_extra_param = '')
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		
 		$v=$this->getString_vL($value);
 
@@ -893,7 +945,7 @@ class ESFiltering
 						.$select1.$comparison_operator.$db->quote($v).')';
 					
 					$filtertitle=JHTML::_('ESUserView.render',  $vL);
-					$PathValue[]=$fieldrow['fieldtitle'.$this->ct->Languages->Postfix].' '.$comparison_operator.' '.$filtertitle;
+					$this->PathValue[]=$fieldrow['fieldtitle'.$this->ct->Languages->Postfix].' '.$comparison_operator.' '.$filtertitle;
 				}
 			}
 		}
@@ -909,7 +961,7 @@ class ESFiltering
 						$cArr[]=$fieldrow['realfieldname'].$comparison_operator.(int)$vL;
 			
 					$filtertitle=JHTML::_('ESUserView.render',  $vL);
-					$PathValue[]=$fieldrow['fieldtitle'.$this->ct->Languages->Postfix].' '.$comparison_operator.' '.$filtertitle;
+					$this->PathValue[]=$fieldrow['fieldtitle'.$this->ct->Languages->Postfix].' '.$comparison_operator.' '.$filtertitle;
 				}
 			}
 		}
@@ -946,7 +998,7 @@ class ESFiltering
 
 	}//function ExplodeSmartParams($param)
 
-	function getRangeWhere(&$fieldrow,&$PathValue,$value)
+	function getRangeWhere(&$fieldrow,$value)
 	{
 		$fieldTitle=$fieldrow['fieldtitle'.$this->ct->Languages->Postfix];
 
@@ -1019,12 +1071,34 @@ class ESFiltering
 		if($valuearr[1]!='')
 			$valueTitle.=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_TO').' '.$valuearr[1];
 	
-		$PathValue[]=$fieldTitle.': '.$valueTitle;
+		$this->PathValue[]=$fieldTitle.': '.$valueTitle;
 
 		if(count($rangewhere)>0)
 			return $rangewhere;
 
 		return '';
+	}
+
+	function sanitizeAndParseFilter($paramwhere, $parse = false)
+	{
+		$paramwhere=str_ireplace('*','=',$paramwhere);
+		$paramwhere=str_ireplace('\\','',$paramwhere);
+
+		//$paramwhere=str_replace(';','',$paramwhere);
+		$paramwhere=str_ireplace('drop ','',$paramwhere);
+		$paramwhere=str_ireplace('select ','',$paramwhere);
+		$paramwhere=str_ireplace('delete ','',$paramwhere);
+		$paramwhere=str_ireplace('update ','',$paramwhere);
+		$paramwhere=str_ireplace('insert ','',$paramwhere);
+
+		if($parse)
+		{
+			//Parse using layout, has no effect to layout itself
+			$this->ct->LayoutProc->layout = $paramwhere;
+			return  $this->ct->LayoutProc->fillLayout();
+		}
+			
+		return $paramwhere;
 	}
 
 }//end class
@@ -1033,7 +1107,7 @@ class LinkJoinFilters
 {
 	static public function getFilterBox($establename,$dynamic_filter_fieldname,$control_name,$filtervalue)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		
 		$fieldrow=Fields::getFieldRowByName($dynamic_filter_fieldname, $tableid=0,$establename);
 		
@@ -1063,7 +1137,7 @@ class LinkJoinFilters
 		if(!is_object($fieldrow))
 			return '<p style="color:white;background-color:red;">sqljoin: field "'.$field.'" not found</p>';
 			
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		$where = '';
 		if($tablerow['published_field_found'])
 			$where = 'WHERE published=1';
@@ -1199,4 +1273,5 @@ class LinkJoinFilters
 
 		return $result;
 	}
+	
 }

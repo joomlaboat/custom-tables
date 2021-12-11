@@ -11,7 +11,7 @@ defined('_JEXEC') or die('Restricted access');
 
 class tagProcessor_If
 {
-    public static function process(&$Model,&$htmlresult,&$row)
+    public static function process(&$ct,&$htmlresult,&$row)
     {
 		$options=array();
         $fList=JoomlaBasicMisc::getListToReplace('if',$options,$htmlresult,'{}');
@@ -20,7 +20,7 @@ class tagProcessor_If
 
         foreach($fList as $fItem)
         {
-			tagProcessor_If::parseIfStatements($options[$i],$Model,$htmlresult,$row);
+			tagProcessor_If::parseIfStatements($options[$i],$ct,$htmlresult,$row);
 			$i++;
         }
 
@@ -44,19 +44,19 @@ class tagProcessor_If
 
 	}
 
-    protected static function processValue(&$Model,&$row,$value)
+    protected static function processValue(&$ct,&$row,$value)
     {
 
 
-        tagProcessor_General::process($Model,$value,$row);
-        tagProcessor_Page::process($Model,$value);
-        tagProcessor_Item::process(false,$Model,$row,$value,'');
-        tagProcessor_Value::processValues($Model,$row,$value,'[]');
+        tagProcessor_General::process($ct,$value,$row);
+        tagProcessor_Page::process($ct,$value);
+        tagProcessor_Item::process($ct,$row,$value,'');
+        tagProcessor_Value::processValues($ct,$row,$value,'[]');
 
         return $value;
     }
 
-    protected static function parseIfStatements($statement,&$Model,&$htmlresult,&$row)
+    protected static function parseIfStatements($statement,&$ct,&$htmlresult,&$row)
     {
         $options=array();
         $fList=JoomlaBasicMisc::getListToReplaceAdvanced('{if:'.$statement.'}','{endif}',$options,$htmlresult,'{if:');
@@ -89,8 +89,8 @@ class tagProcessor_If
                             $pair=array($item[1],'0');//boolean
                         }
 
-						$processed_value1=tagProcessor_If::processValue($Model,$row,$pair[0]);
-                        $processed_value2=tagProcessor_If::processValue($Model,$row,$pair[1]);
+						$processed_value1=tagProcessor_If::processValue($ct,$row,$pair[0]);
+                        $processed_value2=tagProcessor_If::processValue($ct,$row,$pair[1]);
 
 						$isTrues[]=[$item[0],tagProcessor_If::doMath($processed_value1,$opr,$processed_value2)];
 
