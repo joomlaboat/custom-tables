@@ -32,6 +32,7 @@ class CT
 	var $alias_fieldname;
 	var $Limit;
 	var $LimitStart;
+	var $isEditForm;
 	
 	function __construct()
 	{
@@ -39,6 +40,8 @@ class CT
 		$this->Env = new Environment;
 		
 		$this->GroupBy = '';
+		
+		$this->isEditForm = false;
 	}
 	
 	function getTable($tablename_or_id, $useridfieldname = null)

@@ -409,7 +409,6 @@ class tagProcessor_Edit
 
 					$items_to_replace[]=array($new_replaceitecode,$result);
 					$pagelayout=str_replace($entries[$i],$new_replaceitecode,$pagelayout);
-					
 				}
 			}
 		}

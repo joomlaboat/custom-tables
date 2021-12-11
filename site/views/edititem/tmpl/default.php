@@ -89,13 +89,11 @@ jQuery.noConflict()
 	//Better to run tag processor before rendering form edit elements because of IF statments that can exclude the part of the layout that contains form fields.
 	$this->pagelayout = $LayoutProc->fillLayout($this->row,null,'||',false,true);
 
-	tagProcessor_Edit::process($this->ct,$this->pagelayout,$this->row,'comes_');
+	$this->ct->isEditForm = true; //This changes inputbox prefix
+	tagProcessor_Edit::process($this->ct,$this->pagelayout,$this->row);
 	
-	if($this->ct->Env->advancedtagprocessor)
-	{
-		$twig = new TwigProcessor($this->ct, $this->pagelayout);
-		$this->pagelayout = $twig->process($this->row);
-	}
+	$twig = new TwigProcessor($this->ct, $this->pagelayout);
+	$this->pagelayout = $twig->process($this->row);
 	
 	if($this->params->get( 'allowcontentplugins' )==1)
 		LayoutProcessor::applyContentPlugins($this->pagelayout);

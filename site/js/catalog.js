@@ -75,9 +75,6 @@
         link+='&returnto='+returnto;
 
         window.location.href = link;
-
-        //es_LinkLoading=false;
-
     }
 
     function esRefreshObject(objid, toolbarboxid)
@@ -93,7 +90,6 @@
         var current_url=esPrepareLink(['returnto','ids'],[]);
         var returnto=btoa(current_url);
         var link=esPrepareLink(['task','listing_id','returnto','ids'],['task=refresh','listing_id='+objid,'returnto='+returnto]);
-
 
         window.location.href = link;
         return;
@@ -128,12 +124,9 @@
         var returnto=btoa(window.location.href);
         var link=esPrepareLink(['task','listing_id','returnto','ids'],[task,'listing_id='+objid,'returnto='+returnto]);
 
-
         window.location.href = link;
         return;
-
     }
-
 
     function esDeleteObject(msg, objid, toolbarboxid, custom_link)
     {
@@ -279,15 +272,11 @@
 
         var current_url=esPrepareLink(['returnto','ids'],[]);
         var returnto=btoa(current_url);
-        //var returnto=btoa(window.location.href);
 
         var link=esPrepareLink(['task','listing_id','returnto','ids'],['task='+task,'ids='+elements.toString(),'returnto='+returnto]);
         window.location.href = link;
         return;
-
-
     }
-
 
     //https://stackoverflow.com/a/1634841
     function removeURLParameter(url, parameter)
@@ -333,12 +322,9 @@
 		}
 		else
 		{
-			let objectName = "com_"+record_id+"_"+fieldname_;
-			alert(objectName);
+			let objectName = "comes_"+record_id+"_"+fieldname_;
 			params+="&comes_"+fieldname_+"="+document.getElementById(objectName).value;
 		}
-		
-		
 		
         params+="&task=save";
         params+="&Itemid="+Itemid;
