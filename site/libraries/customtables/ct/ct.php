@@ -117,6 +117,11 @@ class CT
 				$ordering[]=$this->Ordering->orderby;
 			}
 		}
+		
+		//print_r($this->Ordering);
+		//die;
+
+		//print_r($ordering);
 
 		$query='SELECT '.implode(',',$selects).' FROM '.$this->Table->realtablename.' ';
 		
@@ -141,9 +146,11 @@ class CT
 		$this->getNumberOfRecords($where);
 		
 		$query = $this->buildQuery($where);
-		
+			
 		if($this->Table->recordcount > 0)
 		{
+			$the_limit=(int)$this->Limit;
+			
 			if($all)
 			{
 				if($the_limit>0)
@@ -151,7 +158,6 @@ class CT
 			}
 			else
 			{
-				$the_limit=(int)$this->Limit;
 				if($the_limit>20000)
 					$the_limit=20000;
 
@@ -221,7 +227,7 @@ class CT
 	
 	function applyLimits($blockExternalVars = true)
 	{
-		$limit_var = 'com_customtables.orderby_'.$this->Env->Itemid;
+		$limit_var = 'com_customtables.limit_'.$this->Env->Itemid;
 		//Grouping
 		if($this->Env->menu_params->get('groupby')!='')
 			$this->GroupBy = Fields::getRealFieldName($this->Env->menu_params->get('groupby'),$this->Table->fields);

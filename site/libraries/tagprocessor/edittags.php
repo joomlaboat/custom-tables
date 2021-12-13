@@ -23,7 +23,7 @@ class tagProcessor_Edit
 	
         $buttons = tagProcessor_Edit::process_button($ct,$pagelayout,$captcha_found,$listing_id);
         
-        $fields = tagProcessor_Edit::process_fields($ct,$pagelayout,$row);
+        $fields = tagProcessor_Edit::process_fields($ct,$pagelayout,$row); //Converted to Twig. Original replaced.
 		return ['fields' => $fields,'buttons' => $buttons];
     }
     
@@ -380,24 +380,18 @@ class tagProcessor_Edit
 				for($i;$i<count($entries);$i++)
 				{
 					$option_list=JoomlaBasicMisc::csv_explode(',',$options[$i],'"',false);
-					// $option_list[0] - CSS Class
-					// $option_list[1] - Optional Parameter
-					$class=$option_list[0];
-					$attribute='';
+
+					$result = '';
 					
-					if(isset($option_list[1]))
-						$attribute=$option_list[1];
-								
-					if(strpos($class,':')!==false)//its a style, chanage it to attribute
-    				{
-						if($attribute!='')
-    						$attribute.=' ';
+					if($esfield['parentid']==$parentid or $parentid==-1)
+					{
+						if($esfield['type']=='date')
+							$calendars[] = $esinputbox->ct->Env->field_prefix.$esfield['fieldname'];
 
-						$attribute.='style="'.$class.'"';
-						$class='';
+						if($esfield['type']!='dummy')
+							$result =  $esinputbox->renderFieldBox($esfield,$row,$option_list);
 					}
-
-					$result=tagProcessor_Edit::renderField($row,-1,$esinputbox,$calendars,$esfield,$class,$attribute,$option_list);
+					
 					
 					if($esinputbox->ct->Env->frmt == 'json')
 					{
@@ -414,18 +408,5 @@ class tagProcessor_Edit
 		}
 		
 		return $field_objects;
-	}
-
-	protected static function renderField(&$row,$parentid,&$esinputbox,&$calendars,&$esfield, string $class, string $attributes,$option_list)
-	{
-		if($esfield['parentid']==$parentid or $parentid==-1)
-		{
-			if($esfield['type']=='date')
-				$calendars[]=$esinputbox->ct->Env->field_prefix.$esfield['fieldname'];
-
-			if($esfield['type']!='dummy')
-				return $esinputbox->renderFieldBox($esfield,$row, $class,$attributes,$option_list);
-		}
-		return '';
 	}
 }

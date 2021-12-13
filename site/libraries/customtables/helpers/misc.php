@@ -195,6 +195,7 @@ class JoomlaBasicMisc
 
 	public static function getURLQueryOption($urlstr, $opt)
 	{
+		$urlstr = str_replace('&amp;','&',$urlstr);
 		$query=explode('&',$urlstr);
 		$newquery=array();
 
@@ -215,6 +216,7 @@ class JoomlaBasicMisc
 
 	public static function deleteURLQueryOption($urlstr, $opt_)
 	{
+		$urlstr = str_replace('&amp;','&',$urlstr);
 		$link='';
 		$newquery=array();
 		$opt=$opt_.'=';
@@ -241,11 +243,14 @@ class JoomlaBasicMisc
 		if($link=='')
 			return implode('&',$newquery);
 		
-		return $link.'?'.implode('&',$newquery);
+		$link2 = $link.'?'.implode('&',$newquery);
+
+		return $link2;
 	}
 
 	public static function ExplodeURLQuery($urlstr)
 	{
+		$urlstr = str_replace('&amp;','&',$urlstr);
 
 		$p=strpos($urlstr,'?');
 
@@ -766,36 +771,33 @@ class JoomlaBasicMisc
 			$fieldrow=Fields::getFieldAsocByName_($field,$ct->Table->fields);
 			if(count($fieldrow)>0)
 			{
-				if(isset($recursivefieldslist))
-				{
-					$typeparams_=explode(',',$fieldrow['typeparams']);
-					$typeparams_[1]=$recursivefieldslist;
-					$typeparams=implode(',',$typeparams_);
-				}
-				else
-					$typeparams=$fieldrow['typeparams'];
+				//if(isset($recursivefieldslist))
+				//{
+					//$typeparams_=explode(',',$fieldrow['typeparams']);
+					//$typeparams_[1]=$recursivefieldslist;
+					//$typeparams=implode(',',$typeparams_);
+				//}
+				//else
+					//$typeparams=$fieldrow['typeparams'];
 
 
 				$getGalleryRows=array();
 				$getFileBoxRows=array();
 
-				if($fieldrow['type']=="multilangstring" or $fieldrow['type']=="multilangtext")
-					$real_fields=$fieldrow['realfieldname'].$langpostfix;
-				else
-					$real_fields=$fieldrow['realfieldname'];
+				//if($fieldrow['type']=="multilangstring" or $fieldrow['type']=="multilangtext")
+//					$real_fields=$fieldrow['realfieldname'].$langpostfix;
+				//else
+					//$real_fields=$fieldrow['realfieldname'];
 
 				$options_list=explode(',',$options);
+				//getValueByType(&$ct,$ESField, $row, &$option_list,&$getGalleryRows,&$getFileBoxRows)
 				$v=tagProcessor_Value::getValueByType($ct,
-					$row[$real_fields],
-					$field,
-					$fieldrow['type'],
-					$typeparams,
+					$fieldrow,
+					$row,
 					$options_list,
 					$getGalleryRows,
 					$getFileBoxRows,
-					$row['listing_id'],
-					$row,
-					$fieldrow['id']);
+				);
 
 				$htmlresult=$v;
 			}

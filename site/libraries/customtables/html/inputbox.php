@@ -41,12 +41,25 @@ class Inputbox
 	var $place_holder;
 	var $prefix;
 	
-	function __construct(&$ct, &$esfield, $class_ = '', string $attributes = '', array $option_list = [])
+	function __construct(&$ct, &$esfield, array $option_list = [])
 	{
 		$this->ct = $ct;
 		$this->jinput = Factory::getApplication()->input;
-		$this->cssclass = $class_;
-		$this->attributes = $attributes;
+		
+		// $option_list[0] - CSS Class
+		// $option_list[1] - Optional Parameter
+		$this->cssclass = $option_list[0] ?? '';
+		$this->attributes = $option_list[1] ?? '';
+
+		if(strpos($this->cssclass,':')!==false)//its a style, change it to attribute
+    	{
+			if($this->attributes!='')
+    			$this->attributes.=' ';
+
+			$this->attributes .= 'style="'.$this->cssclass.'"';
+			$this->cssclass = '';
+		}
+	
 		$this->option_list = $option_list;
 		$this->place_holder = $esfield['fieldtitle'.$this->ct->Languages->Postfix];
 		

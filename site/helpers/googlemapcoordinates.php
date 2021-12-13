@@ -34,13 +34,13 @@ class JHTMLGoogleMapCoordinates
 			$zoom='';
 				
 		$suffix	= '';
-		if ($lat != '') { $suffix .= '&amp;lat='.$lat;}
-		if ($lng != '') { $suffix .= '&amp;lng='.$lng;}
-		if ($zoom != '' && (int)$zoom > 0) { $suffix .= '&amp;zoom='.$zoom;}
-		if ($maptype != '') { $suffix .= '&amp;type='.$maptype;}
+		if ($lat != '') { $suffix .= '&lat='.$lat;}
+		if ($lng != '') { $suffix .= '&lng='.$lng;}
+		if ($zoom != '' && (int)$zoom > 0) { $suffix .= '&zoom='.$zoom;}
+		if ($maptype != '') { $suffix .= '&type='.$maptype;}
 		
 		//TODO Use some Plugin instead
-		$link = 'index.php?option=com_customtables&amp;view=phocamapsgmap&amp;tmpl=component&amp;esobjectname='.$control_name. $suffix;
+		$link = 'index.php?option=com_customtables&view=phocamapsgmap&tmpl=component&esobjectname='.$control_name. $suffix;
 		
 		// Load the modal behavior script.
 		JHtml::_('behavior.modal', 'a.modal_'.$control_name);

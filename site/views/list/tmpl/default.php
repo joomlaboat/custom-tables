@@ -13,9 +13,7 @@ defined('_JEXEC') or die('Restricted access');
 
 <div style="width:100%;overflow: scroll;">
 <form action="index.php" method="post" name="adminForm">
-	<!--controller=list&amp;-->
-	
-	
+
 	<table width="100%">
 		<tr>
 			<td align="left">

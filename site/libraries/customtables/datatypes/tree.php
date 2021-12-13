@@ -60,15 +60,10 @@ class Tree
 
 	}
 	
-	public static function getMultyValueTitles($PropertyTypes,$langpostfix,$StartFrom, $Separator,$TypeParams='')
+	public static function getMultyValueTitles($PropertyTypes,$langpostfix,$StartFrom, $Separator, array $list_of_params = [])
 	{
-		if(strpos($PropertyTypes,'.')===false)
-		{
-			//Try to complete the value
-			$list_of_params=JoomlaBasicMisc::csv_explode(',', $TypeParams,'"', false);
-			
+		if(strpos($PropertyTypes,'.')===false and count($list_of_params) > 0)
 			$PropertyTypes=','.$list_of_params[0].'.'.$PropertyTypes.'.,';
-		}
 		
 		$RowPropertyTypes=explode(",", $PropertyTypes);
 

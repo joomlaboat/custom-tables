@@ -86,7 +86,7 @@ trait render_csv
 			$row['_number']=$number;
 		
             $tablecontent.='
-'.strip_tags(tagProcessor_Item::RenderResultLine($ct,$twig,$row,false));
+'.strip_tags(tagProcessor_Item::RenderResultLine($ct,$twig,$row));
 
 			$number++;
 		}
@@ -136,7 +136,7 @@ trait render_csv
 
 		foreach($ct->Records as $row)
 		{
-			$vlu=trim(strip_tags(tagProcessor_Item::RenderResultLine($ct,$twig,$row,false)));
+			$vlu=trim(strip_tags(tagProcessor_Item::RenderResultLine($ct,$twig,$row)));
 			$l=strlen($vlu);
 			if($commaAdded and $l>0)
 			{

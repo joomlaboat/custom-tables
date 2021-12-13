@@ -346,9 +346,11 @@
 
                 if (http.readyState == 4)
                 {
-                    var res=http.response;
+                    let res=http.response;
+					
+					res = res.replace(/<[^>]*>?/gm, '').trim();
 
-                    if(res=="saved")
+                    if(res.indexOf("saved")!=-1)
                     {
                         obj.className = "ct_checkmark ct_checkmark_hidden";//+css_class;
                     }

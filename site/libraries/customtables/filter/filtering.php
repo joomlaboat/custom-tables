@@ -798,10 +798,10 @@ class Filtering
 		
 		$v=$this->getString_vL($value);
 		
-		$this->PathValue[]=$fieldrow['fieldtitle'.$this->ct->Languages->Postfix].' '.$comparison_operator;
-
 		if($comparison_operator=='=' and $v!="")
 		{
+			$PathValue = [];
+			
 			$vList=explode(',',$v);
 			$cArr=array();
 			foreach($vList as $vL)
@@ -816,6 +816,8 @@ class Filtering
 						$new_v_list[]='CAST ( '.$db->quoteName($realfieldname).' AS text ) LIKE '.$db->quote('%'.$vl.'%');
 					else
 						$new_v_list[]=$db->quoteName($realfieldname).' LIKE '.$db->quote('%'.$vl.'%');
+					
+					$PathValue[] = $vl;
 				}
 
 				if(count($new_v_list)>1)
@@ -824,11 +826,14 @@ class Filtering
 					$cArr[]=implode(' AND ',$new_v_list);
 			}
 
+			$this->PathValue[]=$fieldrow['fieldtitle'.$this->ct->Languages->Postfix].' '.$comparison_operator.' '.implode(', ',$PathValue);
+
 			if(count($cArr)>1)
 				return '('.implode(' OR ',$cArr).')';
 			else
 				return implode(' OR ',$cArr);
-				
+			
+			
 		}
 		else
 		{
@@ -842,6 +847,8 @@ class Filtering
 				$where='('.$db->quoteName($realfieldname).' IS NOT NULL AND '.$db->quoteName($realfieldname).'!='.$db->quote('').')';
 			else
 				$where=$db->quoteName($realfieldname).$comparison_operator.$db->quote($v);
+			
+			$this->PathValue[]=$fieldrow['fieldtitle'.$this->ct->Languages->Postfix].' '.$comparison_operator.' '.($v == '' ? 'NOT SELECTED' : $v);
 			
 			return $where;
 		}

@@ -97,5 +97,17 @@ $edit = "index.php?option=com_customtables&view=listoflayouts&task=layouts.edit"
 			?>
 		</td>
 		
+	<td scope="row">
+			<?php
+
+			if($item->modified!='0000-00-00 00:00:00')
+			{
+				$d=strtotime($item->modified);
+				$mysqldate = date( 'Y-m-d H:i:s', $d);
+				echo $mysqldate;
+			}
+			?>
+		</td>
+		
 	</tr>
 <?php endforeach; ?>

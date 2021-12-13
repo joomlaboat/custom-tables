@@ -128,7 +128,7 @@ class Ordering
 		
 	}
 	
-	function parseOrderByParam($blockExternalVars,&$menu_params)
+	function parseOrderByParam($blockExternalVars,&$menu_params,$Itemid)
 	{
 		//get sort field (and direction) example "price desc"
 		$jinput = Factory::getApplication()->input;
@@ -165,6 +165,8 @@ class Ordering
 				}
 			}
 		}
+		
+		$ordering_param_string = $mainframe->getUserState( 'com_customtables.orderby_'.$Itemid,'' );
 
 		$this->ordering_processed_string = $this->processOrderingString($ordering_param_string);
 

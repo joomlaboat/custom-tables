@@ -64,13 +64,19 @@ class TwigProcessor
 			foreach($ct->Table->fields as $field)
 			{
 	
-				$function = new \Twig\TwigFunction($field['fieldname'], function () use (&$ct, $index) {
+				$function = new \Twig\TwigFunction($field['fieldname'], function () use (&$ct, $index) 
+				{
+					//This function will process record values with field typeparams and with optional arguments
+					//Example:
+					//{{ price }}  - will return 35896.14 if field type parameter is 2,20 (2 decimals)
+					//{{ price(3,",") }}  - will return 35,896.140 if field type parameter is 2,20 (2 decimals) but extra 0 added
 					
-					// Process value
-					$rfn = $ct->Table->fields[$index]['realfieldname'];
-					return $ct->Table->record[$rfn];
+					$args = func_get_args();	
 					
 					
+					$valueProcessor = new Value($this->ct);
+					$vlu = strval($valueProcessor->renderValue($ct->Table->fields[$index],$this->ct->Table->record,$args));
+					return new \Twig\Markup($vlu, 'UTF-8' );
 				});
 				
 				$this->twig->addFunction($function);
@@ -104,28 +110,48 @@ class fieldObject
 	
 	public function __toString()
     {
-		$rfn = $this->field['realfieldname'];
-        return strval($this->ct->Table->record[$rfn]);
+		//$args = func_get_args();
+		$valueProcessor = new Value($this->ct);
+		$vlu = $valueProcessor->renderValue($this->field,$this->ct->Table->record,[]);
+		return strval(new \Twig\Markup($vlu, 'UTF-8'));
     }
 	
 	public function __call($name, $arguments)
     {
+		//if($name == 'title')
+			//return $this->title();
+		
+		if($name == 'edit')
+		{
+			return 'object:'.$name.':['.$arguments[0].']';
+		}
+		
 		//for jsl join fields
-        return '*'.$name.'*['.$arguments[0].']';
+        return 'unknown';
     }
 	
-	public function _name()
+	public function fieldname()
     {
         return $this->field['fieldname'];
     }
 	
-	public function _value()
+	public function v()
+    {
+		return $this->value();
+	}
+	
+	public function value()
     {
 		$rfn = $this->field['realfieldname'];
 		return $this->ct->Table->record[$rfn];
 	}
 	
-	public function _title()
+	public function t()
+    {
+		return $this->title();
+	}
+	
+	public function title()
     {
 		if(!array_key_exists('fieldtitle'.$this->ct->Languages->Postfix,$this->field))
 		{
@@ -138,32 +164,103 @@ class fieldObject
 			return $this->field['fieldtitle'.$this->ct->Languages->Postfix];
     }
 	
-	public function _label()
+	public function label()
     {
 		$forms = new Forms($this->ct);
         return $forms->renderFieldLabel($this->field);
     }
 	
-	public function _description()
+
+	public function description()
     {
 		if(!array_key_exists('description'.$this->ct->Languages->Postfix,$this->field))
-		{
-			Factory::getApplication()->enqueueMessage(
-					JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_LANGFIELDNOTFOUND' ), 'Error');
-                                        
-            return '*description'.$this->ct->Languages->Postfix.' - not found*';
-		}
+			$vlu = $this->field['description'];
         else
-			return $this->field['description'.$this->ct->Languages->Postfix];
+			$vlu = $this->field['description'.$this->ct->Languages->Postfix];
+		
+		return new \Twig\Markup($vlu, 'UTF-8' );
     }
 	
-	public function _type()
+	public function type()
     {
         return $this->field['type'];
     }
 	
-	public function _params()
+	public function params()
     {
         return $this->field['typeparams'];
+    }
+	
+	public function edit()
+    {
+		$args = func_get_args();
+		
+		$value = '';
+		if($this->field['type']!='multilangstring' and $this->field['type']!='multilangtext' and $this->field['type']!='multilangarticle')
+		{
+			$rfn = $this->field['realfieldname'];
+			$value = isset($this->ct->Table->record[$rfn]) ? $this->ct->Table->record[$rfn] : null;
+		}
+		
+		if($this->ct->isEditForm)
+		{
+			$Inputbox = new Inputbox($this->ct, $this->field, $args);
+			return new \Twig\Markup($Inputbox->render($value, $this->ct->Table->record), 'UTF-8' );
+		}
+		else
+		{
+			$postfix='';
+            $ajax_prefix = 'com_'.$this->ct->Table->record['listing_id'].'_';//example: com_153_es_fieldname or com_153_ct_fieldname
+
+			if($this->field['type']=='multilangstring')
+			{
+				if(isset($args[4]))
+				{
+					//multilang field specific language
+                    $firstlanguage=true;
+                    foreach($this->ct->Languages->LanguageList as $lang)
+					{
+						if($lang->sef==$value_option_list[4])
+                        {
+							$postfix=$lang->sef;
+                            break;
+						}
+                    }
+				}
+			}
+			
+			//Deafult style (borderless)
+			if(isset($args[0]) or $args[0] != '')
+				$class_str = $args[0];
+			else
+				$class_str = '';
+			
+			if($class_str == '' or strpos($class_str,':')!==false)//its a style, change it to attribute
+				$div_arg=' style="'.$class_str.'"';
+			else
+				$div_arg=' class="'.$class_str.'"';
+
+			// Default attribute - action to save the value
+			
+			$args[0] = 'border:none !important;width:auto;box-shadow:none;';
+			
+			$onchange='ct_UpdateSingleValue(\''.$this->ct->Env->WebsiteRoot.'\','.$this->ct->Env->Itemid.',\''
+				.$this->field['fieldname'].'\','.$this->ct->Table->record['listing_id'].',\''.$postfix.'\');';
+								
+            $attributes='onchange="'.$onchange.'"'.$style;
+								
+			if(isset($value_option_list[1]))
+				$args[1] .= ' '.$attributes;
+			else
+				$args[1] = $attributes;
+								
+			$Inputbox = new Inputbox($this->ct, $this->field, $args);
+			
+			$edit_box = '<div '.$div_arg.'id="'.$ajax_prefix.$this->field['fieldname'].$postfix.'_div">'
+                            .$Inputbox->render($value, $this->ct->Table->record)
+						.'</div>';
+			
+			return new \Twig\Markup($edit_box, 'UTF-8' );
+		}
     }
 }

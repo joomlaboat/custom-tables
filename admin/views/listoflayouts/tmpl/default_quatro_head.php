@@ -60,4 +60,8 @@ HTMLHelper::_('behavior.multiselect');
 	<th scope="col">
 			<?php echo JText::_('COM_CUSTOMTABLES_LAYOUTS_MODIFIED'); ?>
 	</th>
+	
+	<th scope="col">
+			Twig
+	</th>
 </tr>

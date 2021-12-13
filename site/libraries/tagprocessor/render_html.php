@@ -67,7 +67,7 @@ trait render_html
 		foreach($ct->Records as $row)
 		{
 			$row['_number'] = $number;
-		    $tablecontent.=tagProcessor_Item::RenderResultLine($ct,$twig,$row,true);
+		    $tablecontent.=tagProcessor_Item::RenderResultLine($ct,$twig,$row);
 			
 			$number++;
 		}

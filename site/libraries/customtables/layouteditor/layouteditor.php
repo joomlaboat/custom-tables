@@ -17,7 +17,7 @@ use CustomTables\CT;
 $theme='eclipse';
 $document = JFactory::getDocument();
 
-$document->addCustomTag('<script src="'.JURI::root(true).'/administrator/components/com_customtables/js/ajax.js"></script>');
+$document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/js/ajax.js"></script>');
 
 $version_object = new Version;
 $version = (int)$version_object->getShortVersion();

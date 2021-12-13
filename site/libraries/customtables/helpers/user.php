@@ -389,4 +389,35 @@ class CTUser
 
 		return $user->id;
 	}
+
+
+	//checkAccess
+	public static function checkIfRecordBelongsToUser(&$ct,$ug)
+	{
+        if(!isset($ct->Env->isUserAdministrator))
+            return false;
+
+		if($ug==1)
+			$usergroups =array();
+		else
+			$usergroups = $ct->Env->user->get('groups');
+
+		$isok=false;
+
+		if($ct->Env->isUserAdministrator or in_array($ug,$usergroups))
+			$isok=true;
+		else
+		{
+			if(isset($ct->Table->record) and isset($ct->Table->record['listing_published']) and $ct->Table->useridfieldname!='')
+			{
+				$uid = $ct->Table->record[$ct->Table->useridrealfieldname];
+
+				if($uid==$ct->Env->userid and $ct->Env->userid!=0)
+					$isok=true;
+			}
+		}
+
+		return $isok;
+	}
+
 }

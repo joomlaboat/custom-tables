@@ -65,13 +65,10 @@ trait render_xml
 
             if($tablecontent!="")
                 $tablecontent.="\r\n";
-
-		        $vlu=tagProcessor_Item::RenderResultLine($ct,$twig,$row,false);
-                $tablecontent.=str_replace('&','&amp;',$vlu);
+               	$tablecontent.=tagProcessor_Item::RenderResultLine($ct,$twig,$row);
 				$number++;
 		}
         $result.=$tablecontent;
         return $result;
     }
-
 }

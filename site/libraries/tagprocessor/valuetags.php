@@ -10,6 +10,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\DataTypes\Tree;
+use CustomTables\CTUser;
 
 $types_path=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fieldtypes'.DIRECTORY_SEPARATOR;
 require_once($types_path.'_type_ct.php');
@@ -23,74 +24,19 @@ require_once($types_path.'_type_sqljoin.php');
 
 defined('_JEXEC') or die('Restricted access');
 
+/* All tags already implemented using Twig
+
+Not all field types are tested
+Not tested:
+Articles
+Image Gallery
+File box
+List
+
+ */
+
 class tagProcessor_Value
 {
-    public static function TextFunctions($content,$parameters)
-	{
-        if(count($parameters)==0)
-            return $content;
-        
-    				switch($parameters[0])
-					{
-						case "chars" :
-
-							if(isset($parameters[1]))
-								$count=(int)$parameters[1];
-							else
-								$count=-1;
-
-							if(isset($parameters[2]) and $parameters[2]=='true')
-								$cleanbraces=true;
-							else
-								$cleanbraces=false;
-
-							if(isset($parameters[3]) and $parameters[3]=='true')
-								$cleanquotes=true;
-							else
-								$cleanquotes=false;
-
-							return JoomlaBasicMisc::chars_trimtext($content, $count, $cleanbraces, $cleanquotes);
-							break;
-
-						case "words" :
-
-							if(isset($parameters[1]))
-								$count=(int)$parameters[1];
-							else
-								$count=-1;
-
-							if(isset($parameters[2]) and $parameters[2]=='true')
-								$cleanbraces=true;
-							else
-								$cleanbraces=false;
-
-							if(isset($parameters[3]) and $parameters[3]=='true')
-								$cleanquotes=true;
-							else
-								$cleanquotes=false;
-
-							return JoomlaBasicMisc::words_trimtext($content, $count, $cleanbraces, $cleanquotes);
-							break;
-
-						case "firstimage" :
-
-							return JoomlaBasicMisc::getFirstImage($content);
-
-							break;
-
-
-						default:
-
-							return $content;
-
-
-						break;
-					}
-
-		return $content;
-
-	}
-
     public static function getArticle($articleid,$field)
 	{
     	// get database handle
@@ -125,9 +71,6 @@ class tagProcessor_Value
 				if($ct->Env->menu_params->get('requiredlabel')!='')
 					$esinputbox->requiredlabel=$ct->Env->menu_params->get( 'requiredlabel' );	
 
-                $document = JFactory::getDocument();
-                $document->addCustomTag('<script src="'.JURI::root(true).'/administrator/components/com_customtables/js/ajax.js"></script>');
-                
                 require_once(JPATH_SITE
                     .DIRECTORY_SEPARATOR.'components'
                     .DIRECTORY_SEPARATOR.'com_customtables'
@@ -136,7 +79,7 @@ class tagProcessor_Value
                     .DIRECTORY_SEPARATOR.'itemtags.php');
 
                 $edit_userGroup=(int)$ct->Env->menu_params->get( 'editusergroups' );
-                $isEditable=tagProcessor_Item::checkAccess($ct,$edit_userGroup,$row);
+                $isEditable=CTUser::checkIfRecordBelongsToUser($ct,$edit_userGroup);
         }
         else
             $isEditable=false;
@@ -190,21 +133,30 @@ class tagProcessor_Value
                                     }
                                 }
 								
-								$onchange='ct_UpdateSingleValue(\''.$ct->Env->WebsiteRoot.'\','.$ct->Env->Itemid.',\''.$ESField['fieldname'].'\','.$row['listing_id'].',\''.$postfix.'\');';
+								$onchange='ct_UpdateSingleValue(\''.$ct->Env->WebsiteRoot.'\','.$ct->Env->Itemid.',\''.$ESField['fieldname'].'\','.$row['listing_id'].',\''
+									.$postfix.'\');';
 								
                                 $attributes='onchange="'.$onchange.'"'.$style;
+								
+								if(isset($value_option_list[1]))
+									$value_option_list[1] .= ' '.$attributes;
+								else
+									$value_option_list[1] = $attributes;
                             
                                 $vlu='<div class="" id="'.$ajax_prefix.$ESField['fieldname'].$postfix.'_div">'
-                                .$esinputbox->renderFieldBox($ESField,$row,$class_,$attributes,$value_option_list);
+                                .$esinputbox->renderFieldBox($ESField,$row,$value_option_list);
                                 $vlu.='</div>';
                             }
                             else
 							{
-								$fieldtype='';
-								$fieldname='';
-								$rowValue='';
-								tagProcessor_Value::doMultiValues($ct,$ESField,$row,$fieldtype,$rowValue,$fieldname);
-                                $vlu=$rowValue;
+								//$fieldtype='';
+								//$fieldname='';
+								$fieldtype = $ESField['type'];
+								$fieldname = $ESField['fieldname'];
+								
+								//$rowValue='';
+								//tagProcessor_Value::doMultiValues($ct,$ESField,$row,$fieldtype,$rowValue,$fieldname);
+                                $vlu = $row[$ESField['realfieldname']];
 							}
 
 							$items_to_replace[]=array($new_replaceitecode,$vlu);
@@ -241,10 +193,12 @@ class tagProcessor_Value
                 
 				if($pureValueOptionArr[0]==$ESField['fieldname'])
 				{
-					$fieldtype='';
-					$fieldname='';
-					$rowValue='';
-					tagProcessor_Value::doMultiValues($ct,$ESField,$row,$fieldtype,$rowValue,$fieldname);
+					
+					$fieldtype = $ESField['type'];
+					$fieldname = $ESField['fieldname'];
+					
+					//$rowValue='';
+					//tagProcessor_Value::doMultiValues($ct,$ESField,$row,$fieldtype,$rowValue,$fieldname);
 
 					if($fieldtype=='imagegallery')
 					{
@@ -299,7 +253,7 @@ class tagProcessor_Value
 					}
 					else
 					{
-						$isEmpty=tagProcessor_Value::isEmpty($rowValue,$fieldtype,$ESField['typeparams']);
+						$isEmpty=tagProcessor_Value::isEmpty($row[$ESField['realfieldname']],$fieldtype,$ESField['typeparams']);
 						
 					}
 
@@ -349,7 +303,7 @@ class tagProcessor_Value
                                         $new_array[]=$pureValueOptionArr[$i];
                                 }
                                 
-                                CT_FieldTypeTag_image::getImageSRClayoutview($new_array,$rowValue,$ESField['typeparams'],$imagesrc,$imagetag);
+                                CT_FieldTypeTag_image::getImageSRClayoutview($new_array,$row[$ESField['realfieldname']],$ESField['typeparams'],$imagesrc,$imagetag);
 
 								$vlu=$imagesrc;
 							}
@@ -382,7 +336,7 @@ class tagProcessor_Value
 							}
 							elseif($fieldtype=='records')
 							{
-								$a=explode(",",$rowValue);
+								$a=explode(",",$row[$ESField['realfieldname']]);
 								$b=array();
 								foreach($a as $c)
 								{
@@ -406,15 +360,15 @@ class tagProcessor_Value
                                             $new_array[]=$pureValueOptionArr[$i];
                                     }
                                     
-                                    $vlu=CT_FieldTypeTag_file::process($rowValue,$ESField['typeparams'],$new_array,$row['listing_id'],$ESField['id']
+                                    $vlu=CT_FieldTypeTag_file::process($row[$ESField['realfieldname']],$ESField['typeparams'],$new_array,$row['listing_id'],$ESField['id']
 										,$ct->Table->tableid,true);
                                 }
                                 else
-                                    $vlu=$rowValue;
+                                    $vlu=$row[$ESField['realfieldname']];
                             }
 							else
 							{
-								$vlu=$rowValue;
+								$vlu=$row[$ESField['realfieldname']];
 							}
 
 							//this is temporary replace string - part of the mechanism to avoid getting values of another fields
@@ -535,6 +489,7 @@ class tagProcessor_Value
 		}
 	}
 
+	/*
 	public static function doMultiValues(&$ct,&$ESField, &$row,&$fieldtype,&$rowValue,&$fieldname,$specific_lang='')
 	{
 		$fieldtype=$ESField['type'];
@@ -610,6 +565,7 @@ class tagProcessor_Value
 				$rowValue = null;
 		}
 	}
+	*/
 
     public static function processValues(&$ct,&$row,&$htmlresult,$tag_chars='[]')
 	{
@@ -638,10 +594,10 @@ class tagProcessor_Value
 				$ValueOptions=array();
 				$ValueList=JoomlaBasicMisc::getListToReplace($ESField['fieldname'],$ValueOptions,$htmlresult,$tag_chars);
 
-					$fieldtype='';
-					$fieldname='';
-					$rowValue='';
-					tagProcessor_Value::doMultiValues($ct,$ESField,$row,$fieldtype,$rowValue,$fieldname,'');
+					$fieldtype = $ESField['type'];
+					$fieldname = $ESField['fieldname'];
+					//$rowValue='';
+					//tagProcessor_Value::doMultiValues($ct,$ESField,$row,$fieldtype,$rowValue,$fieldname,'');
 
 					if($fieldtype=='imagegallery')
 					{
@@ -685,7 +641,7 @@ class tagProcessor_Value
 					else
 					{
 						//isEmpty
-						$isEmpty=tagProcessor_Value::isEmpty($rowValue,$fieldtype,$ESField['typeparams']);
+						$isEmpty=tagProcessor_Value::isEmpty($row[$ESField['realfieldname']],$fieldtype,$ESField['typeparams']);
 					}
 
 					// IF
@@ -706,10 +662,10 @@ class tagProcessor_Value
 						{
                             $value_option_list=JoomlaBasicMisc::csv_explode(',',$ValueOption,'"',false);
                             
-                            if(count($value_option_list)>=5)
-                                tagProcessor_Value::doMultiValues($ct,$ESField,$row,$fieldtype,$rowValue,$fieldname,$value_option_list[4]);
+                            //if(count($value_option_list)>=5)
+                               // tagProcessor_Value::doMultiValues($ct,$ESField,$row,$fieldtype,$rowValue,$fieldname,$value_option_list[4]);
 
-							$vlu=tagProcessor_Value::getValueByType($ct,$rowValue,$fieldname,$fieldtype,$ESField['typeparams'],$value_option_list,$getGalleryRows[$fieldname],$getFileBoxRows[$fieldname],$row['listing_id'],$row,$ESField['id']);
+							$vlu=tagProcessor_Value::getValueByType($ct, $ESField, $row,$value_option_list,$getGalleryRows[$fieldname],$getFileBoxRows[$fieldname]);
 
 							//this is temporary replace string - part of the mechanism to avoid getting values of another fields
 							$new_replaceitecode=$replaceitecode.str_pad($ESField['id'], 9, '0', STR_PAD_LEFT).str_pad($i, 4, '0', STR_PAD_LEFT);
@@ -731,445 +687,13 @@ class tagProcessor_Value
 
 	}
 
-    static public function getValueByType(&$ct,$rowValue,$FieldName, $FieldType,$TypeParams,$option_list,&$getGalleryRows,&$getFileBoxRows,$id, array &$row=array(), int $fieldid = 0)
+    static public function getValueByType(&$ct,$ESField, $row, &$option_list,&$getGalleryRows,&$getFileBoxRows)
 	{
-		switch($FieldType)
-		{
-				case 'viewcount':
-						if((int)$rowValue==0)
-							return '';
-
-						return $rowValue;
-						break;
-
-				case 'int':
-						if((int)$rowValue==0)
-							return '';
-
-						if($option_list[0]!='')//thousand separator
-							return number_format ( (int) $rowValue , 0 , "." , $option_list[0]);
-						else
-						{
-							if($TypeParams!='')
-								return number_format ( (int) $rowValue , 0 , "." , $option_list[0]);
-							else
-								return $rowValue;
-						}
-						break;
-
-				case 'float':
-						if((float)$rowValue==0)
-							return '0';
-
-						$decimals=(int)$option_list[0];
-						$decimals_sep='.';
-						$thousand_sep='';
-
-                        if($decimals==0 and $TypeParams!='')
-						{
-							$pair=JoomlaBasicMisc::csv_explode(',',$TypeParams,'"',false);
-                            if((int)$pair[0]!=0)
-                                $decimals=$pair[0];
-						}
-                        
-						if(count($option_list)>0 and $option_list[0]!="")
-						{
-                            if(isset($option_list[1]) and $option_list[1]!='')
-								$decimals_sep=$option_list[1];
-
-							if(isset($option_list[2]) and $option_list[2]!='')
-								$thousand_sep=$option_list[2];
-						}
-						
-                        if($decimals==0 and count($option_list)==1)
-							return (float)$rowValue;
-
-						return number_format ( (float)$rowValue, $decimals,$decimals_sep,$thousand_sep);
-						break;
-
-				case 'phponadd':
-						return $rowValue;
-						break;
-
-				case 'phponchange':
-						return $rowValue;
-						break;
-                    
-                case 'phponview':
-						return $rowValue;
-						break;
-
-				case 'googlemapcoordinates':
-						return $rowValue;
-						break;
-
-				case 'string':
-						return tagProcessor_Value::TextFunctions($rowValue,$option_list);
-						break;
-
-                case 'color':
-
-                    $value=$rowValue;
-                    if($value=='')
-						$value='000000';
-
-                    if($option_list[0]=="rgba")
-                    {
-                        $colors=array();
-                        if(strlen($value)>=6)
-						{
-							$colors[]=hexdec(substr($value, 0,2));
-							$colors[]=hexdec(substr($value, 2,2));
-							$colors[]=hexdec(substr($value, 4,2));
-						}
-								
-						if(strlen($value)==8)
-						{
-							$a=hexdec(substr($value, 6,2));
-							$colors[]=round($a/255,2);
-						}                        
-                        
-                        if(strlen($value)==8)
-                            return 'rgba('.implode(',',$colors).')';
-                        else
-                            return 'rgb('.implode(',',$colors).')';
-                    }
-                    else
-    					return "#".$value;
-                        
-						break;
-
-                case 'alias':
-						return $rowValue;
-						break;
-
-				case 'radio':
-						return $rowValue;
-						break;
-
-				case 'text':
-						return tagProcessor_Value::TextFunctions($rowValue,$option_list);
-						break;
-
-				case 'file':
-					return CT_FieldTypeTag_file::process($rowValue,$TypeParams,$option_list,$row['listing_id'],$fieldid,$ct->Table->tableid);
-					break;
-
-				case 'image':
-					$imagesrc='';
-					$imagetag='';
-
-					CT_FieldTypeTag_image::getImageSRClayoutview($option_list,$rowValue,$TypeParams,$imagesrc,$imagetag);
-
-					return $imagetag;
-					break;
-
-				case 'article':
-
-					if(isset($option_list[0]) and $option_list[0]!='')
-						$article_field=$option_list[0];
-                    else
-                        $article_field='title';
-                        
-					$article=tagProcessor_Value::getArticle((int)$rowValue,$article_field);
-
-					if(isset($option_list[1]))
-                    {
-                        $opts=str_replace(':',',',$option_list[1]);
-						$article=tagProcessor_Value::TextFunctions($article,explode(',',$opts));
-                    }
-
-					return $article;
-
-						break;
-
-				case 'multilangarticle':
-                    
-					if(isset($option_list[0]) and $option_list[0]!='')
-						$article_field=$option_list[0];
-                    else
-                        $article_field='title';
-
-					$article=tagProcessor_Value::getArticle((int)$rowValue,$article_field);
-
-					if(isset($option_list[1]))
-                    {
-                        $opts=str_replace(':',',',$option_list[1]);
-						$article=tagProcessor_Value::TextFunctions($article,explode(',',$opts));
-                    }
-
-						break;
-
-
-				case 'imagegallery':
-
-					if($option_list[0]=='_count')
-						return count($getGalleryRows);
-
-					$imagesrclist='';
-					$imagetaglist='';
-
-
-					CT_FieldTypeTag_imagegallery::getImageGallerySRC($getGalleryRows,$option_list[0],$id,$FieldName,$TypeParams,$imagesrclist
-						,$imagetaglist,$ct->Table->tableid);
-						
-					return $imagetaglist;
-
-						break;
-
-				case 'filebox':
-
-					if($option_list[0]=='_count')
-						return count($getFileBoxRows);
-
-					return CT_FieldTypeTag_filebox::process($ct->Table->tableid,$getFileBoxRows, $id,$FieldName,$TypeParams,$option_list,$fieldid,'');
-
-    				break;
-
-				case 'customtables':
-
-					if(count($option_list)>1 and $option_list[0]!="")
-					{
-						if($option_list[0]=='group')
-						{
-							$typeparamsarray=explode(',',$TypeParams);
-							$rootparent=$typeparamsarray[0];
-
-							$orientation=0;// horizontal
-							if(isset($option_list[1]) and $option_list[1]=='vertical')
-								$orientation=1;// vertical
-
-							$grouparray=CT_FieldTypeTag_ct::groupCustomTablesParents($ct,$rowValue,$rootparent);
-
-
-							$vlu='';
-
-							//Build structure
-							$vlu.='<table border="0"><tbody>';
-
-							if($orientation==0)
-								$vlu.='<tr>';
-
-							foreach($grouparray as $fgroup)
-							{
-								if($orientation==1)
-									$vlu.='<tr>';
-
-								$vlu.='<td valign="top" align="left"><h3>'.$fgroup[0].'</h3><ul>';
-
-								for($i=1; $i<count($fgroup);$i++)
-								    $vlu.='<li>'.$fgroup[$i].'</li>';
-
-								$vlu.='<ul></td><td width="20"></td>';
-
-								if($orientation==1)
-									$vlu.='</tr>';
-							}
-
-							if($orientation==0)
-								$vlu.='</tr>';
-
-							$vlu.='</tbody></table>';
-
-							return $vlu;
-						}
-
-
-						if($option_list[0]=='list')
-						{
-							if($rowValue!='')
-							{
-								$vlus=explode(',',$rowValue);
-								$vlus = array_filter($vlus);
-
-								sort ($vlus);
-
-								$temp_index=0;
-								$vlu=Tree::BuildULHtmlList($vlus,$temp_index,$ct->Languages->Postfix);
-
-								return $vlu;
-							}
-							else
-								return '';
-
-						}
-
-					}
-					else
-					{
-						if($rowValue!='')
-							return implode(',',Tree::getMultyValueTitles($rowValue,$ct->Languages->Postfix,1, ' - ',$TypeParams));
-						else
-							return '';
-
-					}
-						break;
-
-				case 'records':
-
-						return CT_FieldTypeTag_records::resolveRecordType($ct,$rowValue, $TypeParams, $option_list);
-						break;
-
-				case 'sqljoin':
-						return CT_FieldTypeTag_sqljoin::resolveSQLJoinType($ct,$rowValue, $TypeParams, $option_list);
-						break;
-
-				case 'userid':
-
-					return JHTML::_('ESUserView.render',$rowValue,$option_list[0]);
-
-						break;
-
-				case 'user':
-
-					return JHTML::_('ESUserView.render',$rowValue,$option_list[0]);
-
-				case 'usergroup':
-
-					return tagProcessor_Value::showUserGroup($rowValue);
-
-						break;
-
-				case 'usergroups':
-
-					return tagProcessor_Value::showUserGroups($rowValue);
-
-						break;
-
-				case 'filelink':
-
-					$processor_file=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fieldtypes'.DIRECTORY_SEPARATOR.'_type_file.php';
-					require_once($processor_file);
-					
-					return CT_FieldTypeTag_file::process($rowValue,','.$TypeParams,$option_list,$row['listing_id'],$fieldid,$ct->Table->tableid); // "," is to be compatible with file field type params. Becuse first parameter is max file size there
-					break;
-
-						//return $TypeParams.'/'.$rowValue;
-						//break;
-
-				case 'server':
-						return $rowValue;
-						break;
-
-				case 'md5':
-						return $rowValue;
-						break;
-
-				case 'log':
-						return CT_FieldTypeTag_log::getLogVersionLinks($ct,$rowValue,$row);
-						break;
-
-				case 'multilangstring':
-						return tagProcessor_Value::TextFunctions($rowValue,$option_list);
-						break;
-
-				case 'multilangtext':
-						return tagProcessor_Value::TextFunctions($rowValue,$option_list);
-						break;
-
-				case 'email':
-						return $rowValue;
-						break;
-
-				case 'url':
-						return $rowValue;
-						break;
-
-				case 'checkbox':
-						if($rowValue)
-							return JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YES');
-						else
-							return JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NO');
-
-						break;
-
-				case 'lastviewtime':
-						if($rowValue=='' or $rowValue=='0000-00-00' or $rowValue=='0000-00-00 00:00:00')
-							return '';
-
-						$phpdate =strtotime( $rowValue);
-
-						if($option_list[0]!='')
-						{
-							if($option_list[0]=='timestamp')
-								return  $phpdate;
-
-							return date($option_list[0], $phpdate);
-						}
-						else
-							return JHTML::date($phpdate );
-
-						break;
-
-				case 'date':
-						if($rowValue=='' or $rowValue=='0000-00-00' or $rowValue=='0000-00-00 00:00:00')
-							return '';
-
-						$phpdate =strtotime( $rowValue);
-
-						if($option_list[0]!='')
-						{
-							if($option_list[0]=='timestamp')
-								return  $phpdate;
-
-							return date($option_list[0], $phpdate);
-						}
-						else
-							return JHTML::date($phpdate );
-
-						break;
-                    
-                case 'time':
-                    
-                    require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'helpers'.DIRECTORY_SEPARATOR.'cttime.php');
-                    
-					$typeparams=explode(',',$TypeParams);
-                    $seconds=JHTMLCTTime::ticks2Seconds($rowValue,$typeparams);
-                    
-                    return JHTMLCTTime::seconds2FormatedTime($seconds,$option_list[0]);
-
-						break;
-
-				case 'creationtime':
-						$phpdate = strtotime($rowValue);
-						if($rowValue=="0000-00-00 00:00:00")
-							return '';
-						
-						if($option_list[0]!='')
-						{
-							if($option_list[0]=='timestamp')
-								return  $phpdate;
-
-							return date($option_list[0],$phpdate );
-						}
-						else
-						{
-							return JHTML::date($phpdate );
-						}
-
-						break;
-
-				case 'changetime':
-						$phpdate = strtotime( $rowValue);
-						if($option_list[0]!='')
-						{
-							if($option_list[0]=='timestamp')
-								return  $phpdate;
-
-							return date($option_list[0],$phpdate );
-						}
-						else
-							return JHTML::date($phpdate );
-
-						break;
-				case 'id':
-						return $rowValue;
-						break;
-
-		}
-		return '';
+		$valueProcessor = new CustomTables\Value($ct);
+		
+		return $valueProcessor->renderValue($ESField,$row,$option_list);
 	}
-
+	
     public static function showUserGroup($id)
 	{
 		$db = JFactory::getDBO();
@@ -1216,48 +740,5 @@ class tagProcessor_Value
 			$groups[]=$opt['title'];
 
 		return implode(',',$groups);
-	}
-
-    public static function ApplyQueryGetValue($str,$sj_tablename)
-	{
-		$list=explode('$get_',$str);
-		if(count($list)==2)
-		{
-			$q=$list[1];
-
-			$v=JFactory::getApplication()->input->getString($q);
-			$v=str_replace('"','',$v);
-			$v=str_replace("'",'',$v);
-
-			if(strpos($v,','))
-			{
-				$f='#__customtables_table_'.$sj_tablename.'.es_'.str_replace('$get_'.$q,'',$str);
-				$values=explode(',',$v);
-
-
-				$vls=array();
-				foreach($values as $v1)
-				{
-					$vls[]=$f.'"'.$v1.'"';
-				}
-
-				$v='('.implode(' or ',$vls).')';
-				return $v;
-			}
-
-			return '#__customtables_table_'.$sj_tablename.'.es_'.str_replace('$get_'.$q,'"'.$v.'"',$str);
-		}
-        else
-        {
-            if(strpos($str,'_id')!==false)
-                return '#__customtables_table_'.$sj_tablename.'.'.str_replace('_id','listing_id',$str);
-            elseif(strpos($str,'_published')!==false)
-                return '#__customtables_table_'.$sj_tablename.'.'.str_replace('_published','published',$str);
-        }
-
-		$str=str_replace('!=null',' IS NOT NULL',$str);
-		$str=str_replace('=null',' IS NULL',$str);
-
-		return '#__customtables_table_'.$sj_tablename.'.es_'.$str;
 	}
 }

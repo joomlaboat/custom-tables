@@ -93,5 +93,22 @@ $edit = "index.php?option=com_customtables&view=listoflayouts&task=layouts.edit"
 			}
 			?>
 		</td>
+		
+		<td class="nowrap center hidden-phone" style="text-align:center;">
+			<?php
+
+				$engine = (object)$this->isTwig($item);
+
+				$engines = [];
+				if($engine->twig > 0)
+					$engines[] = '<span style="border-radius:10px;padding:7px;background:#5b8127;color:white">Twig ('.$engine->twig.')</span>';
+				
+				if($engine->original > 0)
+					$engines[] = '<span style="border-radius:10px;padding:7px;background:#373737;color:white">Original ('.$engine->original.')</span>';
+				
+				echo implode(' ',$engines);
+			
+			?>
+		</td>
 	</tr>
 <?php endforeach; ?>

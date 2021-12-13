@@ -388,10 +388,16 @@ class JESPagination extends JObject
 	 * @return  string   The HTML for the limit # input box.
 	 * @since   11.1
 	 */
-	public function getLimitBox($columns)
+	public function getLimitBox($the_step = 5)
 	{
-		$the_step=$columns*5;
-
+		$the_step = (int)$the_step;
+		
+		if($the_step < 1)
+			$the_step = 1;
+		
+		if($the_step > 1000)
+			$the_step = 1000;
+		
 		$app = JFactory::getApplication();
 
 		// Initialise variables.

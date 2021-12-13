@@ -278,4 +278,34 @@ class CustomtablesViewListoflayouts extends JViewLegacy
 			'a.id' => JText::_('JGRID_HEADING_ID')
 		);
 	}
+	
+	function isTwig(&$row)
+	{
+		$original_ct_matches = 0;
+		$twig_matches = 0;
+		
+		preg_match_all('#\{(.*?)\}#',$row->layoutcode, $match);
+		$original_ct_matches+=count($match[0]);
+		
+		preg_match_all('#\{\{(.*?)\}\}#',$row->layoutcode, $match);
+		$twig_matches+=count($match[0]);
+		
+		$original_ct_matches = $original_ct_matches - $twig_matches;
+		
+		
+		preg_match_all('/\|(.*?)\|/',$row->layoutcode, $match);
+		$original_ct_matches+=count($match[0]);
+		
+		preg_match_all('/\[(.*?)\]/',$row->layoutcode, $match);
+		$original_ct_matches+=count($match[0]);
+		
+		
+		
+		preg_match_all('#\{\%(.*?)\%\}#',$row->layoutcode, $match);
+		$twig_matches+=count($match[0]);
+
+		return ['original' => $original_ct_matches, 'twig' => $twig_matches];
+		//return $twig_matches > $original_ct_matches or $original_ct_matches == 0;
+		
+	}
 }

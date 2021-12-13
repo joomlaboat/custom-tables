@@ -12,7 +12,7 @@ defined('_JEXEC') or die('Restricted access');
 use CustomTables\Fields;
 use CustomTables\SearchInputBox;
 
-/* Not sll tags already implemented using Twig
+/* All tags are implemented using Twig
 
 Implemented:
 
@@ -22,9 +22,21 @@ Implemented:
 {search:email} - {{ html.search('email') }}
 {recordcount} - {{ record.count(true) }}
 {count} - {{ record.count }}
+{navigation} - {{ html.navigation(|type|,|css_class|) }}
+{add} - {{ html.add(|alias_or_itemid|) }}
+{add:,importcsv} - {{ html.importcsv }}
+{pagination} - {{ html.pagination }}
+{pagination:limit} - {{ html.limit(|step|) }}
+{pagination:order} - {{ html.orderby }}
+{batchtoolbar:modes} - {html.batch('delete','publish')}
+{checkbox} - {html.batch('checkbox')
+{html.batch('delete','checkbox')} - new tag
 
- */
- 
+New:
+
+{{ html.message("text",|type|) }} - types: Message(Green), Notice(Blue), Warning(Yellow), Error(Red)
+
+*/
  
 use \CustomTables\Twig_Html_Tags;
 use \CustomTables\Twig_Record_Tags;
@@ -38,22 +50,22 @@ class tagProcessor_Page
 		
         tagProcessor_Page::FormatLink($ct_html,$pagelayout);//{format:xls}  the link to the same page but in xls format
 		
-        tagProcessor_Page::PathValue($ct,$pagelayout);
-        tagProcessor_Page::AddNew($ct,$pagelayout);
+        tagProcessor_Page::PathValue($ct_html,$pagelayout); //Converted to Twig. Original replaced.
+        tagProcessor_Page::AddNew($ct_html,$pagelayout); //Converted to Twig. Original replaced.
 
-        tagProcessor_Page::Pagination($ct,$pagelayout);
+        tagProcessor_Page::Pagination($ct_html,$pagelayout); //Converted to Twig. Original replaced.
 
-        tagProcessor_Page::PageToolBar($ct,$pagelayout);
+        tagProcessor_Page::PageToolBar($ct_html,$pagelayout); //Converted to Twig. Original replaced.
 
-        tagProcessor_Page::PageToolBarCheckBox($ct,$pagelayout);
+        tagProcessor_Page::PageToolBarCheckBox($ct_html,$pagelayout); //Converted to Twig. Original replaced.
 
-        tagProcessor_Page::SearchButton($ct_html,$pagelayout);
-        tagProcessor_Page::SearchBOX($ct_html,$pagelayout);
+        tagProcessor_Page::SearchButton($ct_html,$pagelayout); //Converted to Twig. Original replaced.
+        tagProcessor_Page::SearchBOX($ct_html,$pagelayout); //Converted to Twig. Original replaced.
 
-        tagProcessor_Page::RecordCountValue($ct_record,$pagelayout);
-        tagProcessor_Page::RecordCount($ct_record,$pagelayout);
+        tagProcessor_Page::RecordCountValue($ct_record,$pagelayout); //Converted to Twig. Original replaced.
+        tagProcessor_Page::RecordCount($ct_record,$pagelayout); //Converted to Twig. Original replaced.
 
-        tagProcessor_Page::PrintButton($ct_html,$pagelayout);
+        tagProcessor_Page::PrintButton($ct_html,$pagelayout); //Converted to Twig. Original replaced.
     }
 
     public static function FormatLink(&$ct_html,&$pagelayout)
@@ -82,7 +94,7 @@ class tagProcessor_Page
 		}
 	}
 
-    public static function PathValue(&$ct,&$pagelayout)
+    public static function PathValue(&$ct_html,&$pagelayout)
 	{
 		$options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('navigation',$options,$pagelayout,'{}');
@@ -91,138 +103,46 @@ class tagProcessor_Page
 
 		foreach($fList as $fItem)
 		{
-            $PathValue=tagProcessor_Page::CleanUpPath($ct->Filter->PathValue);
-			if(count($PathValue)==0)
-				$vlu='';
-			else
-			{
-				$pair=explode(',',$options[$i]);
-
-				$element_class=$pair[0];
-
-				if(isset($pair[1]))
-					$list_type=$pair[1];
-				else
-					$list_type='';
-
-				if($list_type=='' or $list_type=='list')
-				{
-					if($element_class!='' )
-						$vlu='<ul class="'.$element_class.'"><li>'.implode('</li><li>',$PathValue).'</li></ul>';
-					else
-						$vlu='<ul><li>'.implode('</li><li>',$PathValue).'</li></ul>';
-				}
-				elseif($list_type=='comma')
-					$vlu=implode(',',$PathValue);
-				else
-					$vlu='navigation: Unknown list type';
-
-			}
-
+			$pair=explode(',',$options[$i]);
+			
+			$ul_css_class = $pair[0];
+			$list_type = $pair[1] ?? 'list';
+			
+			$vlu = $ct_html->navigation($list_type, $ul_css_class);
 
 			$pagelayout=str_replace($fItem,$vlu,$pagelayout);
 			$i++;
 		}
 	}
 
-    protected static function AddNew(&$ct,&$pagelayout)
+    protected static function AddNew(&$ct_html,&$pagelayout)
 	{
-        $jinput=JFactory::getApplication()->input;
-
 		$options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('add',$options,$pagelayout,'{}');
 
 		$i=0;
 
-        if(isset($ct->Env->menu_params))
-            $edit_userGroup=(int)$ct->Env->menu_params->get( 'editusergroups' );
-        else
-            $edit_userGroup=0;
-
-        $row=array();
-        $isEditable=tagProcessor_Item::checkAccess($ct,$edit_userGroup,$row);
-
 		foreach($fList as $fItem)
 		{
-            if($isEditable and $ct->Env->print==0 and ($ct->Env->frmt=='html' or $ct->Env->frmt==''))
-            {
-                $opt=explode(',',$options[$i]);
-
-                if((int)$opt[0]>0)
-                	$link='/index.php?option=com_customtables&view=edititem&returnto='.$ct->Env->encoded_current_url.'&Itemid='.$opt[0];
-                if($opt[0]!='')
-                	$link='/index.php/'.$opt[0].'?returnto='.$ct->Env->encoded_current_url;
-                else
-                	$link='/index.php?option=com_customtables&view=edititem&returnto='.$ct->Env->encoded_current_url.'&Itemid='.$ct->Env->Itemid;
-
-    			if($jinput->getCmd('tmpl','')!='')
-    				$link.='&tmpl='.$jinput->get('tmpl','','CMD');
-                    
-                if(isset($opt[1]) and $opt[1]=='importcsv')
-                {
-                    $document = JFactory::getDocument();
-					
-					if($ct->Env->version < 4)
-					{
-						$document->addCustomTag('<script src="'.JURI::root(true).'/media/jui/js/jquery.min.js"></script>');
-						$document->addCustomTag('<script src="'.JURI::root(true).'/media/jui/js/bootstrap.min.js"></script>');
-					}
-		
-                    $document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customtables/css/uploadfile.css" rel="stylesheet">');
-                    $document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/js/jquery.uploadfile.min.js"></script>');
-                    $document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/js/jquery.form.js"></script>');
-                    $document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/js/uploader.js"></script>');
-                    $max_file_size=JoomlaBasicMisc::file_upload_max_size();
-                    
-                    $prefix='comes_';
-                    $fileid=JoomlaBasicMisc::generateRandomString();
-                    $fieldid='9999';//some unique number
-                    $objectname='importcsv';
-
-                    $result='<div>';
-
-					JHtml::_('behavior.formvalidator');
-    
-                    $result.='
-                    <div id="ct_fileuploader_'.$objectname.'"></div>
-                    <div id="ct_eventsmessage_'.$objectname.'"></div>
-                    <form action="" name="ctUploadCSVForm" id="ctUploadCSVForm">
-                	<script>
-                        UploadFileCount=1;
-
-                    	var urlstr="/index.php?option=com_customtables&view=fileuploader&tmpl=component&'
-                        .'tableid='.$ct->Table->tableid.'&'
-                        .'task=importcsv&'
-                        .$objectname.'_fileid='.$fileid.'&Itemid='.$ct->Env->Itemid.'&fieldname='.$objectname.'";
-                        
-                    	ct_getUploader('.$fieldid.',urlstr,'.$max_file_size.',"csv","ctUploadCSVForm",true,"ct_fileuploader_'.$objectname.'","ct_eventsmessage_'.$objectname.'","'.$fileid.'","'
-                        .$prefix.$objectname.'","ct_uploadedfile_box_'.$objectname.'");
-                    </script>
-                    <input type="hidden" name="'.$prefix.$objectname.'" id="'.$prefix.$objectname.'" value="" />
-			'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PERMITED_MAX_FILE_SIZE').': '.JoomlaBasicMisc::formatSizeUnits($max_file_size).'
-                    </form>
-                </div>
-                ';
-                  //  $result.='</div>';
-                    $vlu=$result;
-                }
-                else
-        			$vlu='<a href="'.JURI::root(true).$link.'" id="ctToolBarAddNew'.$ct->Table->tableid.'" class="toolbarIcons"><img src="'.JURI::root(true).'/components/com_customtables/images/new.png" alt="Add New" title="Add New" /></a>';
-            }
-            else
-                $vlu='';
+            $opt=explode(',',$options[$i]);
+			
+			if(isset($opt[1]) and $opt[1]=='importcsv')
+			{
+				$vlu = $ct_html->importcsv();
+			}
+			else
+			{
+				$Alias_or_ItemId = $opt[0];
+				$vlu = $ct_html->add($Alias_or_ItemId);
+			}
 
 			$pagelayout=str_replace($fItem,$vlu,$pagelayout);
 			$i++;
 		}
 	}
 
-    
-	protected static function Pagination(&$ct,&$pagelayout)
+	protected static function Pagination(&$ct_html,&$pagelayout)
 	{
-		$PaginationFound=false;
-
-
 		$options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('pagination',$options,$pagelayout,'{}');
 
@@ -230,179 +150,58 @@ class tagProcessor_Page
 
 		foreach($fList as $fItem)
 		{
-			$minRecords=0;//(int)$options[$i];
-			$vlu='';
-            if($ct->Env->print==0)
-            {
-                $a=tagProcessor_Page::get_Pagination($ct,$minRecords,$options[$i]);
-                $vlu=$a;
+			$opt=explode(',',$options[$i]);
+			
+			$element_type = $opt[0];
+
+			switch($element_type)
+			{
+				case '':
+				case 'paginaton':
+					$vlu = $ct_html->pagination();
+					break;
+					
+				case 'limit' :
+					$vlu = $ct_html->limit();
+					break;
+					
+				case 'order' :
+					$vlu = $ct_html->orderby();
+					break;
+					
+				default:
+					$vlu = 'pagination: type "'.$element_type.'" is unknown.';
             }
 
 			$pagelayout=str_replace($fItem,$vlu,$pagelayout);
 			$i++;
 		}
-
-
-		return $PaginationFound;
-
 	}
 
-
-    protected static function get_Pagination(&$ct,$minRecords,$option)
-	{
-		if($ct->Table->recordcount > $minRecords)
-		{
-			$number_of_columns=3;
-	
-			require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'
-				.DIRECTORY_SEPARATOR.'pagination.php');
-				
-			$pagination = new JESPagination($ct->Table->recordcount, $ct->LimitStart, $ct->Limit);
-
-			switch($option)
-			{
-				case 'limit' :
-					return JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SHOW' ).': '.$pagination->getLimitBox($number_of_columns);
-					break;
-				case 'pagination' :
-					return '<div class="pagination">'.$pagination->getPagesLinks("").'</div>';
-					break;
-				case 'order' :
-					return JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ORDER_BY' ).': '.CustomTables\OrderingHTML::getOrderBox($ct->Ordering);
-					break;
-				case 'limitorder' :
-					return '
-			<table cellpadding="0" cellspacing="0" width="100%" >
-		    <tr height="30">
-                <td width="140" valign="top">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SHOW' ).': '.$pagination->getLimitBox($number_of_columns).'</td>
-                <td align="right" valign="top">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ORDER_BY' ).': '.CustomTables\OrderingHTML::getOrderBox($ct->Ordering).'</td>
-		    </tr>
-		    </table>
-		';
-					break;
-
-				case 'limitpagination' :
-					return '
-			<table cellpadding="0" cellspacing="0" width="100%" style="border:none;" >
-		    <tr height="30">
-                <td width="230" valign="top" style="border:none;">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SHOW' ).': '.$pagination->getLimitBox($number_of_columns).'</td>
-                <td valign="top" style="border:none;text-align:center;"><div class="pagination">'.$pagination->getPagesLinks("").'</div></td>
-                <td width="230" align="right" valign="top" style="border:none;"></td>
-		    </tr>
-		    </table>
-		';
-					break;
-
-				case 'limitpaginationorder' :
-					return '
-			<table cellpadding="0" cellspacing="0" width="100%" border="0" >
-		    <tr height="30">
-                <td width="230" valign="top" style="border:none;">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SHOW' ).': '.$pagination->getLimitBox($number_of_columns).'</td>
-                <td align="center" valign="top" style="border:none;"><div class="pagination">'.$pagination->getPagesLinks("").'</div></td>
-                <td width="230" align="right" valign="top" style="border:none;">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ORDER_BY' ).': '
-					.CustomTables\OrderingHTML::getOrderBox($ct->Ordering).'</td>
-		    </tr>
-		    </table>
-		';
-					break;
-
-					case 'paginationorder' :
-						return '
-					<table cellpadding="0" cellspacing="0" width="100%" >
-					    <tr><td valign="top" align="right">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ORDER_BY').': '.CustomTables\OrderingHTML::getOrderBox($ct->Ordering).'</td></tr>
-						<tr><td valign="top" align="center"><br/></td></tr>
-						<tr><td valign="top" align="center"><div class="pagination">'.$pagination->getPagesLinks("").'</div></td></tr>
-				    </table>';
-					break;
-
-				default:
-
-					return '<div class="pagination">'.$pagination->getPagesLinks("").'</div>';
-					break;
-			}
-
-
-		}
-	}
-
-    protected static function PageToolBar(&$ct,&$pagelayout)
+    protected static function PageToolBar(&$ct_html,&$pagelayout)
 	{
 		$options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('batchtoolbar',$options,$pagelayout,'{}');
-
-        $available_modes=array();
         
-        $user = JFactory::getUser();
-		if($user->id!=0)
-        {
-            $publish_userGroup=(int)$ct->Env->menu_params->get( 'publishusergroups' );
-            if(JoomlaBasicMisc::checkUserGroupAccess($publish_userGroup))
-            {
-                $available_modes[]='publish';
-                $available_modes[]='unpublish';
-            }
-            
-            $edit_userGroup=(int)$ct->Env->menu_params->get( 'editusergroups' );
-            if(JoomlaBasicMisc::checkUserGroupAccess($edit_userGroup))
-                $available_modes[]='refresh';
-                
-            $delete_userGroup=(int)$ct->Env->menu_params->get( 'deleteusergroups' );
-            if(JoomlaBasicMisc::checkUserGroupAccess($delete_userGroup))
-                $available_modes[]='delete';
-        }
-        
-		$found=false;
-
 		$i=0;
-		$count=0;
 		foreach($fList as $fItem)
 		{
-			$vlu='';
-
-            if($ct->Env->print==0 and ($ct->Env->frmt=='html' or $ct->Env->frmt==''))
-            {
-                if($options[$i]=='')
-                	$modes=$available_modes;
-                else
-                	$modes=explode(',',$options[$i]);
-
-                foreach($modes as $mode)
-                {
-                	if(in_array($mode,$available_modes))
-                	{
-                		$rid='esToolBar_'.$mode.'_box_'.$ct->Table->tableid;
-                		$alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_'.strtoupper($mode).'_SELECTED' );
-                   		$img='<img src="'.JURI::root(true).'/components/com_customtables/images/'.$mode.'.png" border="0" alt="'.$alt.'" title="'.$alt.'" />';
-                		$link='javascript:esToolBarDO("'.$mode.'", '.$ct->Table->tableid.')';
-                		$vlu.='<div id="'.$rid.'" class="toolbarIcons"><a href=\''.$link.'\'>'.$img.'</a></div>';
-                	}
-                }
-
-                if($vlu!='')
-                	$found=true;
-            }
-
+			$modes = explode(',',$options[$i]);
+			$vlu = $ct_html->batch($modes);
 			$pagelayout=str_replace($fItem,$vlu,$pagelayout);
 
 			$i++;
 		}
-
-		if($found)
-			tagProcessor_Page::PageToolBarCheckBox($ct,$pagelayout);
 	}
 
-    static protected function PageToolBarCheckBox(&$ct,&$pagelayout)
+    static protected function PageToolBarCheckBox(&$ct_html,&$pagelayout)
 	{
 		$options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('checkbox',$options,$pagelayout,'{}');
 
 		foreach($fList as $fItem)
 		{
-            if($ct->Env->print==0 and $ct->Env->frmt!='csv')
-                $vlu='<input type="checkbox" id="esCheckboxAll'.$ct->Table->tableid.'" onChange="esCheckboxAllclicked('.$ct->Table->tableid.')" />';
-            else
-                $vlu='';
-
+			$vlu = $ct_html->batch('checkbox');
 			$pagelayout=str_replace($fItem,$vlu,$pagelayout);
 		}
 	}
@@ -464,14 +263,11 @@ class tagProcessor_Page
 		foreach($fList as $fItem)
 		{
 			$full_sentence = ! ($options[$i]=='numberonly');
-			
 			$vlu = $ct_record->count($full_sentence);
-
 			$pagelayout=str_replace($fItem,$vlu,$pagelayout);
 			$i++;
 		}
 	}
-
 
 	static protected function RecordCountValue(&$ct_record,&$pagelayout)
 	{
@@ -505,36 +301,4 @@ class tagProcessor_Page
 		}
 	}
 
-        static protected function CleanUpPath($thePath)
-		{
-				$newPath=array();
-				if(count($thePath)==0)
-						return $newPath;
-
-				for($i=count($thePath)-1;$i>=0;$i--)
-				{
-						$item=$thePath[$i];
-						if(count($newPath)==0)
-								$newPath[]=$item;
-						else
-						{
-								$found=false;
-								foreach($newPath as $newitem)
-								{
-
-										if(!(strpos($newitem,$item)===false))
-										{
-												$found=true;
-												break;
-										}
-								}
-
-								if(!$found)
-										$newPath[]=$item;
-
-						}
-				}
-
-				return array_reverse ($newPath);
-		}
 }

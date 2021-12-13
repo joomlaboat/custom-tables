@@ -22,9 +22,9 @@ require_once($libpath.'settags.php'); //added to twig
 require_once($libpath.'iftags.php'); //comes with twig
 require_once($libpath.'tabstags.php');
 
-require_once($libpath.'pagetags.php');
-require_once($libpath.'itemtags.php');
-require_once($libpath.'valuetags.php');
+require_once($libpath.'pagetags.php');//added to twig
+require_once($libpath.'itemtags.php');//not all added to twig
+require_once($libpath.'valuetags.php');//added to twig
 require_once($libpath.'shopingtags.php');
 
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fieldtypes'.DIRECTORY_SEPARATOR.'_type_ct.php');

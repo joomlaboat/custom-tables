@@ -53,6 +53,9 @@ class CustomTablesModelCatalog extends JModelLegacy
 		$mainframe = JFactory::getApplication('site');
 		$db = JFactory::getDBO();
 
+		$app		= JFactory::getApplication();
+		$this->params=$app->getParams();
+		
 		//get params
 		if($this->blockExternalVars or (isset($params) and count($params)>1))
 		{
@@ -99,11 +102,11 @@ class CustomTablesModelCatalog extends JModelLegacy
 		$this->ct->setFilter('', $this->ct->Env->menu_params->get('showpublished'));
 
 		//sorting
-		$this->ct->Ordering->parseOrderByParam($this->blockExternalVars,$this->params);
+		$this->ct->Ordering->parseOrderByParam($this->blockExternalVars,$this->params,$this->ct->Env->Itemid);
 
 		//Limit
 		$this->ct->applyLimits();
-
+		
 		$this->ct->LayoutProc = new LayoutProcessor($this->ct);
 				
 		//---------- Filtering

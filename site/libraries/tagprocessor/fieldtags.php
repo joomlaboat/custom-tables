@@ -15,11 +15,6 @@ class tagProcessor_Field
 {
     public static function process(&$ct,&$pagelayout,bool $add_label=false)
     {
-        tagProcessor_Field::ProcessFieldTitles($ct,$pagelayout,$add_label);
-    }
-
-    protected static function ProcessFieldTitles(&$ct,&$pagelayout, bool $add_label=false)
-	{
 		//field title
         if($add_label)
         {

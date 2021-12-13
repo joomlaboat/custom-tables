@@ -68,7 +68,7 @@ trait render_json
 		$records=[];
 
 		foreach($ct->Records as $row)
-			$records[]=trim(strip_tags(tagProcessor_Item::RenderResultLine($ct,$twig, $row,false)));
+			$records[]=trim(strip_tags(tagProcessor_Item::RenderResultLine($ct, $twig, $row)));
 		
 		$result = implode(',',$records);
 

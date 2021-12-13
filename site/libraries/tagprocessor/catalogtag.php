@@ -56,9 +56,9 @@ class tagProcessor_Catalog
 			elseif($ct->Env->frmt=='image')
 				self::get_CatalogTable_singleline_IMAGE($pagelayout,$allowcontentplugins);
 			elseif(isset($pair[1]) and $pair[1]=='notable')
-				$vlu=self::get_Catalog($ct,$tableclass,false,false,$allowcontentplugins);
+				$vlu=self::get_Catalog($ct,$tableclass,false,$allowcontentplugins);
 			else
-				$vlu=self::get_Catalog($ct,$tableclass,false,true,$allowcontentplugins);
+				$vlu=self::get_Catalog($ct,$tableclass,true,$allowcontentplugins);
 
 			$pagelayout=str_replace($fItem,$new_replaceitecode,$pagelayout);
 			$i++;
@@ -67,8 +67,7 @@ class tagProcessor_Catalog
         return $vlu;
     }
 
-
-    protected static function get_Catalog(&$ct,$tableclass,$showhr=true,$showtable=true,$allowcontentplugins=false)
+    protected static function get_Catalog(&$ct,$tableclass,$showtable=true,$allowcontentplugins=false)
 	{
 		$catalogresult='';
 
@@ -87,12 +86,12 @@ class tagProcessor_Catalog
 
 		if($groupby=='')
 		{
-				$number=1+$ct->LimitStart;
+				$number = 1 + $ct->LimitStart;
 								
 				foreach($ct->Records as $row)
 				{
 						$row['_number'] = $number;
-				        $RealRows[]=tagProcessor_Item::RenderResultLine($ct,$twig,$row,$showtable==true); //3ed parameter is to show record HTML anchor or not
+				        $RealRows[]=tagProcessor_Item::RenderResultLine($ct,$twig,$row); //3ed parameter is to show record HTML anchor or not
 						$number++;
 				}
 				$CatGroups[]=array('',$RealRows);
@@ -121,13 +120,14 @@ class tagProcessor_Catalog
 									$galleryrows=array();
 									$FileBoxRows=array();
 									$option=array();
-									$GroupTitle=$ct->LayoutProc->getValueByType($ct,$lastGroup,$FieldRow['fieldname'],$FieldRow['type'],$FieldRow['typeparams'],$option,$galleryrows,$FileBoxRows,$row['listing_id']);
+									//getValueByType(&$ct,$ESField, $row, &$option_list,&$getGalleryRows,&$getFileBoxRows)
+									$GroupTitle=$ct->LayoutProc->getValueByType($ct,$FieldRow,$row,$option,$galleryrows,$FileBoxRows);
 								}
 
 								$CatGroups[]=array($GroupTitle,$RealRows);
 								$RealRows=array();
 						}
-                        $RealRows[]=tagProcessor_Item::RenderResultLine($ct,$twig,$row,$showtable==true); //3ed parameter is to show record HTML anchor or not
+                        $RealRows[]=tagProcessor_Item::RenderResultLine($ct,$twig,$row); //3ed parameter is to show record HTML anchor or not
 
 						$lastGroup=$row[$ct->groupby];
 
@@ -143,7 +143,7 @@ class tagProcessor_Catalog
 						$FileBoxRows=array();
 						$option=array();
 
-						$GroupTitle=$ct->LayoutProc->getValueByType($ct,$lastGroup,$FieldRow['fieldname'],$FieldRow['type'],$FieldRow['typeparams'],$option,$galleryrows,$FileBoxRows,$row['listing_id'],$FieldRow['id']);
+						$GroupTitle=$ct->LayoutProc->getValueByType($ct,$FieldRow,$row,$option,$galleryrows,$FileBoxRows);
 					}
 					$CatGroups[]=array($GroupTitle,$RealRows);
 				}
@@ -167,54 +167,49 @@ class tagProcessor_Catalog
 
 		foreach($CatGroups as $cGroup)
 		{
+			$tr=0;
+			$RealRows=$cGroup[1];
 
-				$tr=0;
-				$RealRows=$cGroup[1];
+			if($showtable)
+			{
+				if($cGroup[0]!='')
+					$catalogresult.='<tr><td'.($number_of_columns>1 ?  ' colspan="'.($number_of_columns).'"': '').'><h2>'.$cGroup[0].'</h2></td></tr>';
+			}
+			else
+			{
+				if($cGroup[0]!='')
+					$catalogresult.='<h2>'.$cGroup[0].'</h2>';
+			}
+
+			foreach($RealRows as $row)
+			{
+				if($tr==0 and $showtable)
+					$catalogresult.='<tr>';
 
 				if($showtable)
 				{
-					if($cGroup[0]!='')
-						$catalogresult.='<tr><td'.($number_of_columns>1 ?  ' colspan="'.($number_of_columns).'"': '').'><h2>'.$cGroup[0].'</h2></td></tr>';
-
+					$catalogresult.='<td valign="top" align="left"><a name="a'.$row['listing_id'].'"></a>'.$row.'</td>';
 				}
 				else
+					$catalogresult.=$row;
+
+				$tr++;
+				if($tr==$number_of_columns)
 				{
-					if($cGroup[0]!='')
-						$catalogresult.='<h2>'.$cGroup[0].'</h2>';
+					if($showtable)
+						$catalogresult.='</tr>';
+
+					$tr	=0;
 				}
+			}
 
+			if($tr>0 and $showtable)
+				$catalogresult.='<td'.($number_of_columns-$tr>1 ? ' colspan="'.($number_of_columns-$tr).'"' : '').'>&nbsp;</td></tr>';
 
-
-				foreach($RealRows as $row)
-				{
-						if($tr==0 and $showtable)
-								$catalogresult.='<tr>';
-
-						if($showtable)
-							$catalogresult.='<td'.($number_of_columns>1 ? ' width="'.$column_width.'%"' : '').' valign="top" align="left">'.$row.'</td>';
-						else
-							$catalogresult.=$row;
-
-						$tr++;
-						if($tr==$number_of_columns)
-						{
-							if($showtable)
-								$catalogresult.='</tr>';
-
-							$tr	=0;
-						}
-
-				}
-				if($tr>0 and $showtable)
-						$catalogresult.='<td'.($number_of_columns-$tr>1 ? ' colspan="'.($number_of_columns-$tr).'"' : '').'>&nbsp;</td></tr>';
-
-				if($showhr and $showtable)
-					$catalogresult.='<tr><td'.($number_of_columns>1 ?  ' colspan="'.($number_of_columns).'"': '').'"><hr/></td></tr>';
+			if($showtable)
+				$catalogresult.='<tr><td'.($number_of_columns>1 ?  ' colspan="'.($number_of_columns).'"': '').'"><hr/></td></tr>';
 		}	//	foreach($CatGroups as $cGroup)
 
-
-
-//}
 		if($showtable)
 		{
 			$catalogresult.='</tbody>

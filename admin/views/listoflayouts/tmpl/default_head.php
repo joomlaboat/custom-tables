@@ -50,5 +50,9 @@ defined('_JEXEC') or die('Restricted access');
 	<th width="5" class="nowrap center hidden-phone" >
 			<?php echo JText::_('COM_CUSTOMTABLES_LAYOUTS_MODIFIED'); ?>
 	</th>
+	
+	<th scope="col" style="text-align:center;">
+		Template engine
+	</th>
 
 </tr>

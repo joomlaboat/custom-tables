@@ -11,68 +11,75 @@ defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\Fields;
 use CustomTables\RecordToolbar;
+use CustomTables\CTUser;
 
-/* Not sll tags already implemented using Twig
+/* Not all tags are implemented using Twig
 
 Implemented:
 
 {id} - {{ record.id }}
 {number} - {{ record.number }}
 {recordlist} - {{ record.list }}
+{_value:published} - {{ published }}
+{published:number} - {{ published }}
+{published:boolean} - {{ published('bool') }} or {{ published('boolean') }}
+{published} - {{ published('yesno') }}
+new: {{ published('Yes','No') }} Example: {{ published('Record is published','Not published') }}
+{link} - {{ record.link(add_returnto = true, menu_item_alias='', returnto='') }}
+{linknoreturn} - {{ record.link(add_returnto = false, menu_item_alias='') }}
+{server} - {{ url.server() }}}
 
- */
+Not yet implemented:
+
+{sqljoin} - not yet
+
+shopping cart
+tree
+
+
+tagProcessor_Item::GetSQLJoin($ct,$htmlresult,$row['listing_id']);
+tagProcessor_Item::GetCustomToolBar($ct,$htmlresult,$row);
+CT_FieldTypeTag_ct::ResolveStructure($ct,$htmlresult);
+
+*/
+ 
+use \CustomTables\Twig_Record_Tags;
 
 class tagProcessor_Item
 {
     public static function process(&$ct,&$row,&$htmlresult,$aLink,$add_label=false)
 	{
-        tagProcessor_Item::processLink($ct,$row,$htmlresult,$aLink);
+		if($row !== null)
+			$ct->Table->record = $row;
+		
+		$ct_record = new Twig_Record_Tags($ct);
+		
+        tagProcessor_Item::processLink($ct_record,$row,$htmlresult); //Twig version added - original replaced
+		tagProcessor_Item::processNoReturnLink($ct_record,$row,$htmlresult); //Twig version added - original replaced
 
-		tagProcessor_Field::process($ct,$htmlresult,$add_label);
+		tagProcessor_Field::process($ct,$htmlresult,$add_label); //Twig version added - original not changed
 
 		if($ct->Env->advancedtagprocessor)
-			tagProcessor_Server::process($htmlresult);
+			tagProcessor_Server::process($ct_url, $htmlresult); //Twig version added - original not changed
 
 		tagProcessor_Shopping::getShoppingCartLink($ct,$htmlresult,$row);
 
-		$p=strpos($aLink,'&returnto');
-		$p2=strpos($aLink,'&amp;returnto');
+		tagProcessor_Item::processRecordlist($ct_record,$row,$pagelayout); //Twig version added - original replaced
 
-		if($p===false and $p2===false )
-		{
-		   $htmlresult=str_replace('{linknoreturn}',$aLink,$htmlresult);
-		}
-		else
-		{
-			//here we assume that the return to is always the last parameter
-			if($p)
-			{
-				$aLinkNoReturn=substr($aLink,0,$p);
-				$htmlresult=str_replace('{linknoreturn}',$aLinkNoReturn,$htmlresult);
-			}
-
-			if($p2)
-			{
-				$aLinkNoReturn=substr($aLink,0,$p2);
-				$htmlresult=str_replace('{linknoreturn}',$aLinkNoReturn,$htmlresult);
-			}
-		}
-
-		$htmlresult=str_replace('{recordlist}',(isset($ct->Table) and isset($ct->Table->recordlist) ? implode(',',$ct->Table->recordlist) : ''),$htmlresult);
-
+		//Listing ID
 		$listing_id = 0;
-		
+
 		if(isset($row) and isset($row['listing_id']))
 			$listing_id = (int)$row['listing_id'];
 			
-		$htmlresult=str_replace('{id}',$listing_id,$htmlresult);
-		$htmlresult=str_replace('{number}',(isset($row['_number']) ? $row['_number'] : ''),$htmlresult);
+		$htmlresult=str_replace('{id}',$listing_id,$htmlresult); //Twig version added - original not changed
+		$htmlresult=str_replace('{number}',(isset($row['_number']) ? $row['_number'] : ''),$htmlresult); //Twig version added - original not changed
 
 		if(isset($row) and isset($row['listing_published']))
-			tagProcessor_Item::processPublishStatus($row,$htmlresult);
+			tagProcessor_Item::processPublishStatus($row,$htmlresult); //Twig version added - original not changed
 
 		if(isset($row) and isset($row['listing_published']))
-			tagProcessor_Item::GetSQLJoin($ct,$htmlresult,$row['listing_id']);
+			tagProcessor_Item::GetSQLJoin($ct_record,$htmlresult,$row['listing_id']);
 
 		if(isset($row) and isset($row['listing_published']))
 			tagProcessor_Item::GetCustomToolBar($ct,$htmlresult,$row);
@@ -80,37 +87,7 @@ class tagProcessor_Item
 		CT_FieldTypeTag_ct::ResolveStructure($ct,$htmlresult);
 	}
 
-    public static function checkAccess(&$ct,$ug,&$row)
-	{
-        if(!isset($ct->Env->isUserAdministrator))
-            return false;
-
-		$user = JFactory::getUser();
-
-		if($ug==1)
-			$usergroups =array();
-		else
-			$usergroups = $user->get('groups');
-
-		$isok=false;
-
-		if($ct->Env->isUserAdministrator or in_array($ug,$usergroups))
-			$isok=true;
-		else
-		{
-			if(isset($row) and isset($row['listing_published']) and $ct->Table->useridfieldname!='')
-			{
-				$uid=$row[$ct->Table->useridrealfieldname];
-
-				if($uid==$ct->Env->userid and $ct->Env->userid!=0)
-					$isok=true;
-			}
-		}
-
-		return $isok;
-	}
-
-    protected static function GetSQLJoin(&$ct,&$htmlresult,$id)
+    protected static function GetSQLJoin($ct_record,&$htmlresult,$id)
 	{
 		$options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('sqljoin',$options,$htmlresult,'{}');
@@ -126,278 +103,39 @@ class tagProcessor_Item
 			if(count($opts)>=5) //dont even try if less than 5 parameters
 			{
 				$field2_type='';
-
 				$order_by_option='';
 
 				$isOk=true;
 
 				$sj_function=$opts[0];
-
 				$sj_tablename=$opts[1];
-
-				if($sj_tablename=='')
-				{
-					$isOk=false;
-				}
-				else
-				{
-					$tablerow = ESTables::getTableRowByNameAssoc($sj_tablename);
-					if(!is_array($tablerow))
-						$isOk=false;
-				}
-				
-				//field1_findwhat
 				$field1_findwhat=$opts[2];
-				if($field1_findwhat=='')
-					$isOk=false;
-
-				if($isOk)
-				{
-					if($field1_findwhat=='_id')
-					{
-						$field1_findwhat=$ct->Table->tablerow['realidfieldname'];
-					}
-					elseif($field1_findwhat=='_published')
-					{
-						if($ct->Table->tablerow['published_field_found'])
-							$field1_findwhat='published';
-						else
-						{
-							$field1_findwhat='';
-							$isOk=false;
-						}
-					}
-					else
-					{
-						$field1_row=Fields::getFieldRowByName($field1_findwhat, $ct->Table->tablerow['id']);
-						if(is_object($field1_row))
-							$field1_findwhat=$field1_row->realfieldname;
-						else
-						{
-							$field1_findwhat='';
-							$isOk=false;
-						}
-					}
-				}
-
-				//field2_lookwhere
 				$field2_lookwhere=$opts[3];
-				if($field2_lookwhere=='')
-					$isOk=false;
 				
-				if($isOk)
-				{
-					if($field2_lookwhere=='_id')
-						$field2_lookwhere=$tablerow['realidfieldname'];
-					elseif($field2_lookwhere=='_published')
-					{
-						if($tablerow['published_field_found'])
-							$field2_lookwhere='published';
-						else
-						{
-							$field2_lookwhere='';
-							$isOk=false;
-						}
-					}
-					else
-					{
-						$field2_type_row=Fields::getFieldRowByName($field2_lookwhere, $tablerow['id']);
-						if(is_object($field2_type_row))
-						{
-							$field2_type=$field2_type_row->type;
-							$field2_lookwhere=$field2_type_row->realfieldname;
-						}
-						else
-						{
-							$field2_type='';
-							$field2_lookwhere='';
-							$isOk=false;
-						}
-					}
-				}
-
 				$opt4_pair=JoomlaBasicMisc::csv_explode(':', $opts[4], '"', false);
 				$FieldName=$opt4_pair[0]; //The field to get value from
 				if(isset($opt4_pair[1])) //Custom parameters
+				{
 					$field_option=$opt4_pair[1];
+					$value_option_list=explode(',',$field_option);
+				}
 				else
-					$field_option='';
+				{
+					$field_option = '';
+					$value_option_list = [];
+				}
 
 				$field3_readvalue=$FieldName;
-
-				if($field3_readvalue=='')
-					$isOk=false;
-				else
-				{
-					if($field3_readvalue=='_id')
-							$field3_readvalue=$tablerow['realidfieldname'];
-					elseif($field3_readvalue=='_published')
-					{
-						if($tablerow['published_field_found'])
-							$field3_readvalue='published';
-						else
-						{
-							$field3_readvalue='';
-							$isOk=false;
-						}
-					}
-					else
-					{
 				
-						$field3_row=Fields::getFieldRowByName($field3_readvalue, $tablerow['id']);
-						if(is_array($tablerow))
-							$field3_readvalue=$field3_row->realfieldname;
-						else
-						{
-							$field3_readvalue='';
-							$isOk=false;
-						}
-					}
-				}
+				$additional_where = $opts[5] ?? '';
+				$order_by_option = $opts[6] ?? '';
 				
-				$additional_where='';
-				if(isset($opts[5]) and $opts[5]!='')
-				{
-					$w=array();
-					$af=explode(' ',$opts[5]);
-					foreach($af as $a)
-					{
-						$b=strtolower(trim($a));
-						if($b!='')
-						{
-							if($b!='and' and $b!='or')
-							{
-								$b=str_replace('$now','now()',$b);
-
-								//read $get_ values
-								$b=tagProcessor_Value::ApplyQueryGetValue($b,$sj_tablename);
-
-								$w[]=$b;
-							}
-							else
-								$w[]=$b;
-						}
-
-					}
-					$additional_where=implode(' ',$w);
-				}
-               
-				//order by
-				if(isset($opts[6]) and $opts[6]!='')
-				{
-					$order_by_option=$opts[6];
-					$order_by_option_row=Fields::getFieldRowByName($order_by_option, $tablerow['id']);
-					$order_by_option=$order_by_option_row->realfieldname;
-				}
-
-				if($isOk)
-				{
-
-					if($sj_function=='count')
-						$query = 'SELECT count('.$tablerow['realtablename'].'.'.$field3_readvalue.') AS vlu ';
-					elseif($sj_function=='sum')
-						$query = 'SELECT sum('.$tablerow['realtablename'].'.'.$field3_readvalue.') AS vlu ';
-					elseif($sj_function=='avg')
-						$query = 'SELECT avg('.$tablerow['realtablename'].'.'.$field3_readvalue.') AS vlu ';
-					elseif($sj_function=='min')
-						$query = 'SELECT min('.$tablerow['realtablename'].'.'.$field3_readvalue.') AS vlu ';
-					elseif($sj_function=='max')
-						$query = 'SELECT max('.$tablerow['realtablename'].'.'.$field3_readvalue.') AS vlu ';
-					else
-					{
-						//need to resolve record value if it's "records" type
-						$query = 'SELECT '.$tablerow['realtablename'].'.'.$field3_readvalue.' AS vlu '; //value or smart
-					}
-
-					$query.=' FROM '.$ct->Table->realtablename.' ';
-
-					if($ct->Table->tablename!=$sj_tablename)
-					{
-						// Join not needed when we are in the same table
-						$query.=' LEFT JOIN '.$tablerow['realtablename'].' ON ';
-
-						if($field2_type=='records')
-						{
-							$query.='INSTR('.$tablerow['realtablename'].'.'.$field2_lookwhere.',  CONCAT(",",'.$ct->Table->realtablename.'.'.$field1_findwhat.',","))' ;
-						}
-						else
-						{
-							$query.=' '.$ct->Table->realtablename.'.'.$field1_findwhat.' = '
-							.' '.$tablerow['realtablename'].'.'.$field2_lookwhere;
-						}
-					}
-
-                        $wheres=array();
-
-						if($ct->Table->tablename!=$sj_tablename)
-						{
-							//don't attach to specific record when it is the same table, example : to find averages
-							$wheres[]=$ct->Table->realtablename.'.'.$ct->Table->tablerow['realidfieldname'].'='.$id;
-						}
-						else
-						{
-                            //$wheres[]='#__customtables_table_'.$sj_tablename.'.published=1';//to join with published record only, preferably set in parameters
-                        }
-
-
-						if($additional_where!='')
-							$wheres[]='('.$additional_where.')';
-
-                        if(count($wheres)>0)
-                            $query.=' WHERE '.implode(' AND ', $wheres);
-
-						if($order_by_option!='')
-							$query.=' ORDER BY '.$tablerow['realtablename'].'.'.$order_by_option;
-
-						$query.=' LIMIT 1';
-
-						$db->setQuery($query);
-
-						$rows=$db->loadAssocList();
-
-						if(count($rows)==0)
-							$vlu='';
-						else
-						{
-							$row=$rows[0];
-
-							if($sj_function=='smart')
-							{
-								$getGalleryRows=array();
-								$getFileBoxRows=array();
-								$vlu=$row['vlu'];
-
-								$temp_ctfields = Fields::getFields($tablerow['id']);
-
-								foreach($temp_ctfields as $ESField)
-								{
-									if($ESField['fieldname']==$FieldName)
-									{
-                                        $value_option_list=explode(',',$field_option);
-										$vlu=tagProcessor_Value::getValueByType($ct,$row['vlu'],$FieldName, $ESField['type'],$ESField['typeparams'],$value_option_list,$getGalleryRows,$getFileBoxRows,0,$row,$ESField['id']);
-										break;
-									}
-								}
-							}
-							else
-								$vlu=$row['vlu'];
-						}
-
-				}//if($isOk)
-				else
-					$vlu='syntax error';
-
+				$vlu = $ct_record->join($sj_function, $sj_tablename, $field1_findwhat, $field2_lookwhere, $field3_readvalue, $additional_where, $order_by_option, $value_option_list);
 
 				$htmlresult=str_replace($fItem,$vlu,$htmlresult);
 				$i++;
-
 			}//if(count($opts)=5)
-
-
-
-
 		}//foreach($fList as $fItem)
-
 	}//function GetSQLJoin(&$htmlresult)
 
 	protected static function processPublishStatus(&$row,&$htmlresult)
@@ -442,9 +180,9 @@ class tagProcessor_Item
 		if($delete_userGroup==0)
 			$delete_userGroup=$edit_userGroup;
 		
-		$isEditable=tagProcessor_Item::checkAccess($ct,$edit_userGroup,$row);
-		$isPublishable=tagProcessor_Item::checkAccess($ct,$publish_userGroup,$row);
-		$isDeletable=tagProcessor_Item::checkAccess($ct,$delete_userGroup,$row);
+		$isEditable=CTUser::checkIfRecordBelongsToUser($ct,$edit_userGroup);
+		$isPublishable=CTUser::checkIfRecordBelongsToUser($ct,$publish_userGroup);
+		$isDeletable=CTUser::checkIfRecordBelongsToUser($ct,$delete_userGroup);
 		
 		$RecordToolbar = new RecordToolbar($ct,$isEditable, $isPublishable, $isDeletable, $ct->Env->Itemid);
 
@@ -473,7 +211,23 @@ class tagProcessor_Item
 		}
 	}
 
-    protected static function processLink(&$ct,&$row,&$pagelayout,$aLink)
+    protected static function processNoReturnLink(&$ct_record,&$row,&$pagelayout)
+	{
+        $options=array();
+		$fList=JoomlaBasicMisc::getListToReplace('linknoreturn',$options,$pagelayout,'{}',':','"');
+
+		$i=0;
+
+		foreach($fList as $fItem)
+		{
+			$vlu = $ct_record->link(false,$options[$i]);
+
+            $pagelayout=str_replace($fItem,$vlu,$pagelayout);
+			$i++;
+        }
+    }
+	
+	protected static function processLink(&$ct_record,&$row,&$pagelayout)
 	{
         $options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('link',$options,$pagelayout,'{}',':','"');
@@ -482,80 +236,46 @@ class tagProcessor_Item
 
 		foreach($fList as $fItem)
 		{
-            $opt=$options[$i];
-            if($opt=='')
-                $vlu=$aLink;
-            else
-                $vlu=tagProcessor_Item::prepareDetailsLink($ct,$row,$opt);
+			$vlu = $ct_record->link(true,$options[$i]);
 
             $pagelayout=str_replace($fItem,$vlu,$pagelayout);
 			$i++;
         }
     }
+	
+	protected static function processRecordlist(&$ct_record,&$row,&$pagelayout)
+	{
+        $options=array();
+		$fList=JoomlaBasicMisc::getListToReplace('recordlist',$options,$pagelayout,'{}',':','"');
 
-    protected static function prepareDetailsLink($ct,$row,$menu_item_alias="",$returnto='')
-    {
-            //SEF Off
-            $menu_item_id=0;
-            $viewlink='';
+		$i=0;
 
-            if($menu_item_alias!="")
-            {
-                $menu_item=JoomlaBasicMisc::FindMenuItemRowByAlias($menu_item_alias);//Accepts menu Itemid and alias
-                if($menu_item!=0)
-                {
-                    $menu_item_id=(int)$menu_item['id'];
-                    $link=$menu_item['link'];
+		foreach($fList as $fItem)
+		{
+			$vlu = $ct_record->list();
 
-                    if($link!='')
-                    {
-                        $viewlink=$link;
-
-                        $view=JoomlaBasicMisc::getURLQueryOption($viewlink,'view');
-                        $viewlink=JoomlaBasicMisc::deleteURLQueryOption($viewlink, 'view');
-                    }
-
-                }
-            }
-
-
-            if($viewlink=='')
-            {
-                $viewlink='index.php?option=com_customtables';//&amp;view=details';
-                if($ct->Table->alias_fieldname=='' or $row[$ct->Env->field_prefix.$ct->Table->alias_fieldname]=='')
-                    $viewlink.='&view=details';
-            }
-
-            if($ct->Table->alias_fieldname!='' and $row[$ct->Env->field_prefix.$ct->Table->alias_fieldname]!='')
-                $viewlink.='&alias='.$row[$ct->Env->field_prefix.$ct->Table->alias_fieldname];
-            else
-                $viewlink.='&listing_id='.$row['listing_id'];
-
-
-            if($menu_item_id==0)
-                $menu_item_id=$ct->Env->Itemid;
-
-            $viewlink.='&Itemid='.$menu_item_id;//.'&amp;returnto='.$returnto;
-			
-			if($returnto!='')
-				$viewlink.='&returnto='.$returnto;
-			
-            $viewlink=JRoute::_($viewlink);
-
-        return $viewlink;
+            $pagelayout=str_replace($fItem,$vlu,$pagelayout);
+			$i++;
+        }
     }
-
-    public static function RenderResultLine(&$ct,&$twig, &$row,$showanchor)
+ 
+    public static function RenderResultLine(&$ct, &$twig, &$row)
     {
 		if($ct->Env->print)
-			$viewlink='#z';
+			$viewlink='';
 		else
 		{
-            $returnto=base64_encode($ct->Env->current_url.'#a'.$row['listing_id']);
-			$viewlink=tagProcessor_Item::prepareDetailsLink($ct,$row,'',$returnto);
-
+            $returnto = $ct->Env->current_url.'#a'.$row['listing_id'];
+			
+			if($row !== null)
+				$ct->Table->record = $row;
+		
+			$ct_record = new Twig_Record_Tags($ct);
+			
+			$viewlink = $ct_record->link(true,'',$returnto);
+			
 			if($ct->Env->jinput->getCmd('tmpl')!='')
-				$viewlink.='&tmpl='.$ct->Env->jinput->getCmd('tmpl');
+				$viewlink.='&amp;tmpl='.$ct->Env->jinput->getCmd('tmpl');
 		}
 
 		$layout='';
@@ -583,10 +303,7 @@ class tagProcessor_Item
 	
             $htmlresult = $ct->LayoutProc->fillLayout($row,$viewlink,'[]',false);
 		}
-		
-		if($showanchor)
-			return '<a name="a'.$row['listing_id'].'"></a>' . $htmlresult;
-		else
-			return $htmlresult;
+
+		return $htmlresult;
     }
 }

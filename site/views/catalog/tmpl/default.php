@@ -20,6 +20,7 @@ $document = JFactory::getDocument();
 
 $document->addScript(JURI::root(true).'/components/com_customtables/js/base64.js');
 $document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/js/catalog.js" type="text/javascript"></script>');
+$document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/js/ajax.js"></script>');
 $document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customtables/css/style.css" type="text/css" rel="stylesheet" >');
 
 $html_format=false;
