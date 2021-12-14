@@ -336,12 +336,12 @@ class CustomtablesViewListofrecords extends JViewLegacy
 		$model = JModelLegacy::getInstance('Details', 'CustomTablesModel', $config);
 		$model->load($_params,$paramsArray['listingid'],true,$paramsArray['custom_where']);
 
-		$model->LayoutProc->layout=$detailsLayout;
+		$model->ct->LayoutProc->layout=$detailsLayout;
 
 		if(count($row)>0)
 		{
-			$model->LayoutProc->toolbar_array=array();
-			$result=$model->LayoutProc->fillLayout($row);
+			$model->ct->LayoutProc->toolbar_array=array();
+			$result=$model->ct->LayoutProc->fillLayout($row);
 			return $result;
 		}
 		else

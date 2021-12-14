@@ -64,6 +64,9 @@ class CT
 	
 	protected function prepareSEFLinkBase()
 	{
+		if($this->Table == null or $this->Table->fields == null)
+			return null;
+		
 		if(strpos($this->Env->current_url,'option=com_customtables')===false)
 	    {
 			foreach($this->Table->fields as $fld)
