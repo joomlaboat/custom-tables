@@ -136,9 +136,18 @@ class CT_FieldTypeTag_log
 						{
 
 							$decoded_data_rows=json_decode(base64_decode($data[3]),true);
-							$decoded_data_row=$decoded_data_rows[0];
-
-							$version_size=CT_FieldTypeTag_log::getVersionDataSize($ct,$decoded_data_row);
+							if($decoded_data_rows == null)
+							{
+								//Log data is too long (longer than 65,535 bytes)
+								//JSON record is corrupted
+								//Update to 5.4.5
+								$version_size = 0;
+							}
+							else
+							{
+								$decoded_data_row=$decoded_data_rows[0];
+								$version_size=CT_FieldTypeTag_log::getVersionDataSize($ct,$decoded_data_row);
+							}
 						}
 						else
 							$version_size=0;
