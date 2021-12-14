@@ -17,6 +17,7 @@ use CustomTables\SearchInputBox;
 Implemented:
 
 {print} - {{ html.print() }}
+{recordlist} - {{ record.list }}
 {format:csv} - {{ html.format('csv') }}
 {searchbutton} - {{ html.searchbutton }}
 {search:email} - {{ html.search('email') }}
@@ -66,6 +67,24 @@ class tagProcessor_Page
         tagProcessor_Page::RecordCount($ct_record,$pagelayout); //Converted to Twig. Original replaced.
 
         tagProcessor_Page::PrintButton($ct_html,$pagelayout); //Converted to Twig. Original replaced.
+		
+		tagProcessor_Page::processRecordlist($ct_record,$pagelayout); //Twig version added - original replaced
+    }
+	
+	protected static function processRecordlist(&$ct_record,&$pagelayout)
+	{
+        $options=array();
+		$fList=JoomlaBasicMisc::getListToReplace('recordlist',$options,$pagelayout,'{}',':','"');
+
+		$i=0;
+
+		foreach($fList as $fItem)
+		{
+			$vlu = $ct_record->list();
+
+            $pagelayout=str_replace($fItem,$vlu,$pagelayout);
+			$i++;
+        }
     }
 
     public static function FormatLink(&$ct_html,&$pagelayout)

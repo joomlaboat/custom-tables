@@ -19,7 +19,6 @@ Implemented:
 
 {id} - {{ record.id }}
 {number} - {{ record.number }}
-{recordlist} - {{ record.list }}
 {_value:published} - {{ published }}
 {published:number} - {{ published }}
 {published:boolean} - {{ published('bool') }} or {{ published('boolean') }}
@@ -63,8 +62,6 @@ class tagProcessor_Item
 			tagProcessor_Server::process($ct_url, $htmlresult); //Twig version added - original not changed
 
 		tagProcessor_Shopping::getShoppingCartLink($ct,$htmlresult,$row);
-
-		tagProcessor_Item::processRecordlist($ct_record,$row,$pagelayout); //Twig version added - original replaced
 
 		//Listing ID
 		$listing_id = 0;
@@ -243,22 +240,6 @@ class tagProcessor_Item
         }
     }
 	
-	protected static function processRecordlist(&$ct_record,&$row,&$pagelayout)
-	{
-        $options=array();
-		$fList=JoomlaBasicMisc::getListToReplace('recordlist',$options,$pagelayout,'{}',':','"');
-
-		$i=0;
-
-		foreach($fList as $fItem)
-		{
-			$vlu = $ct_record->list();
-
-            $pagelayout=str_replace($fItem,$vlu,$pagelayout);
-			$i++;
-        }
-    }
- 
     public static function RenderResultLine(&$ct, &$twig, &$row)
     {
 		if($ct->Env->print)

@@ -323,14 +323,14 @@ class Twig_Record_Tags
 	}
 	
 	
-	public static function join_ApplyQueryGetValue($str,$sj_tablename)
+	function join_ApplyQueryGetValue($str,$sj_tablename)
 	{
 		$list=explode('$get_',$str);
 		if(count($list)==2)
 		{
 			$q=$list[1];
 
-			$v=JFactory::getApplication()->input->getString($q);
+			$v=$this->ct->Env->jinput->getString($q);
 			$v=str_replace('"','',$v);
 			$v=str_replace("'",'',$v);
 
