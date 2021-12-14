@@ -76,7 +76,8 @@ class TwigProcessor
 					
 					$valueProcessor = new Value($this->ct);
 					$vlu = strval($valueProcessor->renderValue($ct->Table->fields[$index],$this->ct->Table->record,$args));
-					return new \Twig\Markup($vlu, 'UTF-8' );
+					return $vlu;
+					//return new \Twig\Markup($vlu, 'UTF-8' ); //doesnt work because it cannot be converted to int or string
 				});
 				
 				$this->twig->addFunction($function);
@@ -113,7 +114,9 @@ class fieldObject
 		//$args = func_get_args();
 		$valueProcessor = new Value($this->ct);
 		$vlu = $valueProcessor->renderValue($this->field,$this->ct->Table->record,[]);
-		return strval(new \Twig\Markup($vlu, 'UTF-8'));
+		return strval($vlu);
+		//return new \Twig\Markup($vlu, 'UTF-8' ); //doesnt work because it cannot be converted to int or string
+		//return strval(new \Twig\Markup($vlu, 'UTF-8'));
     }
 	
 	public function __call($name, $arguments)
