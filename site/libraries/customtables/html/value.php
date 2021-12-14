@@ -17,6 +17,7 @@ use CustomTables\Fields;
 use CustomTables\DataTypes\Tree;
 use CustomTables\Inputbox;
 use \JoomlaBasicMisc;
+use \JHTMLCTTime;
 
 use \CT_FieldTypeTag_file;
 use \CT_FieldTypeTag_image;
