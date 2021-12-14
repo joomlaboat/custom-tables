@@ -1924,6 +1924,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 			$fn_str[]="'comes_".$fn."'";
 			
 			$fn_str[]='[_edit:'.$fn.':';
+			$fn_str[]=$fn.'.edit';
 
 			$found=false;
 			foreach($fn_str as $s)
