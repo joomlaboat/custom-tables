@@ -331,6 +331,7 @@ class Fields
 			case 'text':
 			case 'multilangtext':
 			case 'log':
+				//mediumtext
 				return ['data_type' => 'text','is_nullable'=> true, 'is_unsigned' => null, 'length' => null, 'default' => null, 'extra' => null];
 			case 'int':
 				return ['data_type' => 'int','is_nullable'=> true, 'is_unsigned' => false, 'length' => null, 'default' => null, 'extra' => null];

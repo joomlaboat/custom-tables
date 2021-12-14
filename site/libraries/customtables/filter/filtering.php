@@ -56,7 +56,7 @@ class Filtering
 		if($this->ct->Env->menu_params->get( 'filter' ) !== null)
 		{
 			$filter_string = $this->ct->Env->menu_params->get( 'filter' );
-			
+
 			//Parse using layout, has no effect to layout itself
 			$filter_string = LayoutProcessor::applyContentPlugins($filter_string);
 			$filter_string = $this->sanitizeAndParseFilter($filter_string, true);

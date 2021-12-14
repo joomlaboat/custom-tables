@@ -67,6 +67,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 			$this->params=$app->getParams();
 		}//if($this->blockExternalVars)
 					
+		
 		$this->ct->Env->menu_params = $this->params;
 				
 		$this->layout = $layout; //Very strange parameter
@@ -110,11 +111,8 @@ class CustomTablesModelCatalog extends JModelLegacy
 		$this->ct->LayoutProc = new LayoutProcessor($this->ct);
 				
 		//---------- Filtering
-		if($this->blockExternalVars)
-		{
-			$this->ct->Filter->addMenuParamFilter();
-		}
-		else
+		$this->ct->Filter->addMenuParamFilter();
+		if(!$this->blockExternalVars)
 		{
 			if($this->ct->Env->jinput->get('filter','','STRING'))
 				$this->ct->Filter->addWhereExpression($this->ct->Env->jinput->get('filter','','STRING'));
