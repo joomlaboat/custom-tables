@@ -206,217 +206,211 @@ class CustomTablesModelCatalog extends JModelLegacy
 		}
 		*/
 
-		//Real query
-	
 		$this->ct->getRecords();
 		
 		return true;
 	}
 
+	function cart_emptycart()
+	{
+		$app = JFactory::getApplication();
+		$this->ct->Env->jinput->cookie->set($this->showcartitemsprefix.$this->ct->Table->tablename, '', time()-3600, $app->get('cookie_path', '/'), $app->get('cookie_domain'), $app->isSSLConnection());
+		return true;
+	}
 
-		function cart_emptycart()
-		{
-			$app = JFactory::getApplication();
-			$this->ct->Env->jinput->cookie->set($this->showcartitemsprefix.$this->ct->Table->tablename, '', time()-3600, $app->get('cookie_path', '/'), $app->get('cookie_domain'), $app->isSSLConnection());
-
-			return true;
-		}
-
-		function cart_deleteitem()
-		{
-			if($this->ct->Env->jinput->get('listing_id',0,'INT')==0)
-				return false;
-
+	function cart_deleteitem()
+	{
+		if($this->ct->Env->jinput->get('listing_id',0,'INT')==0)
+			return false;
 			$this->cart_setitemcount(0);
-			return true;
-		}
 
-		function cart_form_addtocart($itemcount=-1)
+		return true;
+	}
+
+	function cart_form_addtocart($itemcount=-1)
+	{
+		if(!$this->ct->Env->jinput->get('listing_id',0,'INT'))
+			return false;
+
+		$objectid=$this->ct->Env->jinput->getInt('listing_id',0);
+
+		if($itemcount==-1)
+			$itemcount=$this->ct->Env->jinput->getInt('itemcount',0);
+
+		$cookieValue = $this->ct->Env->jinput->cookie->getVar($this->showcartitemsprefix.$this->ct->Table->tablename);
+
+		if (isset($cookieValue))
 		{
-			if(!$this->ct->Env->jinput->get('listing_id',0,'INT'))
-				return false;
-
-			$objectid=$this->ct->Env->jinput->getInt('listing_id',0);
-
-			if($itemcount==-1)
-				$itemcount=$this->ct->Env->jinput->getInt('itemcount',0);
-
-			$cookieValue = $this->ct->Env->jinput->cookie->getVar($this->showcartitemsprefix.$this->ct->Table->tablename);
-
-			if (isset($cookieValue))
+			$items=explode(';',$cookieValue);
+			$cnt=count($items);
+			$found=false;
+			for($i=0;$i<$cnt;$i++)
 			{
-				$items=explode(';',$cookieValue);
-				$cnt=count($items);
-				$found=false;
-				for($i=0;$i<$cnt;$i++)
+				$pair=explode(',',$items[$i]);
+				if(count($pair)!=2)
+					unset($items[$i]); //delete the shit
+				else
 				{
-					$pair=explode(',',$items[$i]);
-					if(count($pair)!=2)
-						unset($items[$i]); //delete the shit
-					else
+					if((int)$pair[0]==$objectid)
 					{
-						if((int)$pair[0]==$objectid)
+						$new_itemcount=(int)$pair[1]+$itemcount;
+						if($new_itemcount==0)
 						{
-							$new_itemcount=(int)$pair[1]+$itemcount;
-							if($new_itemcount==0)
-							{
-								unset($items[$i]); //delete item
-								$found=true;
-							}
-							else
-							{
-								//update counter
-								$pair[1]=$new_itemcount;
-								$items[$i]=implode(',',$pair);
-								$found=true;
-							}
+							unset($items[$i]); //delete item
+							$found=true;
 						}
-					}
-				}//for
-
-				if(!$found)
-					$items[]=$objectid.','.$itemcount; // add new item
-
-				$items=array_values($items);
-			}
-			else
-				$items=array($objectid.','.$itemcount); //add new
-
-			$nc=implode(';',$items);
-			setcookie($this->showcartitemsprefix.$this->ct->Table->tablename, $nc, time()+3600*24);
-
-			return true;
-		}
-
-		function cart_setitemcount($itemcount=-1)
-		{
-			if(!$this->ct->Env->jinput->get('listing_id',0,'INT'))
-				return false;
-
-			$objectid=$this->ct->Env->jinput->get('listing_id',0,'INT');
-
-			$app = JFactory::getApplication();
-
-			if($itemcount==-1)
-				$itemcount=$this->ct->Env->jinput->getInt('itemcount',0);
-
-			$cookieValue = $this->ct->Env->jinput->cookie->getVar($this->showcartitemsprefix.$this->ct->Table->tablename);
-
-			if (isset($cookieValue))
-			{
-				$items=explode(';',$cookieValue);
-				$cnt=count($items);
-				$found=false;
-				for($i=0;$i<$cnt;$i++)
-				{
-					$pair=explode(',',$items[$i]);
-					if(count($pair)!=2)
-						unset($items[$i]); //delete the shit
-					else
-					{
-						if((int)$pair[0]==$objectid)
-						{
-							if($itemcount==0)
-							{
-								unset($items[$i]); //delete item
-								$found=true;
-							}
-							else
-							{
-								//update counter
-								$pair[1]=$itemcount;
-								$items[$i]=implode(',',$pair);
-								$found=true;
-							}
-						}
-					}
-				}//for
-
-				if(!$found)
-					$items[]=$objectid.','.$itemcount; // add new item
-
-				$items=array_values($items);
-			}
-			else
-				$items=array($objectid.','.$itemcount); //add new
-
-			$nc=implode(';',$items);
-			setcookie($this->showcartitemsprefix.$this->ct->Table->tablename, $nc, time()+3600*24);
-
-			return true;
-		}
-
-		function cart_addtocart()
-		{
-			if(!$this->ct->Env->jinput->get('listing_id',0,'INT'))
-				return false;
-
-			$objectid=$this->ct->Env->jinput->get('listing_id',0,'INT');
-
-			$cookieValue = $this->ct->Env->jinput->cookie->getVar($this->showcartitemsprefix.$this->ct->Table->tablename);
-
-			if (isset($cookieValue))
-			{
-				$items=explode(';',$cookieValue);
-				$cnt=count($items);
-				$found=false;
-				for($i=0;$i<$cnt;$i++)
-				{
-					$pair=explode(',',$items[$i]);
-					if(count($pair)!=2)
-						unset($items[$i]); //delete the shit
-					else
-					{
-						if((int)$pair[0]==$objectid)
+						else
 						{
 							//update counter
-							$pair[1]=((int)$pair[1])+1;
+							$pair[1]=$new_itemcount;
 							$items[$i]=implode(',',$pair);
 							$found=true;
 						}
 					}
-				}//for
+				}
+			}//for
 
-				if(!$found)
-					$items[]=$objectid.',1'; // add new item
+			if(!$found)
+				$items[]=$objectid.','.$itemcount; // add new item
 
-				$items=array_values($items);
-			}
-			else
-				$items=array($objectid.',1'); //add new
-
-			$nc=implode(';',$items);
-
-			$this->ct->Env->jinput->cookie->set($this->showcartitemsprefix.$this->ct->Table->tablename, $nc, time()+3600*24, $app->get('cookie_path', '/'), $app->get('cookie_domain'), $app->isSSLConnection());
-			return true;
+			$items=array_values($items);
 		}
+		else
+			$items=array($objectid.','.$itemcount); //add new
 
-		function CleanUpPath($thePath)
+		$nc=implode(';',$items);
+		setcookie($this->showcartitemsprefix.$this->ct->Table->tablename, $nc, time()+3600*24);
+		return true;
+	}
+
+	function cart_setitemcount($itemcount=-1)
+	{
+		if(!$this->ct->Env->jinput->get('listing_id',0,'INT'))
+			return false;
+
+		$objectid=$this->ct->Env->jinput->get('listing_id',0,'INT');
+
+		$app = JFactory::getApplication();
+
+		if($itemcount==-1)
+			$itemcount=$this->ct->Env->jinput->getInt('itemcount',0);
+
+		$cookieValue = $this->ct->Env->jinput->cookie->getVar($this->showcartitemsprefix.$this->ct->Table->tablename);
+
+		if (isset($cookieValue))
 		{
-			$newPath=array();
-			if(count($thePath)==0)
-				return $newPath;
-
-			for($i=count($thePath)-1;$i>=0;$i--)
+			$items=explode(';',$cookieValue);
+			$cnt=count($items);
+			$found=false;
+			for($i=0;$i<$cnt;$i++)
 			{
-				$item=$thePath[$i];
-				if(count($newPath)==0)
-					$newPath[]=$item;
+				$pair=explode(',',$items[$i]);
+				if(count($pair)!=2)
+					unset($items[$i]); //delete the shit
 				else
 				{
-					$found=false;
-					foreach($newPath as $newitem)
+					if((int)$pair[0]==$objectid)
 					{
-						if(!(strpos($newitem,$item)===false))
+						if($itemcount==0)
 						{
+							unset($items[$i]); //delete item
 							$found=true;
-							break;
+						}
+						else
+						{
+							//update counter
+							$pair[1]=$itemcount;
+							$items[$i]=implode(',',$pair);
+							$found=true;
 						}
 					}
-					if(!$found)
-						$newPath[]=$item;
 				}
-			}
-			return array_reverse ($newPath);
+			}//for
+
+			if(!$found)
+				$items[]=$objectid.','.$itemcount; // add new item
+
+			$items=array_values($items);
 		}
+		else
+			$items=array($objectid.','.$itemcount); //add new
+
+		$nc=implode(';',$items);
+		setcookie($this->showcartitemsprefix.$this->ct->Table->tablename, $nc, time()+3600*24);
+		return true;
+	}
+
+	function cart_addtocart()
+	{
+		if(!$this->ct->Env->jinput->get('listing_id',0,'INT'))
+			return false;
+
+		$objectid=$this->ct->Env->jinput->get('listing_id',0,'INT');
+
+		$cookieValue = $this->ct->Env->jinput->cookie->getVar($this->showcartitemsprefix.$this->ct->Table->tablename);
+
+		if (isset($cookieValue))
+		{
+			$items=explode(';',$cookieValue);
+			$cnt=count($items);
+			$found=false;
+			for($i=0;$i<$cnt;$i++)
+			{
+				$pair=explode(',',$items[$i]);
+				if(count($pair)!=2)
+					unset($items[$i]); //delete the shit
+				else
+				{
+					if((int)$pair[0]==$objectid)
+					{
+						//update counter
+						$pair[1]=((int)$pair[1])+1;
+						$items[$i]=implode(',',$pair);
+						$found=true;
+					}
+				}
+			}//for
+
+			if(!$found)
+				$items[]=$objectid.',1'; // add new item
+
+			$items=array_values($items);
+		}
+		else
+			$items=array($objectid.',1'); //add new
+
+		$nc=implode(';',$items);
+
+		$this->ct->Env->jinput->cookie->set($this->showcartitemsprefix.$this->ct->Table->tablename, $nc, time()+3600*24, $app->get('cookie_path', '/'), $app->get('cookie_domain'), $app->isSSLConnection());
+		return true;
+	}
+
+	function CleanUpPath($thePath)
+	{
+		$newPath=array();
+		if(count($thePath)==0)
+			return $newPath;
+
+		for($i=count($thePath)-1;$i>=0;$i--)
+		{
+			$item=$thePath[$i];
+			if(count($newPath)==0)
+				$newPath[]=$item;
+			else
+			{
+				$found=false;
+				foreach($newPath as $newitem)
+				{
+					if(!(strpos($newitem,$item)===false))
+					{
+						$found=true;
+						break;
+					}
+				}
+				if(!$found)
+					$newPath[]=$item;
+			}
+		}
+		return array_reverse ($newPath);
+	}
 }

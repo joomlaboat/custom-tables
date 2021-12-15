@@ -65,6 +65,7 @@ class CustomTablesViewCatalog extends JViewLegacy
 		if($layout_item_name!='')
 			$this->itemlayout = $Layouts->getLayout($layout_item_name);
 		
+		
 		if($this->ct->Env->frmt == 'csv')
 		{
 			if(function_exists('mb_convert_encoding'))
@@ -87,7 +88,9 @@ class CustomTablesViewCatalog extends JViewLegacy
 		elseif($this->ct->Env->frmt == 'json')
 			require_once('tmpl'.DIRECTORY_SEPARATOR.'json.php');
 		else
+		{
 			parent::display($tpl);
+		}
 	}
 
 	function SaveViewLogForRecord($rec,$allowedfields)

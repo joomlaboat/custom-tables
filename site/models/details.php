@@ -86,7 +86,17 @@ class CustomTablesModelDetails extends JModelLegacy
 			if(!$params_only and $this->ct->Env->jinput->getString('filter',''))
 				$this->filter=$this->ct->Env->jinput->getString('filter','');
 			else
+			{
 				$this->filter=$this->params->get( 'filter' );
+				
+				$this->ct->LayoutProc=new LayoutProcessor($this->ct);
+				if($this->filter!='' and $this->alias=='')
+				{
+					//Parse using layout
+					$this->ct->LayoutProc->layout=$this->filter;
+					$this->filter=$this->ct->LayoutProc->fillLayout(array(),null,'[]',true);
+				}
+			}
 		}
 
 		if($this->params->get( 'recordstable' )!='' and $this->params->get( 'recordsuseridfield' )!='' and $this->params->get( 'recordsfield' )!='')
@@ -160,7 +170,7 @@ class CustomTablesModelDetails extends JModelLegacy
 			
 			if($this->filter!='')
 			{
-				$this->ct->setFilter($this->filter, $this->ct->Env->menu_params->get('showpublished'));
+				$this->ct->setFilter($this->filter,2); //2 = Show any - published and unpublished
 			}
 			else
 			{

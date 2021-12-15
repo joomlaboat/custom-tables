@@ -30,7 +30,6 @@ if($this->ct->Env->frmt=='html' or $this->ct->Env->frmt=='')
 if($html_format)
     LayoutProcessor::renderPageHeader($this->ct);
 
-
 //Process general tags before catalog tags to prepare headers for CSV etc output
 if($html_format)
 {
@@ -43,7 +42,6 @@ if($html_format)
 	
 	$this->ct->LayoutProc->layout=$this->pagelayout;
 	$this->pagelayout=$this->ct->LayoutProc->fillLayout();
-
 }
 else
 {
