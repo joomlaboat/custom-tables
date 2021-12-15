@@ -384,9 +384,9 @@ trait SaveFieldQuerySet
 			. substr("0123456789ABCDEF", $index2, 1);
 	}
 
-public function Try2CreateUserAccount(&$ct,$field,$row)
+public function Try2CreateUserAccount(&$ct,$field)
 {
-    $uid=(int)$row[$field['realfieldname']];
+    $uid=(int)$ct->Table->record[$field['realfieldname']];
 	
     if($uid!=0)
     {
@@ -411,13 +411,14 @@ public function Try2CreateUserAccount(&$ct,$field,$row)
 	
     //Try to create user
     $new_parts=array();
+
     foreach($parts as $part)
     {
-        tagProcessor_General::process($ct,$part,$row,'',1);
-    	tagProcessor_Item::process($ct,$row,$part,'','',0);
-    	tagProcessor_If::process($ct,$part,$row,'',0);
+        tagProcessor_General::process($ct,$part,$ct->Table->record,'',1);
+    	tagProcessor_Item::process($ct,$ct->Table->record,$part,'','',0);
+    	tagProcessor_If::process($ct,$part,$ct->Table->record,'',0);
     	tagProcessor_Page::process($ct,$part);
-    	tagProcessor_Value::processValues($ct,$row,$part,'[]');
+    	tagProcessor_Value::processValues($ct,$ct->Table->record,$part,'[]');
 
         $new_parts[]=$part;
     }
@@ -442,7 +443,7 @@ public function Try2CreateUserAccount(&$ct,$field,$row)
 	{
         if(!$unique_users) //allow not unique record per users
         {
-            CTUser::UpdateUserField($ct->Table->realtablename, $ct->Table->realidfieldname,$field['realfieldname'],$existing_user_id,$row['listing_id']);
+            CTUser::UpdateUserField($ct->Table->realtablename, $ct->Table->realidfieldname,$field['realfieldname'],$existing_user_id,$ct->Table->record['listing_id']);
             Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORD_USER_UPDATED' ));
         }
         else
@@ -455,7 +456,7 @@ public function Try2CreateUserAccount(&$ct,$field,$row)
 
 	}
     else
-        CTUser::CreateUser($ct->Table->realtablename, $ct->Table->realidfieldname,$user_email,$user_name,$user_groups,$row['listing_id'],$field['realfieldname'],$this->realtablename);
+        CTUser::CreateUser($ct->Table->realtablename, $ct->Table->realidfieldname,$user_email,$user_name,$user_groups,$ct->Table->record['listing_id'],$field['realfieldname'],$this->realtablename);
 
     return true;
 }

@@ -1678,12 +1678,13 @@ class CustomTablesModelEditItem extends JModelLegacy
 		return $rows[0];
 	}
 
-	function parseRowLayoutContent(&$row,$content,$applyContentPlagins=true)
+	function parseRowLayoutContent($content,$applyContentPlagins=true)
 	{
 		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'layout.php');
+
 		$LayoutProc=new LayoutProcessor($this->ct);
 		$LayoutProc->layout=$content;
-		$content=$LayoutProc->fillLayout($row);
+		$content=$LayoutProc->fillLayout($this->ct->Table->record);
 		if($applyContentPlagins)
 			LayoutProcessor::applyContentPlugins($content);
 		
@@ -1693,7 +1694,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 	function sendEmailNote($listing_id,$emails)//,$new_username,$new_password)
 	{
 		$mainframe = JFactory::getApplication('site');
-		$row=$this->getListingRowByID($listing_id);
+		$this->ct->Table->record = $this->getListingRowByID($listing_id);
 		//Prepare Email List
 
 		$emails_raw=JoomlaBasicMisc::csv_explode(',', $emails, '"', true);
@@ -1703,22 +1704,22 @@ class CustomTablesModelEditItem extends JModelLegacy
 		{
 			$EmailPair=JoomlaBasicMisc::csv_explode(':', trim($SendToEmail), '"', false);
 			
-			$EmailTo=$this->parseRowLayoutContent($row,trim($EmailPair[0]),false);
+			$EmailTo=$this->parseRowLayoutContent(trim($EmailPair[0]),false);
 			
 			if(isset($EmailPair[1]) and $EmailPair[1]!='')
-				$Subject=$this->parseRowLayoutContent($row,$EmailPair[1],true);
+				$Subject=$this->parseRowLayoutContent($EmailPair[1],true);
 			else
 				$Subject='Record added to "'.$this->ct->Table->tabletitle.'"';
 			
 			if($EmailTo!='')
 				$emails[]=array('email' => $EmailTo, 'subject' => $Subject);
 		}
-
+		
 		//-----------
 		$Layouts = new Layouts($this->ct);
 		$message_layout_content = $Layouts->getLayout($this->onrecordaddsendemaillayout);
 			
-		$note=$this->parseRowLayoutContent($row,$message_layout_content,true);
+		$note=$this->parseRowLayoutContent($message_layout_content,true);
 		
 		$MailFrom 	= $mainframe->getCfg('mailfrom');
 		$FromName 	= $mainframe->getCfg('fromname');
@@ -1759,7 +1760,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 				if($esfield['type']=='file')
 				{
 
-					$filename='images/esfiles/'.$row[$esfield['realfieldname']];
+					$filename='images/esfiles/'.$this->ct->Table->record[$esfield['realfieldname']];
 					if(file_exists($filename))
 							$attachments[] = $filename;
 				}

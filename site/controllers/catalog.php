@@ -282,7 +282,7 @@ function doTheTask(&$ct,$task,$menu_params,$edit_model,&$this_)
 			
 		$esfield = Fields::getFieldAsocByName($ct->Table->useridfieldname,$ct->Table->tableid);
 
-		if($ct->Table->Try2CreateUserAccount($edit_model,$esfield,$ct->Table->record))
+		if($ct->Table->Try2CreateUserAccount($ct,$esfield))
 			return (object) array('link' => $link, 'status' => null);
 		else
 			return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_USER_NOTCREATED'), 'status' => 'error');
