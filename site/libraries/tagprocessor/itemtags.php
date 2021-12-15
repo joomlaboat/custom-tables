@@ -48,6 +48,9 @@ class tagProcessor_Item
 {
     public static function process(&$ct,&$row,&$htmlresult,$aLink,$add_label=false)
 	{
+		if($ct->Table == null)
+			return false;
+		
 		if($row !== null)
 			$ct->Table->record = $row;
 		

@@ -99,9 +99,24 @@ class CustomTablesModelEditItem extends JModelLegacy
 		
 		$jinput=JFactory::getApplication()->input;
 
-		if((int)$this->getParam_safe( 'customitemid' )!=0)
-		$this->ct->Env->Itemid = (int)$this->getParam_safe( 'customitemid' );
-		
+		if($this->getParam_safe( 'customitemid' )!='')
+		{
+			$forceitemid = $this->getParam_safe( 'customitemid' );
+			
+			//Find Itemid by alias
+			if(((int)$forceitemid)>0)
+				$this->ct->Env->Itemid=$forceitemid;
+			else
+			{
+				if($forceitemid!=0)
+					$this->ct->Env->Itemid=(int)JoomlaBasicMisc::FindItemidbyAlias($forceitemid);//Accepts menu Itemid and alias
+				else
+					$this->ct->Env->Itemid=$this->ct->Env->jinput->getInt('Itemid');
+			}
+		}
+		else
+			$this->ct->Env->Itemid = $this->ct->Env->jinput->getInt('Itemid');
+
 		$this->BlockExternalVars=$BlockExternalVars;
 
 		$this->useridfield=$this->getParam_safe('useridfield');

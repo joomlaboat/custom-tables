@@ -25,7 +25,7 @@ class tagProcessor_General
         tagProcessor_General::getDate($pagelayout);
         tagProcessor_General::getUser($ct,$pagelayout,$row);
         tagProcessor_General::userid($pagelayout);
-        tagProcessor_General::Itemid($ct->Env->Itemid,$pagelayout);
+        tagProcessor_General::Itemid($ct,$pagelayout);
         tagProcessor_General::CurrentURL($ct,$pagelayout);
         tagProcessor_General::ReturnTo($ct,$pagelayout);
         tagProcessor_General::WebsiteRoot($pagelayout);
@@ -34,7 +34,6 @@ class tagProcessor_General
 		$Layouts = new Layouts($ct);
 		$Layouts->processLayoutTag($pagelayout);
     }
-
     
     protected static function WebsiteRoot(&$htmlresult)
 	{
@@ -81,7 +80,8 @@ class tagProcessor_General
         tagProcessor_General::tableDesc($ct,$pagelayout,'tabledescription','description');
 
     }
-    protected static function tableDesc(&$ct,&$pagelayout,$tag,$default='')
+    
+	protected static function tableDesc(&$ct,&$pagelayout,$tag,$default='')
     {
         $options=array();
 		$fList=JoomlaBasicMisc::getListToReplace($tag,$options,$pagelayout,'{}');
@@ -232,9 +232,8 @@ class tagProcessor_General
 		}
 	}
 
-    protected static function Itemid(&$Itemid,&$pagelayout)
+    protected static function Itemid(&$ct,&$pagelayout)
 	{
-
 		$options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('itemid',$options,$pagelayout,'{}');
 
@@ -242,7 +241,11 @@ class tagProcessor_General
 
 		foreach($fList as $fItem)
 		{
-			$vlu=$Itemid;
+			if($ct->Env !=null and $ct->Env->Itemid != null)
+				$vlu = $ct->Env->Itemid;
+			else
+				$vlu = 0;
+			
 			$pagelayout=str_replace($fItem,$vlu,$pagelayout);
 			$i++;
 		}
