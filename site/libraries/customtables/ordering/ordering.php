@@ -134,6 +134,7 @@ class Ordering
 		$jinput = Factory::getApplication()->input;
 		$mainframe = Factory::getApplication();
 		
+		//$orderby_forced = false;
 		$ordering_param_string='';
 		
 		if($blockExternalVars)
@@ -147,6 +148,7 @@ class Ordering
 			if($menu_params->get( 'forcesortby' )!='')
 			{
 				$ordering_param_string=$menu_params->get( 'forcesortby' );
+				$orderby_forced = true;
 			}
 			elseif($jinput->get('esordering','','CMD'))
 			{
@@ -165,9 +167,18 @@ class Ordering
 				}
 			}
 		}
+/*
+		if(!$orderby_forced)
+		{
+			$ordering_param_string_state = $mainframe->getUserState( 'com_customtables.orderby_'.$Itemid,'' );
 		
-		$ordering_param_string = $mainframe->getUserState( 'com_customtables.orderby_'.$Itemid,'' );
-
+			if($ordering_param_string_state != '')
+				$this->ordering_processed_string = $this->processOrderingString($ordering_param_string_state);
+			else
+				$this->ordering_processed_string = $this->processOrderingString($ordering_param_string);
+		}
+		else
+		*/	
 		$this->ordering_processed_string = $this->processOrderingString($ordering_param_string);
 
 		//set state
