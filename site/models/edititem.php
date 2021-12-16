@@ -1228,8 +1228,8 @@ class CustomTablesModelEditItem extends JModelLegacy
 		if($condition=='')
 			return true; //if no conditions
 			
-		$row=$this->getListingRowByID($listing_id);
-		$parsed_condition=$this->parseRowLayoutContent($row,$condition,true);
+		$this->ct->Table->record = $this->getListingRowByID($listing_id);
+		$parsed_condition=$this->parseRowLayoutContent($condition,true);
 		
 		$parsed_condition = '('.$parsed_condition.' ? 1 : 0)';
 

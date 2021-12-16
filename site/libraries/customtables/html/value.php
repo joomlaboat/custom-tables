@@ -76,6 +76,7 @@ class Value
 				return number_format ( (float)$rowValue, $decimals,$decimals_sep,$thousand_sep);
 
 			case 'id':
+			case 'md5':
 			case 'phponadd':
 			case 'phponchange':
 			case 'phponview':

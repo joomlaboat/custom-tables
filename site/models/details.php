@@ -175,7 +175,8 @@ class CustomTablesModelDetails extends JModelLegacy
 			else
 			{
 				JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_NOFILTER'), 'error');
-				return [];//field not found. compatibility trick
+				$row = [];
+				return $row;//field not found. compatibility trick
 			}
 
 			$where = count($this->ct->Filter->where) > 0 ? ' WHERE '.implode(" AND ",$this->ct->Filter->where) : '';
