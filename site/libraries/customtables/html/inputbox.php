@@ -926,7 +926,7 @@ class Inputbox
 			$result.='
 			<div class="control-group">
 				<div class="control-label">'.$lang->caption.'</div>
-				<div class="controls">'.$this->getMultilangStringItem($this->esfield,$row,$postfix,$lang->sef).'</div>
+				<div class="controls">'.$this->getMultilangStringItem($row,$postfix,$lang->sef).'</div>
 			</div>';
 		}
 		$result.='</div>';
