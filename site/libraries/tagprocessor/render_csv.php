@@ -55,23 +55,29 @@ trait render_csv
 		//Initiate the file output
 		$filename = JoomlaBasicMisc::makeNewFileName($ct->Env->menu_params->get('page_title'),'csv');
 
-		$result.= self::renderCSVoutput($ct);
+		$result.= strip_tags($result);
+
+		$result.= strip_tags(self::renderCSVoutput($ct));
 				
 		if($ct->Table->recordcount > $ct->LimitStart + $ct->Limit)
 		{
-			for($limitstart = $ct->LimitStart + $ct->Limit; $limitstart < $ct->Table->recordcount; $limitstart+=$ct->Limit)
+			if($ct->Limit > 0)
 			{
-				$ct->LimitStart=$limitstart;
-				$ct->Records=$ct->getRecords();//get records
-
-				if(count($ct->Records)==0)
-					break;//no records left - escape
+				for($limitstart = $ct->LimitStart + $ct->Limit; $limitstart < $ct->Table->recordcount; $limitstart+=$ct->Limit)
+				{
+					$ct->LimitStart=$limitstart;
 				
-				$result.= self::renderCSVoutput($ct);//output next chunk
+					$ct->getRecords();//get records
+
+					if(count($ct->Records)==0)
+						break;//no records left - escape
+				
+					$result.= self::renderCSVoutput($ct);//output next chunk
+				}
 			}
 		}
 
-        return $result;
+        return strip_tags($result);
     }
 	
 	protected static function renderCSVoutput(&$ct)

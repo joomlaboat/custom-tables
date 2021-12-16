@@ -32,7 +32,7 @@ if($catalogtablecontent=='')
 $this->ct->LayoutProc->layout=$this->pagelayout;
 $this->pagelayout=$this->ct->LayoutProc->fillLayout();
 
-$this->pagelayout=str_replace('&&&&quote&&&&','"',$this->pagelayout); // search boxes may return HTMl elemnts that contain placeholders with quotes like this: &&&&quote&&&&
+$this->pagelayout=strip_tags(str_replace('&&&&quote&&&&','"',$this->pagelayout)); // search boxes may return HTMl elemnts that contain placeholders with quotes like this: &&&&quote&&&&
 $this->pagelayout=str_replace($this->catalogtablecode,$catalogtablecontent,$this->pagelayout);
 
 LayoutProcessor::applyContentPlugins($this->pagelayout);
