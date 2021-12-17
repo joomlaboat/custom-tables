@@ -27,6 +27,8 @@ use \Joomla\CMS\Uri\Uri;
 use \Joomla\CMS\Editor\Editor;
 use \JHTML;
 
+use \CTTypes;
+
 JHTML::addIncludePath(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'helpers');
 
 class Inputbox
