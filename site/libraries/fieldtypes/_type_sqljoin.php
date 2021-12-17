@@ -23,7 +23,7 @@ class CT_FieldTypeTag_sqljoin
 
 		$esr_table=$typeparams[0];
 
-		if($option_list[0]!='')
+		if(isset($option_list[0]) and $option_list[0]!='')
 			$esr_field=$option_list[0];
 		else
 			$esr_field=$typeparams[1];

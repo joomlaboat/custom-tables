@@ -386,7 +386,7 @@ class Twig_Record_Tags
 		$field_details = $this->join_getRealFieldName($field3_readvalue, $tablerow['id']);
 		if($field_details == null)	return '';
 		$field3_readvalue_realname = $field_details[0];
-
+		
 		$sj_tablename = $tablerow['tablename'];
 		$additional_where = $this->join_processWhere($additional_where, $sj_tablename);
 
@@ -425,11 +425,13 @@ class Twig_Record_Tags
 
 				foreach($temp_ctfields as $ESField)
 				{
-					if($ESField['fieldname']==$FieldName)
+					if($ESField['fieldname']==$field3_readvalue)
 					{
-						$value_option_list=explode(',',$field_option);
 						$ESField['realfieldname'] = 'vlu';
-						$vlu=tagProcessor_Value::getValueByType($this->ct,$ESField,$row,$value_option_list,$getGalleryRows,$getFileBoxRows);
+						
+						$valueProcessor = new Value($this->ct);
+						$vlu = $valueProcessor->renderValue($ESField,$row,$value_option_list);
+						
 						break;
 					}
 				}
