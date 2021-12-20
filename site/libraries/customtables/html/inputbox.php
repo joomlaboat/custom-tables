@@ -676,8 +676,6 @@ class Inputbox
 												$this->ct->Languages->Postfix,
 												$this->place_holder
 											  );
-									
-
 						break;
 
 						case 'googlemapcoordinates':
@@ -763,10 +761,8 @@ class Inputbox
 							$result.=JHTML::_('CTTime.render',$this->prefix.$this->esfield['fieldname'], $value, $this->cssclass, $time_attributes, $type_params,$this->option_list);
 
 						break;
-								
 
 						case 'article':
-
 
 							$result.=JHTML::_('ESArticle.render',
 											  $this->prefix.$this->esfield['fieldname'],

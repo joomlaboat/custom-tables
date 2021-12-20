@@ -383,14 +383,14 @@ class tagProcessor_Edit
 
 					$result = '';
 					
-					if($esfield['parentid']==$parentid or $parentid==-1)
-					{
+					//if($esfield['parentid']==$parentid or $parentid==-1)
+					//{
 						if($esfield['type']=='date')
 							$calendars[] = $esinputbox->ct->Env->field_prefix.$esfield['fieldname'];
 
 						if($esfield['type']!='dummy')
 							$result =  $esinputbox->renderFieldBox($esfield,$row,$option_list);
-					}
+					//}
 					
 					
 					if($esinputbox->ct->Env->frmt == 'json')
