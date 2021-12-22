@@ -43,13 +43,14 @@ class Twig_Html_Tags
 			return '';
 		
 		$usergroups = $this->ct->Env->user->get('groups');
-		if(!$this->ct->Env->isUserAdministrator and !in_array($add_userGroup,$usergroups))
-			return ''; //Not permitted
 		
 		if(isset($this->ct->Env->menu_params))
             $add_userGroup=(int)$this->ct->Env->menu_params->get( 'addusergroups' );
         else
             $add_userGroup=0;
+		
+		if(!$this->ct->Env->isUserAdministrator and !in_array($add_userGroup,$usergroups))
+			return ''; //Not permitted
 
         //$isEditable=CTUser::checkIfRecordBelongsToUser($this->ct,$edit_userGroup);
 
