@@ -841,6 +841,9 @@ protected function get_record_type_value()
 
         if($htmlresult!='')
         {
+			$twig = new TwigProcessor($ct, $htmlresult);
+			$htmlresult = $twig->process($row);
+			
             LayoutProcessor::applyContentPlugins($htmlresult);
 
             if($type=='alias')
@@ -852,6 +855,7 @@ protected function get_record_type_value()
 			}
             return $this->realfieldname.'='.$this->db->quote($htmlresult);
         }
+		
 		return null;
     }
 

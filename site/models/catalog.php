@@ -50,12 +50,8 @@ class CustomTablesModelCatalog extends JModelLegacy
 	{
 		$this->blockExternalVars=$blockExternalVars;
 
-		$mainframe = JFactory::getApplication('site');
 		$db = JFactory::getDBO();
 
-		$app		= JFactory::getApplication();
-		$this->params=$app->getParams();
-		
 		//get params
 		if($this->blockExternalVars or (isset($params) and count($params)>1))
 		{
@@ -66,7 +62,6 @@ class CustomTablesModelCatalog extends JModelLegacy
 			$app		= JFactory::getApplication();
 			$this->params=$app->getParams();
 		}//if($this->blockExternalVars)
-					
 		
 		$this->ct->Env->menu_params = $this->params;
 				

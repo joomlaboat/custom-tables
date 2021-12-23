@@ -61,58 +61,11 @@ class CustomtablesViewListofrecords extends JViewLegacy
 		$this->ct = $model->ct;
 		
 		$app = JFactory::getApplication();
-		//$this->tablename="";
-		//$this->realtablename="";
-		//$this->tabletitle="";
+		
 		$this->tablefields=array();
 		
-		
 		$this->state = $this->get('State');
-		/*
-
-		// Assign Table ID State
-		$jinput=$app->input;
-		$this->tableid=$jinput->get->getInt('tableid',0);
 		
-		
-		if($this->tableid==0)// and $tableid==0)
-		{
-			$state_tableid=(int)$this->state->get('filter.tableid');
-			$this->tableid=$state_tableid;
-			$jinput->set('tableid',$this->tableid);
-		}
-		else
-			$this->state->set('filter.tableid',$this->tableid);
-		
-		if($this->tableid!=0)
-		{
-			$table=ESTables::getTableRowByID($this->tableid);
-			if(!is_object($table) and $table==0)
-			{
-				JFactory::getApplication()->enqueueMessage('Table not found', 'error');
-				$this->tableid=0;
-			}
-			else
-			{
-				$this->tablename=$table->tablename;
-				$this->tabletitle=$table->tabletitle;
-				
-				
-				$this->published_field_found=true;
-				if($table->customtablename !='')
-				{
-					$this->realtablename=$table->customtablename;
-					$realfields=Fields::getListOfExistingFields($this->realtablename,false);
-					if(!in_array('published',$realfields))
-						$this->published_field_found = false;
-				}
-				else
-					$this->realtablename = '#__customtables_table_'.$this->tablename;
-			}
-		}
-		
-		$jinput->set('tablename',$this->tablename);
-		*/
 		$this->tablefields=Fields::getFields($this->ct->Table->tableid);
 
 		$this->items = $this->get('Items');
@@ -174,9 +127,12 @@ class CustomtablesViewListofrecords extends JViewLegacy
 		if($this->ct->Table->tableid!=0)
 		{
 			JToolBarHelper::title('Custom Tables - Table "'.$this->ct->Table->tabletitle.'" - '.JText::_('COM_CUSTOMTABLES_LISTOFRECORDS'), 'joomla');
-					}
+		}
 		else
+		{
 			JToolBarHelper::title(JText::_('COM_CUSTOMTABLES_LISTOFRECORDS'), 'joomla');
+			return;
+		}
 
 		
 		JHtmlSidebar::setAction('index.php?option=com_customtables&view=listofrecords&tableid='.$this->ct->Table->tableid);

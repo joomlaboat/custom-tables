@@ -68,12 +68,6 @@ class CustomTablesModelEditItem extends JModelLegacy
 	function __construct()
 	{
 		$this->ct = new CT;
-		
-		$app = JFactory::getApplication();
-		$this->params=$app->getParams();
-		
-		$this->ct->Env->menu_params = $this->params;
-		
 		parent::__construct();
 	}
 	
@@ -89,11 +83,15 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 	function load($params,$BlockExternalVars=false)
 	{
-		$app = JFactory::getApplication();
 		if(isset($params))
 			$this->params = $params;
 		else
+		{
+			$app = JFactory::getApplication();
 			$this->params = $app->getParams();
+		}
+		
+		$this->ct->Env->menu_params = $this->params;
 
 		$this->ct->Env->menu_params = $this->params;
 		

@@ -6,13 +6,18 @@ use \Joomla\CMS\Factory;
 
 function CTLoader($inclide_utilities = false, $include_html = false)
 {
-	//-- TWIG
+	//$conf = Factory::getConfig();
+	$app = JFactory::getApplication();
+	$params = JComponentHelper::getParams('com_customtables');
+	$loadTwig = $params->get('loadTwig');
 	
-	$twig_file = JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'
+	if(($loadTwig == null or $loadTwig or $app->getName() == 'administrator') and !class_exists('Twig'))
+	{
+		$twig_file = JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'
 			. DIRECTORY_SEPARATOR. 'twig' . DIRECTORY_SEPARATOR . 'vendor'. DIRECTORY_SEPARATOR .'autoload.php';
-	
-	require_once ($twig_file);
-	
+			
+		require_once ($twig_file);
+	}
 	
 	$path = dirname(__FILE__) . DIRECTORY_SEPARATOR;
 	

@@ -28,7 +28,10 @@ class CustomtablesViewRecords extends JViewLegacy
 	 * display method of View
 	 * @return void
 	 */
+	var $ct;
 	var $tableid;
+	var $pagelayout;
+	var $BlockExternalVars;
 	
 	public function display($tpl = null)
 	{
@@ -50,8 +53,11 @@ class CustomtablesViewRecords extends JViewLegacy
 		$this->Model = JModelLegacy::getInstance('EditItem', 'CustomTablesModel', $this->params);
 		$this->Model->load($this->params,true);
 		
+		$this->ct = $this->Model->ct;
+		$this->BlockExternalVars = false;
+		
 		$Layouts = new Layouts($this->Model->ct);
-		$this->Model->pagelayout = $Layouts->createDefaultLayout_Edit($this->Model->ct->Table->fields,false);
+		$this->pagelayout = $Layouts->createDefaultLayout_Edit($this->ct->Table->fields,false);
 		
 		$this->row=array();
 

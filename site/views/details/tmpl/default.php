@@ -21,11 +21,8 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'co
 
 	$results = $this->ct->LayoutProc->fillLayout($this->row);
 	
-	if($this->ct->Env->advancedtagprocessor)
-	{
-		$twig = new TwigProcessor($this->ct, $results);
-		$results = $twig->process($this->row);
-	}
+	$twig = new TwigProcessor($this->ct, $results);
+	$results = $twig->process($this->row);
 	
 	if($this->ct->Env->menu_params->get( 'allowcontentplugins' ))
 		LayoutProcessor::applyContentPlugins($results);

@@ -27,6 +27,18 @@
 			label="COM_CUSTOMTABLES_CONFIG_AUTHOR"
 		/>
 -->
+
+                <field
+			name="loadTwig"
+			type="list"
+			label="Load Twig"
+			default="1"
+			description="Some tmeplates come with the Twig and to ovoid the conflict is recomended to disable the Twig load (declaration) in Custom Tables."
+			>
+			<option value="1">Load Twig</option>
+			<option value="0">Do not load Twig</option>
+		</field>
+
 		<field name="autorName"
 			type="text"
 			label="COM_CUSTOMTABLES_CONFIG_AUTHOR_NAME_LABEL"
