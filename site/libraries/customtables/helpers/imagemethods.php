@@ -56,7 +56,6 @@ class CustomTablesImageMethods
 			return (int)$vlu;
 	}
 
-	
 	function getCustomImageOptions($imageparams_)
 	{
 		$TypeParamsArr=JoomlaBasicMisc::csv_explode(',',$imageparams_,'"',false);
@@ -108,7 +107,6 @@ class CustomTablesImageMethods
 		return $cleanOptions;
 	}
 
-
 	function DeleteExistingSingleImage($ExistingImage,$ImageFolder,$imageparams, $realtablename, $realfieldname, $realidfield)
 	{
 		//$realtablename='-options'
@@ -151,7 +149,6 @@ class CustomTablesImageMethods
 			}
 		}
 	}
-
 
 	function DeleteGalleryImages($gallery_table_name, $estableid, $galleryname,$typeparams,$deleteOriginals=false)
 	{
