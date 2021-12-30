@@ -384,82 +384,80 @@ trait SaveFieldQuerySet
 			. substr("0123456789ABCDEF", $index2, 1);
 	}
 
-public function Try2CreateUserAccount(&$ct,$field)
-{
-    $uid=(int)$ct->Table->record[$field['realfieldname']];
+	public function Try2CreateUserAccount(&$ct,$field)
+	{
+		$uid=(int)$ct->Table->record[$field['realfieldname']];
 	
-    if($uid!=0)
-    {
-        $user = Factory::getUser($uid);
-        $email=$user->email.'';
-        if($email!='')
+		if($uid!=0)
 		{
-			Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_ALREADY_EXISTS','error' ));
-            return false; //all good, user already assigned.
+			$user = Factory::getUser($uid);
+			$email=$user->email.'';
+			if($email!='')
+			{
+				Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_ALREADY_EXISTS','error' ));
+				return false; //all good, user already assigned.
+			}
 		}
 
-    }
+		$type_params=$field['typeparams'];
+		$parts=JoomlaBasicMisc::csv_explode(',', $type_params, '"', false);
 
-    $type_params=$field['typeparams'];
-    $parts=JoomlaBasicMisc::csv_explode(',', $type_params, '"', false);
-
-    if(count($parts)<3)
-	{
-		Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('User field name parameters count is less than 3.','error' ));
-        return false;
-	}
+		if(count($parts)<3)
+		{
+			Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('User field name parameters count is less than 3.','error' ));
+			return false;
+		}
 	
-    //Try to create user
-    $new_parts=array();
+		//Try to create user
+		$new_parts=array();
 
-    foreach($parts as $part)
-    {
-        tagProcessor_General::process($ct,$part,$ct->Table->record,'',1);
-    	tagProcessor_Item::process($ct,$ct->Table->record,$part,'','',0);
-    	tagProcessor_If::process($ct,$part,$ct->Table->record,'',0);
-    	tagProcessor_Page::process($ct,$part);
-    	tagProcessor_Value::processValues($ct,$ct->Table->record,$part,'[]');
+		foreach($parts as $part)
+		{
+			tagProcessor_General::process($ct,$part,$ct->Table->record,'',1);
+			tagProcessor_Item::process($ct,$ct->Table->record,$part,'','',0);
+			tagProcessor_If::process($ct,$part,$ct->Table->record,'',0);
+			tagProcessor_Page::process($ct,$part);
+			tagProcessor_Value::processValues($ct,$ct->Table->record,$part,'[]');
 
-        $new_parts[]=$part;
-    }
+			$new_parts[]=$part;
+		}
 
-    $user_groups=$new_parts[0];
-    $user_name=$new_parts[1];
-    $user_email=$new_parts[2];
+		$user_groups=$new_parts[0];
+		$user_name=$new_parts[1];
+		$user_email=$new_parts[2];
 	
-	if($user_groups=='' or $user_name=='' or $user_email=='')
-	{
-		Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('User group field, user name and user email fields not set.' ));
-		return false;
-	}
+		if($user_groups=='' or $user_name=='' or $user_email=='')
+		{
+			Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('User group field, user name and user email fields not set.' ));
+			return false;
+		}
 
-    $unique_users=false;
-    if(isset($new_parts[4]) and $new_parts[4]=='unique')
-        $unique_users=true;
+		$unique_users=false;
+		if(isset($new_parts[4]) and $new_parts[4]=='unique')
+			$unique_users=true;
 		
-	$existing_user_id=CTUser::CheckIfEmailExist($user_email,$existing_user,$existing_name);
+		$existing_user_id=CTUser::CheckIfEmailExist($user_email,$existing_user,$existing_name);
 	
-    if($existing_user_id)
-	{
-        if(!$unique_users) //allow not unique record per users
-        {
-            CTUser::UpdateUserField($ct->Table->realtablename, $ct->Table->realidfieldname,$field['realfieldname'],$existing_user_id,$ct->Table->record['listing_id']);
-            Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORD_USER_UPDATED' ));
-        }
-        else
-        {
-            Factory::getApplication()->enqueueMessage(
-            JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_USER_WITH_EMAIL' )
-                .' "'.$user_email.'" '
-                .JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_ALREADY_EXISTS' ), 'Error');
-        }
+		if($existing_user_id)
+		{
+			if(!$unique_users) //allow not unique record per users
+			{
+				CTUser::UpdateUserField($ct->Table->realtablename, $ct->Table->realidfieldname,$field['realfieldname'],$existing_user_id,$ct->Table->record['listing_id']);
+				Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORD_USER_UPDATED' ));
+			}
+			else
+			{
+				Factory::getApplication()->enqueueMessage(
+				JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_USER_WITH_EMAIL' )
+					.' "'.$user_email.'" '
+					.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_ALREADY_EXISTS' ), 'Error');
+			}
+		}
+		else
+			CTUser::CreateUser($ct->Table->realtablename, $ct->Table->realidfieldname,$user_email,$user_name,$user_groups,$ct->Table->record['listing_id'],$field['realfieldname'],$this->realtablename);
 
+		return true;
 	}
-    else
-        CTUser::CreateUser($ct->Table->realtablename, $ct->Table->realidfieldname,$user_email,$user_name,$user_groups,$ct->Table->record['listing_id'],$field['realfieldname'],$this->realtablename);
-
-    return true;
-}
 
 	protected function get_customtables_type_language()
 	{
@@ -557,8 +555,6 @@ public function Try2CreateUserAccount(&$ct,$field)
         return false;
     }
 
-
-
 	public function get_alias_type_value($id)
 	{
 		$value=$this->jinput->getString($this->comesfieldname);
@@ -603,110 +599,107 @@ public function Try2CreateUserAccount(&$ct,$field)
 		return $value_new;
 	}
 
-protected function splitStringToStringAndNumber($string)
-{
-    if($string=='')
-        return array('',0);
+	protected function splitStringToStringAndNumber($string)
+	{
+		if($string=='')
+			return array('',0);
 
-    $pair=explode('-',$string);
-    $l=count($pair);
+		$pair=explode('-',$string);
+		$l=count($pair);
 
-    if($l==1)
-        return array($string,0);
+		if($l==1)
+			return array($string,0);
 
-    $c=end($pair);
-    if(is_numeric($c))
-    {
-        unset($pair[$l-1]);
-        $pair=array_values($pair);
-        $val=array(implode('-',$pair),intval($c));
-    }
-    else
-        return array($string,0);
+		$c=end($pair);
+		if(is_numeric($c))
+		{
+			unset($pair[$l-1]);
+			$pair=array_values($pair);
+			$val=array(implode('-',$pair),intval($c));
+		}
+		else
+			return array($string,0);
 
-    return $val;
-}
+		return $val;
+	}
 
-protected function checkIfAliasExists($exclude_id,$value,$realfieldname)
-{
-    $query = 'SELECT count('.$this->realidfieldname.') AS c FROM '.$this->realtablename.' WHERE '
-		.$this->realidfieldname.'!='.(int)$exclude_id.' AND '.$realfieldname.'='.$this->db->quote($value).' LIMIT 1';
+	protected function checkIfAliasExists($exclude_id,$value,$realfieldname)
+	{
+		$query = 'SELECT count('.$this->realidfieldname.') AS c FROM '.$this->realtablename.' WHERE '
+			.$this->realidfieldname.'!='.(int)$exclude_id.' AND '.$realfieldname.'='.$this->db->quote($value).' LIMIT 1';
 		
-	$this->db->setQuery( $query );
+		$this->db->setQuery( $query );
 
-	$rows = $this->db->loadObjectList();
-    if(count($rows)==0)
-        return false;
+		$rows = $this->db->loadObjectList();
+		if(count($rows)==0)
+			return false;
 
-    $row=$rows[0];
-    $c=(int)$row->c;
+		$row=$rows[0];
+		$c=(int)$row->c;
 
-    if($c>0)
-        return true;
+		if($c>0)
+			return true;
 
-    return false;
-}
+		return false;
+	}
 
-protected function get_record_type_value()
-{
-    $typeparamsarray=explode(',',$this->typeparams);
-					if(count($typeparamsarray)>2)
-					{
-						$esr_selector=$typeparamsarray[2];
-						$selectorpair=explode(':',$esr_selector);
+	protected function get_record_type_value()
+	{
+		$typeparamsarray=explode(',',$this->typeparams);
+		
+		if(count($typeparamsarray)>2)
+		{
+			$esr_selector=$typeparamsarray[2];
+			$selectorpair=explode(':',$esr_selector);
 
-						switch($selectorpair[0])
-						{
-							case 'single';
+			switch($selectorpair[0])
+			{
+				case 'single';
 
-									$value=$this->jinput->getString($this->comesfieldname,null);
+				$value=$this->jinput->getString($this->comesfieldname,null);
 
-									if(isset($value))
-										return $this->realfieldname.'='.(int)$value;
+				if(isset($value))
+					return $this->realfieldname.'='.(int)$value;
 
-								break;
+				break;
 
-							case 'multi';
-									$valuearray = $this->jinput->post->get($this->comesfieldname, null, 'array' );
+				case 'multi';
+					$valuearray = $this->jinput->post->get($this->comesfieldname, null, 'array' );
 
-									if(isset($valuearray))
-										return $this->realfieldname.'='.$this->db->Quote($this->getCleanRecordValue($valuearray));
+					if(isset($valuearray))
+						return $this->realfieldname.'='.$this->db->Quote($this->getCleanRecordValue($valuearray));
                                     
-								break;
+				break;
 
-							case 'multibox';
-									$valuearray = $this->jinput->post->get($this->comesfieldname,null, 'array' );
+				case 'multibox';
+					$valuearray = $this->jinput->post->get($this->comesfieldname,null, 'array' );
 
-									if(isset($valuearray))
-                                    {
-                                        $clean_value=$this->getCleanRecordValue($valuearray);
-										return $this->realfieldname.'='.$this->db->Quote($clean_value);
-                                    }
-								break;
-
-
-							case 'radio';
-
-									$valuearray = $this->jinput->post->get($this->comesfieldname, null, 'array' );
-
-									if(isset($valuearray))
-										return $this->realfieldname.'='.$this->db->Quote($this->getCleanRecordValue($valuearray));
-
-								break;
-
-							case 'checkbox';
-									$valuearray = $this->jinput->post->get($this->comesfieldname, null, 'array' );
-
-									if(isset($valuearray))
-										return $this->realfieldname.'='.$this->db->Quote($this->getCleanRecordValue($valuearray));
-
-								break;
-						}
-
+					if(isset($valuearray))
+					{
+						$clean_value=$this->getCleanRecordValue($valuearray);
+						return $this->realfieldname.'='.$this->db->Quote($clean_value);
 					}
+					break;
+
+				case 'radio';
+					$valuearray = $this->jinput->post->get($this->comesfieldname, null, 'array' );
+
+					if(isset($valuearray))
+						return $this->realfieldname.'='.$this->db->Quote($this->getCleanRecordValue($valuearray));
+
+					break;
+
+				case 'checkbox';
+					$valuearray = $this->jinput->post->get($this->comesfieldname, null, 'array' );
+
+					if(isset($valuearray))
+						return $this->realfieldname.'='.$this->db->Quote($this->getCleanRecordValue($valuearray));
+
+					break;
+			}
+		}
         return null;
     }
-
 
     protected function getCleanRecordValue($array)
 	{
@@ -820,9 +813,7 @@ protected function get_record_type_value()
 		// last "." dot is to let search by parents
 		// php example: getpos(",geo.usa.",$string)
 		// mysql example: instr($string, ",geo.usa.")
-
 	}
-
 
     protected function getList($parentid)
 	{

@@ -46,8 +46,6 @@ class tagProcessor_If
 
     protected static function processValue(&$ct,&$row,$value)
     {
-
-
         tagProcessor_General::process($ct,$value,$row);
         tagProcessor_Page::process($ct,$value);
         tagProcessor_Item::process($ct,$row,$value,'');

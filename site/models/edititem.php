@@ -1286,7 +1286,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 				$default_fields_to_apply[]=array($fieldname,$esfield['defaultvalue'],$esfield['type'],$esfield['realfieldname']);
 		}
 
-        $this->ct->Table->processDefaultValues($default_fields_to_apply,$this,$row);
+        $this->ct->Table->processDefaultValues($default_fields_to_apply,$this->ct,$row);
 	}
 
 	function updateLog($id)

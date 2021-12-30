@@ -6,8 +6,8 @@ use \Joomla\CMS\Factory;
 
 function CTLoader($inclide_utilities = false, $include_html = false)
 {
-	//$conf = Factory::getConfig();
-	$app = JFactory::getApplication();
+	$app = Factory::getApplication();
+	
 	$params = JComponentHelper::getParams('com_customtables');
 	$loadTwig = $params->get('loadTwig');
 	
@@ -18,7 +18,7 @@ function CTLoader($inclide_utilities = false, $include_html = false)
 			
 		require_once ($twig_file);
 	}
-	
+
 	$path = dirname(__FILE__) . DIRECTORY_SEPARATOR;
 	
 	$path_integrity = $path . 'integrity' . DIRECTORY_SEPARATOR;

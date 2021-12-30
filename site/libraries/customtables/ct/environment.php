@@ -114,7 +114,7 @@ class Environment
 	//http://stackoverflow.com/questions/6524301/detect-mobile-browser
 	protected function check_user_agent ( $type = NULL )
 	{
-        $user_agent = strtolower ( $_SERVER['HTTP_USER_AGENT'] );
+		$user_agent = strtolower ( $_SERVER['HTTP_USER_AGENT'] ?? '');
         if ( $type == 'bot' ) {
                 // matches popular bots
                 if ( preg_match ( "/googlebot|adsbot|yahooseeker|yahoobot|msnbot|watchmouse|pingdom\.com|feedfetcher-google/", $user_agent ) ) {
