@@ -19,7 +19,6 @@ use \Joomla\CMS\Factory;
 use \CustomTables\Twig_Field_Tags;
 use \CustomTables\Forms;
 
-
 class TwigProcessor
 {
 	var $ct;

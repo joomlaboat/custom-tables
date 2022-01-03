@@ -46,8 +46,8 @@ class tagProcessor_Page
 {
     public static function process(&$ct,&$pagelayout)
     {
-		$ct_html = new Twig_Html_Tags($ct);
-		$ct_record = new Twig_Record_Tags($ct);
+		$ct_html = new Twig_Html_Tags($ct, false);
+		$ct_record = new Twig_Record_Tags($ct, false);
 		
         tagProcessor_Page::FormatLink($ct_html,$pagelayout);//{format:xls}  the link to the same page but in xls format
 		

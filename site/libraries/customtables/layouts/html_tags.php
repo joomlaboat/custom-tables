@@ -29,12 +29,18 @@ use \JHTML;
 class Twig_Html_Tags
 {
 	var $ct;
-	var $jinput;
-
-	function __construct(&$ct)
+	var $isTwig;
+	
+	var $captcha_found;
+	var $button_objects = []; //Not clear where and how this variable used.
+	
+	function __construct(&$ct,$isTwig = true)
 	{
 		$this->ct = $ct;
-		$this->jinput=Factory::getApplication()->input;
+		$this->isTwig = $isTwig;
+		
+		$this->captcha_found = false;
+		$this->button_objects = [];//Not clear where and how this variable used.
 	}
 	
 	function add($Alias_or_ItemId = '')
@@ -70,7 +76,10 @@ class Twig_Html_Tags
 		$vlu='<a href="'.URI::root(true).$link.'" id="ctToolBarAddNew'.$this->ct->Table->tableid.'" class="toolbarIcons">'
 			.'<img src="'.URI::root(true).'/components/com_customtables/images/new.png" alt="Add New" title="Add New" /></a>';
 			
-		return new \Twig\Markup($vlu, 'UTF-8' );
+		if($this->isTwig)
+			return new \Twig\Markup($vlu, 'UTF-8' );
+		else
+			return $vlu;
 	}
 	
 	function importcsv()
@@ -128,7 +137,10 @@ class Twig_Html_Tags
                 </div>
 ';
 		
-		return new \Twig\Markup($vlu, 'UTF-8' );
+		if($this->isTwig)
+			return new \Twig\Markup($vlu, 'UTF-8' );
+		else
+			return $vlu;
 	}
 	
 	function pagination()
@@ -141,7 +153,11 @@ class Twig_Html_Tags
 		
 		$pagination = new JESPagination($this->ct->Table->recordcount, $this->ct->LimitStart, $this->ct->Limit);
 		$vlu = '<div class="pagination">'.$pagination->getPagesLinks("").'</div>';
-		return new \Twig\Markup($vlu, 'UTF-8' );
+		
+		if($this->isTwig)
+			return new \Twig\Markup($vlu, 'UTF-8' );
+		else
+			return $vlu;
 	}
 	
 	function limit($the_step = 1)
@@ -151,7 +167,11 @@ class Twig_Html_Tags
 		
 		$pagination = new JESPagination($this->ct->Table->recordcount, $this->ct->LimitStart, $this->ct->Limit);
 		$vlu = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SHOW' ).': '.$pagination->getLimitBox($the_step);
-		return new \Twig\Markup($vlu, 'UTF-8' );
+		
+		if($this->isTwig)
+			return new \Twig\Markup($vlu, 'UTF-8' );
+		else
+			return $vlu;
 	}
 	
 	function orderby()
@@ -160,7 +180,11 @@ class Twig_Html_Tags
 			return '';
 		
 		$vlu = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ORDER_BY' ).': '.OrderingHTML::getOrderBox($this->ct->Ordering);
-		return new \Twig\Markup($vlu, 'UTF-8' );
+		
+		if($this->isTwig)
+			return new \Twig\Markup($vlu, 'UTF-8' );
+		else
+			return $vlu;
 	}
 		
 	function goback($label='Go Back', $image_icon='components/com_customtables/images/arrow_rtl.png', $attribute='',  $returnto = '')
@@ -169,7 +193,7 @@ class Twig_Html_Tags
             $gobackbutton='';
 				
 		if($returnto == '')
-			$returnto = base64_decode($this->jinput->get('returnto','','BASE64'));
+			$returnto = base64_decode($this->ct->Env->jinput->get('returnto','','BASE64'));
 		
 		if($returnto == '')
 			return '';
@@ -178,7 +202,11 @@ class Twig_Html_Tags
 			$attribute = 'class="ct_goback"';
 		
 		$vlu = '<a href="'.$returnto.'" '.$attribute.'><div>'.$label.'</div></a>';
-		return new \Twig\Markup($vlu, 'UTF-8' );
+		
+		if($this->isTwig)
+			return new \Twig\Markup($vlu, 'UTF-8' );
+		else
+			return $vlu;
 	}
 	
 	protected function getAvailableModes()
@@ -249,7 +277,11 @@ class Twig_Html_Tags
 			return '';
 		
 		$vlu = implode('',$html_buttons);
-		return new \Twig\Markup($vlu, 'UTF-8' );
+		
+		if($this->isTwig)
+			return new \Twig\Markup($vlu, 'UTF-8' );
+		else
+			return $vlu;
 	}
 	
 	function toolbar($buttons)
@@ -260,16 +292,16 @@ class Twig_Html_Tags
 	{
 		$link=$this->ct->Env->current_url.(strpos($this->ct->Env->current_url,'?')===false ? '?' : '&').'tmpl=component&amp;print=1';
 
-		if($this->jinput->getInt('moduleid',0)!=0)
+		if($this->ct->Env->jinput->getInt('moduleid',0)!=0)
 		{
 			//search module
 
-			$moduleid = $this->jinput->getInt('moduleid',0);
+			$moduleid = $this->ct->Env->jinput->getInt('moduleid',0);
 			$link.='&amp;moduleid='.$moduleid;
 
 			//keyword search
 			$inputbox_name='eskeysearch_'.$moduleid ;
-			$link.='&amp;'.$inputbox_name.'='.$this->jinput->getString($inputbox_name,'');
+			$link.='&amp;'.$inputbox_name.'='.$this->ct->Env->jinput->getString($inputbox_name,'');
 		}
 
 		if($this->ct->Env->print==1)
@@ -281,7 +313,10 @@ class Twig_Html_Tags
 			$vlu='<input type="button" class="'.$class.'" value="'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PRINT' ).'" onClick=\'window.open("'.$link.'","win2","status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=no,resizable=yes,width=640,height=480,directories=no,location=no"); return false; \'> ';
         }
 			
-		return new \Twig\Markup($vlu, 'UTF-8' );
+		if($this->isTwig)
+			return new \Twig\Markup($vlu, 'UTF-8' );
+		else
+			return $vlu;
 	}
 	
 	protected function getFieldTitles($list_of_fields)
@@ -449,7 +484,10 @@ class Twig_Html_Tags
 		$field2search = $this->prepareSearchElement($first_fld);
 		$vlu.= '<input type=\'hidden\' ctSearchBoxField=\''.$field2search.'\' />';
 		
-		return new \Twig\Markup($vlu, 'UTF-8' );
+		if($this->isTwig)
+			return new \Twig\Markup($vlu, 'UTF-8' );
+		else
+			return $vlu;
 	}
 	
 	function searchbutton($class_ = '')
@@ -467,7 +505,10 @@ class Twig_Html_Tags
         //JavascriptFunction
         $vlu= '<input type=\'button\' value=\'SEARCH\' class=\''.$class.'\' onClick=\'ctSearchBoxDo()\' />';
        
-        return new \Twig\Markup($vlu, 'UTF-8' );
+        if($this->isTwig)
+			return new \Twig\Markup($vlu, 'UTF-8' );
+		else
+			return $vlu;
 	}
 	
 	function message($html, $type = 'Message')
@@ -576,7 +617,11 @@ class Twig_Html_Tags
    				$alt='Download '.strtoupper($format).' file';
    				//add image anchor link
    				$vlu = '<a href="'.$link.'" class="toolbarIcons" id="ctToolBarExport2CSV" target="_blank"><img src="'.$image.'" alt="'.$alt.'" title="'.$alt.'" width="'.$imagesize.'" height="'.$imagesize.'"></a>';
-				return new \Twig\Markup($vlu, 'UTF-8' );
+				
+				if($this->isTwig)
+					return new \Twig\Markup($vlu, 'UTF-8' );
+				else
+					return $vlu;
    			}
    			elseif($link_type == '_value' or $link_type == 'linkonly')
    			{
@@ -588,4 +633,276 @@ class Twig_Html_Tags
 		return '';
 	}
 	
+	function captcha()
+	{
+		if($this->ct->Env->frmt != '' and $this->ct->Env->frmt !='html')
+			return '';
+			
+		JHtml::_('behavior.keepalive');
+			
+		$p = $this->getReCaptchaParams();
+		if($p == null)
+		{
+			Factory::getApplication()->enqueueMessage('{{ html.captcha }} - Captcha plugin not enabled.', 'error');
+			return '';
+		}
+		
+		$reCaptchaParams=json_decode($p->params);
+		
+		if($reCaptchaParams == null or $reCaptchaParams->public_key != "" or isset($reCaptchaParams->size))
+		{
+			Factory::getApplication()->enqueueMessage('{{ html.captcha }} - Captcha Public Key or size not set.', 'error');
+			return '';
+		}
+
+		JPluginHelper::importPlugin('captcha');
+
+		if($this->ct->Env->version < 4)
+		{
+			$dispatcher = JEventDispatcher::getInstance();
+			$dispatcher->trigger('onInit','my_captcha_div');
+		}
+		else
+		{
+			Factory::getApplication()->triggerEvent('onInit', array(null, 'my_captcha_div', 'class=""'));
+		}
+		
+		$this->captcha_found = true;
+	
+		$vlu = '
+    <div id="my_captcha_div"
+		class="g-recaptcha"
+		data-sitekey="'.$reCaptchaParams->public_key.'"
+		data-theme="'.$reCaptchaParams->theme.'"
+		data-size="'.$reCaptchaParams->size.'"
+		data-callback="recaptchaCallback">
+	</div>';
+	
+		if($this->isTwig)
+			return new \Twig\Markup($vlu, 'UTF-8' );
+		else
+			return $vlu;
+
+	}
+	
+	protected function getReCaptchaParams()
+    {
+        $db = Factory::getDBO();
+		$query='SELECT params FROM #__extensions WHERE '.$db->quoteName("name").'='.$db->Quote("plg_captcha_recaptcha").' LIMIT 1';
+		$db->setQuery( $query );
+
+		$rows=$db->loadObjectList();
+		if(count($rows)==0)
+            return null;
+
+        return $rows[0];
+    }
+	
+	public function button($type = 'save', $title = '', $redirectlink = null, $optional_class = '')
+	{
+		if($this->ct->Env->frmt != '' and $this->ct->Env->frmt !='html' and $this->ct->Env->frmt != 'json')
+			return '';
+		
+		if($redirectlink == null and $this->ct->Env->menu_params != null)
+			$redirectlink = $this->ct->Env->menu_params->get( 'returnto' );
+		
+		if($redirectlink != '' and $redirectlink != null)
+		{
+			$_row=array();
+            $_list=array();
+			//TODO: delete this part, no longer needed using TWIG
+			tagProcessor_General::process($this->ct,$redirectlink,$_row,$_list,0);
+		}
+		
+		$vlu = '';
+
+		switch($type)
+		{
+			case 'save':
+				$vlu = $this->renderSaveButton($optional_class,$title);
+				break;
+
+			case 'saveandclose':
+				$vlu = $this->renderSaveAndCloseButton($optional_class,$title,$redirectlink);
+				break;
+
+			case 'saveandprint':
+				$vlu = $this->renderSaveAndPrintButton($optional_class,$title,$redirectlink);
+                break;
+
+			case 'saveascopy':
+				
+				if($this->ct->Table->record['listing_id'] == 0)
+					$vlu = '';
+				else
+					$vlu = $this->renderSaveAsCopyButton($optional_class,$title,$redirectlink);
+				break;
+
+			case 'cancel':
+				$vlu = $this->renderCancelButton($optional_class,$title,$redirectlink);
+                break;
+
+			case 'close':
+				$vlu = $this->renderCancelButton($optional_class,$title,$redirectlink);
+				break;
+                                    
+			case 'delete':
+				$vlu = $this->renderDeleteButton($captcha_found,$optional_class,$title,$redirectlink);
+				break;
+
+			default:
+				$vlu = '';
+
+		}//switch
+
+		//Not clear where and how this variable used.
+		if($this->ct->Env->frmt == 'json')
+		{
+			$this->button_objects[] = ['type' => $type, 'title' => $b, 'redirectlink' => $redirectlink];
+			return $title;
+		}
+
+		if($this->isTwig)
+			return new \Twig\Markup($vlu, 'UTF-8' );
+		else
+			return $vlu;
+	}
+	
+	protected function renderSaveButton($optional_class,$title)
+    {
+		if($title=='')
+            $title=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SAVE');
+			
+		if($this->ct->Env->frmt == 'json')
+			return $title;
+
+        $attribute='';
+        if($this->captcha_found)
+            $attribute=' disabled="disabled"';
+            
+        if($optional_class!='')
+			$the_class=$optional_class;
+		else
+			$the_class='ctEditFormButton btn button-apply btn-success';
+        
+        $onclick='setTask(event, "saveandcontinue","'.$this->ct->Env->encoded_current_url.'",true);';
+		
+		return '<input id="customtables_button_save" type="submit" class="'.$the_class.' validate"'.$attribute.' onClick=\''.$onclick.'\' value="'.$title.'">';
+    }
+    
+    protected function renderSaveAndCloseButton($optional_class,$title,$redirectlink)
+    {
+		if($title=='')
+            $title= JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SAVEANDCLOSE');
+			
+		if($this->ct->Env->frmt == 'json')
+			return $title;
+			
+        $attribute='onClick=\'';
+        
+        $attribute.='setTask(event, "save","'.base64_encode ($redirectlink).'",true);';
+            
+        $attribute.='\'';
+        
+		if($this->captcha_found)
+            $attribute.=' disabled="disabled"';
+            
+        if($optional_class!='')
+			$the_class=$optional_class;
+		else
+			$the_class='ctEditFormButton btn button-apply btn-success';
+
+        
+        return '<input id="customtables_button_saveandclose" type="submit" '.$attribute.' class="'.$the_class.' validate" value="'.$title.'" />';
+    }
+    
+    protected function renderSaveAndPrintButton($optional_class,$title,$redirectlink)
+    {
+		if($title=='')
+            $title=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NEXT');
+			
+		if($this->ct->Env->frmt == 'json')
+			return $title;
+			
+        $attribute='onClick=\'';
+        $attribute='setTask(event, "saveandprint","'.base64_encode ($redirectlink).'",true);';
+        $attribute.='\'';
+        
+        if($this->captcha_found)
+            $attribute=' disabled="disabled"';
+            
+        if($optional_class!='')
+			$the_class=$optional_class;
+		else
+			$the_class='ctEditFormButton btn button-apply btn-success';
+        
+        return '<input id="customtables_button_saveandprint" type="submit" '.$attribute.' class="'.$the_class.' validate" value="'.$title.'" />';
+    }
+    
+    protected function renderSaveAsCopyButton($optional_class,$title,$redirectlink)
+    {
+		if($title=='')
+            $title=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SAVEASCOPYANDCLOSE');
+			
+		if($this->ct->Env->frmt == 'json')
+			return $title;
+			
+        $attribute='';//onClick="return checkRequiredFields();"';
+        if($this->captcha_found)
+            $attribute=' disabled="disabled"';
+            
+        if($optional_class!='')
+			$the_class=$optional_class;//$the_class='ctEditFormButton '.$optional_class;
+		else
+			$the_class='ctEditFormButton btn button-apply btn-success';
+            
+        $onclick='setTask(event, "saveascopy","'.base64_encode ($redirectlink).'",true);';
+        
+        return '<input id="customtables_button_saveandcopy" type="submit" class="'.$the_class.' validate"'.$attribute.' onClick=\''.$onclick.'\' value="'.$title.'">';
+    }
+    
+    protected function renderCancelButton($optional_class,$title,$redirectlink)
+    {
+        if($title=='')
+            $title=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_CANCEL');
+		
+		if($this->ct->Env->frmt == 'json')
+			return $title;
+            
+        if($optional_class!='')
+            $cancel_class=$optional_class;//$cancel_class='ctEditFormButton '.$optional_class;
+        else
+          	$cancel_class='ctEditFormButton btn button-cancel';
+
+        $onclick='setTask(event, "cancel","'.base64_encode ($redirectlink).'",true);';
+    	return '<input id="customtables_button_cancel" type="button" class="'.$cancel_class.'" value="'.$title.'" onClick=\''.$onclick.'\'>';
+    }
+    
+    protected function renderDeleteButton($optional_class,$title,$redirectlink)
+    {
+        if($title=='')
+			$title=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_DELETE');
+				
+		if($this->ct->Env->frmt == 'json')
+			return $title;
+            
+        if($optional_class!='')
+            $class=$optional_class;//$class='ctEditFormButton '.$optional_class;
+        else
+          	$class='ctEditFormButton btn button-cancel';
+
+        $result='<input id="customtables_button_delete" type="button" class="'.$class.'" value="'.$title.'"
+				onClick=\'
+                if (confirm("'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_DO_U_WANT_TO_DELETE').'"))
+                {
+                    this.form.task.value="delete";
+                    '.($redirectlink!='' ? 'this.form.returnto.value="'.base64_encode ($redirectlink).'";' : '' ).'
+                    this.form.submit();
+                }
+                \'>
+			';
+
+        return $result;
+    }
+    
 }
