@@ -708,10 +708,11 @@ class Twig_Html_Tags
 		
 		if($redirectlink != '' and $redirectlink != null)
 		{
+			//TODO: delete this part, no longer needed using TWIG
+			
 			$_row=array();
             $_list=array();
-			//TODO: delete this part, no longer needed using TWIG
-			tagProcessor_General::process($this->ct,$redirectlink,$_row,$_list,0);
+			\tagProcessor_General::process($this->ct,$redirectlink,$_row,$_list,0);
 		}
 		
 		$vlu = '';

@@ -12,6 +12,15 @@ defined('_JEXEC') or die('Restricted access');
 
 use \CustomTables\Twig_Html_Tags;
 
+/* All tags are implemented using Twig
+
+Implemented:
+
+{captcha} - {{ html.captcha }}
+{button:} - {{ html.button("type") }}
+
+*/
+
 class tagProcessor_Edit
 {
     public static function process(&$ct,&$pagelayout,&$row)
