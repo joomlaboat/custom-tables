@@ -648,18 +648,18 @@ class Twig_Html_Tags
 		}
 		
 		$reCaptchaParams=json_decode($p->params);
-		
-		if($reCaptchaParams == null or $reCaptchaParams->public_key != "" or isset($reCaptchaParams->size))
+
+		if($reCaptchaParams == null or $reCaptchaParams->public_key == "" or !isset($reCaptchaParams->size))
 		{
 			Factory::getApplication()->enqueueMessage('{{ html.captcha }} - Captcha Public Key or size not set.', 'error');
 			return '';
 		}
 
-		JPluginHelper::importPlugin('captcha');
+		\JPluginHelper::importPlugin('captcha');
 
 		if($this->ct->Env->version < 4)
 		{
-			$dispatcher = JEventDispatcher::getInstance();
+			$dispatcher = \JEventDispatcher::getInstance();
 			$dispatcher->trigger('onInit','my_captcha_div');
 		}
 		else
