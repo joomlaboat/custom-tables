@@ -51,6 +51,7 @@ class CustomtablesViewListoftables extends JViewLegacy
 		$this->items = $this->get('Items');
 		$this->pagination = $this->get('Pagination');
 		$this->state = $this->get('State');
+		
 		$this->user = JFactory::getUser();
 
 		if($this->ct->Env->version >= 4)

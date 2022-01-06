@@ -11,8 +11,11 @@ defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\IntegrityChecks;
 
+use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
+
+
 
 $tables = $this->prepareTables();
 	
@@ -26,18 +29,37 @@ $document->addCustomTag('<script src="'.JURI::root(true).'/administrator/compone
 
 ?>
 
-
+<form action="<?php echo JRoute::_('index.php?option=com_customtables&view=databasecheck'); ?>" method="post" name="adminForm" id="adminForm">
         <style type="text/css">  
             #canvas_container {  
                 width: 100%;  
 				min-height: <?php echo (count($tables)>50 ? '4000' : '2000'); ?>px;  
                 border: 1px solid #aaa;  
             }  
-        </style>  
+        </style>
+		
+	<div class="row">
+		<div class="col-md-12">
+			<div id="j-main-container" class="j-main-container">
+				
+  
+  
+<?php 
+//$this->filterForm = $this->get('FilterForm');
+//echo $this->filterForm->renderField('tablecategory'); ?>
 
 <?php echo HTMLHelper::_('uitab.startTabSet', 'schemaTab', ['active' => 'diagram', 'recall' => true, 'breakpoint' => 768]); ?>
 	
 	<?php echo HTMLHelper::_('uitab.addTab', 'schemaTab', 'diagram', Text::_('COM_CUSTOMTABLES_TABLES_DIAGRAM')); ?>
+	
+	<?php
+				// Search tools bar
+
+				echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this, 
+  'options' => array('filtersHidden' =>0),'filtersHidden' =>0
+  )); 
+  
+  ?>
 	
 	<div id="canvas_container"></div>
 	
@@ -60,12 +82,14 @@ $document->addCustomTag('<script src="'.JURI::root(true).'/administrator/compone
 	<?php echo HTMLHelper::_('uitab.endTabSet'); ?>
 	
 	
-	<?php 
+	<script>
 	
-	echo '<script>
+	TableCategoryID = <?php echo (int)$this->state->get('filter.tablecategory'); ?>;
+	AllTables = <?php echo json_encode($tables); ?>;
 	
-	AllTables = '.json_encode($tables).';
+	</script>
 	
-	</script>';
-	
-	?>
+<input type="hidden" name="task" value="" />
+<?php echo JHtml::_('form.token'); ?>
+</div></div></div>
+</form>

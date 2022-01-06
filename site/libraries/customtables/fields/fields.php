@@ -300,6 +300,69 @@ class Fields
 		return implode(' ',$elements);
 	}
 	
+	public static function convertMySQLFieldTypeToCT($data_type,$column_type)
+	{
+		$type = '';
+		$typeparams = '';
+		
+		switch(strtolower(trim($data_type)))
+		{
+			case 'tinyint':
+				$type = 'checkbox';
+				break;
+			
+			case 'int':
+			case 'integer':
+			case 'smallint':
+			case 'mediumint':
+			case 'bigint':
+				$type = 'int';
+				break;
+				
+			case 'dec':
+			case 'decimal':
+			case 'float':
+			case 'double':
+			
+				$parts = explode('(',$column_type);
+				if(count($parts)>1)
+				{
+					$length = str_replace(')','',$parts[1]);
+					if($length!='')
+						$typeparams = $length;
+				}
+				$type = 'float';
+				break;
+				
+			case 'char':
+			case 'varchar':
+			
+				$parts = explode('(',$column_type);
+				if(count($parts)>1)
+				{
+					$length = str_replace(')','',$parts[1]);
+					if($length!='')
+						$typeparams = $length;
+				}
+				$type = 'string';
+				break;
+				
+			case 'blob':
+			case 'text':
+			case 'mediumtext':
+			case 'longtext':
+				$type = 'text';
+				break;
+				
+			case 'datetime':
+				$type = 'creationtime';
+				break;
+			
+		}
+		
+		return ['type' => $type, 'typeparams' => $typeparams];
+	}
+	
 	public static function getProjectedFieldType($ct_fieldtype,$typeparams)
 	{
 		//Returns an array of mysql column parameters
@@ -431,7 +494,6 @@ class Fields
 		return $type;
 	}
 
-
     public static function AddMySQLFieldNotExist($realtablename, $realfieldname, $fieldtype, $options)
     {
 		$db = Factory::getDBO();
@@ -443,7 +505,6 @@ class Fields
 			$db->execute();
 		}
     }
-
 
     public static function addForeignKey($realtablename_, $realfieldname, string $new_typeparams, string $join_with_table_name, string $join_with_table_field,&$msg)
 	{
@@ -1261,4 +1322,14 @@ class Fields
 		return $field;
 	}
 
+
+	public static function deleteTablelessFields()
+	{
+		$db = Factory::getDBO();
+		
+		$query='DELETE FROM #__customtables_fields AS f WHERE (SELECT id FROM #__customtables_tables AS t WHERE t.id = f.tableid) IS NULL';
+
+		$db->setQuery($query);
+		$db->execute();
+	}
 }

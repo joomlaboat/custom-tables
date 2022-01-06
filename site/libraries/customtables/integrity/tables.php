@@ -114,9 +114,12 @@ class IntegrityTables extends \CustomTables\IntegrityChecks
 				$database = $conf->get('db');
 				$dbprefix = $conf->get('dbprefix');
 		
-				if(ESTables::createTableIfNotExists($database,$dbprefix,$row['tablename'],$row['tabletitle'],$row['customtablename']))
+				if($row['customtablename'] == null or $row['customtablename'] == '')
 				{
-					Factory::getApplication()->enqueueMessage('Table "'.$row['tabletitle'].'" created.','notice');
+					if(ESTables::createTableIfNotExists($database,$dbprefix,$row['tablename'],$row['tabletitle'],$row['customtablename']))
+					{
+						Factory::getApplication()->enqueueMessage('Table "'.$row['tabletitle'].'" created.','notice');
+					}
 				}
 			}
 		}

@@ -378,7 +378,12 @@ class Value
 			return date($option_list[0],$phpdate );
 		}
 		else
+		{
+			if($value == '0000-00-00 00:00:00')
+				return '';
+			
 			return JHTML::date($phpdate );
+		}
 	}
 
 	public static function TextFunctions($content,$parameters)

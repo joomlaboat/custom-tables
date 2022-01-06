@@ -25,6 +25,30 @@ class ESTables
 		return $db->loadObjectList();
 	}
 	
+	public static function checkTableName($tablename)
+	{
+		$new_tablename = $tablename;
+		$i=1;
+		do
+		{
+
+			$already_exists = ESTables::getTableID($new_tablename);
+			if($already_exists!=0)
+			{
+				$pair=explode('_',$new_tablename);
+
+				$cleantablename = $pair[0];
+				$new_tablename = $cleantablename.'_'.$i;
+				$i++;
+			}
+			else
+				break;
+
+		}while(1==1);
+
+		return $new_tablename;
+	}
+	
 	public static function checkIfTableExists($realtablename)
 	{
 		$conf = JFactory::getConfig();
@@ -209,7 +233,6 @@ class ESTables
 		return '*, '.$realtablename_query.','.$realidfieldname_query.', 1 AS published_field_found';
 	}
 
-
 	public static function createTableIfNotExists($database,$dbprefix,$tablename,$tabletitle,$complete_table_name='')
 	{
 		$db = JFactory::getDBO();
@@ -279,18 +302,19 @@ class ESTables
 			}
 			else
 			{
-				$query = '
-				CREATE TABLE IF NOT EXISTS #__customtables_table_'.$tablename.'
-				(
-					id int(10) UNSIGNED NOT NULL auto_increment,
-					published tinyint(1) NOT NULL DEFAULT 1,
-					PRIMARY KEY (id)
-				) ENGINE=InnoDB COMMENT="'.$tabletitle.'" DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AUTO_INCREMENT=1;
-				';
-
-				$db->setQuery( $query );
-				$db->execute();
-				
+				if($complete_table_name=='')
+				{
+					$query = '
+					CREATE TABLE IF NOT EXISTS #__customtables_table_'.$tablename.'
+					(
+						id int(10) UNSIGNED NOT NULL auto_increment,
+						published tinyint(1) NOT NULL DEFAULT 1,
+						PRIMARY KEY (id)
+					) ENGINE=InnoDB COMMENT="'.$tabletitle.'" DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AUTO_INCREMENT=1;
+';
+					$db->setQuery( $query );
+					$db->execute();
+				}
 				return true;
 			}
 		}
@@ -334,5 +358,164 @@ class ESTables
 			return $db->insertid();	
 		}
 		return 0;
+	}
+
+	public static function renameTableIfNeeded($tableid,$database,$dbprefix,$tablename)
+	{
+		$db = JFactory::getDBO();
+		$old_tablename=ESTables::getTableName($tableid);
+
+		if($old_tablename != $tablename)
+		{
+			//rename table
+			$tablestatus=ESTables::getTableStatus($database,$dbprefix,$old_tablename);
+
+			if(count($tablestatus)>0)
+			{
+				$query = 'RENAME TABLE '.$db->quoteName($database.'.'.$dbprefix.'customtables_table_'.$old_tablename).' TO '
+					.$db->quoteName($database.'.'.$dbprefix.'customtables_table_'.$tablename).';';
+
+				$db->setQuery( $query );
+				$db->execute();
+			}
+		}
+	}
+	
+	public static function addThirdPartyTableFieldsIfNeeded($database,$dbprefix,$tablename,$realtablename)
+	{
+		$fields = Fields::getFields($tablename,$as_object=false,$order_fields = true);
+		if(count($fields) == 0)
+		{
+			//Add third-party fields
+			
+			$tablerow = ESTables::getTableRowByName($tablename);
+			
+			$db = JFactory::getDBO();
+			
+			if($db->serverType == 'postgresql')
+				$query = 'SELECT column_name, data_type, is_nullable, column_default FROM information_schema.columns WHERE table_name = '.$db->quote($realtablename);
+			else
+				$query = 'SELECT '
+				.'COLUMN_NAME AS column_name,'
+				.'DATA_TYPE AS data_type,'
+				.'COLUMN_TYPE AS column_type,'
+				.'IF(COLUMN_TYPE LIKE \'%unsigned\', \'YES\', \'NO\') AS is_unsigned,'
+				.'IS_NULLABLE AS is_nullable,'
+				.'COLUMN_DEFAULT AS column_default,'
+				.'COLUMN_COMMENT AS column_comment,'
+				.'EXTRA AS extra FROM information_schema.columns WHERE table_schema = '.$db->quote($database).' AND table_name = '.$db->quote($realtablename);
+		
+			$db->setQuery( $query );
+			$fields = $db->loadObjectList();
+			
+			$set_fieldnames=['tableid','fieldname','fieldtitle','type','typeparams','defaultvalue','description','customfieldname'];
+			
+			foreach($fields as $field)
+			{
+				$set_values = [];
+				
+				$ct_field_type = Fields::convertMySQLFieldTypeToCT($field->data_type,$field->column_type);
+				if($ct_field_type['type'] == '')
+				{
+					print_r($field);
+					print_r($ct_field_type);
+					die;
+				}
+				
+				$set_values['tableid'] = (int)$tablerow->id;
+				$set_values['fieldname'] = $db->quote(strtolower($field->column_name));
+				$set_values['fieldtitle'] = $db->quote(ucwords(strtolower($field->column_name)));
+				$set_values['type'] = $db->quote($ct_field_type['type']);
+				$set_values['typeparams'] = $db->quote($ct_field_type['typeparams']);
+				$set_values['defaultvalue'] = $field->column_default != '' ? $db->quote($field->column_default) : 'NULL';
+				$set_values['description'] = $field->column_comment != '' ? $db->quote($field->column_comment) : 'NULL';
+				$set_values['customfieldname'] = $db->quote(strtolower($field->column_name));
+				
+				$query='INSERT INTO #__customtables_fields ('.implode(',',$set_fieldnames).') VALUES ('.implode(',',$set_values).')';
+				
+				$db->setQuery($query);
+				$db->execute();
+			}
+		}
+	}
+	
+	public static function copyTable(&$ct,$originaltableid,$new_table,$old_table,$customtablename = '')
+	{
+		//Copy Table
+		$db = JFactory::getDBO();
+
+		//get ID of new table
+		$new_table_id = ESTables::getTableID($new_table);
+		
+		if($customtablename == '')
+		{
+			//Do not copy real third-party tables
+		
+			if($db->serverType == 'postgresql')
+				$query = 'CREATE TABLE #__customtables_table_'.$new_table.' AS TABLE #__customtables_table_'.$old_table;
+			else
+				$query = 'CREATE TABLE #__customtables_table_'.$new_table.' AS SELECT * FROM #__customtables_table_'.$old_table;
+
+			$db->setQuery( $query );
+			$db->execute();
+		
+			$query='ALTER TABLE #__customtables_table_'.$new_table.' ADD PRIMARY KEY (id)';
+			$db->setQuery( $query );
+			$db->execute();
+		
+			$query='ALTER TABLE #__customtables_table_'.$new_table.' CHANGE id id INT UNSIGNED NOT NULL AUTO_INCREMENT';
+			$db->setQuery( $query );
+			$db->execute();
+		}
+
+		//Copy Fields
+		$fields=array('fieldname','type','typeparams','ordering','defaultvalue','allowordering','parentid','isrequired','valuerulecaption','valuerule',
+				'customfieldname','isdisabled','savevalue','alwaysupdatevalue','created_by','modified_by','created','modified');
+	
+		$morethanonelang=false;
+		
+		foreach($ct->Languages->LanguageList as $lang)
+		{
+			if($morethanonelang)
+			{
+				$fields[]='fieldtitle'.'_'.$lang->sef;
+				$fields[]='description'.'_'.$lang->sef;
+			}
+			else
+			{
+				$fields[]='fieldtitle';
+				$fields[]='description';
+				
+				$morethanonelang = true;
+			}
+			
+		}
+
+		$query = 'SELECT * FROM #__customtables_fields WHERE published=1 AND tableid='.$originaltableid;
+		$db->setQuery( $query );
+
+		$rows=$db->loadAssocList();
+
+		if(count($rows)==0)
+			die('Original table has no fields.');
+
+		foreach($rows as $row)
+		{
+
+			$inserts=array('tableid='.$new_table_id);
+			foreach($fields as $fld)
+			{
+				$value=$row[$fld];
+				$value=str_replace('"','\"',$value);
+
+				$inserts[]=''.$fld.'="'.$value.'"';
+			}
+
+			$iq='INSERT INTO #__customtables_fields SET '.implode(', ',$inserts);
+			
+			$db->setQuery( $iq );
+			$db->execute();
+		}
+		return true;
 	}
 }

@@ -15,20 +15,26 @@ JHtml::_('dropdown.init');
 JHtml::_('formbehavior.chosen', 'select');
 */
 
+// load tooltip behavior
+//JHtml::_('behavior.tooltip');
+//sJHtml::_('behavior.multiselect');
+//JHtml::_('dropdown.init');
+//JHtml::_('formbehavior.chosen', 'select');
+
 use CustomTables\IntegrityChecks;
 
 $tables = $this->prepareTables();
 
 $document = JFactory::getDocument();
 
-$document->addCustomTag('<script src="'.JURI::root(true).'/media/vendor/jquery/js/jquery.min.js"></script>');
+//$document->addCustomTag('<script src="'.JURI::root(true).'/media/vendor/jquery/js/jquery.min.js"></script>');
 //https://github.com/DmitryBaranovskiy/raphael/releases
 $document->addCustomTag('<script src="'.JURI::root(true).'/administrator/components/com_customtables/js/raphael.min.js"></script>');
 
 $document->addCustomTag('<script src="'.JURI::root(true).'/administrator/components/com_customtables/js/diagram.js"></script>');
 
 ?>
-
+<form action="<?php echo JRoute::_('index.php?option=com_customtables&view=databasecheck'); ?>" method="post" name="adminForm" id="adminForm">
 <style type="text/css">  
         #canvas_container {  
             width: 100%;  
@@ -66,8 +72,13 @@ $document->addCustomTag('<script src="'.JURI::root(true).'/administrator/compone
 		
 	echo '<script>
 	
+	TableCategoryID = '.(int)$this->state->get('filter.tablecategory').';
 	AllTables = '.json_encode($tables).';
 	
 	</script>';
 	
 	?></div>
+	
+<input type="hidden" name="task" value="" />
+<?php echo JHtml::_('form.token'); ?>
+</form>

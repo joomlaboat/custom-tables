@@ -124,25 +124,21 @@ class CustomtablesModelTables extends JModelAdmin
 			return false;
 		}
 
-		$jinput = JFactory::getApplication()->input;
-
 		// The front end calls this model and uses a_id to avoid id clashes so we need to check for that first.
-		if (JFactory::getApplication()->input->get('a_id'))
+		if ($this->ct->Env->jinput->get('a_id'))
 		{
-			$id = JFactory::getApplication()->input->get('a_id', 0, 'INT');
+			$id = $this->ct->Env->jinput->get('a_id', 0, 'INT');
 		}
 		// The back end uses id so we use that the rest of the time and set it to 0 by default.
 		else
 		{
-			$id = JFactory::getApplication()->input->get('id', 0, 'INT');
+			$id = $this->ct->Env->jinput->get('id', 0, 'INT');
 		}
-
-		$user = JFactory::getUser();
 
 		// Check for existing item.
 		// Modify the form based on Edit State access controls.
-		if ($id != 0 && (!$user->authorise('core.edit.state', 'com_customtables.tables.' . (int) $id))
-			|| ($id == 0 && !$user->authorise('core.edit.state', 'com_customtables')))
+		if ($id != 0 && (!$this->ct->Env->user->authorise('core.edit.state', 'com_customtables.tables.' . (int) $id))
+			|| ($id == 0 && !$this->ct->Env->user->authorise('core.edit.state', 'com_customtables')))
 		{
 			// Disable fields for display.
 			$form->setFieldAttribute('published', 'disabled', 'true');
@@ -153,10 +149,10 @@ class CustomtablesModelTables extends JModelAdmin
 		if (0 == $id)
 		{
 			// Set the created_by to this user
-			$form->setValue('created_by', null, $user->id);
+			$form->setValue('created_by', null, $this->ct->Env->user->id);
 		}
 		// Modify the form based on Edit Creaded By access controls.
-		if (!$user->authorise('core.edit.created_by', 'com_customtables'))
+		if (!$this->ct->Env->user->authorise('core.edit.created_by', 'com_customtables'))
 		{
 			// Disable fields for display.
 			$form->setFieldAttribute('created_by', 'disabled', 'true');
@@ -166,7 +162,7 @@ class CustomtablesModelTables extends JModelAdmin
 			$form->setFieldAttribute('created_by', 'filter', 'unset');
 		}
 		// Modify the form based on Edit Creaded Date access controls.
-		if (!$user->authorise('core.edit.created', 'com_customtables'))
+		if (!$this->ct->Env->user->authorise('core.edit.created', 'com_customtables'))
 		{
 			// Disable fields for display.
 			$form->setFieldAttribute('created', 'disabled', 'true');
@@ -177,9 +173,9 @@ class CustomtablesModelTables extends JModelAdmin
 		if (0 == $id)
 		{
 			// Set redirected field name
-			$redirectedField = JFactory::getApplication()->input->get('ref', null, 'STRING');
+			$redirectedField = $this->ct->Env->jinput->get('ref', null, 'STRING');
 			// Set redirected field value
-			$redirectedValue = JFactory::getApplication()->input->get('refid', 0, 'INT');
+			$redirectedValue = $this->ct->Env->jinput->get('refid', 0, 'INT');
 			if (0 != $redirectedValue && $redirectedField)
 			{
 				// Now set the local-redirected field default value
@@ -218,9 +214,8 @@ class CustomtablesModelTables extends JModelAdmin
 				return;
 			}
 
-			$user = JFactory::getUser();
 			// The record has been set. Check the record permissions.
-			return $user->authorise('core.delete', 'com_customtables.tables.' . (int) $record->id);
+			return $this->ct->Env->user->authorise('core.delete', 'com_customtables.tables.' . (int) $record->id);
 		}
 		return false;
 	}
@@ -236,13 +231,12 @@ class CustomtablesModelTables extends JModelAdmin
 	 */
 	protected function canEditState($record)
 	{
-		$user = JFactory::getUser();
 		$recordId = (!empty($record->id)) ? $record->id : 0;
 
 		if ($recordId)
 		{
 			// The record has been set. Check the record permissions.
-			$permission = $user->authorise('core.edit.state', 'com_customtables.tables.' . (int) $recordId);
+			$permission = $this->ct->Env->user->authorise('core.edit.state', 'com_customtables.tables.' . (int) $recordId);
 			if (!$permission && !is_null($permission))
 			{
 				return false;
@@ -280,7 +274,6 @@ class CustomtablesModelTables extends JModelAdmin
 	protected function prepareTable($table)
 	{
 		$date = JFactory::getDate();
-		$user = JFactory::getUser();
 
 		if (isset($table->name))
 		{
@@ -293,22 +286,14 @@ class CustomtablesModelTables extends JModelAdmin
 			// set the user
 			if ($table->created_by == 0 || empty($table->created_by))
 			{
-				$table->created_by = $user->id;
+				$table->created_by = $this->ct->Env->user->id;
 			}
 		}
 		else
 		{
 			$table->modified = $date->toSql();
-			$table->modified_by = $user->id;
+			$table->modified_by = $this->ct->Env->user->id;
 		}
-
-		/*
-		if (!empty($table->id))
-		{
-			// Increment the items version number.
-			$table->version++;
-		}
-		*/
 	}
 
 	/**
@@ -371,6 +356,8 @@ class CustomtablesModelTables extends JModelAdmin
 		
 		if (!parent::delete($pks))
 			return false;
+
+		Fields::deleteTablelessFields();
 
 		return true;
 	}
@@ -523,30 +510,6 @@ class CustomtablesModelTables extends JModelAdmin
 		die;
 	}
 
-	public function checkTableName($tablename)
-	{
-		$new_tablename=$tablename;
-		$i=1;
-		do
-		{
-
-			$already_exists=ESTables::getTableID($tablename);
-			if($already_exists!=0)
-			{
-				$pair=explode('_',$tablename);
-
-				$cleantablename=$pair[0];
-				$new_tablename=$cleantablename.'_'.$i;
-				$i++;
-			}
-			else
-				break;
-
-		}while(1==1);
-
-		return $new_tablename;
-	}
-
 	public function save($data)
 	{
 		$conf = JFactory::getConfig();
@@ -554,12 +517,11 @@ class CustomtablesModelTables extends JModelAdmin
 		$database = $conf->get('db');
 		$dbprefix = $conf->get('dbprefix');
 
-		$jinput	= JFactory::getApplication()->input;
 		$filter	= JFilterInput::getInstance();
 
 		$db = JFactory::getDBO();
 
-		$data_extra = JFactory::getApplication()->input->get( 'jform',array(),'ARRAY');
+		$data_extra = $this->ct->Env->jinput->get( 'jform',array(),'ARRAY');
 
 		$morethanonelang=false;
 		
@@ -589,25 +551,25 @@ class CustomtablesModelTables extends JModelAdmin
 
 		$tableid=(int)$data['id'];
 
-		$tablename=strtolower(trim(preg_replace("/[^a-zA-Z]/", "", $data['tablename'])));
+		$tablename=strtolower(trim(preg_replace("/[^a-zA-Z_0-9]/", "", $data['tablename'])));
 		
 		//If its a new table, check if field name is unique or add number "_1" if its not.
 		if($tableid==0)
-			$tablename=$this->checkTableName($tablename);
-
+			$tablename=ESTables::checkTableName($tablename);
+		
 		$data['tablename']=$tablename;
 
-		if($tableid!=0 and $data['customtablename']=='')//do not rename real table if its a third-party table - not part of the Custom Tables
+		if($tableid!=0 and (string)$data['customtablename']=='')//do not rename real table if its a third-party table - not part of the Custom Tables
 		{
-			$this->getRenameTableIfNeeded($tableid,$database,$dbprefix,$tablename);
+			ESTables::renameTableIfNeeded($tableid,$database,$dbprefix,$tablename);
 		}
 		
 		$old_tablename='';
 
 		// Alter the unique field for save as copy
-		if (JFactory::getApplication()->input->get('task') === 'save2copy')
+		if ($this->ct->Env->jinput->get('task') === 'save2copy')
 		{
-			$originaltableid=JFactory::getApplication()->input->getInt( 'originaltableid',0);
+			$originaltableid=$this->ct->Env->jinput->getInt( 'originaltableid',0);
 
 			if($originaltableid!=0)
 			{
@@ -616,150 +578,35 @@ class CustomtablesModelTables extends JModelAdmin
 				if($old_tablename==$tablename)
 					$tablename='copy_of_'.$tablename;
 				
-				while($this->checkIfTableNameExists($tablename)!=0)
+				while(ESTables::getTableID($tablename) != 0)
 					$tablename='copy_of_'.$tablename;
 				
 				$data['tablename']=$tablename;
 			}
 		}
-
+		
 		if (parent::save($data))
 		{
-			$originaltableid=JFactory::getApplication()->input->getInt( 'originaltableid',0);
+			$originaltableid=$this->ct->Env->jinput->getInt( 'originaltableid',0);
 			
 			if($originaltableid!=0 and $old_tablename!='')
-				$this->copyTable($originaltableid,$tablename,$old_tablename);
+				ESTables::copyTable($this->ct,$originaltableid,$tablename,$old_tablename,$data['customtablename']);
 
 			ESTables::createTableIfNotExists($database,$dbprefix,$tablename,$tabletitle,$data['customtablename']);
+
+			//Add fields if its a third-party table and no fields added yet.
+			if($data['customtablename'] != null and $data['customtablename'] != '')
+			{
+				ESTables::addThirdPartyTableFieldsIfNeeded($database,$dbprefix,$tablename, $data['customtablename']);
+			}
 
 			return true;
 		}
 		return false;
 	}
 
-	function getRenameTableIfNeeded($tableid,$database,$dbprefix,$tablename)
-	{
-		$db = JFactory::getDBO();
-		$old_tablename=ESTables::getTableName($tableid);
-
-		if($old_tablename!=$tablename)
-		{
-				//rename table
-			$tablestatus=ESTables::getTableStatus($database,$dbprefix,$old_tablename);
-
-			if(count($tablestatus)>0)
-			{
-				$query = 'RENAME TABLE '.$db->quoteName($database.'.'.$dbprefix.'customtables_table_'.$old_tablename).' TO '
-					.$db->quoteName($database.'.'.$dbprefix.'customtables_table_'.$tablename).';';
-
-				$db->setQuery( $query );
-
-				$db->execute();
-			}
-		}
-	}
-
-	/**
-	 * Method to generate a unique value.
-	 *
-	 * @param   string  $field name.
-	 * @param   string  $value data.
-	 *
-	 * @return  string  New value.
-	 *
-	 * @since   3.0
-	 */
-
-
-	function checkIfTableNameExists($tablename)
-	{
-		$db = JFactory::getDBO();
-
-		$query = 'SELECT id FROM #__customtables_tables WHERE tablename='.$db->quote($tablename).' LIMIT 1';
-		
-		$db->setQuery( $query );
-
-		$rows=$db->loadAssocList();
-		if(count($rows)!=1)
-			return 0;
-		
-		return $rows[0]['id'];
-	}
-
 	public function copyTable($originaltableid,$new_table,$old_table)
 	{
-		//Copy Table
-		$db = JFactory::getDBO();
-
-		//get ID of new table
-		$new_table_id=$this->checkIfTableNameExists($new_table);
-		
-		if($db->serverType == 'postgresql')
-			$query = 'CREATE TABLE #__customtables_table_'.$new_table.' AS TABLE #__customtables_table_'.$old_table;
-		else
-			$query = 'CREATE TABLE #__customtables_table_'.$new_table.' AS SELECT * FROM #__customtables_table_'.$old_table;
-
-		$db->setQuery( $query );
-		$db->execute();
-		
-		$query='ALTER TABLE #__customtables_table_'.$new_table.' ADD PRIMARY KEY (id)';
-		$db->setQuery( $query );
-		$db->execute();
-		
-		$query='ALTER TABLE #__customtables_table_'.$new_table.' CHANGE id id INT UNSIGNED NOT NULL AUTO_INCREMENT';
-		$db->setQuery( $query );
-		$db->execute();
-
-		//Copy Fields
-		$fields=array('fieldname','type','typeparams','ordering','defaultvalue','allowordering','parentid','isrequired','valuerulecaption','valuerule',
-				'customfieldname','isdisabled','savevalue','alwaysupdatevalue','valuerulecaption','created_by','modified_by','created','modified');
-	
-		$morethanonelang=false;
-		
-		foreach($this->ct->Languages->LanguageList as $lang)
-		{
-			if($morethanonelang)
-			{
-				$fields[]='fieldtitle'.'_'.$lang->sef;
-				$fields[]='description'.'_'.$lang->sef;
-			}
-			else
-			{
-				$fields[]='fieldtitle';
-				$fields[]='description';
-				
-				$morethanonelang = true;
-			}
-			
-		}
-
-		$query = 'SELECT * FROM #__customtables_fields WHERE published=1 AND tableid='.$originaltableid;
-		$db->setQuery( $query );
-
-		$rows=$db->loadAssocList();
-
-		if(count($rows)==0)
-			die('Original table has no fields.');
-
-		foreach($rows as $row)
-		{
-
-			$inserts=array('tableid='.$new_table_id);
-			foreach($fields as $fld)
-			{
-				$value=$row[$fld];
-				$value=str_replace('"','\"',$value);
-
-				$inserts[]=''.$fld.'="'.$value.'"';
-			}
-
-			$iq='INSERT INTO #__customtables_fields SET '.implode(', ',$inserts);
-			
-			$db->setQuery( $iq );
-			$db->execute();
-		}
-		return true;
+		return ESTables::copyTable($this->ct,$originaltableid,$new_table,$old_table);
 	}
-	
-	
 }

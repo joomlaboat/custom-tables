@@ -16,6 +16,14 @@ use CustomTables\CT;
 
 use Joomla\CMS\Version;
 
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\Toolbar;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+
+
+
+
+
 /**
  * Tables View class
  */
@@ -29,6 +37,8 @@ class CustomtablesViewDataBaseCheck extends JViewLegacy
 	 
 	var $tables=false;
 	
+	public $activeFilters;
+	
 	public function display($tpl = null)
 	{
 		$version = new Version;
@@ -36,17 +46,33 @@ class CustomtablesViewDataBaseCheck extends JViewLegacy
 		
 		$this->ct = new CT;
 		
+		$this->state = $this->get('State');
+		
+		if($this->ct->Env->version >= 4)
+		{
+			$this->filterForm    = $this->get('FilterForm');
+			$this->activeFilters = $this->get('ActiveFilters');
+		}
+		
 		if ($this->getLayout() !== 'modal')
 		{
 			// Include helper submenu
 			CustomtablesHelper::addSubmenu('databasecheck');
-			$this->addToolBar();
+			//$this->addToolBar();
 			if($this->version < 4)
+			{
+				$this->addToolbar_3();
 				$this->sidebar = JHtmlSidebar::render();
+			}
+			else
+				$this->addToolbar_4();
 		}
-		
-		
-		$this->AllTables = $this->getAllTables();
+
+		if($this->version < 4)
+			$this->AllTables = $this->getAllTables($this->state->get('filter.tablecategory'));
+		else
+			$this->AllTables = $this->getAllTables($this->state->get('list.tablecategory'));
+			
 		$this->AllFields = $this->getAllFields();
 		
 		// Set the document
@@ -58,10 +84,31 @@ class CustomtablesViewDataBaseCheck extends JViewLegacy
 			parent::display('quatro');
 	}
 	
-	protected function addToolBar()
+	protected function addToolbar_4()
+	{
+		//$user  = Factory::getUser();
+
+		// Get the toolbar object instance
+		$toolbar = Toolbar::getInstance('toolbar');
+
+		ToolbarHelper::title(Text::_('COM_CUSTOMTABLES_DATABASECHECK'), 'joomla');
+
+	}
+	
+	protected function addToolBar_3()
 	{
 		JToolBarHelper::title(JText::_('COM_CUSTOMTABLES_DATABASECHECK'), 'joomla');
 		JHtmlSidebar::setAction('index.php?option=com_customtables&view=databasecheck');
+		JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/fields');
+		
+		$CTCategory = JFormHelper::loadFieldType('CTCategory', false);
+		$CTCategoryOptions=$CTCategory->getOptions(false); // works only if you set your field getOptions on public!!
+
+		JHtmlSidebar::addFilter(
+		JText::_('COM_CUSTOMTABLES_TABLES_CATEGORY_SELECT'),
+		'filter_tablecategory',
+		JHtml::_('select.options', $CTCategoryOptions, 'value', 'text', $this->state->get('filter.tablecategory'))
+		);
 	}
 
 	protected function setDocument()
@@ -73,10 +120,12 @@ class CustomtablesViewDataBaseCheck extends JViewLegacy
 		$this->document->addStyleSheet(JURI::root(true)."/administrator/components/com_customtables/css/fieldtypes.css");
 	}
 	
-	protected function getAllTables()
+	protected function getAllTables($categoryid)
 	{
 		$db = JFactory::getDBO();
-		$query='SELECT * FROM #__customtables_tables WHERE published = 1 ORDER BY tablename';
+		$query='SELECT * FROM #__customtables_tables WHERE published = 1'
+			.($categoryid !=0 ? ' AND tablecategory='.$categoryid : '')
+			.' ORDER BY tablename';
 		
 		$db->setQuery( $query );
         $rows=$db->loadAssocList();
