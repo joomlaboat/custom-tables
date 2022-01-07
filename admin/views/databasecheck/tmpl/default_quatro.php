@@ -78,13 +78,11 @@ $document->addCustomTag('<script src="'.JURI::root(true).'/administrator/compone
 	?>
 	
 	<?php echo HTMLHelper::_('uitab.endTab'); ?>
-	
 	<?php echo HTMLHelper::_('uitab.endTabSet'); ?>
-	
-	
+
 	<script>
 	
-	TableCategoryID = <?php echo (int)$this->state->get('filter.tablecategory'); ?>;
+	TableCategoryID = <?php echo (int)$this->state->get('list.tablecategory'); ?>;
 	AllTables = <?php echo json_encode($tables); ?>;
 	
 	</script>

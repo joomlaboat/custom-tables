@@ -235,7 +235,7 @@ function renderFieldsBox()
 	{
 		let fieldtypes_to_skip=['log','phponview','phponchange','phponadd','md5','id','server','userid','viewcount','lastviewtime','changetime','creationtime','imagegallery','filebox','dummy'];
 		
-		let label = '<p>Dynamic Field Tags that renders an input field where the user can enter data.<span style="font-weight:bold;color:darkgreen;">(if it\'s not clear, please click <a href="https://joomlaboat.com/support/custom-tables">here</a>)</span></p>';
+		let label = '<p>Dynamic Field Tags that renders an input field where the user can enter data.<span style="font-weight:bold;color:darkgreen;">(more <a href="https://joomlaboat.com/custom-tables-wiki?document=04.-Field-Types" target="_blank">here</a>)</span></p>';
 		tabs.push({'id':'layouteditor_fields_edit','title':'Input/Edit',
 			'content':label + renderFieldTags('[',']',fieldtypes_to_skip,'editparams')
 		});

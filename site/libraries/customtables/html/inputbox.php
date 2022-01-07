@@ -42,10 +42,12 @@ class Inputbox
 	var $option_list;
 	var $place_holder;
 	var $prefix;
+	var $isTwig;
 	
-	function __construct(&$ct, &$esfield, array $option_list = [])
+	function __construct(&$ct, &$esfield, array $option_list = [],$isTwig = true)
 	{
 		$this->ct = $ct;
+		$this->isTwig = $isTwig;
 		$this->jinput = Factory::getApplication()->input;
 		
 		// $option_list[0] - CSS Class
@@ -61,773 +63,188 @@ class Inputbox
 			$this->attributes .= 'style="'.$this->cssclass.'"';
 			$this->cssclass = '';
 		}
+		
+		$this->cssclass .= ($this->ct->Env->version < 4 ? ' inputbox' : ' form-control').($this->esfield['isrequired'] ? ' required' : '');
 	
 		$this->option_list = $option_list;
 		$this->place_holder = $esfield['fieldtitle'.$this->ct->Languages->Postfix];
-		
 		$this->esfield = $esfield;
+		
 	}
 	
 	function render($value, &$row)
 	{
 		$this->prefix = $this->ct->Env->field_input_prefix . (!$this->ct->isEditForm  ? $row['listing_id'] . '_' : '');
 		
-		$result='';
-		
-		$this->cssclass .= ($this->ct->Env->version < 4 ? ' inputbox' : ' form-control').($this->esfield['isrequired'] ? ' required' : '');
-		
 		$type_params=JoomlaBasicMisc::csv_explode(',',$this->esfield['typeparams'],'"',false);
 		
 		switch($this->esfield['type'])
 		{
 			case 'radio':
+				return $this->render_radio($value, $type_params);
 
-							$result.='<table style="border:none;"><tr>';
-							$i=0;
-							foreach($type_params as $radiovalue)
-							{
-								$v=trim($radiovalue);
-								$result.='<td valign="middle"><input type="radio"
-									name="'.$this->prefix.$this->esfield['fieldname'].'"
-									id="'.$this->prefix.$this->esfield['fieldname'].'_'.$i.'"
-									value="'.$v.'" '
-								.($value==$v ? ' checked="checked" ' : '')
-								.' /></td>';
-								$result.='<td valign="middle"><label for="'.$this->prefix.$this->esfield['fieldname'].'_'.$i.'">'.$v.'</label></td>';
-								$i++;
-							}
-							$result.='</tr></table>';
+			case 'int':
+				return $this->render_int($row);
 
-							break;
+			case 'float':
+				return $this->render_float($row);
 
-						case 'int':
+			case 'phponchange':
+				return $value.'<input type="hidden" '
+					.'name="'.$this->prefix.$this->esfield['fieldname'].'" '
+					.'id="'.$this->prefix.$this->esfield['fieldname'].'" '
+					.'value="'.$value.'" />';
+				
+			case 'phponadd':
+				return $value.'<input type="hidden" '
+					.'name="'.$this->prefix.$this->esfield['fieldname'].'" '
+					.'id="'.$this->prefix.$this->esfield['fieldname'].'" '
+					.'value="'.$value.'" />';
+
+			case 'phponview':
+				return $value;
+
+			case 'string':
+				return $this->getTextBox($value);
+
+			case 'alias':
+				return $this->render_alias($value);
+
+			case 'multilangstring':
+				return $this->getMultilangString($row);
+
+			case 'text':
+				return $this->render_text($value, $type_params);
+
+			case 'multilangtext':
+				require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fieldtypes'.DIRECTORY_SEPARATOR.'multilangtext.php');
+				return $this->render_multilangtext($row);
+
+			case 'checkbox':
+				return $this->render_checkbox($value);
+
+			case 'image':
+				$image_type_file=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fieldtypes'.DIRECTORY_SEPARATOR.'_type_image.php';
+				require_once($image_type_file);
+
+				return CT_FieldTypeTag_image::renderImageFieldBox($this->ct, $this->prefix,$this->esfield,
+					$row,$this->esfield['realfieldname'],$this->cssclass,$this->attributes);
+
+			case 'file':
+				$file_type_file=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fieldtypes'.DIRECTORY_SEPARATOR.'_type_file.php';
+				require_once($file_type_file);
+				return CT_FieldTypeTag_file::renderFileFieldBox($this->ct, $this->prefix,
+					$this->esfield,$row,$this->esfield['realfieldname'],$this->cssclass);
+
+			case 'userid':
+				return $this->getUserBox($row,$value,false);
+
+			case 'user':
+				if(count($row)==0)
+					$value=$this->jinput->get($this->ct->Env->field_prefix.$this->esfield['fieldname'],'','STRING');
+
+				return $this->getUserBox($row,$value,true);
+
+			case 'usergroup':
+				if(count($row)==0)
+					$value=$this->jinput->get($this->ct->Env->field_prefix.$this->esfield['fieldname'],'','STRING');
+
+				return $this->getUserGroupBox($value);
+
+			case 'usergroups':
+				return JHTML::_('ESUserGroups.render',
+					$this->prefix.$this->esfield['fieldname'],
+					$value,
+					$this->esfield['typeparams']
+					);
+
+			case 'language':
+				if(count($row)!=0 and (int)$row['listing_id']!=0)
+				{
+					$value=$this->jinput->get($this->ct->Env->field_prefix.$this->esfield['fieldname'],'','STRING');
+				}
+				else
+				{
+					//If it's a new record then default language is the current one
+					$langObj=Factory::getLanguage();
+					$value=$langObj->getTag();
+				}
+				$lang_attributes=array(
+					'name'=>$this->prefix.$this->esfield['fieldname'],
+					'id'=>$this->prefix.$this->esfield['fieldname'],
+					'label'=>$this->esfield['fieldtitle'.$this->ct->Languages->Postfix],'readonly'=>false);
+								
+				return CTTypes::getField('language', $lang_attributes,$value)->input;
+
+			case 'color':
+				return $this->render_color($row);
+
+			case 'filelink':
+
+				if(count($row)==0)
+					$value=$this->jinput->get($this->ct->Env->field_prefix.$this->esfield['fieldname'],'','STRING');
+
+				if($value=='')
+					$value=$this->esfield['defaultvalue'];
+
+				return JHTML::_('ESFileLink.render',$this->prefix.$this->esfield['fieldname'], $value, '', $this->attributes, $this->esfield['typeparams']);
+
+			case 'customtables':
+				return $this->render_customtables($value, $type_params);
 							
-							if(count($row)==0)
-								$value=$this->jinput->get($this->ct->Env->field_prefix.$this->esfield['fieldname'],'','ALNUM');
-							
-							if($value=='')
-								$value=(int)$this->esfield['defaultvalue'];
-							else
-								$value=(int)$value;
-							
-							$result.='<input '
-								.'type="text" '
-								.'name="'.$this->prefix.$this->esfield['fieldname'].'" '
-								.'id="'.$this->prefix.$this->esfield['fieldname'].'" '
-								.'label="'.$this->esfield['fieldname'].'" '
-								.'class="'.$this->cssclass.'" '
-								.$this->attributes.' '
-								.'data-label="'.$this->esfield['fieldtitle'.$this->ct->Languages->Postfix].'" '
-								.'data-valuerule="'.str_replace('"','&quot;',$this->esfield['valuerule']).'" '
-								.'data-valuerulecaption="'.str_replace('"','&quot;',$this->esfield['valuerulecaption']).'" '
-								.'value="'.$value.'" />';
-
-							break;
-
-						case 'float':
-							
-							if(count($row)==0)
-								$value=$this->jinput->getCmd($this->ct->Env->field_prefix.$this->esfield['fieldname'],'');
-							
-							if($value=='')
-								$value=(float)$this->esfield['defaultvalue'];
-							else
-								$value=(float)$value;
-							
-							$result.='<input '
-								.'type="text" '
-								.'name="'.$this->prefix.$this->esfield['fieldname'].'" '
-								.'id="'.$this->prefix.$this->esfield['fieldname'].'" '
-								.'class="'.$this->cssclass.'" '
-								.'data-label="'.$this->esfield['fieldtitle'.$this->ct->Languages->Postfix].'" '
-								.'data-valuerule="'.str_replace('"','&quot;',$this->esfield['valuerule']).'" '
-								.'data-valuerulecaption="'.str_replace('"','&quot;',$this->esfield['valuerulecaption']).'" '
-								.$this->attributes.' ';
-
-							$decimals=intval($type_params[0]);
-							if($decimals<0)
-								$decimals=0;
-
-							if(isset($values[2]) and $values[2]=='smart')
-								$result.='onkeypress="ESsmart_float(this,event,'.$decimals.')" ';
-
-							$result.='value="'.$value.'" />';
-
-							break;
-
-						case 'phponchange':
-
-							$result.=$value;
-							break;
-
-						case 'phponadd':
-
-							$result.=$value;
-							break;
-
-						case 'phponview':
-
-							$result.=$value;
-							break;
-
-						case 'string':
-
-							$result.=$this->getTextBox($value);
-							break;
-
-						case 'alias':
-							$result.='<input type="text" '
-								.'name="'.$this->prefix.$this->esfield['fieldname'].'" '
-								.'id="'.$this->prefix.$this->esfield['fieldname'].'" '
-								.'label="'.$this->esfield['fieldname'].'" '
-								.'class="'.$this->cssclass.'" '
-								.' '.$this->attributes
-								.'data-label="'.$this->esfield['fieldtitle'.$this->ct->Languages->Postfix].'" '
-								.'data-valuerule="'.str_replace('"','&quot;',$this->esfield['valuerule']).'" '
-								.'data-valuerulecaption="'.str_replace('"','&quot;',$this->esfield['valuerulecaption']).'" '
-								.'value="'.$value.'" '.((int)$this->esfield['typeparams']>0 ? 'maxlength="'.(int)$this->esfield['typeparams'].'"' : 'maxlength="255"').' '.$this->attributes.' />';
-
-							break;
-
-						case 'phponadd':
-							$result.='<input type="hidden" '
-								.'name="'.$this->prefix.$this->esfield['fieldname'].'" '
-								.'id="'.$this->prefix.$this->esfield['fieldname'].'" '
-								.'value="'.$value.'" />';
-
-							break;
-
-						case 'phponchange':
-							$result.='<input type="hidden" '
-								.'name="'.$this->prefix.$this->esfield['fieldname'].'" '
-								.'id="'.$this->prefix.$this->esfield['fieldname'].'" '
-								.'value="'.$value.'" />';
-
-							break;
-
-						case 'multilangstring':
-
-							$result.=$this->getMultilangString($row);
-							
-							break;
-
-						case 'text':
-
-								$fname=$this->prefix.$this->esfield['fieldname'];
-
-								if(in_array('rich',$type_params))
-								{
-									$w=500;
-									$h=200;
-									$c=0;
-									$l=0;
-
-									$editor_name = Factory::getApplication()->get('editor');
-									$editor = Editor::getInstance($editor_name);
-
-									$result.='<div>'.$editor->display($fname,$value, $w, $h, $c, $l).'</div>';
-								}
-								else
-								{
-										$result.='<textarea name="'.$fname.'" '
-											.'id="'.$fname.'" '
-											.'class="'.$this->cssclass.'" '
-											.$this->attributes.' '
-											.'data-label="'.$this->esfield['fieldtitle'.$this->ct->Languages->Postfix].'"'
-											.'data-valuerule="'.str_replace('"','&quot;',$this->esfield['valuerule']).'" '
-											.'data-valuerulecaption="'.str_replace('"','&quot;',$this->esfield['valuerulecaption']).'" '
-											.'>'.$value.'</textarea>';
-								}
-
-
-								if(in_array('spellcheck',$type_params))
-								{
-									$file_path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables'.DIRECTORY_SEPARATOR . 'thirdparty'
-										. DIRECTORY_SEPARATOR . 'jsc' . DIRECTORY_SEPARATOR . 'include.js';
-									
-									if(file_exists($file_path))
-									{
-										$document = Factory::getDocument();
-										$document->addCustomTag('<script src="'.URI::root(true).'/components/com_customtables/thirdparty/jsc/include.js"></script>');
-										$document->addCustomTag('<script type="text/javascript">$Spelling.SpellCheckAsYouType("'.$fname.'");</script>');
-										$document->addCustomTag('<script type="text/javascript">$Spelling.DefaultDictionary = "English";</script>');
-									}
-								}
-							break;
-
-						case 'multilangtext':
-
-							require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fieldtypes'.DIRECTORY_SEPARATOR.'multilangtext.php');
-							$result.=$this->render_multilangtext($row);
-							break;
-
-						case 'checkbox':
-						
-								$format="";
-								if(isset($this->option_list[2]) and $this->option_list[2]=='yesno')
-									$format="yesno";
-								
-								if($format=="yesno")
-								{
-									$element_id=$this->prefix.$this->esfield['fieldname'];
-									if($this->ct->Env->version < 4)
-									{
-									
-										$result.='<fieldset id="'.$this->prefix.$this->esfield['fieldname'].'" class="'.$this->cssclass.' btn-group radio btn-group-yesno" '
-											.'style="border:none !important;background:none !important;">';
-								
-										
-								
-										$result.='<div style="position: absolute;visibility:hidden !important; display:none !important;"><input type="radio" '
-										.'id="'.$element_id.'0" '
-										.'name="'.$element_id.'" '
-										.'value="1" '
-										.'data-label="'.$this->esfield['fieldtitle'.$this->ct->Languages->Postfix].'" '
-										.'data-valuerule="'.str_replace('"','&quot;',$this->esfield['valuerule']).'" '
-										.'data-valuerulecaption="'.str_replace('"','&quot;',$this->esfield['valuerulecaption']).'" '
-										.$this->attributes.' '
-										.((int)$value==1 ? ' checked="checked" ' : '')
-										.' ></div>'
-										.'<label class="btn'.((int)$value==1 ? ' active btn-success' : '').'" for="'.$element_id.'0" id="'.$element_id.'0_label" >'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YES').'</label>';
-										
-										$result.='<div style="position: absolute;visibility:hidden !important; display:none !important;"><input type="radio" '
-										.'id="'.$element_id.'1" '
-										.'name="'.$element_id.'" '
-										.$this->attributes.' '
-										.'value="0" '
-										.'data-label="'.$this->esfield['fieldtitle'.$this->ct->Languages->Postfix].'" '
-										.'data-valuerule="'.str_replace('"','&quot;',$this->esfield['valuerule']).'" '
-										.'data-valuerulecaption="'.str_replace('"','&quot;',$this->esfield['valuerulecaption']).'" '
-										.((int)$value==0 ? ' checked="checked" ' : '')
-										.' ></div>'
-										.'<label class="btn'.((int)$value==0 ? ' active btn-danger' : '').'" for="'.$element_id.'1" id="'.$element_id.'1_label">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NO').'</label>';
-										 
-										$result.='</fieldset>';
-									
-									}
-									else
-									{
-										$result.='<div class="switcher">
-					<input type="radio" id="'.$element_id.'0" name="'.$element_id.'" value="0" class="active " '.((int)$value==0 ? ' checked="checked" ' : '').' >
-					<label for="'.$element_id.'0">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NO').'</label>
-					<input type="radio" id="'.$element_id.'1" name="'.$element_id.'" value="1" '.((int)$value==1 ? ' checked="checked" ' : '').' >
-					<label for="'.$element_id.'1">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YES').'</label>
-					<span class="toggle-outside"><span class="toggle-inside"></span></span>
-	</div>';
-									}
-								}
-								else
-								{
-									$onchange=$this->prefix.$this->esfield['fieldname'].'_off.value=(this.checked === true ? 1 : 0);';// this is to save unchecked value as well.
-									
-									if(strpos($this->attributes,'onchange="')!==false)
-										$check_attributes=str_replace('onchange="','onchange="'.$onchange,$this->attributes);// onchange event already exists add one before
-									else
-										$check_attributes = $this->attributes;
-									
-									if($this->ct->Env->version < 4)
-									{
-									
-										$result.='<input type="checkbox" '
-											.'id="'.$this->prefix.$this->esfield['fieldname'].'" '
-											.'name="'.$this->prefix.$this->esfield['fieldname'].'" '
-											.'data-label="'.$this->esfield['fieldtitle'.$this->ct->Languages->Postfix].'" '
-											.'data-valuerule="'.str_replace('"','&quot;',$this->esfield['valuerule']).'" '
-											.'data-valuerulecaption="'.str_replace('"','&quot;',$this->esfield['valuerulecaption']).'" '
-											.$check_attributes
-											.($value ? ' checked="checked" ' : '')
-											.' class="'.$this->cssclass.'">';
-										
-										$result.='<input type="hidden"'
-											.' id="'.$this->prefix.$this->esfield['fieldname'].'_off" '
-											.' name="'.$this->prefix.$this->esfield['fieldname'].'_off" '
-											.($value ? ' value="1" ' : 'value="0"')
-											.' >';
-									}
-									else
-									{
-										$element_id=$this->prefix.$this->esfield['fieldname'];
-										
-										$result.='<div class="switcher">
-					<input type="radio" id="'.$element_id.'0" name="'.$element_id.'" value="0" class="active " '.((int)$value==0 ? ' checked="checked" ' : '').' >
-					<label for="'.$element_id.'0">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NO').'</label>
-					<input type="radio" id="'.$element_id.'1" name="'.$element_id.'" value="1" '.((int)$value==1 ? ' checked="checked" ' : '').' >
-					<label for="'.$element_id.'1">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YES').'</label>
-					<span class="toggle-outside"><span class="toggle-inside"></span></span>
-	</div>';
-									}
-								}
-
-								break;
-
-						case 'image':
-
-								$image_type_file=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fieldtypes'.DIRECTORY_SEPARATOR.'_type_image.php';
-								require_once($image_type_file);
-
-								$result.=CT_FieldTypeTag_image::renderImageFieldBox($this->ct, $this->prefix,$this->esfield,
-									$row,$this->esfield['realfieldname'],$this->cssclass,$this->attributes);
-
-							break;
-
-						case 'file':
-
-								$file_type_file=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fieldtypes'.DIRECTORY_SEPARATOR.'_type_file.php';
-								require_once($file_type_file);
-								$result.=CT_FieldTypeTag_file::renderFileFieldBox($this->ct, $this->prefix,
-									$this->esfield,$row,$this->esfield['realfieldname'],$this->cssclass);
-
-							break;
-
-						case 'userid':
-
-							$result.=$this->getUserBox($row,$value,false);
-							break;
-
-						case 'user':
-
-							if(count($row)==0)
-								$value=$this->jinput->get($this->ct->Env->field_prefix.$this->esfield['fieldname'],'','STRING');
-
-							$result.=$this->getUserBox($row,$value,true);
-							break;
-
-						case 'usergroup':
-
-							if(count($row)==0)
-								$value=$this->jinput->get($this->ct->Env->field_prefix.$this->esfield['fieldname'],'','STRING');
-
-							$result.=$this->getUserGroupBox($value);
-							break;
-
-						case 'usergroups':
-
-							$result.=JHTML::_('ESUserGroups.render',
-											  $this->prefix.$this->esfield['fieldname'],
-											  $value,
-											  $this->esfield['typeparams']
-											  );
-
-						break;
-
-						case 'language':
-
-							if(count($row)!=0 and (int)$row['listing_id']!=0)
-							{
-								$value=$this->jinput->get($this->ct->Env->field_prefix.$this->esfield['fieldname'],'','STRING');
-							}
-							else
-							{
-								//If it's a new record then default language is the current one
-								$langObj=Factory::getLanguage();
-								$value=$langObj->getTag();
-							}
-
-							$lang_attributes=array(
-								'name'=>$this->prefix.$this->esfield['fieldname'],
-								'id'=>$this->prefix.$this->esfield['fieldname'],
-								'label'=>$this->esfield['fieldtitle'.$this->ct->Languages->Postfix],'readonly'=>false);
-								
-							$result.= CTTypes::getField('language', $lang_attributes,$value)->input;
-
-							break;
-
-						case 'color':
-
-							if(count($row)==0)
-								$value=$this->jinput->get($this->ct->Env->field_prefix.$this->esfield['fieldname'],'','ALNUM');
-
-							if($value=='')
-								$value=$this->esfield['defaultvalue'];
-
-							if($value=='')
-								$value='';
-
-							$att=array(
-								'name'=>$this->prefix.$this->esfield['fieldname'],
-								'id'=>$this->prefix.$this->esfield['fieldname'],
-								'label'=>$this->esfield['fieldtitle'.$this->ct->Languages->Postfix]);
-							
-							if($this->option_list[0]=='transparent')
-							{
-								$att['format']='rgba';
-								$att['keywords']='transparent,initial,inherit';
-								
-								//convert value to rgba: rgba(255, 0, 255, 0.1)
-							
-								$colors=array();
-								
-								if(strlen($value)>=6)
-								{
-									$colors[]=hexdec(substr($value, 0,2));
-									$colors[]=hexdec(substr($value, 2,2));
-									$colors[]=hexdec(substr($value, 4,2));
-								}
-								
-								if(strlen($value)==8)
-								{
-									$a=hexdec(substr($value, 6,2));
-									$colors[]=round($a/255,2);
-								}
-								
-								$value='rgba('.implode(',',$colors).')';
-							}
-
-							$array_attributes=$this->prepareAttributes($att,$this->attributes);
-							
-							$inputbox=CTTypes::getField('color', $array_attributes,$value)->input;
-							
-							//Add onChange attribute if not added
-							$onChangeAttribute='';
-							foreach ($array_attributes as $key => $value)
-							{
-								if ('onChange' == $key)
-								{
-									$onChangeAttribute='onChange="'.$value.'"';
-									break;
-								}
-							}
-							if($onChangeAttribute!='' and strpos($inputbox,'onChange')===false)
-								$inputbox=str_replace('<input ','<input '.$onChangeAttribute,$inputbox);
-							
-							
-							$result.=$inputbox;
-
-							break;
-
-						case 'filelink':
-
-							if(count($row)==0)
-								$value=$this->jinput->get($this->ct->Env->field_prefix.$this->esfield['fieldname'],'','STRING');
-								
-							if($value=='')
-								$value=$this->esfield['defaultvalue'];
-
-
-							$result='';
-
-							$result.=JHTML::_('ESFileLink.render',$this->prefix.$this->esfield['fieldname'], $value, '', $this->attributes, $this->esfield['typeparams']);
-
-							break;
-
-						case 'customtables':
-
-							if(!isset($type_params[1]))
-							{
-								$result.='selector not specified';
-								break;
-							}
-
-							$optionname=$type_params[0];
-
-							$parentid=Tree::getOptionIdFull($optionname);
-
-							//$type_params[0] is structure parent
-							//$type_params[1] is selector type (multi or single)
-							//$type_params[2] is data length
-							//$type_params[3] is requirementdepth
-
-								if($type_params[1]=='multi')
-								{
-
-									$fValue=$this->jinput->get($this->ct->Env->field_prefix.$this->esfield['fieldname'],null,'STRING');
-									if(!isset($fValue))
-									{
-										$fValue='';
-										if($this->esfield['defaultvalue']!='')
-										{
-											$fValue=','.$type_params[0].'.'.$this->esfield['defaultvalue'].'.,';
-										}
-
-									}
-
-									if(isset($row[$this->esfield['realfieldname']]))
-										$fValue=$row[$this->esfield['realfieldname']];
-
-										$result.=JHTML::_('MultiSelector.render',
-													  $this->prefix,
-													  $parentid,$optionname,
-													  $this->ct->Languages->Postfix,
-													  $this->ct->Table->tablename,
-													  $this->esfield['fieldname'],
-													  $fValue,
-													'',
-													$this->place_holder);
-
-								}
-								elseif($type_params[1]=='single')
-								{
-										$v=$this->jinput->get($this->ct->Env->field_prefix.$this->esfield['fieldname'],null,'STRING');
-										if(!isset($v))
-										{
-											$v='';
-											if($this->esfield['defaultvalue']!='')
-											{
-												$v=','.$type_params[0].'.'.$this->esfield['defaultvalue'].'.,';
-											}
-
-										}
-
-										if(isset($row[$this->esfield['realfieldname']]))
-											$v=$row[$this->esfield['realfieldname']];
-
-										$result.='<div style="float:left;">';
-										$result.=JHTML::_('ESComboTree.render',
-														  $this->prefix,
-														  $this->ct->Table->tablename,
-														  $this->esfield['fieldname'],
-														  $optionname,
-														  $this->ct->Languages->Postfix,
-														  $v,
-														  '',
-														  '',
-														  '',
-														  '',
-														  $this->esfield['isrequired'],
-														  (isset($type_params[3]) ? (int)$type_params[3] : 1),
-															$this->place_holder,
-															$this->esfield['valuerule'],
-															$this->esfield['valuerulecaption']
-														  );
-
-										$result.='</div>';
-								}
-								else
-										$result.='selector not specified';
-
-						break;
-
-						case 'sqljoin':
-
-	
-							if(isset($this->option_list[2]) and $this->option_list[2]!='')
-								$type_params[2]=$this->option_list[2];//Overwrites field type filter parameter.
-
-							$sqljoin_attributes = $this->attributes . ' '
-								.'data-valuerule="'.str_replace('"','&quot;',$this->esfield['valuerule']).'" '
-								.'data-valuerulecaption="'.str_replace('"','&quot;',$this->esfield['valuerulecaption']).'" ';
-
-							$result.=JHTML::_('ESSQLJoin.render',
-											  $type_params,
-											  $value,
-											  false,
-											  $this->ct->Languages->Postfix,
-											  $this->prefix.$this->esfield['fieldname'],
-											  $this->place_holder,
-											  $this->cssclass,
-											  $sqljoin_attributes);
-							break;
-
-						case 'records':
-							//records : table, [fieldname || layout:layoutname], [selector: multi || single], filter, |datalength|
-							
-							if(count($type_params)<1)
-								$result.='table not specified';
-
-							if(count($type_params)<2)
-								$result.='field or layout not specified';
-
-							if(count($type_params)<3)
-								$result.='selector not specified';
-
-							$esr_table=$type_params[0];
-							if(isset($type_params[1]))
-								$esr_field=$type_params[1];
-							else
-								$esr_field='';
-
-							if(isset($type_params[2]))
-								$esr_selector=$type_params[2];
-							else
-								$esr_selector='';
-
-							if(count($type_params)>3)
-								$esr_filter=$type_params[3];
-							else
-								$esr_filter='';
-
-							if(isset($type_params[4]))
-								$dynamic_filter=$type_params[4];
-							else
-								$dynamic_filter='';
-
-							if(isset($type_params[5]))
-								$sortbyfield=$type_params[5];
-							else
-								$sortbyfield='';
-								
-							$records_attributes = ($this->attributes!='' ? ' ' : '')
-								.'data-valuerule="'.str_replace('"','&quot;',$this->esfield['valuerule']).'" '
-								.'data-valuerulecaption="'.str_replace('"','&quot;',$this->esfield['valuerulecaption']).'" ';
-								
-							$result.=JHTML::_('ESRecords.render',
-											  $type_params,
-											  $this->prefix.$this->esfield['fieldname'],
-											  $value,
-											  $esr_table,
-											  $esr_field,
-											  $esr_selector,
-											  $esr_filter,
-											  '',
-											  $this->cssclass.' ct_improved_selectbox',
-											  $records_attributes,
-											  $dynamic_filter,
-											  $sortbyfield,
-												$this->ct->Languages->Postfix,
-												$this->place_holder
-											  );
-						break;
-
-						case 'googlemapcoordinates':
-
-							$result.=JHTML::_('GoogleMapCoordinates.render',$this->prefix.$this->esfield['fieldname'], $value  );
-
-						break;
-
-						case 'email';
-								$result.='<input '
-									.'type="text" '
-									.'name="'.$this->prefix.$this->esfield['fieldname'].'" '
-									.'id="'.$this->prefix.$this->esfield['fieldname'].'" '
-									.'class="'.$this->cssclass.'" '
-									.'value="'.$value.'" maxlength="255" '
-									.$this->attributes.' '
-									.'data-label="'.$this->esfield['fieldtitle'.$this->ct->Languages->Postfix].'"'
-									.'data-valuerule="'.str_replace('"','&quot;',$this->esfield['valuerule']).'" '
-									.'data-valuerulecaption="'.str_replace('"','&quot;',$this->esfield['valuerulecaption']).'" '
-									.' />';
-
-						break;
-
-						case 'url';
-								$filters=array();
-								$filters[]='url';
-
-								if(isset($type_params[1]) and $type_params[1]=='true')
-									$filters[]='https';
-								
-								if(isset($type_params[2]) and $type_params[2]!='')
-									$filters[]='domain:'.$type_params[2];
-								
-								$result.='<input '
-									.'type="text" '
-									.'name="'.$this->prefix.$this->esfield['fieldname'].'" '
-									.'id="'.$this->prefix.$this->esfield['fieldname'].'" '
-									.'class="'.$this->cssclass.'" '
-									.'value="'.$value.'" maxlength="1024" '
-									.'data-sanitizers="trim" '
-									.'data-filters="'.implode(',',$filters).'" '
-									.'data-label="'.$this->esfield['fieldtitle'.$this->ct->Languages->Postfix].'" '
-									.'data-valuerule="'.str_replace('"','&quot;',$this->esfield['valuerule']).'" '
-									.'data-valuerulecaption="'.str_replace('"','&quot;',$this->esfield['valuerulecaption']).'" '
-									.$this->attributes
-									.' />';
-
-						break;
-
-						case 'date';
-								if($value=="0000-00-00")
-									$value='';
-
-								$attributes_=[];
-								$attributes_['class']=$this->cssclass;
-								$attributes_['placeholder']=$this->place_holder;
-								$attributes_['onChange']='" '
-									.'data-label="'.$this->place_holder.'" '
-									.'data-valuerule="'.str_replace('"','&quot;',$this->esfield['valuerule']).'" '
-									.'data-valuerulecaption="'.str_replace('"','&quot;',$this->esfield['valuerulecaption']); // closing quote is not needed because 
-									//public static function calendar($value, $name, $element_id, $format = '%Y-%m-%d', $attribs = array())  will add it.
-									
-								$attributes_['required']=($this->esfield['isrequired'] ? 'required' : ''); //not working, don't know why.
-
-								$result.=JHTML::calendar($value, $this->prefix.$this->esfield['fieldname'], $this->prefix.$this->esfield['fieldname'],
-									'%Y-%m-%d',$attributes_);
-
-						break;
-
-						case 'time';
-							if(count($row)==0)
-								$value=$this->jinput->get($this->ct->Env->field_prefix.$this->esfield['fieldname'],'','CMD');
-								
-							if($value=='')
-								$value=$this->esfield['defaultvalue'];
-							else
-								$value=(int)$value;
-								
-							$time_attributes = ($this->attributes!='' ? ' ' : '')
-								.'data-valuerule="'.str_replace('"','&quot;',$this->esfield['valuerule']).'" '
-								.'data-valuerulecaption="'.str_replace('"','&quot;',$this->esfield['valuerulecaption']).'" ';
-
-							$result.=JHTML::_('CTTime.render',$this->prefix.$this->esfield['fieldname'], $value, $this->cssclass, $time_attributes, $type_params,$this->option_list);
-
-						break;
-
-						case 'article':
-
-							$result.=JHTML::_('ESArticle.render',
-											  $this->prefix.$this->esfield['fieldname'],
-											  $value,
-
-											  $this->cssclass,
-											  $this->esfield['typeparams']
-											  );
-
-						break;
-
-						case 'imagegallery':
-
-							if(isset($row['listing_id']))
-								$result.=$this->getImageGallery($this->esfield['fieldname'],$this->esfield['typeparams'],$row['listing_id']);
-
-						break;
-
-						case 'filebox':
-
-							if(isset($row['listing_id']))
-								$result.=$this->getFileBox($this->esfield['fieldname'],$this->esfield['typeparams'],$row['listing_id']);
-
-						break;
-
-						case 'multilangarticle':
-							$result.='<table>';
-
-							$firstlanguage=true;
-							foreach($this->ct->Languages->LanguageList as $lang)
-							{
-								if($firstlanguage)
-								{
-									$postfix='';
-									$firstlanguage=false;
-								}
-								else
-									$postfix='_'.$lang->sef;
-
-								$fieldname=$this->esfield['fieldname'].$postfix;
-
-								if(count($row)==0)
-									$value=$this->jinput->get($this->ct->Env->field_prefix.$fieldname,'','STRING');
-								else
-									$value=$row[$this->esfield['realfieldname'].$postfix];
-
-								$result.='<tr>
-								<td>'.$lang->caption.'</td><td>:</td>
-									<td>';
-
-								$result.=JHTML::_('ESArticle.render',
-											  $this->prefix.$fieldname,
-											  $value,
-											  $this->cssclass,
-											  $this->esfield['typeparams']
-											  );
-
-								$result.='</td>
-								</tr>';
-
-							}
-							$result.='</table>';
-							break;
+			case 'sqljoin':
+				return $this->render_tablejoin($value, $type_params);
+
+			case 'records':
+				return $this->render_records($value, $type_params);
+
+			case 'googlemapcoordinates':
+				return JHTML::_('GoogleMapCoordinates.render',$this->prefix.$this->esfield['fieldname'], $value);
+
+			case 'email';
+				return '<input '
+					.'type="text" '
+					.'name="'.$this->prefix.$this->esfield['fieldname'].'" '
+					.'id="'.$this->prefix.$this->esfield['fieldname'].'" '
+					.'class="'.$this->cssclass.'" '
+					.'value="'.$value.'" maxlength="255" '
+					.$this->attributes.' '
+					.'data-label="'.$this->esfield['fieldtitle'.$this->ct->Languages->Postfix].'"'
+					.'data-valuerule="'.str_replace('"','&quot;',$this->esfield['valuerule']).'" '
+					.'data-valuerulecaption="'.str_replace('"','&quot;',$this->esfield['valuerulecaption']).'" '
+					.' />';
+
+			case 'url';
+				return $this->render_url($value, $type_params);
+
+			case 'date';
+				return $this->render_date($value);
+
+			case 'time';
+				return $this->render_time();
+
+			case 'article':
+				return JHTML::_('ESArticle.render',
+					$this->prefix.$this->esfield['fieldname'],
+					$value,
+					$this->cssclass,
+					$this->esfield['typeparams']
+				);
+
+			case 'imagegallery':
+				if(isset($row['listing_id']))
+					return $this->getImageGallery($this->esfield['fieldname'],$this->esfield['typeparams'],$row['listing_id']);
+				else
+					return '';
+
+			case 'filebox':
+				if(isset($row['listing_id']))
+					return $this->getFileBox($this->esfield['fieldname'],$this->esfield['typeparams'],$row['listing_id']);
+
+			case 'multilangarticle':
+				return $this->render_multilangarticle();
 		}
-		return $result;
+		return '';
 	}
 	
 	protected function prepareAttributes($attributes_,$attributes_str)
@@ -1228,5 +645,627 @@ class Inputbox
 		}
 
 		return $result;                            
+	}
+	
+	function render_multilangarticle()
+	{
+		$result = '
+		<table>
+			<tbody>';
+
+		$firstlanguage=true;
+		foreach($this->ct->Languages->LanguageList as $lang)
+		{
+			if($firstlanguage)
+			{
+				$postfix='';
+				$firstlanguage=false;
+			}
+			else
+				$postfix='_'.$lang->sef;
+
+			$fieldname=$this->esfield['fieldname'].$postfix;
+
+			if(count($row)==0)
+				$value=$this->jinput->get($this->ct->Env->field_prefix.$fieldname,'','STRING');
+			else
+				$value=$row[$this->esfield['realfieldname'].$postfix];
+
+			$result.='
+				<tr>
+					<td>'.$lang->caption.'</td>
+					<td>:</td>
+					<td>';
+
+			$result.=JHTML::_('ESArticle.render',
+					$this->prefix.$fieldname,
+					$value,
+					$this->cssclass,
+					$this->esfield['typeparams']
+					);
+
+					$result.='</td>
+				</tr>';
+		}
+		$result.='</body></table>';
+		
+		return $result;
+	}
+	
+	function render_time()
+	{
+		$result = '';
+		
+		if(count($row)==0)
+			$value=$this->jinput->get($this->ct->Env->field_prefix.$this->esfield['fieldname'],'','CMD');
+								
+		if($value=='')
+			$value=$this->esfield['defaultvalue'];
+		else
+			$value=(int)$value;
+								
+		$time_attributes = ($this->attributes!='' ? ' ' : '')
+			.'data-valuerule="'.str_replace('"','&quot;',$this->esfield['valuerule']).'" '
+			.'data-valuerulecaption="'.str_replace('"','&quot;',$this->esfield['valuerulecaption']).'" ';
+
+		$result.=JHTML::_('CTTime.render',$this->prefix.$this->esfield['fieldname'], $value, $this->cssclass, $time_attributes, $type_params,$this->option_list);
+		
+		return $result;
+	}
+	
+	function render_date(&$value)
+	{
+		$result = '';
+		
+		if($value=="0000-00-00")
+			$value='';
+
+		$attributes_=[];
+		$attributes_['class']=$this->cssclass;
+		$attributes_['placeholder']=$this->place_holder;
+		$attributes_['onChange']='" '
+			.'data-label="'.$this->place_holder.'" '
+			.'data-valuerule="'.str_replace('"','&quot;',$this->esfield['valuerule']).'" '
+			.'data-valuerulecaption="'.str_replace('"','&quot;',$this->esfield['valuerulecaption']); // closing quote is not needed because 
+			//public static function calendar($value, $name, $element_id, $format = '%Y-%m-%d', $attribs = array())  will add it.
+									
+		$attributes_['required']=($this->esfield['isrequired'] ? 'required' : ''); //not working, don't know why.
+
+		$result.=JHTML::calendar($value, $this->prefix.$this->esfield['fieldname'], $this->prefix.$this->esfield['fieldname'],
+			'%Y-%m-%d',$attributes_);
+		
+		return $result;
+	}
+	
+	function render_url(&$value, &$type_params)
+	{
+		$result = '';
+		$filters=array();
+		$filters[]='url';
+
+		if(isset($type_params[1]) and $type_params[1]=='true')
+			$filters[]='https';
+								
+		if(isset($type_params[2]) and $type_params[2]!='')
+			$filters[]='domain:'.$type_params[2];
+
+		$result.='<input '
+			.'type="text" '
+			.'name="'.$this->prefix.$this->esfield['fieldname'].'" '
+			.'id="'.$this->prefix.$this->esfield['fieldname'].'" '
+			.'class="'.$this->cssclass.'" '
+			.'value="'.$value.'" maxlength="1024" '
+			.'data-sanitizers="trim" '
+			.'data-filters="'.implode(',',$filters).'" '
+			.'data-label="'.$this->esfield['fieldtitle'.$this->ct->Languages->Postfix].'" '
+			.'data-valuerule="'.str_replace('"','&quot;',$this->esfield['valuerule']).'" '
+			.'data-valuerulecaption="'.str_replace('"','&quot;',$this->esfield['valuerulecaption']).'" '
+			.$this->attributes
+			.' />';
+		
+		return $result;
+	}
+	
+	function render_records(&$value, &$type_params)
+	{
+		$result = '';
+		
+		//records : table, [fieldname || layout:layoutname], [selector: multi || single], filter, |datalength|
+							
+		if(count($type_params)<1)
+			$result.='table not specified';
+
+		if(count($type_params)<2)
+			$result.='field or layout not specified';
+
+		if(count($type_params)<3)
+			$result.='selector not specified';
+
+		$esr_table=$type_params[0];
+		if(isset($type_params[1]))
+			$esr_field=$type_params[1];
+		else
+			$esr_field='';
+
+		if(isset($type_params[2]))
+			$esr_selector=$type_params[2];
+		else
+			$esr_selector='';
+
+		if(count($type_params)>3)
+			$esr_filter=$type_params[3];
+		else
+			$esr_filter='';
+
+		if(isset($type_params[4]))
+			$dynamic_filter=$type_params[4];
+		else
+			$dynamic_filter='';
+
+		if(isset($type_params[5]))
+			$sortbyfield=$type_params[5];
+		else
+			$sortbyfield='';
+								
+		$records_attributes = ($this->attributes!='' ? ' ' : '')
+			.'data-valuerule="'.str_replace('"','&quot;',$this->esfield['valuerule']).'" '
+			.'data-valuerulecaption="'.str_replace('"','&quot;',$this->esfield['valuerulecaption']).'" ';
+								
+		$result.=JHTML::_('ESRecords.render',
+			$type_params,
+			$this->prefix.$this->esfield['fieldname'],
+			$value,
+			$esr_table,
+			$esr_field,
+			$esr_selector,
+			$esr_filter,
+			'',
+			$this->cssclass.' ct_improved_selectbox',
+			$records_attributes,
+			$dynamic_filter,
+			$sortbyfield,
+			$this->ct->Languages->Postfix,
+			$this->place_holder
+		);
+		
+		return $result;
+	}
+	
+	function render_tablejoin(&$value, &$type_params)
+	{
+		$result = '';
+	
+		//CT Example: [house:RedHouses,onChange('Alert("Value Changed")'),city=London]
+
+		//$this->option_list[0] - CSS Class
+		//$this->option_list[1] - Optional Attributes
+	
+		if($this->isTwig)
+		{
+			//Twig Tag
+			//Twig Example: [house:RedHouses,onChange('Alert("Value Changed")'),city=London]
+
+			$result.=JHTML::_('CTTableJoin.render',
+				$this->ct,
+				$this->esfield,
+				$value,
+				$this->place_holder,
+				$this->cssclass,
+				$this->attributes,
+				$this->option_list);
+		}
+		else
+		{
+			//CT Tag
+			if(isset($this->option_list[2]) and $this->option_list[2]!='')
+				$type_params[2]=$this->option_list[2];//Overwrites field type filter parameter.
+							
+			$sqljoin_attributes = $this->attributes . ' '
+				.'data-valuerule="'.str_replace('"','&quot;',$this->esfield['valuerule']).'" '
+				.'data-valuerulecaption="'.str_replace('"','&quot;',$this->esfield['valuerulecaption']).'" ';
+							
+			$result.=JHTML::_('ESSQLJoin.render',
+				$type_params,
+				$value,
+				false,
+				$this->ct->Languages->Postfix,
+				$this->prefix.$this->esfield['fieldname'],
+				$this->place_holder,
+				$this->cssclass,
+				$sqljoin_attributes);
+		}
+		
+		return $result;
+	}
+	
+	function render_customtables(&$value, &$type_params)
+	{
+		$result = '';
+		
+		if(!isset($type_params[1]))
+		{
+			$result.='selector not specified';
+			break;
+		}
+
+		$optionname=$type_params[0];
+		$parentid=Tree::getOptionIdFull($optionname);
+
+		//$type_params[0] is structure parent
+		//$type_params[1] is selector type (multi or single)
+		//$type_params[2] is data length
+		//$type_params[3] is requirementdepth
+
+		if($type_params[1]=='multi')
+		{
+			$fValue=$this->jinput->get($this->ct->Env->field_prefix.$this->esfield['fieldname'],null,'STRING');
+			if(!isset($fValue))
+			{
+				$fValue='';
+				if($this->esfield['defaultvalue']!='')
+					$fValue=','.$type_params[0].'.'.$this->esfield['defaultvalue'].'.,';
+			}
+
+			if(isset($row[$this->esfield['realfieldname']]))
+				$fValue=$row[$this->esfield['realfieldname']];
+
+			$result.=JHTML::_('MultiSelector.render',
+				$this->prefix,
+				$parentid,$optionname,
+				$this->ct->Languages->Postfix,
+				$this->ct->Table->tablename,
+				$this->esfield['fieldname'],
+				$fValue,
+				'',
+				$this->place_holder);
+		}
+		elseif($type_params[1]=='single')
+		{
+			$v=$this->jinput->get($this->ct->Env->field_prefix.$this->esfield['fieldname'],null,'STRING');
+			if(!isset($v))
+			{
+				$v='';
+				if($this->esfield['defaultvalue']!='')
+					$v=','.$type_params[0].'.'.$this->esfield['defaultvalue'].'.,';
+			}
+
+			if(isset($row[$this->esfield['realfieldname']]))
+				$v=$row[$this->esfield['realfieldname']];
+
+			$result.='<div style="float:left;">';
+			$result.=JHTML::_('ESComboTree.render',
+				$this->prefix,
+				$this->ct->Table->tablename,
+				$this->esfield['fieldname'],
+				$optionname,
+				$this->ct->Languages->Postfix,
+				$v,
+				'',
+				'',
+				'',
+				'',
+				$this->esfield['isrequired'],
+				(isset($type_params[3]) ? (int)$type_params[3] : 1),
+				$this->place_holder,
+				$this->esfield['valuerule'],
+				$this->esfield['valuerulecaption']
+				);
+
+			$result.='</div>';
+		}
+		else
+			$result.='selector not specified';
+		
+		return $result;
+	}
+	
+	function render_color(&$row)
+	{
+		$result = '';
+		
+		if(count($row)==0)
+			$value=$this->jinput->get($this->ct->Env->field_prefix.$this->esfield['fieldname'],'','ALNUM');
+
+		if($value=='')
+			$value=$this->esfield['defaultvalue'];
+
+		if($value=='')
+			$value='';
+
+		$att=array(
+			'name'=>$this->prefix.$this->esfield['fieldname'],
+			'id'=>$this->prefix.$this->esfield['fieldname'],
+			'label'=>$this->esfield['fieldtitle'.$this->ct->Languages->Postfix]);
+		
+		if($this->option_list[0]=='transparent')
+		{
+			$att['format']='rgba';
+			$att['keywords']='transparent,initial,inherit';
+		
+			//convert value to rgba: rgba(255, 0, 255, 0.1)
+		
+			$colors=array();
+		
+			if(strlen($value)>=6)
+			{
+				$colors[]=hexdec(substr($value, 0,2));
+				$colors[]=hexdec(substr($value, 2,2));
+				$colors[]=hexdec(substr($value, 4,2));
+			}
+		
+			if(strlen($value)==8)
+			{
+				$a=hexdec(substr($value, 6,2));
+				$colors[]=round($a/255,2);
+			}
+			$value='rgba('.implode(',',$colors).')';
+		}
+
+		$array_attributes=$this->prepareAttributes($att,$this->attributes);
+							
+		$inputbox=CTTypes::getField('color', $array_attributes,$value)->input;
+							
+		//Add onChange attribute if not added
+		$onChangeAttribute='';
+		foreach ($array_attributes as $key => $value)
+		{
+			if ('onChange' == $key)
+			{
+				$onChangeAttribute='onChange="'.$value.'"';
+				break;
+			}
+		}
+		
+		if($onChangeAttribute!='' and strpos($inputbox,'onChange')===false)
+			$inputbox=str_replace('<input ','<input '.$onChangeAttribute,$inputbox);
+		
+		$result.=$inputbox;
+		
+		return $result;
+	}
+	
+	function render_alias(&$value)
+	{
+		$result = '';
+		
+		$result.='<input type="text" '
+			.'name="'.$this->prefix.$this->esfield['fieldname'].'" '
+			.'id="'.$this->prefix.$this->esfield['fieldname'].'" '
+			.'label="'.$this->esfield['fieldname'].'" '
+			.'class="'.$this->cssclass.'" '
+			.' '.$this->attributes
+			.'data-label="'.$this->esfield['fieldtitle'.$this->ct->Languages->Postfix].'" '
+			.'data-valuerule="'.str_replace('"','&quot;',$this->esfield['valuerule']).'" '
+			.'data-valuerulecaption="'.str_replace('"','&quot;',$this->esfield['valuerulecaption']).'" '
+			.'value="'.$value.'" '.((int)$this->esfield['typeparams']>0 ? 'maxlength="'.(int)$this->esfield['typeparams'].'"' : 'maxlength="255"').' '.$this->attributes.' />';
+		
+		return $result;
+	}
+	
+	function render_radio(&$value, &$type_params)
+	{
+		$result = '';
+		
+		$result.='<table style="border:none;"><tr>';
+							$i=0;
+							foreach($type_params as $radiovalue)
+							{
+								$v=trim($radiovalue);
+								$result.='<td valign="middle"><input type="radio"
+									name="'.$this->prefix.$this->esfield['fieldname'].'"
+									id="'.$this->prefix.$this->esfield['fieldname'].'_'.$i.'"
+									value="'.$v.'" '
+								.($value==$v ? ' checked="checked" ' : '')
+								.' /></td>';
+								$result.='<td valign="middle"><label for="'.$this->prefix.$this->esfield['fieldname'].'_'.$i.'">'.$v.'</label></td>';
+								$i++;
+							}
+							$result.='</tr></table>';
+
+		
+		return $result;
+	}
+	
+	function render_int(&$row)
+	{
+		$result = '';
+		
+		if(count($row)==0)
+			$value=$this->jinput->get($this->ct->Env->field_prefix.$this->esfield['fieldname'],'','ALNUM');
+							
+		if($value=='')
+			$value=(int)$this->esfield['defaultvalue'];
+		else
+			$value=(int)$value;
+							
+		$result.='<input '
+			.'type="text" '
+			.'name="'.$this->prefix.$this->esfield['fieldname'].'" '
+			.'id="'.$this->prefix.$this->esfield['fieldname'].'" '
+			.'label="'.$this->esfield['fieldname'].'" '
+			.'class="'.$this->cssclass.'" '
+			.$this->attributes.' '
+			.'data-label="'.$this->esfield['fieldtitle'.$this->ct->Languages->Postfix].'" '
+			.'data-valuerule="'.str_replace('"','&quot;',$this->esfield['valuerule']).'" '
+			.'data-valuerulecaption="'.str_replace('"','&quot;',$this->esfield['valuerulecaption']).'" '
+			.'value="'.$value.'" />';
+		
+		return $result;
+	}
+	
+	function render_float(&$row)
+	{
+		$result = '';
+		
+		if(count($row)==0)
+			$value = $this->ct->Env->jinput->getCmd($this->ct->Env->field_prefix.$this->esfield['fieldname'],'');
+							
+		if($value=='')
+			$value=(float)$this->esfield['defaultvalue'];
+		else
+			$value=(float)$value;
+							
+		$result.='<input '
+			.'type="text" '
+			.'name="'.$this->prefix.$this->esfield['fieldname'].'" '
+			.'id="'.$this->prefix.$this->esfield['fieldname'].'" '
+			.'class="'.$this->cssclass.'" '
+			.'data-label="'.$this->esfield['fieldtitle'.$this->ct->Languages->Postfix].'" '
+			.'data-valuerule="'.str_replace('"','&quot;',$this->esfield['valuerule']).'" '
+			.'data-valuerulecaption="'.str_replace('"','&quot;',$this->esfield['valuerulecaption']).'" '
+			.$this->attributes.' ';
+
+		$decimals=intval($type_params[0]);
+		if($decimals<0)
+			$decimals=0;
+
+		if(isset($values[2]) and $values[2]=='smart')
+			$result.='onkeypress="ESsmart_float(this,event,'.$decimals.')" ';
+
+		$result.='value="'.$value.'" />';
+		return $result;
+	}
+	
+	function render_text(&$value, &$type_params)
+	{
+		$result = '';
+		$fname=$this->prefix.$this->esfield['fieldname'];
+
+		if(in_array('rich',$type_params))
+		{
+			$w=500;
+			$h=200;
+			$c=0;
+			$l=0;
+
+			$editor_name = Factory::getApplication()->get('editor');
+			$editor = Editor::getInstance($editor_name);
+
+			$result.='<div>'.$editor->display($fname,$value, $w, $h, $c, $l).'</div>';
+		}
+		else
+		{
+			$result.='<textarea name="'.$fname.'" '
+					.'id="'.$fname.'" '
+					.'class="'.$this->cssclass.'" '
+					.$this->attributes.' '
+					.'data-label="'.$this->esfield['fieldtitle'.$this->ct->Languages->Postfix].'"'
+					.'data-valuerule="'.str_replace('"','&quot;',$this->esfield['valuerule']).'" '
+					.'data-valuerulecaption="'.str_replace('"','&quot;',$this->esfield['valuerulecaption']).'" '
+					.'>'.$value.'</textarea>';
+		}
+
+		if(in_array('spellcheck',$type_params))
+		{
+			$file_path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables'.DIRECTORY_SEPARATOR . 'thirdparty'
+				. DIRECTORY_SEPARATOR . 'jsc' . DIRECTORY_SEPARATOR . 'include.js';
+									
+			if(file_exists($file_path))
+			{
+				$document = Factory::getDocument();
+				$document->addCustomTag('<script src="'.URI::root(true).'/components/com_customtables/thirdparty/jsc/include.js"></script>');
+				$document->addCustomTag('<script type="text/javascript">$Spelling.SpellCheckAsYouType("'.$fname.'");</script>');
+				$document->addCustomTag('<script type="text/javascript">$Spelling.DefaultDictionary = "English";</script>');
+			}
+		}
+		
+		return $result;
+	}
+	
+	function render_checkbox(&$value)
+	{
+		$result = '';
+		
+		$format="";
+		if(isset($this->option_list[2]) and $this->option_list[2]=='yesno')
+			$format="yesno";
+								
+		if($format=="yesno")
+		{
+			$element_id=$this->prefix.$this->esfield['fieldname'];
+			if($this->ct->Env->version < 4)
+			{
+				$result.='<fieldset id="'.$this->prefix.$this->esfield['fieldname'].'" class="'.$this->cssclass.' btn-group radio btn-group-yesno" '
+					.'style="border:none !important;background:none !important;">';
+
+				$result.='<div style="position: absolute;visibility:hidden !important; display:none !important;"><input type="radio" '
+										.'id="'.$element_id.'0" '
+										.'name="'.$element_id.'" '
+										.'value="1" '
+										.'data-label="'.$this->esfield['fieldtitle'.$this->ct->Languages->Postfix].'" '
+										.'data-valuerule="'.str_replace('"','&quot;',$this->esfield['valuerule']).'" '
+										.'data-valuerulecaption="'.str_replace('"','&quot;',$this->esfield['valuerulecaption']).'" '
+										.$this->attributes.' '
+										.((int)$value==1 ? ' checked="checked" ' : '')
+										.' ></div>'
+										.'<label class="btn'.((int)$value==1 ? ' active btn-success' : '').'" for="'.$element_id.'0" id="'.$element_id.'0_label" >'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YES').'</label>';
+										
+										$result.='<div style="position: absolute;visibility:hidden !important; display:none !important;"><input type="radio" '
+										.'id="'.$element_id.'1" '
+										.'name="'.$element_id.'" '
+										.$this->attributes.' '
+										.'value="0" '
+										.'data-label="'.$this->esfield['fieldtitle'.$this->ct->Languages->Postfix].'" '
+										.'data-valuerule="'.str_replace('"','&quot;',$this->esfield['valuerule']).'" '
+										.'data-valuerulecaption="'.str_replace('"','&quot;',$this->esfield['valuerulecaption']).'" '
+										.((int)$value==0 ? ' checked="checked" ' : '')
+										.' ></div>'
+										.'<label class="btn'.((int)$value==0 ? ' active btn-danger' : '').'" for="'.$element_id.'1" id="'.$element_id.'1_label">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NO').'</label>';
+										 
+				$result.='</fieldset>';
+			}
+			else
+			{
+				$result.='<div class="switcher">
+					<input type="radio" id="'.$element_id.'0" name="'.$element_id.'" value="0" class="active " '.((int)$value==0 ? ' checked="checked" ' : '').' >
+					<label for="'.$element_id.'0">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NO').'</label>
+					<input type="radio" id="'.$element_id.'1" name="'.$element_id.'" value="1" '.((int)$value==1 ? ' checked="checked" ' : '').' >
+					<label for="'.$element_id.'1">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YES').'</label>
+					<span class="toggle-outside"><span class="toggle-inside"></span></span>
+	</div>';
+			}
+		}
+		else
+		{
+			$onchange=$this->prefix.$this->esfield['fieldname'].'_off.value=(this.checked === true ? 1 : 0);';// this is to save unchecked value as well.
+									
+			if(strpos($this->attributes,'onchange="')!==false)
+				$check_attributes=str_replace('onchange="','onchange="'.$onchange,$this->attributes);// onchange event already exists add one before
+			else
+				$check_attributes = $this->attributes;
+									
+			if($this->ct->Env->version < 4)
+			{
+				$result.='<input type="checkbox" '
+											.'id="'.$this->prefix.$this->esfield['fieldname'].'" '
+											.'name="'.$this->prefix.$this->esfield['fieldname'].'" '
+											.'data-label="'.$this->esfield['fieldtitle'.$this->ct->Languages->Postfix].'" '
+											.'data-valuerule="'.str_replace('"','&quot;',$this->esfield['valuerule']).'" '
+											.'data-valuerulecaption="'.str_replace('"','&quot;',$this->esfield['valuerulecaption']).'" '
+											.$check_attributes
+											.($value ? ' checked="checked" ' : '')
+											.' class="'.$this->cssclass.'">';
+										
+				$result.='<input type="hidden"'
+											.' id="'.$this->prefix.$this->esfield['fieldname'].'_off" '
+											.' name="'.$this->prefix.$this->esfield['fieldname'].'_off" '
+											.($value ? ' value="1" ' : 'value="0"')
+											.' >';
+			}
+			else
+			{
+				$element_id=$this->prefix.$this->esfield['fieldname'];
+										
+				$result.='<div class="switcher">
+					<input type="radio" id="'.$element_id.'0" name="'.$element_id.'" value="0" class="active " '.((int)$value==0 ? ' checked="checked" ' : '').' >
+					<label for="'.$element_id.'0">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NO').'</label>
+					<input type="radio" id="'.$element_id.'1" name="'.$element_id.'" value="1" '.((int)$value==1 ? ' checked="checked" ' : '').' >
+					<label for="'.$element_id.'1">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YES').'</label>
+					<span class="toggle-outside"><span class="toggle-inside"></span></span>
+	</div>';
+			}
+		}
+		
+		return $result;
 	}
 }

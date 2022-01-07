@@ -32,7 +32,7 @@ class ESInputBox
 
 	function renderFieldBox(&$esfield,&$row,$option_list)
 	{
-		$Inputbox = new Inputbox($this->ct, $esfield, $option_list);
+		$Inputbox = new Inputbox($this->ct, $esfield, $option_list, false);
 		
 		$realFieldName=$esfield['realfieldname'];
 

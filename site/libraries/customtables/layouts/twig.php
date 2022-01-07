@@ -256,7 +256,7 @@ class fieldObject
 			else
 				$args[1] = $attributes;
 								
-			$Inputbox = new Inputbox($this->ct, $this->field, $args);
+			$Inputbox = new Inputbox($this->ct, $this->field, $args, true);
 			
 			$edit_box = '<div '.$div_arg.'id="'.$ajax_prefix.$this->field['fieldname'].$postfix.'_div">'
                             .$Inputbox->render($value, $this->ct->Table->record)
