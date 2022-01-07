@@ -32,7 +32,7 @@ if ($theview == 'home')
 	$menu_params=$app->getParams();
 	$edit_model = $this->getModel('edititem');
 	$edit_model->params=$menu_params;
-	$edit_model->id = $ct->Env->jinput->getInt('listing_id');
+	$edit_model->listing_id = $ct->Env->jinput->getCmd('listing_id');
 	
 	//Check Authorization
 	//3 - to delete

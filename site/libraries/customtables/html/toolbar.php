@@ -26,7 +26,7 @@ class RecordToolbar
 	
 	var $jinput;
 
-	var $id;
+	var $listing_id;
 	var $rid;
 	
 	var $row;
@@ -49,8 +49,8 @@ class RecordToolbar
 	
 	public function render($row,$mode)
 	{
-		$this->id=$row['listing_id'];
-		$this->rid=$this->Table->tableid.'x'.$this->id;
+		$this->listing_id=$row['listing_id'];
+		$this->rid=$this->Table->tableid.'x'.$this->listing_id;
 		$this->row=$row;
 		
 		if($this->isEditable)
@@ -64,7 +64,7 @@ class RecordToolbar
 					$rid='esRefreshIcon'.$this->rid;
 					$alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_REFRESH' );
 					$img='<img src="'.$this->iconPath.'refresh.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
-					return '<div id="'.$rid.'" class="toolbarIcons"><a href="javascript:esRefreshObject('.$this->id.', \''.$rid.'\');">'.$img.'</a></div>';
+					return '<div id="'.$rid.'" class="toolbarIcons"><a href="javascript:esRefreshObject('.$this->listing_id.', \''.$rid.'\');">'.$img.'</a></div>';
 					
 				case 'gallery':
 					if(is_array($this->Table->imagegalleries) and count($this->Table->imagegalleries)>0)
@@ -91,7 +91,7 @@ class RecordToolbar
 		elseif($mode == 'publish')
 			return $this->renderPublishIcon();
 		elseif($mode == 'checkbox')
-			return '<input type="checkbox" name="esCheckbox'.$this->Table->tableid.'" id="esCheckbox'.$this->rid.'" value="'.$this->id.'" />';
+			return '<input type="checkbox" name="esCheckbox'.$this->Table->tableid.'" id="esCheckbox'.$this->rid.'" value="'.$this->listing_id.'" />';
 	
 		return '';
 	}
@@ -104,13 +104,13 @@ class RecordToolbar
 			
 			if($this->row['listing_published'])
 			{
-				$link='javascript:esPublishObject('.$this->id.', \''.$rid.'\',0);';
+				$link='javascript:esPublishObject('.$this->listing_id.', \''.$rid.'\',0);';
                 $alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_UNPUBLISH' );
 				$img='<img src="'.$this->iconPath.'publish.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 			}
 			else
 			{
-				$link='javascript:esPublishObject('.$this->id.', \''.$rid.'\',1);';
+				$link='javascript:esPublishObject('.$this->listing_id.', \''.$rid.'\',1);';
                 $alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PUBLISH' );
 				$img='<img src="'.$this->iconPath.'unpublish.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 			}
@@ -128,7 +128,7 @@ class RecordToolbar
 	{
 		$editlink=$this->ct->Env->WebsiteRoot.'index.php?option=com_customtables&amp;view=edititem'
 						.'&amp;returnto='.$this->ct->Env->encoded_current_url
-						.'&amp;listing_id='.$this->id;
+						.'&amp;listing_id='.$this->listing_id;
 
 		if($this->jinput->get('tmpl','','CMD')!='')
 			$editlink.='&tmpl='.$this->jinput->get('tmpl','','CMD');
@@ -152,7 +152,7 @@ class RecordToolbar
 			$imagemanagerlink='index.php?option=com_customtables&amp;view=editphotos'
 				.'&amp;establename='.$this->Table->tablename
 				.'&amp;galleryname='.$gallery[0]
-				.'&amp;listing_id='.$this->id
+				.'&amp;listing_id='.$this->listing_id
 				.'&amp;returnto='.$this->ct->Env->encoded_current_url;
 
 			if($this->jinput->get('tmpl','','CMD')!='')
@@ -179,7 +179,7 @@ class RecordToolbar
 			$filemanagerlink='index.php?option=com_customtables&amp;view=editfiles'
 				.'&amp;establename='.$this->Table->tablename
 				.'&amp;fileboxname='.$filebox[0]
-				.'&amp;listing_id='.$this->id
+				.'&amp;listing_id='.$this->listing_id
 				.'&amp;returnto='.$this->ct->Env->encoded_current_url;
 
 			if($this->jinput->get('tmpl','','CMD')!='')
@@ -206,7 +206,7 @@ class RecordToolbar
 		$alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_COPY' );
 		$img='<img src="'.$this->iconPath.'copy.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 
-		return '<div id="ctCopyIcon'.$this->rid.'" class="toolbarIcons"><a href=\'javascript:ctCopyObject("'.$Label.'", '.$this->id.', "ctCopyIcon'.$this->rid.'")\'>'.$img.'</a></div>';
+		return '<div id="ctCopyIcon'.$this->rid.'" class="toolbarIcons"><a href=\'javascript:ctCopyObject("'.$Label.'", '.$this->listing_id.', "ctCopyIcon'.$this->rid.'")\'>'.$img.'</a></div>';
 	}
 	
 	protected function renderResetPasswordIcon()
@@ -219,7 +219,7 @@ class RecordToolbar
 			$alt='Create User Account';
 			$img='<img src="'.$this->iconPath.'key-add.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 			$resetLabel=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_USERWILLBECREATED' ).' '.$this->firstFieldValueLabel() ;
-			$action='ctCreateUser("'.$resetLabel.'", '.$this->id.', "'.$rid.'")';
+			$action='ctCreateUser("'.$resetLabel.'", '.$this->listing_id.', "'.$rid.'")';
 		}
 		else
 		{
@@ -232,7 +232,7 @@ class RecordToolbar
 				$alt='Username: '.$userrow['username'];
 				$img='<img src="'.$this->iconPath.'key.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 				$resetLabel='Would you like to reset '.$user_full_name.' ('.$userrow['username'].') password?';		
-				$action='ctResetPassword("'.$resetLabel.'", '.$this->id.', "'.$rid.'")';
+				$action='ctResetPassword("'.$resetLabel.'", '.$this->listing_id.', "'.$rid.'")';
 			}
 			else
 				return 'User account deleted, open and save the record.';
@@ -249,7 +249,7 @@ class RecordToolbar
 		$img='<img src="'.$this->iconPath.'delete.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 		$msg='Do you want to delete ('.$deleteLabel.')?';
 
-		return '<div id="esDeleteIcon'.$this->rid.'" class="toolbarIcons"><a href=\'javascript:esDeleteObject("'.$msg.'", '.$this->id.', "esDeleteIcon'.$this->rid.'")\'>'.$img.'</a></div>';
+		return '<div id="esDeleteIcon'.$this->rid.'" class="toolbarIcons"><a href=\'javascript:esDeleteObject("'.$msg.'", '.$this->listing_id.', "esDeleteIcon'.$this->rid.'")\'>'.$img.'</a></div>';
 	}
 	
 	protected function firstFieldValueLabel()

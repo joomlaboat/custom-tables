@@ -66,12 +66,12 @@ class Languages
 		return $this->LanguageList;
 	}
 
-	function getLanguageTagByID($id)
+	function getLanguageTagByID($language_id)
 	{
 		
 		foreach($this->LanguageList as $lang)
 		{
-			if($lang->id==$id)
+			if($lang->id == $language_id)
 				return $lang->language;
 		}
 		return '';

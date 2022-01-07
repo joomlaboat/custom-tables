@@ -30,12 +30,6 @@ class CustomtablesControllerListofRecords extends JControllerAdmin
 	public function getModel($name = 'Records', $prefix = 'CustomtablesModel', $config = array())
 	{
 		$model = parent::getModel($name, $prefix, array('ignore_request' => true));
-		
-		//$app = JFactory::getApplication();
-		//$tableid 	= $app->input->get('tableid', 0, 'int');
-		
-		//$model->setState('filter.tableid', $tableid);
-		
 		return $model;
 	}
 	
@@ -60,7 +54,7 @@ class CustomtablesControllerListofRecords extends JControllerAdmin
 		}
 		
 		$cid	= JFactory::getApplication()->input->post->get('cid',array(),'array');
-		$cid = ArrayHelper::toInteger($cid);
+		//$cid = ArrayHelper::toInteger($cid);
 		
 		//Get Edit model
 		$paramsArray=$this->getRecordParams($tableid,$tablename,0);
@@ -76,9 +70,8 @@ class CustomtablesControllerListofRecords extends JControllerAdmin
 		
 		foreach($cid as $id)
 		{
-			if((int)$id!=0)
+			if($id != '')
 			{
-				$id=(int)$id;
 				if($editModel->setPublishStatusSingleRecord($id,$status) == -1)
 				{
 					$ok=false;
@@ -124,7 +117,7 @@ class CustomtablesControllerListofRecords extends JControllerAdmin
 		}
 		
 		$cid	= JFactory::getApplication()->input->post->get('cid',array(),'array');
-		$cid = ArrayHelper::toInteger($cid);
+		//$cid = ArrayHelper::toInteger($cid);
 		
 		//Get Edit model
 		$paramsArray=$this->getRecordParams($tableid,$tablename,0);
@@ -140,9 +133,8 @@ class CustomtablesControllerListofRecords extends JControllerAdmin
 		
 		foreach($cid as $id)
 		{
-			if((int)$id!=0)
+			if($id != '')
 			{
-				$id=(int)$id;
 				$isok=$editModel->deleteSingleRecord($id);
 				if(!$isok)
 				{

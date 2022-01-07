@@ -127,9 +127,9 @@ class Table
 		}
 	}
 	
-	function loadRecord($id)
+	function loadRecord($listing_id)
 	{
-		$query = 'SELECT '.$this->tablerow['query_selects'].' FROM '.$this->realtablename.' WHERE id='.(int)$id.' LIMIT 1';
+		$query = 'SELECT '.$this->tablerow['query_selects'].' FROM '.$this->realtablename.' WHERE '.$this->realidfieldname.'='.$this->db->quote($listing_id).' LIMIT 1';
 
 		$this->db->setQuery( $query );
 	

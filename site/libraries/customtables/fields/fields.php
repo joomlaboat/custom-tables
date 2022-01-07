@@ -308,9 +308,6 @@ class Fields
 		switch(strtolower(trim($data_type)))
 		{
 			case 'tinyint':
-				$type = 'checkbox';
-				break;
-			
 			case 'int':
 			case 'integer':
 			case 'smallint':
@@ -356,6 +353,10 @@ class Fields
 				
 			case 'datetime':
 				$type = 'creationtime';
+				break;
+				
+			case 'date':
+				$type = 'date';
 				break;
 			
 		}
@@ -860,16 +861,16 @@ class Fields
 
 		$rows = $db->loadAssocList();
 
-		$ids=array();
-		$ids[]=$realfieldname.'=0';
+		$where_ids=array();
+		$where_ids[] = $realfieldname.'=0';
 
 		foreach($rows as $row)
 		{
 			if($row['customtables_distinct_temp_id']!='')
-				$ids[]=$realfieldname.'='.$row['customtables_distinct_temp_id'];
+				$where_ids[] = $realfieldname.'='.$row['customtables_distinct_temp_id'];
 		}
 
-		$query = 'UPDATE '.$realtablename.' SET '.$realfieldname.'=NULL WHERE '.implode(' OR ',$ids).';';
+		$query = 'UPDATE '.$realtablename.' SET '.$realfieldname.'=NULL WHERE '.implode(' OR ',$where_ids).';';
 
 		$db->setQuery( $query );
 		$db->execute();
@@ -963,9 +964,6 @@ class Fields
 		{
 			$realtablename=str_replace('#__',$db->getPrefix(),$realtablename);
 			
-			//$query = 'SHOW COLUMNS FROM '.$realtablename;
-			//$db->setQuery( $query );
-			
 			$conf = Factory::getConfig();
 			$database = $conf->get('db');
 			
@@ -977,7 +975,6 @@ class Fields
 				.'COLUMN_DEFAULT AS column_default,'
 				.'EXTRA AS extra'
 				.' FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='.$db->quote($database).' AND TABLE_NAME='.$db->quote($realtablename);
-
 		}
 
 		$db->setQuery( $query );
@@ -987,29 +984,7 @@ class Fields
     public static function getListOfExistingFields($tablename,$add_table_prefix=true)
 	{
 		$realfieldnames=Fields::getExistingFields($tablename,$add_table_prefix);
-		/*
-		$db = Factory::getDBO();
 
-		if($add_table_prefix)
-			$realtablename=$db->getPrefix().'customtables_table_'.$tablename;
-		else
-			$realtablename=$tablename;
-
-		if($db->serverType == 'postgresql')
-		{
-			$realtablename=str_replace('#__',$db->getPrefix(),$realtablename);
-			$query = 'SELECT table_name, column_name, data_type FROM information_schema.columns WHERE table_name = '.$db->quote($realtablename);
-		}
-		else
-		{
-			$query = 'SHOW COLUMNS FROM '.$realtablename;
-		}
-     
-		$list=array();
-
-		$db->setQuery( $query );
-		$recs=$db->loadAssocList();
-        */
 		foreach($realfieldnames as $rec)
 			$list[]=$rec['column_name'];
 

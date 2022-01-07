@@ -299,9 +299,9 @@ class IntegrityCoreTables extends \CustomTables\IntegrityChecks
 		$indexes_sql=[];
 		foreach($indexes as $index)
 		{
-			$idx = $db->quoteName($index['name']);
+			$index_name = $db->quoteName($index['name']);
 			$fld = $db->quoteName($index['field']);
-			$indexes_sql[] = 'KEY ' . $idx . ' (' . $fld . ')';
+			$indexes_sql[] = 'KEY ' . $index_name . ' (' . $fld . ')';
 		}
 		
 		return $indexes_sql;

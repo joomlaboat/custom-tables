@@ -29,11 +29,11 @@ class ExportTables
 		$tables=array();
 		$output=array();
 
-		foreach($table_ids as $id )
+		foreach($table_ids as $table_id)
 	    {
 			//get table
 			$s1='(SELECT categoryname FROM #__customtables_categories WHERE #__customtables_categories.id=#__customtables_tables.tablecategory) AS categoryname';
-			$query = 'SELECT *,'.$s1.' FROM #__customtables_tables WHERE published=1 AND id='.(int)$id.' LIMIT 1';
+			$query = 'SELECT *,'.$s1.' FROM #__customtables_tables WHERE published=1 AND id='.(int)$table_id.' LIMIT 1';
 			
 			$db->setQuery( $query );
 			$table_rows=$db->loadAssocList();

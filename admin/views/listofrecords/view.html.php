@@ -37,14 +37,6 @@ class CustomtablesViewListofrecords extends JViewLegacy
 	 * @return void
 	 */
 	var $ct;
-	 
-	//v//ar $tableid;
-	//var $tablename;
-	//var $realtablename;
-	//var $published_field_found;
-	
-	//var $tabletitle;
-
 	var $tablefields;
 	
 
@@ -65,6 +57,9 @@ class CustomtablesViewListofrecords extends JViewLegacy
 		$this->tablefields=array();
 		
 		$this->state = $this->get('State');
+		
+		if($this->ct->Table->tableid == 0)
+			return;
 		
 		$this->tablefields=Fields::getFields($this->ct->Table->tableid);
 
@@ -277,7 +272,7 @@ class CustomtablesViewListofrecords extends JViewLegacy
 
 		$paramsArray=array();
 		$paramsArray['establename']=$this->ct->Table->tablename;
-		$paramsArray['listingid']=(int)$row['id'];
+		$paramsArray['listingid']=$row['id'];
 		$paramsArray['custom_where']='';
 		
 		if($paramsArray==null)

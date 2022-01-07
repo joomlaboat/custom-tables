@@ -287,7 +287,7 @@ class ImportTables
             if($record_old!=0)
 				ImportTables::updateRecords($mysqltablename,$record,$record_old,false,array(),true);//update single existing record
             else
-                $id=ImportTables::insertRecords($mysqltablename,$record,false,array(),true);//insert single new record
+                $listing_id = ImportTables::insertRecords($mysqltablename,$record,false,array(),true);//insert single new record
         }
 
 		return true;

@@ -23,11 +23,10 @@ class CT_FieldTypeTag_imagegallery
 		return $photorows;
 	}
     
-    public static function getImageGallerySRC($photorows, $image_prefix,$id,$galleryname,$TypeParams,&$imagesrclist,&$imagetaglist,$estableid)
+    public static function getImageGallerySRC($photorows, $image_prefix,$object_id,$galleryname,$TypeParams,&$imagesrclist,&$imagetaglist,$estableid)
 	{
         $imagegalleryprefix='g';
-        
-		$TypeParamsArr=JoomlaBasicMisc::csv_explode(',',$TypeParams,'"',false);
+        $TypeParamsArr=JoomlaBasicMisc::csv_explode(',',$TypeParams,'"',false);
 
 		$imagefolder=CustomTablesImageMethods::getImageFolder($TypeParams);
 
@@ -66,8 +65,6 @@ class CT_FieldTypeTag_imagegallery
 		if(!isset($photorows))
 			return false;
 
-
-
 		$conf = JFactory::getConfig();
 		$sitename = $conf->get('config.sitename');
 
@@ -79,7 +76,6 @@ class CT_FieldTypeTag_imagegallery
 
 		foreach($photorows as $photorow)
 		{
-
 			$photorow_photoid=$photorow->photoid;
 			if(strpos($photorow_photoid,'-')!==false)
 			{
@@ -87,12 +83,9 @@ class CT_FieldTypeTag_imagegallery
 				$photorow_photoid=str_replace('-','',$photorow_photoid);
 			}
 
-
 			if($image_prefix=='')
 			{
 				$imagefile_ext='jpg';
-
-
 				$imagefile=$imagefolderserver.DIRECTORY_SEPARATOR.$imagegalleryprefix.$estableid.'_'.$galleryname.'__esthumb_'.$photorow_photoid.'.jpg';
 				$imagefileweb=$imagefolderweb.'/'.$imagegalleryprefix.$estableid.'_'.$galleryname.'__esthumb_'.$photorow_photoid.'.jpg';
 
@@ -119,25 +112,15 @@ class CT_FieldTypeTag_imagegallery
 			}
 			else
 			{
-
-
 				$imagesizes=$imgMethods->getCustomImageOptions($TypeParams);
-
-
 				$foundimgsize=false;
 
 				foreach($imagesizes as $img)
 				{
-
 					if($img[0]==$image_prefix)
 					{
-
 						$imgname=$imagefolderserver.DIRECTORY_SEPARATOR.$imagegalleryprefix.$estableid.'_'.$galleryname.'_'.$image_prefix.'_'.$photorow_photoid;
-
-
 						$imagefile_ext=$imgMethods->getImageExtention($imgname);
-
-
 
 						if($imagefile_ext!='')
 						{
@@ -160,11 +143,8 @@ class CT_FieldTypeTag_imagegallery
 			}//if($image_prefix=='')
 		}//foreach($photorows as $photorow)
 
-
 		$imagesrclist=implode(';',$imagesrclistarray);
 		$imagetaglist=implode('',$imagetaglistarray);
-
 		return true;
 	}
-    
 }

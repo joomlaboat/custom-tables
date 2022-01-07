@@ -40,7 +40,7 @@ trait SaveFieldQuerySet
 	var $prefix;
 	var $db;
 
-	function getSaveFieldSet($id,&$esfield)
+	function getSaveFieldSet($listing_id,&$esfield)
     {
         $this->fieldname=$esfield['fieldname'];
 		$this->realfieldname=$esfield['realfieldname'];
@@ -124,7 +124,7 @@ trait SaveFieldQuerySet
 						$value=$this->jinput->getString($this->comesfieldname,null);
 
 						if(isset($value))
-                            return $this->get_alias_type_value($id);
+                            return $this->get_alias_type_value($listing_id);
 					break;
 
                 case 'string':
@@ -260,13 +260,13 @@ trait SaveFieldQuerySet
                     $image_type_file=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fieldtypes'.DIRECTORY_SEPARATOR.'_type_image.php';
 					require_once($image_type_file);
 
-                    return CT_FieldTypeTag_image::get_image_type_value($this, $id);
+                    return CT_FieldTypeTag_image::get_image_type_value($this, $listing_id);
 
 				case 'file':
 
                     $file_type_file=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fieldtypes'.DIRECTORY_SEPARATOR.'_type_file.php';
 					require_once($file_type_file);
-					return CT_FieldTypeTag_file::get_file_type_value($this, $id);
+					return CT_FieldTypeTag_file::get_file_type_value($this, $listing_id);
 
 				case 'article':
 						$value=$this->jinput->getInt($this->comesfieldname,null);
@@ -348,7 +348,12 @@ trait SaveFieldQuerySet
 				case 'date':
 						$value=$this->jinput->getString($this->comesfieldname,null);
 						if(isset($value))
-							return $this->realfieldname.'='.$this->db->Quote($value);
+						{
+							if($value == '' or $value == '0000-00-00')
+								return $this->realfieldname.'=NULL';
+							else
+								return $this->realfieldname.'='.$this->db->Quote($value);
+						}
 
 					break;
                 
@@ -555,27 +560,27 @@ trait SaveFieldQuerySet
         return false;
     }
 
-	public function get_alias_type_value($id)
+	public function get_alias_type_value($listing_id)
 	{
 		$value=$this->jinput->getString($this->comesfieldname);
 		if(!isset($value))
 			return null;
     
-		$value=$this->prepare_alias_type_value($id,$value,$this->realfieldname);
+		$value=$this->prepare_alias_type_value($listing_id,$value,$this->realfieldname);
 		if($value=='')
 			return null;
 
 		return $this->realfieldname.'='.$this->db->quote($value);
 	}
 
-	public function prepare_alias_type_value($id,$value,$realfieldname)
+	public function prepare_alias_type_value($listing_id,$value,$realfieldname)
 	{
 		$value=JoomlaBasicMisc::slugify($value);
 
 		if($value=='')
 			return '';
 
-		if(!$this->checkIfAliasExists($id,$value,$realfieldname))
+		if(!$this->checkIfAliasExists($listing_id,$value,$realfieldname))
 			return $value;
 
 		$val=$this->splitStringToStringAndNumber($value);
@@ -585,7 +590,7 @@ trait SaveFieldQuerySet
 
 		do
 		{
-			if($this->checkIfAliasExists($id,$value_new,$realfieldname))
+			if($this->checkIfAliasExists($listing_id,$value_new,$realfieldname))
 			{
 				//increase index
 				$i++;
@@ -873,11 +878,11 @@ trait SaveFieldQuerySet
         $this->runUpdateQuery($savequery,$row['listing_id']);
     }
 
-    public function runUpdateQuery(&$savequery,$id)
+    public function runUpdateQuery(&$savequery,$listing_id)
     {
     	if(count($savequery)>0)
 		{
-			$query='UPDATE '.$this->realtablename.' SET '.implode(', ',$savequery).' WHERE '.$this->realidfieldname.'='.$id;
+			$query='UPDATE '.$this->realtablename.' SET '.implode(', ',$savequery).' WHERE '.$this->realidfieldname.'='.$this->db->quote($listing_id);
 			
 			$this->db->setQuery( $query );
 			$this->db->execute();

@@ -15,7 +15,6 @@ jimport( 'joomla.html.html.menu' );
 
 class CustomTablesModelList extends JModel
 {
-
 	/** @var object JTable object */
 	var $_table = null;
 
@@ -177,18 +176,14 @@ class CustomTablesModelList extends JModel
 		return $items;
 	}
 
-	function treerecurse($id, $indent, $list, &$children, $maxlevel=9999, $level=0, $type=1,$bone,$custom_spacer,$parentname='')
+	function treerecurse($tree_id, $indent, $list, &$children, $maxlevel=9999, $level=0, $type=1,$bone,$custom_spacer,$parentname='')
 	{
-
-
-        if (@$children[$id] && $level <= $maxlevel)
+        if (@$children[$tree_id] && $level <= $maxlevel)
         {
-
-
-                foreach ($children[$id] as $v)
+			foreach ($children[$tree_id] as $v)
                 {
 
-                        $id = $v->id;
+                        $tree_id = $v->id;
 
 
                         if ($type) {
@@ -210,18 +205,18 @@ class CustomTablesModelList extends JModel
 								$pretext=$pre;
                         }
                         $pt = $v->parentid;
-                        $list[$id] = $v;
-						$list[$id]->pre = "$indent$pretext";
-                        $list[$id]->treename = "$indent$txt";
+                        $list[$tree_id] = $v;
+						$list[$tree_id]->pre = "$indent$pretext";
+                        $list[$tree_id]->treename = "$indent$txt";
 
 						if($parentname!='')
 							$parentname_new=$parentname.'.'.$v->optionname;
 						else
 							$parentname_new=$v->optionname;
 
-						$list[$id]->calculatedtree = $parentname_new;
-                        $list[$id]->children = count(@$children[$id]);
-                        $list = $this->treerecurse($id, $indent . $spacer, $list, $children, $maxlevel, $level+1, 1, $bone,$custom_spacer,$parentname_new);
+						$list[$tree_id]->calculatedtree = $parentname_new;
+                        $list[$tree_id]->children = count(@$children[$tree_id]);
+                        $list = $this->treerecurse($tree_id, $indent . $spacer, $list, $children, $maxlevel, $level+1, 1, $bone,$custom_spacer,$parentname_new);
                 }
         }
         return $list;
@@ -308,23 +303,23 @@ class CustomTablesModelList extends JModel
 	 * Delete one or more menu items
 	 * @param mixed int or array of id values
 	 */
-	function delete( $ids )
+	function delete( $tree_ids )
 	{
-		JArrayHelper::toInteger($ids);
+		JArrayHelper::toInteger($tree_ids);
 
-		if (!empty( $ids )) {
+		if (!empty( $tree_ids )) {
 
 			// Add all children to the list
-			foreach ($ids as $id)
+			foreach ($tree_ids as $tree_id)
 			{
-				$this->_addChildren((int)$id, $ids);
+				$this->_addChildren((int)$tree_id, $tree_ids);
 			}
 
 			$db = JFactory::getDBO();
 
 
 			// Delete the menu items
-			$where = 'WHERE id = ' . implode( ' OR id = ', $ids );
+			$where = 'WHERE id = ' . implode( ' OR id = ', $tree_ids );
 
 			$query = 'DELETE FROM #__customtables_options ' . $where;
 			$db->setQuery( $query );
@@ -336,16 +331,16 @@ class CustomTablesModelList extends JModel
 	}
 
 
-	function _addChildren($id, &$list)
+	function _addChildren($tree_id, &$list)
 	{
 		// Initialize variables
 		$return = true;
 
-		// Get all rows with parentid of $id
+		// Get all rows with parentid of $tree_id
 		$db = JFactory::getDBO();
 		$query = 'SELECT id' .
 				' FROM #__customtables_options' .
-				' WHERE parentid = '.(int) $id;
+				' WHERE parentid = '.(int) $tree_id;
 		$db->setQuery( $query );
 		$rows = $db->loadObjectList();
 
@@ -360,9 +355,9 @@ class CustomTablesModelList extends JModel
 		foreach ($rows as $row)
 		{
 			$found = false;
-			foreach ($list as $idx)
+			foreach ($list as $tree_idx)
 			{
-				if ($idx == $row->id) {
+				if ($tree_idx == $row->id) {
 					$found = true;
 					break;
 				}
@@ -383,7 +378,7 @@ class CustomTablesModelList extends JModel
 	{
 		JArrayHelper::toInteger($cid, array(0));
 		$db = JFactory::getDBO();
-		$ids = implode( ',', $cid );
+		$tree_ids = implode( ',', $cid );
 		$cids = array();
 		if($level == 0) {
 			$query 	= 'UPDATE #__customtables_options SET sublevel = 0 WHERE parentid = 0';
@@ -394,10 +389,10 @@ class CustomTablesModelList extends JModel
 			$cids 	= $db->loadResultArray(0);
 		} else {
 			$query	= 'UPDATE #__customtables_options SET sublevel = '.(int) $level
-					.' WHERE parentid IN ('.$ids.')';
+					.' WHERE parentid IN ('.$tree_ids.')';
 			$db->setQuery( $query );
 			$db->execute();
-			$query	= 'SELECT id FROM #__customtables_options WHERE parentid IN ('.$ids.')';
+			$query	= 'SELECT id FROM #__customtables_options WHERE parentid IN ('.$tree_ids.')';
 			$db->setQuery( $query );
 			$cids 	= $db->loadResultArray( 0 );
 		}
@@ -422,31 +417,22 @@ class CustomTablesModelList extends JModel
 
 	function copyItem($cid)
 	{
-
 	    $item = $this->getTable();
 
-
-	    foreach( $cid as $id )
+	    foreach( $cid as $tree_id )
 	    {
+			$item->load( $tree_id );
+			$item->id 	= NULL;
+			$item->optionname 	= 'Copy of '.$item->optionname;
 
-		$item->load( $id );
-		$item->id 	= NULL;
-		$item->optionname 	= 'Copy of '.$item->optionname;
-
-
-
-		if (!$item->check()) {
-			JFactory::getApplication()->enqueueMessage($item->getError(), 'error');
-		}
-
-		if (!$item->store()) {
-			JFactory::getApplication()->enqueueMessage($item->getError(), 'error');
-		}
-		$item->checkin();
-
+			if (!$item->check())
+				JFactory::getApplication()->enqueueMessage($item->getError(), 'error');
+		
+			if (!$item->store())
+				JFactory::getApplication()->enqueueMessage($item->getError(), 'error');
+		
+			$item->checkin();
 	    }
 	    return true;
 	}
-
-
 }

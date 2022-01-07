@@ -347,13 +347,13 @@ class Tree
 			return "";
 		
 		$result.='<ul>';
-		$IDs=array();
+		$list_ids=array();
 		
 		$count=count($rows);
 		foreach($rows as $row)
 		{
 			
-			$IDs[]=$row->id;
+			$list_ids[]=$row->id;
 			
 			$temp_Ids="";
 			$count_child=0;
@@ -439,16 +439,11 @@ class Tree
 			$result=''; //empty block
 		else
 			$result.='</ul>';
+	
+		$ItemList='"'.implode('","',$list_ids).'"';
 		
-		
-		
-		$ItemList='"'.implode('","',$IDs).'"';
-		
-				
 		return $result;
 	}
-	
-	
 	
 	public static function getList($parentid, $langpostfix)
 	{
@@ -595,20 +590,15 @@ class Tree
 	//Used in import
 	public static function getFamilyTreeByParentID($parentid)
 	{
-		
 		if($parentid!=0)
-		{
 			return Tree::getFamilyTree($parentid,0).'-'.$parentid;
-			
-		}
+
 		return '';
-		
 	}
 	
 	//Used many times
 	public static function getFamilyTree($optionid,$level)
 	{
-				
 		$db = Factory::getDBO();
 		$query = 'SELECT parentid FROM #__customtables_options WHERE id="'.$optionid.'" LIMIT 1';
 		$db->setQuery($query);
@@ -617,10 +607,9 @@ class Tree
 		if(count($rows)!=1)
 			return '';
 		
-		$id=$rows[0]->parentid;
-		if($id!=0)
+		if($rows[0]->parentid != 0)
 		{
-			$parentid=Tree::getFamilyTree($id,$level+1);
+			$parentid=Tree::getFamilyTree($rows[0]->parentid,$level+1);
 			if($level>0)
 				$parentid.='-'.$optionid;
 		}
@@ -637,7 +626,6 @@ class Tree
 	//Used many times
 	public static function getFamilyTreeString($optionid,$level)
 	{
-				
 		$db = Factory::getDBO();
 		$query = 'SELECT parentid, optionname FROM #__customtables_options WHERE id="'.$optionid.'" LIMIT 1';
 		$db->setQuery($query);
@@ -646,10 +634,9 @@ class Tree
 		if(count($rows)!=1)
 			return '';
 		
-		$id=$rows[0]->parentid;
-		if($id!=0)
+		if($rows[0]->parentid!=0)
 		{
-			$parentstring=Tree::getFamilyTreeString($id,$level+1);
+			$parentstring=Tree::getFamilyTreeString($rows[0]->parentid,$level+1);
 			if($level>0)
 				$parentstring.='.'.$rows[0]->optionname;
 		}
@@ -661,6 +648,4 @@ class Tree
 		
 		return $parentstring;
 	}
-	
-	
 }

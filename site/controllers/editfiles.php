@@ -13,7 +13,7 @@ defined('_JEXEC') or die('Restricted access');
 		
 	$model = $this->getModel('edititem');
 	$model->params=JFactory::getApplication()->getParams();;
-	$model->id = $jinput->getInt('listing_id');
+	$model->listing_id = $jinput->getCmd('listing_id');
 
 								if(!$model->CheckAuthorization(5))
 								{

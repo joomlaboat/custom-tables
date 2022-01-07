@@ -34,12 +34,12 @@ class CustomTablesFileMethods
 			unlink($filename);
 	}
 
-	static public function getFileExtByID($establename, $estableid, $fileboxname,$id)
+	static public function getFileExtByID($establename, $estableid, $fileboxname,$file_id)
 	{
 		$db = JFactory::getDBO();
 	
 		$fileboxtablename='#__customtables_filebox_'.$establename.'_'.$fileboxname;
-		$query = 'SELECT file_ext FROM '.$fileboxtablename.' WHERE fileid='.(int)$id.' LIMIT 1';
+		$query = 'SELECT file_ext FROM '.$fileboxtablename.' WHERE fileid='.(int)$file_id.' LIMIT 1';
 		$db->setQuery($query);
 		$filerows=$db->loadObjectList();
 		if(count($filerows)!=1)

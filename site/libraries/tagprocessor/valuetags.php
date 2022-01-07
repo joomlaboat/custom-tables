@@ -172,7 +172,7 @@ class tagProcessor_Value
 
     public static function processPureValues(&$ct,&$htmlresult, &$row,&$isGalleryLoaded,&$getGalleryRows,&$isFileBoxLoaded,&$getFileBoxRows,$tag_chars='[]')
 	{
-		$id = (isset($row['listing_id']) ? $row['listing_id'] : 0);
+		$listing_id = (isset($row['listing_id']) ? $row['listing_id'] : 0);
 		
 		$items_to_replace=array();
 
@@ -331,7 +331,7 @@ class tagProcessor_Value
 							}
 							elseif($fieldtype=='filebox')
 							{								
-								$vlu = CT_FieldTypeTag_filebox::process($ct->Table->tableid,$getFileBoxRows[$fieldname], $id,
+								$vlu = CT_FieldTypeTag_filebox::process($ct->Table->tableid,$getFileBoxRows[$fieldname], $listing_id,
 									$fieldname,$TypeParams,['','link','32','_blank',';']);
 							}
 							elseif($fieldtype=='records')
@@ -694,17 +694,16 @@ class tagProcessor_Value
 		return $valueProcessor->renderValue($ESField,$row,$option_list);
 	}
 	
-    public static function showUserGroup($id)
+    public static function showUserGroup($userid)
 	{
 		$db = JFactory::getDBO();
-		$query = 'SELECT title FROM #__usergroups WHERE id='.(int)$id.' LIMIT 1';
+		$query = 'SELECT title FROM #__usergroups WHERE id='.(int)$userid.' LIMIT 1';
 
 		$db->setQuery($query);
 
 		$options=$db->loadAssocList();
 		if(count($options)!=0)
 			return $options[0]['title'];
-
 
 		return '';
 	}

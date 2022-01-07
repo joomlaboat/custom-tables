@@ -134,28 +134,6 @@ class JoomlaBasicMisc
 
 	}
 
-	public static function CreateUniqueID($categoryCode, $CreateDate)
-	{
-
-		$db =& JFactory::getDBO();
-
-		$n=1;
-		do
-		{
-			$DateText=floor(date("ym",$CreateDate));
-			$ID=$DateText.$categoryCode.$n;
-
-
-			$query =' SELECT listing_id FROM listing WHERE esrecat_id="'.$ID.'"' ;
-
-			$db->setQuery( $query );
-			$db->execute();
-
-			$n++;
-		}while($db->getNumRows()>0);
-		return $ID;
-	}
-
 	public static function isUserAdmin()
 	{
 		$user = JFactory::getUser();

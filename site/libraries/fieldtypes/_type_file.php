@@ -201,8 +201,7 @@ class CT_FieldTypeTag_file
             return $filepath;
     }
 
-    //static public function get_file_type_value($id,&$savequery,$typeparams,$comesfieldname,$realfieldname,$realtablename,$realidfieldname)
-	static public function get_file_type_value(&$ctTable, $id)
+    static public function get_file_type_value(&$ctTable, $listing_id)
     {
 		$db = JFactory::getDBO();
 		
@@ -215,14 +214,14 @@ class CT_FieldTypeTag_file
 		$value='';
 		$filepath=JPATH_SITE.DIRECTORY_SEPARATOR.str_replace('/',DIRECTORY_SEPARATOR,$FileFolder);
 
-		if($id==0)
+		if($listing_id==0)
         {
 			$value=CT_FieldTypeTag_file::UploadSingleFile('',$fileid, $ctTable->realfieldname,JPATH_SITE.$FileFolder,$ctTable->typeparams,$ctTable->realtablename);
         }
 		else
 		{
 			$to_delete = $jinput->post->get($ctTable->comesfieldname.'_delete', '','CMD' );
-			$ExistingFile=Tree::isRecordExist($id,'id', $ctTable->realfieldname, $ctTable->realtablename);
+			$ExistingFile=Tree::isRecordExist($listing_id,'id', $ctTable->realfieldname, $ctTable->realtablename);
 
             if($to_delete=='true')
 			{

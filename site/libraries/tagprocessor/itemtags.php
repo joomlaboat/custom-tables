@@ -79,7 +79,7 @@ class tagProcessor_Item
 			tagProcessor_Item::processPublishStatus($row,$htmlresult); //Twig version added - original not changed
 
 		if(isset($row) and isset($row['listing_published']))
-			tagProcessor_Item::GetSQLJoin($ct_record,$htmlresult,$row['listing_id']);
+			tagProcessor_Item::GetSQLJoin($ct_record,$htmlresult);
 
 		if(isset($row) and isset($row['listing_published']))
 			tagProcessor_Item::GetCustomToolBar($ct,$htmlresult,$row);
@@ -87,7 +87,7 @@ class tagProcessor_Item
 		CT_FieldTypeTag_ct::ResolveStructure($ct,$htmlresult);
 	}
 
-    protected static function GetSQLJoin($ct_record,&$htmlresult,$id)
+    protected static function GetSQLJoin($ct_record,&$htmlresult)
 	{
 		$options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('sqljoin',$options,$htmlresult,'{}');

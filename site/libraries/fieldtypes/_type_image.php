@@ -93,7 +93,7 @@ class CT_FieldTypeTag_image
 		return false;
 	}
 
-    static public function get_image_type_value(&$ctTable, $id)
+    static public function get_image_type_value(&$ctTable, $listing_id)
     {
 		$value=0;
 		$imagemethods=new CustomTablesImageMethods;
@@ -103,14 +103,14 @@ class CT_FieldTypeTag_image
 		$jinput=JFactory::getApplication()->input;
         $fileid = $jinput->post->get($ctTable->comesfieldname, '','STRING' );
 
-		if($id==0)
+		if($listing_id==0)
 		{
 			$value=$imagemethods->UploadSingleImage(0, $fileid,$ctTable->realfieldname,JPATH_SITE.DIRECTORY_SEPARATOR.$ImageFolder,$ctTable->typeparams,$ctTable->realtablename,$ctTable->realidfieldname);
 		}
 		else
 		{
 			$to_delete = $jinput->post->get($ctTable->comesfieldname.'_delete', '','CMD' );
-			$ExistingImage=Tree::isRecordExist($id,'id', $ctTable->realfieldname, $ctTable->realtablename);
+			$ExistingImage=Tree::isRecordExist($listing_id,'id', $ctTable->realfieldname, $ctTable->realtablename);
 
 			if($to_delete=='true')
 			{
@@ -231,9 +231,9 @@ class CT_FieldTypeTag_image
 
         $style='margin:10px; border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;vertical-align:top;';
 
-                $id='ct_ubloadfile_box_'.$esfield['fieldname'];
+                $element_id='ct_ubloadfile_box_'.$esfield['fieldname'];
                 $result='
-                <div style="'.$style.'"'.($esfield['isrequired'] ? ' class="inputbox required"' : '').' id="'.$id.'">
+                <div style="'.$style.'"'.($esfield['isrequired'] ? ' class="inputbox required"' : '').' id="'.$element_id.'">
                 	<div id="ct_fileuploader_'.$esfieldname.'"></div>
                     <div id="ct_eventsmessage_'.$esfieldname.'"></div>
                 	<script>

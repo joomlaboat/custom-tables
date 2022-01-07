@@ -63,18 +63,39 @@ class CustomtablesControllerRecords extends JControllerForm
 	 *
 	 * @since   1.6
 	 */
+	/*
+	protected function checkEditId($data = array(), $key = 'id')
+	{
+		echo 'ddd';
+		die;
+	}
+	*/
+	
+	
+	
 	protected function allowEdit($data = array(), $key = 'id')
 	{
 		// get user object.
-		$user = JFactory::getUser();
+		
 		// get record id.
-		$recordId = (int) isset($data[$key]) ? $data[$key] : 0;
-
+		//$recordId = isset($data[$key]) ? $data[$key] : 0;
+		
+		//To support char type record id
+		$recordId 	= $this->input->getCmd('id', 0);
+		
+		//echo '$recordId_:'.$recordId;
+		//die;
+		
+		
+		//$id    	= $this->input->getCmd('id');
 
 		if ($recordId)
 		{
+			$user = JFactory::getUser();
+			
 			// The record has been set. Check the record permissions.
-			$permission = $user->authorise('core.edit', 'com_customtables.records.' . (int) $recordId);
+			$permission = $user->authorise('core.edit', 'com_customtables.records.' . $recordId);
+
 			if (!$permission)
 			{
 				if ($user->authorise('core.edit.own', 'com_customtables.records.' . $recordId))
@@ -106,8 +127,29 @@ class CustomtablesControllerRecords extends JControllerForm
 			}
 		}
 		// Since there is no permission, revert to the component permissions.
-		return parent::allowEdit($data, $key);
+
+		$data['id'] = $recordId;
+		
+		return true;;//parent::allowEdit($data, $key);
 	}
+	
+	/*
+	function edit($data = array(), $key = 'id')
+	{
+
+		$tableid 	= $this->input->get('tableid', 0, 'int');
+		$recordId 	= $this->input->getCmd('id', 0);
+		
+		
+		// Redirect to the items screen.
+		$this->setRedirect(
+			JRoute::_(
+				'index.php?option=' . $this->option . '&view=records&layout=edit&tableid='.(int)$tableid.'&id='.$recordId, false
+				//'index.php?option=' . $this->option . '&view=listofrecords&layout=edit&tableid='.(int)$tableid, false
+			)
+		);
+	}
+	*/
 
 	/**
 	 * Gets the URL arguments to append to an item redirect.
@@ -125,16 +167,22 @@ class CustomtablesControllerRecords extends JControllerForm
 		$layout = $this->input->get('layout', 'edit', 'string');
 
 		$ref 	= $this->input->get('ref', 0, 'string');
-		$refid 	= $this->input->get('refid', 0, 'int');
+		//$refid 	= $this->input->getCmd('refid', 0);
 
-		$tableid= $this->input->getint('tableid',0);
+		//To support char type record id
+		$recordId 	= $this->input->getCmd('id', 0);
+		//$recordId 	= $this->input->getInt('id', 0);
+		
+		//throw new Exception('stop here');
+
+		$tableid= $this->input->getInt('tableid',0);
 		// Setup redirect info.
 
 		$append = '';
 
 		if ($refid)
-                {
-			$append .= '&ref='.(string)$ref.'&refid='.(int)$refid;
+		{
+			$append .= '&ref='.(string)$ref.'&refid='.$refid;
 		}
 		elseif ($ref)
 		{
@@ -157,6 +205,11 @@ class CustomtablesControllerRecords extends JControllerForm
 		}
 
 		$append .= '&tableid=' . $tableid;
+		
+		//This is to overwrite Joomla current record ID state value. Joomla converts ID to integer, but we want to support both int and cmd (A-Za-z0-9_-)
+		$values = (array) $this->app->getUserState('com_customtables.edit.records.id');
+		$values[] = $recordId;
+		$this->app->setUserState('com_customtables.edit.records.id', $values);
 
 		return $append;
 	}
@@ -173,8 +226,6 @@ class CustomtablesControllerRecords extends JControllerForm
 	public function cancel($key = null)
 	{
 		// get the referal details
-		//$this->ref 		= $this->input->get('ref', 0, 'word');
-		//$this->refid 	= $this->input->get('refid', 0, 'int');
 		$tableid 	= $this->input->get('tableid', 0, 'int');
 
 		$cancel = parent::cancel($key);
@@ -182,7 +233,8 @@ class CustomtablesControllerRecords extends JControllerForm
 		// Redirect to the items screen.
 		$this->setRedirect(
 			JRoute::_(
-				'index.php?option=' . $this->option . '&view=listofrecords&layout=edit&tableid='.(int)$tableid, false
+				'index.php?option=' . $this->option . '&view=listofrecords&tableid='.(int)$tableid, false
+				//'index.php?option=' . $this->option . '&view=listofrecords&layout=edit&tableid='.(int)$tableid, false
 			)
 		);
 
@@ -216,7 +268,7 @@ class CustomtablesControllerRecords extends JControllerForm
 			}
 		}
 		
-		$recordid 	= $this->input->get('id', 0, 'int');
+		$recordid 	= $this->input->getCmd('id', 0);
 		
 		//Get Edit model
 		$paramsArray=$this->getRecordParams($tableid,$tablename,$recordid);
@@ -244,12 +296,12 @@ class CustomtablesControllerRecords extends JControllerForm
 		if($this->task=='apply')
 		{
 			JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORD_SAVED'),'success');
-			$redirect.='&view=records&layout=edit&id='.(int)$recordid.'&tableid='.(int)$tableid;
+			$redirect.='&view=records&layout=edit&id='.$recordid.'&tableid='.(int)$tableid;
 		}
 		elseif($this->task=='save2copy')
 		{
 			JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_COPIED'),'success');
-			$redirect.='&view=records&task=records.edit&tableid='.(int)$tableid.'&id='.(int)$editModel->id;
+			$redirect.='&view=records&task=records.edit&tableid='.(int)$tableid.'&id='.$editModel->id;
 		}
 		elseif($this->task=='save2new')
 		{

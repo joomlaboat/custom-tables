@@ -29,13 +29,13 @@ class ESMultiSelector
 			return "";
 
 		$result.='<ul>';
-		$IDs=array();
+		$list_ids=array();
 
 		$count=count($rows);
 		foreach($rows as $row)
 		{
 
-			$IDs[]=$row->id;
+			$list_ids[]=$row->id;
 
 			$temp_Ids="";
 			$count_child=0;
@@ -93,10 +93,7 @@ class ESMultiSelector
 
 		}
 		$result.='</ul>';
-
-		$ItemList='"'.implode('","',$IDs).'"';
-
-
+		$ItemList='"'.implode('","',$list_ids).'"';
 		return $result;
 	}
 

@@ -269,7 +269,7 @@ class Inputbox
 								
 								if($format=="yesno")
 								{
-									$id=$this->prefix.$this->esfield['fieldname'];
+									$element_id=$this->prefix.$this->esfield['fieldname'];
 									if($this->ct->Env->version < 4)
 									{
 									
@@ -279,8 +279,8 @@ class Inputbox
 										
 								
 										$result.='<div style="position: absolute;visibility:hidden !important; display:none !important;"><input type="radio" '
-										.'id="'.$id.'0" '
-										.'name="'.$id.'" '
+										.'id="'.$element_id.'0" '
+										.'name="'.$element_id.'" '
 										.'value="1" '
 										.'data-label="'.$this->esfield['fieldtitle'.$this->ct->Languages->Postfix].'" '
 										.'data-valuerule="'.str_replace('"','&quot;',$this->esfield['valuerule']).'" '
@@ -288,11 +288,11 @@ class Inputbox
 										.$this->attributes.' '
 										.((int)$value==1 ? ' checked="checked" ' : '')
 										.' ></div>'
-										.'<label class="btn'.((int)$value==1 ? ' active btn-success' : '').'" for="'.$id.'0" id="'.$id.'0_label" >'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YES').'</label>';
+										.'<label class="btn'.((int)$value==1 ? ' active btn-success' : '').'" for="'.$element_id.'0" id="'.$element_id.'0_label" >'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YES').'</label>';
 										
 										$result.='<div style="position: absolute;visibility:hidden !important; display:none !important;"><input type="radio" '
-										.'id="'.$id.'1" '
-										.'name="'.$id.'" '
+										.'id="'.$element_id.'1" '
+										.'name="'.$element_id.'" '
 										.$this->attributes.' '
 										.'value="0" '
 										.'data-label="'.$this->esfield['fieldtitle'.$this->ct->Languages->Postfix].'" '
@@ -300,7 +300,7 @@ class Inputbox
 										.'data-valuerulecaption="'.str_replace('"','&quot;',$this->esfield['valuerulecaption']).'" '
 										.((int)$value==0 ? ' checked="checked" ' : '')
 										.' ></div>'
-										.'<label class="btn'.((int)$value==0 ? ' active btn-danger' : '').'" for="'.$id.'1" id="'.$id.'1_label">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NO').'</label>';
+										.'<label class="btn'.((int)$value==0 ? ' active btn-danger' : '').'" for="'.$element_id.'1" id="'.$element_id.'1_label">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NO').'</label>';
 										 
 										$result.='</fieldset>';
 									
@@ -308,10 +308,10 @@ class Inputbox
 									else
 									{
 										$result.='<div class="switcher">
-					<input type="radio" id="'.$id.'0" name="'.$id.'" value="0" class="active " '.((int)$value==0 ? ' checked="checked" ' : '').' >
-					<label for="'.$id.'0">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NO').'</label>
-					<input type="radio" id="'.$id.'1" name="'.$id.'" value="1" '.((int)$value==1 ? ' checked="checked" ' : '').' >
-					<label for="'.$id.'1">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YES').'</label>
+					<input type="radio" id="'.$element_id.'0" name="'.$element_id.'" value="0" class="active " '.((int)$value==0 ? ' checked="checked" ' : '').' >
+					<label for="'.$element_id.'0">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NO').'</label>
+					<input type="radio" id="'.$element_id.'1" name="'.$element_id.'" value="1" '.((int)$value==1 ? ' checked="checked" ' : '').' >
+					<label for="'.$element_id.'1">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YES').'</label>
 					<span class="toggle-outside"><span class="toggle-inside"></span></span>
 	</div>';
 									}
@@ -346,13 +346,13 @@ class Inputbox
 									}
 									else
 									{
-										$id=$this->prefix.$this->esfield['fieldname'];
+										$element_id=$this->prefix.$this->esfield['fieldname'];
 										
 										$result.='<div class="switcher">
-					<input type="radio" id="'.$id.'0" name="'.$id.'" value="0" class="active " '.((int)$value==0 ? ' checked="checked" ' : '').' >
-					<label for="'.$id.'0">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NO').'</label>
-					<input type="radio" id="'.$id.'1" name="'.$id.'" value="1" '.((int)$value==1 ? ' checked="checked" ' : '').' >
-					<label for="'.$id.'1">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YES').'</label>
+					<input type="radio" id="'.$element_id.'0" name="'.$element_id.'" value="0" class="active " '.((int)$value==0 ? ' checked="checked" ' : '').' >
+					<label for="'.$element_id.'0">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NO').'</label>
+					<input type="radio" id="'.$element_id.'1" name="'.$element_id.'" value="1" '.((int)$value==1 ? ' checked="checked" ' : '').' >
+					<label for="'.$element_id.'1">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YES').'</label>
 					<span class="toggle-outside"><span class="toggle-inside"></span></span>
 	</div>';
 									}
@@ -736,7 +736,7 @@ class Inputbox
 									.'data-label="'.$this->place_holder.'" '
 									.'data-valuerule="'.str_replace('"','&quot;',$this->esfield['valuerule']).'" '
 									.'data-valuerulecaption="'.str_replace('"','&quot;',$this->esfield['valuerulecaption']); // closing quote is not needed because 
-									//public static function calendar($value, $name, $id, $format = '%Y-%m-%d', $attribs = array())  will add it.
+									//public static function calendar($value, $name, $element_id, $format = '%Y-%m-%d', $attribs = array())  will add it.
 									
 								$attributes_['required']=($this->esfield['isrequired'] ? 'required' : ''); //not working, don't know why.
 

@@ -9,12 +9,12 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-class FindSimilarImage {
-    
-    static public function find($uploadedfile,$identity,$realtablename,$realfieldname,$ImageFolder,$additional_filter='')
+class FindSimilarImage
+{
+    static public function find($uploadedfile,$level_identity,$realtablename,$realfieldname,$ImageFolder,$additional_filter='')
     {
-        if($identity<0)
-            $identity=0;
+        if($level_identity<0)
+            $level_identity=0;
 	
     	$ci=new compareImages;
 		
@@ -27,20 +27,20 @@ class FindSimilarImage {
 
         foreach($photorows as $photorow)
         {
-    	    $id=$photorow->photoid;
+    	    $photoid=$photorow->photoid;
 
-            if($id!=0)
+            if($photoid!=0)
             {
                 //foreach($ext_list as $ext)
                 //{
-                    $image_file=$ImageFolder.DIRECTORY_SEPARATOR.'_esthumb_'.$id.'.jpg';///.$ext;
+                    $image_file=$ImageFolder.DIRECTORY_SEPARATOR.'_esthumb_'.$photoid.'.jpg';///.$ext;
                     if($image_file!=$uploadedfile)
                     {
                         if(file_exists($image_file))
                         {
                             $index=$ci->compare($uploadedfile,$image_file);
-                            if($index<=$identity)
-                                return $id;
+                            if($index<=$level_identity)
+                                return $photoid;
                         }
                     }
                 //}//for each

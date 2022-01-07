@@ -263,24 +263,22 @@ class tagProcessor_General
 
 			if(isset($opts[1]))
             {
-				$id_value=$opts[1];
+				$userid_value=$opts[1];
 
-                tagProcessor_Value::processValues($ct,$row,$id_value,'[]');
-                tagProcessor_Item::process($ct,$row,$id_value,'');
-                tagProcessor_General::process($ct,$id_value,$row);
-                tagProcessor_Page::process($ct,$id_value);
-                $id=(int)$id_value;
+                tagProcessor_Value::processValues($ct,$row,$userid_value,'[]');
+                tagProcessor_Item::process($ct,$row,$userid_value,'');
+                tagProcessor_General::process($ct,$userid_value,$row);
+                tagProcessor_Page::process($ct,$userid_value);
+                $userid=(int)$userid_value;
             }
 			else
             {
-
-                $id=(int)$user->get('id');
+                $userid=(int)$user->get('id');
             }
 
-			if($id!=0)
+			if($userid!=0)
 			{
-
-				$user_row = (object)CTUser::GetUserRow($id);
+				$user_row = (object)CTUser::GetUserRow($userid);
 
 				switch($opts[0])
 				{
@@ -297,7 +295,7 @@ class tagProcessor_General
 						break;
 
 					case 'id':
-						$vlu=$id;
+						$vlu=$userid;
 						break;
 
 					case 'lastvisitDate':
@@ -319,11 +317,10 @@ class tagProcessor_General
 
                     case 'usergroupsid':
 						$vlu=implode(',',array_keys($user->groups));
-
 						break;
 
                     case 'usergroups':
-						$vlu=CTUser::GetUserGroups($id);
+						$vlu=CTUser::GetUserGroups($userid);
 						break;
 
 					default:

@@ -27,11 +27,11 @@ class CustomTablesModelListEdit extends JModel
 		$this->setId((int)$array[0]);
     }
 
-	function setId($id)
+	function setId($tree_id)
 	{
 		// Set id and wipe data
 
-		$this->_id	= $id;
+		$this->_id	= $tree_id;
 		$this->_data	= null;
 	}
 
@@ -56,13 +56,13 @@ class CustomTablesModelListEdit extends JModel
 		$fieldname='imagefile';
 		$value=0;
 		$imagemethods=new CustomTablesImageMethods;
-		$id=JFactory::getApplication()->input->get('id',0,'INT');
+		$tree_id=JFactory::getApplication()->input->get('id',0,'INT');
 		$imagefolder=JPATH_SITE.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'esoptimages';
 		
 		$imageparams='';
 		
 		
-		if($id==0)
+		if($tree_id==0)
 			$file = $jinput->input->getVar($fieldname, '', 'files', 'array');
 
 			$filename=$file['name'];
@@ -79,7 +79,7 @@ class CustomTablesModelListEdit extends JModel
 		else
 		{
 			
-			$ExistingImage=Tree::isRecordExist($id,'id', 'image', '#__customtables_options');
+			$ExistingImage=Tree::isRecordExist($tree_id,'id', 'image', '#__customtables_options');
 			$file = $jinput->getVar($fieldname, '', 'files', 'array');
 			
 			$filename=$file['name'];
@@ -131,15 +131,15 @@ class CustomTablesModelListEdit extends JModel
 		{
 			return false;
 		}
-		$id=$row->id;
+		$tree_id=$row->id;
 		//set FamilyTree
 		$row = $this->getTable();
 		// Make sure the  record is valid
-		$row->load( $id );
+		$row->load( $tree_id );
 	
 		// Store
-		$row->familytree='-'.Tree::getFamilyTree($id,0).'-';
-		$familytreestr=Tree::getFamilyTreeString($id,0);
+		$row->familytree='-'.Tree::getFamilyTree($tree_id,0).'-';
+		$familytreestr=Tree::getFamilyTreeString($tree_id,0);
 		if($familytreestr!='')
 			$row->familytreestr=','.$familytreestr.'.'.$row->optionname.'.';
 		else

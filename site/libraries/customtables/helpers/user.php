@@ -190,16 +190,16 @@ class CTUser
     {
 		$db = Factory::getDBO();
 		
-		$query = 'UPDATE '.$realtablename.' SET '.$useridfieldname.'='.$existing_user_id.' WHERE '.$realidfieldname.'='.$listing_id.' LIMIT 1';
+		$query = 'UPDATE '.$realtablename.' SET '.$useridfieldname.'='.$existing_user_id.' WHERE '.$realidfieldname.'='.$db->quote($listing_id).' LIMIT 1';
 		$db->setQuery( $query );
 		$db->execute();
     }
 	
-	static public function UpdateUserLink($realtablename,$fieldusreidname,$userid,$id)
+	static public function UpdateUserLink($realtablename,$fieldusreidname,$userid,$listing_id)
 	{
 		$db = Factory::getDBO();
 
-		$query = 'UPDATE '.$realtablename.' SET '.$fieldusreidname.'='.$userid.' WHERE id='.$id;
+		$query = 'UPDATE '.$realtablename.' SET '.$fieldusreidname.'='.$userid.' WHERE '.$realidfieldname.'='.$db->quote($listing_id);
 
 		$db->setQuery( $query );
 		$db->execute();
@@ -276,12 +276,12 @@ class CTUser
 		$db->setQuery( $query );
 
 		$rows = $db->loadObjectList();
-		$ids=array();
+		$usergroup_ids=array();
 		foreach($rows as $row)
 		{
-			$ids[]=$row->id;
+			$usergroup_ids[]=$row->id;
 		}
-		return $ids;
+		return $usergroup_ids;
 	}
 
 	static public function CreateUserAccount($fullname,$username,$password,$email,$group_names,&$msg)

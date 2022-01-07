@@ -129,9 +129,9 @@ function importCSVdata($filename,$ct_tableid)
 			
 			$sets=prepareSQLQuery($fieldList,$fields,$str);
 
-			$id=findRecord($tablerow->realtablename,$tablerow->realidfieldname,$tablerow->published_field_found,$sets);
+			$listing_id=findRecord($tablerow->realtablename,$tablerow->realidfieldname,$tablerow->published_field_found,$sets);
 
-			if($id==false)
+			if($listing_id==false)
 			{
 				$query='INSERT '.$tablerow->realtablename.' SET '.implode(', ',$sets);
 				$db->setQuery( $query );
@@ -182,11 +182,11 @@ function findSQLRecordJoin($realtablename,$join_realfieldname,$realidfieldname,b
 	if(count($records)==0)
 		return false;
     
-	$ids=array();
+	$listing_ids=array();
 	foreach($records as $record)
-		$ids[]=$record['listing_id'];
+		$listing_ids[]=$record['listing_id'];
 	
-	return $ids;
+	return $listing_ids;
 }
 
 function findSQLJoin($realtablename,$join_realfieldname,$realidfieldname,bool $published_field_found,$vlu)

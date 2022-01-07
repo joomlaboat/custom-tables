@@ -45,67 +45,67 @@ class Twig_Field_Tags
 
 class Twig_User_Tags
 {
-	var $id;
+	var $user_id;
 
 	function __construct()
 	{
 		$user = Factory::getUser();
-		$this->id=(int)$user->get('id');
+		$this->user_id = (int)$user->get('id');
 	}
 	
-	function name($id = 0)
+	function name($user_id = 0)
 	{
-		if($id == 0)
-			$id = $this->id;
+		if($user_id == 0)
+			$user_id = $this->user_id;
 		
-		if($id == 0)
+		if($user_id == 0)
 			return '';
 		
-		$user_row = (object)CTUser::GetUserRow($id);
+		$user_row = (object)CTUser::GetUserRow($user_id);
 		return $user_row->name;
 	}
 	
-	function username($id = 0)
+	function username($user_id = 0)
 	{
-		if($id == 0)
-			$id = $this->id;
+		if($user_id == 0)
+			$user_id = $this->id;
 		
-		if($id == 0)
+		if($user_id == 0)
 			return '';
 		
-		$user_row = (object)CTUser::GetUserRow($id);
+		$user_row = (object)CTUser::GetUserRow($user_id);
 		return $user_row->username;
 	}
 	
-	function email($id = 0)
+	function email($user_id = 0)
 	{
-		if($id == 0)
-			$id = $this->id;
+		if($user_id == 0)
+			$user_id = $this->user_id;
 		
-		if($id == 0)
+		if($user_id == 0)
 			return '';
 		
-		$user_row = (object)CTUser::GetUserRow($id);
+		$user_row = (object)CTUser::GetUserRow($user_id);
 		return $user_row->email;
 	}
 	
 	function id()
 	{
-		if($this->id == 0)
+		if($this->user_id == 0)
 			return 0;
 		
-		return $this->id;
+		return $this->user_id;
 	}
 	
-	function lastvisitDate($id = 0)
+	function lastvisitDate($user_id = 0)
 	{
-		if($id == 0)
-			$id = $this->id;
+		if($user_id == 0)
+			$user_id = $this->user_id;
 		
-		if($id == 0)
+		if($user_id == 0)
 			return '';
 		
-		$user_row = (object)CTUser::GetUserRow($id);
+		$user_row = (object)CTUser::GetUserRow($user_id);
 		
 		if($user_row->lastvisitDate == '0000-00-00 00:00:00')
 			return 'Never';
@@ -113,15 +113,15 @@ class Twig_User_Tags
 			return $user_row->lastvisitDate;
 	}
 	
-	function registerDate($id = 0)
+	function registerDate($user_id = 0)
 	{
-		if($id == 0)
-			$id = $this->id;
+		if($user_id == 0)
+			$user_id = $this->user_id;
 		
-		if($id == 0)
+		if($user_id == 0)
 			return '';
 		
-		$user_row = (object)CTUser::GetUserRow($id);
+		$user_row = (object)CTUser::GetUserRow($user_id);
 		
 		if($user_row->registerDate == '0000-00-00 00:00:00')
 			return 'Never';
@@ -129,15 +129,15 @@ class Twig_User_Tags
 			return $user_row->registerDate;
 	}
 	
-	function usergroups($id = 0)
+	function usergroups($user_id = 0)
 	{
-		if($id == 0)
-			$id = $this->id;
+		if($user_id == 0)
+			$user_id = $this->user_id;
 		
-		if($id == 0)
+		if($user_id == 0)
 			return '';
 		
-		return CTUser::GetUserGroups($id);
+		return CTUser::GetUserGroups($user_id);
 	}
 	
 }

@@ -19,7 +19,7 @@ $edit = "index.php?option=com_customtables&view=listofrecords&task=records.edit"
 	
 		<td class="nowrap center">
 		<?php if ($this->canEdit): ?>
-			<?php echo JHtml::_('grid.id', $i, $item->id); ?>
+			<?php echo JHtml::_('grid.id', $i, $item->listing_id); ?>
 		<?php endif; ?>
 		</td>
 		
@@ -27,7 +27,7 @@ $edit = "index.php?option=com_customtables&view=listofrecords&task=records.edit"
 			$item_array =  (array) $item;
 			$result='';
 			
-			$link=JURI::root(false).'administrator/index.php?option=com_customtables&view=records&task=records.edit&tableid='.$this->ct->Table->tableid.'&id='.$item->id;
+			$link=JURI::root(false).'administrator/index.php?option=com_customtables&view=records&task=records.edit&tableid='.$this->ct->Table->tableid.'&id='.$item->listing_id;
 			
 			foreach($this->tablefields as $field)
 			{
@@ -54,12 +54,9 @@ $edit = "index.php?option=com_customtables&view=listofrecords&task=records.edit"
 			<?php endif; ?>
 		</td>
 		<?php endif; ?>
-		
-		
-		<td class="nowrap center hidden-phone">
-			<?php echo $item->id; ?>
-		</td>
 
-		
+		<td class="nowrap center hidden-phone">
+			<?php echo $item->listing_id; ?>s
+		</td>
 	</tr>
 <?php endforeach; ?>

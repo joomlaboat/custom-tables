@@ -11,7 +11,7 @@ defined('_JEXEC') or die('Restricted access');
 
 class CT_FieldTypeTag_filebox
 {
-	public static function process(&$tableid,$FileBoxRows, $id,$FieldName,$TypeParams,$option_list,$fieldid = 0)
+	public static function process(&$tableid,$FileBoxRows, $object_id,$FieldName,$TypeParams,$option_list,$fieldid = 0)
     {
 		$filesrclistarray=array();
 
@@ -19,7 +19,7 @@ class CT_FieldTypeTag_filebox
 		{
 			$shortname=$tableid.'_'.$FieldName.'_'.$filerow->fileid.'.'.$filerow->file_ext;
 			
-			$filesrclistarray[]=CT_FieldTypeTag_file::process($shortname,$TypeParams,$option_list,$id,$fieldid,$tableid);
+			$filesrclistarray[]=CT_FieldTypeTag_file::process($shortname,$TypeParams,$option_list,$object_id,$fieldid,$tableid);
 		}
 		
 		$listformat = '';

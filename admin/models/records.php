@@ -84,7 +84,7 @@ class CustomtablesModelRecords extends JModelAdmin
 
 			$user = JFactory::getUser();
 			// The record has been set. Check the record permissions.
-			return $user->authorise('core.delete', 'com_customtables.records.' . (int) $record->id);
+			return $user->authorise('core.delete', 'com_customtables.records.' . $record->id);
 		}
 		return false;
 	}
@@ -106,7 +106,7 @@ class CustomtablesModelRecords extends JModelAdmin
 		if ($recordId)
 		{
 			// The record has been set. Check the record permissions.
-			$permission = $user->authorise('core.edit.state', 'com_customtables.records.' . (int) $recordId);
+			$permission = $user->authorise('core.edit.state', 'com_customtables.records.' . $recordId);
 			if (!$permission && !is_null($permission))
 			{
 				return false;
@@ -129,7 +129,7 @@ class CustomtablesModelRecords extends JModelAdmin
 	{
 		// Check specific edit permission then general edit permission.
 
-		return JFactory::getUser()->authorise('core.edit', 'com_customtables.records.'. ((int) isset($data[$key]) ? $data[$key] : 0)) or parent::allowEdit($data, $key);
+		return JFactory::getUser()->authorise('core.edit', 'com_customtables.records.'. (isset($data[$key]) ? $data[$key] : 0)) or parent::allowEdit($data, $key);
 	}
 
 	/**

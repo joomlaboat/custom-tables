@@ -108,7 +108,7 @@ class Layouts
 		}
     }
 
-	protected function getLayoutFileContent(int $id, $db_layout_ts,$layoutname)
+	protected function getLayoutFileContent(int $layout_id, $db_layout_ts,$layoutname)
 	{
 		$path=JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'layouts';
 		$filename=$layoutname.'.html';
@@ -120,7 +120,7 @@ class Layouts
 			if($db_layout_ts==0)
 			{
 				$db = Factory::getDBO();
-				$query = 'SELECT UNIX_TIMESTAMP(modified) AS ts FROM #__customtables_layouts WHERE id='.$id.' LIMIT 1';
+				$query = 'SELECT UNIX_TIMESTAMP(modified) AS ts FROM #__customtables_layouts WHERE id='.$layout_id.' LIMIT 1';
 				$db->setQuery( $query );
 
 				$recs = $db->loadAssocList( );
@@ -141,7 +141,7 @@ class Layouts
 
 				$db = Factory::getDBO();
 
-				$query = 'UPDATE #__customtables_layouts SET layoutcode="'.addslashes($content).'",modified=FROM_UNIXTIME('.$file_ts.') WHERE id='.$id;
+				$query = 'UPDATE #__customtables_layouts SET layoutcode="'.addslashes($content).'",modified=FROM_UNIXTIME('.$file_ts.') WHERE id='.$layout_id;
 
 				$db->setQuery( $query );
 				$db->execute();
@@ -230,12 +230,12 @@ class Layouts
 		{
 			$db = Factory::getDBO();
 			
-			$id=(int)$data['id'];
+			$layout_id=(int)$data['id'];
 			
-			if($id==0)
+			if($layout_id==0)
 				$query = 'UPDATE #__customtables_layouts SET modified=FROM_UNIXTIME('.$file_ts.') WHERE layoutname='.$db->quote($data['layoutname']);
 			else
-				$query = 'UPDATE #__customtables_layouts SET modified=FROM_UNIXTIME('.$file_ts.') WHERE id='.$id;
+				$query = 'UPDATE #__customtables_layouts SET modified=FROM_UNIXTIME('.$file_ts.') WHERE id='.$layout_id;
 			
 			$db->setQuery( $query );
 			$db->execute();

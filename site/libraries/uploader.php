@@ -285,10 +285,9 @@ class ESFileUploader
 
 	public static function get_mime_type($filename)
 	{
-    $idx = explode( '.', $filename );
-    $count_explode = count($idx);
-    $idx = strtolower($idx[$count_explode-1]);
-
+		$filename_parts = explode( '.', $filename );
+		$filename_extension = strtolower(end($filename_parts));
+    
     $mimet = array(
         'txt' => 'text/plain',
         'htm' => 'text/html',
@@ -366,12 +365,12 @@ class ESFileUploader
         'ods' => 'application/vnd.oasis.opendocument.spreadsheet',
     );
 
-    if (isset( $mimet[$idx] )) {
-     return $mimet[$idx];
-    } else {
-     return 'application/octet-stream';
-    }
- }
+		if (isset( $mimet[$filename_extension] )) {
+			return $mimet[$filename_extension];
+		} else {
+			return 'application/octet-stream';
+		}
+	}
 
 	protected static function getTableRawByItemid()
 	{

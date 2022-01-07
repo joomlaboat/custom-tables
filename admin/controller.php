@@ -5,7 +5,7 @@
  * @subpackage administrator/components/com_customtables/controller
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @copyright Copyright (C) 2018-2020. All Rights Reserved
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
@@ -40,7 +40,7 @@ class CustomtablesController extends JControllerLegacy
 		$view   = $this->input->getCmd('view', 'customtables');
 		$data	= $this->getViewRelation($view);
 		$layout	= $this->input->get('layout', null, 'WORD');
-		$id    	= $this->input->getInt('id');
+		$id    	= $this->input->getCmd('id');
 
 		// Check for edit form.
 		if(CustomtablesHelper::checkArray($data))
@@ -58,7 +58,13 @@ class CustomtablesController extends JControllerLegacy
 				if ($refid > 0 && CustomtablesHelper::checkString($ref))
 				{
 					// redirect to item of ref
-					$this->setRedirect(JRoute::_('index.php?option=com_customtables&view='.(string)$ref.'&layout=edit&id='.(int)$refid, false));
+					if($ref == 'records')
+					{
+						$refid 	= $this->input->getCmd('refid', 0);
+						$this->setRedirect(JRoute::_('index.php?option=com_customtables&view='.(string)$ref.'&layout=edit&id='.$refid, false));
+					}
+					else
+						$this->setRedirect(JRoute::_('index.php?option=com_customtables&view='.(string)$ref.'&layout=edit&id='.(int)$refid, false));
 				}
 				elseif (CustomtablesHelper::checkString($ref))
 				{
@@ -78,6 +84,35 @@ class CustomtablesController extends JControllerLegacy
 		
 
 		return parent::display($cachable, $urlparams);
+	}
+	
+	protected function checkEditId($context, $id)
+	{
+		if ($id)
+		{
+			$values = (array) $this->app->getUserState($context . '.id');
+
+			$result = \in_array($id, $values); //To support both int and cmd IDs
+
+			if (\defined('JDEBUG') && JDEBUG)
+			{
+				$this->app->getLogger()->info(
+					sprintf(
+						'Checking edit ID %s.%s: %d %s',
+						$context,
+						$id,
+						(int) $result,
+						str_replace("\n", ' ', print_r($values, 1))
+					),
+					array('category' => 'controller')
+				);
+			}
+
+			return $result;
+		}
+
+		// No id for a new item.
+		return true;
 	}
 
 	protected function getViewRelation($view)

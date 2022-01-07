@@ -37,7 +37,7 @@ class CustomTablesModelFiles extends JModelLegacy
 		$this->params=$app->getParams();
 
 		$jinput=JFactory::getApplication()->input;
-		$id= $jinput->getInt('listing_id', 0);
+		$listing_id = $jinput->getInt('listing_id', 0);
 
 		$this->tableid = $jinput->getInt('tableid',0);
 		$this->fieldid = $jinput->getInt('fieldid',0);
@@ -46,7 +46,7 @@ class CustomTablesModelFiles extends JModelLegacy
 		$this->security = $jinput->getCmd('security', 'd');
 		$this->key = $jinput->getCmd('key','');
 
-		if($id==0 or $this->fieldid==0)
+		if($listing_id==0 or $listing_id=='' or $this->fieldid==0)
 		{
 			JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
 
@@ -54,13 +54,13 @@ class CustomTablesModelFiles extends JModelLegacy
 			return false;
 		}
 
-		$this->load($id);
+		$this->load($listing_id);
 
 	}
 
-	function load($id)
+	function load($listing_id)
 	{
-		if($id==0)
+		if($listing_id==0)
 			return false;
 
 		$jinput=JFactory::getApplication()->input;
@@ -74,7 +74,7 @@ class CustomTablesModelFiles extends JModelLegacy
 			return;
 		}
 
-		$this->setId($id);
+		$this->setId($listing_id);
 
 		foreach($this->ct->Table->fields as $f)
 		{
@@ -86,13 +86,11 @@ class CustomTablesModelFiles extends JModelLegacy
 		}
 	}
 
-	function setId($id)
+	function setId($listing_id)
 	{
-		$this->_id	= $id;
+		$this->_id	= $listing_id;
 		$this->_data	= null;
 	}
-
-
 
 	function & getData()
 	{
@@ -101,24 +99,8 @@ class CustomTablesModelFiles extends JModelLegacy
 			$row=array();
 			return $row;
 		}
-
-		$db = JFactory::getDBO();
-
-		$query = 'SELECT *, id AS listing_id ';
-		$query.=' FROM '.$this->ct->Table->realtablename.' WHERE id='.(int)$this->_id.' LIMIT 1';
-
-		$db->setQuery($query);
-
-		$rows=$db->loadAssocList();
-
-		if(count($rows)<1)
-		{
-			$a=array();
-			return $a;
-		}
-
-		$row=$rows[0];
-		return $row;
+		
+		return $this->ct->Table->loadRecord($this->_id);
 	}
 
 

@@ -54,12 +54,10 @@ class ImportExportUserGroups
             if(is_array($old) and count($old)>0)
                 ImportTables::updateRecords('#__usergroups',$usergroup,$old,false,array(),true);
             else
-                $id=ImportTables::insertRecords('#__usergroups',$usergroup,false,array(),true);
+                $usergroupid=ImportTables::insertRecords('#__usergroups',$usergroup,false,array(),true);
         }
         
-        
         $viewlevels=$jsondata['viewlevels'];
-        
         
         foreach($viewlevels as $viewlevel)
         {
@@ -67,7 +65,7 @@ class ImportExportUserGroups
             if(is_array($old) and count($old)>0)
                 ImportTables::updateRecords('#__viewlevels',$viewlevel,$old,false,array(),true);
             else
-                $id=ImportTables::insertRecords('#__viewlevels',$viewlevel,false,array(),true);
+                $usergroupidid=ImportTables::insertRecords('#__viewlevels',$viewlevel,false,array(),true);
         }
         
         return true;

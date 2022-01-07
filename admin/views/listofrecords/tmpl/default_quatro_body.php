@@ -18,7 +18,7 @@ defined('_JEXEC') or die('Restricted access');
 	
 		<?php if ($this->canState or $this->canDelete): ?>	
 		<td scope="row" class="text-center">
-			<?php echo JHtml::_('grid.id', $i, $item->id); ?>
+			<?php echo JHtml::_('grid.id', $i, $item->listing_id); ?>
 		</td>
 		<?php endif; ?>
 		
@@ -26,7 +26,7 @@ defined('_JEXEC') or die('Restricted access');
 			$item_array =  (array) $item;
 			$result='';
 			
-			$link=JURI::root(false).'administrator/index.php?option=com_customtables&view=records&task=records.edit&tableid='.$this->ct->Table->tableid.'&id='.$item->id;
+			$link=JURI::root(false).'administrator/index.php?option=com_customtables&view=records&task=records.edit&tableid='.$this->ct->Table->tableid.'&id='.$item->listing_id;
 			
 			foreach($this->tablefields as $field)
 			{
@@ -52,9 +52,8 @@ defined('_JEXEC') or die('Restricted access');
 		</td>
 		<?php endif; ?>
 		
-		
 		<td class="d-none d-md-table-cell">
-			<?php echo $item->id; ?>
+			<?php echo $item->listing_id; ?>
 		</td>
 	</tr>
 <?php endforeach; ?>

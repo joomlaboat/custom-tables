@@ -48,11 +48,11 @@ class CustomTablesModelDetails extends JModelLegacy
 				$this->ct->Env->clean=1;
 
 			if($this->ct->Env->jinput->getInt('listing_id',0) and $jinput->getInt('listing_id',0)!=0)
-				$id= $this->ct->Env->jinput->getInt('listing_id', 0);
+				$listing_id= $this->ct->Env->jinput->getInt('listing_id', 0);
 			else
-				$id=(int)$params->get( 'listingid' );
+				$listing_id=(int)$params->get( 'listingid' );
 
-			$this->load($params,$id);
+			$this->load($params,$listing_id);
 		}
 	}
 	
@@ -61,7 +61,7 @@ class CustomTablesModelDetails extends JModelLegacy
 		$this->ct->Env->frmt=$frmt;
 	}
 
-	function load($params,$id,$params_only=false,$custom_where='')
+	function load($params,$listing_id,$params_only=false,$custom_where='')
 	{
 		$this->params=$params;
 		$this->ct->Env->menu_params = $this->params;
@@ -74,7 +74,7 @@ class CustomTablesModelDetails extends JModelLegacy
 
 
 		//optional filter
-		if($custom_where!='' and $id==0)
+		if($custom_where!='' and $listing_id==0)
 		{
 			$this->alias='';
 			$this->filter=$custom_where;
@@ -101,7 +101,7 @@ class CustomTablesModelDetails extends JModelLegacy
 
 		if($this->params->get( 'recordstable' )!='' and $this->params->get( 'recordsuseridfield' )!='' and $this->params->get( 'recordsfield' )!='')
 		{
-			if(!$this->checkRecordUserJoin($this->params->get( 'recordstable' ),$this->params->get( 'recordsuseridfield' ),$this->params->get( 'recordsfield' ),$id))
+			if(!$this->checkRecordUserJoin($this->params->get( 'recordstable' ),$this->params->get( 'recordsuseridfield' ),$this->params->get( 'recordsfield' ),$listing_id))
 			{
 				//YOU ARE NOT AUTHORIZED TO ACCESS THIS SOURCE';
 				JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
@@ -109,7 +109,7 @@ class CustomTablesModelDetails extends JModelLegacy
 			}
 		}
 
-		$this->setId($id);
+		$this->setId($listing_id);
 		
 		$this->ct->getTable($this->params->get( 'establename' ), $this->params->get('useridfield'));
 		
@@ -135,14 +135,15 @@ class CustomTablesModelDetails extends JModelLegacy
 		$this->ct->LayoutProc->layout='';
 	}
 
-	function checkRecordUserJoin($recordstable, $recordsuseridfield, $recordsfield, $id)
+	//TODO avoid es_
+	function checkRecordUserJoin($recordstable, $recordsuseridfield, $recordsfield, $listing_id)
 	{
 		$user = JFactory::getUser();
 		$userid = (int)$user->get('id');
 
 		$db = JFactory::getDBO();
 
-		$query='SELECT id FROM #__customtables_table_'.$recordstable.' WHERE es_'.$recordsuseridfield.'='.$userid.' AND INSTR(es_'.$recordsfield.',",'.$id.',")';
+		$query='SELECT listing_id FROM #__customtables_table_'.$recordstable.' WHERE es_'.$recordsuseridfield.'='.$userid.' AND INSTR(es_'.$recordsfield.',",'.$listing_id.',")';
 		$db->setQuery($query);
 
         $db->execute();
@@ -154,9 +155,9 @@ class CustomTablesModelDetails extends JModelLegacy
 		return true;
 	}
 
-	function setId($id)
+	function setId($listing_id)
 	{
-		$this->_id	= $id;
+		$this->_id	= $listing_id;
 		$this->_data	= null;
 	}
 
@@ -235,10 +236,10 @@ class CustomTablesModelDetails extends JModelLegacy
 	}
 
 
-	function makeEmptyRecord($id,$published)
+	function makeEmptyRecord($listing_id,$published)
 	{
 	    $row=array();
-	    $row['listing_id']=$id;
+	    $row['listing_id']=$listing_id;
 	    $row['listing_published']=$published;
 
 	    foreach($this->ct->Table->fields as $ESField)

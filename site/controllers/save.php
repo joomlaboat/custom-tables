@@ -59,7 +59,7 @@ function CustomTablesDelete($task,&$this_)
 	$edit_model = $this_->getModel('edititem');
 	$menu_params=$app->getParams();
 	$edit_model->params=$menu_params;
-	$edit_model->id = $jinput->getInt('listing_id');
+	$edit_model->listing_id = $jinput->getCmd('listing_id');
 	$edit_model->load($menu_params, false);
 	
 	$PermissionIndex=3;//delete

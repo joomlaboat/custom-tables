@@ -41,7 +41,7 @@ class CustomtablesViewRecords extends JViewLegacy
 		$app = JFactory::getApplication();
 		
 		$this->tableid=$app->input->getint('tableid',0);
-		$this->listing_id=$app->input->getint('id',0);
+		$this->listing_id=$app->input->getCmd('id',0);
 	
 		$paramsArray=$this->getRecordParams();
 

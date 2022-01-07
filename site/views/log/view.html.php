@@ -189,32 +189,9 @@ class CustomTablesViewLog extends JViewLegacy
 			return "Table ".$model->ct->Table->tablename."not found.";
 
 		$model->ct->LayoutProc->layout='['.$FieldName.']';
-
-		$tablename=$model->ct->Table->tablename;
-
-		$row=$this->getRecord($tablename,$listing_id);
+		
+		$row = $model->ct->Table->loadRecord($listing_id);
 
 		return $model->ct->LayoutProc->fillLayout($row);
-	}
-
-	function getRecord($tablename,$id)
-	{
-		if($tablename!='')
-		{
-			$db = JFactory::getDBO();
-			$query='SELECT *, id  as  listing_id, published AS listing_published  FROM #__customtables_table_'.$tablename.' WHERE id='.$id.' LIMIT 1';
-
-			$db->setQuery($query);
-
-			$records=$db->loadAssocList();
-
-			if(count($records)==0)
-				return array();
-
-		return $records[0];
-
-		}
-		else
-			return array();//"table not found;"
 	}
 }

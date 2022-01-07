@@ -30,7 +30,7 @@ class CustomTablesKeywordSearch
 	function getRowsByKeywords($keywords,&$record_count,$limit,$limitstart)
 	{
 		$result_rows=array();
-		$idList=array();
+		$listing_ids=array();
 
 		if(!JFactory::getApplication()->input->getString('esfieldlist',''))
 			return $result_rows;
@@ -175,309 +175,268 @@ class CustomTablesKeywordSearch
 		}
 
 
-		function getRowsByKeywords_Processor($keywords,$mod_fieldlist,$AndOrOr)
+	function getRowsByKeywords_Processor($keywords,$mod_fieldlist,$AndOrOr)
+	{
+		$keyword_arr = explode(' ',$keywords);
+		$count=0;
+
+		$result_rows = array();
+		$listing_ids = array();
+
+		if($AndOrOr=='OR')
+			$AndOrOr_text=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_OR' );
+
+		if($AndOrOr=='AND')
+			$AndOrOr_text=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_AND' );
+
+
+		foreach($mod_fieldlist as $mod_field)
 		{
-				$keyword_arr=explode(' ',$keywords);
+			$where='';
+			$inner='';
+			$f=trim($mod_field);
+			$fieldrow=ESTables::FieldRowByName($f,$this->ct->Table->fields);//2011.6.1
 
-				$count=0;
+			//exact match
+			$fields=array();
+			if(isset($fieldrow['type']) and isset($fieldrow['fieldname']))
+				$where=$this->getRowsByKeywords_ProcessTypes($fieldrow['type'],$fieldrow['fieldname'],$fieldrow['typeparams'],'[[:<:]]'.$keywords.'[[:>:]]',$inner,$this->ct->Languages->Postfix);
 
-				$result_rows=array();
-				$idList=array();
+			if($where!='')
+				$this->getKeywordSearch($inner, $where,$result_rows,$count,$listing_ids);
 
-				if($AndOrOr=='OR')
-						$AndOrOr_text=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_OR' );
+			$this->PathValue[]=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_CONTAINS').' "'.$keywords.'"';
 
-				if($AndOrOr=='AND')
-						$AndOrOr_text=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_AND' );
+			if(count($keyword_arr)>1) //Do not search because there is only one keyword, and it's already checked
+			{
+				$where='';
+				$inner='';
 
+				$where_arr=array();
+				$inner_arr=array();
 
-				foreach($mod_fieldlist as $mod_field)
+				$kw_text_array=array();
+				foreach($keyword_arr as $kw)
 				{
-						$where='';
-						$inner='';
-
-						$f=trim($mod_field);
-
-
-
-						$fieldrow=ESTables::FieldRowByName($f,$this->ct->Table->fields);//2011.6.1
-
-
-						//exact match
-						$fields=array();
-						if(isset($fieldrow['type']) and isset($fieldrow['fieldname']))
-								$where=$this->getRowsByKeywords_ProcessTypes($fieldrow['type'],$fieldrow['fieldname'],$fieldrow['typeparams'],'[[:<:]]'.$keywords.'[[:>:]]',$inner,$this->ct->Languages->Postfix);
-
-						if($where!='')
-								$this->getKeywordSearch($inner, $where,$result_rows,$count,$idList);
-
-						$this->PathValue[]=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_CONTAINS').' "'.$keywords.'"';
-
-						if(count($keyword_arr)>1) //Do not search because there is only one keyword, and it's already checked
+					$inner='';
+					$w=$this->getRowsByKeywords_ProcessTypes($fieldrow['type'],$fieldrow['fieldname'],$fieldrow['typeparams'],'[[:<:]]'.$kw.'[[:>:]]',$inner);
+					if($w!='')
+					{
+						$where_arr[]=$w;
+						if(!in_array($inner,$inner_arr))
 						{
-							$where='';
-							$inner='';
-
-							$where_arr=array();
-							$inner_arr=array();
-
-							$kw_text_array=array();
-							foreach($keyword_arr as $kw)
-							{
-								$inner='';
-								$w=$this->getRowsByKeywords_ProcessTypes($fieldrow['type'],$fieldrow['fieldname'],$fieldrow['typeparams'],'[[:<:]]'.$kw.'[[:>:]]',$inner);
-								if($w!='')
-								{
-									$where_arr[]=$w;
-									if(!in_array($inner,$inner_arr))
-									{
-											$inner_arr[]=$inner;
-
-										$kw_text_array[]=$kw;
-									}
-
-								}//if($w!='')
-							}
-
-							$where=implode(' '.$AndOrOr.' ', $where_arr);
-							$inner=implode(' ', $inner_arr);
-
-							if($where!='')
-								$this->getKeywordSearch($inner, $where,$result_rows,$count,$idList);
-
-
-							$this->PathValue[]=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_CONTAINS').' "'.implode('" '.$AndOrOr_text.' "',$kw_text_array).'"';
+							$inner_arr[]=$inner;
+							$kw_text_array[]=$kw;
 						}
-
-						$where='';
-						$inner='';
-
-						$where_arr=array();
-						$inner_arr=array();
-
-						$kw_text_array=array();
-						foreach($keyword_arr as $kw)
-						{
-								$inner='';
-
-								if(isset($fieldrow['type']) and isset($fieldrow['fieldname']))
-										$w=$this->getRowsByKeywords_ProcessTypes($fieldrow['type'],$fieldrow['fieldname'],$fieldrow['typeparams'],'[[:<:]]'.$kw,$inner);
-								else
-										$w='';
-
-								if($w!='')
-								{
-										$where_arr[]=$w;
-										if(!in_array($inner,$inner_arr))
-										{
-												$inner_arr[]=$inner;
-
-												$kw_text_array[]=$kw;
-										}
-								}
-
-						}
-
-						$where=implode(' '.$AndOrOr.' ', $where_arr);
-						$inner=implode(' ', $inner_arr);
-
-						$where=str_replace('\\','',$where);
-
-						if($where!='')
-								$this->getKeywordSearch($inner, $where,$result_rows,$count,$idList);
-
-						$this->PathValue[]=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_CONTAINS').' "'.implode('" '.$AndOrOr_text.' "',$kw_text_array).'"';
-
-				}
-				// -------------------
-				foreach($mod_fieldlist as $mod_field)
-				{
-						if(isset($fieldrow['fieldtitle'.$this->ct->Languages->Postfix]) )
-								$fields[]=$fieldrow['fieldtitle'.$this->ct->Languages->Postfix];
-
-
-						$where='';
-						$f=trim($mod_field);
-						$fieldrow=ESTables::FieldRowByName($f,$this->ct->Table->fields);//2011.6.1
-
-						//any
-						$keyword_arr=explode(' ',$keywords);
-						$where='';
-						$inner='';
-						$inner_arr=array();
-						$where_arr=array();
-						$fieldtypefound=false;
-
-						$kw_text_array=array();
-
-						foreach($keyword_arr as $kw)
-						{
-								$kw_text_array[]=$kw;
-								$t='';
-								if(isset($fieldrow['type']) )
-										$t=$fieldrow['type'];
-
-								switch($t)
-								{
-
-										case 'email':
-
-												$where_arr[]=' INSTR(es_'.$fieldrow['fieldname'].', "'.$kw.'")';
-												$fieldtypefound=true;
-												break;
-
-										case 'url':
-
-												$where_arr[]=' INSTR(es_'.$fieldrow['fieldname'].', "'.$kw.'")';
-												$fieldtypefound=true;
-												break;
-
-										case 'string':
-
-												$where_arr[]=' INSTR(es_'.$fieldrow['fieldname'].', "'.$kw.'")';
-												$fieldtypefound=true;
-												break;
-
-										case 'phponadd':
-
-												$where_arr[]=' INSTR(es_'.$fieldrow['fieldname'].', "'.$kw.'")';
-												$fieldtypefound=true;
-												break;
-
-										case 'phponchange':
-
-												$where_arr[]=' INSTR(es_'.$fieldrow['fieldname'].', "'.$kw.'")';
-												$fieldtypefound=true;
-												break;
-
-										case 'text':
-
-												$where_arr[]=' INSTR(es_'.$fieldrow['fieldname'].', "'.$kw.'")';
-												$fieldtypefound=true;
-												break;
-
-										case 'multilangstring':
-
-												$where_arr[]=' INSTR(es_'.$fieldrow['fieldname'].$this->ct->Languages->Postfix.', "'.$kw.'")';
-												$fieldtypefound=true;
-												break;
-
-										case 'multilangtext':
-
-												$where_arr[]=' INSTR(es_'.$fieldrow['fieldname'].$this->ct->Languages->Postfix.', "'.$kw.'")';
-												$fieldtypefound=true;
-												break;
-
-										case 'records':
-
-
-												$typeparamsarray=explode(',',$fieldrow['typeparams']);
-												$filtertitle='';
-												if(count($typeparamsarray)<1)
-													$filtertitle.='table not specified';
-
-												if(count($typeparamsarray)<2)
-													$filtertitle.='field or layout not specified';
-
-												if(count($typeparamsarray)<3)
-													$filtertitle.='selector not specified';
-
-												$esr_table='#__customtables_table_'.$typeparamsarray[0];
-												$esr_field=$typeparamsarray[1];
-
-												$inner='INNER JOIN '.$esr_table.' ON instr(#__customtables_table_'.$this->ct->Table->tablename.'.es_'.$fieldrow['fieldname'].',concat(",",'.$esr_table.'.id,","))';
-												if(!in_array($inner,$inner_arr))
-														$inner_arr[]=$inner;
-
-
-												$where_arr[]='instr('.$esr_table.'.es_'.$esr_field.',"'.$kw.'")';
-												$fieldtypefound=true;
-
-												break;
-
-										case 'sqljoin':
-												echo 'search box not ready yet';
-
-												$typeparamsarray=explode(',',$fieldrow['typeparams']);
-												$filtertitle='';
-												if(count($typeparamsarray)<1)
-													$filtertitle.='table not specified';
-
-												if(count($typeparamsarray)<2)
-													$filtertitle.='field or layout not specified';
-
-												if(count($typeparamsarray)<3)
-													$filtertitle.='selector not specified';
-
-												$esr_table='#__customtables_table_'.$typeparamsarray[0];
-												$esr_field=$typeparamsarray[1];
-
-												$inner='INNER JOIN '.$esr_table.' ON instr(#__customtables_table_'.$this->ct->Table->tablename.'.es_'.$fieldrow['fieldname'].',concat(",",'.$esr_table.'.id,","))';
-												if(!in_array($inner,$inner_arr))
-														$inner_arr[]=$inner;
-
-
-												$where_arr[]='instr('.$esr_table.'.es_'.$esr_field.',"'.$kw.'")';
-												$fieldtypefound=true;
-
-												break;
-
-										case 'customtables':
-
-
-												$inner='INNER JOIN #__customtables_options ON instr(#__customtables_options.familytreestr, #__customtables_table_'.$this->ct->Table->tablename.'.es_'.$fieldrow['fieldname'].')';
-												if(!in_array($inner,$inner_arr))
-														$inner_arr[]=$inner;
-
-												$where_arr[]='instr(#__customtables_options.title'.$this->ct->Languages->Postfix.',"'.$kw.'")';
-												$fieldtypefound=true;
-
-										break;
-
-										case 'user':
-
-												$inner='INNER JOIN #__users ON #__users.id=#__customtables_table_'.$this->ct->Table->tablename.'.es_'.$fieldrow['fieldname'];
-												if(!in_array($inner,$inner_arr))
-														$inner_arr[]=$inner;
-
-												$where_arr[]=' #__users.name REGEXP "'.$kw.'"';
-												$fieldtypefound=true;
-
-										break;
-
-
-
-										case 'userid':
-
-												$inner='INNER JOIN #__users ON #__users.id=#__customtables_table_'.$this->ct->Table->tablename.'.es_'.$fieldrow['fieldname'];
-												if(!in_array($inner,$inner_arr))
-														$inner_arr[]=$inner;
-
-												$where_arr[]=' #__users.name REGEXP "'.$kw.'"';
-												$fieldtypefound=true;
-										break;
-								}
-						}
-
-
-
-								$where=implode(' '.$AndOrOr.' ', $where_arr);
-								$inner=implode(' ', $inner_arr);
-
-								$where=str_replace('\\','',$where);
-
-								if($where!='')
-									$this->getKeywordSearch($inner, $where,$result_rows,$count,$idList);
-
-								$this->PathValue[]=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_CONTAINS').' "'.implode('" '.$AndOrOr_text.' "',$kw_text_array).'"';
+					}//if($w!='')
 				}
 
+				$where=implode(' '.$AndOrOr.' ', $where_arr);
+				$inner=implode(' ', $inner_arr);
 
-				return $result_rows;
+				if($where!='')
+					$this->getKeywordSearch($inner, $where,$result_rows,$count,$listing_ids);
 
+
+				$this->PathValue[]=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_CONTAINS').' "'.implode('" '.$AndOrOr_text.' "',$kw_text_array).'"';
+			}
+
+			$where='';
+			$inner='';
+			$where_arr=array();
+			$inner_arr=array();
+
+			$kw_text_array=array();
+			foreach($keyword_arr as $kw)
+			{
+				$inner='';
+
+				if(isset($fieldrow['type']) and isset($fieldrow['fieldname']))
+					$w=$this->getRowsByKeywords_ProcessTypes($fieldrow['type'],$fieldrow['fieldname'],$fieldrow['typeparams'],'[[:<:]]'.$kw,$inner);
+				else
+					$w='';
+
+				if($w!='')
+				{
+					$where_arr[]=$w;
+					if(!in_array($inner,$inner_arr))
+					{
+						$inner_arr[]=$inner;
+						$kw_text_array[]=$kw;
+					}
+				}
+			}
+
+			$where=implode(' '.$AndOrOr.' ', $where_arr);
+			$inner=implode(' ', $inner_arr);
+
+			$where=str_replace('\\','',$where);
+
+			if($where!='')
+				$this->getKeywordSearch($inner, $where,$result_rows,$count,$listing_ids);
+
+			$this->PathValue[]=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_CONTAINS').' "'.implode('" '.$AndOrOr_text.' "',$kw_text_array).'"';
 		}
 
-		function getKeywordSearch($inner_str,$where,&$result_rows,&$count,&$idList)
+		// -------------------
+		foreach($mod_fieldlist as $mod_field)
+		{
+			if(isset($fieldrow['fieldtitle'.$this->ct->Languages->Postfix]) )
+				$fields[]=$fieldrow['fieldtitle'.$this->ct->Languages->Postfix];
+
+			$where='';
+			$f=trim($mod_field);
+			$fieldrow=ESTables::FieldRowByName($f,$this->ct->Table->fields);//2011.6.1
+
+			//any
+			$keyword_arr=explode(' ',$keywords);
+			$where='';
+			$inner='';
+			$inner_arr=array();
+			$where_arr=array();
+			$fieldtypefound=false;
+
+			$kw_text_array=array();
+
+			foreach($keyword_arr as $kw)
+			{
+				$kw_text_array[]=$kw;
+				$t='';
+				if(isset($fieldrow['type']) )
+					$t=$fieldrow['type'];
+
+				switch($t)
+				{
+					case 'email':
+						$where_arr[]=' INSTR(es_'.$fieldrow['fieldname'].', "'.$kw.'")';
+						$fieldtypefound=true;
+						break;
+
+					case 'url':
+						$where_arr[]=' INSTR(es_'.$fieldrow['fieldname'].', "'.$kw.'")';
+						$fieldtypefound=true;
+						break;
+
+					case 'string':
+						$where_arr[]=' INSTR(es_'.$fieldrow['fieldname'].', "'.$kw.'")';
+						$fieldtypefound=true;
+						break;
+
+					case 'phponadd':
+						$where_arr[]=' INSTR(es_'.$fieldrow['fieldname'].', "'.$kw.'")';
+						$fieldtypefound=true;
+						break;
+
+					case 'phponchange':
+						$where_arr[]=' INSTR(es_'.$fieldrow['fieldname'].', "'.$kw.'")';
+						$fieldtypefound=true;
+						break;
+
+					case 'text':
+						$where_arr[]=' INSTR(es_'.$fieldrow['fieldname'].', "'.$kw.'")';
+						$fieldtypefound=true;
+						break;
+
+					case 'multilangstring':
+						$where_arr[]=' INSTR(es_'.$fieldrow['fieldname'].$this->ct->Languages->Postfix.', "'.$kw.'")';
+						$fieldtypefound=true;
+						break;
+
+					case 'multilangtext':
+						$where_arr[]=' INSTR(es_'.$fieldrow['fieldname'].$this->ct->Languages->Postfix.', "'.$kw.'")';
+						$fieldtypefound=true;
+						break;
+
+					case 'records':
+						$typeparamsarray=explode(',',$fieldrow['typeparams']);
+						$filtertitle='';
+						if(count($typeparamsarray)<1)
+							$filtertitle.='table not specified';
+
+						if(count($typeparamsarray)<2)
+							$filtertitle.='field or layout not specified';
+
+						if(count($typeparamsarray)<3)
+							$filtertitle.='selector not specified';
+
+						$esr_table='#__customtables_table_'.$typeparamsarray[0];
+						$esr_field=$typeparamsarray[1];
+
+						$inner='INNER JOIN '.$esr_table.' ON instr(#__customtables_table_'.$this->ct->Table->tablename.'.es_'.$fieldrow['fieldname'].',concat(",",'.$esr_table.'.id,","))';
+						if(!in_array($inner,$inner_arr))
+							$inner_arr[]=$inner;
+
+						$where_arr[]='instr('.$esr_table.'.es_'.$esr_field.',"'.$kw.'")';
+						$fieldtypefound=true;
+						break;
+
+					case 'sqljoin':
+						echo 'search box not ready yet';
+
+						$typeparamsarray=explode(',',$fieldrow['typeparams']);
+						$filtertitle='';
+						if(count($typeparamsarray)<1)
+							$filtertitle.='table not specified';
+
+						if(count($typeparamsarray)<2)
+							$filtertitle.='field or layout not specified';
+
+						if(count($typeparamsarray)<3)
+							$filtertitle.='selector not specified';
+
+						$esr_table='#__customtables_table_'.$typeparamsarray[0];
+						$esr_field=$typeparamsarray[1];
+
+						$inner='INNER JOIN '.$esr_table.' ON instr(#__customtables_table_'.$this->ct->Table->tablename.'.es_'.$fieldrow['fieldname'].',concat(",",'.$esr_table.'.id,","))';
+						if(!in_array($inner,$inner_arr))
+							$inner_arr[]=$inner;
+
+						$where_arr[]='instr('.$esr_table.'.es_'.$esr_field.',"'.$kw.'")';
+						$fieldtypefound=true;
+						break;
+
+					case 'customtables':
+						$inner='INNER JOIN #__customtables_options ON instr(#__customtables_options.familytreestr, #__customtables_table_'.$this->ct->Table->tablename.'.es_'.$fieldrow['fieldname'].')';
+						if(!in_array($inner,$inner_arr))
+							$inner_arr[]=$inner;
+
+						$where_arr[]='instr(#__customtables_options.title'.$this->ct->Languages->Postfix.',"'.$kw.'")';
+						$fieldtypefound=true;
+						break;
+
+					case 'user':
+							$inner='INNER JOIN #__users ON #__users.id=#__customtables_table_'.$this->ct->Table->tablename.'.es_'.$fieldrow['fieldname'];
+							if(!in_array($inner,$inner_arr))
+								$inner_arr[]=$inner;
+
+							$where_arr[]=' #__users.name REGEXP "'.$kw.'"';
+							$fieldtypefound=true;
+							break;
+
+					case 'userid':
+							$inner='INNER JOIN #__users ON #__users.id=#__customtables_table_'.$this->ct->Table->tablename.'.es_'.$fieldrow['fieldname'];
+							if(!in_array($inner,$inner_arr))
+								$inner_arr[]=$inner;
+
+							$where_arr[]=' #__users.name REGEXP "'.$kw.'"';
+							$fieldtypefound=true;
+							break;
+				}
+			}
+
+			$where=implode(' '.$AndOrOr.' ', $where_arr);
+			$inner=implode(' ', $inner_arr);
+			$where=str_replace('\\','',$where);
+
+			if($where!='')
+				$this->getKeywordSearch($inner, $where,$result_rows,$count,$listing_ids);
+
+			$this->PathValue[]=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_CONTAINS').' "'.implode('" '.$AndOrOr_text.' "',$kw_text_array).'"';
+		}
+		return $result_rows;
+	}
+
+		function getKeywordSearch($inner_str,$where,&$result_rows,&$count,&$listing_ids)
 		{
 				$db = JFactory::getDBO();
 				$inner=array($inner_str);
@@ -508,7 +467,7 @@ class CustomTablesKeywordSearch
 
 				foreach($rows as $row)
 				{
-						if(in_array($row['listing_id'],$idList))
+						if(in_array($row['listing_id'],$listing_ids))
 								$exist=true;
 						else
 								$exist=false;
@@ -518,7 +477,7 @@ class CustomTablesKeywordSearch
 								$result_rows[]=$row;
 
 
-								$idList[]=$row['listing_id'];
+								$listing_ids[]=$row['listing_id'];
 
 								$count++;
 						}

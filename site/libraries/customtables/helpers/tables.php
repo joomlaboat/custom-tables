@@ -185,8 +185,7 @@ class ESTables
 	public static function getTableRowByWhere($where)
 	{
 		$db = JFactory::getDBO();
-	
-			
+
 		$query = 'SELECT '.ESTables::getTableRowSelects().' FROM #__customtables_tables AS s WHERE '.$where.' LIMIT 1';
 		$db->setQuery( $query );
 
@@ -384,36 +383,46 @@ class ESTables
 	public static function addThirdPartyTableFieldsIfNeeded($database,$dbprefix,$tablename,$realtablename)
 	{
 		$fields = Fields::getFields($tablename,$as_object=false,$order_fields = true);
-		if(count($fields) == 0)
-		{
-			//Add third-party fields
-			
-			$tablerow = ESTables::getTableRowByName($tablename);
-			
-			$db = JFactory::getDBO();
-			
-			if($db->serverType == 'postgresql')
-				$query = 'SELECT column_name, data_type, is_nullable, column_default FROM information_schema.columns WHERE table_name = '.$db->quote($realtablename);
-			else
-				$query = 'SELECT '
-				.'COLUMN_NAME AS column_name,'
-				.'DATA_TYPE AS data_type,'
-				.'COLUMN_TYPE AS column_type,'
-				.'IF(COLUMN_TYPE LIKE \'%unsigned\', \'YES\', \'NO\') AS is_unsigned,'
-				.'IS_NULLABLE AS is_nullable,'
-				.'COLUMN_DEFAULT AS column_default,'
-				.'COLUMN_COMMENT AS column_comment,'
-				.'EXTRA AS extra FROM information_schema.columns WHERE table_schema = '.$db->quote($database).' AND table_name = '.$db->quote($realtablename);
+		if(count($fields) > 0)
+			return false;
 		
-			$db->setQuery( $query );
-			$fields = $db->loadObjectList();
+		//Add third-party fields
 			
-			$set_fieldnames=['tableid','fieldname','fieldtitle','type','typeparams','defaultvalue','description','customfieldname'];
+		$tablerow = ESTables::getTableRowByName($tablename);
 			
-			foreach($fields as $field)
+		$db = JFactory::getDBO();
+			
+		if($db->serverType == 'postgresql')
+			$query = 'SELECT column_name, data_type, is_nullable, column_default FROM information_schema.columns WHERE table_name = '.$db->quote($realtablename);
+		else
+			$query = 'SELECT '
+			.'COLUMN_NAME AS column_name,'
+			.'DATA_TYPE AS data_type,'
+			.'COLUMN_TYPE AS column_type,'
+			.'IF(COLUMN_TYPE LIKE \'%unsigned\', \'YES\', \'NO\') AS is_unsigned,'
+			.'IS_NULLABLE AS is_nullable,'
+			.'COLUMN_DEFAULT AS column_default,'
+			.'COLUMN_COMMENT AS column_comment,'
+			.'COLUMN_KEY AS column_key,'
+			.'EXTRA AS extra FROM information_schema.columns WHERE table_schema = '.$db->quote($database).' AND table_name = '.$db->quote($realtablename);
+		
+		$db->setQuery( $query );
+		$fields = $db->loadObjectList();
+			
+		$set_fieldnames=['tableid','fieldname','fieldtitle','type','typeparams','ordering','defaultvalue','description','customfieldname','isrequired'];
+			
+		$primary_key_column = '';
+		$ordering = 1;
+		foreach($fields as $field)
+		{
+			if($primary_key_column == '' and strtolower($field->column_key) == 'pri')
+			{
+				$primary_key_column = $field->column_name;
+			}
+			else
 			{
 				$set_values = [];
-				
+			
 				$ct_field_type = Fields::convertMySQLFieldTypeToCT($field->data_type,$field->column_type);
 				if($ct_field_type['type'] == '')
 				{
@@ -421,21 +430,33 @@ class ESTables
 					print_r($ct_field_type);
 					die;
 				}
-				
+			
 				$set_values['tableid'] = (int)$tablerow->id;
 				$set_values['fieldname'] = $db->quote(strtolower($field->column_name));
 				$set_values['fieldtitle'] = $db->quote(ucwords(strtolower($field->column_name)));
 				$set_values['type'] = $db->quote($ct_field_type['type']);
 				$set_values['typeparams'] = $db->quote($ct_field_type['typeparams']);
+				$set_values['ordering'] = $ordering;
 				$set_values['defaultvalue'] = $field->column_default != '' ? $db->quote($field->column_default) : 'NULL';
 				$set_values['description'] = $field->column_comment != '' ? $db->quote($field->column_comment) : 'NULL';
 				$set_values['customfieldname'] = $db->quote(strtolower($field->column_name));
+				$set_values['isrequired'] = 0;
 				
 				$query='INSERT INTO #__customtables_fields ('.implode(',',$set_fieldnames).') VALUES ('.implode(',',$set_values).')';
-				
+			
 				$db->setQuery($query);
 				$db->execute();
+				
+				$ordering += 1;
 			}
+		}
+		
+		if($primary_key_column != '')
+		{
+			//Update primary key column
+			$query='UPDATE #__customtables_tables SET customidfield = '.$db->quote($primary_key_column).' WHERE id = '.(int)$tablerow->id;
+			$db->setQuery($query);
+			$db->execute();
 		}
 	}
 	
@@ -488,7 +509,6 @@ class ESTables
 				
 				$morethanonelang = true;
 			}
-			
 		}
 
 		$query = 'SELECT * FROM #__customtables_fields WHERE published=1 AND tableid='.$originaltableid;
