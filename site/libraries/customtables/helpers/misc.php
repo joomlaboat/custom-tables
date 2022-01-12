@@ -470,8 +470,8 @@ class JoomlaBasicMisc
 				$count++;
 				if($count>1000)
 				{
-					echo 'count>1000';
-					die;
+					JFactory::getApplication()->enqueueMessage('Quote count > 1000', 'error');
+					return [];
 				}
 
 				if($quote_char=='')
@@ -577,8 +577,8 @@ class JoomlaBasicMisc
 				$count++;
 				if($count>1000)
 				{
-					echo 'too many quotes.';
-					die;
+					JFactory::getApplication()->enqueueMessage('Too many quotes.', 'error');
+					return [];
 				}
 
 				$peq=strpos($text, '"', $ps1);

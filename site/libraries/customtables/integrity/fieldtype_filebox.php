@@ -14,9 +14,7 @@ namespace CustomTables\Integrity;
 defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\Fields;
-
 use \Joomla\CMS\Factory;
-
 use \ESTables;
 
 class IntegrityFieldType_FileBox extends \CustomTables\IntegrityChecks
@@ -28,36 +26,37 @@ class IntegrityFieldType_FileBox extends \CustomTables\IntegrityChecks
         if(!ESTables::checkIfTableExists($filebox_table_name))
         {
             Fields::CreateFileBoxTable($tablename,$fieldname);
-            echo '<p>File Box Table "<span style="color:green;">'.$filebox_table_name.'</span>" <span style="color:green;">Created.</span></p>';
+			Factory::getApplication()->enqueueMessage('File Box Table "'.$filebox_table_name.'" created.');
         }
-                    $g_ExistingFields=Fields::getExistingFields($filebox_table_name,false);
+		
+		$g_ExistingFields=Fields::getExistingFields($filebox_table_name,false);
 
-                    $morethanonelang=false;
-                    foreach($ct->Languages->LanguageList as $lang)
-                    {
-                    	$g_fieldname='title';
-                    	if($morethanonelang)
-                    		$g_fieldname.='_'.$lang->sef;
+        $morethanonelang=false;
+		foreach($ct->Languages->LanguageList as $lang)
+		{
+			$g_fieldname='title';
+            if($morethanonelang)
+				$g_fieldname.='_'.$lang->sef;
 
-                        $g_found=false;
+			$g_found=false;
 
-                        foreach($g_ExistingFields as $g_existing_field)
-                        {
-                            $g_exst_field=$g_existing_field['column_name'];
-                            if($g_exst_field==$g_fieldname)
-                            {
-                                $g_found=true;
-                                break;
-                            }
-                        }
+            foreach($g_ExistingFields as $g_existing_field)
+            {
+				$g_exst_field=$g_existing_field['column_name'];
+                if($g_exst_field==$g_fieldname)
+                {
+					$g_found=true;
+                    break;
+				}
+			}
 
-                        if(!$g_found)
-                        {
-                            Fields::AddMySQLFieldNotExist($filebox_table_name, $g_fieldname, 'varchar(100) null', '');
-                            echo '<p>File Box Field "<span style="color:green;">'.$g_fieldname.'</span>" <span style="color:green;">Added.</span></p>';
-                        }
+			if(!$g_found)
+			{
+				Fields::AddMySQLFieldNotExist($filebox_table_name, $g_fieldname, 'varchar(100) null', '');
+				Factory::getApplication()->enqueueMessage('File Box Field "'.$g_fieldname.'" added.');
+			}
 
-                        $morethanonelang=true;
-                    }
+			$morethanonelang=true;
+		}
     }
 }

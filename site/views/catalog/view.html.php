@@ -10,6 +10,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\Layouts;
+use \Joomla\CMS\Factory;
 
 class CustomTablesViewCatalog extends JViewLegacy
 {
@@ -22,11 +23,94 @@ class CustomTablesViewCatalog extends JViewLegacy
 	{
 		$this->Model = $this->getModel();
 		
+		$key = $this->Model->ct->Env->jinput->getCmd('key');
+		if($key != '')
+			$this->renderTableJoinSelectorJSON($key);
+		else
+			$this->renderCatalog($tpl);
+	}
+	
+	function renderTableJoinSelectorJSON($key)
+	{
+		$this->ct = $this->Model->ct;
+		$index = $this->Model->ct->Env->jinput->getInt('index');
+		$selectors = (array)Factory::getApplication()->getUserState($key);
+		
+		if($index < 0 or $index >= count($selectors))
+			die(json_encode(['error' => 'Index out of range.']));
+		
+		$selector = $selectors[$index];
+			
+		$tablename = $selector[0];
+		if($tablename=='')
+			die(json_encode(['error' => 'Table not selected']));
+		
+		$this->ct->getTable($tablename);
+		if($this->ct->Table->tablename=='')
+			die(json_encode(['error' => 'Table "' . $tablename . '"not found']));
+		
+		$fieldname_or_layout = $selector[1];
+		if($fieldname_or_layout == null or $fieldname_or_layout=='')
+			$fieldname_or_layout = $this->ct->Table->fields[0]['fieldname'];
+		
+		//$showpublished = 0 - show published
+		//$showpublished = 1 - show unpublished
+		//$showpublished = 2 - show any
+		$showpublished = (($selector[2] ?? '') == '' ? 2 : ((int) ($selector[2] ?? 0) == 1 ? 0 : 1)); //$selector[2] can be "" or "true" or "false"
+			
+		$filter = $selector[3] ?? '';
+		
+		$additional_filter = $this->Model->ct->Env->jinput->getCmd('filter');
+		
+		if($additional_filter!='')
+		{
+			//Find the field name that has a join to the parend (index-1) table
+			foreach($this->ct->Table->fields as $fld)
+			{
+				if($fld['type'] == 'sqljoin')
+				{
+					$type_params = JoomlaBasicMisc::csv_explode(',',$fld['typeparams'],'"',false);
+					$join_tablename = $type_params[0];
+					$join_to_tablename = $selector[5];
+					if($join_tablename == $join_to_tablename)
+						$filter = $filter . ' and ' . $fld['fieldname'] . '=' . $additional_filter;
+				}
+			}
+		}
+		
+		$this->ct->setFilter($filter, $showpublished);
+			
+		$orderby = $selector[4] ?? '';
+			
+		//sorting
+		$this->ct->Ordering->ordering_processed_string = $orderby;
+		$this->ct->Ordering->parseOrderByString();
+		
+		$this->ct->getRecords();
+			
+		$this->catalogtablecode=JoomlaBasicMisc::generateRandomString();//this is temporary replace place holder. to not parse content result again
+			
+		$this->pagelayout = '[{catalog:,notable,","}]';
+		$this->itemlayout = '{"id":{id},"label":"['.$fieldname_or_layout.']"}';
+			
+		$paramsArray['establename'] = $tablename;
+			
+		$_params= new JRegistry;
+		$_params->loadArray($paramsArray);
+		$this->ct->Env->menu_params = $_params;
+			
+		$this->ct->LayoutProc = new LayoutProcessor($this->ct);
+		$this->ct->LayoutProc->layout = $this->pagelayout;
+			
+		require_once('tmpl'.DIRECTORY_SEPARATOR.'json.php');
+	}
+	
+	function renderCatalog($tpl)
+	{
 		$menu_params=null;
-		$this->Model->load($menu_params,false,JFactory::getApplication()->input->getCMD('layout',''));
+		$this->Model->load($menu_params,false,Factory::getApplication()->input->getCMD('layout',''));
 		
 		$this->Model->getSearchResult();
-		
 		$this->ct = $this->Model->ct;
 
 		if(!isset($this->ct->Table->fields))
@@ -65,7 +149,6 @@ class CustomTablesViewCatalog extends JViewLegacy
 		if($layout_item_name!='')
 			$this->itemlayout = $Layouts->getLayout($layout_item_name);
 		
-		
 		if($this->ct->Env->frmt == 'csv')
 		{
 			if(function_exists('mb_convert_encoding'))
@@ -82,7 +165,7 @@ class CustomTablesViewCatalog extends JViewLegacy
 				extension=mbstring<br/><br/>
 				Then restart your webs server. Example:<br/>service apache2 restart';
 				
-				JFactory::getApplication()->enqueueMessage($msg, 'error');
+				Factory::getApplication()->enqueueMessage($msg, 'error');
 			}
 		}
 		elseif($this->ct->Env->frmt == 'json')
@@ -99,19 +182,19 @@ class CustomTablesViewCatalog extends JViewLegacy
 
 		foreach($this->ct->Table->fields as $mFld)
 		{
-				if(in_array($mFld['fieldname'],$allowedfields))
-				{
-						if($mFld['type']=='lastviewtime')
-							$updatefields[]=$mFld['realfieldname'].'="'.date('Y-m-d H:i:s').'"';
+			if(in_array($mFld['fieldname'],$allowedfields))
+			{
+				if($mFld['type']=='lastviewtime')
+					$updatefields[]=$mFld['realfieldname'].'="'.date('Y-m-d H:i:s').'"';
 
-						if($mFld['type']=='viewcount')
-							$updatefields[]=$mFld['realfieldname'].'="'.((int)($rec[$this->ct->Env->field_prefix.$mFld['fieldname']])+1).'"';
-				}
+				if($mFld['type']=='viewcount')
+					$updatefields[]=$mFld['realfieldname'].'="'.((int)($rec[$this->ct->Env->field_prefix.$mFld['fieldname']])+1).'"';
+			}
 		}
 
 		if(count($updatefields)>0)
 		{
-			$db = JFactory::getDBO();
+			$db = Factory::getDBO();
 			$query= 'UPDATE '.$this->ct->Table->realtablename.' SET '.implode(', ', $updatefields).' WHERE id='.$rec['listing_id'];
 			$db->setQuery($query);
 		    $db->execute();
@@ -120,7 +203,7 @@ class CustomTablesViewCatalog extends JViewLegacy
 
 	function SaveViewLog_CheckIfNeeded()
 	{
-		$user = JFactory::getUser();
+		$user = Factory::getUser();
 		$usergroups = $user->get('groups');
 
 		$allowedfields=array();

@@ -142,25 +142,19 @@ class CustomTablesKeywordSearch
 								break;
 
 								case 'sqljoin':
-										echo 'search box not ready yet';
+										JFactory::getApplication()->enqueueMessage('Search box not ready yet.', 'error');
 								break;
 
 								case 'customtables':
-
-										$esr_table='#__customtables_options';
-
-										$inner='INNER JOIN '.$esr_table.' ON instr('.$esr_table.'.familytreestr, #__customtables_table_'.$this->ct->Table->tablename.'.es_'.$fieldname.')';
-
-										$where=' '.$esr_table.'.title'.$this->ct->Languages->Postfix.' REGEXP "'.$regexpression.'"';
-
-								break;
+									$esr_table='#__customtables_options';
+									$inner='INNER JOIN '.$esr_table.' ON instr('.$esr_table.'.familytreestr, #__customtables_table_'.$this->ct->Table->tablename.'.es_'.$fieldname.')';
+									$where=' '.$esr_table.'.title'.$this->ct->Languages->Postfix.' REGEXP "'.$regexpression.'"';
+									break;
 
 								case 'user':
-
-										$inner='INNER JOIN #__users ON #__users.id=#__customtables_table_'.$this->ct->Table->tablename.'.es_'.$fieldname;
-										$where=' #__users.name REGEXP "'.$regexpression.'"';
-
-								break;
+									$inner='INNER JOIN #__users ON #__users.id=#__customtables_table_'.$this->ct->Table->tablename.'.es_'.$fieldname;
+									$where=' #__users.name REGEXP "'.$regexpression.'"';
+									break;
 
 								case 'userid':
 
@@ -236,7 +230,6 @@ class CustomTablesKeywordSearch
 
 				if($where!='')
 					$this->getKeywordSearch($inner, $where,$result_rows,$count,$listing_ids);
-
 
 				$this->PathValue[]=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_CONTAINS').' "'.implode('" '.$AndOrOr_text.' "',$kw_text_array).'"';
 			}
@@ -371,7 +364,7 @@ class CustomTablesKeywordSearch
 						break;
 
 					case 'sqljoin':
-						echo 'search box not ready yet';
+						JFactory::getApplication()->enqueueMessage('Search box not ready yet.', 'error');
 
 						$typeparamsarray=explode(',',$fieldrow['typeparams']);
 						$filtertitle='';

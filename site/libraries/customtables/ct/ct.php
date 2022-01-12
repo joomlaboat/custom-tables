@@ -120,11 +120,6 @@ class CT
 				$ordering[]=$this->Ordering->orderby;
 			}
 		}
-		
-		//print_r($this->Ordering);
-		//die;
-
-		//print_r($ordering);
 
 		$query='SELECT '.implode(',',$selects).' FROM '.$this->Table->realtablename.' ';
 		

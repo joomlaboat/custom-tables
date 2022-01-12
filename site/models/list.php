@@ -401,14 +401,10 @@ class CustomTablesModelList extends JModel
 		}
 	}
 
-
-
-
 	function GetNewParentID($parentid,&$AssociatedTable)
 	{
 		foreach($AssociatedTable as $Ass)
 		{
-			echo $Ass[0].':'.$Ass[1].'  looking for: '.$parentid.'<br/>';
 			if($Ass[0]==$parentid)
 				return $Ass[1];
 		}

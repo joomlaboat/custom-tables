@@ -426,9 +426,8 @@ class ESTables
 				$ct_field_type = Fields::convertMySQLFieldTypeToCT($field->data_type,$field->column_type);
 				if($ct_field_type['type'] == '')
 				{
-					print_r($field);
-					print_r($ct_field_type);
-					die;
+					JFactory::getApplication()->enqueueMessage('third-party table field type "'.$field->data_type.'" is unknown.', 'error');
+					return;
 				}
 			
 				$set_values['tableid'] = (int)$tablerow->id;

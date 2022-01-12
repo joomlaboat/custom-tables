@@ -63,13 +63,13 @@ class Inputbox
 			$this->attributes .= 'style="'.$this->cssclass.'"';
 			$this->cssclass = '';
 		}
+
+		$this->esfield = $esfield;
 		
 		$this->cssclass .= ($this->ct->Env->version < 4 ? ' inputbox' : ' form-control').($this->esfield['isrequired'] ? ' required' : '');
 	
 		$this->option_list = $option_list;
 		$this->place_holder = $esfield['fieldtitle'.$this->ct->Languages->Postfix];
-		$this->esfield = $esfield;
-		
 	}
 	
 	function render($value, &$row)
@@ -84,7 +84,7 @@ class Inputbox
 				return $this->render_radio($value, $type_params);
 
 			case 'int':
-				return $this->render_int($row);
+				return $this->render_int($value, $row);
 
 			case 'float':
 				return $this->render_float($row);
@@ -348,7 +348,7 @@ class Inputbox
 		return $result;
 	}
 	
-	function getMultilangStringItem(&$row,$postfix,$langsef)
+	protected function getMultilangStringItem(&$row,$postfix,$langsef)
 	{
 							$attributes_='';
 							$addDynamicEvent=false;
@@ -458,7 +458,7 @@ class Inputbox
 		return $result;
 	}
 
-	function getUserGroupBox($value)
+	protected function getUserGroupBox($value)
 	{
 		$result='';
 
@@ -476,7 +476,7 @@ class Inputbox
 		return $result;
 	}
 
-	function getImageGallery($fieldname,$type_params,$listing_id)
+	protected function getImageGallery($fieldname,$type_params,$listing_id)
 	{
 		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fieldtypes'.DIRECTORY_SEPARATOR.'_type_gallery.php');
 
@@ -536,7 +536,7 @@ class Inputbox
 
 	}//function
 
-	function getFileBox($fieldname,$type_params,$listing_id)
+	protected function getFileBox($fieldname,$type_params,$listing_id)
 	{
 		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fieldtypes'.DIRECTORY_SEPARATOR.'_type_filebox.php');
 
@@ -588,7 +588,7 @@ class Inputbox
 		return $htmlout;
 	}//function
 	
-	function render_multilangtext(&$row,$cssclass)
+	protected function render_multilangtext(&$row,$cssclass)
 	{
 		$RequiredLabel = 'Field is required';
 		
@@ -647,7 +647,7 @@ class Inputbox
 		return $result;                            
 	}
 	
-	function render_multilangarticle()
+	protected function render_multilangarticle()
 	{
 		$result = '
 		<table>
@@ -692,7 +692,7 @@ class Inputbox
 		return $result;
 	}
 	
-	function render_time()
+	protected function render_time()
 	{
 		$result = '';
 		
@@ -713,7 +713,7 @@ class Inputbox
 		return $result;
 	}
 	
-	function render_date(&$value)
+	protected function render_date(&$value)
 	{
 		$result = '';
 		
@@ -737,7 +737,7 @@ class Inputbox
 		return $result;
 	}
 	
-	function render_url(&$value, &$type_params)
+	protected function render_url(&$value, &$type_params)
 	{
 		$result = '';
 		$filters=array();
@@ -766,7 +766,7 @@ class Inputbox
 		return $result;
 	}
 	
-	function render_records(&$value, &$type_params)
+	protected function render_records(&$value, &$type_params)
 	{
 		$result = '';
 		
@@ -831,7 +831,7 @@ class Inputbox
 		return $result;
 	}
 	
-	function render_tablejoin(&$value, &$type_params)
+	protected function render_tablejoin(&$value, &$type_params)
 	{
 		$result = '';
 	
@@ -846,6 +846,7 @@ class Inputbox
 			//Twig Example: [house:RedHouses,onChange('Alert("Value Changed")'),city=London]
 
 			$result.=JHTML::_('CTTableJoin.render',
+				$this->prefix.$this->esfield['fieldname'],
 				$this->ct,
 				$this->esfield,
 				$value,
@@ -878,15 +879,12 @@ class Inputbox
 		return $result;
 	}
 	
-	function render_customtables(&$value, &$type_params)
+	protected function render_customtables(&$value, &$type_params)
 	{
 		$result = '';
 		
 		if(!isset($type_params[1]))
-		{
-			$result.='selector not specified';
-			break;
-		}
+			return 'selector not specified';
 
 		$optionname=$type_params[0];
 		$parentid=Tree::getOptionIdFull($optionname);
@@ -959,7 +957,7 @@ class Inputbox
 		return $result;
 	}
 	
-	function render_color(&$row)
+	protected function render_color(&$row)
 	{
 		$result = '';
 		
@@ -1024,7 +1022,7 @@ class Inputbox
 		return $result;
 	}
 	
-	function render_alias(&$value)
+	protected function render_alias(&$value)
 	{
 		$result = '';
 		
@@ -1042,7 +1040,7 @@ class Inputbox
 		return $result;
 	}
 	
-	function render_radio(&$value, &$type_params)
+	protected function render_radio(&$value, &$type_params)
 	{
 		$result = '';
 		
@@ -1066,7 +1064,7 @@ class Inputbox
 		return $result;
 	}
 	
-	function render_int(&$row)
+	protected function render_int(&$value, &$row)
 	{
 		$result = '';
 		
@@ -1093,7 +1091,7 @@ class Inputbox
 		return $result;
 	}
 	
-	function render_float(&$row)
+	protected function render_float(&$row)
 	{
 		$result = '';
 		
@@ -1126,7 +1124,7 @@ class Inputbox
 		return $result;
 	}
 	
-	function render_text(&$value, &$type_params)
+	protected function render_text(&$value, &$type_params)
 	{
 		$result = '';
 		$fname=$this->prefix.$this->esfield['fieldname'];
@@ -1172,7 +1170,7 @@ class Inputbox
 		return $result;
 	}
 	
-	function render_checkbox(&$value)
+	protected function render_checkbox(&$value)
 	{
 		$result = '';
 		

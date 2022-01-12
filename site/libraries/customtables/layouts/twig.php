@@ -171,7 +171,6 @@ class fieldObject
 		$forms = new Forms($this->ct);
         return $forms->renderFieldLabel($this->field);
     }
-	
 
 	public function description()
     {
@@ -243,7 +242,6 @@ class fieldObject
 				$div_arg=' class="'.$class_str.'"';
 
 			// Default attribute - action to save the value
-			
 			$args[0] = 'border:none !important;width:auto;box-shadow:none;';
 			
 			$onchange='ct_UpdateSingleValue(\''.$this->ct->Env->WebsiteRoot.'\','.$this->ct->Env->Itemid.',\''
@@ -255,7 +253,7 @@ class fieldObject
 				$args[1] .= ' '.$attributes;
 			else
 				$args[1] = $attributes;
-								
+
 			$Inputbox = new Inputbox($this->ct, $this->field, $args, true);
 			
 			$edit_box = '<div '.$div_arg.'id="'.$ajax_prefix.$this->field['fieldname'].$postfix.'_div">'

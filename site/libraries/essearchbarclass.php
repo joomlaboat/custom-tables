@@ -14,9 +14,7 @@ use CustomTables\Fields;
 class ESSearchBarClass
 {
 	var $ct;
-	
 	var $isLoader;
-
 	var $orientation;
 	var $moduleid;
 	var $modulename;
@@ -51,11 +49,9 @@ class ESSearchBarClass
 		$this->ct->getTable($this->ct->Env->menu_params->get( 'establename' ), $this->ct->Env->menu_params ->get('useridfield'));
 		if($this->ct->Table->tablename=='')
 		{
-			echo 'Table not selected';
-			die;
+			JFactory::getApplication()->enqueueMessage('Table not selected', 'error');
+			return;
 		}
-		
-		
 
 		$this->esinputbox= new SearchInputBox($this->ct,$this->modulename);
 

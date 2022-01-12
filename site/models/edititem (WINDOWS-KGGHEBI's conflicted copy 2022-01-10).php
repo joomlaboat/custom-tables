@@ -6,42 +6,66 @@
  * @license GNU/GPL
  **/
 
+
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-use CustomTables\CT;
-use CustomTables\Email;
-use CustomTables\Fields;
-use CustomTables\Layouts;
-use CustomTables\DataTypes\Tree;
-use CustomTables\CustomPHP\CleanExecute;
-
-use \Joomla\CMS\Component\ComponentHelper;
-use \Joomla\CMS\Factory;
-
 jimport('joomla.application.component.model');
+
+
 
 JTable::addIncludePath(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'tables');
 
 $site_libpath=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR;
+$admin_libpath=JPATH_ADMINISTRATOR.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR;
+require_once($admin_libpath.'customtablesmisc.php');
+require_once($admin_libpath.'misc.php');
+require_once($admin_libpath.'imagemethods.php');
+require_once($admin_libpath.'languages.php');
+require_once($admin_libpath.'tables.php');
+require_once($admin_libpath.'fields.php');
+require_once($admin_libpath.'layouts.php');
 require_once($site_libpath.'layout.php');
+require_once($site_libpath.'logs.php');
 
 $libpath=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tagprocessor'.DIRECTORY_SEPARATOR;
 require_once($libpath.'valuetags.php');
 
-class CustomTablesModelEditItem extends JModelLegacy
-{
-	var $ct;
+require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'filtering.php');
+require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'misc.php');
+require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'models'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'save.php');
+
+class CustomTablesModelEditItem extends JModelLegacy {
+
+	var $es;
+
+	var $LangMisc;
+	var $establename;
+	var $realtablename;
+	var $published_field_found;
 	
+	var $estableid;
+	var $tabletitle;
+	var $establedescription;
+	//var $tablename;//mysql table name deprictade
+	var $tablecustomphp;
+	var $tablerow;
+
 	var $itemaddedtext;
 	var $onrecordaddsendemailto;
 	var $onrecordaddsendemail;
 	var $sendemailcondition;
 	var $emailsentstatusfield;
 
+
 	var $layout_catalog;
 	var $layout_details;
-	var $listing_id;
+	var $id;
+	var $LanguageList;
+	var $langpostfix;
+	var $esfields;
+	var $showlines;
+	//var $oklink;
 
 	var $isAutorized;
 	var $guestcanaddnew;
@@ -54,12 +78,16 @@ class CustomTablesModelEditItem extends JModelLegacy
 	var $delete_userGroup;
 	var $add_userGroup;
 
+	var $current_url;
+	var $encoded_current_url;
+	var $userid;
 	var $useridfield;
 	var $useridfield_uniqueusers;
 	var $isUserAdministrator;
-	
+	var $print;
+	var $frmt;
 	var $params;
-
+	var $Itemid;
 	var $BlockExternalVars;
 	var $advancedtagprocessor;
 	
@@ -67,107 +95,125 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 	function __construct()
 	{
-		$this->ct = new CT;
 		parent::__construct();
+		$this->advancedtagprocessor=false;
+		
+		$phptagprocessor=JPATH_SITE.DIRECTORY_SEPARATOR.'plugins'.DIRECTORY_SEPARATOR.'content'.DIRECTORY_SEPARATOR.'customtables'.DIRECTORY_SEPARATOR.'protagprocessor'.DIRECTORY_SEPARATOR.'phptags.php';
+		if(file_exists($phptagprocessor))
+		{
+			//require_once($phptagprocessor);
+			$this->advancedtagprocessor=true;
+		}
+
+		$jinput=JFactory::getApplication()->input;
+
+		$this->current_url=JoomlaBasicMisc::curPageURL();
+		$this->encoded_current_url=base64_encode($this->current_url);
+
+		$user = JFactory::getUser();
+		$this->userid=$user->id;
+
+		$this->isUserAdministrator=JoomlaBasicMisc::isUserAdmin($this->userid);
+
+		$this->print=(bool)$jinput->getInt('print',0);
+		$this->frmt=$jinput->getCmd('frmt','html');
+
 	}
-	
-	function getParam_safe($param)
-	{
-		return $this->params->get($param);
-	}
-	
-	function setFrmt($frmt)
-	{
-		$this->ct->Env->frmt=$frmt;
-	}
+
 
 	function load($params,$BlockExternalVars=false)
 	{
+		$app = JFactory::getApplication();
 		if(isset($params))
-			$this->params = $params;
+			$this->params=$params;
 		else
-		{
-			$app = JFactory::getApplication();
-			$this->params = $app->getParams();
-		}
-		
-		$this->ct->Env->menu_params = $this->params;
-
-		$this->ct->Env->menu_params = $this->params;
+			$this->params=$app->getParams();
 		
 		$jinput=JFactory::getApplication()->input;
+		$this->Itemid=$jinput->getInt('Itemid',0);
 
-		if($this->getParam_safe( 'customitemid' )!='')
-		{
-			$forceitemid = $this->getParam_safe( 'customitemid' );
-			
-			//Find Itemid by alias
-			if(((int)$forceitemid)>0)
-				$this->ct->Env->Itemid=$forceitemid;
-			else
-			{
-				if($forceitemid!=0)
-					$this->ct->Env->Itemid=(int)JoomlaBasicMisc::FindItemidbyAlias($forceitemid);//Accepts menu Itemid and alias
-				else
-					$this->ct->Env->Itemid=$this->ct->Env->jinput->getInt('Itemid');
-			}
-		}
-		else
-			$this->ct->Env->Itemid = $this->ct->Env->jinput->getInt('Itemid');
-
+		if((int)$this->params->get( 'customitemid' )!=0)
+		$this->Itemid=(int)$this->params->get( 'customitemid' );
+		
 		$this->BlockExternalVars=$BlockExternalVars;
 
-		$this->useridfield=$this->getParam_safe('useridfield');
+		$this->useridfield='';
 		$this->useridfield_unique=false;
 		
-		$this->edit_userGroup=(int)$this->getParam_safe( 'editusergroups' );
-		$this->publish_userGroup=(int)$this->getParam_safe( 'publishusergroups' );
+		$this->es= new CustomTablesMisc;
+
+
+		$this->LangMisc	= new ESLanguages;
+		$this->LanguageList=$this->LangMisc->getLanguageList();
+		$this->langpostfix=$this->LangMisc->getLangPostfix();
+
+
+
+		$this->edit_userGroup=(int)$this->params->get( 'editusergroups' );
+		$this->publish_userGroup=(int)$this->params->get( 'publishusergroups' );
 		if($this->publish_userGroup==0)
 			$this->publish_userGroup=$this->edit_userGroup;
 
-		$this->delete_userGroup=(int)$this->getParam_safe( 'deleteusergroups' );
+		$this->delete_userGroup=(int)$this->params->get( 'deleteusergroups' );
 		if($this->delete_userGroup==0)
 			$this->delete_userGroup=$this->edit_userGroup;
 
-		$this->add_userGroup=(int)$this->getParam_safe( 'addusergroups' );
+		$this->add_userGroup=(int)$this->params->get( 'addusergroups' );
 		if($this->add_userGroup==0)
 			$this->add_userGroup=$this->add_userGroup;
 
 
-		$tablename_or_id_not_sanitized = $this->getParam_safe( 'establename' );
-		
-		if($tablename_or_id_not_sanitized == null or $tablename_or_id_not_sanitized == '')
-			$tablename_or_id_not_sanitized = $this->getParam_safe( 'tableid' ); //Used in back-end
-		
-		$this->ct->getTable($tablename_or_id_not_sanitized, $this->useridfield);
-				
-		if($this->ct->Table->tablename=='')
+		$this->establename=$this->params->get( 'establename' );
+
+		if($this->establename=='')
 		{
-			JFactory::getApplication()->enqueueMessage('Table not selected (148).', 'error');
+			JFactory::getApplication()->enqueueMessage('Table not selected.', 'error');
 			return false;
 		}
 
-		$this->applybuttontitle=$this->getParam_safe( 'applybuttontitle' );
-		$this->guestcanaddnew=$this->getParam_safe( 'guestcanaddnew' );
+
+		$this->applybuttontitle=$this->params->get( 'applybuttontitle' );
+
+		$this->guestcanaddnew=$this->params->get( 'guestcanaddnew' );
+
+		$this->showlines=false;
+
+		$this->submitbuttons=$this->params->get( 'submitbuttons' );
+
+
+		$this->msg_itemissaved=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORD_SAVED' );
+
+
 
 		if($this->params->get( 'msgitemissaved' ))
-			$this->msg_itemissaved=$this->getParam_safe( 'msgitemissaved' );
-		else
-			$this->msg_itemissaved=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORD_SAVED' );
+		$this->msg_itemissaved=$this->params->get( 'msgitemissaved' );
 
-		$this->onrecordaddsendemailto=$this->getParam_safe('onrecordaddsendemailto');
-		$this->onrecordsavesendemailto=$this->getParam_safe('onrecordsavesendemailto');
+		$this->tablerow=ESTables::getTableRowByNameAssoc($this->establename);
+		$this->estableid=$this->tablerow['id'];
 
-		$this->onrecordaddsendemail=(int)$this->getParam_safe('onrecordaddsendemail');
-		$this->sendemailcondition=$this->getParam_safe('sendemailcondition');
-		$this->emailsentstatusfield=$this->getParam_safe('emailsentstatusfield');
+		$this->onrecordaddsendemailto=$this->params->get('onrecordaddsendemailto');
+		$this->onrecordsavesendemailto=$this->params->get('onrecordsavesendemailto');
+
+		$this->onrecordaddsendemail=(int)$this->params->get('onrecordaddsendemail');
+		$this->sendemailcondition=$this->params->get('sendemailcondition');
+		$this->emailsentstatusfield=$this->params->get('emailsentstatusfield');
+
+		$this->tabletitle=$this->tablerow['tabletitle'.$this->langpostfix];
+		$this->establedescription=$this->tablerow['description'.$this->langpostfix];
+		
+		
+		$this->published_field_found=$this->tablerow['published_field_found'];
+		$this->realtablename=$this->tablerow['realtablename'];
+						
+		$this->tablecustomphp=$this->tablerow['customphp'];
 
 		$this->findUserIDField();
 
-		if($this->getParam_safe('eseditlayout')!='')
+		if($this->params->get('eseditlayout')!='')
 		{
-			$Layouts = new Layouts($this->ct);
-			$this->pagelayout = $Layouts->getLayout($this->getParam_safe('eseditlayout'));
+			$layouttype=0;
+			
+			$this->pagelayout=ESLayouts::getLayout($this->params->get('eseditlayout'),$layouttype);
 		}
 		else
 			$this->pagelayout='';
@@ -175,34 +221,31 @@ class CustomTablesModelEditItem extends JModelLegacy
 		$this->layout_catalog='';
 		$this->layout_details='';
 
-		$this->onrecordaddsendemaillayout=$this->getParam_safe('onrecordaddsendemaillayout');
+		$this->onrecordaddsendemaillayout=$this->params->get('onrecordaddsendemaillayout');
 
-		if($this->getParam_safe('listingid')!=0)
+
+		//	Fields
+		$this->esfields= ESFields::getFields($this->estableid);
+
+
+		if($this->params->get('listingid')!=0)
 		{
-			if($this->listing_id==0)
-				$this->listing_id=$this->getParam_safe('listingid');
-			
-			$this->processCustomListingID();
+			$this->id=$this->processCustomListingID();
 		}
 		elseif(!$BlockExternalVars and $jinput->getInt('listing_id',0)!=0)
 		{
-			$this->listing_id = $jinput->getCmd('listing_id',0);
-			$this->processCustomListingID();
+			$this->id=$jinput->getInt('listing_id',0);
+			$this->id=$this->processCustomListingID();
 		}
 			
-		if($this->listing_id==0 and $this->useridfield_uniqueusers and $this->useridfield!='')
+		if($this->id==0 and $this->useridfield_uniqueusers and $this->useridfield!='')
 		{
 			//try to find record by userid
-			$this->listing_id=$this->findRecordByUserID();
+			$this->id=$this->findRecordByUserID();
 		}
 		
 		if(isset($this->row))
 			$this->getSpecificVersionIfSet();
-		else
-		{
-			//default record values
-			$this->row = ['listing_id' => 0,'listing_published' =>0];
-		}
 		
 		return true;
 	}
@@ -212,18 +255,17 @@ class CustomTablesModelEditItem extends JModelLegacy
 		$db = JFactory::getDBO();
 		$wheres=array();
 		
-		if($this->ct->Table->published_field_found)
+		if($this->published_field_found)
 			$wheres[]='published=1';
 			
 		$wheres_user=$this->UserIDField_BuildWheres($this->useridfield);
-
 		$wheres=array_merge($wheres,$wheres_user);
 		
-		$query='SELECT '.$this->ct->Table->tablerow['query_selects'].' FROM '.$this->ct->Table->realtablename.' WHERE '.implode(' AND ',$wheres).' LIMIT 1';
-
+		$query='SELECT c.'.$this->tablerow['realidfieldname'].' FROM '.$this->realtablename.' AS c WHERE '.implode(' AND ',$wheres).' LIMIT 1';
+		
 		$db->setQuery($query);
 		$rows=$db->loadAssocList();
-		
+
 		if(count($rows)<1)
 		{
 			$a=array();//for compatibility
@@ -232,18 +274,20 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 		$this->row=$rows[0];
 
-		return $this->row[$this->ct->Table->realidfieldname];
+		return $this->row['c.'.$this->tablerow['realidfieldname']];
+
 	}
 
 	function processCustomListingID()
 	{
 		$db = JFactory::getDBO();
 
-		if(is_numeric($this->listing_id) or (strpos($this->listing_id,'=')===false and strpos($this->listing_id,'<')===false and strpos($this->listing_id,'>')===false))
+		if($this->id==0)
+			$this->id=$this->params->get('listingid');
+
+		if(is_numeric($this->id))
 		{
-			$query = 'SELECT '.$this->ct->Table->tablerow['query_selects'].' FROM '.$this->ct->Table->realtablename
-				.' WHERE '.$this->ct->Table->realidfieldname.'='.$db->quote($this->listing_id).' LIMIT 1';
-				
+			$query = 'SELECT '.$this->tablerow['query_selects'].' FROM '.$this->realtablename.' WHERE '.$this->tablerow['realidfieldname'].'='.(int)$this->id.' LIMIT 1';
 			$db->setQuery($query);
 			$rows=$db->loadAssocList();
 			if(count($rows)<1)
@@ -251,42 +295,47 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 			$this->row=$rows[0];
 
-			return $this->listing_id;
+			return $this->id;
 		}
 
-		$filter=$this->listing_id;
+
+		$filter=$this->id;
 		if($filter=='')
 			return 0;
 
-		$LayoutProc=new LayoutProcessor($this->ct);
+		$LayoutProc=new LayoutProcessor;
+		$LayoutProc->Model=$this;
 		$LayoutProc->layout=$filter;
-		$filter=$LayoutProc->fillLayout(array(),null,'[]',true);
+		$filter=$LayoutProc->fillLayout(array(),null,array(),'[]',true);
 
-		//TODO
-		Factory::getApplication()->enqueueMessage('Filtering not done.','error');
-		//$this->ct->setFilter('', $this->ct->Env->menu_params->get('showpublished'));
+				$filtering=new ESFiltering;
+				$filtering->langpostfix=$this->langpostfix;
+				$filtering->es=$this->es;
+				$filtering->esfields=$this->esfields;
 
-		//$this->filtering = new ESFiltering($this->ct);
+				$PathValue=array();
+				$paramwhere=$filtering->getWhereExpression($filter,$PathValue);
 
-		$PathValue=array();
-		$paramwhere=$filtering->getWhereExpression($filter,$PathValue);
+				if($paramwhere!='')
+						$wherearr[]=' ('.$paramwhere.' )';
 
-		if($paramwhere!='')
-			$wherearr[]=' ('.$paramwhere.' )';
+			if($this->tablerow['published_field_found'])
+				$wherearr[]='published=1';
 
-		if($this->ct->Table->published_field_found)
-			$wherearr[]='published=1';
+			if(count($wherearr)>0)
+				$where = ' WHERE '.implode(" AND ",$wherearr);
 
-		if(count($wherearr)>0)
-			$where = ' WHERE '.implode(" AND ",$wherearr);
+			$query = 'SELECT '.$this->tablerow['realidfieldname'].' AS listing_id FROM '.$this->realtablename.' '.$where;
 
-		$query = 'SELECT '.$this->ct->Table->realidfieldname.' AS listing_id FROM '.$this->ct->Table->realtablename.' '.$where;
+			$query.=' ORDER BY '.$this->tablerow['realidfieldname'].' DESC'; //show last
+			$query.=' LIMIT 1';
 
-		$query.=' ORDER BY '.$this->ct->Table->realidfieldname.' DESC'; //show last
-		$query.=' LIMIT 1';
 
 		$db->setQuery($query);
+
+		
 		$rows=$db->loadAssocList();
+
 
 		if(count($rows)<1)
 		{
@@ -295,6 +344,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 		}
 
 		$this->row=$rows[0];
+		return $row['listing_id'];
 	}
 	
 	function getSpecificVersionIfSet()
@@ -310,35 +360,36 @@ class CustomTablesModelEditItem extends JModelLegacy
 		    	$new_row= $this->getVersionData($this->row,$log_field,$version);
 				if(count($new_row)>0)
 				{
-				    $this->row=$this->makeEmptyRecord($this->listing_id,$new_row['listing_published']);
+				    $this->row=$this->makeEmptyRecord($this->id,$new_row['listing_published']);
 
 				    //Copy values
-				    foreach($this->ct->Table->fields as $ESField)
+				    foreach($this->esfields as $ESField)
 						$this->row[$ESField['realfieldname']]=$new_row[$ESField['realfieldname']];
 				}
 		    }
 		}
 	}
 	
-	function makeEmptyRecord($listing_id,$published)
+	function makeEmptyRecord($id,$published)
 	{
 	    $row=array();
-	    $row['listing_id'] = $listing_id;
+	    $row['listing_id']=$id;
 	    
-		if($this->ct->Table->published_field_found)
+		if($this->tablerow['published_field_found'])
 			$row['published']=$published;
 		
+		
+		$row['listing_id']=$id;
 	    $row['listing_published']=$published;
 
-	    foreach($this->ct->Table->fields as $ESField)
-			$row[$ESField['realfieldname']]='';
-			
+	    foreach($this->Model->esfields as $ESField)
+		$row[$ESField['realfieldname']]='';
 	    return $row;
 	}
 
 	function getTypeFieldName($type)
 	{
-		foreach($this->ct->Table->fields as $ESField)
+		foreach($this->Model->esfields as $ESField)
 		{
 				if($ESField['type']==$type)
 					return $ESField['realfieldname'];
@@ -363,10 +414,10 @@ class CustomTablesModelEditItem extends JModelLegacy
 						$obj=json_decode(base64_decode($data_content[3]),true);
 						$new_row=$obj[0];
 						
-						if($this->ct->Table->published_field_found)
+						if($this->tablerow['published_field_found'])
 							$new_row['published']=$row['published'];
 							
-						$new_row[$this->ct->Table->realidfieldname]=$row[$this->ct->Table->realidfieldname];
+						$new_row[$this->tablerow['realidfieldname']]=$row[$this->tablerow['realidfieldname']];
 						$new_row['listing_id']=$row['listing_id'];
 						$new_row[$log_field]=$row[$log_field];
 
@@ -393,17 +444,18 @@ class CustomTablesModelEditItem extends JModelLegacy
 		}
 		else
 		{
-			if($action==1 and $this->listing_id==0)
+			if($action==1 and $this->id==0)
 				$action=4; //add new
 		}
 
-		$guestcanaddnew=JoomlaBasicMisc::getMenuParam('guestcanaddnew', $this->ct->Env->Itemid);
+		$Itemid=JFactory::getApplication()->input->getInt("Itemid");
+		$guestcanaddnew=JoomlaBasicMisc::getMenuParam('guestcanaddnew', $Itemid);
 
 
 		if($guestcanaddnew==1)
 			return true;
 
-		if($guestcanaddnew==-1 and $this->listing_id==0)
+		if($guestcanaddnew==-1 and $this->id==0)
 		{
 			$this->isAutorized=false;
 			return false;
@@ -431,6 +483,12 @@ class CustomTablesModelEditItem extends JModelLegacy
 			$this->add_userGroup=$this->add_userGroup;
 
 
+
+		// --- This can be replaced by tableid
+
+		if($this->establename=='')
+			$this->establename=$this->params->get( 'establename' ); //-- use this only
+
 		if($action==1)
 			$this->userGroup = $this->edit_userGroup;
 		if($action==2)
@@ -450,7 +508,8 @@ class CustomTablesModelEditItem extends JModelLegacy
 			return false;
 		}
 
-		if($this->ct->Env->isUserAdministrator)
+		$this->isUserAdministrator=JoomlaBasicMisc::isUserAdmin($this->userid);
+		if($this->isUserAdministrator)
 		{
 			//Administrator has access to anything
 
@@ -459,7 +518,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 		}
 
 
-		if($this->listing_id==0 or $this->useridfield=='')
+		if($this->id==0 or $this->useridfield=='')
 		{
 			$this->isAutorized=JoomlaBasicMisc::checkUserGroupAccess($this->userGroup);
 			return $this->isAutorized;
@@ -484,11 +543,16 @@ class CustomTablesModelEditItem extends JModelLegacy
 		$this->isAutorized=false;
 		$this->isUserAdministrator=false;
 		
-		if($access=='core.edit' and $this->listing_id==0)
+		if($access=='core.edit' and $this->id==0)
 			$access='core.create'; //add new
+
 
 		$user = JFactory::getUser();
 
+		if($this->establename=='')
+			$this->establename=$this->params->get( 'establename' ); //-- use this only
+
+		
 		if ($user->authorise($access, 'com_customtables')) 
 		{
 			$this->isAutorized=true;
@@ -515,10 +579,38 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 	function findUserIDField()
 	{
-		if($this->useridfield!='')
+		if($this->Itemid==0)
+		{
+			$Itemid=JFactory::getApplication()->input->getInt("Itemid");
+			$useridfield=JoomlaBasicMisc::getMenuParam('useridfield', $Itemid);
+			if($this->establename=='')
+				$this->establename=JoomlaBasicMisc::getMenuParam('establename', $Itemid);
+		}
+		else
+		{
+			$useridfield=$this->params->get('useridfield');
+		}
+
+		if($this->establename=='')
+		{
+			JFactory::getApplication()->enqueueMessage('Table not selected..', 'error');
+			return '';
+		}
+
+		$this->tablerow=ESTables::getTableRowByNameAssoc($this->establename);
+
+		if($this->tablerow['customtablename']!='')
+			$this->realtablename=$this->tablerow['customtablename'];
+		else
+			$this->realtablename='#__customtables_table_'.$this->establename;
+	
+		$this->estableid=$this->tablerow['id'];
+		$this->esfields= ESFields::getFields($this->estableid);
+
+		if($useridfield!='')
 		{
 			$useridfields=array();
-			$statement_items=tagProcessor_If::ExplodeSmartParams($this->useridfield); //"and" and "or" as separators
+			$statement_items=tagProcessor_If::ExplodeSmartParams($useridfield); //"and" and "or" as separators
 			
 			foreach($statement_items as $item)
 			{
@@ -529,7 +621,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 					{
 						//Current table field name
 						//find selected field
-						foreach($this->ct->Table->fields as $esfield)
+						foreach($this->esfields as $esfield)
 						{
 							if($esfield['fieldname']==$field and ($esfield['type']=='userid' or $esfield['type']=='user'))
 							{
@@ -592,9 +684,8 @@ class CustomTablesModelEditItem extends JModelLegacy
 			{
 				//example: user
 				//check if the record belong to the current user
-				$user_field_row=Fields::FieldRowByName($field,$this->ct->Table->fields);
-				$wheres_owner[]=[$item[0],$user_field_row['realfieldname'].'='.$this->ct->Env->userid];
-				//$wheres_owner[]=[$item[0],'c.'.$user_field_row['realfieldname'].'='.$this->ct->Env->userid];
+				$user_field_row=ESFields::FieldRowByName($field,$this->esfields);
+				$wheres_owner[]=[$item[0],'c.'.$user_field_row['realfieldname'].'='.$this->userid];
 			}
 			else
 			{
@@ -625,9 +716,9 @@ class CustomTablesModelEditItem extends JModelLegacy
 					return false;
 				}
 				
-				$parent_table_fields=Fields::getFields($parent_table_row->id);
+				$parent_table_fields=ESFields::getFields($parent_table_row->id);
 				
-				$parent_join_field_row=Fields::FieldRowByName($parent_join_field,$parent_table_fields);
+				$parent_join_field_row=ESFields::FieldRowByName($parent_join_field,$parent_table_fields);
 				
 				if(count($parent_join_field_row)==0)
 				{
@@ -643,7 +734,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 				
 				//User field
 				
-				$parent_user_field_row=Fields::FieldRowByName($parent_user_field,$parent_table_fields);
+				$parent_user_field_row=ESFields::FieldRowByName($parent_user_field,$parent_table_fields);
 
 				if(count($parent_user_field_row)==0)
 				{
@@ -664,7 +755,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 				if($parent_join_field_row['type']=='sqljoin')
 					$parent_wheres[]='p.'.$parent_join_field_row['realfieldname'].'=c.listing_id';
 				elseif($parent_join_field_row['type']=='records')
-					$parent_wheres[]='INSTR(p.'.$parent_join_field_row['realfieldname'].',CONCAT(",",c.'.$this->ct->Table->realidfieldname.',","))';
+					$parent_wheres[]='INSTR(p.'.$parent_join_field_row['realfieldname'].',CONCAT(",",c.'.$this->tablerow['realidfieldname'].',","))';
 				else
 					return false;
 				
@@ -687,10 +778,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 			$index+=1;
 		}
 		
-		$db = JFactory::getDBO();
-		
-		if($this->listing_id != '' and $this->listing_id != 0)
-			$wheres[]=$this->ct->Table->realidfieldname.'='.$db->quote($this->listing_id);
+		$wheres[]='c.'.$this->tablerow['realidfieldname'].'='.$this->id;
 		
 		if($wheres_owner_str!='')
 			$wheres[]='('.$wheres_owner_str.')';
@@ -704,7 +792,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 		$db = JFactory::getDBO();
 		$wheres=$this->UserIDField_BuildWheres($useridfield);
 		
-		$query='SELECT c.'.$this->ct->Table->realidfieldname.' FROM '.$this->ct->Table->realtablename.' AS c WHERE '.implode(' AND ',$wheres).' LIMIT 1';
+		$query='SELECT c.'.$this->tablerow['realidfieldname'].' FROM '.$this->realtablename.' AS c WHERE '.implode(' AND ',$wheres).' LIMIT 1';
 
 		$db->setQuery( $query );
 		$db->execute();
@@ -729,11 +817,11 @@ class CustomTablesModelEditItem extends JModelLegacy
 	function getCustomTablesBranch($optionname,$startfrom, $langpostfix, $defaultvalue)
 	{
 		$optionid=0;
-		$filter_rootparent=Tree::getOptionIdFull($optionname);
+		$filter_rootparent=$this->es->getOptionIdFull($optionname);
 
 		if($optionname)
 		{
-		    $available_categories=Tree::getChildren($optionid,$filter_rootparent,1, $langpostfix,$optionname);
+		    $available_categories=$this->getAllChild($optionid,$filter_rootparent,1, $langpostfix,$optionname);
 
 		    $db = JFactory::getDBO();
 		    $query = ' SELECT optionname, id, title_'.$langpostfix.' AS title FROM #__customtables_options WHERE ';
@@ -746,7 +834,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 			if($startfrom==0)
 			{
 			if(count($rpname)==1)
-				JoomlaBasicMisc::array_insert(
+				$this->array_insert(
 			    $available_categories,
 			    array(
 						"id" => $filter_rootparent,
@@ -758,10 +846,10 @@ class CustomTablesModelEditItem extends JModelLegacy
 		}
 		else
 		{
-		    $available_categories=Tree::getChildren($optionid,0,1, $langpostfix,'');
+		    $available_categories=$this->getAllChild($optionid,0,1, $langpostfix,'');
 		}
 		if($defaultvalue)
-			JoomlaBasicMisc::array_insert(
+			$this->es->array_insert(
 			    $available_categories,
 			    array(
 						"id" => 0,
@@ -773,7 +861,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 
 		if($startfrom==0)
-		JoomlaBasicMisc::array_insert($available_categories,
+		$this->array_insert($available_categories,
 								array(	"id" => 0,
 										"name" => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ROOT'),
 										"fullpath" => ''),
@@ -825,16 +913,16 @@ class CustomTablesModelEditItem extends JModelLegacy
 	function copy(&$msg,&$link)
 	{
 		$jinput = JFactory::getApplication()->input;
-		$listing_id = $jinput->getCmd('listing_id',0);
+		$id=$jinput->get('listing_id',0,'INT');
 
 		$db = JFactory::getDBO();
 
-		$query='SELECT MAX('.$this->ct->Table->realidfieldname.') AS maxid FROM '.$this->ct->Table->realtablename.' LIMIT 1';
+		$query='SELECT MAX('.$this->tablerow['realidfieldname'].') AS maxid FROM '.$this->realtablename.' LIMIT 1';
 		$db->setQuery( $query );
 		$rows=$db->loadObjectList();
 		if(count($rows)==0)
 		{
-			$msg='Table not found or something wrong.';
+				$msg='Table not found or something wrong.';
 		}
 
 		$new_id=(int)($rows[0]->maxid)+1;
@@ -849,37 +937,38 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 		if($db->serverType == 'postgresql')
 		{
-			$query = 'CREATE TEMPORARY TABLE ct_tmp AS TABLE '.$this->ct->Table->realtablename.' WITH NO DATA';
+			$query = 'CREATE TEMPORARY TABLE ct_tmp AS TABLE '.$this->realtablename.' WITH NO DATA';
 			
 			$db->setQuery( $query );
 			$db->execute();
 			
-			$query = 'INSERT INTO ct_tmp (SELECT * FROM '.$this->ct->Table->realtablename.' WHERE '.$this->ct->Table->realidfieldname.' = '.$db->quote($listing_id).')';
+			$query = 'INSERT INTO ct_tmp (SELECT * FROM '.$this->realtablename.' WHERE '.$this->tablerow['realidfieldname'].' = '.$id.')';
 			
 			$db->setQuery( $query );
 			$db->execute();
 		}
 		else
 		{
-			$query='CREATE TEMPORARY TABLE ct_tmp SELECT * FROM '.$this->ct->Table->realtablename.' WHERE '.$this->ct->Table->realidfieldname.' = '.$db->quote($listing_id);
+			$query='CREATE TEMPORARY TABLE ct_tmp SELECT * FROM '.$this->realtablename.' WHERE '.$this->tablerow['realidfieldname'].' = '.$id;
 			$db->setQuery( $query );
 			$db->execute();
 		}
 
 		$sets=array();
-		$sets[]=$this->ct->Table->realidfieldname.'='.$db->quote($new_id);
+		$sets[]=$this->tablerow['realidfieldname'].'='.$new_id;
 		
-		$query='UPDATE ct_tmp SET '.implode(',',$sets).' WHERE '.$this->ct->Table->realidfieldname.'='.$db->quote($listing_id);
+		$query='UPDATE ct_tmp SET '.implode(',',$sets).' WHERE '.$this->tablerow['realidfieldname'].' = '.$id.';';
 		$db->setQuery( $query );
 		$db->execute();
 
-		$query='INSERT INTO '.$this->ct->Table->realtablename.' SELECT * FROM ct_tmp WHERE '.$this->ct->Table->realidfieldname.'='.$db->quote($new_id);
+		$query='INSERT INTO '.$this->realtablename.' SELECT * FROM ct_tmp WHERE '.$this->tablerow['realidfieldname'].' = '.$new_id.';';
 		$db->setQuery( $query );
 		$db->execute();
 
 		$jinput->set('listing_id',$new_id);
-		$jinput->set('old_listing_id',$listing_id);
-		$this->listing_id = $new_id;
+		$jinput->set('old_listing_id',$id);
+		
+		
 
 		if($db->serverType == 'postgresql')
 		{
@@ -894,11 +983,11 @@ class CustomTablesModelEditItem extends JModelLegacy
 			$db->execute();
 		}
 
-		return $this->store($msg,$link,true,$new_id);
+		return $this->store($msg,$link,true);
 
 	}
 
-	function store(&$msg,&$link,$isCopy=false, $listing_id = '')
+	function store(&$msg,&$link,$isCopy=false)
 	{
 		$jinput = JFactory::getApplication()->input;
 
@@ -910,6 +999,8 @@ class CustomTablesModelEditItem extends JModelLegacy
 		if(in_array($USER_IP,$IP_Black_List))
 			return true;
 
+
+
 		if(!$this->check_captcha())
 		{
 			$msg='Incorrect Captcha';
@@ -918,11 +1009,10 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 		$isDebug=$jinput->getInt( 'debug',0);
 
-		if($listing_id == '')
-			$listing_id = $this->params->get('listingid');
+		$id=(int)$this->params->get('listingid');
 
-		if($listing_id == '')
-			$listing_id = $jinput->getCmd('listing_id', 0); //TODO : this inconsistancy must be fixed
+		if($id==0)
+			$id= $jinput->getInt('listing_id', 0); //TODO : this inconsistancy must be fixed
 
 		$fieldstosave=$this->getFieldsToSave(); //will Read page Layout to find fields to save
 
@@ -933,36 +1023,34 @@ class CustomTablesModelEditItem extends JModelLegacy
 		$user_email='';
 		$user_name='';
 
+
+
 		//	Fields
 		$prefix='comes_';
-		$this->ct->Table->prefix = $prefix;
 
 		$phponchangefound=false;
 		$phponaddfound=false;
 
-		//$create_new_user=null;
+		$create_new_user=null;
 
 		$default_fields_to_apply=array();
 
-		foreach($this->ct->Table->fields as $esfield)
+		foreach($this->esfields as $esfield)
 		{
 			$realfieldname=$esfield['realfieldname'];
 
 			$value_found=false;
 			if(in_array($esfield['fieldname'],$fieldstosave))
 			{
-				$saveFieldSet = $this->ct->Table->getSaveFieldSet($listing_id,$esfield);
-				
-				if($saveFieldSet != null)
-					$savequery[] = $saveFieldSet;
-				else
+				$value_found=CTValue::getValue($id,$this->es,$esfield,$savequery,$prefix,$this->establename,$this->LanguageList,$fieldstosave,$this->realtablename);
+				if(!$value_found)
 					$default_fields_to_apply[]=array($esfield['fieldname'],$esfield['defaultvalue'],$esfield['type'],$esfield['realfieldname']);
 			}
 
 			switch($esfield['type'])
 			{
 				case 'creationtime':
-					if($listing_id == 0 or $listing_id == '' or $isCopy)
+					if($id==0 or $isCopy)
 						$savequery[]=$realfieldname.'='.$db->Quote(gmdate( 'Y-m-d H:i:s'));
 					break;
 
@@ -971,7 +1059,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 					break;
 
 				case 'phponadd':
-					if($listing_id == 0 or $listing_id == '' or $isCopy)
+					if($id==0 or $isCopy)
 					{
 						$phponaddfound=true;
 					}
@@ -994,7 +1082,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 				case 'userid':
 
-					if(($listing_id == 0 or $listing_id == '' or $isCopy) and !$value_found)//set new userid if record added or copied
+					if(($id==0 or $isCopy) and !$value_found)//set new userid if record added or copied
 					{
 						$user = JFactory::getUser();
 
@@ -1006,17 +1094,17 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 					break;
 				case 'user':
-					//$create_new_user=$esfield;
+					$create_new_user=$esfield;
 					break;
 
 				case 'id':
 					//get max id
-					if($listing_id == 0 or $listing_id == '' or $isCopy)
+					if($id==0 or $isCopy)
 					{
 						$minid=(int)$typeparams;
 
 
-						$query='SELECT MAX('.$realfieldname.') AS maxid FROM '.$this->ct->Table->realtablename.' LIMIT 1';
+						$query='SELECT MAX('.$realfieldname.') AS maxid FROM '.$this->realtablename.' LIMIT 1';
 						$db->setQuery( $query );
 						$rows=$db->loadObjectList();
 						if(count($rows)!=0)
@@ -1036,38 +1124,45 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 			if($this->params->get('fullnamefield')!='' and $this->params->get('fullnamefield')==$fieldname)
 				$user_name=$jinput->getString($prefix.$fieldname);
-		}
+
+
+		}//foreach($this->esfields as $esfield)
+
+
 
 		$row_old=array();
-		$listing_id_temp = 0;
+		$id_temp = 0;
 		
-		if($listing_id == 0 or $listing_id == '')
+		if($id==0)
 		{
 			$isitnewrecords	=true;
-
-			$publishstatus = $this->params->get( 'publishstatus' );
-			if(is_null($publishstatus))
-				$publishstatus = $jinput->getInt('published');
+			if($this->params->get('eseditlayout')!='')
+				$publishstatus=1; //Pubished by default
 			else
-				$publishstatus = (int)$publishstatus;
+				$publishstatus=(int)$this->params->get( 'publishstatus' );
 
-			if($this->ct->Table->tablerow['published_field_found'])
+			if($this->tablerow['published_field_found'])
 				$savequery[]='published='.$publishstatus;
+
+			$db = JFactory::getDBO();
 			
-			$listing_id_temp = ESTables::insertRecords($this->ct->Table->realtablename,$this->ct->Table->realidfieldname,$savequery);
+			$id_temp = ESTables::insertRecords($this->realtablename,$this->tablerow['realidfieldname'],$savequery);
 		}
 
 		else
 		{
 			//get old row
-			$query='SELECT '.$this->ct->Table->tablerow['query_selects'].' FROM '.$this->ct->Table->realtablename.' WHERE '.$this->ct->Table->realidfieldname.'='.$db->quote($listing_id).' LIMIT 1';
+			$query='SELECT '.$this->tablerow['query_selects'].' FROM '.$this->realtablename.' WHERE '.$this->tablerow['realidfieldname'].'='.$id.' LIMIT 1';
 			$db->setQuery( $query );
 			$rows = $db->loadAssocList();
 			if(count($rows)!=0)
 				$row_old=$rows[0];
+
+			$this->updateLog($id);
+			$query='UPDATE '.$this->realtablename.' SET '.implode(', ',$savequery).' WHERE '.$this->tablerow['realidfieldname'].'='.$id;
 			
-			$this->updateLog($listing_id);			
-			$this->ct->Table->runUpdateQuery($savequery,$listing_id);
+			$db->setQuery( $query );
+			$db->execute();
 		}
 
 		if(count($savequery)<1)
@@ -1076,9 +1171,9 @@ class CustomTablesModelEditItem extends JModelLegacy
 			return false;
 		}
 		
-		if(($listing_id==0 or $listing_id == '') and $listing_id_temp!=0)
+		if($id==0 and $id_temp!=0)
 		{
-			$query='SELECT '.$this->ct->Table->tablerow['query_selects'].' FROM '.$this->ct->Table->realtablename.' WHERE '.$this->ct->Table->realidfieldname.'='.$db->quote($listing_id_temp).' LIMIT 1';
+			$query='SELECT '.$this->tablerow['query_selects'].' FROM '.$this->realtablename.' WHERE '.$this->tablerow['realidfieldname'].'='.$id_temp.' LIMIT 1';
 			$db->setQuery( $query );
 
 			$rows = $db->loadAssocList();
@@ -1098,25 +1193,27 @@ class CustomTablesModelEditItem extends JModelLegacy
 				$listing_id=$row['listing_id'];
 			}
 
-			$this->ct->Table->saveLog($listing_id,1);
+
+			ESLogs::save($this->estableid,$listing_id,1);
 
 		}
 		else
 		{
-			$this->ct->Table->saveLog($listing_id,2);
+				$listing_id=$id;
+				ESLogs::save($this->estableid,$listing_id,2);
 
-			$query='SELECT '.$this->ct->Table->tablerow['query_selects'].' FROM '.$this->ct->Table->realtablename.' WHERE '.$this->ct->Table->realidfieldname.'='.$db->quote($listing_id).' LIMIT 1';
-			$db->setQuery( $query );
+				$query='SELECT '.$this->tablerow['query_selects'].' FROM '.$this->realtablename.' WHERE '.$this->tablerow['realidfieldname'].'='.$id.' LIMIT 1';
+				$db->setQuery( $query );
 
-			$rows = $db->loadAssocList();
+				$rows = $db->loadAssocList();
 
-			if(count($rows)!=0)
-			{
-				$row=$rows[0];
-				JFactory::getApplication()->input->set('listing_id',$row['listing_id']);
+				if(count($rows)!=0)
+				{
+					$row=$rows[0];
+					JFactory::getApplication()->input->set('listing_id',$row['listing_id']);
 
-				if($phponchangefound or $this->ct->Table->tablerow['customphp']!='')
-					$this->doPHPonChange($row);
+					if($phponchangefound or $this->tablecustomphp!='')
+						$this->doPHPonChange($row);
 						
 					if($phponaddfound and $isCopy)
 						$this->doPHPonAdd($row);
@@ -1128,8 +1225,19 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 		//update MD5s
 		$this->updateMD5($listing_id);
-		$this->ct->Table->processDefaultValues($default_fields_to_apply,$this->ct,$row);
+		CTValue::processDefaultValues($default_fields_to_apply,$this,$row);
 
+		if($create_new_user!=null and (int)$row['listing_published']==1)
+		{
+			CTValue::Try2CreateUserAccount($this,$create_new_user,$row);
+
+		}
+
+		//Send email note if applicable
+		
+		$new_username='';
+		$new_password='';
+		
 		if($this->onrecordaddsendemail==3 and ($this->onrecordsavesendemailto!='' or $this->onrecordaddsendemailto!=''))
 		{
 			//check conditions
@@ -1137,16 +1245,16 @@ class CustomTablesModelEditItem extends JModelLegacy
 				if($this->checkSendEmailConditions($listing_id,$this->sendemailcondition))
 				{
 					//Send email conditions met
-					$this->sendEmailIfAddressSet($listing_id);//,$new_username,$new_password);
+					$this->sendEmailIfAddressSet($listing_id,$new_username,$new_password);
 				}
 		}
 		else
 		{
-			if($listing_id==0 or $listing_id == '' or $isCopy)
+			if($id==0 or $isCopy)
 			{
 				//New record
 				if($this->onrecordaddsendemail==1 or $this->onrecordaddsendemail==2)
-					$this->sendEmailIfAddressSet($listing_id);//,$new_username,$new_password);
+					$this->sendEmailIfAddressSet($listing_id,$new_username,$new_password);
 
 			}
 			else
@@ -1154,7 +1262,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 				//Old record
 				if($this->onrecordaddsendemail==2)
 				{
-					$this->sendEmailIfAddressSet($listing_id);//,$new_username,$new_password);
+					$this->sendEmailIfAddressSet($listing_id,$new_username,$new_password);
 				}
 
 			}
@@ -1171,36 +1279,128 @@ class CustomTablesModelEditItem extends JModelLegacy
 		//Refresh menu if needed
 		$msg= $this->itemaddedtext;
 
-		if($this->ct->Env->advancedtagprocessor)
-			CleanExecute::executeCustomPHPfile($this->ct->Table->tablerow['customphp'],$row,$row_old);
+		if($this->tablecustomphp!='')
+			$this->doCustomPHP($row,$row_old);
 
 		if($isDebug)
 		{
-			die('Debug mode.');//debug mode
+			echo 'Debug mode.';
+			die ;//debug mode
 		}	
-		
-		$jinput->set('listing_id',$listing_id);
+		$jinput->setVar('listing_id',$listing_id);
 
 		return true;
 	}
 
-	function sendEmailIfAddressSet($listing_id)//,$new_username,$new_password)
+	function Refresh($save_log=1)
+	{
+		$ids_str=JFactory::getApplication()->input->getString('ids', '');
+
+		if($ids_str!='')
+		{
+			$ok=true;
+			$ids_=explode(',',$ids_str);
+			foreach($ids_ as $id)
+			{
+				if((int)$id!=0)
+				{
+					$id=(int)$id;
+					$isok=$this->RefreshSingleRecord($id,$save_log);
+					if(!$isok)
+						$ok=false;
+				}
+			}
+			return 	$ok;
+		}
+
+		$id= JFactory::getApplication()->input->getInt('listing_id', 0);
+
+		if($id==0)
+			return false;
+
+		return $this->RefreshSingleRecord($id,$save_log);
+	}
+
+	protected function RefreshSingleRecord($id,$save_log)
+	{
+
+			$db = JFactory::getDBO();
+			
+			$query='SELECT '.$this->tablerow['query_selects'].' FROM '.$this->realtablename.' WHERE '.$this->tablerow['realidfieldname'].'='.$id.' LIMIT 1';
+			$db->setQuery( $query );
+
+			$rows = $db->loadAssocList();
+			if(count($rows)==0)
+				return false;
+
+			$row=$rows[0];
+			JFactory::getApplication()->input->set('listing_id',$id);
+
+			$this->doPHPonChange($row);
+
+			//update MD5s
+			$this->updateMD5($id);
+
+			if($save_log==1)
+				ESLogs::save($this->estableid,(int)$id,10);
+
+			$this->updateDefaultValues($row);
+
+
+			if($this->tablecustomphp!='')
+				$this->doCustomPHP($row, $row);
+
+
+
+		$create_new_user=null;
+
+		foreach($this->esfields as $esfield)
+		{
+			if($esfield['type']=='user')
+			{
+				$create_new_user=$esfield;
+				break;
+			}
+		}
+
+		if($create_new_user!=null and (int)$row['listing_published']==1)
+			CTValue::Try2CreateUserAccount($this,$create_new_user,$row);
+
+		
+		
+		//Send email note if applicable
+		
+		if($this->onrecordaddsendemail==3 and ($this->onrecordsavesendemailto!='' or $this->onrecordaddsendemailto!=''))
+		{
+			
+			//check conditions
+			if($this->checkSendEmailConditions($id,$this->sendemailcondition))
+			{
+				//Send email conditions met
+				$this->sendEmailIfAddressSet($id,$new_username,$new_password);
+			}
+		}
+		
+		return true;
+	}
+
+	function sendEmailIfAddressSet($listing_id,$new_username,$new_password)
 	{
 		$status=0;
 		if($this->onrecordaddsendemailto!='')
-			$status=$this->sendEmailNote($listing_id,$this->onrecordaddsendemailto);//,$new_username,$new_password);
+			$status=$this->sendEmailNote($listing_id,$this->onrecordaddsendemailto,$new_username,$new_password);
 		else
-			$status=$this->sendEmailNote($listing_id,$this->onrecordsavesendemailto);//,$new_username,$new_password);
+			$status=$this->sendEmailNote($listing_id,$this->onrecordsavesendemailto,$new_username,$new_password);
 		
 		if($this->emailsentstatusfield!='')
 		{
-			foreach($this->ct->Table->fields as $esfield)
+			foreach($this->esfields as $esfield)
 			{
 				$fieldname=$esfield['fieldname'];
 				if($this->emailsentstatusfield==$fieldname)
 				{
 					$db = JFactory::getDBO();
-					$query='UPDATE '.$this->ct->Table->realtablename.' SET es_'.$fieldname.'='.(int)$status.' WHERE '.$this->ct->Table->realidfieldname.'='.$db->quote($listing_id);
+					$query='UPDATE '.$this->realtablename.' SET es_'.$fieldname.'='.(int)$status.' WHERE '.$this->tablerow['realidfieldname'].'='.$listing_id;
 
 					$db->setQuery( $query );
 					$db->execute();	
@@ -1215,31 +1415,22 @@ class CustomTablesModelEditItem extends JModelLegacy
 		if($condition=='')
 			return true; //if no conditions
 			
-		$this->ct->Table->record = $this->getListingRowByID($listing_id);
-		$parsed_condition=$this->parseRowLayoutContent($condition,true);
-		
-		$parsed_condition = '('.$parsed_condition.' ? 1 : 0)';
+		$row=$this->getListingRowByID($listing_id);
+		$parsed_condition=$this->parseRowLayoutContent($row,$condition,true);
+		$thescript='return '.$parsed_condition.';';
+		$value=eval($thescript);
 
-		$error = '';
-		$value = CleanExecute::execute($parsed_condition,$error);
-		
-		if($error!='')
-		{
-			Factory::getApplication()->enqueueMessage($error,'error');
-			return false;
-		}
-
-		if((int)$value==1)
+		if($value==1)
 			return true;
 
 		return false;
 
 	}
 
-	function updateMD5($listing_id)
+	function updateMD5($id)
 	{
 		$savequery=array();
-		foreach($this->ct->Table->fields as $esfield)
+		foreach($this->esfields as $esfield)
 		{
 				if($esfield['type']=='md5')
 				{
@@ -1249,7 +1440,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 						foreach($fieldstocount as $f)
 						{
 							//to make sure that field exists
-							foreach($this->ct->Table->fields as $esfield_)
+							foreach($this->esfields as $esfield_)
 							{
 								if($esfield_['fieldname']==$f and $esfield['fieldname']!=$f)
 									$flds[]='COALESCE('.$esfield_['realfieldname'].')';
@@ -1261,26 +1452,26 @@ class CustomTablesModelEditItem extends JModelLegacy
 				}
 		}
 
-		$this->ct->Table->runUpdateQuery($savequery,$listing_id);
+        CTValue::runQueries($this,$savequery,$id);
 	}
 
 	function updateDefaultValues($row)
 	{
 		$default_fields_to_apply=array();
 
-		foreach($this->ct->Table->fields as $esfield)
+		foreach($this->esfields as $esfield)
 		{
 			$fieldname=$esfield['fieldname'];
 			if($esfield['defaultvalue']!='' and $row[$esfield['realfieldname']]=='')
 				$default_fields_to_apply[]=array($fieldname,$esfield['defaultvalue'],$esfield['type'],$esfield['realfieldname']);
 		}
 
-        $this->ct->Table->processDefaultValues($default_fields_to_apply,$this->ct,$row);
+        CTValue::processDefaultValues($default_fields_to_apply,$this,$row);
 	}
 
-	function updateLog($listing_id)
+	function updateLog($id)
 	{
-		if($listing_id==0 or $listing_id == '')
+		if($id==0)
 			return;
 
 		$db = JFactory::getDBO();
@@ -1288,13 +1479,13 @@ class CustomTablesModelEditItem extends JModelLegacy
 		//saves previous version of the record
 		//get data
 		$fields_to_save=array();
-		foreach($this->ct->Table->fields as $esfield)
+		foreach($this->esfields as $esfield)
 		{
 			if($esfield['type']=='multilangstring' or $esfield['type']=='multilangtext')
 			{
 				$firstlanguage=true;
 
-				foreach($this->ct->Languages->LanguageList as $lang)
+				foreach($this->LangMisc->LanguageList as $lang)
 				{
 					if($firstlanguage)
 					{
@@ -1313,7 +1504,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 		}
 		
 		//get data
-		$query = 'SELECT '.implode(',',$fields_to_save).' FROM '.$this->ct->Table->realtablename.' WHERE '.$this->ct->Table->realidfieldname.'='.$db->quote($listing_id).' LIMIT 1';
+		$query = 'SELECT '.implode(',',$fields_to_save).' FROM '.$this->realtablename.' WHERE '.$this->tablerow['realidfieldname'].'='.$id.' LIMIT 1';
 
 	 	$db->setQuery($query);
 
@@ -1324,7 +1515,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 		$data=base64_encode(json_encode($rows));
 
 		$savequery=array();
-		foreach($this->ct->Table->fields as $esfield)
+		foreach($this->esfields as $esfield)
 		{
 				if($esfield['type']=='log')
 				{
@@ -1336,10 +1527,15 @@ class CustomTablesModelEditItem extends JModelLegacy
 		}
 
 		if(count($savequery)>0)
-			$this->ct->Table->runUpdateQuery($savequery,$listing_id);
+		{
+			$db = JFactory::getDBO();
+			$query='UPDATE '.$this->realtablename.' SET '.implode(', ',$savequery).' WHERE '.$this->tablerow['realidfieldname'].'='.$id;
+
+			$db->setQuery( $query );
+			$db->execute();
+		}
 	}
 
-/*
 	function CheckValueRule($prefix,$fieldname, $fieldtype, $typeparams)
 	{
 		$valuearray=array();
@@ -1398,7 +1594,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 				case 'multilangstring':
 
 					$firstlanguage=true;
-					foreach($this->ct->Languages->LanguageList as $lang)
+					foreach($this->LanguageList as $lang)
 					{
 						if($firstlanguage)
 						{
@@ -1416,13 +1612,13 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 
 				case 'text':
-					$value = ComponentHelper::filterText(JFactory::getApplication()->input->post->get($prefix.$fieldname, '', 'raw'));
+					$value = JComponentHelper::filterText(JFactory::getApplication()->input->post->get($prefix.$fieldname, '', 'raw'));
 					break;
 
 				case 'multilangtext':
 
 					$firstlanguage=true;
-					foreach($this->ct->Languages->LanguageList as $lang)
+					foreach($this->LanguageList as $lang)
 					{
 						if($firstlanguage)
 						{
@@ -1432,7 +1628,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 						else
 							$postfix='_'.$lang->sef;
 
-						$value_ = ComponentHelper::filterText(JFactory::getApplication()->input->post->get($prefix.$fieldname.$postfix, '', 'raw'));
+						$value_ = JComponentHelper::filterText(JFactory::getApplication()->input->post->get($prefix.$fieldname.$postfix, '', 'raw'));
 
 						$valuearray[]=$value_;
 
@@ -1460,7 +1656,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 				case 'multilangarticle':
 
 					$firstlanguage=true;
-					foreach($this->ct->Languages->LanguageList as $lang)
+					foreach($this->LanguageList as $lang)
 					{
 						if($firstlanguage)
 						{
@@ -1482,9 +1678,9 @@ class CustomTablesModelEditItem extends JModelLegacy
 						$optionname=$typeparams_arr[0];
 
 						if($typeparams_arr[1]=='multi')
-							$value=$this->getMultiString($optionname, $prefix.'multi_'.$this->ct->Table->tablename.'_'.$fieldname);
+							$value=$this->getMultiString($optionname, $prefix.'multi_'.$this->establename.'_'.$fieldname);
 						elseif($typeparams_arr[1]=='single')
-							$value=$this->getComboString($optionname, $prefix.'combotree_'.$this->ct->Table->tablename.'_'.$fieldname);
+							$value=$this->getComboString($optionname, $prefix.'combotree_'.$this->establename.'_'.$fieldname);
 
 					break;
 
@@ -1503,10 +1699,9 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 		if($value=='')
 			$value='""';
-			
-		return;
+
+		return eval($v);
 	}
-	*/
 
 	function PrepareAcceptReturnToLink($artlink)
 	{
@@ -1515,6 +1710,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 		$artlink=base64_decode ($artlink);
 
+
 		if($artlink=='')
 			return '';
 
@@ -1522,12 +1718,16 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'layout.php');
 
-		$LayoutProc=new LayoutProcessor($this->ct);
+		$LayoutProc=new LayoutProcessor;
+
+
 		$LayoutProc->layout=$artlink;
+		$LayoutProc->Model=$this;
+
 
 		$db = JFactory::getDBO();
 		
-		$query = 'SELECT '.$this->ct->Table->tablerow['query_selects'].' FROM '.$this->ct->Table->realtablename.' ORDER BY '.$this->ct->Table->realidfieldname.' DESC LIMIT 1';
+		$query = 'SELECT '.$this->tablerow['query_selects'].' FROM '.$this->realtablename.' ORDER BY '.$this->tablerow['realidfieldname'].' DESC LIMIT 1';
 	 	$db->setQuery($query);
 
 		$rows = $db->loadAssocList();
@@ -1536,23 +1736,24 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 		$row=$rows[0];
 
-		$processed_link=$LayoutProc->fillLayout($row,"",'[]',true);
+		$processed_link=$LayoutProc->fillLayout($row,"",array(),'[]',true);
 
 		return $processed_link;
+
 	}
 
 	function doPHPonAdd(&$row)
 	{
-		$listing_id = $row['listing_id'];
+		$id=$row['listing_id'];
 		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'layout.php');
 
-		$LayoutProc=new LayoutProcessor($this->ct);
+		$LayoutProc=new LayoutProcessor;
 		$LayoutProc->Model=$this;
 
 		$savequery='';
 		$db = JFactory::getDBO();
 
-		foreach($this->ct->Table->fields as $esfield)
+		foreach($this->esfields as $esfield)
 		{
 			$realfieldname=$esfield['realfieldname'];
 			$typeparams=$esfield['typeparams'];
@@ -1572,27 +1773,29 @@ class CustomTablesModelEditItem extends JModelLegacy
 						
 						$LayoutProc->layout=$thescript;
 						
-						$thescript='return '.LayoutProcessor::applyContentPlugins($LayoutProc->fillLayout($row,'','[]',true)).';';
-
-						$error = '';
-						$value = CleanExecute::execute($thescript,$error);
-		
-						if($error!='')
+						$thescript='return '.$this->applyContentPlugins($LayoutProc->fillLayout($row,'',array(),'[]',true)).';';
+						
+						$es=$this->es;
+						
+						try
 						{
-							Factory::getApplication()->enqueueMessage($error,'error');
-							return false;
+							$value=@eval($thescript);
+						}
+						catch (Exception $e)
+						{
+							echo $thescript;
 						}
 						
 						$row[$realfieldname]=$value;
 
 						$savequery=$realfieldname.'='.$db->quote($value);
-						$query='UPDATE '.$this->ct->Table->realtablename.' SET '.$savequery.' WHERE '.$this->ct->Table->realidfieldname.'='.$db->quote($listing_id);
+						$query='UPDATE '.$this->realtablename.' SET '.$savequery.' WHERE '.$this->tablerow['realidfieldname'].'='.$id;
 
 						$db->setQuery( $query );
 						$db->execute();
 
-			}
-		}
+			}//if($esfield['type']=='phponadd')
+		}//foreach($this->esfields as $esfield)
 
 
 
@@ -1600,14 +1803,15 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 	function doPHPonChange(&$row)
 	{
-		$listing_id=$row['listing_id'];
+		$id=$row['listing_id'];
 		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'layout.php');
 
-		$LayoutProc=new LayoutProcessor($this->ct);
+		$LayoutProc=new LayoutProcessor;
+		$LayoutProc->Model=$this;//ok
 
 		$db = JFactory::getDBO();
 
-		foreach($this->ct->Table->fields as $esfield)
+		foreach($this->esfields as $esfield)
 		{
 			$realfieldname=$esfield['realfieldname'];
 
@@ -1628,34 +1832,46 @@ class CustomTablesModelEditItem extends JModelLegacy
 						
 						$LayoutProc->layout=$thescript;
 
-						$htmlresult = $LayoutProc->fillLayout($row,'','[]',true);
-						$thescript='return '.LayoutProcessor::applyContentPlugins($htmlresult).';';
+						$thescript='return '.$this->applyContentPlugins($LayoutProc->fillLayout($row,'',array(),'[]',true)).';';
 				
-						$error = '';
-						$value = CleanExecute::execute($thescript,$error);
-		
-						if($error!='')
+						$es=$this->es;
+						
+						try
 						{
-							Factory::getApplication()->enqueueMessage($error,'error');
-							return false;
+							$value=@eval($thescript);
+						}
+						catch (Exception $e)
+						{
+							echo $thescript;
 						}
 						
 						$row[$realfieldname]=$value;
 
 						$savequery=$realfieldname.'='.$db->quote($value);
-						$query='UPDATE '.$this->ct->Table->realtablename.' SET '.$savequery.' WHERE '.$this->ct->Table->realidfieldname.'='.$db->quote($listing_id);
+						$query='UPDATE '.$this->realtablename.' SET '.$savequery.' WHERE '.$this->tablerow['realidfieldname'].'='.$id;
 
 						$db->setQuery( $query );
 						$db->execute();
 			}//if($esfield['type']=='phponchange')
-		}
+		}//foreach($this->esfields as $esfield)
+	}
+
+	function applyContentPlugins($pagelayout)
+	{
+		$o = new stdClass();
+		$o->text=$pagelayout;
+		$o->created_by_alias = 0;
+		$dispatcher	= JDispatcher::getInstance();
+		JPluginHelper::importPlugin('content');
+		$r = $dispatcher->trigger('onContentPrepare', array ('com_content.article', &$o, &$this->params_, 0));
+		return $o->text;
 	}
 
 	function getListingRowByID($listing_id)
 	{
 		$db = JFactory::getDBO();
 		
-		$query = 'SELECT '.$this->ct->Table->tablerow['query_selects'].' FROM '.$this->ct->Table->realtablename.' WHERE '.$this->ct->Table->realidfieldname.'='.$db->quote($listing_id).' LIMIT 1';
+		$query = 'SELECT '.$this->tablerow['query_selects'].' FROM '.$this->realtablename.' WHERE '.$this->tablerow['realidfieldname'].'='.$listing_id.' LIMIT 1';
 	 	$db->setQuery($query);
 
 		$rows = $db->loadAssocList();
@@ -1665,23 +1881,24 @@ class CustomTablesModelEditItem extends JModelLegacy
 		return $rows[0];
 	}
 
-	function parseRowLayoutContent($content,$applyContentPlagins=true)
+	function parseRowLayoutContent(&$row,$content,$applyContentPlagins=true)
 	{
 		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'layout.php');
-
-		$LayoutProc=new LayoutProcessor($this->ct);
+		$LayoutProc=new LayoutProcessor;
+		$LayoutProc->Model=$this;
+		$LayoutProc->advancedtagprocessor=$this->advancedtagprocessor;
 		$LayoutProc->layout=$content;
-		$content=$LayoutProc->fillLayout($this->ct->Table->record);
+		$content=$LayoutProc->fillLayout($row,'','');
 		if($applyContentPlagins)
-			LayoutProcessor::applyContentPlugins($content);
+			$LayoutProc->applyContentPlugins($content);
 		
 		return $content;
 	}
 
-	function sendEmailNote($listing_id,$emails)//,$new_username,$new_password)
+	function sendEmailNote($listing_id,$emails,$new_username,$new_password)
 	{
 		$mainframe = JFactory::getApplication('site');
-		$this->ct->Table->record = $this->getListingRowByID($listing_id);
+		$row=$this->getListingRowByID($listing_id);
 		//Prepare Email List
 
 		$emails_raw=JoomlaBasicMisc::csv_explode(',', $emails, '"', true);
@@ -1691,28 +1908,32 @@ class CustomTablesModelEditItem extends JModelLegacy
 		{
 			$EmailPair=JoomlaBasicMisc::csv_explode(':', trim($SendToEmail), '"', false);
 			
-			$EmailTo=$this->parseRowLayoutContent(trim($EmailPair[0]),false);
-			
-			if(isset($EmailPair[1]) and $EmailPair[1]!='')
-				$Subject=$this->parseRowLayoutContent($EmailPair[1],true);
-			else
-				$Subject='Record added to "'.$this->ct->Table->tabletitle.'"';
-			
+			$EmailTo=$this->parseRowLayoutContent($row,trim($EmailPair[0]),false);
+			$Subject='Record added to "'.$this->tabletitle.'"';
+
+
+			if(isset($EmailPair[1]))
+			{
+				if($EmailPair[1]!='')
+				{
+					$Subject=$this->parseRowLayoutContent($row,$EmailPair[1],true);
+				}
+			}
+
 			if($EmailTo!='')
 				$emails[]=array('email' => $EmailTo, 'subject' => $Subject);
 		}
-		
+
 		//-----------
-		$Layouts = new Layouts($this->ct);
-		$message_layout_content = $Layouts->getLayout($this->onrecordaddsendemaillayout);
-			
-		$note=$this->parseRowLayoutContent($message_layout_content,true);
+		$layouttype=0;
+		$message_layout_content=ESLayouts::getLayout($this->onrecordaddsendemaillayout,$layouttype);
+		$note=$this->parseRowLayoutContent($row,$message_layout_content,true);
 		
 		$MailFrom 	= $mainframe->getCfg('mailfrom');
 		$FromName 	= $mainframe->getCfg('fromname');
 
-		//$note=str_replace('[_username]',$new_username,$note);
-		//$note=str_replace('[_password]',$new_password,$note);
+		$note=str_replace('[_username]',$new_username,$note);
+		$note=str_replace('[_password]',$new_password,$note);
 		
 		$status=0;
 
@@ -1720,7 +1941,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 		{
 			$Subject=$SendToEmail['subject'];
 
-			//$mail = JFactory::getMailer();
+			$mail = JFactory::getMailer();
 
 			$options=array();
 			$fList=JoomlaBasicMisc::getListToReplace('attachment',$options,$note,'{}');
@@ -1731,39 +1952,38 @@ class CustomTablesModelEditItem extends JModelLegacy
 				$filename=$options[$i];
 				if(file_exists($filename))
 				{
-					$mail->addAttachment($filename);
-					$vlu='';
+							$mail->addAttachment($filename);
+							$vlu='';
 				}
 				else
 					$vlu='<p>File not found. Code: 21098s</p>';
 
+
 				$note_final=str_replace($fItem,'',$note);
 				$i++;
 			}
-			
-			$attachments=[];
-			foreach($this->ct->Table->fields as $esfield)
-			{
-				if($esfield['type']=='file')
-				{
 
-					$filename='images/esfiles/'.$this->ct->Table->record[$esfield['realfieldname']];
-					if(file_exists($filename))
-							$attachments[] = $filename;
-				}
-			}
-			
-			$sent = Email::sendEmail($EmailTo,$Subject,$note_final,$isHTML = true,$attachments);
-/*
 			$mail->IsHTML(true);
 			$mail->addRecipient($EmailTo);
 			$mail->setSender( array($MailFrom,$FromName) );
 			$mail->setSubject( $Subject);
 			$mail->setBody( $note_final );
 			
-			
+			foreach($this->esfields as $esfield)
+			{
+				if($esfield['type']=='file')
+				{
+
+					$filename='images/esfiles/'.$row[$esfield['realfieldname']];
+					if(file_exists($filename))
+							$mail->addAttachment($filename);
+
+				}
+
+			}
+
 			$sent = $mail->Send();
-*/
+
 			if ( $sent !== true ) {
 				//Something went wrong. Email not sent.
 				JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_SENDING_EMAIL').': '.$EmailTo.' ('.$Subject.')', 'error');
@@ -1778,128 +1998,97 @@ class CustomTablesModelEditItem extends JModelLegacy
 		return $status;
 	}
 
-	function Refresh($save_log=1)
-	{
-		$listing_ids_str=JFactory::getApplication()->input->getString('ids', '');
-
-		if($listing_ids_str!='')
-		{
-			$listing_ids_=explode(',',$listing_ids_str);
-			foreach($listing_ids_ as $listing_id)
-			{
-				if($listing_id != '')
-				{
-					$listing_id = preg_replace("/[^a-zA-Z_0-9-]/", "", $listing_id);
-					if($this->RefreshSingleRecord($listing_id,$save_log) == -1)
-						return -count($listing_ids_); //negative value means that there is an error
-				}
-			}
-			return count($listing_ids_);
-		}
-
-		$listing_id = JFactory::getApplication()->input->getCmd('listing_id', 0);
-
-		if($listing_id == 0 or $listing_id == '')
-			return 0;
-
-		return $this->RefreshSingleRecord($listing_id,$save_log);
-	}
-	
-	protected function RefreshSingleRecord($listing_id,$save_log)
-	{
-			$db = JFactory::getDBO();
-			
-			$query='SELECT '.$this->ct->Table->tablerow['query_selects'].' FROM '.$this->ct->Table->realtablename.' WHERE '.$this->ct->Table->realidfieldname.'='.$db->quote($listing_id).' LIMIT 1';
-			$db->setQuery( $query );
-
-			$rows = $db->loadAssocList();
-			if(count($rows)==0)
-				return -1;
-
-			$row=$rows[0];
-			JFactory::getApplication()->input->set('listing_id',$listing_id);
-
-			$this->doPHPonChange($row);
-
-			//update MD5s
-			$this->updateMD5($listing_id);
-
-			if($save_log==1)
-				$this->ct->Table->saveLog($listing_id,10);
-
-			$this->updateDefaultValues($row);
-
-			if($this->ct->Env->advancedtagprocessor)
-				CleanExecute::executeCustomPHPfile($this->ct->Table->tablerow['customphp'],$row,$row);
-
-		//Send email note if applicable
-		
-		if($this->onrecordaddsendemail==3 and ($this->onrecordsavesendemailto!='' or $this->onrecordaddsendemailto!=''))
-		{
-			
-			//check conditions
-			if($this->checkSendEmailConditions($listing_id,$this->sendemailcondition))
-			{
-				//Send email conditions met
-				$this->sendEmailIfAddressSet($listing_id);//,$new_username,$new_password);
-			}
-		}
-		
-		return 1;
-	}
-	
 	function setPublishStatus($status)
 	{
-		$listing_ids_str=JFactory::getApplication()->input->getString('ids', '');
-		if($listing_ids_str!='')
+		$ids_str=JFactory::getApplication()->input->getString('ids', '');
+		if($ids_str!='')
 		{
-			$listing_ids_=explode(',',$listing_ids_str);
-			foreach($listing_ids_ as $listing_id)
+			$ok=true;
+			$ids_=explode(',',$ids_str);
+			foreach($ids_ as $id)
 			{
-				if($listing_id != '')
+				if((int)$id!=0)
 				{
-					$listing_id = preg_replace("/[^a-zA-Z_0-9-]/", "", $listing_id);
-					if($this->setPublishStatusSingleRecord($listing_id,$status) == -1)
-						return -count($listing_ids_); //negative value means that there is an error
+					$id=(int)$id;
+					$isok=$this->setPublishStatusSingleRecord($id,$status);
+					if(!$isok)
+						$ok=false;
 				}
 			}
-			return count($listing_ids_);
+			return 	$ok;
 		}
 
-		$listing_id = $this->listing_id;
-		if($listing_id == '' or $listing_id == 0)
-			return 0;
+		$id= $this->id;
+		if($id==0)
+			return false;
 
-		return $this->setPublishStatusSingleRecord($listing_id,$status);
+		return $this->setPublishStatusSingleRecord($id,$status);
 	}
 
-	public function setPublishStatusSingleRecord($listing_id,$status)
+	protected function setPublishStatusSingleRecord($id,$status)
 	{
-		if(!$this->ct->Table->published_field_found)
-			return -1;
+		if(!$this->tablerow['published_field_found'])
+			return false;
 		
 		$db = JFactory::getDBO();
 
-		$query = 'UPDATE '.$this->ct->Table->realtablename.' SET published='.(int)$status.' WHERE '.$this->ct->Table->realidfieldname.'='.$db->quote($listing_id);
-		
+		$query = 'UPDATE '.$this->realtablename.' SET published='.$status.' WHERE '.$this->tablerow['realidfieldname'].'='.(int)$id;
+
 	 	$db->setQuery($query);
 		$db->execute();	
 
 		if($status==1)
-			$this->ct->Table->saveLog($listing_id,3);
+			ESLogs::save($this->estableid,(int)$id,3);
 		else
-			$this->ct->Table->saveLog($listing_id,4);
+			ESLogs::save($this->estableid,(int)$id,4);
 
-		$this->RefreshSingleRecord($listing_id,0);
+		$this->RefreshSingleRecord((int)$id,0);
 
-		return 1;
+		return true;
+	}
+
+	function doCustomPHP(&$row=array(),&$row_old=array())
+	{
+		$servertagprocessor_file=JPATH_SITE.DIRECTORY_SEPARATOR.'plugins'.DIRECTORY_SEPARATOR.'content'.DIRECTORY_SEPARATOR.'customtables'.DIRECTORY_SEPARATOR.'protagprocessor'.DIRECTORY_SEPARATOR.'servertags.php';
+
+		if(!file_exists($servertagprocessor_file))
+			return;
+
+		if($this->tablecustomphp!='')
+		{
+			$parts=explode('/',$this->tablecustomphp); //just a security check
+			if(count($parts)>1)
+				return;
+
+			$file=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'customphp'.DIRECTORY_SEPARATOR.$this->tablecustomphp;
+			if(file_exists($file))
+			{
+				require_once($file);
+				$function_name='CTCustom_'.str_replace('.php','',$this->tablecustomphp);
+
+				if(function_exists ($function_name))
+				{
+					call_user_func($function_name,$row,$row_old);
+					return true;
+				}
+
+				$function_name='ESCustom_'.str_replace('.php','',$this->tablecustomphp);
+				if(function_exists ($function_name))
+				{
+					call_user_func($function_name,$row,$row_old);
+					return true;
+				}
+			}
+		}
+		return false;
+
 	}
 
 	function getFieldsToSave()
 	{
 		$fields=array();
 
-		foreach($this->ct->Table->fields as $esfield)
+		foreach($this->esfields as $esfield)
 		{
 			$fn=$esfield['fieldname'];
 			$fn_str=array();
@@ -1910,13 +2099,17 @@ class CustomTablesModelEditItem extends JModelLegacy
 			$fn_str[]="'comes_".$fn."'";
 			
 			$fn_str[]='[_edit:'.$fn.':';
-			$fn_str[]=$fn.'.edit';
+
+
 
 			$found=false;
 			foreach($fn_str as $s)
 			{
+
+
 				if(strpos($this->pagelayout,$s)!==false)
 				{
+
 					$found=true;
 					break;
 				}
@@ -1924,9 +2117,11 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 			if($found)
 				$fields[]=$fn;
+
 		}
 
 		return $fields;
+
 	}
 
 	function getUserIP()
@@ -1953,72 +2148,75 @@ class CustomTablesModelEditItem extends JModelLegacy
 	{
 		$jinput = JFactory::getApplication()->input;
 
-		$listing_ids_str=$jinput->getString('ids','');
-		if($listing_ids_str!='')
+		$ids_str=$jinput->getString('ids','');
+		if($ids_str!='')
 		{
 			$ok=true;
-			$listing_ids_=explode(',',$listing_ids_str);
-			foreach($listing_ids_ as $listing_id)
+			$ids_=explode(',',$ids_str);
+			foreach($ids_ as $id)
 			{
-				if($listing_id != '')
+				if((int)$id!=0)
 				{
-					$listing_id = preg_replace("/[^a-zA-Z_0-9-]/", "", $listing_id);
-					if($this->deleteSingleRecord($listing_id) == -1)
-						return -count($listing_ids_); //negative value means that there is an error
+					$id=(int)$id;
+					$isok=$this->deleteSingleRecord($id);
+					if(!$isok)
+					{
+						$ok=false;
+					}
 				}
 			}
-			return count($listing_ids_);
+			return 	$ok;
 		}
 
-		$listing_id = $jinput->getCmd('listing_id',0);
-		if($listing_id == '' or $listing_id == 0)
-			return 0;
+		if(!$jinput->getInt('listing_id',0))
+			return false;
 
-		return $this->deleteSingleRecord($listing_id);
+		$id=$jinput->getInt('listing_id',0);
+		if($id==0)
+			return false;
+
+		return $this->deleteSingleRecord($id);
 	}
 
-	public function deleteSingleRecord($listing_id)
+	protected function deleteSingleRecord($objectid)
 	{
 		$db = JFactory::getDBO();
 
 		//delete images if exist
+		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'administrator'.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'imagemethods.php');
 		$imagemethods=new CustomTablesImageMethods;
 
-		$query='SELECT * FROM '.$this->ct->Table->realtablename.' WHERE '.$this->ct->Table->realidfieldname.'='.$db->quote($listing_id);
+		$query='SELECT * FROM '.$this->realtablename.' WHERE '.$this->tablerow['realidfieldname'].'='.$objectid;
 
 		$db->setQuery($query);
 		$rows=$db->loadAssocList();
 
 		if(count($rows)==0)
-			return -1;
+			return false;
 
 		$row=$rows[0];
 
-		foreach($this->ct->Table->fields as $esfield)
+		foreach($this->esfields as $esfield)
 		{
 			if($esfield['type']=='image')
 			{
-				$ImageFolder_=CustomTablesImageMethods::getImageFolder($esfield['typeparams']);
-
 				//delete single image
 				$imagemethods->DeleteExistingSingleImage(
 					$row[$esfield['realfieldname']],
-					$ImageFolder_,
+					$this->imagefolder,
 					$esfield['typeparams'],
-					$this->ct->Table->realtablename,
+					$this->realtablename,
 					$esfield['realfieldname'],
-					$this->ct->Table->realidfieldname
+					$this->tablerow['realidfieldname']
 				);
 			}
 			elseif($esfield['type']=='imagegallery')
 			{
-				$ImageFolder_=CustomTablesImageMethods::getImageFolder($esfield['typeparams']);
-				
 				//delete gallery images if exist
 				$galleryname=$esfield['fieldname'];
-				$phototablename='#__customtables_gallery_'.$this->ct->Table->tablename.'_'.$galleryname;
+				$phototablename='#__customtables_gallery_'.$this->establename.'_'.$galleryname;
 
-				$query = 'SELECT photoid FROM '.$phototablename.' WHERE listingid='.$db->quote($listing_id);
+				$query = 'SELECT photoid FROM '.$phototablename.' WHERE listingid='.$objectid;
 				$db->setQuery($query);
 				
 				$photorows=$db->loadObjectList();
@@ -2026,9 +2224,9 @@ class CustomTablesModelEditItem extends JModelLegacy
 				foreach($photorows as $photorow)
 				{
 					$imagemethods->DeleteExistingGalleryImage(
-						$ImageFolder_,
+						$this->imagefolder,
 						$this->imagegalleryprefix,
-						$this->ct->Table->tableid,
+						$this->estableid,
 						$galleryname,
 						$photorow->photoid,
 						$esfield['typeparams'],
@@ -2037,19 +2235,16 @@ class CustomTablesModelEditItem extends JModelLegacy
 				}//foreach($photorows as $photorow)
 
 			}//elseif($esfield[type]=='imagegallery')
-		}
+		}//foreach($this->esfields as $esfield)
 
-		$query='DELETE FROM '.$this->ct->Table->realtablename.' WHERE '.$this->ct->Table->realidfieldname.'='.$db->quote($listing_id);
+		$query='DELETE FROM '.$this->realtablename.' WHERE '.$this->tablerow['realidfieldname'].'='.$objectid;
 		$db->setQuery($query);
 		$db->execute();
 
-		$this->ct->Table->saveLog($listing_id,5);
+		ESLogs::save($this->estableid,$objectid,5);
 
 		$new_row=array();
-
-		if($this->ct->Env->advancedtagprocessor)
-			CleanExecute::executeCustomPHPfile($this->ct->Table->tablerow['customphp'],$new_row,$row);
-			
-		return 1;
+		$this->doCustomPHP($new_row,$row);
+		return true;
 	}
 }

@@ -381,7 +381,6 @@ function clearListingID() {
     frm.submit();
 }
 
-
 function recaptchaCallback()
 {
 	let buttons=['save','saveandclose','saveandprint','saveandcopy','delete'];
@@ -391,5 +390,86 @@ function recaptchaCallback()
 
 		if(obj)
 			obj.disabled=false;
+	}
+}
+
+function ctRenderTbaleJoinSelectBox(control_name, r, index, execute_all)
+{
+	//alert(control_name + "Wrapper");
+	let wrapper = document.getElementById(control_name + "Wrapper");
+	let filters = wrapper.dataset.valuefilters.split(',');
+		
+	let val = ''
+	if(index < filters.length - 1)
+		val = filters[index];
+	else
+		val = wrapper.dataset.value;
+	
+	if(r.error)
+	{
+		alert(r.error);
+	}
+	else
+	{
+		let result = ''
+		
+		//alert("index:" + index);
+		//alert("filters.length:" + filters.length);
+		
+		if(index < filters.length - 1)
+			result = '<select id="' + control_name + index + '" onChange="ctUpdateTableJoinLink(\'' + control_name + '\', ' + (index + 1) + ', false)">';	
+		else
+			result = '<select id="' + control_name + '" name="' + control_name + '">';
+		
+		for(let i = 0;i < r.length; i++)
+			result += '<option value="' + r[i].id + '"' + (r[i].id == val ? ' selected="selected"' : '') + '>' + r[i].label + '</option>';
+
+		result += '</select><div id="' + control_name + 'Selector' + (index + 1) + '"></div>';
+				
+		document.getElementById(control_name + "Selector" + index).innerHTML = result;
+		
+		if(execute_all)
+			ctUpdateTableJoinLink(control_name,index + 1,true);
+	}
+}
+		
+function ctUpdateTableJoinLink(control_name,index,execute_all)
+{
+	let wrapper = document.getElementById(control_name + "Wrapper");
+
+	let url = 'index.php?option=com_customtables&view=catalog&tmpl=component&from=json&key=' + wrapper.dataset.key + '&index=' + index;
+	
+	let filtercount = parseInt(wrapper.dataset.filtercount);
+	
+	if(index != 0 && execute_all)
+	{
+		let filters = wrapper.dataset.valuefilters.split(',');
+		if(filters[index-1] !='')
+			url += '&filter=' + filters[index-1];
+	}
+	
+	alert(url);
+	
+	if(index < filtercount)
+	{
+		if(index != 0)
+		{
+			if(!execute_all)
+			{
+				let obj = document.getElementById(control_name + (index - 1));
+				url += '&filter=' + obj.value;
+			}
+		}
+		
+		//alert(url);
+		
+		fetch(url)
+			.then(r => r.json())
+			.then(r => {ctRenderTbaleJoinSelectBox(control_name, r, index, execute_all);})
+			.catch(error => console.error("Error", error));
+	}
+	else
+	{
+		//alert("Thank you");
 	}
 }

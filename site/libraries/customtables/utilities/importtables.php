@@ -11,9 +11,7 @@ namespace CustomTables;
 use CustomTables\CT;
 use CustomTables\Fields;
 use CustomTables\IntegrityChecks;
-
 use \Joomla\CMS\Factory;
-
 use CustomTables\Layouts;
 use \ESTables;
 use \JoomlaBasicMisc;

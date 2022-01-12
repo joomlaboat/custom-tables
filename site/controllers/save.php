@@ -96,20 +96,14 @@ function CustomTablesDelete($task,&$this_)
 		if ($edit_model->delete())
 		{
 			if ($clean == 1)
-			{
-				echo 'deleted';
-				die;
-			}
+				die('deleted');
 			else
 				$this_->setRedirect($link,JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_DELETED'));
 		}
 		else
 		{
 			if ($clean == 1)
-			{
-				echo 'error';
-				die;
-			}
+				die('error');
 			else
 				$this_->setRedirect($link,JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_NOT_DELETED'));
 		}
@@ -187,8 +181,7 @@ function CustomTablesSave($task,&$this_)
 
 			if(JFactory::getApplication()->input->get('clean',0,'INT')==1)
 			{
-				echo 'saved';
-				die;//clean exit
+				die('saved');
 			}
 			elseif($link!='')
 			{
@@ -258,7 +251,8 @@ function CustomTablesSave($task,&$this_)
 		{
 			if($msg_=='COM_CUSTOMTABLES_INCORRECT_CAPTCHA')
 			{
-				echo '<p style="padding:5px;width:100%;background-color:red;color:white;font-size:24px;font-weight:bold;text-align:center;">'.$msg_.'</p>
+				JFactory::getApplication()->enqueueMessage($msg_, 'error');
+				echo '
 				<script type="text/javascript">
 setTimeout("history.go(-1)", 3000);
 </script>';
@@ -272,12 +266,8 @@ setTimeout("history.go(-1)", 3000);
 					$this_->setRedirect($link, $msg,'error');
 				}
 				else
-				{
-					echo '<p class="error">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORD_NOT_SAVED').'</p>';
-				}
+					JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORD_NOT_SAVED'), 'error');
 			}
-
 		}//if($isOk)
 	}//if(!$model->CheckAuthorization())
-
 }

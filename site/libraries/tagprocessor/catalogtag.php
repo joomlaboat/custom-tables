@@ -39,9 +39,11 @@ class tagProcessor_Catalog
 		$i=0;
 		foreach($fList as $fItem)
 		{
-			$pair=explode(',',$options[$i]);
+			$pair=JoomlaBasicMisc::csv_explode(',', $options[$i], '"', false);
 
 			$tableclass=$pair[0];
+			$notable=$pair[1] ?? '';
+			$separator=$pair[2] ?? '';
 
 			if($ct->Env->frmt=='csv')
 			{
@@ -55,10 +57,10 @@ class tagProcessor_Catalog
 			}
 			elseif($ct->Env->frmt=='image')
 				self::get_CatalogTable_singleline_IMAGE($pagelayout,$allowcontentplugins);
-			elseif(isset($pair[1]) and $pair[1]=='notable')
-				$vlu=self::get_Catalog($ct,$tableclass,false,$allowcontentplugins);
+			elseif($notable == 'notable')
+				$vlu=self::get_Catalog($ct,$tableclass,false,$allowcontentplugins,$separator);
 			else
-				$vlu=self::get_Catalog($ct,$tableclass,true,$allowcontentplugins);
+				$vlu=self::get_Catalog($ct,$tableclass,true,$allowcontentplugins,$separator);
 
 			$pagelayout=str_replace($fItem,$new_replaceitecode,$pagelayout);
 			$i++;
@@ -67,7 +69,7 @@ class tagProcessor_Catalog
         return $vlu;
     }
 
-    protected static function get_Catalog(&$ct,$tableclass,$showtable=true,$allowcontentplugins=false)
+    protected static function get_Catalog(&$ct,$tableclass,$showtable=true,$allowcontentplugins=false,$separator='')
 	{
 		$catalogresult='';
 
@@ -99,9 +101,7 @@ class tagProcessor_Catalog
 		else
 		{
 			//Group Results
-
 			$FieldRow=ESFields::FieldRowByName($ct->groupby,$ct->Table->fields);
-
 
 			$RealRows=array();
 				$lastGroup='';
@@ -151,13 +151,13 @@ class tagProcessor_Catalog
 
 		$CatGroups=self::reorderCatGroups($CatGroups);
 
-	if($showtable)
-	{
-        $catalogresult.='
+		if($showtable)
+		{
+			$catalogresult.='
     <table'.( ($tableclass!='' ? ' class="'.$tableclass.'"' : '')).' cellpadding="0" cellspacing="0">
         <tbody>
 ';
-	}
+		}
 
 		$number_of_columns=3;
 
@@ -181,15 +181,17 @@ class tagProcessor_Catalog
 					$catalogresult.='<h2>'.$cGroup[0].'</h2>';
 			}
 
+			$i = 0;
 			foreach($RealRows as $row)
 			{
+				if($separator != '' and $i > 0)
+					$catalogresult .= $separator;
+					
 				if($tr==0 and $showtable)
-					$catalogresult.='<tr>';
+					$catalogresult .= '<tr>';
 
 				if($showtable)
-				{
 					$catalogresult.='<td valign="top" align="left"><a name="a'.$row['listing_id'].'"></a>'.$row.'</td>';
-				}
 				else
 					$catalogresult.=$row;
 
@@ -201,6 +203,8 @@ class tagProcessor_Catalog
 
 					$tr	=0;
 				}
+				
+				$i += 1;
 			}
 
 			if($tr>0 and $showtable)
@@ -213,7 +217,6 @@ class tagProcessor_Catalog
 		if($showtable)
 		{
 			$catalogresult.='</tbody>
-
     </table>';
 		}
 

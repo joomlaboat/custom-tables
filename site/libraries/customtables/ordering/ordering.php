@@ -48,6 +48,8 @@ class Ordering
 			return true;
 		}
 		
+		
+		
 		$inners = [];
 	
 		$oPair=explode(' ',$this->ordering_processed_string);
@@ -74,8 +76,8 @@ class Ordering
 			$this->orderby = 'published'.$direction;
 			return true;
 		}
-			
-		$realfieldname=Fields::getRealFieldName($orderby_field,$this->Table->fields);
+		
+		$realfieldname=Fields::getRealFieldName($orderby_field, $this->Table->fields, true);
 		
 		if($realfieldname=='')
 			return false;

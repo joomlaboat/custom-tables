@@ -25,7 +25,9 @@ $document->addScript(JURI::root(true).'/components/com_customtables/js/edit_234.
 $document->addScript(JURI::root(true).'/components/com_customtables/js/esmulti.js');
 
 $document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customtables/css/style.css" type="text/css" rel="stylesheet" >');
-$document->addCustomTag('<link rel="stylesheet" href="'.JURI::root(true).'/media/system/css/fields/switcher.css">');
+
+if($this->ct->Env->version >= 4)
+	$document->addCustomTag('<link rel="stylesheet" href="'.JURI::root(true).'/media/system/css/fields/switcher.css">');
 
 if (!$this->BlockExternalVars and $this->ct->Env->menu_params->get( 'show_page_heading', 1 ) ) : ?>
 <div class="page-header<?php echo $this->escape($this->ct->Env->menu_params->get('pageclass_sfx')); ?>">

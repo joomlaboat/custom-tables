@@ -256,16 +256,14 @@ class CustomTablesModelDetails extends JModelLegacy
 			if($ESField['type']==$type)
 				return $ESField['realfieldname'];
 		}
-
 		return '';
 	}
 
 	function getVersionData(&$row,$log_field,$version)
 	{
 		$creation_time_field=$this->getTypeFieldName('changetime');
-
 		$versions=explode(';',$row[$log_field]);
-		//print_r($versions);
+
 		if($version<=count($versions))
 		{
 			if(count($versions)>1 and $version>1)

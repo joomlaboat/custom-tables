@@ -88,7 +88,6 @@ function processFieldParams(&$fieldList, &$fields)
 	}
 	
 	return $fields;
-	
 }
 
 function importCSVdata($filename,$ct_tableid)
@@ -99,15 +98,10 @@ function importCSVdata($filename,$ct_tableid)
     $fields = Fields::getFields($ct_tableid,true);
 
     $first_line_fieldnames=false;
-      
     $line=JoomlaBasicMisc::csv_explode(',',$arrayOfLines[0],'"',false);
-    
     $fieldList=prepareFieldList($line,$fields,$first_line_fieldnames);
-	
 	$fields = processFieldParams($fieldList,$fields);
-	
-	
-	
+
 	foreach($fieldList as $f)
 	{
 		if($f==-2)

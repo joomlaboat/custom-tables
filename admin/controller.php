@@ -90,13 +90,13 @@ class CustomtablesController extends JControllerLegacy
 	{
 		if ($id)
 		{
-			$values = (array) $this->app->getUserState($context . '.id');
+			$values = (array)Factory::getApplication()->getUserState($context . '.id');
 
 			$result = \in_array($id, $values); //To support both int and cmd IDs
 
 			if (\defined('JDEBUG') && JDEBUG)
 			{
-				$this->app->getLogger()->info(
+				Factory::getApplication()->getLogger()->info(
 					sprintf(
 						'Checking edit ID %s.%s: %d %s',
 						$context,

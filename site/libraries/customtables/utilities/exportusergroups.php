@@ -9,16 +9,13 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-
 //------------- CURRENTLY UNUSED
 
 class ImportExportUserGroups
 {
-    
     public static function processFile($filename,&$msg)
     {
-        
-        if(file_exists($filename))
+		if(file_exists($filename))
         {
             $data=file_get_contents($filename);
 

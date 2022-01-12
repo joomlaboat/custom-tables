@@ -148,14 +148,12 @@ class JHTMLESSqlJoin
 		
 		if(!$model->load($_params, true))
 		{
-			echo 'could not load table [152].';
+			JFactory::getApplication()->enqueueMessage('Could not load table [151].', 'error');
 		}
 		else
 		{
 			if(!$model->getSearchResult())
-			{
-				echo 'could not load records [164].';
-			}
+				JFactory::getApplication()->enqueueMessage('Could not load table [156].', 'error');
 		}
     }
         

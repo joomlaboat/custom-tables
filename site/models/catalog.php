@@ -144,7 +144,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 		}
 		
 		if($addition_filter!='')
-		$this->ct->Filter->where[] = $addition_filter;
+			$this->ct->Filter->where[] = $addition_filter;
 
 		$this->ct->Table->recordcount = 0;
 		

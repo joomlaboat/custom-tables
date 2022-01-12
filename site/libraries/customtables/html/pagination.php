@@ -595,13 +595,6 @@ class JESPagination extends JObject
 			$data->all->base	= '0';
 			$data->all->link	= JRoute::_($query_paramsPlusPrefix);
 		}
-		
-		//$data->all->link = JoomlaBasicMisc::deleteURLQueryOption($data->all->link, 'start');
-		
-		//echo '$this->prefix='.$this->prefix;
-		
-		//print_r($data);
-		//die;
 
 		// Set the start and previous data objects.
 		$data->start	= new JESPaginationObject(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_START'), $this->prefix);
@@ -612,8 +605,6 @@ class JESPagination extends JObject
 			$page = ($this->get('pages.current') -2) * $this->limit;
 
 			// Set the empty for removal from route
-			//$page = $page == 0 ? '' : $page;
-
 			$data->start->base	= '0';
 			$data->start->link	= JRoute::_($query_paramsPlusPrefix);
 			$data->previous->base	= $page;

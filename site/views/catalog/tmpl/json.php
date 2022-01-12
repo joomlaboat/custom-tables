@@ -31,22 +31,22 @@ if($catalogtablecontent=='')
 	$catalogtablecontent=str_replace("\t",'',$catalogtablecontent);
 }
 
-$this->ct->LayoutProc->layout=$pagelayout;
-$pagelayout=$this->ct->LayoutProc->fillLayout();
+$this->ct->LayoutProc->layout=$this->pagelayout;
+$this->pagelayout=$this->ct->LayoutProc->fillLayout();
 
-$pagelayout=str_replace('&&&&quote&&&&','"',$pagelayout); // search boxes may return HTMl elemnts that contain placeholders with quotes like this: &&&&quote&&&&
-$pagelayout=str_replace($this->catalogtablecode,$catalogtablecontent,$this->pagelayout);
+$this->pagelayout=str_replace('&&&&quote&&&&','"',$this->pagelayout); // search boxes may return HTML elemnts that contain placeholders with quotes like this: &&&&quote&&&&
+$this->pagelayout=str_replace($this->catalogtablecode,$catalogtablecontent,$this->pagelayout);
 
 LayoutProcessor::applyContentPlugins($this->pagelayout);
 
-if (ob_get_contents()) ob_end_clean();
+//if (ob_get_contents()) ob_end_clean();
 
 $filename = JoomlaBasicMisc::makeNewFileName($this->ct->Env->menu_params->get('page_title'),'json');
 
-header('Content-Disposition: attachment; filename="'.$filename.'"');
-header('Content-Type: application/json; charset=utf-8');
-header("Pragma: no-cache");
-header("Expires: 0");
+//header('Content-Disposition: attachment; filename="'.$filename.'"');
+//header('Content-Type: application/json; charset=utf-8');
+//header("Pragma: no-cache");
+//header("Expires: 0");
 
 echo $this->pagelayout;
 
