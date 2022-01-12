@@ -85,7 +85,6 @@ class CustomTablesViewCatalog extends JViewLegacy
 		//sorting
 		$this->ct->Ordering->ordering_processed_string = $orderby;
 		$this->ct->Ordering->parseOrderByString();
-		
 		$this->ct->getRecords();
 			
 		$this->catalogtablecode=JoomlaBasicMisc::generateRandomString();//this is temporary replace place holder. to not parse content result again
@@ -205,38 +204,32 @@ class CustomTablesViewCatalog extends JViewLegacy
 	{
 		$user = Factory::getUser();
 		$usergroups = $user->get('groups');
-
 		$allowedfields=array();
 
 		foreach($this->ct->Table->fields as $mFld)
 		{
-				if($mFld['type']=='lastviewtime' or $mFld['type']=='viewcount' or $mFld['type']=='phponview')
+			if($mFld['type']=='lastviewtime' or $mFld['type']=='viewcount' or $mFld['type']=='phponview')
+			{
+				$pair=explode(',',$mFld['typeparams']);
+				$usergroup='';
+
+				if(isset($pair[1]))
 				{
-						$pair=explode(',',$mFld['typeparams']);
-
-						$usergroup='';
-
-
-						if(isset($pair[1]))
-						{
-								if($pair[1]=='catalog')
-										$usergroup=$pair[0];
-						}
-						else
-								$usergroup=$pair[0];
-
-
-						$groupid=JoomlaBasicMisc::getGroupIdByTitle($usergroup);
-
-						if($usergroup!='')
-						{
-								if(in_array($groupid,$usergroups))
-										$allowedfields[]=$mFld['fieldname'];
-
-						}//if($usergroup!='')
+					if($pair[1]=='catalog')
+						$usergroup=$pair[0];
 				}
-		}
+				else
+					$usergroup=$pair[0];
 
+				$groupid=JoomlaBasicMisc::getGroupIdByTitle($usergroup);
+
+				if($usergroup!='')
+				{
+					if(in_array($groupid,$usergroups))
+						$allowedfields[]=$mFld['fieldname'];
+				}//if($usergroup!='')
+			}
+		}
 		return $allowedfields;
 	}
 }

@@ -1,32 +1,3 @@
-/*
-jQuery(function($) {
-    "use strict";
-
-    $(document)
-        .on('click', ".btn-group label:not(.active)", function() {
-
-            let $label = $(this);
-            let $input = $('#' + $label.attr('for'));
-
-            if ($input.prop('checked'))
-                return;
-
-            $label.closest('.btn-group').find("label").removeClass('active btn-success btn-danger btn-primary');
-
-            let btnClass = 'primary';
-
-
-            if ($input.val() != '') {
-                let reversed = $label.closest('.btn-group').hasClass('btn-group-reversed');
-                btnClass = ($input.val() == 0 ? !reversed : reversed) ? 'danger' : 'success';
-            }
-
-            $label.addClass('active btn-' + btnClass);
-            $input.prop('checked', true).trigger('change');
-        });
-});
-*/
-
 function setTask(event, task, returnlink, submitForm) {
 
 	event.preventDefault();
@@ -276,8 +247,6 @@ function checkRequiredFields()
                 let d = requiredFields[i].dataset;
                 if (d.label)
                     label = d.label;
-					
-				
 
                 if (requiredFields[i].type == "text") {
                     let obj = document.getElementById(objname);
@@ -327,11 +296,9 @@ function SetUsetInvalidClass(id, isOk) {
             else
                 c = c + " invalid";
         }
-
     } else {
-        if (isOk) {
+        if (isOk)
             c = c.replace("invalid", "");
-        }
     }
 
     frameObj.className = c;
@@ -393,17 +360,16 @@ function recaptchaCallback()
 	}
 }
 
-function ctRenderTbaleJoinSelectBox(control_name, r, index, execute_all)
+function ctRenderTableJoinSelectBox(control_name, r, index, execute_all)
 {
-	//alert(control_name + "Wrapper");
 	let wrapper = document.getElementById(control_name + "Wrapper");
 	let filters = wrapper.dataset.valuefilters.split(',');
 		
 	let val = ''
-	if(index < filters.length - 1)
-		val = filters[index];
-	else
+	if(index == filters.length)
 		val = wrapper.dataset.value;
+	else
+		val = filters[filters.length - index - 1];
 	
 	if(r.error)
 	{
@@ -412,14 +378,11 @@ function ctRenderTbaleJoinSelectBox(control_name, r, index, execute_all)
 	else
 	{
 		let result = ''
-		
-		//alert("index:" + index);
-		//alert("filters.length:" + filters.length);
-		
-		if(index < filters.length - 1)
-			result = '<select id="' + control_name + index + '" onChange="ctUpdateTableJoinLink(\'' + control_name + '\', ' + (index + 1) + ', false)">';	
-		else
+
+		if(index == filters.length)
 			result = '<select id="' + control_name + '" name="' + control_name + '">';
+		else
+			result = '<select id="' + control_name + index + '" onChange="ctUpdateTableJoinLink(\'' + control_name + '\', ' + (index + 1) + ', false)">';	
 		
 		for(let i = 0;i < r.length; i++)
 			result += '<option value="' + r[i].id + '"' + (r[i].id == val ? ' selected="selected"' : '') + '>' + r[i].label + '</option>';
@@ -432,24 +395,21 @@ function ctRenderTbaleJoinSelectBox(control_name, r, index, execute_all)
 			ctUpdateTableJoinLink(control_name,index + 1,true);
 	}
 }
-		
+
 function ctUpdateTableJoinLink(control_name,index,execute_all)
 {
 	let wrapper = document.getElementById(control_name + "Wrapper");
-
 	let url = 'index.php?option=com_customtables&view=catalog&tmpl=component&from=json&key=' + wrapper.dataset.key + '&index=' + index;
-	
 	let filtercount = parseInt(wrapper.dataset.filtercount);
 	
 	if(index != 0 && execute_all)
 	{
+		//Skip the first element and apply filters since second element, read filters in reverse order: 2,1,0
 		let filters = wrapper.dataset.valuefilters.split(',');
-		if(filters[index-1] !='')
-			url += '&filter=' + filters[index-1];
+		if(filters[filters.length - index] !='')
+			url += '&filter=' + filters[filters.length - index];
 	}
-	
-	alert(url);
-	
+
 	if(index < filtercount)
 	{
 		if(index != 0)
@@ -461,15 +421,13 @@ function ctUpdateTableJoinLink(control_name,index,execute_all)
 			}
 		}
 		
-		//alert(url);
-		
 		fetch(url)
 			.then(r => r.json())
-			.then(r => {ctRenderTbaleJoinSelectBox(control_name, r, index, execute_all);})
+			.then(r => {ctRenderTableJoinSelectBox(control_name, r, index, execute_all);})
 			.catch(error => console.error("Error", error));
 	}
 	else
 	{
-		//alert("Thank you");
+		//alert("Thank you, item selected");
 	}
 }

@@ -21,9 +21,6 @@ class JHTMLCTTableJoin
 		$parent_filter_field_name = JHTMLCTTableJoin::parseTagArguments($option_list,$filter);
 		JHTMLCTTableJoin::parseTypeParams($field,$filter,$parent_filter_field_name);
 		
-		print_r($filter);
-		echo '<hr/>';
-		
 		$key = JoomlaBasicMisc::generateRandomString();
 		Factory::getApplication()->setUserState($key, $filter);
 		
@@ -31,16 +28,12 @@ class JHTMLCTTableJoin
 		
 		$db = Factory::getDBO();
 		$js_filters = [];
-		
 		$parent_id = $value;
 		
-		
-		for($i = count($filter) - 1;$i >= 0; $i--)
-		//for($i = 0;$i < count($filter); $i++)
+		for($i = count($filter) - 1;$i > 0; $i--)
 		{
 			$flt = $filter[$i];
 			$tablename = $flt[0];
-			
 			$temp_ct = new CT;
 			$temp_ct->getTable($tablename);
 			
@@ -60,14 +53,11 @@ class JHTMLCTTableJoin
 				}
 			}
 			
-			$query = 'SELECT '.$temp_ct->Table->tablerow['query_selects'].' FROM '.$temp_ct->Table->realtablename.' WHERE '
+			$query = 'SELECT '.$join_realdfieldname.' FROM '.$temp_ct->Table->realtablename.' WHERE '
 				.$temp_ct->Table->realidfieldname.'='.$db->quote($parent_id).' LIMIT 1';
 				
-			echo '$query = '.$query.'<hr/>';
-
 			$db->setQuery( $query );
 			$recs = $db->loadAssocList();
-			
 			$parent_id = $recs[0][$join_realdfieldname];
 			$js_filters[] = $parent_id;
 		}
