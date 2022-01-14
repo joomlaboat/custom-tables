@@ -32,6 +32,8 @@ class CustomTablesViewCatalog extends JViewLegacy
 	
 	function renderTableJoinSelectorJSON($key)
 	{
+		$db = Factory::getDBO();
+		
 		$this->ct = $this->Model->ct;
 		$index = $this->Model->ct->Env->jinput->getInt('index');
 		$selectors = (array)Factory::getApplication()->getUserState($key);
@@ -40,6 +42,7 @@ class CustomTablesViewCatalog extends JViewLegacy
 			die(json_encode(['error' => 'Index out of range.']));
 		
 		$selector = $selectors[$index];
+		//print_r($selector);
 			
 		$tablename = $selector[0];
 		if($tablename=='')
@@ -60,38 +63,85 @@ class CustomTablesViewCatalog extends JViewLegacy
 			
 		$filter = $selector[3] ?? '';
 		
-		$additional_filter = $this->Model->ct->Env->jinput->getCmd('filter');
+		$additional_filter = $this->ct->Env->jinput->getCmd('filter');
 		
-		if($additional_filter!='')
+		$additional_where = '';
+		//Find the field name that has a join to the parend (index-1) table
+		foreach($this->ct->Table->fields as $fld)
 		{
-			//Find the field name that has a join to the parend (index-1) table
-			foreach($this->ct->Table->fields as $fld)
+			if($fld['type'] == 'sqljoin')
 			{
-				if($fld['type'] == 'sqljoin')
+				$type_params = JoomlaBasicMisc::csv_explode(',',$fld['typeparams'],'"',false);
+				$join_tablename = $type_params[0];
+				$join_to_tablename = $selector[5];
+				
+				if($additional_filter!='')
 				{
-					$type_params = JoomlaBasicMisc::csv_explode(',',$fld['typeparams'],'"',false);
-					$join_tablename = $type_params[0];
-					$join_to_tablename = $selector[5];
 					if($join_tablename == $join_to_tablename)
 						$filter = $filter . ' and ' . $fld['fieldname'] . '=' . $additional_filter;
 				}
+				else
+				{
+					//Check if this table has self-parent field - the TableJoin field linked with the same table.
+					if($join_tablename == $tablename)
+					{
+						$subfilter = $this->ct->Env->jinput->getCmd('subfilter');
+						if($subfilter == '')
+							$additional_where = '('.$fld['fieldname'].' IS NULL OR '.$fld['fieldname'].'="")';
+						else
+							$additional_where = $fld['fieldname'].'='.$db->quote($subfilter);
+						
+						//ssecho '$additional_where = '.$additional_where.'<br>';
+					}
+				}
 			}
 		}
-		
 		$this->ct->setFilter($filter, $showpublished);
-			
+		if($additional_where != '')
+			$this->ct->Filter->where[] = $additional_where;
+		
+		//echo '$additional_where='.$additional_where.'*<br/>';
+		
 		$orderby = $selector[4] ?? '';
 			
 		//sorting
 		$this->ct->Ordering->ordering_processed_string = $orderby;
 		$this->ct->Ordering->parseOrderByString();
+		
+		//print_r($this->ct->Filter->where);
+		//die;
+		
 		$this->ct->getRecords();
-			
+		
 		$this->catalogtablecode=JoomlaBasicMisc::generateRandomString();//this is temporary replace place holder. to not parse content result again
 			
 		$this->pagelayout = '[{catalog:,notable,","}]';
-		$this->itemlayout = '{"id":{id},"label":"['.$fieldname_or_layout.']"}';
-			
+		if(strpos($fieldname_or_layout,'{{') === false and strpos($fieldname_or_layout,'layout') === false)
+		{
+			$fieldname_or_layout_tag = '{{ '.$fieldname_or_layout.' }}';
+		}
+		else
+		{
+			$pair=explode(':',$fieldname_or_layout);
+
+			if(count($pair)==2)
+			{
+				$layout_mode=true;
+				if($pair[0]!='layout')
+					die(json_encode(['error' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_UNKNOW_FIELD_LAYOUT').' "'.$field.'"']));
+
+				$Layouts = new Layouts($this->ct);
+				$fieldname_or_layout_tag = $Layouts->getLayout($pair[1]);
+
+				if(!isset($fieldname_or_layout_tag) or $fieldname_or_layout_tag=='')
+					die(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_LAYOUT_NOT_FOUND').' "'.$pair[1].'"');
+			}
+			else
+				$fieldname_or_layout_tag = $fieldname_or_layout;
+		}
+		
+		$this->itemlayout = '{"id":"{{ record.id }}","label":"'.$fieldname_or_layout_tag.'"}';
+
 		$paramsArray['establename'] = $tablename;
 			
 		$_params= new JRegistry;

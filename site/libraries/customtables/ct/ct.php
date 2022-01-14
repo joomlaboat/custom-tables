@@ -127,6 +127,8 @@ class CT
 			$query.=' '.implode(' ',$this->Ordering->inner).' ';
 			
 		$query.=$where;
+		
+		$query.=' GROUP BY '.$this->Table->tablerow['realidfieldname'];
 	
 		if(count($ordering)>0)
 			$query.=' ORDER BY '.implode(',',$ordering);
@@ -144,7 +146,7 @@ class CT
 		$this->getNumberOfRecords($where);
 		
 		$query = $this->buildQuery($where);
-			
+
 		if($this->Table->recordcount > 0)
 		{
 			$the_limit=(int)$this->Limit;

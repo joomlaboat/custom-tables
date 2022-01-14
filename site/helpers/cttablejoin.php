@@ -10,6 +10,7 @@
 defined('_JEXEC') or die( 'Restricted access' );
 
 use CustomTables\CT;
+use CustomTables\Fields;
 use \Joomla\CMS\Factory;
 
 class JHTMLCTTableJoin
@@ -21,58 +22,84 @@ class JHTMLCTTableJoin
 		$parent_filter_field_name = JHTMLCTTableJoin::parseTagArguments($option_list,$filter);
 		JHTMLCTTableJoin::parseTypeParams($field,$filter,$parent_filter_field_name);
 		
-		$key = JoomlaBasicMisc::generateRandomString();
-		Factory::getApplication()->setUserState($key, $filter);
-		
 		//Get initial table filters based on the value
 		
 		$db = Factory::getDBO();
 		$js_filters = [];
+		$js_filters_selfparent = [];
 		$parent_id = $value;
 		
-		for($i = count($filter) - 1;$i > 0; $i--)
+		
+		
+		for($i = count($filter) - 1;$i >= 0; $i--)
 		{
 			$flt = $filter[$i];
 			$tablename = $flt[0];
 			$temp_ct = new CT;
 			$temp_ct->getTable($tablename);
 			
-			foreach($temp_ct->Table->fields as $fld)
+			$is_selfParentTable = false;
+			$selfParentJoinField = '';
+			
+			if($i > 0)//No need to filter first select element values
 			{
-				if($fld['type'] == 'sqljoin')
+				foreach($temp_ct->Table->fields as $fld)
 				{
-					$type_params = JoomlaBasicMisc::csv_explode(',',$fld['typeparams'],'"',false);
-					$join_tablename = $type_params[0];
-					$join_to_tablename = $flt[5];
-					
-					if($join_tablename == $join_to_tablename)
+					if($fld['type'] == 'sqljoin')
 					{
-						$join_realdfieldname = $fld['realfieldname'];
-						break;
+						$type_params = JoomlaBasicMisc::csv_explode(',',$fld['typeparams'],'"',false);
+						$join_tablename = $type_params[0];
+						$join_to_tablename = $flt[5];
+					
+						if($join_tablename == $join_to_tablename)
+						{
+							$join_realdfieldname = $fld['realfieldname'];
+							break;
+						}
 					}
 				}
+			
+				$query = 'SELECT '.$join_realdfieldname.' FROM '.$temp_ct->Table->realtablename.' WHERE '
+					.$temp_ct->Table->realidfieldname.'='.$db->quote($parent_id).' LIMIT 1';
+				
+				$db->setQuery( $query );
+				$recs = $db->loadAssocList();
+				$parent_id = $recs[0][$join_realdfieldname];
+				$js_filters[] = $parent_id;
 			}
 			
-			$query = 'SELECT '.$join_realdfieldname.' FROM '.$temp_ct->Table->realtablename.' WHERE '
-				.$temp_ct->Table->realidfieldname.'='.$db->quote($parent_id).' LIMIT 1';
+			//Check if this table has self-parent field - the TableJoing field linked with the same table.
+			$selfParentField = Fields::getSelfParentField($temp_ct);
+			if($selfParentField != null)
+			{
+				$selfParent_type_params = JoomlaBasicMisc::csv_explode(',',$selfParentField['typeparams'],'"',false);
 				
-			$db->setQuery( $query );
-			$recs = $db->loadAssocList();
-			$parent_id = $recs[0][$join_realdfieldname];
-			$js_filters[] = $parent_id;
+				if($filter[$i][3] == '')
+					$filter[$i][3] = $selfParent_type_params[2];
+				
+				if($filter[$i][4] == '')
+					$filter[$i][4] = $selfParent_type_params[4];
+			
+				$filter[$i][6] = $selfParentField['fieldname'];
+				$js_filters_selfparent[] = ($selfParentField != null ? 1 : 0);
+			}
 		}
+		
+		$key = JoomlaBasicMisc::generateRandomString();
+		Factory::getApplication()->setUserState($key, $filter);
 		
 		$data = [];
 		$data[] = 'data-key="'.$key.'"';
 		$data[] = 'data-fieldname="'.$field['fieldname'].'"';
 		$data[] = 'data-controlname="'.$control_name.'"';
 		$data[] = 'data-filtercount='.count($filter);
+		$data[] = 'data-filterselfparent="'.implode(',',$js_filters_selfparent).'"';
 		$data[] = 'data-valuefilters="'.implode(',',$js_filters).'"';
 		$data[] = 'data-value="'.$value.'"';
 		
 		echo '<div id="'.$control_name.'Wrapper" '.implode(' ',$data).'><div id="'.$control_name.'Selector0"></div></div>
 			<script>
-				ctUpdateTableJoinLink("'.$control_name.'",0,true);
+				ctUpdateTableJoinLink("'.$control_name.'",0,true,0,"");
 			</script>
 ';
 	}

@@ -565,27 +565,24 @@ class Filtering
 															else
 																$esr_filter='';
 
-
-															$vLnew=$this->getInt_vL($vL);
-
+															$vLnew=$vL;
 
 															$filtertitle.=JHTML::_('ESSQLJoinView.render',
-																					   $vL,
-																					   $esr_table,
-																					   $esr_field,
-																					   $esr_filter,
-																					   $this->ct->Languages->Postfix);
+																$vL,
+																$esr_table,
+																$esr_field,
+																$esr_filter,
+																$this->ct->Languages->Postfix);
 
 															$opt_title='';
 
 															if($vLnew!='')
 															{
-
 																if($comparison_operator=='!=')
 																{
 																	$opt_title=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT');
 
-																	$cArr[]=$esr_table_full.'.'.$fieldrow['realfieldname'].'!='.(int)$vLnew;
+																	$cArr[]=$esr_table_full.'.'.$fieldrow['realfieldname'].'!='.$db->quote($vLnew);
 																	$this->PathValue[]=$fieldrow['fieldtitle'.$this->ct->Languages->Postfix]
 																			.' '
 																			.$opt_title
@@ -596,20 +593,15 @@ class Filtering
 																{
 																	$opt_title=':';
 
-																	$ivLnew=(int)$vLnew;
-																	if($ivLnew==0)
+																	$ivLnew=$vLnew;
+																	if($ivLnew==0 or $ivLnew=="" or $ivLnew==-1)
 																	{
-																		$cArr[]='('.$esr_table_full.'.'.$fieldrow['realfieldname'].'='.(int)$vLnew.' OR '
+																		$cArr[]='('.$esr_table_full.'.'.$fieldrow['realfieldname'].'=0 OR '.$esr_table_full.'.'.$fieldrow['realfieldname'].'="" OR '
 																			.$esr_table_full.'.'.$fieldrow['realfieldname'].' IS NULL)';
 																	}
-																	elseif($ivLnew==-1)
-																		$cArr[]='('.$esr_table_full.'.'.$fieldrow['realfieldname'].' IS NULL OR '.$esr_table_full.'.'.$fieldrow['realfieldname'].'=0)';
 																	else
-																		$cArr[]=$esr_table_full.'.'.$fieldrow['realfieldname'].'='.(int)$vLnew;
-																	
-																	
-
-
+																		$cArr[]=$esr_table_full.'.'.$fieldrow['realfieldname'].'='.$db->quote($vLnew);
+																
 																	$this->PathValue[]=$fieldrow['fieldtitle'
 																			.$this->ct->Languages->Postfix]
 																			.' '

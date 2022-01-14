@@ -46,8 +46,8 @@ class Twig_Record_Tags
 			Factory::getApplication()->enqueueMessage('{{ record.id }} - Record not loaded.', 'error');
 			return '';
 		}
-		
-		return (int)$this->ct->Table->record['listing_id'];
+
+		return $this->ct->Table->record['listing_id'];
 	}
 	
 	function published($type,$second_variable = null)

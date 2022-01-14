@@ -1307,4 +1307,24 @@ class Fields
 		$db->setQuery($query);
 		$db->execute();
 	}
+	
+	public static function getSelfParentField(&$ct)
+	{
+		//Check if this table has self-parent field - the TableJoing field linked with the same table.
+		
+		foreach($ct->Table->fields as $fld)
+		{
+			if($fld['type'] == 'sqljoin')
+			{
+				$type_params = JoomlaBasicMisc::csv_explode(',',$fld['typeparams'],'"',false);
+				$join_tablename = $type_params[0];
+		
+				if($join_tablename == $ct->Table->tablename)
+				{
+					return $fld;//['fieldname'];
+				}
+			}
+		}
+		return null;
+	}
 }
