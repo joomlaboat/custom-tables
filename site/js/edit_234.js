@@ -365,18 +365,42 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all,sub_inde
 	let wrapper = document.getElementById(control_name + "Wrapper");
 	let filters = [];
 	if(wrapper.dataset.valuefilters != '')
-		filters = wrapper.dataset.valuefilters.split(',');
+		filters = JSON.parse(atob(wrapper.dataset.valuefilters));
 	
-	let filterselfparent = wrapper.dataset.filterselfparent.split(',');
-	let selfparent = parseInt(filterselfparent[index]) == 1;
-	let isLastElement = index == filters.length;
-		
+	let next_index = index;
+	let next_sub_index = sub_index;
 	let val = ''
-	if(index == filters.length)
-		val = wrapper.dataset.value;
-	else
-		val = filters[filters.length - index - 1];
 	
+	
+		if(Array.isArray(filters[index]))
+		{
+			//Self Parent field
+			next_sub_index += 1;
+			if(next_sub_index == filters[index].length)
+			{
+				// Max sub index reached
+				next_sub_index = 0;
+				next_index += 1;
+			
+				if(Array.isArray(filters[next_index]))
+					val = filters[next_index][next_sub_index];
+				else
+					val = filters[next_index];
+			}
+			else
+				val = filters[next_index][next_sub_index];
+
+			selfparent = true;
+		}
+		else
+		{
+			next_index += 1;
+			val = filters[next_index];
+		}
+		
+	if(!execute_all)
+		val = null;
+		
 	if(r.error)
 	{
 		alert(r.error);
@@ -385,33 +409,35 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all,sub_inde
 	{
 		if(r.length == 0)
 		{
-			if(!isLastElement)
-				ctUpdateTableJoinLink(control_name,index + 1,true,0,parent_object_id);
-			
+			if(Array.isArray(filters[next_index]))
+			{
+				document.getElementById(control_name + "Selector" + index + '_' + sub_index).innerHTML = "No element to select. Select another parent element.";
+				
+				ctUpdateTableJoinLink(control_name,next_index + 1,false,0,parent_object_id);
+			}
+			else
+			{
+				document.getElementById(control_name + "Selector" + index).innerHTML = "No element to select. Select another parent element.";
+			}
 			return '';
 		}
 		
 		let result = ''
-		let onChangeAttribute = '';
-		let object_id = control_name + index;
 		
-		let selfparent_string = (selfparent ? 'true' : 'false');
-		
-		if(selfparent)
+		if(next_index + 1 < filters.length)
 		{
+			//Add select box
 			
-			//let object_id = control_name + index + '_' + (sub_index - 1);
+			let current_object_id = control_name + index;
+		
+			if(Array.isArray(filters[index]))
+				current_object_id += '_' + sub_index;
 			
-			object_id = object_id + '_' + sub_index;
-			onChangeAttribute = ' onChange="ctUpdateTableJoinLink(\'' + control_name + '\', ' + index + ', false, ' + (sub_index + 1) + ',\'' + object_id + '\')"';
+			let onChangeAttribute = ' onChange="ctUpdateTableJoinLink(\'' + control_name + '\', ' + next_index + ', false, ' + next_sub_index + ',\'' + current_object_id + '\')"';
+			result += '<select id="' + current_object_id + '"' + onChangeAttribute + '>';	
 		}
 		else
-		{
-			onChangeAttribute = ' onChange="ctUpdateTableJoinLink(\'' + control_name + '\', ' + (index + 1) + ', false, 0, \'' + object_id + '\')"';
-		}
-			
-		
-		result = '<select id="' + object_id + '"' + onChangeAttribute + '>';	
+			result += '<select id="' + control_name + '" name="' + control_name + '">';	
 		
 		result += '<option value="">- Select</option>';
 		
@@ -420,134 +446,64 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all,sub_inde
 
 		result += '</select>';
 		
-		if(selfparent)
-		{
-			result += '<div id="' + control_name + 'Selector' + index + '_' + (sub_index + 1) + '"></div>';
-		}
+		//Prepare the space for next elements
+		//alert(next_index)
+		if(Array.isArray(filters[next_index]))
+			result += '<div id="' + control_name + 'Selector' + next_index + '_' + next_sub_index + '"></div>';
 
-		result += '<div id="' + control_name + 'Selector' + (index + 1) + '"></div>';
+		result += '<div id="' + control_name + 'Selector' + next_index + '"></div>';
 
-		//Add element
-		if(selfparent)
+		//Add content to the element
+		if((index > 0 || sub_index >0 ) && Array.isArray(filters[index]))
 		{
-			let object_id = control_name + "Selector" + index
-			if(sub_index > 0)
-				object_id = object_id + '_' + sub_index;
-			
-			//alert("s: " + object_id);
-			
-			document.getElementById(object_id).innerHTML = result;
+			//alert(control_name + "Selector" + index + '_' + sub_index);
+			document.getElementById(control_name + "Selector" + index + '_' + sub_index).innerHTML = result;
 		}
 		else
-		{
 			document.getElementById(control_name + "Selector" + index).innerHTML = result;
-		}
 		
-		if(isLastElement)
-		{
-			if(selfparent && r.length == 1)
-			{
-				//alert("This is the last element but it self-parent table. Try to get more elements. sub_index=" + sub_index)
-				//ctUpdateTableJoinLink(control_name,index,false,sub_index + 1); //do not increment the index because its a same field/table.
-			}
-		}
-		else
-		{
-			if(execute_all)
-			{
-				if(selfparent)
-				{
-				}
-				else
-				{
-					//ctUpdateTableJoinLink(control_name,index + 1,true,0);
-				}
-			}
-		}
+		if(execute_all && next_index + 1 < filters.length)
+			ctUpdateTableJoinLink(control_name,next_index,true,next_sub_index,null);
 	}
 }
 
 function ctUpdateTableJoinLink(control_name,index,execute_all,sub_index,object_id)
 {
-	//alert(object_id);
 	let wrapper = document.getElementById(control_name + "Wrapper");
 	let url = 'index.php?option=com_customtables&view=catalog&tmpl=component&from=json&key=' + wrapper.dataset.key + '&index=' + index;
-	let filtercount = parseInt(wrapper.dataset.filtercount);
-	
-	
+
 	let filters = [];
 	if(wrapper.dataset.valuefilters != '')
-		filters = wrapper.dataset.valuefilters.split(',');
+		filters = JSON.parse(atob(wrapper.dataset.valuefilters));
 	
-	let filterselfparent = wrapper.dataset.filterselfparent.split(',');
-	let selfparent = parseInt(filterselfparent[index]) == 1;
-	let isLastElement = index == filters.length;
+	if(Array.isArray(filters[index]))
+		url += '&subindex=' + sub_index;
 	
-	//alert(index);
-	//alert(selfparent);
-	//alert(isLastElement);
-	
-	if(index != 0 && execute_all)
+	if(execute_all)
 	{
-		//Skip the first element and apply filters since second element, read filters in reverse order: 2,1,0
-		//let filters = wrapper.dataset.valuefilters.split(',');
-		if(filters[filters.length - index] !='')
-			url += '&filter=' + filters[filters.length - index];
-	}
-	
-	if(selfparent)
-	{
-		//alert("Self Parent. we are here");
-		
-		if(sub_index > 0)
+		if(Array.isArray(filters[index]))
 		{
-			url += '&subindex=' + sub_index;
-			
-			//let object_id = control_name + index + '_' + (sub_index - 1);
-			
-			//alert("object_id:" + object_id);
-			
-			let obj = document.getElementById(object_id);
-			
-			//alert(obj.value);
-			
-			url += '&subfilter=' + obj.value;
-			
-			//alert(url);
-			
-			fetch(url)
-				.then(r => r.json())
-				.then(r => {ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_index,object_id);})
-				.catch(error => console.error("Error", error));
+			//Self Parent field
+			if(filters[index][sub_index] !='')
+				url += '&subfilter=' + filters[index][sub_index];
 		}
 		else
 		{
-			//alert("Parent element: " + url);
-			fetch(url)
-				.then(r => r.json())
-				.then(r => {ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_index,object_id);})
-				.catch(error => console.error("Error", error));
+			if(filters[index] !='')
+				url += '&filter=' + filters[index];	
 		}
 	}
 	else
 	{
-		if(index < filtercount)
-		{
-			let obj = document.getElementById(object_id);
-			url += '&filter=' + obj.value;
-			
-		//	alert("Normal element: " + url);
-		
-		
-			fetch(url)
-				.then(r => r.json())
-				.then(r => {ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_index,object_id);})
-				.catch(error => console.error("Error", error));
-			
-		}
+		let obj = document.getElementById(object_id);
+		if(Array.isArray(filters[index]))
+			url += '&subfilter=' + obj.value;
 		else
-		{
-			alert("Thank you, item selected");
-		}
+			url += '&filter=' + obj.value;
 	}
+		
+	fetch(url)
+		.then(r => r.json())
+		.then(r => {ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_index,object_id);})
+		.catch(error => console.error("Error", error));
 }

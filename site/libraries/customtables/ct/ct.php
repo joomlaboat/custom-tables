@@ -93,7 +93,7 @@ class CT
 		$db = Factory::getDBO();
 		
 		$query_analytical='SELECT COUNT('.$this->Table->tablerow['realidfieldname'].') AS count FROM '.$this->Table->realtablename.' '.$where;
-
+		
 		$db->setQuery($query_analytical);
 		$rows=$db->loadObjectList();	
 		if(count($rows)==0)

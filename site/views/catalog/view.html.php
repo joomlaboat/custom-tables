@@ -87,9 +87,9 @@ class CustomTablesViewCatalog extends JViewLegacy
 					{
 						$subfilter = $this->ct->Env->jinput->getCmd('subfilter');
 						if($subfilter == '')
-							$additional_where = '('.$fld['fieldname'].' IS NULL OR '.$fld['fieldname'].'="")';
+							$additional_where = '('.$fld['realfieldname'].' IS NULL OR '.$fld['realfieldname'].'="")';
 						else
-							$additional_where = $fld['fieldname'].'='.$db->quote($subfilter);
+							$additional_where = $fld['realfieldname'].'='.$db->quote($subfilter);
 						
 						//ssecho '$additional_where = '.$additional_where.'<br>';
 					}

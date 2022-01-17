@@ -24,12 +24,36 @@ class JHTMLCTTableJoin
 		
 		//Get initial table filters based on the value
 		
-		$db = Factory::getDBO();
 		$js_filters = [];
 		$js_filters_selfparent = [];
 		$parent_id = $value;
+		JHTMLCTTableJoin::processValue($filter,$parent_id,$js_filters,$js_filters_selfparent);
 		
+		$js_filters[] = $value;
 		
+		$key = JoomlaBasicMisc::generateRandomString();
+		Factory::getApplication()->setUserState($key, $filter);
+
+		$data = [];
+		$data[] = 'data-key="'.$key.'"';
+		$data[] = 'data-fieldname="'.$field['fieldname'].'"';
+		$data[] = 'data-controlname="'.$control_name.'"';
+		$data[] = 'data-valuefilters="'.base64_encode(json_encode($js_filters)).'"';
+		$data[] = 'data-value="'.$value.'"';
+		
+		//TODO: replace Selector0 with Selector0_0 if self parent, same in js file
+		//echo '<div id="'.$control_name.'Wrapper" '.implode(' ',$data).'><div id="'.$control_name.'Selector0"></div></div>
+		
+		echo '<div id="'.$control_name.'Wrapper" '.implode(' ',$data).'><div id="'.$control_name.'Selector0"></div></div>
+			<script>
+				ctUpdateTableJoinLink("'.$control_name.'",0,true,0,"");
+			</script>
+';
+	}
+	
+	protected static function processValue(&$filter,&$parent_id,&$js_filters,&$js_filters_selfparent)
+	{
+		$db = Factory::getDBO();
 		
 		for($i = count($filter) - 1;$i >= 0; $i--)
 		{
@@ -43,31 +67,12 @@ class JHTMLCTTableJoin
 			
 			if($i > 0)//No need to filter first select element values
 			{
-				foreach($temp_ct->Table->fields as $fld)
-				{
-					if($fld['type'] == 'sqljoin')
-					{
-						$type_params = JoomlaBasicMisc::csv_explode(',',$fld['typeparams'],'"',false);
-						$join_tablename = $type_params[0];
-						$join_to_tablename = $flt[5];
-					
-						if($join_tablename == $join_to_tablename)
-						{
-							$join_realdfieldname = $fld['realfieldname'];
-							break;
-						}
-					}
-				}
-			
-				$query = 'SELECT '.$join_realdfieldname.' FROM '.$temp_ct->Table->realtablename.' WHERE '
-					.$temp_ct->Table->realidfieldname.'='.$db->quote($parent_id).' LIMIT 1';
-				
-				$db->setQuery( $query );
-				$recs = $db->loadAssocList();
-				$parent_id = $recs[0][$join_realdfieldname];
+				$join_to_tablename = $flt[5];
+				$parent_id = JHTMLCTTableJoin::getParentFieltrID($temp_ct,$parent_id,$join_to_tablename);
 				$js_filters[] = $parent_id;
 			}
 			
+
 			//Check if this table has self-parent field - the TableJoing field linked with the same table.
 			$selfParentField = Fields::getSelfParentField($temp_ct);
 			if($selfParentField != null)
@@ -79,29 +84,66 @@ class JHTMLCTTableJoin
 				
 				if($filter[$i][4] == '')
 					$filter[$i][4] = $selfParent_type_params[4];
-			
+				
 				$filter[$i][6] = $selfParentField['fieldname'];
 				$js_filters_selfparent[] = ($selfParentField != null ? 1 : 0);
+				
+				$join_to_tablename = $filter[$i][0];
+				
+				$selfparnt_filters = [];
+				while($parent_id != null)
+				{
+					$parent_id = JHTMLCTTableJoin::getParentFieltrID($temp_ct,$parent_id,$join_to_tablename);
+					if($parent_id != null)
+						$selfparnt_filters[] = $parent_id;
+				}
+				$selfparnt_filters[] = "";
+
+
+				$js_filters[] = array_reverse($selfparnt_filters);
+			}
+			else
+			{
+				//$js_filters[] = "";
 			}
 		}
 		
-		$key = JoomlaBasicMisc::generateRandomString();
-		Factory::getApplication()->setUserState($key, $filter);
+		$js_filters = array_reverse($js_filters);
+	}
+	
+	protected static function getParentFieltrID(&$temp_ct,$parent_id,$join_to_tablename)
+	{
+		$db = Factory::getDBO();
 		
-		$data = [];
-		$data[] = 'data-key="'.$key.'"';
-		$data[] = 'data-fieldname="'.$field['fieldname'].'"';
-		$data[] = 'data-controlname="'.$control_name.'"';
-		$data[] = 'data-filtercount='.count($filter);
-		$data[] = 'data-filterselfparent="'.implode(',',$js_filters_selfparent).'"';
-		$data[] = 'data-valuefilters="'.implode(',',$js_filters).'"';
-		$data[] = 'data-value="'.$value.'"';
+		foreach($temp_ct->Table->fields as $fld)
+		{
+			if($fld['type'] == 'sqljoin')
+			{
+				$type_params = JoomlaBasicMisc::csv_explode(',',$fld['typeparams'],'"',false);
+				$join_tablename = $type_params[0];
+
+				if($join_tablename == $join_to_tablename)
+				{
+					$join_realdfieldname = $fld['realfieldname'];
+					break;
+				}
+			}
+		}
+			
+		if($join_realdfieldname=='')
+			return null;
+			
+		$query = 'SELECT '.$join_realdfieldname.' FROM '.$temp_ct->Table->realtablename.' WHERE '
+			.$temp_ct->Table->realidfieldname.'='.$db->quote($parent_id).' LIMIT 1';
+			
+		$db->setQuery( $query );
+		$recs = $db->loadAssocList();
+		if(count($recs)==0)
+			return null;
+
+		$parent_id = $recs[0][$join_realdfieldname];
 		
-		echo '<div id="'.$control_name.'Wrapper" '.implode(' ',$data).'><div id="'.$control_name.'Selector0"></div></div>
-			<script>
-				ctUpdateTableJoinLink("'.$control_name.'",0,true,0,"");
-			</script>
-';
+		return $parent_id;
 	}
 	
 	protected static function parseTagArguments(&$option_list,&$filter)
