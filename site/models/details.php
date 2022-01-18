@@ -15,7 +15,6 @@ use CustomTables\Fields;
 use \Joomla\CMS\Factory;
 
 jimport('joomla.application.component.model');
-//jimport('joomla.application.component.controller');
 
 JTable::addIncludePath(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'tables');
 
@@ -24,11 +23,9 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'co
 class CustomTablesModelDetails extends JModelLegacy
 {
 	var $ct;
-
 	var $storby;
 	var $showpublished;
 	var $filter;
-
 	var $params;
 
 	function __construct()
@@ -37,17 +34,15 @@ class CustomTablesModelDetails extends JModelLegacy
 		
 		$this->ct = new CT;
 		
-		$jinput=Factory::getApplication()->input;
-
-		if(method_exists(JFactory::getApplication(),"getParams"))
+		if(method_exists(Factory::getApplication(),"getParams"))
 		{
-			$params=JFactory::getApplication()->getParams();
+			$params = Factory::getApplication()->getParams();
 			$this->ct->Env->menu_params = $params;
 		
 			if($params->get( 'clean' )==1)
 				$this->ct->Env->clean=1;
 
-			if($this->ct->Env->jinput->getInt('listing_id',0) and $jinput->getInt('listing_id',0)!=0)
+			if($this->ct->Env->jinput->getInt('listing_id',0) and $this->ct->Env->jinput->getInt('listing_id',0)!=0)
 				$listing_id= $this->ct->Env->jinput->getInt('listing_id', 0);
 			else
 				$listing_id=(int)$params->get( 'listingid' );
@@ -71,7 +66,6 @@ class CustomTablesModelDetails extends JModelLegacy
 			$this->sortby=strtolower($this->ct->Env->jinput->getCmd('sortby'));
 		else
 			$this->sortby=strtolower($this->params->get( 'sortby' ));
-
 
 		//optional filter
 		if($custom_where!='' and $listing_id==0)
@@ -104,7 +98,7 @@ class CustomTablesModelDetails extends JModelLegacy
 			if(!$this->checkRecordUserJoin($this->params->get( 'recordstable' ),$this->params->get( 'recordsuseridfield' ),$this->params->get( 'recordsfield' ),$listing_id))
 			{
 				//YOU ARE NOT AUTHORIZED TO ACCESS THIS SOURCE';
-				JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
+				Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
 				return false;
 			}
 		}
@@ -115,7 +109,7 @@ class CustomTablesModelDetails extends JModelLegacy
 		
 		if($this->ct->Table->tablename=='')
 		{
-			//JFactory::getApplication()->enqueueMessage('Table not selected (127).', 'error');
+			//Factory::getApplication()->enqueueMessage('Table not selected (127).', 'error');
 			return;
 		}
 
@@ -138,12 +132,9 @@ class CustomTablesModelDetails extends JModelLegacy
 	//TODO avoid es_
 	function checkRecordUserJoin($recordstable, $recordsuseridfield, $recordsfield, $listing_id)
 	{
-		$user = JFactory::getUser();
-		$userid = (int)$user->get('id');
+		$db = Factory::getDBO();
 
-		$db = JFactory::getDBO();
-
-		$query='SELECT listing_id FROM #__customtables_table_'.$recordstable.' WHERE es_'.$recordsuseridfield.'='.$userid.' AND INSTR(es_'.$recordsfield.',",'.$listing_id.',")';
+		$query='SELECT listing_id FROM #__customtables_table_'.$recordstable.' WHERE es_'.$recordsuseridfield.'='.$this->ct->Env->userid.' AND INSTR(es_'.$recordsfield.',",'.$listing_id.',")';
 		$db->setQuery($query);
 
         $db->execute();
@@ -163,7 +154,7 @@ class CustomTablesModelDetails extends JModelLegacy
 
 	function & getData()
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		
 		if($this->_id==0)
 		{
@@ -175,7 +166,7 @@ class CustomTablesModelDetails extends JModelLegacy
 			}
 			else
 			{
-				JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_NOFILTER'), 'error');
+				Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_NOFILTER'), 'error');
 				$row = [];
 				return $row;//field not found. compatibility trick
 			}
@@ -207,7 +198,7 @@ class CustomTablesModelDetails extends JModelLegacy
 		$row=$rows[0];
 
 		//get specific Version
-		$version= JFactory::getApplication()->input->get('version',0,'INT');
+		$version= Factory::getApplication()->input->get('version',0,'INT');
 		if($version!=0)
 		{
 			//get log field

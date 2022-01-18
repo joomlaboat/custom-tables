@@ -954,7 +954,12 @@ class CustomTablesModelEditItem extends JModelLegacy
 				$saveFieldSet = $this->ct->Table->getSaveFieldSet($listing_id,$esfield);
 				
 				if($saveFieldSet != null)
-					$savequery[] = $saveFieldSet;
+				{
+					if(is_array($saveFieldSet))
+						$savequery = array_merge($savequery,$saveFieldSet);
+					else
+						$savequery[] = $saveFieldSet;
+				}
 				else
 					$default_fields_to_apply[]=array($esfield['fieldname'],$esfield['defaultvalue'],$esfield['type'],$esfield['realfieldname']);
 			}

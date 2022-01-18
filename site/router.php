@@ -84,11 +84,11 @@ class CustomTablesRouter extends JComponentRouterView
 		}
 		if(isset($segments[0]))
 		{
+			$vars['option'] = 'com_customtables';
 			$vars['view'] = 'details';
 			$vars['alias'] = $segments[0];
+			$segments[0] = null;
 		}
-
 		return $vars;
-
 	}
 }

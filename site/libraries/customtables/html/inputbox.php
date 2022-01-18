@@ -36,7 +36,6 @@ class Inputbox
 	var $ct;
 	var $esfield;
 	var $jinput;
-	var $requiredlabel; //unused
 	var $cssclass;
 	var $attributes;
 	var $option_list;
@@ -588,7 +587,7 @@ class Inputbox
 		return $htmlout;
 	}//function
 	
-	protected function render_multilangtext(&$row,$cssclass)
+	protected function render_multilangtext(&$row)
 	{
 		$RequiredLabel = 'Field is required';
 		
@@ -610,7 +609,17 @@ class Inputbox
 			if(count($row)==0)
 				$value=$this->jinput->get($this->ct->Env->field_prefix.$fieldname,'','STRING');
 			else
-				$value=$row[$this->ct->Env->field_prefix.$fieldname];
+			{
+				if(array_key_exists($this->ct->Env->field_prefix . $fieldname, $row))
+				{
+					$value=$row[$this->ct->Env->field_prefix.$fieldname];
+				}
+				else
+				{
+					Factory::getApplication()->enqueueMessage('Field "'.$this->ct->Env->field_prefix.$fieldname.'" not yet created. Go to /Custom Tables/Database schema/Checks to create that field.', 'error');
+					$value = '';
+				}
+			}
 								
 			$result.=($this->esfield['isrequired'] ? ' '.$RequiredLabel : '');
 								
@@ -635,7 +644,7 @@ class Inputbox
 			{
 				$result.='<textarea filter="raw" name="'.$this->prefix.$fieldname.'" '
 					.'id="'.$this->prefix.$fieldname.'" '
-					.'class="'.$cssclass.' '.($this->esfield['isrequired'] ? 'required' : '').'">'.$value.'</textarea>'
+					.'class="'.$this->cssclass.' '.($this->esfield['isrequired'] ? 'required' : '').'">'.$value.'</textarea>'
 					.'<span class="language_label">'.$lang->caption.'</span>';
 				
 				$result.=($this->esfield['isrequired'] ? ' '.$RequiredLabel : '');

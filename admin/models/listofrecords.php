@@ -30,6 +30,14 @@ class CustomtablesModelListofRecords extends JModelList
 	{
 		$this->ct = new CT;
 		
+		$this->ct->getTable($this->ct->Env->jinput->getInt('tableid',0), null);
+		
+		if($this->ct->Table->tablename=='')
+		{
+			JFactory::getApplication()->enqueueMessage('Table not selected.', 'error');
+			return;
+		}
+		
 		if (empty($config['filter_records']))
         {
 			$config['filter_fields'] = array(
@@ -38,17 +46,6 @@ class CustomtablesModelListofRecords extends JModelList
 			);
 		}
 		parent::__construct($config);
-		
-		
-		$jinput=JFactory::getApplication()->input;
-
-		$this->ct->getTable($jinput->getInt('tableid',0), null);
-		
-		if($this->ct->Table->tablename=='')
-		{
-			JFactory::getApplication()->enqueueMessage('Table not selected.', 'error');
-			return;
-		}
 	}
 	
 	/**

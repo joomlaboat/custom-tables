@@ -48,7 +48,7 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'co
 			}
 			elseif($this->ct->Env->frmt=='xml')
 			{
-				$filename = JoomlaBasicMisc::makeNewFileName($mydoc->getTitle(),'xml');
+				$filename = JoomlaBasicMisc::makeNewFileName($document->getTitle(),'xml');
 
 				if (ob_get_contents())
 					ob_end_clean();

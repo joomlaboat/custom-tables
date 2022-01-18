@@ -137,7 +137,7 @@ trait SaveFieldQuerySet
 				case 'multilangstring':
 
 					$firstlanguage=true;
-					$sets = array();
+					$sets = [];
 					foreach($this->Languages->LanguageList as $lang)
 					{
 						if($firstlanguage)
@@ -146,18 +146,15 @@ trait SaveFieldQuerySet
 							$firstlanguage=false;
 						}
 						else
-						$postfix='_'.$lang->sef;
+							$postfix='_'.$lang->sef;
 
 						$value=$this->jinput->getString($this->comesfieldname.$postfix);
 
 						if(isset($value))
-							$sets[]=$this->realfieldname.$postfix.'='.$this->db->Quote($value);
+							$sets[] = $this->realfieldname.$postfix.'='.$this->db->Quote($value);
 					}
 					
-					if(count($sets)>0)
-						return implode(',',$sets);
-					break;
-
+					return (count($sets) > 0 ? $sets : null);
 
 				case 'text':
 
@@ -170,6 +167,7 @@ trait SaveFieldQuerySet
 
 				case 'multilangtext':
 
+					$sets = [];
 					$firstlanguage=true;
 					foreach($this->Languages->LanguageList as $lang)
 					{
@@ -179,15 +177,15 @@ trait SaveFieldQuerySet
 							$firstlanguage=false;
 						}
 						else
-						$postfix='_'.$lang->sef;
-
+							$postfix='_'.$lang->sef;
+						
 						$value_= ComponentHelper::filterText($this->jinput->post->get($this->comesfieldname.$postfix, null, 'raw'));
 
 						if(isset($value_))
-							return $this->realfieldname.$postfix.'='.$this->db->Quote($value_);
-
+							$sets[] = $this->realfieldname.$postfix.'='.$this->db->Quote($value_);
 					}
-					break;
+					
+					return (count($sets) > 0 ? $sets : null);
 
 				case 'int':
 						$value=$this->jinput->getInt($this->comesfieldname,null);
@@ -208,7 +206,6 @@ trait SaveFieldQuerySet
                                 return $this->realfieldname.'=null';
                             else
                                 return $this->realfieldname.'='.(int)$value;
-
                         }
 
 					break;
@@ -217,12 +214,9 @@ trait SaveFieldQuerySet
 
                     	$value=$this->jinput->getInt($this->comesfieldname,null);
 
-						if(isset($value))
-                        {
-							if($value!=0)
-                                return $this->realfieldname.'='.(int)$value;
-                        }
-
+						if(isset($value) and $value!=0)
+							return $this->realfieldname.'='.(int)$value;
+                        
 					break;
 
 				case 'usergroup':
@@ -245,8 +239,6 @@ trait SaveFieldQuerySet
 							return $this->realfieldname.'='.$this->db->Quote($value);
 
 					break;
-
-
 
 				case 'float':
 						$value=$this->jinput->get($this->comesfieldname,null,'FLOAT');
@@ -277,6 +269,8 @@ trait SaveFieldQuerySet
 					break;
 
 				case 'multilangarticle':
+				
+					$sets = [];
 					$firstlanguage=true;
 					foreach($this->Languages->LanguageList as $lang)
 					{
@@ -288,12 +282,13 @@ trait SaveFieldQuerySet
 						else
 							$postfix='_'.$lang->sef;
 
-						$value=$this->jinput->getInt($this->comesfieldname.$postfix,null);
+						$value = $this->jinput->getInt($this->comesfieldname.$postfix,null);
 
 						if(isset($value))
-							return $this->realfieldname.$postfix.'='.$value;
+							$sets[] = $this->realfieldname.$postfix.'='.(int)$value;
 					}
-					break;
+					
+					return (count($sets) > 0 ? $sets : null);
 
 				case 'customtables':
                     return $this->get_customtables_type_value();
