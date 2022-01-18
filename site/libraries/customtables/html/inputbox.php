@@ -76,7 +76,7 @@ class Inputbox
 	{
 		$this->prefix = $this->ct->Env->field_input_prefix . (!$this->ct->isEditForm  ? $row['listing_id'] . '_' : '');
 		
-		$type_params=JoomlaBasicMisc::csv_explode(',',$this->esfield['typeparams'],'"',false);
+		$type_params = JoomlaBasicMisc::csv_explode(',',$this->esfield['typeparams'],'"',false);
 		
 		switch($this->esfield['type'])
 		{
@@ -87,7 +87,7 @@ class Inputbox
 				return $this->render_int($value, $row);
 
 			case 'float':
-				return $this->render_float($row);
+				return $this->render_float($value, $row, $type_params);
 
 			case 'phponchange':
 				return $value.'<input type="hidden" '
@@ -1091,7 +1091,7 @@ class Inputbox
 		return $result;
 	}
 	
-	protected function render_float(&$row)
+	protected function render_float($value, &$row, $type_params)
 	{
 		$result = '';
 		
@@ -1113,7 +1113,7 @@ class Inputbox
 			.'data-valuerulecaption="'.str_replace('"','&quot;',$this->esfield['valuerulecaption']).'" '
 			.$this->attributes.' ';
 
-		$decimals=intval($type_params[0]);
+		$decimals = intval($type_params[0]);
 		if($decimals<0)
 			$decimals=0;
 

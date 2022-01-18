@@ -94,8 +94,7 @@ function isValidURL(str) {
     }
 }
 
-function doValuerules(obj, label, valuerules,caption)
-{
+function doValuerules(obj, label, valuerules,caption){
 	let ct_fielname = obj.name.replaceAll('comes_', '');
 	let valuerules_and_arguments=doValuerules_ParseValues(valuerules,ct_fielname);
 	
@@ -129,8 +128,7 @@ function doValuerules_ParseValues(valuerules,ct_fielname)
 	//let matches=valuerules.match(/(?<=\[)[^\][]*(?=])/g);  Doesn't work on Safari
 	let matches=valuerules.match(/\[(.*?)\]/g); // return example: ["[subject]","[date]"]
 	
-	if(matches == null)
-	{
+	if(matches == null)	{
 		valuerules = '[' + ct_fielname + ']' + valuerules;
 		matches=valuerules.match(/\[(.*?)\]/g); // return example: ["[subject]","[date]"]
 		
@@ -140,8 +138,7 @@ function doValuerules_ParseValues(valuerules,ct_fielname)
 		
 	let args=[];
 	
-	for(let i=0;i<matches.length;i++)
-	{
+	for(let i=0;i<matches.length;i++){
 		let fieldname = matches[i].replace("[","").replace("]","");
 		let objID = "comes_" + fieldname;
 		let obj = document.getElementById(objID);
@@ -154,8 +151,7 @@ function doValuerules_ParseValues(valuerules,ct_fielname)
 	return {new_valuerules : valuerules, new_args : args} ;
 }
 
-function doFilters(obj, label, filters_string)
-{
+function doFilters(obj, label, filters_string){
     let filters = filters_string.split(",");
     let value = obj.value;
 
@@ -214,8 +210,7 @@ function doSanitanization(obj, sanitizers_string) {
     obj.value = value;
 }
 
-function checkRequiredFields()
-{
+function checkRequiredFields(){
     if (!checkFilters())
         return false;
 	
@@ -339,7 +334,7 @@ function CheckSQLJoinRadioSelections(id) {
     return true;
 }
 
-function clearListingID() {
+function clearListingID(){
 
     let obj = document.getElementById("listing_id");
     obj.value = "";
@@ -348,8 +343,7 @@ function clearListingID() {
     frm.submit();
 }
 
-function recaptchaCallback()
-{
+function recaptchaCallback(){
 	let buttons=['save','saveandclose','saveandprint','saveandcopy','delete'];
 	for(let i=0;i<buttons.length;i++){
 		let button = 'customtables_button_' + buttons[i];
@@ -360,8 +354,7 @@ function recaptchaCallback()
 	}
 }
 
-function ctRenderTableJoinSelectBox(control_name, r, index, execute_all,sub_index,parent_object_id)
-{
+function ctRenderTableJoinSelectBox(control_name, r, index, execute_all,sub_index,parent_object_id){
 	let wrapper = document.getElementById(control_name + "Wrapper");
 	let filters = [];
 	if(wrapper.dataset.valuefilters != '')
@@ -371,104 +364,82 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all,sub_inde
 	let next_sub_index = sub_index;
 	let val = ''
 	
-	
-		if(Array.isArray(filters[index]))
-		{
-			//Self Parent field
-			next_sub_index += 1;
-			if(next_sub_index == filters[index].length)
-			{
-				// Max sub index reached
-				next_sub_index = 0;
-				next_index += 1;
-			
-				if(Array.isArray(filters[next_index]))
-					val = filters[next_index][next_sub_index];
-				else
-					val = filters[next_index];
-			}
-			else
+	if(Array.isArray(filters[index])){
+		//Self Parent field
+		next_sub_index += 1;
+		if(next_sub_index == filters[index].length){
+			// Max sub index reached
+			next_sub_index = 0;
+			next_index += 1;
+		
+			if(Array.isArray(filters[next_index]))
 				val = filters[next_index][next_sub_index];
-
-			selfparent = true;
+			else
+				val = filters[next_index];
 		}
 		else
-		{
-			next_index += 1;
-			val = filters[next_index];
-		}
+			val = filters[next_index][next_sub_index];
+
+		selfparent = true;
+	}
+	else{
+		next_index += 1;
+		val = filters[next_index];
+	}
 		
 	if(!execute_all)
 		val = null;
 		
-	if(r.error)
-	{
+	if(r.error){
 		alert(r.error);
+		return false;
+	}
+	
+	if(r.length == 0){
+		if(Array.isArray(filters[next_index])){
+			document.getElementById(control_name + "Selector" + index + '_' + sub_index).innerHTML = "No items to select.";
+			if(next_index + 1 < filters[next_index])
+				ctUpdateTableJoinLink(control_name,next_index + 1,false,0,parent_object_id);
+		}
+		else
+			document.getElementById(control_name + "Selector" + index).innerHTML = "No items to select.";
+
+		return '';
+	}
+	
+	let result = ''
+	
+	if(next_index + 1 < filters.length){
+		//Add select box
+		let current_object_id = control_name + index;
+	
+		if(Array.isArray(filters[index]))
+			current_object_id += '_' + sub_index;
+		
+		let onChangeAttribute = ' onChange="ctUpdateTableJoinLink(\'' + control_name + '\', ' + next_index + ', false, ' + next_sub_index + ',\'' + current_object_id + '\')"';
+		result += '<select id="' + current_object_id + '"' + onChangeAttribute + '>';	
 	}
 	else
-	{
-		if(r.length == 0)
-		{
-			if(Array.isArray(filters[next_index]))
-			{
-				document.getElementById(control_name + "Selector" + index + '_' + sub_index).innerHTML = "No element to select. Select another parent element.";
-				
-				ctUpdateTableJoinLink(control_name,next_index + 1,false,0,parent_object_id);
-			}
-			else
-			{
-				document.getElementById(control_name + "Selector" + index).innerHTML = "No element to select. Select another parent element.";
-			}
-			return '';
-		}
+		result += '<select id="' + control_name + '" name="' + control_name + '">';	
 		
-		let result = ''
+	result += '<option value="">- Select</option>';
 		
-		if(next_index + 1 < filters.length)
-		{
-			//Add select box
-			
-			let current_object_id = control_name + index;
-		
-			if(Array.isArray(filters[index]))
-				current_object_id += '_' + sub_index;
-			
-			let onChangeAttribute = ' onChange="ctUpdateTableJoinLink(\'' + control_name + '\', ' + next_index + ', false, ' + next_sub_index + ',\'' + current_object_id + '\')"';
-			result += '<select id="' + current_object_id + '"' + onChangeAttribute + '>';	
-		}
-		else
-			result += '<select id="' + control_name + '" name="' + control_name + '">';	
-		
-		result += '<option value="">- Select</option>';
-		
-		for(let i = 0;i < r.length; i++)
-			result += '<option value="' + r[i].id + '"' + (r[i].id == val ? ' selected="selected"' : '') + '>' + r[i].label + '</option>';
+	for(let i = 0;i < r.length; i++)
+		result += '<option value="' + r[i].id + '"' + (r[i].id == val ? ' selected="selected"' : '') + '>' + r[i].label + '</option>';
 
-		result += '</select>';
+	result += '</select>';
 		
-		//Prepare the space for next elements
-		//alert(next_index)
-		if(Array.isArray(filters[next_index]))
-			result += '<div id="' + control_name + 'Selector' + next_index + '_' + next_sub_index + '"></div>';
+	//Prepare the space for next elements
+	result += '<div id="' + control_name + 'Selector' + next_index + '_' + next_sub_index + '"></div>';
 
-		result += '<div id="' + control_name + 'Selector' + next_index + '"></div>';
-
-		//Add content to the element
-		if((index > 0 || sub_index >0 ) && Array.isArray(filters[index]))
-		{
-			//alert(control_name + "Selector" + index + '_' + sub_index);
-			document.getElementById(control_name + "Selector" + index + '_' + sub_index).innerHTML = result;
-		}
-		else
-			document.getElementById(control_name + "Selector" + index).innerHTML = result;
+	//Add content to the element
+	document.getElementById(control_name + "Selector" + index + '_' + sub_index).innerHTML = result;
 		
-		if(execute_all && next_index + 1 < filters.length)
-			ctUpdateTableJoinLink(control_name,next_index,true,next_sub_index,null);
-	}
+	if(execute_all && next_index + 1 < filters.length)
+		ctUpdateTableJoinLink(control_name,next_index,true,next_sub_index,null);
 }
 
-function ctUpdateTableJoinLink(control_name,index,execute_all,sub_index,object_id)
-{
+function ctUpdateTableJoinLink(control_name,index,execute_all,sub_index,object_id){
 	let wrapper = document.getElementById(control_name + "Wrapper");
 	let url = 'index.php?option=com_customtables&view=catalog&tmpl=component&from=json&key=' + wrapper.dataset.key + '&index=' + index;
 
@@ -479,23 +450,23 @@ function ctUpdateTableJoinLink(control_name,index,execute_all,sub_index,object_i
 	if(Array.isArray(filters[index]))
 		url += '&subindex=' + sub_index;
 	
-	if(execute_all)
-	{
-		if(Array.isArray(filters[index]))
-		{
+	if(execute_all){
+		if(Array.isArray(filters[index])){
 			//Self Parent field
 			if(filters[index][sub_index] !='')
 				url += '&subfilter=' + filters[index][sub_index];
 		}
-		else
-		{
-			if(filters[index] !='')
-				url += '&filter=' + filters[index];	
-		}
+		else if(filters[index] !='')
+			url += '&filter=' + filters[index];	
 	}
-	else
-	{
+	else{
 		let obj = document.getElementById(object_id);
+		if(obj.value == ""){
+			//Empty everything after
+			document.getElementById(control_name + "Selector" + index + '_' + sub_index).innerHTML = "Not selected";
+			return false;
+		}
+		
 		if(Array.isArray(filters[index]))
 			url += '&subfilter=' + obj.value;
 		else

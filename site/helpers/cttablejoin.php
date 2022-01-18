@@ -41,10 +41,7 @@ class JHTMLCTTableJoin
 		$data[] = 'data-valuefilters="'.base64_encode(json_encode($js_filters)).'"';
 		$data[] = 'data-value="'.$value.'"';
 		
-		//TODO: replace Selector0 with Selector0_0 if self parent, same in js file
-		//echo '<div id="'.$control_name.'Wrapper" '.implode(' ',$data).'><div id="'.$control_name.'Selector0"></div></div>
-		
-		echo '<div id="'.$control_name.'Wrapper" '.implode(' ',$data).'><div id="'.$control_name.'Selector0"></div></div>
+		echo '<div id="'.$control_name.'Wrapper" '.implode(' ',$data).'><div id="'.$control_name.'Selector0_0"></div></div>
 			<script>
 				ctUpdateTableJoinLink("'.$control_name.'",0,true,0,"");
 			</script>
@@ -71,7 +68,6 @@ class JHTMLCTTableJoin
 				$parent_id = JHTMLCTTableJoin::getParentFieltrID($temp_ct,$parent_id,$join_to_tablename);
 				$js_filters[] = $parent_id;
 			}
-			
 
 			//Check if this table has self-parent field - the TableJoing field linked with the same table.
 			$selfParentField = Fields::getSelfParentField($temp_ct);
@@ -98,15 +94,12 @@ class JHTMLCTTableJoin
 						$selfparnt_filters[] = $parent_id;
 				}
 				$selfparnt_filters[] = "";
-
-
 				$js_filters[] = array_reverse($selfparnt_filters);
 			}
-			else
-			{
-				//$js_filters[] = "";
-			}
 		}
+
+		if(!is_array(end($js_filters)))
+			$js_filters[] = "";
 		
 		$js_filters = array_reverse($js_filters);
 	}
