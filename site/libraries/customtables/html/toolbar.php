@@ -44,7 +44,7 @@ class RecordToolbar
 		
 		$this->jinput = Factory::getApplication()->input;
 
-		$this->iconPath = Uri::root(true).'/components/com_customtables/libraries/customtables/media/images/';
+		$this->iconPath = Uri::root(true).'/components/com_customtables/libraries/customtables/media/images/icons/';
 	}
 	
 	public function render($row,$mode)
