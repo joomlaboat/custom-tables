@@ -9,29 +9,14 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
-/*
-JHtml::_('behavior.multiselect');
-JHtml::_('dropdown.init');
-JHtml::_('formbehavior.chosen', 'select');
-*/
-
-// load tooltip behavior
-//JHtml::_('behavior.tooltip');
-//sJHtml::_('behavior.multiselect');
-//JHtml::_('dropdown.init');
-//JHtml::_('formbehavior.chosen', 'select');
-
 use CustomTables\IntegrityChecks;
 
 $tables = $this->prepareTables();
-
 $document = JFactory::getDocument();
 
-//$document->addCustomTag('<script src="'.JURI::root(true).'/media/vendor/jquery/js/jquery.min.js"></script>');
 //https://github.com/DmitryBaranovskiy/raphael/releases
-$document->addCustomTag('<script src="'.JURI::root(true).'/administrator/components/com_customtables/js/raphael.min.js"></script>');
-
-$document->addCustomTag('<script src="'.JURI::root(true).'/administrator/components/com_customtables/js/diagram.js"></script>');
+$document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/js/raphael.min.js"></script>');
+$document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/js/diagram.js"></script>');
 
 ?>
 <form action="<?php echo JRoute::_('index.php?option=com_customtables&view=databasecheck'); ?>" method="post" name="adminForm" id="adminForm">

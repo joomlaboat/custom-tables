@@ -20,9 +20,9 @@ jimport('joomla.html.html.bootstrap');
 
 $document = JFactory::getDocument();
 
-$document->addScript(JURI::root(true).'/components/com_customtables/js/base64.js');
-$document->addScript(JURI::root(true).'/components/com_customtables/js/edit_234.js');
-$document->addScript(JURI::root(true).'/components/com_customtables/js/esmulti.js');
+$document->addScript(JURI::root(true).'/components/com_customtables/libraries/customtables/media/js/base64.js');
+$document->addScript(JURI::root(true).'/components/com_customtables/libraries/customtables/media/js/edit.js');
+$document->addScript(JURI::root(true).'/components/com_customtables/libraries/customtables/media/js/esmulti.js');
 
 $document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customtables/css/style.css" type="text/css" rel="stylesheet" >');
 

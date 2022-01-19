@@ -24,18 +24,17 @@
 		<filename>customtables.php</filename>
 
 		<folder>controllers</folder>
-		<folder>css</folder>
 		<folder>customphp</folder>
 		<folder>fields</folder>
 		<folder>helpers</folder>
 		<folder>images</folder>
-		<folder>js</folder>
 		<folder>libraries</folder>
 		<folder>models</folder>
 		<folder>views</folder>
 	</files>
 
 	<languages folder="site">
+		<language tag="cs-CZ">language/cs-CZ/cs-CZ.com_customtables.ini</language>
 		<language tag="de-DE">language/de-DE/de-DE.com_customtables.ini</language>
 		<language tag="el-GR">language/el-GR/el-GR.com_customtables.ini</language>
 		<language tag="en-GB">language/en-GB/en-GB.com_customtables.ini</language>
@@ -66,11 +65,9 @@
 			<filename>customtables.php</filename>
 			<folder>assets</folder>
 			<folder>controllers</folder>
-			<folder>css</folder>
 			<folder>forms</folder>
 			<folder>helpers</folder>
 			<folder>layouts</folder>
-			<folder>js</folder>
 			<folder>models</folder>
 			<folder>tables</folder>
 			<folder>views</folder>
@@ -78,6 +75,10 @@
 		</files>
 
 		<languages folder="admin">
+
+			<language tag="cs-CZ">language/cs-CZ/cs-CZ.com_customtables.ini</language>
+			<language tag="cs-CZ">language/cs-CZ/cs-CZ.com_customtables.sys.ini</language>
+
 			<language tag="de-DE">language/de-DE/de-DE.com_customtables.ini</language>
 			<language tag="de-DE">language/de-DE/de-DE.com_customtables.sys.ini</language>
 

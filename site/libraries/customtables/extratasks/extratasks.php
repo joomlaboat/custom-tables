@@ -28,10 +28,10 @@ class extraTasks
 		$table_row=ESTables::getTableRowByID($tableid);
 		
 		$document = JFactory::getDocument();
-		$document->addCustomTag('<script src="'.JURI::root(true).'/administrator/components/com_customtables/js/extratasks.js"></script>');
-		$document->addCustomTag('<script src="'.JURI::root(true).'/administrator/components/com_customtables/js/modal.js"></script>');
-		$document->addCustomTag('<link href="'.JURI::root(true).'/administrator/components/com_customtables/css/modal.css" rel="stylesheet">');
-		$document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/js/base64.js"></script>');
+		$document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/js/extratasks.js"></script>');
+		$document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/js/modal.js"></script>');
+		$document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/js/base64.js"></script>');
+		$document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/css/modal.css" rel="stylesheet">');
 
 		$extratask=$input->getCmd('extratask','');
 		

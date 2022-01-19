@@ -13,16 +13,10 @@ defined('_JEXEC') or die('Restricted access');
 jimport('joomla.application.component.view');
 
 use CustomTables\CT;
-
 use Joomla\CMS\Version;
-
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
-
-
-
-
 
 /**
  * Tables View class
@@ -117,7 +111,7 @@ class CustomtablesViewDataBaseCheck extends JViewLegacy
 			$this->document = JFactory::getDocument();
 
 		$this->document->setTitle(JText::_('COM_CUSTOMTABLES_DATABASECHECK'));
-		$this->document->addStyleSheet(JURI::root(true)."/administrator/components/com_customtables/css/fieldtypes.css");
+		$this->document->addStyleSheet(JURI::root(true)."/components/com_customtables/libraries/customtables/media/css/fieldtypes.css");
 	}
 	
 	protected function getAllTables($categoryid)

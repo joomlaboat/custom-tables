@@ -10,7 +10,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 $document = JFactory::getDocument();
-$document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/js/imagegallery.js"></script>');
+$document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/js/imagegallery.js"></script>');
 
 ?>
 <style>

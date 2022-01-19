@@ -18,10 +18,10 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'co
 
 $document = JFactory::getDocument();
 
-$document->addScript(JURI::root(true).'/components/com_customtables/js/base64.js');
-$document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/js/catalog.js" type="text/javascript"></script>');
-$document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/js/ajax.js"></script>');
-$document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customtables/css/style.css" type="text/css" rel="stylesheet" >');
+$document->addScript(JURI::root(true).'/components/com_customtables/libraries/customtables/media/js/base64.js');
+$document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/js/catalog.js" type="text/javascript"></script>');
+$document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/js/ajax.js"></script>');
+$document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/css/style.css" type="text/css" rel="stylesheet" >');
 
 $html_format=false;
 if($this->ct->Env->frmt=='html' or $this->ct->Env->frmt=='')

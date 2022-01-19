@@ -66,7 +66,7 @@ class CustomtablesViewDocumentation extends JViewLegacy
 			$this->document = JFactory::getDocument();
 		}
 		$this->document->setTitle(JText::_('COM_CUSTOMTABLES_DOCUMENTATION'));
-		$this->document->addStyleSheet(JURI::root(true)."/administrator/components/com_customtables/css/fieldtypes.css");
+		$this->document->addStyleSheet(JURI::root(true)."/components/com_customtables/libraries/customtables/media/css/fieldtypes.css");
 		
 		
 		$script='

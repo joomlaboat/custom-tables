@@ -105,9 +105,9 @@ class Twig_Html_Tags
 		}
 		
 		$document->addCustomTag('<link href="'.URI::root(true).'/components/com_customtables/css/uploadfile.css" rel="stylesheet">');
-        $document->addCustomTag('<script src="'.URI::root(true).'/components/com_customtables/js/jquery.uploadfile.min.js"></script>');
-        $document->addCustomTag('<script src="'.URI::root(true).'/components/com_customtables/js/jquery.form.js"></script>');
-        $document->addCustomTag('<script src="'.URI::root(true).'/components/com_customtables/js/uploader.js"></script>');
+        $document->addCustomTag('<script src="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/js/jquery.uploadfile.min.js"></script>');
+        $document->addCustomTag('<script src="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/js/jquery.form.js"></script>');
+        $document->addCustomTag('<script src="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/js/uploader.js"></script>');
 		$max_file_size=JoomlaBasicMisc::file_upload_max_size();
                     
 		$fileid = JoomlaBasicMisc::generateRandomString();

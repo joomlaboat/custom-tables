@@ -92,7 +92,11 @@ width:100%;
 
 
  }
-
+.ct_pro{
+	border:1px solid #ff9999;
+	padding:5px;
+	border-radius: 5px;
+}
 
 .tablesorter td{
 

@@ -17,19 +17,19 @@ use CustomTables\CT;
 $theme='eclipse';
 $document = JFactory::getDocument();
 
-$document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/js/ajax.js"></script>');
+$document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/js/ajax.js"></script>');
 
 $version_object = new Version;
 $version = (int)$version_object->getShortVersion();
 
 if($version < 4)
-	$document->addCustomTag('<script src="'.JURI::root(true).'/administrator/components/com_customtables/js/typeparams.js"></script>');
+	$document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/js/typeparams.js"></script>');
 else
-	$document->addCustomTag('<script src="'.JURI::root(true).'/administrator/components/com_customtables/js/typeparams_j4.js"></script>');
+	$document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/js/typeparams_j4.js"></script>');
 
-$document->addCustomTag('<script src="'.JURI::root(true).'/administrator/components/com_customtables/js/layoutwizard.js"></script>');
-$document->addCustomTag('<script src="'.JURI::root(true).'/administrator/components/com_customtables/js/layouteditor.js"></script>');
-$document->addCustomTag('<link href="'.JURI::root(true).'/administrator/components/com_customtables/css/layouteditor.css" rel="stylesheet">');
+$document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/js/layoutwizard.js"></script>');
+$document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/js/layouteditor.js"></script>');
+$document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/css/layouteditor.css" rel="stylesheet">');
 
 $document->addCustomTag('<link rel="stylesheet" href="'.JURI::root(true).'/components/com_customtables/libraries/codemirror/lib/codemirror.css">');
 $document->addCustomTag('<link rel="stylesheet" href="'.JURI::root(true).'/components/com_customtables/libraries/codemirror/addon/hint/show-hint.css">');
