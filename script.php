@@ -121,14 +121,14 @@ class com_customtablesInstallerScript
 			$allDone = $db->execute();
 
 			echo '<a target="_blank" href="https://joomlaboat.com" title="Custom Tables">
-				<img src="'.JURI::root(true).'/administrator/components/com_customtables/assets/images/vdm-component.jpg"/>
+				<img src="'.JURI::root(true).'/components/com_customtables/libraries/media/images/controlpanel/customtables.jpg"/>
 				</a>';
 		}
 		// do any updates needed
 		if ($type == 'update')
 		{
 			echo '<a target="_blank" href="https://joomlaboat.com" title="Custom Tables">
-				<img src="'.JURI::root(true).'/administrator/components/com_customtables/assets/images/vdm-component.jpg"/>
+				<img src="'.JURI::root(true).'/components/com_customtables/libraries/media/images/controlpanel/customtables.jpg"/>
 				</a>
 				<h3>Upgrade was Successful!</h3>';
 		}

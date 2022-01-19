@@ -63,7 +63,6 @@
 			<filename>controller.php</filename>
 			<filename>index.html</filename>
 			<filename>customtables.php</filename>
-			<folder>assets</folder>
 			<folder>controllers</folder>
 			<folder>forms</folder>
 			<folder>helpers</folder>

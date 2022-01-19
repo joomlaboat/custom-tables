@@ -136,7 +136,7 @@ class CustomTablesViewLog extends JViewLegacy
 	{
 		$actions=['New','Edit','Publish','Unpublish','Delete','Image Uploaded','Image Deleted','File Uploaded','File Deleted','Refreshed'];
 		$action_images=['new.png','edit.png','publish.png','unpublish.png','delete.png','photomanager.png','photomanager.png','filemanager.png','filemanager.png','refresh.png'];
-		$action_image_path='/components/com_customtables/images/';
+		$action_image_path='/components/com_customtables/libraries/customtables/media/images/icons/';
 
 		$a=(int)$rec['action']-1;
 		$alt=$actions[$a];

@@ -20,8 +20,8 @@ defined('_JEXEC') or die('Restricted access');
 				<h2>CustomTables - Structure</h2>
 			</td>
 			<td nowrap="nowrap" align="right">
-				<a href="index.php?option=com_customtables&view=list&task=edit"><img src="<?php echo JURI::root(true); ?>"/components/com_customtables/images/new.png" alt="New" title="New" /></a>
-				<a href="#" onclick="javascript:if (document.adminForm.boxchecked.value==0){alert('Please first make a selection from the list');}else{ Joomla.submitbutton('remove')}" class="toolbar"><img src="<?php echo JURI::root(true); ?>"/components/com_customtables/images/delete.png" alt="Delete" title="Delete" /></a>
+				<a href="index.php?option=com_customtables&view=list&task=edit"><img src="<?php echo JURI::root(true); ?>"/components/com_customtables/libraries/customtables/media/images/icons/new.png" alt="New" title="New" /></a>
+				<a href="#" onclick="javascript:if (document.adminForm.boxchecked.value==0){alert('Please first make a selection from the list');}else{ Joomla.submitbutton('remove')}" class="toolbar"><img src="<?php echo JURI::root(true); ?>"/components/com_customtables/libraries/customtables/media/images/icons/delete.png" alt="Delete" title="Delete" /></a>
 				
 			</td>
 

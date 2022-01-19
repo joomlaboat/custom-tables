@@ -74,7 +74,7 @@ class Twig_Html_Tags
 			$link.='&tmpl='.$jinput->get('tmpl','','CMD');
                     
 		$vlu='<a href="'.URI::root(true).$link.'" id="ctToolBarAddNew'.$this->ct->Table->tableid.'" class="toolbarIcons">'
-			.'<img src="'.URI::root(true).'/components/com_customtables/images/new.png" alt="Add New" title="Add New" /></a>';
+			.'<img src="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/images/icons/new.png" alt="Add New" title="Add New" /></a>';
 			
 		if($this->isTwig)
 			return new \Twig\Markup($vlu, 'UTF-8' );
@@ -187,7 +187,7 @@ class Twig_Html_Tags
 			return $vlu;
 	}
 		
-	function goback($label='Go Back', $image_icon='components/com_customtables/images/arrow_rtl.png', $attribute='',  $returnto = '')
+	function goback($label='Go Back', $image_icon='components/com_customtables/libraries/customtables/media/images/icons/arrow_rtl.png', $attribute='',  $returnto = '')
 	{
 		if($this->ct->Env->print==1)
             $gobackbutton='';
@@ -266,7 +266,7 @@ class Twig_Html_Tags
 				{
 					$rid='esToolBar_'.$mode.'_box_'.$this->ct->Table->tableid;
 					$alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_'.strtoupper($mode).'_SELECTED' );
-					$img='<img src="'.URI::root(true).'/components/com_customtables/images/'.$mode.'.png" border="0" alt="'.$alt.'" title="'.$alt.'" />';
+					$img='<img src="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/images/icons/'.$mode.'.png" border="0" alt="'.$alt.'" title="'.$alt.'" />';
 					$link='javascript:esToolBarDO("'.$mode.'", '.$this->ct->Table->tableid.')';
 					$html_buttons[] = '<div id="'.$rid.'" class="toolbarIcons"><a href=\''.$link.'\'>'.$img.'</a></div>';
 				}
@@ -306,7 +306,7 @@ class Twig_Html_Tags
 
 		if($this->ct->Env->print==1)
 		{
-			$vlu='<p><a href="#" onclick="window.print();return false;"><img src="'.URI::root(true).'/components/com_customtables/images/printButton.png" alt="'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PRINT').'"  /></a></p>';
+			$vlu='<p><a href="#" onclick="window.print();return false;"><img src="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/images/icons/print.png" alt="'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PRINT').'"  /></a></p>';
 		}
 		else
 		{
@@ -612,7 +612,7 @@ class Twig_Html_Tags
    					$format_image=$format;
 
    				if($image=='')
-   					$image='/components/com_customtables/images/fileformats/'.$imagesize.'px/'.$format_image.'.png';
+   					$image='/components/com_customtables/libraries/customtables/media/images/fileformats/'.$imagesize.'px/'.$format_image.'.png';
 
    				$alt='Download '.strtoupper($format).' file';
    				//add image anchor link

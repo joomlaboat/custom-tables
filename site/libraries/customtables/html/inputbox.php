@@ -503,7 +503,7 @@ class Inputbox
 		{
 			$imagesrclist_arr=explode(';',$imagesrclist);
 
-			$htmlout.='<div style="width:100%;overflow:scroll;border:1px dotted grey;background-image: url(\'components/com_customtables/images/bg.png\');">
+			$htmlout.='<div style="width:100%;overflow:scroll;border:1px dotted grey;background-image: url(\'components/com_customtables/libraries/customtables/media/images/icons/bg.png\');">
 
 		<table cellpadding="3"><tbody><tr>';
 
@@ -574,7 +574,7 @@ class Inputbox
 				$vlu = CT_FieldTypeTag_filebox::process($ct->Table->tableid,$FileBoxRows, $listing_id,
 									$fieldname,$type_params,['','icon-filename-link','32','_blank','ol']);
 
-				$htmlout.='<div style="width:100%;overflow:scroll;background-image: url(\'components/com_customtables/images/bg.png\');">'.$vlu.'</div>';
+				$htmlout.='<div style="width:100%;overflow:scroll;background-image: url(\'components/com_customtables/libraries/customtables/media/images/icons/bg.png\');">'.$vlu.'</div>';
 			}
 			else
 				return 'No Files';

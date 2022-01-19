@@ -400,7 +400,7 @@ class tagProcessor_General
 				$pair=explode(',',$options[$i]);
 
 				if($pair[0]=='')
-					$image_icon='components/com_customtables/images/arrow_rtl.png';
+					$image_icon='components/com_customtables/libraries/customtables/media/images/icons/arrow_rtl.png';
 				else
 					$image_icon=$pair[0];
 

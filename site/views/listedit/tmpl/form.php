@@ -40,8 +40,8 @@ $max_file_size=JoomlaBasicMisc::file_upload_max_size();
 				<h2>CustomTables - Structure (<?php echo ($this->optionRecord->id!=0 ? 'Edit' : 'New'); ?>)</h2>
 			</td>
 			<td nowrap="nowrap" align="right">
-				<a href="#" onclick="javascript:Joomla.submitbutton('save')" class="toolbar"><img src="<?php JURI::root(true); ?>"/components/com_customtables/images/save.png" alt="Save" title="Save" /></a>
-				<a href="#" onclick="javascript:Joomla.submitbutton('cancel')" class="toolbar"><img src="<?php JURI::root(true); ?>"/components/com_customtables/images/cancel.png" alt="Cancel" title="Cancel" /></a>
+				<a href="#" onclick="javascript:Joomla.submitbutton('save')" class="toolbar"><img src="<?php JURI::root(true); ?>"/components/com_customtables/libraries/customtables/media/images/icons/save.png" alt="Save" title="Save" /></a>
+				<a href="#" onclick="javascript:Joomla.submitbutton('cancel')" class="toolbar"><img src="<?php JURI::root(true); ?>"/components/com_customtables/libraries/customtables/media/images/icons/cancel.png" alt="Cancel" title="Cancel" /></a>
 				
 			</td>
 

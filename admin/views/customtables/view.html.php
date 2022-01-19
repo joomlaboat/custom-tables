@@ -83,7 +83,7 @@ class CustomtablesViewCustomtables extends JViewLegacy
 		$document = JFactory::getDocument();
 
 		// add dashboard style sheets
-		$document->addStyleSheet(JURI::root(true)."/administrator/components/com_customtables/assets/css/dashboard.css");
+		$document->addStyleSheet(JURI::root(true)."/components/com_customtables/libraries/customtables/media/css/dashboard.css");
 
 		// set page title
 		$document->setTitle(JText::_('COM_CUSTOMTABLES_DASHBOARD'));

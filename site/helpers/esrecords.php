@@ -418,7 +418,7 @@ class JHTMLESRecords
 		else
 				$real_field=$real_field_row->realfieldname;
 
-		$deleteimage='components/com_customtables/images/cancel_small.png';
+		$deleteimage='components/com_customtables/libraries/customtables/media/images/icons/cancel.png';
 		$htmlresult='
 		<script>
 			var '.$control_name.'_r=new Array();
@@ -611,11 +611,11 @@ class JHTMLESRecords
 
 		$htmlresult.='<div style="padding-bottom:20px;"><div style="width:90%;" id="'.$control_name.'_box"></div>'
 		.'<div style="height:30px;">'
-			.'<div id="'.$control_name.'_addButton" style="visibility: visible;"><img src="'.JURI::root(true).'/components/com_customtables/images/new.png" alt="Add" title="Add" style="cursor: pointer;" onClick="'.$control_name.'addItem()" /></div>'
+			.'<div id="'.$control_name.'_addButton" style="visibility: visible;"><img src="'.JURI::root(true).'/components/com_customtables/media/images/icons/new.png" alt="Add" title="Add" style="cursor: pointer;" onClick="'.$control_name.'addItem()" /></div>'
 			.'<div id="'.$control_name.'_addBox" style="visibility: hidden;">'
 				.'<div style="float:left;">'.$single_box.'</div>'
-				.'<img src="'.JURI::root(true).'/components/com_customtables/images/plus_13.png" alt="Add" title="Add" style="cursor: pointer;float:left;margin-top:8px;margin-left:3px;width:16px;height:16px;" onClick="'.$control_name.'DoAddItem()" />'
-				.'<img src="'.JURI::root(true).'/components/com_customtables/images/cancel_small.png" alt="Cancel" title="Cancel" style="cursor: pointer;float:left;margin-top:6px;margin-left:10px;width:16px;height:16px;" onClick="'.$control_name.'cancel()" />'
+				.'<img src="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/images/icons/plus.png" alt="Add" title="Add" style="cursor: pointer;float:left;margin-top:8px;margin-left:3px;width:16px;height:16px;" onClick="'.$control_name.'DoAddItem()" />'
+				.'<img src="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/images/icons/cancel.png" alt="Cancel" title="Cancel" style="cursor: pointer;float:left;margin-top:6px;margin-left:10px;width:16px;height:16px;" onClick="'.$control_name.'cancel()" />'
 
 			.'</div>'
 		.'</div>'

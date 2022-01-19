@@ -29,32 +29,6 @@ else
 
 ?>
 
-<script type="text/javascript">
-/*
-	// waiting spinner
-	var outerDiv = jQuery('body');
-	jQuery('<div id="loading"></div>')
-		.css("background", "rgba(255, 255, 255, .8) url('components/com_customtables/assets/images/import.gif') 50% 15% no-repeat")
-		.css("top", outerDiv.position().top - jQuery(window).scrollTop())
-		.css("left", outerDiv.position().left - jQuery(window).scrollLeft())
-		.css("width", outerDiv.width())
-		.css("height", outerDiv.height())
-		.css("position", "fixed")
-		.css("opacity", "0.80")
-		.css("-ms-filter", "progid:DXImageTransform.Microsoft.Alpha(Opacity = 80)")
-		.css("filter", "alpha(opacity = 80)")
-		.css("display", "none")
-		.appendTo(outerDiv);
-	jQuery('#loading').show();
-	// when page is ready remove and show
-	jQuery(window).load(function() {
-		jQuery('#customtables_loader').fadeIn('fast');
-		jQuery('#loading').hide();
-	});
-	*/
-</script>
-
-<!--<div id="customtables_loader" style="display: none;">-->
 <form action="<?php echo JRoute::_('index.php?option=com_customtables&layout=edit&id='.(int) $this->item->id.$this->referral); ?>" method="post" name="adminForm" id="adminForm" class="form-validate" enctype="multipart/form-data">
 <div class="form-horizontal">
 

@@ -34,7 +34,7 @@ class CT_FieldTypeTag_file
 		
 		$parts=explode('.',$filename);
         $fileextension=end($parts);
-		$icon='/components/com_customtables/images/fileformats/'.$iconsize.'px/'.$fileextension.'.png';
+		$icon='/components/com_customtables/libraries/customtables/media/images/fileformats/'.$iconsize.'px/'.$fileextension.'.png';
 		$icanFilePath=JPATH_SITE.$icon;
 		if (!file_exists($icanFilePath))
 			$icon='';
@@ -419,7 +419,7 @@ class CT_FieldTypeTag_file
         $parts=explode('.',$file);
         $fileextension=end($parts);
 
-        $imagesrc=JURI::root(true).'/components/com_customtables/images/fileformats/48px/'.$fileextension.'.png';
+        $imagesrc=JURI::root(true).'/components/com_customtables/libraries/customtables/media/images/fileformats/48px/'.$fileextension.'.png';
 
         $prefix='comes_';
         $result='
