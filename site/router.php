@@ -66,7 +66,6 @@ class CustomTablesRouter extends JComponentRouterView
 							return true;
 						}
 					}
-
 				}
 
 		return false;

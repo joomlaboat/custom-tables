@@ -78,20 +78,13 @@ class Table
 	function setTable(&$tablerow, $useridfieldname = null, $load_fields = true)
 	{
 		$this->tablerow = $tablerow;
-		
 		$this->tablename = $this->tablerow['tablename'];
-
 		$this->tableid=$this->tablerow['id'];
-
 		$this->published_field_found=$this->tablerow['published_field_found'];
-		
 		$this->customtablename=$this->tablerow['customtablename'];
-		
 		$this->realtablename=$this->tablerow['realtablename'];
 		$this->realidfieldname=$this->tablerow['realidfieldname'];
-			
 		$this->tabletitle=$this->tablerow['tabletitle'.$this->Languages->Postfix];
-		
 		$this->alias_fieldname='';
 		$this->imagegalleries=array();
 		$this->fileboxes=array();

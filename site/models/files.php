@@ -42,20 +42,16 @@ class CustomTablesModelFiles extends JModelLegacy
 		$this->tableid = $jinput->getInt('tableid',0);
 		$this->fieldid = $jinput->getInt('fieldid',0);
 		
-		
 		$this->security = $jinput->getCmd('security', 'd');
 		$this->key = $jinput->getCmd('key','');
 
 		if($listing_id==0 or $listing_id=='' or $this->fieldid==0)
 		{
 			JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
-
 			$this->_id=0;
 			return false;
 		}
-
 		$this->load($listing_id);
-
 	}
 
 	function load($listing_id)
@@ -99,17 +95,19 @@ class CustomTablesModelFiles extends JModelLegacy
 			$row=array();
 			return $row;
 		}
-		
-		return $this->ct->Table->loadRecord($this->_id);
+
+		$this->ct->Table->loadRecord($this->_id);
+		$row = $this->ct->Table->record;
+		return $row;
 	}
 
 
 	function getTypeFieldName($type)
 	{
-		foreach($this->ct->Table->fields as $ESField)
+		foreach($this->ct->Table->fields as $field)
 		{
-				if($ESField['type']==$type)
-					return $ESField['realfieldname'];
+				if($field['type']==$type)
+					return $field['realfieldname'];
 		}
 
 		return '';

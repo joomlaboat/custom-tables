@@ -36,86 +36,71 @@ class CustomTablesController extends JControllerLegacy
 		// Make sure we have a default view
 		if($jinput->getCmd( 'view' )=='')
 		{
-				$jinput->set('view', 'catalog' );
-
-				parent::display();
+			$jinput->set('view', 'catalog' );
+			parent::display();
 		}
 		else
 		{
-				$theview=$jinput->getCmd( 'view' );
+			$theview=$jinput->getCmd( 'view' );
 
+			switch($theview)
+			{
+				case 'log' :
+					require_once('controllers/log.php');
+					break;
 
+				case 'list' :
+					require_once('controllers/list.php');
+					break;
 
-				switch($theview)
-				{
-						case 'log' :
+				case 'edititem' :
+					require_once('controllers/save.php');
+					break;
 
-								require_once('controllers/log.php');
-								break;
+				case ($theview=='home' || $theview=='catalog') :
+					require_once('controllers/catalog.php');
+					break;
 
-						case 'list' :
+				case 'editphotos' :
+					require_once('controllers/editphotos.php');
+					break;
 
-								require_once('controllers/list.php');
-								break;
+				case 'editfiles' :
+					require_once('controllers/editfiles.php');
+					break;
 
-						case 'edititem' :
+				case 'structure' :
+					parent::display();
+					break;
 
-								require_once('controllers/save.php');
-								break;
+				case 'details' :
+					require_once('controllers/details.php');
+					break;
 
-						case ($theview=='home' || $theview=='catalog') :
+				case 'createuser' :
+					parent::display();
+					break;
 
-								require_once('controllers/catalog.php');
-								break;
-						case 'editphotos' :
+				case 'resetuserpassword' :
+					parent::display();
+					break;
 
-								require_once('controllers/editphotos.php');
-								break;
+				case 'paypal' :
+					parent::display();
+					break;
 
-						case 'editfiles' :
+				case 'a2checkout' :
+					parent::display();
+					break;
 
-								require_once('controllers/editfiles.php');
-								break;
+				case 'files' :
+					parent::display();
+					break;
 
-						case 'structure' :
-
-							parent::display();
-							break;
-
-						case 'details' :
-
-							require_once('controllers/details.php');
-							break;
-
-
-						case 'createuser' :
-							parent::display();
-							break;
-
-						case 'resetuserpassword' :
-							parent::display();
-							break;
-
-						case 'paypal' :
-							parent::display();
-							break;
-
-						case 'a2checkout' :
-							parent::display();
-							break;
-
-						case 'files' :
-							parent::display();
-
-							break;
-
-						case 'fileuploader' :
-							parent::display();
-							break;
-
-				}
-
-
+				case 'fileuploader' :
+					parent::display();
+					break;
+			}
 		}
 	}
 }

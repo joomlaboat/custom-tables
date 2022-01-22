@@ -25,12 +25,12 @@ class CustomTablesViewFiles extends JViewLegacy
 		$filepath=$this->getFilePath();
 		if($filepath=='')
 		{
-			JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
+			JFactory::getApplication()->enqueueMessage('File path not set.', 'error');
 		}
 		
 		$key=$this->Model->key;
 		$test_key=CT_FieldTypeTag_file::makeTheKey($filepath,$this->Model->security,$this->Model->_id,$this->Model->fieldid,$this->Model->tableid);
-
+		
 		if($key==$test_key)
 			$this->render_file_output($this->row,$filepath);
 		else
@@ -117,7 +117,10 @@ class CustomTablesViewFiles extends JViewLegacy
 	function getFilePath()
 	{
 		if(!isset($this->Model->fieldrow))
+		{
+			JFactory::getApplication()->enqueueMessage('Field row not set', 'error');
 			return '';
+		}
 	 
 		if($this->Model->fieldrow['type']=='filelink')
 			$TypeParams=','.$this->Model->fieldrow['typeparams']; //file link field type parameters have folder path as second parameter
@@ -125,7 +128,10 @@ class CustomTablesViewFiles extends JViewLegacy
 			$TypeParams=$this->Model->fieldrow['typeparams'];
 	
 		if(!isset($this->row[$this->Model->fieldrow['realfieldname']]))
+		{
+			JFactory::getApplication()->enqueueMessage('Model real field name not set', 'error');
 			return '';
+		}
 
 		$rowValue=$this->row[$this->Model->fieldrow['realfieldname']];
 
