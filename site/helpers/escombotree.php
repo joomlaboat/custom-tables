@@ -14,9 +14,9 @@ class JHTMLESComboTree
         static function render($prefix,$establename, $esfieldname, $optionname, $langpostfix, $value,$cssclass="",$onchange="",
 			$where="",$innerjoin=false,$isRequired=false,$requirementdepth=0,$place_holder='',$valuerule='',$valuerulecaption='')
         {
-				$jinput = JFactory::getApplication()->input;
+			$jinput = JFactory::getApplication()->input;
 
-				require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'combotreeloader.php');
+			require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'combotreeloader.php');
 
 				$MyESDynCombo=new ESDynamicComboTree();
 				$MyESDynCombo->initialize($establename,$esfieldname,$optionname,$prefix);

@@ -189,7 +189,7 @@ class Inputbox
 				return JHTML::_('ESFileLink.render',$this->prefix.$this->esfield['fieldname'], $value, '', $this->attributes, $this->esfield['typeparams']);
 
 			case 'customtables':
-				return $this->render_customtables($value, $type_params);
+				return $this->render_customtables($row, $type_params);
 							
 			case 'sqljoin':
 				return $this->render_tablejoin($value, $type_params);
@@ -888,7 +888,7 @@ class Inputbox
 		return $result;
 	}
 	
-	protected function render_customtables(&$value, &$type_params)
+	protected function render_customtables(&$row, &$type_params)
 	{
 		$result = '';
 		
@@ -905,16 +905,16 @@ class Inputbox
 
 		if($type_params[1]=='multi')
 		{
-			$fValue=$this->jinput->get($this->ct->Env->field_prefix.$this->esfield['fieldname'],null,'STRING');
-			if(!isset($fValue))
+			$value=$this->jinput->get($this->ct->Env->field_prefix.$this->esfield['fieldname'],null,'STRING');
+			if(!isset($value))
 			{
-				$fValue='';
+				$value='';
 				if($this->esfield['defaultvalue']!='')
-					$fValue=','.$type_params[0].'.'.$this->esfield['defaultvalue'].'.,';
+					$value=','.$type_params[0].'.'.$this->esfield['defaultvalue'].'.,';
 			}
 
 			if(isset($row[$this->esfield['realfieldname']]))
-				$fValue=$row[$this->esfield['realfieldname']];
+				$value=$row[$this->esfield['realfieldname']];
 
 			$result.=JHTML::_('MultiSelector.render',
 				$this->prefix,
@@ -922,13 +922,14 @@ class Inputbox
 				$this->ct->Languages->Postfix,
 				$this->ct->Table->tablename,
 				$this->esfield['fieldname'],
-				$fValue,
+				$value,
 				'',
 				$this->place_holder);
 		}
 		elseif($type_params[1]=='single')
 		{
 			$v=$this->jinput->get($this->ct->Env->field_prefix.$this->esfield['fieldname'],null,'STRING');
+
 			if(!isset($v))
 			{
 				$v='';

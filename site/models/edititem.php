@@ -2112,8 +2112,20 @@ class CustomTablesModelEditItem extends JModelLegacy
 		switch($to_field['type'])
 		{
 			case 'sqljoin':
-				die(json_encode(['error' => 'Target field type is table join. Multiple values not allowed.']));
+				if($to_row[$to_field['realfieldname']] !== '')
+					die(json_encode(['error' => 'Target field type is the Table Join. Multiple values not allowed.']));
 				
+			case 'customtables':
+				if($to_row[$to_field['realfieldname']] !== '')
+					die(json_encode(['error' => 'Target field type is a Tree. Multiple values not allowed.']));
+			
+			case 'email':
+			
+				if($to_row[$to_field['realfieldname']] !== '')
+					die(json_encode(['error' => 'Target field type is an Email. Multiple values not allowed.']));
+				
+				$new_value = $from_row[$from_field['realfieldname']];
+			
 			case 'string':
 
 				if(strpos($to_row[$to_field['realfieldname']],$from_row[$from_field['realfieldname']]) !== false)

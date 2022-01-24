@@ -108,7 +108,7 @@
 			runTheTask(tableid,recordid,url,['refreshed']);
 		}
 		else{
-			var returnto=btoa(current_url);
+			var returnto=btoa(window.location.href);
 			var link=esPrepareLink(['task','listing_id','returnto','ids'],['task=refresh','listing_id='+objid,'returnto='+returnto]);
 			window.location.href = link;
 		}
@@ -127,7 +127,7 @@
         var obj=document.getElementById(toolbarboxid);
         obj.innerHTML='';
 
-        var returnto=btoa(current_url);
+        var returnto=btoa(window.location.href);
         var link=esPrepareLink(['task','listing_id','returnto','ids'],['task=refresh','listing_id='+objid,'returnto='+returnto]);
 
         window.location.href = link;
@@ -369,7 +369,7 @@
 		var toolbarboxid='esToolBar_'+task+'_box_'+tableid;
 		document.getElementById(toolbarboxid).style.visibility='hidden';
 
-        var returnto=btoa(current_url);
+        var returnto=btoa(window.location.href);
         var link=esPrepareLink(['task','listing_id','returnto','ids'],['task='+task,'ids='+elements.toString(),'returnto='+returnto]);
         window.location.href = link;
         return;
@@ -502,15 +502,18 @@
 			.dataTransfer
 			.getData('text');
 			
-		if(importFromId == event.target.id)
+		let to_parts = getContainerElementIDTable(event.target);
+		if(to_parts == null)
+			return false;
+		
+		let to_id = to_parts.join("_");
+			
+		if(importFromId == to_id)
 				return false;
 	
 		if (confirm("Do you want to copy field content to target record?") == true) {
 
 			let from_parts = importFromId.split('_');
-			let to_parts = getContainerElementIDTable(event.target);
-			if(to_parts == null)
-				return false;
 			
 			let from = from_parts[2] + '_' + from_parts[3];
 			let to = to_parts[2] + '_' + to_parts[3];
