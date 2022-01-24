@@ -12,7 +12,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 ?>
-<img alt="<?php echo JText::_('COM_CUSTOMTABLES'); ?>" src="<?php echo JURI::root(true); ?>/components/com_customtables/libraries/images/controlpanel/customtables.jpg" style="text-align:center;">
+<img alt="<?php echo JText::_('COM_CUSTOMTABLES'); ?>" src="<?php echo JURI::root(true); ?>/components/com_customtables/libraries/customtables/media/images/controlpanel/customtables.jpg" style="text-align:center;">
 <ul class="list-striped">
 	<li><b><?php echo JText::_('COM_CUSTOMTABLES_VERSION'); ?>:</b> <?php echo $this->manifest->version; ?>&nbsp;&nbsp;<span class="update-notice"></span></li>
 	<li><b><?php echo JText::_('COM_CUSTOMTABLES_DATE'); ?>:</b> <?php echo $this->manifest->creationDate; ?></li>

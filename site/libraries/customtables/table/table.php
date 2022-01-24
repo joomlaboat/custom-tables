@@ -128,8 +128,10 @@ class Table
 	
 		$recs = $this->db->loadAssocList( );
 		if(!$recs) return $this->record = null;
-		if (count($recs)<1) $this->record = null;
+		if (count($recs)<1) return $this->record = null;
 
 		$this->record = $recs[0];
+		
+		return $this->record;
 	}
 }

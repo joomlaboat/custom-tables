@@ -18,6 +18,7 @@ class CustomTablesViewCatalog extends JViewLegacy
 	var $imagegalleries;
 	var $fileboxes;
 	var $ct;
+	var $listing_id;
 	
 	function display($tpl = null)
 	{
@@ -159,7 +160,14 @@ class CustomTablesViewCatalog extends JViewLegacy
 		$menu_params=null;
 		$this->Model->load($menu_params,false,Factory::getApplication()->input->getCMD('layout',''));
 		
-		$this->Model->getSearchResult();
+		$jinput=Factory::getApplication()->input;
+		
+		$addition_filter='';
+		$this->listing_id = $jinput->getCmd('listing_id','');
+		if($this->listing_id != '')
+			$addition_filter='id='.$this->listing_id;
+		
+		$this->Model->getSearchResult($addition_filter);
 		$this->ct = $this->Model->ct;
 
 		if(!isset($this->ct->Table->fields))

@@ -60,12 +60,20 @@ class tagProcessor_CatalogTableView
 			}
 			else
 			{
+				$class='';
+				$dragdrop='';
+				
 				if(isset($pair[1]))
-					$class=$pair[1];
-				else
-					$class='';
+				{
+					$parts = explode(',',$pair[1]);
+					if($parts[0] != '')
+						$class=$parts[0];
+					
+					if(isset($parts[1]))
+						$dragdrop = $parts[1] == 'dragdrop';
+				}
 
-				$vlu=self::get_CatalogTable_HTML($ct,$fields,$class);
+				$vlu=self::get_CatalogTable_HTML($ct, $fields,$class, $dragdrop);
 				$pagelayout=str_replace($fItem,$new_replaceitecode,$pagelayout);
 			}
 

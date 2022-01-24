@@ -53,7 +53,7 @@ class Environment
 		
 		$this->jinput=Factory::getApplication()->input;
 
-		$this->current_url=JoomlaBasicMisc::curPageURL();
+		$this->current_url = JoomlaBasicMisc::curPageURL();
 		
 		if(strpos($this->current_url,'option=com_customtables')===false)
 		{
@@ -65,8 +65,10 @@ class Environment
 		else 
 			$this->current_sef_url = $this->current_url;
 		
+		$tmp_current_url = JoomlaBasicMisc::deleteURLQueryOption($this->current_url, 'listing_id');
+		$tmp_current_url = JoomlaBasicMisc::deleteURLQueryOption($tmp_current_url, 'number');
 		
-		$this->encoded_current_url=base64_encode($this->current_url);
+		$this->encoded_current_url=base64_encode($tmp_current_url);
 
 		$this->user = Factory::getUser();
 		$this->userid=$this->user->id;

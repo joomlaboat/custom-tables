@@ -24,7 +24,7 @@ $document->addScript(JURI::root(true).'/components/com_customtables/libraries/cu
 $document->addScript(JURI::root(true).'/components/com_customtables/libraries/customtables/media/js/edit.js');
 $document->addScript(JURI::root(true).'/components/com_customtables/libraries/customtables/media/js/esmulti.js');
 
-$document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customtables/css/style.css" type="text/css" rel="stylesheet" >');
+$document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/css/style.css" type="text/css" rel="stylesheet" >');
 
 if($this->ct->Env->version >= 4)
 	$document->addCustomTag('<link rel="stylesheet" href="'.JURI::root(true).'/media/system/css/fields/switcher.css">');

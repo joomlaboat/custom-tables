@@ -13,8 +13,14 @@ use CustomTables\TwigProcessor;
 
 trait render_html
 {
-    protected static function get_CatalogTable_HTML(&$ct,$fields,$class)
+    protected static function get_CatalogTable_HTML(&$ct, $fields, $class, $dragdrop = false)
 	{
+		//for reload single record functionality
+		$listing_id = $ct->Env->jinput->getCmd('listing_id','');
+		$custom_number = $ct->Env->jinput->getInt('number',0);
+		$start = $ct->Env->jinput->getInt('start',0); //pagination
+		// end of for reload single record functionality
+		
 		$catalogresult='';
 
 		$fields=str_replace("\n",'',$fields);
@@ -23,10 +29,10 @@ trait render_html
 		$fieldarray=JoomlaBasicMisc::csv_explode(',', $fields, '"', true);
 
         //prepare header and record layouts
-
-		$result='<table'.($class!='' ? ' class="'.$class.'" ': '').'><thead><tr>';
-
-		$recordline='<tr>';
+		$result='
+		<table id="ctTable_'.$ct->Table->tableid.'" '.($class!='' ? ' class="'.$class.'" ': '').'><thead><tr>';
+		//id="ctRecord{{ record.id }}"
+		$recordline='<tr id="ctTable_'.$ct->Table->tableid.'_{{ record.id }}">';
 
 		foreach($fieldarray as $field)
 		{
@@ -38,19 +44,36 @@ trait render_html
 				$result.='<th>'.$fieldpair[0].'</th>';//header
 
             if(!isset($fieldpair[1]))
+			{
                 $recordline.='<td>Catalog Layout Content field corrupted. Check the Layout.</td>';//content
+			}
             else
-                $recordline.='<td>'.$fieldpair[1].'</td>';//content
+			{
+				$attribute = '';
+				if($dragdrop)
+				{
+					$fields_found = tagProcessor_CatalogTableView::checkIfColumnIsASingleField($ct,$fieldpair[1]);
+					
+					if(count($fields_found) == 1)
+						$attribute =' id="ctTable_'.$ct->Table->tableid.'_{{ record.id }}_'.$fields_found[0].'" draggable="true" '
+						.'ondragstart="ctCatalogOnDragStart(event);" ondragover="ctCatalogOnDragOver(event);" ondrop="ctCatalogOnDrop(event);"';
+				}
+				
+				$recordline.='<td'.$attribute.'>'.$fieldpair[1].'</td>';//content
+			}
 		}
 		$result.='</tr></thead>';
 
         //Parse Header
-        $ct->LayoutProc->layout=$result;
-        $result=$ct->LayoutProc->fillLayout();
-        $result=str_replace('&&&&quote&&&&','"',$result);
+		if($listing_id == '')
+		{
+			$ct->LayoutProc->layout=$result;
+			$result=$ct->LayoutProc->fillLayout();
+			$result=str_replace('&&&&quote&&&&','"',$result);
 		
-		$twig = new TwigProcessor($ct, $result);
-		$result = $htmlresult = $twig->process();
+			$twig = new TwigProcessor($ct, $result);
+			$result = $htmlresult = $twig->process();
+		}
 
         //Complete record layout
 		$recordline.='</tr>';
@@ -66,13 +89,30 @@ trait render_html
 		
 		foreach($ct->Records as $row)
 		{
-			$row['_number'] = $number;
+			$row['_number'] = ($custom_number >0 ? $custom_number : $number);
 		    $tablecontent.=tagProcessor_Item::RenderResultLine($ct,$twig,$row);
 			
 			$number++;
 		}
+		
+		if($listing_id != '')
+			die($tablecontent);
+		
         $result.='<tbody>'.$tablecontent.'</tbody></table>';
 
 		return $result;
+	}
+	
+	protected static function checkIfColumnIsASingleField(&$ct,$htmlresult)
+	{
+		$fieldsFound = [];
+		foreach($ct->Table->fields as $field)
+		{
+			$options=array();
+			$fList=JoomlaBasicMisc::getListToReplace($field['fieldname'],$options,$htmlresult,'[]',':','"');
+			if(count($fList) > 0)
+				$fieldsFound[] = $field['fieldname'];
+		}
+		return $fieldsFound;
 	}
 }

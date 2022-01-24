@@ -64,7 +64,7 @@ class RecordToolbar
 					$rid='esRefreshIcon'.$this->rid;
 					$alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_REFRESH' );
 					$img='<img src="'.$this->iconPath.'refresh.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
-					return '<div id="'.$rid.'" class="toolbarIcons"><a href="javascript:esRefreshObject('.$this->listing_id.', \''.$rid.'\');">'.$img.'</a></div>';
+					return '<div id="'.$rid.'" class="toolbarIcons"><a href="javascript:ctRefreshRecord('.$this->Table->tableid.',\''.$this->listing_id.'\', \''.$rid.'\');">'.$img.'</a></div>';
 					
 				case 'gallery':
 					if(is_array($this->Table->imagegalleries) and count($this->Table->imagegalleries)>0)
@@ -102,15 +102,17 @@ class RecordToolbar
 		{
 			$rid = 'esPublishIcon'.$this->rid;
 			
+			//return '<div id="esDeleteIcon'.$this->rid.'" class="toolbarIcons"><a href=\'javascript:ctDeleteRecord("'.$msg.'", '.$this->Table->tableid.', '.$this->listing_id.', "esDeleteIcon'.$this->rid.'")\'>'.$img.'</a></div>';
+			
 			if($this->row['listing_published'])
 			{
-				$link='javascript:esPublishObject('.$this->listing_id.', \''.$rid.'\',0);';
+				$link='javascript:ctPublishRecord('.$this->Table->tableid.',\''.$this->listing_id.'\', \''.$rid.'\',0);';
                 $alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_UNPUBLISH' );
 				$img='<img src="'.$this->iconPath.'publish.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 			}
 			else
 			{
-				$link='javascript:esPublishObject('.$this->listing_id.', \''.$rid.'\',1);';
+				$link='javascript:ctPublishRecord('.$this->Table->tableid.',\''.$this->listing_id.'\', \''.$rid.'\',1);';
                 $alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PUBLISH' );
 				$img='<img src="'.$this->iconPath.'unpublish.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 			}
@@ -249,7 +251,7 @@ class RecordToolbar
 		$img='<img src="'.$this->iconPath.'delete.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 		$msg='Do you want to delete ('.$deleteLabel.')?';
 
-		return '<div id="esDeleteIcon'.$this->rid.'" class="toolbarIcons"><a href=\'javascript:esDeleteObject("'.$msg.'", '.$this->listing_id.', "esDeleteIcon'.$this->rid.'")\'>'.$img.'</a></div>';
+		return '<div id="esDeleteIcon'.$this->rid.'" class="toolbarIcons"><a href="javascript:ctDeleteRecord(\''.$msg.'\', '.$this->Table->tableid.', \''.$this->listing_id.'\', \'esDeleteIcon'.$this->rid.'\');">'.$img.'</a></div>';
 	}
 	
 	protected function firstFieldValueLabel()

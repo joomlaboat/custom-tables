@@ -22,7 +22,7 @@ class CustomTablesViewEditItem extends JViewLegacy
 	function display($tpl = null)
 	{
 	    $document = JFactory::getDocument();
-		$document->addCustomTag('<link src="'.JURI::root(true).'/components/com_customtables/css/style.css" type="text/css" rel="stylesheet" >');
+		$document->addCustomTag('<link src="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/css/style.css" type="text/css" rel="stylesheet" >');
 
 		$app = JFactory::getApplication();
 		$this->params =$app->getParams();

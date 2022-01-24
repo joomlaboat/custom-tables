@@ -71,7 +71,7 @@ class Twig_Html_Tags
 			$link='/index.php?option=com_customtables&view=edititem&returnto='.$this->ct->Env->encoded_current_url.'&Itemid='.$this->ct->Env->Itemid;
 
 		if($this->ct->Env->jinput->getCmd('tmpl','')!='')
-			$link.='&tmpl='.$jinput->get('tmpl','','CMD');
+			$link.='&tmpl='.$this->ct->Env->jinput->get('tmpl','','CMD');
                     
 		$vlu='<a href="'.URI::root(true).$link.'" id="ctToolBarAddNew'.$this->ct->Table->tableid.'" class="toolbarIcons">'
 			.'<img src="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/images/icons/new.png" alt="Add New" title="Add New" /></a>';

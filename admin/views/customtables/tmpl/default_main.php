@@ -17,7 +17,7 @@ defined('_JEXEC') or die('Restricted access');
 		<div class="dashboard-wraper">
 			<div class="dashboard-content">
 				<a class="icon" href="<?php echo $icon->url; ?>">
-					<img alt="<?php echo $icon->alt; ?>" src="<?php echo JURI::root(true); ?>/components/com_customtables/libraries/images/controlpanel/icons/<?php  echo $icon->image; ?>">
+					<img alt="<?php echo $icon->alt; ?>" src="<?php echo JURI::root(true); ?>/components/com_customtables/libraries/customtables/media/images/controlpanel/icons/<?php  echo $icon->image; ?>">
 					<span class="dashboard-title"><?php echo JText::_($icon->name); ?></span>
 				</a>
 			 </div>

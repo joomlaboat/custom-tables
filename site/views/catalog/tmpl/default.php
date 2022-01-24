@@ -27,7 +27,7 @@ $html_format=false;
 if($this->ct->Env->frmt=='html' or $this->ct->Env->frmt=='')
     $html_format=true;
 
-if($html_format)
+if($html_format and $this->listing_id == '') //there is no need to have a header if we are loading a single record.
     LayoutProcessor::renderPageHeader($this->ct);
 
 //Process general tags before catalog tags to prepare headers for CSV etc output
@@ -39,6 +39,9 @@ if($html_format)
 		$this->ct->LayoutProc->layout=$this->itemlayout;
 		$catalogtablecontent=tagProcessor_Catalog::process($this->ct,$this->pagelayout,$this->catalogtablecode);
 	}
+	
+	if($this->listing_id!='') //for reload single record functionality
+		die($catalogtablecontent);
 	
 	$this->ct->LayoutProc->layout=$this->pagelayout;
 	$this->pagelayout=$this->ct->LayoutProc->fillLayout();

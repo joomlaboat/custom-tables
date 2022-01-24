@@ -607,15 +607,17 @@ class JHTMLESRecords
 		$single_box='';
 
 		$single_box.=JHTMLESRecords::getSingle($model, $model_nofilter,$valuearray,$field,$selectorpair,
-                                                      $control_name.'_selector',$style,$cssclass,$attribute,'',$establename,$dynamic_filter,$langpostfix,$place_holder);
+			$control_name.'_selector',$style,$cssclass,$attribute,'',$establename,$dynamic_filter,$langpostfix,$place_holder);
+			
+		$icon_path = JURI::root(true).'/components/com_customtables/libraries/customtables/media/images/icons/';
 
 		$htmlresult.='<div style="padding-bottom:20px;"><div style="width:90%;" id="'.$control_name.'_box"></div>'
 		.'<div style="height:30px;">'
-			.'<div id="'.$control_name.'_addButton" style="visibility: visible;"><img src="'.JURI::root(true).'/components/com_customtables/media/images/icons/new.png" alt="Add" title="Add" style="cursor: pointer;" onClick="'.$control_name.'addItem()" /></div>'
+			.'<div id="'.$control_name.'_addButton" style="visibility: visible;"><img src="'.$icon_path.'new.png" alt="Add" title="Add" style="cursor: pointer;" onClick="'.$control_name.'addItem()" /></div>'
 			.'<div id="'.$control_name.'_addBox" style="visibility: hidden;">'
 				.'<div style="float:left;">'.$single_box.'</div>'
-				.'<img src="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/images/icons/plus.png" alt="Add" title="Add" style="cursor: pointer;float:left;margin-top:8px;margin-left:3px;width:16px;height:16px;" onClick="'.$control_name.'DoAddItem()" />'
-				.'<img src="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/images/icons/cancel.png" alt="Cancel" title="Cancel" style="cursor: pointer;float:left;margin-top:6px;margin-left:10px;width:16px;height:16px;" onClick="'.$control_name.'cancel()" />'
+				.'<img src="'.$icon_path.'plus.png" alt="Add" title="Add" style="cursor: pointer;float:left;margin-top:8px;margin-left:3px;width:16px;height:16px;" onClick="'.$control_name.'DoAddItem()" />'
+				.'<img src="'.$icon_path.'cancel.png" alt="Cancel" title="Cancel" style="cursor: pointer;float:left;margin-top:6px;margin-left:10px;width:16px;height:16px;" onClick="'.$control_name.'cancel()" />'
 
 			.'</div>'
 		.'</div>'

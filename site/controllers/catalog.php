@@ -61,8 +61,12 @@ if ($theview == 'home')
 		if ($edit_model->CheckAuthorization($PermissionIndex))
 		{
 			$redirect=doTheTask($ct,$task,$menu_params,$edit_model,$this);
-			//JFactory::getApplication()->enqueueMessage($redirect->msg);
-			$this->setRedirect($redirect->link, $redirect->msg, $redirect->status);
+			if($redirect == null)
+			{
+				JFactory::getApplication()->enqueueMessage('Unknown task');	
+			}
+			else
+				$this->setRedirect($redirect->link, $redirect->msg, $redirect->status);
 		}
 		else
 		{
@@ -115,39 +119,36 @@ function doTheTask(&$ct,$task,$menu_params,$edit_model,&$this_)
 
 		break;
 
-	case 'delete':
-
-		$count = $edit_model->delete();
-
-		if ($count > 0)
-		{
-			if ($ct->Env->clean == 1)
-				die('deleted');
-			else
+		case 'delete':
+			$count = $edit_model->delete();
+			if ($count > 0)
 			{
-				$msg = 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_DELETED';
-				if($count == 1)
-					$msg.='_1';
+				if ($ct->Env->clean == 1)
+					die('deleted');
+				else
+				{
+					$msg = 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_DELETED';
+					if($count == 1)
+						$msg.='_1';
 				
-				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended($msg,$count), 'status' => null);
-				//COM_CUSTOMTABLES_RECORDS_DELETED
+					return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended($msg,$count), 'status' => null);
+					//COM_CUSTOMTABLES_RECORDS_DELETED
+				}
 			}
-		}
-		elseif($count < 0)
-		{
-			if ($ct->Env->clean == 1)
-				die('error');
-			else
+			elseif($count < 0)
 			{
-				$msg = 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_NOT_DELETED';
-				if(abs($count) == 1)
-					$msg.='_1';
+				if ($ct->Env->clean == 1)
+					die('error');
+				else
+				{
+					$msg = 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_NOT_DELETED';
+					if(abs($count) == 1)
+						$msg.='_1';
 					
-				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended($msg,abs($count)), 'status' => 'error');
+					return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended($msg,abs($count)), 'status' => 'error');
+				}
 			}
-		}
-
-		break;
+			break;
 
 	case 'copy':
 		
@@ -286,8 +287,6 @@ function doTheTask(&$ct,$task,$menu_params,$edit_model,&$this_)
 			return (object) array('link' => $link, 'status' => null);
 		else
 			return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_USER_NOTCREATED'), 'status' => 'error');
-
-		break;
 		
 	case 'resetpassword':
 		
@@ -318,15 +317,50 @@ function doTheTask(&$ct,$task,$menu_params,$edit_model,&$this_)
 		$orderby=$ct->Env->jinput->getString('orderby','');
 		$orderby=trim(preg_replace("/[^a-zA-Z-+%.: ,_]/", "",$orderby));
 		
-		$mainframe = Factory::getApplication();
-
-		$mainframe->setUserState('com_customtables.orderby_'.$ct->Env->Itemid,$orderby);
+		Factory::getApplication()->setUserState('com_customtables.orderby_'.$ct->Env->Itemid,$orderby);
 		
 		$link = JoomlaBasicMisc::deleteURLQueryOption($link, 'task');
 		$link = JoomlaBasicMisc::deleteURLQueryOption($link, 'orderby');
 		
 		return (object) array('link' => $link, 'msg' => null, 'status' => null);
-
+		
+	case 'copycontent':
+	
+		$frmt=$ct->Env->jinput->getCmd('frmt','');
+	
+		$from=$ct->Env->jinput->getCmd('from','');
+		$to=$ct->Env->jinput->getCmd('to','');
+	
+		if ($edit_model->copyContent($from, $to))
+		{
+			if ($ct->Env->clean == 1)
+			{
+				if($frmt == 'json')
+					die(json_encode(['status' => 'copied']));
+				else
+					die('copied');
+			}
+			else
+			{
+				$msg = 'COM_CUSTOMTABLES_LISTOFRECORDS_CONTENT_COPIED';
+				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended($msg), 'status' => null);
+			}
+		}
+		else
+		{
+			if ($ct->Env->clean == 1)
+			{
+				if($frmt == 'json')
+					die(json_encode(['error' => 'not copied']));
+				else
+					die('error');
+			}
+			else
+			{
+				$msg = 'COM_CUSTOMTABLES_LISTOFRECORDS_CONTENT_NOT_COPIED';
+				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended($msg), 'status' => 'error');
+			}
+		}
 		break;
 
 	default:
@@ -394,6 +428,7 @@ function doTheTask(&$ct,$task,$menu_params,$edit_model,&$this_)
 			else
 				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SHOPPING_CART_NOT_UPDATED'), 'status' => 'error');
 		}
-		break;
+		else
+			return null;
 	}
 }

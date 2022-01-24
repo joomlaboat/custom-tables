@@ -32,7 +32,6 @@ require_once($libpath.'valuetags.php');
 class CustomTablesModelEditItem extends JModelLegacy
 {
 	var $ct;
-	
 	var $itemaddedtext;
 	var $onrecordaddsendemailto;
 	var $onrecordaddsendemail;
@@ -2056,5 +2055,117 @@ class CustomTablesModelEditItem extends JModelLegacy
 			CleanExecute::executeCustomPHPfile($this->ct->Table->tablerow['customphp'],$new_row,$row);
 			
 		return 1;
+	}
+	
+	public function copyContent($from, $to)
+	{
+		$db = JFactory::getDBO();
+		
+		//Copy value from one cell to another (drag and drop functionality)
+		$from_parts = explode('_',$from);
+		$to_parts = explode('_',$to);
+		
+		$from_listing_id = $from_parts[0];
+		$to_listing_id = $to_parts[0];
+		
+		$from_field = Fields::FieldRowByName($from_parts[1],$this->ct->Table->fields);
+		$to_field = Fields::FieldRowByName($to_parts[1],$this->ct->Table->fields);
+		
+		if(!isset($from_field['type']))
+			die(json_encode(['error' => 'From field not found.']));
+		
+		if(!isset($to_field['type']))
+			die(json_encode(['error' => 'To field not found.']));
+		
+		$from_fieldtype = $from_field['type'];
+		$to_fieldtype = $to_field['type'];
+		
+		//$from_query_value = '(SELECT '.$from_field['realfieldname'].' FROM '.$this->ct->Table->realtablename.' WHERE '.$this->ct->Table->realidfieldname.'='.$db->quote($from_listing_id).' LIMIT 1)';
+		
+		$from_row = $this->ct->Table->loadRecord($from_listing_id);
+		$to_row = $this->ct->Table->loadRecord($to_listing_id);
+		
+		$f = $from_field['type'];
+		$t = $to_field['type'];
+		
+		$ok = true;
+		
+		if($f != $t)
+		{
+			switch($t)
+			{
+				case 'string':
+					if(!($f == 'email' or $f == 'int' or $f == 'float' or $f == 'text'))
+						$ok = false;
+				break;
+				
+				default:
+					$ok = false;
+			}
+		}
+		
+		if(!$ok)
+			die(json_encode(['error' => 'Target and distanation field types do not match.']));
+		
+		$new_value = '';
+		
+		switch($to_field['type'])
+		{
+			case 'sqljoin':
+				die(json_encode(['error' => 'Target field type is table join. Multiple values not allowed.']));
+				
+			case 'string':
+
+				if(strpos($to_row[$to_field['realfieldname']],$from_row[$from_field['realfieldname']]) !== false)
+					die(json_encode(['error' => 'Target field already contains this value.']));
+					
+				$new_value = $to_row[$to_field['realfieldname']];
+				if($new_value !='' )
+					$new_value .=',';
+				
+				$new_value .= $from_row[$from_field['realfieldname']];
+				break;
+				
+			case 'records':
+			
+				$new_items = [''];
+				$to_items = explode(',',$to_row[$to_field['realfieldname']]);
+				
+				foreach($to_items as $item)
+				{
+					if($item != '' and !in_array($item,$new_items))
+						$new_items[] = $item;
+				}
+				
+				$from_items = explode(',',$from_row[$from_field['realfieldname']]);
+				
+				foreach($from_items as $item)
+				{
+					if($item != '' and !in_array($item,$new_items))
+						$new_items[] = $item;
+				}
+				
+				$new_items[] = '';
+			
+				if(count($new_items) == count($to_items))
+					die(json_encode(['error' => 'Target field already contains this value(s).']));
+				
+				$new_value = implode(',',$new_items);
+			
+				break;
+		}
+		
+		if($new_value != '')
+		{
+			$query='UPDATE '.$this->ct->Table->realtablename
+					.' SET '.$to_field['realfieldname'].'= '.$db->quote($new_value)
+					.' WHERE '.$this->ct->Table->realidfieldname.'='.$db->quote($to_listing_id);
+				
+			$db->setQuery($query);
+			$db->execute();
+			return true;
+		}
+
+		return false;
 	}
 }
