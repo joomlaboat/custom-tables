@@ -104,7 +104,7 @@ class Twig_Html_Tags
 			$document->addCustomTag('<script src="'.URI::root(true).'/media/jui/js/bootstrap.min.js"></script>');
 		}
 		
-		$document->addCustomTag('<link href="'.URI::root(true).'/components/com_customtables/css/uploadfile.css" rel="stylesheet">');
+		$document->addCustomTag('<link href="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/css/uploadfile.css" rel="stylesheet">');
         $document->addCustomTag('<script src="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/js/jquery.uploadfile.min.js"></script>');
         $document->addCustomTag('<script src="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/js/jquery.form.js"></script>');
         $document->addCustomTag('<script src="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/js/uploader.js"></script>');
@@ -267,7 +267,7 @@ class Twig_Html_Tags
 					$rid='esToolBar_'.$mode.'_box_'.$this->ct->Table->tableid;
 					$alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_'.strtoupper($mode).'_SELECTED' );
 					$img='<img src="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/images/icons/'.$mode.'.png" border="0" alt="'.$alt.'" title="'.$alt.'" />';
-					$link='javascript:esToolBarDO("'.$mode.'", '.$this->ct->Table->tableid.')';
+					$link='javascript:ctToolBarDO("'.$mode.'", '.$this->ct->Table->tableid.')';
 					$html_buttons[] = '<div id="'.$rid.'" class="toolbarIcons"><a href=\''.$link.'\'>'.$img.'</a></div>';
 				}
 			}

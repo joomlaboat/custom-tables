@@ -67,9 +67,8 @@
         window.location.href = link;
     }
 	
-	function runTheTask(tableid,recordid,url,responses){
-		let element_tableid_tr = "ctTable_" + tableid + '_' + recordid;
-		let index = findRowIndexById("ctTable_" + tableid,element_tableid_tr);
+	function runTheTask(task, tableid,recordid,url,responses,last){
+		
 		let params = "";
 		let http = CreateHTTPRequestObject ();   // defined in ajax.js
 
@@ -80,8 +79,22 @@
 				if (http.readyState == 4){
 					let res=http.response;
 					if(responses.indexOf(res) != -1){
-						ctCatalogUpdate(tableid, recordid, index);
+						
+						let element_tableid_tr = "ctTable_" + tableid + '_' + recordid;
+						let index = findRowIndexById("ctTable_" + tableid,element_tableid_tr);
+						
+						if(task == 'delete')
+							document.getElementById("ctTable_" + tableid).deleteRow(index); 
+						else
+							ctCatalogUpdate(tableid, recordid, index);
+						
 						es_LinkLoading=false;
+						
+						if(last){
+							let toolbarboxid='esToolBar_'+task+'_box_'+tableid;
+							document.getElementById(toolbarboxid).style.visibility='visible';
+						}
+						
 					}
 					else
 						alert(res);
@@ -105,7 +118,7 @@
 		let tr_object = document.getElementById(element_tableid_tr);
 		if(tr_object){
 			let url = esPrepareLink(['task','listing_id','returnto','ids'],['task=refresh','listing_id='+recordid,'clean=1','tmpl=component']);
-			runTheTask(tableid,recordid,url,['refreshed']);
+			runTheTask('refresh', tableid,recordid,url,['refreshed'], false);
 		}
 		else{
 			var returnto=btoa(window.location.href);
@@ -113,24 +126,6 @@
 			window.location.href = link;
 		}
 
-        return;
-    }
-
-    function esRefreshObject(objid, toolbarboxid){
-		//Legacy support. ctPublishRecord is the replacement.
-				
-        if(es_LinkLoading)
-            return;
-
-        es_LinkLoading=true;
-
-        var obj=document.getElementById(toolbarboxid);
-        obj.innerHTML='';
-
-        var returnto=btoa(window.location.href);
-        var link=esPrepareLink(['task','listing_id','returnto','ids'],['task=refresh','listing_id='+objid,'returnto='+returnto]);
-
-        window.location.href = link;
         return;
     }
 
@@ -162,7 +157,7 @@
 		
 		if(tr_object){
 			let url = esPrepareLink(['task','listing_id','returnto','ids'],[task,'listing_id='+recordid,'clean=1','tmpl=component']);
-			runTheTask(tableid,recordid,url,['published','unpublished']);
+			runTheTask((publish == 0 ? 'unpublish' : 'publish'), tableid,recordid,url,['published','unpublished'], false);
 		}
 		else{
 			var returnto=btoa(window.location.href);
@@ -170,30 +165,6 @@
 			window.location.href = link;
 		}
 		
-        return;
-    }
-
-    function esPublishObject(objid, toolbarboxid,publish){
-		//Legacy support. ctPublishRecord is the replacement.
-		
-        if(es_LinkLoading)
-            return;
-
-        es_LinkLoading=true;
-
-        var obj=document.getElementById(toolbarboxid);
-        obj.innerHTML='';
-
-        var task='';
-        if(publish==1)
-            task='task=publish';
-        else
-            task='task=unpublish';
-
-        var returnto=btoa(window.location.href);
-        var link=esPrepareLink(['task','listing_id','returnto','ids'],[task,'listing_id='+objid,'returnto='+returnto]);
-
-        window.location.href = link;
         return;
     }
 
@@ -220,54 +191,15 @@
 			
 			let tr_object = document.getElementById(element_tableid_tr);
 			if(tr_object){
-				let index = findRowIndexById("ctTable_" + tableid,element_tableid_tr);
+				
 				let url = esPrepareLink(['task','listing_id','returnto','ids'],['task=delete','listing_id='+recordid,'clean=1','tmpl=component']);
-				let params = "";
-				let http = CreateHTTPRequestObject ();   // defined in ajax.js
-				if (http){
-					http.open("GET", url, true);
-					http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-					http.onreadystatechange = function(){
-						if (http.readyState == 4){
-							let res=http.response;
-							if(res == 'deleted'){
-								document.getElementById("ctTable_" + tableid).deleteRow(index); 
-								es_LinkLoading=false;
-							}
-							else{
-								alert(res);
-							}
-						}
-					}
-					http.send(params);
-				}
+				runTheTask('delete', tableid,recordid,url,['deleted'], false);
 			}
 			else{
 				let returnto=btoa(window.location.href);
 				let link=esPrepareLink(['task','listing_id','returnto','ids'],['task=delete','listing_id='+recordid,'returnto='+returnto],custom_link);
 				window.location.href = link;
 			}
-        }
-        else
-            es_LinkLoading=false;
-    }
-
-    function esDeleteObject(msg, objid, toolbarboxid, custom_link){
-		//Legacy support. ctDeleteRecord is the replacement.
-        if(es_LinkLoading)
-            return;
-
-        es_LinkLoading=true;
-
-        if (confirm(msg)){
-			let obj=document.getElementById(toolbarboxid).innerHTML='';
-
-			alert(objid);
-
-            let returnto=btoa(window.location.href);
-			let link=esPrepareLink(['task','listing_id','returnto','ids'],['task=delete','listing_id='+objid,'returnto='+returnto],custom_link);
-
-	        window.location.href = link;
         }
         else
             es_LinkLoading=false;
@@ -345,7 +277,7 @@
         return selectedIds;
     }
 
-    function esToolBarDO(task,tableid)
+    function ctToolBarDO(task,tableid)
     {
         if(es_LinkLoading)
             return;
@@ -368,10 +300,33 @@
 
 		var toolbarboxid='esToolBar_'+task+'_box_'+tableid;
 		document.getElementById(toolbarboxid).style.visibility='hidden';
-
-        var returnto=btoa(window.location.href);
-        var link=esPrepareLink(['task','listing_id','returnto','ids'],['task='+task,'ids='+elements.toString(),'returnto='+returnto]);
-        window.location.href = link;
+		
+		let element_tableid = "ctTable_" + tableid;
+		let tr_object = document.getElementById(element_tableid);
+		if(tr_object){
+			
+			for(let i=0;i<elements.length;i++)
+			{
+				let recordid = elements[i];
+				let url = esPrepareLink(['task','listing_id','returnto','ids'],['task=' + task,'listing_id='+recordid,'clean=1','tmpl=component']);
+				let accept_responses = [];
+				if(task == 'refresh')
+					accept_responses = ['refreshed'];
+				else if(task == 'publish' || task == 'unpublish')
+					accept_responses = ['published','unpublished'];
+				else if(task == 'delete')
+					accept_responses = ['published','deleted'];
+				
+				let last = i == elements.length - 1;
+				runTheTask(task, tableid,recordid,url,accept_responses, last);
+			}
+			
+			
+		}else{
+			var returnto=btoa(window.location.href);
+			var link=esPrepareLink(['task','listing_id','returnto','ids'],['task='+task,'ids='+elements.toString(),'returnto='+returnto]);
+			window.location.href = link;
+		}
         return;
     }
 
