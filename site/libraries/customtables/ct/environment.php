@@ -38,6 +38,7 @@ class Environment
 	var $advancedtagprocessor;
 	var $jinput;
 	var $isMobile; // ok
+	var $isModal; // ok
 	var $Itemid; // ok
 	var $field_prefix; // ok
 	var $field_input_prefix; // ok
@@ -77,6 +78,7 @@ class Environment
 		$this->isUserAdministrator=JoomlaBasicMisc::isUserAdmin($this->userid);
 		$this->print=(bool)$this->jinput->getInt('print',0);
 		$this->clean=(bool)$this->jinput->getInt('clean',0);
+		$this->isModal=(bool)$this->jinput->getInt('modal',0);
 		$this->frmt=$this->jinput->getCmd('frmt','html');
 		if($this->jinput->getCmd('layout','') == 'json')
 			$this->frmt = 'json';

@@ -96,18 +96,6 @@ class Twig_Html_Tags
 		if(!$this->ct->Env->isUserAdministrator and !in_array($add_userGroup,$usergroups))
 			return ''; //Not permitted
 
-		$document = Factory::getDocument();
-		
-		if($this->ct->Env->version < 4)
-		{
-			$document->addCustomTag('<script src="'.URI::root(true).'/media/jui/js/jquery.min.js"></script>');
-			$document->addCustomTag('<script src="'.URI::root(true).'/media/jui/js/bootstrap.min.js"></script>');
-		}
-		
-		$document->addCustomTag('<link href="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/css/uploadfile.css" rel="stylesheet">');
-        $document->addCustomTag('<script src="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/js/jquery.uploadfile.min.js"></script>');
-        $document->addCustomTag('<script src="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/js/jquery.form.js"></script>');
-        $document->addCustomTag('<script src="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/js/uploader.js"></script>');
 		$max_file_size=JoomlaBasicMisc::file_upload_max_size();
                     
 		$fileid = JoomlaBasicMisc::generateRandomString();
@@ -282,10 +270,6 @@ class Twig_Html_Tags
 			return new \Twig\Markup($vlu, 'UTF-8' );
 		else
 			return $vlu;
-	}
-	
-	function toolbar($buttons)
-	{
 	}
 	
 	function print($class='ctEditFormButton btn button')
@@ -864,6 +848,9 @@ class Twig_Html_Tags
     
     protected function renderCancelButton($optional_class,$title,$redirectlink)
     {
+		if($this->ct->Env->isModal)
+			return '';
+			
         if($title=='')
             $title=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_CANCEL');
 		

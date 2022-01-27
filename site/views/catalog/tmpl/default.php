@@ -16,19 +16,15 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'co
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tagprocessor'.DIRECTORY_SEPARATOR.'catalogtag.php');
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tagprocessor'.DIRECTORY_SEPARATOR.'catalogtableviewtag.php');
 
-$document = JFactory::getDocument();
-
-$document->addScript(JURI::root(true).'/components/com_customtables/libraries/customtables/media/js/base64.js');
-$document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/js/catalog.js" type="text/javascript"></script>');
-$document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/js/ajax.js"></script>');
-$document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/css/style.css" type="text/css" rel="stylesheet" >');
-
 $html_format=false;
 if($this->ct->Env->frmt=='html' or $this->ct->Env->frmt=='')
     $html_format=true;
 
 if($html_format and $this->listing_id == '') //there is no need to have a header if we are loading a single record.
+{
+	$this->ct->loadJSAndCSS();
     LayoutProcessor::renderPageHeader($this->ct);
+}
 
 //Process general tags before catalog tags to prepare headers for CSV etc output
 if($html_format)
@@ -90,3 +86,14 @@ elseif($this->ct->Env->clean==1)
 }
 else
 	echo $this->pagelayout;
+
+?>
+
+<!-- Modal content -->
+<div id="ctModal" class="ctModal">
+	<div id="ctModal_box" class="ctModal_content">
+		<span id="ctModal_close" class="ctModal_close">&times;</span>
+		<div id="ctModal_content"></div>
+	</div>
+</div>
+<!-- end of the modal -->

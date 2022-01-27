@@ -356,7 +356,6 @@
     function ct_UpdateSingleValue(WebsiteRoot,Itemid,fieldname_,record_id,postfix){
         var fieldname=fieldname_.split('_')[0];
         var url=WebsiteRoot+'index.php?option=com_customtables&amp;view=edititem&amp;Itemid='+Itemid;
-        var http = null;
 		var params = "";
 		var obj_checkbox_off=document.getElementById("com_"+record_id+"_"+fieldname_+"_off");
 		if(obj_checkbox_off){
@@ -379,8 +378,7 @@
 		if(obj)
 			obj.className = "ct_loader";
 
-        if (!http)
-            http = CreateHTTPRequestObject ();   // defined in ajax.js
+        let http = CreateHTTPRequestObject ();   // defined in ajax.js
 
         if (http){
             http.open("POST", url+"&clean=1", true);
@@ -506,4 +504,29 @@
 
 	function ctCatalogOnDragOver(event) {
 		event.preventDefault();
+	}
+
+	function ctEditModal(url){
+		
+		let new_url = url + '&modal=1';
+		let params = "";
+        let http = CreateHTTPRequestObject ();   // defined in ajax.js
+
+        if (http)
+        {
+            http.open("GET", new_url, true);
+            http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            http.onreadystatechange = function()
+            {
+                if (http.readyState == 4)
+                {
+                    let res=http.response;
+					
+					//let content_html = '<div style="overflow-y: scroll;overflow-x: hidden;height: 100%;width:100%;">' + res + '</div>';
+					let content_html = res;
+					ctShowPopUp(content_html,true);
+				}
+			}
+			http.send(params);
+		}
 	}

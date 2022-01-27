@@ -35,6 +35,9 @@
     border: 1px solid #888;
     width: 80%;
 	max-width:800px;
+	
+	overflow-y: auto;
+	overflow-x: hidden;
 }
 
 .ctModal_content .tab-content{

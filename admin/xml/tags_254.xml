@@ -527,6 +527,7 @@
                     <option value="" label="- None"/>
 			<option value="checkbox" label="Checkbox"/>
                     <option value="edit" label="Edit"/>
+			<option value="editmodal" label="Edit Modal Form"/>
                     <option value="refresh" label="Refresh"/>
                     <option value="delete" label="Delete"/>
                     <option value="publish" label="Publish/Unpublish"/>

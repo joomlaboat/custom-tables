@@ -377,19 +377,6 @@ class CT_FieldTypeTag_file
 
     public static function renderFileFieldBox(&$ct, $prefix,&$esfield,&$row,$realFieldName,$class)
 	{
-        $document = JFactory::getDocument();
-
-		if($ct->Env->version < 4)
-		{
-			$document->addCustomTag('<script src="'.JURI::root(true).'/media/jui/js/jquery.min.js"></script>');
-			$document->addCustomTag('<script src="'.JURI::root(true).'/media/jui/js/bootstrap.min.js"></script>');
-		}
-		
-        $document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/css/uploadfile.css" rel="stylesheet">');
-        $document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/js/jquery.uploadfile.min.js"></script>');
-        $document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/js/jquery.form.js"></script>');
-        $document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/js/uploader.js"></script>');
-
         if(count($row)>0 and $row['listing_id'] != 0)
             $file=$row[$realFieldName];
         else
@@ -403,9 +390,6 @@ class CT_FieldTypeTag_file
    		$result.='</div>';
        	return $result;
     }
-
-
-
 
     protected static function renderFileAndDeleteOption($file,&$esfield)
     {

@@ -16,13 +16,13 @@ class tagProcessor_Set
 {
     public static function process(&$ct,&$pagelayout)
     {
-        tagProcessor_Set::setHeadTag($pagelayout);
-        tagProcessor_Set::setMetaDescription($pagelayout);
-        tagProcessor_Set::setMetaKeywords($pagelayout);
+        tagProcessor_Set::setHeadTag($ct,$pagelayout);
+        tagProcessor_Set::setMetaDescription($ct,$pagelayout);
+        tagProcessor_Set::setMetaKeywords($ct,$pagelayout);
 		tagProcessor_Set::setPageTitle($ct,$pagelayout);
     }
 
-    protected static function setMetaKeywords(&$htmlresult)
+    protected static function setMetaKeywords(&$ct,&$htmlresult)
 	{
 		$options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('metakeywords',$options,$htmlresult,'{}');
@@ -32,16 +32,24 @@ class tagProcessor_Set
 		{
 			$opts=JoomlaBasicMisc::csv_explode(',',$options[$i],'"',false);
 
-			$doc = JFactory::getDocument();
-			$doc->setMetaData( 'keywords', $opts[0] );
-
+			if($ct->Env->isModal)
+			{
+				
+			}
+			else
+			{
+				$doc = JFactory::getDocument();
+				$doc->setMetaData( 'keywords', $opts[0] );
+			}
+			
 			$htmlresult=str_replace($fItem,'',$htmlresult);
+			
 			$i++;
 		}
 
 	}
 
-	protected static function setMetaDescription(&$htmlresult)
+	protected static function setMetaDescription(&$ct,&$htmlresult)
 	{
 		$options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('metadescription',$options,$htmlresult,'{}');
@@ -50,11 +58,17 @@ class tagProcessor_Set
 		foreach($fList as $fItem)
 		{
 			$opts=JoomlaBasicMisc::csv_explode(',',$options[$i],'"',false);
-
-			$doc = JFactory::getDocument();
-			$doc->setMetaData( 'description', $opts[0] );
-
+			if($ct->Env->isModal)
+			{
+			}
+			else
+			{
+				$doc = JFactory::getDocument();
+				$doc->setMetaData( 'description', $opts[0] );
+			}
+			
 			$htmlresult=str_replace($fItem,'',$htmlresult);
+				
 			$i++;
 		}
 
@@ -69,9 +83,17 @@ class tagProcessor_Set
 		foreach($fList as $fItem)
 		{
 			$opts=JoomlaBasicMisc::csv_explode(',',$options[$i],'"',false);
-            $mydoc->setTitle(JoomlaBasicMisc::JTextExtended($opts[0]));
+			
+			if($ct->Env->isModal)
+			{
+			}
+			else
+			{
+				$mydoc->setTitle(JoomlaBasicMisc::JTextExtended($opts[0]));
+			}
+			
+            $htmlresult=str_replace($fItem,'',$htmlresult);
 
-			$htmlresult=str_replace($fItem,'',$htmlresult);
 			$i++;
 		}
 
@@ -79,7 +101,7 @@ class tagProcessor_Set
             $mydoc->setTitle(JoomlaBasicMisc::JTextExtended($ct->Env->menu_params->get( 'page_title' )));
 	}
 
-    protected static function setHeadTag(&$htmlresult)
+    protected static function setHeadTag(&$ct,&$htmlresult)
 	{
 		$options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('headtag',$options,$htmlresult,'{}');
@@ -88,15 +110,18 @@ class tagProcessor_Set
 		foreach($fList as $fItem)
 		{
 			$opts=JoomlaBasicMisc::csv_explode(',',$options[$i],'"',false);
-
-			$document = JFactory::getDocument();
-			$document->addCustomTag($opts[0]);
-
-			$htmlresult=str_replace($fItem,'',$htmlresult);
+			
+			if($ct->Env->isModal)
+			{
+				$htmlresult=str_replace($fItem,$opts[0],$htmlresult);
+			}
+			else
+			{
+				$document = JFactory::getDocument();
+				$document->addCustomTag($opts[0]);
+				$htmlresult=str_replace($fItem,'',$htmlresult);
+			}
 			$i++;
 		}
-
 	}
-
-
 }

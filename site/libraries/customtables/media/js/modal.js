@@ -114,8 +114,7 @@ function ctShowModal(showCloseButton)
             ctResizeModalBox();
 }
 
-function ctShowPopUp(content_html,showCloseButton)
-{
+function ctShowPopUp(content_html,showCloseButton){
 	let ctModal_close=document.getElementById("ctModal_close");
 	
 	if(showCloseButton)
@@ -125,9 +124,34 @@ function ctShowPopUp(content_html,showCloseButton)
 	
 	let ctModal_content=document.getElementById("ctModal_content");
     ctModal_content.innerHTML=content_html;
+	
+	insertAndExecuteScripts("ctModal_content");
+	
+	setTimeout(function(){insertAndExecute("ctModal_content"); }, 1000);
     
     ctShowModal(showCloseButton);
 }
+
+function insertAndExecuteScripts(id) {
+	var scripts = Array.prototype.slice.call(document.getElementById(id).getElementsByTagName("script"));
+	for (var i = 0; i < scripts.length; i++) {
+		if (scripts[i].src != "") {
+			var tag = document.createElement("script");
+			tag.src = scripts[i].src;
+			document.getElementsByTagName("head")[0].appendChild(tag);
+		}
+	}
+}
+	
+function insertAndExecute(id) {
+	var scripts = Array.prototype.slice.call(document.getElementById(id).getElementsByTagName("script"));
+	for (var i = 0; i < scripts.length; i++) {
+		if (scripts[i].src == "") {
+			eval(scripts[i].innerHTML);
+		}
+	}
+}
+
 
 function ctHidePopUp()
 {

@@ -105,13 +105,11 @@ $typeboxid="jform_layouttype";
 			echo $this->renderTextArea($this->item->layoutjs,'layoutjs',$typeboxid,$onPageLoads); 
 		else
 			echo Text::_('COM_CUSTOMTABLES_AVAILABLE');
-		echo JHtml::_('bootstrap.endTab');
-		
-		echo JHtml::_('bootstrap.endTabSet');
 
+		echo JHtml::_('bootstrap.endTab');
+		echo JHtml::_('bootstrap.endTabSet');
 		echo JHtml::_('form.token');
 		
-		//echo JLayoutHelper::render('layouts.details_under', $this);
 		echo render_onPageLoads($onPageLoads,$this->item->layouttype);
 		
 		$this->getMenuItems();

@@ -20,17 +20,80 @@ function setTask(event, task, returnlink, submitForm) {
 			
 			const tasks_with_validation = ['saveandcontinue', 'save', 'saveandprint', 'saveascopy'];
 			
-			if(tasks_with_validation.includes(task))
-			{
-				if (checkRequiredFields())
-					objForm.submit();
+			let element_tableid = "ctTable_" + objForm.dataset.tableid;
+			let table_object = document.getElementById(element_tableid);
+			if(table_object && task != 'saveascopy'){
+				
+				let hideModelOnSave = true;
+				if(task == 'saveandcontinue')
+					hideModelOnSave = false;
+					
+				if(tasks_with_validation.includes(task))
+				{
+					if (checkRequiredFields())
+						submitModalForm(objForm.action,objForm.elements,objForm.dataset.tableid,objForm.dataset.recordid,hideModelOnSave)
+				}
+				else
+					submitModalForm(objForm.action,objForm.elements,objForm.dataset.tableid,objForm.dataset.recordid,hideModelOnSave)
+				
+				
+				return false;
 			}
 			else
-                objForm.submit();
+			{
+				if(tasks_with_validation.includes(task))
+				{
+					if (checkRequiredFields())
+						objForm.submit();
+				}
+				else
+					objForm.submit();
+			}
 
         } else
             alert("Form not found.");
     }
+}
+
+function submitModalForm(url,elements,tableid, recordid, hideModelOnSave){
+	
+	var params = "";
+	for(let i=0;i<elements.length;i++)
+	{
+		if(elements[i].name && elements[i].name != '' && elements[i].name != 'returnto')
+			params+="&" + elements[i].name + "=" + elements[i].value;
+			
+	}
+
+	let http = CreateHTTPRequestObject ();   // defined in ajax.js
+
+	if (http){
+		http.open("POST", url+"&clean=1", true);
+        http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        http.onreadystatechange = function(){
+			if (http.readyState == 4){
+				let res=http.response;
+				res = res.replace(/<[^>]*>?/gm, '').trim();
+
+				if(res.indexOf("saved")!=-1){
+					
+					let element_tableid_tr = "ctTable_" + tableid + '_' + recordid;
+					let index = findRowIndexById("ctTable_" + tableid,element_tableid_tr);
+					ctCatalogUpdate(tableid, recordid, index);
+					
+					if(hideModelOnSave)
+						ctHidePopUp();
+				}
+				else{
+					if(res.indexOf('<div class="alert-message">Nothing to save</div>')!=-1)
+						alert('Nothing to save. Check Edit From layout.');
+					else if(res.indexOf('view-login')!=-1)
+						alert('Session expired. Please login again.');
+				}
+			}
+		};
+		http.send(params);
+	}
 }
 
 function recaptchaCallback() {
@@ -478,3 +541,193 @@ function ctUpdateTableJoinLink(control_name,index,execute_all,sub_index,object_i
 		.then(r => {ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_index,object_id);})
 		.catch(error => console.error("Error", error));
 }
+
+
+//Inputbox: Records
+
+let ctInputboxRecords_r = [];
+let ctInputboxRecords_v = [];
+let ctInputboxRecords_p = [];
+/*
+<script>
+			var '.$control_name.'_r=new Array();
+			var '.$control_name.'_v=new Array();
+			var '.$control_name.'_p=new Array();
+			';
+			$i=0;
+			foreach($model->ct->Records as $row)
+			{
+				if(in_array($row['listing_id'],$valuearray) and count($valuearray)>0)
+				{
+					$htmlresult.='
+					'.$control_name.'_r['.$i.']="'.$row['listing_id'].'";
+					'.$control_name.'_v['.$i.']="'.$row[$real_field].'";
+                                        '.$control_name.'_p['.$i.']="'.(int)$row['listing_published'].'";
+';
+					$i++;
+				}
+			}
+
+			$htmlresult.='
+			function '.$control_name.'removeOptions(selectobj)
+			{
+				for(var i=selectobj.options.length-1;i>=0;i--)
+				{
+					selectobj.remove(i);
+				}
+			}
+			';
+
+			$htmlresult.='
+
+			function '.$control_name.'addItem(index)
+			{
+				var o = document.getElementById("'.$control_name.'_selector");
+				o.selectedIndex=0;
+				';
+
+				if($dynamic_filter!='')
+					$htmlresult.='
+				var ol = document.getElementById("'.$control_name.'_selectorSQLJoinLink");
+				ol.selectedIndex=0;
+                                '.$control_name.'_current_value="";
+				'.$control_name.'_selectorUpdateSQLJoinLink();
+				';
+
+				$htmlresult.='
+
+
+				var btn = document.getElementById("'.$control_name.'_addButton");
+				btn.style.visibility="hidden";
+
+				var box = document.getElementById("'.$control_name.'_addBox");
+				box.style.visibility="visible";
+
+			}
+
+			';
+
+			$htmlresult.='
+
+			function '.$control_name.'DoAddItem()
+			{
+				var o = document.getElementById("'.$control_name.'_selector");
+				if(o.selectedIndex==-1)
+						return;
+
+				var r=o.options[o.selectedIndex].value;
+				var t=o.options[o.selectedIndex].text;
+                                var p=1;
+
+                                if (typeof arr != "undefined" && (arr instanceof Array))
+                                {
+                                        for(var i=0;i<'.$control_name.'_selectorelementsPublished.length;i++)
+                                        {
+                                                if('.$control_name.'_selectorelementsID[i]==r)
+                                                        p='.$control_name.'_selectorelementsPublished[i];
+                                        }
+                                }
+
+
+
+				var i='.$control_name.'_r.length;
+
+				for(var x=0;x<'.$control_name.'_r.length;x++)
+				{
+					if('.$control_name.'_r[x]==r)
+					{
+						alert("Item already exists");
+						return false;
+					}
+				}
+
+				'.$control_name.'_r[i]=r;
+				'.$control_name.'_v[i]=t;
+                                '.$control_name.'_p[i]=p;
+
+
+				//'.$control_name.'cancel();
+
+
+				o.remove(o.selectedIndex);
+
+
+				'.$control_name.'showMultibox();
+
+				//'.$control_name.'DeleteExistingItems();
+			}
+
+			function '.$control_name.'cancel()
+			{
+
+
+				var btn = document.getElementById("'.$control_name.'_addButton");
+				btn.style.visibility="visible";
+
+				var box = document.getElementById("'.$control_name.'_addBox");
+				box.style.visibility="hidden";
+
+			}
+
+			function '.$control_name.'deleteItem(index)
+			{
+				//alert(index);
+				'.$control_name.'_r.splice(index,1);
+				'.$control_name.'_v.splice(index,1);
+                                '.$control_name.'_p.splice(index,1);
+
+				'.$control_name.'showMultibox();
+			}
+
+			function '.$control_name.'showMultibox()
+			{
+				var l = document.getElementById("'.$control_name.'");
+				'.$control_name.'removeOptions(l);
+
+                                var opt1 = document.createElement("option");
+					opt1.value = 0;
+					opt1.innerHTML = "";
+					opt1.setAttribute("selected","selected");
+                			l.appendChild(opt1);
+
+				var v=\'<table style="width:100%;"><tbody>\';
+				for(var i=0;i<'.$control_name.'_r.length;i++)
+				{
+					v+=\'<tr><td style="border-bottom:1px dotted grey;">\';
+                                        if('.$control_name.'_p[i]==0)
+                                        {
+                  //                              v+=\'<span class="esmultiboxoptiondisabled" style="color:red;">\';
+                                                v+='.$control_name.'_v[i];
+                    //                            v+=\'</span>\';
+                                        }
+                                        else
+                                        {
+                                                v+='.$control_name.'_v[i];
+                                        }
+
+                                        v+=\'<td style="border-bottom:1px dotted grey;min-width:16px;"><img src="'.$deleteimage.'" alt="Delete" title="Delete" style="width:16px;height:16px;cursor: pointer;" onClick="'.$control_name.'deleteItem(\'+i+\')" /></td>\';
+                                        v+=\'</tr>\';
+
+
+					var opt = document.createElement("option");
+					opt.value = '.$control_name.'_r[i];
+					opt.innerHTML = '.$control_name.'_v[i];
+                                        opt.style.cssText="color:red;";
+					opt.setAttribute("selected","selected");
+
+                                        //if('.$control_name.'_p[i]==0)
+                                        //        opt.setAttribute("disabled","disabled");
+
+					l.appendChild(opt);
+
+				}
+				v+=\'</tbody></table>\';
+
+				var o = document.getElementById("'.$control_name.'_box");
+				o.innerHTML = v;
+
+			}
+
+
+		</script>
+*/

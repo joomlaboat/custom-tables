@@ -60,6 +60,9 @@ class RecordToolbar
 				case 'edit':
 					return $this->renderEditIcon();
 					
+				case 'editmodal':
+					return $this->renderEditIcon(true);
+					
 				case 'refresh':
 					$rid='esRefreshIcon'.$this->rid;
 					$alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_REFRESH' );
@@ -126,7 +129,7 @@ class RecordToolbar
 		return '';
 	}
 
-    protected function renderEditIcon()
+    protected function renderEditIcon($isModal = false)
 	{
 		$editlink=$this->ct->Env->WebsiteRoot.'index.php?option=com_customtables&amp;view=edititem'
 						.'&amp;returnto='.$this->ct->Env->encoded_current_url
@@ -141,9 +144,20 @@ class RecordToolbar
         $alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_EDIT' );
 		$img='<img src="'.$this->iconPath.'edit.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 
-		$link=$editlink;
+		$a = '';
+		if($isModal)
+		{
+			$link = 'javascript:ctEditModal(\''.$editlink.'\')';
+			$a = '<a href="'.$link.'">'.$img.'</a>';
+		}
+		else
+		{
+			$link = $editlink;
+			$a = '<a href="'.$link.'">'.$img.'</a>';
+		}
 
-		return '<div id="esEditIcon'.$this->rid.'" class="toolbarIcons"><a href="'.$link.'">'.$img.'</a></div>';
+ 
+		return '<div id="esEditIcon'.$this->rid.'" class="toolbarIcons">'.$a.'</div>';
 	}
 
 	protected function renderImageGalleryIcon()

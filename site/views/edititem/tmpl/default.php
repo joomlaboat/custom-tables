@@ -18,16 +18,7 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'co
 
 jimport('joomla.html.html.bootstrap');
 
-$document = JFactory::getDocument();
-
-$document->addScript(JURI::root(true).'/components/com_customtables/libraries/customtables/media/js/base64.js');
-$document->addScript(JURI::root(true).'/components/com_customtables/libraries/customtables/media/js/edit.js');
-$document->addScript(JURI::root(true).'/components/com_customtables/libraries/customtables/media/js/esmulti.js');
-
-$document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/css/style.css" type="text/css" rel="stylesheet" >');
-
-if($this->ct->Env->version >= 4)
-	$document->addCustomTag('<link rel="stylesheet" href="'.JURI::root(true).'/media/system/css/fields/switcher.css">');
+$this->ct->loadJSAndCSS();
 
 if (!$this->BlockExternalVars and $this->ct->Env->menu_params->get( 'show_page_heading', 1 ) ) : ?>
 <div class="page-header<?php echo $this->escape($this->ct->Env->menu_params->get('pageclass_sfx')); ?>">
@@ -69,22 +60,23 @@ jQuery.noConflict()
     })();
 ';
 
-?>
-<form action="<?php echo $this->formLink; ?>" method="post" name="<?php echo $this->formName; ?>" id="<?php echo $this->formName; ?>" class="<?php echo $this->formClass; ?>"<?php echo $this->formAttribute; ?>>
+if(isset($this->row['listing_id']))
+	$listing_id=(int)$this->row['listing_id'];
+else
+	$listing_id=0;
 
+$this->formAttribute .= ' data-tableid="'.$this->ct->Table->tableid.'" data-recordid="'.$listing_id.'"';
+
+?>
+
+<form action="<?php echo $this->formLink; ?>" method="post" name="<?php echo $this->formName; ?>" id="<?php echo $this->formName; ?>" class="<?php echo $this->formClass; ?>"<?php echo $this->formAttribute; ?>>
 
 <?php
 
 	echo ($this->ct->Env->version < 4 ? '<fieldset>' : '<fieldset class="options-form">');
 
 	//Calendars of the child should be built again, because when Dom was ready they didn't exist yet.
-	//$calendars=array();
 
-	if(isset($this->row['listing_id']))
-		$listing_id=(int)$this->row['listing_id'];
-	else
-		$listing_id=0;
-						
 	require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'layout.php');
 	$LayoutProc=new LayoutProcessor($this->ct,$this->pagelayout);
 
@@ -128,3 +120,6 @@ jQuery.noConflict()
 	<?php echo JHtml::_('form.token'); ?>
 	</fieldset>
 </form>
+
+<?php if($this->ct->Env->isModal)
+		die;

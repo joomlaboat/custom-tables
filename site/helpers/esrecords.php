@@ -419,25 +419,28 @@ class JHTMLESRecords
 				$real_field=$real_field_row->realfieldname;
 
 		$deleteimage='components/com_customtables/libraries/customtables/media/images/icons/cancel.png';
+		
+		$ctInputboxRecords_r = [];
+		$ctInputboxRecords_v = [];
+		$ctInputboxRecords_p = [];
+		
+		foreach($model->ct->Records as $row)
+		{
+			if(in_array($row['listing_id'],$valuearray) and count($valuearray)>0)
+			{
+				$ctInputboxRecords_r[]=$row['listing_id'];
+				$ctInputboxRecords_v[]=$row[$real_field];
+				$ctInputboxRecords_p[]=(int)$row['listing_published'];
+			}
+		}
+	
 		$htmlresult='
 		<script>
 			var '.$control_name.'_r=new Array();
 			var '.$control_name.'_v=new Array();
 			var '.$control_name.'_p=new Array();
 			';
-			$i=0;
-			foreach($model->ct->Records as $row)
-			{
-				if(in_array($row['listing_id'],$valuearray) and count($valuearray)>0)
-				{
-					$htmlresult.='
-					'.$control_name.'_r['.$i.']="'.$row['listing_id'].'";
-					'.$control_name.'_v['.$i.']="'.$row[$real_field].'";
-                                        '.$control_name.'_p['.$i.']="'.(int)$row['listing_published'].'";
-';
-					$i++;
-				}
-			}
+			
 
 			$htmlresult.='
 			function '.$control_name.'removeOptions(selectobj)

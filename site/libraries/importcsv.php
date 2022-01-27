@@ -16,44 +16,41 @@ function importCSVfile($filename, $ct_tableid)
     if(file_exists($filename))
   		return importCSVdata($filename,$ct_tableid);
     else
-      return JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FILE_NOT_FOUND');
+		return JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FILE_NOT_FOUND');
 }
 
 function getLines($filename)
 {
-  $str=file_get_contents($filename);
-  
-  
-  //if(ifBomUtf8($str))
-  //{
-    //$str=removeBomUtf8($str);
-  //}
-  //else
-	  
-	if (mb_check_encoding($str,"UTF-8"))
+	$delimiter = detectDelimiter($filename);
+	
+	if (($handle = fopen($filename, "r")) !== FALSE)
 	{
-		$str=mb_convert_encoding($str, 'UTF-8','auto');
-		//$str=mb_convert_encoding($str, 'UTF-8','UTF-16LE');
+		$lines = [];
+		
+		while (($data = fgetcsv($handle, 0, $delimiter)) !== FALSE)
+			$lines[] = $data;
+
+		fclose($handle);
+		return $lines;
 	}
-	else
-	{
-		$str=mb_convert_encoding($str, 'UTF-8','ANSI');
-	}
-   
-  
-  //$lines= preg_split('/([\n\r]+)/', $str, null, PREG_SPLIT_DELIM_CAPTURE);
-  //$str= str_replace("\n\r","\r", $str);
-  //$str= str_replace("\r\n","\r", $str);
-  //$str= str_replace("\n","\r", $str);
-  //$lines= explode("\r", $str);
-  
-  $lines = explode("\n",
-                    str_replace(array("\r\n","\n\r","\r"),"\n",$str)
-            );
-  
-  return $lines;
+	return null;
 }
-  
+
+//https://stackoverflow.com/questions/26717462/php-best-approach-to-detect-csv-delimiter/59581170  
+function detectDelimiter($csvFile)
+{
+	//first line is a list of field name, so this approach is ok here
+    $delimiters = [";" => 0, "," => 0, "\t" => 0, "|" => 0];
+
+    $handle = fopen($csvFile, "r");
+    $firstLine = fgets($handle);
+    fclose($handle); 
+    foreach ($delimiters as $delimiter => &$count) {
+        $count = count(str_getcsv($firstLine, $delimiter));
+    }
+
+    return array_search(max($delimiters), $delimiters);
+}
 
 function processFieldParams(&$fieldList, &$fields)
 {
@@ -93,12 +90,16 @@ function processFieldParams(&$fieldList, &$fields)
 function importCSVdata($filename,$ct_tableid)
 {
     $arrayOfLines = getLines($filename);
+	if($arrayOfLines == null)
+		return JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_CSV_FILE_EMPTY');		
 
     $tablerow=ESTables::getTableRowByID($ct_tableid);
     $fields = Fields::getFields($ct_tableid,true);
 
     $first_line_fieldnames=false;
-    $line=JoomlaBasicMisc::csv_explode(',',$arrayOfLines[0],'"',false);
+    
+	$line = $arrayOfLines[0]; //JoomlaBasicMisc::csv_explode(',',$arrayOfLines[0],'"',false);
+	
     $fieldList=prepareFieldList($line,$fields,$first_line_fieldnames);
 	$fields = processFieldParams($fieldList,$fields);
 
@@ -116,13 +117,9 @@ function importCSVdata($filename,$ct_tableid)
 
     for($i=0+$offset;$i<count($arrayOfLines);$i++)
     {
-		$str=trim($arrayOfLines[$i]);
-      
-		if($str!='')
+		if(count($arrayOfLines[$i]) > 0)
 		{
-			
-			$sets=prepareSQLQuery($fieldList,$fields,$str);
-
+			$sets=prepareSQLQuery($fieldList,$fields,$arrayOfLines[$i]);
 			$listing_id=findRecord($tablerow->realtablename,$tablerow->realidfieldname,$tablerow->published_field_found,$sets);
 
 			if($listing_id==false)
@@ -133,7 +130,6 @@ function importCSVdata($filename,$ct_tableid)
 			}
 		}
     }
-
     return '';
 }
 
@@ -212,9 +208,9 @@ function addSQLJoinSets($realtablename,$sets)
 	$db->execute();	
 }
 
-function prepareSQLQuery($fieldList,$fields,$line_)
+function prepareSQLQuery($fieldList,$fields,$line)
 {
-	$line=JoomlaBasicMisc::csv_explode(',',$line_,'"',false);
+	//$line=JoomlaBasicMisc::csv_explode(',',$line_,'"',false);
   
 	$db = JFactory::getDBO();
 	$sets=array();
@@ -344,7 +340,6 @@ function prepareSQLQuery($fieldList,$fields,$line_)
 	return $sets;
 }
 
-
 function ifBomUtf8($s)
 {
   if(substr($s,0,3)==chr(hexdec('EF')).chr(hexdec('BB')).chr(hexdec('BF')))
@@ -386,12 +381,12 @@ function prepareFieldList($fieldNames,$fields,&$first_line_fieldnames)
         $index=0;
         
         $fieldName=removeBomUtf8($fieldName_);
-        $fieldName=preg_replace("/[^a-zA-Z1-9 #]/", "", $fieldName);
+        $fieldName=strtolower(preg_replace("/[^a-zA-Z1-9 #]/", "", $fieldName));
 		
         $found=false;
         foreach($fields as $field)
         {
-            $clean_field_name=preg_replace("/[^a-zA-Z1-9 #]/", "", $field->fieldtitle);
+            $clean_field_name=strtolower(preg_replace("/[^a-zA-Z1-9 #]/", "", $field->fieldtitle));
       
             if((string)$fieldName=='#')
             {
@@ -401,7 +396,7 @@ function prepareFieldList($fieldNames,$fields,&$first_line_fieldnames)
                 $first_line_fieldnames=true;
                 break;
             }
-            else if((string)$clean_field_name==(string)$fieldName or (string)$field->fieldname==(string)$fieldName)
+            elseif((string)$clean_field_name==(string)$fieldName or (string)$field->fieldname==(string)$fieldName)
             {
                 $first_line_fieldnames=true;
                 $fieldList[]=$index;
@@ -409,36 +404,16 @@ function prepareFieldList($fieldNames,$fields,&$first_line_fieldnames)
                 $count++;
                 break;
             }
-            
-              
             $index++;
         }
         
         if(!$found)
         {
-              $count++;
-              $fieldList[]=-2;
+			$count++;
+			$fieldList[]=-2;
         }
     }
-    
-    /*
-    if(!$found)
-    {    
-      //not found
-        $i=0;
-        foreach($fields as $field)
-        {
-          $fieldList[]=$i;
-                
-          if($i>=count($fieldNames))
-            break;
-          
-          $i++;
-        }
-    }
-    else
-    */
-      $first_line_fieldnames=true;
-    
+
+    $first_line_fieldnames=true;
     return $fieldList;
 }

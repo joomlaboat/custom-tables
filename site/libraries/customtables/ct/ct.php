@@ -18,6 +18,7 @@ use CustomTables\Environment;
 use CustomTables\Filtering;
 
 use \Joomla\CMS\Factory;
+use \Joomla\CMS\Uri\Uri;
 
 class CT
 {
@@ -279,5 +280,36 @@ class CT
 			// In case limit has been changed, adjust it
 			$this->LimitStart = ($this->Limit != 0 ? (floor($this->LimitStart / $this->Limit) * $this->Limit) : 0);
 		}
+	}
+	
+	function loadJSAndCSS()
+	{
+		$document = Factory::getDocument();
+		
+		//JQuery and Bootstrap
+		if($this->Env->version < 4)
+		{
+			$document->addCustomTag('<script src="'.URI::root(true).'/media/jui/js/jquery.min.js"></script>');
+			$document->addCustomTag('<script src="'.URI::root(true).'/media/jui/js/bootstrap.min.js"></script>');
+		}
+		else
+			$document->addCustomTag('<link rel="stylesheet" href="'.URI::root(true).'/media/system/css/fields/switcher.css">');
+		
+		$document->addCustomTag('<script src="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/js/jquery.uploadfile.min.js"></script>');
+		$document->addCustomTag('<script src="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/js/jquery.form.js"></script>');
+
+		$document->addCustomTag('<script src="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/js/ajax.js"></script>');
+		$document->addScript(URI::root(true).'/components/com_customtables/libraries/customtables/media/js/base64.js');
+		$document->addCustomTag('<script src="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/js/catalog.js" type="text/javascript"></script>');
+		$document->addScript(URI::root(true).'/components/com_customtables/libraries/customtables/media/js/edit.js');
+		$document->addScript(URI::root(true).'/components/com_customtables/libraries/customtables/media/js/esmulti.js');
+		$document->addCustomTag('<script src="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/js/modal.js" type="text/javascript"></script>');
+		$document->addCustomTag('<script src="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/js/uploader.js"></script>');
+		$document->addScript(URI::root(true).'/components/com_customtables/libraries/customtables/media/js/combotree.js');
+
+		//Styles
+		$document->addCustomTag('<link href="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/css/style.css" type="text/css" rel="stylesheet" >');
+		$document->addCustomTag('<link href="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/css/modal.css" type="text/css" rel="stylesheet" >');
+		$document->addCustomTag('<link href="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/css/uploadfile.css" rel="stylesheet">');
 	}
 }
