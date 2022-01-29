@@ -19,18 +19,18 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'co
 class JHTMLESRecords
 {
     static public function render($typeparams,$control_name, $value, $establename, $thefield, $selector, $filter,$style='',
-                                $cssclass='', $attribute='', $dynamic_filter='',$sortbyfield='',$langpostfix='',$place_holder='')
+		$cssclass='', $attribute='', $dynamic_filter='',$sortbyfield='',$langpostfix='',$place_holder='')
     {
-				$htmlresult='';
-				$fieldarray=explode(';',$thefield);
-				$field=$fieldarray[0];
-				$selectorpair=explode(':',$selector);
-				$config=array();
+		$htmlresult='';
+		$fieldarray=explode(';',$thefield);
+		$field=$fieldarray[0];
+		$selectorpair=explode(':',$selector);
+		$config=array();
 
-                                if(isset($typeparams[6]) and $typeparams[6]=='true')
-                                	$allowunpublished=true;
-                                else
-                                	$allowunpublished=false;
+        if(isset($typeparams[6]) and $typeparams[6]=='true')
+			$allowunpublished=true;
+		else
+			$allowunpublished=false;
 
 				//With filter
 				$paramsArray=array();
@@ -277,15 +277,13 @@ class JHTMLESRecords
 				}
 
 				return $htmlresult;
-
-
         }
 
 	static protected function getSingle(&$model, &$model_nofilter,&$valuearray,
-                                            $field,$selectorpair,$control_name,$style,$cssclass,$attribute,string $value,
-											$establename,$dynamic_filter='',$langpostfix='',$place_holder='')
+		$field,$selectorpair,$control_name,$style,$cssclass,$attribute,string $value,
+		$establename,$dynamic_filter='',$langpostfix='',$place_holder='')
 	{
-	
+
 		$htmlresult='';
 
 		if($dynamic_filter!='')
@@ -309,101 +307,89 @@ class JHTMLESRecords
 
 		}
 
-		$htmlresult.='<SELECT name="'.$control_name.'" id="'.$control_name.'" '
-				.($style!='' ? 'style="'.$style.'" ' : '')
-				.($cssclass!='' ? 'class="'.$cssclass.'" ' : '')
-				.$attribute.($attribute!='' ? ' ' : '')
-				.'data-label="'.$place_holder.'" '
-				.'>';
+		$htmlresult_options = '';
 
 		if(strpos($control_name,'_selector')===false)
+			$htmlresult_options.='<option value="">- '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT' ).' '.$place_holder.'</option>';
+	
+		if($value=='' or $value==',' or $value==',,')
+			$valuefound=true;
+		else
+			$valuefound=false;
+
+		foreach($model->ct->Records as $row)
 		{
-			$htmlresult.='<option value="">- '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT' ).' '.$place_holder.'</option>';
+			if(in_array($row['listing_id'],$valuearray) and count($valuearray)>0 )
+			{
+				$htmlresult_options.='<option value="'.$row['listing_id'].'" SELECTED '.($row['listing_published']==0 ? ' disabled="disabled"' : '').'>';
+				$valuefound=true;
+			}
+			else
+				$htmlresult_options.='<option value="'.$row['listing_id'].'" '.($row['listing_published']==0 ? ' disabled="disabled"' : '').'>';
+
+			$v=JoomlaBasicMisc::processValue($field,$model->ct,$row,$langpostfix);
+			$htmlresult_options.=$v;
+
+			if($dynamic_filter!='')
+			{
+				$elements[]=$v;
+				$elementsID[]=$row['listing_id'];
+				$elementsFilter[]=$row[$model->ct->Env->field_prefix.$dynamic_filter];
+				$elementsPublished[]=(int)$row['listing_published'];
+			}
+			$htmlresult_options.='</option>';
 		}
-										if($value=='' or $value==',' or $value==',,')
-												$valuefound=true;
-										else
-												$valuefound=false;
 
+		if($value!='' and $value!=',' and $value!=',,' and !$valuefound)
+		{
+			//_nofilter - add all elements, don't remember why, probably if value is not in the list after the fileter
+			//workaround in case the value not found
 
+			foreach($model_nofilter->ct->Records as $row)
+			{
+				if(in_array($row['listing_id'],$valuearray) and count($valuearray)>0 )
+				{
+					$htmlresult_options.='<option value="'.$row['listing_id'].'" SELECTED '.($row['listing_published']==0 ? ' disabled="disabled"' : '').'>';
+					$valuefound=true;
+				}
+				else
+					$htmlresult_options.='<option value="'.$row['listing_id'].'" '.($row['listing_published']==0 ? ' disabled="disabled"' : '').'>';
 
-										$htmlresult_='';
-										foreach($model->ct->Records as $row)
-										{
-												if(in_array($row['listing_id'],$valuearray) and count($valuearray)>0 )
-												{
-														$htmlresult_.='<option value="'.$row['listing_id'].'" SELECTED '.($row['listing_published']==0 ? ' disabled="disabled"' : '').'>';
-														$valuefound=true;
-												}
-												else
-														$htmlresult_.='<option value="'.$row['listing_id'].'" '.($row['listing_published']==0 ? ' disabled="disabled"' : '').'>';
+				$v=JoomlaBasicMisc::processValue($field,$model_nofilter->ct,$row,$langpostfix);
+				$htmlresult_options.=$v;
 
-												$v=JoomlaBasicMisc::processValue($field,$model->ct,$row,$langpostfix);
-												$htmlresult_.=$v;
+				if($dynamic_filter!='')
+				{
+					$elements[]=$v;
+					$elementsID[]=$row['listing_id'];
+					$elementsFilter[]=$row[$model->ct->Env->field_prefix.$dynamic_filter];
+					$elementsPublished[]=(int)$row['listing_published'];
+				}
+				$htmlresult_options.='</option>';
+			}
+		}
 
-												if($dynamic_filter!='')
-												{
-														$elements[]='"'.$v.'"';
-														$elementsID[]=$row['listing_id'];
-														$elementsFilter[]='"'.$row[$model->ct->Env->field_prefix.$dynamic_filter].'"';
-                                                                                                                $elementsPublished[]=(int)$row['listing_published'];
-												}
+		$htmlresult.='<SELECT name="'.$control_name.'" id="'.$control_name.'" '
+			.($style!='' ? 'style="'.$style.'" ' : '')
+			.($cssclass!='' ? 'class="'.$cssclass.'" ' : '')
+			.$attribute.($attribute!='' ? ' ' : '')
+			.'data-label="'.$place_holder.'" '
+		.'>';
+				
+		$htmlresult .= $htmlresult_options;
 
-												$htmlresult_.='</option>';
-										}
+		$htmlresult.='</SELECT>';
 
-										if($value!='' and $value!=',' and $value!=',,' and !$valuefound)
-										{
-												//_nofilter
-
-												$htmlresult_nofilter='';
-												foreach($model_nofilter->ct->Records as $row)
-												{
-													if(in_array($row['listing_id'],$valuearray) and count($valuearray)>0 )
-													{
-														$htmlresult_nofilter.='<option value="'.$row['listing_id'].'" SELECTED '.($row['listing_published']==0 ? ' disabled="disabled"' : '').'>';
-														$valuefound=true;
-													}
-													else
-														$htmlresult_.='<option value="'.$row['listing_id'].'" '.($row['listing_published']==0 ? ' disabled="disabled"' : '').'>';
-
-													$v=JoomlaBasicMisc::processValue($field,$model_nofilter->ct,$row,$langpostfix);
-													$htmlresult_nofilter.=$v;
-
-
-
-													if($dynamic_filter!='')
-													{
-														$elements[]='"'.$v.'"';
-														$elementsID[]=$row['listing_id'];
-														$elementsFilter[]='"'.$row[$model->ct->Env->field_prefix.$dynamic_filter].'"';
-                                                                                                                $elementsPublished[]=(int)$row['listing_published'];
-													}
-
-
-													$htmlresult_nofilter.='</option>';
-
-
-												}
-												$htmlresult.=$htmlresult_nofilter;
-										}
-
-										$htmlresult.=$htmlresult_.'</SELECT>';
-
-										if($dynamic_filter!='')
-										{
-											$htmlresultjs.='
-											<script>
-												var '.$control_name.'elements=['.implode(',',$elements).'];
-												var '.$control_name.'elementsID=['.implode(',',$elementsID).'];
-												var '.$control_name.'elementsFilter=['.implode(',',$elementsFilter).'];
-												var '.$control_name.'elementsPublished=['.implode(',',$elementsPublished).'];
-											</script>
-											';
-											$htmlresult=$htmlresultjs.$htmlresult;
-										}
-
-
+		if($dynamic_filter!='')
+		{
+			$htmlresultjs.='
+			<div id="'.$control_name.'_elements" style="display:none;">'.json_encode($elements).'</div>
+			<div id="'.$control_name.'_elementsID" style="display:none;">'.implode(',',$elementsID).'</div>
+			<div id="'.$control_name.'_elementsFilter" style="display:none;">'.implode(',',$elementsFilter).'</div>
+			<div id="'.$control_name.'_elementsPublished" style="display:none;">'.implode(',',$elementsPublished).'</div>
+			';
+			$htmlresult=$htmlresultjs.$htmlresult;
+		}
 
 		return $htmlresult;
 	}
@@ -414,9 +400,9 @@ class JHTMLESRecords
 		$real_field_row=Fields::getFieldRowByName($field, '',$establename);
 
 		if($real_field_row->type=="multilangstring" or $real_field_row->type=="multilangtext")
-				$real_field=$real_field_row->realfieldname.$langpostfix;
+			$real_field=$real_field_row->realfieldname.$langpostfix;
 		else
-				$real_field=$real_field_row->realfieldname;
+			$real_field=$real_field_row->realfieldname;
 
 		$deleteimage='components/com_customtables/libraries/customtables/media/images/icons/cancel.png';
 		
@@ -433,176 +419,13 @@ class JHTMLESRecords
 				$ctInputboxRecords_p[]=(int)$row['listing_published'];
 			}
 		}
-	
+
 		$htmlresult='
 		<script>
-			var '.$control_name.'_r=new Array();
-			var '.$control_name.'_v=new Array();
-			var '.$control_name.'_p=new Array();
-			';
-			
-
-			$htmlresult.='
-			function '.$control_name.'removeOptions(selectobj)
-			{
-				for(var i=selectobj.options.length-1;i>=0;i--)
-				{
-					selectobj.remove(i);
-				}
-			}
-			';
-
-			$htmlresult.='
-
-			function '.$control_name.'addItem(index)
-			{
-				var o = document.getElementById("'.$control_name.'_selector");
-				o.selectedIndex=0;
-				';
-
-				if($dynamic_filter!='')
-					$htmlresult.='
-				var ol = document.getElementById("'.$control_name.'_selectorSQLJoinLink");
-				ol.selectedIndex=0;
-                                '.$control_name.'_current_value="";
-				'.$control_name.'_selectorUpdateSQLJoinLink();
-				';
-
-				$htmlresult.='
-
-
-				var btn = document.getElementById("'.$control_name.'_addButton");
-				btn.style.visibility="hidden";
-
-				var box = document.getElementById("'.$control_name.'_addBox");
-				box.style.visibility="visible";
-
-			}
-
-			';
-
-			$htmlresult.='
-
-			function '.$control_name.'DoAddItem()
-			{
-				var o = document.getElementById("'.$control_name.'_selector");
-				if(o.selectedIndex==-1)
-						return;
-
-				var r=o.options[o.selectedIndex].value;
-				var t=o.options[o.selectedIndex].text;
-                                var p=1;
-
-                                if (typeof arr != "undefined" && (arr instanceof Array))
-                                {
-                                        for(var i=0;i<'.$control_name.'_selectorelementsPublished.length;i++)
-                                        {
-                                                if('.$control_name.'_selectorelementsID[i]==r)
-                                                        p='.$control_name.'_selectorelementsPublished[i];
-                                        }
-                                }
-
-
-
-				var i='.$control_name.'_r.length;
-
-				for(var x=0;x<'.$control_name.'_r.length;x++)
-				{
-					if('.$control_name.'_r[x]==r)
-					{
-						alert("Item already exists");
-						return false;
-					}
-				}
-
-				'.$control_name.'_r[i]=r;
-				'.$control_name.'_v[i]=t;
-                                '.$control_name.'_p[i]=p;
-
-
-				//'.$control_name.'cancel();
-
-
-				o.remove(o.selectedIndex);
-
-
-				'.$control_name.'showMultibox();
-
-				//'.$control_name.'DeleteExistingItems();
-			}
-
-			function '.$control_name.'cancel()
-			{
-
-
-				var btn = document.getElementById("'.$control_name.'_addButton");
-				btn.style.visibility="visible";
-
-				var box = document.getElementById("'.$control_name.'_addBox");
-				box.style.visibility="hidden";
-
-			}
-
-			function '.$control_name.'deleteItem(index)
-			{
-				//alert(index);
-				'.$control_name.'_r.splice(index,1);
-				'.$control_name.'_v.splice(index,1);
-                                '.$control_name.'_p.splice(index,1);
-
-				'.$control_name.'showMultibox();
-			}
-
-			function '.$control_name.'showMultibox()
-			{
-				var l = document.getElementById("'.$control_name.'");
-				'.$control_name.'removeOptions(l);
-
-                                var opt1 = document.createElement("option");
-					opt1.value = 0;
-					opt1.innerHTML = "";
-					opt1.setAttribute("selected","selected");
-                			l.appendChild(opt1);
-
-				var v=\'<table style="width:100%;"><tbody>\';
-				for(var i=0;i<'.$control_name.'_r.length;i++)
-				{
-					v+=\'<tr><td style="border-bottom:1px dotted grey;">\';
-                                        if('.$control_name.'_p[i]==0)
-                                        {
-                  //                              v+=\'<span class="esmultiboxoptiondisabled" style="color:red;">\';
-                                                v+='.$control_name.'_v[i];
-                    //                            v+=\'</span>\';
-                                        }
-                                        else
-                                        {
-                                                v+='.$control_name.'_v[i];
-                                        }
-
-                                        v+=\'<td style="border-bottom:1px dotted grey;min-width:16px;"><img src="'.$deleteimage.'" alt="Delete" title="Delete" style="width:16px;height:16px;cursor: pointer;" onClick="'.$control_name.'deleteItem(\'+i+\')" /></td>\';
-                                        v+=\'</tr>\';
-
-
-					var opt = document.createElement("option");
-					opt.value = '.$control_name.'_r[i];
-					opt.innerHTML = '.$control_name.'_v[i];
-                                        opt.style.cssText="color:red;";
-					opt.setAttribute("selected","selected");
-
-                                        //if('.$control_name.'_p[i]==0)
-                                        //        opt.setAttribute("disabled","disabled");
-
-					l.appendChild(opt);
-
-				}
-				v+=\'</tbody></table>\';
-
-				var o = document.getElementById("'.$control_name.'_box");
-				o.innerHTML = v;
-
-			}
-
-
+			//Field value
+			ctInputboxRecords_r["'.$control_name.'"] = '.json_encode($ctInputboxRecords_r).';
+			ctInputboxRecords_v["'.$control_name.'"] = '.json_encode($ctInputboxRecords_v).';
+			ctInputboxRecords_p["'.$control_name.'"] = '.json_encode($ctInputboxRecords_p).';
 		</script>
 		';
 
@@ -610,17 +433,18 @@ class JHTMLESRecords
 		$single_box='';
 
 		$single_box.=JHTMLESRecords::getSingle($model, $model_nofilter,$valuearray,$field,$selectorpair,
-			$control_name.'_selector',$style,$cssclass,$attribute,'',$establename,$dynamic_filter,$langpostfix,$place_holder);
+		$control_name.'_selector',$style,$cssclass,$attribute,'',$establename,$dynamic_filter,$langpostfix,$place_holder);
 			
 		$icon_path = JURI::root(true).'/components/com_customtables/libraries/customtables/media/images/icons/';
 
 		$htmlresult.='<div style="padding-bottom:20px;"><div style="width:90%;" id="'.$control_name.'_box"></div>'
 		.'<div style="height:30px;">'
-			.'<div id="'.$control_name.'_addButton" style="visibility: visible;"><img src="'.$icon_path.'new.png" alt="Add" title="Add" style="cursor: pointer;" onClick="'.$control_name.'addItem()" /></div>'
+			.'<div id="'.$control_name.'_addButton" style="visibility: visible;"><img src="'.$icon_path.'new.png" alt="Add" title="Add" style="cursor: pointer;" '
+			.'onClick="ctInputboxRecords_addItem(\''.$control_name.'\',\'_selector\')" /></div>'
 			.'<div id="'.$control_name.'_addBox" style="visibility: hidden;">'
 				.'<div style="float:left;">'.$single_box.'</div>'
-				.'<img src="'.$icon_path.'plus.png" alt="Add" title="Add" style="cursor: pointer;float:left;margin-top:8px;margin-left:3px;width:16px;height:16px;" onClick="'.$control_name.'DoAddItem()" />'
-				.'<img src="'.$icon_path.'cancel.png" alt="Cancel" title="Cancel" style="cursor: pointer;float:left;margin-top:6px;margin-left:10px;width:16px;height:16px;" onClick="'.$control_name.'cancel()" />'
+				.'<img src="'.$icon_path.'plus.png" alt="Add" title="Add" style="cursor: pointer;float:left;margin-top:8px;margin-left:3px;width:16px;height:16px;" onClick="ctInputboxRecords_DoAddItem(\''.$control_name.'\',\'_selector\')" />'
+				.'<img src="'.$icon_path.'cancel.png" alt="Cancel" title="Cancel" style="cursor: pointer;float:left;margin-top:6px;margin-left:10px;width:16px;height:16px;" onClick="ctInputboxRecords_cancel(\''.$control_name.'\')" />'
 
 			.'</div>'
 		.'</div>'
@@ -628,11 +452,10 @@ class JHTMLESRecords
 		.'</div>
 
 		<script>
-			'.$control_name.'showMultibox();
+			ctInputboxRecords_showMultibox("'.$control_name.'");
 		</script>
 		';
 
 		return $htmlresult;
-
 	}
 }

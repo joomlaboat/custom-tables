@@ -697,7 +697,6 @@ class CustomTablesModelEditItem extends JModelLegacy
 		return $wheres;
 	}
 	
-	
 	function checkIfItemBelongsToUser($useridfield)
 	{
 		$db = JFactory::getDBO();

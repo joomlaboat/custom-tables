@@ -1148,116 +1148,16 @@ class LinkJoinFilters
 		$records=$db->loadAssocList();
 		$result.='
 		<script>
-		function '.$control_name.'removeOptions(selectobj)
-		{
-			var i;
-			for(i=selectobj.options.length-1;i>=0;i--)
-			{
-				selectobj.remove(i);
-			}
-		}
-
-		function '.$control_name.'removeEmptyParents()
-		{
-			var selectobj = document.getElementById("'.$control_name.'SQLJoinLink");
-			for(var o=selectobj.options.length-1;o>=0;o--)
-			{
-				c=0;
-				var v=selectobj.options[o].value;
-
-				for (var i = 0; i<'.$control_name.'elementsFilter.length; i++)
-				{
-					var f='.$control_name.'elementsFilter[i];
-					if(typeof f!="undefined")
-					{
-						if(f==v)
-							c++;
-						else
-						{
-							if(f.indexOf(","+v+",")!=-1)
-								c++;
-						}
-					}
-				}
-			}
-		}
-
-		function '.$control_name.'UpdateSQLJoinLink()
-		{
-			setTimeout('.$control_name.'UpdateSQLJoinLink_do, 100);
-		}
-		
-		var '.$control_name.'_current_value="";
-		
-		function '.$control_name.'UpdateSQLJoinLink_do()
-		{
-			var l = document.getElementById("'.$control_name.'");
-			var o = document.getElementById("'.$control_name.'SQLJoinLink");
-			if(o.selectedIndex==-1)
-				return;
-				
-			var v=o.options[o.selectedIndex].value;
-
-			var selectedValue='.$control_name.'_current_value;
-			'.$control_name.'removeOptions(l);
-
-			';
-			if(strpos($control_name,'_selector')===false)
-			{
-				$result.='
-			var opt = document.createElement("option");
-			opt.value = 0;
-			opt.innerHTML = "- '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT').'";
-			l.appendChild(opt);
-			';
-			}
-			$result.='
-			for (var i = 0; i<='.$control_name.'elements.length; i++)
-			{
-				var f='.$control_name.'elementsFilter[i];
-				if(typeof f!="undefined" && '.$control_name.'elements[i]!="")
-				{
-					var eid='.$control_name.'elementsID[i];
-					var published='.$control_name.'elementsPublished[i];
-
-
-					if(f==v)
-					{
-							var opt = document.createElement("option");
-							opt.value = eid;
-							if(eid==selectedValue)
-								opt.selected = true;
-
-							if(published==0)
-								opt.style.cssText="color:red;";
-
-							opt.innerHTML = '.$control_name.'elements[i];
-							l.appendChild(opt);
-					}else
-					{
-						if(f.indexOf(","+v+",")!=-1)
-						{
-							var opt = document.createElement("option");
-							opt.value = eid;
-							if(eid==selectedValue)
-								opt.selected = true;
-
-							if(published==0)
-								opt.style.cssText="color:red;";
-
-
-							opt.innerHTML = '.$control_name.'elements[i];
-							l.appendChild(opt);
-						}
-					}
-				}
-			}
-		}
+			ctTranslates["COM_CUSTOMTABLES_SELECT"] = "- '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT').'";
+			ctInputboxRecords_current_value["'.$control_name.'"]="";
 		</script>
 		';
+		
+		$control_name_postfix = '';
+		if(strpos($control_name,'_selector' !== false))
+			$control_name_postfix = '_selector';
 
-
-		$result.='<select id="'.$control_name.'SQLJoinLink" onchange="'.$control_name.'UpdateSQLJoinLink()">';
+		$result.='<select id="'.$control_name.'SQLJoinLink" onchange="ctInputbox_UpdateSQLJoinLink(\''.$control_name.'\',\''.$control_name_postfix.'\')">';
 		$result.='<option value="">- '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT' ).'</option>';
 		
 		foreach($records as $row)

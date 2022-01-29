@@ -17,13 +17,13 @@ function setTask(event, task, returnlink, submitForm) {
     if (submitForm) {
         let objForm = document.getElementById('eseditForm');
         if (objForm) {
-			
+
 			const tasks_with_validation = ['saveandcontinue', 'save', 'saveandprint', 'saveascopy'];
 			
 			let element_tableid = "ctTable_" + objForm.dataset.tableid;
 			let table_object = document.getElementById(element_tableid);
 			if(table_object && task != 'saveascopy'){
-				
+
 				let hideModelOnSave = true;
 				if(task == 'saveandcontinue')
 					hideModelOnSave = false;
@@ -35,7 +35,6 @@ function setTask(event, task, returnlink, submitForm) {
 				}
 				else
 					submitModalForm(objForm.action,objForm.elements,objForm.dataset.tableid,objForm.dataset.recordid,hideModelOnSave)
-				
 				
 				return false;
 			}
@@ -60,11 +59,25 @@ function submitModalForm(url,elements,tableid, recordid, hideModelOnSave){
 	var params = "";
 	for(let i=0;i<elements.length;i++)
 	{
-		if(elements[i].name && elements[i].name != '' && elements[i].name != 'returnto')
-			params+="&" + elements[i].name + "=" + elements[i].value;
+		if(elements[i].name && elements[i].name != '' && elements[i].name != 'returnto'){
 			
+			if (elements[i].type == "select-multiple"){
+				
+				var options = elements[i] && elements[i].options;
+				
+				let result = [];
+				for (let x=0;x<options.length;x++){
+					opt = options[x];
+					if (opt.selected)
+						params+="&" + elements[i].name + "=" + opt.value;
+				}
+				
+			}
+			else	
+				params+="&" + elements[i].name + "=" + elements[i].value;
+		}
 	}
-
+	
 	let http = CreateHTTPRequestObject ();   // defined in ajax.js
 
 	if (http){
@@ -72,8 +85,8 @@ function submitModalForm(url,elements,tableid, recordid, hideModelOnSave){
         http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         http.onreadystatechange = function(){
 			if (http.readyState == 4){
-				let res=http.response;
-				res = res.replace(/<[^>]*>?/gm, '').trim();
+				
+				let res = http.response.replace(/<[^>]*>?/gm, '').trim();
 
 				if(res.indexOf("saved")!=-1){
 					
@@ -543,191 +556,229 @@ function ctUpdateTableJoinLink(control_name,index,execute_all,sub_index,object_i
 }
 
 
-//Inputbox: Records
+// --------------------- Inputbox: Records
 
 let ctInputboxRecords_r = [];
 let ctInputboxRecords_v = [];
 let ctInputboxRecords_p = [];
-/*
-<script>
-			var '.$control_name.'_r=new Array();
-			var '.$control_name.'_v=new Array();
-			var '.$control_name.'_p=new Array();
-			';
-			$i=0;
-			foreach($model->ct->Records as $row)
-			{
-				if(in_array($row['listing_id'],$valuearray) and count($valuearray)>0)
+let ctInputboxRecords_dynamic_filter = [];
+let ctInputboxRecords_current_value = [];
+
+function ctInputboxRecords_removeOptions(selectobj){
+	//Old calls replaced
+	for(let i=selectobj.options.length-1;i>=0;i--){
+		selectobj.remove(i);
+	}
+}
+
+function ctInputboxRecords_addItem(control_name, control_name_postfix){
+	//Old calls replaced
+	let o = document.getElementById(control_name + control_name_postfix);
+	o.selectedIndex=0;
+	
+	if(ctInputboxRecords_dynamic_filter[control_name]!=''){
+		
+		ctInputboxRecords_current_value[control_name]="";
+		
+		let SQLJoinLink = document.getElementById(control_name + control_name_postfix + 'SQLJoinLink');
+		if(SQLJoinLink){
+			SQLJoinLink.selectedIndex=0;
+			ctInputbox_UpdateSQLJoinLink(control_name, control_name_postfix);
+		}
+	}
+
+	document.getElementById(control_name + '_addButton').style.visibility="hidden";
+	document.getElementById(control_name + '_addBox').style.visibility="visible";
+}
+
+function ctInputboxRecords_DoAddItem(control_name, control_name_postfix)
+{
+	//Old calls replaced
+	let o = document.getElementById(control_name + control_name_postfix);
+	if(o.selectedIndex==-1)
+		return;
+
+	let r=o.options[o.selectedIndex].value;
+	let t=o.options[o.selectedIndex].text;
+	let p=1;
+
+	if (document.getElementById(control_name + control_name_postfix + '_elementsPublished'))
+    {
+		let elementsPublished = document.getElementById(control_name + control_name_postfix + '_elementsPublished').innerHTML.split(",");
+		let elementsID = document.getElementById(control_name + control_name_postfix + '_elementsID').innerHTML.split(",");
+		
+		for(let i=0;i<elementsPublished.length;i++){
+			if(elementsID[i]==r)
+                p=elementsPublished[i];
+			}
+		}
+
+		for(let x=0;x<ctInputboxRecords_r[control_name].length;x++){
+			if(ctInputboxRecords_r[control_name][x]==r){
+				alert("Item already exists");
+				return false;
+			}
+		}
+
+		ctInputboxRecords_r[control_name].push(r);
+		ctInputboxRecords_v[control_name].push(t);
+		ctInputboxRecords_p[control_name].push(p);
+
+		o.remove(o.selectedIndex);
+
+		ctInputboxRecords_showMultibox(control_name,control_name_postfix);
+	}
+
+function ctInputboxRecords_cancel(control_name){
+	//Old calls replaced
+	document.getElementById(control_name + '_addButton').style.visibility="visible";
+	document.getElementById(control_name + '_addBox').style.visibility="hidden";
+}
+
+function ctInputboxRecords_deleteItem(control_name,control_name_postfix,index){
+	//Old calls replaced
+	ctInputboxRecords_r[control_name].splice(index,1);
+	ctInputboxRecords_v[control_name].splice(index,1);
+	ctInputboxRecords_p[control_name].splice(index,1);
+	ctInputboxRecords_showMultibox(control_name,control_name_postfix);
+}
+
+function ctInputboxRecords_showMultibox(control_name,control_name_postfix){
+	//Old calls replaced
+
+	let l = document.getElementById(control_name);
+	ctInputboxRecords_removeOptions(l);
+
+	let opt1 = document.createElement("option");
+		opt1.value = 0;
+		opt1.innerHTML = "";
+		opt1.setAttribute("selected","selected");
+		l.appendChild(opt1);
+
+	let v='<table style="width:100%;"><tbody>';
+	for(let i=0;i<ctInputboxRecords_r[control_name].length;i++){
+		v+='<tr><td style="border-bottom:1px dotted grey;">';
+		if(ctInputboxRecords_p[control_name][i]==0)
+			v+=ctInputboxRecords_v[control_name][i];
+		else
+			v+=ctInputboxRecords_v[control_name][i];
+        
+		let deleteimage='components/com_customtables/libraries/customtables/media/images/icons/cancel.png';
+		
+		v+='<td style="border-bottom:1px dotted grey;min-width:16px;">';
+		let onClick = "ctInputboxRecords_deleteItem('"+control_name+"','"+control_name_postfix+"',"+i+")";
+		v+='<img src="' + deleteimage + '" alt="Delete" title="Delete" style="width:16px;height:16px;cursor: pointer;" onClick="'+onClick+'" />';
+		v+='</td>';
+        v+='</tr>';
+
+		var opt = document.createElement("option");
+		opt.value = ctInputboxRecords_r[control_name][i];
+		opt.innerHTML = ctInputboxRecords_v[control_name][i];
+		opt.style.cssText="color:red;";
+		opt.setAttribute("selected","selected");
+
+        l.appendChild(opt);
+	}
+	v+='</tbody></table>';
+
+	var o = document.getElementById(control_name + "_box").innerHTML = v;
+}
+
+/* -------------------------- Filtering --------------------------- */
+
+let ctTranslates = [];
+
+function ctInputbox_removeEmptyParents(control_name,control_name_postfix)
+{
+	//Old calls replaced
+	let selectobj = document.getElementById(control_name + 'SQLJoinLink');
+	let elementsFilter = document.getElementById(control_name + control_name_postfix + '_elementsFilter').innerHTML.split(",");
+	
+	for(let o=selectobj.options.length-1;o>=0;o--){
+		c=0;
+		let v=selectobj.options[o].value;
+
+		for (let i = 0; i < control_name + elementsFilter.length; i++){
+			let f=elementsFilter[i];
+			if(typeof f!="undefined"){
+				if(f==v)
+					c++;
+				else
 				{
-					$htmlresult.='
-					'.$control_name.'_r['.$i.']="'.$row['listing_id'].'";
-					'.$control_name.'_v['.$i.']="'.$row[$real_field].'";
-                                        '.$control_name.'_p['.$i.']="'.(int)$row['listing_published'].'";
-';
-					$i++;
+					if(f.indexOf(","+v+",")!=-1)
+						c++;
 				}
 			}
+		}
+	}
+}
 
-			$htmlresult.='
-			function '.$control_name.'removeOptions(selectobj)
-			{
-				for(var i=selectobj.options.length-1;i>=0;i--)
-				{
-					selectobj.remove(i);
-				}
-			}
-			';
+function ctInputbox_UpdateSQLJoinLink(control_name, control_name_postfix)
+{
+	//Old calls replaced
+	setTimeout(ctInputbox_UpdateSQLJoinLink_do(control_name, control_name_postfix), 100);
+}
 
-			$htmlresult.='
+function ctInputbox_UpdateSQLJoinLink_do(control_name, control_name_postfix)
+{
+	//Old calls replaced
+	let l = document.getElementById(control_name + control_name_postfix);
+	let o = document.getElementById(control_name + control_name_postfix + 'SQLJoinLink');
+	
+	let v='';
+	
+	if(o){
+		if(o.selectedIndex==-1)
+			return;
+		
+		v=o.options[o.selectedIndex].value;
+	}
 
-			function '.$control_name.'addItem(index)
-			{
-				var o = document.getElementById("'.$control_name.'_selector");
-				o.selectedIndex=0;
-				';
+	let selectedValue=ctInputboxRecords_current_value[control_name];
+	ctInputboxRecords_removeOptions(l);
 
-				if($dynamic_filter!='')
-					$htmlresult.='
-				var ol = document.getElementById("'.$control_name.'_selectorSQLJoinLink");
-				ol.selectedIndex=0;
-                                '.$control_name.'_current_value="";
-				'.$control_name.'_selectorUpdateSQLJoinLink();
-				';
+	if(control_name_postfix != '_selector'){
+		let opt = document.createElement("option");
+		opt.value = 0;
+		opt.innerHTML = ctTranslates["COM_CUSTOMTABLES_SELECT"];
+		l.appendChild(opt);
+	}
 
-				$htmlresult.='
+	let elements = JSON.parse(document.getElementById(control_name + control_name_postfix + '_elements').innerHTML);
+	let elementsID = document.getElementById(control_name + control_name_postfix + '_elementsID').innerHTML.split(",");
+	let elementsFilter = document.getElementById(control_name + control_name_postfix + '_elementsFilter').innerHTML.split(",");
+	let elementsPublished = document.getElementById(control_name + control_name_postfix + '_elementsPublished').innerHTML.split(",");
+	
+	for (let i = 0; i<= elements.length; i++){
+		let f=elementsFilter[i];
+		if(typeof f!="undefined" && elements[i]!=""){
+			let eid=elementsID[i];
+			let published=elementsPublished[i];
+			if(f==v){
+				let opt = document.createElement("option");
+				opt.value = eid;
+				if(eid==selectedValue)
+					opt.selected = true;
 
+				if(published==0)
+					opt.style.cssText="color:red;";
 
-				var btn = document.getElementById("'.$control_name.'_addButton");
-				btn.style.visibility="hidden";
+				opt.innerHTML = elements[i];
+				l.appendChild(opt);
+			}else{
+				if(f.indexOf(","+v+",")!=-1){
+					let opt = document.createElement("option");
+					opt.value = eid;
+					if(eid==selectedValue)
+						opt.selected = true;
 
-				var box = document.getElementById("'.$control_name.'_addBox");
-				box.style.visibility="visible";
+					if(published==0)
+						opt.style.cssText="color:red;";
 
-			}
-
-			';
-
-			$htmlresult.='
-
-			function '.$control_name.'DoAddItem()
-			{
-				var o = document.getElementById("'.$control_name.'_selector");
-				if(o.selectedIndex==-1)
-						return;
-
-				var r=o.options[o.selectedIndex].value;
-				var t=o.options[o.selectedIndex].text;
-                                var p=1;
-
-                                if (typeof arr != "undefined" && (arr instanceof Array))
-                                {
-                                        for(var i=0;i<'.$control_name.'_selectorelementsPublished.length;i++)
-                                        {
-                                                if('.$control_name.'_selectorelementsID[i]==r)
-                                                        p='.$control_name.'_selectorelementsPublished[i];
-                                        }
-                                }
-
-
-
-				var i='.$control_name.'_r.length;
-
-				for(var x=0;x<'.$control_name.'_r.length;x++)
-				{
-					if('.$control_name.'_r[x]==r)
-					{
-						alert("Item already exists");
-						return false;
-					}
-				}
-
-				'.$control_name.'_r[i]=r;
-				'.$control_name.'_v[i]=t;
-                                '.$control_name.'_p[i]=p;
-
-
-				//'.$control_name.'cancel();
-
-
-				o.remove(o.selectedIndex);
-
-
-				'.$control_name.'showMultibox();
-
-				//'.$control_name.'DeleteExistingItems();
-			}
-
-			function '.$control_name.'cancel()
-			{
-
-
-				var btn = document.getElementById("'.$control_name.'_addButton");
-				btn.style.visibility="visible";
-
-				var box = document.getElementById("'.$control_name.'_addBox");
-				box.style.visibility="hidden";
-
-			}
-
-			function '.$control_name.'deleteItem(index)
-			{
-				//alert(index);
-				'.$control_name.'_r.splice(index,1);
-				'.$control_name.'_v.splice(index,1);
-                                '.$control_name.'_p.splice(index,1);
-
-				'.$control_name.'showMultibox();
-			}
-
-			function '.$control_name.'showMultibox()
-			{
-				var l = document.getElementById("'.$control_name.'");
-				'.$control_name.'removeOptions(l);
-
-                                var opt1 = document.createElement("option");
-					opt1.value = 0;
-					opt1.innerHTML = "";
-					opt1.setAttribute("selected","selected");
-                			l.appendChild(opt1);
-
-				var v=\'<table style="width:100%;"><tbody>\';
-				for(var i=0;i<'.$control_name.'_r.length;i++)
-				{
-					v+=\'<tr><td style="border-bottom:1px dotted grey;">\';
-                                        if('.$control_name.'_p[i]==0)
-                                        {
-                  //                              v+=\'<span class="esmultiboxoptiondisabled" style="color:red;">\';
-                                                v+='.$control_name.'_v[i];
-                    //                            v+=\'</span>\';
-                                        }
-                                        else
-                                        {
-                                                v+='.$control_name.'_v[i];
-                                        }
-
-                                        v+=\'<td style="border-bottom:1px dotted grey;min-width:16px;"><img src="'.$deleteimage.'" alt="Delete" title="Delete" style="width:16px;height:16px;cursor: pointer;" onClick="'.$control_name.'deleteItem(\'+i+\')" /></td>\';
-                                        v+=\'</tr>\';
-
-
-					var opt = document.createElement("option");
-					opt.value = '.$control_name.'_r[i];
-					opt.innerHTML = '.$control_name.'_v[i];
-                                        opt.style.cssText="color:red;";
-					opt.setAttribute("selected","selected");
-
-                                        //if('.$control_name.'_p[i]==0)
-                                        //        opt.setAttribute("disabled","disabled");
-
+					opt.innerHTML = elements[i];
 					l.appendChild(opt);
-
 				}
-				v+=\'</tbody></table>\';
-
-				var o = document.getElementById("'.$control_name.'_box");
-				o.innerHTML = v;
-
 			}
-
-
-		</script>
-*/
+		}
+	}
+}

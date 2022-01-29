@@ -127,7 +127,7 @@ function ctShowPopUp(content_html,showCloseButton){
 	
 	insertAndExecuteScripts("ctModal_content");
 	
-	setTimeout(function(){insertAndExecute("ctModal_content"); }, 1000);
+	setTimeout(function(){insertAndExecute("ctModal_content"); }, 300);
     
     ctShowModal(showCloseButton);
 }

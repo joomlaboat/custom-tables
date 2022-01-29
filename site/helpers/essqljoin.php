@@ -261,11 +261,8 @@ class JHTMLESSqlJoin
 
 	static protected function renderDropdownSelector_Box_simple($list_values,$current_value,$control_name,$cssclass,$attribute,$place_holder,$dynamic_filter,$addNoValue=false)
     {
-                        $htmlresult='';
-
-                        $htmlresult_select='';
-						
-                        $htmlresult_select.='<SELECT '
+		$htmlresult='';
+		$htmlresult_select ='<SELECT '
 							.'name="'.$control_name.'" '
 							.'id="'.$control_name.'" '
 							.($cssclass!='' ? 'class="'.$cssclass.'" ' : '')
@@ -276,66 +273,59 @@ class JHTMLESSqlJoin
 		$htmlresult_select.='<option value="">- '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT' ).' '.$place_holder.'</option>';
 
         foreach($list_values as $list_value)
-                        {
-                                if($list_value[2]==0)//if unpublished
-                                        $style=' style="color:red"';
-                                else
-                                        $style='';
+		{
+			if($list_value[2]==0)//if unpublished
+				$style=' style="color:red"';
+			else
+				$style='';
 
-                                if($dynamic_filter=='')
-                                        $htmlresult_select.='<option value="'.$list_value[0].'"'.($list_value[0]==$current_value ? ' selected="SELECTED"' : '').''.$style.'>'.strip_tags($list_value[1]).'</option>';
-			}
+		        if($dynamic_filter=='')
+					$htmlresult_select.='<option value="'.$list_value[0].'"'.($list_value[0]==$current_value ? ' selected="SELECTED"' : '').''.$style.'>'.strip_tags($list_value[1]).'</option>';
+		}
 			
-			if($addNoValue)
-				$htmlresult_select.='<option value="-1"'.((int)$current_value==-1 ? ' selected="SELECTED"' : '').'>- '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_SPECIFIED' ).'</option>';
+		if($addNoValue)
+			$htmlresult_select.='<option value="-1"'.((int)$current_value==-1 ? ' selected="SELECTED"' : '').'>- '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_SPECIFIED' ).'</option>';
 			
-			$htmlresult_select.='</SELECT>';
+		$htmlresult_select.='</SELECT>';
 
+		if($dynamic_filter!='')
+		{
+	        $elements=array();
+	        $elementsID=array();
+	        $elementsFilter=array();
+	        $elementsPublished=array();
 
-                        if($dynamic_filter!='')
-                        {
-                                $elements=array();
-                                $elementsID=array();
-                                $elementsFilter=array();
-                                $elementsPublished=array();
+	        foreach($list_values as $list_value)
+	        {
+				$elementsID[]=$list_value[0];
+		    	$elements[]=$list_value[1];
+				$elementsPublished[]=$list_value[2];
+				$elementsFilter[]=$list_value[3];
+	        }
 
-                                foreach($list_values as $list_value)
-                                {
-                                                                        $elementsID[]=$list_value[0];
-                                                        		$elements[]='"'.$list_value[1].'"';
-                                                                        $elementsPublished[]=$list_value[2];
-                                                                        $elementsFilter[]='"'.$list_value[3].'"';
-                                }
+			$htmlresult.='
+			<div id="'.$control_name.'_elements" style="display:none;">'.json_encode($elements).'</div>
+			<div id="'.$control_name.'_elementsID" style="display:none;">'.implode(',',$elementsID).'</div>
+			<div id="'.$control_name.'_elementsFilter" style="display:none;">'.implode(',',$elementsFilter).'</div>
+			<div id="'.$control_name.'_elementsPublished" style="display:none;">'.implode(',',$elementsPublished).'</div>
+			';
 
-                                                                $htmlresultjs='
-						<script>
-							var '.$control_name.'elements=['.implode(',',$elements).'];
-							var '.$control_name.'elementsID=['.implode(',',$elementsID).'];
-							var '.$control_name.'elementsFilter=['.implode(',',$elementsFilter).'];
-                                                        var '.$control_name.'elementsPublished=['.implode(',',$elementsPublished).'];
-						</script>
-					';
-                                        
-                                $htmlresult.=$htmlresult_select;
+	        $htmlresult.=$htmlresult_select;
 
-                                $htmlresult=$htmlresultjs.$htmlresult.'
-				<script>
-                                        '.$control_name.'_current_value="'.$current_value.'";
-					'.$control_name.'removeEmptyParents();
-					'.$control_name.'UpdateSQLJoinLink();
-				</script>
-				';
-
-                        }
-                        else
-                        {
-                                $htmlresult.=$htmlresult_select;
-                        }
-
-
-
-                        return $htmlresult;
-                }
+	        $htmlresult.='
+			<script>
+				ctInputboxRecords_current_value["'.$control_name.'"]="'.$current_value.'";
+				ctInputbox_removeEmptyParents("'.$control_name.'");
+				ctInputbox_UpdateSQLJoinLink("'.$control_name.'");
+			</script>
+			';
+		}
+		else
+		{
+	        $htmlresult.=$htmlresult_select;
+		}
+		return $htmlresult;
+	}
 
     static protected function renderRadioSelector_Box($list_values,$current_value,$control_name,$cssclass,$attribute,$field)
 	{
