@@ -176,7 +176,7 @@ class Inputbox
 				return CTTypes::getField('language', $lang_attributes,$value)->input;
 
 			case 'color':
-				return $this->render_color($row);
+				return $this->render_color($row,$value);
 
 			case 'filelink':
 
@@ -967,7 +967,7 @@ class Inputbox
 		return $result;
 	}
 	
-	protected function render_color(&$row)
+	protected function render_color(&$row,$value)
 	{
 		$result = '';
 		
