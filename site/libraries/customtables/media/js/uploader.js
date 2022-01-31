@@ -39,6 +39,8 @@ function ct_getUploader(index,urlstr,maxFileSize,allowedTypes,UploaderForm,Submi
 	}
 		
 	let uploadFileObject = document.getElementById(FileUploaderBox);
+	jQuery(function($)
+    {
 		
 	$("#"+FileUploaderBox).uploadFile({
 		url:urlstr,
@@ -131,5 +133,7 @@ function ct_getUploader(index,urlstr,maxFileSize,allowedTypes,UploaderForm,Submi
 			updateUploadedFileBox(index);
 			checkRequiredFields();
 		}
+	});
+	
 	});
 }

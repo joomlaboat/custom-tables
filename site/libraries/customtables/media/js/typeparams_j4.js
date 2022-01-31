@@ -45,14 +45,6 @@ function updateParameters()
     
         typeparams_box_obj.innerHTML=renderParamBox(typeparams,typeparams_id,typeparams_obj.value);
 
-		/*
-        jQuery(function($)
-        {
-			const popoverElement = $(typeparams_box_obj).find(".hasPopover");
-		
-        });
-		*/
-
         var param_att=typeparams["@attributes"];
         var rawquotes=false;
         if (typeof(param_att.rawquotes) != "undefined" && param_att.rawquotes=="1")

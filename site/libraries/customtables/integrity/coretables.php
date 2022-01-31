@@ -109,7 +109,7 @@ class IntegrityCoreTables extends \CustomTables\IntegrityChecks
 		$tables_projected_fields[]=['name'=>'ordering','ct_fieldtype'=>'','mysql_type'=>'INT UNSIGNED NOT NULL','postgresql_type'=>'INT NOT NULL'];		
 
 		$tables_projected_fields[]=['name'=>'defaultvalue','ct_fieldtype'=>'','mysql_type'=>'VARCHAR(1024) NULL','postgresql_type'=>'VARCHAR(1024) NULL'];
-		$tables_projected_fields[]=['name'=>'customfieldname','ct_fieldtype'=>'','mysql_type'=>'VARCHAR(100) NULL','postgresql_type'=>'VARCHAR(100) NULL'];
+		$tables_projected_fields[]=['name'=>'customfieldname','ct_fieldtype'=>'string','mysql_type'=>'VARCHAR(100) NULL','postgresql_type'=>'VARCHAR(100) NULL'];
 		$tables_projected_fields[]=['name'=>'type','ct_fieldtype'=>'','mysql_type'=>'VARCHAR(50) NULL','postgresql_type'=>'VARCHAR(50) NULL'];
 		$tables_projected_fields[]=['name'=>'typeparams','ct_fieldtype'=>'','mysql_type'=>'VARCHAR(1024) NULL','postgresql_type'=>'VARCHAR(1024) NULL'];
 		$tables_projected_fields[]=['name'=>'valuerule','ct_fieldtype'=>'','mysql_type'=>'VARCHAR(1024) NULL','postgresql_type'=>'VARCHAR(1024) NULL'];
