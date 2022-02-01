@@ -396,8 +396,8 @@ class CustomTablesModelEditItem extends JModelLegacy
 				$action=4; //add new
 		}
 
-		$guestcanaddnew=JoomlaBasicMisc::getMenuParam('guestcanaddnew', $this->ct->Env->Itemid);
-
+		$menuparams = JoomlaBasicMisc::getMenuParams($this->ct->Env->Itemid);
+		$guestcanaddnew = $menuparams->guestcanaddnew;
 
 		if($guestcanaddnew==1)
 			return true;

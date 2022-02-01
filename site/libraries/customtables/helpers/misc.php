@@ -113,8 +113,6 @@ class JoomlaBasicMisc
 		return $randomString;
 	}
 
-
-
 	public static function suggest_TempFileName()
 	{
 		$output_dir=$file = DIRECTORY_SEPARATOR .
@@ -382,10 +380,7 @@ class JoomlaBasicMisc
 
 	}//if(JoomlaBasicMisc::layoutsettings->wordcount==0)
 
-
-
-
-	public static function getSrcParam($img)
+	public static function getSrcParam($img)//?
 	{
 		foreach($img as $i)
 		{
@@ -547,8 +542,6 @@ class JoomlaBasicMisc
 		return $fList;
 	}
 
-
-
 	public static function getListToReplaceAdvanced($begining_tag,$ending_tag,&$options,&$text,$sub_begining_tag='')
 	{
 		$fList=array();
@@ -645,48 +638,24 @@ class JoomlaBasicMisc
 		return $fList;
 	}
 
-	public static function getMenuParam($param, $Itemid,$rawparams='')
+	public static function getMenuParams($Itemid,$rawparams='')
     {
 		if($rawparams=='')
 		{
 			$db = JFactory::getDBO();
-
 			$query = 'SELECT params FROM #__menu WHERE id='.(int)$Itemid.' LIMIT 1';
-
 			$db->setQuery($query);
-
 			$rows= $db->loadObjectList();
 
 			if(count($rows)==0)
 				return '';
 
 			$row=$rows[0];
-
 			$rawparams=$row->params;
-
 		}
-
-
-
-			if(strlen($rawparams)<8)
-				return '';
-
-			$rawparams=substr($rawparams,1,strlen($rawparams)-2);
-
-			$list_of_params=JoomlaBasicMisc::csv_explode(',', $rawparams,'"', true);
-
-			foreach($list_of_params as $pl)
-		    {
-				$pair=JoomlaBasicMisc::csv_explode(':', $pl,'"', false);
-
-				if($pair[0]==$param)
-					return $pair[1];
-			}
-
-		return '';
-
-	}//function getMenuParam($param, $Itemid,$rawparams='')
-
+		
+		return json_decode($rawparams);
+	}
 
 	public static function csv_explode(string $delim, string $str, string $enclose='"', bool $preserve = false)
 	{
@@ -707,7 +676,6 @@ class JoomlaBasicMisc
 		}
 	return $resArr;
 	}
-
 
 	//-- only for "records" field type;
 	public static function processValue($field,&$ct,&$row,$langpostfix)
@@ -788,7 +756,6 @@ class JoomlaBasicMisc
 
 	}//processValue()
 
-
 	public static function getGroupIdByTitle($grouptitle)
 	{
 		$db = JFactory::getDbo();
@@ -848,8 +815,6 @@ class JoomlaBasicMisc
         return $filename;
     }
 
-
-
     public static function strip_tags_content($text, $tags = '', $invert = FALSE)
     {
 		//$tags - list of tags. Example: <b><span>
@@ -890,8 +855,6 @@ Result for strip_tags_content($text, '<b>', TRUE);
 text with <div>tags</div> 
 	 */
     }
-
-
 
 	public static function slugify($text)
 	{
@@ -996,7 +959,6 @@ text with <div>tags</div>
 
 			return $recs[0];
 	}
-	
 	
 	public static function checkUserGroupAccess($thegroup=0)
 	{
