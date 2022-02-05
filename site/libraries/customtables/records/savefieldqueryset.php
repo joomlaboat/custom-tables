@@ -421,14 +421,24 @@ trait SaveFieldQuerySet
 
 			$new_parts[]=$part;
 		}
-
+	
 		$user_groups=$new_parts[0];
 		$user_name=$new_parts[1];
 		$user_email=$new_parts[2];
 	
-		if($user_groups=='' or $user_name=='' or $user_email=='')
+		if($user_groups=='')
 		{
-			Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('User group field, user name and user email fields not set.' ));
+			Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('User group field not set.' ));
+			return false;
+		}
+		elseif($user_name=='')
+		{
+			Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('User name field not set.' ));
+			return false;
+		}
+		elseif($user_email=='')
+		{
+			Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('User email field not set.' ));
 			return false;
 		}
 

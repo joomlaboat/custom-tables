@@ -445,6 +445,7 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all,sub_inde
 		next_sub_index += 1;
 		if(next_sub_index == filters[index].length){
 			// Max sub index reached
+			/*
 			next_sub_index = 0;
 			next_index += 1;
 		
@@ -452,6 +453,8 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all,sub_inde
 				val = filters[next_index][next_sub_index];
 			else
 				val = filters[next_index];
+			*/
+			val = null;
 		}
 		else
 			val = filters[next_index][next_sub_index];
@@ -473,12 +476,25 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all,sub_inde
 	
 	if(r.length == 0){
 		if(Array.isArray(filters[next_index])){
-			document.getElementById(control_name + "Selector" + index + '_' + sub_index).innerHTML = "No items to select.";
-			if(next_index + 1 < filters[next_index])
-				ctUpdateTableJoinLink(control_name,next_index + 1,false,0,parent_object_id);
+			
+			next_sub_index = 0;
+			next_index += 1;
+			
+			if(next_index + 1 < filters.length)
+			{
+				let result = '<div id="' + control_name + 'Selector' + next_index + '_' + next_sub_index + '"></div>';
+				document.getElementById(control_name + "Selector" + index + '_' + sub_index).innerHTML = result;
+				ctUpdateTableJoinLink(control_name,next_index,false,next_sub_index,parent_object_id);
+				return result;
+			}
+			else
+				document.getElementById(control_name + "Selector" + index + '_' + sub_index).innerHTML = "No items to select..";
 		}
 		else
-			document.getElementById(control_name + "Selector" + index).innerHTML = "No items to select.";
+		{
+			document.getElementById(control_name + "Selector" + index + '_' + sub_index).innerHTML = "No items to select";
+			return '';
+		}
 
 		return '';
 	}
@@ -511,7 +527,7 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all,sub_inde
 	//Add content to the element
 	document.getElementById(control_name + "Selector" + index + '_' + sub_index).innerHTML = result;
 		
-	if(execute_all && next_index + 1 < filters.length)
+	if(execute_all && next_index + 1 < filters.length && val != null)
 		ctUpdateTableJoinLink(control_name,next_index,true,next_sub_index,null);
 }
 
@@ -548,7 +564,7 @@ function ctUpdateTableJoinLink(control_name,index,execute_all,sub_index,object_i
 		else
 			url += '&filter=' + obj.value;
 	}
-		
+
 	fetch(url)
 		.then(r => r.json())
 		.then(r => {ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_index,object_id);})

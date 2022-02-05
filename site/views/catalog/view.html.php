@@ -43,8 +43,7 @@ class CustomTablesViewCatalog extends JViewLegacy
 			die(json_encode(['error' => 'Index out of range.']));
 		
 		$selector = $selectors[$index];
-		//print_r($selector);
-			
+
 		$tablename = $selector[0];
 		if($tablename=='')
 			die(json_encode(['error' => 'Table not selected']));
@@ -101,16 +100,11 @@ class CustomTablesViewCatalog extends JViewLegacy
 		if($additional_where != '')
 			$this->ct->Filter->where[] = $additional_where;
 		
-		//echo '$additional_where='.$additional_where.'*<br/>';
-		
 		$orderby = $selector[4] ?? '';
 			
 		//sorting
 		$this->ct->Ordering->ordering_processed_string = $orderby;
 		$this->ct->Ordering->parseOrderByString();
-		
-		//print_r($this->ct->Filter->where);
-		//die;
 		
 		$this->ct->getRecords();
 		
