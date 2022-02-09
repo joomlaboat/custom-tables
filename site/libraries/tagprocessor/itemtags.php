@@ -58,11 +58,10 @@ class tagProcessor_Item
 		
         tagProcessor_Item::processLink($ct_record,$row,$htmlresult); //Twig version added - original replaced
 		tagProcessor_Item::processNoReturnLink($ct_record,$row,$htmlresult); //Twig version added - original replaced
-
 		tagProcessor_Field::process($ct,$htmlresult,$add_label); //Twig version added - original not changed
 
 		if($ct->Env->advancedtagprocessor)
-			tagProcessor_Server::process($ct_url, $htmlresult); //Twig version added - original not changed
+			tagProcessor_Server::process($htmlresult); //Twig version added - original not changed
 
 		tagProcessor_Shopping::getShoppingCartLink($ct,$htmlresult,$row);
 
