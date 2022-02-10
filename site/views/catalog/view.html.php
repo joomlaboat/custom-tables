@@ -122,7 +122,7 @@ class CustomTablesViewCatalog extends JViewLegacy
 			if(count($pair)==2)
 			{
 				$layout_mode=true;
-				if($pair[0]!='layout')
+				if($pair[0]!='layout' and $pair[0]!='tablelesslayout')
 					die(json_encode(['error' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_UNKNOW_FIELD_LAYOUT').' "'.$field.'"']));
 
 				$Layouts = new Layouts($this->ct);
@@ -156,13 +156,14 @@ class CustomTablesViewCatalog extends JViewLegacy
 		
 		$jinput=Factory::getApplication()->input;
 		
+		$this->ct = $this->Model->ct;
+		
 		$addition_filter='';
 		$this->listing_id = $jinput->getCmd('listing_id','');
 		if($this->listing_id != '')
-			$addition_filter='id='.$this->listing_id;
+			$addition_filter = $this->ct->Table->realidfieldname . '=' . $this->listing_id;
 		
 		$this->Model->getSearchResult($addition_filter);
-		$this->ct = $this->Model->ct;
 
 		if(!isset($this->ct->Table->fields))
 			return false;

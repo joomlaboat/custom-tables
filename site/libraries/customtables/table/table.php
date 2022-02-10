@@ -24,32 +24,24 @@ class Table
 {
 	use Logs;
 	use SaveFieldQuerySet;
-	
+
 	var $Languages;
 	var $Env;
-		
 	var $tableid;
 	var $tablerow;
 	var $tablename;
 	var $published_field_found;
-	
 	var $customtablename;
 	var $realtablename;
 	var $realidfieldname;
-		
 	var $tabletitle;
-	
 	var $alias_fieldname;
-	
 	var $useridfieldname;
 	var $useridrealfieldname;
-	
 	var $fields;
 	var $record;
-
 	var $recordcount;
 	var $recordlist;
-	
 	var $db;
 	
 	function __construct(&$Languages, &$Env, $tablename_or_id_not_sanitized, $useridfieldname = null)
