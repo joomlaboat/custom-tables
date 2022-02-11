@@ -694,7 +694,7 @@ function addFieldTag(index_unused,tagstartchar,tagendchar,tag,param_count)
 					}
 				}
 
-				result+='"Action<br/>{search:button}":"{toolbar:edit,publish,refresh,delete}";\r\n';
+				result+='"Action<br/>{{ html.searchbutton }}":"{toolbar:editmodal,publish,refresh,delete}";\r\n';
 				result+='css_class_name\r\n';
 				result+='}\r\n';
 				result+='</div>\r\n';

@@ -56,7 +56,7 @@ $edit = "index.php?option=com_customtables&view=listofrecords&task=records.edit"
 		<?php endif; ?>
 
 		<td class="nowrap center hidden-phone">
-			<?php echo $item->listing_id; ?>s
+			<?php echo $item->listing_id; ?>
 		</td>
 	</tr>
 <?php endforeach; ?>

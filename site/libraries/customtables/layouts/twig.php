@@ -42,6 +42,7 @@ class TwigProcessor
 		$this->twig->addGlobal('html', new Twig_Html_Tags($ct) );
 		$this->twig->addGlobal('document', new Twig_Document_Tags($ct) );
 		$this->twig->addGlobal('record', new Twig_Record_Tags($ct) );
+		$this->twig->addGlobal('text', new Twig_Text_Tags($ct) );
 		
 		$this->variables = [];
 		

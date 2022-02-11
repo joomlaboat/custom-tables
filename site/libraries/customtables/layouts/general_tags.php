@@ -290,3 +290,11 @@ class Twig_Document_Tags
 		return $layout;
 	}
 }
+
+class Twig_Text_Tags
+{
+	function base64encode($str)
+	{
+		return base64_encode($str);
+	}
+}

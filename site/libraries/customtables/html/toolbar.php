@@ -134,8 +134,8 @@ class RecordToolbar
 		$editlink = $this->ct->Env->WebsiteRoot.'index.php?option=com_customtables&amp;view=edititem'
 					.'&amp;listing_id='.$this->listing_id;
 					
-		if(!$isModal)
-			$editlink .= '&amp;returnto='.$this->ct->Env->encoded_current_url;
+		//if(!$isModal)
+		$editlink .= '&amp;returnto='.$this->ct->Env->encoded_current_url;
 
 		if($this->jinput->get('tmpl','','CMD')!='')
 			$editlink.='&tmpl='.$this->jinput->get('tmpl','','CMD');
