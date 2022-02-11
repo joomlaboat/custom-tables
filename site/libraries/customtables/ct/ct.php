@@ -125,15 +125,15 @@ class CT
 		$query='SELECT '.implode(',',$selects).' FROM '.$this->Table->realtablename.' ';
 		
 		if($this->Ordering->inner!=null)
-			$query.=' '.implode(' ',$this->Ordering->inner).' ';
+			$query.=' '.$this->Ordering->inner;
 			
 		$query.=$where;
 		
-		$query.=' GROUP BY '.$this->Table->tablerow['realidfieldname'];
+		$query.=' GROUP BY '.$this->Table->realtablename . '.' . $this->Table->tablerow['realidfieldname'];
 	
 		if(count($ordering)>0)
 			$query.=' ORDER BY '.implode(',',$ordering);
-		
+
 		return $query;
 	}
 	
@@ -145,7 +145,6 @@ class CT
 		$where = str_replace('\\','',$where); //Just to make sure that there is nothing weird in the query
 		
 		$this->getNumberOfRecords($where);
-		
 		$query = $this->buildQuery($where);
 
 		if($this->Table->recordcount > 0)
