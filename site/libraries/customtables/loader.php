@@ -116,6 +116,7 @@ function CTLoader($inclide_utilities = false, $include_html = false)
 	//require_once($path_datatypes.'Logs.php');
 	
 	
-	
+	require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'
+		.DIRECTORY_SEPARATOR.'customtables'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.'edit.php');	
 
 }

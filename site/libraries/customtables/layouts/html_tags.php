@@ -717,7 +717,7 @@ class Twig_Html_Tags
 
 			case 'saveascopy':
 				
-				if($this->ct->Table->record['listing_id'] == 0)
+				if(!isset($this->ct->Table->record['listing_id']) or $this->ct->Table->record['listing_id'] == 0)
 					$vlu = '';
 				else
 					$vlu = $this->renderSaveAsCopyButton($optional_class,$title,$redirectlink);
@@ -730,7 +730,7 @@ class Twig_Html_Tags
 			case 'close':
 				$vlu = $this->renderCancelButton($optional_class,$title,$redirectlink);
 				break;
-                                    
+
 			case 'delete':
 				$vlu = $this->renderDeleteButton($captcha_found,$optional_class,$title,$redirectlink);
 				break;
@@ -796,7 +796,6 @@ class Twig_Html_Tags
 			$the_class=$optional_class;
 		else
 			$the_class='ctEditFormButton btn button-apply btn-success';
-
         
         return '<input id="customtables_button_saveandclose" type="submit" '.$attribute.' class="'.$the_class.' validate" value="'.$title.'" />';
     }

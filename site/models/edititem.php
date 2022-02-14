@@ -92,8 +92,6 @@ class CustomTablesModelEditItem extends JModelLegacy
 		
 		$this->ct->Env->menu_params = $this->params;
 
-		$this->ct->Env->menu_params = $this->params;
-		
 		$jinput=JFactory::getApplication()->input;
 
 		if($this->getParam_safe( 'customitemid' )!='')
