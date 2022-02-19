@@ -161,13 +161,20 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 		$this->findUserIDField();
 
-		if($this->getParam_safe('eseditlayout')!='')
+		if($this->ct->Env->jinput->getInt('moduleid'))
 		{
-			$Layouts = new Layouts($this->ct);
-			$this->pagelayout = $Layouts->getLayout($this->getParam_safe('eseditlayout'));
+			
 		}
 		else
-			$this->pagelayout='';
+		{
+			if($this->getParam_safe('eseditlayout')!='')
+			{
+				$Layouts = new Layouts($this->ct);
+				$this->pagelayout = $Layouts->getLayout($this->getParam_safe('eseditlayout'));
+			}
+			else
+				$this->pagelayout='';
+		}
 
 		$this->layout_catalog='';
 		$this->layout_details='';
@@ -261,9 +268,6 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 		//TODO
 		Factory::getApplication()->enqueueMessage('Filtering not done.','error');
-		//$this->ct->setFilter('', $this->ct->Env->menu_params->get('showpublished'));
-
-		//$this->filtering = new ESFiltering($this->ct);
 
 		$PathValue=array();
 		$paramwhere=$filtering->getWhereExpression($filter,$PathValue);
@@ -351,34 +355,30 @@ class CustomTablesModelEditItem extends JModelLegacy
 		$versions=explode(';',$row[$log_field]);
 		if($version<=count($versions))
 		{
-					$data_editor=explode(',',$versions[$version-2]);
-					$data_content=explode(',',$versions[$version-1]);
+			$data_editor=explode(',',$versions[$version-2]);
+			$data_content=explode(',',$versions[$version-1]);
 
-					if($data_content[3]!='')
-					{
-                        //record versions stored in database table text field as base64 encoded json object
-						$obj=json_decode(base64_decode($data_content[3]),true);
-						$new_row=$obj[0];
+			if($data_content[3]!='')
+			{
+				//record versions stored in database table text field as base64 encoded json object
+				$obj=json_decode(base64_decode($data_content[3]),true);
+				$new_row=$obj[0];
 						
-						if($this->ct->Table->published_field_found)
-							$new_row['published']=$row['published'];
+				if($this->ct->Table->published_field_found)
+					$new_row['published']=$row['published'];
 							
-						$new_row[$this->ct->Table->realidfieldname]=$row[$this->ct->Table->realidfieldname];
-						$new_row['listing_id']=$row['listing_id'];
-						$new_row[$log_field]=$row[$log_field];
+				$new_row[$this->ct->Table->realidfieldname]=$row[$this->ct->Table->realidfieldname];
+				$new_row['listing_id']=$row['listing_id'];
+				$new_row[$log_field]=$row[$log_field];
 
-
-						if($creation_time_field)
-						{
-							$timestamp = date('Y-m-d H:i:s', (int)$data_editor[0]);
-							$new_row[$creation_time_field]=$timestamp ;
-						}
-
-
-						return $new_row;
-					}
+				if($creation_time_field)
+				{
+					$timestamp = date('Y-m-d H:i:s', (int)$data_editor[0]);
+					$new_row[$creation_time_field]=$timestamp ;
+				}
+				return $new_row;
+			}
 		}
-
 		return array();
 	}
 
@@ -406,15 +406,12 @@ class CustomTablesModelEditItem extends JModelLegacy
 			return false;
 		}
 
-
 		//check is authorized or not
 		$user = JFactory::getUser();
 		$this->userid = (int)$user->get('id');
 
-
 		$this->edit_userGroup=(int)$this->params->get( 'editusergroups' );
 		$this->publish_userGroup=(int)$this->params->get( 'publishusergroups' );
-
 
 		if($this->publish_userGroup==0)
 			$this->publish_userGroup=$this->edit_userGroup;
@@ -426,7 +423,6 @@ class CustomTablesModelEditItem extends JModelLegacy
 		$this->add_userGroup=(int)$this->params->get( 'addusergroups' );
 		if($this->add_userGroup==0)
 			$this->add_userGroup=$this->add_userGroup;
-
 
 		if($action==1)
 			$this->userGroup = $this->edit_userGroup;
@@ -443,18 +439,15 @@ class CustomTablesModelEditItem extends JModelLegacy
 		{
 			$this->isAutorized=false;
 			$this->isUserAdministrator=false;
-
 			return false;
 		}
 
 		if($this->ct->Env->isUserAdministrator)
 		{
 			//Administrator has access to anything
-
 			$this->isAutorized=true;
 			return true;
 		}
-
 
 		if($this->listing_id==0 or $this->useridfield=='')
 		{
@@ -506,7 +499,6 @@ class CustomTablesModelEditItem extends JModelLegacy
 				}
 			}
 		}
-		
 		return false;
 	}
 
@@ -719,7 +711,6 @@ class CustomTablesModelEditItem extends JModelLegacy
 	{
 		//came from Category Block
 		return strip_tags($vlu);
-
 	}
 
 	function getCustomTablesBranch($optionname,$startfrom, $langpostfix, $defaultvalue)
@@ -766,8 +757,6 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 						),0);
 
-
-
 		if($startfrom==0)
 		JoomlaBasicMisc::array_insert($available_categories,
 								array(	"id" => 0,
@@ -812,10 +801,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 		{
 			return false;
 		}
-
-
 		return true;
-
 	}
 
 	function copy(&$msg,&$link)
@@ -829,9 +815,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 		$db->setQuery( $query );
 		$rows=$db->loadObjectList();
 		if(count($rows)==0)
-		{
 			$msg='Table not found or something wrong.';
-		}
 
 		$new_id=(int)($rows[0]->maxid)+1;
 

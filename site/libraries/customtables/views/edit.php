@@ -14,9 +14,10 @@ defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\TwigProcessor;
 
-require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tagprocessor'.DIRECTORY_SEPARATOR.'edittags.php');
+require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR
+	.'tagprocessor'.DIRECTORY_SEPARATOR.'edittags.php');
 
-function CTViewEdit(&$ct, $row, &$pagelayout, $BlockExternalVars,$formLink,$formName,$formClass,$formAttribute)
+function CTViewEdit(&$ct, $row, &$pagelayout, $BlockExternalVars,$formLink,$formName)
 {
 	jimport('joomla.html.html.bootstrap');
 
@@ -33,9 +34,7 @@ function CTViewEdit(&$ct, $row, &$pagelayout, $BlockExternalVars,$formLink,$form
 	else
 		$listing_id=0;
 
-	$formAttribute .= ' data-tableid="'.$ct->Table->tableid.'" data-recordid="'.$listing_id.'"';
-
-	echo '<form action="'.$formLink.'" method="post" name="'.$formName.'" id="'.$formName.'" class="'.$formClass.'" '.$formAttribute.'>';
+	echo '<form action="'.$formLink.'" method="post" name="'.$formName.'" id="'.$formName.'" class="form-validate form-horizontal well" data-tableid="'.$ct->Table->tableid.'" data-recordid="'.$listing_id.'">';
 
 	echo ($ct->Env->version < 4 ? '<fieldset>' : '<fieldset class="options-form">');
 
