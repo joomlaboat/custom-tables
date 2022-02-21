@@ -786,3 +786,55 @@ function ctInputbox_UpdateSQLJoinLink_do(control_name, control_name_postfix)
 		}
 	}
 }
+
+// ------------------------ Google Map coordinates
+
+let gmapdata = [];
+let gmapmarker = [];
+
+function ctInputbox_googlemapcoordinates(inputbox_id)
+{
+	let val = document.getElementById(inputbox_id).value;
+	let val_list = val.split(",");
+	let def_longval = (val_list[0] != '' ? parseFloat(val_list[0]) : 120.994260);
+	let def_latval = (val_list.length > 1 && val_list[1] != '' ? parseFloat(val_list[1]) : 14.593999);
+	let def_zoomval = (val_list.length > 2 && val_list[2] != '' ? parseFloat(val_list[2]) : 10);
+	if(def_zoomval == 0)
+		def_zoomval = 10;
+	
+	let curpoint = new google.maps.LatLng(def_latval,def_longval);
+
+	let map_obj = document.getElementById(inputbox_id + "_map");
+	
+	if(map_obj.style.display == "block"){
+		map_obj.style.display = "none";
+		map_obj.innerHTML = "";
+		return false;
+	}
+
+	gmapdata[inputbox_id] = new google.maps.Map(map_obj, {
+		center: curpoint,
+		zoom: def_zoomval,
+		mapTypeId: 'roadmap'
+		});
+
+	gmapmarker[inputbox_id] = new google.maps.Marker({
+					map: gmapdata[inputbox_id],
+					position: curpoint
+				});
+
+	infoWindow = new google.maps.InfoWindow;
+	
+	google.maps.event.addListener(gmapdata[inputbox_id], 'click', function(event) {
+		document.getElementById(inputbox_id).value = event.latLng.lng().toFixed(6) + "," + event.latLng.lat().toFixed(6);
+		gmapmarker[inputbox_id].setPosition(event.latLng);
+	});
+
+	google.maps.event.addListener(gmapmarker[inputbox_id], 'click', function() {
+		infoWindow.open(gmapdata[inputbox_id], gmapmarker[inputbox_id]);
+	});
+	
+	map_obj.style.display = "block";
+
+	return false;
+}

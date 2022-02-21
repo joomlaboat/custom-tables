@@ -304,6 +304,8 @@ class CT
 		$document->addScript(URI::root(true).'/components/com_customtables/libraries/customtables/media/js/esmulti.js');
 		$document->addCustomTag('<script src="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/js/modal.js" type="text/javascript"></script>');
 		$document->addCustomTag('<script src="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/js/uploader.js"></script>');
+		$document->addCustomTag('<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>');
+	
 		$document->addScript(URI::root(true).'/components/com_customtables/libraries/customtables/media/js/combotree.js');
 
 		//Styles
