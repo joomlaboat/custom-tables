@@ -190,18 +190,8 @@ class JHTMLCTTableJoin
 	{
 		$type_params = JoomlaBasicMisc::csv_explode(',',$field['typeparams'],'"',false);
 
-		//Param version
-		//2.5.9 version
-		//[table_name,field_name,filter,DYNAMIC_FILTER,order_by,allow_unpublished,SELECTOR,ADD_FORIGN_KEY]
-		//2.6.2 version
-		//[table_name,field_name,allow_unpublished,filter,order_by,ADD_FORIGN_KEY]
 		if(count($type_params) > 6 or (isset($type_params[7]) and ($type_params[7] == 'addforignkey' or $type_params[7] == 'noforignkey')))
 		{
-			//2.5.9 version
-			//table_name,field_name,filter,DYNAMIC_FILTER,order_by,allow_unpublished
-			//to
-			//table_name,field_name,allow_unpublished,filter,order_by
-			
 			//Dynamic filter, 
 			if($type_params[3] != null and $type_params[3] != '')
 			{
@@ -234,10 +224,6 @@ class JHTMLCTTableJoin
 		}
 		else
 		{
-			//>=2.6.2 version
-			//table_name,field_name,allow_unpublished,filter,order_by
-			//to
-			//table_name,field_name,allow_unpublished,filter,order_by,fieldname_for_parent_table_value
 			$filter[] = [$type_params[0],$type_params[1],$type_params[2],$type_params[3],$type_params[4],$parent_filter_field_name];
 		}		
 	}

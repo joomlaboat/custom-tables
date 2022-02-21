@@ -334,11 +334,13 @@ class JHTMLESRecords
 			{
 				$elements[]=$v;
 				$elementsID[]=$row['listing_id'];
+				//echo '*'.$row[$model->ct->Env->field_prefix.$dynamic_filter].'*';
 				$elementsFilter[]=$row[$model->ct->Env->field_prefix.$dynamic_filter];
 				$elementsPublished[]=(int)$row['listing_published'];
 			}
 			$htmlresult_options.='</option>';
 		}
+		//echo '		<br/>';
 
 		if($value!='' and $value!=',' and $value!=',,' and !$valuefound)
 		{
@@ -385,7 +387,7 @@ class JHTMLESRecords
 			$htmlresultjs.='
 			<div id="'.$control_name.'_elements" style="display:none;">'.json_encode($elements).'</div>
 			<div id="'.$control_name.'_elementsID" style="display:none;">'.implode(',',$elementsID).'</div>
-			<div id="'.$control_name.'_elementsFilter" style="display:none;">'.implode(',',$elementsFilter).'</div>
+			<div id="'.$control_name.'_elementsFilter" style="display:none;">'.implode(';',$elementsFilter).'</div>
 			<div id="'.$control_name.'_elementsPublished" style="display:none;">'.implode(',',$elementsPublished).'</div>
 			';
 			$htmlresult=$htmlresultjs.$htmlresult;

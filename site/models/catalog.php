@@ -24,19 +24,15 @@ require_once($sitelib.'layout.php');
 class CustomTablesModelCatalog extends JModelLegacy
 {
 	var $ct;
-
 	var $params;
 	var $blockExternalVars;
-
 	var $layout; //very strange parameter
-
 	var $showcartitemsonly;
 	var $showcartitemsprefix;
 
 	function __construct()
 	{
 		parent::__construct();
-	
 		$this->ct = new CT;
 		$this->showcartitemsprefix='customtables_';
 	}
@@ -61,7 +57,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 		{
 			$app		= JFactory::getApplication();
 			$this->params=$app->getParams();
-		}//if($this->blockExternalVars)
+		}
 		
 		$this->ct->Env->menu_params = $this->params;
 				
@@ -94,7 +90,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 			JFactory::getApplication()->enqueueMessage('Table not selected (185).', 'error');
 			return false;
 		}
-					
+
 		$this->ct->setFilter('', $this->ct->Env->menu_params->get('showpublished'));
 
 		//sorting
@@ -104,7 +100,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 		$this->ct->applyLimits();
 		
 		$this->ct->LayoutProc = new LayoutProcessor($this->ct);
-				
+
 		//---------- Filtering
 		$this->ct->Filter->addMenuParamFilter();
 		if(!$this->blockExternalVars)
@@ -153,7 +149,6 @@ class CustomTablesModelCatalog extends JModelLegacy
 		if($this->layout=='currentuser' or $this->layout=='customcurrentuser')
 		{
 			//Not sure where this layout used
-			
 			if($this->ct->Table->useridfieldname!='')
 				$this->ct->Filter->where[] = $this->ct->Table->useridrealfieldname.'='.(int)$this->ct->Env->user->get('id');
 		}
@@ -179,7 +174,6 @@ class CustomTablesModelCatalog extends JModelLegacy
 						$pair=explode(',',$item);
 						$warr[]=$this->ct->Table->realtablename.'.'.$this->ct->Table->tablerow['realidfieldname'].'='.(int)$pair[0];//id must be a number
 					}
-					
 					$this->ct->Filter->where[] = '('.implode(' OR ', $warr).')';
 				}
 			}
@@ -189,20 +183,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 				$this->ct->Filter->where[]=$this->ct->Table->realtablename.'.'.$this->ct->Table->tablerow['realidfieldname'].'=0';
 			}
 		}
-
-		//to execute the "Clear" task - this is very dangerouse task - find another way to do it 
-		/*
-		if($this->ct->Env->jinput->get('task','','CMD')=='clear')
-		{
-			$cQuery='DELETE FROM '.$this->ct->Table->realtablename.' '.$where;
-			$db->setQuery($cQuery);
-			$db->execute();
-			return true;
-		}
-		*/
-
 		$this->ct->getRecords();
-		
 		return true;
 	}
 
@@ -341,7 +322,6 @@ class CustomTablesModelCatalog extends JModelLegacy
 			return false;
 
 		$objectid=$this->ct->Env->jinput->get('listing_id',0,'INT');
-
 		$cookieValue = $this->ct->Env->jinput->cookie->getVar($this->showcartitemsprefix.$this->ct->Table->tablename);
 
 		if (isset($cookieValue))
@@ -364,7 +344,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 						$found=true;
 					}
 				}
-			}//for
+			}
 
 			if(!$found)
 				$items[]=$objectid.',1'; // add new item

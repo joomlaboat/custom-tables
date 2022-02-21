@@ -708,7 +708,7 @@ function ctInputbox_removeEmptyParents(control_name,control_name_postfix)
 {
 	//Old calls replaced
 	let selectobj = document.getElementById(control_name + 'SQLJoinLink');
-	let elementsFilter = document.getElementById(control_name + control_name_postfix + '_elementsFilter').innerHTML.split(",");
+	let elementsFilter = document.getElementById(control_name + control_name_postfix + '_elementsFilter').innerHTML.split(";");
 	
 	for(let o=selectobj.options.length-1;o>=0;o--){
 		c=0;
@@ -717,13 +717,11 @@ function ctInputbox_removeEmptyParents(control_name,control_name_postfix)
 		for (let i = 0; i < control_name + elementsFilter.length; i++){
 			let f=elementsFilter[i];
 			if(typeof f!="undefined"){
-				if(f==v)
+				
+				let f_list = f.split(",");
+				
+				if(f_list.indexOf(v)!=-1)
 					c++;
-				else
-				{
-					if(f.indexOf(","+v+",")!=-1)
-						c++;
-				}
 			}
 		}
 	}
@@ -747,7 +745,7 @@ function ctInputbox_UpdateSQLJoinLink_do(control_name, control_name_postfix)
 		if(o.selectedIndex==-1)
 			return;
 		
-		v=o.options[o.selectedIndex].value;
+		v = o.options[o.selectedIndex].value;
 	}
 
 	let selectedValue=ctInputboxRecords_current_value[control_name];
@@ -762,15 +760,18 @@ function ctInputbox_UpdateSQLJoinLink_do(control_name, control_name_postfix)
 
 	let elements = JSON.parse(document.getElementById(control_name + control_name_postfix + '_elements').innerHTML);
 	let elementsID = document.getElementById(control_name + control_name_postfix + '_elementsID').innerHTML.split(",");
-	let elementsFilter = document.getElementById(control_name + control_name_postfix + '_elementsFilter').innerHTML.split(",");
+	let elementsFilter = document.getElementById(control_name + control_name_postfix + '_elementsFilter').innerHTML.split(";");
 	let elementsPublished = document.getElementById(control_name + control_name_postfix + '_elementsPublished').innerHTML.split(",");
 	
 	for (let i = 0; i<= elements.length; i++){
 		let f=elementsFilter[i];
 		if(typeof f!="undefined" && elements[i]!=""){
+			
 			let eid=elementsID[i];
 			let published=elementsPublished[i];
-			if(f==v){
+			let f_list = f.split(",");
+
+			if(f_list.indexOf(v)!=-1){
 				let opt = document.createElement("option");
 				opt.value = eid;
 				if(eid==selectedValue)
@@ -781,19 +782,6 @@ function ctInputbox_UpdateSQLJoinLink_do(control_name, control_name_postfix)
 
 				opt.innerHTML = elements[i];
 				l.appendChild(opt);
-			}else{
-				if(f.indexOf(","+v+",")!=-1){
-					let opt = document.createElement("option");
-					opt.value = eid;
-					if(eid==selectedValue)
-						opt.selected = true;
-
-					if(published==0)
-						opt.style.cssText="color:red;";
-
-					opt.innerHTML = elements[i];
-					l.appendChild(opt);
-				}
 			}
 		}
 	}

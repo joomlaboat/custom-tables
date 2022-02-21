@@ -9,6 +9,8 @@
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die( 'Restricted access' );
 
+use \Joomla\CMS\Version;
+
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'models'.DIRECTORY_SEPARATOR.'catalog.php');
 
 class JHTMLGoogleMapCoordinates
@@ -41,10 +43,24 @@ class JHTMLGoogleMapCoordinates
 		
 		//TODO Use some Plugin instead
 		$link = 'index.php?option=com_customtables&view=phocamapsgmap&tmpl=component&esobjectname='.$control_name. $suffix;
-		
-		// Load the modal behavior script.
-		JHtml::_('behavior.modal', 'a.modal_'.$control_name);
 
+		$version_object = new Version;
+		$version = (int)$version_object->getShortVersion();
+
+		if($version < 4)
+		{
+			// Load the modal behavior script.
+			JHtml::_('behavior.modal', 'a.modal_'.$control_name);
+		}
+
+		$html[] = '<div><input type="text" class="form-control  form-control" id="'.$control_name.'" name="'.$control_name.'" value="'. $value.'" />';
+		//$html[] = '<button class="btn btn-success form-control-success" style="padding:unset !important;padding-left:5px;padding-right:5px;margin-left:-5px;
+		//border-top-left-radius:0px;border-bottom-left-radius:0px;height:30px;maring-top:-1px;">&nbsp;...&nbsp;</button></div>';
+		$html[] = '<button class="btn btn-primary">&nbsp;...&nbsp;</button></div>';
+		
+		$html[] = '<div id="'.$control_name.'_mapitems" style="max-width: 480px; max-height: 540px"></div>';
+
+/*
 		$html[] = '<div><table style="border:none;"><tr>';
 		$html[] = '<td><input type="text" id="'.$control_name.'" name="'.$control_name.'" value="'. $value.'"' .
 					' /></td>';
@@ -61,6 +77,7 @@ class JHTMLGoogleMapCoordinates
 		$html[] = '  </div>';
 		$html[] = '</div></td>';
 		$html[] = '</tr></table></div>';
+		*/
 
 		return implode("\n", $html);
 	}
