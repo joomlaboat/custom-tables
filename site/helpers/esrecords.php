@@ -14,6 +14,8 @@ use CustomTables\Fields;
 use CustomTables\Layouts;
 use CustomTables\LinkJoinFilters;
 
+use \Joomla\CMS\Uri\Uri;
+
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'models'.DIRECTORY_SEPARATOR.'catalog.php');
 
 class JHTMLESRecords
@@ -334,13 +336,11 @@ class JHTMLESRecords
 			{
 				$elements[]=$v;
 				$elementsID[]=$row['listing_id'];
-				//echo '*'.$row[$model->ct->Env->field_prefix.$dynamic_filter].'*';
 				$elementsFilter[]=$row[$model->ct->Env->field_prefix.$dynamic_filter];
 				$elementsPublished[]=(int)$row['listing_published'];
 			}
 			$htmlresult_options.='</option>';
 		}
-		//echo '		<br/>';
 
 		if($value!='' and $value!=',' and $value!=',,' and !$valuefound)
 		{
@@ -406,7 +406,7 @@ class JHTMLESRecords
 		else
 			$real_field=$real_field_row->realfieldname;
 
-		$deleteimage='components/com_customtables/libraries/customtables/media/images/icons/cancel.png';
+		$deleteimage=URI::root(true).'/components/com_customtables/libraries/customtables/media/images/icons/cancel.png';
 		
 		$ctInputboxRecords_r = [];
 		$ctInputboxRecords_v = [];

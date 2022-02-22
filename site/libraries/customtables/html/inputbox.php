@@ -503,7 +503,7 @@ class Inputbox
 		{
 			$imagesrclist_arr=explode(';',$imagesrclist);
 
-			$htmlout.='<div style="width:100%;overflow:scroll;border:1px dotted grey;background-image: url(\'components/com_customtables/libraries/customtables/media/images/icons/bg.png\');">
+			$htmlout.='<div style="width:100%;overflow:scroll;border:1px dotted grey;background-image: url(\''.URI::root(true).'/components/com_customtables/libraries/customtables/media/images/icons/bg.png\');">
 
 		<table cellpadding="3"><tbody><tr>';
 
