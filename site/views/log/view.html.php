@@ -99,7 +99,7 @@ class CustomTablesViewLog extends JViewLegacy
 
 		$result='';
 		$result.='<select onchange="TableFilterChanged(this)">';
-		$result.='<option value="0" '.($userid==0 ? 'selected="SELECTED"' : '').'>- '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT' ).'</option>';
+		$result.='<option value="0" '.($tableid==0 ? 'selected="SELECTED"' : '').'>- '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT' ).'</option>';
 
 		foreach($rows as $row)
 		{
