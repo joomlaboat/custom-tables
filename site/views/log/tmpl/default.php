@@ -20,21 +20,23 @@ else
 
 echo '
 <script>
-function ActionFilterChanged(o)
-{
-	var action=o.value;
-	location.href="'.$cleanurl.'user='.$this->userid.'&action="+action;
+function ActionFilterChanged(o){
+	location.href="'.$cleanurl.'user='.$this->userid.'&table='.$this->tableid.'&action="+o.value;
 }
 
-function UserFilterChanged(o)
-{
-	location.href="'.$cleanurl.'action='.$this->action.'&user="+o.value;
+function UserFilterChanged(o){
+	location.href="'.$cleanurl.'action='.$this->action.'&table='.$this->tableid.'&user="+o.value;
+}
+
+function TableFilterChanged(o){
+	location.href="'.$cleanurl.'action='.$this->action.'&user='.$this->userid.'&table="+o.value;
 }
 </script>';
 
 
 echo $this->actionSelector;
 echo $this->userSelector;
+echo $this->tableSelector;
 
 echo '<div class="datagrid">'
 		.'<table>'

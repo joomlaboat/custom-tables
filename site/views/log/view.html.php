@@ -26,16 +26,20 @@ class CustomTablesViewLog extends JViewLegacy
 		if($this->action=='')
 			$this->action=-1;
 
-		$this->userid=JFactory::getApplication()->input->get('user',0,'INT');
+		$this->userid=JFactory::getApplication()->input->getInt('user',0);
+		
+		$this->tableid=JFactory::getApplication()->input->getInt('table',0);
 
 		//Is user super Admin?
 		$this->isUserAdministrator=JoomlaBasicMisc::isUserAdmin($this->userid);
 
-		$this->records=$this->getRecords($this->action,$this->userid);
+		$this->records=$this->getRecords($this->action,$this->userid,$this->tableid);
 
 		$this->actionSelector=$this->ActionFilter($this->action);
 
 		$this->userSelector=$this->getUsers($this->userid);
+		
+		$this->tableSelector=$this->gettables($this->tableid);
 
 		parent::display($tpl);
 
@@ -82,8 +86,32 @@ class CustomTablesViewLog extends JViewLegacy
 
 		return $result;
 	}
+	
+	function getTables($tableid)
+	{
+		$db = JFactory::getDBO();
 
-	function getRecords($action,$userid)
+		$query='SELECT id,tablename FROM #__customtables_tables ORDER BY tablename';
+
+		$db->setQuery($query);
+
+		$rows=$db->loadAssocList();
+
+		$result='';
+		$result.='<select onchange="TableFilterChanged(this)">';
+		$result.='<option value="0" '.($userid==0 ? 'selected="SELECTED"' : '').'>- '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT' ).'</option>';
+
+		foreach($rows as $row)
+		{
+			$result.='<option value="'.$row['id'].'" '.($tableid==$row['id'] ? 'selected="SELECTED"' : '').'>'.$row['tablename'].'</option>';
+		}
+
+		$result.='</select>';
+
+		return $result;
+	}
+
+	function getRecords($action,$userid,$tableid)
 	{
 		$mainframe = JFactory::getApplication('site');
 		$this->limit = $mainframe->getUserStateFromRequest('global.list.limit', 'limit', $mainframe->getCfg('list_limit'), 'int');
@@ -109,6 +137,9 @@ class CustomTablesViewLog extends JViewLegacy
 
 		if($userid!=0)
 			$where[]='userid='.$userid;
+		
+		if($tableid!=0)
+			$where[]='tableid='.$tableid;
 
 
 		$query='SELECT '.implode(',',$selects).' FROM #__customtables_log '.(count($where)>0 ? ' WHERE '.implode(' AND ',$where) : '').' ORDER BY datetime DESC';
