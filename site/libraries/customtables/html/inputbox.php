@@ -128,6 +128,9 @@ class Inputbox
 
 				return CT_FieldTypeTag_image::renderImageFieldBox($this->ct, $this->prefix,$this->esfield,
 					$row,$this->esfield['realfieldname'],$this->cssclass,$this->attributes);
+			
+			case 'signature':
+				return $this->render_signature($type_params);
 
 			case 'file':
 				$file_type_file=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fieldtypes'.DIRECTORY_SEPARATOR.'_type_file.php';
@@ -712,7 +715,7 @@ class Inputbox
 			$value=$this->esfield['defaultvalue'];
 		else
 			$value=(int)$value;
-
+	
 		$time_attributes = ($this->attributes!='' ? ' ' : '')
 			.'data-valuerule="'.str_replace('"','&quot;',$this->esfield['valuerule']).'" '
 			.'data-valuerulecaption="'.str_replace('"','&quot;',$this->esfield['valuerulecaption']).'" ';
@@ -742,6 +745,24 @@ class Inputbox
 
 		$result.=JHTML::calendar($value, $this->prefix.$this->esfield['fieldname'], $this->prefix.$this->esfield['fieldname'],
 			'%Y-%m-%d',$attributes_);
+		
+		return $result;
+	}
+	
+	protected function render_signature(&$type_params)
+	{
+		$result = '';
+
+		$result.='<canvas '
+			.'name="'.$this->prefix.$this->esfield['fieldname'].'" '
+			.'id="'.$this->prefix.$this->esfield['fieldname'].'" '
+			.'class="'.$this->cssclass.'" '
+			.'data-sanitizers="trim" '
+			.'data-label="'.$this->esfield['fieldtitle'.$this->ct->Languages->Postfix].'" '
+			.'data-valuerule="'.str_replace('"','&quot;',$this->esfield['valuerule']).'" '
+			.'data-valuerulecaption="'.str_replace('"','&quot;',$this->esfield['valuerulecaption']).'" '
+			.$this->attributes
+			.' >AAAAAAAAA</canvas>999';
 		
 		return $result;
 	}

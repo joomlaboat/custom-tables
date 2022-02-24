@@ -139,11 +139,13 @@
                         <option value="imagegallery">COM_CUSTOMTABLES_FIELDS_IMAGE_GALLERY</option>
 
                         <option value="file">COM_CUSTOMTABLES_FIELDS_FILE</option>
-						<option value="filebox">COM_CUSTOMTABLES_FIELDS_FILE_BOX</option>
+			<option value="filebox">COM_CUSTOMTABLES_FIELDS_FILE_BOX</option>
                         <option value="filelink">COM_CUSTOMTABLES_FIELDS_FILE_LINK</option>
 
+			<option value="signature">COM_CUSTOMTABLES_FIELDS_SIGNATURE</option>
 
-						<option value="" disabled="disabled">_____ Table Joins _____</option>
+
+			<option value="" disabled="disabled">_____ Table Joins _____</option>
                         <option value="sqljoin">COM_CUSTOMTABLES_FIELDS_SQL_JOIN</option>
                         <option value="records">COM_CUSTOMTABLES_FIELDS_MULTI_SQL_JOIN</option>
 						<option value="customtables">COM_CUSTOMTABLES_FIELDS_EXTRA_SEARCH</option>

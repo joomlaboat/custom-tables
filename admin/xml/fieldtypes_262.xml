@@ -75,25 +75,23 @@
 
 </type>
 
-	<type ct_name="signature" name="signature" label="Signature" description="A signature pad that allows users to draw smooth signatures on canvas element and export the signatures to PNG/JPG/SVG/WebP images." ct_alias="signature" disabled="false" ct_special="false" priority="2" >
-		<editparams name="size" label="Size" description="Width and height.">
+	<type ct_name="signature" name="signature" label="Signature" description="A signature pad that allows users to draw smooth signatures on canvas element and export the signatures to PNG/JPG/SVG/WebP images." ct_alias="signature" disabled="false" ct_special="false" priority="1" >
 		<params>
-			<param name="width" label="Width" description="Width in pixels" default="" type="text" options="" />
-			<param name="height" label="Height" description="Height in pixels" default="" type="text" options="" />
+			<param name="folder" label="Folder" example="/images/signature_files" description="Folder where all the signature image files will be saved. By default /images" default="" type="folder" />
+			<param name="format" label="Image Format" description="" hidden="false" default="" type="list">
+				<option value="jpg" label="Show as JPG image" />
+				<option value="png" label="Show as PNG image" />					
+				<option value="svg" label="Show as SVG image" />
+				<option value="webp" label="Show as WEBP image" />
+			</param>
 		</params>
-		</editparams>
 
-		<valueparams name="color" label="Color Output Parameters" description="Fromat color code.">
+		<editparams name="size" label="Size" description="Width and height.">
 			<params>
-				<param name="pathortag" label="Image tag or Link" description="Show as HTML IMG tag or a link to the image." default="" type="radio" options="|Image Tag,link|Link" />
-				<param name="format" label="Image Format" description="" hidden="false" default="" type="list">
-					<option value="jpg" label="Show as JPG image" />
-					<option value="png" label="Show as PNG image" />					
-					<option value="svg" label="Show as SVG image" />
-					<option value="webp" label="Show as WEBP image" />
-				</param>
+				<param name="width" label="Width" description="Width in pixels" default="" type="text" options="" />
+				<param name="height" label="Height" description="Height in pixels" default="" type="text" options="" />
 			</params>
-                </valueparams>
+		</editparams>
 	</type>
 
 	<type ct_name="text" name="text" label="Text Area (Multilple Lines)" description="Provides a textarea box for data entry." ct_alias="text" disabled="false" ct_special="false" priority="1">

@@ -34,6 +34,7 @@ class DataTypes
 				'time' => 'COM_CUSTOMTABLES_FIELDS_TIME',
 				'image' => 'COM_CUSTOMTABLES_FIELDS_IMAGE',
 				'imagegallery' => 'COM_CUSTOMTABLES_FIELDS_IMAGE_GALLERY',
+				'signature' => 'COM_CUSTOMTABLES_FIELDS_SIGNATURE',
 				'filebox' => 'COM_CUSTOMTABLES_FIELDS_FILE_BOX',
 				'file' => 'COM_CUSTOMTABLES_FIELDS_FILE',
 				'filelink' => 'COM_CUSTOMTABLES_FIELDS_FILE_LINK',

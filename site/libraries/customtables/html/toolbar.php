@@ -229,7 +229,10 @@ class RecordToolbar
 	
 	protected function renderResetPasswordIcon()
 	{
-		$realuserid=$this->row[$this->Table->useridrealfieldname];
+		if(isset($this->row[$this->Table->useridrealfieldname]))
+			$realuserid=$this->row[$this->Table->useridrealfieldname];
+		else
+			$realuserid=0;
 		
 		if($realuserid==0)
 		{
