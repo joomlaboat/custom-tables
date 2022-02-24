@@ -220,7 +220,7 @@ class Inputbox
 				return $this->render_date($value);
 
 			case 'time';
-				return $this->render_time();
+				return $this->render_time($row,$value, $type_params);
 
 			case 'article':
 				return JHTML::_('ESArticle.render',
@@ -701,18 +701,18 @@ class Inputbox
 		return $result;
 	}
 	
-	protected function render_time()
+	protected function render_time(&$row, &$value, $type_params)
 	{
 		$result = '';
 		
 		if(count($row)==0)
 			$value=$this->jinput->get($this->ct->Env->field_prefix.$this->esfield['fieldname'],'','CMD');
-								
+
 		if($value=='')
 			$value=$this->esfield['defaultvalue'];
 		else
 			$value=(int)$value;
-								
+
 		$time_attributes = ($this->attributes!='' ? ' ' : '')
 			.'data-valuerule="'.str_replace('"','&quot;',$this->esfield['valuerule']).'" '
 			.'data-valuerulecaption="'.str_replace('"','&quot;',$this->esfield['valuerulecaption']).'" ';
