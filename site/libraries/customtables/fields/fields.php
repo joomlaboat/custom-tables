@@ -106,7 +106,7 @@ class Fields
 		{
 			//Create table
 			//get CT table name if possible
-			$establename=str_replace('#__customtables_table','',$realtablename);
+			$establename=str_replace($db->getPrefix().'customtables_table','',$realtablename);
 			$esfieldname=str_replace($ct->Env->field_prefix,'',$realfieldname);
 			Fields::CreateFileBoxTable($establename,$esfieldname);
 		}
@@ -392,6 +392,16 @@ class Fields
 			case 'multilangstring':
 				$l=(int)$typeparams;
 				return ['data_type' => 'varchar','is_nullable'=> true, 'is_unsigned' => null, 'length' => ($l < 1 ? 255 : ($l > 1024 ? 1024 : $l)), 'default' => null, 'extra' => null];
+			case 'signature':
+			
+				$typeparams_arr=explode(',',$typeparams);
+				$format = $typeparams_arr[3] ?? 'svg';
+				
+				if($format == 'svg-db')
+					return ['data_type' => 'text','is_nullable'=> true, 'is_unsigned' => null, 'length' => null, 'default' => null, 'extra' => null];
+				else
+					return ['data_type' => 'bigint','is_nullable'=> true, 'is_unsigned' => false, 'length' => null, 'default' => null, 'extra' => null];
+				
 			case 'text':
 			case 'multilangtext':
 			case 'log':
@@ -732,7 +742,7 @@ class Fields
         if($new_type==$ex_type)
 			return true; //no need to convert
 
-        $unconvertable_types=array('dummy','image','imagegallery','file','filebox','records','customtables','log');
+        $unconvertable_types=array('dummy','image','imagegallery','file','filebox','signature','records','customtables','log');
 
         if(in_array($new_type,$unconvertable_types) or in_array($ex_type,$unconvertable_types))
             return false;

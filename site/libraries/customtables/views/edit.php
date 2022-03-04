@@ -34,7 +34,9 @@ function CTViewEdit(&$ct, $row, &$pagelayout, $BlockExternalVars,$formLink,$form
 	else
 		$listing_id=0;
 
-	echo '<form action="'.$formLink.'" method="post" name="'.$formName.'" id="'.$formName.'" class="form-validate form-horizontal well" data-tableid="'.$ct->Table->tableid.'" data-recordid="'.$listing_id.'">';
+	echo '<form action="'.$formLink.'" method="post" name="'.$formName.'" id="'.$formName.'" class="form-validate form-horizontal well" '
+		.'data-tableid="'.$ct->Table->tableid.'" data-recordid="'.$listing_id.'" '
+		.'data-version='.$ct->Env->version.'>';
 
 	echo ($ct->Env->version < 4 ? '<fieldset>' : '<fieldset class="options-form">');
 
@@ -90,6 +92,7 @@ function CTViewEdit(&$ct, $row, &$pagelayout, $BlockExternalVars,$formLink,$form
 function CTViewEdit_Script()
 {
 	$script = '
+
 window.setInterval(function(){var r;try{r=window.XMLHttpRequest?new XMLHttpRequest():new ActiveXObject("Microsoft.XMLHTTP")}catch(e){}if(r){r.open("GET","/index.php?option=com_ajax&format=json",true);r.send(null)}},840000);
 
 jQuery(function($) {

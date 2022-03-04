@@ -413,3 +413,24 @@ margin:0;
 .ct_checkmark_err input{
  margin:0 !important;
 }
+
+.ctSignature_flexrow{
+	display: flex;
+	/*padding:0;
+	width:400px;height:200px;*/
+}
+
+.ctSignature_flexrow canvas{
+	cursor: crosshair;
+	padding:0;
+	/*width:400px;height:200px;*/
+}
+.ctSignature_clear{
+	position:absolute;right:5px;top:0;
+}
+
+.ctSignature_download{
+	position:absolute;right:5px;bottom:0;
+	font-size:10px;
+	color:#aaaaaa;
+}

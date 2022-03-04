@@ -18,6 +18,8 @@ function setTask(event, task, returnlink, submitForm) {
         let objForm = document.getElementById('eseditForm');
         if (objForm) {
 
+			ctInputbox_signature_apply();
+
 			const tasks_with_validation = ['saveandcontinue', 'save', 'saveandprint', 'saveascopy'];
 			
 			let element_tableid = "ctTable_" + objForm.dataset.tableid;
@@ -501,6 +503,11 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all,sub_inde
 	
 	let result = ''
 	
+	let cssclass = 'form-select valid form-control-success';
+	let objForm = document.getElementById('eseditForm');
+	if(objForm.dataset.version < 4)
+		cssclass = 'inputbox';
+	
 	if(next_index + 1 < filters.length){
 		//Add select box
 		let current_object_id = control_name + index;
@@ -509,10 +516,10 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all,sub_inde
 			current_object_id += '_' + sub_index;
 		
 		let onChangeAttribute = ' onChange="ctUpdateTableJoinLink(\'' + control_name + '\', ' + next_index + ', false, ' + next_sub_index + ',\'' + current_object_id + '\')"';
-		result += '<select id="' + current_object_id + '"' + onChangeAttribute + '>';	
+		result += '<select id="' + current_object_id + '"' + onChangeAttribute + ' class="'+cssclass+'">';	
 	}
 	else
-		result += '<select id="' + control_name + '" name="' + control_name + '">';	
+		result += '<select id="' + control_name + '" name="' + control_name + '" class="'+cssclass+'">';	
 		
 	result += '<option value="">- Select</option>';
 		
@@ -838,6 +845,97 @@ function ctInputbox_googlemapcoordinates(inputbox_id)
 
 	return false;
 }
+
+let ct_signaturePad_fields = [];
+let ct_signaturePad = [];
+let ct_signaturePad_formats = [];
+
+function ctInputbox_signature(inputbox_id,width,height,format){
+	
+	let canvas = document.getElementById(inputbox_id + '_canvas');
+	
+	ct_signaturePad_fields.push(inputbox_id);
+	ct_signaturePad[inputbox_id] = new SignaturePad(canvas, {
+        backgroundColor: "rgb(255, 255, 255)"
+	});
+	
+	ct_signaturePad_formats[inputbox_id] = format;
+	
+	canvas.width = width;
+	canvas.height = height;
+	canvas.getContext("2d").scale(1, 1);
+	
+	document.getElementById(inputbox_id + '_clear').addEventListener('click', function(){
+        ct_signaturePad[inputbox_id].clear();
+	});
+	
+	/*
+	document.getElementById(inputbox_id + '_save').addEventListener("click", function (event) {
+		if (ct_signaturePad[inputbox_id].isEmpty()) {
+			alert("Please provide a signature first.");
+		} else {
+			//let dataURL = ct_signaturePad[inputbox_id].toDataURL('image/'+format+'+xml');
+			let dataURL = ct_signaturePad[inputbox_id].toDataURL('image/'+format);
+			document.getElementById(inputbox_id).setAttribute("value", dataURL);
+		}
+	});
+	*/
+}
+
+function ctInputbox_signature_apply()
+{
+	for(let i=0;i<ct_signaturePad_fields.length;i++){
+		
+		let inputbox_id = ct_signaturePad_fields[i];
+		
+		if (ct_signaturePad[inputbox_id].isEmpty()) {
+			alert("Please provide a signature first.");
+		} else {
+			
+			let format = ct_signaturePad_formats[inputbox_id];
+			
+			//let dataURL = ct_signaturePad[inputbox_id].toDataURL('image/'+format+'+xml');
+			let dataURL = ct_signaturePad[inputbox_id].toDataURL('image/'+format);
+			document.getElementById(inputbox_id).setAttribute("value", dataURL);
+		}
+	}
+}
+
+/*
+function download(dataURL, filename) {
+  var blob = dataURLToBlob(dataURL);
+  var url = window.URL.createObjectURL(blob);
+
+  var a = document.createElement("a");
+  a.style = "display: none";
+  a.href = url;
+  a.download = filename;
+
+  document.body.appendChild(a);
+  a.click();
+
+  window.URL.revokeObjectURL(url);
+}
+
+// One could simply use Canvas#toBlob method instead, but its just to show
+// that it can be done using result of SignaturePad#toDataURL.
+function dataURLToBlob(dataURL) {
+  // Code taken from https://github.com/ebidel/filer.js
+  var parts = dataURL.split(\';base64,\');
+  var contentType = parts[0].split(":")[1];
+  var raw = window.atob(parts[1]);
+  var rawLength = raw.length;
+  var uInt8Array = new Uint8Array(rawLength);
+
+  for (var i = 0; i < rawLength; ++i) {
+    uInt8Array[i] = raw.charCodeAt(i);
+  }
+
+  return new Blob([uInt8Array], { type: contentType });
+}
+*/
+
+//---------------------------------
 
 !function(a,b){"function"==typeof define&&define.amd?define([],function(){return a.SignaturePad=b()}):"object"==typeof exports?module.exports=b():a.SignaturePad=b()}(this,function(){/*!
  * Signature Pad v1.3.5 | https://github.com/szimek/signature_pad

@@ -259,6 +259,46 @@ trait SaveFieldQuerySet
                     $file_type_file=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fieldtypes'.DIRECTORY_SEPARATOR.'_type_file.php';
 					require_once($file_type_file);
 					return CT_FieldTypeTag_file::get_file_type_value($this, $listing_id);
+					
+				case 'signature':
+					$value=$this->jinput->getString($this->comesfieldname,null);
+					
+					if(isset($value))
+					{
+						$type_params = JoomlaBasicMisc::csv_explode(',',$this->typeparams,'"',false);
+						$ImageFolder = \CustomTablesImageMethods::getImageFolder($this->typeparams);
+						
+						$format = $type_params[3] ?? 'png';
+					
+						if($format == 'svg-db')
+						{
+							return $this->realfieldname.'='.$this->db->Quote($value);
+						}
+						else
+						{
+							if($format == 'jpeg')
+								$format = 'jpg';
+							
+							//Get new file name and avoid possible duplicate
+							
+							$i=0;
+							do
+							{
+								$ImageID=date("YmdHis").($i>0 ? $i : '');
+								//there is possible error, check all possible ext
+								$image_file = JPATH_SITE.DIRECTORY_SEPARATOR.$ImageFolder.DIRECTORY_SEPARATOR.$ImageID.'.'.$format;
+								$i++;
+							}while(file_exists($image_file));
+							echo '$image_file='.$image_file;
+							$parts = explode(';base64,',$value);
+							echo '<br/>'.$parts[1].'<br/>';
+							
+							$deceded_binary = base64_decode($parts[1]);
+							file_put_contents($image_file, $deceded_binary);
+							
+							return $this->realfieldname.'='.$this->db->Quote($ImageID);
+						}
+					}
 
 				case 'article':
 						$value=$this->jinput->getInt($this->comesfieldname,null);

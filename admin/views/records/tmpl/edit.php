@@ -26,4 +26,4 @@ if($this->version >= 4)
 $document = JFactory::getDocument();
 $document->addStyleSheet(JURI::root(true)."/components/com_customtables/libraries/customtables/media/css/style.css");
 
-require(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.'edititem'.DIRECTORY_SEPARATOR.'tmpl'.DIRECTORY_SEPARATOR.'default.php');
+CTViewEdit($this->ct, $this->row, $this->pagelayout, true, $this->formLink,'adminForm');

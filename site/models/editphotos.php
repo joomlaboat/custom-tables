@@ -12,7 +12,9 @@ defined('_JEXEC') or die('Restricted access');
 use CustomTables\CT;
 use CustomTables\Fields;
 
-use \Joomla\CMS\Component\ComponentHelper;
+use \Joomla\CMS\Factory;
+
+//use \Joomla\CMS\Component\ComponentHelper;
 
 jimport('joomla.application.component.model');
 
@@ -21,30 +23,31 @@ JTable::addIncludePath(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEP
 class CustomTablesModelEditPhotos extends JModelLegacy
 {
 	var $ct;
-
 	var $imagemethods;
-
 	var $listing_id;
 	var $Listing_Title;
-
 	var $galleryname;
-
 	var $GalleryTitle;
 	var $GalleryParams;
-
 	var $imagefolderword;
 	var $imagefolder;
 	var $imagefolderweb;
 	var $imagemainprefix;
 	var $maxfilesize;
-
+	var $useridfield;
 	var $phototablename;
 
 	function __construct()
 	{
+		parent::__construct();
+	}
+	
+	function load()
+	{
 		$this->ct = new CT;
 		
-		$params = ComponentHelper::getParams( 'com_customtables' );
+		$app		= Factory::getApplication();
+		$params	= $app->getParams();
 
 		$this->maxfilesize=JoomlaBasicMisc::file_upload_max_size();
 
@@ -54,9 +57,11 @@ class CustomTablesModelEditPhotos extends JModelLegacy
 
 		$this->imagemainprefix='g';
 		$this->imagemethods=new CustomTablesImageMethods;
+		
+		$this->useridfield=$params->get('useridfield');
 
-		$this->ct->getTable($this->getParam_safe( 'establename' ), $this->useridfield);
-				
+		$this->ct->getTable($params->get( 'establename' ), $this->useridfield);
+		
 		if($this->ct->Table->tablename=='')
 		{
 			JFactory::getApplication()->enqueueMessage('Table not selected (62).', 'error');
@@ -75,10 +80,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy
 		$this->getObject();
 
 		$this->phototablename='#__customtables_gallery_'.$this->ct->Table->tablename.'_'.$this->galleryname;
-
-		parent::__construct();
 	}
-
 
 	function getPhotoList()
 	{
@@ -113,7 +115,6 @@ class CustomTablesModelEditPhotos extends JModelLegacy
 		$this->GalleryTitle=$row->title;
 
 		$this->imagefolderword=CustomTablesImageMethods::getImageFolder($row->typeparams);
-
 		$this->imagefolderweb=$this->imagefolderword;
 		
 		$this->imagefolder=JPATH_SITE;
@@ -217,6 +218,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy
 		}
 		return true;
 	}
+	
 	function AutoReorderPhotos()
 	{
 		$images=$this->getPhotoList();
@@ -237,8 +239,6 @@ class CustomTablesModelEditPhotos extends JModelLegacy
 			$db->execute();	
 			$i++;
 		}
-
-
 		return true;
 	}
 
@@ -344,24 +344,24 @@ class CustomTablesModelEditPhotos extends JModelLegacy
 		}
 
 		unlink($uploadedfile);
-
 		$this->ct->Table->saveLog($this->listing_id,6);
 
 		return true;
 	}
 
-	function base64file_decode( $inputfile, $outputfile ) {
-  /* read data (binary) */
-  $ifp = fopen( $inputfile, "rb" );
-  $srcData = fread( $ifp, filesize( $inputfile ) );
-  fclose( $ifp );
-  /* encode & write data (binary) */
-  $ifp = fopen( $outputfile, "wb" );
-  fwrite( $ifp, base64_decode( $srcData ) );
-  fclose( $ifp );
-  /* return output filename */
-  return( $outputfile );
-}
+	function base64file_decode( $inputfile, $outputfile )
+	{
+		/* read data (binary) */
+		$ifp = fopen( $inputfile, "rb" );
+		$srcData = fread( $ifp, filesize( $inputfile ) );
+		fclose( $ifp );
+		/* encode & write data (binary) */
+		$ifp = fopen( $outputfile, "wb" );
+		fwrite( $ifp, base64_decode( $srcData ) );
+		fclose( $ifp );
+		/* return output filename */
+		return( $outputfile );
+	}
 
 	function addPhotoRecord($photo_ext)
 	{

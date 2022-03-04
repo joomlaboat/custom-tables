@@ -165,7 +165,7 @@ class RecordToolbar
 	protected function renderImageGalleryIcon()
 	{
 		$imagegalleries = [];
-		foreach($thid->Table->imagegalleries as $gallery)
+		foreach($this->Table->imagegalleries as $gallery)
 		{
 			$imagemanagerlink='index.php?option=com_customtables&amp;view=editphotos'
 				.'&amp;establename='.$this->Table->tablename

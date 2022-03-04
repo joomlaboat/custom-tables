@@ -795,7 +795,7 @@ class CustomtablesModelFields extends JModelAdmin
 		$data_extra = $input->get( 'jform',array(),'ARRAY');
 
 		//clean field name
-		$esfieldname=strtolower(trim(preg_replace("/[^a-zA-Z]/", "", $data_extra['fieldname'])));
+		$esfieldname=strtolower(trim(preg_replace("/[^a-zA-Z0-9]/", "", $data_extra['fieldname'])));
 		if(strlen ( $esfieldname )>40)
 			$esfieldname=substr($esfieldname, 0, 40);
 

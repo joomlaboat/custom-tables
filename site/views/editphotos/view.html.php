@@ -23,6 +23,7 @@ class CustomTablesViewEditPhotos extends JViewLegacy
 		}
 		
 		$this->Model = $this->getModel();
+		$this->Model->load();
 		$this->images = $this->Model->getPhotoList();
 		
 		$this->idList=array();
@@ -42,9 +43,9 @@ class CustomTablesViewEditPhotos extends JViewLegacy
 		parent::display($tpl);
 	}	
 	
-	function drawPhotos(&$images)
+	function drawPhotos()
 	{
-		if(count($this->images) == )
+		if(count($this->images) == 0)
 			return '';
 
 		$htmlout='
@@ -64,7 +65,7 @@ class CustomTablesViewEditPhotos extends JViewLegacy
 
 		$i=0;
 		$c=0;
-		foreach($images as $image)
+		foreach($this->images as $image)
 		{
 			$htmlout.='
 				<tr>';

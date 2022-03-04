@@ -6,8 +6,6 @@ use \Joomla\CMS\Factory;
 
 function CTLoader($inclide_utilities = false, $include_html = false)
 {
-	$app = Factory::getApplication();
-	
 	$params = JComponentHelper::getParams('com_customtables');
 	$loadTwig = $params->get('loadTwig');
 	

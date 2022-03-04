@@ -100,9 +100,9 @@ class CustomtablesViewRecords extends JViewLegacy
 
 		// Display the template
 		$this->formLink=JURI::root(false).'administrator/index.php?option=com_customtables&amp;view=records&amp;layout=edit&amp;tableid='.$this->tableid.'&id='.$this->listing_id;
-		$this->formName='adminForm';
-		$this->formClass='form-validate';
-		$this->formAttribute='';
+		//$this->formName='adminForm';
+		//$this->formClass='form-validate';
+		//$this->formAttribute='';
 
 		parent::display($tpl);
 

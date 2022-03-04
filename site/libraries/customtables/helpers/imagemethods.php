@@ -557,7 +557,7 @@ class CustomTablesImageMethods
 		fwrite( $ifp, base64_decode( $srcData ) );
 		fclose( $ifp );
 		/* return output filename */
-		return( $outputfile );
+		return $outputfile;
 	}
 
 	function CheckImage($src,$memorylimit)

@@ -31,6 +31,7 @@ use \CT_FieldTypeTag_ct;
 
 use Joomla\CMS\Editor\Editor;
 use Joomla\CMS\Factory;
+use \Joomla\CMS\Uri\Uri;
 
 use \JHTML;
 
@@ -109,6 +110,46 @@ class Value
 				CT_FieldTypeTag_image::getImageSRClayoutview($option_list,$rowValue,$TypeParams,$imagesrc,$imagetag);
 
 				return $imagetag;
+				
+			case 'signature':
+				
+				CT_FieldTypeTag_image::getImageSRClayoutview($option_list,$rowValue,$TypeParams,$imagesrc,$imagetag);
+				
+				
+				//-------------
+				
+				$conf = Factory::getConfig();
+				$sitename = $conf->get('config.sitename');
+
+				$ImageFolder_ = \CustomTablesImageMethods::getImageFolder($TypeParams);
+	
+				$ImageFolderWeb=str_replace(DIRECTORY_SEPARATOR,'/',$ImageFolder_);
+				$ImageFolder=str_replace('/',DIRECTORY_SEPARATOR,$ImageFolder_);
+
+				$imagesrc='';
+				$imagetag='';
+				
+				$type_params = JoomlaBasicMisc::csv_explode(',',$TypeParams,'"',false);
+				
+				$format = $type_params[3] ?? 'png';
+					
+				if($format == 'jpeg')
+					$format = 'jpg';
+		
+				$imagefileweb = URI::root(false).$ImageFolderWeb.'/'.$rowValue.'.'.$format;
+				$imagefile=$ImageFolder.DIRECTORY_SEPARATOR.$rowValue.'.'.$format;
+				
+				if(file_exists(JPATH_SITE.DIRECTORY_SEPARATOR.$imagefile))
+				{
+					$width = $type_params[0] ?? 300;
+					$height = $type_params[1] ?? 150;
+					
+					$imagetag='<img src="'.$imagefileweb.'" width="'.$width.'" height="'.$height.'" alt="'.$sitename.'" title="'.$sitename.'" />';
+					//$imagesrc=$imagefileweb;
+					return $imagetag;
+				}
+				return null;
+				
 			
 			case 'article':
 			case 'multilangarticle':

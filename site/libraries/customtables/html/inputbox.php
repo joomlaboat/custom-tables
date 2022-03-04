@@ -751,19 +751,41 @@ class Inputbox
 	
 	protected function render_signature(&$type_params)
 	{
-		$result = '';
+		$type_params = JoomlaBasicMisc::csv_explode(',',$this->esfield['typeparams'],'"',false);
+		
+		$width = $type_params[0] ?? 300;
+		$height = $type_params[1] ?? 150;
+		$folder = $type_params[2] ?? 'images';
+		$format = $type_params[3] ?? 'svg';
+		if($format == 'svg-db')
+			$format = 'svg';
+		
+		//https://github.com/szimek/signature_pad/blob/gh-pages/js/app.js
+		//https://stackoverflow.com/questions/46514484/send-signature-pad-to-php-post-method
+		//		class="wrapper"
+		$result ='
+<div class="ctSignature_flexrow" style="width:'.$width.'px;height:'.$height.'px;padding:0;">
+	<div style="position:relative;display: flex;padding:0;">
+		<canvas style="background-color: #ffffff;padding:0;width:'.$width.'px;height:'.$height.'px;" '
+			.'id="'.$this->prefix.$this->esfield['fieldname'].'_canvas" '
+			.'class="uneditable-input '.$this->cssclass.'" '
+			.$this->attributes
+			.' >
+		</canvas>
+		<div class="ctSignature_clear"><button type="button" class="close" id="'.$this->prefix.$this->esfield['fieldname'].'_clear">×</button></div>';
+		//<div class="ctSignature_download"><span id = "'.$this->prefix.$this->esfield['fieldname'].'_save">Download</span></div>
+		$result .='
+	</div>
+</div>
 
-		$result.='<canvas '
-			.'name="'.$this->prefix.$this->esfield['fieldname'].'" '
-			.'id="'.$this->prefix.$this->esfield['fieldname'].'" '
-			.'class="'.$this->cssclass.'" '
-			.'data-sanitizers="trim" '
+<input type="text" style="display:none;" name="'.$this->prefix.$this->esfield['fieldname'].'" id="'.$this->prefix.$this->esfield['fieldname'].'" value="" '
 			.'data-label="'.$this->esfield['fieldtitle'.$this->ct->Languages->Postfix].'" '
 			.'data-valuerule="'.str_replace('"','&quot;',$this->esfield['valuerule']).'" '
-			.'data-valuerulecaption="'.str_replace('"','&quot;',$this->esfield['valuerulecaption']).'" '
-			.$this->attributes
-			.' >AAAAAAAAA</canvas>999';
-		
+			.'data-valuerulecaption="'.str_replace('"','&quot;',$this->esfield['valuerulecaption']).'" > 
+<script>
+	ctInputbox_signature("'.$this->prefix.$this->esfield['fieldname'].'",'.((int)$width).','.((int)$height).',"'.$format.'");
+</script>
+';
 		return $result;
 	}
 	

@@ -26,7 +26,7 @@ var idList = [<?php echo implode(',',$this->idList) ?>];
 
 <h3><?php echo $this->Listing_Title; ?></h3>
 
-<form action="index.php" method="POST" name="eseditphotos" id="eseditphotos" enctype="multipart/form-data">
+<form action="index.php?option=com_customtables&view=editphotos&Itemid=<?php echo $this->jinput->getInt('Itemid',0); ?>" method="POST" name="eseditphotos" id="eseditphotos" enctype="multipart/form-data">
 <?php
 
 	$toolbar='
