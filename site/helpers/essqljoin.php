@@ -315,8 +315,8 @@ class JHTMLESSqlJoin
 	        $htmlresult.='
 			<script>
 				ctInputboxRecords_current_value["'.$control_name.'"]="'.$current_value.'";
-				ctInputbox_removeEmptyParents("'.$control_name.'");
-				ctInputbox_UpdateSQLJoinLink("'.$control_name.'");
+				ctInputbox_removeEmptyParents("'.$control_name.'","");
+				ctInputbox_UpdateSQLJoinLink("'.$control_name.'","");
 			</script>
 			';
 		}
