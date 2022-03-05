@@ -19,31 +19,23 @@ class RecordToolbar
 {
 	var $ct;
 	var $Table;
-	
 	var $isEditable;
 	var $isPublishable;
 	var $isDeletable;
-	
 	var $jinput;
-
 	var $listing_id;
 	var $rid;
-	
 	var $row;
-	
 	var $iconPath;
 	
 	function __construct(&$ct, $isEditable, $isPublishable, $isDeletable)
 	{
 		$this->ct = $ct;
 		$this->Table = $ct->Table;
-		
 		$this->isEditable = $isEditable;
 		$this->isPublishable = $isPublishable;
 		$this->isDeletable = $isDeletable;
-		
 		$this->jinput = Factory::getApplication()->input;
-
 		$this->iconPath = Uri::root(true).'/components/com_customtables/libraries/customtables/media/images/icons/';
 	}
 	
@@ -131,33 +123,33 @@ class RecordToolbar
 
     protected function renderEditIcon($isModal = false)
 	{
-		$editlink = $this->ct->Env->WebsiteRoot.'index.php?option=com_customtables&amp;view=edititem'
-					.'&amp;listing_id='.$this->listing_id;
-					
-		//if(!$isModal)
-		$editlink .= '&amp;returnto='.$this->ct->Env->encoded_current_url;
+		$alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_EDIT' );
+		$img='<img src="'.$this->iconPath.'edit.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 
+		$editlink = $this->ct->Env->WebsiteRoot.'index.php?option=com_customtables&amp;view=edititem'
+			.'&amp;listing_id='.$this->listing_id;
+			
 		if($this->jinput->get('tmpl','','CMD')!='')
 			$editlink.='&tmpl='.$this->jinput->get('tmpl','','CMD');
-
+			
 		if($this->ct->Env->Itemid>0)
 			$editlink.='&amp;Itemid='.$this->ct->Env->Itemid;
-
-        $alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_EDIT' );
-		$img='<img src="'.$this->iconPath.'edit.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 
 		$a = '';
 		if($isModal)
 		{
+			$editlink .= '&amp;returnto='.$this->ct->Env->encoded_current_url;
+
 			$link = 'javascript:ctEditModal(\''.$editlink.'\')';
 			$a = '<a href="'.$link.'">'.$img.'</a>';
 		}
 		else
 		{
-			$link = $editlink;
+			$returnto = base64_encode($this->ct->Env->current_url);				
+			$link = $editlink . '&amp;returnto='.$returnto;
+			
 			$a = '<a href="'.$link.'">'.$img.'</a>';
 		}
-
  
 		return '<div id="esEditIcon'.$this->rid.'" class="toolbarIcons">'.$a.'</div>';
 	}

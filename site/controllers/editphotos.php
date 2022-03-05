@@ -19,7 +19,6 @@ defined('_JEXEC') or die('Restricted access');
 	{
 		//not authorized
 		$link =JRoute::_('index.php?option=com_users&view=login&return='.base64_encode(JoomlaBasicMisc::curPageURL()));
-		
 		$this->setRedirect($link,JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
 	}
 	else

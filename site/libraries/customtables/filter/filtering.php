@@ -1154,7 +1154,7 @@ class LinkJoinFilters
 		';
 		
 		$control_name_postfix = '';
-		if(strpos($control_name,'_selector' !== false))
+		if(strpos($control_name,'_selector') !== false)
 			$control_name_postfix = '_selector';
 
 		$result.='<select id="'.$control_name.'SQLJoinLink" onchange="ctInputbox_UpdateSQLJoinLink(\''.$control_name.'\',\''.$control_name_postfix.'\')">';
