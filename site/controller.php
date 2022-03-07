@@ -36,7 +36,7 @@ class CustomTablesController extends JControllerLegacy
 		// Make sure we have a default view
 		if($jinput->getCmd( 'view' )=='')
 		{
-			$jinput->set('view', 'catalog' ); test without it
+			$jinput->set('view', 'catalog' );
 			parent::display();
 		}
 		else
