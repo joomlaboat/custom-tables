@@ -1104,19 +1104,19 @@ class Filtering
 
 class LinkJoinFilters
 {
-	static public function getFilterBox($establename,$dynamic_filter_fieldname,$control_name,$filtervalue)
+	static public function getFilterBox($establename,$dynamic_filter_fieldname,$control_name,$filtervalue,$control_name_postfix='')
 	{
 		$db = Factory::getDBO();
 		
 		$fieldrow=Fields::getFieldRowByName($dynamic_filter_fieldname, $tableid=0,$establename);
 		
 		if($fieldrow->type=='sqljoin' or $fieldrow->type=='records')
-			return LinkJoinFilters::getFilterElement_SqlJoin($fieldrow->typeparams,$control_name,$filtervalue);
+			return LinkJoinFilters::getFilterElement_SqlJoin($fieldrow->typeparams,$control_name,$filtervalue,$control_name_postfix);
 
 		return '';
 	}
 
-	static protected function getFilterElement_SqlJoin($typeparams,$control_name,$filtervalue)
+	static protected function getFilterElement_SqlJoin($typeparams,$control_name,$filtervalue,$control_name_postfix='')
 	{
 		$result='';
 
@@ -1153,10 +1153,6 @@ class LinkJoinFilters
 		</script>
 		';
 		
-		$control_name_postfix = '';
-		if(strpos($control_name,'_selector') !== false)
-			$control_name_postfix = '_selector';
-
 		$result.='<select id="'.$control_name.'SQLJoinLink" onchange="ctInputbox_UpdateSQLJoinLink(\''.$control_name.'\',\''.$control_name_postfix.'\')">';
 		$result.='<option value="">- '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT' ).'</option>';
 		

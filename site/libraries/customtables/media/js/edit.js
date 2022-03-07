@@ -669,7 +669,7 @@ function ctInputboxRecords_deleteItem(control_name,control_name_postfix,index){
 function ctInputboxRecords_showMultibox(control_name,control_name_postfix){
 	//Old calls replaced
 
-	let l = document.getElementById(control_name);
+	let l = document.getElementById(control_name);// + control_name_postfix);
 	ctInputboxRecords_removeOptions(l);
 
 	let opt1 = document.createElement("option");
@@ -744,7 +744,7 @@ function ctInputbox_UpdateSQLJoinLink_do(control_name, control_name_postfix)
 {
 	//Old calls replaced
 	let l = document.getElementById(control_name + control_name_postfix);
-	let o = document.getElementById(control_name + control_name_postfix + 'SQLJoinLink');
+	let o = document.getElementById(control_name + 'SQLJoinLink');
 	
 	let v='';
 	

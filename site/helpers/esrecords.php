@@ -282,7 +282,7 @@ class JHTMLESRecords
         }
 
 	static protected function getSingle(&$model, &$model_nofilter,&$valuearray,
-		$field,$selectorpair,$control_name,$style,$cssclass,$attribute,string $value,
+		$field,$selectorpair,$control_name, $control_name_postfix, $style,$cssclass,$attribute,string $value,
 		$establename,$dynamic_filter='',$langpostfix='',$place_holder='')
 	{
 
@@ -305,7 +305,7 @@ class JHTMLESRecords
 					break;
 				}
 			}
-			$htmlresult.=LinkJoinFilters::getFilterBox($establename,$dynamic_filter,$control_name,$filtervalue);
+			$htmlresult.=LinkJoinFilters::getFilterBox($establename,$dynamic_filter,$control_name,$filtervalue,$control_name_postfix);
 
 		}
 
@@ -371,7 +371,7 @@ class JHTMLESRecords
 			}
 		}
 
-		$htmlresult.='<SELECT name="'.$control_name.'" id="'.$control_name.'" '
+		$htmlresult.='<SELECT name="'.$control_name.'" id="'.$control_name.$control_name_postfix.'" '
 			.($style!='' ? 'style="'.$style.'" ' : '')
 			.($cssclass!='' ? 'class="'.$cssclass.'" ' : '')
 			.$attribute.($attribute!='' ? ' ' : '')
@@ -385,10 +385,10 @@ class JHTMLESRecords
 		if($dynamic_filter!='')
 		{
 			$htmlresultjs.='
-			<div id="'.$control_name.'_elements" style="display:none;">'.json_encode($elements).'</div>
-			<div id="'.$control_name.'_elementsID" style="display:none;">'.implode(',',$elementsID).'</div>
-			<div id="'.$control_name.'_elementsFilter" style="display:none;">'.implode(';',$elementsFilter).'</div>
-			<div id="'.$control_name.'_elementsPublished" style="display:none;">'.implode(',',$elementsPublished).'</div>
+			<div id="'.$control_name.$control_name_postfix.'_elements" style="display:none;">'.json_encode($elements).'</div>
+			<div id="'.$control_name.$control_name_postfix.'_elementsID" style="display:none;">'.implode(',',$elementsID).'</div>
+			<div id="'.$control_name.$control_name_postfix.'_elementsFilter" style="display:none;">'.implode(';',$elementsFilter).'</div>
+			<div id="'.$control_name.$control_name_postfix.'_elementsPublished" style="display:none;">'.implode(',',$elementsPublished).'</div>
 			';
 			$htmlresult=$htmlresultjs.$htmlresult;
 		}
@@ -435,16 +435,21 @@ class JHTMLESRecords
 		$single_box='';
 
 		$single_box.=JHTMLESRecords::getSingle($model, $model_nofilter,$valuearray,$field,$selectorpair,
-		$control_name,$style,$cssclass,$attribute,'',$establename,$dynamic_filter,$langpostfix,$place_holder);
+		$control_name, '_selector',$style,$cssclass,$attribute,'',$establename,$dynamic_filter,$langpostfix,$place_holder);
 		$icon_path = JURI::root(true).'/components/com_customtables/libraries/customtables/media/images/icons/';
 		$htmlresult.='<div style="padding-bottom:20px;"><div style="width:90%;" id="'.$control_name.'_box"></div>'
 		.'<div style="height:30px;">'
 			.'<div id="'.$control_name.'_addButton" style="visibility: visible;"><img src="'.$icon_path.'new.png" alt="Add" title="Add" style="cursor: pointer;" '
-			.'onClick="ctInputboxRecords_addItem(\''.$control_name.'\',\'\')" /></div>'
+			.'onClick="ctInputboxRecords_addItem(\''.$control_name.'\',\'_selector\')" /></div>'
 			.'<div id="'.$control_name.'_addBox" style="visibility: hidden;">'
 				.'<div style="float:left;">'.$single_box.'</div>'
-				.'<img src="'.$icon_path.'plus.png" alt="Add" title="Add" style="cursor: pointer;float:left;margin-top:8px;margin-left:3px;width:16px;height:16px;" onClick="ctInputboxRecords_DoAddItem(\''.$control_name.'\',\'\')" />'
-				.'<img src="'.$icon_path.'cancel.png" alt="Cancel" title="Cancel" style="cursor: pointer;float:left;margin-top:6px;margin-left:10px;width:16px;height:16px;" onClick="ctInputboxRecords_cancel(\''.$control_name.'\')" />'
+				.'<img src="'.$icon_path.'plus.png" '
+					.'alt="Add" title="Add" '
+					.'style="cursor: pointer;float:left;margin-top:8px;margin-left:3px;width:16px;height:16px;" '
+					.'onClick="ctInputboxRecords_DoAddItem(\''.$control_name.'\',\'_selector\')" />'
+				.'<img src="'.$icon_path.'cancel.png" alt="Cancel" title="Cancel" '
+					.'style="cursor: pointer;float:left;margin-top:6px;margin-left:10px;width:16px;height:16px;" '
+					.'onClick="ctInputboxRecords_cancel(\''.$control_name.'\',\'_selector\')" />'
 
 			.'</div>'
 		.'</div>'
@@ -452,7 +457,7 @@ class JHTMLESRecords
 		.'</div>
 
 		<script>
-			ctInputboxRecords_showMultibox("'.$control_name.'","");
+			ctInputboxRecords_showMultibox("'.$control_name.'","_selector");
 		</script>
 		';
 
