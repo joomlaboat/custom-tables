@@ -112,14 +112,14 @@ class CT
 		if($this->Ordering->ordering_processed_string!=null)
 		{
 			$this->Ordering->parseOrderByString();
-
-			if($this->Ordering->orderby!=null)
-			{
-				if($this->Ordering->selects!=null)
-					$selects[]=$this->Ordering->selects;
-				
-				$ordering[]=$this->Ordering->orderby;
-			}
+		}
+		
+		if($this->Ordering->orderby!=null)
+		{
+			if($this->Ordering->selects!=null)
+				$selects[]=$this->Ordering->selects;
+			
+			$ordering[]=$this->Ordering->orderby;
 		}
 
 		$query='SELECT '.implode(',',$selects).' FROM '.$this->Table->realtablename.' ';

@@ -173,20 +173,21 @@ class CustomTablesModelDetails extends JModelLegacy
 
 			$where = count($this->ct->Filter->where) > 0 ? ' WHERE '.implode(" AND ",$this->ct->Filter->where) : '';
 
-			$this->ct->Ordering->orderby = 'id DESC';
+			$this->ct->Ordering->orderby = $this->ct->Table->realidfieldname.' DESC';
+			if($this->ct->Table->published_field_found)
+				$this->ct->Ordering->orderby .= ',published DESC';
+			
 			$query = $this->ct->buildQuery($where);
 			$query.=' LIMIT 1';
 		}
 		else
 		{
 			//show exact record
-			
 			$query = $this->ct->buildQuery('WHERE id='.$this->_id);
 			$query.=' LIMIT 1';
 		}
 
 		$db->setQuery($query);
-		
 		$rows=$db->loadAssocList();
 
 		if(count($rows)<1)
@@ -226,7 +227,6 @@ class CustomTablesModelDetails extends JModelLegacy
 		return $row;
 	}
 
-
 	function makeEmptyRecord($listing_id,$published)
 	{
 	    $row=array();
@@ -238,7 +238,6 @@ class CustomTablesModelDetails extends JModelLegacy
 
 	    return $row;
 	}
-
 
 	function getTypeFieldName($type)
 	{

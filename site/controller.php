@@ -4,7 +4,7 @@
  * @package Custom Tables
  * @author Ivan komlev <support@joomlaboat.com>
  * @link https://www.joomlaboat.com
- * @copyright Copyright (C) 2018-2021. All Rights Reserved
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
@@ -36,7 +36,7 @@ class CustomTablesController extends JControllerLegacy
 		// Make sure we have a default view
 		if($jinput->getCmd( 'view' )=='')
 		{
-			$jinput->set('view', 'catalog' );
+			$jinput->set('view', 'catalog' ); test without it
 			parent::display();
 		}
 		else
