@@ -159,7 +159,7 @@ class JHTMLESUserGroups
 		.'</div>
 		
 		<script>
-			ctInputboxRecords_showMultibox("'.$control_name.'");
+			ctInputboxRecords_showMultibox("'.$control_name.'","");
 		</script>
 		';
 		return $htmlresult;
