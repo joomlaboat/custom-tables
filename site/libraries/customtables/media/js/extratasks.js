@@ -4,7 +4,7 @@
  * @subpackage administrator/components/com_customtables/js/extratasks.js
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @copyright Copyright (C) 2018-2020. All Rights Reserved
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
@@ -24,7 +24,7 @@ function ctExtraUpdateImages(old_params,new_params,fieldid,tabletitle,fieldtitle
 	result+='<table><tbody><tr><td><b>Old Parameters:</b></td><td>'+op+'</td></tr><tr><td><b>New Parameters:</b></td><td>'+np+'</td></tr></tbody></table>';
 	result+='<div id="ctStatus"></div><br/>';
 		
-	result+='<div class="progress progress-striped active"><div id="ct_progressbar" class="bar" role="progressbar" style="width: 0%;"></div></div><br/><p>Please keep this window open.</p>';
+	result+='<div class="progress progress-striped active"><div id="ct_progressbar" class="ctProgressBar" role="progressbar" style="width: 0%;"></div></div><br/><p>Please keep this window open.</p>';
 	
 	ctShowPopUp(result,false);
 	ctQueryAPI(old_params,new_params,fieldid);

@@ -39,9 +39,7 @@ class CT
 	{
 		$this->Languages = new Languages;
 		$this->Env = new Environment;
-		
 		$this->GroupBy = '';
-		
 		$this->isEditForm = false;
 	}
 	

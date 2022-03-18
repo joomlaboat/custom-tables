@@ -5,7 +5,7 @@
  * @subpackage views/fields/tmpl/edit.php
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @copyright Copyright (C) 2018-2020. All Rights Reserved
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
@@ -30,6 +30,9 @@ $document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customt
 $document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/js/ajax.js"></script>');
 $document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/js/typeparams_j4.js"></script>');
 $document->addCustomTag('<link rel="stylesheet" href="'.JURI::root(true).'/media/system/css/fields/switcher.css">');
+
+require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'
+		.DIRECTORY_SEPARATOR.'customtables'.DIRECTORY_SEPARATOR.'extratasks'.DIRECTORY_SEPARATOR.'extratasks.php');	
 
 $input	= JFactory::getApplication()->input;
 

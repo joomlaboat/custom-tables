@@ -134,11 +134,12 @@ class CustomTablesModelDetails extends JModelLegacy
 	{
 		$db = Factory::getDBO();
 
-		$query='SELECT listing_id FROM #__customtables_table_'.$recordstable.' WHERE es_'.$recordsuseridfield.'='.$this->ct->Env->userid.' AND INSTR(es_'.$recordsfield.',",'.$listing_id.',")';
+		$query='SELECT COUNT(*) AS count FROM #__customtables_table_'.$recordstable.' WHERE es_'.$recordsuseridfield.'='
+			.$this->ct->Env->userid.' AND INSTR(es_'.$recordsfield.',",'.$listing_id.',") LIMIT 1';
+			
 		$db->setQuery($query);
-
-        $db->execute();
-		$num_rows = $db->getNumRows();
+		$rows=$db->loadAssocList();
+		$num_rows = $rows[0]['count'];
 
 		if($num_rows==0)
 			return false;

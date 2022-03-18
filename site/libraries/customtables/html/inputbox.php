@@ -4,7 +4,7 @@
  * @package Custom Tables
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @copyright Copyright (C) 2018-2021. All Rights Reserved
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
@@ -471,9 +471,23 @@ class Inputbox
 		$attributes='class="'.$this->cssclass.'" '.$this->attributes;
 
 		$where='';
+		$availableusergroups_list = (trim($this->esfield['typeparams']) == '' ? [] : explode(',',trim($this->esfield['typeparams'])));
+		if(count($availableusergroups_list) == 0)
+		{
+			$query->where('#__usergroups.title!='.$db->quote('Super Users'));
+		}
+		else
+		{
+			$where = [];
+			foreach($availableusergroups_list as $availableusergroup)
+			{
+				if($availableusergroup != '')
+					$where[] = '#__usergroups.title='.$db->quote($availableusergroup);
+			}
+			$where = '('.implode(' OR ',$where).')';
+		}
 
-
-		$result.=JHTML::_('ESUserGroup.render',$this->prefix.$this->esfield['fieldname'], $value, '', $attributes, '',$where);
+		$result.=JHTML::_('ESUserGroup.render',$this->prefix.$this->esfield['fieldname'], $value, '', $attributes, $where);
 
 		return $result;
 	}

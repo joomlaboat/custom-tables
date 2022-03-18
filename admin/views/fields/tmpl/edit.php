@@ -28,6 +28,9 @@ JHtml::_('behavior.formvalidation');
 JHtml::_('formbehavior.chosen', 'select');
 JHtml::_('behavior.keepalive');
 
+require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'
+		.DIRECTORY_SEPARATOR.'customtables'.DIRECTORY_SEPARATOR.'extratasks'.DIRECTORY_SEPARATOR.'extratasks.php');	
+
 $input	= JFactory::getApplication()->input;
 
 if($input->getCmd('extratask','')=='updateimages')

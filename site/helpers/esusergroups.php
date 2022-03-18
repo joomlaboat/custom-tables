@@ -13,8 +13,15 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'co
 
 class JHTMLESUserGroups
 {
-	static public function render($control_name, $value,$selector)
+	static public function render($control_name, $value, $typeparams)
     {
+		$typeparams_array=JoomlaBasicMisc::csv_explode(',',$typeparams,'"',false);
+		
+		$selector = $typeparams_array[0];
+		$availableusergroups = $typeparams_array[1] ?? '';
+		
+		$availableusergroups_list = (trim($availableusergroups) == '' ? [] : explode(',',trim($availableusergroups)));
+
 		$htmlresult='';
 		$valuearray=explode(',',$value);
 		$db = JFactory::getDBO();
@@ -22,6 +29,22 @@ class JHTMLESUserGroups
 		$query = $db->getQuery(true);
 		$query->select('#__usergroups.id AS id, #__usergroups.title AS name');
 		$query->from('#__usergroups');
+
+		if(count($availableusergroups_list) == 0)
+		{
+			$query->where('#__usergroups.title!='.$db->quote('Super Users'));
+		}
+		else
+		{
+			$where = [];
+			foreach($availableusergroups_list as $availableusergroup)
+			{
+				if($availableusergroup != '')
+					$where[] = '#__usergroups.title='.$db->quote($availableusergroup);
+			}
+			$query->where(implode(' OR ',$where));
+		}
+		
 		$query->order('#__usergroups.title');
 		$db->setQuery($query);
 		$records=$db->loadObjectList();

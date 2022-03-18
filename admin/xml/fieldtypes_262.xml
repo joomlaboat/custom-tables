@@ -867,6 +867,9 @@
 		</editparams>
 </type><!-- pro -->
 	<type ct_name="usergroup" label="User Group" description="User Group Select Box." priority="3">
+		<params>
+			<param type="string" name="availableusergroups" label="Available User Groups" description="List of available User Groups separated by comma. User groups that can be selected. Super Users disabled by default. If the field is empty then all user groups will be visible to select except Super Users group." />
+		</params>		
 		<editparams name="usergroup" label="Input Element Parameters" description="">
 			<params>
 				<param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)." />
@@ -882,6 +885,7 @@
 				<option value="radio" label="Single User Group (Radio)" />
 				<option value="checkbox" label="Multiple User Groups (Checkboxes)" />
 			</param>
+			<param type="string" name="availableusergroups" label="Available User Groups" description="List of available User Groups separated by comma. User groups that can be selected. Super Users disabled by default. If the field is empty then all user groups will be visible to select except Super Users group." />
 		</params>
 			<editparams name="usergroups" label="Input Element Parameters" description="">
 			<params>
