@@ -4,52 +4,42 @@
  * @subpackage administrator/components/com_customtables/js/layoutwizard.js
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @copyright Copyright (C) 2018-2020. All Rights Reserved
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
  
 var tableselector_id="";
 var field_box_id="";
 var tableselector_obj=null;
-
 var current_table_id=0;
 var wizardFields=[];
 var wizardLayouts=[];
-
 var joomlaVersion = 3;
-
 var languages=[];
 
-function loadLayout(version)
-{
+function loadLayout(version){
 	joomlaVersion = version;
 	var obj=document.getElementById("allLayoutRaw");
 	if(obj)
 		wizardLayouts=JSON.parse(obj.innerHTML);
 }
 
-function openLayoutWizard()
-{
+function openLayoutWizard(){
 	FillLayout();
 }
 
-function loadFields(tableselector_id_,field_box_id_)
-{
+function loadFields(tableselector_id_,field_box_id_){
 	tableselector_id=tableselector_id_;
 	field_box_id=field_box_id_;
 	tableselector_obj=document.getElementById(tableselector_id);
 	loadFieldsUpdate();
 }
 
-function loadFieldsUpdate()
-{
+function loadFieldsUpdate(){
 	
 	var tableid=tableselector_obj.value;
 	if(tableid!==current_table_id)
-	{
-		
 		loadFieldsData(tableid);
-	}
 }
 
 function loadFieldsData(tableid)
@@ -67,32 +57,27 @@ function loadFieldsData(tableid)
 		{
 			if(response.ok)
 			{
-				response.json().then(function(json)
-				{
+				response.json().then(function(json){
 					wizardFields=Array.from(json);
 					current_table_id=tableid;
 					updateFieldsBox();
 				});
 			}
 			else
-			{
 				console.log('Network request for products.json failed with response ' + response.status + ': ' + response.statusText);
-			}
-		}).catch(function(err)
-		{
+
+		}).catch(function(err){
 			console.log('Fetch Error :-S', err);
 		});
 	}
 	else
 	{
 		//for IE
-		var http = null;
-		var params = "";
+		let http = null;
+		let params = "";
 
 		if (!http)
-		{
 		    http = CreateHTTPRequestObject ();   // defined in ajax.js
-		}
 
 		if (http)
 		{
@@ -100,10 +85,8 @@ function loadFieldsData(tableid)
 		    http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 		    http.onreadystatechange = function()
 		    {
-
-			    if (http.readyState == 4)
-			    {
-			        var res=http.response;
+			    if (http.readyState == 4){
+			        let res=http.response;
 					wizardFields=JSON.parse(res);
 					current_table_id=tableid;
 					updateFieldsBox();
@@ -120,7 +103,6 @@ function updateFieldsBox()
 	//result+='<p>Position cursor to the code editor where you want to insert a new dynamic tag and click on the Tag Button.</p>';
 	
 	//field_box_obj.innerHTML='';//<div class="dynamic_values">'+result+'</div>';
-	
 }
 
 function renderTabs(tabset_id, tabs)
@@ -489,15 +471,13 @@ function addFieldTag(index_unused,tagstartchar,tagendchar,tag,param_count)
 			{
 				var editor = codemirror_editors[codemirror_active_index];
 				var t = parseInt(document.getElementById("jform_layouttype").value);
-				if(isNaN(t) || t===0)
-				{
+				if(isNaN(t) || t===0){
 					alert("Type not selected.");
 					return;
 				}
 
 				var tableid = parseInt(document.getElementById("jform_tableid").value);
-				if(isNaN(tableid) || tableid===0)
-				{
+				if(isNaN(tableid) || tableid===0){
 					alert("Table not selected.");
 					return;
 				}

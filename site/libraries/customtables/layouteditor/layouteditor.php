@@ -4,7 +4,7 @@
  * @package Custom Tables
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @copyright Copyright (C) 2018-2021. All Rights Reserved
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
@@ -56,8 +56,8 @@ if($version >= 4)
 		$index=count($onPageLoads);
 		$result='<div class="customlayoutform layouteditorbox">'.$textareacode.'</div><div id="'.$textareatabid.'"></div>';
 		
-
 			$code='
+		joomlaVersion ='.$ct->Env->version.';
 		
 		text_areas.push(["'.$textareaid.'",'.$index.']);
         codemirror_editors['.$index.'] = CodeMirror.fromTextArea(document.getElementById("'.$textareaid.'"), {
@@ -124,7 +124,7 @@ if($version >= 4)
 		return implode(',',$list);
 	}
 
-	function render_onPageLoads($onPageLoads,$LayoutType)
+	function render_onPageLoads($onPageLoads,$LayoutType,$version)
 	{
 
 		$result='
@@ -143,6 +143,7 @@ if($version >= 4)
 	$result_js='
 	<script type="text/javascript">
 
+	joomlaVersion ='.$version.';
 	define_cmLayoutEditor();
 
 	var text_areas=[];
@@ -156,7 +157,7 @@ if($version >= 4)
 
     };
 	
-	setTimeout(addTabExtraEvents, 100);
+	setTimeout(addTabExtraEvents, 500);
 
     </script>';
 

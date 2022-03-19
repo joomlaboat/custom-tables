@@ -105,9 +105,11 @@ class JHTMLESRecords
 						{
 
 								case 'single' :
+								
+										$control_name_postfix = '';
 
 										$htmlresult.=JHTMLESRecords::getSingle($model, $model_nofilter,$valuearray,$field,$selectorpair,$control_name,
-                                            $style,$cssclass,$attribute,$value,$establename,$dynamic_filter,$langpostfix,$place_holder);
+                                            $control_name_postfix, $style,$cssclass,$attribute,$value,$establename,$dynamic_filter,$langpostfix,$place_holder);
 											
 										break;
 

@@ -39,7 +39,7 @@ function updateTagsParameters()
 
     if(tagsets.length>0)
     {
-        render_current_TagSets();
+        do_render_current_TagSets();
     }
     else
         tags_box_obj.innerHTML='<p class="msg_error">Unknown Field Type</p>';
@@ -750,6 +750,7 @@ function addTabExtraEvents3()
 function addTabExtraEvent4(id)
 {
 	let tab_object=document.querySelectorAll('[aria-controls="' + id + '-tab"]');
+
 	for (let i = 0; i < tab_object.length; i++)  
 	{
 		tab_object[i].addEventListener("click",  function(){ 
@@ -785,6 +786,13 @@ function addTabExtraEvents()
 
 		for (let i = 0; i < tabs.length; i++)
 			addTabExtraEvent4(tabs[i]);
+		
+		
+		let index = 0;
+		codemirror_active_index=index;
+		codemirror_active_areatext_id='jform_' + tabs[0];
+        let cm=codemirror_editors[index];
+        cm.refresh();
 	}
 }
 

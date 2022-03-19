@@ -5,7 +5,7 @@
  * @subpackage administrator/components/com_customtables/views/layouts/tmpl/edit.php
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @copyright Copyright (C) 2018-2020. All Rights Reserved
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
  
@@ -109,7 +109,7 @@ $typeboxid="jform_layouttype";
 		
 		<div class="clearfix"></div>
 		<?php echo JLayoutHelper::render('layouts.details_under', $this);
-		echo render_onPageLoads($onPageLoads,$this->item->layouttype);
+		echo render_onPageLoads($onPageLoads,$this->item->layouttype,4);
 		$this->getMenuItems();
 		?>
 		

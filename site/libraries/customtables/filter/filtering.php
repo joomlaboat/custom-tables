@@ -1110,6 +1110,9 @@ class LinkJoinFilters
 		
 		$fieldrow=Fields::getFieldRowByName($dynamic_filter_fieldname, $tableid=0,$establename);
 		
+		if($fieldrow == null)
+			return '';
+		
 		if($fieldrow->type=='sqljoin' or $fieldrow->type=='records')
 			return LinkJoinFilters::getFilterElement_SqlJoin($fieldrow->typeparams,$control_name,$filtervalue,$control_name_postfix);
 
