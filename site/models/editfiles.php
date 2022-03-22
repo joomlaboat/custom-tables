@@ -231,6 +231,8 @@ class CustomTablesModelEditFiles extends JModelLegacy
 
 		$query = 'INSERT '.$this->fileboxtablename.' SET '
 			.'file_ext="'.$file_ext.'", '
+			.'ordering=0, '
+			.'title="", '
 			.'listingid='.$this->listing_id;
 
 		$db->setQuery( $query );
