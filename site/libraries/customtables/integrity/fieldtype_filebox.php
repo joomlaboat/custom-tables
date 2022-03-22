@@ -5,7 +5,7 @@
  * @subpackage integrity/fields.php
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @copyright Copyright (C) 2018-2020. All Rights Reserved
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
  
@@ -19,13 +19,15 @@ use \ESTables;
 
 class IntegrityFieldType_FileBox extends \CustomTables\IntegrityChecks
 {
-	public static function checkFileBox(&$ct,$filebox_table_name,$tablename,$fieldname)
+	public static function checkFileBox(&$ct,$fieldname)
 	{
+		$filebox_table_name='#__customtables_filebox_'.$ct->Table->tablename.'_'.$fieldname;
+		
 		$db = Factory::getDBO();
 		
         if(!ESTables::checkIfTableExists($filebox_table_name))
         {
-            Fields::CreateFileBoxTable($tablename,$fieldname);
+            Fields::CreateFileBoxTable($ct->Table->tablename,$fieldname);
 			Factory::getApplication()->enqueueMessage('File Box Table "'.$filebox_table_name.'" created.');
         }
 		
@@ -55,7 +57,6 @@ class IntegrityFieldType_FileBox extends \CustomTables\IntegrityChecks
 				Fields::AddMySQLFieldNotExist($filebox_table_name, $g_fieldname, 'varchar(100) null', '');
 				Factory::getApplication()->enqueueMessage('File Box Field "'.$g_fieldname.'" added.');
 			}
-
 			$morethanonelang=true;
 		}
     }

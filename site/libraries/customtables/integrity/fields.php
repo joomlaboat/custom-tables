@@ -113,21 +113,19 @@ class IntegrityFields extends \CustomTables\IntegrityChecks
 				{
 					if($exst_field==$projected_field['realfieldname'])
 					{
-						$gallery_table_name='#__customtables_gallery_'.$ct->Table->tablename.'_'.$projected_field['fieldname'];
-						IntegrityFieldType_Gallery::checkGallery($gallery_table_name,$languages,$ct->Table->tablename,$projected_field['fieldname']);
+						IntegrityFieldType_Gallery::checkGallery($ct,$projected_field['fieldname']);
 
 						$projected_data_type = Fields::getProjectedFieldType($projected_field['type'], $projected_field['typeparams']);
 						$found_field=$projected_field['realfieldname'];
 						$found=true;
-						break;
 					}
+					
 				}
 				elseif($projected_field['type']=='filebox')
 				{
 					if($exst_field==$projected_field['realfieldname'])
 					{
-						$filebox_table_name='#__customtables_filebox_'.$ct->Table->tablename.'_'.$projected_field['fieldname'];
-						IntegrityFieldType_FileBox::checkFileBox($ct,$filebox_table_name,$ct->Table->tablename,$projected_field['fieldname']);
+						IntegrityFieldType_FileBox::checkFileBox($ct,$projected_field['fieldname']);
 						
 						$projected_data_type = Fields::getProjectedFieldType($projected_field['type'], $projected_field['typeparams']);
 						$found_field=$projected_field['realfieldname'];
@@ -154,6 +152,8 @@ class IntegrityFields extends \CustomTables\IntegrityChecks
 					}
 				}
 			}
+			
+			
 			
 			if(!$found)
 			{
