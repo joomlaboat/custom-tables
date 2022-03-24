@@ -4,7 +4,7 @@
  * @package Custom Tables
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @copyright Copyright (C) 2018-2021. All Rights Reserved
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 // No direct access to this file access');
@@ -22,7 +22,11 @@ use Joomla\CMS\String\PunycodeHelper;
 
 HTMLHelper::_('behavior.multiselect');
 
-//$loggeduser = Factory::getUser(); used fo batch
+if($this->saveOrder and $this->ordering_realfieldname != '')
+{
+	$saveOrderingUrl = 'index.php?option=com_customtables&task=listofrecords.ordering&tableid='.$this->ct->Table->tableid.'&tmpl=component';
+	HTMLHelper::_('draggablelist.draggable');
+}
 
 ?>
 <form action="<?php echo Route::_('index.php?option=com_customtables&view=listofrecords&tableid='.$this->ct->Table->tableid); ?>" method="post" name="adminForm" id="adminForm">
@@ -48,7 +52,7 @@ HTMLHelper::_('behavior.multiselect');
 						<thead>
 							<?php include('default_quatro_head.php');?>
 						</thead>
-						<tbody>
+						<tbody<?php if ($this->saveOrder) : ?> class="js-draggable" data-url="<?php echo $saveOrderingUrl; ?>" data-direction="<?php echo strtolower($this->listDirn); ?>" data-nested="true"<?php endif; ?>>
 							<?php echo $this->loadTemplate('quatro_body');?>
 						</tbody>
 					</table>

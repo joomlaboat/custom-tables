@@ -4,7 +4,7 @@
  * @package Custom Tables
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @copyright Copyright (C) 2018-2020. All Rights Reserved
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
@@ -14,8 +14,8 @@ defined('_JEXEC') or die('Restricted access');
 // import Joomla controlleradmin library
 jimport('joomla.application.component.controlleradmin');
 
+use CustomTables\CT;
 use Joomla\Utilities\ArrayHelper;
-
 
 /**
  * Listoffields Controller
@@ -160,6 +160,28 @@ class CustomtablesControllerListofRecords extends JControllerAdmin
 				$redirect, false
 			)
 		);
+	}
+	
+	public function ordering()
+	{
+		$ct = new CT;
+		
+		$tableid = $ct->Env->jinput->getInt('tableid');
+		$ct->getTable($tableid);
+		
+		if($ct->Table->tablename=='')
+		{
+			header("HTTP/1.1 500 Internal Server Error");
+			die('Table not selected.');
+		}
+		
+		$ordering = new CustomTables\Ordering($ct->Table);
+		
+		if(!$ordering->saveorder())
+		{
+			header("HTTP/1.1 500 Internal Server Error");
+			die('Something went wrong.');
+		}
 	}
 	
 	protected function getRecordParams($tableid,$tablename,$recordid)

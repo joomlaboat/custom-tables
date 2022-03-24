@@ -16,11 +16,19 @@ defined('_JEXEC') or die('Restricted access');
 			<?php echo JHtml::_('grid.checkall'); ?>
 	</th>
 
-		<?php
+	<?php if($this->ordering_realfieldname != ''): ?>
+	
+	<th width="1%" class="nowrap center hidden-phone">
+		<i class="icon-menu-2"></i>
+	</th>
+	
+	<?php endif; ?>
+	
+	<?php
 
-			foreach($this->tablefields as $field)
+		foreach($this->ct->Table->fields as $field)
 			{
-				if($field['type'] != 'dummy' and $field['type'] != 'log')
+				if($field['type'] != 'dummy' and $field['type'] != 'log' and $field['type'] != 'ordering')
 				{
 					$id='fieldtitle';
 					$title=$field[$id];

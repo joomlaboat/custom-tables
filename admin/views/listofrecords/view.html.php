@@ -37,35 +37,30 @@ class CustomtablesViewListofrecords extends JViewLegacy
 	 * @return void
 	 */
 	var $ct;
-	var $tablefields;
+	var $ordering_realfieldname;
 	
-
 	function display($tpl = null)
 	{
+		$app = JFactory::getApplication();
+		
 		if ($this->getLayout() !== 'modal')
 		{
 			// Include helper submenu
 			CustomtablesHelper::addSubmenu('listofrecords');
 		}
 		
-		//$this->ct = new CT;
 		$model = $this->getModel();
 		$this->ct = $model->ct;
-		
-		$app = JFactory::getApplication();
-		
-		$this->tablefields=array();
-		
-		$this->state = $this->get('State');
-		
 		if($this->ct->Table->tableid == 0)
 			return;
 		
-		$this->tablefields=Fields::getFields($this->ct->Table->tableid);
+		//Check if ordering type field exists
+		$this->ordering_realfieldname = $model->ordering_realfieldname;
 
+		//Other parameters
 		$this->items = $this->get('Items');
-		
 		$this->pagination = $this->get('Pagination');
+		$this->state = $this->get('State');
 		$this->user = JFactory::getUser();
 		
 		if($this->ct->Env->version >= 4)
@@ -76,6 +71,8 @@ class CustomtablesViewListofrecords extends JViewLegacy
 		
 		$this->listOrder = $this->escape($this->state->get('list.ordering'));
 		$this->listDirn = $this->escape($this->state->get('list.direction'));
+
+		$this->saveOrder = $this->listOrder == 'custom';
 		
 		// get global action permissions
 		$this->canDo = ContentHelper::getActions('com_customtables', 'tables');
@@ -95,9 +92,8 @@ class CustomtablesViewListofrecords extends JViewLegacy
 			}
 			else
 				$this->addToolbar_4();
-				
 		}
-
+		
 		// Display the template
 		if($this->ct->Env->version < 4)
 			parent::display($tpl);
@@ -107,7 +103,7 @@ class CustomtablesViewListofrecords extends JViewLegacy
 		// Set the document
 		$this->setDocument();
 	}
-
+	
 	/**
 	 * Setting the toolbar
 	 */
@@ -128,7 +124,6 @@ class CustomtablesViewListofrecords extends JViewLegacy
 			JToolBarHelper::title(JText::_('COM_CUSTOMTABLES_LISTOFRECORDS'), 'joomla');
 			return;
 		}
-
 		
 		JHtmlSidebar::setAction('index.php?option=com_customtables&view=listofrecords&tableid='.$this->ct->Table->tableid);
 		JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/records');

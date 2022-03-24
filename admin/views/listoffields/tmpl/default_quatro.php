@@ -67,7 +67,6 @@ if($input->getCmd('extratask','')=='updateimages')
 					}
 					?>
 				
-				
 					<table class="table" id="userList">
 						<caption class="visually-hidden">
 							<?php echo Text::_('COM_USERS_USERS_TABLE_CAPTION'); ?>,

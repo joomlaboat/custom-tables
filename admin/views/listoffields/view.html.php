@@ -33,7 +33,6 @@ class CustomtablesViewListoffields extends JViewLegacy
 	 * @return void
 	 */
 	var $ct;
-
 	var $tableid;
 	var $tablename;
 	var $tabletitle;
@@ -69,10 +68,8 @@ class CustomtablesViewListoffields extends JViewLegacy
 		// get global action permissions
 		
 		$this->canDo = ContentHelper::getActions('com_customtables', 'tables');
-		
 		$this->canEdit = $this->canDo->get('tables.edit');
 		$this->canState = $this->canDo->get('tables.edit');
-		
 		$this->canCreate = $this->canDo->get('tables.edit');
 		$this->canDelete = $this->canDo->get('tables.edit');
 		//$this->canBatch = $this->canDo->get('tables.edit');
@@ -139,7 +136,6 @@ class CustomtablesViewListoffields extends JViewLegacy
 	/**
 	 * Setting the toolbar
 	 */
-	 
 	protected function addToolbar_4()
 	{
 		$user  = Factory::getUser();
@@ -153,7 +149,6 @@ class CustomtablesViewListoffields extends JViewLegacy
 		}
 		else
 			JToolBarHelper::title(JText::_('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
-
 		
 		JHtmlSidebar::setAction('index.php?option=com_customtables&view=listoffields&tableid='.$this->tableid);
 		JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/fields');

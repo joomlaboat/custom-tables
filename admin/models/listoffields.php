@@ -4,7 +4,7 @@
  * @package Custom Tables
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @copyright Copyright (C) 2018-2020. All Rights Reserved
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 // No direct access to this file access');
@@ -28,6 +28,8 @@ class CustomtablesModelListoffields extends JModelList
 	
 	public function __construct($config = array())
 	{
+		$this->ct = new CT;
+		
 		if (empty($config['filter_fields']))
         {
 			$config['filter_fields'] = array(
@@ -41,8 +43,6 @@ class CustomtablesModelListoffields extends JModelList
 		}
 
 		parent::__construct($config);
-		
-		$this->ct = new CT;
 	}
 	
 	/**
@@ -62,32 +62,7 @@ class CustomtablesModelListoffields extends JModelList
 			
 			$published = $this->getUserStateFromRequest($this->context . '.filter.published', 'filter_published', '');
 			$this->setState('filter.published', $published);
-
-			/*
-			$orderCol = $app->input->get('filter_order', 'a.ordering');
-			if (!in_array($orderCol, $this->filter_fields))
-			{
-				$orderCol = 'a.ordering';
-			}
-
-			$this->setState('list.ordering', $orderCol);
-
-			$listOrder = $app->input->get('filter_order_Dir', 'ASC');
-
-			if (!in_array(strtoupper($listOrder), array('ASC', 'DESC', '')))
-			{
-				$listOrder = 'ASC';
-			}
-			*/
-			
 		}
-		else
-		{
-
-		}
-		
-		$this->setState('list.direction', $direction);
-		
 		
 		$this->setState('params', ComponentHelper::getParams('com_customtables'));
 		
@@ -130,8 +105,6 @@ class CustomtablesModelListoffields extends JModelList
 				}
 			}
 		}
-         
-		// return items
 		return $items;
 	}
 
@@ -143,7 +116,7 @@ class CustomtablesModelListoffields extends JModelList
 	protected function getListQuery()
 	{
 		$jinput = JFactory::getApplication()->input;
-		$this->tableid=$jinput->getInt('tableid',0);
+		$this->tableid = $jinput->getInt('tableid',0);
 
 		// Get the user object.
 		$user = JFactory::getUser();
@@ -152,11 +125,8 @@ class CustomtablesModelListoffields extends JModelList
 		$query = $db->getQuery(true);
 
 		// Select some fields
-		
 		$tabletitle='(SELECT tabletitle FROM #__customtables_tables AS tables WHERE tables.id=a.tableid)';
 		$query->select('a.*, '.$tabletitle.' AS tabletitle');
-		
-		//$query->select('a.*');
 
 		// From the customtables_item table
 		$query->from($db->quoteName('#__customtables_fields', 'a'));
@@ -192,16 +162,15 @@ class CustomtablesModelListoffields extends JModelList
 			$query->where('a.type = ' . $db->quote($db->escape($type)));
 		}
 		
-		if ($this->tableid!=0)
+		if ($this->tableid != 0)
 		{
 			$query->where('a.tableid = ' . $db->quote($db->escape($this->tableid)));
 		}
-		$app = JFactory::getApplication();
-		$this->tableid=$app->input->getint('tableid',0);
 		
 		// Add the list ordering clause.
 		$orderCol = $this->state->get('list.ordering', 'a.ordering');
-		$orderDirn = $this->state->get('list.direction', 'asc');	
+		$orderDirn = $this->state->get('list.direction', 'asc');
+		
 		if ($orderCol != '')
 		{
 			$query->order($db->escape($orderCol . ' ' . $orderDirn));

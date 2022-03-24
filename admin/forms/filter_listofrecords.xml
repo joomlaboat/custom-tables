@@ -25,7 +25,7 @@
 			type="list"
 			label="JGLOBAL_SORT_BY"
 			onchange="this.form.submit();"
-			default="listing_id ASC"
+			default="id ASC"
 			validate="options"
 			>
 			<option value="">JGLOBAL_SORT_BY</option>
@@ -33,6 +33,8 @@
 			<option value="published DESC">COM_CUSTOMTABLES_RECORD_HEADING_STATE_DESC</option>
 			<option value="id ASC">JGRID_HEADING_ID_ASC</option>
 			<option value="id DESC">JGRID_HEADING_ID_DESC</option>
+			<option value="custom ASC">COM_CUSTOMTABLES_HEADING_CUSTOM_ASC</option>
+			<option value="custom DESC">COM_CUSTOMTABLES_HEADING_CUSTOM_DESC</option>
 		</field>
 		<field
 			name="limit"

@@ -4,17 +4,21 @@
  * @package Custom Tables
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @copyright Copyright (C) 2018-2020. All Rights Reserved
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 // No direct access to this file access');
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Language\Text;
+
 ?>
 
-<?php foreach ($this->items as $i => $item): ?>
+<?php foreach ($this->items as $i => $item): 
+	$item_array =  (array) $item;
+?>
 	
-	<tr class="row<?php echo $i % 2; ?>">
+	<tr class="row<?php echo $i % 2; ?>" data-draggable-group="<?php echo $this->ct->Table->tableid; ?>">
 	
 		<?php if ($this->canState or $this->canDelete): ?>	
 		<td scope="row" class="text-center">
@@ -22,15 +26,37 @@ defined('_JEXEC') or die('Restricted access');
 		</td>
 		<?php endif; ?>
 		
+		<?php if($this->ordering_realfieldname != ''): ?>
+		<td class="text-center d-none d-md-table-cell">
+			<?php
+				$iconClass = '';
+				if (!$this->saveOrder)
+					$iconClass = ' inactive" title="' . Text::_('JORDERINGDISABLED');
+			?>
+
+			<span class="sortable-handler<?php echo $iconClass; ?>">
+				<span class="icon-ellipsis-v" aria-hidden="true"></span>
+			</span>
+			<?php if ($this->saveOrder) :
+
+				$order_value = (int)$item_array[$this->ordering_realfieldname];
+				if($order_value == 0)
+					$order_value = $item->listing_id;
+
+			?>
+				<input type="text" name="order[]" size="5" value="<?php echo $order_value; ?>" class="width-20 text-area-order hidden">
+			<?php endif; ?>
+		</td>
+		<?php endif; ?>
+		
 		<?php
-			$item_array =  (array) $item;
 			$result='';
 			
 			$link=JURI::root(false).'administrator/index.php?option=com_customtables&view=records&task=records.edit&tableid='.$this->ct->Table->tableid.'&id='.$item->listing_id;
 			
-			foreach($this->tablefields as $field)
+			foreach($this->ct->Table->fields as $field)
 			{
-				if($field['type'] != 'dummy' and $field['type'] != 'log')
+				if($field['type'] != 'dummy' and $field['type'] != 'log' and $field['type'] != 'ordering')
 				{
 					if($field['type']=='text')
 						$result.='<td scope="row"><a href="'.$link.'">['.$field['fieldname'].':words,50]</a></td>';

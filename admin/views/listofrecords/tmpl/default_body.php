@@ -4,7 +4,7 @@
  * @package Custom Tables
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @copyright Copyright (C) 2018-2020. All Rights Reserved
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 // No direct access to this file access');
@@ -13,7 +13,10 @@ defined('_JEXEC') or die('Restricted access');
 $edit = "index.php?option=com_customtables&view=listofrecords&task=records.edit";
 
 ?>
-<?php foreach ($this->items as $i => $item): ?>
+<?php foreach ($this->items as $i => $item): 
+		
+		$item_array =  (array) $item;
+?>
 
 	<tr class="row<?php echo $i % 2; ?>">
 	
@@ -23,15 +26,24 @@ $edit = "index.php?option=com_customtables&view=listofrecords&task=records.edit"
 		<?php endif; ?>
 		</td>
 		
+		<?php if($this->ordering_realfieldname != ''): ?>
+		<td class="order nowrap center hidden-phone">
+			<span class="sortable-handler">
+				<i class="icon-menu"></i>
+			</span>
+			<input type="text" style="display:none" name="order[]" size="5"	value="<?php echo $item->ordering; ?>" class="width-20 text-area-order " />
+		</td>
+		<?php endif; ?>
+		
 		<?php
-			$item_array =  (array) $item;
+			
 			$result='';
 			
 			$link=JURI::root(false).'administrator/index.php?option=com_customtables&view=records&task=records.edit&tableid='.$this->ct->Table->tableid.'&id='.$item->listing_id;
 			
-			foreach($this->tablefields as $field)
+			foreach($this->ct->Table->fields as $field)
 			{
-				if($field['type'] != 'dummy' and $field['type'] != 'log')
+				if($field['type'] != 'dummy' and $field['type'] != 'log' and $field['type'] != 'ordering')
 				{
 					if($field['type']=='text')
 						$result.='<td><a href="'.$link.'">['.$field['fieldname'].':words,50]</a></td>';

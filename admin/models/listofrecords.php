@@ -5,7 +5,7 @@
  * @subpackage listofrecords.php
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @copyright Copyright (C) 2018-2021. All Rights Reserved
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 // No direct access to this file access');
@@ -25,6 +25,7 @@ jimport('joomla.application.component.modellist');
 class CustomtablesModelListofRecords extends JModelList
 {
 	var $ct;
+	var $ordering_realfieldname;
 
 	public function __construct($config = array())
 	{
@@ -38,13 +39,21 @@ class CustomtablesModelListofRecords extends JModelList
 			return;
 		}
 		
-		if (empty($config['filter_records']))
-        {
-			$config['filter_fields'] = array(
-				$this->ct->Table->realtablename.'.'.$this->ct->Table->realidfieldname,'id',
-				$this->ct->Table->realtablename.'.published','published',
-			);
+		//Check if ordering type field exists
+		$this->ordering_realfieldname = '';
+		foreach($this->ct->Table->fields as $field)
+		{
+			if($field['type'] == 'ordering')
+			{
+				$this->ordering_realfieldname = $field['realfieldname'];
+				break;
+			}
 		}
+		
+		//Ordering
+		if (empty($config['filter_records']))
+			$config['filter_fields'] = array('id','published','custom');
+		
 		parent::__construct($config);
 	}
 	
@@ -53,8 +62,11 @@ class CustomtablesModelListofRecords extends JModelList
 	 *
 	 * @return  void
 	 */
-	protected function populateState($ordering = null, $direction = null)
+	protected function populateState($ordering = null, $direction = 'asc')
 	{
+		if($this->ordering_realfieldname != '' and $ordering == null)
+			$ordering = $this->ct->Table->realtablename.'.'.$this->ordering_realfieldname;
+			
 		if($this->ct->Env->version < 4)
 		{
 			$search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
@@ -63,7 +75,7 @@ class CustomtablesModelListofRecords extends JModelList
 			$published = $this->getUserStateFromRequest($this->context . '.filter.published', 'filter_published', '');
 			$this->setState('filter.published', $published);
 		}
-		
+
 		$this->setState('params', ComponentHelper::getParams('com_customtables'));
 
 		// List state information.
@@ -80,22 +92,19 @@ class CustomtablesModelListofRecords extends JModelList
 	{
 		// load parent items
 		$items = parent::getItems(); 
-
 		return $items;
 	}
-
 
 	/**
 	 * Method to convert selection values to translatable string.
 	 *
 	 * @return translatable string
 	 */
-	
 	protected function getListQuery()
 	{
-		//echo 'sssssssss';
 		// Get the user object.
 		$user = JFactory::getUser();
+		
 		// Create a new query object.
 		$db = JFactory::getDBO();
 		$query = $db->getQuery(true);
@@ -143,12 +152,39 @@ class CustomtablesModelListofRecords extends JModelList
 		}
 		
 		// Add the list ordering clause.
-		$orderCol = $this->state->get('list.ordering', $this->ct->Table->realtablename.'.'.$this->ct->Table->realidfieldname);
-		$orderDirn = $this->state->get('list.direction', 'asc');
-		if ($orderCol != '')
+		
+		//Check if ordering type field exists
+		$ordering_realfieldname = '';
+		foreach($this->ct->Table->fields as $field)
 		{
-			$query->order($db->escape($orderCol . ' ' . $orderDirn));
+			if($field['type'] == 'ordering')
+			{
+				$ordering_realfieldname = $field['realfieldname'];
+				break;
+			}
 		}
+
+		$order_by_Col = $this->ct->Table->realtablename.'.'.$this->ct->Table->realidfieldname;		
+		$orderDirn = $this->state->get('list.direction', 'asc');
+		
+		if($this->ct->Env->version < 4)
+		{
+			if($this->ordering_realfieldname != '')
+				$order_by_Col = $this->ct->Table->realtablename.'.'.$this->ordering_realfieldname;
+		}
+		else
+		{
+			$orderCol = $this->state->get('list.ordering', ($this->ordering_realfieldname != '' ? 'custom' : 'id'));
+			
+			if($orderCol == 'id')
+				$order_by_Col = $this->ct->Table->realtablename.'.'.$this->ct->Table->realidfieldname;
+			elseif($orderCol == 'published')
+				$order_by_Col = $this->ct->Table->realtablename.'.published';
+			elseif($orderCol == 'custom' and $this->ordering_realfieldname != '')
+				$order_by_Col = $this->ct->Table->realtablename.'.'.$this->ordering_realfieldname;
+		}
+		
+		$query->order($db->escape($order_by_Col . ' ' . $orderDirn));
 
 		return $query;
 	} 

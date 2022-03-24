@@ -16,6 +16,12 @@ JHtml::_('behavior.multiselect');
 JHtml::_('dropdown.init');
 JHtml::_('formbehavior.chosen', 'select');
 
+if($this->ordering_realfieldname != '')
+{
+	$saveOrderingUrl = 'index.php?option=com_customtables&task=listofrecords.ordering&tableid='.$this->ct->Table->tableid.'&tmpl=component';
+	JHtml::_('sortablelist.sortable', 'recordsList', 'adminForm', 'asc', $saveOrderingUrl);
+}
+
 ?>
 <form action="<?php echo JRoute::_('index.php?option=com_customtables&view=listofrecords'); ?>" method="post" name="adminForm" id="adminForm">
 <?php if(!empty( $this->sidebar)): ?>

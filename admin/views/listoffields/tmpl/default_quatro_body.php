@@ -4,7 +4,7 @@
  * @package Custom Tables
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @copyright Copyright (C) 2018-2020. All Rights Reserved
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 // No direct access to this file access');
@@ -20,20 +20,8 @@ $edit = "index.php?option=com_customtables&view=listoffields&task=fields.edit&ta
 	<?php
 		$canCheckin = $this->user->authorise('core.manage', 'com_checkin') || $item->checked_out == $this->user->id || $item->checked_out == 0;
 		$userChkOut = JFactory::getUser($item->checked_out);
-
-
-		/*
-		$transitions = ContentHelper::filterTransitions($this->transitions, (int) $item->stage_id, (int) $item->workflow_id);
-
-
-		$transition_ids = ArrayHelper::getColumn($transitions, 'value');
-		$transition_ids = ArrayHelper::toInteger($transition_ids);
-		data-transitions="<?php echo implode(',', $transition_ids); ?>"
-		*/
-		
-		
 	?>
-	<tr class="row<?php echo $i % 2; ?>" data-draggable-group="<?php echo $item->tableid; ?>">
+	<tr class="row<?php echo $i % 2; ?>" data-draggable-group="<?php echo $this->tableid; ?>">
 							
 		<?php if ($this->canState or $this->canDelete): ?>	
 		

@@ -4,7 +4,7 @@
  * @package Custom Tables
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @copyright Copyright (C) 2018-2020. All Rights Reserved
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 // No direct access to this file access');
@@ -29,11 +29,17 @@ HTMLHelper::_('behavior.multiselect');
 		</th>
 	<?php endif; ?>
 	
+	<?php if($this->ordering_realfieldname != ''): ?>
+		<th scope="col" class="w-1 text-center d-none d-md-table-cell">
+			<?php echo HTMLHelper::_('searchtools.sort', '', 'custom', $this->listDirn, $this->listOrder, null, 'asc', 'JGRID_HEADING_ORDERING', 'icon-sort'); ?>
+		</th>
+	<?php endif; ?>
+	
 	<?php
 
-	foreach($this->tablefields as $field)
+	foreach($this->ct->Table->fields as $field)
 	{
-		if($field['type'] != 'dummy' and $field['type'] != 'log')
+		if($field['type'] != 'dummy' and $field['type'] != 'log' and $field['type'] != 'ordering')
 		{
 			$id='fieldtitle';
 			$title=$field[$id];
@@ -54,11 +60,11 @@ HTMLHelper::_('behavior.multiselect');
 	
 	<?php if($this->ct->Table->published_field_found): ?>
 	<th class="nowrap hidden-phone center" style="text-align:center;">
-		<?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_RECORDS_STATUS', 'a.published', $this->listDirn, $this->listOrder); ?>
+		<?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_RECORDS_STATUS', 'published', $this->listDirn, $this->listOrder); ?>
 	</th>
 	<?php endif; ?>
 	
 	<th width="5" class="nowrap center hidden-phone" >
-		<?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_RECORDS_ID', 'a.id', $this->listDirn, $this->listOrder); ?>
+		<?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_RECORDS_ID', 'id', $this->listDirn, $this->listOrder); ?>
 	</th>
 </tr>

@@ -19,29 +19,10 @@ JHtml::_('formbehavior.chosen', 'select');
 
 use CustomTables\Integrity\IntegrityFields;
 
-/*
-if (strpos($listOrder, 'publish_up') !== false)
-{
-	$orderingColumn = 'publish_up';
-}
-elseif (strpos($listOrder, 'publish_down') !== false)
-{
-	$orderingColumn = 'publish_down';
-}
-elseif (strpos($listOrder, 'modified') !== false)
-{
-	$orderingColumn = 'modified';
-}
-else
-{
-	$orderingColumn = 'created';
-}
-*/
 if ($this->saveOrder && !empty($this->items))
 {
 	$saveOrderingUrl = 'index.php?option=com_customtables&task=listoffields.saveOrderAjax&tableid='.$this->tableid.'&tmpl=component';
 	JHtml::_('sortablelist.sortable', 'fieldsList', 'adminForm', strtolower($this->listDirn), $saveOrderingUrl);
-	//HTMLHelper::_('draggablelist.draggable');
 }
 
 $input	= JFactory::getApplication()->input;

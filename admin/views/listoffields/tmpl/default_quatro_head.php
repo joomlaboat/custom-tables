@@ -28,21 +28,12 @@ HTMLHelper::_('behavior.multiselect');
 		<th class="w-1 text-center">
 			<?php echo HTMLHelper::_('grid.checkall'); ?>
 		</th>
-		<?php /*
-		<th width="20" class="nowrap center">
-			<?php echo JHtml::_('grid.checkall'); ?>
-		</th> */ ?>
 	<?php endif; ?>
 
 	<?php if ($this->canEdit): ?>
 		<th scope="col" class="w-1 text-center d-none d-md-table-cell">
 			<?php echo HTMLHelper::_('searchtools.sort', '', 'a.ordering', $this->listDirn, $this->listOrder, null, 'asc', 'JGRID_HEADING_ORDERING', 'icon-sort'); ?>
 		</th>
-		<?php /*
-		<th width="1%" class="nowrap center hidden-phone">
-			<?php echo JHtml::_('grid.sort', '<i class="icon-menu-2"></i>', 'a.ordering', $this->listDirn, $this->listOrder, null, 'asc', 'JGRID_HEADING_ORDERING'); ?>
-		</th>
-		*/ ?>
 	<?php endif; ?>
 	
 	
