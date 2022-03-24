@@ -45,8 +45,8 @@ $edit = "index.php?option=com_customtables&view=listofrecords&task=records.edit"
 			{
 				if($field['type'] != 'dummy' and $field['type'] != 'log' and $field['type'] != 'ordering')
 				{
-					if($field['type']=='text')
-						$result.='<td><a href="'.$link.'">['.$field['fieldname'].':words,50]</a></td>';
+					if($field['type']=='text' or $field['type']=='multilangtext' or $field['type']=='string' or $field['type']=='multilangstring')
+						$result.='<td><a href="'.$link.'">['.$field['fieldname'].':words,20]</a></td>';
 					else
 						$result.='<td><a href="'.$link.'">['.$field['fieldname'].']</a></td>';
 				}
