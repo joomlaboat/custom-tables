@@ -131,7 +131,10 @@ class Inputbox
 			
 			case 'signature':
 				return $this->render_signature($type_params);
-
+				
+			case 'ordering':
+				return $this->render_int($value, $row);
+				
 			case 'file':
 				$file_type_file=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fieldtypes'.DIRECTORY_SEPARATOR.'_type_file.php';
 				require_once($file_type_file);
@@ -811,7 +814,7 @@ class Inputbox
 
 		if(isset($type_params[1]) and $type_params[1]=='true')
 			$filters[]='https';
-								
+
 		if(isset($type_params[2]) and $type_params[2]!='')
 			$filters[]='domain:'.$type_params[2];
 

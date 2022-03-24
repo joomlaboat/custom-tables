@@ -10,6 +10,9 @@
 // No direct access to this file access');
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+
 $edit = "index.php?option=com_customtables&view=listoffields&task=fields.edit&tableid=".$this->tableid;
 
 ?>
@@ -17,43 +20,52 @@ $edit = "index.php?option=com_customtables&view=listoffields&task=fields.edit&ta
 	<?php
 		$canCheckin = $this->user->authorise('core.manage', 'com_checkin') || $item->checked_out == $this->user->id || $item->checked_out == 0;
 		$userChkOut = JFactory::getUser($item->checked_out);
+
+
+		/*
+		$transitions = ContentHelper::filterTransitions($this->transitions, (int) $item->stage_id, (int) $item->workflow_id);
+
+
+		$transition_ids = ArrayHelper::getColumn($transitions, 'value');
+		$transition_ids = ArrayHelper::toInteger($transition_ids);
+		data-transitions="<?php echo implode(',', $transition_ids); ?>"
+		*/
+		
+		
 	?>
-	<tr class="row<?php echo $i % 2; ?>">
-		
-		<?php if ($this->canEdit): ?>	
-		<td class="order nowrap center hidden-phone">
-			<?php
-				if ($this->saveOrder)
-				{
-					$iconClass = ' inactive';
-				}
-				else
-				{
-					$iconClass = ' inactive tip-top hasTooltip';// title="' . JHtml::tooltipText('JORDERINGDISABLED');
-				}
-			?>
-			<span class="sortable-handler<?php echo $iconClass; ?>">
-				<i class="icon-menu"></i>
-			</span>
-			<?php if ($this->saveOrder) : ?>
-				<input type="text" style="display:none" name="order[]" size="5"
-				value="<?php echo $item->ordering; ?>" class="width-20 text-area-order " />
-			<?php endif; ?>
-		</td>
-		<?php endif; ?>
-		
+	<tr class="row<?php echo $i % 2; ?>" data-draggable-group="<?php echo $item->tableid; ?>">
+							
 		<?php if ($this->canState or $this->canDelete): ?>	
 		
 		<td class="text-center">
 				<?php if ($item->checked_out) : ?>
 					<?php if ($canCheckin) : ?>
-						<?php echo JHtml::_('grid.id', $i, $item->id); ?>
+						<?php echo HTMLHelper::_('grid.id', $i, $item->id, false, 'cid', 'cb', $item->fieldname); ?>
 					<?php else: ?>
 						&#9633;
 					<?php endif; ?>
 				<?php else: ?>
-					<?php echo JHtml::_('grid.id', $i, $item->id); ?>
+					<?php echo HTMLHelper::_('grid.id', $i, $item->id, false, 'cid', 'cb', $item->fieldname); ?>
 				<?php endif; ?>
+		</td>
+		<?php endif; ?>
+
+		<?php if ($this->canEdit): ?>
+		
+		<td class="text-center d-none d-md-table-cell">
+		
+			<?php
+				$iconClass = '';
+				if (!$this->saveOrder)
+					$iconClass = ' inactive" title="' . Text::_('JORDERINGDISABLED');
+			?>
+
+			<span class="sortable-handler<?php echo $iconClass; ?>">
+				<span class="icon-ellipsis-v" aria-hidden="true"></span>
+			</span>
+			<?php if ($this->saveOrder) : ?>
+				<input type="text" name="order[]" size="5" value="<?php echo $item->ordering; ?>" class="width-20 text-area-order hidden">
+			<?php endif; ?>
 		</td>
 		<?php endif; ?>
 		

@@ -438,3 +438,46 @@ margin:0;
 .ctProgressBar{
 	background-color: #457d54;
 }
+
+
+/* ------------------------------------- ordering field type ------------------------------- */
+
+
+@font-face {
+	font-family: 'IcoMoon';
+	src: url('../../../../../../media/jui/fonts/IcoMoon.eot');
+	src: url('../../../../../../media/jui/fonts/IcoMoon.eot?#iefix') format('embedded-opentype'), 
+		url('../../../../../../media/jui/fonts/IcoMoon.woff') format('woff'), 
+		url('../../../../../../media/jui/fonts/IcoMoon.ttf') format('truetype'), 
+		url('../../../../../../media/jui/fonts/IcoMoon.svg#IcoMoon') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+[class^="icon-"],
+[class*=" icon-"] {
+	display: inline-block;
+	width: 14px;
+	height: 14px;
+	margin-right: .25em;
+	line-height: 14px;
+}
+[class^="icon-"]:before,
+[class*=" icon-"]:before {
+	font-family: 'IcoMoon';
+	font-style: normal;
+	speak: none;
+}
+[class^="icon-"].disabled,
+[class*=" icon-"].disabled {
+	font-weight: normal;
+}
+
+.icon-menu:before {
+	content: "\5a";
+}
+
+.sortable-handler.inactive {
+	opacity: 0.3;
+	filter: alpha(opacity=30);
+}

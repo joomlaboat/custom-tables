@@ -155,7 +155,6 @@ class CustomTablesViewCatalog extends JViewLegacy
 		$this->Model->load($menu_params,false,Factory::getApplication()->input->getCMD('layout',''));
 		
 		$jinput=Factory::getApplication()->input;
-		
 		$this->ct = $this->Model->ct;
 		
 		$addition_filter='';

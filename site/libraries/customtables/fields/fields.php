@@ -407,6 +407,8 @@ class Fields
 			case 'log':
 				//mediumtext
 				return ['data_type' => 'text','is_nullable'=> true, 'is_unsigned' => null, 'length' => null, 'default' => null, 'extra' => null];
+			case 'ordering':
+				return ['data_type' => 'int','is_nullable'=> false, 'is_unsigned' => true, 'length' => null, 'default' => 0, 'extra' => null];
 			case 'int':
 				return ['data_type' => 'int','is_nullable'=> true, 'is_unsigned' => false, 'length' => null, 'default' => null, 'extra' => null];
 			case 'float':

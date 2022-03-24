@@ -25,7 +25,7 @@
 				<param name="autocomplete" label="Autocomplete" description="Generate autocomplete data list using table records" default="" type="radio" options="|No,autocomplete|Yes" />
 			</params>
 		</editparams>
-</type>
+	</type>
 
 	<type ct_name="multilangstring" name="multilangstring" label="Multilingual Text String (Single Line)" description="Provides a set of text boxes for data entry. One inputbox for each language." ct_alias="multilangstring" disabled="false" ct_special="false" priority="1">
 		<params>
@@ -89,6 +89,10 @@
 			</param>
 		</params>
 	</type>
+
+	<type ct_name="ordering" name="ordering" label="Ordering/Sorting" description="Record custom position, a front-end tool to sort record in custom order." ct_alias="ordering" disabled="false" ct_special="false" priority="3" >
+	</type>
+
 
 	<type ct_name="text" name="text" label="Text Area (Multilple Lines)" description="Provides a textarea box for data entry." ct_alias="text" disabled="false" ct_special="false" priority="1">
 		<params>

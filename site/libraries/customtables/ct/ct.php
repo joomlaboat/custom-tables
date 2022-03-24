@@ -35,6 +35,8 @@ class CT
 	var $LimitStart;
 	var $isEditForm;
 	
+	var $LayoutVariables = [];
+	
 	function __construct()
 	{
 		$this->Languages = new Languages;

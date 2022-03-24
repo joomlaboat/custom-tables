@@ -4,7 +4,7 @@
  * @package Custom Tables
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @copyright Copyright (C) 2018-2020. All Rights Reserved
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 // No direct access to this file access');
@@ -15,33 +15,15 @@ $edit = "index.php?option=com_customtables&view=listoffields&task=fields.edit";
 ?>
 <?php foreach ($this->items as $i => $item): ?>
 	<?php
+	
+		$ordering   = ($this->listOrder == 'a.ordering');
+		$item->max_ordering = 0; //I am not sure if its used
+	
 		$canCheckin = $this->user->authorise('core.manage', 'com_checkin') || $item->checked_out == $this->user->id || $item->checked_out == 0;
 		$userChkOut = JFactory::getUser($item->checked_out);
 	?>
-	<tr class="row<?php echo $i % 2; ?>">
-		<td class="order nowrap center hidden-phone">
-		<?php if ($this->canState or $this->canDelete): ?>
-			<?php
-				if ($this->saveOrder)
-				{
-					$iconClass = ' inactive';
-				}
-				else
-				{
-					$iconClass = ' inactive tip-top hasTooltip';// title="' . JHtml::tooltipText('JORDERINGDISABLED');
-				}
-			?>
-			<span class="sortable-handler<?php echo $iconClass; ?>">
-				<i class="icon-menu"></i>
-			</span>
-			<?php if ($this->saveOrder) : ?>
-				<input type="text" style="display:none" name="order[]" size="5"
-				value="<?php echo $item->ordering; ?>" class="width-20 text-area-order " />
-			<?php endif; ?>
-		<?php else: ?>
-			&#8942;
-		<?php endif; ?>
-		</td>
+	<tr class="row<?php echo $i % 2; ?>" sortable-group-id="<?php echo $this->tableid; ?>">
+	
 		<td class="nowrap center">
 		<?php if ($this->canEdit): ?>
 				<?php if ($item->checked_out) : ?>
@@ -57,18 +39,38 @@ $edit = "index.php?option=com_customtables&view=listoffields&task=fields.edit";
 			&#9633;
 		<?php endif; ?>
 		</td>
+	
+		<td class="order nowrap center hidden-phone">
+		<?php 
+			
+			if ($this->canState or $this->canDelete): 
+				$iconClass = '';
+			
+				if (!$this->saveOrder)
+					$iconClass = ' inactive tip-top hasTooltip" title="' . JHtml::_('tooltipText', 'JORDERINGDISABLED');
+			?>
+			<span class="sortable-handler<?php echo $iconClass; ?>">
+				<i class="icon-menu"></i>
+			</span>
+			<?php if ($this->saveOrder) : ?>
+				<input type="text" style="display:none" name="order[]" size="5"
+				value="<?php echo $item->ordering; ?>" class="width-20 text-area-order " />
+			<?php endif; ?>
+		<?php else: ?>
+			&#8942;
+		<?php endif; ?>
+		</td>
 
 		<td class="hidden-phone">
 			
 			<?php if ($this->canEdit): ?>
-					<a href="<?php echo $edit; ?>&tableid=<?php echo $item->tableid; ?>&id=<?php echo $item->id; ?>"><?php echo $this->escape($item->fieldname); ?></a>
+					<a href="<?php echo $edit; ?>&tableid=<?php echo $this->tableid; ?>&id=<?php echo $item->id; ?>"><?php echo $this->escape($item->fieldname); ?></a>
 					<?php if ($item->checked_out): ?>
 						<?php echo JHtml::_('jgrid.checkedout', $i, $userChkOut->name, $item->checked_out_time, 'listoffields.', $canCheckin); ?>
 					<?php endif; ?>
 				<?php else: ?>
 					<?php echo $this->escape($item->fieldname); ?>
 				<?php endif; ?>
-				
 				
 				<?php 
 				

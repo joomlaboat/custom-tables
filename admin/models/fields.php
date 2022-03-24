@@ -726,12 +726,10 @@ class CustomtablesModelFields extends JModelAdmin
 				}
 			}
 
-
 			// Check the row.
 			if (!$this->table->check())
 			{
 				$this->setError($this->table->getError());
-
 				return false;
 			}
 
@@ -744,7 +742,6 @@ class CustomtablesModelFields extends JModelAdmin
 			if (!$this->table->store())
 			{
 				$this->setError($this->table->getError());
-
 				return false;
 			}
 		}
@@ -784,7 +781,6 @@ class CustomtablesModelFields extends JModelAdmin
 
 		return $new_fieldname;
 	}
-
 
 	public function save($data)
 	{
@@ -853,7 +849,6 @@ class CustomtablesModelFields extends JModelAdmin
 			//Process image type field
 		}
 
-
 		$table_row = ESTables::getTableRowByID($tableid);
 		
 		if(!is_object($table_row))
@@ -878,10 +873,8 @@ class CustomtablesModelFields extends JModelAdmin
 		return false;
 	}
 
-
 	protected function update_physical_field($table_row,$fieldid,$data)
 	{
-
 		$db = JFactory::getDBO();
 
 		$realtablename=$table_row->realtablename;//$db->getPrefix().'customtables_table_'.$establename;
@@ -936,7 +929,6 @@ class CustomtablesModelFields extends JModelAdmin
 				return false;
 			}
 
-
 			if($ex_type==$new_type and $new_type=='image' and ($ex_typeparams !=$new_typeparams or strpos($new_typeparams,'|delete')!==false))
 			{
 				//Resize all images if neaded
@@ -946,20 +938,15 @@ class CustomtablesModelFields extends JModelAdmin
 				$input->set('old_typeparams',base64_encode($ex_typeparams));
 				$input->set('new_typeparams',base64_encode($new_typeparams));
 				$input->set('fieldid',$fieldid);
-
 			}
 
 			if($ex_type==$new_type and $new_type=='imagegallery' and $ex_typeparams !=$new_typeparams)
 			{
 				//Resize all images if neaded
 				//$this->doResizeImageGallery($new_typeparams, $ex_typeparams,$esfieldname);
-
 			}
-
 		}
-
 		//---------------------------------- end convert field
-
 
 		$msg='';
 
@@ -970,7 +957,6 @@ class CustomtablesModelFields extends JModelAdmin
 			Fields::addField($ct,$realtablename,$realfieldname,$new_type,$PureFieldType,$fieldtitle);
 		}
 
-
 		if($new_type=='sqljoin')
 		{
 				//Create Index if needed
@@ -979,8 +965,6 @@ class CustomtablesModelFields extends JModelAdmin
 				//Add Foreign Key
 				$msg='';
 				Fields::addForeignKey($realtablename,$realfieldname,$new_typeparams,'','id',$msg);
-
-
 		}
 
 		if($new_type=='user' or $new_type=='userid')
@@ -995,7 +979,6 @@ class CustomtablesModelFields extends JModelAdmin
 		return true;
 	}
 
-
 	/**
 	 * Method to generate a unique value.
 	 *
@@ -1008,7 +991,6 @@ class CustomtablesModelFields extends JModelAdmin
 	 */
 	protected function generateUnique($field,$value)
 	{
-
 		// set field value unique
 		$table = $this->getTable();
 

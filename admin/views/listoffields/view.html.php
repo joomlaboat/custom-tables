@@ -65,7 +65,7 @@ class CustomtablesViewListoffields extends JViewLegacy
 		
 		$this->listOrder = $this->escape($this->state->get('list.ordering'));
 		$this->listDirn = $this->escape($this->state->get('list.direction'));
-		$this->saveOrder = $this->listOrder == 'ordering';
+		$this->saveOrder = $this->listOrder == 'ordering' || $this->listOrder == 'a.ordering';
 		// get global action permissions
 		
 		$this->canDo = ContentHelper::getActions('com_customtables', 'tables');

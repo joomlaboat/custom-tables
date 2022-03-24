@@ -19,10 +19,29 @@ JHtml::_('formbehavior.chosen', 'select');
 
 use CustomTables\Integrity\IntegrityFields;
 
-if ($this->saveOrder)
+/*
+if (strpos($listOrder, 'publish_up') !== false)
+{
+	$orderingColumn = 'publish_up';
+}
+elseif (strpos($listOrder, 'publish_down') !== false)
+{
+	$orderingColumn = 'publish_down';
+}
+elseif (strpos($listOrder, 'modified') !== false)
+{
+	$orderingColumn = 'modified';
+}
+else
+{
+	$orderingColumn = 'created';
+}
+*/
+if ($this->saveOrder && !empty($this->items))
 {
 	$saveOrderingUrl = 'index.php?option=com_customtables&task=listoffields.saveOrderAjax&tableid='.$this->tableid.'&tmpl=component';
 	JHtml::_('sortablelist.sortable', 'fieldsList', 'adminForm', strtolower($this->listDirn), $saveOrderingUrl);
+	//HTMLHelper::_('draggablelist.draggable');
 }
 
 $input	= JFactory::getApplication()->input;
@@ -35,26 +54,7 @@ if($input->getCmd('extratask','')=='updateimages')
 	require_once($path.'extratasks.php');
 	extraTasks::prepareJS();
 }
-
 ?>
-<script type="text/javascript">
-	Joomla.orderTable = function()
-	{
-		table = document.getElementById("sortTable");
-		direction = document.getElementById("directionTable");
-		order = table.options[table.selectedIndex].value;
-		if (order != '<?php echo $this->listOrder; ?>')
-		{
-			dirn = 'asc';
-		}
-		else
-		{
-			dirn = direction.options[direction.selectedIndex].value;
-		}
-		Joomla.tableOrdering(order, dirn, '');
-	}
-	
-</script>
 
 <form action="<?php echo JRoute::_('index.php?option=com_customtables&view=listoffields&tableid='.$this->tableid); ?>" method="post" name="adminForm" id="adminForm">
 <?php if(!empty( $this->sidebar)): ?>
@@ -81,10 +81,10 @@ if($input->getCmd('extratask','')=='updateimages')
 		}
 		?>
 		
-		<table class="table table-striped" id="fieldsList">
+		<table class="table table-striped" id="fieldsList" style="position: relative;">
 			<thead><?php echo $this->loadTemplate('head');?></thead>
-			<tfoot><?php echo $this->loadTemplate('foot');?></tfoot>
 			<tbody><?php echo $this->loadTemplate('body');?></tbody>
+			<tfoot><?php echo $this->loadTemplate('foot');?></tfoot>
 		</table>
 		<?php //Load the batch processing form. ?>
         <?php /* if ($this->canCreate && $this->canEdit) : ?>

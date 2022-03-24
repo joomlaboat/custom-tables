@@ -22,7 +22,11 @@ use Joomla\CMS\String\PunycodeHelper;
 
 use CustomTables\Integrity\IntegrityFields;
 
-//$loggeduser = Factory::getUser(); used fo batch
+if ($this->saveOrder && !empty($this->items))
+{
+	$saveOrderingUrl = 'index.php?option=com_customtables&task=listoffields.saveOrderAjax&tableid='.$this->tableid.'&tmpl=component';
+	HTMLHelper::_('draggablelist.draggable');
+}
 
 $input	= JFactory::getApplication()->input;
 
@@ -73,7 +77,7 @@ if($input->getCmd('extratask','')=='updateimages')
 						<thead>
 							<?php include('default_quatro_head.php');?>
 						</thead>
-						<tbody>
+						<tbody<?php if ($this->saveOrder) : ?> class="js-draggable" data-url="<?php echo $saveOrderingUrl; ?>" data-direction="<?php echo strtolower($this->listDirn); ?>" data-nested="true"<?php endif; ?>>
 							<?php echo $this->loadTemplate('quatro_body');?>
 						</tbody>
 					</table>

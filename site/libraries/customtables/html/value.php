@@ -4,7 +4,7 @@
  * @package Custom Tables
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @copyright Copyright (C) 2018-2021. All Rights Reserved
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
@@ -70,11 +70,13 @@ class Value
 				return number_format ( (int)$rowValue, 0, '',$thousand_sep);
 
 			case 'float':
-
 				$decimals = $option_list[0] != '' ? (int)$option_list[0] : ($type_params[0] != '' ? (int)$type_params[0] : 2);
 				$decimals_sep = $option_list[1] ?? '.';
 				$thousand_sep = $option_list[2] ?? '';
 				return number_format ( (float)$rowValue, $decimals,$decimals_sep,$thousand_sep);
+				
+			case 'ordering':
+				return $this->orderingProcess($rowValue, $field, $row);
 
 			case 'id':
 			case 'md5':
@@ -114,9 +116,6 @@ class Value
 			case 'signature':
 				
 				CT_FieldTypeTag_image::getImageSRClayoutview($option_list,$rowValue,$TypeParams,$imagesrc,$imagetag);
-				
-				
-				//-------------
 				
 				$conf = Factory::getConfig();
 				$sitename = $conf->get('config.sitename');
@@ -234,7 +233,7 @@ class Value
 		return null;
 	}
 	
-	protected function multilang(array $field, array $row, array &$option_list)
+	protected function multilang(array $field, array &$row, array &$option_list)
 	{
 		$specific_lang = $option_list[4] ?? '';
 		
@@ -406,6 +405,31 @@ class Value
 		}
 		else
 			return JHTML::date($phpdate );
+	}
+	
+	protected function orderingProcess($value, &$field, &$row)
+	{
+		$orderby_pair = explode(' ',$this->ct->Ordering->orderby);
+			
+		if($orderby_pair[0] == $field['realfieldname'])
+			$iconClass = '';
+		else
+			$iconClass = ' inactive tip-top hasTooltip" title="' . JHtml::_('tooltipText', 'COM_CUSTOMTABLES_FIELD_ORDERING_DISABLED');
+
+		$result ='
+			<span class="sortable-handler'.$iconClass.'">
+				<i class="icon-menu"></i>
+			</span>';
+		
+		if($orderby_pair[0] == $field['realfieldname'])
+		{
+			$result .='<input type="text" style="display:none" name="order[]" size="5" value="'.$value.'" class="width-20 text-area-order " />';
+			$result .='<input type="checkbox" style="display:none" name="cid[]" value="'.$row[$this->ct->Table->realidfieldname].'" class="width-20 text-area-order " />';
+			
+			$this->ct->LayoutVariables['ordering_field_type_found'] = true;
+		}
+			
+		return $result;
 	}
 	
 	protected function timeProcess($value, array &$option_list)

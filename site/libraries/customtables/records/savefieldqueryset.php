@@ -187,12 +187,19 @@ trait SaveFieldQuerySet
 					
 					return (count($sets) > 0 ? $sets : null);
 
-				case 'int':
+				case 'ordering':
 						$value=$this->jinput->getInt($this->comesfieldname,null);
 
 						if(isset($value)) // always check with isset(). null doesnt work as 0 is null somehow in PHP
 							return $this->realfieldname.'='.(int)$value;
 
+					break;
+
+				case 'int':
+						$value=$this->jinput->getInt($this->comesfieldname,null);
+
+						if(isset($value)) // always check with isset(). null doesnt work as 0 is null somehow in PHP
+							return $this->realfieldname.'='.(int)$value;
 
 					break;
 

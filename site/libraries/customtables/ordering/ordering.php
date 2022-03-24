@@ -17,6 +17,7 @@ use \Joomla\CMS\Factory;
 use \JoomlaBasicMisc;
 use CustomTables\Fields;
 use \ESTables;
+use Joomla\Utilities\ArrayHelper;
 
 //Old CTOrdering
 class Ordering
@@ -328,5 +329,46 @@ class Ordering
 			}
 		}
 		return (object)['titles'=>$order_list,'values'=>$order_values];
+	}
+	
+	public function saveorder()
+	{
+		// Get the input
+		$pks = $this->Table->Env->jinput->post->get('cid', array(), 'array');
+		$order = $this->Table->Env->jinput->post->get('order', array(), 'array');
+		
+		//$pks = $this->Table->Env->jinput->get('cid', array(), 'array');
+		//$order = $this->Table->Env->jinput->get('order', array(), 'array');
+		
+		// Sanitize the input
+		$pks = ArrayHelper::toInteger($pks);
+		$order = ArrayHelper::toInteger($order);
+		
+		$realdfieldname = '';
+		
+		foreach($this->Table->fields as $field)
+		{
+			if($field['type'] == 'ordering')
+			{
+				$realdfieldname = $field['realfieldname'];
+				break;
+			}
+		}
+		
+		if($realdfieldname == '')
+			return false;
+		
+		$db = Factory::getDBO();
+		
+		for($i = 0; $i < count($pks); $i++)
+		{
+			$query = 'UPDATE '.$this->Table->realtablename.' SET '.$db->quoteName($realdfieldname).'='.$order[$i].' WHERE '
+				.$db->quoteName($this->Table->realidfieldname).'='.(int)$pks[$i];
+				
+			$db->setQuery($query);
+			$db->execute();
+		}
+		
+		return true;
 	}
 }

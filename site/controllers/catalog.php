@@ -362,6 +362,26 @@ function doTheTask(&$ct,$task,$menu_params,$edit_model,&$this_)
 			}
 		}
 		break;
+		
+	case 'ordering':
+	
+		$tableid = $ct->Env->jinput->getInt('tableid');
+		$ct->getTable($tableid);
+		
+		if($ct->Table->tablename=='')
+		{
+			header("HTTP/1.1 500 Internal Server Error");
+			die('Table not selected.');
+		}
+		
+		$ordering = new CustomTables\Ordering($ct->Table);
+		
+		if(!$ordering->saveorder())
+		{
+			header("HTTP/1.1 500 Internal Server Error");
+			die('Something went wrong.');
+		}
+		break;
 
 	default:
 		

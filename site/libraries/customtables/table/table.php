@@ -106,7 +106,6 @@ class Table
 						$this->useridfieldname=$fld['fieldname'];
 						$this->useridrealfieldname=$fld['realfieldname'];;
 					}
-						
 					break;
 			}
 		}

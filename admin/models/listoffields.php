@@ -24,7 +24,6 @@ use Joomla\CMS\Component\ComponentHelper;
 class CustomtablesModelListoffields extends JModelList
 {
 	var $ct;
-	
 	var $tableid;
 	
 	public function __construct($config = array())
@@ -34,7 +33,8 @@ class CustomtablesModelListoffields extends JModelList
 			$config['filter_fields'] = array(
 				'a.id','id',
 				'a.published','published',
-				//'a.tableid','tableid',
+				'a.tableid','tableid',
+				'a.ordering', 'ordering',
 				'a.fieldname','fieldname',
 				'a.type','type'
 			);
@@ -50,7 +50,7 @@ class CustomtablesModelListoffields extends JModelList
 	 *
 	 * @return  void
 	 */
-	protected function populateState($ordering = null, $direction = null)
+	protected function populateState($ordering = 'a.ordering', $direction = 'asc')
 	{
 		if($this->ct->Env->version < 4)
 		{
@@ -62,7 +62,32 @@ class CustomtablesModelListoffields extends JModelList
 			
 			$published = $this->getUserStateFromRequest($this->context . '.filter.published', 'filter_published', '');
 			$this->setState('filter.published', $published);
+
+			/*
+			$orderCol = $app->input->get('filter_order', 'a.ordering');
+			if (!in_array($orderCol, $this->filter_fields))
+			{
+				$orderCol = 'a.ordering';
+			}
+
+			$this->setState('list.ordering', $orderCol);
+
+			$listOrder = $app->input->get('filter_order_Dir', 'ASC');
+
+			if (!in_array(strtoupper($listOrder), array('ASC', 'DESC', '')))
+			{
+				$listOrder = 'ASC';
+			}
+			*/
+			
 		}
+		else
+		{
+
+		}
+		
+		$this->setState('list.direction', $direction);
+		
 		
 		$this->setState('params', ComponentHelper::getParams('com_customtables'));
 		
@@ -105,8 +130,7 @@ class CustomtablesModelListoffields extends JModelList
 				}
 			}
 		}
- 
-        
+         
 		// return items
 		return $items;
 	}
@@ -116,32 +140,11 @@ class CustomtablesModelListoffields extends JModelList
 	 *
 	 * @return	string	An SQL query
 	 */
-	
 	protected function getListQuery()
 	{
 		$jinput = JFactory::getApplication()->input;
 		$this->tableid=$jinput->getInt('tableid',0);
-		/*
-		$state_tableid=(int)$this->getState('filter.tableid');
-	
-		if($state_tableid!=0)// and $tableid==0)
-		{
-			$this->tableid=$state_tableid;
-			$jinput->set('tableid',$this->tableid);
-			$this->tableid=$jinput->getInt('tableid',0);
-		}
-		elseif($state_tableid==0 and $this->tableid!=0)
-		{
-			$this->setState('filter.tableid',$this->tableid);
-		}
-		else
-		{
-			$this->tableid=0;
-		}
-		*/
-		//-0---------------------------------------------
-		
-		
+
 		// Get the user object.
 		$user = JFactory::getUser();
 		// Create a new query object.
@@ -153,7 +156,7 @@ class CustomtablesModelListoffields extends JModelList
 		$tabletitle='(SELECT tabletitle FROM #__customtables_tables AS tables WHERE tables.id=a.tableid)';
 		$query->select('a.*, '.$tabletitle.' AS tabletitle');
 		
-		$query->select('a.*');
+		//$query->select('a.*');
 
 		// From the customtables_item table
 		$query->from($db->quoteName('#__customtables_fields', 'a'));
@@ -188,8 +191,6 @@ class CustomtablesModelListoffields extends JModelList
 		{
 			$query->where('a.type = ' . $db->quote($db->escape($type)));
 		}
-
-		
 		
 		if ($this->tableid!=0)
 		{
@@ -199,7 +200,7 @@ class CustomtablesModelListoffields extends JModelList
 		$this->tableid=$app->input->getint('tableid',0);
 		
 		// Add the list ordering clause.
-		$orderCol = $this->state->get('list.ordering', 'a.id');
+		$orderCol = $this->state->get('list.ordering', 'a.ordering');
 		$orderDirn = $this->state->get('list.direction', 'asc');	
 		if ($orderCol != '')
 		{

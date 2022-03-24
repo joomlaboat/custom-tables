@@ -30,8 +30,8 @@ trait render_html
 
         //prepare header and record layouts
 		$result='
-		<table id="ctTable_'.$ct->Table->tableid.'" '.($class!='' ? ' class="'.$class.'" ': '').'><thead><tr>';
-		//id="ctRecord{{ record.id }}"
+		<table id="ctTable_'.$ct->Table->tableid.'" '.($class!='' ? ' class="'.$class.'" ': '').' style="position: relative;"><thead><tr>';
+		
 		$recordline='<tr id="ctTable_'.$ct->Table->tableid.'_{{ record.id }}">';
 
 		foreach($fieldarray as $field)
@@ -99,6 +99,15 @@ trait render_html
 			die($tablecontent);
 		
         $result.='<tbody>'.$tablecontent.'</tbody></table>';
+		
+		//Add Ordering Field Type code
+		if(isset($ct->LayoutVariables['ordering_field_type_found']) and $ct->LayoutVariables['ordering_field_type_found'])
+		{
+			$saveOrderingUrl = 'index.php?option=com_customtables&view=catalog&task=ordering&tableid='.$ct->Table->tableid.'&tmpl=component&clean=1';
+			JHtml::_('sortablelist.sortable', 'ctTable_'.$ct->Table->tableid.'', 'ctTableForm_'.$ct->Table->tableid.'', 'asc', $saveOrderingUrl);
+			
+			$result = '<form id="ctTableForm_'.$ct->Table->tableid.'">'.$result.'</form>';
+		}
 
 		return $result;
 	}

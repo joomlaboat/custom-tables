@@ -106,7 +106,7 @@ class IntegrityCoreTables extends \CustomTables\IntegrityChecks
 		$tables_projected_fields[]=['name'=>'alwaysupdatevalue','ct_fieldtype'=>'checkbox','mysql_type'=>'TINYINT NOT NULL DEFAULT 0','postgresql_type'=>'SMALLINT NOT NULL DEFAULT 0','comment'=>'Update default value every time record is edited.'];
 		
 		$tables_projected_fields[]=['name'=>'parentid','ct_fieldtype'=>'sqljoin','mysql_type'=>'INT NULL','postgresql_type'=>'INT NULL'];		
-		$tables_projected_fields[]=['name'=>'ordering','ct_fieldtype'=>'','mysql_type'=>'INT UNSIGNED NOT NULL','postgresql_type'=>'INT NOT NULL'];		
+		$tables_projected_fields[]=['name'=>'ordering','ct_fieldtype'=>'int','mysql_type'=>'INT NOT NULL','postgresql_type'=>'INT NOT NULL'];		
 
 		$tables_projected_fields[]=['name'=>'defaultvalue','ct_fieldtype'=>'','mysql_type'=>'VARCHAR(1024) NULL','postgresql_type'=>'VARCHAR(1024) NULL'];
 		$tables_projected_fields[]=['name'=>'customfieldname','ct_fieldtype'=>'string','mysql_type'=>'VARCHAR(100) NULL','postgresql_type'=>'VARCHAR(100) NULL'];
