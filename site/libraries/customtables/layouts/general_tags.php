@@ -289,6 +289,11 @@ class Twig_Document_Tags
             
 		return $layout;
 	}
+	
+	function sitename()
+	{
+		return Factory::getApplication()->get('sitename');
+	}
 }
 
 class Twig_Text_Tags
