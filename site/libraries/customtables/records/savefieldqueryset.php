@@ -562,53 +562,41 @@ trait SaveFieldQuerySet
 
 	protected function get_usergroups_type_value()
 	{
-		switch($this->typeparams)
+		$type_params = JoomlaBasicMisc::csv_explode(',',$this->typeparams,'"',false);
+		
+		switch($type_params[0])
 		{
 			case 'single';
+				$value=$this->jinput->getString($this->comesfieldname,null);
+				if(isset($value))
+					return $this->realfieldname.'='.$this->db->Quote(','.$value.',');
+				
+				break;
+			case 'multi';
+				$valuearray = $this->jinput->post->get( $this->comesfieldname, null, 'array' );
+				if(isset($valuearray))
+					return $this->realfieldname.'='.$this->db->Quote(','.implode(',',$valuearray).',');
 
-								$value=$this->jinput->getString($this->comesfieldname,null);
+				break;
+			case 'multibox';
+				$valuearray = $this->jinput->post->get( $this->comesfieldname, null, 'array' );
+				if(isset($valuearray))
+					return $this->realfieldname.'='.$this->db->Quote(','.implode(',',$valuearray).',');
 
-								if(isset($value))
-									return $this->realfieldname.'='.$this->db->Quote(','.$value.',');
+				break;
+			case 'radio';
+				$value=$this->jinput->getString($this->comesfieldname,null);
+				if(isset($value))
+					return $this->realfieldname.'='.$this->db->Quote(','.$value.',');
 
+				break;
+			case 'checkbox';
+				$valuearray = $this->jinput->post->get( $this->comesfieldname, null, 'array' );
+				if(isset($valuearray))
+					return $this->realfieldname.'='.$this->db->Quote(','.implode(',',$valuearray).',');
 
-								break;
-
-							case 'multi';
-									$valuearray = $this->jinput->post->get( $this->comesfieldname, null, 'array' );
-
-									if(isset($valuearray))
-										return $this->realfieldname.'='.$this->db->Quote(','.implode(',',$valuearray).',');
-
-								break;
-
-							case 'multibox';
-									$valuearray = $this->jinput->post->get( $this->comesfieldname, null, 'array' );
-
-									if(isset($valuearray))
-										return $this->realfieldname.'='.$this->db->Quote(','.implode(',',$valuearray).',');
-
-								break;
-
-
-							case 'radio';
-
-									$value=$this->jinput->getString($this->comesfieldname,null);
-
-									if(isset($value))
-										return $this->realfieldname.'='.$this->db->Quote(','.$value.',');
-
-								break;
-
-							case 'checkbox';
-								$valuearray = $this->jinput->post->get( $this->comesfieldname, null, 'array' );
-
-								if(isset($valuearray))
-									return $this->realfieldname.'='.$this->db->Quote(','.implode(',',$valuearray).',');
-
-								break;
-						}
-
+				break;
+		}
         return false;
     }
 
