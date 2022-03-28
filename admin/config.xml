@@ -39,6 +39,14 @@
 			<option value="0">Do not load Twig</option>
 		</field>
 
+                <field
+			name="googlemapapikey"
+			type="text"
+			label="Google Map API Key"
+			default=""
+			description=""
+		/>
+
 		<field name="autorName"
 			type="text"
 			label="COM_CUSTOMTABLES_CONFIG_AUTHOR_NAME_LABEL"

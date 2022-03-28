@@ -19,6 +19,7 @@ use CustomTables\Filtering;
 
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Uri\Uri;
+use \Joomla\CMS\Component\ComponentHelper;
 
 class CT
 {
@@ -304,8 +305,12 @@ class CT
 		$document->addScript(URI::root(true).'/components/com_customtables/libraries/customtables/media/js/esmulti.js');
 		$document->addCustomTag('<script src="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/js/modal.js" type="text/javascript"></script>');
 		$document->addCustomTag('<script src="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/js/uploader.js"></script>');
-		$document->addCustomTag('<script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=false"></script>');
-	
+
+		$params = ComponentHelper::getParams('com_customtables');
+		$googlemapapikey = $params->get('googlemapapikey');
+		
+		$document->addCustomTag('<script type="text/javascript" src="https://maps.google.com/maps/api/js?key='.$googlemapapikey.'&sensor=false"></script>');
+		
 		$document->addScript(URI::root(true).'/components/com_customtables/libraries/customtables/media/js/combotree.js');
 
 		//Styles
