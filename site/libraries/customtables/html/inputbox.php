@@ -36,14 +36,18 @@ class Inputbox
 	var $ct;
 	var $esfield;
 	var $jinput;
+	
 	var $cssclass;
+	var $cssstyle;
 	var $attributes;
+	var $onchange;
+	
 	var $option_list;
 	var $place_holder;
 	var $prefix;
 	var $isTwig;
 	
-	function __construct(&$ct, &$esfield, array $option_list = [],$isTwig = true)
+	function __construct(&$ct, &$esfield, array $option_list = [],$isTwig = true, $onchange = '')
 	{
 		$this->ct = $ct;
 		$this->isTwig = $isTwig;
@@ -53,14 +57,19 @@ class Inputbox
 		// $option_list[1] - Optional Parameter
 		$this->cssclass = $option_list[0] ?? '';
 		$this->attributes = $option_list[1] ?? '';
+		$this->cssstyle = '';
+		$this->onchange = $onchange;
 
-		if(strpos($this->cssclass,':')!==false)//its a style, change it to attribute
+		if(strpos($this->cssclass,':') !== false)//its a style, change it to attribute
     	{
-			if($this->attributes!='')
-    			$this->attributes.=' ';
-
-			$this->attributes .= 'style="'.$this->cssclass.'"';
+			$this->cssstyle = $this->cssclass;
 			$this->cssclass = '';
+		}
+
+		if(strpos($this->attributes,'onchange="') !== false and $this->onchange != '')
+    	{
+			//if the attributes already containe "onchange" parameter then add onchange value to the attributes parameter
+			$this->attributes = str_replace('onchange="','onchange="'.$this->onchange,$this->attributes);
 		}
 
 		$this->esfield = $esfield;
@@ -1256,7 +1265,8 @@ class Inputbox
 				$result.='<fieldset id="'.$this->prefix.$this->esfield['fieldname'].'" class="'.$this->cssclass.' btn-group radio btn-group-yesno" '
 					.'style="border:none !important;background:none !important;">';
 
-				$result.='<div style="position: absolute;visibility:hidden !important; display:none !important;"><input type="radio" '
+				$result.='<div style="position: absolute;visibility:hidden !important; display:none !important;">'
+							.'<input type="radio" '
 										.'id="'.$element_id.'0" '
 										.'name="'.$element_id.'" '
 										.'value="1" '
@@ -1265,10 +1275,12 @@ class Inputbox
 										.'data-valuerulecaption="'.str_replace('"','&quot;',$this->esfield['valuerulecaption']).'" '
 										.$this->attributes.' '
 										.((int)$value==1 ? ' checked="checked" ' : '')
-										.' ></div>'
-										.'<label class="btn'.((int)$value==1 ? ' active btn-success' : '').'" for="'.$element_id.'0" id="'.$element_id.'0_label" >'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YES').'</label>';
+							.' >'
+						.'</div>'
+						.'<label class="btn'.((int)$value==1 ? ' active btn-success' : '').'" for="'.$element_id.'0" id="'.$element_id.'0_label" >'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YES').'</label>';
 										
-										$result.='<div style="position: absolute;visibility:hidden !important; display:none !important;"><input type="radio" '
+				$result.='<div style="position: absolute;visibility:hidden !important; display:none !important;">'
+						.'<input type="radio" '
 										.'id="'.$element_id.'1" '
 										.'name="'.$element_id.'" '
 										.$this->attributes.' '
@@ -1277,60 +1289,109 @@ class Inputbox
 										.'data-valuerule="'.str_replace('"','&quot;',$this->esfield['valuerule']).'" '
 										.'data-valuerulecaption="'.str_replace('"','&quot;',$this->esfield['valuerulecaption']).'" '
 										.((int)$value==0 ? ' checked="checked" ' : '')
-										.' ></div>'
-										.'<label class="btn'.((int)$value==0 ? ' active btn-danger' : '').'" for="'.$element_id.'1" id="'.$element_id.'1_label">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NO').'</label>';
-										 
+							.' >'
+						.'</div>'
+						.'<label class="btn'.((int)$value==0 ? ' active btn-danger' : '').'" for="'.$element_id.'1" id="'.$element_id.'1_label">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NO').'</label>';
+
 				$result.='</fieldset>';
 			}
 			else
 			{
-				$result.='<div class="switcher">
-					<input type="radio" id="'.$element_id.'0" name="'.$element_id.'" value="0" class="active " '.((int)$value==0 ? ' checked="checked" ' : '').' >
-					<label for="'.$element_id.'0">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NO').'</label>
-					<input type="radio" id="'.$element_id.'1" name="'.$element_id.'" value="1" '.((int)$value==1 ? ' checked="checked" ' : '').' >
-					<label for="'.$element_id.'1">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YES').'</label>
-					<span class="toggle-outside"><span class="toggle-inside"></span></span>
-	</div>';
+				$result.='<div class="switcher">'
+							.'<input type="radio" '
+								.'id="'.$element_id.'0" '
+								.'name="'.$element_id.'" '
+								.$this->attributes.' '
+								.'value="0" '
+								.'class="active " '
+								.'data-label="'.$this->esfield['fieldtitle'.$this->ct->Languages->Postfix].'" '
+								.'data-valuerule="'.str_replace('"','&quot;',$this->esfield['valuerule']).'" '
+								.'data-valuerulecaption="'.str_replace('"','&quot;',$this->esfield['valuerulecaption']).'" '
+								.((int)$value==0 ? ' checked="checked" ' : '')
+							.' >'
+							.'<label for="'.$element_id.'0">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NO').'</label>'
+							.'<input type="radio" '
+								.'id="'.$element_id.'1" '
+								.'name="'.$element_id.'" '
+								.$this->attributes.' '
+								.'value="1" '
+								.'data-label="'.$this->esfield['fieldtitle'.$this->ct->Languages->Postfix].'" '
+								.'data-valuerule="'.str_replace('"','&quot;',$this->esfield['valuerule']).'" '
+								.'data-valuerulecaption="'.str_replace('"','&quot;',$this->esfield['valuerulecaption']).'" '
+								.((int)$value==1 ? ' checked="checked" ' : '')
+							.' >'
+							.'<label for="'.$element_id.'1">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YES').'</label>'
+							.'<span class="toggle-outside"><span class="toggle-inside"></span></span>'
+						.'</div>';
 			}
 		}
 		else
 		{
-			$onchange=$this->prefix.$this->esfield['fieldname'].'_off.value=(this.checked === true ? 1 : 0);';// this is to save unchecked value as well.
-									
-			if(strpos($this->attributes,'onchange="')!==false)
-				$check_attributes=str_replace('onchange="','onchange="'.$onchange,$this->attributes);// onchange event already exists add one before
-			else
-				$check_attributes = $this->attributes;
-									
 			if($this->ct->Env->version < 4)
 			{
+				$onchange=$this->prefix.$this->esfield['fieldname'].'_off.value=(this.checked === true ? 0 : 1);';// this is to save unchecked value as well.
+				
+				if(strpos($this->attributes,'onchange="')!==false)
+					$check_attributes = str_replace('onchange="','onchange="'.$onchange,$this->attributes);// onchange event already exists add one before
+				else
+					$check_attributes = $this->attributes.'onchange="'.$onchange;
+				
 				$result.='<input type="checkbox" '
 											.'id="'.$this->prefix.$this->esfield['fieldname'].'" '
 											.'name="'.$this->prefix.$this->esfield['fieldname'].'" '
 											.'data-label="'.$this->esfield['fieldtitle'.$this->ct->Languages->Postfix].'" '
 											.'data-valuerule="'.str_replace('"','&quot;',$this->esfield['valuerule']).'" '
 											.'data-valuerulecaption="'.str_replace('"','&quot;',$this->esfield['valuerulecaption']).'" '
-											.$check_attributes
 											.($value ? ' checked="checked" ' : '')
-											.' class="'.$this->cssclass.'">';
-										
-				$result.='<input type="hidden"'
+											.($this->cssstyle != '' ? ' class="'.$this->cssstyle.'" ' : '')
+											.($this->cssclass != '' ? ' class="'.$this->cssclass.'" ' : '')
+											.($check_attributes != '' ? ' '.$check_attributes : '')
+											.'>'
+						.'<input type="hidden"'
 											.' id="'.$this->prefix.$this->esfield['fieldname'].'_off" '
 											.' name="'.$this->prefix.$this->esfield['fieldname'].'_off" '
-											.($value ? ' value="1" ' : 'value="0"')
+											.((int)$value == 1? ' value="0" ' : 'value="1"')
 											.' >';
 			}
 			else
 			{
 				$element_id=$this->prefix.$this->esfield['fieldname'];
-										
-				$result.='<div class="switcher">
-					<input type="radio" id="'.$element_id.'0" name="'.$element_id.'" value="0" class="active " '.((int)$value==0 ? ' checked="checked" ' : '').' >
-					<label for="'.$element_id.'0">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NO').'</label>
-					<input type="radio" id="'.$element_id.'1" name="'.$element_id.'" value="1" '.((int)$value==1 ? ' checked="checked" ' : '').' >
-					<label for="'.$element_id.'1">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YES').'</label>
-					<span class="toggle-outside"><span class="toggle-inside"></span></span>
-	</div>';
+				
+				$result.='<div class="switcher">'
+							.'<input type="radio" '
+								.'id="'.$element_id.'0" '
+								.'name="'.$element_id.'" '
+								.'value="0" '
+								.'class="active " '
+								.'data-label="'.$this->esfield['fieldtitle'.$this->ct->Languages->Postfix].'" '
+								.'data-valuerule="'.str_replace('"','&quot;',$this->esfield['valuerule']).'" '
+								.'data-valuerulecaption="'.str_replace('"','&quot;',$this->esfield['valuerulecaption']).'" '
+								.((int)$value==0 ? ' checked="checked" ' : '')
+							.' >'
+							.'<label for="'.$element_id.'0">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NO').'</label>'
+							.'<input type="radio" '
+								.'id="'.$element_id.'1" '
+								.'name="'.$element_id.'" '
+								.'value="1" '
+								.'data-label="'.$this->esfield['fieldtitle'.$this->ct->Languages->Postfix].'" '
+								.'data-valuerule="'.str_replace('"','&quot;',$this->esfield['valuerule']).'" '
+								.'data-valuerulecaption="'.str_replace('"','&quot;',$this->esfield['valuerulecaption']).'" '
+								.((int)$value==1 ? ' checked="checked" ' : '').' >'
+							.'<label for="'.$element_id.'1">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YES').'</label>'
+							.'<span class="toggle-outside"><span class="toggle-inside"></span></span>'
+							.'<input type="hidden"'
+											.' id="'.$this->prefix.$this->esfield['fieldname'].'_off" '
+											.' name="'.$this->prefix.$this->esfield['fieldname'].'_off" '
+											.((int)$value == 1 ? ' value="0" ' : 'value="1"')
+											.' >'
+						.'</div>'
+						.'
+						<script>
+							document.getElementById("'.$element_id.'0").onchange = function(){if(this.checked === true)'.$this->prefix.$this->esfield['fieldname'].'_off.value=1;'.$this->onchange.'};
+							document.getElementById("'.$element_id.'1").onchange = function(){if(this.checked === true)'.$this->prefix.$this->esfield['fieldname'].'_off.value=0;'.$this->onchange.'};
+						</script>
+						
+						';
 			}
 		}
 		

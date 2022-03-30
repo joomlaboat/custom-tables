@@ -233,31 +233,33 @@ class fieldObject
 			
 			//Deafult style (borderless)
 			if(isset($args[0]) or $args[0] != '')
+			{
 				$class_str = $args[0];
+				
+				if(strpos($class_str,':')!==false)//its a style, change it to attribute
+					$div_arg=' style="'.$class_str.'"';
+				else
+					$div_arg=' class="'.$class_str.'"';
+			}
 			else
-				$class_str = '';
-			
-			if($class_str == '' or strpos($class_str,':')!==false)//its a style, change it to attribute
-				$div_arg=' style="'.$class_str.'"';
-			else
-				$div_arg=' class="'.$class_str.'"';
+				$div_arg = '';
 
 			// Default attribute - action to save the value
 			$args[0] = 'border:none !important;width:auto;box-shadow:none;';
 			
 			$onchange='ct_UpdateSingleValue(\''.$this->ct->Env->WebsiteRoot.'\','.$this->ct->Env->Itemid.',\''
 				.$this->field['fieldname'].'\','.$this->ct->Table->record['listing_id'].',\''.$postfix.'\');';
-								
-            $attributes='onchange="'.$onchange.'"'.$style;
-								
-			if(isset($value_option_list[1]))
-				$args[1] .= ' '.$attributes;
-			else
-				$args[1] = $attributes;
 
-			$Inputbox = new Inputbox($this->ct, $this->field, $args, true);
+            //$attributes='onchange="'.$onchange.'"'.$style;
+
+			if(isset($value_option_list[1]))
+				$args[1] .= $value_option_list[1];//' '.$attributes;
+			//else
+				//$args[1] = $attributes;
+
+			$Inputbox = new Inputbox($this->ct, $this->field, $args, true, $onchange);
 			
-			$edit_box = '<div '.$div_arg.'id="'.$ajax_prefix.$this->field['fieldname'].$postfix.'_div">'
+			$edit_box = '<div'.$div_arg.' id="'.$ajax_prefix.$this->field['fieldname'].$postfix.'_div">'
                             .$Inputbox->render($value, $this->ct->Table->record)
 						.'</div>';
 			

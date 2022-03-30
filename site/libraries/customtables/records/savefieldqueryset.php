@@ -383,7 +383,12 @@ trait SaveFieldQuerySet
                     {
                         $value=$this->jinput->getCmd($this->comesfieldname.'_off');
                         if($value!=null)
-							return $this->realfieldname.'=0';
+						{
+							if((int)$value == 1)
+								return $this->realfieldname.'=0';
+							else
+								return $this->realfieldname.'=1';
+						}
                     }
                     break;
 

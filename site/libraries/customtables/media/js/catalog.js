@@ -357,13 +357,16 @@
         var fieldname=fieldname_.split('_')[0];
         var url=WebsiteRoot+'index.php?option=com_customtables&amp;view=edititem&amp;Itemid='+Itemid;
 		var params = "";
-		var obj_checkbox_off=document.getElementById("com_"+record_id+"_"+fieldname_+"_off");
+		var obj_checkbox_off=document.getElementById("comes_"+record_id+"_"+fieldname_+"_off");
 		if(obj_checkbox_off){
 			//Bit confusing. But this is needed to save Unchecked values
-			params="comes_"+fieldname_+"_off="+obj_checkbox_off.value;
+			//Its because unchecked checkbox has value NULL
+			params="comes_"+fieldname_+"_off="+obj_checkbox_off.value; // if this set 1 then the ckeckbox value will be 0
 			
 			if(parseInt(obj_checkbox_off.value)==1)
-				params+="&comes_"+fieldname_+"="+document.getElementById("com_"+record_id+"_"+fieldname_).value;
+				params+="&comes_"+fieldname_+"=0";
+			else
+				params+="&comes_"+fieldname_+"=1";
 		}
 		else{
 			let objectName = "comes_"+record_id+"_"+fieldname_;
