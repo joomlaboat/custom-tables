@@ -1,3 +1,4 @@
+
 <?php
 /**
  * CustomTables Joomla! 3.x Native Component
@@ -211,12 +212,16 @@ class CT_FieldTypeTag_file
 
         $fileid = $jinput->post->get($ctTable->comesfieldname, '','STRING' );
 
-		$value='';
+		$value = null;
+		$value_found = false;
+		
 		$filepath=JPATH_SITE.DIRECTORY_SEPARATOR.str_replace('/',DIRECTORY_SEPARATOR,$FileFolder);
 
 		if($listing_id==0)
         {
-			$value=CT_FieldTypeTag_file::UploadSingleFile('',$fileid, $ctTable->realfieldname,JPATH_SITE.$FileFolder,$ctTable->typeparams,$ctTable->realtablename);
+			$value = CT_FieldTypeTag_file::UploadSingleFile('',$fileid, $ctTable->realfieldname,JPATH_SITE.$FileFolder,$ctTable->typeparams,$ctTable->realtablename);
+			if($value)
+					$value_found = true;
         }
 		else
 		{
@@ -232,14 +237,15 @@ class CT_FieldTypeTag_file
 						unlink($filename_full);
 				}
             
-				$value_found=true;
-				$savequery[]=$ctTable->realfieldname.'='.$db->quote('');
+				$value_found = true;
 			}
-			else
-				$value=CT_FieldTypeTag_file::UploadSingleFile($ExistingFile,$fileid, $ctTable->realfieldname,JPATH_SITE.$FileFolder,$ctTable->typeparams,$ctTable->realtablename);
+
+			$value = CT_FieldTypeTag_file::UploadSingleFile($ExistingFile,$fileid, $ctTable->realfieldname,JPATH_SITE.$FileFolder,$ctTable->typeparams,$ctTable->realtablename);
+			if($value)
+				$value_found = true;
 		}
 
-		if($value and $value!='')
+		if($value_found)
 			return $ctTable->realfieldname.'='.$db->quote($value);
 
         return null;
