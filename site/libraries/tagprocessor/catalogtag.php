@@ -47,8 +47,8 @@ class tagProcessor_Catalog
 
 			if($ct->Env->frmt=='csv')
 			{
-				$pagelayout=str_replace($fItem,'',$pagelayout);//delete {catalog} tag
-				self::get_CatalogTable_singleline_CSV($ct,$allowcontentplugins,$pagelayout);
+				//$pagelayout=str_replace($fItem,'',$pagelayout);//delete {catalog} tag
+				$vlu.=self::get_CatalogTable_singleline_CSV($ct,$allowcontentplugins,$pagelayout);
 			}
 			elseif($ct->Env->frmt=='json')
 			{
@@ -58,14 +58,13 @@ class tagProcessor_Catalog
 			elseif($ct->Env->frmt=='image')
 				self::get_CatalogTable_singleline_IMAGE($pagelayout,$allowcontentplugins);
 			elseif($notable == 'notable')
-				$vlu=self::get_Catalog($ct,$tableclass,false,$allowcontentplugins,$separator);
+				$vlu.=self::get_Catalog($ct,$tableclass,false,$allowcontentplugins,$separator);
 			else
-				$vlu=self::get_Catalog($ct,$tableclass,true,$allowcontentplugins,$separator);
+				$vlu.=self::get_Catalog($ct,$tableclass,true,$allowcontentplugins,$separator);
 
 			$pagelayout=str_replace($fItem,$new_replaceitecode,$pagelayout);
 			$i++;
 		}
-
         return $vlu;
     }
 

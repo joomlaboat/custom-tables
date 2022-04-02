@@ -56,9 +56,8 @@ trait render_csv
 		$filename = JoomlaBasicMisc::makeNewFileName($ct->Env->menu_params->get('page_title'),'csv');
 
 		$result.= strip_tags($result);
-
 		$result.= strip_tags(self::renderCSVoutput($ct));
-				
+
 		if($ct->Table->recordcount > $ct->LimitStart + $ct->Limit)
 		{
 			if($ct->Limit > 0)
@@ -99,6 +98,7 @@ trait render_csv
         return $tablecontent;
 	}
 
+	/*
 	public static function get_CatalogTable_singleline_CSV(&$ct,$allowcontentplugins,$pagelayout)
 	{
 		$filename = JoomlaBasicMisc::makeNewFileName($ct->Env->menu_params->get('page_title'),'csv');
@@ -157,6 +157,30 @@ trait render_csv
         if($allowcontentplugins)
 			$result = LayoutProcessor::applyContentPlugins($result);
                 
+		return $result;
+    }
+	*/
+	
+	public static function get_CatalogTable_singleline_CSV(&$ct,$allowcontentplugins,$pagelayout)
+	{
+		if (ob_get_contents())
+			ob_clean();
+
+		//Prepare line layout
+		$layout=$ct->LayoutProc->layout;
+		$layout=str_replace("\n",'',$layout);
+		$layout=str_replace("\r",'',$layout);
+
+		$twig = new TwigProcessor($ct, $layout);
+		
+		$records=[];
+
+		foreach($ct->Records as $row)
+			$records[]=trim(strip_tags(tagProcessor_Item::RenderResultLine($ct, $twig, $row)));
+
+		$result = implode('
+',$records);
+
 		return $result;
     }
 }

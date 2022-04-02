@@ -22,17 +22,18 @@ $catalogtablecontent=tagProcessor_CatalogTableView::process($this->ct,$this->pag
 if($catalogtablecontent=='')
 {
 	$this->ct->LayoutProc->layout=$itemlayout;
-	
 	$catalogtablecontent=tagProcessor_Catalog::process($this->ct,$this->pagelayout,$this->catalogtablecode);
-	$catalogtablecontent=str_replace("\n",'',$catalogtablecontent);
-	$catalogtablecontent=str_replace("\r",'',$catalogtablecontent);
-	$catalogtablecontent=str_replace("\t",'',$catalogtablecontent);
 }
 
 $this->ct->LayoutProc->layout=$this->pagelayout;
 $this->pagelayout=$this->ct->LayoutProc->fillLayout();
 
-$this->pagelayout=strip_tags(str_replace('&&&&quote&&&&','"',$this->pagelayout)); // search boxes may return HTMl elemnts that contain placeholders with quotes like this: &&&&quote&&&&
+$this->pagelayout=strip_tags(str_replace('&&&&quote&&&&','"',trim($this->pagelayout))); // search boxes may return HTMl elemnts that contain placeholders with quotes like this: &&&&quote&&&&
+
+$this->pagelayout=str_replace("\n",'',$this->pagelayout);
+$this->pagelayout=str_replace("\r",'',$this->pagelayout);
+$this->pagelayout=str_replace("\t",'',$this->pagelayout);
+
 $this->pagelayout=str_replace($this->catalogtablecode,$catalogtablecontent,$this->pagelayout);
 
 LayoutProcessor::applyContentPlugins($this->pagelayout);
