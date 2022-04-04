@@ -38,7 +38,8 @@ $this->pagelayout=str_replace($this->catalogtablecode,$catalogtablecontent,$this
 
 LayoutProcessor::applyContentPlugins($this->pagelayout);
 
-if (ob_get_contents()) ob_end_clean();
+if (ob_get_contents()) 
+	ob_end_clean();
 
 $filename = JoomlaBasicMisc::makeNewFileName($this->ct->Env->menu_params->get('page_title'),'csv');
 header('Content-Disposition: attachment; filename="'.$filename.'"');
@@ -46,5 +47,6 @@ header('Content-Type: text/csv; charset=utf-8');
 header("Pragma: no-cache");
 header("Expires: 0");
 
-echo chr(255).chr(254).mb_convert_encoding($this->pagelayout, 'UTF-16LE', 'UTF-8');
+echo chr(255).chr(254);
+echo mb_convert_encoding($this->pagelayout, 'UTF-16LE', 'UTF-8');
 die;//clean exit

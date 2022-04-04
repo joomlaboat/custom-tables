@@ -294,6 +294,11 @@ class Twig_Document_Tags
 	{
 		return Factory::getApplication()->get('sitename');
 	}
+	
+	function language_postfix()
+	{
+		return $this->ct->Languages->Postfix;
+	}
 }
 
 class Twig_Text_Tags
