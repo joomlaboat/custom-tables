@@ -122,6 +122,12 @@ class Twig_Record_Tags
 		{
 			$join_table_fields = Fields::getFields($join_table);
 			
+			if(count($join_table_fields) == 0)
+			{
+				Factory::getApplication()->enqueueMessage('{{ record.count("'.$join_table.'") }} - Table not found or it has no fields.', 'error');
+				return '';
+			}
+			
 			foreach($join_table_fields as $join_table_field)
 			{
 				if($join_table_field['type'] == 'sqljoin')
