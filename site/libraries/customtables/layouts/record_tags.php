@@ -450,7 +450,6 @@ class Twig_Record_Tags
 			else
 				$vlu = $row['vlu'];
 		}
-		
-		//return new \Twig\Markup($vlu, 'UTF-8' );
 		return $vlu;
 	}
+}

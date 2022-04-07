@@ -294,7 +294,7 @@ class Twig_Html_Tags
 		if($this->isTwig)
 			return new \Twig\Markup($vlu, 'UTF-8' );
 		else
-			return ''.$vlu;
+			return $vlu;
 	}
 	
 	function print($class='ctEditFormButton btn button')
