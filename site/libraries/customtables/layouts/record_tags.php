@@ -99,8 +99,8 @@ class Twig_Record_Tags
 		
 		return (int)$this->ct->Table->record['_number'];
 	}
-	
-	function count($full_sentence = false)
+
+	function count($join_table = '')
 	{
 		if($this->ct->Env->frmt == 'csv')
 			return '';	
@@ -117,12 +117,24 @@ class Twig_Record_Tags
 			return '';
 		}
 		
-		if($full_sentence)
+		
+		if($join_table != '')
 		{
-			$vlu = '<span class="ctCatalogRecordCount">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FOUND' ).': '.$this->ct->Table->recordcount
-				.' '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RESULT_S' ).'</span>';
-				
-			return new \Twig\Markup($vlu, 'UTF-8' );
+			$join_table_fields = Fields::getFields($join_table);
+			
+			foreach($join_table_fields as $join_table_field)
+			{
+				if($join_table_field['type'] == 'sqljoin')
+				{
+					$typeparams=JoomlaBasicMisc::csv_explode(',',$join_table_field['typeparams'],'"',false);
+					$join_table_join_to_table = $typeparams[0];
+					if($join_table_join_to_table == $this->ct->Table->tablename)
+						return $this->join('count', $join_table, '_id', $join_table_field['fieldname']);
+				}
+			}
+			
+			Factory::getApplication()->enqueueMessage('{{ record.count("'.$join_table.'") }} - Table found but the field that links to this table not found.', 'error');
+			return '';
 		}
 		else
 			return $this->ct->Table->recordcount;
@@ -322,7 +334,6 @@ class Twig_Record_Tags
 		return $query;
 	}
 	
-	
 	function join_ApplyQueryGetValue($str,$sj_tablename)
 	{
 		$list=explode('$get_',$str);
@@ -366,7 +377,7 @@ class Twig_Record_Tags
 		return '#__customtables_table_'.$sj_tablename.'.es_'.$str;
 	}
 	
-	function join($sj_function, $sj_tablename, $field1_findwhat, $field2_lookwhere, $field3_readvalue, $additional_where, $order_by_option, $value_option_list)
+	function join($sj_function, $sj_tablename, $field1_findwhat, $field2_lookwhere, $field3_readvalue = '_id', $additional_where = '' , $order_by_option = '', $value_option_list = [])
 	{
 		if($sj_tablename=='')	return '';
 
@@ -439,6 +450,7 @@ class Twig_Record_Tags
 			else
 				$vlu = $row['vlu'];
 		}
-		return new \Twig\Markup($vlu, 'UTF-8' );
+		
+		//return new \Twig\Markup($vlu, 'UTF-8' );
+		return $vlu;
 	}
-}

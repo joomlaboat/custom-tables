@@ -21,7 +21,7 @@ Implemented:
 {format:csv} - {{ html.format('csv') }}
 {searchbutton} - {{ html.searchbutton }}
 {search:email} - {{ html.search('email') }}
-{recordcount} - {{ record.count(true) }}
+{recordcount} - {{ record.count_sentence }}
 {count} - {{ record.count }}
 {navigation} - {{ html.navigation(|type|,|css_class|) }}
 {add} - {{ html.add(|alias_or_itemid|) }}
@@ -64,7 +64,7 @@ class tagProcessor_Page
         tagProcessor_Page::SearchBOX($ct_html,$pagelayout); //Converted to Twig. Original replaced.
 
         tagProcessor_Page::RecordCountValue($ct_record,$pagelayout); //Converted to Twig. Original replaced.
-        tagProcessor_Page::RecordCount($ct_record,$pagelayout); //Converted to Twig. Original replaced.
+        tagProcessor_Page::RecordCount($ct_record,$ct_html,$pagelayout); //Converted to Twig. Original replaced.
 
         tagProcessor_Page::PrintButton($ct_html,$pagelayout); //Converted to Twig. Original replaced.
 		
@@ -272,7 +272,7 @@ class tagProcessor_Page
         }
 	}
 
-    static protected function RecordCount(&$ct_record,&$pagelayout)
+    static protected function RecordCount(&$ct_record,&$ct_html,&$pagelayout)
 	{
 		$options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('recordcount',$options,$pagelayout,'{}');
@@ -281,8 +281,11 @@ class tagProcessor_Page
 
 		foreach($fList as $fItem)
 		{
-			$full_sentence = ! ($options[$i]=='numberonly');
-			$vlu = $ct_record->count($full_sentence);
+			if($options[$i]=='numberonly')
+				$vlu = $ct_record->count();
+			else
+				$vlu = $ct_html->recordcount();
+			
 			$pagelayout=str_replace($fItem,$vlu,$pagelayout);
 			$i++;
 		}
@@ -295,7 +298,7 @@ class tagProcessor_Page
 
 		foreach($fList as $fItem)
 		{
-			$vlu = $ct_record->count(false);
+			$vlu = $ct_record->count();
 			$pagelayout=str_replace($fItem,$vlu,$pagelayout);
 		}
 	}

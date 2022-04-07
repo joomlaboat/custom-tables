@@ -73,11 +73,13 @@
 		let http = CreateHTTPRequestObject ();   // defined in ajax.js
 
 		if (http){
+			
 			http.open("GET", url, true);
 			http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 			http.onreadystatechange = function(){
 				if (http.readyState == 4){
-					let res=http.response;
+					let res = http.response.replace(/(\r\n|\n|\r)/gm, "");
+					
 					if(responses.indexOf(res) != -1){
 						
 						let element_tableid_tr = "ctTable_" + tableid + '_' + recordid;

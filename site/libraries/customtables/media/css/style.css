@@ -442,18 +442,6 @@ margin:0;
 
 /* ------------------------------------- ordering field type ------------------------------- */
 
-
-@font-face {
-	font-family: 'IcoMoon';
-	src: url('../../../../../../media/jui/fonts/IcoMoon.eot');
-	src: url('../../../../../../media/jui/fonts/IcoMoon.eot?#iefix') format('embedded-opentype'), 
-		url('../../../../../../media/jui/fonts/IcoMoon.woff') format('woff'), 
-		url('../../../../../../media/jui/fonts/IcoMoon.ttf') format('truetype'), 
-		url('../../../../../../media/jui/fonts/IcoMoon.svg#IcoMoon') format('svg');
-	font-weight: normal;
-	font-style: normal;
-}
-
 [class^="icon-"],
 [class*=" icon-"] {
 	display: inline-block;
@@ -464,8 +452,6 @@ margin:0;
 }
 [class^="icon-"]:before,
 [class*=" icon-"]:before {
-	font-family: 'IcoMoon';
-	font-style: normal;
 	speak: none;
 }
 [class^="icon-"].disabled,
@@ -474,7 +460,7 @@ margin:0;
 }
 
 .icon-menu:before {
-	content: "\5a";
+	content:url("data:image/svg+xml,<svg width='10' viewBox='0 0 8 8' xmlns='http://www.w3.org/2000/svg'><circle cx='4' cy='4' r='4' fill='#0000ffff' /></svg>");
 }
 
 .sortable-handler.inactive {

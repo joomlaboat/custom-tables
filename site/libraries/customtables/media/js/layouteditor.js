@@ -108,7 +108,6 @@ function loadTagParams(type_id,tags_box)
     {
         updateTagsParameters();
     }
-
 }
 
 function loadTags(type_id,tags_box)

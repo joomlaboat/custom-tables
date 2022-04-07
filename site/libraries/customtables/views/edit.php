@@ -13,12 +13,16 @@
 defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\TwigProcessor;
+use Joomla\CMS\HTML\HTMLHelper;
 
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR
 	.'tagprocessor'.DIRECTORY_SEPARATOR.'edittags.php');
 
 function CTViewEdit(&$ct, $row, &$pagelayout, $BlockExternalVars,$formLink,$formName)
 {
+	HTMLHelper::_('jquery.framework');
+	
+	
 	jimport('joomla.html.html.bootstrap');
 
 	$ct->loadJSAndCSS();

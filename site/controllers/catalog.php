@@ -124,7 +124,16 @@ function doTheTask(&$ct,$task,$menu_params,$edit_model,&$this_)
 			if ($count > 0)
 			{
 				if ($ct->Env->clean == 1)
+				{
+					if (ob_get_contents()) 
+						ob_end_clean();
+					
+					header('Content-Type: text/csv; charset=utf-8');
+					header("Pragma: no-cache");
+					header("Expires: 0");
+
 					die('deleted');
+				}
 				else
 				{
 					$msg = 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_DELETED';

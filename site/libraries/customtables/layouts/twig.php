@@ -4,7 +4,7 @@
  * @package Custom Tables
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @copyright Copyright (C) 2018-2021. All Rights Reserved
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
@@ -54,7 +54,9 @@ class TwigProcessor
 			'id'=>$ct->Table->tableid,
 			'name' => $ct->Table->tablename,
 			'title' => $ct->Table->tabletitle,
-			'description'=> new \Twig\Markup($description, 'UTF-8' )
+			'description'=> new \Twig\Markup($description, 'UTF-8' ),
+			'records'=>$ct->Table->recordcount,
+			'fields'=>count($ct->Table->fields)
 			];
 		}
 
@@ -192,6 +194,13 @@ class fieldObject
     {
         return $this->field['typeparams'];
     }
+	
+	/*
+	public function count()
+    {
+        return 123;
+    }
+	*/
 	
 	public function edit()
     {

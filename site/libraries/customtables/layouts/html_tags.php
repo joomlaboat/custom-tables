@@ -43,6 +43,29 @@ class Twig_Html_Tags
 		$this->button_objects = [];//Not clear where and how this variable used.
 	}
 	
+	function recordcount()
+	{
+		if($this->ct->Env->frmt == 'csv')
+			return '';	
+			
+		if(!isset($this->ct->Table))
+		{
+			Factory::getApplication()->enqueueMessage('{{ html.recordcount }} - Table not loaded.', 'error');
+			return '';
+		}
+		
+		if(!isset($this->ct->Records))
+		{
+			Factory::getApplication()->enqueueMessage('{{ html.recordcount }} - Records not loaded.', 'error');
+			return '';
+		}
+		
+		$vlu = '<span class="ctCatalogRecordCount">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FOUND' ).': '.$this->ct->Table->recordcount
+			.' '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RESULT_S' ).'</span>';
+				
+		return new \Twig\Markup($vlu, 'UTF-8' );
+	}
+	
 	function add($Alias_or_ItemId = '')
 	{
 		if($this->ct->Env->print==1 or ($this->ct->Env->frmt!='html' and $this->ct->Env->frmt!=''))
@@ -222,8 +245,10 @@ class Twig_Html_Tags
 		return $available_modes;
 	}
 	
-	function batch($buttons = [])
+	function batch()
 	{
+		$buttons = func_get_args();
+		
 		if($this->ct->Env->print==1 or ($this->ct->Env->frmt!='html' and $this->ct->Env->frmt!=''))
 			return '';
 		
@@ -260,7 +285,7 @@ class Twig_Html_Tags
 				}
 			}
 		}
-		
+
 		if(count($html_buttons) == 0)
 			return '';
 		
@@ -269,7 +294,7 @@ class Twig_Html_Tags
 		if($this->isTwig)
 			return new \Twig\Markup($vlu, 'UTF-8' );
 		else
-			return $vlu;
+			return ''.$vlu;
 	}
 	
 	function print($class='ctEditFormButton btn button')
