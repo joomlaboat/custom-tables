@@ -180,23 +180,26 @@ function renderFieldsBox()
 	if(a.indexOf(current_layout_type)!==-1)
 	{
 		tabs.push({'id':'layouteditor_fields_value','title':'Field Values',
-			'content':'<p>Dynamic Field Tags that produce Field Values:</p>'+renderFieldTags('[',']',['dummy'],'valueparams')
+			'content':'<p>Dynamic Field Tags that produce Field Values:</p>'+renderFieldTags('{{ ','',' }}',['dummy'],'valueparams') //skip 'dummy'
 		});
 	}
 
 	//Any Layout Type
 	tabs.push({'id':'layouteditor_fields_titles','title':'Field Titles',
-			'content':'<p>Dynamic Field Tags that produce Field Titles (Language dependable):</p>' + renderFieldTags('*','*',[],'titleparams')
+			'content':'<p>Dynamic Field Tags that produce Field Titles (Language dependable):</p>' + renderFieldTags('{{ ','.title',' }}',[],'titleparams')
+	});
+	tabs.push({'id':'layouteditor_fields_labels','title':'Field Labels',
+			'content':'<p>Dynamic Field Tags that produce Field Title Label HTML tag (Language dependable):</p>' + renderFieldTags('{{ ','.label',' }}',[],'titleparams')
 	});
 
 	if(a.indexOf(current_layout_type)!==-1)
 	{
 		tabs.push({'id':'layouteditor_fields_purevalue','title':'Field Pure Values',
-			'content':'<p>Dynamic Field Tags that returns pure Field Values (as it stored in database):</p>' + renderFieldTags('[_value:',']',['string','md5','changetime','creationtime','lastviewtime','viewcount','id','phponadd','phponchange','phponview','server','multilangstring','text','multilangtext','int','float','email','date','filelink','creationtime','dummy'],'')
+			'content':'<p>Dynamic Field Tags that returns pure Field Values (as it stored in database):</p>' + renderFieldTags('{{ ','.value',' }}',['string','md5','changetime','creationtime','lastviewtime','viewcount','id','phponadd','phponchange','phponview','server','multilangstring','text','multilangtext','int','float','email','date','filelink','creationtime','dummy'],'')
 		});
 		
 		tabs.push({'id':'layouteditor_fields_ajaxedit','title':'Input Edit (Update on change)',
-			'content':'<p>Renders input/select box for selected field. It works in all types of layout except Edit Form:</p>' + renderFieldTags('[_edit:',']',fieldtypes_to_skip,'')
+			'content':'<p>Renders input/select box for selected field. It works in all types of layout except Edit Form:</p>' + renderFieldTags('{{ ','.edit',' }}',fieldtypes_to_skip,'')
 		});
 	}
 	
@@ -207,12 +210,12 @@ function renderFieldsBox()
 		
 		let label = '<p>Dynamic Field Tags that renders an input field where the user can enter data.<span style="font-weight:bold;color:darkgreen;">(more <a href="https://joomlaboat.com/custom-tables-wiki?document=04.-Field-Types" target="_blank">here</a>)</span></p>';
 		tabs.push({'id':'layouteditor_fields_edit','title':'Input/Edit',
-			'content':label + renderFieldTags('[',']',fieldtypes_to_skip,'editparams')
+			'content':label + renderFieldTags('{{ ','.edit',' }}',fieldtypes_to_skip,'editparams')
 		});
 
 
-		tabs.push({'id':'layouteditor_fields_valueineditform','title':'Fields Values inside Edit form',
-			'content':'<p>Dynamic Field Tags that produce Field Values (if the record is alredy created ID!=0):</p>' + renderFieldTags('|','|',['dummy'],'valueparams')
+		tabs.push({'id':'layouteditor_fields_valueineditform','title':'Field Values',
+			'content':'<p>Dynamic Field Tags that produce Field Values (if the record is alredy created ID!=0):</p>' + renderFieldTags('{{ ','',' }}',['dummy'],'valueparams')
 		});
 	}
 	
@@ -232,7 +235,7 @@ function findFieldObjectByName(fieldname){
 	return null;
 }
 
-function renderFieldTags(startchar,endchar,fieldtypes_to_skip,param_group)
+function renderFieldTags(startchar,postfix,endchar,fieldtypes_to_skip,param_group)
 {
 	var result='';
 
@@ -244,7 +247,7 @@ function renderFieldTags(startchar,endchar,fieldtypes_to_skip,param_group)
 
 		if(fieldtypes_to_skip.indexOf(field.type)===-1)
 		{
-	        var t=field.fieldname;
+	        var t=field.fieldname + postfix;
 			var p=0;
 			var alt=field.fieldtitle;
 
@@ -258,8 +261,6 @@ function renderFieldTags(startchar,endchar,fieldtypes_to_skip,param_group)
 
 				if(param_group!='')
 				{
-
-
 					var param_group_object=typeparams[param_group];
 					if (typeof(param_group_object) != "undefined")
 					{
@@ -267,11 +268,11 @@ function renderFieldTags(startchar,endchar,fieldtypes_to_skip,param_group)
 						p=params.length;
 
 						if(p>0)
-							t=field.fieldname+':<span>Params</span>';
+							t += '(<span>Params</span>)';
 					}
 				}
 
-				button_value=startchar+t+endchar;
+				button_value = startchar + t + endchar;
 			}
 			else
 			{
@@ -284,9 +285,9 @@ function renderFieldTags(startchar,endchar,fieldtypes_to_skip,param_group)
 			result+='<div style="display:inline-block;">';
 			
 			if(joomlaVersion < 4)
-				result+='<a href=\'javascript:addFieldTag("0","'+startchar+'","'+endchar+'","'+btoa(field.fieldname)+'",'+p+');\' class="btn" alt="'+alt+'" title="'+alt+'">'+button_value+'</a>';
+				result+='<a href=\'javascript:addFieldTag("'+startchar+'","'+postfix+'","'+endchar+'","'+btoa(field.fieldname)+'",'+p+');\' class="btn" alt="'+alt+'" title="'+alt+'">'+button_value+'</a>';
 			else
-				result+='<a href=\'javascript:addFieldTag("0","'+startchar+'","'+endchar+'","'+btoa(field.fieldname)+'",'+p+');\' class="btn-primary" alt="'+alt+'" title="'+alt+'">'+button_value+'</a>';
+				result+='<a href=\'javascript:addFieldTag("'+startchar+'","'+postfix+'","'+endchar+'","'+btoa(field.fieldname)+'",'+p+');\' class="btn-primary" alt="'+alt+'" title="'+alt+'">'+button_value+'</a>';
 			
 			
 		    result+='</div>';
@@ -347,7 +348,7 @@ function showModalFieldTagsList(e)
 	return;
 }
 
-function showModalFieldTagForm(tagstartchar,tagendchar,tag,top,left,line,positions,isnew)
+function showModalFieldTagForm(tagstartchar,postfix,tagendchar,tag,top,left,line,positions,isnew)
 {
 	var modalcontentobj=document.getElementById("layouteditor_modal_content_box");
 
@@ -397,7 +398,7 @@ function showModalFieldTagForm(tagstartchar,tagendchar,tag,top,left,line,positio
     if(tag_pair.length==2)
         paramvaluestring=tag_pair[1];
 
-    var form_content=getParamEditForm(group_params_object,line,positions,isnew,countparams,tagstartchar,tagendchar,paramvaluestring);
+    var form_content=getParamEditForm(group_params_object,line,positions,isnew,countparams,tagstartchar,postfix,tagendchar,paramvaluestring);
 
     if(form_content==null)
         return false;
@@ -413,17 +414,20 @@ function showModalFieldTagForm(tagstartchar,tagendchar,tag,top,left,line,positio
 
     modalcontentobj.innerHTML=result+form_content;
 
-    jQuery(function($)
-    {
-        $(modalcontentobj).find(".hasPopover").popover({"html": true,"trigger": "hover focus","layouteditor_modal_content_box": "body"});
-    });
+	if(joomlaVersion < 4)
+	{
+		jQuery(function($)
+		{
+			$(modalcontentobj).find(".hasPopover").popover({"html": true,"trigger": "hover focus","layouteditor_modal_content_box": "body"});
+		});
+	}
 
     updateParamString("fieldtype_param_",1,countparams,"current_tagparameter",null,false);
 
     showModal();
  }
 
-function addFieldTag(index_unused,tagstartchar,tagendchar,tag,param_count)
+function addFieldTag(tagstartchar,postfix,tagendchar,tag,param_count)
 {
     var index=0;
 	var cm=codemirror_editors[index];
@@ -435,11 +439,11 @@ function addFieldTag(index_unused,tagstartchar,tagendchar,tag,param_count)
         var positions=[cr.ch,cr.ch];
         var mousepos=cm.cursorCoords(cr,"window");
 
-        showModalFieldTagForm(tagstartchar,tagendchar,atob(tag),mousepos.top,mousepos.left,cr.line,positions,1);
+        showModalFieldTagForm(tagstartchar,postfix,tagendchar,atob(tag),mousepos.top,mousepos.left,cr.line,positions,1);
     }
     else
 	{
-        updateCodeMirror(tagstartchar+atob(tag)+tagendchar);
+        updateCodeMirror(tagstartchar+atob(tag) + postfix + tagendchar);////-----------------todo
 		
 		//in case modal window is open
 		var modal = document.getElementById('layouteditor_Modal');

@@ -287,11 +287,11 @@ function updateParamString(inputboxid,countlist,countparams,objectid,e,rawquotes
 {
     
     if (typeof(startchar)== "undefined")
-        startchar="{";
+        startchar="{{ ";//startchar="{";
 
-    var endchar='}';
-    if(startchar=='[')
-        endchar=']';
+	var endchar=' }}';//var endchar='}';
+    //if(startchar=='[')
+        //endchar=']';
     
     
     //objectid is the element id where value will be set
@@ -331,6 +331,18 @@ function updateParamString(inputboxid,countlist,countparams,objectid,e,rawquotes
                else
                    v=obj.value;
 
+				if(isNaN(v))
+				{
+					if(v.indexOf('"')!=-1)
+                        v=v.replaceAll('"','****quote****');
+					
+					if(v.indexOf("'")!=-1)
+                        v=v.replaceAll("'",'****apos****');
+
+					v='"'+v+'"';
+				}
+				
+				/*
                 if(!rawquotes && v!='')//if raw quotes is set to true then don't change it
                 {
                     var q=false;
@@ -349,6 +361,7 @@ function updateParamString(inputboxid,countlist,countparams,objectid,e,rawquotes
                     if(q || v.indexOf(',')!=-1 || v.indexOf(':')!=-1 )
                         v='"'+v+'"';
                 }
+				*/
 
                params.push(v);
 

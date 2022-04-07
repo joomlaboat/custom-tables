@@ -409,7 +409,7 @@ class ESTables
 		$db->setQuery( $query );
 		$fields = $db->loadObjectList();
 			
-		$set_fieldnames=['tableid','fieldname','fieldtitle','type','typeparams','ordering','defaultvalue','description','customfieldname','isrequired'];
+		$set_fieldnames=['tableid','fieldname','fieldtitle','allowordering','type','typeparams','ordering','defaultvalue','description','customfieldname','isrequired'];
 			
 		$primary_key_column = '';
 		$ordering = 1;
@@ -433,6 +433,7 @@ class ESTables
 				$set_values['tableid'] = (int)$tablerow->id;
 				$set_values['fieldname'] = $db->quote(strtolower($field->column_name));
 				$set_values['fieldtitle'] = $db->quote(ucwords(strtolower($field->column_name)));
+				$set_values['allowordering'] = 'true';
 				$set_values['type'] = $db->quote($ct_field_type['type']);
 				$set_values['typeparams'] = $db->quote($ct_field_type['typeparams']);
 				$set_values['ordering'] = $ordering;

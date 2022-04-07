@@ -346,7 +346,19 @@ function updateParamString(inputboxid,countlist,countparams,objectid,e,rawquotes
                    v=getSelectValues(select).merge(",");
                else
                    v=obj.value;
+			   
+				if(isNaN(v))
+				{
+					if(v.indexOf('"')!=-1)
+                        v=v.replaceAll('"','****quote****');
+					
+					if(v.indexOf("'")!=-1)
+                        v=v.replaceAll("'",'****apos****');
 
+					v='"'+v+'"';
+				}
+			   
+				/*
                 if(!rawquotes)//if raw quotes is set to true then don't change it
                 {
                     var q=false;
@@ -365,8 +377,9 @@ function updateParamString(inputboxid,countlist,countparams,objectid,e,rawquotes
                     if(q || v.indexOf(',')!=-1 || v.indexOf(':')!=-1 )
                         v='"'+v+'"';
                 }
+				*/
 
-               params.push(v);
+				params.push(v);
 
                if(v!="")
                  	count=i+1; //to include all previous parameters even if they are empty

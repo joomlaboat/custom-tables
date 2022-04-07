@@ -287,7 +287,7 @@ function showModal()
             resizeModalBox();
 }
 
-function showModalForm(tagstartchar,tagendchar,tag,top,left,line,positions,isnew)
+function showModalForm(tagstartchar,postfix,tagendchar,tag,top,left,line,positions,isnew)
 {
     //detect tag type first
     var tag_pair=parseQuote(tag,[':','='],false);
@@ -299,11 +299,11 @@ function showModalForm(tagstartchar,tagendchar,tag,top,left,line,positions,isnew
     else
     {
         //field tags
-        showModalFieldTagForm(tagstartchar,tagendchar,tag,top,left,line,positions,isnew);
+        showModalFieldTagForm(tagstartchar,postfix,tagendchar,tag,top,left,line,positions,isnew);
     }
 }
 
-function showModalTagForm(tagstartchar,tagendchar,tag,top,left,line,positions,isnew)
+function showModalTagForm(tagstartchar,postfix,tagendchar,tag,top,left,line,positions,isnew)
 {
     var tag_pair=parseQuote(tag,[':','='],false);
 
@@ -324,7 +324,7 @@ function showModalTagForm(tagstartchar,tagendchar,tag,top,left,line,positions,is
     if(tag_pair.length==2)
         paramvaluestring=tag_pair[1];
 
-    var form_content=getParamEditForm(tagobject,line,positions,isnew,countparams,tagstartchar,tagendchar,paramvaluestring);
+    var form_content=getParamEditForm(tagobject,line,positions,isnew,countparams,tagstartchar,postfix,tagendchar,paramvaluestring);
     
     if(form_content==null)
     {
@@ -480,27 +480,27 @@ function updateCodeMirror(text)
         return null;
     }
 
-
-    //function getParamEditForm(tagobjecttagstartchar,tagendchar,tag,line,positions,isnew)
-    function getParamEditForm(tagobject,line,positions,isnew,countparams,tagstartchar,tagendchar,paramvaluestring)
+    function getParamEditForm(tagobject,line,positions,isnew,countparams,tagstartchar,postfix,tagendchar,paramvaluestring)
     {
         var att=tagobject["@attributes"];
 
         var result="";
-        var separator=":";
+        //var separator=":";
 
-        if (typeof(att.separator)!== "undefined")
-            separator=att.separator;
+        //if (typeof(att.separator)!== "undefined")
+            //separator=att.separator;
 
         result+=renderParamBox(tagobject,"current_tagparameter",paramvaluestring);
         
         result+='<div class="dynamic_values"><span class="dynamic_values_label">Tag with parameter:</span> '+tagstartchar+temp_params_tag;
-        result+=separator+'<span id="current_tagparameter" style="">'+paramvaluestring+'</span>';
+		
+		result+=postfix+'(<span id="current_tagparameter" style="">'+paramvaluestring+'</span>)';
+		
         result+=tagendchar+'</div>';
 
 
         result+='<div style="text-align:center;">';
-        result+='<button id="clsave" onclick=\'return saveParams(event,'+countparams+','+line+','+positions[0]+','+positions[1]+','+isnew+',"'+tagstartchar+'","'+tagendchar+'","'+separator+'");\' class="btn btn-small button-apply btn-success">Save</button>';
+        result+='<button id="clsave" onclick=\'return saveParams(event,'+countparams+','+line+','+positions[0]+','+positions[1]+','+isnew+',"'+tagstartchar+'","'+tagendchar+'","'+postfix+'");\' class="btn btn-small button-apply btn-success">Save</button>';
         result+=' <button id="clclose" onclick=\'return closeModal(event);\' class="btn btn-small button-cancel btn-danger">Cancel</button>';
         result+='</div>';
 
@@ -508,7 +508,7 @@ function updateCodeMirror(text)
         return result;
     }
 
-    function saveParams(e,countparams,line_number,pos1,pos2,isnew,tagstartchar,tagendchar,separator)
+    function saveParams(e,countparams,line_number,pos1,pos2,isnew,tagstartchar,tagendchar,postfix)
     {
         updateParamString("fieldtype_param_",1,countparams,"current_tagparameter",null,false);
 
@@ -516,10 +516,10 @@ function updateCodeMirror(text)
         var result='';
         var tmp_params=document.getElementById('current_tagparameter').innerHTML;
 
-            result=tagstartchar+temp_params_tag;
+            result = tagstartchar + temp_params_tag + postfix;
 
             if(tmp_params!="")
-                result+=separator+tmp_params;//{tag:par1,par2} where ":" is separator
+                result+='('+tmp_params+')';//{{ tag.edit(par1,par2) }} where ".edit" is the postfix
 
             result+=tagendchar;
 
@@ -817,10 +817,11 @@ function addExtraEvents()
                                             var startchar=line.substring(positions[0],positions[0]+1); //+1 to have 1 character
                                             var endchar=line.substring(positions[1]-1,positions[1]-1+1);//-1 because position ends after the tag
                                             var tag=line.substring(positions[0]+1, positions[1]-1);//-1 because position ends after the tag
+											var postfix = ''; //todo
 
                                             var mousepos=cm.cursorCoords(cr,"window");
 
-                                            showModalForm(startchar,endchar,tag,mousepos.top,mousepos.left,cr.line,positions,0);
+                                            showModalForm(startchar,postfix,endchar,tag,mousepos.top,mousepos.left,cr.line,positions,0);
 
                                         }
 

@@ -25,6 +25,7 @@ $document->addCustomTag('<script src="'.JURI::root(true).'/components/com_custom
 
 HTMLHelper::_('behavior.formvalidator');
 HTMLHelper::_('behavior.keepalive');
+HTMLHelper::_('jquery.framework');
 
 require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR
 	.'libraries'.DIRECTORY_SEPARATOR .'customtables'. DIRECTORY_SEPARATOR . 'layouteditor' .DIRECTORY_SEPARATOR.'layouteditor.php');

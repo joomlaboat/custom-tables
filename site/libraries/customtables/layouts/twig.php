@@ -172,7 +172,8 @@ class fieldObject
 	public function label()
     {
 		$forms = new Forms($this->ct);
-        return $forms->renderFieldLabel($this->field);
+        $vlu = $forms->renderFieldLabel($this->field);
+		return new \Twig\Markup($vlu, 'UTF-8' );
     }
 
 	public function description()

@@ -5,7 +5,7 @@
  * @subpackage edit.php
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @copyright Copyright (C) 2018-2020. All Rights Reserved
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
  
@@ -45,7 +45,7 @@ $document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customt
 
 				<?php
 
-				$morethanonelang=false;
+				$morethanonelang = false;
 				foreach($this->ct->Languages->LanguageList as $lang)
 				{
 					$id='tabletitle';
@@ -59,7 +59,7 @@ $document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customt
 					else
 					{
 						$cssclass='form-control required valid form-control-success';
-						$att=' required ';//aria-required="true"';
+						$att=' required ';
 					}
 
 					$item_array=(array)$this->item;
@@ -70,10 +70,15 @@ $document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customt
 
 					echo '
 					<div class="control-group">
-						<div class="control-label">'.$this->form->getLabel('tabletitle').'</div>
+						<div class="control-label">
+						<label id="jform_tabletitle-lbl" for="jform_tabletitle" class="required">
+							Table Title'.(!$morethanonelang ? '<span class="star" aria-hidden="true">&nbsp;*</span>' : '').'</label>
+							<br/><b>'.$lang->title.'</b>
+						</div>
 						<div class="controls">
-							<input type="text" name="jform['.$id.']" id="jform_'.$id.'"  value="'.$vlu.'" class="'.$cssclass.'"     placeholder="Table Title"   maxlength="255" '.$att.' />
-							<b>'.$lang->title.'</b>
+							<input type="text" name="jform['.$id.']" id="jform_'.$id.'"  value="'.$vlu.'" class="'.$cssclass.'" '
+								.'placeholder="Table Title" maxlength="255" '.$att.' />
+							
 						</div>
 
 					</div>
@@ -81,10 +86,7 @@ $document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customt
 
 					$morethanonelang=true; //More than one language installed
 				}
-
-
 				?>
-
 
 				<hr/>
 
@@ -102,7 +104,6 @@ $document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customt
 		</div>
 
 	<?php echo HTMLHelper::_('uitab.endTab'); ?>
-
 
 	<?php
 		$morethanonelang=false;
