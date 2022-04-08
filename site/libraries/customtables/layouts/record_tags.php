@@ -111,13 +111,6 @@ class Twig_Record_Tags
 			return '';
 		}
 		
-		if(!isset($this->ct->Records))
-		{
-			Factory::getApplication()->enqueueMessage('{{ record.count }} - Records not loaded.', 'error');
-			return '';
-		}
-		
-		
 		if($join_table != '')
 		{
 			$join_table_fields = Fields::getFields($join_table);
@@ -138,6 +131,69 @@ class Twig_Record_Tags
 						return $this->join('count', $join_table, '_id', $join_table_field['fieldname']);
 				}
 			}
+			
+			Factory::getApplication()->enqueueMessage('{{ record.count("'.$join_table.'") }} - Table found but the field that links to this table not found.', 'error');
+			return '';
+		}
+		else
+			return $this->ct->Table->recordcount;
+	}
+	
+	function sum($join_table = '', $value_field = '')
+	{
+		if($value_field == '')
+		{
+			Factory::getApplication()->enqueueMessage('{{ record.count("'.$join_table.'",value_field_name) }} - Value field not specified.', 'error');
+			return '';
+		}
+			
+		if($this->ct->Env->frmt == 'csv')
+			return '';	
+			
+		if(!isset($this->ct->Table))
+		{
+			Factory::getApplication()->enqueueMessage('{{ record.count }} - Table not loaded.', 'error');
+			return '';
+		}
+		
+		if($join_table != '')
+		{
+			$join_table_fields = Fields::getFields($join_table);
+			
+			if(count($join_table_fields) == 0)
+			{
+				Factory::getApplication()->enqueueMessage('{{ record.count("'.$join_table.'") }} - Table "'.$join_table.'" not found or it has no fields.', 'error');
+				return '';
+			}
+			
+			$value_field_found = false;
+			foreach($join_table_fields as $join_table_field)
+			{
+				if($join_table_field['fieldname'] == $value_field)
+				{
+					$value_field_found = true;
+					break;
+				}
+			}
+			
+			if(!$value_field_found)
+			{
+				Factory::getApplication()->enqueueMessage('{{ record.count("'.$join_table.'","'.$value_field.'") }} - Value field "'.$value_field.'" not found.', 'error');
+				return '';
+			}
+			
+			foreach($join_table_fields as $join_table_field)
+			{
+				if($join_table_field['type'] == 'sqljoin')
+				{
+					$typeparams=JoomlaBasicMisc::csv_explode(',',$join_table_field['typeparams'],'"',false);
+					$join_table_join_to_table = $typeparams[0];
+					if($join_table_join_to_table == $this->ct->Table->tablename)
+						return $this->join('sum', $join_table, '_id', $join_table_field['fieldname'],$value_field);
+				}
+			}
+			
+			
 			
 			Factory::getApplication()->enqueueMessage('{{ record.count("'.$join_table.'") }} - Table found but the field that links to this table not found.', 'error');
 			return '';
