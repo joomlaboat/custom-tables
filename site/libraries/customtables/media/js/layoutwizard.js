@@ -568,8 +568,9 @@ function getLayout_Page(){
 
 	result+='<th>Action<br/>{{ html.searchbutton }}</th>\r\n';
 	result+='</tr></thead>\r\n\r\n';
-	result+='<tbody>\r\n\r\n';
-	result+='{catalog:,notable}\r\n\r\n';
+	result+='<tbody>\r\n';
+
+	result+='{{ records.list("LAYOUT NAME") }}<!-- Please create a "Catalog Item" layout and type the name of that layout instead of LAYOUT NAME -->\r\n';
 
 	result+='</tbody>\r\n';
 	result+='</table>\r\n';
@@ -587,7 +588,7 @@ function getLayout_Item(){
 	let fieldtypes_to_skip=['log','imagegallery','filebox','dummy'];
 	let user_fieldtypes=['user','userid'];
 				
-	result+='<td>{toolbar:checkbox}</td>\r\n';
+	result+='<td>{{ html.toolbar("checkbox") }}</td>\r\n';
 	result+='<td><a href="{{ record.link(true) }}">{{ record.id }}</a></td>\r\n';
 				
 	let user_field = '';
@@ -604,13 +605,13 @@ function getLayout_Item(){
 	}
 	
 	if(user_field==''){
-		result+='<td>{toolbar:edit,publish,refresh,delete}</td>\r\n';
+		result+='<td>{{ html.toolbar("edit","publish","refresh","delete") }}</td>\r\n';
 	}else{
 		result+='<td>\r\n';
 		result+='\t<!-- The "if" statement is to show the toolbar for the record\'s author only. -->\r\n';
 		result+='\t{% if ' + user_field + '.value == {{ user.id }} %} <!-- Where "' + user_field + '" is the user type field name. -->\r\n';
 		result+='\t\t<!-- toolbar -->\r\n';
-		result+='\t\t{toolbar:edit,publish,refresh,delete}\r\n';
+		result+='\t\t{{ html.toolbar("edit","publish","refresh","delete") }}\r\n';
 		result+='\t\t<!-- end of toolbar -->\r\n';
 		result+='\t{% endif %}\r\n';
 		result+='</td>\r\n';
@@ -630,11 +631,40 @@ function getLayout_SimpleCatalog(){
 	result+='<div style="text-align:center;">{{ html.print }}</div>\r\n';
 	result+='<div class="datagrid">\r\n';
 	result+='<div>{{ html.batch(\'edit\',\'publish\',\'unpublish\',\'refresh\',\'delete\') }}</div>';
-	result+='\r\n\r\n{catalogtable:\r\n';
-	result+='"#<br/>{{ html.batch(\'checkbox\') }}":"<a href=\'{{ record.link(true) }}\'>{{ record.id }}</a><br/>{toolbar:checkbox}",\r\n';
-
+	result+='\r\n';
+	
 	let fieldtypes_to_skip=['log','imagegallery','filebox','dummy'];
-	let fieldtypes_withsearch=['email','string','multilangstring','text','multilangtext','int','float','sqljoin','records'];
+	let fieldtypes_withsearch=['email','string','multilangstring','text','multilangtext','sqljoin','records'];
+	
+	let field_titles = [];
+	
+	field_titles.push('html.batch("checkbox")');
+	field_titles.push('"#"');
+	
+	for (let index=0;index<l;index++)
+	{
+		let field=wizardFields[index];
+
+		if(fieldtypes_to_skip.indexOf(field.type)===-1){
+		
+			if(fieldtypes_withsearch.indexOf(field.type)===-1)
+				field_titles.push(field.fieldname + '.title');
+			else
+				field_titles.push(field.fieldname + '.title ~ "<br/>" ~ html.search(\''+field.fieldname+'\')');
+		}
+	}
+	
+	field_titles.push('"Action"');
+	
+	result+='\r\n<table>\r\n';
+	result+='{{ html.tablehead(' + field_titles.join(",") + ') }}';
+	result+='\r\n<body>';
+	result+='\r\n{% block record %}';
+	
+	result+='\r\n<tr>\r\n';
+	
+	result+='<td>{{ html.toolbar("checkbox") }}</td>\r\n';
+	result+='<td><a href=\'{{ record.link(true) }}\'>{{ record.id }}</a></td>\r\n';
 
 	for (let index=0;index<l;index++)
 	{
@@ -643,15 +673,21 @@ function getLayout_SimpleCatalog(){
 		if(fieldtypes_to_skip.indexOf(field.type)===-1){
 		
 			if(fieldtypes_withsearch.indexOf(field.type)===-1)
-				result+='"{{ ' + field.fieldname + '.title }}":"{{ '+field.fieldname+' }}",\r\n';
+				result+='<td>{{ '+field.fieldname+' }}</td>\r\n';
 			else
-				result+='"{{ ' + field.fieldname + '.title }}<br/>{{ html.search(\''+field.fieldname+'\') }}":"{{ '+field.fieldname+' }}",\r\n';
+				result+='<td>{{ '+field.fieldname+' }}</td>\r\n';
 		}
 	}
-
-	result+='"Action<br/>{{ html.searchbutton }}":"{toolbar:editmodal,publish,refresh,delete}";\r\n';
-	result+='css_class_name\r\n';
-	result+='}\r\n';
+	
+	result+='<td>{{ html.toolbar("edit","publish","refresh","delete") }}</td>\r\n';
+	
+	result+='</tr>';
+	
+	result+='\r\n{% endblock %}';
+	result+='\r\n</body>';
+	result+='\r\n</table>\r\n';
+	
+	result+='\r\n';
 	result+='</div>\r\n';
 	result+='<br/><div style=\'text-align:center;\'>{{ html.pagination }}</div>\r\n';
 	return result;
@@ -731,48 +767,73 @@ function getLayout_Email(){
 function getLayout_CSV(){
 	let result="";
 	let l=wizardFields.length;
-	result+='{catalogtable:\r\n';
-	result+='"#":"{{ record.id }}",\r\n';
-
-	let fieldtypes_to_skip=['log','imagegallery','filebox','dummy'];
-
+	
+	let fieldtypes_to_skip=['log','imagegallery','filebox','dummy','ordering'];
+	let fieldtypes_to_purevalue=['image','imagegallery','filebox','file'];
+	
 	for (let index=0;index<l;index++){
 		let field=wizardFields[index];
 
 		if(fieldtypes_to_skip.indexOf(field.type)===-1){
-		result+='"{{ '+field.fieldname+'.title }}":"{{ '+field.fieldname+' }}"';
-
-		if(index<l-1)
-			result+=',\r\n';
-		else
-			result+=';';
+			if(result != '')
+				result+=',';
+		
+			result+='{{ '+field.fieldname+'.title }}';
 		}
 	}
-	result+='}\r\n';
+	
+	result+='\r\n{% block record %}';
+
+	let firstfield = true;
+	for (let index=0;index<l;index++){
+		let field=wizardFields[index];
+
+		if(fieldtypes_to_skip.indexOf(field.type)===-1){
+			
+			if(!firstfield)
+				result+=',';
+			
+			if(fieldtypes_to_purevalue.indexOf(field.type)===-1)
+				result+='{{ '+field.fieldname+' }}';
+			else
+				result+='{{ '+field.fieldname+'.value }}';
+			
+			firstfield = false;
+		}
+	}
+	result+='\r\n{% endblock %}';
 	return result;
 }
 
 function getLayout_JSON(){
 	let result="";
 	let l=wizardFields.length;
-	result+='{catalogtable:\r\n';
+
+	result+='[\r\n{% block record %}\r\n{';
 	result+='"id_":"{{ record.id }}",\r\n';
 
-	let fieldtypes_to_skip=['log','imagegallery','filebox','dummy'];
+	let fieldtypes_to_skip=['log','imagegallery','filebox','dummy','ordering'];
+	let fieldtypes_to_purevalue=['image','imagegallery','filebox','file'];
+
+	let firstfield = true;
 
 	for (var index=0;index<l;index++){
 		let field=wizardFields[index];
 
 		if(fieldtypes_to_skip.indexOf(field.type)===-1){
-			result+='"'+field.fieldname+'":"{{ '+field.fieldname+' }}"';
-
-			if(index<l-1)
+			
+			if(!firstfield)
 				result+=',\r\n';
+			
+			if(fieldtypes_to_purevalue.indexOf(field.type)===-1)
+				result+='"'+field.fieldname+'":"{{ '+field.fieldname+' }}"';
 			else
-				result+=';';
+				result+='"'+field.fieldname+'":"{{ '+field.fieldname+'.value }}"';
+			
+			firstfield = false;
 		}
 	}
-	result+='}\r\n';
+	result+='},\r\n{% endblock %}]\r\n';
 	return result;
 }
 
@@ -780,7 +841,7 @@ function getLayout_XML(){
 	let result="";
 	let l=wizardFields.length;
 	result+='<?xml version="1.0" encoding="utf-8"?>\r\n<document>\r\n{catalogtable:\r\n';
-	let fieldtypes_to_skip=['log','imagegallery','filebox','dummy'];
+	let fieldtypes_to_skip=['log','imagegallery','filebox','dummy','ordering'];
 	for (let index=0;index<l;index++){
 		let field=wizardFields[index];
 
@@ -808,15 +869,15 @@ function getLayout_Record(){
 	let result="";
 	let l=wizardFields.length;
 	let fieldtypes_to_skip=['log','dummy'];
-	let fieldtypes_to_purevalue=['image','imagegallery','filebox','file'];
+	let fieldtypes_to_purevalue=['image','imagegallery','filebox','file','ordering'];
 
 	for (let index=0;index<l;index++){
 		let field=wizardFields[index];
 		if(fieldtypes_to_skip.indexOf(field.type)===-1){
 			if(fieldtypes_to_purevalue.indexOf(field.type)===-1)
-				result+='\t<div>['+field.fieldname+']</div>\r\n';
+				result+='\t<div>{{ '+field.fieldname+' }}</div>\r\n';
 			else
-				result+='\t<div>[_value:'+field.fieldname+']</div>\r\n';
+				result+='\t<div>{{ '+field.fieldname+'.value }}</div>\r\n';
 		}
 	}
 	return result;

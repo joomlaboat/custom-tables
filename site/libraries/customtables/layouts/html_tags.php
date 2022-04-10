@@ -17,6 +17,7 @@ use CustomTables\Fields;
 use CustomTables\Layouts;
 use CustomTables\SearchInputBox;
 use CustomTables\CTUser;
+use CustomTables\RecordToolbar;
 
 use \JoomlaBasicMisc;
 use \JESPagination;
@@ -951,7 +952,7 @@ class Twig_Html_Tags
 		return '';
 	}
 	
-	function htmltablehead()
+	function tablehead()
 	{
 		$result = '<thead>';
 		$head_columns = func_get_args();
@@ -963,5 +964,37 @@ class Twig_Html_Tags
 		
 		return new \Twig\Markup($result, 'UTF-8' );
 	}
-    
+	
+	function toolbar()
+	{
+		if($this->ct->Env->print==1)
+			return '';
+		
+		$modes = func_get_args();
+			
+		$edit_userGroup=(int)$this->ct->Env->menu_params->get( 'editusergroups' );
+		$publish_userGroup=(int)$this->ct->Env->menu_params->get( 'publishusergroups' );
+		if($publish_userGroup==0)
+			$publish_userGroup=$edit_userGroup;
+
+		$delete_userGroup=(int)$this->ct->Env->menu_params->get( 'deleteusergroups' );
+		if($delete_userGroup==0)
+			$delete_userGroup=$edit_userGroup;
+		
+		$isEditable=CTUser::checkIfRecordBelongsToUser($this->ct,$edit_userGroup);
+		$isPublishable=CTUser::checkIfRecordBelongsToUser($this->ct,$publish_userGroup);
+		$isDeletable=CTUser::checkIfRecordBelongsToUser($this->ct,$delete_userGroup);
+		
+		$RecordToolbar = new RecordToolbar($this->ct,$isEditable, $isPublishable, $isDeletable, $this->ct->Env->Itemid);
+
+		if(count($modes)==0)
+			$modes = ['edit','refresh','publish','delete'];
+
+		$icons=[];
+		foreach($modes as $mode)
+			$icons[] = $RecordToolbar->render($this->ct->Table->record,$mode);
+				
+		$vlu = implode('',$icons);
+		return new \Twig\Markup($vlu, 'UTF-8' );
+	}
 }

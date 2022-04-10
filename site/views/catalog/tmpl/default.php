@@ -27,8 +27,8 @@ if($html_format and $this->listing_id == '') //there is no need to have a header
 }
 
 //Process general tags before catalog tags to prepare headers for CSV etc output
-if($html_format)
-{
+//if($html_format)
+//{
 	$catalogtablecontent=tagProcessor_CatalogTableView::process($this->ct,$this->pagelayout,$this->catalogtablecode);
 	if($catalogtablecontent=='')
 	{
@@ -41,7 +41,7 @@ if($html_format)
 	
 	$this->ct->LayoutProc->layout=$this->pagelayout;
 	$this->pagelayout=$this->ct->LayoutProc->fillLayout();
-}
+/*}
 else
 {
 	$catalogtablecontent=tagProcessor_CatalogTableView::process($this->ct,$this->pagelayout,$this->catalogtablecode);
@@ -55,6 +55,7 @@ else
 	$this->ct->LayoutProc->layout=$this->pagelayout;
 	$this->pagelayout=$this->ct->LayoutProc->fillLayout();
 }
+*/
 
 $twig = new TwigProcessor($this->ct, $this->pagelayout);
 
@@ -73,6 +74,18 @@ if($this->ct->Env->frmt=='xml')
     $filename = JoomlaBasicMisc::makeNewFileName($this->ct->Env->menu_params->get('page_title'),'xml');
     header('Content-Disposition: attachment; filename="'.$filename.'"');
     header('Content-Type: text/xml; charset=utf-8');
+    header("Pragma: no-cache");
+    header("Expires: 0");
+	echo $this->pagelayout;
+	die;//clean exit
+}
+elseif($this->ct->Env->frmt=='json')
+{
+	if (ob_get_contents()) ob_end_clean();
+	
+    $filename = JoomlaBasicMisc::makeNewFileName($this->ct->Env->menu_params->get('page_title'),'json');
+	header('Content-Disposition: attachment; filename="'.$filename.'"');
+    header('Content-Type: application/json; charset=utf-8');
     header("Pragma: no-cache");
     header("Expires: 0");
 	echo $this->pagelayout;

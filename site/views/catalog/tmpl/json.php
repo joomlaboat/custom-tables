@@ -39,14 +39,14 @@ $this->pagelayout=str_replace($this->catalogtablecode,$catalogtablecontent,$this
 
 LayoutProcessor::applyContentPlugins($this->pagelayout);
 
-//if (ob_get_contents()) ob_end_clean();
+if (ob_get_contents()) ob_end_clean();
 
 $filename = JoomlaBasicMisc::makeNewFileName($this->ct->Env->menu_params->get('page_title'),'json');
 
-//header('Content-Disposition: attachment; filename="'.$filename.'"');
-//header('Content-Type: application/json; charset=utf-8');
-//header("Pragma: no-cache");
-//header("Expires: 0");
+header('Content-Disposition: attachment; filename="'.$filename.'"');
+header('Content-Type: application/json; charset=utf-8');
+header("Pragma: no-cache");
+header("Expires: 0");
 
 echo $this->pagelayout;
 

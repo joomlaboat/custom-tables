@@ -219,8 +219,8 @@ class CustomTablesViewCatalog extends JViewLegacy
 				Factory::getApplication()->enqueueMessage($msg, 'error');
 			}
 		}
-		elseif($this->ct->Env->frmt == 'json')
-			require_once('tmpl'.DIRECTORY_SEPARATOR.'json.php');
+		//elseif($this->ct->Env->frmt == 'json')
+			//require_once('tmpl'.DIRECTORY_SEPARATOR.'json.php');
 		else
 		{
 			parent::display($tpl);
