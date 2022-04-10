@@ -23,7 +23,7 @@ use \Joomla\CMS\Factory;
 use \Joomla\CMS\Uri\Uri;
 use \Joomla\CMS\Router\Route;
 
-class Twig_Field_Tags
+class Twig_Fields_Tags
 {
 	var $ct;
 
@@ -37,7 +37,13 @@ class Twig_Field_Tags
 		return json_encode(Fields::shortFieldObjects($this->ct->Table->fields));
 	}
 	
+	/*
 	function length()
+	{
+		return count($this->ct->Table->fields);
+	}
+	*/
+	function count()
 	{
 		return count($this->ct->Table->fields);
 	}
@@ -97,7 +103,7 @@ class Twig_User_Tags
 		return $this->user_id;
 	}
 	
-	function lastvisitDate($user_id = 0)
+	function lastvisitdate($user_id = 0)
 	{
 		if($user_id == 0)
 			$user_id = $this->user_id;
@@ -113,7 +119,7 @@ class Twig_User_Tags
 			return $user_row->lastvisitDate;
 	}
 	
-	function registerDate($user_id = 0)
+	function registerdate($user_id = 0)
 	{
 		if($user_id == 0)
 			$user_id = $this->user_id;

@@ -916,14 +916,14 @@ class Twig_Html_Tags
 
         return $result;
     }
-    
-	function catalogpage($layoutname = '', $filter = '', $orderby = '', $limit = 0)
+	
+	function records($layoutname = '', $filter = '', $orderby = '', $limit = 0)
 	{
-		//Example {{ html.catalogpage("InvoicesPage","_published=1","name") }}
+		//Example {{ html.records("InvoicesPage","_published=1","name") }}
 		
 		if($layoutname == '')
 		{
-			Factory::getApplication()->enqueueMessage('{{ html.catalogpage("'.$layoutname.'","'.$filter.'","'.$orderby.'") }} - Layout name not specified.', 'error');
+			Factory::getApplication()->enqueueMessage('{{ html.records("'.$layoutname.'","'.$filter.'","'.$orderby.'") }} - Layout name not specified.', 'error');
 			return '';
 		}
 		
@@ -932,7 +932,7 @@ class Twig_Html_Tags
 		$pagelayout = $layouts->getLayout($layoutname,false);//It is safier to process layout after rendering the table
 		if($layouts->tableid == null)
 		{
-			Factory::getApplication()->enqueueMessage('{{ html.catalogpage("'.$layoutname.'","'.$filter.'","'.$orderby.'") }} - Layout "'.$layoutname.' not found.', 'error');
+			Factory::getApplication()->enqueueMessage('{{ html.records("'.$layoutname.'","'.$filter.'","'.$orderby.'") }} - Layout "'.$layoutname.' not found.', 'error');
 			return '';
 		}
 		
@@ -944,11 +944,24 @@ class Twig_Html_Tags
 			$twig = new TwigProcessor($join_ct, '{% autoescape false %}'.$pagelayout.'{% endautoescape %}');
 			$vlu = $twig->process();
 
-			//return $vlu;
 			return new \Twig\Markup($vlu, 'UTF-8' );
 		}
 		
-		Factory::getApplication()->enqueueMessage('{{ html.catalogpage("'.$layoutname.'","'.$filter.'","'.$orderby.'") }} - LCould not load records.', 'error');
+		Factory::getApplication()->enqueueMessage('{{ html.records("'.$layoutname.'","'.$filter.'","'.$orderby.'") }} - LCould not load records.', 'error');
 		return '';
 	}
+	
+	function htmltablehead()
+	{
+		$result = '<thead>';
+		$head_columns = func_get_args();
+		
+		foreach($head_columns as $head_column)
+			$result .= '<th>'.$head_column.'</th>';
+		
+		$result .= '</thead>';
+		
+		return new \Twig\Markup($result, 'UTF-8' );
+	}
+    
 }

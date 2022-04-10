@@ -2,7 +2,7 @@
 /**
  * CustomTables Joomla! 3.x Native Component
  * @package Custom Tables
- * @author Ivan komlev <support@joomlaboat.com>
+ * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
  * @copyright Copyright (C) 2018-2022. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
@@ -25,45 +25,157 @@ class TwigProcessor
 	var $loaded = false;
 	var $twig;
 	var $variables = [];
+	var $recordBlockFound;
+	var $recordBlockreplaceCode;
 
-	public function __construct(&$ct, $htmlresult)
+	public function __construct(&$ct, $htmlresult_)
 	{
 		$this->ct = $ct;
-
-		$loader = new \Twig\Loader\ArrayLoader([
-			'index' => $htmlresult,
-		]);
 		
+		$tag1 = '{% block record %}';
+		$pos1 = strpos($htmlresult_,$tag1);
+		
+		if($pos1 !== false)
+		{
+			$this->recordBlockFound = true;
+			
+			$tag2 = '{% endblock %}';
+			
+			$pos2 = strpos($htmlresult_,$tag2,$pos1 + strlen($tag1));
+			if($pos1 === false)
+			{
+				Factory::getApplication()->enqueueMessage('{% endblock %} is missing', 'error');
+				return '';
+			}
+			
+			$tag1_length = strlen($tag1);
+			$record_block = substr($htmlresult_,$pos1+$tag1_length,$pos2-$pos1-$tag1_length);
+			$record_block_replace = substr($htmlresult_,$pos1,$pos2-$pos1+strlen($tag2));
+			
+			$this->recordBlockreplaceCode=JoomlaBasicMisc::generateRandomString();//this is temporary replace place holder. to not parse content result again
+			
+			$htmlresult = str_replace($record_block_replace,$this->recordBlockreplaceCode,$htmlresult_);
+						
+			$loader = new \Twig\Loader\ArrayLoader([
+				'index' => '{% autoescape false %}'.$htmlresult.'{% endautoescape %}',
+				'record' => '{% autoescape false %}'.$record_block.'{% endautoescape %}',
+			]);
+		}
+		else
+		{
+			$this->recordBlockFound = false;
+			$loader = new \Twig\Loader\ArrayLoader([
+				'index' => $htmlresult_,
+			]);
+		}
+	
 		$this->twig = new \Twig\Environment($loader);
 			
-		$this->twig->addGlobal('fields', new Twig_Field_Tags($ct) );
-		$this->twig->addGlobal('user', new Twig_User_Tags($ct) );
-		$this->twig->addGlobal('url', new Twig_Url_Tags($ct) );
-		$this->twig->addGlobal('html', new Twig_Html_Tags($ct) );
-		$this->twig->addGlobal('document', new Twig_Document_Tags($ct) );
-		$this->twig->addGlobal('record', new Twig_Record_Tags($ct) );
-		$this->twig->addGlobal('text', new Twig_Text_Tags($ct) );
+		$this->twig->addGlobal('fields', new Twig_Fields_Tags($this->ct) );
+		//{{ fields.count() }}
+		//{{ fields.json() }}
+		
+		$this->twig->addGlobal('user', new Twig_User_Tags($this->ct) );
+		//{{ user.name() }}
+		//{{ user.username() }}
+		//{{ user.email() }}
+		//{{ user.id() }}
+		//{{ user.lastvisitdate() }}
+		//{{ user.registerdate() }}
+		//{{ user.usergroups() }}
+		
+		$this->twig->addGlobal('url', new Twig_Url_Tags($this->ct) );
+		//{{ url.link() }}
+		//{{ url.base64() }}
+		//{{ url.root() }}
+		//{{ url.getInt() }}
+		//{{ url.getString() }}
+		//{{ url.getUInt() }}
+		//{{ url.getFloat() }}
+		//{{ url.getWord() }}
+		//{{ url.getAlnum() }}
+		//{{ url.getCmd() }}
+		//{{ url.getStringAndEncode() }}
+		//{{ url.getStringAndDecode() }}
+		//{{ url.Itemid() }}
+		//{{ url.set() }}
+		//{{ url.server() }}
+		
+		$this->twig->addGlobal('html', new Twig_Html_Tags($this->ct) );
+		//{{ html.add() }}
+		//{{ html.batch() }}
+		//{{ html.button() }}
+		//{{ html.captcha() }}
+		//{{ html.format() }}
+		//{{ html.goback() }}
+		//{{ html.importcsv() }}
+		//{{ html.layout("InvoicesPage","price>100","name",20) }}
+		//{{ html.limit() }}
+		//{{ html.message() }}
+		//{{ html.navigation() }}
+		//{{ html.orderby() }}
+		//{{ html.pagination() }}
+		//{{ html.print() }}
+		//{{ html.recordcount }}
+		//{{ html.records("InvoicesPage","price>100","name",20) }}
+		//{{ html.search() }}
+		//{{ html.searchbutton() }}
+
+		$this->twig->addGlobal('document', new Twig_Document_Tags($this->ct) );
+		//{{ document.setMetaKeywords() }}
+		//{{ document.setMetaDescription() }}
+		//{{ document.setPageTitle() }}
+		//{{ document.setHeadTag() }}
+		//{{ document.layout() }} ?????
+		//{{ document.sitename() }}
+		//{{ document.language_postfix() }}
+		
+		$this->twig->addGlobal('record', new Twig_Record_Tags($this->ct) );
+		//{{ record.advancedjoin(function, tablename, field_findwhat, field_lookwhere, field_readvalue, additional_where, order_by_option, value_option_list) }}
+		//{{ record.count(join_table) }}
+		//{{ record.id }}
+		//{{ record.number }}
+		//{{ record.published }}
+		//{{ record.sum(join_table,value_field_name) }}
+		//{{ record.tablejoin("InvoicesPage","_published=1","name") }}
+		//{{ record.valuejoin(join_table,value_field_name) }}
+		
+		$this->twig->addGlobal('records', new Twig_Records_Tags($this->ct) );
+		//{{ records.count }}
+		//{{ records.list }}
+		//{{ records.list("InvoicesItems") }}
+		//{{ records.htmltable([['column_1_title','column_1_value'],['column_1_title','column_1_value']]) }}
+		
+		
+		$this->twig->addGlobal('text', new Twig_Text_Tags($this->ct) );
+		//{{ text.base64encode() }}
 		
 		$this->variables = [];
 		
+		//{{ table.id }}
+		//{{ table.name }}
+		//{{ table.title }}
+		//{{ table.description }}
+		//{{ table.records }} same as {{ records.count }}
+		//{{ table.fields }} same as {{ fields.count() }}
 		if(isset($ct->Table))
 		{
-			$description = $ct->Table->tablerow['description'.$ct->Table->Languages->Postfix];
+			$description = $ct->Table->tablerow['description'.$this->ct->Table->Languages->Postfix];
 						
 			$this->variables['table'] = [
-			'id'=>$ct->Table->tableid,
-			'name' => $ct->Table->tablename,
-			'title' => $ct->Table->tabletitle,
+			'id'=>$this->ct->Table->tableid,
+			'name' => $this->ct->Table->tablename,
+			'title' => $this->ct->Table->tabletitle,
 			'description'=> new \Twig\Markup($description, 'UTF-8' ),
-			'records'=>$ct->Table->recordcount,
-			'fields'=>count($ct->Table->fields)
+			'records'=>$this->ct->Table->recordcount,
+			'fields'=>count($this->ct->Table->fields)
 			];
 		}
 
-		if(isset($ct->Table->fields))
+		if(isset($this->ct->Table->fields))
 		{
 			$index=0;
-			foreach($ct->Table->fields as $field)
+			foreach($this->ct->Table->fields as $field)
 			{
 	
 				$function = new \Twig\TwigFunction($field['fieldname'], function () use (&$ct, $index) 
@@ -77,14 +189,14 @@ class TwigProcessor
 					
 					
 					$valueProcessor = new Value($this->ct);
-					$vlu = strval($valueProcessor->renderValue($ct->Table->fields[$index],$this->ct->Table->record,$args));
+					$vlu = strval($valueProcessor->renderValue($this->ct->Table->fields[$index],$this->ct->Table->record,$args));
 					return $vlu;
 					//return new \Twig\Markup($vlu, 'UTF-8' ); //doesnt work because it cannot be converted to int or string
 				});
 				
 				$this->twig->addFunction($function);
 			
-				$this->variables[$field['fieldname']] = new fieldObject($ct,$field);
+				$this->variables[$field['fieldname']] = new fieldObject($this->ct,$field);
 				
 				$index++;
 			}
@@ -96,7 +208,24 @@ class TwigProcessor
 		if($row !== null)
 			$this->ct->Table->record = $row;
 		
-		return @$this->twig->render('index', $this->variables);
+		$result = @$this->twig->render('index', $this->variables);
+		
+		if($this->recordBlockFound)
+		{
+			$number = 0;
+			$record_result = '';
+			foreach($this->ct->Records as $row)
+			{
+				$row['_number'] = $number;
+				$this->ct->Table->record = $row;
+				$record_result .= @$this->twig->render('record', $this->variables);
+				$number++;
+			}
+		
+			return str_replace($this->recordBlockreplaceCode,$record_result,$result);
+		}
+		
+		return $result;
 	}
 }
 
