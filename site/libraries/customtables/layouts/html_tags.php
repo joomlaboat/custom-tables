@@ -212,7 +212,7 @@ class Twig_Html_Tags
 		if($attribute == '')
 			$attribute = 'class="ct_goback"';
 		
-		$vlu = '<a href="'.$returnto.'" '.$attribute.'><div>'.$label.'</div></a>';
+		$vlu = '<a href="'.$returnto.'" '.$attribute.'><div>'.($image_icon != '' ? '<img src="'.$image_icon.'" alt="'.$label.'" />' : '').$label.'</div></a>';
 		
 		if($this->isTwig)
 			return new \Twig\Markup($vlu, 'UTF-8' );
@@ -917,4 +917,38 @@ class Twig_Html_Tags
         return $result;
     }
     
+	function catalogpage($layoutname = '', $filter = '', $orderby = '', $limit = 0)
+	{
+		//Example {{ html.catalogpage("InvoicesPage","_published=1","name") }}
+		
+		if($layoutname == '')
+		{
+			Factory::getApplication()->enqueueMessage('{{ html.catalogpage("'.$layoutname.'","'.$filter.'","'.$orderby.'") }} - Layout name not specified.', 'error');
+			return '';
+		}
+		
+		$layouts = new Layouts($this->ct);
+		
+		$pagelayout = $layouts->getLayout($layoutname,false);//It is safier to process layout after rendering the table
+		if($layouts->tableid == null)
+		{
+			Factory::getApplication()->enqueueMessage('{{ html.catalogpage("'.$layoutname.'","'.$filter.'","'.$orderby.'") }} - Layout "'.$layoutname.' not found.', 'error');
+			return '';
+		}
+		
+		$join_ct = new CT;
+		$tables = new Tables($join_ct);
+		
+		if($tables->loadRecords($layouts->tableid, $filter, $orderby))
+		{
+			$twig = new TwigProcessor($join_ct, '{% autoescape false %}'.$pagelayout.'{% endautoescape %}');
+			$vlu = $twig->process();
+
+			//return $vlu;
+			return new \Twig\Markup($vlu, 'UTF-8' );
+		}
+		
+		Factory::getApplication()->enqueueMessage('{{ html.catalogpage("'.$layoutname.'","'.$filter.'","'.$orderby.'") }} - LCould not load records.', 'error');
+		return '';
+	}
 }

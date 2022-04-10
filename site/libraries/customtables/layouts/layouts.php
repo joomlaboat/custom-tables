@@ -22,6 +22,7 @@ use \Joomla\CMS\Factory;
 class Layouts
 {
 	var $ct;
+	var $tableid;
 	var $layouttype;
 	
 	function __construct(&$ct)
@@ -39,9 +40,9 @@ class Layouts
 		$db = Factory::getDBO();
 		
 		if($db->serverType == 'postgresql')
-			$query = 'SELECT id, layoutcode, layoutmobile, layoutcss, layoutjs, extract(epoch FROM modified) AS ts, layouttype FROM #__customtables_layouts WHERE layoutname='.$db->quote($layoutname).' LIMIT 1';
+			$query = 'SELECT id, tableid, layoutcode, layoutmobile, layoutcss, layoutjs, extract(epoch FROM modified) AS ts, layouttype FROM #__customtables_layouts WHERE layoutname='.$db->quote($layoutname).' LIMIT 1';
 		else
-			$query = 'SELECT id, layoutcode, layoutmobile, layoutcss, layoutjs, UNIX_TIMESTAMP(modified) AS ts, layouttype FROM #__customtables_layouts WHERE layoutname='.$db->quote($layoutname).' LIMIT 1';
+			$query = 'SELECT id, tableid, layoutcode, layoutmobile, layoutcss, layoutjs, UNIX_TIMESTAMP(modified) AS ts, layouttype FROM #__customtables_layouts WHERE layoutname='.$db->quote($layoutname).' LIMIT 1';
 			
 		$db->setQuery( $query );
 		$rows = $db->loadAssocList();
@@ -49,7 +50,9 @@ class Layouts
 			return '';
 
 		$row=$rows[0];
-        $this->layouttype=(int)$row['layouttype'];
+        $this->tableid=(int)$row['tableid'];
+		
+		$this->layouttype=(int)$row['layouttype'];
 
 		$content=$this->getLayoutFileContent($row['id'],$row['ts'],$layoutname);
 		if($content!='')

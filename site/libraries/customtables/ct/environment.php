@@ -2,9 +2,9 @@
 /**
  * CustomTables Joomla! 3.x Native Component
  * @package Custom Tables
- * @author Ivan komlev <support@joomlaboat.com>
+ * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @copyright Copyright (C) 2018-2021. All Rights Reserved
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
@@ -19,6 +19,7 @@ use \JoomlaBasicMisc;
 
 use \Joomla\CMS\Version;
 use \Joomla\CMS\Factory;
+use \Joomla\Registry\Registry;
 use \Joomla\CMS\Uri\Uri;
 
 class Environment
@@ -110,9 +111,10 @@ class Environment
 		
 		$this->Itemid = $this->jinput->getInt('Itemid',0);
 		
-		$this->menu_params = null;
+		$paramsArray=array();
+		$this->menu_params = new Registry;
+		$this->menu_params->loadArray($paramsArray);
 	}
-	
 	
 	/* USER-AGENTS ================================================== */
 	//http://stackoverflow.com/questions/6524301/detect-mobile-browser

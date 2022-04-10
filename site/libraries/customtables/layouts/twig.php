@@ -116,6 +116,7 @@ class fieldObject
 		//$args = func_get_args();
 		$valueProcessor = new Value($this->ct);
 		$vlu = $valueProcessor->renderValue($this->field,$this->ct->Table->record,[]);
+		//return $vlu;
 		return strval($vlu);
 		//return new \Twig\Markup($vlu, 'UTF-8' ); //doesnt work because it cannot be converted to int or string
 		//return strval(new \Twig\Markup($vlu, 'UTF-8'));
