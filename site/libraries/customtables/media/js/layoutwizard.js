@@ -550,7 +550,7 @@ function getLayout_Page(){
 	result+='<table><thead><tr>';
 
 	let fieldtypes_to_skip=['log','imagegallery','filebox','dummy'];
-	let fieldtypes_withsearch=['email','string','multilangstring','text','multilangtext','int','float','sqljoin','records'];
+	let fieldtypes_withsearch=['email','string','multilangstring','text','multilangtext','sqljoin','records'];
 
 	result+='<th>{{ html.batch("checkbox") }}</th>\r\n';
 	result+='<th>#</th>\r\n';
@@ -569,7 +569,33 @@ function getLayout_Page(){
 	result+='<th>Action<br/>{{ html.searchbutton }}</th>\r\n';
 	result+='</tr></thead>\r\n\r\n';
 	result+='<tbody>\r\n';
+/*
+	result+='{% block record %}';
+	
+	result+='\r\n<tr>\r\n';
+	
+	result+='<td>{{ html.toolbar("checkbox") }}</td>\r\n';
+	result+='<td><a href=\'{{ record.link(true) }}\'>{{ record.id }}</a></td>\r\n';
 
+	for (let index=0;index<l;index++)
+	{
+		let field=wizardFields[index];
+
+		if(fieldtypes_to_skip.indexOf(field.type)===-1){
+		
+			if(fieldtypes_withsearch.indexOf(field.type)===-1)
+				result+='<td>{{ '+field.fieldname+' }}</td>\r\n';
+			else
+				result+='<td>{{ '+field.fieldname+' }}</td>\r\n';
+		}
+	}
+	
+	result+='<td>{{ html.toolbar("edit","publish","refresh","delete") }}</td>\r\n';
+	
+	result+='</tr>';
+	
+	result+='\r\n{% endblock %}\r\n';
+*/
 	result+='{{ records.list("LAYOUT NAME") }}<!-- Please create a "Catalog Item" layout and type the name of that layout instead of LAYOUT NAME -->\r\n';
 
 	result+='</tbody>\r\n';
@@ -657,8 +683,31 @@ function getLayout_SimpleCatalog(){
 	field_titles.push('"Action"');
 	
 	result+='\r\n<table>\r\n';
-	result+='{{ html.tablehead(' + field_titles.join(",") + ') }}';
-	result+='\r\n<body>';
+	//result+='{{ html.tablehead(' + field_titles.join(",") + ') }}';
+	
+	
+	result+='<thead><tr>';
+
+	result+='<th>{{ html.batch("checkbox") }}</th>\r\n';
+	result+='<th>#</th>\r\n';
+
+	for (let index=0;index<l;index++){
+		let field=wizardFields[index];
+
+		if(fieldtypes_to_skip.indexOf(field.type)===-1){
+			if(fieldtypes_withsearch.indexOf(field.type)===-1)
+				result+='<th>{{ '+field.fieldname+'.title }}</th>\r\n';
+			else
+				result+='<th>{{ '+field.fieldname+'.title }}<br/>{{ html.search("'+field.fieldname+'") }}</th>\r\n';
+		}
+	}
+
+	result+='<th>Action<br/>{{ html.searchbutton }}</th>\r\n';
+	result+='</tr></thead>\r\n\r\n';
+	
+	
+	
+	result+='\r\n<tbody>';
 	result+='\r\n{% block record %}';
 	
 	result+='\r\n<tr>\r\n';
@@ -684,7 +733,7 @@ function getLayout_SimpleCatalog(){
 	result+='</tr>';
 	
 	result+='\r\n{% endblock %}';
-	result+='\r\n</body>';
+	result+='\r\n</tbody>';
 	result+='\r\n</table>\r\n';
 	
 	result+='\r\n';

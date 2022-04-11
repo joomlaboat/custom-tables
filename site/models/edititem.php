@@ -1,7 +1,7 @@
 <?php
 /**
  * CustomTables Joomla! 3.x Native Component
- * @author Ivan komlev <support@joomlaboat.com>
+ * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
  * @license GNU/GPL
  **/
@@ -15,6 +15,7 @@ use CustomTables\Fields;
 use CustomTables\Layouts;
 use CustomTables\DataTypes\Tree;
 use CustomTables\CustomPHP\CleanExecute;
+use CustomTables\TwigProcessor;
 
 use \Joomla\CMS\Component\ComponentHelper;
 use \Joomla\CMS\Factory;
@@ -1027,6 +1028,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 		$row_old=array();
 		$listing_id_temp = 0;
 		
+		$isitnewrecords = false;
 		if($listing_id == 0 or $listing_id == '')
 		{
 			$isitnewrecords	=true;
@@ -1083,9 +1085,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 				$listing_id=$row['listing_id'];
 			}
-
 			$this->ct->Table->saveLog($listing_id,1);
-
 		}
 		else
 		{
@@ -1104,48 +1104,47 @@ class CustomTablesModelEditItem extends JModelLegacy
 				if($phponchangefound or $this->ct->Table->tablerow['customphp']!='')
 					$this->doPHPonChange($row);
 						
-					if($phponaddfound and $isCopy)
-						$this->doPHPonAdd($row);
+				if($phponaddfound and $isCopy)
+					$this->doPHPonAdd($row);
 						
-					$this->updateDefaultValues($row);
-
-				}
+				$this->updateDefaultValues($row);
+			}
 		}
 
 		//update MD5s
 		$this->updateMD5($listing_id);
 		$this->ct->Table->processDefaultValues($default_fields_to_apply,$this->ct,$row);
 
-		if($this->onrecordaddsendemail==3 and ($this->onrecordsavesendemailto!='' or $this->onrecordaddsendemailto!=''))
+		if($this->onrecordsavesendemailto!='' or $this->onrecordaddsendemailto!='')
 		{
-			//check conditions
-			
+			if($this->onrecordaddsendemail==3)
+			{
+				//check conditions
 				if($this->checkSendEmailConditions($listing_id,$this->sendemailcondition))
 				{
 					//Send email conditions met
 					$this->sendEmailIfAddressSet($listing_id);//,$new_username,$new_password);
 				}
-		}
-		else
-		{
-			if($listing_id==0 or $listing_id == '' or $isCopy)
-			{
-				//New record
-				if($this->onrecordaddsendemail==1 or $this->onrecordaddsendemail==2)
-					$this->sendEmailIfAddressSet($listing_id);//,$new_username,$new_password);
-
 			}
 			else
 			{
-				//Old record
-				if($this->onrecordaddsendemail==2)
+				if($isitnewrecords or $isCopy)
 				{
-					$this->sendEmailIfAddressSet($listing_id);//,$new_username,$new_password);
+					//New record
+					if($this->onrecordaddsendemail==1 or $this->onrecordaddsendemail==2)
+						$this->sendEmailIfAddressSet($listing_id);//,$new_username,$new_password);
 				}
+				else
+				{
+					//Old record
+					if($this->onrecordaddsendemail==2)
+					{
+						$this->sendEmailIfAddressSet($listing_id);//,$new_username,$new_password);
+					}
 
+				}
 			}
 		}
-
 
 		//Prepare "Accept Return To" Link
 		$art_link=$this->PrepareAcceptReturnToLink(JFactory::getApplication()->input->get( 'returnto','','BASE64' ));
@@ -1661,15 +1660,18 @@ class CustomTablesModelEditItem extends JModelLegacy
 		if($applyContentPlagins)
 			LayoutProcessor::applyContentPlugins($content);
 		
+		$twig = new TwigProcessor($this->ct, '{% autoescape false %}'.$content.'{% endautoescape %}');
+		$content = $twig->process($this->ct->Table->record);
+		
 		return $content;
 	}
 
-	function sendEmailNote($listing_id,$emails)//,$new_username,$new_password)
+	function sendEmailNote($listing_id,$emails)
 	{
 		$mainframe = JFactory::getApplication('site');
 		$this->ct->Table->record = $this->getListingRowByID($listing_id);
+		
 		//Prepare Email List
-
 		$emails_raw=JoomlaBasicMisc::csv_explode(',', $emails, '"', true);
 
 		$emails=array();
@@ -1688,25 +1690,20 @@ class CustomTablesModelEditItem extends JModelLegacy
 				$emails[]=array('email' => $EmailTo, 'subject' => $Subject);
 		}
 		
-		//-----------
 		$Layouts = new Layouts($this->ct);
 		$message_layout_content = $Layouts->getLayout($this->onrecordaddsendemaillayout);
-			
+		
 		$note=$this->parseRowLayoutContent($message_layout_content,true);
 		
 		$MailFrom 	= $mainframe->getCfg('mailfrom');
 		$FromName 	= $mainframe->getCfg('fromname');
 
-		//$note=str_replace('[_username]',$new_username,$note);
-		//$note=str_replace('[_password]',$new_password,$note);
-		
 		$status=0;
 
 		foreach($emails as $SendToEmail)
 		{
+			$EmailTo=$SendToEmail['email'];
 			$Subject=$SendToEmail['subject'];
-
-			//$mail = JFactory::getMailer();
 
 			$options=array();
 			$fList=JoomlaBasicMisc::getListToReplace('attachment',$options,$note,'{}');
@@ -1740,16 +1737,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 			}
 			
 			$sent = Email::sendEmail($EmailTo,$Subject,$note_final,$isHTML = true,$attachments);
-/*
-			$mail->IsHTML(true);
-			$mail->addRecipient($EmailTo);
-			$mail->setSender( array($MailFrom,$FromName) );
-			$mail->setSubject( $Subject);
-			$mail->setBody( $note_final );
-			
-			
-			$sent = $mail->Send();
-*/
+
 			if ( $sent !== true ) {
 				//Something went wrong. Email not sent.
 				JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_SENDING_EMAIL').': '.$EmailTo.' ('.$Subject.')', 'error');
@@ -1793,36 +1781,34 @@ class CustomTablesModelEditItem extends JModelLegacy
 	
 	protected function RefreshSingleRecord($listing_id,$save_log)
 	{
-			$db = JFactory::getDBO();
-			
-			$query='SELECT '.$this->ct->Table->tablerow['query_selects'].' FROM '.$this->ct->Table->realtablename.' WHERE '.$this->ct->Table->realidfieldname.'='.$db->quote($listing_id).' LIMIT 1';
-			$db->setQuery( $query );
+		$db = JFactory::getDBO();
+		
+		$query='SELECT '.$this->ct->Table->tablerow['query_selects'].' FROM '.$this->ct->Table->realtablename.' WHERE '.$this->ct->Table->realidfieldname.'='.$db->quote($listing_id).' LIMIT 1';
+		$db->setQuery( $query );
 
-			$rows = $db->loadAssocList();
-			if(count($rows)==0)
-				return -1;
+		$rows = $db->loadAssocList();
+		if(count($rows)==0)
+			return -1;
 
-			$row=$rows[0];
-			JFactory::getApplication()->input->set('listing_id',$listing_id);
+		$row=$rows[0];
+		JFactory::getApplication()->input->set('listing_id',$listing_id);
 
-			$this->doPHPonChange($row);
+		$this->doPHPonChange($row);
 
-			//update MD5s
-			$this->updateMD5($listing_id);
+		//update MD5s
+		$this->updateMD5($listing_id);
 
-			if($save_log==1)
-				$this->ct->Table->saveLog($listing_id,10);
+		if($save_log==1)
+			$this->ct->Table->saveLog($listing_id,10);
 
-			$this->updateDefaultValues($row);
+		$this->updateDefaultValues($row);
 
-			if($this->ct->Env->advancedtagprocessor)
-				CleanExecute::executeCustomPHPfile($this->ct->Table->tablerow['customphp'],$row,$row);
+		if($this->ct->Env->advancedtagprocessor)
+			CleanExecute::executeCustomPHPfile($this->ct->Table->tablerow['customphp'],$row,$row);
 
 		//Send email note if applicable
-		
 		if($this->onrecordaddsendemail==3 and ($this->onrecordsavesendemailto!='' or $this->onrecordaddsendemailto!=''))
 		{
-			
 			//check conditions
 			if($this->checkSendEmailConditions($listing_id,$this->sendemailcondition))
 			{

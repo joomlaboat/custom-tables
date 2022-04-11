@@ -296,9 +296,7 @@ trait SaveFieldQuerySet
 								$image_file = JPATH_SITE.DIRECTORY_SEPARATOR.$ImageFolder.DIRECTORY_SEPARATOR.$ImageID.'.'.$format;
 								$i++;
 							}while(file_exists($image_file));
-							echo '$image_file='.$image_file;
 							$parts = explode(';base64,',$value);
-							echo '<br/>'.$parts[1].'<br/>';
 							
 							$deceded_binary = base64_decode($parts[1]);
 							file_put_contents($image_file, $deceded_binary);

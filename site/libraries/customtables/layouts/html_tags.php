@@ -202,7 +202,7 @@ class Twig_Html_Tags
 	function goback($label='Go Back', $image_icon='components/com_customtables/libraries/customtables/media/images/icons/arrow_rtl.png', $attribute='',  $returnto = '')
 	{
 		if($this->ct->Env->print==1)
-            $gobackbutton='';
+            return '';
 				
 		if($returnto == '')
 			$returnto = base64_decode($this->ct->Env->jinput->get('returnto','','BASE64'));
@@ -249,6 +249,12 @@ class Twig_Html_Tags
 	function batch()
 	{
 		$buttons = func_get_args();
+		if(count($buttons) == 1)
+		{
+			if(is_array($buttons[0]))
+				$buttons = $buttons[0];
+		}
+
 		
 		if($this->ct->Env->print==1 or ($this->ct->Env->frmt!='html' and $this->ct->Env->frmt!=''))
 			return '';

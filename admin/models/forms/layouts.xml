@@ -103,7 +103,7 @@
                         <option value="6">COM_CUSTOMTABLES_LAYOUTS_CATALOG_ITEM</option>
                         <option value="2">COM_CUSTOMTABLES_LAYOUTS_EDIT_FORM</option>
                         <option value="4">COM_CUSTOMTABLES_LAYOUTS_DETAILS</option>
-                        <option value="3">COM_CUSTOMTABLES_LAYOUTS_RECORD_LINK</option>
+                        <!--<option value="3">COM_CUSTOMTABLES_LAYOUTS_RECORD_LINK</option>-->
                         <option value="7">COM_CUSTOMTABLES_LAYOUTS_EMAIL_MESSAGE</option>
                         <option value="8">COM_CUSTOMTABLES_LAYOUTS_XML</option>
                         <option value="9">COM_CUSTOMTABLES_LAYOUTS_CSV</option>

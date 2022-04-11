@@ -101,42 +101,4 @@ class Twig_Records_Tags
 		//return $htmlresult;		
 		return new \Twig\Markup($htmlresult, 'UTF-8' );
 	}
-	
-	
-	function htmltable(array $fields = [])
-	{
-		// {{ records.htmltable([['column_1_title','column_1_value'],['column_1_title','column_1_value']]) }}
-		if(count($fields) == 0)
-		{
-			Factory::getApplication()->enqueueMessage('{{ records.htmltable([]) }} - List of fields not set', 'error');
-			return '';
-		}
-		
-		print_r($fields);
-		
-		return 'LOL';
-		$layouts = new Layouts($this->ct);
-		
-		$pagelayout = $layouts->getLayout($layoutname,false);//It is safier to process layout after rendering the table
-		if($layouts->tableid == null)
-		{
-			Factory::getApplication()->enqueueMessage('{{ records.htmltable("'.$layoutname.'","'.$filter.'","'.$orderby.'") }} - Layout "'.$layoutname.' not found.', 'error');
-			return '';
-		}
-		
-		$number = 0;
-		$twig = new TwigProcessor($this->ct, '{% autoescape false %}'.$pagelayout.'{% endautoescape %}');
-		
-		$htmlresult = '';
-		
-		foreach($this->ct->Records as $row)
-		{
-			$row['_number'] = $number;
-			$htmlresult .= $twig->process($row);
-			$number++;
-		}
-		
-		//return $htmlresult;		
-		return new \Twig\Markup($htmlresult, 'UTF-8' );
-	}
 }
