@@ -166,8 +166,6 @@ function loadTags(type_id,tags_box)
     }
 }
 
-
-
 function resizeModalBox()
 {
     setTimeout(
@@ -596,9 +594,7 @@ function updateCodeMirror(text)
     doc.replaceRange(text, cursor);
 }
 
-
-
-    function textarea_findindex(code)
+function textarea_findindex(code)
     {
         for(var i=0;i<text_areas.length;i++)
         {
@@ -925,10 +921,23 @@ function do_render_current_TagSets()
         if(i==0)
             c="active";
 
-        if (proversion || typeof(a.proversion) === "undefined" || a.proversion==="0")
-        {
-            result_li+='<li class="'+c+'"><a href="#layouteditor_tags'+index+'_'+i+'" onclick="resizeModalBox()" data-toggle="tab">'+a.label+'</a></li>';
+		if (typeof(a.proversion) === "undefined" || a.proversion==="0")
+		{
+			result_li+='<li class="'+c+'"><a href="#layouteditor_tags'+index+'_'+i+'" onclick="resizeModalBox()" data-toggle="tab">'+a.label+'</a></li>';
             result_div+='<div id="layouteditor_tags'+index+'_'+i+'" class="tab-pane '+c+' FieldTagWizard"><p>'+a.description+'</p>'+renderTags(index,tagset)+'</div>';
+		}
+		else
+		{
+			if (proversion)
+			{
+				result_li+='<li class="'+c+'"><a href="#layouteditor_tags'+index+'_'+i+'" onclick="resizeModalBox()" data-toggle="tab">'+a.label+'</a></li>';
+				result_div+='<div id="layouteditor_tags'+index+'_'+i+'" class="tab-pane '+c+' FieldTagWizard"><p>'+a.description+'</p>'+renderTags(index,tagset)+'</div>';
+			}
+			else
+			{
+				result_li+='<li class="'+c+'"><a href="#layouteditor_tags'+index+'_'+i+'" onclick="resizeModalBox()" data-toggle="tab">'+a.label+'</a></li>';
+				result_div+='<div id="layouteditor_tags'+index+'_'+i+'" class="tab-pane '+c+' FieldTagWizard"><p>'+a.description+'</p>'+renderTags(index,tagset)+'</div>';
+			}
         }
     }
 
@@ -949,30 +958,45 @@ function renderTags(index,tagset)
     {
         var tag_object=tags[i];
         var tag=tag_object["@attributes"];
-
-        if (proversion || typeof(tag.proversion) === "undefined" || tag.proversion==="0")
-        {
-            var t="";
-
-            var params=getParamOptions(tag_object.params,'param');
+		var t="";
+		var params=getParamOptions(tag_object.params,'param');
 			
-			let full_tagname = '';
-			if (typeof(tag.twigclass) !== "undefined" && tag.twigclass!=="")
-				full_tagname = tag.twigclass + '.' + tag.name;
-			else
-				full_tagname = tag.name;
+		let full_tagname = '';
+		if (typeof(tag.twigclass) !== "undefined" && tag.twigclass!=="")
+			full_tagname = tag.twigclass + '.' + tag.name;
+		else
+			full_tagname = tag.name;
 			
-			if(params.length==0)
-				t='{{ ' + full_tagname + ' }}'; // t=tag.startchar+tag.name+tag.endchar;
-			else
-				t='{{ '+full_tagname+'(<span>Params</span>)'+' }}'; //t=tag.startchar+full_tagname+':<span>Params</span>'+tag.endchar;
+		if(params.length==0)
+			t='{{ ' + full_tagname + ' }}'; // t=tag.startchar+tag.name+tag.endchar;
+		else
+			t='{{ '+full_tagname+'(<span>Params</span>)'+' }}'; //t=tag.startchar+full_tagname+':<span>Params</span>'+tag.endchar;
 
-            result+='<div style="vertical-align:top;">';
-			//result+='<div style="display:inline-block;"><a href=\'javascript:addTag("0","'+tag.startchar+'","'+tag.endchar+'","'+btoa(tag.name)+'",'+params.length+');\' class="btn">'+t+'</a></div> ';
-			result+='<div style="display:inline-block;"><a href=\'javascript:addTag("{{ "," }}","'+btoa(full_tagname)+'",'+params.length+');\' class="btn">'+t+'</a></div> ';
-            result+='<div style="display:inline-block;">'+tag.description+'</div>';
-            result+='</div>';
-        }
+		if(parseInt(tag.depricated) != 1)
+		{
+			result+='<div style="vertical-align:top;">';
+		
+			if (typeof(tag.proversion) === "undefined" || parseInt(tag.proversion) != 1)
+			{
+				result+='<div style="display:inline-block;"><a href=\'javascript:addTag("{{ "," }}","'+btoa(full_tagname)+'",'+params.length+');\' class="btn btn-primary">'+t+'</a></div> ';
+			}
+			else
+			{
+				if (proversion)
+				{
+					result+='<div style="display:inline-block;"><a href=\'javascript:addTag("{{ "," }}","'+btoa(full_tagname)+'",'+params.length+');\' class="btn btn-primary">'+t+'</a></div> ';
+				}
+				else
+				{
+					result+='<div style="display:inline-block;"><div class="btn">'+t+'</div></div> ';
+					result+='<div class="ct_doc_pro_label"><a href="https://joomlaboat.com/custom-tables#buy-extension" target="_blank">Available in PRO Version</a></div>';
+				}
+			}
+			result+='<div style="display:inline-block;">'+tag.description+'</div>';
+			result+='</div>';
+		}
+			
+		
     }
 
     result+='</div>';

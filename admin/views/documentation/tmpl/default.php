@@ -58,8 +58,10 @@ use Joomla\CMS\Language\Text;
 		<?php echo JText::_('COM_CUSTOMTABLES_TABLEFIELDTYPES_DESC'); ?>
 		<?php echo $this->getFieldTypes(); ?></div>
 		
+		
+		<div class="tab-pane" id="layouttags">
 		<h3><?php echo JText::_('COM_CUSTOMTABLES_LAYOUTTAGS'); ?></h3>
-		<div class="tab-pane" id="layouttags"><?php echo $this->getLayoutTags(); ?></div>
+		<?php echo $this->getLayoutTags(); ?></div>
 	</div>
 	
 	<?php

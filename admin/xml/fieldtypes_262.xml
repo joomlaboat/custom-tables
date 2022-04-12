@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <fieldtypes>
-	<type ct_name="string" name="string" label="Text String (Single Line)" description="Provides a text box for data entry." ct_alias="string" disabled="false" ct_special="false" priority="1">
+	<type ct_name="string" name="string" label="Text String (Single Line)" description="Provides a text box for data entry." ct_alias="string" 
+		disabled="false" ct_special="false" priority="1">
 		<params>
-			<param name="length" label="Length" description="Number of characters. Number of characters not bytes." hidden="false" default="255" type="number" min="1" max="1024" example="30" />
+			<param name="length" label="Length" description="Number of characters. Number of characters not bytes." hidden="false" default="255" type="number" min="1" max="1024"
+				example="30" />
 		</params>
 		<valueparams name="string" label="Text Output Parameters" description="This dictates how to process the text value of the field.">
 			<params>
