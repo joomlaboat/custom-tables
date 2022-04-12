@@ -24,6 +24,8 @@ use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\Database\DatabaseDriver;
 use Joomla\Component\Content\Administrator\Extension\ContentComponent;
 
+use CustomTables\Fields;
+
 //JForm::addFieldPath(JPATH_COMPONENT . '/models/fields');
 
 /**
@@ -281,31 +283,103 @@ class CustomtablesViewListoflayouts extends JViewLegacy
 	
 	function isTwig(&$row)
 	{
+		$original_ct_tags_q=['currenturl','currentuserid','currentusertype','date','gobackbutton','description','format','Itemid','returnto',
+			'server','tabledescription','tabletitle','table','today','user','websiteroot','layout','if','headtag','metakeywords','metadescription',
+			'pagetitle','php','php_a','php_b','php_c','catalogtable','catalog','recordlist','page','add','count','navigation','batchtoolbar',
+			'checkbox','pagination','print','recordcount','search','searchbutton','button','buttons','captcha','id','published','link','linknoreturn',
+			'number','toolbar','cart','createuser','resolve','_value','sqljoin'];
+			
+		$original_ct_tags_s=['_if','_endif','_value','_edit'];
+		
+		$fields = Fields::getFields($row->tableid);
+		
+		// ------------------------ CT Original
+		
 		$original_ct_matches = 0;
+		
+		foreach($original_ct_tags_s as $tag)
+		{
+			if(strpos($row->layoutcode,'['.$tag.':') !== false)
+				$original_ct_matches += 1;
+			
+			if(strpos($row->layoutcode,'['.$tag.']') !== false)
+				$original_ct_matches += 1;
+		}
+		
+		foreach($original_ct_tags_q as $tag)
+		{
+			if(strpos($row->layoutcode,'{'.$tag.':') !== false)
+				$original_ct_matches += 1;
+			
+			if(strpos($row->layoutcode,'{'.$tag.'}') !== false)
+				$original_ct_matches += 1;
+		}
+		
+		foreach($fields as $field)
+		{
+			$fieldname = $field['fieldname'];
+			
+			if(strpos($row->layoutcode,'*'.$fieldname.'*') !== false)
+				$original_ct_matches += 1;
+			
+			if(strpos($row->layoutcode,'|'.$fieldname.'|') !== false)
+				$original_ct_matches += 1;
+			
+			if(strpos($row->layoutcode,'['.$fieldname.':') !== false)
+				$original_ct_matches += 1;
+			
+			if(strpos($row->layoutcode,'['.$fieldname.']') !== false)
+				$original_ct_matches += 1;
+		}
+		
+		// ------------------------ Twig
+		
 		$twig_matches = 0;
 		
-		preg_match_all('#\{(.*?)\}#',$row->layoutcode, $match);
-		$original_ct_matches+=count($match[0]);
 		
-		preg_match_all('#\{\{(.*?)\}\}#',$row->layoutcode, $match);
-		$twig_matches+=count($match[0]);
+		foreach($original_ct_tags_s as $tag)
+		{
+			if(strpos($row->layoutcode,'{{ '.$tag.'(') !== false)
+				$twig_matches += 1;
+			
+			if(strpos($row->layoutcode,'{{ '.$tag.' }}') !== false)
+				$twig_matches += 1;
+		}
 		
-		$original_ct_matches = $original_ct_matches - $twig_matches;
+		foreach($fields as $field)
+		{
+			$fieldname = $field['fieldname'];
+			
+			if(strpos($row->layoutcode,'{{ '.$fieldname.'(') !== false)
+				$twig_matches += 1;
+			
+			if(strpos($row->layoutcode,'{{ '.$fieldname.' }}') !== false)
+				$twig_matches += 1;
+			
+			if(strpos($row->layoutcode,'{{ '.$fieldname.'.') !== false)
+				$twig_matches += 1;
+		}
+		
+		//preg_match_all('#\{(.*?)\}#',$row->layoutcode, $match);
+		//$original_ct_matches+=count($match[0]);
 		
 		
-		preg_match_all('/\|(.*?)\|/',$row->layoutcode, $match);
-		$original_ct_matches+=count($match[0]);
 		
-		preg_match_all('/\[(.*?)\]/',$row->layoutcode, $match);
-		$original_ct_matches+=count($match[0]);
+		//preg_match_all('/\|(.*?)\|/',$row->layoutcode, $match);
+		//$original_ct_matches+=count($match[0]);
+		
+		//preg_match_all('/\[(.*?)\]/',$row->layoutcode, $match);
+		//$original_ct_matches+=count($match[0]);
 		
 		
 		
-		preg_match_all('#\{\%(.*?)\%\}#',$row->layoutcode, $match);
-		$twig_matches+=count($match[0]);
+		
 
 		return ['original' => $original_ct_matches, 'twig' => $twig_matches];
 		//return $twig_matches > $original_ct_matches or $original_ct_matches == 0;
 		
+		
 	}
+	
+	
 }

@@ -126,13 +126,14 @@ class TwigProcessor
 		//{{ html.search() }}	-	wizard ok
 		//{{ html.searchbutton() }}	-	wizard ok
 		//{{ html.toolbar() }}	-	wizard ok
+		//{{ html.base64encode() }}	-	wizard ok
 
 		$this->twig->addGlobal('document', new Twig_Document_Tags($this->ct) );
 		//{{ document.setmetakeywords() }}	-	wizard ok
 		//{{ document.setmetadescription() }}	-	wizard ok
 		//{{ document.setpagetitle() }}	-	wizard ok
 		//{{ document.setheadtag() }}	-	wizard ok
-		//{{ document.layout() }}	-	wizard ok
+		//{{ document.layout("InvoicesItems") }}	-	wizard ok
 		//{{ document.sitename() }}	-	wizard ok
 		//{{ document.languagepostfix() }}	-	wizard ok
 		
@@ -150,14 +151,6 @@ class TwigProcessor
 		//{{ record.number }}	-	wizard ok
 		//{{ record.published }}	-	wizard ok
 		//{{ record.sum(join_table,value_field_name) }}
-		
-		
-		$this->twig->addGlobal('records', new Twig_Records_Tags($this->ct) );
-		//{{ records.count }}	-	wizard ok (use {{ table.records }} instead)
-		//{{ records.list("InvoicesItems") }}	-	wizard ok
-
-		$this->twig->addGlobal('text', new Twig_Text_Tags($this->ct) );
-		//{{ text.base64encode() }}
 		
 		$this->variables = [];
 		

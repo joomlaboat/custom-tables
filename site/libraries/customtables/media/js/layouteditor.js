@@ -437,9 +437,10 @@ function showModalTagForm(tagstartchar,postfix,tagendchar,tag,top,left,line,posi
 			doc.replaceRange(param_att.twigsimplereplacement, cursor_from,cursor_to,"");
 			return true;
 		}
-		else if (typeof(param_att.twigreplacestartchar) !== "undefined" && param_att.twigreplacestartchar !=="" && typeof(param_att.twigreplaceendchar) !== "undefined" && param_att.twigreplaceendchar !=="")
+		else if (typeof(param_att.twigreplacestartchar) !== "undefined" && param_att.twigreplacestartchar !=="" 
+			&& typeof(param_att.twigreplaceendchar) !== "undefined" && param_att.twigreplaceendchar !=="")
 		{
-			let cursor_from = {line:line,ch:positions[0]};
+				let cursor_from = {line:line,ch:positions[0]};
 			let cursor_to = {line:line,ch:positions[1]};
 			
 			paramvaluestring = safeOld2NewParamConversion(paramvaluestring);
@@ -472,7 +473,10 @@ function showModalTagForm(tagstartchar,postfix,tagendchar,tag,top,left,line,posi
 								{
 									temp_params_tag = param_att.twigreplacement + '.' + tmpAtt.twigexactreplacement;
 									
-									paramvaluestring = safeOld2NewParamConversion(tmlLstOfParams[1]);
+									if(tmlLstOfParams.length > 1)
+										paramvaluestring = safeOld2NewParamConversion(tmlLstOfParams[1]);
+									else
+										paramvaluestring = '';
 								}
 							}
 							break;
@@ -692,16 +696,51 @@ function findTagObjectByName(tagstartchar,tagendchar,lookfor_tag){
 		for(let i=0;i<tags.length;i++){
 			let tag=tags[i];
 			let a=tag["@attributes"];
-				
+			
 			if(lookfor_tag.indexOf(".") == -1){
-				if(a.name==lookfor_tag && a.startchar==tagstartchar && a.endchar==tagendchar)
-					return tag;
+				
+				//Conversion - OLD to Twig
+				if (typeof(a.twigclass) == "undefined" || a.twigclass == ""){
+
+					if(a.name==lookfor_tag && a.startchar==tagstartchar && a.endchar==tagendchar)
+						return tag;
+				}
+				
 			}else if (TwigTag && typeof(a.twigclass) !== "undefined" && a.twigclass!==""){
+				
+				//Twig Tag
 				if(a.twigclass + '.' + a.name == lookfor_tag && a.startchar==tagstartchar && a.endchar==tagendchar)
 					return tag;
 			}
 		}
 	}
+	
+	
+	//If nothing found then simplify the search
+	
+	for(var s=0;s<tagsets.length;s++){
+		let tagset=tagsets[s];
+		let tags=getParamOptions(tagset,'tag');
+
+		for(let i=0;i<tags.length;i++){
+			let tag=tags[i];
+			let a=tag["@attributes"];
+			
+			if(lookfor_tag.indexOf(".") == -1){
+				
+				//Conversion - OLD to Twig
+				if(a.name==lookfor_tag && a.startchar==tagstartchar && a.endchar==tagendchar)
+					return tag;
+				
+			}else if (TwigTag && typeof(a.twigclass) !== "undefined" && a.twigclass!==""){
+				
+				//Twig Tag
+				if(a.twigclass + '.' + a.name == lookfor_tag && a.startchar==tagstartchar && a.endchar==tagendchar)
+					return tag;
+			}
+		}
+	}
+	
 	return null;
 }
 

@@ -147,27 +147,57 @@ function replaceOldFieldTitleTagsWithTwigStyle()
 	let editor = codemirror_editors[codemirror_active_index];
 	let docuemntText = editor.getValue();
 	let count = 0;
+	let changesMade = false;
 	
+	//Titles
 	for(let i=0;i<wizardFields.length;i++)
 	{
 		let oldFieldTag = '*' + wizardFields[i].fieldname + '*';
 		if(docuemntText.indexOf(oldFieldTag) != -1)
 			count += 1;
-		
-		
 	}
 	
-	if (confirm("Found " + count + " old field title tags. Would you like to replace them with Twig style tags?") == true){
-		for(let i=0;i<wizardFields.length;i++)
-		{
-			let oldFieldTag = '*' + wizardFields[i].fieldname + '*';
-			let newFieldTag = '{{ ' + wizardFields[i].fieldname + '.title }}';
-			docuemntText = docuemntText.replace(oldFieldTag,newFieldTag)
+	if(count > 0)
+	{
+		if (confirm("Found " + count + " old field title tags. Would you like to replace them with Twig style tags?") == true){
+			for(let i=0;i<wizardFields.length;i++)
+			{
+				let oldFieldTag = '*' + wizardFields[i].fieldname + '*';
+				let newFieldTag = '{{ ' + wizardFields[i].fieldname + '.title }}';
+				docuemntText = docuemntText.replace(oldFieldTag,newFieldTag)
+				changesMade = true;
+			}
 		}
 	}
 	
-	editor.setValue(docuemntText);
-	editor.refresh();
+	count = 0;
+	
+	//values
+	for(let i=0;i<wizardFields.length;i++)
+	{
+		let oldFieldTag = '|' + wizardFields[i].fieldname + '|';
+		if(docuemntText.indexOf(oldFieldTag) != -1)
+			count += 1;
+	}
+	
+	if(count > 0)
+	{
+		if (confirm("Found " + count + " old field value tags. Would you like to replace them with Twig style tags?") == true){
+			for(let i=0;i<wizardFields.length;i++)
+			{
+				let oldFieldTag = '|' + wizardFields[i].fieldname + '|';
+				let newFieldTag = '{{ ' + wizardFields[i].fieldname + '.value }}';
+				docuemntText = docuemntText.replace(oldFieldTag,newFieldTag)
+				changesMade = true;
+			}
+		}
+	}
+	
+	if(changesMade = true)
+	{
+		editor.setValue(docuemntText);
+		editor.refresh();
+	}
 }
 
 
@@ -386,26 +416,39 @@ function showModalFieldTagsList(e)
 function showModalFieldTagForm(tagstartchar,postfix,tagendchar,tag,top,left,line,positions,isnew)
 {
 	let modalcontentobj=document.getElementById("layouteditor_modal_content_box");
-
-    let tag_pair=parseQuote(tag,':',false);
-	let paramvaluestring="";
-
-	if(tag_pair[0]=="_value" || tag_pair[0]=="_edit"){
-		temp_params_tag=tag_pair[1].trim();
-		
-		if(tag_pair.length==2)
-			paramvaluestring=tag_pair[1];
 	
-	}else{
-		
-		let tag_pair2=parseQuote(tag,'(',false);
-		
-		temp_params_tag = tag_pair2[0].trim();
+	let paramvaluestring="";
+	
+	let tag_pair = parseQuote(tag,'(',false)
+	
+	if(tag_pair.length > 1)
+	{
+		temp_params_tag = tag_pair[0].trim();
 		paramvaluestring = findTagParameter(tag);
 	}
+	else
+	{
+		tag_pair=parseQuote(tag,':',false);
+		if(tag_pair.length > 1)
+		{
+			if(tag_pair[0]=="_value" || tag_pair[0]=="_edit"){
+				
+				temp_params_tag=tag_pair[1].trim();
+		
+				if(tag_pair.length == 2)
+					paramvaluestring=tag_pair[1];
+				
+			}else{
+				temp_params_tag = tag_pair[0].trim();
+				paramvaluestring = tag.replace(temp_params_tag,'');
+			}
+		}
+		else
+		{
+			temp_params_tag = tag.trim();
+		}
+	}
 	
-	
-
 	var field=findFieldObjectByName(temp_params_tag);
 	if(field==null)
 	{

@@ -197,55 +197,55 @@
                        options="|Add,notrailingslash|No"/>
             </params>
 		</tag>
-		<tag name="getInt" label="Integer" startchar="{" endchar="}" description="Returns the first integer found in the parameter value." twigclass="url" >
+		<tag name="getint" label="Integer" startchar="{" endchar="}" description="Returns the first integer found in the parameter value." twigclass="url" >
 			<params>
-				<param name="parameter" label="Parameter" type="string" description="Url query parameter" example="firstname" twigexactreplacement="" />
+				<param name="parameter" label="Parameter" type="string" description="Url query parameter" example="firstname" />
 			</params>
 		</tag>
-		<tag name="getString" label="String" startchar="{" endchar="}" description="Converts the input to a plain text string; strips all tags / attributes." twigclass="url" >
+		<tag name="getstring" label="String" startchar="{" endchar="}" description="Converts the input to a plain text string; strips all tags / attributes." twigclass="url" >
 			<params>
-				<param name="parameter" label="Parameter" type="string" description="Url query parameter" example="firstname" twigexactreplacement="" />
+				<param name="parameter" label="Parameter" type="string" description="Url query parameter" example="firstname" />
 			</params>
 		</tag>
-		<tag name="getUInt" label="Unsigned Integer" startchar="{" endchar="}" description="Returns an unsigned int." twigclass="url" >
+		<tag name="getuint" label="Unsigned Integer" startchar="{" endchar="}" description="Returns an unsigned int." twigclass="url" >
 			<params>
-				<param name="parameter" label="Parameter" type="string" description="Url query parameter" example="firstname" twigexactreplacement="" />
+				<param name="parameter" label="Parameter" type="string" description="Url query parameter" example="firstname" />
 			</params>
 		</tag>
-		<tag name="getFloat" label="Float/Decimal" startchar="{" endchar="}" description="Only use the first floating point value." twigclass="url" >
+		<tag name="getfloat" label="Float/Decimal" startchar="{" endchar="}" description="Only use the first floating point value." twigclass="url" >
 			<params>
-				<param name="parameter" label="Parameter" type="string" description="Url query parameter" example="firstname" twigexactreplacement="" />
+				<param name="parameter" label="Parameter" type="string" description="Url query parameter" example="firstname" />
 			</params>
 		</tag>
-		<tag name="getWord" label="Word" startchar="{" endchar="}" description="Only allow characters a-z, and underscores." twigclass="url" >
+		<tag name="getword" label="Word" startchar="{" endchar="}" description="Only allow characters a-z, and underscores." twigclass="url" >
 			<params>
-				<param name="parameter" label="Parameter" type="string" description="Url query parameter" example="firstname" twigexactreplacement="" />
+				<param name="parameter" label="Parameter" type="string" description="Url query parameter" example="firstname" />
 			</params>
 		</tag>
-		<tag name="getAlnum" label="Alphanumeric" startchar="{" endchar="}" description="Allow a-z and 0-9 only." twigclass="url" >
+		<tag name="getalnum" label="Alphanumeric" startchar="{" endchar="}" description="Allow a-z and 0-9 only." twigclass="url" >
 			<params>
-				<param name="parameter" label="Parameter" type="string" description="Url query parameter" example="firstname" twigexactreplacement="" />
+				<param name="parameter" label="Parameter" type="string" description="Url query parameter" example="firstname" />
 			</params>
 		</tag>
-		<tag name="getCmd" label="Command" startchar="{" endchar="}" description="Allow a-z, 0-9, underscore, dot, dash. Also remove leading dots from result." twigclass="url" >
+		<tag name="getcmd" label="Command" startchar="{" endchar="}" description="Allow a-z, 0-9, underscore, dot, dash. Also remove leading dots from result." twigclass="url" >
 			<params>
-				<param name="parameter" label="Parameter" type="string" description="Url query parameter" example="firstname" twigexactreplacement="" />
+				<param name="parameter" label="Parameter" type="string" description="Url query parameter" example="firstname" />
 			</params>
 		</tag>
-		<tag name="getStringAndEncode" label="Base64 Encode" startchar="{" endchar="}" description="Returns encoded value of query parameter." twigclass="url" >
+		<tag name="getstringandencode" label="Base64 Encode" startchar="{" endchar="}" description="Returns encoded value of query parameter." twigclass="url" >
 			<params>
-				<param name="parameter" label="Parameter" type="string" description="Url query parameter" example="firstname" twigexactreplacement="" />
+				<param name="parameter" label="Parameter" type="string" description="Url query parameter" example="firstname" />
 			</params>
 		</tag>
-		<tag name="getStringAndDecode" label="Base64 Decode" startchar="{" endchar="}" description="Returns decoded value of query parameter." twigclass="url" >
+		<tag name="getstringanddecode" label="Base64 Decode" startchar="{" endchar="}" description="Returns decoded value of query parameter." twigclass="url" >
 			<params>
-				<param name="parameter" label="Parameter" type="string" description="Url query parameter" example="firstname" twigexactreplacement="" />
+				<param name="parameter" label="Parameter" type="string" description="Url query parameter" example="firstname" />
 			</params>
 		</tag>
 		<tag name="set" label="Sets query value" startchar="{" endchar="}" description="" twigclass="url" >
 			<params>
-				<param name="parameter" label="Parameter" type="string" description="Url query parameter" example="firstname" twigexactreplacement="" />
-				<param name="value" label="Value" type="string" description="Value to set Url query parameter" twigexactreplacement="" />
+				<param name="parameter" label="Parameter" type="string" description="Url query parameter" example="firstname" />
+				<param name="value" label="Value" type="string" description="Value to set Url query parameter" />
 			</params>
 		</tag>
 		<tag name="server" label="" startchar="{" endchar="}" description="Sets query value to communicate with different modules for example." twigclass="url" >
@@ -346,19 +346,19 @@
 			 twigmapparam="parameter" >
             <params>
                 <param name="option" label="Option" type="list" description="Select on of the available options.">
-                    <option value="string" label="String" description="" twigexactreplacement="getString" />
-                    <option value="word" label="Word" description="" twigexactreplacement="getWord" />
-					<option value="cmd" label="Command" description="" twigexactreplacement="getCmd" />
-					<option value="alnum" label="Alphanumeric" description="" twigexactreplacement="getAlnum" />
-                    <option value="int" label="Integer" description="" twigexactreplacement="getInt" />
-					<option value="uint" label="Unsigned Integer" description="" twigexactreplacement="getUInt" />
-					<option value="float" label="Decimal" description="" twigexactreplacement="getFloat" />
-					<option value="base64" label="Base64 Encode" description="" twigexactreplacement="getStringAndEncode" />
-					<option value="base64decode" label="Base64 Decode" description="" twigexactreplacement="getStringAndDecode" />
+                    <option value="string" label="String" description="" twigexactreplacement="getstring" />
+                    <option value="word" label="Word" description="" twigexactreplacement="getword" />
+					<option value="cmd" label="Command" description="" twigexactreplacement="getcmd" />
+					<option value="alnum" label="Alphanumeric" description="" twigexactreplacement="getalnum" />
+                    <option value="int" label="Integer" description="" twigexactreplacement="getint" />
+					<option value="uint" label="Unsigned Integer" description="" twigexactreplacement="getuint" />
+					<option value="float" label="Decimal" description="" twigexactreplacement="getfloat" />
+					<option value="base64" label="Base64 Encode" description="" twigexactreplacement="base64" />
+					<option value="base64decode" label="Base64 Decode" description="" twigexactreplacement="getstringanddecode" />
                     <option value="set" label="Sets query value" description="" twigexactreplacement="set" />
                 </param>
-                <param name="parameter" label="Parameter" type="string" description="Url query parameter" example="firstname" twigexactreplacement="" />
-                <param name="value" label="Value" type="string" description="Value to set Url query parameter" twigexactreplacement="" />
+                <param name="parameter" label="Parameter" type="string" description="Url query parameter" example="firstname" />
+                <param name="value" label="Value" type="string" description="Value to set Url query parameter" />
             </params>
         </tag>
 		
@@ -550,7 +550,23 @@
 		
 		<tag name="recordlist" label="List of Records" description="Comma separated list or record IDs. Example: 4,78,3,876" startchar="{" endchar="}" twigclass="html" />	
 		
+		<tag name="base64encode" label="Base64 Encode" startchar="{" endchar="}" description="Encodes the given string with base64." twigclass="html" >
+			<params>
+				<param name="parameter" label="String" type="string" description="The data to encode. " />
+			</params>
+		</tag>
 	<!-- Depricated -->
+		<tag name="_if" label="If statement" startchar="[" endchar="]" separator=":" twigreplacestartchar="{% if " twigreplaceendchar=" %}" depricated="1" />
+		<tag name="_endif" label="EndIf statement" startchar="[" endchar="]" separator=":" twigsimplereplacement="{% endif %}" depricated="1" />
+		
+		<tag name="catalog" label="Catalog" description="Renders Catalog Page" startchar="{" endchar="}" separator=":"
+			twigreplacement="document.layout">
+        </tag>
+		<tag name="date" label="Date" startchar="{" endchar="}" depricated="1" twigsimplereplacement="{{ 'now'|date('Y-m-d') }}" />
+        <tag name="today" label="Today" startchar="{" endchar="}" depricated="1" twigsimplereplacement="{{ 'now'|date('Y-m-d') }}" />
+	
+		<tag name="if" label="If statement" startchar="{" endchar="}" separator=":" twigreplacestartchar="{% if " twigreplaceendchar=" %}" depricated="1" />
+		<tag name="endif" label="EndIf statement" startchar="{" endchar="}" separator=":" twigsimplereplacement="{% endif %}" depricated="1" />
 	
 		<tag name="gobackbutton" label="Go Back Button" startchar="{" endchar="}" separator=":" depricated="1"
               twigreplacestartchar="{{ html.goback(" twigreplaceendchar=") }}" />
@@ -562,7 +578,7 @@
 
 <!-- Document Tags -->
 	<tagset name="document" label="Document" description="Document Tags to manipate current web page or to set system variables."
-		priority="4" layouttypes="1,5,2,4">
+		priority="3" layouttypes="1,5,2,4">
 		
 		<tag name="setpagetitle" label="Set Page Title" startchar="{" endchar="}" twigclass="document"
              description="A command to set the Page Title." proversion="1">
@@ -599,8 +615,7 @@
              description="Includes the content of selected layout." hidedefaultexample="0" proversion="1" twigclass="document">
             <params>
                 <param name="layoutname" label="Layout Name" type="layout" description="Layout Name." examplenoquotes="0" table="current" example="my_script_layout"/>
-				<param name="process" label="Process content" description="Process content plugins such as Content - Email Cloaking etc." type="radio" default=""
-                    options="|No,process|Process"/>
+				<!-- <param name="process" label="Process content" description="Process content plugins such as Content - Email Cloaking etc." type="radio" default="" options="|No,process|Process"/> -->
 			</params>
         </tag>
 		
@@ -612,42 +627,10 @@
 		
 		<!-- Depricated -->
 		
-		<tag name="date" label="Date" startchar="{" endchar="}" depricated="1" twigsimplereplacement="{{ 'now'|date('Y-m-d') }}" />
-        <tag name="today" label="Today" startchar="{" endchar="}" depricated="1" twigsimplereplacement="{{ 'now'|date('Y-m-d') }}" />
-		
 		<tag name="pagetitle" label="Set Page Title" startchar="{" endchar="}" depricated="1" twigreplacement="document.setPageTitle" />
 		<tag name="headtag" label="HTML Document Head Tag" startchar="{" endchar="}" depricated="1" twigreplacement="document.setHeadTag" />
 		<tag name="metakeywords" label="Set Meta Keywords" startchar="{" endchar="}" depricated="1" twigreplacement="document.setMetaKeywords" />
         <tag name="metadescription" label="Set Meta Description" startchar="{" endchar="}" depricated="1" twigreplacement="document.setMetaDescription" />
-		
-		<tag name="_if" label="If statement" startchar="[" endchar="]" separator=":" twigreplacestartchar="{% if " twigreplaceendchar=" %}" depricated="1" />
-		<tag name="_endif" label="EndIf statement" startchar="[" endchar="]" separator=":" twigsimplereplacement="{% endif %}" depricated="1" />
-	
-		<tag name="if" label="If statement" startchar="{" endchar="}" separator=":" twigreplacestartchar="{% if " twigreplaceendchar=" %}" depricated="1" />
-		<tag name="endif" label="EndIf statement" startchar="{" endchar="}" separator=":" twigsimplereplacement="{% endif %}" depricated="1" />
-
-	</tagset>
-	
-<!-- Records Tags -->
-	<tagset name="records" label="Records" description="Records Tags " priority="4">
-		
-		<tag name="list" label="List of Records" startchar="{" endchar="}" description="List of current page records" 
-			hidedefaultexample="1" repeatative="0" twigclass="records">
-            <params>
-				<param type="layout" name="layout" label="Layout" table="current" layoutype="catalogitem" />
-			</params>
-		</tag>
-		
-		<!-- Depricated -->
-		
-		<tag name="count" label="Record Count (number)" startchar="{" endchar="}"
-             description="Same as {{ table.records }}" twigreplacement="table.records" twigclass="records" />
-			
-        
-		
-		<tag name="catalog" label="Catalog" description="Renders Catalog Page" startchar="{" endchar="}" separator=":"
-			twigreplacement="records.list">
-        </tag>
 		
 	</tagset>
 	
@@ -733,11 +716,15 @@
         </tag>
 
 		<!-- Depricated -->
+		
+		<tag name="id" label="record ID" startchar="{" endchar="}" twigreplacement="record.id" />
+		<!--<tag name="number" label="Record Number" startchar="{" endchar="}" twigreplacement="record.number" />-->
+		
         <tag name="sqljoin" label="Table Join" startchar="{" endchar="}"
              description="Returns value of joined table field." hidedefaultexample="1" twigreplacement="record.advancedjoin" />
 	
 		<tag name="linknoreturn" label="No Return Link (Depricated)" startchar="{" endchar="}"
-            description="Link to detailed page without «returnto» link (Depricated)" twigclass="record"
+            description="Link to detailed page without «returnto» link (Depricated)" 
 			twigreplacement="record.link" twigreplacementparams="" />
 
 	</tagset>

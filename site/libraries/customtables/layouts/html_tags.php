@@ -687,6 +687,11 @@ class Twig_Html_Tags
 		return new \Twig\Markup($vlu, 'UTF-8' );
 	}
 
+	function base64encode($str)
+	{
+		return base64_encode($str);
+	}
+	
 	/* --------------------------- PROTECTED FUNCTIONS ------------------- */
 
 	protected function id_list()

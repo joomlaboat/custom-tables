@@ -207,52 +207,52 @@ class Twig_Url_Tags
         return $WebsiteRoot;
 	}
 	
-	function getInt($param,$default = 0)//wizard ok
+	function getint($param,$default = 0)//wizard ok
 	{
 		return $this->jinput->getInt($param,$default);
 	}
 	
-	function getString($param,$default = '')//wizard ok
+	function getstring($param,$default = '')//wizard ok
 	{
 		return $this->jinput->getString($param,$default);
 	}
 	
-	function getUInt($param,$default = 0)//wizard ok
+	function getuint($param,$default = 0)//wizard ok
 	{
 		return $this->jinput->get($param,$default,'UINT');
 	}
 	
-	function getFloat($param,$default = 0)//wizard ok
+	function getfloat($param,$default = 0)//wizard ok
 	{
 		return $this->jinput->getFloat($param,$default);
 	}
 	
-	function getWord($param,$default = '')//wizard ok
+	function getword($param,$default = '')//wizard ok
 	{
 		return $this->jinput->get($param,$default,'WORD');
 	}
 	
-	function getAlnum($param,$default = '')//wizard ok
+	function getalnum($param,$default = '')//wizard ok
 	{
 		return $this->jinput->getCmd($param,$default);
 	}
 	
-	function getCmd($param,$default = '')//wizard ok
+	function getcmd($param,$default = '')//wizard ok
 	{
 		return $this->jinput->getCmd($param,$default);
 	}
 	
-	function getStringAndEncode($param,$default = '')//wizard ok
+	function getstringandencode($param,$default = '')//wizard ok
 	{
 		return base64_encode(strip_tags($this->jinput->getString($param,$default)));
 	}
 	
-	function getStringAndDecode($param,$default = '')//wizard ok
+	function getstringanddecode($param,$default = '')//wizard ok
 	{
 		return strip_tags(base64_decode($this->jinput->getString($param,$default)));
 	}
 	
-	function Itemid()//wizard ok
+	function itemid()//wizard ok
 	{
 		return $this->jinput->getInt('Itemid',0);
 	}
@@ -368,18 +368,47 @@ class Twig_Document_Tags
 		$doc->addCustomTag($headtag);
 	}
 	
-	function layout($layoutname, $ProcessContentPlugins = false)//wizard ok
+	function layout($layoutname)//, $ProcessContentPlugins = false)//wizard ok
 	{
-		$l =  new Layouts($this->ct);
-		$layout = $l->getLayout($layoutname);
+		if(!isset($this->ct->Table))
+		{
+			Factory::getApplication()->enqueueMessage('{{ document.layout }} - Table not loaded.', 'error');
+			return '';
+		}
+		
+		$layouts = new Layouts($this->ct);
+		$layout = $layouts->getLayout($layoutname);
+		
+		if($layouts->tableid == null)
+		{
+			Factory::getApplication()->enqueueMessage('{{ document.layout("'.$layoutname.'") }} - Layout "'.$layoutname.' not found.', 'error');
+			return '';
+		}
+		
+		if($layouts->tableid != $this->ct->Table->tableid)
+		{
+			Factory::getApplication()->enqueueMessage('{{ document.layout("'.$layoutname.'") }} - Layout Table ID and Current Table ID do not match.', 'error');
+			return '';
+		}
 		
 		$twig = new TwigProcessor($this->ct, '{% autoescape false %}'.$layout.'{% endautoescape %}');
+		
+		if($layouts->layouttype == 6) //Catalog Item
+		{
+			$number = 0;
+			$htmlresult = '';
+		
+			foreach($this->ct->Records as $row)
+			{
+				$row['_number'] = $number;
+				$htmlresult .= $twig->process($row);
+				$number++;
+			}
+			return new \Twig\Markup($htmlresult, 'UTF-8' );
+		}
+
 		$layout = $twig->process();
-			
-		if($ProcessContentPlugins)
-			LayoutProcessor::applyContentPlugins($layout);
-            
-		return $layout;
+		return new \Twig\Markup($layout, 'UTF-8' );
 	}
 	
 	function sitename()//wizard ok
@@ -390,13 +419,5 @@ class Twig_Document_Tags
 	function languagepostfix()//wizard ok
 	{
 		return $this->ct->Languages->Postfix;
-	}
-}
-
-class Twig_Text_Tags
-{
-	function base64encode($str)
-	{
-		return base64_encode($str);
 	}
 }

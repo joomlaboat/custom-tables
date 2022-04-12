@@ -63,7 +63,6 @@ function CTLoader($inclide_utilities = false, $include_html = false)
 	require_once($path_datatypes.'twig.php');
 	require_once($path_datatypes.'general_tags.php');
 	require_once($path_datatypes.'record_tags.php');
-	require_once($path_datatypes.'records_tags.php');
 	require_once($path_datatypes.'html_tags.php');
 	
 	
