@@ -49,8 +49,6 @@ class Ordering
 			return true;
 		}
 		
-		
-		
 		$inners = [];
 	
 		$oPair=explode(' ',$this->ordering_processed_string);

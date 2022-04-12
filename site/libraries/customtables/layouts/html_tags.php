@@ -2,9 +2,9 @@
 /**
  * CustomTables Joomla! 3.x Native Component
  * @package Custom Tables
- * @author Ivan komlev <support@joomlaboat.com>
+ * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @copyright Copyright (C) 2018-2021. All Rights Reserved
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
@@ -44,7 +44,7 @@ class Twig_Html_Tags
 		$this->button_objects = [];//Not clear where and how this variable used.
 	}
 	
-	function recordcount()
+	function recordcount()//wizard ok
 	{
 		if($this->ct->Env->frmt == 'csv')
 			return '';	
@@ -67,7 +67,7 @@ class Twig_Html_Tags
 		return new \Twig\Markup($vlu, 'UTF-8' );
 	}
 	
-	function add($Alias_or_ItemId = '')
+	function add($Alias_or_ItemId = '')//wizard ok
 	{
 		if($this->ct->Env->print==1 or ($this->ct->Env->frmt!='html' and $this->ct->Env->frmt!=''))
 			return '';
@@ -106,7 +106,7 @@ class Twig_Html_Tags
 			return $vlu;
 	}
 	
-	function importcsv()
+	function importcsv()//wizard ok
 	{
 		if($this->ct->Env->print==1 or ($this->ct->Env->frmt!='html' and $this->ct->Env->frmt!=''))
 			return '';
@@ -155,7 +155,7 @@ class Twig_Html_Tags
 			return $vlu;
 	}
 	
-	function pagination()
+	function pagination()//wizard ok
 	{
 		if($this->ct->Env->print==1 or ($this->ct->Env->frmt!='html' and $this->ct->Env->frmt!=''))
 			return '';
@@ -172,7 +172,7 @@ class Twig_Html_Tags
 			return $vlu;
 	}
 	
-	function limit($the_step = 1)
+	function limit($the_step = 1)//wizard ok
 	{
 		if($this->ct->Env->print==1 or ($this->ct->Env->frmt!='html' and $this->ct->Env->frmt!=''))
 			return '';
@@ -186,7 +186,7 @@ class Twig_Html_Tags
 			return $vlu;
 	}
 	
-	function orderby()
+	function orderby()//wizard ok
 	{
 		if($this->ct->Env->print==1 or ($this->ct->Env->frmt!='html' and $this->ct->Env->frmt!=''))
 			return '';
@@ -221,32 +221,7 @@ class Twig_Html_Tags
 			return $vlu;
 	}
 	
-	protected function getAvailableModes()
-	{
-		$available_modes=array();
-        
-        $user = Factory::getUser();
-		if($user->id!=0)
-        {
-            $publish_userGroup=(int)$this->ct->Env->menu_params->get( 'publishusergroups' );
-            if(JoomlaBasicMisc::checkUserGroupAccess($publish_userGroup))
-            {
-                $available_modes[]='publish';
-                $available_modes[]='unpublish';
-            }
-            
-            $edit_userGroup=(int)$this->ct->Env->menu_params->get( 'editusergroups' );
-            if(JoomlaBasicMisc::checkUserGroupAccess($edit_userGroup))
-                $available_modes[]='refresh';
-                
-            $delete_userGroup=(int)$this->ct->Env->menu_params->get( 'deleteusergroups' );
-            if(JoomlaBasicMisc::checkUserGroupAccess($delete_userGroup))
-                $available_modes[]='delete';
-        }
-		return $available_modes;
-	}
-	
-	function batch()
+	function batch()//wizard ok
 	{
 		$buttons = func_get_args();
 		if(count($buttons) == 1)
@@ -335,53 +310,7 @@ class Twig_Html_Tags
 			return $vlu;
 	}
 	
-	protected function getFieldTitles($list_of_fields)
-    {
-        $fieldtitles=array();
-        foreach($list_of_fields as $fieldname)
-        {
-			if($fieldname=='_id')
-				$fieldtitles[] = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ID');
-			else						
-			{
-				foreach($this->ct->Table->fields as $fld)
-				{
-					if($fld['fieldname']==$fieldname)
-					{
-						$fieldtitles[]=$fld['fieldtitle'.$this->ct->Languages->Postfix];
-						break;
-					}
-				}
-			}
-        }
-        return $fieldtitles;
-    }
-	
-	protected function prepareSearchElement($fld)
-    {
-		if(isset($fld['fields']) and count($fld['fields'])>0)
-        {
-			return 'es_search_box_'.$fld['fieldname'].':'.implode(';',$fld['fields']).':';
-        }
-        else
-        {
-			if($fld['type']=='customtables')
-            {
-				$exparams=explode(',',$fld['typeparams']);
-    			if(count($exparams)>1)
-    			{
-					$esroot=$exparams[0];
-    				return 'es_search_box_combotree_'.$this->ct->Table->tablename.'_'.$fld['fieldname'].'_1:'.$fld['fieldname'].':'.$esroot;
-    			}
-			}
-    		else
-    			return 'es_search_box_'.$fld['fieldname'].':'.$fld['fieldname'].':';
-		}
-		
-        return '';       
-    }
-	
-	function search($list_of_fields_string_or_array, $class = '', $reload = false, $improved = false)
+	function search($list_of_fields_string_or_array, $class = '', $reload = false, $improved = false)//wizard ok
 	{
 		if($this->ct->Env->print == 1 or $this->ct->Env->frmt == 'csv')
 			return '';
@@ -506,7 +435,7 @@ class Twig_Html_Tags
 			return $vlu;
 	}
 	
-	function searchbutton($class_ = '')
+	function searchbutton($class_ = '')//wizard ok
 	{
 		if($this->ct->Env->print==1 or $this->ct->Env->frmt=='csv')
 			return '';
@@ -527,14 +456,14 @@ class Twig_Html_Tags
 			return $vlu;
 	}
 	
-	function message($html, $type = 'Message')
+	function message($text, $type = 'Message')//wizard ok
 	{
-		Factory::getApplication()->enqueueMessage($html, $type);
+		Factory::getApplication()->enqueueMessage($text, $type);
 		
 		return null;
 	}
 	
-	function navigation($list_type = 'list', $ul_css_class = '')
+	function navigation($list_type = 'list', $ul_css_class = '')//wizard ok
 	{
 		$PathValue = $this->CleanNavigationPath($this->ct->Filter->PathValue);
 		if(count($PathValue)==0)
@@ -550,106 +479,7 @@ class Twig_Html_Tags
 			return 'navigation: Unknown list type';
 	}
 	
-	protected function CleanNavigationPath($thePath)
-	{
-		//Returns a list of unique search path criteria - eleminates duplicates
-		$newPath=array();
-		if(count($thePath)==0)
-			return $newPath;
-
-		for($i=count($thePath)-1;$i>=0;$i--)
-		{
-			$item=$thePath[$i];
-			if(count($newPath)==0)
-				$newPath[]=$item;
-			else
-			{
-				$found=false;
-				foreach($newPath as $newitem)
-				{
-					if(!(strpos($newitem,$item)===false))
-					{
-						$found=true;
-						break;
-					}
-				}
-
-				if(!$found)
-					$newPath[]=$item;
-			}
-		}
-		return array_reverse ($newPath);
-	}
-	
-	function format($format, $link_type = 'anchor', $image = '', $imagesize = '', $menu_item_alias = '', $csv_column_separator = ',')
-	{
-		//$csv_column_separator parameter is only for csv output format
-		
-        if($this->ct->Env->frmt=='' or $this->ct->Env->frmt=='html')
-        {
-			if($menu_item_alias != '')
-			{
-				$menu_item=JoomlaBasicMisc::FindMenuItemRowByAlias($menu_item_alias);//Accepts menu Itemid and alias
-				if($menu_item!=0)
-				{
-					$menu_item_id=(int)$menu_item['id'];
-					$link=$menu_item['link'];
-				}
-					
-				$link.='&Itemid='.$menu_item_id;//.'&returnto='.$returnto;
-			}
-			else
-			{
-				$link=JoomlaBasicMisc::deleteURLQueryOption($this->ct->Env->current_url, 'frmt');
-			}
-				
-			$link = Route::_($link);
-				
-   			//check if format supported
-   			$allowed_formats=['csv','json','xml','xlsx','pdf','image'];
-   			if($format=='' or !in_array($format,$allowed_formats))
-				$format='csv';
-				
-   			$link.=(strpos($link,'?')===false ? '?' : '&').'frmt='.$format.'&clean=1';
-   			$vlu='';
-			
-			if($format == 'csv' and $csv_column_separator != ',')
-				$link.='&sep='.$csv_column_separator;
-
-   			if($link_type=='anchor' or $link_type=='')
-   			{
-   				$allowed_sizes=['16','32','48'];
-   				if($imagesize=='' or !in_array($imagesize,$allowed_sizes))
-   					$imagesize=32;
-
-   				if($format=='image')
-   					$format_image='jpg';
-   				else
-   					$format_image=$format;
-
-   				if($image=='')
-   					$image='/components/com_customtables/libraries/customtables/media/images/fileformats/'.$imagesize.'px/'.$format_image.'.png';
-
-   				$alt='Download '.strtoupper($format).' file';
-   				//add image anchor link
-   				$vlu = '<a href="'.$link.'" class="toolbarIcons" id="ctToolBarExport2CSV" target="_blank"><img src="'.$image.'" alt="'.$alt.'" title="'.$alt.'" width="'.$imagesize.'" height="'.$imagesize.'"></a>';
-				
-				if($this->isTwig)
-					return new \Twig\Markup($vlu, 'UTF-8' );
-				else
-					return $vlu;
-   			}
-   			elseif($link_type == '_value' or $link_type == 'linkonly')
-   			{
-   				//link only
-				return $link;
-   			}
-		}
-        
-		return '';
-	}
-	
-	function captcha()
+	function captcha()//wizard ok
 	{
 		if($this->ct->Env->frmt != '' and $this->ct->Env->frmt !='html')
 			return '';
@@ -701,20 +531,7 @@ class Twig_Html_Tags
 
 	}
 	
-	protected function getReCaptchaParams()
-    {
-        $db = Factory::getDBO();
-		$query='SELECT params FROM #__extensions WHERE '.$db->quoteName("name").'='.$db->Quote("plg_captcha_recaptcha").' LIMIT 1';
-		$db->setQuery( $query );
-
-		$rows=$db->loadObjectList();
-		if(count($rows)==0)
-            return null;
-
-        return $rows[0];
-    }
-	
-	public function button($type = 'save', $title = '', $redirectlink = null, $optional_class = '')
+	function button($type = 'save', $title = '', $redirectlink = null, $optional_class = '')//wizard ok
 	{
 		if($this->ct->Env->frmt != '' and $this->ct->Env->frmt !='html' and $this->ct->Env->frmt != 'json')
 			return '';
@@ -785,6 +602,185 @@ class Twig_Html_Tags
 			return $vlu;
 	}
 	
+	function records($layoutname = '', $filter = '', $orderby = '', $limit = 0)//wizard ok
+	{
+		//Example {{ html.records("InvoicesPage","_published=1","name") }}
+		
+		if($layoutname == '')
+		{
+			Factory::getApplication()->enqueueMessage('{{ html.records("'.$layoutname.'","'.$filter.'","'.$orderby.'") }} - Layout name not specified.', 'error');
+			return '';
+		}
+		
+		$layouts = new Layouts($this->ct);
+		
+		$pagelayout = $layouts->getLayout($layoutname,false);//It is safier to process layout after rendering the table
+		if($layouts->tableid == null)
+		{
+			Factory::getApplication()->enqueueMessage('{{ html.records("'.$layoutname.'","'.$filter.'","'.$orderby.'") }} - Layout "'.$layoutname.' not found.', 'error');
+			return '';
+		}
+		
+		$join_ct = new CT;
+		$tables = new Tables($join_ct);
+		
+		if($tables->loadRecords($layouts->tableid, $filter, $orderby, $limit))
+		{
+			$twig = new TwigProcessor($join_ct, '{% autoescape false %}'.$pagelayout.'{% endautoescape %}');
+			$vlu = $twig->process();
+
+			return new \Twig\Markup($vlu, 'UTF-8' );
+		}
+		
+		Factory::getApplication()->enqueueMessage('{{ html.records("'.$layoutname.'","'.$filter.'","'.$orderby.'") }} - LCould not load records.', 'error');
+		return '';
+	}
+	
+	function tablehead()//wizard ok
+	{
+		$result = '<thead>';
+		$head_columns = func_get_args();
+		
+		foreach($head_columns as $head_column)
+			$result .= '<th>'.$head_column.'</th>';
+		
+		$result .= '</thead>';
+		
+		return new \Twig\Markup($result, 'UTF-8' );
+	}
+	
+	function recordlist()//wizard ok
+	{
+		return $this->id_list();
+	}
+	
+	function toolbar()//wizard ok
+	{
+		if($this->ct->Env->print==1)
+			return '';
+		
+		$modes = func_get_args();
+			
+		$edit_userGroup=(int)$this->ct->Env->menu_params->get( 'editusergroups' );
+		$publish_userGroup=(int)$this->ct->Env->menu_params->get( 'publishusergroups' );
+		if($publish_userGroup==0)
+			$publish_userGroup=$edit_userGroup;
+
+		$delete_userGroup=(int)$this->ct->Env->menu_params->get( 'deleteusergroups' );
+		if($delete_userGroup==0)
+			$delete_userGroup=$edit_userGroup;
+		
+		$isEditable=CTUser::checkIfRecordBelongsToUser($this->ct,$edit_userGroup);
+		$isPublishable=CTUser::checkIfRecordBelongsToUser($this->ct,$publish_userGroup);
+		$isDeletable=CTUser::checkIfRecordBelongsToUser($this->ct,$delete_userGroup);
+		
+		$RecordToolbar = new RecordToolbar($this->ct,$isEditable, $isPublishable, $isDeletable, $this->ct->Env->Itemid);
+
+		if(count($modes)==0)
+			$modes = ['edit','refresh','publish','delete'];
+
+		$icons=[];
+		foreach($modes as $mode)
+			$icons[] = $RecordToolbar->render($this->ct->Table->record,$mode);
+				
+		$vlu = implode('',$icons);
+		return new \Twig\Markup($vlu, 'UTF-8' );
+	}
+
+	/* --------------------------- PROTECTED FUNCTIONS ------------------- */
+
+	protected function id_list()
+	{
+		if($this->ct->Env->frmt == 'csv')
+			return '';	
+			
+		if(!isset($this->ct->Table))
+		{
+			Factory::getApplication()->enqueueMessage('{{ record.list }} - Table not loaded.', 'error');
+			return '';
+		}
+		
+		if(!isset($this->ct->Records))
+		{
+			Factory::getApplication()->enqueueMessage('{{ record.list }} - Records not loaded.', 'error');
+			return '';
+		}
+		
+		if($this->ct->Table->recordlist == null)
+			$this->ct->getRecordList();
+		
+		return implode(',',$this->ct->Table->recordlist);
+	}
+
+	protected function getAvailableModes()
+	{
+		$available_modes=array();
+        
+        $user = Factory::getUser();
+		if($user->id!=0)
+        {
+            $publish_userGroup=(int)$this->ct->Env->menu_params->get( 'publishusergroups' );
+            if(JoomlaBasicMisc::checkUserGroupAccess($publish_userGroup))
+            {
+                $available_modes[]='publish';
+                $available_modes[]='unpublish';
+            }
+            
+            $edit_userGroup=(int)$this->ct->Env->menu_params->get( 'editusergroups' );
+            if(JoomlaBasicMisc::checkUserGroupAccess($edit_userGroup))
+                $available_modes[]='refresh';
+                
+            $delete_userGroup=(int)$this->ct->Env->menu_params->get( 'deleteusergroups' );
+            if(JoomlaBasicMisc::checkUserGroupAccess($delete_userGroup))
+                $available_modes[]='delete';
+        }
+		return $available_modes;
+	}
+
+	protected function CleanNavigationPath($thePath)
+	{
+		//Returns a list of unique search path criteria - eleminates duplicates
+		$newPath=array();
+		if(count($thePath)==0)
+			return $newPath;
+
+		for($i=count($thePath)-1;$i>=0;$i--)
+		{
+			$item=$thePath[$i];
+			if(count($newPath)==0)
+				$newPath[]=$item;
+			else
+			{
+				$found=false;
+				foreach($newPath as $newitem)
+				{
+					if(!(strpos($newitem,$item)===false))
+					{
+						$found=true;
+						break;
+					}
+				}
+
+				if(!$found)
+					$newPath[]=$item;
+			}
+		}
+		return array_reverse ($newPath);
+	}
+
+	protected function getReCaptchaParams()
+    {
+        $db = Factory::getDBO();
+		$query='SELECT params FROM #__extensions WHERE '.$db->quoteName("name").'='.$db->Quote("plg_captcha_recaptcha").' LIMIT 1';
+		$db->setQuery( $query );
+
+		$rows=$db->loadObjectList();
+		if(count($rows)==0)
+            return null;
+
+        return $rows[0];
+    }
+
 	protected function renderSaveButton($optional_class,$title)
     {
 		if($title=='')
@@ -923,84 +919,50 @@ class Twig_Html_Tags
 
         return $result;
     }
+
+	protected function getFieldTitles($list_of_fields)
+    {
+        $fieldtitles=array();
+        foreach($list_of_fields as $fieldname)
+        {
+			if($fieldname=='_id')
+				$fieldtitles[] = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ID');
+			else						
+			{
+				foreach($this->ct->Table->fields as $fld)
+				{
+					if($fld['fieldname']==$fieldname)
+					{
+						$fieldtitles[]=$fld['fieldtitle'.$this->ct->Languages->Postfix];
+						break;
+					}
+				}
+			}
+        }
+        return $fieldtitles;
+    }
 	
-	function records($layoutname = '', $filter = '', $orderby = '', $limit = 0)
-	{
-		//Example {{ html.records("InvoicesPage","_published=1","name") }}
-		
-		if($layoutname == '')
-		{
-			Factory::getApplication()->enqueueMessage('{{ html.records("'.$layoutname.'","'.$filter.'","'.$orderby.'") }} - Layout name not specified.', 'error');
-			return '';
+	protected function prepareSearchElement($fld)
+    {
+		if(isset($fld['fields']) and count($fld['fields'])>0)
+        {
+			return 'es_search_box_'.$fld['fieldname'].':'.implode(';',$fld['fields']).':';
+        }
+        else
+        {
+			if($fld['type']=='customtables')
+            {
+				$exparams=explode(',',$fld['typeparams']);
+    			if(count($exparams)>1)
+    			{
+					$esroot=$exparams[0];
+    				return 'es_search_box_combotree_'.$this->ct->Table->tablename.'_'.$fld['fieldname'].'_1:'.$fld['fieldname'].':'.$esroot;
+    			}
+			}
+    		else
+    			return 'es_search_box_'.$fld['fieldname'].':'.$fld['fieldname'].':';
 		}
 		
-		$layouts = new Layouts($this->ct);
-		
-		$pagelayout = $layouts->getLayout($layoutname,false);//It is safier to process layout after rendering the table
-		if($layouts->tableid == null)
-		{
-			Factory::getApplication()->enqueueMessage('{{ html.records("'.$layoutname.'","'.$filter.'","'.$orderby.'") }} - Layout "'.$layoutname.' not found.', 'error');
-			return '';
-		}
-		
-		$join_ct = new CT;
-		$tables = new Tables($join_ct);
-		
-		if($tables->loadRecords($layouts->tableid, $filter, $orderby))
-		{
-			$twig = new TwigProcessor($join_ct, '{% autoescape false %}'.$pagelayout.'{% endautoescape %}');
-			$vlu = $twig->process();
-
-			return new \Twig\Markup($vlu, 'UTF-8' );
-		}
-		
-		Factory::getApplication()->enqueueMessage('{{ html.records("'.$layoutname.'","'.$filter.'","'.$orderby.'") }} - LCould not load records.', 'error');
-		return '';
-	}
-	
-	function tablehead()
-	{
-		$result = '<thead>';
-		$head_columns = func_get_args();
-		
-		foreach($head_columns as $head_column)
-			$result .= '<th>'.$head_column.'</th>';
-		
-		$result .= '</thead>';
-		
-		return new \Twig\Markup($result, 'UTF-8' );
-	}
-	
-	function toolbar()
-	{
-		if($this->ct->Env->print==1)
-			return '';
-		
-		$modes = func_get_args();
-			
-		$edit_userGroup=(int)$this->ct->Env->menu_params->get( 'editusergroups' );
-		$publish_userGroup=(int)$this->ct->Env->menu_params->get( 'publishusergroups' );
-		if($publish_userGroup==0)
-			$publish_userGroup=$edit_userGroup;
-
-		$delete_userGroup=(int)$this->ct->Env->menu_params->get( 'deleteusergroups' );
-		if($delete_userGroup==0)
-			$delete_userGroup=$edit_userGroup;
-		
-		$isEditable=CTUser::checkIfRecordBelongsToUser($this->ct,$edit_userGroup);
-		$isPublishable=CTUser::checkIfRecordBelongsToUser($this->ct,$publish_userGroup);
-		$isDeletable=CTUser::checkIfRecordBelongsToUser($this->ct,$delete_userGroup);
-		
-		$RecordToolbar = new RecordToolbar($this->ct,$isEditable, $isPublishable, $isDeletable, $this->ct->Env->Itemid);
-
-		if(count($modes)==0)
-			$modes = ['edit','refresh','publish','delete'];
-
-		$icons=[];
-		foreach($modes as $mode)
-			$icons[] = $RecordToolbar->render($this->ct->Table->record,$mode);
-				
-		$vlu = implode('',$icons);
-		return new \Twig\Markup($vlu, 'UTF-8' );
-	}
+        return '';       
+    }
 }

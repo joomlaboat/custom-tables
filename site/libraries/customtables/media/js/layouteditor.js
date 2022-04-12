@@ -2,7 +2,7 @@
  * CustomTables Joomla! 3.x Native Component
  * @package Custom Tables
  * @subpackage administrator/components/com_customtables/js/layouteditor.js
- * @author Ivan komlev <support@joomlaboat.com>
+ * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
  * @copyright Copyright (C) 2018-2022. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
@@ -11,7 +11,10 @@
 var codemirror_editors=[];
 var codemirror_active_index=0;
 var codemirror_active_areatext_id=null;
+
 var temp_params_tag="";
+//let temp_params_tagstartchar = "";
+
 var parts=location.href.split("/administrator/");
 var websiteroot=parts[0]+"/administrator/";
 var layout_tags=[];
@@ -290,41 +293,248 @@ function showModal()
 function showModalForm(tagstartchar,postfix,tagendchar,tag,top,left,line,positions,isnew)
 {
     //detect tag type first
-    var tag_pair=parseQuote(tag,[':','='],false);
-    if(tagstartchar==='{' || (tagstartchar==='[' && (tag_pair[0]=="_value" || tag_pair[0]=="_edit")))
+    if(tagstartchar==='{')
     {
-        //tags
-        showModalTagForm(tagstartchar,tagendchar,tag,top,left,line,positions,isnew);
+		//Old style
+		showModalTagForm(tagstartchar,postfix,tagendchar,tag,top,left,line,positions,isnew);
+	}
+	else if(tagstartchar==='{{')
+	{
+		//Twig tag
+		let tag_pair=parseQuote(tag,['.'],false);
+		let twigclass = tag_pair[0].trim();
+		
+		let twigclasss = ['fields','users','url','html','document','record','records','text','table'];
+		if(twigclasss.indexOf(twigclass) != -1)
+		{
+			showModalTagForm('{{',postfix,'}}',tag.trim(),top,left,line,positions,isnew);
+		}
+		else if(tag_pair.length > 1)
+		{
+			postfix = '';
+			if(tag_pair.length > 2)
+				postfix = tag_pair[1];
+			
+			alert('tag:'+tag)
+			alert('postfix:'+postfix)
+			
+			showModalFieldTagForm('[',postfix,']',tag.trim(),top,left,line,positions,isnew);
+		}
+		else
+		{
+			postfix = '';
+			showModalFieldTagForm('[',postfix,']',tag.trim(),top,left,line,positions,isnew);
+		}
+	}
+	else if(tagstartchar==='[')
+    {
+		let tag_pair=parseQuote(tag,[':','='],false);
+		
+		if(tag_pair[0]=="_if" || tag_pair[0]=="_endif")
+		{
+			showModalTagForm('[',postfix,']',tag,top,left,line,positions,isnew);
+		}
+		else if(tag_pair[0]=="_value" || tag_pair[0]=="_edit")
+		{
+			if(tag_pair[0]=="_value")
+				postfix = '.value';
+			else if(tag_pair[0]=="_edit")
+				postfix = '.edit';
+			
+			let clean_tag = tag_pair[1];
+			
+			if(tag_pair.length == 3)
+				postfix += '("' + tag_pair[2] + '")';
+			
+			showModalFieldTagForm(tagstartchar,postfix,tagendchar,clean_tag,top,left,line,positions,isnew);
+		}
+		else
+		{
+			if(current_layout_type == 2)
+				postfix = '.edit';
+			
+			showModalFieldTagForm(tagstartchar,postfix,tagendchar,tag,top,left,line,positions,isnew);
+		}
     }
     else
     {
-        //field tags
         showModalFieldTagForm(tagstartchar,postfix,tagendchar,tag,top,left,line,positions,isnew);
     }
 }
 
+function findTagParameter(tag){
+	
+	let pos1 = tag.indexOf("(");
+	let pos2 = tag.lastIndexOf(")");
+	
+	let parems = tag.substring(pos1+1,pos2);
+	return parems;
+}
+
+function safeOld2NewParamConversion(old){
+	
+	let TempPairList1 = parseQuote(old,[':'],false);
+	let TempPairList2 = [];
+
+	for(let i=0;i<TempPairList1.length;i++){
+		let v = TempPairList1[i];
+		if((isNaN(v) && v != 'true' && v != 'false') || v==''){
+			v='"'+v+'"';
+		}
+		TempPairList2.push(v);
+	}
+	return TempPairList2.join(",");
+}
+
 function showModalTagForm(tagstartchar,postfix,tagendchar,tag,top,left,line,positions,isnew)
 {
-    var tag_pair=parseQuote(tag,[':','='],false);
-
-    temp_params_tag=tag_pair[0];
-
-    var tagobject=findTagObjectByName(tagstartchar,tagendchar,temp_params_tag);
-    if(tagobject==null || typeof tagobject !== 'object')
+	let paramvaluestring="";
+	
+	if(tagstartchar == '[')
+	{
+		let tag_pair=parseQuote(tag,[':','='],false);
+		temp_params_tag=tag_pair[0];//tag_pair[0];
+		paramvaluestring=tag_pair[1];
+	}
+	
+	if(tagstartchar == '{{')
+	{
+		let tag_pair=parseQuote(tag,['('],false);
+		temp_params_tag = tag_pair[0].trim();
+		
+		paramvaluestring=findTagParameter(tag);
+	}
+	else
+	{
+		let tag_pair=parseQuote(tag,[':','='],false);
+		temp_params_tag = tag_pair[0].trim();
+		
+		if(tag_pair.length > 1)
+		{
+			let pos1 = tag.indexOf(":");
+			paramvaluestring=tag.substring(pos1+1,tag.length);
+		}
+	}
+		
+	let tagobject=findTagObjectByName(tagstartchar,tagendchar,temp_params_tag);
+	
+	//alert(JSON.stringify(tagobject));
+	
+	if(tagobject==null || typeof tagobject !== 'object')
         return null;
 
-    var param_array=getParamOptions(tagobject.params,'param');
+    let param_array=getParamOptions(tagobject.params,'param');
+	let param_att=tagobject["@attributes"];
+	
+	if(tagstartchar == '{')
+	{
+		if (typeof(param_att.twigsimplereplacement) !== "undefined" && param_att.twigsimplereplacement !=="")
+		{
+			let cursor_from = {line:line,ch:positions[0]};
+			let cursor_to = {line:line,ch:positions[1]};
+			let editor = codemirror_editors[codemirror_active_index];
+			let doc = editor.getDoc();
+			doc.replaceRange(param_att.twigsimplereplacement, cursor_from,cursor_to,"");
+			return true;
+		}
+		else if (typeof(param_att.twigreplacestartchar) !== "undefined" && param_att.twigreplacestartchar !=="" && typeof(param_att.twigreplaceendchar) !== "undefined" && param_att.twigreplaceendchar !=="")
+		{
+			let cursor_from = {line:line,ch:positions[0]};
+			let cursor_to = {line:line,ch:positions[1]};
+			
+			paramvaluestring = safeOld2NewParamConversion(paramvaluestring);
+			
+			let result = param_att.twigreplacestartchar + paramvaluestring + param_att.twigreplaceendchar;
+			let editor = codemirror_editors[codemirror_active_index];
+			let doc = editor.getDoc();
+			doc.replaceRange(result, cursor_from,cursor_to,"");
+			return true;
+		}else if (typeof(param_att.twigreplacement) !== "undefined" && param_att.twigreplacement !=="")
+		{
+			
+			if (typeof(param_att.twigmapname) !== "undefined" && param_att.twigmapname !==""){
+				
+				if (typeof(param_att.twigmapparam) !== "undefined" && param_att.twigmapparam !==""){
+
+					for(let i3=0;i3<param_array.length;i3++)
+					{
+						let tmpPar=param_array[i3]["@attributes"];
+						if(tmpPar.name == param_att.twigmapname)
+						{
+							let option_array=getParamOptions(param_array[i3],'option');
+							let tmlLstOfParams = paramvaluestring.split(",");
+							
+							for(let i4=0;i4<option_array.length;i4++)
+							{
+								let tmpAtt=option_array[i4]["@attributes"];
+
+								if(tmpAtt.value == tmlLstOfParams[0])
+								{
+									temp_params_tag = param_att.twigreplacement + '.' + tmpAtt.twigexactreplacement;
+									
+									paramvaluestring = safeOld2NewParamConversion(tmlLstOfParams[1]);
+								}
+							}
+							break;
+						}
+					}
+				}
+				
+			}else if (typeof(param_att.twigoptionsreplacement) !== "undefined" && param_att.twigoptionsreplacement == "1"){
+				temp_params_tag = param_att.twigreplacement + '.' + paramvaluestring;
+				paramvaluestring = '';
+			}else
+				temp_params_tag = param_att.twigreplacement;	
+			
+			if (typeof(param_att.twigreplacementparams) !== "undefined" && param_att.twigreplacementparams !=="")
+			{
+				paramvaluestring = param_att.twigreplacementparams;
+				//alert(paramvaluestring);
+			}
+			
+			
+			//alert("fff:"+temp_params_tag)
+			tagobject = findTagObjectByName('{{','}}',temp_params_tag);
+			//tagobject = findTagObjectByName(tagstartchar,tagendchar,temp_params_tag);
+			
+			param_array=getParamOptions(tagobject.params,'param');
+			param_att=tagobject["@attributes"];
+		}
+		else if (typeof(param_att.twigclass) !== "undefined" && param_att.twigclass !=="")
+			temp_params_tag = param_att.twigclass + '.' + temp_params_tag;
+		
+	}else if(tagstartchar == '[')
+	{
+		if (typeof(param_att.twigreplacestartchar) !== "undefined" && param_att.twigreplacestartchar !=="" && typeof(param_att.twigreplaceendchar) !== "undefined" && param_att.twigreplaceendchar !=="")
+		{
+			let cursor_from = {line:line,ch:positions[0]};
+			let cursor_to = {line:line,ch:positions[1]};
+			let result = param_att.twigreplacestartchar + paramvaluestring + param_att.twigreplaceendchar;
+			let editor = codemirror_editors[codemirror_active_index];
+			let doc = editor.getDoc();
+			doc.replaceRange(result, cursor_from,cursor_to,"");
+			return true;
+		}else if (typeof(param_att.twigsimplereplacement) !== "undefined" && param_att.twigsimplereplacement !=="")
+		{
+			let cursor_from = {line:line,ch:positions[0]};
+			let cursor_to = {line:line,ch:positions[1]};
+			let editor = codemirror_editors[codemirror_active_index];
+			let doc = editor.getDoc();
+			doc.replaceRange(param_att.twigsimplereplacement, cursor_from,cursor_to,"");
+			return true;
+		}
+		
+		return false;
+	}
     
-    var param_att=tagobject["@attributes"];
     var countparams=param_array.length;
     if (typeof(param_att.repeatative) !== "undefined" && param_att.repeatative==="1" && param_array.length==1)
         countparams=-1;//unlimited number of parameters
 
-    var paramvaluestring="";
-    if(tag_pair.length==2)
-        paramvaluestring=tag_pair[1];
+    
 
-    var form_content=getParamEditForm(tagobject,line,positions,isnew,countparams,tagstartchar,postfix,tagendchar,paramvaluestring);
+    //var form_content=getParamEditForm(tagobject,line,positions,isnew,countparams,tagstartchar,postfix,tagendchar,paramvaluestring);
+	var form_content=getParamEditForm(tagobject,line,positions,isnew,countparams,'{{ ',postfix,' }}',paramvaluestring);
     
     if(form_content==null)
     {
@@ -348,24 +558,27 @@ function showModalTagForm(tagstartchar,postfix,tagendchar,tag,top,left,line,posi
     showModal();
  }
 
-function addTag(index_unused,tagstartchar,tagendchar,tag,param_count)
-{
-    var cm=codemirror_editors[0];
+function addTag(tagstartchar,tagendchar,tag,param_count){
+	
+	let postfix = '';
+	
+	var cm=codemirror_editors[0];
     
-    if(param_count>0)
-    {
-        var cr=cm.getCursor();
-
-        var positions=[cr.ch,cr.ch];
-        var mousepos=cm.cursorCoords(cr,"window");
-
-        showModalTagForm(tagstartchar,tagendchar,atob(tag),mousepos.top,mousepos.left,cr.line,positions,1);
-    }
-    else
-    {
-        updateCodeMirror(tagstartchar+atob(tag)+tagendchar);
-    	document.getElementById('layouteditor_Modal').style.display = "none";
+	if(param_count>0){
 		
+		let tagname = atob(tag);
+		
+		//alert("showModalTagForm:" + tagname)
+		//tagstartchar = '{';
+		//tagendchar = '}';
+		var cr=cm.getCursor();
+
+		var positions=[cr.ch,cr.ch];
+		var mousepos=cm.cursorCoords(cr,"window");
+		showModalTagForm(tagstartchar.trim(),postfix,tagendchar.trim(),tagname,mousepos.top,mousepos.left,cr.line,positions,1);
+	}else{
+		updateCodeMirror(tagstartchar+atob(tag)+tagendchar);
+		document.getElementById('layouteditor_Modal').style.display = "none";
 		cm.focus();
     }
 }
@@ -461,38 +674,55 @@ function updateCodeMirror(text)
         }
 
 
-    function findTagObjectByName(tagstartchar,tagendchar,lookfor_tag)
-    {
-        for(var s=0;s<tagsets.length;s++)
-        {
-            var tagset=tagsets[s];
-            var tags=getParamOptions(tagset,'tag');
+function findTagObjectByName(tagstartchar,tagendchar,lookfor_tag){
+	
+	let TwigTag = false;
+	
+	if(tagstartchar == '{{'){
+		tagstartchar = '{';
+		tagendchar = '}'
+		
+		TwigTag = true;
+	}
 
-            for(var i=0;i<tags.length;i++)
-            {
-                var tag=tags[i];
-                var a=tag["@attributes"];
-                if(a.name==lookfor_tag && a.startchar==tagstartchar && a.endchar==tagendchar)
-                    return tag;
-            }
+	for(var s=0;s<tagsets.length;s++){
+		let tagset=tagsets[s];
+		let tags=getParamOptions(tagset,'tag');
 
-        }
-        return null;
-    }
+		for(let i=0;i<tags.length;i++){
+			let tag=tags[i];
+			let a=tag["@attributes"];
+				
+			if(lookfor_tag.indexOf(".") == -1){
+				if(a.name==lookfor_tag && a.startchar==tagstartchar && a.endchar==tagendchar)
+					return tag;
+			}else if (TwigTag && typeof(a.twigclass) !== "undefined" && a.twigclass!==""){
+				if(a.twigclass + '.' + a.name == lookfor_tag && a.startchar==tagstartchar && a.endchar==tagendchar)
+					return tag;
+			}
+		}
+	}
+	return null;
+}
 
     function getParamEditForm(tagobject,line,positions,isnew,countparams,tagstartchar,postfix,tagendchar,paramvaluestring)
     {
         var att=tagobject["@attributes"];
 
         var result="";
-        //var separator=":";
-
-        //if (typeof(att.separator)!== "undefined")
-            //separator=att.separator;
+		
+		//alert (tagstartchar);
 
         result+=renderParamBox(tagobject,"current_tagparameter",paramvaluestring);
         
-        result+='<div class="dynamic_values"><span class="dynamic_values_label">Tag with parameter:</span> '+tagstartchar+temp_params_tag;
+        result+='<div class="dynamic_values"><span class="dynamic_values_label">Tag with parameter:</span> ';
+		
+		result+=tagstartchar;
+		
+		//if (typeof(att.twigclass) !== "undefined" && att.twigclass!=="")
+			//result+=att.twigclass + '.';
+		
+		result+=temp_params_tag;
 		
 		result+=postfix+'(<span id="current_tagparameter" style="">'+paramvaluestring+'</span>)';
 		
@@ -521,8 +751,7 @@ function updateCodeMirror(text)
             if(tmp_params!="")
                 result+='('+tmp_params+')';//{{ tag.edit(par1,par2) }} where ".edit" is the postfix
 
-            result+=tagendchar;
-
+		result+=tagendchar;
 
         var cursor_from = {line:line_number,ch:pos1};
         var cursor_to = {line:line_number,ch:pos2};
@@ -687,15 +916,22 @@ function renderTags(index,tagset)
             var t="";
 
             var params=getParamOptions(tag_object.params,'param');
-
-            if(params.length==0)
-                t=tag.startchar+tag.name+tag.endchar;
-            else
-                t=tag.startchar+tag.name+':<span>Params</span>'+tag.endchar;
+			
+			let full_tagname = '';
+			if (typeof(tag.twigclass) !== "undefined" && tag.twigclass!=="")
+				full_tagname = tag.twigclass + '.' + tag.name;
+			else
+				full_tagname = tag.name;
+			
+			if(params.length==0)
+				t='{{ ' + full_tagname + ' }}'; // t=tag.startchar+tag.name+tag.endchar;
+			else
+				t='{{ '+full_tagname+'(<span>Params</span>)'+' }}'; //t=tag.startchar+full_tagname+':<span>Params</span>'+tag.endchar;
 
             result+='<div style="vertical-align:top;">';
-                result+='<div style="display:inline-block;"><a href=\'javascript:addTag("0","'+tag.startchar+'","'+tag.endchar+'","'+btoa(tag.name)+'",'+params.length+');\' class="btn">'+t+'</a></div> ';
-                result+='<div style="display:inline-block;">'+tag.description+'</div>';
+			//result+='<div style="display:inline-block;"><a href=\'javascript:addTag("0","'+tag.startchar+'","'+tag.endchar+'","'+btoa(tag.name)+'",'+params.length+');\' class="btn">'+t+'</a></div> ';
+			result+='<div style="display:inline-block;"><a href=\'javascript:addTag("{{ "," }}","'+btoa(full_tagname)+'",'+params.length+');\' class="btn">'+t+'</a></div> ';
+            result+='<div style="display:inline-block;">'+tag.description+'</div>';
             result+='</div>';
         }
     }
@@ -797,11 +1033,10 @@ function addTabExtraEvents()
 
 function addExtraEvents()
 {
-                    var index=0;
-
-                    setTimeout(function()
-                               {
-                                    codemirror_active_index=index;
+	let index=0;
+	setTimeout(function()
+	{
+		codemirror_active_index=index;
                                     var cm=codemirror_editors[index];
                                     cm.refresh();
 
@@ -815,8 +1050,30 @@ function addExtraEvents()
                                         if(positions!=null)
                                         {
                                             var startchar=line.substring(positions[0],positions[0]+1); //+1 to have 1 character
+											if(startchar == '{')
+											{
+												let startchar2 = line.substring(positions[0]-1,positions[0]+1);
+												if(startchar2 == '{{')
+													startchar = '{{';
+												
+											}
+											
                                             var endchar=line.substring(positions[1]-1,positions[1]-1+1);//-1 because position ends after the tag
+											if(endchar == '}')
+											{
+												let endchar2 = line.substring(positions[1]-1,positions[1]-1+2);
+												if(endchar2 == '}}')
+													endchar = '}}';
+											}
+											
                                             var tag=line.substring(positions[0]+1, positions[1]-1);//-1 because position ends after the tag
+											
+											if(startchar == '{{')
+											{
+												positions[0] = positions[0] - 1;
+												positions[1] = positions[1] + 1;
+											}
+											
 											var postfix = ''; //todo
 
                                             var mousepos=cm.cursorCoords(cr,"window");

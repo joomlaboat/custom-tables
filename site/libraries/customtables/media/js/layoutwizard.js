@@ -2,7 +2,7 @@
  * CustomTables Joomla! 3.x Native Component
  * @package Custom Tables
  * @subpackage administrator/components/com_customtables/js/layoutwizard.js
- * @author Ivan komlev <support@joomlaboat.com>
+ * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
  * @copyright Copyright (C) 2018-2022. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
@@ -98,6 +98,7 @@ function loadFieldsData(tableid)
 
 function updateFieldsBox()
 {
+	
 	//var result=renderFieldsBox();
 	//result+='<p>Position cursor to the code editor where you want to insert a new dynamic tag and click on the Tag Button.</p>';
 	//field_box_obj.innerHTML='';//<div class="dynamic_values">'+result+'</div>';
@@ -141,6 +142,35 @@ function renderTabs(tabset_id, tabs){
 	}
 }
 
+function replaceOldFieldTitleTagsWithTwigStyle()
+{
+	let editor = codemirror_editors[codemirror_active_index];
+	let docuemntText = editor.getValue();
+	let count = 0;
+	
+	for(let i=0;i<wizardFields.length;i++)
+	{
+		let oldFieldTag = '*' + wizardFields[i].fieldname + '*';
+		if(docuemntText.indexOf(oldFieldTag) != -1)
+			count += 1;
+		
+		
+	}
+	
+	if (confirm("Found " + count + " old field title tags. Would you like to replace them with Twig style tags?") == true){
+		for(let i=0;i<wizardFields.length;i++)
+		{
+			let oldFieldTag = '*' + wizardFields[i].fieldname + '*';
+			let newFieldTag = '{{ ' + wizardFields[i].fieldname + '.title }}';
+			docuemntText = docuemntText.replace(oldFieldTag,newFieldTag)
+		}
+	}
+	
+	editor.setValue(docuemntText);
+	editor.refresh();
+}
+
+
 function renderFieldsBox()
 {
 	//1 - Simple Catalog
@@ -168,6 +198,10 @@ function renderFieldsBox()
 	{
 		//field_box_obj.innerHTML='<div class="FieldTagWizard"><p>There are no Fields in selected table.</p></div>';
 		return;
+	}
+	else
+	{
+		replaceOldFieldTitleTagsWithTwigStyle();
 	}
 
 	var result='';
@@ -300,19 +334,20 @@ function renderFieldTags(startchar,postfix,endchar,fieldtypes_to_skip,param_grou
 	return result;
 }
 
-function getParamGroup(tagstartchar,tagendchar)
+function getParamGroup(tagstartchar,postfix,tagendchar)
 {
 	var param_group='';
 
 
 	var a=[1,3,4,6,7,8,9,10];
 
-	if(current_layout_type!==5 && tagstartchar==='*' && tagendchar==='*')
+	if(postfix == '.title' || (current_layout_type!==5 && tagstartchar==='*' && tagendchar==='*'))
 		param_group='titleparams';
-	else if(a.indexOf(current_layout_type)!==-1 && tagstartchar==='[' && tagendchar===']')
-		param_group='valueparams';
-	else if(current_layout_type===2)
+	else if(postfix == '.edit' || current_layout_type===2)
 		param_group='editparams';
+	else if(a.indexOf(current_layout_type)!==-1 && ((tagstartchar==='[' && tagendchar===']') || (tagstartchar==='{{ ' && tagendchar===' }}')))
+		param_group='valueparams';
+	
 
 	return param_group;
 }
@@ -350,11 +385,27 @@ function showModalFieldTagsList(e)
 
 function showModalFieldTagForm(tagstartchar,postfix,tagendchar,tag,top,left,line,positions,isnew)
 {
-	var modalcontentobj=document.getElementById("layouteditor_modal_content_box");
+	let modalcontentobj=document.getElementById("layouteditor_modal_content_box");
 
-    var tag_pair=parseQuote(tag,':',false);
+    let tag_pair=parseQuote(tag,':',false);
+	let paramvaluestring="";
 
-    temp_params_tag=tag_pair[0];
+	if(tag_pair[0]=="_value" || tag_pair[0]=="_edit"){
+		temp_params_tag=tag_pair[1].trim();
+		
+		if(tag_pair.length==2)
+			paramvaluestring=tag_pair[1];
+	
+	}else{
+		
+		let tag_pair2=parseQuote(tag,'(',false);
+		
+		temp_params_tag = tag_pair2[0].trim();
+		paramvaluestring = findTagParameter(tag);
+	}
+	
+	
+
 	var field=findFieldObjectByName(temp_params_tag);
 	if(field==null)
 	{
@@ -363,7 +414,7 @@ function showModalFieldTagForm(tagstartchar,postfix,tagendchar,tag,top,left,line
 		return;
 	}
 
-	var param_group=getParamGroup(tagstartchar,tagendchar);
+	var param_group=getParamGroup(tagstartchar,postfix,tagendchar);
 	
 	if(param_group==='')
 	{
@@ -385,20 +436,27 @@ function showModalFieldTagForm(tagstartchar,postfix,tagendchar,tag,top,left,line
 	
 	if(!group_params_object || !group_params_object.params)
 	{
-		modalcontentobj.innerHTML='<p>Field Type Tag doesn\'t have parameters.</p>';
-		showModal();
+		let cursor_from = {line:line,ch:positions[0]};
+        let cursor_to = {line:line,ch:positions[1]};
+		let result = '{{ ' + tag + postfix + ' }}';
+		let editor = codemirror_editors[codemirror_active_index];
+		let doc = editor.getDoc();
+		doc.replaceRange(result, cursor_from,cursor_to,"");
+		//return saveParams(event,4,14,68,84,0,"{{ "," }}","");'
+		
+		//modalcontentobj.innerHTML='<p>Field Type Tag doesn\'t have parameters.</p>';
+		//showModal();
 		return;
 	}
-
+	
 	var param_array=getParamOptions(group_params_object.params,'param');
 
     var countparams=param_array.length;
 
-    var paramvaluestring="";
-    if(tag_pair.length==2)
-        paramvaluestring=tag_pair[1];
+    
 
-    var form_content=getParamEditForm(group_params_object,line,positions,isnew,countparams,tagstartchar,postfix,tagendchar,paramvaluestring);
+    //var form_content=getParamEditForm(group_params_object,line,positions,isnew,countparams,tagstartchar,postfix,tagendchar,paramvaluestring);
+	var form_content=getParamEditForm(group_params_object,line,positions,isnew,countparams,'{{ ',postfix,' }}',paramvaluestring);
 
     if(form_content==null)
         return false;

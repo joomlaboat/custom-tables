@@ -139,6 +139,14 @@
         window.location.href = link;
 	}
 	
+	function ctLimitChanged(object){
+		var current_url=esPrepareLink(['returnto','task','limit'],[]);
+        var returnto=btoa(current_url);
+		
+        var link=esPrepareLink(['task'],['task=setlimit','limit=' + object.value,'returnto='+returnto]);
+        window.location.href = link;
+	}
+	
 	function ctPublishRecord(tableid, recordid, toolbarboxid, publish){
         if(es_LinkLoading)
             return;

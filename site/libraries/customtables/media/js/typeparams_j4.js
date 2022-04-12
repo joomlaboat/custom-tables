@@ -283,135 +283,99 @@ function getInputType(obj)
     return '';
 }
 
-function updateParamString(inputboxid,countlist,countparams,objectid,e,rawquotes,refresh,startchar)
-{
+function updateParamString(inputboxid,countlist,countparams,objectid,e,rawquotes,refresh,startchar){
     
-    if (typeof(startchar)== "undefined")
-        startchar="{{ ";//startchar="{";
+	if (typeof(startchar)== "undefined")
+		startchar="{";
 
-	var endchar=' }}';//var endchar='}';
-    //if(startchar=='[')
-        //endchar=']';
-    
-    
-    //objectid is the element id where value will be set
+	let endchar='}';
+	if(startchar=='[')
+		endchar=']';
 
-    if(e!=null)
-        e.preventDefault();
+	//objectid is the element id where value will be set
+	if(e!=null)
+		e.preventDefault();
 
-    var count=0;
+	let count=0;
+	let list=[];
 
-    var list=[];
+    for(let r=0;r<countlist;r++){
+		let params=[];
 
-    for(var r=0;r<countlist;r++)
-    {
-        var params=[];
+		for(let i=0;i<countparams || countparams==-1;i++){ // -1 "unlimited" number of parameters
+			let objectname=inputboxid;
 
-        for(var i=0;i<countparams || countparams==-1;i++) // -1 "unlimited" number of parameters
-        {
-           var objectname=inputboxid;
+			if(r>0)
+				objectname+=r+'x';
 
-           if(r>0)
-            objectname+=r+'x';
-
-           objectname+=i;
-
+			objectname+=i;
+			let obj=document.getElementById(objectname);
 		
+			if(obj){
+				let t=getInputType(obj);
+				let v="";
 
-           var obj=document.getElementById(objectname);
-           if(obj)
-           {
-               var t=getInputType(obj);
-               var v="";
-
-               if (t === "radio")
-                   v=getRadioValue(objectname);
-               else if (t === "multiselect")
-                   v=getSelectValues(select).merge(",");
-               else
-                   v=obj.value;
-
-				if(isNaN(v))
-				{
+				if(t === "radio")
+					v=getRadioValue(objectname);
+				else if (t === "multiselect")
+					v=getSelectValues(select).merge(",");
+				else
+					v=obj.value;
+			   
+				if(isNaN(v) && v != 'true' && v != 'false'){
 					if(v.indexOf('"')!=-1)
-                        v=v.replaceAll('"','****quote****');
-					
+						v=v.replaceAll('"','****quote****');
+
 					if(v.indexOf("'")!=-1)
-                        v=v.replaceAll("'",'****apos****');
+						v=v.replaceAll("'",'****apos****');
 
 					v='"'+v+'"';
 				}
+				params.push(v);
+				if(v!="")
+					count=i+1; //to include all previous parameters even if they are empty
+           }else
+				break;
+        }
+
+		let tmp_params="";
+		let newparams=[];
+        
+		if(count>0){
+			for(let i2=0;i2<count;i2++){
 				
-				/*
-                if(!rawquotes && v!='')//if raw quotes is set to true then don't change it
-                {
-                    var q=false;
-                    if(v.indexOf('"')!=-1)
-                    {
-                        v=v.replaceAll('"','****quote****');
-                        q=true;
-                    }
+				let v = params[i2];
+				if(v == '')
+					v='"'+v+'"';
+        		
+				newparams.push(v);
+			}
+			tmp_params=newparams.join(",");
+		}
+		list.push(tmp_params);
+	}
 
-                    if(v.indexOf("'")!=-1)
-                    {
-                        v=v.replaceAll("'",'****apos****');
-                        q=true;
-                    }
-
-                    if(q || v.indexOf(',')!=-1 || v.indexOf(':')!=-1 )
-                        v='"'+v+'"';
-                }
-				*/
-
-               params.push(v);
-
-               if(v!="")
-                 	count=i+1; //to include all previous parameters even if they are empty
-           }
-           else
-            break;
-        }
-
-        var tmp_params="";
-
-        var newparams=[];
-        if(count>0)
-        {
-           	for(var i2=0;i2<count;i2++)
-        		newparams.push(params[i2]);
-
-            tmp_params=newparams.join(",");
-        }
-
-        list.push(tmp_params);
-    }
-
-    var tmp_list=list.join(";");
-
-    var typeparams_obj=document.getElementById(objectid);
-    if(typeparams_obj)
-    {
-        typeparams_obj.value=tmp_list;  // why is it here?
-        typeparams_obj.innerHTML=tmp_list;
+    let tmp_list=list.join(";");
+	let typeparams_obj=document.getElementById(objectid);
+	
+	if(typeparams_obj){
+		typeparams_obj.value=tmp_list;  // why is it here?
+		typeparams_obj.innerHTML=tmp_list;
     }
     
-    if(refresh)
-    {
-        var mptn=document.getElementById("modalParamTagName");
-        if(mptn)
-        {
-            var typename=mptn.innerHTML;
-        
-            var typeparams=findTagObjectByName(startchar,endchar,typename);
-            if(typeparams!=null)
-            {
-                var obj2=document.getElementById("modalParamList");
-                if(obj2)
-                    obj2.innerHTML=renderParamList(typeparams,"current_tagparameter",tmp_list);
-            }
-        }
-    }    
-    return false;
+	if(refresh){
+		let mptn=document.getElementById("modalParamTagName");
+		if(mptn){
+			let typename=mptn.innerHTML;
+			let typeparams=findTagObjectByName(startchar,endchar,typename);
+			if(typeparams!=null){
+				let obj2=document.getElementById("modalParamList");
+				if(obj2)
+					obj2.innerHTML=renderParamList(typeparams,"current_tagparameter",tmp_list);
+			}
+		}
+	}    
+	return false;
 }
 
 function getSelectValues(select)
@@ -927,44 +891,38 @@ function renderInput_Radio(objname,param,value,onchange)
         return false;
     }
     
-    function renderInput_Layout(id,param,value,onchange)
-    {
-        var param_att=param["@attributes"];
-        
-        var obj=document.getElementById('jform_tableid');
-        var currentTable=obj.value;
-        
-        var layout_table="";
+    function renderInput_Layout(id,param,value,onchange){
+		let param_att=param["@attributes"];
+		
+		let currentLayout = document.getElementById('jform_layoutname').value;
+        let currentTable = document.getElementById('jform_tableid').value;
+		
+        let layout_table="";
         if(param_att.table!=null)
             layout_table=param_att.table;
             
-        var layout_type="";
-        if(param_att.table!=null)
+        let layout_type="";
+        if(param_att.layoutype!=null)
             layout_type=param_att.layoutype;
         
-        var result='<select id="'+id+'" '+onchange+' class="ct_improved_selectbox">';
-                    
-                result+='<option value="" '+(value=="" ? 'selected="selected"' : '')+'>- Select Layout</option>';
-                
-                for(var o=0;o<wizardLayouts.length;o++)
-                {
-                        
-                        var ok=true;
-                        var option=wizardLayouts[o];
-                        
-                        if(layout_table=="current")
-                        {   
-                            if(option.tableid!=currentTable)
-                                ok=false;
-                        }
+        let result='<select id="'+id+'" '+onchange+' class="ct_improved_selectbox">';
+        
+		result+='<option value="" '+(value=="" ? 'selected="selected"' : '')+'>- Select Layout</option>';
 
-                        if(ok)
-                        {   //table checked not checking layout type
-                            if(renderInput_Layout_checktype(layout_type,parseInt(option.layouttype)))
-                                result+='<option value="'+option.layoutname+'"'+(option.id==value ? 'selected="selected"' : '')+'>'+option.layoutname+'</option>';
-                        }
-                }
+        for(let o=0;o<wizardLayouts.length;o++){
+			let ok=true;
+            let option=wizardLayouts[o];
+			
+			if(layout_table=="current"){   
+				if(option.tableid!=currentTable)
+                ok=false;
+			}
 
+			if(ok && option.layoutname != currentLayout){   //table checked not checking layout type
+				if(renderInput_Layout_checktype(layout_type,parseInt(option.layouttype)))
+					result+='<option value="'+option.layoutname+'"'+(option.layoutname==value ? 'selected="selected"' : '')+'>'+option.layoutname+'</option>';
+				}
+			}
         return result+='</select>';
     }
     

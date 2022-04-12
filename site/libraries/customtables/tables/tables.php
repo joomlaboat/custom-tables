@@ -39,6 +39,9 @@ class Tables
 		
 		$this->ct->setFilter($filter, 2);
 		
+		$this->ct->Ordering->ordering_processed_string = $orderby;
+		$this->ct->Ordering->parseOrderByString();
+		
 		$this->ct->Limit=$limit;
 		$this->ct->LimitStart=0;
 		

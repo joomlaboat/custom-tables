@@ -229,13 +229,16 @@ class CT
 	function applyLimits($blockExternalVars = true)
 	{
 		$limit_var = 'com_customtables.limit_'.$this->Env->Itemid;
+		
+		$mainframe = Factory::getApplication('site');
+		
+		$this->Limit = $mainframe->getUserState($limit_var, 0);
+		
 		//Grouping
 		if($this->Env->menu_params->get('groupby')!='')
 			$this->GroupBy = Fields::getRealFieldName($this->Env->menu_params->get('groupby'),$this->Table->fields);
 		else
 			$this->GroupBy = '';
-		
-		$mainframe = Factory::getApplication('site');
 		
 		if($this->Env->frmt!='html')
 		{
@@ -250,14 +253,11 @@ class CT
 			if((int)$this->Env->menu_params->get( 'limit' ) > 0)
 			{
 				$this->Limit = (int)$this->Env->menu_params->get( 'limit' );
-				$mainframe->setUserState($limit_var, $this->Limit);
-			
 				$this->LimitStart = $this->Env->jinput->getInt('start',0);
 				$this->LimitStart = ($this->Limit != 0 ? (floor($this->LimitStart / $this->Limit) * $this->Limit) : 0);
 			}
 			else
 			{
-				$mainframe->setUserState($limit_var, 0);
 				$this->Limit=0;
 				$this->Limitstart=0;
 			}
@@ -265,18 +265,13 @@ class CT
 		else
 		{
 			$this->LimitStart = $this->Env->jinput->getInt('start',0);
-
-			if((int)$this->Env->menu_params->get( 'limit' )>0)
+			$this->Limit = $mainframe->getUserState($limit_var, 0);
+			
+			if($this->Limit == 0 and (int)$this->Env->menu_params->get( 'limit' )>0)
 			{
 				$this->Limit = (int)$this->Env->menu_params->get( 'limit' );
-				$mainframe->setUserState($limit_var,$this->Limit);
 			}
-			else
-			{
-				$this->Limit = $mainframe->getUserState($limit_var, 0);
-				$mainframe->setUserState($limit_var,$this->Limit);
-			}
-			
+
 			// In case limit has been changed, adjust it
 			$this->LimitStart = ($this->Limit != 0 ? (floor($this->LimitStart / $this->Limit) * $this->Limit) : 0);
 		}

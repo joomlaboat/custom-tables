@@ -19,6 +19,9 @@ use \Joomla\CMS\Factory;
 use \CustomTables\Twig_Field_Tags;
 use \CustomTables\Forms;
 
+$types_path=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fieldtypes'.DIRECTORY_SEPARATOR;
+require_once($types_path.'_type_image.php');
+
 class TwigProcessor
 {
 	var $ct;
@@ -72,92 +75,98 @@ class TwigProcessor
 		$this->twig = new \Twig\Environment($loader);
 			
 		$this->twig->addGlobal('fields', new Twig_Fields_Tags($this->ct) );
-		//{{ fields.count() }}
-		//{{ fields.json() }}
+		//{{ fields.list() }}	-	wizard ok
+		//{{ fields.count() }}	-	wizard ok
+		//{{ fields.json() }}	-	wizard ok
 		
 		$this->twig->addGlobal('user', new Twig_User_Tags($this->ct) );
-		//{{ user.name() }}
-		//{{ user.username() }}
-		//{{ user.email() }}
-		//{{ user.id() }}
-		//{{ user.lastvisitdate() }}
-		//{{ user.registerdate() }}
-		//{{ user.usergroups() }}
+		//{{ user.name() }}	-	wizard ok
+		//{{ user.username() }}	-	wizard ok
+		//{{ user.email() }}	-	wizard ok
+		//{{ user.id() }}	-	wizard ok
+		//{{ user.lastvisitdate() }}	-	wizard ok
+		//{{ user.registerdate() }}	-	wizard ok
+		//{{ user.usergroups() }}	-	wizard ok
 		
 		$this->twig->addGlobal('url', new Twig_Url_Tags($this->ct) );
-		//{{ url.link() }}
-		//{{ url.base64() }}
-		//{{ url.root() }}
-		//{{ url.getInt() }}
-		//{{ url.getString() }}
-		//{{ url.getUInt() }}
-		//{{ url.getFloat() }}
-		//{{ url.getWord() }}
-		//{{ url.getAlnum() }}
-		//{{ url.getCmd() }}
-		//{{ url.getStringAndEncode() }}
-		//{{ url.getStringAndDecode() }}
-		//{{ url.Itemid() }}
-		//{{ url.set() }}
-		//{{ url.server() }}
+		//{{ url.link() }}	-	wizard ok
+		//{{ url.format() }}	-	wizard ok
+		//{{ url.base64() }}	-	wizard ok
+		//{{ url.root() }}	-	wizard ok
+		//{{ url.getInt() }}	-	wizard ok
+		//{{ url.getString() }}	-	wizard ok
+		//{{ url.getUInt() }}	-	wizard ok
+		//{{ url.getFloat() }}	-	wizard ok
+		//{{ url.getWord() }}	-	wizard ok
+		//{{ url.getAlnum() }}	-	wizard ok
+		//{{ url.getCmd() }}	-	wizard ok
+		//{{ url.getstringandencode() }}	-	wizard ok
+		//{{ url.getstringanddecode() }}	-	wizard ok
+		//{{ url.Itemid() }}	-	wizard ok
+		//{{ url.set() }}	-	wizard ok
+		//{{ url.server() }}	-	wizard ok
 		
 		$this->twig->addGlobal('html', new Twig_Html_Tags($this->ct) );
-		//{{ html.add() }}
-		//{{ html.batch() }}
-		//{{ html.button() }}
-		//{{ html.captcha() }}
-		//{{ html.format() }}
-		//{{ html.goback() }}
-		//{{ html.importcsv() }}
-		//{{ html.layout("InvoicesPage","price>100","name",20) }}
-		//{{ html.limit() }}
-		//{{ html.message() }}
-		//{{ html.navigation() }}
-		//{{ html.orderby() }}
-		//{{ html.pagination() }}
-		//{{ html.print() }}
-		//{{ html.recordcount }}
-		//{{ html.records("InvoicesPage","price>100","name",20) }}
-		//{{ html.search() }}
-		//{{ html.searchbutton() }}
+		//{{ html.add() }}	-	wizard ok
+		//{{ html.batch() }}	-	wizard ok
+		//{{ html.button() }}	-	wizard ok
+		//{{ html.captcha() }}	-	wizard ok
+		//{{ html.goback() }}	-	wizard ok
+		//{{ html.importcsv() }}	-	wizard ok
+		//{{ html.tablehead() }}	-	wizard ok
+		//{{ html.limit() }}	-	wizard ok
+		//{{ html.message() }}	-	wizard ok
+		//{{ html.navigation() }}	-	wizard ok
+		//{{ html.orderby() }}	-	wizard ok
+		//{{ html.pagination() }}	-	wizard ok
+		//{{ html.print() }}	-	wizard ok
+		//{{ html.recordcount }}	-	wizard ok
+		//{{ html.recordlist }}	-	wizard ok
+		//{{ html.records() }}	-	wizard ok
+		//{{ html.search() }}	-	wizard ok
+		//{{ html.searchbutton() }}	-	wizard ok
+		//{{ html.toolbar() }}	-	wizard ok
 
 		$this->twig->addGlobal('document', new Twig_Document_Tags($this->ct) );
-		//{{ document.setMetaKeywords() }}
-		//{{ document.setMetaDescription() }}
-		//{{ document.setPageTitle() }}
-		//{{ document.setHeadTag() }}
-		//{{ document.layout() }} ?????
-		//{{ document.sitename() }}
-		//{{ document.language_postfix() }}
+		//{{ document.setmetakeywords() }}	-	wizard ok
+		//{{ document.setmetadescription() }}	-	wizard ok
+		//{{ document.setpagetitle() }}	-	wizard ok
+		//{{ document.setheadtag() }}	-	wizard ok
+		//{{ document.layout() }}	-	wizard ok
+		//{{ document.sitename() }}	-	wizard ok
+		//{{ document.languagepostfix() }}	-	wizard ok
 		
 		$this->twig->addGlobal('record', new Twig_Record_Tags($this->ct) );
-		//{{ record.advancedjoin(function, tablename, field_findwhat, field_lookwhere, field_readvalue, additional_where, order_by_option, value_option_list) }}
-		//{{ record.count(join_table) }}
-		//{{ record.id }}
-		//{{ record.number }}
-		//{{ record.published }}
-		//{{ record.sum(join_table,value_field_name) }}
+		//{{ record.advancedjoin(function, tablename, field_findwhat, field_lookwhere, field_readvalue, additional_where, order_by_option, value_option_list) }}	-	wizard ok
 		//{{ record.tablejoin("InvoicesPage","_published=1","name") }}
-		//{{ record.valuejoin(join_table,value_field_name) }}
+		
+		//{{ record.joincount(join_table) }}
+		//{{ record.joinavg(join_table,value_field_name) }}
+		//{{ record.joinmin(join_table,value_field_name) }}
+		//{{ record.joinmax(join_table,value_field_name) }}
+		//{{ record.joinvalue(join_table,value_field_name) }}
+		
+		//{{ record.id }}	-	wizard ok
+		//{{ record.number }}	-	wizard ok
+		//{{ record.published }}	-	wizard ok
+		//{{ record.sum(join_table,value_field_name) }}
+		
 		
 		$this->twig->addGlobal('records', new Twig_Records_Tags($this->ct) );
-		//{{ records.count }}
-		//{{ records.list }}
-		//{{ records.list("InvoicesItems") }}
-		//{{ records.htmltable([['column_1_title','column_1_value'],['column_1_title','column_1_value']]) }}
-		
-		
+		//{{ records.count }}	-	wizard ok (use {{ table.records }} instead)
+		//{{ records.list("InvoicesItems") }}	-	wizard ok
+
 		$this->twig->addGlobal('text', new Twig_Text_Tags($this->ct) );
 		//{{ text.base64encode() }}
 		
 		$this->variables = [];
 		
-		//{{ table.id }}
-		//{{ table.name }}
-		//{{ table.title }}
-		//{{ table.description }}
-		//{{ table.records }} same as {{ records.count }}
-		//{{ table.fields }} same as {{ fields.count() }}
+		//{{ table.id }}	-	wizard ok
+		//{{ table.name }}	-	wizard ok
+		//{{ table.title }}	-	wizard ok
+		//{{ table.description }}	-	wizard ok
+		//{{ table.records }} same as {{ records.count }}	-	wizard ok
+		//{{ table.fields }} same as {{ fields.count() }}	-	wizard ok
 		if(isset($ct->Table))
 		{
 			$description = $ct->Table->tablerow['description'.$this->ct->Table->Languages->Postfix];
@@ -253,15 +262,21 @@ class fieldObject
 	
 	public function __call($name, $arguments)
     {
-		//if($name == 'title')
-			//return $this->title();
-		
-		if($name == 'edit')
+		if($this->field['fieldname'] == 'user')
 		{
-			return 'object:'.$name.':['.$arguments[0].']';
+			$user_parameters = ['name','username','email','id','lastvisitdate','registerdate','usergroups'];
+			if(in_array($name,$user_parameters))
+			{
+				$user = new Twig_User_Tags;
+				
+				$single_argument = 0;
+				if(count($arguments) > 0)
+					$single_argument = $arguments[0];
+				
+				return $user->{$name}($single_argument);
+			}
 		}
-		
-		//for jsl join fields
+
         return 'unknown';
     }
 	
@@ -277,8 +292,22 @@ class fieldObject
 	
 	public function value()
     {
+		$options = func_get_args();
 		$rfn = $this->field['realfieldname'];
-		return $this->ct->Table->record[$rfn];
+		
+		if($this->field['type'] == 'image')
+		{
+			$imagesrc='';
+            $imagetag='';
+
+            \CT_FieldTypeTag_image::getImageSRClayoutview($options,$this->ct->Table->record[$rfn],$this->field['typeparams'],$imagesrc,$imagetag);
+
+			$vlu=$imagesrc;
+			
+			return $vlu;
+		}
+		else
+			return $this->ct->Table->record[$rfn];
 	}
 	
 	public function t()

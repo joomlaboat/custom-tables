@@ -97,7 +97,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 		$this->ct->Ordering->parseOrderByParam($this->blockExternalVars,$this->params,$this->ct->Env->Itemid);
 
 		//Limit
-		$this->ct->applyLimits();
+		$this->ct->applyLimits($blockExternalVars);
 		
 		$this->ct->LayoutProc = new LayoutProcessor($this->ct);
 

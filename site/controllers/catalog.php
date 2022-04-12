@@ -333,6 +333,17 @@ function doTheTask(&$ct,$task,$menu_params,$edit_model,&$this_)
 		
 		return (object) array('link' => $link, 'msg' => null, 'status' => null);
 		
+	case 'setlimit':
+
+		$limit=$ct->Env->jinput->getInt('limit','');
+				
+		Factory::getApplication()->setUserState('com_customtables.limit_'.$ct->Env->Itemid,$limit);
+		
+		$link = JoomlaBasicMisc::deleteURLQueryOption($link, 'task');
+		$link = JoomlaBasicMisc::deleteURLQueryOption($link, 'limit');
+		
+		return (object) array('link' => $link, 'msg' => null, 'status' => null);
+		
 	case 'copycontent':
 	
 		$frmt=$ct->Env->jinput->getCmd('frmt','');

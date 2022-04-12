@@ -2,9 +2,9 @@
 /**
  * CustomTables Joomla! 3.x Native Component
  * @package Custom Tables
- * @author Ivan komlev <support@joomlaboat.com>
+ * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @copyright Copyright (C) 2018-2021. All Rights Reserved
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
@@ -34,7 +34,7 @@ class Twig_Record_Tags
 		$this->ct = $ct;
 	}
 	
-	function id()
+	function id()//wizard ok
 	{
 		if(!isset($this->ct->Table))
 		{
@@ -51,222 +51,7 @@ class Twig_Record_Tags
 		return $this->ct->Table->record['listing_id'];
 	}
 	
-	function published($type,$second_variable = null)
-	{
-		if(!isset($this->ct->Table))
-		{
-			Factory::getApplication()->enqueueMessage('{{ record.published }} - Table not loaded.', 'error');
-			return '';
-		}
-		
-		if(!isset($this->ct->Table->record))
-		{
-			Factory::getApplication()->enqueueMessage('{{ record.published }} - Record not loaded.', 'error');
-			return '';
-		}
-		
-		if($type == 'yesno')
-			$vlu = (int)$this->ct->Table->record['listing_published']==1 ? JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YES') : JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NO');
-		elseif($options[$i]=='bool' or $options[$i]=='boolean')
-			return (bool)(int)$this->ct->Table->record['listing_published'];
-		else
-		{
-			if($second_variable != null)
-				return $this->ct->Table->record['listing_published']==1 ? $type : $second_variable;
-			else
-				return (int)$this->ct->Table->record['listing_published'];
-		}
-	}
-	
-	function number()
-	{
-		if(!isset($this->ct->Table))
-		{
-			Factory::getApplication()->enqueueMessage('{{ record.number }} - Table not loaded.', 'error');
-			return '';
-		}
-		
-		if(!isset($this->ct->Table->record))
-		{
-			Factory::getApplication()->enqueueMessage('{{ record.number }} - Record not loaded.', 'error');
-			return '';
-		}
-		
-		if(!isset($this->ct->Table->record['_number']))
-		{
-			Factory::getApplication()->enqueueMessage('{{ record.number }} - Record number not set.', 'error');
-			return '';
-		}
-		
-		return (int)$this->ct->Table->record['_number'];
-	}
-
-	function count($join_table = '')
-	{
-		if($this->ct->Env->frmt == 'csv')
-			return '';	
-		
-		if($join_table == '')
-		{
-			Factory::getApplication()->enqueueMessage('{{ record.count("'.$join_table.'") }} - Table not specified.', 'error');
-			return '';
-		}
-			
-		if(!isset($this->ct->Table))
-		{
-			Factory::getApplication()->enqueueMessage('{{ record.count("'.$join_table.'") }} - Parent table not loaded.', 'error');
-			return '';
-		}
-		
-		$join_table_fields = Fields::getFields($join_table);
-			
-		if(count($join_table_fields) == 0)
-		{
-			Factory::getApplication()->enqueueMessage('{{ record.count("'.$join_table.'") }} - Table not found or it has no fields.', 'error');
-			return '';
-		}
-			
-		foreach($join_table_fields as $join_table_field)
-		{
-			if($join_table_field['type'] == 'sqljoin')
-			{
-				$typeparams=JoomlaBasicMisc::csv_explode(',',$join_table_field['typeparams'],'"',false);
-				$join_table_join_to_table = $typeparams[0];
-				if($join_table_join_to_table == $this->ct->Table->tablename)
-					return $this->advancedjoin('count', $join_table, '_id', $join_table_field['fieldname']);
-			}
-		}
-			
-		Factory::getApplication()->enqueueMessage('{{ record.count("'.$join_table.'") }} - Table found but the field that links to this table not found.', 'error');
-		return '';
-	}
-	
-	function sum($join_table = '', $value_field = '')
-	{
-		if($join_table == '')
-		{
-			Factory::getApplication()->enqueueMessage('{{ record.sum("'.$join_table.'",value_field_name) }} - Table not specified.', 'error');
-			return '';
-		}
-		
-		if($value_field == '')
-		{
-			Factory::getApplication()->enqueueMessage('{{ record.sum("'.$join_table.'",value_field_name) }} - Value field not specified.', 'error');
-			return '';
-		}
-			
-		if($this->ct->Env->frmt == 'csv')
-			return '';	
-			
-		if(!isset($this->ct->Table))
-		{
-			Factory::getApplication()->enqueueMessage('{{ record.sum() }} - Table not loaded.', 'error');
-			return '';
-		}
-		
-		$join_table_fields = Fields::getFields($join_table);
-			
-		if(count($join_table_fields) == 0)
-		{
-			Factory::getApplication()->enqueueMessage('{{ record.sum("'.$join_table.'",value_field_name) }} - Table "'.$join_table.'" not found or it has no fields.', 'error');
-			return '';
-		}
-			
-		$value_field_found = false;
-		foreach($join_table_fields as $join_table_field)
-		{
-			if($join_table_field['fieldname'] == $value_field)
-			{
-				$value_field_found = true;
-				break;
-			}
-		}
-
-		if(!$value_field_found)
-		{
-			Factory::getApplication()->enqueueMessage('{{ record.sum("'.$join_table.'","'.$value_field.'") }} - Value field "'.$value_field.'" not found.', 'error');
-			return '';
-		}
-
-		foreach($join_table_fields as $join_table_field)
-		{
-			if($join_table_field['type'] == 'sqljoin')
-			{
-				$typeparams=JoomlaBasicMisc::csv_explode(',',$join_table_field['typeparams'],'"',false);
-				$join_table_join_to_table = $typeparams[0];
-				if($join_table_join_to_table == $this->ct->Table->tablename)
-					return $this->advancedjoin('sum', $join_table, '_id', $join_table_field['fieldname'],$value_field);
-			}
-		}
-			
-		Factory::getApplication()->enqueueMessage('{{ record.count("'.$join_table.'") }} - Table found but the field that links to this table not found.', 'error');
-		return '';
-	}
-	
-	function valuejoin($join_table = '', $value_field = '')
-	{
-		
-		if($join_table == '')
-		{
-			Factory::getApplication()->enqueueMessage('{{ record.valuejoin("'.$join_table.'",value_field_name) }} - Table not specified.', 'error');
-			return '';
-		}
-		
-		if($value_field == '')
-		{
-			Factory::getApplication()->enqueueMessage('{{ record.valuejoin("'.$join_table.'",value_field_name) }} - Value field not specified.', 'error');
-			return '';
-		}
-			
-		if($this->ct->Env->frmt == 'csv')
-			return '';	
-			
-		if(!isset($this->ct->Table))
-		{
-			Factory::getApplication()->enqueueMessage('{{ record.valuejoin() }} - Table not loaded.', 'error');
-			return '';
-		}
-		
-		$join_table_fields = Fields::getFields($join_table);
-			
-		if(count($join_table_fields) == 0)
-		{
-			Factory::getApplication()->enqueueMessage('{{ record.valuejoin("'.$join_table.'") }} - Table "'.$join_table.'" not found or it has no fields.', 'error');
-			return '';
-		}
-			
-		$value_field_found = false;
-		foreach($join_table_fields as $join_table_field)
-		{
-			if($join_table_field['fieldname'] == $value_field)
-			{
-				$value_field_found = true;
-				break;
-			}
-		}
-
-		if(!$value_field_found)
-		{
-			Factory::getApplication()->enqueueMessage('{{ record.valuejoin("'.$join_table.'","'.$value_field.'") }} - Value field "'.$value_field.'" not found.', 'error');
-			return '';
-		}
-
-		foreach($join_table_fields as $join_table_field)
-		{
-			if($join_table_field['type'] == 'sqljoin')
-			{
-				$typeparams=JoomlaBasicMisc::csv_explode(',',$join_table_field['typeparams'],'"',false);
-				$join_table_join_to_table = $typeparams[0];
-				if($join_table_join_to_table == $this->ct->Table->tablename)
-					return $this->advancedjoin('value', $join_table, '_id', $join_table_field['fieldname'],$value_field);
-			}
-		}
-			
-		Factory::getApplication()->enqueueMessage('{{ record.valuejoin("'.$join_table.'") }} - Table found but the field that links to this table not found.', 'error');
-		return '';
-	}
-	
-	function link($add_returnto = false, $menu_item_alias='', $custom_not_base64_returnto = '')
+	function link($add_returnto = false, $menu_item_alias='', $custom_not_base64_returnto = '')//wizard ok
 	{
 		$menu_item_id=0;
         $viewlink='';
@@ -315,6 +100,316 @@ class Twig_Record_Tags
 		$viewlink=Route::_($viewlink);
 		return new \Twig\Markup($viewlink, 'UTF-8' ); //Twig replaces & with &amp;
     }
+	
+	function published($type,$second_variable = null)//wizard ok
+	{
+		if(!isset($this->ct->Table))
+		{
+			Factory::getApplication()->enqueueMessage('{{ record.published }} - Table not loaded.', 'error');
+			return '';
+		}
+		
+		if(!isset($this->ct->Table->record))
+		{
+			Factory::getApplication()->enqueueMessage('{{ record.published }} - Record not loaded.', 'error');
+			return '';
+		}
+		
+		if($type == 'yesno' or $type == '')
+			$vlu = (int)$this->ct->Table->record['listing_published']==1 ? JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YES') : JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NO');
+		elseif($type=='bool' or $type=='boolean')
+			return ((int)$this->ct->Table->record['listing_published'] ? 'true' : 'false');
+		elseif($type=='number')
+			return (int)$this->ct->Table->record['listing_published'];
+		else
+		{
+			if($second_variable != null)
+				return $this->ct->Table->record['listing_published']==1 ? $second_variable : '';
+			else
+				return (int)$this->ct->Table->record['listing_published'];
+		}
+	}
+	
+	function number()//wizard ok
+	{
+		if(!isset($this->ct->Table))
+		{
+			Factory::getApplication()->enqueueMessage('{{ record.number }} - Table not loaded.', 'error');
+			return '';
+		}
+		
+		if(!isset($this->ct->Table->record))
+		{
+			Factory::getApplication()->enqueueMessage('{{ record.number }} - Record not loaded.', 'error');
+			return '';
+		}
+		
+		if(!isset($this->ct->Table->record['_number']))
+		{
+			Factory::getApplication()->enqueueMessage('{{ record.number }} - Record number not set.', 'error');
+			return '';
+		}
+		
+		return (int)$this->ct->Table->record['_number'];
+	}
+
+	function joincount($join_table = '')//wizard ok
+	{
+		if($this->ct->Env->frmt == 'csv')
+			return '';	
+		
+		if($join_table == '')
+		{
+			Factory::getApplication()->enqueueMessage('{{ record.count("'.$join_table.'") }} - Table not specified.', 'error');
+			return '';
+		}
+			
+		if(!isset($this->ct->Table))
+		{
+			Factory::getApplication()->enqueueMessage('{{ record.count("'.$join_table.'") }} - Parent table not loaded.', 'error');
+			return '';
+		}
+		
+		$join_table_fields = Fields::getFields($join_table);
+			
+		if(count($join_table_fields) == 0)
+		{
+			Factory::getApplication()->enqueueMessage('{{ record.count("'.$join_table.'") }} - Table not found or it has no fields.', 'error');
+			return '';
+		}
+			
+		foreach($join_table_fields as $join_table_field)
+		{
+			if($join_table_field['type'] == 'sqljoin')
+			{
+				$typeparams=JoomlaBasicMisc::csv_explode(',',$join_table_field['typeparams'],'"',false);
+				$join_table_join_to_table = $typeparams[0];
+				if($join_table_join_to_table == $this->ct->Table->tablename)
+					return $this->advancedjoin('count', $join_table, '_id', $join_table_field['fieldname']);
+			}
+		}
+			
+		Factory::getApplication()->enqueueMessage('{{ record.count("'.$join_table.'") }} - Table found but the field that links to this table not found.', 'error');
+		return '';
+	}
+	
+	function joinavg($join_table = '', $value_field = '')//wizard ok
+	{
+		return $this->simple_join('avg', $join_table, $value_field, 'record.valuejoin');
+	}
+	
+	function joinmin($join_table = '', $value_field = '')//wizard ok
+	{
+		return $this->simple_join('min', $join_table, $value_field, 'record.valuejoin');
+	}
+	
+	function joinmax($join_table = '', $value_field = '')//wizard ok
+	{
+		return $this->simple_join('max', $join_table, $value_field, 'record.valuejoin');
+	}
+	
+	function joinsum($join_table = '', $value_field = '')//wizard ok
+	{
+		return $this->simple_join('sum', $join_table, $value_field, 'record.valuejoin');
+	}
+	
+	function joinvalue($join_table = '', $value_field = '')//wizard ok
+	{
+		return $this->simple_join('value', $join_table, $value_field, 'record.valuejoin');
+	}
+	
+	function tablejoin($layoutname = '', $filter = '', $orderby = '')//wizard ok
+	{
+		//Example {{ record.tablejoin("InvoicesPage","_published=1","name") }}
+		
+		if($layoutname == '')
+		{
+			Factory::getApplication()->enqueueMessage('{{ record.tablejoin("'.$layoutname.'","'.$filter.'","'.$orderby.'") }} - Layout name not specified.', 'error');
+			return '';
+		}
+		
+		$layouts = new Layouts($this->ct);
+		
+		$pagelayout = $layouts->getLayout($layoutname,false);//It is safier to process layout after rendering the table
+		if($layouts->tableid == null)
+		{
+			Factory::getApplication()->enqueueMessage('{{ record.tablejoin("'.$layoutname.'","'.$filter.'","'.$orderby.'") }} - Layout "'.$layoutname.' not found.', 'error');
+			return '';
+		}
+		
+		$join_table_fields = Fields::getFields($layouts->tableid);
+		
+		$complete_filter = $filter;
+		
+		foreach($join_table_fields as $join_table_field)
+		{
+			if($join_table_field['type'] == 'sqljoin')
+			{
+				$typeparams=JoomlaBasicMisc::csv_explode(',',$join_table_field['typeparams'],'"',false);
+				$join_table_join_to_table = $typeparams[0];
+				if($join_table_join_to_table == $this->ct->Table->tablename)
+				{
+					$complete_filter = $join_table_field['fieldname'].'='.$this->ct->Table->record[$this->ct->Table->realidfieldname];
+					if($filter != '')
+						$complete_filter .= ' and ' . $filter;
+					break;
+				}
+			}
+		}
+		
+		$join_ct = new CT;
+		$tables = new Tables($join_ct);
+		
+		if($tables->loadRecords($layouts->tableid, $complete_filter, $orderby))
+		{
+			$twig = new TwigProcessor($join_ct, '{% autoescape false %}'.$pagelayout.'{% endautoescape %}');
+			$vlu = $twig->process();
+
+			//return $vlu;
+			return new \Twig\Markup($vlu, 'UTF-8' );
+		}
+		
+		Factory::getApplication()->enqueueMessage('{{ record.tablejoin("'.$layoutname.'","'.$filter.'","'.$orderby.'") }} - LCould not load records.', 'error');
+		return '';
+	}
+
+	function advancedjoin($sj_function, $sj_tablename, $field1_findwhat, $field2_lookwhere, $field3_readvalue = '_id', $additional_where = '' ,
+		$order_by_option = '', $value_option_list = [])//wizard ok
+	{
+		if($sj_tablename=='')	return '';
+
+		$tablerow = ESTables::getTableRowByNameAssoc($sj_tablename);
+		if(!is_array($tablerow)) return '';
+
+		//field1_findwhat
+		$field_details = $this->join_getRealFieldName($field1_findwhat, $this->ct->Table->tablerow['id']);
+		if($field_details == null) return '';
+		$field1_findwhat_realname = $field_details[0];
+		
+		$field_details = $this->join_getRealFieldName($field2_lookwhere, $tablerow['id']);
+		if($field_details == null)	return '';
+		$field2_lookwhere_realname = $field_details[0];
+		$field2_type = $field_details[1];
+		
+		$field_details = $this->join_getRealFieldName($field3_readvalue, $tablerow['id']);
+		if($field_details == null)	return '';
+		$field3_readvalue_realname = $field_details[0];
+		
+		$sj_tablename = $tablerow['tablename'];
+		$additional_where = $this->join_processWhere($additional_where, $sj_tablename);
+
+		if($order_by_option!='')
+		{
+			$field_details = $this->join_getRealFieldName($order_by_option, $tablerow['id']);
+			$order_by_option_realname = $field_details[0] ?? '';
+		}
+		else
+			$order_by_option_realname = '';
+
+		$query = $this->join_buildQuery($sj_function, $tablerow, $field1_findwhat_realname, $field2_lookwhere_realname, 
+				$field2_type, $field3_readvalue_realname, $additional_where, $order_by_option_realname);
+		
+		$db = Factory::getDBO();
+		
+		$db->setQuery($query);
+
+		$rows=$db->loadAssocList();
+
+		if(count($rows)==0)
+		{
+			$vlu='';
+		}
+		else
+		{
+			$row=$rows[0];
+
+			if($sj_function=='smart')
+			{
+				$getGalleryRows=array();
+				$getFileBoxRows=array();
+				$vlu=$row['vlu'];
+
+				$temp_ctfields = Fields::getFields($tablerow['id']);
+
+				foreach($temp_ctfields as $ESField)
+				{
+					if($ESField['fieldname']==$field3_readvalue)
+					{
+						$ESField['realfieldname'] = 'vlu';
+						
+						$valueProcessor = new Value($this->ct);
+						$vlu = $valueProcessor->renderValue($ESField,$row,$value_option_list);
+						
+						break;
+					}
+				}
+			}
+			else
+				$vlu = $row['vlu'];
+		}
+		return $vlu;
+	}
+	
+	/* --------------------------- PROTECTED FUNCTIONS ------------------- */
+	
+	protected function simple_join($function, $join_table, $value_field, $tag)
+	{
+		if($join_table == '')
+		{
+			Factory::getApplication()->enqueueMessage('{{ '.$tag.'("'.$join_table.'",value_field_name) }} - Table not specified.', 'error');
+			return '';
+		}
+		
+		if($value_field == '')
+		{
+			Factory::getApplication()->enqueueMessage('{{ '.$tag.'("'.$join_table.'",value_field_name) }} - Value field not specified.', 'error');
+			return '';
+		}
+			
+		if(!isset($this->ct->Table))
+		{
+			Factory::getApplication()->enqueueMessage('{{ '.$tag.'() }} - Table not loaded.', 'error');
+			return '';
+		}
+		
+		$join_table_fields = Fields::getFields($join_table);
+			
+		if(count($join_table_fields) == 0)
+		{
+			Factory::getApplication()->enqueueMessage('{{ '.$tag.'("'.$join_table.'",value_field_name) }} - Table "'.$join_table.'" not found or it has no fields.', 'error');
+			return '';
+		}
+			
+		$value_field_found = false;
+		foreach($join_table_fields as $join_table_field)
+		{
+			if($join_table_field['fieldname'] == $value_field)
+			{
+				$value_field_found = true;
+				break;
+			}
+		}
+
+		if(!$value_field_found)
+		{
+			Factory::getApplication()->enqueueMessage('{{ '.$tag.'("'.$join_table.'","'.$value_field.'") }} - Value field "'.$value_field.'" not found.', 'error');
+			return '';
+		}
+		
+		foreach($join_table_fields as $join_table_field)
+		{
+			if($join_table_field['type'] == 'sqljoin')
+			{
+				$typeparams=JoomlaBasicMisc::csv_explode(',',$join_table_field['typeparams'],'"',false);
+				$join_table_join_to_table = $typeparams[0];
+				if($join_table_join_to_table == $this->ct->Table->tablename)
+					return $this->advancedjoin('value', $join_table, '_id', $join_table_field['fieldname'],$value_field);
+			}
+		}
+			
+		Factory::getApplication()->enqueueMessage('{{ '.$tag.'("'.$join_table.'") }} - Table found but the field that links to this table not found.', 'error');
+		return '';
+	}
 	
 	protected function join_getRealFieldName($fieldname,$tableid)
 	{
@@ -437,7 +532,7 @@ class Twig_Record_Tags
 		return $query;
 	}
 	
-	function join_ApplyQueryGetValue($str,$sj_tablename)
+	protected function join_ApplyQueryGetValue($str,$sj_tablename)
 	{
 		$list=explode('$get_',$str);
 		if(count($list)==2)
@@ -480,135 +575,4 @@ class Twig_Record_Tags
 		return '#__customtables_table_'.$sj_tablename.'.es_'.$str;
 	}
 	
-	function tablejoin($layoutname = '', $filter = '', $orderby = '')
-	{
-		//Example {{ record.tablejoin("InvoicesPage","_published=1","name") }}
-		
-		if($layoutname == '')
-		{
-			Factory::getApplication()->enqueueMessage('{{ record.tablejoin("'.$layoutname.'","'.$filter.'","'.$orderby.'") }} - Layout name not specified.', 'error');
-			return '';
-		}
-		
-		$layouts = new Layouts($this->ct);
-		
-		$pagelayout = $layouts->getLayout($layoutname,false);//It is safier to process layout after rendering the table
-		if($layouts->tableid == null)
-		{
-			Factory::getApplication()->enqueueMessage('{{ record.tablejoin("'.$layoutname.'","'.$filter.'","'.$orderby.'") }} - Layout "'.$layoutname.' not found.', 'error');
-			return '';
-		}
-		
-		$join_table_fields = Fields::getFields($layouts->tableid);
-		
-		$complete_filter = $filter;
-		
-		foreach($join_table_fields as $join_table_field)
-		{
-			if($join_table_field['type'] == 'sqljoin')
-			{
-				$typeparams=JoomlaBasicMisc::csv_explode(',',$join_table_field['typeparams'],'"',false);
-				$join_table_join_to_table = $typeparams[0];
-				if($join_table_join_to_table == $this->ct->Table->tablename)
-				{
-					$complete_filter = $join_table_field['fieldname'].'='.$this->ct->Table->record[$this->ct->Table->realidfieldname];
-					if($filter != '')
-						$complete_filter .= ' and ' . $filter;
-					break;
-				}
-			}
-		}
-		
-		$join_ct = new CT;
-		$tables = new Tables($join_ct);
-		
-		if($tables->loadRecords($layouts->tableid, $complete_filter, $orderby))
-		{
-			$twig = new TwigProcessor($join_ct, '{% autoescape false %}'.$pagelayout.'{% endautoescape %}');
-			$vlu = $twig->process();
-
-			//return $vlu;
-			return new \Twig\Markup($vlu, 'UTF-8' );
-		}
-		
-		Factory::getApplication()->enqueueMessage('{{ record.tablejoin("'.$layoutname.'","'.$filter.'","'.$orderby.'") }} - LCould not load records.', 'error');
-		return '';
-	}
-	
-
-	function advancedjoin($sj_function, $sj_tablename, $field1_findwhat, $field2_lookwhere, $field3_readvalue = '_id', $additional_where = '' , $order_by_option = '', $value_option_list = [])
-	{
-		if($sj_tablename=='')	return '';
-
-		$tablerow = ESTables::getTableRowByNameAssoc($sj_tablename);
-		if(!is_array($tablerow)) return '';
-
-		//field1_findwhat
-		$field_details = $this->join_getRealFieldName($field1_findwhat, $this->ct->Table->tablerow['id']);
-		if($field_details == null) return '';
-		$field1_findwhat_realname = $field_details[0];
-		
-		$field_details = $this->join_getRealFieldName($field2_lookwhere, $tablerow['id']);
-		if($field_details == null)	return '';
-		$field2_lookwhere_realname = $field_details[0];
-		$field2_type = $field_details[1];
-		
-		$field_details = $this->join_getRealFieldName($field3_readvalue, $tablerow['id']);
-		if($field_details == null)	return '';
-		$field3_readvalue_realname = $field_details[0];
-		
-		$sj_tablename = $tablerow['tablename'];
-		$additional_where = $this->join_processWhere($additional_where, $sj_tablename);
-
-		if($order_by_option!='')
-		{
-			$field_details = $this->join_getRealFieldName($order_by_option, $tablerow['id']);
-			$order_by_option_realname = $field_details[0] ?? '';
-		}
-		else
-			$order_by_option_realname = '';
-
-		$query = $this->join_buildQuery($sj_function, $tablerow, $field1_findwhat_realname, $field2_lookwhere_realname, 
-				$field2_type, $field3_readvalue_realname, $additional_where, $order_by_option_realname);
-		
-		$db = Factory::getDBO();
-		
-		$db->setQuery($query);
-
-		$rows=$db->loadAssocList();
-
-		if(count($rows)==0)
-		{
-			$vlu='';
-		}
-		else
-		{
-			$row=$rows[0];
-
-			if($sj_function=='smart')
-			{
-				$getGalleryRows=array();
-				$getFileBoxRows=array();
-				$vlu=$row['vlu'];
-
-				$temp_ctfields = Fields::getFields($tablerow['id']);
-
-				foreach($temp_ctfields as $ESField)
-				{
-					if($ESField['fieldname']==$field3_readvalue)
-					{
-						$ESField['realfieldname'] = 'vlu';
-						
-						$valueProcessor = new Value($this->ct);
-						$vlu = $valueProcessor->renderValue($ESField,$row,$value_option_list);
-						
-						break;
-					}
-				}
-			}
-			else
-				$vlu = $row['vlu'];
-		}
-		return $vlu;
-	}
 }

@@ -34,48 +34,22 @@ class Twig_Records_Tags
 		$this->ct = $ct;
 	}
 	
-	function count()
+	function count()//wizard ok
 	{
 		//{{ records.count }}
 		
 		if(!isset($this->ct->Table))
 		{
-			Factory::getApplication()->enqueueMessage('{{ record.count }} - Table not loaded.', 'error');
+			Factory::getApplication()->enqueueMessage('{{ records.count }} - Table not loaded.', 'error');
 			return '';
 		}
 		
-		return $ct->Table->recordcount;
+		return $this->ct->Table->recordcount;
 	}
 		
-	protected function id_list()
-	{
-		if($this->ct->Env->frmt == 'csv')
-			return '';	
-			
-		if(!isset($this->ct->Table))
-		{
-			Factory::getApplication()->enqueueMessage('{{ record.list }} - Table not loaded.', 'error');
-			return '';
-		}
-		
-		if(!isset($this->ct->Records))
-		{
-			Factory::getApplication()->enqueueMessage('{{ record.list }} - Records not loaded.', 'error');
-			return '';
-		}
-		
-		if($this->ct->Table->recordlist == null)
-			$this->ct->getRecordList();
-		
-		return implode(',',$this->ct->Table->recordlist);
-	}
-	
-	function list($layoutname = '')
+	function list($layoutname = '')//wizard ok
 	{
 		//Example {{ records.list("InvoicesPage") }}
-		
-		if($layoutname == '')
-			return $this->id_list();
 		
 		$layouts = new Layouts($this->ct);
 		
