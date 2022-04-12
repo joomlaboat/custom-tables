@@ -907,53 +907,35 @@ function findTagObjectByName(tagstartchar,tagendchar,lookfor_tag){
 
 function do_render_current_TagSets()
 {
+	if(type_obj === null)
+		return;
+	
     layouttypeid=type_obj.value;
 
-    var result_li='';
-    var result_div='';
-    var index=0;
-    for(var i=0;i<tagsets.length;i++)
+    let index=0;
+	let tabs = [];
+	
+    for(let i=0;i<tagsets.length;i++)
     {
-        var tagset=tagsets[i];
-        var a=tagset["@attributes"];
+        let tagset=tagsets[i];
+        let a=tagset["@attributes"];
 
-        var c="";
-        if(i==0)
-            c="active";
-
-		if (typeof(a.proversion) === "undefined" || a.proversion==="0")
-		{
-			result_li+='<li class="'+c+'"><a href="#layouteditor_tags'+index+'_'+i+'" onclick="resizeModalBox()" data-toggle="tab">'+a.label+'</a></li>';
-            result_div+='<div id="layouteditor_tags'+index+'_'+i+'" class="tab-pane '+c+' FieldTagWizard"><p>'+a.description+'</p>'+renderTags(index,tagset)+'</div>';
-		}
-		else
-		{
-			if (proversion)
-			{
-				result_li+='<li class="'+c+'"><a href="#layouteditor_tags'+index+'_'+i+'" onclick="resizeModalBox()" data-toggle="tab">'+a.label+'</a></li>';
-				result_div+='<div id="layouteditor_tags'+index+'_'+i+'" class="tab-pane '+c+' FieldTagWizard"><p>'+a.description+'</p>'+renderTags(index,tagset)+'</div>';
-			}
-			else
-			{
-				result_li+='<li class="'+c+'"><a href="#layouteditor_tags'+index+'_'+i+'" onclick="resizeModalBox()" data-toggle="tab">'+a.label+'</a></li>';
-				result_div+='<div id="layouteditor_tags'+index+'_'+i+'" class="tab-pane '+c+' FieldTagWizard"><p>'+a.description+'</p>'+renderTags(index,tagset)+'</div>';
-			}
-        }
+		tabs.push({'id':'layouteditor_tags'+index+'_'+i+'','title':a.label,
+			'content':'<p>'+a.description+'</p>'+renderTags(index,tagset)
+		});
     }
 
-    var result='<ul class="nav nav-tabs" >'+result_li+'</ul>';
-
-    result+='<div class="tab-content" id="layouteditor_tagsContent'+index+'">'+result_div+'</div>';
-
-    return result;
-
+	if(tabs.length >0)
+		return renderTabs('layouteditor_fields', tabs);
+	else
+		return '<div class="FieldTagWizard"><p>No Tags available for this Layout Type</p></div>';
 }
 
 function renderTags(index,tagset)
 {
     var tags=getParamOptions(tagset,'tag');
 
-    var result='<div class="dynamic_values">';
+    var result='<div class="dynamic_values" style="padding-left:0px !important;">';
     for(var i=0;i<tags.length;i++)
     {
         var tag_object=tags[i];
@@ -974,25 +956,26 @@ function renderTags(index,tagset)
 
 		if(parseInt(tag.depricated) != 1)
 		{
-			result+='<div style="vertical-align:top;">';
+			result+='<div style="vertical-align:top; style="display:inline-block;"">';
 		
 			if (typeof(tag.proversion) === "undefined" || parseInt(tag.proversion) != 1)
-			{
-				result+='<div style="display:inline-block;"><a href=\'javascript:addTag("{{ "," }}","'+btoa(full_tagname)+'",'+params.length+');\' class="btn btn-primary">'+t+'</a></div> ';
+			{//<div>/div>
+				result+='<a href=\'javascript:addTag("{{ "," }}","'+btoa(full_tagname)+'",'+params.length+');\' class="btn-primary">'+t+'</a> ';
 			}
 			else
 			{
 				if (proversion)
-				{
-					result+='<div style="display:inline-block;"><a href=\'javascript:addTag("{{ "," }}","'+btoa(full_tagname)+'",'+params.length+');\' class="btn btn-primary">'+t+'</a></div> ';
+				{//<div style="display:inline-block;"></div>
+					result+='<a href=\'javascript:addTag("{{ "," }}","'+btoa(full_tagname)+'",'+params.length+');\' class="btn-primary">'+t+'</a> ';
 				}
 				else
 				{
-					result+='<div style="display:inline-block;"><div class="btn">'+t+'</div></div> ';
+					result+='<div style="display:inline-block;"><div class="btn-default">'+t+'</div></div> ';
 					result+='<div class="ct_doc_pro_label"><a href="https://joomlaboat.com/custom-tables#buy-extension" target="_blank">Available in PRO Version</a></div>';
 				}
 			}
-			result+='<div style="display:inline-block;">'+tag.description+'</div>';
+			//result+='<span>'+tag.description+'</span>';
+			result+=tag.description;
 			result+='</div>';
 		}
 			

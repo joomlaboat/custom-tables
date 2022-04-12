@@ -134,7 +134,7 @@ function renderTabs(tabset_id, tabs){
 			if(i==0)
 				cssclass="active";
 				
-			result_div += '<joomla-tab-element' + (i==0 ? ' active' : '') +' id="' + tab.id + '" name="'+tab.title+'">'+tab.content+'</joomla-tab-element>';
+			result_div += '<joomla-tab-element' + (i==0 ? ' active' : '') +' style="height:fit-content;overflow-y: auto;overflow-x: none;" id="' + tab.id + '" name="'+tab.title+'">'+tab.content+'</joomla-tab-element>';
 		}
 		
 		let result_div_li='<div role="tablist">'+result_li+'</div>';
@@ -234,7 +234,7 @@ function renderFieldsBox()
 		replaceOldFieldTitleTagsWithTwigStyle();
 	}
 
-	var result='';
+	//var result='';
 	
 
 	var a=[1,3,4,6,7,8,9,10];//Layout Types that may have Field Values.
@@ -258,11 +258,11 @@ function renderFieldsBox()
 
 	if(a.indexOf(current_layout_type)!==-1)
 	{
-		tabs.push({'id':'layouteditor_fields_purevalue','title':'Field Pure Values',
+		tabs.push({'id':'layouteditor_fields_purevalue','title':'Pure Values',
 			'content':'<p>Dynamic Field Tags that returns pure Field Values (as it stored in database):</p>' + renderFieldTags('{{ ','.value',' }}',['string','md5','changetime','creationtime','lastviewtime','viewcount','id','phponadd','phponchange','phponview','server','multilangstring','text','multilangtext','int','float','email','date','filelink','creationtime','dummy'],'')
 		});
 		
-		tabs.push({'id':'layouteditor_fields_ajaxedit','title':'Input Edit (Update on change)',
+		tabs.push({'id':'layouteditor_fields_ajaxedit','title':'Edit',
 			'content':'<p>Renders input/select box for selected field. It works in all types of layout except Edit Form:</p>' + renderFieldTags('{{ ','.edit',' }}',fieldtypes_to_skip,'')
 		});
 	}
@@ -353,9 +353,7 @@ function renderFieldTags(startchar,postfix,endchar,fieldtypes_to_skip,param_grou
 			else
 				result+='<a href=\'javascript:addFieldTag("'+startchar+'","'+postfix+'","'+endchar+'","'+btoa(field.fieldname)+'",'+p+');\' class="btn-primary" alt="'+alt+'" title="'+alt+'">'+button_value+'</a>';
 			
-			
 		    result+='</div>';
-	                //result+='<div style="display:inline-block;">'+tag.description+'</div>';
 	        result+='</div>';
 		}
 

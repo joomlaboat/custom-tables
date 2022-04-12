@@ -97,15 +97,20 @@ $edit = "index.php?option=com_customtables&view=listoflayouts&task=layouts.edit"
 			?>
 		</td>
 		
-	<td scope="row">
+		<td scope="row">
 			<?php
 
-			if($item->modified!='0000-00-00 00:00:00')
-			{
-				$d=strtotime($item->modified);
-				$mysqldate = date( 'Y-m-d H:i:s', $d);
-				echo $mysqldate;
-			}
+				$engine = (object)$this->isTwig($item);
+
+				$engines = [];
+				if($engine->twig > 0)
+					$engines[] = '<span style="border-radius:10px;padding:7px;background:#5b8127;color:white">Twig ('.$engine->twig.')</span>';
+				
+				if($engine->original > 0)
+					$engines[] = '<span style="border-radius:10px;padding:7px;background:#373737;color:white">Original ('.$engine->original.')</span>';
+				
+				echo implode(' ',$engines);
+			
 			?>
 		</td>
 		
