@@ -71,6 +71,10 @@ class Inputbox
 			//if the attributes already containe "onchange" parameter then add onchange value to the attributes parameter
 			$this->attributes = str_replace('onchange="','onchange="'.$this->onchange,$this->attributes);
 		}
+		elseif($this->attributes != '')
+			$this->attributes .= ' onchange="'.$onchange.'"';
+		else
+			$this->attributes = 'onchange="'.$onchange.'"';
 
 		$this->esfield = $esfield;
 		
@@ -1207,6 +1211,11 @@ class Inputbox
 	{
 		$result = '';
 		$fname=$this->prefix.$this->esfield['fieldname'];
+		
+		//if(strpos($this->attributes,'onchange="')!==false)
+			//$attributes = str_replace('onchange="','onchange="'.$this->onchange,$this->attributes);// onchange event already exists add one before
+		//else
+			//$attributes = $this->attributes.' onchange="'.$onchange;
 
 		if(in_array('rich',$type_params))
 		{

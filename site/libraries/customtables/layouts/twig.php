@@ -412,12 +412,8 @@ class fieldObject
 			$onchange='ct_UpdateSingleValue(\''.$this->ct->Env->WebsiteRoot.'\','.$this->ct->Env->Itemid.',\''
 				.$this->field['fieldname'].'\','.$this->ct->Table->record['listing_id'].',\''.$postfix.'\');';
 
-            //$attributes='onchange="'.$onchange.'"'.$style;
-
 			if(isset($value_option_list[1]))
-				$args[1] .= $value_option_list[1];//' '.$attributes;
-			//else
-				//$args[1] = $attributes;
+				$args[1] .= $value_option_list[1];
 
 			$Inputbox = new Inputbox($this->ct, $this->field, $args, true, $onchange);
 			
