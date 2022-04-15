@@ -24,26 +24,29 @@ use Joomla\CMS\Language\Text;
     	
 	<?php if($this->version >= 4):
 	
-			echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'fieldtypes', 'recall' => true, 'breakpoint' => 768]); ?>
+		echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'fieldtypes', 'recall' => true, 'breakpoint' => 768]); ?>
 
-			<?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'fieldtypes', Text::_('COM_CUSTOMTABLES_TABLEFIELDTYPES')); ?>
+		<?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'fieldtypes', Text::_('COM_CUSTOMTABLES_TABLEFIELDTYPES')); ?>
+			<?php if($this->internal_use): ?>
 			<h3><?php echo JText::_('COM_CUSTOMTABLES_TABLEFIELDTYPES'); ?></h3>
+			<?php endif; ?>
+			
 			<?php echo JText::_('COM_CUSTOMTABLES_TABLEFIELDTYPES_DESC'); ?>
-			
 			<?php echo $this->getFieldTypes(); ?>
-			<?php echo HTMLHelper::_('uitab.endTab'); ?>
+		<?php echo HTMLHelper::_('uitab.endTab'); ?>
 			
-			<?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'layouttags', Text::_('COM_CUSTOMTABLES_LAYOUTTAGS')); ?>
-			<h3><?php echo JText::_('COM_CUSTOMTABLES_LAYOUTTAGS'); ?></h3>
+		<?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'layouttags', Text::_('COM_CUSTOMTABLES_LAYOUTTAGS')); ?>
+			<?php if($this->internal_use): ?>
+			<h3><?php echo JText::_('COM_CUSTOMTABLES_LAYOUTTAGS'); ?></h3><br/>
+			<?php endif; ?>
 			<?php echo $this->getLayoutTags(); ?>
-			<?php echo HTMLHelper::_('uitab.endTab'); ?>
+		<?php echo HTMLHelper::_('uitab.endTab'); ?>
 			
-			<?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'more_about', Text::_('COM_CUSTOMTABLES_MOREABOUT')); ?>
-			
+		<?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'more_about', Text::_('COM_CUSTOMTABLES_MOREABOUT')); ?>
 			<a href="https://joomlaboat.com/custom-tables" target="_blank" style="color:#51A351;"><?php echo JText::_('COM_CUSTOMTABLES_MOREABOUT'); ?></a>
-			<?php echo HTMLHelper::_('uitab.endTab'); ?>
+		<?php echo HTMLHelper::_('uitab.endTab'); ?>
 			
-	<?php echo HTMLHelper::_('uitab.endTabSet'); 
+		<?php echo HTMLHelper::_('uitab.endTabSet'); 
 	else: ?>
 	
 	<ul class="nav nav-tabs">
@@ -54,13 +57,21 @@ use Joomla\CMS\Language\Text;
                 
     <div class="tab-content">
 		<div class="tab-pane active" id="fieldtypes">
+		
+		<?php if($this->internal_use): ?>
 		<h3><?php echo JText::_('COM_CUSTOMTABLES_TABLEFIELDTYPES'); ?></h3>
+		<?php endif; ?>
+		
 		<?php echo JText::_('COM_CUSTOMTABLES_TABLEFIELDTYPES_DESC'); ?>
+		
 		<?php echo $this->getFieldTypes(); ?></div>
 		
 		
 		<div class="tab-pane" id="layouttags">
+		<?php if($this->internal_use): ?>
 		<h3><?php echo JText::_('COM_CUSTOMTABLES_LAYOUTTAGS'); ?></h3>
+		<?php endif; ?>
+			
 		<?php echo $this->getLayoutTags(); ?></div>
 	</div>
 	

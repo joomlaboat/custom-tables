@@ -567,7 +567,6 @@ class CustomTablesModelEditItem extends JModelLegacy
 		return '';
 	}
 
-	
 	function UserIDField_BuildWheres($useridfield)
 	{
 		$wheres=array();

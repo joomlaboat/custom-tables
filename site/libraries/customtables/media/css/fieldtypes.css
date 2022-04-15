@@ -37,10 +37,7 @@ width:98%;
 }
 
 .ct_readmoreOpen{
-    
-
-  
--webkit-animation: ct_readmoreOpen_ani 0.5s ease-in;
+	-webkit-animation: ct_readmoreOpen_ani 0.3s ease-in;
 }
 @-webkit-keyframes ct_readmoreOpen_ani {
  
@@ -76,9 +73,11 @@ width:98%;
     -webkit-animation: ct_readmoreClose_ani 0.3s linear;
 }
 
+/*
 #layouttags h3{
 	margin-top:40px;
 }
+*/
 
 @-webkit-keyframes ct_readmoreClose_ani {
  
@@ -104,6 +103,8 @@ width:98%;
 .ct_doc_param_options{
     color: darkgreen;
     font-style: italic;
+	margin-top:10px;
+	margin-bottom:20px;
 }
 
 .ct_doc_pre{
