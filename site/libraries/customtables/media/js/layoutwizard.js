@@ -551,80 +551,74 @@ function addFieldTag(tagstartchar,postfix,tagendchar,tag,param_count)
 		cm.focus();
 	}
 }
-			function FillLayout()
-			{
-				var editor = codemirror_editors[codemirror_active_index];
-				var t = parseInt(document.getElementById("jform_layouttype").value);
-				if(isNaN(t) || t===0){
-					alert("Type not selected.");
-					return;
-				}
+			
+function FillLayout()
+{
+	let editor = codemirror_editors[codemirror_active_index];
+	let t = parseInt(document.getElementById("jform_layouttype").value);
+	if(isNaN(t) || t===0){
+		alert("Type not selected.");
+		return;
+	}
 
-				var tableid = parseInt(document.getElementById("jform_tableid").value);
-				if(isNaN(tableid) || tableid===0){
-					alert("Table not selected.");
-					return;
-				}
+	let tableid = parseInt(document.getElementById("jform_tableid").value);
+	if(isNaN(tableid) || tableid===0){
+		alert("Table not selected.");
+		return;
+	}
 
-				var layout_obj = document.getElementById(codemirror_active_areatext_id);
-				layout_obj.value=editor.getValue();
+	let layout_obj = document.getElementById(codemirror_active_areatext_id);
+	layout_obj.value=editor.getValue();
 
-				var v=layout_obj.value;
-				if(v!=='')
-				{
-					alert("Layout Content is not empty, delete it first.");
-					return;
-				}
+	let v=layout_obj.value;
+	if(v!==''){
+		alert("Layout Content is not empty, delete it first.");
+		return;
+	}
 
-				switch(t)
-				{
-					case 1:
-						layout_obj.value=getLayout_SimpleCatalog();
-					break;
+	switch(t){
+		case 1:
+			layout_obj.value=getLayout_SimpleCatalog();
+		break;
 
-					case 2:
-						layout_obj.value=getLayout_Edit();
-					break;
+		case 2:
+			layout_obj.value=getLayout_Edit();
+		break;
 
-					case 3:
-						layout_obj.value=getLayout_Record();
-					break;
+		case 3:
+			layout_obj.value=getLayout_Record();
+		break;
 
-					case 4:
-						layout_obj.value=getLayout_Details();
-					break;
+		case 4:
+			layout_obj.value=getLayout_Details();
+		break;
 
-					case 5:
-						layout_obj.value=getLayout_Page();
-					break;
+		case 5:
+			layout_obj.value=getLayout_Page();
+		break;
 
-					case 6:
-						layout_obj.value=getLayout_Item();
-					break;
+		case 6:
+			layout_obj.value=getLayout_Item();
+		break;
 
-					case 7:
-						layout_obj.value=getLayout_Email();
-					break;
+		case 7:
+			layout_obj.value=getLayout_Email();
+		break;
 
-					case 8:
-						layout_obj.value=getLayout_XML();
-					break;
+		case 8:
+			layout_obj.value=getLayout_XML();
+		break;
 
-					case 9:
-						layout_obj.value=getLayout_CSV();
-					break;
+		case 9:
+			layout_obj.value=getLayout_CSV();
+		break;
 
-					case 10:
-						layout_obj.value=getLayout_JSON();
-					break;
-
-
-				}
-
-				//'<!-- Automatacally created layout -->\r\n'+
-				editor.getDoc().setValue(layout_obj.value);
-
-			}
+		case 10:
+			layout_obj.value=getLayout_JSON();
+		break;
+	}
+	editor.getDoc().setValue(layout_obj.value);
+}
 
 
 function getLayout_Page(){

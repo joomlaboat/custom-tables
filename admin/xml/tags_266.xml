@@ -121,10 +121,10 @@
 		<tag name="pagination" label="Pagination Bar" startchar="{" endchar="}"
              description="renders HTML Pagination Bar." twigclass="html" />
 			 
-		<tag name="orderby" label="Order By (Sort By) box" startchar="{" endchar="}"
+		<tag name="orderby" label="Order By (Sort By) box" startchar="{" endchar="}" proversion="1"
              description="renders HTML Order By select box." twigclass="html" />
 			 
-		<tag name="limit" label="Limit records per page" startchar="{" endchar="}"
+		<tag name="limit" label="Limit records per page" startchar="{" endchar="}" proversion="1"
              description="renders HTML Limit box to limit the number of records per page." twigclass="html" />
 			 
 		<tag name="button" label="Button" startchar="{" endchar="}" added="2019-05-28" hidedefaultexample="1"
@@ -373,10 +373,10 @@
 		<tag name="description" label="Description" startchar="{" endchar="}"
             description="Returns current table description." hidedefaultexample="1" twigclass="table" />
 			
-		<tag name="name" label="Table Name" startchar="{" endchar="}"
+		<tag name="name" label="Table Name" startchar="{" endchar="}" proversion="1"
             description="Returns the current table name." hidedefaultexample="1" twigclass="table" />
 			
-		<tag name="id" label="Table ID" startchar="{" endchar="}"
+		<tag name="id" label="Table ID" startchar="{" endchar="}" proversion="1"
             description="Returns current table ID." hidedefaultexample="1" twigclass="table" />
 			
 		<tag name="fields" label="Fields" startchar="{" endchar="}"
@@ -442,7 +442,7 @@
 		<tag name="count" label="Field Count (number)" startchar="{" endchar="}"
             description="Return the number of fields in the table" twigclass="fields" />
 			
-		<tag name="list" label="List of field parameters" startchar="{" endchar="}"
+		<tag name="list" label="List of field parameters" startchar="{" endchar="}" proversion="1"
             description="Returns the list of fields. Example: country,city,phone" twigclass="fields" >
 			<params>
 				<param name="option" label="Field attribute" type="list" description="Select one attribute.">

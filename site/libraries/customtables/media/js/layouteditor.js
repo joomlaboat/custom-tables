@@ -594,85 +594,72 @@ function updateCodeMirror(text)
     doc.replaceRange(text, cursor);
 }
 
-function textarea_findindex(code)
-    {
-        for(var i=0;i<text_areas.length;i++)
-        {
-			let a = text_areas[i][0];
+function textarea_findindex(code){
+	for(let i=0;i<text_areas.length;i++){
+		let a = text_areas[i][0];
+
+        if(a == 'jform_' +code)
+        	return text_areas[i][1];
+	}
+	return -1;
+}
+
+function findTagInLine(ch,str){
+	
+	let start_pos=-1;
+	let end_pos=-1;
+	let level=1;
+	let startchar='';
+    let endchar='';
+
+	for(let i=ch;i>-1;i--){
+
+		if((str[i]==']' || str[i]=='}') && i!=ch)
+			level++;
+
+		if(str[i]=='[' || str[i]=='{'){
 			
-        	if(a == 'jform_' +code)
-        		return text_areas[i][1];
-        }
-        return -1;
-    }
+			if(startchar=='')
+				startchar=str[i];
 
+            level--;
+            if(level==0){
+				start_pos=i;
+                break;
+			}
+		}
+	}
+    
+	if(start_pos==-1)
+		return null;
 
+	level=1;
+    for(let i2=ch;i2<str.length;i2++){
+		
+		if(str[i2]=='[' || str[i2]=='{')
+			level++;
 
-    function findTagInLine(ch,str)
-        {
-            var start_pos=-1;
-            var end_pos=-1;
-            var level=1;
-            var startchar='';
-            var endchar='';
+		if(str[i2]==']' || str[i2]=='}'){
+			
+			if(endchar=='')
+				endchar=str[i2];
 
-            for(var i=ch;i>-1;i--)
-            {
+			level--;
+            if(level==0){
+				end_pos=i2;
+                break;
+			}
+		}
+	}
 
-                if((str[i]==']' || str[i]=='}') && i!=ch)
-                    level++;
+    if(end_pos==-1)
+		return null;
 
+	if(start_pos<=ch && end_pos>=ch)
+		return [start_pos,end_pos+1];// +1 because position should end after the tag
 
-                if(str[i]=='[' || str[i]=='{')
-                {
-                    if(startchar=='')
-                        startchar=str[i];
-
-                    level--;
-                    if(level==0)
-                    {
-                        start_pos=i;
-                        break;
-                    }
-                }
-
-
-            }
-            if(start_pos==-1)
-                return null;
-
-            level=1;
-            for(var i2=ch;i2<str.length;i2++)
-            {
-                if(str[i2]=='[' || str[i2]=='{')
-                    level++;
-
-                if(str[i2]==']' || str[i2]=='}')
-                {
-                    if(endchar=='')
-                        endchar=str[i2];
-
-                    level--;
-                    if(level==0)
-                    {
-                        end_pos=i2;
-                        break;
-                    }
-                }
-
-
-            }
-
-            if(end_pos==-1)
-                return null;
-
-
-            if(start_pos<=ch && end_pos>=ch)
-                return [start_pos,end_pos+1];// +1 because position should end after the tag
-
-            return null;
-        }
-
+	return null;
+}
 
 function findTagObjectByName(tagstartchar,tagendchar,lookfor_tag){
 	
@@ -935,20 +922,18 @@ function do_render_current_TagSets()
 		return '<div class="FieldTagWizard"><p>No Tags available for this Layout Type</p></div>';
 }
 
-function renderTags(index,tagset)
-{
+function renderTags(index,tagset){
+	
     let tags=getParamOptions(tagset,'tag');
 	let result='<div class="dynamic_values" style="padding-left:0px !important;">';
 	
-    for(let i=0;i<tags.length;i++)
-    {
-        var tag_object=tags[i];
-        var tag=tag_object["@attributes"];
+    for(let i=0;i<tags.length;i++){
+        let tag_object=tags[i];
+        let tag=tag_object["@attributes"];
 		
-		if (typeof(tag.depricated) == "undefined" || tag.depricated=="0")
-		{
-			var t="";
-			var params=getParamOptions(tag_object.params,'param');
+		if (typeof(tag.depricated) == "undefined" || tag.depricated=="0"){
+			let t="";
+			let params=getParamOptions(tag_object.params,'param');
 			
 			let full_tagname = '';
 			if (typeof(tag.twigclass) !== "undefined" && tag.twigclass!=="")
@@ -961,30 +946,20 @@ function renderTags(index,tagset)
 			else
 				t='{{ '+full_tagname+'(<span>Params</span>)'+' }}'; //t=tag.startchar+full_tagname+':<span>Params</span>'+tag.endchar;
 
-			//if(parseInt(tag.depricated) != 1)
-			//{
-				result+='<div style="vertical-align:top; style="display:inline-block;"">';
+			result+='<div style="vertical-align:top; style="display:inline-block;"">';
 		
-				if (typeof(tag.proversion) === "undefined" || parseInt(tag.proversion) != 1)
-				{
+			if (typeof(tag.proversion) === "undefined" || parseInt(tag.proversion) != 1){
+				result+='<a href=\'javascript:addTag("{{ "," }}","'+btoa(full_tagname)+'",'+params.length+');\' class="btn-primary">'+t+'</a> ';
+			}else{
+				if (proversion){
 					result+='<a href=\'javascript:addTag("{{ "," }}","'+btoa(full_tagname)+'",'+params.length+');\' class="btn-primary">'+t+'</a> ';
+				}else{
+					result+='<div style="display:inline-block;"><div class="btn-default">'+t+'</div></div> ';
+					result+='<div class="ct_doc_pro_label"><a href="https://joomlaboat.com/custom-tables#buy-extension" target="_blank">Available in PRO Version</a></div>';
 				}
-				else
-				{
-					if (proversion)
-					{
-						result+='<a href=\'javascript:addTag("{{ "," }}","'+btoa(full_tagname)+'",'+params.length+');\' class="btn-primary">'+t+'</a> ';
-					}
-					else
-					{
-						result+='<div style="display:inline-block;"><div class="btn-default">'+t+'</div></div> ';
-						result+='<div class="ct_doc_pro_label"><a href="https://joomlaboat.com/custom-tables#buy-extension" target="_blank">Available in PRO Version</a></div>';
-					}
-				}
-			
-				result+=tag.description;
-				result+='</div>';
-			//}
+			}
+			result+=tag.description;
+			result+='</div>';
 		}
     }
 
@@ -992,8 +967,6 @@ function renderTags(index,tagset)
 
     return result;
 }
-
-
 
 function addTabExtraEvents3()
 {
