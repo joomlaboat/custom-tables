@@ -22,12 +22,15 @@ class Tables
 		$this->ct = $ct;
 	}
 	
-	function loadRecords($tableid,$filter = '', $orderby = '', $limit = 0)
+	function loadRecords($tablename_or_id, string $filter = '', string $orderby = '', int $limit = 0)
 	{
-		if($tableid == 0)
-			return false;
+		if(is_numeric($tablename_or_id) and (int)$tablename_or_id == 0)
+			return null;
+		
+		if($tablename_or_id == '')
+			return null;
 
-		$this->ct->getTable($tableid, null);
+		$this->ct->getTable($tablename_or_id, null);
 		
 		if($this->ct->Table->tablename=='')
 		{
@@ -48,5 +51,39 @@ class Tables
 		$this->ct->getRecords();
 
 		return true;
+	}
+	
+	function loadRecord($tablename_or_id, int $recordid = 0)
+	{
+		if(is_numeric($tablename_or_id) and (int)$tablename_or_id == 0)
+			return null;
+		
+		if($tablename_or_id == '')
+			return null;
+
+		$this->ct->getTable($tablename_or_id, null);
+		
+		if($this->ct->Table->tablename=='')
+		{
+			JFactory::getApplication()->enqueueMessage('Table not found.', 'error');
+			return null;
+		}
+		
+		$this->ct->Table->recordcount = 0;
+		
+		$this->ct->setFilter('', 2);
+		$this->ct->Filter->where[] = $this->ct->Table->realidfieldname.'='.(int)$recordid;
+
+		
+		$this->ct->Limit=1;
+		$this->ct->LimitStart=0;
+		
+		$this->ct->getRecords();
+
+		
+		if(count($this->ct->Records) == 0)
+			return null;
+		
+		return $this->ct->Records[0];
 	}
 }

@@ -602,40 +602,6 @@ class Twig_Html_Tags
 			return $vlu;
 	}
 	
-	function records($layoutname = '', $filter = '', $orderby = '', $limit = 0)//wizard ok
-	{
-		//Example {{ html.records("InvoicesPage","_published=1","name") }}
-		
-		if($layoutname == '')
-		{
-			Factory::getApplication()->enqueueMessage('{{ html.records("'.$layoutname.'","'.$filter.'","'.$orderby.'") }} - Layout name not specified.', 'error');
-			return '';
-		}
-		
-		$layouts = new Layouts($this->ct);
-		
-		$pagelayout = $layouts->getLayout($layoutname,false);//It is safier to process layout after rendering the table
-		if($layouts->tableid == null)
-		{
-			Factory::getApplication()->enqueueMessage('{{ html.records("'.$layoutname.'","'.$filter.'","'.$orderby.'") }} - Layout "'.$layoutname.' not found.', 'error');
-			return '';
-		}
-		
-		$join_ct = new CT;
-		$tables = new Tables($join_ct);
-		
-		if($tables->loadRecords($layouts->tableid, $filter, $orderby, $limit))
-		{
-			$twig = new TwigProcessor($join_ct, '{% autoescape false %}'.$pagelayout.'{% endautoescape %}');
-			$vlu = $twig->process();
-
-			return new \Twig\Markup($vlu, 'UTF-8' );
-		}
-		
-		Factory::getApplication()->enqueueMessage('{{ html.records("'.$layoutname.'","'.$filter.'","'.$orderby.'") }} - LCould not load records.', 'error');
-		return '';
-	}
-	
 	function tablehead()//wizard ok
 	{
 		$result = '<thead>';

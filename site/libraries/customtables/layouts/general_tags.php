@@ -159,7 +159,6 @@ class Twig_User_Tags
 		
 		return explode(',',CTUser::GetUserGroups($user_id));
 	}
-	
 }
 
 class Twig_Url_Tags
@@ -368,7 +367,7 @@ class Twig_Document_Tags
 		$doc->addCustomTag($headtag);
 	}
 	
-	function layout($layoutname)//, $ProcessContentPlugins = false)//wizard ok
+	function layout($layoutname)//wizard ok
 	{
 		if(!isset($this->ct->Table))
 		{

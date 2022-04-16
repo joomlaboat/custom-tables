@@ -22,7 +22,6 @@
 <!-- Simple Catalog & Catalog Page Tags - 1,5 -->
 <!-- Record - All -->
 
-
 <!-- HTML Tags -->
     <tagset name="html" label="HTML" description="HTML Tags to render HTML code." priority="2">
 
@@ -164,15 +163,6 @@
         </tag>
 		
 		<!-- New -->
-		<tag name="records" label="Records" startchar="{" endchar="}" description="Renders another table catalog layout records" 
-			hidedefaultexample="1" repeatative="0" twigclass="html" proversion="1">
-            <params>
-				<param type="layout" name="layout" label="Catalog Layout" table="" layoutype="catalogpage,simplecatalog" />
-				<param type="string" name="filter" label="Filter" description="Example: price>100" />
-				<param type="string" name="orderby" label="Order By field" description="Example: name desc" />
-				<param type="string" name="limit" label="Limit" description="Max number of records to load. Example: 20" />
-			</params>
-		</tag>
 		
 		<tag name="recordlist" label="List of Records" description="Comma separated list or record IDs. Example: 4,78,3,876" startchar="{" endchar="}" twigclass="html" proversion="1" />	
 		
@@ -256,6 +246,62 @@
              description="Returns the number of records in the joined table (Table Join) that are connected to the current record." twigclass="record">
 			<params>
 				<param name="tablename" label="Table" type="table" description="The name of the Table that has a Table Join type field." example="products" />
+				<param name="filter" label="Filter" type="string" description="Optional filter, ie. fieldname=some value." />
+			</params>
+		</tag>
+		
+		<tag name="joinavg" label="Table Join - Average" startchar="{" endchar="}" proversion="1"
+             description="Calculates the average value of all the records that match." twigclass="record">
+			<params>
+				<param name="tablename" label="Table" type="table" description="The name of the Table that has a Table Join type field." example="products" />
+				<param name="value_of_field" label="Value Field" type="string" description="Field of joined table to read the value from." example="_id" />
+				<param name="filter" label="Filter" type="string" description="Optional filter, ie. fieldname=some value." />
+			</params>
+		</tag>
+		
+		<tag name="joinmin" label="Table Join - Minimum" startchar="{" endchar="}" proversion="1"
+             description="Finds minimum value of all the records that match." twigclass="record">
+			<params>
+				<param name="tablename" label="Table" type="table" description="The name of the Table that has a Table Join type field." example="products" />
+				<param name="value_of_field" label="Value Field" type="string" description="Field of joined table to read the value from." example="_id" />
+				<param name="filter" label="Filter" type="string" description="Optional filter, ie. fieldname=some value." />
+			</params>
+		</tag>
+		
+		<tag name="joinmax" label="Table Join - Maximum" startchar="{" endchar="}" proversion="1"
+             description="Finds maximum value of all the records that match." twigclass="record">
+			<params>
+				<param name="tablename" label="Table" type="table" description="The name of the Table that has a Table Join type field." example="products" />
+				<param name="value_of_field" label="Value Field" type="string" description="Field of joined table to read the value from." example="_id" />
+				<param name="filter" label="Filter" type="string" description="Optional filter, ie. fieldname=some value." />
+			</params>
+		</tag>
+		
+		<tag name="joinsum" label="Table Join - Sum" startchar="{" endchar="}" proversion="1"
+             description="Summarizes values of a selected field of all the records that match." twigclass="record">
+			<params>
+				<param name="tablename" label="Table" type="table" description="The name of the Table that has a Table Join type field." example="products" />
+				<param name="value_of_field" label="Value Field" type="string" description="Field of joined table to read the value from." example="_id" />
+				<param name="filter" label="Filter" type="string" description="Optional filter, ie. fieldname=some value." />
+			</params>
+		</tag>
+		
+		<tag name="joinvalue" label="Table Join - Value" startchar="{" endchar="}" proversion="1"
+             description="Returns the value of selected field of all the records that match." twigclass="record">
+			<params>
+				<param name="tablename" label="Table" type="table" description="The name of the Table that has a Table Join type field." example="products" />
+				<param name="value_of_field" label="Field of joined table to read the value from." type="string" description="Field of joined table to read the value from." example="_id" />
+				<param name="filter" label="Filter" type="string" description="Optional filter, ie. fieldname=some value." />
+			</params>
+		</tag>
+		
+		<tag name="jointable" label="Join Table - Table" startchar="{" endchar="}" proversion="1"
+             description="Returns the records from another table these that connected to currnet record and match the filter. Records will be formatted by selected layout." twigclass="record">
+			<params>
+				<param type="layout" name="layout" label="Catalog Layout" table="" layoutype="catalogpage,simplecatalog" />
+				<param type="string" name="filter" label="Filter" description="Example: price>100" />
+				<param type="string" name="orderby" label="Order By field" description="Example: name desc" />
+				<param type="string" name="limit" label="Limit" description="Max number of records to load. Example: 20" />
 			</params>
 		</tag>
 		
@@ -267,7 +313,7 @@
             <params>
                 <param name="function" label="Function" type="list" description="What to do with returned value(s)" example="count">
                     <option value="count" label="Count" description="Counts the number of records that match."/>
-                    <option value="avg" label="Average" description="Calculate the average value of all the records that match."/>
+                    <option value="avg" label="Average" description="Calculates the average value of all the records that match."/>
                     <option value="min" label="Minimum" description="Finds minimum value of all the records that match."/>
                     <option value="max" label="Maximum" description="Finds maximum value of all the records that match."/>
                     <option value="sum" label="Sum" description="Summarizes values of a selected field of all the records that match."/>
@@ -281,10 +327,10 @@
                        description="Field of a joined table" example="productid" />
                 <param name="value_of_field" label="Value Field" type="string"
                        description="Value of joined table field." example="_id" />
-                <param name="additional filter" label="Additional Filter" type="string" description="Apply additional filter, ie. fieldname=some value. Use $get_queryparameter to get query parameter value. Example: $get_year" />
+                <param name="filter" label="Filter" type="string" description="Optional filter, ie. fieldname=some value." />
             </params>
         </tag>
-
+		
 		<!-- Depricated -->
 		
 		<tag name="cart" label="Shopping Cart" startchar="{" endchar="}" hidedefaultexample="1" layouttypes="1,6,3,4,8,9,10" proversion="1"
@@ -356,6 +402,38 @@
                        options="|No,box|Yes"/>
             </params>
         </tag>
+	</tagset>
+	
+	<!-- Tables Tags -->
+    <tagset name="tables" label="Tables" description="Tags related current to current table." priority="3">
+		
+		<tag name="getvalue" label="Get Value" startchar="{" endchar="}" description="Read a record field value from selected table." 
+			twigclass="tables" proversion="1">
+            <params>
+				<param name="tablename" label="Table" type="table" description="The name of the Table that has a Table Join type field." example="products" />
+				<param type="string" name="recordidorfilter" label="Record ID or filter" description="Example 1: 65, example 2: population>1000000" example="62"/>
+				<param type="string" name="orderby" label="Order By Field" description="Optional and is used with the Filter not Record ID" example="" />
+			</params>
+		</tag>
+		
+		<tag name="getrecord" label="Get Record" startchar="{" endchar="}" description="Renders another table single record using selected layout." 
+			twigclass="tables" proversion="1">
+            <params>
+				<param type="layout" name="layout" label="Catalog Layout" table="" layoutype="catalogpage,simplecatalog" example="CountriesPage" />
+				<param type="string" name="recordidorfilter" label="Record ID or filter" description="Example 1: 65, example 2: population>1000000" example="62"/>
+				<param type="string" name="orderby" label="Order By Field" description="Optional and is used with the Filter not Record ID" example="" />
+			</params>
+		</tag>
+		
+		<tag name="getrecords" label="Get Records" startchar="{" endchar="}" description="Renders another table records using selected layout." 
+			twigclass="tables" proversion="1">
+            <params>
+				<param type="layout" name="layout" label="Catalog Layout" table="" layoutype="catalogpage,simplecatalog" example="CountriesPage" />
+				<param type="string" name="filter" label="Filter" description="Example: price>100" example="populatioin>1000000"/>
+				<param type="string" name="orderby" label="Order By Field" description="Example: name desc" example="name" />
+				<param type="string" name="limit" label="Limit" description="Max number of records to load. Example: 20" example="20" />
+			</params>
+		</tag>
 	</tagset>
 	
 <!-- Fields Tags -->
@@ -736,11 +814,10 @@
 	
 	<!-- Available in PRO version and antwhere -->
 
-    <tagset name="plugins" label="Plugins" description="Custom Tables Plugins." priority="3" proversion="1">
+    <tagset name="plugins" label="Plugins" description="Custom Tables Plugins." priority="3" proversion="1" depricated="1">
 	
 		<tag name="tab" label="Tabs" startchar="{" endchar="} html code {/tabs}"
-             description="" hidedefaultexample="1" proversion="1"
-			 >
+             description="" hidedefaultexample="1" proversion="1" depricated="1">
             <params>
                 <param name="title" label="Title" type="string" description="Tab label" examplenoquotes="1" example="Tab 1} First Tab Content {tab:Tab 2} Second Tab content{/tabs"/>
             </params>

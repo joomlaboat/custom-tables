@@ -28,10 +28,12 @@ use \Joomla\CMS\Router\Route;
 class Twig_Record_Tags
 {
 	var $ct;
+	//var $msg;
 
 	function __construct(&$ct)
 	{
 		$this->ct = $ct;
+		//$this->msg = null;
 	}
 	
 	function id()//wizard ok
@@ -153,7 +155,7 @@ class Twig_Record_Tags
 		return (int)$this->ct->Table->record['_number'];
 	}
 
-	function joincount($join_table = '')//wizard ok
+	function joincount(string $join_table = '', string $filter = '')//wizard ok
 	{
 		if($this->ct->Env->frmt == 'csv')
 			return '';	
@@ -185,7 +187,7 @@ class Twig_Record_Tags
 				$typeparams=JoomlaBasicMisc::csv_explode(',',$join_table_field['typeparams'],'"',false);
 				$join_table_join_to_table = $typeparams[0];
 				if($join_table_join_to_table == $this->ct->Table->tablename)
-					return $this->advancedjoin('count', $join_table, '_id', $join_table_field['fieldname']);
+					return $this->advancedjoin('count', $join_table, '_id', $join_table_field['fieldname'],'_id', $filter);
 			}
 		}
 			
@@ -193,32 +195,32 @@ class Twig_Record_Tags
 		return '';
 	}
 	
-	function joinavg($join_table = '', $value_field = '')//wizard ok
+	function joinavg(string $join_table = '', string $value_field = '', string $filter = '')//wizard ok
 	{
-		return $this->simple_join('avg', $join_table, $value_field, 'record.valuejoin');
+		return $this->simple_join('avg', $join_table, $value_field, 'record.valuejoin', $filter);
 	}
 	
-	function joinmin($join_table = '', $value_field = '')//wizard ok
+	function joinmin(string $join_table = '', string $value_field = '', string $filter = '')//wizard ok
 	{
-		return $this->simple_join('min', $join_table, $value_field, 'record.valuejoin');
+		return $this->simple_join('min', $join_table, $value_field, 'record.valuejoin', $filter);
 	}
 	
-	function joinmax($join_table = '', $value_field = '')//wizard ok
+	function joinmax(string $join_table = '', string $value_field = '', string $filter = '')//wizard ok
 	{
-		return $this->simple_join('max', $join_table, $value_field, 'record.valuejoin');
+		return $this->simple_join('max', $join_table, $value_field, 'record.valuejoin', $filter);
 	}
 	
-	function joinsum($join_table = '', $value_field = '')//wizard ok
+	function joinsum(string $join_table = '', string $value_field = '', string $filter = '')//wizard ok
 	{
-		return $this->simple_join('sum', $join_table, $value_field, 'record.valuejoin');
+		return $this->simple_join('sum', $join_table, $value_field, 'record.valuejoin', $filter);
 	}
 	
-	function joinvalue($join_table = '', $value_field = '')//wizard ok
+	function joinvalue(string $join_table = '', string $value_field = '', string $filter = '')//wizard ok
 	{
-		return $this->simple_join('value', $join_table, $value_field, 'record.valuejoin');
+		return $this->simple_join('value', $join_table, $value_field, 'record.valuejoin', $filter);
 	}
 	
-	function tablejoin($layoutname = '', $filter = '', $orderby = '')//wizard ok
+	function jointable($layoutname = '', $filter = '', $orderby = '', $limit = 0)//wizard ok
 	{
 		//Example {{ record.tablejoin("InvoicesPage","_published=1","name") }}
 		
@@ -260,7 +262,7 @@ class Twig_Record_Tags
 		$join_ct = new CT;
 		$tables = new Tables($join_ct);
 		
-		if($tables->loadRecords($layouts->tableid, $complete_filter, $orderby))
+		if($tables->loadRecords($layouts->tableid, $complete_filter, $orderby, $limit))
 		{
 			$twig = new TwigProcessor($join_ct, '{% autoescape false %}'.$pagelayout.'{% endautoescape %}');
 			$vlu = $twig->process();
@@ -273,7 +275,7 @@ class Twig_Record_Tags
 		return '';
 	}
 
-	function advancedjoin($sj_function, $sj_tablename, $field1_findwhat, $field2_lookwhere, $field3_readvalue = '_id', $additional_where = '' ,
+	function advancedjoin($sj_function, $sj_tablename, $field1_findwhat, $field2_lookwhere, $field3_readvalue = '_id', $filter = '' ,
 		$order_by_option = '', $value_option_list = [])//wizard ok
 	{
 		if($sj_tablename=='')	return '';
@@ -296,7 +298,7 @@ class Twig_Record_Tags
 		$field3_readvalue_realname = $field_details[0];
 		
 		$sj_tablename = $tablerow['tablename'];
-		$additional_where = $this->join_processWhere($additional_where, $sj_tablename);
+		$additional_where = $this->join_processWhere($filter, $sj_tablename);
 
 		if($order_by_option!='')
 		{
@@ -352,7 +354,7 @@ class Twig_Record_Tags
 	
 	/* --------------------------- PROTECTED FUNCTIONS ------------------- */
 	
-	protected function simple_join($function, $join_table, $value_field, $tag)
+	protected function simple_join($function, $join_table, $value_field, $tag, string $filter = '')
 	{
 		if($join_table == '')
 		{
@@ -403,7 +405,7 @@ class Twig_Record_Tags
 				$typeparams=JoomlaBasicMisc::csv_explode(',',$join_table_field['typeparams'],'"',false);
 				$join_table_join_to_table = $typeparams[0];
 				if($join_table_join_to_table == $this->ct->Table->tablename)
-					return $this->advancedjoin('value', $join_table, '_id', $join_table_field['fieldname'],$value_field);
+					return $this->advancedjoin('value', $join_table, '_id', $join_table_field['fieldname'], $value_field, $filter);
 			}
 		}
 			
@@ -575,4 +577,150 @@ class Twig_Record_Tags
 		return '#__customtables_table_'.$sj_tablename.'.es_'.$str;
 	}
 	
+}
+
+class Twig_Tables_Tags
+{
+	function getvalue($table = '', $fieldname = '', $record_id_or_filter = '', $orderby = '')//wizard ok
+	{
+		$tag = 'tables.getvalue';
+		if($table == '')
+		{
+			Factory::getApplication()->enqueueMessage('{{ '.$tag.'("'.$table.'",value_field_name) }} - Table not specified.', 'error');
+			return '';
+		}
+		
+		if($fieldname == '')
+		{
+			Factory::getApplication()->enqueueMessage('{{ '.$tag.'("'.$table.'",field_name) }} - Value field not specified.', 'error');
+			return '';
+		}
+		
+		$join_table_fields = Fields::getFields($table);
+		
+		$value_realfieldname = '';
+		foreach($join_table_fields as $join_table_field)
+		{
+			if($join_table_field['fieldname'] == $fieldname)
+			{
+				$value_realfieldname = $join_table_field['realfieldname'];
+				break;
+			}
+		}
+
+		if(!$value_realfieldname)
+		{
+			Factory::getApplication()->enqueueMessage('{{ '.$tag.'("'.$join_table.'","'.$value_field.'") }} - Value field "'.$value_field.'" not found.', 'error');
+			return '';
+		}
+		
+		$join_ct = new CT;
+		$tables = new Tables($join_ct);
+		
+		if(is_numeric($record_id_or_filter) and (int)$record_id_or_filter > 0)
+		{
+			$row = $tables->loadRecord($table, $record_id_or_filter);
+			if($row == null)
+				return '';
+		}
+		else
+		{
+			if($tables->loadRecords($table, $record_id_or_filter, $orderby, 1))
+			{
+				if(count($join_ct->Records) > 0)
+					$row = $join_ct->Records[0];
+				else
+					return '';
+			}
+			else
+				return '';
+		}
+		
+		return $row[$value_realfieldname];
+	}
+	
+	function getrecord($layoutname= '', $record_id_or_filter = '', $orderby = '')//wizard ok
+	{
+		if($layoutname == '')
+		{
+			Factory::getApplication()->enqueueMessage('{{ html.records("'.$layoutname.'","'.$filter.'","'.$orderby.'") }} - Layout name not specified.', 'error');
+			return '';
+		}
+		
+		if($record_id_or_filter == '')
+		{
+			Factory::getApplication()->enqueueMessage('{{ html.records("'.$layoutname.'","'.$filter.'","'.$orderby.'") }} - Record id or fileter not set.', 'error');
+			return '';
+		}
+		
+		$layouts = new Layouts($this->ct);
+		
+		$pagelayout = $layouts->getLayout($layoutname,false);//It is safier to process layout after rendering the table
+		if($layouts->tableid == null)
+		{
+			Factory::getApplication()->enqueueMessage('{{ html.records("'.$layoutname.'","'.$filter.'","'.$orderby.'") }} - Layout "'.$layoutname.' not found.', 'error');
+			return '';
+		}
+		
+		$join_ct = new CT;
+		$tables = new Tables($join_ct);
+		
+		if(is_numeric($record_id_or_filter) and (int)$record_id_or_filter > 0)
+		{
+			$row = $tables->loadRecord($layouts->tableid, $record_id_or_filter);
+			if($row == null)
+				return '';
+		}
+		else
+		{
+			if($tables->loadRecords($layouts->tableid, $record_id_or_filter, $orderby, 1))
+			{
+				if(count($join_ct->Records) > 0)
+					$row = $join_ct->Records[0];
+				else
+					return '';
+			}
+			else
+				return '';
+		}
+
+		$twig = new TwigProcessor($join_ct, '{% autoescape false %}'.$pagelayout.'{% endautoescape %}');
+		$vlu = $twig->process($row);
+
+		return new \Twig\Markup($vlu, 'UTF-8' );
+	}
+	
+	function getrecords($layoutname = '', $filter = '', $orderby = '', $limit = 0)//wizard ok
+	{
+		//Example {{ html.records("InvoicesPage","firstname=john","lastname") }}
+		
+		if($layoutname == '')
+		{
+			Factory::getApplication()->enqueueMessage('{{ html.records("'.$layoutname.'","'.$filter.'","'.$orderby.'") }} - Layout name not specified.', 'error');
+			return '';
+		}
+		
+		$layouts = new Layouts($this->ct);
+		
+		$pagelayout = $layouts->getLayout($layoutname,false);//It is safier to process layout after rendering the table
+		if($layouts->tableid == null)
+		{
+			Factory::getApplication()->enqueueMessage('{{ html.records("'.$layoutname.'","'.$filter.'","'.$orderby.'") }} - Layout "'.$layoutname.' not found.', 'error');
+			return '';
+		}
+		
+		$join_ct = new CT;
+		$tables = new Tables($join_ct);
+		
+		if($tables->loadRecords($layouts->tableid, $filter, $orderby, $limit))
+		{
+			$twig = new TwigProcessor($join_ct, '{% autoescape false %}'.$pagelayout.'{% endautoescape %}');
+			$vlu = $twig->process();
+
+			return new \Twig\Markup($vlu, 'UTF-8' );
+		}
+		
+		Factory::getApplication()->enqueueMessage('{{ html.records("'.$layoutname.'","'.$filter.'","'.$orderby.'") }} - LCould not load records.', 'error');
+		return '';
+	}
 }

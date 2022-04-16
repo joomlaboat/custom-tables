@@ -97,7 +97,7 @@ class CustomtablesViewDocumentation extends JViewLegacy
 	
 	function getFieldTypes()
 	{
-		$xml=$this->getXMLData('fieldtypes_262.xml');
+		$xml=$this->getXMLData('fieldtypes_266.xml');
 		if(count($xml)==0 or !isset($xml->type))
 			return '';
 
@@ -106,7 +106,7 @@ class CustomtablesViewDocumentation extends JViewLegacy
 	
 	function getLayoutTags()
 	{
-		$xml=$this->getXMLData('tags_262.xml');
+		$xml=$this->getXMLData('tags_266.xml');
 
 		if(count($xml)==0)
 			return '';

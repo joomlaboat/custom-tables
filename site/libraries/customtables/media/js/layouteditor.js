@@ -117,7 +117,7 @@ function loadTags(type_id,tags_box)
 {
     type_obj=document.getElementById(type_id);
 
-    var url=websiteroot+"components/com_customtables/xml/tags_262.xml";
+    var url=websiteroot+"components/com_customtables/xml/tags_266.xml";
 
     var http = null;
     var params = "";
@@ -919,10 +919,14 @@ function do_render_current_TagSets()
     {
         let tagset=tagsets[i];
         let a=tagset["@attributes"];
+		
+		if (typeof(a.depricated) == "undefined" || a.depricated=="0")
+		{
 
-		tabs.push({'id':'layouteditor_tags'+index+'_'+i+'','title':a.label,
-			'content':'<p>'+a.description+'</p>'+renderTags(index,tagset)
-		});
+			tabs.push({'id':'layouteditor_tags'+index+'_'+i+'','title':a.label,
+				'content':'<p>'+a.description+'</p>'+renderTags(index,tagset)
+			});
+		}
     }
 
 	if(tabs.length >0)
@@ -933,53 +937,55 @@ function do_render_current_TagSets()
 
 function renderTags(index,tagset)
 {
-    var tags=getParamOptions(tagset,'tag');
-
-    var result='<div class="dynamic_values" style="padding-left:0px !important;">';
-    for(var i=0;i<tags.length;i++)
+    let tags=getParamOptions(tagset,'tag');
+	let result='<div class="dynamic_values" style="padding-left:0px !important;">';
+	
+    for(let i=0;i<tags.length;i++)
     {
         var tag_object=tags[i];
         var tag=tag_object["@attributes"];
-		var t="";
-		var params=getParamOptions(tag_object.params,'param');
-			
-		let full_tagname = '';
-		if (typeof(tag.twigclass) !== "undefined" && tag.twigclass!=="")
-			full_tagname = tag.twigclass + '.' + tag.name;
-		else
-			full_tagname = tag.name;
-			
-		if(params.length==0)
-			t='{{ ' + full_tagname + ' }}'; // t=tag.startchar+tag.name+tag.endchar;
-		else
-			t='{{ '+full_tagname+'(<span>Params</span>)'+' }}'; //t=tag.startchar+full_tagname+':<span>Params</span>'+tag.endchar;
-
-		if(parseInt(tag.depricated) != 1)
-		{
-			result+='<div style="vertical-align:top; style="display:inline-block;"">';
 		
-			if (typeof(tag.proversion) === "undefined" || parseInt(tag.proversion) != 1)
-			{//<div>/div>
-				result+='<a href=\'javascript:addTag("{{ "," }}","'+btoa(full_tagname)+'",'+params.length+');\' class="btn-primary">'+t+'</a> ';
-			}
+		if (typeof(tag.depricated) == "undefined" || tag.depricated=="0")
+		{
+			var t="";
+			var params=getParamOptions(tag_object.params,'param');
+			
+			let full_tagname = '';
+			if (typeof(tag.twigclass) !== "undefined" && tag.twigclass!=="")
+				full_tagname = tag.twigclass + '.' + tag.name;
 			else
-			{
-				if (proversion)
-				{//<div style="display:inline-block;"></div>
+				full_tagname = tag.name;
+			
+			if(params.length==0)
+				t='{{ ' + full_tagname + ' }}'; // t=tag.startchar+tag.name+tag.endchar;
+			else
+				t='{{ '+full_tagname+'(<span>Params</span>)'+' }}'; //t=tag.startchar+full_tagname+':<span>Params</span>'+tag.endchar;
+
+			//if(parseInt(tag.depricated) != 1)
+			//{
+				result+='<div style="vertical-align:top; style="display:inline-block;"">';
+		
+				if (typeof(tag.proversion) === "undefined" || parseInt(tag.proversion) != 1)
+				{
 					result+='<a href=\'javascript:addTag("{{ "," }}","'+btoa(full_tagname)+'",'+params.length+');\' class="btn-primary">'+t+'</a> ';
 				}
 				else
 				{
-					result+='<div style="display:inline-block;"><div class="btn-default">'+t+'</div></div> ';
-					result+='<div class="ct_doc_pro_label"><a href="https://joomlaboat.com/custom-tables#buy-extension" target="_blank">Available in PRO Version</a></div>';
+					if (proversion)
+					{
+						result+='<a href=\'javascript:addTag("{{ "," }}","'+btoa(full_tagname)+'",'+params.length+');\' class="btn-primary">'+t+'</a> ';
+					}
+					else
+					{
+						result+='<div style="display:inline-block;"><div class="btn-default">'+t+'</div></div> ';
+						result+='<div class="ct_doc_pro_label"><a href="https://joomlaboat.com/custom-tables#buy-extension" target="_blank">Available in PRO Version</a></div>';
+					}
 				}
-			}
-			//result+='<span>'+tag.description+'</span>';
-			result+=tag.description;
-			result+='</div>';
-		}
 			
-		
+				result+=tag.description;
+				result+='</div>';
+			//}
+		}
     }
 
     result+='</div>';

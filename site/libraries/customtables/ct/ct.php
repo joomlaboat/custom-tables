@@ -180,7 +180,10 @@ class CT
 	
 		$this->Records = $rows;
 		
-		return true;
+		//if(count($this->Records) == 0)
+			//return 0;
+		
+		return true;//$this->Records[0];
 	}
 	
 	function getRecordsByKeyword()

@@ -122,7 +122,6 @@ class TwigProcessor
 		//{{ html.print() }}	-	wizard ok
 		//{{ html.recordcount }}	-	wizard ok
 		//{{ html.recordlist }}	-	wizard ok
-		//{{ html.records() }}	-	wizard ok
 		//{{ html.search() }}	-	wizard ok
 		//{{ html.searchbutton() }}	-	wizard ok
 		//{{ html.toolbar() }}	-	wizard ok
@@ -139,18 +138,18 @@ class TwigProcessor
 		
 		$this->twig->addGlobal('record', new Twig_Record_Tags($this->ct) );
 		//{{ record.advancedjoin(function, tablename, field_findwhat, field_lookwhere, field_readvalue, additional_where, order_by_option, value_option_list) }}	-	wizard ok
-		//{{ record.tablejoin("InvoicesPage","_published=1","name") }}
+		
 		
 		//{{ record.joincount(join_table) }}
 		//{{ record.joinavg(join_table,value_field_name) }}
 		//{{ record.joinmin(join_table,value_field_name) }}
 		//{{ record.joinmax(join_table,value_field_name) }}
 		//{{ record.joinvalue(join_table,value_field_name) }}
+		//{{ record.jointable(layout,filter,orderby,limit) }}
 		
 		//{{ record.id }}	-	wizard ok
 		//{{ record.number }}	-	wizard ok
 		//{{ record.published }}	-	wizard ok
-		//{{ record.sum(join_table,value_field_name) }}
 		
 		$this->variables = [];
 		
@@ -160,6 +159,11 @@ class TwigProcessor
 		//{{ table.description }}	-	wizard ok
 		//{{ table.records }} same as {{ records.count }}	-	wizard ok
 		//{{ table.fields }} same as {{ fields.count() }}	-	wizard ok
+		
+		//{{ tables.getvalue(tablename,field_name,recordid_or_filter, orderby) }}
+		//{{ tables.getrecord(layoutname,recordid_or_filter, orderby) }}
+		//{{ tables.getrecords(layoutname,filter,orderby,limit) }}
+		
 		if(isset($ct->Table))
 		{
 			$description = $ct->Table->tablerow['description'.$this->ct->Table->Languages->Postfix];
@@ -173,6 +177,8 @@ class TwigProcessor
 			'fields'=>count($this->ct->Table->fields)
 			];
 		}
+		
+		$this->twig->addGlobal('tables', new Twig_Tables_Tags($this->ct) );
 
 		if(isset($this->ct->Table->fields))
 		{
@@ -347,13 +353,6 @@ class fieldObject
     {
         return $this->field['typeparams'];
     }
-	
-	/*
-	public function count()
-    {
-        return 123;
-    }
-	*/
 	
 	public function edit()
     {
