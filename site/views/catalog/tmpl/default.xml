@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <metadata>
-	<layout title="Catalog View">
-		<message>Generate Custom Tables catalog according to the selected layout.
+	<layout title="Records">
+		<message>Generate Custom Tables records according to the selected layout.
 		</message>
 	</layout>
 	
@@ -14,11 +14,11 @@
 			<fieldset name="PARAMS"  addfieldpath="/components/com_customtables/fields">	
 				<field type="estable" name="establename" default="" label="Table" description="Select Table" />
 				
-				<field type="escataloglayout" name="escataloglayout" default="" label="Catalog Layout" description="Select Catalog Layout" />
-				<field type="esitemlayout" name="esitemlayout" default="" label="Record Layout" description="Select Record Layout" />
+				<field type="escataloglayout" name="escataloglayout" default="" label="Page Layout" description="Select Page Layout" />
+				<field type="esitemlayout" name="esitemlayout" default="" label="Record (Item) Layout" description="Select Record (Item) Layout" />
 				
 				
-				<field type="esdetailslayout" name="esdetailslayout" default="" label="Details Layout" description="Select Details Layout" />
+				<field type="esdetailslayout" name="esdetailslayout" default="" label="Details Layout" description="Select Record Details Layout" />
 				
 				<field type="text" name="groupby" default="" label="Group By" description="Field name to group results by" />
 				<field type="text" name="sortby" default="" label="Default sort by field" description="Type field name to sort by and the order. Example 1: 'title desc' Example 2: 'title asc'. Note that keyword asc is not necessary." />

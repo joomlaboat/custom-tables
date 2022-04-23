@@ -225,7 +225,7 @@ class ESTables
 		}
 		else
 		{
-			$realtablename_query='IF(customtablename!=\'\', customtablename, CONCAT(\'#__customtables_table_\', tablename)) AS realtablename';
+			$realtablename_query='IF((customtablename IS NOT NULL AND customtablename!=\'\'	), customtablename, CONCAT(\'#__customtables_table_\', tablename)) AS realtablename';
 			$realidfieldname_query='IF(customidfield!=\'\', customidfield, \'id\') AS realidfieldname';
 		}
 			

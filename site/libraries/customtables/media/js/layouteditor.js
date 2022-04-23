@@ -23,8 +23,7 @@ var tagsets=[];
 
 var current_layout_type=0;
 
-function updateTagsParameters()
-{
+function updateTagsParameters(){
     if(type_obj == null)
         return ;
 
@@ -32,19 +31,16 @@ function updateTagsParameters()
     if(isNaN(current_layout_type))
         current_layout_type=0;
 
-    var t1=findTagSets(current_layout_type,1);
-    var t2=findTagSets(current_layout_type,2);
-    var t3=findTagSets(current_layout_type,3);
-    var t4=findTagSets(current_layout_type,4);
+	let t1=findTagSets(current_layout_type,1);
+	let t2=findTagSets(current_layout_type,2);
+	let t3=findTagSets(current_layout_type,3);
+	let t4=findTagSets(current_layout_type,4);
 
-    tagsets=t1.concat(t2,t3,t4);
-
+	tagsets=t1.concat(t2,t3,t4);
 
     if(tagsets.length>0)
-    {
-        do_render_current_TagSets();
-    }
-    else
+		do_render_current_TagSets();
+	else
         tags_box_obj.innerHTML='<p class="msg_error">Unknown Field Type</p>';
 
     updateFieldsBox();
@@ -324,16 +320,13 @@ function showModalForm(tagstartchar,postfix,tagendchar,tag,top,left,line,positio
 			showModalFieldTagForm('[',postfix,']',tag.trim(),top,left,line,positions,isnew);
 		}
 	}
-	else if(tagstartchar==='[')
-    {
+	else if(tagstartchar==='['){
 		let tag_pair=parseQuote(tag,[':','='],false);
 		
-		if(tag_pair[0]=="_if" || tag_pair[0]=="_endif")
-		{
+		if(tag_pair[0]=="_if" || tag_pair[0]=="_endif"){
 			showModalTagForm('[',postfix,']',tag,top,left,line,positions,isnew);
 		}
-		else if(tag_pair[0]=="_value" || tag_pair[0]=="_edit")
-		{
+		else if(tag_pair[0]=="_value" || tag_pair[0]=="_edit"){
 			if(tag_pair[0]=="_value")
 				postfix = '.value';
 			else if(tag_pair[0]=="_edit")
@@ -345,17 +338,13 @@ function showModalForm(tagstartchar,postfix,tagendchar,tag,top,left,line,positio
 				postfix += '("' + tag_pair[2] + '")';
 			
 			showModalFieldTagForm(tagstartchar,postfix,tagendchar,clean_tag,top,left,line,positions,isnew);
-		}
-		else
-		{
+		}else{
 			if(current_layout_type == 2)
 				postfix = '.edit';
 			
 			showModalFieldTagForm(tagstartchar,postfix,tagendchar,tag,top,left,line,positions,isnew);
 		}
-    }
-    else
-    {
+    }else{
         showModalFieldTagForm(tagstartchar,postfix,tagendchar,tag,top,left,line,positions,isnew);
     }
 }
@@ -388,27 +377,16 @@ function showModalTagForm(tagstartchar,postfix,tagendchar,tag,top,left,line,posi
 {
 	let paramvaluestring="";
 	
-	if(tagstartchar == '[')
-	{
-		let tag_pair=parseQuote(tag,[':','='],false);
-		temp_params_tag=tag_pair[0];//tag_pair[0];
-		paramvaluestring=tag_pair[1];
-	}
-	
-	if(tagstartchar == '{{')
-	{
+	if(tagstartchar == '{{'){
 		let tag_pair=parseQuote(tag,['('],false);
 		temp_params_tag = tag_pair[0].trim();
 		
 		paramvaluestring=findTagParameter(tag);
-	}
-	else
-	{
+	}else{
 		let tag_pair=parseQuote(tag,[':','='],false);
 		temp_params_tag = tag_pair[0].trim();
 		
-		if(tag_pair.length > 1)
-		{
+		if(tag_pair.length > 1){
 			let pos1 = tag.indexOf(":");
 			paramvaluestring=tag.substring(pos1+1,tag.length);
 		}
@@ -533,10 +511,7 @@ function showModalTagForm(tagstartchar,postfix,tagendchar,tag,top,left,line,posi
     if (typeof(param_att.repeatative) !== "undefined" && param_att.repeatative==="1" && param_array.length==1)
         countparams=-1;//unlimited number of parameters
 
-    
-
-    //var form_content=getParamEditForm(tagobject,line,positions,isnew,countparams,tagstartchar,postfix,tagendchar,paramvaluestring);
-	var form_content=getParamEditForm(tagobject,line,positions,isnew,countparams,'{{ ',postfix,' }}',paramvaluestring);
+    let form_content=getParamEditForm(tagobject,line,positions,isnew,countparams,'{{ ',postfix,' }}',paramvaluestring);
     
     if(form_content==null)
     {
@@ -563,20 +538,14 @@ function showModalTagForm(tagstartchar,postfix,tagendchar,tag,top,left,line,posi
 function addTag(tagstartchar,tagendchar,tag,param_count){
 	
 	let postfix = '';
-	
-	var cm=codemirror_editors[0];
+	let cm=codemirror_editors[0];
     
 	if(param_count>0){
 		
 		let tagname = atob(tag);
-		
-		//alert("showModalTagForm:" + tagname)
-		//tagstartchar = '{';
-		//tagendchar = '}';
-		var cr=cm.getCursor();
-
-		var positions=[cr.ch,cr.ch];
-		var mousepos=cm.cursorCoords(cr,"window");
+		let cr=cm.getCursor();
+		let positions=[cr.ch,cr.ch];
+		let mousepos=cm.cursorCoords(cr,"window");
 		showModalTagForm(tagstartchar.trim(),postfix,tagendchar.trim(),tagname,mousepos.top,mousepos.left,cr.line,positions,1);
 	}else{
 		updateCodeMirror(tagstartchar+atob(tag)+tagendchar);
@@ -727,69 +696,46 @@ function findTagObjectByName(tagstartchar,tagendchar,lookfor_tag){
 	return null;
 }
 
-    function getParamEditForm(tagobject,line,positions,isnew,countparams,tagstartchar,postfix,tagendchar,paramvaluestring)
-    {
-        var att=tagobject["@attributes"];
+function getParamEditForm(tagobject,line,positions,isnew,countparams,tagstartchar,postfix,tagendchar,paramvaluestring){
+	let att=tagobject["@attributes"];
+	let result="";
 
-        var result="";
-		
-		//alert (tagstartchar);
+	result+=renderParamBox(tagobject,"current_tagparameter",paramvaluestring);
+	result+='<div class="dynamic_values"><span class="dynamic_values_label">Tag with parameter:</span> ';
+	result+=tagstartchar;
+	result+=temp_params_tag;
+	result+=postfix+'(<span id="current_tagparameter" style="">'+paramvaluestring+'</span>)';
+	result+=tagendchar+'</div>';
+	result+='<div style="text-align:center;">';
+    result+='<button id="clsave" onclick=\'return saveParams(event,'+countparams+','+line+','+positions[0]+','+positions[1]+','+isnew+',"'+tagstartchar+'","'+tagendchar+'","'+postfix+'");\' class="btn btn-small button-apply btn-success">Save</button>';
+    result+=' <button id="clclose" onclick=\'return closeModal(event);\' class="btn btn-small button-cancel btn-danger">Cancel</button>';
+    result+='</div>';
+	return result;
+}
 
-        result+=renderParamBox(tagobject,"current_tagparameter",paramvaluestring);
-        
-        result+='<div class="dynamic_values"><span class="dynamic_values_label">Tag with parameter:</span> ';
-		
-		result+=tagstartchar;
-		
-		//if (typeof(att.twigclass) !== "undefined" && att.twigclass!=="")
-			//result+=att.twigclass + '.';
-		
-		result+=temp_params_tag;
-		
-		result+=postfix+'(<span id="current_tagparameter" style="">'+paramvaluestring+'</span>)';
-		
-        result+=tagendchar+'</div>';
+function saveParams(e,countparams,line_number,pos1,pos2,isnew,tagstartchar,tagendchar,postfix){
+	
+	updateParamString("fieldtype_param_",1,countparams,"current_tagparameter",null,false);
+	e.preventDefault();
+    let result='';
+    let tmp_params=document.getElementById('current_tagparameter').innerHTML;
+	result = tagstartchar + temp_params_tag + postfix;
 
+	if(tmp_params!="")
+		result+='('+tmp_params+')';//{{ tag.edit(par1,par2) }} where ".edit" is the postfix
+	
+	result+=tagendchar;
 
-        result+='<div style="text-align:center;">';
-        result+='<button id="clsave" onclick=\'return saveParams(event,'+countparams+','+line+','+positions[0]+','+positions[1]+','+isnew+',"'+tagstartchar+'","'+tagendchar+'","'+postfix+'");\' class="btn btn-small button-apply btn-success">Save</button>';
-        result+=' <button id="clclose" onclick=\'return closeModal(event);\' class="btn btn-small button-cancel btn-danger">Cancel</button>';
-        result+='</div>';
-
-
-        return result;
-    }
-
-    function saveParams(e,countparams,line_number,pos1,pos2,isnew,tagstartchar,tagendchar,postfix)
-    {
-        updateParamString("fieldtype_param_",1,countparams,"current_tagparameter",null,false);
-
-        e.preventDefault();
-        var result='';
-        var tmp_params=document.getElementById('current_tagparameter').innerHTML;
-
-            result = tagstartchar + temp_params_tag + postfix;
-
-            if(tmp_params!="")
-                result+='('+tmp_params+')';//{{ tag.edit(par1,par2) }} where ".edit" is the postfix
-
-		result+=tagendchar;
-
-        var cursor_from = {line:line_number,ch:pos1};
-        var cursor_to = {line:line_number,ch:pos2};
-
-        var editor = codemirror_editors[codemirror_active_index];
-
-        var doc = editor.getDoc();
-        doc.replaceRange(result, cursor_from,cursor_to,"");
-
-
-        document.getElementById('layouteditor_Modal').style.display = "none";
-        var cm=codemirror_editors[0];
-        cm.focus();
-        
-        return false;
-    }
+	let cursor_from = {line:line_number,ch:pos1};
+	let cursor_to = {line:line_number,ch:pos2};
+	let editor = codemirror_editors[codemirror_active_index];
+	let doc = editor.getDoc();
+	doc.replaceRange(result, cursor_from,cursor_to,"");
+	document.getElementById('layouteditor_Modal').style.display = "none";
+	let cm=codemirror_editors[0];
+	cm.focus();
+	return false;
+}
 
     function closeModal(e)
     {
@@ -1028,17 +974,14 @@ function addTabExtraEvent4(id)
 	}
 }
 
-function addTabExtraEvents()
-{
-	if(joomlaVersion<4)
-	{
+function addTabExtraEvents(){
+	
+		
+	if(joomlaVersion<4){
 		addTabExtraEvents3();
-	}
-	else
-	{
+	}else{
 		let tabs = ['layoutcode','layoutmobile','layoutcss','layoutjs']
-		setTimeout(function()
-		{
+		setTimeout(function(){
 			codemirror_active_index=0;
 			let cm=codemirror_editors[0];
 			cm.refresh();
@@ -1047,11 +990,14 @@ function addTabExtraEvents()
 		for (let i = 0; i < tabs.length; i++)
 			addTabExtraEvent4(tabs[i]);
 		
-		
 		let index = 0;
 		codemirror_active_index=index;
 		codemirror_active_areatext_id='jform_' + tabs[0];
         let cm=codemirror_editors[index];
+		
+		if (typeof(cm) == "undefined")
+			return;
+	
         cm.refresh();
 	}
 }

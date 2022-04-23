@@ -96,6 +96,8 @@
 		
 		<tag name="searchbutton" label="Search Button" startchar="{" endchar="}" description="Renders a Search Button" twigclass="html">
             <params>
+				<param name="label" label="Button Label" type="string" example="Search"
+                       description="The label of the button."/>
                 <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS classes separated by space." />
             </params>
         </tag>
@@ -360,7 +362,6 @@
 
 	</tagset>
 
-
 <!-- Table Tags -->
     <tagset name="table" label="Table" description="Tags related current to current table." priority="1">
 	
@@ -411,6 +412,8 @@
 			twigclass="tables" proversion="1">
             <params>
 				<param name="tablename" label="Table" type="table" description="The name of the Table that has a Table Join type field." example="products" />
+				
+				<param type="string" name="valuefield" label="Value Field" description="Field of joined table to read the value from." example="_id" />
 				<param type="string" name="recordidorfilter" label="Record ID or filter" description="Example 1: 65, example 2: population>1000000" example="62"/>
 				<param type="string" name="orderby" label="Order By Field" description="Optional and is used with the Filter not Record ID" example="" />
 			</params>

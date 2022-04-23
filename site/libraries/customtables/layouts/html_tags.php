@@ -435,7 +435,7 @@ class Twig_Html_Tags
 			return $vlu;
 	}
 	
-	function searchbutton($class_ = '')//wizard ok
+	function searchbutton($label = 'SEARCH', $class_ = '')//wizard ok
 	{
 		if($this->ct->Env->print==1 or $this->ct->Env->frmt=='csv')
 			return '';
@@ -448,7 +448,7 @@ class Twig_Html_Tags
 			$class.=' btn button-apply btn-primary';
                     
         //JavascriptFunction
-        $vlu= '<input type=\'button\' value=\'SEARCH\' class=\''.$class.'\' onClick=\'ctSearchBoxDo()\' />';
+        $vlu= '<input type=\'button\' value=\''.$label.'\' class=\''.$class.'\' onClick=\'ctSearchBoxDo()\' />';
        
         if($this->isTwig)
 			return new \Twig\Markup($vlu, 'UTF-8' );

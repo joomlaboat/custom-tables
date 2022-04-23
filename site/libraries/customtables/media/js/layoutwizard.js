@@ -438,7 +438,10 @@ function showModalFieldTagForm(tagstartchar,postfix,tagendchar,tag,top,left,line
 				
 			}else{
 				temp_params_tag = tag_pair[0].trim();
-				paramvaluestring = tag.replace(temp_params_tag,'');
+				
+				let pos1 = tag.indexOf(":");
+				paramvaluestring=tag.substring(pos1+1,tag.length);
+				//paramvaluestring = tag.replace(temp_params_tag,'');
 			}
 		}
 		else

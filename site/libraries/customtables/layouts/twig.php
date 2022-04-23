@@ -93,16 +93,16 @@ class TwigProcessor
 		//{{ url.format() }}	-	wizard ok
 		//{{ url.base64() }}	-	wizard ok
 		//{{ url.root() }}	-	wizard ok
-		//{{ url.getInt() }}	-	wizard ok
-		//{{ url.getString() }}	-	wizard ok
-		//{{ url.getUInt() }}	-	wizard ok
-		//{{ url.getFloat() }}	-	wizard ok
-		//{{ url.getWord() }}	-	wizard ok
-		//{{ url.getAlnum() }}	-	wizard ok
-		//{{ url.getCmd() }}	-	wizard ok
+		//{{ url.getint() }}	-	wizard ok
+		//{{ url.getstring() }}	-	wizard ok
+		//{{ url.getuint() }}	-	wizard ok
+		//{{ url.getfloat() }}	-	wizard ok
+		//{{ url.getword() }}	-	wizard ok
+		//{{ url.getalnum() }}	-	wizard ok
+		//{{ url.getcmd() }}	-	wizard ok
 		//{{ url.getstringandencode() }}	-	wizard ok
 		//{{ url.getstringanddecode() }}	-	wizard ok
-		//{{ url.Itemid() }}	-	wizard ok
+		//{{ url.itemid() }}	-	wizard ok
 		//{{ url.set() }}	-	wizard ok
 		//{{ url.server() }}	-	wizard ok
 		

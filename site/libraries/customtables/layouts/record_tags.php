@@ -28,7 +28,6 @@ use \Joomla\CMS\Router\Route;
 class Twig_Record_Tags
 {
 	var $ct;
-	//var $msg;
 
 	function __construct(&$ct)
 	{
@@ -278,36 +277,40 @@ class Twig_Record_Tags
 	function advancedjoin($sj_function, $sj_tablename, $field1_findwhat, $field2_lookwhere, $field3_readvalue = '_id', $filter = '' ,
 		$order_by_option = '', $value_option_list = [])//wizard ok
 	{
+		$filter = '';
+		
 		if($sj_tablename=='')	return '';
 
 		$tablerow = ESTables::getTableRowByNameAssoc($sj_tablename);
+		
 		if(!is_array($tablerow)) return '';
 
-		//field1_findwhat
-		$field_details = $this->join_getRealFieldName($field1_findwhat, $this->ct->Table->tablerow['id']);
+		$field_details = $this->join_getRealFieldName($field1_findwhat, $this->ct->Table->tablerow);
 		if($field_details == null) return '';
 		$field1_findwhat_realname = $field_details[0];
 		
-		$field_details = $this->join_getRealFieldName($field2_lookwhere, $tablerow['id']);
+		$field_details = $this->join_getRealFieldName($field2_lookwhere, $tablerow);
 		if($field_details == null)	return '';
 		$field2_lookwhere_realname = $field_details[0];
 		$field2_type = $field_details[1];
 		
-		$field_details = $this->join_getRealFieldName($field3_readvalue, $tablerow['id']);
+		$field_details = $this->join_getRealFieldName($field3_readvalue, $tablerow);
 		if($field_details == null)	return '';
 		$field3_readvalue_realname = $field_details[0];
 		
 		$sj_tablename = $tablerow['tablename'];
 		$additional_where = $this->join_processWhere($filter, $sj_tablename);
-
+		
 		if($order_by_option!='')
 		{
-			$field_details = $this->join_getRealFieldName($order_by_option, $tablerow['id']);
+			$field_details = $this->join_getRealFieldName($order_by_option, $tablerow);
 			$order_by_option_realname = $field_details[0] ?? '';
 		}
 		else
 			$order_by_option_realname = '';
 
+		
+		
 		$query = $this->join_buildQuery($sj_function, $tablerow, $field1_findwhat_realname, $field2_lookwhere_realname, 
 				$field2_type, $field3_readvalue_realname, $additional_where, $order_by_option_realname);
 		
@@ -327,6 +330,7 @@ class Twig_Record_Tags
 
 			if($sj_function=='smart')
 			{
+				//TODO: review smart advanced join
 				$getGalleryRows=array();
 				$getFileBoxRows=array();
 				$vlu=$row['vlu'];
@@ -349,6 +353,7 @@ class Twig_Record_Tags
 			else
 				$vlu = $row['vlu'];
 		}
+		
 		return $vlu;
 	}
 	
@@ -413,15 +418,17 @@ class Twig_Record_Tags
 		return '';
 	}
 	
-	protected function join_getRealFieldName($fieldname,$tableid)
+	protected function join_getRealFieldName($fieldname,&$tablerow)
 	{
+		$tableid = $tablerow['id'];
+		
 		if($fieldname=='_id')
 		{
-			return [$this->ct->Table->tablerow['realidfieldname'],'_id'];
+			return [$tablerow['realidfieldname'],'_id'];
 		}
 		elseif($fieldname=='_published')
 		{
-			if($this->ct->Table->tablerow['published_field_found'])
+			if($tablerow['published_field_found'])
 				return ['published','_published'];
 			else
 				Factory::getApplication()->enqueueMessage('{{ record.join }} - Table doesn\' have "published" field.', 'error');
@@ -499,7 +506,8 @@ class Twig_Record_Tags
 
 			if($field2_type=='records')
 			{
-				$query.='INSTR('.$tablerow['realtablename'].'.'.$field2_lookwhere.',  CONCAT(",",'.$this->ct->Table->realtablename.'.'.$field1_findwhat.',","))' ;
+				$query.='INSTR('.$tablerow['realtablename'].'.'.$field2_lookwhere
+					.',  CONCAT(",",'.$this->ct->Table->realtablename.'.'.$field1_findwhat.',","))' ;
 			}
 			else
 			{

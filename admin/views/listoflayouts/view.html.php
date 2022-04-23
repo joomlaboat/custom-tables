@@ -291,6 +291,16 @@ class CustomtablesViewListoflayouts extends JViewLegacy
 			
 		$original_ct_tags_s=['_if','_endif','_value','_edit'];
 		
+		$twig_tags=['fields.list','fields.count','fields.json','user.name','user.username','user.email','user.id','user.lastvisitdate','user.registerdate',
+			'user.usergroups','url.link','url.format','url.base64','url.root','url.getint','url.getstring','url.getuint','url.getfloat','url.getword',
+			'url.getalnum','url.getcmd','url.getstringandencode','url.getstringanddecode','url.itemid','url.set','url.server','html.add','html.batch',
+			'html.button','html.captcha','html.goback','html.importcsv','html.tablehead','html.limit','html.message','html.navigation','html.orderby',
+			'html.pagination','html.print','html.recordcount','html.recordlist','html.search','html.searchbutton','html.toolbar','html.base64encode',
+			'document.setmetakeywords','document.setmetadescription','document.setpagetitle','document.setheadtag','document.layout','document.sitename',
+			'document.languagepostfi','record.advancedjoin','record.joincount','record.joinavg','record.joinmin','record.joinmax','record.joinvalue',
+			'record.jointable','record.id','record.number','record.published','table.id','table.name','table.title','table.description','table.records',
+			'table.fields','tables.getvalue','tables.getrecor','tables.getrecords'];
+		
 		$fields = Fields::getFields($row->tableid);
 		
 		// ------------------------ CT Original
@@ -337,7 +347,7 @@ class CustomtablesViewListoflayouts extends JViewLegacy
 		$twig_matches = 0;
 		
 		
-		foreach($original_ct_tags_s as $tag)
+		foreach($twig_tags as $tag)
 		{
 			if(strpos($row->layoutcode,'{{ '.$tag.'(') !== false)
 				$twig_matches += 1;
