@@ -364,14 +364,11 @@ class ImportTables
 
 	protected static function processMenuItem(&$menuitem_new,$menutype,&$msg,&$menus)
     {
-
         //This function creates menuitem and returns it's id.
         //If menuitem with same alias already exists then existing menuitem will be updated and it's ID will be returned.
         $db = Factory::getDBO();
         $menuitem_alias=substr($menuitem_new['alias'],0,400);
-
         $menuitemid=0;
-
 
 		$component=ImportTables::getRecordByField('#__extensions','element','com_customtables',false);
 		if(!is_array($component))
@@ -388,33 +385,29 @@ class ImportTables
 
 		//Check NEW $menuitem_new['menutype']
 		$new_menutype_alias=substr(JoomlaBasicMisc::slugify($new_menutype),0,24);
-
 		$menutype_old=ImportTables::getRecordByField('#__menu_types','menutype',$new_menutype_alias,false);
-
 
 		if(!is_array($menutype_old) or count($menutype_old)==0)
 		{
 			//Create new menu type
 			$db = Factory::getDBO();
 			$inserts=array();
-		        $inserts[]='asset_id=0';
+			$inserts[]='asset_id=0';
 			$inserts[]='menutype='.$db->Quote($new_menutype_alias);
-		        $inserts[]='title='.$db->Quote($new_menutype);
+			$inserts[]='title='.$db->Quote($new_menutype);
 			$inserts[]='description='.$db->Quote('Menu Type created by CustomTables');
 			
 			$menu_types_id = ESTables::insertRecords('#__menu_types','id',$inserts);
 		}
 
-			$menuitem_new['checked_out']=0;
-
-
+		$menuitem_new['checked_out']=0;
 		$menuitem_old=ImportTables::getRecordByField('#__menu','alias',$menuitem_alias,false);
 
         if(is_array($menuitem_old) and count($menuitem_old)>0)
         {
             $menuitemid=$menuitem_old['id'];
-
             $old_menutype=ImportTables::getRecordByField('#__menu_types','menutype',$menuitem_old['menutype'],false);
+			$menuitem_new['home']=0;// Menu parameter (default page) should not be copied into export file. #4 
 
             if($old_menutype==0)
             {
@@ -430,7 +423,6 @@ class ImportTables
                     $menuitem_new['parent_id']=1;
 
                 $menuitem_new['level']=1;
-
                 $menuitem_new['menutype']=$new_menutype_alias;
             }
             else
@@ -442,11 +434,8 @@ class ImportTables
                     $menuitem_new['parent_id']=ImportTables::getMenuParentID($menuitem_old['parent_id'],$menus);
                 else
                     $menuitem_new['parent_id']=1;
-				
-                //$menuitem_new['parent_id']=$menuitem_old['parent_id'];
 
                 $menuitem_new['level']=$menuitem_old['level'];
-
                 $menuitem_new['menutype']=$menuitem_old['menutype'];
             }
 
@@ -456,10 +445,7 @@ class ImportTables
         }
         else
         {
-            //if($menuitem_old['parent_id']!=1)
-                //$menuitem_new['parent_id']=ImportTables::getMenuParentID($menuitem_old['parent_id'],$menus);
-            //else
-                $menuitem_new['parent_id']=1;
+			$menuitem_new['parent_id']=1;
 
 			$menuitem_new['level']=1;
 			
@@ -477,19 +463,13 @@ class ImportTables
             //Create layout record
 			//TODO: Add Menu First
 
-
             //Alias,New ID, Old ID
             $menus[]=[$menuitem_alias,$menuitemid,0];
 
 
             $menuitemid=ImportTables::insertRecords('#__menu',$menuitem_new,false);
             $menuitem_new['id']=$menuitemid;
-            //$menuitemid=ImportTables::rebuildMenuTree($menuitem_new);//,$new_menutype_alias,$menuitem_alias,$component_id);
         }
-
-
-
-
 
         return $menuitemid;
     }
