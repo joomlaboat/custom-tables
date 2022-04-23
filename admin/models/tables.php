@@ -551,7 +551,7 @@ class CustomtablesModelTables extends JModelAdmin
 
 		$tableid=(int)$data['id'];
 
-		$tablename=strtolower(trim(preg_replace("/[^a-zA-Z_0-9]/", "", $data['tablename'])));
+		$tablename=strtolower(trim(preg_replace("/[^a-zA-Z0-9]/", "", $data['tablename'])));
 		
 		//If its a new table, check if field name is unique or add number "_1" if its not.
 		if($tableid==0)
