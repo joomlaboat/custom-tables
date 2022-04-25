@@ -44,7 +44,6 @@ if($input->getCmd('extratask','')=='updateimages')
 ?>
 <div id="fieldsData" style="display:none;"><?php echo json_encode(Fields::getFields($this->tableid,true)); ?></div>
 <script type="text/javascript">
-	//websiteroot="<?php echo JURI::root(true); ?>";
 
 	<?php
 

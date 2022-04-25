@@ -28,7 +28,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy
 	var $Listing_Title;
 	var $galleryname;
 	var $GalleryTitle;
-	var $GalleryParams;
+
 	var $imagefolderword;
 	var $imagefolder;
 	var $imagefolderweb;
@@ -36,6 +36,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy
 	var $maxfilesize;
 	var $useridfield;
 	var $phototablename;
+	var $row;
 
 	function __construct()
 	{
@@ -68,16 +69,18 @@ class CustomTablesModelEditPhotos extends JModelLegacy
 			return;
 		}
 
-		$this->listing_id=JFactory::getApplication()->input->getInt('listing_id', 0);
-		if(!JFactory::getApplication()->input->getCmd('galleryname'))
+		$this->listing_id = $this->ct->Env->jinput->getInt('listing_id', 0);
+		if(!$this->ct->Env->jinput->getCmd('galleryname'))
 			return false;
 
-		$this->galleryname=JFactory::getApplication()->input->getCmd('galleryname');
+		$this->galleryname=$this->ct->Env->jinput->getCmd('galleryname');
+
+		$this->getObject();
 
 		if(!$this->getGallery())
 			return false;
 
-		$this->getObject();
+		
 
 		$this->phototablename='#__customtables_gallery_'.$this->ct->Table->tablename.'_'.$this->galleryname;
 	}
@@ -105,16 +108,16 @@ class CustomTablesModelEditPhotos extends JModelLegacy
 
 		$db->setQuery($query);
 
-		$rows=$db->loadObjectList();
+		$fieldrows=$db->loadObjectList();
 
-		if(count($rows)!=1)
+		if(count($fieldrows)!=1)
 			return false;
 
-		$row=$rows[0];
+		$this->field = new Field($ct,$fieldrows[0],$this->row);
 
-		$this->GalleryTitle=$row->title;
-
-		$this->imagefolderword=CustomTablesImageMethods::getImageFolder($row->typeparams);
+		$this->GalleryTitle=$this->field->title;
+		
+		$this->imagefolderword=CustomTablesImageMethods::getImageFolder($this->field->params);
 		$this->imagefolderweb=$this->imagefolderword;
 		
 		$this->imagefolder=JPATH_SITE;
@@ -127,14 +130,16 @@ class CustomTablesModelEditPhotos extends JModelLegacy
 			JFactory::getApplication()->enqueueMessage('Path '.$this->imagefolder.' not found.', 'error');
 			mkdir($this->imagefolder, 0755, true);
 		}
-			
-		$this->GalleryParams=$row->typeparams;
 
 		return true;
 	}
 
 	function getObject()
 	{
+		$this->row = $this->ct->Table->loadRecord($this->listing_id);
+		if($this->row == null)
+			return false;
+		/*
 		$db = JFactory::getDBO();
 		$query = 'SELECT * FROM #__customtables_table_'.$this->ct->Table->tablename.' WHERE id='.$this->listing_id.' LIMIT 1';
 
@@ -146,7 +151,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy
 			return false;
 
 		$row=$rows[0];
-
+*/
 		$this->Listing_Title='';
 
 		foreach($this->ct->Table->fields as $mFld)
@@ -157,7 +162,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy
 
 			if($row[$titlefield]!='')
 			{
-				$this->Listing_Title=$row[$titlefield];
+				$this->Listing_Title=$this->row[$titlefield];
 				break;
 			}
 		}
@@ -254,7 +259,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy
 			if($photoid!='')
 			{
 				$this->imagemethods->DeleteExistingGalleryImage($this->imagefolder,$this->imagemainprefix, $this->ct->Table->tableid, $this->galleryname,
-					$photoid,$this->GalleryParams,true);
+					$photoid,$this->field->params[0],true);
 
 				$query = 'DELETE FROM '.$this->phototablename.' WHERE listingid='.$this->listing_id.' AND photoid='.$photoid;
 				$db->setQuery($query);
@@ -304,7 +309,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy
 		if($r!=1)
 			$isOk=false;
 
-		$customsizes=$this->imagemethods->getCustomImageOptions($this->GalleryParams);
+		$customsizes=$this->imagemethods->getCustomImageOptions($this->field->params[0]);
 
 		foreach($customsizes as $imagesize)
 		{

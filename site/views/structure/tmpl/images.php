@@ -34,8 +34,8 @@ else
 	{
 		$row=$this->rows[0];
 		$imageparams=Tree::getHeritageInfo($row['parentid'], 'imageparams');
-				
-		$cleanOptions=$imagemethods->getCustomImageOptions($imageparams);
+		$type_params = JoomlaBasicMisc::csv_explode(',',$imageparams,'"',false);
+		$cleanOptions=$imagemethods->getCustomImageOptions($type_params[0]);
 				
 		if(count($cleanOptions)>0)
 		{

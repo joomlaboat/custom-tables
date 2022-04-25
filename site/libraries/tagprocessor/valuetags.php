@@ -441,7 +441,8 @@ class tagProcessor_Value
 			else
 			{
 				//check if file exists
-				$ImageFolder_=CustomTablesImageMethods::getImageFolder($fieldtypeparams);
+				$TypeParamsArr=JoomlaBasicMisc::csv_explode(',',$fieldtypeparams,'"',false);
+				$ImageFolder_=CustomTablesImageMethods::getImageFolder($TypeParamsArr);
 
 				$ImageFolder=str_replace('/',DIRECTORY_SEPARATOR,$ImageFolder_);
 

@@ -2,7 +2,7 @@
 /**
  * CustomTables Joomla! 3.x Native Component
  * @package Custom Tables
- * @author Ivan komlev <support@joomlaboat.com>
+ * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
  * @copyright Copyright (C) 2018-2021. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
@@ -40,7 +40,7 @@ class extraTasks
 			$js='
 		<script>
 		window.addEventListener( "load", function( event ) {
-		ctExtraUpdateImages(\''.$input->get('old_typeparams','','BASE64').'\',\''.$input->get('new_typeparams','','BASE64').'\','.(int)$fieldid.',\''.$table_row->tabletitle.'\',\''.$field_row->fieldtitle.'\');
+		ctExtraUpdateImages(\''.$input->get('old_typeparams','','BASE64').'\',\''.$input->get('new_typeparams','','BASE64').'\','.(int)$tableid.','.(int)$fieldid.',\''.$table_row->tabletitle.'\',\''.$field_row->fieldtitle.'\');
 	});
 		</script>
 ';

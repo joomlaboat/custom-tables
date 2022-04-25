@@ -39,7 +39,7 @@ class JoomlaBasicMisc
 	}
 	
 	//https://stackoverflow.com/questions/13076480/php-get-actual-maximum-upload-size
-	public static function file_upload_max_size()
+	public static function file_upload_max_size($custom_max_size = 20000000)
 	{
 		static $max_size = -1;
 
@@ -57,6 +57,10 @@ class JoomlaBasicMisc
 				$max_size = $upload_max;
 			}
 		}
+		
+		if($custom_max_size != 0 and $custom_max_size < $max_size)
+			$max_size = $custom_max_size;
+		
 		return $max_size;
 	}
 

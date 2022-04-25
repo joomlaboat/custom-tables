@@ -1015,6 +1015,9 @@ function renderInput_Radio(objname,param,value,onchange)
             }
             else if(param_att.type==="folder")
             {
+				vlu=vlu.replaceAll('****quote****','&quot;');
+                vlu=vlu.replaceAll('****apos****',"&apos;");
+				
                 result=renderInput_Folder(id,vlu,attributes);
             }
             else if(param_att.type==="radio")

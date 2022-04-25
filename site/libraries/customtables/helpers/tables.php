@@ -352,6 +352,10 @@ class ESTables
 		else
 		{
 			$query='INSERT '.$realtablename.' SET '.implode(', ',$sets);
+			
+			echo $query;
+			//die;
+			
 			$db->setQuery( $query );
 			$db->execute();
 			return $db->insertid();	

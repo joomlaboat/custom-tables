@@ -224,41 +224,19 @@ $max_file_size=JoomlaBasicMisc::file_upload_max_size();
 				<?php
 					if($imagefile!='')
 					{
-						
-					$wh=getimagesize($imagefile_original);
-					echo '<b>Image Sizes:</b>
-					<ul>
+						$wh=getimagesize($imagefile_original);
+						echo '<b>Image Sizes:</b>
+						<ul>
 							<li>_esthumb (150px x 150px)</li>
 							<li>_original ('.$wh[0].'px x '.$wh[1].'px)</li>
-					</ul>';
-					$imageparams=$this->optionRecord->imageparams;
+						</ul>';
+						$imageparams=$this->optionRecord->imageparams;
 					
-					
-					if(strlen($imageparams)==0)
-					{
-						$pid=$this->optionRecord->parentid;
-						$imageparams=Tree::getHeritageInfo($pid, 'imageparams');
-					}	
-					/*	
-					if($imageparams!='')
-					{
-						echo '<b>Custom Sizes:</b>';	
-					
-					
-						$imagemethods=new CustomTablesImageMethods;
-						$cleanOptions=$imagemethods->getCustomImageOptions($imageparams);
-						echo '<ul>';
-						foreach($cleanOptions as $imagesize)
+						if(strlen($imageparams)==0)
 						{
-							echo '<li>'.$imagesize[0].' ('.$imagesize[1].'px x '.$imagesize[2].'px)'.'</li>';
-						}
-						
-						echo '</ul>';
-						
-					}
-					
-						*/
-					
+							$pid=$this->optionRecord->parentid;
+							$imageparams=Tree::getHeritageInfo($pid, 'imageparams');
+						}	
 					}
 				?>
 				

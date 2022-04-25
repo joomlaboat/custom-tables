@@ -11,17 +11,18 @@
 defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\DataTypes\Tree;
+use CustomTables\Field;
 
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'uploader.php');
 
 class CT_FieldTypeTag_file
 {
-    public static function process($filename,$TypeParams, $option_list,$recid,$fieldid,$tableid,$filename_only=false)
+	public static function process($filename,&$field, $option_list, $recid, $filename_only=false)
     {
         if($filename=='')
             return '';
 
-        $FileFolder=CT_FieldTypeTag_file::getFileFolder($TypeParams);
+        $FileFolder=CT_FieldTypeTag_file::getFileFolder($field->params);
 
         $filepath=$FileFolder.'/'.$filename;
 		
@@ -43,7 +44,7 @@ class CT_FieldTypeTag_file
         $how_to_process=$option_list[0];
 
         if($how_to_process!='')
-            $filepath=CT_FieldTypeTag_file::get_private_file_path($filename,$how_to_process,$filepath,$recid,$fieldid,$tableid,$filename_only);
+            $filepath=CT_FieldTypeTag_file::get_private_file_path($filename,$how_to_process,$filepath,$recid,$this->field->id,$this->field->ct->Table->tableid,$filename_only);
 		
        
 		$target='';
@@ -202,15 +203,15 @@ class CT_FieldTypeTag_file
             return $filepath;
     }
 
-    static public function get_file_type_value(&$ctTable, $listing_id)
+    static public function get_file_type_value(&$field, $listing_id)
     {
 		$db = JFactory::getDBO();
 		
         $jinput=JFactory::getApplication()->input;
         
-        $FileFolder=CT_FieldTypeTag_file::getFileFolder($ctTable->typeparams);
+        $FileFolder=CT_FieldTypeTag_file::getFileFolder($field->params);
 
-        $fileid = $jinput->post->get($ctTable->comesfieldname, '','STRING' );
+        $fileid = $jinput->post->get($field->comesfieldname, '','STRING' );
 
 		$value = null;
 		$value_found = false;
@@ -219,18 +220,19 @@ class CT_FieldTypeTag_file
 
 		if($listing_id==0)
         {
-			$value = CT_FieldTypeTag_file::UploadSingleFile('',$fileid, $ctTable->realfieldname,JPATH_SITE.$FileFolder,$ctTable->typeparams,$ctTable->realtablename);
+			$value = CT_FieldTypeTag_file::UploadSingleFile('',$fileid, $field,JPATH_SITE.$FileFolder);
 			if($value)
-					$value_found = true;
+				$value_found = true;
         }
 		else
 		{
-			$to_delete = $jinput->post->get($ctTable->comesfieldname.'_delete', '','CMD' );
-			$ExistingFile=Tree::isRecordExist($listing_id,'id', $ctTable->realfieldname, $ctTable->realtablename);
+			$to_delete = $jinput->post->get($field->comesfieldname.'_delete', '','CMD' );
+
+			$ExistingFile=$field->ct->Table->getRecordFieldValue($listing_id,$field->realfieldname);
 
             if($to_delete=='true')
 			{
-				if($ExistingFile!='' and !CT_FieldTypeTag_file::checkIfTheFileBelongsToAnotherRecord($ExistingFile,$FileFolder,$ctTable->realtablename,$ctTable->realfieldname))
+				if($ExistingFile!='' and !CT_FieldTypeTag_file::checkIfTheFileBelongsToAnotherRecord($ExistingFile,$FileFolder,$field))
 				{
 					$filename_full=$filepath.DIRECTORY_SEPARATOR.$ExistingFile;
 					if(file_exists($filename_full))
@@ -240,22 +242,27 @@ class CT_FieldTypeTag_file
 				$value_found = true;
 			}
 
-			$value = CT_FieldTypeTag_file::UploadSingleFile($ExistingFile,$fileid, $ctTable->realfieldname,JPATH_SITE.$FileFolder,$ctTable->typeparams,$ctTable->realtablename);
+			$value = CT_FieldTypeTag_file::UploadSingleFile($ExistingFile,$fileid, $field,JPATH_SITE.$FileFolder);
 			if($value)
 				$value_found = true;
 		}
 
 		if($value_found)
-			return $ctTable->realfieldname.'='.$db->quote($value);
+			return $value;
 
         return null;
     }
 
-    protected static function UploadSingleFile($ExistingFile, $file_id, $realfieldname,$FileFolder,$typeparams,$realtablename='-options')
+    protected static function UploadSingleFile($ExistingFile, $file_id, &$field, $FileFolder)//,$realtablename='-options')
     {
+		if(isset($field->params[2]))
+			$fileextensions = $field->params[2];
+		else
+			$fileextensions = '';
+
 		if($file_id!='')
 		{
-            $accepted_file_types=explode(' ',ESFileUploader::getAcceptedFileTypes($typeparams));
+            $accepted_file_types=explode(' ',ESFileUploader::getAcceptedFileTypes($fileextensions));
 
          	$accepted_filetypes=array();
 
@@ -283,7 +290,7 @@ class CT_FieldTypeTag_file
 				$uploadedfile=$dst;
 			}
 			
-    		if($ExistingFile!='' and !CT_FieldTypeTag_file::checkIfTheFileBelongsToAnotherRecord($ExistingFile,$FileFolder,$realtablename,$realfieldname))
+    		if($ExistingFile!='' and !CT_FieldTypeTag_file::checkIfTheFileBelongsToAnotherRecord($ExistingFile,$FileFolder,$field))
     		{
 				//Delete Old File
     			$filename_full=$FileFolder.DIRECTORY_SEPARATOR.$ExistingFile;
@@ -332,10 +339,10 @@ class CT_FieldTypeTag_file
 		return false;
 	}
 	
-	static protected function checkIfTheFileBelongsToAnotherRecord($filename,$FileFolder,$realtablename,$realfieldname)
+	static protected function checkIfTheFileBelongsToAnotherRecord($filename,$FileFolder,&$field)
 	{
 		$db = JFactory::getDBO();
-		$query='SELECT * FROM '.$realtablename.' WHERE '.$realfieldname.'='.$db->quote($filename).' LIMIT 2';
+		$query='SELECT * FROM '.$field->ct->Table->realtablename.' WHERE '.$field->realfieldname.'='.$db->quote($filename).' LIMIT 2';
 		
 		$db->setQuery( $query );
 		$db->execute();
@@ -381,28 +388,30 @@ class CT_FieldTypeTag_file
         return $filename_new;
     }
 
-    public static function renderFileFieldBox(&$ct, $prefix,&$esfield,&$row,$realFieldName,$class)
+    public static function renderFileFieldBox(&$ct, &$fieldrow,&$row,$class)
 	{
+		$field = new Field($ct,$fieldrow);
+		
         if(count($row)>0 and $row['listing_id'] != 0)
-            $file=$row[$realFieldName];
+            $file=$row[$field->realfieldname];
         else
             $file='';
 
     	$result='<div class="esUploadFileBox" style="vertical-align:top;">';
 
-        $result.=CT_FieldTypeTag_file::renderFileAndDeleteOption($file,$esfield);
-        $result.=CT_FieldTypeTag_file::renderUploader((int)$esfield['id'],$esfield['fieldname'],$esfield['typeparams']);
+		$result.=CT_FieldTypeTag_file::renderFileAndDeleteOption($file,$field);
+        $result.=CT_FieldTypeTag_file::renderUploader($field);
 
    		$result.='</div>';
        	return $result;
     }
 
-    protected static function renderFileAndDeleteOption($file,&$esfield)
+    protected static function renderFileAndDeleteOption($file,&$field)
     {
         if($file=='')
             return '';
 
-        $FileFolder=CT_FieldTypeTag_file::getFileFolder($esfield['typeparams']);
+        $FileFolder=CT_FieldTypeTag_file::getFileFolder($field->params);
 
         $link=$FileFolder.'/'.$file;
 
@@ -413,12 +422,12 @@ class CT_FieldTypeTag_file
 
         $prefix='comes_';
         $result='
-                <div style="margin:10px; border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;vertical-align:top;" id="ct_uploadedfile_box_'.$esfield['fieldname'].'">';
+                <div style="margin:10px; border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;vertical-align:top;" id="ct_uploadedfile_box_'.$field->fieldname.'">';
 
 						    $result.='<a href="'.$link.'" target="_blank" alt="'.$file.'" title="'.$file.'"><img src="'.$imagesrc.'" width="48" /></a><br/>';
 
-							if(!$esfield['isrequired'])
-								$result.='<input type="checkbox" name="'.$prefix.$esfield['fieldname'].'_delete" id="'.$prefix.$esfield['fieldname'].'_delete" value="true">'
+							if(!$field->isrequired)
+								$result.='<input type="checkbox" name="'.$field->prefix.$field->fieldname.'_delete" id="'.$field->prefix.$field->fieldname.'_delete" value="true">'
 								.' Delete File';
 
 		$result.='
@@ -427,30 +436,39 @@ class CT_FieldTypeTag_file
         return $result;
     }
 
-    protected static function renderUploader($fieldid,$esfieldname,$typeparams)
+    protected static function renderUploader(&$field)
     {
-        $accepted_file_types=ESFileUploader::getAcceptedFileTypes($typeparams);
-        $max_file_size=JoomlaBasicMisc::file_upload_max_size();
-        $prefix='comes_';
+		if(isset($field->params[2]))
+			$fileextensions = $field->params[2];
+		else
+			$fileextensions = '';
+		
+        $accepted_file_types=ESFileUploader::getAcceptedFileTypes($fileextensions);
+		
+		$custom_max_size = (int)$field->params[0];
+		if($custom_max_size != 0 and $custom_max_size < 10000)
+			$custom_max_size = $custom_max_size  * 1000000; //to change 20 to 20MB
+		
+        $max_file_size=JoomlaBasicMisc::file_upload_max_size($custom_max_size);
 
         $fileid=JoomlaBasicMisc::generateRandomString();
 
-        $jinput=JFactory::getApplication()->input;
-
-		$Itemid=$jinput->getInt('Itemid',0);
-
-                $result='
+		$result='
                 <div style="margin:10px; border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;vertical-align:top;">
                 
-                	<div id="ct_fileuploader_'.$esfieldname.'"></div>
-                    <div id="ct_eventsmessage_'.$esfieldname.'"></div>
+                	<div id="ct_fileuploader_'.$field->fieldname.'"></div>
+                    <div id="ct_eventsmessage_'.$field->fieldname.'"></div>
                 	<script>
                         UploadFileCount=1;
 
-                    	var urlstr="'.JURI::root(true).'/index.php?option=com_customtables&view=fileuploader&tmpl=component&'.$esfieldname.'_fileid='.$fileid.'&Itemid='.$Itemid.'&fieldname='.$esfieldname.'";
-                    	ct_getUploader('.$fieldid.',urlstr,'.$max_file_size.',"'.$accepted_file_types.'","eseditForm",false,"ct_fileuploader_'.$esfieldname.'","ct_eventsmessage_'.$esfieldname.'","'.$fileid.'","'.$prefix.$esfieldname.'","ct_ubloadedfile_box_'.$esfieldname.'");
+                    	var urlstr="'.JURI::root(true).'/index.php?option=com_customtables&view=fileuploader&tmpl=component&'.$field->fieldname
+							.'_fileid='.$fileid.'&Itemid='.$field->ct->Env->Itemid.'&fieldname='.$field->fieldname.'";
+                    	
+						ct_getUploader('.$field->id.',urlstr,'.$max_file_size.',"'.$accepted_file_types.'","eseditForm",false,"ct_fileuploader_'.$field->fieldname.'","ct_eventsmessage_'
+							.$field->fieldname.'","'.$fileid.'","'.$field->prefix.$field->fieldname.'","ct_ubloadedfile_box_'.$field->fieldname.'");
+
                     </script>
-                    <input type="hidden" name="'.$prefix.$esfieldname.'" id="'.$prefix.$esfieldname.'" value="" />
+                    <input type="hidden" name="'.$field->prefix.$field->fieldname.'" id="'.$field->prefix.$field->fieldname.'" value="" />
                     '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PERMITED_FILE_TYPES').': '.$accepted_file_types.'<br/>
 					'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PERMITED_MAX_FILE_SIZE').': '.JoomlaBasicMisc::formatSizeUnits($max_file_size).'
                 </div>
@@ -460,13 +478,12 @@ class CT_FieldTypeTag_file
 
     }
 	
-	public static function getFileFolder($typeparams)
+	public static function getFileFolder(&$params)
     {
         $folder='';
-        $pair=explode(',',$typeparams);
 
-		if(isset($pair[1]))
-			$folder=$pair[1];
+		if(isset($params[1]))
+			$folder=$params[1];
         
 		if($folder=='')
 			$folder='/images';	//default folder
@@ -488,17 +505,23 @@ class CT_FieldTypeTag_file
 				if($p!='/images/')
 					$folder='/images'.$folder;
 			}
+			else
+			{
+				$folder='/images'.$folder;
+			}
 
 			//delete trailing slash if found
 			$p=substr($folder,strlen($folder)-1,1);
 			if($p=='/')
 				$folder=substr($folder,0,strlen($folder)-1);
-			
-			$folderPath=JPATH_SITE.str_replace('/',DIRECTORY_SEPARATOR,$folder); //relative path
-			//Create folder if not exists
+		}
+		
+		$folderPath=JPATH_SITE.str_replace('/',DIRECTORY_SEPARATOR,$folder); //relative path
+		
+		//Create folder if not exists
 			if (!file_exists($folderPath))
 				mkdir($folderPath, 0755, true);
-		}
+		
 		return $folder;
     }
     

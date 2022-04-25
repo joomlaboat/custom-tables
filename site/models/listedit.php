@@ -88,10 +88,9 @@ class CustomTablesModelListEdit extends JModel
 				if($jinput->getCmd('image_delete')=='true')
 				{
 					if($ExistingImage>0)
-					$imagemethods->DeleteExistingSingleImage($ExistingImage,$imagefolder,$imageparams,'-options',$fieldname);
-									
+						$imagemethods->DeleteExistingSingleImage($ExistingImage,$imagefolder,$imageparams,'-options',$fieldname);
+
 					$savequery[]=''.$fieldname.'='.$value;
-				
 				}
 			}
 			else

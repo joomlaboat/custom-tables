@@ -30,60 +30,97 @@ use \JoomlaBasicMisc;
 use CustomTables\CTUser;
 use \LayoutProcessor;
 
-trait SaveFieldQuerySet
+class SaveFieldQuerySet
 {
-    var $fieldname;
-	var $realfieldname;
-	var $comesfieldname;
-	var $typeparams;
-	var $jinput;
-	var $prefix;
-	var $db;
+	var $ct;
+    var $db;
+	var $field;
+	var $row;
+	var $isCopy;
+	
+	function __construct(&$ct,&$row,$isCopy=false)
+	{
+		$this->ct = $ct;
+		$this->db = Factory::getDBO();
+		$this->row = $row;
+		$this->isCopy = $isCopy;
+	}
 
-	function getSaveFieldSet($listing_id,&$esfield)
+	function getSaveFieldSet(&$fieldrow)
     {
-        $this->fieldname=$esfield['fieldname'];
-		$this->realfieldname=$esfield['realfieldname'];
+		$this->field = new Field($this->ct,$fieldrow,$this->row);
 		
-        $this->comesfieldname=$this->prefix.$this->fieldname;
-        $this->jinput=Factory::getApplication()->input;
-        $this->typeparams=$esfield['typeparams'];
+		$query = $this->getSaveFieldSetType();
+		
+		if($this->field->fieldname=='c')
+		{
+			
 
-        switch($esfield['type'])
+		}
+		
+		//Process default value
+		if($this->field->defaultvalue != "" and ($query == null or $this->row[$this->field->realfieldname] == null or $this->row[$this->field->realfieldname] == ''))
+		{
+			$twig = new TwigProcessor($this->ct, $this->field->defaultvalue);
+			$value = $twig->process($this->row);
+			
+			$this->row[$this->field->realfieldname] = $value;
+			return $this->field->realfieldname.'='.$this->db->quote($value);
+		}
+		else
+			return $query;
+	}
+		
+	protected function getSaveFieldSetType()
+    {
+		$listing_id = $this->row[$this->ct->Table->realidfieldname];
+		
+        switch($this->field->type)
 		{
 				case 'records':
-					return $this->get_record_type_value();
+					$value = $this->get_record_type_value();
+					$this->row[$this->field->realfieldname] = $value;
+					return ($value == null ? null : $this->field->realfieldname.'='.$this->db->Quote($value));
 
 				case 'sqljoin':
 
-					$value=$this->jinput->getInt($this->comesfieldname,null);
+					$value=$this->ct->Env->jinput->getInt($this->field->comesfieldname,null);
 					if(isset($value))
 					{
+						$this->row[$this->field->realfieldname] = $value;
+						
 						if($value==0)
-							return $this->realfieldname.'=NULL';
+							return $this->field->realfieldname.'=NULL';
 						else
-							return $this->realfieldname.'='.(int)$value;
+							return $this->field->realfieldname.'='.(int)$value;
 					}
 
 					break;
 				case 'radio':
-						$value=$this->jinput->getCmd($this->comesfieldname,null);
+						$value=$this->ct->Env->jinput->getCmd($this->field->comesfieldname,null);
 
 						if(isset($value))
- 							return $this->realfieldname.'='.$this->db->Quote($value);
+						{
+							$this->row[$this->field->realfieldname] = $value;
+ 							return $this->field->realfieldname.'='.$this->db->Quote($value);
+						}
+						
 					break;
 
 				case 'googlemapcoordinates':
-						$value=$this->jinput->getString($this->comesfieldname,null);
+						$value=$this->ct->Env->jinput->getString($this->field->comesfieldname,null);
 
 						if(isset($value))
-							return $this->realfieldname.'='.$this->db->Quote($value);
+						{
+							$this->row[$this->field->realfieldname] = $value;
+							return $this->field->realfieldname.'='.$this->db->Quote($value);
+						}
 
 					break;
 
                 case 'color':
 
-                    $value=$this->jinput->getString($this->comesfieldname,null);
+                    $value=$this->ct->Env->jinput->getString($this->field->comesfieldname,null);
 						
 					if(isset($value))
                     {
@@ -110,28 +147,37 @@ trait SaveFieldQuerySet
 
                         }
                         else
-                            $value=$this->jinput->get($this->comesfieldname,'','ALNUM');
+                            $value=$this->ct->Env->jinput->get($this->field->comesfieldname,'','ALNUM');
 
                      
                         $value=strtolower($value);
                         $value=str_replace('#','',$value);
                         if(ctype_xdigit($value) or $value=='')
-                            return $this->realfieldname.'='.$this->db->Quote($value);
+						{
+							$this->row[$this->field->realfieldname] = $value;
+                            return $this->field->realfieldname.'='.$this->db->Quote($value);
+						}
                     }
 					break;
 
 				case 'alias':
-						$value=$this->jinput->getString($this->comesfieldname,null);
+						$value=$this->ct->Env->jinput->getString($this->field->comesfieldname,null);
 
 						if(isset($value))
+						{
+							$this->row[$this->field->realfieldname] = $value;
                             return $this->get_alias_type_value($listing_id);
+						}
 					break;
 
                 case 'string':
-						$value=$this->jinput->getString($this->comesfieldname,null);
+						$value=$this->ct->Env->jinput->getString($this->field->comesfieldname,null);
 
 						if(isset($value))
-							return $this->realfieldname.'='.$this->db->Quote($value);
+						{
+							$this->row[$this->field->realfieldname] = $value;
+							return $this->field->realfieldname.'='.$this->db->Quote($value);
+						}
 					break;
 
 				case 'multilangstring':
@@ -148,20 +194,26 @@ trait SaveFieldQuerySet
 						else
 							$postfix='_'.$lang->sef;
 
-						$value=$this->jinput->getString($this->comesfieldname.$postfix);
+						$value=$this->ct->Env->jinput->getString($this->field->comesfieldname.$postfix);
 
 						if(isset($value))
-							$sets[] = $this->realfieldname.$postfix.'='.$this->db->Quote($value);
+						{
+							$this->row[$this->field->realfieldname.$postfix] = $value;
+							$sets[] = $this->field->realfieldname.$postfix.'='.$this->db->Quote($value);
+						}
 					}
 					
 					return (count($sets) > 0 ? $sets : null);
 
 				case 'text':
 
-					$value_= ComponentHelper::filterText($this->jinput->post->get($this->comesfieldname, null, 'raw'));
+					$value= ComponentHelper::filterText($this->ct->Env->jinput->post->get($this->field->comesfieldname, null, 'raw'));
 
-					if(isset($value_))
-						return $this->realfieldname.'='.$this->db->Quote(stripslashes($value_));
+					if(isset($value))
+					{
+						$this->row[$this->field->realfieldname] = $value;
+						return $this->field->realfieldname.'='.$this->db->Quote(stripslashes($value));
+					}
 
 					break;
 
@@ -179,137 +231,149 @@ trait SaveFieldQuerySet
 						else
 							$postfix='_'.$lang->sef;
 						
-						$value_= ComponentHelper::filterText($this->jinput->post->get($this->comesfieldname.$postfix, null, 'raw'));
+						$value= ComponentHelper::filterText($this->ct->Env->jinput->post->get($this->field->comesfieldname.$postfix, null, 'raw'));
 
-						if(isset($value_))
-							$sets[] = $this->realfieldname.$postfix.'='.$this->db->Quote($value_);
+						if(isset($value))
+						{
+							$this->row[$this->field->realfieldname.$postfix] = $value;
+							$sets[] = $this->field->realfieldname.$postfix.'='.$this->db->Quote($value);
+						}
 					}
 					
 					return (count($sets) > 0 ? $sets : null);
 
 				case 'ordering':
-						$value=$this->jinput->getInt($this->comesfieldname,null);
+						$value=$this->ct->Env->jinput->getInt($this->field->comesfieldname,null);
 
 						if(isset($value)) // always check with isset(). null doesnt work as 0 is null somehow in PHP
-							return $this->realfieldname.'='.(int)$value;
+						{
+							$this->row[$this->field->realfieldname] = $value;
+							return $this->field->realfieldname.'='.(int)$value;
+						}
 
 					break;
 
 				case 'int':
-						$value=$this->jinput->getInt($this->comesfieldname,null);
+						$value=$this->ct->Env->jinput->getInt($this->field->comesfieldname,null);
 
 						if(isset($value)) // always check with isset(). null doesnt work as 0 is null somehow in PHP
-							return $this->realfieldname.'='.(int)$value;
+						{
+							$this->row[$this->field->realfieldname] = $value;
+							return $this->field->realfieldname.'='.(int)$value;
+						}
 
 					break;
 
 				case 'user':
-						$value=$this->jinput->getVar($this->comesfieldname);
+						$value=$this->ct->Env->jinput->getVar($this->field->comesfieldname);
 
 						if(isset($value))
                         {
-                            $value=$this->jinput->getInt($this->comesfieldname);
+                            $value=$this->ct->Env->jinput->getInt($this->field->comesfieldname);
+							$this->row[$this->field->realfieldname] = $value;
+							
 							if($value == null)
-                                return $this->realfieldname.'=null';
+                                return $this->field->realfieldname.'=null';
                             else
-                                return $this->realfieldname.'='.(int)$value;
+                                return $this->field->realfieldname.'='.(int)$value;
                         }
 
 					break;
 
                 case 'userid':
 
-                    	$value=$this->jinput->getInt($this->comesfieldname,null);
+                    	$value=$this->ct->Env->jinput->getInt($this->field->comesfieldname,null);
 
 						if(isset($value) and $value!=0)
-							return $this->realfieldname.'='.(int)$value;
+						{
+							$this->row[$this->field->realfieldname] = $value;
+							return $this->field->realfieldname.'='.(int)$value;
+						}
+						elseif($this->row[$this->ct->Table->realidfieldname] == 0 or $this->row[$this->ct->Table->realidfieldname] == '' or $this->isCopy)
+						{
+							$user = JFactory::getUser();
+							$value = ($user->id!=0 ? $user->id : 0); 
+							
+							$this->row[$this->field->realfieldname] = $value;
+							return $this->field->realfieldname.'='.(int)$value;
+						}
                         
 					break;
 
 				case 'usergroup':
-						$value=$this->jinput->getInt($this->comesfieldname,null);
+						$value=$this->ct->Env->jinput->getInt($this->field->comesfieldname,null);
 
 						if(isset($value))
-							return $this->realfieldname.'='.(int)$value;
+						{
+							$this->row[$this->field->realfieldname] = $value;
+							return $this->field->realfieldname.'='.(int)$value;
+						}
 
 					break;
 
 				case 'usergroups':
-					return $this->get_usergroups_type_value();
+					$value = $this->get_usergroups_type_value();
+					$this->row[$this->field->realfieldname] = $value;
+					return ($value == null ? null : $this->field->realfieldname.'='.$this->db->Quote($value));
 
                 case 'language':
-                    return $this->get_customtables_type_language();
+					$value = $this->get_customtables_type_language();
+					$this->row[$this->field->realfieldname] = $value;
+					return ($value == null ? null : $this->field->realfieldname.'='.$this->db->Quote($value));
 
 				case 'filelink':
-						$value=$this->jinput->getString($this->comesfieldname,null);
+						$value=$this->ct->Env->jinput->getString($this->field->comesfieldname,null);
 						if(isset($value))
-							return $this->realfieldname.'='.$this->db->Quote($value);
+						{
+							$this->row[$this->field->realfieldname] = $value;
+							return $this->field->realfieldname.'='.$this->db->Quote($value);
+						}
 
 					break;
 
 				case 'float':
-						$value=$this->jinput->get($this->comesfieldname,null,'FLOAT');
+						$value=$this->ct->Env->jinput->get($this->field->comesfieldname,null,'FLOAT');
 
 						if(isset($value))
-							return $this->realfieldname.'='.(float)$value;
+						{
+							$this->row[$this->field->realfieldname] = $value;
+							return $this->field->realfieldname.'='.(float)$value;
+						}
+						
 					break;
 
 				case 'image':
 
                     $image_type_file=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fieldtypes'.DIRECTORY_SEPARATOR.'_type_image.php';
 					require_once($image_type_file);
-
-                    return CT_FieldTypeTag_image::get_image_type_value($this, $listing_id);
+					
+					$value = CT_FieldTypeTag_image::get_image_type_value($this->field, $listing_id);
+					$this->row[$this->field->realfieldname] = $value;
+					return ($value == null ? null : $this->field->realfieldname.'='.$this->db->Quote($value));
 
 				case 'file':
 
                     $file_type_file=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fieldtypes'.DIRECTORY_SEPARATOR.'_type_file.php';
 					require_once($file_type_file);
-					return CT_FieldTypeTag_file::get_file_type_value($this, $listing_id);
+					
+					$value = CT_FieldTypeTag_file::get_file_type_value($this->field, $listing_id);
+					$this->row[$this->field->realfieldname] = $value;
+					return ($value == null ? null : $this->field->realfieldname.'='.$this->db->Quote($value));
 					
 				case 'signature':
-					$value=$this->jinput->getString($this->comesfieldname,null);
-					
-					if(isset($value))
-					{
-						$type_params = JoomlaBasicMisc::csv_explode(',',$this->typeparams,'"',false);
-						$ImageFolder = \CustomTablesImageMethods::getImageFolder($this->typeparams);
-						
-						$format = $type_params[3] ?? 'png';
-					
-						if($format == 'svg-db')
-						{
-							return $this->realfieldname.'='.$this->db->Quote($value);
-						}
-						else
-						{
-							if($format == 'jpeg')
-								$format = 'jpg';
-							
-							//Get new file name and avoid possible duplicate
-							
-							$i=0;
-							do
-							{
-								$ImageID=date("YmdHis").($i>0 ? $i : '');
-								//there is possible error, check all possible ext
-								$image_file = JPATH_SITE.DIRECTORY_SEPARATOR.$ImageFolder.DIRECTORY_SEPARATOR.$ImageID.'.'.$format;
-								$i++;
-							}while(file_exists($image_file));
-							$parts = explode(';base64,',$value);
-							
-							$deceded_binary = base64_decode($parts[1]);
-							file_put_contents($image_file, $deceded_binary);
-							
-							return $this->realfieldname.'='.$this->db->Quote($ImageID);
-						}
-					}
+				
+					$value = $this->get_customtables_type_signature();
+					$this->row[$this->field->realfieldname] = $value;
+					return ($value == null ? null : $this->field->realfieldname.'='.$this->db->Quote($value));
 
 				case 'article':
-						$value=$this->jinput->getInt($this->comesfieldname,null);
+						$value=$this->ct->Env->jinput->getInt($this->field->comesfieldname,null);
 
 						if(isset($value))
-							return $this->realfieldname.'='.$value;
+						{
+							$this->row[$this->field->realfieldname] = $value;
+							return $this->field->realfieldname.'='.$value;
+						}
 
 					break;
 
@@ -327,46 +391,62 @@ trait SaveFieldQuerySet
 						else
 							$postfix='_'.$lang->sef;
 
-						$value = $this->jinput->getInt($this->comesfieldname.$postfix,null);
+						$value = $this->ct->Env->jinput->getInt($this->field->comesfieldname.$postfix,null);
 
 						if(isset($value))
-							$sets[] = $this->realfieldname.$postfix.'='.(int)$value;
+						{
+							$this->row[$this->field->realfieldname.$postfix] = $value;
+							$sets[] = $this->field->realfieldname.$postfix.'='.(int)$value;
+						}
 					}
 					
 					return (count($sets) > 0 ? $sets : null);
 
 				case 'customtables':
-                    return $this->get_customtables_type_value();
-
-					break;
+				
+					$value = $this->get_customtables_type_value();
+					$this->row[$this->field->realfieldname] = $value;
+					return ($value == null ? null : $this->field->realfieldname.'='.$this->db->Quote($value));
 
 				case 'email':
-						$value=$this->jinput->getString($this->comesfieldname);
+						$value=$this->ct->Env->jinput->getString($this->field->comesfieldname);
 						if(isset($value))
 						{
 							$value = trim($value);
 							if(Email::checkEmail($value))
-								return $this->realfieldname.'='.$this->db->Quote($value);
+							{
+								$this->row[$this->field->realfieldname] = $value;
+								return $this->field->realfieldname.'='.$this->db->Quote($value);
+							}
 							else
-								return $this->realfieldname.'='.$this->db->Quote("");//PostgreSQL compatible
+							{
+								$this->row[$this->field->realfieldname] = null;
+								return $this->field->realfieldname.'='.$this->db->Quote("");//PostgreSQL compatible
+							}
 						}
 					break;
 
 				case 'url':
-						$value=$this->jinput->getString($this->comesfieldname);
+						$value=$this->ct->Env->jinput->getString($this->field->comesfieldname);
 						if(isset($value))
 						{
 							$value = trim($value);
 							
 							if (filter_var($value, FILTER_VALIDATE_URL))
-								return $this->realfieldname.'='.$this->db->Quote($value);
+							{
+								$this->row[$this->field->realfieldname] = $value;
+								return $this->field->realfieldname.'='.$this->db->Quote($value);
+							}
 							else
-								return $this->realfieldname.'='.$this->db->Quote("");//PostgreSQL compatible
+							{
+								$this->row[$this->field->realfieldname] = null;
+								return $this->field->realfieldname.'='.$this->db->Quote("");//PostgreSQL compatible
+							}
 						}
 					break;
 
 				case 'checkbox':
-                    $value=$this->jinput->getCmd($this->comesfieldname);
+                    $value=$this->ct->Env->jinput->getCmd($this->field->comesfieldname);
                     
                     if($value!=null)
                     {
@@ -375,50 +455,138 @@ trait SaveFieldQuerySet
                         else
                             $value=0;
                         
-                        return $this->realfieldname.'='.(int)$value;
+						$this->row[$this->field->realfieldname] = (int)$value;
+                        return $this->field->realfieldname.'='.(int)$value;
                     }
                     else
                     {
-                        $value=$this->jinput->getCmd($this->comesfieldname.'_off');
+                        $value=$this->ct->Env->jinput->getCmd($this->field->comesfieldname.'_off');
                         if($value!=null)
 						{
 							if((int)$value == 1)
-								return $this->realfieldname.'=0';
+							{
+								$this->row[$this->field->realfieldname] = 0;
+								return $this->field->realfieldname.'=0';
+							}
 							else
-								return $this->realfieldname.'=1';
+							{
+								$this->row[$this->field->realfieldname] = 1;
+								return $this->field->realfieldname.'=1';
+							}
 						}
                     }
                     break;
 
 				case 'date':
-						$value=$this->jinput->getString($this->comesfieldname,null);
+						$value=$this->ct->Env->jinput->getString($this->field->comesfieldname,null);
 						if(isset($value))
 						{
 							if($value == '' or $value == '0000-00-00')
-								return $this->realfieldname.'=NULL';
+							{
+								$this->row[$this->field->realfieldname] = null;
+								return $this->field->realfieldname.'=NULL';
+							}
 							else
-								return $this->realfieldname.'='.$this->db->Quote($value);
+							{
+								$this->row[$this->field->realfieldname] = $value;
+								return $this->field->realfieldname.'='.$this->db->Quote($value);
+							}
 						}
 
 					break;
                 
                 case 'time':
-						$value=$this->jinput->getString($this->comesfieldname,null);
+						$value=$this->ct->Env->jinput->getString($this->field->comesfieldname,null);
 						if(isset($value))
                         {
 							if($value=='')
-								return $this->realfieldname.'=NULL';
+							{
+								$this->row[$this->field->realfieldname] = null;
+								return $this->field->realfieldname.'=NULL';
+							}
 							else
-								return $this->realfieldname.'='.(int)$value;
+							{
+								$this->row[$this->field->realfieldname] = (int)$value;
+								return $this->field->realfieldname.'='.(int)$value;
+							}
                         } 
 
 					break;
+					
+					
+				case 'creationtime':
+					if($this->row[$this->ct->Table->realidfieldname] == 0 or $this->row[$this->ct->Table->realidfieldname] == '' or $this->isCopy)
+						$value = gmdate( 'Y-m-d H:i:s');
+						$this->row[$this->field->realfieldname] = $value;
+						return $this->field->realfieldname.'='.$db->Quote($value);
+					break;
 
-			}//switch($esfield['type'])
+				case 'changetime':
+						$value = gmdate( 'Y-m-d H:i:s');
+						$this->row[$this->field->realfieldname] = $value;
+						return $this->field->realfieldname.'='.$db->Quote($value);
+					break;
 
-    return null;
+				case 'server':
 
-}
+						if(count($this->field->params) == 0)
+							$value=$this->getUserIP(); //Try to get client real IP
+						else
+							$value=$jinput->server->get($this->field->params[0],'','STRING');
+
+						$this->row[$this->field->realfieldname] = $value;
+						return $this->field->realfieldname.'='.$db->Quote($value);
+					break;
+
+				case 'id':
+					//get max id
+					if($this->row[$this->ct->Table->realidfieldname] == 0 or $this->row[$this->ct->Table->realidfieldname] == '' or $this->isCopy)
+					{
+						$minid=(int)$this->fields->params[0];
+
+						$query='SELECT MAX('.$realfieldname.') AS maxid FROM '.$this->ct->Table->realtablename.' LIMIT 1';
+						$db->setQuery( $query );
+						$this->rows=$db->loadObjectList();
+						if(count($this->rows)!=0)
+						{
+							$value=(int)($this->rows[0]->maxid)+1;
+							if($value<$minid)
+								$value=$minid;
+
+							$this->row[$this->field->realfieldname] = $value;
+							return $this->field->realfieldname.'='.$db->Quote($value);
+						}
+					}
+					break;
+				
+				case 'md5':
+				
+					$vlu = '';
+					$fields = explode(',',$this->field->params[0]);
+					foreach($fields as $f1)
+					{
+						if($f1 != $this->field->fieldname)
+						{
+							//to make sure that field exists
+							foreach($this->ct->Table->fields as $f2)
+							{
+								if($f2['fieldname']==$f1)
+									$vlu.=$this->row[$f2['realfieldname']];
+							}
+						}
+					}
+
+					if($vlu!='')
+					{
+						$value = md5($vlu);
+						$this->row[$this->field->realfieldname] = $value;
+						return $this->field->realfieldname.'='.$this->db->Quote($value);
+					}
+					
+					break;
+			}
+		return null;
+	}
 
 	protected function toHex($n)
 	{
@@ -449,10 +617,7 @@ trait SaveFieldQuerySet
 			}
 		}
 
-		$type_params=$field['typeparams'];
-		$parts=JoomlaBasicMisc::csv_explode(',', $type_params, '"', false);
-
-		if(count($parts)<3)
+		if(count($this->field->params)<3)
 		{
 			Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('User field name parameters count is less than 3.','error' ));
 			return false;
@@ -461,7 +626,7 @@ trait SaveFieldQuerySet
 		//Try to create user
 		$new_parts=array();
 
-		foreach($parts as $part)
+		foreach($this->field->params as $part)
 		{
 			tagProcessor_General::process($ct,$part,$ct->Table->record,'',1);
 			tagProcessor_Item::process($ct,$ct->Table->record,$part,'','',0);
@@ -519,12 +684,53 @@ trait SaveFieldQuerySet
 		return true;
 	}
 
+	protected function get_customtables_type_signature()
+	{
+		$value=$this->ct->Env->jinput->getString($this->field->comesfieldname,null);
+	
+		if(isset($value))
+		{
+			$ImageFolder = \CustomTablesImageMethods::getImageFolder($this->fields->params);
+	
+			$format = $this->field->params[3] ?? 'png';
+		
+			if($format == 'svg-db')
+			{
+				return $value;
+			}
+			else
+			{
+				if($format == 'jpeg')
+					$format = 'jpg';
+
+			//Get new file name and avoid possible duplicate
+
+			$i=0;
+			do
+			{
+				$ImageID=date("YmdHis").($i>0 ? $i : '');
+				//there is possible error, check all possible ext
+				$image_file = JPATH_SITE.DIRECTORY_SEPARATOR.$ImageFolder.DIRECTORY_SEPARATOR.$ImageID.'.'.$format;
+				$i++;
+			}while(file_exists($image_file));
+		
+			$parts = explode(';base64,',$value);
+
+			$deceded_binary = base64_decode($parts[1]);
+			file_put_contents($image_file, $deceded_binary);
+			
+			return $ImageID;
+			}
+		}
+		return null;
+	}
+	
 	protected function get_customtables_type_language()
 	{
-		$value=$this->jinput->getCmd($this->comesfieldname,null);
+		$value=$this->ct->Env->jinput->getCmd($this->field->comesfieldname,null);
 
 		if(isset($value))
-			return $this->realfieldname.'='.$this->db->Quote($value);
+			return value;
 
 		return null;
 	}
@@ -533,31 +739,30 @@ trait SaveFieldQuerySet
 	{
 		$value='';
 
-		$typeparams_arr=explode(',',$this->typeparams);
-		$optionname=$typeparams_arr[0];
+		$optionname=$this->field->params[0];
 
-		if($typeparams_arr[1]=='multi')
+		if($this->field->params[1]=='multi')
 		{
-			$value=$this->getMultiString($optionname, $this->prefix.'multi_'.$this->tablename.'_'.$this->fieldname);
+			$value=$this->getMultiString($optionname);
 
 			if($value!=null)
 			{
 				if($value!='')
-					return $this->realfieldname.'='.$this->db->Quote(','.$value.',');
+					return ','.$value.',';
 				else
-					return $this->realfieldname.'=""';
+					return '';
 			}
 		}
-		elseif($typeparams_arr[1]=='single')
+		elseif($this->field->params[1]=='single')
 		{
-			$value=$this->getComboString($optionname, $this->prefix.'combotree_'.$this->tablename.'_'.$this->fieldname);
+			$value=$this->getComboString($optionname);
 
 			if($value!=null)
 			{
 				if($value!='')
-					return $this->realfieldname.'='.$this->db->Quote(','.$value.',');
+					return ','.$value.',';
 				else
-					return $this->realfieldname.'=""';
+					return '';
 			}
 		}
         return null;
@@ -565,65 +770,63 @@ trait SaveFieldQuerySet
 
 	protected function get_usergroups_type_value()
 	{
-		$type_params = JoomlaBasicMisc::csv_explode(',',$this->typeparams,'"',false);
-		
-		switch($type_params[0])
+		switch($this->field->params[0])
 		{
 			case 'single';
-				$value=$this->jinput->getString($this->comesfieldname,null);
+				$value=$this->ct->Env->jinput->getString($this->field->comesfieldname,null);
 				if(isset($value))
-					return $this->realfieldname.'='.$this->db->Quote(','.$value.',');
+					return ','.$value.',';
 				
 				break;
 			case 'multi';
-				$valuearray = $this->jinput->post->get( $this->comesfieldname, null, 'array' );
+				$valuearray = $this->ct->Env->jinput->post->get( $this->field->comesfieldname, null, 'array' );
 				if(isset($valuearray))
-					return $this->realfieldname.'='.$this->db->Quote(','.implode(',',$valuearray).',');
+					return ','.implode(',',$valuearray).',';
 
 				break;
 			case 'multibox';
-				$valuearray = $this->jinput->post->get( $this->comesfieldname, null, 'array' );
+				$valuearray = $this->ct->Env->jinput->post->get( $this->field->comesfieldname, null, 'array' );
 				if(isset($valuearray))
-					return $this->realfieldname.'='.$this->db->Quote(','.implode(',',$valuearray).',');
+					return ','.implode(',',$valuearray).',';
 
 				break;
 			case 'radio';
-				$value=$this->jinput->getString($this->comesfieldname,null);
+				$value=$this->ct->Env->jinput->getString($this->field->comesfieldname,null);
 				if(isset($value))
-					return $this->realfieldname.'='.$this->db->Quote(','.$value.',');
+					return ','.$value.',';
 
 				break;
 			case 'checkbox';
-				$valuearray = $this->jinput->post->get( $this->comesfieldname, null, 'array' );
+				$valuearray = $this->ct->Env->jinput->post->get( $this->field->comesfieldname, null, 'array' );
 				if(isset($valuearray))
-					return $this->realfieldname.'='.$this->db->Quote(','.implode(',',$valuearray).',');
+					return ','.implode(',',$valuearray).',';
 
 				break;
 		}
-        return false;
+        return null;
     }
 
 	public function get_alias_type_value($listing_id)
 	{
-		$value=$this->jinput->getString($this->comesfieldname);
+		$value=$this->ct->Env->jinput->getString($this->field->comesfieldname);
 		if(!isset($value))
 			return null;
     
-		$value=$this->prepare_alias_type_value($listing_id,$value,$this->realfieldname);
+		$value=$this->prepare_alias_type_value($listing_id,$value);
 		if($value=='')
 			return null;
 
-		return $this->realfieldname.'='.$this->db->quote($value);
+		return $value;
 	}
 
-	public function prepare_alias_type_value($listing_id,$value,$realfieldname)
+	public function prepare_alias_type_value($listing_id,$value)
 	{
 		$value=JoomlaBasicMisc::slugify($value);
 
 		if($value=='')
 			return '';
 
-		if(!$this->checkIfAliasExists($listing_id,$value,$realfieldname))
+		if(!$this->checkIfAliasExists($listing_id,$value,$this->field->realfieldname))
 			return $value;
 
 		$val=$this->splitStringToStringAndNumber($value);
@@ -678,12 +881,12 @@ trait SaveFieldQuerySet
 		
 		$this->db->setQuery( $query );
 
-		$rows = $this->db->loadObjectList();
-		if(count($rows)==0)
+		$this->rows = $this->db->loadObjectList();
+		if(count($this->rows)==0)
 			return false;
 
-		$row=$rows[0];
-		$c=(int)$row->c;
+		$this->row=$this->rows[0];
+		$c=(int)$this->row->c;
 
 		if($c>0)
 			return true;
@@ -693,55 +896,53 @@ trait SaveFieldQuerySet
 
 	protected function get_record_type_value()
 	{
-		$typeparamsarray=explode(',',$this->typeparams);
-		
-		if(count($typeparamsarray)>2)
+		if(count($this->field->params)>2)
 		{
-			$esr_selector=$typeparamsarray[2];
+			$esr_selector=$this->field->params[2];
 			$selectorpair=explode(':',$esr_selector);
 
 			switch($selectorpair[0])
 			{
 				case 'single';
 
-				$value=$this->jinput->getString($this->comesfieldname,null);
+				$value=$this->ct->Env->jinput->getString($this->field->comesfieldname,null);
 
 				if(isset($value))
-					return $this->realfieldname.'='.(int)$value;
+					return (int)$value;
 
 				break;
 
 				case 'multi';
-					$valuearray = $this->jinput->post->get($this->comesfieldname, null, 'array' );
+					$valuearray = $this->ct->Env->jinput->post->get($this->field->comesfieldname, null, 'array' );
 
 					if(isset($valuearray))
-						return $this->realfieldname.'='.$this->db->Quote($this->getCleanRecordValue($valuearray));
+						return $this->getCleanRecordValue($valuearray);
                                     
 				break;
 
 				case 'multibox';
-					$valuearray = $this->jinput->post->get($this->comesfieldname,null, 'array' );
+					$valuearray = $this->ct->Env->jinput->post->get($this->field->comesfieldname,null, 'array' );
 
 					if(isset($valuearray))
 					{
 						$clean_value=$this->getCleanRecordValue($valuearray);
-						return $this->realfieldname.'='.$this->db->Quote($clean_value);
+						return $clean_value;
 					}
 					break;
 
 				case 'radio';
-					$valuearray = $this->jinput->post->get($this->comesfieldname, null, 'array' );
+					$valuearray = $this->ct->Env->jinput->post->get($this->field->comesfieldname, null, 'array' );
 
 					if(isset($valuearray))
-						return $this->realfieldname.'='.$this->db->Quote($this->getCleanRecordValue($valuearray));
+						return $this->getCleanRecordValue($valuearray);
 
 					break;
 
 				case 'checkbox';
-					$valuearray = $this->jinput->post->get($this->comesfieldname, null, 'array' );
+					$valuearray = $this->ct->Env->jinput->post->get($this->field->comesfieldname, null, 'array' );
 
 					if(isset($valuearray))
-						return $this->realfieldname.'='.$this->db->Quote($this->getCleanRecordValue($valuearray));
+						return $this->getCleanRecordValue($valuearray);
 
 					break;
 			}
@@ -760,8 +961,10 @@ trait SaveFieldQuerySet
 		return ','.implode(',',$values).',';
 	}
 
-	protected function getMultiString($parent, $prefix)
+	protected function getMultiString($parent)
 	{
+		$prefix = $this->field->prefix.'multi_'.$this->ct->Table->tablename.'_'.$this->field->fieldname;
+		
 		$parentid=Tree::getOptionIdFull($parent);
 		$a=$this->getMultiSelector($parentid,$parent, $prefix);
 		if($a==null)
@@ -779,17 +982,17 @@ trait SaveFieldQuerySet
 		$set=false;
 		$resilt_list=array();
 
-		$rows=$this->getList($parentid);
-		if(count($rows)<1)
+		$this->rows=$this->getList($parentid);
+		if(count($this->rows)<1)
 			return $resilt_list;
 
-		$count=count($rows);
-		foreach($rows as $row)
+		$count=count($this->rows);
+		foreach($this->rows as $this->row)
 		{
 			if(strlen($parentname)==0)
-				$ChildList=$this->getMultiSelector($row->id,$row->optionname,$prefix);
+				$ChildList=$this->getMultiSelector($this->row->id,$this->row->optionname,$prefix);
 			else
-				$ChildList=$this->getMultiSelector($row->id,$parentname.'.'.$row->optionname,$prefix);
+				$ChildList=$this->getMultiSelector($this->row->id,$parentname.'.'.$this->row->optionname,$prefix);
 
 			if($ChildList!=null)
 				$count_child=count($ChildList);
@@ -802,15 +1005,15 @@ trait SaveFieldQuerySet
 			}
 			else
 			{
-				$value=$this->jinput->getString($prefix.'_'.$row->id,null);
+				$value=$this->ct->Env->jinput->getString($prefix.'_'.$this->row->id,null);
 				if(isset($value))
 				{
 					$set=true;
 
 					if(strlen($parentname)==0)
-						$resilt_list[]=$row->optionname.'.';
+						$resilt_list[]=$this->row->optionname.'.';
 					else
-						$resilt_list[]=$parentname.'.'.$row->optionname.'.';
+						$resilt_list[]=$parentname.'.'.$this->row->optionname.'.';
 				}
 			}
 		}
@@ -821,8 +1024,10 @@ trait SaveFieldQuerySet
 		return $resilt_list;
 	}
 
-	protected function getComboString($parent, $prefix)
+	protected function getComboString($parent)
 	{
+		$prefix = $this->field->prefix.'combotree_'.$this->tablename.'_'.$this->field->fieldname;
+		
 		$i=1;
 		$result=array();
 		$v='';
@@ -830,7 +1035,7 @@ trait SaveFieldQuerySet
 		do
 		{
 
-			$value=$this->jinput->getCmd($prefix.'_'.$i);
+			$value=$this->ct->Env->jinput->getCmd($prefix.'_'.$i);
 			if(isset($value))
 			{
 				if($value!='')
@@ -870,35 +1075,35 @@ trait SaveFieldQuerySet
         return $this->db->loadObjectList();
 	}
 
-    function processDefaultValue(&$ct,$htmlresult,$type,&$row)
+/*
+    function processDefaultValue(&$ct,$htmlresult,$type,&$this->row)
     {
-        tagProcessor_General::process($ct,$htmlresult,$row,'',1);
-		tagProcessor_Item::process($ct,$row,$htmlresult,'','',0);
-		tagProcessor_If::process($ct,$htmlresult,$row,'',0);
+        tagProcessor_General::process($ct,$htmlresult,$this->row,'',1);
+		tagProcessor_Item::process($ct,$this->row,$htmlresult,'','',0);
+		tagProcessor_If::process($ct,$htmlresult,$this->row,'',0);
 		tagProcessor_Page::process($ct,$htmlresult);
-		tagProcessor_Value::processValues($ct,$row,$htmlresult,'[]');
+		tagProcessor_Value::processValues($ct,$this->row,$htmlresult,'[]');
 
         if($htmlresult!='')
         {
 			$twig = new TwigProcessor($ct, $htmlresult);
-			$htmlresult = $twig->process($row);
+			$htmlresult = $twig->process($this->row);
 			
             LayoutProcessor::applyContentPlugins($htmlresult);
 
             if($type=='alias')
 			{
                 $htmlresult=$this->prepare_alias_type_value(
-					$row['listing_id'],
-					$htmlresult,
-					$this->realfieldname);
+					$this->row['listing_id'],
+					$htmlresult);
 			}
-            return $this->realfieldname.'='.$this->db->quote($htmlresult);
+            return $this->field->realfieldname.'='.$this->db->quote($htmlresult);
         }
 		
 		return null;
     }
 
-    public function processDefaultValues($default_fields_to_apply,&$ct,&$row)
+    public function processDefaultValues($default_fields_to_apply,&$ct,&$this->row)
     {
         $savequery=array();
 		
@@ -907,25 +1112,25 @@ trait SaveFieldQuerySet
             $fieldname=$d[0];
             $value=$d[1];
             $type=$d[2];
-			$this->realfieldname=$d[3];
+			$this->field->realfieldname=$d[3];
 			
-            $r=$row[$this->realfieldname];
+            $r=$this->row[$this->field->realfieldname];
             if($r==null or $r=='' or $r==0)
 			{
-				$q = $this->processDefaultValue($ct,$value,$type,$row);
+				$q = $this->processDefaultValue($ct,$value,$type,$this->row);
 				if($q != null)
 					$savequery[] = $q;
 			}
 		}
 		
-        $this->runUpdateQuery($savequery,$row['listing_id']);
+        $this->runUpdateQuery($savequery,$this->row['listing_id']);
     }
-
-    public function runUpdateQuery(&$savequery,$listing_id)
+	*/
+    function runUpdateQuery(&$savequery,$listing_id)
     {
     	if(count($savequery)>0)
 		{
-			$query='UPDATE '.$this->realtablename.' SET '.implode(', ',$savequery).' WHERE '.$this->realidfieldname.'='.$this->db->quote($listing_id);
+			$query='UPDATE '.$this->ct->Table->realtablename.' SET '.implode(', ',$savequery).' WHERE '.$this->ct->Table->realidfieldname.'='.$this->db->quote($listing_id);
 			
 			$this->db->setQuery( $query );
 			$this->db->execute();

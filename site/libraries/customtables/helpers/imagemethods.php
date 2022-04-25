@@ -56,11 +56,8 @@ class CustomTablesImageMethods
 			return (int)$vlu;
 	}
 
-	function getCustomImageOptions($imageparams_)
+	function getCustomImageOptions(string $imageparams)
 	{
-		$TypeParamsArr=JoomlaBasicMisc::csv_explode(',',$imageparams_,'"',false);
-		$imageparams=$TypeParamsArr[0];
-
 		$cleanOptions=array();
 		//custom images
 		$imagesizes=explode(';',$imageparams);
@@ -107,7 +104,7 @@ class CustomTablesImageMethods
 		return $cleanOptions;
 	}
 
-	function DeleteExistingSingleImage($ExistingImage,$ImageFolder,$imageparams, $realtablename, $realfieldname, $realidfield)
+	function DeleteExistingSingleImage($ExistingImage,$ImageFolder,string $imageparams, $realtablename, $realfieldname, $realidfield)
 	{
 		//$realtablename='-options'
 		
@@ -118,7 +115,7 @@ class CustomTablesImageMethods
 			CustomTablesImageMethods::DeleteCustomImage($ExistingImage, $ImageFolder,$customsize[0]);
 	}
 
-	function DeleteExistingGalleryImage($ImageFolder,$ImageMainPrefix, $estableid, $galleryname, $photoid,$imageparams,$deleteOriginals=false)
+	function DeleteExistingGalleryImage($ImageFolder,$ImageMainPrefix, $estableid, $galleryname, $photoid,string $imageparams,$deleteOriginals=false)
 	{
 		//Delete original thumbnails
 		if($deleteOriginals)
@@ -150,10 +147,9 @@ class CustomTablesImageMethods
 		}
 	}
 
-	function DeleteGalleryImages($gallery_table_name, $estableid, $galleryname,$typeparams,$deleteOriginals=false)
+	function DeleteGalleryImages($gallery_table_name, $estableid, $galleryname,$params,$deleteOriginals=false)
 	{
-		$TypeParamsArr=JoomlaBasicMisc::csv_explode(',',$typeparams,'"',false);
-		$image_parameters=$TypeParamsArr[0];
+		$image_parameters=$params[0];
 
 		$imagefolderword='';
 		if(isset($image_parameters[1]))
@@ -285,7 +281,8 @@ class CustomTablesImageMethods
 		return '';
 	}
 
-	function CreateNewCustomImages($realtablename, $realfieldname, $ImageFolder, $imageparams, $startindex, $step, $realidfield)
+	/*
+	function CreateNewCustomImages($realtablename, $realfieldname, $ImageFolder, $params, $startindex, $step, $realidfield)
 	{
 		$count=0;
 		$db = JFactory::getDBO();
@@ -294,12 +291,11 @@ class CustomTablesImageMethods
 		$db->setQuery( $query );
 		$imagelist=$db->loadAssocList();
 
-		$pair=JoomlaBasicMisc::csv_explode(',',$imageparams,'"',false);
 		$compareexisting=false;
-		if(isset($pair[1]))
+		if(isset($params[1]))
 		{
 			//Additional Parameters
-			$second_pair=explode(':',$pair[1]);
+			$second_pair=explode(':',$params[1]);
 
 			//Special Plugin
 			if(strpos($second_pair[0],'compareexisting')!==false)
@@ -311,11 +307,11 @@ class CustomTablesImageMethods
 					$level_identity=(int)$second_pair[1];
 			}
 
-			if(isset($pair[2]))
-				$ImageFolder=$pair[2]; //Path
+			if(isset($params[2]))
+				$ImageFolder=$params[2]; //Path
 		}
 
-		$customsizes=$this->getCustomImageOptions($imageparams);
+		$customsizes=$this->getCustomImageOptions($params[0]);
 
 		foreach($imagelist as $img)
 		{
@@ -392,8 +388,9 @@ class CustomTablesImageMethods
 
 		return count($imagelist);
 	}
+	*/
 
-	function UploadSingleImage($ExistingImage, $image_file_id, $realfieldname, $ImageFolder, $imageparams_full, $realtablename,$realidfieldname)
+	function UploadSingleImage($ExistingImage, $image_file_id, $realfieldname, $ImageFolder, $params, $realtablename,$realidfieldname)
 	{
 		//$realtablename = '-options'
 		
@@ -404,11 +401,9 @@ class CustomTablesImageMethods
 			
 		if($image_file_id!='')
 		{
-			$pair=JoomlaBasicMisc::csv_explode(',',$imageparams_full,'"',false);
-
 			$additional_params='';
-			if(isset($pair[1]))
-				$additional_params=$pair[1];
+			if(isset($params[1]))
+				$additional_params=$params[1];
 				
 			if(strpos($image_file_id,DIRECTORY_SEPARATOR)===false)//in case when other applications pass full path to the file
 				$uploadedfile = JPATH_SITE.DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR.$image_file_id;
@@ -430,7 +425,7 @@ class CustomTablesImageMethods
 
 			//Delete Old Logo
 			if($ExistingImage!=0)
-				$this->DeleteExistingSingleImage($ExistingImage,$ImageFolder,$imageparams_full,$realtablename,$realfieldname,$realidfieldname);
+				$this->DeleteExistingSingleImage($ExistingImage,$ImageFolder,$params[0],$realtablename,$realfieldname,$realidfieldname);
 
 			$new_photo_ext=$this->FileExtenssion($uploadedfile);
 
@@ -470,7 +465,7 @@ class CustomTablesImageMethods
 			//custom images
 			if($isOk)
 			{
-				$customsizes=$this->getCustomImageOptions($imageparams_full);
+				$customsizes=$this->getCustomImageOptions($params[0]);
 
 				foreach($customsizes as $imagesize)
 				{
@@ -733,14 +728,13 @@ class CustomTablesImageMethods
 		return 1;
 	}
 
-	public static function getImageFolder($imageparams)
+	public static function getImageFolder($params)//$imageparams)
 	{
 		$ImageFolder='images'.DIRECTORY_SEPARATOR.'ct_images';
-		$pair=JoomlaBasicMisc::csv_explode(',',$imageparams,'"',false);
 
-		if(isset($pair[2]))
+		if(isset($params[2]))
 		{
-			$ImageFolder=$pair[2];
+			$ImageFolder=$params[2];
 			if($ImageFolder[0]!='/')
 				$ImageFolder='/'.$ImageFolder;
 

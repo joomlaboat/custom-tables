@@ -48,35 +48,35 @@ require_once($types_path.'_type_sqljoin.php');
 class Value
 {
 	var $ct;
+	var $field;
 	
 	function __construct(&$ct)
 	{
 		$this->ct = $ct;
 	}
 
-	function renderValue(&$field,&$row,$option_list)
+	function renderValue(&$fieldrow,&$row,$option_list)
 	{
-		$rfn = $field['realfieldname'];
+		$this->field = new Field($this->ct,$fieldrow,$row);
+		
+		$rfn = $this->field->realfieldname;
 		$rowValue = isset($row[$rfn]) ? $row[$rfn] : null;
-		
-		$TypeParams = $field['typeparams'];
-		$type_params = JoomlaBasicMisc::csv_explode(',',$TypeParams,'"',false);
-		
-		switch($field['type'])
+			
+		switch($this->field->type)
 		{
 			case 'int':
 			case 'viewcount':
-				$thousand_sep = $option_list[0] ?? ($type_params[0] ?? '');
+				$thousand_sep = $option_list[0] ?? ($this->field->params[0] ?? '');
 				return number_format ( (int)$rowValue, 0, '',$thousand_sep);
 
 			case 'float':
-				$decimals = $option_list[0] != '' ? (int)$option_list[0] : ($type_params[0] != '' ? (int)$type_params[0] : 2);
+				$decimals = $option_list[0] != '' ? (int)$option_list[0] : ($this->field->params[0] != '' ? (int)$this->field->params[0] : 2);
 				$decimals_sep = $option_list[1] ?? '.';
 				$thousand_sep = $option_list[2] ?? '';
 				return number_format ( (float)$rowValue, $decimals,$decimals_sep,$thousand_sep);
 				
 			case 'ordering':
-				return $this->orderingProcess($rowValue, $field, $row);
+				return $this->orderingProcess($rowValue, $row);
 
 			case 'id':
 			case 'md5':
@@ -93,7 +93,7 @@ class Value
 				
 			case 'multilangstring':
 			case 'multilangtext':
-				return $this->multilang($field, $row, $option_list);
+				return $this->multilang($row, $option_list);
 				
     		case 'string':
 			case 'text':
@@ -103,24 +103,25 @@ class Value
 				return $this->colorProcess($rowValue,$option_list);
 
 			case 'file':
-				return CT_FieldTypeTag_file::process($rowValue,$TypeParams,$option_list,$row['listing_id'],$field['id'],$this->ct->Table->tableid);
+			
+				return CT_FieldTypeTag_file::process($rowValue,$this->field,$option_list,$row['listing_id']);
 			
 			case 'image':
 				$imagesrc='';
 				$imagetag='';
 
-				CT_FieldTypeTag_image::getImageSRClayoutview($option_list,$rowValue,$TypeParams,$imagesrc,$imagetag);
+				CT_FieldTypeTag_image::getImageSRClayoutview($option_list,$rowValue,$this->field->params,$imagesrc,$imagetag);
 
 				return $imagetag;
 				
 			case 'signature':
 				
-				CT_FieldTypeTag_image::getImageSRClayoutview($option_list,$rowValue,$TypeParams,$imagesrc,$imagetag);
+				CT_FieldTypeTag_image::getImageSRClayoutview($option_list,$rowValue,$this->field->params,$imagesrc,$imagetag);
 				
 				$conf = Factory::getConfig();
 				$sitename = $conf->get('config.sitename');
 
-				$ImageFolder_ = \CustomTablesImageMethods::getImageFolder($TypeParams);
+				$ImageFolder_ = \CustomTablesImageMethods::getImageFolder($this->field->params);
 	
 				$ImageFolderWeb=str_replace(DIRECTORY_SEPARATOR,'/',$ImageFolder_);
 				$ImageFolder=str_replace('/',DIRECTORY_SEPARATOR,$ImageFolder_);
@@ -128,9 +129,7 @@ class Value
 				$imagesrc='';
 				$imagetag='';
 				
-				$type_params = JoomlaBasicMisc::csv_explode(',',$TypeParams,'"',false);
-				
-				$format = $type_params[3] ?? 'png';
+				$format = $this->field->params[3] ?? 'png';
 					
 				if($format == 'jpeg')
 					$format = 'jpg';
@@ -140,8 +139,8 @@ class Value
 				
 				if(file_exists(JPATH_SITE.DIRECTORY_SEPARATOR.$imagefile))
 				{
-					$width = $type_params[0] ?? 300;
-					$height = $type_params[1] ?? 150;
+					$width = $this->field->params[0] ?? 300;
+					$height = $this->field->params[1] ?? 150;
 					
 					$imagetag='<img src="'.$imagefileweb.'" width="'.$width.'" height="'.$height.'" alt="'.$sitename.'" title="'.$sitename.'" />';
 					//$imagesrc=$imagefileweb;
@@ -163,7 +162,7 @@ class Value
 				$imagetaglist='';
 
 				CT_FieldTypeTag_imagegallery::getImageGallerySRC($getGalleryRows,$option_list[0],
-					$row['listing_id'],$field['fieldname'],$TypeParams,$imagesrclist,$imagetaglist,$this->ct->Table->tableid);
+					$row['listing_id'],$this->field->fieldname,$this->field->params,$imagesrclist,$imagetaglist,$this->ct->Table->tableid);
 						
 				return $imagetaglist;
 
@@ -172,17 +171,17 @@ class Value
 				if($option_list[0]=='_count')
 					return count($getFileBoxRows);
 
-				return CT_FieldTypeTag_filebox::process($this->ct->Table->tableid,$getFileBoxRows, $row['listing_id'], $field['fieldname'],
-					$TypeParams,$option_list,$field['id'],'');
+				return CT_FieldTypeTag_filebox::process($this->ct->Table->tableid,$getFileBoxRows, $row['listing_id'], $this->field->fieldname,
+					$this->field->params,$option_list,$this->field->id,'');
     		
 			case 'customtables':
-				return $this->listProcess($rowValue, $type_params, $option_list);
+				return $this->listProcess($rowValue, $option_list);
 
 			case 'records':
-				return CT_FieldTypeTag_records::resolveRecordType($this->ct,$rowValue, $TypeParams, $option_list);
+				return CT_FieldTypeTag_records::resolveRecordType($this->ct,$rowValue, $this->field->params, $option_list);
 
 			case 'sqljoin':
-				return CT_FieldTypeTag_sqljoin::resolveSQLJoinType($this->ct,$rowValue, $TypeParams, $option_list);
+				return CT_FieldTypeTag_sqljoin::resolveSQLJoinType($this->ct,$rowValue, $this->field->params, $option_list);
 
 			case 'user':
 			case 'userid':
@@ -198,8 +197,8 @@ class Value
 				$processor_file=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fieldtypes'.DIRECTORY_SEPARATOR.'_type_file.php';
 				require_once($processor_file);
 					
-				return CT_FieldTypeTag_file::process($rowValue,','.$TypeParams,
-					$option_list, $row['listing_id'], $field['id'],$this->ct->Table->tableid); // "," is to be compatible with file field type params. Becuse first parameter is max file size there
+				return CT_FieldTypeTag_file::process($rowValue,','.$this->field->params,
+					$option_list, $row['listing_id'], $this->field->id,$this->ct->Table->tableid); // "," is to be compatible with file field type params. Becuse first parameter is max file size there
 
 			case 'log':
 				return CT_FieldTypeTag_log::getLogVersionLinks($this->ct,$rowValue,$row);
@@ -218,7 +217,7 @@ class Value
                     
 			case 'time':
 				require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'helpers'.DIRECTORY_SEPARATOR.'cttime.php');
-				$seconds=JHTMLCTTime::ticks2Seconds($rowValue,$type_params);
+				$seconds=JHTMLCTTime::ticks2Seconds($rowValue,$this->field->params);
 				return JHTMLCTTime::seconds2FormatedTime($seconds,$option_list[0]);
 
 			case 'creationtime':
@@ -233,11 +232,11 @@ class Value
 		return null;
 	}
 	
-	protected function multilang(array $field, array &$row, array &$option_list)
+	protected function multilang(array &$row, array &$option_list)
 	{
 		$specific_lang = $option_list[4] ?? '';
 		
-		$fieldtype = $field['type'];
+		$fieldtype = $this->field->type;
 		
 		if($fieldtype=='multilangstring')
 			$fieldtype='string';
@@ -265,7 +264,7 @@ class Value
         else
             $postfix=$this->ct->Languages->Postfix; //front-end default language
                 
-   		$fieldname=$field['realfieldname'].$postfix;
+   		$fieldname=$this->field->realfieldname.$postfix;
 		if(isset($row[$fieldname]))
 			$rowValue = $row[$fieldname];
 		else
@@ -322,13 +321,13 @@ class Value
 			return $article;
 	}
 	
-	protected function listProcess($rowValue, array $type_params, array &$option_list)
+	protected function listProcess($rowValue, array &$option_list)
 	{
 		if(count($option_list)>1 and $option_list[0]!="")
 		{
 			if($option_list[0]=='group')
 			{
-				$rootparent=$type_params[0];
+				$rootparent=$this->field->params[0];
 
 				$orientation=0;// horizontal
 				if(isset($option_list[1]) and $option_list[1]=='vertical')
@@ -384,7 +383,7 @@ class Value
 		else
 		{
 			if($rowValue!='')
-				return implode(',',Tree::getMultyValueTitles($rowValue,$this->ct->Languages->Postfix,1, ' - ',$type_params));
+				return implode(',',Tree::getMultyValueTitles($rowValue,$this->ct->Languages->Postfix,1, ' - ',$this->field->params));
 		}
 		return '';
 	}
@@ -407,11 +406,11 @@ class Value
 			return JHTML::date($phpdate );
 	}
 	
-	protected function orderingProcess($value, &$field, &$row)
+	protected function orderingProcess($value, &$row)
 	{
 		$orderby_pair = explode(' ',$this->ct->Ordering->orderby);
 			
-		if($orderby_pair[0] == $field['realfieldname'])
+		if($orderby_pair[0] == $this->field->realfieldname)
 			$iconClass = '';
 		else
 			$iconClass = ' inactive tip-top hasTooltip" title="' . JHtml::_('tooltipText', 'COM_CUSTOMTABLES_FIELD_ORDERING_DISABLED');
@@ -421,7 +420,7 @@ class Value
 				<i class="icon-menu"></i>
 			</span>';
 		
-		if($orderby_pair[0] == $field['realfieldname'])
+		if($orderby_pair[0] == $this->field->realfieldname)
 		{
 			$result .='<input type="text" style="display:none" name="order[]" size="5" value="'.$value.'" class="width-20 text-area-order " />';
 			$result .='<input type="checkbox" style="display:none" name="cid[]" value="'.$row[$this->ct->Table->realidfieldname].'" class="width-20 text-area-order " />';

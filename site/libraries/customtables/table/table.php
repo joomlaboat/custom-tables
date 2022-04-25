@@ -16,6 +16,7 @@ defined('_JEXEC') or die('Restricted access');
 
 use \Joomla\CMS\Factory;
 use CustomTables\Fields;
+use CustomTables\SaveFieldQuerySet;
 
 use \ESTables;
 use \ESFields;
@@ -23,8 +24,7 @@ use \ESFields;
 class Table
 {
 	use Logs;
-	use SaveFieldQuerySet;
-
+	
 	var $Languages;
 	var $Env;
 	var $tableid;
@@ -53,11 +53,13 @@ class Table
 		
 		if($tablename_or_id_not_sanitized == null or $tablename_or_id_not_sanitized == '')
 			return;
-		elseif((int)$tablename_or_id_not_sanitized)
+		elseif(is_numeric($tablename_or_id_not_sanitized))
+		{
 			$this->tablerow = ESTables::getTableRowByIDAssoc((int)$tablename_or_id_not_sanitized);// int sanitizes the input
+		}
 		else
 		{
-			$tablename_or_id = strtolower(trim(preg_replace('/[^a-zA-Z]/', '', $tablename_or_id_not_sanitized)));
+			$tablename_or_id = strtolower(trim(preg_replace('/[^a-zA-Z0-9]/', '', $tablename_or_id_not_sanitized)));
 			$this->tablerow = ESTables::getTableRowByNameAssoc($tablename_or_id);
 		}
 			
@@ -65,6 +67,20 @@ class Table
 			return;
 
 		$this->setTable($this->tablerow, $useridfieldname, $load_fields = true);
+	}
+	
+	function getRecordFieldValue($listingid,$resultfield)
+	{
+		$db = Factory::getDBO();
+		$query =' SELECT '.$resultfield.' AS resultfield FROM '.$this->realtablename.' WHERE '.$this->realidfieldname.'='.$db->quote($listingid).' LIMIT 1';
+		$db->setQuery( $query );
+
+		$espropertytype= $db->loadObjectList();
+
+		if(count($espropertytype)>0)
+			return $espropertytype[0]->resultfield;	
+		
+		return "";
 	}
 	
 	function setTable(&$tablerow, $useridfieldname = null, $load_fields = true)

@@ -128,7 +128,7 @@ class ESFileUploader
 
 	public static function uploadFile($fileid,$filetypes_str="")
 	{
-		$filetypes_str=ESFileUploader::getAcceptedFileTypes(',,'.$filetypes_str);
+		$filetypes_str=ESFileUploader::getAcceptedFileTypes($filetypes_str);//',,'.
 
 		$accepted_types=ESFileUploader::getAcceptableMimeTypes($filetypes_str);
 
@@ -237,7 +237,7 @@ class ESFileUploader
 		}
 	}
 
-	protected static function getAcceptableMimeTypes($filetypes_str="")
+	protected static function getAcceptableMimeTypes($filetypes_str = "")
 	{
 		if($filetypes_str=='')
 		{
@@ -301,7 +301,7 @@ class ESFileUploader
 
         // images
         'png' => 'image/png',
-	'webp' => 'image/webp',
+		'webp' => 'image/webp',
         'jpe' => 'image/jpeg',
         'jpeg' => 'image/jpeg',
         'jpg' => 'image/jpeg',
@@ -411,9 +411,9 @@ class ESFileUploader
 	    return $str;
 	}
 
-	public static function getAcceptedFileTypes($typeparams)
+	public static function getAcceptedFileTypes($fileextensions)
     {
-        $pair=explode(',',$typeparams);
+        //$pair=explode(',',$typeparams);
 
         $allowedExtensions='doc docx pdf txt xls xlsx psd ppt pptx odg odp ods odt'
 		.' xcf ai txt avi csv accdb htm html'
@@ -424,9 +424,10 @@ class ESFileUploader
 
 		$allowedExts=explode(' ',$allowedExtensions);
 		$file_formats=array();
-		if(isset($pair[2]) and $pair[2]!='')
+		
+		if($fileextensions != '')
 		{
-			$file_formats_=explode(' ',$pair[2]);
+			$file_formats_=explode(' ',$fileextensions);
 			foreach($file_formats_ as $f)
 			{
 				if(in_array($f,$allowedExts))

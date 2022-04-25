@@ -2,7 +2,7 @@
  * CustomTables Joomla! 3.x Native Component
  * @package Custom Tables
  * @subpackage administrator/components/com_customtables/js/extratasks.js
- * @author Ivan komlev <support@joomlaboat.com>
+ * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
  * @copyright Copyright (C) 2018-2022. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
@@ -12,7 +12,7 @@ var ct_updateimages_count=0;
 var ct_updateimages_startindex=0;
 var ct_updateimages_stepsize=10;
 
-function ctExtraUpdateImages(old_params,new_params,fieldid,tabletitle,fieldtitle)
+function ctExtraUpdateImages(old_params,new_params,tableid,fieldid,tabletitle,fieldtitle)
 {
 	let result='<h3>Processing image files...</h3>';
 	
@@ -27,10 +27,10 @@ function ctExtraUpdateImages(old_params,new_params,fieldid,tabletitle,fieldtitle
 	result+='<div class="progress progress-striped active"><div id="ct_progressbar" class="ctProgressBar" role="progressbar" style="width: 0%;"></div></div><br/><p>Please keep this window open.</p>';
 	
 	ctShowPopUp(result,false);
-	ctQueryAPI(old_params,new_params,fieldid);
+	ctQueryAPI(old_params,new_params,tableid,fieldid);
 }
 
-function ctQueryAPI(old_params,new_params,fieldid)
+function ctQueryAPI(old_params,new_params,tableid,fieldid)
 {
 	let parts=location.href.split("/administrator/");
 	let websiteroot=parts[0]+"/administrator/";
@@ -53,7 +53,10 @@ function ctQueryAPI(old_params,new_params,fieldid)
 							if(ct_updateimages_count==0)
 							{
 								document.getElementById("ctStatus").innerHTML="No images found.";
-								setTimeout(function(){ ctHidePopUp(); }, 500);
+								setTimeout(function(){
+									ctHidePopUp();
+									location.href = 'index.php?option=com_customtables&view=listoffields&tableid=' + tableid;
+								}, 500);
 								return;
 							}
 						}
@@ -73,6 +76,7 @@ function ctQueryAPI(old_params,new_params,fieldid)
 							setTimeout(function(){ 
 							
 								document.getElementById("ctStatus").innerHTML="Completed.";
+								location.href = 'index.php?option=com_customtables&view=listoffields&tableid=' + tableid;
 								ctHidePopUp(); 
 							
 							}, 500);
@@ -85,7 +89,7 @@ function ctQueryAPI(old_params,new_params,fieldid)
 						if(ct_updateimages_startindex+ct_updateimages_stepsize>ct_updateimages_count)
 							ct_updateimages_stepsize=ct_updateimages_count-ct_updateimages_startindex;
 						
-						setTimeout(function(){ ctQueryAPI(old_params,new_params,fieldid); }, 500);
+						setTimeout(function(){ ctQueryAPI(old_params,new_params,tableid,fieldid); }, 500);
 					}
 					else					
 					{

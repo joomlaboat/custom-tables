@@ -34,6 +34,7 @@ JHTML::addIncludePath(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPA
 class Inputbox
 {
 	var $ct;
+	var $field;
 	var $esfield;
 	var $jinput;
 	
@@ -50,6 +51,7 @@ class Inputbox
 	function __construct(&$ct, &$esfield, array $option_list = [],$isTwig = true, $onchange = '')
 	{
 		$this->ct = $ct;
+		
 		$this->isTwig = $isTwig;
 		$this->jinput = Factory::getApplication()->input;
 		
@@ -86,11 +88,11 @@ class Inputbox
 	
 	function render($value, &$row)
 	{
+		$this->field = new Field($this->ct,$this->esfield,$row);
+		
 		$this->prefix = $this->ct->Env->field_input_prefix . (!$this->ct->isEditForm  ? $row['listing_id'] . '_' : '');
-		
-		$type_params = JoomlaBasicMisc::csv_explode(',',$this->esfield['typeparams'],'"',false);
-		
-		switch($this->esfield['type'])
+
+		switch($this->field->type)
 		{
 			case 'radio':
 				return $this->render_radio($value, $type_params);
@@ -139,8 +141,8 @@ class Inputbox
 				$image_type_file=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fieldtypes'.DIRECTORY_SEPARATOR.'_type_image.php';
 				require_once($image_type_file);
 
-				return CT_FieldTypeTag_image::renderImageFieldBox($this->ct, $this->prefix,$this->esfield,
-					$row,$this->esfield['realfieldname'],$this->cssclass,$this->attributes);
+				return CT_FieldTypeTag_image::renderImageFieldBox($this->field, $this->prefix,
+					$row,$this->cssclass,$this->attributes);
 			
 			case 'signature':
 				return $this->render_signature($type_params);
@@ -151,8 +153,7 @@ class Inputbox
 			case 'file':
 				$file_type_file=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fieldtypes'.DIRECTORY_SEPARATOR.'_type_file.php';
 				require_once($file_type_file);
-				return CT_FieldTypeTag_file::renderFileFieldBox($this->ct, $this->prefix,
-					$this->esfield,$row,$this->esfield['realfieldname'],$this->cssclass);
+				return CT_FieldTypeTag_file::renderFileFieldBox($this->ct,$this->esfield,$row,$this->cssclass);
 
 			case 'userid':
 				return $this->getUserBox($row,$value,false);
@@ -251,7 +252,7 @@ class Inputbox
 
 			case 'imagegallery':
 				if(isset($row['listing_id']))
-					return $this->getImageGallery($this->esfield['fieldname'],$this->esfield['typeparams'],$row['listing_id']);
+					return $this->getImageGallery($row['listing_id']);
 				else
 					return '';
 
@@ -508,13 +509,13 @@ class Inputbox
 		return $result;
 	}
 
-	protected function getImageGallery($fieldname,$type_params,$listing_id)
+	protected function getImageGallery($listing_id)
 	{
 		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fieldtypes'.DIRECTORY_SEPARATOR.'_type_gallery.php');
 
 		$htmlout='';
 
-		$getGalleryRows=CT_FieldTypeTag_imagegallery::getGalleryRows($this->ct->Table->tablename,$fieldname,$listing_id);
+		$getGalleryRows=CT_FieldTypeTag_imagegallery::getGalleryRows($this->ct->Table->tablename,$this->field->fieldname,$listing_id);
 
 		$htmlout.='
 		';
@@ -532,7 +533,8 @@ class Inputbox
 		$imagesrclist=array();
 		$imagetaglist=array();
 
-		if(CT_FieldTypeTag_imagegallery::getImageGallerySRC($getGalleryRows, $image_prefix,$listing_id,$fieldname,$type_params,$imagesrclist,$imagetaglist,$this->ct->Table->tableid))
+		if(CT_FieldTypeTag_imagegallery::getImageGallerySRC($getGalleryRows, $image_prefix,$listing_id,$this->field->fieldname,
+			$this->field->params,$imagesrclist,$imagetaglist,$this->ct->Table->tableid))
 		{
 			$imagesrclist_arr=explode(';',$imagesrclist);
 

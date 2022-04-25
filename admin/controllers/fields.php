@@ -2,7 +2,7 @@
 /**
  * CustomTables Joomla! 3.x Native Component
  * @package Custom Tables
- * @author Ivan komlev <support@joomlaboat.com>
+ * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
  * @copyright Copyright (C) 2018-2022. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
@@ -10,6 +10,10 @@
 
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
+
+use \Joomla\CMS\Router\Route;
+use \Joomla\CMS\Factory;
+
 
 // import Joomla controllerform library
 jimport('joomla.application.component.controllerform');
@@ -145,6 +149,37 @@ class CustomtablesControllerFields extends JControllerForm
 		return $cancel;
 	}
 
+	public function edit($key = NULL, $urlVar = NULL)
+	{
+		$redirect = 'index.php?option=' . $this->option;
+		
+		$tableid 	= $this->input->get('tableid', 0, 'int');
+		$id 	= $this->input->get('id', 0, 'int');
+		
+		$extratask = $this->input->getCmd('extratask','');
+		
+		//Pospone extra task
+		if($extratask != '')
+		{
+			$redirect.='&extratask='.$this->input->getCmd('extratask','');
+			$redirect.='&old_typeparams='.$this->input->get('old_typeparams','','BASE64');
+			$redirect.='&new_typeparams='.$this->input->get('new_typeparams','','BASE64');
+			$redirect.='&fieldid='.$this->input->getInt('fieldid',0);
+
+		}
+		$redirect.='&view=fields&layout=edit&id='.(int)$fieldid.'&tableid='.(int)$tableid.'&id='.(int)$id;
+		
+		$context = 'com_customtables.edit.fields';
+		Factory::getApplication()->setUserState($context . '.id', $id);
+		
+		// Redirect to the item screen.
+		$application = JFactory::getApplication();
+		$application->redirect(Route::_($redirect, false));
+		$application->close();
+		exit(0);
+		//$this->setRedirect(JRoute::_($redirect, false));
+	}
+
 	public function save($key = null, $urlVar = null)
 	{
 		$tableid 	= $this->input->get('tableid', 0, 'int');
@@ -167,22 +202,29 @@ class CustomtablesControllerFields extends JControllerForm
 		
 		$redirect = 'index.php?option=' . $this->option;
 		
-		if($this->task=='apply' or $this->task=='save2new' or $this->task=='save2copy')
-		{
-			$redirect.='&view=fields&layout=edit&id='.(int)$fieldid.'&tableid='.(int)$tableid;
-		}
-		else
-			$redirect.='&view=listoffields&tableid='.(int)$tableid;
+		$extratask = $this->input->getCmd('extratask','');
 		
 		//Pospone extra task
-				
-		if($this->input->getCmd('extratask','')!='')
+		if($extratask != '')
 		{
 			$redirect.='&extratask='.$this->input->getCmd('extratask','');
 			$redirect.='&old_typeparams='.$this->input->get('old_typeparams','','BASE64');
 			$redirect.='&new_typeparams='.$this->input->get('new_typeparams','','BASE64');
 			$redirect.='&fieldid='.$this->input->getInt('fieldid',0);
 		}
+		
+		if($extratask != '' or $this->task=='apply' or $this->task=='save2new' or $this->task=='save2copy')
+		{
+			//$redirect.='&view=fields&layout=edit&id='.(int)$fieldid.'&tableid='.(int)$tableid;
+			$redirect.='&view=listoffields&tableid='.(int)$tableid.'&task=fields.edit&id='.(int)$fieldid;
+			//https://e24j.joomlaboat.com/administrator/index.php?option=com_customtables&view=listoffields&task=fields.edit&tableid=24&tableid=24&id=302
+		}
+		else
+			$redirect.='&view=listoffields&tableid='.(int)$tableid;
+
+		echo $redirect;
+		//echo '$saved='.$saved;
+		//die;
 
 		if ($saved)
 		{

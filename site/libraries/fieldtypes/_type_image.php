@@ -14,7 +14,7 @@ use CustomTables\DataTypes\Tree;
 
 class CT_FieldTypeTag_image
 {
-    static public function getImageSRClayoutview($option_list,$rowValue,$TypeParams,&$imagesrc,&$imagetag)//,$onlylink=false)
+	static public function getImageSRClayoutview($option_list,$rowValue,array $params,&$imagesrc,&$imagetag)//,$onlylink=false)
 	{
 		if(strpos($rowValue,'-')!==false)
 			$rowValue=str_replace('-','',$rowValue);
@@ -24,7 +24,7 @@ class CT_FieldTypeTag_image
 
 		$option=$option_list[0];
 
-		$ImageFolder_=CustomTablesImageMethods::getImageFolder($TypeParams);
+		$ImageFolder_=CustomTablesImageMethods::getImageFolder($params);
 	
 		$ImageFolderWeb=str_replace(DIRECTORY_SEPARATOR,'/',$ImageFolder_);
 		$ImageFolder=str_replace('/',DIRECTORY_SEPARATOR,$ImageFolder_);
@@ -75,7 +75,7 @@ class CT_FieldTypeTag_image
 		$imagefile_ext=$imgMethods->getImageExtention(JPATH_SITE.DIRECTORY_SEPARATOR.$imgname);
 		//--- WARNING - ERROR -- REAL EXT NEEDED - IT COMES FROM OPTIONS
 		$imagefile=JURI::root(false).$ImageFolderWeb.'/'.$prefix.'_'.$rowValue.'.'.$imagefile_ext;
-		$imagesizes=$imgMethods->getCustomImageOptions($TypeParams);
+		$imagesizes=$imgMethods->getCustomImageOptions($params[0]);
         
 		foreach($imagesizes as $img)
 		{
@@ -93,24 +93,25 @@ class CT_FieldTypeTag_image
 		return false;
 	}
 
-    static public function get_image_type_value(&$ctTable, $listing_id)
+    static public function get_image_type_value(&$field, $listing_id)
     {
 		$value=0;
 		$imagemethods=new CustomTablesImageMethods;
 
-		$ImageFolder=CustomTablesImageMethods::getImageFolder($ctTable->typeparams);
+		$ImageFolder=CustomTablesImageMethods::getImageFolder($field->params);
 
 		$jinput=JFactory::getApplication()->input;
-        $fileid = $jinput->post->get($ctTable->comesfieldname, '','STRING' );
+        $fileid = $jinput->post->get($field->comesfieldname, '','STRING' );
 
 		if($listing_id==0)
 		{
-			$value=$imagemethods->UploadSingleImage(0, $fileid,$ctTable->realfieldname,JPATH_SITE.DIRECTORY_SEPARATOR.$ImageFolder,$ctTable->typeparams,$ctTable->realtablename,$ctTable->realidfieldname);
+			$value=$imagemethods->UploadSingleImage(0, $fileid,$field->realfieldname,JPATH_SITE.DIRECTORY_SEPARATOR
+				.$ImageFolder,$field->params,$field->ct->Table->realtablename,$field->ct->Table->realidfieldname);
 		}
 		else
 		{
-			$to_delete = $jinput->post->get($ctTable->comesfieldname.'_delete', '','CMD' );
-			$ExistingImage=Tree::isRecordExist($listing_id,'id', $ctTable->realfieldname, $ctTable->realtablename);
+			$to_delete = $jinput->post->get($field->comesfieldname.'_delete', '','CMD' );
+			$ExistingImage=Tree::isRecordExist($listing_id,'id', $field->realfieldname, $field->ct->Table->realtablename);
 
 			if($to_delete=='true')
 			{
@@ -119,18 +120,18 @@ class CT_FieldTypeTag_image
 					$imagemethods->DeleteExistingSingleImage(
 										$ExistingImage,
 										JPATH_SITE.DIRECTORY_SEPARATOR.$ImageFolder,
-										$ctTable->typeparams,
-										$ctTable->realtablename,
-										$ctTable->realfieldname,
-										$ctTable->realidfieldname);
+										$field->params[0],
+										$field->ct->Table->realtablename,
+										$field->realfieldname,
+										$field->ct->Table->realidfieldname);
 				}
  
-				return $ctTable->realfieldname.'='.$value;
+				return $value;
 			}
 			else
 			{
-				$value=$imagemethods->UploadSingleImage($ExistingImage,$fileid, $ctTable->realfieldname,
-					JPATH_SITE.DIRECTORY_SEPARATOR.$ImageFolder,$ctTable->typeparams,$ctTable->realtablename,$ctTable->realidfieldname);
+				$value=$imagemethods->UploadSingleImage($ExistingImage,$fileid, $field->realfieldname,
+					JPATH_SITE.DIRECTORY_SEPARATOR.$ImageFolder,$field->params,$field->ct->Table->realtablename,$field->ct->Table->realidfieldname);
 			}
 		}
 
@@ -141,47 +142,42 @@ class CT_FieldTypeTag_image
 			JFactory::getApplication()->enqueueMessage('Could not upload image file.', 'error');
 		}
         elseif($value != 0)
-			return $ctTable->realfieldname.'='.$value;
+			return $value;
 
         return null;
     }
 
-    public static function renderImageFieldBox(&$ct, $prefix,&$esfield,&$row,$realFieldName,$class,$optinal_parameter)
+    public static function renderImageFieldBox(&$field, $prefix, &$row,$class,$optinal_parameter)
 	{
-		$ImageFolder=CustomTablesImageMethods::getImageFolder($esfield['typeparams']);
+		$ImageFolder=CustomTablesImageMethods::getImageFolder($field->params);
 
         $imagefile='';
         $isShortcut=false;
-		$imagesrc=CT_FieldTypeTag_image::getImageSRC($row,$realFieldName,$ImageFolder,$imagefile,$isShortcut);
+		$imagesrc=CT_FieldTypeTag_image::getImageSRC($row,$field->realfieldname,$ImageFolder,$imagefile,$isShortcut);
 
     	$result='<div class="esUploadFileBox" style="vertical-align:top;">';
 
-
 		if($imagefile!='')
-			$result.=CT_FieldTypeTag_image::renderImageAndDeleteOption($prefix,$imagesrc,$esfield,$isShortcut);
+			$result.=CT_FieldTypeTag_image::renderImageAndDeleteOption($field,$prefix,$imagesrc,$isShortcut);
     
-
-        $result.=CT_FieldTypeTag_image::renderUploader($esfield);
+        $result.=CT_FieldTypeTag_image::renderUploader($field,$prefix);
 
    		$result.='</div>';
        	return $result;
 
 	}
 
-    protected static function renderImageAndDeleteOption($prefix,$imagesrc,&$esfield,$isShortcut)
+    protected static function renderImageAndDeleteOption(&$field,$prefix,$imagesrc,$isShortcut)
     {
-        $style='margin:10px; border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;vertical-align:top;';
-        $result='
-                <div style="" id="ct_uploadedfile_box_'.$esfield['fieldname'].'">';
+        //$style='margin:10px; border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;vertical-align:top;';
+        $result='<div style="" id="ct_uploadedfile_box_'.$field->fieldname.'">'
+			.'<img src="'.$imagesrc.'" width="150" /><br/>';
 
-		$result.='<img src="'.$imagesrc.'" width="150" /><br/>';
-
-		if(!$esfield['isrequired'])
-			$result.='<input type="checkbox" name="'.$prefix.$esfield['fieldname'].'_delete" id="'.$prefix.$esfield['fieldname'].'_delete" value="true">'
+		if(!$field->isrequired)
+			$result.='<input type="checkbox" name="'.$prefix.$field->fieldname.'_delete" id="'.$prefix.$field->fieldname.'_delete" value="true">'
 				.' Delete '.($isShortcut ? 'Shortcut' : 'Image');
 
-		$result.='
-        </div>';
+		$result.='</div>';
 
         return $result;
     }
@@ -190,7 +186,7 @@ class CT_FieldTypeTag_image
     {
 		$max_file_size=JoomlaBasicMisc::file_upload_max_size();
 		
-            $result='
+		$result='
                 <div style="margin:10px; border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;vertical-align:top;">
 				'.JoomlaBasicMisc::JTextExtended( "MIN SIZE" ).': 10px x 10px<br/>
 				'.JoomlaBasicMisc::JTextExtended( "MAX SIZE" ).': 1000px x 1000px<br/>
@@ -198,43 +194,36 @@ class CT_FieldTypeTag_image
 				'.JoomlaBasicMisc::JTextExtended( "FORMAT" ).': JPEG, GIF, PNG, WEBP
 				</div>';
 
-            return $result;
+		return $result;
     }
 
-    protected static function renderUploader(&$esfield)
+    protected static function renderUploader(&$field,$prefix)
     {
-        $fieldid=(int)$esfield['id'];
-        $esfieldname=$esfield['fieldname'];
-
         $max_file_size=JoomlaBasicMisc::file_upload_max_size();
-
-        $prefix='comes_';
-
         $fileid=JoomlaBasicMisc::generateRandomString();
-
         $jinput=JFactory::getApplication()->input;
-
-		$Itemid=$jinput->getInt('Itemid',0);
 
         $style='margin:10px; border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;vertical-align:top;';
 
-                $element_id='ct_ubloadfile_box_'.$esfield['fieldname'];
+                $element_id='ct_ubloadfile_box_'.$field->fieldname;
                 $result='
-                <div style="'.$style.'"'.($esfield['isrequired'] ? ' class="inputbox required"' : '').' id="'.$element_id.'">
-                	<div id="ct_fileuploader_'.$esfieldname.'"></div>
-                    <div id="ct_eventsmessage_'.$esfieldname.'"></div>
+                <div style="'.$style.'"'.($field->isrequired ? ' class="inputbox required"' : '').' id="'.$element_id.'">
+                	<div id="ct_fileuploader_'.$field->fieldname.'"></div>
+                    <div id="ct_eventsmessage_'.$field->fieldname.'"></div>
                 	<script>
                         UploadFileCount=1;
                         AutoSubmitForm=false;
                         esUploaderFormID="eseditForm";
                         ct_eventsmessage_element="ct_eventsmessage";
                         tempFileName="'.$fileid.'";
-                        fieldValueInputBox="'.$prefix.$esfieldname.'";
-                    	var urlstr="'.JURI::root(true).'/index.php?option=com_customtables&view=fileuploader&tmpl=component&'.$esfieldname.'_fileid='.$fileid.'&Itemid='.$Itemid.'&fieldname='.$esfieldname.'";
-                    	ct_getUploader('.$fieldid.',urlstr,'.$max_file_size.',"jpg jpeg png gif svg webp","eseditForm",false,"ct_fileuploader_'.$esfieldname.'","ct_eventsmessage_'.$esfieldname.'","'.$fileid.'","'.$prefix.$esfieldname.'","ct_ubloadedfile_box_'.$esfieldname.'");
+                        fieldValueInputBox="'.$prefix.$field->fieldname.'";
+                    	var urlstr="'.JURI::root(true).'/index.php?option=com_customtables&view=fileuploader&tmpl=component&'
+							.$field->fieldname.'_fileid='.$fileid.'&Itemid='.$field->ct->Env->Itemid.'&fieldname='.$field->fieldname.'";
+                    	ct_getUploader('.$field->id.',urlstr,'.$max_file_size.',"jpg jpeg png gif svg webp","eseditForm",false,"ct_fileuploader_'
+							.$field->fieldname.'","ct_eventsmessage_'.$field->fieldname.'","'.$fileid.'","'.$prefix.$field->fieldname.'","ct_ubloadedfile_box_'.$field->fieldname.'");
 
                     </script>
-                    <input type="hidden" name="'.$prefix.$esfieldname.'" id="'.$prefix.$esfieldname.'" value=""'.($esfield['isrequired'] ? ' class="required"' : '').' />
+                    <input type="hidden" name="'.$prefix.$field->fieldname.'" id="'.$prefix.$field->fieldname.'" value=""'.($field->isrequired ? ' class="required"' : '').' />
 			'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PERMITED_MAX_FILE_SIZE').': '.JoomlaBasicMisc::formatSizeUnits($max_file_size).'
                 </div>
                 ';

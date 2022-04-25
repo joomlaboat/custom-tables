@@ -289,6 +289,11 @@ class fieldObject
 		return $this->value();
 	}
 	
+	public function int()
+    {
+		return intval($this->value());
+	}
+	
 	public function value()
     {
 		$options = func_get_args();
@@ -321,10 +326,16 @@ class fieldObject
 			Factory::getApplication()->enqueueMessage(
 					JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_LANGFIELDNOTFOUND' ), 'Error');
                                         
-            return '*fieldtitle'.$this->ct->Languages->Postfix.' - not found*';
+            return 'fieldtitle'.$this->ct->Languages->Postfix.' - not found';
 		}
         else
-			return $this->field['fieldtitle'.$this->ct->Languages->Postfix];
+		{
+			$vlu = $this->field['fieldtitle'.$this->ct->Languages->Postfix];
+			if($vlu == '')
+				return $this->field['fieldtitle'];
+			else
+				return $vlu;
+		}
     }
 	
 	public function label()

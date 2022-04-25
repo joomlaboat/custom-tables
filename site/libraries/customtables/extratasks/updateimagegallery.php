@@ -21,10 +21,14 @@ class updateImageGallery
 		$old_typeparams=base64_decode($input->get('old_typeparams','','BASE64'));
 		if($old_typeparams=='')
 			return array('error'=>'old_typeparams not set');
+		
+		$old_params = JoomlaBasicMisc::csv_explode(',',$old_typeparams,'"',false);
 			
 		$new_typeparams=base64_decode($input->get('new_typeparams','','BASE64'));
 		if($new_typeparams=='')
 			return array('error'=>'new_typeparams not set');
+		
+		$new_params = JoomlaBasicMisc::csv_explode(',',$new_typeparams,'"',false);
 		
 		$fieldid=(int)$input->getInt('fieldid',0);
 		if($fieldid==0)
@@ -44,18 +48,28 @@ class updateImageGallery
 			$count=updateImages::countImages($table_row->tablename,$field_row->fieldname);
 		}
 		
-		$old_ImageFolder_=CustomTablesImageMethods::getImageFolder($old_typeparams);
+		/*
+		$old_typeparams_array=JoomlaBasicMisc::csv_explode(',',$old_typeparams,'"',false);
+		
+		$old_ImageFolder_=CustomTablesImageMethods::getImageFolder($old_typeparams_array);
 		$old_ImageFolder=str_replace('/',DIRECTORY_SEPARATOR,$old_ImageFolder_);
 		
-		$new_ImageFolder_=CustomTablesImageMethods::getImageFolder($new_typeparams);
-		$new_ImageFolder=str_replace('/',DIRECTORY_SEPARATOR,$new_ImageFolder_);
+		$new_typeparams_array=JoomlaBasicMisc::csv_explode(',',$new_typeparams,'"',false);
 		
-		$status=updateImages::processImages($table_row->tablename,$field_row->fieldname, $old_typeparams, $new_typeparams, $old_ImageFolder,$new_ImageFolder, $startindex, $stepsize);
+		$new_ImageFolder_=CustomTablesImageMethods::getImageFolder($new_typeparams_array);
+		$new_ImageFolder=str_replace('/',DIRECTORY_SEPARATOR,$new_ImageFolder_);
+		*/
+		
+		//$status=updateImages::processImages($table_row->tablename,$field_row->fieldname, $old_typeparams_array[0], $new_typeparams_array[0],
+			//$old_ImageFolder,$new_ImageFolder, $startindex, $stepsize);
+		
+		$status=updateImages::processImages($table_row->realtablename,$field_row->realfieldname, $old_params, $new_params, $startindex, $stepsize);
 
 		return array('count'=>$count,'success'=>(int)($status==null),'startindex'=>$startindex,'stepsize'=>$stepsize,'error'=>$status);
-		
+
+
 	}
-	
+	/*
 	protected static function countImages($establename,$esfieldname)
 	{
 		$db = JFactory::getDBO();
@@ -68,7 +82,7 @@ class updateImageGallery
 		return (int)$recs[0]['c'];
 	}
 	
-	protected static function processImages($realtablename,$realfieldname,$old_typeparams, $new_typeparams, $old_ImageFolder, $new_ImageFolder, $startindex, $stepsize, $deleteOriginals=false)
+	protected static function processImages($realtablename,$realfieldname, string $old_imageparams, string $new_imageparams, $old_ImageFolder, $new_ImageFolder, $startindex, $stepsize, $deleteOriginals=false)
 	{
 		$db = JFactory::getDBO();
 		$query = 'SELECT '.$realfieldname.' FROM '.$realtablename.' WHERE '.$realfieldname.'>0';
@@ -77,8 +91,8 @@ class updateImageGallery
 		$imagelist=$db->loadAssocList();
 		
 		$imgMethods= new CustomTablesImageMethods;
-		$old_imagesizes=$imgMethods->getCustomImageOptions($old_typeparams);
-		$new_imagesizes=$imgMethods->getCustomImageOptions($new_typeparams);
+		$old_imagesizes=$imgMethods->getCustomImageOptions($old_imageparams);
+		$new_imagesizes=$imgMethods->getCustomImageOptions($new_imageparams);
 
 		foreach($imagelist as $img)
 		{
@@ -90,8 +104,8 @@ class updateImageGallery
 		
 		return null;
 	}
-	
-	
+	*/
+	/*
 	protected static function processImage_Thumbnail(&$imgMethods,$rowValue,$old_ImageFolder, $new_ImageFolder)
 	{
 		//Check thumbnail
@@ -116,7 +130,8 @@ class updateImageGallery
 			
 		return null;
 	}
-	
+	*/
+	/*
 	protected static function processImage_Original(&$imgMethods,$rowValue,$old_ImageFolder, $new_ImageFolder,&$original_image_file)
 	{
 		//Check original image file
@@ -148,7 +163,8 @@ class updateImageGallery
 		
 		return null;
 	}
-	
+	*/
+	/*
 	protected static function processImage_CustomSize_MoveFile(&$imgMethods,$old_imagesize,$rowValue,$old_ImageFolder, $new_ImageFolder, $prefix,$imagefile_ext="",$original_image_file)
 	{
 		$old_imagefile=$old_ImageFolder.DIRECTORY_SEPARATOR.$prefix.'_'.$rowValue;
@@ -194,7 +210,8 @@ class updateImageGallery
 		
 		return null;
 	}
-	
+	*/
+	/*
 	protected static function processImage_CustomSizes(&$imgMethods,$old_imagesizes,$new_imagesizes,$rowValue,$old_ImageFolder, $new_ImageFolder,$original_image_file)
 	{
 		//Move files if neccesary
@@ -207,7 +224,8 @@ class updateImageGallery
 		
 		return null;
 	}
-	
+	*/
+	/*
 	protected static function processImage(&$imgMethods,&$old_imagesizes,&$new_imagesizes,$rowValue,$old_ImageFolder, $new_ImageFolder)
 	{
 		$original_image_file='';
@@ -240,4 +258,5 @@ class updateImageGallery
 		return null;
 	
 	}
+	*/
 }

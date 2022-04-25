@@ -18,6 +18,73 @@ use \ESTables;
 
 use \Joomla\CMS\Factory;
 
+class Field
+{
+	var $ct;
+	
+	var $id;
+	var $params;
+	var $type;
+	var $isrequired;
+	var $defaultvalue;
+		
+	var $title;
+	var $fieldname;
+	var $realfieldname;
+	var $comesfieldname;
+	
+
+	var $prefix; //part of the table class
+
+	function __construct(&$ct,$fieldrow,$row = [])
+	{
+		$this->ct = $ct;
+		
+		$this->id = $fieldrow['id'];
+		$this->type = $fieldrow['type'];
+		
+		if(!array_key_exists('fieldtitle'.$ct->Languages->Postfix,$fieldrow))
+		{
+            $this->title = 'fieldtitle'.$ct->Languages->Postfix.' - not found';
+		}
+        else
+		{
+			$vlu = $fieldrow['fieldtitle'.$ct->Languages->Postfix];
+			if($vlu == '')
+				$this->title = $fieldrow['fieldtitle'];
+			else
+				$this->title = $vlu;
+		}
+		
+		$this->fieldname=$fieldrow['fieldname'];
+		$this->realfieldname = $fieldrow['realfieldname'];
+		$this->isrequired = $fieldrow['isrequired'];
+		$this->defaultvalue = $fieldrow['defaultvalue'];
+		
+		$this->prefix=$this->ct->Env->field_input_prefix;
+		$this->comesfieldname=$this->prefix.$this->fieldname;
+		
+		$type_params = JoomlaBasicMisc::csv_explode(',',$fieldrow['typeparams'],'"',false);
+		
+		
+		$this->params = [];
+		foreach($type_params as $type_param_)
+		{
+			$type_param = str_replace('****quote****','"',$type_param_);
+			$type_param = str_replace('****apos****','"',$type_param);
+			
+			if(is_numeric($type_param))
+				$this->params[] = $type_param;
+			elseif(strpos($type_param,'{{') === false)
+				$this->params[] = $type_param;
+			else{
+				$twig = new TwigProcessor($this->ct, '{% autoescape false %}'.$type_param.'{% endautoescape %}');
+				$this->params[] = $twig->process($row);
+			}
+		}
+	}
+}
+
 class Fields
 {
     public static function getFieldID($tableid, $fieldname)
@@ -119,52 +186,54 @@ class Fields
 		$ImageFolder=JPATH_SITE.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'esimages';
 
 		$fieldrow=Fields::getFieldRow($fieldid);
-
-    	if(!is_object($fieldrow) or count($fieldrow)==0)
+		
+		if(!is_object($fieldrow) or count($fieldrow)==0)
 			return false;
-			
-		$tablerow=ESTables::getTableRowByID($fieldrow->tableid);
+		
+		$field = new Field($ct,$fieldrow);
+	
+		$tablerow=ESTables::getTableRowByID($field->tableid);
 
 		//for Image Gallery
-		if($fieldrow->type=='imagegallery')
+		if($field->type=='imagegallery')
 		{
 			//Delete all photos belongs to the gallery
 			
 			$imagemethods=new CustomTablesImageMethods;
-			$gallery_table_name='#__customtables_gallery_'.$tablerow->tablename.'_'.$fieldrow->fieldname;
-			$imagemethods->DeleteGalleryImages($gallery_table_name, $tableid, $fieldrow->fieldname,$fieldrow->typeparams,true);
+			$gallery_table_name='#__customtables_gallery_'.$tablerow->tablename.'_'.$field->fieldname;
+			$imagemethods->DeleteGalleryImages($gallery_table_name, $tableid, $field->fieldname,$field->params,true);
 
 			//Delete gallery table
 			$query ='DROP TABLE IF EXISTS '.$gallery_table_name;
 			$db->setQuery($query);
 			$db->execute();
 		}
-		elseif($fieldrow->type=='filebox')
+		elseif($field->type=='filebox')
 		{
 			//Delete all files belongs to the filebox
 
-			$filebox_table_name='#__customtables_filebox_'.$tablerow->tablename.'_'.$fieldrow->fieldname;
-			CustomTablesFileMethods::DeleteFileBoxFiles($filebox_table_name, $tableid, $fieldrow->fieldname,$fieldrow->typeparams,true);
+			$filebox_table_name='#__customtables_filebox_'.$tablerow->tablename.'_'.$field->fieldname;
+			CustomTablesFileMethods::DeleteFileBoxFiles($filebox_table_name, $tableid, $field->fieldname,$field->params,true);
 
 			//Delete gallery table
 			$query ='DROP TABLE IF EXISTS '.$filebox_table_name;
 			$db->setQuery($query);
 			$db->execute();
 		}
-		elseif($fieldrow->type=='image')
+		elseif($field->type=='image')
 		{
-			if(Fields::checkIfFieldExists($tablerow->realtablename,$fieldrow->realfieldname))
+			if(Fields::checkIfFieldExists($tablerow->realtablename,$field->realfieldname))
 			{
 				$imagemethods=new CustomTablesImageMethods;
-				$imageparams=str_replace('|compare','|delete:',$fieldrow->typeparams); //disable image comparision if set
-				$imagemethods->DeleteCustomImages($tablerow->realtablename,$fieldrow->realfieldname, $ImageFolder, $imageparams, $tablerow->realidfieldname, true);
+				//$imageparams=str_replace('|compare','|delete:',$field->params); //disable image comparision if set
+				$imagemethods->DeleteCustomImages($tablerow->realtablename,$field->realfieldname, $ImageFolder, $field->params[0], $tablerow->realidfieldname, true);
 			}
 		}
-		elseif($fieldrow->type=='user' or $fieldrow->type=='userid' or $fieldrow->type=='sqljoin')
+		elseif($field->type=='user' or $field->type=='userid' or $field->type=='sqljoin')
 		{
-			Fields::removeForeignKey($tablerow->realtablename,$fieldrow->realfieldname);
+			Fields::removeForeignKey($tablerow->realtablename,$field->realfieldname);
 		}
-        elseif($fieldrow->type=='file')
+        elseif($field->type=='file')
 		{
 			// delete all files
 			//if(file_exists($filename))
@@ -173,9 +242,9 @@ class Fields
 
 		$realfieldnames=array();
 
-		if(strpos($fieldrow->type,'multilang')===false)
+		if(strpos($field->type,'multilang')===false)
 		{
-			$realfieldnames[]=$fieldrow->realfieldname;
+			$realfieldnames[]=$field->realfieldname;
 		}
 		else
 		{
@@ -187,7 +256,7 @@ class Fields
 				else
 					$postfix='_'.$lang->sef;
 
-				$realfieldnames[]=$fieldrow->realfieldname.$postfix;
+				$realfieldnames[]=$field->realfieldname.$postfix;
 			}
 		}
 
@@ -195,7 +264,7 @@ class Fields
 
 		foreach($realfieldnames as $realfieldname)
 		{
-			if($fieldrow->type!='dummy')
+			if($field->type!='dummy')
 			{
 				$msg='';
 				Fields::deleteMYSQLField($tablerow->realtablename,$realfieldname,$msg);
@@ -900,7 +969,6 @@ class Fields
                 return false;
         }
 
-
         if(count($parts)==2)
             return true;
         else
@@ -1340,3 +1408,5 @@ class Fields
 		return null;
 	}
 }
+
+

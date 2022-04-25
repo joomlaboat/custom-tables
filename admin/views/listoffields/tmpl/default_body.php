@@ -10,7 +10,7 @@
 // No direct access to this file access');
 defined('_JEXEC') or die('Restricted access');
 
-$edit = "index.php?option=com_customtables&view=listoffields&task=fields.edit";
+$edit = "index.php?option=com_customtables&view=listoffields&task=fields.edit&tableid=".$this->tableid;
 
 ?>
 <?php foreach ($this->items as $i => $item): ?>

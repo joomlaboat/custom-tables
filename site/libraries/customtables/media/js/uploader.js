@@ -41,7 +41,7 @@ function ct_getUploader(index,urlstr,maxFileSize,allowedTypes,UploaderForm,Submi
 	let uploadFileObject = document.getElementById(FileUploaderBox);
 	jQuery(function($)
     {
-		
+	
 	$("#"+FileUploaderBox).uploadFile({
 		url:urlstr,
 		multiple:multiple_,
@@ -63,6 +63,7 @@ function ct_getUploader(index,urlstr,maxFileSize,allowedTypes,UploaderForm,Submi
 		onSuccess:function(files,data,xhr,pd){
 			var p=uploaderParams[index];
 			var data_=data;
+			
 			if(checkIfLogedIn(data_)){
 				var res=null
 				try {
@@ -105,6 +106,7 @@ function ct_getUploader(index,urlstr,maxFileSize,allowedTypes,UploaderForm,Submi
 				*/
 		},
 		onError: function(files,status,errMsg,pd){
+
 			$("#"+EventMessageBox).html("<br/>Error "+errMsg+" for: "+JSON.stringify(files));
 		},
 		onCancel:function(files,pd){

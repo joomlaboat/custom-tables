@@ -23,12 +23,11 @@ class CT_FieldTypeTag_imagegallery
 		return $photorows;
 	}
     
-    public static function getImageGallerySRC($photorows, $image_prefix,$object_id,$galleryname,$TypeParams,&$imagesrclist,&$imagetaglist,$estableid)
+    public static function getImageGallerySRC($photorows, $image_prefix,$object_id,$galleryname,array $params,&$imagesrclist,&$imagetaglist,$estableid)
 	{
         $imagegalleryprefix='g';
-        $TypeParamsArr=JoomlaBasicMisc::csv_explode(',',$TypeParams,'"',false);
-
-		$imagefolder=CustomTablesImageMethods::getImageFolder($TypeParams);
+        
+		$imagefolder=CustomTablesImageMethods::getImageFolder($params);
 
 		if($imagefolder=='')
 		{
@@ -112,7 +111,7 @@ class CT_FieldTypeTag_imagegallery
 			}
 			else
 			{
-				$imagesizes=$imgMethods->getCustomImageOptions($TypeParams);
+				$imagesizes=$imgMethods->getCustomImageOptions($params[0]);
 				$foundimgsize=false;
 
 				foreach($imagesizes as $img)
