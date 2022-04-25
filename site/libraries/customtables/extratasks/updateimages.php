@@ -106,6 +106,18 @@ class updateImages
 				return $status;
 		}
 		
+		//Check if the old folder is already empty, if it is empty the delete the folder
+		$files = scandir(JPATH_SITE.DIRECTORY_SEPARATOR.$old_ImageFolder);
+		$count = 0;
+		foreach($files as $file)
+		{
+			if($file!='.' and $file!='..')
+				$count += 1;
+		}
+		
+		if($count == 0)
+			rmdir(JPATH_SITE.DIRECTORY_SEPARATOR.$old_ImageFolder);
+		
 		return null;
 	}
 	
