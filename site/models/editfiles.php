@@ -10,6 +10,8 @@
 defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\CT;
+use CustomTables\Field;
+use CustomTables\Fields;
 
 jimport('joomla.application.component.model');
 
@@ -18,9 +20,10 @@ JTable::addIncludePath(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEP
 class CustomTablesModelEditFiles extends JModelLegacy
 {
 	var $ct;
+	var $row;
 	var $filemethods;
 	var $listing_id;
-	var $Listing_Title;
+
 	var $fileboxname;
 	var $FileBoxTitle;
 	var $fileboxfolder;
@@ -61,10 +64,10 @@ class CustomTablesModelEditFiles extends JModelLegacy
 
 		$this->fileboxname=$this->ct->Env->jinput->getCmd('fileboxname');
 
+		$this->row = $this->ct->Table->loadRecord($this->listing_id);
+
 		if(!$this->getFileBox())
 			return false;
-
-		$this->getObject();
 
 		$this->fileboxtablename='#__customtables_filebox_'.$this->ct->Table->tablename.'_'.$this->fileboxname;
 
@@ -84,60 +87,19 @@ class CustomTablesModelEditFiles extends JModelLegacy
 
 	function getFileBox()
 	{
-		$db = JFactory::getDBO();
-		$query = 'SELECT fieldtitle'.$this->ct->Languages->Postfix.' AS title,typeparams FROM #__customtables_fields WHERE published=1 AND tableid='
-			.(int)$this->ct->Table->tableid.' AND fieldname="'.$this->fileboxname.'" AND type="filebox" LIMIT 1';
-
-		$db->setQuery($query);
-
-		$rows=$db->loadObjectList();
-
-		if(count($rows)!=1)
-			return false;
-
-		$row=$rows[0];
-
-		$pair=explode(',',$row->typeparams);
-		$this->fileboxfolderweb='images/'.$pair[1];
+		$fieldrow = Fields::FieldRowByName($this->fileboxname,$this->ct->Table->fields);
+		$this->field = new Field($this->ct,$fieldrow,$this->row);
+		
+		$this->fileboxfolderweb='images/'.$this->field->params[1];
 
 		$this->fileboxfolder=JPATH_SITE.DIRECTORY_SEPARATOR.str_replace('/',DIRECTORY_SEPARATOR,$this->fileboxfolderweb);
 		//Create folder if not exists
 		if (!file_exists($this->fileboxfolder))
 			mkdir($this->fileboxfolder, 0755, true);
 
-		$this->FileBoxTitle=$row->title;
+		$this->FileBoxTitle=$this->field->title;
 
 		return true;
-	}
-
-	function getObject()
-	{
-		$db = JFactory::getDBO();
-		$query = 'SELECT * FROM #__customtables_table_'.$this->ct->Table->tablename.' WHERE id='.(int)$this->listing_id.' LIMIT 1';
-
-		$db->setQuery($query);
-
-		$rows = $db->loadAssocList();
-
-		if(count($rows)!=1)
-			return false;
-
-		$row=$rows[0];
-
-		$this->Listing_Title='';
-
-		foreach($this->ct->Table->fields as $mFld)
-		{
-			$titlefield=$mFld['realfieldname'];
-			if(!(strpos($mFld['type'],'multi')===false))
-				$titlefield.=$this->ct->Languages->Postfix;
-
-			if($row[$titlefield]!='')
-			{
-				$this->Listing_Title=$row[$titlefield];
-				break;
-			}
-		}
 	}
 
 	function delete()
@@ -165,7 +127,6 @@ class CustomTablesModelEditFiles extends JModelLegacy
 
 		return true;
 	}
-
 
 	function add()
 	{

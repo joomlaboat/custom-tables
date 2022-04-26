@@ -183,10 +183,10 @@ class TwigProcessor
 		if(isset($this->ct->Table->fields))
 		{
 			$index=0;
-			foreach($this->ct->Table->fields as $field)
+			foreach($this->ct->Table->fields as $fieldrow)
 			{
 	
-				$function = new \Twig\TwigFunction($field['fieldname'], function () use (&$ct, $index) 
+				$function = new \Twig\TwigFunction($fieldrow['fieldname'], function () use (&$ct, $index) 
 				{
 					//This function will process record values with field typeparams and with optional arguments
 					//Example:
@@ -204,7 +204,7 @@ class TwigProcessor
 				
 				$this->twig->addFunction($function);
 			
-				$this->variables[$field['fieldname']] = new fieldObject($this->ct,$field);
+				$this->variables[$fieldrow['fieldname']] = new fieldObject($this->ct,$fieldrow);
 				
 				$index++;
 			}
@@ -242,26 +242,22 @@ class fieldObject
 	var $ct;
 	var $field;
 
-	function __construct(&$ct, &$field)
+	function __construct(&$ct, &$fieldrow)
 	{
 		$this->ct = $ct;
-		$this->field = $field;
+		$this->field = new Field($ct,$fieldrow,$this->ct->Table->record);
 	}
 	
 	public function __toString()
     {
-		//$args = func_get_args();
 		$valueProcessor = new Value($this->ct);
-		$vlu = $valueProcessor->renderValue($this->field,$this->ct->Table->record,[]);
-		//return $vlu;
+		$vlu = $valueProcessor->renderValue($this->field->fieldrow,$this->ct->Table->record,[]);
 		return strval($vlu);
-		//return new \Twig\Markup($vlu, 'UTF-8' ); //doesnt work because it cannot be converted to int or string
-		//return strval(new \Twig\Markup($vlu, 'UTF-8'));
     }
 	
 	public function __call($name, $arguments)
     {
-		if($this->field['fieldname'] == 'user')
+		if($this->field->fieldname == 'user')
 		{
 			$user_parameters = ['name','username','email','id','lastvisitdate','registerdate','usergroups'];
 			if(in_array($name,$user_parameters))
@@ -281,7 +277,7 @@ class fieldObject
 	
 	public function fieldname()
     {
-        return $this->field['fieldname'];
+        return $this->field->fieldname;
     }
 	
 	public function v()
@@ -297,14 +293,14 @@ class fieldObject
 	public function value()
     {
 		$options = func_get_args();
-		$rfn = $this->field['realfieldname'];
+		$rfn = $this->field->realfieldname;
 		
-		if($this->field['type'] == 'image')
+		if($this->field->type == 'image')
 		{
 			$imagesrc='';
             $imagetag='';
 
-            \CT_FieldTypeTag_image::getImageSRClayoutview($options,$this->ct->Table->record[$rfn],$this->field['typeparams'],$imagesrc,$imagetag);
+            \CT_FieldTypeTag_image::getImageSRClayoutview($options,$this->ct->Table->record[$rfn],$this->field->params,$imagesrc,$imagetag);
 
 			$vlu=$imagesrc;
 			
@@ -321,7 +317,9 @@ class fieldObject
 	
 	public function title()
     {
-		if(!array_key_exists('fieldtitle'.$this->ct->Languages->Postfix,$this->field))
+		return $this->field->title;
+		/*
+		if(!array_key_exists('fieldtitle'.$this->ct->Languages->Postfix,$this->field->fieldrow))
 		{
 			Factory::getApplication()->enqueueMessage(
 					JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_LANGFIELDNOTFOUND' ), 'Error');
@@ -330,12 +328,13 @@ class fieldObject
 		}
         else
 		{
-			$vlu = $this->field['fieldtitle'.$this->ct->Languages->Postfix];
+			$vlu = $this->field->fieldrow['fieldtitle'.$this->ct->Languages->Postfix];
 			if($vlu == '')
 				return $this->field['fieldtitle'];
 			else
 				return $vlu;
 		}
+		*/
     }
 	
 	public function label()
@@ -347,22 +346,17 @@ class fieldObject
 
 	public function description()
     {
-		if(!array_key_exists('description'.$this->ct->Languages->Postfix,$this->field))
-			$vlu = $this->field['description'];
-        else
-			$vlu = $this->field['description'.$this->ct->Languages->Postfix];
-		
-		return new \Twig\Markup($vlu, 'UTF-8' );
+		return new \Twig\Markup($this->field->description, 'UTF-8' );
     }
 	
 	public function type()
     {
-        return $this->field['type'];
+        return $this->field->type;
     }
 	
 	public function params()
     {
-        return $this->field['typeparams'];
+        return $this->field->params;
     }
 	
 	public function edit()
@@ -370,15 +364,15 @@ class fieldObject
 		$args = func_get_args();
 		
 		$value = '';
-		if($this->field['type']!='multilangstring' and $this->field['type']!='multilangtext' and $this->field['type']!='multilangarticle')
+		if($this->field->type!='multilangstring' and $this->field->type!='multilangtext' and $this->field->type!='multilangarticle')
 		{
-			$rfn = $this->field['realfieldname'];
+			$rfn = $this->field->realfieldname;
 			$value = isset($this->ct->Table->record[$rfn]) ? $this->ct->Table->record[$rfn] : null;
 		}
 		
 		if($this->ct->isEditForm)
 		{
-			$Inputbox = new Inputbox($this->ct, $this->field, $args);
+			$Inputbox = new Inputbox($this->ct, $this->field->fieldrow, $args);
 			return new \Twig\Markup($Inputbox->render($value, $this->ct->Table->record), 'UTF-8' );
 		}
 		else
@@ -386,7 +380,7 @@ class fieldObject
 			$postfix='';
             $ajax_prefix = 'com_'.$this->ct->Table->record['listing_id'].'_';//example: com_153_es_fieldname or com_153_ct_fieldname
 
-			if($this->field['type']=='multilangstring')
+			if($this->field->type=='multilangstring')
 			{
 				if(isset($args[4]))
 				{
@@ -420,14 +414,14 @@ class fieldObject
 			$args[0] = 'border:none !important;width:auto;box-shadow:none;';
 			
 			$onchange='ct_UpdateSingleValue(\''.$this->ct->Env->WebsiteRoot.'\','.$this->ct->Env->Itemid.',\''
-				.$this->field['fieldname'].'\','.$this->ct->Table->record['listing_id'].',\''.$postfix.'\');';
+				.$this->field->fieldname.'\','.$this->ct->Table->record['listing_id'].',\''.$postfix.'\');';
 
 			if(isset($value_option_list[1]))
 				$args[1] .= $value_option_list[1];
 
-			$Inputbox = new Inputbox($this->ct, $this->field, $args, true, $onchange);
+			$Inputbox = new Inputbox($this->ct, $this->field->fieldrow, $args, true, $onchange);
 			
-			$edit_box = '<div'.$div_arg.' id="'.$ajax_prefix.$this->field['fieldname'].$postfix.'_div">'
+			$edit_box = '<div'.$div_arg.' id="'.$ajax_prefix.$this->field->fieldname.$postfix.'_div">'
                             .$Inputbox->render($value, $this->ct->Table->record)
 						.'</div>';
 			

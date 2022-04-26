@@ -1,4 +1,3 @@
-
 <?php
 /**
  * CustomTables Joomla! 3.x Native Component

@@ -103,7 +103,7 @@ function ShowAddFile()
 		</tr>
 		<tr>
 			<td colspan="2">
-				<?php echo JoomlaBasicMisc::JTextExtended( "COM_CUSTOMTABLES_PERMITED_MAX_FILE_SIZE" ).': '.JoomlaBasicMisc::formatSizeUnits($max_file_size); ?><br/>
+				<?php echo JoomlaBasicMisc::JTextExtended( "COM_CUSTOMTABLES_PERMITED_MAX_FILE_SIZE" ).': '.JoomlaBasicMisc::formatSizeUnits($this->max_file_size); ?><br/>
 				<?php echo JoomlaBasicMisc::JTextExtended( "File Formats" ); ?>: <b><?php echo str_replace(' ',', ',$this->allowedExtensions); ?></b>
 			</td>
 		</tr>

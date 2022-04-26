@@ -11,10 +11,8 @@ defined('_JEXEC') or die('Restricted access');
 
 class CT_FieldTypeTag_records
 {
-    public static function resolveRecordType(&$ct,$rowValue, $TypeParams,$options)
+    public static function resolveRecordType(&$ct,$rowValue, array $typeparams, array $options)
 	{
-		$typeparams=JoomlaBasicMisc::csv_explode(',',$TypeParams,'"',false);
-
 		$sortbyfield='';
 
 		if(count($typeparams)<1)
@@ -41,10 +39,6 @@ class CT_FieldTypeTag_records
 		else
 			$esr_field=$typeparams[1];
 
-
-
-
-
 		$esr_selector=$typeparams[2];
 
 		if(count($typeparams)>3)
@@ -54,8 +48,6 @@ class CT_FieldTypeTag_records
 
 		if($sortbyfield=='' and isset($typeparams[5]))
 			$sortbyfield=$typeparams[5];
-
-
 
 		//this is important because it has been selected some how.
 		$esr_filter='';

@@ -24,35 +24,10 @@ require_once($types_path.'_type_sqljoin.php');
 
 defined('_JEXEC') or die('Restricted access');
 
-/* All tags already implemented using Twig
-
-Not all field types are tested
-Not tested:
-Articles
-Image Gallery
-File box
-List
-
- */
+use CustomTables\Field;
 
 class tagProcessor_Value
 {
-    public static function getArticle($articleid,$field)
-	{
-    	// get database handle
-		$db = JFactory::getDBO();
-		$query='SELECT '.$field.' FROM #__content WHERE id='.(int)$articleid.' LIMIT 1';
-		$db->setQuery($query);
-
-		$rows=$db->loadAssocList();
-
-		if(count($rows)!=1)
-			return ""; //return nothing if article not found
-
-		$row=$rows[0];
-		return $row[$field];
-	}
-
     public static function processEditValues(&$ct,&$htmlresult, &$row,&$isGalleryLoaded,&$getGalleryRows,&$isFileBoxLoaded,&$getFileBoxRows,$tag_chars='[]')
 	{
 		$items_to_replace=array();
@@ -188,7 +163,8 @@ class tagProcessor_Value
             $i=0;
 			foreach($ct->Table->fields as $ESField)
 			{
-				$TypeParams = $ESField['typeparams'];
+				$field = new Field($ct,$ESField,$row);
+				
                 $replaceitecode=md5(JoomlaBasicMisc::generateRandomString().(isset($row['listing_id']) ? $row['listing_id'] : '').$ESField['fieldname']);
                 
 				if($pureValueOptionArr[0]==$ESField['fieldname'])
@@ -197,9 +173,6 @@ class tagProcessor_Value
 					$fieldtype = $ESField['type'];
 					$fieldname = $ESField['fieldname'];
 					
-					//$rowValue='';
-					//tagProcessor_Value::doMultiValues($ct,$ESField,$row,$fieldtype,$rowValue,$fieldname);
-
 					if($fieldtype=='imagegallery')
 					{
 						if(count($isGalleryLoaded)>0)
@@ -253,8 +226,7 @@ class tagProcessor_Value
 					}
 					else
 					{
-						$isEmpty=tagProcessor_Value::isEmpty($row[$ESField['realfieldname']],$fieldtype,$ESField['typeparams']);
-						
+						$isEmpty=tagProcessor_Value::isEmpty($row[$ESField['realfieldname']],$field);
 					}
 
 					$ifname='[_if:_value:'.$ESField['fieldname'].']';
@@ -331,8 +303,7 @@ class tagProcessor_Value
 							}
 							elseif($fieldtype=='filebox')
 							{								
-								$vlu = CT_FieldTypeTag_filebox::process($ct->Table->tableid,$getFileBoxRows[$fieldname], $listing_id,
-									$fieldname,$TypeParams,['','link','32','_blank',';']);
+								$vlu = CT_FieldTypeTag_filebox::process($getFileBoxRows[$fieldname], $field, $row['listing_id'],['','link','32','_blank',';']);
 							}
 							elseif($fieldtype=='records')
 							{
@@ -387,8 +358,10 @@ class tagProcessor_Value
 
 	}//function
 
-	public static function isEmpty(&$rowValue,$fieldtype,$fieldtypeparams='')
+	public static function isEmpty(&$rowValue,$field)
 	{
+		$fieldtype = $field->type;
+		
 		if($fieldtype=='int' or $fieldtype=='user' or $fieldtype=='userid' or $fieldtype=='usergroup')
 		{
 			$v=(int)$rowValue;
@@ -441,8 +414,7 @@ class tagProcessor_Value
 			else
 			{
 				//check if file exists
-				$TypeParamsArr=JoomlaBasicMisc::csv_explode(',',$fieldtypeparams,'"',false);
-				$ImageFolder_=CustomTablesImageMethods::getImageFolder($TypeParamsArr);
+				$ImageFolder_=CustomTablesImageMethods::getImageFolder($field->params);
 
 				$ImageFolder=str_replace('/',DIRECTORY_SEPARATOR,$ImageFolder_);
 
@@ -490,85 +462,7 @@ class tagProcessor_Value
 		}
 	}
 
-	/*
-	public static function doMultiValues(&$ct,&$ESField, &$row,&$fieldtype,&$rowValue,&$fieldname,$specific_lang='')
-	{
-		$fieldtype=$ESField['type'];
-		if(strpos($fieldtype,'multilang')===false)
-		{
-			if($fieldtype=='dummy')
-			{
-				$rowValue='';
-				$fieldname=$ESField['fieldname'];
-			}
-            elseif($fieldtype=='phponview')
-			{
-                $fieldname=$ESField['fieldname'];
-                $rowValue=$row[$ESField['realfieldname']];
-                
-                if(isset($row['_processing_field_values']))
-                    return true;
-                
-                if(isset($row['listing_id']))
-                {
-                    $type_params=JoomlaBasicMisc::csv_explode(',',$ESField['typeparams'],'"',false);
-				
-                    if(isset($type_params[1]) and $type_params[1]=='dynamic')
-                    {
-                    	$phptagprocessor=JPATH_SITE.DIRECTORY_SEPARATOR.'plugins'.DIRECTORY_SEPARATOR.'content'.DIRECTORY_SEPARATOR.'customtables'.DIRECTORY_SEPARATOR.'protagprocessor'.DIRECTORY_SEPARATOR.'phptags.php';
-                        if(file_exists($phptagprocessor))
-                        {
-                           	require_once($phptagprocessor);
-                           	$rowValue=tagProcessor_PHP::processTempValue($ct,$row,$ESField['realfieldname'],$type_params,true);
-                        }
-                    }
-                }
-			}
-			else
-			{
-				$rowValue=isset($row[$ESField['realfieldname']]) ? $row[$ESField['realfieldname']] : null;
-				$fieldname=$ESField['fieldname'];
-			}
-		}
-		else
-		{
-			if($fieldtype=='multilangstring')
-				$fieldtype='string';
-			elseif($fieldtype=='multilangtext')
-				$fieldtype='text';
-                
-            $postfix='';
-            if($specific_lang!='')
-            {
-                $i=0;
-                foreach($ct->Languages->LanguageList as $l)
-                {
-                    if($l->sef==$specific_lang)
-                    {
-                        if($i==0)
-                            $postfix='';//first language in the list
-                        else
-                            $postfix='_'.$specific_lang;
-                            
-                        break;
-                    }
-                    $i++;
-                }
-
-            }
-            else
-                $postfix=$ct->Languages->Postfix; //front-end default language
-                
-    		$fieldname=$ESField['realfieldname'].$postfix;
-			if(isset($row[$fieldname]))
-				$rowValue = $row[$fieldname];
-			else
-				$rowValue = null;
-		}
-	}
-	*/
-
-    public static function processValues(&$ct,&$row,&$htmlresult,$tag_chars='[]')
+	public static function processValues(&$ct,&$row,&$htmlresult,$tag_chars='[]')
 	{
 		$fields_used=[];//Fields found in the layout.
 		
@@ -582,6 +476,8 @@ class tagProcessor_Value
 		{
 			foreach($ct->Table->fields as $ESField)
 			{
+				$field = new Field($ct,$ESField,$row);
+				
                 $replaceitecode=md5(JoomlaBasicMisc::generateRandomString().(isset($row['listing_id']) ? $row['listing_id'] : '').$ESField['fieldname']);
                 
 				$temp_items_to_replace=tagProcessor_Value::processPureValues($ct,$htmlresult,$row,$isGalleryLoaded,$getGalleryRows,$isFileBoxLoaded,$getFileBoxRows,$tag_chars);
@@ -642,7 +538,7 @@ class tagProcessor_Value
 					else
 					{
 						//isEmpty
-						$isEmpty=tagProcessor_Value::isEmpty($row[$ESField['realfieldname']],$fieldtype,$ESField['typeparams']);
+						$isEmpty=tagProcessor_Value::isEmpty($row[$ESField['realfieldname']],$field);
 					}
 
 					// IF

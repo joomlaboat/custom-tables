@@ -114,7 +114,7 @@ class CustomTablesViewFiles extends JViewLegacy
 		return $content;
 	}
 
-	function getFilePath()
+	protected function getFilePath()
 	{
 		if(!isset($this->Model->fieldrow))
 		{

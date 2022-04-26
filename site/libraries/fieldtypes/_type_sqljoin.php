@@ -11,11 +11,9 @@ defined('_JEXEC') or die('Restricted access');
 
 class CT_FieldTypeTag_sqljoin
 {
-    public static function resolveSQLJoinType(&$ct,$rowValue, $TypeParams, $option_list)
+    public static function resolveSQLJoinType(&$ct,$rowValue, $typeparams, $option_list)
 	{
-        $typeparams=JoomlaBasicMisc::csv_explode(',',$TypeParams,'"',false);
-
-		if(count($typeparams)<1)
+        if(count($typeparams)<1)
 			$result.='table not specified';
 
 		if(count($typeparams)<2)

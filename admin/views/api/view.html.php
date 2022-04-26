@@ -16,8 +16,13 @@ use CustomTables\Fields;
 // import Joomla view library
 jimport('joomla.application.component.view');
 
-require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'
-		.DIRECTORY_SEPARATOR.'customtables'.DIRECTORY_SEPARATOR.'extratasks'.DIRECTORY_SEPARATOR.'updateimages.php');	
+$path = JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'
+		.DIRECTORY_SEPARATOR.'customtables'.DIRECTORY_SEPARATOR.'extratasks'.DIRECTORY_SEPARATOR;
+
+require_once($path . 'updateimages.php');
+require_once($path . 'updatefiles.php');
+require_once($path . 'updateimagegallery.php');
+require_once($path . 'updatefilebox.php');
 
 /**
  * Customtables View class for the Listoftables
@@ -57,6 +62,24 @@ class CustomtablesViewAPI extends JViewLegacy
 			case 'updateimages':
 				
 				$result=updateImages::process();
+					
+				break;
+				
+			case 'updatefiles':
+				
+				$result=updateFiles::process();
+					
+				break;
+				
+			case 'updateimagegallery':
+				
+				$result=updateImageGallery::process();
+					
+				break;
+				
+			case 'updatefilebox':
+				
+				$result=updateFileBox::process();
 					
 				break;
 			
@@ -109,5 +132,4 @@ class CustomtablesViewAPI extends JViewLegacy
 			}
 		}
 	}
-	
 }

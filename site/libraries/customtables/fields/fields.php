@@ -29,9 +29,12 @@ class Field
 	var $defaultvalue;
 		
 	var $title;
+	var $description;
 	var $fieldname;
 	var $realfieldname;
 	var $comesfieldname;
+	
+	var $fieldrow;
 	
 
 	var $prefix; //part of the table class
@@ -42,6 +45,7 @@ class Field
 		
 		$this->id = $fieldrow['id'];
 		$this->type = $fieldrow['type'];
+		$this->fieldrow = $fieldrow;
 		
 		if(!array_key_exists('fieldtitle'.$ct->Languages->Postfix,$fieldrow))
 		{
@@ -56,6 +60,19 @@ class Field
 				$this->title = $vlu;
 		}
 		
+		if(!array_key_exists('description'.$ct->Languages->Postfix,$fieldrow))
+		{
+            $this->description = 'description'.$ct->Languages->Postfix.' - not found';
+		}
+        else
+		{
+			$vlu = $fieldrow['description'.$ct->Languages->Postfix];
+			if($vlu == '')
+				$this->description = $fieldrow['description'];
+			else
+				$this->description = $vlu;
+		}
+		
 		$this->fieldname=$fieldrow['fieldname'];
 		$this->realfieldname = $fieldrow['realfieldname'];
 		$this->isrequired = $fieldrow['isrequired'];
@@ -64,24 +81,30 @@ class Field
 		$this->prefix=$this->ct->Env->field_input_prefix;
 		$this->comesfieldname=$this->prefix.$this->fieldname;
 		
-		$type_params = JoomlaBasicMisc::csv_explode(',',$fieldrow['typeparams'],'"',false);
+		$this->params = JoomlaBasicMisc::csv_explode(',',$fieldrow['typeparams'],'"',false);
 		
+		$this->parseParams($row);
+	}
+	
+	function parseParams(&$row)
+	{
+		$new_params = [];
 		
-		$this->params = [];
-		foreach($type_params as $type_param_)
+		foreach($this->params as $type_param)
 		{
-			$type_param = str_replace('****quote****','"',$type_param_);
+			$type_param = str_replace('****quote****','"',$type_param);
 			$type_param = str_replace('****apos****','"',$type_param);
 			
 			if(is_numeric($type_param))
-				$this->params[] = $type_param;
+				$new_params[] = $type_param;
 			elseif(strpos($type_param,'{{') === false)
-				$this->params[] = $type_param;
+				$new_params[] = $type_param;
 			else{
 				$twig = new TwigProcessor($this->ct, '{% autoescape false %}'.$type_param.'{% endautoescape %}');
-				$this->params[] = $twig->process($row);
+				$new_params[] = $twig->process($row);
 			}
 		}
+		$this->params = $new_params;
 	}
 }
 
@@ -1267,28 +1290,12 @@ class Fields
 		return $rows[0];
 	}
 
-	public static function getFieldAsocByName_($fieldname,$fields)
-	{
-		//from fields array
-		foreach($fields as $field)
-		{
-			if($field['fieldname']==$fieldname)
-				return $field;
-		}
-		return array();
-
-	}
-
 	public static function FieldRowByName($fieldname,&$ctfields)
 	{
-		//trigger_error("Cannot divide by zero", E_USER_ERROR);
-		
 		foreach($ctfields as $field)
 		{
 			if($field['fieldname']==$fieldname)
-			{
 				return $field;
-			}
 		}	
 		return array();
 	}

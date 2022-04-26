@@ -47,7 +47,7 @@ class updateImages
 		$count=0;
 		if($startindex==0)
 		{
-			$count=updateImages::countImages($ct->Table->tablename,$fieldrow->fieldname);
+			$count=updateImages::countImages($ct->Table->realtablename,$fieldrow->realfieldname,$ct->Table->realidfieldname);
 			if($stepsize>$count)
 				$stepsize=$count;
 		}
@@ -57,10 +57,10 @@ class updateImages
 		return array('count'=>$count,'success'=>(int)($status==null),'startindex'=>$startindex,'stepsize'=>$stepsize,'error'=>$status);
 	}
 	
-	protected static function countImages($establename,$esfieldname)
+	protected static function countImages($realtablename,$realfieldname,$realidfieldname)
 	{
 		$db = JFactory::getDBO();
-		$query = 'SELECT count(id) AS c FROM #__customtables_table_'.$establename.' WHERE es_'.$esfieldname.'>0';
+		$query = 'SELECT count('.$realidfieldname.') AS c FROM '.$realtablename.' WHERE '.$realfieldname.'>0';
 		$db->setQuery( $query );
 		$recs=$db->loadAssocList();
 		return (int)$recs[0]['c'];

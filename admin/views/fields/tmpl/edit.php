@@ -33,7 +33,7 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'co
 
 $input	= JFactory::getApplication()->input;
 
-if($input->getCmd('extratask','')=='updateimages')
+if(in_array($input->getCmd('extratask',''),$this->$this->extrataskOptions))
 {
 	extraTasks::prepareJS();
 }

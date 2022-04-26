@@ -3,9 +3,9 @@
  * CustomTables Joomla! 3.x Native Component
  * @package Custom Tables
  * @subpackage models/fields.php
- * @author Ivan komlev <support@joomlaboat.com>
+ * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @copyright Copyright (C) 2018-2020. All Rights Reserved
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
  
@@ -753,11 +753,12 @@ class CustomtablesModelFields extends JModelAdmin
 	}
 
 	/**
-	 * Method to save the form data.
+	 * Method to the the field name.
 	 *
-	 * @param   array  $data  The form data.
+	 * @param   int		$tableid  The Table ID.
+	 * @param   string	$fieldname  The Field name.
 	 *
-	 * @return  boolean  True on success.
+	 * @return  string  New not occupied field name.
 	 *
 	 * @since   1.6
 	 */
@@ -929,21 +930,27 @@ class CustomtablesModelFields extends JModelAdmin
 				return false;
 			}
 
+			$input	= JFactory::getApplication()->input;
+			$extratask = '';
+
 			if($ex_type==$new_type and $new_type=='image' and ($ex_typeparams !=$new_typeparams or strpos($new_typeparams,'|delete')!==false))
+				$extratask = 'updateimages'; //Resize all images if neaded
+			
+			if($ex_type==$new_type and $new_type=='file' and $ex_typeparams !=$new_typeparams)
+				$extratask = 'updatefiles';
+
+			if($ex_type==$new_type and $new_type=='imagegallery' and $ex_typeparams !=$new_typeparams)
+				$extratask = 'updateimagegallery'; //Resize or move all images in the gallery if neaded
+			
+			if($ex_type==$new_type and $new_type=='filebox' and $ex_typeparams !=$new_typeparams)
+				$extratask = 'updatefilebox'; //Resize or move all images in the gallery if neaded
+			
+			if($extratask != '')
 			{
-				//Resize all images if neaded
-				//$this->doResizeImages($new_typeparams, $ex_typeparams,$this->establename,$esfieldname);
-				$input	= JFactory::getApplication()->input;
-				$input->set('extratask','updateimages');
+				$input->set('extratask',$extratask);
 				$input->set('old_typeparams',base64_encode($ex_typeparams));
 				$input->set('new_typeparams',base64_encode($new_typeparams));
 				$input->set('fieldid',$fieldid);
-			}
-
-			if($ex_type==$new_type and $new_type=='imagegallery' and $ex_typeparams !=$new_typeparams)
-			{
-				//Resize all images if neaded
-				//$this->doResizeImageGallery($new_typeparams, $ex_typeparams,$esfieldname);
 			}
 		}
 		//---------------------------------- end convert field

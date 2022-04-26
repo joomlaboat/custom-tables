@@ -75,7 +75,7 @@ class CustomTablesViewEditFiles extends JViewLegacy
 					<td valign="top" align="center">
 						<input type="checkbox" name="esfile'.$file->fileid.'" id="esfile'.$file->fileid.'" align="left" style="vertical-align:top">
 					</td>
-					<td align="left"><a href="'.$filepath.'">'.$filename.'</a></td>
+					<td align="left"><a href="'.$filepath.'" target="_blank">'.$filename.'</a></td>
 			';
 
 			$c++;

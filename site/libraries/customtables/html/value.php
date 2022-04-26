@@ -168,11 +168,12 @@ class Value
 
 			case 'filebox':
 
-				if($option_list[0]=='_count')
-					return count($getFileBoxRows);
+				$FileBoxRows=CT_FieldTypeTag_filebox::getFileBoxRows($this->ct->Table->tablename,$this->field->fieldname,$row['listing_id']);
 
-				return CT_FieldTypeTag_filebox::process($this->ct->Table->tableid,$getFileBoxRows, $row['listing_id'], $this->field->fieldname,
-					$this->field->params,$option_list,$this->field->id,'');
+				if($option_list[0]=='_count')
+					return count($FileBoxRows);
+
+				return CT_FieldTypeTag_filebox::process($FileBoxRows, $this->field, $row['listing_id'],$option_list);
     		
 			case 'customtables':
 				return $this->listProcess($rowValue, $option_list);
@@ -310,7 +311,7 @@ class Value
 		else
 			$article_field='title';
                         
-		$article=tagProcessor_Value::getArticle((int)$rowValue,$article_field);
+		$article=$this->getArticle((int)$rowValue,$article_field);
 
 		if(isset($option_list[1]))
         {
@@ -319,6 +320,22 @@ class Value
         }
 		else 
 			return $article;
+	}
+	
+	protected function getArticle($articleid,$field)
+	{
+    	// get database handle
+		$db = Factory::getDBO();
+		$query='SELECT '.$field.' FROM #__content WHERE id='.(int)$articleid.' LIMIT 1';
+		$db->setQuery($query);
+
+		$rows=$db->loadAssocList();
+
+		if(count($rows)!=1)
+			return ""; //return nothing if article not found
+
+		$row=$rows[0];
+		return $row[$field];
 	}
 	
 	protected function listProcess($rowValue, array &$option_list)

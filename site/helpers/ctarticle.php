@@ -9,24 +9,20 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted Access');
 
-require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'models'.DIRECTORY_SEPARATOR.'catalog.php');
-
-class JHTMLESArticle
+class JHTMLCTArticle
 {
-	static public function render($control_name, $value,$cssclass, $TypeParams, $attribute='')
-        {
-		$p=explode(',',$TypeParams);
-		if(isset($p[0]))
-			$catid=(int)$p[0];
-		else
-			return '<p style="color:white;background-color:red;"> CustomTables: Article Category ID not set. </p>';
-
-
+	static public function render($control_name, $value,$cssclass, $params, $attribute='')
+	{
+		$catid=(int)$params[0];
+		
 		$db = JFactory::getDBO();
 
 		$query = $db->getQuery(true);
 		$query->select('id, title');
-		$query->where('catid='.$catid);
+		
+		if($catid != 0)
+			$query->where('catid='.$catid);
+		
 	 	$query->from('#__content');
 		$query->order('title');
 		$db->setQuery($query);

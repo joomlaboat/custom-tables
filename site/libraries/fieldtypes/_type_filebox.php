@@ -11,15 +11,14 @@ defined('_JEXEC') or die('Restricted access');
 
 class CT_FieldTypeTag_filebox
 {
-	public static function process(&$tableid,$FileBoxRows, $object_id,$FieldName,$TypeParams,$option_list,$fieldid = 0)
+	public static function process($FileBoxRows, &$field, $listing_id, array $option_list)
     {
 		$filesrclistarray=array();
 
 		foreach($FileBoxRows as $filerow)
 		{
-			$shortname=$tableid.'_'.$FieldName.'_'.$filerow->fileid.'.'.$filerow->file_ext;
-			
-			$filesrclistarray[]=CT_FieldTypeTag_file::process($shortname,$TypeParams,$option_list,$object_id,$fieldid,$tableid);
+			$filename=$field->ct->Table->tableid.'_'.$field->fieldname.'_'.$filerow->fileid.'.'.$filerow->file_ext;
+			$filesrclistarray[]=CT_FieldTypeTag_file::process($filename, $field, $option_list, $listing_id);
 		}
 		
 		$listformat = '';
@@ -58,16 +57,14 @@ class CT_FieldTypeTag_filebox
 		}
     }
 	
-	public static function getFileBoxRows($establename,$fileboxname, $listing_id)
+	public static function getFileBoxRows($tablename,$fieldname, $listing_id)
 	{
 		$db = JFactory::getDBO();
-		$fileboxtablename='#__customtables_filebox_'.$establename.'_'.$fileboxname;
+		$fileboxtablename='#__customtables_filebox_'.$tablename.'_'.$fieldname;
 
 		$query = 'SELECT fileid, file_ext FROM '.$fileboxtablename.' WHERE listingid='.(int)$listing_id.' ORDER BY fileid';
 		$db->setQuery($query);
 
-		$filerows=$db->loadObjectList();
-		
-		return $filerows;
+		return $db->loadObjectList();
 	}
 }

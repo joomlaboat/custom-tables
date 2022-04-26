@@ -24,7 +24,6 @@ class CustomtablesViewFields extends JViewLegacy
 	 * @return void
 	 */
 	var $ct;
-		
 	var $tableid;
 	var $table_row;
 	
@@ -51,12 +50,12 @@ class CustomtablesViewFields extends JViewLegacy
 
 		$this->script = $this->get('Script');
 		$this->state = $this->get('State');
+
 		// get action permissions
 		$this->canDo = ContentHelper::getActions('com_customtables', 'tables',$this->item->id);
 		
 		$this->canCreate = $this->canDo->get('tables.edit');
 		$this->canEdit = $this->canDo->get('tables.edit');
-		
 		
 		// get input
 		$jinput = JFactory::getApplication()->input;
@@ -77,6 +76,8 @@ class CustomtablesViewFields extends JViewLegacy
 		// Set the toolbar
 		$this->addToolBar();
 		
+		$this->extrataskOptions = ['updateimages', 'updatefiles', 'updateimagegallery', 'updatefilebox'];
+		
 		// Check for errors.
 		if (count($errors = $this->get('Errors')))
 		{
@@ -92,7 +93,6 @@ class CustomtablesViewFields extends JViewLegacy
 		// Set the document
 		$this->setDocument();
 	}
-
 
 	/**
 	 * Setting the toolbar

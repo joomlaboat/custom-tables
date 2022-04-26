@@ -198,12 +198,10 @@ class CustomtablesControllerFields extends JControllerForm
 		}
 
 		$saved = parent::save($key, $urlVar);
-
 		
 		$redirect = 'index.php?option=' . $this->option;
-		
 		$extratask = $this->input->getCmd('extratask','');
-		
+	
 		//Pospone extra task
 		if($extratask != '')
 		{
@@ -214,17 +212,9 @@ class CustomtablesControllerFields extends JControllerForm
 		}
 		
 		if($extratask != '' or $this->task=='apply' or $this->task=='save2new' or $this->task=='save2copy')
-		{
-			//$redirect.='&view=fields&layout=edit&id='.(int)$fieldid.'&tableid='.(int)$tableid;
 			$redirect.='&view=listoffields&tableid='.(int)$tableid.'&task=fields.edit&id='.(int)$fieldid;
-			//https://e24j.joomlaboat.com/administrator/index.php?option=com_customtables&view=listoffields&task=fields.edit&tableid=24&tableid=24&id=302
-		}
 		else
 			$redirect.='&view=listoffields&tableid='.(int)$tableid;
-
-		echo $redirect;
-		//echo '$saved='.$saved;
-		//die;
 
 		if ($saved)
 		{

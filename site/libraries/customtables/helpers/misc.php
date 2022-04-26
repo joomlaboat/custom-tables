@@ -669,7 +669,7 @@ class JoomlaBasicMisc
 		}
 		else
 		{
-			$fieldrow=Fields::getFieldAsocByName_($field,$ct->Table->fields);
+			$fieldrow=Fields::FieldRowByName($field,$ct->Table->fields);
 			if(count($fieldrow)>0)
 			{
 				$getGalleryRows=array();

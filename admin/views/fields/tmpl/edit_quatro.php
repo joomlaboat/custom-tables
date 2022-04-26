@@ -36,7 +36,7 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'co
 
 $input	= JFactory::getApplication()->input;
 
-if($input->getCmd('extratask','')=='updateimages')
+if(in_array($input->getCmd('extratask',''),$this->extrataskOptions))
 {
 	extraTasks::prepareJS();
 }
@@ -52,8 +52,7 @@ if($input->getCmd('extratask','')=='updateimages')
 		echo '
 		proversion=true;
 ';
-	}
-	;
+	};
 	
 	echo 'all_tables='.$this->getAllTables().';';
 	?>
@@ -62,7 +61,6 @@ if($input->getCmd('extratask','')=='updateimages')
 	wizardFields=Array.from(json);
 
 </script>
-<!--<div id="customtables_loader" style="display: none;"> -->
 
 <form action="<?php echo JRoute::_('index.php?option=com_customtables&layout=edit&id='.(int)($this->item->id).$this->referral); ?>" method="post" name="adminForm" id="adminForm" class="form-validate" enctype="multipart/form-data">
 

@@ -2,7 +2,7 @@
 /**
  * CustomTables Joomla! 3.x Native Component
  * @package Custom Tables
- * @author Ivan komlev <support@joomlaboat.com>
+ * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
  * @copyright Copyright (C) 2018-2022. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
@@ -243,11 +243,11 @@ class Inputbox
 				return $this->render_time($row,$value, $type_params);
 
 			case 'article':
-				return JHTML::_('ESArticle.render',
+				return JHTML::_('CTArticle.render',
 					$this->prefix.$this->esfield['fieldname'],
 					$value,
 					$this->cssclass,
-					$this->esfield['typeparams']
+					$this->field->params
 				);
 
 			case 'imagegallery':
@@ -606,8 +606,7 @@ class Inputbox
 
 			if(count($FileBoxRows) > 0)
 			{
-				$vlu = CT_FieldTypeTag_filebox::process($ct->Table->tableid,$FileBoxRows, $listing_id,
-									$fieldname,$type_params,['','icon-filename-link','32','_blank','ol']);
+				$vlu = CT_FieldTypeTag_filebox::process($FileBoxRows, $this->field, $listing_id,['','icon-filename-link','32','_blank','ol']);
 
 				$htmlout.='<div style="width:100%;overflow:scroll;background-image: url(\'components/com_customtables/libraries/customtables/media/images/icons/bg.png\');">'.$vlu.'</div>';
 			}
@@ -721,11 +720,11 @@ class Inputbox
 					<td>:</td>
 					<td>';
 
-			$result.=JHTML::_('ESArticle.render',
+			$result.=JHTML::_('CTArticle.render',
 					$this->prefix.$fieldname,
 					$value,
 					$this->cssclass,
-					$this->esfield['typeparams']
+					$this->field->params
 					);
 
 					$result.='</td>

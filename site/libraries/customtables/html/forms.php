@@ -26,54 +26,28 @@ class Forms
 		$this->ct = $ct;
 	}
 	
-	function renderFieldLabel(&$esfield)
+	function renderFieldLabel(&$field)
 	{
-		if($esfield['type']=='dummy')
-        {
-			$field_label=$esfield['fieldtitle'.$this->ct->Languages->Postfix];
-        }
-        else
-        {
-			if(!array_key_exists('fieldtitle'.$this->ct->Languages->Postfix,$esfield))
-			{
-				Factory::getApplication()->enqueueMessage(
-					JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_LANGFIELDNOTFOUND' ), 'Error');
-                                        
-				$title = '*fieldtitle'.$this->ct->Languages->Postfix.' - not found*';
-			}
-			else	
-				$title = $esfield['fieldtitle'.$this->ct->Languages->Postfix];
-			
-			if(!array_key_exists('description'.$this->ct->Languages->Postfix,$esfield))
-			{
-				Factory::getApplication()->enqueueMessage(
-					JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_LANGFIELDNOTFOUND' ), 'Error');
-                                        
-				$description = '*description'.$this->ct->Languages->Postfix.' - not found*';
-			}
-			else	
-				$description = str_replace('"','',$esfield['description'.$this->ct->Languages->Postfix]);
-			
-			$isrequired=(bool)$esfield['isrequired'];
+		if($field->type=='dummy')
+			return $field->title;
 
-			$field_label='<label id="'.$this->ct->Env->field_input_prefix.$esfield['fieldname'].'-lbl" for="'.$this->ct->Env->field_input_prefix.$esfield['fieldname'].'" ';
-			$class=($description!='' ? 'hasPopover' : '').''.($isrequired ? ' required' : '');
+		$field_label='<label id="'.$this->ct->Env->field_input_prefix.$field->fieldname.'-lbl" for="'.$this->ct->Env->field_input_prefix.$field->fieldname.'" ';
+		$class=($field->description!='' ? 'hasPopover' : '').''.($field->isrequired ? ' required' : '');
 
-			if($class!='')
-			    $field_label.=' class="'.$class.'"';
+		if($class!='')
+		    $field_label.=' class="'.$class.'"';
 
-			$field_label.=' title="'.$title.'"';
+		$field_label.=' title="'.$field->title.'"';
 
-			if($description)
-			    $field_label.=' data-content="'.$description.'"';
+		if($field->description != "")
+			$field_label.=' data-content="'.$field->description.'"';
 
-			$field_label.=' data-original-title="'.$title.'">'.$title;
+		$field_label.=' data-original-title="'.$field->title.'">'.$field->title;
 
-			if($isrequired)
-			    $field_label.='<span class="star">&#160;*</span>';
+		if($field->isrequired)
+			$field_label.='<span class="star">&#160;*</span>';
 
-			$field_label.='</label>';
-		}
+		$field_label.='</label>';
 		
 		return $field_label;
 	}

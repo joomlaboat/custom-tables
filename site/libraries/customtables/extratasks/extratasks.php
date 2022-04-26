@@ -4,7 +4,7 @@
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @copyright Copyright (C) 2018-2021. All Rights Reserved
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
  
@@ -34,13 +34,13 @@ class extraTasks
 		$document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/css/modal.css" rel="stylesheet">');
 
 		$extratask=$input->getCmd('extratask','');
-		
-		if($extratask=='updateimages')
+
+		if($extratask!='')// and isset($tasks[$extratask]))
 		{
 			$js='
 		<script>
 		window.addEventListener( "load", function( event ) {
-		ctExtraUpdateImages(\''.$input->get('old_typeparams','','BASE64').'\',\''.$input->get('new_typeparams','','BASE64').'\','.(int)$tableid.','.(int)$fieldid.',\''.$table_row->tabletitle.'\',\''.$field_row->fieldtitle.'\');
+		extraTasksUpdate(\''.$extratask.'\',\''.$input->get('old_typeparams','','BASE64').'\',\''.$input->get('new_typeparams','','BASE64').'\','.(int)$tableid.','.(int)$fieldid.',\''.$table_row->tabletitle.'\',\''.$field_row->fieldtitle.'\');
 	});
 		</script>
 ';

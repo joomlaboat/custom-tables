@@ -13,7 +13,6 @@ namespace CustomTables;
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-
 use \Joomla\CMS\Factory;
 use CustomTables\Fields;
 use CustomTables\SaveFieldQuerySet;
