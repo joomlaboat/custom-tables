@@ -966,7 +966,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 				$user_name=$jinput->getString($prefix.$fieldname);
 		}
 
-		$row_old=array();
+		$row_old = [];
 		$listing_id_temp = 0;
 		
 		$isitnewrecords = false;

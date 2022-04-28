@@ -2,9 +2,9 @@
 /**
  * CustomTables Joomla! 3.x Native Component
  * @package Custom Tables
- * @author Ivan komlev <support@joomlaboat.com>
+ * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @copyright Copyright (C) 2018-2021. All Rights Reserved
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 // No direct access to this file access');
@@ -181,6 +181,7 @@ class tagProcessor_Catalog
 			}
 
 			$i = 0;
+			
 			foreach($RealRows as $row)
 			{
 				if($separator != '' and $i > 0)
@@ -190,7 +191,12 @@ class tagProcessor_Catalog
 					$catalogresult .= '<tr>';
 
 				if($showtable)
-					$catalogresult.='<td valign="top" align="left"><a name="a'.$row['listing_id'].'"></a>'.$row.'</td>';
+				{
+					if(isset($row[$ct->Table->realidfieldname]))
+						$catalogresult.='<td valign="top" align="left"><a name="a'.$row[$ct->Table->realidfieldname].'"></a>'.$row.'</td>';
+					else
+						$catalogresult.='<td valign="top" align="left">'.$row.'</td>';
+				}
 				else
 					$catalogresult.=$row;
 

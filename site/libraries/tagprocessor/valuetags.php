@@ -331,8 +331,7 @@ class tagProcessor_Value
                                             $new_array[]=$pureValueOptionArr[$i];
                                     }
                                     
-                                    $vlu=CT_FieldTypeTag_file::process($row[$field->realfieldname],$field->fieldrow->params,$new_array,$row['listing_id'],$field->id
-										,$ct->Table->tableid,true);
+                                    $vlu=CT_FieldTypeTag_file::process($row[$field->realfieldname],$field,$new_array,$row['listing_id']);
                                 }
                                 else
                                     $vlu=$row[$field->realfieldname];

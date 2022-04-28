@@ -43,7 +43,7 @@ class CT_FieldTypeTag_file
         $how_to_process=$option_list[0];
 
         if($how_to_process!='')
-            $filepath=CT_FieldTypeTag_file::get_private_file_path($filename,$how_to_process,$filepath,$recid,$this->field->id,$this->field->ct->Table->tableid,$filename_only);
+            $filepath=CT_FieldTypeTag_file::get_private_file_path($filename,$how_to_process,$filepath,$recid,$field->id,$field->ct->Table->tableid,$filename_only);
 		
        
 		$target='';
@@ -298,6 +298,9 @@ class CT_FieldTypeTag_file
                   	unlink($filename_full);
 			}
 
+			if(!file_exists($uploadedfile))
+				return false;
+			
             $mime=mime_content_type ($uploadedfile);
 
             $parts=explode('.',$uploadedfile);

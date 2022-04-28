@@ -52,12 +52,6 @@ class SaveFieldQuerySet
 		
 		$query = $this->getSaveFieldSetType();
 		
-		if($this->field->fieldname=='c')
-		{
-			
-
-		}
-		
 		//Process default value
 		if($this->field->defaultvalue != "" and ($query == null or $this->row[$this->field->realfieldname] == null or $this->row[$this->field->realfieldname] == ''))
 		{
@@ -165,8 +159,9 @@ class SaveFieldQuerySet
 
 						if(isset($value))
 						{
+							$value = $this->get_alias_type_value($listing_id);
 							$this->row[$this->field->realfieldname] = $value;
-                            return $this->get_alias_type_value($listing_id);
+                            return ($value == null ? null : $this->field->realfieldname.'='.$this->db->Quote($value));
 						}
 					break;
 
@@ -546,12 +541,12 @@ class SaveFieldQuerySet
 
 						$query='SELECT MAX('.$realfieldname.') AS maxid FROM '.$this->ct->Table->realtablename.' LIMIT 1';
 						$this->db->setQuery( $query );
-						$this->rows=$this->db->loadObjectList();
-						if(count($this->rows)!=0)
+						$rows=$this->db->loadObjectList();
+						if(count($rows)!=0)
 						{
-							$value=(int)($this->rows[0]->maxid)+1;
-							if($value<$minid)
-								$value=$minid;
+							$value=(int)($rows[0]->maxid)+1;
+							if($value < $minid)
+								$value = $minid;
 
 							$this->row[$this->field->realfieldname] = $value;
 							return $this->field->realfieldname.'='.$this->db->Quote($value);
@@ -703,23 +698,23 @@ class SaveFieldQuerySet
 				if($format == 'jpeg')
 					$format = 'jpg';
 
-			//Get new file name and avoid possible duplicate
+				//Get new file name and avoid possible duplicate
 
-			$i=0;
-			do
-			{
-				$ImageID=date("YmdHis").($i>0 ? $i : '');
-				//there is possible error, check all possible ext
-				$image_file = JPATH_SITE.DIRECTORY_SEPARATOR.$ImageFolder.DIRECTORY_SEPARATOR.$ImageID.'.'.$format;
-				$i++;
-			}while(file_exists($image_file));
+				$i=0;
+				do
+				{
+					$ImageID=date("YmdHis").($i>0 ? $i : '');
+					//there is possible error, check all possible ext
+					$image_file = JPATH_SITE.DIRECTORY_SEPARATOR.$ImageFolder.DIRECTORY_SEPARATOR.$ImageID.'.'.$format;
+					$i++;
+				}while(file_exists($image_file));
 		
-			$parts = explode(';base64,',$value);
+				$parts = explode(';base64,',$value);
 
-			$deceded_binary = base64_decode($parts[1]);
-			file_put_contents($image_file, $deceded_binary);
+				$deceded_binary = base64_decode($parts[1]);
+				file_put_contents($image_file, $deceded_binary);
 			
-			return $ImageID;
+				return $ImageID;
 			}
 		}
 		return null;
@@ -876,17 +871,16 @@ class SaveFieldQuerySet
 
 	protected function checkIfAliasExists($exclude_id,$value,$realfieldname)
 	{
-		$query = 'SELECT count('.$this->realidfieldname.') AS c FROM '.$this->realtablename.' WHERE '
-			.$this->realidfieldname.'!='.(int)$exclude_id.' AND '.$realfieldname.'='.$this->db->quote($value).' LIMIT 1';
+		$query = 'SELECT count('.$this->ct->Table->realidfieldname.') AS c FROM '.$this->ct->Table->realtablename.' WHERE '
+			.$this->ct->Table->realidfieldname.'!='.(int)$exclude_id.' AND '.$realfieldname.'='.$this->db->quote($value).' LIMIT 1';
 		
 		$this->db->setQuery( $query );
 
-		$this->rows = $this->db->loadObjectList();
-		if(count($this->rows)==0)
+		$rows = $this->db->loadObjectList();
+		if(count($rows)==0)
 			return false;
 
-		$this->row=$this->rows[0];
-		$c=(int)$this->row->c;
+		$c=(int)$rows[0]->c;
 
 		if($c>0)
 			return true;
@@ -982,17 +976,17 @@ class SaveFieldQuerySet
 		$set=false;
 		$resilt_list=array();
 
-		$this->rows=$this->getList($parentid);
-		if(count($this->rows)<1)
+		$rows=$this->getList($parentid);
+		if(count($rows)<1)
 			return $resilt_list;
 
-		$count=count($this->rows);
-		foreach($this->rows as $this->row)
+		$count=count($rows);
+		foreach($rows as $row)
 		{
 			if(strlen($parentname)==0)
-				$ChildList=$this->getMultiSelector($this->row->id,$this->row->optionname,$prefix);
+				$ChildList=$this->getMultiSelector($row->id,$row->optionname,$prefix);
 			else
-				$ChildList=$this->getMultiSelector($this->row->id,$parentname.'.'.$this->row->optionname,$prefix);
+				$ChildList=$this->getMultiSelector($row->id,$parentname.'.'.$row->optionname,$prefix);
 
 			if($ChildList!=null)
 				$count_child=count($ChildList);
@@ -1005,15 +999,15 @@ class SaveFieldQuerySet
 			}
 			else
 			{
-				$value=$this->ct->Env->jinput->getString($prefix.'_'.$this->row->id,null);
+				$value=$this->ct->Env->jinput->getString($prefix.'_'.$row->id,null);
 				if(isset($value))
 				{
 					$set=true;
 
 					if(strlen($parentname)==0)
-						$resilt_list[]=$this->row->optionname.'.';
+						$resilt_list[]=$row->optionname.'.';
 					else
-						$resilt_list[]=$parentname.'.'.$this->row->optionname.'.';
+						$resilt_list[]=$parentname.'.'.$row->optionname.'.';
 				}
 			}
 		}
@@ -1075,60 +1069,9 @@ class SaveFieldQuerySet
         return $this->db->loadObjectList();
 	}
 
-/*
-    function processDefaultValue(&$ct,$htmlresult,$type,&$this->row)
-    {
-        tagProcessor_General::process($ct,$htmlresult,$this->row,'',1);
-		tagProcessor_Item::process($ct,$this->row,$htmlresult,'','',0);
-		tagProcessor_If::process($ct,$htmlresult,$this->row,'',0);
-		tagProcessor_Page::process($ct,$htmlresult);
-		tagProcessor_Value::processValues($ct,$this->row,$htmlresult,'[]');
-
-        if($htmlresult!='')
-        {
-			$twig = new TwigProcessor($ct, $htmlresult);
-			$htmlresult = $twig->process($this->row);
-			
-            LayoutProcessor::applyContentPlugins($htmlresult);
-
-            if($type=='alias')
-			{
-                $htmlresult=$this->prepare_alias_type_value(
-					$this->row['listing_id'],
-					$htmlresult);
-			}
-            return $this->field->realfieldname.'='.$this->db->quote($htmlresult);
-        }
-		
-		return null;
-    }
-
-    public function processDefaultValues($default_fields_to_apply,&$ct,&$this->row)
-    {
-        $savequery=array();
-		
-        foreach($default_fields_to_apply as $d)
-		{
-            $fieldname=$d[0];
-            $value=$d[1];
-            $type=$d[2];
-			$this->field->realfieldname=$d[3];
-			
-            $r=$this->row[$this->field->realfieldname];
-            if($r==null or $r=='' or $r==0)
-			{
-				$q = $this->processDefaultValue($ct,$value,$type,$this->row);
-				if($q != null)
-					$savequery[] = $q;
-			}
-		}
-		
-        $this->runUpdateQuery($savequery,$this->row['listing_id']);
-    }
-	*/
     function runUpdateQuery(&$savequery,$listing_id)
     {
-    	if(count($savequery)>0)
+		if(count($savequery)>0)
 		{
 			$query='UPDATE '.$this->ct->Table->realtablename.' SET '.implode(', ',$savequery).' WHERE '.$this->ct->Table->realidfieldname.'='.$this->db->quote($listing_id);
 			

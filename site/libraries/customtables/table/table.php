@@ -71,13 +71,15 @@ class Table
 	function getRecordFieldValue($listingid,$resultfield)
 	{
 		$db = Factory::getDBO();
-		$query =' SELECT '.$resultfield.' AS resultfield FROM '.$this->realtablename.' WHERE '.$this->realidfieldname.'='.$db->quote($listingid).' LIMIT 1';
+		$query =' SELECT '.$resultfield.' FROM '.$this->realtablename.' WHERE '.$this->realidfieldname.'='.$db->quote($listingid).' LIMIT 1';
+
+		
 		$db->setQuery( $query );
 
-		$espropertytype= $db->loadAssocList();
+		$recs = $db->loadAssocList();
 
-		if(count($espropertytype)>0)
-			return $espropertytype[0][$resultfield];	
+		if(count($recs)>0)
+			return $recs[0][$resultfield];
 		
 		return "";
 	}

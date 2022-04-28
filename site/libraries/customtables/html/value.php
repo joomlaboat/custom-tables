@@ -104,7 +104,7 @@ class Value
 
 			case 'file':
 			
-				return CT_FieldTypeTag_file::process($rowValue,$this->field,$option_list,$row['listing_id']);
+				return CT_FieldTypeTag_file::process($rowValue, $this->field, $option_list, $row['listing_id']);
 			
 			case 'image':
 				$imagesrc='';
@@ -198,8 +198,7 @@ class Value
 				$processor_file=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fieldtypes'.DIRECTORY_SEPARATOR.'_type_file.php';
 				require_once($processor_file);
 					
-				return CT_FieldTypeTag_file::process($rowValue,','.$this->field->params,
-					$option_list, $row['listing_id'], $this->field->id,$this->ct->Table->tableid); // "," is to be compatible with file field type params. Becuse first parameter is max file size there
+				return CT_FieldTypeTag_file::process($rowValue, $this->field, $option_list, $row['listing_id']);
 
 			case 'log':
 				return CT_FieldTypeTag_log::getLogVersionLinks($this->ct,$rowValue,$row);

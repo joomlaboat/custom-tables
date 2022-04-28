@@ -287,7 +287,7 @@ class CustomtablesViewListoflayouts extends JViewLegacy
 			'server','tabledescription','tabletitle','table','today','user','websiteroot','layout','if','headtag','metakeywords','metadescription',
 			'pagetitle','php','php_a','php_b','php_c','catalogtable','catalog','recordlist','page','add','count','navigation','batchtoolbar',
 			'checkbox','pagination','print','recordcount','search','searchbutton','button','buttons','captcha','id','published','link','linknoreturn',
-			'number','toolbar','cart','createuser','resolve','_value','sqljoin'];
+			'number','toolbar','cart','createuser','resolve','_value','sqljoin','attachment'];
 			
 		$original_ct_tags_s=['_if','_endif','_value','_edit'];
 		
