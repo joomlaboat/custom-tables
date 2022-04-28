@@ -44,20 +44,21 @@ trait render_csv
         $recordline.='"'.implode('","',$line_fields).'"';
 		$result.='"'.implode('","',$header_fields).'"';//."\r\n";
 
-        //Parse Header
+		//Parse Header
         $ct->LayoutProc->layout=$result;
         $result=$ct->LayoutProc->fillLayout();
         $result=str_replace('&&&&quote&&&&','"',$result);
-
+		
+		
 		//table row number, it maybe use in the layout as {number}
 		$ct->LayoutProc->layout = $recordline;
 
 		//Initiate the file output
-		$filename = JoomlaBasicMisc::makeNewFileName($ct->Env->menu_params->get('page_title'),'csv');
+		//$filename = JoomlaBasicMisc::makeNewFileName($ct->Env->menu_params->get('page_title'),'csv');
 
-		$result.= strip_tags($result);
+		$result= strip_tags($result);
 		$result.= strip_tags(self::renderCSVoutput($ct));
-
+		
 		if($ct->Table->recordcount > $ct->LimitStart + $ct->Limit)
 		{
 			if($ct->Limit > 0)

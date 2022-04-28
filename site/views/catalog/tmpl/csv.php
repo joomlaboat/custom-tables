@@ -10,6 +10,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\Layouts;
+use CustomTables\TwigProcessor;
 
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'layout.php');
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tagprocessor'.DIRECTORY_SEPARATOR.'catalogtag.php');
@@ -18,12 +19,16 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'co
 $itemlayout=str_replace("\n",'',$this->itemlayout);
 
 $catalogtablecontent=tagProcessor_CatalogTableView::process($this->ct,$this->pagelayout,$this->catalogtablecode);
+$twig = new TwigProcessor($this->ct, $this->pagelayout);
+$this->pagelayout = $twig->process();
 
 if($catalogtablecontent=='')
 {
 	$this->ct->LayoutProc->layout=$itemlayout;
 	$catalogtablecontent=tagProcessor_Catalog::process($this->ct,$this->pagelayout,$this->catalogtablecode);
 }
+
+$this->pagelayout=preg_replace('/(<(script|style)\b[^>]*>).*?(<\/\2>)/is', "$1$3", $this->pagelayout);
 
 $this->ct->LayoutProc->layout=$this->pagelayout;
 $this->pagelayout=$this->ct->LayoutProc->fillLayout();

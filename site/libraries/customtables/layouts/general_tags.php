@@ -268,68 +268,67 @@ class Twig_Url_Tags
 	
 	function format($format, $link_type = 'anchor', $image = '', $imagesize = '', $menu_item_alias = '', $csv_column_separator = ',')//wizard ok
 	{
+		if($this->ct->Env->print==1 or ($this->ct->Env->frmt!='html' and $this->ct->Env->frmt!=''))
+			return '';
 		//$csv_column_separator parameter is only for csv output format
 		
-        if($this->ct->Env->frmt=='' or $this->ct->Env->frmt=='html')
-        {
-			if($menu_item_alias != '')
+        if($menu_item_alias != '')
+		{
+			$menu_item=JoomlaBasicMisc::FindMenuItemRowByAlias($menu_item_alias);//Accepts menu Itemid and alias
+			if($menu_item!=0)
 			{
-				$menu_item=JoomlaBasicMisc::FindMenuItemRowByAlias($menu_item_alias);//Accepts menu Itemid and alias
-				if($menu_item!=0)
-				{
-					$menu_item_id=(int)$menu_item['id'];
-					$link=$menu_item['link'];
-				}
-					
-				$link.='&Itemid='.$menu_item_id;//.'&returnto='.$returnto;
-			}
-			else
-			{
-				$link=JoomlaBasicMisc::deleteURLQueryOption($this->ct->Env->current_url, 'frmt');
+				$menu_item_id=(int)$menu_item['id'];
+				$link=$menu_item['link'];
 			}
 				
-			$link = Route::_($link);
-				
-   			//check if format supported
-   			$allowed_formats=['csv','json','xml','xlsx','pdf','image'];
-   			if($format=='' or !in_array($format,$allowed_formats))
-				$format='csv';
-				
-   			$link.=(strpos($link,'?')===false ? '?' : '&').'frmt='.$format.'&clean=1';
-   			$vlu='';
-			
-			if($format == 'csv' and $csv_column_separator != ',')
-				$link.='&sep='.$csv_column_separator;
-
-   			if($link_type=='anchor' or $link_type=='')
-   			{
-   				$allowed_sizes=['16','32','48'];
-   				if($imagesize=='' or !in_array($imagesize,$allowed_sizes))
-   					$imagesize=32;
-
-   				if($format=='image')
-   					$format_image='jpg';
-   				else
-   					$format_image=$format;
-
-   				if($image=='')
-   					$image='/components/com_customtables/libraries/customtables/media/images/fileformats/'.$imagesize.'px/'.$format_image.'.png';
-
-   				$alt='Download '.strtoupper($format).' file';
-   				//add image anchor link
-   				$vlu = '<a href="'.$link.'" class="toolbarIcons" id="ctToolBarExport2CSV" target="_blank"><img src="'.$image.'" alt="'.$alt.'" title="'.$alt.'" width="'.$imagesize.'" height="'.$imagesize.'"></a>';
-				
-				if($this->isTwig)
-					return new \Twig\Markup($vlu, 'UTF-8' );
-				else
-					return $vlu;
-   			}
-   			elseif($link_type == '_value' or $link_type == 'linkonly')
-   			{
-   				//link only
-				return $link;
-   			}
+			$link.='&Itemid='.$menu_item_id;//.'&returnto='.$returnto;
 		}
+		else
+		{
+			$link=JoomlaBasicMisc::deleteURLQueryOption($this->ct->Env->current_url, 'frmt');
+		}
+			
+		$link = Route::_($link);
+			
+   		//check if format supported
+   		$allowed_formats=['csv','json','xml','xlsx','pdf','image'];
+   		if($format=='' or !in_array($format,$allowed_formats))
+			$format='csv';
+			
+   		$link.=(strpos($link,'?')===false ? '?' : '&').'frmt='.$format.'&clean=1';
+   		$vlu='';
+			
+		if($format == 'csv' and $csv_column_separator != ',')
+			$link.='&sep='.$csv_column_separator;
+
+   		if($link_type=='anchor' or $link_type=='')
+   		{
+   			$allowed_sizes=['16','32','48'];
+   			if($imagesize=='' or !in_array($imagesize,$allowed_sizes))
+   				$imagesize=32;
+
+			if($format=='image')
+ 				$format_image='jpg';
+   			else
+   				$format_image=$format;
+
+ 			if($image=='')
+ 				$image='/components/com_customtables/libraries/customtables/media/images/fileformats/'.$imagesize.'px/'.$format_image.'.png';
+
+   			$alt='Download '.strtoupper($format).' file';
+   			//add image anchor link
+   			$vlu = '<a href="'.$link.'" class="toolbarIcons" id="ctToolBarExport2CSV" target="_blank"><img src="'.$image.'" alt="'.$alt.'" title="'.$alt.'" width="'.$imagesize.'" height="'.$imagesize.'"></a>';
+				
+			if($this->isTwig)
+				return new \Twig\Markup($vlu, 'UTF-8' );
+			else
+				return $vlu;
+   		}
+   		elseif($link_type == '_value' or $link_type == 'linkonly')
+   		{
+   			//link only
+			return $link;
+   		}
 		return '';
 	}
 }
