@@ -32,7 +32,6 @@ class Twig_Record_Tags
 	function __construct(&$ct)
 	{
 		$this->ct = $ct;
-		//$this->msg = null;
 	}
 	
 	function id()//wizard ok
@@ -728,7 +727,7 @@ class Twig_Tables_Tags
 			return new \Twig\Markup($vlu, 'UTF-8' );
 		}
 		
-		Factory::getApplication()->enqueueMessage('{{ html.records("'.$layoutname.'","'.$filter.'","'.$orderby.'") }} - LCould not load records.', 'error');
+		Factory::getApplication()->enqueueMessage('{{ html.records("'.$layoutname.'","'.$filter.'","'.$orderby.'") }} - Could not load records.', 'error');
 		return '';
 	}
 }

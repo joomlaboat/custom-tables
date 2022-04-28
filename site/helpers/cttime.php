@@ -11,30 +11,30 @@ defined('_JEXEC') or die( 'Restricted access' );
 
 class JHTMLCTTime
 {
-        static public function render($control_name, $value,$class, string $attribute,$typeparams,$option_list)
+        static public function render($control_name, $value,$class, string $attribute,array $params, array $option_list)
         {
                 $options=array(array('id'=>'','name'=>'- '.JText ::_( 'COM_CUSTOMTABLES_SELECT' )));
                 
                 
-                $from=JHTMLCTTime::durationToSeconds($typeparams[0]);
+                $from=JHTMLCTTime::durationToSeconds($params[0]);
                 
-                if(isset($typeparams[1]))
-                        $to=JHTMLCTTime::durationToSeconds($typeparams[1]);
+                if(isset($params[1]))
+                        $to=JHTMLCTTime::durationToSeconds($params[1]);
                 else
                         $to=3600*24;//24 hours
                         
-                if(isset($typeparams[2]))
-                        $step=JHTMLCTTime::durationToSeconds($typeparams[2]);
+                if(isset($params[2]))
+                        $step=JHTMLCTTime::durationToSeconds($params[2]);
                 else
                         $step=3600;//1 hour
                         
-                if(isset($typeparams[3]))
-                        $ticks=JHTMLCTTime::durationToSeconds($typeparams[3]);
+                if(isset($params[3]))
+                        $ticks=JHTMLCTTime::durationToSeconds($params[3]);
                 else
                         $ticks=1;//1 second
                         
-                if(isset($typeparams[4]))
-                        $offset=JHTMLCTTime::durationToSeconds($typeparams[4]);
+                if(isset($params[4]))
+                        $offset=JHTMLCTTime::durationToSeconds($params[4]);
                 else
                         $offset=0;
 
@@ -57,27 +57,27 @@ class JHTMLCTTime
 
         }
        
-        static public function ticks2Seconds($number_of_ticks,$typeparams)
+        static public function ticks2Seconds($number_of_ticks,array $params)
         {
-                $from=JHTMLCTTime::durationToSeconds($typeparams[0]);
+                $from=JHTMLCTTime::durationToSeconds($params[0]);
                 
-                    if(isset($typeparams[1]))
-                            $to=JHTMLCTTime::durationToSeconds($typeparams[1]);
+                    if(isset($params[1]))
+                            $to=JHTMLCTTime::durationToSeconds($params[1]);
                     else
                             $to=3600*24;//24 hours
                         
-                    if(isset($typeparams[2]))
-                            $step=JHTMLCTTime::durationToSeconds($typeparams[2]);
+                    if(isset($params[2]))
+                            $step=JHTMLCTTime::durationToSeconds($params[2]);
                     else
                             $step=3600;//1 hour
                         
-                    if(isset($typeparams[3]))
-                        $ticks=JHTMLCTTime::durationToSeconds($typeparams[3]);
+                    if(isset($params[3]))
+                        $ticks=JHTMLCTTime::durationToSeconds($params[3]);
                     else
                         $ticks=1;//1 second
                         
-                    if(isset($typeparams[4]))
-                        $offset=JHTMLCTTime::durationToSeconds($typeparams[4]);
+                    if(isset($params[4]))
+                        $offset=JHTMLCTTime::durationToSeconds($params[4]);
                     else
                         $offset='0';
                 

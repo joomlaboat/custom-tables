@@ -33,6 +33,8 @@ class Field
 	var $fieldname;
 	var $realfieldname;
 	var $comesfieldname;
+	var $valuerule;
+	var $valuerulecaption;
 	
 	var $fieldrow;
 	
@@ -77,6 +79,9 @@ class Field
 		$this->realfieldname = $fieldrow['realfieldname'];
 		$this->isrequired = $fieldrow['isrequired'];
 		$this->defaultvalue = $fieldrow['defaultvalue'];
+		
+		$this->valuerule = $fieldrow['valuerule'];
+		$this->valuerulecaption = $fieldrow['valuerulecaption'];
 		
 		$this->prefix=$this->ct->Env->field_input_prefix;
 		$this->comesfieldname=$this->prefix.$this->fieldname;

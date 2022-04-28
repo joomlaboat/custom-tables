@@ -13,10 +13,8 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'co
 
 class JHTMLESUserGroups
 {
-	static public function render($control_name, $value, $typeparams)
+	static public function render($control_name, $value, array &$typeparams_array)
     {
-		$typeparams_array=JoomlaBasicMisc::csv_explode(',',$typeparams,'"',false);
-		
 		$selector = $typeparams_array[0];
 		$availableusergroups = $typeparams_array[1] ?? '';
 		

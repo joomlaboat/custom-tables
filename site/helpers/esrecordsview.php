@@ -22,7 +22,6 @@ class JHTMLESRecordsView
 				if($value=='' or $value==',' or $value==',,')
 						return '';
 
-
 				$fieldvalues=JoomlaBasicMisc::csv_explode(':',$field,'"',false);
 
 				$htmlresult='';

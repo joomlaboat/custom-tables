@@ -2,9 +2,9 @@
 /**
  * CustomTables Joomla! 3.x Native Component
  * @package Custom Tables
- * @author Ivan komlev <support@joomlaboat.com>
+ * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @copyright Copyright (C) 2018-2021. All Rights Reserved
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
@@ -74,10 +74,10 @@ class Table
 		$query =' SELECT '.$resultfield.' AS resultfield FROM '.$this->realtablename.' WHERE '.$this->realidfieldname.'='.$db->quote($listingid).' LIMIT 1';
 		$db->setQuery( $query );
 
-		$espropertytype= $db->loadObjectList();
+		$espropertytype= $db->loadAssocList();
 
 		if(count($espropertytype)>0)
-			return $espropertytype[0]->resultfield;	
+			return $espropertytype[0][$resultfield];	
 		
 		return "";
 	}

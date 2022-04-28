@@ -9,8 +9,85 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use \Joomla\CMS\Factory;
+
+use CustomTables\CT;
+use CustomTables\Field;
+use CustomTables\Layouts;
+use CustomTables\TwigProcessor;
+
 class CT_FieldTypeTag_records
 {
+	//New function
+	public static function resolveRecordTypeValue(&$field, $layoutcode, $rowValue, array $options)
+	{
+		$db = Factory::getDBO();
+		
+		$ct = new CT;
+		$ct->getTable($field->params[0]);
+		
+		$selector=$field->params[2];
+		
+		if(count($field->params)<3)
+			return 'selector not specified';
+		
+		$sortbyfield = '';
+		if($options[0]!='')
+			$sortbyfield=$options[0];
+		elseif(isset($field->params[5]))
+			$sortbyfield=$field->params[5];
+		
+		if(isset($field->params[3]))
+			$filter=$field->params[3];
+		else
+			$filter='';
+		
+		//$showpublished = 0 - show published
+		//$showpublished = 1 - show unpublished
+		//$showpublished = 2 - show any
+		$showpublished = (($field->params[6] ?? '') == '' ? 2 : ((int) ($field->params[6] ?? 0) == 1 ? 0 : 1));
+
+		//this is important because it has been selected some how.
+		$ct->setFilter($filter,$showpublished);
+		
+		$ct->Filter->where[] = 'INSTR('.$db->quote($rowValue).','.$ct->Table->realidfieldname.')';
+		$ct->getRecords();
+		
+		return CT_FieldTypeTag_records::processRecordRecords($ct, $layoutcode, $rowValue, $ct->Records);
+	}
+	
+	protected static function processRecordRecords(&$ct, $layoutcode, $rowValue, &$records)
+	{
+		$valuearray=explode(',',$rowValue);
+
+		$number=1;
+
+		//To make sure that records belong to the value
+		$CleanSearchResult=array();
+		foreach($records as $row)
+		{
+			if(in_array($row['listing_id'],$valuearray))
+				$CleanSearchResult[]=$row;
+		}
+		
+		$result_count=count($CleanSearchResult);
+		
+		$htmlresult='';
+
+		foreach($CleanSearchResult as $row)
+		{
+			$row['_number'] = $number;
+
+			$twig = new TwigProcessor($ct, '{% autoescape false %}'.$layoutcode.'{% endautoescape %}');
+			$htmlresult .= $twig->process($row);
+			
+			$number++;
+		}
+		
+		return $htmlresult;
+	}
+	
+	//Old function
     public static function resolveRecordType(&$ct,$rowValue, array $typeparams, array $options)
 	{
 		$sortbyfield='';

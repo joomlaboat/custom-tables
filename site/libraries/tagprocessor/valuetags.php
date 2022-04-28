@@ -165,13 +165,13 @@ class tagProcessor_Value
 			{
 				$field = new Field($ct,$ESField,$row);
 				
-                $replaceitecode=md5(JoomlaBasicMisc::generateRandomString().(isset($row['listing_id']) ? $row['listing_id'] : '').$ESField['fieldname']);
+                $replaceitecode=md5(JoomlaBasicMisc::generateRandomString().(isset($row['listing_id']) ? $row['listing_id'] : '').$field->fieldname);
                 
-				if($pureValueOptionArr[0]==$ESField['fieldname'])
+				if($pureValueOptionArr[0]==$field->fieldname)
 				{
 					
-					$fieldtype = $ESField['type'];
-					$fieldname = $ESField['fieldname'];
+					$fieldtype = $field->type;
+					$fieldname = $field->fieldname;
 					
 					if($fieldtype=='imagegallery')
 					{
@@ -226,11 +226,11 @@ class tagProcessor_Value
 					}
 					else
 					{
-						$isEmpty=tagProcessor_Value::isEmpty($row[$ESField['realfieldname']],$field);
+						$isEmpty=tagProcessor_Value::isEmpty($row[$field->realfieldname],$field);
 					}
 
-					$ifname='[_if:_value:'.$ESField['fieldname'].']';
-					$endifname='[_endif:_value:'.$ESField['fieldname'].']';
+					$ifname='[_if:_value:'.$field->fieldname.']';
+					$endifname='[_endif:_value:'.$field->fieldname.']';
 
 					if($isEmpty)
 					{
@@ -275,7 +275,7 @@ class tagProcessor_Value
                                         $new_array[]=$pureValueOptionArr[$i];
                                 }
                                 
-                                CT_FieldTypeTag_image::getImageSRClayoutview($new_array,$row[$ESField['realfieldname']],$ESField['typeparams'],$imagesrc,$imagetag);
+                                CT_FieldTypeTag_image::getImageSRClayoutview($new_array,$row[$field->realfieldname],$field->params,$imagesrc,$imagetag);
 
 								$vlu=$imagesrc;
 							}
@@ -296,7 +296,7 @@ class tagProcessor_Value
                                 {
                                     $option=$new_array[0];
                                     CT_FieldTypeTag_imagegallery::getImageGallerySRC($getGalleryRows[$fieldname],
-                                    			$option,$row['listing_id'],$fieldname,$ESField['typeparams'],$imagesrclist,$imagetaglist,$ct->Table->tableid);
+                                    			$option,$row['listing_id'],$fieldname,$field->params,$imagesrclist,$imagetaglist,$ct->Table->tableid);
                                 }
 
 								$vlu=$imagesrclist;
@@ -307,7 +307,7 @@ class tagProcessor_Value
 							}
 							elseif($fieldtype=='records')
 							{
-								$a=explode(",",$row[$ESField['realfieldname']]);
+								$a=explode(",",$row[$field->realfieldname]);
 								$b=array();
 								foreach($a as $c)
 								{
@@ -331,19 +331,19 @@ class tagProcessor_Value
                                             $new_array[]=$pureValueOptionArr[$i];
                                     }
                                     
-                                    $vlu=CT_FieldTypeTag_file::process($row[$ESField['realfieldname']],$ESField['typeparams'],$new_array,$row['listing_id'],$ESField['id']
+                                    $vlu=CT_FieldTypeTag_file::process($row[$field->realfieldname],$field->fieldrow->params,$new_array,$row['listing_id'],$field->id
 										,$ct->Table->tableid,true);
                                 }
                                 else
-                                    $vlu=$row[$ESField['realfieldname']];
+                                    $vlu=$row[$field->realfieldname];
                             }
 							else
 							{
-								$vlu=$row[$ESField['realfieldname']];
+								$vlu=$row[$field->realfieldname];
 							}
 
 							//this is temporary replace string - part of the mechanism to avoid getting values of another fields
-							$new_replaceitecode=$replaceitecode.str_pad($ESField['id'], 9, '0', STR_PAD_LEFT).str_pad($i, 4, '0', STR_PAD_LEFT);
+							$new_replaceitecode=$replaceitecode.str_pad($field->id, 9, '0', STR_PAD_LEFT).str_pad($i, 4, '0', STR_PAD_LEFT);
 
 							$items_to_replace[]=array($new_replaceitecode,$vlu);
 							$htmlresult=str_replace($pureValueList[$p],$new_replaceitecode,$htmlresult);
@@ -478,7 +478,7 @@ class tagProcessor_Value
 			{
 				$field = new Field($ct,$ESField,$row);
 				
-                $replaceitecode=md5(JoomlaBasicMisc::generateRandomString().(isset($row['listing_id']) ? $row['listing_id'] : '').$ESField['fieldname']);
+                $replaceitecode=md5(JoomlaBasicMisc::generateRandomString().(isset($row['listing_id']) ? $row['listing_id'] : '').$field->fieldname);
                 
 				$temp_items_to_replace=tagProcessor_Value::processPureValues($ct,$htmlresult,$row,$isGalleryLoaded,$getGalleryRows,$isFileBoxLoaded,$getFileBoxRows,$tag_chars);
 				if(count($temp_items_to_replace)!=0)
@@ -489,10 +489,10 @@ class tagProcessor_Value
 					$items_to_replace=array_merge($items_to_replace,$temp_items_to_replace);
 
 				$ValueOptions=array();
-				$ValueList=JoomlaBasicMisc::getListToReplace($ESField['fieldname'],$ValueOptions,$htmlresult,$tag_chars);
+				$ValueList=JoomlaBasicMisc::getListToReplace($field->fieldname,$ValueOptions,$htmlresult,$tag_chars);
 
-					$fieldtype = $ESField['type'];
-					$fieldname = $ESField['fieldname'];
+					$fieldtype = $field->type;
+					$fieldname = $field->fieldname;
 					//$rowValue='';
 					//tagProcessor_Value::doMultiValues($ct,$ESField,$row,$fieldtype,$rowValue,$fieldname,'');
 
@@ -538,14 +538,14 @@ class tagProcessor_Value
 					else
 					{
 						//isEmpty
-						$isEmpty=tagProcessor_Value::isEmpty($row[$ESField['realfieldname']],$field);
+						$isEmpty=tagProcessor_Value::isEmpty($row[$field->realfieldname],$field);
 					}
 
 					// IF
-					tagProcessor_If::IFStatment('[_if:'.$ESField['fieldname'].']','[_endif:'.$ESField['fieldname'].']',$htmlresult,$isEmpty);
+					tagProcessor_If::IFStatment('[_if:'.$field->fieldname.']','[_endif:'.$field->fieldname.']',$htmlresult,$isEmpty);
 
 					// IF NOT
-					tagProcessor_If::IFStatment('[_ifnot:'.$ESField['fieldname'].']','[_endifnot:'.$ESField['fieldname'].']',$htmlresult,!$isEmpty);
+					tagProcessor_If::IFStatment('[_ifnot:'.$field->fieldname.']','[_endifnot:'.$field->fieldname.']',$htmlresult,!$isEmpty);
 
 					if($isEmpty)
 					{
@@ -565,7 +565,7 @@ class tagProcessor_Value
 							$vlu=tagProcessor_Value::getValueByType($ct, $ESField, $row,$value_option_list,$getGalleryRows[$fieldname],$getFileBoxRows[$fieldname]);
 
 							//this is temporary replace string - part of the mechanism to avoid getting values of another fields
-							$new_replaceitecode=$replaceitecode.str_pad($ESField['id'], 9, '0', STR_PAD_LEFT).str_pad($i, 4, '0', STR_PAD_LEFT);
+							$new_replaceitecode=$replaceitecode.str_pad($field->id, 9, '0', STR_PAD_LEFT).str_pad($i, 4, '0', STR_PAD_LEFT);
 
 							$items_to_replace[]=array($new_replaceitecode,$vlu);
 							$htmlresult=str_replace($ValueList[$i],$new_replaceitecode,$htmlresult);

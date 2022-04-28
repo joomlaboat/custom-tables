@@ -394,7 +394,7 @@ class Twig_Document_Tags
 		
 		if($layouts->layouttype == 6) //Catalog Item
 		{
-			$number = 0;
+			$number = 1;
 			$htmlresult = '';
 		
 			foreach($this->ct->Records as $row)

@@ -19,6 +19,9 @@ use \Joomla\CMS\Factory;
 use \CustomTables\Twig_Field_Tags;
 use \CustomTables\Forms;
 
+use \CT_FieldTypeTag_sqljoin;
+use \CT_FieldTypeTag_records;
+
 $types_path=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fieldtypes'.DIRECTORY_SEPARATOR;
 require_once($types_path.'_type_image.php');
 
@@ -428,4 +431,52 @@ class fieldObject
 			return new \Twig\Markup($edit_box, 'UTF-8' );
 		}
     }
+	
+	public function get($fieldname, array $args = [])
+	{
+		if($this->field->type != 'sqljoin' and $this->field->type != 'records')
+		{
+			Factory::getApplication()->enqueueMessage('{{ '.$this->field->fieldname.'.get }}. Wrong field type "'.$this->field->type.'". ".get" method is only available for Table Join and Records feild types.', 'error');
+			return '';
+		}
+		
+		$join_ct = new CT;
+		$join_ct->getTable($this->field->params[0]);
+		$fieldrow = Fields::FieldRowByName($fieldname,$join_ct->Table->fields);
+		
+		if($this->field->type != 'sqljoin' and $this->field->type != 'records')
+		{
+			$rfn = $this->field->realfieldname;
+			$row  = $join_ct->Table->loadRecord($this->ct->Table->record[$rfn]);
+			$valueProcessor = new Value($join_ct);
+			return $valueProcessor->renderValue($fieldrow,$row,$args);
+		}
+		else
+		{
+			$Layouts = new Layouts($ct);
+			$layoutcode = '{{ '.$fieldname.' }}';
+			return CT_FieldTypeTag_records::resolveRecordTypeValue($this->field,$layoutcode,$this->ct->Table->record[$this->field->realfieldname],$args);
+		}
+	}
+	
+	public function layout(string $layoutname, array $args = [])
+    {
+		$args = func_get_args();
+		if($this->field->type != 'sqljoin' and $this->field->type != 'records')
+		{
+			Factory::getApplication()->enqueueMessage('{{ '.$this->field->fieldname.'.get }}. Wrong field type "'.$this->field->type.'". ".get" method is only available for Table Join and Records feild types.', 'error');
+			return '';
+		}
+		
+		$Layouts = new Layouts($ct);
+		$layoutcode = $Layouts->getLayout($layoutname);
+		
+		if($layoutcode=='')
+		{
+			Factory::getApplication()->enqueueMessage('{{ '.$this->field->fieldname.'.layout("'.$layoutname.'") }} Layout "'.$layoutname.'" not found or is empty.', 'error');
+			return '';
+		}
+		
+		return CT_FieldTypeTag_records::resolveRecordTypeValue($this->field,$layoutcode,$this->ct->Table->record[$this->field->realfieldname],$args);
+	}
 }

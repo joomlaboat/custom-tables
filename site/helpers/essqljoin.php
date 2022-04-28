@@ -16,7 +16,7 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'co
 
 class JHTMLESSqlJoin
 {
-    static public function render($typeparams, $value, $force_dropdown, $langpostfix,$control_name,$place_holder,$cssclass='', $attribute='',$addNoValue=false)
+    static public function render(array $typeparams, $value, $force_dropdown, $langpostfix,$control_name,$place_holder,$cssclass='', $attribute='',$addNoValue=false)
     {
 		if(count($typeparams)<1)
         {

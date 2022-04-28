@@ -10,6 +10,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 use \CustomTables\Forms;
+use \CustomTables\Field;
 
 class tagProcessor_Field
 {
@@ -18,27 +19,28 @@ class tagProcessor_Field
 		//field title
         if($add_label)
         {
-            foreach($ct->Table->fields as $esfield)
+            foreach($ct->Table->fields as $fieldrow)
             {
 				$forms = new Forms($ct);
-				$field_label = $forms->renderFieldLabel($esfield);
+				$field = new Field($ct,$fieldrow,$ct->Table->record);
+				$field_label = $forms->renderFieldLabel($field);
 				
-            	$pagelayout=str_replace('*'.$esfield['fieldname'].'*',$field_label,$pagelayout);
+            	$pagelayout=str_replace('*'.$field->fieldname.'*',$field_label,$pagelayout);
             }
         }
         else
         {
-            foreach($ct->Table->fields as $esfield)
+            foreach($ct->Table->fields as $fieldrow)
             {
-                if(!array_key_exists('fieldtitle'.$ct->Languages->Postfix,$esfield))
+                if(!array_key_exists('fieldtitle'.$ct->Languages->Postfix,$fieldrow))
 				{
 					JFactory::getApplication()->enqueueMessage(
 						JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_LANGFIELDNOTFOUND' ), 'Error');
                                         
-                    $pagelayout=str_replace('*'.$esfield['fieldname'].'*','*fieldtitle'.$ct->Languages->Postfix.' - not found*',$pagelayout);
+                    $pagelayout=str_replace('*'.$fieldrow['fieldname'].'*','*fieldtitle'.$ct->Languages->Postfix.' - not found*',$pagelayout);
 				}
                 else
-                    $pagelayout=str_replace('*'.$esfield['fieldname'].'*',$esfield['fieldtitle'.$ct->Languages->Postfix],$pagelayout);
+                    $pagelayout=str_replace('*'.$fieldrow['fieldname'].'*',$fieldrow['fieldtitle'.$ct->Languages->Postfix],$pagelayout);
             }
         }
 		return $pagelayout;

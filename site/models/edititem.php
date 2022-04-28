@@ -988,14 +988,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 		else
 		{
-			//get old row
-			//$query='SELECT '.$this->ct->Table->tablerow['query_selects'].' FROM '.$this->ct->Table->realtablename.' WHERE '.$this->ct->Table->realidfieldname.'='.$db->quote($listing_id).' LIMIT 1';
-			//$db->setQuery( $query );
-			//$rows = $db->loadAssocList();
-			//if(count($rows)!=0)
-				//$row_old=$rows[0];
-			
-			$this->updateLog($listing_id);			
+			$this->updateLog($savefield,$listing_id);			
 			$savefield->runUpdateQuery($savequery,$listing_id);
 		}
 
@@ -1032,12 +1025,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 		else
 		{
 			$this->ct->Table->saveLog($listing_id,2);
-
 			$row = $this->ct->Table->loadRecord($listing_id);
-			//$query='SELECT '.$this->ct->Table->tablerow['query_selects'].' FROM '.$this->ct->Table->realtablename.' WHERE '.$this->ct->Table->realidfieldname.'='.$db->quote($listing_id).' LIMIT 1';
-			//$db->setQuery( $query );
-
-			//$rows = $db->loadAssocList();
 
 			if($row != null)
 			{
@@ -1050,13 +1038,10 @@ class CustomTablesModelEditItem extends JModelLegacy
 				if($phponaddfound and $isCopy)
 					$this->doPHPonAdd($row);
 						
-				//$this->updateDefaultValues($row);
 			}
 		}
 
 		//update MD5s
-		//$this->updateMD5($listing_id);
-		//$this->ct->Table->processDefaultValues($default_fields_to_apply,$this->ct,$row);
 
 		if($this->onrecordsavesendemailto!='' or $this->onrecordaddsendemailto!='')
 		{
@@ -1163,51 +1148,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 	}
 
-	/*
-	function updateMD5($listing_id)
-	{
-		$savequery=array();
-		foreach($this->ct->Table->fields as $esfield)
-		{
-				if($esfield['type']=='md5')
-				{
-						$fieldstocount=explode(',',str_replace('"','',$esfield['typeparams']));//only field names, nothing else
-						
-						$flds=array();
-						foreach($fieldstocount as $f)
-						{
-							//to make sure that field exists
-							foreach($this->ct->Table->fields as $esfield_)
-							{
-								if($esfield_['fieldname']==$f and $esfield['fieldname']!=$f)
-									$flds[]='COALESCE('.$esfield_['realfieldname'].')';
-							}
-						}
-
-						if(count($flds)>1)
-							$savequery[]=$esfield['realfieldname'].'=md5(CONCAT_WS('.implode(',',$flds).'))';
-				}
-		}
-
-		$this->ct->Table->runUpdateQuery($savequery,$listing_id);
-	}
-	*/
-/*
-	function updateDefaultValues($row)
-	{
-		$default_fields_to_apply=array();
-
-		foreach($this->ct->Table->fields as $esfield)
-		{
-			$fieldname=$esfield['fieldname'];
-			if($esfield['defaultvalue']!='' and $row[$esfield['realfieldname']]=='')
-				$default_fields_to_apply[]=array($fieldname,$esfield['defaultvalue'],$esfield['type'],$esfield['realfieldname']);
-		}
-
-        $this->ct->Table->processDefaultValues($default_fields_to_apply,$this->ct,$row);
-	}
-*/
-	function updateLog($listing_id)
+	function updateLog(&$savefield,$listing_id)
 	{
 		if($listing_id==0 or $listing_id == '')
 			return;
@@ -1265,7 +1206,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 		}
 
 		if(count($savequery)>0)
-			$this->ct->Table->runUpdateQuery($savequery,$listing_id);
+			$savefield->runUpdateQuery($savequery,$listing_id);
 	}
 
 /*
