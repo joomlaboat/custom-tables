@@ -599,9 +599,9 @@ class SaveFieldQuerySet
 			. substr("0123456789ABCDEF", $index2, 1);
 	}
 
-	public function Try2CreateUserAccount(&$ct,$field)
+	public function Try2CreateUserAccount(&$fieldrow)
 	{
-		$uid=(int)$ct->Table->record[$field['realfieldname']];
+		$uid=(int)$this->ct->Table->record[$fieldrow['realfieldname']];
 	
 		if($uid!=0)
 		{
@@ -625,11 +625,11 @@ class SaveFieldQuerySet
 
 		foreach($this->field->params as $part)
 		{
-			tagProcessor_General::process($ct,$part,$ct->Table->record,'',1);
-			tagProcessor_Item::process($ct,$ct->Table->record,$part,'','',0);
-			tagProcessor_If::process($ct,$part,$ct->Table->record,'',0);
-			tagProcessor_Page::process($ct,$part);
-			tagProcessor_Value::processValues($ct,$ct->Table->record,$part,'[]');
+			tagProcessor_General::process($this->ct,$part,$this->ct->Table->record,'',1);
+			tagProcessor_Item::process($this->ct,$this->ct->Table->record,$part,'','',0);
+			tagProcessor_If::process($this->ct,$part,$this->ct->Table->record,'',0);
+			tagProcessor_Page::process($this->ct,$part);
+			tagProcessor_Value::processValues($this->ct,$this->ct->Table->record,$part,'[]');
 
 			$new_parts[]=$part;
 		}
@@ -664,7 +664,7 @@ class SaveFieldQuerySet
 		{
 			if(!$unique_users) //allow not unique record per users
 			{
-				CTUser::UpdateUserField($ct->Table->realtablename, $ct->Table->realidfieldname,$field['realfieldname'],$existing_user_id,$ct->Table->record['listing_id']);
+				CTUser::UpdateUserField($this->ct->Table->realtablename, $this->ct->Table->realidfieldname,$fieldrow['realfieldname'],$existing_user_id,$this->ct->Table->record['listing_id']);
 				Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORD_USER_UPDATED' ));
 			}
 			else
@@ -676,7 +676,7 @@ class SaveFieldQuerySet
 			}
 		}
 		else
-			CTUser::CreateUser($ct->Table->realtablename, $ct->Table->realidfieldname,$user_email,$user_name,$user_groups,$ct->Table->record['listing_id'],$field['realfieldname'],$this->realtablename);
+			CTUser::CreateUser($this->ct->Table->realtablename, $this->ct->Table->realidfieldname,$user_email,$user_name,$user_groups,$this->ct->Table->record['listing_id'],$fieldrow['realfieldname'],$this->realtablename);
 
 		return true;
 	}

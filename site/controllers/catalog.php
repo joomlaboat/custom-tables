@@ -13,6 +13,7 @@ defined('_JEXEC') or die('Restricted access');
 use CustomTables\CT;
 use CustomTables\Fields;
 use CustomTables\CTUser;
+use CustomTables\SaveFieldQuerySet;
 use \Joomla\CMS\Factory;
 
 $ct = new CT;
@@ -291,8 +292,10 @@ function doTheTask(&$ct,$task,$menu_params,$edit_model,&$this_)
 		}
 			
 		$esfield = Fields::getFieldAsocByName($ct->Table->useridfieldname,$ct->Table->tableid);
+		
+		$savefield = new SaveFieldQuerySet($ct,$ct->Table->record,false);
 
-		if($ct->Table->Try2CreateUserAccount($ct,$esfield))
+		if($savefield->Try2CreateUserAccount($esfield))
 			return (object) array('link' => $link, 'status' => null);
 		else
 			return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_USER_NOTCREATED'), 'status' => 'error');
