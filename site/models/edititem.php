@@ -1029,7 +1029,6 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 			if($row != null)
 			{
-				$row=$rows[0];
 				JFactory::getApplication()->input->set('listing_id',$row['listing_id']);
 
 				if($phponchangefound or $this->ct->Table->tablerow['customphp']!='')
@@ -1087,9 +1086,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 			CleanExecute::executeCustomPHPfile($this->ct->Table->tablerow['customphp'],$row,$row_old);
 
 		if($isDebug)
-		{
 			die('Debug mode.');//debug mode
-		}	
 		
 		$jinput->set('listing_id',$listing_id);
 
