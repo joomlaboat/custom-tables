@@ -511,9 +511,11 @@ class SaveFieldQuerySet
 					
 				case 'creationtime':
 					if($this->row[$this->ct->Table->realidfieldname] == 0 or $this->row[$this->ct->Table->realidfieldname] == '' or $this->isCopy)
+					{
 						$value = gmdate( 'Y-m-d H:i:s');
 						$this->row[$this->field->realfieldname] = $value;
 						return $this->field->realfieldname.'='.$this->db->Quote($value);
+					}
 					break;
 
 				case 'changetime':
@@ -1074,7 +1076,6 @@ class SaveFieldQuerySet
 		if(count($savequery)>0)
 		{
 			$query='UPDATE '.$this->ct->Table->realtablename.' SET '.implode(', ',$savequery).' WHERE '.$this->ct->Table->realidfieldname.'='.$this->db->quote($listing_id);
-			
 			$this->db->setQuery( $query );
 			$this->db->execute();
 		}

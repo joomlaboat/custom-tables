@@ -2,9 +2,9 @@
 /**
  * CustomTables Joomla! 3.x Native Component
  * @package Custom Tables
- * @author Ivan komlev <support@joomlaboat.com>
+ * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @copyright Copyright (C) 2018-2020. All Rights Reserved
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
@@ -340,22 +340,11 @@ class ESTables
 			$db->setQuery( $query );
 			$db->execute();
 			return $db->insertid();
-			
-			//get last id
-			/*
-			$query='SELECT '.$realidfieldname.' AS listing_id FROM '.$realtablename.' ORDER BY '.$realidfieldname.' DESC LIMIT 1';
-			$db->setQuery( $query );
-			$temp_rows = $db->loadObjectList();
-			return $temp_rows[0]->listing_id;
-			*/
 		}
 		else
 		{
 			$query='INSERT '.$realtablename.' SET '.implode(', ',$sets);
-			
-			echo $query;
-			//die;
-			
+
 			$db->setQuery( $query );
 			$db->execute();
 			return $db->insertid();	

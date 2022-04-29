@@ -56,7 +56,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 		else
 		{
 			$app		= JFactory::getApplication();
-			$this->params=$app->getParams();
+			$this->params = $app->getParams();
 		}
 		
 		$this->ct->Env->menu_params = $this->params;

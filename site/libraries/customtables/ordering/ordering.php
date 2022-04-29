@@ -168,6 +168,7 @@ class Ordering
 				}
 			}
 		}
+
 /*
 		if(!$orderby_forced)
 		{
