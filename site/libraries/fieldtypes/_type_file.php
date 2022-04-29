@@ -170,8 +170,8 @@ class CT_FieldTypeTag_file
 
             //make the key
             $key=CT_FieldTypeTag_file::makeTheKey($filepath,$security,$recid,$fieldid,$tableid);
-
-            $jinput=JFactory::getApplication()->input;
+			
+			$jinput=JFactory::getApplication()->input;
             $Itemid=$jinput->getInt('Itemid',0);
 
             $currenturl=JoomlaBasicMisc::curPageURL();

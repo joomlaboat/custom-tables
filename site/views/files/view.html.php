@@ -23,10 +23,9 @@ class CustomTablesViewFiles extends JViewLegacy
 		$this->Model = $this->getModel();
 		$this->row = $this->get('Data');
 		$filepath=$this->getFilePath();
+		
 		if($filepath=='')
-		{
 			JFactory::getApplication()->enqueueMessage('File path not set.', 'error');
-		}
 		
 		$key=$this->Model->key;
 		$test_key=CT_FieldTypeTag_file::makeTheKey($filepath,$this->Model->security,$this->Model->_id,$this->Model->fieldid,$this->Model->tableid);
@@ -134,7 +133,8 @@ class CustomTablesViewFiles extends JViewLegacy
 		}
 
 		$rowValue=$this->row[$this->Model->fieldrow['realfieldname']];
-
-		return CT_FieldTypeTag_file::getFileFolder($TypeParams).'/'.$rowValue;
+		
+		$params = JoomlaBasicMisc::csv_explode(',',$TypeParams,'"',false);
+		return CT_FieldTypeTag_file::getFileFolder($params).'/'.$rowValue;
 	}
 }
