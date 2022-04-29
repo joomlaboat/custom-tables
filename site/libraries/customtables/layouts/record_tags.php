@@ -155,9 +155,6 @@ class Twig_Record_Tags
 
 	function joincount(string $join_table = '', string $filter = '')//wizard ok
 	{
-		if($this->ct->Env->frmt == 'csv')
-			return '';	
-		
 		if($join_table == '')
 		{
 			Factory::getApplication()->enqueueMessage('{{ record.count("'.$join_table.'") }} - Table not specified.', 'error');
@@ -185,7 +182,7 @@ class Twig_Record_Tags
 				$typeparams=JoomlaBasicMisc::csv_explode(',',$join_table_field['typeparams'],'"',false);
 				$join_table_join_to_table = $typeparams[0];
 				if($join_table_join_to_table == $this->ct->Table->tablename)
-					return $this->advancedjoin('count', $join_table, '_id', $join_table_field['fieldname'],'_id', $filter);
+					return intval($this->advancedjoin('count', $join_table, '_id', $join_table_field['fieldname'],'_id', $filter));
 			}
 		}
 			
