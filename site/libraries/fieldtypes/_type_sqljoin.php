@@ -9,8 +9,33 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use \Joomla\CMS\Factory;
+
+use CustomTables\CT;
+use CustomTables\TwigProcessor;
+
 class CT_FieldTypeTag_sqljoin
 {
+	//New function
+	public static function resolveSQLJoinTypeValue(&$field, $layoutcode, $listing_id, array $options)
+	{
+		$db = Factory::getDBO();
+		
+		$ct = new CT;
+		$ct->getTable($field->params[0]);
+
+		if(isset($field->params[6]))
+			$selector=$field->params[6];
+		else
+			$selector='dropdown';	
+		
+		$row  = $ct->Table->loadRecord($listing_id);
+		
+		$twig = new TwigProcessor($ct, '{% autoescape false %}'.$layoutcode.'{% endautoescape %}');
+		return $twig->process($row);
+	}
+
+	//Old function
     public static function resolveSQLJoinType(&$ct,$rowValue, $typeparams, $option_list)
 	{
         if(count($typeparams)<1)

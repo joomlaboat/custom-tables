@@ -434,39 +434,32 @@ class fieldObject
 	
 	public function get($fieldname, array $args = [])
 	{
-		if($this->field->type != 'sqljoin' and $this->field->type != 'records')
+		if($this->field->type == 'sqljoin')
 		{
-			Factory::getApplication()->enqueueMessage('{{ '.$this->field->fieldname.'.get }}. Wrong field type "'.$this->field->type.'". ".get" method is only available for Table Join and Records feild types.', 'error');
-			return '';
+			$layoutcode = '{{ '.$fieldname.' }}';
+			return CT_FieldTypeTag_sqljoin::resolveSQLJoinTypeValue($this->field, $layoutcode, $this->ct->Table->record[$this->field->realfieldname],$args);
 		}
-		
-		$join_ct = new CT;
-		$join_ct->getTable($this->field->params[0]);
-		$fieldrow = Fields::FieldRowByName($fieldname,$join_ct->Table->fields);
-		
-		if($this->field->type != 'sqljoin' and $this->field->type != 'records')
+		elseif($this->field->type == 'records')
 		{
-			$rfn = $this->field->realfieldname;
-			$row  = $join_ct->Table->loadRecord($this->ct->Table->record[$rfn]);
-			$valueProcessor = new Value($join_ct);
-			return $valueProcessor->renderValue($fieldrow,$row,$args);
+			$layoutcode = '{{ '.$fieldname.' }}';
+			return CT_FieldTypeTag_records::resolveRecordTypeValue($this->field,$layoutcode,$this->ct->Table->record[$this->field->realfieldname],$args);
 		}
 		else
 		{
-			$Layouts = new Layouts($ct);
-			$layoutcode = '{{ '.$fieldname.' }}';
-			return CT_FieldTypeTag_records::resolveRecordTypeValue($this->field,$layoutcode,$this->ct->Table->record[$this->field->realfieldname],$args);
+			Factory::getApplication()->enqueueMessage('{{ '.$this->field->fieldname.'.get }}. Wrong field type "'.$this->field->type.'". ".get" method is only available for Table Join and Records feild types.', 'error');
+			return '';
 		}
 	}
 	
 	public function layout(string $layoutname, array $args = [])
     {
-		$args = func_get_args();
 		if($this->field->type != 'sqljoin' and $this->field->type != 'records')
 		{
 			Factory::getApplication()->enqueueMessage('{{ '.$this->field->fieldname.'.get }}. Wrong field type "'.$this->field->type.'". ".get" method is only available for Table Join and Records feild types.', 'error');
 			return '';
 		}
+		
+		$args = func_get_args();
 		
 		$Layouts = new Layouts($ct);
 		$layoutcode = $Layouts->getLayout($layoutname);
@@ -477,6 +470,15 @@ class fieldObject
 			return '';
 		}
 		
-		return CT_FieldTypeTag_records::resolveRecordTypeValue($this->field,$layoutcode,$this->ct->Table->record[$this->field->realfieldname],$args);
+		if($this->field->type == 'sqljoin')
+		{
+			return CT_FieldTypeTag_sqljoin::resolveSQLJoinTypeValue($this->field, $layoutcode, $this->ct->Table->record[$this->field->realfieldname],$args);
+		}
+		elseif($this->field->type == 'records')
+		{
+			return CT_FieldTypeTag_records::resolveRecordTypeValue($this->field,$layoutcode,$this->ct->Table->record[$this->field->realfieldname],$args);
+		}
+		return 'imposible';
+		
 	}
 }
