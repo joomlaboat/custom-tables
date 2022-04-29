@@ -759,7 +759,7 @@
 
 <!-- Document Tags -->
 	<tagset name="document" label="Document" description="Document Tags to manipate current web page or to set system variables."
-		priority="3" layouttypes="1,5,2,4">
+		priority="3">
 		
 		<tag name="setpagetitle" label="Set Page Title" startchar="{" endchar="}" twigclass="document"
              description="A command to set the Page Title." proversion="1">
@@ -802,7 +802,11 @@
 		
 		<tag name="languagepostfix" label="Language Postfix" startchar="{" endchar="}"
              description="Current page Language Postfix." proversion="1" twigclass="document" />
-			 
+		
+		<tag name="attachment" label="Email file attachment" startchar="{" endchar="}" layouttypes="7"
+             description="The link to a file that will be attached to an email. Works in Email Layout Type." proversion="1" twigclass="document" >
+		</tag>
+		
 		<tag name="sitename" label="Site Name" startchar="{" endchar="}"
              description="Return the Site Name set in configuration.php file" proversion="1" twigclass="document" />
 		
