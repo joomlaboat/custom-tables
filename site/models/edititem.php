@@ -11,6 +11,7 @@ defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\CT;
 use CustomTables\Email;
+use CustomTables\Field;
 use CustomTables\Fields;
 use CustomTables\Layouts;
 use CustomTables\DataTypes\Tree;

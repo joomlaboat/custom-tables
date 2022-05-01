@@ -28,6 +28,7 @@ use tagProcessor_Value;
 
 use \JoomlaBasicMisc;
 use CustomTables\CTUser;
+use CustomTables\Field;
 use \LayoutProcessor;
 
 class SaveFieldQuerySet
@@ -599,9 +600,9 @@ class SaveFieldQuerySet
 			. substr("0123456789ABCDEF", $index2, 1);
 	}
 
-	public function Try2CreateUserAccount(&$fieldrow)
+	public function Try2CreateUserAccount(&$field)
 	{
-		$uid=(int)$this->ct->Table->record[$fieldrow['realfieldname']];
+		$uid=(int)$this->ct->Table->record[$field->realfieldname];
 	
 		if($uid!=0)
 		{
@@ -614,7 +615,7 @@ class SaveFieldQuerySet
 			}
 		}
 
-		if(count($this->field->params)<3)
+		if(count($field->params)<3)
 		{
 			Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('User field name parameters count is less than 3.','error' ));
 			return false;
@@ -623,7 +624,7 @@ class SaveFieldQuerySet
 		//Try to create user
 		$new_parts=array();
 
-		foreach($this->field->params as $part)
+		foreach($field->params as $part)
 		{
 			tagProcessor_General::process($this->ct,$part,$this->ct->Table->record,'',1);
 			tagProcessor_Item::process($this->ct,$this->ct->Table->record,$part,'','',0);
@@ -664,7 +665,7 @@ class SaveFieldQuerySet
 		{
 			if(!$unique_users) //allow not unique record per users
 			{
-				CTUser::UpdateUserField($this->ct->Table->realtablename, $this->ct->Table->realidfieldname,$fieldrow['realfieldname'],$existing_user_id,$this->ct->Table->record['listing_id']);
+				CTUser::UpdateUserField($this->ct->Table->realtablename, $this->ct->Table->realidfieldname,$field->realfieldname,$existing_user_id,$this->ct->Table->record['listing_id']);
 				Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORD_USER_UPDATED' ));
 			}
 			else
@@ -676,7 +677,7 @@ class SaveFieldQuerySet
 			}
 		}
 		else
-			CTUser::CreateUser($this->ct->Table->realtablename, $this->ct->Table->realidfieldname,$user_email,$user_name,$user_groups,$this->ct->Table->record['listing_id'],$fieldrow['realfieldname'],$this->realtablename);
+			CTUser::CreateUser($this->ct->Table->realtablename, $this->ct->Table->realidfieldname,$user_email,$user_name,$user_groups,$this->ct->Table->record['listing_id'],$field->realfieldname,$this->realtablename);
 
 		return true;
 	}

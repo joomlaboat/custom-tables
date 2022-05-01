@@ -88,20 +88,20 @@ class CT_FieldTypeTag_records
 	}
 	
 	//Old function
-    public static function resolveRecordType(&$ct,$rowValue, array $typeparams, array $options)
+    public static function resolveRecordType(&$ct,$rowValue, $field, array $options)
 	{
 		$sortbyfield='';
 
-		if(count($typeparams)<1)
+		if(count($field->params)<1)
 			$result.='table not specified';
 
-		if(count($typeparams)<2)
+		if(count($field->params)<2)
 			$result.='field or layout not specified';
 
-		if(count($typeparams)<3)
+		if(count($field->params)<3)
 			$result.='selector not specified';
 
-		$esr_table=$typeparams[0];
+		$esr_table=$field->params[0];
 
 		if($options[0]!='')
 		{
@@ -114,21 +114,23 @@ class CT_FieldTypeTag_records
 
 		}
 		else
-			$esr_field=$typeparams[1];
+			$esr_field=$field->params[1];
 
-		$esr_selector=$typeparams[2];
+		$esr_selector=$field->params[2];
 
 		if(count($typeparams)>3)
-			$esr_filter=$typeparams[3];
+			$esr_filter=$field->params[3];
 		else
 			$esr_filter='';
 
-		if($sortbyfield=='' and isset($typeparams[5]))
-			$sortbyfield=$typeparams[5];
+		if($sortbyfield=='' and isset($field->params[5]))
+			$sortbyfield=$field->params[5];
 
 		//this is important because it has been selected some how.
 		$esr_filter='';
 
-		return JHTML::_('ESRecordsView.render',$rowValue,$esr_table,$esr_field,$esr_selector,$esr_filter,$ct->Languages->Postfix,$sortbyfield);
+		$result = JHTML::_('ESRecordsView.render',$rowValue,$esr_table,$esr_field,$esr_selector,$esr_filter,$ct->Languages->Postfix,$sortbyfield);
+
+		return CT_FieldTypeTag_records::resolveRecordTypeValue($field,$result,$rowValue,$options);
 	}
 }

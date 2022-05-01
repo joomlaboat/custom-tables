@@ -46,9 +46,9 @@ class Twig_Html_Tags
 	
 	function recordcount()//wizard ok
 	{
-		if($this->ct->Env->frmt == 'csv')
-			return '';	
-			
+		if($this->ct->Env->frmt!='html' and $this->ct->Env->frmt!='')
+			return '';
+		
 		if(!isset($this->ct->Table))
 		{
 			Factory::getApplication()->enqueueMessage('{{ html.recordcount }} - Table not loaded.', 'error');
@@ -201,8 +201,8 @@ class Twig_Html_Tags
 		
 	function goback($label='Go Back', $image_icon='components/com_customtables/libraries/customtables/media/images/icons/arrow_rtl.png', $attribute='',  $returnto = '')
 	{
-		if($this->ct->Env->print==1)
-            return '';
+		if($this->ct->Env->print==1 or ($this->ct->Env->frmt!='html' and $this->ct->Env->frmt!=''))
+			return '';
 				
 		if($returnto == '')
 			$returnto = base64_decode($this->ct->Env->jinput->get('returnto','','BASE64'));
@@ -223,16 +223,15 @@ class Twig_Html_Tags
 	
 	function batch()//wizard ok
 	{
+		if($this->ct->Env->print==1 or ($this->ct->Env->frmt!='html' and $this->ct->Env->frmt!=''))
+			return '';
+		
 		$buttons = func_get_args();
 		if(count($buttons) == 1)
 		{
 			if(is_array($buttons[0]))
 				$buttons = $buttons[0];
 		}
-
-		
-		if($this->ct->Env->print==1 or ($this->ct->Env->frmt!='html' and $this->ct->Env->frmt!=''))
-			return '';
 		
 		$available_modes = $this->getAvailableModes();
 		if(count($available_modes) == 0)
@@ -281,6 +280,9 @@ class Twig_Html_Tags
 	
 	function print($class='ctEditFormButton btn button')
 	{
+		if($this->ct->Env->print==1 or ($this->ct->Env->frmt!='html' and $this->ct->Env->frmt!=''))
+			return '';
+		
 		$link=$this->ct->Env->current_url.(strpos($this->ct->Env->current_url,'?')===false ? '?' : '&').'tmpl=component&amp;print=1';
 
 		if($this->ct->Env->jinput->getInt('moduleid',0)!=0)
@@ -312,9 +314,9 @@ class Twig_Html_Tags
 	
 	function search($list_of_fields_string_or_array, $class = '', $reload = false, $improved = false)//wizard ok
 	{
-		if($this->ct->Env->print == 1 or $this->ct->Env->frmt == 'csv')
+		if($this->ct->Env->print==1 or ($this->ct->Env->frmt!='html' and $this->ct->Env->frmt!=''))
 			return '';
-				
+
 		if(is_array($list_of_fields_string_or_array))
 			$list_of_fields_string_array = $list_of_fields_string_or_array;
 		else
@@ -437,7 +439,7 @@ class Twig_Html_Tags
 	
 	function searchbutton($label = 'SEARCH', $class_ = '')//wizard ok
 	{
-		if($this->ct->Env->print==1 or $this->ct->Env->frmt=='csv')
+		if($this->ct->Env->print==1 or ($this->ct->Env->frmt!='html' and $this->ct->Env->frmt!=''))
 			return '';
 		
 		$class = 'ctSearchBox';
@@ -458,6 +460,9 @@ class Twig_Html_Tags
 	
 	function message($text, $type = 'Message')//wizard ok
 	{
+		if($this->ct->Env->print==1 or ($this->ct->Env->frmt!='html' and $this->ct->Env->frmt!=''))
+			return '';
+	
 		Factory::getApplication()->enqueueMessage($text, $type);
 		
 		return null;
@@ -465,6 +470,9 @@ class Twig_Html_Tags
 	
 	function navigation($list_type = 'list', $ul_css_class = '')//wizard ok
 	{
+		if($this->ct->Env->frmt!='html' and $this->ct->Env->frmt!='')
+			return '';
+		
 		$PathValue = $this->CleanNavigationPath($this->ct->Filter->PathValue);
 		if(count($PathValue)==0)
 			return '';
@@ -481,9 +489,9 @@ class Twig_Html_Tags
 	
 	function captcha()//wizard ok
 	{
-		if($this->ct->Env->frmt != '' and $this->ct->Env->frmt !='html')
+		if($this->ct->Env->print==1 or ($this->ct->Env->frmt!='html' and $this->ct->Env->frmt!=''))
 			return '';
-			
+				
 		JHtml::_('behavior.keepalive');
 			
 		$p = $this->getReCaptchaParams();
@@ -533,7 +541,7 @@ class Twig_Html_Tags
 	
 	function button($type = 'save', $title = '', $redirectlink = null, $optional_class = '')//wizard ok
 	{
-		if($this->ct->Env->frmt != '' and $this->ct->Env->frmt !='html' and $this->ct->Env->frmt != 'json')
+		if($this->ct->Env->frmt != '' and $this->ct->Env->frmt !='html')
 			return '';
 		
 		if($redirectlink == null and $this->ct->Env->menu_params != null)
@@ -622,7 +630,7 @@ class Twig_Html_Tags
 	
 	function toolbar()//wizard ok
 	{
-		if($this->ct->Env->print==1)
+		if($this->ct->Env->print==1 or ($this->ct->Env->frmt!='html' and $this->ct->Env->frmt!=''))
 			return '';
 		
 		$modes = func_get_args();
@@ -662,9 +670,6 @@ class Twig_Html_Tags
 
 	protected function id_list()
 	{
-		if($this->ct->Env->frmt == 'csv')
-			return '';	
-			
 		if(!isset($this->ct->Table))
 		{
 			Factory::getApplication()->enqueueMessage('{{ record.list }} - Table not loaded.', 'error');

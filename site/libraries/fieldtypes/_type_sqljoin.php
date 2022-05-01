@@ -36,13 +36,13 @@ class CT_FieldTypeTag_sqljoin
 	}
 
 	//Old function
-    public static function resolveSQLJoinType(&$ct,$rowValue, $typeparams, $option_list)
+    public static function resolveSQLJoinType(&$ct,$listing_id, $typeparams, $option_list)
 	{
         if(count($typeparams)<1)
-			$result.='table not specified';
+			return 'table not specified';
 
 		if(count($typeparams)<2)
-			$result.='field or layout not specified';
+			return 'field or layout not specified';
 
 		$esr_table=$typeparams[0];
 
@@ -60,8 +60,16 @@ class CT_FieldTypeTag_sqljoin
 
 		//this is important because it has been selected some how.
 		$esr_filter='';
+		
+		//Old method - slow
+		$result = JHTML::_('ESSQLJoinView.render',$listing_id,$esr_table,$esr_field,$esr_filter,$ct->Languages->Postfix,'');
 
-		return JHTML::_('ESSQLJoinView.render',$rowValue,$esr_table,$esr_field,$esr_filter,$ct->Languages->Postfix,'');
+		//New method - fast and secure
+		$join_ct = new CT;
+		$join_ct->getTable($typeparams[0]);
+		$row  = $join_ct->Table->loadRecord($listing_id);
 
+		$twig = new TwigProcessor($join_ct, '{% autoescape false %}'.$result.'{% endautoescape %}');
+		return $twig->process($row);
 	}
 }
