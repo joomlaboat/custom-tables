@@ -19,6 +19,7 @@ class CustomTablesViewCatalog extends JViewLegacy
 	var $fileboxes;
 	var $ct;
 	var $listing_id;
+	var $layoutType = 0;
 	
 	function display($tpl = null)
 	{
@@ -191,6 +192,8 @@ class CustomTablesViewCatalog extends JViewLegacy
 				$this->ct->Env->frmt='csv';
 			elseif($Layouts->layouttype==10)
 				$this->ct->Env->frmt='json';
+				
+			$this->layoutType = $Layouts->layouttype;
 		}
 		else
 			$this->pagelayout='{catalog:,notable}';

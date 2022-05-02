@@ -44,7 +44,7 @@ $this->pagelayout=$this->ct->LayoutProc->fillLayout();
 
 $this->pagelayout=strip_tags(str_replace('&&&&quote&&&&','"',trim($this->pagelayout))); // search boxes may return HTMl elemnts that contain placeholders with quotes like this: &&&&quote&&&&
 
-if(1==1)
+if($this->layoutType != 9) //not CSV layout
 {
 	$this->pagelayout = str_replace("\n",'',$this->pagelayout);
 	$this->pagelayout = str_replace("\r",'',$this->pagelayout);
@@ -63,10 +63,10 @@ if (ob_get_contents())
 	ob_end_clean();
 
 $filename = JoomlaBasicMisc::makeNewFileName($this->ct->Env->menu_params->get('page_title'),'csv');
-//header('Content-Disposition: attachment; filename="'.$filename.'"');
-//header('Content-Type: text/csv; charset=utf-8');
-//header("Pragma: no-cache");
-//header("Expires: 0");
+header('Content-Disposition: attachment; filename="'.$filename.'"');
+header('Content-Type: text/csv; charset=utf-8');
+header("Pragma: no-cache");
+header("Expires: 0");
 
 echo chr(255).chr(254);
 echo mb_convert_encoding($this->pagelayout, 'UTF-16LE', 'UTF-8');

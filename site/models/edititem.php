@@ -1754,7 +1754,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 	{
 		$fields=array();
 		
-		$backgroundFieldTypes = ['creationtime','changetime','server','id','md5'];
+		$backgroundFieldTypes = ['creationtime','changetime','server','id','md5','userid'];
 
 		foreach($this->ct->Table->fields as $esfield)
 		{

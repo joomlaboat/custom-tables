@@ -13,6 +13,7 @@ defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\Fields;
 use CustomTables\DataTypes\Tree;
+use CustomTables\TwigProcessor;
 
 use \ESTables;
 use \JoomlaBasicMisc;
@@ -1094,9 +1095,12 @@ class Filtering
 		{
 			//Parse using layout, has no effect to layout itself
 			$this->ct->LayoutProc->layout = $paramwhere;
-			return  $this->ct->LayoutProc->fillLayout();
-		}
+			$paramwhere = $this->ct->LayoutProc->fillLayout();
 			
+			$twig = new TwigProcessor($this->ct, '{% autoescape false %}'.$paramwhere.'{% endautoescape %}');
+			$paramwhere = $twig->process();
+		}
+		
 		return $paramwhere;
 	}
 
