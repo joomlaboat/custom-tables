@@ -24,8 +24,8 @@ class tagProcessor_If
 			$i++;
         }
 
-		//outdated - absolete
-		if(isset($row) and count($row)>0 and isset($row['listing_id']) and $row['listing_id'] != 0)
+		//outdated - obsolete, use Twig if statements instead. Example: {% if record.published == 1 %} ... {% endif %}
+		if(isset($row) and is_array($row) and isset($row['listing_published']))
 		{
 			//Row Publish Status IF,IFNOT statments
 			tagProcessor_If::IFStatment('[_if_published]','[_endif_published]',$htmlresult,!$row['listing_published']==1);

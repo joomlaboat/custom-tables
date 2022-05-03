@@ -470,8 +470,8 @@ class tagProcessor_Value
 		$getGalleryRows=array();
 		$isFileBoxLoaded=array();
 		$getFileBoxRows=array();
-		 //and isset($row['listing_id']) and $row['listing_id'] != 0
-		if(isset($row) and count($row)>0)
+
+		if(isset($row) and is_array($row) and count($row) > 0)
 		{
 			foreach($ct->Table->fields as $ESField)
 			{
@@ -492,8 +492,6 @@ class tagProcessor_Value
 
 					$fieldtype = $field->type;
 					$fieldname = $field->fieldname;
-					//$rowValue='';
-					//tagProcessor_Value::doMultiValues($ct,$ESField,$row,$fieldtype,$rowValue,$fieldname,'');
 
 					if($fieldtype=='imagegallery')
 					{
@@ -558,9 +556,6 @@ class tagProcessor_Value
 						{
                             $value_option_list=JoomlaBasicMisc::csv_explode(',',$ValueOption,'"',false);
                             
-                            //if(count($value_option_list)>=5)
-                               // tagProcessor_Value::doMultiValues($ct,$ESField,$row,$fieldtype,$rowValue,$fieldname,$value_option_list[4]);
-
 							$vlu=tagProcessor_Value::getValueByType($ct, $ESField, $row,$value_option_list,$getGalleryRows[$fieldname],$getFileBoxRows[$fieldname]);
 
 							//this is temporary replace string - part of the mechanism to avoid getting values of another fields
