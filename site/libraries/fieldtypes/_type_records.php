@@ -118,7 +118,7 @@ class CT_FieldTypeTag_records
 
 		$esr_selector=$field->params[2];
 
-		if(count($typeparams)>3)
+		if(count($field->params)>3)
 			$esr_filter=$field->params[3];
 		else
 			$esr_filter='';
