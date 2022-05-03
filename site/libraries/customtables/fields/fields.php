@@ -1092,7 +1092,8 @@ class Fields
     public static function getListOfExistingFields($tablename,$add_table_prefix=true)
 	{
 		$realfieldnames=Fields::getExistingFields($tablename,$add_table_prefix);
-
+		$list = [];
+		
 		foreach($realfieldnames as $rec)
 			$list[]=$rec['column_name'];
 

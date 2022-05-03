@@ -113,7 +113,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy
 		if(count($fieldrows)!=1)
 			return false;
 
-		$this->field = new Field($ct,$fieldrows[0],$this->row);
+		$this->field = new Field($this->ct,$fieldrows[0],$this->row);
 
 		$this->GalleryTitle=$this->field->title;
 		

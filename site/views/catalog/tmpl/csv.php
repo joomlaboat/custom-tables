@@ -19,6 +19,10 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'co
 $itemlayout=str_replace("\n",'',$this->itemlayout);
 
 $catalogtablecontent=tagProcessor_CatalogTableView::process($this->ct,$this->pagelayout,$this->catalogtablecode);
+
+$twig = new TwigProcessor($this->ct, $catalogtablecontent);
+$catalogtablecontent = $twig->process();
+
 $twig = new TwigProcessor($this->ct, $this->pagelayout);
 $this->pagelayout = $twig->process();
 
@@ -51,23 +55,25 @@ if($this->layoutType != 9) //not CSV layout
 	$this->pagelayout = str_replace("\t",'',$this->pagelayout);
 }
 
-$this->pagelayout = str_ireplace('****linebrake****',"\r\n",$this->pagelayout);
+$this->pagelayout = str_ireplace('****linebrake****',"\r" . "\n",$this->pagelayout);
 
 
 
 $this->pagelayout = str_replace($this->catalogtablecode,$catalogtablecontent,$this->pagelayout);
 
-LayoutProcessor::applyContentPlugins($this->pagelayout);
+//LayoutProcessor::applyContentPlugins($this->pagelayout);
 
 if (ob_get_contents()) 
 	ob_end_clean();
 
 $filename = JoomlaBasicMisc::makeNewFileName($this->ct->Env->menu_params->get('page_title'),'csv');
 header('Content-Disposition: attachment; filename="'.$filename.'"');
-header('Content-Type: text/csv; charset=utf-8');
+header('Content-Type: text/csv; charset=utf-16');
 header("Pragma: no-cache");
 header("Expires: 0");
 
-echo chr(255).chr(254);
-echo mb_convert_encoding($this->pagelayout, 'UTF-16LE', 'UTF-8');
+//echo chr(255).chr(254);
+//$bom = pack("CCC", 0xef, 0xbb, 0xbf);
+//echo $bom.mb_convert_encoding($this->pagelayout, 'UTF-16LE', 'UTF-8');
+echo $this->pagelayout;
 die;//clean exit

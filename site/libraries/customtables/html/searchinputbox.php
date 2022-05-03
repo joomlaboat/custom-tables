@@ -339,7 +339,7 @@ class SearchInputBox
 		else
 			$default_class='form-control';
 		
-								if($esfield['essb_option']=='any')
+								if(isset($esfield['essb_option']) and $esfield['essb_option']=='any')
 								{
 									if($esfield['essb_option2']!='')
 										$translations=JoomlaBasicMisc::csv_explode(',', $esfield['essb_option2'], '"', false);
@@ -363,8 +363,6 @@ class SearchInputBox
 										<option value="false" '.($value=='false' ? 'SELECTED' : '').'>'.$translations[2].'</option>
 									</select>
 									';
-
-
 								}
 								else
 								{

@@ -26,8 +26,9 @@ function getLines($filename)
 	if (($handle = fopen($filename, "r")) !== FALSE)
 	{
 		$lines = [];
+		$enclosure = "\"";
 		
-		while (($data = fgetcsv($handle, 0, $delimiter)) !== FALSE)
+		while (($data = fgetcsv($handle, 0, $delimiter, $enclosure)) !== FALSE)
 			$lines[] = $data;
 
 		fclose($handle);
@@ -388,7 +389,7 @@ function prepareFieldList($fieldNames,$fields,&$first_line_fieldnames)
         {
             $clean_field_name=strtolower(preg_replace("/[^a-zA-Z1-9 #]/", "", $field->fieldtitle));
       
-            if((string)$fieldName=='#')
+            if((string)$fieldName=='#' or (string)$fieldName=='')
             {
                 $fieldList[]=-1;
                 $found=true;
@@ -398,10 +399,10 @@ function prepareFieldList($fieldNames,$fields,&$first_line_fieldnames)
             }
             elseif((string)$clean_field_name==(string)$fieldName or (string)$field->fieldname==(string)$fieldName)
             {
-                $first_line_fieldnames=true;
                 $fieldList[]=$index;
                 $found=true;
                 $count++;
+				$first_line_fieldnames=true;
                 break;
             }
             $index++;

@@ -35,7 +35,7 @@ class CustomTablesViewFileUploader extends JViewLegacy
 
             $output_dir=JPATH_SITE.DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR;
 
-            if(file_exists($output_dir.$file))
+            if($file != '' and file_exists($output_dir.$file))
             {
                 unlink($output_dir.$file);
                 echo json_encode(['status'=>'Deleted']);

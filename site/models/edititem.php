@@ -1668,23 +1668,28 @@ class CustomTablesModelEditItem extends JModelLegacy
 		
 		$query='SELECT '.$this->ct->Table->tablerow['query_selects'].' FROM '.$this->ct->Table->realtablename.' WHERE '.$this->ct->Table->realidfieldname.'='.$db->quote($listing_id).' LIMIT 1';
 		$db->setQuery( $query );
-
+		
+		
 		$rows = $db->loadAssocList();
 		if(count($rows)==0)
 			return -1;
 
 		$row=$rows[0];
+		
+		$savefield = new SaveFieldQuerySet($this->ct,$row,false);
+		
 		JFactory::getApplication()->input->set('listing_id',$listing_id);
 
 		$this->doPHPonChange($row);
 
 		//update MD5s
-		$this->updateMD5($listing_id);
+		$this->updateMD5($savefield,$listing_id);
 
 		if($save_log==1)
 			$this->ct->Table->saveLog($listing_id,10);
 
-		$this->updateDefaultValues($row);
+		//TODO use $savefield
+		//$this->updateDefaultValues($row);
 
 		if($this->ct->Env->advancedtagprocessor)
 			CleanExecute::executeCustomPHPfile($this->ct->Table->tablerow['customphp'],$row,$row);
@@ -1701,6 +1706,35 @@ class CustomTablesModelEditItem extends JModelLegacy
 		}
 		
 		return 1;
+	}
+	
+	function updateMD5(&$savefield,$listing_id)
+	{
+		//TODO: Use savefield
+		$savequery=array();
+		foreach($this->ct->Table->fields as $esfield)
+		{
+			if($esfield['type']=='md5')
+			{
+				$fieldstocount=explode(',',str_replace('"','',$esfield['typeparams']));//only field names, nothing else
+					
+				$flds=array();
+				foreach($fieldstocount as $f)
+				{
+					//to make sure that field exists
+					foreach($this->ct->Table->fields as $esfield_)
+							{
+								if($esfield_['fieldname']==$f and $esfield['fieldname']!=$f)
+									$flds[]='COALESCE('.$esfield_['realfieldname'].')';
+							}
+						}
+
+					if(count($flds)>1)
+						$savequery[]=$esfield['realfieldname'].'=md5(CONCAT_WS('.implode(',',$flds).'))';
+			}
+		}
+
+		$savefield->runUpdateQuery($savequery,$listing_id);
 	}
 	
 	function setPublishStatus($status)
@@ -1860,7 +1894,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 		foreach($this->ct->Table->fields as $esfield)
 		{
-			$field = new Field($ct,$esfield,$row);
+			$field = new Field($this->ct,$esfield,$row);
 			
 			if($field->type=='image')
 			{
