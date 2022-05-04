@@ -74,7 +74,7 @@ class tagProcessor_Value
             $i=0;
 			foreach($ct->Table->fields as $ESField)
 			{
-                $replaceitecode=md5(JoomlaBasicMisc::generateRandomString().(isset($row['listing_id']) ? $row['listing_id'] : '').$ESField['fieldname']);
+                $replaceitecode=md5(JoomlaBasicMisc::generateRandomString().(isset($row[$ct->Table->realidfieldname]) ? $row[$ct->Table->realidfieldname] : '').$ESField['fieldname']);
                 
 				if($pureValueOptionArr[0]==$ESField['fieldname'])
 				{
@@ -84,7 +84,7 @@ class tagProcessor_Value
                             if($isEditable)
                             {
                                 $postfix='';
-                                $ajax_prefix = 'com_'.$row['listing_id'].'_';//example: com_153_es_fieldname or com_153_ct_fieldname
+                                $ajax_prefix = 'com_'.$row[$ct->Table->realidfieldname].'_';//example: com_153_es_fieldname or com_153_ct_fieldname
                             
                                 $value_option_list=array();
                                 if(isset($pureValueOptionArr[1]))
@@ -108,7 +108,7 @@ class tagProcessor_Value
                                     }
                                 }
 								
-								$onchange='ct_UpdateSingleValue(\''.$ct->Env->WebsiteRoot.'\','.$ct->Env->Itemid.',\''.$ESField['fieldname'].'\','.$row['listing_id'].',\''
+								$onchange='ct_UpdateSingleValue(\''.$ct->Env->WebsiteRoot.'\','.$ct->Env->Itemid.',\''.$ESField['fieldname'].'\','.$row[$ct->Table->realidfieldname].',\''
 									.$postfix.'\');';
 								
                                 $attributes='onchange="'.$onchange.'"'.$style;
@@ -147,7 +147,7 @@ class tagProcessor_Value
 
     public static function processPureValues(&$ct,&$htmlresult, &$row,&$isGalleryLoaded,&$getGalleryRows,&$isFileBoxLoaded,&$getFileBoxRows,$tag_chars='[]')
 	{
-		$listing_id = (isset($row['listing_id']) ? $row['listing_id'] : 0);
+		$listing_id = (isset($row[$ct->Table->realidfieldname]) ? $row[$ct->Table->realidfieldname] : 0);
 		
 		$items_to_replace=array();
 
@@ -165,7 +165,7 @@ class tagProcessor_Value
 			{
 				$field = new Field($ct,$ESField,$row);
 				
-                $replaceitecode=md5(JoomlaBasicMisc::generateRandomString().(isset($row['listing_id']) ? $row['listing_id'] : '').$field->fieldname);
+                $replaceitecode=md5(JoomlaBasicMisc::generateRandomString().(isset($row[$ct->Table->realidfieldname]) ? $row[$ct->Table->realidfieldname] : '').$field->fieldname);
                 
 				if($pureValueOptionArr[0]==$field->fieldname)
 				{
@@ -181,14 +181,14 @@ class tagProcessor_Value
 							{
 								//load if not loaded
 								$isGalleryLoaded[$fieldname]=true;
-								$getGalleryRows[$fieldname]=CT_FieldTypeTag_imagegallery::getGalleryRows($ct->Table->tablename,$fieldname,$row['listing_id']);
+								$getGalleryRows[$fieldname]=CT_FieldTypeTag_imagegallery::getGalleryRows($ct->Table->tablename,$fieldname,$row[$ct->Table->realidfieldname]);
 							}
 						}
 						else
 						{
 							//load if not loaded
 							$isGalleryLoaded[$fieldname]=true;
-							$getGalleryRows[$fieldname]=CT_FieldTypeTag_imagegallery::getGalleryRows($ct->Table->tablename,$fieldname,$row['listing_id']);
+							$getGalleryRows[$fieldname]=CT_FieldTypeTag_imagegallery::getGalleryRows($ct->Table->tablename,$fieldname,$row[$ct->Table->realidfieldname]);
 						}
 
 						if(count($getGalleryRows[$fieldname])==0)
@@ -204,7 +204,7 @@ class tagProcessor_Value
 							{
 								//load if not loaded
 								$isFileBoxLoaded[$fieldname]=true;
-								$getFileBoxRows[$fieldname]=CT_FieldTypeTag_filebox::getFileBoxRows($ct->Table->tablename,$fieldname,$row['listing_id']);
+								$getFileBoxRows[$fieldname]=CT_FieldTypeTag_filebox::getFileBoxRows($ct->Table->tablename,$fieldname,$row[$ct->Table->realidfieldname]);
 							}
 
 						}
@@ -212,7 +212,7 @@ class tagProcessor_Value
 						{
 							//load if not loaded
 							$isFileBoxLoaded[$fieldname]=true;
-							$getFileBoxRows[$fieldname]=CT_FieldTypeTag_filebox::getFileBoxRows($ct->Table->tablename,$fieldname,$row['listing_id']);
+							$getFileBoxRows[$fieldname]=CT_FieldTypeTag_filebox::getFileBoxRows($ct->Table->tablename,$fieldname,$row[$ct->Table->realidfieldname]);
 						}
 
 						if(count($getFileBoxRows[$fieldname])==0)
@@ -296,14 +296,14 @@ class tagProcessor_Value
                                 {
                                     $option=$new_array[0];
                                     CT_FieldTypeTag_imagegallery::getImageGallerySRC($getGalleryRows[$fieldname],
-                                    			$option,$row['listing_id'],$fieldname,$field->params,$imagesrclist,$imagetaglist,$ct->Table->tableid);
+                                    			$option,$row[$ct->Table->realidfieldname],$fieldname,$field->params,$imagesrclist,$imagetaglist,$ct->Table->tableid);
                                 }
 
 								$vlu=$imagesrclist;
 							}
 							elseif($fieldtype=='filebox')
 							{								
-								$vlu = CT_FieldTypeTag_filebox::process($getFileBoxRows[$fieldname], $field, $row['listing_id'],['','link','32','_blank',';']);
+								$vlu = CT_FieldTypeTag_filebox::process($getFileBoxRows[$fieldname], $field, $row[$ct->Table->realidfieldname],['','link','32','_blank',';']);
 							}
 							elseif($fieldtype=='records')
 							{
@@ -331,7 +331,7 @@ class tagProcessor_Value
                                             $new_array[]=$pureValueOptionArr[$i];
                                     }
                                     
-                                    $vlu=CT_FieldTypeTag_file::process($row[$field->realfieldname],$field,$new_array,$row['listing_id']);
+                                    $vlu=CT_FieldTypeTag_file::process($row[$field->realfieldname],$field,$new_array,$row[$ct->Table->realidfieldname]);
                                 }
                                 else
                                     $vlu=$row[$field->realfieldname];
@@ -477,7 +477,7 @@ class tagProcessor_Value
 			{
 				$field = new Field($ct,$ESField,$row);
 				
-                $replaceitecode=md5(JoomlaBasicMisc::generateRandomString().(isset($row['listing_id']) ? $row['listing_id'] : '').$field->fieldname);
+                $replaceitecode=md5(JoomlaBasicMisc::generateRandomString().(isset($row[$ct->Table->realidfieldname]) ? $row[$ct->Table->realidfieldname] : '').$field->fieldname);
                 
 				$temp_items_to_replace=tagProcessor_Value::processPureValues($ct,$htmlresult,$row,$isGalleryLoaded,$getGalleryRows,$isFileBoxLoaded,$getFileBoxRows,$tag_chars);
 				if(count($temp_items_to_replace)!=0)
@@ -498,7 +498,7 @@ class tagProcessor_Value
 						if(!isset($isGalleryLoaded[$fieldname]) or $isGalleryLoaded[$fieldname]==false)
 						{
 							$isGalleryLoaded[$fieldname]=true;
-							$r=CT_FieldTypeTag_imagegallery::getGalleryRows($ct->Table->tablename,$fieldname,$row['listing_id']);
+							$r=CT_FieldTypeTag_imagegallery::getGalleryRows($ct->Table->tablename,$fieldname,$row[$ct->Table->realidfieldname]);
 							$getGalleryRows[$fieldname]=$r;
 						}
 
@@ -516,13 +516,13 @@ class tagProcessor_Value
 							if($isFileBoxLoaded[$fieldname]==false)
 							{
 								$isFileBoxLoaded[$fieldname]=true;
-								$getFileBoxRows[$fieldname]=CT_FieldTypeTag_filebox::getFileBoxRows($ct->Table->tablename,$fieldname,$row['listing_id']);
+								$getFileBoxRows[$fieldname]=CT_FieldTypeTag_filebox::getFileBoxRows($ct->Table->tablename,$fieldname,$row[$ct->Table->realidfieldname]);
 							}
 						}
 						else
 						{
 							$isFileBoxLoaded[$fieldname]=true;
-							$getFileBoxRows[$fieldname]=CT_FieldTypeTag_filebox::getFileBoxRows($ct->Table->tablename,$fieldname,$row['listing_id']);
+							$getFileBoxRows[$fieldname]=CT_FieldTypeTag_filebox::getFileBoxRows($ct->Table->tablename,$fieldname,$row[$ct->Table->realidfieldname]);
 						}
 
 

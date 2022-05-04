@@ -1,7 +1,7 @@
 <?php
 /**
  * CustomTables Joomla! 3.x Native Component
- * @author Ivan komlev <support@joomlaboat.com>
+ * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
  * @license GNU/GPL
  **/
@@ -207,15 +207,16 @@ class CustomTablesViewLog extends JViewLegacy
 
 		$app= JFactory::getApplication();
 		$jinput = JFactory::getApplication()->input;
-		$jinput->set('listing_id', $listing_id);
-		$jinput->set('Itemid', $Itemid);
+
+		$jinput->set("listing_id", $listing_id);
+		$jinput->set('Itemid', $Itemid);		
 
 		$menu = $app->getMenu();
 		$menuparams = $menu->getParams($Itemid);
 
 		$model = new CustomTablesModelDetails;
 		$model->load($menuparams,$listing_id,true);
-
+		
 		if($model->ct->Table->tablename=='')
 			return "Table ".$model->ct->Table->tablename."not found.";
 

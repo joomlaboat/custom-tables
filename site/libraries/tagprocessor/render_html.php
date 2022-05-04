@@ -16,7 +16,7 @@ trait render_html
     protected static function get_CatalogTable_HTML(&$ct, $fields, $class, $dragdrop = false)
 	{
 		//for reload single record functionality
-		$listing_id = $ct->Env->jinput->getCmd('listing_id','');
+		$listing_id = $ct->Env->jinput->getCmd("listing_id",'');
 		$custom_number = $ct->Env->jinput->getInt('number',0);
 		$start = $ct->Env->jinput->getInt('start',0); //pagination
 		// end of for reload single record functionality

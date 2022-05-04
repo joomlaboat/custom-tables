@@ -58,7 +58,7 @@ class CustomTablesRouter extends JComponentRouterView
 							CT_FieldTypeTag_file::process_file_link(end($segments));
 
 							$jinput=JFactory::getApplication()->input;
-							$vars['listing_id'] = $jinput->getInt('listing_id', 0);
+							$vars["listing_id"] = $jinput->getInt("listing_id", 0);
 							$vars['fieldid'] = $jinput->getInt('fieldid', 0);
 							$vars['security'] = $jinput->getCmd('security', 0);//security level letter (d,e,f,g,h,i)
 							$vars['tableid'] = $jinput->getInt('tableid', 0);

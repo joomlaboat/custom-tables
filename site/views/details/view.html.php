@@ -55,7 +55,7 @@ class CustomTablesViewDetails extends JViewLegacy
 		{
 			$redirectto = $this->ct->Env->menu_params->get( 'redirectto' );
 			
-			if((!isset($this->row['listing_id']) or (int)$this->row['listing_id']==0) and $redirectto != '')
+			if((!isset($this->row[$this->ct->Table->realidfieldname]) or (int)$this->row[$this->ct->Table->realidfieldname]==0) and $redirectto != '')
 			{
 				$mainframe->redirect($redirectto);
 			}
@@ -76,7 +76,7 @@ class CustomTablesViewDetails extends JViewLegacy
 
 	function UpdatePHPOnView($row)//,$allowedfields
 	{
-		if(!isset($row['listing_id']))
+		if(!isset($row[$this->ct->Table->realidfieldname]))
 			return false;
 		
 		foreach($this->ct->Table->fields as $mFld)
@@ -122,12 +122,10 @@ class CustomTablesViewDetails extends JViewLegacy
 		if(count($updatefields)>0)
 		{
 				$db = JFactory::getDBO();
-				$query= 'UPDATE #__customtables_table_'.$this->ct->Table->tablename.' SET '.implode(', ', $updatefields).' WHERE id='.$rec['listing_id'];
+				$query= 'UPDATE #__customtables_table_'.$this->ct->Table->tablename.' SET '.implode(', ', $updatefields).' WHERE id='.$rec[$this->ct->Table->realidfieldname];
 
 				$db->setQuery($query);
 				$db->execute();	
 		}
-
 	}
 }
-

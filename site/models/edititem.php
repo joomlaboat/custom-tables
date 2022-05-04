@@ -191,9 +191,9 @@ class CustomTablesModelEditItem extends JModelLegacy
 			
 			$this->processCustomListingID();
 		}
-		elseif(!$BlockExternalVars and $jinput->getInt('listing_id',0)!=0)
+		elseif(!$BlockExternalVars and $jinput->getInt("listing_id",0)!=0)
 		{
-			$this->listing_id = $jinput->getCmd('listing_id',0);
+			$this->listing_id = $jinput->getCmd("listing_id",0);
 			$this->processCustomListingID();
 		}
 			
@@ -208,7 +208,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 		else
 		{
 			//default record values
-			$this->row = ['listing_id' => 0,'listing_published' =>0];
+			$this->row = [$this->ct->Table->realidfieldname => '', 'listing_published' =>0];
 		}
 		
 		return true;
@@ -326,8 +326,8 @@ class CustomTablesModelEditItem extends JModelLegacy
 	
 	function makeEmptyRecord($listing_id,$published)
 	{
-	    $row=array();
-	    $row['listing_id'] = $listing_id;
+	    $row=[];
+	    $row[$this->ct->Table->realidfieldname] = $listing_id;
 	    
 		if($this->ct->Table->published_field_found)
 			$row['published']=$published;
@@ -371,7 +371,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 					$new_row['published']=$row['published'];
 							
 				$new_row[$this->ct->Table->realidfieldname]=$row[$this->ct->Table->realidfieldname];
-				$new_row['listing_id']=$row['listing_id'];
+				
 				$new_row[$log_field]=$row[$log_field];
 
 				if($creation_time_field)
@@ -810,7 +810,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 	function copy(&$msg,&$link)
 	{
 		$jinput = JFactory::getApplication()->input;
-		$listing_id = $jinput->getCmd('listing_id',0);
+		$listing_id = $jinput->getCmd("listing_id",0);
 
 		$db = JFactory::getDBO();
 
@@ -860,7 +860,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 		$db->setQuery( $query );
 		$db->execute();
 
-		$jinput->set('listing_id',$new_id);
+		$jinput->set("listing_id",$new_id);
 		$jinput->set('old_listing_id',$listing_id);
 		$this->listing_id = $new_id;
 
@@ -902,10 +902,18 @@ class CustomTablesModelEditItem extends JModelLegacy
 		$isDebug=$jinput->getInt( 'debug',0);
 
 		if($listing_id == '')
+		{
 			$listing_id = $this->params->get('listingid');
+			if($listing_id == 0)
+				$listing_id = '';
+		}
 
 		if($listing_id == '')
-			$listing_id = $jinput->getCmd('listing_id', 0); //TODO : this inconsistancy must be fixed
+		{
+			$listing_id = $jinput->getCmd("listing_id", ''); //TODO : this inconsistancy must be fixed
+			if($listing_id == 0)
+				$listing_id = '';
+		}
 
 		$fieldstosave=$this->getFieldsToSave(); //will Read page Layout to find fields to save
 
@@ -1002,14 +1010,10 @@ class CustomTablesModelEditItem extends JModelLegacy
 		if(($listing_id==0 or $listing_id == '') and $listing_id_temp!=0)
 		{
 			$row = $this->ct->Table->loadRecord($listing_id_temp);
-			//$query='SELECT '.$this->ct->Table->tablerow['query_selects'].' FROM '.$this->ct->Table->realtablename.' WHERE '.$this->ct->Table->realidfieldname.'='.$db->quote($listing_id_temp).' LIMIT 1';
-			//$db->setQuery( $query );
 
-			//$rows = $db->loadAssocList();
 			if($row != null)
 			{
-				$row=$rows[0];
-				JFactory::getApplication()->input->set('listing_id',$row['listing_id']);
+				JFactory::getApplication()->input->set("listing_id",$row[$this->ct->Table->realidfieldname]);
 
 				if($phponaddfound)
 					$this->doPHPonAdd($row);
@@ -1019,7 +1023,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 					
 				//$this->updateDefaultValues($row);
 
-				$listing_id=$row['listing_id'];
+				$listing_id=$row[$this->ct->Table->realidfieldname];
 			}
 			$this->ct->Table->saveLog($listing_id,1);
 		}
@@ -1030,7 +1034,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 			if($row != null)
 			{
-				JFactory::getApplication()->input->set('listing_id',$row['listing_id']);
+				JFactory::getApplication()->input->set("listing_id",$row[$this->ct->Table->realidfieldname]);
 
 				if($phponchangefound or $this->ct->Table->tablerow['customphp']!='')
 					$this->doPHPonChange($row);
@@ -1078,7 +1082,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 		if($art_link!='')
 			$link=$art_link;
 
-		$link=str_replace('*new*',$row['listing_id'],$link);
+		$link=str_replace('*new*',$row[$this->ct->Table->realidfieldname],$link);
 
 		//Refresh menu if needed
 		$msg= $this->itemaddedtext;
@@ -1089,8 +1093,10 @@ class CustomTablesModelEditItem extends JModelLegacy
 		if($isDebug)
 			die('Debug mode.');//debug mode
 		
-		$jinput->set('listing_id',$listing_id);
+		$jinput->set("listing_id",$listing_id);
 
+echo 'saved';
+die;
 		return true;
 	}
 
@@ -1411,7 +1417,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 	function doPHPonAdd(&$row)
 	{
-		$listing_id = $row['listing_id'];
+		$listing_id = $row[$this->ct->Table->realidfieldname];
 		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'layout.php');
 
 		$LayoutProc=new LayoutProcessor($this->ct);
@@ -1468,7 +1474,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 	function doPHPonChange(&$row)
 	{
-		$listing_id=$row['listing_id'];
+		$listing_id=$row[$this->ct->Table->realidfieldname];
 		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'layout.php');
 
 		$LayoutProc=new LayoutProcessor($this->ct);
@@ -1654,7 +1660,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 			return count($listing_ids_);
 		}
 
-		$listing_id = JFactory::getApplication()->input->getCmd('listing_id', 0);
+		$listing_id = JFactory::getApplication()->input->getCmd("listing_id", 0);
 
 		if($listing_id == 0 or $listing_id == '')
 			return 0;
@@ -1678,7 +1684,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 		
 		$savefield = new SaveFieldQuerySet($this->ct,$row,false);
 		
-		JFactory::getApplication()->input->set('listing_id',$listing_id);
+		JFactory::getApplication()->input->set("listing_id",$listing_id);
 
 		$this->doPHPonChange($row);
 
@@ -1868,7 +1874,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 			return count($listing_ids_);
 		}
 
-		$listing_id = $jinput->getCmd('listing_id',0);
+		$listing_id = $jinput->getCmd("listing_id",0);
 		if($listing_id == '' or $listing_id == 0)
 			return 0;
 

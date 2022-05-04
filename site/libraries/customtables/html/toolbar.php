@@ -41,7 +41,7 @@ class RecordToolbar
 	
 	public function render($row,$mode)
 	{
-		$this->listing_id=$row['listing_id'];
+		$this->listing_id=$row[$this->Table->realidfieldname];
 		$this->rid=$this->Table->tableid.'x'.$this->listing_id;
 		$this->row=$row;
 		

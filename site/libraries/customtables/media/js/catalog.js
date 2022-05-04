@@ -7,7 +7,7 @@
 			obj.innerHTML='';
 			
             var returnto=btoa(window.location.href);
-            var link=esPrepareLink(['task','listing_id','returnto','ids'],['task=createuser','listing_id='+listing_id,'returnto='+returnto]);
+            var link=esPrepareLink(['task',"listing_id",'returnto','ids'],['task=createuser','listing_id='+listing_id,'returnto='+returnto]);
             window.location.href = link;
         }
     }
@@ -18,7 +18,7 @@
 			obj.innerHTML='';
 					
             var returnto=btoa(window.location.href);
-            var link=esPrepareLink(['task','listing_id','returnto','ids'],['task=resetpassword','listing_id='+listing_id,'returnto='+returnto]);
+            var link=esPrepareLink(['task',"listing_id",'returnto','ids'],['task=resetpassword','listing_id='+listing_id,'returnto='+returnto]);
             window.location.href = link;
         }
     }
@@ -119,12 +119,12 @@
 		
 		let tr_object = document.getElementById(element_tableid_tr);
 		if(tr_object){
-			let url = esPrepareLink(['task','listing_id','returnto','ids'],['task=refresh','listing_id='+recordid,'clean=1','tmpl=component']);
+			let url = esPrepareLink(['task',"listing_id",'returnto','ids'],['task=refresh','listing_id='+recordid,'clean=1','tmpl=component']);
 			runTheTask('refresh', tableid,recordid,url,['refreshed'], false);
 		}
 		else{
 			var returnto=btoa(window.location.href);
-			var link=esPrepareLink(['task','listing_id','returnto','ids'],['task=refresh','listing_id='+objid,'returnto='+returnto]);
+			var link=esPrepareLink(['task',"listing_id",'returnto','ids'],['task=refresh','listing_id='+objid,'returnto='+returnto]);
 			window.location.href = link;
 		}
 
@@ -166,12 +166,12 @@
 		let tr_object = document.getElementById(element_tableid_tr);
 		
 		if(tr_object){
-			let url = esPrepareLink(['task','listing_id','returnto','ids'],[task,'listing_id='+recordid,'clean=1','tmpl=component']);
+			let url = esPrepareLink(['task',"listing_id",'returnto','ids'],[task,'listing_id='+recordid,'clean=1','tmpl=component']);
 			runTheTask((publish == 0 ? 'unpublish' : 'publish'), tableid,recordid,url,['published','unpublished'], false);
 		}
 		else{
 			var returnto=btoa(window.location.href);
-			var link=esPrepareLink(['task','listing_id','returnto','ids'],[task,'listing_id='+recordid,'returnto='+returnto]);
+			var link=esPrepareLink(['task',"listing_id",'returnto','ids'],[task,'listing_id='+recordid,'returnto='+returnto]);
 			window.location.href = link;
 		}
 		
@@ -202,12 +202,12 @@
 			let tr_object = document.getElementById(element_tableid_tr);
 			if(tr_object){
 				
-				let url = esPrepareLink(['task','listing_id','returnto','ids'],['task=delete','listing_id='+recordid,'clean=1','tmpl=component']);
+				let url = esPrepareLink(['task',"listing_id",'returnto','ids'],['task=delete','listing_id='+recordid,'clean=1','tmpl=component']);
 				runTheTask('delete', tableid,recordid,url,['deleted'], false);
 			}
 			else{
 				let returnto=btoa(window.location.href);
-				let link=esPrepareLink(['task','listing_id','returnto','ids'],['task=delete','listing_id='+recordid,'returnto='+returnto],custom_link);
+				let link=esPrepareLink(['task',"listing_id",'returnto','ids'],['task=delete','listing_id='+recordid,'returnto='+returnto],custom_link);
 				window.location.href = link;
 			}
         }
@@ -250,7 +250,7 @@
 			else
 				alert('Element "'+n[0]+'" not found.');
 		}
-		var link=esPrepareLink(['where','task','listing_id','returnto'],["where="+Base64.encode(w.join(" and "))]);
+		var link=esPrepareLink(['where','task',"listing_id",'returnto'],["where="+Base64.encode(w.join(" and "))]);
         window.location.href = link;
 	}
 
@@ -318,7 +318,7 @@
 			for(let i=0;i<elements.length;i++)
 			{
 				let recordid = elements[i];
-				let url = esPrepareLink(['task','listing_id','returnto','ids'],['task=' + task,'listing_id='+recordid,'clean=1','tmpl=component']);
+				let url = esPrepareLink(['task',"listing_id",'returnto','ids'],['task=' + task,'listing_id='+recordid,'clean=1','tmpl=component']);
 				let accept_responses = [];
 				if(task == 'refresh')
 					accept_responses = ['refreshed'];
@@ -334,7 +334,7 @@
 			
 		}else{
 			var returnto=btoa(window.location.href);
-			var link=esPrepareLink(['task','listing_id','returnto','ids'],['task='+task,'ids='+elements.toString(),'returnto='+returnto]);
+			var link=esPrepareLink(['task',"listing_id",'returnto','ids'],['task='+task,'ids='+elements.toString(),'returnto='+returnto]);
 			window.location.href = link;
 		}
         return;
@@ -422,7 +422,7 @@
 	
 		let element_tableid = "ctTable_" + tableid;
 
-		let url = esPrepareLink(['task','listing_id','returnto','ids','clean','component','frmt'],['listing_id='+recordsId,'number='+row_index]);
+		let url = esPrepareLink(['task',"listing_id",'returnto','ids','clean','component','frmt'],['listing_id='+recordsId,'number='+row_index]);
 		
 		let params = "";
         let http = CreateHTTPRequestObject ();   // defined in ajax.js
@@ -487,7 +487,7 @@
 			let element_tableid_tr = "ctTable_" +  to_parts[1] + '_' + to_parts[2];
 			let index = findRowIndexById("ctTable_" + to_parts[1],element_tableid_tr);
 
-			let url = esPrepareLink(['task','listing_id','returnto','ids','clean','component','frmt'],['task=copycontent','from='+from,'to='+to,'clean=1','tmpl=component','frmt=json']);
+			let url = esPrepareLink(['task',"listing_id",'returnto','ids','clean','component','frmt'],['task=copycontent','from='+from,'to='+to,'clean=1','tmpl=component','frmt=json']);
 			
 			fetch(url)
 				.then(r => r.json())

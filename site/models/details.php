@@ -42,8 +42,8 @@ class CustomTablesModelDetails extends JModelLegacy
 			if($params->get( 'clean' )==1)
 				$this->ct->Env->clean=1;
 
-			if($this->ct->Env->jinput->getInt('listing_id',0) and $this->ct->Env->jinput->getInt('listing_id',0)!=0)
-				$listing_id= $this->ct->Env->jinput->getInt('listing_id', 0);
+			if($this->ct->Env->jinput->getInt("listing_id",0) and $this->ct->Env->jinput->getInt("listing_id",0)!=0)
+				$listing_id= $this->ct->Env->jinput->getInt("listing_id", 0);
 			else
 				$listing_id=(int)$params->get( 'listingid' );
 
@@ -210,7 +210,7 @@ class CustomTablesModelDetails extends JModelLegacy
 				$new_row= $this->getVersionData($row,$log_field,$version);
 				if(count($new_row)>0)
 				{
-				    $row=$this->makeEmptyRecord($row['listing_id'],$new_row['listing_published']);
+				    $row=$this->makeEmptyRecord($row[$this->ct->Table->realidfieldname],$new_row['listing_published']);
 
 				    //Copy values
 				    foreach($this->ct->Table->fields as $ESField)
@@ -230,8 +230,8 @@ class CustomTablesModelDetails extends JModelLegacy
 
 	function makeEmptyRecord($listing_id,$published)
 	{
-	    $row=array();
-	    $row['listing_id']=$listing_id;
+	    $row = [];
+	    $row[$this->ct->Table->realidfieldname]=$listing_id;
 	    $row['listing_published']=$published;
 
 	    foreach($this->ct->Table->fields as $ESField)
@@ -269,7 +269,7 @@ class CustomTablesModelDetails extends JModelLegacy
 						$obj=json_decode(base64_decode($data_content[3]),true);
 						$new_row=$obj[0];
 						$new_row['listing_published']=$row['listing_published'];
-						$new_row['listing_id']=$row['listing_id'];
+						$new_row[$this->ct->Table->realidfieldname]=$row[$this->ct->Table->realidfieldname];
 						$new_row[$log_field]=$row[$log_field];
 
 

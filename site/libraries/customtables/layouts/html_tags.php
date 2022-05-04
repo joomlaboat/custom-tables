@@ -574,7 +574,7 @@ class Twig_Html_Tags
 
 			case 'saveascopy':
 				
-				if(!isset($this->ct->Table->record['listing_id']) or $this->ct->Table->record['listing_id'] == 0)
+				if(!isset($this->ct->Table->record[$this->ct->Table->realidfieldname]) or $this->ct->Table->record[$this->ct->Table->realidfieldname] == 0)
 					$vlu = '';
 				else
 					$vlu = $this->renderSaveAsCopyButton($optional_class,$title,$redirectlink);

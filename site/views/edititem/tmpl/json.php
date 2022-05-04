@@ -2,9 +2,9 @@
 /**
  * CustomTables Joomla! 3.x Native Component
  * @package Custom Tables
- * @author Ivan komlev <support@joomlaboat.com>
+ * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @copyright Copyright (C) 2018-2021. All Rights Reserved
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
@@ -32,8 +32,8 @@ if (ob_get_contents())
 	//Calendars of the child should be built again, because when Dom was ready they didn't exist yet.
 	//$calendars=array();
 
-	if(isset($this->row['listing_id']))
-		$listing_id=(int)$this->row['listing_id'];
+	if(isset($this->row[$this->ct->Table->realidfieldname]))
+		$listing_id=(int)$this->row[$this->ct->Table->realidfieldname];
 	else
 		$listing_id=0;
 						

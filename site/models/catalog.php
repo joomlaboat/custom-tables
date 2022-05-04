@@ -2,9 +2,9 @@
 /**
  * CustomTables Joomla! 3.x Native Component
  * @package Custom Tables
- * @author Ivan komlev <support@joomlaboat.com>
+ * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @copyright Copyright (C) 2018-2021. All Rights Reserved
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
@@ -60,7 +60,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 		}
 		
 		$this->ct->Env->menu_params = $this->params;
-				
+
 		$this->layout = $layout; //Very strange parameter
 
 		$forceitemid=$this->params->get('forceitemid');
@@ -196,19 +196,20 @@ class CustomTablesModelCatalog extends JModelLegacy
 
 	function cart_deleteitem()
 	{
-		if($this->ct->Env->jinput->get('listing_id',0,'INT')==0)
+		$listing_id = $this->ct->Env->jinput->getCmd("listing_id",'');
+		if($listing_id == '' or (is_numeric($listing_id) and $listing_id == 0))
 			return false;
-			$this->cart_setitemcount(0);
+		
+		$this->cart_setitemcount(0);
 
 		return true;
 	}
 
 	function cart_form_addtocart($itemcount=-1)
 	{
-		if(!$this->ct->Env->jinput->get('listing_id',0,'INT'))
+		$listing_id = $this->ct->Env->jinput->getCmd("listing_id",'');
+		if($listing_id == '' or (is_numeric($listing_id) and $listing_id == 0))
 			return false;
-
-		$objectid=$this->ct->Env->jinput->getInt('listing_id',0);
 
 		if($itemcount==-1)
 			$itemcount=$this->ct->Env->jinput->getInt('itemcount',0);
@@ -227,7 +228,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 					unset($items[$i]); //delete the shit
 				else
 				{
-					if((int)$pair[0]==$objectid)
+					if((int)$pair[0]==$listing_id)
 					{
 						$new_itemcount=(int)$pair[1]+$itemcount;
 						if($new_itemcount==0)
@@ -247,12 +248,12 @@ class CustomTablesModelCatalog extends JModelLegacy
 			}//for
 
 			if(!$found)
-				$items[]=$objectid.','.$itemcount; // add new item
+				$items[]=$listing_id.','.$itemcount; // add new item
 
 			$items=array_values($items);
 		}
 		else
-			$items=array($objectid.','.$itemcount); //add new
+			$items=array($listing_id.','.$itemcount); //add new
 
 		$nc=implode(';',$items);
 		setcookie($this->showcartitemsprefix.$this->ct->Table->tablename, $nc, time()+3600*24);
@@ -261,10 +262,9 @@ class CustomTablesModelCatalog extends JModelLegacy
 
 	function cart_setitemcount($itemcount=-1)
 	{
-		if(!$this->ct->Env->jinput->get('listing_id',0,'INT'))
+		$listing_id = $this->ct->Env->jinput->getCmd("listing_id",'');
+		if($listing_id == '' or (is_numeric($listing_id) and $listing_id == 0))
 			return false;
-
-		$objectid=$this->ct->Env->jinput->get('listing_id',0,'INT');
 
 		$app = JFactory::getApplication();
 
@@ -285,7 +285,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 					unset($items[$i]); //delete the shit
 				else
 				{
-					if((int)$pair[0]==$objectid)
+					if((int)$pair[0]==$listing_id)
 					{
 						if($itemcount==0)
 						{
@@ -304,12 +304,12 @@ class CustomTablesModelCatalog extends JModelLegacy
 			}//for
 
 			if(!$found)
-				$items[]=$objectid.','.$itemcount; // add new item
+				$items[]=$listing_id.','.$itemcount; // add new item
 
 			$items=array_values($items);
 		}
 		else
-			$items=array($objectid.','.$itemcount); //add new
+			$items=array($listing_id.','.$itemcount); //add new
 
 		$nc=implode(';',$items);
 		setcookie($this->showcartitemsprefix.$this->ct->Table->tablename, $nc, time()+3600*24);
@@ -318,10 +318,10 @@ class CustomTablesModelCatalog extends JModelLegacy
 
 	function cart_addtocart()
 	{
-		if(!$this->ct->Env->jinput->get('listing_id',0,'INT'))
+		$listing_id = $this->ct->Env->jinput->getCmd("listing_id",'');
+		if($listing_id == '' or (is_numeric($listing_id) and $listing_id == 0))
 			return false;
 
-		$objectid=$this->ct->Env->jinput->get('listing_id',0,'INT');
 		$cookieValue = $this->ct->Env->jinput->cookie->getVar($this->showcartitemsprefix.$this->ct->Table->tablename);
 
 		if (isset($cookieValue))
@@ -336,7 +336,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 					unset($items[$i]); //delete the shit
 				else
 				{
-					if((int)$pair[0]==$objectid)
+					if((int)$pair[0]==$listing_id)
 					{
 						//update counter
 						$pair[1]=((int)$pair[1])+1;
@@ -347,12 +347,12 @@ class CustomTablesModelCatalog extends JModelLegacy
 			}
 
 			if(!$found)
-				$items[]=$objectid.',1'; // add new item
+				$items[]=$listing_id.',1'; // add new item
 
 			$items=array_values($items);
 		}
 		else
-			$items=array($objectid.',1'); //add new
+			$items=array($listing_id.',1'); //add new
 
 		$nc=implode(';',$items);
 

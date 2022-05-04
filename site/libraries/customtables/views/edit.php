@@ -2,9 +2,9 @@
 /**
  * CustomTables Joomla! 3.x Native Component
  * @package Custom Tables
- * @author Ivan komlev <support@joomlaboat.com>
+ * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @copyright Copyright (C) 2018-2021. All Rights Reserved
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
@@ -33,8 +33,8 @@ function CTViewEdit(&$ct, $row, &$pagelayout, $BlockExternalVars,$formLink,$form
 			.JoomlaBasicMisc::JTextExtended($ct->Env->menu_params->get( 'page_title' )).'</h2></div>';
 	}
 
-	if(isset($row['listing_id']))
-		$listing_id=(int)$row['listing_id'];
+	if(isset($row[$ct->Table->realidfieldname]))
+		$listing_id=(int)$row[$ct->Table->realidfieldname];
 	else
 		$listing_id=0;
 

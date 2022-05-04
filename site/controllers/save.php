@@ -59,7 +59,7 @@ function CustomTablesDelete($task,&$this_)
 	$edit_model = $this_->getModel('edititem');
 	$menu_params=$app->getParams();
 	$edit_model->params=$menu_params;
-	$edit_model->listing_id = $jinput->getCmd('listing_id');
+	$edit_model->listing_id = $jinput->getCmd("listing_id");
 	$edit_model->load($menu_params, false);
 	
 	$PermissionIndex=3;//delete
@@ -143,14 +143,14 @@ function CustomTablesSave($task,&$this_)
 
 		if($task=='saveandcontinue')
 		{
-			$link=JoomlaBasicMisc::deleteURLQueryOption($link, 'listing_id');
+			$link=JoomlaBasicMisc::deleteURLQueryOption($link, "listing_id");
 
 			if(strpos($link,"?")===false)
 				$link.='?';
 			else
 				$link.='&';
 			
-			$link.='listing_id='.$jinput->getInt('listing_id');
+			$link.='listing_id='.$jinput->getInt("listing_id");
 			
 			//stay on the same page if "saveandcontinue"
 			//return;
@@ -185,7 +185,7 @@ function CustomTablesSave($task,&$this_)
 			}
 			elseif($link!='')
 			{
-				$link=str_replace('$get_listing_id',JFactory::getApplication()->input->get('listing_id',0,'INT'),$link);
+				$link=str_replace('$get_listing_id',JFactory::getApplication()->input->get("listing_id",0,'INT'),$link);
 
 
 
@@ -214,7 +214,7 @@ function CustomTablesSave($task,&$this_)
 				{
 				    $link = $model->ct->Env->WebsiteRoot.'index.php?option=com_customtables&view=details'
 												.'&Itemid='.JFactory::getApplication()->input->get('Itemid',0,'INT')
-												.'&listing_id='.JFactory::getApplication()->input->get('listing_id',0,'INT')
+												.'&listing_id='.JFactory::getApplication()->input->get("listing_id",0,'INT')
 												.'&tmpl=component'
 												.'&print=1'
 												;

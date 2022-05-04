@@ -460,7 +460,7 @@ class CustomTablesKeywordSearch
 
 				foreach($rows as $row)
 				{
-						if(in_array($row['listing_id'],$listing_ids))
+						if(in_array($row[$this->ct->Table->realidfieldname],$listing_ids))
 								$exist=true;
 						else
 								$exist=false;
@@ -470,7 +470,7 @@ class CustomTablesKeywordSearch
 								$result_rows[]=$row;
 
 
-								$listing_ids[]=$row['listing_id'];
+								$listing_ids[]=$row[$this->ct->Table->realidfieldname];
 
 								$count++;
 						}

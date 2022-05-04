@@ -27,10 +27,10 @@ class tagProcessor_Edit
     {
 		$ct_html = new Twig_Html_Tags($ct, false);
 		
-        if(isset($row['listing_id']))
-            $listing_id=(int)$row['listing_id'];
+        if(isset($row[$ct->Table->realidfieldname]))
+            $listing_id=(int)$row[$ct->Table->realidfieldname];
         else
-        	$listing_id=0;
+        	$listing_id='';
         
         $captcha_found = tagProcessor_Edit::process_captcha($ct_html,$pagelayout); //Converted to Twig. Original replaced.
 	

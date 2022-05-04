@@ -381,7 +381,7 @@ class fieldObject
 		else
 		{
 			$postfix='';
-            $ajax_prefix = 'com_'.$this->ct->Table->record['listing_id'].'_';//example: com_153_es_fieldname or com_153_ct_fieldname
+            $ajax_prefix = 'com_'.$this->ct->Table->record[$this->ct->Table->realidfieldname].'_';//example: com_153_es_fieldname or com_153_ct_fieldname
 
 			if($this->field->type=='multilangstring')
 			{
@@ -417,7 +417,7 @@ class fieldObject
 			$args[0] = 'border:none !important;width:auto;box-shadow:none;';
 			
 			$onchange='ct_UpdateSingleValue(\''.$this->ct->Env->WebsiteRoot.'\','.$this->ct->Env->Itemid.',\''
-				.$this->field->fieldname.'\','.$this->ct->Table->record['listing_id'].',\''.$postfix.'\');';
+				.$this->field->fieldname.'\','.$this->ct->Table->record[$this->ct->Table->realidfieldname].',\''.$postfix.'\');';
 
 			if(isset($value_option_list[1]))
 				$args[1] .= $value_option_list[1];

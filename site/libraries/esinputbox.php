@@ -77,7 +77,7 @@ class ESInputBox
 		if($row==null)
 			$row=array();
 
-		if(count($row)==0 or (isset($row['listing_id']) and $row['listing_id'] == 0))
+		if(count($row)==0 or (isset($row[$this->ct->Table->realidfieldname]) and $row[$this->ct->Table->realidfieldname] == 0))
 		{
 			$value=$this->ct->Env->jinput->getString($realFieldName);
 			if($value=='')
@@ -102,7 +102,7 @@ class ESInputBox
 
 						if($esfield['type']=='alias')
 						{
-							$listing_id=isset($row['listing_id']) ? $row['listing_id'] : 0;
+							$listing_id=isset($row[$this->ct->Table->realidfieldname]) ? $row[$this->ct->Table->realidfieldname] : 0;
 							$value=$this->ct->Table->prepare_alias_type_value($listing_id,$value,$esfield['realfieldname']);
 						}
 			        }

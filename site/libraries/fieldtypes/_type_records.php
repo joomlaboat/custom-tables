@@ -66,7 +66,7 @@ class CT_FieldTypeTag_records
 		$CleanSearchResult=array();
 		foreach($records as $row)
 		{
-			if(in_array($row['listing_id'],$valuearray))
+			if(in_array($row[$ct->Table->realidfieldname],$valuearray))
 				$CleanSearchResult[]=$row;
 		}
 		

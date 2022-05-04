@@ -394,7 +394,7 @@ class CT_FieldTypeTag_file
 	{
 		$field = new Field($ct,$fieldrow);
 		
-        if(count($row)>0 and $row['listing_id'] != 0)
+        if(count($row)>0 and $row[$ct->Table->realidfieldname] != 0)
             $file=$row[$field->realfieldname];
         else
             $file='';
@@ -576,7 +576,7 @@ class CT_FieldTypeTag_file
             CT_FieldTypeTag_file::wrong();
 
         $listing_id=$key_params_a[0];
-		$jinput->set('listing_id', $listing_id);
+		$jinput->set("listing_id", $listing_id);
 		
 		if(isset($key_params_a[1]))
 		{

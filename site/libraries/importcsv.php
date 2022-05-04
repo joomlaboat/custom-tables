@@ -142,7 +142,7 @@ function findRecord($realtablename,$realidfieldname,bool $published_field_found,
 	if($published_field_found)
 		$wheres[]='published=1';
 	
-	$query='SELECT '.$realidfieldname.' AS listing_id FROM '.$realtablename.' WHERE '.implode(' AND ',$wheres).' LIMIT 1';
+	$query='SELECT '.$realidfieldname.' FROM '.$realtablename.' WHERE '.implode(' AND ',$wheres).' LIMIT 1';
 	
 	$db->setQuery($query);
 	$records=$db->loadAssocList();
@@ -150,7 +150,7 @@ function findRecord($realtablename,$realidfieldname,bool $published_field_found,
 	if(count($records)==0)
 		return false;
 		
-	return (int)$records[0]['listing_id'];
+	return (int)$records[0][$realidfieldname];
 }
 
 function findSQLRecordJoin($realtablename,$join_realfieldname,$realidfieldname,bool $published_field_found,$vlus_str)
@@ -166,7 +166,7 @@ function findSQLRecordJoin($realtablename,$join_realfieldname,$realidfieldname,b
 	if($published_field_found)
 		$wheres[]='published=1';
 	
-	$query='SELECT '.$realidfieldname.' AS listing_id FROM '.$realtablename.' WHERE '.implode(' AND ',$wheres);
+	$query='SELECT '.$realidfieldname.' FROM '.$realtablename.' WHERE '.implode(' AND ',$wheres);
 	$db->setQuery($query);
 	$records=$db->loadAssocList();
   
@@ -175,7 +175,7 @@ function findSQLRecordJoin($realtablename,$join_realfieldname,$realidfieldname,b
     
 	$listing_ids=array();
 	foreach($records as $record)
-		$listing_ids[]=$record['listing_id'];
+		$listing_ids[]=$record[$realidfieldname];
 	
 	return $listing_ids;
 }
@@ -189,7 +189,7 @@ function findSQLJoin($realtablename,$join_realfieldname,$realidfieldname,bool $p
 		
 	$wheres[]=$db->quoteName($join_realfieldname).'='.$db->quote($vlu);
 	
-	$query='SELECT '.$realidfieldname.' AS listing_id FROM '.$realtablename.' WHERE '.implode(' AND ',$wheres).' LIMIT 1';
+	$query='SELECT '.$realidfieldname.' FROM '.$realtablename.' WHERE '.implode(' AND ',$wheres).' LIMIT 1';
 	
 	$db->setQuery($query);
 	$records=$db->loadAssocList();
@@ -197,7 +197,7 @@ function findSQLJoin($realtablename,$join_realfieldname,$realidfieldname,bool $p
 	if(count($records)==0)
 		return false;
     
-	return $records[0]['listing_id'];
+	return $records[0][$realidfieldname];
 }
 
 function addSQLJoinSets($realtablename,$sets)

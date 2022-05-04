@@ -139,8 +139,8 @@ class JHTMLESRecords
                                             else
                                                 $style='';
 
-												$htmlresult.='<option value="'.$row['listing_id'].'" '
-														.((in_array($row['listing_id'],$valuearray) and count($valuearray)>0) ? ' SELECTED ' : '')
+												$htmlresult.='<option value="'.$row[$model->ct->Table->realidfieldname].'" '
+														.((in_array($row[$model->ct->Table->realidfieldname],$valuearray) and count($valuearray)>0) ? ' SELECTED ' : '')
 														.' '.$style.'>';
 
 												$htmlresult.=$row[$real_field].'</option>';
@@ -159,8 +159,8 @@ class JHTMLESRecords
 														.'<input type="radio" '
 														.'name="'.$control_name.'" '
 														.'id="'.$control_name.'_'.$i.'" '
-														.'value="'.$row['listing_id'].'" '
-														.((in_array($row['listing_id'],$valuearray) and count($valuearray)>0) ? ' checked="checked" ' : '')
+														.'value="'.$row[$model->ct->Table->realidfieldname].'" '
+														.((in_array($row[$model->ct->Table->realidfieldname],$valuearray) and count($valuearray)>0) ? ' checked="checked" ' : '')
 														.($cssclass!='' ? 'class="'.$cssclass.'"' : '')
 														.' /></td>';
 
@@ -187,8 +187,8 @@ class JHTMLESRecords
 														.'<input type="checkbox" '
 														.'name="'.$control_name.'[]" '
 														.'id="'.$control_name.'_'.$i.'" '
-														.'value="'.$row['listing_id'].'" '
-														.((in_array($row['listing_id'],$valuearray) and count($valuearray)>0 ) ? ' checked="checked" ' : '')
+														.'value="'.$row[$model->ct->Table->realidfieldname].'" '
+														.((in_array($row[$model->ct->Table->realidfieldname],$valuearray) and count($valuearray)>0 ) ? ' checked="checked" ' : '')
 														.($cssclass!='' ? 'class="'.$cssclass.'"' : '')
 														.' /></td>';
 
@@ -243,8 +243,8 @@ class JHTMLESRecords
 										$htmlresult.='<input type="checkbox" '
 										.'name="'.$control_name.'[]" '
 										.'id="'.$control_name.'_'.$i.'" '
-										.'value="'.$row['listing_id'].'" '
-										.((in_array($row['listing_id'],$valuearray) and count($valuearray)>0) ? ' checked="checked" ' : '')
+										.'value="'.$row[$model->ct->Table->realidfieldname].'" '
+										.((in_array($row[$model->ct->Table->realidfieldname],$valuearray) and count($valuearray)>0) ? ' checked="checked" ' : '')
 										.' />';
 								}
 								elseif($selectorpair[0]=='single' or $selectorpair[0]=='radio')
@@ -252,8 +252,8 @@ class JHTMLESRecords
 										$htmlresult.='<input type="radio" '
 										.'name="'.$control_name.'" '
 										.'id="'.$control_name.'_'.$i.'" '
-										.'value="'.$row['listing_id'].'" '
-										.((in_array($row['listing_id'],$valuearray) and count($valuearray)>0) ? ' checked="checked" ' : '')
+										.'value="'.$row[$model->ct->Table->realidfieldname].'" '
+										.((in_array($row[$model->ct->Table->realidfieldname],$valuearray) and count($valuearray)>0) ? ' checked="checked" ' : '')
 										.' />';
 								}
 								else
@@ -301,9 +301,9 @@ class JHTMLESRecords
 			$filtervalue='';
 			foreach($model_nofilter->ct->Records as $row)
 			{
-				if($row['listing_id']==$value)
+				if($row[$model_nofilter->ct->Table->realidfieldname]==$value)
 				{
-					$filtervalue=$row[$model->ct->Env->field_prefix.$dynamic_filter];
+					$filtervalue=$row[$model_nofilter->ct->Env->field_prefix.$dynamic_filter];
 					break;
 				}
 			}
@@ -323,13 +323,13 @@ class JHTMLESRecords
 
 		foreach($model->ct->Records as $row)
 		{
-			if(in_array($row['listing_id'],$valuearray) and count($valuearray)>0 )
+			if(in_array($row[$model->ct->Table->realidfieldname],$valuearray) and count($valuearray)>0 )
 			{
-				$htmlresult_options.='<option value="'.$row['listing_id'].'" SELECTED '.($row['listing_published']==0 ? ' disabled="disabled"' : '').'>';
+				$htmlresult_options.='<option value="'.$row[$model->ct->Table->realidfieldname].'" SELECTED '.($row['listing_published']==0 ? ' disabled="disabled"' : '').'>';
 				$valuefound=true;
 			}
 			else
-				$htmlresult_options.='<option value="'.$row['listing_id'].'" '.($row['listing_published']==0 ? ' disabled="disabled"' : '').'>';
+				$htmlresult_options.='<option value="'.$row[$model->ct->Table->realidfieldname].'" '.($row['listing_published']==0 ? ' disabled="disabled"' : '').'>';
 
 			$v=JoomlaBasicMisc::processValue($field,$model->ct,$row,$langpostfix);
 			$htmlresult_options.=$v;
@@ -337,7 +337,7 @@ class JHTMLESRecords
 			if($dynamic_filter!='')
 			{
 				$elements[]=$v;
-				$elementsID[]=$row['listing_id'];
+				$elementsID[]=$row[$model->ct->Table->realidfieldname];
 				$elementsFilter[]=$row[$model->ct->Env->field_prefix.$dynamic_filter];
 				$elementsPublished[]=(int)$row['listing_published'];
 			}
@@ -351,13 +351,13 @@ class JHTMLESRecords
 
 			foreach($model_nofilter->ct->Records as $row)
 			{
-				if(in_array($row['listing_id'],$valuearray) and count($valuearray)>0 )
+				if(in_array($row[$model_nofilter->ct->Table->realidfieldname],$valuearray) and count($valuearray)>0 )
 				{
-					$htmlresult_options.='<option value="'.$row['listing_id'].'" SELECTED '.($row['listing_published']==0 ? ' disabled="disabled"' : '').'>';
+					$htmlresult_options.='<option value="'.$row[$model_nofilter->ct->Table->realidfieldname].'" SELECTED '.($row['listing_published']==0 ? ' disabled="disabled"' : '').'>';
 					$valuefound=true;
 				}
 				else
-					$htmlresult_options.='<option value="'.$row['listing_id'].'" '.($row['listing_published']==0 ? ' disabled="disabled"' : '').'>';
+					$htmlresult_options.='<option value="'.$row[$model_nofilter->ct->Table->realidfieldname].'" '.($row['listing_published']==0 ? ' disabled="disabled"' : '').'>';
 
 				$v=JoomlaBasicMisc::processValue($field,$model_nofilter->ct,$row,$langpostfix);
 				$htmlresult_options.=$v;
@@ -365,8 +365,8 @@ class JHTMLESRecords
 				if($dynamic_filter!='')
 				{
 					$elements[]=$v;
-					$elementsID[]=$row['listing_id'];
-					$elementsFilter[]=$row[$model->ct->Env->field_prefix.$dynamic_filter];
+					$elementsID[]=$row[$model_nofilter->ct->Table->realidfieldname];
+					$elementsFilter[]=$row[$model_nofilter->ct->Env->field_prefix.$dynamic_filter];
 					$elementsPublished[]=(int)$row['listing_published'];
 				}
 				$htmlresult_options.='</option>';
@@ -416,9 +416,9 @@ class JHTMLESRecords
 		
 		foreach($model->ct->Records as $row)
 		{
-			if(in_array($row['listing_id'],$valuearray) and count($valuearray)>0)
+			if(in_array($row[$model->ct->Table->realidfieldname],$valuearray) and count($valuearray)>0)
 			{
-				$ctInputboxRecords_r[]=$row['listing_id'];
+				$ctInputboxRecords_r[]=$row[$model->ct->Table->realidfieldname];
 				$ctInputboxRecords_v[]=$row[$real_field];
 				$ctInputboxRecords_p[]=(int)$row['listing_published'];
 			}

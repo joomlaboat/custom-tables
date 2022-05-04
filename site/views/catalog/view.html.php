@@ -159,7 +159,7 @@ class CustomTablesViewCatalog extends JViewLegacy
 		$this->ct = $this->Model->ct;
 		
 		$addition_filter='';
-		$this->listing_id = $jinput->getCmd('listing_id','');
+		$this->listing_id = $jinput->getCmd("listing_id",'');
 		if($this->listing_id != '')
 			$addition_filter = $this->ct->Table->realidfieldname . '=' . $this->listing_id;
 		
@@ -249,7 +249,7 @@ class CustomTablesViewCatalog extends JViewLegacy
 		if(count($updatefields)>0)
 		{
 			$db = Factory::getDBO();
-			$query= 'UPDATE '.$this->ct->Table->realtablename.' SET '.implode(', ', $updatefields).' WHERE id='.$rec['listing_id'];
+			$query= 'UPDATE '.$this->ct->Table->realtablename.' SET '.implode(', ', $updatefields).' WHERE id='.$rec[$this->ct->Table->realidfieldname];
 			$db->setQuery($query);
 		    $db->execute();
 		}

@@ -65,7 +65,7 @@ class JHTMLESSQLJoinView
 			$getGalleryRows=array();
 			foreach($records as $row)
 			{
-				if($row['listing_id']==$value)
+				if($row[$model->ct->Table->realidfieldname]==$value)
 					$htmlresult.=JoomlaBasicMisc::processValue($field,$model->ct,$row,$langpostfix);
 			}
 		}
@@ -124,7 +124,7 @@ class JHTMLESSQLJoinView
 			$CleanSearchResult=array();
 			foreach($records as $row)
 			{
-				if(in_array($row['listing_id'],$valuearray))
+				if(in_array($row[$model->ct->Table->realidfieldname],$valuearray))
 					$CleanSearchResult[]=$row;
 			}
 

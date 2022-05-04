@@ -48,7 +48,7 @@ class Twig_Record_Tags
 			return '';
 		}
 
-		return $this->ct->Table->record['listing_id'];
+		return $this->ct->Table->record[$this->ct->Table->realidfieldname];
 	}
 	
 	function link($add_returnto = false, $menu_item_alias='', $custom_not_base64_returnto = '')//wizard ok
@@ -78,10 +78,10 @@ class Twig_Record_Tags
 			if($alias != '')
 				$viewlink .= '&alias='.$alias;
 			else
-				$viewlink .= '&listing_id='.$this->ct->Table->record['listing_id'];
+				$viewlink .= '&listing_id='.$this->ct->Table->record[$this->ct->Table->realidfieldname];
 		}
 		else
-			$viewlink .= '&listing_id='.$this->ct->Table->record['listing_id'];
+			$viewlink .= '&listing_id='.$this->ct->Table->record[$this->ct->Table->realidfieldname];
 
 		$viewlink .= '&Itemid=' . ($menu_item_id == 0 ? $this->ct->Env->Itemid : $menu_item_id);
 
@@ -92,7 +92,7 @@ class Twig_Record_Tags
 			if($custom_not_base64_returnto)
 				$returnto = base64_encode($custom_not_base64_returnto);			
 			else
-				$returnto = base64_encode($this->ct->Env->current_url.'#a'.$this->ct->Table->record['listing_id']);			
+				$returnto = base64_encode($this->ct->Env->current_url.'#a'.$this->ct->Table->record[$this->ct->Table->realidfieldname]);			
 		
 			$viewlink .= ($returnto!='' ? '&returnto='.$returnto : '');
 		}
@@ -157,13 +157,13 @@ class Twig_Record_Tags
 	{
 		if($join_table == '')
 		{
-			Factory::getApplication()->enqueueMessage('{{ record.count("'.$join_table.'") }} - Table not specified.', 'error');
+			Factory::getApplication()->enqueueMessage('{{ record.joincount("'.$join_table.'") }} - Table not specified.', 'error');
 			return '';
 		}
 			
 		if(!isset($this->ct->Table))
 		{
-			Factory::getApplication()->enqueueMessage('{{ record.count("'.$join_table.'") }} - Parent table not loaded.', 'error');
+			Factory::getApplication()->enqueueMessage('{{ record.joincount("'.$join_table.'") }} - Parent table not loaded.', 'error');
 			return '';
 		}
 		
@@ -171,7 +171,7 @@ class Twig_Record_Tags
 			
 		if(count($join_table_fields) == 0)
 		{
-			Factory::getApplication()->enqueueMessage('{{ record.count("'.$join_table.'") }} - Table not found or it has no fields.', 'error');
+			Factory::getApplication()->enqueueMessage('{{ record.joincount("'.$join_table.'") }} - Table not found or it has no fields.', 'error');
 			return '';
 		}
 			
@@ -186,33 +186,33 @@ class Twig_Record_Tags
 			}
 		}
 			
-		Factory::getApplication()->enqueueMessage('{{ record.count("'.$join_table.'") }} - Table found but the field that links to this table not found.', 'error');
+		Factory::getApplication()->enqueueMessage('{{ record.joincount("'.$join_table.'") }} - Table found but the field that links to this table not found.', 'error');
 		return '';
 	}
 	
 	function joinavg(string $join_table = '', string $value_field = '', string $filter = '')//wizard ok
 	{
-		return $this->simple_join('avg', $join_table, $value_field, 'record.valuejoin', $filter);
+		return $this->simple_join('avg', $join_table, $value_field, 'record.joinavg', $filter);
 	}
 	
 	function joinmin(string $join_table = '', string $value_field = '', string $filter = '')//wizard ok
 	{
-		return $this->simple_join('min', $join_table, $value_field, 'record.valuejoin', $filter);
+		return $this->simple_join('min', $join_table, $value_field, 'record.joinmin', $filter);
 	}
 	
 	function joinmax(string $join_table = '', string $value_field = '', string $filter = '')//wizard ok
 	{
-		return $this->simple_join('max', $join_table, $value_field, 'record.valuejoin', $filter);
+		return $this->simple_join('max', $join_table, $value_field, 'record.joinmax', $filter);
 	}
 	
 	function joinsum(string $join_table = '', string $value_field = '', string $filter = '')//wizard ok
 	{
-		return $this->simple_join('sum', $join_table, $value_field, 'record.valuejoin', $filter);
+		return $this->simple_join('sum', $join_table, $value_field, 'record.joinsum', $filter);
 	}
 	
 	function joinvalue(string $join_table = '', string $value_field = '', string $filter = '')//wizard ok
 	{
-		return $this->simple_join('value', $join_table, $value_field, 'record.valuejoin', $filter);
+		return $this->simple_join('value', $join_table, $value_field, 'record.joinvalue', $filter);
 	}
 	
 	function jointable($layoutname = '', $filter = '', $orderby = '', $limit = 0)//wizard ok
@@ -284,6 +284,7 @@ class Twig_Record_Tags
 		$field_details = $this->join_getRealFieldName($field1_findwhat, $this->ct->Table->tablerow);
 		if($field_details == null) return '';
 		$field1_findwhat_realname = $field_details[0];
+		$field1_type = $field_details[1];
 		
 		$field_details = $this->join_getRealFieldName($field2_lookwhere, $tablerow);
 		if($field_details == null)	return '';
@@ -295,7 +296,9 @@ class Twig_Record_Tags
 		$field3_readvalue_realname = $field_details[0];
 		
 		$sj_tablename = $tablerow['tablename'];
-		$additional_where = $this->join_processWhere($filter, $sj_tablename);
+		$sj_realtablename = $tablerow['realtablename'];
+		$sj_realidfieldname = $tablerow['realidfieldname'];
+		$additional_where = $this->join_processWhere($filter, $sj_realtablename, $sj_realidfieldname);
 		
 		if($order_by_option!='')
 		{
@@ -307,9 +310,9 @@ class Twig_Record_Tags
 
 		
 		
-		$query = $this->join_buildQuery($sj_function, $tablerow, $field1_findwhat_realname, $field2_lookwhere_realname, 
+		$query = $this->join_buildQuery($sj_function, $tablerow, $field1_findwhat_realname, $field1_type, $field2_lookwhere_realname, 
 				$field2_type, $field3_readvalue_realname, $additional_where, $order_by_option_realname);
-		
+				
 		$db = Factory::getDBO();
 		
 		$db->setQuery($query);
@@ -318,7 +321,7 @@ class Twig_Record_Tags
 
 		if(count($rows)==0)
 		{
-			$vlu='';
+			$vlu='no records found';
 		}
 		else
 		{
@@ -427,7 +430,7 @@ class Twig_Record_Tags
 			if($tablerow['published_field_found'])
 				return ['published','_published'];
 			else
-				Factory::getApplication()->enqueueMessage('{{ record.join }} - Table doesn\' have "published" field.', 'error');
+				Factory::getApplication()->enqueueMessage('{{ record.join... }} - Table doesn\' have "published" field.', 'error');
 		}
 		else
 		{
@@ -437,12 +440,12 @@ class Twig_Record_Tags
 				return [$field1_row->realfieldname,$field1_row->type];
 			}
 			else
-				Factory::getApplication()->enqueueMessage('{{ record.join }} - Field "'.$fieldname.'" not found.', 'error');
+				Factory::getApplication()->enqueueMessage('{{ record.join... }} - Field "'.$fieldname.'" not found.', 'error');
 		}
 		return null;
 	}
 	
-	protected function join_processWhere($additional_where,$sj_tablename)
+	protected function join_processWhere($additional_where,$sj_realtablename, $sj_realidfieldname)
 	{
 		if($additional_where == '')
 			return '';
@@ -460,7 +463,7 @@ class Twig_Record_Tags
 					$b=str_replace('$now','now()',$b);
 
 					//read $get_ values
-					$b=$this->join_ApplyQueryGetValue($b,$sj_tablename);
+					$b=$this->join_ApplyQueryGetValue($b,$sj_realtablename, $sj_realidfieldname);
 
 					$w[]=$b;
 				}
@@ -471,7 +474,7 @@ class Twig_Record_Tags
 		return implode(' ',$w);
 	}
 	
-	protected function join_buildQuery($sj_function, &$tablerow, $field1_findwhat, $field2_lookwhere, $field2_type, $field3_readvalue, $additional_where, $order_by_option)
+	protected function join_buildQuery($sj_function, &$tablerow, $field1_findwhat, $field1_type, $field2_lookwhere, $field2_type, $field3_readvalue, $additional_where, $order_by_option)
 	{
 		$db = Factory::getDBO();
 		
@@ -500,15 +503,29 @@ class Twig_Record_Tags
 			// Join not needed when we are in the same table
 			$query.=' LEFT JOIN '.$tablerow['realtablename'].' ON ';
 
-			if($field2_type=='records')
+			if($field1_type=='records')
 			{
-				$query.='INSTR('.$tablerow['realtablename'].'.'.$field2_lookwhere
-					.',  CONCAT(",",'.$this->ct->Table->realtablename.'.'.$field1_findwhat.',","))' ;
+				if($field2_type=='records')
+				{
+					$query.='1==2'; //todo
+				}
+				else
+				{
+					$query.='INSTR('.$this->ct->Table->realtablename.'.'.$field1_findwhat.',CONCAT(",",'.$tablerow['realtablename'].'.'.$field2_lookwhere.',","))' ;
+				}
 			}
 			else
 			{
-				$query.=' '.$this->ct->Table->realtablename.'.'.$field1_findwhat.' = '
-					.' '.$tablerow['realtablename'].'.'.$field2_lookwhere;
+				if($field2_type=='records')
+				{
+					$query.='INSTR('.$tablerow['realtablename'].'.'.$field2_lookwhere
+						.',  CONCAT(",",'.$this->ct->Table->realtablename.'.'.$field1_findwhat.',","))' ;
+				}
+				else
+				{
+					$query.=' '.$this->ct->Table->realtablename.'.'.$field1_findwhat.' = '
+						.' '.$tablerow['realtablename'].'.'.$field2_lookwhere;
+				}
 			}
 		}
 
@@ -517,7 +534,7 @@ class Twig_Record_Tags
 		if($this->ct->Table->tablename != $sj_tablename)
 		{
 			//don't attach to specific record when it is the same table, example : to find averages
-			$wheres[]=$this->ct->Table->realtablename.'.'.$this->ct->Table->tablerow['realidfieldname'].'='.$db->quote($this->ct->Table->record['listing_id']);
+			$wheres[]=$this->ct->Table->realtablename.'.'.$this->ct->Table->tablerow['realidfieldname'].'='.$db->quote($this->ct->Table->record[$this->ct->Table->realidfieldname]);
 		}
 		else
 		{
@@ -538,7 +555,7 @@ class Twig_Record_Tags
 		return $query;
 	}
 	
-	protected function join_ApplyQueryGetValue($str,$sj_tablename)
+	protected function join_ApplyQueryGetValue($str,$sj_realtablename, $sj_realidfieldname)
 	{
 		$list=explode('$get_',$str);
 		if(count($list)==2)
@@ -551,7 +568,7 @@ class Twig_Record_Tags
 
 			if(strpos($v,','))
 			{
-				$f='#__customtables_table_'.$sj_tablename.'.es_'.str_replace('$get_'.$q,'',$str);
+				$f=$sj_realtablename.'.es_'.str_replace('$get_'.$q,'',$str);
 				$values=explode(',',$v);
 
 
@@ -565,20 +582,20 @@ class Twig_Record_Tags
 				return $v;
 			}
 
-			return '#__customtables_table_'.$sj_tablename.'.es_'.str_replace('$get_'.$q,'"'.$v.'"',$str);
+			return $sj_realtablename.'.es_'.str_replace('$get_'.$q,'"'.$v.'"',$str);
 		}
         else
         {
             if(strpos($str,'_id')!==false)
-                return '#__customtables_table_'.$sj_tablename.'.'.str_replace('_id','listing_id',$str);
+                return $sj_realtablename.'.'.str_replace('_id',$sj_realidfieldname,$str);
             elseif(strpos($str,'_published')!==false)
-                return '#__customtables_table_'.$sj_tablename.'.'.str_replace('_published','published',$str);
+                return $sj_realtablename.'.'.str_replace('_published','published',$str);//TODO replace publish with realpublish field name
         }
 
 		$str=str_replace('!=null',' IS NOT NULL',$str);
 		$str=str_replace('=null',' IS NULL',$str);
 
-		return '#__customtables_table_'.$sj_tablename.'.es_'.$str;
+		return $sj_realtablename.'.es_'.$str;
 	}
 	
 }

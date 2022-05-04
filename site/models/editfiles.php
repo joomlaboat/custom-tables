@@ -57,7 +57,7 @@ class CustomTablesModelEditFiles extends JModelLegacy
 			return;
 		}
 
-		$this->listing_id=$this->ct->Env->jinput->getInt('listing_id', 0);
+		$this->listing_id=$this->ct->Env->jinput->getInt("listing_id", 0);
 		if(!$this->ct->Env->jinput->getCmd('fileboxname'))
 			return false;
 

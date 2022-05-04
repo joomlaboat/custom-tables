@@ -49,7 +49,7 @@ class tagProcessor_Shopping
 							$pair=explode(',',$item);
 							if(count($pair)==2)//first is ID sencond - count: example 45,6 - 6 items with id 45
 							{
-								if((int)$pair[0]==$row['listing_id'])
+								if((int)$pair[0]==$row[$ct->Table->realidfieldname])
 								{
 									$vlu=(int)$pair[1];
 									break;
@@ -62,7 +62,7 @@ class tagProcessor_Shopping
 					break;
 
 				case 'addtocart' :
-					$theLink.='task=cart_addtocart&listing_id='.$row['listing_id'];
+					$theLink.='task=cart_addtocart&listing_id='.$row[$ct->Table->realidfieldname];
 					$htmlresult=str_replace($fItem,$theLink,$htmlresult);
 					break;
 
@@ -79,7 +79,7 @@ class tagProcessor_Shopping
 							$pair=explode(',',$items[$i]);
 							if(count($pair)==2) //otherwise ignore the shit
 							{
-								if((int)$pair[0]==$row['listing_id'])
+								if((int)$pair[0]==$row[$ct->Table->realidfieldname])
 									$vlu=(int)$pair[1];
 							}
 						}
@@ -101,7 +101,7 @@ class tagProcessor_Shopping
 					$input_button='<input type="submit" value="'.$button_label.'" class="'.$button_class.'" />';
 
 					$result='<form action="" method="post" id="ct_addtocartform">
-					<input type="hidden" name="listing_id" value="'.$row['listing_id'].'" />
+					<input type="hidden" name="listing_id" value="'.$row[$ct->Table->realidfieldname].'" />
 					<input type="hidden" name="task" value="cart_form_addtocart" />
 					<input type="text" class="inputbox" style="'.$input_style.'" name="itemcount" value="1" />'.$input_button.'
 					</form>
@@ -126,7 +126,7 @@ class tagProcessor_Shopping
 							$pair=explode(',',$items[$i]);
 							if(count($pair)==2) //otherwise ignore the shit
 							{
-								if((int)$pair[0]==$row['listing_id'])
+								if((int)$pair[0]==$row[$ct->Table->realidfieldname])
 									$vlu=(int)$pair[1];
 							}
 						}
@@ -149,7 +149,7 @@ class tagProcessor_Shopping
 
 					$result='
 					<form action="" method="post" id="ct_updatecartform">
-					<input type="hidden" name="listing_id" value="'.$row['listing_id'].'" />
+					<input type="hidden" name="listing_id" value="'.$row[$ct->Table->realidfieldname].'" />
 					<input type="hidden" name="task" value="cart_setitemcount" />
 					<input type="text" class="inputbox" name="itemcount" value="'.$vlu.'" />'.$input_button.'
 					</form>
@@ -157,12 +157,11 @@ class tagProcessor_Shopping
 
 					$htmlresult=str_replace($fItem,$result,$htmlresult);
 
-
 					break;
 
 				case 'deleteitem' :
 
-					$theLink.='task=cart_deleteitem&listing_id='.$row['listing_id'];
+					$theLink.='task=cart_deleteitem&listing_id='.$row[$ct->Table->realidfieldname];
 					$htmlresult=str_replace($fItem,$theLink,$htmlresult);
 
 					break;

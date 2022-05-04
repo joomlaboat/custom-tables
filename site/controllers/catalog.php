@@ -34,7 +34,7 @@ if ($theview == 'home')
 	$menu_params=$app->getParams();
 	$edit_model = $this->getModel('edititem');
 	$edit_model->params=$menu_params;
-	$edit_model->listing_id = $ct->Env->jinput->getCmd('listing_id');
+	$edit_model->listing_id = $ct->Env->jinput->getCmd("listing_id");
 	
 	//Check Authorization
 	//3 - to delete
@@ -284,7 +284,7 @@ function doTheTask(&$ct,$task,$menu_params,$edit_model,&$this_)
 		if($ct->Table->useridfieldname == null)
 			return (object) array('link' => $link, 'msg' => 'User field not found.', 'status' => 'error');
 			
-		$listing_id = $ct->Env->jinput->getInt('listing_id');
+		$listing_id = $ct->Env->jinput->getInt("listing_id");
 		$ct->Table->loadRecord($listing_id);
 		if($ct->Table->record == null)
 		{
@@ -312,7 +312,7 @@ function doTheTask(&$ct,$task,$menu_params,$edit_model,&$this_)
 		if($ct->Table->tablename=='')
 			return (object) array('link' => $link, 'msg' => 'Table not selected.', 'status' => 'error');
 
-		$listing_id = $ct->Env->jinput->getInt('listing_id');
+		$listing_id = $ct->Env->jinput->getInt("listing_id");
 		if(CTUser::ResetPassword($ct,$listing_id))
 		{
 			if ($ct->Env->clean == 1)
@@ -430,7 +430,7 @@ function doTheTask(&$ct,$task,$menu_params,$edit_model,&$this_)
 				{
 					$pair[1] = JoomlaBasicMisc::deleteURLQueryOption($pair[1], 'task');
 					$pair[1] = JoomlaBasicMisc::deleteURLQueryOption($pair[1], 'cartprefix');
-					$pair[1] = JoomlaBasicMisc::deleteURLQueryOption($pair[1], 'listing_id');
+					$pair[1] = JoomlaBasicMisc::deleteURLQueryOption($pair[1], "listing_id");
 				}
 
 				$link = implode('?', $pair);

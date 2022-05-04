@@ -104,7 +104,7 @@ class Value
 
 			case 'file':
 			
-				return CT_FieldTypeTag_file::process($rowValue, $this->field, $option_list, $row['listing_id']);
+				return CT_FieldTypeTag_file::process($rowValue, $this->field, $option_list, $row[$this->ct->Table->realidfieldname]);
 			
 			case 'image':
 				$imagesrc='';
@@ -162,18 +162,18 @@ class Value
 				$imagetaglist='';
 
 				CT_FieldTypeTag_imagegallery::getImageGallerySRC($getGalleryRows,$option_list[0],
-					$row['listing_id'],$this->field->fieldname,$this->field->params,$imagesrclist,$imagetaglist,$this->ct->Table->tableid);
+					$row[$this->ct->Table->realidfieldname],$this->field->fieldname,$this->field->params,$imagesrclist,$imagetaglist,$this->ct->Table->tableid);
 						
 				return $imagetaglist;
 
 			case 'filebox':
 
-				$FileBoxRows=CT_FieldTypeTag_filebox::getFileBoxRows($this->ct->Table->tablename,$this->field->fieldname,$row['listing_id']);
+				$FileBoxRows=CT_FieldTypeTag_filebox::getFileBoxRows($this->ct->Table->tablename,$this->field->fieldname,$row[$this->ct->Table->realidfieldname]);
 
 				if($option_list[0]=='_count')
 					return count($FileBoxRows);
 
-				return CT_FieldTypeTag_filebox::process($FileBoxRows, $this->field, $row['listing_id'],$option_list);
+				return CT_FieldTypeTag_filebox::process($FileBoxRows, $this->field, $row[$this->ct->Table->realidfieldname],$option_list);
     		
 			case 'customtables':
 				return $this->listProcess($rowValue, $option_list);
@@ -198,7 +198,7 @@ class Value
 				$processor_file=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fieldtypes'.DIRECTORY_SEPARATOR.'_type_file.php';
 				require_once($processor_file);
 					
-				return CT_FieldTypeTag_file::process($rowValue, $this->field, $option_list, $row['listing_id']);
+				return CT_FieldTypeTag_file::process($rowValue, $this->field, $option_list, $row[$this->ct->Table->realidfieldname]);
 
 			case 'log':
 				return CT_FieldTypeTag_log::getLogVersionLinks($this->ct,$rowValue,$row);

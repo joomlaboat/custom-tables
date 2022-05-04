@@ -12,37 +12,7 @@ defined('_JEXEC') or die('Restricted access');
 use CustomTables\Fields;
 use CustomTables\RecordToolbar;
 use CustomTables\CTUser;
-
-/* Not all tags are implemented using Twig
-
-Implemented:
-
-{id} - {{ record.id }}
-{number} - {{ record.number }}
-{_value:published} - {{ published }}
-{published:number} - {{ published }}
-{published:boolean} - {{ published('bool') }} or {{ published('boolean') }}
-{published} - {{ published('yesno') }}
-new: {{ published('Yes','No') }} Example: {{ published('Record is published','Not published') }}
-{link} - {{ record.link(add_returnto = true, menu_item_alias='', returnto='') }}
-{linknoreturn} - {{ record.link(add_returnto = false, menu_item_alias='') }}
-{server} - {{ url.server() }}}
-
-Not yet implemented:
-
-{sqljoin} - not yet
-
-shopping cart
-tree
-
-
-tagProcessor_Item::GetSQLJoin($ct,$htmlresult,$row['listing_id']);
-tagProcessor_Item::GetCustomToolBar($ct,$htmlresult,$row);
-CT_FieldTypeTag_ct::ResolveStructure($ct,$htmlresult);
-
-*/
- 
-use \CustomTables\Twig_Record_Tags;
+use CustomTables\Twig_Record_Tags;
 
 class tagProcessor_Item
 {
@@ -68,8 +38,8 @@ class tagProcessor_Item
 		//Listing ID
 		$listing_id = 0;
 
-		if(isset($row) and isset($row['listing_id']))
-			$listing_id = (int)$row['listing_id'];
+		if(isset($row) and isset($row[$ct->Table->realidfieldname]))
+			$listing_id = (int)$row[$ct->Table->realidfieldname];
 			
 		$htmlresult=str_replace('{id}',$listing_id,$htmlresult); //Twig version added - original not changed
 		$htmlresult=str_replace('{number}',(isset($row['_number']) ? $row['_number'] : ''),$htmlresult); //Twig version added - original not changed
@@ -248,7 +218,7 @@ class tagProcessor_Item
 			$viewlink='';
 		else
 		{
-            $returnto = $ct->Env->current_url.'#a'.$row['listing_id'];
+            $returnto = $ct->Env->current_url.'#a'.$row[$ct->Table->realidfieldname];
 			
 			if($row !== null)
 				$ct->Table->record = $row;
@@ -271,10 +241,9 @@ class tagProcessor_Item
 
 			$htmlresult = $twig->process($row);
 
-            $prefix='table_'.$ct->Table->tablename.'_'.$row['listing_id'].'_';
+            $prefix='table_'.$ct->Table->tablename.'_'.$row[$ct->Table->realidfieldname].'_';
             tagProcessor_Edit::process($ct,$htmlresult,$row,$prefix);//Process edit form layout
-            			
-			
+
             $ct->LayoutProc->layout=$htmlresult;//Temporary replace original layout with processed result
 			
 			$htmlresult=$ct->LayoutProc->fillLayout($row,null,'||',false,true);//Process field values

@@ -1165,10 +1165,10 @@ class LinkJoinFilters
 		
 		foreach($records as $row)
 		{
-			if($row['listing_id']==$filtervalue or strpos($filtervalue,','.$row['listing_id'].',')!==false)
-				$result.='<option value="'.$row['listing_id'].'" selected>'.$row[$fieldrow->realfieldname].'</option>';
+			if($row[$tablerow['realidfieldname']]==$filtervalue or strpos($filtervalue,','.$row[$tablerow['realidfieldname']].',')!==false)
+				$result.='<option value="'.$row[$tablerow['realidfieldname']].'" selected>'.$row[$fieldrow->realfieldname].'</option>';
 			else
-				$result.='<option value="'.$row['listing_id'].'">'.$row[$fieldrow->realfieldname].'</option>';
+				$result.='<option value="'.$row[$tablerow['realidfieldname']].'">'.$row[$fieldrow->realfieldname].'</option>';
 		}
 		$result.='</select>
 ';

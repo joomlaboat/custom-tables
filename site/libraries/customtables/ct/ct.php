@@ -220,7 +220,7 @@ class CT
 		$recordlist = [];
 		
 		foreach($this->Records as $row)
-			$recordlist[]=$row['listing_id'];
+			$recordlist[]=$row[$this->Table->realidfieldname];
 			
 		$this->Table->recordlist = $recordlist;
 		return $recordlist;

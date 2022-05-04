@@ -670,7 +670,7 @@ class SaveFieldQuerySet
 		{
 			if(!$unique_users) //allow not unique record per users
 			{
-				CTUser::UpdateUserField($this->ct->Table->realtablename, $this->ct->Table->realidfieldname,$field->realfieldname,$existing_user_id,$this->ct->Table->record['listing_id']);
+				CTUser::UpdateUserField($this->ct->Table->realtablename, $this->ct->Table->realidfieldname,$field->realfieldname,$existing_user_id,$this->ct->Table->record[$this->ct->Table->realidfieldname]);
 				Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORD_USER_UPDATED' ));
 			}
 			else
@@ -682,7 +682,7 @@ class SaveFieldQuerySet
 			}
 		}
 		else
-			CTUser::CreateUser($this->ct->Table->realtablename, $this->ct->Table->realidfieldname,$user_email,$user_name,$user_groups,$this->ct->Table->record['listing_id'],$field->realfieldname,$this->realtablename);
+			CTUser::CreateUser($this->ct->Table->realtablename, $this->ct->Table->realidfieldname,$user_email,$user_name,$user_groups,$this->ct->Table->record[$this->ct->Table->realidfieldname],$field->realfieldname,$this->realtablename);
 
 		return true;
 	}

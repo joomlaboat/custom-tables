@@ -67,7 +67,7 @@ class Environment
 		else 
 			$this->current_sef_url = $this->current_url;
 		
-		$tmp_current_url = JoomlaBasicMisc::deleteURLQueryOption($this->current_url, 'listing_id');
+		$tmp_current_url = JoomlaBasicMisc::deleteURLQueryOption($this->current_url, "listing_id");
 		$tmp_current_url = JoomlaBasicMisc::deleteURLQueryOption($tmp_current_url, 'number');
 		
 		$this->encoded_current_url=base64_encode($tmp_current_url);

@@ -1,7 +1,7 @@
 <?php
 /**
  * CustomTables Joomla! 3.x Native Component
- * @author Ivan komlev <support@joomlaboat.com>
+ * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
  * @license GNU/GPL
  **/
@@ -37,7 +37,7 @@ class CustomTablesModelFiles extends JModelLegacy
 		$this->params=$app->getParams();
 
 		$jinput=JFactory::getApplication()->input;
-		$listing_id = $jinput->getInt('listing_id', 0);
+		$listing_id = $jinput->getInt("listing_id", 0);
 
 		$this->tableid = $jinput->getInt('tableid',0);
 		$this->fieldid = $jinput->getInt('fieldid',0);

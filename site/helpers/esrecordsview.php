@@ -62,7 +62,7 @@ class JHTMLESRecordsView
 										$getGalleryRows=array();
 										foreach($model->ct->Records as $row)
 										{
-											if(in_array($row['listing_id'],$valuearray) )
+											if(in_array($row[$model->ct->Table->realidfieldname],$valuearray) )
 												$htmlresult.=JoomlaBasicMisc::processValue($field,$model->ct,$row,$langpostfix);
 										}
 
@@ -73,7 +73,7 @@ class JHTMLESRecordsView
 
 										foreach($model->ct->Records as $row)
 										{
-												if(in_array($row['listing_id'],$valuearray) )
+												if(in_array($row[$model->ct->Table->realidfieldname],$valuearray) )
 														$vArray[]=JoomlaBasicMisc::processValue($field,$model->ct,$row,$langpostfix);
 										}
 										$htmlresult.=implode(',',$vArray);
@@ -84,7 +84,7 @@ class JHTMLESRecordsView
 
 										foreach($model->ct->Records as $row)
 										{
-												if(in_array($row['listing_id'],$valuearray) )
+												if(in_array($row[$model->ct->Table->realidfieldname],$valuearray) )
 														$htmlresult.=JoomlaBasicMisc::processValue($field,$model->ct,$row,$langpostfix);
 										}
 
@@ -98,7 +98,7 @@ class JHTMLESRecordsView
 
 										foreach($model->ct->Records as $row)
 										{
-												if(in_array($row['listing_id'],$valuearray) )
+												if(in_array($row[$model->ct->Table->realidfieldname],$valuearray) )
 														$vArray[]=JoomlaBasicMisc::processValue($field,$model->ct,$row,$langpostfix);
 										}
 										$htmlresult.=implode(',',$vArray);
@@ -109,7 +109,7 @@ class JHTMLESRecordsView
 
 										foreach($model->ct->Records as $row)
 										{
-												if(in_array($row['listing_id'],$valuearray) )
+												if(in_array($row[$model->ct->Table->realidfieldname],$valuearray) )
 														$vArray[]=JoomlaBasicMisc::processValue($field,$model->ct,$row,$langpostfix);
 										}
 										$htmlresult.=implode(',',$vArray);
@@ -171,7 +171,7 @@ class JHTMLESRecordsView
 						$CleanSearchResult=array();
 						foreach($model->ct->Records as $row)
 						{
-								if(in_array($row['listing_id'],$valuearray))
+								if(in_array($row[$model->ct->Table->realidfieldname],$valuearray))
 								{
 										$CleanSearchResult[]=$row;
 								}

@@ -90,7 +90,7 @@ class Inputbox
 	{
 		$this->field = new Field($this->ct,$this->esfield,$row);
 		
-		$this->prefix = $this->ct->Env->field_input_prefix . (!$this->ct->isEditForm  ? $row['listing_id'] . '_' : '');
+		$this->prefix = $this->ct->Env->field_input_prefix . (!$this->ct->isEditForm  ? $row[$this->ct->Table->realidfieldname] . '_' : '');
 
 		switch($this->field->type)
 		{
@@ -178,7 +178,7 @@ class Inputbox
 					);
 
 			case 'language':
-				if(count($row)!=0 and (int)$row['listing_id']!=0)
+				if(count($row)!=0 and (int)$row[$this->ct->Table->realidfieldname]!=0)
 				{
 					$value=$this->jinput->get($this->ct->Env->field_prefix.$this->esfield['fieldname'],'','STRING');
 				}
@@ -251,14 +251,14 @@ class Inputbox
 				);
 
 			case 'imagegallery':
-				if(isset($row['listing_id']))
-					return $this->getImageGallery($row['listing_id']);
+				if(isset($row[$this->ct->Table->realidfieldname]))
+					return $this->getImageGallery($row[$this->ct->Table->realidfieldname]);
 				else
 					return '';
 
 			case 'filebox':
-				if(isset($row['listing_id']))
-					return $this->getFileBox($row['listing_id']);
+				if(isset($row[$this->ct->Table->realidfieldname]))
+					return $this->getFileBox($row[$this->ct->Table->realidfieldname]);
 
 			case 'multilangarticle':
 				return $this->render_multilangarticle();
@@ -385,7 +385,7 @@ class Inputbox
 									$value=isset($row[$this->esfield['realfieldname'].$postfix]) ? $row[$this->field->realfieldname.$postfix] : null;
 
 								if($addDynamicEvent)
-									$attributes_=' onchange="ct_UpdateSingleValue(\''.$this->ct->Env->WebsiteRoot.'\','.$this->ct->Env->Itemid.',\''.$this->esfield['fieldname'].$postfix.'\','.$row['listing_id'].',\''.$langsef.'\')"';
+									$attributes_=' onchange="ct_UpdateSingleValue(\''.$this->ct->Env->WebsiteRoot.'\','.$this->ct->Env->Itemid.',\''.$this->esfield['fieldname'].$postfix.'\','.$row[$this->ct->Table->realidfieldname].',\''.$langsef.'\')"';
 									
 								$result='<input type="text" '
 									.'name="'.$this->prefix.$this->field->fieldname.$postfix.'" '

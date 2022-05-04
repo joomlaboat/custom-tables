@@ -166,7 +166,7 @@ class JHTMLESSqlJoin
 			$filtervalue='';
 			foreach($ct->Records as $row)
 			{
-				if($row['listing_id']==$value)
+				if($row[$ct->Table->realidfieldname]==$value)
 				{
 					$filtervalue=$row[$ct->Env->field_prefix.$dynamic_filter];
 					break;
@@ -219,7 +219,7 @@ class JHTMLESSqlJoin
             else
 				$d='';
 
-            $list_values[]=[$row['listing_id'],$v,(int)$row['listing_published'],$d];
+            $list_values[]=[$row[$model->ct->Table->realidfieldname],$v,(int)$row['listing_published'],$d];
         }
 
 		return $list_values;

@@ -13,7 +13,7 @@ defined('_JEXEC') or die('Restricted access');
 		
 	$model = $this->getModel('edititem');
 	$model->params=JFactory::getApplication()->getParams();;
-	$model->listing_id = $jinput->getCmd('listing_id');
+	$model->listing_id = $jinput->getCmd("listing_id");
 
 								if(!$model->CheckAuthorization(5))
 								{
@@ -44,7 +44,7 @@ defined('_JEXEC') or die('Restricted access');
 										}
 
 										$fileboxname=JFactory::getApplication()->input->getCmd( 'fileboxname');
-										$listing_id=JFactory::getApplication()->input->get('listing_id',0,'INT');
+										$listing_id=JFactory::getApplication()->input->get("listing_id",0,'INT');
 										$returnto=JFactory::getApplication()->input->get('returnto','','BASE64');
 										$Itemid=JFactory::getApplication()->input->get('Itemid',0,'INT');
 
@@ -73,7 +73,7 @@ defined('_JEXEC') or die('Restricted access');
 										}
 										//$establename=JFactory::getApplication()->input->getCmd( 'establename');
 										$fileboxname=JFactory::getApplication()->input->getCmd( 'fileboxname');
-										$listing_id=JFactory::getApplication()->input->get('listing_id',0,'INT');
+										$listing_id=JFactory::getApplication()->input->get("listing_id",0,'INT');
 										$returnto=JFactory::getApplication()->input->get('returnto','','BASE64');
 										$Itemid=JFactory::getApplication()->input->get('Itemid',0,'INT');
 
