@@ -934,7 +934,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 			$row_old = $this->ct->Table->loadRecord($listing_id);
 		else
 			$row_old[$this->ct->Table->realidfieldname] = '';
-
+		
 		$phponchangefound=false;
 		$phponaddfound=false;
 
@@ -975,7 +975,6 @@ class CustomTablesModelEditItem extends JModelLegacy
 				$user_name=$jinput->getString($prefix.$fieldname);
 		}
 
-		$row_old = [];
 		$listing_id_temp = 0;
 		
 		$isitnewrecords = false;
