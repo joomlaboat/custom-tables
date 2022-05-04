@@ -309,6 +309,17 @@ class fieldObject
 			
 			return $vlu;
 		}
+		elseif($this->field->type == 'records')
+		{
+			$a=explode(",",$this->ct->Table->record[$rfn]);
+			$b=array();
+			foreach($a as $c)
+			{
+				if($c!="")
+					$b[]=$c;
+			}
+			return implode(',',$b);
+		}
 		else
 			return $this->ct->Table->record[$rfn];
 	}

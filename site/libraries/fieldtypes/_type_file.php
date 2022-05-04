@@ -394,7 +394,7 @@ class CT_FieldTypeTag_file
 	{
 		$field = new Field($ct,$fieldrow);
 		
-        if(count($row)>0 and $row[$ct->Table->realidfieldname] != 0)
+        if(count($row)>0 and $row[$ct->Table->realidfieldname] != '' and (is_numeric($row[$ct->Table->realidfieldname]) and $row[$ct->Table->realidfieldname] != 0))
             $file=$row[$field->realfieldname];
         else
             $file='';
