@@ -130,8 +130,8 @@ class CT
 			
 		$query.=$where;
 		
-		$query.=' GROUP BY '.$this->Table->realtablename . '.' . $this->Table->tablerow['realidfieldname'];
-	
+		$query.=' GROUP BY '.$this->Table->realtablename . '.' . $this->Table->realidfieldname;
+
 		if(count($ordering)>0)
 			$query.=' ORDER BY '.implode(',',$ordering);
 
@@ -177,7 +177,6 @@ class CT
 		else
 			$rows=array();
 		
-	
 		$this->Records = $rows;
 
 		return true;

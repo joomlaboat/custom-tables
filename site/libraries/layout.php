@@ -47,8 +47,9 @@ class LayoutProcessor
 		$this->layout = $layout;
 	}
 
-	function fillLayout($row=array(),$aLink=null,$tag_chars='[]',$disable_advanced_tags=false,$add_label=false)
+	function fillLayout(array $row = [],$aLink=null,$tag_chars='[]',$disable_advanced_tags=false,$add_label=false)
 	{
+		//$this->ct->Table->record = $row;
 		$htmlresult=$this->layout;
 
 		if($this->advancedtagprocessor and !$disable_advanced_tags)

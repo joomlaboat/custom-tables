@@ -180,7 +180,7 @@ class SaveFieldQuerySet
 
 					$firstlanguage=true;
 					$sets = [];
-					foreach($this->Languages->LanguageList as $lang)
+					foreach($this->ct->Languages->LanguageList as $lang)
 					{
 						if($firstlanguage)
 						{
@@ -217,7 +217,7 @@ class SaveFieldQuerySet
 
 					$sets = [];
 					$firstlanguage=true;
-					foreach($this->Languages->LanguageList as $lang)
+					foreach($this->ct->Languages->LanguageList as $lang)
 					{
 						if($firstlanguage)
 						{
@@ -382,7 +382,7 @@ class SaveFieldQuerySet
 				
 					$sets = [];
 					$firstlanguage=true;
-					foreach($this->Languages->LanguageList as $lang)
+					foreach($this->ct->Languages->LanguageList as $lang)
 					{
 						if($firstlanguage)
 						{

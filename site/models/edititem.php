@@ -1045,8 +1045,6 @@ class CustomTablesModelEditItem extends JModelLegacy
 			}
 		}
 
-		//update MD5s
-
 		if($this->onrecordsavesendemailto!='' or $this->onrecordaddsendemailto!='')
 		{
 			if($this->onrecordaddsendemail==3)
@@ -1095,8 +1093,6 @@ class CustomTablesModelEditItem extends JModelLegacy
 		
 		$jinput->set("listing_id",$listing_id);
 
-echo 'saved';
-die;
 		return true;
 	}
 

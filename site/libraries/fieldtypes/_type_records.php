@@ -131,6 +131,7 @@ class CT_FieldTypeTag_records
 
 		$result = JHTML::_('ESRecordsView.render',$rowValue,$esr_table,$esr_field,$esr_selector,$esr_filter,$ct->Languages->Postfix,$sortbyfield);
 
-		return CT_FieldTypeTag_records::resolveRecordTypeValue($field,$result,$rowValue,$options);
+		return $result;
+		//return CT_FieldTypeTag_records::resolveRecordTypeValue($field,$result,$rowValue,$options);
 	}
 }
