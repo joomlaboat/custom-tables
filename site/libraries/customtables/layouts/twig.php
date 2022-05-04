@@ -290,7 +290,7 @@ class fieldObject
 	
 	public function int()
     {
-		return intval($this->value());
+		return (int)intval($this->value());
 	}
 	
 	public function value()
