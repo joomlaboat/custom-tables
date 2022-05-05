@@ -935,6 +935,7 @@ function addTabExtraEvents3()
             {
                 setTimeout(function()
                 {
+					console.log(index);
 					codemirror_active_index=index;
 					codemirror_active_areatext_id='jform_' + code;
                     let cm=codemirror_editors[index];
@@ -976,30 +977,32 @@ function addTabExtraEvent4(id)
 
 function addTabExtraEvents(){
 	
-		
+	let tabs = ['layoutcode','layoutmobile','layoutcss','layoutjs']
+
 	if(joomlaVersion<4){
 		addTabExtraEvents3();
 	}else{
-		let tabs = ['layoutcode','layoutmobile','layoutcss','layoutjs']
+		
+		/*
 		setTimeout(function(){
 			codemirror_active_index=0;
 			let cm=codemirror_editors[0];
 			cm.refresh();
-		}, 100);
+		}, 100);*/
 
 		for (let i = 0; i < tabs.length; i++)
 			addTabExtraEvent4(tabs[i]);
-		
-		let index = 0;
-		codemirror_active_index=index;
-		codemirror_active_areatext_id='jform_' + tabs[0];
-        let cm=codemirror_editors[index];
-		
-		if (typeof(cm) == "undefined")
-			return;
-	
-        cm.refresh();
 	}
+	
+	let index = 0;
+	codemirror_active_index=index;
+	codemirror_active_areatext_id='jform_' + tabs[0];
+	let cm=codemirror_editors[index];
+	
+	if (typeof(cm) == "undefined")
+		return;
+	
+	cm.refresh();
 }
 
 function addExtraEvents()
@@ -1007,56 +1010,54 @@ function addExtraEvents()
 	let index=0;
 	setTimeout(function()
 	{
-		codemirror_active_index=index;
-                                    var cm=codemirror_editors[index];
-                                    cm.refresh();
+		let editors=document.getElementsByClassName("CodeMirror");
+		
+		for(let i=0;i<editors.length;i++)
+			addExtraEvent(i);
+	}, 100);
+}
 
-                                    cm.on('dblclick', function()
-                                    {
-                                        var cr=cm.getCursor();
-                                        var line=cm.getLine(cr.line);
+function addExtraEvent(index)
+{
+	codemirror_active_index=index;
+	let cm=codemirror_editors[index];
+	cm.refresh();
 
-                                        var positions=findTagInLine(cr.ch,line);
+	cm.on('dblclick', function()
+	{
+	    let cr=cm.getCursor();
+	    let line=cm.getLine(cr.line);
+		let positions=findTagInLine(cr.ch,line);
 
-                                        if(positions!=null)
-                                        {
-                                            var startchar=line.substring(positions[0],positions[0]+1); //+1 to have 1 character
-											if(startchar == '{')
-											{
-												let startchar2 = line.substring(positions[0]-1,positions[0]+1);
-												if(startchar2 == '{{')
-													startchar = '{{';
-												
-											}
-											
-                                            var endchar=line.substring(positions[1]-1,positions[1]-1+1);//-1 because position ends after the tag
-											if(endchar == '}')
-											{
-												let endchar2 = line.substring(positions[1]-1,positions[1]-1+2);
-												if(endchar2 == '}}')
-													endchar = '}}';
-											}
-											
-                                            var tag=line.substring(positions[0]+1, positions[1]-1);//-1 because position ends after the tag
-											
-											if(startchar == '{{')
-											{
-												positions[0] = positions[0] - 1;
-												positions[1] = positions[1] + 1;
-											}
-											
-											var postfix = ''; //todo
+	    if(positions!=null){
+	        let startchar=line.substring(positions[0],positions[0]+1); //+1 to have 1 character
+			if(startchar == '{'){
+				let startchar2 = line.substring(positions[0]-1,positions[0]+1);
+				if(startchar2 == '{{')
+					startchar = '{{';
+			}
 
-                                            var mousepos=cm.cursorCoords(cr,"window");
+	        let endchar=line.substring(positions[1]-1,positions[1]-1+1);//-1 because position ends after the tag
+			if(endchar == '}'){
+				let endchar2 = line.substring(positions[1]-1,positions[1]-1+2);
+				if(endchar2 == '}}')
+					endchar = '}}';
+			}
 
-                                            showModalForm(startchar,postfix,endchar,tag,mousepos.top,mousepos.left,cr.line,positions,0);
+	        let tag=line.substring(positions[0]+1, positions[1]-1);//-1 because position ends after the tag
+			
+			if(startchar == '{{'){
+				positions[0] = positions[0] - 1;
+				positions[1] = positions[1] + 1;
+			}
+			
+			let postfix = ''; //todo
+			let mousepos=cm.cursorCoords(cr,"window");
+	        showModalForm(startchar,postfix,endchar,tag,mousepos.top,mousepos.left,cr.line,positions,0);
+	    }
 
-                                        }
-
-                                    },true);
-
-                               }, 100);
-	}
+	},true);
+}
 
 function htmlDecode2(input)
 {
@@ -1067,7 +1068,7 @@ function htmlDecode2(input)
 
 function adjustEditorHeight()
 {
-    var editors=document.getElementsByClassName("CodeMirror");
+    let editors=document.getElementsByClassName("CodeMirror");
     if(editors.length==0)
         return false;//editor not found
     

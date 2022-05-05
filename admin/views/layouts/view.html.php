@@ -66,7 +66,17 @@ class CustomtablesViewLayouts extends JViewLegacy
 		{
 			throw new Exception(implode("\n", $errors), 500);
 		}
-
+		
+		$this->active_tab = 'general';
+		if($this->item->layoutcode != '')
+			$this->active_tab = 'layoutcode-tab';
+		elseif($this->item->layoutmobile != '')
+			$this->active_tab = 'layoutmobile-tab';
+		elseif($this->item->layoutcss != '')
+			$this->active_tab = 'layoutcss-tab';
+		elseif($this->item->layoutjs != '')
+			$this->active_tab = 'layoutjs-tab';
+		
 		// Display the template
 		if($this->ct->Env->version < 4)
 			parent::display($tpl);

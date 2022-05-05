@@ -219,7 +219,12 @@ class TwigProcessor
 		if($row !== null)
 			$this->ct->Table->record = $row;
 		
-		$result = @$this->twig->render('index', $this->variables);
+		try {
+			$result = @$this->twig->render('index', $this->variables);
+		} catch (Exception $e) {
+			Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
+			return '';
+		}
 		
 		if($this->recordBlockFound)
 		{

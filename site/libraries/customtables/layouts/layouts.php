@@ -76,10 +76,22 @@ class Layouts
 	{
 		$document = Factory::getDocument();
 		if(trim($row['layoutcss'])!='')
-			$document->addCustomTag('<style>'.trim($row['layoutcss']).'</style>');
+		{
+			$layout = trim($row['layoutcss']);
+			$twig = new TwigProcessor($this->ct, $layout);
+			$layout = $twig->process($row);
+
+			$document->addCustomTag('<style>'.$layout.'</style>');
+		}
 
 		if(trim($row['layoutjs'])!='')
-			$document->addScriptDeclaration(trim($row['layoutjs']));
+		{
+			$layout = trim($row['layoutjs']);
+			$twig = new TwigProcessor($this->ct, $layout);
+			$layout = $twig->process($row);
+			
+			$document->addScriptDeclaration($layout);
+		}
 	}
 	
 	function processLayoutTag(&$htmlresult)

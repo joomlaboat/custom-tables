@@ -46,7 +46,7 @@ $typeboxid="jform_layouttype";
 		<div class="row-fluid form-horizontal-desktop">
 		-->
 	
-		<?php echo HTMLHelper::_('uitab.startTabSet', 'layouteditorTabs', ['active' => 'general', 'recall' => true, 'breakpoint' => 768]); ?>
+		<?php echo HTMLHelper::_('uitab.startTabSet', 'layouteditorTabs', ['active' => $this->active_tab, 'recall' => true, 'breakpoint' => 768]); ?>
 	
 		<?php echo HTMLHelper::_('uitab.addTab', 'layouteditorTabs', 'general', Text::_('COM_CUSTOMTABLES_LAYOUTS_GENERAL')); ?>
 		<div class="row-fluid form-horizontal-desktop">

@@ -2,7 +2,7 @@
 /**
  * CustomTables Joomla! 3.x Native Component
  * @package Custom Tables
- * @author Ivan komlev <support@joomlaboat.com>
+ * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
  * @copyright Copyright (C) 2018-2022. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
@@ -49,9 +49,9 @@ $document->addCustomTag('<link rel="stylesheet" href="'.JURI::root(true).'/compo
 if($version >= 4)
 	$document->addCustomTag('<link rel="stylesheet" href="'.JURI::root(true).'/media/system/css/fields/switcher.css">');
 
-	function renderEditor($textareacode,$textareaid,$typeboxid,$textareatabid,&$onPageLoads)
-	{
-		$ct = new CT;
+function renderEditor($textareacode,$textareaid,$typeboxid,$textareatabid,&$onPageLoads)
+{
+	$ct = new CT;
 		
 		$index=count($onPageLoads);
 		$result='<div class="customlayoutform layouteditorbox">'.$textareacode.'</div><div id="'.$textareatabid.'"></div>';

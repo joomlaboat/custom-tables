@@ -58,7 +58,6 @@ else
 */
 
 $twig = new TwigProcessor($this->ct, $this->pagelayout);
-
 $this->pagelayout = $twig->process();
 
 $this->pagelayout=str_replace('&&&&quote&&&&','"',$this->pagelayout); // search boxes may return HTML elemnts that contain placeholders with quotes like this: &&&&quote&&&&
