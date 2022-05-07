@@ -54,7 +54,9 @@ class SaveFieldQuerySet
 		$query = $this->getSaveFieldSetType();
 		
 		//Process default value
-		if($this->field->defaultvalue != "" and ($query == null or $this->row[$this->field->realfieldname] == null or $this->row[$this->field->realfieldname] == ''))
+		// or $this->row[$this->field->realfieldname] == ''
+
+		if($this->field->defaultvalue != "" and ($query == null or is_null($this->row[$this->field->realfieldname])))
 		{
 			$twig = new TwigProcessor($this->ct, $this->field->defaultvalue);
 			$value = $twig->process($this->row);
@@ -251,8 +253,8 @@ class SaveFieldQuerySet
 
 				case 'int':
 						$value=$this->ct->Env->jinput->getInt($this->field->comesfieldname,null);
-
-						if(isset($value)) // always check with isset(). null doesnt work as 0 is null somehow in PHP
+						
+						if(!is_null($value)) // always check with isset(). null doesnt work as 0 is null somehow in PHP
 						{
 							$this->row[$this->field->realfieldname] = $value;
 							return $this->field->realfieldname.'='.(int)$value;

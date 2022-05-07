@@ -12,6 +12,23 @@ defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Language\Text;
 
+use CustomTables\TwigProcessor;
+
+$recordLayout = '';
+
+foreach($this->ct->Table->fields as $field)
+{
+	if($field['type'] != 'dummy' and $field['type'] != 'log' and $field['type'] != 'ordering')
+	{
+		if($field['type']=='text' or $field['type']=='multilangtext' or $field['type']=='string' or $field['type']=='multilangstring')
+			$recordLayout.='<td scope="row"><a href="****link****">{{ '.$field['fieldname'].'("words",20) }}</a></td>';
+		else
+			$recordLayout.='<td scope="row"><a href="****link****">{{ '.$field['fieldname'].'}}</a></td>';
+	}
+}
+
+$twig = new TwigProcessor($this->ct, '{% autoescape false %}'.$recordLayout.'{% endautoescape %}');
+
 ?>
 
 <?php foreach ($this->items as $i => $item): 
@@ -54,18 +71,10 @@ use Joomla\CMS\Language\Text;
 			
 			$link=JURI::root(false).'administrator/index.php?option=com_customtables&view=records&task=records.edit&tableid='.$this->ct->Table->tableid.'&id='.$item->listing_id;
 			
-			foreach($this->ct->Table->fields as $field)
-			{
-				if($field['type'] != 'dummy' and $field['type'] != 'log' and $field['type'] != 'ordering')
-				{
-					if($field['type']=='text' or $field['type']=='multilangtext' or $field['type']=='string' or $field['type']=='multilangstring')
-						$result.='<td scope="row"><a href="'.$link.'">['.$field['fieldname'].':words,20]</a></td>';
-					else
-						$result.='<td scope="row"><a href="'.$link.'">['.$field['fieldname'].']</a></td>';
-				}
-			}
-		
-			echo $this->processRecord($item_array,$result);
+			$result = $twig->process($item_array);
+			
+			echo str_replace('****link****',$link,$result);
+			
 		?>
 		
 		<?php if($this->ct->Table->published_field_found): ?>

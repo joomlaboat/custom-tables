@@ -10,7 +10,22 @@
 // No direct access to this file access');
 defined('_JEXEC') or die('Restricted access');
 
-$edit = "index.php?option=com_customtables&view=listofrecords&task=records.edit";
+use CustomTables\TwigProcessor;
+
+$recordLayout = '';
+
+foreach($this->ct->Table->fields as $field)
+{
+	if($field['type'] != 'dummy' and $field['type'] != 'log' and $field['type'] != 'ordering')
+	{
+		if($field['type']=='text' or $field['type']=='multilangtext' or $field['type']=='string' or $field['type']=='multilangstring')
+			$recordLayout.='<td><a href="****link****">{{ '.$field['fieldname'].'("words",20) }}</a></td>';
+		else
+			$recordLayout.='<td><a href="****link****">{{ '.$field['fieldname'].'}}</a></td>';
+	}
+}
+
+$twig = new TwigProcessor($this->ct, '{% autoescape false %}'.$recordLayout.'{% endautoescape %}');
 
 ?>
 <?php foreach ($this->items as $i => $item): 
@@ -37,25 +52,13 @@ $edit = "index.php?option=com_customtables&view=listofrecords&task=records.edit"
 		
 		<?php
 			
-			$result='';
+			$link = JURI::root(false).'administrator/index.php?option=com_customtables&view=records&task=records.edit&tableid='.$this->ct->Table->tableid.'&id='.$item->listing_id;
 			
-			$link=JURI::root(false).'administrator/index.php?option=com_customtables&view=records&task=records.edit&tableid='.$this->ct->Table->tableid.'&id='.$item->listing_id;
+			$result = $twig->process($item_array);
 			
-			foreach($this->ct->Table->fields as $field)
-			{
-				if($field['type'] != 'dummy' and $field['type'] != 'log' and $field['type'] != 'ordering')
-				{
-					if($field['type']=='text' or $field['type']=='multilangtext' or $field['type']=='string' or $field['type']=='multilangstring')
-						$result.='<td><a href="'.$link.'">['.$field['fieldname'].':words,20]</a></td>';
-					else
-						$result.='<td><a href="'.$link.'">['.$field['fieldname'].']</a></td>';
-				}
-			}
-		
-			$result=$this->processRecord($item_array,$result);
-				
-			echo $result;
-			?>
+			echo str_replace('****link****',$link,$result);
+
+		?>
 
 		<?php if($this->ct->Table->published_field_found): ?>
 		<td class="center">

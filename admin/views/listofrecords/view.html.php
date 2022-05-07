@@ -261,36 +261,4 @@ class CustomtablesViewListofrecords extends JViewLegacy
 		return CustomtablesHelper::htmlEscape($var, $this->_charset);
 	}
 	
-	protected function processRecord($row,$detailsLayout)
-	{
-		$jinput=JFactory::getApplication()->input;
-
-		$paramsArray=array();
-		$paramsArray['establename']=$this->ct->Table->tablename;
-		$paramsArray['listingid']=$row['id'];
-		$paramsArray['custom_where']='';
-		
-		if($paramsArray==null)
-				return '';
-
-		$_params= new JRegistry;
-		$_params->loadArray($paramsArray);
-
-		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'models'.DIRECTORY_SEPARATOR.'details.php');
-
-		$config=array();
-		$model = JModelLegacy::getInstance('Details', 'CustomTablesModel', $config);
-		$model->load($_params,$paramsArray['listingid'],true,$paramsArray['custom_where']);
-
-		$model->ct->LayoutProc->layout=$detailsLayout;
-
-		if(count($row)>0)
-		{
-			$model->ct->LayoutProc->toolbar_array=array();
-			$result=$model->ct->LayoutProc->fillLayout($row);
-			return $result;
-		}
-		else
-			return 'CustomTables Record Not Found';
-	}
 }
