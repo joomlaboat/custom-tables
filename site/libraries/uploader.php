@@ -126,10 +126,11 @@ class ESFileUploader
 		return 'application/zip';
 	}
 
-	public static function uploadFile($fileid,$filetypes_str="")
+	public static function uploadFile($fileid,$filetypes_str_argument="")
 	{
-		$filetypes_str=ESFileUploader::getAcceptedFileTypes($filetypes_str);//',,'.
+		$filetypes_str=ESFileUploader::getAcceptedFileTypes($filetypes_str_argument);//',,'.
 
+		$filetypes_str='csv';
 		$accepted_types=ESFileUploader::getAcceptableMimeTypes($filetypes_str);
 
 		ESFileUploader::deleteOldFiles();
@@ -197,7 +198,7 @@ class ESFileUploader
 					unlink($file["tmp_name"]);
 					$msg='File type ('.$mime.') not permitted.';
 					if($filetypes_str!='')
-						$msg.=' '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PERMITED_TYPES' ).' '.$filetypes_str;
+						$msg.=' '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PERMITED_TYPES' ).' '.implode(', ',$accepted_types);
 
 					$ret = ['error'=>$msg];
 				}
@@ -276,12 +277,15 @@ class ESFileUploader
 				$accepted_filetypes[]='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 			elseif($filetype=='pptx')
 				$accepted_filetypes[]='application/vnd.openxmlformats-officedocument.presentationml.presentation';
-
+			elseif($filetype=='csv')
+			{
+				$accepted_filetypes[]='application/csv';
+				$accepted_filetypes[]='text/plain';
+			}
 		}
 
 		return $accepted_filetypes;
 	}
-
 
 	public static function get_mime_type($filename)
 	{
@@ -290,6 +294,7 @@ class ESFileUploader
     
     $mimet = array(
         'txt' => 'text/plain',
+		'csv' => 'text/csv',
         'htm' => 'text/html',
         'html' => 'text/html',
         'php' => 'text/html',
@@ -393,7 +398,6 @@ class ESFileUploader
 
 	}
 
-
 	public static function normalizeString ($str = '')
 	{
 		//String sanitizer for filename
@@ -433,7 +437,6 @@ class ESFileUploader
 				if(in_array($f,$allowedExts))
 				   $file_formats[]=$f;
 			}
-
 		}
 		else
 			$file_formats=$allowedExts;

@@ -211,8 +211,6 @@ function addSQLJoinSets($realtablename,$sets)
 
 function prepareSQLQuery($fieldList,$fields,$line)
 {
-	//$line=JoomlaBasicMisc::csv_explode(',',$line_,'"',false);
-  
 	$db = JFactory::getDBO();
 	$sets=array();
 	$i=0;
@@ -322,8 +320,8 @@ function prepareSQLQuery($fieldList,$fields,$line)
 						
 					$sets[]=$db->quoteName($fields[$f_index]->realfieldname).'='.(int)$vlu;
 				}
-				else
-					$sets[]=$db->quoteName($fields[$f_index]->realfieldname).'=NULL';
+				//else
+					//$sets[]=$db->quoteName($fields[$f_index]->realfieldname).'=NULL';
 			}
 			else
 			{
@@ -356,17 +354,16 @@ function ifBomUtf8($s)
 
 function removeBomUtf8($s)
 {
-  if(substr($s,0,3)==chr(hexdec('EF')).chr(hexdec('BB')).chr(hexdec('BF')))
-  {
-       return substr($s,3);
-  }
-  else
-  {
-      if(substr($s,0,2)==chr(hexdec('FF')).chr(hexdec('FE')))
-          return substr($s,2);
-
-       return $s;
-  }
+	if(substr($s,0,3)==chr(hexdec('EF')).chr(hexdec('BB')).chr(hexdec('BF')))
+	{
+		return substr($s,3);
+	}
+	else
+	{
+		if(substr($s,0,2)==chr(hexdec('FF')).chr(hexdec('FE')))
+			return substr($s,2);
+		return $s;
+	}
 }
 
 function prepareFieldList($fieldNames,$fields,&$first_line_fieldnames)
@@ -382,14 +379,14 @@ function prepareFieldList($fieldNames,$fields,&$first_line_fieldnames)
         $index=0;
         
         $fieldName=removeBomUtf8($fieldName_);
-        $fieldName=strtolower(preg_replace("/[^a-zA-Z1-9 #]/", "", $fieldName));
+        $fieldName=strtolower(preg_replace("/[^a-zA-Z1-9]/", "", $fieldName));
 		
         $found=false;
         foreach($fields as $field)
         {
-            $clean_field_name=strtolower(preg_replace("/[^a-zA-Z1-9 #]/", "", $field->fieldtitle));
+            $clean_field_name=strtolower(preg_replace("/[^a-zA-Z1-9]/", "", $field->fieldtitle));
       
-            if((string)$fieldName=='#' or (string)$fieldName=='')
+            if($fieldName_=='#' or $fieldName_=='')
             {
                 $fieldList[]=-1;
                 $found=true;
@@ -397,7 +394,7 @@ function prepareFieldList($fieldNames,$fields,&$first_line_fieldnames)
                 $first_line_fieldnames=true;
                 break;
             }
-            elseif((string)$clean_field_name==(string)$fieldName or (string)$field->fieldname==(string)$fieldName)
+            elseif((string)$clean_field_name==(string)$fieldName or (string)$field->fieldname==(string)$fieldName or (string)$field->fieldtitle==(string)$fieldName)
             {
                 $fieldList[]=$index;
                 $found=true;
