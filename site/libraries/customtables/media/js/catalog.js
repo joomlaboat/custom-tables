@@ -230,11 +230,13 @@
 		
 		for(let i=0;i<allSearchElements.length;i++){
 			let n=allSearchElements[i].getAttribute('ctSearchBoxField').split(":");
-			let obj = document.getElementById(n[0]);
+			let elementId = n[0];
+			let obj = document.getElementById(elementId);
 			
 			if(obj){
-				var o=obj.value;
-				if(o!=="" && (o!=="0" || obj.dataset.type == 'int' || obj.dataset.type == 'float')){
+				let o=obj.value;
+
+				if(o!=="" && (o!=="0" || obj.dataset.type == 'int' || obj.dataset.type == 'float' || obj.dataset.type == 'checkbox')){
 					if(n[2]===""){
     					if(o.indexOf("-to-")!=-1){
 							if(o!="-to-")
@@ -247,8 +249,9 @@
 						w.push(n[1]+"="+n[2]+"."+o);//Custom Tables Structure
 				}
 			}
-			else
-				alert('Element "'+n[0]+'" not found.');
+			else{
+				alert('Element "'+elementId+'" not found.');
+			}
 		}
 		var link=esPrepareLink(['where','task',"listing_id",'returnto'],["where="+Base64.encode(w.join(" and "))]);
         window.location.href = link;

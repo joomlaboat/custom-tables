@@ -313,15 +313,16 @@ class SearchInputBox
 		if($this->ct->Env->version < 4)
 			$default_class='inputbox';
 		else
-			$default_class='form-control';
+			$default_class='form-select';
 		
-		if(isset($fieldrow['essb_option']) and $fieldrow['essb_option']=='any')
+		$translations=array(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ANY'),JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YES'),JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NO'));
+			
+		if($default_Action!='')
 		{
-			if($fieldrow['essb_option2']!='')
-				$translations=JoomlaBasicMisc::csv_explode(',', $fieldrow['essb_option2'], '"', false);
-			else
-				$translations=array('Any','Checked','Unchecked');
-
+			$onchange=$default_Action;
+		}
+		else
+		{
 			$onchange=' onChange="'.$this->modulename.'_onChange('
 				.$index.','
 				.'this.value,'
@@ -330,45 +331,18 @@ class SearchInputBox
 				.'\''.urlencode($wherelist).'\','
 				.'\''.$this->ct->Languages->Postfix.'\''
 				.')"';
+		}
 
-			$result.='<select'
-				.' id="'.$objname_.'"'
-				.' name="'.$objname_.'"'
-				.' '.$onchange
-				.' class="'.$cssclass.' '.$default_class.'"'
-				.' data-type="checkbox">';
-				
-			$result.='<option value="" '.($value=='' ? 'SELECTED' : '').'>'.$translations[0].'</option>'
-					.'<option value="true" '.($value=='true' ? 'SELECTED' : '').'>'.$translations[1].'</option>'
-					.'<option value="false" '.($value=='false' ? 'SELECTED' : '').'>'.$translations[2].'</option>'
-					.'</select>';
-			}
-			else
-			{
-				if($default_Action!='')
-				{
-					$onAction=$default_Action;
-				}
-				else
-				{
-					$onAction=' onChange="'.$this->modulename.'_onChange('
-						.$index.','
-						.'this.value,'
-						.'\''.$this->field->fieldname.'\','
-						.'\''.urlencode($where).'\','
-						.'\''.urlencode($wherelist).'\','
-						.'\''.$this->ct->Languages->Postfix.'\''
-						.')"';
-				}
-
-				$result.='<input type="checkbox" class="'.$cssclass.' '.$default_class.'"'
-					.' id="'.$objname_.'"'
-					.' name="'.$objname_.'"'
-					.($value=='on' ? ' checked="checked"' : '')
-					.' onkeypress="es_SearchBoxKeyPress(event)"'
-					.' '.$onAction
-					.' data-type="checkbox" />';
-			}
+		$result.='<select'
+			.' id="'.$objname_.'"'
+			.' name="'.$objname_.'"'
+			.' '.$onchange
+			.' class="'.$cssclass.' '.$default_class.'"'
+			.' data-type="checkbox">'
+			.'<option value="" '.($value=='' ? 'SELECTED' : '').'>'.$this->field->title.' - '.$translations[0].'</option>'
+			.'<option value="true" '.($value=='true' ? 'SELECTED' : '').'>'.$this->field->title.' - '.$translations[1].'</option>'
+			.'<option value="false" '.($value=='false' ? 'SELECTED' : '').'>'.$this->field->title.' - '.$translations[2].'</option>'
+			.'</select>';
 
 		return $result;
 	}

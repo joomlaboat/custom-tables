@@ -199,7 +199,7 @@ class Twig_Html_Tags
 			return $vlu;
 	}
 		
-	function goback($label='Go Back', $image_icon='components/com_customtables/libraries/customtables/media/images/icons/arrow_rtl.png', $attribute='',  $returnto = '')
+	function goback($label='Go Back', $image_icon='', $attribute='',  $returnto = '')
 	{
 		if($this->ct->Env->print==1 or ($this->ct->Env->frmt!='html' and $this->ct->Env->frmt!=''))
 			return '';
@@ -210,7 +210,7 @@ class Twig_Html_Tags
 		if($returnto == '')
 			return '';
 		
-		if($attribute == '')
+		if($attribute == '' and $image_icon == '')
 			$attribute = 'class="ct_goback"';
 		
 		$vlu = '<a href="'.$returnto.'" '.$attribute.'><div>'.($image_icon != '' ? '<img src="'.$image_icon.'" alt="'.$label.'" />' : '').$label.'</div></a>';

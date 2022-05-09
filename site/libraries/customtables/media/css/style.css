@@ -50,7 +50,7 @@ color:red;
 }
 
 .ct_goback div{
-  background-image: url('../images/arrow_rtl.png');
+  background-image: url('../images/icons/arrow_rtl.png');
   background-position: left;
   background-repeat: no-repeat;
   padding-left: 20px;

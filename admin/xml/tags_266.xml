@@ -45,12 +45,12 @@
         </tag>
 		
 		<tag name="goback" label="Go Back Button" startchar="{" endchar="}" separator=":"
-             description="Renders a link to the previous page." twigclass="html">
+			description="Renders a link to the previous page." twigclass="html">
             <params>
-                <param name="icon" label="Icon Image" type="string" description="Icon Image that will appear before text/label."/>
-                <param name="option" label="Option" type="string"
-                       description="HTML options like: style, class, onchange etc.)" example="style='border:1px solid red;'"/>
                 <param name="label" label="Label" type="string" description="What will be written after the icon." example="Click to go back to the previous page"/>
+				<param name="icon" label="Icon Image" type="string" description="Icon Image that will appear before text/label."/>
+                <param name="attribute" label="Attribute" type="string"
+                       description="HTML options like: style, class, onchange etc.)" example="style='border:1px solid red;'"/>
                 <param name="redirectlink" label="Custom Redirect Link" type="string" description="URL to redirect after processing the button click. Tip: user $get_listing_id keyword to get newly saved record id."/>
             </params>
         </tag>

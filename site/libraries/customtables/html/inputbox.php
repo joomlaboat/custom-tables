@@ -717,22 +717,22 @@ class Inputbox
 	{
 		$result = '';
 		
-		if($value=="0000-00-00")
-			$value='';
+		if($value=="0000-00-00" or is_null($value))
+			$value = '';
 
-		$attributes_=[];
-		$attributes_['class']=$this->cssclass;
-		$attributes_['placeholder']=$this->place_holder;
-		$attributes_['onChange']='" '
+		$attributes=[];
+		$attributes['class']=$this->cssclass;
+		$attributes['placeholder']=$this->place_holder;
+		$attributes['onChange']='" '
 			.'data-label="'.$this->place_holder.'" '
 			.'data-valuerule="'.str_replace('"','&quot;',$this->esfield['valuerule']).'" '
 			.'data-valuerulecaption="'.str_replace('"','&quot;',$this->esfield['valuerulecaption']); // closing quote is not needed because 
 			//public static function calendar($value, $name, $element_id, $format = '%Y-%m-%d', $attribs = array())  will add it.
 									
-		$attributes_['required']=($this->esfield['isrequired'] ? 'required' : ''); //not working, don't know why.
+		$attributes['required']=($this->esfield['isrequired'] ? 'required' : ''); //not working, don't know why.
 
-		$result.=JHTML::calendar($value, $this->prefix.$this->esfield['fieldname'], $this->prefix.$this->esfield['fieldname'],
-			'%Y-%m-%d',$attributes_);
+		$result.=JHTML::calendar($value, $this->prefix.$this->field->fieldname, $this->prefix.$this->field->fieldname,
+			'%Y-%m-%d',$attributes);
 		
 		return $result;
 	}
