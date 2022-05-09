@@ -121,16 +121,17 @@ class JHTMLESRecords
 												$real_field=$real_field_row->realfieldname;
 
 
-										$htmlresult.='<SELECT name="'.$control_name.'[]" '
-											.'id="'.$control_name.'" MULTIPLE ';
+										$htmlresult.='<SELECT name="'.$control_name.'[]"'
+											.' id="'.$control_name.'" MULTIPLE';
 													
 										if(count($selectorpair)>1)
-											$htmlresult.='size="'.$selectorpair[1].'" ';
+											$htmlresult.=' size="'.$selectorpair[1].'"';
 											
-										$htmlresult.=($style!='' ? 'style="'.$style.'" ' : '')
-													.($cssclass!='' ? 'class="'.$cssclass.'" ' : '')
-													.'data-label="'.$place_holder.'" '
-													.($attribute!='' ? ' '.$attribute.' ' : '').'>';
+										$htmlresult.=($style!='' ? ' style="'.$style.'"' : '')
+											.($cssclass!='' ? ' class="'.$cssclass.'"' : '')
+											.' data-label="'.$place_holder.'"'
+											.($attribute!='' ? ' '.$attribute : '');
+											.' data-type="records">';
 										
 										foreach($model->ct->Records as $row)
 										{
@@ -156,13 +157,14 @@ class JHTMLESRecords
 										foreach($model->ct->Records as $row)
 										{
 												$htmlresult.='<tr><td valign="middle">'
-														.'<input type="radio" '
-														.'name="'.$control_name.'" '
-														.'id="'.$control_name.'_'.$i.'" '
-														.'value="'.$row[$model->ct->Table->realidfieldname].'" '
-														.((in_array($row[$model->ct->Table->realidfieldname],$valuearray) and count($valuearray)>0) ? ' checked="checked" ' : '')
-														.($cssclass!='' ? 'class="'.$cssclass.'"' : '')
-														.' /></td>';
+														.'<input type="radio"'
+														.' name="'.$control_name.'"'
+														.' id="'.$control_name.'_'.$i.'"'
+														.' value="'.$row[$model->ct->Table->realidfieldname].'"'
+														.((in_array($row[$model->ct->Table->realidfieldname],$valuearray) and count($valuearray)>0) ? ' checked="checked"' : '')
+														.($cssclass!='' ? ' class="'.$cssclass.'"' : '')
+														.' data-type="records" />';
+														.'</td>';
 
 												$htmlresult.='<td valign="middle">'
 														.'<label for="'.$control_name.'_'.$i.'">'.$row[$real_field_row->realfieldname].'</label>'
@@ -184,13 +186,14 @@ class JHTMLESRecords
 										foreach($model->ct->Records as $row)
 										{
 												$htmlresult.='<tr><td valign="middle">'
-														.'<input type="checkbox" '
-														.'name="'.$control_name.'[]" '
-														.'id="'.$control_name.'_'.$i.'" '
-														.'value="'.$row[$model->ct->Table->realidfieldname].'" '
+														.'<input type="checkbox"'
+														.' name="'.$control_name.'[]"'
+														.' id="'.$control_name.'_'.$i.'"'
+														.' value="'.$row[$model->ct->Table->realidfieldname].'"'
 														.((in_array($row[$model->ct->Table->realidfieldname],$valuearray) and count($valuearray)>0 ) ? ' checked="checked" ' : '')
-														.($cssclass!='' ? 'class="'.$cssclass.'"' : '')
-														.' /></td>';
+														.($cssclass!='' ? ' class="'.$cssclass.'"' : '')
+														.' data-type="records" />';
+														.'</td>';
 
                                                 $htmlresult.='<td valign="middle">'
 														.'<label for="'.$control_name.'_'.$i.'">'.$row[$real_field].'</label>'
@@ -239,22 +242,21 @@ class JHTMLESRecords
 
 								if($selectorpair[0]=='multi' or $selectorpair[0]=='checkbox')
 								{
-
-										$htmlresult.='<input type="checkbox" '
-										.'name="'.$control_name.'[]" '
-										.'id="'.$control_name.'_'.$i.'" '
-										.'value="'.$row[$model->ct->Table->realidfieldname].'" '
-										.((in_array($row[$model->ct->Table->realidfieldname],$valuearray) and count($valuearray)>0) ? ' checked="checked" ' : '')
-										.' />';
+									$htmlresult.='<input type="checkbox"'
+										.' name="'.$control_name.'[]"'
+										.' id="'.$control_name.'_'.$i.'"'
+										.' value="'.$row[$model->ct->Table->realidfieldname].'"'
+										.((in_array($row[$model->ct->Table->realidfieldname],$valuearray) and count($valuearray)>0) ? ' checked="checked"' : '')
+										.' data-type="records" />';
 								}
 								elseif($selectorpair[0]=='single' or $selectorpair[0]=='radio')
 								{
 										$htmlresult.='<input type="radio" '
-										.'name="'.$control_name.'" '
-										.'id="'.$control_name.'_'.$i.'" '
-										.'value="'.$row[$model->ct->Table->realidfieldname].'" '
-										.((in_array($row[$model->ct->Table->realidfieldname],$valuearray) and count($valuearray)>0) ? ' checked="checked" ' : '')
-										.' />';
+										.' name="'.$control_name.'"'
+										.' id="'.$control_name.'_'.$i.'"'
+										.' value="'.$row[$model->ct->Table->realidfieldname].'"'
+										.((in_array($row[$model->ct->Table->realidfieldname],$valuearray) and count($valuearray)>0) ? ' checked="checked"' : '')
+										.' data-type="records" />';
 								}
 								else
 										return '<p>Incorrect selector</p>';
@@ -373,12 +375,12 @@ class JHTMLESRecords
 			}
 		}
 
-		$htmlresult.='<SELECT name="'.$control_name.'" id="'.$control_name.$control_name_postfix.'" '
-			.($style!='' ? 'style="'.$style.'" ' : '')
-			.($cssclass!='' ? 'class="'.$cssclass.'" ' : '')
-			.$attribute.($attribute!='' ? ' ' : '')
-			.'data-label="'.$place_holder.'" '
-		.'>';
+		$htmlresult.='<SELECT name="'.$control_name.'" id="'.$control_name.$control_name_postfix.'"'
+			.($style!='' ? ' style="'.$style.'"' : '')
+			.($cssclass!='' ? ' class="'.$cssclass.'"' : '')
+			.($attribute!='' ? ' '.$attribute : '')
+			.' data-label="'.$place_holder.'"'
+			.' data-type="records" />';
 				
 		$htmlresult .= $htmlresult_options;
 
@@ -399,7 +401,7 @@ class JHTMLESRecords
 	}
 
 	static protected function getMultibox(&$model, &$model_nofilter,&$valuearray,$field,$selectorpair,
-                                              $control_name,$style,$cssclass,$attribute,$establename,$dynamic_filter,$langpostfix='',$place_holder='')
+		$control_name,$style,$cssclass,$attribute,$establename,$dynamic_filter,$langpostfix='',$place_holder='')
 	{
 		$real_field_row=Fields::getFieldRowByName($field, '',$establename);
 

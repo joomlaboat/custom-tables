@@ -22,27 +22,22 @@ class SearchInputBox
 {
 	var $ct;
 	var $modulename;
-	
+	var $field;
+		
 	function __construct(&$ct, $modulename)
 	{
 		$this->ct = $ct;
 		$this->modulename = $modulename;
 	}
 
-	function renderFieldBox($prefix,$objname,&$esfield,$cssclass,$index,$where,$innerjoin,$wherelist,$default_Action,$field_title=null)
+	function renderFieldBox($prefix,$objname,&$fieldrow,$cssclass,$index,$where,$innerjoin,$wherelist,$default_Action,$field_title=null)
 	{
-		if(!isset($esfield['fieldtitle'.$this->ct->Languages->Postfix]))
-		{
-			Factory::getApplication()->enqueueMessage(
-				JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_LANGFIELDNOTFOUND' ), 'Error');
-			
-			return '';	
-		}
+		$this->field = new Field($this->ct,$fieldrow);
 
-		$place_holder=$esfield['fieldtitle'.$this->ct->Languages->Postfix];
+		$place_holder = $this->field->title;
 	
 		if($field_title==null)
-			$field_title=$esfield['fieldtitle'.$this->ct->Languages->Postfix];
+			$field_title = $place_holder;
 
 		$result='';
 
@@ -50,10 +45,10 @@ class SearchInputBox
 		
 		if($value=='')
 		{
-			if(isset($esfield['fields']) and count($esfield['fields'])>0)
-				$where_name = implode(';',$esfield['fields']);
+			if(isset($fieldrow['fields']) and count($fieldrow['fields'])>0)
+				$where_name = implode(';',$fieldrow['fields']);
 			else
-				$where_name = $esfield['fieldname'];
+				$where_name = $this->field->fieldname;
 				
 			$value=$this->getWhereParameter($where_name);
 		}
@@ -65,144 +60,131 @@ class SearchInputBox
 		else
 			$default_class='form-control';
 
-		switch($esfield['type'])
+		switch($this->field->type)
 		{
-						case 'int':
-							$result.='<input type="text" name="'.$objname_.'" id="'.$objname_.'" class="'.$cssclass.' '.$default_class.'"
-							value="'.$value.'" placeholder="'.$field_title.'"'
-							.' onkeypress="es_SearchBoxKeyPress(event)"  />';
+			case 'int':
+				$result.='<input type="text" name="'.$objname_.'" id="'.$objname_.'" class="'.$cssclass.' '.$default_class.'"'
+					.' value="'.$value.'" placeholder="'.$field_title.'"'
+					.' onkeypress="es_SearchBoxKeyPress(event)"'
+					.' data-type="'.$this->field->type.'" />';
+				break;
 
+			case 'float':
+				$result.='<input type="text" name="'.$objname_.'" id="'.$objname_.'" class="'.$cssclass.' '.$default_class.'" value="'.$value.'"'
+					.' value="'.$value.'" placeholder="'.$field_title.'"'
+					.' onkeypress="es_SearchBoxKeyPress(event)" '
+					.' data-type="'.$this->field->type.'" />';
+				break;
 
-							break;
+			case 'string':
+				$result.='<input type="text" name="'.$objname_.'" id="'.$objname_.'" class="'.$cssclass.' '.$default_class.'" '
+					.' value="'.$value.'" '.((int)$this->field->params[0] > 0 ? 'maxlength="'.(int)$this->field->params[0].'"' : 'maxlength="255"')
+					.' placeholder="'.$field_title.'"'
+					.' onkeypress="es_SearchBoxKeyPress(event)"'
+					.' data-type="'.$this->field->type.'" />';
+				break;
 
-						case 'float':
-							$result.='<input type="text" name="'.$objname_.'" id="'.$objname_.'" class="'.$cssclass.' '.$default_class.'" value="'.$value.'"
-							value="'.$value.'" placeholder="'.$field_title.'"'
-							.' onkeypress="es_SearchBoxKeyPress(event)" />';
+			case 'phponchange':
+				$result.='<input type="text" name="'.$objname_.'" id="'.$objname_.'" class="'.$cssclass.' '.$default_class.'" '
+					.' value="'.$value.'" '.((int)$this->field->params[0] > 0 ? 'maxlength="'.(int)$this->field->params[0].'"' : 'maxlength="255"')
+					.' placeholder="'.$field_title.'"'
+					.' onkeypress="es_SearchBoxKeyPress(event)"'
+					.' data-type="'.$this->field->type.'" />';
+				break;
 
-							break;
+			case 'phponadd':
+				$result.='<input type="text" name="'.$objname_.'" id="'.$objname_.'" class="'.$cssclass.' '.$default_class.'" '
+					.' value="'.$value.'" '.((int)$this->field->params[0] > 0 ? 'maxlength="'.(int)$this->field->params[0].'"' : 'maxlength="255"')
+					.' placeholder="'.$field_title.'"'
+					.' onkeypress="es_SearchBoxKeyPress(event)"'
+					.' data-type="'.$this->field->type.'" />';
+				break;
 
-						case 'string':
-							$result.='<input type="text" name="'.$objname_.'" id="'.$objname_.'" class="'.$cssclass.' '.$default_class.'" '
-							.' value="'.$value.'" '.((int)$esfield['typeparams']>0 ? 'maxlength="'.(int)$esfield['typeparams'].'"' : 'maxlength="255"')
-							.' placeholder="'.$field_title.'"'
-							.' onkeypress="es_SearchBoxKeyPress(event)"'
-							.' />';
+			case 'multilangstring':
+				$result.='<input type="text" name="'.$objname_.'" id="'.$objname_.'" class="'.$cssclass.' '.$default_class.'" '
+					.' value="'.$value.'" '.((int)$this->field->params[0] > 0 ? 'maxlength="'.(int)$this->field->params[0].'"' : 'maxlength="255"')
+					.' placeholder="'.$field_title.'"'
+					.' onkeypress="es_SearchBoxKeyPress(event)"'
+					.' data-type="'.$this->field->type.'" />';
+				break;
 
-							break;
+			case 'text':
+				$result.='<input type="text" name="'.$objname_.'" id="'.$objname_.'" class="'.$cssclass.' '.$default_class.'" '
+					.' value="'.$value.'" '.((int)$this->field->params[0] > 0 ? 'maxlength="'.(int)$this->field->params[0].'"' : 'maxlength="255"')
+					.' placeholder="'.$field_title.'"'
+					.' onkeypress="es_SearchBoxKeyPress(event)"'
+					.' data-type="'.$this->field->type.'" />';
+				break;
 
-						case 'phponchange':
-							$result.='<input type="text" name="'.$objname_.'" id="'.$objname_.'" class="'.$cssclass.' '.$default_class.'" '
-							.' value="'.$value.'" '.((int)$esfield['typeparams']>0 ? 'maxlength="'.(int)$esfield['typeparams'].'"' : 'maxlength="255"')
-							.' placeholder="'.$field_title.'"'
-							.' onkeypress="es_SearchBoxKeyPress(event)"'
-							.' />';
+			case 'multilangtext':
+				$result.='<input type="text" name="'.$objname_.'" id="'.$objname_.'" class="'.$cssclass.' '.$default_class.'" '
+					.' value="'.$value.'" '.((int)$this->field->params[0] > 0 ? 'maxlength="'.(int)$this->field->params[0].'"' : 'maxlength="255"')
+					.' placeholder="'.$field_title.'" onkeypress="es_SearchBoxKeyPress(event)"'
+					.' data-type="'.$this->field->type.'" />';
+				break;
 
-							break;
+			case 'checkbox':
+				$result.=$this->getCheckBox($fieldrow,$default_Action,$index,$where,$wherelist,$objname_,$value, $cssclass);
+				break;
 
-						case 'phponadd':
-							$result.='<input type="text" name="'.$objname_.'" id="'.$objname_.'" class="'.$cssclass.' '.$default_class.'" '
-							.' value="'.$value.'" '.((int)$esfield['typeparams']>0 ? 'maxlength="'.(int)$esfield['typeparams'].'"' : 'maxlength="255"')
-							.' placeholder="'.$field_title.'"'
-							.' onkeypress="es_SearchBoxKeyPress(event)"'
-							.' />';
+			case 'range':
+				$result.=$this->getRangeBox($fieldrow,$index,$where,$wherelist,$objname_,$value, $cssclass);
+				break;
 
-							break;
+			case 'customtables':
+				$result.=$this->getCustomTablesBox($prefix,$innerjoin,$default_Action,$index,$where,$wherelist,$objname_,$value, $cssclass,$place_holder);
+				break;
 
-						case 'multilangstring':
+			case 'userid':
+				$result.=$this->getUserBox($default_Action,$index,$where,$wherelist,$objname_,$value, $cssclass);
+				break;
 
-								$result.='<input type="text" name="'.$objname_.'" id="'.$objname_.'" class="'.$cssclass.' '.$default_class.'" '
-								.' value="'.$value.'" '.((int)$esfield['typeparams']>0 ? 'maxlength="'.(int)$esfield['typeparams'].'"' : 'maxlength="255"')
-								.' placeholder="'.$field_title.'"'
-								.' onkeypress="es_SearchBoxKeyPress(event)"'
-								.' />';
+			case 'user':
+				$result.=$this->getUserBox($default_Action,$index,$where,$wherelist,$objname_,$value, $cssclass);
+				break;
 
-							break;
+			case 'usergroup':
+				$result.=$this->getUserGroupBox($default_Action,$index,$where,$wherelist,$objname_,$value, $cssclass);
+				break;
 
-						case 'text':
-								$result.='<input type="text" name="'.$objname_.'" id="'.$objname_.'" class="'.$cssclass.' '.$default_class.'" '
-								.' value="'.$value.'" '.((int)$esfield['typeparams']>0 ? 'maxlength="'.(int)$esfield['typeparams'].'"' : 'maxlength="255"')
-								.' placeholder="'.$field_title.'"'
-								.' onkeypress="es_SearchBoxKeyPress(event)"'
-								.' />';
+			case 'usergroups':
+				$result.=$this->getUserGroupBox($default_Action,$index,$where,$wherelist,$objname_,$value, $cssclass);
+				break;
 
+			case 'records':
+				$result.=$this->getRecordsBox($default_Action,$index,$where,$wherelist,$objname_,$value, $cssclass);
+				break;
 
-							break;
+			case 'sqljoin':
+				$result.=$this->getTableJoinBox($default_Action,$index,$where,$wherelist,$objname_,$value, $cssclass);
+				break;
 
+			case 'email';
+				$result.='<input type="text" name="'.$objname_.'" id="'.$objname_.'" class="'.$cssclass.' '.$default_class.'" '
+					.' placeholder="'.$field_title.'"'
+					.' onkeypress="es_SearchBoxKeyPress(event)"'
+					.' value="'.$value.'" maxlength="255"'
+					.' data-type="'.$this->field->type.'" />';
+				break;
 
-						case 'multilangtext':
+			case 'url';
+				$result.='<input type="text" name="'.$objname_.'" id="'.$objname_.'" class="'.$cssclass.' '.$default_class.'" '
+					.' placeholder="'.$field_title.'"'
+					.' onkeypress="es_SearchBoxKeyPress(event)"'
+					.' value="'.$value.'" maxlength="1024"'
+					.' data-type="'.$this->field->type.'" />';
+				break;
 
-								$result.='<input type="text" name="'.$objname_.'" id="'.$objname_.'" class="'.$cssclass.' '.$default_class.'" '
-								.' value="'.$value.'" '.((int)$esfield['typeparams']>0 ? 'maxlength="'.(int)$esfield['typeparams'].'"' : 'maxlength="255"')
-								.' placeholder="'.$field_title.'" onkeypress="es_SearchBoxKeyPress(event)" />';
-
-							break;
-
-						case 'checkbox':
-								$result.=$this->getCheckBox($esfield,$default_Action,$index,$where,$wherelist,$objname_,$value, $cssclass);
-								break;
-
-						case 'range':
-								$result.=$this->getRangeBox($esfield,$index,$where,$wherelist,$objname_,$value, $cssclass);
-								break;
-
-						case 'customtables':
-								$result.=$this->getCustomTablesBox($prefix,$innerjoin,$esfield,$default_Action,$index,$where,$wherelist,$objname_,$value, $cssclass,$place_holder);
-								break;
-
-						case 'userid':
-							$result.=$this->getUserBox($esfield,$default_Action,$index,$where,$wherelist,$objname_,$value, $cssclass);
-							break;
-
-						case 'user':
-							$result.=$this->getUserBox($esfield,$default_Action,$index,$where,$wherelist,$objname_,$value, $cssclass);
-							break;
-
-						case 'usergroup':
-							$result.=$this->getUserGroupBox($esfield,$default_Action,$index,$where,$wherelist,$objname_,$value, $cssclass);
-							break;
-
-						case 'usergroups':
-							$result.=$this->getUserGroupBox($esfield,$default_Action,$index,$where,$wherelist,$objname_,$value, $cssclass);
-							break;
-
-						case 'records':
-							$result.=$this->getRecordsBox($esfield,$default_Action,$index,$where,$wherelist,$objname_,$value, $cssclass);
-							break;
-
-						case 'sqljoin':
-							$result.=$this->getTableJoinBox($esfield,$default_Action,$index,$where,$wherelist,$objname_,$value, $cssclass);
-						break;
-
-						case 'email';
-								$result.='<input type="text" name="'.$objname_.'" id="'.$objname_.'" class="'.$cssclass.' '.$default_class.'" '
-								.' placeholder="'.$field_title.'"'
-								.' onkeypress="es_SearchBoxKeyPress(event)"'
-								.' value="'.$value.'" maxlength="255" />';
-								
-						break;
-
-						case 'url';
-								$result.='<input type="text" name="'.$objname_.'" id="'.$objname_.'" class="'.$cssclass.' '.$default_class.'" '
-								.' placeholder="'.$field_title.'"'
-								.' onkeypress="es_SearchBoxKeyPress(event)"'
-								.' value="'.$value.'" maxlength="1024" />';
-						break;
-
-						case 'date';
-								$result.=JHTML::calendar($value, $objname_, $objname_);
-
-						break;
-
+			case 'date';
+				$result.=JHTML::calendar($value, $objname_, $objname_);
+				break;
 		}
 		return $result;
 	}
 
-	function getTableJoinBox(&$esfield,$default_Action,$index,$where,$wherelist,$objname_,$value, $cssclass)
+	protected function getTableJoinBox($default_Action,$index,$where,$wherelist,$objname_,$value, $cssclass)
 	{
 		$result='';
-
-		$typeparams=JoomlaBasicMisc::csv_explode(',',$esfield['typeparams'],'"',false);
 
 		if($default_Action!='' and $default_Action!=' ')
 			$onchange=$default_Action;
@@ -217,120 +199,114 @@ class SearchInputBox
 		else
 			$default_class='form-control';
 
-		$typeparams=JoomlaBasicMisc::csv_explode(',',$esfield['typeparams'],'"',false);
-		$result.='<div class="'.$cssclass.'">'.JHTML::_('ESSQLJoin.render',$typeparams,$value,true,$this->ct->Languages->Postfix,$objname_,
-				$esfield['fieldtitle'].$this->ct->Languages->Postfix,
-			  ' '.$default_class.' es_class_sqljoin', $onchange,true).'</div>';
+		$result.='<div class="'.$cssclass.'">'.JHTML::_('ESSQLJoin.render',$this->field->params,$value,true,$this->ct->Languages->Postfix,$objname_,
+				$this->field->title,
+				' '.$default_class.' es_class_sqljoin', $onchange,true).'</div>';
 
 		return $result;
 	}
 
-	function getRecordsBox(&$esfield,$default_Action,$index,$where,$wherelist,$objname_,$value, $cssclass)
+	protected function getRecordsBox($default_Action,$index,$where,$wherelist,$objname_,$value, $cssclass)
 	{
 		$result='';
 
-		$typeparams=JoomlaBasicMisc::csv_explode(',',$esfield['typeparams'],'"',false);
+		if(count($this->field->params)<1)
+			$result.='table not specified';
 
-							if(count($typeparams)<1)
-								$result.='table not specified';
+		if(count($this->field->params)<2)
+			$result.='field or layout not specified';
 
-							if(count($typeparams)<2)
-								$result.='field or layout not specified';
+		if(count($this->field->params)<3)
+			$result.='selector not specified';
 
-							if(count($typeparams)<3)
-								$result.='selector not specified';
+		$esr_table=$this->field->params[0];
+		$esr_field=$this->field->params[1];
+		$esr_selector=$this->field->params[2];
 
-							$esr_table=$typeparams[0];
-							$esr_field=$typeparams[1];
-							$esr_selector=$typeparams[2];
+		if($wherelist!='')
+			$esr_filter=$wherelist;
+		elseif(count($this->field->params)>3)
+			$esr_filter=$this->field->params[3];
+		else
+			$esr_filter='';
 
+		$dynamic_filter='';
 
-							if($wherelist!='')
-								$esr_filter=$wherelist;
-							elseif(count($typeparams)>3)
-								$esr_filter=$typeparams[3];
-							else
-								$esr_filter='';
+		$sortbyfield='';
+		if(isset($this->field->params[5]))
+			$sortbyfield=$this->field->params[5];
 
-							$dynamic_filter='';
+		$v=array();
+		$v[]=$index;
+		$v[]='this.value';
+		$v[]='"'.$this->field->fieldname.'"';
+		$v[]='"'.urlencode($where).'"';
+		$v[]='"'.urlencode($wherelist).'"';
+		$v[]='"'.$this->ct->Languages->Postfix.'"';
 
-							$sortbyfield='';
-							if(isset($typeparams[5]))
-								$sortbyfield=$typeparams[5];
+		if($default_Action!='' and $default_Action!=' ')
+			$onchange=$default_Action;
+		else
+			$onchange=' onkeypress="es_SearchBoxKeyPress(event)"';
 
-							$v=array();
-							$v[]=$index;
-							$v[]='this.value';
-							$v[]='"'.$esfield['fieldname'].'"';
-							$v[]='"'.urlencode($where).'"';
-							$v[]='"'.urlencode($wherelist).'"';
-							$v[]='"'.$this->ct->Languages->Postfix.'"';
+		if(is_array($value))
+			$value=implode(',',$value);
 
-							if($default_Action!='' and $default_Action!=' ')
-								$onchange=$default_Action;
-							else
-								$onchange=' onkeypress="es_SearchBoxKeyPress(event)"';
+		$real_selector=$esr_selector;
+		$real_selector='single';
 
-							if(is_array($value))
-								$value=implode(',',$value);
-
-							$real_selector=$esr_selector;
-
-							$real_selector='single';
-
-							$result.=JHTML::_('ESRecords.render',$typeparams,$objname_, $value,$esr_table,$esr_field,$real_selector,$esr_filter,'',
- $cssclass, $onchange,$dynamic_filter,$sortbyfield,$this->ct->Languages->Postfix,$esfield['fieldtitle'].$this->ct->Languages->Postfix);
-
-							return $result;
-
-	}
-
-	function getCustomTablesBox($prefix,$innerjoin,&$esfield,$default_Action,$index,$where,$wherelist,$objname_,$value, $cssclass,$place_holder='')
-	{
-		$result='';
-		$typeparams=explode(',',$esfield['typeparams']);
-							$optionname=$typeparams[0];
-
-							$parentid=Tree::getOptionIdFull($optionname);
-
-							if($default_Action!='')
-							{
-								$onchange=$default_Action;
-								$requirementdepth=1;
-							}
-							else
-							{
-								$onchange=$this->modulename.'_onChange('
-									.$index.','
-									.'me.value,'
-									.'\''.$esfield['fieldname'].'\','
-									.'\''.urlencode($where).'\','
-									.'\''.urlencode($wherelist).'\','
-									.'\''.$this->ct->Languages->Postfix.'\''
-									.')';
-								$requirementdepth=0;
-							}
-
-							$result.=JHTML::_('ESComboTree.render',
-											  $prefix,
-											  $this->ct->Table->tablename,
-											  $esfield['fieldname'],
-											  $optionname,
-											  $this->ct->Languages->Postfix,
-											  $value,
-											  $cssclass,
-											  $onchange,
-											  $where,
-											  $innerjoin,false,$requirementdepth,
-											  $place_holder,
-											  '',
-											  ''
-											);
+		$result.=JHTML::_('ESRecords.render',$this->field->params,$objname_,
+			value,$esr_table,$esr_field,$real_selector,$esr_filter,'',
+			$cssclass, $onchange,$dynamic_filter,$sortbyfield,
+			$this->ct->Languages->Postfix,$this->field->title);
 
 		return $result;
 	}
 
-	function getCheckBox(&$esfield,$default_Action,$index,$where,$wherelist,$objname_,$value, $cssclass)
+	protected function getCustomTablesBox($prefix,$innerjoin,$default_Action,$index,$where,$wherelist,$objname_,$value, $cssclass,$place_holder='')
+	{
+		$result='';
+		$optionname=$this->field->params[0];
+		$parentid=Tree::getOptionIdFull($optionname);
+
+		if($default_Action!='')
+		{
+			$onchange=$default_Action;
+			$requirementdepth=1;
+		}
+		else
+		{
+			$onchange=$this->modulename.'_onChange('
+				.$index.','
+				.'me.value,'
+				.'\''.$this->field->params->fieldname.'\','
+				.'\''.urlencode($where).'\','
+				.'\''.urlencode($wherelist).'\','
+				.'\''.$this->ct->Languages->Postfix.'\''
+				.')';
+				
+			$requirementdepth=0;
+		}
+
+		$result.=JHTML::_('ESComboTree.render',
+			$prefix,
+			$this->ct->Table->tablename,
+			$this->field->params->fieldname,
+			$optionname,
+			$this->ct->Languages->Postfix,
+			$value,
+			$cssclass,
+			$onchange,
+			$where,
+			$innerjoin,false,$requirementdepth,
+			$place_holder,
+			'',
+			'');
+
+		return $result;
+	}
+
+	protected function getCheckBox(&$fieldrow,$default_Action,$index,$where,$wherelist,$objname_,$value, $cssclass)
 	{
 		$result='';
 		
@@ -339,63 +315,65 @@ class SearchInputBox
 		else
 			$default_class='form-control';
 		
-								if(isset($esfield['essb_option']) and $esfield['essb_option']=='any')
-								{
-									if($esfield['essb_option2']!='')
-										$translations=JoomlaBasicMisc::csv_explode(',', $esfield['essb_option2'], '"', false);
-									else
-										$translations=array('Any','Checked','Unchecked');
+		if(isset($fieldrow['essb_option']) and $fieldrow['essb_option']=='any')
+		{
+			if($fieldrow['essb_option2']!='')
+				$translations=JoomlaBasicMisc::csv_explode(',', $fieldrow['essb_option2'], '"', false);
+			else
+				$translations=array('Any','Checked','Unchecked');
 
-										$onchange=' onChange="'.$this->modulename.'_onChange('
-										.$index.','
-										.'this.value,'
-										.'\''.$esfield['fieldname'].'\','
-										.'\''.urlencode($where).'\','
-										.'\''.urlencode($wherelist).'\','
-										.'\''.$this->ct->Languages->Postfix.'\''
-										.')"';
+			$onchange=' onChange="'.$this->modulename.'_onChange('
+				.$index.','
+				.'this.value,'
+				.'\''.$this->field->fieldname.'\','
+				.'\''.urlencode($where).'\','
+				.'\''.urlencode($wherelist).'\','
+				.'\''.$this->ct->Languages->Postfix.'\''
+				.')"';
 
+			$result.='<select'
+				.' id="'.$objname_.'"'
+				.' name="'.$objname_.'"'
+				.' '.$onchange
+				.' class="'.$cssclass.' '.$default_class.'"'
+				.' data-type="checkbox">';
+				
+			$result.='<option value="" '.($value=='' ? 'SELECTED' : '').'>'.$translations[0].'</option>'
+					.'<option value="true" '.($value=='true' ? 'SELECTED' : '').'>'.$translations[1].'</option>'
+					.'<option value="false" '.($value=='false' ? 'SELECTED' : '').'>'.$translations[2].'</option>'
+					.'</select>';
+			}
+			else
+			{
+				if($default_Action!='')
+				{
+					$onAction=$default_Action;
+				}
+				else
+				{
+					$onAction=' onChange="'.$this->modulename.'_onChange('
+						.$index.','
+						.'this.value,'
+						.'\''.$this->field->fieldname.'\','
+						.'\''.urlencode($where).'\','
+						.'\''.urlencode($wherelist).'\','
+						.'\''.$this->ct->Languages->Postfix.'\''
+						.')"';
+				}
 
-										$result.='
-									<select id="'.$objname_.'" name="'.$objname_.'" '.$onchange.' class="'.$cssclass.' '.$default_class.'" >
-										<option value="" '.($value=='' ? 'SELECTED' : '').'>'.$translations[0].'</option>
-										<option value="true" '.($value=='true' ? 'SELECTED' : '').'>'.$translations[1].'</option>
-										<option value="false" '.($value=='false' ? 'SELECTED' : '').'>'.$translations[2].'</option>
-									</select>
-									';
-								}
-								else
-								{
-
-									if($default_Action!='')
-										$onAction=$default_Action;
-									else
-									{
-										$onAction=' onChange="'.$this->modulename.'_onChange('
-										.$index.','
-										.'this.value,'
-										.'\''.$esfield['fieldname'].'\','
-										.'\''.urlencode($where).'\','
-										.'\''.urlencode($wherelist).'\','
-										.'\''.$this->ct->Languages->Postfix.'\''
-										.')"';
-									}
-
-									$result.='<input type="checkbox" class="'.$cssclass.' '.$default_class.'" '
-										.' id="'.$objname_.'" '
-										.' name="'.$objname_.'" '
-										.($value=='on' ? ' checked="checked" ' : '')
-										.' onkeypress="es_SearchBoxKeyPress(event)"'
-										.' '.$onAction.' >';
-
-
-								}
+				$result.='<input type="checkbox" class="'.$cssclass.' '.$default_class.'"'
+					.' id="'.$objname_.'"'
+					.' name="'.$objname_.'"'
+					.($value=='on' ? ' checked="checked"' : '')
+					.' onkeypress="es_SearchBoxKeyPress(event)"'
+					.' '.$onAction
+					.' data-type="checkbox" />';
+			}
 
 		return $result;
 	}
 
-
-	function getRangeBox(&$esfield,$index,$where,$wherelist,$objname_,$value, $cssclass)
+	protected function getRangeBox(&$fieldrow,$index,$where,$wherelist,$objname_,$value, $cssclass)
 	{
 		$jinput=Factory::getApplication()->input;
 		$result='';
@@ -408,26 +386,27 @@ class SearchInputBox
 		$value_min='';
 		$value_max='';
 
-								if($esfield['typeparams']=='date')
-									$d='-to-';
-								if($esfield['typeparams']=='float')
-									$d='-';
+		if($this->field->params=='date')
+			$d='-to-';
+		
+		if($this->field->params=='float')
+			$d='-';
 
-								$values=explode($d,$value);
-								$value_min=$values[0];
+		$values=explode($d,$value);
+		$value_min=$values[0];
 
-								if(isset($values[1]))
-									$value_max=$values[1];
+		if(isset($values[1]))
+			$value_max=$values[1];
 
-								if($value_min=='')
-									$value_min=$jinput->getString($objname_.'_min');
+		if($value_min=='')
+			$value_min=$jinput->getString($objname_.'_min');
 
-								if($value_max=='')
-									$value_max=$jinput->getString($objname_.'_max');
+		if($value_max=='')
+			$value_max=$jinput->getString($objname_.'_max');
 
-								//header function
-								$document = Factory::getDocument();
-								$js='
+		//header function
+		$document = Factory::getDocument();
+		$js='
 	function Update'.$objname_.'Values()
 	{
 		var o=document.getElementById("'.$objname_.'");
@@ -435,80 +414,70 @@ class SearchInputBox
 		var v_max=document.getElementById("'.$objname_.'_max").value;
 		o.value=v_min+"'.$d.'"+v_max;
 
-		//'.$this->modulename.'_onChange('.$index.',v_min+"'.$d.'"+v_max,"'.$esfield['fieldname'].'","'.urlencode($where).'","'.urlencode($wherelist).'");
+		//'.$this->modulename.'_onChange('.$index.',v_min+"'.$d.'"+v_max,"'.$this->field->fieldname.'","'.urlencode($where).'","'.urlencode($wherelist).'");
 	}
 ';
+		$document->addScriptDeclaration($js);
+		//end of header function
 
-								$document->addScriptDeclaration($js);
-								//end of header function
+		$attribs='onChange="Update'.$objname_.'Values()" class="'.$default_class.'" ';
 
-								$attribs='onChange="Update'.$objname_.'Values()" class="'.$default_class.'" ';
+		$result.='<input type="hidden"'
+			.' id="'.$objname_.'" '
+			.' name="'.$objname_.'" '
+			.' value="'.$value_min.$d.$value_max.'" '
+			.' onkeypress="es_SearchBoxKeyPress(event)"'
+			.' data-type="range" />';
 
+		$result.='<table class="es_class_min_range_table" border="0" cellpadding="0" cellspacing="0" class="'.$cssclass.'" ><tbody><tr><td valign="middle">';
 
-								$result.='<input type="hidden"'
-										.' id="'.$objname_.'" '
-										.' name="'.$objname_.'" '
-										.' value="'.$value_min.$d.$value_max.'" '
-										.' onkeypress="es_SearchBoxKeyPress(event)"'
-										.' />';
+		//From
+		if($fieldrow['typeparams']=='date')
+		{
+			$result.=JHTML::calendar($value_min, $objname_.'_min', $objname_.'_min','%Y-%m-%d',$attribs);
+		}
+		else
+		{
+			$result.='<input type="text"'
+				.' id="'.$objname_.'_min" '
+				.' name="'.$objname_.'_min" '
+				. 'value="'.$value_min.'" '
+				.' onkeypress="es_SearchBoxKeyPress(event)" '
+				.' '.str_replace('class="','class="es_class_min_range ',$attribs)
+				.' data-type="range" />';
+		}
 
-								$result.='<table class="es_class_min_range_table" border="0" cellpadding="0" cellspacing="0" class="'.$cssclass.'" ><tbody><tr><td valign="middle">';
+		$result.='</td><td width="20" align="center">-</td><td align="left" width="140" valign="middle">';
 
-								//From
-								if($esfield['typeparams']=='date')
-								{
-									$result.=JHTML::calendar($value_min, $objname_.'_min', $objname_.'_min','%Y-%m-%d',$attribs);
-								}
-								else
-								{
-									$result.='<input type="text"'
-										.' id="'.$objname_.'_min" '
-										.' name="'.$objname_.'_min" '
-										. 'value="'.$value_min.'" '
-										.' onkeypress="es_SearchBoxKeyPress(event)" '
+		//To
+		if($fieldrow['typeparams']=='date')
+		{
+			$result.=JHTML::calendar($value_max, $objname_.'_max', $objname_.'_max','%Y-%m-%d',$attribs);
+		}
+		else
+		{
+			$result.='<input type="text"'
+				.' id="'.$objname_.'_max"'
+				.' name="'.$objname_.'_max"'
+				.' value="'.$value_max.'"'
+				.' onkeypress="es_SearchBoxKeyPress(event)"'
+				.' '.str_replace('class="','class="es_class_min_range ',$attribs)
+				.' data-type="range" />';
+		}
 
-										.str_replace('class="','class="es_class_min_range ',$attribs)
-										.' >';
-								}
-
-								$result.='</td><td width="20" align="center">-</td><td align="left" width="140" valign="middle">';
-
-								//To
-								if($esfield['typeparams']=='date')
-								{
-
-									$result.=JHTML::calendar($value_max, $objname_.'_max', $objname_.'_max','%Y-%m-%d',$attribs);
-								}
-								else
-								{
-									$result.='<input type="text"'
-										.' id="'.$objname_.'_max" '
-										.' name="'.$objname_.'_max" '
-										. 'value="'.$value_max.'" '
-										.' onkeypress="es_SearchBoxKeyPress(event)" '
-
-										.str_replace('class="','class="es_class_min_range ',$attribs)
-										.' >';
-								}
-
-								$result.='</td></tr></tbody></table>';
-
-		return $result;
+		return '</td></tr></tbody></table>';
 	}
 
-	function getUserGroupBox(&$esfield,$default_Action,$index,$where,$wherelist,$objname_,$value,$cssclass)
+	protected function getUserGroupBox($default_Action,$index,$where,$wherelist,$objname_,$value,$cssclass)
 	{
 		$result='';
-
-		$mysqljoin='#__customtables_table_'.$this->ct->Table->tablename.' ON #__customtables_table_'.$this->ct->Table->tablename.'.es_'.$esfield['fieldname'].'=#__usergroups.id';
-
-		$usergroup=$esfield['typeparams'];
+		$mysqljoin='#__customtables_table_'.$this->ct->Table->tablename.' ON #__customtables_table_'.$this->ct->Table->tablename.'.es_'.$this->field->fieldname.'=#__usergroups.id';
+		$usergroup=$this->field->params[0];
 		
 		if($this->ct->Env->version < 4)
 			$cssclass='class="inputbox '.$cssclass.'" ';
 		else
 			$cssclass='class="form-control '.$cssclass.'" ';
-			
 
 		$user =  Factory::getUser();
 
@@ -519,13 +488,13 @@ class SearchInputBox
 		else
 		{
 			$onchange=' onChange=   "'.$this->modulename.'_onChange('
-									.$index.','
-									.'this.value,'
-									.'\''.$esfield['fieldname'].'\','
-									.'\''.urlencode($where).'\','
-									.'\''.urlencode($wherelist).'\','
-									.'\''.$this->ct->Languages->Postfix.'\''
-									.')"';
+				.$index.','
+				.'this.value,'
+				.'\''.$this->field->fieldname.'\','
+				.'\''.urlencode($where).'\','
+				.'\''.urlencode($wherelist).'\','
+				.'\''.$this->ct->Languages->Postfix.'\''
+				.')"';
 		}
 
 		if($user->id!=0)
@@ -534,14 +503,11 @@ class SearchInputBox
 		return $result;
 	}
 
-	function getUserBox(&$esfield,$default_Action,$index,$where,$wherelist,$objname_,$value, $cssclass)
+	protected function getUserBox($default_Action,$index,$where,$wherelist,$objname_,$value, $cssclass)
 	{
 		$result='';
-
-		$mysqljoin='#__customtables_table_'.$this->ct->Table->tablename.' ON #__customtables_table_'.$this->ct->Table->tablename.'.es_'.$esfield['fieldname'].'=#__users.id';
-
-		$usergroup=$esfield['typeparams'];
-		
+		$mysqljoin='#__customtables_table_'.$this->ct->Table->tablename.' ON #__customtables_table_'.$this->ct->Table->tablename.'.es_'.$this->field->fieldname.'=#__users.id';
+		$usergroup=$this->field->params;
 		$user =  Factory::getUser();
 
 		if($default_Action!='')
@@ -553,7 +519,7 @@ class SearchInputBox
 			$onchange=' onChange=   "'.$this->modulename.'_onChange('
 									.$index.','
 									.'this.value,'
-									.'\''.$esfield['fieldname'].'\','
+									.'\''.$this->field->fieldname.'\','
 									.'\''.urlencode($where).'\','
 									.'\''.urlencode($wherelist).'\','
 									.'\''.$this->ct->Languages->Postfix.'\''

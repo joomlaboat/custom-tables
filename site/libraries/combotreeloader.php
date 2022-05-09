@@ -186,16 +186,16 @@ class ESDynamicComboTree
 				.'\''.((int)$this->requirementdepth).'\'); '
 				.' " ';
 
-		$result.='<select '
-			.'name="'.$objectname.'" '
-			.'id="'.$objectname.'" '
-			.'class="'.$this->cssclass.'" '
-			.$onChange.' '
-			.$optionalOptions.' '
-			.'data-label="'.$place_holder.'" '
-			.'data-valuerule="'.str_replace('"','&quot;',$valuerule).'" '
-			.'data-valuerulecaption="'.str_replace('"','&quot;',$valuerulecaption).'" '
-			.'>';
+		$result.='<select'
+			.' name="'.$objectname.'"'
+			.' id="'.$objectname.'"'
+			.' class="'.$this->cssclass.'"'
+			.' '.$onChange
+			.' '.$optionalOptions
+			.' data-label="'.$place_holder.'"'
+			.' data-valuerule="'.str_replace('"','&quot;',$valuerule).'"'
+			.' data-valuerulecaption="'.str_replace('"','&quot;',$valuerulecaption).'"'
+			.' data-type="customtables">';
 
 		$result.='<option value="" '.($value=="" ? ' SELECTED ':'').'>- '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT').' '.$place_holder.'</option>';
 
@@ -267,7 +267,6 @@ class ESDynamicComboTree
 
 	function renderComboBox(&$filterwhere, &$urlwhere, &$filterwherearr,&$urlwherearr, $simpleList=false,
 		$value='',$place_holder='',$valuerule='',$valuerulecaption='')
-	
 	{
 		$result='';
 

@@ -234,7 +234,7 @@
 			
 			if(obj){
 				var o=obj.value;
-				if(o!=="" && o!=="0"){
+				if(o!=="" && (o!=="0" || obj.dataset.type == 'int' || obj.dataset.type == 'float')){
 					if(n[2]===""){
     					if(o.indexOf("-to-")!=-1){
 							if(o!="-to-")

@@ -233,14 +233,20 @@ class JHTMLESSqlJoin
 		{
 			if($list_value[0]==$current_value)
 			{
-				$htmlresult.='<input type="hidden" name="'.$control_name.'" id="'.$control_name.'" value="'.$list_value[0].'" >';
+				$htmlresult.='<input type="hidden" name="'.$control_name.'"'
+					.' id="'.$control_name.'" value="'.$list_value[0].'"'
+					.' data-type="sqljoin" />';
 				$htmlresult.=$list_value[1];
                 break;
 			}
 		}
 
 		if($htmlresult=='')
-			$htmlresult.='<input type="hidden" name="'.$control_name.'" id="'.$control_name.'" value="">';
+			$htmlresult.='<input type="hidden"'
+					.' name="'.$control_name.'"'
+					.' id="'.$control_name.'"'
+					.' value=""'
+					.' data-type="sqljoin" />';
 
 		return $htmlresult;
 	}
@@ -262,13 +268,13 @@ class JHTMLESSqlJoin
 	static protected function renderDropdownSelector_Box_simple($list_values,$current_value,$control_name,$cssclass,$attribute,$place_holder,$dynamic_filter,$addNoValue=false)
     {
 		$htmlresult='';
-		$htmlresult_select ='<SELECT '
-							.'name="'.$control_name.'" '
-							.'id="'.$control_name.'" '
-							.($cssclass!='' ? 'class="'.$cssclass.'" ' : '')
-							.($attribute!='' ? ' '.$attribute.' ' : '')
-							.'data-label="'.$place_holder.'" '
-							.'>';
+		$htmlresult_select ='<SELECT'
+							.' name="'.$control_name.'"'
+							.' id="'.$control_name.'"'
+							.($cssclass!='' ? ' class="'.$cssclass.'"' : '')
+							.($attribute!='' ? ' '.$attribute : '')
+							.' data-label="'.$place_holder.'"'
+							.' data-type="sqljoin">';
 
 		$htmlresult_select.='<option value="">- '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT' ).' '.$place_holder.'</option>';
 
@@ -352,11 +358,11 @@ class JHTMLESSqlJoin
 				$htmlresult.='<div id="sqljoin_table_'.$control_name.'_'.$list_value[0].'">';
 
 			$htmlresult.='<input type="radio" '
-					.'name="'.$control_name.'" '
-					.'id="'.$control_name.'_'.$i.'" '
-					.'value="'.$list_value[0].'" '
-					.($list_value==$current_value ? ' checked="checked" ' : '')
-					.' />';
+					.' name="'.$control_name.'"'
+					.' id="'.$control_name.'_'.$i.'"'
+					.' value="'.$list_value[0].'"'
+					.($list_value==' '.$current_value ? ' checked="checked" ' : '')
+					.' data-type="sqljoin" />';
 
 			if($withtable)
 				$htmlresult.='</td><td valign="middle">';
