@@ -131,7 +131,7 @@ class JHTMLESRecords
 										$htmlresult.=($style!='' ? ' style="'.$style.'"' : '')
 											.($cssclass!='' ? ' class="'.$cssclass.'"' : '')
 											.' data-label="'.$place_holder.'"'
-											.($attribute!='' ? ' '.$attribute : '');
+											.($attribute!='' ? ' '.$attribute : '')
 											.' data-type="records">';
 										
 										foreach($model->ct->Records as $row)
@@ -164,7 +164,7 @@ class JHTMLESRecords
 														.' value="'.$row[$model->ct->Table->realidfieldname].'"'
 														.((in_array($row[$model->ct->Table->realidfieldname],$valuearray) and count($valuearray)>0) ? ' checked="checked"' : '')
 														.($cssclass!='' ? ' class="'.$cssclass.'"' : '')
-														.' data-type="records" />';
+														.' data-type="records" />'
 														.'</td>';
 
 												$htmlresult.='<td valign="middle">'
@@ -193,7 +193,7 @@ class JHTMLESRecords
 														.' value="'.$row[$model->ct->Table->realidfieldname].'"'
 														.((in_array($row[$model->ct->Table->realidfieldname],$valuearray) and count($valuearray)>0 ) ? ' checked="checked" ' : '')
 														.($cssclass!='' ? ' class="'.$cssclass.'"' : '')
-														.' data-type="records" />';
+														.' data-type="records" />'
 														.'</td>';
 
                                                 $htmlresult.='<td valign="middle">'

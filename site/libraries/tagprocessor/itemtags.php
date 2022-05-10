@@ -235,7 +235,7 @@ class tagProcessor_Item
 		
 		$htmlresult = '';
 		
-		$LayoutProc = new LayoutProcessor($model->ct);
+		$LayoutProc = new LayoutProcessor($ct);
 
 		if($layoutType==2)
         {

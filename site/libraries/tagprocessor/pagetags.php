@@ -40,6 +40,7 @@ New:
 */
  
 use \CustomTables\Twig_Html_Tags;
+use \CustomTables\Twig_Url_Tags;
 use \CustomTables\Twig_Record_Tags;
 
 class tagProcessor_Page
@@ -47,9 +48,10 @@ class tagProcessor_Page
     public static function process(&$ct,&$pagelayout)
     {
 		$ct_html = new Twig_Html_Tags($ct, false);
+		$ct_url = new Twig_Url_Tags($ct, false);
 		$ct_record = new Twig_Record_Tags($ct, false);
 		
-        tagProcessor_Page::FormatLink($ct_html,$pagelayout);//{format:xls}  the link to the same page but in xls format
+        tagProcessor_Page::FormatLink($ct_url,$pagelayout);//{format:xls}  the link to the same page but in xls format
 		
         tagProcessor_Page::PathValue($ct_html,$pagelayout); //Converted to Twig. Original replaced.
         tagProcessor_Page::AddNew($ct_html,$pagelayout); //Converted to Twig. Original replaced.
@@ -87,7 +89,7 @@ class tagProcessor_Page
         }
     }
 
-    public static function FormatLink(&$ct_html,&$pagelayout)
+    public static function FormatLink(&$ct_url,&$pagelayout)
 	{
 		$options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('format',$options,$pagelayout,'{}');
@@ -106,7 +108,7 @@ class tagProcessor_Page
 			$imagesize = isset($option_list[3]) ? $option_list[3] : '';
 			$menu_item_alias = isset($option_list[4]) ? $option_list[4] : '';
 			
-			$vlu = $ct_html->format($format, $link_type, $image, $imagesize, $menu_item_alias, ',');
+			$vlu = $ct_url->format($format, $link_type, $image, $imagesize, $menu_item_alias, ',');
 
 			$pagelayout=str_replace($fItem,$vlu,$pagelayout);
 			$i++;

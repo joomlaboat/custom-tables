@@ -256,7 +256,7 @@ class SearchInputBox
 		$real_selector='single';
 
 		$result.=JHTML::_('ESRecords.render',$this->field->params,$objname_,
-			value,$esr_table,$esr_field,$real_selector,$esr_filter,'',
+			$value,$esr_table,$esr_field,$real_selector,$esr_filter,'',
 			$cssclass, $onchange,$dynamic_filter,$sortbyfield,
 			$this->ct->Languages->Postfix,$this->field->title);
 
