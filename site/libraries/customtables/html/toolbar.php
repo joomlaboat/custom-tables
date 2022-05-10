@@ -58,7 +58,12 @@ class RecordToolbar
 				case 'refresh':
 					$rid='esRefreshIcon'.$this->rid;
 					$alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_REFRESH' );
-					$img='<img src="'.$this->iconPath.'refresh.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+					
+					if($this->ct->Env->toolbaricons == 'fontawesome')
+						$img='<i class="ba-btn-transition fas fa-sync" data-icon="fas fa-sync" title="' . $alt . '"></i>';
+					else
+						$img='<img src="'.$this->iconPath.'refresh.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+					
 					return '<div id="'.$rid.'" class="toolbarIcons"><a href="javascript:ctRefreshRecord('.$this->Table->tableid.',\''.$this->listing_id.'\', \''.$rid.'\');">'.$img.'</a></div>';
 					
 				case 'gallery':
@@ -96,20 +101,26 @@ class RecordToolbar
 		if($this->isPublishable)
 		{
 			$rid = 'esPublishIcon'.$this->rid;
-			
-			//return '<div id="esDeleteIcon'.$this->rid.'" class="toolbarIcons"><a href=\'javascript:ctDeleteRecord("'.$msg.'", '.$this->Table->tableid.', '.$this->listing_id.', "esDeleteIcon'.$this->rid.'")\'>'.$img.'</a></div>';
-			
+
 			if($this->row['listing_published'])
 			{
 				$link='javascript:ctPublishRecord('.$this->Table->tableid.',\''.$this->listing_id.'\', \''.$rid.'\',0);';
                 $alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_UNPUBLISH' );
-				$img='<img src="'.$this->iconPath.'publish.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+				
+				if($this->ct->Env->toolbaricons == 'fontawesome')
+					$img='<i class="ba-btn-transition far fa-check-circle" data-icon="far fa-check-circle" title="'.$alt.'"></i>';
+				else
+					$img='<img src="'.$this->iconPath.'publish.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 			}
 			else
 			{
 				$link='javascript:ctPublishRecord('.$this->Table->tableid.',\''.$this->listing_id.'\', \''.$rid.'\',1);';
                 $alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PUBLISH' );
-				$img='<img src="'.$this->iconPath.'unpublish.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+				
+				if($this->ct->Env->toolbaricons == 'fontawesome')
+					$img='<i class="ba-btn-transition fas fa-ban" data-icon="fas fa-ban" title="'.$alt.'"></i>';
+				else
+					$img='<img src="'.$this->iconPath.'unpublish.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 			}
 			return '<div id="'.$rid.'" class="toolbarIcons"><a href="'.$link.'">'.$img.'</a></div>';
 		}
@@ -124,7 +135,11 @@ class RecordToolbar
     protected function renderEditIcon($isModal = false)
 	{
 		$alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_EDIT' );
-		$img='<img src="'.$this->iconPath.'edit.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+		
+		if($this->ct->Env->toolbaricons == 'fontawesome')
+			$img='<i class="ba-btn-transition fas fa-pen" data-icon="fas fa-pen" title="'.$alt.'"></i>';
+		else
+			$img='<img src="'.$this->iconPath.'edit.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 
 		$editlink = $this->ct->Env->WebsiteRoot.'index.php?option=com_customtables&amp;view=edititem'
 			.'&amp;listing_id='.$this->listing_id;
@@ -171,8 +186,12 @@ class RecordToolbar
 			if($this->ct->Env->Itemid>0)
 				$imagemanagerlink.='&amp;Itemid='.$this->ct->Env->Itemid;
 
-            $alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PHOTO_MANAGER' ).' ('.$gallery[1].')';
-			$img='<img src="'.$this->iconPath.'photomanager.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+            $alt = $gallery[1];
+			
+			if($this->ct->Env->toolbaricons == 'fontawesome')
+				$img='<i class="ba-btn-transition fas fa-image" data-icon="fas fa-image" title="'.$alt.'"></i>';
+			else
+				$img='<img src="'.$this->iconPath.'photomanager.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 
 			$imagegalleries[] = '<div id="esImageGalleryIcon'.$this->rid.'" class="toolbarIcons"><a href="'.$this->ct->Env->WebsiteRoot.$imagemanagerlink.'">'.$img.'</a></div>';
 
@@ -198,10 +217,13 @@ class RecordToolbar
 			if($this->ct->Env->Itemid>0)
 				$filemanagerlink.='&amp;Itemid='.$this->ct->Env->Itemid;
 
-            $alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FILE_MANAGER').' ('.$filebox[1].')';
-			$img='<img src="'.$this->iconPath.'filemanager.png" border="0" '
-							.'alt="'.$alt.'" '
-							.'title="'.$alt.'">';
+            //$alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FILE_MANAGER').' ('.$filebox[1].')';
+			$alt=$filebox[1];
+			
+			if($this->ct->Env->toolbaricons == 'fontawesome')
+				$img='<i class="ba-btn-transition fas fa-folder" data-icon="fas fa-folder" title="'.$alt.'"></i>';
+			else
+				$img='<img src="'.$this->iconPath.'filemanager.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 
 			$fileboxes[] = '<div id="esFileBoxIcon'.$this->rid.'" class="toolbarIcons"><a href="'.$this->ct->Env->WebsiteRoot.$filemanagerlink.'">'.$img.'</a></div>';
 		}
@@ -213,8 +235,12 @@ class RecordToolbar
 	{
 		$Label = 'Would you like to copy ('.$this->firstFieldValueLabel().')?';
 		
-		$alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_COPY' );
-		$img='<img src="'.$this->iconPath.'copy.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+		$alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_COPY');
+		
+		if($this->ct->Env->toolbaricons == 'fontawesome')
+			$img='<i class="ba-btn-transition fas fa-copy" data-icon="fas fa-copy" title="'.$alt.'"></i>';
+		else
+			$img='<img src="'.$this->iconPath.'copy.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 
 		return '<div id="ctCopyIcon'.$this->rid.'" class="toolbarIcons"><a href=\'javascript:ctCopyObject("'.$Label.'", '.$this->listing_id.', "ctCopyIcon'.$this->rid.'")\'>'.$img.'</a></div>';
 	}
@@ -230,7 +256,12 @@ class RecordToolbar
 		{
 			$rid='ctCreateUserIcon'.$this->rid;
 			$alt='Create User Account';
-			$img='<img src="'.$this->iconPath.'key-add.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+			
+			if($this->ct->Env->toolbaricons == 'fontawesome')
+				$img='<i class="ba-btn-transition fas fa-user-plus" data-icon="fas fa-user-plus" title="'.$alt.'"></i>';
+			else
+				$img='<img src="'.$this->iconPath.'key-add.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+			
 			$resetLabel=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_USERWILLBECREATED' ).' '.$this->firstFieldValueLabel() ;
 			$action='ctCreateUser("'.$resetLabel.'", '.$this->listing_id.', "'.$rid.'")';
 		}
@@ -243,7 +274,12 @@ class RecordToolbar
 		
 				$rid='ctResetPasswordIcon'.$this->rid;
 				$alt='Username: '.$userrow['username'];
-				$img='<img src="'.$this->iconPath.'key.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+				
+				if($this->ct->Env->toolbaricons == 'fontawesome')
+					$img='<i class="ba-btn-transition fas fa-user" data-icon="fas fa-user" title="'.$alt.'"></i>';
+				else
+					$img='<img src="'.$this->iconPath.'key.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+				
 				$resetLabel='Would you like to reset '.$user_full_name.' ('.$userrow['username'].') password?';		
 				$action='ctResetPassword("'.$resetLabel.'", '.$this->listing_id.', "'.$rid.'")';
 			}
@@ -259,7 +295,12 @@ class RecordToolbar
 		$deleteLabel = $this->firstFieldValueLabel();
 
 		$alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_DELETE' );
-		$img='<img src="'.$this->iconPath.'delete.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+		
+		if($this->ct->Env->toolbaricons == 'fontawesome')
+			$img='<i class="ba-btn-transition fas fa-trash" data-icon="fas fa-trash" title="' . $alt . '"></i>';
+		else
+			$img='<img src="'.$this->iconPath.'delete.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+		
 		$msg='Do you want to delete ('.$deleteLabel.')?';
 
 		return '<div id="esDeleteIcon'.$this->rid.'" class="toolbarIcons"><a href="javascript:ctDeleteRecord(\''.$msg.'\', '.$this->Table->tableid.', \''.$this->listing_id.'\', \'esDeleteIcon'.$this->rid.'\');">'.$img.'</a></div>';

@@ -312,12 +312,24 @@ class Twig_Url_Tags
    			else
    				$format_image=$format;
 
- 			if($image=='')
- 				$image='/components/com_customtables/libraries/customtables/media/images/fileformats/'.$imagesize.'px/'.$format_image.'.png';
-
-   			$alt='Download '.strtoupper($format).' file';
-   			//add image anchor link
-   			$vlu = '<a href="'.$link.'" class="toolbarIcons" id="ctToolBarExport2CSV" target="_blank"><img src="'.$image.'" alt="'.$alt.'" title="'.$alt.'" width="'.$imagesize.'" height="'.$imagesize.'"></a>';
+ 			$alt='Download '.strtoupper($format).' file';
+   			
+			if($image=='')
+			{
+				if($this->ct->Env->toolbaricons == 'fontawesome' and $format == 'csv')
+				{
+					$img = '<i class="ba-btn-transition fas fa-file-csv" data-icon="fas fa-file-csv" title="' . $alt . '"></i>';
+				}
+				else
+				{
+					$image='/components/com_customtables/libraries/customtables/media/images/fileformats/'.$imagesize.'px/'.$format_image.'.png';
+					$img = '<img src="'.$image.'" alt="'.$alt.'" title="'.$alt.'" width="'.$imagesize.'" height="'.$imagesize.'">';
+				}
+			}
+			else
+				$img = '<img src="'.$image.'" alt="'.$alt.'" title="'.$alt.'" width="'.$imagesize.'" height="'.$imagesize.'">';
+			
+   			$vlu = '<a href="'.$link.'" class="toolbarIcons" id="ctToolBarExport2CSV" target="_blank">'.$img.'</a>';
 				
 			if($this->isTwig)
 				return new \Twig\Markup($vlu, 'UTF-8' );

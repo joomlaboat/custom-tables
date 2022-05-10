@@ -21,6 +21,7 @@ use \Joomla\CMS\Version;
 use \Joomla\CMS\Factory;
 use \Joomla\Registry\Registry;
 use \Joomla\CMS\Uri\Uri;
+use \Joomla\CMS\Component\ComponentHelper;
 
 class Environment
 {
@@ -44,6 +45,10 @@ class Environment
 	var $field_prefix; // ok
 	var $field_input_prefix; // ok
 	var $menu_params; // ok, other menu marameters are part of modl. class, also you can find it in cintroller files
+	
+	var $loadTwig;
+	var $toolbaricons;
+	var $legacysupport;
 
 	function __construct()
 	{
@@ -114,6 +119,12 @@ class Environment
 		$paramsArray=array();
 		$this->menu_params = new Registry;
 		$this->menu_params->loadArray($paramsArray);
+		
+		$params = ComponentHelper::getParams('com_customtables');
+		
+		$this->loadTwig = $params->get('loadTwig');
+		$this->toolbaricons = $params->get('toolbaricons');
+		$this->legacysupport = $params->get('legacysupport');
 	}
 	
 	/* USER-AGENTS ================================================== */

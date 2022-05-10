@@ -96,9 +96,15 @@ class Twig_Html_Tags
 
 		if($this->ct->Env->jinput->getCmd('tmpl','')!='')
 			$link.='&tmpl='.$this->ct->Env->jinput->get('tmpl','','CMD');
-                    
-		$vlu='<a href="'.URI::root(true).$link.'" id="ctToolBarAddNew'.$this->ct->Table->tableid.'" class="toolbarIcons">'
-			.'<img src="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/images/icons/new.png" alt="Add New" title="Add New" /></a>';
+        
+		$alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ADD');
+		
+		if($this->ct->Env->toolbaricons == 'fontawesome')
+			$img = '<i class="ba-btn-transition fas fa-plus-circle" data-icon="fas fa-plus-circle" title="'.$alt.'"></i>';		
+		else
+			$img = '<img src="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/images/icons/new.png" alt="'.$alt.'" title="'.$alt.'" />';
+		
+		$vlu='<a href="'.URI::root(true).$link.'" id="ctToolBarAddNew'.$this->ct->Table->tableid.'" class="toolbarIcons">'.$img.'</a>';
 			
 		if($this->isTwig)
 			return new \Twig\Markup($vlu, 'UTF-8' );
@@ -209,11 +215,23 @@ class Twig_Html_Tags
 		
 		if($returnto == '')
 			return '';
-		
+
 		if($attribute == '' and $image_icon == '')
-			$attribute = 'class="ct_goback"';
-		
-		$vlu = '<a href="'.$returnto.'" '.$attribute.'><div>'.($image_icon != '' ? '<img src="'.$image_icon.'" alt="'.$label.'" />' : '').$label.'</div></a>';
+		{
+			if($this->ct->Env->toolbaricons == 'fontawesome')
+				$vlu = '<a href="'.$returnto.'"><i class="ba-btn-transition fas fa-angle-left" data-icon="fas fa-angle-left" title="'.$label.'" style="margin-right:10px;"></i>'.$label.'</a>';
+			else
+				$vlu = '<a href="'.$returnto.'" class="ct_goback"><div>'.$label.'</div></a>';
+		}
+		else
+		{
+			if($this->ct->Env->toolbaricons == 'fontawesome' or $image_icon == '')
+				$img = '<i class="ba-btn-transition fas fa-angle-left" data-icon="fas fa-angle-left" title="'.$label.'" style="margin-right:10px;"></i>'.$label.'</a>';
+			else
+				$img = '<img src="'.$image_icon.'" alt="'.$label.'" />';
+			
+			$vlu = '<a href="'.$returnto.'" '.$attribute.'><div>'.$img.$label.'</div></a>';
+		}
 		
 		if($this->isTwig)
 			return new \Twig\Markup($vlu, 'UTF-8' );
@@ -260,7 +278,15 @@ class Twig_Html_Tags
 				{
 					$rid='esToolBar_'.$mode.'_box_'.$this->ct->Table->tableid;
 					$alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_'.strtoupper($mode).'_SELECTED' );
-					$img='<img src="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/images/icons/'.$mode.'.png" border="0" alt="'.$alt.'" title="'.$alt.'" />';
+					
+					if($this->ct->Env->toolbaricons == 'fontawesome')
+					{
+						$icons = ['publish' => 'fa-check-circle', 'unpublish' => 'fa-ban', 'refresh' => 'fa-sync', 'delete' => 'fa-trash'];
+						$img='<i class="ba-btn-transition fas '.$icons[$mode].'" data-icon="fas '.$icons[$mode].'" title="'.$alt.'"></i>';
+					}
+					else	
+						$img='<img src="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/images/icons/'.$mode.'.png" border="0" alt="'.$alt.'" title="'.$alt.'" />';
+					
 					$link='javascript:ctToolBarDO("'.$mode.'", '.$this->ct->Table->tableid.')';
 					$html_buttons[] = '<div id="'.$rid.'" class="toolbarIcons"><a href=\''.$link.'\'>'.$img.'</a></div>';
 				}
@@ -278,7 +304,7 @@ class Twig_Html_Tags
 			return $vlu;
 	}
 	
-	function print($class='ctEditFormButton btn button')
+	function print($linktype = '', $label = '', $class='ctEditFormButton btn button')
 	{
 		if($this->ct->Env->print==1 or ($this->ct->Env->frmt!='html' and $this->ct->Env->frmt!=''))
 			return '';
@@ -297,13 +323,20 @@ class Twig_Html_Tags
 			$link.='&amp;'.$inputbox_name.'='.$this->ct->Env->jinput->getString($inputbox_name,'');
 		}
 
+		$onClick = 'window.open("'.$link.'","win2","status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=no,resizable=yes,width=640,height=480,directories=no,location=no");return false;';
 		if($this->ct->Env->print==1)
 		{
 			$vlu='<p><a href="#" onclick="window.print();return false;"><img src="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/images/icons/print.png" alt="'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PRINT').'"  /></a></p>';
 		}
 		else
 		{
-			$vlu='<input type="button" class="'.$class.'" value="'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PRINT' ).'" onClick=\'window.open("'.$link.'","win2","status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=no,resizable=yes,width=640,height=480,directories=no,location=no"); return false; \'> ';
+			if($label == '')
+				$label = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PRINT' );
+				
+			if($linktype == 'fontawesome')
+				$vlu='<a href="#" onclick=\''.$onClick.'\'><i class="ba-btn-transition fas fa-print" data-icon="fas fa-print" title="'.$label.'"></i></a>';
+			else
+				$vlu='<input type="button" class="'.$class.'" value="'.$label.'" onClick=\''.$onClick.'\' />';
         }
 			
 		if($this->isTwig)

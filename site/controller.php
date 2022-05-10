@@ -13,7 +13,6 @@ defined('_JEXEC') or die('Restricted access');
 
 class CustomTablesController extends JControllerLegacy
 {
-
 	function display($cachable = false, $urlparams = array())
 	{
 		$jinput=JFactory::getApplication()->input;

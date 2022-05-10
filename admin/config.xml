@@ -33,7 +33,7 @@
 			type="list"
 			label="Load Twig"
 			default="1"
-			description="Some tmeplates come with the Twig and to ovoid the conflict is recomended to disable the Twig load (declaration) in Custom Tables."
+			description="Some templates come with the Twig and to avoid the conflict is recommended to disable the Twig load (declaration) in Custom Tables."
 			>
 			<option value="1">Load Twig</option>
 			<option value="0">Do not load Twig</option>
@@ -46,6 +46,28 @@
 			default=""
 			description=""
 		/>
+
+                <field
+			name="toolbaricons"
+			type="list"
+			label="Toolbar Icons"
+			default=""
+			description="What type of toolbar icons to use : Image Icons or Font Awesome."
+			>
+			<option value="">Image Icons</option>
+			<option value="fontawesome">Font Awesome</option>
+		</field>
+
+                <field
+			name="legacysupport"
+			type="list"
+			label="Legacy Support"
+			default=""
+			description="Support old style layout syntaxis, example: *fieldname*, [fieldname], |fieldname|, {button:save}. Use Twig tags instead: {{ fieldname.title }}, {{ fieldname }}, {{ fieldname.value }}, {{ html.button('save') }}"
+			>
+			<option value="">Twig and Legacy</option>
+			<option value="puretwig">Pure Twig</option>
+		</field>
 
 		<field name="autorName"
 			type="text"

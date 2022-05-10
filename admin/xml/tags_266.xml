@@ -40,7 +40,12 @@
 		<tag name="print" label="Print Button" startchar="{" endchar="}" twigclass="html"
              description="A button that opens a new controlless window without a template, only content.">
             <params>
-                <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)." />
+                <param name="listtype" label="Link Type" type="list">
+                    <option value="" label="Button"/>
+                    <option value="fontawesome" label="Font Awesome icon"/>
+                </param>
+				<param type="label" name="label" label="Label" description="What will be written on the button." />
+				<param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)." />
             </params>
         </tag>
 		
