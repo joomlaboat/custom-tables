@@ -48,10 +48,6 @@ class JHTMLESSQLJoinView
 
 		$htmlresult='';
 
-		
-
-		
-				
 		//Get Row
 		$query = 'SELECT '.$model->ct->Table->tablerow['query_selects'].' FROM '.$model->ct->Table->realtablename.' WHERE '.$model->ct->Table->tablerow['realidfieldname'].'='.(int)$value;
 		$db= JFactory::getDBO();
@@ -98,7 +94,6 @@ class JHTMLESSQLJoinView
 				else
 					$layout_pair[1]=0;
 
-				$ct = new CT;
 				$Layouts = new Layouts($model->ct);
 				$layoutcode = $Layouts->getLayout($layout_pair[0]);
 		
@@ -106,7 +101,11 @@ class JHTMLESSQLJoinView
 					return '<p>layout "'.$layout_pair[0].'" not found or is empty.</p>';
 			}
 
-			$model->ct->LayoutProc->layout=$layoutcode;
+			if($model->ct->Env->legacysupport)
+			{
+				$LayoutProc = new LayoutProcessor($model->ct);
+				$LayoutProc->layout=$layoutcode;
+			}
 
 			$valuearray=explode(',',$value);
 
@@ -140,11 +139,19 @@ class JHTMLESSQLJoinView
 
 				//process layout
 				$row['_number'] = $number;
+				
+				if($model->ct->Env->legacysupport)
+					$vlu = $LayoutProc->fillLayout($row);
+				else
+					$vlu = $layoutcode;
+				
+				$twig = new TwigProcessor($model->ct, '{% autoescape false %}'.$vlu.'{% endautoescape %}');
+				$vlu = $twig->process($row);
 
 				if($isTableLess)
-					$htmlresult.=$model->ct->LayoutProc->fillLayout($row);
+					$htmlresult .= $vlu;
 				else
-					$htmlresult.='<td valign="middle" style="border:none;">'.$model->ct->LayoutProc->fillLayout($row).'</td>';
+					$htmlresult.='<td valign="middle" style="border:none;">'.$vlu.'</td>';
 
 				$tr++;
 				if(!$isTableLess and $tr==$columns)
@@ -160,7 +167,9 @@ class JHTMLESSQLJoinView
 				$htmlresult.='</table>';
 		}
 
-		LayoutProcessor::applyContentPlugins($htmlresult);
+		if($model->ct->Env->menu_params->get( 'allowcontentplugins' ))
+			$htmlresult = JoomlaBasicMisc::applyContentPlugins($htmlresult);
+		
 		return $htmlresult;
 	}
 }

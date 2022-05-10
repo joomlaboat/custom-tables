@@ -72,7 +72,10 @@ defined('_JEXEC') or die('Restricted access');
 
     </table>';
 
-	echo LayoutProcessor::applyContentPlugins($catalogresult);
+	if((int)$this->ct->Env->menu_params->get( 'allowcontentplugins' )==1)
+		$catalogresult = JoomlaBasicMisc::applyContentPlugins($catalogresult);
+	
+	echo $catalogresult;
 
 	if($this->record_count > 5)
 	{

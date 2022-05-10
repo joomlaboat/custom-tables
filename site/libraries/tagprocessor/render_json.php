@@ -33,6 +33,9 @@ trait render_json
 
 		$number=1 + $ct->LimitStart; //table row number, it maybe use in the layout as {number}
         $records=array();
+		
+		$LayoutProc = new LayoutProcessor($ct);
+		
 		foreach($ct->Records as $row)
 		{
 				$row['_number'] = $number;
@@ -40,8 +43,8 @@ trait render_json
                 $vlus=array();
                 foreach($header_fields as $header_field)
                 {
-                    $ct->LayoutProc->layout=$line_fields[$i];
-                    $vlus[$header_field] = $ct->LayoutProc->fillLayout($row,null,'[]',false,false);
+                    $LayoutProc->layout=$line_fields[$i];
+                    $vlus[$header_field] = $LayoutProc->fillLayout($row,null,'[]',false,false);
                     $i++;
                 }
 
@@ -53,13 +56,13 @@ trait render_json
         return $result;
     }
 	
-	function get_CatalogTable_singleline_JSON(&$ct,$allowcontentplugins,$pagelayout)
+	function get_CatalogTable_singleline_JSON(&$ct,$layoutType,$allowcontentplugins,$layout) //TO DO
 	{
 		if (ob_get_contents())
 			ob_clean();
 
 		//Prepare line layout
-		$layout=$ct->LayoutProc->layout;
+		
 		$layout=str_replace("\n",'',$layout);
 		$layout=str_replace("\r",'',$layout);
 
@@ -68,7 +71,7 @@ trait render_json
 		$records=[];
 
 		foreach($ct->Records as $row)
-			$records[]=trim(strip_tags(tagProcessor_Item::RenderResultLine($ct, $twig, $row)));
+			$records[]=trim(strip_tags(tagProcessor_Item::RenderResultLine($ct,$layoutType, $twig, $row)));
 		
 		$result = implode(',',$records);
 

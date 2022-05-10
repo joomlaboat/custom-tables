@@ -144,9 +144,6 @@ class CustomTablesViewCatalog extends JViewLegacy
 		$_params->loadArray($paramsArray);
 		$this->ct->Env->menu_params = $_params;
 			
-		$this->ct->LayoutProc = new LayoutProcessor($this->ct);
-		$this->ct->LayoutProc->layout = $this->pagelayout;
-			
 		require_once('tmpl'.DIRECTORY_SEPARATOR.'json.php');
 	}
 	

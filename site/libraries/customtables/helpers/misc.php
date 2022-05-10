@@ -936,4 +936,40 @@ text with <div>tags</div>
 			$_params['filter']=str_replace('|',',',$f);
 		}
 	}
+	
+	public static function applyContentPlugins(&$htmlresult)
+	{
+		$version_object = new Version;
+		$version = (int)$version_object->getShortVersion();
+
+		$mainframe = JFactory::getApplication('site');
+
+		if(method_exists($mainframe,'getParams'))
+		{
+			$mydoc = JFactory::getDocument();
+			$pagetitle=$mydoc->getTitle(); //because content plugins may overwrite the title
+
+			$content_params = $mainframe->getParams('com_content');
+
+			$o = new stdClass();
+			$o->text = $htmlresult;
+			$o->created_by_alias = 0;
+		
+			JPluginHelper::importPlugin( 'content' );
+		
+			if($version < 4)
+			{
+				$dispatcher	= JDispatcher::getInstance();
+				$results = $dispatcher->trigger('onContentPrepare', array ('com_content.article', &$o, &$content_params, 0));
+			}
+			else
+				$results = JFactory::getApplication()->triggerEvent( 'onContentPrepare',array ('com_content.article', &$o, &$content_params, 0));
+			
+			$htmlresult = $o->text;
+		
+			$mydoc->setTitle(JoomlaBasicMisc::JTextExtended($pagetitle)); //because content plugins may overwrite the title
+		}
+		
+		return $htmlresult;
+	}
 }

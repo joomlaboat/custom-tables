@@ -13,7 +13,7 @@ defined('_JEXEC') or die('Restricted access');
 trait render_image
 {
 
-    protected static function get_CatalogTable_singleline_IMAGE(&$ct,&$pagelayout,$allowcontentplugins)
+    protected static function get_CatalogTable_singleline_IMAGE(&$ct,$layoutType,&$pagelayout,$allowcontentplugins)
 	{
 		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_imagegenerator'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'include.php');
 		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_imagegenerator'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'misc.php');
@@ -49,7 +49,7 @@ trait render_image
 
 		foreach($ct->Records as $row)
 		{
-			$vlu=$this->RenderResultLine($row,false,$allowcontentplugins);
+			$vlu=$this->RenderResultLine($row,$layoutType,false,$allowcontentplugins);//TODO
 			$IG->setInstructions($vlu,true);
 			$obj=$IG->render(false,$obj,$x_offset,$y_offset);
 			//break;

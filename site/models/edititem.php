@@ -265,9 +265,15 @@ class CustomTablesModelEditItem extends JModelLegacy
 		if($filter=='')
 			return 0;
 
-		$LayoutProc=new LayoutProcessor($this->ct);
-		$LayoutProc->layout=$filter;
-		$filter=$LayoutProc->fillLayout(array(),null,'[]',true);
+		if($this->ct->Env->legacysupport)
+		{
+			$LayoutProc=new LayoutProcessor($this->ct);
+			$LayoutProc->layout=$filter;
+			$filter=$LayoutProc->fillLayout(array(),null,'[]',true);
+		}
+		
+		$twig = new TwigProcessor($this->ct, $this->filter);
+		$this->filter = $twig->process();
 
 		//TODO
 		Factory::getApplication()->enqueueMessage('Filtering not done.','error');
@@ -1377,22 +1383,15 @@ class CustomTablesModelEditItem extends JModelLegacy
 	}
 	*/
 
-	function PrepareAcceptReturnToLink($artlink)
+	function PrepareAcceptReturnToLink($encoded_link)
 	{
-		if($artlink=='')
+		if($encoded_link == '')
 			return '';
 
-		$artlink=base64_decode ($artlink);
+		$link = base64_decode ($encoded_link);
 
-		if($artlink=='')
+		if($link == '')
 			return '';
-
-		$mainframe = JFactory::getApplication('site');
-
-		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'layout.php');
-
-		$LayoutProc=new LayoutProcessor($this->ct);
-		$LayoutProc->layout=$artlink;
 
 		$db = JFactory::getDBO();
 		
@@ -1404,10 +1403,19 @@ class CustomTablesModelEditItem extends JModelLegacy
 			return '';
 
 		$row=$rows[0];
+		
+		if($this->ct->Env->legacysupport)
+		{
+			require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'layout.php');
+			$LayoutProc=new LayoutProcessor($this->ct);
+			$LayoutProc->layout=$link;
+			$link=$LayoutProc->fillLayout($row,"",'[]',true);
+		}
+		
+		$twig = new TwigProcessor($this->ct, $link);
+		$link = $twig->process($row);
 
-		$processed_link=$LayoutProc->fillLayout($row,"",'[]',true);
-
-		return $processed_link;
+		return $link;
 	}
 
 	function doPHPonAdd(&$row)
@@ -1415,8 +1423,11 @@ class CustomTablesModelEditItem extends JModelLegacy
 		$listing_id = $row[$this->ct->Table->realidfieldname];
 		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'layout.php');
 
-		$LayoutProc=new LayoutProcessor($this->ct);
-		$LayoutProc->Model=$this;
+		if($this->ct->Env->legacysupport)
+		{
+			$LayoutProc=new LayoutProcessor($this->ct);
+			$LayoutProc->Model=$this;
+		}
 
 		$savequery='';
 		$db = JFactory::getDBO();
@@ -1439,9 +1450,19 @@ class CustomTablesModelEditItem extends JModelLegacy
 							$thescript=str_replace('****apos****',"'",$thescript);
 						}
 						
-						$LayoutProc->layout=$thescript;
+						if($this->ct->Env->legacysupport)
+						{
+							$LayoutProc->layout = $thescript;
+							$thescript = $LayoutProc->fillLayout($row,'','[]',true);
+						}
 						
-						$thescript='return '.LayoutProcessor::applyContentPlugins($LayoutProc->fillLayout($row,'','[]',true)).';';
+						$twig = new TwigProcessor($this->ct, $thescript);
+						$thescript = $twig->process();
+						
+						if($this->ct->Env->menu_params->get( 'allowcontentplugins' ))	
+							$thescript = JoomlaBasicMisc::applyContentPlugins($thescript);
+						
+						$thescript='return '.$thescript.';';
 
 						$error = '';
 						$value = CleanExecute::execute($thescript,$error);
@@ -1482,40 +1503,49 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 			if($esfield['type']=='phponchange')
 			{
-						$parts=JoomlaBasicMisc::csv_explode(',', $esfield['typeparams'], '"', false);
+				$parts=JoomlaBasicMisc::csv_explode(',', $esfield['typeparams'], '"', false);
 						
-						if(count($parts)==1 and strpos($esfield['typeparams'],'"')!==false and strpos($esfield['typeparams'],'****quote****')===false )
-						{
-							$thescript=$esfield['typeparams'];//to support older version when type params field could countain php script only. Also ****quote****  wasn't supported
-						}
-						else
-						{
-							$thescript=$parts[0];
-							$thescript=str_replace('****quote****','"',$thescript);
-							$thescript=str_replace('****apos****',"'",$thescript);
-						}
+				if(count($parts)==1 and strpos($esfield['typeparams'],'"')!==false and strpos($esfield['typeparams'],'****quote****')===false )
+				{
+					$thescript=$esfield['typeparams'];//to support older version when type params field could countain php script only. Also ****quote****  wasn't supported
+				}
+				else
+				{
+					$thescript=$parts[0];
+					$thescript=str_replace('****quote****','"',$thescript);
+					$thescript=str_replace('****apos****',"'",$thescript);
+				}
 						
-						$LayoutProc->layout=$thescript;
-
-						$htmlresult = $LayoutProc->fillLayout($row,'','[]',true);
-						$thescript='return '.LayoutProcessor::applyContentPlugins($htmlresult).';';
-				
-						$error = '';
-						$value = CleanExecute::execute($thescript,$error);
+				if($this->ct->Env->legacysupport)
+				{
+					$LayoutProc->layout = $thescript;
+					$thescript = $LayoutProc->fillLayout($row,'','[]',true);
+				}
+						
+				$twig = new TwigProcessor($this->ct, $thescript);
+				$thescript = $twig->process();
+						
+				if($this->ct->Env->menu_params->get( 'allowcontentplugins' ))	
+					$thescript = JoomlaBasicMisc::applyContentPlugins($thescript);
+						
+				$thescript='return '.$thescript.';';
+						
+				$error = '';
+				$value = CleanExecute::execute($thescript,$error);
 		
-						if($error!='')
-						{
-							Factory::getApplication()->enqueueMessage($error,'error');
-							return false;
-						}
-						
-						$row[$realfieldname]=$value;
+				if($error!='')
+				{
+					Factory::getApplication()->enqueueMessage($error,'error');
+					return false;
+				}
+				
+				$row[$realfieldname]=$value;
 
-						$savequery=$realfieldname.'='.$db->quote($value);
-						$query='UPDATE '.$this->ct->Table->realtablename.' SET '.$savequery.' WHERE '.$this->ct->Table->realidfieldname.'='.$db->quote($listing_id);
+				$savequery=$realfieldname.'='.$db->quote($value);
+				$query='UPDATE '.$this->ct->Table->realtablename.' SET '.$savequery.' WHERE '.$this->ct->Table->realidfieldname.'='.$db->quote($listing_id);
 
-						$db->setQuery( $query );
-						$db->execute();
+				$db->setQuery( $query );
+				$db->execute();
 			}//if($esfield['type']=='phponchange')
 		}
 	}
@@ -1536,17 +1566,21 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 	function parseRowLayoutContent($content,$applyContentPlagins=true)
 	{
-		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'layout.php');
+		if($this->ct->Env->legacysupport)
+		{
+			require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'layout.php');
 
-		$LayoutProc=new LayoutProcessor($this->ct);
-		$LayoutProc->layout=$content;
-		$content=$LayoutProc->fillLayout($this->ct->Table->record);
-		if($applyContentPlagins)
-			LayoutProcessor::applyContentPlugins($content);
-		
+			$LayoutProc=new LayoutProcessor($this->ct);
+			$LayoutProc->layout=$content;
+			$content=$LayoutProc->fillLayout($this->ct->Table->record);
+		}
+			
 		$twig = new TwigProcessor($this->ct, '{% autoescape false %}'.$content.'{% endautoescape %}');
 		$content = $twig->process($this->ct->Table->record);
 		
+		if($applyContentPlagins and $this->ct->Env->menu_params->get( 'allowcontentplugins' ))	
+			$content = JoomlaBasicMisc::applyContentPlugins($content);
+
 		return $content;
 	}
 

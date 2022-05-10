@@ -83,7 +83,7 @@ class LayoutProcessor
 		return $htmlresult;
 	}
 
-	public static function applyContentPlugins(&$htmlresult)
+/*	public static function LayoutProcessor :: applyContentPlugins_UNUSED(&$htmlresult)
 	{
 		$version_object = new Version;
 		$version = (int)$version_object->getShortVersion();
@@ -118,14 +118,15 @@ class LayoutProcessor
 		
 		return $htmlresult;
 	}
-
-	public static function renderPageHeader(&$ct)
+*/
+/*
+	public static function renderPage_UNUSED_Header(&$ct)
 	{
 		if ($ct->Env->menu_params->get( 'show_page_heading', 1 ) )
 		{
 			$title=JoomlaBasicMisc::JTextExtended($ct->Env->menu_params->get( 'page_title' ));
 			echo '
-			<div class="page-header'.LayoutProcessor::htmlEscape($ct->Env->menu_params->get('pageclass_sfx'), 'UTF-8').'">
+			<div class="page-header'.CustomtablesHelper::htmlEscape($ct->Env->menu_params->get('pageclass_sfx'), 'UTF-8').'">
 				<h2 itemprop="headline">
 					'.$title.'
 				</h2>
@@ -133,8 +134,10 @@ class LayoutProcessor
 			';
 		}
 	}
+*/	
 
-	public static function htmlEscape($var, $charset = 'UTF-8', $shorten = false, $length = 40)
+/*
+	public static function html_UNUSED_Escape($var, $charset = 'UTF-8', $shorten = false, $length = 40)
 	{
 		if (isset($var) && is_string($var) && strlen($var) > 0)
 		{
@@ -151,8 +154,10 @@ class LayoutProcessor
 			return '';
 		}
 	}
-
-	protected static function shorten($string, $length = 40, $addTip = true)
+*/
+	
+/*
+	protected static function shorte_n_unused($string, $length = 40, $addTip = true)
 	{
 		if (self::checkString($string))
 		{
@@ -185,4 +190,5 @@ class LayoutProcessor
 		}
 		return $string;
 	}
+	*/
 }

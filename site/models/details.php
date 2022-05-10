@@ -11,6 +11,7 @@ defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\CT;
 use CustomTables\Fields;
+use CustomTables\TwigProcessor;
 
 use \Joomla\CMS\Factory;
 
@@ -83,12 +84,18 @@ class CustomTablesModelDetails extends JModelLegacy
 			{
 				$this->filter=$this->params->get( 'filter' );
 				
-				$this->ct->LayoutProc=new LayoutProcessor($this->ct);
 				if($this->filter!='' and $this->alias=='')
 				{
-					//Parse using layout
-					$this->ct->LayoutProc->layout=$this->filter;
-					$this->filter=$this->ct->LayoutProc->fillLayout(array(),null,'[]',true);
+					if($this->ct->Env->legacysupport)
+					{
+						//Parse using layout
+						$LayoutProc = new LayoutProcessor($this->ct);
+						$LayoutProc->layout=$this->filter;
+						$this->filter=$LayoutProc->fillLayout(array(),null,'[]',true);
+					}
+					
+					$twig = new TwigProcessor($this->ct, $this->filter);
+					$this->filter = $twig->process();
 				}
 			}
 		}
@@ -108,25 +115,24 @@ class CustomTablesModelDetails extends JModelLegacy
 		$this->ct->getTable($this->params->get( 'establename' ), $this->params->get('useridfield'));
 		
 		if($this->ct->Table->tablename=='')
-		{
-			//Factory::getApplication()->enqueueMessage('Table not selected (127).', 'error');
 			return;
-		}
 
 		if($this->alias!='' and $this->ct->Table->alias_fieldname!='')
 			$this->filter=$this->ct->Table->alias_fieldname.'='.$this->alias;
 
-		$this->ct->LayoutProc=new LayoutProcessor($this->ct);
-		
 		if($this->filter!='' and $this->alias=='')
 		{
 			//Parse using layout
-			$this->ct->LayoutProc->layout=$this->filter;
-
-			$this->filter=$this->ct->LayoutProc->fillLayout(array(),null,'[]',true);
+			if($this->ct->Env->legacysupport)
+			{
+				$LayoutProc = new LayoutProcessor($this->ct);
+				$LayoutProc->layout=$this->filter;
+				$this->filter = $LayoutProc->fillLayout(array(),null,'[]',true);
+			}
+			
+			$twig = new TwigProcessor($this->ct, $this->filter);
+			$this->filter = $twig->process();
 		}
-
-		$this->ct->LayoutProc->layout='';
 	}
 
 	//TODO avoid es_

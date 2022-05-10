@@ -30,7 +30,6 @@ class CT
 	var $GroupBy;
 	var $Ordering;
 	var $Filter;
-	var $LayoutProc; //Old - will be deprictaed by 2023
 	var $alias_fieldname;
 	var $Limit;
 	var $LimitStart;

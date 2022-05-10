@@ -9,6 +9,8 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\TwigProcessor;
+
 $jinput = JFactory::getApplication()->input;
 
 $task=$jinput->getCmd( 'task');
@@ -170,13 +172,19 @@ function CustomTablesSave($task,&$this_)
 			else
 				$msg=$model->msg_itemissaved;
 
-			$site_libpath=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR;
-			require_once($site_libpath.'layout.php');
+			if($Model->ct->Env->legacysupport)
+			{
+				$site_libpath=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR;
+				require_once($site_libpath.'layout.php');
 
-			$LayoutProc=new LayoutProcessor($model->ct);
-			$LayoutProc->Model=$model;
-			$LayoutProc->layout=$msg;
-			$msg=$LayoutProc->fillLayout(array(),null,'[]',true);
+				$LayoutProc=new LayoutProcessor($model->ct);
+				$LayoutProc->Model=$model;
+				$LayoutProc->layout=$msg;
+				$msg=$LayoutProc->fillLayout(array(),null,'[]',true);
+			}
+			
+			$twig = new TwigProcessor($model->ct, $msg);
+			$msg = $twig->process();
 
 
 			if(JFactory::getApplication()->input->get('clean',0,'INT')==1)
@@ -186,8 +194,6 @@ function CustomTablesSave($task,&$this_)
 			elseif($link!='')
 			{
 				$link=str_replace('$get_listing_id',JFactory::getApplication()->input->get("listing_id",0,'INT'),$link);
-
-
 
 				if(strpos($link,'tmpl=component')===false)
 				{

@@ -13,7 +13,7 @@ use CustomTables\TwigProcessor;
 
 trait render_html
 {
-    protected static function get_CatalogTable_HTML(&$ct, $fields, $class, $dragdrop = false)
+    protected static function get_CatalogTable_HTML(&$ct,$layoutType, $fields, $class, $dragdrop = false)
 	{
 		//for reload single record functionality
 		$listing_id = $ct->Env->jinput->getCmd("listing_id",'');
@@ -64,11 +64,13 @@ trait render_html
 		}
 		$result.='</tr></thead>';
 
+		$LayoutProc = new LayoutProcessor($ct);
+
         //Parse Header
 		if($listing_id == '')
 		{
-			$ct->LayoutProc->layout=$result;
-			$result=$ct->LayoutProc->fillLayout();
+			$LayoutProc->layout=$result;
+			$result=$LayoutProc->fillLayout();
 			$result=str_replace('&&&&quote&&&&','"',$result);
 		
 			$twig = new TwigProcessor($ct, $result);
@@ -90,7 +92,7 @@ trait render_html
 		foreach($ct->Records as $row)
 		{
 			$row['_number'] = ($custom_number >0 ? $custom_number : $number);
-		    $tablecontent.=tagProcessor_Item::RenderResultLine($ct,$twig,$row);
+		    $tablecontent.=tagProcessor_Item::RenderResultLine($ct,$layoutType,$twig,$row);//TODO
 			
 			$number++;
 		}

@@ -212,7 +212,7 @@ class tagProcessor_Item
         }
     }
 	
-    public static function RenderResultLine(&$ct, &$twig, &$row)
+    public static function RenderResultLine(&$ct,$layoutType, &$twig, &$row)
     {
 		if($ct->Env->print)
 			$viewlink='';
@@ -234,26 +234,26 @@ class tagProcessor_Item
 		$layout='';
 		
 		$htmlresult = '';
+		
+		$LayoutProc = new LayoutProcessor($model->ct);
 
-		if($ct->LayoutProc->layoutType==2)
+		if($layoutType==2)
         {
-            require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tagprocessor'.DIRECTORY_SEPARATOR.'edittags.php');
+            $htmlresult = $twig->process($row);
 
-			$htmlresult = $twig->process($row);
-
+			require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'tagprocessor'.DIRECTORY_SEPARATOR.'edittags.php');
             $prefix='table_'.$ct->Table->tablename.'_'.$row[$ct->Table->realidfieldname].'_';
             tagProcessor_Edit::process($ct,$htmlresult,$row,$prefix);//Process edit form layout
 
-            $ct->LayoutProc->layout=$htmlresult;//Temporary replace original layout with processed result
-			
-			$htmlresult=$ct->LayoutProc->fillLayout($row,null,'||',false,true);//Process field values
+			$LayoutProc->layout=$htmlresult;//Temporary replace original layout with processed result
+			$htmlresult=$LayoutProc->fillLayout($row,null,'||',false,true);//Process field values
         }
         else
 		{	
 			$htmlresult = $twig->process($row);
-			$ct->LayoutProc->layout=$htmlresult;//Layout was modified by Twig
-	
-            $htmlresult = $ct->LayoutProc->fillLayout($row,$viewlink,'[]',false);
+
+			$LayoutProc->layout=$htmlresult;//Layout was modified by Twig
+            $htmlresult = $LayoutProc->fillLayout($row,$viewlink,'[]',false);
 		}
 
 		return $htmlresult;

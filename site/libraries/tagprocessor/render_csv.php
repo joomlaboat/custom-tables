@@ -13,7 +13,7 @@ use CustomTables\TwigProcessor;
 
 trait render_csv
 {
-    protected static function get_CatalogTable_CSV(&$ct,$fields)
+    protected static function get_CatalogTable_CSV(&$ct,$layoutType,$fields)
 	{
 		$catalogresult='';
 
@@ -45,19 +45,16 @@ trait render_csv
 		$result.='"'.implode('","',$header_fields).'"';//."\r\n";
 
 		//Parse Header
-        $ct->LayoutProc->layout=$result;
-        $result=$ct->LayoutProc->fillLayout();
+		$LayoutProc = new LayoutProcessor($ct);
+        $LayoutProc->layout=$result;
+        $result=$LayoutProc->fillLayout();
         $result=str_replace('&&&&quote&&&&','"',$result);
 		
-		
-		//table row number, it maybe use in the layout as {number}
-		$ct->LayoutProc->layout = $recordline;
-
 		//Initiate the file output
 		//$filename = JoomlaBasicMisc::makeNewFileName($ct->Env->menu_params->get('page_title'),'csv');
 
 		$result= strip_tags($result);
-		$result.= strip_tags(self::renderCSVoutput($ct));
+		$result.= strip_tags(self::renderCSVoutput($ct,$layoutType));
 		
 		if($ct->Table->recordcount > $ct->LimitStart + $ct->Limit)
 		{
@@ -72,7 +69,7 @@ trait render_csv
 					if(count($ct->Records)==0)
 						break;//no records left - escape
 				
-					$result.= self::renderCSVoutput($ct);//output next chunk
+					$result.= self::renderCSVoutput($ct,$layoutType,$recordline);//output next chunk
 				}
 			}
 		}
@@ -80,9 +77,9 @@ trait render_csv
         return strip_tags($result);
     }
 	
-	protected static function renderCSVoutput(&$ct)
+	protected static function renderCSVoutput(&$ct, int $layoutType, string $itemlayout)
 	{
-		$twig = new TwigProcessor($ct, $ct->LayoutProc->layout);
+		$twig = new TwigProcessor($ct, $itemlayout);
 		
 		$number = 1 + $ct->LimitStart; //table row number, it can be used in the layout as {number}
 		$tablecontent='';
@@ -92,83 +89,19 @@ trait render_csv
 			$row['_number']=$number;
 		
             $tablecontent.='
-'.strip_tags(tagProcessor_Item::RenderResultLine($ct,$twig,$row));
+'.strip_tags(tagProcessor_Item::RenderResultLine($ct,$layoutType,$twig,$row));//TODO
 
 			$number++;
 		}
         return $tablecontent;
 	}
 
-	/*
-	public static function get_CatalogTable_singleline_CSV(&$ct,$allowcontentplugins,$pagelayout)
-	{
-		$filename = JoomlaBasicMisc::makeNewFileName($ct->Env->menu_params->get('page_title'),'csv');
-
-		//Header
-		$options=array();
-		$fList=JoomlaBasicMisc::getListToReplaceAdvanced('<style>','</style>',$options,$pagelayout);
-		foreach($fList as $fItem)
-			$pagelayout=str_replace($fItem,'',$pagelayout);
-			
-			
-		$options=array();
-		$fList=JoomlaBasicMisc::getListToReplaceAdvanced('</th>','<th>',$options,$pagelayout);
-		foreach($fList as $fItem)
-			$pagelayout=str_replace($fItem,',',$pagelayout);
-			
-		$result=trim(strip_tags(html_entity_decode($pagelayout)));
-		$result=str_replace("\n",'',$result);
-		$result=str_replace("\r",'',$result);
-		
-		if($result!='')
-			$result=$result.'
-';
-
-		//Prepare line layout
-		$layout=$ct->LayoutProc->layout;
-		$layout=str_replace("\n",'',$layout);
-		$layout=str_replace("\r",'',$layout);
-		
-		$commaAdded=false;
-
-		$options=array();
-		$fList=JoomlaBasicMisc::getListToReplaceAdvanced('</td>','<td',$options,$layout);
-		foreach($fList as $fItem)
-		{
-			$layout=str_replace($fItem,',<td',$layout);
-			$commaAdded=true;
-		}
-
-		$twig = new TwigProcessor($ct, $layout);
-
-		foreach($ct->Records as $row)
-		{
-			$vlu=trim(strip_tags(tagProcessor_Item::RenderResultLine($ct,$twig,$row)));
-			$l=strlen($vlu);
-			if($commaAdded and $l>0)
-			{
-				//delete comma in the end of the line
-				if($vlu[$l-1]==',')
-					$vlu=substr($vlu,0,$l-1);
-			}
-			$result.=$vlu.'
-';
-		}
-
-        if($allowcontentplugins)
-			$result = LayoutProcessor::applyContentPlugins($result);
-                
-		return $result;
-    }
-	*/
-	
-	public static function get_CatalogTable_singleline_CSV(&$ct,$allowcontentplugins,$pagelayout)
+	public static function get_CatalogTable_singleline_CSV(&$ct,$allowcontentplugins,$layout)
 	{
 		if (ob_get_contents())
 			ob_clean();
 
 		//Prepare line layout
-		$layout=$ct->LayoutProc->layout;
 		$layout=str_replace("\n",'',$layout);
 		$layout=str_replace("\r",'',$layout);
 
@@ -177,7 +110,7 @@ trait render_csv
 		$records=[];
 
 		foreach($ct->Records as $row)
-			$records[]=trim(strip_tags(tagProcessor_Item::RenderResultLine($ct, $twig, $row)));
+			$records[]=trim(strip_tags(tagProcessor_Item::RenderResultLine($ct,$layoutType, $twig, $row)));//TO DO
 
 		$result = implode('
 ',$records);

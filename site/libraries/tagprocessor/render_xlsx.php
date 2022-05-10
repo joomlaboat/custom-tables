@@ -76,13 +76,14 @@ trait render_xlsx
 			$recordline=str_replace('\'','"',$recordline);
 			$recordline=str_replace('&&&&quote&&&&','"',$recordline);
 
-			$ct->LayoutProc->layout=$recordline;
+			$LayoutProc = new LayoutProcessor($ct);
+			$LayoutProc->layout=$recordline;
 
 			$records=array();
 
 			foreach($ct->Records as $row)
 			{
-				$htmlresult=$ct->LayoutProc->fillLayout($row);
+				$htmlresult=$LayoutProc->fillLayout($row);
 
 				$htmlresult=JoomlaBasicMisc::strip_tags_content($htmlresult, '<a><center><p><br><i><u><b><span>', FALSE);
 				$htmlresult=strip_tags($htmlresult);//, '<center><p><br><i><u><b><span>');

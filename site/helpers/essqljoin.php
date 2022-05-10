@@ -202,7 +202,11 @@ class JHTMLESSqlJoin
 				return array();
             }
 
-			$model->ct->LayoutProc->layout=$layoutcode;
+			if($model->ct->Env->legacysupport)
+			{
+				$LayoutProc = new LayoutProcessor($model->ct);
+				$LayoutProc->layout = $layoutcode;
+			}
         }
 
         $list_values=array();
@@ -210,9 +214,17 @@ class JHTMLESSqlJoin
 		foreach($model->ct->Records as $row)
         {
 			if($layout_mode)
-				$v=$model->ct->LayoutProc->fillLayout($row);
+			{
+				if($model->ct->Env->legacysupport)
+					$v = $LayoutProc->fillLayout($row);
+				else
+					$v = $layoutcode;
+				
+				$twig = new TwigProcessor($model->ct, '{% autoescape false %}'.$v.'{% endautoescape %}');
+				$v = $twig->process($row);
+			}
             else
-				$v=JoomlaBasicMisc::processValue($field,$model->ct,$row,$langpostfix);
+				$v=JoomlaBasicMisc::processValue($field,$model->ct,$row,$langpostfix);//TODO try to replace processValue function
 
             if($dynamic_filter!='')
 				$d=$row[$model->ct->Env->field_prefix.$dynamic_filter];

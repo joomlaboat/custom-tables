@@ -28,7 +28,7 @@ class tagProcessor_Catalog
 	use render_json;
 	use render_image;
 
-    public static function process(&$ct,&$pagelayout,$new_replaceitecode)
+    public static function process(&$ct,$layoutType,&$pagelayout,&$itemlayout,$new_replaceitecode)
     {
         $vlu='';
         $allowcontentplugins=$ct->Env->menu_params->get( 'allowcontentplugins' );
@@ -47,20 +47,19 @@ class tagProcessor_Catalog
 
 			if($ct->Env->frmt=='csv')
 			{
-				//$pagelayout=str_replace($fItem,'',$pagelayout);//delete {catalog} tag
-				$vlu.=self::get_CatalogTable_singleline_CSV($ct,$allowcontentplugins,$pagelayout);
+				$vlu.=self::get_CatalogTable_singleline_CSV($ct,$layoutType,$allowcontentplugins,$itemlayout);
 			}
 			elseif($ct->Env->frmt=='json')
 			{
 				//$pagelayout=str_replace($fItem,'',$pagelayout);//delete {catalog} tag
-				$vlu=self::get_CatalogTable_singleline_JSON($ct,$allowcontentplugins,$pagelayout);
+				$vlu=self::get_CatalogTable_singleline_JSON($ct,$layoutType,$allowcontentplugins,$itemlayout);
 			}
 			elseif($ct->Env->frmt=='image')
-				self::get_CatalogTable_singleline_IMAGE($pagelayout,$allowcontentplugins);
+				self::get_CatalogTable_singleline_IMAGE($ct,$layoutType,$pagelayout,$allowcontentplugins);
 			elseif($notable == 'notable')
-				$vlu.=self::get_Catalog($ct,$tableclass,false,$allowcontentplugins,$separator);
+				$vlu.=self::get_Catalog($ct,$layoutType,$itemlayout,$tableclass,false,$allowcontentplugins,$separator);
 			else
-				$vlu.=self::get_Catalog($ct,$tableclass,true,$allowcontentplugins,$separator);
+				$vlu.=self::get_Catalog($ct,$layoutType,$itemlayout,$tableclass,true,$allowcontentplugins,$separator);
 
 			$pagelayout=str_replace($fItem,$new_replaceitecode,$pagelayout);
 			$i++;
@@ -68,7 +67,7 @@ class tagProcessor_Catalog
         return $vlu;
     }
 
-    protected static function get_Catalog(&$ct,$tableclass,$showtable=true,$allowcontentplugins=false,$separator='')
+    protected static function get_Catalog(&$ct,$layoutType,$itemlayout,$tableclass,$showtable=true,$allowcontentplugins=false,$separator='')
 	{
 		$catalogresult='';
 
@@ -77,7 +76,7 @@ class tagProcessor_Catalog
 
 		$CatGroups=array();
 		
-		$twig = new TwigProcessor($ct, $ct->LayoutProc->layout);
+		$twig = new TwigProcessor($ct, $itemlayout);
 		
 		//Grouping
 		if($ct->Env->menu_params->get('groupby')!='')
@@ -92,7 +91,7 @@ class tagProcessor_Catalog
 				foreach($ct->Records as $row)
 				{
 						$row['_number'] = $number;
-				        $RealRows[]=tagProcessor_Item::RenderResultLine($ct,$twig,$row); //3ed parameter is to show record HTML anchor or not
+				        $RealRows[]=tagProcessor_Item::RenderResultLine($ct,$layoutType,$twig,$row); //3ed parameter is to show record HTML anchor or not
 						$number++;
 				}
 				$CatGroups[]=array('',$RealRows);
@@ -120,13 +119,13 @@ class tagProcessor_Catalog
 									$FileBoxRows=array();
 									$option=array();
 									//getValueByType(&$ct,$ESField, $row, &$option_list,&$getGalleryRows,&$getFileBoxRows)
-									$GroupTitle=$ct->LayoutProc->getValueByType($ct,$FieldRow,$row,$option,$galleryrows,$FileBoxRows);
+									$GroupTitle=tagProcessor_Value::getValueByType($ct,$FieldRow,$row,$option,$galleryrows,$FileBoxRows);
 								}
 
 								$CatGroups[]=array($GroupTitle,$RealRows);
 								$RealRows=array();
 						}
-                        $RealRows[]=tagProcessor_Item::RenderResultLine($ct,$twig,$row); //3ed parameter is to show record HTML anchor or not
+                        $RealRows[]=tagProcessor_Item::RenderResultLine($ct,$layoutType,$twig,$row); //3ed parameter is to show record HTML anchor or not
 
 						$lastGroup=$row[$ct->groupby];
 
@@ -142,7 +141,7 @@ class tagProcessor_Catalog
 						$FileBoxRows=array();
 						$option=array();
 
-						$GroupTitle=$ct->LayoutProc->getValueByType($ct,$FieldRow,$row,$option,$galleryrows,$FileBoxRows);
+						$GroupTitle=tagProcessor_Value::getValueByType($ct,$FieldRow,$row,$option,$galleryrows,$FileBoxRows);
 					}
 					$CatGroups[]=array($GroupTitle,$RealRows);
 				}

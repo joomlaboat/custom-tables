@@ -116,7 +116,7 @@ class Layouts
             $layout = $this->getLayout($layoutname);
 			
 			if($ProcessContentPlugins)
-				LayoutProcessor::applyContentPlugins($layout);
+				JoomlaBasicMisc::applyContentPlugins($layout);
             
 			$htmlresult=str_replace($fItem,$layout,$htmlresult);
 			$i++;

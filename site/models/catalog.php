@@ -99,8 +99,6 @@ class CustomTablesModelCatalog extends JModelLegacy
 		//Limit
 		$this->ct->applyLimits($blockExternalVars);
 		
-		$this->ct->LayoutProc = new LayoutProcessor($this->ct);
-
 		//---------- Filtering
 		$this->ct->Filter->addMenuParamFilter();
 		if(!$this->blockExternalVars)

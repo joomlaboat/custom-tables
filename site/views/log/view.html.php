@@ -219,11 +219,12 @@ class CustomTablesViewLog extends JViewLegacy
 		
 		if($model->ct->Table->tablename=='')
 			return "Table ".$model->ct->Table->tablename."not found.";
-
-		$model->ct->LayoutProc->layout='['.$FieldName.']';
+		
+		$layout = '{{ ' . $FieldName . ' }}'
+		$twig = new TwigProcessor($this->ct, $layout);
 		
 		$row = $model->ct->Table->loadRecord($listing_id);
-
-		return $model->ct->LayoutProc->fillLayout($row);
+		
+		return $twig->process($row);
 	}
 }

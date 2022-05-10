@@ -59,7 +59,7 @@ class Filtering
 			$filter_string = $this->ct->Env->menu_params->get( 'filter' );
 
 			//Parse using layout, has no effect to layout itself
-			$filter_string = LayoutProcessor::applyContentPlugins($filter_string);
+			
 			$filter_string = $this->sanitizeAndParseFilter($filter_string, true);
 			
 			if($filter_string!='')
@@ -1081,6 +1081,23 @@ class Filtering
 
 	function sanitizeAndParseFilter($paramwhere, $parse = false)
 	{
+		if($parse)
+		{
+			//Parse using layout, has no effect to layout itself
+			if($this->ct->Env->legacysupport)
+			{
+				$LayoutProc = new LayoutProcessor($this->ct);
+				$LayoutProc->layout = $paramwhere;
+				$paramwhere = $LayoutProc->fillLayout();
+			}
+			
+			$twig = new TwigProcessor($this->ct, '{% autoescape false %}'.$paramwhere.'{% endautoescape %}');
+			$paramwhere = $twig->process();
+			
+			if($this->ct->Env->menu_params->get( 'allowcontentplugins' ))
+				$paramwhere = JoomlaBasicMisc::applyContentPlugins($paramwhere);
+		}
+		
 		$paramwhere=str_ireplace('*','=',$paramwhere);
 		$paramwhere=str_ireplace('\\','',$paramwhere);
 
@@ -1090,16 +1107,6 @@ class Filtering
 		$paramwhere=str_ireplace('delete ','',$paramwhere);
 		$paramwhere=str_ireplace('update ','',$paramwhere);
 		$paramwhere=str_ireplace('insert ','',$paramwhere);
-
-		if($parse)
-		{
-			//Parse using layout, has no effect to layout itself
-			$this->ct->LayoutProc->layout = $paramwhere;
-			$paramwhere = $this->ct->LayoutProc->fillLayout();
-			
-			$twig = new TwigProcessor($this->ct, '{% autoescape false %}'.$paramwhere.'{% endautoescape %}');
-			$paramwhere = $twig->process();
-		}
 		
 		return $paramwhere;
 	}

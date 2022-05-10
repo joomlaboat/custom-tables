@@ -124,7 +124,7 @@ class Environment
 		
 		$this->loadTwig = $params->get('loadTwig');
 		$this->toolbaricons = $params->get('toolbaricons');
-		$this->legacysupport = $params->get('legacysupport');
+		$this->legacysupport = $params->get('legacysupport') == '';
 	}
 	
 	/* USER-AGENTS ================================================== */

@@ -25,7 +25,7 @@ class tagProcessor_CatalogTableView
     use render_xml;
 	use render_image;
 
-    public static function process(&$ct,&$pagelayout,$new_replaceitecode)
+    public static function process(&$ct,$layoutType,&$pagelayout,$new_replaceitecode)
     {
         $vlu='';
 
@@ -51,7 +51,7 @@ class tagProcessor_CatalogTableView
 			}
             elseif($ct->Env->frmt=='xml')
 			{
-				$vlu=self::get_CatalogTable_XML($ct,$fields);
+				$vlu=self::get_CatalogTable_XML($ct,$layoutType,$fields);
                 $pagelayout=str_replace($fItem,$new_replaceitecode,$pagelayout);
 			}
 			elseif($ct->Env->frmt=='xlsx')

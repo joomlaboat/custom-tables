@@ -224,15 +224,17 @@ class JHTMLESRecords
 						if($pair[0]!='layout' and $pair[0]!='tablelesslayout')
 								return '<p>unknown field/layout command "'.$field.'" should be like: "layout:'.$pair[1].'".</p>';
 						
-						$ct = new CT;
-						
-						$Layouts = new Layouts($ct);
+						$Layouts = new Layouts($model->ct);
 						$layoutcode = $Layouts->getLayout($pair[1]);
 						
 						if($layoutcode=='')
 							return '<p>layout "'.$pair[1].'" not found or is empty.</p>';
 
-						$model->ct->LayoutProc->layout=$layoutcode;
+						if($model->ct->Env->legacysupport)
+						{
+							$LayoutProc = new LayoutProcessor($model->ct);
+							$LayoutProc->layout=$layoutcode;
+						}
 
 						$htmlresult.='<table style="border:none;" id="sqljoin_table_'.$control_name.'">';
 						$i=0;
@@ -267,19 +269,21 @@ class JHTMLESRecords
 
 								//process layout
 								$htmlresult.='<label for="'.$control_name.'_'.$i.'">';
-								$htmlresult.=$model->ct->LayoutProc->fillLayout($row);
+								
+								if($model->ct->Env->legacysupport)
+									$layoutcode_tmp = $LayoutProc->fillLayout($row);
+								else
+									$layoutcode_tmp = $layoutcode;
+								
+								$twig = new TwigProcessor($this->ct, $layoutcode_tmp);
+								$htmlresult .= $twig->process($row);
+								
 								$htmlresult.='</label>';
-
 
 								$htmlresult.='</td></tr>';
 								$i++;
 						}
 						$htmlresult.='</table>';
-
-
-
-
-
 				}
 
 				return $htmlresult;

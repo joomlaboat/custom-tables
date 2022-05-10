@@ -90,15 +90,22 @@ class ESInputBox
 				//Process default value, not processing PHP tag
 				if($value!='')
 				{
-					tagProcessor_General::process($this->ct,$value,$row,'',1);
-					tagProcessor_Item::process($this->ct,$row,$value,'','',0);
-					tagProcessor_If::process($this->ct,$value,$row,'',0);
-					tagProcessor_Page::process($this->ct,$value);
-					tagProcessor_Value::processValues($this->ct,$row,$value,'[]');
+					if($this->ct->Env->legacysupport)
+					{
+						tagProcessor_General::process($this->ct,$value,$row,'',1);
+						tagProcessor_Item::process($this->ct,$row,$value,'','',0);
+						tagProcessor_If::process($this->ct,$value,$row,'',0);
+						tagProcessor_Page::process($this->ct,$value);
+						tagProcessor_Value::processValues($this->ct,$row,$value,'[]');
+					}
+					
+					$twig = new TwigProcessor($model->ct, '{% autoescape false %}'.$value.'{% endautoescape %}');
+					$value = $twig->process($row);
 
 					if($value!='')
 					{
-						LayoutProcessor::applyContentPlugins($htmlresult);
+						if($this->ct->Env->menu_params->get( 'allowcontentplugins' ))
+							JoomlaBasicMisc::applyContentPlugins($htmlresult);
 
 						if($esfield['type']=='alias')
 						{

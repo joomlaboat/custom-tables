@@ -13,7 +13,7 @@ use CustomTables\TwigProcessor;
 
 trait render_xml
 {
-    protected static function get_CatalogTable_XML(&$ct,$fields)
+    protected static function get_CatalogTable_XML(&$ct,$layoutType,$fields)
 	{
 		$catalogresult='';
 
@@ -50,8 +50,9 @@ trait render_xml
 		$result.=implode('',$header_fields);//."\r\n";
 
         //Parse Header
-        $ct->LayoutProc->layout=$result;
-        $result=$ct->LayoutProc->fillLayout();
+		$LayoutProc = new LayoutProcessor($ct);
+        $LayoutProc->layout=$result;
+        $result=$LayoutProc->fillLayout();
         $result=str_replace('&&&&quote&&&&','"',$result);
 
 		$number = 1 + $ct->LimitStart; //table row number, it maybe use in the layout as {number}
@@ -65,7 +66,7 @@ trait render_xml
 
             if($tablecontent!="")
                 $tablecontent.="\r\n";
-               	$tablecontent.=tagProcessor_Item::RenderResultLine($ct,$twig,$row);
+               	$tablecontent.=tagProcessor_Item::RenderResultLine($ct,$layoutType,$twig,$row);
 				$number++;
 		}
         $result.=$tablecontent;

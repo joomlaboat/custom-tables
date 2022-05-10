@@ -111,5 +111,8 @@ foreach($this->rows as $row)
 $catalogresult.='</tbody>
 </table>';
 		
-echo LayoutProcessor::applyContentPlugins($catalogresult);
+if((int)$this->ct->Env->menu_params->get( 'allowcontentplugins' )==1)
+	$catalogresult = JoomlaBasicMisc::applyContentPlugins($catalogresult);
+
+echo $catalogresult;
  

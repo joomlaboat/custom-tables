@@ -146,7 +146,11 @@ class JHTMLESRecordsView
 			if($layoutcode=='')
 				return '<p>layout "'.$layout_pair[0].'" not found or is empty.</p>';
 
-			$model->ct->LayoutProc->layout=$layoutcode;
+			if($model->ct->Env->legacysupport)
+			{
+				$LayoutProc = new LayoutProcessor($model->ct);
+				$LayoutProc->layout=$layoutcode;
+			}
 
 			$valuearray=explode(',',$value);
 
@@ -181,7 +185,10 @@ class JHTMLESRecordsView
 				//process layout
 				$row['_number'] = $number;
 
-				$vlu = $model->ct->LayoutProc->fillLayout($row);
+				if($model->ct->Env->legacysupport)
+					$vlu = $LayoutProc->fillLayout($row);
+				else
+					$vlu = $layoutcode;
 
 				$twig = new TwigProcessor($model->ct, '{% autoescape false %}'.$vlu.'{% endautoescape %}');
 				$vlu = $twig->process($row);

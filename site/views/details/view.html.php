@@ -22,6 +22,7 @@ class CustomTablesViewDetails extends JViewLegacy
 	var $row;
 	var $imagegalleries;
 	var $fileboxes;
+	var $layout_details;
 
 	function display($tpl = null)
 	{
@@ -29,15 +30,12 @@ class CustomTablesViewDetails extends JViewLegacy
 		
 		$this->ct = $this->Model->ct;
 		
-		if(!isset($this->ct->LayoutProc))
-			return;
-
-		$layout_catalog='';
+		$this->layout_details = '';
 
 		if($this->ct->Env->menu_params->get('esdetailslayout')!='')
 		{
 			$Layouts = new Layouts($this->ct);
-			$layout_catalog = $Layouts->getLayout($this->ct->Env->menu_params->get('esdetailslayout'));
+			$this->layout_details = $Layouts->getLayout($this->ct->Env->menu_params->get('esdetailslayout'));
 				
 			if($Layouts->layouttype==8)
 				$this->ct->Env->frmt='xml';
@@ -45,8 +43,6 @@ class CustomTablesViewDetails extends JViewLegacy
 				$this->ct->Env->frmt='csv';
 			elseif($Layouts->layouttype==10)
 				$this->ct->Env->frmt='json';
-
-			$this->ct->LayoutProc->layout=$layout_catalog;
 		}
 
 		$this->row = $this->get('Data');
