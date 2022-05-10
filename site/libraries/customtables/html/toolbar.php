@@ -59,8 +59,8 @@ class RecordToolbar
 					$rid='esRefreshIcon'.$this->rid;
 					$alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_REFRESH' );
 					
-					if($this->ct->Env->toolbaricons == 'fontawesome')
-						$img='<i class="ba-btn-transition fas fa-sync" data-icon="fas fa-sync" title="' . $alt . '"></i>';
+					if($this->ct->Env->toolbaricons != '')
+						$img='<i class="ba-btn-transition '.$this->ct->Env->toolbaricons.' fa-sync" data-icon="'.$this->ct->Env->toolbaricons.' fa-sync" title="' . $alt . '"></i>';
 					else
 						$img='<img src="'.$this->iconPath.'refresh.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 					
@@ -107,8 +107,8 @@ class RecordToolbar
 				$link='javascript:ctPublishRecord('.$this->Table->tableid.',\''.$this->listing_id.'\', \''.$rid.'\',0);';
                 $alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_UNPUBLISH' );
 				
-				if($this->ct->Env->toolbaricons == 'fontawesome')
-					$img='<i class="ba-btn-transition far fa-check-circle" data-icon="far fa-check-circle" title="'.$alt.'"></i>';
+				if($this->ct->Env->toolbaricons != '')
+					$img='<i class="ba-btn-transition '.$this->ct->Env->toolbaricons.' fa-check-circle" data-icon="'.$this->ct->Env->toolbaricons.' fa-check-circle" title="'.$alt.'"></i>';
 				else
 					$img='<img src="'.$this->iconPath.'publish.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 			}
@@ -117,8 +117,8 @@ class RecordToolbar
 				$link='javascript:ctPublishRecord('.$this->Table->tableid.',\''.$this->listing_id.'\', \''.$rid.'\',1);';
                 $alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PUBLISH' );
 				
-				if($this->ct->Env->toolbaricons == 'fontawesome')
-					$img='<i class="ba-btn-transition fas fa-ban" data-icon="fas fa-ban" title="'.$alt.'"></i>';
+				if($this->ct->Env->toolbaricons != '')
+					$img='<i class="ba-btn-transition '.$this->ct->Env->toolbaricons.' fa-ban" data-icon="'.$this->ct->Env->toolbaricons.' fa-ban" title="'.$alt.'"></i>';
 				else
 					$img='<img src="'.$this->iconPath.'unpublish.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 			}
@@ -136,8 +136,8 @@ class RecordToolbar
 	{
 		$alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_EDIT' );
 		
-		if($this->ct->Env->toolbaricons == 'fontawesome')
-			$img='<i class="ba-btn-transition fas fa-pen" data-icon="fas fa-pen" title="'.$alt.'"></i>';
+		if($this->ct->Env->toolbaricons != '')
+			$img='<i class="ba-btn-transition '.$this->ct->Env->toolbaricons.' fa-pen" data-icon="'.$this->ct->Env->toolbaricons.' fa-pen" title="'.$alt.'"></i>';
 		else
 			$img='<img src="'.$this->iconPath.'edit.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 
@@ -188,8 +188,8 @@ class RecordToolbar
 
             $alt = $gallery[1];
 			
-			if($this->ct->Env->toolbaricons == 'fontawesome')
-				$img='<i class="ba-btn-transition fas fa-image" data-icon="fas fa-image" title="'.$alt.'"></i>';
+			if($this->ct->Env->toolbaricons != '')
+				$img='<i class="ba-btn-transition '.$this->ct->Env->toolbaricons.' fa-image" data-icon="'.$this->ct->Env->toolbaricons.' fa-image" title="'.$alt.'"></i>';
 			else
 				$img='<img src="'.$this->iconPath.'photomanager.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 
@@ -220,8 +220,8 @@ class RecordToolbar
             //$alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FILE_MANAGER').' ('.$filebox[1].')';
 			$alt=$filebox[1];
 			
-			if($this->ct->Env->toolbaricons == 'fontawesome')
-				$img='<i class="ba-btn-transition fas fa-folder" data-icon="fas fa-folder" title="'.$alt.'"></i>';
+			if($this->ct->Env->toolbaricons != '')
+				$img='<i class="ba-btn-transition '.$this->ct->Env->toolbaricons.' fa-folder" data-icon="'.$this->ct->Env->toolbaricons.' fa-folder" title="'.$alt.'"></i>';
 			else
 				$img='<img src="'.$this->iconPath.'filemanager.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 
@@ -237,8 +237,8 @@ class RecordToolbar
 		
 		$alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_COPY');
 		
-		if($this->ct->Env->toolbaricons == 'fontawesome')
-			$img='<i class="ba-btn-transition fas fa-copy" data-icon="fas fa-copy" title="'.$alt.'"></i>';
+		if($this->ct->Env->toolbaricons != '')
+			$img='<i class="ba-btn-transition '.$this->ct->Env->toolbaricons.' fa-copy" data-icon="'.$this->ct->Env->toolbaricons.' fa-copy" title="'.$alt.'"></i>';
 		else
 			$img='<img src="'.$this->iconPath.'copy.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 
@@ -257,8 +257,8 @@ class RecordToolbar
 			$rid='ctCreateUserIcon'.$this->rid;
 			$alt='Create User Account';
 			
-			if($this->ct->Env->toolbaricons == 'fontawesome')
-				$img='<i class="ba-btn-transition fas fa-user-plus" data-icon="fas fa-user-plus" title="'.$alt.'"></i>';
+			if($this->ct->Env->toolbaricons != '')
+				$img='<i class="ba-btn-transition '.$this->ct->Env->toolbaricons.' fa-user-plus" data-icon="'.$this->ct->Env->toolbaricons.' fa-user-plus" title="'.$alt.'"></i>';
 			else
 				$img='<img src="'.$this->iconPath.'key-add.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 			
@@ -275,8 +275,8 @@ class RecordToolbar
 				$rid='ctResetPasswordIcon'.$this->rid;
 				$alt='Username: '.$userrow['username'];
 				
-				if($this->ct->Env->toolbaricons == 'fontawesome')
-					$img='<i class="ba-btn-transition fas fa-user" data-icon="fas fa-user" title="'.$alt.'"></i>';
+				if($this->ct->Env->toolbaricons != '')
+					$img='<i class="ba-btn-transition '.$this->ct->Env->toolbaricons.' fa-user" data-icon="'.$this->ct->Env->toolbaricons.' fa-user" title="'.$alt.'"></i>';
 				else
 					$img='<img src="'.$this->iconPath.'key.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 				
@@ -296,8 +296,8 @@ class RecordToolbar
 
 		$alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_DELETE' );
 		
-		if($this->ct->Env->toolbaricons == 'fontawesome')
-			$img='<i class="ba-btn-transition fas fa-trash" data-icon="fas fa-trash" title="' . $alt . '"></i>';
+		if($this->ct->Env->toolbaricons != '')
+			$img='<i class="ba-btn-transition '.$this->ct->Env->toolbaricons.' fa-trash" data-icon="'.$this->ct->Env->toolbaricons.' fa-trash" title="' . $alt . '"></i>';
 		else
 			$img='<img src="'.$this->iconPath.'delete.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 		

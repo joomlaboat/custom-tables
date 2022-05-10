@@ -316,9 +316,9 @@ class Twig_Url_Tags
    			
 			if($image=='')
 			{
-				if($this->ct->Env->toolbaricons == 'fontawesome' and $format == 'csv')
+				if($this->ct->Env->toolbaricons != '' and $format == 'csv')
 				{
-					$img = '<i class="ba-btn-transition fas fa-file-csv" data-icon="fas fa-file-csv" title="' . $alt . '"></i>';
+					$img = '<i class="ba-btn-transition '.$this->ct->Env->toolbaricons.' fa-file-csv" data-icon="'.$this->ct->Env->toolbaricons.' fa-file-csv" title="' . $alt . '"></i>';
 				}
 				else
 				{

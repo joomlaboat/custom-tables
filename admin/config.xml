@@ -55,7 +55,10 @@
 			description="What type of toolbar icons to use : Image Icons or Font Awesome."
 			>
 			<option value="">Image Icons</option>
-			<option value="fontawesome">Font Awesome</option>
+			<option value="fas">Font Awesome - Solid</option>
+			<!--<option value="fa-regular">Font Awesome - Regular</option>-->
+<!--			<option value="fal">Font Awesome - Light</option>-->
+<!--			<option value="fad">Font Awesome - Duotone</option>-->
 		</field>
 
                 <field

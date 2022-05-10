@@ -99,8 +99,8 @@ class Twig_Html_Tags
         
 		$alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ADD');
 		
-		if($this->ct->Env->toolbaricons == 'fontawesome')
-			$img = '<i class="ba-btn-transition fas fa-plus-circle" data-icon="fas fa-plus-circle" title="'.$alt.'"></i>';		
+		if($this->ct->Env->toolbaricons != '')
+			$img = '<i class="ba-btn-transition '.$this->ct->Env->toolbaricons.' fa-plus-circle" data-icon="'.$this->ct->Env->toolbaricons.' fa-plus-circle" title="'.$alt.'"></i>';		
 		else
 			$img = '<img src="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/images/icons/new.png" alt="'.$alt.'" title="'.$alt.'" />';
 		
@@ -218,15 +218,15 @@ class Twig_Html_Tags
 
 		if($attribute == '' and $image_icon == '')
 		{
-			if($this->ct->Env->toolbaricons == 'fontawesome')
-				$vlu = '<a href="'.$returnto.'"><i class="ba-btn-transition fas fa-angle-left" data-icon="fas fa-angle-left" title="'.$label.'" style="margin-right:10px;"></i>'.$label.'</a>';
+			if($this->ct->Env->toolbaricons != '')
+				$vlu = '<a href="'.$returnto.'"><i class="ba-btn-transition '.$this->ct->Env->toolbaricons.' fa-angle-left" data-icon="'.$this->ct->Env->toolbaricons.' fa-angle-left" title="'.$label.'" style="margin-right:10px;"></i>'.$label.'</a>';
 			else
 				$vlu = '<a href="'.$returnto.'" class="ct_goback"><div>'.$label.'</div></a>';
 		}
 		else
 		{
-			if($this->ct->Env->toolbaricons == 'fontawesome' or $image_icon == '')
-				$img = '<i class="ba-btn-transition fas fa-angle-left" data-icon="fas fa-angle-left" title="'.$label.'" style="margin-right:10px;"></i>'.$label.'</a>';
+			if($this->ct->Env->toolbaricons != '' or $image_icon == '')
+				$img = '<i class="ba-btn-transition '.$this->ct->Env->toolbaricons.' fa-angle-left" data-icon="'.$this->ct->Env->toolbaricons.' fa-angle-left" title="'.$label.'" style="margin-right:10px;"></i>'.$label.'</a>';
 			else
 				$img = '<img src="'.$image_icon.'" alt="'.$label.'" />';
 			
@@ -279,10 +279,10 @@ class Twig_Html_Tags
 					$rid='esToolBar_'.$mode.'_box_'.$this->ct->Table->tableid;
 					$alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_'.strtoupper($mode).'_SELECTED' );
 					
-					if($this->ct->Env->toolbaricons == 'fontawesome')
+					if($this->ct->Env->toolbaricons != '')
 					{
 						$icons = ['publish' => 'fa-check-circle', 'unpublish' => 'fa-ban', 'refresh' => 'fa-sync', 'delete' => 'fa-trash'];
-						$img='<i class="ba-btn-transition fas '.$icons[$mode].'" data-icon="fas '.$icons[$mode].'" title="'.$alt.'"></i>';
+						$img='<i class="ba-btn-transition '.$this->ct->Env->toolbaricons.' '.$icons[$mode].'" data-icon="'.$this->ct->Env->toolbaricons.' '.$icons[$mode].'" title="'.$alt.'"></i>';
 					}
 					else	
 						$img='<img src="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/images/icons/'.$mode.'.png" border="0" alt="'.$alt.'" title="'.$alt.'" />';
@@ -333,7 +333,7 @@ class Twig_Html_Tags
 			if($label == '')
 				$label = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PRINT' );
 				
-			if($linktype == 'fontawesome')
+			if($linktype != '')
 				$vlu='<a href="#" onclick=\''.$onClick.'\'><i class="ba-btn-transition fas fa-print" data-icon="fas fa-print" title="'.$label.'"></i></a>';
 			else
 				$vlu='<input type="button" class="'.$class.'" value="'.$label.'" onClick=\''.$onClick.'\' />';
