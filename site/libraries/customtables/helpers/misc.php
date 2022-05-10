@@ -10,6 +10,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\Fields;
+use \Joomla\CMS\Version;
 
 class JoomlaBasicMisc
 {

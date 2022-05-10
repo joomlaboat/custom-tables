@@ -31,16 +31,8 @@ function CTViewEdit(&$ct, $row, &$pagelayout, $BlockExternalVars,$formLink,$form
 
 	if (!$BlockExternalVars and $ct->Env->menu_params->get( 'show_page_heading', 1 ) )
 	{
-		if($ct->Env->legacysupport)
-		{
-			echo '<div class="page-header'.CustomtablesHelper::htmlEscape($ct->Env->menu_params->get('pageclass_sfx')).'"><h2 itemprop="headline">'
+		echo '<div class="page-header'.strip_tags($ct->Env->menu_params->get('pageclass_sfx')).'"><h2 itemprop="headline">'
 			.JoomlaBasicMisc::JTextExtended($ct->Env->menu_params->get( 'page_title' )).'</h2></div>';
-		}
-		else
-		{
-			echo '<div class="page-header'.$ct->Env->menu_params->get('pageclass_sfx').'"><h2 itemprop="headline">'
-			.JoomlaBasicMisc::JTextExtended($ct->Env->menu_params->get( 'page_title' )).'</h2></div>';
-		}
 	}
 
 	if(isset($row[$ct->Table->realidfieldname]))

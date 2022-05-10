@@ -11,6 +11,7 @@ defined('_JEXEC') or die( 'Restricted access' );
 
 use CustomTables\Layouts;
 use CustomTables\LinkJoinFilters;
+use CustomTables\TwigProcessor;
 
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'models'.DIRECTORY_SEPARATOR.'catalog.php');
 

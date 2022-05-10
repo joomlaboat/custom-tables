@@ -28,10 +28,8 @@ if($this->ct->Env->frmt and $this->listing_id == '') //there is no need to have 
 	{
 		$title=JoomlaBasicMisc::JTextExtended($this->ct->Env->menu_params->get( 'page_title' ));
 		echo '
-		<div class="page-header'.CustomtablesHelper::htmlEscape($this->ct->Env->menu_params->get('pageclass_sfx'), 'UTF-8').'">
-			<h2 itemprop="headline">
-				'.$title.'
-			</h2>
+		<div class="page-header'.strip_tags($this->ct->Env->menu_params->get('pageclass_sfx')).'">
+			<h2 itemprop="headline">'.$title.'</h2>
 		</div>
 		';
 	}

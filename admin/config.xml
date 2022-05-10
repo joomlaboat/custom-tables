@@ -56,7 +56,8 @@
 			>
 			<option value="">Image Icons</option>
 			<option value="fas">Font Awesome - Solid</option>
-			<!--<option value="fa-regular">Font Awesome - Regular</option>-->
+<!--			FA PRO ICONS ($99/year) -->
+<!--			<option value="far">Font Awesome - Regular</option>-->
 <!--			<option value="fal">Font Awesome - Light</option>-->
 <!--			<option value="fad">Font Awesome - Duotone</option>-->
 		</field>

@@ -13,6 +13,7 @@ use CustomTables\CT;
 use CustomTables\Fields;
 use CustomTables\Layouts;
 use CustomTables\LinkJoinFilters;
+use CustomTables\TwigProcessor;
 
 use \Joomla\CMS\Uri\Uri;
 
