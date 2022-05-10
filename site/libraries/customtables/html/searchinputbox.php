@@ -445,7 +445,7 @@ class SearchInputBox
 	protected function getUserGroupBox($default_Action,$index,$where,$wherelist,$objname_,$value,$cssclass)
 	{
 		$result='';
-		$mysqljoin='#__customtables_table_'.$this->ct->Table->tablename.' ON #__customtables_table_'.$this->ct->Table->tablename.'.es_'.$this->field->fieldname.'=#__usergroups.id';
+		$mysqljoin = $this->ct->Table->realtablename.' ON '.$this->ct->Table->realtablename . '.' . $this->field->realfieldname . '=#__usergroups.id';
 		$usergroup=$this->field->params[0];
 		
 		if($this->ct->Env->version < 4)
@@ -480,9 +480,7 @@ class SearchInputBox
 	protected function getUserBox($default_Action,$index,$where,$wherelist,$objname_,$value, $cssclass)
 	{
 		$result='';
-		$mysqljoin='#__customtables_table_'.$this->ct->Table->tablename.' ON #__customtables_table_'.$this->ct->Table->tablename.'.es_'.$this->field->fieldname.'=#__users.id';
-		$usergroup=$this->field->params;
-		$user =  Factory::getUser();
+		$mysqljoin = $this->ct->Table->realtablename.' ON '.$this->ct->Table->realtablename . '.' . $this->field->realfieldname . '=#__users.id';
 
 		if($default_Action!='')
 		{
@@ -491,13 +489,13 @@ class SearchInputBox
 		else
 		{
 			$onchange=' onChange=   "'.$this->modulename.'_onChange('
-									.$index.','
-									.'this.value,'
-									.'\''.$this->field->fieldname.'\','
-									.'\''.urlencode($where).'\','
-									.'\''.urlencode($wherelist).'\','
-									.'\''.$this->ct->Languages->Postfix.'\''
-									.')"';
+				.$index.','
+				.'this.value,'
+				.'\''.$this->field->fieldname.'\','
+				.'\''.urlencode($where).'\','
+				.'\''.urlencode($wherelist).'\','
+				.'\''.$this->ct->Languages->Postfix.'\''
+				.')"';
 		}
 
 		if($this->ct->Env->version < 4)
@@ -505,8 +503,8 @@ class SearchInputBox
 		else
 			$default_class='form-control';
 
-		if($user->id!=0)
-			$result=JHTML::_('ESUser.render',$objname_, $value, '', 'class="'.$cssclass.' '.$default_class.'" ', $usergroup, $onchange,$where, $mysqljoin);
+		if($this->ct->Env->user->id!=0)
+			$result=JHTML::_('ESUser.render',$objname_, $value, '', 'class="'.$cssclass.' '.$default_class.'" ', $this->field->params[0], $onchange,$where, $mysqljoin);
 
 
 		return $result;

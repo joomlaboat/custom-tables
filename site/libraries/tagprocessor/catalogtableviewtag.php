@@ -73,7 +73,7 @@ class tagProcessor_CatalogTableView
 						$dragdrop = $parts[1] == 'dragdrop';
 				}
 
-				$vlu=self::get_CatalogTable_HTML($ct, $fields,$class, $dragdrop);
+				$vlu=self::get_CatalogTable_HTML($ct,$layoutType, $fields,$class, $dragdrop);
 				$pagelayout=str_replace($fItem,$new_replaceitecode,$pagelayout);
 			}
 

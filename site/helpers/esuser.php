@@ -13,7 +13,7 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'co
 
 class JHTMLESUser
 {
-	static public function render($control_name, $value,$style,$cssclass, $usergroup='', $attribute='',$mysqlwhere='',$mysqljoin='')
+	static public function render($control_name, $value,$style,$cssclass, string $usergroup='', $attribute='',$mysqlwhere='',$mysqljoin='')
     {
 		$db = JFactory::getDBO();
 		$query = $db->getQuery(true);
