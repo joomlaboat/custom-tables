@@ -16,6 +16,8 @@ use CustomTables\Fields;
 use CustomTables\Ordering;
 use CustomTables\DataTypes\Tree;
 
+use Joomla\CMS\Factory;
+
 jimport('joomla.application.component.model');
 
 $sitelib=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR;
@@ -37,16 +39,9 @@ class CustomTablesModelCatalog extends JModelLegacy
 		$this->showcartitemsprefix='customtables_';
 	}
 
-	function setFrmt($frmt)
-	{
-		$this->ct->Env->frmt=$frmt;
-	}
-		
-	function load(&$params,$blockExternalVars=false,$layout='')
+    function load(&$params,$blockExternalVars=false,$layout='')
 	{
 		$this->blockExternalVars=$blockExternalVars;
-
-		$db = JFactory::getDBO();
 
 		//get params
 		if($this->blockExternalVars or (isset($params) and count($params)>1))
@@ -55,7 +50,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 		}
 		else
 		{
-			$app		= JFactory::getApplication();
+			$app		= Factory::getApplication();
 			$this->params = $app->getParams();
 		}
 		
@@ -87,7 +82,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 				
 		if($this->ct->Table->tablename=='')
 		{
-			JFactory::getApplication()->enqueueMessage('Table not selected (185).', 'error');
+			Factory::getApplication()->enqueueMessage('Table not selected (185).', 'error');
 			return false;
 		}
 
@@ -142,8 +137,6 @@ class CustomTablesModelCatalog extends JModelLegacy
 
 		$this->ct->Table->recordcount = 0;
 		
-		$db= JFactory::getDBO();
-		
 		if($this->layout=='currentuser' or $this->layout=='customcurrentuser')
 		{
 			//Not sure where this layout used
@@ -187,7 +180,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 
 	function cart_emptycart()
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$this->ct->Env->jinput->cookie->set($this->showcartitemsprefix.$this->ct->Table->tablename, '', time()-3600, $app->get('cookie_path', '/'), $app->get('cookie_domain'), $app->isSSLConnection());
 		return true;
 	}
@@ -264,7 +257,7 @@ class CustomTablesModelCatalog extends JModelLegacy
 		if($listing_id == '' or (is_numeric($listing_id) and $listing_id == 0))
 			return false;
 
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		if($itemcount==-1)
 			$itemcount=$this->ct->Env->jinput->getInt('itemcount',0);

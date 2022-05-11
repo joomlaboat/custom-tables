@@ -38,9 +38,9 @@ class CustomTablesController extends JControllerLegacy
 		}
 		else
 		{
-			$theview=$jinput->getCmd( 'view' );
+			$view=$jinput->getCmd( 'view' );
 
-			switch($theview)
+			switch($view)
 			{
 				case 'log' :
 					require_once('controllers/log.php');
@@ -54,7 +54,7 @@ class CustomTablesController extends JControllerLegacy
 					require_once('controllers/save.php');
 					break;
 
-				case ($theview=='home' || $theview=='catalog') :
+				case ($view=='home' || $view=='catalog') :
 					require_once('controllers/catalog.php');
 					break;
 

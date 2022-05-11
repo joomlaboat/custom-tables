@@ -10,16 +10,12 @@
 defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\Fields;
-use CustomTables\DataTypes\Tree;
 use CustomTables\Inputbox;
-
-use Joomla\CMS\Editor\Editor;
 use Joomla\CMS\Factory;
 
 class ESInputBox
 {
-    var $width = 0;
-    var $requiredlabel = '';
+    var string $requiredlabel = '';
     var CustomTables\CT $ct;
     var $jinput;
 

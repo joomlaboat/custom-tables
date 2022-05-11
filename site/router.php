@@ -11,7 +11,7 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-//use Joomla\CMS\Component\Router\RouterBase;
+use Joomla\CMS\Factory;
 
 class CustomTablesRouter extends JComponentRouterView
 {
@@ -20,9 +20,9 @@ class CustomTablesRouter extends JComponentRouterView
 		parent::__construct($app, $menu);
 	}
 
-	public function build(&$query)
+	public function build(&$query):array
 	{
-		$segments = array();
+		$segments = [];
 	    if(isset($query['alias']))
 		{
 			$segments[] = $query['alias'];
@@ -32,13 +32,13 @@ class CustomTablesRouter extends JComponentRouterView
 		return $segments;
 	}
 
-	protected function CheckIfFile2download(&$segments,&$vars)
-	{
+	protected function CheckIfFile2download(&$segments,&$vars): bool
+    {
 		$path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components'. DIRECTORY_SEPARATOR .'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR;
 		require_once($path.'loader.php');
 		CTLoader();
 
-				if(strpos(end($segments),'.')!==false)
+				if(str_contains(end($segments), '.'))
 				{
 					//could be a file
 					$parts=explode('.',end($segments));
@@ -57,7 +57,7 @@ class CustomTablesRouter extends JComponentRouterView
 
 							CT_FieldTypeTag_file::process_file_link(end($segments));
 
-							$jinput=JFactory::getApplication()->input;
+							$jinput=Factory::getApplication()->input;
 							$vars["listing_id"] = $jinput->getInt("listing_id", 0);
 							$vars['fieldid'] = $jinput->getInt('fieldid', 0);
 							$vars['security'] = $jinput->getCmd('security', 0);//security level letter (d,e,f,g,h,i)
@@ -71,11 +71,11 @@ class CustomTablesRouter extends JComponentRouterView
 		return false;
 	}
 
-	public function parse(&$segments)
+	public function parse(&$segments): array
 	{
-		$vars = array();
+		$vars = [];
 
-		//Check if its a file to download
+		//Check if it's a file to download
 		if(CustomTablesRouter::CheckIfFile2download($segments,$vars))
 		{
 			//rerouted

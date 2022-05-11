@@ -10,11 +10,8 @@
 defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\CT;
-use CustomTables\Fields;
 
 use \Joomla\CMS\Factory;
-
-//use \Joomla\CMS\Component\ComponentHelper;
 
 jimport('joomla.application.component.model');
 
@@ -65,7 +62,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy
 		
 		if($this->ct->Table->tablename=='')
 		{
-			JFactory::getApplication()->enqueueMessage('Table not selected (62).', 'error');
+			Factory::getApplication()->enqueueMessage('Table not selected (62).', 'error');
 			return;
 		}
 
@@ -80,29 +77,25 @@ class CustomTablesModelEditPhotos extends JModelLegacy
 		if(!$this->getGallery())
 			return false;
 
-		
-
 		$this->phototablename='#__customtables_gallery_'.$this->ct->Table->tablename.'_'.$this->galleryname;
 	}
 
 	function getPhotoList()
 	{
 		// get database handle
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		$query = 'SELECT ordering, photoid,  title'.$this->ct->Languages->Postfix.' AS title, photo_ext FROM '.$this->phototablename
 			.' WHERE listingid='.$this->listing_id.' ORDER BY ordering, photoid';
 
 		$db->setQuery($query);
 
-		$rows=$db->loadObjectList();
-
-		return $rows;
+        return $db->loadObjectList();
 	}
 
 	function getGallery()
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		$query = 'SELECT id, fieldtitle'.$this->ct->Languages->Postfix.' AS title,typeparams FROM #__customtables_fields WHERE published=1 AND tableid='
 			.$this->ct->Table->tableid.' AND  fieldname="'.$this->galleryname.'" AND type="imagegallery" LIMIT 1';
 
@@ -127,7 +120,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy
 		//Create folder if not exists
 		if (!file_exists($this->imagefolder))
 		{
-			JFactory::getApplication()->enqueueMessage('Path '.$this->imagefolder.' not found.', 'error');
+			Factory::getApplication()->enqueueMessage('Path '.$this->imagefolder.' not found.', 'error');
 			mkdir($this->imagefolder, 0755, true);
 		}
 
@@ -139,19 +132,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy
 		$this->row = $this->ct->Table->loadRecord($this->listing_id);
 		if($this->row == null)
 			return false;
-		/*
-		$db = JFactory::getDBO();
-		$query = 'SELECT * FROM #__customtables_table_'.$this->ct->Table->tablename.' WHERE id='.$this->listing_id.' LIMIT 1';
 
-		$db->setQuery($query);
-
-		$rows = $db->loadAssocList();
-
-		if(count($rows)!=1)
-			return false;
-
-		$row=$rows[0];
-*/
 		$this->Listing_Title='';
 
 		foreach($this->ct->Table->fields as $mFld)
@@ -176,18 +157,17 @@ class CustomTablesModelEditPhotos extends JModelLegacy
 
 		//Apply Main Photo
 		//Get New Ordering
-		$Mainphoto= JFactory::getApplication()->input->getInt('esphotomain');
+		$Mainphoto= Factory::getApplication()->input->getInt('esphotomain');
 
 		foreach($images as $image)
 		{
-			$image->ordering=abs(JFactory::getApplication()->input->getInt( 'esphotoorder'.$image->photoid,0));
+			$image->ordering=abs(Factory::getApplication()->input->getInt( 'esphotoorder'.$image->photoid,0));
 			if($Mainphoto==$image->photoid)
 				$image->ordering=-1;
 		}
 
 		//Increase all if main
-		$nonegative=true;
-		do
+        do
 		{
 			$nonegative=true;
 			foreach($images as $image)
@@ -204,13 +184,13 @@ class CustomTablesModelEditPhotos extends JModelLegacy
 
 		}while(!$nonegative);
 
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		asort  (  $images );
 		$i=0;
 		foreach($images as $image)
 		{
-			$safetitle=JFactory::getApplication()->input->getString('esphototitle'.$image->photoid);
+			$safetitle=Factory::getApplication()->input->getString('esphototitle'.$image->photoid);
 			$safetitle=str_replace('"',"",$safetitle);
 
 			$query = 'UPDATE '.$this->phototablename.' SET ordering='.$i.', title'.$this->ct->Languages->Postfix.'="'.$safetitle.'" WHERE listingid='
@@ -228,13 +208,13 @@ class CustomTablesModelEditPhotos extends JModelLegacy
 	{
 		$images=$this->getPhotoList();
 
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		asort  (  $images );
 		$i=0;
 		foreach($images as $image)
 		{
-			$safetitle=JFactory::getApplication()->input->getString('esphototitle'.$image->photoid);
+			$safetitle=Factory::getApplication()->input->getString('esphototitle'.$image->photoid);
 			$safetitle=str_replace('"',"",$safetitle);
 
 			$query = 'UPDATE '.$this->phototablename.' SET ordering='.$i.', title'.$this->ct->Languages->Postfix.'="'.$safetitle.'" WHERE listingid='
@@ -249,9 +229,9 @@ class CustomTablesModelEditPhotos extends JModelLegacy
 
 	function delete()
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
-		$photoids=JFactory::getApplication()->input->getString('photoids','');
+		$photoids=Factory::getApplication()->input->getString('photoids','');
 		$photo_arr=explode('*',$photoids);
 
 		foreach($photo_arr as $photoid)
@@ -273,14 +253,14 @@ class CustomTablesModelEditPhotos extends JModelLegacy
 
 	function add()
 	{
-		$jinputfile = JFactory::getApplication()->input->files;
+		$jinputfile = Factory::getApplication()->input->files;
 		$file = $jinputfile->files->get('uploadedfile');
 
 		$uploadedfile= "tmp/".basename( $file['name']);
 		if(!move_uploaded_file($file['tmp_name'], $uploadedfile))
 			return false;
 
-		if(JFactory::getApplication()->input->getCmd( 'base64ecnoded', '')=="true")
+		if(Factory::getApplication()->input->getCmd( 'base64ecnoded', '')=="true")
 		{
 			$src = $uploadedfile;
 			$dst = "tmp/decoded_".basename( $file['name']);
@@ -291,7 +271,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy
 		//Check file
 		if(!$this->imagemethods->CheckImage($uploadedfile,JoomlaBasicMisc::file_upload_max_size()))//$this->maxfilesize
 		{
-			JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_BROKEN_IMAGE'), 'error');
+			Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_BROKEN_IMAGE'), 'error');
 			unlink($uploadedfile);
 			return false;
 		}
@@ -370,7 +350,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy
 
 	function addPhotoRecord($photo_ext)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		$query = 'INSERT '.$this->phototablename.' SET '
 				.'ordering=100, '

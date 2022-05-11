@@ -10,8 +10,9 @@
 defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\TwigProcessor;
+use Joomla\CMS\Factory;
 
-$document = JFactory::getDocument();
+$document = Factory::getDocument();
 $document->addScript(JURI::root(true).'/components/com_customtables/libraries/customtables/media/js/base64.js');
 $document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/js/catalog.js" type="text/javascript"></script>');
 $document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/js/ajax.js"></script>');
@@ -35,7 +36,7 @@ if($this->ct->Env->clean)
 {
 	if($this->ct->Env->frmt=='csv')
 	{
-		$filename = JoomlaBasicMisc::makeNewFileName($mydoc->getTitle(),'csv');
+		$filename = JoomlaBasicMisc::makeNewFileName($document->getTitle(),'csv');
 
 		if (ob_get_contents())
 			ob_end_clean();

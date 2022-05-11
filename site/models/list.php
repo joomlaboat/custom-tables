@@ -10,6 +10,7 @@
 defined('_JEXEC') or die( 'Restricted access' );
 
 use CustomTables\Fields;
+use \Joomla\CMS\Factory;
 
 jimport( 'joomla.html.html.menu' );
 
@@ -22,11 +23,11 @@ class CustomTablesModelList extends JModel
 
 	function getItems($noState = false,$bone='<sup>|_</sup>&nbsp;',$custom_spacer='&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;', $connect_with_table='', $connect_with_field='')
 	{
-		$mainframe = JFactory::getApplication();
+		$mainframe = Factory::getApplication();
 
 		static $items;
 
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		if($noState)
 		{
@@ -253,7 +254,7 @@ class CustomTablesModelList extends JModel
 
 	function setOrder($items)
 	{
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 		$total		= count( $items );
 		$row 		= JTable::getInstance('List', 'Table');
 
@@ -262,7 +263,7 @@ class CustomTablesModelList extends JModel
 
 
 
-		$order		= JFactory::getApplication()->input->post->get('order',array(),'array');
+		$order		= Factory::getApplication()->input->post->get('order',array(),'array');
 		JArrayHelper::toInteger($order);
 
 
@@ -315,7 +316,7 @@ class CustomTablesModelList extends JModel
 				$this->_addChildren((int)$tree_id, $tree_ids);
 			}
 
-			$db = JFactory::getDBO();
+			$db = Factory::getDBO();
 
 
 			// Delete the menu items
@@ -337,7 +338,7 @@ class CustomTablesModelList extends JModel
 		$return = true;
 
 		// Get all rows with parentid of $tree_id
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		$query = 'SELECT id' .
 				' FROM #__customtables_options' .
 				' WHERE parentid = '.(int) $tree_id;
@@ -377,7 +378,7 @@ class CustomTablesModelList extends JModel
 	function _rebuildSubLevel($cid = array(0), $level = 0)
 	{
 		JArrayHelper::toInteger($cid, array(0));
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		$tree_ids = implode( ',', $cid );
 		$cids = array();
 		if($level == 0) {
@@ -422,10 +423,10 @@ class CustomTablesModelList extends JModel
 			$item->optionname 	= 'Copy of '.$item->optionname;
 
 			if (!$item->check())
-				JFactory::getApplication()->enqueueMessage($item->getError(), 'error');
+				Factory::getApplication()->enqueueMessage($item->getError(), 'error');
 		
 			if (!$item->store())
-				JFactory::getApplication()->enqueueMessage($item->getError(), 'error');
+				Factory::getApplication()->enqueueMessage($item->getError(), 'error');
 		
 			$item->checkin();
 	    }

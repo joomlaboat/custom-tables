@@ -15,13 +15,14 @@ use CustomTables\Field;
 use CustomTables\Fields;
 use CustomTables\CTUser;
 use CustomTables\SaveFieldQuerySet;
-use \Joomla\CMS\Factory;
+use Joomla\CMS\Factory;
 
 $ct = new CT;
 
 $returnto = $ct->Env->jinput->get('returnto', '', 'BASE64');
+$view=$ct->Env->jinput->getCmd( 'view' );
 
-if ($theview == 'home')
+if ($view == 'home')
 {
 	parent::display();
 	$ct->Env->jinput->set('homeparent', 'home');
@@ -30,8 +31,7 @@ if ($theview == 'home')
 
 	$task = $ct->Env->jinput->getCmd('task');
 	
-	$app = JFactory::getApplication();
-	$menu_params=$app->getParams();
+	$menu_params=$ct->app->getParams();
 	$edit_model = $this->getModel('edititem');
 	$edit_model->params=$menu_params;
 	$edit_model->listing_id = $ct->Env->jinput->getCmd("listing_id");
@@ -51,7 +51,7 @@ if ($theview == 'home')
 	if($task!='')
 	{
 		/*
-		if (JFactory::getUser()->authorise('core.admin', 'com_helloworld')) 
+		if (Factory::getUser()->authorise('core.admin', 'com_helloworld')) 
 					<action name="core.create" title="JACTION_CREATE" description="COM_CUSTOMTABLES_ACCESS_CREATE_DESC" />
 		<action name="core.edit" title="JACTION_EDIT" description="COM_CUSTOMTABLES_ACCESS_EDIT_DESC" />
 		<action name="core.edit.own" title="JACTION_EDITOWN" description="COM_CUSTOMTABLES_ACCESS_EDITOWN_DESC" />
@@ -65,7 +65,7 @@ if ($theview == 'home')
 			$redirect=doTheTask($ct,$task,$menu_params,$edit_model,$this);
 			if($redirect == null)
 			{
-				JFactory::getApplication()->enqueueMessage('Unknown task');	
+				Factory::getApplication()->enqueueMessage('Unknown task');	
 			}
 			else
 				$this->setRedirect($redirect->link, $redirect->msg, $redirect->status);
@@ -77,7 +77,7 @@ if ($theview == 'home')
 				die('not authorized');
 			else
 			{
-				//JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
+				//Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
 				$link = $ct->Env->WebsiteRoot . 'index.php?option=com_users&view=login&return=1' . base64_encode(JoomlaBasicMisc::curPageURL());
 				$this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'));
 				parent::display();
@@ -89,15 +89,14 @@ if ($theview == 'home')
 	
 function doTheTask(&$ct,$task,$menu_params,$edit_model,&$this_)	
 {
-	$encodedreturnto = base64_encode(JoomlaBasicMisc::curPageURL());
-	$returnto = $ct->Env->jinput->get('returnto', '', 'BASE64');
+    $returnto = $ct->Env->jinput->get('returnto', '', 'BASE64');
 	$decodedreturnto = base64_decode($returnto);
 	
 	//Return link
 	if ($returnto != '')
 	{
 		$link = $decodedreturnto;
-		if (strpos($link, 'http:') === false and strpos($link, 'https:') === false)
+		if (!str_contains($link, 'http:') and !str_contains($link, 'https:'))
 			$link.= $ct->Env->WebsiteRoot . $link;
 	}
 	else
@@ -118,8 +117,6 @@ function doTheTask(&$ct,$task,$menu_params,$edit_model,&$this_)
 				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_DELETED'), 'status' => null);
 			else
 				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_NOT_DELETED'), 'status' => 'error');
-
-		break;
 
 		case 'delete':
 			$count = $edit_model->delete();
@@ -162,7 +159,8 @@ function doTheTask(&$ct,$task,$menu_params,$edit_model,&$this_)
 			break;
 
 	case 'copy':
-		
+
+        $msg = '';
 		if ($edit_model->copy($msg, $link))
 		{
 			if ($ct->Env->clean == 1)
@@ -177,8 +175,6 @@ function doTheTask(&$ct,$task,$menu_params,$edit_model,&$this_)
 			else
 				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_NOT_COPIED'), 'status' => 'error');
 		}
-
-		break;
 
 	case 'refresh':
 
@@ -209,9 +205,8 @@ function doTheTask(&$ct,$task,$menu_params,$edit_model,&$this_)
 				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended($msg,abs($count)), 'status' => 'error');
 			}
 		}
-		break;
 
-	case 'publish':
+        case 'publish':
 
 		$count = $edit_model->setPublishStatus(1);
 		if ($count > 0)
@@ -288,7 +283,7 @@ function doTheTask(&$ct,$task,$menu_params,$edit_model,&$this_)
 		$ct->Table->loadRecord($listing_id);
 		if($ct->Table->record == null)
 		{
-			Factory::getApplication()->enqueueMessage('User record ID: "'.$user_listing_id.'" not found.', 'error');
+			Factory::getApplication()->enqueueMessage('User record ID: "'.$listing_id.'" not found.', 'error');
 			return (object) array('link' => $link, 'status' => 'error');
 		}
 			
@@ -328,14 +323,12 @@ function doTheTask(&$ct,$task,$menu_params,$edit_model,&$this_)
 				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_USERS_RESET_COMPLETE_ERROR'), 'status' => 'error');
 		}
 
-		break;
-		
 	case 'setorderby':
 
-		$orderby=$ct->Env->jinput->getString('orderby','');
-		$orderby=trim(preg_replace("/[^a-zA-Z-+%.: ,_]/", "",$orderby));
+		$order_by=$ct->Env->jinput->getString('orderby','');
+		$order_by=trim(preg_replace("/[^a-zA-Z-+%.: ,_]/", "",$order_by));
 		
-		Factory::getApplication()->setUserState('com_customtables.orderby_'.$ct->Env->Itemid,$orderby);
+		Factory::getApplication()->setUserState('com_customtables.orderby_'.$ct->Env->Itemid,$order_by);
 		
 		$link = JoomlaBasicMisc::deleteURLQueryOption($link, 'task');
 		$link = JoomlaBasicMisc::deleteURLQueryOption($link, 'orderby');
@@ -346,7 +339,7 @@ function doTheTask(&$ct,$task,$menu_params,$edit_model,&$this_)
 
 		$limit=$ct->Env->jinput->getInt('limit','');
 				
-		Factory::getApplication()->setUserState('com_customtables.limit_'.$ct->Env->Itemid,$limit);
+		$ct->app->setUserState('com_customtables.limit_'.$ct->Env->Itemid,$limit);
 		
 		$link = JoomlaBasicMisc::deleteURLQueryOption($link, 'task');
 		$link = JoomlaBasicMisc::deleteURLQueryOption($link, 'limit');
@@ -390,8 +383,7 @@ function doTheTask(&$ct,$task,$menu_params,$edit_model,&$this_)
 				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended($msg), 'status' => 'error');
 			}
 		}
-		break;
-		
+
 	case 'ordering':
 	
 		$tableid = $ct->Env->jinput->getInt('tableid');
@@ -437,6 +429,8 @@ function doTheTask(&$ct,$task,$menu_params,$edit_model,&$this_)
 			}
 
 			$param_msg = '';
+            $result = '';
+
 			switch ($task)
 			{
 			case 'cart_addtocart':
@@ -465,9 +459,9 @@ function doTheTask(&$ct,$task,$menu_params,$edit_model,&$this_)
 				break;
 			}
 
-			if ($result)
+			if ($result != "")
 			{
-				$msg = JFactory::getApplication()->input->getString('msg', null);
+				$msg = $ct->Env->jinput->getString('msg', null);
 
 				if ($msg == null)
 					return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SHOPPING_CART_UPDATED'), 'status' => null);
@@ -480,4 +474,6 @@ function doTheTask(&$ct,$task,$menu_params,$edit_model,&$this_)
 		else
 			return null;
 	}
+
+    return null;
 }

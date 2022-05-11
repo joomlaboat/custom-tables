@@ -13,61 +13,54 @@ namespace CustomTables;
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-use CustomTables\Fields;
-use CustomTables\Layouts;
-use CustomTables\SearchInputBox;
-use CustomTables\CTUser;
-use CustomTables\RecordToolbar;
-
-use \JoomlaBasicMisc;
-use \JESPagination;
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Uri\Uri;
-use \Joomla\CMS\Router\Route;
-
-use \JHTML;
+use JoomlaBasicMisc;
+use JESPagination;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
+use JHTML;
+use Twig\Markup;
 
 class Twig_Html_Tags
 {
-	var $ct;
-	var $isTwig;
+	var CT $ct;
+	var bool $isTwig;
 	
-	var $captcha_found;
-	var $button_objects = []; //Not clear where and how this variable used.
+	var bool $captcha_found;
+	var array $button_objects = []; //Not clear where and how this variable used.
 	
 	function __construct(&$ct,$isTwig = true)
 	{
-		$this->ct = $ct;
+		$this->ct = &$ct;
 		$this->isTwig = $isTwig;
 		
 		$this->captcha_found = false;
 		$this->button_objects = [];//Not clear where and how this variable used.
 	}
 	
-	function recordcount()//wizard ok
+	function recordcount()
 	{
 		if($this->ct->Env->frmt!='html' and $this->ct->Env->frmt!='')
 			return '';
 		
 		if(!isset($this->ct->Table))
 		{
-			Factory::getApplication()->enqueueMessage('{{ html.recordcount }} - Table not loaded.', 'error');
+			$this->ct->app->enqueueMessage('{{ html.recordcount }} - Table not loaded.', 'error');
 			return '';
 		}
 		
 		if(!isset($this->ct->Records))
 		{
-			Factory::getApplication()->enqueueMessage('{{ html.recordcount }} - Records not loaded.', 'error');
+			$this->ct->app->enqueueMessage('{{ html.recordcount }} - Records not loaded.', 'error');
 			return '';
 		}
 		
 		$vlu = '<span class="ctCatalogRecordCount">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FOUND' ).': '.$this->ct->Table->recordcount
 			.' '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RESULT_S' ).'</span>';
 				
-		return new \Twig\Markup($vlu, 'UTF-8' );
+		return new Markup($vlu, 'UTF-8' );
 	}
 	
-	function add($Alias_or_ItemId = '')//wizard ok
+	function add($Alias_or_ItemId = '')
 	{
 		if($this->ct->Env->print==1 or ($this->ct->Env->frmt!='html' and $this->ct->Env->frmt!=''))
 			return '';
@@ -107,12 +100,12 @@ class Twig_Html_Tags
 		$vlu='<a href="'.URI::root(true).$link.'" id="ctToolBarAddNew'.$this->ct->Table->tableid.'" class="toolbarIcons">'.$img.'</a>';
 			
 		if($this->isTwig)
-			return new \Twig\Markup($vlu, 'UTF-8' );
+			return new Markup($vlu, 'UTF-8' );
 		else
 			return $vlu;
 	}
 	
-	function importcsv()//wizard ok
+	function importcsv()
 	{
 		if($this->ct->Env->print==1 or ($this->ct->Env->frmt!='html' and $this->ct->Env->frmt!=''))
 			return '';
@@ -156,12 +149,12 @@ class Twig_Html_Tags
 ';
 		
 		if($this->isTwig)
-			return new \Twig\Markup($vlu, 'UTF-8' );
+			return new Markup($vlu, 'UTF-8' );
 		else
 			return $vlu;
 	}
 	
-	function pagination()//wizard ok
+	function pagination()
 	{
 		if($this->ct->Env->print==1 or ($this->ct->Env->frmt!='html' and $this->ct->Env->frmt!=''))
 			return '';
@@ -173,12 +166,12 @@ class Twig_Html_Tags
 		$vlu = '<div class="pagination">'.$pagination->getPagesLinks("").'</div>';
 		
 		if($this->isTwig)
-			return new \Twig\Markup($vlu, 'UTF-8' );
+			return new Markup($vlu, 'UTF-8' );
 		else
 			return $vlu;
 	}
 	
-	function limit($the_step = 1)//wizard ok
+	function limit($the_step = 1)
 	{
 		if($this->ct->Env->print==1 or ($this->ct->Env->frmt!='html' and $this->ct->Env->frmt!=''))
 			return '';
@@ -187,12 +180,12 @@ class Twig_Html_Tags
 		$vlu = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SHOW' ).': '.$pagination->getLimitBox($the_step);
 		
 		if($this->isTwig)
-			return new \Twig\Markup($vlu, 'UTF-8' );
+			return new Markup($vlu, 'UTF-8' );
 		else
 			return $vlu;
 	}
 	
-	function orderby()//wizard ok
+	function orderby()
 	{
 		if($this->ct->Env->print==1 or ($this->ct->Env->frmt!='html' and $this->ct->Env->frmt!=''))
 			return '';
@@ -200,7 +193,7 @@ class Twig_Html_Tags
 		$vlu = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ORDER_BY' ).': '.OrderingHTML::getOrderBox($this->ct->Ordering);
 		
 		if($this->isTwig)
-			return new \Twig\Markup($vlu, 'UTF-8' );
+			return new Markup($vlu, 'UTF-8' );
 		else
 			return $vlu;
 	}
@@ -234,12 +227,12 @@ class Twig_Html_Tags
 		}
 		
 		if($this->isTwig)
-			return new \Twig\Markup($vlu, 'UTF-8' );
+			return new Markup($vlu, 'UTF-8' );
 		else
 			return $vlu;
 	}
 	
-	function batch()//wizard ok
+	function batch()
 	{
 		if($this->ct->Env->print==1 or ($this->ct->Env->frmt!='html' and $this->ct->Env->frmt!=''))
 			return '';
@@ -299,7 +292,7 @@ class Twig_Html_Tags
 		$vlu = implode('',$html_buttons);
 		
 		if($this->isTwig)
-			return new \Twig\Markup($vlu, 'UTF-8' );
+			return new Markup($vlu, 'UTF-8' );
 		else
 			return $vlu;
 	}
@@ -340,12 +333,12 @@ class Twig_Html_Tags
         }
 			
 		if($this->isTwig)
-			return new \Twig\Markup($vlu, 'UTF-8' );
+			return new Markup($vlu, 'UTF-8' );
 		else
 			return $vlu;
 	}
 	
-	function search($list_of_fields_string_or_array, $class = '', $reload = false, $improved = false)//wizard ok
+	function search($list_of_fields_string_or_array, $class = '', $reload = false, $improved = false)
 	{
 		if($this->ct->Env->print==1 or ($this->ct->Env->frmt!='html' and $this->ct->Env->frmt!=''))
 			return '';
@@ -357,7 +350,7 @@ class Twig_Html_Tags
 		
 		if(count($list_of_fields_string_array) == 0)
 		{
-			Factory::getApplication()->enqueueMessage('Search box: Please specify a field name.', 'error');
+			$this->ct->app->enqueueMessage('Search box: Please specify a field name.', 'error');
 			return '';
 		}
 		
@@ -380,7 +373,7 @@ class Twig_Html_Tags
 
 		if(count($list_of_fields) == 0)
 		{
-			Factory::getApplication()->enqueueMessage('Search box: Field name "'.implode(',',$list_of_fields_string_or_array).'" not found.', 'error');
+			$this->ct->app->enqueueMessage('Search box: Field name "'.implode(',',$list_of_fields_string_or_array).'" not found.', 'error');
 			return '';
 		}
 		
@@ -465,12 +458,12 @@ class Twig_Html_Tags
 		$vlu.= '<input type=\'hidden\' ctSearchBoxField=\''.$field2search.'\' />';
 		
 		if($this->isTwig)
-			return new \Twig\Markup($vlu, 'UTF-8' );
+			return new Markup($vlu, 'UTF-8' );
 		else
 			return $vlu;
 	}
 	
-	function searchbutton($label = 'SEARCH', $class_ = '')//wizard ok
+	function searchbutton($label = 'SEARCH', $class_ = '')
 	{
 		if($this->ct->Env->print==1 or ($this->ct->Env->frmt!='html' and $this->ct->Env->frmt!=''))
 			return '';
@@ -486,22 +479,22 @@ class Twig_Html_Tags
         $vlu= '<input type=\'button\' value=\''.$label.'\' class=\''.$class.'\' onClick=\'ctSearchBoxDo()\' />';
        
         if($this->isTwig)
-			return new \Twig\Markup($vlu, 'UTF-8' );
+			return new Markup($vlu, 'UTF-8' );
 		else
 			return $vlu;
 	}
 	
-	function message($text, $type = 'Message')//wizard ok
+	function message($text, $type = 'Message')
 	{
 		if($this->ct->Env->print==1 or ($this->ct->Env->frmt!='html' and $this->ct->Env->frmt!=''))
 			return '';
 	
-		Factory::getApplication()->enqueueMessage($text, $type);
+		$this->ct->app->enqueueMessage($text, $type);
 		
 		return null;
 	}
 	
-	function navigation($list_type = 'list', $ul_css_class = '')//wizard ok
+	function navigation($list_type = 'list', $ul_css_class = '')
 	{
 		if($this->ct->Env->frmt!='html' and $this->ct->Env->frmt!='')
 			return '';
@@ -512,7 +505,7 @@ class Twig_Html_Tags
 		elseif($list_type=='' or $list_type=='list')
 		{
 			$vlu = '<ul'.($ul_css_class != '' ? ' class="'.$ul_css_class.'"' : '').'><li>'.implode('</li><li>',$PathValue).'</li></ul>';
-			return new \Twig\Markup($vlu, 'UTF-8' );
+			return new Markup($vlu, 'UTF-8' );
 		}
 		elseif($list_type=='comma')
 			return implode(',',$PathValue);
@@ -520,7 +513,7 @@ class Twig_Html_Tags
 			return 'navigation: Unknown list type';
 	}
 	
-	function captcha()//wizard ok
+	function captcha()
 	{
 		if($this->ct->Env->print==1 or ($this->ct->Env->frmt!='html' and $this->ct->Env->frmt!=''))
 			return '';
@@ -530,7 +523,7 @@ class Twig_Html_Tags
 		$p = $this->getReCaptchaParams();
 		if($p == null)
 		{
-			Factory::getApplication()->enqueueMessage('{{ html.captcha }} - Captcha plugin not enabled.', 'error');
+			$this->ct->app->enqueueMessage('{{ html.captcha }} - Captcha plugin not enabled.', 'error');
 			return '';
 		}
 		
@@ -538,7 +531,7 @@ class Twig_Html_Tags
 
 		if($reCaptchaParams == null or $reCaptchaParams->public_key == "" or !isset($reCaptchaParams->size))
 		{
-			Factory::getApplication()->enqueueMessage('{{ html.captcha }} - Captcha Public Key or size not set.', 'error');
+			$this->ct->app->enqueueMessage('{{ html.captcha }} - Captcha Public Key or size not set.', 'error');
 			return '';
 		}
 
@@ -551,7 +544,7 @@ class Twig_Html_Tags
 		}
 		else
 		{
-			Factory::getApplication()->triggerEvent('onInit', array(null, 'my_captcha_div', 'class=""'));
+			$this->ct->app->triggerEvent('onInit', array(null, 'my_captcha_div', 'class=""'));
 		}
 		
 		$this->captcha_found = true;
@@ -566,13 +559,13 @@ class Twig_Html_Tags
 	</div>';
 	
 		if($this->isTwig)
-			return new \Twig\Markup($vlu, 'UTF-8' );
+			return new Markup($vlu, 'UTF-8' );
 		else
 			return $vlu;
 
 	}
 	
-	function button($type = 'save', $title = '', $redirectlink = null, $optional_class = '')//wizard ok
+	function button($type = 'save', $title = '', $redirectlink = null, $optional_class = '')
 	{
 		if($this->ct->Env->frmt != '' and $this->ct->Env->frmt !='html')
 			return '';
@@ -580,18 +573,7 @@ class Twig_Html_Tags
 		if($redirectlink == null and $this->ct->Env->menu_params != null)
 			$redirectlink = $this->ct->Env->menu_params->get( 'returnto' );
 		
-		if($redirectlink != '' and $redirectlink != null)
-		{
-			//TODO: delete this part, no longer needed using TWIG
-			
-			$_row=array();
-            $_list=array();
-			\tagProcessor_General::process($this->ct,$redirectlink,$_row,$_list,0);
-		}
-		
-		$vlu = '';
-
-		switch($type)
+        switch($type)
 		{
 			case 'save':
 				$vlu = $this->renderSaveButton($optional_class,$title);
@@ -613,16 +595,13 @@ class Twig_Html_Tags
 					$vlu = $this->renderSaveAsCopyButton($optional_class,$title,$redirectlink);
 				break;
 
-			case 'cancel':
+            case 'close':
+            case 'cancel':
 				$vlu = $this->renderCancelButton($optional_class,$title,$redirectlink);
                 break;
 
-			case 'close':
-				$vlu = $this->renderCancelButton($optional_class,$title,$redirectlink);
-				break;
-
-			case 'delete':
-				$vlu = $this->renderDeleteButton($captcha_found,$optional_class,$title,$redirectlink);
+            case 'delete':
+				$vlu = $this->renderDeleteButton($optional_class,$title,$redirectlink);
 				break;
 
 			default:
@@ -633,17 +612,17 @@ class Twig_Html_Tags
 		//Not clear where and how this variable used.
 		if($this->ct->Env->frmt == 'json')
 		{
-			$this->button_objects[] = ['type' => $type, 'title' => $b, 'redirectlink' => $redirectlink];
+			$this->button_objects[] = ['type' => $type, 'title' => $title, 'redirectlink' => $redirectlink];
 			return $title;
 		}
 
 		if($this->isTwig)
-			return new \Twig\Markup($vlu, 'UTF-8' );
+			return new Markup($vlu, 'UTF-8' );
 		else
 			return $vlu;
 	}
 	
-	function tablehead()//wizard ok
+	function tablehead()
 	{
 		$result = '<thead>';
 		$head_columns = func_get_args();
@@ -653,15 +632,15 @@ class Twig_Html_Tags
 		
 		$result .= '</thead>';
 		
-		return new \Twig\Markup($result, 'UTF-8' );
+		return new Markup($result, 'UTF-8' );
 	}
 	
-	function recordlist()//wizard ok
+	function recordlist()
 	{
 		return $this->id_list();
 	}
 	
-	function toolbar()//wizard ok
+	function toolbar()
 	{
 		if($this->ct->Env->print==1 or ($this->ct->Env->frmt!='html' and $this->ct->Env->frmt!=''))
 			return '';
@@ -691,7 +670,7 @@ class Twig_Html_Tags
 			$icons[] = $RecordToolbar->render($this->ct->Table->record,$mode);
 				
 		$vlu = implode('',$icons);
-		return new \Twig\Markup($vlu, 'UTF-8' );
+		return new Markup($vlu, 'UTF-8' );
 	}
 
 	function base64encode($str)
@@ -705,13 +684,13 @@ class Twig_Html_Tags
 	{
 		if(!isset($this->ct->Table))
 		{
-			Factory::getApplication()->enqueueMessage('{{ record.list }} - Table not loaded.', 'error');
+			$this->ct->app->enqueueMessage('{{ record.list }} - Table not loaded.', 'error');
 			return '';
 		}
 		
 		if(!isset($this->ct->Records))
 		{
-			Factory::getApplication()->enqueueMessage('{{ record.list }} - Records not loaded.', 'error');
+			$this->ct->app->enqueueMessage('{{ record.list }} - Records not loaded.', 'error');
 			return '';
 		}
 		
@@ -931,24 +910,24 @@ class Twig_Html_Tags
 
 	protected function getFieldTitles($list_of_fields)
     {
-        $fieldtitles=array();
+        $field_titles=array();
         foreach($list_of_fields as $fieldname)
         {
 			if($fieldname=='_id')
-				$fieldtitles[] = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ID');
+				$field_titles[] = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ID');
 			else						
 			{
 				foreach($this->ct->Table->fields as $fld)
 				{
 					if($fld['fieldname']==$fieldname)
 					{
-						$fieldtitles[]=$fld['fieldtitle'.$this->ct->Languages->Postfix];
+						$field_titles[]=$fld['fieldtitle'.$this->ct->Languages->Postfix];
 						break;
 					}
 				}
 			}
         }
-        return $fieldtitles;
+        return $field_titles;
     }
 	
 	protected function prepareSearchElement($fld)

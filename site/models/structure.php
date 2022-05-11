@@ -9,8 +9,10 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-use \Joomla\CMS\Component\ComponentHelper;
+use CustomTables\CT;
 use CustomTables\DataTypes\Tree;
+
+use \Joomla\CMS\Factory;
 
 jimport('joomla.application.component.model');
 
@@ -44,10 +46,10 @@ class CustomTablesModelStructure extends JModel
 				
 	    parent::__construct();
 		
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$params=$app->getParams();
 	
-		$this->ct->Env->menu_params = $params
+		$this->ct->Env->menu_params = $params;
 		
 		if($this->ct->Env->jinput->get('establename','','CMD'))
 			$this->establename=$this->ct->Env->jinput->get('establename','','CMD');
@@ -69,7 +71,7 @@ class CustomTablesModelStructure extends JModel
 		$this->estableid=$tablerow->id;
 
 		// Get pagination request variables
-		$mainframe = JFactory::getApplication('site');
+		$mainframe = Factory::getApplication('site');
 		$limit = $mainframe->getUserStateFromRequest('global.list.limit', 'limit', $mainframe->getCfg('list_limit'), 'int');
 		$limitstart = $this->ct->Env->jinput->get('limitstart',0,'INT');
  
@@ -140,11 +142,11 @@ class CustomTablesModelStructure extends JModel
 		}
 		else
 		{
-			$this->parentid=$es->getOptionIdFull($this->optionname);
+			$this->parentid=Tree::getOptionIdFull($this->optionname);
 			$wherearr[]='parentid='.(int)$this->parentid;
 		}
 		
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		
 		$where='';
 		if(count($wherearr)>0)

@@ -13,32 +13,39 @@ namespace CustomTables;
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-use CustomTables\Languages;
-use CustomTables\Environment;
-use CustomTables\Filtering;
+use Joomla\CMS\Application\WebApplication;
+use Joomla\CMS\Document\Document;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Component\ComponentHelper;
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Uri\Uri;
-use \Joomla\CMS\Component\ComponentHelper;
+use CustomTablesKeywordSearch;
 
 class CT
 {
-	var $Languages;
-	var $Env;
-	var $Table;
-	var $Records;
-	var $GroupBy;
-	var $Ordering;
-	var $Filter;
+	var Languages $Languages;
+	var Environment $Env;
+	var Table $Table;
+	var array $Records;
+	var string $GroupBy;
+	var Ordering $Ordering;
+	var Filtering $Filter;
 	var $alias_fieldname;
-	var $Limit;
-	var $LimitStart;
-	var $isEditForm;
+	var int $Limit;
+	var int $LimitStart;
+	var bool $isEditForm;
+    var $app;
+    var Document $document;
+    var ?\Joomla\Database\DatabaseDriver $db;
 	
 	var array $LayoutVariables;
 	
 	function __construct()
 	{
+        $this->app = Factory::getApplication();
+        $this->document = $this->app->getDocument();
+        $this->db = Factory::getDBO();
+
 		$this->Languages = new Languages;
 		$this->Env = new Environment;
 		$this->GroupBy = '';
@@ -46,8 +53,8 @@ class CT
         $this->LayoutVariables = [];
 	}
 
-	function getTable($tablename_or_id, $useridfieldname = null)
-	{
+	function getTable($tablename_or_id, $useridfieldname = null): void
+    {
 		$this->Table = new Table($this->Languages, $this->Env, $tablename_or_id, $useridfieldname);
 		$this->Ordering = new Ordering($this->Table);
 		
@@ -64,10 +71,10 @@ class CT
 		$this->prepareSEFLinkBase();
 	}
 	
-	protected function prepareSEFLinkBase()
-	{
-		if($this->Table == null or $this->Table->fields == null)
-			return null;
+	protected function prepareSEFLinkBase(): void
+    {
+		if($this->Table->fields == null)
+			return;
 		
 		if(!str_contains($this->Env->current_url, 'option=com_customtables'))
 	    {
@@ -76,7 +83,7 @@ class CT
 				if($fld['type']=='alias')
 				{
 					$this->alias_fieldname=$fld['fieldname'];
-					break;
+					return;
 				}
 			}
 		}
@@ -152,7 +159,7 @@ class CT
 
 		if($this->Table->recordcount > 0)
 		{
-			$the_limit=(int)$this->Limit;
+			$the_limit= $this->Limit;
 			
 			if($all)
 			{
@@ -174,18 +181,16 @@ class CT
 				$db->setQuery($query, $this->LimitStart, $the_limit);
 			}
 
-			$rows = $db->loadAssocList();
+            $this->Records = $db->loadAssocList();
 		}
 		else
-			$rows=[];
-		
-		$this->Records = $rows;
+            $this->Records=[];
 
 		return true;
 	}
 	
-	function getRecordsByKeyword()
-	{
+	function getRecordsByKeyword(): void
+    {
 		$moduleid = $this->Env->jinput->get('moduleid',0,'INT');
 		if($moduleid!=0)
 		{
@@ -200,10 +205,11 @@ class CT
 				$KeywordSearcher->groupby=$this->GroupBy;
 				$KeywordSearcher->esordering=$this->Ordering->ordering_processed_string;
 
+
 				$this->Records=$KeywordSearcher->getRowsByKeywords(
 						$eskeysearch_,
 						$this->Table->recordcount,
-						(int)$this->getState('limit'),
+						(int)$this->app->getState('limit'),
 						$this->LimitStart
 				);
 
@@ -213,8 +219,8 @@ class CT
 		}
 	}
 	
-	function getRecordList()
-	{
+	function getRecordList(): array
+    {
 		if($this->Table->recordlist != null)
 			return $this->Table->recordlist;
 		
@@ -227,13 +233,11 @@ class CT
 		return $recordlist;
 	}
 	
-	function applyLimits($blockExternalVars = true)
-	{
+	function applyLimits($blockExternalVars = true): void
+    {
 		$limit_var = 'com_customtables.limit_'.$this->Env->Itemid;
 		
-		$mainframe = Factory::getApplication('site');
-		
-		$this->Limit = $mainframe->getUserState($limit_var, 0);
+		$this->Limit = $this->app->getUserState($limit_var, 0);
 		
 		//Grouping
 		if($this->Env->menu_params->get('groupby')!='')
@@ -260,13 +264,13 @@ class CT
 			else
 			{
 				$this->Limit=0;
-				$this->Limitstart=0;
+				$this->LimitStart=0;
 			}
 		}
 		else
 		{
 			$this->LimitStart = $this->Env->jinput->getInt('start',0);
-			$this->Limit = $mainframe->getUserState($limit_var, 0);
+			$this->Limit = $this->app->getUserState($limit_var, 0);
 			
 			if($this->Limit == 0 and (int)$this->Env->menu_params->get( 'limit' )>0)
 			{
@@ -278,40 +282,38 @@ class CT
 		}
 	}
 	
-	function loadJSAndCSS()
-	{
-		$document = Factory::getDocument();
-		
+	function loadJSAndCSS(): void
+    {
 		//JQuery and Bootstrap
 		if($this->Env->version < 4)
 		{
-			$document->addCustomTag('<script src="'.URI::root(true).'/media/jui/js/jquery.min.js"></script>');
-			$document->addCustomTag('<script src="'.URI::root(true).'/media/jui/js/bootstrap.min.js"></script>');
+            $this->document->addCustomTag('<script src="'.URI::root(true).'/media/jui/js/jquery.min.js"></script>');
+            $this->document->addCustomTag('<script src="'.URI::root(true).'/media/jui/js/bootstrap.min.js"></script>');
 		}
 		else
-			$document->addCustomTag('<link rel="stylesheet" href="'.URI::root(true).'/media/system/css/fields/switcher.css">');
-		
-		$document->addCustomTag('<script src="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/js/jquery.uploadfile.min.js"></script>');
-		$document->addCustomTag('<script src="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/js/jquery.form.js"></script>');
+            $this->document->addCustomTag('<link rel="stylesheet" href="'.URI::root(true).'/media/system/css/fields/switcher.css">');
 
-		$document->addCustomTag('<script src="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/js/ajax.js"></script>');
-		$document->addScript(URI::root(true).'/components/com_customtables/libraries/customtables/media/js/base64.js');
-		$document->addCustomTag('<script src="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/js/catalog.js" type="text/javascript"></script>');
-		$document->addScript(URI::root(true).'/components/com_customtables/libraries/customtables/media/js/edit.js');
-		$document->addScript(URI::root(true).'/components/com_customtables/libraries/customtables/media/js/esmulti.js');
-		$document->addCustomTag('<script src="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/js/modal.js" type="text/javascript"></script>');
-		$document->addCustomTag('<script src="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/js/uploader.js"></script>');
+        $this->document->addCustomTag('<script src="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/js/jquery.uploadfile.min.js"></script>');
+        $this->document->addCustomTag('<script src="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/js/jquery.form.js"></script>');
+
+        $this->document->addCustomTag('<script src="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/js/ajax.js"></script>');
+        $this->document->addScript(URI::root(true).'/components/com_customtables/libraries/customtables/media/js/base64.js');
+        $this->document->addCustomTag('<script src="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/js/catalog.js" type="text/javascript"></script>');
+        $this->document->addScript(URI::root(true).'/components/com_customtables/libraries/customtables/media/js/edit.js');
+        $this->document->addScript(URI::root(true).'/components/com_customtables/libraries/customtables/media/js/esmulti.js');
+        $this->document->addCustomTag('<script src="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/js/modal.js" type="text/javascript"></script>');
+        $this->document->addCustomTag('<script src="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/js/uploader.js"></script>');
 
 		$params = ComponentHelper::getParams('com_customtables');
 		$googlemapapikey = $params->get('googlemapapikey');
-		
-		$document->addCustomTag('<script type="text/javascript" src="https://maps.google.com/maps/api/js?key='.$googlemapapikey.'&sensor=false"></script>');
-		
-		$document->addScript(URI::root(true).'/components/com_customtables/libraries/customtables/media/js/combotree.js');
+
+        $this->document->addCustomTag('<script type="text/javascript" src="https://maps.google.com/maps/api/js?key='.$googlemapapikey.'&sensor=false"></script>');
+
+        $this->document->addScript(URI::root(true).'/components/com_customtables/libraries/customtables/media/js/combotree.js');
 
 		//Styles
-		$document->addCustomTag('<link href="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/css/style.css" type="text/css" rel="stylesheet" >');
-		$document->addCustomTag('<link href="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/css/modal.css" type="text/css" rel="stylesheet" >');
-		$document->addCustomTag('<link href="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/css/uploadfile.css" rel="stylesheet">');
+        $this->document->addCustomTag('<link href="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/css/style.css" type="text/css" rel="stylesheet" >');
+        $this->document->addCustomTag('<link href="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/css/modal.css" type="text/css" rel="stylesheet" >');
+        $this->document->addCustomTag('<link href="'.URI::root(true).'/components/com_customtables/libraries/customtables/media/css/uploadfile.css" rel="stylesheet">');
 	}
 }

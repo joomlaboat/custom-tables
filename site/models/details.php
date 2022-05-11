@@ -10,7 +10,6 @@
 defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\CT;
-use CustomTables\Fields;
 use CustomTables\TwigProcessor;
 
 use \Joomla\CMS\Factory;
@@ -24,7 +23,6 @@ require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARAT
 class CustomTablesModelDetails extends JModelLegacy
 {
     var $ct;
-    var $storby;
     var $showpublished;
     var $filter;
     var $params;

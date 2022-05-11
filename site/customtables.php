@@ -12,16 +12,19 @@
 
 defined('_JEXEC') or die('Restricted access');
 
-$path = JPATH_COMPONENT_SITE . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR;
-require_once($path.'loader.php');
-CTLoader($inclide_utilities = false, $include_html = true);
+$path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR;
+require_once($path . 'loader.php');
+CTLoader(false, $include_html = true);
 
 // Require the base controller
-require_once JPATH_COMPONENT.DIRECTORY_SEPARATOR.'controller.php';
+require_once JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'controller.php';
 
 // Initialize the controller
 $controller = new CustomTablesController();
-$controller->execute( null );
+try {
+    $controller->execute(null);
+} catch (Exception $e) {
+}
 
 // Redirect if set by the controller
 $controller->redirect();

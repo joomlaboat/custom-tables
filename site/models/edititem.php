@@ -19,8 +19,7 @@ use CustomTables\CustomPHP\CleanExecute;
 use CustomTables\TwigProcessor;
 use CustomTables\SaveFieldQuerySet;
 
-use \Joomla\CMS\Component\ComponentHelper;
-use \Joomla\CMS\Factory;
+use Joomla\CMS\Factory;
 
 jimport('joomla.application.component.model');
 
@@ -89,13 +88,13 @@ class CustomTablesModelEditItem extends JModelLegacy
 			$this->params = $params;
 		else
 		{
-			$app = JFactory::getApplication();
+			$app = Factory::getApplication();
 			$this->params = $app->getParams();
 		}
 		
 		$this->ct->Env->menu_params = $this->params;
 
-		$jinput=JFactory::getApplication()->input;
+		$jinput=Factory::getApplication()->input;
 
 		if($this->getParam_safe( 'customitemid' )!='')
 		{
@@ -143,7 +142,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 		if($this->ct->Table->tablename=='')
 		{
-			JFactory::getApplication()->enqueueMessage('Table not selected (148).', 'error');
+			Factory::getApplication()->enqueueMessage('Table not selected (148).', 'error');
 			return false;
 		}
 
@@ -216,7 +215,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 	function findRecordByUserID()
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		$wheres=array();
 		
 		if($this->ct->Table->published_field_found)
@@ -244,7 +243,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 	function processCustomListingID()
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		if(is_numeric($this->listing_id) or (strpos($this->listing_id,'=')===false and strpos($this->listing_id,'<')===false and strpos($this->listing_id,'>')===false))
 		{
@@ -310,7 +309,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 	function getSpecificVersionIfSet()
 	{
 		//get specific Version if set
-		$version= JFactory::getApplication()->input->get('version',0,'INT');
+		$version= Factory::getApplication()->input->get('version',0,'INT');
 		if($version!=0)
 		{
 		    //get log field
@@ -417,7 +416,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 		}
 
 		//check is authorized or not
-		$user = JFactory::getUser();
+		$user = Factory::getUser();
 		$this->userid = (int)$user->get('id');
 
 		$this->edit_userGroup=(int)$this->params->get( 'editusergroups' );
@@ -487,7 +486,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 		if($access=='core.edit' and $this->listing_id==0)
 			$access='core.create'; //add new
 
-		$user = JFactory::getUser();
+		$user = Factory::getUser();
 
 		if ($user->authorise($access, 'com_customtables')) 
 		{
@@ -600,14 +599,14 @@ class CustomTablesModelEditItem extends JModelLegacy
 				$statement_parts=explode('.',$field);
 				if(count($statement_parts)!=2)
 				{
-					JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('Menu Item - "UserID Field name" parameter has a syntax error. Error is about "." character - only one is permited. Correct example: parent(children).user'), 'error');
+					Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('Menu Item - "UserID Field name" parameter has a syntax error. Error is about "." character - only one is permited. Correct example: parent(children).user'), 'error');
 					return false;
 				}
 				
 				$table_parts=explode('(',$statement_parts[0]);
 				if(count($table_parts)!=2)
 				{
-					JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('Menu Item - "UserID Field name" parameter has a syntax error. Error is about "(" character. Correct example: parent(children).user'), 'error');
+					Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('Menu Item - "UserID Field name" parameter has a syntax error. Error is about "(" character. Correct example: parent(children).user'), 'error');
 					return false;
 				}
 				
@@ -619,7 +618,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 				if(!is_object($parent_table_row))
 				{
-					JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('Menu Item - "UserID Field name" parameter has an error: Table "'.$parent_tablename.'" not found.'), 'error');
+					Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('Menu Item - "UserID Field name" parameter has an error: Table "'.$parent_tablename.'" not found.'), 'error');
 					return false;
 				}
 				
@@ -629,13 +628,13 @@ class CustomTablesModelEditItem extends JModelLegacy
 				
 				if(count($parent_join_field_row)==0)
 				{
-					JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('Menu Item - "UserID Field name" parameter has an error: Join field "'.$parent_join_field.'" not found.'), 'error');
+					Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('Menu Item - "UserID Field name" parameter has an error: Join field "'.$parent_join_field.'" not found.'), 'error');
 					return false;
 				}
 				
 				if($parent_join_field_row['type']!='sqljoin' and $parent_join_field_row['type']!='records')
 				{
-					JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('Menu Item - "UserID Field name" parameter has an error: Wrong join field type "'.$parent_join_field_row['type'].'". Accepted types: "sqljoin" and "records" .'), 'error');
+					Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('Menu Item - "UserID Field name" parameter has an error: Wrong join field type "'.$parent_join_field_row['type'].'". Accepted types: "sqljoin" and "records" .'), 'error');
 					return false;
 				}
 				
@@ -645,13 +644,13 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 				if(count($parent_user_field_row)==0)
 				{
-					JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('Menu Item - "UserID Field name" parameter has an error: User field "'.$parent_user_field.'" not found.'), 'error');
+					Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('Menu Item - "UserID Field name" parameter has an error: User field "'.$parent_user_field.'" not found.'), 'error');
 					return false;
 				}
 				
 				if($parent_user_field_row['type']!='userid' and $parent_user_field_row['type']!='user')
 				{
-					JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('Menu Item - "UserID Field name" parameter has an error: Wrong user field type "'.$parent_join_field_row['type'].'". Accepted types: "userid" and "user" .'), 'error');
+					Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('Menu Item - "UserID Field name" parameter has an error: Wrong user field type "'.$parent_join_field_row['type'].'". Accepted types: "userid" and "user" .'), 'error');
 					return false;
 				}
 
@@ -685,7 +684,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 			$index+=1;
 		}
 		
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		
 		if($this->listing_id != '' and $this->listing_id != 0)
 			$wheres[]=$this->ct->Table->realidfieldname.'='.$db->quote($this->listing_id);
@@ -698,7 +697,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 	
 	function checkIfItemBelongsToUser($useridfield)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		$wheres=$this->UserIDField_BuildWheres($useridfield);
 		
 		$query='SELECT c.'.$this->ct->Table->realidfieldname.' FROM '.$this->ct->Table->realtablename.' AS c WHERE '.implode(' AND ',$wheres).' LIMIT 1';
@@ -731,7 +730,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 		{
 		    $available_categories=Tree::getChildren($optionid,$filter_rootparent,1, $langpostfix,$optionname);
 
-		    $db = JFactory::getDBO();
+		    $db = Factory::getDBO();
 		    $query = ' SELECT optionname, id, title_'.$langpostfix.' AS title FROM #__customtables_options WHERE ';
 		    $query.= ' id='.$filter_rootparent.' LIMIT 1';
 
@@ -797,7 +796,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 		if(count($captcha)==0)
 			return true;
 
-		$config = JFactory::getConfig()->get('captcha');
+		$config = Factory::getConfig()->get('captcha');
 		$captcha = JCaptcha::getInstance($config);
 		try
 		{
@@ -815,10 +814,10 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 	function copy(&$msg,&$link)
 	{
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 		$listing_id = $jinput->getCmd("listing_id",0);
 
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		$query='SELECT MAX('.$this->ct->Table->realidfieldname.') AS maxid FROM '.$this->ct->Table->realtablename.' LIMIT 1';
 		$db->setQuery( $query );
@@ -889,7 +888,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 	function store(&$msg,&$link,$isCopy=false, $listing_id = '')
 	{
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 
 		//IP Filter
 		$USER_IP=$this->getUserIP();
@@ -925,10 +924,6 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 		$msg='';
 		$savequery=array();
-		$db = JFactory::getDBO();
-
-		$user_email='';
-		$user_name='';
 
 		//	Fields
 		$prefix='comes_';
@@ -1008,7 +1003,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 		if(count($savequery)<1)
 		{
-			JFactory::getApplication()->enqueueMessage('Nothing to save', 'Warning');
+            Factory::getApplication()->enqueueMessage('Nothing to save', 'Warning');
 			return false;
 		}
 		
@@ -1018,7 +1013,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 			if($row != null)
 			{
-				JFactory::getApplication()->input->set("listing_id",$row[$this->ct->Table->realidfieldname]);
+				Factory::getApplication()->input->set("listing_id",$row[$this->ct->Table->realidfieldname]);
 
 				if($phponaddfound)
 					$this->doPHPonAdd($row);
@@ -1039,7 +1034,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 			if($row != null)
 			{
-				JFactory::getApplication()->input->set("listing_id",$row[$this->ct->Table->realidfieldname]);
+				Factory::getApplication()->input->set("listing_id",$row[$this->ct->Table->realidfieldname]);
 
 				if($phponchangefound or $this->ct->Table->tablerow['customphp']!='')
 					$this->doPHPonChange($row);
@@ -1081,7 +1076,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 		}
 
 		//Prepare "Accept Return To" Link
-		$art_link=$this->PrepareAcceptReturnToLink(JFactory::getApplication()->input->get( 'returnto','','BASE64' ));
+		$art_link=$this->PrepareAcceptReturnToLink(Factory::getApplication()->input->get( 'returnto','','BASE64' ));
 		if($art_link!='')
 			$link=$art_link;
 
@@ -1116,7 +1111,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 				$fieldname=$esfield['fieldname'];
 				if($this->emailsentstatusfield==$fieldname)
 				{
-					$db = JFactory::getDBO();
+					$db = Factory::getDBO();
 					$query='UPDATE '.$this->ct->Table->realtablename.' SET es_'.$fieldname.'='.(int)$status.' WHERE '.$this->ct->Table->realidfieldname.'='.$db->quote($listing_id);
 
 					$db->setQuery( $query );
@@ -1158,7 +1153,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 		if($listing_id==0 or $listing_id == '')
 			return;
 
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		//saves previous version of the record
 		//get data
@@ -1203,7 +1198,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 		{
 				if($esfield['type']=='log')
 				{
-					$user = JFactory::getUser();
+					$user = Factory::getUser();
 					$userid = (int)$user->get('id');
 					$value=time().','.$userid.','.$this->getUserIP().','.$data.';';
 					$savequery[]=$esfield['realfieldname'].'=CONCAT('.$esfield['realfieldname'].',"'.$value.'")';
@@ -1233,24 +1228,24 @@ class CustomTablesModelEditItem extends JModelLegacy
 						switch($selectorpair[0])
 						{
 							case 'single';
-									$value=JFactory::getApplication()->input->getString($prefix.$fieldname);
+									$value=Factory::getApplication()->input->getString($prefix.$fieldname);
 								break;
 
 							case 'multi';
-									$valuearray = JFactory::getApplication()->input->get( $prefix.$fieldname, array(), 'post', 'array' );
+									$valuearray = Factory::getApplication()->input->get( $prefix.$fieldname, array(), 'post', 'array' );
 									$value='"'.implode('","',$valuearray).'"';
 								break;
 							case 'multibox';
-									$valuearray = JFactory::getApplication()->input->get( $prefix.$fieldname, array(), 'post', 'array' );
+									$valuearray = Factory::getApplication()->input->get( $prefix.$fieldname, array(), 'post', 'array' );
 									$value='"'.implode('","',$valuearray).'"';
 								break;
 
 							case 'radio';
-									$value=JFactory::getApplication()->input->getString($prefix.$fieldname);
+									$value=Factory::getApplication()->input->getString($prefix.$fieldname);
 								break;
 
 							case 'checkbox';
-									$valuearray = JFactory::getApplication()->input->get( $prefix.$fieldname, array(), 'post', 'array' );
+									$valuearray = Factory::getApplication()->input->get( $prefix.$fieldname, array(), 'post', 'array' );
 									$value='"'.implode('","',$valuearray).'"';
 								break;
 						}
@@ -1259,15 +1254,15 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 					break;
 				case 'radio':
-						$value=JFactory::getApplication()->input->getString($prefix.$fieldname);
+						$value=Factory::getApplication()->input->getString($prefix.$fieldname);
 					break;
 
 				case 'googlemapcoordinates':
-						$value=JFactory::getApplication()->input->getString($prefix.$fieldname);
+						$value=Factory::getApplication()->input->getString($prefix.$fieldname);
 					break;
 
 				case 'string':
-						$value=JFactory::getApplication()->input->getString($prefix.$fieldname);
+						$value=Factory::getApplication()->input->getString($prefix.$fieldname);
 					break;
 
 				case 'multilangstring':
@@ -1283,7 +1278,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 						else
 							$postfix='_'.$lang->sef;
 
-						$valuearray[]=JFactory::getApplication()->input->getString($prefix.$fieldname.$postfix);
+						$valuearray[]=Factory::getApplication()->input->getString($prefix.$fieldname.$postfix);
 
 					}
 					$value='"'.implode('","',$valuearray).'"';
@@ -1291,7 +1286,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 
 				case 'text':
-					$value = ComponentHelper::filterText(JFactory::getApplication()->input->post->get($prefix.$fieldname, '', 'raw'));
+					$value = ComponentHelper::filterText(Factory::getApplication()->input->post->get($prefix.$fieldname, '', 'raw'));
 					break;
 
 				case 'multilangtext':
@@ -1307,7 +1302,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 						else
 							$postfix='_'.$lang->sef;
 
-						$value_ = ComponentHelper::filterText(JFactory::getApplication()->input->post->get($prefix.$fieldname.$postfix, '', 'raw'));
+						$value_ = ComponentHelper::filterText(Factory::getApplication()->input->post->get($prefix.$fieldname.$postfix, '', 'raw'));
 
 						$valuearray[]=$value_;
 
@@ -1316,20 +1311,20 @@ class CustomTablesModelEditItem extends JModelLegacy
 					break;
 
 				case 'int':
-						$value=JFactory::getApplication()->input->getInt($prefix.$fieldname,0);
+						$value=Factory::getApplication()->input->getInt($prefix.$fieldname,0);
 					break;
 
 				case 'user':
-						$value=(int)JFactory::getApplication()->input->getInt($prefix.$fieldname,0);
+						$value=(int)Factory::getApplication()->input->getInt($prefix.$fieldname,0);
 					break;
 
 				case 'float':
-						$value=JFactory::getApplication()->input->get($prefix.$fieldname,0,'FLOAT');
+						$value=Factory::getApplication()->input->get($prefix.$fieldname,0,'FLOAT');
 					break;
 
 
 				case 'article':
-						$value=JFactory::getApplication()->input->getInt($prefix.$fieldname,0);
+						$value=Factory::getApplication()->input->getInt($prefix.$fieldname,0);
 					break;
 
 				case 'multilangarticle':
@@ -1345,7 +1340,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 						else
 							$postfix='_'.$lang->sef;
 
-						$valuearray[]=JFactory::getApplication()->input->getInt($prefix.$fieldname.$postfix,0);
+						$valuearray[]=Factory::getApplication()->input->getInt($prefix.$fieldname.$postfix,0);
 
 					}
 					$value='"'.implode('","',$valuearray).'"';
@@ -1364,15 +1359,15 @@ class CustomTablesModelEditItem extends JModelLegacy
 					break;
 
 				case 'email':
-						$value=JFactory::getApplication()->input->getString($prefix.$fieldname);
+						$value=Factory::getApplication()->input->getString($prefix.$fieldname);
 					break;
 
 				case 'checkbox':
-						$value=JFactory::getApplication()->input->getCmd($prefix.$fieldname);
+						$value=Factory::getApplication()->input->getCmd($prefix.$fieldname);
 					break;
 
 				case 'date':
-						$value=JFactory::getApplication()->input->getString($prefix.$fieldname);
+						$value=Factory::getApplication()->input->getString($prefix.$fieldname);
 					break;
 			}
 
@@ -1393,7 +1388,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 		if($link == '')
 			return '';
 
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		
 		$query = 'SELECT '.$this->ct->Table->tablerow['query_selects'].' FROM '.$this->ct->Table->realtablename.' ORDER BY '.$this->ct->Table->realidfieldname.' DESC LIMIT 1';
 	 	$db->setQuery($query);
@@ -1430,7 +1425,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 		}
 
 		$savequery='';
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		foreach($this->ct->Table->fields as $esfield)
 		{
@@ -1495,7 +1490,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 		$LayoutProc=new LayoutProcessor($this->ct);
 
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		foreach($this->ct->Table->fields as $esfield)
 		{
@@ -1552,7 +1547,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 	function getListingRowByID($listing_id)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		
 		$query = 'SELECT '.$this->ct->Table->tablerow['query_selects'].' FROM '.$this->ct->Table->realtablename.' WHERE '.$this->ct->Table->realidfieldname.'='.$db->quote($listing_id).' LIMIT 1';
 	 	$db->setQuery($query);
@@ -1586,7 +1581,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 	function sendEmailNote($listing_id,$emails)
 	{
-		$mainframe = JFactory::getApplication('site');
+		$mainframe = Factory::getApplication('site');
 		$this->ct->Table->record = $this->getListingRowByID($listing_id);
 		
 		//Prepare Email List
@@ -1658,11 +1653,11 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 			if ( $sent !== true ) {
 				//Something went wrong. Email not sent.
-				JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_SENDING_EMAIL').': '.$EmailTo.' ('.$Subject.')', 'error');
+				Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_SENDING_EMAIL').': '.$EmailTo.' ('.$Subject.')', 'error');
 				$status=0;
 			}
 			else{
-				JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_EMAIL_SENT_TO').': '.$EmailTo.' ('.$Subject.')');
+				Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_EMAIL_SENT_TO').': '.$EmailTo.' ('.$Subject.')');
 				$status=1;
 			}
 		}
@@ -1672,7 +1667,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 	function Refresh($save_log=1)
 	{
-		$listing_ids_str=JFactory::getApplication()->input->getString('ids', '');
+		$listing_ids_str=Factory::getApplication()->input->getString('ids', '');
 
 		if($listing_ids_str!='')
 		{
@@ -1689,7 +1684,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 			return count($listing_ids_);
 		}
 
-		$listing_id = JFactory::getApplication()->input->getCmd("listing_id", 0);
+		$listing_id = Factory::getApplication()->input->getCmd("listing_id", 0);
 
 		if($listing_id == 0 or $listing_id == '')
 			return 0;
@@ -1699,7 +1694,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 	
 	protected function RefreshSingleRecord($listing_id,$save_log)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		
 		$query='SELECT '.$this->ct->Table->tablerow['query_selects'].' FROM '.$this->ct->Table->realtablename.' WHERE '.$this->ct->Table->realidfieldname.'='.$db->quote($listing_id).' LIMIT 1';
 		$db->setQuery( $query );
@@ -1713,7 +1708,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 		
 		$savefield = new SaveFieldQuerySet($this->ct,$row,false);
 		
-		JFactory::getApplication()->input->set("listing_id",$listing_id);
+		Factory::getApplication()->input->set("listing_id",$listing_id);
 
 		$this->doPHPonChange($row);
 
@@ -1774,7 +1769,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 	
 	function setPublishStatus($status)
 	{
-		$listing_ids_str=JFactory::getApplication()->input->getString('ids', '');
+		$listing_ids_str=Factory::getApplication()->input->getString('ids', '');
 		if($listing_ids_str!='')
 		{
 			$listing_ids_=explode(',',$listing_ids_str);
@@ -1802,7 +1797,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 		if(!$this->ct->Table->published_field_found)
 			return -1;
 		
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		$query = 'UPDATE '.$this->ct->Table->realtablename.' SET published='.(int)$status.' WHERE '.$this->ct->Table->realidfieldname.'='.$db->quote($listing_id);
 		
@@ -1884,7 +1879,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 	
 	function delete()
 	{
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 
 		$listing_ids_str=$jinput->getString('ids','');
 		if($listing_ids_str!='')
@@ -1912,7 +1907,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 	public function deleteSingleRecord($listing_id)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		//delete images if exist
 		$imagemethods=new CustomTablesImageMethods;
@@ -1990,7 +1985,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 	
 	public function copyContent($from, $to)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		
 		//Copy value from one cell to another (drag and drop functionality)
 		$from_parts = explode('_',$from);

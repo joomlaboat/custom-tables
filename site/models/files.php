@@ -10,7 +10,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\CT;
-use CustomTables\Fields;
+use \Joomla\CMS\Factory;
 
 jimport('joomla.application.component.model');
 
@@ -33,10 +33,10 @@ class CustomTablesModelFiles extends JModelLegacy
 
 		parent::__construct();
 
-		$app		= JFactory::getApplication();
+		$app		= Factory::getApplication();
 		$this->params=$app->getParams();
 
-		$jinput=JFactory::getApplication()->input;
+		$jinput=Factory::getApplication()->input;
 		$listing_id = $jinput->getInt("listing_id", 0);
 
 		$this->tableid = $jinput->getInt('tableid',0);
@@ -47,7 +47,7 @@ class CustomTablesModelFiles extends JModelLegacy
 
 		if($listing_id==0 or $listing_id=='' or $this->fieldid==0)
 		{
-			JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
+			Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
 			$this->_id=0;
 			return false;
 		}
@@ -59,14 +59,14 @@ class CustomTablesModelFiles extends JModelLegacy
 		if($listing_id==0)
 			return false;
 
-		$jinput=JFactory::getApplication()->input;
+		$jinput=Factory::getApplication()->input;
 
 		$this->tableid = $jinput->getInt('tableid',0);
 		$this->ct->getTable($this->tableid, null);
 				
 		if($this->ct->Table->tablename=='')
 		{
-			JFactory::getApplication()->enqueueMessage('Table not selected (79).', 'error');
+			Factory::getApplication()->enqueueMessage('Table not selected (79).', 'error');
 			return;
 		}
 

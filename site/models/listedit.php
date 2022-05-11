@@ -10,6 +10,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\DataTypes\Tree;
+use \Joomla\CMS\Factory;
 
 jimport('joomla.application.component.model');
 
@@ -21,7 +22,7 @@ class CustomTablesModelListEdit extends JModel
     {
 		parent::__construct();
 		
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 		$array = $jinput->get('cid',array(),'array');
 
 		$this->setId((int)$array[0]);
@@ -44,19 +45,19 @@ class CustomTablesModelListEdit extends JModel
 
 	function store()
 	{
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 		
-	    $optionname=strtolower(trim(preg_replace("/[^a-zA-Z0-9]/", "", JFactory::getApplication()->input->get('optionname','','STRING'))));
-		$title=ucwords(strtolower(trim(JFactory::getApplication()->input->get('title','','STRING'))));
+	    $optionname=strtolower(trim(preg_replace("/[^a-zA-Z0-9]/", "", Factory::getApplication()->input->get('optionname','','STRING'))));
+		$title=ucwords(strtolower(trim(Factory::getApplication()->input->get('title','','STRING'))));
 		
-		JFactory::getApplication()->input->set('optionname',$optionname);
-		JFactory::getApplication()->input->set('title',$title);
+		Factory::getApplication()->input->set('optionname',$optionname);
+		Factory::getApplication()->input->set('title',$title);
 	
 		//save image if needed
 		$fieldname='imagefile';
 		$value=0;
 		$imagemethods=new CustomTablesImageMethods;
-		$tree_id=JFactory::getApplication()->input->get('id',0,'INT');
+		$tree_id=Factory::getApplication()->input->get('id',0,'INT');
 		$imagefolder=JPATH_SITE.DIRECTORY_SEPARATOR.'images'.DIRECTORY_SEPARATOR.'esoptimages';
 		
 		$imageparams='';
@@ -71,7 +72,7 @@ class CustomTablesModelListEdit extends JModel
 				$imageparams=$jinput->get('imageparams','','string');
 				
 				if(strlen($imageparams)==0)
-					$imageparams=Tree::getHeritageInfo(JFactory::getApplication()->input->get('parentid',0,'INT'), 'imageparams');
+					$imageparams=Tree::getHeritageInfo(Factory::getApplication()->input->get('parentid',0,'INT'), 'imageparams');
 			
 				$value=$imagemethods->UploadSingleImage(0, $fieldname,$imagefolder,$imageparams,'-options');
 			}
@@ -156,7 +157,7 @@ class CustomTablesModelListEdit extends JModel
 
 	function delete()
 	{
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 		
 		$cids = $jinput->get->post('cid',array(),'array');
 		$row = $this->getTable();
