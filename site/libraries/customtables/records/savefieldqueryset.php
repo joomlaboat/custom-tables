@@ -360,9 +360,17 @@ class SaveFieldQuerySet
 					require_once($file_type_file);
 					
 					$value = CT_FieldTypeTag_file::get_file_type_value($this->field, $listing_id);
-					$this->row[$this->field->realfieldname] = $value;
-					return ($value == null ? null : $this->field->realfieldname.'='.$this->db->Quote($value));
-					
+
+                    $to_delete = $this->ct->Env->jinput->post->get($this->field->comesfieldname . '_delete', '', 'CMD');
+
+                    if ($to_delete == 'true' and $value == null) {
+                        $this->row[$this->field->realfieldname] = null;
+                        return $this->field->realfieldname.'=NULL';
+                    }else{
+                        $this->row[$this->field->realfieldname] = $value;
+                        return ($value == null ? null : $this->field->realfieldname.'='.$this->db->Quote($value));
+                    }
+
 				case 'signature':
 				
 					$value = $this->get_customtables_type_signature();
