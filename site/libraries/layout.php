@@ -9,7 +9,7 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-use Joomla\CMS\Version;
+use CustomTables\CT;
 
 JHTML::addIncludePath(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'helpers');
 
@@ -31,25 +31,24 @@ require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'co
 
 class LayoutProcessor
 {
-	var $layout;
-	var $layoutType;//item layout type
-	var $advancedtagprocessor;
-	var $version = 0;
+	var string $layout;
+	var int $layoutType;//item layout type
+	var bool $advancedtagprocessor;
+	var float $version = 0;
 	
-	var $ct;
+	var CustomTables\CT $ct;
 
-	function __construct(&$ct, $layout = null, $layoutType = null)
+	function __construct(CustomTables\CT &$ct, $layout = '', $layoutType = null)
 	{
 		$this->ct = $ct;
 		$this->version = $this->ct->Env->version;
-		$this->advancedtagprocessor = $this->version = $this->ct->Env->advancedtagprocessor;
+		$this->advancedtagprocessor = $this->ct->Env->advancedtagprocessor;
 		
 		$this->layout = $layout;
 	}
 
-	function fillLayout(array $row = [],$aLink=null,$tag_chars='[]',$disable_advanced_tags=false,$add_label=false)
+	function fillLayout(array $row = [],$aLink=null,$tag_chars='[]',$disable_advanced_tags=false,$add_label=false):string
 	{
-		//$this->ct->Table->record = $row;
 		$htmlresult=$this->layout;
 
 		if($this->advancedtagprocessor and !$disable_advanced_tags)

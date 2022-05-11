@@ -33,12 +33,12 @@ use CustomTables\DataTypes\Tree;
 		require_once ( JPATH_BASE .DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'defines.php' );
 		require_once ( JPATH_BASE .DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'framework.php' );
 
-		JDEBUG ? $_PROFILER->mark( 'afterLoad' ) : null;
+		//JDEBUG ? $_PROFILER->mark( 'afterLoad' ) : null;
 
 		// CREATE THE APPLICATION
 
 		// Instantiate the application.
-		$app = JFactory::getApplication('site');
+		$app = Factory::getApplication('site');
 
 		// Initialise the application.
 		$app->initialise();

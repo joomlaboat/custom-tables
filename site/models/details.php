@@ -17,278 +17,247 @@ use \Joomla\CMS\Factory;
 
 jimport('joomla.application.component.model');
 
-JTable::addIncludePath(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'tables');
+JTable::addIncludePath(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'tables');
 
-require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'layout.php');
+require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'layout.php');
 
 class CustomTablesModelDetails extends JModelLegacy
 {
-	var $ct;
-	var $storby;
-	var $showpublished;
-	var $filter;
-	var $params;
+    var $ct;
+    var $storby;
+    var $showpublished;
+    var $filter;
+    var $params;
 
-	function __construct()
-	{
-		parent::__construct();
-		
-		$this->ct = new CT;
-		
-		if(method_exists(Factory::getApplication(),"getParams"))
-		{
-			$params = Factory::getApplication()->getParams();
-			$this->ct->Env->menu_params = $params;
-		
-			if($params->get( 'clean' )==1)
-				$this->ct->Env->clean=1;
+    function __construct()
+    {
+        parent::__construct();
 
-			if($this->ct->Env->jinput->getInt("listing_id",0) and $this->ct->Env->jinput->getInt("listing_id",0)!=0)
-				$listing_id= $this->ct->Env->jinput->getInt("listing_id", 0);
-			else
-				$listing_id=(int)$params->get( 'listingid' );
+        $this->ct = new CT;
 
-			$this->load($params,$listing_id);
-		}
-	}
-	
-	function setFrmt($frmt)
-	{
-		$this->ct->Env->frmt=$frmt;
-	}
+        if (method_exists(Factory::getApplication(), "getParams")) {
+            $params = Factory::getApplication()->getParams();
+            $this->ct->Env->menu_params = $params;
 
-	function load($params,$listing_id,$params_only=false,$custom_where='')
-	{
-		$this->params=$params;
-		$this->ct->Env->menu_params = $this->params;
+            if ($params->get('clean') == 1)
+                $this->ct->Env->clean = 1;
 
-		//sort by field
-		if(!$params_only and $this->ct->Env->jinput->getCmd('sortby'))
-			$this->sortby=strtolower($this->ct->Env->jinput->getCmd('sortby'));
-		else
-			$this->sortby=strtolower($this->params->get( 'sortby' ));
+            if ($this->ct->Env->jinput->getInt("listing_id", 0) and $this->ct->Env->jinput->getInt("listing_id", 0) != 0)
+                $listing_id = $this->ct->Env->jinput->getInt("listing_id", 0);
+            else
+                $listing_id = (int)$params->get('listingid');
 
-		//optional filter
-		if($custom_where!='' and $listing_id==0)
-		{
-			$this->alias='';
-			$this->filter=$custom_where;
-		}
-		else
-		{
-			$this->alias=JoomlaBasicMisc::slugify($this->ct->Env->jinput->getString('alias'));
+            $this->load($params, $listing_id);
+        }
+    }
 
-			if(!$params_only and $this->ct->Env->jinput->getString('filter',''))
-				$this->filter=$this->ct->Env->jinput->getString('filter','');
-			else
-			{
-				$this->filter=$this->params->get( 'filter' );
-				
-				if($this->filter!='' and $this->alias=='')
-				{
-					if($this->ct->Env->legacysupport)
-					{
-						//Parse using layout
-						$LayoutProc = new LayoutProcessor($this->ct);
-						$LayoutProc->layout=$this->filter;
-						$this->filter=$LayoutProc->fillLayout(array(),null,'[]',true);
-					}
-					
-					$twig = new TwigProcessor($this->ct, $this->filter);
-					$this->filter = $twig->process();
-				}
-			}
-		}
+    function load($params, $listing_id, $params_only = false, $custom_where = '')
+    {
+        $this->params = $params;
+        $this->ct->Env->menu_params = $this->params;
 
-		if($this->params->get( 'recordstable' )!='' and $this->params->get( 'recordsuseridfield' )!='' and $this->params->get( 'recordsfield' )!='')
-		{
-			if(!$this->checkRecordUserJoin($this->params->get( 'recordstable' ),$this->params->get( 'recordsuseridfield' ),$this->params->get( 'recordsfield' ),$listing_id))
-			{
-				//YOU ARE NOT AUTHORIZED TO ACCESS THIS SOURCE';
-				Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
-				return false;
-			}
-		}
+        //sort by field
+        if (!$params_only and $this->ct->Env->jinput->getCmd('sortby'))
+            $this->sortby = strtolower($this->ct->Env->jinput->getCmd('sortby'));
+        else
+            $this->sortby = strtolower($this->params->get('sortby'));
 
-		$this->setId($listing_id);
-		
-		$this->ct->getTable($this->params->get( 'establename' ), $this->params->get('useridfield'));
-		
-		if($this->ct->Table->tablename=='')
-			return;
+        //optional filter
+        if ($custom_where != '' and $listing_id == 0) {
+            $this->alias = '';
+            $this->filter = $custom_where;
+        } else {
+            $this->alias = JoomlaBasicMisc::slugify($this->ct->Env->jinput->getString('alias'));
 
-		if($this->alias!='' and $this->ct->Table->alias_fieldname!='')
-			$this->filter=$this->ct->Table->alias_fieldname.'='.$this->alias;
+            if (!$params_only and $this->ct->Env->jinput->getString('filter', ''))
+                $this->filter = $this->ct->Env->jinput->getString('filter', '');
+            else {
+                $this->filter = $this->params->get('filter');
 
-		if($this->filter!='' and $this->alias=='')
-		{
-			//Parse using layout
-			if($this->ct->Env->legacysupport)
-			{
-				$LayoutProc = new LayoutProcessor($this->ct);
-				$LayoutProc->layout=$this->filter;
-				$this->filter = $LayoutProc->fillLayout(array(),null,'[]',true);
-			}
-			
-			$twig = new TwigProcessor($this->ct, $this->filter);
-			$this->filter = $twig->process();
-		}
-	}
+                if ($this->filter != '' and $this->alias == '') {
+                    if ($this->ct->Env->legacysupport) {
+                        //Parse using layout
+                        $LayoutProc = new LayoutProcessor($this->ct);
+                        $LayoutProc->layout = $this->filter;
+                        $this->filter = $LayoutProc->fillLayout(array(), null, '[]', true);
+                    }
 
-	//TODO avoid es_
-	function checkRecordUserJoin($recordstable, $recordsuseridfield, $recordsfield, $listing_id)
-	{
-		$db = Factory::getDBO();
+                    $twig = new TwigProcessor($this->ct, $this->filter);
+                    $this->filter = $twig->process();
+                }
+            }
+        }
 
-		$query='SELECT COUNT(*) AS count FROM #__customtables_table_'.$recordstable.' WHERE es_'.$recordsuseridfield.'='
-			.$this->ct->Env->userid.' AND INSTR(es_'.$recordsfield.',",'.$listing_id.',") LIMIT 1';
-			
-		$db->setQuery($query);
-		$rows=$db->loadAssocList();
-		$num_rows = $rows[0]['count'];
+        if ($this->params->get('recordstable') != '' and $this->params->get('recordsuseridfield') != '' and $this->params->get('recordsfield') != '') {
+            if (!$this->checkRecordUserJoin($this->params->get('recordstable'), $this->params->get('recordsuseridfield'), $this->params->get('recordsfield'), $listing_id)) {
+                //YOU ARE NOT AUTHORIZED TO ACCESS THIS SOURCE';
+                Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
+                return false;
+            }
+        }
 
-		if($num_rows==0)
-			return false;
+        $this->setId($listing_id);
 
-		return true;
-	}
+        $this->ct->getTable($this->params->get('establename'), $this->params->get('useridfield'));
 
-	function setId($listing_id)
-	{
-		$this->_id	= $listing_id;
-		$this->_data	= null;
-	}
+        if ($this->ct->Table->tablename == '')
+            return;
 
-	function & getData()
-	{
-		$db = Factory::getDBO();
-		
-		if($this->_id==0)
-		{
-			$this->_id	= 0;
-			
-			if($this->filter!='')
-			{
-				$this->ct->setFilter($this->filter,2); //2 = Show any - published and unpublished
-			}
-			else
-			{
-				Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_NOFILTER'), 'error');
-				$row = [];
-				return $row;//field not found. compatibility trick
-			}
+        if ($this->alias != '' and $this->ct->Table->alias_fieldname != '')
+            $this->filter = $this->ct->Table->alias_fieldname . '=' . $this->alias;
 
-			$where = count($this->ct->Filter->where) > 0 ? ' WHERE '.implode(" AND ",$this->ct->Filter->where) : '';
+        if ($this->filter != '' and $this->alias == '') {
+            //Parse using layout
+            if ($this->ct->Env->legacysupport) {
+                $LayoutProc = new LayoutProcessor($this->ct);
+                $LayoutProc->layout = $this->filter;
+                $this->filter = $LayoutProc->fillLayout(array(), null, '[]', true);
+            }
 
-			$this->ct->Ordering->orderby = $this->ct->Table->realidfieldname.' DESC';
-			if($this->ct->Table->published_field_found)
-				$this->ct->Ordering->orderby .= ',published DESC';
-			
-			$query = $this->ct->buildQuery($where);
-			$query.=' LIMIT 1';
-		}
-		else
-		{
-			//show exact record
-			$query = $this->ct->buildQuery('WHERE id='.$this->_id);
-			$query.=' LIMIT 1';
-		}
+            $twig = new TwigProcessor($this->ct, $this->filter);
+            $this->filter = $twig->process();
+        }
+    }
 
-		$db->setQuery($query);
-		$rows=$db->loadAssocList();
+    //TODO avoid es_
+    function checkRecordUserJoin($recordstable, $recordsuseridfield, $recordsfield, $listing_id)
+    {
+        $db = Factory::getDBO();
 
-		if(count($rows)<1)
-		{
-			$a=array();
-			return $a;
-		}
+        $query = 'SELECT COUNT(*) AS count FROM #__customtables_table_' . $recordstable . ' WHERE es_' . $recordsuseridfield . '='
+            . $this->ct->Env->userid . ' AND INSTR(es_' . $recordsfield . ',",' . $listing_id . ',") LIMIT 1';
 
-		$row=$rows[0];
+        $db->setQuery($query);
+        $rows = $db->loadAssocList();
+        $num_rows = $rows[0]['count'];
 
-		//get specific Version
-		$version= Factory::getApplication()->input->get('version',0,'INT');
-		if($version!=0)
-		{
-			//get log field
-			$log_field=$this->getTypeFieldName('log');;
-			if($log_field!='')
-			{
-				$new_row= $this->getVersionData($row,$log_field,$version);
-				if(count($new_row)>0)
-				{
-				    $row=$this->makeEmptyRecord($row[$this->ct->Table->realidfieldname],$new_row['listing_published']);
+        if ($num_rows == 0)
+            return false;
 
-				    //Copy values
-				    foreach($this->ct->Table->fields as $ESField)
-					{
-						if(isset($new_row[$ESField['realfieldname']]))
-							$row[$ESField['realfieldname']]=$new_row[$ESField['realfieldname']];
-					}
-				}
+        return true;
+    }
 
-				$versioned_data = $this->getVersionData($row,$log_field,$version);
-				return $versioned_data;
-			}
-		}
+    function setId($listing_id)
+    {
+        $this->_id = $listing_id;
+        $this->_data = null;
+    }
 
-		return $row;
-	}
+    function & getData()
+    {
+        $db = Factory::getDBO();
 
-	function makeEmptyRecord($listing_id,$published)
-	{
-	    $row = [];
-	    $row[$this->ct->Table->realidfieldname]=$listing_id;
-	    $row['listing_published']=$published;
+        if ($this->_id == 0) {
+            $this->_id = 0;
 
-	    foreach($this->ct->Table->fields as $ESField)
-		$row[$ESField['realfieldname']]='';
+            if ($this->filter != '') {
+                $this->ct->setFilter($this->filter, 2); //2 = Show any - published and unpublished
+            } else {
+                Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_NOFILTER'), 'error');
+                $row = [];
+                return $row;//field not found. compatibility trick
+            }
 
-	    return $row;
-	}
+            $where = count($this->ct->Filter->where) > 0 ? ' WHERE ' . implode(" AND ", $this->ct->Filter->where) : '';
 
-	function getTypeFieldName($type)
-	{
-		foreach($this->ct->Table->fields as $ESField)
-		{
-			if($ESField['type']==$type)
-				return $ESField['realfieldname'];
-		}
-		return '';
-	}
+            $this->ct->Ordering->orderby = $this->ct->Table->realidfieldname . ' DESC';
+            if ($this->ct->Table->published_field_found)
+                $this->ct->Ordering->orderby .= ',published DESC';
 
-	function getVersionData(&$row,$log_field,$version)
-	{
-		$creation_time_field=$this->getTypeFieldName('changetime');
-		$versions=explode(';',$row[$log_field]);
+            $query = $this->ct->buildQuery($where);
+            $query .= ' LIMIT 1';
+        } else {
+            //show exact record
+            $query = $this->ct->buildQuery('WHERE id=' . $this->_id);
+            $query .= ' LIMIT 1';
+        }
 
-		if($version<=count($versions))
-		{
-			if(count($versions)>1 and $version>1)
-				$data_editor=explode(',',$versions[$version-2]);
-			else
-				$data_editor=[''];
-			
-			$data_content=explode(',',$versions[$version-1]); // version 1, 1 - 1 = 0; where 0 is the index
+        $db->setQuery($query);
+        $rows = $db->loadAssocList();
 
-					if($data_content[3]!='')
-					{
-						$obj=json_decode(base64_decode($data_content[3]),true);
-						$new_row=$obj[0];
-						$new_row['listing_published']=$row['listing_published'];
-						$new_row[$this->ct->Table->realidfieldname]=$row[$this->ct->Table->realidfieldname];
-						$new_row[$log_field]=$row[$log_field];
+        if (count($rows) < 1) {
+            $a = array();
+            return $a;
+        }
+
+        $row = $rows[0];
+
+        //get specific Version
+        $version = Factory::getApplication()->input->get('version', 0, 'INT');
+        if ($version != 0) {
+            //get log field
+            $log_field = $this->getTypeFieldName('log');;
+            if ($log_field != '') {
+                $new_row = $this->getVersionData($row, $log_field, $version);
+                if (count($new_row) > 0) {
+                    $row = $this->makeEmptyRecord($row[$this->ct->Table->realidfieldname], $new_row['listing_published']);
+
+                    //Copy values
+                    foreach ($this->ct->Table->fields as $ESField) {
+                        if (isset($new_row[$ESField['realfieldname']]))
+                            $row[$ESField['realfieldname']] = $new_row[$ESField['realfieldname']];
+                    }
+                }
+
+                $versioned_data = $this->getVersionData($row, $log_field, $version);
+                return $versioned_data;
+            }
+        }
+
+        return $row;
+    }
+
+    function makeEmptyRecord($listing_id, $published)
+    {
+        $row = [];
+        $row[$this->ct->Table->realidfieldname] = $listing_id;
+        $row['listing_published'] = $published;
+
+        foreach ($this->ct->Table->fields as $ESField)
+            $row[$ESField['realfieldname']] = '';
+
+        return $row;
+    }
+
+    function getTypeFieldName($type)
+    {
+        foreach ($this->ct->Table->fields as $ESField) {
+            if ($ESField['type'] == $type)
+                return $ESField['realfieldname'];
+        }
+        return '';
+    }
+
+    function getVersionData(&$row, $log_field, $version)
+    {
+        $creation_time_field = $this->getTypeFieldName('changetime');
+        $versions = explode(';', $row[$log_field]);
+
+        if ($version <= count($versions)) {
+            if (count($versions) > 1 and $version > 1)
+                $data_editor = explode(',', $versions[$version - 2]);
+            else
+                $data_editor = [''];
+
+            $data_content = explode(',', $versions[$version - 1]); // version 1, 1 - 1 = 0; where 0 is the index
+
+            if ($data_content[3] != '') {
+                $obj = json_decode(base64_decode($data_content[3]), true);
+                $new_row = $obj[0];
+                $new_row['listing_published'] = $row['listing_published'];
+                $new_row[$this->ct->Table->realidfieldname] = $row[$this->ct->Table->realidfieldname];
+                $new_row[$log_field] = $row[$log_field];
 
 
-						if($creation_time_field)
-						{
-							$timestamp = date('Y-m-d H:i:s', (int)$data_editor[0]);
-							$new_row[$creation_time_field]=$timestamp ; //time (int)
-						}
+                if ($creation_time_field) {
+                    $timestamp = date('Y-m-d H:i:s', (int)$data_editor[0]);
+                    $new_row[$creation_time_field] = $timestamp; //time (int)
+                }
 
-						return $new_row;
-					}
+                return $new_row;
+            }
 
-		}
-		return array();
-	}
+        }
+        return array();
+    }
 }

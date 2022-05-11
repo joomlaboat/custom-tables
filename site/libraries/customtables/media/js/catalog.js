@@ -112,8 +112,7 @@
 
         es_LinkLoading=true;
 
-        var obj=document.getElementById(toolbarboxid);
-        obj.innerHTML='';
+		document.getElementById(toolbarboxid).innerHTML='';
 		
 		let element_tableid_tr = "ctTable_" + tableid + '_' + recordid;
 		
@@ -123,8 +122,8 @@
 			runTheTask('refresh', tableid,recordid,url,['refreshed'], false);
 		}
 		else{
-			var returnto=btoa(window.location.href);
-			var link=esPrepareLink(['task',"listing_id",'returnto','ids'],['task=refresh','listing_id='+objid,'returnto='+returnto]);
+			let returnto=btoa(window.location.href);
+			let link = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], ['task=refresh', 'listing_id=' + recordid, 'returnto=' + returnto]);
 			window.location.href = link;
 		}
 

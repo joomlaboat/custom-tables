@@ -35,7 +35,7 @@ class CT
 	var $LimitStart;
 	var $isEditForm;
 	
-	var $LayoutVariables = [];
+	var array $LayoutVariables;
 	
 	function __construct()
 	{
@@ -43,8 +43,9 @@ class CT
 		$this->Env = new Environment;
 		$this->GroupBy = '';
 		$this->isEditForm = false;
+        $this->LayoutVariables = [];
 	}
-	
+
 	function getTable($tablename_or_id, $useridfieldname = null)
 	{
 		$this->Table = new Table($this->Languages, $this->Env, $tablename_or_id, $useridfieldname);
@@ -53,8 +54,8 @@ class CT
 		$this->prepareSEFLinkBase();
 	}
 	
-	function setTable(&$tablerow, $useridfieldname = null, $load_fields = true)
-	{
+	public function setTable(array &$tablerow, $useridfieldname = null, bool $load_fields = true): void
+    {
 		$this->Table = new Table($this->Languages, $this->Env, 0);
 		$this->Table->setTable($tablerow, $useridfieldname, $load_fields);
 		
@@ -68,7 +69,7 @@ class CT
 		if($this->Table == null or $this->Table->fields == null)
 			return null;
 		
-		if(strpos($this->Env->current_url,'option=com_customtables')===false)
+		if(!str_contains($this->Env->current_url, 'option=com_customtables'))
 	    {
 			foreach($this->Table->fields as $fld)
 			{
@@ -82,14 +83,14 @@ class CT
 		$this->alias_fieldname = null;
 	}
 	
-	function setFilter($filter_string = '', $showpublished = 0)
-	{
+	function setFilter($filter_string = '', $showpublished = 0): void
+    {
 		$this->Filter = new Filtering($this, $showpublished);
 		if($filter_string!='')
 			$this->Filter->addWhereExpression($filter_string);
 	}
 	
-	function getNumberOfRecords($where)
+	function getNumberOfRecords($where):int
 	{
 		$db = Factory::getDBO();
 		
@@ -101,10 +102,12 @@ class CT
 			$this->Table->recordcount = 0;
 		else
 			$this->Table->recordcount = $rows[0]->count;
+
+        return $this->Table->recordcount;
 	}
 	
-	function buildQuery($where)
-	{
+	function buildQuery($where): string
+    {
 		$ordering = $this->GroupBy!='' ? [$this->GroupBy] : [];
 		
 		$selects = [$this->Table->tablerow['query_selects']];
@@ -137,8 +140,8 @@ class CT
 		return $query;
 	}
 	
-	function getRecords($all = false)
-	{
+	function getRecords($all = false): bool
+    {
 		$db = Factory::getDBO();
 		
 		$where = count($this->Filter->where) >0 ? ' WHERE '.implode(' AND ',$this->Filter->where) : '';
@@ -174,7 +177,7 @@ class CT
 			$rows = $db->loadAssocList();
 		}
 		else
-			$rows=array();
+			$rows=[];
 		
 		$this->Records = $rows;
 
