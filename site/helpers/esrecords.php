@@ -276,7 +276,7 @@ class JHTMLESRecords
 								else
 									$layoutcode_tmp = $layoutcode;
 								
-								$twig = new TwigProcessor($this->ct, $layoutcode_tmp);
+								$twig = new TwigProcessor($model->ct, $layoutcode_tmp);
 								$htmlresult .= $twig->process($row);
 								
 								$htmlresult.='</label>';

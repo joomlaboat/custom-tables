@@ -1,113 +1,113 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
-	<fieldset
-		addrulepath="/administrator/components/com_customtables/models/rules"
-		addfieldpath="/administrator/components/com_customtables/models/fields"
-		name="global_config"
-		label="COM_CUSTOMTABLES_CONFIG_GLOBAL_LABEL"
-		description="COM_CUSTOMTABLES_CONFIG_GLOBAL_DESC">
+    <fieldset
+            addrulepath="/administrator/components/com_customtables/models/rules"
+            addfieldpath="/administrator/components/com_customtables/models/fields"
+            name="global_config"
+            label="COM_CUSTOMTABLES_CONFIG_GLOBAL_LABEL"
+            description="COM_CUSTOMTABLES_CONFIG_GLOBAL_DESC">
 
-<!--		
-                <field
-			name="row_format"
-			type="list"
-			label="InnoDB Row Formats"
-			default="COMPACT"
-			description="The row format of a table determines how its rows are physically stored, which in turn can affect the performance of queries and DML operations. As more rows fit into a single disk page, queries and index lookups can work faster, less cache memory is required in the buffer pool, and less I/O is required to write out updated values. Changing the parameter will affect new tables only."
-			>
-			<option value="REDUNDANT">REDUNDANT Row Format</option>
-			<option value="COMPACT">COMPACT Row Format</option>
-			<option value="DYNAMIC">DYNAMIC Row Format</option>
-			<option value="COMPRESSED">COMPRESSED Row Format</option>
-		</field>
+        <!--
+                        <field
+                    name="row_format"
+                    type="list"
+                    label="InnoDB Row Formats"
+                    default="COMPACT"
+                    description="The row format of a table determines how its rows are physically stored, which in turn can affect the performance of queries and DML operations. As more rows fit into a single disk page, queries and index lookups can work faster, less cache memory is required in the buffer pool, and less I/O is required to write out updated values. Changing the parameter will affect new tables only."
+                    >
+                    <option value="REDUNDANT">REDUNDANT Row Format</option>
+                    <option value="COMPACT">COMPACT Row Format</option>
+                    <option value="DYNAMIC">DYNAMIC Row Format</option>
+                    <option value="COMPRESSED">COMPRESSED Row Format</option>
+                </field>
 
--->
-<!--		<field name="autorTitle"
-			type="spacer"
-			label="COM_CUSTOMTABLES_CONFIG_AUTHOR"
-		/>
--->
+        -->
+        <!--		<field name="autorTitle"
+                    type="spacer"
+                    label="COM_CUSTOMTABLES_CONFIG_AUTHOR"
+                />
+        -->
 
-                <field
-			name="loadTwig"
-			type="list"
-			label="Load Twig"
-			default="1"
-			description="Some templates come with the Twig and to avoid the conflict is recommended to disable the Twig load (declaration) in Custom Tables."
-			>
-			<option value="1">Load Twig</option>
-			<option value="0">Do not load Twig</option>
-		</field>
+        <field
+                name="loadTwig"
+                type="list"
+                label="Load Twig"
+                default="1"
+                description="Some templates come with the Twig and to avoid the conflict is recommended to disable the Twig load (declaration) in Custom Tables."
+        >
+            <option value="1">Load Twig</option>
+            <option value="0">Do not load Twig</option>
+        </field>
 
-                <field
-			name="googlemapapikey"
-			type="text"
-			label="Google Map API Key"
-			default=""
-			description=""
-		/>
+        <field
+                name="googlemapapikey"
+                type="text"
+                label="Google Map API Key"
+                default=""
+                description=""
+        />
 
-                <field
-			name="toolbaricons"
-			type="list"
-			label="Toolbar Icons"
-			default=""
-			description="What type of toolbar icons to use : Image Icons or Font Awesome."
-			>
-			<option value="">Image Icons</option>
-			<option value="fas">Font Awesome - Solid</option>
-<!--			FA PRO ICONS ($99/year) -->
-<!--			<option value="far">Font Awesome - Regular</option>-->
-<!--			<option value="fal">Font Awesome - Light</option>-->
-<!--			<option value="fad">Font Awesome - Duotone</option>-->
-		</field>
+        <field
+                name="toolbaricons"
+                type="list"
+                label="Toolbar Icons"
+                default=""
+                description="What type of toolbar icons to use : Image Icons or Font Awesome."
+        >
+            <option value="">Image Icons</option>
+            <option value="fas">Font Awesome - Solid</option>
+            <!--			FA PRO ICONS ($99/year) -->
+            <!--			<option value="far">Font Awesome - Regular</option>-->
+            <!--			<option value="fal">Font Awesome - Light</option>-->
+            <!--			<option value="fad">Font Awesome - Duotone</option>-->
+        </field>
 
-                <field
-			name="legacysupport"
-			type="list"
-			label="Legacy Support"
-			default=""
-			description="Support old style layout syntaxis, example: *fieldname*, [fieldname], |fieldname|, {button:save}. Use Twig tags instead: {{ fieldname.title }}, {{ fieldname }}, {{ fieldname.value }}, {{ html.button('save') }}"
-			>
-			<option value="">Twig and Legacy</option>
-			<option value="puretwig">Pure Twig</option>
-		</field>
+        <field
+                name="legacysupport"
+                type="list"
+                label="Legacy Support"
+                default=""
+                description="Support old style layout syntaxis, example: *fieldname*, [fieldname], |fieldname|, {button:save}. Use Twig tags instead: {{ fieldname.title }}, {{ fieldname }}, {{ fieldname.value }}, {{ html.button('save') }}"
+        >
+            <option value="">Twig and Legacy</option>
+            <option value="puretwig">Pure Twig</option>
+        </field>
 
-		<field name="autorName"
-			type="text"
-			label="COM_CUSTOMTABLES_CONFIG_AUTHOR_NAME_LABEL"
-			description="COM_CUSTOMTABLES_CONFIG_AUTHOR_NAME_DESC"
-			size="60"
-			default="Ivan Komlev"
-			readonly="true"
-			class="readonly"
-		/>
+        <field name="autorName"
+               type="text"
+               label="COM_CUSTOMTABLES_CONFIG_AUTHOR_NAME_LABEL"
+               description="COM_CUSTOMTABLES_CONFIG_AUTHOR_NAME_DESC"
+               size="60"
+               default="Ivan Komlev"
+               readonly="true"
+               class="readonly"
+        />
 
-		<field name="autorEmail"
-			type="email"
-			label="COM_CUSTOMTABLES_CONFIG_AUTHOR_EMAIL_LABEL"
-			description="COM_CUSTOMTABLES_CONFIG_AUTHOR_EMAIL_DESC"
-			size="60"
-			default="support@joomlaboat.com"
-			readonly="true"
-			class="readonly"
-		/>
-                
-	</fieldset>
-	<fieldset
-		name="permissions"
-		label="JCONFIG_PERMISSIONS_LABEL"
-		description="JCONFIG_PERMISSIONS_DESC">
+        <field name="autorEmail"
+               type="email"
+               label="COM_CUSTOMTABLES_CONFIG_AUTHOR_EMAIL_LABEL"
+               description="COM_CUSTOMTABLES_CONFIG_AUTHOR_EMAIL_DESC"
+               size="60"
+               default="support@joomlaboat.com"
+               readonly="true"
+               class="readonly"
+        />
 
-		<field
-			name="rules"
-			type="rules"
-			label="JCONFIG_PERMISSIONS_LABEL"
-			class="inputbox"
-			filter="rules"
-			validate="rules"
-			component="com_customtables"
-			section="component" 
-		/>
-	</fieldset>
+    </fieldset>
+    <fieldset
+            name="permissions"
+            label="JCONFIG_PERMISSIONS_LABEL"
+            description="JCONFIG_PERMISSIONS_DESC">
+
+        <field
+                name="rules"
+                type="rules"
+                label="JCONFIG_PERMISSIONS_LABEL"
+                class="inputbox"
+                filter="rules"
+                validate="rules"
+                component="com_customtables"
+                section="component"
+        />
+    </fieldset>
 </config>

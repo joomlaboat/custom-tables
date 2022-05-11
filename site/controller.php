@@ -30,8 +30,6 @@ class CustomTablesController extends JControllerLegacy
 			return;
 		}
 
-		$user = JFactory::getUser();
-
 		// Make sure we have a default view
 		if($jinput->getCmd( 'view' )=='')
 		{
@@ -68,38 +66,20 @@ class CustomTablesController extends JControllerLegacy
 					require_once('controllers/editfiles.php');
 					break;
 
-				case 'structure' :
+                case 'createuser':
+                case 'resetuserpassword':
+                case 'paypal':
+                case 'a2checkout':
+                case 'files':
+                case 'fileuploader':
+                case 'structure' :
 					parent::display();
 					break;
 
 				case 'details' :
 					require_once('controllers/details.php');
 					break;
-
-				case 'createuser' :
-					parent::display();
-					break;
-
-				case 'resetuserpassword' :
-					parent::display();
-					break;
-
-				case 'paypal' :
-					parent::display();
-					break;
-
-				case 'a2checkout' :
-					parent::display();
-					break;
-
-				case 'files' :
-					parent::display();
-					break;
-
-				case 'fileuploader' :
-					parent::display();
-					break;
-			}
+            }
 		}
 	}
 }
