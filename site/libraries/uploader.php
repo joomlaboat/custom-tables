@@ -51,7 +51,7 @@ class ESFileUploader
 			if($file==null)
 				return  json_encode(['error'=>'File is empty.']);
 			
-			$mime=mime_content_type ($file["tmp_name"]);//read mime typw
+			$mime=mime_content_type ($file["tmp_name"]);//read mime type
 
 			if($mime!='application/zip')//if not zip file
 			{
@@ -130,7 +130,6 @@ class ESFileUploader
 	{
 		$filetypes_str=ESFileUploader::getAcceptedFileTypes($filetypes_str_argument);//',,'.
 
-		$filetypes_str='csv';
 		$accepted_types=ESFileUploader::getAcceptableMimeTypes($filetypes_str);
 
 		ESFileUploader::deleteOldFiles();
