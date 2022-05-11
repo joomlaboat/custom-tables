@@ -145,7 +145,7 @@ class Fields
                 if($field['is_nullable']!='NO')
 					$AdditionOptions='null';
 
-                Fields::AddMySQLFieldNotExist($tablename, $new_fieldname, $field['data_type'], $AdditionOptions);
+                Fields::AddMySQLFieldNotExist($tablename, $new_fieldname, $field['column_type'], $AdditionOptions);
                 return true;
             }
         }
@@ -607,10 +607,12 @@ class Fields
     public static function AddMySQLFieldNotExist($realtablename, $realfieldname, $fieldtype, $options)
     {
 		$db = Factory::getDBO();
+		
 		if(!Fields::checkIfFieldExists($realtablename,$realfieldname,false))
 		{
 			$query='ALTER TABLE '.$realtablename.' ADD COLUMN '.$realfieldname.' '.$fieldtype.' '.$options;
-
+			
+			
 			$db->setQuery($query);
 			$db->execute();
 		}

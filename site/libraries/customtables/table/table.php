@@ -93,7 +93,10 @@ class Table
 		$this->customtablename=$this->tablerow['customtablename'];
 		$this->realtablename=$this->tablerow['realtablename'];
 		$this->realidfieldname=$this->tablerow['realidfieldname'];
-		$this->tabletitle=$this->tablerow['tabletitle'.$this->Languages->Postfix];
+		
+		if(isset($this->tablerow['tabletitle'.$this->Languages->Postfix]) and $this->tablerow['tabletitle'.$this->Languages->Postfix]!="")
+			$this->tabletitle=$this->tablerow['tabletitle'];
+		
 		$this->alias_fieldname='';
 		$this->imagegalleries=array();
 		$this->fileboxes=array();

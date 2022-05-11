@@ -2,7 +2,7 @@
 /**
  * CustomTables Joomla! 3.x Native Component
  * @package Custom Tables
- * @author Ivan komlev <support@joomlaboat.com>
+ * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
  * @copyright Copyright (C) 2018-2022. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
@@ -96,8 +96,8 @@ $edit = "index.php?option=com_customtables&view=listoffields&task=fields.edit&ta
 
 					if(!array_key_exists($id,$item_array))
 					{
-						JFactory::getApplication()->enqueueMessage(
-							JText::_('COM_CUSTOMTABLES_ERROR_LANGFIELDTTILENOTFOUND' ), 'Error');
+						JFactory::getApplication()->enqueueMessage('"'.$id.'" '.
+							JText::_('COM_CUSTOMTABLES_ERROR_LANGFIELDTITLENOTFOUND' ), 'Error');
 			
 						$id='fieldtitle';
 					}
