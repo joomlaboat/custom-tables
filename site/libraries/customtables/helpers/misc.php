@@ -702,31 +702,6 @@ class JoomlaBasicMisc
         return false;
     }
 
-    public static function prepareSearchFilter(&$_params)
-    {
-        if (isset($_params['filter']) and $_params['filter'] != "") {
-            $jinput = JFactory::getApplication()->input;
-
-            $f = str_replace('$now', '{now}', $_params['filter']);
-            $f = str_replace('$year', date('Y'), $f);
-
-            $newf = array();
-            $p = explode(' ', $f);
-            foreach ($p as $a) {
-                if (strpos($a, '$get_') !== false) {
-                    $z = explode('$get_', $a);
-                    $sp = explode('|', $z[1]);
-                    $v = (string)preg_replace('/[^A-Z0-9_\.,-]/i', '', $jinput->getString($sp[0]));
-                    $newf[] = str_replace('$get_' . $sp[0], $v, $a);
-                } else
-                    $newf[] = $a;
-            }
-            $f = implode(' ', $newf);
-
-            $_params['filter'] = str_replace('|', ',', $f);
-        }
-    }
-
     public static function applyContentPlugins(&$htmlresult)
     {
         $version_object = new Version;

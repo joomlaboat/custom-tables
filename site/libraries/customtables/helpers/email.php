@@ -15,8 +15,8 @@ use \Joomla\CMS\Factory;
 
 class Email
 {
-	public static function checkEmail($email)
-	{
+	public static function checkEmail($email): bool
+    {
 		if(preg_match("/^([a-zA-Z0-9])+([a-zA-Z0-9\._-])*@([a-zA-Z0-9_-])+([a-zA-Z0-9\._-]+)+$/",  $email))
         {
             if(Email::domain_exists($email))
@@ -27,7 +27,7 @@ class Email
 		return false;
 	}
 	
-	protected static function domain_exists($email, $record = 'MX')
+	protected static function domain_exists($email, $record = 'MX'): bool
     {
     	$pair = explode('@', $email);
         if(count($pair)==1)
@@ -36,8 +36,8 @@ class Email
     	return checkdnsrr(end($pair), $record);
     }
 	
-	static public function sendEmail($email,$emailSubject,$emailBody,$isHTML = true,$attachments=array())
-	{
+	static public function sendEmail($email,$emailSubject,$emailBody,$isHTML = true,$attachments=array()): bool
+    {
 		$mailer = Factory::getMailer();
 		$config = Factory::getConfig();
 

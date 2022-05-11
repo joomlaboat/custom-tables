@@ -20,11 +20,11 @@ use \Joomla\CMS\Factory;
 
 class Field
 {
-	var $ct;
+	var CT $ct;
 	
-	var $id;
-	var $params;
-	var $type;
+	var int $id;
+	var array $params;
+	var string $type;
 	var $isrequired;
 	var $defaultvalue;
 		
@@ -36,10 +36,8 @@ class Field
 	var $valuerule;
 	var $valuerulecaption;
 	
-	var $fieldrow;
-	
-
-	var $prefix; //part of the table class
+	var array $fieldrow;
+	var string $prefix; //part of the table class
 
 	function __construct(&$ct,$fieldrow,$row = [])
 	{

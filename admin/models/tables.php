@@ -597,7 +597,7 @@ class CustomtablesModelTables extends JModelAdmin
 			//Add fields if its a third-party table and no fields added yet.
 			if($data['customtablename'] != null and $data['customtablename'] != '')
 			{
-				ESTables::addThirdPartyTableFieldsIfNeeded($database,$dbprefix,$tablename, $data['customtablename']);
+				ESTables::addThirdPartyTableFieldsIfNeeded($database, $tablename, $data['customtablename']);
 			}
 
 			return true;
