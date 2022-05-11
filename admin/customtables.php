@@ -8,18 +8,17 @@
  * @copyright Copyright (C) 2018-2022. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
- 
+
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
 // Access check.
-if (!JFactory::getUser()->authorise('core.manage', 'com_customtables'))
-{
-	JFactory::getApplication()->enqueueMessage(JText::_('JERROR_ALERTNOAUTHOR'), 'error');
+if (!JFactory::getUser()->authorise('core.manage', 'com_customtables')) {
+    JFactory::getApplication()->enqueueMessage(JText::_('JERROR_ALERTNOAUTHOR'), 'error');
 };
 
 $path = JPATH_COMPONENT_SITE . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR;
-require_once($path.'loader.php');
+require_once($path . 'loader.php');
 CTLoader($inclide_utilities = true);
 
 // require helper files

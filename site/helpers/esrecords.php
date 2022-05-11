@@ -338,7 +338,7 @@ class JHTMLESRecords
 			else
 				$htmlresult_options.='<option value="'.$row[$model->ct->Table->realidfieldname].'" '.($row['listing_published']==0 ? ' disabled="disabled"' : '').'>';
 
-			$v=JoomlaBasicMisc::processValue($field,$model->ct,$row,$langpostfix);
+			$v=JoomlaBasicMisc::processValue($field, $model->ct, $row);
 			$htmlresult_options.=$v;
 
 			if($dynamic_filter!='')
@@ -366,7 +366,7 @@ class JHTMLESRecords
 				else
 					$htmlresult_options.='<option value="'.$row[$model_nofilter->ct->Table->realidfieldname].'" '.($row['listing_published']==0 ? ' disabled="disabled"' : '').'>';
 
-				$v=JoomlaBasicMisc::processValue($field,$model_nofilter->ct,$row,$langpostfix);
+				$v=JoomlaBasicMisc::processValue($field, $model_nofilter->ct, $row);
 				$htmlresult_options.=$v;
 
 				if($dynamic_filter!='')

@@ -225,7 +225,7 @@ class JHTMLESSqlJoin
 				$v = $twig->process($row);
 			}
             else
-				$v=JoomlaBasicMisc::processValue($field,$model->ct,$row,$langpostfix);//TODO try to replace processValue function
+				$v=JoomlaBasicMisc::processValue($field, $model->ct, $row);//TODO try to replace processValue function
 
             if($dynamic_filter!='')
 				$d=$row[$model->ct->Env->field_prefix.$dynamic_filter];

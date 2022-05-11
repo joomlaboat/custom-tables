@@ -61,7 +61,7 @@ class JHTMLESRecordsView
 					foreach($model->ct->Records as $row)
 					{
 						if(in_array($row[$model->ct->Table->realidfieldname],$valuearray) )
-							$htmlresult.=JoomlaBasicMisc::processValue($field,$model->ct,$row,$langpostfix);
+							$htmlresult.=JoomlaBasicMisc::processValue($field, $model->ct, $row);
 					}
 
 					break;
@@ -73,7 +73,7 @@ class JHTMLESRecordsView
 					foreach($model->ct->Records as $row)
 					{
 						if(in_array($row[$model->ct->Table->realidfieldname],$valuearray) )
-							$vArray[]=JoomlaBasicMisc::processValue($field,$model->ct,$row,$langpostfix);
+							$vArray[]=JoomlaBasicMisc::processValue($field, $model->ct, $row);
 					}
 					$htmlresult.=implode(',',$vArray);
 
@@ -84,7 +84,7 @@ class JHTMLESRecordsView
 					foreach($model->ct->Records as $row)
 					{
 						if(in_array($row[$model->ct->Table->realidfieldname],$valuearray) )
-							$htmlresult.=JoomlaBasicMisc::processValue($field,$model->ct,$row,$langpostfix);
+							$htmlresult.=JoomlaBasicMisc::processValue($field, $model->ct, $row);
 					}
 
 					break;
@@ -96,7 +96,7 @@ class JHTMLESRecordsView
 					foreach($model->ct->Records as $row)
 					{
 						if(in_array($row[$model->ct->Table->realidfieldname],$valuearray) )
-							$vArray[]=JoomlaBasicMisc::processValue($field,$model->ct,$row,$langpostfix);
+							$vArray[]=JoomlaBasicMisc::processValue($field, $model->ct, $row);
 					}
 					$htmlresult.=implode(',',$vArray);
 					break;
@@ -108,7 +108,7 @@ class JHTMLESRecordsView
 					foreach($model->ct->Records as $row)
 					{
 						if(in_array($row[$model->ct->Table->realidfieldname],$valuearray) )
-							$vArray[]=JoomlaBasicMisc::processValue($field,$model->ct,$row,$langpostfix);
+							$vArray[]=JoomlaBasicMisc::processValue($field, $model->ct, $row);
 					}
 					$htmlresult.=implode(',',$vArray);
 					break;

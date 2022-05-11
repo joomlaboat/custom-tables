@@ -194,7 +194,7 @@ class CT_FieldTypeTag_file
         return $filepath;
     }
 
-    static public function get_file_type_value(&$field, $listing_id)
+    static public function get_file_type_value(CustomTables\Field &$field, $listing_id)
     {
         $db = JFactory::getDBO();
 
@@ -223,7 +223,7 @@ class CT_FieldTypeTag_file
             $ExistingFile = $field->ct->Table->getRecordFieldValue($listing_id, $field->realfieldname);
 
             if ($to_delete == 'true') {
-                if ($ExistingFile != '' and !CT_FieldTypeTag_file::checkIfTheFileBelongsToAnotherRecord($ExistingFile, $FileFolder, $field)) {
+                if ($ExistingFile != '' and !CT_FieldTypeTag_file::checkIfTheFileBelongsToAnotherRecord($ExistingFile, $field)) {
                     $filename_full = $filepath . DIRECTORY_SEPARATOR . $ExistingFile;
 
                     if (file_exists($filename_full))
@@ -278,7 +278,7 @@ class CT_FieldTypeTag_file
                 $uploadedfile = $dst;
             }
 
-            if ($ExistingFile != '' and !CT_FieldTypeTag_file::checkIfTheFileBelongsToAnotherRecord($ExistingFile, $FileFolder, $field)) {
+            if ($ExistingFile != '' and !CT_FieldTypeTag_file::checkIfTheFileBelongsToAnotherRecord($ExistingFile, $field)) {
                 //Delete Old File
                 $filename_full = $FileFolder . DIRECTORY_SEPARATOR . $ExistingFile;
 
@@ -322,7 +322,7 @@ class CT_FieldTypeTag_file
         return false;
     }
 
-    static protected function checkIfTheFileBelongsToAnotherRecord($filename, $FileFolder, &$field)
+    static protected function checkIfTheFileBelongsToAnotherRecord(string $filename, CustomTables\Field &$field): bool
     {
         $db = JFactory::getDBO();
         $query = 'SELECT * FROM ' . $field->ct->Table->realtablename . ' WHERE ' . $field->realfieldname . '=' . $db->quote($filename) . ' LIMIT 2';
@@ -333,9 +333,8 @@ class CT_FieldTypeTag_file
         return $db->getNumRows() > 1;
     }
 
-    static protected function getCleanAndAvailableFileName($filename, $FileFolder)
+    static protected function getCleanAndAvailableFileName(string $filename, string $FileFolder): string
     {
-
         $parts = explode('_', $filename);
         if (count($parts) < 4)
             return '';
@@ -354,7 +353,7 @@ class CT_FieldTypeTag_file
 
         $i = 0;
         $filename_new = $filename;
-        do {
+        while(1) {
 
             if (file_exists($FileFolder . DIRECTORY_SEPARATOR . $filename_new)) {
                 //increase index
@@ -362,13 +361,12 @@ class CT_FieldTypeTag_file
                 $filename_new = str_replace('.', '-' . $i . '.', $filename);
             } else
                 break;
-
-        } while (1 == 1);
+        }
 
         return $filename_new;
     }
 
-    public static function renderFileFieldBox(&$ct, &$fieldrow, &$row, $class)
+    public static function renderFileFieldBox(&$ct, array &$fieldrow, array &$row, $class): string
     {
         $field = new Field($ct, $fieldrow);
 
@@ -386,7 +384,7 @@ class CT_FieldTypeTag_file
         return $result;
     }
 
-    protected static function renderFileAndDeleteOption($file, &$field)
+    protected static function renderFileAndDeleteOption(string $file, &$field): string
     {
         if ($file == '')
             return '';
@@ -416,12 +414,9 @@ class CT_FieldTypeTag_file
         return $result;
     }
 
-    protected static function renderUploader(&$field)
+    protected static function renderUploader(&$field): string
     {
-        if (isset($field->params[2]))
-            $fileextensions = $field->params[2];
-        else
-            $fileextensions = '';
+        $fileextensions = $field->params[2] ?? '';
 
         $accepted_file_types = ESFileUploader::getAcceptedFileTypes($fileextensions);
 
@@ -455,10 +450,9 @@ class CT_FieldTypeTag_file
                 ';
 
         return $result;
-
     }
 
-    public static function getFileFolder(&$params)
+    public static function getFileFolder(&$params): string
     {
         $folder = '';
 
@@ -500,7 +494,7 @@ class CT_FieldTypeTag_file
         return $folder;
     }
 
-    public static function wrong()
+    public static function wrong(): bool
     {
         JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
         return false;
@@ -562,7 +556,7 @@ class CT_FieldTypeTag_file
         }
     }
 
-    public static function makeTheKey($filepath, $security, $rec_id, $fieldid, $tableid)
+    public static function makeTheKey(string $filepath, string $security, string $rec_id, string $fieldid, string $tableid): string
     {
         $user = JFactory::getUser();
         $username = $user->get('username');
@@ -590,8 +584,6 @@ class CT_FieldTypeTag_file
 
         //replace rear part of the hash
         $m3 = substr($m, 0, strlen($m) - strlen($m2));
-        $m4 = $m3 . $m2;
-
-        return $m4;
+        return $m3 . $m2;
     }
 }

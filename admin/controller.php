@@ -29,11 +29,6 @@ class CustomtablesController extends JControllerLegacy
         parent::__construct($config);
     }
 
-    /**
-     * display task
-     *
-     * @return void
-     */
     function display($cachable = false, $urlparams = false)
     {
         // set default view if not set
@@ -73,11 +68,10 @@ class CustomtablesController extends JControllerLegacy
             }
         }
 
-
         return parent::display($cachable, $urlparams);
     }
 
-    protected function checkEditId($context, $id)
+    protected function checkEditId($context, $id): bool
     {
         if ($id) {
             $values = (array)Factory::getApplication()->getUserState($context . '.id');
@@ -104,9 +98,8 @@ class CustomtablesController extends JControllerLegacy
         return true;
     }
 
-    protected function getViewRelation($view)
+    protected function getViewRelation($view): bool|array
     {
-        // check the we have a value
         if (CustomtablesHelper::checkString($view)) {
             // the view relationships
             $views = array(
@@ -124,7 +117,7 @@ class CustomtablesController extends JControllerLegacy
                 return array('edit' => false, 'view' => array_search($view, $views), 'views' => $view);
             } // check if it is an edit view
             elseif (array_key_exists($view, $views)) {
-                // this is a edit view
+                // this is an edit view
                 return array('edit' => true, 'view' => $view, 'views' => $views[$view]);
             }
         }

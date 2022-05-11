@@ -63,7 +63,7 @@ class JHTMLESSQLJoinView
 			foreach($records as $row)
 			{
 				if($row[$model->ct->Table->realidfieldname]==$value)
-					$htmlresult.=JoomlaBasicMisc::processValue($field,$model->ct,$row,$langpostfix);
+					$htmlresult.=JoomlaBasicMisc::processValue($field, $model->ct, $row);
 			}
 		}
 		else
