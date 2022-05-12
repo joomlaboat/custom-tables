@@ -39,7 +39,7 @@ class Table
     var $record;
     var $recordcount;
     var $recordlist;
-    var \Joomla\Database\DatabaseDriver $db;
+    var $db;
 
     function __construct(&$Languages, &$Env, $tablename_or_id_not_sanitized, $useridfieldname = null)
     {

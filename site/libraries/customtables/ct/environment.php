@@ -73,8 +73,12 @@ class Environment
 
         $this->encoded_current_url = base64_encode($tmp_current_url);
 
-        $this->user = Factory::getApplication()->getIdentity();
-        $this->userid = $this->user->id;
+        if($this->version < 4)
+            $this->user = Factory::getUser();
+        else
+            $this->user = Factory::getApplication()->getIdentity();
+
+        $this->userid = is_null($this->user) ? 0 : $this->user->id;
 
         $this->isUserAdministrator = JoomlaBasicMisc::isUserAdmin($this->userid);
         $this->print = (bool)$this->jinput->getInt('print', 0);

@@ -71,7 +71,7 @@ class tagProcessor_Catalog
 	{
 		$catalogresult='';
 
-		if($ct->Records == null or count($ct->Records)==0)
+		if(is_null($ct->Records))
 			return '';
 
 		$CatGroups=array();
@@ -87,7 +87,7 @@ class tagProcessor_Catalog
 		if($groupby=='')
 		{
 				$number = 1 + $ct->LimitStart;
-								
+                $RealRows = [];
 				foreach($ct->Records as $row)
 				{
 						$row['_number'] = $number;

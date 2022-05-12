@@ -401,7 +401,7 @@ class fieldObject
 			{
 				if(isset($args[4]))
 				{
-					//multilang field specific language
+					//multilingual field specific language
                     foreach($this->ct->Languages->LanguageList as $lang)
 					{
 						if($lang->sef==$args[4])

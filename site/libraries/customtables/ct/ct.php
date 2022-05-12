@@ -25,18 +25,18 @@ class CT
 {
 	var Languages $Languages;
 	var Environment $Env;
-	var Table $Table;
-	var array $Records;
+	var ?Table $Table;
+	var ?array $Records;
 	var string $GroupBy;
-	var Ordering $Ordering;
-	var Filtering $Filter;
+	var ?Ordering $Ordering;
+	var ?Filtering $Filter;
 	var $alias_fieldname;
 	var int $Limit;
 	var int $LimitStart;
 	var bool $isEditForm;
     var $app;
     var Document $document;
-    var ?\Joomla\Database\DatabaseDriver $db;
+    var $db;
 	
 	var array $LayoutVariables;
 	
@@ -54,6 +54,11 @@ class CT
 
         $this->Limit = 0;
         $this->LimitStart = 0;
+
+        $this->Table = null;
+        $this->Records = null;
+        $this->Ordering = null;
+	    $this->Filter = null;
 	}
 
 	function getTable($tablename_or_id, $useridfieldname = null): void

@@ -20,10 +20,10 @@ class tagProcessor_Item
 {
     public static function process(&$ct,&$row,&$htmlresult,$aLink,$add_label=false)
 	{
-		if($ct->Table == null)
+		if(is_null($ct->Table))
 			return false;
 		
-		if($row !== null)
+		if(!is_null($row))
 			$ct->Table->record = $row;
 		
 		$ct_record = new Twig_Record_Tags($ct);

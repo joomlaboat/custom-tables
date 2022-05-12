@@ -4,6 +4,13 @@ defined('_JEXEC') or die('Restricted access');
 
 use \Joomla\CMS\Factory;
 
+if (!function_exists('str_contains')) {
+    function str_contains($haystack, $needle): bool
+    {
+        return $needle !== '' && mb_strpos($haystack, $needle) !== false;
+    }
+}
+
 function CTLoader($inclide_utilities = false, $include_html = false)
 {
 	$params = JComponentHelper::getParams('com_customtables');
