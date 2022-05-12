@@ -62,11 +62,13 @@ class CustomTablesModelOptions extends JModelAdmin
 				$item->metadata = $registry->toArray();
 			}
 
+            /*
 			if (!empty($item->id))
 			{
 				$item->tags = new JHelperTags;
 				$item->tags->getTagIds($item->id, 'com_customtables.options');
 			}
+            */
 		}
 
 		return $item;
@@ -217,17 +219,7 @@ class CustomTablesModelOptions extends JModelAdmin
 
 	public function save($data)//;//store($data)
 	{
-		$conf = JFactory::getConfig();
-
-		$database = $conf->get('db');
-		$dbprefix = $conf->get('dbprefix');
-
-		$jinput	= JFactory::getApplication()->input;
-		$filter	= JFilterInput::getInstance();
-
-		$db = JFactory::getDBO();
-
-		$data_extra = JFactory::getApplication()->input->get( 'jform',array(),'ARRAY');
+        $data_extra = JFactory::getApplication()->input->get( 'jform',array(),'ARRAY');
 
 		$morethanonelang=false;
 		$fields=Fields::getListOfExistingFields('#__customtables_options',false);
@@ -276,7 +268,7 @@ class CustomTablesModelOptions extends JModelAdmin
 		$input	= JFactory::getApplication()->input;
 		$cids = $input->post('cid',array(),'ARRAY');
 		
-		$row =& $this->getTable();
+		$row = $this->getTable();
 
 		if (count( $cids ))
 		{

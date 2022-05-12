@@ -676,7 +676,7 @@ class ImportTables
 
                         $nonLanguageFieldName=Fields::getLanguagelessFieldName($key);
 
-                        $filedtype=Fields::getFieldType($mysqltablename,false,$nonLanguageFieldName);
+                        $filedtype=Fields::getFieldType($mysqltablename,$nonLanguageFieldName);
 							
 						if($filedtype != '')
 						{

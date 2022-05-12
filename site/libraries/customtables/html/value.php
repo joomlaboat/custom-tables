@@ -47,8 +47,8 @@ require_once($types_path.'_type_sqljoin.php');
 
 class Value
 {
-	var $ct;
-	var $field;
+	var CT $ct;
+	var Field $field;
 	
 	function __construct(&$ct)
 	{
@@ -96,9 +96,15 @@ class Value
 				return $this->multilang($row, $option_list);
 				
     		case 'string':
+                return $this->TextFunctions($rowValue,$option_list);
+
 			case 'text':
-				return Value::TextFunctions($rowValue,$option_list);
-	
+
+                if($this->ct->Table->customtablename)
+                    return $this->blobProcess($rowValue, $option_list);
+                else
+				    return $this->TextFunctions($rowValue, $option_list);
+
 			case 'color':
 				return $this->colorProcess($rowValue,$option_list);
 
@@ -107,16 +113,16 @@ class Value
 				return CT_FieldTypeTag_file::process($rowValue, $this->field, $option_list, $row[$this->ct->Table->realidfieldname]);
 			
 			case 'image':
-				$imagesrc='';
+				$imageSRC='';
 				$imagetag='';
 
-				CT_FieldTypeTag_image::getImageSRClayoutview($option_list,$rowValue,$this->field->params,$imagesrc,$imagetag);
+				CT_FieldTypeTag_image::getImageSRClayoutview($option_list,$rowValue,$this->field->params,$imageSRC,$imagetag);
 
 				return $imagetag;
 				
 			case 'signature':
 				
-				CT_FieldTypeTag_image::getImageSRClayoutview($option_list,$rowValue,$this->field->params,$imagesrc,$imagetag);
+				CT_FieldTypeTag_image::getImageSRClayoutview($option_list,$rowValue,$this->field->params,$imageSRC,$imagetag);
 				
 				$conf = Factory::getConfig();
 				$sitename = $conf->get('config.sitename');
@@ -126,7 +132,7 @@ class Value
 				$ImageFolderWeb=str_replace(DIRECTORY_SEPARATOR,'/',$ImageFolder_);
 				$ImageFolder=str_replace('/',DIRECTORY_SEPARATOR,$ImageFolder_);
 
-				$imagesrc='';
+				$imageSRC='';
 				$imagetag='';
 				
 				$format = $this->field->params[3] ?? 'png';
@@ -141,10 +147,8 @@ class Value
 				{
 					$width = $this->field->params[0] ?? 300;
 					$height = $this->field->params[1] ?? 150;
-					
-					$imagetag='<img src="'.$imagefileweb.'" width="'.$width.'" height="'.$height.'" alt="'.$sitename.'" title="'.$sitename.'" />';
-					//$imagesrc=$imagefileweb;
-					return $imagetag;
+
+                    return '<img src="'.$imagefileweb.'" width="'.$width.'" height="'.$height.'" alt="'.$sitename.'" title="'.$sitename.'" />';
 				}
 				return null;
 				
@@ -163,7 +167,7 @@ class Value
 
 				CT_FieldTypeTag_imagegallery::getImageGallerySRC($getGalleryRows,$option_list[0],
 					$row[$this->ct->Table->realidfieldname],$this->field->fieldname,$this->field->params,$imagesrclist,$imagetaglist,$this->ct->Table->tableid);
-						
+
 				return $imagetaglist;
 
 			case 'filebox':
@@ -270,7 +274,7 @@ class Value
 		else
 			$rowValue = null;
 		
-		return Value::TextFunctions($rowValue,$option_list);
+		return $this->TextFunctions($rowValue,$option_list);
 	}
 	
 	protected function colorProcess($value, array &$option_list)
@@ -315,7 +319,7 @@ class Value
 		if(isset($option_list[1]))
         {
 			$opts=str_replace(':',',',$option_list[1]);
-			return Value::TextFunctions($article,explode(',',$opts));
+			return $this->TextFunctions($article,explode(',',$opts));
         }
 		else 
 			return $article;
@@ -466,7 +470,16 @@ class Value
 		}
 	}
 
-	public static function TextFunctions($content,$parameters)
+    protected function blobProcess($value, array &$option_list)
+    {
+        $fieldType = Fields::getFieldType($this->ct->Table->realtablename, $this->field->realfieldname);
+        if($fieldType != 'blob' and $fieldType != 'tinyblob' and $fieldType != 'mediumblob' and $fieldType != 'longblob')
+            return TextFunctions($value,$option_list);
+
+        return '[BLOB - '.JoomlaBasicMisc::formatSizeUnits(strlen($value)).']';
+    }
+
+    public function TextFunctions($content,$parameters)
 	{
         if(count($parameters)==0)
             return $content;

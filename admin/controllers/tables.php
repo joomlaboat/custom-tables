@@ -18,6 +18,7 @@ jimport('joomla.application.component.controllerform');
 /**
  * Tables Controller
  */
+
 class CustomtablesControllerTables extends JControllerForm
 {
 	/**

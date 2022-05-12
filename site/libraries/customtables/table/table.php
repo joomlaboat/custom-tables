@@ -97,6 +97,7 @@ class Table
 
         //Fields
         $this->fields = Fields::getFields($this->tableid);
+
         foreach ($this->fields as $fld) {
             switch ($fld['type']) {
                 case 'alias':

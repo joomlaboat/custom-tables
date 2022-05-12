@@ -93,12 +93,13 @@ class CustomtablesModelFields extends JModelAdmin
 				$registry->loadString($item->metadata);
 				$item->metadata = $registry->toArray();
 			}
-
+/*
 			if (!empty($item->id))
 			{
 				$item->tags = new JHelperTags;
 				$item->tags->getTagIds($item->id, 'com_customtables.fields');
 			}
+            */
 		}
 
 		return $item;

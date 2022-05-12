@@ -77,7 +77,7 @@ class CustomtablesController extends JControllerLegacy
             $values = (array)Factory::getApplication()->getUserState($context . '.id');
 
             $result = \in_array($id, $values); //To support both int and cmd IDs
-
+/*
             if (\defined('JDEBUG') && JDEBUG) {
                 Factory::getApplication()->getLogger()->info(
                     sprintf(
@@ -90,6 +90,7 @@ class CustomtablesController extends JControllerLegacy
                     array('category' => 'controller')
                 );
             }
+            */
 
             return $result;
         }

@@ -322,9 +322,19 @@ class CustomtablesViewListoftables extends JViewLegacy
 	{
 		$db = JFactory::getDBO();
 		$query='SELECT COUNT('.$realidfield.') AS count FROM '.$realtablename.' LIMIT 1';
-		
-		$db->setQuery( $query );
-        $rows=$db->loadObjectList();
+
+        try {
+            $db->setQuery( $query );
+            $rows=$db->loadObjectList();
+        }catch (Exception $e)
+        {
+            echo $e->getMessage();
+
+            $app = Factory::getApplication();
+            $app->enqueueMessage('Table "'.$realtablename.'" - ' . $e->getMessage(), 'error');
+            return 0;
+        }
+
 
 		return $rows[0]->count;
 	}

@@ -380,7 +380,7 @@ class ESTables
                 $set_values['ordering'] = $ordering;
                 $set_values['defaultvalue'] = $field->column_default != '' ? $db->quote($field->column_default) : 'NULL';
                 $set_values['description'] = $field->column_comment != '' ? $db->quote($field->column_comment) : 'NULL';
-                $set_values['customfieldname'] = $db->quote(strtolower($field->column_name));
+                $set_values['customfieldname'] = $db->quote($field->column_name);
                 $set_values['isrequired'] = 0;
 
                 $query = 'INSERT INTO #__customtables_fields (' . implode(',', $set_fieldnames) . ') VALUES (' . implode(',', $set_values) . ')';

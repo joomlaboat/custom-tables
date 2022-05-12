@@ -34,7 +34,7 @@ class CustomtablesControllerListoftables extends JControllerAdmin
 
 		return $model;
 	}
-	
+
 	public function export()
 	{
 		$cids	= JFactory::getApplication()->input->post->get('cid',array(),'array');

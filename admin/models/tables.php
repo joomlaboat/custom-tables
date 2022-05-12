@@ -94,11 +94,13 @@ class CustomtablesModelTables extends JModelAdmin
 				$item->metadata = $registry->toArray();
 			}
 
+            /*
 			if (!empty($item->id))
 			{
 				$item->tags = new JHelperTags;
 				$item->tags->getTagIds($item->id, 'com_customtables.tables');
 			}
+            */
 		}
 
 		return $item;
@@ -517,11 +519,7 @@ class CustomtablesModelTables extends JModelAdmin
 		$database = $conf->get('db');
 		$dbprefix = $conf->get('dbprefix');
 
-		$filter	= JFilterInput::getInstance();
-
-		$db = JFactory::getDBO();
-
-		$data_extra = $this->ct->Env->jinput->get( 'jform',array(),'ARRAY');
+        $data_extra = $this->ct->Env->jinput->get( 'jform',array(),'ARRAY');
 
 		$morethanonelang=false;
 		
@@ -584,7 +582,7 @@ class CustomtablesModelTables extends JModelAdmin
 				$data['tablename']=$tablename;
 			}
 		}
-		
+
 		if (parent::save($data))
 		{
 			$originaltableid=$this->ct->Env->jinput->getInt( 'originaltableid',0);
@@ -594,7 +592,7 @@ class CustomtablesModelTables extends JModelAdmin
 
 			ESTables::createTableIfNotExists($database,$dbprefix,$tablename,$tabletitle,$data['customtablename']);
 
-			//Add fields if its a third-party table and no fields added yet.
+			//Add fields if it's a third-party table and no fields added yet.
 			if($data['customtablename'] != null and $data['customtablename'] != '')
 			{
 				ESTables::addThirdPartyTableFieldsIfNeeded($database, $tablename, $data['customtablename']);

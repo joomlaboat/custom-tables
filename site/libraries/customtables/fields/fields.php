@@ -402,6 +402,7 @@ class Fields
 		
 		switch(strtolower(trim($data_type)))
 		{
+            case 'bit':
 			case 'tinyint':
 			case 'int':
 			case 'integer':
@@ -438,8 +439,11 @@ class Fields
 				}
 				$type = 'string';
 				break;
-				
-			case 'blob':
+
+            case 'tynyblob':
+            case 'blob':
+            case 'mediumblob':
+            case 'longblob':
 			case 'text':
 			case 'mediumtext':
 			case 'longtext':
@@ -1022,15 +1026,10 @@ class Fields
             return '';
     }
 
-    public static function getFieldType($tablename, bool $add_table_prefix,$realfieldname)
+    public static function getFieldType(string $realtablename, $realfieldname)
 	{
 		$db = Factory::getDBO();
 
-		if($add_table_prefix)
-			$realtablename='#__customtables_table_'.$tablename;
-		else
-			$realtablename=$tablename;
-			
 		$realtablename=str_replace('#__',$db->getPrefix(),$realtablename);
 		
 		if($db->serverType == 'postgresql')
@@ -1132,7 +1131,7 @@ class Fields
 			}
 			catch (Exception $e)
 			{
-				$msg='<p style="color:red;">Caught exception: '.$e->getMessage().'</p>';
+				$msg= '<p style="color:#ff0000;">Caught exception: ' .$e->getMessage().'</p>';
 				return false;
 			}
 		}
@@ -1230,12 +1229,14 @@ class Fields
 			$order='';
 
         if((int)$tableid_or_name>0)
-            $query = 'SELECT '.Fields::getFieldRowSelects().' FROM #__customtables_fields AS f WHERE f.published=1 AND f.tableid='.(int)$tableid_or_name.$order;
+            $where = 'f.published=1 AND f.tableid='.(int)$tableid_or_name;
         else
         {
             $w1='(SELECT t.id FROM #__customtables_tables AS t WHERE t.tablename='.$db->quote($tableid_or_name).' LIMIT 1)';
-            $query = 'SELECT '.Fields::getFieldRowSelects().' FROM #__customtables_fields AS f WHERE f.published=1 AND f.tableid='.$w1.$order;
+            $where = 'f.published=1 AND f.tableid='.$w1;
         }
+
+        $query = 'SELECT '.Fields::getFieldRowSelects().' FROM #__customtables_fields AS f WHERE '.$where.$order;
 
 		$db->setQuery( $query );
 

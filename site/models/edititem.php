@@ -114,7 +114,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 			}
 		}
 		else
-			$this->ct->Env->Itemid = $this->ct->Env->jinput->getInt('Itemid');
+			$this->ct->Env->Itemid = $this->ct->Env->jinput->getInt('Itemid', 0);
 
 		$this->BlockExternalVars=$BlockExternalVars;
 
