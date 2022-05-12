@@ -18,13 +18,12 @@ defined('_JEXEC') or die('Restricted access');
 class Catalog
 {
     var CT $ct;
-    var $menuParams;
     var $moduleId;
 
     function __construct(CT &$ct, $menuParams, $moduleId = null)
     {
         $this->ct = &$ct;
-        $this->menuParams = $menuParams;
+        $this->ct->Env->menu_params = $menuParams;
         $this->moduleId = $moduleId;
     }
 
@@ -48,7 +47,7 @@ class Catalog
         }
 
 // --------------------- ItemId
-        $forceItemId=$this->menuParams->get('forceitemid');
+        $forceItemId=$this->ct->Env->menu_params->get('forceitemid');
         if(isset($forceItemId) and $forceItemId!='')
         {
             //Find Itemid by alias
@@ -67,7 +66,7 @@ class Catalog
 
 // -------------------- Table
 
-        $this->ct->getTable($this->menuParams->get( 'establename' ));
+        $this->ct->getTable($this->ct->Env->menu_params->get( 'establename' ));
 
         if($this->ct->Table->tablename=='')
         {
@@ -80,7 +79,7 @@ class Catalog
         $this->ct->Filter->addMenuParamFilter();
 
 // --------------------- Sorting
-        $this->ct->Ordering->parseOrderByParam(true,$this->menuParams,$this->ct->Env->Itemid);
+        $this->ct->Ordering->parseOrderByParam(true,$this->ct->Env->menu_params,$this->ct->Env->Itemid);
 
 // --------------------- Limit
         $this->ct->applyLimits();
@@ -90,17 +89,17 @@ class Catalog
         $Layouts = new Layouts($this->ct);
         $Layouts->layouttype = 0;
 
-        if($this->menuParams->get( 'ct_pagelayout' )!=null)
+        if($this->ct->Env->menu_params->get( 'ct_pagelayout' )!=null)
         {
-            $pagelayout=$Layouts->getLayout($this->menuParams->get( 'ct_pagelayout' ));
+            $pagelayout=$Layouts->getLayout($this->ct->Env->menu_params->get( 'ct_pagelayout' ));
             if($pagelayout=='')
                 $pagelayout='{catalog:,notable}';
         }
         else
             $pagelayout='{catalog:,notable}';
 
-        if($this->menuParams->get( 'ct_itemlayout' )!=null)
-            $itemLayout=$Layouts->getLayout($this->menuParams->get( 'ct_itemlayout' ));
+        if($this->ct->Env->menu_params->get( 'ct_itemlayout' )!=null)
+            $itemLayout=$Layouts->getLayout($this->ct->Env->menu_params->get( 'ct_itemlayout' ));
         else
             $itemLayout='';
 
@@ -125,7 +124,7 @@ class Catalog
         $twig = new TwigProcessor($this->ct, $pagelayout);
         $pagelayout = $twig->process();
 
-        if($this->menuParams->get( 'allowcontentplugins' )==1)
+        if($this->ct->Env->menu_params->get( 'allowcontentplugins' )==1)
             JoomlaBasicMisc::applyContentPlugins($pagelayout);
 
         return $pagelayout;

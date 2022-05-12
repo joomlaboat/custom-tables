@@ -85,11 +85,8 @@ class Filtering
 	{
 		if($param == '')
 			return;
-			
-		$db = Factory::getDBO();
-		$numerical_fields=['int','float','checkbox','viewcount','userid','user','id','sqljoin','article','multilangarticle'];
 
-		$wheres=[];
+        $wheres=[];
 				
 		$items=$this->ExplodeSmartParams($param);
 				
@@ -104,9 +101,7 @@ class Filtering
 			
 			if($logic_operator=='or' or $logic_operator=='and')
 			{
-				$opr='';
-
-				if(!(strpos($comparison_operator_str,'<=')===false))
+                if(!(strpos($comparison_operator_str,'<=')===false))
 					$comparison_operator='<=';
 				elseif(!(strpos($comparison_operator_str,'>=')===false))
 					$comparison_operator='>=';
