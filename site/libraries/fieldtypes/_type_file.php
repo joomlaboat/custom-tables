@@ -143,8 +143,6 @@ class CT_FieldTypeTag_file
         //make the key
         $key = CT_FieldTypeTag_file::makeTheKey($filepath, $security, $recid, $fieldid, $tableid);
 
-        $jinput = JFactory::getApplication()->input;
-
         $currentURL = JoomlaBasicMisc::curPageURL();
         $currentURL = JoomlaBasicMisc::deleteURLQueryOption($currentURL, 'returnto');
 
@@ -153,7 +151,7 @@ class CT_FieldTypeTag_file
         $filetype = $fna[count($fna) - 1];
         array_splice($fna, count($fna) - 1);
         $filename = implode('.', $fna);
-        $filepath = $filename . '_' . $key . '.' . $filetype;//'/index.php?option=com_customtables&view=files&file='.$rowValue.'&Itemid='.$Itemid.'&key='.$key;
+        $filepath = $filename . '_' . $key . '.' . $filetype;
 
         if (!$filename_only) {
             if (str_contains($currentURL, '?')) {
@@ -412,10 +410,10 @@ class CT_FieldTypeTag_file
                 	<script>
                         UploadFileCount=1;
 
-                    	let urlstr="' . JURI::root(true) . '/index.php?option=com_customtables&view=fileuploader&tmpl=component&' . $field->fieldname
+                    	let urlstr' . $field->id .' ="' . JURI::root(true) . '/index.php?option=com_customtables&view=fileuploader&tmpl=component&' . $field->fieldname
             . '_fileid=' . $file_id . '&Itemid=' . $field->ct->Env->Itemid . '&fieldname=' . $field->fieldname . '";
                     	
-						ct_getUploader(' . $field->id . ',urlstr,' . $max_file_size . ',"' . $accepted_file_types . '","eseditForm",false,"ct_fileuploader_' . $field->fieldname . '","ct_eventsmessage_'
+						ct_getUploader(' . $field->id . ',urlstr' . $field->id .',' . $max_file_size . ',"' . $accepted_file_types . '","eseditForm",false,"ct_fileuploader_' . $field->fieldname . '","ct_eventsmessage_'
             . $field->fieldname . '","' . $file_id . '","' . $field->prefix . $field->fieldname . '","ct_ubloadedfile_box_' . $field->fieldname . '")
 
                     </script>
