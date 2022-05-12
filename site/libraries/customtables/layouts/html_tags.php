@@ -64,6 +64,9 @@ class Twig_Html_Tags
 	{
 		if($this->ct->Env->print==1 or ($this->ct->Env->frmt!='html' and $this->ct->Env->frmt!=''))
 			return '';
+
+        if($this->ct->Env->isPlugin)
+            return '';
 		
 		$usergroups = $this->ct->Env->user->get('groups');
 		
@@ -109,6 +112,9 @@ class Twig_Html_Tags
 	{
 		if($this->ct->Env->print==1 or ($this->ct->Env->frmt!='html' and $this->ct->Env->frmt!=''))
 			return '';
+
+        if($this->ct->Env->isPlugin or (!is_null($this->ct->Env->moduleId) and $this->ct->Env->moduleId != 0))
+            return '';
 		
 		if(isset($this->ct->Env->menu_params))
             $add_userGroup=(int)$this->ct->Env->menu_params->get( 'addusergroups' );
@@ -158,6 +164,9 @@ class Twig_Html_Tags
 	{
 		if($this->ct->Env->print==1 or ($this->ct->Env->frmt!='html' and $this->ct->Env->frmt!=''))
 			return '';
+
+        if($this->ct->Env->isPlugin or (!is_null($this->ct->Env->moduleId) and $this->ct->Env->moduleId != 0))
+            return '';
 		
 		if($this->ct->Table->recordcount <= $this->ct->Limit)
 			return '';
@@ -175,6 +184,9 @@ class Twig_Html_Tags
 	{
 		if($this->ct->Env->print==1 or ($this->ct->Env->frmt!='html' and $this->ct->Env->frmt!=''))
 			return '';
+
+        if($this->ct->Env->isPlugin or (!is_null($this->ct->Env->moduleId) and $this->ct->Env->moduleId != 0))
+            return '';
 		
 		$pagination = new JESPagination($this->ct->Table->recordcount, $this->ct->LimitStart, $this->ct->Limit);
 		$vlu = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SHOW' ).': '.$pagination->getLimitBox($the_step);
@@ -189,6 +201,9 @@ class Twig_Html_Tags
 	{
 		if($this->ct->Env->print==1 or ($this->ct->Env->frmt!='html' and $this->ct->Env->frmt!=''))
 			return '';
+
+        if($this->ct->Env->isPlugin or (!is_null($this->ct->Env->moduleId) and $this->ct->Env->moduleId != 0))
+            return '';
 		
 		$vlu = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ORDER_BY' ).': '.OrderingHTML::getOrderBox($this->ct->Ordering);
 		
@@ -202,6 +217,9 @@ class Twig_Html_Tags
 	{
 		if($this->ct->Env->print==1 or ($this->ct->Env->frmt!='html' and $this->ct->Env->frmt!=''))
 			return '';
+
+        if($this->ct->Env->isPlugin or (!is_null($this->ct->Env->moduleId) and $this->ct->Env->moduleId != 0))
+            return '';
 				
 		if($returnto == '')
 			$returnto = base64_decode($this->ct->Env->jinput->get('returnto','','BASE64'));
@@ -236,6 +254,9 @@ class Twig_Html_Tags
 	{
 		if($this->ct->Env->print==1 or ($this->ct->Env->frmt!='html' and $this->ct->Env->frmt!=''))
 			return '';
+
+        if($this->ct->Env->isPlugin)
+            return '';
 		
 		$buttons = func_get_args();
 		if(count($buttons) == 1)
@@ -301,6 +322,9 @@ class Twig_Html_Tags
 	{
 		if($this->ct->Env->print==1 or ($this->ct->Env->frmt!='html' and $this->ct->Env->frmt!=''))
 			return '';
+
+        if($this->ct->Env->isPlugin or (!is_null($this->ct->Env->moduleId) and $this->ct->Env->moduleId != 0))
+            return '';
 		
 		$link=$this->ct->Env->current_url.(strpos($this->ct->Env->current_url,'?')===false ? '?' : '&').'tmpl=component&amp;print=1';
 
@@ -342,6 +366,9 @@ class Twig_Html_Tags
 	{
 		if($this->ct->Env->print==1 or ($this->ct->Env->frmt!='html' and $this->ct->Env->frmt!=''))
 			return '';
+
+        if($this->ct->Env->isPlugin or (!is_null($this->ct->Env->moduleId) and $this->ct->Env->moduleId != 0))
+            return '';
 
 		if(is_array($list_of_fields_string_or_array))
 			$list_of_fields_string_array = $list_of_fields_string_or_array;
@@ -467,6 +494,9 @@ class Twig_Html_Tags
 	{
 		if($this->ct->Env->print==1 or ($this->ct->Env->frmt!='html' and $this->ct->Env->frmt!=''))
 			return '';
+
+        if($this->ct->Env->isPlugin or (!is_null($this->ct->Env->moduleId) and $this->ct->Env->moduleId != 0))
+            return '';
 		
 		$class = 'ctSearchBox';
 		
@@ -488,6 +518,9 @@ class Twig_Html_Tags
 	{
 		if($this->ct->Env->print==1 or ($this->ct->Env->frmt!='html' and $this->ct->Env->frmt!=''))
 			return '';
+
+        if($this->ct->Env->isPlugin or (!is_null($this->ct->Env->moduleId) and $this->ct->Env->moduleId != 0))
+            return '';
 	
 		$this->ct->app->enqueueMessage($text, $type);
 		
@@ -517,6 +550,9 @@ class Twig_Html_Tags
 	{
 		if($this->ct->Env->print==1 or ($this->ct->Env->frmt!='html' and $this->ct->Env->frmt!=''))
 			return '';
+
+        if($this->ct->Env->isPlugin or (!is_null($this->ct->Env->moduleId) and $this->ct->Env->moduleId != 0))
+            return '';
 				
 		JHtml::_('behavior.keepalive');
 			
@@ -569,6 +605,9 @@ class Twig_Html_Tags
 	{
 		if($this->ct->Env->frmt != '' and $this->ct->Env->frmt !='html')
 			return '';
+
+        if($this->ct->Env->isPlugin or (!is_null($this->ct->Env->moduleId) and $this->ct->Env->moduleId != 0))
+            return '';
 		
 		if($redirectlink == null and $this->ct->Env->menu_params != null)
 			$redirectlink = $this->ct->Env->menu_params->get( 'returnto' );
@@ -644,6 +683,9 @@ class Twig_Html_Tags
 	{
 		if($this->ct->Env->print==1 or ($this->ct->Env->frmt!='html' and $this->ct->Env->frmt!=''))
 			return '';
+
+        if($this->ct->Env->isPlugin)
+            return '';
 		
 		$modes = func_get_args();
 			

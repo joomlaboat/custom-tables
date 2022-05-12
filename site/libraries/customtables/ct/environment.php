@@ -47,6 +47,8 @@ class Environment
     var bool $loadTwig;
     var string $toolbaricons;
     var bool $legacysupport;
+    var ?int $moduleId; //this can be set by calling the class from the module
+    var bool $isPlugin; //this can be set by calling the class from the plugin
 
     function __construct()
     {
@@ -121,6 +123,9 @@ class Environment
         $this->loadTwig = $params->get('loadTwig') == '1';
         $this->toolbaricons = strval($params->get('toolbaricons'));
         $this->legacysupport = $params->get('legacysupport') == '';
+
+        $this->moduleId = null;
+        $this->isPlugin = false;
     }
 
     /* USER-AGENTS ================================================== */
