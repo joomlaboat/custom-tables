@@ -51,6 +51,9 @@ class CT
 		$this->GroupBy = '';
 		$this->isEditForm = false;
         $this->LayoutVariables = [];
+
+        $this->Limit = 0;
+        $this->LimitStart = 0;
 	}
 
 	function getTable($tablename_or_id, $useridfieldname = null): void
@@ -159,7 +162,7 @@ class CT
 
 		if($this->Table->recordcount > 0)
 		{
-			$the_limit= $this->Limit;
+			$the_limit = $this->Limit;
 			
 			if($all)
 			{

@@ -1,49 +1,53 @@
 <?php
 /**
  * CustomTables Joomla! 3.x Native Component
- * @author Ivan komlev <support@joomlaboat.com>
+ * @package Custom Tables
+ * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @license GNU/GPL
+ * @copyright (C) 2018-2022 Ivan Komlev
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-use CustomTables\DataTypes\Tree;
 use CustomTables\Field;
 
 require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'uploader.php');
 
 class CT_FieldTypeTag_file
 {
-    public static function process($filename, &$field, $option_list, $recid, $filename_only = false)
+    public static function process($filename, CustomTables\Field $field, $option_list, $record_id, $filename_only = false)
     {
         if ($filename == '')
             return '';
 
-        $FileFolder = CT_FieldTypeTag_file::getFileFolder($field->params);
+        if ($field->type == 'filelink')
+            $FileFolder = CT_FieldTypeTag_file::getFileFolder($field->params[0]);
+        else
+            $FileFolder = CT_FieldTypeTag_file::getFileFolder($field->params[1]);
 
         $filepath = $FileFolder . '/' . $filename;
 
         if (!isset($option_list[2]))
-            $iconsize = '32';
+            $icon_size = '32';
         else
-            $iconsize = $option_list[2];
+            $icon_size = $option_list[2];
 
-        if ($iconsize != "16" and $iconsize != "32" and $iconsize != "48")
-            $iconsize = '32';
+        if ($icon_size != "16" and $icon_size != "32" and $icon_size != "48")
+            $icon_size = '32';
 
         $parts = explode('.', $filename);
-        $fileextension = end($parts);
-        $icon = '/components/com_customtables/libraries/customtables/media/images/fileformats/' . $iconsize . 'px/' . $fileextension . '.png';
-        $icanFilePath = JPATH_SITE . $icon;
-        if (!file_exists($icanFilePath))
+        $fileExtension = end($parts);
+        $icon = '/components/com_customtables/libraries/customtables/media/images/fileformats/' . $icon_size . 'px/' . $fileExtension . '.png';
+        $icon_File_Path = JPATH_SITE . $icon;
+        if (!file_exists($icon_File_Path))
             $icon = '';
 
         $how_to_process = $option_list[0];
 
         if ($how_to_process != '')
-            $filepath = CT_FieldTypeTag_file::get_private_file_path($filename, $how_to_process, $filepath, $recid, $field->id, $field->ct->Table->tableid, $filename_only);
+            $filepath = CT_FieldTypeTag_file::get_private_file_path($filename, $how_to_process, $filepath, $record_id, $field->id, $field->ct->Table->tableid, $filename_only);
 
 
         $target = '';
@@ -51,7 +55,7 @@ class CT_FieldTypeTag_file
             if ($option_list[3] == '_blank')
                 $target = ' target="_blank"';
             if ($option_list[3] == 'savefile') {
-                if (strpos($filepath, '?') === false)
+                if (!str_contains($filepath, '?'))
                     $filepath .= '?';
                 else
                     $filepath .= '&';
@@ -65,102 +69,74 @@ class CT_FieldTypeTag_file
             $output_format = $option_list[1];
 
         switch ($output_format) {
-            case '':
-                //Link Only
-                return $filepath;
-                break;
 
+            case '':
             case 'link':
                 //Link Only
                 return $filepath;
-                break;
 
             case 'icon-filename-link':
                 //Clickable Icon and File Name
-                return '<a href="' . $filepath . '"' . $target . '>' . ($icon != '' ? '<img src="' . $icon . '" alt="' . $filename . '" title="' . $filename . '" />' : '') . '<span>' . $filename . '</span></a>';
-                break;
+                return '<a href="' . $filepath . '"' . $target . '>'
+                    . ($icon != '' ? '<img src="' . $icon . '" alt="' . $filename . '" title="' . $filename . '" />' : '')
+                    . '<span>' . $filename . '</span></a>';
 
             case 'icon-link':
                 //Clickable Icon
                 return '<a href="' . $filepath . '"' . $target . '>' . ($icon != '' ? '<img src="' . $icon . '" alt="' . $filename . '" title="' . $filename . '" />' : $filename) . '</a>';//show file name if icon not available
 
-                break;
-
             case 'filename-link':
                 //Clickable File Name
                 return '<a href="' . $filepath . '"' . $target . '>' . $filename . '</a>';
-                break;
 
             case 'link-anchor':
                 //Clickable Link
                 return '<a href="' . $filepath . '"' . $target . '>' . $filepath . '</a>';
-                break;
 
             case 'icon':
-                //Icon
                 return ($icon != '' ? '<img src="' . $icon . '" alt="' . $filename . '" title="' . $filename . '" />' : '');//show nothing is icon not available
-                break;
 
             case 'link-to-icon':
-                //Link to Icon
-
                 return $icon;//show nothing if icon not available
-
-                break;
 
             case 'filename':
                 return $filename;
-                //File Name
-                break;
 
             case 'extension':
-                return $fileextension;
-                //Extension
-                break;
+                return $fileExtension;
 
             default:
                 return $filepath;
-
-                break;
         }
     }
 
-    static protected function get_security_letter($how_to_process)
+    static protected function get_security_letter($how_to_process): string
     {
         switch ($how_to_process) {
             case 'timelimited':
                 return 'd';
-                break;
 
             case 'timelimited_longterm':
                 return 'e';
-                break;
 
             case 'hostlimited':
                 return 'f';
-                break;
 
             case 'hostlimited_longterm':
                 return 'g';
-                break;
 
             case 'private':
                 return 'h';
-                break;
 
             case 'private_longterm':
                 return 'i';
-                break;
 
             default:
                 return '';
-                break;
         }
-
-        return '';
     }
 
-    static protected function get_private_file_path($rowValue, $how_to_process, $filepath, $recid, $fieldid, $tableid, $filename_only = false)
+    static protected function get_private_file_path($rowValue, $how_to_process, $filepath, $recid, $fieldid, $tableid, $filename_only = false): string
     {
         $security = CT_FieldTypeTag_file::get_security_letter($how_to_process);
 
@@ -168,10 +144,9 @@ class CT_FieldTypeTag_file
         $key = CT_FieldTypeTag_file::makeTheKey($filepath, $security, $recid, $fieldid, $tableid);
 
         $jinput = JFactory::getApplication()->input;
-        $Itemid = $jinput->getInt('Itemid', 0);
 
-        $currenturl = JoomlaBasicMisc::curPageURL();
-        $currenturl = JoomlaBasicMisc::deleteURLQueryOption($currenturl, 'returnto');
+        $currentURL = JoomlaBasicMisc::curPageURL();
+        $currentURL = JoomlaBasicMisc::deleteURLQueryOption($currentURL, 'returnto');
 
         //prepare new file name that includes the key
         $fna = explode('.', $rowValue);
@@ -181,13 +156,13 @@ class CT_FieldTypeTag_file
         $filepath = $filename . '_' . $key . '.' . $filetype;//'/index.php?option=com_customtables&view=files&file='.$rowValue.'&Itemid='.$Itemid.'&key='.$key;
 
         if (!$filename_only) {
-            if (strpos($currenturl, '?') !== false) {
-                $filepath = $currenturl . '&file=' . $filepath;
+            if (str_contains($currentURL, '?')) {
+                $filepath = $currentURL . '&file=' . $filepath;
             } else {
-                if ($currenturl[strlen($currenturl) - 1] != '/')
-                    $filepath = $currenturl . '/' . $filepath;
+                if ($currentURL[strlen($currentURL) - 1] != '/')
+                    $filepath = $currentURL . '/' . $filepath;
                 else
-                    $filepath = $currenturl . $filepath;
+                    $filepath = $currentURL . $filepath;
             }
         }
 
@@ -196,15 +171,15 @@ class CT_FieldTypeTag_file
 
     static public function get_file_type_value(CustomTables\Field &$field, $listing_id)
     {
-        $db = JFactory::getDBO();
-
         $jinput = JFactory::getApplication()->input;
 
-        $FileFolder = CT_FieldTypeTag_file::getFileFolder($field->params);
+        if ($field->type == 'filelink')
+            $FileFolder = CT_FieldTypeTag_file::getFileFolder($field->params[0]);
+        else
+            $FileFolder = CT_FieldTypeTag_file::getFileFolder($field->params[1]);
 
-        $fileid = $jinput->post->get($field->comesfieldname, '', 'STRING');
+        $file_id = $jinput->post->get($field->comesfieldname, '', 'STRING');
 
-        $value = null;
         $value_found = false;
 
         $filepath = str_replace('/', DIRECTORY_SEPARATOR, $FileFolder);
@@ -214,9 +189,7 @@ class CT_FieldTypeTag_file
             $filepath = JPATH_SITE . DIRECTORY_SEPARATOR . $filepath;
 
         if ($listing_id == 0) {
-            $value = CT_FieldTypeTag_file::UploadSingleFile('', $fileid, $field, JPATH_SITE . $FileFolder);
-            if ($value)
-                $value_found = true;
+            $value = CT_FieldTypeTag_file::UploadSingleFile('', $file_id, $field, JPATH_SITE . $FileFolder);
         } else {
             $to_delete = $jinput->post->get($field->comesfieldname . '_delete', '', 'CMD');
 
@@ -233,10 +206,10 @@ class CT_FieldTypeTag_file
                 $value_found = true;
             }
 
-            $value = CT_FieldTypeTag_file::UploadSingleFile($ExistingFile, $fileid, $field, JPATH_SITE . $FileFolder);
-            if ($value)
-                $value_found = true;
+            $value = CT_FieldTypeTag_file::UploadSingleFile($ExistingFile, $file_id, $field, JPATH_SITE . $FileFolder);
         }
+        if ($value)
+            $value_found = true;
 
         if ($value_found)
             return $value;
@@ -244,12 +217,9 @@ class CT_FieldTypeTag_file
         return null;
     }
 
-    protected static function UploadSingleFile($ExistingFile, $file_id, &$field, $FileFolder)//,$realtablename='-options')
+    protected static function UploadSingleFile($ExistingFile, $file_id, $field, $FileFolder)//,$realtablename='-options')
     {
-        if (isset($field->params[2]))
-            $fileextensions = $field->params[2];
-        else
-            $fileextensions = '';
+        $fileextensions = $field->params[2] ?? '';
 
         if ($file_id != '') {
             $accepted_file_types = explode(' ', ESFileUploader::getAcceptedFileTypes($fileextensions));
@@ -273,6 +243,9 @@ class CT_FieldTypeTag_file
             $is_base64encoded = JFactory::getApplication()->input->get('base64encoded', '', 'CMD');
             if ($is_base64encoded == "true") {
                 $src = $uploadedfile;
+
+                $jinput = JFactory::getApplication()->input;
+                $file = $jinput->post->get($field->comesfieldname, '', 'STRING');
                 $dst = JPATH_SITE . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR . 'decoded_' . basename($file['name']);
                 CustomTablesFileMethods::base64file_decode($src, $dst);
                 $uploadedfile = $dst;
@@ -322,7 +295,7 @@ class CT_FieldTypeTag_file
         return false;
     }
 
-    static protected function checkIfTheFileBelongsToAnotherRecord(string $filename, CustomTables\Field &$field): bool
+    static protected function checkIfTheFileBelongsToAnotherRecord(string $filename, CustomTables\Field $field): bool
     {
         $db = JFactory::getDBO();
         $query = 'SELECT * FROM ' . $field->ct->Table->realtablename . ' WHERE ' . $field->realfieldname . '=' . $db->quote($filename) . ' LIMIT 2';
@@ -370,8 +343,9 @@ class CT_FieldTypeTag_file
     {
         $field = new Field($ct, $fieldrow);
 
-        if (count($row) > 0 and $row[$ct->Table->realidfieldname] != '' and (is_numeric($row[$ct->Table->realidfieldname]) and $row[$ct->Table->realidfieldname] != 0))
-            $file = $row[$field->realfieldname];
+        if (count($row) > 0 and $row[$ct->Table->realidfieldname] != '' and (is_numeric($row[$ct->Table->realidfieldname]) and $row[$ct->Table->realidfieldname] != 0)) {
+            $file = strval($row[$field->realfieldname]);
+        }
         else
             $file = '';
 
@@ -389,20 +363,22 @@ class CT_FieldTypeTag_file
         if ($file == '')
             return '';
 
-        $FileFolder = CT_FieldTypeTag_file::getFileFolder($field->params);
+        if ($field->type == 'filelink')
+            $FileFolder = CT_FieldTypeTag_file::getFileFolder($field->params[0]);
+        else
+            $FileFolder = CT_FieldTypeTag_file::getFileFolder($field->params[1]);
 
         $link = $FileFolder . '/' . $file;
 
         $parts = explode('.', $file);
-        $fileextension = end($parts);
+        $file_extension = end($parts);
 
-        $imagesrc = JURI::root(true) . '/components/com_customtables/libraries/customtables/media/images/fileformats/48px/' . $fileextension . '.png';
+        $image_src = JURI::root(true) . '/components/com_customtables/libraries/customtables/media/images/fileformats/48px/' . $file_extension . '.png';
 
-        $prefix = 'comes_';
         $result = '
                 <div style="margin:10px; border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;vertical-align:top;" id="ct_uploadedfile_box_' . $field->fieldname . '">';
 
-        $result .= '<a href="' . $link . '" target="_blank" alt="' . $file . '" title="' . $file . '"><img src="' . $imagesrc . '" width="48" /></a><br/>';
+        $result .= '<a href="' . $link . '" target="_blank" title="' . $file . '"><img src="' . $image_src . '" width="48" alt="' . $file . '" /></a><br/>';
 
         if (!$field->isrequired)
             $result .= '<input type="checkbox" name="' . $field->prefix . $field->fieldname . '_delete" id="' . $field->prefix . $field->fieldname . '_delete" value="true">'
@@ -416,9 +392,9 @@ class CT_FieldTypeTag_file
 
     protected static function renderUploader(&$field): string
     {
-        $fileextensions = $field->params[2] ?? '';
+        $file_extensions = $field->params[2] ?? '';
 
-        $accepted_file_types = ESFileUploader::getAcceptedFileTypes($fileextensions);
+        $accepted_file_types = ESFileUploader::getAcceptedFileTypes($file_extensions);
 
         $custom_max_size = (int)$field->params[0];
         if ($custom_max_size != 0 and $custom_max_size < 10000)
@@ -426,9 +402,9 @@ class CT_FieldTypeTag_file
 
         $max_file_size = JoomlaBasicMisc::file_upload_max_size($custom_max_size);
 
-        $fileid = JoomlaBasicMisc::generateRandomString();
+        $file_id = JoomlaBasicMisc::generateRandomString();
 
-        $result = '
+        return '
                 <div style="margin:10px; border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;vertical-align:top;">
                 
                 	<div id="ct_fileuploader_' . $field->fieldname . '"></div>
@@ -436,11 +412,11 @@ class CT_FieldTypeTag_file
                 	<script>
                         UploadFileCount=1;
 
-                    	var urlstr="' . JURI::root(true) . '/index.php?option=com_customtables&view=fileuploader&tmpl=component&' . $field->fieldname
-            . '_fileid=' . $fileid . '&Itemid=' . $field->ct->Env->Itemid . '&fieldname=' . $field->fieldname . '";
+                    	let urlstr="' . JURI::root(true) . '/index.php?option=com_customtables&view=fileuploader&tmpl=component&' . $field->fieldname
+            . '_fileid=' . $file_id . '&Itemid=' . $field->ct->Env->Itemid . '&fieldname=' . $field->fieldname . '";
                     	
 						ct_getUploader(' . $field->id . ',urlstr,' . $max_file_size . ',"' . $accepted_file_types . '","eseditForm",false,"ct_fileuploader_' . $field->fieldname . '","ct_eventsmessage_'
-            . $field->fieldname . '","' . $fileid . '","' . $field->prefix . $field->fieldname . '","ct_ubloadedfile_box_' . $field->fieldname . '");
+            . $field->fieldname . '","' . $file_id . '","' . $field->prefix . $field->fieldname . '","ct_ubloadedfile_box_' . $field->fieldname . '")
 
                     </script>
                     <input type="hidden" name="' . $field->prefix . $field->fieldname . '" id="' . $field->prefix . $field->fieldname . '" value="" />
@@ -448,21 +424,13 @@ class CT_FieldTypeTag_file
 					' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PERMITED_MAX_FILE_SIZE') . ': ' . JoomlaBasicMisc::formatSizeUnits($max_file_size) . '
                 </div>
                 ';
-
-        return $result;
     }
 
-    public static function getFileFolder(&$params): string
+    public static function getFileFolder(string $folder): string
     {
-        $folder = '';
-
-        if (isset($params[1]))
-            $folder = $params[1];
-
         if ($folder == '')
             $folder = '/images';    //default folder
         elseif ($folder[0] == '/') {
-            //absolute path
 
             //delete trailing slash if found
             $p = substr($folder, strlen($folder) - 1, 1);
@@ -500,7 +468,7 @@ class CT_FieldTypeTag_file
         return false;
     }
 
-    public static function process_file_link($filename)
+    public static function process_file_link($filename): void
     {
 
         $jinput = JFactory::getApplication()->input;
@@ -508,8 +476,6 @@ class CT_FieldTypeTag_file
 
         if (count($parts) == 1)
             CT_FieldTypeTag_file::wrong();
-
-        $filetype = $parts[count($parts) - 1];
 
         array_splice($parts, count($parts) - 1);
         $filename_without_ext = implode('.', $parts);
@@ -530,11 +496,11 @@ class CT_FieldTypeTag_file
         //security letters tells what method used
         $security = 'd';//Time Limited (8-24 minutes)
 
-        if (strpos($key_params, 'e') !== false) $security = 'e';//Time Limited (1.5 - 4 hours)
-        elseif (strpos($key_params, 'f') !== false) $security = 'f';//Time/Host Limited (8-24 minutes)
-        elseif (strpos($key_params, 'g') !== false) $security = 'g';//Time/Host Limited (1.5 - 4 hours)
-        elseif (strpos($key_params, 'h') !== false) $security = 'h';//Time/Host/User Limited (8-24 minutes)
-        elseif (strpos($key_params, 'i') !== false) $security = 'i';//Time/Host/User Limited (1.5 - 4 hours)
+        if (str_contains($key_params, 'e')) $security = 'e';//Time Limited (1.5 - 4 hours)
+        elseif (str_contains($key_params, 'f')) $security = 'f';//Time/Host Limited (8-24 minutes)
+        elseif (str_contains($key_params, 'g')) $security = 'g';//Time/Host Limited (1.5 - 4 hours)
+        elseif (str_contains($key_params, 'h')) $security = 'h';//Time/Host/User Limited (8-24 minutes)
+        elseif (str_contains($key_params, 'i')) $security = 'i';//Time/Host/User Limited (1.5 - 4 hours)
 
         $jinput->set('security', $security);
 
@@ -560,7 +526,8 @@ class CT_FieldTypeTag_file
     {
         $user = JFactory::getUser();
         $username = $user->get('username');
-        $currentuserid = (int)$user->get('id');
+        $current_user_id = (int)$user->get('id');
+
         $t = time();
         //prepare augmented timer
         $secs = 1000;
@@ -574,13 +541,15 @@ class CT_FieldTypeTag_file
         $sep = $security;//($secs==1000 ? 'a' : 'b');
         $m2 = 'c' . $rec_id . $sep . $fieldid . $sep . $tableid;
 
+        $m = '';
+
         //calculate MD5
         if ($security == 'd' or $security == 'e')
             $m = md5($filepath . $tplus);
         elseif ($security == 'f' or $security == 'g')
             $m = md5($filepath . $tplus . $ip);
         elseif ($security == 'h' or $security == 'i')
-            $m = md5($filepath . $tplus . $ip . $username . $currentuserid);
+            $m = md5($filepath . $tplus . $ip . $username . $current_user_id);
 
         //replace rear part of the hash
         $m3 = substr($m, 0, strlen($m) - strlen($m2));

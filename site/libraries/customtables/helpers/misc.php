@@ -1,9 +1,11 @@
 <?php
 /**
  * CustomTables Joomla! 3.x Native Component
- * @author Ivan komlev <support@joomlaboat.com>
+ * @package Custom Tables
+ * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @license GNU/GPL
+ * @copyright (C) 2018-2022 Ivan Komlev
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
 // no direct access
@@ -733,5 +735,18 @@ class JoomlaBasicMisc
         }
 
         return $htmlresult;
+    }
+
+    public static function suggest_TempFileName()
+    {
+        $output_dir = DIRECTORY_SEPARATOR . trim(sys_get_temp_dir(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+        $random_name=JoomlaBasicMisc::generateRandomString(32);
+
+        while(1)
+        {
+            $file=$output_dir.$random_name;
+            if(!file_exists($file))
+                return $file;
+        }
     }
 }

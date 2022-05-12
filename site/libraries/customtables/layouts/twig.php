@@ -4,7 +4,7 @@
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @copyright Copyright (C) 2018-2022. All Rights Reserved
+ * @copyright (C) 2018-2022 Ivan Komlev
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
@@ -13,14 +13,15 @@ namespace CustomTables;
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-use \LayoutProcessor;
-use \JoomlaBasicMisc;
-use \Joomla\CMS\Factory;
-use \CustomTables\Twig_Field_Tags;
-use \CustomTables\Forms;
+use Exception;
+use JoomlaBasicMisc;
+use CT_FieldTypeTag_sqljoin;
+use CT_FieldTypeTag_records;
+use Twig\Loader\ArrayLoader;
+use Twig\Markup;
+use Twig\TwigFunction;
 
-use \CT_FieldTypeTag_sqljoin;
-use \CT_FieldTypeTag_records;
+use CT_FieldTypeTag_image;
 
 $types_path=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fieldtypes'.DIRECTORY_SEPARATOR;
 require_once($types_path.'_type_image.php');
@@ -48,10 +49,10 @@ class TwigProcessor
 			$tag2 = '{% endblock %}';
 			
 			$pos2 = strpos($htmlresult_,$tag2,$pos1 + strlen($tag1));
-			if($pos1 === false)
+			if($pos2 === false)
 			{
-				Factory::getApplication()->enqueueMessage('{% endblock %} is missing', 'error');
-				return '';
+				$this->ct->app->enqueueMessage('{% endblock %} is missing', 'error');
+				return;
 			}
 			
 			$tag1_length = strlen($tag1);
@@ -62,7 +63,7 @@ class TwigProcessor
 			
 			$htmlresult = str_replace($record_block_replace,$this->recordBlockreplaceCode,$htmlresult_);
 						
-			$loader = new \Twig\Loader\ArrayLoader([
+			$loader = new ArrayLoader([
 				'index' => '{% autoescape false %}'.$htmlresult.'{% endautoescape %}',
 				'record' => '{% autoescape false %}'.$record_block.'{% endautoescape %}',
 			]);
@@ -70,7 +71,7 @@ class TwigProcessor
 		else
 		{
 			$this->recordBlockFound = false;
-			$loader = new \Twig\Loader\ArrayLoader([
+			$loader = new ArrayLoader([
 				'index' => $htmlresult_,
 			]);
 		}
@@ -175,7 +176,7 @@ class TwigProcessor
 			'id'=>$this->ct->Table->tableid,
 			'name' => $this->ct->Table->tablename,
 			'title' => $this->ct->Table->tabletitle,
-			'description'=> new \Twig\Markup($description, 'UTF-8' ),
+			'description'=> new Markup($description, 'UTF-8' ),
 			'records'=>$this->ct->Table->recordcount,
 			'fields'=>count($this->ct->Table->fields)
 			];
@@ -189,7 +190,7 @@ class TwigProcessor
 			foreach($this->ct->Table->fields as $fieldrow)
 			{
 	
-				$function = new \Twig\TwigFunction($fieldrow['fieldname'], function () use (&$ct, $index) 
+				$function = new TwigFunction($fieldrow['fieldname'], function () use (&$ct, $index)
 				{
 					//This function will process record values with field typeparams and with optional arguments
 					//Example:
@@ -200,8 +201,7 @@ class TwigProcessor
 					
 					
 					$valueProcessor = new Value($this->ct);
-					$vlu = strval($valueProcessor->renderValue($this->ct->Table->fields[$index],$this->ct->Table->record,$args));
-					return $vlu;
+                    return strval($valueProcessor->renderValue($this->ct->Table->fields[$index],$this->ct->Table->record,$args));
 					//return new \Twig\Markup($vlu, 'UTF-8' ); //doesnt work because it cannot be converted to int or string
 				});
 				
@@ -212,7 +212,7 @@ class TwigProcessor
 				$index++;
 			}
 		}
-	}
+    }
 	
 	public function process($row = null)
 	{
@@ -222,7 +222,7 @@ class TwigProcessor
 		try {
 			$result = @$this->twig->render('index', $this->variables);
 		} catch (Exception $e) {
-			Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
+			$this->ct->app->enqueueMessage($e->getMessage(), 'error');
 			return '';
 		}
 		
@@ -247,12 +247,12 @@ class TwigProcessor
 
 class fieldObject
 {
-	var $ct;
+	var CT $ct;
 	var $field;
 
-	function __construct(&$ct, &$fieldrow)
+	function __construct(CT &$ct, $fieldrow)
 	{
-		$this->ct = $ct;
+		$this->ct = &$ct;
 		$this->field = new Field($ct,$fieldrow,$this->ct->Table->record);
 	}
 	
@@ -270,7 +270,7 @@ class fieldObject
 			$user_parameters = ['name','username','email','id','lastvisitdate','registerdate','usergroups'];
 			if(in_array($name,$user_parameters))
 			{
-				$user = new Twig_User_Tags;
+				$user = new Twig_User_Tags($this->ct);
 				
 				$single_argument = 0;
 				if(count($arguments) > 0)
@@ -295,7 +295,7 @@ class fieldObject
 	
 	public function int()
     {
-		return (int)intval($this->value());
+		return intval($this->value());
 	}
 	
 	public function value()
@@ -308,11 +308,9 @@ class fieldObject
 			$imagesrc='';
             $imagetag='';
 
-            \CT_FieldTypeTag_image::getImageSRClayoutview($options,$this->ct->Table->record[$rfn],$this->field->params,$imagesrc,$imagetag);
+            CT_FieldTypeTag_image::getImageSRClayoutview($options,$this->ct->Table->record[$rfn],$this->field->params,$imagesrc,$imagetag);
 
-			$vlu=$imagesrc;
-			
-			return $vlu;
+            return $imagesrc;
 		}
 		elseif($this->field->type == 'records')
 		{
@@ -340,7 +338,7 @@ class fieldObject
 		/*
 		if(!array_key_exists('fieldtitle'.$this->ct->Languages->Postfix,$this->field->fieldrow))
 		{
-			Factory::getApplication()->enqueueMessage(
+			$this->ct->app->enqueueMessage(
 					JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_LANGFIELDNOTFOUND' ), 'Error');
                                         
             return 'fieldtitle'.$this->ct->Languages->Postfix.' - not found';
@@ -360,12 +358,12 @@ class fieldObject
     {
 		$forms = new Forms($this->ct);
         $vlu = $forms->renderFieldLabel($this->field);
-		return new \Twig\Markup($vlu, 'UTF-8' );
+		return new Markup($vlu, 'UTF-8' );
     }
 
 	public function description()
     {
-		return new \Twig\Markup($this->field->description, 'UTF-8' );
+		return new Markup($this->field->description, 'UTF-8' );
     }
 	
 	public function type()
@@ -386,13 +384,13 @@ class fieldObject
 		if($this->field->type!='multilangstring' and $this->field->type!='multilangtext' and $this->field->type!='multilangarticle')
 		{
 			$rfn = $this->field->realfieldname;
-			$value = isset($this->ct->Table->record[$rfn]) ? $this->ct->Table->record[$rfn] : null;
+			$value = $this->ct->Table->record[$rfn] ?? null;
 		}
 		
 		if($this->ct->isEditForm)
 		{
 			$Inputbox = new Inputbox($this->ct, $this->field->fieldrow, $args);
-			return new \Twig\Markup($Inputbox->render($value, $this->ct->Table->record), 'UTF-8' );
+			return new Markup($Inputbox->render($value, $this->ct->Table->record), 'UTF-8' );
 		}
 		else
 		{
@@ -404,10 +402,9 @@ class fieldObject
 				if(isset($args[4]))
 				{
 					//multilang field specific language
-                    $firstlanguage=true;
                     foreach($this->ct->Languages->LanguageList as $lang)
 					{
-						if($lang->sef==$value_option_list[4])
+						if($lang->sef==$args[4])
                         {
 							$postfix=$lang->sef;
                             break;
@@ -421,7 +418,7 @@ class fieldObject
 			{
 				$class_str = $args[0];
 				
-				if(strpos($class_str,':')!==false)//its a style, change it to attribute
+				if(str_contains($class_str, ':'))//it's a style, change it to attribute
 					$div_arg=' style="'.$class_str.'"';
 				else
 					$div_arg=' class="'.$class_str.'"';
@@ -444,7 +441,7 @@ class fieldObject
                             .$Inputbox->render($value, $this->ct->Table->record)
 						.'</div>';
 			
-			return new \Twig\Markup($edit_box, 'UTF-8' );
+			return new Markup($edit_box, 'UTF-8' );
 		}
     }
 	
@@ -462,7 +459,7 @@ class fieldObject
 		}
 		else
 		{
-			Factory::getApplication()->enqueueMessage('{{ '.$this->field->fieldname.'.get }}. Wrong field type "'.$this->field->type.'". ".get" method is only available for Table Join and Records feild types.', 'error');
+			$this->ct->app->enqueueMessage('{{ '.$this->field->fieldname.'.get }}. Wrong field type "'.$this->field->type.'". ".get" method is only available for Table Join and Records filed types.', 'error');
 			return '';
 		}
 	}
@@ -471,18 +468,18 @@ class fieldObject
     {
 		if($this->field->type != 'sqljoin' and $this->field->type != 'records')
 		{
-			Factory::getApplication()->enqueueMessage('{{ '.$this->field->fieldname.'.get }}. Wrong field type "'.$this->field->type.'". ".get" method is only available for Table Join and Records feild types.', 'error');
+			$this->ct->app->enqueueMessage('{{ '.$this->field->fieldname.'.get }}. Wrong field type "'.$this->field->type.'". ".get" method is only available for Table Join and Records filed types.', 'error');
 			return '';
 		}
 		
 		$args = func_get_args();
 		
-		$Layouts = new Layouts($ct);
+		$Layouts = new Layouts($this->ct);
 		$layoutcode = $Layouts->getLayout($layoutname);
 		
 		if($layoutcode=='')
 		{
-			Factory::getApplication()->enqueueMessage('{{ '.$this->field->fieldname.'.layout("'.$layoutname.'") }} Layout "'.$layoutname.'" not found or is empty.', 'error');
+			$this->ct->app->enqueueMessage('{{ '.$this->field->fieldname.'.layout("'.$layoutname.'") }} Layout "'.$layoutname.'" not found or is empty.', 'error');
 			return '';
 		}
 		

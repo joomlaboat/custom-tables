@@ -4,7 +4,7 @@
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @copyright Copyright (C) 2018-2022. All Rights Reserved
+ * @copyright (C) 2018-2022 Ivan Komlev
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
@@ -73,7 +73,7 @@ class updateFiles
 		$db->setQuery($query, $startindex, $stepsize);
 
 		$filelist=$db->loadAssocList();
-		
+
 		foreach($filelist as $file)
 		{
 			$field_row_old = (array)$fieldrow;
@@ -82,8 +82,8 @@ class updateFiles
 			$field_old = new Field($ct,$field_row_old,$file);
 			$field_old->params = $old_params;
 			$field_old->parseParams($file);
-			
-			$old_FileFolder=CT_FieldTypeTag_file::getFileFolder($field_old->params);
+
+			$old_FileFolder=CT_FieldTypeTag_file::getFileFolder($field_old->params[1]);
 
 			$old_FileFolder=str_replace('/',DIRECTORY_SEPARATOR,$old_FileFolder);
 			
@@ -93,7 +93,7 @@ class updateFiles
 			$field_new->params = $new_params;
 			$field_new->parseParams($file);
 
-			$new_FileFolder=CT_FieldTypeTag_file::getFileFolder($field_new->params);
+			$new_FileFolder=CT_FieldTypeTag_file::getFileFolder($field_new->params[1]);
 
 			$new_FileFolder=str_replace('/',DIRECTORY_SEPARATOR,$new_FileFolder);
 			

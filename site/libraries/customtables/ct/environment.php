@@ -4,7 +4,7 @@
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @copyright Copyright (C) 2018-2022. All Rights Reserved
+ * @copyright (C) 2018-2022 Ivan Komlev
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
@@ -13,12 +13,14 @@ namespace CustomTables;
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-use \JoomlaBasicMisc;
-use \Joomla\CMS\Version;
-use \Joomla\CMS\Factory;
-use \Joomla\Registry\Registry;
-use \Joomla\CMS\Uri\Uri;
-use \Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\User\User;
+use Joomla\Input\Input;
+use JoomlaBasicMisc;
+use Joomla\CMS\Version;
+use Joomla\CMS\Factory;
+use Joomla\Registry\Registry;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Component\ComponentHelper;
 
 class Environment
 {
@@ -27,14 +29,14 @@ class Environment
     var string $current_sef_url;
     var string $encoded_current_url;
     var int $userid;
-    var \Joomla\CMS\User\User $user;
+    var ?User $user;
     var bool $isUserAdministrator;
     var bool $print;
     var bool $clean;
     var string $frmt;
     var string $WebsiteRoot;
     var bool $advancedtagprocessor;
-    var \Joomla\Input\Input $jinput;
+    var Input $jinput;
     var bool $isMobile;
     var bool $isModal;
     var int $Itemid;

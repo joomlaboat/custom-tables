@@ -1,140 +1,158 @@
- <?php
+<?php
 /**
- * CustomTables Joomla! 3.x Native Component
- * @author Ivan komlev <support@joomlaboat.com>
+ * CustomTables Joomla! 3.x/4.x Native Component
+ * @author Ivan Komlev <support@joomlaboat.com>
+ * @copyright (C) 2018-2022 Ivan Komlev
  * @link http://www.joomlaboat.com
  * @license GNU/GPL
  **/
 
 // no direct access
 defined('_JEXEC') or die('Restricted access');
-//jimport('joomla.html.pane');
 
-jimport( 'joomla.application.component.view'); //Important to get menu parameters
-require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fieldtypes'.DIRECTORY_SEPARATOR.'_type_file.php');
+jimport('joomla.application.component.view'); //Important to get menu parameters
+require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_file.php');
+
+use CustomTables\CT;
+use CustomTables\Field;
 
 class CustomTablesViewFiles extends JViewLegacy
 {
-	var $Model;
-	var $row;
+    var CT $ct;
 
-	function display($tpl = null)
-	{
-		$this->Model = $this->getModel();
-		$this->row = $this->get('Data');
-		$filepath=$this->getFilePath();
-		
-		if($filepath=='')
-			JFactory::getApplication()->enqueueMessage('File path not set.', 'error');
-		
-		$key=$this->Model->key;
-		$test_key=CT_FieldTypeTag_file::makeTheKey($filepath,$this->Model->security,$this->Model->_id,$this->Model->fieldid,$this->Model->tableid);
-		
-		if($key==$test_key)
-			$this->render_file_output($this->row,$filepath);
-		else
-			JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_DOWNLOAD_LINK_IS_EXPIRED'), 'error');
- 	}
+    var array $row;
+    var string $key;
+    var string $security;
+    var string $listing_id;
+    var int $tableid;
+    var int $fieldid;
+    var Field $field;
 
-	function render_file_output($row,$filepath)
-	{
-		$jinput=JFactory::getApplication()->input;
-		$savefile=$jinput->getInt('savefile',0);
-	 	$jinput = JFactory::getApplication()->input;
-	
-		if(strlen($filepath)>8 and substr($filepath,0,8)=='/images/')
-			$file=JPATH_SITE.str_replace('/',DIRECTORY_SEPARATOR,$filepath);
-		else
-			$file=str_replace('/',DIRECTORY_SEPARATOR,$filepath);
+    function display($tpl = null)
+    {
+        $this->ct = new CT;
 
-		if(!file_exists($file))
-		{
-			JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FILE_NOT_FOUND'), 'error');
-			return;
-		}
+        $this->listing_id = $this->ct->Env->jinput->getCmd("listing_id");
 
-		$content=file_get_contents($file);
+        $this->security = $this->ct->Env->jinput->getCmd('security', 'd');
+        $this->key = $this->ct->Env->jinput->getCmd('key', '');
 
-		$parts = explode('/',$file);
-		$filename = end($parts);
-		$filename_parts = explode('.',$filename);
-		$fileextension=end($filename_parts);
+        $this->tableid = $this->ct->Env->jinput->getInt('tableid', 0);
+        $this->fieldid = $this->ct->Env->jinput->getInt('fieldid', 0);
 
-		$content=$this->ProcessContentWithCustomPHP($content,$row);
+        $this->ct->getTable($this->tableid);
+        if ($this->ct->Table->tablename == '') {
+            $this->ct->app->enqueueMessage('Table not selected (79).', 'error');
+            return;
+        }
 
-		if (ob_get_contents()) ob_end_clean();
+        $fieldrow = null;
+        foreach ($this->ct->Table->fields as $f) {
+            if ($f['id'] == $this->fieldid) {
+                $fieldrow = $f;
+                break;
+            }
+        }
 
-		$mt=mime_content_type($file);
-   
-		@header('Content-Type: '.$mt);
-		@header("Pragma: public");
-		@header("Expires: 0");
-		@header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-		@header("Cache-Control: public");
-		@header("Content-Description: File Transfer");
-		@header("Content-Transfer-Encoding: binary");
-		@header("Content-Disposition: attachment; filename=\"".$filename."\"");
-   
-		echo $content;
+        if (is_null($fieldrow)) {
+            $this->ct->app->enqueueMessage('File View: Field not found.', 'error');
+            return;
+        }
 
-		die;//clean exit
-	}
+        $this->field = new Field($this->ct,$fieldrow,$this->row);
 
-	function ProcessContentWithCustomPHP($content,&$row)
-	{
-		$servertagprocessor_file=JPATH_SITE.DIRECTORY_SEPARATOR.'plugins'.DIRECTORY_SEPARATOR.'content'.DIRECTORY_SEPARATOR.'customtables'.DIRECTORY_SEPARATOR.'protagprocessor'.DIRECTORY_SEPARATOR.'servertags.php';
+        $this->row = $this->ct->Table->loadRecord($this->listing_id);
+        $filepath = $this->getFilePath();
 
-		if(!file_exists($servertagprocessor_file))
-			return $content;
+        if ($filepath == '')
+            $this->ct->app->enqueueMessage('File path not set.', 'error');
 
-		$TypeParams=$this->Model->fieldrow['typeparams'];
-		$param_parts=JoomlaBasicMisc::csv_explode(',', $TypeParams, '"', false);
-		if(!isset($param_parts[4]))
-			return $content;
+        $key = $this->key;
+        $test_key = CT_FieldTypeTag_file::makeTheKey($filepath, $this->security, $this->listing_id, $this->fieldid, $this->tableid);
 
-		$customphpfile=$param_parts[4];
+        if ($key == $test_key) {
+            $this->render_file_output($this->row, $filepath);
+        } else
+            $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_DOWNLOAD_LINK_IS_EXPIRED'), 'error');
+    }
 
-		if($customphpfile!='')
-		{
-			$parts=explode('/',$customphpfile); //just a security check
-			if(count($parts)>1)
-				return $content;
+    protected function getFilePath(): string
+    {
+        if (!isset($this->row[$this->field->realfieldname]))
+            $this->ct->app->enqueueMessage('Real field name not set', 'error');
 
-			$file=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'customphp'.DIRECTORY_SEPARATOR.$customphpfile;
-			if(file_exists($file))
-			{
-				require_once($file);
-				$function_name='CTProcessFile_'.str_replace('.php','',$customphpfile);
+        $rowValue = $this->row[$this->field->realfieldname];
 
-				if(function_exists ($function_name))
-					return call_user_func($function_name,$content,$row,$this->Model->ct->Table->tableid,$this->Model->fieldid);
-			}
-		}
-		return $content;
-	}
+        if ($this->field->type == 'filelink')
+            return CT_FieldTypeTag_file::getFileFolder($this->field->params[0]) . '/' . $rowValue;
+        else
+            return CT_FieldTypeTag_file::getFileFolder($this->field->params[1]) . '/' . $rowValue;
+    }
 
-	protected function getFilePath()
-	{
-		if(!isset($this->Model->fieldrow))
-		{
-			JFactory::getApplication()->enqueueMessage('Field row not set', 'error');
-			return '';
-		}
-	 
-		if($this->Model->fieldrow['type']=='filelink')
-			$TypeParams=','.$this->Model->fieldrow['typeparams']; //file link field type parameters have folder path as second parameter
-		else
-			$TypeParams=$this->Model->fieldrow['typeparams'];
-	
-		if(!isset($this->row[$this->Model->fieldrow['realfieldname']]))
-		{
-			JFactory::getApplication()->enqueueMessage('Model real field name not set', 'error');
-			return '';
-		}
+    function render_file_output($row, $filepath)
+    {
+        if (strlen($filepath) > 8 and str_starts_with($filepath, '/images/'))
+            $file = JPATH_SITE . str_replace('/', DIRECTORY_SEPARATOR, $filepath);
+        else
+            $file = str_replace('/', DIRECTORY_SEPARATOR, $filepath);
 
-		$rowValue=$this->row[$this->Model->fieldrow['realfieldname']];
-		
-		$params = JoomlaBasicMisc::csv_explode(',',$TypeParams,'"',false);
-		return CT_FieldTypeTag_file::getFileFolder($params).'/'.$rowValue;
-	}
+        if (!file_exists($file)) {
+            $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FILE_NOT_FOUND'), 'error');
+            return;
+        }
+
+        $content = file_get_contents($file);
+
+        $parts = explode('/', $file);
+        $filename = end($parts);
+
+        $content = $this->ProcessContentWithCustomPHP($content, $row);
+
+        if (ob_get_contents()) ob_end_clean();
+
+        $mt = mime_content_type($file);
+
+        @header('Content-Type: ' . $mt);
+        @header("Pragma: public");
+        @header("Expires: 0");
+        @header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+        @header("Cache-Control: public");
+        @header("Content-Description: File Transfer");
+        @header("Content-Transfer-Encoding: binary");
+        @header("Content-Disposition: attachment; filename=\"" . $filename . "\"");
+
+        echo $content;
+
+        die;//clean exit
+    }
+
+    function ProcessContentWithCustomPHP($content, $row)
+    {
+        $serverTagProcessorFile = JPATH_SITE . DIRECTORY_SEPARATOR . 'plugins' . DIRECTORY_SEPARATOR . 'content' . DIRECTORY_SEPARATOR
+            . 'customtables' . DIRECTORY_SEPARATOR . 'protagprocessor' . DIRECTORY_SEPARATOR . 'servertags.php';
+
+        if (!file_exists($serverTagProcessorFile))
+            return $content;
+
+        if (!isset($this->field->params[4]))
+            return $content;
+
+        $customPHPFile = $this->field->params[4];
+
+        if ($customPHPFile != '') {
+            $parts = explode('/', $customPHPFile); //just a security check
+            if (count($parts) > 1)
+                return $content;
+
+            $file = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'customphp' . DIRECTORY_SEPARATOR . $customPHPFile;
+            if (file_exists($file)) {
+                require_once($file);
+                $function_name = 'CTProcessFile_' . str_replace('.php', '', $customPHPFile);
+
+                if (function_exists($function_name))
+                    return call_user_func($function_name, $content, $row, $this->ct->Table->tableid, $this->fieldid);
+            }
+        }
+        return $content;
+    }
 }

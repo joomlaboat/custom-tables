@@ -1,9 +1,11 @@
 <?php
 /**
  * CustomTables Joomla! 3.x Native Component
- * @author Ivan komlev <support@joomlaboat.com>
+ * @package Custom Tables
+ * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
- * @license GNU/GPL
+ * @copyright (C) 2018-2022 Ivan Komlev
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
 // no direct access
@@ -47,6 +49,11 @@ class CustomTablesModelDetails extends JModelLegacy
 
             $this->load($params, $listing_id);
         }
+    }
+
+    function setFrmt($frmt)
+    {
+        $this->ct->Env->frmt=$frmt;
     }
 
     function load($params, $listing_id, $params_only = false, $custom_where = '')

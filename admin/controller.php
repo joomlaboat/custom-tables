@@ -98,7 +98,7 @@ class CustomtablesController extends JControllerLegacy
         return true;
     }
 
-    protected function getViewRelation($view): bool|array
+    protected function getViewRelation($view)
     {
         if (CustomtablesHelper::checkString($view)) {
             // the view relationships
