@@ -10,24 +10,25 @@
 
 namespace CustomTables;
 
-//use CustomTables\CTUser;
-
-use \tagProcessor_General;
-use \tagProcessor_Item;
-use \tagProcessor_If;
-use \tagProcessor_Page;
-use \tagProcessor_Value;
-use \CT_FieldTypeTag_image;
-use \CT_FieldTypeTag_file;
+use tagProcessor_General;
+use tagProcessor_Item;
+use tagProcessor_If;
+use tagProcessor_Page;
+use tagProcessor_Value;
+use CT_FieldTypeTag_image;
+use CT_FieldTypeTag_file;
+use CT_FieldTypeTag_imagegallery;
+use CT_FieldTypeTag_filebox;
 
 use CustomTables\DataTypes\Tree;
-use \Joomla\CMS\Factory;
-use \JoomlaBasicMisc;
-use \Joomla\CMS\Uri\Uri;
-use \Joomla\CMS\Editor\Editor;
-use \JHTML;
 
-use \CTTypes;
+use Joomla\CMS\Factory;
+use JoomlaBasicMisc;
+use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Editor\Editor;
+use JHTML;
+
+use CTTypes;
 
 JHTML::addIncludePath(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'helpers');
 
@@ -97,7 +98,8 @@ class Inputbox
 			case 'radio':
 				return $this->render_radio($value);
 
-			case 'int':
+            case 'ordering':
+            case 'int':
 				return $this->render_int($value, $row);
 
 			case 'float':
@@ -125,7 +127,7 @@ class Inputbox
 				return $this->render_alias($value);
 
 			case 'multilangstring':
-				return $this->getMultilangString($row);
+				return $this->getMultilingualString($row);
 
 			case 'text':
 				return $this->render_text($value);
@@ -146,11 +148,8 @@ class Inputbox
 			
 			case 'signature':
 				return $this->render_signature();
-				
-			case 'ordering':
-				return $this->render_int($value, $row);
-				
-			case 'file':
+
+            case 'file':
 				$file_type_file=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fieldtypes'.DIRECTORY_SEPARATOR.'_type_file.php';
 				require_once($file_type_file);
 				return CT_FieldTypeTag_file::renderFileFieldBox($this->ct,$this->esfield,$row,$this->cssclass);
@@ -261,7 +260,8 @@ class Inputbox
 					return $this->getFileBox($row[$this->ct->Table->realidfieldname]);
 
 			case 'multilangarticle':
-				return $this->render_multilangarticle();
+                if(isset($row[$this->ct->Table->realidfieldname]))
+				    return $this->render_multilangarticle($row);
 		}
 		return '';
 	}
@@ -291,8 +291,8 @@ class Inputbox
 		return $attributes_;
 	}
 	
-	public function getWhereParameter($field)
-	{
+	public function getWhereParameter($field): string
+    {
 		$f=str_replace($this->ct->Env->field_prefix,'',$field);
 
 		$list=$this->getWhereParameters();
@@ -306,19 +306,18 @@ class Inputbox
 		return '';
 	}
 
-	protected function getWhereParameters()
-	{
+	protected function getWhereParameters(): array
+    {
 		$value=$this->ct->Env->jinput->get('where','','BASE64');;
 		$b=base64_decode($value);
 		$b=str_replace(' or ',' and ',$b);
 		$b=str_replace(' OR ',' and ',$b);
 		$b=str_replace(' AND ',' and ',$b);
-		$list=explode(' and ',$b);
-		return $list;
+        return explode(' and ',$b);
 	}
 	
-	protected function getMultilangString(&$row)
-	{
+	protected function getMultilingualString(&$row): string
+    {
 		$result='';
 		if(isset($this->option_list[4]))
 		{
@@ -372,7 +371,7 @@ class Inputbox
 							$attributes_='';
 							$addDynamicEvent=false;
 							
-							if(strpos($this->attributes,'onchange="ct_UpdateSingleValue(')!==false)//its like a keyword
+							if(str_contains($this->attributes, 'onchange="ct_UpdateSingleValue('))//its like a keyword
 							{
 								$addDynamicEvent=true;
 							}
@@ -425,8 +424,8 @@ class Inputbox
 			$query='SELECT '.$this->esfield['realfieldname'].' FROM '.$this->ct->Table->realtablename.' GROUP BY '.$this->field->realfieldname
 				.' ORDER BY '.$this->field->realfieldname;
 				
-			$db->setQuery($query);
-			$records=$db->loadColumn();
+			$this->ct->db->setQuery($query);
+			$records=$this->ct->db->loadColumn();
 			
 			$result.='<datalist id="'.$this->prefix.$this->field->fieldname.'_datalist">'
 				.(count($records) > 0 ? '<option value="'.implode('"><option value="',$records).'">' : '')
@@ -479,25 +478,24 @@ class Inputbox
 
 		$attributes='class="'.$this->cssclass.'" '.$this->attributes;
 
-		$where='';
-		$availableusergroups_list = ($this->field->params[0] == '' ? [] : $this->field->params);
+		$availableUserGroupsList = ($this->field->params[0] == '' ? [] : $this->field->params);
 		
-		if(count($availableusergroups_list) == 0)
+		if(count($availableUserGroupsList) == 0)
 		{
-			$query->where('#__usergroups.title!='.$db->quote('Super Users'));
+            $where_string = '#__usergroups.title!='.$this->ct->db->quote('Super Users');
 		}
 		else
 		{
 			$where = [];
-			foreach($availableusergroups_list as $availableusergroup)
+			foreach($availableUserGroupsList as $availableusergroup)
 			{
 				if($availableusergroup != '')
-					$where[] = '#__usergroups.title='.$db->quote($availableusergroup);
+					$where[] = '#__usergroups.title='.$this->ct->db->quote($availableusergroup);
 			}
-			$where = '('.implode(' OR ',$where).')';
+			$where_string = '('.implode(' OR ',$where).')';
 		}
 
-		$result.=JHTML::_('ESUserGroup.render',$this->prefix.$this->field->fieldname, $value, '', $attributes, $where);
+		$result.=JHTML::_('ESUserGroup.render',$this->prefix.$this->field->fieldname, $value, '', $attributes, $where_string);
 
 		return $result;
 	}
@@ -506,14 +504,11 @@ class Inputbox
 	{
 		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'fieldtypes'.DIRECTORY_SEPARATOR.'_type_gallery.php');
 
-		$htmlout='';
+		$result='';
 
 		$getGalleryRows=CT_FieldTypeTag_imagegallery::getGalleryRows($this->ct->Table->tablename,$this->field->fieldname,$listing_id);
 
-		$htmlout.='
-		';
-
-		$image_prefix='';
+    	$image_prefix='';
 
 		if(isset($pair[1]) and (int)$pair[1]<250)
 			$img_width=(int)$pair[1];
@@ -531,18 +526,18 @@ class Inputbox
 		{
 			$imagesrclist_arr=explode(';',$imagesrclist);
 
-			$htmlout.='<div style="width:100%;overflow:scroll;border:1px dotted grey;background-image: url(\''.URI::root(true).'/components/com_customtables/libraries/customtables/media/images/icons/bg.png\');">
+			$result.='<div style="width:100%;overflow:scroll;border:1px dotted grey;background-image: url(\''.URI::root(true).'/components/com_customtables/libraries/customtables/media/images/icons/bg.png\');">
 
-		<table cellpadding="3"><tbody><tr>';
+		<table><tbody><tr>';
 
 		foreach($imagesrclist_arr as $img)
 		{
-			$htmlout.='<td align="center" valign="top">';
-			$htmlout.='<a href="'.$img.'" target="_blank"><img src="'.$img.'" width="'.$img_width.'" />';
-			$htmlout.='</td>';
+			$result.='<td>';
+			$result.='<a href="'.$img.'" target="_blank"><img src="'.$img.'" width="'.$img_width.'" />';
+			$result.='</td>';
 		}
 
-		$htmlout.='</tr></tbody></table>
+		$result.='</tr></tbody></table>
 
 		</div>';
 
@@ -552,16 +547,8 @@ class Inputbox
 			return 'No Images';
 		}
 
-		$htmlout.='
-		';
-
-
-
-		return $htmlout;
-
-
-
-	}//function
+		return $result;
+	}
 
 	protected function getFileBox($listing_id)
 	{
@@ -597,8 +584,9 @@ class Inputbox
 								
 			$fieldname=$this->esfield['fieldname'].$postfix;
 								
-			if(count($row)==0)
-				$value=$this->jinput->get($this->ct->Env->field_prefix.$fieldname,'','STRING');
+			if($this->ct->Table->isRecordEmpty($row)) {
+                $value = $this->jinput->get($this->ct->Env->field_prefix . $fieldname, '', 'STRING');
+            }
 			else
 			{
 				if(array_key_exists($this->ct->Env->field_prefix . $fieldname, $row))
@@ -607,6 +595,8 @@ class Inputbox
 				}
 				else
 				{
+                    Fields::addLanguageField($this->ct->Table->realtablename, $this->ct->Env->field_prefix . $this->esfield['fieldname'], $this->ct->Env->field_prefix.$fieldname);
+
 					Factory::getApplication()->enqueueMessage('Field "'.$this->ct->Env->field_prefix.$fieldname.'" not yet created. Go to /Custom Tables/Database schema/Checks to create that field.', 'error');
 					$value = '';
 				}
@@ -633,7 +623,7 @@ class Inputbox
 			}
 			else
 			{
-				$result.='<textarea filter="raw" name="'.$this->prefix.$fieldname.'" '
+				$result.='<textarea name="'.$this->prefix.$fieldname.'" '
 					.'id="'.$this->prefix.$fieldname.'" '
 					.'class="'.$this->cssclass.' '.($this->esfield['isrequired'] ? 'required' : '').'">'.$value.'</textarea>'
 					.'<span class="language_label">'.$lang->caption.'</span>';
@@ -647,7 +637,7 @@ class Inputbox
 		return $result;                            
 	}
 	
-	protected function render_multilangarticle()
+	protected function render_multilangarticle($row)
 	{
 		$result = '
 		<table>
@@ -737,12 +727,11 @@ class Inputbox
 		return $result;
 	}
 	
-	protected function render_signature()
-	{
+	protected function render_signature(): string
+    {
 		$width = $this->field->params[0] ?? 300;
 		$height = $this->field->params[1] ?? 150;
-		$folder = $this->field->params[2] ?? 'images';
-		$format = $this->field->params[3] ?? 'svg';
+        $format = $this->field->params[3] ?? 'svg';
 		if($format == 'svg-db')
 			$format = 'svg';
 		
@@ -768,14 +757,14 @@ class Inputbox
 			.'data-valuerule="'.str_replace('"','&quot;',$this->field->valuerule).'" '
 			.'data-valuerulecaption="'.str_replace('"','&quot;',$this->field->valuerulecaption).'" > 
 <script>
-	ctInputbox_signature("'.$this->prefix.$this->field->fieldname.'",'.((int)$width).','.((int)$height).',"'.$format.'");
+	ctInputbox_signature("'.$this->prefix.$this->field->fieldname.'",'.((int)$width).','.((int)$height).',"'.$format.'")
 </script>
 ';
 		return $result;
 	}
 	
-	protected function render_url(&$value)
-	{
+	protected function render_url(&$value): string
+    {
 		$result = '';
 		$filters=array();
 		$filters[]='url';
@@ -1087,13 +1076,13 @@ class Inputbox
 							foreach($this->field->params as $radiovalue)
 							{
 								$v=trim($radiovalue);
-								$result.='<td valign="middle"><input type="radio"
+								$result.='<td><input type="radio"
 									name="'.$this->prefix.$this->esfield['fieldname'].'"
 									id="'.$this->prefix.$this->esfield['fieldname'].'_'.$i.'"
 									value="'.$v.'" '
 								.($value==$v ? ' checked="checked" ' : '')
 								.' /></td>';
-								$result.='<td valign="middle"><label for="'.$this->prefix.$this->esfield['fieldname'].'_'.$i.'">'.$v.'</label></td>';
+								$result.='<td><label for="'.$this->prefix.$this->esfield['fieldname'].'_'.$i.'">'.$v.'</label></td>';
 								$i++;
 							}
 							$result.='</tr></table>';
