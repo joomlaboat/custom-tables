@@ -1,547 +1,663 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layouts>
 
-	<layouttypes>
+    <layouttypes>
         <type name="simple" label="Simple Catalog" id="1"/>
-		<type name="page" label="Catalog Page" id="5"/>
-		<type name="item" label="Catalog Item" id="6"/>
+        <type name="page" label="Catalog Page" id="5"/>
+        <type name="item" label="Catalog Item" id="6"/>
         <type name="edit" label="Edit Record" id="2"/>
-		<type name="details" label="Details Page" id="4"/>
-		<type name="email" label="Email Message" id="7"/>
-		<type name="xml" label="XML" id="8"/>
-		<type name="csv" label="CSV" id="9"/>
-		<type name="json" label="JSON" id="10"/>
+        <type name="details" label="Details Page" id="4"/>
+        <type name="email" label="Email Message" id="7"/>
+        <type name="xml" label="XML" id="8"/>
+        <type name="csv" label="CSV" id="9"/>
+        <type name="json" label="JSON" id="10"/>
         <!--<type name="record" label="Record" id="3"/>-->
     </layouttypes>
 
-<!-- General - All -->
-<!-- Set Tags - 1,5,2,4 -->
-<!-- Edit Tags - 2 -->
-<!-- Plugins - All -->
-<!-- atalog Tags - 1,5,7,8,9,10 -->
-<!-- Simple Catalog & Catalog Page Tags - 1,5 -->
-<!-- Record - All -->
+    <!-- General - All -->
+    <!-- Set Tags - 1,5,2,4 -->
+    <!-- Edit Tags - 2 -->
+    <!-- Plugins - All -->
+    <!-- Catalog Tags - 1,5,7,8,9,10 -->
+    <!-- Simple Catalog & Catalog Page Tags - 1,5 -->
+    <!-- Record - All -->
 
-<!-- HTML Tags -->
+    <!-- HTML Tags -->
     <tagset name="html" label="HTML" description="HTML Tags to render HTML code." priority="2">
 
-		<tag name="add" label="Add New" startchar="{" endchar="}"
-            description="Renders 'Add New Record' button" twigclass="html">
+        <tag name="add" label="Add New" startchar="{" endchar="}"
+             description="Renders 'Add New Record' button" twigclass="html">
 
             <params>
-                <param type="string" name="alias" label="Munu Itemid or Alias (Optional)" description="To redirect to a specific Menu Item." />
+                <param type="string" name="alias" label="Munu Itemid or Alias (Optional)"
+                       description="To redirect to a specific Menu Item."/>
             </params>
         </tag>
-		
-		<tag name="recordcount" label="Record Count (as text)" startchar="{" endchar="}"
-             description="Example: Found 23 record(s)" twigclass="html" >
+
+        <tag name="recordcount" label="Record Count (as text)" startchar="{" endchar="}"
+             description="Example: Found 23 record(s)" twigclass="html">
         </tag>
-	
-		<tag name="print" label="Print Button" startchar="{" endchar="}" twigclass="html"
+
+        <tag name="print" label="Print Button" startchar="{" endchar="}" twigclass="html"
              description="A button that opens a new controlless window without a template, only content.">
             <params>
                 <param name="listtype" label="Link Type" type="list">
                     <option value="" label="Button"/>
                     <option value="fontawesome" label="Font Awesome icon"/>
                 </param>
-				<param type="label" name="label" label="Label" description="What will be written on the button." />
-				<param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)." />
-            </params>
-        </tag>
-		
-		<tag name="goback" label="Go Back Button" startchar="{" endchar="}" separator=":"
-			description="Renders a link to the previous page." twigclass="html">
-            <params>
-                <param name="label" label="Label" type="string" description="What will be written after the icon." example="Click to go back to the previous page"/>
-				<param name="icon" label="Icon Image" type="string" description="Icon Image that will appear before text/label."/>
-                <param name="attribute" label="Attribute" type="string"
-                       description="HTML options like: style, class, onchange etc.)" example="style='border:1px solid red;'"/>
-                <param name="redirectlink" label="Custom Redirect Link" type="string" description="URL to redirect after processing the button click. Tip: user $get_listing_id keyword to get newly saved record id."/>
+                <param type="label" name="label" label="Label" description="What will be written on the button."/>
+                <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)."/>
             </params>
         </tag>
 
-		<tag name="navigation" label="Navigation" startchar="{" endchar="}" proversion="1"
+        <tag name="goback" label="Go Back Button" startchar="{" endchar="}" separator=":"
+             description="Renders a link to the previous page." twigclass="html">
+            <params>
+                <param name="label" label="Label" type="string" description="What will be written after the icon."
+                       example="Click to go back to the previous page"/>
+                <param name="icon" label="Icon Image" type="string"
+                       description="Icon Image that will appear before text/label."/>
+                <param name="attribute" label="Attribute" type="string"
+                       description="HTML options like: style, class, onchange etc.)"
+                       example="style='border:1px solid red;'"/>
+                <param name="redirectlink" label="Custom Redirect Link" type="string"
+                       description="URL to redirect after processing the button click. Tip: user $get_listing_id keyword to get newly saved record id."/>
+            </params>
+        </tag>
+
+        <tag name="navigation" label="Navigation" startchar="{" endchar="}" proversion="1"
              description="Navigation / Breadcrumbs. Returns a value of the filter used." twigclass="html">
             <params>
                 <param name="listtype" label="List Type" type="list">
                     <option value="list" label="Unordered list [ul][li][/li]...[/ul]"/>
                     <option value="comma" label="Comma Separated String"/>
                 </param>
-				<param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)." />
+                <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)."/>
             </params>
         </tag>
-		
-		<tag name="batch" label="Batch Toolbar" repeatative="1" startchar="{" endchar="}" description="Renders the batch toolbar" hidedefaultexample="1"
-			twigclass='html'>
+
+        <tag name="batch" label="Batch Toolbar" repeatative="1" startchar="{" endchar="}"
+             description="Renders the batch toolbar" hidedefaultexample="1"
+             twigclass='html'>
             <params>
                 <param name="button" label="Button" type="list" example="edit" description="Select button type">
                     <option value="refresh" label="Refresh"/>
                     <option value="delete" label="Delete"/>
                     <option value="publish" label="Publish"/>
                     <option value="unpublish" label="Unpublish"/>
-					<option value="checkbox" label="Checkbox"/>
+                    <option value="checkbox" label="Checkbox"/>
                 </param>
             </params>
         </tag>
 
-		<tag name="search" label="Search Box" startchar="{" endchar="}" description="" twigclass="html">
+        <tag name="search" label="Search Box" startchar="{" endchar="}" description="" twigclass="html">
             <params>
-                <param type="field" name="field" label="Field(s)" description="Select Table Field to search in." repeatative="0" />
-                
-                <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS classes separated by space." />
-                
-                <param name="reload" label="On Change" description="Reload the page when value selected. Applied to select boxes only." type="radio" default="" example="reload"
+                <param type="field" name="field" label="Field(s)" description="Select Table Field to search in."
+                       repeatative="0"/>
+
+                <param type="string" name="cssclass" label="CSS Class"
+                       description="Name or names of CSS classes separated by space."/>
+
+                <param name="reload" label="On Change"
+                       description="Reload the page when value selected. Applied to select boxes only." type="radio"
+                       default="" example="reload"
                        options="|Do nothing,reload|Reload Page"/>
-                
-                <param name="improved" label="Improve Select Box" description="Improve Select box to include in-list search." type="radio" default="" example="reload"
+
+                <param name="improved" label="Improve Select Box"
+                       description="Improve Select box to include in-list search." type="radio" default=""
+                       example="reload"
                        options="|Standard,improved|Improved"/>
-                
+
             </params>
         </tag>
-		
-		<tag name="searchbutton" label="Search Button" startchar="{" endchar="}" description="Renders a Search Button" twigclass="html">
+
+        <tag name="searchbutton" label="Search Button" startchar="{" endchar="}" description="Renders a Search Button"
+             twigclass="html">
             <params>
-				<param name="label" label="Button Label" type="string" example="Search"
+                <param name="label" label="Button Label" type="string" example="Search"
                        description="The label of the button."/>
-                <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS classes separated by space." />
+                <param type="string" name="cssclass" label="CSS Class"
+                       description="Name or names of CSS classes separated by space."/>
             </params>
         </tag>
-		
-		<tag name="toolbar" label="Toolbar" startchar="{" endchar="}" description="Renders the toolbar" hidedefaultexample="1" repeatative="1" twigclass="html">
+
+        <tag name="toolbar" label="Toolbar" startchar="{" endchar="}" description="Renders the toolbar"
+             hidedefaultexample="1" repeatative="1" twigclass="html">
             <params>
                 <param name="button" label="Button" type="list" example="edit">
                     <option value="" label="- None"/>
-					<option value="checkbox" label="Checkbox"/>
+                    <option value="checkbox" label="Checkbox"/>
                     <option value="edit" label="Edit"/>
-					<option value="editmodal" label="Edit Modal Form"/>
+                    <option value="editmodal" label="Edit Modal Form"/>
                     <option value="refresh" label="Refresh"/>
                     <option value="delete" label="Delete"/>
                     <option value="publish" label="Publish/Unpublish"/>
                     <option value="gallery" label="Image Gallery"/>
                     <option value="filebox" label="File Box"/>
-					<option value="copy" label="Copy" proversion="1" />
-					<option value="resetpassword" label="Reset Password" proversion="1" />
+                    <option value="copy" label="Copy" proversion="1"/>
+                    <option value="resetpassword" label="Reset Password" proversion="1"/>
                 </param>
             </params>
         </tag>
-		
-		<tag name="pagination" label="Pagination Bar" startchar="{" endchar="}"
-             description="renders HTML Pagination Bar." twigclass="html" />
-			 
-		<tag name="orderby" label="Order By (Sort By) box" startchar="{" endchar="}" proversion="1"
-             description="renders HTML Order By select box." twigclass="html" />
-			 
-		<tag name="limit" label="Limit records per page" startchar="{" endchar="}" proversion="1"
-             description="renders HTML Limit box to limit the number of records per page." twigclass="html" />
-			 
-		<tag name="button" label="Button" startchar="{" endchar="}" added="2019-05-28" hidedefaultexample="1"
+
+        <tag name="pagination" label="Pagination Bar" startchar="{" endchar="}"
+             description="renders HTML Pagination Bar." twigclass="html"/>
+
+        <tag name="orderby" label="Order By (Sort By) box" startchar="{" endchar="}" proversion="1"
+             description="renders HTML Order By select box." twigclass="html"/>
+
+        <tag name="limit" label="Limit records per page" startchar="{" endchar="}" proversion="1"
+             description="renders HTML Limit box to limit the number of records per page." twigclass="html"/>
+
+        <tag name="button" label="Button" startchar="{" endchar="}" added="2019-05-28" hidedefaultexample="1"
              description="Renders form submit button. " twigclass="html">
             <params>
                 <param name="type" label="Type" type="list" example="save">
-                    
+
                     <option value="save" label="Save" description=""/>
-                    <option value="saveandclose" label="Save &#38; Close" description="" />
+                    <option value="saveandclose" label="Save &#38; Close" description=""/>
                     <option value="saveascopy" label="Save as Copy"/>
                     <option value="cancel" label="Cancel"/>
                     <option value="delete" label="Delete"/>
                 </param>
                 <param name="label" label="Button Label" type="string" example="Click here to save the form"
                        description="The label of the button."/>
-                
-                <param name="redirectlink" label="Custom Redirect Link" type="string" description="URL to redirect after processing the button click."/>
-                
-                <param name="class" label="CSS Class" type="string" description="Name or names of CSS class(s)." example="registerButton" />
+
+                <param name="redirectlink" label="Custom Redirect Link" type="string"
+                       description="URL to redirect after processing the button click."/>
+
+                <param name="class" label="CSS Class" type="string" description="Name or names of CSS class(s)."
+                       example="registerButton"/>
             </params>
         </tag>
-		
-		<tag name="captcha" label="Captcha" startchar="{" endchar="}" twigclass="html"
-             description="Provides the use of a captcha plugin (if enabled)." proversion="1" />
-				
-		<tag name="message" label="Alert Message" startchar="{" endchar="}" description="Renders an alert message above the main content." twigclass="html" proversion="1">
+
+        <tag name="captcha" label="Captcha" startchar="{" endchar="}" twigclass="html"
+             description="Provides the use of a captcha plugin (if enabled)." proversion="1"/>
+
+        <tag name="message" label="Alert Message" startchar="{" endchar="}"
+             description="Renders an alert message above the main content." twigclass="html" proversion="1">
             <params>
-                <param type="string" name="text" label="Text" description="Alert message text (HTML tag will be stripped)" example="Error" />
-				<param name="type" label="Type" type="list" example="Your passport is expired. Please upload a new one.">
+                <param type="string" name="text" label="Text"
+                       description="Alert message text (HTML tag will be stripped)" example="Error"/>
+                <param name="type" label="Type" type="list"
+                       example="Your passport is expired. Please upload a new one.">
                     <option value="Message" label="Message " description="Message on green background"/>
-                    <option value="Notice" label="Notice" description="Message on blue background" />
+                    <option value="Notice" label="Notice" description="Message on blue background"/>
                     <option value="Warning" label="Warning" description="Message on yellow background"/>
                     <option value="Error" label="Error" description="Message on pink background"/>
                 </param>
             </params>
         </tag>
-		
-		<!-- New -->
-		
-		<tag name="recordlist" label="List of Records" description="Comma separated list or record IDs. Example: 4,78,3,876" startchar="{" endchar="}" twigclass="html" proversion="1" />	
-		
-		<tag name="importcsv" label="Import CSV" startchar="{" endchar="}" proversion="1"
-            description="Renders the 'Upload CSV file' button" twigclass="html">
+
+        <!-- New -->
+
+        <tag name="recordlist" label="List of Records"
+             description="Comma separated list or record IDs. Example: 4,78,3,876" startchar="{" endchar="}"
+             twigclass="html" proversion="1"/>
+
+        <tag name="importcsv" label="Import CSV" startchar="{" endchar="}" proversion="1"
+             description="Renders the 'Upload CSV file' button" twigclass="html">
         </tag>
-		
-		<tag name="tablehead" label="HTML Table Head" repeatative="1" startchar="{" endchar="}" proversion="1"
-			description="Renders 'thead' and 'th' HTML tags. This tag helps to create a table header faster." hidedefaultexample="1"
-			twigclass='html'>
+
+        <tag name="tablehead" label="HTML Table Head" repeatative="1" startchar="{" endchar="}" proversion="1"
+             description="Renders 'thead' and 'th' HTML tags. This tag helps to create a table header faster."
+             hidedefaultexample="1"
+             twigclass='html'>
             <params>
-                <param type="string" name="columntitle" label="Column Title" example="'Company Name','Country','City','Phone'" examplenoquotes="1" />
+                <param type="string" name="columntitle" label="Column Title"
+                       example="'Company Name','Country','City','Phone'" examplenoquotes="1"/>
             </params>
         </tag>
-		
-		<tag name="base64encode" label="Base64 Encode" startchar="{" endchar="}" description="Encodes the given string with base64." twigclass="html" proversion="1" >
-			<params>
-				<param name="parameter" label="String" type="string" description="The data to encode. " />
-			</params>
-		</tag>
-	<!-- Depricated -->
-	
-		<tag name="checkbox" label="Checkbox" startchar="{" endchar="}" description="Renders the checkbox for batch toolbar"
-			twigreplacement="html.batch" twigreplacementparams='"checkbox"' depricated="1" />
-	
-		<tag name="_if" label="If statement" startchar="[" endchar="]" separator=":" twigreplacestartchar="{% if " twigreplaceendchar=" %}" depricated="1" />
-		<tag name="_endif" label="EndIf statement" startchar="[" endchar="]" separator=":" twigsimplereplacement="{% endif %}" depricated="1" />
-		
-		<tag name="catalog" label="Catalog" description="Renders Catalog Page" startchar="{" endchar="}" separator=":" depricated="1"
-			twigreplacement="document.layout">
+
+        <tag name="base64encode" label="Base64 Encode" startchar="{" endchar="}"
+             description="Encodes the given string with base64." twigclass="html" proversion="1">
+            <params>
+                <param name="parameter" label="String" type="string" description="The data to encode. "/>
+            </params>
         </tag>
-		<tag name="date" label="Date" startchar="{" endchar="}" depricated="1" twigsimplereplacement="{{ 'now'|date('Y-m-d') }}" />
-        <tag name="today" label="Today" startchar="{" endchar="}" depricated="1" twigsimplereplacement="{{ 'now'|date('Y-m-d') }}" />
-	
-		<tag name="if" label="If statement" startchar="{" endchar="}" separator=":" twigreplacestartchar="{% if " twigreplaceendchar=" %}" depricated="1" />
-		<tag name="endif" label="EndIf statement" startchar="{" endchar="}" separator=":" twigsimplereplacement="{% endif %}" depricated="1" />
-	
-		<tag name="gobackbutton" label="Go Back Button" startchar="{" endchar="}" separator=":" depricated="1"
-              twigreplacestartchar="{{ html.goback(" twigreplaceendchar=") }}" />
+        <!-- Depricated -->
 
-        <tag name="batchtoolbar" label="Batch Toolbar" repeatative="1" startchar="{" endchar="}" description="Renders the batch toolbar" hidedefaultexample="1"
-			twigreplacement="html.batch" depricated="1" />
+        <tag name="checkbox" label="Checkbox" startchar="{" endchar="}"
+             description="Renders the checkbox for batch toolbar"
+             twigreplacement="html.batch" twigreplacementparams='"checkbox"' depricated="1"/>
 
-	</tagset>
-	
-<!-- Record Tags -->
-	<tagset name="record" label="Record" description="Tags related to a single record." priority="1">
-	
-		<tag name="id" label="record ID" startchar="{" endchar="}" description="Returns record ID" twigclass="record" />
-			
+        <tag name="_if" label="If statement" startchar="[" endchar="]" separator=":" twigreplacestartchar="{% if "
+             twigreplaceendchar=" %}" depricated="1"/>
+        <tag name="_endif" label="EndIf statement" startchar="[" endchar="]" separator=":"
+             twigsimplereplacement="{% endif %}" depricated="1"/>
+
+        <tag name="catalog" label="Catalog" description="Renders Catalog Page" startchar="{" endchar="}" separator=":"
+             depricated="1"
+             twigreplacement="document.layout">
+        </tag>
+        <tag name="date" label="Date" startchar="{" endchar="}" depricated="1"
+             twigsimplereplacement="{{ 'now'|date('Y-m-d') }}"/>
+        <tag name="today" label="Today" startchar="{" endchar="}" depricated="1"
+             twigsimplereplacement="{{ 'now'|date('Y-m-d') }}"/>
+
+        <tag name="if" label="If statement" startchar="{" endchar="}" separator=":" twigreplacestartchar="{% if "
+             twigreplaceendchar=" %}" depricated="1"/>
+        <tag name="endif" label="EndIf statement" startchar="{" endchar="}" separator=":"
+             twigsimplereplacement="{% endif %}" depricated="1"/>
+
+        <tag name="gobackbutton" label="Go Back Button" startchar="{" endchar="}" separator=":" depricated="1"
+             twigreplacestartchar="{{ html.goback(" twigreplaceendchar=") }}"/>
+
+        <tag name="batchtoolbar" label="Batch Toolbar" repeatative="1" startchar="{" endchar="}"
+             description="Renders the batch toolbar" hidedefaultexample="1"
+             twigreplacement="html.batch" depricated="1"/>
+
+    </tagset>
+
+    <!-- Record Tags -->
+    <tagset name="record" label="Record" description="Tags related to a single record." priority="1">
+
+        <tag name="id" label="record ID" startchar="{" endchar="}" description="Returns record ID" twigclass="record"/>
+
         <tag name="number" label="Record Number" startchar="{" endchar="}"
-             description="Returns record number (in current order), not record id." twigclass="record" />
-	
-		<tag name="published" label="Published" startchar="{" endchar="}"
-             description="Returns the «Yes» word (language depended) if the record is published and «No» if not." twigclass="record" >
+             description="Returns record number (in current order), not record id." twigclass="record"/>
+
+        <tag name="published" label="Published" startchar="{" endchar="}"
+             description="Returns the «Yes» word (language depended) if the record is published and «No» if not."
+             twigclass="record">
             <params>
                 <param name="format" label="Format" description="What type of value to return." type="list">
-                    <option value="" label="Text (Yes/No)" description="Word 'Yes' will be returned if the record is published. Or Word 'No' instead"/>
-                    <option value="number" label="Number (1/0)" description="Number '1' will be returned if the record is published. Or number '0' instead."/>
-                    <option value="boolean" label="Boolean (true,false)" description="Word 'true' will be returned if record is published or word 'false' instead"/>
-					<option value="custom" label="Custom" description="Custom text to show if the record is published"/>
+                    <option value="" label="Text (Yes/No)"
+                            description="Word 'Yes' will be returned if the record is published. Or Word 'No' instead"/>
+                    <option value="number" label="Number (1/0)"
+                            description="Number '1' will be returned if the record is published. Or number '0' instead."/>
+                    <option value="boolean" label="Boolean (true,false)"
+                            description="Word 'true' will be returned if record is published or word 'false' instead"/>
+                    <option value="custom" label="Custom" description="Custom text to show if the record is published"/>
                 </param>
-				<param type="string" name="customtext" label="Custom Text( Optional)" description="Custom text to show if the record is published" />
+                <param type="string" name="customtext" label="Custom Text( Optional)"
+                       description="Custom text to show if the record is published"/>
             </params>
         </tag>
-	
-		<tag name="link" label="Link to detailed page" startchar="{" endchar="}" 
-			description="Link to record details page (Details Layout will be used, the one selected in the current menu item.)"
-			twigclass="record" 
-			twigreplacement="record.link" twigreplacementparams="true" >
-			<params>
+
+        <tag name="link" label="Link to detailed page" startchar="{" endchar="}"
+             description="Link to record details page (Details Layout will be used, the one selected in the current menu item.)"
+             twigclass="record"
+             twigreplacement="record.link" twigreplacementparams="true">
+            <params>
                 <param name="add_returnto" label="Add '&#38;returnto=' parameter" description="
-				To add '&#38;returnto=' query parameter to the link to allow 'Go Back' button on detailed or edit web page." type="radio" default=""
+				To add '&#38;returnto=' query parameter to the link to allow 'Go Back' button on detailed or edit web page."
+                       type="radio" default=""
                        options="|No,true|Add"/>
-				<param type="string" name="menu_item_alias" label="Menu Item alias (Optional)" description="Menu Item alias to open the link using specific menu item parameters." />
-				<param type="string" name="custom_returnto_link" label="Custom '&#38;returnto=' link (Optional)" description="Example: {{ link(true,'','/index.php/thank-you') }}" />
-			</params>
-		</tag>
+                <param type="string" name="menu_item_alias" label="Menu Item alias (Optional)"
+                       description="Menu Item alias to open the link using specific menu item parameters."/>
+                <param type="string" name="custom_returnto_link" label="Custom '&#38;returnto=' link (Optional)"
+                       description="Example: {{ link(true,'','/index.php/thank-you') }}"/>
+            </params>
+        </tag>
 
-		<tag name="joincount" label="Table Join - Count" startchar="{" endchar="}" proversion="1"
-             description="Returns the number of records in the joined table (Table Join) that are connected to the current record." twigclass="record">
-			<params>
-				<param name="tablename" label="Table" type="table" description="The name of the Table that has a Table Join type field." example="products" />
-				<param name="filter" label="Filter" type="string" description="Optional filter, ie. fieldname=some value." />
-			</params>
-		</tag>
-		
-		<tag name="joinavg" label="Table Join - Average" startchar="{" endchar="}" proversion="1"
+        <tag name="joincount" label="Table Join - Count" startchar="{" endchar="}" proversion="1"
+             description="Returns the number of records in the joined table (Table Join) that are connected to the current record."
+             twigclass="record">
+            <params>
+                <param name="tablename" label="Table" type="table"
+                       description="The name of the Table that has a Table Join type field." example="products"/>
+                <param name="filter" label="Filter" type="string"
+                       description="Optional filter, ie. fieldname=some value."/>
+            </params>
+        </tag>
+
+        <tag name="joinavg" label="Table Join - Average" startchar="{" endchar="}" proversion="1"
              description="Calculates the average value of all the records that match." twigclass="record">
-			<params>
-				<param name="tablename" label="Table" type="table" description="The name of the Table that has a Table Join type field." example="products" />
-				<param name="value_of_field" label="Value Field" type="string" description="Field of joined table to read the value from." example="_id" />
-				<param name="filter" label="Filter" type="string" description="Optional filter, ie. fieldname=some value." />
-			</params>
-		</tag>
-		
-		<tag name="joinmin" label="Table Join - Minimum" startchar="{" endchar="}" proversion="1"
-             description="Finds minimum value of all the records that match." twigclass="record">
-			<params>
-				<param name="tablename" label="Table" type="table" description="The name of the Table that has a Table Join type field." example="products" />
-				<param name="value_of_field" label="Value Field" type="string" description="Field of joined table to read the value from." example="_id" />
-				<param name="filter" label="Filter" type="string" description="Optional filter, ie. fieldname=some value." />
-			</params>
-		</tag>
-		
-		<tag name="joinmax" label="Table Join - Maximum" startchar="{" endchar="}" proversion="1"
-             description="Finds maximum value of all the records that match." twigclass="record">
-			<params>
-				<param name="tablename" label="Table" type="table" description="The name of the Table that has a Table Join type field." example="products" />
-				<param name="value_of_field" label="Value Field" type="string" description="Field of joined table to read the value from." example="_id" />
-				<param name="filter" label="Filter" type="string" description="Optional filter, ie. fieldname=some value." />
-			</params>
-		</tag>
-		
-		<tag name="joinsum" label="Table Join - Sum" startchar="{" endchar="}" proversion="1"
-             description="Summarizes values of a selected field of all the records that match." twigclass="record">
-			<params>
-				<param name="tablename" label="Table" type="table" description="The name of the Table that has a Table Join type field." example="products" />
-				<param name="value_of_field" label="Value Field" type="string" description="Field of joined table to read the value from." example="_id" />
-				<param name="filter" label="Filter" type="string" description="Optional filter, ie. fieldname=some value." />
-			</params>
-		</tag>
-		
-		<tag name="joinvalue" label="Table Join - Value" startchar="{" endchar="}" proversion="1"
-             description="Returns the value of selected field of all the records that match." twigclass="record">
-			<params>
-				<param name="tablename" label="Table" type="table" description="The name of the Table that has a Table Join type field." example="products" />
-				<param name="value_of_field" label="Field of joined table to read the value from." type="string" description="Field of joined table to read the value from." example="_id" />
-				<param name="filter" label="Filter" type="string" description="Optional filter, ie. fieldname=some value." />
-			</params>
-		</tag>
-		
-		<tag name="jointable" label="Join Table - Table" startchar="{" endchar="}" proversion="1"
-             description="Returns the records from another table these that connected to currnet record and match the filter. Records will be formatted by selected layout." twigclass="record">
-			<params>
-				<param type="layout" name="layout" label="Catalog Layout" table="" layoutype="catalogpage,simplecatalog" />
-				<param type="string" name="filter" label="Filter" description="Example: price>100" />
-				<param type="string" name="orderby" label="Order By field" description="Example: name desc" />
-				<param type="string" name="limit" label="Limit" description="Max number of records to load. Example: 20" />
-			</params>
-		</tag>
-		
-		<!-- <tag name="resolve" label="Resolves Hierarchical Data" startchar="{" endchar="}" -->
-          <!--    description="Code to Textual Representation." proversion="1" /> -->
+            <params>
+                <param name="tablename" label="Table" type="table"
+                       description="The name of the Table that has a Table Join type field." example="products"/>
+                <param name="value_of_field" label="Value Field" type="string"
+                       description="Field of joined table to read the value from." example="_id"/>
+                <param name="filter" label="Filter" type="string"
+                       description="Optional filter, ie. fieldname=some value."/>
+            </params>
+        </tag>
 
-		<tag name="advancedjoin" label="Table Join" startchar="{" endchar="}" proversion="1"
+        <tag name="joinmin" label="Table Join - Minimum" startchar="{" endchar="}" proversion="1"
+             description="Finds minimum value of all the records that match." twigclass="record">
+            <params>
+                <param name="tablename" label="Table" type="table"
+                       description="The name of the Table that has a Table Join type field." example="products"/>
+                <param name="value_of_field" label="Value Field" type="string"
+                       description="Field of joined table to read the value from." example="_id"/>
+                <param name="filter" label="Filter" type="string"
+                       description="Optional filter, ie. fieldname=some value."/>
+            </params>
+        </tag>
+
+        <tag name="joinmax" label="Table Join - Maximum" startchar="{" endchar="}" proversion="1"
+             description="Finds maximum value of all the records that match." twigclass="record">
+            <params>
+                <param name="tablename" label="Table" type="table"
+                       description="The name of the Table that has a Table Join type field." example="products"/>
+                <param name="value_of_field" label="Value Field" type="string"
+                       description="Field of joined table to read the value from." example="_id"/>
+                <param name="filter" label="Filter" type="string"
+                       description="Optional filter, ie. fieldname=some value."/>
+            </params>
+        </tag>
+
+        <tag name="joinsum" label="Table Join - Sum" startchar="{" endchar="}" proversion="1"
+             description="Summarizes values of a selected field of all the records that match." twigclass="record">
+            <params>
+                <param name="tablename" label="Table" type="table"
+                       description="The name of the Table that has a Table Join type field." example="products"/>
+                <param name="value_of_field" label="Value Field" type="string"
+                       description="Field of joined table to read the value from." example="_id"/>
+                <param name="filter" label="Filter" type="string"
+                       description="Optional filter, ie. fieldname=some value."/>
+            </params>
+        </tag>
+
+        <tag name="joinvalue" label="Table Join - Value" startchar="{" endchar="}" proversion="1"
+             description="Returns the value of selected field of all the records that match." twigclass="record">
+            <params>
+                <param name="tablename" label="Table" type="table"
+                       description="The name of the Table that has a Table Join type field." example="products"/>
+                <param name="value_of_field" label="Field of joined table to read the value from." type="string"
+                       description="Field of joined table to read the value from." example="_id"/>
+                <param name="filter" label="Filter" type="string"
+                       description="Optional filter, ie. fieldname=some value."/>
+            </params>
+        </tag>
+
+        <tag name="jointable" label="Join Table - Table" startchar="{" endchar="}" proversion="1"
+             description="Returns the records from another table these that connected to currnet record and match the filter. Records will be formatted by selected layout."
+             twigclass="record">
+            <params>
+                <param type="layout" name="layout" label="Catalog Layout" table=""
+                       layoutype="catalogpage,simplecatalog"/>
+                <param type="string" name="filter" label="Filter" description="Example: price>100"/>
+                <param type="string" name="orderby" label="Order By field" description="Example: name desc"/>
+                <param type="string" name="limit" label="Limit"
+                       description="Max number of records to load. Example: 20"/>
+            </params>
+        </tag>
+
+        <!-- <tag name="resolve" label="Resolves Hierarchical Data" startchar="{" endchar="}" -->
+        <!--    description="Code to Textual Representation." proversion="1" /> -->
+
+        <tag name="advancedjoin" label="Table Join" startchar="{" endchar="}" proversion="1"
              description="Returns value of joined table field." hidedefaultexample="1" twigclass="record">
             <params>
-                <param name="function" label="Function" type="list" description="What to do with returned value(s)" example="count">
+                <param name="function" label="Function" type="list" description="What to do with returned value(s)"
+                       example="count">
                     <option value="count" label="Count" description="Counts the number of records that match."/>
-                    <option value="avg" label="Average" description="Calculates the average value of all the records that match."/>
-                    <option value="min" label="Minimum" description="Finds minimum value of all the records that match."/>
-                    <option value="max" label="Maximum" description="Finds maximum value of all the records that match."/>
-                    <option value="sum" label="Sum" description="Summarizes values of a selected field of all the records that match."/>
-                    <option value="value" label="Value" description="Returns the value of selected field of all the records that match."/>
+                    <option value="avg" label="Average"
+                            description="Calculates the average value of all the records that match."/>
+                    <option value="min" label="Minimum"
+                            description="Finds minimum value of all the records that match."/>
+                    <option value="max" label="Maximum"
+                            description="Finds maximum value of all the records that match."/>
+                    <option value="sum" label="Sum"
+                            description="Summarizes values of a selected field of all the records that match."/>
+                    <option value="value" label="Value"
+                            description="Returns the value of selected field of all the records that match."/>
                     <!-- <option value="smart" label="Hierarchical" description="resolves value of selected field." proversion="1" /> -->
                 </param>
-                <param name="tablename" label="Join With Table" type="string" description="Table Name to join with (Where to look)" example="sales" />
+                <param name="tablename" label="Join With Table" type="string"
+                       description="Table Name to join with (Where to look)" example="sales"/>
                 <param name="findwhat_field" label="Find What Field" type="string" example="_id"
                        description="The field of the current table. use '_id' to the find current table record id."/>
                 <param name="lookwhere_field" label="Where to Look Field" type="string"
-                       description="Field of a joined table" example="productid" />
+                       description="Field of a joined table" example="productid"/>
                 <param name="value_of_field" label="Value Field" type="string"
-                       description="Value of joined table field." example="_id" />
-                <param name="filter" label="Filter" type="string" description="Optional filter, ie. fieldname=some value." />
+                       description="Value of joined table field." example="_id"/>
+                <param name="filter" label="Filter" type="string"
+                       description="Optional filter, ie. fieldname=some value."/>
             </params>
         </tag>
-		
-		<!-- Depricated -->
-		
-		<tag name="cart" label="Shopping Cart" startchar="{" endchar="}" hidedefaultexample="1" layouttypes="1,6,3,4,8,9,10" proversion="1"
+
+        <!-- Depricated -->
+
+        <tag name="cart" label="Shopping Cart" startchar="{" endchar="}" hidedefaultexample="1"
+             layouttypes="1,6,3,4,8,9,10" proversion="1"
              description="Returns Shopping Cart item count or renders Add to Shoping Cart button" depricated="1">
             <params>
                 <param name="option" label="Option" type="list" description="Select on of the available options.">
-					<option value="count" label="Item count" description="Return the number of items in the Shopping Cart."/>
-					<option value="addtocart" label="Add to cart" description="Return the link that add current item to the Shopping Cart" />
-					<option value="deleteitem" label="Delete Item" description="Return the link that deletes current item from the Shopping Cart"/>
-					<option value="form_addtocart" label="Add to cart form" description="Renders Add to Cart form with quantity input box." />
-					<option value="setitemcount" label="Set item count/quantity" description="Renders Update quantity form." />
-		        </param>
-                <param name="label" label="Button Label" type="string" description="Add or Updated form button label. (Applicabale to Add to Cart form and Set item count/quantity)" example="Update" />
-                <param type="string" name="cssclass" label="Button CSS Class" description="Name or names of CSS class(s). (Applicabale to Add to cart form and Set item count/quantity)" />
+                    <option value="count" label="Item count"
+                            description="Return the number of items in the Shopping Cart."/>
+                    <option value="addtocart" label="Add to cart"
+                            description="Return the link that add current item to the Shopping Cart"/>
+                    <option value="deleteitem" label="Delete Item"
+                            description="Return the link that deletes current item from the Shopping Cart"/>
+                    <option value="form_addtocart" label="Add to cart form"
+                            description="Renders Add to Cart form with quantity input box."/>
+                    <option value="setitemcount" label="Set item count/quantity"
+                            description="Renders Update quantity form."/>
+                </param>
+                <param name="label" label="Button Label" type="string"
+                       description="Add or Updated form button label. (Applicabale to Add to Cart form and Set item count/quantity)"
+                       example="Update"/>
+                <param type="string" name="cssclass" label="Button CSS Class"
+                       description="Name or names of CSS class(s). (Applicabale to Add to cart form and Set item count/quantity)"/>
             </params>
         </tag>
-		
-		<tag name="id" label="record ID" startchar="{" endchar="}" twigreplacement="record.id" depricated="1" />
-		<!--<tag name="number" label="Record Number" startchar="{" endchar="}" twigreplacement="record.number" />-->
-		
+
+        <tag name="id" label="record ID" startchar="{" endchar="}" twigreplacement="record.id" depricated="1"/>
+        <!--<tag name="number" label="Record Number" startchar="{" endchar="}" twigreplacement="record.number" />-->
+
         <tag name="sqljoin" label="Table Join" startchar="{" endchar="}" depricated="1"
-             description="Returns value of joined table field." hidedefaultexample="1" twigreplacement="record.advancedjoin" />
-	
-		<tag name="linknoreturn" label="No Return Link (Depricated)" startchar="{" endchar="}"
-            description="Link to detailed page without «returnto» link (Depricated)" depricated="1"
-			twigreplacement="record.link" twigreplacementparams="" />
+             description="Returns value of joined table field." hidedefaultexample="1"
+             twigreplacement="record.advancedjoin"/>
 
-	</tagset>
+        <tag name="linknoreturn" label="No Return Link (Depricated)" startchar="{" endchar="}"
+             description="Link to detailed page without «returnto» link (Depricated)" depricated="1"
+             twigreplacement="record.link" twigreplacementparams=""/>
 
-<!-- Table Tags -->
+    </tagset>
+
+    <!-- Table Tags -->
     <tagset name="table" label="Table" description="Tags related current to current table." priority="1">
-	
-		<tag name="records" label="Record Count (number)" startchar="{" endchar="}"
-            description="Returns the number of records in the table that met filter criteria" twigclass="table" />
-	
-		<tag name="title" label="Table Title" startchar="{" endchar="}"
-            description="Returns the current table title." hidedefaultexample="1" twigclass="table" />
-			
-		<tag name="description" label="Description" startchar="{" endchar="}"
-            description="Returns current table description." hidedefaultexample="1" twigclass="table" />
-			
-		<tag name="name" label="Table Name" startchar="{" endchar="}" proversion="1"
-            description="Returns the current table name." hidedefaultexample="1" twigclass="table" />
-			
-		<tag name="id" label="Table ID" startchar="{" endchar="}" proversion="1"
-            description="Returns current table ID." hidedefaultexample="1" twigclass="table" />
-			
-		<tag name="fields" label="Fields" startchar="{" endchar="}"
-            description="Return the number of fields in the table" hidedefaultexample="1" twigclass="table" />
-		
-	<!-- Depricated -->
-		
-		<tag name="table" label="Table Info" startchar="{" endchar="}" depricated="1"
+
+        <tag name="records" label="Record Count (number)" startchar="{" endchar="}"
+             description="Returns the number of records in the table that met filter criteria" twigclass="table"/>
+
+        <tag name="title" label="Table Title" startchar="{" endchar="}"
+             description="Returns the current table title." hidedefaultexample="1" twigclass="table"/>
+
+        <tag name="description" label="Description" startchar="{" endchar="}"
+             description="Returns current table description." hidedefaultexample="1" twigclass="table"/>
+
+        <tag name="name" label="Table Name" startchar="{" endchar="}" proversion="1"
+             description="Returns the current table name." hidedefaultexample="1" twigclass="table"/>
+
+        <tag name="id" label="Table ID" startchar="{" endchar="}" proversion="1"
+             description="Returns current table ID." hidedefaultexample="1" twigclass="table"/>
+
+        <tag name="fields" label="Fields" startchar="{" endchar="}"
+             description="Return the number of fields in the table" hidedefaultexample="1" twigclass="table"/>
+
+        <!-- Depricated -->
+
+        <tag name="table" label="Table Info" startchar="{" endchar="}" depricated="1"
              description="Returns the current table related information" hidedefaultexample="1"
-			 twigreplacement="table"
-			 twigoptionsreplacement="1" />
-			 
-		<tag name="description" label="Table Description (Depricated)" startchar="{" endchar="}"
-             description="(Depricated) Returns table description." proversion="1" depricated="1" twigreplacement="table.description" />
-		
-		<tag name="tabletitle" label="Table Title (Depricated)" startchar="{" endchar="}"
-             description="(Depricated) Returns a title of the current table" proversion="1" depricated="1" twigreplacement="table.title" />
-		
-		<tag name="tabledescription" label="Table Description (Depricated)" startchar="{" endchar="}"
-             description="(Depricated) Returns a description of the current table" proversion="1" depricated="1" twigreplacement="table.description">
+             twigreplacement="table"
+             twigoptionsreplacement="1"/>
+
+        <tag name="description" label="Table Description (Depricated)" startchar="{" endchar="}"
+             description="(Depricated) Returns table description." proversion="1" depricated="1"
+             twigreplacement="table.description"/>
+
+        <tag name="tabletitle" label="Table Title (Depricated)" startchar="{" endchar="}"
+             description="(Depricated) Returns a title of the current table" proversion="1" depricated="1"
+             twigreplacement="table.title"/>
+
+        <tag name="tabledescription" label="Table Description (Depricated)" startchar="{" endchar="}"
+             description="(Depricated) Returns a description of the current table" proversion="1" depricated="1"
+             twigreplacement="table.description">
             <params>
-                <param name="box" label="Show in message box" description="Table description will appear in a message type box with [X] close button." type="radio" default=""
+                <param name="box" label="Show in message box"
+                       description="Table description will appear in a message type box with [X] close button."
+                       type="radio" default=""
                        options="|No,box|Yes"/>
             </params>
         </tag>
-	</tagset>
-	
-	<!-- Tables Tags -->
+    </tagset>
+
+    <!-- Tables Tags -->
     <tagset name="tables" label="Tables" description="Tags related current to current table." priority="3">
-		
-		<tag name="getvalue" label="Get Value" startchar="{" endchar="}" description="Read a record field value from selected table." 
-			twigclass="tables" proversion="1">
+
+        <tag name="getvalue" label="Get Value" startchar="{" endchar="}"
+             description="Read a record field value from selected table."
+             twigclass="tables" proversion="1">
             <params>
-				<param name="tablename" label="Table" type="table" description="The name of the Table that has a Table Join type field." example="products" />
-				
-				<param type="string" name="valuefield" label="Value Field" description="Field of joined table to read the value from." example="_id" />
-				<param type="string" name="recordidorfilter" label="Record ID or filter" description="Example 1: 65, example 2: population>1000000" example="62"/>
-				<param type="string" name="orderby" label="Order By Field" description="Optional and is used with the Filter not Record ID" example="" />
-			</params>
-		</tag>
-		
-		<tag name="getrecord" label="Get Record" startchar="{" endchar="}" description="Renders another table single record using selected layout." 
-			twigclass="tables" proversion="1">
+                <param name="tablename" label="Table" type="table"
+                       description="The name of the Table that has a Table Join type field." example="products"/>
+
+                <param type="string" name="valuefield" label="Value Field"
+                       description="Field of joined table to read the value from." example="_id"/>
+                <param type="string" name="recordidorfilter" label="Record ID or filter"
+                       description="Example 1: 65, example 2: population>1000000" example="62"/>
+                <param type="string" name="orderby" label="Order By Field"
+                       description="Optional and is used with the Filter not Record ID" example=""/>
+            </params>
+        </tag>
+
+        <tag name="getrecord" label="Get Record" startchar="{" endchar="}"
+             description="Renders another table single record using selected layout."
+             twigclass="tables" proversion="1">
             <params>
-				<param type="layout" name="layout" label="Catalog Layout" table="" layoutype="catalogpage,simplecatalog" example="CountriesPage" />
-				<param type="string" name="recordidorfilter" label="Record ID or filter" description="Example 1: 65, example 2: population>1000000" example="62"/>
-				<param type="string" name="orderby" label="Order By Field" description="Optional and is used with the Filter not Record ID" example="" />
-			</params>
-		</tag>
-		
-		<tag name="getrecords" label="Get Records" startchar="{" endchar="}" description="Renders another table records using selected layout." 
-			twigclass="tables" proversion="1">
+                <param type="layout" name="layout" label="Catalog Layout" table="" layoutype="catalogpage,simplecatalog"
+                       example="CountriesPage"/>
+                <param type="string" name="recordidorfilter" label="Record ID or filter"
+                       description="Example 1: 65, example 2: population>1000000" example="62"/>
+                <param type="string" name="orderby" label="Order By Field"
+                       description="Optional and is used with the Filter not Record ID" example=""/>
+            </params>
+        </tag>
+
+        <tag name="getrecords" label="Get Records" startchar="{" endchar="}"
+             description="Renders another table records using selected layout."
+             twigclass="tables" proversion="1">
             <params>
-				<param type="layout" name="layout" label="Catalog Layout" table="" layoutype="catalogpage,simplecatalog" example="CountriesPage" />
-				<param type="string" name="filter" label="Filter" description="Example: price>100" example="populatioin>1000000"/>
-				<param type="string" name="orderby" label="Order By Field" description="Example: name desc" example="name" />
-				<param type="string" name="limit" label="Limit" description="Max number of records to load. Example: 20" example="20" />
-			</params>
-		</tag>
-	</tagset>
-	
-<!-- Fields Tags -->
+                <param type="layout" name="layout" label="Catalog Layout" table="" layoutype="catalogpage,simplecatalog"
+                       example="CountriesPage"/>
+                <param type="string" name="filter" label="Filter" description="Example: price>100"
+                       example="populatioin>1000000"/>
+                <param type="string" name="orderby" label="Order By Field" description="Example: name desc"
+                       example="name"/>
+                <param type="string" name="limit" label="Limit" description="Max number of records to load. Example: 20"
+                       example="20"/>
+            </params>
+        </tag>
+    </tagset>
+
+    <!-- Fields Tags -->
     <tagset name="fields" label="Fields" description="Tags related to current table fields." priority="1">
-	
-		<tag name="count" label="Field Count (number)" startchar="{" endchar="}"
-            description="Return the number of fields in the table" twigclass="fields" />
-			
-		<tag name="list" label="List of field parameters" startchar="{" endchar="}" proversion="1"
-            description="Returns the list of fields. Example: country,city,phone" twigclass="fields" >
-			<params>
-				<param name="option" label="Field attribute" type="list" description="Select one attribute.">
-					<option value="fieldname" label="Field Name" />
-					<option value="title" label="Title" description="Language dependable" />
-					<option value="description" label="Description" description="Language dependable" />
-					<option value="type" label="Type" />
-					<option value="typeparams" label="Type Params" />
-					<option value="isrequired" label="Is Required" />
-					<option value="isdisabled" label="Is Disabled" />
-					<option value="defaultvalue" label="Default Value" />
-					<option value="valuerule" label="Value Rule" />
-					<option value="valuerulecaption" label="Value Rule Caption" />
-				</param>
-			</params>
-		</tag>
-			
-		<tag name="json" label="Field Json Array" startchar="{" endchar="}" proversion="1"
-            description="Return the array of fields in JSON format" twigclass="fields" />
-	</tagset>
-	
 
-<!-- User Tags -->
+        <tag name="count" label="Field Count (number)" startchar="{" endchar="}"
+             description="Return the number of fields in the table" twigclass="fields"/>
+
+        <tag name="list" label="List of field parameters" startchar="{" endchar="}" proversion="1"
+             description="Returns the list of fields. Example: country,city,phone" twigclass="fields">
+            <params>
+                <param name="option" label="Field attribute" type="list" description="Select one attribute.">
+                    <option value="fieldname" label="Field Name"/>
+                    <option value="title" label="Title" description="Language dependable"/>
+                    <option value="description" label="Description" description="Language dependable"/>
+                    <option value="type" label="Type"/>
+                    <option value="typeparams" label="Type Params"/>
+                    <option value="isrequired" label="Is Required"/>
+                    <option value="isdisabled" label="Is Disabled"/>
+                    <option value="defaultvalue" label="Default Value"/>
+                    <option value="valuerule" label="Value Rule"/>
+                    <option value="valuerulecaption" label="Value Rule Caption"/>
+                </param>
+            </params>
+        </tag>
+
+        <tag name="json" label="Field Json Array" startchar="{" endchar="}" proversion="1"
+             description="Return the array of fields in JSON format" twigclass="fields"/>
+    </tagset>
+
+
+    <!-- User Tags -->
     <tagset name="user" label="User" description="Tags related Joomla user accounts." priority="2">
-		<tag name="id" label="Current User ID" startchar="{" endchar="}"
-            description="Returns Current User ID" proversion="1" twigclass="user" />
-	
-		<tag name="name" label="User Full Name" startchar="{" endchar="}"
-            description="Returns User full name." proversion="1" twigclass="user" >	
-			<params>
-				<param name="userid" label="User ID" description="To get the Full Name of the specific user, leave it blank to get the Current User's Full Name" hidden="false" default="" type="string" />
-			</params>
-		</tag>
-	
-		<tag name="username" label="Username" startchar="{" endchar="}"
-            description="Returns Username." proversion="1" twigclass="user" >	
-			<params>
-				<param name="userid" label="User ID" description="To get the Username of the specific user, leave it blank to get the Current User's Username" hidden="false" default="" type="string" />
-			</params>
-		</tag>
-	
-		<tag name="email" label="Email" startchar="{" endchar="}"
-            description="Returns User email address." proversion="1" twigclass="user" >	
-			<params>
-				<param name="userid" label="User ID" description="To get the Email of the specific user, leave it blank to get the Current User's Email" hidden="false" default="" type="string" />
-			</params>
-		</tag>
-	
-		<tag name="lastvisitdate" label="Last Visit Date" startchar="{" endchar="}"
-            description="Returns Current User Last Visit Date." proversion="1" twigclass="user" >	
-			<params>
-				<param name="userid" label="User ID" description="To get the Last Visit Date of the specific user, leave it blank to get the Current User's Last Visit Date" hidden="false" default="" type="string" />
-			</params>
-		</tag>
-	
-		<tag name="registerdate" label="Register Date" startchar="{" endchar="}"
-            description="Returns Current User Registration Date." proversion="1" twigclass="user" >	
-			<params>
-				<param name="userid" label="User ID" description="To get the Register Date of the specific user, leave it blank to get the Current User's Register Date" hidden="false" default="" type="string" />
-			</params>
-		</tag>
-	
-		<tag name="usergroups" label="Returns an array of User Group names" startchar="{" endchar="}"
-            description="Use |join(',') filter to return a string" proversion="1" twigclass="user" >	
-			<params>
-				<param name="userid" label="User ID" description="To get the User Group Names of the specific user, leave it blank to get the Current User's User Groups Names." hidden="false" default="" type="string" />
-			</params>
-		</tag>
-		
-		<!-- Depricated -->
-		
-		<tag name="user" label="User" startchar="{" endchar="}" depricated="1"
-             description="Returns current user info (if user is logged in)" hidedefaultexample="1" 
-			 twigreplacement="user"
-			 twigoptionsreplacement="1" />
-			 
-		<tag name="currentuserid" label="Current User ID (Depricated)" startchar="{" endchar="}"
-             description="(Depricated) Returns Current User ID" proversion="1" depricated="1" twigreplacement="user.id" />
-			 
-		<tag name="currentusertype" label="Current User Type (Depricated)" startchar="{" endchar="}" twigsimplereplacement="{{ user.usergroups()|join(',') }}"
-             description="(Depricated) Returns Current User Type (Super Administrator, Editor, etc...)" proversion="1" depricated="1" /><!-- pro only -->
-		
-	</tagset>
+        <tag name="id" label="Current User ID" startchar="{" endchar="}"
+             description="Returns Current User ID" proversion="1" twigclass="user"/>
 
-<!-- Url Tags -->
+        <tag name="name" label="User Full Name" startchar="{" endchar="}"
+             description="Returns User full name." proversion="1" twigclass="user">
+            <params>
+                <param name="userid" label="User ID"
+                       description="To get the Full Name of the specific user, leave it blank to get the Current User's Full Name"
+                       hidden="false" default="" type="string"/>
+            </params>
+        </tag>
+
+        <tag name="username" label="Username" startchar="{" endchar="}"
+             description="Returns Username." proversion="1" twigclass="user">
+            <params>
+                <param name="userid" label="User ID"
+                       description="To get the Username of the specific user, leave it blank to get the Current User's Username"
+                       hidden="false" default="" type="string"/>
+            </params>
+        </tag>
+
+        <tag name="email" label="Email" startchar="{" endchar="}"
+             description="Returns User email address." proversion="1" twigclass="user">
+            <params>
+                <param name="userid" label="User ID"
+                       description="To get the Email of the specific user, leave it blank to get the Current User's Email"
+                       hidden="false" default="" type="string"/>
+            </params>
+        </tag>
+
+        <tag name="lastvisitdate" label="Last Visit Date" startchar="{" endchar="}"
+             description="Returns Current User Last Visit Date." proversion="1" twigclass="user">
+            <params>
+                <param name="userid" label="User ID"
+                       description="To get the Last Visit Date of the specific user, leave it blank to get the Current User's Last Visit Date"
+                       hidden="false" default="" type="string"/>
+            </params>
+        </tag>
+
+        <tag name="registerdate" label="Register Date" startchar="{" endchar="}"
+             description="Returns Current User Registration Date." proversion="1" twigclass="user">
+            <params>
+                <param name="userid" label="User ID"
+                       description="To get the Register Date of the specific user, leave it blank to get the Current User's Register Date"
+                       hidden="false" default="" type="string"/>
+            </params>
+        </tag>
+
+        <tag name="usergroups" label="Returns an array of User Group names" startchar="{" endchar="}"
+             description="Use |join(',') filter to return a string" proversion="1" twigclass="user">
+            <params>
+                <param name="userid" label="User ID"
+                       description="To get the User Group Names of the specific user, leave it blank to get the Current User's User Groups Names."
+                       hidden="false" default="" type="string"/>
+            </params>
+        </tag>
+
+        <!-- Depricated -->
+
+        <tag name="user" label="User" startchar="{" endchar="}" depricated="1"
+             description="Returns current user info (if user is logged in)" hidedefaultexample="1"
+             twigreplacement="user"
+             twigoptionsreplacement="1"/>
+
+        <tag name="currentuserid" label="Current User ID (Depricated)" startchar="{" endchar="}"
+             description="(Depricated) Returns Current User ID" proversion="1" depricated="1"
+             twigreplacement="user.id"/>
+
+        <tag name="currentusertype" label="Current User Type (Depricated)" startchar="{" endchar="}"
+             twigsimplereplacement="{{ user.usergroups()|join(',') }}"
+             description="(Depricated) Returns Current User Type (Super Administrator, Editor, etc...)" proversion="1"
+             depricated="1"/><!-- pro only -->
+
+    </tagset>
+
+    <!-- Url Tags -->
     <tagset name="url" label="URL" description="Tags related current URL and links." priority="2">
-	
-		<tag name="link" label="Link" startchar="{" endchar="}" description="Current URL" twigclass="url" />
-		
-		<tag name="format" label="Output Format" startchar="{" endchar="}" proversion="1"
-             description="A link to download current page records in a specific format." hidedefaultexample="1" twigclass="url">
+
+        <tag name="link" label="Link" startchar="{" endchar="}" description="Current URL" twigclass="url"/>
+
+        <tag name="format" label="Output Format" startchar="{" endchar="}" proversion="1"
+             description="A link to download current page records in a specific format." hidedefaultexample="1"
+             twigclass="url">
             <params>
                 <param name="format" label="Format" type="list" description="Select the output format.">
                     <option value="csv" label="CSV" description="Generates CSV file"/>
@@ -549,91 +665,123 @@
                     <option value="xml" label="XML" description="Generates XML file."/>
                 </param>
 
-                <param name="linktype" label="Icon" type="list" description="Render HTML anchor with an icon or just a link.">
-                    <option value="" label="Link with an icon" />
-                    <option value="linkonly" label="Link only" />
+                <param name="linktype" label="Icon" type="list"
+                       description="Render HTML anchor with an icon or just a link.">
+                    <option value="" label="Link with an icon"/>
+                    <option value="linkonly" label="Link only"/>
                 </param>
 
-				<param type="string" name="image" label="Path to a custom icon (Optional)" description="Leave it empty to use available file format icon." />
+                <param type="string" name="image" label="Path to a custom icon (Optional)"
+                       description="Leave it empty to use available file format icon."/>
 
                 <param name="size" label="Icon Size" type="list" description="Select the icon size in pixels.">
-                    <option value="16" label="16 x 16" />
-                    <option value="32" label="32 x 32" />
-                    <option value="48" label="48 x 48" />
+                    <option value="16" label="16 x 16"/>
+                    <option value="32" label="32 x 32"/>
+                    <option value="48" label="48 x 48"/>
                 </param>
-		
-				<param type="string" name="alias" label="Munu Itemid or Alias (Optional)" description="To redirect to a specific Menu Item." /></params>
+
+                <param type="string" name="alias" label="Munu Itemid or Alias (Optional)"
+                       description="To redirect to a specific Menu Item."/>
+            </params>
         </tag>
-		
-		<tag name="itemid" label="Menu Itemid" startchar="{" endchar="}" description="Joomla menu item Itemid" twigclass="url" proversion="1" />
-		
-		<tag name="getint" label="Integer" startchar="{" endchar="}" description="Returns the first integer found in the parameter value." twigclass="url" >
-			<params>
-				<param name="parameter" label="Parameter" type="string" description="Url query parameter" example="firstname" />
-			</params>
-		</tag>
-		<tag name="getstring" label="String" startchar="{" endchar="}" description="Converts the input to a plain text string; strips all tags / attributes." twigclass="url" >
-			<params>
-				<param name="parameter" label="Parameter" type="string" description="Url query parameter" example="firstname" />
-			</params>
-		</tag>
-		<tag name="getuint" label="Unsigned Integer" startchar="{" endchar="}" description="Returns an unsigned int." twigclass="url" proversion="1" >
-			<params>
-				<param name="parameter" label="Parameter" type="string" description="Url query parameter" example="firstname" />
-			</params>
-		</tag>
-		<tag name="getfloat" label="Float/Decimal" startchar="{" endchar="}" description="Only use the first floating-point value if the list is provided." twigclass="url" >
-			<params>
-				<param name="parameter" label="Parameter" type="string" description="Url query parameter" example="firstname" />
-			</params>
-		</tag>
-		<tag name="getword" label="Word" startchar="{" endchar="}" description="Only allow characters a-z, and underscores." twigclass="url" >
-			<params>
-				<param name="parameter" label="Parameter" type="string" description="Url query parameter" example="firstname" />
-			</params>
-		</tag>
-		<tag name="getalnum" label="Alphanumeric" startchar="{" endchar="}" description="Allow a-z and 0-9 only." twigclass="url" >
-			<params>
-				<param name="parameter" label="Parameter" type="string" description="Url query parameter" example="firstname" />
-			</params>
-		</tag>
-		<tag name="getcmd" label="Command" startchar="{" endchar="}" description="Allow a-z, 0-9, underscore, dot, dash. Also, removes leading dots from the result." twigclass="url" >
-			<params>
-				<param name="parameter" label="Parameter" type="string" description="Url query parameter" example="firstname" />
-			</params>
-		</tag>
-		<tag name="getstringandencode" label="Base64 Encode" startchar="{" endchar="}" description="Returns encoded value of query parameter." twigclass="url" proversion="1" >
-			<params>
-				<param name="parameter" label="Parameter" type="string" description="Url query parameter" example="firstname" />
-			</params>
-		</tag>
-		<tag name="getstringanddecode" label="Base64 Decode" startchar="{" endchar="}" description="Returns decoded value of query parameter." twigclass="url" proversion="1" >
-			<params>
-				<param name="parameter" label="Parameter" type="string" description="Url query parameter" example="firstname" />
-			</params>
-		</tag>
-		
-		<tag name="base64" label="Base64 Encode URL" startchar="{" endchar="}" description="Returns base64 encoded current URL." twigclass="url" proversion="1" />
-		
-		<tag name="root" label="" startchar="{" endchar="}" description="" twigclass="url" proversion="1" >
-		
-			<params>
-                <param name="include_host" label="Include Host" description="Include Website protocol, host, port, etc." type="radio" default=""
+
+        <tag name="itemid" label="Menu Itemid" startchar="{" endchar="}" description="Joomla menu item Itemid"
+             twigclass="url" proversion="1"/>
+
+        <tag name="getint" label="Integer" startchar="{" endchar="}"
+             description="Returns the first integer found in the parameter value." twigclass="url">
+            <params>
+                <param name="parameter" label="Parameter" type="string" description="Url query parameter"
+                       example="firstname"/>
+            </params>
+        </tag>
+        <tag name="getstring" label="String" startchar="{" endchar="}"
+             description="Converts the input to a plain text string; strips all tags / attributes." twigclass="url">
+            <params>
+                <param name="parameter" label="Parameter" type="string" description="Url query parameter"
+                       example="firstname"/>
+            </params>
+        </tag>
+        <tag name="getuint" label="Unsigned Integer" startchar="{" endchar="}" description="Returns an unsigned int."
+             twigclass="url" proversion="1">
+            <params>
+                <param name="parameter" label="Parameter" type="string" description="Url query parameter"
+                       example="firstname"/>
+            </params>
+        </tag>
+        <tag name="getfloat" label="Float/Decimal" startchar="{" endchar="}"
+             description="Only use the first floating-point value if the list is provided." twigclass="url">
+            <params>
+                <param name="parameter" label="Parameter" type="string" description="Url query parameter"
+                       example="firstname"/>
+            </params>
+        </tag>
+        <tag name="getword" label="Word" startchar="{" endchar="}"
+             description="Only allow characters a-z, and underscores." twigclass="url">
+            <params>
+                <param name="parameter" label="Parameter" type="string" description="Url query parameter"
+                       example="firstname"/>
+            </params>
+        </tag>
+        <tag name="getalnum" label="Alphanumeric" startchar="{" endchar="}" description="Allow a-z and 0-9 only."
+             twigclass="url">
+            <params>
+                <param name="parameter" label="Parameter" type="string" description="Url query parameter"
+                       example="firstname"/>
+            </params>
+        </tag>
+        <tag name="getcmd" label="Command" startchar="{" endchar="}"
+             description="Allow a-z, 0-9, underscore, dot, dash. Also, removes leading dots from the result."
+             twigclass="url">
+            <params>
+                <param name="parameter" label="Parameter" type="string" description="Url query parameter"
+                       example="firstname"/>
+            </params>
+        </tag>
+        <tag name="getstringandencode" label="Base64 Encode" startchar="{" endchar="}"
+             description="Returns encoded value of query parameter." twigclass="url" proversion="1">
+            <params>
+                <param name="parameter" label="Parameter" type="string" description="Url query parameter"
+                       example="firstname"/>
+            </params>
+        </tag>
+        <tag name="getstringanddecode" label="Base64 Decode" startchar="{" endchar="}"
+             description="Returns decoded value of query parameter." twigclass="url" proversion="1">
+            <params>
+                <param name="parameter" label="Parameter" type="string" description="Url query parameter"
+                       example="firstname"/>
+            </params>
+        </tag>
+
+        <tag name="base64" label="Base64 Encode URL" startchar="{" endchar="}"
+             description="Returns base64 encoded current URL." twigclass="url" proversion="1"/>
+
+        <tag name="root" label="" startchar="{" endchar="}" description="" twigclass="url" proversion="1">
+
+            <params>
+                <param name="include_host" label="Include Host" description="Include Website protocol, host, port, etc."
+                       type="radio" default=""
                        options="|No,includehost|Include"/>
-				<param name="include_host" label="Add Trailing Slashe" description="Add common slash to the end of the host name. Example: https://example.com/" type="radio" default=""
+                <param name="include_host" label="Add Trailing Slashe"
+                       description="Add common slash to the end of the host name. Example: https://example.com/"
+                       type="radio" default=""
                        options="|Add,notrailingslash|No"/>
             </params>
-		</tag>
-		
-		<tag name="set" label="Sets query value" startchar="{" endchar="}" description="" twigclass="url" proversion="1">
-			<params>
-				<param name="parameter" label="Parameter" type="string" description="Url query parameter" example="firstname" />
-				<param name="value" label="Value" type="string" description="Value to set Url query parameter" />
-			</params>
-		</tag>
+        </tag>
 
-		<tag name="server" label="" startchar="{" endchar="}" description="Sets query value to communicate with different modules for example." twigclass="url" proversion="1">
-			<params>
+        <tag name="set" label="Sets query value" startchar="{" endchar="}" description="" twigclass="url"
+             proversion="1">
+            <params>
+                <param name="parameter" label="Parameter" type="string" description="Url query parameter"
+                       example="firstname"/>
+                <param name="value" label="Value" type="string" description="Value to set Url query parameter"/>
+            </params>
+        </tag>
+
+        <tag name="server" label="" startchar="{" endchar="}"
+             description="Sets query value to communicate with different modules for example." twigclass="url"
+             proversion="1">
+            <params>
                 <param name="option" label="Option" type="list" description="Select what information to return.">
                     <option value="REMOTE_ADDR" label="REMOTE_ADDR"
                             description="The IP address from which the user is viewing the current page. "/>
@@ -714,69 +862,79 @@
                             description="Original version of 'PATH_INFO' before processed by PHP."/>
                 </param>
             </params>
-		</tag>
+        </tag>
 
-		<!-- Depricated -->
-		
-		<tag name="returnto" label="Encoded Current Page Link (Depricated)" startchar="{" endchar="}"
+        <!-- Depricated -->
+
+        <tag name="returnto" label="Encoded Current Page Link (Depricated)" startchar="{" endchar="}"
              description="(Depricated) Use {currenturl:base64} instead. Returns Base64 encrypted Link to catalog page with an anchor to a current record."
-			 proversion="1" depricated="1" twigreplacement="url.base64" />
+             proversion="1" depricated="1" twigreplacement="url.base64"/>
 
-		
-		<tag name="currenturl" label="Current URL (Depricated)" startchar="{" endchar="}" hidedefaultexample="1" depricated="1"
+
+        <tag name="currenturl" label="Current URL (Depricated)" startchar="{" endchar="}" hidedefaultexample="1"
+             depricated="1"
              description="Returns current URL or any query parameter, it can also be base64 encoded if you include that keyword."
-			 twigreplacement="url"
-			 twigmapname="option"
-			 twigmapparam="parameter" >
+             twigreplacement="url"
+             twigmapname="option"
+             twigmapparam="parameter">
             <params>
                 <param name="option" label="Option" type="list" description="Select on of the available options.">
-                    <option value="string" label="String" description="" twigexactreplacement="getstring" />
-                    <option value="word" label="Word" description="" twigexactreplacement="getword" />
-					<option value="cmd" label="Command" description="" twigexactreplacement="getcmd" />
-					<option value="alnum" label="Alphanumeric" description="" twigexactreplacement="getalnum" />
-                    <option value="int" label="Integer" description="" twigexactreplacement="getint" />
-					<option value="uint" label="Unsigned Integer" description="" twigexactreplacement="getuint" />
-					<option value="float" label="Decimal" description="" twigexactreplacement="getfloat" />
-					<option value="base64" label="Base64 Encode" description="" twigexactreplacement="base64" />
-					<option value="base64decode" label="Base64 Decode" description="" twigexactreplacement="getstringanddecode" />
-                    <option value="set" label="Sets query value" description="" twigexactreplacement="set" />
+                    <option value="string" label="String" description="" twigexactreplacement="getstring"/>
+                    <option value="word" label="Word" description="" twigexactreplacement="getword"/>
+                    <option value="cmd" label="Command" description="" twigexactreplacement="getcmd"/>
+                    <option value="alnum" label="Alphanumeric" description="" twigexactreplacement="getalnum"/>
+                    <option value="int" label="Integer" description="" twigexactreplacement="getint"/>
+                    <option value="uint" label="Unsigned Integer" description="" twigexactreplacement="getuint"/>
+                    <option value="float" label="Decimal" description="" twigexactreplacement="getfloat"/>
+                    <option value="base64" label="Base64 Encode" description="" twigexactreplacement="base64"/>
+                    <option value="base64decode" label="Base64 Decode" description=""
+                            twigexactreplacement="getstringanddecode"/>
+                    <option value="set" label="Sets query value" description="" twigexactreplacement="set"/>
                 </param>
-                <param name="parameter" label="Parameter" type="string" description="Url query parameter" example="firstname" />
-                <param name="value" label="Value" type="string" description="Value to set Url query parameter" />
+                <param name="parameter" label="Parameter" type="string" description="Url query parameter"
+                       example="firstname"/>
+                <param name="value" label="Value" type="string" description="Value to set Url query parameter"/>
             </params>
         </tag>
-		
-		<tag name="websiteroot" label="Website Root" startchar="{" endchar="}" depricated="1"
-             description="Returns website root path (http://example.com/)" twigreplacement="url.root" >
+
+        <tag name="websiteroot" label="Website Root" startchar="{" endchar="}" depricated="1"
+             description="Returns website root path (http://example.com/)" twigreplacement="url.root">
             <params>
-                <param name="include_host" label="Include Host" description="Include Website protocol, host, port etc." type="radio" default=""
+                <param name="include_host" label="Include Host" description="Include Website protocol, host, port etc."
+                       type="radio" default=""
                        options="|No,includehost|Include"/>
-				<param name="include_host" label="Add Trailing Slashe" description="Add common slash to the end of the host name. Example: https://example.com/" type="radio" default=""
+                <param name="include_host" label="Add Trailing Slashe"
+                       description="Add common slash to the end of the host name. Example: https://example.com/"
+                       type="radio" default=""
                        options="|Add,notrailingslash|No"/>
             </params>
         </tag>
-		
-		<tag name="server" label="Server Info" startchar="{" endchar="}" depricated="1"
-             description="Returns Sanitized (String) Server Environment value - $_SERVER" proversion="1" hidedefaultexample="1" twigreplacement="url.server" ><!-- pro only -->
-        </tag>
-		
-	</tagset>
 
-<!-- Document Tags -->
-	<tagset name="document" label="Document" description="Document Tags to manipate current web page or to set system variables."
-		priority="3">
-		
-		<tag name="setpagetitle" label="Set Page Title" startchar="{" endchar="}" twigclass="document"
+        <tag name="server" label="Server Info" startchar="{" endchar="}" depricated="1"
+             description="Returns Sanitized (String) Server Environment value - $_SERVER" proversion="1"
+             hidedefaultexample="1" twigreplacement="url.server"><!-- pro only -->
+        </tag>
+
+    </tagset>
+
+    <!-- Document Tags -->
+    <tagset name="document" label="Document"
+            description="Document Tags to manipate current web page or to set system variables."
+            priority="3">
+
+        <tag name="setpagetitle" label="Set Page Title" startchar="{" endchar="}" twigclass="document"
              description="A command to set the Page Title." proversion="1">
             <params>
-                <param name="title" label="Title" type="string" description="Type the Page Title here." example="JoomlaBoat - Custom Tables" />
+                <param name="title" label="Title" type="string" description="Type the Page Title here."
+                       example="JoomlaBoat - Custom Tables"/>
             </params>
         </tag>
-		
-		<tag name="setheadtag" label="HTML Document Head Tag" startchar="{" endchar="}" hidedefaultexample="1"
+
+        <tag name="setheadtag" label="HTML Document Head Tag" startchar="{" endchar="}" hidedefaultexample="1"
              description="Places whatever provided to HTML document head tag." proversion="1" twigclass="document">
             <params>
-                <param name="content" label="Content" type="string" example="&lt;script src='/components/com_oxfordsms/js/ajax.js' type='text/javascript'&gt;&lt;/script&gt;"
+                <param name="content" label="Content" type="string"
+                       example="&lt;script src='/components/com_oxfordsms/js/ajax.js' type='text/javascript'&gt;&lt;/script&gt;"
                        description="You can add script or css link here or style tags. This will go to HTML document HEAD part."/>
             </params>
         </tag>
@@ -792,81 +950,105 @@
         <tag name="setmetadescription" label="Set Meta Description" startchar="{" endchar="}" twigclass="document"
              description="A command to place a meta description into the head of the page." proversion="1">
             <params>
-                <param name="description" label="Description" type="string" example="custom tables, the best joomla extension, [producttitle], database"
+                <param name="description" label="Description" type="string"
+                       example="custom tables, the best joomla extension, [producttitle], database"
                        description="Description text. You may include [fieldname] to get description from."/>
             </params>
         </tag>
-		
-		<tag name="layout" label="Extend Layout" startchar="{" endchar="}"
-             description="Includes the content of selected layout." hidedefaultexample="0" proversion="1" twigclass="document">
-            <params>
-                <param name="layoutname" label="Layout Name" type="layout" description="Layout Name." examplenoquotes="0" table="current" example="my_script_layout"/>
-				<!-- <param name="process" label="Process content" description="Process content plugins such as Content - Email Cloaking etc." type="radio" default="" options="|No,process|Process"/> -->
-			</params>
-        </tag>
-		
-		<tag name="languagepostfix" label="Language Postfix" startchar="{" endchar="}"
-             description="Current page Language Postfix." proversion="1" twigclass="document" />
-		
-		<tag name="attachment" label="Email file attachment" startchar="{" endchar="}" layouttypes="7"
-             description="The link to a file that will be attached to an email. Works in Email Layout Type." proversion="1" twigclass="document" >
-		</tag>
-		
-		<tag name="sitename" label="Site Name" startchar="{" endchar="}"
-             description="Return the Site Name set in configuration.php file" proversion="1" twigclass="document" />
-		
-		<!-- Depricated -->
-		
-		<tag name="pagetitle" label="Set Page Title" startchar="{" endchar="}" depricated="1" twigreplacement="document.setPageTitle" />
-		<tag name="headtag" label="HTML Document Head Tag" startchar="{" endchar="}" depricated="1" twigreplacement="document.setHeadTag" />
-		<tag name="metakeywords" label="Set Meta Keywords" startchar="{" endchar="}" depricated="1" twigreplacement="document.setMetaKeywords" />
-        <tag name="metadescription" label="Set Meta Description" startchar="{" endchar="}" depricated="1" twigreplacement="document.setMetaDescription" />
-		
-	</tagset>
-	
-	<!-- Available in PRO version and antwhere -->
 
-    <tagset name="plugins" label="Plugins" description="Custom Tables Plugins." priority="3" proversion="1" depricated="1">
-	
-		<tag name="tab" label="Tabs" startchar="{" endchar="} html code {/tabs}"
-             description="" hidedefaultexample="1" proversion="1" depricated="1">
+        <tag name="layout" label="Extend Layout" startchar="{" endchar="}"
+             description="Includes the content of selected layout." hidedefaultexample="0" proversion="1"
+             twigclass="document">
             <params>
-                <param name="title" label="Title" type="string" description="Tab label" examplenoquotes="1" example="Tab 1} First Tab Content {tab:Tab 2} Second Tab content{/tabs"/>
+                <param name="layoutname" label="Layout Name" type="layout" description="Layout Name."
+                       examplenoquotes="0" table="current" example="my_script_layout"/>
+                <!-- <param name="process" label="Process content" description="Process content plugins such as Content - Email Cloaking etc." type="radio" default="" options="|No,process|Process"/> -->
             </params>
         </tag>
-	
-        <tag name="customtablescatalog" label="Custom Tables Catalog" startchar="{" endchar="}" separator="=" hidedefaultexample="1"
-             description="Returns a Custom Table catalog results into. Enable Content Plugins in menu item settings." proversion="1">
+
+        <tag name="languagepostfix" label="Language Postfix" startchar="{" endchar="}"
+             description="Current page Language Postfix." proversion="1" twigclass="document"/>
+
+        <tag name="attachment" label="Email file attachment" startchar="{" endchar="}" layouttypes="7"
+             description="The link to a file that will be attached to an email. Works in Email Layout Type."
+             proversion="1" twigclass="document">
+        </tag>
+
+        <tag name="sitename" label="Site Name" startchar="{" endchar="}"
+             description="Return the Site Name set in configuration.php file" proversion="1" twigclass="document"/>
+
+        <!-- Depricated -->
+
+        <tag name="pagetitle" label="Set Page Title" startchar="{" endchar="}" depricated="1"
+             twigreplacement="document.setPageTitle"/>
+        <tag name="headtag" label="HTML Document Head Tag" startchar="{" endchar="}" depricated="1"
+             twigreplacement="document.setHeadTag"/>
+        <tag name="metakeywords" label="Set Meta Keywords" startchar="{" endchar="}" depricated="1"
+             twigreplacement="document.setMetaKeywords"/>
+        <tag name="metadescription" label="Set Meta Description" startchar="{" endchar="}" depricated="1"
+             twigreplacement="document.setMetaDescription"/>
+
+    </tagset>
+
+    <!-- Available in PRO version and antwhere -->
+
+    <tagset name="plugins" label="Plugins" description="Custom Tables Plugins." priority="3" proversion="1"
+            depricated="1">
+
+        <tag name="tab" label="Tabs" startchar="{" endchar="} html code {/tabs}"
+             description="" hidedefaultexample="1" proversion="1" depricated="1">
             <params>
-                <param name="tablename" label="Table" type="table" description="Table Name" example="products" />
+                <param name="title" label="Title" type="string" description="Tab label" examplenoquotes="1"
+                       example="Tab 1} First Tab Content {tab:Tab 2} Second Tab content{/tabs"/>
+            </params>
+        </tag>
 
-                <param name="pagelayout" label="Page Layout" type="layout" description="Catalog Layout" example="productspage" table="0" layoutype="catalogpage,simplecatalog" />
-                <param name="itemlayout" label="Record Layout" type="layout" description="Record Layout" example="productrecord" table="0" layoutype="catalogitem,record" />
+        <tag name="customtablescatalog" label="Custom Tables Catalog" startchar="{" endchar="}" separator="="
+             hidedefaultexample="1"
+             description="Returns a Custom Table catalog results into. Enable Content Plugins in menu item settings."
+             proversion="1">
+            <params>
+                <param name="tablename" label="Table" type="table" description="Table Name" example="products"/>
 
-                <param name="state" label="Publish State" description="What record states to show." type="radio" default="" example="1"
+                <param name="pagelayout" label="Page Layout" type="layout" description="Catalog Layout"
+                       example="productspage" table="0" layoutype="catalogpage,simplecatalog"/>
+                <param name="itemlayout" label="Record Layout" type="layout" description="Record Layout"
+                       example="productrecord" table="0" layoutype="catalogitem,record"/>
+
+                <param name="state" label="Publish State" description="What record states to show." type="radio"
+                       default="" example="1"
                        options="2|Show All,1|Show Published,0|Show Unpublished"/>
 
-                <param name="filter" label="Filter" type="string" example="count>0" description="Additional filter, ie. fieldname=some value. field to search in = (or &#60; or &#60;= or &#62; or &#62;= or !=)
+                <param name="filter" label="Filter" type="string" example="count>0"
+                       description="Additional filter, ie. fieldname=some value. field to search in = (or &#60; or &#60;= or &#62; or &#62;= or !=)
 		value (or special macro as {currentuserid} for example ) to have more then one equation use AND, OR
 		to get value from url query add '$get_' to parameter name, example 'username=$get_user' this will read value 'user' from url query."/>
 
-                <param name="columns" label="Columns" description="Leave it empty. This parameter no longer used" type="radio" default="" example=" " examplenoquotes="1" options="|"/>
+                <param name="columns" label="Columns" description="Leave it empty. This parameter no longer used"
+                       type="radio" default="" example=" " examplenoquotes="1" options="|"/>
 
-                <param type="string" name="sortby" default="" example="title" label="Sort by field" description="Type field name to sort by. Example 1: 'title desc' Example 2: 'title asc'. Note that keyword asc is not necessary." />
+                <param type="string" name="sortby" default="" example="title" label="Sort by field"
+                       description="Type field name to sort by. Example 1: 'title desc' Example 2: 'title asc'. Note that keyword asc is not necessary."/>
 
-                <param type="string" name="forceitemid" example=" " examplenoquotes="1" default="0" label="Force Menu Itemid" description="Used to set parameters for edit form etc." />
+                <param type="string" name="forceitemid" example=" " examplenoquotes="1" default="0"
+                       label="Force Menu Itemid" description="Used to set parameters for edit form etc."/>
             </params>
         </tag>
-        <tag name="customtablesrecord" label="Custom Tables Record" startchar="{" endchar="}" separator="=" hidedefaultexample="1"
-             description="Returns Custom Tables single Record by ID. Enable Content Plugins in menu item settings." proversion="1">
+        <tag name="customtablesrecord" label="Custom Tables Record" startchar="{" endchar="}" separator="="
+             hidedefaultexample="1"
+             description="Returns Custom Tables single Record by ID. Enable Content Plugins in menu item settings."
+             proversion="1">
             <params>
-		<param name="tablename" label="Table" type="table" description="Table Name" example="products" />
-		<param name="detailslayout" label="Layout" type="layout" description="Details Layout" example="productdetails" table="0" layoutype="details,record,catalogitem" />
-                <param name="recordid" label="Record ID or Filter" example="[productid]" description="Record ID or filter. Example 1: 2, Example 2: title=about, Example 3: title=$get_title" type="string" default="" />
+                <param name="tablename" label="Table" type="table" description="Table Name" example="products"/>
+                <param name="detailslayout" label="Layout" type="layout" description="Details Layout"
+                       example="productdetails" table="0" layoutype="details,record,catalogitem"/>
+                <param name="recordid" label="Record ID or Filter" example="[productid]"
+                       description="Record ID or filter. Example 1: 2, Example 2: title=about, Example 3: title=$get_title"
+                       type="string" default=""/>
             </params>
         </tag>
-		
-		<!-- <tag name="php" label="Execute PHP" startchar="{" endchar="}" hidedefaultexample="1" -->
+
+        <!-- <tag name="php" label="Execute PHP" startchar="{" endchar="}" hidedefaultexample="1" -->
         <!--   description="Executes PHP script and returns the result." proversion="1"> -->
         <!--  <params> -->
         <!--      <param name="script" label="PHP Script" type="code" examplenoquotes="1" example="strtolower(&quot;[producttitle]&quot;)" -->
@@ -876,6 +1058,6 @@
         <!--             return $b; -->
         <!--             "/> -->
         <!--  </params> -->
-		<!-- </tag> -->
+        <!-- </tag> -->
     </tagset>
 </layouts>
