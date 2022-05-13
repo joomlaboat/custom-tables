@@ -140,9 +140,9 @@ class CustomtablesModelListoflayouts extends JModelList
 		{
 			$query->where('a.published = ' . (int) $published);
 		}
-		elseif ($published === '')
+        elseif (is_null($published) or  $published == '')
 		{
-			$query->where('(a.published = 0 OR a.published = 1)');
+			$query->where('a.published = 1');
 		}
 		// Filter by search.
 		$search = $this->getState('filter.search');

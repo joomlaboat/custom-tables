@@ -39,17 +39,6 @@ class CustomtablesModelCategories extends JModelAdmin
 	 */
 	public $typeAlias = 'com_customtables.categories';
 
-	/**
-	 * Returns a Table object, always creating it
-	 *
-	 * @param   type    $type    The table type to instantiate
-	 * @param   string  $prefix  A prefix for the table class name. Optional.
-	 * @param   array   $config  Configuration array for model. Optional.
-	 *
-	 * @return  JTable  A database object
-	 *
-	 * @since   1.6
-	 */
 	public function getTable($type = 'categories', $prefix = 'CustomtablesTable', $config = array())
 	{
 		return JTable::getInstance($type, $prefix, $config);
@@ -83,12 +72,13 @@ class CustomtablesModelCategories extends JModelAdmin
 				$registry->loadString($item->metadata);
 				$item->metadata = $registry->toArray();
 			}
-
+/*
 			if (!empty($item->id))
 			{
 				$item->tags = new JHelperTags;
 				$item->tags->getTagIds($item->id, 'com_customtables.categories');
 			}
+            */
 		}
 
 		return $item;

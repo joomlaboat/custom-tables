@@ -48,22 +48,6 @@ class CustomtablesModelListofcategories extends JModelList
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
-		/*
-		$app = JFactory::getApplication();
-
-		// Adjust the context to support modal layouts.
-		if ($layout = $app->input->get('layout'))
-		{
-			$this->context .= '.' . $layout;
-		}
-		$categoryname = $this->getUserStateFromRequest($this->context . '.filter.categoryname', 'filter_categoryname');
-		$this->setState('filter.categoryname', $categoryname);
-        
-		$sorting = $this->getUserStateFromRequest($this->context . '.filter.sorting', 'filter_sorting', 0, 'int');
-		$this->setState('filter.sorting', $sorting);
-
-		*/
-		
 		if($this->ct->Env->version < 4)
 		{
 			$search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
@@ -118,9 +102,9 @@ class CustomtablesModelListofcategories extends JModelList
 		{
 			$query->where('a.published = ' . (int) $published);
 		}
-		elseif ($published === '')
+        elseif (is_null($published) or  $published == '')
 		{
-			$query->where('(a.published = 0 OR a.published = 1)');
+			$query->where('a.published = 1');
 		}
 		// Filter by search.
 		$search = $this->getState('filter.search');

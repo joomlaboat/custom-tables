@@ -51,21 +51,7 @@ class CustomtablesModelListofTables extends JModelList
 	 * @return  void
 	 */
 	protected function populateState($ordering = 'a.id', $direction = 'asc')
-	{/*
-		$app = JFactory::getApplication();
-
-		// Adjust the context to support modal layouts.
-		if ($layout = $app->input->get('layout'))
-		{
-			$this->context .= '.' . $layout;
-		}
-		//$tabletitle = $this->getUserStateFromRequest($this->context . '.filter.tabletitle', 'filter_tabletitle');
-		//$this->setState('filter.tabletitle', $tabletitle);
-		
-*/
-		
-		//$sorting = $this->getUserStateFromRequest($this->context . '.filter.sorting', 'filter_sorting', 0, 'int');
-		//$this->setState('filter.sorting', $sorting);
+	{
 		if($this->ct->Env->version < 4)
 		{
 			$search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
@@ -132,9 +118,9 @@ class CustomtablesModelListofTables extends JModelList
 		{
 			$query->where('a.published = ' . (int) $published);
 		}
-		elseif ($published === '')
+        elseif (is_null($published) or  $published == '')
 		{
-			$query->where('(a.published = 0 OR a.published = 1)');
+			$query->where('a.published = 1');
 		}
 		// Filter by search.
 		$search = $this->getState('filter.search');
