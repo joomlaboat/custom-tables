@@ -13,25 +13,22 @@ namespace CustomTables;
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-use CustomTables\Fields;
 use CustomTables\DataTypes\Tree;
-use CustomTables\Inputbox;
-use \JoomlaBasicMisc;
-use \JHTMLCTTime;
-use \tagProcessor_Value;
+use JoomlaBasicMisc;
+use JHTMLCTTime;
+use tagProcessor_Value;
 
-use \CT_FieldTypeTag_file;
-use \CT_FieldTypeTag_image;
-use \CT_FieldTypeTag_imagegallery;
-use \CT_FieldTypeTag_filebox;
-use \CT_FieldTypeTag_sqljoin;
-use \CT_FieldTypeTag_records;
-use \CT_FieldTypeTag_log;
-use \CT_FieldTypeTag_ct;
+use CT_FieldTypeTag_file;
+use CT_FieldTypeTag_image;
+use CT_FieldTypeTag_imagegallery;
+use CT_FieldTypeTag_filebox;
+use CT_FieldTypeTag_sqljoin;
+use CT_FieldTypeTag_records;
+use CT_FieldTypeTag_log;
+use CT_FieldTypeTag_ct;
 
-use Joomla\CMS\Editor\Editor;
 use Joomla\CMS\Factory;
-use \Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Uri\Uri;
 
 use \JHTML;
 
