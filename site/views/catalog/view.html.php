@@ -11,20 +11,24 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\CT;
 use CustomTables\Layouts;
-use \Joomla\CMS\Factory;
+use Joomla\CMS\Factory;
 
 class CustomTablesViewCatalog extends JViewLegacy
 {
     var $Model;
-    var $ct;
+    var CT $ct;
     var $listing_id;
     var int $layoutType = 0;
-    var string $catalogtablecode;
+    var string $catalogTableCode;
     var string $pagelayout;
+    var string $itemlayout;
 
     function display($tpl = null)
     {
+        $this->itemlayout = '';
+
         $this->Model = $this->getModel();
 
         $this->ct = $this->Model->ct;
@@ -41,7 +45,7 @@ class CustomTablesViewCatalog extends JViewLegacy
         $db = Factory::getDBO();
 
         $index = $this->Model->ct->Env->jinput->getInt('index');
-        $selectors = (array)Factory::getApplication()->getUserState($key);
+        $selectors = (array)$this->ct->app->getUserState($key);
 
         if ($index < 0 or $index >= count($selectors))
             die(json_encode(['error' => 'Index out of range.']));
@@ -60,20 +64,20 @@ class CustomTablesViewCatalog extends JViewLegacy
         if ($fieldname_or_layout == null or $fieldname_or_layout == '')
             $fieldname_or_layout = $this->ct->Table->fields[0]['fieldname'];
 
-        //$showpublished = 0 - show published
-        //$showpublished = 1 - show unpublished
-        //$showpublished = 2 - show any
-        $showpublished = (($selector[2] ?? '') == '' ? 2 : ((int)($selector[2] ?? 0) == 1 ? 0 : 1)); //$selector[2] can be "" or "true" or "false"
+        //$showPublished = 0 - show published
+        //$showPublished = 1 - show unpublished
+        //$showPublished = 2 - show any
+        $showPublished = (($selector[2] ?? '') == '' ? 2 : ((int)($selector[2] ?? 0) == 1 ? 0 : 1)); //$selector[2] can be "" or "true" or "false"
 
         $filter = $selector[3] ?? '';
 
         $additional_filter = $this->ct->Env->jinput->getCmd('filter');
 
         $additional_where = '';
-        //Find the field name that has a join to the parend (index-1) table
+        //Find the field name that has a join to the parent (index-1) table
         foreach ($this->ct->Table->fields as $fld) {
             if ($fld['type'] == 'sqljoin') {
-                $type_params = JoomlaBasicMisc::csv_explode(',', $fld['typeparams'], '"', false);
+                $type_params = JoomlaBasicMisc::csv_explode(',', $fld['typeparams']);
                 $join_tablename = $type_params[0];
                 $join_to_tablename = $selector[5];
 
@@ -83,18 +87,16 @@ class CustomTablesViewCatalog extends JViewLegacy
                 } else {
                     //Check if this table has self-parent field - the TableJoin field linked with the same table.
                     if ($join_tablename == $tablename) {
-                        $subfilter = $this->ct->Env->jinput->getCmd('subfilter');
-                        if ($subfilter == '')
+                        $subFilter = $this->ct->Env->jinput->getCmd('subfilter');
+                        if ($subFilter == '')
                             $additional_where = '(' . $fld['realfieldname'] . ' IS NULL OR ' . $fld['realfieldname'] . '="")';
                         else
-                            $additional_where = $fld['realfieldname'] . '=' . $db->quote($subfilter);
-
-                        //ssecho '$additional_where = '.$additional_where.'<br>';
+                            $additional_where = $fld['realfieldname'] . '=' . $db->quote($subFilter);
                     }
                 }
             }
         }
-        $this->ct->setFilter($filter, $showpublished);
+        $this->ct->setFilter($filter, $showPublished);
         if ($additional_where != '')
             $this->ct->Filter->where[] = $additional_where;
 
@@ -106,10 +108,9 @@ class CustomTablesViewCatalog extends JViewLegacy
 
         $this->ct->getRecords();
 
-        $this->catalogtablecode = JoomlaBasicMisc::generateRandomString();//this is temporary replace place holder. to not parse content result again
+        $this->catalogTableCode = JoomlaBasicMisc::generateRandomString();//this is temporary replace placeholder. to not parse content result again
 
-        $this->pagelayout = '[{catalog:,notable,","}]';
-        if (strpos($fieldname_or_layout, '{{') === false and strpos($fieldname_or_layout, 'layout') === false) {
+        if (!str_contains($fieldname_or_layout, '{{') and !str_contains($fieldname_or_layout, 'layout')) {
             $fieldname_or_layout_tag = '{{ ' . $fieldname_or_layout . ' }}';
         } else {
             $pair = explode(':', $fieldname_or_layout);
@@ -117,7 +118,7 @@ class CustomTablesViewCatalog extends JViewLegacy
             if (count($pair) == 2) {
                 $layout_mode = true;
                 if ($pair[0] != 'layout' and $pair[0] != 'tablelesslayout')
-                    die(json_encode(['error' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_UNKNOW_FIELD_LAYOUT') . ' "' . $field . '"']));
+                    die(json_encode(['error' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_UNKNOWN_FIELD_LAYOUT') . ' "' . $fieldname_or_layout . '"']));
 
                 $Layouts = new Layouts($this->ct);
                 $fieldname_or_layout_tag = $Layouts->getLayout($pair[1]);
@@ -128,7 +129,9 @@ class CustomTablesViewCatalog extends JViewLegacy
                 $fieldname_or_layout_tag = $fieldname_or_layout;
         }
 
-        $this->itemlayout = '{"id":"{{ record.id }}","label":"' . $fieldname_or_layout_tag . '"}';
+        $itemlayout = '{"id":"{{ record.id }}","label":"' . $fieldname_or_layout_tag . '"}';
+
+        $this->pagelayout = '[{% block record %}'.$itemlayout.',{% endblock %}{}]';
 
         $paramsArray['establename'] = $tablename;
 
@@ -139,7 +142,7 @@ class CustomTablesViewCatalog extends JViewLegacy
         require_once('tmpl' . DIRECTORY_SEPARATOR . 'json.php');
     }
 
-    function renderCatalog($tpl)
+    function renderCatalog($tpl): bool
     {
         $menu_params = null;
         $this->Model->load($menu_params, false, Factory::getApplication()->input->getCMD('layout', ''));
@@ -164,14 +167,14 @@ class CustomTablesViewCatalog extends JViewLegacy
         }
 
         if ($this->ct->Env->legacysupport)
-            $this->catalogtablecode = JoomlaBasicMisc::generateRandomString();//this is temporary replace place holder. to not parse content result again
+            $this->catalogTableCode = JoomlaBasicMisc::generateRandomString();//this is temporary replace placeholder. to not parse content result again
 
         $Layouts = new Layouts($this->ct);
 
         $this->pagelayout = '';
         $layout_catalog_name = $this->ct->Env->menu_params->get('escataloglayout');
         if ($layout_catalog_name != '') {
-            $this->pagelayout = $Layouts->getLayout($layout_catalog_name, false);//It is safier to process layout after rendering the table
+            $this->pagelayout = $Layouts->getLayout($layout_catalog_name, false);//It is safer to process layout after rendering the table
 
             if ($Layouts->layouttype == 8)
                 $this->ct->Env->frmt = 'xml';
@@ -193,13 +196,13 @@ class CustomTablesViewCatalog extends JViewLegacy
             if (function_exists('mb_convert_encoding')) {
                 require_once('tmpl' . DIRECTORY_SEPARATOR . 'csv.php');
             } else {
-                $msg = '"mbstring" PHP exntension not installed.<br/>
+                $msg = '"mbstring" PHP extension not installed.<br/>
 				You need to install this extension. It depends on of your operating system, here are some examples:<br/><br/>
 				sudo apt-get install php-mbstring  # Debian, Ubuntu<br/>
 				sudo yum install php-mbstring  # RedHat, Fedora, CentOS<br/><br/>
 				Uncomment the following line in php.ini, and restart the Apache server:<br/>
 				extension=mbstring<br/><br/>
-				Then restart your webs server. Example:<br/>service apache2 restart';
+				Then restart your webs\' server. Example:<br/>service apache2 restart';
 
                 Factory::getApplication()->enqueueMessage($msg, 'error');
             }
@@ -209,12 +212,12 @@ class CustomTablesViewCatalog extends JViewLegacy
         return true;
     }
 
-    function SaveViewLogForRecord($rec, $allowedfields)
+    function SaveViewLogForRecord($rec, $allowedFields)
     {
         $update_fields = array();
 
         foreach ($this->ct->Table->fields as $mFld) {
-            if (in_array($mFld['fieldname'], $allowedfields)) {
+            if (in_array($mFld['fieldname'], $allowedFields)) {
                 if ($mFld['type'] == 'lastviewtime')
                     $update_fields[] = $mFld['realfieldname'] . '="' . date('Y-m-d H:i:s') . '"';
 
@@ -231,7 +234,7 @@ class CustomTablesViewCatalog extends JViewLegacy
         }
     }
 
-    function SaveViewLog_CheckIfNeeded()
+    function SaveViewLog_CheckIfNeeded(): array
     {
         $user_groups = $this->ct->Env->user->get('groups');
         $allowed_fields = array();

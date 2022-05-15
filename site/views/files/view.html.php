@@ -62,7 +62,7 @@ class CustomTablesViewFiles extends JViewLegacy
         $this->row = $this->ct->Table->loadRecord($this->listing_id);
 
         $this->field = new Field($this->ct,$fieldrow,$this->row);
-        
+
         $filepath = $this->getFilePath();
 
         if ($filepath == '')

@@ -11,7 +11,7 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-use CustomTables\Layouts;
+use CustomTables\TwigProcessor;
 
 $itemlayout = str_replace("\n", '', $this->itemlayout);
 $itemlayout = str_replace("\r", '', $itemlayout);
@@ -22,19 +22,19 @@ if ($this->ct->Env->legacysupport) {
     require_once($path . 'layout.php');
     require_once($path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'catalogtag.php');
     require_once($path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'catalogtableviewtag.php');
-    $catalogtablecontent = tagProcessor_CatalogTableView::process($this->ct, $this->layoutType, $this->pagelayout, $this->catalogtablecode);
+    $catalogTableContent = tagProcessor_CatalogTableView::process($this->ct, $this->layoutType, $this->pagelayout, $this->catalogTableCode);
 } else
-    $catalogtablecontent = $this->pagelayout;
+    $catalogTableContent = $this->pagelayout;
 
-if ($catalogtablecontent == '') {
+if ($catalogTableContent == '') {
     if ($this->ct->Env->legacysupport)
-        $catalogtablecontent = tagProcessor_Catalog::process($this->ct, $this->layoutType, $this->pagelayout, $itemlayout, $this->catalogtablecode);
+        $catalogTableContent = tagProcessor_Catalog::process($this->ct, $this->layoutType, $this->pagelayout, $itemlayout, $this->catalogTableCode);
     else
-        $catalogtablecontent = $itemlayout;
+        $catalogTableContent = $itemlayout;
 
-    $catalogtablecontent = str_replace("\n", '', $catalogtablecontent);
-    $catalogtablecontent = str_replace("\r", '', $catalogtablecontent);
-    $catalogtablecontent = str_replace("\t", '', $catalogtablecontent);
+    $catalogTableContent = str_replace("\n", '', $catalogTableContent);
+    $catalogTableContent = str_replace("\r", '', $catalogTableContent);
+    $catalogTableContent = str_replace("\t", '', $catalogTableContent);
 }
 
 if ($this->ct->Env->legacysupport) {
@@ -42,16 +42,23 @@ if ($this->ct->Env->legacysupport) {
     $LayoutProc->layout = $this->pagelayout;
     $this->pagelayout = $LayoutProc->fillLayout();
 
-    $this->pagelayout = str_replace('&&&&quote&&&&', '"', $this->pagelayout); // search boxes may return HTML elemnts that contain placeholders with quotes like this: &&&&quote&&&&
-    $this->pagelayout = str_replace($this->catalogtablecode, $catalogtablecontent, $this->pagelayout);
+    $this->pagelayout = str_replace('&&&&quote&&&&', '"', $this->pagelayout); // search boxes may return HTML elements that contain placeholders with quotes like this: &&&&quote&&&&
+    $this->pagelayout = str_replace($this->catalogTableCode, $catalogTableContent, $this->pagelayout);
 }
+
+$twig = new TwigProcessor($this->ct, $this->pagelayout);
+$this->pagelayout = $twig->process();
 
 if ($this->ct->Env->menu_params->get('allowcontentplugins'))
     JoomlaBasicMisc::applyContentPlugins($this->pagelayout);
 
 if (ob_get_contents()) ob_end_clean();
 
-$filename = JoomlaBasicMisc::makeNewFileName($this->ct->Env->menu_params->get('page_title'), 'json');
+$filename = $this->ct->Env->menu_params->get('page_title');
+if(is_null($filename))
+    $filename = 'ct';
+
+$filename = JoomlaBasicMisc::makeNewFileName($filename, 'json');
 
 header('Content-Disposition: attachment; filename="' . $filename . '"');
 header('Content-Type: application/json; charset=utf-8');

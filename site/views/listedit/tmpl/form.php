@@ -186,7 +186,7 @@ $max_file_size=JoomlaBasicMisc::file_upload_max_size();
 				<BR><BR>
 				<?php echo JoomlaBasicMisc::JTextExtended( "MIN SIZE" ); ?>: 10px x 10px<br/>
 				<?php echo JoomlaBasicMisc::JTextExtended( "MAX SIZE" ); ?>: 1000px x 1000px<br/>
-				<?php echo JoomlaBasicMisc::JTextExtended( "COM_CUSTOMTABLES_PERMITED_MAX_FILE_SIZE" ).': '.JoomlaBasicMisc::formatSizeUnits($max_file_size); ?><br/>
+				<?php echo JoomlaBasicMisc::JTextExtended( "COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE" ).': '.JoomlaBasicMisc::formatSizeUnits($max_file_size); ?><br/>
 				<?php echo JoomlaBasicMisc::JTextExtended( "FORMAT" ); ?>: JPEG, GIF, PNG, WEBP
 
 			</td>

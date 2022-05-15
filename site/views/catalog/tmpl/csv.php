@@ -23,21 +23,18 @@ if ($this->ct->Env->legacysupport) {
 $itemlayout = str_replace("\n", '', $this->itemlayout);
 
 if ($this->ct->Env->legacysupport)
-    $catalogtablecontent = tagProcessor_CatalogTableView::process($this->ct, $this->layoutType, $this->pagelayout, $itemlayout, $this->catalogtablecode);
+    $catalogTableContent = tagProcessor_CatalogTableView::process($this->ct, $this->layoutType, $this->pagelayout, $itemlayout, $this->catalogTableCode);
 else
-    $catalogtablecontent = $this->pagelayout;
+    $catalogTableContent = $this->pagelayout;
 
-$twig = new TwigProcessor($this->ct, $catalogtablecontent);
-$catalogtablecontent = $twig->process();
-
-$twig = new TwigProcessor($this->ct, $this->pagelayout);
-$this->pagelayout = $twig->process();
+$twig = new TwigProcessor($this->ct, $catalogTableContent);
+$catalogTableContent = $twig->process();
 
 if ($this->ct->Env->legacysupport) {
-    if ($catalogtablecontent == '')
-        $catalogtablecontent = tagProcessor_Catalog::process($this->ct, $this->layoutType, $this->pagelayout, $itemlayout, $this->catalogtablecode);
+    if ($catalogTableContent == '')
+        $catalogTableContent = tagProcessor_Catalog::process($this->ct, $this->layoutType, $this->pagelayout, $itemlayout, $this->catalogTableCode);
     else
-        $catalogtablecontent = $this->pagelayout;
+        $catalogTableContent = $this->pagelayout;
 }
 
 $this->pagelayout = preg_replace('/(<(script|style)\b[^>]*>).*?(<\/\2>)/is', "$1$3", $this->pagelayout);
@@ -54,8 +51,11 @@ if ($this->ct->Env->legacysupport) {
     $LayoutProc = new LayoutProcessor($this->ct);
     $LayoutProc->layout = $this->pagelayout;
     $this->pagelayout = $LayoutProc->fillLayout();
-    $this->pagelayout = strip_tags(str_replace('&&&&quote&&&&', '"', trim($this->pagelayout))); // search boxes may return HTMl elemnts that contain placeholders with quotes like this: &&&&quote&&&&
+    $this->pagelayout = strip_tags(str_replace('&&&&quote&&&&', '"', trim($this->pagelayout))); // search boxes may return HTMl elements that contain placeholders with quotes like this: &&&&quote&&&&
 }
+
+$twig = new TwigProcessor($this->ct, $this->pagelayout);
+$this->pagelayout = $twig->process();
 
 if ($this->ct->Env->menu_params->get('allowcontentplugins'))
     JoomlaBasicMisc::applyContentPlugins($this->pagelayout);
@@ -69,7 +69,7 @@ if ($this->layoutType != 9) //not CSV layout
 
 $this->pagelayout = str_ireplace('****linebrake****', "\r" . "\n", $this->pagelayout);
 
-$this->pagelayout = str_replace($this->catalogtablecode, $catalogtablecontent, $this->pagelayout);
+$this->pagelayout = str_replace($this->catalogTableCode, $catalogTableContent, $this->pagelayout);
 
 if (ob_get_contents())
     ob_end_clean();

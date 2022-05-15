@@ -601,7 +601,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 				$statement_parts=explode('.',$field);
 				if(count($statement_parts)!=2)
 				{
-					Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('Menu Item - "UserID Field name" parameter has a syntax error. Error is about "." character - only one is permited. Correct example: parent(children).user'), 'error');
+					Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('Menu Item - "UserID Field name" parameter has a syntax error. Error is about "." character - only one is permitted. Correct example: parent(children).user'), 'error');
 					return false;
 				}
 				

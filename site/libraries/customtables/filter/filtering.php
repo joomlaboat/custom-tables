@@ -484,7 +484,7 @@ class Filtering
 																elseif($comparison_operator=='!==')
 																	$opt_title=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ISNOT');
 																else
-																	$opt_title=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_UNKNOW_OPERATION');
+																	$opt_title=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_UNKNOWN_OPERATION');
 															}
 															elseif($esr_selector=='radio' or $esr_selector=='single')
 																$opt_title=':';
@@ -509,7 +509,7 @@ class Filtering
 																elseif($comparison_operator=='==')
 																	$cArr[]=$esr_table_full.'.'.$fieldrow['realfieldname'].'='.$db->quote(','.$vLnew.',');//exact value
 																else
-																	$opt_title=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_UNKNOW_OPERATION' );
+																	$opt_title=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_UNKNOWN_OPERATION' );
 																	
 
 																if($comparison_operator=='!=' or $comparison_operator=='=')

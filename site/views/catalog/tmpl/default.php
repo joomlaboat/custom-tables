@@ -36,14 +36,14 @@ if ($this->ct->Env->frmt and $this->listing_id == '') //there is no need to have
 }
 
 if ($this->ct->Env->legacysupport) {
-    $catalogtablecontent = tagProcessor_CatalogTableView::process($this->ct, $this->layoutType, $this->pagelayout, $this->catalogtablecode);
-    if ($catalogtablecontent == '')
-        $catalogtablecontent = tagProcessor_Catalog::process($this->ct, $this->layoutType, $this->pagelayout, $this->itemlayout, $this->catalogtablecode);
+    $catalogTableContent = tagProcessor_CatalogTableView::process($this->ct, $this->layoutType, $this->pagelayout, $this->catalogTableCode);
+    if ($catalogTableContent == '')
+        $catalogTableContent = tagProcessor_Catalog::process($this->ct, $this->layoutType, $this->pagelayout, $this->itemlayout, $this->catalogTableCode);
 } else
-    $catalogtablecontent = $this->pagelayout;
+    $catalogTableContent = $this->pagelayout;
 
 if ($this->listing_id != '') //for reload single record functionality
-    die($catalogtablecontent);
+    die($catalogTableContent);
 
 if ($this->ct->Env->legacysupport) {
     $LayoutProc = new LayoutProcessor($this->ct);
@@ -51,7 +51,7 @@ if ($this->ct->Env->legacysupport) {
     $this->pagelayout = $LayoutProc->fillLayout();
 
     $this->pagelayout = str_replace('&&&&quote&&&&', '"', $this->pagelayout); // search boxes may return HTML elemnts that contain placeholders with quotes like this: &&&&quote&&&&
-    $this->pagelayout = str_replace($this->catalogtablecode, $catalogtablecontent, $this->pagelayout);
+    $this->pagelayout = str_replace($this->catalogTableCode, $catalogTableContent, $this->pagelayout);
 }
 
 $twig = new TwigProcessor($this->ct, $this->pagelayout);

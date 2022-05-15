@@ -29,7 +29,7 @@ class JHTMLESSqlJoin
 
         if(count($typeparams)<2)
         {
-			JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_UNKNOW_FIELD_LAYOUT'), 'error');
+			JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_UNKNOWN_FIELD_LAYOUT'), 'error');
             return '';
         }
 
@@ -192,7 +192,7 @@ class JHTMLESSqlJoin
 			$layout_mode=true;
             if($pair[0]!='layout' and $pair[0]!='tablelesslayout' )
             {
-				JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_UNKNOW_FIELD_LAYOUT').' "'.$field.'"', 'error');
+				JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_UNKNOWN_FIELD_LAYOUT').' "'.$field.'"', 'error');
                 return array();
             }
 

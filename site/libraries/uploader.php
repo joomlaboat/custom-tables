@@ -197,7 +197,7 @@ class ESFileUploader
 					unlink($file["tmp_name"]);
 					$msg='File type ('.$mime.') not permitted.';
 					if($filetypes_str!='')
-						$msg.=' '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PERMITED_TYPES' ).' '.implode(', ',$accepted_types);
+						$msg.=' '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PERMITTED_TYPES' ).' '.implode(', ',$accepted_types);
 
 					$ret = ['error'=>$msg];
 				}

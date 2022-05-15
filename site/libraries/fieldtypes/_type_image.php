@@ -192,7 +192,7 @@ class CT_FieldTypeTag_image
                 <div style="margin:10px; border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;vertical-align:top;">
 				'.JoomlaBasicMisc::JTextExtended( "MIN SIZE" ).': 10px x 10px<br/>
 				'.JoomlaBasicMisc::JTextExtended( "MAX SIZE" ).': 1000px x 1000px<br/>
-				'.JoomlaBasicMisc::JTextExtended( "COM_CUSTOMTABLES_PERMITED_MAX_FILE_SIZE" ).': '.JoomlaBasicMisc::formatSizeUnits($max_file_size).'<br/>
+				'.JoomlaBasicMisc::JTextExtended( "COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE" ).': '.JoomlaBasicMisc::formatSizeUnits($max_file_size).'<br/>
 				'.JoomlaBasicMisc::JTextExtended( "FORMAT" ).': JPEG, GIF, PNG, WEBP
 				</div>';
 
@@ -226,7 +226,7 @@ class CT_FieldTypeTag_image
 
                     </script>
                     <input type="hidden" name="'.$prefix.$field->fieldname.'" id="'.$prefix.$field->fieldname.'" value=""'.($field->isrequired ? ' class="required"' : '').' />
-			'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PERMITED_MAX_FILE_SIZE').': '.JoomlaBasicMisc::formatSizeUnits($max_file_size).'
+			'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE').': '.JoomlaBasicMisc::formatSizeUnits($max_file_size).'
                 </div>
                 ';
 
