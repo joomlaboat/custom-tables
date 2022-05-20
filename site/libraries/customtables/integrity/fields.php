@@ -39,8 +39,7 @@ class IntegrityFields extends \CustomTables\IntegrityChecks
 		//Do not check third-party tables
 		if($ct->Table->customtablename!='')
 			return $result;
-		
-		$db = Factory::getDBO();
+
 		$conf = Factory::getConfig();
 		$database = $conf->get('db');
 		$dbprefix = $conf->get('dbprefix');
@@ -62,8 +61,6 @@ class IntegrityFields extends \CustomTables\IntegrityChecks
 		$task=$jinput->getCmd('task');
 		$taskfieldname=$jinput->getCmd('fieldname');
 		$tasktableid=$jinput->getInt('tableid');
-		
-		$db = Factory::getDBO();
 		
 		foreach($ExistingFields as $existing_field)
 		{
@@ -239,12 +236,8 @@ class IntegrityFields extends \CustomTables\IntegrityChecks
 		
 	public static function addFieldIfNotExists(&$ct,$realtablename,$ExistingFields,$proj_field,$fieldtype,$typeparams)
     {
-		$result = '';
-		$db = Factory::getDBO();
-
         if($fieldtype=='multilangstring' or $fieldtype=='multilangtext')
         {
-            $found=false;
             $morethanonelang=false;
         	foreach($ct->Languages->LanguageList as $lang)
         	{

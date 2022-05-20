@@ -12,6 +12,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\Fields;
+use Joomla\CMS\Factory;
 
 jimport('joomla.form.helper');
 JFormHelper::loadFieldClass('list');
@@ -27,7 +28,7 @@ class JFormFieldAnyTableFields extends JFormFieldList
 		$options = array();
 		$options[] = JHtml::_('select.option', '', JText::_('COM_CUSTOMTABLES_FIELDS_SELECT_LABEL'));
 		
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$tableid=$app->input->getInt('tableid',0);
 		if($tableid!=0)
 		{
@@ -35,9 +36,7 @@ class JFormFieldAnyTableFields extends JFormFieldList
 			if($table_row->customtablename!='')
 			{
 				$fields = Fields::getExistingFields($table_row->customtablename,false);
-				
-				$db = JFactory::getDBO();
-									
+
 				foreach($fields as $field)
 					$options[] = JHtml::_('select.option', $field['column_name'], $field['column_name'].' ('.$field['data_type'].')');
             }

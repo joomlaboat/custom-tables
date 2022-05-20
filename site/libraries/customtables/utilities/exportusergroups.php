@@ -9,6 +9,9 @@
  **/
 
 // no direct access
+use CustomTables\ImportTables;
+use Joomla\CMS\Factory;
+
 defined('_JEXEC') or die('Restricted access');
 
 //------------- CURRENTLY UNUSED
@@ -76,7 +79,7 @@ class ImportExportUserGroups
 
 		$output=array();
 		
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 			
 		$query = 'SELECT * FROM #__usergroups';
 		$db->setQuery( $query );

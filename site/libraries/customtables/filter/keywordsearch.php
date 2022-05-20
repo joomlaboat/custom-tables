@@ -9,6 +9,9 @@
  **/
 
 // no direct access
+use CustomTables\Ordering;
+use Joomla\CMS\Factory;
+
 defined('_JEXEC') or die('Restricted access');
 
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'ordering.php');
@@ -34,7 +37,7 @@ class CustomTablesKeywordSearch
 		$result_rows=array();
 		$listing_ids=array();
 
-		if(!JFactory::getApplication()->input->getString('esfieldlist',''))
+		if(!Factory::getApplication()->input->getString('esfieldlist',''))
 			return $result_rows;
 
 		if($keywords=='')
@@ -46,7 +49,7 @@ class CustomTablesKeywordSearch
 				$keywords=str_replace('\\','',$keywords);
 
 
-				$mod_fieldlist=explode(',',JFactory::getApplication()->input->getString('esfieldlist',''));
+				$mod_fieldlist=explode(',',Factory::getApplication()->input->getString('esfieldlist',''));
 
 				//Strict (all words in a serash must be there)
 				$result_rows=$this->getRowsByKeywords_Processor($keywords,$mod_fieldlist,'AND');
@@ -144,7 +147,7 @@ class CustomTablesKeywordSearch
 								break;
 
 								case 'sqljoin':
-										JFactory::getApplication()->enqueueMessage('Search box not ready yet.', 'error');
+										Factory::getApplication()->enqueueMessage('Search box not ready yet.', 'error');
 								break;
 
 								case 'customtables':
@@ -366,7 +369,7 @@ class CustomTablesKeywordSearch
 						break;
 
 					case 'sqljoin':
-						JFactory::getApplication()->enqueueMessage('Search box not ready yet.', 'error');
+						Factory::getApplication()->enqueueMessage('Search box not ready yet.', 'error');
 
 						$typeparamsarray=explode(',',$fieldrow['typeparams']);
 						$filtertitle='';
@@ -433,7 +436,7 @@ class CustomTablesKeywordSearch
 
 		function getKeywordSearch($inner_str,$where,&$result_rows,&$count,&$listing_ids)
 		{
-				$db = JFactory::getDBO();
+				$db = Factory::getDBO();
 				$inner=array($inner_str);
 				$tablename='#__customtables_table_'.$this->ct->Table->tablename;
 				$query = 'SELECT *, '.$tablename.'.id AS listing_id, '.$tablename.'.published As  listing_published ';
@@ -444,7 +447,7 @@ class CustomTablesKeywordSearch
 					$ordering[]=$this->ct->Env->field_prefix.$this->groupby;
 
 				if($this->esordering)
-						CTOrdering::getOrderingQuery($ordering,$query,$inner,$this->esordering,$this->ct->Languages->Postfix,$tablename);
+						Ordering::getOrderingQuery($ordering,$query,$inner,$this->esordering,$this->ct->Languages->Postfix,$tablename);
 
 				$query.=' FROM '.$tablename.' ';
 

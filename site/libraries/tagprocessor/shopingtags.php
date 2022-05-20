@@ -11,11 +11,13 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Factory;
+
 class tagProcessor_Shopping
 {
     public static function getShoppingCartLink(&$ct,&$htmlresult,&$row)
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		
 		$options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('cart',$options,$htmlresult,'{}');
@@ -28,7 +30,7 @@ class tagProcessor_Shopping
 			$option_pair=explode(',',$options[$opt_i]);
 
 
-			if(strpos($theLink,'?')===false)
+			if(!str_contains($theLink, '?'))
 				$theLink.='?';
 			else
 				$theLink.='&';
@@ -101,7 +103,7 @@ class tagProcessor_Shopping
 						$button_class='btn';
 
 					$input_button='<input type="submit" value="'.$button_label.'" class="'.$button_class.'" />';
-
+                    $input_style = '';
 					$result='<form action="" method="post" id="ct_addtocartform">
 					<input type="hidden" name="listing_id" value="'.$row[$ct->Table->realidfieldname].'" />
 					<input type="hidden" name="task" value="cart_form_addtocart" />

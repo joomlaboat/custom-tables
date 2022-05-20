@@ -29,7 +29,7 @@
              description="Renders 'Add New Record' button" twigclass="html">
 
             <params>
-                <param type="string" name="alias" label="Munu Itemid or Alias (Optional)"
+                <param type="string" name="alias" label="Menu Itemid or Alias (Optional)"
                        description="To redirect to a specific Menu Item."/>
             </params>
         </tag>
@@ -39,7 +39,7 @@
         </tag>
 
         <tag name="print" label="Print Button" startchar="{" endchar="}" twigclass="html"
-             description="A button that opens a new controlless window without a template, only content.">
+             description="A button that opens a new controllers window without a template, only content.">
             <params>
                 <param name="listtype" label="Link Type" type="list">
                     <option value="" label="Button"/>
@@ -144,10 +144,20 @@
              description="renders HTML Pagination Bar." twigclass="html"/>
 
         <tag name="orderby" label="Order By (Sort By) box" startchar="{" endchar="}" proversion="1"
-             description="renders HTML Order By select box." twigclass="html"/>
+             description="renders HTML Order By select box." twigclass="html" />
 
         <tag name="limit" label="Limit records per page" startchar="{" endchar="}" proversion="1"
-             description="renders HTML Limit box to limit the number of records per page." twigclass="html"/>
+             description="renders HTML Limit box to limit the number of records per page." twigclass="html">
+            <params>
+                <param name="step" label="Step" type="list" example="10" default="5">
+                    <option value="1" label="1"/>
+                    <option value="5" label="5"/>
+                    <option value="10" label="10"/>
+                    <option value="20" label="20"/>
+                    <option value="50" label="50"/>
+                </param>
+            </params>
+        </tag>
 
         <tag name="button" label="Button" startchar="{" endchar="}" added="2019-05-28" hidedefaultexample="1"
              description="Renders form submit button. " twigclass="html">
@@ -215,37 +225,37 @@
                 <param name="parameter" label="String" type="string" description="The data to encode. "/>
             </params>
         </tag>
-        <!-- Depricated -->
+        <!-- Deprecated -->
 
         <tag name="checkbox" label="Checkbox" startchar="{" endchar="}"
              description="Renders the checkbox for batch toolbar"
-             twigreplacement="html.batch" twigreplacementparams='"checkbox"' depricated="1"/>
+             twigreplacement="html.batch" twigreplacementparams='"checkbox"' Deprecated="1"/>
 
         <tag name="_if" label="If statement" startchar="[" endchar="]" separator=":" twigreplacestartchar="{% if "
-             twigreplaceendchar=" %}" depricated="1"/>
+             twigreplaceendchar=" %}" Deprecated="1"/>
         <tag name="_endif" label="EndIf statement" startchar="[" endchar="]" separator=":"
-             twigsimplereplacement="{% endif %}" depricated="1"/>
+             twigsimplereplacement="{% endif %}" Deprecated="1"/>
 
         <tag name="catalog" label="Catalog" description="Renders Catalog Page" startchar="{" endchar="}" separator=":"
-             depricated="1"
+             Deprecated="1"
              twigreplacement="document.layout">
         </tag>
-        <tag name="date" label="Date" startchar="{" endchar="}" depricated="1"
+        <tag name="date" label="Date" startchar="{" endchar="}" Deprecated="1"
              twigsimplereplacement="{{ 'now'|date('Y-m-d') }}"/>
-        <tag name="today" label="Today" startchar="{" endchar="}" depricated="1"
+        <tag name="today" label="Today" startchar="{" endchar="}" Deprecated="1"
              twigsimplereplacement="{{ 'now'|date('Y-m-d') }}"/>
 
         <tag name="if" label="If statement" startchar="{" endchar="}" separator=":" twigreplacestartchar="{% if "
-             twigreplaceendchar=" %}" depricated="1"/>
+             twigreplaceendchar=" %}" Deprecated="1"/>
         <tag name="endif" label="EndIf statement" startchar="{" endchar="}" separator=":"
-             twigsimplereplacement="{% endif %}" depricated="1"/>
+             twigsimplereplacement="{% endif %}" Deprecated="1"/>
 
-        <tag name="gobackbutton" label="Go Back Button" startchar="{" endchar="}" separator=":" depricated="1"
+        <tag name="gobackbutton" label="Go Back Button" startchar="{" endchar="}" separator=":" Deprecated="1"
              twigreplacestartchar="{{ html.goback(" twigreplaceendchar=") }}"/>
 
         <tag name="batchtoolbar" label="Batch Toolbar" repeatative="1" startchar="{" endchar="}"
              description="Renders the batch toolbar" hidedefaultexample="1"
-             twigreplacement="html.batch" depricated="1"/>
+             twigreplacement="html.batch" Deprecated="1"/>
 
     </tagset>
 
@@ -409,11 +419,11 @@
             </params>
         </tag>
 
-        <!-- Depricated -->
+        <!-- Deprecated -->
 
         <tag name="cart" label="Shopping Cart" startchar="{" endchar="}" hidedefaultexample="1"
              layouttypes="1,6,3,4,8,9,10" proversion="1"
-             description="Returns Shopping Cart item count or renders Add to Shoping Cart button" depricated="1">
+             description="Returns Shopping Cart item count or renders Add to Shoping Cart button" Deprecated="1">
             <params>
                 <param name="option" label="Option" type="list" description="Select on of the available options.">
                     <option value="count" label="Item count"
@@ -428,22 +438,22 @@
                             description="Renders Update quantity form."/>
                 </param>
                 <param name="label" label="Button Label" type="string"
-                       description="Add or Updated form button label. (Applicabale to Add to Cart form and Set item count/quantity)"
+                       description="Add or Updated form button label. (Applicable to Add to Cart form and Set item count/quantity)"
                        example="Update"/>
                 <param type="string" name="cssclass" label="Button CSS Class"
-                       description="Name or names of CSS class(s). (Applicabale to Add to cart form and Set item count/quantity)"/>
+                       description="Name or names of CSS class(s). (Applicable to Add to cart form and Set item count/quantity)"/>
             </params>
         </tag>
 
-        <tag name="id" label="record ID" startchar="{" endchar="}" twigreplacement="record.id" depricated="1"/>
+        <tag name="id" label="record ID" startchar="{" endchar="}" twigreplacement="record.id" Deprecated="1"/>
         <!--<tag name="number" label="Record Number" startchar="{" endchar="}" twigreplacement="record.number" />-->
 
-        <tag name="sqljoin" label="Table Join" startchar="{" endchar="}" depricated="1"
+        <tag name="sqljoin" label="Table Join" startchar="{" endchar="}" Deprecated="1"
              description="Returns value of joined table field." hidedefaultexample="1"
              twigreplacement="record.advancedjoin"/>
 
-        <tag name="linknoreturn" label="No Return Link (Depricated)" startchar="{" endchar="}"
-             description="Link to detailed page without «returnto» link (Depricated)" depricated="1"
+        <tag name="linknoreturn" label="No Return Link (Deprecated)" startchar="{" endchar="}"
+             description="Link to detailed page without «returnto» link (Deprecated)" Deprecated="1"
              twigreplacement="record.link" twigreplacementparams=""/>
 
     </tagset>
@@ -469,23 +479,23 @@
         <tag name="fields" label="Fields" startchar="{" endchar="}"
              description="Return the number of fields in the table" hidedefaultexample="1" twigclass="table"/>
 
-        <!-- Depricated -->
+        <!-- Deprecated -->
 
-        <tag name="table" label="Table Info" startchar="{" endchar="}" depricated="1"
+        <tag name="table" label="Table Info" startchar="{" endchar="}" Deprecated="1"
              description="Returns the current table related information" hidedefaultexample="1"
              twigreplacement="table"
              twigoptionsreplacement="1"/>
 
-        <tag name="description" label="Table Description (Depricated)" startchar="{" endchar="}"
-             description="(Depricated) Returns table description." proversion="1" depricated="1"
+        <tag name="description" label="Table Description (Deprecated)" startchar="{" endchar="}"
+             description="(Deprecated) Returns table description." proversion="1" Deprecated="1"
              twigreplacement="table.description"/>
 
-        <tag name="tabletitle" label="Table Title (Depricated)" startchar="{" endchar="}"
-             description="(Depricated) Returns a title of the current table" proversion="1" depricated="1"
+        <tag name="tabletitle" label="Table Title (Deprecated)" startchar="{" endchar="}"
+             description="(Deprecated) Returns a title of the current table" proversion="1" Deprecated="1"
              twigreplacement="table.title"/>
 
-        <tag name="tabledescription" label="Table Description (Depricated)" startchar="{" endchar="}"
-             description="(Depricated) Returns a description of the current table" proversion="1" depricated="1"
+        <tag name="tabledescription" label="Table Description (Deprecated)" startchar="{" endchar="}"
+             description="(Deprecated) Returns a description of the current table" proversion="1" Deprecated="1"
              twigreplacement="table.description">
             <params>
                 <param name="box" label="Show in message box"
@@ -535,7 +545,7 @@
                 <param type="layout" name="layout" label="Catalog Layout" table="" layoutype="catalogpage,simplecatalog"
                        example="CountriesPage"/>
                 <param type="string" name="filter" label="Filter" description="Example: price>100"
-                       example="populatioin>1000000"/>
+                       example="population>1000000"/>
                 <param type="string" name="orderby" label="Order By Field" description="Example: name desc"
                        example="name"/>
                 <param type="string" name="limit" label="Limit" description="Max number of records to load. Example: 20"
@@ -632,21 +642,21 @@
             </params>
         </tag>
 
-        <!-- Depricated -->
+        <!-- Deprecated -->
 
-        <tag name="user" label="User" startchar="{" endchar="}" depricated="1"
+        <tag name="user" label="User" startchar="{" endchar="}" Deprecated="1"
              description="Returns current user info (if user is logged in)" hidedefaultexample="1"
              twigreplacement="user"
              twigoptionsreplacement="1"/>
 
-        <tag name="currentuserid" label="Current User ID (Depricated)" startchar="{" endchar="}"
-             description="(Depricated) Returns Current User ID" proversion="1" depricated="1"
+        <tag name="currentuserid" label="Current User ID (Deprecated)" startchar="{" endchar="}"
+             description="(Deprecated) Returns Current User ID" proversion="1" Deprecated="1"
              twigreplacement="user.id"/>
 
-        <tag name="currentusertype" label="Current User Type (Depricated)" startchar="{" endchar="}"
+        <tag name="currentusertype" label="Current User Type (Deprecated)" startchar="{" endchar="}"
              twigsimplereplacement="{{ user.usergroups()|join(',') }}"
-             description="(Depricated) Returns Current User Type (Super Administrator, Editor, etc...)" proversion="1"
-             depricated="1"/><!-- pro only -->
+             description="(Deprecated) Returns Current User Type (Super Administrator, Editor, etc...)" proversion="1"
+             Deprecated="1"/><!-- pro only -->
 
     </tagset>
 
@@ -680,7 +690,7 @@
                     <option value="48" label="48 x 48"/>
                 </param>
 
-                <param type="string" name="alias" label="Munu Itemid or Alias (Optional)"
+                <param type="string" name="alias" label="Menu Itemid or Alias (Optional)"
                        description="To redirect to a specific Menu Item."/>
             </params>
         </tag>
@@ -762,7 +772,7 @@
                 <param name="include_host" label="Include Host" description="Include Website protocol, host, port, etc."
                        type="radio" default=""
                        options="|No,includehost|Include"/>
-                <param name="include_host" label="Add Trailing Slashe"
+                <param name="include_host" label="Add Trailing Slash"
                        description="Add common slash to the end of the host name. Example: https://example.com/"
                        type="radio" default=""
                        options="|Add,notrailingslash|No"/>
@@ -857,22 +867,22 @@
                     <option value="AUTH_TYPE" label="AUTH_TYPE"
                             description="When doing HTTP authentication, this variable is set to the authentication type. "/>
                     <option value="PATH_INFO" label="PATH_INFO"
-                            description="Contains any client-provided pathname information trailing the actual script filename but preceding the query string, if available. For instance, if the current script was accessed via the URL http://www.example.com/php/path_info.php/some/stuff?foo=bar, then $_SERVER['PATH_INFO'] would contain /some/stuff. "/>
+                            description="Contains any client-provided pathname information trailing the actual script filename but preceding the query string, if available. For instance, if the current script was accessed via the URL https://www.example.com/php/path_info.php/some/stuff?foo=bar, then $_SERVER['PATH_INFO'] would contain /some/stuff. "/>
                     <option value="ORIG_PATH_INFO" label="ORIG_PATH_INFO"
                             description="Original version of 'PATH_INFO' before processed by PHP."/>
                 </param>
             </params>
         </tag>
 
-        <!-- Depricated -->
+        <!-- Deprecated -->
 
-        <tag name="returnto" label="Encoded Current Page Link (Depricated)" startchar="{" endchar="}"
-             description="(Depricated) Use {currenturl:base64} instead. Returns Base64 encrypted Link to catalog page with an anchor to a current record."
-             proversion="1" depricated="1" twigreplacement="url.base64"/>
+        <tag name="returnto" label="Encoded Current Page Link (Deprecated)" startchar="{" endchar="}"
+             description="(Deprecated) Use {currenturl:base64} instead. Returns Base64 encrypted Link to catalog page with an anchor to a current record."
+             proversion="1" Deprecated="1" twigreplacement="url.base64"/>
 
 
-        <tag name="currenturl" label="Current URL (Depricated)" startchar="{" endchar="}" hidedefaultexample="1"
-             depricated="1"
+        <tag name="currenturl" label="Current URL (Deprecated)" startchar="{" endchar="}" hidedefaultexample="1"
+             Deprecated="1"
              description="Returns current URL or any query parameter, it can also be base64 encoded if you include that keyword."
              twigreplacement="url"
              twigmapname="option"
@@ -897,20 +907,20 @@
             </params>
         </tag>
 
-        <tag name="websiteroot" label="Website Root" startchar="{" endchar="}" depricated="1"
-             description="Returns website root path (http://example.com/)" twigreplacement="url.root">
+        <tag name="websiteroot" label="Website Root" startchar="{" endchar="}" Deprecated="1"
+             description="Returns website root path (https://example.com/)" twigreplacement="url.root">
             <params>
                 <param name="include_host" label="Include Host" description="Include Website protocol, host, port etc."
                        type="radio" default=""
                        options="|No,includehost|Include"/>
-                <param name="include_host" label="Add Trailing Slashe"
+                <param name="include_host" label="Add Trailing Slash"
                        description="Add common slash to the end of the host name. Example: https://example.com/"
                        type="radio" default=""
                        options="|Add,notrailingslash|No"/>
             </params>
         </tag>
 
-        <tag name="server" label="Server Info" startchar="{" endchar="}" depricated="1"
+        <tag name="server" label="Server Info" startchar="{" endchar="}" Deprecated="1"
              description="Returns Sanitized (String) Server Environment value - $_SERVER" proversion="1"
              hidedefaultexample="1" twigreplacement="url.server"><!-- pro only -->
         </tag>
@@ -977,26 +987,26 @@
         <tag name="sitename" label="Site Name" startchar="{" endchar="}"
              description="Return the Site Name set in configuration.php file" proversion="1" twigclass="document"/>
 
-        <!-- Depricated -->
+        <!-- Deprecated -->
 
-        <tag name="pagetitle" label="Set Page Title" startchar="{" endchar="}" depricated="1"
+        <tag name="pagetitle" label="Set Page Title" startchar="{" endchar="}" Deprecated="1"
              twigreplacement="document.setPageTitle"/>
-        <tag name="headtag" label="HTML Document Head Tag" startchar="{" endchar="}" depricated="1"
+        <tag name="headtag" label="HTML Document Head Tag" startchar="{" endchar="}" Deprecated="1"
              twigreplacement="document.setHeadTag"/>
-        <tag name="metakeywords" label="Set Meta Keywords" startchar="{" endchar="}" depricated="1"
+        <tag name="metakeywords" label="Set Meta Keywords" startchar="{" endchar="}" Deprecated="1"
              twigreplacement="document.setMetaKeywords"/>
-        <tag name="metadescription" label="Set Meta Description" startchar="{" endchar="}" depricated="1"
+        <tag name="metadescription" label="Set Meta Description" startchar="{" endchar="}" Deprecated="1"
              twigreplacement="document.setMetaDescription"/>
 
     </tagset>
 
-    <!-- Available in PRO version and antwhere -->
+    <!-- Available in PRO version and anywhere -->
 
     <tagset name="plugins" label="Plugins" description="Custom Tables Plugins." priority="3" proversion="1"
-            depricated="1">
+            Deprecated="1">
 
         <tag name="tab" label="Tabs" startchar="{" endchar="} html code {/tabs}"
-             description="" hidedefaultexample="1" proversion="1" depricated="1">
+             description="" hidedefaultexample="1" proversion="1" Deprecated="1">
             <params>
                 <param name="title" label="Title" type="string" description="Tab label" examplenoquotes="1"
                        example="Tab 1} First Tab Content {tab:Tab 2} Second Tab content{/tabs"/>

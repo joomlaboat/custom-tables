@@ -9,6 +9,8 @@
  **/
 
 // Check to ensure this file is included in Joomla!
+use Joomla\CMS\Factory;
+
 defined('_JEXEC') or die( 'Restricted access' );
 
 jimport('joomla.form.helper');
@@ -20,7 +22,7 @@ class JFormFieldCTUserGroup extends JFormFieldList
 
 	protected function getOptions()//$name, $value, &$node, $control_name)	
     {
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		$query = $db->getQuery(true);
 		$query->select('id,title');
@@ -30,7 +32,9 @@ class JFormFieldCTUserGroup extends JFormFieldList
 		$db->setQuery($query);
 
 		$records=$db->loadObjectList();
-		
+
+        $options = [];
+
 		if($records)
         {
             foreach($records as $record) 

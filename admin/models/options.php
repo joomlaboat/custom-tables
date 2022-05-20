@@ -13,6 +13,8 @@ defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\CT;
 use CustomTables\Fields;
+use Joomla\CMS\Factory;
+use Joomla\Registry\Registry;
 
 // Import Joomla! libraries
 
@@ -84,20 +86,18 @@ class CustomTablesModelOptions extends JModelAdmin
 			return false;
 		}
 
-		$jinput = JFactory::getApplication()->input;
-
 		// The front end calls this model and uses a_id to avoid id clashes so we need to check for that first.
-		if (JFactory::getApplication()->input->get('a_id'))
+		if (Factory::getApplication()->input->get('a_id'))
 		{
-			$id = JFactory::getApplication()->input->get('a_id', 0, 'INT');
+			$id = Factory::getApplication()->input->get('a_id', 0, 'INT');
 		}
 		// The back end uses id so we use that the rest of the time and set it to 0 by default.
 		else
 		{
-			$id = JFactory::getApplication()->input->get('id', 0, 'INT');
+			$id = Factory::getApplication()->input->get('id', 0, 'INT');
 		}
 
-		$user = JFactory::getUser();
+		$user = Factory::getUser();
 
 		// Check for existing item.
 		// Modify the form based on Edit State access controls.
@@ -139,9 +139,9 @@ class CustomTablesModelOptions extends JModelAdmin
 		if (0 == $id)
 		{
 			// Set redirected field name
-			$redirectedField = JFactory::getApplication()->input->get('ref', null, 'STRING');
+			$redirectedField = Factory::getApplication()->input->get('ref', null, 'STRING');
 			// Set redirected field value
-			$redirectedValue = JFactory::getApplication()->input->get('refid', 0, 'INT');
+			$redirectedValue = Factory::getApplication()->input->get('refid', 0, 'INT');
 			if (0 != $redirectedValue && $redirectedField)
 			{
 				// Now set the local-redirected field default value
@@ -166,7 +166,7 @@ class CustomTablesModelOptions extends JModelAdmin
 				//return;
 			//}
 
-			$user = JFactory::getUser();
+			$user = Factory::getUser();
 			// The record has been set. Check the record permissions.
 			return true;//$user->authorise('core.delete', 'com_customtables.options.' . (int) $record->id);
 		}
@@ -176,7 +176,7 @@ class CustomTablesModelOptions extends JModelAdmin
 
 	protected function canEditState($record)
 	{
-		$user = JFactory::getUser();
+		$user = Factory::getUser();
 		$recordId = (!empty($record->id)) ? $record->id : 0;
 
 		if ($recordId)
@@ -196,14 +196,14 @@ class CustomTablesModelOptions extends JModelAdmin
 	{
 		// Check specific edit permission then general edit permission.
 
-		return JFactory::getUser()->authorise('core.edit', 'com_customtables.options.'. ((int) isset($data[$key]) ? $data[$key] : 0)) or parent::allowEdit($data, $key);
+		return Factory::getUser()->authorise('core.edit', 'com_customtables.options.'. ((int) isset($data[$key]) ? $data[$key] : 0)) or parent::allowEdit($data, $key);
 	}
 
 		protected function loadFormData()
 	{
 
 		// Check the session for previously entered form data.
-		$data = JFactory::getApplication()->getUserState('com_customtables.edit.options.data', array());
+		$data = Factory::getApplication()->getUserState('com_customtables.edit.options.data', array());
 
 		if (empty($data))
 		{
@@ -219,7 +219,7 @@ class CustomTablesModelOptions extends JModelAdmin
 
 	public function save($data)//;//store($data)
 	{
-        $data_extra = JFactory::getApplication()->input->get( 'jform',array(),'ARRAY');
+        $data_extra = Factory::getApplication()->input->get( 'jform',array(),'ARRAY');
 
 		$morethanonelang=false;
 		$fields=Fields::getListOfExistingFields('#__customtables_options',false);
@@ -265,7 +265,7 @@ class CustomTablesModelOptions extends JModelAdmin
 
 	function deleteItem()
 	{
-		$input	= JFactory::getApplication()->input;
+		$input	= Factory::getApplication()->input;
 		$cids = $input->post('cid',array(),'ARRAY');
 		
 		$row = $this->getTable();

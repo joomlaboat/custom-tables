@@ -13,16 +13,16 @@ defined('_JEXEC') or die( 'Restricted access' );
 
 use CustomTables\CT;
 use CustomTables\Layouts;
-use CustomTables\LinkJoinFilters;
 use CustomTables\TwigProcessor;
 
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'models'.DIRECTORY_SEPARATOR.'catalog.php');
 
 class JHTMLESSQLJoinView
 {
-    public static function render($value, $establename, $field, $filter,$langpostfix='')
+    public static function render($value, $establename, $field, $filter)
     {
-		$config=array();
+        if($value==0 or $value=='')
+            return '';
 
 		$paramsArray=array();
 		$paramsArray['limit']=0;
@@ -36,36 +36,51 @@ class JHTMLESSQLJoinView
 
 		$_params= new JRegistry;
 		$_params->loadArray($paramsArray);
-		
-		$model = JModelLegacy::getInstance('Catalog', 'CustomTablesModel', $config);
-		$model->load($_params, true);
-		$model->showpagination=false;
-		
-		if($model->ct->Table->realtablename == null or $model->ct->Table->realtablename=='')
-		{
-			JFactory::getApplication()->enqueueMessage('SQL Join field: Table no set.', 'error');
-			return '';
-		}
-		if($value==0 or $value=='')// or $value==',' or $value==',,')
-			return '';
 
+        $ct = new CT;
+        $ct->setParams($_params, true);
+		
+        // -------------------- Table
+
+        $ct->getTable($ct->Params->tableName);
+
+        if($ct->Table->tablename=='')
+        {
+            $ct->app->enqueueMessage('SQL Join field: Table no set.', 'error');
+            return null;
+        }
+        /*
+        // --------------------- Filter
+        $ct->setFilter('', $ct->Params->showPublished);
+        $ct->Filter->addMenuParamFilter();
+        $ct->Filter->where[] = $filter;
+
+        // --------------------- Sorting
+        $ct->Ordering->parseOrderByParam();
+
+        // --------------------- Limit
+        $ct->applyLimits();
+
+        $ct->getRecords();
+        */
+		
 		$htmlresult='';
 
 		//Get Row
-		$query = 'SELECT '.$model->ct->Table->tablerow['query_selects'].' FROM '.$model->ct->Table->realtablename.' WHERE '.$model->ct->Table->tablerow['realidfieldname'].'='.(int)$value;
-		$db= JFactory::getDBO();
-		$db->setQuery($query);
+		$query = 'SELECT '.$ct->Table->tablerow['query_selects'].' FROM '.$ct->Table->realtablename.' WHERE '
+                .$ct->Table->tablerow['realidfieldname'].'='.(int)$value;
 
-		$records=$db->loadAssocList();
+		$ct->db->setQuery($query);
 
-		if(strpos($field,':')===false)
+		$records=$ct->db->loadAssocList();
+
+		if(!str_contains($field, ':'))
 		{
 			//without layout
-			$getGalleryRows=array();
 			foreach($records as $row)
 			{
-				if($row[$model->ct->Table->realidfieldname]==$value)
-					$htmlresult.=JoomlaBasicMisc::processValue($field, $model->ct, $row);
+				if($row[$ct->Table->realidfieldname]==$value)
+					$htmlresult.=JoomlaBasicMisc::processValue($field, $ct, $row);
 			}
 		}
 		else
@@ -74,7 +89,6 @@ class JHTMLESSQLJoinView
 
 			if($pair[0]!='layout' and $pair[0]!='tablelesslayout' and $pair[0]!='value')
 				return '<p>unknown field/layout command "'.$field.'" should be like: "layout:'.$pair[1].'"..</p>';
-
 
 			$isTableLess=false;
 			if($pair[0]=='tablelesslayout' or $pair[0]=='value')
@@ -97,20 +111,14 @@ class JHTMLESSQLJoinView
 				else
 					$layout_pair[1]=0;
 
-				$Layouts = new Layouts($model->ct);
+				$Layouts = new Layouts($ct);
 				$layoutcode = $Layouts->getLayout($layout_pair[0]);
 		
 				if($layoutcode=='')
 					return '<p>layout "'.$layout_pair[0].'" not found or is empty.</p>';
 			}
 
-			if($model->ct->Env->legacysupport)
-			{
-				$LayoutProc = new LayoutProcessor($model->ct);
-				$LayoutProc->layout=$layoutcode;
-			}
-
-			$valuearray=explode(',',$value);
+    		$valueArray=explode(',',$value);
 
 			if(!$isTableLess)
 				$htmlresult.='<table style="border:none;">';
@@ -126,11 +134,9 @@ class JHTMLESSQLJoinView
 			$CleanSearchResult=array();
 			foreach($records as $row)
 			{
-				if(in_array($row[$model->ct->Table->realidfieldname],$valuearray))
+				if(in_array($row[$ct->Table->realidfieldname],$valueArray))
 					$CleanSearchResult[]=$row;
 			}
-
-			$result_count=count($CleanSearchResult);
 
 			foreach($CleanSearchResult as $row)
 			{
@@ -143,18 +149,22 @@ class JHTMLESSQLJoinView
 				//process layout
 				$row['_number'] = $number;
 				
-				if($model->ct->Env->legacysupport)
-					$vlu = $LayoutProc->fillLayout($row);
+				if($ct->Env->legacysupport)
+                {
+                    $LayoutProc = new LayoutProcessor($mct);
+                    $LayoutProc->layout=$layoutcode;
+                    $vlu = $LayoutProc->fillLayout($row);
+                }
 				else
 					$vlu = $layoutcode;
 				
-				$twig = new TwigProcessor($model->ct, '{% autoescape false %}'.$vlu.'{% endautoescape %}');
+				$twig = new TwigProcessor($ct, '{% autoescape false %}'.$vlu.'{% endautoescape %}');
 				$vlu = $twig->process($row);
 
 				if($isTableLess)
 					$htmlresult .= $vlu;
 				else
-					$htmlresult.='<td valign="middle" style="border:none;">'.$vlu.'</td>';
+					$htmlresult.='<td style="border:none;">'.$vlu.'</td>';
 
 				$tr++;
 				if(!$isTableLess and $tr==$columns)
@@ -170,7 +180,7 @@ class JHTMLESSQLJoinView
 				$htmlresult.='</table>';
 		}
 
-		if($model->ct->Env->menu_params->get( 'allowcontentplugins' ))
+		if($ct->Params->allowContentPlugins)
 			$htmlresult = JoomlaBasicMisc::applyContentPlugins($htmlresult);
 		
 		return $htmlresult;

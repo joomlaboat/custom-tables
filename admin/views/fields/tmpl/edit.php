@@ -13,8 +13,9 @@
 defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\Fields;
+use Joomla\CMS\Factory;
 
-$document = JFactory::getDocument();
+$document = Factory::getDocument();
 
 $document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/css/style.css" rel="stylesheet">');
 $document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/css/fieldtypes.css" rel="stylesheet">');
@@ -31,7 +32,7 @@ JHtml::_('behavior.keepalive');
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'
 		.DIRECTORY_SEPARATOR.'customtables'.DIRECTORY_SEPARATOR.'extratasks'.DIRECTORY_SEPARATOR.'extratasks.php');	
 
-$input	= JFactory::getApplication()->input;
+$input	= Factory::getApplication()->input;
 
 if(in_array($input->getCmd('extratask',''),$this->extrataskOptions))
 {
@@ -235,7 +236,7 @@ if(in_array($input->getCmd('extratask',''),$this->extrataskOptions))
 				<div class="row-fluid form-horizontal-desktop">
 					<div class="span12">';
 
-			$editor = JFactory::getEditor();
+			$editor = Factory::getEditor();
 
 			$item_array=(array)$this->item;
 			$vlu='';

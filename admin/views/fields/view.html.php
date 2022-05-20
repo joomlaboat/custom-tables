@@ -12,6 +12,7 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\Version;
 /**
@@ -32,7 +33,7 @@ class CustomtablesViewFields extends JViewLegacy
 		$version = new Version;
 		$this->version = (int)$version->getShortVersion();
 		
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		
 		$model = $this->getModel();
 		$this->ct = $model->ct;
@@ -58,9 +59,9 @@ class CustomtablesViewFields extends JViewLegacy
 		$this->canEdit = $this->canDo->get('tables.edit');
 		
 		// get input
-		$jinput = JFactory::getApplication()->input;
-		$this->ref = JFactory::getApplication()->input->get('ref', 0, 'word');
-		$this->refid = JFactory::getApplication()->input->get('refid', 0, 'int');
+		$jinput = Factory::getApplication()->input;
+		$this->ref = Factory::getApplication()->input->get('ref', 0, 'word');
+		$this->refid = Factory::getApplication()->input->get('refid', 0, 'int');
 		$this->referral = '';
 		if ($this->refid)
 		{
@@ -99,8 +100,8 @@ class CustomtablesViewFields extends JViewLegacy
 	 */
 	protected function addToolBar()
 	{
-		JFactory::getApplication()->input->set('hidemainmenu', true);
-		$user = JFactory::getUser();
+		Factory::getApplication()->input->set('hidemainmenu', true);
+		$user = Factory::getUser();
 		$userId	= $user->id;
 		$isNew = $this->item->id == 0;
 
@@ -199,7 +200,7 @@ class CustomtablesViewFields extends JViewLegacy
 	{
 		$isNew = ($this->item->id < 1);
 		if (!isset($this->document))
-			$this->document = JFactory::getDocument();
+			$this->document = Factory::getDocument();
 
 		$this->document->setTitle(JText::_($isNew ? 'COM_CUSTOMTABLES_FIELDS_NEW' : 'COM_CUSTOMTABLES_FIELDS_EDIT'));
 		
@@ -212,7 +213,7 @@ class CustomtablesViewFields extends JViewLegacy
 	protected function getAllTables()
 	{
 
-        $db = JFactory::getDBO();
+        $db = Factory::getDBO();
 		$query = $db->getQuery(true);
 		$query->select('id,tablename,tabletitle');
         $query->from('#__customtables_tables');

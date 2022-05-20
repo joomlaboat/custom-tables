@@ -1,12 +1,16 @@
 <?php
 /**
- * Custom Tables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x Native Component
+ * @package Custom Tables
  * @author Ivan komlev <support@joomlaboat.com>
- * @link http://www.joomlaboat.com
- * @license GNU/GPL
+ * @link https://www.joomlaboat.com
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
 // no direct access
+use Joomla\CMS\Factory;
+
 defined('_JEXEC') or die('Restricted access');
 
 class CustomTablesFileMethods
@@ -36,7 +40,7 @@ class CustomTablesFileMethods
 
 	static public function getFileExtByID($establename, $estableid, $fileboxname,$file_id)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 	
 		$fileboxtablename='#__customtables_filebox_'.$establename.'_'.$fileboxname;
 		$query = 'SELECT file_ext FROM '.$fileboxtablename.' WHERE fileid='.(int)$file_id.' LIMIT 1';
@@ -53,7 +57,7 @@ class CustomTablesFileMethods
 	{
 		$filefolder=JPATH_SITE.DIRECTORY_SEPARATOR.str_replace('/',DIRECTORY_SEPARATOR,$typeparams);
 		
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		$query = 'SELECT fileid FROM '.$filebox_table_name;
 		$db->setQuery($query);

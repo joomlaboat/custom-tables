@@ -52,7 +52,7 @@ class CustomtablesViewListoftables extends JViewLegacy
 		$this->pagination = $this->get('Pagination');
 		$this->state = $this->get('State');
 		
-		$this->user = JFactory::getUser();
+		$this->user = Factory::getUser();
 
 		if($this->ct->Env->version >= 4)
 		{
@@ -280,7 +280,7 @@ class CustomtablesViewListoftables extends JViewLegacy
 	{
 		if (!isset($this->document))
 		{
-			$this->document = JFactory::getDocument();
+			$this->document = Factory::getDocument();
 		}
 		$this->document->setTitle(JText::_('COM_CUSTOMTABLES_LISTOFTABLES'));
 	}
@@ -320,7 +320,7 @@ class CustomtablesViewListoftables extends JViewLegacy
 
 	protected function getNumberOfRecords($realtablename,$realidfield)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		$query='SELECT COUNT('.$realidfield.') AS count FROM '.$realtablename.' LIMIT 1';
 
         try {

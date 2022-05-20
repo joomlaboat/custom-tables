@@ -10,6 +10,8 @@
  **/
 
 // No direct access to this file
+use Joomla\CMS\Factory;
+
 \defined('_JEXEC') or die;
 
 jimport('joomla.application.component.view');
@@ -31,23 +33,23 @@ class CustomTablesViewListOfOptions extends JViewLegacy
 		
 		$this->languages=$this->ct->Languages->LanguageList;
 
-		$document =  JFactory::getDocument();
+		$document =  Factory::getDocument();
 		$document->setTitle(JText::_('View List Items'));
 
-		$input	= JFactory::getApplication()->input;
+		$input	= Factory::getApplication()->input;
 
 		$this->limitstart = $input->getInt('limitstart', '0');
 		$this->items		= $this->get('Items');
 		$this->pagination	= $this->get('Pagination');
 		$this->lists		= $this->_getViewLists();
-		$this->user		= JFactory::getUser();
+		$this->user		= Factory::getUser();
 
 		// Ensure ampersands and double quotes are encoded in item titles
 		foreach ($this->items as $i => $item) {
 			$treename = $item->treename;
 			$treename = JFilterOutput::ampReplace($treename);
 			$treename = str_replace('"', '&quot;', $treename);
-			$items[$i]->treename = $treename;
+			$this->items[$i]->treename = $treename;
 		}
 
 		JHTML::_('behavior.tooltip');
@@ -72,8 +74,8 @@ class CustomTablesViewListOfOptions extends JViewLegacy
 
 	function &_getViewLists()
 	{
-		$mainframe = JFactory::getApplication();
-		$db		= JFactory::getDBO();
+		$mainframe = Factory::getApplication();
+		$db		= Factory::getDBO();
 
 		$context			= 'com_customtables.listofoptions.';
 

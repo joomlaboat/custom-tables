@@ -11,11 +11,12 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Factory;
 use \Joomla\CMS\Version;
 use CustomTables\CT;
 
 $theme='eclipse';
-$document = JFactory::getDocument();
+$document = Factory::getDocument();
 
 $document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/js/ajax.js"></script>');
 
@@ -111,7 +112,7 @@ function renderEditor($textareacode,$textareaid,$typeboxid,$textareatabid,&$onPa
 		
 	function getKnownLanguages()
 	{
-		$db=JFactory::getDbo();
+		$db=Factory::getDbo();
 		$db->setQuery('SELECT sef, title_native FROM #__languages ORDER BY sef ASC');
 		
 		$list=array();
@@ -161,7 +162,7 @@ function renderEditor($textareacode,$textareaid,$typeboxid,$textareatabid,&$onPa
 
     </script>';
 
-	    $document = JFactory::getDocument();
+	    $document = Factory::getDocument();
 		$document->addCustomTag($result_js);
 
 		return $result;

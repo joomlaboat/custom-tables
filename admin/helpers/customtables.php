@@ -65,15 +65,10 @@ abstract class CustomtablesHelper
 		return $contributors;
 	}
 
-	/**
-	*	Configure the Linkbar.
-	**/
 	public static function addSubmenu($submenu)
 	{
 		$ct = new CT;
 		
-		// load user for access menus
-		$user = JFactory::getUser();
 		// load the submenus to sidebar
 		JHtmlSidebar::addEntry(JText::_('COM_CUSTOMTABLES_SUBMENU_DASHBOARD'), 'index.php?option=com_customtables&view=customtables', $submenu === 'customtables');
 		

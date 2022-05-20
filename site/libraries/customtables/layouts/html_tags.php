@@ -88,7 +88,7 @@ class Twig_Html_Tags
 		if($Alias_or_ItemId != '')
 			$link='/index.php/'.$Alias_or_ItemId.'?returnto='.$this->ct->Env->encoded_current_url;
 		else
-			$link='/index.php?option=com_customtables&view=edititem&returnto='.$this->ct->Env->encoded_current_url.'&Itemid='.$this->ct->Env->Itemid;
+			$link='/index.php?option=com_customtables&view=edititem&returnto='.$this->ct->Env->encoded_current_url.'&Itemid='.$this->ct->Env->ItemId;
 
 		if($this->ct->Env->jinput->getCmd('tmpl','')!='')
 			$link.='&tmpl='.$this->ct->Env->jinput->get('tmpl','','CMD');
@@ -143,7 +143,7 @@ class Twig_Html_Tags
                     	var urlstr="/index.php?option=com_customtables&amp;view=fileuploader&amp;tmpl=component&'
                         .'tableid='.$this->ct->Table->tableid.'&'
                         .'task=importcsv&'
-                        .$objectname.'_fileid='.$fileid.'&Itemid='.$this->ct->Env->Itemid.'&fieldname='.$objectname.'";
+                        .$objectname.'_fileid='.$fileid.'&Itemid='.$this->ct->Env->ItemId.'&fieldname='.$objectname.'";
                         
                     	ct_getUploader('.$fieldid.',urlstr,'.$max_file_size.',"csv","ctUploadCSVForm",true,"ct_fileuploader_'.$objectname.'","ct_eventsmessage_'.$objectname.'","'.$fileid.'","'
                         .$this->ct->Env->field_input_prefix.$objectname.'","ct_uploadedfile_box_'.$objectname.'");
@@ -180,7 +180,7 @@ class Twig_Html_Tags
 			return $vlu;
 	}
 	
-	function limit($the_step = 1)
+	function limit($the_step = 5)
 	{
 		if($this->ct->Env->print==1 or ($this->ct->Env->frmt!='html' and $this->ct->Env->frmt!=''))
 			return '';
@@ -702,7 +702,7 @@ class Twig_Html_Tags
 		$isPublishable=CTUser::checkIfRecordBelongsToUser($this->ct,$publish_userGroup);
 		$isDeletable=CTUser::checkIfRecordBelongsToUser($this->ct,$delete_userGroup);
 		
-		$RecordToolbar = new RecordToolbar($this->ct,$isEditable, $isPublishable, $isDeletable, $this->ct->Env->Itemid);
+		$RecordToolbar = new RecordToolbar($this->ct,$isEditable, $isPublishable, $isDeletable, $this->ct->Env->ItemId);
 
 		if(count($modes)==0)
 			$modes = ['edit','refresh','publish','delete'];

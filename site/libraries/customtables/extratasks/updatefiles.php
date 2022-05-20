@@ -14,6 +14,7 @@ defined('_JEXEC') or die('Restricted access');
 use CustomTables\CT;
 use CustomTables\Field;
 use CustomTables\Fields;
+use Joomla\CMS\Factory;
 
 class updateFiles
 {
@@ -59,7 +60,7 @@ class updateFiles
 	
 	protected static function countFiles($realtablename,$realfieldname,$realidfieldname)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		$query = 'SELECT count('.$realidfieldname.') AS c FROM '.$realtablename.' WHERE '.$realfieldname.' IS NOT NULL AND '.$realfieldname.' != ""';
 		$db->setQuery( $query );
 		$recs=$db->loadAssocList();
@@ -68,7 +69,7 @@ class updateFiles
 	
 	protected static function processFiles(&$ct, $fieldrow, array $old_params, array $new_params, $startindex, $stepsize)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		$query = 'SELECT '.$ct->Table->tablerow['query_selects'].' FROM '.$ct->Table->realtablename.' WHERE '.$fieldrow->realfieldname.' IS NOT NULL AND '.$fieldrow->realfieldname.' != ""';
 		$db->setQuery($query, $startindex, $stepsize);
 

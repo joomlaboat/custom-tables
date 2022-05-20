@@ -12,6 +12,8 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Factory;
+
 function renderDependencies($table_id,$tablename)
 {
     $result='';
@@ -77,7 +79,7 @@ function _getTablesThisTableDependOn($table_id)
 	if((int)$table_id==0)
 		return array();
 	
-    $db = JFactory::getDBO();
+    $db = Factory::getDBO();
 
 	if($db->serverType == 'postgresql')
 	{
@@ -103,7 +105,7 @@ function _getTablesThatDependOnThisTable($tablename)
 	if($tablename=='')
 		return array();
 		
-    $db = JFactory::getDBO();
+    $db = Factory::getDBO();
 
     $select_tablename='(SELECT tabletitle FROM #__customtables_tables AS t WHERE t.id=f.tableid LIMIT 1)';
 

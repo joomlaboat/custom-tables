@@ -11,6 +11,8 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Factory;
+
 class CT_FieldTypeTag_filebox
 {
 	public static function process($FileBoxRows, &$field, $listing_id, array $option_list)
@@ -61,7 +63,7 @@ class CT_FieldTypeTag_filebox
 	
 	public static function getFileBoxRows($tablename,$fieldname, $listing_id)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		$fileboxtablename='#__customtables_filebox_'.$tablename.'_'.$fieldname;
 
 		$query = 'SELECT fileid, file_ext FROM '.$fileboxtablename.' WHERE listingid='.(int)$listing_id.' ORDER BY fileid';

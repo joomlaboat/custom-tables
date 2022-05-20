@@ -1,12 +1,16 @@
 <?php
 /**
- * Custom Tables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x Native Component
+ * @package Custom Tables
  * @author Ivan komlev <support@joomlaboat.com>
- * @link http://www.joomlaboat.com
- * @license GNU/GPL
+ * @link https://www.joomlaboat.com
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
 // no direct access
+use Joomla\CMS\Factory;
+
 defined('_JEXEC') or die('Restricted access');
 
 class FindSimilarImage
@@ -18,7 +22,7 @@ class FindSimilarImage
 	
     	$ci=new compareImages;
 		
-        $db = JFactory::getDBO();
+        $db = Factory::getDBO();
         
         $query = 'SELECT '.$realfieldname.' AS photoid FROM '.$realtablename.' WHERE '.$realfieldname.'>0'.($additional_filter!='' ? ' AND '.$additional_filter : '');
 

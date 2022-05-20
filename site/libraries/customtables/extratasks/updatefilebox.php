@@ -12,12 +12,13 @@
 defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\Fields;
+use Joomla\CMS\Factory;
 
 class updateFileBox
 {
     public static function process()
 	{
-		$input	= JFactory::getApplication()->input;
+		$input	= Factory::getApplication()->input;
 		$old_typeparams=base64_decode($input->get('old_typeparams','','BASE64'));
 		if($old_typeparams=='')
 			return array('error'=>'old_typeparams not set');
@@ -72,7 +73,7 @@ class updateFileBox
 	/*
 	protected static function countImages($establename,$esfieldname)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		$query = 'SELECT count(id) AS c FROM #__customtables_table_'.$establename.' WHERE es_'.$esfieldname.'>0';
 	
 		$db->setQuery( $query );
@@ -84,7 +85,7 @@ class updateFileBox
 	
 	protected static function processImages($realtablename,$realfieldname, string $old_imageparams, string $new_imageparams, $old_ImageFolder, $new_ImageFolder, $startindex, $stepsize, $deleteOriginals=false)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		$query = 'SELECT '.$realfieldname.' FROM '.$realtablename.' WHERE '.$realfieldname.'>0';
 		$db->setQuery($query);
 

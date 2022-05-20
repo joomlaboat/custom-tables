@@ -10,13 +10,15 @@
 
 // no direct access
 
+use Joomla\CMS\Factory;
+
 defined('_JEXEC') or die('Restricted access');
 
 echo '<div id="j-sidebar-container" class="span2">';
 echo $this->sidebar;
 echo '</div>';
 
-$input	= JFactory::getApplication()->input;
+$input	= Factory::getApplication()->input;
 ?>
 
 <form action="<?php echo JRoute::_('index.php?option=com_customtables'); ?>" method="post" name="adminForm" id="adminForm">

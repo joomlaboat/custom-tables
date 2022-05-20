@@ -25,6 +25,7 @@ class CT
 {
 	var Languages $Languages;
 	var Environment $Env;
+    var ?Params $Params;
 	var ?Table $Table;
 	var ?array $Records;
 	var string $GroupBy;
@@ -48,6 +49,8 @@ class CT
 
 		$this->Languages = new Languages;
 		$this->Env = new Environment;
+        $this->Params = new Params();
+
 		$this->GroupBy = '';
 		$this->isEditForm = false;
         $this->LayoutVariables = [];
@@ -61,10 +64,16 @@ class CT
 	    $this->Filter = null;
 	}
 
-	function getTable($tablename_or_id, $useridfieldname = null): void
+    function setParams($menu_params,$blockExternalVars=false): void
     {
-		$this->Table = new Table($this->Languages, $this->Env, $tablename_or_id, $useridfieldname);
-		$this->Ordering = new Ordering($this->Table);
+        $this->Params->setParams($menu_params,$blockExternalVars);
+        $this->Env->ItemId = $this->Params->ItemId;
+    }
+
+	function getTable($tablename_or_id, $userIdFieldName = null): void
+    {
+		$this->Table = new Table($this->Languages, $this->Env, $tablename_or_id, $userIdFieldName);
+		$this->Ordering = new Ordering($this->Table, $this->Params);
 		
 		$this->prepareSEFLinkBase();
 	}
@@ -241,9 +250,9 @@ class CT
 		return $recordlist;
 	}
 	
-	function applyLimits($blockExternalVars = true): void
+	function applyLimits(): void
     {
-		$limit_var = 'com_customtables.limit_'.$this->Env->Itemid;
+		$limit_var = 'com_customtables.limit_'.$this->Env->ItemId;
 		
 		$this->Limit = $this->app->getUserState($limit_var, 0);
 		
@@ -261,11 +270,11 @@ class CT
 			return;
 		}
 			
-		if($blockExternalVars)
+		if($this->Params->blockExternalVars)
 		{			
-			if((int)$this->Env->menu_params->get( 'limit' ) > 0)
+			if((int)$this->Params->Limit > 0)
 			{
-				$this->Limit = (int)$this->Env->menu_params->get( 'limit' );
+				$this->Limit = (int)$this->Params->Limit;
 				$this->LimitStart = $this->Env->jinput->getInt('start',0);
 				$this->LimitStart = ($this->Limit != 0 ? (floor($this->LimitStart / $this->Limit) * $this->Limit) : 0);
 			}
@@ -280,9 +289,9 @@ class CT
 			$this->LimitStart = $this->Env->jinput->getInt('start',0);
 			$this->Limit = $this->app->getUserState($limit_var, 0);
 			
-			if($this->Limit == 0 and (int)$this->Env->menu_params->get( 'limit' )>0)
+			if($this->Limit == 0 and (int)$this->Params->Limit > 0)
 			{
-				$this->Limit = (int)$this->Env->menu_params->get( 'limit' );
+				$this->Limit = (int)$this->Params->Limit;
 			}
 
 			// In case limit has been changed, adjust it

@@ -1,9 +1,11 @@
 <?php
 /**
- * Custom Tables Joomla! 3.x Native Component
- * @author JoomlaBoat.com <support@joomlaboat.com>
- * @link http://joomlaboat.com
- * @license GNU/GPL
+ * CustomTables Joomla! 3.x Native Component
+ * @package Custom Tables
+ * @author Ivan komlev <support@joomlaboat.com>
+ * @link https://www.joomlaboat.com
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
 namespace CustomTables;
@@ -11,18 +13,23 @@ namespace CustomTables;
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Factory;
+
 //This function is too old and used to get the where parameter out of module select boxes
 
+//TODO: Review the use of this class
+/*
 class Alpha
 {
 	function getAlphaWhere($alpha,&$wherearr)
 	{
+        $jinput=Factory::getApplication()->input;
 		$alpha = $jinput->get('alpha','','STRING')
 			
-				if($this->blockExternalVars)
+				if($this->ct->Params->blockExternalVars)
 						return;
 
-				$jinput = JFactory::getApplication()->input;
+				$jinput = Factory::getApplication()->input;
 				$esfieldtype=$jinput->get('esfieldtype','','CMD');
 				$esfieldname=$jinput->get('esfieldname','','CMD');
 
@@ -36,7 +43,7 @@ class Alpha
 				}
 				else
 				{
-						$db = JFactory::getDBO();
+						$db = Factory::getDBO();
 
 						$parentid=Tree::getOptionIdFull($jinput->get('optionname','','STRING'));
 
@@ -75,3 +82,4 @@ class Alpha
 
 		}
 }
+*/

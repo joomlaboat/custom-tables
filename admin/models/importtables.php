@@ -13,7 +13,9 @@
 defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\CT;
+use CustomTables\DataTypes\Tree;
 use CustomTables\ImportTables;
+use Joomla\CMS\Factory;
 
 // Import Joomla! libraries
 jimport('joomla.application.component.model');
@@ -31,7 +33,7 @@ class CustomTablesModelImporttables extends JModelList
 
 	function importtables(&$msg)
 	{
-		$jinput=JFactory::getApplication()->input;
+		$jinput=Factory::getApplication()->input;
 
 			$fileid = $jinput->getCmd( 'fileid', '' );
 
@@ -125,7 +127,7 @@ class CustomTablesModelImporttables extends JModelList
 
 	function getOptionListItem($optionname, $optionTitle)
 	{
-        $db = JFactory::getDbo();
+        $db = Factory::getDbo();
 		$parentid=$this->esmisc->getOptionIdFull($optionname);
 
 		$rows=$this->esmisc->getHeritage($parentid, $db->quoteName('title').'='.$db->quote($optionTitle), 1);
@@ -150,7 +152,7 @@ class CustomTablesModelImporttables extends JModelList
 
 			$familytree=Tree::getFamilyTreeByParentID($parentid).'-';
 
-			$db = JFactory::getDBO();
+			$db = Factory::getDBO();
 			$query = 'INSERT #__customtables_options SET '
 				.$db->quoteName('parentid').'='.$db->quote($parentid).', '
 				.$db->quoteName('optionname').'='.$db->quote($newoptionname).', '
@@ -207,7 +209,7 @@ class CustomTablesModelImporttables extends JModelList
 	function findMaxId($table)
 	{
 
-		$db =& JFactory::getDBO();
+		$db = Factory::getDBO();
 		$query = ' SELECT id FROM #__customtables_table_'.$table.' ORDER BY id DESC LIMIT 1';
 
 		$db->setQuery( $query );
@@ -228,7 +230,7 @@ class CustomTablesModelImporttables extends JModelList
 	{
 		//Example: $code='en-GB';
 
-		$db =& JFactory::getDBO();
+		$db = Factory::getDBO();
 		$query = ' SELECT id FROM #__customtables_languages WHERE language="'.$code.'" LIMIT 1';
 		$db->setQuery( $query );
 		$rows= $db->loadObjectList();

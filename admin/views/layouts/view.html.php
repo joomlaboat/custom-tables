@@ -11,6 +11,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 
+use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\Version;
 /**
@@ -43,7 +44,7 @@ class CustomtablesViewLayouts extends JViewLegacy
 		
 		// get input
 		
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 		$this->ref = $jinput->get('ref', 0, 'word');
 		$this->refid = $jinput->get('refid', 0, 'int');
 		$this->referral = '';
@@ -93,8 +94,8 @@ class CustomtablesViewLayouts extends JViewLegacy
 	 */
 	protected function addToolBar()
 	{
-		JFactory::getApplication()->input->set('hidemainmenu', true);
-		$user = JFactory::getUser();
+		Factory::getApplication()->input->set('hidemainmenu', true);
+		$user = Factory::getUser();
 		$userId	= $user->id;
 		$isNew = $this->item->id == 0;
 
@@ -206,7 +207,7 @@ class CustomtablesViewLayouts extends JViewLegacy
 	{
 		$isNew = ($this->item->id < 1);
 		if (!isset($this->document))
-			$this->document = JFactory::getDocument();
+			$this->document = Factory::getDocument();
 		
 		$this->document->setTitle(JText::_($isNew ? 'COM_CUSTOMTABLES_LAYOUTS_NEW' : 'COM_CUSTOMTABLES_LAYOUTS_EDIT'));
 
@@ -271,7 +272,7 @@ class CustomtablesViewLayouts extends JViewLegacy
 		if(count($where)>0)
 		{
 
-			$db = JFactory::getDBO();
+			$db = Factory::getDBO();
 			$query='SELECT id,title FROM #__menu WHERE '.implode(' OR ',$where);
 
 			$db->setQuery( $query );
@@ -296,7 +297,7 @@ class CustomtablesViewLayouts extends JViewLegacy
 	
 	protected function getLayouts()
 	{
-        $db = JFactory::getDBO();
+        $db = Factory::getDBO();
 		$query = $db->getQuery(true);
 		$query->select('id,layoutname,tableid,layouttype');
         $query->from('#__customtables_layouts');
@@ -309,7 +310,7 @@ class CustomtablesViewLayouts extends JViewLegacy
 	protected function getAllTables()
 	{
 
-        $db = JFactory::getDBO();
+        $db = Factory::getDBO();
 		$query = $db->getQuery(true);
 		$query->select('id,tablename,tabletitle');
         $query->from('#__customtables_tables');

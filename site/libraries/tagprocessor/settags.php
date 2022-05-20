@@ -9,8 +9,9 @@
  **/
 
 // no direct access
-
 defined('_JEXEC') or die('Restricted access');
+
+use Joomla\CMS\Factory;
 
 /* All tags already implemented using Twig */
 
@@ -40,7 +41,7 @@ class tagProcessor_Set
 			}
 			else
 			{
-				$doc = JFactory::getDocument();
+				$doc = Factory::getDocument();
 				$doc->setMetaData( 'keywords', $opts[0] );
 			}
 			
@@ -65,7 +66,7 @@ class tagProcessor_Set
 			}
 			else
 			{
-				$doc = JFactory::getDocument();
+				$doc = Factory::getDocument();
 				$doc->setMetaData( 'description', $opts[0] );
 			}
 			
@@ -80,7 +81,7 @@ class tagProcessor_Set
 	{
 		$options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('pagetitle',$options,$htmlresult,'{}');
-        $mydoc = JFactory::getDocument();
+        $mydoc = Factory::getDocument();
 		$i=0;
 		foreach($fList as $fItem)
 		{
@@ -100,7 +101,7 @@ class tagProcessor_Set
 		}
 
         if(count($fList)==0)
-            $mydoc->setTitle(JoomlaBasicMisc::JTextExtended($ct->Env->menu_params->get( 'page_title' )));
+            $mydoc->setTitle(JoomlaBasicMisc::JTextExtended($ct->Params->pageTitle));
 	}
 
     protected static function setHeadTag(&$ct,&$htmlresult)
@@ -119,7 +120,7 @@ class tagProcessor_Set
 			}
 			else
 			{
-				$document = JFactory::getDocument();
+				$document = Factory::getDocument();
 				$document->addCustomTag($opts[0]);
 				$htmlresult=str_replace($fItem,'',$htmlresult);
 			}

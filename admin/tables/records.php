@@ -11,6 +11,7 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Factory;
 use Joomla\Registry\Registry;
 
 // import Joomla table library
@@ -31,7 +32,7 @@ class CustomtablesTableRecords extends JTable
 
 	function __construct(&$db) 
 	{
-		$jinput=JFactory::getApplication()->input;
+		$jinput=Factory::getApplication()->input;
 		$tableid=$jinput->getInt('tableid',0);
 		
 		if($tableid!=0)
@@ -39,8 +40,7 @@ class CustomtablesTableRecords extends JTable
 			$table=ESTables::getTableRowByID($tableid);
 			if(!is_object($table) and $table==0)
 			{
-				JFactory::getApplication()->enqueueMessage('Table not found', 'error');
-				$tableid=0;
+				Factory::getApplication()->enqueueMessage('Table not found', 'error');
 				return null;
 			}
 		}

@@ -9,6 +9,8 @@
  **/
 
 // no direct access
+use Joomla\CMS\Factory;
+
 defined('_JEXEC') or die('Restricted access');
 
 jimport('joomla.form.helper');
@@ -28,7 +30,7 @@ class JFormFieldCTCategory extends JFormFieldList
 	
 	public function getOptions($add_empty_option = true)//$name, $value, &$node, $control_name)
 	{
-        $db = JFactory::getDBO();
+        $db = Factory::getDBO();
 		$query = $db->getQuery(true);
 		$query->select('id,categoryname');
         $query->from('#__customtables_categories');

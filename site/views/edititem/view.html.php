@@ -11,31 +11,40 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\CT;
+use CustomTables\CTUser;
+use Joomla\CMS\Factory;
+
 jimport('joomla.html.pane');
-jimport( 'joomla.application.component.view'); //Important to get menu parameters
+jimport('joomla.application.component.view'); //Important to get menu parameters
 
 class CustomTablesViewEditItem extends JViewLegacy
 {
-	function display($tpl = null)
-	{
+    var CT $ct;
+
+	function display($tpl = null): bool
+    {
+        $this->ct = new CT;
 		$Model = $this->getModel();
-        $Model->load(JFactory::getApplication()->getParams());
+        $Model->load($this->ct);
 		
-        if(!$Model->CheckAuthorization(1))
+        if(!CTUser::CheckAuthorization($this->ct))
     	{
     		//not authorized
-            JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
+            Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
     		return false;
         }
 
-        if(!isset($Model->ct->Table->fields) or !is_array($Model->ct->Table->fields))
+        if(!isset($this->ct->Table->fields) or !is_array($this->ct->Table->fields))
             return false;
 
-		$formLink=$Model->ct->Env->WebsiteRoot.'index.php?option=com_customtables&amp;view=edititem'.($Model->ct->Env->Itemid!=0 ? '&amp;Itemid='.$Model->ct->Env->Itemid : '');
+		$formLink=$this->ct->Env->WebsiteRoot.'index.php?option=com_customtables&amp;view=edititem'.($this->ct->Env->ItemId!=0 ? '&amp;Itemid='.$this->ct->Env->ItemId : '');
 		
-		if($Model->ct->Env->frmt == 'json')
+		if($this->ct->Env->frmt == 'json')
 			require_once('tmpl'.DIRECTORY_SEPARATOR.'json.php');
 		else
-			CTViewEdit($Model->ct, $Model->row, $Model->pagelayout, $Model->BlockExternalVars,$formLink,'eseditForm');
+			CTViewEdit($this->ct, $Model->row, $Model->pagelayout, $formLink,'eseditForm');
+
+        return true;
 	}
 }

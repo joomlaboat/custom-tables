@@ -11,7 +11,9 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-$document = JFactory::getDocument();
+use Joomla\CMS\Factory;
+
+$document = Factory::getDocument();
 $document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/js/imagegallery.js"></script>');
 
 ?>

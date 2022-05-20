@@ -9,6 +9,8 @@
  **/
 
 // no direct access
+use Joomla\CMS\Factory;
+
 defined('_JEXEC') or die('Restricted access');
 
 jimport('joomla.form.helper');
@@ -28,18 +30,18 @@ class JFormFieldCTOption extends JFormFieldList
 
 	protected function getOptions()//$name, $value, &$node, $control_name)
 	{
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 
 		$currentoptionid=0;
 		if ($jinput->get('id'))
-			$currentoptionid = $jinput->getInt('id');
+			$currentoptionid = $jinput->getInt('id',0);
 
-        $db = JFactory::getDBO();
+        $db = Factory::getDBO();
 		$query = $db->getQuery(true);
 		$query->select('id,title');
         $query->from('#__customtables_options');
 		$query->order('title');
-		$query->where('id!='.(int)$currentoptionid);
+		$query->where('id!='.$currentoptionid);
 
 		$db->setQuery((string)$query);
         $records = $db->loadObjectList();

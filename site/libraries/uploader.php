@@ -1,9 +1,11 @@
 <?php
 /**
  * CustomTables Joomla! 3.x Native Component
- * @author JoomlaBoat.com <support@joomlaboat.com>
- * @link http://www.joomlaboat.com
- * @license GNU/GPL
+ * @package Custom Tables
+ * @author Ivan komlev <support@joomlaboat.com>
+ * @link https://www.joomlaboat.com
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
 // no direct access
@@ -11,6 +13,7 @@ defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\CT;
 use CustomTables\Fields;
+use Joomla\CMS\Factory;
 
 class ESFileUploader
 {
@@ -32,7 +35,7 @@ class ESFileUploader
 	{
 		$ct = new CT;
 		
-		$jinput=JFactory::getApplication()->input;
+		$jinput=Factory::getApplication()->input;
 
 		if($ct->Env->advancedtagprocessor)
 		{
@@ -137,7 +140,7 @@ class ESFileUploader
 		$output_dir=JPATH_SITE.DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR;
 		$t=time();
 
-		$jinput=JFactory::getApplication()->input;
+		$jinput=Factory::getApplication()->input;
 		$file=ESFileUploader::getfile_SafeMIME($fileid,$filetypes_str);
 
 		$accepted_types=ESFileUploader::getAcceptableMimeTypes($filetypes_str);
@@ -241,7 +244,7 @@ class ESFileUploader
 	{
 		if($filetypes_str=='')
 		{
-			$app = JFactory::getApplication();
+			$app = Factory::getApplication();
 			$jinput=$app->input;
 			$fieldname=$jinput->getCmd('fieldname','');
 
@@ -345,8 +348,7 @@ class ESFileUploader
 		'avi' => 'video/x-msvideo',
 		'mpg' => 'video/mpeg',
 		'wmv' => 'video/x-ms-wmv',
-		'swf' => 'application/x-shockwave-flash',
-		
+
         // adobe
         'pdf' => 'application/pdf',
         'psd' => 'image/vnd.adobe.photoshop',
@@ -378,16 +380,16 @@ class ESFileUploader
 
 	protected static function getTableRawByItemid()
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$jinput=$app->input;
 		$Itemid=$jinput->getInt('Itemid',0);
 
 		$menuItem = $app->getMenu()->getItem($Itemid);
 		// Get params for menuItem
-		$menu_params = $menuItem->params;
+		$params = $menuItem->params;
 
 		$esTable=new ESTables;
-		$establename=$menu_params->get( 'establename' );
+		$establename=$params->get( 'establename' );
 		if($establename=='')
 			return 0;
 

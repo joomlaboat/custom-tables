@@ -11,11 +11,11 @@
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die( 'Restricted access' );
 
+use CustomTables\CT;
 use CustomTables\Layouts;
 use CustomTables\LinkJoinFilters;
 use CustomTables\TwigProcessor;
-
-require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'models'.DIRECTORY_SEPARATOR.'catalog.php');
+use Joomla\CMS\Factory;
 
 class JHTMLESSqlJoin
 {
@@ -23,13 +23,13 @@ class JHTMLESSqlJoin
     {
 		if(count($typeparams)<1)
         {
-			JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_TABLE_NOT_SPECIFIED'), 'error');
+			Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_TABLE_NOT_SPECIFIED'), 'error');
             return '';
         }
 
         if(count($typeparams)<2)
         {
-			JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_UNKNOWN_FIELD_LAYOUT'), 'error');
+			Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_UNKNOWN_FIELD_LAYOUT'), 'error');
             return '';
         }
 
@@ -74,7 +74,7 @@ class JHTMLESSqlJoin
 
         if(ESTables::getTableID($establename)=='')
         {
-			JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_TABLE_NOT_FOUND'), 'error');
+			Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_TABLE_NOT_FOUND'), 'error');
             return '';
         }
 
@@ -84,20 +84,18 @@ class JHTMLESSqlJoin
 		if($place_holder=='')
 			$place_holder='- '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT' );
 
-        $config=array();
-        $model = JModelLegacy::getInstance('Catalog', 'CustomTablesModel', $config);
-
         //Get Database records
-		JHTMLESSqlJoin::get_searchresult($model,$filter, $establename, $order_by_field,$allowunpublished);
+        $ct = new CT;
+		self::get_searchresult($ct, $filter, $establename, $order_by_field,$allowunpublished);
 
         //Process records depending on field type and layout
-        $list_values=JHTMLESSqlJoin::get_List_Values($model,$value_field,$langpostfix,$dynamic_filter);
+        $list_values=self::get_List_Values($ct,$value_field,$langpostfix,$dynamic_filter);
 
         $htmlresult='';
-        //Output slection box
-        if($model->ct->Env->print==1)
+        //Output section box
+        if($ct->Env->print==1)
         {
-			$htmlresult.=JHTMLESSqlJoin::renderPrintResult($list_values,$value,$control_name);
+			$htmlresult.=self::renderPrintResult($list_values,$value,$control_name);
         }
 		elseif($selector=='json')
 		{
@@ -113,18 +111,17 @@ class JHTMLESSqlJoin
 		}
 		elseif($selector=='dropdown' or $force_dropdown or $dynamic_filter)
         {
-			$htmlresult.=JHTMLESSqlJoin::renderDynamicFilter($model->ct,$value,$establename,$dynamic_filter,$control_name);
-            $htmlresult.=JHTMLESSqlJoin::renderDropdownSelector_Box($list_values,$value,$control_name,$cssclass,$attribute,$place_holder,$dynamic_filter,$addNoValue);
+			$htmlresult.=self::renderDynamicFilter($ct,$value,$establename,$dynamic_filter,$control_name);
+            $htmlresult.=self::renderDropdownSelector_Box($list_values,$value,$control_name,$cssclass,$attribute,$place_holder,$dynamic_filter,$addNoValue);
         }
 		else
-			$htmlresult.=JHTMLESSqlJoin::renderRadioSelector_Box($list_values,$value,$control_name,$cssclass,$attribute,$value_field);
+			$htmlresult.=self::renderRadioSelector_Box($list_values,$value,$control_name,$cssclass,$attribute,$value_field);
 
 		return $htmlresult;
     }
 
-    static protected function get_searchresult(&$model,$filter, $establename, $order_by_field,$allowunpublished)
+    static protected function get_searchresult(CT &$ct, $filter, $establename, $order_by_field,$allowunpublished): bool
     {
-		
 		$paramsArray=array();
 
         $paramsArray['limit']=0;
@@ -138,7 +135,7 @@ class JHTMLESSqlJoin
         $paramsArray['groupby']='';
         $paramsArray['shownavigation']=0;
 		
-		if(strpos($order_by_field,':')===false) //cannot sort by layout only by field name
+		if(!str_contains($order_by_field, ':')) //cannot sort by layout only by field name
 			$paramsArray['forcesortby']=$order_by_field;
 
         if($filter!='')
@@ -148,20 +145,36 @@ class JHTMLESSqlJoin
 
         $_params= new JRegistry;
 		$_params->loadArray($paramsArray);
-		
-		if(!$model->load($_params, true))
-		{
-			JFactory::getApplication()->enqueueMessage('Could not load table [151].', 'error');
-		}
-		else
-		{
-			if(!$model->getSearchResult())
-				JFactory::getApplication()->enqueueMessage('Could not load table [156].', 'error');
-		}
+
+        $ct->setParams($_params, true);
+
+        // -------------------- Table
+
+        $ct->getTable($ct->Params->tableName);
+
+        if($ct->Table->tablename=='')
+        {
+            $ct->app->enqueueMessage('Catalog View: Table not selected.', 'error');
+            return false;
+        }
+
+        // --------------------- Filter
+        $ct->setFilter('', $ct->Params->showPublished);
+        $ct->Filter->addMenuParamFilter();
+
+        // --------------------- Sorting
+        $ct->Ordering->parseOrderByParam();
+
+        // --------------------- Limit
+        $ct->applyLimits();
+
+        $ct->getRecords();
+
+        return true;
     }
         
-	static protected function renderDynamicFilter(&$ct, $value,$establename,$dynamic_filter,$control_name)
-	{
+	static protected function renderDynamicFilter(&$ct, $value,$establename,$dynamic_filter,$control_name): string
+    {
 		$htmlresult='';
 
 		if($dynamic_filter!='')
@@ -182,66 +195,63 @@ class JHTMLESSqlJoin
 		return $htmlresult;
 	}
 
-    static protected function get_List_Values(&$model,$field,$langpostfix,$dynamic_filter)
+    static protected function get_List_Values(CT &$ct,$field,$langpostfix,$dynamic_filter)
 	{
 		$layout_mode=false;
-
+        $layoutcode = '';
         $pair=explode(':',$field);
         if(count($pair)==2)
         {
 			$layout_mode=true;
             if($pair[0]!='layout' and $pair[0]!='tablelesslayout' )
             {
-				JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_UNKNOWN_FIELD_LAYOUT').' "'.$field.'"', 'error');
+				Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_UNKNOWN_FIELD_LAYOUT').' "'.$field.'"', 'error');
                 return array();
             }
 
-			$Layouts = new Layouts($model->ct);
+			$Layouts = new Layouts($ct);
 			$layoutcode = $Layouts->getLayout($pair[1]);
 
             if(!isset($layoutcode) or $layoutcode=='')
             {
-				JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_LAYOUT_NOT_FOUND').' "'.$pair[1].'"', 'error');
+				Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_LAYOUT_NOT_FOUND').' "'.$pair[1].'"', 'error');
 				return array();
             }
-
-			if($model->ct->Env->legacysupport)
-			{
-				$LayoutProc = new LayoutProcessor($model->ct);
-				$LayoutProc->layout = $layoutcode;
-			}
         }
 
         $list_values=array();
 
-		foreach($model->ct->Records as $row)
+		foreach($ct->Records as $row)
         {
 			if($layout_mode)
 			{
-				if($model->ct->Env->legacysupport)
-					$v = $LayoutProc->fillLayout($row);
+				if($ct->Env->legacysupport) {
+                    $LayoutProc = new LayoutProcessor($ct);
+                    $LayoutProc->layout = $layoutcode;
+                    $v = $LayoutProc->fillLayout($row);
+                }
 				else
 					$v = $layoutcode;
 				
-				$twig = new TwigProcessor($model->ct, '{% autoescape false %}'.$v.'{% endautoescape %}');
+				$twig = new TwigProcessor($ct, '{% autoescape false %}'.$v.'{% endautoescape %}');
 				$v = $twig->process($row);
 			}
             else
-				$v=JoomlaBasicMisc::processValue($field, $model->ct, $row);//TODO try to replace processValue function
+				$v=JoomlaBasicMisc::processValue($field, $ct, $row);//TODO try to replace processValue function
 
             if($dynamic_filter!='')
-				$d=$row[$model->ct->Env->field_prefix.$dynamic_filter];
+				$d=$row[$ct->Env->field_prefix.$dynamic_filter];
             else
 				$d='';
 
-            $list_values[]=[$row[$model->ct->Table->realidfieldname],$v,(int)$row['listing_published'],$d];
+            $list_values[]=[$row[$ct->Table->realidfieldname],$v,(int)$row['listing_published'],$d];
         }
 
 		return $list_values;
 	}
 
-    static protected function renderPrintResult($list_values,$current_value,$control_name)
-	{
+    static protected function renderPrintResult($list_values,$current_value,$control_name): string
+    {
 		$htmlresult='';
 
 		foreach($list_values as $list_value)
@@ -269,15 +279,15 @@ class JHTMLESSqlJoin
     static protected function renderDropdownSelector_Box($list_values,$current_value,$control_name,$cssclass,$attribute,$place_holder,$dynamic_filter,$addNoValue=false)
     {
 		if(strpos($cssclass,' ct_improved_selectbox')!==false)
-			return JHTMLESSqlJoin::renderDropdownSelector_Box_improved($list_values,$current_value,$control_name,$cssclass,$attribute,$place_holder,$dynamic_filter);
+			return self::renderDropdownSelector_Box_improved($list_values,$current_value,$control_name,$cssclass,$attribute,$place_holder,$dynamic_filter);
         else
-			return JHTMLESSqlJoin::renderDropdownSelector_Box_simple($list_values,$current_value,$control_name,$cssclass,$attribute,$place_holder,$dynamic_filter,$addNoValue);
+			return self::renderDropdownSelector_Box_simple($list_values,$current_value,$control_name,$cssclass,$attribute,$place_holder,$dynamic_filter,$addNoValue);
 	}
 
 	static protected function renderDropdownSelector_Box_improved($list_values,$current_value,$control_name,$cssclass,$attribute,$place_holder,$dynamic_filter,$addNoValue=false)
     {
 		JHtml::_('formbehavior.chosen', '.ct_improved_selectbox');
-        return JHTMLESSqlJoin::renderDropdownSelector_Box_simple($list_values,$current_value,$control_name,$cssclass,$attribute,$place_holder,$dynamic_filter,$addNoValue);
+        return self::renderDropdownSelector_Box_simple($list_values,$current_value,$control_name,$cssclass,$attribute,$place_holder,$dynamic_filter,$addNoValue);
     }
 
 	static protected function renderDropdownSelector_Box_simple($list_values,$current_value,$control_name,$cssclass,$attribute,$place_holder,$dynamic_filter,$addNoValue=false)
@@ -368,7 +378,7 @@ class JHTMLESSqlJoin
         foreach($list_values as $list_value)
         {
 			if($withtable)
-				$htmlresult.='<tr><td valign="middle">';
+				$htmlresult.='<tr><td>';
 			else
 				$htmlresult.='<div id="sqljoin_table_'.$control_name.'_'.$list_value[0].'">';
 
@@ -380,7 +390,7 @@ class JHTMLESSqlJoin
 					.' data-type="sqljoin" />';
 
 			if($withtable)
-				$htmlresult.='</td><td valign="middle">';
+				$htmlresult.='</td><td>';
 
 			$htmlresult.='<label for="'.$control_name.'_'.$i.'">'.$list_value[1].'</label>';
 

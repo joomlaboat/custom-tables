@@ -11,6 +11,7 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\CT;
 use CustomTables\TwigProcessor;
 
 trait render_json
@@ -58,7 +59,7 @@ trait render_json
         return $result;
     }
 	
-	function get_CatalogTable_singleline_JSON(&$ct,$layoutType,$allowcontentplugins,$layout) //TO DO
+	function get_CatalogTable_singleline_JSON(CT &$ct,int $layoutType,string $layout) //TO DO
 	{
 		if (ob_get_contents())
 			ob_clean();

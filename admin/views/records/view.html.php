@@ -14,6 +14,7 @@ defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\Layouts;
 
+use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\Version;
 
@@ -38,7 +39,7 @@ class CustomtablesViewRecords extends JViewLegacy
 		$version = new Version;
 		$this->version = (int)$version->getShortVersion();
 		
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		
 		$this->tableid=$app->input->getint('tableid',0);
 		$this->listing_id=$app->input->getCmd('id',0);
@@ -61,7 +62,7 @@ class CustomtablesViewRecords extends JViewLegacy
 		
 		$this->row=array();
 
-		$user = JFactory::getUser();
+		$user = Factory::getUser();
 		$this->userid = (int)$user->get('id');
 
 		$this->row = $this->Model->row;
@@ -74,9 +75,9 @@ class CustomtablesViewRecords extends JViewLegacy
 		$this->canEdit = $this->canDo->get('tables.edit');
 		
 		// get input
-		$jinput = JFactory::getApplication()->input;
-		$this->ref = JFactory::getApplication()->input->get('ref', 0, 'word');
-		$this->refid = JFactory::getApplication()->input->get('refid', 0, 'int');
+		$jinput = Factory::getApplication()->input;
+		$this->ref = Factory::getApplication()->input->get('ref', 0, 'word');
+		$this->refid = Factory::getApplication()->input->get('refid', 0, 'int');
 		$this->referral = '';
 		if ($this->refid)
 		{
@@ -127,7 +128,7 @@ class CustomtablesViewRecords extends JViewLegacy
 	 */
 	protected function addToolBar()
 	{
-		JFactory::getApplication()->input->set('hidemainmenu', true);
+		Factory::getApplication()->input->set('hidemainmenu', true);
 		
 		$userId	= $this->userid;
 		$isNew = $this->listing_id == 0;
@@ -213,7 +214,7 @@ class CustomtablesViewRecords extends JViewLegacy
 		$isNew = $this->listing_id == 0;
 		if (!isset($this->document))
 		{
-			$this->document = JFactory::getDocument();
+			$this->document = Factory::getDocument();
 		}
 		$this->document->setTitle(JText::_($isNew ? 'COM_CUSTOMTABLES_RECORDS_NEW' : 'COM_CUSTOMTABLES_RECORDS_EDIT'));
 	}

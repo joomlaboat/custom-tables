@@ -12,6 +12,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\Layouts;
+use Joomla\CMS\Factory;
 
 // import Joomla controllerform library
 jimport('joomla.application.component.controllerform');
@@ -33,8 +34,8 @@ class CustomtablesControllerRecords extends JControllerForm
 
 	public function __construct($config = array())
 	{
-		//$jinput = JFactory::getApplication()->input;
-		//$tableid=JFactory::getApplication()->input->getint('tableid',0);
+		//$jinput = Factory::getApplication()->input;
+		//$tableid=Factory::getApplication()->input->getint('tableid',0);
 
 		parent::__construct($config);
 	}
@@ -91,7 +92,7 @@ class CustomtablesControllerRecords extends JControllerForm
 
 		if ($recordId)
 		{
-			$user = JFactory::getUser();
+			$user = Factory::getUser();
 			
 			// The record has been set. Check the record permissions.
 			$permission = $user->authorise('core.edit', 'com_customtables.records.' . $recordId);
@@ -167,7 +168,7 @@ class CustomtablesControllerRecords extends JControllerForm
 		$layout = $this->input->get('layout', 'edit', 'string');
 
 		$ref 	= $this->input->get('ref', 0, 'string');
-		//$refid 	= $this->input->getCmd('refid', 0);
+		$refid 	= $this->input->getCmd('refid', 0);
 
 		//To support char type record id
 		$recordId 	= $this->input->getCmd('id', 0);
@@ -207,9 +208,9 @@ class CustomtablesControllerRecords extends JControllerForm
 		$append .= '&tableid=' . $tableid;
 		
 		//This is to overwrite Joomla current record ID state value. Joomla converts ID to integer, but we want to support both int and cmd (A-Za-z0-9_-)
-		$values = (array) JFactory::getApplication()->getUserState('com_customtables.edit.records.id');
+		$values = (array) Factory::getApplication()->getUserState('com_customtables.edit.records.id');
 		$values[] = $recordId;
-		JFactory::getApplication()->setUserState('com_customtables.edit.records.id', $values);
+		Factory::getApplication()->setUserState('com_customtables.edit.records.id', $values);
 
 		return $append;
 	}
@@ -259,7 +260,7 @@ class CustomtablesControllerRecords extends JControllerForm
 			$table=ESTables::getTableRowByID($tableid);
 			if(!is_object($table) and $table==0)
 			{
-				JFactory::getApplication()->enqueueMessage('Table not found', 'error');
+				Factory::getApplication()->enqueueMessage('Table not found', 'error');
 				return;
 			}
 			else
@@ -295,22 +296,22 @@ class CustomtablesControllerRecords extends JControllerForm
 				
 		if($this->task=='apply')
 		{
-			JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORD_SAVED'),'success');
+			Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORD_SAVED'),'success');
 			$redirect.='&view=records&layout=edit&id='.$recordid.'&tableid='.(int)$tableid;
 		}
 		elseif($this->task=='save2copy')
 		{
-			JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_COPIED'),'success');
+			Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_COPIED'),'success');
 			$redirect.='&view=records&task=records.edit&tableid='.(int)$tableid.'&id='.$editModel->id;
 		}
 		elseif($this->task=='save2new')
 		{
-			JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORD_SAVED'),'success');
+			Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORD_SAVED'),'success');
 			$redirect.='&view=records&task=records.edit&tableid='.(int)$tableid;
 		}
 		else
 		{
-			JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORD_SAVED'),'success');
+			Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORD_SAVED'),'success');
 			$redirect.='&view=listofrecords&tableid='.(int)$tableid;
 		}
 		

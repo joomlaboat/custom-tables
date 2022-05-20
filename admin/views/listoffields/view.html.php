@@ -40,7 +40,7 @@ class CustomtablesViewListoffields extends JViewLegacy
 
 	function display($tpl = null)
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		if ($this->getLayout() !== 'modal')
 		{
@@ -54,7 +54,7 @@ class CustomtablesViewListoffields extends JViewLegacy
 		$this->items = $this->get('Items');
 		$this->pagination = $this->get('Pagination');
 		$this->state = $this->get('State');
-		$this->user = JFactory::getUser();
+		$this->user = Factory::getUser();
 
 		if($this->ct->Env->version >= 4)
 		{
@@ -85,7 +85,7 @@ class CustomtablesViewListoffields extends JViewLegacy
 			$table=ESTables::getTableRowByIDAssoc($this->tableid);
 			if(!is_object($table) and $table==0)
 			{
-				JFactory::getApplication()->enqueueMessage('Table not found', 'error');
+				Factory::getApplication()->enqueueMessage('Table not found', 'error');
 				$this->tableid=0;
 			}
 			else
@@ -195,7 +195,7 @@ class CustomtablesViewListoffields extends JViewLegacy
 	 
 	protected function addToolBar_3()
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		if($this->tableid!=0)
 		{
@@ -316,7 +316,7 @@ class CustomtablesViewListoffields extends JViewLegacy
 	{
 		if (!isset($this->document))
 		{
-			$this->document = JFactory::getDocument();
+			$this->document = Factory::getDocument();
 		}
 		$this->document->setTitle(JText::_('COM_CUSTOMTABLES_LISTOFFIELDS'));
 	}
@@ -360,7 +360,7 @@ class CustomtablesViewListoffields extends JViewLegacy
 	protected function getTheTypeSelections()
 	{
 		// Get a db connection.
-		$db = JFactory::getDbo();
+		$db = Factory::getDbo();
 
 		// Create a new query object.
 		$query = $db->getQuery(true);

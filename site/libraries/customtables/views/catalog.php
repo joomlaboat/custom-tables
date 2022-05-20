@@ -18,13 +18,13 @@ defined('_JEXEC') or die('Restricted access');
 class Catalog
 {
     var CT $ct;
-    var $moduleId;
+    //var ?int $moduleId;
 
-    function __construct(CT &$ct, $menuParams, $moduleId = null)
+    function __construct(CT &$ct)//, $moduleId = null)
     {
         $this->ct = &$ct;
-        $this->ct->Env->menu_params = $menuParams;
-        $this->moduleId = $moduleId;
+        //$this->ct->Env->menu_params = $menuParams;
+        //$this->moduleId = $moduleId;
     }
 
     function render(): string
@@ -46,27 +46,9 @@ class Catalog
             require_once($site_path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'fieldtags.php');
         }
 
-// --------------------- ItemId
-        $forceItemId=$this->ct->Env->menu_params->get('forceitemid');
-        if(isset($forceItemId) and $forceItemId!='')
-        {
-            //Find Itemid by alias
-            if(((int)$forceItemId)>0)
-                $this->ct->Env->Itemid=$forceItemId;
-            else
-            {
-                if($forceItemId!="0")
-                    $this->ct->Env->Itemid=(int)JoomlaBasicMisc::FindItemidbyAlias($forceItemId);//Accepts menu Itemid and alias
-                else
-                    $this->ct->Env->Itemid=$this->ct->Env->jinput->get('Itemid',0,'INT');
-            }
-        }
-        else
-            $this->ct->Env->Itemid = $this->ct->Env->jinput->get('Itemid',0,'INT');
-
 // -------------------- Table
 
-        $this->ct->getTable($this->ct->Env->menu_params->get( 'establename' ));
+        $this->ct->getTable($this->ct->Params->tableName);
 
         if($this->ct->Table->tablename=='')
         {
@@ -75,11 +57,51 @@ class Catalog
         }
 
 // --------------------- Filter
-        $this->ct->setFilter('', $this->ct->Env->menu_params->get('showpublished'));
+        $this->ct->setFilter('', $this->ct->Params->showPublished);
         $this->ct->Filter->addMenuParamFilter();
 
+        if(!$this->ct->Params->blockExternalVars)
+        {
+            if($this->ct->Env->jinput->get('filter','','STRING'))
+                $this->ct->Filter->addWhereExpression($this->ct->Env->jinput->get('filter','','STRING'));
+        }
+
+        if(!$this->ct->Params->blockExternalVars)
+            $this->ct->Filter->addQueryWhereFilter();
+
+// --------------------- Shopping Cart
+
+        if($this->ct->Params->showCartItemsOnly)
+        {
+            $cookieValue = $this->ct->Env->jinput->cookie->get($this->ct->Params->showCartItemsPrefix.$this->ct->Table->tablename);
+
+            if (isset($cookieValue))
+            {
+                if($cookieValue=='')
+                {
+                    $this->ct->Filter->where[] = $this->ct->Table->realtablename.'.'.$this->ct->Table->tablerow['realidfieldname'].'=0';
+                }
+                else
+                {
+                    $items=explode(';',$cookieValue);
+                    $arr=array();
+                    foreach($items as $item)
+                    {
+                        $pair=explode(',',$item);
+                        $arr[]=$this->ct->Table->realtablename.'.'.$this->ct->Table->tablerow['realidfieldname'].'='.(int)$pair[0];//id must be a number
+                    }
+                    $this->ct->Filter->where[] = '('.implode(' OR ', $arr).')';
+                }
+            }
+            else
+            {
+                //Show only shopping cart items. TODO: check the query
+                $this->ct->Filter->where[]=$this->ct->Table->realtablename.'.'.$this->ct->Table->tablerow['realidfieldname'].'=0';
+            }
+        }
+
 // --------------------- Sorting
-        $this->ct->Ordering->parseOrderByParam(true,$this->ct->Env->menu_params,$this->ct->Env->Itemid);
+        $this->ct->Ordering->parseOrderByParam();
 
 // --------------------- Limit
         $this->ct->applyLimits();
@@ -89,23 +111,25 @@ class Catalog
         $Layouts = new Layouts($this->ct);
         $Layouts->layouttype = 0;
 
-        if($this->ct->Env->menu_params->get( 'ct_pagelayout' )!=null)
+        if($this->ct->Params->pageLayout != null)
         {
-            $pagelayout=$Layouts->getLayout($this->ct->Env->menu_params->get( 'ct_pagelayout' ));
+            $pagelayout=$Layouts->getLayout($this->ct->Params->pageLayout);
             if($pagelayout=='')
                 $pagelayout='{catalog:,notable}';
         }
         else
             $pagelayout='{catalog:,notable}';
 
-        if($this->ct->Env->menu_params->get( 'ct_itemlayout' )!=null)
-            $itemLayout=$Layouts->getLayout($this->ct->Env->menu_params->get( 'ct_itemlayout' ));
+        if($this->ct->Params->itemLayout != null)
+            $itemLayout=$Layouts->getLayout($this->ct->Params->itemLayout);
         else
             $itemLayout='';
 
+        print_r($this->ct->Params);
+        echo 'list limit: '.$this->ct->Limit.'*<br/>';
+
 // -------------------- Load Records
         $this->ct->getRecords();
-
 // -------------------- Parse Layouts
         if ($this->ct->Env->legacysupport) {
             $catalogTableCode = JoomlaBasicMisc::generateRandomString();//this is temporary replace place holder. to not parse content result again
@@ -117,14 +141,14 @@ class Catalog
             $LayoutProc = new \LayoutProcessor($this->ct);
             $LayoutProc->layout = $pagelayout;
             $pagelayout = $LayoutProc->fillLayout(array(), null, '');
-            $pagelayout = str_replace('&&&&quote&&&&', '"', $pagelayout); // search boxes may return HTMl elemnts that contain placeholders with quotes like this: &&&&quote&&&&
+            $pagelayout = str_replace('&&&&quote&&&&', '"', $pagelayout); // search boxes may return HTMl elements that contain placeholders with quotes like this: &&&&quote&&&&
             $pagelayout = str_replace($catalogTableCode, $catalogTableContent, $pagelayout);
         }
 
         $twig = new TwigProcessor($this->ct, $pagelayout);
         $pagelayout = $twig->process();
 
-        if($this->ct->Env->menu_params->get( 'allowcontentplugins' )==1)
+        if($this->ct->Params->allowContentPlugins)
             JoomlaBasicMisc::applyContentPlugins($pagelayout);
 
         return $pagelayout;

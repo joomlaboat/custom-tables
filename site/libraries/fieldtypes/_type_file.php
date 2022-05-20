@@ -12,6 +12,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\Field;
+use Joomla\CMS\Factory;
 
 require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'uploader.php');
 
@@ -169,7 +170,7 @@ class CT_FieldTypeTag_file
 
     static public function get_file_type_value(CustomTables\Field &$field, $listing_id)
     {
-        $jinput = JFactory::getApplication()->input;
+        $jinput = Factory::getApplication()->input;
 
         if ($field->type == 'filelink')
             $FileFolder = CT_FieldTypeTag_file::getFileFolder($field->params[0]);
@@ -238,11 +239,11 @@ class CT_FieldTypeTag_file
 
             $uploadedfile = JPATH_SITE . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR . $file_id;
 
-            $is_base64encoded = JFactory::getApplication()->input->get('base64encoded', '', 'CMD');
+            $is_base64encoded = Factory::getApplication()->input->get('base64encoded', '', 'CMD');
             if ($is_base64encoded == "true") {
                 $src = $uploadedfile;
 
-                $jinput = JFactory::getApplication()->input;
+                $jinput = Factory::getApplication()->input;
                 $file = $jinput->post->get($field->comesfieldname, '', 'STRING');
                 $dst = JPATH_SITE . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR . 'decoded_' . basename($file['name']);
                 CustomTablesFileMethods::base64file_decode($src, $dst);
@@ -295,7 +296,7 @@ class CT_FieldTypeTag_file
 
     static protected function checkIfTheFileBelongsToAnotherRecord(string $filename, CustomTables\Field $field): bool
     {
-        $db = JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = 'SELECT * FROM ' . $field->ct->Table->realtablename . ' WHERE ' . $field->realfieldname . '=' . $db->quote($filename) . ' LIMIT 2';
 
         $db->setQuery($query);
@@ -411,7 +412,7 @@ class CT_FieldTypeTag_file
                         UploadFileCount=1;
 
                     	let urlstr' . $field->id .' ="' . JURI::root(true) . '/index.php?option=com_customtables&view=fileuploader&tmpl=component&' . $field->fieldname
-            . '_fileid=' . $file_id . '&Itemid=' . $field->ct->Env->Itemid . '&fieldname=' . $field->fieldname . '";
+            . '_fileid=' . $file_id . '&Itemid=' . $field->ct->Env->ItemId . '&fieldname=' . $field->fieldname . '";
                     	
 						ct_getUploader(' . $field->id . ',urlstr' . $field->id .',' . $max_file_size . ',"' . $accepted_file_types . '","eseditForm",false,"ct_fileuploader_' . $field->fieldname . '","ct_eventsmessage_'
             . $field->fieldname . '","' . $file_id . '","' . $field->prefix . $field->fieldname . '","ct_ubloadedfile_box_' . $field->fieldname . '")
@@ -462,14 +463,14 @@ class CT_FieldTypeTag_file
 
     public static function wrong(): bool
     {
-        JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
+        Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
         return false;
     }
 
     public static function process_file_link($filename): void
     {
 
-        $jinput = JFactory::getApplication()->input;
+        $jinput = Factory::getApplication()->input;
         $parts = explode('.', $filename);
 
         if (count($parts) == 1)
@@ -522,7 +523,7 @@ class CT_FieldTypeTag_file
 
     public static function makeTheKey(string $filepath, string $security, string $rec_id, string $fieldid, string $tableid): string
     {
-        $user = JFactory::getUser();
+        $user = Factory::getUser();
         $username = $user->get('username');
         $current_user_id = (int)$user->get('id');
 

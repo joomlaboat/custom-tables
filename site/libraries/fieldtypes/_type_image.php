@@ -11,17 +11,17 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-use CustomTables\CT;
 use CustomTables\DataTypes\Tree;
+use Joomla\CMS\Factory;
 
 class CT_FieldTypeTag_image
 {
 	static public function getImageSRClayoutview($option_list,$rowValue,array $params,&$imagesrc,&$imagetag)//,$onlylink=false)
 	{
-		if(strpos($rowValue,'-')!==false)
+		if(str_contains($rowValue, '-'))
 			$rowValue=str_replace('-','',$rowValue);
 
-		$conf = JFactory::getConfig();
+		$conf = Factory::getConfig();
 		$sitename = $conf->get('config.sitename');
 
 		$option=$option_list[0];
@@ -52,7 +52,6 @@ class CT_FieldTypeTag_image
 		elseif($option=='_original')
 		{
 			$prefix='_original';
-			$imagefile_ext='jpg';
 			$imgname=$ImageFolder.DIRECTORY_SEPARATOR.$prefix.'_'.$rowValue;
 
 			$imgMethods= new CustomTablesImageMethods;
@@ -102,7 +101,7 @@ class CT_FieldTypeTag_image
 
 		$ImageFolder=CustomTablesImageMethods::getImageFolder($field->params);
 
-		$jinput=JFactory::getApplication()->input;
+		$jinput=Factory::getApplication()->input;
         $fileid = $jinput->post->get($field->comesfieldname, '','STRING' );
 
 		if($listing_id==0)
@@ -141,7 +140,7 @@ class CT_FieldTypeTag_image
 		{
 			// -1 if file extension not supported
 			// 2 if file already exists
-			JFactory::getApplication()->enqueueMessage('Could not upload image file.', 'error');
+			Factory::getApplication()->enqueueMessage('Could not upload image file.', 'error');
 		}
         elseif($value != 0)
 			return $value;
@@ -203,7 +202,6 @@ class CT_FieldTypeTag_image
     {
         $max_file_size=JoomlaBasicMisc::file_upload_max_size();
         $fileid=JoomlaBasicMisc::generateRandomString();
-        $jinput=JFactory::getApplication()->input;
 
         $style='margin:10px; border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;vertical-align:top;';
 
@@ -220,7 +218,7 @@ class CT_FieldTypeTag_image
                         tempFileName="'.$fileid.'";
                         fieldValueInputBox="'.$prefix.$field->fieldname.'";
                     	var urlstr="'.JURI::root(true).'/index.php?option=com_customtables&view=fileuploader&tmpl=component&'
-							.$field->fieldname.'_fileid='.$fileid.'&Itemid='.$field->ct->Env->Itemid.'&fieldname='.$field->fieldname.'";
+							.$field->fieldname.'_fileid='.$fileid.'&Itemid='.$field->ct->Env->ItemId.'&fieldname='.$field->fieldname.'";
                     	ct_getUploader('.$field->id.',urlstr,'.$max_file_size.',"jpg jpeg png gif svg webp","eseditForm",false,"ct_fileuploader_'
 							.$field->fieldname.'","ct_eventsmessage_'.$field->fieldname.'","'.$fileid.'","'.$prefix.$field->fieldname.'","ct_ubloadedfile_box_'.$field->fieldname.'");
 
@@ -268,7 +266,6 @@ class CT_FieldTypeTag_image
 		elseif(file_exists(JPATH_SITE.DIRECTORY_SEPARATOR.$imagefile_.'.webp'))
 		{
 			$imagefile=$imagefile_.'.webp';
-			$imagesrc=$imagesrc_.'.webp';
 			$imagesrc=$imagesrc_.'.webp';
 		}
 		else

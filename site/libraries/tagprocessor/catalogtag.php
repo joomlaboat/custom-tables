@@ -18,6 +18,7 @@ require_once('render_csv.php');
 require_once('render_json.php');
 require_once('render_image.php');
 
+use CustomTables\Fields;
 use CustomTables\TwigProcessor;
 
 class tagProcessor_Catalog
@@ -31,8 +32,6 @@ class tagProcessor_Catalog
     public static function process(&$ct,$layoutType,&$pagelayout,&$itemlayout,$new_replaceitecode)
     {
         $vlu='';
-        $allowcontentplugins=$ct->Env->menu_params->get( 'allowcontentplugins' );
-
         $options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('catalog',$options,$pagelayout,'{}');
 		//---------------------
@@ -47,19 +46,19 @@ class tagProcessor_Catalog
 
 			if($ct->Env->frmt=='csv')
 			{
-				$vlu.=self::get_CatalogTable_singleline_CSV($ct,$layoutType,$allowcontentplugins,$itemlayout);
+				$vlu.=self::get_CatalogTable_singleline_CSV($ct,$layoutType,$itemlayout);
 			}
 			elseif($ct->Env->frmt=='json')
 			{
 				//$pagelayout=str_replace($fItem,'',$pagelayout);//delete {catalog} tag
-				$vlu=self::get_CatalogTable_singleline_JSON($ct,$layoutType,$allowcontentplugins,$itemlayout);
+				$vlu=self::get_CatalogTable_singleline_JSON($ct,$layoutType,$itemlayout);
 			}
 			elseif($ct->Env->frmt=='image')
-				self::get_CatalogTable_singleline_IMAGE($ct,$layoutType,$pagelayout,$allowcontentplugins);
+				self::get_CatalogTable_singleline_IMAGE($ct,$layoutType,$pagelayout);
 			elseif($notable == 'notable')
-				$vlu.=self::get_Catalog($ct,$layoutType,$itemlayout,$tableclass,false,$allowcontentplugins,$separator);
+				$vlu.=self::get_Catalog($ct,$layoutType,$itemlayout,$tableclass,false,$separator);
 			else
-				$vlu.=self::get_Catalog($ct,$layoutType,$itemlayout,$tableclass,true,$allowcontentplugins,$separator);
+				$vlu.=self::get_Catalog($ct,$layoutType,$itemlayout,$tableclass,true,$separator);
 
 			$pagelayout=str_replace($fItem,$new_replaceitecode,$pagelayout);
 			$i++;
@@ -67,7 +66,7 @@ class tagProcessor_Catalog
         return $vlu;
     }
 
-    protected static function get_Catalog(&$ct,$layoutType,$itemlayout,$tableclass,$showtable=true,$allowcontentplugins=false,$separator='')
+    protected static function get_Catalog(&$ct,$layoutType,$itemlayout,$tableclass,$showtable=true,$separator='')
 	{
 		$catalogresult='';
 
@@ -99,7 +98,7 @@ class tagProcessor_Catalog
 		else
 		{
 			//Group Results
-			$FieldRow=ESFields::FieldRowByName($ct->groupby,$ct->Table->fields);
+			$FieldRow=Fields::FieldRowByName($ct->groupby,$ct->Table->fields);
 
 			$RealRows=array();
 				$lastGroup='';
@@ -141,6 +140,8 @@ class tagProcessor_Catalog
 						$FileBoxRows=array();
 						$option=array();
 
+                        $row = $RealRows[0];
+
 						$GroupTitle=tagProcessor_Value::getValueByType($ct,$FieldRow,$row,$option,$galleryrows,$FileBoxRows);
 					}
 					$CatGroups[]=array($GroupTitle,$RealRows);
@@ -158,10 +159,6 @@ class tagProcessor_Catalog
 		}
 
 		$number_of_columns=3;
-
-		$content_width=100;
-		$column_width=floor($content_width/$number_of_columns);
-
 
 		foreach($CatGroups as $cGroup)
 		{

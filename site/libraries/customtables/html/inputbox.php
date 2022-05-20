@@ -384,7 +384,7 @@ class Inputbox
 									$value=isset($row[$this->esfield['realfieldname'].$postfix]) ? $row[$this->field->realfieldname.$postfix] : null;
 
 								if($addDynamicEvent)
-									$attributes_=' onchange="ct_UpdateSingleValue(\''.$this->ct->Env->WebsiteRoot.'\','.$this->ct->Env->Itemid.',\''.$this->esfield['fieldname'].$postfix.'\','.$row[$this->ct->Table->realidfieldname].',\''.$langsef.'\')"';
+									$attributes_=' onchange="ct_UpdateSingleValue(\''.$this->ct->Env->WebsiteRoot.'\','.$this->ct->Env->ItemId.',\''.$this->esfield['fieldname'].$postfix.'\','.$row[$this->ct->Table->realidfieldname].',\''.$langsef.'\')"';
 									
 								$result='<input type="text" '
 									.'name="'.$this->prefix.$this->field->fieldname.$postfix.'" '

@@ -9,6 +9,8 @@
  **/
 
 // Check to ensure this file is included in Joomla!
+use Joomla\CMS\Factory;
+
 defined('_JEXEC') or die( 'Restricted access' );
 
 class JHTMLESComboTree
@@ -16,7 +18,7 @@ class JHTMLESComboTree
         static function render($prefix,$establename, $esfieldname, $optionname, $langpostfix, $value,$cssclass="",$onchange="",
 			$where="",$innerjoin=false,$isRequired=false,$requirementdepth=0,$place_holder='',$valuerule='',$valuerulecaption='')
         {
-			$jinput = JFactory::getApplication()->input;
+			$jinput = Factory::getApplication()->input;
 
 			require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR
 				.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'combotreeloader.php');

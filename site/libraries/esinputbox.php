@@ -13,6 +13,7 @@ defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\Fields;
 use CustomTables\Inputbox;
+use CustomTables\TwigProcessor;
 use Joomla\CMS\Factory;
 
 class ESInputBox
@@ -95,7 +96,7 @@ class ESInputBox
                     $value = $twig->process($row);
 
                     if ($value != '') {
-                        if ($this->ct->Env->menu_params->get('allowcontentplugins'))
+                        if($this->ct->Params->allowContentPlugins)
                             JoomlaBasicMisc::applyContentPlugins($htmlresult);
 
                         if ($fieldrow['type'] == 'alias') {

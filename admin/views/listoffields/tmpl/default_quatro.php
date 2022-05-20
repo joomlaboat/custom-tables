@@ -28,7 +28,7 @@ if ($this->saveOrder && !empty($this->items))
 	HTMLHelper::_('draggablelist.draggable');
 }
 
-$input	= JFactory::getApplication()->input;
+$input	= Factory::getApplication()->input;
 
 if($input->getCmd('extratask','')=='updateimages')
 {

@@ -9,6 +9,8 @@
  **/
 
 // Check to ensure this file is included in Joomla!
+use Joomla\CMS\Factory;
+
 defined('_JEXEC') or die( 'Restricted access' );
 
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'models'.DIRECTORY_SEPARATOR.'catalog.php');
@@ -17,7 +19,7 @@ class JHTMLESUserView
 {
         public static function render($value,$field='')
         {
-				$db = JFactory::getDBO();
+				$db = Factory::getDBO();
 				
 				if($field=='online')
 				{

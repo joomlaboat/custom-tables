@@ -27,6 +27,7 @@ require_once($types_path.'_type_sqljoin.php');
 defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\Field;
+use Joomla\CMS\Factory;
 
 class tagProcessor_Value
 {
@@ -110,7 +111,7 @@ class tagProcessor_Value
                                     }
                                 }
 								
-								$onchange='ct_UpdateSingleValue(\''.$ct->Env->WebsiteRoot.'\','.$ct->Env->Itemid.',\''.$ESField['fieldname'].'\','.$row[$ct->Table->realidfieldname].',\''
+								$onchange='ct_UpdateSingleValue(\''.$ct->Env->WebsiteRoot.'\','.$ct->Env->ItemId.',\''.$ESField['fieldname'].'\','.$row[$ct->Table->realidfieldname].',\''
 									.$postfix.'\');';
 								
                                 $attributes='onchange="'.$onchange.'"'.$style;
@@ -589,7 +590,7 @@ class tagProcessor_Value
 	
     public static function showUserGroup($userid)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		$query = 'SELECT title FROM #__usergroups WHERE id='.(int)$userid.' LIMIT 1';
 
 		$db->setQuery($query);
@@ -606,7 +607,7 @@ class tagProcessor_Value
 		if($valuearray_str=='')
 			return '';
 
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		$where=array();
 		$valuearray=explode(',',$valuearray_str);

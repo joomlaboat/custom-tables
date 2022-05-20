@@ -49,12 +49,12 @@ if ($this->ct->Env->legacysupport) {
 $twig = new TwigProcessor($this->ct, $this->pagelayout);
 $this->pagelayout = $twig->process();
 
-if ($this->ct->Env->menu_params->get('allowcontentplugins'))
+if($this->ct->Params->allowContentPlugins)
     JoomlaBasicMisc::applyContentPlugins($this->pagelayout);
 
 if (ob_get_contents()) ob_end_clean();
 
-$filename = $this->ct->Env->menu_params->get('page_title');
+$filename = $this->ct->Params->pageTitle;
 if(is_null($filename))
     $filename = 'ct';
 

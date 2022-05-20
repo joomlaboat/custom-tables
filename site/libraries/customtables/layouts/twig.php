@@ -429,7 +429,7 @@ class fieldObject
 			// Default attribute - action to save the value
 			$args[0] = 'border:none !important;width:auto;box-shadow:none;';
 			
-			$onchange='ct_UpdateSingleValue(\''.$this->ct->Env->WebsiteRoot.'\','.$this->ct->Env->Itemid.',\''
+			$onchange='ct_UpdateSingleValue(\''.$this->ct->Env->WebsiteRoot.'\','.$this->ct->Env->ItemId.',\''
 				.$this->field->fieldname.'\','.$this->ct->Table->record[$this->ct->Table->realidfieldname].',\''.$postfix.'\');';
 
 			if(isset($value_option_list[1]))

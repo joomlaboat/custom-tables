@@ -34,7 +34,7 @@ defined('_JEXEC') or die('Restricted access');
 		';
 		}
 		
-	$catalogresult='<table width="100%">';
+	$catalogResult='<table width="100%">';
 	$Itemid=$this->ct->Env->jinput->getInt('Itemid',  0);
 
     $tr=0;
@@ -47,46 +47,46 @@ defined('_JEXEC') or die('Restricted access');
     foreach($this->rows as $row)
     {
 		if($tr==0)
-		$catalogresult.='<tr>';
+		$catalogResult.='<tr>';
 
-        $catalogresult.='<td width="'.$column_width.'%" valign="top" align="left">';
+        $catalogResult.='<td width="'.$column_width.'%" valign="top" align="left">';
 
 		if($this->linkable)
-			$catalogresult.='<a href="'.$aLink.'&es_'.$this->esfieldname.'_1='.$row['optionname'].'">'.$row['optiontitle'].'</a>';
+			$catalogResult.='<a href="'.$aLink.'&es_'.$this->esfieldname.'_1='.$row['optionname'].'">'.$row['optiontitle'].'</a>';
 		else
-			$catalogresult.=$row[optiontitle].'';
+			$catalogResult.=$row['optiontitle'].'';
 
-		$catalogresult.='</td>';
+		$catalogResult.='</td>';
 
 		$tr++;
 		if($tr==$number_of_columns)
 		{
-			$catalogresult.='</tr>';
+			$catalogResult.='</tr>';
 
 			if($this->row_break)
-				$catalogresult.='<tr><td colspan="'.$number_of_columns.'"><hr /></td></tr>';
+				$catalogResult.='<tr><td colspan="'.$number_of_columns.'"><hr /></td></tr>';
 
 			$tr	=0;
 		}
     }
 
-    $catalogresult.='</tbody>
+    $catalogResult.='</tbody>
 
     </table>';
 
-	if((int)$this->ct->Env->menu_params->get( 'allowcontentplugins' )==1)
-		$catalogresult = JoomlaBasicMisc::applyContentPlugins($catalogresult);
+    if($this->ct->Params->allowContentPlugins)
+		$catalogResult = JoomlaBasicMisc::applyContentPlugins($catalogResult);
 	
-	echo $catalogresult;
+	echo $catalogResult;
 
 	if($this->record_count > 5)
 	{
 		echo '<p></p>
 		<hr>
-			<table cellpadding="0" cellspacing="0" width="100%" >
+			<table>
 				<tbody>
-					<tr height="30">
-						<td align="center" valign="top">'.$this->pagination->getPagesLinks("").'<br/></td>
+					<tr>
+						<td>'.$this->pagination->getPagesLinks("").'<br/></td>
 					</tr>
 				</tbody>
 			</table>

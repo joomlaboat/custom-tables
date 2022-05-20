@@ -10,12 +10,14 @@
 
 
 // no direct access
+use CustomTables\TwigProcessor;
+
 defined('_JEXEC') or die('Restricted access');
 
 trait render_image
 {
 
-    protected static function get_CatalogTable_singleline_IMAGE(&$ct,$layoutType,&$pagelayout,$allowcontentplugins)
+    protected static function get_CatalogTable_singleline_IMAGE(&$ct,$layoutType,&$pagelayout)
 	{
 		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_imagegenerator'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'include.php');
 		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_imagegenerator'.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'misc.php');
@@ -24,7 +26,7 @@ trait render_image
 
 		$IG=new IG();
 
-		$IG->filename = JoomlaBasicMisc::makeNewFileName($ct->Env->menu_params->get('page_title'),'');
+		$IG->filename = JoomlaBasicMisc::makeNewFileName($ct->Params->pageTitle,'');
 		$IG->setImageGeneratorProfileFromText($pagelayout);
 
 		$image_width=$IG->width;
@@ -49,12 +51,14 @@ trait render_image
 		$y_offset=5;
 		$c=0;
 
+        $twig = new TwigProcessor($ct, $pagelayout);
+
 		foreach($ct->Records as $row)
 		{
-			$vlu=$this->RenderResultLine($row,$layoutType,false,$allowcontentplugins);//TODO
+			$vlu=tagProcessor_Item::RenderResultLine($ct,$layoutType,$twig, $row);
 			$IG->setInstructions($vlu,true);
 			$obj=$IG->render(false,$obj,$x_offset,$y_offset);
-			//break;
+
 			$x_offset+=$image_width;
 			$c++;
 			if($c>=3)
@@ -66,7 +70,7 @@ trait render_image
 		}
 		
 		$IG->setInstructions('',false);
-		$obj=$IG->render(true,$obj);
+		$IG->render(true,$obj);
 
         die;//clean exit
     }

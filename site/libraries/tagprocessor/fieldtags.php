@@ -13,6 +13,7 @@ defined('_JEXEC') or die('Restricted access');
 
 use \CustomTables\Forms;
 use \CustomTables\Field;
+use Joomla\CMS\Factory;
 
 class tagProcessor_Field
 {
@@ -36,7 +37,7 @@ class tagProcessor_Field
             {
                 if(!array_key_exists('fieldtitle'.$ct->Languages->Postfix,$fieldrow))
 				{
-					JFactory::getApplication()->enqueueMessage(
+					Factory::getApplication()->enqueueMessage(
 						JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_LANGFIELDNOTFOUND' ), 'Error');
                                         
                     $pagelayout=str_replace('*'.$fieldrow['fieldname'].'*','*fieldtitle'.$ct->Languages->Postfix.' - not found*',$pagelayout);

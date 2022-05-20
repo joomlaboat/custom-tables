@@ -12,13 +12,14 @@
 defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\Fields;
+use Joomla\CMS\Factory;
 
 class ESTables
 {
     //This function works with MySQL not PostgreeSQL
     public static function getTableStatus($database, $dbprefix, $tablename)
     {
-        $db = JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = 'SHOW TABLE STATUS FROM ' . $db->quoteName($database) . ' LIKE ' . $db->quote($dbprefix . 'customtables_table_' . $tablename);
         $db->setQuery($query);
 
@@ -47,10 +48,10 @@ class ESTables
 
     public static function checkIfTableExists(string $realtablename): bool
     {
-        $conf = JFactory::getConfig();
+        $conf = Factory::getConfig();
         $database = $conf->get('db');
 
-        $db = JFactory::getDBO();
+        $db = Factory::getDBO();
 
         $realtablename = str_replace('#__', $db->getPrefix(), $realtablename);
 
@@ -71,12 +72,12 @@ class ESTables
 
     public static function getTableName($tableid = 0): string
     {
-        $db = JFactory::getDBO();
+        $db = Factory::getDBO();
 
-        $jinput = JFactory::getApplication()->input;
+        $jinput = Factory::getApplication()->input;
 
         if ($tableid == 0)
-            $tableid = JFactory::getApplication()->input->get('tableid', 0, 'INT');
+            $tableid = Factory::getApplication()->input->get('tableid', 0, 'INT');
 
         $query = 'SELECT tablename FROM #__customtables_tables AS s WHERE id=' . (int)$tableid . ' LIMIT 1';
         $db->setQuery($query);
@@ -93,7 +94,7 @@ class ESTables
         if (strpos($tablename, '"') !== false)
             return 0;
 
-        $db = JFactory::getDBO();
+        $db = Factory::getDBO();
 
         if ($tablename == '')
             return 0;
@@ -123,7 +124,7 @@ class ESTables
 
     public static function getTableRowByIDAssoc(int $tableid)
     {
-        $db = JFactory::getDBO();
+        $db = Factory::getDBO();
 
         if ($tableid == 0)
             return 0;
@@ -133,7 +134,7 @@ class ESTables
 
     public static function getTableRowByName($tablename = '')
     {
-        $db = JFactory::getDBO();
+        $db = Factory::getDBO();
 
         if ($tablename == '')
             return 0;
@@ -150,14 +151,14 @@ class ESTables
         if ($tablename == '')
             return 0;
 
-        $db = JFactory::getDBO();
+        $db = Factory::getDBO();
 
         return ESTables::getTableRowByWhere('tablename=' . $db->quote($tablename));
     }
 
     public static function getTableRowByWhere($where)
     {
-        $db = JFactory::getDBO();
+        $db = Factory::getDBO();
 
         $query = 'SELECT ' . ESTables::getTableRowSelects() . ' FROM #__customtables_tables AS s WHERE ' . $where . ' LIMIT 1';
         $db->setQuery($query);
@@ -188,7 +189,7 @@ class ESTables
 
     public static function getTableRowSelects()
     {
-        $db = JFactory::getDBO();
+        $db = Factory::getDBO();
 
         if ($db->serverType == 'postgresql') {
             $realtablename_query = 'CASE WHEN customtablename!=\'\' THEN customtablename ELSE CONCAT(\'#__customtables_table_\', tablename) END AS realtablename';
@@ -203,7 +204,7 @@ class ESTables
 
     public static function createTableIfNotExists($database, $dbprefix, $tablename, $tabletitle, $complete_table_name = '')
     {
-        $db = JFactory::getDBO();
+        $db = Factory::getDBO();
 
         if ($db->serverType == 'postgresql') {
             //PostgreSQL
@@ -282,7 +283,7 @@ class ESTables
 
     public static function insertRecords($realtablename, $realidfieldname, $sets)
     {
-        $db = JFactory::getDBO();
+        $db = Factory::getDBO();
 
         if ($db->serverType == 'postgresql') {
             $set_fieldnames = array();
@@ -309,7 +310,7 @@ class ESTables
 
     public static function renameTableIfNeeded($tableid, $database, $dbprefix, $tablename)
     {
-        $db = JFactory::getDBO();
+        $db = Factory::getDBO();
         $old_tablename = ESTables::getTableName($tableid);
 
         if ($old_tablename != $tablename) {
@@ -336,7 +337,7 @@ class ESTables
 
         $tablerow = ESTables::getTableRowByName($tablename);
 
-        $db = JFactory::getDBO();
+        $db = Factory::getDBO();
 
         if ($db->serverType == 'postgresql')
             $query = 'SELECT column_name, data_type, is_nullable, column_default FROM information_schema.columns WHERE table_name = ' . $db->quote($realtablename);
@@ -367,7 +368,7 @@ class ESTables
 
                 $ct_field_type = Fields::convertMySQLFieldTypeToCT($field->data_type, $field->column_type);
                 if ($ct_field_type['type'] == '') {
-                    JFactory::getApplication()->enqueueMessage('third-party table field type "' . $field->data_type . '" is unknown.', 'error');
+                    Factory::getApplication()->enqueueMessage('third-party table field type "' . $field->data_type . '" is unknown.', 'error');
                     return;
                 }
 
@@ -403,7 +404,7 @@ class ESTables
     public static function copyTable(&$ct, $originaltableid, $new_table, $old_table, $customtablename = '')
     {
         //Copy Table
-        $db = JFactory::getDBO();
+        $db = Factory::getDBO();
 
         //get ID of new table
         $new_table_id = ESTables::getTableID($new_table);

@@ -1,11 +1,12 @@
 <?php
 /**
- * Custom Tables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x Native Component
+ * @package Custom Tables
  * @author Ivan komlev <support@joomlaboat.com>
- * @link http://www.joomlaboat.com
- * @license GNU/GPL
- *
- */
+ * @link https://www.joomlaboat.com
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
+ **/
 
 // no direct access
 defined('_JEXEC') or die('Restricted access');
@@ -17,463 +18,394 @@ use CustomTables\CTUser;
 use CustomTables\SaveFieldQuerySet;
 use Joomla\CMS\Factory;
 
-$ct = new CT;
 
-$returnto = $ct->Env->jinput->get('returnto', '', 'BASE64');
-$view=$ct->Env->jinput->getCmd( 'view' );
+$jinput = Factory::getApplication()->input;
+$view = $jinput->getCmd('view');
 
-if ($view == 'home')
-{
-	parent::display();
-	$ct->Env->jinput->set('homeparent', 'home');
-	$ct->Env->jinput->set('view', 'catalog');
+if ($view == 'home') {
+    $jinput->set('homeparent', 'home');
+    $jinput->set('view', 'catalog');
+
+    parent::display();
 }
 
-	$task = $ct->Env->jinput->getCmd('task');
-	
-	$menu_params=$ct->app->getParams();
-	$edit_model = $this->getModel('edititem');
-	$edit_model->params=$menu_params;
-	$edit_model->listing_id = $ct->Env->jinput->getCmd("listing_id");
-	
-	//Check Authorization
-	//3 - to delete
-	$PermissionIndexes=['clear'=>3,'delete'=>3,'copy'=>4,'refresh'=>1,'publish'=>2,'unpublish'=>2,'createuser'=>1,'resetpassword'=>1];
-	//$PermissionWords=['clear'=>'core.delete','delete'=>'core.delete','copy'=>'core.create','refresh'=>'core.edit','publish'=>'core.edit.state','unpublish'=>'core.edit.state','createuser'=>'core.edit'];
-	$PermissionIndex=0;
-	//$PermissionWord='';
-	//if (array_key_exists($task,$PermissionWords))
-		//$PermissionWord=$PermissionWords[$task];
-	
-	if (array_key_exists($task,$PermissionIndexes))
-		$PermissionIndex=$PermissionIndexes[$task];
-	
-	if($task!='')
-	{
-		/*
-		if (Factory::getUser()->authorise('core.admin', 'com_helloworld')) 
-					<action name="core.create" title="JACTION_CREATE" description="COM_CUSTOMTABLES_ACCESS_CREATE_DESC" />
-		<action name="core.edit" title="JACTION_EDIT" description="COM_CUSTOMTABLES_ACCESS_EDIT_DESC" />
-		<action name="core.edit.own" title="JACTION_EDITOWN" description="COM_CUSTOMTABLES_ACCESS_EDITOWN_DESC" />
-		<action name="core.edit.state" title="JACTION_EDITSTATE" description="COM_CUSTOMTABLES_ACCESS_EDITSTATE_DESC" />
-		<action name="core.delete" title="JACTION_DELETE" description="COM_CUSTOMTABLES_ACCESS_DELETE_DESC" />
-		<action name="core.update" title="COM_CUSTOMTABLES_REFRESH" description="COM_CUSTOMTABLES_ACCESS_REFRESH_DESC" />
+$task = $jinput->getCmd('task');
+
+//$edit_model = $this->getModel('edititem');
+//$edit_model->listing_id = $ct->Env->jinput->getCmd("listing_id");
+
+//Check Authorization
+//3 - to delete
+$PermissionIndexes = ['clear' => 3, 'delete' => 3, 'copy' => 4, 'refresh' => 1, 'publish' => 2, 'unpublish' => 2, 'createuser' => 1, 'resetpassword' => 1];
+//$PermissionWords=['clear'=>'core.delete','delete'=>'core.delete','copy'=>'core.create','refresh'=>'core.edit','publish'=>'core.edit.state','unpublish'=>'core.edit.state','createuser'=>'core.edit'];
+$PermissionIndex = 0;
+//$PermissionWord='';
+//if (array_key_exists($task,$PermissionWords))
+//$PermissionWord=$PermissionWords[$task];
+
+if (array_key_exists($task, $PermissionIndexes))
+    $PermissionIndex = $PermissionIndexes[$task];
+
+if ($task != '') {
+
+    $ct = new CT;
+
+    /*
+    if (Factory::getUser()->authorise('core.admin', 'com_helloworld'))
+                <action name="core.create" title="JACTION_CREATE" description="COM_CUSTOMTABLES_ACCESS_CREATE_DESC" />
+    <action name="core.edit" title="JACTION_EDIT" description="COM_CUSTOMTABLES_ACCESS_EDIT_DESC" />
+    <action name="core.edit.own" title="JACTION_EDITOWN" description="COM_CUSTOMTABLES_ACCESS_EDITOWN_DESC" />
+    <action name="core.edit.state" title="JACTION_EDITSTATE" description="COM_CUSTOMTABLES_ACCESS_EDITSTATE_DESC" />
+    <action name="core.delete" title="JACTION_DELETE" description="COM_CUSTOMTABLES_ACCESS_DELETE_DESC" />
+    <action name="core.update" title="COM_CUSTOMTABLES_REFRESH" description="COM_CUSTOMTABLES_ACCESS_REFRESH_DESC" />
 */
-		//if ($edit_model->CheckAuthorizationACL($PermissionWord))
-		if ($edit_model->CheckAuthorization($PermissionIndex))
-		{
-			$redirect=doTheTask($ct,$task,$menu_params,$edit_model,$this);
-			if($redirect == null)
-			{
-				Factory::getApplication()->enqueueMessage('Unknown task');	
-			}
-			else
-				$this->setRedirect($redirect->link, $redirect->msg, $redirect->status);
-		}
-		else
-		{
-			// not authorized
-			if ($ct->Env->clean == 1)
-				die('not authorized');
-			else
-			{
-				//Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
-				$link = $ct->Env->WebsiteRoot . 'index.php?option=com_users&view=login&return=1' . base64_encode(JoomlaBasicMisc::curPageURL());
-				$this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'));
-				parent::display();
-			}
-		}
-	}
-	else
-		parent::display();
-	
-function doTheTask(&$ct,$task,$menu_params,$edit_model,&$this_)	
+    //if ($edit_model->CheckAuthorizationACL($PermissionWord))
+
+    if (CTUser::CheckAuthorization($ct, $PermissionIndex)) {
+
+        $edit_model = $this->getModel('edititem');
+        $redirect = doTheTask($ct, $task, $edit_model, $this);
+        if ($redirect == null) {
+            Factory::getApplication()->enqueueMessage('Unknown task');
+        } else
+            $this->setRedirect($redirect->link, $redirect->msg, $redirect->status);
+    } else {
+        // not authorized
+        if ($ct->Env->clean == 1)
+            die('not authorized');
+        else {
+            //Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
+            $link = $ct->Env->WebsiteRoot . 'index.php?option=com_users&view=login&return=1' . base64_encode(JoomlaBasicMisc::curPageURL());
+            $this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'));
+        }
+    }
+
+    //parent::display('catalog', $ct);
+}else
+    parent::display();
+
+function doTheTask(&$ct, $task, $edit_model, &$this_)
 {
-    $returnto = $ct->Env->jinput->get('returnto', '', 'BASE64');
-	$decodedreturnto = base64_decode($returnto);
-	
-	//Return link
-	if ($returnto != '')
-	{
-		$link = $decodedreturnto;
-		if (!str_contains($link, 'http:') and !str_contains($link, 'https:'))
-			$link.= $ct->Env->WebsiteRoot . $link;
-	}
-	else
-		$link = $ct->Env->WebsiteRoot . 'index.php?Itemid=' . $ct->Env->Itemid;
-	
-	$link = JoomlaBasicMisc::deleteURLQueryOption($link, 'task');
-	
-	$edit_model->load($menu_params, false);
-		
-	switch ($task)
-	{
-		case 'clear':
-			//Review this task - its insecure and disbaled
-			$model = $this_->getModel('catalog');
-			$model->load($menu_params, false);
+    //Return link
+    if ($ct->Params->returnTo != '') {
+        $link = $ct->Params->returnTo;
+        if (!str_contains($link, 'http:') and !str_contains($link, 'https:'))
+            $link .= $ct->Env->WebsiteRoot . $link;
+    } else
+        $link = $ct->Env->WebsiteRoot . 'index.php?Itemid=' . $ct->Env->ItemId;
 
-			if ($model->ct->Records !== null)
-				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_DELETED'), 'status' => null);
-			else
-				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_NOT_DELETED'), 'status' => 'error');
+    $link = JoomlaBasicMisc::deleteURLQueryOption($link, 'task');
 
-		case 'delete':
-			$count = $edit_model->delete();
-			if ($count > 0)
-			{
-				if ($ct->Env->clean == 1)
-				{
-					if (ob_get_contents()) 
-						ob_end_clean();
-					
-					header('Content-Type: text/csv; charset=utf-8');
-					header("Pragma: no-cache");
-					header("Expires: 0");
+    echo ' load model ';
+    if (!$edit_model->load($ct))
+        die('Model not loaded');
 
-					die('deleted');
-				}
-				else
-				{
-					$msg = 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_DELETED';
-					if($count == 1)
-						$msg.='_1';
-				
-					return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended($msg,$count), 'status' => null);
-					//COM_CUSTOMTABLES_RECORDS_DELETED
-				}
-			}
-			elseif($count < 0)
-			{
-				if ($ct->Env->clean == 1)
-					die('error');
-				else
-				{
-					$msg = 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_NOT_DELETED';
-					if(abs($count) == 1)
-						$msg.='_1';
-					
-					return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended($msg,abs($count)), 'status' => 'error');
-				}
-			}
-			break;
+    switch ($task) {
 
-	case 'copy':
+        case 'delete':
+            $count = $edit_model->delete();
+            if ($count > 0) {
+                if ($ct->Env->clean == 1) {
+                    if (ob_get_contents())
+                        ob_end_clean();
 
-        $msg = '';
-		if ($edit_model->copy($msg, $link))
-		{
-			if ($ct->Env->clean == 1)
-				die('copied');
-			else
-				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_COPIED'), 'status' => null);
-		}
-		else
-		{
-			if ($ct->Env->clean == 1)
-				die('error');
-			else
-				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_NOT_COPIED'), 'status' => 'error');
-		}
+                    header('Content-Type: text/csv; charset=utf-8');
+                    header("Pragma: no-cache");
+                    header("Expires: 0");
 
-	case 'refresh':
+                    die('deleted');
+                } else {
+                    $msg = 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_DELETED';
+                    if ($count == 1)
+                        $msg .= '_1';
 
-		$count = $edit_model->Refresh();
-		if ($count > 0)
-		{
-			if ($ct->Env->clean == 1)
-				die('refreshed');
-			else
-			{
-				$msg = 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_REFRESHED';
-				if($count == 1)
-					$msg.='_1';
-				
-				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended($msg,$count), 'status' => null);
-			}
-		}
-		else
-		{
-			if ($ct->Env->clean == 1)
-				die('error');
-			else
-			{
-				$msg = 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_NOT_REFRESHED';
-				if(abs($count) == 1)
-					$msg.='_1';
-					
-				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended($msg,abs($count)), 'status' => 'error');
-			}
-		}
+                    return (object)array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended($msg, $count), 'status' => null);
+                    //COM_CUSTOMTABLES_RECORDS_DELETED
+                }
+            } elseif ($count < 0) {
+                if ($ct->Env->clean == 1)
+                    die('error');
+                else {
+                    $msg = 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_NOT_DELETED';
+                    if (abs($count) == 1)
+                        $msg .= '_1';
+
+                    return (object)array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended($msg, abs($count)), 'status' => 'error');
+                }
+            }
+            break;
+
+        case 'copy':
+
+            $msg = '';
+            if ($edit_model->copy($msg, $link)) {
+                if ($ct->Env->clean == 1)
+                    die('copied');
+                else
+                    return (object)array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_COPIED'), 'status' => null);
+            } else {
+                if ($ct->Env->clean == 1)
+                    die('error');
+                else
+                    return (object)array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_NOT_COPIED'), 'status' => 'error');
+            }
+
+        case 'refresh':
+
+            $count = $edit_model->Refresh();
+            if ($count > 0) {
+                if ($ct->Env->clean == 1)
+                    die('refreshed');
+                else {
+                    $msg = 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_REFRESHED';
+                    if ($count == 1)
+                        $msg .= '_1';
+
+                    return (object)array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended($msg, $count), 'status' => null);
+                }
+            } else {
+                if ($ct->Env->clean == 1)
+                    die('error');
+                else {
+                    $msg = 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_NOT_REFRESHED';
+                    if (abs($count) == 1)
+                        $msg .= '_1';
+
+                    return (object)array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended($msg, abs($count)), 'status' => 'error');
+                }
+            }
 
         case 'publish':
 
-		$count = $edit_model->setPublishStatus(1);
-		if ($count > 0)
-		{
-			if ($ct->Env->clean == 1)
-				die('published');
-			else
-			{
-				$msg = 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_PUBLISHED';
-				if($count == 1)
-					$msg.='_1';
-				
-				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended($msg,$count), 'status' => null);
-			}
-		}
-		elseif($count < 0)
-		{
-			if ($ct->Env->clean == 1)
-				die('error');
-			else
-			{
-				$msg = 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_NOT_PUBLISHED';
-				if(abs($count) == 1)
-					$msg.='_1';
-					
-				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended($msg,abs($count)), 'status' => 'error');
-			}
-		}
-		
-		break;
+            $count = $edit_model->setPublishStatus(1);
+            if ($count > 0) {
+                if ($ct->Env->clean == 1)
+                    die('published');
+                else {
+                    $msg = 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_PUBLISHED';
+                    if ($count == 1)
+                        $msg .= '_1';
 
-	case 'unpublish':
-		
-		$count = $edit_model->setPublishStatus(0);
-		if ($count > 0)
-		{
-			if ($ct->Env->clean == 1)
-				die('unpublished');
-			else
-			{
-				$msg = 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_UNPUBLISHED';
-				if($count == 1)
-					$msg.='_1';
-				
-				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended($msg,$count), 'status' => null);
-			}
-		}
-		elseif($count < 0)
-		{
-			if ($ct->Env->clean == 1)
-				die('error');
-			else
-			{
-				$msg = 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_NOT_UNPUBLISHED';
-				if(abs($count) == 1)
-					$msg.='_1';
-					
-				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended($msg,abs($count)), 'status' => 'error');
-			}
-		}
-		
-		break;
+                    return (object)array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended($msg, $count), 'status' => null);
+                }
+            } elseif ($count < 0) {
+                if ($ct->Env->clean == 1)
+                    die('error');
+                else {
+                    $msg = 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_NOT_PUBLISHED';
+                    if (abs($count) == 1)
+                        $msg .= '_1';
 
-	case 'createuser':
-		
-		$ct->getTable($menu_params->get( 'establename' ), null);
-		if($ct->Table->tablename=='')
-			return (object) array('link' => $link, 'msg' => 'Table not selected.', 'status' => 'error');
-			
-		if($ct->Table->useridfieldname == null)
-			return (object) array('link' => $link, 'msg' => 'User field not found.', 'status' => 'error');
-			
-		$listing_id = $ct->Env->jinput->getInt("listing_id");
-		$ct->Table->loadRecord($listing_id);
-		if($ct->Table->record == null)
-		{
-			Factory::getApplication()->enqueueMessage('User record ID: "'.$listing_id.'" not found.', 'error');
-			return (object) array('link' => $link, 'status' => 'error');
-		}
-			
-		$fieldrow = Fields::getFieldAsocByName($ct->Table->useridfieldname,$ct->Table->tableid);
-		
-		$savefield = new SaveFieldQuerySet($ct,$ct->Table->record,false);
-		$field = new Field($ct,$fieldrow);
-		
-		if($savefield->Try2CreateUserAccount($field))
-		{
-			return (object) array('link' => $link, 'status' => null);
-		}
-		else
-		{
-			return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_USER_NOTCREATED'), 'status' => 'error');
-		}
-		
-	case 'resetpassword':
-		
-		$ct->getTable($menu_params->get( 'establename' ), null);
-		if($ct->Table->tablename=='')
-			return (object) array('link' => $link, 'msg' => 'Table not selected.', 'status' => 'error');
+                    return (object)array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended($msg, abs($count)), 'status' => 'error');
+                }
+            }
 
-		$listing_id = $ct->Env->jinput->getInt("listing_id");
-		if(CTUser::ResetPassword($ct,$listing_id))
-		{
-			if ($ct->Env->clean == 1)
-				die('password has been reset');
-			else
-				return (object) array('link' => $link, 'status' => null);
-		}
-		else
-		{
-			if ($ct->Env->clean == 1)
-				die('error');
-			else
-				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_USERS_RESET_COMPLETE_ERROR'), 'status' => 'error');
-		}
+            break;
 
-	case 'setorderby':
+        case 'unpublish':
 
-		$order_by=$ct->Env->jinput->getString('orderby','');
-		$order_by=trim(preg_replace("/[^a-zA-Z-+%.: ,_]/", "",$order_by));
-		
-		Factory::getApplication()->setUserState('com_customtables.orderby_'.$ct->Env->Itemid,$order_by);
-		
-		$link = JoomlaBasicMisc::deleteURLQueryOption($link, 'task');
-		$link = JoomlaBasicMisc::deleteURLQueryOption($link, 'orderby');
-		
-		return (object) array('link' => $link, 'msg' => null, 'status' => null);
-		
-	case 'setlimit':
+            $count = $edit_model->setPublishStatus(0);
+            if ($count > 0) {
+                if ($ct->Env->clean == 1)
+                    die('unpublished');
+                else {
+                    $msg = 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_UNPUBLISHED';
+                    if ($count == 1)
+                        $msg .= '_1';
 
-		$limit=$ct->Env->jinput->getInt('limit','');
-				
-		$ct->app->setUserState('com_customtables.limit_'.$ct->Env->Itemid,$limit);
-		
-		$link = JoomlaBasicMisc::deleteURLQueryOption($link, 'task');
-		$link = JoomlaBasicMisc::deleteURLQueryOption($link, 'limit');
-		
-		return (object) array('link' => $link, 'msg' => null, 'status' => null);
-		
-	case 'copycontent':
-	
-		$frmt=$ct->Env->jinput->getCmd('frmt','');
-	
-		$from=$ct->Env->jinput->getCmd('from','');
-		$to=$ct->Env->jinput->getCmd('to','');
-	
-		if ($edit_model->copyContent($from, $to))
-		{
-			if ($ct->Env->clean == 1)
-			{
-				if($frmt == 'json')
-					die(json_encode(['status' => 'copied']));
-				else
-					die('copied');
-			}
-			else
-			{
-				$msg = 'COM_CUSTOMTABLES_LISTOFRECORDS_CONTENT_COPIED';
-				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended($msg), 'status' => null);
-			}
-		}
-		else
-		{
-			if ($ct->Env->clean == 1)
-			{
-				if($frmt == 'json')
-					die(json_encode(['error' => 'not copied']));
-				else
-					die('error');
-			}
-			else
-			{
-				$msg = 'COM_CUSTOMTABLES_LISTOFRECORDS_CONTENT_NOT_COPIED';
-				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended($msg), 'status' => 'error');
-			}
-		}
+                    return (object)array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended($msg, $count), 'status' => null);
+                }
+            } elseif ($count < 0) {
+                if ($ct->Env->clean == 1)
+                    die('error');
+                else {
+                    $msg = 'COM_CUSTOMTABLES_LISTOFRECORDS_N_ITEMS_NOT_UNPUBLISHED';
+                    if (abs($count) == 1)
+                        $msg .= '_1';
 
-	case 'ordering':
-	
-		$tableid = $ct->Env->jinput->getInt('tableid');
-		$ct->getTable($tableid);
-		
-		if($ct->Table->tablename=='')
-		{
-			header("HTTP/1.1 500 Internal Server Error");
-			die('Table not selected.');
-		}
-		
-		$ordering = new CustomTables\Ordering($ct->Table);
-		
-		if(!$ordering->saveorder())
-		{
-			header("HTTP/1.1 500 Internal Server Error");
-			die('Something went wrong.');
-		}
-		break;
+                    return (object)array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended($msg, abs($count)), 'status' => 'error');
+                }
+            }
 
-	default:
-		
-		if ($task == 'cart_addtocart' or $task == 'cart_form_addtocart' or $task == 'cart_setitemcount' or $task == 'cart_deleteitem' or $task == 'cart_emptycart')
-		{
-			$model = $this_->getModel('catalog');
-			$model->load($menu_params, false);
-			if ($menu_params->get('cart_returnto'))
-			{
-				$link = $menu_params->get('cart_returnto');
-			}
-			else
-			{
-				$theLink = JoomlaBasicMisc::curPageURL();
-				$pair = explode('?', $theLink);
-				if (isset($pair[1]))
-				{
-					$pair[1] = JoomlaBasicMisc::deleteURLQueryOption($pair[1], 'task');
-					$pair[1] = JoomlaBasicMisc::deleteURLQueryOption($pair[1], 'cartprefix');
-					$pair[1] = JoomlaBasicMisc::deleteURLQueryOption($pair[1], "listing_id");
-				}
+            break;
 
-				$link = implode('?', $pair);
-			}
+        case 'createuser':
 
-			$param_msg = '';
-            $result = '';
+            $ct->getTable($ct->Params->tableName, null);
+            if ($ct->Table->tablename == '')
+                return (object)array('link' => $link, 'msg' => 'Table not selected.', 'status' => 'error');
 
-			switch ($task)
-			{
-			case 'cart_addtocart':
-				$result = $model->cart_addtocart();
-				if ($menu_params->get('cart_msgitemadded')) $param_msg = $menu_params->get('cart_msgitemadded');
-				break;
+            if ($ct->Table->useridfieldname == null)
+                return (object)array('link' => $link, 'msg' => 'User field not found.', 'status' => 'error');
 
-			case 'cart_form_addtocart':
-				$result = $model->cart_form_addtocart();
-				if ($menu_params->get('cart_msgitemadded')) $param_msg = $menu_params->get('cart_msgitemadded');
-				break;
+            $listing_id = $ct->Env->jinput->getInt("listing_id");
+            $ct->Table->loadRecord($listing_id);
+            if ($ct->Table->record == null) {
+                Factory::getApplication()->enqueueMessage('User record ID: "' . $listing_id . '" not found.', 'error');
+                return (object)array('link' => $link, 'status' => 'error');
+            }
 
-			case 'cart_setitemcount':
-				$result = $model->cart_setitemcount();
-				if ($menu_params->get('cart_msgitemupdated')) $param_msg = $menu_params->get('cart_msgitemupdated');
-				break;
+            $fieldrow = Fields::getFieldAsocByName($ct->Table->useridfieldname, $ct->Table->tableid);
 
-			case 'cart_deleteitem':
-				$result = $model->cart_deleteitem();
-				if ($menu_params->get('cart_msgitemdeleted')) $param_msg = $menu_params->get('cart_msgitemdeleted');
-				break;
+            $savefield = new SaveFieldQuerySet($ct, $ct->Table->record, false);
+            $field = new Field($ct, $fieldrow);
 
-			case 'cart_emptycart':
-				$result = $model->cart_emptycart();
-				if ($menu_params->get('cart_msgitemupdated')) $param_msg = $menu_params->get('cart_msgitemupdated');
-				break;
-			}
+            if ($savefield->Try2CreateUserAccount($field)) {
+                return (object)array('link' => $link, 'status' => null);
+            } else {
+                return (object)array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_USER_NOTCREATED'), 'status' => 'error');
+            }
 
-			if ($result != "")
-			{
-				$msg = $ct->Env->jinput->getString('msg', null);
+        case 'resetpassword':
 
-				if ($msg == null)
-					return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SHOPPING_CART_UPDATED'), 'status' => null);
-				elseif ($param_msg != '')
-					return (object) array('link' => $link, 'msg' => $param_msg, 'status' => null);
-			}
-			else
-				return (object) array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SHOPPING_CART_NOT_UPDATED'), 'status' => 'error');
-		}
-		else
-			return null;
-	}
+            $ct->getTable($ct->Params->tableName, null);
+            if ($ct->Table->tablename == '')
+                return (object)array('link' => $link, 'msg' => 'Table not selected.', 'status' => 'error');
+
+            $listing_id = $ct->Env->jinput->getInt("listing_id");
+            if (CTUser::ResetPassword($ct, $listing_id)) {
+                if ($ct->Env->clean == 1)
+                    die('password has been reset');
+                else
+                    return (object)array('link' => $link, 'status' => null);
+            } else {
+                if ($ct->Env->clean == 1)
+                    die('error');
+                else
+                    return (object)array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_USERS_RESET_COMPLETE_ERROR'), 'status' => 'error');
+            }
+
+        case 'setorderby':
+
+            $order_by = $ct->Env->jinput->getString('orderby', '');
+            $order_by = trim(preg_replace("/[^a-zA-Z-+%.: ,_]/", "", $order_by));
+
+            Factory::getApplication()->setUserState('com_customtables.orderby_' . $ct->Env->ItemId, $order_by);
+
+            $link = JoomlaBasicMisc::deleteURLQueryOption($link, 'task');
+            $link = JoomlaBasicMisc::deleteURLQueryOption($link, 'orderby');
+
+            return (object)array('link' => $link, 'msg' => null, 'status' => null);
+
+        case 'setlimit':
+
+            $limit = $ct->Env->jinput->getInt('limit', '');
+
+            $ct->app->setUserState('com_customtables.limit_' . $ct->Env->ItemId, $limit);
+
+            $link = JoomlaBasicMisc::deleteURLQueryOption($link, 'task');
+            $link = JoomlaBasicMisc::deleteURLQueryOption($link, 'limit');
+
+            return (object)array('link' => $link, 'msg' => null, 'status' => null);
+
+        case 'copycontent':
+
+            $frmt = $ct->Env->jinput->getCmd('frmt', '');
+
+            $from = $ct->Env->jinput->getCmd('from', '');
+            $to = $ct->Env->jinput->getCmd('to', '');
+
+            if ($edit_model->copyContent($from, $to)) {
+                if ($ct->Env->clean == 1) {
+                    if ($frmt == 'json')
+                        die(json_encode(['status' => 'copied']));
+                    else
+                        die('copied');
+                } else {
+                    $msg = 'COM_CUSTOMTABLES_LISTOFRECORDS_CONTENT_COPIED';
+                    return (object)array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended($msg), 'status' => null);
+                }
+            } else {
+                if ($ct->Env->clean == 1) {
+                    if ($frmt == 'json')
+                        die(json_encode(['error' => 'not copied']));
+                    else
+                        die('error');
+                } else {
+                    $msg = 'COM_CUSTOMTABLES_LISTOFRECORDS_CONTENT_NOT_COPIED';
+                    return (object)array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended($msg), 'status' => 'error');
+                }
+            }
+
+        case 'ordering':
+
+            $tableid = $ct->Env->jinput->getInt('tableid');
+            $ct->getTable($tableid);
+
+            if ($ct->Table->tablename == '') {
+                header("HTTP/1.1 500 Internal Server Error");
+                die('Table not selected.');
+            }
+
+            $ordering = new CustomTables\Ordering($ct->Table);
+
+            if (!$ordering->saveorder()) {
+                header("HTTP/1.1 500 Internal Server Error");
+                die('Something went wrong.');
+            }
+            break;
+
+        default:
+
+            if ($task == 'cart_addtocart' or $task == 'cart_form_addtocart' or $task == 'cart_setitemcount' or $task == 'cart_deleteitem' or $task == 'cart_emptycart') {
+                $model = $this_->getModel('catalog');
+                $model->load($ct, false);
+                if ($ct->Params->cartReturnTo) {
+                    $link = $ct->Params->cartReturnTo;
+                } else {
+                    $theLink = JoomlaBasicMisc::curPageURL();
+                    $pair = explode('?', $theLink);
+                    if (isset($pair[1])) {
+                        $pair[1] = JoomlaBasicMisc::deleteURLQueryOption($pair[1], 'task');
+                        $pair[1] = JoomlaBasicMisc::deleteURLQueryOption($pair[1], 'cartprefix');
+                        $pair[1] = JoomlaBasicMisc::deleteURLQueryOption($pair[1], "listing_id");
+                    }
+
+                    $link = implode('?', $pair);
+                }
+
+                $param_msg = '';
+                $result = '';
+
+                switch ($task) {
+                    case 'cart_addtocart':
+                        $result = $model->cart_addtocart();
+                        if ($ct->Params->cartMsgItemAdded) $param_msg = $ct->Params->cartMsgItemAdded;
+                        break;
+
+                    case 'cart_form_addtocart':
+                        $result = $model->cart_form_addtocart();
+                        if ($ct->Params->cartMsgItemAdded) $param_msg = $ct->Params->cartMsgItemAdded;
+                        break;
+
+                    case 'cart_setitemcount':
+                        $result = $model->cart_setitemcount();
+                        if ($ct->Params->cartMsgItemUpdated) $param_msg = $ct->Params->cartMsgItemUpdated;
+                        break;
+
+                    case 'cart_deleteitem':
+                        $result = $model->cart_deleteitem();
+                        if ($ct->Params->cartMsgItemDeleted) $param_msg = $ct->Params->cartMsgItemDeleted;
+                        break;
+
+                    case 'cart_emptycart':
+                        $result = $model->cart_emptycart();
+                        if ($ct->Params->cartMsgItemUpdated) $param_msg = $ct->Params->cartMsgItemUpdated;
+                        break;
+                }
+
+                if ($result != "") {
+                    $msg = $ct->Env->jinput->getString('msg', null);
+
+                    if ($msg == null)
+                        return (object)array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SHOPPING_CART_UPDATED'), 'status' => null);
+                    elseif ($param_msg != '')
+                        return (object)array('link' => $link, 'msg' => $param_msg, 'status' => null);
+                } else
+                    return (object)array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SHOPPING_CART_NOT_UPDATED'), 'status' => 'error');
+            } else
+                return null;
+    }
 
     return null;
 }

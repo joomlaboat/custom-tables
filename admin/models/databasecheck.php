@@ -82,9 +82,9 @@ class CustomtablesModelDatabasecheck extends JModelList
 	protected function getListQuery()
 	{
 		// Get the user object.
-		$user = JFactory::getUser();
+		$user = Factory::getUser();
 		// Create a new query object.
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		$query = $db->getQuery(true);
 
 		// Select some fields

@@ -11,6 +11,7 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Factory;
 use Joomla\Registry\Registry;
 
 // import Joomla modelform library
@@ -104,20 +105,18 @@ class CustomtablesModelCategories extends JModelAdmin
 			return false;
 		}
 
-		$jinput = JFactory::getApplication()->input;
-
 		// The front end calls this model and uses a_id to avoid id clashes so we need to check for that first.
-		if (JFactory::getApplication()->input->get('a_id'))
+		if (Factory::getApplication()->input->get('a_id'))
 		{
-			$id = JFactory::getApplication()->input->get('a_id', 0, 'INT');
+			$id = Factory::getApplication()->input->get('a_id', 0, 'INT');
 		}
 		// The back end uses id so we use that the rest of the time and set it to 0 by default.
 		else
 		{
-			$id = JFactory::getApplication()->input->get('id', 0, 'INT');
+			$id = Factory::getApplication()->input->get('id', 0, 'INT');
 		}
 
-		$user = JFactory::getUser();
+		$user = Factory::getUser();
 
 		// Check for existing item.
 		// Modify the form based on Edit State access controls.
@@ -157,9 +156,9 @@ class CustomtablesModelCategories extends JModelAdmin
 		if (0 == $id)
 		{
 			// Set redirected field name
-			$redirectedField = JFactory::getApplication()->input->get('ref', null, 'STRING');
+			$redirectedField = Factory::getApplication()->input->get('ref', null, 'STRING');
 			// Set redirected field value
-			$redirectedValue = JFactory::getApplication()->input->get('refid', 0, 'INT');
+			$redirectedValue = Factory::getApplication()->input->get('refid', 0, 'INT');
 			if (0 != $redirectedValue && $redirectedField)
 			{
 				// Now set the local-redirected field default value
@@ -193,7 +192,7 @@ class CustomtablesModelCategories extends JModelAdmin
 	{
 		if (!empty($record->id))
 		{
-			$user = JFactory::getUser();
+			$user = Factory::getUser();
 			// The record has been set. Check the record permissions.
 			return $user->authorise('categories.delete', 'com_customtables.categories.' . (int) $record->id);
 		}
@@ -211,7 +210,7 @@ class CustomtablesModelCategories extends JModelAdmin
 	 */
 	protected function canEditState($record)
 	{
-		$user = JFactory::getUser();
+		$user = Factory::getUser();
 		$recordId = (!empty($record->id)) ? $record->id : 0;
 
 		if ($recordId)
@@ -240,7 +239,7 @@ class CustomtablesModelCategories extends JModelAdmin
 	{
 		// Check specific edit permission then general edit permission.
 
-		return JFactory::getUser()->authorise('categories.edit', 'com_customtables.categories.'. ((int) isset($data[$key]) ? $data[$key] : 0)) or parent::allowEdit($data, $key);
+		return Factory::getUser()->authorise('categories.edit', 'com_customtables.categories.'. ((int) isset($data[$key]) ? $data[$key] : 0)) or parent::allowEdit($data, $key);
 	}
 
 	/**
@@ -254,8 +253,8 @@ class CustomtablesModelCategories extends JModelAdmin
 	 */
 	protected function prepareTable($table)
 	{
-		$date = JFactory::getDate();
-		$user = JFactory::getUser();
+		$date = Factory::getDate();
+		$user = Factory::getUser();
 
 		if (isset($table->name))
 		{
@@ -301,7 +300,7 @@ class CustomtablesModelCategories extends JModelAdmin
 	protected function loadFormData()
 	{
 		// Check the session for previously entered form data.
-		$data = JFactory::getApplication()->getUserState('com_customtables.edit.categories.data', array());
+		$data = Factory::getApplication()->getUserState('com_customtables.edit.categories.data', array());
 
 		if (empty($data))
 		{
@@ -394,7 +393,7 @@ class CustomtablesModelCategories extends JModelAdmin
 		$done = false;
 
 		// Set some needed variables.
-		$this->user			= JFactory::getUser();
+		$this->user			= Factory::getUser();
 		$this->table			= $this->getTable();
 		$this->tableClassName		= get_class($this->table);
 		$this->contentType		= new JUcmType;
@@ -430,7 +429,6 @@ class CustomtablesModelCategories extends JModelAdmin
 					{
 						$contexts[$new] = $contexts[$old];
 					}
-					$pks = array_values($result);
 				}
 				else
 				{
@@ -474,7 +472,7 @@ class CustomtablesModelCategories extends JModelAdmin
 		if (empty($this->batchSet))
 		{
 			// Set some needed variables.
-			$this->user 		= JFactory::getUser();
+			$this->user 		= Factory::getUser();
 			$this->table 		= $this->getTable();
 			$this->tableClassName	= get_class($this->table);
 			$this->canDo		= CustomtablesHelper::getActions('categories');
@@ -617,7 +615,7 @@ class CustomtablesModelCategories extends JModelAdmin
 		if (empty($this->batchSet))
 		{
 			// Set some needed variables.
-			$this->user		= JFactory::getUser();
+			$this->user		= Factory::getUser();
 			$this->table		= $this->getTable();
 			$this->tableClassName	= get_class($this->table);
 			$this->canDo		= CustomtablesHelper::getActions('categories');
@@ -721,7 +719,7 @@ class CustomtablesModelCategories extends JModelAdmin
 	 
 	public function save($data)
 	{
-		$input	= JFactory::getApplication()->input;
+		$input	= Factory::getApplication()->input;
 
 		if ($input->get('task') === 'save2copy')
 		{

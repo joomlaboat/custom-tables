@@ -11,6 +11,8 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Factory;
+
 // Import Joomla! libraries
 jimport( 'joomla.application.component.view');
 
@@ -22,7 +24,7 @@ class CustomTablesViewFileUploader extends JViewLegacy
 
 		if (ob_get_contents()) ob_end_clean();
 
-        $jinput=JFactory::getApplication()->input;
+        $jinput=Factory::getApplication()->input;
 
         $fieldname=$jinput->getCmd('fieldname','');
 		$fileid = $jinput->getCmd($fieldname.'_fileid', '' );

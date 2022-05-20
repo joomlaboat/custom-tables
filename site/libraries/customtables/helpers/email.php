@@ -1,9 +1,11 @@
 <?php
 /**
- * Custom Tables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x Native Component
+ * @package Custom Tables
  * @author Ivan komlev <support@joomlaboat.com>
- * @link http://www.joomlaboat.com
- * @license GNU/GPL
+ * @link https://www.joomlaboat.com
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
 namespace CustomTables;
@@ -11,6 +13,7 @@ namespace CustomTables;
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Exception;
 use \Joomla\CMS\Factory;
 
 class Email
@@ -53,13 +56,13 @@ class Email
 		$mailer->isHTML($isHTML);
 		
 		foreach($attachments as $attachment)
-			$mail->addAttachment($attachment);
+			$mailer->addAttachment($attachment);
 
 		try
         {
 			$send = @$mailer->Send();
         }
-        catch (RuntimeException $e)
+        catch (Exception $e)
         {
 			$msg = $e->getMessage();
 			Factory::getApplication()->enqueueMessage($msg, 'error');			

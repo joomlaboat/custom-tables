@@ -1,9 +1,11 @@
 <?php
 /**
- * Custom Tables Joomla! 3.x Native Component
- * @author JoomlaBoat.com <support@joomlaboat.com>
- * @link http://joomlaboat.com
- * @license GNU/GPL
+ * CustomTables Joomla! 3.x Native Component
+ * @package Custom Tables
+ * @author Ivan komlev <support@joomlaboat.com>
+ * @link https://www.joomlaboat.com
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
 // No direct access to this file
@@ -109,7 +111,7 @@ function importCSVdata(string $filename, $ct_tableid):string
     if ($first_line_fieldnames)
         $offset = 1;
 
-    $db = JFactory::getDBO();
+    $db = Factory::getDBO();
 
     for ($i = 0 + $offset; $i < count($arrayOfLines); $i++) {
         if (count($arrayOfLines[$i]) > 0) {
@@ -146,7 +148,7 @@ function findRecord($realtablename, $realidfieldname, bool $published_field_foun
 
 function findSQLRecordJoin($realtablename, $join_realfieldname, $realidfieldname, bool $published_field_found, $vlus_str)
 {
-    $db = JFactory::getDBO();
+    $db = Factory::getDBO();
     $vlus = explode(',', $vlus_str);
     $wheres_or = array();
     foreach ($vlus as $vlu)
@@ -191,7 +193,7 @@ function addSQLJoinSets($realtablename, $sets)
 
 function prepareSQLQuery($fieldList, $fields, $line)
 {
-    $db = JFactory::getDBO();
+    $db = Factory::getDBO();
     $sets = array();
     $i = 0;
 
@@ -281,7 +283,7 @@ function prepareSQLQuery($fieldList, $fields, $line)
                     else
                         $vlu = 0;
 
-                    $sets[] = $db->quoteName($fields[$f_index]->realfieldname) . '=' . (int)$vlu;
+                    $sets[] = $db->quoteName($fields[$f_index]->realfieldname) . '=' . $vlu;
                 }
 
             } else {

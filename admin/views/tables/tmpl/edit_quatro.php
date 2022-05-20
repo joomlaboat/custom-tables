@@ -20,7 +20,7 @@ use Joomla\CMS\Language\Text;
 HTMLHelper::_('behavior.formvalidator');
 HTMLHelper::_('behavior.keepalive');
 
-$document = JFactory::getDocument();
+$document = Factory::getDocument();
 $document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/css/style.css" rel="stylesheet">');
 
 ?>

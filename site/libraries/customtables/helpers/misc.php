@@ -12,7 +12,8 @@
 defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\Fields;
-use \Joomla\CMS\Version;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Version;
 
 class JoomlaBasicMisc
 {
@@ -107,7 +108,7 @@ class JoomlaBasicMisc
 
     public static function isUserAdmin(): bool
     {
-        $user = JFactory::getUser();
+        $user = Factory::getUser();
 
         if ($user->authorise('core.edit', 'com_content'))
             return true; //Editing permitted
@@ -273,7 +274,7 @@ class JoomlaBasicMisc
 
                 $count++;
                 if ($count > 1000) {
-                    JFactory::getApplication()->enqueueMessage('Quote count > 1000', 'error');
+                    Factory::getApplication()->enqueueMessage('Quote count > 1000', 'error');
                     return [];
                 }
 
@@ -365,7 +366,7 @@ class JoomlaBasicMisc
 
                 $count++;
                 if ($count > 1000) {
-                    JFactory::getApplication()->enqueueMessage('Too many quotes.', 'error');
+                    Factory::getApplication()->enqueueMessage('Too many quotes.', 'error');
                     return [];
                 }
 
@@ -426,7 +427,7 @@ class JoomlaBasicMisc
     public static function getMenuParams($Itemid, $rawparams = '')
     {
         if ($rawparams == '') {
-            $db = JFactory::getDBO();
+            $db = Factory::getDBO();
             $query = 'SELECT params FROM #__menu WHERE id=' . (int)$Itemid . ' LIMIT 1';
             $db->setQuery($query);
             $rows = $db->loadObjectList();
@@ -512,7 +513,7 @@ class JoomlaBasicMisc
 
     public static function getGroupIdByTitle($grouptitle): string
     {
-        $db = JFactory::getDbo();
+        $db = Factory::getDbo();
 
         // Build the database query to get the rules for the asset.
         $query = 'SELECT id FROM #__usergroups WHERE title=' . $db->quote(trim($grouptitle)) . ' LIMIT 1';
@@ -644,7 +645,7 @@ class JoomlaBasicMisc
                 } else
                     $extension = strtolower($parts[0] . '_' . $parts[1]);
 
-                $lang = JFactory::getLanguage();
+                $lang = Factory::getLanguage();
                 $lang->load($extension, JPATH_BASE);
 
                 if (is_null($value))
@@ -660,7 +661,7 @@ class JoomlaBasicMisc
 
     public static function FindItemidbyAlias($alias)
     {
-        $db = JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = 'SELECT id FROM #__menu WHERE published=1 AND alias=' . $db->Quote($alias);
 
         $db->setQuery($query);
@@ -674,7 +675,7 @@ class JoomlaBasicMisc
 
     public static function FindMenuItemRowByAlias($alias)
     {
-        $db = JFactory::getDBO();
+        $db = Factory::getDBO();
         $query = 'SELECT * FROM #__menu WHERE published=1 AND alias=' . $db->Quote($alias);
 
         $db->setQuery($query);
@@ -691,7 +692,7 @@ class JoomlaBasicMisc
         if ($thegroup == 0)
             return false;
 
-        $user = JFactory::getUser();
+        $user = Factory::getUser();
         $isAdmin = $user->get('isRoot');
         if ($isAdmin)
             return true;
@@ -709,10 +710,10 @@ class JoomlaBasicMisc
         $version_object = new Version;
         $version = (int)$version_object->getShortVersion();
 
-        $mainframe = JFactory::getApplication('site');
+        $mainframe = Factory::getApplication('site');
 
         if (method_exists($mainframe, 'getParams')) {
-            $mydoc = JFactory::getDocument();
+            $mydoc = Factory::getDocument();
             $pagetitle = $mydoc->getTitle(); //because content plugins may overwrite the title
 
             $content_params = $mainframe->getParams('com_content');
@@ -727,7 +728,7 @@ class JoomlaBasicMisc
                 $dispatcher = JDispatcher::getInstance();
                 $results = $dispatcher->trigger('onContentPrepare', array('com_content.article', &$o, &$content_params, 0));
             } else
-                $results = JFactory::getApplication()->triggerEvent('onContentPrepare', array('com_content.article', &$o, &$content_params, 0));
+                $results = Factory::getApplication()->triggerEvent('onContentPrepare', array('com_content.article', &$o, &$content_params, 0));
 
             $htmlresult = $o->text;
 

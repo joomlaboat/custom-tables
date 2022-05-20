@@ -15,7 +15,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 
 $edit = "index.php?option=com_customtables&view=listoftables&task=tables.edit";
-$db = JFactory::getDBO();
+$db = Factory::getDBO();
 
 ?>
 <?php foreach ($this->items as $i => $item): ?>

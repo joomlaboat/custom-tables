@@ -13,6 +13,9 @@ namespace CustomTables;
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTablesFileMethods;
+use CustomTablesImageMethods;
+use Exception;
 use \JoomlaBasicMisc;
 use \ESTables;
 
@@ -132,9 +135,7 @@ class Fields
     public static function addLanguageField($tablename,$original_fieldname,$new_fieldname)
     {
         $fields=Fields::getExistingFields($tablename,false);
-		
-		$db = Factory::getDBO();
-		
+
         foreach($fields as $field)
         {
             if($field['column_name']==$original_fieldname)
@@ -227,7 +228,7 @@ class Fields
 			
 			$imagemethods=new CustomTablesImageMethods;
 			$gallery_table_name='#__customtables_gallery_'.$tablerow->tablename.'_'.$field->fieldname;
-			$imagemethods->DeleteGalleryImages($gallery_table_name, $tableid, $field->fieldname,$field->params,true);
+			$imagemethods->DeleteGalleryImages($gallery_table_name, $field->tableid, $field->fieldname,$field->params,true);
 
 			//Delete gallery table
 			$query ='DROP TABLE IF EXISTS '.$gallery_table_name;
@@ -239,7 +240,7 @@ class Fields
 			//Delete all files belongs to the filebox
 
 			$filebox_table_name='#__customtables_filebox_'.$tablerow->tablename.'_'.$field->fieldname;
-			CustomTablesFileMethods::DeleteFileBoxFiles($filebox_table_name, $tableid, $field->fieldname,$field->params,true);
+			CustomTablesFileMethods::DeleteFileBoxFiles($filebox_table_name, $field->tableid, $field->fieldname,$field->params,true);
 
 			//Delete gallery table
 			$query ='DROP TABLE IF EXISTS '.$filebox_table_name;
@@ -285,8 +286,6 @@ class Fields
 				$realfieldnames[]=$field->realfieldname.$postfix;
 			}
 		}
-
-		$i=0;
 
 		foreach($realfieldnames as $realfieldname)
 		{
@@ -679,7 +678,7 @@ class Fields
                 $db->setQuery($query);
 				$db->execute();
             }
-            catch (RuntimeException $e)
+            catch (Exception $e)
             {
             	$msg=$e->getMessage();
             }
@@ -693,9 +692,6 @@ class Fields
 		
 		if($db->serverType == 'postgresql')
 			return false;
-		
-		$conf = Factory::getConfig();
-		$database = $conf->get('db');
 
         //get constarnt name
         $query='show create table '.$realtablename;
@@ -748,7 +744,7 @@ class Fields
 			$db->setQuery($query);
 			$db->execute();
         }
-        catch (RuntimeException $e)
+        catch (Exception $e)
         {
 			Factory::getApplication()->enqueueMessage($e->getMessage(),'error');
 		}
@@ -760,8 +756,6 @@ class Fields
 
     public static function removeForeignKey($realtablename,$realfieldname)
 	{
-		$db = Factory::getDBO();
-		
 		$constrances = Fields::getTableConstrances($realtablename,$realfieldname);
 
         foreach($constrances as $constrance)
@@ -887,11 +881,11 @@ class Fields
 
 	public static function FixCustomTablesRecords($realtablename, $realfieldname, $optionname, $maxlenght)
 	{
+        $db = Factory::getDBO();
+
 		//CutomTables field type
 		if($db->serverType == 'postgresql')
 			return;
-
-		$db = Factory::getDBO();
 
 		$fixcount=0;
 
@@ -1185,8 +1179,6 @@ class Fields
 	{
 		$db = Factory::getDBO();
 
-		$jinput = Factory::getApplication()->input;
-
 		if($fieldid==0)
 			$fieldid=Factory::getApplication()->input->get('fieldid',0,'INT');
 
@@ -1203,8 +1195,6 @@ class Fields
 	public static function getFieldRow($fieldid = 0)
 	{
 		$db = Factory::getDBO();
-
-		$jinput = Factory::getApplication()->input;
 
 		if($fieldid==0)
 			$fieldid=Factory::getApplication()->input->get('fieldid',0,'INT');

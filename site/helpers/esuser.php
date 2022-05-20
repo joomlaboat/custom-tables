@@ -9,6 +9,8 @@
  **/
 
 // Check to ensure this file is included in Joomla!
+use Joomla\CMS\Factory;
+
 defined('_JEXEC') or die( 'Restricted access' );
 
 require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'models'.DIRECTORY_SEPARATOR.'catalog.php');
@@ -17,7 +19,7 @@ class JHTMLESUser
 {
 	static public function render($control_name, $value,$style,$cssclass, string $usergroup='', $attribute='',$mysqlwhere='',$mysqljoin='')
     {
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		$query = $db->getQuery(true);
 		$query->select('#__users.id AS id, #__users.name AS name');
 		$query->from('#__users ');
@@ -42,8 +44,8 @@ class JHTMLESUser
 		if($mysqlwhere!='')
 			$query->where($mysqlwhere);
 
-		$query->group('#__users.id');
-		$query->order('#__users.name');
+		$query->group("#__users" . "." . "id");
+		$query->order("#__users" . "." . "name");
 
 		$db->setQuery($query);
 

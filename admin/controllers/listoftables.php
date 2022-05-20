@@ -15,6 +15,7 @@ defined('_JEXEC') or die('Restricted access');
 // import Joomla controlleradmin library
 jimport('joomla.application.component.controlleradmin');
 
+use Joomla\CMS\Factory;
 use Joomla\Utilities\ArrayHelper;
 use CustomTables\ExportTables;
 
@@ -37,7 +38,7 @@ class CustomtablesControllerListoftables extends JControllerAdmin
 
 	public function export()
 	{
-		$cids	= JFactory::getApplication()->input->post->get('cid',array(),'array');
+		$cids	= Factory::getApplication()->input->post->get('cid',array(),'array');
 		$cids = ArrayHelper::toInteger($cids);
 		
 		$download_link=ExportTables::export($cids);
@@ -59,7 +60,7 @@ class CustomtablesControllerListoftables extends JControllerAdmin
 			$msg = JText::_( 'COM_CUSTOMTABLES_TABLES_UNABLETOEXPORT' );
 	    }
 		
-		JFactory::getApplication()->enqueueMessage($msg,'success');
+		Factory::getApplication()->enqueueMessage($msg,'success');
 		
 		$redirect = 'index.php?option=' . $this->option;
 		$redirect.='&view=listoftables';

@@ -11,11 +11,13 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Factory;
+
 class CT_FieldTypeTag_imagegallery
 {
 	public static function getGalleryRows($establename,$galleryname, $listing_id)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		$phototablename='#__customtables_gallery_'.$establename.'_'.$galleryname;
 
 		$query = 'SELECT photoid, photo_ext FROM '.$phototablename.' WHERE listingid='.(int)$listing_id.' ORDER BY ordering, photoid';
@@ -66,7 +68,7 @@ class CT_FieldTypeTag_imagegallery
 		if(!isset($photorows))
 			return false;
 
-		$conf = JFactory::getConfig();
+		$conf = Factory::getConfig();
 		$sitename = $conf->get('config.sitename');
 
 		//the returnedl list should be separated by ;
@@ -78,7 +80,7 @@ class CT_FieldTypeTag_imagegallery
 		foreach($photorows as $photorow)
 		{
 			$photorow_photoid=$photorow->photoid;
-			if(strpos($photorow_photoid,'-')!==false)
+			if(str_contains($photorow_photoid, '-'))
 			{
 				//$isShortcut=true;
 				$photorow_photoid=str_replace('-','',$photorow_photoid);
@@ -86,7 +88,6 @@ class CT_FieldTypeTag_imagegallery
 
 			if($image_prefix=='')
 			{
-				$imagefile_ext='jpg';
 				$imagefile=$imagefolderserver.DIRECTORY_SEPARATOR.$imagegalleryprefix.$estableid.'_'.$galleryname.'__esthumb_'.$photorow_photoid.'.jpg';
 				$imagefileweb=$imagefolderweb.'/'.$imagegalleryprefix.$estableid.'_'.$galleryname.'__esthumb_'.$photorow_photoid.'.jpg';
 
@@ -98,7 +99,6 @@ class CT_FieldTypeTag_imagegallery
 			}
 			elseif($image_prefix=='_original')
 			{
-				$imagefile_ext='jpg';
 				$imgname=$imagefolderserver.DIRECTORY_SEPARATOR.$imagegalleryprefix.$estableid.'_'.$galleryname.'_'.$image_prefix.'_'.$photorow_photoid;
 				$imagefile_ext=$imgMethods->getImageExtention($imgname);
 

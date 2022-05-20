@@ -14,7 +14,7 @@ defined('_JEXEC') or die('Restricted access');
 use CustomTables\CT;
 use CustomTables\TwigProcessor;
 
-use \Joomla\CMS\Factory;
+use Joomla\CMS\Factory;
 
 jimport('joomla.application.component.model');
 
@@ -24,94 +24,45 @@ require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARAT
 
 class CustomTablesModelDetails extends JModelLegacy
 {
-    var $ct;
-    var $showpublished;
-    var $filter;
-    var $params;
+    var CT $ct;
+    var string $filter;
 
     function __construct()
     {
         parent::__construct();
-
-        $this->ct = new CT;
-
-        if (method_exists(Factory::getApplication(), "getParams")) {
-            $params = Factory::getApplication()->getParams();
-            $this->ct->Env->menu_params = $params;
-
-            if ($params->get('clean') == 1)
-                $this->ct->Env->clean = 1;
-
-            if ($this->ct->Env->jinput->getInt("listing_id", 0) and $this->ct->Env->jinput->getInt("listing_id", 0) != 0)
-                $listing_id = $this->ct->Env->jinput->getInt("listing_id", 0);
-            else
-                $listing_id = (int)$params->get('listingid');
-
-            $this->load($params, $listing_id);
-        }
     }
 
-    function setFrmt($frmt)
+    function load(CT &$ct)
     {
-        $this->ct->Env->frmt=$frmt;
-    }
+        $this->ct = $ct;
 
-    function load($params, $listing_id, $params_only = false, $custom_where = '')
-    {
-        $this->params = $params;
-        $this->ct->Env->menu_params = $this->params;
+        $this->filter = '';
 
-        //sort by field
-        if (!$params_only and $this->ct->Env->jinput->getCmd('sortby'))
-            $this->sortby = strtolower($this->ct->Env->jinput->getCmd('sortby'));
-        else
-            $this->sortby = strtolower($this->params->get('sortby'));
+        if ($this->ct->Params->filter != '' and $this->ct->Params->alias == '') {
 
-        //optional filter
-        if ($custom_where != '' and $listing_id == 0) {
-            $this->alias = '';
-            $this->filter = $custom_where;
-        } else {
-            $this->alias = JoomlaBasicMisc::slugify($this->ct->Env->jinput->getString('alias'));
-
-            if (!$params_only and $this->ct->Env->jinput->getString('filter', ''))
-                $this->filter = $this->ct->Env->jinput->getString('filter', '');
-            else {
-                $this->filter = $this->params->get('filter');
-
-                if ($this->filter != '' and $this->alias == '') {
-                    if ($this->ct->Env->legacysupport) {
-                        //Parse using layout
-                        $LayoutProc = new LayoutProcessor($this->ct);
-                        $LayoutProc->layout = $this->filter;
-                        $this->filter = $LayoutProc->fillLayout(array(), null, '[]', true);
-                    }
-
-                    $twig = new TwigProcessor($this->ct, $this->filter);
-                    $this->filter = $twig->process();
-                }
-            }
+            $twig = new TwigProcessor($this->ct, $this->ct->Params->filter);
+            $this->filter = $twig->process();
         }
 
-        if ($this->params->get('recordstable') != '' and $this->params->get('recordsuseridfield') != '' and $this->params->get('recordsfield') != '') {
-            if (!$this->checkRecordUserJoin($this->params->get('recordstable'), $this->params->get('recordsuseridfield'), $this->params->get('recordsfield'), $listing_id)) {
+        if (!is_null($this->ct->Params->recordsTable) and !is_null($this->ct->Params->recordsUserIdField) and !is_null($this->ct->Params->recordsField)) {
+            if (!$this->checkRecordUserJoin($this->ct->Params->recordsTable, $this->ct->Params->recordsUserIdField, $this->ct->Params->recordsField, $this->ct->Params->listing_id)) {
                 //YOU ARE NOT AUTHORIZED TO ACCESS THIS SOURCE';
-                Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
+                $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
                 return false;
             }
         }
 
-        $this->setId($listing_id);
+        $this->setId($this->ct->Params->listing_id);
 
-        $this->ct->getTable($this->params->get('establename'), $this->params->get('useridfield'));
+        $this->ct->getTable($this->ct->Params->tableName, $this->ct->Params->userIdField);
 
         if ($this->ct->Table->tablename == '')
             return;
 
-        if ($this->alias != '' and $this->ct->Table->alias_fieldname != '')
-            $this->filter = $this->ct->Table->alias_fieldname . '=' . $this->alias;
+        if (!is_null($this->ct->Params->alias) and $this->ct->Table->alias_fieldname != '')
+            $this->filter = $this->ct->Table->alias_fieldname . '=' . $this->ct->db->quote($this->ct->Params->alias);
 
-        if ($this->filter != '' and $this->alias == '') {
+        if ($this->filter != '' and $this->ct->Params->alias == '') {
             //Parse using layout
             if ($this->ct->Env->legacysupport) {
                 $LayoutProc = new LayoutProcessor($this->ct);
@@ -125,15 +76,13 @@ class CustomTablesModelDetails extends JModelLegacy
     }
 
     //TODO avoid es_
-    function checkRecordUserJoin($recordstable, $recordsuseridfield, $recordsfield, $listing_id)
+    function checkRecordUserJoin($recordstable, $recordsuseridfield, $recordsfield, $listing_id): bool
     {
-        $db = Factory::getDBO();
-
         $query = 'SELECT COUNT(*) AS count FROM #__customtables_table_' . $recordstable . ' WHERE es_' . $recordsuseridfield . '='
             . $this->ct->Env->userid . ' AND INSTR(es_' . $recordsfield . ',",' . $listing_id . ',") LIMIT 1';
 
-        $db->setQuery($query);
-        $rows = $db->loadAssocList();
+        $this->ct->db->setQuery($query);
+        $rows = $this->ct->db->loadAssocList();
         $num_rows = $rows[0]['count'];
 
         if ($num_rows == 0)
@@ -191,7 +140,7 @@ class CustomTablesModelDetails extends JModelLegacy
         $version = Factory::getApplication()->input->get('version', 0, 'INT');
         if ($version != 0) {
             //get log field
-            $log_field = $this->getTypeFieldName('log');;
+            $log_field = $this->getTypeFieldName('log');
             if ($log_field != '') {
                 $new_row = $this->getVersionData($row, $log_field, $version);
                 if (count($new_row) > 0) {
@@ -218,8 +167,8 @@ class CustomTablesModelDetails extends JModelLegacy
         $row[$this->ct->Table->realidfieldname] = $listing_id;
         $row['listing_published'] = $published;
 
-        foreach ($this->ct->Table->fields as $ESField)
-            $row[$ESField['realfieldname']] = '';
+        foreach ($this->ct->Table->fields as $field)
+            $row[$field['realfieldname']] = '';
 
         return $row;
     }

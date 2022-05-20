@@ -1,23 +1,27 @@
 <?php
 /**
- * Custom Tables Joomla! 3.x Native Component
- * @author Ivan Komlev <support@joomlaboat.com>
- * @link http://www.joomlaboat.com
- * @license GNU/GPL
+ * CustomTables Joomla! 3.x Native Component
+ * @package Custom Tables
+ * @author Ivan komlev <support@joomlaboat.com>
+ * @link https://www.joomlaboat.com
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
 // no direct access
+use Joomla\CMS\Factory;
+
 defined('_JEXEC') or die('Restricted access');
 
-$layout=JFactory::getApplication()->input->get('layout','','CMD');
+$layout=Factory::getApplication()->input->get('layout','','CMD');
 
 
-	switch(JFactory::getApplication()->input->get('task','','CMD'))
+	switch(Factory::getApplication()->input->get('task','','CMD'))
 	{
 		case 'edit':
 
-			JFactory::getApplication()->input->set('view', 'listedit');
-			JFactory::getApplication()->input->set('layout', 'form'  );
+			Factory::getApplication()->input->set('view', 'listedit');
+			Factory::getApplication()->input->set('layout', 'form'  );
 
 			parent::display();
 
@@ -27,7 +31,7 @@ $layout=JFactory::getApplication()->input->get('layout','','CMD');
 
 			$model = $this->getModel('listedit');
 
-			$link 	= 'index.php?option=com_customtables&view=list&Itemid='.JFactory::getApplication()->input->get('Itemid',0,'INT');
+			$link 	= 'index.php?option=com_customtables&view=list&Itemid='.Factory::getApplication()->input->get('Itemid',0,'INT');
 			if ($model->store())
 			{
 				$msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_OPTION_SAVED' );
@@ -43,7 +47,7 @@ $layout=JFactory::getApplication()->input->get('layout','','CMD');
 
 		case 'cancel':
 
-			$link 	= 'index.php?option=com_customtables&view=list&Itemid='.JFactory::getApplication()->input->get('Itemid',0,'INT');
+			$link 	= 'index.php?option=com_customtables&view=list&Itemid='.Factory::getApplication()->input->get('Itemid',0,'INT');
 
 			$msg = '';
 
@@ -55,14 +59,14 @@ $layout=JFactory::getApplication()->input->get('layout','','CMD');
 		case 'remove':
 
 
-			$link 	= 'index.php?option=com_customtables&view=list&Itemid='.JFactory::getApplication()->input->get('Itemid',0,'INT');
+			$link 	= 'index.php?option=com_customtables&view=list&Itemid='.Factory::getApplication()->input->get('Itemid',0,'INT');
 
 			// Check for request forgeries
 			JSession::checkToken() or jexit( 'COM_CUSTOMTABLES_INVALID_TOKEN' );
 
 			// Get some variables from the request
 
-			$cid	= JFactory::getApplication()->input->post->get('cid',array(),'array');
+			$cid	= Factory::getApplication()->input->post->get('cid',array(),'array');
 			JArrayHelper::toInteger($cid);
 
 			if (!count($cid)) {
@@ -82,7 +86,7 @@ $layout=JFactory::getApplication()->input->get('layout','','CMD');
 
 		default:
 
-			JFactory::getApplication()->input->set('view', 'list');
+			Factory::getApplication()->input->set('view', 'list');
 			parent::display();
 
 		break;

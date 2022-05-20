@@ -14,6 +14,7 @@ defined('_JEXEC') or die('Restricted access');
 use CustomTables\CT;
 use CustomTables\Field;
 use CustomTables\Fields;
+use Joomla\CMS\Factory;
 
 class updateImages
 {
@@ -57,19 +58,19 @@ class updateImages
 		return array('count'=>$count,'success'=>(int)($status==null),'startindex'=>$startindex,'stepsize'=>$stepsize,'error'=>$status);
 	}
 	
-	protected static function countImages($realtablename,$realfieldname,$realidfieldname)
+	public static function countImages($realtablename,$realfieldname,$realidfieldname)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		$query = 'SELECT count('.$realidfieldname.') AS c FROM '.$realtablename.' WHERE '.$realfieldname.'>0';
 		$db->setQuery( $query );
 		$recs=$db->loadAssocList();
 		return (int)$recs[0]['c'];
 	}
 	
-	protected static function processImages(&$ct, $fieldrow, array $old_params, array $new_params, 
+	public static function processImages(&$ct, $fieldrow, array $old_params, array $new_params,
 		 $startindex, $stepsize, $deleteOriginals=false)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		$query = 'SELECT '.$fieldrow->realfieldname.' FROM '.$ct->Table->realtablename.' WHERE '.$fieldrow->realfieldname.'>0';
 		$db->setQuery($query, $startindex, $stepsize);
 

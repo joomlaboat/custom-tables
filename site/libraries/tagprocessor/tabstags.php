@@ -11,6 +11,7 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Version;
 
@@ -65,7 +66,7 @@ class tagProcessor_Tabs
 
             if(count($fList))
             {
-                $document = JFactory::getDocument();
+                $document = Factory::getDocument();
         		$document->addCustomTag('
                 <script>
                 jQuery(function($){

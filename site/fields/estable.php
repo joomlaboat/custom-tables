@@ -9,6 +9,8 @@
  **/
 
 // no direct access
+use Joomla\CMS\Factory;
+
 defined('_JEXEC') or die('Restricted access');
 
 jimport('joomla.form.helper');
@@ -16,13 +18,7 @@ JFormHelper::loadFieldClass('list');
 
 class JFormFieldESTable extends JFormFieldList
 {
-	/**
-	 * Element name
-	 *
-	 * @access	protected
-	 * @var		string
-	 *  
-	 */
+
 	protected $type = 'estable';
 	
 	protected function getOptions()//$name, $value, &$node, $control_name)
@@ -31,7 +27,7 @@ class JFormFieldESTable extends JFormFieldList
 		require_once($path.'loader.php');
 		CTLoader();
 	
-        $db = JFactory::getDBO();
+        $db = Factory::getDBO();
 		$query = $db->getQuery(true);
 		$query->select('id,tablename');
         $query->from('#__customtables_tables');

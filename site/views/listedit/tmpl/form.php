@@ -11,21 +11,22 @@
 defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\DataTypes\Tree;
+use CustomTables\Languages;
+use Joomla\CMS\Factory;
 
 $max_file_size=JoomlaBasicMisc::file_upload_max_size();
 ?>
 
-
-<script language="javascript" type="text/javascript">
+<script>
 	function submitbutton(pressbutton) {
-		var form = document.adminForm;
-		if (pressbutton == 'cancel') {
+        const form = document.adminForm;
+        if (pressbutton == 'cancel') {
 			submitform( pressbutton );
 			return;
 		}
 
 		// do field validation
-		if (trim(form.optionname.value) == "") {
+		if (form.optionname.value.trim() === "") {
 			alert( "<?php echo JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PROVIDE_OPTION_NAME', true ); ?>" );
 		}
 		else {
@@ -79,9 +80,6 @@ $max_file_size=JoomlaBasicMisc::file_upload_max_size();
 							
 							if(!(strpos($this->optionRecord->optionname,' ')===false))
 								$isReadOnly=false;
-								
-							//$isReadOnly=false;
-							
 						?>
 						<input type="text" name="optionname" id="optionname" class="inputbox" size="40" value="<?php echo $this->optionRecord->optionname; ?>"
 																													 
@@ -96,13 +94,13 @@ $max_file_size=JoomlaBasicMisc::file_upload_max_size();
 				
 				$row_array = (array)$this->optionRecord;
 			
-				$firstlanguage=true;
-				foreach($LanguageList as $lang)
+				$firstLanguage=true;
+				foreach($this->ct->Languages->LanguageList as $lang)
 				{
-					if($firstlanguage)
+					if($firstLanguage)
 					{
 						$postfix='';
-						$firstlanguage=false;
+						$firstLanguage=false;
 					}
 					else
 						$postfix='_'.$lang->sef;	
@@ -276,7 +274,7 @@ $max_file_size=JoomlaBasicMisc::file_upload_max_size();
 					<td>
 							<?php
 								//get the editor
-			 					$editor = JFactory::getEditor();
+			 					$editor = Factory::getEditor();
 			 					echo $editor->display( 'optionalcode',$this->optionRecord->optionalcode, '350', '300', '60', '20')
 							?>
 					</td>
@@ -321,7 +319,7 @@ $max_file_size=JoomlaBasicMisc::file_upload_max_size();
 	<input type="hidden" name="id" value="<?php echo $this->optionRecord->id; ?>" />
 	<input type="hidden" name="task" value="" />
 	
-	<input type="hidden" name="Itemid" value="<?php echo JFactory::getApplication()->input->get('Itemid',0,'INT'); ?>" />
+	<input type="hidden" name="Itemid" value="<?php echo Factory::getApplication()->input->get('Itemid',0,'INT'); ?>" />
 
 
 </form>

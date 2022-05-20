@@ -15,6 +15,7 @@ defined('_JEXEC') or die('Restricted access');
 use CustomTables\CT;
 use CustomTables\Fields;
 
+use Joomla\CMS\Factory;
 use Joomla\Registry\Registry;
 
 // import Joomla modelform library
@@ -49,17 +50,6 @@ class CustomtablesModelTables extends JModelAdmin
 		$this->ct = new CT;
 	}
 
-	/**
-	 * Returns a Table object, always creating it
-	 *
-	 * @param   type    $type    The table type to instantiate
-	 * @param   string  $prefix  A prefix for the table class name. Optional.
-	 * @param   array   $config  Configuration array for model. Optional.
-	 *
-	 * @return  JTable  A database object
-	 *
-	 * @since   1.6
-	 */
 	public function getTable($type = 'tables', $prefix = 'CustomtablesTable', $config = array())
 	{
 		return JTable::getInstance($type, $prefix, $config);
@@ -261,7 +251,7 @@ class CustomtablesModelTables extends JModelAdmin
 	{
 		// Check specific edit permission then general edit permission.
 
-		return JFactory::getUser()->authorise('core.edit', 'com_customtables.tables.'. ((int) isset($data[$key]) ? $data[$key] : 0)) or parent::allowEdit($data, $key);
+		return Factory::getUser()->authorise('core.edit', 'com_customtables.tables.'. ((int) isset($data[$key]) ? $data[$key] : 0)) or parent::allowEdit($data, $key);
 	}
 
 	/**
@@ -275,7 +265,7 @@ class CustomtablesModelTables extends JModelAdmin
 	 */
 	protected function prepareTable($table)
 	{
-		$date = JFactory::getDate();
+		$date = Factory::getDate();
 
 		if (isset($table->name))
 		{
@@ -308,7 +298,7 @@ class CustomtablesModelTables extends JModelAdmin
 	protected function loadFormData()
 	{
 		// Check the session for previously entered form data.
-		$data = JFactory::getApplication()->getUserState('com_customtables.edit.tables.data', array());
+		$data = Factory::getApplication()->getUserState('com_customtables.edit.tables.data', array());
 
 		if (empty($data))
 		{
@@ -329,7 +319,7 @@ class CustomtablesModelTables extends JModelAdmin
 	 */
 	public function delete(&$pks)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		foreach($pks as $tableid)
 		{
@@ -416,7 +406,7 @@ class CustomtablesModelTables extends JModelAdmin
 		$done = false;
 
 		// Set some needed variables.
-		$this->user			= JFactory::getUser();
+		$this->user			= Factory::getUser();
 		$this->table			= $this->getTable();
 		$this->tableClassName		= get_class($this->table);
 		$this->contentType		= new JUcmType;
@@ -514,7 +504,7 @@ class CustomtablesModelTables extends JModelAdmin
 
 	public function save($data)
 	{
-		$conf = JFactory::getConfig();
+		$conf = Factory::getConfig();
 
 		$database = $conf->get('db');
 		$dbprefix = $conf->get('dbprefix');

@@ -12,6 +12,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\Fields;
+use Joomla\CMS\Factory;
 
 // import Joomla view library
 jimport('joomla.application.component.view');
@@ -36,7 +37,7 @@ class CustomtablesViewAPI extends JViewLegacy
 	function display($tpl = null)
 	{
 		if (ob_get_contents()) ob_end_clean();
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 		
 		$task=$jinput->getCmd('task', '');
 		$frmt=$jinput->getCmd('frmt', '');

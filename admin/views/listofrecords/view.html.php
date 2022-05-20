@@ -41,7 +41,7 @@ class CustomtablesViewListofrecords extends JViewLegacy
 	
 	function display($tpl = null)
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		
 		if ($this->getLayout() !== 'modal')
 		{
@@ -61,7 +61,7 @@ class CustomtablesViewListofrecords extends JViewLegacy
 		$this->items = $this->get('Items');
 		$this->pagination = $this->get('Pagination');
 		$this->state = $this->get('State');
-		$this->user = JFactory::getUser();
+		$this->user = Factory::getUser();
 		
 		if($this->ct->Env->version >= 4)
 		{
@@ -162,7 +162,7 @@ class CustomtablesViewListofrecords extends JViewLegacy
 	{
 		JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/fields');
 
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		if($this->ct->Table->tableid!=0)
 		{
@@ -238,7 +238,7 @@ class CustomtablesViewListofrecords extends JViewLegacy
 	{
 		if (!isset($this->document))
 		{
-			$this->document = JFactory::getDocument();
+			$this->document = Factory::getDocument();
 		}
 		$this->document->setTitle(JText::_('COM_CUSTOMTABLES_LISTOFRECORDS'));
 	}

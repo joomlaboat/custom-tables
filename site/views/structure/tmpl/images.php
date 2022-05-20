@@ -74,14 +74,14 @@ foreach($this->rows as $row)
 		{
 			$aLink='index.php?option=com_customtables&view=catalog&';
 								
-			if($ct->Env->menu_params->get( 'layout' )!='')
-				$aLink.='layout='.$ct->Env->menu_params->get( 'layout' ).'&';
+			if($this->ct->Params->pageLayout!='')
+				$aLink.='pagelayout='.$this->ct->Params->pageLayout.'&';
 								
 								
-			if($ct->Env->menu_params->get( 'itemid' )!='')
-				$aLink.='Itemid='.$ct->Env->menu_params->get( 'itemid' ).'&';
+			if($this->ct->Params->ItemId!='')
+				$aLink.='Itemid='.$this->ct->Params->ItemId.'&';
 			else
-				$aLink.='Itemid='.$ct->Env->jinput->getInt('Itemid',  0).'&';
+				$aLink.='Itemid='.$this->ct->Env->jinput->getInt('Itemid',  0).'&';
 							
 			$aLink.='&establename='.$this->ct->Table->tablename;
 			$aLink.='&filter='.$this->esfieldname.urlencode('=').$this->optionname;
@@ -113,7 +113,7 @@ foreach($this->rows as $row)
 $catalogresult.='</tbody>
 </table>';
 		
-if((int)$this->ct->Env->menu_params->get( 'allowcontentplugins' )==1)
+if((int)$this->ct->Params->allowContentPlugins==1)
 	$catalogresult = JoomlaBasicMisc::applyContentPlugins($catalogresult);
 
 echo $catalogresult;

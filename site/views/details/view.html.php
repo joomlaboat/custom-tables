@@ -11,119 +11,105 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\CT;
 use CustomTables\Layouts;
 
 jimport('joomla.html.pane');
+jimport('joomla.application.component.view'); //Important to get menu parameters
 
-jimport( 'joomla.application.component.view'); //Important to get menu parameters
 class CustomTablesViewDetails extends JViewLegacy
 {
-	var $catid=0;
-	var $Model;
-	var $ct;
-	var $row;
-	var $imagegalleries;
-	var $fileboxes;
-	var $layout_details;
+    var CT $ct;
+    var ?array $row;
+    var string $layoutDetailsContent;
 
-	function display($tpl = null)
-	{
-		$this->Model = $this->getModel();
-		
-		$this->ct = $this->Model->ct;
-		
-		$this->layout_details = '';
+    function display($tpl = null)
+    {
+        $this->ct = new CT;
 
-		if($this->ct->Env->menu_params->get('esdetailslayout')!='')
-		{
-			$Layouts = new Layouts($this->ct);
-			$this->layout_details = $Layouts->getLayout($this->ct->Env->menu_params->get('esdetailslayout'));
-				
-			if($Layouts->layouttype==8)
-				$this->ct->Env->frmt='xml';
-			elseif($Layouts->layouttype==9)
-				$this->ct->Env->frmt='csv';
-			elseif($Layouts->layouttype==10)
-				$this->ct->Env->frmt='json';
-		}
+        $Model = $this->getModel();
+        $Model->load($this->ct);
 
-		$this->row = $this->get('Data');
+        $this->layoutDetailsContent = '';
 
-		if(count($this->row)>0)
-		{
-			$redirectto = $this->ct->Env->menu_params->get( 'redirectto' );
-			
-			if((!isset($this->row[$this->ct->Table->realidfieldname]) or (int)$this->row[$this->ct->Table->realidfieldname]==0) and $redirectto != '')
-			{
-				$mainframe->redirect($redirectto);
-			}
+        if ($this->ct->Params->detailsLayout != '') {
+            $Layouts = new Layouts($this->ct);
+            $this->layoutDetailsContent = $Layouts->getLayout($this->ct->Params->detailsLayout);
 
-			if ($this->ct->Env->print)
-			{
-				$document	= JFactory::getDocument();
-				$document->setMetaData('robots', 'noindex, nofollow');
-			}
+            if ($Layouts->layouttype == 8)
+                $this->ct->Env->frmt = 'xml';
+            elseif ($Layouts->layouttype == 9)
+                $this->ct->Env->frmt = 'csv';
+            elseif ($Layouts->layouttype == 10)
+                $this->ct->Env->frmt = 'json';
+        }
 
-			parent::display($tpl);
+        $this->row = $this->get('Data');
 
-			//Save view log
-			$this->SaveViewLogForRecord($this->row);
-			$this->UpdatePHPOnView($this->row);
-		}
-	}
+        if (count($this->row) > 0) {
+            $returnto = $this->ct->Params->returnTo;
 
-	function UpdatePHPOnView($row)//,$allowedfields
-	{
-		if(!isset($row[$this->ct->Table->realidfieldname]))
-			return false;
-		
-		foreach($this->ct->Table->fields as $mFld)
-		{
-			if($mFld['type']=='phponview')
-			{
-				$fieldname=$mFld['fieldname'];
-				$type_params=JoomlaBasicMisc::csv_explode(',',$mFld['typeparams'],'"',false);
-				tagProcessor_PHP::processTempValue($this->Model,$row,$fieldname,$type_params,false);
-			}
-		}
-	}
+            if ((!isset($this->row[$this->ct->Table->realidfieldname]) or (int)$this->row[$this->ct->Table->realidfieldname] == 0) and $returnto != '') {
+                $this->ct->app->redirect($returnto);
+            }
 
-	function SaveViewLogForRecord($rec)//,$allowedfields
-	{
-		$updatefields=array();
+            if ($this->ct->Env->print)
+                $this->ct->document->setMetaData('robots', 'noindex, nofollow');
 
-		$allwedTypes=['lastviewtime','viewcount'];
+            parent::display($tpl);
 
-		foreach($this->ct->Table->fields as $mFld)
-		{
-				$t=$mFld['type'];
-				if(in_array($t,$allwedTypes))
-				{
+            //Save view log
+            $this->SaveViewLogForRecord($this->row);
+            $this->UpdatePHPOnView($Model, $this->row);
+        }
+    }
 
-					$allow_count=true;
-					$author_user_field=$mFld['typeparams'];
+    protected function SaveViewLogForRecord($rec)
+    {
+        $updateFields = array();
 
-					if(!isset($author_user_field) or $author_user_field=='' or $rec[$this->ct->Env->field_prefix.$author_user_field]==$this->ct->Env->userid)
-						$allow_count=false;
+        $allowedTypes = ['lastviewtime', 'viewcount'];
 
-					if($allow_count)
-					{
-						$n=$this->ct->Env->field_prefix.$mFld['fieldname'];
-						if($t=='lastviewtime')
-							$updatefields[]=$n.'="'.date('Y-m-d H:i:s').'"';
-						elseif($t=='viewcount')
-							$updatefields[]=$n.'='.((int)($rec[$n])+1);
-					}
-				}
-		}
+        foreach ($this->ct->Table->fields as $mFld) {
+            $t = $mFld['type'];
+            if (in_array($t, $allowedTypes)) {
 
-		if(count($updatefields)>0)
-		{
-				$db = JFactory::getDBO();
-				$query= 'UPDATE #__customtables_table_'.$this->ct->Table->tablename.' SET '.implode(', ', $updatefields).' WHERE id='.$rec[$this->ct->Table->realidfieldname];
+                $allow_count = true;
+                $author_user_field = $mFld['typeparams'];
 
-				$db->setQuery($query);
-				$db->execute();	
-		}
-	}
+                if (!isset($author_user_field) or $author_user_field == '' or $rec[$this->ct->Env->field_prefix . $author_user_field] == $this->ct->Env->userid)
+                    $allow_count = false;
+
+                if ($allow_count) {
+                    $n = $this->ct->Env->field_prefix . $mFld['fieldname'];
+                    if ($t == 'lastviewtime')
+                        $updateFields[] = $n . '="' . date('Y-m-d H:i:s') . '"';
+                    elseif ($t == 'viewcount')
+                        $updateFields[] = $n . '=' . ((int)($rec[$n]) + 1);
+                }
+            }
+        }
+
+        if (count($updateFields) > 0) {
+            $query = 'UPDATE #__customtables_table_' . $this->ct->Table->tablename . ' SET ' . implode(', ', $updateFields) . ' WHERE id=' . $rec[$this->ct->Table->realidfieldname];
+
+            $this->ct->db->setQuery($query);
+            $this->ct->db->execute();
+        }
+    }
+
+    protected function UpdatePHPOnView($Model, $row): bool
+    {
+        if (!isset($row[$this->ct->Table->realidfieldname]))
+            return false;
+
+        foreach ($this->ct->Table->fields as $mFld) {
+            if ($mFld['type'] == 'phponview') {
+                $fieldname = $mFld['fieldname'];
+                $type_params = JoomlaBasicMisc::csv_explode(',', $mFld['typeparams']);
+                tagProcessor_PHP::processTempValue($Model, $row, $fieldname, $type_params);
+            }
+        }
+        return true;
+    }
 }

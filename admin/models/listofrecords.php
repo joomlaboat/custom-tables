@@ -15,6 +15,7 @@ use CustomTables\CT;
 use CustomTables\Fields;
 
 use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Factory;
 
 // import the Joomla modellist library
 jimport('joomla.application.component.modellist');
@@ -35,7 +36,7 @@ class CustomtablesModelListofRecords extends JModelList
 		
 		if($this->ct->Table->tablename=='')
 		{
-			JFactory::getApplication()->enqueueMessage('Table not selected.', 'error');
+			Factory::getApplication()->enqueueMessage('Table not selected.', 'error');
 			return;
 		}
 		
@@ -95,18 +96,13 @@ class CustomtablesModelListofRecords extends JModelList
 		return $items;
 	}
 
-	/**
-	 * Method to convert selection values to translatable string.
-	 *
-	 * @return translatable string
-	 */
 	protected function getListQuery()
 	{
 		// Get the user object.
-		$user = JFactory::getUser();
+		$user = Factory::getUser();
 		
 		// Create a new query object.
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		$query = $db->getQuery(true);
 
 		$query->select($this->ct->Table->tablerow['query_selects']);

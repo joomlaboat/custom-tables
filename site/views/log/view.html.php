@@ -11,26 +11,36 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\CT;
+use CustomTables\TwigProcessor;
+use Joomla\CMS\Factory;
+
 class CustomTablesViewLog extends JViewLegacy
 {
-	var $limit;
-	var $limitstart;
-	var $record_count;
+    var CT $ct;
+    
+	var int $limit;
+	var int $limitstart;
+	var int $record_count;
+    var int $userid;
+    var string $action;
 
 	function display($tpl = null)
 	{
+        $this->ct = new CT;
+        
 		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'models'.DIRECTORY_SEPARATOR.'details.php');
 		
-		$user = JFactory::getUser();
+		$user = Factory::getUser();
 		$this->userid=$user->id;
 
-		$this->action=JFactory::getApplication()->input->getString('action', '');
+		$this->action=Factory::getApplication()->input->getString('action', '');
 		if($this->action=='')
 			$this->action=-1;
 
-		$this->userid=JFactory::getApplication()->input->getInt('user',0);
+		$this->userid=Factory::getApplication()->input->getInt('user',0);
 		
-		$this->tableid=JFactory::getApplication()->input->getInt('table',0);
+		$this->tableid=Factory::getApplication()->input->getInt('table',0);
 
 		//Is user super Admin?
 		$this->isUserAdministrator=JoomlaBasicMisc::isUserAdmin($this->userid);
@@ -67,7 +77,7 @@ class CustomTablesViewLog extends JViewLegacy
 
 	function getUsers($userid)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		$query='SELECT #__users.id AS id, #__users.name AS name FROM #__customtables_log INNER JOIN #__users ON #__users.id=#__customtables_log.userid GROUP BY #__users.id ORDER BY name';
 
@@ -91,7 +101,7 @@ class CustomTablesViewLog extends JViewLegacy
 	
 	function getTables($tableid)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		$query='SELECT id,tablename FROM #__customtables_tables ORDER BY tablename';
 
@@ -115,16 +125,16 @@ class CustomTablesViewLog extends JViewLegacy
 
 	function getRecords($action,$userid,$tableid)
 	{
-		$mainframe = JFactory::getApplication('site');
+		$mainframe = Factory::getApplication('site');
 		$this->limit = $mainframe->getUserStateFromRequest('global.list.limit', 'limit', $mainframe->getCfg('list_limit'), 'int');
-		if($this->limit=0)
-			$this->limit=20;
+		if($this->limit == 0)
+			$this->limit = 20;
 
-		$this->limitstart = JFactory::getApplication()->input->get('start',0,'INT');
+		$this->limitstart = Factory::getApplication()->input->get('start',0,'INT');
 		// In case limit has been changed, adjust it
 		$this->limitstart = ($this->limit != 0 ? (floor($this->limitstart / $this->limit) * $this->limit) : 0);
 
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		$selects=array();
 		$selects[]='*';
@@ -207,8 +217,8 @@ class CustomTablesViewLog extends JViewLegacy
 		if(!isset($FieldName) or $FieldName=='')
 			return "Table/Field not found.";
 
-		$app= JFactory::getApplication();
-		$jinput = JFactory::getApplication()->input;
+		$app= Factory::getApplication();
+		$jinput = Factory::getApplication()->input;
 
 		$jinput->set("listing_id", $listing_id);
 		$jinput->set('Itemid', $Itemid);		
@@ -216,13 +226,16 @@ class CustomTablesViewLog extends JViewLegacy
 		$menu = $app->getMenu();
 		$menuparams = $menu->getParams($Itemid);
 
+        $ct = new CT;
+        $ct->setParams($menuparams);
+
 		$model = new CustomTablesModelDetails;
-		$model->load($menuparams,$listing_id,true);
+		$model->load($ct);
 		
 		if($model->ct->Table->tablename=='')
 			return "Table ".$model->ct->Table->tablename."not found.";
 		
-		$layout = '{{ ' . $FieldName . ' }}'
+		$layout = '{{ ' . $FieldName . ' }}';
 		$twig = new TwigProcessor($this->ct, $layout);
 		
 		$row = $model->ct->Table->loadRecord($listing_id);

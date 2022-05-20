@@ -12,6 +12,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\DataTypes\Tree;
+use Joomla\CMS\Factory;
 
 class ESMultiSelector
 {
@@ -101,7 +102,7 @@ class ESMultiSelector
 
 	function getList($parentid, $langpostfix)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		$query = 'SELECT id, optionname, title'.$langpostfix.' AS title FROM #__customtables_options WHERE parentid='.(int)$parentid;
 		$query.=' ORDER BY ordering, title';
 		$db->setQuery($query);

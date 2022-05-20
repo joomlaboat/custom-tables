@@ -15,6 +15,7 @@ defined('_JEXEC') or die('Restricted access');
 jimport('joomla.application.component.controlleradmin');
 
 use CustomTables\CT;
+use Joomla\CMS\Factory;
 use Joomla\Utilities\ArrayHelper;
 
 /**
@@ -44,7 +45,7 @@ class CustomtablesControllerListofRecords extends JControllerAdmin
 			$table=ESTables::getTableRowByID($tableid);
 			if(!is_object($table) and $table==0)
 			{
-				JFactory::getApplication()->enqueueMessage('Table not found', 'error');
+				Factory::getApplication()->enqueueMessage('Table not found', 'error');
 				return;
 			}
 			else
@@ -53,7 +54,7 @@ class CustomtablesControllerListofRecords extends JControllerAdmin
 			}
 		}
 		
-		$cid	= JFactory::getApplication()->input->post->get('cid',array(),'array');
+		$cid	= Factory::getApplication()->input->post->get('cid',array(),'array');
 		//$cid = ArrayHelper::toInteger($cid);
 		
 		//Get Edit model
@@ -88,7 +89,7 @@ class CustomtablesControllerListofRecords extends JControllerAdmin
 		if(count($cid) == 1)
 			$msg.='_1';
 		
-		JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended($msg,count($cid)),'success');
+		Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended($msg,count($cid)),'success');
 
 		// Redirect to the item screen.
 		$this->setRedirect(
@@ -107,7 +108,7 @@ class CustomtablesControllerListofRecords extends JControllerAdmin
 			$table=ESTables::getTableRowByID($tableid);
 			if(!is_object($table) and $table==0)
 			{
-				JFactory::getApplication()->enqueueMessage('Table not found', 'error');
+				Factory::getApplication()->enqueueMessage('Table not found', 'error');
 				return;
 			}
 			else
@@ -116,7 +117,7 @@ class CustomtablesControllerListofRecords extends JControllerAdmin
 			}
 		}
 		
-		$cid	= JFactory::getApplication()->input->post->get('cid',array(),'array');
+		$cid	= Factory::getApplication()->input->post->get('cid',array(),'array');
 		//$cid = ArrayHelper::toInteger($cid);
 		
 		//Get Edit model
@@ -152,7 +153,7 @@ class CustomtablesControllerListofRecords extends JControllerAdmin
 		if(count($cid) == 1)
 			$msg.='_1';
 		
-		JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended($msg,count($cid)),'success');
+		Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended($msg,count($cid)),'success');
 		
 		// Redirect to the item screen.
 		$this->setRedirect(

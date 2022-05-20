@@ -18,7 +18,7 @@ class customtablesHeaderCheck
 		// UIkit check point
 		if (strpos($script_name,'uikit') !== false)
 		{
-			$app            	= JFactory::getApplication();
+			$app            	= Factory::getApplication();
 			$getTemplateName  	= $app->getTemplate('template')->template;
 			
 			if (strpos($getTemplateName,'yoo') !== false)
@@ -27,7 +27,7 @@ class customtablesHeaderCheck
 			}
 		}
 		
-		$document 	= JFactory::getDocument();
+		$document 	= Factory::getDocument();
 		$head_data 	= $document->getHeadData();
 		foreach (array_keys($head_data['scripts']) as $script)
 		{
@@ -46,7 +46,7 @@ class customtablesHeaderCheck
 		// UIkit check point
 		if (strpos($script_name,'uikit') !== false)
 		{
-			$app            	= JFactory::getApplication();
+			$app            	= Factory::getApplication();
 			$getTemplateName  	= $app->getTemplate('template')->template;
 			
 			if (strpos($getTemplateName,'yoo') !== false)
@@ -55,7 +55,7 @@ class customtablesHeaderCheck
 			}
 		}
 		
-		$document 	= JFactory::getDocument();
+		$document 	= Factory::getDocument();
 		$head_data 	= $document->getHeadData();
 		
 		foreach (array_keys($head_data['styleSheets']) as $script)

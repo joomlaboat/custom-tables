@@ -12,14 +12,15 @@
 defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\Fields;
+use Joomla\CMS\Factory;
 
 class extraTasks
 {
 	public static function prepareJS()
 	{
-		$input	= JFactory::getApplication()->input;
+		$input	= Factory::getApplication()->input;
 		
-		$fieldid=(int)$input->getInt('fieldid',0);
+		$fieldid = $input->getInt('fieldid',0);
 		if($fieldid==0)
 			return;
 		
@@ -27,7 +28,7 @@ class extraTasks
 		$tableid=$field_row->tableid;
 		$table_row=ESTables::getTableRowByID($tableid);
 		
-		$document = JFactory::getDocument();
+		$document = Factory::getDocument();
 		$document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/js/extratasks.js"></script>');
 		$document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/js/modal.js"></script>');
 		$document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/js/base64.js"></script>');

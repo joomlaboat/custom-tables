@@ -11,16 +11,18 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Factory;
+
 jimport( 'joomla.application.component.view'); //Important to get menu parameters
 class CustomTablesViewEditPhotos extends JViewLegacy
 {
 	function display($tpl = null)
 	{
-		$user = JFactory::getUser();
+		$user = Factory::getUser();
         $userid = $user->get('id');
 		if((int)$userid==0)
 		{
-			JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
+			Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
 			return false;
 		}
 		
@@ -35,7 +37,7 @@ class CustomTablesViewEditPhotos extends JViewLegacy
 		
 		$this->max_file_size=JoomlaBasicMisc::file_upload_max_size();
 		
-		$this->jinput = JFactory::getApplication()->input;
+		$this->jinput = Factory::getApplication()->input;
 		
 		$this->Listing_Title = $this->Model->Listing_Title;
 		

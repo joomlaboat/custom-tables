@@ -7,26 +7,34 @@
  */
 
 // no direct access
-
 defined('_JEXEC') or die('Restricted access');
 
-$jinput = JFactory::getApplication()->input;
-$task = JFactory::getApplication()->input->getCmd('task','');
+use CustomTables\CT;
+use CustomTables\CTUser;
+use Joomla\CMS\Factory;
+
+$jinput = Factory::getApplication()->input;
+$task = Factory::getApplication()->input->getCmd('task','');
+
+$ct = null;
+if($task != '')
+    $ct = new CT;
 
 switch ($task)
 {
 	case 'publish':
+
 		$model = $this->getModel('edititem');
-		if (!$model->CheckAuthorization())
+		if (!CTUser::CheckAuthorization($ct))
 		{
 			$link = JRoute::_('index.php?option=com_users&view=login&return=' . base64_encode(JoomlaBasicMisc::curPageURL()));
 			$this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
 		}
 		else
 		{
-			$app = JFactory::getApplication();
-			$menu_params = $app->getParams();
-			$model->load($menu_params);
+			$app = Factory::getApplication();
+
+			$model->load($ct);
 			$count = $model->setPublishStatus(1);
 			$link = JoomlaBasicMisc::curPageURL();
 			$link = JoomlaBasicMisc::deleteURLQueryOption($link, 'task');
@@ -43,17 +51,15 @@ switch ($task)
 	case 'unpublish':
 
 		$model = $this->getModel('edititem');
-		if (!$model->CheckAuthorization())
+		if (!CTUser::CheckAuthorization($ct))
 		{
-			if ($JoomlaVersionRelease != 1.5) $link = JRoute::_('index.php?option=com_users&view=login&return=' . base64_encode(JoomlaBasicMisc::curPageURL()));
+			if ($ct->Env->version != 1.5) $link = JRoute::_('index.php?option=com_users&view=login&return=' . base64_encode(JoomlaBasicMisc::curPageURL()));
 			else $link = JRoute::_('index.php?option=com_user&view=login&return=' . base64_encode(JoomlaBasicMisc::curPageURL()));
 			$this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
 		}
 		else
 		{
-			$app = JFactory::getApplication();
-			$menu_params = $app->getParams();
-			$model->load($menu_params);
+			$model->load($ct);
 			$count = $model->setPublishStatus(0);
 			$link = JoomlaBasicMisc::curPageURL();
 			$link = JoomlaBasicMisc::deleteURLQueryOption($link, 'task');
@@ -71,10 +77,11 @@ switch ($task)
 		if ($task == 'cart_addtocart' or $task == 'cart_form_addtocart' or $task == 'cart_setitemcount' or $task == 'cart_deleteitem' or $task == 'cart_emptycart')
 		{
 			$model = $this->getModel('catalog');
-			$model->load($menu_params, false);
-			if ($model->params->get('cart_returnto'))
+            $app = Factory::getApplication();
+			$model->load($ct);
+			if ($ct->Params->cartReturnTo)
 			{
-				$link = $model->params->get('cart_returnto');
+				$link = $ct->Params->cartReturnTo;
 			}
 			else
 			{
@@ -85,42 +92,44 @@ switch ($task)
 					$pair[1] = JoomlaBasicMisc::deleteURLQueryOption($pair[1], 'task');
 					$pair[1] = JoomlaBasicMisc::deleteURLQueryOption($pair[1], 'cartprefix');
 				}
-				$link = implode('?', $pair); //'index.php?option=com_customtables&view=catalog&Itemid='.JFactory::getApplication()->input->getInt(
+				$link = implode('?', $pair); //'index.php?option=com_customtables&view=catalog&Itemid='.Factory::getApplication()->input->getInt(
 			}
 
 			$param_msg = '';
+            $result = '';
+
 			switch ($task)
 			{
 			case 'cart_addtocart':
 				$result = $model->cart_addtocart();
-				if ($model->params->get('cart_msgitemadded')) $param_msg = $model->params->get('cart_msgitemadded');
+                if ($ct->Params->cartMsgItemAdded) $param_msg = $ct->Params->cartMsgItemAdded;
 			break;
 
 			case 'cart_form_addtocart':
 				$result = $model->cart_form_addtocart();
-				if ($model->params->get('cart_msgitemadded')) $param_msg = $model->params->get('cart_msgitemadded');
+				if ($$ct->Params->cartMsgItemAdded) $param_msg = $ct->Params->cartMsgItemAdded;
 			break;
 
 			case 'cart_setitemcount':
 				$result = $model->cart_setitemcount();
-				if ($model->params->get('cart_msgitemupdated')) $param_msg = $model->params->get('cart_msgitemupdated');
+				if ($ct->Params->cartMsgItemUpdated) $param_msg = $ct->Params->cartMsgItemUpdated;
 			break;
 
 			case 'cart_deleteitem':
 				$result = $model->cart_deleteitem();
-				if ($model->params->get('cart_msgitemdeleted')) $param_msg = $model->params->get('cart_msgitemdeleted');
+				if ($ct->Params->cartMsgItemDeleted) $param_msg = $ct->Params->cartMsgItemDeleted;
 			break;
 
 			case 'cart_emptycart':
 				$result = $model->cart_emptycart();
-				if ($model->params->get('cart_msgitemupdated')) $param_msg = $model->params->get('cart_msgitemupdated');
+				if ($ct->Params->cartMsgItemUpdated) $param_msg = $ct->Params->cartMsgItemUpdated;
 			break;
 			}
 
 			if ($result)
 			{
-				if (JFactory::getApplication()->input->getString('msg'))
-					$msg = JFactory::getApplication()->input->getString('msg');
+				if (Factory::getApplication()->input->getString('msg'))
+					$msg = Factory::getApplication()->input->getString('msg');
 				elseif ($param_msg != '')
 					$msg = $param_msg;
 				else

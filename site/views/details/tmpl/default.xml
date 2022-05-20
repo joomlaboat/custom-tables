@@ -1,97 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
 <metadata>
-	<layout title="Record Details">
-		<message>Generate details view of a single record.
-		</message>
-	</layout>
+    <layout title="Record Details">
+        <message>Generate details view of a single record.
+        </message>
+    </layout>
 
-		<name>Record Details</name>
-		<description>CustomTables - Record Details</description>
+    <name>Record Details</name>
+    <description>CustomTables - Record Details</description>
 
-        <fields
-                name="params"
-				addfieldpath="/components/com_customtables/fields"
-        >
-                <fieldset name="PARAMS">
+    <fields
+            name="params"
+            addfieldpath="/components/com_customtables/fields"
+    >
+        <fieldset name="PARAMS">
 
+            <field type="estable" name="establename" default="" label="Select Table" description="Select Custom Table"/>
+            <field type="text" name="listingid" default="0" label="Listing ID" description="Optional Value"/>
+			<field type="text" name="filter" default="" label="Search Parameter" description="Search Parameter"/>
 
+			<field type="esdetailslayout" name="esdetailslayout" default="" label="Details Layout"
+				   description="Select Details Layout"/>
 
-			<field type="estable" name="establename" default="" label="Select Table" description="Select Custom Table" />
-			<field type="text" name="listingid" default="0" label="Listing ID" description="Optional Value" />
+            <field type="text" name="recordstable" default="" label="User Join Table"
+				   description="Table that contains records user ids"/>
+			<field type="text" name="recordsuseridfield" default="" label="User Join User ID Field"
+				   description="Field that contains user id"/>
+			<field type="text" name="recordsfield" default="" label="User Join Field"
+				   description="Field that contains records user ids"/>
 
-					<field name="editusergroups" type="CTUserGroup" default="8" label="Who may edit content" description="Select a user group that may edit the records?" />
-					<field type="esdetailslayout" name="esdetailslayout" default="" label="Details Layout" description="Select Details Layout" />
+			<field type="radio" name="allowcontentplugins" default="0" label="Allow Content Plugins" description=""
+				   class="btn-group btn-group-yesno">
+				<option value="1">Yes</option>
+				<option value="0">No</option>
+			</field>
+        </fieldset>
 
+        <fieldset name="EDITFORM">
 
+			<field type="text" name="useridfield" default="" label="UserID Field name" description="
+User type field name - to check if a record belongs to a current user. The table must contain the user type field.
+There is the option to find out if a record belongs to a current user through parent tables.
+Syntax example: 'user or parents(children).user'.
+In this case, there will be two checks: the first one will check if the record belongs to the current user and the second one will check if the record belongs to any parent record
+ that belongs to the current user. At least one check must be positive." />
 
-					<field type="radio" name="allowcontentplugins" default="0" label="Allow Content Plugins" description="" class="btn-group btn-group-yesno">
-						<option value="1">Yes</option>
-						<option value="0">No</option>
-					</field>
+			<field type="list" name="publishstatus" default="1" label="Publish it" description="" >
+				<option value="1">Published</option>
+				<option value="0">Not Published</option>
+			</field>
 
-					<field type="radio" name="clean" default="0" label="Disable Template" description="" class="btn-group btn-group-yesno">
-						<option value="1">Yes</option>
-						<option value="0">No</option>
-					</field>
+			<field name="editusergroups" type="CTUserGroup" default="8" label="Who may edit content" description="Select a user group that may edit records." />
 
+			<field type="text" name="forceitemid" default="0" label="Force Itemid" description="Used to set parameters for edit form etc." />
 
+			<field type="text" name="returnto" default="" size="70" label="Custom Return To" description="Visitor will be redirected to this link when form is completed. Active value (may include value(s) of field(s) use [fieldname] to get the value) " />
 
-					<field type="text" name="recordstable" default="" label="User Join Table" description="Table that contains records fileds with ids" />
-					<field type="text" name="recordsuseridfield" default="" label="User Join User ID Field" description="Field that contains user id" />
-					<field type="text" name="recordsfield" default="" label="User Join Field" description="Field that contains records fileds with ids" />
-
-			<field type="text" name="filter" default="" label="Search Parameter" description="Search Parameter" />
-				</fieldset>
-
-<fieldset name="EDITFORM">
-				<field type="eseditlayout" name="eseditlayout" default="" label="Edit Layout" description="Select Edit Layout" />
-				<field type="list" name="submitbuttons" default="0" label="Submit Button(s)" description="Submit buttos(s)" >
-				    <option value="savecancel">Save / Cancel</option>
-					<option value="savecancelsavenew">Save / Save as New / Cancel</option>
-					<option value="apply">Apply</option>
-					<option value="nextprint">Next (Opens Print preview)</option>
-				</field>
-				<field type="text" name="applybuttontitle" filter="raw" size="70" default="" label="Button Label" description="Button Label" />
-				<field type="list" name="publishstatus" default="1" label="Publish" description="" >
-					<option value="1">Published</option>
-					<option value="0">Not Published</option>
-				</field>
-
-
-
-				<field type="text" name="returnto" default="" size="70" label="Custom Return To" description="Visitor will be redireced to this link when form is complited. Active value (may include value(s) of field(s) use [fieldname] to get the value) " />
-
-				<field type="list" name="guestcanaddnew" default="0" label="Guest can add new records" description="" >
-				    <option value="1">Guest can add new records</option>
-					<option value="0">Only registred can add new records</option>
-				</field>
+			<field type="list" name="guestcanaddnew" default="0" label="Guest can add new records" description="" >
+				<option value="1">Guest can add new records</option>
+				<option value="0">Only registered can add new records</option>
+				<option value="-1">Disable Add New records</option>
+			</field>
 
 
-				<field type="text" name="requiredlabel" filter="raw" default="" size="70" label="Required Label" description="Character or a text to show next to required field if there is one." />
+			<field type="text" name="requiredlabel" filter="raw" default="" size="70" label="Required Label" description="Character or a text to show next to required field if there is one." />
+
+			<field type="eseditlayout" name="eseditlayout" default="" label="Edit Layout" description="Select Edit Layout" />
+
+			<field type="text" name="msgitemissaved" default="" size="70" label="Record Saved Message" description="This message will show up on the record being saved." />
 
 
-				<field type="text" name="msgitemissaved" default="" size="70" label="Record Saved Message" description="This message will show up on the record being saved." />
+			<field type="list" name="onrecordaddsendemail" default="0" label="Send Email When record" description="" >
+				<option value="1">Added</option>
+				<option value="2">Saved</option>
+				<option value="3">On Conditions (Works on refresh too)</option>
+				<option value="0">Do not send</option>
+			</field>
 
-				<field type="list" name="onrecordaddsendemail" default="0" label="Send Email When record" description="" >
-		                	<option value="1">Added</option>
-					<option value="2">Saved</option>
-					<option value="3">On Conditions (Works on refresh too)</option>
-					<option value="0">Do not send</option>
-				</field>
+			<field type="text" name="sendemailcondition" default="" size="50" label="Send Email Condition" description="Example (That's PHP syntax): approved==1 or name==ivan" />
 
-				<field type="text" name="sendemailcondition" default="" size="50" label="Send Email Condition" description="Example (That's PHP syntax): approved==1 or name==ivan" />
+			<field type="text" name="onrecordaddsendemailto" default="" size="50" label="On Record Add Send Email to" description="The email with the data filled in the form will be sent to this email. More than one email is ok. Separate them with the comma.
 
-				<field type="text" name="onrecordaddsendemailto" default="" size="50" label="On Record Add Send Email to" description="The email with the data filled in the form will be sent to this email. More than one email is ok. Separate them with the comma.
-						
-						Also you may use a value of the field of the table to send an email to.
-						To have your own Email Subject please type : after email and then the subject.
-						Example 1: [email]
-						Example 2: test@yahoo.com,test@gmail.com,[email]
-						Example 3: [email]:Thank you for participation
-				" />
-				
-				<field type="text" name="onrecordsavesendemailto" default="" size="50" label="On Record Edit Send Email to" description="The email with the data filled in the form will be sent to this email. More than one email is ok. Separate them with the comma.
-						
 						Also you may use a value of the field of the table to send an email to.
 						To have your own Email Subject please type : after email and then the subject.
 						Example 1: [email]
@@ -99,11 +87,20 @@
 						Example 3: [email]:Thank you for participation
 				" />
 
-				<field type="esemaillayout" name="onrecordaddsendemaillayout" default="" label="Email Layout" description="Email Layout" />
-			        <field type="string" name="emailsentstatusfield" default="" label="Email Sent Status Field" description="Field Name where to save the email sending status. Should be int or checkbox type. 1- sent, 0- not sent." />
+			<field type="text" name="onrecordsavesendemailto" default="" size="50" label="On Record Edit Send Email to" description="The email with the data filled in the form will be sent to this email. More than one email is ok. Separate them with the comma.
 
-			</fieldset>
+						Also you may use a value of the field of the table to send an email to.
+						To have your own Email Subject please type : after email and then the subject.
+						Example 1: [email]
+						Example 2: test@yahoo.com,test@gmail.com,[email]
+						Example 3: [email]:Thank you for participation
+				" />
 
-		</fields>
+			<field type="esemaillayout" name="onrecordaddsendemaillayout" default="" label="Email Layout" description="Email Layout" />
+			<field type="string" name="emailsentstatusfield" default="" label="Email Sent Status Field" description="Field Name where to save the email sending status. Should be int or checkbox type. 1- sent, 0- not sent." />
+
+		</fieldset>
+
+    </fields>
 
 </metadata>

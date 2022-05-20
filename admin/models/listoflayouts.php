@@ -20,13 +20,14 @@ jimport('joomla.application.component.modellist');
 use CustomTables\CT;
 
 use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Factory;
 
 /**
  * Listoflayouts Model
  */
-class CustomtablesModelListoflayouts extends JModelList
+class CustomtablesModelListOfLayouts extends JModelList
 {
-	var $ct;
+	var CT $ct;
 	
 	public function __construct($config = array())
 	{
@@ -44,6 +45,8 @@ class CustomtablesModelListoflayouts extends JModelList
 		parent::__construct($config);
 		
 		$this->ct = new CT;
+        $params = ComponentHelper::getParams('com_customtables');
+        $this->ct->setParams($params);
 	}
 
 	/**
@@ -118,12 +121,10 @@ class CustomtablesModelListoflayouts extends JModelList
 	 *
 	 * @return	string	An SQL query
 	 */
-	protected function getListQuery()
-	{
-		// Get the user object.
-		$user = JFactory::getUser();
+	protected function getListQuery(): string
+    {
 		// Create a new query object.
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		$query = $db->getQuery(true);
 
 		// Select some fields

@@ -10,11 +10,13 @@
  **/
  
 // No direct access to this file
+use Joomla\CMS\Factory;
+
 defined('_JEXEC') or die('Restricted access');
 
 function renderDependencies($layout_row)
 {
-	$db = JFactory::getDBO();
+	$db = Factory::getDBO();
 	
 	if($db->serverType == 'postgresql')
 		return '';
@@ -29,8 +31,8 @@ function renderDependencies($layout_row)
 		$w1='('.$db->quoteName('type').'=\'sqljoin\' OR '.$db->quoteName('type').'=\'records\')';
 		//$w2a='POSITOIN(\'layout:'.$layoutname.'\' IN SUBSTRING_INDEX(typeparams,",",2))>0';
 		//$w2b='POSITOIN(\'tablelesslayout:'.$layoutname.'\' IN SUBSTRING_INDEX(typeparams,",",2))>0';
-		$w2='('.$w2a.' OR '.$w2b.')';
-		$wF='f.published=1 AND f.tableid=t.id AND '.$w1.' AND '.$w2;
+		//$w2='('.$w2a.' OR '.$w2b.')';
+		$wF='f.published=1 AND f.tableid=t.id';// AND '.$w1.' AND '.$w2;
 	}
 	else
 	{
@@ -196,7 +198,7 @@ function _renderTableList($rows)
 
 function _getTablesThatUseThisLayout($layoutname,$wF)
 {
-    $db = JFactory::getDBO();
+    $db = Factory::getDBO();
 	$fields='(SELECT GROUP_CONCAT(CONCAT(f.id,",",fieldname),";") FROM #__customtables_fields AS f WHERE '.$wF.' ORDER BY fieldname) AS fields';
 
 	
@@ -212,7 +214,7 @@ function _getTablesThatUseThisLayout($layoutname,$wF)
 
 function _getMenuItemsThatUseThisLayout($layoutname)
 {
-    $db = JFactory::getDBO();
+    $db = Factory::getDBO();
 
 	$wheres=array();
 	$wheres[]='published=1';
@@ -236,7 +238,7 @@ function _getMenuItemsThatUseThisLayout($layoutname)
 
 function _getModulesThatUseThisLayout($layoutname)
 {
-    $db = JFactory::getDBO();
+    $db = Factory::getDBO();
 
 	$wheres=array();
 	$wheres[]='published=1';
@@ -260,7 +262,7 @@ function _getModulesThatUseThisLayout($layoutname)
 
 function _getLayoutsThatUseThisLayout($layoutname)
 {
-    $db = JFactory::getDBO();
+    $db = Factory::getDBO();
 	
 	$wheres=array();
 	$wheres[]='published=1';

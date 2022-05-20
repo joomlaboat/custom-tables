@@ -14,6 +14,7 @@ defined('_JEXEC') or die('Restricted access');
 use CustomTables\Fields;
 use CustomTables\Layouts;
 use CustomTables\CTUser;
+use Joomla\CMS\Factory;
 
 /* All tags already implemented using Twig */
 
@@ -118,7 +119,7 @@ class tagProcessor_General
 
             if($extraopt=='box')
             {
-                JFactory::getApplication()->enqueueMessage($vlu,'notice');//, 'error'
+                Factory::getApplication()->enqueueMessage($vlu,'notice');//, 'error'
                 $pagelayout=str_replace($fItem,'',$pagelayout);
             }
             else
@@ -130,7 +131,7 @@ class tagProcessor_General
 
     protected static function CurrentURL(&$ct,&$pagelayout)
 	{
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 
 		$options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('currenturl',$options,$pagelayout,'{}');
@@ -243,8 +244,8 @@ class tagProcessor_General
 
 		foreach($fList as $fItem)
 		{
-			if($ct->Env !=null and $ct->Env->Itemid != null)
-				$vlu = $ct->Env->Itemid;
+			if($ct->Env !=null and $ct->Env->ItemId != null)
+				$vlu = $ct->Env->ItemId;
 			else
 				$vlu = 0;
 			
@@ -257,7 +258,7 @@ class tagProcessor_General
 	{
 		$options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('user',$options,$pagelayout,'{}');
-        $user = JFactory::getUser();
+        $user = Factory::getUser();
 		$i=0;
 		foreach($fList as $fItem)
 		{
@@ -340,7 +341,7 @@ class tagProcessor_General
 
     protected static function userid(&$pagelayout)
 	{
-        $user = JFactory::getUser();
+        $user = Factory::getUser();
 		$currentuserid=(int)$user->get('id');
         if($currentuserid!=0 and count($user->groups)>0)
 		{
@@ -386,8 +387,8 @@ class tagProcessor_General
 
 	public static function getGoBackButton(&$ct,&$layout_code)
 	{
-        $jinput = JFactory::getApplication()->input;
-        $returnto =base64_decode(JFactory::getApplication()->input->get('returnto','','BASE64'));
+        $jinput = Factory::getApplication()->input;
+        $returnto =base64_decode(Factory::getApplication()->input->get('returnto','','BASE64'));
 
 		$options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('gobackbutton',$options,$layout_code,'{}');

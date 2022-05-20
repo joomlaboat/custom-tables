@@ -1,29 +1,32 @@
 <?php
 /**
  * CustomTables Joomla! 3.x Native Component
- * @author JoomlaBoat.com <support@joomlaboat.com>
- * @link http://www.joomlaboat.com
- * @license GNU/GPL
+ * @package Custom Tables
+ * @author Ivan komlev <support@joomlaboat.com>
+ * @link https://www.joomlaboat.com
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\IntegrityChecks;
+use Joomla\CMS\Factory;
 use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 
 $tables = $this->prepareTables();
 
-$document = JFactory::getDocument();
+$document = Factory::getDocument();
 $document->addCustomTag('<script src="'.JURI::root(true).'/media/vendor/jquery/js/jquery.min.js"></script>');
 $document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/js/raphael.min.js"></script>');
 $document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/js/diagram.js"></script>');
 ?>
 
 <form action="<?php echo JRoute::_('index.php?option=com_customtables&view=databasecheck'); ?>" method="post" name="adminForm" id="adminForm">
-        <style type="text/css">  
+        <style>
             #canvas_container {  
                 width: 100%;  
 				min-height: <?php echo (count($tables)>50 ? '4000' : '2000'); ?>px;  

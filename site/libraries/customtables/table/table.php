@@ -16,7 +16,7 @@ defined('_JEXEC') or die('Restricted access');
 use \Joomla\CMS\Factory;
 
 use \ESTables;
-use \ESFields;
+use CustomTables\Fields;
 
 class Table
 {

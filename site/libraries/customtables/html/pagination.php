@@ -11,6 +11,8 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Factory;
+
 /**
  * Pagination Class.  Provides a common interface for content pagination for the
  * Joomla! Framework.
@@ -262,10 +264,6 @@ class JESPagination extends JObject
 	 */
 	public function getPagesLinks($columns)
 	{
-	    $the_step=(int)$columns*2;
-
-		$app = JFactory::getApplication();
-
 		// Build the page navigation list.
 		$data = $this->_buildDataObject();
 
@@ -360,8 +358,6 @@ class JESPagination extends JObject
 	 */
 	public function getListFooter()
 	{
-		$app = JFactory::getApplication();
-
 		$list = array();
 		$list['prefix']			= $this->prefix;
 		$list['limit']			= $this->limit;
@@ -400,7 +396,7 @@ class JESPagination extends JObject
 		if($the_step > 1000)
 			$the_step = 1000;
 		
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 
 		// Initialise variables.
 		$limits = array ();
@@ -524,7 +520,7 @@ class JESPagination extends JObject
 	 */
 	protected function _item_active(&$item)
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		if($app->isClient('administrator'))
 		{
 			if ($item->base > 0) {
@@ -549,7 +545,7 @@ class JESPagination extends JObject
 	 */
 	protected function _item_inactive(&$item, $current_page = false)
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		if($app->isClient('administrator'))
 			return "<span>".$item->text."</span>";
 		else

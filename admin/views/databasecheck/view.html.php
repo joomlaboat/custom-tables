@@ -1,9 +1,11 @@
 <?php
 /**
  * CustomTables Joomla! 3.x Native Component
- * @author JoomlaBoat.com <support@joomlaboat.com>
- * @link http://www.joomlaboat.com
- * @license GNU/GPL
+ * @package Custom Tables
+ * @author Ivan komlev <support@joomlaboat.com>
+ * @link https://www.joomlaboat.com
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
  
 // No direct access to this file
@@ -13,6 +15,7 @@ defined('_JEXEC') or die('Restricted access');
 jimport('joomla.application.component.view');
 
 use CustomTables\CT;
+use Joomla\CMS\Factory;
 use Joomla\CMS\Version;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\Toolbar;
@@ -108,7 +111,7 @@ class CustomtablesViewDataBaseCheck extends JViewLegacy
 	protected function setDocument()
 	{
 		if (!isset($this->document))
-			$this->document = JFactory::getDocument();
+			$this->document = Factory::getDocument();
 
 		$this->document->setTitle(JText::_('COM_CUSTOMTABLES_DATABASECHECK'));
 		$this->document->addStyleSheet(JURI::root(true)."/components/com_customtables/libraries/customtables/media/css/fieldtypes.css");
@@ -116,7 +119,7 @@ class CustomtablesViewDataBaseCheck extends JViewLegacy
 	
 	protected function getAllTables($categoryid)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		$query='SELECT * FROM #__customtables_tables WHERE published = 1'
 			.($categoryid !=0 ? ' AND tablecategory='.$categoryid : '')
 			.' ORDER BY tablename';
@@ -129,7 +132,7 @@ class CustomtablesViewDataBaseCheck extends JViewLegacy
 	
 	protected function getAllFields()
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		$query='SELECT * FROM #__customtables_fields WHERE published = 1 ORDER BY fieldname';
 		
 		$db->setQuery( $query );

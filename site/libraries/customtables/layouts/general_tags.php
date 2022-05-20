@@ -341,9 +341,9 @@ class Twig_Document_Tags
         $this->ct->document->setMetaData('description', $metadescription);
     }
 
-    function setpagetitle($page_title): void
+    function setpagetitle($pageTitle): void
     {
-        $this->ct->document->setTitle(JoomlaBasicMisc::JTextExtended($page_title));
+        $this->ct->document->setTitle(JoomlaBasicMisc::JTextExtended($pageTitle));
     }
 
     function setheadtag($tag): void

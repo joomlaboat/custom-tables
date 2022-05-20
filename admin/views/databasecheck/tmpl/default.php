@@ -1,18 +1,21 @@
 <?php
 /**
  * CustomTables Joomla! 3.x Native Component
- * @author JoomlaBoat.com <support@joomlaboat.com>
- * @link http://www.joomlaboat.com
- * @license GNU/GPL
+ * @package Custom Tables
+ * @author Ivan komlev <support@joomlaboat.com>
+ * @link https://www.joomlaboat.com
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\IntegrityChecks;
+use Joomla\CMS\Factory;
 
 $tables = $this->prepareTables();
-$document = JFactory::getDocument();
+$document = Factory::getDocument();
 
 //https://github.com/DmitryBaranovskiy/raphael/releases
 $document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/js/raphael.min.js"></script>');

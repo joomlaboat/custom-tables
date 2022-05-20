@@ -8,6 +8,8 @@
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 // No direct access to this file access');
+use Joomla\CMS\Factory;
+
 defined('_JEXEC') or die('Restricted access');
 
 $edit = "index.php?option=com_customtables&view=listoflayouts&task=layouts.edit";
@@ -16,7 +18,7 @@ $edit = "index.php?option=com_customtables&view=listoflayouts&task=layouts.edit"
 <?php foreach ($this->items as $i => $item): ?>
 	<?php
 		$canCheckin = $this->user->authorise('core.manage', 'com_checkin') || $item->checked_out == $this->user->id || $item->checked_out == 0;
-		$userChkOut = JFactory::getUser($item->checked_out);
+		$userChkOut = Factory::getUser($item->checked_out);
 	?>
 	<tr class="row<?php echo $i % 2; ?>">
 	

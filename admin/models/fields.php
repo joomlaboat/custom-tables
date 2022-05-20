@@ -15,6 +15,7 @@ defined('_JEXEC') or die('Restricted access');
 use CustomTables\CT;
 use CustomTables\Fields;
 
+use Joomla\CMS\Factory;
 use Joomla\Registry\Registry;
 
 // import Joomla modelform library
@@ -48,17 +49,6 @@ class CustomtablesModelFields extends JModelAdmin
 	 */
 	public $typeAlias = 'com_customtables.fields';
 
-	/**
-	 * Returns a Table object, always creating it
-	 *
-	 * @param   type    $type    The table type to instantiate
-	 * @param   string  $prefix  A prefix for the table class name. Optional.
-	 * @param   array   $config  Configuration array for model. Optional.
-	 *
-	 * @return  JTable  A database object
-	 *
-	 * @since   1.6
-	 */
 	public function getTable($type = 'fields', $prefix = 'CustomtablesTable', $config = array())
 	{
 		return JTable::getInstance($type, $prefix, $config);
@@ -124,20 +114,18 @@ class CustomtablesModelFields extends JModelAdmin
 			return false;
 		}
 
-		$jinput = JFactory::getApplication()->input;
-
 		// The front end calls this model and uses a_id to avoid id clashes so we need to check for that first.
-		if (JFactory::getApplication()->input->get('a_id'))
+		if (Factory::getApplication()->input->get('a_id'))
 		{
-			$id = JFactory::getApplication()->input->get('a_id', 0, 'INT');
+			$id = Factory::getApplication()->input->get('a_id', 0, 'INT');
 		}
 		// The back end uses id so we use that the rest of the time and set it to 0 by default.
 		else
 		{
-			$id = JFactory::getApplication()->input->get('id', 0, 'INT');
+			$id = Factory::getApplication()->input->get('id', 0, 'INT');
 		}
 
-		$user = JFactory::getUser();
+		$user = Factory::getUser();
 
 		// Check for existing item.
 		// Modify the form based on Edit State access controls.
@@ -179,9 +167,9 @@ class CustomtablesModelFields extends JModelAdmin
 		if (0 == $id)
 		{
 			// Set redirected field name
-			$redirectedField = JFactory::getApplication()->input->get('ref', null, 'STRING');
+			$redirectedField = Factory::getApplication()->input->get('ref', null, 'STRING');
 			// Set redirected field value
-			$redirectedValue = JFactory::getApplication()->input->get('refid', 0, 'INT');
+			$redirectedValue = Factory::getApplication()->input->get('refid', 0, 'INT');
 			if (0 != $redirectedValue && $redirectedField)
 			{
 				// Now set the local-redirected field default value
@@ -220,7 +208,7 @@ class CustomtablesModelFields extends JModelAdmin
 				return;
 			}
 
-			$user = JFactory::getUser();
+			$user = Factory::getUser();
 			// The record has been set. Check the record permissions.
 			return $user->authorise('core.delete', 'com_customtables.fields.' . (int) $record->id);
 		}
@@ -238,7 +226,7 @@ class CustomtablesModelFields extends JModelAdmin
 	 */
 	protected function canEditState($record)
 	{
-		$user = JFactory::getUser();
+		$user = Factory::getUser();
 		$recordId = (!empty($record->id)) ? $record->id : 0;
 
 		if ($recordId)
@@ -267,7 +255,7 @@ class CustomtablesModelFields extends JModelAdmin
 	{
 		// Check specific edit permission then general edit permission.
 
-		return JFactory::getUser()->authorise('core.edit', 'com_customtables.fields.'. ((int) isset($data[$key]) ? $data[$key] : 0)) or parent::allowEdit($data, $key);
+		return Factory::getUser()->authorise('core.edit', 'com_customtables.fields.'. ((int) isset($data[$key]) ? $data[$key] : 0)) or parent::allowEdit($data, $key);
 	}
 
 	/**
@@ -281,8 +269,8 @@ class CustomtablesModelFields extends JModelAdmin
 	 */
 	protected function prepareTable($table)
 	{
-		$date = JFactory::getDate();
-		$user = JFactory::getUser();
+		$date = Factory::getDate();
+		$user = Factory::getUser();
 
 		if (isset($table->name))
 		{
@@ -307,7 +295,7 @@ class CustomtablesModelFields extends JModelAdmin
 			// Set ordering to the last item if not set
 			if (empty($table->ordering))
 			{
-				$db = JFactory::getDbo();
+				$db = Factory::getDbo();
 				$query = $db->getQuery(true)
 					->select('MAX(ordering)')
 					->from($db->quoteName('#__customtables_fields'));
@@ -342,7 +330,7 @@ class CustomtablesModelFields extends JModelAdmin
 	protected function loadFormData()
 	{
 		// Check the session for previously entered form data.
-		$data = JFactory::getApplication()->getUserState('com_customtables.edit.fields.data', array());
+		$data = Factory::getApplication()->getUserState('com_customtables.edit.fields.data', array());
 
 		if (empty($data))
 		{
@@ -382,7 +370,6 @@ class CustomtablesModelFields extends JModelAdmin
 
 		foreach($pks as $fieldid)
 		{
-			$data=Fields::getFieldRow($fieldid);
 			Fields::deleteField_byID($ct,$fieldid);
 		}
 
@@ -441,7 +428,7 @@ class CustomtablesModelFields extends JModelAdmin
 		$done = false;
 
 		// Set some needed variables.
-		$this->user			= JFactory::getUser();
+		$this->user			= Factory::getUser();
 		$this->table			= $this->getTable();
 		$this->tableClassName		= get_class($this->table);
 		$this->contentType		= new JUcmType;
@@ -477,7 +464,6 @@ class CustomtablesModelFields extends JModelAdmin
 					{
 						$contexts[$new] = $contexts[$old];
 					}
-					$pks = array_values($result);
 				}
 				else
 				{
@@ -521,7 +507,7 @@ class CustomtablesModelFields extends JModelAdmin
 		if (empty($this->batchSet))
 		{
 			// Set some needed variables.
-			$this->user 		= JFactory::getUser();
+			$this->user 		= Factory::getUser();
 			$this->table 		= $this->getTable();
 			$this->tableClassName	= get_class($this->table);
 			$this->canDo		= CustomtablesHelper::getActions('fields');
@@ -664,7 +650,7 @@ class CustomtablesModelFields extends JModelAdmin
 		if (empty($this->batchSet))
 		{
 			// Set some needed variables.
-			$this->user		= JFactory::getUser();
+			$this->user		= Factory::getUser();
 			$this->table		= $this->getTable();
 			$this->tableClassName	= get_class($this->table);
 			$this->canDo		= CustomtablesHelper::getActions('fields');
@@ -786,9 +772,7 @@ class CustomtablesModelFields extends JModelAdmin
 
 	public function save($data)
 	{
-		$input	= JFactory::getApplication()->input;
-		$filter	= JFilterInput::getInstance();
-
+		$input	= Factory::getApplication()->input;
 
 		$data_extra = $input->get( 'jform',array(),'ARRAY');
 
@@ -855,7 +839,7 @@ class CustomtablesModelFields extends JModelAdmin
 		
 		if(!is_object($table_row))
 		{
-			JFactory::getApplication()->enqueueMessage('Table not found', 'error');
+			Factory::getApplication()->enqueueMessage('Table not found', 'error');
 			return false;
 		}
 		
@@ -877,7 +861,7 @@ class CustomtablesModelFields extends JModelAdmin
 
 	protected function update_physical_field($table_row,$fieldid,$data)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		$realtablename=$table_row->realtablename;//$db->getPrefix().'customtables_table_'.$establename;
 		$realtablename=str_replace('#__',$db->getPrefix(),$realtablename);
@@ -927,11 +911,11 @@ class CustomtablesModelFields extends JModelAdmin
 
 			if(!$convert_ok)
 			{
-				JFactory::getApplication()->enqueueMessage('Cannot convert the type.', 'error');
+				Factory::getApplication()->enqueueMessage('Cannot convert the type.', 'error');
 				return false;
 			}
 
-			$input	= JFactory::getApplication()->input;
+			$input	= Factory::getApplication()->input;
 			$extratask = '';
 
 			if($ex_type==$new_type and $new_type=='image' and ($ex_typeparams !=$new_typeparams or strpos($new_typeparams,'|delete')!==false))
@@ -955,8 +939,6 @@ class CustomtablesModelFields extends JModelAdmin
 			}
 		}
 		//---------------------------------- end convert field
-
-		$msg='';
 
 		if($fieldid==0 or !$fieldfound)
 		{

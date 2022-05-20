@@ -15,7 +15,7 @@ defined('_JEXEC') or die('Restricted access');
 use CustomTables\TwigProcessor;
 use Joomla\CMS\HTML\HTMLHelper;
 
-function CTViewEdit(&$ct, $row, &$pagelayout, $BlockExternalVars,$formLink,$formName)
+function CTViewEdit(&$ct, $row, &$pagelayout, $formLink,$formName): void
 {
 	if($ct->Env->legacysupport)
 	{
@@ -29,10 +29,10 @@ function CTViewEdit(&$ct, $row, &$pagelayout, $BlockExternalVars,$formLink,$form
 
 	$ct->loadJSAndCSS();
 
-	if (!$BlockExternalVars and $ct->Env->menu_params->get( 'show_page_heading', 1 ) )
+	if (!$ct->Params->blockExternalVars and $ct->Params->showPageHeading )
 	{
-		echo '<div class="page-header'.strip_tags($ct->Env->menu_params->get('pageclass_sfx')).'"><h2 itemprop="headline">'
-			.JoomlaBasicMisc::JTextExtended($ct->Env->menu_params->get( 'page_title' )).'</h2></div>';
+		echo '<div class="page-header'.strip_tags($ct->Params->pageClassSFX).'"><h2 itemprop="headline">'
+			.JoomlaBasicMisc::JTextExtended($ct->Params->pageTitle ).'</h2></div>';
 	}
 
 	if(isset($row[$ct->Table->realidfieldname]))
@@ -63,7 +63,7 @@ function CTViewEdit(&$ct, $row, &$pagelayout, $BlockExternalVars,$formLink,$form
 	$twig = new TwigProcessor($ct, $pagelayout);
 	$pagelayout = $twig->process($row);
 	
-	if((int)$ct->Env->menu_params->get( 'allowcontentplugins' )==1)
+	if($ct->Params->allowContentPlugins)
 		JoomlaBasicMisc::applyContentPlugins($pagelayout);
 
 	echo $pagelayout;
@@ -72,8 +72,8 @@ function CTViewEdit(&$ct, $row, &$pagelayout, $BlockExternalVars,$formLink,$form
 
 	if($ct->Env->jinput->get('returnto','','BASE64'))
 		$returnto=base64_decode($ct->Env->jinput->get('returnto','','BASE64'));
-	elseif($ct->Env->menu_params->get( 'returnto' ))
-		$returnto=$ct->Env->menu_params->get( 'returnto' );
+	elseif($ct->Params->returnTo)
+		$returnto=$ct->Params->returnTo;
 
 	$encoded_returnto=base64_encode ($returnto);
 

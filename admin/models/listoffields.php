@@ -17,6 +17,7 @@ use CustomTables\CT;
 use CustomTables\DataTypes;
 
 use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Factory;
 
 /**
  * Listoffields Model
@@ -115,13 +116,13 @@ class CustomtablesModelListoffields extends JModelList
 	 */
 	protected function getListQuery()
 	{
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 		$this->tableid = $jinput->getInt('tableid',0);
 
 		// Get the user object.
-		$user = JFactory::getUser();
+		$user = Factory::getUser();
 		// Create a new query object.
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		$query = $db->getQuery(true);
 
 		// Select some fields

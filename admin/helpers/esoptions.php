@@ -9,6 +9,8 @@
  **/
 
 // Check to ensure this file is included in Joomla!
+use Joomla\CMS\Factory;
+
 defined('_JEXEC') or die( 'Restricted access' );
 
 
@@ -18,7 +20,7 @@ class JHTMLESOptions
         public static function options($currentoptionid, $control_name, $value)
         {
 				
-				$db = JFactory::getDBO();
+				$db = Factory::getDBO();
 
 				$query = 'SELECT id, optionname '
 						. ' FROM #__customtables_options '

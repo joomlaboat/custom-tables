@@ -9,6 +9,8 @@
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
+use Joomla\CMS\Factory;
+
 defined('_JEXEC') or die('Restricted access');
 
 // Import Joomla! libraries
@@ -27,9 +29,9 @@ class CustomTablesViewOptions extends JViewLegacy
 		// get action permissions
 		$this->canDo = CustomtablesHelper::getActions('options',$this->item);
 		// get input
-		$jinput = JFactory::getApplication()->input;
-		$this->ref = JFactory::getApplication()->input->get('ref', 0, 'word');
-		$this->refid = JFactory::getApplication()->input->get('refid', 0, 'int');
+
+		$this->ref = Factory::getApplication()->input->get('ref', 0, 'word');
+		$this->refid = Factory::getApplication()->input->get('refid', 0, 'int');
 		$this->referral = '';
 		if ($this->refid)
 		{
@@ -61,8 +63,8 @@ class CustomTablesViewOptions extends JViewLegacy
 
     protected function addToolBar()
 	{
-		JFactory::getApplication()->input->set('hidemainmenu', true);
-		$user = JFactory::getUser();
+		Factory::getApplication()->input->set('hidemainmenu', true);
+		$user = Factory::getUser();
 		$userId	= $user->id;
 		$isNew = $this->item->id == 0;
 
@@ -140,7 +142,7 @@ class CustomTablesViewOptions extends JViewLegacy
 		$isNew = ($this->item->id < 1);
 		if (!isset($this->document))
 		{
-			$this->document = JFactory::getDocument();
+			$this->document = Factory::getDocument();
 		}
 		$this->document->setTitle(JText::_($isNew ? 'COM_CUSTOMTABLES_OPTIONS_NEW' : 'COM_CUSTOMTABLES_OPTIONS_EDIT'));
 //		$this->document->addScript(JURI::root(true) . $this->script, (CustomtablesHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/javascript');

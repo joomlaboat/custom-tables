@@ -15,6 +15,7 @@ use CustomTables\Fields;
 use CustomTables\RecordToolbar;
 use CustomTables\CTUser;
 use CustomTables\Twig_Record_Tags;
+use Joomla\CMS\Factory;
 
 class tagProcessor_Item
 {
@@ -58,14 +59,14 @@ class tagProcessor_Item
 		CT_FieldTypeTag_ct::ResolveStructure($ct,$htmlresult);
 	}
 
-    protected static function GetSQLJoin($ct_record,&$htmlresult)
-	{
+    protected static function GetSQLJoin($ct_record,&$htmlresult): void
+    {
 		$options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('sqljoin',$options,$htmlresult,'{}');
 		if(count($fList)==0)
 			return;
 
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		$i=0;
 		foreach($fList as $fItem)
 		{
@@ -109,8 +110,8 @@ class tagProcessor_Item
 		}//foreach($fList as $fItem)
 	}//function GetSQLJoin(&$htmlresult)
 
-	protected static function processPublishStatus(&$row,&$htmlresult)
-	{
+	protected static function processPublishStatus(&$row,&$htmlresult): void
+    {
 		$htmlresult=str_replace('{_value:published}',$row['listing_published']==1,$htmlresult);
 
 		$options=array();
@@ -133,8 +134,8 @@ class tagProcessor_Item
 		}
 	}
 
-    protected static function GetCustomToolBar(&$ct,&$htmlresult,&$row)
-	{
+    protected static function GetCustomToolBar(&$ct,&$htmlresult,&$row): void
+    {
 		$options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('toolbar',$options,$htmlresult,'{}');
 		
@@ -155,7 +156,7 @@ class tagProcessor_Item
 		$isPublishable=CTUser::checkIfRecordBelongsToUser($ct,$publish_userGroup);
 		$isDeletable=CTUser::checkIfRecordBelongsToUser($ct,$delete_userGroup);
 		
-		$RecordToolbar = new RecordToolbar($ct,$isEditable, $isPublishable, $isDeletable, $ct->Env->Itemid);
+		$RecordToolbar = new RecordToolbar($ct,$isEditable, $isPublishable, $isDeletable, $ct->Env->ItemId);
 
 		$i=0;
 		foreach($fList as $fItem)
@@ -182,8 +183,8 @@ class tagProcessor_Item
 		}
 	}
 
-    protected static function processNoReturnLink(&$ct_record,&$row,&$pagelayout)
-	{
+    protected static function processNoReturnLink(&$ct_record,&$row,&$pagelayout): void
+    {
         $options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('linknoreturn',$options,$pagelayout,'{}',':','"');
 
@@ -198,8 +199,8 @@ class tagProcessor_Item
         }
     }
 	
-	protected static function processLink(&$ct_record,&$row,&$pagelayout)
-	{
+	protected static function processLink(&$ct_record,&$row,&$pagelayout): void
+    {
         $options=array();
 		$fList=JoomlaBasicMisc::getListToReplace('link',$options,$pagelayout,'{}',':','"');
 

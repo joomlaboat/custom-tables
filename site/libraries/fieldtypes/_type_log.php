@@ -11,6 +11,8 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Factory;
+
 class CT_FieldTypeTag_log
 {
 	public static function getLogVersionLinks(&$ct,$rowValue,&$row)
@@ -23,8 +25,7 @@ class CT_FieldTypeTag_log
 		$result='';
 		$versions=explode(';',$rowValue);
 
-		$jinput = JFactory::getApplication()->input;
-		$version = JFactory::getApplication()->input->get('version',0,'INT');
+		$version = Factory::getApplication()->input->get('version',0,'INT');
 
 		$version_date='';
 		$version_author='';
@@ -62,7 +63,6 @@ class CT_FieldTypeTag_log
 
 					$result.='<li>';
 
-					$str='';
 					if($version_date!='')
 					{
 						$str=date( 'Y-m-d H:m:s', $version_date).' - '.$version_author;

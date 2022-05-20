@@ -11,11 +11,9 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-use \Joomla\CMS\Factory;
+use Joomla\CMS\Factory;
 
 use CustomTables\CT;
-use CustomTables\Field;
-use CustomTables\Layouts;
 use CustomTables\TwigProcessor;
 
 class CT_FieldTypeTag_records
@@ -38,13 +36,10 @@ class CT_FieldTypeTag_records
 			$sortbyfield=$options[0];
 		elseif(isset($field->params[5]))
 			$sortbyfield=$field->params[5];
-		
-		if(isset($field->params[3]))
-			$filter=$field->params[3];
-		else
-			$filter='';
-		
-		//$showpublished = 0 - show published
+
+        $filter = $field->params[3] ?? '';
+
+        //$showpublished = 0 - show published
 		//$showpublished = 1 - show unpublished
 		//$showpublished = 2 - show any
 		$showpublished = (($field->params[6] ?? '') == '' ? 2 : ((int) ($field->params[6] ?? 0) == 1 ? 0 : 1));
@@ -92,7 +87,8 @@ class CT_FieldTypeTag_records
 	//Old function
     public static function resolveRecordType(&$ct,$rowValue, $field, array $options)
 	{
-		$sortbyfield='';
+		$sortbyfield = '';
+        $result = '';
 
 		if(count($field->params)<1)
 			$result.='table not specified';
@@ -131,9 +127,8 @@ class CT_FieldTypeTag_records
 		//this is important because it has been selected some how.
 		$esr_filter='';
 
-		$result = JHTML::_('ESRecordsView.render',$rowValue,$esr_table,$esr_field,$esr_selector,$esr_filter,$ct->Languages->Postfix,$sortbyfield);
+		$result = JHTML::_('ESRecordsView.render',$rowValue,$esr_table,$esr_field,$esr_selector,$esr_filter,$sortbyfield);
 
 		return $result;
-		//return CT_FieldTypeTag_records::resolveRecordTypeValue($field,$result,$rowValue,$options);
 	}
 }

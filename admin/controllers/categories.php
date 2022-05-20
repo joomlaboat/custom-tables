@@ -9,6 +9,8 @@
  **/
 
 // No direct access to this file
+use Joomla\CMS\Factory;
+
 defined('_JEXEC') or die('Restricted access');
 
 // import Joomla controllerform library
@@ -61,7 +63,7 @@ class CustomtablesControllerCategories extends JControllerForm
 	protected function allowEdit($data = array(), $key = 'id')
 	{
 		// get user object.
-		$user = JFactory::getUser();
+		$user = Factory::getUser();
 		// get record id.
 		$recordId = (int) isset($data[$key]) ? $data[$key] : 0;
 

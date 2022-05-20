@@ -1,9 +1,11 @@
 <?php
 /**
- * Custom Tables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x Native Component
+ * @package Custom Tables
  * @author Ivan komlev <support@joomlaboat.com>
- * @link http://www.joomlaboat.com
- * @license GNU/GPL
+ * @link https://www.joomlaboat.com
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
 namespace CustomTables\DataTypes;
@@ -564,7 +566,7 @@ class Tree
 			if(strlen($vlu)>0)
 				return $vlu;
 			else
-				return Tree::getHeritageInfo($row[id], $fieldname);
+				return Tree::getHeritageInfo($row['id'], $fieldname);
 		}
 		else
 			return '';

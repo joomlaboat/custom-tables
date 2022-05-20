@@ -12,7 +12,7 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
-use \Joomla\CMS\Factory;
+use Joomla\CMS\Factory;
 
 // import Joomla controller library
 jimport('joomla.application.component.controller');
@@ -52,13 +52,13 @@ class CustomtablesController extends JControllerLegacy
                     // redirect to item of ref
                     if ($ref == 'records') {
                         $refid = $this->input->getCmd('refid', 0);
-                        $this->setRedirect(JRoute::_('index.php?option=com_customtables&view=' . (string)$ref . '&layout=edit&id=' . $refid, false));
+                        $this->setRedirect(JRoute::_('index.php?option=com_customtables&view=' . $ref . '&layout=edit&id=' . $refid, false));
                     } else
-                        $this->setRedirect(JRoute::_('index.php?option=com_customtables&view=' . (string)$ref . '&layout=edit&id=' . (int)$refid, false));
+                        $this->setRedirect(JRoute::_('index.php?option=com_customtables&view=' . $ref . '&layout=edit&id=' . $refid, false));
                 } elseif (CustomtablesHelper::checkString($ref)) {
 
                     // redirect to ref
-                    $this->setRedirect(JRoute::_('index.php?option=com_customtables&view=' . (string)$ref, false));
+                    $this->setRedirect(JRoute::_('index.php?option=com_customtables&view=' . $ref, false));
                 } else {
                     // normal redirect back to the list view
                     $this->setRedirect(JRoute::_('index.php?option=com_customtables&view=' . $data['views'], false));

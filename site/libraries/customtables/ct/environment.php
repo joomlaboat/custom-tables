@@ -82,7 +82,7 @@ class Environment
 
         $this->userid = is_null($this->user) ? 0 : $this->user->id;
 
-        $this->isUserAdministrator = JoomlaBasicMisc::isUserAdmin($this->userid);
+        $this->isUserAdministrator = JoomlaBasicMisc::isUserAdmin();
         $this->print = (bool)$this->jinput->getInt('print', 0);
         $this->clean = (bool)$this->jinput->getInt('clean', 0);
         $this->isModal = (bool)$this->jinput->getInt('modal', 0);
@@ -112,7 +112,7 @@ class Environment
 
         $this->isMobile = $this->check_user_agent('mobile');
 
-        $this->Itemid = $this->jinput->getInt('Itemid', 0);
+        $this->ItemId = $this->jinput->getInt('Itemid', 0);
 
         $paramsArray = array();
         $this->menu_params = new Registry;

@@ -1,9 +1,11 @@
 <?php
 /**
- * Custom Tables Joomla! 3.x Native Component
- * @author JoomlaBoat.com <support@joomlaboat.com>
- * @link http://joomlaboat.com
- * @license GNU/GPL
+ * CustomTables Joomla! 3.x Native Component
+ * @package Custom Tables
+ * @author Ivan komlev <support@joomlaboat.com>
+ * @link https://www.joomlaboat.com
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
 // no direct access
@@ -11,8 +13,9 @@ defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\CT;
 use CustomTables\DataTypes\Tree;
+use Joomla\CMS\Factory;
 
-	$independat=false;
+$independat=false;
 
 	if(!defined('_JEXEC'))
 	{
@@ -41,7 +44,7 @@ use CustomTables\DataTypes\Tree;
 		$app = Factory::getApplication('site');
 
 		// Initialise the application.
-		$app->initialise();
+		//$app->initialise();
 		$independat=true;
 	}
 	else
@@ -54,20 +57,20 @@ if($independat)
 {
 	require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'combotreeloader.php');
 
-	$establename=JFactory::getApplication()->input->get('establename','','CMD');
-	$esfieldname=JFactory::getApplication()->input->get('esfieldname','','CMD');
-	$optionname=JFactory::getApplication()->input->getCmd('optionname');
+	$establename=Factory::getApplication()->input->get('establename','','CMD');
+	$esfieldname=Factory::getApplication()->input->get('esfieldname','','CMD');
+	$optionname=Factory::getApplication()->input->getCmd('optionname');
 
 	$MyESDynCombo=new ESDynamicComboTree();
-	$MyESDynCombo->initialize($establename,$esfieldname,$optionname,JFactory::getApplication()->input->getString('prefix'));
-	$MyESDynCombo->langpostfix=JFactory::getApplication()->input->getCmd('langpostfix','');
-	$MyESDynCombo->cssclass=JFactory::getApplication()->input->getString('cssclass');
-	$MyESDynCombo->onchange=JFactory::getApplication()->input->getString('onchange');
-	$MyESDynCombo->innerjoin=JFactory::getApplication()->input->getInt('innerjoin');
-	$MyESDynCombo->isRequired=JFactory::getApplication()->input->get('isrequired',0,'INT');
-	$MyESDynCombo->requirementdepth=JFactory::getApplication()->input->getInt('requirementdepth');
-	$MyESDynCombo->where=JFactory::getApplication()->input->getString('where');
-	$MyESDynCombo->place_holder=JFactory::getApplication()->input->getString('place_holder');
+	$MyESDynCombo->initialize($establename,$esfieldname,$optionname,Factory::getApplication()->input->getString('prefix'));
+	$MyESDynCombo->langpostfix=Factory::getApplication()->input->getCmd('langpostfix','');
+	$MyESDynCombo->cssclass=Factory::getApplication()->input->getString('cssclass');
+	$MyESDynCombo->onchange=Factory::getApplication()->input->getString('onchange');
+	$MyESDynCombo->innerjoin=Factory::getApplication()->input->getInt('innerjoin');
+	$MyESDynCombo->isRequired=Factory::getApplication()->input->get('isrequired',0,'INT');
+	$MyESDynCombo->requirementdepth=Factory::getApplication()->input->getInt('requirementdepth');
+	$MyESDynCombo->where=Factory::getApplication()->input->getString('where');
+	$MyESDynCombo->place_holder=Factory::getApplication()->input->getString('place_holder');
 
 	$MyESDynCombo->parentname='';
 
@@ -126,10 +129,10 @@ class ESDynamicComboTree
 
 	function getInstrWhereAdv($object_name,$temp_parent, &$filterwhere, &$urlwhere, &$filterwherearr,&$urlwherearr,$field)
 	{
-		if(strlen(JFactory::getApplication()->input->getString($object_name, '' ))>0)
+		if(strlen(Factory::getApplication()->input->getString($object_name, '' ))>0)
 		{
 			$filterwherearr[]='INSTR('.$this->listingtable.'.es_'.$field.', ",'.$temp_parent.'.")';
-			$urlwherearr[]=$object_name.'='.JFactory::getApplication()->input->getCmd( $object_name, '' );
+			$urlwherearr[]=$object_name.'='.Factory::getApplication()->input->getCmd( $object_name, '' );
 		}
     
 		if(count($filterwherearr)>0)
@@ -152,7 +155,7 @@ class ESDynamicComboTree
 		$optional=implode("&", $optionalarr);
 
 		if($value=='')
-			$value=JFactory::getApplication()->input->getCmd( $objectname, '' );
+			$value=Factory::getApplication()->input->getCmd( $objectname, '' );
 
 		$result='';
 
@@ -220,7 +223,7 @@ class ESDynamicComboTree
 	function getOptionList($parentname)
 	{
 		$parentid=Tree::getOptionIdFull($parentname);
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		$query = 'SELECT '
 				.' id AS optionid, '
@@ -238,7 +241,7 @@ class ESDynamicComboTree
 	function getOptionListWhere($parentname, $filterwhere, $listingfield)
 	{
 		$parentid=Tree::getOptionIdFull($parentname);
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		$query = 'SELECT '
 				.' #__customtables_options.id AS optionid, '
@@ -301,9 +304,9 @@ class ESDynamicComboTree
 			else
 				$result.=$this->renderSelectBox($object_name, $rows,$urlwhere,'class="inputbox"',$simpleList,$value,$place_holder,$valuerule,$valuerulecaption);
 
-			if(JFactory::getApplication()->input->getCmd($object_name))
+			if(Factory::getApplication()->input->getCmd($object_name))
 			{
-				$temp_parent.='.'.JFactory::getApplication()->input->getCmd($object_name);
+				$temp_parent.='.'.Factory::getApplication()->input->getCmd($object_name);
 				$this->parentname=$temp_parent;
 
 				$this->getInstrWhereAdv($object_name,$temp_parent, $filterwhere, $urlwhere, $filterwherearr,$urlwherearr,$this->esfieldname) ;
@@ -313,7 +316,7 @@ class ESDynamicComboTree
 
 			$i++;
 		
-		}while(JFactory::getApplication()->input->getCmd($object_name));
+		}while(Factory::getApplication()->input->getCmd($object_name));
 		return $result;
 	}
 }

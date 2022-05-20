@@ -9,6 +9,8 @@
  **/
 
 // No direct access to this file
+use Joomla\CMS\Factory;
+
 defined('_JEXEC') or die('Restricted Access');
 
 class JHTMLCTArticle
@@ -17,7 +19,7 @@ class JHTMLCTArticle
 	{
 		$catid=(int)$params[0];
 		
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		$query = $db->getQuery(true);
 		$query->select('id, title');

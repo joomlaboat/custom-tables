@@ -1,9 +1,11 @@
 <?php
 /**
- * Custom Tables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x Native Component
+ * @package Custom Tables
  * @author Ivan komlev <support@joomlaboat.com>
- * @link http://www.joomlaboat.com
- * @license GNU/GPL
+ * @link https://www.joomlaboat.com
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
 namespace CustomTables;
@@ -806,8 +808,8 @@ class ImportTables
 		$menuitem_new['parent_id']=1; //TODO: Add menu parent functionality
 		$menuitem_new['menutype']=$menutype;
 
-		if($home==1)
-			OxfordSMSComponents::setAllMenuitemAsNotHome();
+		//if($home==1)
+			//OxfordSMSComponents::setAllMenuitemAsNotHome();
 
 		$menuitem_new['home']=$home;
 		$menuitem_new['level']=1;

@@ -79,7 +79,7 @@ class Languages
 
 	function getLanguageByCODE($code)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		
 		$query = ' SELECT lang_id AS id FROM #__languages WHERE lang_code="'.$code.'" LIMIT 1';
 

@@ -1,44 +1,39 @@
 <?php
 /**
- * Custom Tables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x Native Component
+ * @package Custom Tables
  * @author Ivan komlev <support@joomlaboat.com>
- * @link http://www.joomlaboat.com
- * @license GNU/GPL
+ * @link https://www.joomlaboat.com
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\CT;
+use CustomTables\CTUser;
 use CustomTables\TwigProcessor;
+use Joomla\CMS\Factory;
 
-$jinput = JFactory::getApplication()->input;
+$jinput = Factory::getApplication()->input;
 
 $task=$jinput->getCmd( 'task');
 
 switch ($task)
 {
-	case 'save' :
-		if(CustomTablesSave($task,$this))
-			parent::display();
-
-		break;
-	
-	case 'saveandcontinue' :
-		if(CustomTablesSave($task,$this))
-			parent::display();
-
-		break;
-
-	case 'saveascopy' :
+    case 'saveandcontinue':
+    case 'saveascopy':
+    case 'save' :
 		if(CustomTablesSave($task,$this))
 			parent::display();
 
 		break;
 
-	case 'cancel':
+    case 'cancel':
 		
 		$msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_EDIT_CANCELED');
-		$link 	= $returnto=base64_decode(JFactory::getApplication()->input->get('returnto','','BASE64'));
+		$link 	= $returnto=base64_decode(Factory::getApplication()->input->get('returnto','','BASE64'));
 		$this->setRedirect($link, $msg);
 		
 	break;
@@ -55,35 +50,32 @@ switch ($task)
 
 function CustomTablesDelete($task,&$this_)
 {
-	$jinput = JFactory::getApplication()->input;
-	
-	$app = JFactory::getApplication();
+	$jinput = Factory::getApplication()->input;
+
+    $ct = new CT;
+
 	$edit_model = $this_->getModel('edititem');
-	$menu_params=$app->getParams();
-	$edit_model->params=$menu_params;
-	$edit_model->listing_id = $jinput->getCmd("listing_id");
-	$edit_model->load($menu_params, false);
-	
+    $edit_model->load($ct);
+
 	$PermissionIndex=3;//delete
 	
-	if (!$edit_model->CheckAuthorization($PermissionIndex))
+	if (!CTUser::CheckAuthorization($ct, $PermissionIndex))
 	{
 		// not authorized
-		if ($clean == 1)
+		if ($ct->Env->clean == 1)
 		{
-			JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
+			Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
 			return;
 		}
 		else
 		{
-			$link = $edit_model->ct->Env->WebsiteRoot . 'index.php?option=com_users&view=login&return=' . $encodedreturnto;
+			$link = $edit_model->ct->Env->WebsiteRoot . 'index.php?option=com_users&view=login&return=' . $ct->Env->encoded_current_url;
 			$this_->setRedirect($link,JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
 		}
 		return true;
 	}
 	else
 	{
-		$encodedreturnto = base64_encode(JoomlaBasicMisc::curPageURL());
 		$returnto = $jinput->get('returnto', '', 'BASE64');
 		$decodedreturnto = base64_decode($returnto);
 
@@ -93,41 +85,39 @@ function CustomTablesDelete($task,&$this_)
 			if (strpos($link, 'http:') === false and strpos($link, 'https:') === false) $link.= $edit_model->ct->Env->WebsiteRoot . $link;
 		}
 		else
-			$link = $edit_model->ct->Env->WebsiteRoot . 'index.php?Itemid=' . $Itemid;
+			$link = $ct->Env->WebsiteRoot . 'index.php?Itemid=' . $ct->Params->ItemId;
 		
 		if ($edit_model->delete())
 		{
-			if ($clean == 1)
+			if ($ct->Env->clean == 1)
 				die('deleted');
 			else
 				$this_->setRedirect($link,JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_DELETED'));
 		}
 		else
 		{
-			if ($clean == 1)
+			if ($ct->Env->clean == 1)
 				die('error');
 			else
 				$this_->setRedirect($link,JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_NOT_DELETED'));
 		}
-	} //if(!$model->CheckAuthorization())
+	}
 }
 
 function CustomTablesSave($task,&$this_)
 {
-	$jinput = JFactory::getApplication()->input;
+	$jinput = Factory::getApplication()->input;
 	$returnto=$jinput->get('returnto','','BASE64');
 	$link 	= base64_decode ($returnto);
 
 	$jinput->set('task','');
-
+    $ct = new CT;
 	$model = $this_->getModel('edititem');
-	$app		= JFactory::getApplication();
-	$menu_params=$app->getParams();
 
-	if(!$model->load($menu_params))
+	if(!$model->load($ct))
 	{
 	}
-	elseif(!$model->CheckAuthorization(1))
+	elseif(!CTUser::CheckAuthorization($ct,1))
 	{
 		$link =$model->ct->Env->WebsiteRoot.'index.php?option=com_users&view=login&return='.base64_encode(JoomlaBasicMisc::curPageURL());
 
@@ -172,7 +162,7 @@ function CustomTablesSave($task,&$this_)
 			else
 				$msg=$model->msg_itemissaved;
 
-			if($Model->ct->Env->legacysupport)
+			if($ct->Env->legacysupport)
 			{
 				$site_libpath=JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR;
 				require_once($site_libpath.'layout.php');
@@ -187,13 +177,13 @@ function CustomTablesSave($task,&$this_)
 			$msg = $twig->process();
 
 
-			if(JFactory::getApplication()->input->get('clean',0,'INT')==1)
+			if(Factory::getApplication()->input->get('clean',0,'INT')==1)
 			{
 				die('saved');
 			}
 			elseif($link!='')
 			{
-				$link=str_replace('$get_listing_id',JFactory::getApplication()->input->get("listing_id",0,'INT'),$link);
+				$link=str_replace('$get_listing_id',Factory::getApplication()->input->get("listing_id",0,'INT'),$link);
 
 				if(strpos($link,'tmpl=component')===false)
 				{
@@ -216,11 +206,11 @@ function CustomTablesSave($task,&$this_)
 			}//if($link!='')
 			else
 			{
-				if(JFactory::getApplication()->input->get('submitbutton','','CMD')=='nextprint')
+				if(Factory::getApplication()->input->get('submitbutton','','CMD')=='nextprint')
 				{
 				    $link = $model->ct->Env->WebsiteRoot.'index.php?option=com_customtables&view=details'
-												.'&Itemid='.JFactory::getApplication()->input->get('Itemid',0,'INT')
-												.'&listing_id='.JFactory::getApplication()->input->get("listing_id",0,'INT')
+												.'&Itemid='.Factory::getApplication()->input->get('Itemid',0,'INT')
+												.'&listing_id='.Factory::getApplication()->input->get("listing_id",0,'INT')
 												.'&tmpl=component'
 												.'&print=1'
 												;
@@ -232,17 +222,17 @@ function CustomTablesSave($task,&$this_)
 					onClick=\'window.open("'.$link.'","win2","'.$status.'"); return false; \'>
 					</p>';
 
-					JFactory::getApplication()->input->get('view','details');
+					Factory::getApplication()->input->get('view','details');
 
 
 					return true;
 
 
 
-				}//if(JFactory::getApplication()->input->get('submitbutton','','CMD')=='nextprint')
+				}//if(Factory::getApplication()->input->get('submitbutton','','CMD')=='nextprint')
 				else
 				{
-					$link = $model->ct->Env->WebsiteRoot.'index.php?option=com_customtables&view=catalog&Itemid='.JFactory::getApplication()->input->get('Itemid',0,'INT');
+					$link = $model->ct->Env->WebsiteRoot.'index.php?option=com_customtables&view=catalog&Itemid='.Factory::getApplication()->input->get('Itemid',0,'INT');
 					
 					if($msg!='')
 						$this_->setRedirect($link, $msg);
@@ -250,14 +240,14 @@ function CustomTablesSave($task,&$this_)
 						$this_->setRedirect($link);
 					
 
-				}//if(JFactory::getApplication()->input->get('submitbutton','','CMD')=='nextprint')
+				}//if(Factory::getApplication()->input->get('submitbutton','','CMD')=='nextprint')
 			}////if($link!='')
 		}//if($isOk)
 		else
 		{
 			if($msg_=='COM_CUSTOMTABLES_INCORRECT_CAPTCHA')
 			{
-				JFactory::getApplication()->enqueueMessage($msg_, 'error');
+				Factory::getApplication()->enqueueMessage($msg_, 'error');
 				echo '
 				<script type="text/javascript">
 setTimeout("history.go(-1)", 3000);
@@ -272,8 +262,8 @@ setTimeout("history.go(-1)", 3000);
 					$this_->setRedirect($link, $msg,'error');
 				}
 				else
-					JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORD_NOT_SAVED'), 'error');
+					Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORD_NOT_SAVED'), 'error');
 			}
-		}//if($isOk)
-	}//if(!$model->CheckAuthorization())
+		}
+	}
 }

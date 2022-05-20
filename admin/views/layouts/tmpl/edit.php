@@ -17,7 +17,7 @@ use Joomla\CMS\Editor\Editor;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 
-$document = JFactory::getDocument();
+$document = Factory::getDocument();
 $document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/css/fieldtypes.css" rel="stylesheet">');
 $document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/css/modal.css" rel="stylesheet">');
 $document->addCustomTag('<script src="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/js/ajax.js"></script>');

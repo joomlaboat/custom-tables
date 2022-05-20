@@ -57,7 +57,7 @@ class Value
 		$this->field = new Field($this->ct,$fieldrow,$row);
 		
 		$rfn = $this->field->realfieldname;
-		$rowValue = isset($row[$rfn]) ? $row[$rfn] : null;
+		$rowValue = $row[$rfn] ?? null;
 			
 		switch($this->field->type)
 		{

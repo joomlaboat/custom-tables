@@ -11,6 +11,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\CT;
+use Joomla\CMS\Factory;
 use Joomla\Registry\Registry;
 
 // import Joomla modelform library
@@ -37,17 +38,6 @@ class CustomtablesModelRecords extends JModelAdmin
 	 */
 	public $typeAlias = 'com_customtables.records';
 
-	/**
-	 * Returns a Table object, always creating it
-	 *
-	 * @param   type    $type    The table type to instantiate
-	 * @param   string  $prefix  A prefix for the table class name. Optional.
-	 * @param   array   $config  Configuration array for model. Optional.
-	 *
-	 * @return  JTable  A database object
-	 *
-	 * @since   1.6
-	 */
 	public function getTable($type = 'records', $prefix = 'CustomtablesTable', $config = array())
 	{
 		
@@ -77,12 +67,7 @@ class CustomtablesModelRecords extends JModelAdmin
 	{
 		if (!empty($record->id))
 		{
-			//if ($record->published != -2)
-			//{
-				//return;
-			//}
-
-			$user = JFactory::getUser();
+			$user = Factory::getUser();
 			// The record has been set. Check the record permissions.
 			return $user->authorise('core.delete', 'com_customtables.records.' . $record->id);
 		}
@@ -100,7 +85,7 @@ class CustomtablesModelRecords extends JModelAdmin
 	 */
 	protected function canEditState($record)
 	{
-		$user = JFactory::getUser();
+		$user = Factory::getUser();
 		$recordId = (!empty($record->id)) ? $record->id : 0;
 
 		if ($recordId)
@@ -129,7 +114,7 @@ class CustomtablesModelRecords extends JModelAdmin
 	{
 		// Check specific edit permission then general edit permission.
 
-		return JFactory::getUser()->authorise('core.edit', 'com_customtables.records.'. (isset($data[$key]) ? $data[$key] : 0)) or parent::allowEdit($data, $key);
+		return Factory::getUser()->authorise('core.edit', 'com_customtables.records.'. (isset($data[$key]) ? $data[$key] : 0)) or parent::allowEdit($data, $key);
 	}
 
 	/**

@@ -15,6 +15,7 @@ defined('_JEXEC') or die('Restricted access');
 // import Joomla view library
 //jimport('joomla.application.component.view');
 
+use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\Version;
 
@@ -51,9 +52,8 @@ class CustomtablesViewTables extends JViewLegacy
 		
 		// get input
 		
-		$jinput = JFactory::getApplication()->input;
-		$this->ref = JFactory::getApplication()->input->get('ref', 0, 'word');
-		$this->refid = JFactory::getApplication()->input->get('refid', 0, 'int');
+		$this->ref = Factory::getApplication()->input->get('ref', 0, 'word');
+		$this->refid = Factory::getApplication()->input->get('refid', 0, 'int');
 		$this->referral = '';
 		if ($this->refid)
 		{
@@ -91,8 +91,8 @@ class CustomtablesViewTables extends JViewLegacy
 	 */
 	protected function addToolBar()
 	{
-		JFactory::getApplication()->input->set('hidemainmenu', true);
-		$user = JFactory::getUser();
+		Factory::getApplication()->input->set('hidemainmenu', true);
+		$user = Factory::getUser();
 		$userId	= $user->id;
 		$isNew = $this->item->id == 0;
 
@@ -194,7 +194,7 @@ class CustomtablesViewTables extends JViewLegacy
 		$isNew = ($this->item->id < 1);
 		if (!isset($this->document))
 		{
-			$this->document = JFactory::getDocument();
+			$this->document = Factory::getDocument();
 		}
 		$this->document->setTitle(JText::_($isNew ? 'COM_CUSTOMTABLES_TABLES_NEW' : 'COM_CUSTOMTABLES_TABLES_EDIT'));
 		$this->document->addScript(JURI::root(true)."/administrator/components/com_customtables/views/tables/submitbutton.js");

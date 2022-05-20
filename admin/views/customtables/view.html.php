@@ -13,6 +13,8 @@ defined('_JEXEC') or die('Restricted access');
 
 // import Joomla view library
 jimport('joomla.application.component.view');
+
+use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
 
 /**
@@ -80,7 +82,7 @@ class CustomtablesViewCustomtables extends JViewLegacy
 	 */
 	protected function setDocument()
 	{
-		$document = JFactory::getDocument();
+		$document = Factory::getDocument();
 
 		// add dashboard style sheets
 		$document->addStyleSheet(JURI::root(true)."/components/com_customtables/libraries/customtables/media/css/dashboard.css");

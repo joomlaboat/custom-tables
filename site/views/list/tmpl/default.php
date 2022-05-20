@@ -1,13 +1,17 @@
 <?php
 /**
- * Custom Tables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x Native Component
+ * @package Custom Tables
  * @author Ivan komlev <support@joomlaboat.com>
- * @link http://www.joomlaboat.com
- * @license GNU/GPL
+ * @link https://www.joomlaboat.com
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
 // no direct access
 defined('_JEXEC') or die('Restricted access');
+
+use Joomla\CMS\Factory;
 
 ?>
 
@@ -182,7 +186,7 @@ echo $this->pagination->orderUpIcon( $i, $row->parentid == 0 || $row->parentid =
 	<input type="hidden" name="boxchecked" value="0" />
 	<input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>" />
 	<input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>" />
-	<input type="hidden" name="Itemid" value="<?php echo JFactory::getApplication()->input->get('Itemid',0,'INT'); ?>" />
+	<input type="hidden" name="Itemid" value="<?php echo Factory::getApplication()->input->get('Itemid',0,'INT'); ?>" />
 	
 	<?php echo JHTML::_( 'form.token' ); ?>
 </form>

@@ -73,10 +73,7 @@ class CustomTablesModelList extends JModel
 			$query = 'SELECT m.id' .
 					' FROM #__customtables_options AS m' .
 					' WHERE ' .
-					' LOWER( m.title ) LIKE '.$db->Quote( '%'.$search.'%', false ) .
-
-					//AND
-					$and;
+					' LOWER( m.title ) LIKE '.$db->Quote( '%'.$search.'%', false );
 			$db->setQuery( $query );
 			$search_rows = $db->loadResultArray();
 		}
@@ -256,13 +253,10 @@ class CustomTablesModelList extends JModel
 
 	function setOrder($items)
 	{
-		$jinput = Factory::getApplication()->input;
 		$total		= count( $items );
 		$row 		= JTable::getInstance('List', 'Table');
 
 		$groupings	= array();
-
-
 
 
 		$order		= Factory::getApplication()->input->post->get('order',array(),'array');

@@ -11,6 +11,8 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Factory;
+
 jimport('joomla.form.helper');
 JFormHelper::loadFieldClass('list');
 
@@ -36,7 +38,7 @@ class JFormFieldAnyTables extends JFormFieldList
 	
 	protected function getListOfExistingTables()
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		if($db->serverType == 'postgresql')
 		{
@@ -53,7 +55,7 @@ class JFormFieldAnyTables extends JFormFieldList
 		}
 		else
 		{
-			$conf = JFactory::getConfig();
+			$conf = Factory::getConfig();
 			$database = $conf->get('db');
 			
 

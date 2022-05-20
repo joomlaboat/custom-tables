@@ -1,9 +1,11 @@
 <?php
 /**
- * Custom Tables Joomla! 3.x Native Component
- * @author JoomlaBoat.com <support@joomlaboat.com>
- * @link http://joomlaboat.com
- * @license GNU/GPL
+ * CustomTables Joomla! 3.x Native Component
+ * @package Custom Tables
+ * @author Ivan komlev <support@joomlaboat.com>
+ * @link https://www.joomlaboat.com
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
 namespace CustomTables;
@@ -27,8 +29,8 @@ JHTML::addIncludePath(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPA
 
 class Filtering
 {
-	var $ct;
-	var $PathValue;
+	var CT $ct;
+	var array $PathValue;
 	var $where;
 	var $showpublished;
 	
@@ -54,9 +56,9 @@ class Filtering
 	
 	function addMenuParamFilter()
 	{
-		if($this->ct->Env->menu_params->get( 'filter' ) !== null)
+		if($this->ct->Params->filter !== null)
 		{
-			$filter_string = $this->ct->Env->menu_params->get( 'filter' );
+			$filter_string = $this->ct->Params->filter;
 
 			//Parse using layout, has no effect to layout itself
 			
@@ -81,8 +83,8 @@ class Filtering
 		}
 	}
 	
-	function addWhereExpression(string $param)
-	{
+	function addWhereExpression(string $param): void
+    {
 		if($param == '')
 			return;
 
@@ -230,9 +232,7 @@ class Filtering
 															$comparison_operator='=';
 
 														$c='published'.$comparison_operator.(int)$value;
-
 														$this->PathValue[]='Published '.$comparison_operator.' '.(int)$value;
-														$c=$cArr[0];
 
 														break;
 
@@ -995,6 +995,7 @@ class Filtering
 
 	function getRangeWhere(&$fieldrow,$value)
 	{
+        $db = Factory::getDBO();
 		$fieldTitle=$fieldrow['fieldtitle'.$this->ct->Languages->Postfix];
 
 		if($fieldrow['typeparams']=='date')
@@ -1036,8 +1037,6 @@ class Filtering
 
 		if($from_field=='' and $to_field=='')
 			return '';
-
-		$innerwherearray='';
 
 		if($fieldrow['typeparams']=='date')
 		{
@@ -1089,7 +1088,7 @@ class Filtering
 			$twig = new TwigProcessor($this->ct, '{% autoescape false %}'.$paramwhere.'{% endautoescape %}');
 			$paramwhere = $twig->process();
 			
-			if($this->ct->Env->menu_params->get( 'allowcontentplugins' ))
+			if($this->ct->Params->allowContentPlugins)
 				$paramwhere = JoomlaBasicMisc::applyContentPlugins($paramwhere);
 		}
 		

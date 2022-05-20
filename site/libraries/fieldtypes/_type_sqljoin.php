@@ -11,7 +11,7 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-use \Joomla\CMS\Factory;
+use Joomla\CMS\Factory;
 
 use CustomTables\CT;
 use CustomTables\TwigProcessor;
@@ -21,8 +21,6 @@ class CT_FieldTypeTag_sqljoin
 	//New function
 	public static function resolveSQLJoinTypeValue(&$field, $layoutcode, $listing_id, array $options)
 	{
-		$db = Factory::getDBO();
-		
 		$ct = new CT;
 		$ct->getTable($field->params[0]);
 
@@ -64,7 +62,7 @@ class CT_FieldTypeTag_sqljoin
 		$esr_filter='';
 		
 		//Old method - slow
-		$result = JHTML::_('ESSQLJoinView.render',$listing_id,$esr_table,$esr_field,$esr_filter,$ct->Languages->Postfix,'');
+		$result = JHTML::_('ESSQLJoinView.render',$listing_id,$esr_table,$esr_field,$esr_filter);
 
 		//New method - fast and secure
 		$join_ct = new CT;

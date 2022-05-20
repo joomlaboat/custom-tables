@@ -15,6 +15,7 @@ namespace CustomTables;
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Exception;
 use JoomlaBasicMisc;
 use Joomla\CMS\Factory;
 
@@ -216,7 +217,7 @@ class Layouts
         {
 			@file_put_contents($path.DIRECTORY_SEPARATOR.$filename, $data['layoutcode']);
 		}
-        catch (RuntimeException $e)
+        catch (Exception $e)
         {
 			$msg=$e->getMessage();
 		}
@@ -225,7 +226,7 @@ class Layouts
         {
 			@$file_ts=filemtime ($path.DIRECTORY_SEPARATOR.$filename);
 		}
-        catch (RuntimeException $e)
+        catch (Exception $e)
         {
 			$msg=$e->getMessage();
 			$file_ts='';

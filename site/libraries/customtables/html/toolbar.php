@@ -147,8 +147,8 @@ class RecordToolbar
 		if($this->jinput->get('tmpl','','CMD')!='')
 			$editlink.='&tmpl='.$this->jinput->get('tmpl','','CMD');
 			
-		if($this->ct->Env->Itemid>0)
-			$editlink.='&amp;Itemid='.$this->ct->Env->Itemid;
+		if($this->ct->Env->ItemId>0)
+			$editlink.='&amp;Itemid='.$this->ct->Env->ItemId;
 
 		$a = '';
 		if($isModal)
@@ -183,8 +183,8 @@ class RecordToolbar
 			if($this->jinput->get('tmpl','','CMD')!='')
 				$imagemanagerlink.='&tmpl='.$this->jinput->get('tmpl','','CMD');
 
-			if($this->ct->Env->Itemid>0)
-				$imagemanagerlink.='&amp;Itemid='.$this->ct->Env->Itemid;
+			if($this->ct->Env->ItemId>0)
+				$imagemanagerlink.='&amp;Itemid='.$this->ct->Env->ItemId;
 
             $alt = $gallery[1];
 			
@@ -214,8 +214,8 @@ class RecordToolbar
 			if($this->jinput->get('tmpl','','CMD')!='')
 				$filemanagerlink.='&tmpl='.$this->jinput->get('tmpl','','CMD');
 
-			if($this->ct->Env->Itemid>0)
-				$filemanagerlink.='&amp;Itemid='.$this->ct->Env->Itemid;
+			if($this->ct->Env->ItemId>0)
+				$filemanagerlink.='&amp;Itemid='.$this->ct->Env->ItemId;
 
             //$alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FILE_MANAGER').' ('.$filebox[1].')';
 			$alt=$filebox[1];

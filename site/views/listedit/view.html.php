@@ -1,19 +1,29 @@
 <?php
 /**
- * Custom Tables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x Native Component
+ * @package Custom Tables
  * @author Ivan komlev <support@joomlaboat.com>
- * @link http://www.joomlaboat.com
- * @license GNU/GPL
+ * @link https://www.joomlaboat.com
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
+// no direct access
 defined('_JEXEC') or die('Restricted access');
+
+use CustomTables\CT;
+use Joomla\CMS\Factory;
 
 jimport( 'joomla.application.component.view');
 class CustomTablesViewListEdit extends JView
 {
+    var CT $ct;
+
     function display($tpl = null)
     {
-		$mainframe = JFactory::getApplication();
+        $this->ct = new CT;
+
+		$mainframe = Factory::getApplication();
 
 		$this->optionRecord = $this->get('Data');
 		

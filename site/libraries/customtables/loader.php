@@ -59,6 +59,7 @@ function CTLoader($inclide_utilities = false, $include_html = false)
 	$pathDataTypes = $path . 'ct' . DIRECTORY_SEPARATOR;
 	require_once($pathDataTypes.'ct.php');
 	require_once($pathDataTypes.'environment.php');
+    require_once($pathDataTypes.'params.php');
 	
 	$pathDataTypes = $path . 'datatypes' . DIRECTORY_SEPARATOR;
 	require_once($pathDataTypes.'datatypes.php');

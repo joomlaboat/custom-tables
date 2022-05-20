@@ -13,7 +13,9 @@ defined('_JEXEC') or die( 'Restricted access' );
 
 use CustomTables\CT;
 
+use CustomTables\DataTypes\Tree;
 use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Factory;
 
 class CustomTablesModelListOfOptions extends JModelList
 {
@@ -27,7 +29,7 @@ class CustomTablesModelListOfOptions extends JModelList
 	{
 		$this->ct = new CT;
 		
-		$mainframe = JFactory::getApplication();
+		$mainframe = Factory::getApplication();
 
 		static $items;
 
@@ -35,7 +37,7 @@ class CustomTablesModelListOfOptions extends JModelList
 			return $items;
 		}
 
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		$context= 'com_customtables.list.';
 
@@ -191,7 +193,7 @@ class CustomTablesModelListOfOptions extends JModelList
 
 	function orderItem($item, $movement)
 	{
-		$row =& JTable::getInstance('List', 'Table');
+		$row = JTable::getInstance('List', 'Table');
 		$row->load( $item );
 
 		if (!$row->move( $movement, ' parentid = '.(int) $row->parentid )) {
@@ -204,10 +206,10 @@ class CustomTablesModelListOfOptions extends JModelList
 	function setOrder($items)
 	{
 		$total		= count( $items );
-		$row 		=& JTable::getInstance('List', 'Table');
+		$row 		= JTable::getInstance('List', 'Table');
 		$groupings	= array();
 		
-		$input	= JFactory::getApplication()->input;
+		$input	= Factory::getApplication()->input;
 		$order = $input->post( 'order',array(),'ARRAY');
 		
 		JArrayHelper::toInteger($order);
@@ -257,7 +259,7 @@ class CustomTablesModelListOfOptions extends JModelList
 				$this->_addChildren($id, $ids);
 			}
 
-			$db = JFactory::getDBO();
+			$db = Factory::getDBO();
 			
 			// Delete the menu items
 			$where = 'WHERE id = ' . implode( ' OR id = ', $ids );
@@ -274,7 +276,7 @@ class CustomTablesModelListOfOptions extends JModelList
 		$return = true;
 
 		// Get all rows with parentid of $id
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		$query = 'SELECT id' .
 				' FROM #__customtables_options' .
 				' WHERE parentid = '.(int) $id;
@@ -315,7 +317,7 @@ class CustomTablesModelListOfOptions extends JModelList
 	function _rebuildSubLevel($cid = array(0), $level = 0)
 	{
 		JArrayHelper::toInteger($cid, array(0));
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		$ids = implode( ',', $cid );
 		$cids = array();
 		if($level == 0) {
@@ -353,7 +355,7 @@ class CustomTablesModelListOfOptions extends JModelList
 
 	function copyItem($cid)
 	{
-	    $item =& $this->getTable();
+	    $item = $this->getTable();
 
 	    foreach( $cid as $id )
 	    {
@@ -362,11 +364,11 @@ class CustomTablesModelListOfOptions extends JModelList
 			$item->optionname 	= 'Copy of '.$item->optionname;
 
 			if (!$item->check()) {
-				JFactory::getApplication()->enqueueMessage($item->getError(), 'error');
+				Factory::getApplication()->enqueueMessage($item->getError(), 'error');
 			}
 
 			if (!$item->store()) {
-				JFactory::getApplication()->enqueueMessage($item->getError(), 'error');
+				Factory::getApplication()->enqueueMessage($item->getError(), 'error');
 			}
 			$item->checkin();
 	    }
@@ -375,7 +377,7 @@ class CustomTablesModelListOfOptions extends JModelList
 
 	function RefreshFamily()
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		$query="SELECT id, optionname FROM #__customtables_options";// WHERE parentid!=0";
 		$db->setQuery( $query );
@@ -383,7 +385,7 @@ class CustomTablesModelListOfOptions extends JModelList
 		$rows = $db->loadObjectList();
 		foreach($rows as $row)
 		{
-			$familytreestr=$es->getFamilyTreeString($row->id,0);
+			$familytreestr=Tree::getFamilyTreeString($row->id,0);
 			if($familytreestr!='')
 				$familytreestr=','.$familytreestr.'.'.$row->optionname.'.';
 			else

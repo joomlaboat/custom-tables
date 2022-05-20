@@ -52,8 +52,6 @@ class JHTMLCTTableJoin
 	
 	protected static function processValue(&$filter,&$parent_id,&$js_filters,&$js_filters_selfparent)
 	{
-		$db = Factory::getDBO();
-		
 		for($i = count($filter) - 1;$i >= 0; $i--)
 		{
 			$flt = $filter[$i];
@@ -109,6 +107,7 @@ class JHTMLCTTableJoin
 	protected static function getParentFieltrID(&$temp_ct,$parent_id,$join_to_tablename)
 	{
 		$db = Factory::getDBO();
+        $join_realfieldname = '';
 		
 		foreach($temp_ct->Table->fields as $fld)
 		{
@@ -119,16 +118,16 @@ class JHTMLCTTableJoin
 
 				if($join_tablename == $join_to_tablename)
 				{
-					$join_realdfieldname = $fld['realfieldname'];
+					$join_realfieldname = $fld['realfieldname'];
 					break;
 				}
 			}
 		}
 			
-		if($join_realdfieldname=='')
+		if($join_realfieldname=='')
 			return null;
 			
-		$query = 'SELECT '.$join_realdfieldname.' FROM '.$temp_ct->Table->realtablename.' WHERE '
+		$query = 'SELECT '.$join_realfieldname.' FROM '.$temp_ct->Table->realtablename.' WHERE '
 			.$temp_ct->Table->realidfieldname.'='.$db->quote($parent_id).' LIMIT 1';
 			
 		$db->setQuery( $query );
@@ -136,9 +135,7 @@ class JHTMLCTTableJoin
 		if(count($recs)==0)
 			return null;
 
-		$parent_id = $recs[0][$join_realdfieldname];
-		
-		return $parent_id;
+        return $recs[0][$join_realfieldname];
 	}
 	
 	protected static function parseTagArguments(&$option_list,&$filter)
@@ -202,7 +199,7 @@ class JHTMLCTTableJoin
 				
 				if($temp_ct->Table->tablename=='')
 				{
-					JFactory::getApplication()->enqueueMessage('Dynamic filter field "'.$type_params[3].'" : Table "' . $temp_ct->Table->tablename . '" not found.','error');
+					Factory::getApplication()->enqueueMessage('Dynamic filter field "'.$type_params[3].'" : Table "' . $temp_ct->Table->tablename . '" not found.','error');
 					return '';
 				}
 				

@@ -77,7 +77,7 @@ class Twig_Record_Tags
 		else
 			$view_link .= '&listing_id='.$this->ct->Table->record[$this->ct->Table->realidfieldname];
 
-		$view_link .= '&Itemid=' . ($menu_item_id == 0 ? $this->ct->Env->Itemid : $menu_item_id);
+		$view_link .= '&Itemid=' . ($menu_item_id == 0 ? $this->ct->Env->ItemId : $menu_item_id);
 
 		$view_link=JoomlaBasicMisc::deleteURLQueryOption($view_link, 'returnto');
 

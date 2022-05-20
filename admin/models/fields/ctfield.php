@@ -12,6 +12,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\DataTypes;
+use Joomla\CMS\Factory;
 
 jimport('joomla.form.helper');
 JFormHelper::loadFieldClass('list');
@@ -31,7 +32,7 @@ class JFormFieldCTField extends JFormFieldList
 	public function getOptions($add_empty_option = true)//$name, $value, &$node, $control_name)
 	{
 		// Get a db connection.
-		$db = JFactory::getDbo();
+		$db = Factory::getDbo();
 
 		// Create a new query object.
 		$query = $db->getQuery(true);

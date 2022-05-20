@@ -23,7 +23,7 @@ if($this->version >= 4)
 	HTMLHelper::_('behavior.keepalive');
 }
 
-$document = JFactory::getDocument();
+$document = Factory::getDocument();
 $document->addStyleSheet(JURI::root(true)."/components/com_customtables/libraries/customtables/media/css/style.css");
 
 CTViewEdit($this->ct, $this->row, $this->pagelayout, true, $this->formLink,'adminForm');

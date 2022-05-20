@@ -18,6 +18,7 @@ JHtml::_('dropdown.init');
 JHtml::_('formbehavior.chosen', 'select');
 
 use CustomTables\Integrity\IntegrityFields;
+use Joomla\CMS\Factory;
 
 if ($this->saveOrder && !empty($this->items))
 {
@@ -25,7 +26,7 @@ if ($this->saveOrder && !empty($this->items))
 	JHtml::_('sortablelist.sortable', 'fieldsList', 'adminForm', strtolower($this->listDirn), $saveOrderingUrl);
 }
 
-$input	= JFactory::getApplication()->input;
+$input	= Factory::getApplication()->input;
 
 if($input->getCmd('extratask','')=='updateimages')
 {

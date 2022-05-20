@@ -17,6 +17,7 @@ jimport('joomla.installer.helper');
 
 use CustomTables\CT;
 use CustomTables\IntegrityChecks;
+use Joomla\CMS\Factory;
 
 /**
  * Script File of Customtables Component
@@ -56,7 +57,7 @@ class com_customtablesInstallerScript
 	function preflight($type, $parent)
 	{
 		// get application
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		// is redundant ...hmmm
 		if ($type == 'uninstall')
 		{
@@ -87,12 +88,12 @@ class com_customtablesInstallerScript
 	function postflight($type, $parent)
 	{
 		// get application
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		// set the default component settings
 		if ($type == 'install')
 		{
 			// Install the global extenstion assets permission.
-			$db = JFactory::getDbo();
+			$db = Factory::getDbo();
 			$query = $db->getQuery(true);
 			// Field to update.
 			$fields = array(
@@ -149,45 +150,5 @@ class com_customtablesInstallerScript
 			if(count($result)>0)
 				echo '<ol><li>'.implode('</li><li>',$result).'</li></ol>';
 		}
-			
-		//if(!$ct->Env->advancedtagprocessor)
-			//$this->hideCategorySubMenu();
 	}
-	/*
-	function hideCategorySubMenu()
-	{
-		$db = JFactory::getDbo();
-        $query = $db->getQuery(true);
-
-        $fields = array(
-            //$db->quoteName('published') . ' = 0',
-			$db->quoteName('client_id') . ' = 99' //imposible client id to hide the menu item
-        );
-
-        $conditions = array(
-            $db->quoteName('alias') . ' = ' . $db->quote('com-customtables-submenu-listofcategories'), 
-            $db->quoteName('link') . ' = ' . $db->quote('index.php?option=com_customtables&view=listofcategories'),
-        );
-	
-        $query->update($db->quoteName('#__menu'))->set($fields)->where($conditions);
-
-        $db->setQuery($query);   
-        $db->execute();     
-	}
-	
-	function deleteCategorySubMenu()
-	{
-		$db = JFactory::getDbo();
-        
-        $conditions = array(
-            $db->quoteName('alias') . ' = ' . $db->quote('com-customtables-submenu-listofcategories'), 
-            $db->quoteName('link') . ' = ' . $db->quote('index.php?option=com_customtables&view=listofcategories'),
-        );
-	
-        $query= 'DELETE FROM #__menu WHERE '.implode(' AND ',$conditions);
-
-        $db->setQuery($query);   
-        $db->execute();     
-	}
-	*/
 }

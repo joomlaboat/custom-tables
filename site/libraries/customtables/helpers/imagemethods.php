@@ -1,12 +1,16 @@
 <?php
 /**
- * Custom Tables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x Native Component
+ * @package Custom Tables
  * @author Ivan komlev <support@joomlaboat.com>
- * @link http://www.joomlaboat.com
- * @license GNU/GPL
+ * @link https://www.joomlaboat.com
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
 // no direct access
+use Joomla\CMS\Factory;
+
 defined('_JEXEC') or die('Restricted access');
 
 class CustomTablesImageMethods
@@ -159,7 +163,7 @@ class CustomTablesImageMethods
 		$imagegalleryprefix='g';
 
 		//delete gallery images if exist
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		//check if table exists
 		$query = 'SHOW TABLES LIKE "'.$gallery_table_name.'"';
@@ -197,7 +201,7 @@ class CustomTablesImageMethods
 		//check if the image has child or not
 		if($realtablename!='-options')
 		{
-			$db = JFactory::getDBO();
+			$db = Factory::getDBO();
 
 			if($ExistingImage=='')
 				$ExistingImage=0;
@@ -250,7 +254,7 @@ class CustomTablesImageMethods
 
 	function DeleteCustomImages($realtablename, $realfieldname, $ImageFolder, $imageparams, $realidfield, $deleteOriginals=false)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		$query = 'SELECT '.$realfieldname.' FROM '.$realtablename.' WHERE '.$realfieldname.'>0';
 
 		$db->setQuery( $query );
@@ -285,7 +289,7 @@ class CustomTablesImageMethods
 	function CreateNewCustomImages($realtablename, $realfieldname, $ImageFolder, $params, $startindex, $step, $realidfield)
 	{
 		$count=0;
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		$query = 'SELECT '.$realfieldname.' FROM '.$realtablename.' WHERE '.$realfieldname.'>0';
 		$db->setQuery( $query );
@@ -394,11 +398,11 @@ class CustomTablesImageMethods
 	{
 		//$realtablename = '-options'
 		
-		if(is_object('JFactory::getApplication()'))
-			$jinput = JFactory::getApplication()->input;
+		if(is_object('Factory::getApplication()'))
+			$jinput = Factory::getApplication()->input;
 		else
 			$jinput = null;
-			
+
 		if($image_file_id!='')
 		{
 			$additional_params='';
@@ -410,8 +414,8 @@ class CustomTablesImageMethods
 			else
 				$uploadedfile = $image_file_id;
 		
-			if(is_object('JFactory::getApplication()'))		
-				$is_base64encoded = JFactory::getApplication()->input->get('base64encoded','','CMD');
+			if(is_object('Factory::getApplication()'))		
+				$is_base64encoded = Factory::getApplication()->input->get('base64encoded','','CMD');
 			else
 				$is_base64encoded = '';
 				
@@ -582,7 +586,7 @@ class CustomTablesImageMethods
 
 		if($fileExtension == '')
 		{
-			//JFactory::getApplication()->enqueueMessage('File type ('.$fileExtension.') not supported.', 'error');
+			//Factory::getApplication()->enqueueMessage('File type ('.$fileExtension.') not supported.', 'error');
 			return -1;
 		}
 
@@ -592,7 +596,7 @@ class CustomTablesImageMethods
 		//Check if destination file already exists
 		if(file_exists($dst)) //Just in case
 		{
-			//JFactory::getApplication()->enqueueMessage('File with the same name ('.$dst.') already exists.', 'error');
+			//Factory::getApplication()->enqueueMessage('File with the same name ('.$dst.') already exists.', 'error');
 			return 2;
 		}
 	

@@ -11,6 +11,8 @@
 namespace CustomTables;
  
 // no direct access
+use Joomla\CMS\Factory;
+
 defined('_JEXEC') or die('Restricted access');
 
 class Tables
@@ -34,7 +36,7 @@ class Tables
 		
 		if($this->ct->Table->tablename=='')
 		{
-			JFactory::getApplication()->enqueueMessage('Table not found.', 'error');
+			Factory::getApplication()->enqueueMessage('Table not found.', 'error');
 			return false;
 		}
 		
@@ -65,7 +67,7 @@ class Tables
 		
 		if($this->ct->Table->tablename=='')
 		{
-			JFactory::getApplication()->enqueueMessage('Table not found.', 'error');
+			Factory::getApplication()->enqueueMessage('Table not found.', 'error');
 			return null;
 		}
 		

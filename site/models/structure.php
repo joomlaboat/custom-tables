@@ -50,9 +50,7 @@ class CustomTablesModelStructure extends JModel
 		
 		$app = Factory::getApplication();
 		$params=$app->getParams();
-	
-		$this->ct->Env->menu_params = $params;
-		
+
 		if($this->ct->Env->jinput->get('establename','','CMD'))
 			$this->establename=$this->ct->Env->jinput->get('establename','','CMD');
 		else

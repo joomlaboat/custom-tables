@@ -1,9 +1,11 @@
 <?php
 /**
- * Custom Tables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x Native Component
+ * @package Custom Tables
  * @author Ivan komlev <support@joomlaboat.com>
- * @link http://www.joomlaboat.com
- * @license GNU/GPL
+ * @link https://www.joomlaboat.com
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
 // no direct access
@@ -11,6 +13,7 @@ defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\CT;
 
+use CustomTables\Field;
 use \Joomla\CMS\Factory;
 
 jimport('joomla.application.component.model');
@@ -141,7 +144,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy
 			if(!(strpos($mFld['type'],'multi')===false))
 				$titlefield.=$this->ct->Languages->Postfix;
 
-			if($row[$titlefield]!='')
+			if($this->row[$titlefield]!='')
 			{
 				$this->Listing_Title=$this->row[$titlefield];
 				break;

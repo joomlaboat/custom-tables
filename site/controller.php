@@ -11,11 +11,13 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Factory;
+
 class CustomTablesController extends JControllerLegacy
 {
 	function display($cachable = false, $urlparams = array())
 	{
-		$jinput=JFactory::getApplication()->input;
+		$jinput=Factory::getApplication()->input;
 		if($jinput->getString( 'file' )!='')
 		{
 			//Load file instead

@@ -53,7 +53,6 @@ trait render_csv
         $result=str_replace('&&&&quote&&&&','"',$result);
 		
 		//Initiate the file output
-		//$filename = JoomlaBasicMisc::makeNewFileName($ct->Env->menu_params->get('page_title'),'csv');
 
 		$result= strip_tags($result);
 		$result.= strip_tags(self::renderCSVoutput($ct,$layoutType));
@@ -98,7 +97,7 @@ trait render_csv
         return $tablecontent;
 	}
 
-	public static function get_CatalogTable_singleline_CSV(&$ct,$allowcontentplugins,$layout)
+	public static function get_CatalogTable_singleline_CSV(&$ct,$layoutType,$layout)
 	{
 		if (ob_get_contents())
 			ob_clean();

@@ -57,7 +57,7 @@ if ($this->ct->Env->legacysupport) {
 $twig = new TwigProcessor($this->ct, $this->pagelayout);
 $this->pagelayout = $twig->process();
 
-if ($this->ct->Env->menu_params->get('allowcontentplugins'))
+if($this->ct->Params->allowContentPlugins)
     JoomlaBasicMisc::applyContentPlugins($this->pagelayout);
 
 if ($this->layoutType != 9) //not CSV layout
@@ -74,7 +74,7 @@ $this->pagelayout = str_replace($this->catalogTableCode, $catalogTableContent, $
 if (ob_get_contents())
     ob_end_clean();
 
-$filename = JoomlaBasicMisc::makeNewFileName($this->ct->Env->menu_params->get('page_title'), 'csv');
+$filename = JoomlaBasicMisc::makeNewFileName($this->ct->Params->pageTitle, 'csv');
 header('Content-Disposition: attachment; filename="' . $filename . '"');
 header('Content-Type: text/csv; charset=utf-16');
 header("Pragma: no-cache");

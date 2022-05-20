@@ -9,6 +9,8 @@
  **/
 
 // Check to ensure this file is included in Joomla!
+use Joomla\CMS\Factory;
+
 defined('_JEXEC') or die( 'Restricted access' );
 
 class JHTMLESUserGroupView
@@ -16,7 +18,7 @@ class JHTMLESUserGroupView
     public static function render($value,$field='')
     {
 		
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 				
 		$query = $db->getQuery(true);
 		$query->select('#__usergroups.title AS name');

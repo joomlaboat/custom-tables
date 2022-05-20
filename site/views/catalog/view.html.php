@@ -12,26 +12,20 @@
 defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\CT;
+use CustomTables\Catalog;
 use CustomTables\Layouts;
 use Joomla\CMS\Factory;
 
 class CustomTablesViewCatalog extends JViewLegacy
 {
-    var $Model;
     var CT $ct;
-    var $listing_id;
-    var int $layoutType = 0;
+    var string $listing_id;
+    var Catalog $catalog;
     var string $catalogTableCode;
-    var string $pagelayout;
-    var string $itemlayout;
 
     function display($tpl = null)
     {
-        $this->itemlayout = '';
-
-        $this->Model = $this->getModel();
-
-        $this->ct = $this->Model->ct;
+        $this->ct = new CT;
 
         $key = $this->ct->Env->jinput->getCmd('key');
         if ($key != '')
@@ -42,9 +36,7 @@ class CustomTablesViewCatalog extends JViewLegacy
 
     function renderTableJoinSelectorJSON($key)
     {
-        $db = Factory::getDBO();
-
-        $index = $this->Model->ct->Env->jinput->getInt('index');
+        $index = $this->ct->Env->jinput->getInt('index');
         $selectors = (array)$this->ct->app->getUserState($key);
 
         if ($index < 0 or $index >= count($selectors))
@@ -91,7 +83,7 @@ class CustomTablesViewCatalog extends JViewLegacy
                         if ($subFilter == '')
                             $additional_where = '(' . $fld['realfieldname'] . ' IS NULL OR ' . $fld['realfieldname'] . '="")';
                         else
-                            $additional_where = $fld['realfieldname'] . '=' . $db->quote($subFilter);
+                            $additional_where = $fld['realfieldname'] . '=' . $this->ct->db->quote($subFilter);
                     }
                 }
             }
@@ -129,68 +121,22 @@ class CustomTablesViewCatalog extends JViewLegacy
                 $fieldname_or_layout_tag = $fieldname_or_layout;
         }
 
-        $itemlayout = '{"id":"{{ record.id }}","label":"' . $fieldname_or_layout_tag . '"}';
-
-        $this->pagelayout = '[{% block record %}'.$itemlayout.',{% endblock %}{}]';
+        $itemLayout = '{"id":"{{ record.id }}","label":"' . $fieldname_or_layout_tag . '"}';
+        $this->ct->Params->pageLayout = '[{% block record %}'.$itemLayout.',{% endblock %}{}]';
 
         $paramsArray['establename'] = $tablename;
 
-        $_params = new JRegistry;
-        $_params->loadArray($paramsArray);
-        $this->ct->Env->menu_params = $_params;
+        $params = new JRegistry;
+        $params->loadArray($paramsArray);
+        $this->ct->setParams($params);
 
         require_once('tmpl' . DIRECTORY_SEPARATOR . 'json.php');
     }
 
     function renderCatalog($tpl): bool
     {
-        $menu_params = null;
-        $this->Model->load($menu_params, false, Factory::getApplication()->input->getCMD('layout', ''));
-
-        $jinput = Factory::getApplication()->input;
-
-        $addition_filter = '';
-        $this->listing_id = $jinput->getCmd("listing_id", '');
-        if ($this->listing_id != '')
-            $addition_filter = $this->ct->Table->realidfieldname . '=' . $this->listing_id;
-
-        $this->Model->getSearchResult($addition_filter);
-
-        if (!isset($this->ct->Table->fields))
-            return false;
-
-        //Save view log
-        $allowed_fields = $this->SaveViewLog_CheckIfNeeded();
-        if (count($allowed_fields) > 0 and $this->ct->Records !== null) {
-            foreach ($this->ct->Records as $rec)
-                $this->SaveViewLogForRecord($rec, $allowed_fields);
-        }
-
-        if ($this->ct->Env->legacysupport)
-            $this->catalogTableCode = JoomlaBasicMisc::generateRandomString();//this is temporary replace placeholder. to not parse content result again
-
-        $Layouts = new Layouts($this->ct);
-
-        $this->pagelayout = '';
-        $layout_catalog_name = $this->ct->Env->menu_params->get('escataloglayout');
-        if ($layout_catalog_name != '') {
-            $this->pagelayout = $Layouts->getLayout($layout_catalog_name, false);//It is safer to process layout after rendering the table
-
-            if ($Layouts->layouttype == 8)
-                $this->ct->Env->frmt = 'xml';
-            elseif ($Layouts->layouttype == 9)
-                $this->ct->Env->frmt = 'csv';
-            elseif ($Layouts->layouttype == 10)
-                $this->ct->Env->frmt = 'json';
-
-            $this->layoutType = $Layouts->layouttype;
-        } else
-            $this->pagelayout = '{catalog:,notable}';
-
-        $this->itemlayout = '';
-        $layout_item_name = $this->ct->Env->menu_params->get('esitemlayout');
-        if ($layout_item_name != '')
-            $this->itemlayout = $Layouts->getLayout($layout_item_name);
+        $this->ct->setParams(null,false);
+        $this->catalog = new Catalog($this->ct); //$params is the parameter passed by joomla to the module, it contains module settings
 
         if ($this->ct->Env->frmt == 'csv') {
             if (function_exists('mb_convert_encoding')) {
@@ -204,11 +150,19 @@ class CustomTablesViewCatalog extends JViewLegacy
 				extension=mbstring<br/><br/>
 				Then restart your webs\' server. Example:<br/>service apache2 restart';
 
-                Factory::getApplication()->enqueueMessage($msg, 'error');
+                $this->ct->app->appenqueueMessage($msg, 'error');
             }
         } else {
             parent::display($tpl);
         }
+
+        //Save view log
+        $allowed_fields = $this->SaveViewLog_CheckIfNeeded();
+        if (count($allowed_fields) > 0 and $this->ct->Records !== null) {
+            foreach ($this->ct->Records as $rec)
+                $this->SaveViewLogForRecord($rec, $allowed_fields);
+        }
+
         return true;
     }
 
@@ -227,10 +181,10 @@ class CustomTablesViewCatalog extends JViewLegacy
         }
 
         if (count($update_fields) > 0) {
-            $db = Factory::getDBO();
+
             $query = 'UPDATE ' . $this->ct->Table->realtablename . ' SET ' . implode(', ', $update_fields) . ' WHERE id=' . $rec[$this->ct->Table->realidfieldname];
-            $db->setQuery($query);
-            $db->execute();
+            $this->ct->db->setQuery($query);
+            $this->ct->db->execute();
         }
     }
 

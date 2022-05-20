@@ -22,15 +22,13 @@ JHtml::_('bootstrap.popover');
 
 use Joomla\CMS\Session\Session;
 
-if (!$this->BlockExternalVars and $this->ct->Env->menu_params->get('show_page_heading', 1 ) )
-	$response_object['page_title'] = JoomlaBasicMisc::JTextExtended($this->ct->Env->menu_params->get( 'page_title' ));
+if (!$this->ct->Params->blockExternalVars and $this->ct->Params->showPageHeading )
+	$response_object['page_title'] = JoomlaBasicMisc::JTextExtended($this->ct->Params->pageTitle);
 
 if (ob_get_contents())
       	ob_end_clean();
-		
 
 	//Calendars of the child should be built again, because when Dom was ready they didn't exist yet.
-	//$calendars=array();
 
 	if(isset($this->row[$this->ct->Table->realidfieldname]))
 		$listing_id=(int)$this->row[$this->ct->Table->realidfieldname];
@@ -47,14 +45,7 @@ if (ob_get_contents())
 
 	$response_object=[];
 
-	$returnto='';
-
-	if(JFactory::getApplication()->input->get('returnto','','BASE64'))
-		$returnto=base64_decode(JFactory::getApplication()->input->get('returnto','','BASE64'));
-	elseif($this->params->get( 'returnto' ))
-		$returnto=$this->params->get( 'returnto' );
-
-	$encoded_returnto=base64_encode ($returnto);
+	$encoded_returnto=base64_encode ($this->ct->Params->returnTo);
 
 	if($listing_id==0)
 	{
@@ -66,7 +57,7 @@ if (ob_get_contents())
 	$response_object['returnto'] = $encoded_returnto;
 	$response_object['token'] = Session::getFormToken();
 
-	$filename = JoomlaBasicMisc::makeNewFileName($this->ct->Env->menu_params->get('page_title'),'json');
+	$filename = JoomlaBasicMisc::makeNewFileName($this->ct->Params->pageTitle,'json');
 
     header('Content-Disposition: attachment; filename="'.$filename.'"');
     header('Content-Type: application/json; charset=utf-8');

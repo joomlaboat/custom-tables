@@ -16,7 +16,7 @@ trait render_xlsx
 
     protected static function get_CatalogTable_XLSX(&$ct,$fields)
 	{
-		$filename = JoomlaBasicMisc::makeNewFileName($ct->Env->menu_params->get('page_title'),'xlsx');
+		$filename = JoomlaBasicMisc::makeNewFileName($ct->Params->pageTitle,'xlsx');
 
         if (ob_get_contents()) ob_end_clean();
         /** Include PHPExcel */
@@ -29,7 +29,7 @@ trait render_xlsx
         $fields=str_replace("\n",'',$fields);
 		$fields=str_replace("\r",'',$fields);
 
-		$fieldarray=JoomlaBasicMisc::csv_explode(',', $fields, '"', true);
+		$fieldArray=JoomlaBasicMisc::csv_explode(',', $fields, '"', true);
 
         $sheet_name=$ct->Env->menu_params->get('menu-anchor_title');
 
@@ -47,23 +47,22 @@ trait render_xlsx
 
 		if (ob_get_contents()) ob_end_clean();
 
-		$allrecords=array();
+		$allRecords=array();
 
         $column=0;
-        foreach($fieldarray as $field)
+        foreach($fieldArray as $field)
 		{
 
-			$fieldpair=JoomlaBasicMisc::csv_explode(':', $field, '"', false);
-
+			$fieldPair=JoomlaBasicMisc::csv_explode(':', $field, '"', false);
 
             $pos=ESCustomCatalogLayout::num2alpha($column).'1';
 
-            $value= $fieldpair[0];
+            $value= $fieldPair[0];
 
-			$value=JoomlaBasicMisc::strip_tags_content($value, '<center><p><br><i><u><b><span>', FALSE);
+			$value=JoomlaBasicMisc::strip_tags_content($value, '<p><br><i><u><b><span>', FALSE);
 
 			$value=strip_tags($value);//, '<center><p><br><i><u><b><span>');
-			$this->simpleHTMLcorrections($value);
+			self::simpleHTMLcorrections($value);
 
 
 		        $richText = $value;//$wizard->toRichTextObject($value);
@@ -73,7 +72,7 @@ trait render_xlsx
 
 			// Output Rows
 
-			$recordline=str_replace('|(','{',$fieldpair[1]);
+			$recordline=str_replace('|(','{',$fieldPair[1]);
 			$recordline=str_replace(')|','}',$recordline);
 			$recordline=str_replace('\'','"',$recordline);
 			$recordline=str_replace('&&&&quote&&&&','"',$recordline);
@@ -87,22 +86,22 @@ trait render_xlsx
 			{
 				$htmlresult=$LayoutProc->fillLayout($row);
 
-				$htmlresult=JoomlaBasicMisc::strip_tags_content($htmlresult, '<a><center><p><br><i><u><b><span>', FALSE);
+				$htmlresult=JoomlaBasicMisc::strip_tags_content($htmlresult, '<a><p><br><i><u><b><span>', FALSE);
 				$htmlresult=strip_tags($htmlresult);//, '<center><p><br><i><u><b><span>');
 
 				$records[]=$htmlresult;//$richText;
 
 			}
-			$allrecords[]=$records;
+			$allRecords[]=$records;
 
             $column++;
 		}
 
 		for($r=count($records)-1;$r>=0;$r--)
 		{
-			for($c=count($allrecords)-1;$c>=0;$c--)
+			for($c=count($allRecords)-1;$c>=0;$c--)
 			{
-				$objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($c, $r+2, $allrecords[$c][$r]);
+				$objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($c, $r+2, $allRecords[$c][$r]);
 			}
 		}
 

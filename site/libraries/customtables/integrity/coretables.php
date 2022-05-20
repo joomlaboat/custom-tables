@@ -314,7 +314,6 @@ class IntegrityCoreTables extends \CustomTables\IntegrityChecks
 		//https://dev.mysql.com/doc/refman/5.7/en/innodb-row-format.html
 		
 		$conf = Factory::getConfig();
-		$database = $conf->get('db');
 
 		$db = Factory::getDBO();
 		
@@ -400,7 +399,7 @@ class IntegrityCoreTables extends \CustomTables\IntegrityChecks
 		{
 			$projected_data_type = Fields::getProjectedFieldType($ct_fieldtype, $ct_typeparams);
 		
-			if(!IntegrityFields::compareFieldTypes($existing_field,$projected_data_type))
+			if(!IntegrityFields::compareFieldTypes($exst_field,$projected_data_type))
 			{
 				$PureFieldType = Fields::makeProjectedFieldType($projected_data_type);
 
@@ -417,8 +416,6 @@ class IntegrityCoreTables extends \CustomTables\IntegrityChecks
 	
 	public static function checkCoreTable(&$ct,$realtablename, $projected_fields)
 	{
-		$db = Factory::getDBO();
-		
 		$ExistingFields=Fields::getExistingFields($realtablename, false);
 		
 		foreach($projected_fields as $projected_field)

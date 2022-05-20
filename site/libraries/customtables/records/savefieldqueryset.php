@@ -547,7 +547,7 @@ class SaveFieldQuerySet
 						if(count($this->field->params) == 0)
 							$value=$this->getUserIP(); //Try to get client real IP
 						else
-							$value=$jinput->server->get($this->field->params[0],'','STRING');
+							$value=$this->ct->Env->jinput->server->get($this->field->params[0],'','STRING');
 
 						$this->row[$this->field->realfieldname] = $value;
 						return $this->field->realfieldname.'='.$this->db->Quote($value);
@@ -745,7 +745,7 @@ class SaveFieldQuerySet
 		$value=$this->ct->Env->jinput->getCmd($this->field->comesfieldname,null);
 
 		if(isset($value))
-			return value;
+			return $value;
 
 		return null;
 	}
@@ -851,7 +851,7 @@ class SaveFieldQuerySet
 
 		do
 		{
-			if($this->checkIfAliasExists($listing_id,$value_new,$realfieldname))
+			if($this->checkIfAliasExists($listing_id,$value_new,$this->field->realfieldname))
 			{
 				//increase index
 				$i++;

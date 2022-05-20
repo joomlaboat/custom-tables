@@ -9,6 +9,8 @@
  **/
 
 // no direct access
+use Joomla\CMS\Factory;
+
 defined('_JEXEC') or die('Restricted access');
 
 jimport( 'joomla.application.component.controller' );
@@ -23,7 +25,7 @@ class CustomTablesControllerImportTables extends JControllerForm
 	}
 	function display($cachable = false, $urlparams = array())
 	{
-        $input	= JFactory::getApplication()->input;
+        $input	= Factory::getApplication()->input;
 		$task = $input->getCmd( 'task','');
 
 		if($task=='importtables')
@@ -51,4 +53,3 @@ class CustomTablesControllerImportTables extends JControllerForm
 		}
 	}
 }
-?>

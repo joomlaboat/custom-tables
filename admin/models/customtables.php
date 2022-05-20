@@ -16,20 +16,21 @@ jimport('joomla.application.component.modellist');
 jimport('joomla.application.component.helper');
 
 use CustomTables\CT;
+use Joomla\CMS\Factory;
 
 /**
  * Customtables Model
  */
 class CustomtablesModelCustomtables extends JModelList
 {
-	var $ct;
+	var CT $ct;
 	
 	public function getIcons()
 	{
 		$this->ct = new CT;
 		
 		// load user for access menus
-		$user = JFactory::getUser();
+		$user = Factory::getUser();
 		// reset icon array
 		$icons  = array();
 		// view groups array
@@ -60,10 +61,12 @@ class CustomtablesModelCustomtables extends JModelList
 		foreach($viewGroups as $group => $views)
 		{
 			$i = 0;
+            $url = '';
 			if (CustomtablesHelper::checkArray($views))
 			{
 				foreach($views as $view)
 				{
+                    $action =true;
 					$add = false;
 					// external views (links)
 					if (strpos($view,'||') !== false)
@@ -92,10 +95,11 @@ class CustomtablesModelCustomtables extends JModelList
 							list($type, $name) = $dwd;
 							$action = false;
 						}
-						if ($action)
+
+                        $viewName = $name;
+                        if ($action)
 						{
-							$viewName = $name;
-							switch($action)
+                            switch($action)
 							{
 								case 'add':
 									$url 	= 'index.php?option=com_customtables&view='.$name.'&layout=edit';
@@ -114,8 +118,7 @@ class CustomtablesModelCustomtables extends JModelList
 						}
 						else
 						{
-							$viewName 	= $name;
-							$alt 		= $name;
+                            $alt 		= $name;
 							$url 		= 'index.php?option=com_customtables&view='.$name;
 							$image 		= $name.'.'.$type;
 							$name 		= 'COM_CUSTOMTABLES_DASHBOARD_'.CustomtablesHelper::safeString($name,'U');
@@ -139,7 +142,7 @@ class CustomtablesModelCustomtables extends JModelList
 						$dashboard_list = false;
 						$accessTo = '';
 						$accessAdd = '';
-						// acces checking start
+						// access checking start
 						$accessCreate = (isset($viewAccess[$viewName.'.create'])) ? CustomtablesHelper::checkString($viewAccess[$viewName.'.create']):false;
 						$accessAccess = (isset($viewAccess[$viewName.'.access'])) ? CustomtablesHelper::checkString($viewAccess[$viewName.'.access']):false;
 						// set main controllers
@@ -154,7 +157,7 @@ class CustomtablesModelCustomtables extends JModelList
 						{
 							$accessAdd = 'core.create';
 						}
-						// check if acces to view is set
+						// check if access to view is set
 						if ($accessAccess)
 						{
 							$accessTo = $viewAccess[$viewName.'.access'];

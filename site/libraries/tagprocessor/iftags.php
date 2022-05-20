@@ -11,6 +11,8 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Factory;
+
 class tagProcessor_If
 {
     public static function process(&$ct,&$htmlresult,&$row)
@@ -39,7 +41,7 @@ class tagProcessor_If
 			tagProcessor_If::IFStatment('[_ifnot_published]','[_endifnot_published]',$htmlresult,true);
 		}
 
-		$user = JFactory::getUser();
+		$user = Factory::getUser();
 		$currentuserid=(int)$user->get('id');
 
 		tagProcessor_If::IFUserTypeStatment($htmlresult,$user,$currentuserid);

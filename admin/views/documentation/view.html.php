@@ -1,9 +1,11 @@
 <?php
 /**
  * CustomTables Joomla! 3.x Native Component
- * @author JoomlaBoat.com <support@joomlaboat.com>
- * @link http://www.joomlaboat.com
- * @license GNU/GPL
+ * @package Custom Tables
+ * @author Ivan komlev <support@joomlaboat.com>
+ * @link https://www.joomlaboat.com
+ * @copyright Copyright (C) 2018-2022. All Rights Reserved
+ * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
  
 // No direct access to this file
@@ -12,6 +14,7 @@ defined('_JEXEC') or die('Restricted access');
 // import Joomla view library
 jimport('joomla.application.component.view');
 
+use Joomla\CMS\Factory;
 use Joomla\CMS\Version;
 
 /**
@@ -23,15 +26,16 @@ class CustomtablesViewDocumentation extends JViewLegacy
 	 * display method of View
 	 * @return void
 	 */
-	var $internal_use=false;
+	var bool $internal_use=false;
+    var float $version;
 	
 	public function display($tpl = null)
 	{
 		$version = new Version;
-		$this->version = (int)$version->getShortVersion();
+		$this->version = (float)$version->getShortVersion();
 		
 		$this->internal_use=true;
-		$jinput = JFactory::getApplication()->input;
+		$jinput = Factory::getApplication()->input;
 		
 		if($jinput->getCmd('tmpl','') == 'component')
 			$this->internal_use=false;
@@ -65,7 +69,7 @@ class CustomtablesViewDocumentation extends JViewLegacy
 	{
 		if (!isset($this->document))
 		{
-			$this->document = JFactory::getDocument();
+			$this->document = Factory::getDocument();
 		}
 		$this->document->setTitle(JText::_('COM_CUSTOMTABLES_DOCUMENTATION'));
 		$this->document->addStyleSheet(JURI::root(true)."/components/com_customtables/libraries/customtables/media/css/fieldtypes.css");
@@ -480,11 +484,13 @@ class CustomtablesViewDocumentation extends JViewLegacy
 	function renderParametersInternal($params_,$opening_char,$tag_name,$postfix,$closing_char,$hidedefaultexample)
 	{
 		$result='';
+        $example_values=array();
+        $example_values_count=0;
+
 		if($params_ != null)
 		{
 			$params=$params_->param;
-			$example_values=array();
-			$example_values_count=0;
+
 			foreach($params as $param)
 			{
 				$param_att=$param->attributes();
@@ -812,7 +818,8 @@ class CustomtablesViewDocumentation extends JViewLegacy
         if($xml_content!='')
 		{
 			$xml=simplexml_load_string($xml_content) or die('Cannot load or parse "'.$file.'" file.');
+            return $xml;
 		}
-		return $xml;
+		return '';
     }
 }

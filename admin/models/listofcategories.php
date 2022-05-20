@@ -14,6 +14,7 @@ defined('_JEXEC') or die('Restricted access');
 use CustomTables\CT;
 
 use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Factory;
 
 // import the Joomla modellist library
 jimport('joomla.application.component.modellist');
@@ -84,10 +85,8 @@ class CustomtablesModelListofcategories extends JModelList
 	 */
 	protected function getListQuery()
 	{
-		// Get the user object.
-		$user = JFactory::getUser();
 		// Create a new query object.
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 		$query = $db->getQuery(true);
 
 		// Select some fields

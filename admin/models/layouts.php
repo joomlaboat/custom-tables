@@ -12,6 +12,7 @@ defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\CT;
 
+use Joomla\CMS\Factory;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Helper\ContentHelper;
 
@@ -46,31 +47,11 @@ class CustomtablesModelLayouts extends JModelAdmin
 	 */
 	public $typeAlias = 'com_customtables.layouts';
 
-	/**
-	 * Returns a Table object, always creating it
-	 *
-	 * @param   type    $type    The table type to instantiate
-	 * @param   string  $prefix  A prefix for the table class name. Optional.
-	 * @param   array   $config  Configuration array for model. Optional.
-	 *
-	 * @return  JTable  A database object
-	 *
-	 * @since   1.6
-	 */
 	public function getTable($type = 'layouts', $prefix = 'CustomtablesTable', $config = array())
 	{
 		return JTable::getInstance($type, $prefix, $config);
 	}
 
-	/**
-	 * Method to get a single record.
-	 *
-	 * @param   integer  $pk  The id of the primary key.
-	 *
-	 * @return  mixed  Object on success, false on failure.
-	 *
-	 * @since   1.6
-	 */
 	public function getItem($pk = null)
 	{
 		if ($item = parent::getItem($pk))
@@ -89,12 +70,6 @@ class CustomtablesModelLayouts extends JModelAdmin
 				$registry = new Registry;
 				$registry->loadString($item->metadata);
 				$item->metadata = $registry->toArray();
-			}
-
-			if (!empty($item->id))
-			{
-				$item->tags = new JHelperTags;
-				$item->tags->getTagIds($item->id, 'com_customtables.layouts');
 			}
 		}
 
@@ -121,20 +96,18 @@ class CustomtablesModelLayouts extends JModelAdmin
 			return false;
 		}
 
-		$jinput = JFactory::getApplication()->input;
-
 		// The front end calls this model and uses a_id to avoid id clashes so we need to check for that first.
-		if (JFactory::getApplication()->input->get('a_id'))
+		if (Factory::getApplication()->input->get('a_id'))
 		{
-			$id = JFactory::getApplication()->input->get('a_id', 0, 'INT');
+			$id = Factory::getApplication()->input->get('a_id', 0, 'INT');
 		}
 		// The back end uses id so we use that the rest of the time and set it to 0 by default.
 		else
 		{
-			$id = JFactory::getApplication()->input->get('id', 0, 'INT');
+			$id = Factory::getApplication()->input->get('id', 0, 'INT');
 		}
 
-		$user = JFactory::getUser();
+		$user = Factory::getUser();
 
 		// Check for existing item.
 		// Modify the form based on Edit State access controls.
@@ -174,9 +147,9 @@ class CustomtablesModelLayouts extends JModelAdmin
 		if (0 == $id)
 		{
 			// Set redirected field name
-			$redirectedField = JFactory::getApplication()->input->get('ref', null, 'STRING');
+			$redirectedField = Factory::getApplication()->input->get('ref', null, 'STRING');
 			// Set redirected field value
-			$redirectedValue = JFactory::getApplication()->input->get('refid', 0, 'INT');
+			$redirectedValue = Factory::getApplication()->input->get('refid', 0, 'INT');
 			if (0 != $redirectedValue && $redirectedField)
 			{
 				// Now set the local-redirected field default value
@@ -215,7 +188,7 @@ class CustomtablesModelLayouts extends JModelAdmin
 				return;
 			}
 
-			$user = JFactory::getUser();
+			$user = Factory::getUser();
 			// The record has been set. Check the record permissions.
 			return $user->authorise('core.delete', 'com_customtables.layouts.' . (int) $record->id);
 		}
@@ -233,7 +206,7 @@ class CustomtablesModelLayouts extends JModelAdmin
 	 */
 	protected function canEditState($record)
 	{
-		$user = JFactory::getUser();
+		$user = Factory::getUser();
 		$recordId = (!empty($record->id)) ? $record->id : 0;
 
 		if ($recordId)
@@ -262,7 +235,7 @@ class CustomtablesModelLayouts extends JModelAdmin
 	{
 		// Check specific edit permission then general edit permission.
 
-		return JFactory::getUser()->authorise('core.edit', 'com_customtables.layouts.'. ((int) isset($data[$key]) ? $data[$key] : 0)) or parent::allowEdit($data, $key);
+		return Factory::getUser()->authorise('core.edit', 'com_customtables.layouts.'. ((int) isset($data[$key]) ? $data[$key] : 0)) or parent::allowEdit($data, $key);
 	}
 
 	/**
@@ -276,8 +249,8 @@ class CustomtablesModelLayouts extends JModelAdmin
 	 */
 	protected function prepareTable($table)
 	{
-		$date = JFactory::getDate();
-		$user = JFactory::getUser();
+		$date = Factory::getDate();
+		$user = Factory::getUser();
 
 		if (isset($table->name))
 		{
@@ -324,7 +297,7 @@ class CustomtablesModelLayouts extends JModelAdmin
 	protected function loadFormData()
 	{
 		// Check the session for previously entered form data.
-		$data = JFactory::getApplication()->getUserState('com_customtables.edit.layouts.data', array());
+		$data = Factory::getApplication()->getUserState('com_customtables.edit.layouts.data', array());
 
 		if (empty($data))
 		{
@@ -417,7 +390,7 @@ class CustomtablesModelLayouts extends JModelAdmin
 		$done = false;
 
 		// Set some needed variables.
-		$this->user			= JFactory::getUser();
+		$this->user			= Factory::getUser();
 		$this->table			= $this->getTable();
 		$this->tableClassName		= get_class($this->table);
 		$this->contentType		= new JUcmType;
@@ -494,7 +467,7 @@ class CustomtablesModelLayouts extends JModelAdmin
 		if (empty($this->batchSet))
 		{
 			// Set some needed variables.
-			$this->user 		= JFactory::getUser();
+			$this->user 		= Factory::getUser();
 			$this->table 		= $this->getTable();
 			$this->tableClassName	= get_class($this->table);
 			$this->canDo = ContentHelper::getActions('com_customtables', 'layouts');
@@ -636,7 +609,7 @@ class CustomtablesModelLayouts extends JModelAdmin
 		if (empty($this->batchSet))
 		{
 			// Set some needed variables.
-			$this->user		= JFactory::getUser();
+			$this->user		= Factory::getUser();
 			$this->table		= $this->getTable();
 			$this->tableClassName	= get_class($this->table);
 			//$this->canDo		= CustomtablesHelper::getActions('layouts');
@@ -742,7 +715,7 @@ class CustomtablesModelLayouts extends JModelAdmin
 	 */
 	public function save($data)
 	{
-		$input	= JFactory::getApplication()->input;
+		$input	= Factory::getApplication()->input;
 		$filter	= JFilterInput::getInstance();
 
 		// set the metadata to the Item Data

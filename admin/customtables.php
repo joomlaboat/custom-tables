@@ -12,9 +12,11 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Factory;
+
 // Access check.
-if (!JFactory::getUser()->authorise('core.manage', 'com_customtables')) {
-    JFactory::getApplication()->enqueueMessage(JText::_('JERROR_ALERTNOAUTHOR'), 'error');
+if (!Factory::getUser()->authorise('core.manage', 'com_customtables')) {
+    Factory::getApplication()->enqueueMessage(JText::_('JERROR_ALERTNOAUTHOR'), 'error');
 };
 
 $path = JPATH_COMPONENT_SITE . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR;
@@ -32,7 +34,7 @@ jimport('joomla.application.component.controller');
 $controller = JControllerLegacy::getInstance('Customtables');
 
 // Perform the Request task
-$controller->execute(JFactory::getApplication()->input->getCmd('task'));
+$controller->execute(Factory::getApplication()->input->getCmd('task'));
 
 // Redirect if set by the controller
 $controller->redirect();

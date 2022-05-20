@@ -10,6 +10,8 @@
  **/
  
 // No direct access to this file
+use Joomla\CMS\Factory;
+
 defined('_JEXEC') or die('Restricted access');
 
 JHtml::_('behavior.tooltip');
@@ -17,7 +19,7 @@ JHtml::_('behavior.formvalidation');
 JHtml::_('formbehavior.chosen', 'select');
 JHtml::_('behavior.keepalive');
 
-$document = JFactory::getDocument();
+$document = Factory::getDocument();
 $document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/css/style.css" rel="stylesheet">');
 
 ?>
@@ -108,7 +110,7 @@ $document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customt
 					<div class="span12">';
 
 
-			$editor = JFactory::getEditor();
+			$editor = Factory::getEditor();
 
 			$item_array=(array)$this->item;
 			$vlu='';

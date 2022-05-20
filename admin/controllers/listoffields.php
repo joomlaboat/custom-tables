@@ -14,6 +14,7 @@ defined('_JEXEC') or die('Restricted access');
 // import Joomla controlleradmin library
 jimport('joomla.application.component.controlleradmin');
 
+use Joomla\CMS\Factory;
 use Joomla\Utilities\ArrayHelper;
 
 /**
@@ -54,7 +55,7 @@ class CustomtablesControllerListoffields extends JControllerAdmin
 			$table=ESTables::getTableRowByID($tableid);
 			if(!is_object($table) and $table==0)
 			{
-				JFactory::getApplication()->enqueueMessage('Table not found', 'error');
+				Factory::getApplication()->enqueueMessage('Table not found', 'error');
 				return;
 			}
 			else
@@ -63,7 +64,7 @@ class CustomtablesControllerListoffields extends JControllerAdmin
 			}
 		}
 		
-		$cid	= JFactory::getApplication()->input->post->get('cid',array(),'array');
+		$cid	= Factory::getApplication()->input->post->get('cid',array(),'array');
 		$cid = ArrayHelper::toInteger($cid);
 		
 		$ok=true;
@@ -95,7 +96,7 @@ class CustomtablesControllerListoffields extends JControllerAdmin
 		if(count($cid) == 1)
 			$msg.='_1';
 		
-		JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended($msg,count($cid)),'success');
+		Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended($msg,count($cid)),'success');
 
 		// Redirect to the item screen.
 		$this->setRedirect(
@@ -114,7 +115,7 @@ class CustomtablesControllerListoffields extends JControllerAdmin
 			$table=ESTables::getTableRowByID($tableid);
 			if(!is_object($table) and $table==0)
 			{
-				JFactory::getApplication()->enqueueMessage('Table not found', 'error');
+				Factory::getApplication()->enqueueMessage('Table not found', 'error');
 				return;
 			}
 			else
@@ -123,7 +124,7 @@ class CustomtablesControllerListoffields extends JControllerAdmin
 			}
 		}
 		
-		$cid	= JFactory::getApplication()->input->post->get('cid',array(),'array');
+		$cid	= Factory::getApplication()->input->post->get('cid',array(),'array');
 		$cid = ArrayHelper::toInteger($cid);
 		
 		$ok=true;
@@ -149,7 +150,7 @@ class CustomtablesControllerListoffields extends JControllerAdmin
 		if(count($cid) == 1)
 			$msg.='_1';
 		
-		JFactory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended($msg,count($cid)),'success');
+		Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended($msg,count($cid)),'success');
 		
 		// Redirect to the item screen.
 		$this->setRedirect(
@@ -161,7 +162,7 @@ class CustomtablesControllerListoffields extends JControllerAdmin
 	
 	protected function setPublishStatusSingleRecord($id,$status)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		$query = 'UPDATE #__customtables_fields SET published='.(int)$status.' WHERE id='.(int)$id;
 
@@ -173,7 +174,7 @@ class CustomtablesControllerListoffields extends JControllerAdmin
 	
 	protected function deleteSingleRecord($id)
 	{
-		$db = JFactory::getDBO();
+		$db = Factory::getDBO();
 
 		$query = 'DELETE FROM #__customtables_fields WHERE id='.(int)$id;
 

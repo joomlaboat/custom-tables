@@ -34,14 +34,14 @@ In this case, there will be two checks: the first one will check if the record b
 			<field name="deleteusergroups" type="CTUserGroup" default="8" label="Who may delete records" description="Select a user group that may delete records." />
 
 
-			<field type="text" name="customitemid" default="" size="70" label="Custom Itemid" description="" />
+			<field type="text" name="forceitemid" default="0" label="Force Itemid" description="Used to set parameters for edit form etc." />
 			<field type="text" name="listingid" default="" size="70" label="Custom Listing ID" description="" />
 
-			<field type="text" name="returnto" default="" size="70" label="Custom Return To" description="Visitor will be redireced to this link when form is complited. Active value (may include value(s) of field(s) use [fieldname] to get the value) " />
+			<field type="text" name="returnto" default="" size="70" label="Custom Return To" description="Visitor will be redirected to this link when form is completed. Active value (may include value(s) of field(s) use [fieldname] to get the value) " />
 
 			<field type="list" name="guestcanaddnew" default="0" label="Guest can add new records" description="" >
 	                	<option value="1">Guest can add new records</option>
-				<option value="0">Only registred can add new records</option>
+				<option value="0">Only registered can add new records</option>
 				<option value="-1">Disable Add New records</option>
 			</field>
 

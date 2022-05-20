@@ -9,13 +9,15 @@
  **/
 
 // Check to ensure this file is included in Joomla!
-defined('_JEXEC') or die( 'Restricted access' );
+ use Joomla\CMS\Factory;
+
+ defined('_JEXEC') or die( 'Restricted access' );
 
 class JHTMLCTFields
 {
         public static function fields($tableid, $currentfieldid, $control_name, $value)
         {
-				$db = JFactory::getDBO();
+				$db = Factory::getDBO();
 
 				$query = 'SELECT id, fieldname '
 						. ' FROM #__customtables_fields '
