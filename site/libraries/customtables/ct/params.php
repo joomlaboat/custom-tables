@@ -86,7 +86,7 @@ class Params
 
         if (is_null($menu_params)) {
             if(method_exists($this->app,'getParams')) {
-                echo 'exists';
+                //echo 'exists';
                 $menu_params = $this->app->getParams();
                 $this->setParams($menu_params);
             }
@@ -99,7 +99,7 @@ class Params
     {
         if (is_null($menu_params)) {
             if(method_exists($this->app,'getParams')) {
-                echo 'default_params';
+                
                 $menu_params = $this->app->getParams();
             }
             else

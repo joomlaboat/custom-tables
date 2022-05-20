@@ -125,8 +125,8 @@ class Catalog
         else
             $itemLayout='';
 
-        print_r($this->ct->Params);
-        echo 'list limit: '.$this->ct->Limit.'*<br/>';
+        //print_r($this->ct->Params);
+        //echo 'list limit: '.$this->ct->Limit.'*<br/>';
 
 // -------------------- Load Records
         $this->ct->getRecords();

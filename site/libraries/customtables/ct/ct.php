@@ -272,9 +272,9 @@ class CT
 			
 		if($this->Params->blockExternalVars)
 		{			
-			if((int)$this->Params->Limit > 0)
+			if((int)$this->Params->limit > 0)
 			{
-				$this->Limit = (int)$this->Params->Limit;
+				$this->Limit = (int)$this->Params->limit;
 				$this->LimitStart = $this->Env->jinput->getInt('start',0);
 				$this->LimitStart = ($this->Limit != 0 ? (floor($this->LimitStart / $this->Limit) * $this->Limit) : 0);
 			}
@@ -289,9 +289,9 @@ class CT
 			$this->LimitStart = $this->Env->jinput->getInt('start',0);
 			$this->Limit = $this->app->getUserState($limit_var, 0);
 			
-			if($this->Limit == 0 and (int)$this->Params->Limit > 0)
+			if($this->Limit == 0 and (int)$this->Params->limit > 0)
 			{
-				$this->Limit = (int)$this->Params->Limit;
+				$this->Limit = (int)$this->Params->limit;
 			}
 
 			// In case limit has been changed, adjust it

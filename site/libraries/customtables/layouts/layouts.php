@@ -179,7 +179,7 @@ class Layouts
 			{
 				$result.='	<div class="control-group">
 ';
-				$result.='		<div class="control-label">*'.$field['fieldname'].'*</div><div class="controls">['.$field['fieldname'].']</div>
+				$result.='		<div class="control-label">{{ '.$field['fieldname'].'.title }}</div><div class="controls">{{ '.$field['fieldname'].'.edit }}}</div>
 ';
 				$result.='	</div>
 
@@ -195,14 +195,14 @@ class Layouts
 		{
 			if($field['type']==="dummy")
 			{
-				$result.='<p><span style="color: #FB1E3D; ">*</span> *'.$field['fieldname'].'*</p>
+				$result.='<p><span style="color: #FB1E3D; ">*</span> {{ '.$field['fieldname'].'.edit }}</p>
 ';
 				break;
 			}
 		}
 
 		if($addToolbar)
-			$result.='<div style="text-align:center;">{button:save} {button:saveandclose} {button:saveascopy} {button:cancel}</div>
+			$result.='<div style="text-align:center;">{{ button("save") }} {{ button("saveandclose") }} {{ button("saveascopy") }} {{ button("cancel") }}</div>
 ';
 	
 		return $result;
