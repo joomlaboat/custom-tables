@@ -313,9 +313,6 @@ class Fields
 		
 		switch($type->data_type)
 		{
-			case null:
-				return '';
-				
 			case 'varchar':
 				$elements[]='varchar('.$type->length.')';
 				break;

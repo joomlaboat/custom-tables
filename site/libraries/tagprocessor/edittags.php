@@ -23,7 +23,7 @@ Implemented:
 
 class tagProcessor_Edit
 {
-    public static function process(&$ct,&$pagelayout,&$row)
+    public static function process(&$ct,&$pagelayout,&$row): array
     {
 		$ct_html = new Twig_Html_Tags($ct, false);
 		
@@ -125,8 +125,7 @@ class tagProcessor_Edit
 
 			if(count($entries)>0)
 			{
-				$i=0;
-				for($i;$i<count($entries);$i++)
+				for($i=0;$i<count($entries);$i++)
 				{
 					$option_list=JoomlaBasicMisc::csv_explode(',',$options[$i],'"',false);
 

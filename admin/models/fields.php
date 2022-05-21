@@ -634,17 +634,6 @@ class CustomtablesModelFields extends JModelAdmin
 		return $newIds;
 	}
 
-	/**
-	 * Batch move items to a new category
-	 *
-	 * @param   integer  $value     The new category ID.
-	 * @param   array    $pks       An array of row IDs.
-	 * @param   array    $contexts  An array of item contexts.
-	 *
-	 * @return  boolean  True if successful, false otherwise and internal error is set.
-	 *
-	 * @since 12.2
-	 */
 	protected function batchMove($values, $pks, $contexts)
 	{
 		if (empty($this->batchSet))

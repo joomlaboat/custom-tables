@@ -79,7 +79,7 @@ class ExportTables
 		return $link;
 	}
 	
-	protected static function processTable($table)
+	protected static function processTable($table): array
 	{
 		$db = Factory::getDBO();
 				
@@ -121,7 +121,7 @@ class ExportTables
 		}
 		else
 			$records = null;
-	
-		return ['table'=>$table,'fields'=>$fields,'layouts'=>$layouts,'records'=>$records,'menu'=>$menu];
+
+        return ['table'=>$table,'fields'=>$fields,'layouts'=>$layouts,'records'=>$records,'menu'=>$menu];
 	}
 }

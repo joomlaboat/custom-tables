@@ -1009,14 +1009,14 @@ class Filtering
 		if($fieldrow['typeparams']=='date')
 			$valuearr_new = [$db->quote($valuearr[0]),$db->quote($valuearr[1])];
 		else
-            $valuearr_new = [(float)$valuearr[0],(float)$valuearr[1]]);
+            $valuearr_new = [(float)$valuearr[0],(float)$valuearr[1]];
 
 		$range=explode('_r_',$fieldrow['fieldname']);
 		if(count($range)==1)
 			return '';
 
 		$valueTitle='';
-		$rangewhere='';
+		$rangeWhere='';
 
 		$from_field='';
 		$to_field='';
@@ -1044,13 +1044,13 @@ class Filtering
 		}
 
 		if($valuearr[0]!='' and $valuearr[1]!='')
-			$rangewhere='(es_'.$from_field.'>='.$v_min.' AND es_'.$to_field.'<='.$v_max.')';
+			$rangeWhere='(es_'.$from_field.'>='.$v_min.' AND es_'.$to_field.'<='.$v_max.')';
 		elseif($valuearr[0]!='' and $valuearr[1]=='' )
-			$rangewhere='(es_'.$from_field.'>='.$v_min.')';
+			$rangeWhere='(es_'.$from_field.'>='.$v_min.')';
 		elseif($valuearr[1]!='' and $valuearr[0]=='' )
-			$rangewhere='(es_'.$from_field.'<='.$v_max.')';
+			$rangeWhere='(es_'.$from_field.'<='.$v_max.')';
 
-		if($rangewhere=='')
+		if($rangeWhere=='')
 			return '';
 
 		if($valuearr[0]!='')
@@ -1061,8 +1061,8 @@ class Filtering
 	
 		$this->PathValue[]=$fieldTitle.': '.$valueTitle;
 
-		if(count($rangewhere)>0)
-			return $rangewhere;
+		if(count($rangeWhere)>0)
+			return $rangeWhere;
 
 		return '';
 	}

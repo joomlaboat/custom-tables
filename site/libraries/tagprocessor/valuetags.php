@@ -441,10 +441,7 @@ class tagProcessor_Value
 		elseif($fieldtype=='customtables')
 		{
 			if($rowValue=='' or $rowValue==',.')
-			{
-				$rowValue=='';
 				return true;
-			}
 			else
 				return false;
 		}
