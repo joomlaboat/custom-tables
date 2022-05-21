@@ -540,7 +540,6 @@ class SaveFieldQuerySet
 						$value = gmdate( 'Y-m-d H:i:s');
 						$this->row[$this->field->realfieldname] = $value;
 						return $this->field->realfieldname.'='.$this->db->Quote($value);
-					break;
 
 				case 'server':
 
@@ -551,7 +550,6 @@ class SaveFieldQuerySet
 
 						$this->row[$this->field->realfieldname] = $value;
 						return $this->field->realfieldname.'='.$this->db->Quote($value);
-					break;
 
 				case 'id':
 					//get max id

@@ -64,7 +64,7 @@ class CT
 	    $this->Filter = null;
 	}
 
-    function setParams($menu_params,$blockExternalVars=false): void
+    function setParams($menu_params = null, $blockExternalVars = false): void
     {
         $this->Params->setParams($menu_params,$blockExternalVars);
         $this->Env->ItemId = $this->Params->ItemId;
@@ -83,7 +83,7 @@ class CT
 		$this->Table = new Table($this->Languages, $this->Env, 0);
 		$this->Table->setTable($tablerow, $useridfieldname, $load_fields);
 		
-		$this->Ordering = new Ordering($this->Table);
+		$this->Ordering = new Ordering($this->Table,$this->Params);
 		
 		$this->prepareSEFLinkBase();
 	}

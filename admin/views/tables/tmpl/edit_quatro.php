@@ -45,11 +45,11 @@ $document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customt
 
 				<?php
 
-				$morethanonelang = false;
+				$moreThanOneLang = false;
 				foreach($this->ct->Languages->LanguageList as $lang)
 				{
 					$id='tabletitle';
-					if($morethanonelang)
+					if($moreThanOneLang)
 					{
 						$id.='_'.$lang->sef;
 
@@ -72,7 +72,7 @@ $document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customt
 					<div class="control-group">
 						<div class="control-label">
 						<label id="jform_tabletitle-lbl" for="jform_tabletitle" class="required">
-							Table Title'.(!$morethanonelang ? '<span class="star" aria-hidden="true">&nbsp;*</span>' : '').'</label>
+							Table Title'.(!$moreThanOneLang ? '<span class="star" aria-hidden="true">&nbsp;*</span>' : '').'</label>
 							<br/><b>'.$lang->title.'</b>
 						</div>
 						<div class="controls">
@@ -84,7 +84,7 @@ $document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customt
 					</div>
 					';
 
-					$morethanonelang=true; //More than one language installed
+					$moreThanOneLang=true; //More than one language installed
 				}
 				?>
 
@@ -106,11 +106,11 @@ $document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customt
 	<?php echo HTMLHelper::_('uitab.endTab'); ?>
 
 	<?php
-		$morethanonelang=false;
+		$moreThanOneLang=false;
 		foreach($this->ct->Languages->LanguageList as $lang)
 		{
 			$id='description';
-			if($morethanonelang)
+			if($moreThanOneLang)
 				$id.='_'.$lang->sef;
 			
 			echo HTMLHelper::_('uitab.addTab', 'tablesTab', $id, $lang->title);
@@ -137,7 +137,7 @@ $document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customt
 					</div>
 				</div>
 			</div>';
-			$morethanonelang=true; //More than one language installed
+			$moreThanOneLang=true; //More than one language installed
 			
 			echo HTMLHelper::_('uitab.endTab');
 		}

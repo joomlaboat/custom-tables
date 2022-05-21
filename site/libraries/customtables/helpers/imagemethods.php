@@ -410,9 +410,9 @@ class CustomTablesImageMethods
 				$additional_params=$params[1];
 				
 			if(strpos($image_file_id,DIRECTORY_SEPARATOR)===false)//in case when other applications pass full path to the file
-				$uploadedfile = JPATH_SITE.DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR.$image_file_id;
+				$uploadedFile = JPATH_SITE.DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR.$image_file_id;
 			else
-				$uploadedfile = $image_file_id;
+				$uploadedFile = $image_file_id;
 		
 			if(is_object('Factory::getApplication()'))		
 				$is_base64encoded = Factory::getApplication()->input->get('base64encoded','','CMD');
@@ -421,21 +421,18 @@ class CustomTablesImageMethods
 				
 			if($is_base64encoded=="true")
 			{
-				$src = $uploadedfile;
-				$dst= JPATH_SITE.DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR.'decoded_'.basename( $file['name']);
+				$src = $uploadedFile;
+				$dst= JPATH_SITE.DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR.'decoded_'.basename($image_file_id);//TODO: Check this functionality
 				$this->base64file_decode( $src, $dst );
-				$uploadedfile=$dst;
+				$uploadedFile=$dst;
 			}
 
 			//Delete Old Logo
 			if($ExistingImage!=0)
 				$this->DeleteExistingSingleImage($ExistingImage,$ImageFolder,$params[0],$realtablename,$realfieldname,$realidfieldname);
 
-			$new_photo_ext=$this->FileExtenssion($uploadedfile);
+			$new_photo_ext=$this->FileExtenssion($uploadedFile);
 
-			$ImageID=0;
-
-			
 			//Get new file name and avoid possible duplicate
 			
 			$i=0;
@@ -451,14 +448,14 @@ class CustomTablesImageMethods
 			$isOk=true;
 
 			//es Thumb
-			$r=$this->ProportionalResize($uploadedfile,$thumbnail_image_file, 150, 150,1,true, -1, '');
+			$r=$this->ProportionalResize($uploadedFile,$thumbnail_image_file, 150, 150,1,true, -1, '');
 			
 			if($r!=1)
 				$isOk=false;
 				
 			//--------- compare thumbnails	
 			
-			$duplicateImageID = $this->compareThumbs($additional_params, $realtablename, $realfieldname, $ImageFolder, $uploadedfile, $thumbnail_image_file);
+			$duplicateImageID = $this->compareThumbs($additional_params, $realtablename, $realfieldname, $ImageFolder, $uploadedFile, $thumbnail_image_file);
 			
 			if($duplicateImageID!=0)
 				return $duplicateImageID;
@@ -486,7 +483,7 @@ class CustomTablesImageMethods
 					else
 						$ext=$new_photo_ext;
 
-					$r=$this->ProportionalResize($uploadedfile,$ImageFolder.DIRECTORY_SEPARATOR.$prefix.'_'.$ImageID.'.'.$ext, $width, $height,1,true, $color, $watermark);
+					$r=$this->ProportionalResize($uploadedFile,$ImageFolder.DIRECTORY_SEPARATOR.$prefix.'_'.$ImageID.'.'.$ext, $width, $height,1,true, $color, $watermark);
 
 					if($r!=1)
 						$isOk=false;
@@ -495,8 +492,8 @@ class CustomTablesImageMethods
 
 			if($isOk)
 			{
-				copy($uploadedfile,$original_image_file);
-				unlink($uploadedfile);
+				copy($uploadedFile,$original_image_file);
+				unlink($uploadedFile);
 				return $ImageID;
 			}
 			else
@@ -504,7 +501,7 @@ class CustomTablesImageMethods
 				if(file_exists($original_image_file))
 					unlink($original_image_file);
 
-				unlink($uploadedfile);
+				unlink($uploadedFile);
 				return -1;
 			}
 		}

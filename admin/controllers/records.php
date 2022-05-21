@@ -11,6 +11,7 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\CT;
 use CustomTables\Layouts;
 use Joomla\CMS\Factory;
 
@@ -76,19 +77,8 @@ class CustomtablesControllerRecords extends JControllerForm
 	
 	protected function allowEdit($data = array(), $key = 'id')
 	{
-		// get user object.
-		
-		// get record id.
-		//$recordId = isset($data[$key]) ? $data[$key] : 0;
-		
 		//To support char type record id
 		$recordId 	= $this->input->getCmd('id', 0);
-		
-		//echo '$recordId_:'.$recordId;
-		//die;
-		
-		
-		//$id    	= $this->input->getCmd('id');
 
 		if ($recordId)
 		{
@@ -129,41 +119,22 @@ class CustomtablesControllerRecords extends JControllerForm
 		}
 		// Since there is no permission, revert to the component permissions.
 
-		$data['id'] = $recordId;
-		
-		return true;;//parent::allowEdit($data, $key);
+		return true;
 	}
 	
-	/*
-	function edit($data = array(), $key = 'id')
-	{
-
-		$tableid 	= $this->input->get('tableid', 0, 'int');
-		$recordId 	= $this->input->getCmd('id', 0);
-		
-		
-		// Redirect to the items screen.
-		$this->setRedirect(
-			JRoute::_(
-				'index.php?option=' . $this->option . '&view=records&layout=edit&tableid='.(int)$tableid.'&id='.$recordId, false
-				//'index.php?option=' . $this->option . '&view=listofrecords&layout=edit&tableid='.(int)$tableid, false
-			)
-		);
-	}
-	*/
 
 	/**
 	 * Gets the URL arguments to append to an item redirect.
 	 *
-	 * @param   integer  $recordId  The primary key id for the item.
+	 * @param   integer  $listing_id  The primary key id for the item.
 	 * @param   string   $urlVar    The name of the URL variable for the id.
 	 *
 	 * @return  string  The arguments to append to the redirect URL.
 	 *
 	 * @since   12.2
 	 */
-	protected function getRedirectToItemAppend($recordId = null, $urlVar = 'id')
-	{
+	protected function getRedirectToItemAppend($listing_id = null, $urlVar = 'id'): string
+    {
 		$tmpl   = $this->input->get('tmpl');
 		$layout = $this->input->get('layout', 'edit', 'string');
 
@@ -171,9 +142,8 @@ class CustomtablesControllerRecords extends JControllerForm
 		$refid 	= $this->input->getCmd('refid', 0);
 
 		//To support char type record id
-		$recordId 	= $this->input->getCmd('id', 0);
-		//$recordId 	= $this->input->getInt('id', 0);
-		
+		$listing_id 	= $this->input->getCmd('id', 0);
+
 		//throw new Exception('stop here');
 
 		$tableid= $this->input->getInt('tableid',0);
@@ -183,11 +153,11 @@ class CustomtablesControllerRecords extends JControllerForm
 
 		if ($refid)
 		{
-			$append .= '&ref='.(string)$ref.'&refid='.$refid;
+			$append .= '&ref='.$ref.'&refid='.$refid;
 		}
 		elseif ($ref)
 		{
-			$append .= '&ref='.(string)$ref;
+			$append .= '&ref='.$ref;
 		}
 
 		if ($tmpl)
@@ -200,16 +170,16 @@ class CustomtablesControllerRecords extends JControllerForm
 			$append .= '&layout=' . $layout;
 		}
 
-		if ($recordId)
+		if ($listing_id)
 		{
-			$append .= '&' . $urlVar . '=' . $recordId;
+			$append .= '&' . $urlVar . '=' . $listing_id;
 		}
 
 		$append .= '&tableid=' . $tableid;
 		
 		//This is to overwrite Joomla current record ID state value. Joomla converts ID to integer, but we want to support both int and cmd (A-Za-z0-9_-)
 		$values = (array) Factory::getApplication()->getUserState('com_customtables.edit.records.id');
-		$values[] = $recordId;
+		$values[] = $listing_id;
 		Factory::getApplication()->setUserState('com_customtables.edit.records.id', $values);
 
 		return $append;
@@ -224,9 +194,9 @@ class CustomtablesControllerRecords extends JControllerForm
 	 *
 	 * @since   12.2
 	 */
-	public function cancel($key = null)
-	{
-		// get the referal details
+	public function cancel($key = null): bool
+    {
+		// get the referral details
 		$tableid 	= $this->input->get('tableid', 0, 'int');
 
 		$cancel = parent::cancel($key);
@@ -242,18 +212,21 @@ class CustomtablesControllerRecords extends JControllerForm
 		return $cancel;
 	}
 
-	/**
-	 * Method to save a record.
-	 *
-	 * @param   string  $key     The name of the primary key of the URL variable.
-	 * @param   string  $urlVar  The name of the URL variable if different from the primary key (sometimes required to avoid router collisions).
-	 *
-	 * @return  boolean  True if successful, false otherwise.
-	 *
-	 * @since   12.2
-	 */
-	public function save($key = null, $urlVar = null)
-	{
+    /**
+     * Method to save a record.
+     *
+     * @param string $key The name of the primary key of the URL variable.
+     * @param string $urlVar The name of the URL variable if different from the primary key (sometimes required to avoid router collisions).
+     *
+     * @return  boolean  True if successful, false otherwise.
+     *
+     * @throws Exception
+     * @since   12.2
+     */
+	public function save($key = null, $urlVar = null): bool
+    {
+        $tablename = null;
+
 		$tableid 	= $this->input->get('tableid', 0, 'int');
 		if($tableid!=0)
 		{
@@ -261,7 +234,7 @@ class CustomtablesControllerRecords extends JControllerForm
 			if(!is_object($table) and $table==0)
 			{
 				Factory::getApplication()->enqueueMessage('Table not found', 'error');
-				return;
+				return false;
 			}
 			else
 			{
@@ -269,21 +242,28 @@ class CustomtablesControllerRecords extends JControllerForm
 			}
 		}
 		
-		$recordid 	= $this->input->getCmd('id', 0);
-		
-		//Get Edit model
-		$paramsArray=$this->getRecordParams($tableid,$tablename,$recordid);
-		
-		$_params= new JRegistry;
-		$_params->loadArray($paramsArray);
-		
+		$listing_id 	= $this->input->getCmd('id', 0);
+
+        $paramsArray = array();
+        $paramsArray['tableid'] = $tableid;
+        $paramsArray['establename']=$tablename;
+        $paramsArray['publishstatus'] = 1;
+        $paramsArray['listingid'] = $listing_id;
+
+
+        $params = new JRegistry;
+        $params->loadArray($paramsArray);
+
+        $ct = new CT;
+        $ct->setParams($params, true);
+
 		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'models'.DIRECTORY_SEPARATOR.'edititem.php');
-		$editModel = JModelLegacy::getInstance('EditItem', 'CustomTablesModel', $_params);
-		$editModel->load($_params,true);
+		$editModel = JModelLegacy::getInstance('EditItem', 'CustomTablesModel', $params);
+		$editModel->load($ct);
 		
-		$Layouts = new Layouts($editModel->ct);
+		$Layouts = new Layouts($ct);
 			
-		$editModel->pagelayout = $Layouts->createDefaultLayout_Edit($editModel->ct->Table->fields,false);
+		$editModel->pagelayout = $Layouts->createDefaultLayout_Edit($ct->Table->fields,false);
 
 		$msg_='';
 		
@@ -297,12 +277,12 @@ class CustomtablesControllerRecords extends JControllerForm
 		if($this->task=='apply')
 		{
 			Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORD_SAVED'),'success');
-			$redirect.='&view=records&layout=edit&id='.$recordid.'&tableid='.(int)$tableid;
+			$redirect.='&view=records&layout=edit&id='.$listing_id.'&tableid='.(int)$tableid;
 		}
 		elseif($this->task=='save2copy')
 		{
 			Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_COPIED'),'success');
-			$redirect.='&view=records&task=records.edit&tableid='.(int)$tableid.'&id='.$editModel->id;
+			$redirect.='&view=records&task=records.edit&tableid='.(int)$tableid.'&id='.$ct->Params->listing_id;
 		}
 		elseif($this->task=='save2new')
 		{
@@ -327,33 +307,4 @@ class CustomtablesControllerRecords extends JControllerForm
 		
 		return $saved;
 	}
-	
-	
-	protected function getRecordParams($tableid,$tablename,$recordid)
-	{
-		$paramsArray=array();
-
-		$paramsArray['listingid']=$recordid;
-		$paramsArray['estableid']=$tableid;
-		$paramsArray['establename']=$tablename;
-
-		return $paramsArray;
-	}
-
-	/**
-	 * Function that allows child controller access to model data
-	 * after the data has been saved.
-	 *
-	 * @param   JModel  &$model     The data model object.
-	 * @param   array   $validData  The validated data.
-	 *
-	 * @return  void
-	 *
-	 * @since   11.1
-	 */
-	protected function postSaveHook(JModelLegacy $model, $validData = array())
-	{
-		return;
-	}
-
 }

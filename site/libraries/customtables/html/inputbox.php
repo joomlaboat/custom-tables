@@ -871,14 +871,10 @@ class Inputbox
 			//Twig Tag
 			//Twig Example: [house:RedHouses,onChange('Alert("Value Changed")'),city=London]
 
-			$result.=JHTML::_('CTTableJoin.render',
+			$result .= JHTML::_('CTTableJoin.render',
 				$this->prefix.$this->esfield['fieldname'],
-				$this->ct,
-				$this->esfield,
+				$this->field,
 				$value,
-				$this->place_holder,
-				$this->cssclass,
-				$this->attributes,
 				$this->option_list);
 		}
 		else

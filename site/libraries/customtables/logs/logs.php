@@ -39,6 +39,7 @@ trait Logs
 		$sets[]=(int)$action;
 		$sets[]=(int)Factory::getApplication()->input->get('Itemid',0,'INT');
 
+        //Value from sets
 		$query = 'INSERT INTO #__customtables_log (userid,datetime,tableid,listingid,action,Itemid) VALUES ('.implode(',',$sets).')';
 
 		$db->setQuery($query);

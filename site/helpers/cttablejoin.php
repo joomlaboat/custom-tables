@@ -17,7 +17,7 @@ use \Joomla\CMS\Factory;
 
 class JHTMLCTTableJoin
 {
-	static public function render($control_name, &$ct, &$field, $value, $place_holder, $cssclass='', $attribute='', &$option_list)
+	static public function render($control_name, &$field, $value, &$option_list): string
     {
 		$filter = [];
 		
@@ -38,19 +38,19 @@ class JHTMLCTTableJoin
 
 		$data = [];
 		$data[] = 'data-key="'.$key.'"';
-		$data[] = 'data-fieldname="'.$field['fieldname'].'"';
+		$data[] = 'data-fieldname="'.$field->fieldname.'"';
 		$data[] = 'data-controlname="'.$control_name.'"';
 		$data[] = 'data-valuefilters="'.base64_encode(json_encode($js_filters)).'"';
 		$data[] = 'data-value="'.$value.'"';
 		
-		echo '<div id="'.$control_name.'Wrapper" '.implode(' ',$data).'><div id="'.$control_name.'Selector0_0"></div></div>
+		return '<div id="'.$control_name.'Wrapper" '.implode(' ',$data).'><div id="'.$control_name.'Selector0_0"></div></div>
 			<script>
 				ctUpdateTableJoinLink("'.$control_name.'",0,true,0,"");
 			</script>
 ';
 	}
 	
-	protected static function processValue(&$filter,&$parent_id,&$js_filters,&$js_filters_selfparent)
+	protected static function processValue(&$filter,&$parent_id,&$js_filters,&$js_filters_selfParent)
 	{
 		for($i = count($filter) - 1;$i >= 0; $i--)
 		{
@@ -82,7 +82,7 @@ class JHTMLCTTableJoin
 					$filter[$i][4] = $selfParent_type_params[4];
 				
 				$filter[$i][6] = $selfParentField['fieldname'];
-				$js_filters_selfparent[] = ($selfParentField != null ? 1 : 0);
+				$js_filters_selfParent[] = ($selfParentField != null ? 1 : 0);
 				
 				$join_to_tablename = $filter[$i][0];
 				
@@ -185,28 +185,26 @@ class JHTMLCTTableJoin
 		return $parent_filter_field_name;
 	}
 	
-	protected static function parseTypeParams(&$field,&$filter,$parent_filter_field_name)
+	protected static function parseTypeParams(&$field,&$filter,&$parent_filter_field_name)
 	{
-		$type_params = JoomlaBasicMisc::csv_explode(',',$field['typeparams'],'"',false);
-
-		if(count($type_params) > 6 or (isset($type_params[7]) and ($type_params[7] == 'addforignkey' or $type_params[7] == 'noforignkey')))
+		if(count($field->params) > 6 or (isset($field->params[7]) and ($field->params[7] == 'addforignkey' or $field->params[7] == 'noforignkey')))
 		{
 			//Dynamic filter, 
-			if($type_params[3] != null and $type_params[3] != '')
+			if($field->params[3] != null and $field->params[3] != '')
 			{
 				$temp_ct = new CT;
-				$temp_ct->getTable($type_params[0]);
+				$temp_ct->getTable($field->params[0]);
 				
 				if($temp_ct->Table->tablename=='')
 				{
-					Factory::getApplication()->enqueueMessage('Dynamic filter field "'.$type_params[3].'" : Table "' . $temp_ct->Table->tablename . '" not found.','error');
+					Factory::getApplication()->enqueueMessage('Dynamic filter field "'.$field->params[3].'" : Table "' . $temp_ct->Table->tablename . '" not found.','error');
 					return '';
 				}
 				
 				//Find dynamic filter field
 				foreach($temp_ct->Table->fields as $fld)
 				{
-					if($fld['fieldname'] == $type_params[3])
+					if($fld['fieldname'] == $field->params[3])
 					{
 						//Add dynamic filter parameters
 						$temp_type_params = JoomlaBasicMisc::csv_explode(',',$fld['typeparams'],'"',false);
@@ -218,12 +216,12 @@ class JHTMLCTTableJoin
 				}
 			}
 			
-			$filter[] = [$type_params[0],$type_params[1],$type_params[5],$type_params[2],$type_params[4],$parent_filter_field_name];
-			$parent_filter_field_name = $type_params[0];
+			$filter[] = [$field->params[0],$field->params[1],$field->params[5],$field->params[2],$field->params[4],$parent_filter_field_name];
+			$parent_filter_field_name = $field->params[0];
 		}
 		else
 		{
-			$filter[] = [$type_params[0],$type_params[1],$type_params[2],$type_params[3],$type_params[4],$parent_filter_field_name];
+			$filter[] = [$field->params[0],$field->params[1],$field->params[2],$field->params[3],$field->params[4],$parent_filter_field_name];
 		}		
 	}
 }

@@ -12,32 +12,19 @@
 // No direct access to this file
 \defined('_JEXEC') or die;
 
-use Joomla\CMS\Version;
+use CustomTables\CT;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\MVC\View\GenericDataException;
-use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
-use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Toolbar\Toolbar;
 use Joomla\CMS\Toolbar\ToolbarHelper;
-use Joomla\Database\DatabaseDriver;
 use Joomla\Component\Content\Administrator\Extension\ContentComponent;
 
 use CustomTables\Fields;
 
-//JForm::addFieldPath(JPATH_COMPONENT . '/models/fields');
-
-/**
- * Customtables View class for the Listoflayouts
- */
 class CustomtablesViewListoflayouts extends JViewLegacy
 {
-	/**
-	 * Listoflayouts view display method
-	 * @return void
-	 */
-	var $ct;
+	var CT $ct;
 	 
 	function display($tpl = null)
 	{
@@ -73,7 +60,7 @@ class CustomtablesViewListoflayouts extends JViewLegacy
 		$this->canState = $this->canDo->get('layouts.edit.state');
 		$this->canDelete = $this->canDo->get('layouts.delete');
 		
-		$this->isEmptyState = $this->get('IsEmptyState');
+		$this->isEmptyState = count($this->items) == 0;
 		
 
 		// We don't need toolbar in the modal window.
@@ -110,14 +97,8 @@ class CustomtablesViewListoflayouts extends JViewLegacy
 		$this->setDocument();
 	}
 
-	/**
-	 * Setting the toolbar
-	 */
-	 
 	protected function addToolbar_4()
 	{
-		$user  = Factory::getUser();
-
 		// Get the toolbar object instance
 		$toolbar = Toolbar::getInstance('toolbar');
 
@@ -165,7 +146,7 @@ class CustomtablesViewListoflayouts extends JViewLegacy
 	 
 	protected function addToolBar_3()
 	{
-		JToolBarHelper::title(JText::_('COM_CUSTOMTABLES_LISTOFLAYOUTS'), 'joomla');
+		JToolBarHelper::title(Text::_('COM_CUSTOMTABLES_LISTOFLAYOUTS'), 'joomla');
 		JHtmlSidebar::setAction('index.php?option=com_customtables&view=listoflayouts');
 		JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/fields');
 

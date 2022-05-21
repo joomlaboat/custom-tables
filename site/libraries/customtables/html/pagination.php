@@ -524,10 +524,18 @@ class JESPagination extends JObject
 		if($app->isClient('administrator'))
 		{
 			if ($item->base > 0) {
-				return "<a title=\"".$item->text."\" onclick=\"document.adminForm." . $this->prefix . "start.value=".$item->base."; Joomla.submitform();return false;\">".$item->text."</a>";
+				return '<a'
+                    .' title="'.$item->text.'"'
+                    .' onclick="document.adminForm.' . $this->prefix . 'start.value='.$item->base.'; Joomla.submitform();return false;"'
+                    .'>'
+                    .$item->text.'</a>';
 			}
 			else {
-				return "<a title=\"".$item->text."\" onclick=\"document.adminForm." . $this->prefix . "start.value=0; Joomla.submitform();return false;\">".$item->text."</a>";
+				return '<a'
+                    .' title="'.$item->text.'"'
+                    .' onclick="document.adminForm.' . $this->prefix . 'start.value=0; Joomla.submitform();return false;"'
+                    .'>'
+                    .$item->text.'</a>';
 			}
 		}
 		else {

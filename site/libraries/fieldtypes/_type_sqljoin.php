@@ -11,65 +11,59 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-use Joomla\CMS\Factory;
-
 use CustomTables\CT;
 use CustomTables\TwigProcessor;
 
 class CT_FieldTypeTag_sqljoin
 {
-	//New function
-	public static function resolveSQLJoinTypeValue(&$field, $layoutcode, $listing_id, array $options)
-	{
-		$ct = new CT;
-		$ct->getTable($field->params[0]);
+    //New function
+    public static function resolveSQLJoinTypeValue(&$field, $layoutcode, $listing_id, array $options): string
+    {
+        $ct = new CT;
+        $ct->getTable($field->params[0]);
 
-		if(isset($field->params[6]))
-			$selector=$field->params[6];
-		else
-			$selector='dropdown';	
-		
-		$row  = $ct->Table->loadRecord($listing_id);
-		
-		$twig = new TwigProcessor($ct, '{% autoescape false %}'.$layoutcode.'{% endautoescape %}');
-		return $twig->process($row);
-	}
+        //TODO: add selector to the output box
+        $selector = $field->params[6] ?? 'dropdown';
 
-	//Old function
-    public static function resolveSQLJoinType(&$ct,$listing_id, $typeparams, $option_list)
-	{
-        if(count($typeparams)<1)
-			return 'table not specified';
+        $row = $ct->Table->loadRecord($listing_id);
 
-		if(count($typeparams)<2)
-			return 'field or layout not specified';
+        $twig = new TwigProcessor($ct, '{% autoescape false %}' . $layoutcode . '{% endautoescape %}');
+        return $twig->process($row);
+    }
 
-		$esr_table=$typeparams[0];
+    //Old function
+    public static function resolveSQLJoinType($listing_id, $typeparams, $option_list): string
+    {
+        if (count($typeparams) < 1)
+            return 'table not specified';
 
-		if(isset($option_list[0]) and $option_list[0]!='')
-			$esr_field=$option_list[0];
-		else
-			$esr_field=$typeparams[1];
+        if (count($typeparams) < 2)
+            return 'field or layout not specified';
 
-		if(count($typeparams)>2)
-        {
-			$esr_filter=$typeparams[2];
-        }
-		else
-			$esr_filter='';
+        $esr_table = $typeparams[0];
 
-		//this is important because it has been selected some how.
-		$esr_filter='';
-		
-		//Old method - slow
-		$result = JHTML::_('ESSQLJoinView.render',$listing_id,$esr_table,$esr_field,$esr_filter);
+        if (isset($option_list[0]) and $option_list[0] != '')
+            $esr_field = $option_list[0];
+        else
+            $esr_field = $typeparams[1];
 
-		//New method - fast and secure
-		$join_ct = new CT;
-		$join_ct->getTable($typeparams[0]);
-		$row  = $join_ct->Table->loadRecord($listing_id);
+        //this is important because it has been selected somehow.
+        //$esr_filter='';
 
-		$twig = new TwigProcessor($join_ct, '{% autoescape false %}'.$result.'{% endautoescape %}');
-		return $twig->process($row);
-	}
+        if (count($typeparams) > 2)
+            $esr_filter = $typeparams[2];
+        else
+            $esr_filter = '';
+
+        //Old method - slow
+        $result = JHTML::_('ESSQLJoinView.render', $listing_id, $esr_table, $esr_field, $esr_filter);
+
+        //New method - fast and secure
+        $join_ct = new CT;
+        $join_ct->getTable($typeparams[0]);
+        $row = $join_ct->Table->loadRecord($listing_id);
+
+        $twig = new TwigProcessor($join_ct, '{% autoescape false %}' . $result . '{% endautoescape %}');
+        return $twig->process($row);
+    }
 }

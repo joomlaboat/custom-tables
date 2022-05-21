@@ -316,9 +316,7 @@ class CustomTablesModelList extends JModel
 
 
 			// Delete the menu items
-			$where = 'WHERE id = ' . implode( ' OR id = ', $tree_ids );
-
-			$query = 'DELETE FROM #__customtables_options ' . $where;
+			$query = 'DELETE FROM #__customtables_options WHERE id = ' . implode( ' OR id = ', $tree_ids );
 			$db->setQuery( $query );
 			$db->execute();
 		}

@@ -147,6 +147,7 @@ abstract class IntegrationTestCase extends TestCase
             $this->markTestSkipped('no tests to run');
         }
 
+        $ret = ''; //TODO: Check if Twig already fixed it.
         if ($condition) {
             eval('$ret = '.$condition.';');
             if (!$ret) {

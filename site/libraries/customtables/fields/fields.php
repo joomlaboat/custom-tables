@@ -572,7 +572,6 @@ class Fields
 
 			case 'dummy':
 				return ['data_type' => null,'is_nullable'=> null, 'is_unsigned' => null, 'length' => null, 'default' => null, 'extra' => null];
-				break;
 
 			case 'md5':
 				return ['data_type' => 'char','is_nullable'=> true, 'is_unsigned' => null, 'length' => 32, 'default' => null, 'extra' => null];
@@ -586,13 +585,10 @@ class Fields
                     return ['data_type' => null,'is_nullable'=> null, 'is_unsigned' => null, 'length' => null, 'default' => null, 'extra' => null]; //do not store field values
                 else
                     return ['data_type' => 'varchar','is_nullable'=> true, 'is_unsigned' => null, 'length' => 255, 'default' => null, 'extra' => null];
-                
-                break;
 
 			default:
 
 				return ['data_type' => 'varchar','is_nullable'=> true, 'is_unsigned' => null, 'length' => 255, 'default' => null, 'extra' => null];
-				break;
 		}
 	}
 	

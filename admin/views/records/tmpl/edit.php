@@ -13,11 +13,9 @@
 defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Editor\Editor;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Language\Text;
 
-if($this->version >= 4)
+if($this->ct->Env->version >= 4)
 {
 	HTMLHelper::_('behavior.formvalidator');
 	HTMLHelper::_('behavior.keepalive');
@@ -26,4 +24,4 @@ if($this->version >= 4)
 $document = Factory::getDocument();
 $document->addStyleSheet(JURI::root(true)."/components/com_customtables/libraries/customtables/media/css/style.css");
 
-CTViewEdit($this->ct, $this->row, $this->pagelayout, true, $this->formLink,'adminForm');
+CTViewEdit($this->ct, $this->row, $this->pagelayout, $this->formLink,'adminForm');

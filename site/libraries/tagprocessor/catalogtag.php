@@ -68,7 +68,7 @@ class tagProcessor_Catalog
 
     protected static function get_Catalog(&$ct,$layoutType,$itemlayout,$tableclass,$showtable=true,$separator='')
 	{
-		$catalogresult='';
+		$catalogResult='';
 
 		if(is_null($ct->Records))
 			return '';
@@ -152,7 +152,7 @@ class tagProcessor_Catalog
 
 		if($showtable)
 		{
-			$catalogresult.='
+			$catalogResult.='
     <table'.( ($tableclass!='' ? ' class="'.$tableclass.'"' : '')).' cellpadding="0" cellspacing="0">
         <tbody>
 ';
@@ -168,12 +168,12 @@ class tagProcessor_Catalog
 			if($showtable)
 			{
 				if($cGroup[0]!='')
-					$catalogresult.='<tr><td'.($number_of_columns>1 ?  ' colspan="'.($number_of_columns).'"': '').'><h2>'.$cGroup[0].'</h2></td></tr>';
+					$catalogResult.='<tr><td colspan="'.($number_of_columns).'"><h2>'.$cGroup[0].'</h2></td></tr>';
 			}
 			else
 			{
 				if($cGroup[0]!='')
-					$catalogresult.='<h2>'.$cGroup[0].'</h2>';
+					$catalogResult.='<h2>'.$cGroup[0].'</h2>';
 			}
 
 			$i = 0;
@@ -181,26 +181,26 @@ class tagProcessor_Catalog
 			foreach($RealRows as $row)
 			{
 				if($separator != '' and $i > 0)
-					$catalogresult .= $separator;
+					$catalogResult .= $separator;
 					
 				if($tr==0 and $showtable)
-					$catalogresult .= '<tr>';
+					$catalogResult .= '<tr>';
 
 				if($showtable)
 				{
 					if(isset($row[$ct->Table->realidfieldname]))
-						$catalogresult.='<td valign="top" align="left"><a name="a'.$row[$ct->Table->realidfieldname].'"></a>'.$row.'</td>';
+						$catalogResult.='<td valign="top" align="left"><a name="a'.$row[$ct->Table->realidfieldname].'"></a>'.$row.'</td>';
 					else
-						$catalogresult.='<td valign="top" align="left">'.$row.'</td>';
+						$catalogResult.='<td valign="top" align="left">'.$row.'</td>';
 				}
 				else
-					$catalogresult.=$row;
+					$catalogResult.=$row;
 
 				$tr++;
 				if($tr==$number_of_columns)
 				{
 					if($showtable)
-						$catalogresult.='</tr>';
+						$catalogResult.='</tr>';
 
 					$tr	=0;
 				}
@@ -209,19 +209,19 @@ class tagProcessor_Catalog
 			}
 
 			if($tr>0 and $showtable)
-				$catalogresult.='<td'.($number_of_columns-$tr>1 ? ' colspan="'.($number_of_columns-$tr).'"' : '').'>&nbsp;</td></tr>';
+				$catalogResult.='<td'.($number_of_columns-$tr>1 ? ' colspan="'.($number_of_columns-$tr).'"' : '').'>&nbsp;</td></tr>';
 
 			if($showtable)
-				$catalogresult.='<tr><td'.($number_of_columns>1 ?  ' colspan="'.($number_of_columns).'"': '').'"><hr/></td></tr>';
+				$catalogResult.='<tr><td'.($number_of_columns>1 ?  ' colspan="'.($number_of_columns).'"': '').'"><hr/></td></tr>';
 		}	//	foreach($CatGroups as $cGroup)
 
 		if($showtable)
 		{
-			$catalogresult.='</tbody>
+			$catalogResult.='</tbody>
     </table>';
 		}
 
-		return $catalogresult;
+		return $catalogResult;
 	}
 
 

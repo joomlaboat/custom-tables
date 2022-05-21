@@ -201,38 +201,35 @@ class CT_FieldTypeTag_image
     protected static function renderUploader(&$field,$prefix)
     {
         $max_file_size=JoomlaBasicMisc::file_upload_max_size();
-        $fileid=JoomlaBasicMisc::generateRandomString();
-
+        $fileId=JoomlaBasicMisc::generateRandomString();
         $style='margin:10px; border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;vertical-align:top;';
+        $element_id='ct_ubloadfile_box_'.$field->fieldname;
 
-                $element_id='ct_ubloadfile_box_'.$field->fieldname;
-                $result='
-                <div style="'.$style.'"'.($field->isrequired ? ' class="inputbox required"' : '').' id="'.$element_id.'">
-                	<div id="ct_fileuploader_'.$field->fieldname.'"></div>
-                    <div id="ct_eventsmessage_'.$field->fieldname.'"></div>
-                	<script>
-                        UploadFileCount=1;
-                        AutoSubmitForm=false;
-                        esUploaderFormID="eseditForm";
-                        ct_eventsmessage_element="ct_eventsmessage";
-                        tempFileName="'.$fileid.'";
-                        fieldValueInputBox="'.$prefix.$field->fieldname.'";
-                    	var urlstr="'.JURI::root(true).'/index.php?option=com_customtables&view=fileuploader&tmpl=component&'
-							.$field->fieldname.'_fileid='.$fileid.'&Itemid='.$field->ct->Env->ItemId.'&fieldname='.$field->fieldname.'";
-                    	ct_getUploader('.$field->id.',urlstr,'.$max_file_size.',"jpg jpeg png gif svg webp","eseditForm",false,"ct_fileuploader_'
-							.$field->fieldname.'","ct_eventsmessage_'.$field->fieldname.'","'.$fileid.'","'.$prefix.$field->fieldname.'","ct_ubloadedfile_box_'.$field->fieldname.'");
+        return '
+        <div style="'.$style.'"'.($field->isrequired ? ' class="inputbox required"' : '').' id="'.$element_id.'">
+            <div id="ct_fileuploader_'.$field->fieldname.'"></div>
+            <div id="ct_eventsmessage_'.$field->fieldname.'"></div>
+            <script>
+                UploadFileCount=1;
+                AutoSubmitForm=false;
+                esUploaderFormID="eseditForm";
+                ct_eventsmessage_element="ct_eventsmessage";
+                tempFileName="'.$fileId.'";
+                fieldValueInputBox="'.$prefix.$field->fieldname.'";
+                var urlstr="'.JURI::root(true).'/index.php?option=com_customtables&view=fileuploader&tmpl=component&'
+                    .$field->fieldname.'_fileid='.$fileId.'&Itemid='.$field->ct->Env->ItemId.'&fieldname='.$field->fieldname.'";
+                ct_getUploader('.$field->id.',urlstr,'.$max_file_size.',"jpg jpeg png gif svg webp","eseditForm",false,"ct_fileuploader_'
+                    .$field->fieldname.'","ct_eventsmessage_'.$field->fieldname.'","'.$fileId.'","'.$prefix.$field->fieldname.'","ct_ubloadedfile_box_'.$field->fieldname.'");
 
-                    </script>
-                    <input type="hidden" name="'.$prefix.$field->fieldname.'" id="'.$prefix.$field->fieldname.'" value=""'.($field->isrequired ? ' class="required"' : '').' />
-			'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE').': '.JoomlaBasicMisc::formatSizeUnits($max_file_size).'
-                </div>
-                ';
-
-        return $result;
+            </script>
+            <input type="hidden" name="'.$prefix.$field->fieldname.'" id="'.$prefix.$field->fieldname.'" value=""'.($field->isrequired ? ' class="required"' : '').' />
+    '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE').': '.JoomlaBasicMisc::formatSizeUnits($max_file_size).'
+        </div>
+        ';
 
     }
 
-    public static function getImageSRC($row,$realFieldName,$ImageFolder,&$imagefile,&$isShortcut)
+    public static function getImageSRC($row, $realFieldName, $ImageFolder, &$imageFile, &$isShortcut)
     {
 		$isShortcut=false;
 		if(isset($row[$realFieldName]))
@@ -244,37 +241,37 @@ class CT_FieldTypeTag_image
 				$img=str_replace('-','',$img);
 			}
 
-			$imagefile_=$ImageFolder.DIRECTORY_SEPARATOR.'_esthumb_'.$img;
-			$imagesrc_=str_replace(DIRECTORY_SEPARATOR,'/',$ImageFolder).'/_esthumb_'.$img;
+			$imageFile_=$ImageFolder.DIRECTORY_SEPARATOR.'_esthumb_'.$img;
+			$imageSrc_=str_replace(DIRECTORY_SEPARATOR,'/',$ImageFolder).'/_esthumb_'.$img;
 		}
 		else
 		{
-			$imagefile_='';
-			$imagesrc_='';
+			$imageFile_='';
+			$imageSrc_='';
 		}
 
-		if(file_exists(JPATH_SITE.DIRECTORY_SEPARATOR.$imagefile_.'.jpg'))
+		if(file_exists(JPATH_SITE.DIRECTORY_SEPARATOR.$imageFile_.'.jpg'))
 		{
-			$imagefile=$imagefile_.'.jpg';
-			$imagesrc=$imagesrc_.'.jpg';
+			$imageFile=$imageFile_.'.jpg';
+			$imageSrc=$imageSrc_.'.jpg';
 		}
-		elseif(file_exists(JPATH_SITE.DIRECTORY_SEPARATOR.$imagefile_.'.png'))
+		elseif(file_exists(JPATH_SITE.DIRECTORY_SEPARATOR.$imageFile_.'.png'))
 		{
-			$imagefile=$imagefile_.'.png';
-			$imagesrc=$imagesrc_.'.png';
+			$imageFile=$imageFile_.'.png';
+			$imageSrc=$imageSrc_.'.png';
 		}
-		elseif(file_exists(JPATH_SITE.DIRECTORY_SEPARATOR.$imagefile_.'.webp'))
+		elseif(file_exists(JPATH_SITE.DIRECTORY_SEPARATOR.$imageFile_.'.webp'))
 		{
-			$imagefile=$imagefile_.'.webp';
-			$imagesrc=$imagesrc_.'.webp';
+			$imageFile=$imageFile_.'.webp';
+			$imageSrc=$imageSrc_.'.webp';
 		}
 		else
 		{
-			$imagefile='';
-			$imagesrc='';
+			$imageFile='';
+			$imageSrc='';
 		}
 
-        return JURI::root(false).$imagesrc;
+        return JURI::root(false).$imageSrc;
     }
 
     //Drupal has this implemented fairly elegantly:

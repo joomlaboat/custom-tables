@@ -305,7 +305,6 @@ class ESTables
             $db->execute();
             return $db->insertid();
         }
-        return 0;
     }
 
     public static function renameTableIfNeeded($tableid, $database, $dbprefix, $tablename)

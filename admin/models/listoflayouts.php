@@ -49,11 +49,6 @@ class CustomtablesModelListOfLayouts extends JModelList
         $this->ct->setParams($params);
 	}
 
-	/**
-	 * Method to auto-populate the model state.
-	 *
-	 * @return  void
-	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
 		if($this->ct->Env->version < 4)

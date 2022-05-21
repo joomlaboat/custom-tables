@@ -39,16 +39,13 @@ class CT_FieldTypeTag_filebox
 					$filetaglistarray[]='<li>'.$filename.'</li>';
 
 				return '<ul>'.implode('',$filetaglistarray).'</ul>';
-				break;
-				
+
 			case ',':
 				return implode(',',$filesrclistarray);
-				break;
-			
+
 			case ';':
 				return implode(';',$filesrclistarray);
-				break;
-			
+
 			default:
 				//INCLUDING OL
 				$filetaglistarray=array();
@@ -57,7 +54,6 @@ class CT_FieldTypeTag_filebox
 					$filetaglistarray[]='<li>'.$filename.'</li>';
 
 				return '<ol>'.implode('',$filetaglistarray).'</ol>';
-				break;
 		}
     }
 	

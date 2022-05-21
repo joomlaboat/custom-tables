@@ -28,8 +28,8 @@ class CustomTablesKeywordSearch
 		$this->ct = $ct;
 		$this->PathValue = [];
 		
-		$KeywordSearcher->groupby='';
-		$KeywordSearcher->esordering='';
+		$this->groupby='';
+		$this->esordering='';
 	}
 
 	function getRowsByKeywords($keywords,&$record_count,$limit,$limitstart)

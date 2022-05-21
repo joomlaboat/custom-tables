@@ -308,12 +308,10 @@ function prepareSQLQuery($fieldList, $fields, $line)
  */
 function ifBomUtf8($s): bool
 {
-    if (substr($s, 0, 3) == chr(hexdec('EF')) . chr(hexdec('BB')) . chr(hexdec('BF'))) {
+    if (substr($s, 0, 3) == chr(hexdec('EF')) . chr(hexdec('BB')) . chr(hexdec('BF')))
         return true;
-    } else {
-        return true;
-    }
-    return false;
+    else
+        return false;
 }
 
 function removeBomUtf8($s):string

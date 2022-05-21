@@ -14,7 +14,6 @@ defined('_JEXEC') or die('Restricted access');
 use CustomTables\CT;
 use CustomTables\Catalog;
 use CustomTables\Layouts;
-use Joomla\CMS\Factory;
 
 class CustomTablesViewCatalog extends JViewLegacy
 {
@@ -23,8 +22,14 @@ class CustomTablesViewCatalog extends JViewLegacy
     var Catalog $catalog;
     var string $catalogTableCode;
 
+    var string $pageLayoutContent;
+    var string $itemLayoutContent;
+
     function display($tpl = null)
     {
+        $this->pageLayoutContent = '';
+        $this->itemLayoutContent = '';
+
         $this->ct = new CT;
 
         $key = $this->ct->Env->jinput->getCmd('key');
@@ -122,7 +127,7 @@ class CustomTablesViewCatalog extends JViewLegacy
         }
 
         $itemLayout = '{"id":"{{ record.id }}","label":"' . $fieldname_or_layout_tag . '"}';
-        $this->ct->Params->pageLayout = '[{% block record %}'.$itemLayout.',{% endblock %}{}]';
+        $this->pageLayoutContent = '[{% block record %}'.$itemLayout.',{% endblock %}{}]';
 
         $paramsArray['establename'] = $tablename;
 
@@ -136,7 +141,7 @@ class CustomTablesViewCatalog extends JViewLegacy
     function renderCatalog($tpl): bool
     {
         $this->ct->setParams(null,false);
-        $this->catalog = new Catalog($this->ct); //$params is the parameter passed by joomla to the module, it contains module settings
+        $this->catalog = new Catalog($this->ct);
 
         if ($this->ct->Env->frmt == 'csv') {
             if (function_exists('mb_convert_encoding')) {

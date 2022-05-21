@@ -179,7 +179,7 @@ class Layouts
 			{
 				$result.='	<div class="control-group">
 ';
-				$result.='		<div class="control-label">{{ '.$field['fieldname'].'.title }}</div><div class="controls">{{ '.$field['fieldname'].'.edit }}}</div>
+				$result.='		<div class="control-label">{{ '.$field['fieldname'].'.title }}</div><div class="controls">{{ '.$field['fieldname'].'.edit }}</div>
 ';
 				$result.='	</div>
 

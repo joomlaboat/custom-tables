@@ -1007,15 +1007,9 @@ class Filtering
 			return '';
 
 		if($fieldrow['typeparams']=='date')
-		{
-			$valuearr_new[0]=$db->quote($valuearr[0]);
-			$valuearr_new[1]=$db->quote($valuearr[1]);
-		}
+			$valuearr_new = [$db->quote($valuearr[0]),$db->quote($valuearr[1])];
 		else
-		{
-			$valuearr_new[0]=(float)$valuearr[0];
-			$valuearr_new[1]=(float)$valuearr[1];
-		}
+            $valuearr_new = [(float)$valuearr[0],(float)$valuearr[1]]);
 
 		$range=explode('_r_',$fieldrow['fieldname']);
 		if(count($range)==1)

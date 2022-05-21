@@ -99,7 +99,7 @@ class Params
     {
         if (is_null($menu_params)) {
             if(method_exists($this->app,'getParams')) {
-                
+
                 $menu_params = $this->app->getParams();
             }
             else
@@ -131,8 +131,15 @@ class Params
         //Filter
         $this->userIdField = $menu_params->get('useridfield');
 
-        if (!$blockExternalVars and $this->jinput->getString('filter', ''))
-            $this->filter = $this->jinput->getString('filter', '');
+        if (!$blockExternalVars and $this->jinput->getString('filter', '')) {
+
+            $filter = $this->jinput->getString('filter', '');
+            if(is_array($filter)) {
+                $this->filter = $filter['search'];
+            }
+            else
+                $this->filter = $filter;
+        }
         else
             $this->filter = $menu_params->get('filter');
 

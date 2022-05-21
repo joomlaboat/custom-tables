@@ -45,7 +45,6 @@ class CustomTablesModelEditItem extends JModelLegacy
 
     function __construct()
     {
-        $this->ct = new CT;
         parent::__construct();
     }
 
@@ -234,8 +233,6 @@ class CustomTablesModelEditItem extends JModelLegacy
 
         return $this->row[$this->ct->Table->realidfieldname];
     }
-
-
 
     function getSpecificVersionIfSet()
     {

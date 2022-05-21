@@ -390,11 +390,8 @@ class IntegrityCoreTables extends \CustomTables\IntegrityChecks
 		}
 		
 		if($exst_field == null)
-		{
 			die('field not created '.$realfieldname);
-			return false;
-		}
-		
+
 		if($ct_fieldtype != null and $ct_fieldtype != '')
 		{
 			$projected_data_type = Fields::getProjectedFieldType($ct_fieldtype, $ct_typeparams);

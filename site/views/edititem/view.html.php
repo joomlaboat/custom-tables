@@ -25,6 +25,7 @@ class CustomTablesViewEditItem extends JViewLegacy
 	function display($tpl = null): bool
     {
         $this->ct = new CT;
+        $this->ct->setParams();
 		$Model = $this->getModel();
         $Model->load($this->ct);
 		
