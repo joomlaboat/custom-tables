@@ -26,6 +26,7 @@ class CustomTablesViewDetails extends JViewLegacy
     function display($tpl = null)
     {
         $this->ct = new CT;
+        $this->ct->setParams(null, false);
 
         $Model = $this->getModel();
         $Model->load($this->ct);

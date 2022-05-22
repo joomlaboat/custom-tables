@@ -540,7 +540,13 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all,sub_inde
 
 function ctUpdateTableJoinLink(control_name,index,execute_all,sub_index,object_id){
 	let wrapper = document.getElementById(control_name + "Wrapper");
-	let url = 'index.php?option=com_customtables&view=catalog&tmpl=component&from=json&key=' + wrapper.dataset.key + '&index=' + index;
+
+	let link = location.href.split('administrator/index.php?option=com_customtables');
+	let url = '';
+	if(link.length == 2)//to make sure that it will work in the back-end
+		url = link[0] + 'index.php?option=com_customtables&view=catalog&tmpl=component&from=json&key=' + wrapper.dataset.key + '&index=' + index;
+	else
+		url = 'index.php?option=com_customtables&view=catalog&tmpl=component&from=json&key=' + wrapper.dataset.key + '&index=' + index;
 
 	let filters = [];
 	if(wrapper.dataset.valuefilters != '')
