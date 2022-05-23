@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
@@ -21,30 +21,30 @@ jimport('joomla.database.table');
  */
 class CustomtablesTableTables extends JTable
 {
-	var $id = null;
-	var $customphp = null;
-	var $description = null;
-	var $tablecategory = null;
-	var $tablename = null;
-	var $tabletitle = null;
-	var $published = null;
-	var $created_by = null;
-	var $modified_by = null;
-	var $created = null;
-	var $modified = null;
-	var $checked_out = null;
-	var $checked_out_time = null;
-	var $allowimportcontent = null;
-	var $customtablename = null;
-	var $customidfield = null;
-	
-	/**
-	 * Constructor
-	 *
-	 * @param object Database connector object
-	 */
-	function __construct(&$db)
-	{
-		parent::__construct('#__customtables_tables', 'id', $db);
-	}
+    var $id = null;
+    var $customphp = null;
+    var $description = null;
+    var $tablecategory = null;
+    var $tablename = null;
+    var $tabletitle = null;
+    var $published = null;
+    var $created_by = null;
+    var $modified_by = null;
+    var $created = null;
+    var $modified = null;
+    var $checked_out = null;
+    var $checked_out_time = null;
+    var $allowimportcontent = null;
+    var $customtablename = null;
+    var $customidfield = null;
+
+    /**
+     * Constructor
+     *
+     * @param object Database connector object
+     */
+    function __construct(&$db)
+    {
+        parent::__construct('#__customtables_tables', 'id', $db);
+    }
 }

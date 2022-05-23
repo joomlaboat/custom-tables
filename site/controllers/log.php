@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan komlev <support@joomlaboat.com>
  * @link https://www.joomlaboat.com
@@ -11,4 +11,4 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-	parent::display();
+parent::display();

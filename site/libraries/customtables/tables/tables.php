@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
@@ -9,7 +9,7 @@
  **/
 
 namespace CustomTables;
- 
+
 // no direct access
 use Joomla\CMS\Factory;
 
@@ -17,75 +17,73 @@ defined('_JEXEC') or die('Restricted access');
 
 class Tables
 {
-	var $ct;
+    var $ct;
 
-	function __construct(&$ct)
-	{
-		$this->ct = $ct;
-	}
-	
-	function loadRecords($tablename_or_id, string $filter = '', string $orderby = '', int $limit = 0)
-	{
-		if(is_numeric($tablename_or_id) and (int)$tablename_or_id == 0)
-			return null;
-		
-		if($tablename_or_id == '')
-			return null;
+    function __construct(&$ct)
+    {
+        $this->ct = $ct;
+    }
 
-		$this->ct->getTable($tablename_or_id, null);
-		
-		if($this->ct->Table->tablename=='')
-		{
-			Factory::getApplication()->enqueueMessage('Table not found.', 'error');
-			return false;
-		}
-		
-		$this->ct->Table->recordcount = 0;
-		
-		$this->ct->setFilter($filter, 2);
-		
-		$this->ct->Ordering->ordering_processed_string = $orderby;
-		$this->ct->Ordering->parseOrderByString();
-		
-		$this->ct->Limit=$limit;
-		$this->ct->LimitStart=0;
-		
-		$this->ct->getRecords();
+    function loadRecords($tablename_or_id, string $filter = '', string $orderby = '', int $limit = 0)
+    {
+        if (is_numeric($tablename_or_id) and (int)$tablename_or_id == 0)
+            return null;
 
-		return true;
-	}
-	
-	function loadRecord($tablename_or_id, int $recordid = 0)
-	{
-		if(is_numeric($tablename_or_id) and (int)$tablename_or_id == 0)
-			return null;
-		
-		if($tablename_or_id == '')
-			return null;
+        if ($tablename_or_id == '')
+            return null;
 
-		$this->ct->getTable($tablename_or_id, null);
-		
-		if($this->ct->Table->tablename=='')
-		{
-			Factory::getApplication()->enqueueMessage('Table not found.', 'error');
-			return null;
-		}
-		
-		$this->ct->Table->recordcount = 0;
-		
-		$this->ct->setFilter('', 2);
-		$this->ct->Filter->where[] = $this->ct->Table->realidfieldname.'='.(int)$recordid;
+        $this->ct->getTable($tablename_or_id, null);
 
-		
-		$this->ct->Limit=1;
-		$this->ct->LimitStart=0;
-		
-		$this->ct->getRecords();
+        if ($this->ct->Table->tablename == '') {
+            Factory::getApplication()->enqueueMessage('Table not found.', 'error');
+            return false;
+        }
 
-		
-		if(count($this->ct->Records) == 0)
-			return null;
-		
-		return $this->ct->Records[0];
-	}
+        $this->ct->Table->recordcount = 0;
+
+        $this->ct->setFilter($filter, 2);
+
+        $this->ct->Ordering->ordering_processed_string = $orderby;
+        $this->ct->Ordering->parseOrderByString();
+
+        $this->ct->Limit = $limit;
+        $this->ct->LimitStart = 0;
+
+        $this->ct->getRecords();
+
+        return true;
+    }
+
+    function loadRecord($tablename_or_id, int $recordid = 0)
+    {
+        if (is_numeric($tablename_or_id) and (int)$tablename_or_id == 0)
+            return null;
+
+        if ($tablename_or_id == '')
+            return null;
+
+        $this->ct->getTable($tablename_or_id, null);
+
+        if ($this->ct->Table->tablename == '') {
+            Factory::getApplication()->enqueueMessage('Table not found.', 'error');
+            return null;
+        }
+
+        $this->ct->Table->recordcount = 0;
+
+        $this->ct->setFilter('', 2);
+        $this->ct->Filter->where[] = $this->ct->Table->realidfieldname . '=' . (int)$recordid;
+
+
+        $this->ct->Limit = 1;
+        $this->ct->LimitStart = 0;
+
+        $this->ct->getRecords();
+
+
+        if (count($this->ct->Records) == 0)
+            return null;
+
+        return $this->ct->Records[0];
+    }
 }

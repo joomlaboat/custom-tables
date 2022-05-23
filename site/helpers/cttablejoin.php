@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
@@ -43,9 +43,15 @@ class JHTMLCTTableJoin
         $data[] = 'data-valuefilters="' . base64_encode(json_encode($js_filters)) . '"';
         $data[] = 'data-value="' . $value . '"';
 
+        $app = JFactory::getApplication();
+        if ($app->getName() == 'administrator')   //since   3.2
+            $formID = 'adminForm';
+        else
+            $formID = 'eseditForm';
+
         return '<div id="' . $control_name . 'Wrapper" ' . implode(' ', $data) . '><div id="' . $control_name . 'Selector0_0"></div></div>
 			<script>
-				ctUpdateTableJoinLink("' . $control_name . '",0,true,0,"");
+				ctUpdateTableJoinLink("' . $control_name . '",0,true,0,"","' . $formID . '");
 			</script>
 ';
     }
@@ -89,7 +95,7 @@ class JHTMLCTTableJoin
         return $parent_filter_field_name;
     }
 
-    protected static function parseTypeParams(&$field, &$filter, &$parent_filter_field_name)
+    protected static function parseTypeParams(&$field, &$filter, &$parent_filter_field_name): bool
     {
         if (count($field->params) > 6 or (isset($field->params[7]) and ($field->params[7] == 'addforignkey' or $field->params[7] == 'noforignkey'))) {
             //Dynamic filter,
@@ -99,7 +105,7 @@ class JHTMLCTTableJoin
 
                 if ($temp_ct->Table->tablename == '') {
                     Factory::getApplication()->enqueueMessage('Dynamic filter field "' . $field->params[3] . '" : Table "' . $temp_ct->Table->tablename . '" not found.', 'error');
-                    return '';
+                    return false;
                 }
 
                 //Find dynamic filter field
@@ -120,6 +126,7 @@ class JHTMLCTTableJoin
         } else {
             $filter[] = [$field->params[0], $field->params[1], $field->params[2], $field->params[3], $field->params[4], $parent_filter_field_name];
         }
+        return true;
     }
 
     protected static function processValue(&$filter, &$parent_id, &$js_filters, &$js_filters_selfParent)

@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
@@ -9,36 +9,36 @@
  **/
 
 // Check to ensure this file is included in Joomla!
-defined('_JEXEC') or die( 'Restricted access' );
+defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\CT;
 use CustomTables\Layouts;
 use CustomTables\TwigProcessor;
 
-require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'models'.DIRECTORY_SEPARATOR.'catalog.php');
+require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR . 'catalog.php');
 
 class JHTMLESRecordsView
 {
-	public static function render($value, $establename, $field, $selector, $filter, $sortByField=""): ?string
+    public static function render($value, $establename, $field, $selector, $filter, $sortByField = ""): ?string
     {
-		if($value=='' or $value==',' or $value==',,')
-			return '';
+        if ($value == '' or $value == ',' or $value == ',,')
+            return '';
 
-		$htmlresult='';
-		$value_where_filter='INSTR(",'.$value.',",id)';
+        $htmlresult = '';
+        $value_where_filter = 'INSTR(",' . $value . ',",id)';
 
-		$paramsArray=array();
-		$paramsArray['limit']=0;
-		$paramsArray['establename']=$establename;
-		$paramsArray['filter']=$filter;
-		$paramsArray['showpublished']=2;//0 - published only; 1 - hidden only;
-		$paramsArray['showpagination']=0;
-		$paramsArray['groupby']='';
-		$paramsArray['shownavigation']=0;
-		$paramsArray['sortby']=$sortByField;
+        $paramsArray = array();
+        $paramsArray['limit'] = 0;
+        $paramsArray['establename'] = $establename;
+        $paramsArray['filter'] = $filter;
+        $paramsArray['showpublished'] = 2;//0 - published only; 1 - hidden only;
+        $paramsArray['showpagination'] = 0;
+        $paramsArray['groupby'] = '';
+        $paramsArray['shownavigation'] = 0;
+        $paramsArray['sortby'] = $sortByField;
 
-		$_params= new JRegistry;
-		$_params->loadArray($paramsArray);
+        $_params = new JRegistry;
+        $_params->loadArray($paramsArray);
 
         $ct = new CT;
         $ct->setParams($_params, true);
@@ -47,8 +47,7 @@ class JHTMLESRecordsView
 
         $ct->getTable($ct->Params->tableName);
 
-        if($ct->Table->tablename=='')
-        {
+        if ($ct->Table->tablename == '') {
             $ct->app->enqueueMessage('Catalog View: Table not selected.', 'error');
             return null;
         }
@@ -66,138 +65,128 @@ class JHTMLESRecordsView
 
         $ct->getRecords();
 
-		$selectorPair=explode(':',$selector);
+        $selectorPair = explode(':', $selector);
 
-		if(!str_contains($field, ':'))
-		{
-			//without layout
-			$valueArray=explode(',',$value);
-			switch($selectorPair[0])
-			{
-				case 'single' :
+        if (!str_contains($field, ':')) {
+            //without layout
+            $valueArray = explode(',', $value);
+            switch ($selectorPair[0]) {
+                case 'single' :
 
-					//$getGalleryRows=array();
-					foreach($ct->Records as $row)
-					{
-						if(in_array($row[$ct->Table->realidfieldname],$valueArray) )
-							$htmlresult.=JoomlaBasicMisc::processValue($field, $ct, $row);
-					}
+                    //$getGalleryRows=array();
+                    foreach ($ct->Records as $row) {
+                        if (in_array($row[$ct->Table->realidfieldname], $valueArray))
+                            $htmlresult .= JoomlaBasicMisc::processValue($field, $ct, $row);
+                    }
 
-					break;
+                    break;
 
                 case 'checkbox':
                 case 'multibox':
                 case 'multi' :
-					
-					$vArray=array();
 
-					foreach($ct->Records as $row)
-					{
-						if(in_array($row[$ct->Table->realidfieldname],$valueArray) )
-							$vArray[]=JoomlaBasicMisc::processValue($field, $ct, $row);
-					}
-					$htmlresult.=implode(',',$vArray);
+                    $vArray = array();
 
-					break;
+                    foreach ($ct->Records as $row) {
+                        if (in_array($row[$ct->Table->realidfieldname], $valueArray))
+                            $vArray[] = JoomlaBasicMisc::processValue($field, $ct, $row);
+                    }
+                    $htmlresult .= implode(',', $vArray);
 
-				case 'radio' :
+                    break;
 
-					foreach($ct->Records as $row)
-					{
-						if(in_array($row[$ct->Table->realidfieldname],$valueArray) )
-							$htmlresult.=JoomlaBasicMisc::processValue($field, $ct, $row);
-					}
+                case 'radio' :
 
-					break;
+                    foreach ($ct->Records as $row) {
+                        if (in_array($row[$ct->Table->realidfieldname], $valueArray))
+                            $htmlresult .= JoomlaBasicMisc::processValue($field, $ct, $row);
+                    }
+
+                    break;
 
                 default:
-					return '<p>Incorrect selector</p>';
-			}
-		}
-		else
-		{
-			$pair=JoomlaBasicMisc::csv_explode(':',$field);
+                    return '<p>Incorrect selector</p>';
+            }
+        } else {
+            $pair = JoomlaBasicMisc::csv_explode(':', $field);
 
-			if($pair[0]!='layout' and $pair[0]!='tablelesslayout')
-				return '<p>unknown field/layout command "'.$field.'" should be like: "layout:'.$pair[1].'".</p>';
+            if ($pair[0] != 'layout' and $pair[0] != 'tablelesslayout')
+                return '<p>unknown field/layout command "' . $field . '" should be like: "layout:' . $pair[1] . '".</p>';
 
-			$isTableLess=false;
-			if($pair[0]=='tablelesslayout')
-				$isTableLess=true;
+            $isTableLess = false;
+            if ($pair[0] == 'tablelesslayout')
+                $isTableLess = true;
 
-			if(isset($pair[1]))
-				$layoutname = $pair[1];
-			else
-				return '<p>unknown field/layout command "'.$field.'" should be like: "layout:'.$pair[1].'".</p>';
+            if (isset($pair[1]))
+                $layoutname = $pair[1];
+            else
+                return '<p>unknown field/layout command "' . $field . '" should be like: "layout:' . $pair[1] . '".</p>';
 
-			if(isset($pair[2]))
+            if (isset($pair[2]))
                 $columns = (int)$pair[2];
-			else
+            else
                 $columns = 0;
 
-			$Layouts = new Layouts($ct);
-			$layoutcode = $Layouts->getLayout($layoutname);
-				
-			if($layoutcode=='')
-				return '<p>layout "'.$layoutname.'" not found or is empty.</p>';
+            $Layouts = new Layouts($ct);
+            $layoutcode = $Layouts->getLayout($layoutname);
 
-			$valueArray=explode(',',$value);
+            if ($layoutcode == '')
+                return '<p>layout "' . $layoutname . '" not found or is empty.</p>';
 
-			if(!$isTableLess)
-				$htmlresult.='<table style="border:none;">';
+            $valueArray = explode(',', $value);
 
-			$number=1;
+            if (!$isTableLess)
+                $htmlresult .= '<table style="border:none;">';
+
+            $number = 1;
 
 
-			$tr=0;
+            $tr = 0;
 
-			$CleanSearchResult = [];
-			foreach($ct->Records as $row)
-			{
-				if(in_array($row[$ct->Table->realidfieldname],$valueArray))
-					$CleanSearchResult[]=$row;
-			}
-				
-			foreach($CleanSearchResult as $row)
-			{
-				if($tr==$columns)
-					$tr	= 0;
+            $CleanSearchResult = [];
+            foreach ($ct->Records as $row) {
+                if (in_array($row[$ct->Table->realidfieldname], $valueArray))
+                    $CleanSearchResult[] = $row;
+            }
 
-				if(!$isTableLess and $tr==0)
-					$htmlresult.='<tr>';
+            foreach ($CleanSearchResult as $row) {
+                if ($tr == $columns)
+                    $tr = 0;
 
-				//process layout
-				$row['_number'] = $number;
+                if (!$isTableLess and $tr == 0)
+                    $htmlresult .= '<tr>';
 
-				if($ct->Env->legacysupport) {
+                //process layout
+                $row['_number'] = $number;
+
+                if ($ct->Env->legacysupport) {
                     $LayoutProc = new LayoutProcessor($ct);
-                    $LayoutProc->layout=$layoutcode;
+                    $LayoutProc->layout = $layoutcode;
                     $vlu = $LayoutProc->fillLayout($row);
-                }
-				else
-					$vlu = $layoutcode;
+                } else
+                    $vlu = $layoutcode;
 
-				$twig = new TwigProcessor($ct, '{% autoescape false %}'.$vlu.'{% endautoescape %}');
-				$vlu = $twig->process($row);
+                $twig = new TwigProcessor($ct, '{% autoescape false %}' . $vlu . '{% endautoescape %}');
+                $vlu = $twig->process($row);
 
-				if($isTableLess)
-					$htmlresult.= $vlu;
-				else
-					$htmlresult.='<td style="border:none;">'.$vlu.'</td>';
+                if ($isTableLess)
+                    $htmlresult .= $vlu;
+                else
+                    $htmlresult .= '<td style="border:none;">' . $vlu . '</td>';
 
-				$tr++;
-				if(!$isTableLess and $tr==$columns)
-					$htmlresult.='</tr>';
-				
-				$number++;
-			}
-				
-			if(!$isTableLess and $tr<$columns)
-				$htmlresult.='</tr>';
+                $tr++;
+                if (!$isTableLess and $tr == $columns)
+                    $htmlresult .= '</tr>';
 
-			if(!$isTableLess)
-				$htmlresult.='</table><!-- records view : end of table -->';
-		}
-		return $htmlresult;
-	}
+                $number++;
+            }
+
+            if (!$isTableLess and $tr < $columns)
+                $htmlresult .= '</tr>';
+
+            if (!$isTableLess)
+                $htmlresult .= '</table><!-- records view : end of table -->';
+        }
+        return $htmlresult;
+    }
 }

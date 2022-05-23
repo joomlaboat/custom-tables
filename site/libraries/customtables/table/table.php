@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
@@ -63,20 +63,6 @@ class Table
         $this->setTable($this->tablerow, $useridfieldname, $load_fields = true);
     }
 
-    public function getRecordFieldValue($listingid, $resultfield)
-    {
-        $db = Factory::getDBO();
-        $query = ' SELECT ' . $resultfield . ' FROM ' . $this->realtablename . ' WHERE ' . $this->realidfieldname . '=' . $db->quote($listingid) . ' LIMIT 1';
-
-        $db->setQuery($query);
-        $recs = $db->loadAssocList();
-
-        if (count($recs) > 0)
-            return $recs[0][$resultfield];
-
-        return "";
-    }
-
     function setTable(&$tablerow, $useridfieldname = null, $load_fields = true): void
     {
         $this->tablerow = $tablerow;
@@ -122,6 +108,20 @@ class Table
         }
     }
 
+    public function getRecordFieldValue($listingid, $resultfield)
+    {
+        $db = Factory::getDBO();
+        $query = ' SELECT ' . $resultfield . ' FROM ' . $this->realtablename . ' WHERE ' . $this->realidfieldname . '=' . $db->quote($listingid) . ' LIMIT 1';
+
+        $db->setQuery($query);
+        $recs = $db->loadAssocList();
+
+        if (count($recs) > 0)
+            return $recs[0][$resultfield];
+
+        return "";
+    }
+
     function loadRecord($listing_id)
     {
         $query = 'SELECT ' . $this->tablerow['query_selects'] . ' FROM ' . $this->realtablename . ' WHERE ' . $this->realidfieldname . '=' . $this->db->quote($listing_id) . ' LIMIT 1';
@@ -136,16 +136,16 @@ class Table
 
     function isRecordEmpty($row): bool
     {
-        if(!is_array($row))
+        if (!is_array($row))
             return true;
 
-        if(is_null($row[$this->realidfieldname]))
+        if (is_null($row[$this->realidfieldname]))
             return true;
 
-        if($row[$this->realidfieldname] == '')
+        if ($row[$this->realidfieldname] == '')
             return true;
 
-        if(is_numeric($row[$this->realidfieldname]) and (int)$row[$this->realidfieldname] == 0)
+        if (is_numeric($row[$this->realidfieldname]) and (int)$row[$this->realidfieldname] == 0)
             return true;
 
         return false;

@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @subpackage administrator/components/com_customtables/tables/categories.php
  * @author Ivan komlev <support@joomlaboat.com>
@@ -22,16 +22,16 @@ jimport('joomla.database.table');
  */
 class CustomtablesTableCategories extends JTable
 {
-   	var $id = null;
-    	var $categoryname = null;
-	
-	/**
-	 * Constructor
-	 *
-	 * @param object Database connector object
-	 */
-	function __construct(&$db) 
-	{
-		parent::__construct('#__customtables_categories', 'id', $db); 
-	}	
+    var $id = null;
+    var $categoryname = null;
+
+    /**
+     * Constructor
+     *
+     * @param object Database connector object
+     */
+    function __construct(&$db)
+    {
+        parent::__construct('#__customtables_categories', 'id', $db);
+    }
 }

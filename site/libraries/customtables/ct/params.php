@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
@@ -78,31 +78,29 @@ class Params
 
     var bool $blockExternalVars;
 
-    function __construct($menu_params = null,$blockExternalVars=false)
+    function __construct($menu_params = null, $blockExternalVars = false)
     {
         $this->blockExternalVars = $blockExternalVars;
         $this->app = Factory::getApplication();
         $this->jinput = $this->app->input;
 
         if (is_null($menu_params)) {
-            if(method_exists($this->app,'getParams')) {
+            if (method_exists($this->app, 'getParams')) {
                 //echo 'exists';
                 $menu_params = $this->app->getParams();
                 $this->setParams($menu_params);
             }
-        }
-        else
+        } else
             $this->setParams($menu_params);
     }
 
     function setParams($menu_params = null, $blockExternalVars = true): void
     {
         if (is_null($menu_params)) {
-            if(method_exists($this->app,'getParams')) {
+            if (method_exists($this->app, 'getParams')) {
 
                 $menu_params = $this->app->getParams();
-            }
-            else
+            } else
                 return;
         }
 
@@ -115,7 +113,7 @@ class Params
         else
             $this->alias = null;
 
-            $this->pageTitle = $menu_params->get('page_title');
+        $this->pageTitle = $menu_params->get('page_title');
         $this->showPageHeading = $menu_params->get('show_page_heading', 1);
         $this->pageClassSFX = strip_tags($menu_params->get('pageclass_sfx'));
 
@@ -125,8 +123,8 @@ class Params
             $this->listing_id = $menu_params->get('listingid');
 
         $this->tableName = $menu_params->get('establename'); //Table name or id not sanitized
-        if($this->tableName == null or $this->tableName == '')
-            $this->tableName = $menu_params->get('tableid' ); //Used in the back-end
+        if ($this->tableName == null or $this->tableName == '')
+            $this->tableName = $menu_params->get('tableid'); //Used in the back-end
 
         //Filter
         $this->userIdField = $menu_params->get('useridfield');
@@ -134,13 +132,11 @@ class Params
         if (!$blockExternalVars and $this->jinput->getString('filter', '')) {
 
             $filter = $this->jinput->getString('filter', '');
-            if(is_array($filter)) {
+            if (is_array($filter)) {
                 $this->filter = $filter['search'];
-            }
-            else
+            } else
                 $this->filter = $filter;
-        }
-        else
+        } else
             $this->filter = $menu_params->get('filter');
 
         $this->showPublished = (int)$menu_params->get('showpublished');
@@ -149,7 +145,7 @@ class Params
         $this->groupBy = $menu_params->get('groupby');
 
         //Sorting
-        if(!$blockExternalVars and !is_null($this->jinput->getCmd('sortby')))
+        if (!$blockExternalVars and !is_null($this->jinput->getCmd('sortby')))
             $this->sortBy = strtolower($this->jinput->getCmd('sortby'));
         else
             $this->sortBy = strtolower($menu_params->get('sortby'));
@@ -162,11 +158,11 @@ class Params
 
         //Layouts
         $this->pageLayout = $menu_params->get('escataloglayout');
-        if(is_null($this->pageLayout))
+        if (is_null($this->pageLayout))
             $this->pageLayout = $menu_params->get('ct_pagelayout');
 
         $this->itemLayout = $menu_params->get('esitemlayout');
-        if(is_null($this->itemLayout))
+        if (is_null($this->itemLayout))
             $this->itemLayout = $menu_params->get('ct_itemlayout');
 
         $this->detailsLayout = $menu_params->get('esdetailslayout');
@@ -176,13 +172,13 @@ class Params
 
         //Shopping Cart
 
-        if($menu_params->get( 'showcartitemsonly' )!='')
-            $this->showCartItemsOnly=(bool)(int)$menu_params->get( 'showcartitemsonly' );
+        if ($menu_params->get('showcartitemsonly') != '')
+            $this->showCartItemsOnly = (bool)(int)$menu_params->get('showcartitemsonly');
         else
-            $this->showCartItemsOnly=false;
+            $this->showCartItemsOnly = false;
 
-        $this->showCartItemsPrefix='customtables_';
-        if($menu_params->get('showcartitemsprefix') != '')
+        $this->showCartItemsPrefix = 'customtables_';
+        if ($menu_params->get('showcartitemsprefix') != '')
             $this->showCartItemsPrefix = $menu_params->get('showcartitemsprefix');
 
         $this->cartReturnTo = $menu_params->get('cart_returnto');
@@ -195,22 +191,22 @@ class Params
         $this->editUserGroups = $menu_params->get('editusergroups');
 
         $this->addUserGroups = $menu_params->get('addusergroups');
-        if($this->addUserGroups == 0)
+        if ($this->addUserGroups == 0)
             $this->addUserGroups = $this->editUserGroups;
 
         $this->publishUserGroups = $menu_params->get('publishusergroups');
-        if($this->publishUserGroups == 0)
+        if ($this->publishUserGroups == 0)
             $this->publishUserGroups = $this->editUserGroups;
 
         $this->deleteUserGroups = $menu_params->get('deleteusergroups');
-        if($this->deleteUserGroups==0)
-            $this->deleteUserGroups=$this->editUserGroups;
+        if ($this->deleteUserGroups == 0)
+            $this->deleteUserGroups = $this->editUserGroups;
 
 
         $this->guestCanAddNew = $menu_params->get('guestcanaddnew');
         $this->publishStatus = $menu_params->get('publishstatus');
 
-        if (!$blockExternalVars and  is_null($this->publishStatus))
+        if (!$blockExternalVars and is_null($this->publishStatus))
             $this->publishStatus = $this->jinput->getInt('published');
         else
             $this->publishStatus = 1;
@@ -224,8 +220,8 @@ class Params
 
         //Form Saved
 
-        if(!$blockExternalVars and $this->jinput->get('returnto','','BASE64'))
-            $this->returnTo=base64_decode($this->jinput->get('returnto','','BASE64'));
+        if (!$blockExternalVars and $this->jinput->get('returnto', '', 'BASE64'))
+            $this->returnTo = base64_decode($this->jinput->get('returnto', '', 'BASE64'));
         else
             $this->returnTo = $menu_params->get('returnto');
 
@@ -240,7 +236,7 @@ class Params
     protected function getForceItemId($menu_params): void
     {
         $forceItemId = $menu_params->get('forceitemid');
-        if(is_null($forceItemId))
+        if (is_null($forceItemId))
             $forceItemId = $menu_params->get('customitemid');
 
         if (!is_null($forceItemId)) {
@@ -250,8 +246,7 @@ class Params
                     $this->ItemId = (int)$forceItemId;
                     return;
                 }
-            }
-            elseif ($forceItemId != '') {
+            } elseif ($forceItemId != '') {
                 $this->ItemId = (int)JoomlaBasicMisc::FindItemidbyAlias($forceItemId);//Accepts menu Itemid and alias
                 return;
             }

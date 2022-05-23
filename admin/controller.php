@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @subpackage administrator/components/com_customtables/controller
  * @author Ivan komlev <support@joomlaboat.com>
@@ -71,34 +71,6 @@ class CustomtablesController extends JControllerLegacy
         return parent::display($cachable, $urlparams);
     }
 
-    protected function checkEditId($context, $id): bool
-    {
-        if ($id) {
-            $values = (array)Factory::getApplication()->getUserState($context . '.id');
-
-            $result = \in_array($id, $values); //To support both int and cmd IDs
-/*
-            if (\defined('JDEBUG') && JDEBUG) {
-                Factory::getApplication()->getLogger()->info(
-                    sprintf(
-                        'Checking edit ID %s.%s: %d %s',
-                        $context,
-                        $id,
-                        (int)$result,
-                        str_replace("\n", ' ', print_r($values, 1))
-                    ),
-                    array('category' => 'controller')
-                );
-            }
-            */
-
-            return $result;
-        }
-
-        // No id for a new item.
-        return true;
-    }
-
     protected function getViewRelation($view)
     {
         if (CustomtablesHelper::checkString($view)) {
@@ -123,5 +95,33 @@ class CustomtablesController extends JControllerLegacy
             }
         }
         return false;
+    }
+
+    protected function checkEditId($context, $id): bool
+    {
+        if ($id) {
+            $values = (array)Factory::getApplication()->getUserState($context . '.id');
+
+            $result = \in_array($id, $values); //To support both int and cmd IDs
+            /*
+                        if (\defined('JDEBUG') && JDEBUG) {
+                            Factory::getApplication()->getLogger()->info(
+                                sprintf(
+                                    'Checking edit ID %s.%s: %d %s',
+                                    $context,
+                                    $id,
+                                    (int)$result,
+                                    str_replace("\n", ' ', print_r($values, 1))
+                                ),
+                                array('category' => 'controller')
+                            );
+                        }
+                        */
+
+            return $result;
+        }
+
+        // No id for a new item.
+        return true;
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
@@ -17,20 +17,11 @@ use Joomla\CMS\Factory;
 class ESTables
 {
     //This function works with MySQL not PostgreeSQL
-    public static function getTableStatus($database, $dbprefix, $tablename)
-    {
-        $db = Factory::getDBO();
-        $query = 'SHOW TABLE STATUS FROM ' . $db->quoteName($database) . ' LIKE ' . $db->quote($dbprefix . 'customtables_table_' . $tablename);
-        $db->setQuery($query);
-
-        return $db->loadObjectList();
-    }
-
     public static function checkTableName($tablename)
     {
         $new_tablename = $tablename;
         $i = 1;
-        while(1) {
+        while (1) {
 
             $already_exists = ESTables::getTableID($new_tablename);
             if ($already_exists != 0) {
@@ -44,6 +35,27 @@ class ESTables
         }
 
         return $new_tablename;
+    }
+
+    public static function getTableID(string $tablename): int
+    {
+        if (strpos($tablename, '"') !== false)
+            return 0;
+
+        $db = Factory::getDBO();
+
+        if ($tablename == '')
+            return 0;
+
+        $query = 'SELECT id FROM #__customtables_tables AS s WHERE tablename=' . $db->quote($tablename) . ' LIMIT 1';
+
+        $db->setQuery($query);
+
+        $rows = $db->loadObjectList();
+        if (count($rows) != 1)
+            return 0;
+
+        return $rows[0]->id;
     }
 
     public static function checkIfTableExists(string $realtablename): bool
@@ -70,46 +82,6 @@ class ESTables
         return false;
     }
 
-    public static function getTableName($tableid = 0): string
-    {
-        $db = Factory::getDBO();
-
-        $jinput = Factory::getApplication()->input;
-
-        if ($tableid == 0)
-            $tableid = Factory::getApplication()->input->get('tableid', 0, 'INT');
-
-        $query = 'SELECT tablename FROM #__customtables_tables AS s WHERE id=' . (int)$tableid . ' LIMIT 1';
-        $db->setQuery($query);
-
-        $rows = $db->loadObjectList();
-        if (count($rows) != 1)
-            return '';
-
-        return $rows[0]->tablename;
-    }
-
-    public static function getTableID(string $tablename): int
-    {
-        if (strpos($tablename, '"') !== false)
-            return 0;
-
-        $db = Factory::getDBO();
-
-        if ($tablename == '')
-            return 0;
-
-        $query = 'SELECT id FROM #__customtables_tables AS s WHERE tablename=' . $db->quote($tablename) . ' LIMIT 1';
-
-        $db->setQuery($query);
-
-        $rows = $db->loadObjectList();
-        if (count($rows) != 1)
-            return 0;
-
-        return $rows[0]->id;
-    }
-
     public static function getTableRowByID(int $tableid)
     {
         if ($tableid == 0)
@@ -130,30 +102,6 @@ class ESTables
             return 0;
 
         return ESTables::getTableRowByWhere('id=' . (int)$tableid);
-    }
-
-    public static function getTableRowByName($tablename = '')
-    {
-        $db = Factory::getDBO();
-
-        if ($tablename == '')
-            return 0;
-
-        $row = ESTables::getTableRowByNameAssoc($tablename);
-        if (!is_array($row))
-            return 0;
-
-        return (object)$row;
-    }
-
-    public static function getTableRowByNameAssoc($tablename = '')
-    {
-        if ($tablename == '')
-            return 0;
-
-        $db = Factory::getDBO();
-
-        return ESTables::getTableRowByWhere('tablename=' . $db->quote($tablename));
     }
 
     public static function getTableRowByWhere($where)
@@ -281,6 +229,15 @@ class ESTables
         return false;
     }
 
+    public static function getTableStatus($database, $dbprefix, $tablename)
+    {
+        $db = Factory::getDBO();
+        $query = 'SHOW TABLE STATUS FROM ' . $db->quoteName($database) . ' LIKE ' . $db->quote($dbprefix . 'customtables_table_' . $tablename);
+        $db->setQuery($query);
+
+        return $db->loadObjectList();
+    }
+
     public static function insertRecords($realtablename, $realidfieldname, $sets)
     {
         $db = Factory::getDBO();
@@ -324,6 +281,25 @@ class ESTables
                 $db->execute();
             }
         }
+    }
+
+    public static function getTableName($tableid = 0): string
+    {
+        $db = Factory::getDBO();
+
+        $jinput = Factory::getApplication()->input;
+
+        if ($tableid == 0)
+            $tableid = Factory::getApplication()->input->get('tableid', 0, 'INT');
+
+        $query = 'SELECT tablename FROM #__customtables_tables AS s WHERE id=' . (int)$tableid . ' LIMIT 1';
+        $db->setQuery($query);
+
+        $rows = $db->loadObjectList();
+        if (count($rows) != 1)
+            return '';
+
+        return $rows[0]->tablename;
     }
 
     public static function addThirdPartyTableFieldsIfNeeded($database, $tablename, $realtablename)
@@ -398,6 +374,30 @@ class ESTables
             $db->setQuery($query);
             $db->execute();
         }
+    }
+
+    public static function getTableRowByName($tablename = '')
+    {
+        $db = Factory::getDBO();
+
+        if ($tablename == '')
+            return 0;
+
+        $row = ESTables::getTableRowByNameAssoc($tablename);
+        if (!is_array($row))
+            return 0;
+
+        return (object)$row;
+    }
+
+    public static function getTableRowByNameAssoc($tablename = '')
+    {
+        if ($tablename == '')
+            return 0;
+
+        $db = Factory::getDBO();
+
+        return ESTables::getTableRowByWhere('tablename=' . $db->quote($tablename));
     }
 
     public static function copyTable(&$ct, $originaltableid, $new_table, $old_table, $customtablename = '')

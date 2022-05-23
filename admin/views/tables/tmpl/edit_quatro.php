@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @subpackage edit.php
  * @author Ivan komlev <support@joomlaboat.com>
@@ -8,7 +8,7 @@
  * @copyright Copyright (C) 2018-2022. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
- 
+
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
@@ -21,187 +21,183 @@ HTMLHelper::_('behavior.formvalidator');
 HTMLHelper::_('behavior.keepalive');
 
 $document = Factory::getDocument();
-$document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customtables/libraries/customtables/media/css/style.css" rel="stylesheet">');
+$document->addCustomTag('<link href="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/css/style.css" rel="stylesheet">');
 
 ?>
 
-<form action="<?php echo JRoute::_('index.php?option=com_customtables&layout=edit&id='.(int) $this->item->id.$this->referral); ?>" method="post" name="adminForm" id="adminForm" class="form-validate" enctype="multipart/form-data">
-<div id="jform_title"></div>
-<div class="form-horizontal">
+<form action="<?php echo JRoute::_('index.php?option=com_customtables&layout=edit&id=' . (int)$this->item->id . $this->referral); ?>"
+      method="post" name="adminForm" id="adminForm" class="form-validate" enctype="multipart/form-data">
+    <div id="jform_title"></div>
+    <div class="form-horizontal">
 
-	<?php echo HTMLHelper::_('uitab.startTabSet', 'tablesTab', ['active' => 'details', 'recall' => true, 'breakpoint' => 768]); ?>
-	
-	<?php echo HTMLHelper::_('uitab.addTab', 'tablesTab', 'details', Text::_('COM_CUSTOMTABLES_TABLES_DETAILS')); ?>
-	
-		<div class="row-fluid form-horizontal-desktop">
-			<div class="span12">
+        <?php echo HTMLHelper::_('uitab.startTabSet', 'tablesTab', ['active' => 'details', 'recall' => true, 'breakpoint' => 768]); ?>
 
-				<div class="control-group">
-					<div class="control-label"><?php echo $this->form->getLabel('tablename'); ?></div>
-					<div class="controls"><?php echo $this->form->getInput('tablename'); ?></div>
-				</div>
+        <?php echo HTMLHelper::_('uitab.addTab', 'tablesTab', 'details', Text::_('COM_CUSTOMTABLES_TABLES_DETAILS')); ?>
 
-				<hr/>
+        <div class="row-fluid form-horizontal-desktop">
+            <div class="span12">
 
-				<?php
+                <div class="control-group">
+                    <div class="control-label"><?php echo $this->form->getLabel('tablename'); ?></div>
+                    <div class="controls"><?php echo $this->form->getInput('tablename'); ?></div>
+                </div>
 
-				$moreThanOneLang = false;
-				foreach($this->ct->Languages->LanguageList as $lang)
-				{
-					$id='tabletitle';
-					if($moreThanOneLang)
-					{
-						$id.='_'.$lang->sef;
+                <hr/>
 
-						$cssclass='form-control valid form-control-success';
-						$att='';
-					}
-					else
-					{
-						$cssclass='form-control required valid form-control-success';
-						$att=' required ';
-					}
+                <?php
 
-					$item_array=(array)$this->item;
-					$vlu='';
+                $moreThanOneLang = false;
+                foreach ($this->ct->Languages->LanguageList as $lang) {
+                    $id = 'tabletitle';
+                    if ($moreThanOneLang) {
+                        $id .= '_' . $lang->sef;
 
-					if(isset($item_array[$id]))
-						$vlu=$item_array[$id];
+                        $cssclass = 'form-control valid form-control-success';
+                        $att = '';
+                    } else {
+                        $cssclass = 'form-control required valid form-control-success';
+                        $att = ' required ';
+                    }
 
-					echo '
+                    $item_array = (array)$this->item;
+                    $vlu = '';
+
+                    if (isset($item_array[$id]))
+                        $vlu = $item_array[$id];
+
+                    echo '
 					<div class="control-group">
 						<div class="control-label">
 						<label id="jform_tabletitle-lbl" for="jform_tabletitle" class="required">
-							Table Title'.(!$moreThanOneLang ? '<span class="star" aria-hidden="true">&nbsp;*</span>' : '').'</label>
-							<br/><b>'.$lang->title.'</b>
+							Table Title' . (!$moreThanOneLang ? '<span class="star" aria-hidden="true">&nbsp;*</span>' : '') . '</label>
+							<br/><b>' . $lang->title . '</b>
 						</div>
 						<div class="controls">
-							<input type="text" name="jform['.$id.']" id="jform_'.$id.'"  value="'.$vlu.'" class="'.$cssclass.'" '
-								.'placeholder="Table Title" maxlength="255" '.$att.' />
+							<input type="text" name="jform[' . $id . ']" id="jform_' . $id . '"  value="' . $vlu . '" class="' . $cssclass . '" '
+                        . 'placeholder="Table Title" maxlength="255" ' . $att . ' />
 							
 						</div>
 
 					</div>
 					';
 
-					$moreThanOneLang=true; //More than one language installed
-				}
-				?>
+                    $moreThanOneLang = true; //More than one language installed
+                }
+                ?>
 
-				<hr/>
+                <hr/>
 
-				<div class="control-group<?php echo (!$this->ct->Env->advancedtagprocessor ? ' ct_pro' : ''); ?>">
-					<div class="control-label"><?php echo $this->form->getLabel('tablecategory'); ?></div>
-					<div class="controls"><?php 
-						if(!$this->ct->Env->advancedtagprocessor)
-							echo '<input type="text" value="Available in Pro Version" disabled="disabled" class="form-control valid form-control-success" />';
-						else
-							echo $this->form->getInput('tablecategory'); 
-					?></div>
-				</div>
+                <div class="control-group<?php echo(!$this->ct->Env->advancedtagprocessor ? ' ct_pro' : ''); ?>">
+                    <div class="control-label"><?php echo $this->form->getLabel('tablecategory'); ?></div>
+                    <div class="controls"><?php
+                        if (!$this->ct->Env->advancedtagprocessor)
+                            echo '<input type="text" value="Available in Pro Version" disabled="disabled" class="form-control valid form-control-success" />';
+                        else
+                            echo $this->form->getInput('tablecategory');
+                        ?></div>
+                </div>
 
-			</div>
-		</div>
+            </div>
+        </div>
 
-	<?php echo HTMLHelper::_('uitab.endTab'); ?>
+        <?php echo HTMLHelper::_('uitab.endTab'); ?>
 
-	<?php
-		$moreThanOneLang=false;
-		foreach($this->ct->Languages->LanguageList as $lang)
-		{
-			$id='description';
-			if($moreThanOneLang)
-				$id.='_'.$lang->sef;
-			
-			echo HTMLHelper::_('uitab.addTab', 'tablesTab', $id, $lang->title);
-			
-			echo '
-			<div id="'.$id.'" class="tab-pane">
+        <?php
+        $moreThanOneLang = false;
+        foreach ($this->ct->Languages->LanguageList as $lang) {
+            $id = 'description';
+            if ($moreThanOneLang)
+                $id .= '_' . $lang->sef;
+
+            echo HTMLHelper::_('uitab.addTab', 'tablesTab', $id, $lang->title);
+
+            echo '
+			<div id="' . $id . '" class="tab-pane">
 				<div class="row-fluid form-horizontal-desktop">
 					<div class="span12">
 					
-					<h3>'.Text::_('COM_CUSTOMTABLES_TABLES_DESCRIPTION').' -  <b>'.$lang->title.'</b></h3>';
+					<h3>' . Text::_('COM_CUSTOMTABLES_TABLES_DESCRIPTION') . ' -  <b>' . $lang->title . '</b></h3>';
 
-			$editor_name = Factory::getApplication()->get('editor');
-			$editor = Editor::getInstance($editor_name);
+            $editor_name = Factory::getApplication()->get('editor');
+            $editor = Editor::getInstance($editor_name);
 
-			$item_array=(array)$this->item;
-			$vlu='';
+            $item_array = (array)$this->item;
+            $vlu = '';
 
-			if(isset($item_array[$id]))
-				$vlu=$item_array[$id];
+            if (isset($item_array[$id]))
+                $vlu = $item_array[$id];
 
-			echo $editor->display('jform['.$id.']',$vlu, '100%', '300', '60', '5');
+            echo $editor->display('jform[' . $id . ']', $vlu, '100%', '300', '60', '5');
 
-			echo '
+            echo '
 					</div>
 				</div>
 			</div>';
-			$moreThanOneLang=true; //More than one language installed
-			
-			echo HTMLHelper::_('uitab.endTab');
-		}
+            $moreThanOneLang = true; //More than one language installed
 
-	//if($this->ct->Env->advancedtagprocessor):
-	
-	echo HTMLHelper::_('uitab.addTab', 'tablesTab', 'advanced', Text::_('COM_CUSTOMTABLES_TABLES_ADVANCED')); ?>
-	
-	<div class="row-fluid form-horizontal-desktop">
-			<div class="span12">
+            echo HTMLHelper::_('uitab.endTab');
+        }
 
-				<div class="control-group<?php echo (!$this->ct->Env->advancedtagprocessor ? ' ct_pro' : ''); ?>">
-					<div class="control-label"><?php echo $this->form->getLabel('customphp'); ?></div>
-					<div class="controls"><?php 
-					
-						if(!$this->ct->Env->advancedtagprocessor)
-							echo '<input type="text" value="Available in Pro Version" disabled="disabled" class="form-control valid form-control-success" />';
-						else
-							echo $this->form->getInput('customphp'); 
-					
-					?></div>
-				</div>
+        //if($this->ct->Env->advancedtagprocessor):
 
-				<div class="control-group<?php echo (!$this->ct->Env->advancedtagprocessor ? ' ct_pro' : ''); ?>">
-					<div class="control-label"><?php echo $this->form->getLabel('allowimportcontent'); ?></div>
-					<div class="controls"><?php echo $this->form->getInput('allowimportcontent'); ?></div>
-				</div>
-				
-				<div class="control-group<?php echo (!$this->ct->Env->advancedtagprocessor ? ' ct_pro' : ''); ?>">
-					<div class="control-label"><?php echo $this->form->getLabel('customtablename'); ?></div>
-					<div class="controls"><?php echo $this->form->getInput('customtablename'); ?></div>
-				</div>
-				
-				<div class="control-group<?php echo (!$this->ct->Env->advancedtagprocessor ? ' ct_pro' : ''); ?>">
-					<div class="control-label"><?php echo $this->form->getLabel('customidfield'); ?></div>
-					<div class="controls"><?php echo $this->form->getInput('customidfield'); ?></div>
-				</div>
-				
-				
-			</div>
-	</div>
+        echo HTMLHelper::_('uitab.addTab', 'tablesTab', 'advanced', Text::_('COM_CUSTOMTABLES_TABLES_ADVANCED')); ?>
 
-	<?php 
-	
-		echo HTMLHelper::_('uitab.endTab');
-	//endif;
+        <div class="row-fluid form-horizontal-desktop">
+            <div class="span12">
 
-	echo HTMLHelper::_('uitab.addTab', 'tablesTab', 'dependencies', Text::_('COM_CUSTOMTABLES_TABLES_DEPENDENCIES'));
-	
-	include ('_dependencies.php');
-	?>
+                <div class="control-group<?php echo(!$this->ct->Env->advancedtagprocessor ? ' ct_pro' : ''); ?>">
+                    <div class="control-label"><?php echo $this->form->getLabel('customphp'); ?></div>
+                    <div class="controls"><?php
 
-	<div class="row-fluid form-horizontal-desktop">
-			<div class="span12">
+                        if (!$this->ct->Env->advancedtagprocessor)
+                            echo '<input type="text" value="Available in Pro Version" disabled="disabled" class="form-control valid form-control-success" />';
+                        else
+                            echo $this->form->getInput('customphp');
 
-				<?php
-				echo renderDependencies($this->item->id,$this->item->tablename);
-				?>
+                        ?></div>
+                </div>
 
-			</div>
-	</div>
-	<?php echo HTMLHelper::_('uitab.endTab'); ?>
+                <div class="control-group<?php echo(!$this->ct->Env->advancedtagprocessor ? ' ct_pro' : ''); ?>">
+                    <div class="control-label"><?php echo $this->form->getLabel('allowimportcontent'); ?></div>
+                    <div class="controls"><?php echo $this->form->getInput('allowimportcontent'); ?></div>
+                </div>
 
-	<?php /* if ($this->canDo->get('core.admin')) : ?>
+                <div class="control-group<?php echo(!$this->ct->Env->advancedtagprocessor ? ' ct_pro' : ''); ?>">
+                    <div class="control-label"><?php echo $this->form->getLabel('customtablename'); ?></div>
+                    <div class="controls"><?php echo $this->form->getInput('customtablename'); ?></div>
+                </div>
+
+                <div class="control-group<?php echo(!$this->ct->Env->advancedtagprocessor ? ' ct_pro' : ''); ?>">
+                    <div class="control-label"><?php echo $this->form->getLabel('customidfield'); ?></div>
+                    <div class="controls"><?php echo $this->form->getInput('customidfield'); ?></div>
+                </div>
+
+
+            </div>
+        </div>
+
+        <?php
+
+        echo HTMLHelper::_('uitab.endTab');
+        //endif;
+
+        echo HTMLHelper::_('uitab.addTab', 'tablesTab', 'dependencies', Text::_('COM_CUSTOMTABLES_TABLES_DEPENDENCIES'));
+
+        include('_dependencies.php');
+        ?>
+
+        <div class="row-fluid form-horizontal-desktop">
+            <div class="span12">
+
+                <?php
+                echo renderDependencies($this->item->id, $this->item->tablename);
+                ?>
+
+            </div>
+        </div>
+        <?php echo HTMLHelper::_('uitab.endTab'); ?>
+
+        <?php /* if ($this->canDo->get('core.admin')) : ?>
 	
 	<?php echo HTMLHelper::_('uitab.addTab', 'tablesTab', 'permissions', Text::_('COM_CUSTOMTABLES_TABLES_PERMISSION')); ?>
 		<div class="row-fluid form-horizontal-desktop">
@@ -226,23 +222,23 @@ $document->addCustomTag('<link href="'.JURI::root(true).'/components/com_customt
 	endif;
 	*/
 
-	echo HTMLHelper::_('uitab.endTabSet'); ?>
+        echo HTMLHelper::_('uitab.endTabSet'); ?>
 
-	<div>
-		<input type="hidden" name="task" value="tables.edit" />
-		<input type="hidden" name="originaltableid" value="<?php echo $this->item->id; ?>" />
-		<?php echo JHtml::_('form.token'); ?>
-	</div>
-</div>
+        <div>
+            <input type="hidden" name="task" value="tables.edit"/>
+            <input type="hidden" name="originaltableid" value="<?php echo $this->item->id; ?>"/>
+            <?php echo JHtml::_('form.token'); ?>
+        </div>
+    </div>
 
-<div class="clearfix"></div>
-<?php echo JLayoutHelper::render('tables.details_under', $this); ?>
+    <div class="clearfix"></div>
+    <?php echo JLayoutHelper::render('tables.details_under', $this); ?>
 
-<?php if(!$this->ct->Env->advancedtagprocessor): ?>
-<script>
-		disableProField("jform_customtablename");
-		disableProField("jform_customidfield");
-</script>
-<?php endif; ?>
+    <?php if (!$this->ct->Env->advancedtagprocessor): ?>
+        <script>
+            disableProField("jform_customtablename");
+            disableProField("jform_customidfield");
+        </script>
+    <?php endif; ?>
 
 </form>

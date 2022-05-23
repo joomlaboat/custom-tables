@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
@@ -95,17 +95,6 @@ class JoomlaBasicMisc
         return $bytes;
     }
 
-    public static function generateRandomString(int $length = 32): string
-    {
-        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $charactersLength = strlen($characters);
-        $randomString = '';
-        for ($i = 0; $i < $length; $i++)
-            $randomString .= $characters[rand(0, $charactersLength - 1)];
-
-        return $randomString;
-    }
-
     public static function isUserAdmin(): bool
     {
         $user = Factory::getUser();
@@ -189,6 +178,15 @@ class JoomlaBasicMisc
         return $image;
     }
 
+    public static function getSrcParam($img)
+    {
+        foreach ($img as $i) {
+            if ($i[1] == 'src' or $i[1] == 'SRC')
+                return $i[2];
+        }
+        return null;
+    }
+
     public static function chars_trimtext($text, $count, $cleanbraces = false, $cleanquotes = false): string
     {
         if ($count == 0)
@@ -237,15 +235,6 @@ class JoomlaBasicMisc
         }
 
         return trim(preg_replace('/\s\s+/', ' ', $desc));
-    }
-
-    public static function getSrcParam($img)
-    {
-        foreach ($img as $i) {
-            if ($i[1] == 'src' or $i[1] == 'SRC')
-                return $i[2];
-        }
-        return null;
     }
 
     public static function getListToReplace($par, &$options, &$text, string $qtype, $separator = ':', $quote_char = '"'): array
@@ -362,7 +351,7 @@ class JoomlaBasicMisc
 
             $ps1 = $ps + $l;
             $count = 0;
-            while(1) {
+            while (1) {
 
                 $count++;
                 if ($count > 1000) {
@@ -461,8 +450,7 @@ class JoomlaBasicMisc
         return $resArr;
     }
 
-    //-- only for "records" field type;
-    public static function processValue($field, &$ct, &$row)
+public static function processValue($field, &$ct, &$row)
     {
         $p = strpos($field, '->');
         if (!($p === false)) {
@@ -509,7 +497,9 @@ class JoomlaBasicMisc
         }
         return $htmlresult;
 
-    }//processValue()
+    }
+
+    //-- only for "records" field type;
 
     public static function getGroupIdByTitle($grouptitle): string
     {
@@ -527,9 +517,9 @@ class JoomlaBasicMisc
             return '';
 
         return $rows[0]->id;
-    }
+    }//processValue()
 
-    public static function makeNewFileName(string $filename, string $format):string
+    public static function makeNewFileName(string $filename, string $format): string
     {
         //Use translation if needed
         $parts = explode('.', $filename);
@@ -562,6 +552,36 @@ class JoomlaBasicMisc
             $filename .= '.' . $format;
 
         return $filename;
+    }
+
+    public static function JTextExtended($text, $value = null)
+    {
+        if (is_null($value))
+            $new_text = JText::_($text);
+        else
+            $new_text = JText::sprintf($text, $value);
+
+        if ($new_text == $text) {
+            $parts = explode('_', $text);
+            if (count($parts) > 1) {
+                $type = $parts[0];
+                if ($type == 'PLG' and count($parts) > 2) {
+                    $extension = strtolower($parts[0] . '_' . $parts[1] . '_' . $parts[2]);
+                } else
+                    $extension = strtolower($parts[0] . '_' . $parts[1]);
+
+                $lang = Factory::getLanguage();
+                $lang->load($extension, JPATH_BASE);
+
+                if (is_null($value))
+                    return JText::_($text);
+                else
+                    return JText::sprintf($text, $value);
+            } else
+                return $text;
+        } else
+            return $new_text;
+
     }
 
     public static function strip_tags_content($text, $tags = '', $invert = FALSE)
@@ -627,36 +647,6 @@ class JoomlaBasicMisc
             return '';
 
         return $text;
-    }
-
-    public static function JTextExtended($text, $value = null)
-    {
-        if (is_null($value))
-            $new_text = JText::_($text);
-        else
-            $new_text = JText::sprintf($text, $value);
-
-        if ($new_text == $text) {
-            $parts = explode('_', $text);
-            if (count($parts) > 1) {
-                $type = $parts[0];
-                if ($type == 'PLG' and count($parts) > 2) {
-                    $extension = strtolower($parts[0] . '_' . $parts[1] . '_' . $parts[2]);
-                } else
-                    $extension = strtolower($parts[0] . '_' . $parts[1]);
-
-                $lang = Factory::getLanguage();
-                $lang->load($extension, JPATH_BASE);
-
-                if (is_null($value))
-                    return JText::_($text);
-                else
-                    return JText::sprintf($text, $value);
-            } else
-                return $text;
-        } else
-            return $new_text;
-
     }
 
     public static function FindItemidbyAlias($alias)
@@ -741,13 +731,23 @@ class JoomlaBasicMisc
     public static function suggest_TempFileName()
     {
         $output_dir = DIRECTORY_SEPARATOR . trim(sys_get_temp_dir(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
-        $random_name=JoomlaBasicMisc::generateRandomString(32);
+        $random_name = JoomlaBasicMisc::generateRandomString(32);
 
-        while(1)
-        {
-            $file=$output_dir.$random_name;
-            if(!file_exists($file))
+        while (1) {
+            $file = $output_dir . $random_name;
+            if (!file_exists($file))
                 return $file;
         }
+    }
+
+    public static function generateRandomString(int $length = 32): string
+    {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++)
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+
+        return $randomString;
     }
 }

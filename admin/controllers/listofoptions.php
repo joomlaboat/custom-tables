@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
@@ -9,28 +9,29 @@
  **/
 
 // Check to ensure this file is included in Joomla!
-defined('_JEXEC') or die( 'Restricted access' );
+defined('_JEXEC') or die('Restricted access');
 
 jimport('joomla.application.component.controller');
 
 /**
- * @package		Joomla
- * @subpackage	List
+ * @package        Joomla
+ * @subpackage    List
  */
 class CustomTablesControllerListOfOptions extends JControllerAdmin
 {
 
 
-	protected $text_prefix = 'COM_CUSTOMTABLES_LISTOFOPTIONS';
-	/**
-	 * Proxy for getModel.
-	 * @since	2.5
-	 */
-	public function getModel($name = 'Options', $prefix = 'CustomtablesModel', $config = array())
-	{
-		$model = parent::getModel($name, $prefix, array('ignore_request' => true));
+    protected $text_prefix = 'COM_CUSTOMTABLES_LISTOFOPTIONS';
 
-		return $model;
-	}
+    /**
+     * Proxy for getModel.
+     * @since    2.5
+     */
+    public function getModel($name = 'Options', $prefix = 'CustomtablesModel', $config = array())
+    {
+        $model = parent::getModel($name, $prefix, array('ignore_request' => true));
+
+        return $model;
+    }
 }
 

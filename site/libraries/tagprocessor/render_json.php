@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
@@ -16,69 +16,66 @@ use CustomTables\TwigProcessor;
 
 trait render_json
 {
-    protected static function get_CatalogTable_JSON(&$ct,$fields)
-	{
-		$fields=str_replace("\n",'',$fields);
-		$fields=str_replace("\r",'',$fields);
-		$fieldarray=JoomlaBasicMisc::csv_explode(',', $fields, '"', true);
-		foreach($fieldarray as $field)
-		{
-			$fieldpair=JoomlaBasicMisc::csv_explode(':', $field, '"', false);
-			$header_fields[]=$fieldpair[0];//$result;//header
+    protected static function get_CatalogTable_JSON(&$ct, $fields)
+    {
+        $fields = str_replace("\n", '', $fields);
+        $fields = str_replace("\r", '', $fields);
+        $fieldarray = JoomlaBasicMisc::csv_explode(',', $fields, '"', true);
+        foreach ($fieldarray as $field) {
+            $fieldpair = JoomlaBasicMisc::csv_explode(':', $field, '"', false);
+            $header_fields[] = $fieldpair[0];//$result;//header
 
-            if(isset($fieldpair[1]))
-                $vlu=$fieldpair[1];
+            if (isset($fieldpair[1]))
+                $vlu = $fieldpair[1];
             else
-                $vlu="";
+                $vlu = "";
 
-			$line_fields[]=$vlu;//content
-		}
+            $line_fields[] = $vlu;//content
+        }
 
-		$number=1 + $ct->LimitStart; //table row number, it maybe use in the layout as {number}
-        $records=array();
-		
-		$LayoutProc = new LayoutProcessor($ct);
-		
-		foreach($ct->Records as $row)
-		{
-				$row['_number'] = $number;
-                $i=0;
-                $vlus=array();
-                foreach($header_fields as $header_field)
-                {
-                    $LayoutProc->layout=$line_fields[$i];
-                    $vlus[$header_field] = $LayoutProc->fillLayout($row,null,'[]',false,false);
-                    $i++;
-                }
+        $number = 1 + $ct->LimitStart; //table row number, it maybe use in the layout as {number}
+        $records = array();
 
-                $records[] = $vlus;
-                $number++;
-		}
+        $LayoutProc = new LayoutProcessor($ct);
 
-        $result=json_encode($records);
+        foreach ($ct->Records as $row) {
+            $row['_number'] = $number;
+            $i = 0;
+            $vlus = array();
+            foreach ($header_fields as $header_field) {
+                $LayoutProc->layout = $line_fields[$i];
+                $vlus[$header_field] = $LayoutProc->fillLayout($row, null, '[]', false, false);
+                $i++;
+            }
+
+            $records[] = $vlus;
+            $number++;
+        }
+
+        $result = json_encode($records);
         return $result;
     }
-	
-	function get_CatalogTable_singleline_JSON(CT &$ct,int $layoutType,string $layout) //TO DO
-	{
-		if (ob_get_contents())
-			ob_clean();
 
-		//Prepare line layout
-		
-		$layout=str_replace("\n",'',$layout);
-		$layout=str_replace("\r",'',$layout);
+    function get_CatalogTable_singleline_JSON(CT &$ct, int $layoutType, string $layout) //TO DO
+    {
+        if (ob_get_contents())
+            ob_clean();
 
-		$twig = new TwigProcessor($ct, $layout);
-		
-		$records=[];
+        //Prepare line layout
 
-		foreach($ct->Records as $row)
-			$records[]=trim(strip_tags(tagProcessor_Item::RenderResultLine($ct,$layoutType, $twig, $row)));
-		
-		$result = implode(',',$records);
+        $layout = str_replace("\n", '', $layout);
+        $layout = str_replace("\r", '', $layout);
 
-		return $result;
+        $twig = new TwigProcessor($ct, $layout);
+
+        $records = [];
+
+        foreach ($ct->Records as $row)
+            $records[] = trim(strip_tags(tagProcessor_Item::RenderResultLine($ct, $layoutType, $twig, $row)));
+
+        $result = implode(',', $records);
+
+        return $result;
     }
 
 }

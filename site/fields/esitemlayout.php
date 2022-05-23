@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
@@ -18,33 +18,32 @@ JFormHelper::loadFieldClass('list');
 
 class JFormFieldESItemLayout extends JFormFieldList
 {
-	protected $type = 'esitemlayout';
+    protected $type = 'esitemlayout';
 
-	protected function getOptions()
-	{
-		$path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR;
-		require_once($path.'loader.php');
-		CTLoader();
-		
+    protected function getOptions()
+    {
+        $path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR;
+        require_once($path . 'loader.php');
+        CTLoader();
+
         $db = Factory::getDBO();
-		$query = $db->getQuery(true);
-		$query->select('id,layoutname, (SELECT tablename FROM #__customtables_tables WHERE id=tableid) AS tablename');
+        $query = $db->getQuery(true);
+        $query->select('id,layoutname, (SELECT tablename FROM #__customtables_tables WHERE id=tableid) AS tablename');
         $query->from('#__customtables_layouts');
-		$query->where('published=1 AND layouttype=6');
-		$query->order('tablename,layoutname');
+        $query->where('published=1 AND layouttype=6');
+        $query->order('tablename,layoutname');
 
         $db->setQuery((string)$query);
         $messages = $db->loadObjectList();
         $options = array();
 
-		$options[] = JHtml::_('select.option', '', '- '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT' ));
+        $options[] = JHtml::_('select.option', '', '- ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT'));
 
-        if ($messages)
-        {
-            foreach($messages as $message)
-                $options[] = JHtml::_('select.option', $message->layoutname, $message->tablename.': '.$message->layoutname);
+        if ($messages) {
+            foreach ($messages as $message)
+                $options[] = JHtml::_('select.option', $message->layoutname, $message->tablename . ': ' . $message->layoutname);
         }
 
         return $options;
-	}
+    }
 }

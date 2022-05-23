@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
@@ -20,50 +20,48 @@ JFormHelper::loadFieldClass('list');
 //https://docs.joomla.org/Creating_a_custom_form_field_type
 class JFormFieldCTField extends JFormFieldList
 {
-	/**
-	 * Element name
-	 *
-	 * @access	public
-	 * @var		string
-	 *  
-	 */
-	public $type = 'ctfield';
-	
-	public function getOptions($add_empty_option = true)//$name, $value, &$node, $control_name)
-	{
-		// Get a db connection.
-		$db = Factory::getDbo();
+    /**
+     * Element name
+     *
+     * @access    public
+     * @var        string
+     *
+     */
+    public $type = 'ctfield';
 
-		// Create a new query object.
-		$query = $db->getQuery(true);
+    public function getOptions($add_empty_option = true)//$name, $value, &$node, $control_name)
+    {
+        // Get a db connection.
+        $db = Factory::getDbo();
 
-		// Select the text.
-		$query->select($db->quoteName('type'));
-		$query->from($db->quoteName('#__customtables_fields'));
-		$query->order($db->quoteName('type') . ' ASC');
+        // Create a new query object.
+        $query = $db->getQuery(true);
 
-		// Reset the query using our newly populated query object.
-		$db->setQuery($query);
+        // Select the text.
+        $query->select($db->quoteName('type'));
+        $query->from($db->quoteName('#__customtables_fields'));
+        $query->order($db->quoteName('type') . ' ASC');
 
-		$results = $db->loadColumn();
-		
-		$translations = DataTypes::fieldTypeTranslation();
-		$_filter = array();
-		
-		if ($results)
-		{
-			// get model
-			//$model = $this->getModel();
-			$results = array_unique($results);
-			
-			foreach ($results as $type)
-			{
-				// Translate the type selection
-				$text = $translations[$type];
-				// Now add the type and its text to the options array
-				$_filter[] = JHtml::_('select.option', $type, JText::_($text));
-			}
-		}
-		return $_filter;
-	}
+        // Reset the query using our newly populated query object.
+        $db->setQuery($query);
+
+        $results = $db->loadColumn();
+
+        $translations = DataTypes::fieldTypeTranslation();
+        $_filter = array();
+
+        if ($results) {
+            // get model
+            //$model = $this->getModel();
+            $results = array_unique($results);
+
+            foreach ($results as $type) {
+                // Translate the type selection
+                $text = $translations[$type];
+                // Now add the type and its text to the options array
+                $_filter[] = JHtml::_('select.option', $type, JText::_($text));
+            }
+        }
+        return $_filter;
+    }
 }

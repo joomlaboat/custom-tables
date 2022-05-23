@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
@@ -20,53 +20,50 @@ JFormHelper::loadFieldClass('list');
 
 class JFormFieldCTLayoutType extends JFormFieldList
 {
-	/**
-	 * Element name
-	 *
-	 * @access	public
-	 * @var		string
-	 *  
-	 */
-	public $type = 'ctlayouttype';
-	
-	public function getOptions()//$name, $value, &$node, $control_name)
-	{
-		$ct = new CT;
-		
-		// Get a db connection.
-		$db = Factory::getDbo();
+    /**
+     * Element name
+     *
+     * @access    public
+     * @var        string
+     *
+     */
+    public $type = 'ctlayouttype';
 
-		// Create a new query object.
-		$query = $db->getQuery(true);
+    public function getOptions()//$name, $value, &$node, $control_name)
+    {
+        $ct = new CT;
 
-		// Select the text.
-		$query->select($db->quoteName('layouttype'));
-		$query->from($db->quoteName('#__customtables_layouts'));
-		$query->order($db->quoteName('layouttype') . ' ASC');
+        // Get a db connection.
+        $db = Factory::getDbo();
 
-		// Reset the query using our newly populated query object.
-		$db->setQuery($query);
+        // Create a new query object.
+        $query = $db->getQuery(true);
 
-		$results = $db->loadColumn();
+        // Select the text.
+        $query->select($db->quoteName('layouttype'));
+        $query->from($db->quoteName('#__customtables_layouts'));
+        $query->order($db->quoteName('layouttype') . ' ASC');
 
-		$options = array();
-		if ($results)
-		{
-			$Layouts = new Layouts($ct);
-			$translations = $Layouts->layoutTypeTranslation();
-			$results = array_unique($results);
-			
-			foreach ($results as $layouttype)
-			{
-				// Translate the layouttype selection
-				if((int)$layouttype!=0)
-				{
-					$text = $translations[$layouttype];
-					// Now add the layouttype and its text to the options array
-					$options[] = JHtml::_('select.option', $layouttype, JText::_($text));
-				}
-			}
-		}
-		return $options;
-	}
+        // Reset the query using our newly populated query object.
+        $db->setQuery($query);
+
+        $results = $db->loadColumn();
+
+        $options = array();
+        if ($results) {
+            $Layouts = new Layouts($ct);
+            $translations = $Layouts->layoutTypeTranslation();
+            $results = array_unique($results);
+
+            foreach ($results as $layouttype) {
+                // Translate the layouttype selection
+                if ((int)$layouttype != 0) {
+                    $text = $translations[$layouttype];
+                    // Now add the layouttype and its text to the options array
+                    $options[] = JHtml::_('select.option', $layouttype, JText::_($text));
+                }
+            }
+        }
+        return $options;
+    }
 }

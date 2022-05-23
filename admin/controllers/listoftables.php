@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @subpackage controllers/listoffields.php
  * @author Ivan komlev <support@joomlaboat.com>
@@ -8,7 +8,7 @@
  * @copyright Copyright (C) 2018-2020. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
- 
+
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
@@ -24,52 +24,50 @@ use CustomTables\ExportTables;
  */
 class CustomtablesControllerListoftables extends JControllerAdmin
 {
-	protected $text_prefix = 'COM_CUSTOMTABLES_LISTOFTABLES';
-	/**
-	 * Proxy for getModel.
-	 * @since	2.5
-	 */
-	public function getModel($name = 'Tables', $prefix = 'CustomtablesModel', $config = array())
-	{
-		$model = parent::getModel($name, $prefix, array('ignore_request' => true));
+    protected $text_prefix = 'COM_CUSTOMTABLES_LISTOFTABLES';
 
-		return $model;
-	}
+    /**
+     * Proxy for getModel.
+     * @since    2.5
+     */
+    public function getModel($name = 'Tables', $prefix = 'CustomtablesModel', $config = array())
+    {
+        $model = parent::getModel($name, $prefix, array('ignore_request' => true));
 
-	public function export()
-	{
-		$cids	= Factory::getApplication()->input->post->get('cid',array(),'array');
-		$cids = ArrayHelper::toInteger($cids);
-		
-		$download_link=ExportTables::export($cids);
-		
-		if($download_link!='')
-		{
-			$msg = 'COM_CUSTOMTABLES_LISTOFTABLES_N_ITEMS_EXPORTED';
-			
-			if(count($cids) == 1)
-				$msg.='_1';
-				
-			$msg = JText::sprintf($msg,count($cids));
-				
-			if($download_link!='')
-				$msg.='&nbsp;&nbsp;<a href="'.$download_link.'" target="_blank">Download (Click Save Link As...)</a>';
-	    }
-	    else
-	    {
-			$msg = JText::_( 'COM_CUSTOMTABLES_TABLES_UNABLETOEXPORT' );
-	    }
-		
-		Factory::getApplication()->enqueueMessage($msg,'success');
-		
-		$redirect = 'index.php?option=' . $this->option;
-		$redirect.='&view=listoftables';
-		
-		// Redirect to the item screen.
-		$this->setRedirect(
-			JRoute::_(
-				$redirect, false
-			)
-		);
-	}
+        return $model;
+    }
+
+    public function export()
+    {
+        $cids = Factory::getApplication()->input->post->get('cid', array(), 'array');
+        $cids = ArrayHelper::toInteger($cids);
+
+        $download_link = ExportTables::export($cids);
+
+        if ($download_link != '') {
+            $msg = 'COM_CUSTOMTABLES_LISTOFTABLES_N_ITEMS_EXPORTED';
+
+            if (count($cids) == 1)
+                $msg .= '_1';
+
+            $msg = JText::sprintf($msg, count($cids));
+
+            if ($download_link != '')
+                $msg .= '&nbsp;&nbsp;<a href="' . $download_link . '" target="_blank">Download (Click Save Link As...)</a>';
+        } else {
+            $msg = JText::_('COM_CUSTOMTABLES_TABLES_UNABLETOEXPORT');
+        }
+
+        Factory::getApplication()->enqueueMessage($msg, 'success');
+
+        $redirect = 'index.php?option=' . $this->option;
+        $redirect .= '&view=listoftables';
+
+        // Redirect to the item screen.
+        $this->setRedirect(
+            JRoute::_(
+                $redirect, false
+            )
+        );
+    }
 }

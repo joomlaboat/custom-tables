@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
@@ -429,7 +429,7 @@ class CTUser
         $theAnswerIs = false;
 
         if ($ct->Params->userIdField != '')
-            $theAnswerIs = self::checkIfItemBelongsToUser($ct, $ct->Params->userIdField,$ct->Params->listing_id);
+            $theAnswerIs = self::checkIfItemBelongsToUser($ct, $ct->Params->userIdField, $ct->Params->listing_id);
 
         if (!$theAnswerIs)
             return JoomlaBasicMisc::checkUserGroupAccess($userGroup);
@@ -439,7 +439,7 @@ class CTUser
 
     public static function checkIfItemBelongsToUser(CT &$ct, string $userIdField, string $listing_id): bool
     {
-        $wheres = self::UserIDField_BuildWheres($ct, $userIdField,$listing_id);
+        $wheres = self::UserIDField_BuildWheres($ct, $userIdField, $listing_id);
 
         $query = 'SELECT c.' . $ct->Table->realidfieldname . ' FROM ' . $ct->Table->realtablename . ' AS c WHERE ' . implode(' AND ', $wheres) . ' LIMIT 1';
 

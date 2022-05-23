@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
@@ -111,30 +111,40 @@ class CT_FieldTypeTag_file
         }
     }
 
-    static protected function get_security_letter($how_to_process): string
+    public static function getFileFolder(string $folder): string
     {
-        switch ($how_to_process) {
-            case 'timelimited':
-                return 'd';
+        if ($folder == '')
+            $folder = '/images';    //default folder
+        elseif ($folder[0] == '/') {
 
-            case 'timelimited_longterm':
-                return 'e';
+            //delete trailing slash if found
+            $p = substr($folder, strlen($folder) - 1, 1);
+            if ($p == '/')
+                $folder = substr($folder, 0, strlen($folder) - 1);
+        } else {
+            $folder = '/' . $folder;
+            if (strlen($folder) > 8)//add /images to relative path
+            {
+                $p = substr($folder, 0, 8);
+                if ($p != '/images/')
+                    $folder = '/images' . $folder;
+            } else {
+                $folder = '/images' . $folder;
+            }
 
-            case 'hostlimited':
-                return 'f';
-
-            case 'hostlimited_longterm':
-                return 'g';
-
-            case 'private':
-                return 'h';
-
-            case 'private_longterm':
-                return 'i';
-
-            default:
-                return '';
+            //delete trailing slash if found
+            $p = substr($folder, strlen($folder) - 1, 1);
+            if ($p == '/')
+                $folder = substr($folder, 0, strlen($folder) - 1);
         }
+
+        $folderPath = JPATH_SITE . str_replace('/', DIRECTORY_SEPARATOR, $folder); //relative path
+
+        //Create folder if not exists
+        if (!file_exists($folderPath))
+            mkdir($folderPath, 0755, true);
+
+        return $folder;
     }
 
     static protected function get_private_file_path($rowValue, $how_to_process, $filepath, $recid, $fieldid, $tableid, $filename_only = false): string
@@ -168,6 +178,66 @@ class CT_FieldTypeTag_file
         return $filepath;
     }
 
+    static protected function get_security_letter($how_to_process): string
+    {
+        switch ($how_to_process) {
+            case 'timelimited':
+                return 'd';
+
+            case 'timelimited_longterm':
+                return 'e';
+
+            case 'hostlimited':
+                return 'f';
+
+            case 'hostlimited_longterm':
+                return 'g';
+
+            case 'private':
+                return 'h';
+
+            case 'private_longterm':
+                return 'i';
+
+            default:
+                return '';
+        }
+    }
+
+    public static function makeTheKey(string $filepath, string $security, string $rec_id, string $fieldid, string $tableid): string
+    {
+        $user = Factory::getUser();
+        $username = $user->get('username');
+        $current_user_id = (int)$user->get('id');
+
+        $t = time();
+        //prepare augmented timer
+        $secs = 1000;
+        if ($security == 'e' or $security == 'g' or $security == 'i')
+            $secs = 10000;
+
+        $tplus = floor(($t + $secs) / $secs) * $secs;
+        $ip = $_SERVER['REMOTE_ADDR'];
+
+        //get secs key char
+        $sep = $security;//($secs==1000 ? 'a' : 'b');
+        $m2 = 'c' . $rec_id . $sep . $fieldid . $sep . $tableid;
+
+        $m = '';
+
+        //calculate MD5
+        if ($security == 'd' or $security == 'e')
+            $m = md5($filepath . $tplus);
+        elseif ($security == 'f' or $security == 'g')
+            $m = md5($filepath . $tplus . $ip);
+        elseif ($security == 'h' or $security == 'i')
+            $m = md5($filepath . $tplus . $ip . $username . $current_user_id);
+
+        //replace rear part of the hash
+        $m3 = substr($m, 0, strlen($m) - strlen($m2));
+        return $m3 . $m2;
+    }
+
     static public function get_file_type_value(CustomTables\Field &$field, $listing_id)
     {
         $jinput = Factory::getApplication()->input;
@@ -182,7 +252,7 @@ class CT_FieldTypeTag_file
         $value_found = false;
 
         $filepath = str_replace('/', DIRECTORY_SEPARATOR, $FileFolder);
-        if(substr($filepath,0,1) == DIRECTORY_SEPARATOR)
+        if (substr($filepath, 0, 1) == DIRECTORY_SEPARATOR)
             $filepath = JPATH_SITE . $filepath;
         else
             $filepath = JPATH_SITE . DIRECTORY_SEPARATOR . $filepath;
@@ -325,7 +395,7 @@ class CT_FieldTypeTag_file
 
         $i = 0;
         $filename_new = $filename;
-        while(1) {
+        while (1) {
 
             if (file_exists($FileFolder . DIRECTORY_SEPARATOR . $filename_new)) {
                 //increase index
@@ -344,8 +414,7 @@ class CT_FieldTypeTag_file
 
         if (count($row) > 0 and $row[$ct->Table->realidfieldname] != '' and (is_numeric($row[$ct->Table->realidfieldname]) and $row[$ct->Table->realidfieldname] != 0)) {
             $file = strval($row[$field->realfieldname]);
-        }
-        else
+        } else
             $file = '';
 
         $result = '<div class="esUploadFileBox" style="vertical-align:top;">';
@@ -411,10 +480,10 @@ class CT_FieldTypeTag_file
                 	<script>
                         UploadFileCount=1;
 
-                    	let urlstr' . $field->id .' ="' . JURI::root(true) . '/index.php?option=com_customtables&view=fileuploader&tmpl=component&' . $field->fieldname
+                    	let urlstr' . $field->id . ' ="' . JURI::root(true) . '/index.php?option=com_customtables&view=fileuploader&tmpl=component&' . $field->fieldname
             . '_fileid=' . $file_id . '&Itemid=' . $field->ct->Env->ItemId . '&fieldname=' . $field->fieldname . '";
                     	
-						ct_getUploader(' . $field->id . ',urlstr' . $field->id .',' . $max_file_size . ',"' . $accepted_file_types . '","eseditForm",false,"ct_fileuploader_' . $field->fieldname . '","ct_eventsmessage_'
+						ct_getUploader(' . $field->id . ',urlstr' . $field->id . ',' . $max_file_size . ',"' . $accepted_file_types . '","eseditForm",false,"ct_fileuploader_' . $field->fieldname . '","ct_eventsmessage_'
             . $field->fieldname . '","' . $file_id . '","' . $field->prefix . $field->fieldname . '","ct_ubloadedfile_box_' . $field->fieldname . '")
 
                     </script>
@@ -423,48 +492,6 @@ class CT_FieldTypeTag_file
 					' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE') . ': ' . JoomlaBasicMisc::formatSizeUnits($max_file_size) . '
                 </div>
                 ';
-    }
-
-    public static function getFileFolder(string $folder): string
-    {
-        if ($folder == '')
-            $folder = '/images';    //default folder
-        elseif ($folder[0] == '/') {
-
-            //delete trailing slash if found
-            $p = substr($folder, strlen($folder) - 1, 1);
-            if ($p == '/')
-                $folder = substr($folder, 0, strlen($folder) - 1);
-        } else {
-            $folder = '/' . $folder;
-            if (strlen($folder) > 8)//add /images to relative path
-            {
-                $p = substr($folder, 0, 8);
-                if ($p != '/images/')
-                    $folder = '/images' . $folder;
-            } else {
-                $folder = '/images' . $folder;
-            }
-
-            //delete trailing slash if found
-            $p = substr($folder, strlen($folder) - 1, 1);
-            if ($p == '/')
-                $folder = substr($folder, 0, strlen($folder) - 1);
-        }
-
-        $folderPath = JPATH_SITE . str_replace('/', DIRECTORY_SEPARATOR, $folder); //relative path
-
-        //Create folder if not exists
-        if (!file_exists($folderPath))
-            mkdir($folderPath, 0755, true);
-
-        return $folder;
-    }
-
-    public static function wrong(): bool
-    {
-        Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
-        return false;
     }
 
     public static function process_file_link($filename): void
@@ -521,37 +548,9 @@ class CT_FieldTypeTag_file
         }
     }
 
-    public static function makeTheKey(string $filepath, string $security, string $rec_id, string $fieldid, string $tableid): string
+    public static function wrong(): bool
     {
-        $user = Factory::getUser();
-        $username = $user->get('username');
-        $current_user_id = (int)$user->get('id');
-
-        $t = time();
-        //prepare augmented timer
-        $secs = 1000;
-        if ($security == 'e' or $security == 'g' or $security == 'i')
-            $secs = 10000;
-
-        $tplus = floor(($t + $secs) / $secs) * $secs;
-        $ip = $_SERVER['REMOTE_ADDR'];
-
-        //get secs key char
-        $sep = $security;//($secs==1000 ? 'a' : 'b');
-        $m2 = 'c' . $rec_id . $sep . $fieldid . $sep . $tableid;
-
-        $m = '';
-
-        //calculate MD5
-        if ($security == 'd' or $security == 'e')
-            $m = md5($filepath . $tplus);
-        elseif ($security == 'f' or $security == 'g')
-            $m = md5($filepath . $tplus . $ip);
-        elseif ($security == 'h' or $security == 'i')
-            $m = md5($filepath . $tplus . $ip . $username . $current_user_id);
-
-        //replace rear part of the hash
-        $m3 = substr($m, 0, strlen($m) - strlen($m2));
-        return $m3 . $m2;
+        Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
+        return false;
     }
 }

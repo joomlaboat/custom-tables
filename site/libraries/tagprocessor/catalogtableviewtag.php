@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
@@ -21,66 +21,55 @@ require_once('render_image.php');
 class tagProcessor_CatalogTableView
 {
     use render_html;
-	use render_xlsx;
-	use render_csv;
+    use render_xlsx;
+    use render_csv;
     use render_json;
     use render_xml;
-	use render_image;
+    use render_image;
 
-    public static function process(&$ct,$layoutType,&$pagelayout,$new_replaceitecode)
+    public static function process(&$ct, $layoutType, &$pagelayout, $new_replaceitecode)
     {
-        $vlu='';
+        $vlu = '';
 
         //Catalog Table View
-		$options=array();
-		$fList=JoomlaBasicMisc::getListToReplace('catalogtable',$options,$pagelayout,'{}');
+        $options = array();
+        $fList = JoomlaBasicMisc::getListToReplace('catalogtable', $options, $pagelayout, '{}');
 
-		$i=0;
-		foreach($fList as $fItem)
-		{
-			$pair=JoomlaBasicMisc::csv_explode(';', $options[$i], '"', true);
-			$fields=$pair[0];
+        $i = 0;
+        foreach ($fList as $fItem) {
+            $pair = JoomlaBasicMisc::csv_explode(';', $options[$i], '"', true);
+            $fields = $pair[0];
 
-			if($ct->Env->frmt=='csv')
-			{
-				$vlu=self::get_CatalogTable_CSV($ct,$fields);
-                $pagelayout=str_replace($fItem,$new_replaceitecode,$pagelayout);
-			}
-            elseif($ct->Env->frmt=='json')
-			{
-				$vlu=self::get_CatalogTable_JSON($ct,$fields);
-                $pagelayout=str_replace($fItem,$new_replaceitecode,$pagelayout);
-			}
-            elseif($ct->Env->frmt=='xml')
-			{
-				$vlu=self::get_CatalogTable_XML($ct,$layoutType,$fields);
-                $pagelayout=str_replace($fItem,$new_replaceitecode,$pagelayout);
-			}
-			elseif($ct->Env->frmt=='xlsx')
-			{
-				self::get_CatalogTable_XLSX($fields);
-			}
-			else
-			{
-				$class='';
-				$dragdrop='';
-				
-				if(isset($pair[1]))
-				{
-					$parts = explode(',',$pair[1]);
-					if($parts[0] != '')
-						$class=$parts[0];
-					
-					if(isset($parts[1]))
-						$dragdrop = $parts[1] == 'dragdrop';
-				}
+            if ($ct->Env->frmt == 'csv') {
+                $vlu = self::get_CatalogTable_CSV($ct, $fields);
+                $pagelayout = str_replace($fItem, $new_replaceitecode, $pagelayout);
+            } elseif ($ct->Env->frmt == 'json') {
+                $vlu = self::get_CatalogTable_JSON($ct, $fields);
+                $pagelayout = str_replace($fItem, $new_replaceitecode, $pagelayout);
+            } elseif ($ct->Env->frmt == 'xml') {
+                $vlu = self::get_CatalogTable_XML($ct, $layoutType, $fields);
+                $pagelayout = str_replace($fItem, $new_replaceitecode, $pagelayout);
+            } elseif ($ct->Env->frmt == 'xlsx') {
+                self::get_CatalogTable_XLSX($fields);
+            } else {
+                $class = '';
+                $dragdrop = '';
 
-				$vlu=self::get_CatalogTable_HTML($ct,$layoutType, $fields,$class, $dragdrop);
-				$pagelayout=str_replace($fItem,$new_replaceitecode,$pagelayout);
-			}
+                if (isset($pair[1])) {
+                    $parts = explode(',', $pair[1]);
+                    if ($parts[0] != '')
+                        $class = $parts[0];
 
-			$i++;
-		}
+                    if (isset($parts[1]))
+                        $dragdrop = $parts[1] == 'dragdrop';
+                }
+
+                $vlu = self::get_CatalogTable_HTML($ct, $layoutType, $fields, $class, $dragdrop);
+                $pagelayout = str_replace($fItem, $new_replaceitecode, $pagelayout);
+            }
+
+            $i++;
+        }
         return $vlu;
     }
 }

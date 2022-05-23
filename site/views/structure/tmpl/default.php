@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
@@ -12,85 +12,81 @@
 defined('_JEXEC') or die('Restricted access');
 
 
-	echo '<h5>'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FOUND').': '.$this->record_count.' '.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RESULT_S').'</h5>';
+echo '<h5>' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FOUND') . ': ' . $this->record_count . ' ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RESULT_S') . '</h5>';
 
-	echo '<form action="" method="post" name="escatalogform" id="escatalogform">
+echo '<form action="" method="post" name="escatalogform" id="escatalogform">
 		<input type="hidden" name="option" value="com_customtables" />
 		<input type="hidden" name="view" value="structure" />
         <input type="hidden" name="task" id="task" value="" />
         ';
 
-		if($this->record_count > 5)
-		{
-		echo '
+if ($this->record_count > 5) {
+    echo '
 	<table cellpadding=0 cellspacing=0 width="100%" >
         <tr height=30>
-                <td width="140" valign="top">'.JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SHOW').': '.$this->pagination->getLimitBox("").'</td>
-                <td align="center" valign="top">'.$this->pagination->getPagesLinks("").'<br/></td>
+                <td width="140" valign="top">' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SHOW') . ': ' . $this->pagination->getLimitBox("") . '</td>
+                <td align="center" valign="top">' . $this->pagination->getPagesLinks("") . '<br/></td>
                 <td width="140" valign="top"></td>
         </tr>
     </table>
 	<hr>
 		';
-		}
-		
-	$catalogResult='<table width="100%">';
-	$Itemid=$this->ct->Env->jinput->getInt('Itemid',  0);
+}
 
-    $tr=0;
-	$number_of_columns=3;
+$catalogResult = '<table width="100%">';
+$Itemid = $this->ct->Env->jinput->getInt('Itemid', 0);
 
-	$content_width=100;
-	$column_width=floor($content_width/$number_of_columns);
-	$aLink='index.php?option=com_customtables&view=catalog&Itemid='.$Itemid.'&essearchbar=true&establename='.$this->ct->Table->tablename;
+$tr = 0;
+$number_of_columns = 3;
 
-    foreach($this->rows as $row)
-    {
-		if($tr==0)
-		$catalogResult.='<tr>';
+$content_width = 100;
+$column_width = floor($content_width / $number_of_columns);
+$aLink = 'index.php?option=com_customtables&view=catalog&Itemid=' . $Itemid . '&essearchbar=true&establename=' . $this->ct->Table->tablename;
 
-        $catalogResult.='<td width="'.$column_width.'%" valign="top" align="left">';
+foreach ($this->rows as $row) {
+    if ($tr == 0)
+        $catalogResult .= '<tr>';
 
-		if($this->linkable)
-			$catalogResult.='<a href="'.$aLink.'&es_'.$this->esfieldname.'_1='.$row['optionname'].'">'.$row['optiontitle'].'</a>';
-		else
-			$catalogResult.=$row['optiontitle'].'';
+    $catalogResult .= '<td width="' . $column_width . '%" valign="top" align="left">';
 
-		$catalogResult.='</td>';
+    if ($this->linkable)
+        $catalogResult .= '<a href="' . $aLink . '&es_' . $this->esfieldname . '_1=' . $row['optionname'] . '">' . $row['optiontitle'] . '</a>';
+    else
+        $catalogResult .= $row['optiontitle'] . '';
 
-		$tr++;
-		if($tr==$number_of_columns)
-		{
-			$catalogResult.='</tr>';
+    $catalogResult .= '</td>';
 
-			if($this->row_break)
-				$catalogResult.='<tr><td colspan="'.$number_of_columns.'"><hr /></td></tr>';
+    $tr++;
+    if ($tr == $number_of_columns) {
+        $catalogResult .= '</tr>';
 
-			$tr	=0;
-		}
+        if ($this->row_break)
+            $catalogResult .= '<tr><td colspan="' . $number_of_columns . '"><hr /></td></tr>';
+
+        $tr = 0;
     }
+}
 
-    $catalogResult.='</tbody>
+$catalogResult .= '</tbody>
 
     </table>';
 
-    if($this->ct->Params->allowContentPlugins)
-		$catalogResult = JoomlaBasicMisc::applyContentPlugins($catalogResult);
-	
-	echo $catalogResult;
+if ($this->ct->Params->allowContentPlugins)
+    $catalogResult = JoomlaBasicMisc::applyContentPlugins($catalogResult);
 
-	if($this->record_count > 5)
-	{
-		echo '<p></p>
+echo $catalogResult;
+
+if ($this->record_count > 5) {
+    echo '<p></p>
 		<hr>
 			<table>
 				<tbody>
 					<tr>
-						<td>'.$this->pagination->getPagesLinks("").'<br/></td>
+						<td>' . $this->pagination->getPagesLinks("") . '<br/></td>
 					</tr>
 				</tbody>
 			</table>
 		';
-	}
+}
 
-    echo '</form>';
+echo '</form>';

@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan komlev <support@joomlaboat.com>
  * @link https://www.joomlaboat.com
@@ -81,7 +81,7 @@ if ($task != '') {
     }
 
     //parent::display('catalog', $ct);
-}else
+} else
     parent::display();
 
 function doTheTask(&$ct, $task, $edit_model, &$this_)

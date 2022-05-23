@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
@@ -331,8 +331,7 @@ class CustomTablesModelEditItem extends JModelLegacy
                 if ($this->ct->Env->user->authorise('core.edit.own', 'com_customtables')) {
                     $this->isAuthorized = true;
                     return true;
-                }
-                else
+                } else
                     $this->isAuthorized = false;
             }
         }
@@ -1404,7 +1403,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
                 $photoRows = $this->ct->db->loadObjectList();
 
-                $imageGalleryPrefix='g';
+                $imageGalleryPrefix = 'g';
 
                 foreach ($photoRows as $photoRow) {
                     $imageMethods->DeleteExistingGalleryImage(

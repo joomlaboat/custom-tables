@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
@@ -23,45 +23,45 @@ HTMLHelper::_('behavior.multiselect');
 
 ?>
 <tr>
-	<?php if ($this->canEdit && $this->canState): ?>
-		<th width="20" class="nowrap center">
-			<?php echo JHtml::_('grid.checkall'); ?>
-		</th>
-	<?php endif; ?>
-	
-	<th scope="col">
-		<?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_LAYOUTS_LAYOUTNAME_LABEL', 'a.layoutname', $this->listDirn, $this->listOrder); ?>
-	</th>
-	
-	<th scope="col">
-		<?php echo JText::_('COM_CUSTOMTABLES_LAYOUTS_LAYOUTTYPE_LABEL'); ?>
-	</th>
-	
-	<th scope="col">
-			<?php echo JText::_('COM_CUSTOMTABLES_LAYOUTS_TABLEID_LABEL'); ?>
-	</th>
-	
-	<th scope="col" class="text-center d-none d-md-table-cell" >
-		<?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_LAYOUTS_STATUS', 'a.published', $this->listDirn, $this->listOrder); ?>
-	</th>
-	
-	<th scope="col" class="w-12 d-none d-xl-table-cell" >
-		<?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_LAYOUTS_ID', 'a.id', $this->listDirn, $this->listOrder); ?>
-	</th>
-	
-	<th scope="col">
-			<?php echo JText::_('COM_CUSTOMTABLES_LAYOUTS_SIZE'); ?>
-	</th>
+    <?php if ($this->canEdit && $this->canState): ?>
+        <th width="20" class="nowrap center">
+            <?php echo JHtml::_('grid.checkall'); ?>
+        </th>
+    <?php endif; ?>
 
-	<th scope="col">
-			<?php echo JText::_('COM_CUSTOMTABLES_LAYOUTS_MODIFIEDBY'); ?>
-	</th>
+    <th scope="col">
+        <?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_LAYOUTS_LAYOUTNAME_LABEL', 'a.layoutname', $this->listDirn, $this->listOrder); ?>
+    </th>
 
-	<th scope="col">
-			<?php echo JText::_('COM_CUSTOMTABLES_LAYOUTS_MODIFIED'); ?>
-	</th>
-	
-	<th scope="col">
-			Template engine
-	</th>
+    <th scope="col">
+        <?php echo JText::_('COM_CUSTOMTABLES_LAYOUTS_LAYOUTTYPE_LABEL'); ?>
+    </th>
+
+    <th scope="col">
+        <?php echo JText::_('COM_CUSTOMTABLES_LAYOUTS_TABLEID_LABEL'); ?>
+    </th>
+
+    <th scope="col" class="text-center d-none d-md-table-cell">
+        <?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_LAYOUTS_STATUS', 'a.published', $this->listDirn, $this->listOrder); ?>
+    </th>
+
+    <th scope="col" class="w-12 d-none d-xl-table-cell">
+        <?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_LAYOUTS_ID', 'a.id', $this->listDirn, $this->listOrder); ?>
+    </th>
+
+    <th scope="col">
+        <?php echo JText::_('COM_CUSTOMTABLES_LAYOUTS_SIZE'); ?>
+    </th>
+
+    <th scope="col">
+        <?php echo JText::_('COM_CUSTOMTABLES_LAYOUTS_MODIFIEDBY'); ?>
+    </th>
+
+    <th scope="col">
+        <?php echo JText::_('COM_CUSTOMTABLES_LAYOUTS_MODIFIED'); ?>
+    </th>
+
+    <th scope="col">
+        Template engine
+    </th>
 </tr>

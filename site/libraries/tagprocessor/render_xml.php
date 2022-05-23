@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
@@ -15,63 +15,59 @@ use CustomTables\TwigProcessor;
 
 trait render_xml
 {
-    protected static function get_CatalogTable_XML(&$ct,$layoutType,$fields)
-	{
-		$catalogresult='';
+    protected static function get_CatalogTable_XML(&$ct, $layoutType, $fields)
+    {
+        $catalogresult = '';
 
-		$fieldarray=JoomlaBasicMisc::csv_explode(',', $fields, '"', true);
+        $fieldarray = JoomlaBasicMisc::csv_explode(',', $fields, '"', true);
 
         //prepare header and record layouts
 
-		$result='';
+        $result = '';
 
-		$recordline='';
+        $recordline = '';
 
-        $header_fields=array();
-        $line_fields=array();
-		foreach($fieldarray as $field)
-		{
-			$fieldpair=JoomlaBasicMisc::csv_explode(':', $field, '"', false);
+        $header_fields = array();
+        $line_fields = array();
+        foreach ($fieldarray as $field) {
+            $fieldpair = JoomlaBasicMisc::csv_explode(':', $field, '"', false);
 
-			$header_fields[]=str_replace("'",'"',$fieldpair[0]);
+            $header_fields[] = str_replace("'", '"', $fieldpair[0]);
 
-            if(isset($fieldpair[1]))
-            {
-                $vlu=str_replace("'",'"',$fieldpair[1]);
+            if (isset($fieldpair[1])) {
+                $vlu = str_replace("'", '"', $fieldpair[1]);
 
-                if(strpos($vlu,',')!==false)
-                    $vlu='"'.$vlu.'"';
-            }
-            else
-                $vlu="";
+                if (strpos($vlu, ',') !== false)
+                    $vlu = '"' . $vlu . '"';
+            } else
+                $vlu = "";
 
-			$line_fields[]=$vlu;//content
-		}
+            $line_fields[] = $vlu;//content
+        }
 
-        $recordline.=implode('',$line_fields);
-		$result.=implode('',$header_fields);//."\r\n";
+        $recordline .= implode('', $line_fields);
+        $result .= implode('', $header_fields);//."\r\n";
 
         //Parse Header
-		$LayoutProc = new LayoutProcessor($ct);
-        $LayoutProc->layout=$result;
-        $result=$LayoutProc->fillLayout();
-        $result=str_replace('&&&&quote&&&&','"',$result);
+        $LayoutProc = new LayoutProcessor($ct);
+        $LayoutProc->layout = $result;
+        $result = $LayoutProc->fillLayout();
+        $result = str_replace('&&&&quote&&&&', '"', $result);
 
-		$number = 1 + $ct->LimitStart; //table row number, it maybe use in the layout as {number}
-		
-		$twig = new TwigProcessor($ct, $recordline);
+        $number = 1 + $ct->LimitStart; //table row number, it maybe use in the layout as {number}
 
-        $tablecontent='';
-		foreach($ct->Records as $row)
-		{
-			$row['_number'] = $number;
+        $twig = new TwigProcessor($ct, $recordline);
 
-            if($tablecontent!="")
-                $tablecontent.="\r\n";
-               	$tablecontent.=tagProcessor_Item::RenderResultLine($ct,$layoutType,$twig,$row);
-				$number++;
-		}
-        $result.=$tablecontent;
+        $tablecontent = '';
+        foreach ($ct->Records as $row) {
+            $row['_number'] = $number;
+
+            if ($tablecontent != "")
+                $tablecontent .= "\r\n";
+            $tablecontent .= tagProcessor_Item::RenderResultLine($ct, $layoutType, $twig, $row);
+            $number++;
+        }
+        $result .= $tablecontent;
         return $result;
     }
 }

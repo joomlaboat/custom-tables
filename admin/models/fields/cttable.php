@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
@@ -19,29 +19,28 @@ JFormHelper::loadFieldClass('list');
 //https://docs.joomla.org/Creating_a_custom_form_field_type
 class JFormFieldCTTable extends JFormFieldList
 {
-	public $type = 'cttable';
-	
-	public function getOptions($add_empty_option = true)//$name, $value, &$node, $control_name)
-	{
-        $db = Factory::getDBO();
-		$query = $db->getQuery(true);
-		$query->select('id,tabletitle');
-        $query->from('#__customtables_tables');
-		$query->order('tabletitle');
-		$query->where('published=1');
+    public $type = 'cttable';
 
-		$db->setQuery((string)$query);
+    public function getOptions($add_empty_option = true)//$name, $value, &$node, $control_name)
+    {
+        $db = Factory::getDBO();
+        $query = $db->getQuery(true);
+        $query->select('id,tabletitle');
+        $query->from('#__customtables_tables');
+        $query->order('tabletitle');
+        $query->where('published=1');
+
+        $db->setQuery((string)$query);
         $records = $db->loadObjectList();
-		
+
         $options = array();
-        if ($records)
-        {
-			if($add_empty_option)
-				$options[] = JHtml::_('select.option', '', JText::_('COM_CUSTOMTABLES_LAYOUTS_TABLEID_SELECT'));
-				
-            foreach($records as $rec) 
+        if ($records) {
+            if ($add_empty_option)
+                $options[] = JHtml::_('select.option', '', JText::_('COM_CUSTOMTABLES_LAYOUTS_TABLEID_SELECT'));
+
+            foreach ($records as $rec)
                 $options[] = JHtml::_('select.option', $rec->id, $rec->tabletitle);
         }
         return $options;
-	}
+    }
 }

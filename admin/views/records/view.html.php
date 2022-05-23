@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @subpackage views/records/view.html.php
  * @author Ivan komlev <support@joomlaboat.com>
@@ -13,6 +13,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\CT;
+use CustomTables\Inputbox;
 use CustomTables\Layouts;
 
 use Joomla\CMS\Factory;
@@ -49,13 +50,21 @@ class CustomtablesViewRecords extends JViewLegacy
         $paramsArray['publishstatus'] = 1;
         $paramsArray['listingid'] = $listing_id;
 
-
         $params = new JRegistry;
         $params->loadArray($paramsArray);
 
         $this->ct = new CT;
         $this->ct->setParams($params, true);
 
+        $key = $this->ct->Env->jinput->getCmd('key');
+        if ($key != '') {
+            Inputbox::renderTableJoinSelectorJSON($this->ct, $key);
+        } else
+            $this->renderForm($tpl, $params);
+    }
+
+    protected function renderForm($tpl, $params): bool
+    {
         $Model = JModelLegacy::getInstance('EditItem', 'CustomTablesModel', $params);
         $Model->load($this->ct);
 
@@ -99,6 +108,7 @@ class CustomtablesViewRecords extends JViewLegacy
         // Set the document
         $this->setDocument();
 
+        return true;
     }
 
     protected function addToolBar()

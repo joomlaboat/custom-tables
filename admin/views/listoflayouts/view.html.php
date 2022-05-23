@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @subpackage view.html.php
  * @author Ivan komlev <support@joomlaboat.com>
@@ -24,353 +24,322 @@ use CustomTables\Fields;
 
 class CustomtablesViewListoflayouts extends JViewLegacy
 {
-	var CT $ct;
-	 
-	function display($tpl = null)
-	{
-		if ($this->getLayout() !== 'modal')
-		{
-			// Include helper submenu
-			CustomtablesHelper::addSubmenu('listoflayouts');
-		}
+    var CT $ct;
 
-		$model = $this->getModel();
-		$this->ct = $model->ct;
+    function display($tpl = null)
+    {
+        if ($this->getLayout() !== 'modal') {
+            // Include helper submenu
+            CustomtablesHelper::addSubmenu('listoflayouts');
+        }
 
-		// Assign data to the view
-		$this->items = $this->get('Items');
-		$this->pagination = $this->get('Pagination');
-		$this->state = $this->get('State');
-		$this->user = Factory::getUser();
-		
-		if($this->ct->Env->version >= 4)
-		{
-			$this->filterForm    = $this->get('FilterForm');
-			$this->activeFilters = $this->get('ActiveFilters');
-		}
-		
-		$this->listOrder = $this->escape($this->state->get('list.ordering'));
-		$this->listDirn = $this->escape($this->state->get('list.direction'));
+        $model = $this->getModel();
+        $this->ct = $model->ct;
 
-		// get global action permissions
-		$this->canDo = ContentHelper::getActions('com_customtables', 'listoflayouts');
+        // Assign data to the view
+        $this->items = $this->get('Items');
+        $this->pagination = $this->get('Pagination');
+        $this->state = $this->get('State');
+        $this->user = Factory::getUser();
 
-		$this->canCreate = $this->canDo->get('layouts.create');
-		$this->canEdit = $this->canDo->get('layouts.edit');
-		$this->canState = $this->canDo->get('layouts.edit.state');
-		$this->canDelete = $this->canDo->get('layouts.delete');
-		
-		$this->isEmptyState = count($this->items) == 0;
-		
+        if ($this->ct->Env->version >= 4) {
+            $this->filterForm = $this->get('FilterForm');
+            $this->activeFilters = $this->get('ActiveFilters');
+        }
 
-		// We don't need toolbar in the modal window.
-		if ($this->getLayout() !== 'modal')
-		{
-			if($this->ct->Env->version < 4)
-			{
-				$this->addToolbar_3();
-				$this->sidebar = JHtmlSidebar::render();
-			}
-			else
-				$this->addToolbar_4();
-				
-			// load the batch html
-			//if ($this->canCreate && $this->canEdit && $this->canState)
-			//{
-				//$this->batchDisplay = JHtmlBatch_::render();
-			//}
-		}
+        $this->listOrder = $this->escape($this->state->get('list.ordering'));
+        $this->listDirn = $this->escape($this->state->get('list.direction'));
 
-		// Check for errors.
-		if (count($errors = $this->get('Errors')))
-		{
-			throw new Exception(implode("\n", $errors), 500);
-		}
+        // get global action permissions
+        $this->canDo = ContentHelper::getActions('com_customtables', 'listoflayouts');
 
-		// Display the template
-		if($this->ct->Env->version < 4)
-			parent::display($tpl);
-		else
-			parent::display('quatro');
+        $this->canCreate = $this->canDo->get('layouts.create');
+        $this->canEdit = $this->canDo->get('layouts.edit');
+        $this->canState = $this->canDo->get('layouts.edit.state');
+        $this->canDelete = $this->canDo->get('layouts.delete');
 
-		// Set the document
-		$this->setDocument();
-	}
+        $this->isEmptyState = count($this->items) == 0;
 
-	protected function addToolbar_4()
-	{
-		// Get the toolbar object instance
-		$toolbar = Toolbar::getInstance('toolbar');
 
-		ToolbarHelper::title(Text::_('COM_CUSTOMTABLES_LISTOFLAYOUTS'), 'joomla');
+        // We don't need toolbar in the modal window.
+        if ($this->getLayout() !== 'modal') {
+            if ($this->ct->Env->version < 4) {
+                $this->addToolbar_3();
+                $this->sidebar = JHtmlSidebar::render();
+            } else
+                $this->addToolbar_4();
 
-		if ($this->canCreate)
-			$toolbar->addNew('layouts.add');
+            // load the batch html
+            //if ($this->canCreate && $this->canEdit && $this->canState)
+            //{
+            //$this->batchDisplay = JHtmlBatch_::render();
+            //}
+        }
 
-		$dropdown = $toolbar->dropdownButton('status-group')
-			->text('JTOOLBAR_CHANGE_STATUS')
-			->toggleSplit(false)
-			->icon('icon-ellipsis-h')
-			->buttonClass('btn btn-action')
-			->listCheck(true);
+        // Check for errors.
+        if (count($errors = $this->get('Errors'))) {
+            throw new Exception(implode("\n", $errors), 500);
+        }
 
-		$childBar = $dropdown->getChildToolbar();
-			
-		if ($this->canState)
-		{
-			$childBar->publish('listoflayouts.publish')->listCheck(true);
-			$childBar->unpublish('listoflayouts.unpublish')->listCheck(true);
-		}
-		
-		if ($this->canDo->get('core.admin'))
-		{
-			$childBar->checkin('listoflayouts.checkin');
-		}
+        // Display the template
+        if ($this->ct->Env->version < 4)
+            parent::display($tpl);
+        else
+            parent::display('quatro');
 
-		if(($this->canState && $this->canDelete))
-		{
-			if ($this->state->get('filter.published') != ContentComponent::CONDITION_TRASHED)
-			{
-				$childBar->trash('listoflayouts.trash')->listCheck(true);
-			}
+        // Set the document
+        $this->setDocument();
+    }
 
-			if (!$this->isEmptyState && $this->state->get('filter.published') == ContentComponent::CONDITION_TRASHED && $this->canDelete)
-			{
-				$toolbar->delete('listoflayouts.delete')
-					->text('JTOOLBAR_EMPTY_TRASH')
-					->message('JGLOBAL_CONFIRM_DELETE')
-					->listCheck(true);
-			}
-		}
-	}
-	 
-	protected function addToolBar_3()
-	{
-		JToolBarHelper::title(Text::_('COM_CUSTOMTABLES_LISTOFLAYOUTS'), 'joomla');
-		JHtmlSidebar::setAction('index.php?option=com_customtables&view=listoflayouts');
-		JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/fields');
+    /**
+     * Escapes a value for output in a view script.
+     *
+     * @param mixed $var The output to escape.
+     *
+     * @return  mixed  The escaped value.
+     */
+    public function escape($var)
+    {
+        if (strlen($var) > 50) {
+            // use the helper htmlEscape method instead and shorten the string
+            return CustomtablesHelper::htmlEscape($var, $this->_charset, true);
+        }
+        // use the helper htmlEscape method instead.
+        return CustomtablesHelper::htmlEscape($var, $this->_charset);
+    }
 
-		if ($this->canCreate)
-		{
-			JToolBarHelper::addNew('layouts.add');
-		}
+    protected function addToolBar_3()
+    {
+        JToolBarHelper::title(Text::_('COM_CUSTOMTABLES_LISTOFLAYOUTS'), 'joomla');
+        JHtmlSidebar::setAction('index.php?option=com_customtables&view=listoflayouts');
+        JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/fields');
 
-		// Only load if there are items
-		if (CustomtablesHelper::checkArray($this->items))
-		{
-			if ($this->canEdit)
-			{
-				JToolBarHelper::editList('layouts.edit');
-			}
+        if ($this->canCreate) {
+            JToolBarHelper::addNew('layouts.add');
+        }
 
-			if ($this->canState)
-			{
-				JToolBarHelper::publishList('listoflayouts.publish');
-				JToolBarHelper::unpublishList('listoflayouts.unpublish');
-			}
+        // Only load if there are items
+        if (CustomtablesHelper::checkArray($this->items)) {
+            if ($this->canEdit) {
+                JToolBarHelper::editList('layouts.edit');
+            }
 
-			if ($this->canDo->get('core.admin'))
-			{
-				JToolBarHelper::checkin('listoflayouts.checkin');
-			}
+            if ($this->canState) {
+                JToolBarHelper::publishList('listoflayouts.publish');
+                JToolBarHelper::unpublishList('listoflayouts.unpublish');
+            }
 
-			if ($this->state->get('filter.published') == -2 && ($this->canState && $this->canDelete))
-			{
-				JToolbarHelper::deleteList('', 'listoflayouts.delete', 'JTOOLBAR_EMPTY_TRASH');
-			}
-			elseif ($this->canState && $this->canDelete)
-			{
-				JToolbarHelper::trash('listoflayouts.trash');
-			}
-		}
+            if ($this->canDo->get('core.admin')) {
+                JToolBarHelper::checkin('listoflayouts.checkin');
+            }
 
-		if ($this->canState)
-		{
-			JHtmlSidebar::addFilter(
-				JText::_('JOPTION_SELECT_PUBLISHED'),
-				'filter_published',
-				JHtml::_('select.options', JHtml::_('jgrid.publishedOptions'), 'value', 'text', $this->state->get('filter.published'), true)
-			);
-		}
+            if ($this->state->get('filter.published') == -2 && ($this->canState && $this->canDelete)) {
+                JToolbarHelper::deleteList('', 'listoflayouts.delete', 'JTOOLBAR_EMPTY_TRASH');
+            } elseif ($this->canState && $this->canDelete) {
+                JToolbarHelper::trash('listoflayouts.trash');
+            }
+        }
 
-		$CTLayoutType = JFormHelper::loadFieldType('CTLayoutType', false);
-		$CTLayoutTypeOptions=$CTLayoutType->getOptions(); // works only if you set your field getOptions on public!!
+        if ($this->canState) {
+            JHtmlSidebar::addFilter(
+                JText::_('JOPTION_SELECT_PUBLISHED'),
+                'filter_published',
+                JHtml::_('select.options', JHtml::_('jgrid.publishedOptions'), 'value', 'text', $this->state->get('filter.published'), true)
+            );
+        }
 
-		JHtmlSidebar::addFilter(
-		JText::_('COM_CUSTOMTABLES_LAYOUTS_LAYOUTTYPE_SELECT'),
-		'filter_layouttype',
-		JHtml::_('select.options', $CTLayoutTypeOptions, 'value', 'text', $this->state->get('filter.layouttype'))
-		);
+        $CTLayoutType = JFormHelper::loadFieldType('CTLayoutType', false);
+        $CTLayoutTypeOptions = $CTLayoutType->getOptions(); // works only if you set your field getOptions on public!!
 
-		// Set Tableid Selection
+        JHtmlSidebar::addFilter(
+            JText::_('COM_CUSTOMTABLES_LAYOUTS_LAYOUTTYPE_SELECT'),
+            'filter_layouttype',
+            JHtml::_('select.options', $CTLayoutTypeOptions, 'value', 'text', $this->state->get('filter.layouttype'))
+        );
 
-		$CTTable = JFormHelper::loadFieldType('CTTable', false);
-		$CTTableOptions=$CTTable->getOptions(false); // works only if you set your field getOptions on public!!
+        // Set Tableid Selection
 
-		JHtmlSidebar::addFilter(
-		JText::_('COM_CUSTOMTABLES_LAYOUTS_TABLEID_SELECT'),
-		'filter_tableid',
-		JHtml::_('select.options', $CTTableOptions, 'value', 'text', $this->state->get('filter.tableid'))
-		);
+        $CTTable = JFormHelper::loadFieldType('CTTable', false);
+        $CTTableOptions = $CTTable->getOptions(false); // works only if you set your field getOptions on public!!
 
-	}
+        JHtmlSidebar::addFilter(
+            JText::_('COM_CUSTOMTABLES_LAYOUTS_TABLEID_SELECT'),
+            'filter_tableid',
+            JHtml::_('select.options', $CTTableOptions, 'value', 'text', $this->state->get('filter.tableid'))
+        );
 
-	/**
-	 * Method to set up the document properties
-	 *
-	 * @return void
-	 */
-	protected function setDocument()
-	{
-		if (!isset($this->document))
-		{
-			$this->document = Factory::getDocument();
-		}
-		$this->document->setTitle(JText::_('COM_CUSTOMTABLES_LISTOFLAYOUTS'));
-	}
+    }
 
-	/**
-	 * Escapes a value for output in a view script.
-	 *
-	 * @param   mixed  $var  The output to escape.
-	 *
-	 * @return  mixed  The escaped value.
-	 */
-	public function escape($var)
-	{
-		if(strlen($var) > 50)
-		{
-			// use the helper htmlEscape method instead and shorten the string
-			return CustomtablesHelper::htmlEscape($var, $this->_charset, true);
-		}
-		// use the helper htmlEscape method instead.
-		return CustomtablesHelper::htmlEscape($var, $this->_charset);
-	}
+    protected function addToolbar_4()
+    {
+        // Get the toolbar object instance
+        $toolbar = Toolbar::getInstance('toolbar');
 
-	/**
-	 * Returns an array of fields the table can be sorted by
-	 *
-	 * @return  array  Array containing the field name to sort by as the key and display text as value
-	 */
-	protected function getSortFields()
-	{
-		return array(
-			'a.published' => JText::_('JSTATUS'),
-			'a.layoutname' => JText::_('COM_CUSTOMTABLES_LAYOUTS_LAYOUTNAME_LABEL'),
-			'a.layouttype' => JText::_('COM_CUSTOMTABLES_LAYOUTS_LAYOUTTYPE_SELECT'),
-			'a.id' => JText::_('JGRID_HEADING_ID')
-		);
-	}
-	
-	function isTwig(&$row)
-	{
-		$original_ct_tags_q=['currenturl','currentuserid','currentusertype','date','gobackbutton','description','format','Itemid','returnto',
-			'server','tabledescription','tabletitle','table','today','user','websiteroot','layout','if','headtag','metakeywords','metadescription',
-			'pagetitle','php','php_a','php_b','php_c','catalogtable','catalog','recordlist','page','add','count','navigation','batchtoolbar',
-			'checkbox','pagination','print','recordcount','search','searchbutton','button','buttons','captcha','id','published','link','linknoreturn',
-			'number','toolbar','cart','createuser','resolve','_value','sqljoin','attachment'];
-			
-		$original_ct_tags_s=['_if','_endif','_value','_edit'];
-		
-		$twig_tags=['fields.list','fields.count','fields.json','user.name','user.username','user.email','user.id','user.lastvisitdate','user.registerdate',
-			'user.usergroups','url.link','url.format','url.base64','url.root','url.getint','url.getstring','url.getuint','url.getfloat','url.getword',
-			'url.getalnum','url.getcmd','url.getstringandencode','url.getstringanddecode','url.itemid','url.set','url.server','html.add','html.batch',
-			'html.button','html.captcha','html.goback','html.importcsv','html.tablehead','html.limit','html.message','html.navigation','html.orderby',
-			'html.pagination','html.print','html.recordcount','html.recordlist','html.search','html.searchbutton','html.toolbar','html.base64encode',
-			'document.setmetakeywords','document.setmetadescription','document.setpagetitle','document.setheadtag','document.layout','document.sitename',
-			'document.languagepostfi','record.advancedjoin','record.joincount','record.joinavg','record.joinmin','record.joinmax','record.joinvalue',
-			'record.jointable','record.id','record.number','record.published','table.id','table.name','table.title','table.description','table.records',
-			'table.fields','tables.getvalue','tables.getrecor','tables.getrecords'];
-		
-		$fields = Fields::getFields($row->tableid);
-		
-		// ------------------------ CT Original
-		
-		$original_ct_matches = 0;
-		
-		foreach($original_ct_tags_s as $tag)
-		{
-			if(strpos($row->layoutcode,'['.$tag.':') !== false)
-				$original_ct_matches += 1;
-			
-			if(strpos($row->layoutcode,'['.$tag.']') !== false)
-				$original_ct_matches += 1;
-		}
-		
-		foreach($original_ct_tags_q as $tag)
-		{
-			if(strpos($row->layoutcode,'{'.$tag.':') !== false)
-				$original_ct_matches += 1;
-			
-			if(strpos($row->layoutcode,'{'.$tag.'}') !== false)
-				$original_ct_matches += 1;
-		}
-		
-		foreach($fields as $field)
-		{
-			$fieldname = $field['fieldname'];
-			
-			if(strpos($row->layoutcode,'*'.$fieldname.'*') !== false)
-				$original_ct_matches += 1;
-			
-			if(strpos($row->layoutcode,'|'.$fieldname.'|') !== false)
-				$original_ct_matches += 1;
-			
-			if(strpos($row->layoutcode,'['.$fieldname.':') !== false)
-				$original_ct_matches += 1;
-			
-			if(strpos($row->layoutcode,'['.$fieldname.']') !== false)
-				$original_ct_matches += 1;
-		}
-		
-		// ------------------------ Twig
-		
-		$twig_matches = 0;
-		
-		
-		foreach($twig_tags as $tag)
-		{
-			if(strpos($row->layoutcode,'{{ '.$tag.'(') !== false)
-				$twig_matches += 1;
-			
-			if(strpos($row->layoutcode,'{{ '.$tag.' }}') !== false)
-				$twig_matches += 1;
-		}
-		
-		foreach($fields as $field)
-		{
-			$fieldname = $field['fieldname'];
-			
-			if(strpos($row->layoutcode,'{{ '.$fieldname.'(') !== false)
-				$twig_matches += 1;
-			
-			if(strpos($row->layoutcode,'{{ '.$fieldname.' }}') !== false)
-				$twig_matches += 1;
-			
-			if(strpos($row->layoutcode,'{{ '.$fieldname.'.') !== false)
-				$twig_matches += 1;
-		}
-		
-		//preg_match_all('#\{(.*?)\}#',$row->layoutcode, $match);
-		//$original_ct_matches+=count($match[0]);
-		
-		
-		
-		//preg_match_all('/\|(.*?)\|/',$row->layoutcode, $match);
-		//$original_ct_matches+=count($match[0]);
-		
-		//preg_match_all('/\[(.*?)\]/',$row->layoutcode, $match);
-		//$original_ct_matches+=count($match[0]);
-		
-		
-		
-		
+        ToolbarHelper::title(Text::_('COM_CUSTOMTABLES_LISTOFLAYOUTS'), 'joomla');
 
-		return ['original' => $original_ct_matches, 'twig' => $twig_matches];
-		//return $twig_matches > $original_ct_matches or $original_ct_matches == 0;
-		
-		
-	}
-	
-	
+        if ($this->canCreate)
+            $toolbar->addNew('layouts.add');
+
+        $dropdown = $toolbar->dropdownButton('status-group')
+            ->text('JTOOLBAR_CHANGE_STATUS')
+            ->toggleSplit(false)
+            ->icon('icon-ellipsis-h')
+            ->buttonClass('btn btn-action')
+            ->listCheck(true);
+
+        $childBar = $dropdown->getChildToolbar();
+
+        if ($this->canState) {
+            $childBar->publish('listoflayouts.publish')->listCheck(true);
+            $childBar->unpublish('listoflayouts.unpublish')->listCheck(true);
+        }
+
+        if ($this->canDo->get('core.admin')) {
+            $childBar->checkin('listoflayouts.checkin');
+        }
+
+        if (($this->canState && $this->canDelete)) {
+            if ($this->state->get('filter.published') != ContentComponent::CONDITION_TRASHED) {
+                $childBar->trash('listoflayouts.trash')->listCheck(true);
+            }
+
+            if (!$this->isEmptyState && $this->state->get('filter.published') == ContentComponent::CONDITION_TRASHED && $this->canDelete) {
+                $toolbar->delete('listoflayouts.delete')
+                    ->text('JTOOLBAR_EMPTY_TRASH')
+                    ->message('JGLOBAL_CONFIRM_DELETE')
+                    ->listCheck(true);
+            }
+        }
+    }
+
+    /**
+     * Method to set up the document properties
+     *
+     * @return void
+     */
+    protected function setDocument()
+    {
+        if (!isset($this->document)) {
+            $this->document = Factory::getDocument();
+        }
+        $this->document->setTitle(JText::_('COM_CUSTOMTABLES_LISTOFLAYOUTS'));
+    }
+
+    function isTwig(&$row)
+    {
+        $original_ct_tags_q = ['currenturl', 'currentuserid', 'currentusertype', 'date', 'gobackbutton', 'description', 'format', 'Itemid', 'returnto',
+            'server', 'tabledescription', 'tabletitle', 'table', 'today', 'user', 'websiteroot', 'layout', 'if', 'headtag', 'metakeywords', 'metadescription',
+            'pagetitle', 'php', 'php_a', 'php_b', 'php_c', 'catalogtable', 'catalog', 'recordlist', 'page', 'add', 'count', 'navigation', 'batchtoolbar',
+            'checkbox', 'pagination', 'print', 'recordcount', 'search', 'searchbutton', 'button', 'buttons', 'captcha', 'id', 'published', 'link', 'linknoreturn',
+            'number', 'toolbar', 'cart', 'createuser', 'resolve', '_value', 'sqljoin', 'attachment'];
+
+        $original_ct_tags_s = ['_if', '_endif', '_value', '_edit'];
+
+        $twig_tags = ['fields.list', 'fields.count', 'fields.json', 'user.name', 'user.username', 'user.email', 'user.id', 'user.lastvisitdate', 'user.registerdate',
+            'user.usergroups', 'url.link', 'url.format', 'url.base64', 'url.root', 'url.getint', 'url.getstring', 'url.getuint', 'url.getfloat', 'url.getword',
+            'url.getalnum', 'url.getcmd', 'url.getstringandencode', 'url.getstringanddecode', 'url.itemid', 'url.set', 'url.server', 'html.add', 'html.batch',
+            'html.button', 'html.captcha', 'html.goback', 'html.importcsv', 'html.tablehead', 'html.limit', 'html.message', 'html.navigation', 'html.orderby',
+            'html.pagination', 'html.print', 'html.recordcount', 'html.recordlist', 'html.search', 'html.searchbutton', 'html.toolbar', 'html.base64encode',
+            'document.setmetakeywords', 'document.setmetadescription', 'document.setpagetitle', 'document.setheadtag', 'document.layout', 'document.sitename',
+            'document.languagepostfi', 'record.advancedjoin', 'record.joincount', 'record.joinavg', 'record.joinmin', 'record.joinmax', 'record.joinvalue',
+            'record.jointable', 'record.id', 'record.number', 'record.published', 'table.id', 'table.name', 'table.title', 'table.description', 'table.records',
+            'table.fields', 'tables.getvalue', 'tables.getrecor', 'tables.getrecords'];
+
+        $fields = Fields::getFields($row->tableid);
+
+        // ------------------------ CT Original
+
+        $original_ct_matches = 0;
+
+        foreach ($original_ct_tags_s as $tag) {
+            if (strpos($row->layoutcode, '[' . $tag . ':') !== false)
+                $original_ct_matches += 1;
+
+            if (strpos($row->layoutcode, '[' . $tag . ']') !== false)
+                $original_ct_matches += 1;
+        }
+
+        foreach ($original_ct_tags_q as $tag) {
+            if (strpos($row->layoutcode, '{' . $tag . ':') !== false)
+                $original_ct_matches += 1;
+
+            if (strpos($row->layoutcode, '{' . $tag . '}') !== false)
+                $original_ct_matches += 1;
+        }
+
+        foreach ($fields as $field) {
+            $fieldname = $field['fieldname'];
+
+            if (strpos($row->layoutcode, '*' . $fieldname . '*') !== false)
+                $original_ct_matches += 1;
+
+            if (strpos($row->layoutcode, '|' . $fieldname . '|') !== false)
+                $original_ct_matches += 1;
+
+            if (strpos($row->layoutcode, '[' . $fieldname . ':') !== false)
+                $original_ct_matches += 1;
+
+            if (strpos($row->layoutcode, '[' . $fieldname . ']') !== false)
+                $original_ct_matches += 1;
+        }
+
+        // ------------------------ Twig
+
+        $twig_matches = 0;
+
+
+        foreach ($twig_tags as $tag) {
+            if (strpos($row->layoutcode, '{{ ' . $tag . '(') !== false)
+                $twig_matches += 1;
+
+            if (strpos($row->layoutcode, '{{ ' . $tag . ' }}') !== false)
+                $twig_matches += 1;
+        }
+
+        foreach ($fields as $field) {
+            $fieldname = $field['fieldname'];
+
+            if (strpos($row->layoutcode, '{{ ' . $fieldname . '(') !== false)
+                $twig_matches += 1;
+
+            if (strpos($row->layoutcode, '{{ ' . $fieldname . ' }}') !== false)
+                $twig_matches += 1;
+
+            if (strpos($row->layoutcode, '{{ ' . $fieldname . '.') !== false)
+                $twig_matches += 1;
+        }
+
+        //preg_match_all('#\{(.*?)\}#',$row->layoutcode, $match);
+        //$original_ct_matches+=count($match[0]);
+
+
+        //preg_match_all('/\|(.*?)\|/',$row->layoutcode, $match);
+        //$original_ct_matches+=count($match[0]);
+
+        //preg_match_all('/\[(.*?)\]/',$row->layoutcode, $match);
+        //$original_ct_matches+=count($match[0]);
+
+
+        return ['original' => $original_ct_matches, 'twig' => $twig_matches];
+        //return $twig_matches > $original_ct_matches or $original_ct_matches == 0;
+
+
+    }
+
+    /**
+     * Returns an array of fields the table can be sorted by
+     *
+     * @return  array  Array containing the field name to sort by as the key and display text as value
+     */
+    protected function getSortFields()
+    {
+        return array(
+            'a.published' => JText::_('JSTATUS'),
+            'a.layoutname' => JText::_('COM_CUSTOMTABLES_LAYOUTS_LAYOUTNAME_LABEL'),
+            'a.layouttype' => JText::_('COM_CUSTOMTABLES_LAYOUTS_LAYOUTTYPE_SELECT'),
+            'a.id' => JText::_('JGRID_HEADING_ID')
+        );
+    }
+
+
 }

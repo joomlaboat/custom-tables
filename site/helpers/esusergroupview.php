@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
@@ -11,28 +11,28 @@
 // Check to ensure this file is included in Joomla!
 use Joomla\CMS\Factory;
 
-defined('_JEXEC') or die( 'Restricted access' );
+defined('_JEXEC') or die('Restricted access');
 
 class JHTMLESUserGroupView
 {
-    public static function render($value,$field='')
+    public static function render($value, $field = '')
     {
-		
-		$db = Factory::getDBO();
-				
-		$query = $db->getQuery(true);
-		$query->select('#__usergroups.title AS name');
-		$query->from('#__usergroups');
-		$query->where('id='.(int)$value);
-		$query->limit('1');
-				
-		$db->setQuery($query);
-				
-		$options=$db->loadObjectList();
-				
-		if(count($options)==0)
-			return '';
-				
-		return $options[0]->name;
+
+        $db = Factory::getDBO();
+
+        $query = $db->getQuery(true);
+        $query->select('#__usergroups.title AS name');
+        $query->from('#__usergroups');
+        $query->where('id=' . (int)$value);
+        $query->limit('1');
+
+        $db->setQuery($query);
+
+        $options = $db->loadObjectList();
+
+        if (count($options) == 0)
+            return '';
+
+        return $options[0]->name;
     }
 }

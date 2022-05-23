@@ -432,7 +432,7 @@ function recaptchaCallback(){
 	}
 }
 
-function ctRenderTableJoinSelectBox(control_name, r, index, execute_all,sub_index,parent_object_id){
+function ctRenderTableJoinSelectBox(control_name, r, index, execute_all,sub_index,parent_object_id, formId){
 	let wrapper = document.getElementById(control_name + "Wrapper");
 	let filters = [];
 	if(wrapper.dataset.valuefilters != '')
@@ -486,7 +486,7 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all,sub_inde
 			{
 				let result = '<div id="' + control_name + 'Selector' + next_index + '_' + next_sub_index + '"></div>';
 				document.getElementById(control_name + "Selector" + index + '_' + sub_index).innerHTML = result;
-				ctUpdateTableJoinLink(control_name,next_index,false,next_sub_index,parent_object_id);
+				ctUpdateTableJoinLink(control_name,next_index,false,next_sub_index,parent_object_id, formId);
 				return result;
 			}
 			else
@@ -503,10 +503,10 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all,sub_inde
 	
 	let result = ''
 	
-	let cssclass = 'form-select valid form-control-success';
-	let objForm = document.getElementById('eseditForm');
+	let cssClass = 'form-select valid form-control-success';
+	let objForm = document.getElementById(formId);//'eseditForm');
 	if(objForm.dataset.version < 4)
-		cssclass = 'inputbox';
+		cssClass = 'inputbox';
 	
 	if(next_index + 1 < filters.length){
 		//Add select box
@@ -515,11 +515,11 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all,sub_inde
 		if(Array.isArray(filters[index]))
 			current_object_id += '_' + sub_index;
 		
-		let onChangeAttribute = ' onChange="ctUpdateTableJoinLink(\'' + control_name + '\', ' + next_index + ', false, ' + next_sub_index + ',\'' + current_object_id + '\')"';
-		result += '<select id="' + current_object_id + '"' + onChangeAttribute + ' class="'+cssclass+'">';	
+		let onChangeAttribute = ' onChange="ctUpdateTableJoinLink(\'' + control_name + '\', ' + next_index + ', false, ' + next_sub_index + ',\'' + current_object_id + '\', \'' + formId + '\')"';
+		result += '<select id="' + current_object_id + '"' + onChangeAttribute + ' class="'+cssClass+'">';
 	}
 	else
-		result += '<select id="' + control_name + '" name="' + control_name + '" class="'+cssclass+'">';	
+		result += '<select id="' + control_name + '" name="' + control_name + '" class="'+cssClass+'">';
 		
 	result += '<option value="">- Select</option>';
 		
@@ -535,16 +535,17 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all,sub_inde
 	document.getElementById(control_name + "Selector" + index + '_' + sub_index).innerHTML = result;
 		
 	if(execute_all && next_index + 1 < filters.length && val != null)
-		ctUpdateTableJoinLink(control_name,next_index,true,next_sub_index,null);
+		ctUpdateTableJoinLink(control_name,next_index,true,next_sub_index,null, formId);
 }
 
-function ctUpdateTableJoinLink(control_name,index,execute_all,sub_index,object_id){
+function ctUpdateTableJoinLink(control_name,index,execute_all,sub_index,object_id, formId){
 	let wrapper = document.getElementById(control_name + "Wrapper");
 
 	let link = location.href.split('administrator/index.php?option=com_customtables');
 	let url = '';
+
 	if(link.length == 2)//to make sure that it will work in the back-end
-		url = link[0] + 'index.php?option=com_customtables&view=catalog&tmpl=component&from=json&key=' + wrapper.dataset.key + '&index=' + index;
+		url = 'index.php?option=com_customtables&view=records&from=json&key=' + wrapper.dataset.key + '&index=' + index;
 	else
 		url = 'index.php?option=com_customtables&view=catalog&tmpl=component&from=json&key=' + wrapper.dataset.key + '&index=' + index;
 
@@ -580,7 +581,7 @@ function ctUpdateTableJoinLink(control_name,index,execute_all,sub_index,object_i
 
 	fetch(url)
 		.then(r => r.json())
-		.then(r => {ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_index,object_id);})
+		.then(r => {ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_index,object_id, formId);})
 		.catch(error => console.error("Error", error));
 }
 

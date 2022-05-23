@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan komlev <support@joomlaboat.com>
  * @link https://www.joomlaboat.com
@@ -13,6 +13,44 @@ defined('_JEXEC') or die('Restricted access');
 
 class compareImages
 {
+    public function compare($a, $b)
+    {
+        /*main function. returns the hammering distance of two images' bit value*/
+        $i1 = $this->createImage($a);
+        $i2 = $this->createImage($b);
+        if (!$i1 || !$i2) {
+            return false;
+        }
+        $i1 = $this->resizeImage($i1, $a);
+        $i2 = $this->resizeImage($i2, $b);
+        imagefilter($i1, IMG_FILTER_GRAYSCALE);
+        imagefilter($i2, IMG_FILTER_GRAYSCALE);
+        $colorMean1 = $this->colorMeanValue($i1);
+        $colorMean2 = $this->colorMeanValue($i2);
+        $bits1 = $this->bits($colorMean1);
+        $bits2 = $this->bits($colorMean2);
+        $hammeringDistance = 0;
+        for ($a = 0; $a < 64; $a++) {
+            if ($bits1[$a] != $bits2[$a]) {
+                $hammeringDistance++;
+            }
+        }
+        return $hammeringDistance;
+    }
+
+    private function createImage($i)
+    {
+        /*returns image resource or false if it's not jpg or png*/
+        $mime = $this->mimeType($i);
+        if ($mime[2] == 'jpg') {
+            return imagecreatefromjpeg($i);
+        } else if ($mime[2] == 'png') {
+            return imagecreatefrompng($i);
+        } else {
+            return false;
+        }
+    }
+
     private function mimeType($i)
     {
         /*returns array with mime type and if its jpg or png. Returns false if it isn't jpg or png*/
@@ -27,19 +65,6 @@ class compareImages
                 return $return;
             default:
                 return false;
-        }
-    }
-
-    private function createImage($i)
-    {
-        /*returns image resource or false if it's not jpg or png*/
-        $mime = $this->mimeType($i);
-        if ($mime[2] == 'jpg') {
-            return imagecreatefromjpeg($i);
-        } else if ($mime[2] == 'png') {
-            return imagecreatefrompng($i);
-        } else {
-            return false;
         }
     }
 
@@ -78,31 +103,6 @@ class compareImages
 
         return $bits;
 
-    }
-
-    public function compare($a, $b)
-    {
-        /*main function. returns the hammering distance of two images' bit value*/
-        $i1 = $this->createImage($a);
-        $i2 = $this->createImage($b);
-        if (!$i1 || !$i2) {
-            return false;
-        }
-        $i1 = $this->resizeImage($i1, $a);
-        $i2 = $this->resizeImage($i2, $b);
-        imagefilter($i1, IMG_FILTER_GRAYSCALE);
-        imagefilter($i2, IMG_FILTER_GRAYSCALE);
-        $colorMean1 = $this->colorMeanValue($i1);
-        $colorMean2 = $this->colorMeanValue($i2);
-        $bits1 = $this->bits($colorMean1);
-        $bits2 = $this->bits($colorMean2);
-        $hammeringDistance = 0;
-        for ($a = 0; $a < 64; $a++) {
-            if ($bits1[$a] != $bits2[$a]) {
-                $hammeringDistance++;
-            }
-        }
-        return $hammeringDistance;
     }
 }
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
@@ -14,64 +14,63 @@ use CustomTables\TwigProcessor;
 
 $recordLayout = '';
 
-foreach($this->ct->Table->fields as $field)
-{
-	if($field['type'] != 'dummy' and $field['type'] != 'log' and $field['type'] != 'ordering')
-	{
-		if($field['type']=='text' or $field['type']=='multilangtext' or $field['type']=='string' or $field['type']=='multilangstring')
-			$recordLayout.='<td><a href="****link****">{{ '.$field['fieldname'].'("words",20) }}</a></td>';
-		else
-			$recordLayout.='<td><a href="****link****">{{ '.$field['fieldname'].'}}</a></td>';
-	}
+foreach ($this->ct->Table->fields as $field) {
+    if ($field['type'] != 'dummy' and $field['type'] != 'log' and $field['type'] != 'ordering') {
+        if ($field['type'] == 'text' or $field['type'] == 'multilangtext' or $field['type'] == 'string' or $field['type'] == 'multilangstring')
+            $recordLayout .= '<td><a href="****link****">{{ ' . $field['fieldname'] . '("words",20) }}</a></td>';
+        else
+            $recordLayout .= '<td><a href="****link****">{{ ' . $field['fieldname'] . '}}</a></td>';
+    }
 }
 
-$twig = new TwigProcessor($this->ct, '{% autoescape false %}'.$recordLayout.'{% endautoescape %}');
+$twig = new TwigProcessor($this->ct, '{% autoescape false %}' . $recordLayout . '{% endautoescape %}');
 
 ?>
-<?php foreach ($this->items as $i => $item): 
-		
-		$item_array =  (array) $item;
-?>
+<?php foreach ($this->items as $i => $item):
 
-	<tr class="row<?php echo $i % 2; ?>">
-	
-		<td class="nowrap center">
-		<?php if ($this->canEdit): ?>
-			<?php echo JHtml::_('grid.id', $i, $item->listing_id); ?>
-		<?php endif; ?>
-		</td>
-		
-		<?php if($this->ordering_realfieldname != ''): ?>
-		<td class="order nowrap center hidden-phone">
+    $item_array = (array)$item;
+    ?>
+
+    <tr class="row<?php echo $i % 2; ?>">
+
+        <td class="nowrap center">
+            <?php if ($this->canEdit): ?>
+                <?php echo JHtml::_('grid.id', $i, $item->listing_id); ?>
+            <?php endif; ?>
+        </td>
+
+        <?php if ($this->ordering_realfieldname != ''): ?>
+            <td class="order nowrap center hidden-phone">
 			<span class="sortable-handler">
 				<i class="icon-menu"></i>
 			</span>
-			<input type="text" style="display:none" name="order[]" size="5"	value="<?php echo $item->ordering; ?>" class="width-20 text-area-order " />
-		</td>
-		<?php endif; ?>
-		
-		<?php
-			
-			$link = JURI::root(false).'administrator/index.php?option=com_customtables&view=records&task=records.edit&tableid='.$this->ct->Table->tableid.'&id='.$item->listing_id;
-			
-			$result = $twig->process($item_array);
-			
-			echo str_replace('****link****',$link,$result);
+                <input type="text" style="display:none" name="order[]" size="5" value="<?php echo $item->ordering; ?>"
+                       class="width-20 text-area-order "/>
+            </td>
+        <?php endif; ?>
 
-		?>
+        <?php
 
-		<?php if($this->ct->Table->published_field_found): ?>
-		<td class="center">
-			<?php if ($this->canState) : ?>
-					<?php echo JHtml::_('jgrid.published', $item->published, $i, 'listofrecords.', true, 'cb'); ?>
-			<?php else: ?>
-				<?php echo JHtml::_('jgrid.published', $item->published, $i, 'listofrecords.', false, 'cb'); ?>
-			<?php endif; ?>
-		</td>
-		<?php endif; ?>
+        $link = JURI::root(false) . 'administrator/index.php?option=com_customtables&view=records&task=records.edit&tableid=' . $this->ct->Table->tableid . '&id=' . $item->listing_id;
 
-		<td class="nowrap center hidden-phone">
-			<?php echo $item->listing_id; ?>
-		</td>
-	</tr>
+        $result = $twig->process($item_array);
+
+        echo str_replace('****link****', $link, $result);
+
+        ?>
+
+        <?php if ($this->ct->Table->published_field_found): ?>
+            <td class="center">
+                <?php if ($this->canState) : ?>
+                    <?php echo JHtml::_('jgrid.published', $item->published, $i, 'listofrecords.', true, 'cb'); ?>
+                <?php else: ?>
+                    <?php echo JHtml::_('jgrid.published', $item->published, $i, 'listofrecords.', false, 'cb'); ?>
+                <?php endif; ?>
+            </td>
+        <?php endif; ?>
+
+        <td class="nowrap center hidden-phone">
+            <?php echo $item->listing_id; ?>
+        </td>
+    </tr>
 <?php endforeach; ?>

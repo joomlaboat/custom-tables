@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
@@ -75,7 +75,7 @@ class Environment
 
         $this->encoded_current_url = base64_encode($tmp_current_url);
 
-        if($this->version < 4)
+        if ($this->version < 4)
             $this->user = Factory::getUser();
         else
             $this->user = Factory::getApplication()->getIdentity();

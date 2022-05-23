@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan komlev <support@joomlaboat.com>
  * @link https://www.joomlaboat.com
@@ -13,81 +13,77 @@ use Joomla\CMS\Factory;
 
 defined('_JEXEC') or die('Restricted access');
 
-$layout=Factory::getApplication()->input->get('layout','','CMD');
+$layout = Factory::getApplication()->input->get('layout', '', 'CMD');
 
 
-	switch(Factory::getApplication()->input->get('task','','CMD'))
-	{
-		case 'edit':
+switch (Factory::getApplication()->input->get('task', '', 'CMD')) {
+    case 'edit':
 
-			Factory::getApplication()->input->set('view', 'listedit');
-			Factory::getApplication()->input->set('layout', 'form'  );
+        Factory::getApplication()->input->set('view', 'listedit');
+        Factory::getApplication()->input->set('layout', 'form');
 
-			parent::display();
+        parent::display();
 
-		break;
+        break;
 
-		case 'save':
+    case 'save':
 
-			$model = $this->getModel('listedit');
+        $model = $this->getModel('listedit');
 
-			$link 	= 'index.php?option=com_customtables&view=list&Itemid='.Factory::getApplication()->input->get('Itemid',0,'INT');
-			if ($model->store())
-			{
-				$msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_OPTION_SAVED' );
-				$this->setRedirect($link, $msg);
-			}
-			else
-			{
-				$msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_OPTION_NOT_SAVED');
-				$this->setRedirect($link, $msg,'error');
-			}
+        $link = 'index.php?option=com_customtables&view=list&Itemid=' . Factory::getApplication()->input->get('Itemid', 0, 'INT');
+        if ($model->store()) {
+            $msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_OPTION_SAVED');
+            $this->setRedirect($link, $msg);
+        } else {
+            $msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_OPTION_NOT_SAVED');
+            $this->setRedirect($link, $msg, 'error');
+        }
 
-		break;
+        break;
 
-		case 'cancel':
+    case 'cancel':
 
-			$link 	= 'index.php?option=com_customtables&view=list&Itemid='.Factory::getApplication()->input->get('Itemid',0,'INT');
+        $link = 'index.php?option=com_customtables&view=list&Itemid=' . Factory::getApplication()->input->get('Itemid', 0, 'INT');
 
-			$msg = '';
+        $msg = '';
 
-			$this->setRedirect($link, $msg);
+        $this->setRedirect($link, $msg);
 
 
-		break;
+        break;
 
-		case 'remove':
+    case 'remove':
 
 
-			$link 	= 'index.php?option=com_customtables&view=list&Itemid='.Factory::getApplication()->input->get('Itemid',0,'INT');
+        $link = 'index.php?option=com_customtables&view=list&Itemid=' . Factory::getApplication()->input->get('Itemid', 0, 'INT');
 
-			// Check for request forgeries
-			JSession::checkToken() or jexit( 'COM_CUSTOMTABLES_INVALID_TOKEN' );
+        // Check for request forgeries
+        JSession::checkToken() or jexit('COM_CUSTOMTABLES_INVALID_TOKEN');
 
-			// Get some variables from the request
+        // Get some variables from the request
 
-			$cid	= Factory::getApplication()->input->post->get('cid',array(),'array');
-			JArrayHelper::toInteger($cid);
+        $cid = Factory::getApplication()->input->post->get('cid', array(), 'array');
+        JArrayHelper::toInteger($cid);
 
-			if (!count($cid)) {
-				$this->setRedirect( $link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_OPTIONS_NOT_SELECTED') );
-				return false;
-			}
+        if (!count($cid)) {
+            $this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_OPTIONS_NOT_SELECTED'));
+            return false;
+        }
 
-			$model = $this->getModel( 'List' );
-			if ($n = $model->delete($cid)) {
-				$msg = JText::sprintf( '% COM_CUSTOMTABLES_OPTIONS_DELETED', $n );
-			} else {
-				$msg = $model->getError();
-			}
-			$this->setRedirect( $link, $msg );
+        $model = $this->getModel('List');
+        if ($n = $model->delete($cid)) {
+            $msg = JText::sprintf('% COM_CUSTOMTABLES_OPTIONS_DELETED', $n);
+        } else {
+            $msg = $model->getError();
+        }
+        $this->setRedirect($link, $msg);
 
-		break;
+        break;
 
-		default:
+    default:
 
-			Factory::getApplication()->input->set('view', 'list');
-			parent::display();
+        Factory::getApplication()->input->set('view', 'list');
+        parent::display();
 
-		break;
-	}
+        break;
+}

@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
@@ -20,217 +20,200 @@ jimport('joomla.application.component.controllerform');
 
 class CustomtablesControllerFields extends JControllerForm
 {
-	protected $task;
+    protected $task;
 
-	public function __construct($config = array())
-	{
-		$this->view_list = 'listoffields'; // safeguard for setting the return view listing to the main view.
-		parent::__construct($config);
-	}
+    public function __construct($config = array())
+    {
+        $this->view_list = 'listoffields'; // safeguard for setting the return view listing to the main view.
+        parent::__construct($config);
+    }
 
-	protected function allowAdd($data = array())
-	{		// In the absense of better information, revert to the component permissions.
-		return parent::allowAdd($data);
-	}
+    public function batch($model = null)
+    {
+        JSession::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
-	protected function allowEdit($data = array(), $key = 'id')
-	{
-		// get user object.
-		$user = Factory::getUser();
-		// get record id.
-		$recordId = (int) isset($data[$key]) ? $data[$key] : 0;
+        // Set the model
+        $model = $this->getModel('Fields', '', array());
 
-		if ($recordId)
-		{
-			// The record has been set. Check the record permissions.
-			$permission = $user->authorise('core.edit', 'com_customtables.fields.' . (int) $recordId);
-			if (!$permission)
-			{
-				if ($user->authorise('core.edit.own', 'com_customtables.fields.' . $recordId))
-				{
-					// Now test the owner is the user.
-					$ownerId = (int) isset($data['created_by']) ? $data['created_by'] : 0;
-					if (empty($ownerId))
-					{
-						// Need to do a lookup from the model.
-						$record = $this->getModel()->getItem($recordId);
+        // Preset the redirect
+        $this->setRedirect(JRoute::_('index.php?option=com_customtables&view=listoffields' . $this->getRedirectToListAppend(), false));
 
-						if (empty($record))
-						{
-							return false;
-						}
-						$ownerId = $record->created_by;
-					}
+        return parent::batch($model);
+    }
 
-					// If the owner matches 'me' then allow.
-					if ($ownerId == $user->id)
-					{
-						if ($user->authorise('core.edit.own', 'com_customtables'))
-						{
-							return true;
-						}
-					}
-				}
-				return false;
-			}
-		}
-		// Since there is no permission, revert to the component permissions.
-		return parent::allowEdit($data, $key);
-	}
+    public function cancel($key = null)
+    {
+        $tableid = $this->input->get('tableid', 0, 'int');
 
-	protected function getRedirectToItemAppend($recordId = null, $urlVar = 'id')
-	{
-		$tmpl   = $this->input->get('tmpl');
-		$layout = $this->input->get('layout', 'edit', 'string');
+        $cancel = parent::cancel($key);
 
-		$ref 	= $this->input->get('ref', 0, 'string');
-		$refid 	= $this->input->get('refid', 0, 'int');
+        $this->setRedirect(
+            JRoute::_(
+                'index.php?option=' . $this->option . '&view=listoffields&tableid=' . (int)$tableid, false
+            )
+        );
 
-		$tableid= $this->input->getint('tableid',0);
-		// Setup redirect info.
+        return $cancel;
+    }
 
-		$append = '';
+    public function edit($key = NULL, $urlVar = NULL)
+    {
+        $redirect = 'index.php?option=' . $this->option;
 
-		if ($refid)
-                {
-			$append .= '&ref='.(string)$ref.'&refid='.(int)$refid;
-		}
-		elseif ($ref)
-		{
-			$append .= '&ref='.(string)$ref;
-		}
+        $tableid = $this->input->get('tableid', 0, 'int');
+        $fieldid = $this->input->getInt('fieldid', 0);
+        $id = $this->input->get('id', 0, 'int');
 
-		if ($tmpl)
-		{
-			$append .= '&tmpl=' . $tmpl;
-		}
+        $extratask = $this->input->getCmd('extratask', '');
 
-		if ($layout)
-		{
-			$append .= '&layout=' . $layout;
-		}
+        //Postpone extra task
+        if ($extratask != '') {
+            $redirect .= '&extratask=' . $this->input->getCmd('extratask', '');
+            $redirect .= '&old_typeparams=' . $this->input->get('old_typeparams', '', 'BASE64');
+            $redirect .= '&new_typeparams=' . $this->input->get('new_typeparams', '', 'BASE64');
+            $redirect .= '&fieldid=' . $fieldid;
 
-		if ($recordId)
-		{
-			$append .= '&' . $urlVar . '=' . $recordId;
-		}
+        }
+        $redirect .= '&view=fields&layout=edit&id=' . $fieldid . '&tableid=' . (int)$tableid . '&id=' . (int)$id;
 
-		$append .= '&tableid=' . $tableid;
+        $context = 'com_customtables.edit.fields';
+        Factory::getApplication()->setUserState($context . '.id', $id);
 
-		return $append;
-	}
+        // Redirect to the item screen.
+        $application = Factory::getApplication();
+        $application->redirect(Route::_($redirect, false));
+        $application->close();
+        exit(0);
+        //$this->setRedirect(JRoute::_($redirect, false));
+    }
 
-	public function batch($model = null)
-	{
-		JSession::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
+    public function save($key = null, $urlVar = null)
+    {
+        $tableid = $this->input->get('tableid', 0, 'int');
 
-		// Set the model
-		$model = $this->getModel('Fields', '', array());
+        // get the referal details
+        $this->ref = $this->input->get('ref', 0, 'word');
+        $this->refid = $this->input->get('refid', 0, 'int');
 
-		// Preset the redirect
-		$this->setRedirect(JRoute::_('index.php?option=com_customtables&view=listoffields'. $this->getRedirectToListAppend(), false));
+        $fieldid = $this->input->get('id', 0, 'int');
 
-		return parent::batch($model);
-	}
 
-	public function cancel($key = null)
-	{
-		$tableid 	= $this->input->get('tableid', 0, 'int');
-		
-		$cancel = parent::cancel($key);
+        if ($this->ref || $this->refid) {
+            // to make sure the item is checkedin on redirect
+            $this->task = 'save';
+        }
 
-		$this->setRedirect(
-			JRoute::_(
-				'index.php?option=' . $this->option . '&view=listoffields&tableid='.(int)$tableid, false
-			)
-		);
+        $saved = parent::save($key, $urlVar);
 
-		return $cancel;
-	}
+        $redirect = 'index.php?option=' . $this->option;
+        $extratask = $this->input->getCmd('extratask', '');
 
-	public function edit($key = NULL, $urlVar = NULL)
-	{
-		$redirect = 'index.php?option=' . $this->option;
-		
-		$tableid 	= $this->input->get('tableid', 0, 'int');
-        $fieldid    = $this->input->getInt('fieldid',0);
-		$id 	= $this->input->get('id', 0, 'int');
-		
-		$extratask = $this->input->getCmd('extratask','');
-		
-		//Postpone extra task
-		if($extratask != '')
-		{
-			$redirect.='&extratask='.$this->input->getCmd('extratask','');
-			$redirect.='&old_typeparams='.$this->input->get('old_typeparams','','BASE64');
-			$redirect.='&new_typeparams='.$this->input->get('new_typeparams','','BASE64');
-			$redirect.='&fieldid='.$fieldid;
+        //Pospone extra task
+        if ($extratask != '') {
+            $redirect .= '&extratask=' . $this->input->getCmd('extratask', '');
+            $redirect .= '&old_typeparams=' . $this->input->get('old_typeparams', '', 'BASE64');
+            $redirect .= '&new_typeparams=' . $this->input->get('new_typeparams', '', 'BASE64');
+            $redirect .= '&fieldid=' . $this->input->getInt('fieldid', 0);
+        }
 
-		}
-		$redirect.='&view=fields&layout=edit&id='.$fieldid.'&tableid='.(int)$tableid.'&id='.(int)$id;
-		
-		$context = 'com_customtables.edit.fields';
-		Factory::getApplication()->setUserState($context . '.id', $id);
-		
-		// Redirect to the item screen.
-		$application = Factory::getApplication();
-		$application->redirect(Route::_($redirect, false));
-		$application->close();
-		exit(0);
-		//$this->setRedirect(JRoute::_($redirect, false));
-	}
+        if ($extratask != '' or $this->task == 'apply' or $this->task == 'save2new' or $this->task == 'save2copy')
+            $redirect .= '&view=listoffields&tableid=' . (int)$tableid . '&task=fields.edit&id=' . (int)$fieldid;
+        else
+            $redirect .= '&view=listoffields&tableid=' . (int)$tableid;
 
-	public function save($key = null, $urlVar = null)
-	{
-		$tableid 	= $this->input->get('tableid', 0, 'int');
+        if ($saved) {
+            // Redirect to the item screen.
+            $this->setRedirect(
+                JRoute::_(
+                    $redirect, false
+                )
+            );
+        }
 
-		// get the referal details
-		$this->ref 		= $this->input->get('ref', 0, 'word');
-		$this->refid 	= $this->input->get('refid', 0, 'int');
-		
-		$fieldid 	= $this->input->get('id', 0, 'int');
-		
-	
-		if ($this->ref || $this->refid)
-		{
-			// to make sure the item is checkedin on redirect
-			$this->task = 'save';
-		}
+        return $saved;
+    }
 
-		$saved = parent::save($key, $urlVar);
-		
-		$redirect = 'index.php?option=' . $this->option;
-		$extratask = $this->input->getCmd('extratask','');
-	
-		//Pospone extra task
-		if($extratask != '')
-		{
-			$redirect.='&extratask='.$this->input->getCmd('extratask','');
-			$redirect.='&old_typeparams='.$this->input->get('old_typeparams','','BASE64');
-			$redirect.='&new_typeparams='.$this->input->get('new_typeparams','','BASE64');
-			$redirect.='&fieldid='.$this->input->getInt('fieldid',0);
-		}
-		
-		if($extratask != '' or $this->task=='apply' or $this->task=='save2new' or $this->task=='save2copy')
-			$redirect.='&view=listoffields&tableid='.(int)$tableid.'&task=fields.edit&id='.(int)$fieldid;
-		else
-			$redirect.='&view=listoffields&tableid='.(int)$tableid;
+    protected function allowAdd($data = array())
+    {        // In the absense of better information, revert to the component permissions.
+        return parent::allowAdd($data);
+    }
 
-		if ($saved)
-		{
-			// Redirect to the item screen.
-			$this->setRedirect(
-				JRoute::_(
-					$redirect, false
-				)
-			);
-		}
-		
-		return $saved;
-	}
+    protected function allowEdit($data = array(), $key = 'id')
+    {
+        // get user object.
+        $user = Factory::getUser();
+        // get record id.
+        $recordId = (int)isset($data[$key]) ? $data[$key] : 0;
 
-	protected function postSaveHook(JModelLegacy $model, $validData = array())
-	{
-		return;
-	}
+        if ($recordId) {
+            // The record has been set. Check the record permissions.
+            $permission = $user->authorise('core.edit', 'com_customtables.fields.' . (int)$recordId);
+            if (!$permission) {
+                if ($user->authorise('core.edit.own', 'com_customtables.fields.' . $recordId)) {
+                    // Now test the owner is the user.
+                    $ownerId = (int)isset($data['created_by']) ? $data['created_by'] : 0;
+                    if (empty($ownerId)) {
+                        // Need to do a lookup from the model.
+                        $record = $this->getModel()->getItem($recordId);
+
+                        if (empty($record)) {
+                            return false;
+                        }
+                        $ownerId = $record->created_by;
+                    }
+
+                    // If the owner matches 'me' then allow.
+                    if ($ownerId == $user->id) {
+                        if ($user->authorise('core.edit.own', 'com_customtables')) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+        }
+        // Since there is no permission, revert to the component permissions.
+        return parent::allowEdit($data, $key);
+    }
+
+    protected function getRedirectToItemAppend($recordId = null, $urlVar = 'id')
+    {
+        $tmpl = $this->input->get('tmpl');
+        $layout = $this->input->get('layout', 'edit', 'string');
+
+        $ref = $this->input->get('ref', 0, 'string');
+        $refid = $this->input->get('refid', 0, 'int');
+
+        $tableid = $this->input->getint('tableid', 0);
+        // Setup redirect info.
+
+        $append = '';
+
+        if ($refid) {
+            $append .= '&ref=' . (string)$ref . '&refid=' . (int)$refid;
+        } elseif ($ref) {
+            $append .= '&ref=' . (string)$ref;
+        }
+
+        if ($tmpl) {
+            $append .= '&tmpl=' . $tmpl;
+        }
+
+        if ($layout) {
+            $append .= '&layout=' . $layout;
+        }
+
+        if ($recordId) {
+            $append .= '&' . $urlVar . '=' . $recordId;
+        }
+
+        $append .= '&tableid=' . $tableid;
+
+        return $append;
+    }
+
+    protected function postSaveHook(JModelLegacy $model, $validData = array())
+    {
+        return;
+    }
 }

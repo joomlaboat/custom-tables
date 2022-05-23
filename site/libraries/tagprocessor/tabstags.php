@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
@@ -17,57 +17,25 @@ use Joomla\CMS\Version;
 
 class tagProcessor_Tabs
 {
-	public static function process(&$htmlresult)
+    public static function process(&$htmlresult)
     {
-		$version_object = new Version;
-		$version = (int)$version_object->getShortVersion();
-		
-		if($version < 4)
-			tagProcessor_Tabs::process_3($htmlresult);
-		else
-			tagProcessor_Tabs::process_4($htmlresult);
-	}
-	
-	public static function process_4(&$htmlresult)
-    {
-			$options=array();
-            $fList=JoomlaBasicMisc::getListToReplace('tab',$options,$htmlresult,'{}');
+        $version_object = new Version;
+        $version = (int)$version_object->getShortVersion();
 
-            $i=0;
-            $objname='CTtab';
+        if ($version < 4)
+            tagProcessor_Tabs::process_3($htmlresult);
+        else
+            tagProcessor_Tabs::process_4($htmlresult);
+    }
 
-            foreach($fList as $fItem)
-            {
-                $option=$options[$i];
-                $name=JoomlaBasicMisc::slugify($option);
-
-                $tab='';
-                if($i==0)
-					$tab=HTMLHelper::_('uitab.startTabSet', $objname, ['active' => $name, 'recall' => true, 'breakpoint' => 768]);
-                else
-					$tab=HTMLHelper::_('uitab.endTab');
-
-				$tab.=HTMLHelper::_('uitab.addTab', $objname, $name, $option);
-
-                $htmlresult=str_replace($fItem,$tab,$htmlresult);
-				$i++;
-            }
-
-            $endtab=HTMLHelper::_('uitab.endTab');
-			$endtab.=HTMLHelper::_('uitab.endTabSet');
-            
-            $htmlresult=str_replace('{/tabs}',$endtab,$htmlresult);
-	}
-	
     public static function process_3(&$htmlresult)
     {
-			$options=array();
-            $fList=JoomlaBasicMisc::getListToReplace('tab',$options,$htmlresult,'{}');
+        $options = array();
+        $fList = JoomlaBasicMisc::getListToReplace('tab', $options, $htmlresult, '{}');
 
-            if(count($fList))
-            {
-                $document = Factory::getDocument();
-        		$document->addCustomTag('
+        if (count($fList)) {
+            $document = Factory::getDocument();
+            $document->addCustomTag('
                 <script>
                 jQuery(function($){
                 var tabs$ = $(".nav-tabs a");
@@ -95,43 +63,68 @@ $( window ).on("hashchange", function() {
                 </script>
                 ');
 
-                //JHtml::_('behavior.tabstate');
+            //JHtml::_('behavior.tabstate');
 
+        }
+
+
+        $i = 0;
+
+        $objname = 'CTtab';
+
+        foreach ($fList as $fItem) {
+            $option = $options[$i];
+            $name = JoomlaBasicMisc::slugify($option);
+
+            $tab = '';
+            if ($i == 0) {
+                //first tab
+                $tab = JHtml::_('bootstrap.startTabSet', $objname, array('active' => $name));
+                //,'class' =>'CTTAB'
+            } else {
+                //tabs between first and last
+                $tab = JHtml::_('bootstrap.endTab'); //close previouse tab
             }
 
 
-            $i=0;
+            $tab .= JHtml::_('bootstrap.addTab', $objname, $name, $option); //open new tab
+            $htmlresult = str_replace($fItem, $tab, $htmlresult);
+            $i++;
+        }
 
-            $objname='CTtab';
+        $endtab = JHtml::_('bootstrap.endTab'); //close previouse tab
+        $endtab .= JHtml::_('bootstrap.endTabSet');
+        $htmlresult = str_replace('{/tabs}', $endtab, $htmlresult);
+    }
 
-            foreach($fList as $fItem)
-            {
-                $option=$options[$i];
-                $name=JoomlaBasicMisc::slugify($option);
+    public static function process_4(&$htmlresult)
+    {
+        $options = array();
+        $fList = JoomlaBasicMisc::getListToReplace('tab', $options, $htmlresult, '{}');
 
-                $tab='';
-                if($i==0)
-                {
-                    //first tab
-                    $tab=JHtml::_('bootstrap.startTabSet', $objname, array('active' => $name));
-                    //,'class' =>'CTTAB'
-                }
-                else
-                {
-                    //tabs between first and last
-                    $tab=JHtml::_('bootstrap.endTab'); //close previouse tab
-                }
+        $i = 0;
+        $objname = 'CTtab';
 
+        foreach ($fList as $fItem) {
+            $option = $options[$i];
+            $name = JoomlaBasicMisc::slugify($option);
 
+            $tab = '';
+            if ($i == 0)
+                $tab = HTMLHelper::_('uitab.startTabSet', $objname, ['active' => $name, 'recall' => true, 'breakpoint' => 768]);
+            else
+                $tab = HTMLHelper::_('uitab.endTab');
 
-                $tab.=JHtml::_('bootstrap.addTab', $objname, $name, $option); //open new tab
-                $htmlresult=str_replace($fItem,$tab,$htmlresult);
-				$i++;
-            }
+            $tab .= HTMLHelper::_('uitab.addTab', $objname, $name, $option);
 
-            $endtab=JHtml::_('bootstrap.endTab'); //close previouse tab
-            $endtab.=JHtml::_('bootstrap.endTabSet');
-            $htmlresult=str_replace('{/tabs}',$endtab,$htmlresult);
-	}
+            $htmlresult = str_replace($fItem, $tab, $htmlresult);
+            $i++;
+        }
+
+        $endtab = HTMLHelper::_('uitab.endTab');
+        $endtab .= HTMLHelper::_('uitab.endTabSet');
+
+        $htmlresult = str_replace('{/tabs}', $endtab, $htmlresult);
+    }
 
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan komlev <support@joomlaboat.com>
  * @link https://www.joomlaboat.com
@@ -15,125 +15,110 @@ use Joomla\CMS\Factory;
 
 defined('_JEXEC') or die('Restricted access');
 
-	$jinput = Factory::getApplication()->input;
+$jinput = Factory::getApplication()->input;
 
-    $ct = new CT;
-		
-	$model = $this->getModel('edititem');
-    $model->load($ct);
+$ct = new CT;
 
-	$model->params=Factory::getApplication()->getParams();
+$model = $this->getModel('edititem');
+$model->load($ct);
 
-
-	$model->listing_id = $jinput->getCmd("listing_id");
-
-								if(!CTUser::CheckAuthorization($ct,5))
-								{
-									//not authorized
-									Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
+$model->params = Factory::getApplication()->getParams();
 
 
-									$link =JRoute::_('index.php?option=com_users&view=login&return='.base64_encode(JoomlaBasicMisc::curPageURL()));
-									$this->setRedirect($link,JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'));
-									return;
-								}
-								else
-								{
-									switch(Factory::getApplication()->input->getCmd( 'task' ))
-									{
+$model->listing_id = $jinput->getCmd("listing_id");
 
-									case 'add' :
-
-										$model = $this->getModel('editfiles');
-
-										if ($model->add())
-										{
-											$msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FILE_ADDED' );
-										}
-										else
-										{
-											$msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FILE_NOT_ADDED');
-										}
-
-										$fileboxname=Factory::getApplication()->input->getCmd( 'fileboxname');
-										$listing_id=Factory::getApplication()->input->get("listing_id",0,'INT');
-										$returnto=Factory::getApplication()->input->get('returnto','','BASE64');
-										$Itemid=Factory::getApplication()->input->get('Itemid',0,'INT');
-
-										$link 	= 'index.php?option=com_customtables&view=editfiles'
-
-											.'&fileboxname='.$fileboxname
-											.'&listing_id='.$listing_id
-											.'&returnto='.$returnto
-											.'&Itemid='.$Itemid;
-
-										$this->setRedirect($link, $msg);
-
-										break;
-
-									case 'delete' :
-
-										$model = $this->getModel('editfiles');
-
-										if ($model->delete())
-										{
-												$msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FILE_DELETED' );
-										}
-										else
-										{
-											$msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FILE_NOT_DELETED');
-										}
-										//$establename=Factory::getApplication()->input->getCmd( 'establename');
-										$fileboxname=Factory::getApplication()->input->getCmd( 'fileboxname');
-										$listing_id=Factory::getApplication()->input->get("listing_id",0,'INT');
-										$returnto=Factory::getApplication()->input->get('returnto','','BASE64');
-										$Itemid=Factory::getApplication()->input->get('Itemid',0,'INT');
-
-										$link 	= 'index.php?option=com_customtables&view=editfiles'
-
-											.'&fileboxname='.$fileboxname
-											.'&listing_id='.$listing_id
-											.'&returnto='.$returnto
-											.'&Itemid='.$Itemid;
-
-										$this->setRedirect($link, $msg);
-
-										break;
-
-									case 'saveorder' :
-
-										$model = $this->getModel('editfiles');
+if (!CTUser::CheckAuthorization($ct, 5)) {
+    //not authorized
+    Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
 
 
-										if ($model->reorder())
-										{
-												$msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FILE_ORDER_SAVED' );
-										}
-										else
-										{
-											$msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FILE_ORDER_NOT_SAVED');
-										}
-										$returnto=Factory::getApplication()->input->get('returnto','','BASE64');
+    $link = JRoute::_('index.php?option=com_users&view=login&return=' . base64_encode(JoomlaBasicMisc::curPageURL()));
+    $this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'));
+    return;
+} else {
+    switch (Factory::getApplication()->input->getCmd('task')) {
 
-										$link 	= $returnto=base64_decode (Factory::getApplication()->input->get('returnto','','BASE64'));
+        case 'add' :
+
+            $model = $this->getModel('editfiles');
+
+            if ($model->add()) {
+                $msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FILE_ADDED');
+            } else {
+                $msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FILE_NOT_ADDED');
+            }
+
+            $fileboxname = Factory::getApplication()->input->getCmd('fileboxname');
+            $listing_id = Factory::getApplication()->input->get("listing_id", 0, 'INT');
+            $returnto = Factory::getApplication()->input->get('returnto', '', 'BASE64');
+            $Itemid = Factory::getApplication()->input->get('Itemid', 0, 'INT');
+
+            $link = 'index.php?option=com_customtables&view=editfiles'
+
+                . '&fileboxname=' . $fileboxname
+                . '&listing_id=' . $listing_id
+                . '&returnto=' . $returnto
+                . '&Itemid=' . $Itemid;
+
+            $this->setRedirect($link, $msg);
+
+            break;
+
+        case 'delete' :
+
+            $model = $this->getModel('editfiles');
+
+            if ($model->delete()) {
+                $msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FILE_DELETED');
+            } else {
+                $msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FILE_NOT_DELETED');
+            }
+            //$establename=Factory::getApplication()->input->getCmd( 'establename');
+            $fileboxname = Factory::getApplication()->input->getCmd('fileboxname');
+            $listing_id = Factory::getApplication()->input->get("listing_id", 0, 'INT');
+            $returnto = Factory::getApplication()->input->get('returnto', '', 'BASE64');
+            $Itemid = Factory::getApplication()->input->get('Itemid', 0, 'INT');
+
+            $link = 'index.php?option=com_customtables&view=editfiles'
+
+                . '&fileboxname=' . $fileboxname
+                . '&listing_id=' . $listing_id
+                . '&returnto=' . $returnto
+                . '&Itemid=' . $Itemid;
+
+            $this->setRedirect($link, $msg);
+
+            break;
+
+        case 'saveorder' :
+
+            $model = $this->getModel('editfiles');
 
 
+            if ($model->reorder()) {
+                $msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FILE_ORDER_SAVED');
+            } else {
+                $msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FILE_ORDER_NOT_SAVED');
+            }
+            $returnto = Factory::getApplication()->input->get('returnto', '', 'BASE64');
+
+            $link = $returnto = base64_decode(Factory::getApplication()->input->get('returnto', '', 'BASE64'));
 
 
-										$this->setRedirect($link, $msg);
+            $this->setRedirect($link, $msg);
 
-										break;
+            break;
 
-									case 'cancel' :
+        case 'cancel' :
 
-										$msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_EDIT_CANCELED' );
-										$link 	= $returnto=base64_decode (Factory::getApplication()->input->get('returnto','','BASE64'));
+            $msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_EDIT_CANCELED');
+            $link = $returnto = base64_decode(Factory::getApplication()->input->get('returnto', '', 'BASE64'));
 
-										$this->setRedirect($link, $msg);
+            $this->setRedirect($link, $msg);
 
-										break;
-									default:
+            break;
+        default:
 
-										parent::display();
-									}
-								}//switch(Factory::getApplication()->input->get('task','','CMD'))
+            parent::display();
+    }
+}//switch(Factory::getApplication()->input->get('task','','CMD'))

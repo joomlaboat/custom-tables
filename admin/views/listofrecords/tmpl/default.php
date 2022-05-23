@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
@@ -16,36 +16,36 @@ JHtml::_('behavior.multiselect');
 JHtml::_('dropdown.init');
 JHtml::_('formbehavior.chosen', 'select');
 
-if($this->ordering_realfieldname != '')
-{
-	$saveOrderingUrl = 'index.php?option=com_customtables&task=listofrecords.ordering&tableid='.$this->ct->Table->tableid.'&tmpl=component';
-	JHtml::_('sortablelist.sortable', 'recordsList', 'adminForm', 'asc', $saveOrderingUrl);
+if ($this->ordering_realfieldname != '') {
+    $saveOrderingUrl = 'index.php?option=com_customtables&task=listofrecords.ordering&tableid=' . $this->ct->Table->tableid . '&tmpl=component';
+    JHtml::_('sortablelist.sortable', 'recordsList', 'adminForm', 'asc', $saveOrderingUrl);
 }
 
 ?>
-<form action="<?php echo JRoute::_('index.php?option=com_customtables&view=listofrecords'); ?>" method="post" name="adminForm" id="adminForm">
-<?php if(!empty( $this->sidebar)): ?>
-	<div id="j-sidebar-container" class="span2">
-		<?php echo $this->sidebar; ?>
-	</div>
-	<div id="j-main-container" class="span10">
-<?php else : ?>
-	<div id="j-main-container">
-<?php endif; ?>
-<?php if (empty($this->items)): ?>
-	<?php //echo $this->loadTemplate('toolbar');?>
-    <div class="alert alert-no-items">
-        <?php //echo JText::_('JGLOBAL_NO_MATCHING_RESULTS'); ?>
+<form action="<?php echo JRoute::_('index.php?option=com_customtables&view=listofrecords'); ?>" method="post"
+      name="adminForm" id="adminForm">
+    <?php if (!empty($this->sidebar)): ?>
+    <div id="j-sidebar-container" class="span2">
+        <?php echo $this->sidebar; ?>
     </div>
-<?php else : ?>
-		
-		<table class="table table-striped" id="recordsList">
-			<thead><?php echo $this->loadTemplate('head');?></thead>
-			<tfoot><?php echo $this->loadTemplate('foot');?></tfoot>
-			<tbody><?php echo $this->loadTemplate('body');?></tbody>
-		</table>
-		<?php //Load the batch processing form. ?>
-        <?php /* if ($this->canCreate && $this->canEdit) : ?>
+    <div id="j-main-container" class="span10">
+        <?php else : ?>
+        <div id="j-main-container">
+            <?php endif; ?>
+            <?php if (empty($this->items)): ?>
+                <?php //echo $this->loadTemplate('toolbar');?>
+                <div class="alert alert-no-items">
+                    <?php //echo JText::_('JGLOBAL_NO_MATCHING_RESULTS'); ?>
+                </div>
+            <?php else : ?>
+
+                <table class="table table-striped" id="recordsList">
+                    <thead><?php echo $this->loadTemplate('head'); ?></thead>
+                    <tfoot><?php echo $this->loadTemplate('foot'); ?></tfoot>
+                    <tbody><?php echo $this->loadTemplate('body'); ?></tbody>
+                </table>
+                <?php //Load the batch processing form. ?>
+                <?php /* if ($this->canCreate && $this->canEdit) : ?>
             <?php echo JHtml::_(
                 'bootstrap.renderModal',
                 'collapseModal',
@@ -56,19 +56,19 @@ if($this->ordering_realfieldname != '')
                 $this->loadTemplate('batch_body')
             ); ?>
         <?php endif; */ ?>
-		
-		
-		<input type="hidden" name="filter_order" value="" />
-		<input type="hidden" name="filter_order_Dir" value="" />
-		<input type="hidden" name="boxchecked" value="0" />
-		
 
-<?php endif; ?>
-</div>
-	
-<input type="hidden" name="option" value="com_customtables" />
-<input type="hidden" name="task" value="" />
-<input type="hidden" name="tableid" value="<?php echo $this->ct->Table->tableid; ?>" />
 
-<?php echo JHtml::_('form.token'); ?>
+                <input type="hidden" name="filter_order" value=""/>
+                <input type="hidden" name="filter_order_Dir" value=""/>
+                <input type="hidden" name="boxchecked" value="0"/>
+
+
+            <?php endif; ?>
+        </div>
+
+        <input type="hidden" name="option" value="com_customtables"/>
+        <input type="hidden" name="task" value=""/>
+        <input type="hidden" name="tableid" value="<?php echo $this->ct->Table->tableid; ?>"/>
+
+        <?php echo JHtml::_('form.token'); ?>
 </form>

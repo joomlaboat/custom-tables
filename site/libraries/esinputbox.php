@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
@@ -96,7 +96,7 @@ class ESInputBox
                     $value = $twig->process($row);
 
                     if ($value != '') {
-                        if($this->ct->Params->allowContentPlugins)
+                        if ($this->ct->Params->allowContentPlugins)
                             JoomlaBasicMisc::applyContentPlugins($htmlresult);
 
                         if ($fieldrow['type'] == 'alias') {

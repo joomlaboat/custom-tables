@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
@@ -18,45 +18,42 @@ JHtml::_('formbehavior.chosen', 'select');
 
 ?>
 <script type="text/javascript">
-	Joomla.orderTable = function()
-	{
-		table = document.getElementById("sortTable");
-		direction = document.getElementById("directionTable");
-		order = table.options[table.selectedIndex].value;
-		if (order != '<?php echo $this->listOrder; ?>')
-		{
-			dirn = 'asc';
-		}
-		else
-		{
-			dirn = direction.options[direction.selectedIndex].value;
-		}
-		Joomla.tableOrdering(order, dirn, '');
-	}
+    Joomla.orderTable = function () {
+        table = document.getElementById("sortTable");
+        direction = document.getElementById("directionTable");
+        order = table.options[table.selectedIndex].value;
+        if (order != '<?php echo $this->listOrder; ?>') {
+            dirn = 'asc';
+        } else {
+            dirn = direction.options[direction.selectedIndex].value;
+        }
+        Joomla.tableOrdering(order, dirn, '');
+    }
 </script>
-<form action="<?php echo JRoute::_('index.php?option=com_customtables&view=listoflayouts'); ?>" method="post" name="adminForm" id="adminForm">
-<?php if(!empty( $this->sidebar)): ?>
-	<div id="j-sidebar-container" class="span2">
-		<?php echo $this->sidebar; ?>
-	</div>
-	<div id="j-main-container" class="span10">
-<?php else : ?>
-	<div id="j-main-container">
-<?php endif; ?>
-<?php if (empty($this->items)): ?>
-	<?php echo $this->loadTemplate('toolbar');?>
-    <div class="alert alert-no-items">
-        <?php echo JText::_('JGLOBAL_NO_MATCHING_RESULTS'); ?>
+<form action="<?php echo JRoute::_('index.php?option=com_customtables&view=listoflayouts'); ?>" method="post"
+      name="adminForm" id="adminForm">
+    <?php if (!empty($this->sidebar)): ?>
+    <div id="j-sidebar-container" class="span2">
+        <?php echo $this->sidebar; ?>
     </div>
-<?php else : ?>
-		<?php echo $this->loadTemplate('toolbar');?>
-		<table class="table table-striped" id="layoutsList">
-			<thead><?php include('default_head.php');?></thead>
-			<tfoot><?php echo $this->loadTemplate('foot');?></tfoot>
-			<tbody><?php echo $this->loadTemplate('body');?></tbody>
-		</table>
-		<?php //Load the batch processing form. ?>
-        <?php /* if ($this->canCreate && $this->canEdit) : ?>
+    <div id="j-main-container" class="span10">
+        <?php else : ?>
+        <div id="j-main-container">
+            <?php endif; ?>
+            <?php if (empty($this->items)): ?>
+                <?php echo $this->loadTemplate('toolbar'); ?>
+                <div class="alert alert-no-items">
+                    <?php echo JText::_('JGLOBAL_NO_MATCHING_RESULTS'); ?>
+                </div>
+            <?php else : ?>
+            <?php echo $this->loadTemplate('toolbar'); ?>
+            <table class="table table-striped" id="layoutsList">
+                <thead><?php include('default_head.php'); ?></thead>
+                <tfoot><?php echo $this->loadTemplate('foot'); ?></tfoot>
+                <tbody><?php echo $this->loadTemplate('body'); ?></tbody>
+            </table>
+            <?php //Load the batch processing form. ?>
+            <?php /* if ($this->canCreate && $this->canEdit) : ?>
             <?php echo JHtml::_(
                 'bootstrap.renderModal',
                 'collapseModal',
@@ -67,11 +64,11 @@ JHtml::_('formbehavior.chosen', 'select');
                 $this->loadTemplate('batch_body')
             ); ?>
         <?php endif; */ ?>
-		<input type="hidden" name="filter_order" value="" />
-		<input type="hidden" name="filter_order_Dir" value="" />
-		<input type="hidden" name="boxchecked" value="0" />
-	</div>
-<?php endif; ?>
-<input type="hidden" name="task" value="" />
-<?php echo JHtml::_('form.token'); ?>
+            <input type="hidden" name="filter_order" value=""/>
+            <input type="hidden" name="filter_order_Dir" value=""/>
+            <input type="hidden" name="boxchecked" value="0"/>
+        </div>
+    <?php endif; ?>
+        <input type="hidden" name="task" value=""/>
+        <?php echo JHtml::_('form.token'); ?>
 </form>

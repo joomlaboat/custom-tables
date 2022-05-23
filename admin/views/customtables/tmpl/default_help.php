@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
@@ -11,5 +11,5 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
 
-echo '<div class="ct_howitworks">'.JText::_('COM_CUSTOMTABLES_HOW_IT_WORKS_DESC').'</div>';
+echo '<div class="ct_howitworks">' . JText::_('COM_CUSTOMTABLES_HOW_IT_WORKS_DESC') . '</div>';
 

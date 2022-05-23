@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan komlev <support@joomlaboat.com>
  * @link https://www.joomlaboat.com
@@ -14,22 +14,22 @@ use Joomla\CMS\Factory;
 defined('_JEXEC') or die('Restricted access');
 
 // Import Joomla! libraries
-jimport( 'joomla.application.component.view');
+jimport('joomla.application.component.view');
 
 class CustomTablesViewFileUploader extends JViewLegacy
 {
     function display($tpl = null)
     {
 
-		require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'uploader.php');
+        require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'uploader.php');
 
-		if (ob_get_contents()) ob_end_clean();
+        if (ob_get_contents()) ob_end_clean();
 
-        $jinput=Factory::getApplication()->input;
-		$fileid = $jinput->getCmd( 'fileid', '' );
+        $jinput = Factory::getApplication()->input;
+        $fileid = $jinput->getCmd('fileid', '');
 
-        echo ESFileUploader::uploadFile($fileid,'txt html');
+        echo ESFileUploader::uploadFile($fileid, 'txt html');
 
-		die; //to stop rendering template and staff
-	}
+        die; //to stop rendering template and staff
+    }
 }

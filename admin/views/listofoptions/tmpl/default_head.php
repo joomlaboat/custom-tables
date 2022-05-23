@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
@@ -13,36 +13,35 @@ defined('_JEXEC') or die('Restricted Access');
 ?>
 
 
-		<tr>
-			<th width="20">
-				<input type="checkbox" name="checkall-toggle" value="" title="Check All" onclick="Joomla.checkAll(this)" />
-			</th>
-			<th class="title">
-				<?php echo JHTML::_('grid.sort',   'Option Name', 'name', @$this->lists['order_Dir'], @$this->lists['order'] ); ?>
-			</th>
-			
-				<?php
-			
-			foreach($this->languages as $lang)
-			{
-				?>
-				
-				<th class="title">
-				<?php echo JHTML::_('grid.sort',   'Option Title ('.$lang->caption.')', 'title_'.$lang->id, @$this->lists['order_Dir'], @$this->lists['order'] ); ?>
-				</th>
-				
-				<?php
-			}
+<tr>
+    <th width="20">
+        <input type="checkbox" name="checkall-toggle" value="" title="Check All" onclick="Joomla.checkAll(this)"/>
+    </th>
+    <th class="title">
+        <?php echo JHTML::_('grid.sort', 'Option Name', 'name', @$this->lists['order_Dir'], @$this->lists['order']); ?>
+    </th>
 
-			?>
-			
-			<th width="8%" nowrap="nowrap">
-				<?php echo JHTML::_('grid.sort',   'Is Selectable', 'm.isselectable', @$this->lists['order_Dir'], @$this->lists['order'] ); ?>
-				
-			</th>
+    <?php
 
-			<th width="1%" nowrap="nowrap">
-				Family Tree
-			</th>
-		</tr>
+    foreach ($this->languages as $lang) {
+        ?>
+
+        <th class="title">
+            <?php echo JHTML::_('grid.sort', 'Option Title (' . $lang->caption . ')', 'title_' . $lang->id, @$this->lists['order_Dir'], @$this->lists['order']); ?>
+        </th>
+
+        <?php
+    }
+
+    ?>
+
+    <th width="8%" nowrap="nowrap">
+        <?php echo JHTML::_('grid.sort', 'Is Selectable', 'm.isselectable', @$this->lists['order_Dir'], @$this->lists['order']); ?>
+
+    </th>
+
+    <th width="1%" nowrap="nowrap">
+        Family Tree
+    </th>
+</tr>
 	

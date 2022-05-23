@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @subpackage view.html.php
  * @author Ivan komlev <support@joomlaboat.com>
@@ -31,269 +31,247 @@ use Joomla\Component\Content\Administrator\Extension\ContentComponent;
  */
 class CustomtablesViewListofcategories extends JViewLegacy
 {
-	/**
-	 * Listofcategories view display method
-	 * @return void
-	 */
-	var $ct;
-	var $isEmptyState = false;
-	 
-	function display($tpl = null)
-	{
-		$this->ct = new CT;
-				
-		if ($this->getLayout() !== 'modal')
-		{
-			// Include helper submenu
-			CustomtablesHelper::addSubmenu('listofcategories');
-		}
-		
-		// Assign data to the view
-		$this->items = $this->get('Items');
-		$this->pagination = $this->get('Pagination');
-		$this->state = $this->get('State');
-		$this->user = Factory::getUser();
-		
-		if($this->ct->Env->version >= 4)
-		{
-			$this->filterForm    = $this->get('FilterForm');
-			$this->activeFilters = $this->get('ActiveFilters');
-		}
-		
-		$this->listOrder = $this->escape($this->state->get('list.ordering'));
-		$this->listDirn = $this->escape($this->state->get('list.direction'));
-		$this->saveOrder = $this->listOrder == 'ordering';
-		// get global action permissions
+    /**
+     * Listofcategories view display method
+     * @return void
+     */
+    var $ct;
+    var $isEmptyState = false;
 
-		$this->canDo = ContentHelper::getActions('com_customtables', 'categories');
-		
-		$this->canCreate = $this->canDo->get('categories.create');
-		$this->canEdit = $this->canDo->get('categories.edit');
-		$this->canState = $this->canDo->get('categories.edit.state');
-		$this->canDelete = $this->canDo->get('categories.delete');
-		
-		$this->isEmptyState = $this->get('IsEmptyState');
-		//$this->canBatch = $this->canDo->get('core.batch');
+    function display($tpl = null)
+    {
+        $this->ct = new CT;
 
-		// We don't need toolbar in the modal window.
-		if ($this->getLayout() !== 'modal')
-		{
-			if($this->ct->Env->version < 4)
-			{
-				$this->addToolbar_3();
-				$this->sidebar = JHtmlSidebar::render();
-			}
-			else
-				$this->addToolbar_4();
-			
-			// load the batch html
-			if ($this->canCreate && $this->canEdit && $this->canState)
-			{
-				$this->batchDisplay = JHtmlBatch_::render();
-			}
-		}
-		
-		// Check for errors.
-		if (count($errors = $this->get('Errors')))
-		{
-			throw new Exception(implode("\n", $errors), 500);
-		}
+        if ($this->getLayout() !== 'modal') {
+            // Include helper submenu
+            CustomtablesHelper::addSubmenu('listofcategories');
+        }
 
-		// Display the template
-		if($this->ct->Env->version < 4)
-			parent::display($tpl);
-		else
-			parent::display('quatro');
+        // Assign data to the view
+        $this->items = $this->get('Items');
+        $this->pagination = $this->get('Pagination');
+        $this->state = $this->get('State');
+        $this->user = Factory::getUser();
 
-		// Set the document
-		$this->setDocument();
-	}
+        if ($this->ct->Env->version >= 4) {
+            $this->filterForm = $this->get('FilterForm');
+            $this->activeFilters = $this->get('ActiveFilters');
+        }
 
-	protected function addToolbar_4()
-	{
-		$user  = Factory::getUser();
+        $this->listOrder = $this->escape($this->state->get('list.ordering'));
+        $this->listDirn = $this->escape($this->state->get('list.direction'));
+        $this->saveOrder = $this->listOrder == 'ordering';
+        // get global action permissions
 
-		// Get the toolbar object instance
-		$toolbar = Toolbar::getInstance('toolbar');
+        $this->canDo = ContentHelper::getActions('com_customtables', 'categories');
 
-		ToolbarHelper::title(Text::_('COM_CUSTOMTABLES_LISTOFCATEGORIES'), 'joomla');
+        $this->canCreate = $this->canDo->get('categories.create');
+        $this->canEdit = $this->canDo->get('categories.edit');
+        $this->canState = $this->canDo->get('categories.edit.state');
+        $this->canDelete = $this->canDo->get('categories.delete');
 
-		if ($this->canCreate and $this->ct->Env->advancedtagprocessor)
-			$toolbar->addNew('categories.add');
+        $this->isEmptyState = $this->get('IsEmptyState');
+        //$this->canBatch = $this->canDo->get('core.batch');
 
-		$dropdown = $toolbar->dropdownButton('status-group')
-			->text('JTOOLBAR_CHANGE_STATUS')
-			->toggleSplit(false)
-			->icon('icon-ellipsis-h')
-			->buttonClass('btn btn-action')
-			->listCheck(true);
+        // We don't need toolbar in the modal window.
+        if ($this->getLayout() !== 'modal') {
+            if ($this->ct->Env->version < 4) {
+                $this->addToolbar_3();
+                $this->sidebar = JHtmlSidebar::render();
+            } else
+                $this->addToolbar_4();
 
-		$childBar = $dropdown->getChildToolbar();
-		
-		if ($this->canState)
-		{
-			$childBar->publish('listofcategories.publish')->listCheck(true);
-			$childBar->unpublish('listofcategories.unpublish')->listCheck(true);
-		}
-		
-		if ($this->canDo->get('core.admin'))
-		{
-			$childBar->checkin('listoflayouts.checkin');
-		}
+            // load the batch html
+            if ($this->canCreate && $this->canEdit && $this->canState) {
+                $this->batchDisplay = JHtmlBatch_::render();
+            }
+        }
 
-		if(($this->canState && $this->canDelete))
-		{
-			if ($this->state->get('filter.published') != ContentComponent::CONDITION_TRASHED)
-			{
-				$childBar->trash('listofcategories.trash')->listCheck(true);
-			}
+        // Check for errors.
+        if (count($errors = $this->get('Errors'))) {
+            throw new Exception(implode("\n", $errors), 500);
+        }
 
-			if (!$this->isEmptyState && $this->state->get('filter.published') == ContentComponent::CONDITION_TRASHED && $this->canDelete)
-			{
-				$toolbar->delete('listofcategories.delete')
-					->text('JTOOLBAR_EMPTY_TRASH')
-					->message('JGLOBAL_CONFIRM_DELETE')
-					->listCheck(true);
-			}
-		}
-	}
+        // Display the template
+        if ($this->ct->Env->version < 4)
+            parent::display($tpl);
+        else
+            parent::display('quatro');
 
-	protected function addToolBar_3()
-	{
-		JToolBarHelper::title(JText::_('COM_CUSTOMTABLES_LISTOFCATEGORIES'), 'joomla');
-		JHtmlSidebar::setAction('index.php?option=com_customtables&view=listofcategories');
-		JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/fields');
+        // Set the document
+        $this->setDocument();
+    }
 
-		if ($this->canCreate)
-			JToolBarHelper::addNew('categories.add');
+    /**
+     * Escapes a value for output in a view script.
+     *
+     * @param mixed $var The output to escape.
+     *
+     * @return  mixed  The escaped value.
+     */
+    public function escape($var)
+    {
+        if (strlen($var) > 50) {
+            // use the helper htmlEscape method instead and shorten the string
+            return CustomtablesHelper::htmlEscape($var, $this->_charset, true);
+        }
+        // use the helper htmlEscape method instead.
+        return CustomtablesHelper::htmlEscape($var, $this->_charset);
+    }
 
-		// Only load if there are items
-		if (CustomtablesHelper::checkArray($this->items))
-		{
-			if ($this->canEdit)
-			{
-				JToolBarHelper::editList('categories.edit');
-			}
+    protected function addToolBar_3()
+    {
+        JToolBarHelper::title(JText::_('COM_CUSTOMTABLES_LISTOFCATEGORIES'), 'joomla');
+        JHtmlSidebar::setAction('index.php?option=com_customtables&view=listofcategories');
+        JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/fields');
 
-			if ($this->canState)
-			{
-				JToolBarHelper::publishList('listofcategories.publish');
-				JToolBarHelper::unpublishList('listofcategories.unpublish');
-			}
+        if ($this->canCreate)
+            JToolBarHelper::addNew('categories.add');
 
-			if ($this->canDo->get('core.admin'))
-			{
-				JToolBarHelper::checkin('listofcategories.checkin');
-			}
+        // Only load if there are items
+        if (CustomtablesHelper::checkArray($this->items)) {
+            if ($this->canEdit) {
+                JToolBarHelper::editList('categories.edit');
+            }
+
+            if ($this->canState) {
+                JToolBarHelper::publishList('listofcategories.publish');
+                JToolBarHelper::unpublishList('listofcategories.unpublish');
+            }
+
+            if ($this->canDo->get('core.admin')) {
+                JToolBarHelper::checkin('listofcategories.checkin');
+            }
 
 
-			// Add a batch button
-			/*
-			if ($this->canBatch && $this->canCreate && $this->canEdit && $this->canState)
-			{
-				// Get the toolbar object instance
-				$bar = JToolBar::getInstance('toolbar');
-				// set the batch button name
-				$title = JText::_('JTOOLBAR_BATCH');
-				// Instantiate a new JLayoutFile instance and render the batch button
-				$layout = new JLayoutFile('joomla.toolbar.batch');
-				// add the button to the page
-				$dhtml = $layout->render(array('title' => $title));
-				$bar->appendButton('Custom', $dhtml, 'batch');
-			}
-			*/			
+            // Add a batch button
+            /*
+            if ($this->canBatch && $this->canCreate && $this->canEdit && $this->canState)
+            {
+                // Get the toolbar object instance
+                $bar = JToolBar::getInstance('toolbar');
+                // set the batch button name
+                $title = JText::_('JTOOLBAR_BATCH');
+                // Instantiate a new JLayoutFile instance and render the batch button
+                $layout = new JLayoutFile('joomla.toolbar.batch');
+                // add the button to the page
+                $dhtml = $layout->render(array('title' => $title));
+                $bar->appendButton('Custom', $dhtml, 'batch');
+            }
+            */
 
-			if ($this->state->get('filter.published') == -2 && ($this->canState && $this->canDelete))
-			{
-				JToolbarHelper::deleteList('', 'listofcategories.delete', 'JTOOLBAR_EMPTY_TRASH');
-			}
-			elseif ($this->canState && $this->canDelete)
-			{
-				JToolbarHelper::trash('listofcategories.trash');
-			}
-		} 
+            if ($this->state->get('filter.published') == -2 && ($this->canState && $this->canDelete)) {
+                JToolbarHelper::deleteList('', 'listofcategories.delete', 'JTOOLBAR_EMPTY_TRASH');
+            } elseif ($this->canState && $this->canDelete) {
+                JToolbarHelper::trash('listofcategories.trash');
+            }
+        }
 
-		// set help url for this view if found
-		/*
-		$help_url = CustomtablesHelper::getHelpUrl('listofcategories');
-		if (CustomtablesHelper::checkString($help_url))
-		{
-				JToolbarHelper::help('COM_CUSTOMTABLES_HELP_MANAGER', false, $help_url);
-		}
-		*/
+        // set help url for this view if found
+        /*
+        $help_url = CustomtablesHelper::getHelpUrl('listofcategories');
+        if (CustomtablesHelper::checkString($help_url))
+        {
+                JToolbarHelper::help('COM_CUSTOMTABLES_HELP_MANAGER', false, $help_url);
+        }
+        */
 
-		// add the options comp button
-		/*
-		if ($this->canDo->get('core.admin') || $this->canDo->get('core.options'))
-		{
-			JToolBarHelper::preferences('com_customtables');
-		}
-		*/
+        // add the options comp button
+        /*
+        if ($this->canDo->get('core.admin') || $this->canDo->get('core.options'))
+        {
+            JToolBarHelper::preferences('com_customtables');
+        }
+        */
 
-		if ($this->canState)
-		{
-			JHtmlSidebar::addFilter(
-				JText::_('JOPTION_SELECT_PUBLISHED'),
-				'filter_published',
-				JHtml::_('select.options', JHtml::_('jgrid.publishedOptions'), 'value', 'text', $this->state->get('filter.published'), true)
-			);
-			// only load if batch allowed
-			/*
-			if ($this->canBatch)
-			{
-				JHtmlBatch_::addListSelection(
-					JText::_('COM_CUSTOMTABLES_KEEP_ORIGINAL_STATE'),
-					'batch[published]',
-					JHtml::_('select.options', JHtml::_('jgrid.publishedOptions', array('all' => false)), 'value', 'text', '', true)
-				);
-			}
-			*/
-		}
-	}
+        if ($this->canState) {
+            JHtmlSidebar::addFilter(
+                JText::_('JOPTION_SELECT_PUBLISHED'),
+                'filter_published',
+                JHtml::_('select.options', JHtml::_('jgrid.publishedOptions'), 'value', 'text', $this->state->get('filter.published'), true)
+            );
+            // only load if batch allowed
+            /*
+            if ($this->canBatch)
+            {
+                JHtmlBatch_::addListSelection(
+                    JText::_('COM_CUSTOMTABLES_KEEP_ORIGINAL_STATE'),
+                    'batch[published]',
+                    JHtml::_('select.options', JHtml::_('jgrid.publishedOptions', array('all' => false)), 'value', 'text', '', true)
+                );
+            }
+            */
+        }
+    }
 
-	/**
-	 * Method to set up the document properties
-	 *
-	 * @return void
-	 */
-	protected function setDocument()
-	{
-		if (!isset($this->document))
-		{
-			$this->document = Factory::getDocument();
-		}
-		$this->document->setTitle(JText::_('COM_CUSTOMTABLES_LISTOFCATEGORIES'));
-	}
+    protected function addToolbar_4()
+    {
+        $user = Factory::getUser();
 
-	/**
-	 * Escapes a value for output in a view script.
-	 *
-	 * @param   mixed  $var  The output to escape.
-	 *
-	 * @return  mixed  The escaped value.
-	 */
-	public function escape($var)
-	{
-		if(strlen($var) > 50)
-		{
-			// use the helper htmlEscape method instead and shorten the string
-			return CustomtablesHelper::htmlEscape($var, $this->_charset, true);
-		}
-		// use the helper htmlEscape method instead.
-		return CustomtablesHelper::htmlEscape($var, $this->_charset);
-	}
+        // Get the toolbar object instance
+        $toolbar = Toolbar::getInstance('toolbar');
 
-	/**
-	 * Returns an array of fields the table can be sorted by
-	 *
-	 * @return  array  Array containing the field name to sort by as the key and display text as value
-	 */
-	protected function getSortFields()
-	{
-		return array(
-			'a.published' => JText::_('JSTATUS'),
-			'a.categoryname' => JText::_('COM_CUSTOMTABLES_CATEGORIES_CATEGORYNAME_LABEL'),
-			'a.id' => JText::_('JGRID_HEADING_ID')
-		);
-	}
+        ToolbarHelper::title(Text::_('COM_CUSTOMTABLES_LISTOFCATEGORIES'), 'joomla');
+
+        if ($this->canCreate and $this->ct->Env->advancedtagprocessor)
+            $toolbar->addNew('categories.add');
+
+        $dropdown = $toolbar->dropdownButton('status-group')
+            ->text('JTOOLBAR_CHANGE_STATUS')
+            ->toggleSplit(false)
+            ->icon('icon-ellipsis-h')
+            ->buttonClass('btn btn-action')
+            ->listCheck(true);
+
+        $childBar = $dropdown->getChildToolbar();
+
+        if ($this->canState) {
+            $childBar->publish('listofcategories.publish')->listCheck(true);
+            $childBar->unpublish('listofcategories.unpublish')->listCheck(true);
+        }
+
+        if ($this->canDo->get('core.admin')) {
+            $childBar->checkin('listoflayouts.checkin');
+        }
+
+        if (($this->canState && $this->canDelete)) {
+            if ($this->state->get('filter.published') != ContentComponent::CONDITION_TRASHED) {
+                $childBar->trash('listofcategories.trash')->listCheck(true);
+            }
+
+            if (!$this->isEmptyState && $this->state->get('filter.published') == ContentComponent::CONDITION_TRASHED && $this->canDelete) {
+                $toolbar->delete('listofcategories.delete')
+                    ->text('JTOOLBAR_EMPTY_TRASH')
+                    ->message('JGLOBAL_CONFIRM_DELETE')
+                    ->listCheck(true);
+            }
+        }
+    }
+
+    /**
+     * Method to set up the document properties
+     *
+     * @return void
+     */
+    protected function setDocument()
+    {
+        if (!isset($this->document)) {
+            $this->document = Factory::getDocument();
+        }
+        $this->document->setTitle(JText::_('COM_CUSTOMTABLES_LISTOFCATEGORIES'));
+    }
+
+    /**
+     * Returns an array of fields the table can be sorted by
+     *
+     * @return  array  Array containing the field name to sort by as the key and display text as value
+     */
+    protected function getSortFields()
+    {
+        return array(
+            'a.published' => JText::_('JSTATUS'),
+            'a.categoryname' => JText::_('COM_CUSTOMTABLES_CATEGORIES_CATEGORYNAME_LABEL'),
+            'a.id' => JText::_('JGRID_HEADING_ID')
+        );
+    }
 }

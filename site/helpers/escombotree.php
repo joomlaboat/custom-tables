@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
@@ -11,73 +11,70 @@
 // Check to ensure this file is included in Joomla!
 use Joomla\CMS\Factory;
 
-defined('_JEXEC') or die( 'Restricted access' );
+defined('_JEXEC') or die('Restricted access');
 
 class JHTMLESComboTree
 {
-        static function render($prefix,$establename, $esfieldname, $optionname, $langpostfix, $value,$cssclass="",$onchange="",
-			$where="",$innerjoin=false,$isRequired=false,$requirementdepth=0,$place_holder='',$valuerule='',$valuerulecaption='')
-        {
-			$jinput = Factory::getApplication()->input;
+    static function render($prefix, $establename, $esfieldname, $optionname, $langpostfix, $value, $cssclass = "", $onchange = "",
+                           $where = "", $innerjoin = false, $isRequired = false, $requirementdepth = 0, $place_holder = '', $valuerule = '', $valuerulecaption = '')
+    {
+        $jinput = Factory::getApplication()->input;
 
-			require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR
-				.'com_customtables'.DIRECTORY_SEPARATOR.'libraries'.DIRECTORY_SEPARATOR.'combotreeloader.php');
+        require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR
+            . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'combotreeloader.php');
 
-				$MyESDynCombo=new ESDynamicComboTree();
-				$MyESDynCombo->initialize($establename,$esfieldname,$optionname,$prefix);
-				$MyESDynCombo->cssclass=$cssclass;
-				$MyESDynCombo->onchange=$onchange;
-				$MyESDynCombo->innerjoin=$innerjoin;
-				$MyESDynCombo->langpostfix=$langpostfix;
-				$MyESDynCombo->isRequired=$isRequired;
-				$MyESDynCombo->requirementdepth=$requirementdepth;
+        $MyESDynCombo = new ESDynamicComboTree();
+        $MyESDynCombo->initialize($establename, $esfieldname, $optionname, $prefix);
+        $MyESDynCombo->cssclass = $cssclass;
+        $MyESDynCombo->onchange = $onchange;
+        $MyESDynCombo->innerjoin = $innerjoin;
+        $MyESDynCombo->langpostfix = $langpostfix;
+        $MyESDynCombo->isRequired = $isRequired;
+        $MyESDynCombo->requirementdepth = $requirementdepth;
 
-				$MyESDynCombo->where=$where;
+        $MyESDynCombo->where = $where;
 
-				$filterwhere='';
-				$filterwherearr=array();
+        $filterwhere = '';
+        $filterwherearr = array();
 
-				$urlwhere='';
-				$urlwherearr=array();
+        $urlwhere = '';
+        $urlwherearr = array();
 
-				//Set current value (count only firet one in case multi-value provided)
-				$value_arr=explode(',',$value);
-				if(count($value_arr)>0)
-				{
-					if(count($value_arr)<2)
-						$value_arr[1]='';
-					
-					$i=1;
-					$option_arr=explode('.',$value_arr[1]);
-					$parent_arr=explode('.',$optionname);
-					if(count($option_arr)>count($parent_arr))
-					{
-						for($p=count($parent_arr);$p<count($option_arr);$p++)
-						{
-							$opt=$option_arr[$p];
-							if($opt=='')
-								break;
+        //Set current value (count only firet one in case multi-value provided)
+        $value_arr = explode(',', $value);
+        if (count($value_arr) > 0) {
+            if (count($value_arr) < 2)
+                $value_arr[1] = '';
 
-							$jinput->set($MyESDynCombo->ObjectName.'_'.$i, $opt);
-							$i++;
-						}
-					}
-				}
+            $i = 1;
+            $option_arr = explode('.', $value_arr[1]);
+            $parent_arr = explode('.', $optionname);
+            if (count($option_arr) > count($parent_arr)) {
+                for ($p = count($parent_arr); $p < count($option_arr); $p++) {
+                    $opt = $option_arr[$p];
+                    if ($opt == '')
+                        break;
 
-				$html_=
-				'<div id="'.$MyESDynCombo->ObjectName.'" name="'.$MyESDynCombo->ObjectName.'">'
-				.$MyESDynCombo->renderComboBox($filterwhere, $urlwhere, $filterwherearr, $urlwherearr,
-					($requirementdepth==1 ? true : false ),
-					$value,
-					$place_holder,
-					$valuerule,
-					$valuerulecaption
-					)
-					
-				.'</div>';
-
-
-				return $html_;
+                    $jinput->set($MyESDynCombo->ObjectName . '_' . $i, $opt);
+                    $i++;
+                }
+            }
         }
+
+        $html_ =
+            '<div id="' . $MyESDynCombo->ObjectName . '" name="' . $MyESDynCombo->ObjectName . '">'
+            . $MyESDynCombo->renderComboBox($filterwhere, $urlwhere, $filterwherearr, $urlwherearr,
+                ($requirementdepth == 1 ? true : false),
+                $value,
+                $place_holder,
+                $valuerule,
+                $valuerulecaption
+            )
+
+            . '</div>';
+
+
+        return $html_;
+    }
 
 }

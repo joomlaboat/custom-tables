@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan komlev <support@joomlaboat.com>
  * @link https://www.joomlaboat.com
@@ -55,7 +55,7 @@ function detectDelimiter($csvFile)
     return array_search(max($delimiters), $delimiters);
 }
 
-function processFieldParams(&$fieldList, array &$fields):array
+function processFieldParams(&$fieldList, array &$fields): array
 {
     foreach ($fieldList as $f_index) {
         if ($f_index >= 0) {
@@ -86,7 +86,7 @@ function processFieldParams(&$fieldList, array &$fields):array
     return $fields;
 }
 
-function importCSVdata(string $filename, $ct_tableid):string
+function importCSVdata(string $filename, $ct_tableid): string
 {
     $arrayOfLines = getLines($filename);
     if ($arrayOfLines == null)
@@ -179,7 +179,7 @@ function findSQLJoin($realtablename, $join_realfieldname, $realidfieldname, bool
 
     $wheres = [$db->quoteName($join_realfieldname) . '=' . $db->quote($vlu)];
 
-    return findRecord($realtablename, $realidfieldname, $published_field_found,$wheres);
+    return findRecord($realtablename, $realidfieldname, $published_field_found, $wheres);
 }
 
 function addSQLJoinSets($realtablename, $sets)
@@ -287,8 +287,7 @@ function prepareSQLQuery($fieldList, $fields, $line)
                 }
 
             } else {
-                if (isset($line[$i]))
-                {
+                if (isset($line[$i])) {
                     $vlu = $line[$i];
                     $sets[] = $db->quoteName($fields[$f_index]->realfieldname) . '=' . $db->quote($vlu);
                 }
@@ -314,7 +313,7 @@ function ifBomUtf8($s): bool
         return false;
 }
 
-function removeBomUtf8($s):string
+function removeBomUtf8($s): string
 {
     if (substr($s, 0, 3) == chr(hexdec('EF')) . chr(hexdec('BB')) . chr(hexdec('BF'))) {
         return substr($s, 3);
@@ -325,7 +324,7 @@ function removeBomUtf8($s):string
     }
 }
 
-function prepareFieldList(array $fieldNames, array $fields, bool &$first_line_fieldnames):array
+function prepareFieldList(array $fieldNames, array $fields, bool &$first_line_fieldnames): array
 {
     $fieldList = array();
 

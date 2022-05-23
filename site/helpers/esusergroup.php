@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
@@ -11,35 +11,35 @@
 // Check to ensure this file is included in Joomla!
 use Joomla\CMS\Factory;
 
-defined('_JEXEC') or die( 'Restricted access' );
+defined('_JEXEC') or die('Restricted access');
 
-require_once(JPATH_SITE.DIRECTORY_SEPARATOR.'components'.DIRECTORY_SEPARATOR.'com_customtables'.DIRECTORY_SEPARATOR.'models'.DIRECTORY_SEPARATOR.'catalog.php');
+require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR . 'catalog.php');
 
 class JHTMLESUserGroup
 {
-    static public function render($control_name, $value,$style,$cssclass, $attribute='',$mysqlwhere='',$mysqljoin='')
+    static public function render($control_name, $value, $style, $cssclass, $attribute = '', $mysqlwhere = '', $mysqljoin = '')
     {
-		$db = Factory::getDBO();
+        $db = Factory::getDBO();
 
-		$query = $db->getQuery(true);
-		$query->select('#__usergroups.id AS id, #__usergroups.title AS name');
-	 	$query->from('#__usergroups');
+        $query = $db->getQuery(true);
+        $query->select('#__usergroups.id AS id, #__usergroups.title AS name');
+        $query->from('#__usergroups');
 
-		if($mysqljoin!='')
-			$query->join('INNER', $mysqljoin);
+        if ($mysqljoin != '')
+            $query->join('INNER', $mysqljoin);
 
-		if($mysqlwhere!='')
-			$query->where($mysqlwhere);
+        if ($mysqlwhere != '')
+            $query->where($mysqlwhere);
 
-		$query->order('#__usergroups.title');
+        $query->order('#__usergroups.title');
 
-		$db->setQuery($query);
+        $db->setQuery($query);
 
-		$options=$db->loadObjectList();
-		$att=['id'=>'','data-type'=>'usergroup','name'=>'- '.JText ::_( 'COM_CUSTOMTABLES_SELECT' )];
-		
-		$options=array_merge(array($att),$options);
+        $options = $db->loadObjectList();
+        $att = ['id' => '', 'data-type' => 'usergroup', 'name' => '- ' . JText::_('COM_CUSTOMTABLES_SELECT')];
 
-		return JHTML::_('select.genericlist', $options, $control_name, $cssclass.' style="'.$style.'" '.$attribute.' ', 'id', 'name', $value,$control_name);
+        $options = array_merge(array($att), $options);
+
+        return JHTML::_('select.genericlist', $options, $control_name, $cssclass . ' style="' . $style . '" ' . $attribute . ' ', 'id', 'name', $value, $control_name);
     }
 }

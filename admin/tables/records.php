@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
@@ -22,35 +22,33 @@ jimport('joomla.database.table');
  */
 class CustomtablesTableRecords extends JTable
 {
-	//protected $_jsonEncode = array('params', 'metadata');
-    
-	/**
-	 * Constructor
-	 *
-	 * @param object Database connector object
-	 */
+    //protected $_jsonEncode = array('params', 'metadata');
 
-	function __construct(&$db) 
-	{
-		$jinput=Factory::getApplication()->input;
-		$tableid=$jinput->getInt('tableid',0);
-		
-		if($tableid!=0)
-		{
-			$table=ESTables::getTableRowByID($tableid);
-			if(!is_object($table) and $table==0)
-			{
-				Factory::getApplication()->enqueueMessage('Table not found', 'error');
-				return null;
-			}
-		}
-		
-		if($table->customtablename !='')
-			$realtablename=$table->customtablename;
-		else
-			$realtablename = '#__customtables_table_'.$table->tablename;
-		
-		parent::__construct($realtablename, 'id', $db); 
-	}	
-	
+    /**
+     * Constructor
+     *
+     * @param object Database connector object
+     */
+
+    function __construct(&$db)
+    {
+        $jinput = Factory::getApplication()->input;
+        $tableid = $jinput->getInt('tableid', 0);
+
+        if ($tableid != 0) {
+            $table = ESTables::getTableRowByID($tableid);
+            if (!is_object($table) and $table == 0) {
+                Factory::getApplication()->enqueueMessage('Table not found', 'error');
+                return null;
+            }
+        }
+
+        if ($table->customtablename != '')
+            $realtablename = $table->customtablename;
+        else
+            $realtablename = '#__customtables_table_' . $table->tablename;
+
+        parent::__construct($realtablename, 'id', $db);
+    }
+
 }

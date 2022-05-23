@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
@@ -13,9 +13,9 @@ defined('_JEXEC') or die('Restricted Access');
 ?>
 
 <tfoot>
-		<tr>
-			<td colspan="<?php echo (count($this->languages)+4); ?>">
-				<?php echo $this->pagination->getListFooter(); ?>
-			</td>
-		</tr>
+<tr>
+    <td colspan="<?php echo(count($this->languages) + 4); ?>">
+        <?php echo $this->pagination->getListFooter(); ?>
+    </td>
+</tr>
 </tfoot>

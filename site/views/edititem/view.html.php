@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
@@ -22,30 +22,29 @@ class CustomTablesViewEditItem extends JViewLegacy
 {
     var CT $ct;
 
-	function display($tpl = null): bool
+    function display($tpl = null): bool
     {
         $this->ct = new CT;
         $this->ct->setParams();
-		$Model = $this->getModel();
+        $Model = $this->getModel();
         $Model->load($this->ct);
-		
-        if(!CTUser::CheckAuthorization($this->ct))
-    	{
-    		//not authorized
+
+        if (!CTUser::CheckAuthorization($this->ct)) {
+            //not authorized
             Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
-    		return false;
+            return false;
         }
 
-        if(!isset($this->ct->Table->fields) or !is_array($this->ct->Table->fields))
+        if (!isset($this->ct->Table->fields) or !is_array($this->ct->Table->fields))
             return false;
 
-		$formLink=$this->ct->Env->WebsiteRoot.'index.php?option=com_customtables&amp;view=edititem'.($this->ct->Env->ItemId!=0 ? '&amp;Itemid='.$this->ct->Env->ItemId : '');
-		
-		if($this->ct->Env->frmt == 'json')
-			require_once('tmpl'.DIRECTORY_SEPARATOR.'json.php');
-		else
-			CTViewEdit($this->ct, $Model->row, $Model->pagelayout, $formLink,'eseditForm');
+        $formLink = $this->ct->Env->WebsiteRoot . 'index.php?option=com_customtables&amp;view=edititem' . ($this->ct->Env->ItemId != 0 ? '&amp;Itemid=' . $this->ct->Env->ItemId : '');
+
+        if ($this->ct->Env->frmt == 'json')
+            require_once('tmpl' . DIRECTORY_SEPARATOR . 'json.php');
+        else
+            CTViewEdit($this->ct, $Model->row, $Model->pagelayout, $formLink, 'eseditForm');
 
         return true;
-	}
+    }
 }

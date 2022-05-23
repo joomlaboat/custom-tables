@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
@@ -109,7 +109,7 @@ $edit = "index.php?option=com_customtables&view=listoffields&task=fields.edit&ta
                             }
                         }
 
-                        echo '<li>' . (count($this->languages) > 1 ? $lang->title . ': ' : '' ) . '<b>' . $this->escape($item_array[$fieldTitle]) . '</b></li>';
+                        echo '<li>' . (count($this->languages) > 1 ? $lang->title . ': ' : '') . '<b>' . $this->escape($item_array[$fieldTitle]) . '</b></li>';
 
                         $moreThanOneLang = true; //More than one language installed
                     }

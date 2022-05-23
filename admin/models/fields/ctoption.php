@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
@@ -19,40 +19,39 @@ JFormHelper::loadFieldClass('list');
 
 class JFormFieldCTOption extends JFormFieldList
 {
-	/**
-	 * Element name
-	 *
-	 * @access	protected
-	 * @var		string
-	 *
-	 */
-	protected $type = 'ctoption';
+    /**
+     * Element name
+     *
+     * @access    protected
+     * @var        string
+     *
+     */
+    protected $type = 'ctoption';
 
-	protected function getOptions()//$name, $value, &$node, $control_name)
-	{
-		$jinput = Factory::getApplication()->input;
+    protected function getOptions()//$name, $value, &$node, $control_name)
+    {
+        $jinput = Factory::getApplication()->input;
 
-		$currentoptionid=0;
-		if ($jinput->get('id'))
-			$currentoptionid = $jinput->getInt('id',0);
+        $currentoptionid = 0;
+        if ($jinput->get('id'))
+            $currentoptionid = $jinput->getInt('id', 0);
 
         $db = Factory::getDBO();
-		$query = $db->getQuery(true);
-		$query->select('id,title');
+        $query = $db->getQuery(true);
+        $query->select('id,title');
         $query->from('#__customtables_options');
-		$query->order('title');
-		$query->where('id!='.$currentoptionid);
+        $query->order('title');
+        $query->where('id!=' . $currentoptionid);
 
-		$db->setQuery((string)$query);
+        $db->setQuery((string)$query);
         $records = $db->loadObjectList();
 
         $options = array();
-        if ($records)
-        {
-			$options[] = JHtml::_('select.option', '', JText::_('COM_CUSTOMTABLES_FIELDS_SELECT_LABEL'));
-            foreach($records as $rec)
+        if ($records) {
+            $options[] = JHtml::_('select.option', '', JText::_('COM_CUSTOMTABLES_FIELDS_SELECT_LABEL'));
+            foreach ($records as $rec)
                 $options[] = JHtml::_('select.option', $rec->id, $rec->title);
         }
         return $options;
-	}
+    }
 }

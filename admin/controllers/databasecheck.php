@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
@@ -16,11 +16,11 @@ jimport('joomla.application.component.controllerform');
 
 class CustomTablesControllerDatabaseCheck extends JControllerForm
 {
-	protected $task;
+    protected $task;
 
-	public function __construct($config = array())
-	{
-		$this->view_list = 'databasecheck'; // safeguard for setting the return view listing to the main view.
-		parent::__construct($config);
-	}
+    public function __construct($config = array())
+    {
+        $this->view_list = 'databasecheck'; // safeguard for setting the return view listing to the main view.
+        parent::__construct($config);
+    }
 }

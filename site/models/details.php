@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
@@ -161,18 +161,6 @@ class CustomTablesModelDetails extends JModelLegacy
         return $row;
     }
 
-    function makeEmptyRecord($listing_id, $published)
-    {
-        $row = [];
-        $row[$this->ct->Table->realidfieldname] = $listing_id;
-        $row['listing_published'] = $published;
-
-        foreach ($this->ct->Table->fields as $field)
-            $row[$field['realfieldname']] = '';
-
-        return $row;
-    }
-
     function getTypeFieldName($type)
     {
         foreach ($this->ct->Table->fields as $ESField) {
@@ -213,5 +201,17 @@ class CustomTablesModelDetails extends JModelLegacy
 
         }
         return array();
+    }
+
+    function makeEmptyRecord($listing_id, $published)
+    {
+        $row = [];
+        $row[$this->ct->Table->realidfieldname] = $listing_id;
+        $row['listing_published'] = $published;
+
+        foreach ($this->ct->Table->fields as $field)
+            $row[$field['realfieldname']] = '';
+
+        return $row;
     }
 }

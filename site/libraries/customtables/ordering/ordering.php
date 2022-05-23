@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
@@ -142,7 +142,7 @@ class Ordering
                 $ordering_param_string = $app->getUserState('com_customtables.orderby_' . $Itemid, '');
 
                 if ($ordering_param_string == '') {
-                    if($this->Params->sortBy != '')
+                    if ($this->Params->sortBy != '')
                         $ordering_param_string = $this->Params->sortBy;
                 }
             }
@@ -200,8 +200,7 @@ class Ordering
                         return 'DATE_FORMAT(' . $row['realfieldname'] . ', ' . $db->quote($order_params) . ')' . $desc;
                     } else
                         return $fieldname . $desc;
-                }
-                elseif ($fieldType !== 'dummy')
+                } elseif ($fieldType !== 'dummy')
                     return $fieldname . $desc;
             }
         }

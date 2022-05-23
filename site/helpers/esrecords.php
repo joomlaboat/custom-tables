@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link http://www.joomlaboat.com
@@ -199,8 +199,7 @@ class JHTMLESRecords
                     $LayoutProc = new LayoutProcessor($ct);
                     $LayoutProc->layout = $layoutcode;
                     $layoutcode_tmp = $LayoutProc->fillLayout($row);
-                }
-                else
+                } else
                     $layoutcode_tmp = $layoutcode;
 
                 $twig = new TwigProcessor($ct, $layoutcode_tmp);
@@ -219,7 +218,7 @@ class JHTMLESRecords
 
     static protected function getCT($establename, $filter, $allowUnpublished, $sortByField, $field): ?CT
     {
-        $menuParams = self::prepareParams($establename,$filter,$allowUnpublished,$sortByField,$field);
+        $menuParams = self::prepareParams($establename, $filter, $allowUnpublished, $sortByField, $field);
 
         $ct = new CT;
         $ct->setParams($menuParams, true);
@@ -248,7 +247,7 @@ class JHTMLESRecords
         return $ct;
     }
 
-    static protected function prepareParams($establename,$filter,$allowUnpublished,$sortByField,$field)
+    static protected function prepareParams($establename, $filter, $allowUnpublished, $sortByField, $field)
     {
         $paramsArray = array();
         $paramsArray['limit'] = 10000;
