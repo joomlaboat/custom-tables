@@ -140,14 +140,13 @@ class CTUser
 
         $articleId = 0;
 
-        //CreateUserAccount($fullname,$username,$password,$email,$group_names,&$msg,$email_content_article_id)
-
         if (!Email::checkEmail($email)) {
             Factory::getApplication()->enqueueMessage('Incorrect email "' . $email . '"', 'error');
             return false;
         }
 
         $realUserId = CTUser::CreateUserAccount($name, $email, $password, $email, $usergroups, $msg, $articleId);
+
         if ($msg != '') {
             Factory::getApplication()->enqueueMessage($msg, 'error');
             return false;
@@ -301,6 +300,7 @@ class CTUser
         $db = Factory::getDBO();
 
         $query = 'UPDATE ' . $realtablename . ' SET ' . $useridfieldname . '=' . $existing_user_id . ' WHERE ' . $realidfieldname . '=' . $db->quote($listing_id) . ' LIMIT 1';
+
         $db->setQuery($query);
         $db->execute();
     }

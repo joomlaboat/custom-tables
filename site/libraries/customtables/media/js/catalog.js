@@ -6,6 +6,7 @@ function ctCreateUser(msg, listing_id, toolbarboxid) {
 
         let returnto = btoa(window.location.href);
         let link = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], ['task=createuser', 'listing_id=' + listing_id, 'returnto=' + returnto]);
+        
         window.location.href = link;
     }
 }

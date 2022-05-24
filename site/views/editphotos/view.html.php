@@ -51,40 +51,39 @@ class CustomTablesViewEditPhotos extends JViewLegacy
         if (count($this->images) == 0)
             return '';
 
-        $htmlout = '
+        $htmlOut = '
 
 		<h2>' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_LIST_OF_FOTOS') . '</h2>
-		<table width="100%" border="0" cellpadding="5" cellspacing="5">
+		<table>
 			<thead>
 				<tr>
-					<td valign="top" align="center"><input type="checkbox" name="SelectAllBox" id="SelectAllBox" onClick=SelectAll(this.checked) align="left" style="vertical-align:top";></td>
-					<td valign="top" align="center"></td>
-					<td valign="top" align="center"></td>
+					<td><input type="checkbox" name="SelectAllBox" id="SelectAllBox" onClick=SelectAll(this.checked) align="left" style="vertical-align:top";></td>
+					<td></td>
+					<td></td>
 				</tr>
 				<tr><td colspan="3"><hr></td></tr>
 			</thead>
 			<tbody>
 		';
 
-        $i = 0;
         $c = 0;
         foreach ($this->images as $image) {
-            $htmlout .= '
+            $htmlOut .= '
 				<tr>';
 
-            $imagefile = $this->Model->imagefolderweb . '/' . $this->Model->imagemainprefix . $this->Model->ct->Table->tableid . '_'
+            $imageFile = $this->Model->imagefolderweb . '/' . $this->Model->imagemainprefix . $this->Model->ct->Table->tableid . '_'
                 . $this->Model->galleryname . '__esthumb_' . $image->photoid . '.jpg';
 
-            $imagefileoriginal = $this->Model->imagefolderweb . '/' . $this->Model->imagemainprefix
+            $imageFileOriginal = $this->Model->imagefolderweb . '/' . $this->Model->imagemainprefix
                 . $this->Model->ct->Table->tableid . '_' . $this->Model->galleryname . '__original_' . $image->photoid . '.' . $image->photo_ext;
 
-            $htmlout .= '
+            $htmlOut .= '
 					<td valign="top" align="center">
 						<input type="checkbox" name="esphoto' . $image->photoid . '" id="esphoto' . $image->photoid . '" align="left" style="vertical-align:top";>
 					</td>
 
 					<td' . ($c == 0 ? ' class="MainImage" ' : '') . ' width="170" align="center">
-						<a href="' . $imagefileoriginal . '" rel="shadowbox"><img src="' . $imagefile . '" border="0" alt="' . $image->title . '" title="' . $image->title . '" width="150" height="150" /></a>
+						<a href="' . $imageFileOriginal . '" rel="shadowbox"><img src="' . $imageFile . '" border="0" alt="' . $image->title . '" title="' . $image->title . '" width="150" height="150" /></a>
 					</td>
 
 					<td valign="top" align="left">
@@ -104,15 +103,15 @@ class CustomTablesViewEditPhotos extends JViewLegacy
 
             $c++;
 
-            $htmlout .= '
+            $htmlOut .= '
 				</tr>
 				<tr><td colspan="3"><hr></td></tr>';
         }
 
-        $htmlout .= '
+        $htmlOut .= '
 			</tbody>
 		</table>';
 
-        return $htmlout;
+        return $htmlOut;
     }
 }

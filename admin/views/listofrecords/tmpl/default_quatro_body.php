@@ -19,9 +19,9 @@ $recordLayout = '';
 foreach ($this->ct->Table->fields as $field) {
     if ($field['type'] != 'dummy' and $field['type'] != 'log' and $field['type'] != 'ordering') {
         if ($field['type'] == 'text' or $field['type'] == 'multilangtext' or $field['type'] == 'string' or $field['type'] == 'multilangstring')
-            $recordLayout .= '<td scope="row"><a href="****link****">{{ ' . $field['fieldname'] . '("words",20) }}</a></td>';
+            $recordLayout .= '<td><a href="****link****">{{ ' . $field['fieldname'] . '("words",20) }}</a></td>';
         else
-            $recordLayout .= '<td scope="row"><a href="****link****">{{ ' . $field['fieldname'] . '}}</a></td>';
+            $recordLayout .= '<td><a href="****link****">{{ ' . $field['fieldname'] . '}}</a></td>';
     }
 }
 

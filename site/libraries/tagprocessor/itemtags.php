@@ -62,7 +62,7 @@ class tagProcessor_Item
         return $htmlresult;
     }
 
-        public static function process(&$ct, &$row, &$htmlresult, $aLink, $add_label = false)
+    public static function process(&$ct, &$row, &$htmlresult, $aLink, $add_label = false)
     {
         if (is_null($ct->Table))
             return false;
@@ -155,7 +155,7 @@ class tagProcessor_Item
         }
     }
 
-protected static function GetSQLJoin($ct_record, &$htmlresult): void
+    protected static function GetSQLJoin($ct_record, &$htmlresult): void
     {
         $options = array();
         $fList = JoomlaBasicMisc::getListToReplace('sqljoin', $options, $htmlresult, '{}');
@@ -212,12 +212,12 @@ protected static function GetSQLJoin($ct_record, &$htmlresult): void
             return;
 
 
-        $edit_userGroup = (int)$ct->Env->menu_params->get('editusergroups');
-        $publish_userGroup = (int)$ct->Env->menu_params->get('publishusergroups');
+        $edit_userGroup = (int)$ct->Params->editUserGroups;
+        $publish_userGroup = (int)$ct->Params->publishUserGroups;
         if ($publish_userGroup == 0)
             $publish_userGroup = $edit_userGroup;
 
-        $delete_userGroup = (int)$ct->Env->menu_params->get('deleteusergroups');
+        $delete_userGroup = (int)$ct->Params->deleteUserGroups;
         if ($delete_userGroup == 0)
             $delete_userGroup = $edit_userGroup;
 

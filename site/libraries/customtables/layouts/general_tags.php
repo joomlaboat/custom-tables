@@ -358,6 +358,7 @@ class Twig_Document_Tags
             return new Markup('', 'UTF-8');
         }
 
+
         $layouts = new Layouts($this->ct);
         $layout = $layouts->getLayout($layoutname);
 
@@ -373,21 +374,16 @@ class Twig_Document_Tags
 
         $twig = new TwigProcessor($this->ct, '{% autoescape false %}' . $layout . '{% endautoescape %}');
 
-        if ($layouts->layouttype == 6) //Catalog Item
-        {
-            $number = 1;
-            $html_result = '';
+        $number = 1;
+        $html_result = '';
 
-            foreach ($this->ct->Records as $row) {
-                $row['_number'] = $number;
-                $html_result .= $twig->process($row);
-                $number++;
-            }
-            return new Markup($html_result, 'UTF-8');
+        foreach ($this->ct->Records as $row) {
+            $row['_number'] = $number;
+            $html_result .= $twig->process($row);
+            $number++;
         }
 
-        $layout = $twig->process();
-        return new Markup($layout, 'UTF-8');
+        return new Markup($html_result, 'UTF-8');
     }
 
     function sitename(): string

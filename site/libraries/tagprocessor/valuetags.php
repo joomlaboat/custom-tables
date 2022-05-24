@@ -407,7 +407,7 @@ class tagProcessor_Value
                 . DIRECTORY_SEPARATOR . 'tagprocessor'
                 . DIRECTORY_SEPARATOR . 'itemtags.php');
 
-            $edit_userGroup = (int)$ct->Env->menu_params->get('editusergroups');
+            $edit_userGroup = (int)$ct->Params->editUserGroups;
             $isEditable = CTUser::checkIfRecordBelongsToUser($ct, $edit_userGroup);
         } else
             $isEditable = false;

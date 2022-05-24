@@ -128,9 +128,10 @@ class Table
         $this->db->setQuery($query);
 
         $recs = $this->db->loadAssocList();
-        if (!$recs) return $this->record = null;
+
         if (count($recs) < 1) return $this->record = null;
 
+        $this->record = $recs[0];
         return $recs[0];
     }
 

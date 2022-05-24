@@ -65,26 +65,26 @@ if ($task != '') {
 
         $edit_model = $this->getModel('edititem');
         $redirect = doTheTask($ct, $task, $edit_model, $this);
-        if ($redirect == null) {
-            Factory::getApplication()->enqueueMessage('Unknown task');
-        } else
+        if (is_null($redirect))
+            $ct->app->enqueueMessage('Unknown task');
+        else {
             $this->setRedirect($redirect->link, $redirect->msg, $redirect->status);
+        }
+
     } else {
         // not authorized
         if ($ct->Env->clean == 1)
             die('not authorized');
         else {
-            //Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
             $link = $ct->Env->WebsiteRoot . 'index.php?option=com_users&view=login&return=1' . base64_encode(JoomlaBasicMisc::curPageURL());
             $this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'));
         }
     }
 
-    //parent::display('catalog', $ct);
 } else
     parent::display();
 
-function doTheTask(&$ct, $task, $edit_model, &$this_)
+function doTheTask(&$ct, $task, $edit_model, $this_)
 {
     //Return link
     if ($ct->Params->returnTo != '') {
@@ -96,7 +96,6 @@ function doTheTask(&$ct, $task, $edit_model, &$this_)
 
     $link = JoomlaBasicMisc::deleteURLQueryOption($link, 'task');
 
-    echo ' load model ';
     if (!$edit_model->load($ct))
         die('Model not loaded');
 
@@ -232,29 +231,30 @@ function doTheTask(&$ct, $task, $edit_model, &$this_)
         case 'createuser':
 
             $ct->getTable($ct->Params->tableName, null);
-            if ($ct->Table->tablename == '')
+            if ($ct->Table->tablename == '') {
                 return (object)array('link' => $link, 'msg' => 'Table not selected.', 'status' => 'error');
+            }
 
-            if ($ct->Table->useridfieldname == null)
+            if ($ct->Table->useridfieldname == null) {
                 return (object)array('link' => $link, 'msg' => 'User field not found.', 'status' => 'error');
+            }
 
             $listing_id = $ct->Env->jinput->getInt("listing_id");
             $ct->Table->loadRecord($listing_id);
             if ($ct->Table->record == null) {
-                Factory::getApplication()->enqueueMessage('User record ID: "' . $listing_id . '" not found.', 'error');
-                return (object)array('link' => $link, 'status' => 'error');
+                $ct->app->enqueueMessage('User record ID: "' . $listing_id . '" not found.', 'error');
+                return (object)array('link' => $link, 'msg' => 'User record ID: "' . $listing_id . '" not found.', 'status' => 'error');
             }
 
             $fieldrow = Fields::getFieldAsocByName($ct->Table->useridfieldname, $ct->Table->tableid);
 
-            $savefield = new SaveFieldQuerySet($ct, $ct->Table->record, false);
+            $saveField = new SaveFieldQuerySet($ct, $ct->Table->record, false);
             $field = new Field($ct, $fieldrow);
 
-            if ($savefield->Try2CreateUserAccount($field)) {
-                return (object)array('link' => $link, 'status' => null);
-            } else {
+            if ($saveField->Try2CreateUserAccount($field))
+                return (object)array('link' => $link, 'msg' => null, 'status' => null);
+            else
                 return (object)array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_USER_NOTCREATED'), 'status' => 'error');
-            }
 
         case 'resetpassword':
 
@@ -267,7 +267,7 @@ function doTheTask(&$ct, $task, $edit_model, &$this_)
                 if ($ct->Env->clean == 1)
                     die('password has been reset');
                 else
-                    return (object)array('link' => $link, 'status' => null);
+                    return (object)array('link' => $link, 'msg' => 'Password has been reset.', 'status' => null);
             } else {
                 if ($ct->Env->clean == 1)
                     die('error');
@@ -280,7 +280,7 @@ function doTheTask(&$ct, $task, $edit_model, &$this_)
             $order_by = $ct->Env->jinput->getString('orderby', '');
             $order_by = trim(preg_replace("/[^a-zA-Z-+%.: ,_]/", "", $order_by));
 
-            Factory::getApplication()->setUserState('com_customtables.orderby_' . $ct->Env->ItemId, $order_by);
+            $ct->appsetUserState('com_customtables.orderby_' . $ct->Env->ItemId, $order_by);
 
             $link = JoomlaBasicMisc::deleteURLQueryOption($link, 'task');
             $link = JoomlaBasicMisc::deleteURLQueryOption($link, 'orderby');
@@ -337,7 +337,7 @@ function doTheTask(&$ct, $task, $edit_model, &$this_)
                 die('Table not selected.');
             }
 
-            $ordering = new CustomTables\Ordering($ct->Table);
+            $ordering = new CustomTables\Ordering($ct->Table, $ct->Params);
 
             if (!$ordering->saveorder()) {
                 header("HTTP/1.1 500 Internal Server Error");

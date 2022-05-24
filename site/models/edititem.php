@@ -463,7 +463,7 @@ class CustomTablesModelEditItem extends JModelLegacy
     function store(&$msg, &$link, $isCopy = false, $listing_id = '')
     {
         //IP Filter
-        $USER_IP = $this->getUserIP();
+        $USER_IP = SaveFieldQuerySet::getUserIP();
 
         $IP_Black_List = array();
 
@@ -621,20 +621,6 @@ class CustomTablesModelEditItem extends JModelLegacy
         return true;
     }
 
-    function getUserIP()
-    {
-        if (array_key_exists('HTTP_X_FORWARDED_FOR', $_SERVER) && !empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            if (strpos($_SERVER['HTTP_X_FORWARDED_FOR'], ',') > 0) {
-                $address = explode(",", $_SERVER['HTTP_X_FORWARDED_FOR']);
-                return trim($address[0]);
-            } else {
-                return $_SERVER['HTTP_X_FORWARDED_FOR'];
-            }
-        } else {
-            return $_SERVER['REMOTE_ADDR'];
-        }
-    }
-
     function check_captcha(): bool
     {
         $options = array();
@@ -734,7 +720,7 @@ class CustomTablesModelEditItem extends JModelLegacy
         $saveQuery = [];
         foreach ($this->ct->Table->fields as $fieldrow) {
             if ($fieldrow['type'] == 'log') {
-                $value = time() . ',' . $this->ct->Env->userid . ',' . $this->getUserIP() . ',' . $data . ';';
+                $value = time() . ',' . $this->ct->Env->userid . ',' . SaveFieldQuerySet::getUserIP() . ',' . $data . ';';
                 $saveQuery[] = $fieldrow['realfieldname'] . '=CONCAT(' . $fieldrow['realfieldname'] . ',"' . $value . '")';
             }
         }

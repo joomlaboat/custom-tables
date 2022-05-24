@@ -26,7 +26,7 @@ class CT_FieldTypeTag_file
         if ($field->type == 'filelink')
             $FileFolder = CT_FieldTypeTag_file::getFileFolder($field->params[0]);
         else
-            $FileFolder = CT_FieldTypeTag_file::getFileFolder($field->params[1]);
+            $FileFolder = CT_FieldTypeTag_file::getFileFolder($field->params[1] ?? '');
 
         $filepath = $FileFolder . '/' . $filename;
 

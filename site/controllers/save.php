@@ -38,7 +38,7 @@ switch ($task) {
         break;
 
     case 'delete':
-        if (CustomTablesDelete($task, $this))
+        if (CustomTablesDelete($this))
             parent::display();
 
         break;
@@ -47,7 +47,7 @@ switch ($task) {
         parent::display();
 }
 
-function CustomTablesDelete($task, &$this_)
+function CustomTablesDelete($this_)
 {
     $jinput = Factory::getApplication()->input;
 
@@ -62,7 +62,7 @@ function CustomTablesDelete($task, &$this_)
         // not authorized
         if ($ct->Env->clean == 1) {
             Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
-            return;
+            return false;
         } else {
             $link = $edit_model->ct->Env->WebsiteRoot . 'index.php?option=com_users&view=login&return=' . $ct->Env->encoded_current_url;
             $this_->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
@@ -70,11 +70,11 @@ function CustomTablesDelete($task, &$this_)
         return true;
     } else {
         $returnto = $jinput->get('returnto', '', 'BASE64');
-        $decodedreturnto = base64_decode($returnto);
+        $decodedReturnTo = base64_decode($returnto);
 
         if ($returnto != '') {
-            $link = $decodedreturnto;
-            if (strpos($link, 'http:') === false and strpos($link, 'https:') === false) $link .= $edit_model->ct->Env->WebsiteRoot . $link;
+            $link = $decodedReturnTo;
+            if (!str_contains($link, 'http:') and !str_contains($link, 'https:')) $link .= $edit_model->ct->Env->WebsiteRoot . $link;
         } else
             $link = $ct->Env->WebsiteRoot . 'index.php?Itemid=' . $ct->Params->ItemId;
 
@@ -90,9 +90,10 @@ function CustomTablesDelete($task, &$this_)
                 $this_->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_NOT_DELETED'));
         }
     }
+    return true;
 }
 
-function CustomTablesSave($task, &$this_)
+function CustomTablesSave($task, $this_)
 {
     $jinput = Factory::getApplication()->input;
     $returnto = $jinput->get('returnto', '', 'BASE64');
@@ -100,11 +101,14 @@ function CustomTablesSave($task, &$this_)
 
     $jinput->set('task', '');
     $ct = new CT;
+    $ct->setParams();
     $model = $this_->getModel('edititem');
 
-    if (!$model->load($ct)) {
-    } elseif (!CTUser::CheckAuthorization($ct, 1)) {
-        $link = $model->ct->Env->WebsiteRoot . 'index.php?option=com_users&view=login&return=' . base64_encode(JoomlaBasicMisc::curPageURL());
+    if (!$model->load($ct))
+        return false;
+
+    if (!CTUser::CheckAuthorization($ct)) {
+        $link = $ct->Env->WebsiteRoot . 'index.php?option=com_users&view=login&return=' . base64_encode(JoomlaBasicMisc::curPageURL());
 
         $this_->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
     } else {
@@ -119,7 +123,7 @@ function CustomTablesSave($task, &$this_)
         if ($task == 'saveandcontinue') {
             $link = JoomlaBasicMisc::deleteURLQueryOption($link, "listing_id");
 
-            if (strpos($link, "?") === false)
+            if (!str_contains($link, "?"))
                 $link .= '?';
             else
                 $link .= '&';
@@ -127,33 +131,29 @@ function CustomTablesSave($task, &$this_)
             $link .= 'listing_id=' . $jinput->getInt("listing_id");
 
             //stay on the same page if "saveandcontinue"
-            //return;
         }
 
         if ($isOk) {
 
-            if ($model->msg_itemissaved == '-')
-                $msg = '';
-            elseif ($msg_ == '-')
+            if ($ct->Params->msgItemIsSaved == '-')
                 $msg = '';
             elseif ($msg_ != '')
                 $msg = $msg_;
-            elseif ($model->msg_itemissaved == '')
+            elseif ($ct->Params->msgItemIsSaved == '')
                 $msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORD_SAVED');
             else
-                $msg = $model->msg_itemissaved;
+                $msg = $ct->Params->msgItemIsSaved;
 
             if ($ct->Env->legacysupport) {
-                $site_libpath = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR;
-                require_once($site_libpath . 'layout.php');
+                $siteLibraryPath = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR;
+                require_once($siteLibraryPath . 'layout.php');
 
-                $LayoutProc = new LayoutProcessor($model->ct);
-                $LayoutProc->Model = $model;
+                $LayoutProc = new LayoutProcessor($ct);
                 $LayoutProc->layout = $msg;
                 $msg = $LayoutProc->fillLayout(array(), null, '[]', true);
             }
 
-            $twig = new TwigProcessor($model->ct, $msg);
+            $twig = new TwigProcessor($ct, $msg);
             $msg = $twig->process();
 
 
@@ -162,7 +162,7 @@ function CustomTablesSave($task, &$this_)
             } elseif ($link != '') {
                 $link = str_replace('$get_listing_id', Factory::getApplication()->input->get("listing_id", 0, 'INT'), $link);
 
-                if (strpos($link, 'tmpl=component') === false) {
+                if (!str_contains($link, 'tmpl=component')) {
                     if ($msg != '') {
 
 
@@ -171,15 +171,13 @@ function CustomTablesSave($task, &$this_)
                         $this_->setRedirect($link);
 
 
-                }//if(strpos($link,'template=component')===false)
-                else {
+                } else {
                     $this_->setRedirect($link);
-                }//if(strpos($link,'template=component')===false)
+                }
 
-            }//if($link!='')
-            else {
+            } else {
                 if (Factory::getApplication()->input->get('submitbutton', '', 'CMD') == 'nextprint') {
-                    $link = $model->ct->Env->WebsiteRoot . 'index.php?option=com_customtables&view=details'
+                    $link = $ct->Env->WebsiteRoot . 'index.php?option=com_customtables&view=details'
                         . '&Itemid=' . Factory::getApplication()->input->get('Itemid', 0, 'INT')
                         . '&listing_id=' . Factory::getApplication()->input->get("listing_id", 0, 'INT')
                         . '&tmpl=component'
@@ -198,9 +196,8 @@ function CustomTablesSave($task, &$this_)
                     return true;
 
 
-                }//if(Factory::getApplication()->input->get('submitbutton','','CMD')=='nextprint')
-                else {
-                    $link = $model->ct->Env->WebsiteRoot . 'index.php?option=com_customtables&view=catalog&Itemid=' . Factory::getApplication()->input->get('Itemid', 0, 'INT');
+                } else {
+                    $link = $ct->Env->WebsiteRoot . 'index.php?option=com_customtables&view=catalog&Itemid=' . Factory::getApplication()->input->get('Itemid', 0, 'INT');
 
                     if ($msg != '')
                         $this_->setRedirect($link, $msg);
@@ -208,11 +205,10 @@ function CustomTablesSave($task, &$this_)
                         $this_->setRedirect($link);
 
 
-                }//if(Factory::getApplication()->input->get('submitbutton','','CMD')=='nextprint')
-            }////if($link!='')
-        }//if($isOk)
-        else {
-            if ($msg_ == 'COM_CUSTOMTABLES_INCORRECT_CAPTCHA') {
+                }
+            }
+        } else {
+            if ($ct->Params->msgItemIsSaved == 'COM_CUSTOMTABLES_INCORRECT_CAPTCHA') {
                 Factory::getApplication()->enqueueMessage($msg_, 'error');
                 echo '
 				<script type="text/javascript">
@@ -228,4 +224,5 @@ setTimeout("history.go(-1)", 3000);
             }
         }
     }
+    return true;
 }

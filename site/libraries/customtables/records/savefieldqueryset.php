@@ -13,14 +13,12 @@ namespace CustomTables;
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-use \Joomla\CMS\Factory;
-use \Joomla\CMS\Component\ComponentHelper;
-use \Joomla\CMS\User\UserHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Component\ComponentHelper;
 
 use CT_FieldTypeTag_image;
 use CT_FieldTypeTag_file;
 use CustomTables\DataTypes\Tree;
-use CustomTables\Email;
 
 use tagProcessor_General;
 use tagProcessor_Item;
@@ -28,18 +26,15 @@ use tagProcessor_If;
 use tagProcessor_Page;
 use tagProcessor_Value;
 
-use \JoomlaBasicMisc;
-use CustomTables\CTUser;
-use CustomTables\Field;
-use \LayoutProcessor;
+use JoomlaBasicMisc;
 
 class SaveFieldQuerySet
 {
-    var $ct;
+    var CT $ct;
     var $db;
-    var $field;
-    var $row;
-    var $isCopy;
+    var Field $field;
+    var array $row;
+    var bool $isCopy;
 
     function __construct(&$ct, &$row, $isCopy = false)
     {
@@ -49,7 +44,7 @@ class SaveFieldQuerySet
         $this->isCopy = $isCopy;
     }
 
-    function getSaveFieldSet(&$fieldrow)
+    function getSaveFieldSet($fieldrow): string
     {
         $this->field = new Field($this->ct, $fieldrow, $this->row);
 
@@ -87,7 +82,7 @@ class SaveFieldQuerySet
                     if ($value == 0)
                         return $this->field->realfieldname . '=NULL';
                     else
-                        return $this->field->realfieldname . '=' . (int)$value;
+                        return $this->field->realfieldname . '=' . $value;
                 }
 
                 break;
@@ -116,7 +111,7 @@ class SaveFieldQuerySet
                 $value = $this->ct->Env->jinput->getString($this->field->comesfieldname, null);
 
                 if (isset($value)) {
-                    if (strpos($value, 'rgb') !== false) {
+                    if (str_contains($value, 'rgb')) {
                         $parts = str_replace('rgba(', '', $value);
                         $parts = str_replace('rgb(', '', $parts);
                         $parts = str_replace(')', '', $parts);
@@ -485,7 +480,7 @@ class SaveFieldQuerySet
             case 'server':
 
                 if (count($this->field->params) == 0)
-                    $value = $this->getUserIP(); //Try to get client real IP
+                    $value = self::getUserIP(); //Try to get client real IP
                 else
                     $value = $this->ct->Env->jinput->server->get($this->field->params[0], '', 'STRING');
 
@@ -495,7 +490,7 @@ class SaveFieldQuerySet
             case 'id':
                 //get max id
                 if ($this->row[$this->ct->Table->realidfieldname] == 0 or $this->row[$this->ct->Table->realidfieldname] == '' or $this->isCopy) {
-                    $minid = (int)$this->fields->params[0];
+                    $minid = (int)$this->field->params[0];
 
                     $query = 'SELECT MAX(' . $this->ct->Table->realidfieldname . ') AS maxid FROM ' . $this->ct->Table->realtablename . ' LIMIT 1';
                     $this->db->setQuery($query);
@@ -747,7 +742,7 @@ class SaveFieldQuerySet
         $value = $this->ct->Env->jinput->getString($this->field->comesfieldname, null);
 
         if (isset($value)) {
-            $ImageFolder = \CustomTablesImageMethods::getImageFolder($this->fields->params);
+            $ImageFolder = \CustomTablesImageMethods::getImageFolder($this->field->params);
 
             $format = $this->field->params[3] ?? 'png';
 
@@ -873,7 +868,7 @@ class SaveFieldQuerySet
 
     protected function getComboString($parent)
     {
-        $prefix = $this->field->prefix . 'combotree_' . $this->tablename . '_' . $this->field->fieldname;
+        $prefix = $this->field->prefix . 'combotree_' . $this->ct->Table->tablename . '_' . $this->field->fieldname;
 
         $i = 1;
         $result = array();
@@ -909,7 +904,21 @@ class SaveFieldQuerySet
         // mysql example: instr($string, ",geo.usa.")
     }
 
-    public function Try2CreateUserAccount(&$field)
+    public static function getUserIP(): string
+    {
+        if (array_key_exists('HTTP_X_FORWARDED_FOR', $_SERVER) && !empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            if (strpos($_SERVER['HTTP_X_FORWARDED_FOR'], ',') > 0) {
+                $address = explode(",", $_SERVER['HTTP_X_FORWARDED_FOR']);
+                return trim($address[0]);
+            } else {
+                return $_SERVER['HTTP_X_FORWARDED_FOR'];
+            }
+        } else {
+            return $_SERVER['REMOTE_ADDR'];
+        }
+    }
+
+    public function Try2CreateUserAccount(&$field): bool
     {
         $uid = (int)$this->ct->Table->record[$field->realfieldname];
 
@@ -964,7 +973,9 @@ class SaveFieldQuerySet
         if ($existing_user_id) {
             if (!$unique_users) //allow not unique record per users
             {
-                CTUser::UpdateUserField($this->ct->Table->realtablename, $this->ct->Table->realidfieldname, $field->realfieldname, $existing_user_id, $this->ct->Table->record[$this->ct->Table->realidfieldname]);
+                CTUser::UpdateUserField($this->ct->Table->realtablename, $this->ct->Table->realidfieldname, $field->realfieldname,
+                    $existing_user_id, $this->ct->Table->record[$this->ct->Table->realidfieldname]);
+
                 Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORD_USER_UPDATED'));
             } else {
                 Factory::getApplication()->enqueueMessage(
@@ -972,18 +983,21 @@ class SaveFieldQuerySet
                     . ' "' . $user_email . '" '
                     . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_ALREADY_EXISTS'), 'Error');
             }
-        } else
-            CTUser::CreateUser($this->ct->Table->realtablename, $this->ct->Table->realidfieldname, $user_email, $user_name, $user_groups, $this->ct->Table->record[$this->ct->Table->realidfieldname], $field->realfieldname, $this->realtablename);
+        } else {
+            $status = CTUser::CreateUser($this->ct->Table->realtablename, $this->ct->Table->realidfieldname, $user_email, $user_name,
+                $user_groups, $this->ct->Table->record[$this->ct->Table->realidfieldname], $field->realfieldname);
+        }
 
         return true;
     }
 
-    function runUpdateQuery(&$savequery, $listing_id)
+    function runUpdateQuery(&$saveQuery, $listing_id): void
     {
-        if (count($savequery) > 0) {
-            $query = 'UPDATE ' . $this->ct->Table->realtablename . ' SET ' . implode(', ', $savequery) . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . $this->db->quote($listing_id);
+        if (count($saveQuery) > 0) {
+            $query = 'UPDATE ' . $this->ct->Table->realtablename . ' SET ' . implode(', ', $saveQuery) . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . $this->db->quote($listing_id);
             $this->db->setQuery($query);
             $this->db->execute();
         }
     }
+
 }

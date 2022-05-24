@@ -215,7 +215,7 @@ class TwigProcessor
             $result = @$this->twig->render('index', $this->variables);
         } catch (Exception $e) {
             $this->ct->app->enqueueMessage($e->getMessage(), 'error');
-            return '';
+            return $e->getMessage();
         }
 
         if ($this->recordBlockFound) {

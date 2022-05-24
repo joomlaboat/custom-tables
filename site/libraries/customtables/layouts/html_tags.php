@@ -263,7 +263,6 @@ class Twig_Html_Tags
         if (count($available_modes) == 0)
             return '';
 
-        $buttons_array = [];
         if (is_array($buttons))
             $buttons_array = $buttons;
         else
@@ -311,17 +310,18 @@ class Twig_Html_Tags
 
         $user = Factory::getUser();
         if ($user->id != 0) {
-            $publish_userGroup = (int)$this->ct->Env->menu_params->get('publishusergroups');
+            $publish_userGroup = (int)$this->ct->Params->publishUserGroups;
+
             if (JoomlaBasicMisc::checkUserGroupAccess($publish_userGroup)) {
                 $available_modes[] = 'publish';
                 $available_modes[] = 'unpublish';
             }
 
-            $edit_userGroup = (int)$this->ct->Env->menu_params->get('editusergroups');
+            $edit_userGroup = (int)$this->ct->Params->editUserGroups;
             if (JoomlaBasicMisc::checkUserGroupAccess($edit_userGroup))
                 $available_modes[] = 'refresh';
 
-            $delete_userGroup = (int)$this->ct->Env->menu_params->get('deleteusergroups');
+            $delete_userGroup = (int)$this->ct->Params->deleteUserGroups;
             if (JoomlaBasicMisc::checkUserGroupAccess($delete_userGroup))
                 $available_modes[] = 'delete';
         }
@@ -906,12 +906,12 @@ class Twig_Html_Tags
 
         $modes = func_get_args();
 
-        $edit_userGroup = (int)$this->ct->Env->menu_params->get('editusergroups');
-        $publish_userGroup = (int)$this->ct->Env->menu_params->get('publishusergroups');
+        $edit_userGroup = (int)$this->ct->Params->editUserGroups;
+        $publish_userGroup = (int)$this->ct->Params->publishUserGroups;
         if ($publish_userGroup == 0)
             $publish_userGroup = $edit_userGroup;
 
-        $delete_userGroup = (int)$this->ct->Env->menu_params->get('deleteusergroups');
+        $delete_userGroup = (int)$this->ct->Params->deleteUserGroups;
         if ($delete_userGroup == 0)
             $delete_userGroup = $edit_userGroup;
 
