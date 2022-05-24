@@ -10,6 +10,7 @@
 
 
 // no direct access
+use CustomTables\CT;
 use CustomTables\TwigProcessor;
 
 defined('_JEXEC') or die('Restricted access');
@@ -17,7 +18,7 @@ defined('_JEXEC') or die('Restricted access');
 trait render_image
 {
 
-    protected static function get_CatalogTable_singleline_IMAGE(&$ct, $layoutType, &$pagelayout)
+    protected static function get_CatalogTable_singleline_IMAGE(CT &$ct, $layoutType, &$pagelayout)
     {
         require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_imagegenerator' . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'include.php');
         require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_imagegenerator' . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'misc.php');

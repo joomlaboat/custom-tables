@@ -28,7 +28,7 @@ class Twig_Html_Tags
     var bool $captcha_found;
     var array $button_objects = []; //Not clear where and how this variable used.
 
-    function __construct(&$ct, $isTwig = true)
+    function __construct(CT &$ct, $isTwig = true)
     {
         $this->ct = &$ct;
         $this->isTwig = $isTwig;
@@ -68,22 +68,17 @@ class Twig_Html_Tags
 
         $usergroups = $this->ct->Env->user->get('groups');
 
-        if (isset($this->ct->Env->menu_params))
-            $add_userGroup = (int)$this->ct->Env->menu_params->get('addusergroups');
-        else
-            $add_userGroup = 0;
+        $add_userGroup = (int)$this->ct->Params->addUserGroups;
 
         if (!$this->ct->Env->isUserAdministrator and !in_array($add_userGroup, $usergroups))
             return ''; //Not permitted
 
-        //$isEditable=CTUser::checkIfRecordBelongsToUser($this->ct,$edit_userGroup);
-
         if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
             return ''; //Not permitted
 
-        if ((int)$Alias_or_ItemId > 0)
+        if (is_numeric($Alias_or_ItemId) and $Alias_or_ItemId > 0)
             $link = '/index.php?option=com_customtables&view=edititem&returnto=' . $this->ct->Env->encoded_current_url . '&Itemid=' . $Alias_or_ItemId;
-        if ($Alias_or_ItemId != '')
+        elseif ($Alias_or_ItemId != '')
             $link = '/index.php/' . $Alias_or_ItemId . '?returnto=' . $this->ct->Env->encoded_current_url;
         else
             $link = '/index.php?option=com_customtables&view=edititem&returnto=' . $this->ct->Env->encoded_current_url . '&Itemid=' . $this->ct->Env->ItemId;
@@ -114,13 +109,8 @@ class Twig_Html_Tags
         if ($this->ct->Env->isPlugin or (!is_null($this->ct->Env->moduleId) and $this->ct->Env->moduleId != 0))
             return '';
 
-        if (isset($this->ct->Env->menu_params))
-            $add_userGroup = (int)$this->ct->Env->menu_params->get('addusergroups');
-        else
-            $add_userGroup = 0;
-
         $usergroups = $this->ct->Env->user->get('groups');
-        if (!$this->ct->Env->isUserAdministrator and !in_array($add_userGroup, $usergroups))
+        if (!$this->ct->Env->isUserAdministrator and !in_array($this->ct->Params->addUserGroups, $usergroups))
             return ''; //Not permitted
 
         $max_file_size = JoomlaBasicMisc::file_upload_max_size();
@@ -671,8 +661,8 @@ class Twig_Html_Tags
         if ($this->ct->Env->isPlugin or (!is_null($this->ct->Env->moduleId) and $this->ct->Env->moduleId != 0))
             return '';
 
-        if ($redirectlink == null and $this->ct->Env->menu_params != null)
-            $redirectlink = $this->ct->Env->menu_params->get('returnto');
+        if ($redirectlink == null and !is_null($this->ct->Params->returnTo))
+            $redirectlink = $this->ct->Params->returnTo;
 
         switch ($type) {
             case 'save':

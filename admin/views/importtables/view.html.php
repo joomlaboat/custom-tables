@@ -15,18 +15,20 @@ defined('_JEXEC') or die('Restricted access');
 // Import Joomla! libraries
 jimport('joomla.application.component.view');
 
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Version;
 
 class CustomTablesViewImportTables extends JViewLegacy
 {
     var $catalogview;
+    var $version;
 
     function display($tpl = null)
     {
         $version = new Version;
         $this->version = (int)$version->getShortVersion();
 
-        JToolBarHelper::title(JText::_('Custom Tables - Import Tables', 'generic.png'));//
+        JToolBarHelper::title(Text::_('Custom Tables - Import Tables', 'generic.png'));//
 
         parent::display($tpl);
     }

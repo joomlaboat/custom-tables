@@ -10,7 +10,10 @@
  **/
 
 // No direct access to this file
+use CustomTables\DataTypes\Tree;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\String\StringHelper;
 
 \defined('_JEXEC') or die;
 
@@ -34,7 +37,7 @@ class CustomTablesViewListOfOptions extends JViewLegacy
         $this->languages = $this->ct->Languages->LanguageList;
 
         $document = Factory::getDocument();
-        $document->setTitle(JText::_('View List Items'));
+        $document->setTitle(Text::_('View List Items'));
 
         $input = Factory::getApplication()->input;
 
@@ -62,7 +65,7 @@ class CustomTablesViewListOfOptions extends JViewLegacy
 
     protected function addToolBar()
     {
-        JToolBarHelper::title(JText::_('Custom Tables - List'), 'menu.png');
+        JToolBarHelper::title(Text::_('Custom Tables - List'), 'menu.png');
 
 
         JToolBarHelper::addNew('options.add');
@@ -89,7 +92,7 @@ class CustomTablesViewListOfOptions extends JViewLegacy
 
         $levellimit = $mainframe->getUserStateFromRequest($context . "levellimit", 'levellimit', 10, 'int');
         $search = $mainframe->getUserStateFromRequest($context . "search", 'search', '', 'string');
-        $search = JString::strtolower($search);
+        $search = StringHelper::strtolower($search);
 
         // level limit filter
         $lists['levellist'] = JHTML::_('select.integerlist', 1, 20, 1, 'levellimit', 'size="1" onchange="document.adminForm.submit();"', $levellimit);

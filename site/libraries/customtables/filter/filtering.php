@@ -34,7 +34,7 @@ class Filtering
     var $where;
     var $showpublished;
 
-    function __construct(&$ct, $showpublished = 0)
+    function __construct(CT &$ct, $showpublished = 0)
     {
         $this->ct = $ct;
         $this->PathValue = [];
@@ -197,7 +197,7 @@ class Filtering
         }
     }
 
-function ExplodeSmartParams($param)
+    function ExplodeSmartParams($param)
     {
         $items = array();
 
@@ -982,7 +982,7 @@ function ExplodeSmartParams($param)
 
     }
 
-        function getInt_vL($vL)
+    function getInt_vL($vL)
     {
         if (strpos($vL, '$get_') !== false) {
             $getPar = str_replace('$get_', '', $vL);

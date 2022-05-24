@@ -11,14 +11,13 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\CT;
 use CustomTables\TwigProcessor;
 
 trait render_xml
 {
-    protected static function get_CatalogTable_XML(&$ct, $layoutType, $fields)
+    protected static function get_CatalogTable_XML(CT &$ct, $layoutType, $fields)
     {
-        $catalogresult = '';
-
         $fieldarray = JoomlaBasicMisc::csv_explode(',', $fields, '"', true);
 
         //prepare header and record layouts

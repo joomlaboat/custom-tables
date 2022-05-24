@@ -10,6 +10,7 @@
 
 // Check to ensure this file is included in Joomla!
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 
 defined('_JEXEC') or die('Restricted access');
 
@@ -49,7 +50,7 @@ class JHTMLESUser
         $db->setQuery($query);
 
         $options = $db->loadObjectList();
-        $att = ['id' => '', 'data-type' => 'user', 'name' => '- ' . JText::_('COM_CUSTOMTABLES_SELECT')];
+        $att = ['id' => '', 'data-type' => 'user', 'name' => '- ' . Text::_('COM_CUSTOMTABLES_SELECT')];
         $options = array_merge(array($att), $options);
 
         return JHTML::_('select.genericlist', $options, $control_name, $cssclass . ' style="' . $style . '" ' . $attribute . ' ', 'id', 'name', $value, $control_name);

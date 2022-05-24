@@ -9,6 +9,8 @@
  **/
 
 // no direct access
+use CustomTables\CT;
+
 defined('_JEXEC') or die('Restricted access');
 
 require_once('render_html.php');
@@ -27,7 +29,7 @@ class tagProcessor_CatalogTableView
     use render_xml;
     use render_image;
 
-    public static function process(&$ct, $layoutType, &$pagelayout, $new_replaceitecode)
+    public static function process(CT &$ct, $layoutType, &$pagelayout, $new_replaceitecode)
     {
         $vlu = '';
 

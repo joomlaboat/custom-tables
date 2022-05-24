@@ -49,7 +49,7 @@ $typeboxid = "jform_layouttype";
     echo JHtml::_('bootstrap.startTabSet', 'layoutsTab', array('active' => $this->active_tab));
     ?>
 
-    <?php echo JHtml::_('bootstrap.addTab', 'layoutsTab', 'general', JText::_('COM_CUSTOMTABLES_LAYOUTS_GENERAL', true)); ?>
+    <?php echo JHtml::_('bootstrap.addTab', 'layoutsTab', 'general', Text::_('COM_CUSTOMTABLES_LAYOUTS_GENERAL', true)); ?>
 
     <div class="row-fluid form-horizontal-desktop">
         <div class="span12">
@@ -73,25 +73,25 @@ $typeboxid = "jform_layouttype";
 
     <?php echo JHtml::_('bootstrap.endTab');
 
-    echo JHtml::_('bootstrap.addTab', 'layoutsTab', 'layoutcode-tab', JText::_('COM_CUSTOMTABLES_LAYOUTS_HTML', true));
+    echo JHtml::_('bootstrap.addTab', 'layoutsTab', 'layoutcode-tab', Text::_('COM_CUSTOMTABLES_LAYOUTS_HTML', true));
     echo $this->renderTextArea($this->item->layoutcode, 'layoutcode', $typeboxid, $onPageLoads);
     echo JHtml::_('bootstrap.endTab');
 
-    echo JHtml::_('bootstrap.addTab', 'layoutsTab', 'layoutmobile-tab', JText::_('COM_CUSTOMTABLES_LAYOUTS_HTML_MOBILE', true));
+    echo JHtml::_('bootstrap.addTab', 'layoutsTab', 'layoutmobile-tab', Text::_('COM_CUSTOMTABLES_LAYOUTS_HTML_MOBILE', true));
     if ($this->ct->Env->advancedtagprocessor)
         echo $this->renderTextArea($this->item->layoutmobile, 'layoutmobile', $typeboxid, $onPageLoads);
     else
         echo Text::_('COM_CUSTOMTABLES_AVAILABLE');
     echo JHtml::_('bootstrap.endTab');
 
-    echo JHtml::_('bootstrap.addTab', 'layoutsTab', 'layoutcss-tab', JText::_('COM_CUSTOMTABLES_LAYOUTS_CSS', true));
+    echo JHtml::_('bootstrap.addTab', 'layoutsTab', 'layoutcss-tab', Text::_('COM_CUSTOMTABLES_LAYOUTS_CSS', true));
     if ($this->ct->Env->advancedtagprocessor)
         echo $this->renderTextArea($this->item->layoutcss, 'layoutcss', $typeboxid, $onPageLoads);
     else
         echo Text::_('COM_CUSTOMTABLES_AVAILABLE');
     echo JHtml::_('bootstrap.endTab');
 
-    echo JHtml::_('bootstrap.addTab', 'layoutsTab', 'layoutjs-tab', JText::_('COM_CUSTOMTABLES_LAYOUTS_JS', true));
+    echo JHtml::_('bootstrap.addTab', 'layoutsTab', 'layoutjs-tab', Text::_('COM_CUSTOMTABLES_LAYOUTS_JS', true));
     if ($this->ct->Env->advancedtagprocessor)
         echo $this->renderTextArea($this->item->layoutjs, 'layoutjs', $typeboxid, $onPageLoads);
     else
@@ -109,7 +109,7 @@ $typeboxid = "jform_layouttype";
 
     <div id="allLayoutRaw" style="display:none;"><?php echo json_encode($this->getLayouts()); ?></div>
     <div id="dependencies_content" style="display:none;">
-        <h3><?php echo JText::_('COM_CUSTOMTABLES_LAYOUTS_WHAT_IS_USING_IT', true); ?></h3>
+        <h3><?php echo Text::_('COM_CUSTOMTABLES_LAYOUTS_WHAT_IS_USING_IT', true); ?></h3>
         <div id="layouteditor_tagsContent0" class="dynamic_values_list dynamic_values">
             <?php
             require('dependencies.php');

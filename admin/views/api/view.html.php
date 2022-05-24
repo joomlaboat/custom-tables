@@ -114,7 +114,7 @@ class CustomtablesViewAPI extends JViewLegacy
 
             if (is_array($value)) {
                 $subnode = $xml_data->addChild($key);
-                array_to_xml($value, $subnode);
+                $this->array_to_xml($value, $subnode);
             } else {
                 $xml_data->addChild("$key", htmlspecialchars("$value"));
             }

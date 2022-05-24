@@ -30,23 +30,23 @@ use Joomla\CMS\Language\Text;
 
         <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'fieldtypes', Text::_('COM_CUSTOMTABLES_TABLEFIELDTYPES')); ?>
         <?php if ($this->internal_use): ?>
-        <h3><?php echo JText::_('COM_CUSTOMTABLES_TABLEFIELDTYPES'); ?></h3>
+        <h3><?php echo Text::_('COM_CUSTOMTABLES_TABLEFIELDTYPES'); ?></h3>
     <?php endif; ?>
 
-        <?php echo JText::_('COM_CUSTOMTABLES_TABLEFIELDTYPES_DESC'); ?>
+        <?php echo Text::_('COM_CUSTOMTABLES_TABLEFIELDTYPES_DESC'); ?>
         <?php echo $this->getFieldTypes(); ?>
         <?php echo HTMLHelper::_('uitab.endTab'); ?>
 
         <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'layouttags', Text::_('COM_CUSTOMTABLES_LAYOUTTAGS')); ?>
         <?php if ($this->internal_use): ?>
-        <h3><?php echo JText::_('COM_CUSTOMTABLES_LAYOUTTAGS'); ?></h3><br/>
+        <h3><?php echo Text::_('COM_CUSTOMTABLES_LAYOUTTAGS'); ?></h3><br/>
     <?php endif; ?>
         <?php echo $this->getLayoutTags(); ?>
         <?php echo HTMLHelper::_('uitab.endTab'); ?>
 
         <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'more_about', Text::_('COM_CUSTOMTABLES_MOREABOUT')); ?>
         <a href="https://joomlaboat.com/custom-tables" target="_blank"
-           style="color:#51A351;"><?php echo JText::_('COM_CUSTOMTABLES_MOREABOUT'); ?></a>
+           style="color:#51A351;"><?php echo Text::_('COM_CUSTOMTABLES_MOREABOUT'); ?></a>
         <?php echo HTMLHelper::_('uitab.endTab'); ?>
 
         <?php echo HTMLHelper::_('uitab.endTabSet');
@@ -54,27 +54,27 @@ use Joomla\CMS\Language\Text;
 
         <ul class="nav nav-tabs">
             <li class="active"><a href="#fieldtypes"
-                                  data-toggle="tab"><?php echo JText::_('COM_CUSTOMTABLES_TABLEFIELDTYPES'); ?></a></li>
-            <li><a href="#layouttags" data-toggle="tab"><?php echo JText::_('COM_CUSTOMTABLES_LAYOUTTAGS'); ?></a></li>
+                                  data-toggle="tab"><?php echo Text::_('COM_CUSTOMTABLES_TABLEFIELDTYPES'); ?></a></li>
+            <li><a href="#layouttags" data-toggle="tab"><?php echo Text::_('COM_CUSTOMTABLES_LAYOUTTAGS'); ?></a></li>
             <li><a href="https://joomlaboat.com/custom-tables" target="_blank"
-                   style="color:#51A351;"><?php echo JText::_('COM_CUSTOMTABLES_MOREABOUT'); ?></a></li>
+                   style="color:#51A351;"><?php echo Text::_('COM_CUSTOMTABLES_MOREABOUT'); ?></a></li>
         </ul>
 
         <div class="tab-content">
             <div class="tab-pane active" id="fieldtypes">
 
                 <?php if ($this->internal_use): ?>
-                    <h3><?php echo JText::_('COM_CUSTOMTABLES_TABLEFIELDTYPES'); ?></h3>
+                    <h3><?php echo Text::_('COM_CUSTOMTABLES_TABLEFIELDTYPES'); ?></h3>
                 <?php endif; ?>
 
-                <?php echo JText::_('COM_CUSTOMTABLES_TABLEFIELDTYPES_DESC'); ?>
+                <?php echo Text::_('COM_CUSTOMTABLES_TABLEFIELDTYPES_DESC'); ?>
 
                 <?php echo $this->getFieldTypes(); ?></div>
 
 
             <div class="tab-pane" id="layouttags">
                 <?php if ($this->internal_use): ?>
-                    <h3><?php echo JText::_('COM_CUSTOMTABLES_LAYOUTTAGS'); ?></h3>
+                    <h3><?php echo Text::_('COM_CUSTOMTABLES_LAYOUTTAGS'); ?></h3>
                 <?php endif; ?>
 
                 <?php echo $this->getLayoutTags(); ?></div>

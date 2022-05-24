@@ -9,6 +9,8 @@
  **/
 
 // No direct access to this file
+use Joomla\CMS\Language\Text;
+
 defined('_JEXEC') or die('Restricted access');
 
 // load tooltip behavior
@@ -45,7 +47,7 @@ JHtml::_('formbehavior.chosen', 'select');
             <?php if (empty($this->items)): ?>
                 <?php echo $this->loadTemplate('toolbar'); ?>
                 <div class="alert alert-no-items">
-                    <?php echo JText::_('JGLOBAL_NO_MATCHING_RESULTS'); ?>
+                    <?php echo Text::_('JGLOBAL_NO_MATCHING_RESULTS'); ?>
                 </div>
             <?php else : ?>
             <?php echo $this->loadTemplate('toolbar'); ?>
@@ -61,7 +63,7 @@ JHtml::_('formbehavior.chosen', 'select');
                 'bootstrap.renderModal',
                 'collapseModal',
                 array(
-                    'title' => JText::_('COM_CUSTOMTABLES_LISTOFCATEGORIES_BATCH_OPTIONS'),
+                    'title' => Text::_('COM_CUSTOMTABLES_LISTOFCATEGORIES_BATCH_OPTIONS'),
                     'footer' => $this->loadTemplate('batch_footer')
                 ),
                 $this->loadTemplate('batch_body')

@@ -45,7 +45,7 @@ if ($this->version >= 4) {
         </div>
 
 
-        <?php //echo JHtml::_('bootstrap.addTab', 'categoriesTab', 'general', JText::_('COM_CUSTOMTABLES_CATEGORIES_GENERAL', true));
+        <?php //echo JHtml::_('bootstrap.addTab', 'categoriesTab', 'general', Text::_('COM_CUSTOMTABLES_CATEGORIES_GENERAL', true));
         /*
             <div class="row-fluid form-horizontal-desktop">
                 <div class="span12">

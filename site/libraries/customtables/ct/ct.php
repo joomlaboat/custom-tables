@@ -64,9 +64,9 @@ class CT
         $this->Filter = null;
     }
 
-    function setParams($menu_params = null, $blockExternalVars = false): void
+    function setParams($menuParams = null, $blockExternalVars = false): void
     {
-        $this->Params->setParams($menu_params, $blockExternalVars);
+        $this->Params->setParams($menuParams, $blockExternalVars);
         $this->Env->ItemId = $this->Params->ItemId;
     }
 
@@ -245,8 +245,8 @@ class CT
         $this->Limit = $this->app->getUserState($limit_var, 0);
 
         //Grouping
-        if ($this->Env->menu_params->get('groupby') != '')
-            $this->GroupBy = Fields::getRealFieldName($this->Env->menu_params->get('groupby'), $this->Table->fields);
+        if ($this->Params->groupBy != '')
+            $this->GroupBy = Fields::getRealFieldName($this->Params->groupBy, $this->Table->fields);
         else
             $this->GroupBy = '';
 

@@ -19,6 +19,7 @@ JHtml::_('formbehavior.chosen', 'select');
 
 use CustomTables\Integrity\IntegrityFields;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 
 if ($this->saveOrder && !empty($this->items)) {
     $saveOrderingUrl = 'index.php?option=com_customtables&task=listoffields.saveOrderAjax&tableid=' . $this->tableid . '&tmpl=component';
@@ -49,7 +50,7 @@ if ($input->getCmd('extratask', '') == 'updateimages') {
                 <?php if (empty($this->items)): ?>
                     <?php echo $this->loadTemplate('toolbar'); ?>
                     <div class="alert alert-no-items">
-                        <?php echo JText::_('JGLOBAL_NO_MATCHING_RESULTS'); ?>
+                        <?php echo Text::_('JGLOBAL_NO_MATCHING_RESULTS'); ?>
                     </div>
                 <?php else : ?>
                 <?php echo $this->loadTemplate('toolbar'); ?>
@@ -72,7 +73,7 @@ if ($input->getCmd('extratask', '') == 'updateimages') {
                 'bootstrap.renderModal',
                 'collapseModal',
                 array(
-                    'title' => JText::_('COM_CUSTOMTABLES_LISTOFFIELDS_BATCH_OPTIONS'),
+                    'title' => Text::_('COM_CUSTOMTABLES_LISTOFFIELDS_BATCH_OPTIONS'),
                     'footer' => $this->loadTemplate('batch_footer')
                 ),
                 $this->loadTemplate('batch_body')

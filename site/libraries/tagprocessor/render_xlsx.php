@@ -9,12 +9,14 @@
  **/
 
 // no direct access
+use CustomTables\CT;
+
 defined('_JEXEC') or die('Restricted access');
 
 trait render_xlsx
 {
 
-    protected static function get_CatalogTable_XLSX(&$ct, $fields)
+    protected static function get_CatalogTable_XLSX(CT &$ct, $fields)
     {
         $filename = JoomlaBasicMisc::makeNewFileName($ct->Params->pageTitle, 'xlsx');
 
@@ -31,7 +33,7 @@ trait render_xlsx
 
         $fieldArray = JoomlaBasicMisc::csv_explode(',', $fields, '"', true);
 
-        $sheet_name = $ct->Env->menu_params->get('menu-anchor_title');
+        $sheet_name = $ct->Params->pageTitle;
 
         // Set document properties
         $objPHPExcel->getProperties()->setCreator("CustomTables")

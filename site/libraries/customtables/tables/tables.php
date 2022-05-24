@@ -17,7 +17,7 @@ defined('_JEXEC') or die('Restricted access');
 
 class Tables
 {
-    var $ct;
+    var CT $ct;
 
     function __construct(&$ct)
     {

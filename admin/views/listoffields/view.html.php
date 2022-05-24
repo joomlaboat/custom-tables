@@ -12,6 +12,7 @@
 // No direct access to this file
 \defined('_JEXEC') or die;
 
+use CustomTables\CT;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\Language\Text;
@@ -32,7 +33,7 @@ class CustomtablesViewListoffields extends JViewLegacy
      * Listoffields view display method
      * @return void
      */
-    var $ct;
+    var CT $ct;
     var $tableid;
     var $tablename;
     var $tabletitle;
@@ -144,9 +145,9 @@ class CustomtablesViewListoffields extends JViewLegacy
         $app = Factory::getApplication();
 
         if ($this->tableid != 0) {
-            JToolBarHelper::title('Table "' . $this->tabletitle . '" - ' . JText::_('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
+            JToolBarHelper::title('Table "' . $this->tabletitle . '" - ' . Text::_('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
         } else
-            JToolBarHelper::title(JText::_('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
+            JToolBarHelper::title(Text::_('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
 
 
         JHtmlSidebar::setAction('index.php?option=com_customtables&view=listoffields&tableid=' . $this->tableid);
@@ -186,7 +187,7 @@ class CustomtablesViewListoffields extends JViewLegacy
         if ($this->canState) {
             /*
             JHtmlSidebar::addFilter(
-                JText::_('JOPTION_SELECT_PUBLISHED'),
+                Text::_('JOPTION_SELECT_PUBLISHED'),
                 'filter_published',
                 JHtml::_('select.options', JHtml::_('jgrid.publishedOptions'), 'value', 'text', $this->state->get('filter.published'), true)
             );
@@ -197,7 +198,7 @@ class CustomtablesViewListoffields extends JViewLegacy
 
 
             JHtmlSidebar::addFilter(
-                JText::_('JOPTION_SELECT_PUBLISHED'),
+                Text::_('JOPTION_SELECT_PUBLISHED'),
                 'filter_published',
                 JHtml::_('select.options', $CTJStatusOptions, 'value', 'text', $this->state->get('filter.published'))
             );
@@ -210,7 +211,7 @@ class CustomtablesViewListoffields extends JViewLegacy
         {
             // Type Filter
             JHtmlSidebar::addFilter(
-                '- Select '.JText::_('COM_CUSTOMTABLES_FIELDS_TYPE_LABEL').' -',
+                '- Select '.Text::_('COM_CUSTOMTABLES_FIELDS_TYPE_LABEL').' -',
                 'filter_type',
                 JHtml::_('select.options', $this->typeOptions, 'value', 'text', $this->state->get('filter.type'))
             );
@@ -221,7 +222,7 @@ class CustomtablesViewListoffields extends JViewLegacy
         $CTFieldOptions = $CTField->getOptions(false); // works only if you set your field getOptions on public!!
 
         JHtmlSidebar::addFilter(
-            '- Select ' . JText::_('COM_CUSTOMTABLES_FIELDS_TYPE_LABEL') . ' -',
+            '- Select ' . Text::_('COM_CUSTOMTABLES_FIELDS_TYPE_LABEL') . ' -',
             'filter_type',
             JHtml::_('select.options', $CTFieldOptions, 'value', 'text', $this->state->get('filter.type'))
         );
@@ -232,7 +233,7 @@ class CustomtablesViewListoffields extends JViewLegacy
         $CTTableOptions=$CTTable->getOptions(false); // works only if you set your field getOptions on public!!
 
         JHtmlSidebar::addFilter(
-        JText::_('COM_CUSTOMTABLES_LAYOUTS_TABLEID_SELECT'),
+        Text::_('COM_CUSTOMTABLES_LAYOUTS_TABLEID_SELECT'),
         'filter_tableid',
         JHtml::_('select.options', $CTTableOptions, 'value', 'text', $this->state->get('filter.tableid'))
         );
@@ -252,9 +253,9 @@ class CustomtablesViewListoffields extends JViewLegacy
         $toolbar = Toolbar::getInstance('toolbar');
 
         if ($this->tableid != 0) {
-            JToolBarHelper::title('Custom Tables - Table "' . $this->tabletitle . '" - ' . JText::_('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
+            JToolBarHelper::title('Custom Tables - Table "' . $this->tabletitle . '" - ' . Text::_('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
         } else
-            JToolBarHelper::title(JText::_('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
+            JToolBarHelper::title(Text::_('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
 
         JHtmlSidebar::setAction('index.php?option=com_customtables&view=listoffields&tableid=' . $this->tableid);
         JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/fields');
@@ -304,7 +305,7 @@ class CustomtablesViewListoffields extends JViewLegacy
         if (!isset($this->document)) {
             $this->document = Factory::getDocument();
         }
-        $this->document->setTitle(JText::_('COM_CUSTOMTABLES_LISTOFFIELDS'));
+        $this->document->setTitle(Text::_('COM_CUSTOMTABLES_LISTOFFIELDS'));
     }
 
     /**
@@ -317,11 +318,11 @@ class CustomtablesViewListoffields extends JViewLegacy
     {
         //Joomla 3 only
         return array(
-            'a.ordering' => JText::_('JGRID_HEADING_ORDERING'),
-            'a.published' => JText::_('JSTATUS'),
-            'a.fieldname' => JText::_('COM_CUSTOMTABLES_FIELDS_FIELDNAME_LABEL'),
-            'a.type' => JText::_('COM_CUSTOMTABLES_FIELDS_TYPE_LABEL'),
-            'a.id' => JText::_('JGRID_HEADING_ID')
+            'a.ordering' => Text::_('JGRID_HEADING_ORDERING'),
+            'a.published' => Text::_('JSTATUS'),
+            'a.fieldname' => Text::_('COM_CUSTOMTABLES_FIELDS_FIELDNAME_LABEL'),
+            'a.type' => Text::_('COM_CUSTOMTABLES_FIELDS_TYPE_LABEL'),
+            'a.id' => Text::_('JGRID_HEADING_ID')
         );
     }
 
@@ -352,7 +353,7 @@ class CustomtablesViewListoffields extends JViewLegacy
                 // Translate the type selection
                 $text = $model->selectionTranslation($type, 'type');
                 // Now add the type and its text to the options array
-                $_filter[] = JHtml::_('select.option', $type, JText::_($text));
+                $_filter[] = JHtml::_('select.option', $type, Text::_($text));
             }
             return $_filter;
         }

@@ -20,7 +20,7 @@ jimport('joomla.application.component.model');
 
 class CustomTablesModelStructure extends JModel
 {
-    var $ct;
+    var CT $ct;
 
     var $record_count = 0;
 

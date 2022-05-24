@@ -10,6 +10,7 @@
 
 // no direct access
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 
 defined('_JEXEC') or die('Restricted access');
 
@@ -30,7 +31,7 @@ class CustomTablesControllerImportTables extends JControllerForm
         $task = $input->getCmd('task', '');
 
         if ($task == 'importtables')
-            importtables();
+            $this->importtables();
         else {
             $input->set('view', 'importtables');
             parent::display();
@@ -44,9 +45,9 @@ class CustomTablesControllerImportTables extends JControllerForm
         $link = 'index.php?option=com_customtables&view=importtables';
         $msg = '';
         if ($model->importtables($msg)) {
-            $this->setRedirect($link, JText::_('Tables Imported Successfully'));
+            $this->setRedirect($link, Text::_('Tables Imported Successfully'));
         } else {
-            $this->setRedirect($link, JText::_('Tables was Unabled to Import: ' . $msg), 'error');
+            $this->setRedirect($link, Text::_('Tables was Unabled to Import: ' . $msg), 'error');
         }
     }
 }

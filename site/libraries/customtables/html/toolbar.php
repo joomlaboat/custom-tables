@@ -17,7 +17,7 @@ use \Joomla\CMS\Uri\Uri;
 
 class RecordToolbar
 {
-    var $ct;
+    var CT $ct;
     var $Table;
     var $isEditable;
     var $isPublishable;
@@ -28,7 +28,7 @@ class RecordToolbar
     var $row;
     var $iconPath;
 
-    function __construct(&$ct, $isEditable, $isPublishable, $isDeletable)
+    function __construct(CT &$ct, $isEditable, $isPublishable, $isDeletable)
     {
         $this->ct = $ct;
         $this->Table = $ct->Table;

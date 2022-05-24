@@ -25,7 +25,7 @@ jimport('joomla.application.component.modellist');
  */
 class CustomtablesModelListofTables extends JModelList
 {
-    var $ct;
+    var CT $ct;
 
     public function __construct($config = array())
     {

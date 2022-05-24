@@ -24,7 +24,7 @@ use Joomla\CMS\Factory;
  */
 class CustomtablesModelListoffields extends JModelList
 {
-    var $ct;
+    var CT $ct;
     var $tableid;
 
     public function __construct($config = array())

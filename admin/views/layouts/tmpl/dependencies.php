@@ -11,6 +11,7 @@
 
 // No direct access to this file
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 
 defined('_JEXEC') or die('Restricted access');
 
@@ -44,7 +45,7 @@ function renderDependencies($layout_row)
 
     if (count($rows) > 0) {
         $count += count($rows);
-        $result .= '<h3>' . JText::_('COM_CUSTOMTABLES_LAYOUTS_TABLES_WITH_TABLEJOIN_FIELDS', true) . '</h3>';
+        $result .= '<h3>' . Text::_('COM_CUSTOMTABLES_LAYOUTS_TABLES_WITH_TABLEJOIN_FIELDS', true) . '</h3>';
         $result .= _renderTableList($rows);
     }
 
@@ -61,7 +62,7 @@ function renderDependencies($layout_row)
 
     if (count($rows) > 0) {
         $count += count($rows);
-        $result .= '<h3>' . JText::_('COM_CUSTOMTABLES_LAYOUTS_TABLES_DEFAULTVALUE', true) . '</h3>';
+        $result .= '<h3>' . Text::_('COM_CUSTOMTABLES_LAYOUTS_TABLES_DEFAULTVALUE', true) . '</h3>';
         $result .= _renderTableList($rows);
     }
 
@@ -69,7 +70,7 @@ function renderDependencies($layout_row)
 
     if (count($menus) > 0) {
         $count += count($menus);
-        $result .= '<h3>' . JText::_('COM_CUSTOMTABLES_LAYOUTS_MENUS', true) . '</h3>';
+        $result .= '<h3>' . Text::_('COM_CUSTOMTABLES_LAYOUTS_MENUS', true) . '</h3>';
         $result .= _renderMenuList($menus);
 
     }
@@ -77,7 +78,7 @@ function renderDependencies($layout_row)
     $modules = _getModulesThatUseThisLayout($layout_row->layoutname);
     if (count($modules) > 0) {
         $count += count($modules);
-        $result .= '<h3>' . JText::_('COM_CUSTOMTABLES_LAYOUTS_MODULES', true) . '</h3>';
+        $result .= '<h3>' . Text::_('COM_CUSTOMTABLES_LAYOUTS_MODULES', true) . '</h3>';
         $result .= _renderModuleList($modules);
 
     }
@@ -85,13 +86,13 @@ function renderDependencies($layout_row)
     $layouts = _getLayoutsThatUseThisLayout($layout_row->layoutname);
     if (count($layouts) > 0) {
         $count += count($layouts);
-        $result .= '<h3>' . JText::_('COM_CUSTOMTABLES_DASHBOARD_LISTOFLAYOUTS', true) . '</h3>';
+        $result .= '<h3>' . Text::_('COM_CUSTOMTABLES_DASHBOARD_LISTOFLAYOUTS', true) . '</h3>';
         $result .= _renderLayoutList($layouts);
 
     }
 
     if ($count == 0)
-        $result .= '<p>' . JText::_('COM_CUSTOMTABLES_LAYOUTS_THIS_LAYOUT_IS_NOT_IN_USE', true) . '</p>';
+        $result .= '<p>' . Text::_('COM_CUSTOMTABLES_LAYOUTS_THIS_LAYOUT_IS_NOT_IN_USE', true) . '</p>';
 
     $result .= '</div>';
 
@@ -143,9 +144,9 @@ function _renderTableList($rows)
     $result = '
         <table class="table table-striped">
 			<thead>
-                <th>' . JText::_('COM_CUSTOMTABLES_TABLES_TABLENAME', true) . '</th>
-                <th>' . JText::_('COM_CUSTOMTABLES_TABLES_TABLETITLE', true) . '</th>
-                <th>' . JText::_('COM_CUSTOMTABLES_LISTOFFIELDS', true) . '</th>
+                <th>' . Text::_('COM_CUSTOMTABLES_TABLES_TABLENAME', true) . '</th>
+                <th>' . Text::_('COM_CUSTOMTABLES_TABLES_TABLETITLE', true) . '</th>
+                <th>' . Text::_('COM_CUSTOMTABLES_LISTOFFIELDS', true) . '</th>
             </thead>
 			<tbody>
             ';

@@ -9,9 +9,11 @@
  **/
 
 // No direct access to this file
+use Joomla\CMS\Language\Text;
+
 defined('_JEXEC') or die('Restricted access');
 
 ?>
 
-<p><?php echo JText::_('COM_CUSTOMTABLES_LISTOFCATEGORIES_BATCH_TIP'); ?></p>
+<p><?php echo Text::_('COM_CUSTOMTABLES_LISTOFCATEGORIES_BATCH_TIP'); ?></p>
 <?php echo $this->batchDisplay; ?>

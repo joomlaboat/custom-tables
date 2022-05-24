@@ -11,6 +11,7 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\CT;
 use CustomTables\Fields;
 use Joomla\CMS\Factory;
 
@@ -400,7 +401,7 @@ class ESTables
         return ESTables::getTableRowByWhere('tablename=' . $db->quote($tablename));
     }
 
-    public static function copyTable(&$ct, $originaltableid, $new_table, $old_table, $customtablename = '')
+    public static function copyTable(CT &$ct, $originaltableid, $new_table, $old_table, $customtablename = '')
     {
         //Copy Table
         $db = Factory::getDBO();

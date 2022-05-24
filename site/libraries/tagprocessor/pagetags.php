@@ -11,6 +11,7 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\CT;
 use CustomTables\Fields;
 use CustomTables\SearchInputBox;
 
@@ -47,7 +48,7 @@ use \CustomTables\Twig_Record_Tags;
 
 class tagProcessor_Page
 {
-    public static function process(&$ct, &$pagelayout)
+    public static function process(CT &$ct, &$pagelayout)
     {
         $ct_html = new Twig_Html_Tags($ct, false);
         $ct_url = new Twig_Url_Tags($ct, false);

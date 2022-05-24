@@ -11,11 +11,12 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\CT;
 use CustomTables\DataTypes\Tree;
 
 class CT_FieldTypeTag_ct
 {
-    public static function ResolveStructure(&$ct, &$htmlresult)
+    public static function ResolveStructure(CT &$ct, &$htmlresult)
     {
         $options = array();
         $fList = JoomlaBasicMisc::getListToReplace('resolve', $options, $htmlresult, '{}');
@@ -31,7 +32,7 @@ class CT_FieldTypeTag_ct
         }
     }
 
-    public static function groupCustomTablesParents(&$ct, $esvaluestring, $rootparent)
+    public static function groupCustomTablesParents(CT &$ct, $esvaluestring, $rootparent)
     {
         $GroupList = explode(',', $esvaluestring);
         $GroupNames = array();

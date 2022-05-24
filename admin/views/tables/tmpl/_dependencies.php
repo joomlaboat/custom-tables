@@ -13,6 +13,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 
 function renderDependencies($table_id, $tablename)
 {
@@ -21,22 +22,22 @@ function renderDependencies($table_id, $tablename)
     $rows = _getTablesThatDependOnThisTable($tablename);
 
     if (count($rows) == 0)
-        $result .= '<h4>' . JText::_('COM_CUSTOMTABLES_TABLES_NO_TABLES_THAT_DEPEND_ON_THIS_TABLE', true) . '</h4>';
+        $result .= '<h4>' . Text::_('COM_CUSTOMTABLES_TABLES_NO_TABLES_THAT_DEPEND_ON_THIS_TABLE', true) . '</h4>';
     else {
-        $result .= '<h3>' . JText::_('COM_CUSTOMTABLES_TABLES_TABLES_THAT_DEPEND_ON_THIS_TABLE', true) . '</h3>';
+        $result .= '<h3>' . Text::_('COM_CUSTOMTABLES_TABLES_TABLES_THAT_DEPEND_ON_THIS_TABLE', true) . '</h3>';
         $result .= _renderTableList($rows);
     }
 
     $result .= '<hr/>';
     $rows = _getTablesThisTableDependOn($table_id);
     if (count($rows) == 0)
-        $result .= '<h4>' . JText::_('COM_CUSTOMTABLES_TABLES_THIS_TABLE_DOESNT_HAVE_TABLE_JOIN_TYPE_FIELDS', true) . '</h4>';
+        $result .= '<h4>' . Text::_('COM_CUSTOMTABLES_TABLES_THIS_TABLE_DOESNT_HAVE_TABLE_JOIN_TYPE_FIELDS', true) . '</h4>';
     else {
-        $result .= '<h3>' . JText::_('COM_CUSTOMTABLES_TABLES_TABLES_THIS_TABLE_DEPENDS_ON', true) . '</h3>';
+        $result .= '<h3>' . Text::_('COM_CUSTOMTABLES_TABLES_TABLES_THIS_TABLE_DEPENDS_ON', true) . '</h3>';
         $result .= _renderTableList($rows);
     }
 
-    $result .= JText::_('COM_CUSTOMTABLES_TABLES_DATABASE_NORMALIZATION_EXPLAINED_IN_SIMPLE_ENGLISH', true);
+    $result .= Text::_('COM_CUSTOMTABLES_TABLES_DATABASE_NORMALIZATION_EXPLAINED_IN_SIMPLE_ENGLISH', true);
 
 
     return $result;
@@ -47,9 +48,9 @@ function _renderTableList($rows)
     $result = '
         <table class="table table-striped">
 			<thead>
-                <th>' . JText::_('COM_CUSTOMTABLES_TABLES_TABLETITLE', true) . '</th>
-                <th>' . JText::_('COM_CUSTOMTABLES_FIELDS_FIELDNAME', true) . '</th>
-                <th>' . JText::_('COM_CUSTOMTABLES_FIELDS_TYPEPARAMS', true) . '</th>
+                <th>' . Text::_('COM_CUSTOMTABLES_TABLES_TABLETITLE', true) . '</th>
+                <th>' . Text::_('COM_CUSTOMTABLES_FIELDS_FIELDNAME', true) . '</th>
+                <th>' . Text::_('COM_CUSTOMTABLES_FIELDS_TYPEPARAMS', true) . '</th>
             </thead>
 			<tbody>
             ';

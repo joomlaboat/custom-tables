@@ -66,7 +66,7 @@ class updateFiles
         return (int)$recs[0]['c'];
     }
 
-    protected static function processFiles(&$ct, $fieldrow, array $old_params, array $new_params, $startindex, $stepsize)
+    protected static function processFiles(CT &$ct, $fieldrow, array $old_params, array $new_params, $startindex, $stepsize)
     {
         $db = Factory::getDBO();
         $query = 'SELECT ' . $ct->Table->tablerow['query_selects'] . ' FROM ' . $ct->Table->realtablename . ' WHERE ' . $fieldrow->realfieldname . ' IS NOT NULL AND ' . $fieldrow->realfieldname . ' != ""';

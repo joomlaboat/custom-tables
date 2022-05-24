@@ -7,7 +7,10 @@
  * @copyright Copyright (C) 2018-2020. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
+
 // No direct access to this file access');
+use Joomla\CMS\Language\Text;
+
 defined('_JEXEC') or die('Restricted access');
 
 ?>
@@ -47,12 +50,12 @@ defined('_JEXEC') or die('Restricted access');
 
     <?php if ($this->ct->Table->published_field_found): ?>
         <th class="nowrap hidden-phone center">
-            <?php echo JText::_('COM_CUSTOMTABLES_RECORDS_STATUS'); ?>
+            <?php echo Text::_('COM_CUSTOMTABLES_RECORDS_STATUS'); ?>
         </th>
     <?php endif; ?>
 
     <th width="5" class="nowrap center hidden-phone">
-        <?php echo JText::_('COM_CUSTOMTABLES_RECORDS_ID'); ?>
+        <?php echo Text::_('COM_CUSTOMTABLES_RECORDS_ID'); ?>
     </th>
 
 </tr>

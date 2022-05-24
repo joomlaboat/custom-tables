@@ -11,13 +11,14 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\CT;
 use Joomla\CMS\Factory;
 
 /* All tags already implemented using Twig */
 
 class tagProcessor_Set
 {
-    public static function process(&$ct, &$pagelayout)
+    public static function process(CT &$ct, &$pagelayout)
     {
         tagProcessor_Set::setHeadTag($ct, $pagelayout);
         tagProcessor_Set::setMetaDescription($ct, $pagelayout);
@@ -25,7 +26,7 @@ class tagProcessor_Set
         tagProcessor_Set::setPageTitle($ct, $pagelayout);
     }
 
-    protected static function setHeadTag(&$ct, &$htmlresult)
+    protected static function setHeadTag(CT &$ct, &$htmlresult)
     {
         $options = array();
         $fList = JoomlaBasicMisc::getListToReplace('headtag', $options, $htmlresult, '{}');
@@ -45,7 +46,7 @@ class tagProcessor_Set
         }
     }
 
-    protected static function setMetaDescription(&$ct, &$htmlresult)
+    protected static function setMetaDescription(CT &$ct, &$htmlresult)
     {
         $options = array();
         $fList = JoomlaBasicMisc::getListToReplace('metadescription', $options, $htmlresult, '{}');
@@ -66,7 +67,7 @@ class tagProcessor_Set
 
     }
 
-    protected static function setMetaKeywords(&$ct, &$htmlresult)
+    protected static function setMetaKeywords(CT &$ct, &$htmlresult)
     {
         $options = array();
         $fList = JoomlaBasicMisc::getListToReplace('metakeywords', $options, $htmlresult, '{}');
@@ -89,7 +90,7 @@ class tagProcessor_Set
 
     }
 
-    protected static function setPageTitle(&$ct, &$htmlresult)
+    protected static function setPageTitle(CT &$ct, &$htmlresult)
     {
         $options = array();
         $fList = JoomlaBasicMisc::getListToReplace('pagetitle', $options, $htmlresult, '{}');

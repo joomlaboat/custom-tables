@@ -13,6 +13,7 @@ defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\DataTypes;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 
 jimport('joomla.form.helper');
 JFormHelper::loadFieldClass('list');
@@ -59,7 +60,7 @@ class JFormFieldCTField extends JFormFieldList
                 // Translate the type selection
                 $text = $translations[$type];
                 // Now add the type and its text to the options array
-                $_filter[] = JHtml::_('select.option', $type, JText::_($text));
+                $_filter[] = JHtml::_('select.option', $type, Text::_($text));
             }
         }
         return $_filter;

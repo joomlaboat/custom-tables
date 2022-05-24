@@ -10,6 +10,7 @@
 
 // no direct access
 use Joomla\CMS\Factory;
+use Joomla\Utilities\ArrayHelper;
 
 defined('_JEXEC') or die('Restricted access');
 
@@ -63,7 +64,7 @@ switch (Factory::getApplication()->input->get('task', '', 'CMD')) {
         // Get some variables from the request
 
         $cid = Factory::getApplication()->input->post->get('cid', array(), 'array');
-        JArrayHelper::toInteger($cid);
+        ArrayHelper::toInteger($cid);
 
         if (!count($cid)) {
             $this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_OPTIONS_NOT_SELECTED'));

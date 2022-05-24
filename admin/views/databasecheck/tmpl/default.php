@@ -13,6 +13,7 @@ defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\IntegrityChecks;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 
 $tables = $this->prepareTables();
 $document = Factory::getDocument();
@@ -40,12 +41,12 @@ $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_cu
 
         <?php echo JHtml::_('bootstrap.startTabSet', 'schemaTab', array('active' => 'diagram'));
 
-        echo JHtml::_('bootstrap.addTab', 'schemaTab', 'diagram', JText::_('COM_CUSTOMTABLES_TABLES_DIAGRAM', true));
+        echo JHtml::_('bootstrap.addTab', 'schemaTab', 'diagram', Text::_('COM_CUSTOMTABLES_TABLES_DIAGRAM', true));
         echo '<div id="canvas_container"></div>';
 
         echo JHtml::_('bootstrap.endTab');
 
-        echo JHtml::_('bootstrap.addTab', 'schemaTab', 'checks', JText::_('COM_CUSTOMTABLES_TABLES_CHECKS', true));
+        echo JHtml::_('bootstrap.addTab', 'schemaTab', 'checks', Text::_('COM_CUSTOMTABLES_TABLES_CHECKS', true));
 
         $result = IntegrityChecks::check($this->ct);
 

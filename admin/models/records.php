@@ -22,7 +22,7 @@ jimport('joomla.application.component.modeladmin');
  */
 class CustomtablesModelRecords extends JModelAdmin
 {
-    var $ct;
+    var CT $ct;
     /**
      * The type alias for this content type.
      *

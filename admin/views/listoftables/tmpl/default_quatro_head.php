@@ -36,14 +36,14 @@ HTMLHelper::_('behavior.multiselect');
     </th>
 
     <th scope="col">
-        <?php echo JText::_('COM_CUSTOMTABLES_TABLES_TABLETITLE_LABEL'); ?>
+        <?php echo Text::_('COM_CUSTOMTABLES_TABLES_TABLETITLE_LABEL'); ?>
     </th>
 
     <th scope="col" class="text-center">
-        <?php echo JText::_('COM_CUSTOMTABLES_TABLES_FIELDS_LABEL'); ?>
+        <?php echo Text::_('COM_CUSTOMTABLES_TABLES_FIELDS_LABEL'); ?>
     </th>
     <th scope="col" class="text-center">
-        <?php echo JText::_('COM_CUSTOMTABLES_TABLES_RECORDS_LABEL'); ?>
+        <?php echo Text::_('COM_CUSTOMTABLES_TABLES_RECORDS_LABEL'); ?>
     </th>
 
     <th scope="col">

@@ -10,6 +10,7 @@
 
 // no direct access
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 
 defined('_JEXEC') or die('Restricted access');
 
@@ -48,7 +49,7 @@ class JFormFieldCTOption extends JFormFieldList
 
         $options = array();
         if ($records) {
-            $options[] = JHtml::_('select.option', '', JText::_('COM_CUSTOMTABLES_FIELDS_SELECT_LABEL'));
+            $options[] = JHtml::_('select.option', '', Text::_('COM_CUSTOMTABLES_FIELDS_SELECT_LABEL'));
             foreach ($records as $rec)
                 $options[] = JHtml::_('select.option', $rec->id, $rec->title);
         }

@@ -496,20 +496,26 @@ class JESPagination extends JObject
         $app = Factory::getApplication();
         if ($app->isClient('administrator')) {
             if ($item->base > 0) {
+
+                $onClick = 'document.adminForm.' . $this->prefix . 'start.value=' . $item->base . '; Joomla.submitform();return false;';
+
                 return '<a'
                     . ' title="' . $item->text . '"'
-                    . ' onclick="document.adminForm.' . $this->prefix . 'start.value=' . $item->base . '; Joomla.submitform();return false;"'
+                    . ' onclick="' . $onClick . '"'
                     . '>'
                     . $item->text . '</a>';
             } else {
+
+                $onClick = 'document.adminForm.' . $this->prefix . 'start.value=0; Joomla.submitform();return false;';
+
                 return '<a'
                     . ' title="' . $item->text . '"'
-                    . ' onclick="document.adminForm.' . $this->prefix . 'start.value=0; Joomla.submitform();return false;"'
+                    . ' onclick="' . $onClick . '"'
                     . '>'
                     . $item->text . '</a>';
             }
         } else {
-            return "<a title=\"" . $item->text . "\" href=\"" . $item->link . "\" class=\"pagenav\">" . $item->text . "</a>";
+            return '<a title="' . $item->text . '" href="' . $item->link . '" class="pagenav">' . $item->text . '</a>';
         }
     }
 

@@ -10,6 +10,7 @@
 // No direct access to this file access');
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\CT;
 use CustomTables\DataTypes\Tree;
 
 require_once('render_html.php');
@@ -29,7 +30,7 @@ class tagProcessor_Catalog
     use render_json;
     use render_image;
 
-    public static function process(&$ct, $layoutType, &$pagelayout, &$itemlayout, $new_replaceitecode)
+    public static function process(CT &$ct, $layoutType, &$pagelayout, $itemlayout, $newReplaceItCode): string
     {
         $vlu = '';
         $options = array();
@@ -37,9 +38,9 @@ class tagProcessor_Catalog
         //---------------------
         $i = 0;
         foreach ($fList as $fItem) {
-            $pair = JoomlaBasicMisc::csv_explode(',', $options[$i], '"', false);
+            $pair = JoomlaBasicMisc::csv_explode(',', $options[$i]);
 
-            $tableclass = $pair[0];
+            $tableClass = $pair[0];
             $notable = $pair[1] ?? '';
             $separator = $pair[2] ?? '';
 
@@ -51,17 +52,17 @@ class tagProcessor_Catalog
             } elseif ($ct->Env->frmt == 'image')
                 self::get_CatalogTable_singleline_IMAGE($ct, $layoutType, $pagelayout);
             elseif ($notable == 'notable')
-                $vlu .= self::get_Catalog($ct, $layoutType, $itemlayout, $tableclass, false, $separator);
+                $vlu .= self::get_Catalog($ct, $layoutType, $itemlayout, $tableClass, false, $separator);
             else
-                $vlu .= self::get_Catalog($ct, $layoutType, $itemlayout, $tableclass, true, $separator);
+                $vlu .= self::get_Catalog($ct, $layoutType, $itemlayout, $tableClass, true, $separator);
 
-            $pagelayout = str_replace($fItem, $new_replaceitecode, $pagelayout);
+            $pagelayout = str_replace($fItem, $newReplaceItCode, $pagelayout);
             $i++;
         }
         return $vlu;
     }
 
-    protected static function get_Catalog(&$ct, $layoutType, $itemlayout, $tableclass, $showtable = true, $separator = '')
+    protected static function get_Catalog(CT &$ct, $layoutType, $itemlayout, $tableClass, $showTable = true, $separator = ''): string
     {
         $catalogResult = '';
 
@@ -73,12 +74,12 @@ class tagProcessor_Catalog
         $twig = new TwigProcessor($ct, $itemlayout);
 
         //Grouping
-        if ($ct->Env->menu_params->get('groupby') != '')
-            $groupby = Fields::getRealFieldName($ct->Env->menu_params->get('groupby'), $ct->Table->fields);
+        if ($ct->Params->groupBy != '')
+            $groupBy = Fields::getRealFieldName($ct->Params->groupBy, $ct->Table->fields);
         else
-            $groupby = '';
+            $groupBy = '';
 
-        if ($groupby == '') {
+        if ($groupBy == '') {
             $number = 1 + $ct->LimitStart;
             $RealRows = [];
             foreach ($ct->Records as $row) {
@@ -89,7 +90,7 @@ class tagProcessor_Catalog
             $CatGroups[] = array('', $RealRows);
         } else {
             //Group Results
-            $FieldRow = Fields::FieldRowByName($ct->groupby, $ct->Table->fields);
+            $FieldRow = Fields::FieldRowByName($ct->Params->groupBy, $ct->Table->fields);
 
             $RealRows = array();
             $lastGroup = '';
@@ -97,16 +98,16 @@ class tagProcessor_Catalog
             $number = 1 + $ct->LimitStart;
             foreach ($ct->Records as $row) {
 
-                if ($lastGroup != $row[$ct->groupby] and $lastGroup != '') {
+                if ($lastGroup != $row[$ct->Params->groupBy] and $lastGroup != '') {
                     if ($FieldRow['type'] == 'customtables')
                         $GroupTitle = implode(',', Tree::getMultyValueTitles($lastGroup, $ct->Languages->Postfix, 1, ' - '));
                     else {
                         $row['_number'] = $number;
-                        $galleryrows = array();
+                        $galleryRows = array();
                         $FileBoxRows = array();
                         $option = array();
-                        //getValueByType(&$ct,$ESField, $row, &$option_list,&$getGalleryRows,&$getFileBoxRows)
-                        $GroupTitle = tagProcessor_Value::getValueByType($ct, $FieldRow, $row, $option, $galleryrows, $FileBoxRows);
+                        //getValueByType(CT &$ct,$ESField, $row, &$option_list,&$getGalleryRows,&$getFileBoxRows)
+                        $GroupTitle = tagProcessor_Value::getValueByType($ct, $FieldRow, $row, $option, $galleryRows, $FileBoxRows);
                     }
 
                     $CatGroups[] = array($GroupTitle, $RealRows);
@@ -114,7 +115,7 @@ class tagProcessor_Catalog
                 }
                 $RealRows[] = tagProcessor_Item::RenderResultLine($ct, $layoutType, $twig, $row); //3ed parameter is to show record HTML anchor or not
 
-                $lastGroup = $row[$ct->groupby];
+                $lastGroup = $row[$ct->Params->groupBy];
 
                 $number++;
             }
@@ -122,13 +123,13 @@ class tagProcessor_Catalog
                 if ($FieldRow['type'] == 'customtables')
                     $GroupTitle = implode(',', Tree::getMultyValueTitles($lastGroup, $ct->Languages->Postfix, 1, ' - '));
                 else {
-                    $galleryrows = array();
+                    $galleryRows = array();
                     $FileBoxRows = array();
                     $option = array();
 
                     $row = $RealRows[0];
 
-                    $GroupTitle = tagProcessor_Value::getValueByType($ct, $FieldRow, $row, $option, $galleryrows, $FileBoxRows);
+                    $GroupTitle = tagProcessor_Value::getValueByType($ct, $FieldRow, $row, $option, $galleryRows, $FileBoxRows);
                 }
                 $CatGroups[] = array($GroupTitle, $RealRows);
             }
@@ -136,9 +137,9 @@ class tagProcessor_Catalog
 
         $CatGroups = self::reorderCatGroups($CatGroups);
 
-        if ($showtable) {
+        if ($showTable) {
             $catalogResult .= '
-    <table' . (($tableclass != '' ? ' class="' . $tableclass . '"' : '')) . ' cellpadding="0" cellspacing="0">
+    <table' . (($tableClass != '' ? ' class="' . $tableClass . '"' : '')) . ' cellpadding="0" cellspacing="0">
         <tbody>
 ';
         }
@@ -149,7 +150,7 @@ class tagProcessor_Catalog
             $tr = 0;
             $RealRows = $cGroup[1];
 
-            if ($showtable) {
+            if ($showTable) {
                 if ($cGroup[0] != '')
                     $catalogResult .= '<tr><td colspan="' . ($number_of_columns) . '"><h2>' . $cGroup[0] . '</h2></td></tr>';
             } else {
@@ -163,20 +164,20 @@ class tagProcessor_Catalog
                 if ($separator != '' and $i > 0)
                     $catalogResult .= $separator;
 
-                if ($tr == 0 and $showtable)
+                if ($tr == 0 and $showTable)
                     $catalogResult .= '<tr>';
 
-                if ($showtable) {
+                if ($showTable) {
                     if (isset($row[$ct->Table->realidfieldname]))
-                        $catalogResult .= '<td valign="top" align="left"><a name="a' . $row[$ct->Table->realidfieldname] . '"></a>' . $row . '</td>';
+                        $catalogResult .= '<td><a name="a' . $row[$ct->Table->realidfieldname] . '"></a>' . $row . '</td>';
                     else
-                        $catalogResult .= '<td valign="top" align="left">' . $row . '</td>';
+                        $catalogResult .= '<td>' . $row . '</td>';
                 } else
                     $catalogResult .= $row;
 
                 $tr++;
                 if ($tr == $number_of_columns) {
-                    if ($showtable)
+                    if ($showTable)
                         $catalogResult .= '</tr>';
 
                     $tr = 0;
@@ -185,14 +186,14 @@ class tagProcessor_Catalog
                 $i += 1;
             }
 
-            if ($tr > 0 and $showtable)
-                $catalogResult .= '<td' . ($number_of_columns - $tr > 1 ? ' colspan="' . ($number_of_columns - $tr) . '"' : '') . '>&nbsp;</td></tr>';
+            if ($tr > 0 and $showTable)
+                $catalogResult .= '<td colspan="' . ($number_of_columns - $tr) . '>&nbsp;</td></tr>';
 
-            if ($showtable)
-                $catalogResult .= '<tr><td' . ($number_of_columns > 1 ? ' colspan="' . ($number_of_columns) . '"' : '') . '"><hr/></td></tr>';
+            if ($showTable)
+                $catalogResult .= '<tr><td colspan="' . ($number_of_columns) . '"><hr/></td></tr>';
         }    //	foreach($CatGroups as $cGroup)
 
-        if ($showtable) {
+        if ($showTable) {
             $catalogResult .= '</tbody>
     </table>';
         }
@@ -201,7 +202,7 @@ class tagProcessor_Catalog
     }
 
 
-    protected static function reorderCatGroups(&$CatGroups)
+    protected static function reorderCatGroups($CatGroups): array
     {
         $newCat = array();
         $names = array();

@@ -9,6 +9,8 @@
  **/
 
 // No direct access to this file
+use Joomla\CMS\Language\Text;
+
 defined('_JEXEC') or die('Restricted access');
 
 ?>
@@ -19,7 +21,7 @@ defined('_JEXEC') or die('Restricted access');
                 <a class="icon" href="<?php echo $icon->url; ?>">
                     <img alt="<?php echo $icon->alt; ?>"
                          src="<?php echo JURI::root(true); ?>/components/com_customtables/libraries/customtables/media/images/controlpanel/icons/<?php echo $icon->image; ?>">
-                    <span class="dashboard-title"><?php echo JText::_($icon->name); ?></span>
+                    <span class="dashboard-title"><?php echo Text::_($icon->name); ?></span>
                 </a>
             </div>
         </div>
@@ -27,7 +29,7 @@ defined('_JEXEC') or die('Restricted access');
     <div class="clearfix"></div>
 <?php else: ?>
     <div class="alert alert-error"><h4
-                class="alert-heading"><?php echo JText::_("Permission denied, or not correctly set"); ?></h4>
-        <div class="alert-message"><?php echo JText::_("Please notify your System Administrator if result is unexpected."); ?></div>
+                class="alert-heading"><?php echo Text::_("Permission denied, or not correctly set"); ?></h4>
+        <div class="alert-message"><?php echo Text::_("Please notify your System Administrator if result is unexpected."); ?></div>
     </div>
 <?php endif; ?>

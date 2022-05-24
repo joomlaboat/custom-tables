@@ -16,10 +16,12 @@ use CustomTables\CT;
 use CustomTables\DataTypes\Tree;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
+use Joomla\String\StringHelper;
+use Joomla\Utilities\ArrayHelper;
 
 class CustomTablesModelListOfOptions extends JModelList
 {
-    var $ct;
+    var CT $ct;
 
     var $_table = null;
 
@@ -59,8 +61,7 @@ class CustomTablesModelListOfOptions extends JModelList
         $levellimit = $mainframe->getUserStateFromRequest($context . 'levellimit', 'levellimit', 10, 'int');
         $search = $mainframe->getUserStateFromRequest($context . 'search', 'search', '', 'string');
 
-        //$search = $this->getState('filter.search');
-        $search = JString::strtolower($search);
+        $search = StringHelper::strtolower($search);
 
         if ($filter_order != 'm.ordering' and $filter_order != 'optionname')
             $filter_order = 'm.ordering';
@@ -205,7 +206,7 @@ class CustomTablesModelListOfOptions extends JModelList
         $input = Factory::getApplication()->input;
         $order = $input->post('order', array(), 'ARRAY');
 
-        JArrayHelper::toInteger($order);
+        ArrayHelper::toInteger($order);
         // update ordering values
         for ($i = 0; $i < $total; $i++) {
             $row->load($items[$i]);
@@ -241,7 +242,7 @@ class CustomTablesModelListOfOptions extends JModelList
      */
     function delete($ids)
     {
-        JArrayHelper::toInteger($ids);
+        ArrayHelper::toInteger($ids);
 
         if (!empty($ids)) {
 
@@ -305,10 +306,10 @@ class CustomTablesModelListOfOptions extends JModelList
      */
     function _rebuildSubLevel($cid = array(0), $level = 0)
     {
-        JArrayHelper::toInteger($cid, array(0));
+        ArrayHelper::toInteger($cid, array(0));
         $db = Factory::getDBO();
         $ids = implode(',', $cid);
-        $cids = array();
+
         if ($level == 0) {
             $query = 'UPDATE #__customtables_options SET sublevel = 0 WHERE parentid = 0';
             $db->setQuery($query);

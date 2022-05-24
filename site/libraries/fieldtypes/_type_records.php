@@ -53,7 +53,7 @@ class CT_FieldTypeTag_records
         return CT_FieldTypeTag_records::processRecordRecords($ct, $layoutcode, $rowValue, $ct->Records);
     }
 
-    protected static function processRecordRecords(&$ct, $layoutcode, $rowValue, &$records)
+    protected static function processRecordRecords(CT &$ct, $layoutcode, $rowValue, &$records)
     {
         $valuearray = explode(',', $rowValue);
 
@@ -83,7 +83,7 @@ class CT_FieldTypeTag_records
     }
 
     //Old function
-    public static function resolveRecordType(&$ct, $rowValue, $field, array $options)
+    public static function resolveRecordType(CT &$ct, $rowValue, $field, array $options)
     {
         $sortbyfield = '';
         $result = '';

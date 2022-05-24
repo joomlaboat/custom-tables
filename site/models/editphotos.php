@@ -22,7 +22,7 @@ JTable::addIncludePath(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTO
 
 class CustomTablesModelEditPhotos extends JModelLegacy
 {
-    var $ct;
+    var CT $ct;
     var $imagemethods;
     var $listing_id;
     var $Listing_Title;

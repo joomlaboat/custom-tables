@@ -13,6 +13,7 @@ namespace CustomTables\DataTypes;
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Language\Text;
 use \JoomlaBasicMisc;
 use \Joomla\CMS\Factory;
 
@@ -55,7 +56,7 @@ class Tree
         $query = "SELECT id, optionname FROM #__customtables_options WHERE parentid=0 ORDER BY optionname";
         $db->setQuery($query);
         $available_rootparents = $db->loadObjectList();
-        JoomlaBasicMisc::array_insert($available_rootparents, array("id" => 0, "optionname" => JText::_('-Select Parent')), 0);
+        JoomlaBasicMisc::array_insert($available_rootparents, array("id" => 0, "optionname" => Text::_('-Select Parent')), 0);
         return $available_rootparents;
 
     }
@@ -441,8 +442,8 @@ class Tree
                     {
                         $result.='
                 <div style="margin-left:100px">
-                <a href=\'javascript:ESCheckAll("'.$ObjectName.'",Array('.$temp_Ids.'))\'>'.JText::_( 'CHECK ALL' ).'</a>&nbsp;&nbsp;
-                <a href=\'javascript:ESUncheckAll("'.$ObjectName.'",Array('.$temp_Ids.'))\'>'.JText::_( 'UNCHECK ALL' ).'</a>
+                <a href=\'javascript:ESCheckAll("'.$ObjectName.'",Array('.$temp_Ids.'))\'>'.Text::_( 'CHECK ALL' ).'</a>&nbsp;&nbsp;
+                <a href=\'javascript:ESUncheckAll("'.$ObjectName.'",Array('.$temp_Ids.'))\'>'.Text::_( 'UNCHECK ALL' ).'</a>
                 </div>';
                     }
                     */

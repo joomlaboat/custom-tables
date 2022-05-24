@@ -12,10 +12,11 @@
 
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\CT;
 use CustomTables\TwigProcessor;
 use Joomla\CMS\HTML\HTMLHelper;
 
-function CTViewEdit(&$ct, $row, &$pagelayout, $formLink, $formName): void
+function CTViewEdit(CT &$ct, $row, &$pagelayout, $formLink, $formName): void
 {
     if ($ct->Env->legacysupport) {
         $path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR;
@@ -75,8 +76,7 @@ function CTViewEdit(&$ct, $row, &$pagelayout, $formLink, $formName): void
     $encoded_returnto = base64_encode($returnto);
 
     if ($listing_id == 0) {
-        $publishstatus = $ct->Env->menu_params->get('publishstatus');
-        echo '<input type="hidden" name="published" value="' . (int)$publishstatus . '" />';
+        echo '<input type="hidden" name="published" value="' . (int)$ct->Params->publishStatus . '" />';
     }
 
     echo '

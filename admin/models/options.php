@@ -22,11 +22,11 @@ jimport('joomla.application.component.modeladmin');
 
 class CustomTablesModelOptions extends JModelAdmin
 {
-    var $ct;
+    var CT $ct;
     public $typeAlias = 'com_customtables.options';
     public $es;
-public $imagefolder;
-        protected $text_prefix = 'COM_CUSTOMTABLES';//images/esoptimages
+    public $imagefolder;
+    protected $text_prefix = 'COM_CUSTOMTABLES';//images/esoptimages
 
     public function __construct($config = array())
     {

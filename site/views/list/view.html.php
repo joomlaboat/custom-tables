@@ -13,6 +13,7 @@ defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\DataTypes\Tree;
 use Joomla\CMS\Factory;
+use Joomla\String\StringHelper;
 
 jimport('joomla.application.component.view');
 
@@ -58,21 +59,21 @@ class CustomTablesViewList extends JView
         $filter_order = $mainframe->getUserStateFromRequest($context . "filter_order", 'filter_order', 'm.ordering', 'cmd');
         $filter_order_Dir = $mainframe->getUserStateFromRequest($context . "filter_order_Dir", 'filter_order_Dir', 'ASC', 'word');
 
-        $filter_rootparent = $mainframe->getUserStateFromRequest($context . "filter_rootparent", 'filter_rootparent', '', 'int');
+        $filterRootParent = $mainframe->getUserStateFromRequest($context . "filter_rootparent", 'filter_rootparent', '', 'int');
 
-        $levellimit = $mainframe->getUserStateFromRequest($context . "levellimit", 'levellimit', 10, 'int');
+        $levelLimit = $mainframe->getUserStateFromRequest($context . "levellimit", 'levellimit', 10, 'int');
         $search = $mainframe->getUserStateFromRequest($context . "search", 'search', '', 'string');
-        $search = JString::strtolower($search);
+        $search = StringHelper::strtolower($search);
 
         // level limit filter
-        $lists['levellist'] = JHTML::_('select.integerlist', 1, 20, 1, 'levellimit', 'size="1" onchange="document.adminForm.submit();"', $levellimit);
+        $lists['levellist'] = JHTML::_('select.integerlist', 1, 20, 1, 'levellimit', 'size="1" onchange="document.adminForm.submit();"', $levelLimit);
 
 
         // Category List
         $javascript = 'onchange="document.adminForm.submit();"';
 
         $available_rootparents = Tree::getAllRootParents();
-        $lists['rootparent'] = JHTML::_('select.genericlist', $available_rootparents, 'filter_rootparent', $javascript, 'id', 'optionname', $filter_rootparent);
+        $lists['rootparent'] = JHTML::_('select.genericlist', $available_rootparents, 'filter_rootparent', $javascript, 'id', 'optionname', $filterRootParent);
 
         // table ordering
         $lists['order_Dir'] = $filter_order_Dir;

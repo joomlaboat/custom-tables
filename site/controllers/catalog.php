@@ -84,7 +84,7 @@ if ($task != '') {
 } else
     parent::display();
 
-function doTheTask(&$ct, $task, $edit_model, $this_)
+function doTheTask(CT &$ct, $task, $edit_model, $this_)
 {
     //Return link
     if ($ct->Params->returnTo != '') {
@@ -280,7 +280,7 @@ function doTheTask(&$ct, $task, $edit_model, $this_)
             $order_by = $ct->Env->jinput->getString('orderby', '');
             $order_by = trim(preg_replace("/[^a-zA-Z-+%.: ,_]/", "", $order_by));
 
-            $ct->appsetUserState('com_customtables.orderby_' . $ct->Env->ItemId, $order_by);
+            $ct->app->setUserState('com_customtables.orderby_' . $ct->Env->ItemId, $order_by);
 
             $link = JoomlaBasicMisc::deleteURLQueryOption($link, 'task');
             $link = JoomlaBasicMisc::deleteURLQueryOption($link, 'orderby');

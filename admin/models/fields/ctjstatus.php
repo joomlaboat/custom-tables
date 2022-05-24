@@ -9,6 +9,8 @@
  **/
 
 // no direct access
+use Joomla\CMS\Language\Text;
+
 defined('_JEXEC') or die('Restricted access');
 
 jimport('joomla.form.helper');
@@ -30,9 +32,9 @@ class JFormFieldCTJStatus extends JFormFieldList
     {
         $options = array();
 
-        $options[] = JHtml::_('select.option', -2, JText::_('JTRASHED'));
-        $options[] = JHtml::_('select.option', 0, JText::_('JUNPUBLISHED'));
-        $options[] = JHtml::_('select.option', 1, JText::_('JPUBLISHED'));
+        $options[] = JHtml::_('select.option', -2, Text::_('JTRASHED'));
+        $options[] = JHtml::_('select.option', 0, Text::_('JUNPUBLISHED'));
+        $options[] = JHtml::_('select.option', 1, Text::_('JPUBLISHED'));
 
         return $options;
     }

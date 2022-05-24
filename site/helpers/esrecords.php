@@ -373,8 +373,8 @@ class JHTMLESRecords
         return $htmlresult;
     }
 
-    static protected function getMultiBox(&$ct, &$ct_noFilter, $valuearray, $field,
-                                          $control_name, $style, $cssclass, $attribute, $establename, $dynamic_filter, $langPostfix = '', $place_holder = ''): string
+    static protected function getMultiBox(CT &$ct, &$ct_noFilter, $valuearray, $field,
+                                             $control_name, $style, $cssclass, $attribute, $establename, $dynamic_filter, $langPostfix = '', $place_holder = ''): string
     {
         $real_field_row = Fields::getFieldRowByName($field, '', $establename);
 

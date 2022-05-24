@@ -9,6 +9,8 @@
  **/
 
 // No direct access to this file
+use Joomla\CMS\Language\Text;
+
 defined('_JEXEC') or die('Restricted access');
 
 ?>
@@ -22,10 +24,10 @@ defined('_JEXEC') or die('Restricted access');
         <?php echo JHtml::_('grid.sort', 'COM_CUSTOMTABLES_LAYOUTS_LAYOUTNAME_LABEL', 'a.layoutname', $this->listDirn, $this->listOrder); ?>
     </th>
     <th class="nowrap hidden-phone">
-        <?php echo JText::_('COM_CUSTOMTABLES_LAYOUTS_LAYOUTTYPE_LABEL'); ?>
+        <?php echo Text::_('COM_CUSTOMTABLES_LAYOUTS_LAYOUTTYPE_LABEL'); ?>
     </th>
     <th class="nowrap hidden-phone">
-        <?php echo JText::_('COM_CUSTOMTABLES_LAYOUTS_TABLEID_LABEL'); ?>
+        <?php echo Text::_('COM_CUSTOMTABLES_LAYOUTS_TABLEID_LABEL'); ?>
     </th>
     <?php if ($this->canState): ?>
         <th width="10" class="nowrap center">
@@ -33,22 +35,22 @@ defined('_JEXEC') or die('Restricted access');
         </th>
     <?php else: ?>
         <th width="10" class="nowrap center">
-            <?php echo JText::_('COM_CUSTOMTABLES_LAYOUTS_STATUS'); ?>
+            <?php echo Text::_('COM_CUSTOMTABLES_LAYOUTS_STATUS'); ?>
         </th>
     <?php endif; ?>
     <th width="5" class="nowrap center hidden-phone">
         <?php echo JHtml::_('grid.sort', 'COM_CUSTOMTABLES_LAYOUTS_ID', 'a.id', $this->listDirn, $this->listOrder); ?>
     </th>
     <th width="5" class="nowrap center hidden-phone">
-        <?php echo JText::_('COM_CUSTOMTABLES_LAYOUTS_SIZE'); ?>
+        <?php echo Text::_('COM_CUSTOMTABLES_LAYOUTS_SIZE'); ?>
     </th>
 
     <th width="5" class="nowrap center hidden-phone">
-        <?php echo JText::_('COM_CUSTOMTABLES_LAYOUTS_MODIFIEDBY'); ?>
+        <?php echo Text::_('COM_CUSTOMTABLES_LAYOUTS_MODIFIEDBY'); ?>
     </th>
 
     <th width="5" class="nowrap center hidden-phone">
-        <?php echo JText::_('COM_CUSTOMTABLES_LAYOUTS_MODIFIED'); ?>
+        <?php echo Text::_('COM_CUSTOMTABLES_LAYOUTS_MODIFIED'); ?>
     </th>
 
     <th scope="col" style="text-align:center;">

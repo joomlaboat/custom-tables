@@ -13,6 +13,7 @@ defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\Fields;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Version;
 
 class JoomlaBasicMisc
@@ -450,7 +451,7 @@ class JoomlaBasicMisc
         return $resArr;
     }
 
-public static function processValue($field, &$ct, &$row)
+    public static function processValue($field, &$ct, &$row)
     {
         $p = strpos($field, '->');
         if (!($p === false)) {
@@ -557,7 +558,7 @@ public static function processValue($field, &$ct, &$row)
     public static function JTextExtended($text, $value = null)
     {
         if (is_null($value))
-            $new_text = JText::_($text);
+            $new_text = Text::_($text);
         else
             $new_text = JText::sprintf($text, $value);
 
@@ -574,7 +575,7 @@ public static function processValue($field, &$ct, &$row)
                 $lang->load($extension, JPATH_BASE);
 
                 if (is_null($value))
-                    return JText::_($text);
+                    return Text::_($text);
                 else
                     return JText::sprintf($text, $value);
             } else

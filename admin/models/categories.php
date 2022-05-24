@@ -12,19 +12,22 @@
 defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 use Joomla\Registry\Registry;
 
 // import Joomla modelform library
 jimport('joomla.application.component.modeladmin');
 
 use CustomTables\CT;
+use Joomla\String\StringHelper;
+use Joomla\Utilities\ArrayHelper;
 
 /**
  * Customtables Categories Model
  */
 class CustomtablesModelCategories extends JModelAdmin
 {
-    var $ct;
+    var CT $ct;
     /**
      * The type alias for this content type.
      *
@@ -174,7 +177,7 @@ class CustomtablesModelCategories extends JModelAdmin
     {
         // Sanitize ids.
         $pks = array_unique($pks);
-        JArrayHelper::toInteger($pks);
+        ArrayHelper::toInteger($pks);
 
         // Remove any values of zero.
         if (array_search(0, $pks, true)) {
@@ -182,7 +185,7 @@ class CustomtablesModelCategories extends JModelAdmin
         }
 
         if (empty($pks)) {
-            $this->setError(JText::_('JGLOBAL_NO_ITEM_SELECTED'));
+            $this->setError(Text::_('JGLOBAL_NO_ITEM_SELECTED'));
             return false;
         }
 
@@ -198,7 +201,7 @@ class CustomtablesModelCategories extends JModelAdmin
         $this->batchSet = true;
 
         if (!$this->canDo->get('core.batch')) {
-            $this->setError(JText::_('JLIB_APPLICATION_ERROR_INSUFFICIENT_BATCH_INFORMATION'));
+            $this->setError(Text::_('JLIB_APPLICATION_ERROR_INSUFFICIENT_BATCH_INFORMATION'));
             return false;
         }
 
@@ -210,7 +213,7 @@ class CustomtablesModelCategories extends JModelAdmin
         $this->tagsObserver = $this->table->getObserverOfClass('JTableObserverTags');
 
         if (!empty($commands['move_copy'])) {
-            $cmd = JArrayHelper::getValue($commands, 'move_copy', 'c');
+            $cmd = ArrayHelper::getValue($commands, 'move_copy', 'c');
 
             if ($cmd == 'c') {
                 $result = $this->batchCopy($commands, $pks, $contexts);
@@ -230,7 +233,7 @@ class CustomtablesModelCategories extends JModelAdmin
         }
 
         if (!$done) {
-            $this->setError(JText::_('JLIB_APPLICATION_ERROR_INSUFFICIENT_BATCH_INFORMATION'));
+            $this->setError(Text::_('JLIB_APPLICATION_ERROR_INSUFFICIENT_BATCH_INFORMATION'));
 
             return false;
         }
@@ -398,7 +401,7 @@ class CustomtablesModelCategories extends JModelAdmin
         $table = $this->getTable();
 
         while ($table->load(array($field => $value))) {
-            $value = JString::increment($value);
+            $value = StringHelper::increment($value);
         }
 
         return $value;
@@ -415,7 +418,7 @@ class CustomtablesModelCategories extends JModelAdmin
         }
 
         if (!$this->canDo->get('core.edit') && !$this->canDo->get('core.batch')) {
-            $this->setError(JText::_('JLIB_APPLICATION_ERROR_BATCH_CANNOT_EDIT'));
+            $this->setError(Text::_('JLIB_APPLICATION_ERROR_BATCH_CANNOT_EDIT'));
             return false;
         }
 
@@ -429,7 +432,7 @@ class CustomtablesModelCategories extends JModelAdmin
         // Parent exists so we proceed
         foreach ($pks as $pk) {
             if (!$this->user->authorise('core.edit', $contexts[$pk])) {
-                $this->setError(JText::_('JLIB_APPLICATION_ERROR_BATCH_CANNOT_EDIT'));
+                $this->setError(Text::_('JLIB_APPLICATION_ERROR_BATCH_CANNOT_EDIT'));
                 return false;
             }
 
@@ -687,7 +690,7 @@ class CustomtablesModelCategories extends JModelAdmin
         $table = $this->getTable();
 
         while ($table->load(array('title' => $title))) {
-            $title = JString::increment($title);
+            $title = StringHelper::increment($title);
         }
 
         return $title;

@@ -25,7 +25,7 @@ jimport('joomla.application.component.modellist');
  */
 class CustomtablesModelListofRecords extends JModelList
 {
-    var $ct;
+    var CT $ct;
     var $ordering_realfieldname;
 
     public function __construct($config = array())

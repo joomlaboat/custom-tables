@@ -24,7 +24,7 @@ class Twig_Fields_Tags
     var CT $ct;
     var bool $isTwig;
 
-    function __construct(&$ct, bool $isTwig = true)
+    function __construct(CT &$ct, bool $isTwig = true)
     {
         $this->ct = &$ct;
         $this->isTwig = $isTwig;
@@ -163,7 +163,7 @@ class Twig_Url_Tags
     var bool $isTwig;
     var Input $jinput;
 
-    function __construct(&$ct, $isTwig = true)
+    function __construct(CT &$ct, $isTwig = true)
     {
         $this->ct = &$ct;
         $this->isTwig = $isTwig;

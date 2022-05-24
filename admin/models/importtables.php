@@ -24,7 +24,7 @@ require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARAT
 
 class CustomTablesModelImporttables extends JModelList
 {
-    var $ct;
+    var CT $ct;
 
     function __construct()
     {

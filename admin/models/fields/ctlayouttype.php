@@ -14,6 +14,7 @@ defined('_JEXEC') or die('Restricted access');
 use CustomTables\CT;
 use CustomTables\Layouts;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 
 jimport('joomla.form.helper');
 JFormHelper::loadFieldClass('list');
@@ -60,7 +61,7 @@ class JFormFieldCTLayoutType extends JFormFieldList
                 if ((int)$layouttype != 0) {
                     $text = $translations[$layouttype];
                     // Now add the layouttype and its text to the options array
-                    $options[] = JHtml::_('select.option', $layouttype, JText::_($text));
+                    $options[] = JHtml::_('select.option', $layouttype, Text::_($text));
                 }
             }
         }

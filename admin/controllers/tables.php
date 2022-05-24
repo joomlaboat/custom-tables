@@ -11,6 +11,7 @@
 
 // No direct access to this file
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 
 defined('_JEXEC') or die('Restricted access');
 
@@ -49,7 +50,7 @@ class CustomtablesControllerTables extends JControllerForm
      */
     public function batch($model = null)
     {
-        JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
+        JSession::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
         // Set the model
         $model = $this->getModel('Tables', '', array());
@@ -292,13 +293,13 @@ class CustomtablesControllerTables extends JControllerForm
         $download_link=$this->getModel()->export($pks);
         if($download_link!='')
         {
-            $msg = JText::_( 'Table(s) Exported Successfully' );
+            $msg = Text::_( 'Table(s) Exported Successfully' );
             if($download_link!='')
                 $msg.=' <a href="'.$download_link.'" target="_blank">[download]</a>';
         }
         else
         {
-            $msg = JText::_( 'COM_CUSTOMTABLES_TABLES_UNABLETOEXPORT' );
+            $msg = Text::_( 'COM_CUSTOMTABLES_TABLES_UNABLETOEXPORT' );
         }
 
         $link 	= 'index.php?option=com_customtables&view=listoftables';

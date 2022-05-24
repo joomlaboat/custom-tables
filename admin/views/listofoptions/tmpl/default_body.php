@@ -34,7 +34,7 @@ foreach ($rows as $row) :
             <?php /* if (  JTable::isCheckedOut($this->user->get('id'), $row->checked_out ) ) : ?>
 				<?php echo $row->treename; ?>
 				<?php else : ?>
-				<span class="editlinktip hasTip" title="<?php echo JText::_( 'Edit Menu' );?>::<?php echo $row->treename; ?>">
+				<span class="editlinktip hasTip" title="<?php echo Text::_( 'Edit Menu' );?>::<?php echo $row->treename; ?>">
 
 				*/ ?>
 

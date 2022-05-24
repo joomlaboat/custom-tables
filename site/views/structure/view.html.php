@@ -9,13 +9,15 @@
  **/
 
 // no direct access
+use CustomTables\CT;
+
 defined('_JEXEC') or die('Restricted access');
 
 jimport('joomla.application.component.view');
 
 class CustomTablesViewStructure extends JView
 {
-    var $ct;
+    var CT $ct;
 
     function display($tpl = null)
     {

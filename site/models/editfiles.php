@@ -24,49 +24,42 @@ JTable::addIncludePath(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTO
 class CustomTablesModelEditFiles extends JModelLegacy
 {
     var CT $ct;
-    var $row;
+    var array $row;
     var $filemethods;
-    var $listing_id;
     var $fileboxname;
     var $FileBoxTitle;
     var $fileboxfolder;
     var $fileboxfolderweb;
-    var $maxfilesize;
+    var int $maxfilesize;
     var $fileboxtablename;
-    var $allowedExtensions;
+    var string $allowedExtensions;
+    var Field $field;
 
     function __construct()
     {
         $this->ct = new CT;
+        $this->ct->setParams();
 
         parent::__construct();
 
         $this->allowedExtensions = 'doc docx pdf txt xls xlsx psd ppt pptx webp png mp3 jpg jpeg csv accdb';
 
-        $app = Factory::getApplication();
-        $params = $app->getParams();
-
-        $this->ct->Env->menu_params = $params;
-
         $this->maxfilesize = JoomlaBasicMisc::file_upload_max_size();
-
         $this->filemethods = new CustomTablesFileMethods;
 
-        $this->ct->getTable($params->get('establename'), null);
+        $this->ct->getTable($this->ct->Params->tableName, null);
 
         if ($this->ct->Table->tablename == '') {
             Factory::getApplication()->enqueueMessage('Table not selected (63).', 'error');
-            return;
+            return false;
         }
 
-        $this->listing_id = $this->ct->Env->jinput->getInt("listing_id", 0);
         if (!$this->ct->Env->jinput->getCmd('fileboxname'))
             return false;
 
-
         $this->fileboxname = $this->ct->Env->jinput->getCmd('fileboxname');
 
-        $this->row = $this->ct->Table->loadRecord($this->listing_id);
+        $this->row = $this->ct->Table->loadRecord($this->ct->Params->listing_id);
 
         if (!$this->getFileBox())
             return false;
@@ -74,9 +67,10 @@ class CustomTablesModelEditFiles extends JModelLegacy
         $this->fileboxtablename = '#__customtables_filebox_' . $this->ct->Table->tablename . '_' . $this->fileboxname;
 
         parent::__construct();
+        return true;
     }
 
-    function getFileBox()
+    function getFileBox(): bool
     {
         $fieldrow = Fields::FieldRowByName($this->fileboxname, $this->ct->Table->fields);
         $this->field = new Field($this->ct, $fieldrow, $this->row);
@@ -97,11 +91,9 @@ class CustomTablesModelEditFiles extends JModelLegacy
     {
         // get database handle
         $db = Factory::getDBO();
-        $query = 'SELECT fileid, file_ext FROM ' . $this->fileboxtablename . ' WHERE listingid=' . $this->listing_id . ' ORDER BY fileid';
+        $query = 'SELECT fileid, file_ext FROM ' . $this->fileboxtablename . ' WHERE listingid=' . $this->ct->Params->listing_id . ' ORDER BY fileid';
         $db->setQuery($query);
-        $rows = $db->loadObjectList();
-
-        return $rows;
+        return $db->loadObjectList();
     }
 
     function delete(): bool
@@ -117,13 +109,13 @@ class CustomTablesModelEditFiles extends JModelLegacy
 
                 CustomTablesFileMethods::DeleteExistingFileBoxFile($this->fileboxfolder, $this->ct->Table->tableid, $this->fileboxname, $fileid, $file_ext);
 
-                $query = 'DELETE FROM ' . $this->fileboxtablename . ' WHERE listingid=' . $this->listing_id . ' AND fileid=' . $fileid;
+                $query = 'DELETE FROM ' . $this->fileboxtablename . ' WHERE listingid=' . $this->ct->Params->listing_id . ' AND fileid=' . $fileid;
                 $db->setQuery($query);
                 $db->execute();
             }
         }
 
-        $this->ct->Table->saveLog($this->listing_id, 9);
+        $this->ct->Table->saveLog($this->ct->Params->listing_id, 9);
 
         return true;
     }
@@ -168,7 +160,7 @@ class CustomTablesModelEditFiles extends JModelLegacy
 
         unlink($uploadedfile);
 
-        $this->ct->Table->saveLog($this->listing_id, 8);
+        $this->ct->Table->saveLog($this->ct->Params->listing_id, 8);
         return true;
     }
 
@@ -181,12 +173,12 @@ class CustomTablesModelEditFiles extends JModelLegacy
             . 'file_ext="' . $file_ext . '", '
             . 'ordering=0, '
             . 'title="", '
-            . 'listingid=' . $this->listing_id;
+            . 'listingid=' . $this->ct->Params->listing_id;
 
         $db->setQuery($query);
         $db->execute();
 
-        $query = ' SELECT fileid FROM ' . $this->fileboxtablename . ' WHERE listingid=' . $this->listing_id . ' ORDER BY fileid DESC LIMIT 1';
+        $query = ' SELECT fileid FROM ' . $this->fileboxtablename . ' WHERE listingid=' . $this->ct->Params->listing_id . ' ORDER BY fileid DESC LIMIT 1';
         $db->setQuery($query);
 
         $rows = $db->loadObjectList();

@@ -35,7 +35,7 @@ if ($this->ordering_realfieldname != '') {
             <?php if (empty($this->items)): ?>
                 <?php //echo $this->loadTemplate('toolbar');?>
                 <div class="alert alert-no-items">
-                    <?php //echo JText::_('JGLOBAL_NO_MATCHING_RESULTS'); ?>
+                    <?php //echo Text::_('JGLOBAL_NO_MATCHING_RESULTS'); ?>
                 </div>
             <?php else : ?>
 
@@ -50,7 +50,7 @@ if ($this->ordering_realfieldname != '') {
                 'bootstrap.renderModal',
                 'collapseModal',
                 array(
-                    'title' => JText::_('COM_CUSTOMTABLES_LISTOFRECORDS_BATCH_OPTIONS'),
+                    'title' => Text::_('COM_CUSTOMTABLES_LISTOFRECORDS_BATCH_OPTIONS'),
                     'footer' => $this->loadTemplate('batch_footer')
                 ),
                 $this->loadTemplate('batch_body')

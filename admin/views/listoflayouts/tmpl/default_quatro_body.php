@@ -10,6 +10,7 @@
 
 // No direct access to this file access');
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 
 defined('_JEXEC') or die('Restricted access');
 
@@ -51,7 +52,7 @@ $edit = "index.php?option=com_customtables&view=listoflayouts&task=layouts.edit"
         </td>
 
         <td scope="row">
-            <?php echo JText::_($item->layouttype); ?>
+            <?php echo Text::_($item->layouttype); ?>
         </td>
 
         <td scope="row">

@@ -42,7 +42,7 @@ class Field
     var array $fieldrow;
     var string $prefix; //part of the table class
 
-    function __construct(&$ct, $fieldrow, $row = [])
+    function __construct(CT &$ct, $fieldrow, $row = [])
     {
         $this->ct = $ct;
 
@@ -205,7 +205,7 @@ class Fields
         return $list;
     }
 
-    public static function addField(&$ct, $realtablename, $realfieldname, $fieldtype, $PureFieldType, $fieldtitle)
+    public static function addField(CT &$ct, $realtablename, $realfieldname, $fieldtype, $PureFieldType, $fieldtitle)
     {
         if ($PureFieldType == '')
             return '';
@@ -293,7 +293,7 @@ class Fields
         return true;
     }
 
-    public static function deleteField_byID(&$ct, $fieldid)
+    public static function deleteField_byID(CT &$ct, $fieldid)
     {
         $db = Factory::getDBO();
 

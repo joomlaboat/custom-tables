@@ -11,11 +11,12 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\CT;
 use Joomla\CMS\Factory;
 
 class CT_FieldTypeTag_log
 {
-    public static function getLogVersionLinks(&$ct, $rowValue, &$row)
+    public static function getLogVersionLinks(CT &$ct, $rowValue, &$row)
     {
         $current_json_data_size = CT_FieldTypeTag_log::getVersionDataSize($ct, $row);
 
@@ -142,7 +143,7 @@ class CT_FieldTypeTag_log
     }
 
 
-    public static function getVersionDataSize(&$ct, $decoded_data_row)
+    public static function getVersionDataSize(CT &$ct, $decoded_data_row)
     {
         $version_size = 0;
 

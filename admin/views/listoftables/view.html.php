@@ -12,6 +12,7 @@
 // No direct access to this file
 \defined('_JEXEC') or die;
 
+use CustomTables\CT;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\Language\Text;
@@ -32,7 +33,7 @@ class CustomtablesViewListoftables extends JViewLegacy
      * Listoftables view display method
      * @return void
      */
-    var $ct;
+    var CT $ct;
 
     var $languages;
 
@@ -123,7 +124,7 @@ class CustomtablesViewListoftables extends JViewLegacy
 
     protected function addToolBar_3()
     {
-        JToolBarHelper::title(JText::_('COM_CUSTOMTABLES_LISTOFTABLES'), 'joomla');
+        JToolBarHelper::title(Text::_('COM_CUSTOMTABLES_LISTOFTABLES'), 'joomla');
         JHtmlSidebar::setAction('index.php?option=com_customtables&view=listoftables');
         JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/fields');
 
@@ -153,7 +154,7 @@ class CustomtablesViewListoftables extends JViewLegacy
                 // Get the toolbar object instance
                 $bar = JToolBar::getInstance('toolbar');
                 // set the batch button name
-                $title = JText::_('JTOOLBAR_BATCH');
+                $title = Text::_('JTOOLBAR_BATCH');
                 // Instantiate a new JLayoutFile instance and render the batch button
                 $layout = new JLayoutFile('joomla.toolbar.batch');
                 // add the button to the page
@@ -191,7 +192,7 @@ class CustomtablesViewListoftables extends JViewLegacy
 */
         if ($this->canState) {
             JHtmlSidebar::addFilter(
-                JText::_('JOPTION_SELECT_PUBLISHED'),
+                Text::_('JOPTION_SELECT_PUBLISHED'),
                 'filter_published',
                 JHtml::_('select.options', JHtml::_('jgrid.publishedOptions'), 'value', 'text', $this->state->get('filter.published'), true)
             );
@@ -200,7 +201,7 @@ class CustomtablesViewListoftables extends JViewLegacy
             if ($this->canBatch)
             {
                 JHtmlBatch_::addListSelection(
-                    JText::_('COM_CUSTOMTABLES_KEEP_ORIGINAL_STATE'),
+                    Text::_('COM_CUSTOMTABLES_KEEP_ORIGINAL_STATE'),
                     'batch[published]',
                     JHtml::_('select.options', JHtml::_('jgrid.publishedOptions', array('all' => false)), 'value', 'text', '', true)
                 );
@@ -212,7 +213,7 @@ class CustomtablesViewListoftables extends JViewLegacy
         $CTCategoryOptions = $CTCategory->getOptions(false); // works only if you set your field getOptions on public!!
 
         JHtmlSidebar::addFilter(
-            JText::_('COM_CUSTOMTABLES_TABLES_CATEGORY_SELECT'),
+            Text::_('COM_CUSTOMTABLES_TABLES_CATEGORY_SELECT'),
             'filter_tablecategory',
             JHtml::_('select.options', $CTCategoryOptions, 'value', 'text', $this->state->get('filter.tablecategory'))
         );
@@ -277,7 +278,7 @@ class CustomtablesViewListoftables extends JViewLegacy
         if (!isset($this->document)) {
             $this->document = Factory::getDocument();
         }
-        $this->document->setTitle(JText::_('COM_CUSTOMTABLES_LISTOFTABLES'));
+        $this->document->setTitle(Text::_('COM_CUSTOMTABLES_LISTOFTABLES'));
     }
 
     /**
@@ -288,10 +289,10 @@ class CustomtablesViewListoftables extends JViewLegacy
     protected function getSortFields()
     {
         return array(
-            'a.published' => JText::_('JSTATUS'),
-            'a.tablename' => JText::_('COM_CUSTOMTABLES_TABLES_TABLENAME_LABEL'),
-            'a.tablecategory' => JText::_('COM_CUSTOMTABLES_TABLES_TABLECATEGORY_LABEL'),
-            'a.id' => JText::_('JGRID_HEADING_ID')
+            'a.published' => Text::_('JSTATUS'),
+            'a.tablename' => Text::_('COM_CUSTOMTABLES_TABLES_TABLENAME_LABEL'),
+            'a.tablecategory' => Text::_('COM_CUSTOMTABLES_TABLES_TABLECATEGORY_LABEL'),
+            'a.id' => Text::_('JGRID_HEADING_ID')
         );
     }
 

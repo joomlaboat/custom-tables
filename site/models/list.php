@@ -13,6 +13,8 @@ defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\Fields;
 use \Joomla\CMS\Factory;
+use Joomla\String\StringHelper;
+use Joomla\Utilities\ArrayHelper;
 
 jimport('joomla.html.html.menu');
 
@@ -60,7 +62,7 @@ class CustomTablesModelList extends JModel
             $limitstart = $mainframe->getUserStateFromRequest($context . 'limitstart', 'limitstart', 0, 'int');
             $levellimit = $mainframe->getUserStateFromRequest($context . 'levellimit', 'levellimit', 10, 'int');
             $search = $mainframe->getUserStateFromRequest($context . 'search', 'search', '', 'string');
-            $search = JString::strtolower($search);
+            $search = StringHelper::strtolower($search);
         }
 
         $where = array();
@@ -242,7 +244,7 @@ class CustomTablesModelList extends JModel
 
 
         $order = Factory::getApplication()->input->post->get('order', array(), 'array');
-        JArrayHelper::toInteger($order);
+        ArrayHelper::toInteger($order);
 
 
         // update ordering values
@@ -283,7 +285,7 @@ class CustomTablesModelList extends JModel
      */
     function delete($tree_ids)
     {
-        JArrayHelper::toInteger($tree_ids);
+        ArrayHelper::toInteger($tree_ids);
 
         if (!empty($tree_ids)) {
 
@@ -350,7 +352,7 @@ class CustomTablesModelList extends JModel
      */
     function _rebuildSubLevel($cid = array(0), $level = 0)
     {
-        JArrayHelper::toInteger($cid, array(0));
+        ArrayHelper::toInteger($cid, array(0));
         $db = Factory::getDBO();
         $tree_ids = implode(',', $cid);
         $cids = array();

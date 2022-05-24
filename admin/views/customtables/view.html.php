@@ -16,6 +16,7 @@ jimport('joomla.application.component.view');
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
+use Joomla\CMS\Language\Text;
 
 /**
  * Customtables View class
@@ -57,7 +58,7 @@ class CustomtablesViewCustomtables extends JViewLegacy
     {
         $canDo = ContentHelper::getActions('com_customtables', '');
         //$canDo = CustomtablesHelper::getActions('customtables');
-        JToolBarHelper::title(JText::_('COM_CUSTOMTABLES_DASHBOARD'), 'grid-2');
+        JToolBarHelper::title(Text::_('COM_CUSTOMTABLES_DASHBOARD'), 'grid-2');
 
         // set help url for this view if found
         /*
@@ -86,7 +87,7 @@ class CustomtablesViewCustomtables extends JViewLegacy
         $document->addStyleSheet(JURI::root(true) . "/components/com_customtables/libraries/customtables/media/css/dashboard.css");
 
         // set page title
-        $document->setTitle(JText::_('COM_CUSTOMTABLES_DASHBOARD'));
+        $document->setTitle(Text::_('COM_CUSTOMTABLES_DASHBOARD'));
 
         // add manifest to page JavaScript
         $document->addScriptDeclaration("var manifest = jQuery.parseJSON('" . json_encode($this->manifest) . "');", "text/javascript");

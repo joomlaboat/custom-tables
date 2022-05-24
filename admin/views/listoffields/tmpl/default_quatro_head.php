@@ -42,22 +42,22 @@ HTMLHelper::_('behavior.multiselect');
     </th>
 
     <th scope="col">
-        <?php echo JText::_('COM_CUSTOMTABLES_FIELDS_FIELDTITLE_LABEL'); ?>
+        <?php echo Text::_('COM_CUSTOMTABLES_FIELDS_FIELDTITLE_LABEL'); ?>
     </th>
 
     <th scope="col">
         <?php echo HTMLHelper::_('searchtools.sort', 'COM_CUSTOMTABLES_FIELDS_TYPE_LABEL', 'a.type', $this->listDirn, $this->listOrder); ?>
     </th>
     <th scope="col">
-        <?php echo JText::_('COM_CUSTOMTABLES_FIELDS_TYPEPARAMS_LABEL'); ?>
+        <?php echo Text::_('COM_CUSTOMTABLES_FIELDS_TYPEPARAMS_LABEL'); ?>
     </th>
 
     <th scope="col">
-        <?php echo JText::_('COM_CUSTOMTABLES_FIELDS_ISREQUIRED_LABEL'); ?>
+        <?php echo Text::_('COM_CUSTOMTABLES_FIELDS_ISREQUIRED_LABEL'); ?>
     </th>
 
     <th scope="col">
-        <?php echo JText::_('COM_CUSTOMTABLES_FIELDS_TABLEID_LABEL'); ?>
+        <?php echo Text::_('COM_CUSTOMTABLES_FIELDS_TABLEID_LABEL'); ?>
     </th>
 
     <th scope="col" class="text-center d-none d-md-table-cell">

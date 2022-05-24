@@ -8,6 +8,8 @@
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
 
+use Joomla\CMS\Language\Text;
+
 defined('_JEXEC') or die('Restricted access');
 
 JHTML::addIncludePath(JPATH_ADMINISTRATOR . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'helpers');
@@ -16,7 +18,7 @@ $isNew = $this->item->id == 0;
 
 <form id="adminForm" action="index.php" method="post" class="form-inline" enctype="multipart/form-data">
 
-    <legend><?php echo JText::_('Custom Tables - Option Details'); ?></legend>
+    <legend><?php echo Text::_('Custom Tables - Option Details'); ?></legend>
 
     <div class="form-horizontal">
         <div class="control-group">

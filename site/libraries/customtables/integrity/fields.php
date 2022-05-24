@@ -13,8 +13,10 @@ namespace CustomTables\Integrity;
 
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\CT;
 use CustomTables\Fields;
 
+use CustomTables\IntegrityChecks;
 use \Joomla\CMS\Factory;
 
 use \ESTables;
@@ -22,9 +24,9 @@ use \ESTables;
 use CustomTables\Integrity\IntegrityFieldType_FileBox;
 use CustomTables\Integrity\IntegrityFieldType_Gallery;
 
-class IntegrityFields extends \CustomTables\IntegrityChecks
+class IntegrityFields extends IntegrityChecks
 {
-    public static function checkFields(&$ct, $link)
+    public static function checkFields(CT &$ct, $link)
     {
         if (strpos($link, '?') === false)
             $link .= '?';
@@ -241,7 +243,7 @@ class IntegrityFields extends \CustomTables\IntegrityChecks
         return true;
     }
 
-    public static function addFieldIfNotExists(&$ct, $realtablename, $ExistingFields, $proj_field, $fieldtype, $typeparams)
+    public static function addFieldIfNotExists(CT &$ct, $realtablename, $ExistingFields, $proj_field, $fieldtype, $typeparams)
     {
         if ($fieldtype == 'multilangstring' or $fieldtype == 'multilangtext') {
             $morethanonelang = false;

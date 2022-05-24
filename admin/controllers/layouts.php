@@ -10,6 +10,7 @@
 
 // No direct access to this file
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 
 defined('_JEXEC') or die('Restricted access');
 
@@ -47,7 +48,7 @@ class CustomtablesControllerLayouts extends JControllerForm
      */
     public function batch($model = null)
     {
-        JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
+        JSession::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
         // Set the model
         $model = $this->getModel('Layouts', '', array());

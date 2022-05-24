@@ -19,7 +19,7 @@ use \Joomla\CMS\Factory;
 
 class Forms
 {
-    var $ct;
+    var CT $ct;
 
     function __construct(&$ct)
     {

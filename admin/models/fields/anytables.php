@@ -12,6 +12,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 
 jimport('joomla.form.helper');
 JFormHelper::loadFieldClass('list');
@@ -26,7 +27,7 @@ class JFormFieldAnyTables extends JFormFieldList
     protected function getOptions()
     {
         $options = array();
-        $options[] = JHtml::_('select.option', '', JText::_('COM_CUSTOMTABLES_SELECT'));
+        $options[] = JHtml::_('select.option', '', Text::_('COM_CUSTOMTABLES_SELECT'));
 
         $tables = $this->getListOfExistingTables();
 

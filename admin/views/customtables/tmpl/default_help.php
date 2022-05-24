@@ -9,7 +9,9 @@
  **/
 
 // No direct access to this file
+use Joomla\CMS\Language\Text;
+
 defined('_JEXEC') or die('Restricted access');
 
-echo '<div class="ct_howitworks">' . JText::_('COM_CUSTOMTABLES_HOW_IT_WORKS_DESC') . '</div>';
+echo '<div class="ct_howitworks">' . Text::_('COM_CUSTOMTABLES_HOW_IT_WORKS_DESC') . '</div>';
 

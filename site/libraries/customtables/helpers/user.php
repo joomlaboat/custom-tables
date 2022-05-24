@@ -357,7 +357,7 @@ class CTUser
         return false;
     }
 
-    public static function checkIfRecordBelongsToUser(&$ct, $ug)
+    public static function checkIfRecordBelongsToUser(CT &$ct, $ug)
     {
         if (!isset($ct->Env->isUserAdministrator))
             return false;

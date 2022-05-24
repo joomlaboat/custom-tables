@@ -66,8 +66,8 @@ class updateImages
         return (int)$recs[0]['c'];
     }
 
-    public static function processImages(&$ct, $fieldrow, array $old_params, array $new_params,
-                                         $startindex, $stepsize, $deleteOriginals = false)
+    public static function processImages(CT &$ct, $fieldrow, array $old_params, array $new_params,
+                                            $startindex, $stepsize, $deleteOriginals = false)
     {
         $db = Factory::getDBO();
         $query = 'SELECT ' . $fieldrow->realfieldname . ' FROM ' . $ct->Table->realtablename . ' WHERE ' . $fieldrow->realfieldname . '>0';

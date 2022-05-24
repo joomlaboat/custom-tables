@@ -10,14 +10,10 @@
 
 namespace CustomTables;
 
-use CustomTables\CT;
-use CustomTables\Fields;
-use CustomTables\IntegrityChecks;
-use \Joomla\CMS\Factory;
-use CustomTables\Layouts;
-use \ESTables;
-use \JoomlaBasicMisc;
-use \JTableNested;
+use Joomla\CMS\Factory;
+use ESTables;
+use JoomlaBasicMisc;
+use JTableNested;
 
 // no direct access
 defined('_JEXEC') or die('Restricted access');
@@ -42,12 +38,12 @@ class ImportTables
         }
     }
 
-    public static function processContent(&$ct, $data, $menutype, &$msg, $category = '', $importfields = true, $importlayouts = true, $importmenu = true)
+    public static function processContent(CT &$ct, $data, $menutype, &$msg, $category = '', $importfields = true, $importlayouts = true, $importmenu = true)
     {
         $keyword = '<customtablestableexport>';
-        if (strpos($data, $keyword) === false) {
+        if (!str_contains($data, $keyword)) {
             $keyword = '<extrasearchtableexport>';
-            if (strpos($data, $keyword) === false) {
+            if (!str_contains($data, $keyword)) {
                 $msg = 'Uploaded file/content does not contain CustomTables table structure data.';
                 return false;
             }
@@ -59,7 +55,7 @@ class ImportTables
         return ImportTables::processData($ct, $jsondata, $menutype, $msg, $category, $importfields, $importlayouts, $importmenu);
     }
 
-    protected static function processData(&$ct, $jsondata, $menutype, &$msg, $category, $importfields, $importlayouts, $importmenu)
+    protected static function processData(CT &$ct, $jsondata, $menutype, &$msg, $category, $importfields, $importlayouts, $importmenu)
     {
         foreach ($jsondata as $table) {
             $tableid = ImportTables::processTable($table['table'], $msg, $category);
@@ -96,7 +92,7 @@ class ImportTables
     protected static function processTable(&$table_new, &$msg, $categoryname)
     {
         //This function creates the table and returns table's id.
-        //If table with same name already exists then existing table will be updated and it's ID will be returned.
+        //If table with same name already exists then existing table will be updated, and it's ID will be returned.
 
         $db = Factory::getDBO();
         $tablename = $table_new['tablename'];
@@ -109,7 +105,7 @@ class ImportTables
             //Lets update it
             ImportTables::updateRecords('tables', $table_new, $table_old, true, ['categoryname']);
         } else {
-            //Create table reacord
+            //Create table record
             $tableid = ImportTables::insertRecords('tables', $table_new, true, ['categoryname']);
         }
 
@@ -186,10 +182,7 @@ class ImportTables
     {
         $ok = true;
 
-        //$extraexceptions=['layout_catalog','layout_details','layout_edit','layout_email','recordaddednote','itemaddedtext','tablecategory','hidden'];
-        //$exceptions=array_merge($exceptions,$extraexceptions);
-
-        if (strpos($key, 'itemaddedtext') !== false)
+        if (str_contains($key, 'itemaddedtext'))
             $ok = false;
 
         if (!$force_id) {
@@ -198,13 +191,13 @@ class ImportTables
         }
 
         for ($k = 3; $k < 11; $k++) {
-            if (strpos($key, '_' . $k) !== false)
+            if (str_contains($key, '_' . $k))
                 $ok = false;
         }
 
-        if (strpos($key, '_1') !== false)
+        if (str_contains($key, '_1'))
             $fieldname = str_replace('_1', '', $key);
-        elseif (strpos($key, '_2') !== false)
+        elseif (str_contains($key, '_2'))
             $fieldname = str_replace('_2', '_es', $key);
         else
             $fieldname = $key;
@@ -263,18 +256,18 @@ class ImportTables
         $core_fields = ['id', 'published'];
 
         foreach ($keys as $key) {
-            $isok = false;
+            $isOk = false;
             $type = null;
 
             if (isset($field_conversion_map[$key])) {
-                $isok = true;
+                $isOk = true;
                 if (is_array($field_conversion_map[$key])) {
                     $fieldname = $field_conversion_map[$key]['name'];
                     $type = $field_conversion_map[$key]['type'];
                 } else
                     $fieldname = $field_conversion_map[$key];
             } elseif (count($field_conversion_map) > 0 and in_array($key, $field_conversion_map)) {
-                $isok = true;
+                $isOk = true;
                 if (in_array($key, $core_fields))
                     $fieldname = $key;
                 else
@@ -282,13 +275,13 @@ class ImportTables
             } else {
                 $fieldname = ImportTables::checkFieldName($key, $force_id, $exceptions);
                 if ($fieldname != '') {
-                    $isok = true;
+                    $isOk = true;
                     if (!in_array($fieldname, $core_fields))
                         $fieldname = $add_field_prefix . $fieldname;
                 }
             }
 
-            if ($isok and !in_array($fieldname, $ignore_fields)) {
+            if ($isOk and !in_array($fieldname, $ignore_fields)) {
                 if (!Fields::checkIfFieldExists($mysqltablename, $fieldname, false)) {
                     //Add field
                     $isLanguageFieldName = Fields::isLanguageFieldName($fieldname);
@@ -414,16 +407,13 @@ class ImportTables
         return true;
     }
 
-    protected static function processField(&$ct, $tableid, $establename, &$field_new, &$msg)
+    protected static function processField(CT &$ct, $tableid, $establename, &$field_new, &$msg)
     {
         //This function creates the table field and returns field's id.
         //If field with same name already exists then existing field will be updated and it's ID will be returned.
 
-        $db = Factory::getDBO();
-
         $field_new['tableid'] = $tableid;//replace tableid
         $esfieldname = $field_new['fieldname'];
-        $fieldid = 0;
 
         $field_old = Fields::getFieldAsocByName($esfieldname, $tableid);
         if (is_array($field_old) and count($field_old) > 0) {
@@ -435,11 +425,6 @@ class ImportTables
             if ($fieldid != 0) {
                 //Field added
                 //Lets create mysql field
-                if (isset($field_new['fieldtitle']))
-                    $fieldtitle = $field_new['fieldtitle'];
-                else
-                    $fieldtitle = $field_new['fieldtitle_1'];
-
                 $PureFieldType = Fields::getPureFieldType($field_new['type'], $field_new['typeparams']);
                 Fields::addField($ct, '#__customtables_table_' . $establename, $ct->Env->field_prefix . $esfieldname, $field_new['type'], $PureFieldType, $field_new['fieldtitle']);
             }
@@ -447,27 +432,23 @@ class ImportTables
         return $fieldid;
     }
 
-    protected static function processLayouts(&$ct, $tableid, $layouts, &$msg)
+    protected static function processLayouts(CT &$ct, $tableid, $layouts, &$msg)
     {
-
         foreach ($layouts as $layout) {
-            $layoutid = ImportTables::processLayout($ct, $tableid, $layout, $msg);
-            if ($layoutid != 0) {
-                //All Good
-            } else {
+            $layoutId = ImportTables::processLayout($ct, $tableid, $layout, $msg);
+            if ($layoutId == 0) {
                 $msg = 'Could not Add or Update layout "' . $layout['layoutname'] . '"';
                 return false;
             }
         }
 
         return true;
-
     }
 
-    protected static function processLayout(&$ct, $tableid, &$layout_new, &$msg)
+    protected static function processLayout(CT &$ct, $tableid, &$layout_new, &$msg)
     {
-        //This function creates layout and returns it's id.
-        //If layout with same name already exists then existing layout will be updated and it's ID will be returned.
+        //This function creates layout and returns its id.
+        //If layout with same name already exists then existing layout will be updated, and it's ID will be returned.
 
         $db = Factory::getDBO();
         $layout_new['tableid'] = $tableid;//replace tableid
@@ -567,7 +548,7 @@ class ImportTables
                 $menuitem_new['level'] = 1;
                 $menuitem_new['menutype'] = $new_menutype_alias;
             } else {
-                $menuitem_new['lft'] = $menuitem_old['lft'];;
+                $menuitem_new['lft'] = $menuitem_old['lft'];
                 $menuitem_new['rgt'] = $menuitem_old['rgt'];
 
                 if ($menuitem_old['parent_id'] != 1)
@@ -626,7 +607,7 @@ class ImportTables
         return $rows[0]['rgt'];
     }
 
-    protected static function getMenuParentID($oldparentid, &$menus)
+    protected static function getMenuParentID($oldparentid, $menus)
     {
         foreach ($menus as $menu) {
             if ($menu[2] == $oldparentid)  // 2 - old id
@@ -636,7 +617,7 @@ class ImportTables
         return 1;// Root
     }
 
-    protected static function processRecords($establename, $records, &$msg)
+    protected static function processRecords($establename, $records): bool
     {
         $mysqltablename = '#__customtables_table_' . $establename;
 
@@ -652,10 +633,10 @@ class ImportTables
         return true;
     }
 
-    public static function addMenu($title, $alias, $link, $menutype_or_title, $extension_name, $access_, $menu_params_string, $home = 0)
+    public static function addMenu($title, $alias, $link, $menutype_or_title, $extension_name, $access_, $menuParamsString, $home = 0)
     {
-        $menutype = JoomlaBasicMisc::slugify($menutype_or_title);
-        ImportTables::addMenutypeIfNotExist($menutype, $menutype_or_title);
+        $menuType = JoomlaBasicMisc::slugify($menutype_or_title);
+        ImportTables::addMenutypeIfNotExist($menuType, $menutype_or_title);
 
         if ((int)$access_ == 0) {
             //Try to find id by name
@@ -683,7 +664,7 @@ class ImportTables
         $menuitem_new['access'] = $access;
         $menuitem_new['language'] = '*';
         $menuitem_new['parent_id'] = 1; //TODO: Add menu parent functionality
-        $menuitem_new['menutype'] = $menutype;
+        $menuitem_new['menutype'] = $menuType;
 
         //if($home==1)
         //OxfordSMSComponents::setAllMenuitemAsNotHome();
@@ -693,7 +674,7 @@ class ImportTables
         $menuitem_new['lft'] = null;
         $menuitem_new['rgt'] = null;
         $menuitem_new['id'] = null;
-        $menuitem_new['params'] = $menu_params_string;
+        $menuitem_new['params'] = $menuParamsString;
 
         if ($extension_name == 'url')
             $component_id = 0;
@@ -702,7 +683,7 @@ class ImportTables
             $component_id = (int)$component['extension_id'];
         }
 
-        $menuitem_new['component_id'] = (int)$component_id;
+        $menuitem_new['component_id'] = $component_id;
         $menuitem_new['alias'] = $alias;
 
         $menuitem_old = ImportTables::getRecordByField('#__menu', 'alias', $alias, false);
@@ -722,6 +703,8 @@ class ImportTables
 
             ImportTables::rebuildMenuTree($menuitem_new);//,'oxford-sms','tos-shared-files',$component_id);
         }
+
+        return true;
     }
 
     public static function addMenutypeIfNotExist($menutype, $menutype_title)
@@ -736,12 +719,10 @@ class ImportTables
             $inserts[] = 'menutype=' . $db->Quote($menutype);
             $inserts[] = 'title=' . $db->Quote($menutype_title);
             $inserts[] = 'description=' . $db->Quote('Menu Type created by CustomTables');
-
-            $menu_types_id = ESTables::insertRecords('#__menu_types', 'id', $inserts);
         }
     }
 
-    public static function rebuildMenuTree(&$menuitem_new)//,$menutype,$menualias,$component_id)
+    public static function rebuildMenuTree($menuitem_new)
     {
         // http://joomla.stackexchange.com/questions/5104/programmatically-add-menu-item-in-component
         // sorts out the lft rgt issue

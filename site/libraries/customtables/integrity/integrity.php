@@ -20,7 +20,7 @@ use CustomTables\Integrity\IntegrityOptions;
 
 class IntegrityChecks
 {
-    public static function check(&$ct, $check_core_tables = true, $check_custom_tables = true)
+    public static function check(CT &$ct, $check_core_tables = true, $check_custom_tables = true): array
     {
         $result = []; //Status array
 

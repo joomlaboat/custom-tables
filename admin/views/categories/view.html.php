@@ -16,6 +16,7 @@ defined('_JEXEC') or die('Restricted access');
 //jimport('joomla.application.component.view');
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Version;
 
 /**
@@ -80,11 +81,9 @@ class CustomtablesViewCategories extends JViewLegacy
     protected function addToolBar()
     {
         Factory::getApplication()->input->set('hidemainmenu', true);
-        $user = Factory::getUser();
-        $userId = $user->id;
         $isNew = $this->item->id == 0;
 
-        JToolbarHelper::title(JText::_($isNew ? 'COM_CUSTOMTABLES_CATEGORIES_NEW' : 'COM_CUSTOMTABLES_CATEGORIES_EDIT'), 'pencil-2 article-add');
+        JToolbarHelper::title(Text::_($isNew ? 'COM_CUSTOMTABLES_CATEGORIES_NEW' : 'COM_CUSTOMTABLES_CATEGORIES_EDIT'), 'pencil-2 article-add');
         // Built the actions for new and existing records.
         if ($this->refid || $this->ref) {
             if ($this->canCreate && $isNew) {
@@ -147,7 +146,7 @@ class CustomtablesViewCategories extends JViewLegacy
         if (!isset($this->document)) {
             $this->document = Factory::getDocument();
         }
-        $this->document->setTitle(JText::_($isNew ? 'COM_CUSTOMTABLES_CATEGORIES_NEW' : 'COM_CUSTOMTABLES_CATEGORIES_EDIT'));
+        $this->document->setTitle(Text::_($isNew ? 'COM_CUSTOMTABLES_CATEGORIES_NEW' : 'COM_CUSTOMTABLES_CATEGORIES_EDIT'));
 
         if ($this->version < 4)
             $this->document->addScript(JURI::root(true) . "/administrator/components/com_customtables/views/categories/submitbutton.js");

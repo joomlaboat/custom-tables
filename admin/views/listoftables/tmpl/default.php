@@ -17,6 +17,7 @@ JHtml::_('dropdown.init');
 JHtml::_('formbehavior.chosen', 'select');
 
 use CustomTables\IntegrityChecks;
+use Joomla\CMS\Language\Text;
 
 ?>
 
@@ -33,7 +34,7 @@ use CustomTables\IntegrityChecks;
             <?php if (empty($this->items)): ?>
                 <?php echo $this->loadTemplate('toolbar'); ?>
                 <div class="alert alert-no-items">
-                    <?php echo JText::_('JGLOBAL_NO_MATCHING_RESULTS'); ?>
+                    <?php echo Text::_('JGLOBAL_NO_MATCHING_RESULTS'); ?>
                 </div>
             <?php else : ?>
                 <?php echo $this->loadTemplate('toolbar'); ?>
@@ -53,7 +54,7 @@ use CustomTables\IntegrityChecks;
                 'bootstrap.renderModal',
                 'collapseModal',
                 array(
-                    'title' => JText::_('COM_CUSTOMTABLES_LISTOFTABLES_BATCH_OPTIONS'),
+                    'title' => Text::_('COM_CUSTOMTABLES_LISTOFTABLES_BATCH_OPTIONS'),
                     'footer' => $this->loadTemplate('batch_footer')
                 ),
                 $this->loadTemplate('batch_body')

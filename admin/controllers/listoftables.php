@@ -16,6 +16,7 @@ defined('_JEXEC') or die('Restricted access');
 jimport('joomla.application.component.controlleradmin');
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 use Joomla\Utilities\ArrayHelper;
 use CustomTables\ExportTables;
 
@@ -52,10 +53,9 @@ class CustomtablesControllerListoftables extends JControllerAdmin
 
             $msg = JText::sprintf($msg, count($cids));
 
-            if ($download_link != '')
-                $msg .= '&nbsp;&nbsp;<a href="' . $download_link . '" target="_blank">Download (Click Save Link As...)</a>';
+            $msg .= '&nbsp;&nbsp;<a href="' . $download_link . '" target="_blank">Download (Click Save Link As...)</a>';
         } else {
-            $msg = JText::_('COM_CUSTOMTABLES_TABLES_UNABLETOEXPORT');
+            $msg = Text::_('COM_CUSTOMTABLES_TABLES_UNABLETOEXPORT');
         }
 
         Factory::getApplication()->enqueueMessage($msg, 'success');

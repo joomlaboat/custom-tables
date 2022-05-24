@@ -35,7 +35,7 @@ class CustomtablesViewListofcategories extends JViewLegacy
      * Listofcategories view display method
      * @return void
      */
-    var $ct;
+    var CT $ct;
     var $isEmptyState = false;
 
     function display($tpl = null)
@@ -121,7 +121,7 @@ class CustomtablesViewListofcategories extends JViewLegacy
 
     protected function addToolBar_3()
     {
-        JToolBarHelper::title(JText::_('COM_CUSTOMTABLES_LISTOFCATEGORIES'), 'joomla');
+        JToolBarHelper::title(Text::_('COM_CUSTOMTABLES_LISTOFCATEGORIES'), 'joomla');
         JHtmlSidebar::setAction('index.php?option=com_customtables&view=listofcategories');
         JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/fields');
 
@@ -151,7 +151,7 @@ class CustomtablesViewListofcategories extends JViewLegacy
                 // Get the toolbar object instance
                 $bar = JToolBar::getInstance('toolbar');
                 // set the batch button name
-                $title = JText::_('JTOOLBAR_BATCH');
+                $title = Text::_('JTOOLBAR_BATCH');
                 // Instantiate a new JLayoutFile instance and render the batch button
                 $layout = new JLayoutFile('joomla.toolbar.batch');
                 // add the button to the page
@@ -186,7 +186,7 @@ class CustomtablesViewListofcategories extends JViewLegacy
 
         if ($this->canState) {
             JHtmlSidebar::addFilter(
-                JText::_('JOPTION_SELECT_PUBLISHED'),
+                Text::_('JOPTION_SELECT_PUBLISHED'),
                 'filter_published',
                 JHtml::_('select.options', JHtml::_('jgrid.publishedOptions'), 'value', 'text', $this->state->get('filter.published'), true)
             );
@@ -195,7 +195,7 @@ class CustomtablesViewListofcategories extends JViewLegacy
             if ($this->canBatch)
             {
                 JHtmlBatch_::addListSelection(
-                    JText::_('COM_CUSTOMTABLES_KEEP_ORIGINAL_STATE'),
+                    Text::_('COM_CUSTOMTABLES_KEEP_ORIGINAL_STATE'),
                     'batch[published]',
                     JHtml::_('select.options', JHtml::_('jgrid.publishedOptions', array('all' => false)), 'value', 'text', '', true)
                 );
@@ -258,7 +258,7 @@ class CustomtablesViewListofcategories extends JViewLegacy
         if (!isset($this->document)) {
             $this->document = Factory::getDocument();
         }
-        $this->document->setTitle(JText::_('COM_CUSTOMTABLES_LISTOFCATEGORIES'));
+        $this->document->setTitle(Text::_('COM_CUSTOMTABLES_LISTOFCATEGORIES'));
     }
 
     /**
@@ -269,9 +269,9 @@ class CustomtablesViewListofcategories extends JViewLegacy
     protected function getSortFields()
     {
         return array(
-            'a.published' => JText::_('JSTATUS'),
-            'a.categoryname' => JText::_('COM_CUSTOMTABLES_CATEGORIES_CATEGORYNAME_LABEL'),
-            'a.id' => JText::_('JGRID_HEADING_ID')
+            'a.published' => Text::_('JSTATUS'),
+            'a.categoryname' => Text::_('COM_CUSTOMTABLES_CATEGORIES_CATEGORYNAME_LABEL'),
+            'a.id' => Text::_('JGRID_HEADING_ID')
         );
     }
 }

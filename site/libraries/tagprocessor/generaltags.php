@@ -11,6 +11,7 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\CT;
 use CustomTables\Fields;
 use CustomTables\Layouts;
 use CustomTables\CTUser;
@@ -20,7 +21,7 @@ use Joomla\CMS\Factory;
 
 class tagProcessor_General
 {
-    public static function process(&$ct, &$pagelayout, &$row)
+    public static function process(CT &$ct, &$pagelayout, &$row)
     {
         tagProcessor_General::TableInfo($ct, $pagelayout);
         $pagelayout = str_replace('{today}', date('Y-m-d', time()), $pagelayout);
@@ -38,7 +39,7 @@ class tagProcessor_General
         $Layouts->processLayoutTag($pagelayout);
     }
 
-    protected static function TableInfo(&$ct, &$pagelayout)
+    protected static function TableInfo(CT &$ct, &$pagelayout)
     {
         tagProcessor_General::tableDesc($ct, $pagelayout, 'table');
         tagProcessor_General::tableDesc($ct, $pagelayout, 'tabletitle', 'title');
@@ -47,7 +48,7 @@ class tagProcessor_General
 
     }
 
-    protected static function tableDesc(&$ct, &$pagelayout, $tag, $default = '')
+    protected static function tableDesc(CT &$ct, &$pagelayout, $tag, $default = '')
     {
         $options = array();
         $fList = JoomlaBasicMisc::getListToReplace($tag, $options, $pagelayout, '{}');
@@ -105,7 +106,7 @@ class tagProcessor_General
         }
     }
 
-    protected static function getUser(&$ct, &$pagelayout, &$row)
+    protected static function getUser(CT &$ct, &$pagelayout, &$row)
     {
         $options = array();
         $fList = JoomlaBasicMisc::getListToReplace('user', $options, $pagelayout, '{}');
@@ -205,7 +206,7 @@ class tagProcessor_General
         }
     }
 
-    protected static function Itemid(&$ct, &$pagelayout)
+    protected static function Itemid(CT &$ct, &$pagelayout)
     {
         $options = array();
         $fList = JoomlaBasicMisc::getListToReplace('itemid', $options, $pagelayout, '{}');
@@ -223,7 +224,7 @@ class tagProcessor_General
         }
     }
 
-    protected static function CurrentURL(&$ct, &$pagelayout)
+    protected static function CurrentURL(CT &$ct, &$pagelayout)
     {
         $jinput = Factory::getApplication()->input;
 
@@ -308,7 +309,7 @@ class tagProcessor_General
         }
     }
 
-    protected static function ReturnTo(&$ct, &$pagelayout)
+    protected static function ReturnTo(CT &$ct, &$pagelayout)
     {
         //Depricated. Use 	{currenturl:base64} instead
         $options = array();
@@ -355,9 +356,8 @@ class tagProcessor_General
 
     }
 
-    public static function getGoBackButton(&$ct, &$layout_code)
+    public static function getGoBackButton(CT &$ct, &$layout_code)
     {
-        $jinput = Factory::getApplication()->input;
         $returnto = base64_decode(Factory::getApplication()->input->get('returnto', '', 'BASE64'));
 
         $options = array();
@@ -370,11 +370,6 @@ class tagProcessor_General
 
             $title = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_GO_BACK');
             $pair = explode(',', $options[$i]);
-
-            if ($pair[0] == '')
-                $image_icon = 'components/com_customtables/libraries/customtables/media/images/icons/arrow_rtl.png';
-            else
-                $image_icon = $pair[0];
 
             if (isset($pair[1]) and $pair[1] != '')
                 $opt = $pair[1];
@@ -399,9 +394,8 @@ class tagProcessor_General
         }
     }
 
-    protected static function renderGoBackButton($returnto, $title, $opt)
+    protected static function renderGoBackButton($returnto, $title, $opt): string
     {
-        $gobackbutton = '';
         if ($returnto == '') {
             $gobackbutton = '';
         } else {

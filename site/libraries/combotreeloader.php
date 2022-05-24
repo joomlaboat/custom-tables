@@ -87,7 +87,7 @@ if ($independat) {
 
 class ESDynamicComboTree
 {
-    var $ct;
+    var CT $ct;
 
     var $ObjectName;
     var $establename;

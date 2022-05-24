@@ -13,13 +13,14 @@ namespace CustomTables\Integrity;
 
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\CT;
 use CustomTables\Fields;
 use \Joomla\CMS\Factory;
 use \ESTables;
 
 class IntegrityFieldType_Gallery extends \CustomTables\IntegrityChecks
 {
-    public static function checkGallery(&$ct, $fieldname)
+    public static function checkGallery(CT &$ct, $fieldname)
     {
         $gallery_table_name = '#__customtables_gallery_' . $ct->Table->tablename . '_' . $fieldname;
 

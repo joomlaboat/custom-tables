@@ -11,7 +11,7 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-use CustomTables\DataTypes\Tree;
+use CustomTables\CT;
 use CustomTables\CTUser;
 
 $types_path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR;
@@ -31,10 +31,8 @@ use Joomla\CMS\Factory;
 
 class tagProcessor_Value
 {
-    public static function processValues(&$ct, &$row, &$htmlresult, $tag_chars = '[]')
+    public static function processValues(CT &$ct, &$row, &$htmlresult, $tag_chars = '[]'): void
     {
-        $fields_used = [];//Fields found in the layout.
-
         $items_to_replace = array();
         $isGalleryLoaded = array();
         $getGalleryRows = array();
@@ -45,13 +43,13 @@ class tagProcessor_Value
             foreach ($ct->Table->fields as $ESField) {
                 $field = new Field($ct, $ESField, $row);
 
-                $replaceitecode = md5(JoomlaBasicMisc::generateRandomString() . (isset($row[$ct->Table->realidfieldname]) ? $row[$ct->Table->realidfieldname] : '') . $field->fieldname);
+                $replaceitecode = md5(JoomlaBasicMisc::generateRandomString() . ($row[$ct->Table->realidfieldname] ?? '') . $field->fieldname);
 
                 $temp_items_to_replace = tagProcessor_Value::processPureValues($ct, $htmlresult, $row, $isGalleryLoaded, $getGalleryRows, $isFileBoxLoaded, $getFileBoxRows, $tag_chars);
                 if (count($temp_items_to_replace) != 0)
                     $items_to_replace = array_merge($items_to_replace, $temp_items_to_replace);
 
-                $temp_items_to_replace = tagProcessor_Value::processEditValues($ct, $htmlresult, $row, $isGalleryLoaded, $getGalleryRows, $isFileBoxLoaded, $getFileBoxRows, $tag_chars);
+                $temp_items_to_replace = tagProcessor_Value::processEditValues($ct, $htmlresult, $row, $tag_chars);
                 if (count($temp_items_to_replace) != 0)
                     $items_to_replace = array_merge($items_to_replace, $temp_items_to_replace);
 
@@ -62,7 +60,7 @@ class tagProcessor_Value
                 $fieldname = $field->fieldname;
 
                 if ($fieldtype == 'imagegallery') {
-                    if (!isset($isGalleryLoaded[$fieldname]) or $isGalleryLoaded[$fieldname] == false) {
+                    if (!isset($isGalleryLoaded[$fieldname]) or !$isGalleryLoaded[$fieldname]) {
                         $isGalleryLoaded[$fieldname] = true;
                         $r = CT_FieldTypeTag_imagegallery::getGalleryRows($ct->Table->tablename, $fieldname, $row[$ct->Table->realidfieldname]);
                         $getGalleryRows[$fieldname] = $r;
@@ -76,7 +74,7 @@ class tagProcessor_Value
                 } elseif ($fieldtype == 'filebox') {
 
                     if (count($isFileBoxLoaded) > 0) {
-                        if ($isFileBoxLoaded[$fieldname] == false) {
+                        if (!$isFileBoxLoaded[$fieldname]) {
                             $isFileBoxLoaded[$fieldname] = true;
                             $getFileBoxRows[$fieldname] = CT_FieldTypeTag_filebox::getFileBoxRows($ct->Table->tablename, $fieldname, $row[$ct->Table->realidfieldname]);
                         }
@@ -132,9 +130,9 @@ class tagProcessor_Value
 
     }
 
-    public static function processPureValues(&$ct, &$htmlresult, &$row, &$isGalleryLoaded, &$getGalleryRows, &$isFileBoxLoaded, &$getFileBoxRows, $tag_chars = '[]')
+    public static function processPureValues(CT &$ct, &$htmlresult, &$row, &$isGalleryLoaded, &$getGalleryRows, &$isFileBoxLoaded, &$getFileBoxRows, $tag_chars = '[]')
     {
-        $listing_id = (isset($row[$ct->Table->realidfieldname]) ? $row[$ct->Table->realidfieldname] : 0);
+        $listing_id = ($row[$ct->Table->realidfieldname] ?? 0);
 
         $items_to_replace = array();
 
@@ -150,7 +148,7 @@ class tagProcessor_Value
             foreach ($ct->Table->fields as $ESField) {
                 $field = new Field($ct, $ESField, $row);
 
-                $replaceitecode = md5(JoomlaBasicMisc::generateRandomString() . (isset($row[$ct->Table->realidfieldname]) ? $row[$ct->Table->realidfieldname] : '') . $field->fieldname);
+                $replaceitecode = md5(JoomlaBasicMisc::generateRandomString() . ($row[$ct->Table->realidfieldname] ?? '') . $field->fieldname);
 
                 if ($pureValueOptionArr[0] == $field->fieldname) {
 
@@ -176,7 +174,7 @@ class tagProcessor_Value
                             $isEmpty = false;
                     } elseif ($fieldtype == 'filebox') {
                         if (count($isFileBoxLoaded) > 0) {
-                            if ($isFileBoxLoaded[$fieldname] == false) {
+                            if (!$isFileBoxLoaded[$fieldname]) {
                                 //load if not loaded
                                 $isFileBoxLoaded[$fieldname] = true;
                                 $getFileBoxRows[$fieldname] = CT_FieldTypeTag_filebox::getFileBoxRows($ct->Table->tablename, $fieldname, $row[$ct->Table->realidfieldname]);
@@ -208,7 +206,7 @@ class tagProcessor_Value
                             $startif_ = strpos($htmlresult, $ifname);
                             if ($startif_ === false)
                                 break;
-                            if (!($startif_ === false)) {
+                            else {
 
                                 $endif_ = strpos($htmlresult, $endifname);
                                 if (!($endif_ === false)) {
@@ -303,7 +301,7 @@ class tagProcessor_Value
 
     }//function
 
-    public static function isEmpty(&$rowValue, $field)
+    public static function isEmpty(&$rowValue, $field): bool
     {
         $fieldtype = $field->type;
 
@@ -352,7 +350,7 @@ class tagProcessor_Value
                 $image_prefix = '_esthumb';
 
                 $img = $rowValue;
-                if (strpos($img, '-') !== false) {
+                if (str_contains($img, '-')) {
                     //$isShortcut=true;
                     $img = str_replace('-', '', $img);
                 }
@@ -383,7 +381,7 @@ class tagProcessor_Value
         }
     }
 
-    public static function processEditValues(&$ct, &$htmlresult, &$row, &$isGalleryLoaded, &$getGalleryRows, &$isFileBoxLoaded, &$getFileBoxRows, $tag_chars = '[]')
+    public static function processEditValues(CT &$ct, &$htmlresult, &$row, $tag_chars = '[]')
     {
         $items_to_replace = array();
         $pureValueOptions = array();
@@ -397,8 +395,8 @@ class tagProcessor_Value
                 . DIRECTORY_SEPARATOR . 'esinputbox.php');
 
             $esinputbox = new ESInputBox($ct);
-            if ($ct->Env->menu_params->get('requiredlabel') != '')
-                $esinputbox->requiredlabel = $ct->Env->menu_params->get('requiredlabel');
+            if ($ct->Params->requiredLabel != '')
+                $esinputbox->requiredlabel = $ct->Params->requiredLabel;
 
             require_once(JPATH_SITE
                 . DIRECTORY_SEPARATOR . 'components'
@@ -416,20 +414,17 @@ class tagProcessor_Value
         foreach ($pureValueOptions as $pureValueOption) {
             $pureValueOptionArr = explode(':', $pureValueOption);
 
-            $class_ = '';
             $style = '';
-            if (isset($pureValueOptionArr[1]))
-                $class_ = $pureValueOptionArr[1];
-            else
+            if (!isset($pureValueOptionArr[1]))
                 $style = ' style="width:auto; !important;border:none !important;box-shadow:none;"';
 
             $i = 0;
             foreach ($ct->Table->fields as $ESField) {
-                $replaceitecode = md5(JoomlaBasicMisc::generateRandomString() . (isset($row[$ct->Table->realidfieldname]) ? $row[$ct->Table->realidfieldname] : '') . $ESField['fieldname']);
+                $replaceItCode = md5(JoomlaBasicMisc::generateRandomString() . ($row[$ct->Table->realidfieldname] ?? '') . $ESField['fieldname']);
 
                 if ($pureValueOptionArr[0] == $ESField['fieldname']) {
                     //this is temporary replace string - part of the mechanism to avoid getting values of another fields
-                    $new_replaceitecode = $replaceitecode . str_pad($ESField['id'], 9, '0', STR_PAD_LEFT) . str_pad($i, 4, '0', STR_PAD_LEFT);
+                    $newReplaceItCode = $replaceItCode . str_pad($ESField['id'], 9, '0', STR_PAD_LEFT) . str_pad($i, 4, '0', STR_PAD_LEFT);
 
                     if ($isEditable) {
                         $postfix = '';
@@ -441,15 +436,14 @@ class tagProcessor_Value
 
                         if ($ESField['type'] == 'multilangstring') {
                             if (isset($value_option_list[4])) {
-                                //multilang field specific language
-                                $firstlanguage = true;
+                                //multilingual field specific language
                                 foreach ($ct->Languages->LanguageList as $lang) {
                                     if ($lang->sef == $value_option_list[4]) {
                                         $postfix = $lang->sef;
                                         break;
                                     }
                                 }
-                                $new_replaceitecode .= $postfix;
+                                $newReplaceItCode .= $postfix;
                             }
                         }
 
@@ -467,18 +461,16 @@ class tagProcessor_Value
                             . $esinputbox->renderFieldBox($ESField, $row, $value_option_list);
                         $vlu .= '</div>';
                     } else {
-                        //$fieldtype='';
-                        //$fieldname='';
-                        $fieldtype = $ESField['type'];
-                        $fieldname = $ESField['fieldname'];
+                        //$fieldtype = $ESField['type'];
+                        //$fieldname = $ESField['fieldname'];
 
                         //$rowValue='';
                         //tagProcessor_Value::doMultiValues($ct,$ESField,$row,$fieldtype,$rowValue,$fieldname);
                         $vlu = $row[$ESField['realfieldname']];
                     }
 
-                    $items_to_replace[] = array($new_replaceitecode, $vlu);
-                    $htmlresult = str_replace($pureValueList[$p], $new_replaceitecode, $htmlresult);
+                    $items_to_replace[] = array($newReplaceItCode, $vlu);
+                    $htmlresult = str_replace($pureValueList[$p], $newReplaceItCode, $htmlresult);
                 }
                 $i++;
             }
@@ -488,7 +480,7 @@ class tagProcessor_Value
         return $items_to_replace;
     }
 
-    static public function getValueByType(&$ct, $ESField, $row, &$option_list, &$getGalleryRows, &$getFileBoxRows)
+    static public function getValueByType(CT &$ct, $ESField, $row, $option_list)
     {
         $valueProcessor = new CustomTables\Value($ct);
 

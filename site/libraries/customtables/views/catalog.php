@@ -27,7 +27,6 @@ class Catalog
     function __construct(CT &$ct)//, $moduleId = null)
     {
         $this->ct = &$ct;
-        //$this->ct->Env->menu_params = $menuParams;
         //$this->moduleId = $moduleId;
     }
 

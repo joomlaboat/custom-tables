@@ -69,7 +69,7 @@ if (in_array($input->getCmd('extratask', ''), $this->extrataskOptions)) {
         <?php echo HTMLHelper::_('uitab.startTabSet', 'fieldsTab', ['active' => 'general', 'recall' => true, 'breakpoint' => 768]); ?>
 
         <?php echo HTMLHelper::_('uitab.addTab', 'fieldsTab', 'general', Text::_('COM_CUSTOMTABLES_FIELDS_GENERAL')); ?>
-        <?php //echo JHtml::_('bootstrap.addTab', 'fieldsTab', 'general', JText::_('COM_CUSTOMTABLES_FIELDS_GENERAL', true)); ?>
+        <?php //echo JHtml::_('bootstrap.addTab', 'fieldsTab', 'general', Text::_('COM_CUSTOMTABLES_FIELDS_GENERAL', true)); ?>
         <div class="row-fluid form-horizontal-desktop">
             <div class="span12">
 
@@ -85,7 +85,7 @@ if (in_array($input->getCmd('extratask', ''), $this->extrataskOptions)) {
 
                 <?php if ($this->table_row->customtablename != ''): ?>
                     <hr/>
-                    <p><?php echo JText::_('COM_CUSTOMTABLES_FIELDS_THIS_IS_THIRDPARTY_FIELD', true) . ': "' . $this->table_row->customtablename . '"'; ?></p>
+                    <p><?php echo Text::_('COM_CUSTOMTABLES_FIELDS_THIS_IS_THIRDPARTY_FIELD', true) . ': "' . $this->table_row->customtablename . '"'; ?></p>
                     <div class="control-group">
                         <div class="control-label"><?php echo $this->form->getLabel('customfieldname'); ?></div>
                         <div class="controls"><?php echo $this->form->getInput('customfieldname'); ?></div>
@@ -117,7 +117,7 @@ if (in_array($input->getCmd('extratask', ''), $this->extrataskOptions)) {
                         $vlu = $item_array[$id];
 
                     if ($morethanonelang)
-                        $field_label = JText::_('COM_CUSTOMTABLES_FIELDS_FIELDTITLE', true);
+                        $field_label = Text::_('COM_CUSTOMTABLES_FIELDS_FIELDTITLE', true);
                     else
                         $field_label = $this->form->getLabel('fieldtitle');
 
@@ -164,7 +164,7 @@ if (in_array($input->getCmd('extratask', ''), $this->extrataskOptions)) {
         <?php //echo JHtml::_('bootstrap.endTab'); ?>
 
         <?php echo HTMLHelper::_('uitab.addTab', 'fieldsTab', 'optional', Text::_('COM_CUSTOMTABLES_FIELDS_OPTIONAL')); ?>
-        <?php //echo JHtml::_('bootstrap.addTab', 'fieldsTab', 'optional', JText::_('COM_CUSTOMTABLES_FIELDS_OPTIONAL', true)); ?>
+        <?php //echo JHtml::_('bootstrap.addTab', 'fieldsTab', 'optional', Text::_('COM_CUSTOMTABLES_FIELDS_OPTIONAL', true)); ?>
         <div class="row-fluid form-horizontal-desktop">
             <div class="span12">
 

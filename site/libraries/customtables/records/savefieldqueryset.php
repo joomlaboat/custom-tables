@@ -36,7 +36,7 @@ class SaveFieldQuerySet
     var array $row;
     var bool $isCopy;
 
-    function __construct(&$ct, &$row, $isCopy = false)
+    function __construct(CT &$ct, &$row, $isCopy = false)
     {
         $this->ct = $ct;
         $this->db = Factory::getDBO();

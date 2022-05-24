@@ -9,13 +9,15 @@
  **/
 
 // Check to ensure this file is included in Joomla!
+use Joomla\CMS\Language\Text;
+
 defined('_JEXEC') or die('Restricted access');
 
 class JHTMLCTTime
 {
     static public function render($control_name, $value, $class, string $attribute, array $params, array $option_list)
     {
-        $options = array(array('id' => '', 'name' => '- ' . JText::_('COM_CUSTOMTABLES_SELECT')));
+        $options = array(array('id' => '', 'name' => '- ' . Text::_('COM_CUSTOMTABLES_SELECT')));
 
 
         $from = JHTMLCTTime::durationToSeconds($params[0]);

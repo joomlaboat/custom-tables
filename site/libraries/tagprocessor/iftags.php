@@ -11,11 +11,12 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\CT;
 use Joomla\CMS\Factory;
 
 class tagProcessor_If
 {
-    protected static function processValue(&$ct, &$row, $value)
+    protected static function processValue(CT &$ct, &$row, $value)
     {
         tagProcessor_General::process($ct, $value, $row);
         tagProcessor_Page::process($ct, $value);
@@ -25,7 +26,7 @@ class tagProcessor_If
         return $value;
     }
 
-    public static function process(&$ct, &$htmlresult, &$row)
+    public static function process(CT &$ct, &$htmlresult, &$row)
     {
         $options = array();
         $fList = JoomlaBasicMisc::getListToReplace('if', $options, $htmlresult, '{}');
@@ -102,7 +103,7 @@ class tagProcessor_If
         }
     }
 
-public static function ExplodeSmartParams($param)
+    public static function ExplodeSmartParams($param)
     {
         $items = array();
         $a = explode(' and ', $param);
@@ -185,7 +186,7 @@ public static function ExplodeSmartParams($param)
         return false;
     }
 
-        protected static function ifCompare($value1, $value2, $operation)
+    protected static function ifCompare($value1, $value2, $operation)
     {
         if ($operation == '>') {
             if ($value1 > $value2)

@@ -10,6 +10,7 @@
 
 // No direct access to this file
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 
 defined('_JEXEC') or die('Restricted Access');
 
@@ -31,7 +32,7 @@ class JHTMLCTArticle
         $query->order('title');
         $db->setQuery($query);
         $options = $db->loadObjectList();
-        $options = array_merge(array(array('id' => '', 'title' => '- ' . JText::_('COM_CUSTOMTABLES_SELECT'))), $options);
+        $options = array_merge(array(array('id' => '', 'title' => '- ' . Text::_('COM_CUSTOMTABLES_SELECT'))), $options);
 
         return JHTML::_('select.genericlist', $options, $control_name, 'class="' . $cssclass . '" ' . $attribute . ' ', 'id', 'title', $value, $control_name);
     }

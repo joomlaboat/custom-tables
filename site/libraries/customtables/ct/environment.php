@@ -42,7 +42,6 @@ class Environment
     var int $Itemid;
     var string $field_prefix;
     var string $field_input_prefix;
-    var Registry $menu_params; // ok, other menu parameters are part of module. class, also you can find it in controller files
 
     var bool $loadTwig;
     var string $toolbaricons;
@@ -113,10 +112,6 @@ class Environment
         $this->isMobile = $this->check_user_agent('mobile');
 
         $this->ItemId = $this->jinput->getInt('Itemid', 0);
-
-        $paramsArray = array();
-        $this->menu_params = new Registry;
-        $this->menu_params->loadArray($paramsArray);
 
         $params = ComponentHelper::getParams('com_customtables');
 

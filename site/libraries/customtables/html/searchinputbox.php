@@ -22,11 +22,11 @@ JHTML::addIncludePath(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTOR
 
 class SearchInputBox
 {
-    var $ct;
+    var CT $ct;
     var $modulename;
     var $field;
 
-    function __construct(&$ct, $modulename)
+    function __construct(CT &$ct, $modulename)
     {
         $this->ct = $ct;
         $this->modulename = $modulename;

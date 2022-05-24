@@ -30,7 +30,7 @@ class CustomtablesViewDataBaseCheck extends JViewLegacy
      * display method of View
      * @return void
      */
-    var $ct;
+    var CT $ct;
 
     var $tables = false;
 
@@ -79,7 +79,7 @@ class CustomtablesViewDataBaseCheck extends JViewLegacy
 
     protected function addToolBar_3()
     {
-        JToolBarHelper::title(JText::_('COM_CUSTOMTABLES_DATABASECHECK'), 'joomla');
+        JToolBarHelper::title(Text::_('COM_CUSTOMTABLES_DATABASECHECK'), 'joomla');
         JHtmlSidebar::setAction('index.php?option=com_customtables&view=databasecheck');
         JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/fields');
 
@@ -87,7 +87,7 @@ class CustomtablesViewDataBaseCheck extends JViewLegacy
         $CTCategoryOptions = $CTCategory->getOptions(false); // works only if you set your field getOptions on public!!
 
         JHtmlSidebar::addFilter(
-            JText::_('COM_CUSTOMTABLES_TABLES_CATEGORY_SELECT'),
+            Text::_('COM_CUSTOMTABLES_TABLES_CATEGORY_SELECT'),
             'filter_tablecategory',
             JHtml::_('select.options', $CTCategoryOptions, 'value', 'text', $this->state->get('filter.tablecategory'))
         );
@@ -133,7 +133,7 @@ class CustomtablesViewDataBaseCheck extends JViewLegacy
         if (!isset($this->document))
             $this->document = Factory::getDocument();
 
-        $this->document->setTitle(JText::_('COM_CUSTOMTABLES_DATABASECHECK'));
+        $this->document->setTitle(Text::_('COM_CUSTOMTABLES_DATABASECHECK'));
         $this->document->addStyleSheet(JURI::root(true) . "/components/com_customtables/libraries/customtables/media/css/fieldtypes.css");
     }
 

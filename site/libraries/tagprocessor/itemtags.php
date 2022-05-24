@@ -11,6 +11,7 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\CT;
 use CustomTables\Fields;
 use CustomTables\RecordToolbar;
 use CustomTables\CTUser;
@@ -19,7 +20,7 @@ use Joomla\CMS\Factory;
 
 class tagProcessor_Item
 {
-    public static function RenderResultLine(&$ct, $layoutType, &$twig, &$row)
+    public static function RenderResultLine(CT &$ct, $layoutType, &$twig, &$row)
     {
         if ($ct->Env->print)
             $viewlink = '';
@@ -62,7 +63,7 @@ class tagProcessor_Item
         return $htmlresult;
     }
 
-    public static function process(&$ct, &$row, &$htmlresult, $aLink, $add_label = false)
+    public static function process(CT &$ct, &$row, &$htmlresult, $aLink, $add_label = false)
     {
         if (is_null($ct->Table))
             return false;
@@ -203,7 +204,7 @@ class tagProcessor_Item
         }//foreach($fList as $fItem)
     }
 
-    protected static function GetCustomToolBar(&$ct, &$htmlresult, &$row): void
+    protected static function GetCustomToolBar(CT &$ct, &$htmlresult, &$row): void
     {
         $options = array();
         $fList = JoomlaBasicMisc::getListToReplace('toolbar', $options, $htmlresult, '{}');

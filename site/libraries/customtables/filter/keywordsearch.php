@@ -9,6 +9,7 @@
  **/
 
 // no direct access
+use CustomTables\CT;
 use CustomTables\Ordering;
 use Joomla\CMS\Factory;
 
@@ -18,7 +19,7 @@ require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARAT
 
 class CustomTablesKeywordSearch
 {
-    var $ct;
+    var CT $ct;
     var $PathValue;
     var $groupby;
     var $esordering;

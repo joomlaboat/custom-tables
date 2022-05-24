@@ -15,6 +15,7 @@ defined('_JEXEC') or die('Restricted access');
 jimport('joomla.application.component.view');
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Version;
 
 /**
@@ -60,7 +61,7 @@ class CustomtablesViewDocumentation extends JViewLegacy
 
     protected function addToolBar()
     {
-        JToolBarHelper::title(JText::_('COM_CUSTOMTABLES_DOCUMENTATION'), 'joomla');
+        JToolBarHelper::title(Text::_('COM_CUSTOMTABLES_DOCUMENTATION'), 'joomla');
         JHtmlSidebar::setAction('index.php?option=com_customtables&view=documentation');
     }
 
@@ -69,7 +70,7 @@ class CustomtablesViewDocumentation extends JViewLegacy
         if (!isset($this->document)) {
             $this->document = Factory::getDocument();
         }
-        $this->document->setTitle(JText::_('COM_CUSTOMTABLES_DOCUMENTATION'));
+        $this->document->setTitle(Text::_('COM_CUSTOMTABLES_DOCUMENTATION'));
         $this->document->addStyleSheet(JURI::root(true) . "/components/com_customtables/libraries/customtables/media/css/fieldtypes.css");
 
 
@@ -150,7 +151,7 @@ class CustomtablesViewDocumentation extends JViewLegacy
                 }
 
                 if ($is4Pro)
-                    $result .= '<div class="ct_doc_pro_label"><a href="https://joomlaboat.com/custom-tables#buy-extension" target="_blank">' . JText::_('COM_CUSTOMTABLES_AVAILABLE') . '</a></div>';
+                    $result .= '<div class="ct_doc_pro_label"><a href="https://joomlaboat.com/custom-tables#buy-extension" target="_blank">' . Text::_('COM_CUSTOMTABLES_AVAILABLE') . '</a></div>';
 
                 $result .= '</h4>';
 
@@ -159,22 +160,22 @@ class CustomtablesViewDocumentation extends JViewLegacy
                 if (!empty($type->params) and count($type->params) > 0) {
                     $content = $this->renderParametersInternal($type->params, '', '', '', '', true);
                     if ($content != '')
-                        $result .= '<hr/><h5>' . JText::_('COM_CUSTOMTABLES_FIELDTYPEPARAMS') . ':</h5>' . $content;
+                        $result .= '<hr/><h5>' . Text::_('COM_CUSTOMTABLES_FIELDTYPEPARAMS') . ':</h5>' . $content;
 
                     $content = null;
                 }
 
 
-                $result .= '<hr/><h5>' . JText::_('COM_CUSTOMTABLES_EDITRECPARAMS') . ':</h5><p>Example 1:<pre class="ct_doc_pre">'
-                    . '{{ <i>' . str_replace(' ', '', JText::_('COM_CUSTOMTABLES_FIELDNAME')) . '</i>.edit }}</pre></p>';
+                $result .= '<hr/><h5>' . Text::_('COM_CUSTOMTABLES_EDITRECPARAMS') . ':</h5><p>Example 1:<pre class="ct_doc_pre">'
+                    . '{{ <i>' . str_replace(' ', '', Text::_('COM_CUSTOMTABLES_FIELDNAME')) . '</i>.edit }}</pre></p>';
 
                 if (!empty($type->editparams)) {
                     foreach ($type->editparams as $p) {
                         $params = $p->params;
-                        //$result.='<h5>'.JText::_('COM_CUSTOMTABLES_EDITRECPARAMS').':</h5>'
+                        //$result.='<h5>'.Text::_('COM_CUSTOMTABLES_EDITRECPARAMS').':</h5>'
                         $result .= $this->renderParametersInternal($params,
                             '{{ ',
-                            '<i>' . str_replace(' ', '', JText::_('COM_CUSTOMTABLES_FIELDNAME')) . '</i>',
+                            '<i>' . str_replace(' ', '', Text::_('COM_CUSTOMTABLES_FIELDNAME')) . '</i>',
                             '.edit(',
                             ') }}',
                             $hidedefaultexample);
@@ -184,16 +185,16 @@ class CustomtablesViewDocumentation extends JViewLegacy
                 }
 
 
-                $result .= '<hr/><h5>' . JText::_('COM_CUSTOMTABLES_VALUEPARAMS') . ':</h5><p>Example 1:<pre class="ct_doc_pre">'
-                    . '{{ <i>' . str_replace(' ', '', JText::_('COM_CUSTOMTABLES_FIELDNAME')) . '</i> }}</pre></p>';
+                $result .= '<hr/><h5>' . Text::_('COM_CUSTOMTABLES_VALUEPARAMS') . ':</h5><p>Example 1:<pre class="ct_doc_pre">'
+                    . '{{ <i>' . str_replace(' ', '', Text::_('COM_CUSTOMTABLES_FIELDNAME')) . '</i> }}</pre></p>';
 
                 if (!empty($type->valueparams)) {
                     foreach ($type->valueparams as $p) {
                         $params = $p->params;
-                        //$result.='<h5>'.JText::_('COM_CUSTOMTABLES_VALUEPARAMS').':</h5>'
+                        //$result.='<h5>'.Text::_('COM_CUSTOMTABLES_VALUEPARAMS').':</h5>'
                         $result .= $this->renderParametersInternal($params,
                             '{{ ',
-                            '<i>' . str_replace(' ', '', JText::_('COM_CUSTOMTABLES_FIELDNAME')) . '</i>',
+                            '<i>' . str_replace(' ', '', Text::_('COM_CUSTOMTABLES_FIELDNAME')) . '</i>',
                             '(',
                             ') }}',
                             $hidedefaultexample);
@@ -202,9 +203,9 @@ class CustomtablesViewDocumentation extends JViewLegacy
 
                 }
 
-                $result .= '<h5>' . JText::_('Pure Value (As it is)') . ':</h5>'
-                    . '<p>' . JText::_('COM_CUSTOMTABLES_EXAMPLE') . ':<br/><pre class="ct_doc_pre">'
-                    . '{{ <i>' . str_replace(' ', '', JText::_('COM_CUSTOMTABLES_FIELDNAME')) . '</i>.value }}'
+                $result .= '<h5>' . Text::_('Pure Value (As it is)') . ':</h5>'
+                    . '<p>' . Text::_('COM_CUSTOMTABLES_EXAMPLE') . ':<br/><pre class="ct_doc_pre">'
+                    . '{{ <i>' . str_replace(' ', '', Text::_('COM_CUSTOMTABLES_FIELDNAME')) . '</i>.value }}'
                     . '</pre></p>';
 
                 $result .= '</div>';
@@ -252,12 +253,12 @@ class CustomtablesViewDocumentation extends JViewLegacy
 
         if ($tag_name == '') {
             if (!(bool)(int)$hidedefaultexample) {
-                $result_new .= '<p>' . JText::_('COM_CUSTOMTABLES_EXAMPLE') . ': <pre class="ct_doc_pre">'
+                $result_new .= '<p>' . Text::_('COM_CUSTOMTABLES_EXAMPLE') . ': <pre class="ct_doc_pre">'
                     . $opening_char . $tag_name . $postfix . $cleanedParamsStr . $closing_char . '</pre></p>';
             }
         } else {
             if ($example_values_count > 0) {
-                $result_new .= '<p>' . JText::_('COM_CUSTOMTABLES_EXAMPLE') . ': <pre class="ct_doc_pre">'
+                $result_new .= '<p>' . Text::_('COM_CUSTOMTABLES_EXAMPLE') . ': <pre class="ct_doc_pre">'
                     . $opening_char . $tag_name . $postfix . $cleanedParamsStr . $closing_char . '</pre></p>';
             }
         }
@@ -275,13 +276,13 @@ class CustomtablesViewDocumentation extends JViewLegacy
             case 'number':
 
                 $result .= '<ul class="ct_doc_param_options">
-					<li><b>' . JText::_('COM_CUSTOMTABLES_DEFAULT') . '</b>: ' . $param_att->default . '</li>
+					<li><b>' . Text::_('COM_CUSTOMTABLES_DEFAULT') . '</b>: ' . $param_att->default . '</li>
 ';
                 if (!empty($param_att->min))
-                    $result .= '<li><b>' . JText::_('COM_CUSTOMTABLES_MIN') . '</b>: ' . $param_att->min . '</li>';
+                    $result .= '<li><b>' . Text::_('COM_CUSTOMTABLES_MIN') . '</b>: ' . $param_att->min . '</li>';
 
                 if (!empty($param_att->max))
-                    $result .= '<li><b>' . JText::_('COM_CUSTOMTABLES_MAX') . '</b>: ' . $param_att->max . '</li>';
+                    $result .= '<li><b>' . Text::_('COM_CUSTOMTABLES_MAX') . '</b>: ' . $param_att->max . '</li>';
 
                 $result .= '</ul>';
 
@@ -295,7 +296,7 @@ class CustomtablesViewDocumentation extends JViewLegacy
             case 'radio':
                 $options = explode(',', $param_att->options);
                 $value_example = '';
-                //<p>'.JText::_('COM_CUSTOMTABLES_OPTIONS').':</p>
+                //<p>'.Text::_('COM_CUSTOMTABLES_OPTIONS').':</p>
                 $result .= '<ul class="ct_doc_param_options">';
                 foreach ($options as $option) {
                     $parts = explode('|', $option);
@@ -396,14 +397,14 @@ class CustomtablesViewDocumentation extends JViewLegacy
                 if (!empty($type->params) and count($type->params) > 0) {
                     $content = $this->renderParametersGitHub($type->params, '', '', '', '', true);
                     if ($content != '')
-                        $result .= '## ' . JText::_('COM_CUSTOMTABLES_FIELDTYPEPARAMS') . ':<br/><br/>' . $content;
+                        $result .= '## ' . Text::_('COM_CUSTOMTABLES_FIELDTYPEPARAMS') . ':<br/><br/>' . $content;
 
                     $content = null;
                 }
 
 
-                $result .= '## ' . JText::_('COM_CUSTOMTABLES_EDITRECPARAMS') . ':<br/><br/>Example:'
-                    . '`{{ ' . str_replace(' ', '', JText::_('COM_CUSTOMTABLES_FIELDNAME')) . '.edit }}`<br/><br/>';
+                $result .= '## ' . Text::_('COM_CUSTOMTABLES_EDITRECPARAMS') . ':<br/><br/>Example:'
+                    . '`{{ ' . str_replace(' ', '', Text::_('COM_CUSTOMTABLES_FIELDNAME')) . '.edit }}`<br/><br/>';
 
                 if (!empty($type->editparams)) {
                     foreach ($type->editparams as $p) {
@@ -411,7 +412,7 @@ class CustomtablesViewDocumentation extends JViewLegacy
 
                         $result .= $this->renderParametersGitHub($params,
                             '{{ ',
-                            str_replace(' ', '', JText::_('COM_CUSTOMTABLES_FIELDNAME')),
+                            str_replace(' ', '', Text::_('COM_CUSTOMTABLES_FIELDNAME')),
                             '.edit(',
                             ') }}',
                             $hidedefaultexample);
@@ -419,15 +420,15 @@ class CustomtablesViewDocumentation extends JViewLegacy
                     }
                 }
 
-                $result .= '## ' . JText::_('COM_CUSTOMTABLES_VALUEPARAMS') . ':<br/><br/>Example:'
-                    . '`{{ ' . str_replace(' ', '', JText::_('COM_CUSTOMTABLES_FIELDNAME')) . ' }}`';
+                $result .= '## ' . Text::_('COM_CUSTOMTABLES_VALUEPARAMS') . ':<br/><br/>Example:'
+                    . '`{{ ' . str_replace(' ', '', Text::_('COM_CUSTOMTABLES_FIELDNAME')) . ' }}`';
 
                 if (!empty($type->valueparams)) {
                     foreach ($type->valueparams as $p) {
                         $params = $p->params;
 
                         $result .= $this->renderParametersGitHub($params,
-                            '{{ ', str_replace(' ', '', JText::_('COM_CUSTOMTABLES_FIELDNAME')),
+                            '{{ ', str_replace(' ', '', Text::_('COM_CUSTOMTABLES_FIELDNAME')),
                             '(',
                             ') }}',
                             $hidedefaultexample);
@@ -437,9 +438,9 @@ class CustomtablesViewDocumentation extends JViewLegacy
 
                 }
 
-                $result .= '## ' . JText::_('Pure Value (As it is)') . ':<br/><br/>'
-                    . JText::_('COM_CUSTOMTABLES_EXAMPLE') . ':<br/><br/>'
-                    . '`{{ ' . str_replace(' ', '', JText::_('COM_CUSTOMTABLES_FIELDNAME')) . '.value }}`'
+                $result .= '## ' . Text::_('Pure Value (As it is)') . ':<br/><br/>'
+                    . Text::_('COM_CUSTOMTABLES_EXAMPLE') . ':<br/><br/>'
+                    . '`{{ ' . str_replace(' ', '', Text::_('COM_CUSTOMTABLES_FIELDNAME')) . '.value }}`'
                     . '<br/><br/>';
             }
         }
@@ -503,13 +504,13 @@ class CustomtablesViewDocumentation extends JViewLegacy
         switch ($param_att->type) {
             case 'number':
 
-                $result .= '&nbsp;&nbsp;&nbsp;&nbsp;* **' . JText::_('COM_CUSTOMTABLES_DEFAULT') . '** - ' . $param_att->default . '<br/>';
+                $result .= '&nbsp;&nbsp;&nbsp;&nbsp;* **' . Text::_('COM_CUSTOMTABLES_DEFAULT') . '** - ' . $param_att->default . '<br/>';
 
                 if (!empty($param_att->min))
-                    $result .= '&nbsp;&nbsp;&nbsp;&nbsp;* **' . JText::_('COM_CUSTOMTABLES_MIN') . '** - ' . $param_att->min . '<br/>';
+                    $result .= '&nbsp;&nbsp;&nbsp;&nbsp;* **' . Text::_('COM_CUSTOMTABLES_MIN') . '** - ' . $param_att->min . '<br/>';
 
                 if (!empty($param_att->max))
-                    $result .= '&nbsp;&nbsp;&nbsp;&nbsp;* **' . JText::_('COM_CUSTOMTABLES_MAX') . '** - ' . $param_att->max . '<br/>';
+                    $result .= '&nbsp;&nbsp;&nbsp;&nbsp;* **' . Text::_('COM_CUSTOMTABLES_MAX') . '** - ' . $param_att->max . '<br/>';
 
                 if (!empty($param_att->example))
                     $value_example = $param_att->example;
@@ -609,7 +610,7 @@ class CustomtablesViewDocumentation extends JViewLegacy
 
                 $result .= '<h3>' . $tagset_att->label . '';
                 if ($is4Pro)
-                    $result .= '<div class="ct_doc_pro_label"><a href="https://joomlaboat.com/custom-tables#buy-extension" target="_blank">' . JText::_('COM_CUSTOMTABLES_AVAILABLE') . '</a></div>';
+                    $result .= '<div class="ct_doc_pro_label"><a href="https://joomlaboat.com/custom-tables#buy-extension" target="_blank">' . Text::_('COM_CUSTOMTABLES_AVAILABLE') . '</a></div>';
 
                 $result .= '</h3>';
 
@@ -654,7 +655,7 @@ class CustomtablesViewDocumentation extends JViewLegacy
                 $result .= '<a name="' . $tag_att->twigclass . '_' . $tag_att->name . '"></a><h4 onClick="readmoreOpenClose(\'ctDocTag_' . $tag_att->twigclass . '_' . $tag_att->name . '\')">' . $startchar . $tag_att->name . $endchar . ' - <span>' . $tag_att->label . '</span>';
 
                 if ($is4Pro)
-                    $result .= '<div class="ct_doc_pro_label"><a href="https://joomlaboat.com/custom-tables#buy-extension" target="_blank">' . JText::_('COM_CUSTOMTABLES_AVAILABLE') . '</a></div>';
+                    $result .= '<div class="ct_doc_pro_label"><a href="https://joomlaboat.com/custom-tables#buy-extension" target="_blank">' . Text::_('COM_CUSTOMTABLES_AVAILABLE') . '</a></div>';
 
                 $result .= '</h4>';
 
@@ -670,7 +671,7 @@ class CustomtablesViewDocumentation extends JViewLegacy
                             $hidedefaultexample);
 
                         if ($content != '')
-                            $result .= '<h5>' . JText::_('COM_CUSTOMTABLES_PARAMS') . ':</h5>' . $content;
+                            $result .= '<h5>' . Text::_('COM_CUSTOMTABLES_PARAMS') . ':</h5>' . $content;
 
                         $content = null;
                     }
@@ -732,7 +733,7 @@ class CustomtablesViewDocumentation extends JViewLegacy
                             $hidedefaultexample);
 
                         if ($content != '')
-                            $result .= '**' . JText::_('COM_CUSTOMTABLES_PARAMS') . '**<br><br>' . $content;
+                            $result .= '**' . Text::_('COM_CUSTOMTABLES_PARAMS') . '**<br><br>' . $content;
 
                         $content = null;
                     }

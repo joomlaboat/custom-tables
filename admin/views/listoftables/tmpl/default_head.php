@@ -7,7 +7,10 @@
  * @copyright Copyright (C) 2018-2020. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
+
 // No direct access to this file access');
+use Joomla\CMS\Language\Text;
+
 defined('_JEXEC') or die('Restricted access');
 
 ?>
@@ -23,14 +26,14 @@ defined('_JEXEC') or die('Restricted access');
     </th>
 
     <th class="nowrap">
-        <?php echo JText::_('COM_CUSTOMTABLES_TABLES_TABLETITLE_LABEL'); ?>
+        <?php echo Text::_('COM_CUSTOMTABLES_TABLES_TABLETITLE_LABEL'); ?>
     </th>
 
     <th class="nowrap hidden-phone">
-        <?php echo JText::_('COM_CUSTOMTABLES_TABLES_FIELDS_LABEL'); ?>
+        <?php echo Text::_('COM_CUSTOMTABLES_TABLES_FIELDS_LABEL'); ?>
     </th>
     <th class="nowrap hidden-phone">
-        <?php echo JText::_('COM_CUSTOMTABLES_TABLES_RECORDS_LABEL'); ?>
+        <?php echo Text::_('COM_CUSTOMTABLES_TABLES_RECORDS_LABEL'); ?>
     </th>
 
     <th class="nowrap hidden-phone">

@@ -13,13 +13,14 @@ namespace CustomTables\Integrity;
 
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\CT;
 use CustomTables\Fields;
 use \Joomla\CMS\Factory;
 use \ESTables;
 
 class IntegrityFieldType_FileBox extends \CustomTables\IntegrityChecks
 {
-    public static function checkFileBox(&$ct, $fieldname)
+    public static function checkFileBox(CT &$ct, $fieldname)
     {
         $filebox_table_name = '#__customtables_filebox_' . $ct->Table->tablename . '_' . $fieldname;
 

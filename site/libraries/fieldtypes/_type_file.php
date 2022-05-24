@@ -11,6 +11,7 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\CT;
 use CustomTables\Field;
 use Joomla\CMS\Factory;
 
@@ -408,7 +409,7 @@ class CT_FieldTypeTag_file
         return $filename_new;
     }
 
-    public static function renderFileFieldBox(&$ct, array &$fieldrow, array &$row, $class): string
+    public static function renderFileFieldBox(CT &$ct, array &$fieldrow, array &$row, $class): string
     {
         $field = new Field($ct, $fieldrow);
 

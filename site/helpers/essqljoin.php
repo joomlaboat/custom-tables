@@ -233,7 +233,7 @@ class JHTMLESSqlJoin
         return $htmlresult;
     }
 
-    static protected function renderDynamicFilter(&$ct, $value, $establename, $dynamic_filter, $control_name): string
+    static protected function renderDynamicFilter(CT &$ct, $value, $establename, $dynamic_filter, $control_name): string
     {
         $htmlresult = '';
 

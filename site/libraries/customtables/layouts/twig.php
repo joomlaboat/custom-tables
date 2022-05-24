@@ -28,14 +28,14 @@ require_once($types_path . '_type_image.php');
 
 class TwigProcessor
 {
-    var $ct;
+    var CT $ct;
     var $loaded = false;
     var $twig;
     var $variables = [];
     var $recordBlockFound;
     var $recordBlockreplaceCode;
 
-    public function __construct(&$ct, $htmlresult_)
+    public function __construct(CT &$ct, $htmlresult_)
     {
         $this->ct = $ct;
 

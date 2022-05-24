@@ -11,8 +11,10 @@
 defined('_JEXEC') or die('Restricted access');
 
 
+use CustomTables\CT;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Version;
 
 /**
@@ -25,7 +27,7 @@ class CustomtablesViewLayouts extends JViewLegacy
      * @return void
      */
 
-    var $ct;
+    var CT $ct;
 
     public function display($tpl = null)
     {
@@ -92,11 +94,9 @@ class CustomtablesViewLayouts extends JViewLegacy
     protected function addToolBar()
     {
         Factory::getApplication()->input->set('hidemainmenu', true);
-        $user = Factory::getUser();
-        $userId = $user->id;
         $isNew = $this->item->id == 0;
 
-        JToolbarHelper::title(JText::_($isNew ? 'COM_CUSTOMTABLES_LAYOUTS_NEW' : 'COM_CUSTOMTABLES_LAYOUTS_EDIT'), 'pencil-2 article-add');
+        JToolbarHelper::title(Text::_($isNew ? 'COM_CUSTOMTABLES_LAYOUTS_NEW' : 'COM_CUSTOMTABLES_LAYOUTS_EDIT'), 'pencil-2 article-add');
         // Built the actions for new and existing records.
         /*
         if ($this->refid || $this->ref)
@@ -181,7 +181,7 @@ class CustomtablesViewLayouts extends JViewLegacy
         if (!isset($this->document))
             $this->document = Factory::getDocument();
 
-        $this->document->setTitle(JText::_($isNew ? 'COM_CUSTOMTABLES_LAYOUTS_NEW' : 'COM_CUSTOMTABLES_LAYOUTS_EDIT'));
+        $this->document->setTitle(Text::_($isNew ? 'COM_CUSTOMTABLES_LAYOUTS_NEW' : 'COM_CUSTOMTABLES_LAYOUTS_EDIT'));
 
         $this->document->addScript(JURI::root(true) . "/administrator/components/com_customtables/views/layouts/submitbutton.js");
 

@@ -7,7 +7,10 @@
  * @copyright (C) 2018-2022 Ivan Komlev
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
+
 // No direct access to this file access');
+use Joomla\CMS\Language\Text;
+
 defined('_JEXEC') or die('Restricted access');
 
 ?>
@@ -38,20 +41,20 @@ defined('_JEXEC') or die('Restricted access');
         <?php echo JHtml::_('grid.sort', 'COM_CUSTOMTABLES_FIELDS_FIELDNAME_LABEL', 'a.fieldname', $this->listDirn, $this->listOrder); ?>
     </th>
     <th class="nowrap">
-        <?php echo JText::_('COM_CUSTOMTABLES_FIELDS_FIELDTITLE_LABEL'); ?>
+        <?php echo Text::_('COM_CUSTOMTABLES_FIELDS_FIELDTITLE_LABEL'); ?>
     </th>
 
     <th class="nowrap hidden-phone">
         <?php echo JHtml::_('grid.sort', 'COM_CUSTOMTABLES_FIELDS_TYPE_LABEL', 'a.type', $this->listDirn, $this->listOrder); ?>
     </th>
     <th class="nowrap hidden-phone">
-        <?php echo JText::_('COM_CUSTOMTABLES_FIELDS_TYPEPARAMS_LABEL'); ?>
+        <?php echo Text::_('COM_CUSTOMTABLES_FIELDS_TYPEPARAMS_LABEL'); ?>
     </th>
     <th class="nowrap hidden-phone">
-        <?php echo JText::_('COM_CUSTOMTABLES_FIELDS_ISREQUIRED_LABEL'); ?>
+        <?php echo Text::_('COM_CUSTOMTABLES_FIELDS_ISREQUIRED_LABEL'); ?>
     </th>
     <th class="nowrap hidden-phone">
-        <?php echo JText::_('COM_CUSTOMTABLES_FIELDS_TABLEID_LABEL'); ?>
+        <?php echo Text::_('COM_CUSTOMTABLES_FIELDS_TABLEID_LABEL'); ?>
     </th>
     <?php if ($this->canState): ?>
         <th width="10" class="nowrap center">
@@ -59,7 +62,7 @@ defined('_JEXEC') or die('Restricted access');
         </th>
     <?php else: ?>
         <th width="10" class="nowrap center">
-            <?php echo JText::_('COM_CUSTOMTABLES_FIELDS_STATUS'); ?>
+            <?php echo Text::_('COM_CUSTOMTABLES_FIELDS_STATUS'); ?>
         </th>
     <?php endif; ?>
     <th width="5" class="nowrap center hidden-phone">

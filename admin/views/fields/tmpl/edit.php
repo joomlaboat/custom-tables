@@ -14,6 +14,7 @@ defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\Fields;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 
 $document = Factory::getDocument();
 
@@ -94,7 +95,7 @@ if (in_array($input->getCmd('extratask', ''), $this->extrataskOptions)) {
             <?php
             echo JHtml::_('bootstrap.startTabSet', 'fieldsTab', array('active' => 'general')); ?>
 
-            <?php echo JHtml::_('bootstrap.addTab', 'fieldsTab', 'general', JText::_('COM_CUSTOMTABLES_FIELDS_GENERAL', true)); ?>
+            <?php echo JHtml::_('bootstrap.addTab', 'fieldsTab', 'general', Text::_('COM_CUSTOMTABLES_FIELDS_GENERAL', true)); ?>
             <div class="row-fluid form-horizontal-desktop">
                 <div class="span12">
 
@@ -110,7 +111,7 @@ if (in_array($input->getCmd('extratask', ''), $this->extrataskOptions)) {
 
                     <?php if ($this->table_row->customtablename != ''): ?>
                         <hr/>
-                        <p><?php echo JText::_('COM_CUSTOMTABLES_FIELDS_THIS_IS_THIRDPARTY_FIELD', true) . ': "' . $this->table_row->customtablename . '"'; ?></p>
+                        <p><?php echo Text::_('COM_CUSTOMTABLES_FIELDS_THIS_IS_THIRDPARTY_FIELD', true) . ': "' . $this->table_row->customtablename . '"'; ?></p>
                         <div class="control-group">
                             <div class="control-label"><?php echo $this->form->getLabel('customfieldname'); ?></div>
                             <div class="controls"><?php echo $this->form->getInput('customfieldname'); ?></div>
@@ -142,7 +143,7 @@ if (in_array($input->getCmd('extratask', ''), $this->extrataskOptions)) {
                             $vlu = $item_array[$id];
 
                         if ($morethanonelang)
-                            $field_label = JText::_('COM_CUSTOMTABLES_FIELDS_FIELDTITLE', true);
+                            $field_label = Text::_('COM_CUSTOMTABLES_FIELDS_FIELDTITLE', true);
                         else
                             $field_label = $this->form->getLabel('fieldtitle');
 
@@ -187,7 +188,7 @@ if (in_array($input->getCmd('extratask', ''), $this->extrataskOptions)) {
             </div>
             <?php echo JHtml::_('bootstrap.endTab'); ?>
 
-            <?php echo JHtml::_('bootstrap.addTab', 'fieldsTab', 'optional', JText::_('COM_CUSTOMTABLES_FIELDS_OPTIONAL', true)); ?>
+            <?php echo JHtml::_('bootstrap.addTab', 'fieldsTab', 'optional', Text::_('COM_CUSTOMTABLES_FIELDS_OPTIONAL', true)); ?>
             <div class="row-fluid form-horizontal-desktop">
                 <div class="span12">
                     <div class="control-group">
@@ -226,7 +227,7 @@ if (in_array($input->getCmd('extratask', ''), $this->extrataskOptions)) {
                 if ($morethanonelang)
                     $id .= '_' . $lang->sef;
 
-                JHtml::_('bootstrap.addTab', 'fieldsTab', $id, JText::_('COM_CUSTOMTABLES_FIELDS_DESCRIPTION', true) . ' <b>' . $lang->title . '</b>');
+                JHtml::_('bootstrap.addTab', 'fieldsTab', $id, Text::_('COM_CUSTOMTABLES_FIELDS_DESCRIPTION', true) . ' <b>' . $lang->title . '</b>');
                 echo '
 			<div id="' . $id . '" class="tab-pane">
 				<div class="row-fluid form-horizontal-desktop">

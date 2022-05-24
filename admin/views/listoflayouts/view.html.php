@@ -142,7 +142,7 @@ class CustomtablesViewListoflayouts extends JViewLegacy
 
         if ($this->canState) {
             JHtmlSidebar::addFilter(
-                JText::_('JOPTION_SELECT_PUBLISHED'),
+                Text::_('JOPTION_SELECT_PUBLISHED'),
                 'filter_published',
                 JHtml::_('select.options', JHtml::_('jgrid.publishedOptions'), 'value', 'text', $this->state->get('filter.published'), true)
             );
@@ -152,7 +152,7 @@ class CustomtablesViewListoflayouts extends JViewLegacy
         $CTLayoutTypeOptions = $CTLayoutType->getOptions(); // works only if you set your field getOptions on public!!
 
         JHtmlSidebar::addFilter(
-            JText::_('COM_CUSTOMTABLES_LAYOUTS_LAYOUTTYPE_SELECT'),
+            Text::_('COM_CUSTOMTABLES_LAYOUTS_LAYOUTTYPE_SELECT'),
             'filter_layouttype',
             JHtml::_('select.options', $CTLayoutTypeOptions, 'value', 'text', $this->state->get('filter.layouttype'))
         );
@@ -163,7 +163,7 @@ class CustomtablesViewListoflayouts extends JViewLegacy
         $CTTableOptions = $CTTable->getOptions(false); // works only if you set your field getOptions on public!!
 
         JHtmlSidebar::addFilter(
-            JText::_('COM_CUSTOMTABLES_LAYOUTS_TABLEID_SELECT'),
+            Text::_('COM_CUSTOMTABLES_LAYOUTS_TABLEID_SELECT'),
             'filter_tableid',
             JHtml::_('select.options', $CTTableOptions, 'value', 'text', $this->state->get('filter.tableid'))
         );
@@ -222,7 +222,7 @@ class CustomtablesViewListoflayouts extends JViewLegacy
         if (!isset($this->document)) {
             $this->document = Factory::getDocument();
         }
-        $this->document->setTitle(JText::_('COM_CUSTOMTABLES_LISTOFLAYOUTS'));
+        $this->document->setTitle(Text::_('COM_CUSTOMTABLES_LISTOFLAYOUTS'));
     }
 
     function isTwig(&$row)
@@ -334,10 +334,10 @@ class CustomtablesViewListoflayouts extends JViewLegacy
     protected function getSortFields()
     {
         return array(
-            'a.published' => JText::_('JSTATUS'),
-            'a.layoutname' => JText::_('COM_CUSTOMTABLES_LAYOUTS_LAYOUTNAME_LABEL'),
-            'a.layouttype' => JText::_('COM_CUSTOMTABLES_LAYOUTS_LAYOUTTYPE_SELECT'),
-            'a.id' => JText::_('JGRID_HEADING_ID')
+            'a.published' => Text::_('JSTATUS'),
+            'a.layoutname' => Text::_('COM_CUSTOMTABLES_LAYOUTS_LAYOUTNAME_LABEL'),
+            'a.layouttype' => Text::_('COM_CUSTOMTABLES_LAYOUTS_LAYOUTTYPE_SELECT'),
+            'a.id' => Text::_('JGRID_HEADING_ID')
         );
     }
 

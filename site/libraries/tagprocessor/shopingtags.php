@@ -11,11 +11,12 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\CT;
 use Joomla\CMS\Factory;
 
 class tagProcessor_Shopping
 {
-    public static function getShoppingCartLink(&$ct, &$htmlresult, &$row)
+    public static function getShoppingCartLink(CT &$ct, &$htmlresult, &$row)
     {
         $app = Factory::getApplication();
 

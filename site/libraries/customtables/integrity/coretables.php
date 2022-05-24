@@ -13,6 +13,7 @@ namespace CustomTables\Integrity;
 
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\CT;
 use CustomTables\Fields;
 
 //use CustomTables\Integrity\IntegrityFields;
@@ -37,7 +38,7 @@ class IntegrityCoreTables extends \CustomTables\IntegrityChecks
         }
     }
 
-    protected static function createCoreTableIfNotExists(&$ct, $table)
+    protected static function createCoreTableIfNotExists(CT &$ct, $table)
     {
         if (!ESTables::checkIfTableExists($table->realtablename))
             IntegrityCoreTables::createCoreTable($ct, $table);
@@ -45,13 +46,11 @@ class IntegrityCoreTables extends \CustomTables\IntegrityChecks
             IntegrityCoreTables::checkCoreTable($ct, $table->realtablename, $table->fields);
     }
 
-    protected static function createCoreTable(&$ct, $table)
+    protected static function createCoreTable(CT &$ct, $table)
     {
         //TODO:
         //Add InnoDB Row Formats to config file
         //https://dev.mysql.com/doc/refman/5.7/en/innodb-row-format.html
-
-        $conf = Factory::getConfig();
 
         $db = Factory::getDBO();
 
@@ -111,7 +110,7 @@ class IntegrityCoreTables extends \CustomTables\IntegrityChecks
         return false;
     }
 
-    protected static function prepareAddFieldQuery(&$ct, $fields, $db_type)
+    protected static function prepareAddFieldQuery(CT &$ct, $fields, $db_type)
     {
         $db = Factory::getDBO();
 
@@ -151,7 +150,7 @@ class IntegrityCoreTables extends \CustomTables\IntegrityChecks
         return $indexes_sql;
     }
 
-    public static function checkCoreTable(&$ct, $realtablename, $projected_fields)
+    public static function checkCoreTable(CT &$ct, $realtablename, $projected_fields)
     {
         $ExistingFields = Fields::getExistingFields($realtablename, false);
 
@@ -179,7 +178,7 @@ class IntegrityCoreTables extends \CustomTables\IntegrityChecks
         }
     }
 
-    public static function checkCoreTableFields(&$ct, $realtablename, $ExistingFields, $realfieldname, $ct_fieldtype, $ct_typeparams = '')
+    public static function checkCoreTableFields(CT &$ct, $realtablename, $ExistingFields, $realfieldname, $ct_fieldtype, $ct_typeparams = '')
     {
         $exst_field = null;
         foreach ($ExistingFields as $existing_field) {

@@ -11,11 +11,12 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\CT;
 use CustomTables\TwigProcessor;
 
 trait render_html
 {
-    protected static function get_CatalogTable_HTML(&$ct, $layoutType, $fields, $class, $dragdrop = false)
+    protected static function get_CatalogTable_HTML(CT &$ct, $layoutType, $fields, $class, $dragdrop = false)
     {
         //for reload single record functionality
         $listing_id = $ct->Env->jinput->getCmd("listing_id", '');
@@ -108,7 +109,7 @@ trait render_html
         return $result;
     }
 
-    protected static function checkIfColumnIsASingleField(&$ct, $htmlresult)
+    protected static function checkIfColumnIsASingleField(CT &$ct, $htmlresult)
     {
         $fieldsFound = [];
         foreach ($ct->Table->fields as $field) {

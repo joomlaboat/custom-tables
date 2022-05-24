@@ -11,11 +11,12 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTables\CT;
 use CustomTables\TwigProcessor;
 
 trait render_csv
 {
-    public static function get_CatalogTable_singleline_CSV(&$ct, $layoutType, $layout)
+    public static function get_CatalogTable_singleline_CSV(CT &$ct, $layoutType, $layout)
     {
         if (ob_get_contents())
             ob_clean();
@@ -37,7 +38,7 @@ trait render_csv
         return $result;
     }
 
-    protected static function get_CatalogTable_CSV(&$ct, $layoutType, $fields)
+    protected static function get_CatalogTable_CSV(CT &$ct, $layoutType, $fields)
     {
         $catalogresult = '';
 
@@ -96,7 +97,7 @@ trait render_csv
         return strip_tags($result);
     }
 
-    protected static function renderCSVoutput(&$ct, int $layoutType, string $itemlayout)
+    protected static function renderCSVoutput(CT &$ct, int $layoutType, string $itemlayout)
     {
         $twig = new TwigProcessor($ct, $itemlayout);
 
