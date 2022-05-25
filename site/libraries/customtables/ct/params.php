@@ -11,8 +11,10 @@
 namespace CustomTables;
 
 // no direct access
+use Joomla\CMS\Helper\ModuleHelper;
 use Joomla\CMS\Factory;
 use JoomlaBasicMisc;
+use JRegistry;
 
 defined('_JEXEC') or die('Restricted access');
 
@@ -68,6 +70,7 @@ class Params
     var ?string $cartMsgItemUpdated;
 
     var ?int $ItemId;
+    var ?int $ModuleId;
     var ?string $alias;
     var $app;
     var $jinput;
@@ -78,24 +81,35 @@ class Params
 
     var bool $blockExternalVars;
 
-    function __construct($menu_params = null, $blockExternalVars = false)
+    function __construct($menu_params = null, $blockExternalVars = false, $ModuleId = null)
     {
         $this->blockExternalVars = $blockExternalVars;
         $this->app = Factory::getApplication();
         $this->jinput = $this->app->input;
 
         if (is_null($menu_params)) {
-            if (method_exists($this->app, 'getParams')) {
-                //echo 'exists';
+
+            if (is_null($ModuleId)) {
+                $ModuleId = $this->jinput->getInt('ModuleId');
+            }
+
+            if (!is_null($ModuleId)) {
+                $module = ModuleHelper::getModuleById(strval($ModuleId));
+                $params = new JRegistry;
+                $params->loadString($module->params);
+                $this->setParams($params, false, $ModuleId);
+            } elseif (method_exists($this->app, 'getParams')) {
                 $menu_params = $this->app->getParams();
-                $this->setParams($menu_params);
+                $this->setParams($menu_params, $blockExternalVars, $ModuleId);
             }
         } else
-            $this->setParams($menu_params);
+            $this->setParams($menu_params, $blockExternalVars, $ModuleId);
     }
 
-    function setParams($menu_params = null, $blockExternalVars = true): void
+    function setParams($menu_params = null, $blockExternalVars = true, $ModuleId = null): void
     {
+        $this->ModuleId = $ModuleId;
+
         if (is_null($menu_params)) {
             if (method_exists($this->app, 'getParams')) {
 

@@ -482,7 +482,10 @@ class CT_FieldTypeTag_file
                         UploadFileCount=1;
 
                     	let urlstr' . $field->id . ' ="' . JURI::root(true) . '/index.php?option=com_customtables&view=fileuploader&tmpl=component&' . $field->fieldname
-            . '_fileid=' . $file_id . '&Itemid=' . $field->ct->Env->ItemId . '&fieldname=' . $field->fieldname . '";
+            . '_fileid=' . $file_id
+            . '&Itemid=' . $field->ct->Params->ItemId
+            . (is_null($field->ct->Params->ModuleId) ? '' : '&ModuleId=' . $field->ct->Params->ModuleId)
+            . '&fieldname=' . $field->fieldname . '";
                     	
 						ct_getUploader(' . $field->id . ',urlstr' . $field->id . ',' . $max_file_size . ',"' . $accepted_file_types . '","eseditForm",false,"ct_fileuploader_' . $field->fieldname . '","ct_eventsmessage_'
             . $field->fieldname . '","' . $file_id . '","' . $field->prefix . $field->fieldname . '","ct_ubloadedfile_box_' . $field->fieldname . '")

@@ -62,7 +62,10 @@ class RecordToolbar
                     else
                         $img = '<img src="' . $this->iconPath . 'refresh.png" border="0" alt="' . $alt . '" title="' . $alt . '">';
 
-                    return '<div id="' . $rid . '" class="toolbarIcons"><a href="javascript:ctRefreshRecord(' . $this->Table->tableid . ',\'' . $this->listing_id . '\', \'' . $rid . '\');">' . $img . '</a></div>';
+
+                    $href = 'javascript:ctRefreshRecord(' . $this->Table->tableid . ',\'' . $this->listing_id . '\', \'' . $rid . '\',' . (int)$this->ct->Params->ModuleId . ');';
+
+                    return '<div id="' . $rid . '" class="toolbarIcons"><a href="' . $href . '">' . $img . '</a></div>';
 
                 case 'gallery':
                     if (is_array($this->Table->imagegalleries) and count($this->Table->imagegalleries) > 0)
@@ -109,8 +112,11 @@ class RecordToolbar
         if ($this->jinput->get('tmpl', '', 'CMD') != '')
             $editlink .= '&tmpl=' . $this->jinput->get('tmpl', '', 'CMD');
 
-        if ($this->ct->Env->ItemId > 0)
-            $editlink .= '&amp;Itemid=' . $this->ct->Env->ItemId;
+        if ($this->ct->Params->ItemId > 0)
+            $editlink .= '&amp;Itemid=' . $this->ct->Params->ItemId;
+
+        if (!is_null($this->ct->Params->ModuleId))
+            $editlink .= '&amp;ModuleId=' . $this->ct->Params->ModuleId;
 
         $a = '';
         if ($isModal) {
@@ -141,8 +147,11 @@ class RecordToolbar
             if ($this->jinput->get('tmpl', '', 'CMD') != '')
                 $imagemanagerlink .= '&tmpl=' . $this->jinput->get('tmpl', '', 'CMD');
 
-            if ($this->ct->Env->ItemId > 0)
-                $imagemanagerlink .= '&amp;Itemid=' . $this->ct->Env->ItemId;
+            if ($this->ct->Params->ItemId > 0)
+                $imagemanagerlink .= '&amp;Itemid=' . $this->ct->Params->ItemId;
+
+            if (!is_null($this->ct->Params->ModuleId))
+                $imagemanagerlink .= '&amp;ModuleId=' . $this->ct->Params->ModuleId;
 
             $alt = $gallery[1];
 
@@ -171,8 +180,11 @@ class RecordToolbar
             if ($this->jinput->get('tmpl', '', 'CMD') != '')
                 $filemanagerlink .= '&tmpl=' . $this->jinput->get('tmpl', '', 'CMD');
 
-            if ($this->ct->Env->ItemId > 0)
-                $filemanagerlink .= '&amp;Itemid=' . $this->ct->Env->ItemId;
+            if ($this->ct->Params->ItemId > 0)
+                $filemanagerlink .= '&amp;Itemid=' . $this->ct->Params->ItemId;
+
+            if (!is_null($this->ct->Params->ModuleId))
+                $filemanagerlink .= '&amp;ModuleId=' . $this->ct->Params->ModuleId;
 
             //$alt=JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FILE_MANAGER').' ('.$filebox[1].')';
             $alt = $filebox[1];
@@ -199,7 +211,8 @@ class RecordToolbar
         else
             $img = '<img src="' . $this->iconPath . 'copy.png" border="0" alt="' . $alt . '" title="' . $alt . '">';
 
-        return '<div id="ctCopyIcon' . $this->rid . '" class="toolbarIcons"><a href=\'javascript:ctCopyObject("' . $Label . '", ' . $this->listing_id . ', "ctCopyIcon' . $this->rid . '")\'>' . $img . '</a></div>';
+        $href = 'javascript:ctCopyObject("' . $Label . '", ' . $this->listing_id . ', "ctCopyIcon' . $this->rid . '",' . (int)$this->ct->Params->ModuleId . ')';
+        return '<div id="ctCopyIcon' . $this->rid . '" class="toolbarIcons"><a href=\'' . $href . '\'>' . $img . '</a></div>';
     }
 
     protected function firstFieldValueLabel()
@@ -251,7 +264,7 @@ class RecordToolbar
                 $img = '<img src="' . $this->iconPath . 'key-add.png" border="0" alt="' . $alt . '" title="' . $alt . '">';
 
             $resetLabel = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_USERWILLBECREATED') . ' ' . $this->firstFieldValueLabel();
-            $action = 'ctCreateUser("' . $resetLabel . '", ' . $this->listing_id . ', "' . $rid . '")';
+            $action = 'ctCreateUser("' . $resetLabel . '", ' . $this->listing_id . ', "' . $rid . '",' . (int)$this->ct->Params->ModuleId . ')';
         } else {
             $userrow = CTUser::GetUserRow($realuserid);
             if ($userrow != null) {
@@ -266,7 +279,7 @@ class RecordToolbar
                     $img = '<img src="' . $this->iconPath . 'key.png" border="0" alt="' . $alt . '" title="' . $alt . '">';
 
                 $resetLabel = 'Would you like to reset ' . $user_full_name . ' (' . $userrow['username'] . ') password?';
-                $action = 'ctResetPassword("' . $resetLabel . '", ' . $this->listing_id . ', "' . $rid . '")';
+                $action = 'ctResetPassword("' . $resetLabel . '", ' . $this->listing_id . ', "' . $rid . '",' . (int)$this->ct->Params->ModuleId . ')';
             } else
                 return 'User account deleted, open and save the record.';
         }
@@ -287,7 +300,9 @@ class RecordToolbar
 
         $msg = 'Do you want to delete (' . $deleteLabel . ')?';
 
-        return '<div id="esDeleteIcon' . $this->rid . '" class="toolbarIcons"><a href="javascript:ctDeleteRecord(\'' . $msg . '\', ' . $this->Table->tableid . ', \'' . $this->listing_id . '\', \'esDeleteIcon' . $this->rid . '\');">' . $img . '</a></div>';
+        //ctDeleteRecord(msg, tableid, recordid, toolbarboxid, custom_link)
+        $href = 'javascript:ctDeleteRecord(\'' . $msg . '\', ' . $this->Table->tableid . ', \'' . $this->listing_id . '\', \'esDeleteIcon' . $this->rid . '\', ' . (int)$this->ct->Params->ModuleId . ');';
+        return '<div id="esDeleteIcon' . $this->rid . '" class="toolbarIcons"><a href="' . $href . '">' . $img . '</a></div>';
     }
 
     protected function renderPublishIcon()
@@ -296,7 +311,7 @@ class RecordToolbar
             $rid = 'esPublishIcon' . $this->rid;
 
             if ($this->row['listing_published']) {
-                $link = 'javascript:ctPublishRecord(' . $this->Table->tableid . ',\'' . $this->listing_id . '\', \'' . $rid . '\',0);';
+                $link = 'javascript:ctPublishRecord(' . $this->Table->tableid . ',\'' . $this->listing_id . '\', \'' . $rid . '\',0,' . (int)$this->ct->Params->ModuleId . ');';
                 $alt = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_UNPUBLISH');
 
                 if ($this->ct->Env->toolbaricons != '')
@@ -304,7 +319,7 @@ class RecordToolbar
                 else
                     $img = '<img src="' . $this->iconPath . 'publish.png" border="0" alt="' . $alt . '" title="' . $alt . '">';
             } else {
-                $link = 'javascript:ctPublishRecord(' . $this->Table->tableid . ',\'' . $this->listing_id . '\', \'' . $rid . '\',1);';
+                $link = 'javascript:ctPublishRecord(' . $this->Table->tableid . ',\'' . $this->listing_id . '\', \'' . $rid . '\',1,' . (int)$this->ct->Params->ModuleId . ');';
                 $alt = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PUBLISH');
 
                 if ($this->ct->Env->toolbaricons != '')

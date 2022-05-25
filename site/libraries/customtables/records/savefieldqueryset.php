@@ -44,7 +44,8 @@ class SaveFieldQuerySet
         $this->isCopy = $isCopy;
     }
 
-    function getSaveFieldSet($fieldrow): string
+    //Return type: null|string|array
+    function getSaveFieldSet($fieldrow)
     {
         $this->field = new Field($this->ct, $fieldrow, $this->row);
 
@@ -53,7 +54,7 @@ class SaveFieldQuerySet
         //Process default value
         // or $this->row[$this->field->realfieldname] == ''
 
-        if ($this->field->defaultvalue != "" and ($query == null or is_null($this->row[$this->field->realfieldname]))) {
+        if ($this->field->defaultvalue != "" and (is_null($query) or is_null($this->row[$this->field->realfieldname]))) {
             $twig = new TwigProcessor($this->ct, $this->field->defaultvalue);
             $value = $twig->process($this->row);
 

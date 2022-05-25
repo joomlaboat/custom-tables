@@ -447,8 +447,9 @@ class tagProcessor_Value
                             }
                         }
 
-                        $onchange = 'ct_UpdateSingleValue(\'' . $ct->Env->WebsiteRoot . '\',' . $ct->Env->ItemId . ',\'' . $ESField['fieldname'] . '\',' . $row[$ct->Table->realidfieldname] . ',\''
-                            . $postfix . '\');';
+                        $onchange = 'ct_UpdateSingleValue(\'' . $ct->Env->WebsiteRoot . '\',' . $ct->Params->ItemId . ',\''
+                            . $ESField['fieldname'] . '\',' . $row[$ct->Table->realidfieldname] . ',\''
+                            . $postfix . '\',' . (int)$ct->Params->ModuleId . ');';
 
                         $attributes = 'onchange="' . $onchange . '"' . $style;
 

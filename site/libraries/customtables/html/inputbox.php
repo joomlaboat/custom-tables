@@ -558,8 +558,13 @@ class Inputbox
         else
             $value = isset($row[$this->esfield['realfieldname'] . $postfix]) ? $row[$this->field->realfieldname . $postfix] : null;
 
-        if ($addDynamicEvent)
-            $attributes_ = ' onchange="ct_UpdateSingleValue(\'' . $this->ct->Env->WebsiteRoot . '\',' . $this->ct->Env->ItemId . ',\'' . $this->esfield['fieldname'] . $postfix . '\',' . $row[$this->ct->Table->realidfieldname] . ',\'' . $langsef . '\')"';
+        if ($addDynamicEvent) {
+            $href = 'onchange="ct_UpdateSingleValue(\'' . $this->ct->Env->WebsiteRoot . '\','
+                . $this->ct->Params->ItemId . ',\'' . $this->esfield['fieldname'] . $postfix . '\','
+                . $row[$this->ct->Table->realidfieldname] . ',\'' . $langsef . '\',' . (int)$this->ct->Params->ModuleId . ')"';
+
+            $attributes_ = ' ' . $href;
+        }
 
         $result = '<input type="text" '
             . 'name="' . $this->prefix . $this->field->fieldname . $postfix . '" '

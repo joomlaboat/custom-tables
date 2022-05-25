@@ -60,18 +60,22 @@ class Twig_Record_Tags
         }
 
         if ($view_link == '')
-            $view_link = 'index.php?option=com_customtables&view=details';
+            $view_link = 'index.php?option=com_customtables&amp;view=details';
+
+        if (!is_null($this->ct->Params->ModuleId))
+            $view_link .= '&amp;ModuleId=' . $this->ct->Params->ModuleId;
 
         if ($this->ct->Table->alias_fieldname != '') {
             $alias = $this->ct->Table->record[$this->ct->Env->field_prefix . $this->ct->Table->alias_fieldname] ?? '';
             if ($alias != '')
-                $view_link .= '&alias=' . $alias;
+                $view_link .= '&amp;alias=' . $alias;
             else
-                $view_link .= '&listing_id=' . $this->ct->Table->record[$this->ct->Table->realidfieldname];
+                $view_link .= '&amp;listing_id=' . $this->ct->Table->record[$this->ct->Table->realidfieldname];
         } else
-            $view_link .= '&listing_id=' . $this->ct->Table->record[$this->ct->Table->realidfieldname];
+            $view_link .= '&amp;listing_id=' . $this->ct->Table->record[$this->ct->Table->realidfieldname];
 
-        $view_link .= '&Itemid=' . ($menu_item_id == 0 ? $this->ct->Env->ItemId : $menu_item_id);
+        $view_link .= '&amp;Itemid=' . ($menu_item_id == 0 ? $this->ct->Params->ItemId : $menu_item_id);
+        $view_link .= (is_null($this->ct->Params->ModuleId) ? '' : '&amp;ModuleId=' . $this->ct->Params->ModuleId);
 
         $view_link = JoomlaBasicMisc::deleteURLQueryOption($view_link, 'returnto');
 
@@ -81,7 +85,7 @@ class Twig_Record_Tags
             else
                 $returnto = base64_encode($this->ct->Env->current_url . '#a' . $this->ct->Table->record[$this->ct->Table->realidfieldname]);
 
-            $view_link .= ($returnto != '' ? '&returnto=' . $returnto : '');
+            $view_link .= ($returnto != '' ? '&amp;returnto=' . $returnto : '');
         }
 
         $view_link = Route::_($view_link);

@@ -219,7 +219,11 @@ class CT_FieldTypeTag_image
                 tempFileName="' . $fileId . '";
                 fieldValueInputBox="' . $prefix . $field->fieldname . '";
                 var urlstr="' . JURI::root(true) . '/index.php?option=com_customtables&view=fileuploader&tmpl=component&'
-            . $field->fieldname . '_fileid=' . $fileId . '&Itemid=' . $field->ct->Env->ItemId . '&fieldname=' . $field->fieldname . '";
+            . $field->fieldname . '_fileid=' . $fileId
+            . '&Itemid=' . $field->ct->Params->ItemId
+            . (is_null($field->ct->Params->ModuleId) ? '' : '&ModuleId=' . $field->ct->Params->ModuleId)
+            . '&fieldname=' . $field->fieldname . '";
+            
                 ct_getUploader(' . $field->id . ',urlstr,' . $max_file_size . ',"jpg jpeg png gif svg webp","eseditForm",false,"ct_fileuploader_'
             . $field->fieldname . '","ct_eventsmessage_' . $field->fieldname . '","' . $fileId . '","' . $prefix . $field->fieldname . '","ct_ubloadedfile_box_' . $field->fieldname . '");
 

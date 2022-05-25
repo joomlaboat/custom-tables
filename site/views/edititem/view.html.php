@@ -24,8 +24,8 @@ class CustomTablesViewEditItem extends JViewLegacy
 
     function display($tpl = null): bool
     {
-        $this->ct = new CT;
-        $this->ct->setParams();
+        $this->ct = new CT(null, false);
+
         $Model = $this->getModel();
         $Model->load($this->ct);
 
@@ -38,12 +38,25 @@ class CustomTablesViewEditItem extends JViewLegacy
         if (!isset($this->ct->Table->fields) or !is_array($this->ct->Table->fields))
             return false;
 
-        $formLink = $this->ct->Env->WebsiteRoot . 'index.php?option=com_customtables&amp;view=edititem' . ($this->ct->Env->ItemId != 0 ? '&amp;Itemid=' . $this->ct->Env->ItemId : '');
+        $formLink = $this->ct->Env->WebsiteRoot . 'index.php?option=com_customtables&amp;view=edititem' . ($this->ct->Params->ItemId != 0 ? '&amp;Itemid=' . $this->ct->Params->ItemId : '');
+        if (!is_null($this->ct->Params->ModuleId))
+            $formLink .= '&amp;ModuleId=' . $this->ct->Params->ModuleId;
 
         if ($this->ct->Env->frmt == 'json')
             require_once('tmpl' . DIRECTORY_SEPARATOR . 'json.php');
-        else
+        else {
             CTViewEdit($this->ct, $Model->row, $Model->pagelayout, $formLink, 'eseditForm');
+
+            echo '
+            <!-- Modal content -->
+<div id="ctModal" class="ctModal">
+    <div id="ctModal_box" class="ctModal_content">
+        <span id="ctModal_close" class="ctModal_close">&times;</span>
+        <div id="ctModal_content"></div>
+    </div>
+</div><!-- end of the modal -->';
+
+        }
 
         return true;
     }

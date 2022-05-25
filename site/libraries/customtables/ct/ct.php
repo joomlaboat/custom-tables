@@ -41,7 +41,7 @@ class CT
 
     var array $LayoutVariables;
 
-    function __construct()
+    function __construct($menuParams = null, $blockExternalVars = true, $ModuleId = null)
     {
         $this->app = Factory::getApplication();
         $this->document = $this->app->getDocument();
@@ -49,7 +49,7 @@ class CT
 
         $this->Languages = new Languages;
         $this->Env = new Environment;
-        $this->Params = new Params();
+        $this->Params = new Params($menuParams, $blockExternalVars, $ModuleId);
 
         $this->GroupBy = '';
         $this->isEditForm = false;
@@ -64,9 +64,9 @@ class CT
         $this->Filter = null;
     }
 
-    function setParams($menuParams = null, $blockExternalVars = false): void
+    function setParams($menuParams = null, $blockExternalVars = true, $ModuleId = null): void
     {
-        $this->Params->setParams($menuParams, $blockExternalVars);
+        $this->Params->setParams($menuParams, $blockExternalVars, $ModuleId);
         $this->Env->ItemId = $this->Params->ItemId;
     }
 
@@ -164,9 +164,14 @@ class CT
         return $this->Table->recordcount;
     }
 
-    function buildQuery($where): string
+    function buildQuery($where): ?string
     {
         $ordering = $this->GroupBy != '' ? [$this->GroupBy] : [];
+
+        if (is_null($this->Table) or is_null($this->Table->tablerow)) {
+            $this->app->enqueueMessage('Table not set.', 'error');
+            return null;
+        }
 
         $selects = [$this->Table->tablerow['query_selects']];
 

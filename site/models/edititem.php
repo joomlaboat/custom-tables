@@ -55,6 +55,7 @@ class CustomTablesModelEditItem extends JModelLegacy
         $this->userIdField_Unique = false;
 
         $this->ct->Params->userIdField = $this->findUserIDField($this->ct->Params->userIdField);//to make sure that the field name is real and two userid fields can be used
+
         $this->ct->getTable($ct->Params->tableName, $this->ct->Params->userIdField);
 
         if ($this->ct->Table->tablename == '') {

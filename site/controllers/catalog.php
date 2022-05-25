@@ -91,8 +91,10 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
         $link = $ct->Params->returnTo;
         if (!str_contains($link, 'http:') and !str_contains($link, 'https:'))
             $link .= $ct->Env->WebsiteRoot . $link;
-    } else
-        $link = $ct->Env->WebsiteRoot . 'index.php?Itemid=' . $ct->Env->ItemId;
+    } else {
+        $link = $ct->Env->WebsiteRoot . 'index.php?Itemid=' . $ct->Params->ItemId;
+        $link .= (is_null($ct->Params->ModuleId) ? '' : '&ModuleId=' . $ct->Params->ModuleId);
+    }
 
     $link = JoomlaBasicMisc::deleteURLQueryOption($link, 'task');
 
@@ -280,7 +282,7 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
             $order_by = $ct->Env->jinput->getString('orderby', '');
             $order_by = trim(preg_replace("/[^a-zA-Z-+%.: ,_]/", "", $order_by));
 
-            $ct->app->setUserState('com_customtables.orderby_' . $ct->Env->ItemId, $order_by);
+            $ct->app->setUserState('com_customtables.orderby_' . $ct->Params->ItemId, $order_by);
 
             $link = JoomlaBasicMisc::deleteURLQueryOption($link, 'task');
             $link = JoomlaBasicMisc::deleteURLQueryOption($link, 'orderby');
@@ -291,7 +293,7 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
 
             $limit = $ct->Env->jinput->getInt('limit', '');
 
-            $ct->app->setUserState('com_customtables.limit_' . $ct->Env->ItemId, $limit);
+            $ct->app->setUserState('com_customtables.limit_' . $ct->Params->ItemId, $limit);
 
             $link = JoomlaBasicMisc::deleteURLQueryOption($link, 'task');
             $link = JoomlaBasicMisc::deleteURLQueryOption($link, 'limit');

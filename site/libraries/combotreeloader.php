@@ -18,7 +18,7 @@ use Joomla\CMS\Factory;
 $independat = false;
 
 if (!defined('_JEXEC')) {
-    //Indipendat
+
     define('_JEXEC', 1);
 
     $path = dirname(__FILE__);

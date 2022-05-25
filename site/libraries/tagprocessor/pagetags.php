@@ -69,7 +69,7 @@ class tagProcessor_Page
         tagProcessor_Page::SearchBOX($ct_html, $pagelayout); //Converted to Twig. Original replaced.
 
         tagProcessor_Page::RecordCountValue($ct_record, $pagelayout); //Converted to Twig. Original replaced.
-        tagProcessor_Page::RecordCount($ct_record, $ct_html, $pagelayout); //Converted to Twig. Original replaced.
+        tagProcessor_Page::RecordCount($ct, $ct_html, $pagelayout); //Converted to Twig. Original replaced.
 
         tagProcessor_Page::PrintButton($ct_html, $pagelayout); //Converted to Twig. Original replaced.
 
@@ -259,7 +259,7 @@ class tagProcessor_Page
         }
     }
 
-    static protected function RecordCount(&$ct_record, &$ct_html, &$pagelayout)
+    static protected function RecordCount(&$ct, &$ct_html, &$pagelayout)
     {
         $options = array();
         $fList = JoomlaBasicMisc::getListToReplace('recordcount', $options, $pagelayout, '{}');
@@ -268,7 +268,7 @@ class tagProcessor_Page
 
         foreach ($fList as $fItem) {
             if ($options[$i] == 'numberonly')
-                $vlu = $ct_record->count();
+                $vlu = $ct->Table->recordcount;
             else
                 $vlu = $ct_html->recordcount();
 

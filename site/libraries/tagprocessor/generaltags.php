@@ -206,7 +206,7 @@ class tagProcessor_General
         }
     }
 
-    protected static function Itemid(CT &$ct, &$pagelayout)
+    protected static function Itemid(CT &$ct, &$pagelayout): void
     {
         $options = array();
         $fList = JoomlaBasicMisc::getListToReplace('itemid', $options, $pagelayout, '{}');
@@ -214,8 +214,8 @@ class tagProcessor_General
         $i = 0;
 
         foreach ($fList as $fItem) {
-            if ($ct->Env != null and $ct->Env->ItemId != null)
-                $vlu = $ct->Env->ItemId;
+            if ($ct->Params->ItemId != null)
+                $vlu = $ct->Params->ItemId;
             else
                 $vlu = 0;
 

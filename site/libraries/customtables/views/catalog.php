@@ -59,7 +59,7 @@ class Catalog
         }
 
 // --------------------- Filter
-        $this->ct->setFilter('', $this->ct->Params->showPublished);
+        $this->ct->setFilter($this->ct->Params->filter, $this->ct->Params->showPublished);
         $this->ct->Filter->addMenuParamFilter();
 
         if (!$this->ct->Params->blockExternalVars) {

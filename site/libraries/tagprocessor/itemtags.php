@@ -226,7 +226,7 @@ class tagProcessor_Item
         $isPublishable = CTUser::checkIfRecordBelongsToUser($ct, $publish_userGroup);
         $isDeletable = CTUser::checkIfRecordBelongsToUser($ct, $delete_userGroup);
 
-        $RecordToolbar = new RecordToolbar($ct, $isEditable, $isPublishable, $isDeletable, $ct->Env->ItemId);
+        $RecordToolbar = new RecordToolbar($ct, $isEditable, $isPublishable, $isDeletable);
 
         $i = 0;
         foreach ($fList as $fItem) {

@@ -402,8 +402,9 @@ class fieldObject
             // Default attribute - action to save the value
             $args[0] = 'border:none !important;width:auto;box-shadow:none;';
 
-            $onchange = 'ct_UpdateSingleValue(\'' . $this->ct->Env->WebsiteRoot . '\',' . $this->ct->Env->ItemId . ',\''
-                . $this->field->fieldname . '\',' . $this->ct->Table->record[$this->ct->Table->realidfieldname] . ',\'' . $postfix . '\');';
+            $onchange = 'ct_UpdateSingleValue(\'' . $this->ct->Env->WebsiteRoot . '\',' . $this->ct->Params->ItemId . ',\''
+                . $this->field->fieldname . '\',' . $this->ct->Table->record[$this->ct->Table->realidfieldname] . ',\''
+                . $postfix . '\',' . (int)$this->ct->Params->ModuleId . ');';
 
             if (isset($value_option_list[1]))
                 $args[1] .= $value_option_list[1];

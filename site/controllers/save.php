@@ -101,7 +101,6 @@ function CustomTablesSave($task, $this_)
 
     $jinput->set('task', '');
     $ct = new CT;
-    $ct->setParams();
     $model = $this_->getModel('edititem');
 
     if (!$model->load($ct))

@@ -1,21 +1,35 @@
 let es_LinkLoading = false;
 
-function ctCreateUser(msg, listing_id, toolbarboxid) {
+function ctCreateUser(msg, listing_id, toolbarboxid, ModuleId) {
     if (confirm(msg)) {
         document.getElementById(toolbarboxid).innerHTML = '';
 
         let returnto = btoa(window.location.href);
-        let link = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], ['task=createuser', 'listing_id=' + listing_id, 'returnto=' + returnto]);
-        
+
+        let link = '';
+
+        if (ModuleId !== 0)
+            link = esPrepareLink(['task', "listing_id", 'returnto', 'ids', 'option', 'view'], ['task=createuser', 'option=com_customtables', 'view=catalog', 'listing_id=' + recordid, 'returnto=' + returnto, 'ModuleId=' + ModuleId]);
+        else
+            link = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], ['task=createuser', 'listing_id=' + recordid, 'returnto=' + returnto]);
+
         window.location.href = link;
     }
 }
 
-function ctResetPassword(msg, listing_id, toolbarboxid) {
+function ctResetPassword(msg, listing_id, toolbarboxid, ModuleId) {
     if (confirm(msg)) {
         document.getElementById(toolbarboxid).innerHTML = '';
         let returnto = btoa(window.location.href);
-        window.location.href = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], ['task=resetpassword', 'listing_id=' + listing_id, 'returnto=' + returnto]);
+
+        let link = '';
+
+        if (ModuleId !== 0)
+            link = esPrepareLink(['task', "listing_id", 'returnto', 'ids', 'option', 'view'], ['task=resetpassword', 'option=com_customtables', 'view=catalog', 'listing_id=' + recordid, 'returnto=' + returnto, 'ModuleId=' + ModuleId]);
+        else
+            link = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], ['task=resetpassword', 'listing_id=' + recordid, 'returnto=' + returnto]);
+
+        window.location.href = link;
 
     }
 }
@@ -101,7 +115,7 @@ function runTheTask(task, tableid, recordid, url, responses, last) {
     }
 }
 
-function ctRefreshRecord(tableid, recordid, toolbarboxid) {
+function ctRefreshRecord(tableid, recordid, toolbarboxid, ModuleId) {
     if (es_LinkLoading)
         return;
 
@@ -117,7 +131,14 @@ function ctRefreshRecord(tableid, recordid, toolbarboxid) {
         runTheTask('refresh', tableid, recordid, url, ['refreshed'], false);
     } else {
         let returnto = btoa(window.location.href);
-        let link = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], ['task=refresh', 'listing_id=' + recordid, 'returnto=' + returnto]);
+
+        let link = '';
+
+        if (ModuleId !== 0)
+            link = esPrepareLink(['task', "listing_id", 'returnto', 'ids', 'option', 'view'], ['task=refresh', 'option=com_customtables', 'view=catalog', 'listing_id=' + recordid, 'returnto=' + returnto, 'ModuleId=' + ModuleId]);
+        else
+            link = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], ['task=refresh', 'listing_id=' + recordid, 'returnto=' + returnto]);
+
         window.location.href = link;
     }
 
@@ -140,7 +161,7 @@ function ctLimitChanged(object) {
     window.location.href = link;
 }
 
-function ctPublishRecord(tableid, recordid, toolbarboxid, publish) {
+function ctPublishRecord(tableid, recordid, toolbarboxid, publish, ModuleId) {
     if (es_LinkLoading)
         return;
 
@@ -161,8 +182,15 @@ function ctPublishRecord(tableid, recordid, toolbarboxid, publish) {
         let url = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], [task, 'listing_id=' + recordid, 'clean=1', 'tmpl=component']);
         runTheTask((publish == 0 ? 'unpublish' : 'publish'), tableid, recordid, url, ['published', 'unpublished'], false);
     } else {
-        let returnto = btoa(window.location.href);
-        let link = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], [task, 'listing_id=' + recordid, 'returnto=' + returnto]);
+        let returnto = Base64.encode(window.location.href);
+
+        let link = '';
+
+        if (ModuleId !== 0)
+            link = esPrepareLink(['task', "listing_id", 'returnto', 'ids', 'option', 'view'], [task, 'option=com_customtables', 'view=catalog', 'listing_id=' + recordid, 'returnto=' + returnto, 'ModuleId=' + ModuleId]);
+        else
+            link = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], [task, 'listing_id=' + recordid, 'returnto=' + returnto]);
+
         window.location.href = link;
     }
 
@@ -179,7 +207,7 @@ function findRowIndexById(tableid, rowid) {
     return -1;
 }
 
-function ctDeleteRecord(msg, tableid, recordid, toolbarboxid, custom_link) {
+function ctDeleteRecord(msg, tableid, recordid, toolbarboxid, ModuleId) {
     if (es_LinkLoading)
         return;
 
@@ -197,7 +225,14 @@ function ctDeleteRecord(msg, tableid, recordid, toolbarboxid, custom_link) {
             runTheTask('delete', tableid, recordid, url, ['deleted'], false);
         } else {
             let returnto = btoa(window.location.href);
-            let link = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], ['task=delete', 'listing_id=' + recordid, 'returnto=' + returnto], custom_link);
+
+            let link = '';
+
+            if (ModuleId !== 0)
+                link = esPrepareLink(['task', "listing_id", 'returnto', 'ids', 'option', 'view'], ['task=delete', 'option=com_customtables', 'view=catalog', 'listing_id=' + recordid, 'returnto=' + returnto, 'ModuleId=' + ModuleId]);
+            else
+                link = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], ['task=delete', 'listing_id=' + recordid, 'returnto=' + returnto]);
+
             window.location.href = link;
         }
     } else
@@ -350,14 +385,14 @@ function removeURLParameter(url, parameter) {
     }
 }
 
-function ct_UpdateSingleValue(WebsiteRoot, Itemid, fieldname_, record_id, postfix) {
+function ct_UpdateSingleValue(WebsiteRoot, Itemid, fieldname_, record_id, postfix, ModuleId) {
     const fieldname = fieldname_.split('_')[0];
     const url = WebsiteRoot + 'index.php?option=com_customtables&amp;view=edititem&amp;Itemid=' + Itemid;
     let params = "";
     const obj_checkbox_off = document.getElementById("comes_" + record_id + "_" + fieldname_ + "_off");
     if (obj_checkbox_off) {
-        //Bit confusing. But this is needed to save Unchecked values
-        //Its because unchecked checkbox has value NULL
+        //A bit confusing. But this is needed to save Unchecked values
+        //It's because unchecked checkbox has value NULL
         params = "comes_" + fieldname_ + "_off=" + obj_checkbox_off.value; // if this set 1 then the ckeckbox value will be 0
 
         if (parseInt(obj_checkbox_off.value) == 1)
@@ -371,6 +406,9 @@ function ct_UpdateSingleValue(WebsiteRoot, Itemid, fieldname_, record_id, postfi
 
     params += "&task=save";
     params += "&Itemid=" + Itemid;
+    if (ModuleId != 0)
+        params += "&ModuleId=" + ModuleId;
+
     params += "&listing_id=" + record_id;
 
     const obj = document.getElementById("com_" + record_id + "_" + fieldname + postfix + "_div");

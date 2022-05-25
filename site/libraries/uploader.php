@@ -190,9 +190,7 @@ class ESFileUploader
         if ($establename == '')
             return 0;
 
-        $tablerow = $esTable->getTableRowByNameAssoc($establename);
-
-        return $tablerow;
+        return $esTable->getTableRowByNameAssoc($establename);
 
     }
 
@@ -201,7 +199,7 @@ class ESFileUploader
         $filename_parts = explode('.', $filename);
         $filename_extension = strtolower(end($filename_parts));
 
-        $mimet = array(
+        $mimeType = array(
             'txt' => 'text/plain',
             'csv' => 'text/csv',
             'htm' => 'text/html',
@@ -278,8 +276,8 @@ class ESFileUploader
             'ods' => 'application/vnd.oasis.opendocument.spreadsheet',
         );
 
-        if (isset($mimet[$filename_extension])) {
-            return $mimet[$filename_extension];
+        if (isset($mimeType[$filename_extension])) {
+            return $mimeType[$filename_extension];
         } else {
             return 'application/octet-stream';
         }

@@ -30,8 +30,11 @@ class CustomTablesModelCatalog extends JModelLegacy
 
     function cart_emptycart()
     {
-        $app = Factory::getApplication();
-        $this->ct->Env->jinput->cookie->set($this->showcartitemsprefix . $this->ct->Table->tablename, '', time() - 3600, $app->get('cookie_path', '/'), $app->get('cookie_domain'), $app->isSSLConnection());
+
+        $this->ct->Env->jinput->cookie->set($this->showcartitemsprefix . $this->ct->Table->tablename, '',
+            time() - 3600,
+            $this->ct->app->get('cookie_path', '/'),
+            $this->ct->app->get('cookie_domain'), $this->ct->app->isSSLConnection());
         return true;
     }
 

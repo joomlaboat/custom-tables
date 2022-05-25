@@ -18,6 +18,9 @@ use Joomla\CMS\HTML\HTMLHelper;
 
 function CTViewEdit(CT &$ct, $row, &$pagelayout, $formLink, $formName): void
 {
+    if (!is_null($ct->Params->ModuleId))
+        $formName .= $ct->Params->ModuleId;
+
     if ($ct->Env->legacysupport) {
         $path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR;
         require_once($path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'edittags.php');
@@ -34,10 +37,7 @@ function CTViewEdit(CT &$ct, $row, &$pagelayout, $formLink, $formName): void
             . JoomlaBasicMisc::JTextExtended($ct->Params->pageTitle) . '</h2></div>';
     }
 
-    if (isset($row[$ct->Table->realidfieldname]))
-        $listing_id = (int)$row[$ct->Table->realidfieldname];
-    else
-        $listing_id = 0;
+    $listing_id = $row[$ct->Table->realidfieldname] ?? 0;
 
     echo '<form action="' . $formLink . '" method="post" name="' . $formName . '" id="' . $formName . '" class="form-validate form-horizontal well" '
         . 'data-tableid="' . $ct->Table->tableid . '" data-recordid="' . $listing_id . '" '
@@ -79,11 +79,14 @@ function CTViewEdit(CT &$ct, $row, &$pagelayout, $formLink, $formName): void
         echo '<input type="hidden" name="published" value="' . (int)$ct->Params->publishStatus . '" />';
     }
 
-    echo '
-	<input type="hidden" name="task" id="task" value="save" />
-	<input type="hidden" name="returnto" id="returnto" value="' . $encoded_returnto . '" />
-	<input type="hidden" name="listing_id" id="listing_id" value="' . $listing_id . '" />'
-        . ($ct->Env->jinput->getCmd('tmpl', '') != '' ? '<input type="hidden" name="tmpl" value="' . $ct->Env->jinput->getCmd('tmpl', '') . '" />' : '')
+    echo '<input type="hidden" name="task" id="task" value="save" />'
+        . '<input type="hidden" name="returnto" id="returnto" value="' . $encoded_returnto . '" />'
+        . '<input type="hidden" name="listing_id" id="listing_id" value="' . $listing_id . '" />';
+
+    if (!is_null($ct->Params->ModuleId))
+        echo '<input type="hidden" name="ModuleId" id="ModuleId" value="' . $ct->Params->ModuleId . '" />';
+
+    echo ($ct->Env->jinput->getCmd('tmpl', '') != '' ? '<input type="hidden" name="tmpl" value="' . $ct->Env->jinput->getCmd('tmpl', '') . '" />' : '')
         . JHtml::_('form.token')
         . '</fieldset>
 </form>';
