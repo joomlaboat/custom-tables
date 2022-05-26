@@ -40,7 +40,7 @@ class ESTables
 
     public static function getTableID(string $tablename): int
     {
-        if (strpos($tablename, '"') !== false)
+        if (str_contains($tablename, '"'))
             return 0;
 
         $db = Factory::getDBO();
@@ -97,12 +97,10 @@ class ESTables
 
     public static function getTableRowByIDAssoc(int $tableid)
     {
-        $db = Factory::getDBO();
-
         if ($tableid == 0)
             return 0;
 
-        return ESTables::getTableRowByWhere('id=' . (int)$tableid);
+        return ESTables::getTableRowByWhere('id=' . $tableid);
     }
 
     public static function getTableRowByWhere($where)
@@ -136,7 +134,7 @@ class ESTables
         return $row;
     }
 
-    public static function getTableRowSelects()
+    public static function getTableRowSelects(): string
     {
         $db = Factory::getDBO();
 
@@ -151,7 +149,7 @@ class ESTables
         return '*, ' . $realtablename_query . ',' . $realidfieldname_query . ', 1 AS published_field_found';
     }
 
-    public static function createTableIfNotExists($database, $dbprefix, $tablename, $tabletitle, $complete_table_name = '')
+    public static function createTableIfNotExists($database, $dbprefix, $tablename, $tabletitle, $complete_table_name = ''): bool
     {
         $db = Factory::getDBO();
 
@@ -160,6 +158,8 @@ class ESTables
             //Check if table exists
             if ($complete_table_name == '')
                 $table_name = $dbprefix . 'customtables_table_' . $tablename;
+            elseif ($complete_table_name == '-new-')
+                $table_name = $tablename;
             else
                 $table_name = $complete_table_name;// used for custom table names - to connect to third-part tables for example
 
@@ -193,7 +193,7 @@ class ESTables
 
             if (count($rows2) > 0) {
                 if ($complete_table_name == '') {
-                    //do not medify third-party tables
+                    //do not modify third-party tables
                     $row2 = $rows2[0];
 
                     $table_name = $dbprefix . 'customtables_table_' . $tablename;
@@ -211,18 +211,25 @@ class ESTables
                     return false;
                 }
             } else {
-                if ($complete_table_name == '') {
-                    $query = '
-					CREATE TABLE IF NOT EXISTS #__customtables_table_' . $tablename . '
+
+                if ($complete_table_name == '')
+                    $table_name = $dbprefix . 'customtables_table_' . $tablename;
+                elseif ($complete_table_name == '-new-')
+                    $table_name = $tablename;
+                else
+                    $table_name = $complete_table_name;// used for custom table names - to connect to third-part tables for example
+
+                $query = '
+					CREATE TABLE IF NOT EXISTS ' . $table_name . '
 					(
 						id int(10) UNSIGNED NOT NULL auto_increment,
 						published tinyint(1) NOT NULL DEFAULT 1,
 						PRIMARY KEY (id)
 					) ENGINE=InnoDB COMMENT="' . $tabletitle . '" DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AUTO_INCREMENT=1;
 ';
-                    $db->setQuery($query);
-                    $db->execute();
-                }
+                $db->setQuery($query);
+                $db->execute();
+
                 return true;
             }
         }
@@ -239,7 +246,7 @@ class ESTables
         return $db->loadObjectList();
     }
 
-    public static function insertRecords($realtablename, $realidfieldname, $sets)
+    public static function insertRecords($realtablename, $sets)
     {
         $db = Factory::getDBO();
 
@@ -253,19 +260,16 @@ class ESTables
             }
 
             $query = 'INSERT INTO ' . $realtablename . ' (' . implode(',', $set_fieldnames) . ') VALUES (' . implode(',', $set_values) . ')';
-            $db->setQuery($query);
-            $db->execute();
-            return $db->insertid();
         } else {
             $query = 'INSERT ' . $realtablename . ' SET ' . implode(', ', $sets);
 
-            $db->setQuery($query);
-            $db->execute();
-            return $db->insertid();
         }
+        $db->setQuery($query);
+        $db->execute();
+        return $db->insertid();
     }
 
-    public static function renameTableIfNeeded($tableid, $database, $dbprefix, $tablename)
+    public static function renameTableIfNeeded($tableid, $database, $dbprefix, $tablename): void
     {
         $db = Factory::getDBO();
         $old_tablename = ESTables::getTableName($tableid);
@@ -288,8 +292,6 @@ class ESTables
     {
         $db = Factory::getDBO();
 
-        $jinput = Factory::getApplication()->input;
-
         if ($tableid == 0)
             $tableid = Factory::getApplication()->input->get('tableid', 0, 'INT');
 
@@ -303,9 +305,9 @@ class ESTables
         return $rows[0]->tablename;
     }
 
-    public static function addThirdPartyTableFieldsIfNeeded($database, $tablename, $realtablename)
+    public static function addThirdPartyTableFieldsIfNeeded($database, $tablename, $realtablename): bool
     {
-        $fields = Fields::getFields($tablename, $as_object = false, $order_fields = true);
+        $fields = Fields::getFields($tablename, false, true);
         if (count($fields) > 0)
             return false;
 
@@ -345,7 +347,7 @@ class ESTables
                 $ct_field_type = Fields::convertMySQLFieldTypeToCT($field->data_type, $field->column_type);
                 if ($ct_field_type['type'] == '') {
                     Factory::getApplication()->enqueueMessage('third-party table field type "' . $field->data_type . '" is unknown.', 'error');
-                    return;
+                    return false;
                 }
 
                 $set_values['tableid'] = (int)$tablerow->id;
@@ -375,12 +377,11 @@ class ESTables
             $db->setQuery($query);
             $db->execute();
         }
+        return true;
     }
 
     public static function getTableRowByName($tablename = '')
     {
-        $db = Factory::getDBO();
-
         if ($tablename == '')
             return 0;
 
@@ -401,7 +402,7 @@ class ESTables
         return ESTables::getTableRowByWhere('tablename=' . $db->quote($tablename));
     }
 
-    public static function copyTable(CT &$ct, $originaltableid, $new_table, $old_table, $customtablename = '')
+    public static function copyTable(CT $ct, $originaltableid, $new_table, $old_table, $customtablename = '')
     {
         //Copy Table
         $db = Factory::getDBO();
@@ -462,7 +463,7 @@ class ESTables
                 $value = $row[$fld];
                 $value = str_replace('"', '\"', $value);
 
-                $inserts[] = '' . $fld . '="' . $value . '"';
+                $inserts[] = $fld . '="' . $value . '"';
             }
 
             $iq = 'INSERT INTO #__customtables_fields SET ' . implode(', ', $inserts);

@@ -303,15 +303,13 @@ class ImportTables
                             $inserts[] = $fieldname . '=' . ImportTables::dbQuoteByType($rows[$key], $type);
                         }
                     }
-                    //else
-                    //$inserts[]=$fieldname.'='.ImportTables::dbQuoteByType($rows[$key],$type);
                 } else {
                     $inserts[] = $fieldname . '=' . ImportTables::dbQuoteByType($rows[$key], $type);
                 }
             }
         }
 
-        return ESTables::insertRecords($mysqltablename, 'id', $inserts);
+        return ESTables::insertRecords($mysqltablename, $inserts);
     }
 
     protected static function updateTableCategory($tableid, &$table_new, $categoryname)
@@ -355,7 +353,7 @@ class ImportTables
                 $inserts = array();
                 $inserts[] = 'categoryname=' . $db->Quote($categoryname);
 
-                $categoryid = ESTables::insertRecords('#__customtables_categories', 'id', $inserts);
+                $categoryid = ESTables::insertRecords('#__customtables_categories', $inserts);
             }
         }
 
@@ -522,7 +520,7 @@ class ImportTables
             $inserts[] = 'title=' . $db->Quote($new_menutype);
             $inserts[] = 'description=' . $db->Quote('Menu Type created by CustomTables');
 
-            $menu_types_id = ESTables::insertRecords('#__menu_types', 'id', $inserts);
+            $menu_types_id = ESTables::insertRecords('#__menu_types', $inserts);
         }
 
         $menuitem_new['checked_out'] = 0;

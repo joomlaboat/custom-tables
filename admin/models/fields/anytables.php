@@ -34,6 +34,8 @@ class JFormFieldAnyTables extends JFormFieldList
         foreach ($tables as $table)
             $options[] = JHtml::_('select.option', $table, $table);
 
+        $options[] = JHtml::_('select.option', '-new-', '- Create New Table');
+
         return $options;
     }
 

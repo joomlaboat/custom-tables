@@ -23,9 +23,6 @@ use Joomla\Utilities\ArrayHelper;
 // import Joomla modelform library
 jimport('joomla.application.component.modeladmin');
 
-/**
- * Customtables Tables Model
- */
 class CustomtablesModelTables extends JModelAdmin
 {
     var CT $ct;
@@ -121,11 +118,6 @@ class CustomtablesModelTables extends JModelAdmin
         return $form;
     }
 
-    /**
-     * Method to get the script that have to be included on the form
-     *
-     * @return string    script files
-     */
     public function getScript()
     {
         return JURI::root(true) . '/administrator/components/com_customtables/models/forms/tables.js';
@@ -366,10 +358,10 @@ class CustomtablesModelTables extends JModelAdmin
 
         // Alter the unique field for save as copy
         if ($this->ct->Env->jinput->get('task') === 'save2copy') {
-            $originaltableid = $this->ct->Env->jinput->getInt('originaltableid', 0);
+            $originalTableId = $this->ct->Env->jinput->getInt('originaltableid', 0);
 
-            if ($originaltableid != 0) {
-                $old_tablename = ESTables::getTableName($originaltableid);
+            if ($originalTableId != 0) {
+                $old_tablename = ESTables::getTableName($originalTableId);
 
                 if ($old_tablename == $tablename)
                     $tablename = 'copy_of_' . $tablename;
@@ -381,20 +373,30 @@ class CustomtablesModelTables extends JModelAdmin
             }
         }
 
-        if (parent::save($data)) {
-            $originaltableid = $this->ct->Env->jinput->getInt('originaltableid', 0);
+        if ($data['customtablename'] == '-new-') {
+            $data['customtablename'] = $tablename;
+            $data['customidfield'] = 'id';
+             
+            if (parent::save($data)) {
 
-            if ($originaltableid != 0 and $old_tablename != '')
-                ESTables::copyTable($this->ct, $originaltableid, $tablename, $old_tablename, $data['customtablename']);
-
-            ESTables::createTableIfNotExists($database, $dbprefix, $tablename, $tabletitle, $data['customtablename']);
-
-            //Add fields if it's a third-party table and no fields added yet.
-            if ($data['customtablename'] != null and $data['customtablename'] != '') {
-                ESTables::addThirdPartyTableFieldsIfNeeded($database, $tablename, $data['customtablename']);
+                ESTables::createTableIfNotExists($database, $dbprefix, $tablename, $tabletitle, $data['customtablename']);
+                return true;
             }
+        } else {
+            if (parent::save($data)) {
+                $originalTableId = $this->ct->Env->jinput->getInt('originaltableid', 0);
 
-            return true;
+                if ($originalTableId != 0 and $old_tablename != '')
+                    ESTables::copyTable($this->ct, $originalTableId, $tablename, $old_tablename, $data['customtablename']);
+
+                ESTables::createTableIfNotExists($database, $dbprefix, $tablename, $tabletitle, $data['customtablename']);
+
+                //Add fields if it's a third-party table and no fields added yet.
+                if ($data['customtablename'] != null and $data['customtablename'] != '')
+                    ESTables::addThirdPartyTableFieldsIfNeeded($database, $tablename, $data['customtablename']);
+
+                return true;
+            }
         }
         return false;
     }
@@ -417,7 +419,7 @@ class CustomtablesModelTables extends JModelAdmin
     {
         if (!empty($record->id)) {
             if ($record->published != -2) {
-                return;
+                return false;
             }
 
             // The record has been set. Check the record permissions.

@@ -51,6 +51,8 @@ $edit = "index.php?option=com_customtables&view=listoftables&task=tables.edit";
                 <?php else: ?>
                     <?php echo $this->escape($item->tablename); ?>
                 <?php endif; ?>
+
+                <br/><span style="color:grey;"><?php echo $item->realtablename; ?></span>
             </div>
         </td>
 

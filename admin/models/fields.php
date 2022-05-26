@@ -504,28 +504,28 @@ class CustomtablesModelFields extends JModelAdmin
         $data_extra = $input->get('jform', array(), 'ARRAY');
 
         //clean field name
-        $esfieldname = strtolower(trim(preg_replace("/[^a-zA-Z0-9]/", "", $data_extra['fieldname'])));
-        if (strlen($esfieldname) > 40)
-            $esfieldname = substr($esfieldname, 0, 40);
+        $fieldName = strtolower(trim(preg_replace("/[^a-zA-Z0-9]/", "", $data_extra['fieldname'])));
+        if (strlen($fieldName) > 40)
+            $fieldName = substr($fieldName, 0, 40);
 
 
         $tableid = $data_extra['tableid'];
         $fieldid = $data['id'];
 
         if ($fieldid == 0)
-            $esfieldname = $this->checkFieldName($tableid, $esfieldname);
+            $fieldName = $this->checkFieldName($tableid, $fieldName);
 
-        $data['fieldname'] = $esfieldname;
+        $data['fieldname'] = $fieldName;
 
-        //Add language fields to the fields table if necessary
+        //Add language fields to the fields' table if necessary
 
-        $morethanonelang = false;
+        $moreThanOneLang = false;
         $fields = Fields::getListOfExistingFields('#__customtables_fields', false);
         foreach ($this->ct->Languages->LanguageList as $lang) {
             $id_title = 'fieldtitle';
             $id_description = 'description';
 
-            if ($morethanonelang) {
+            if ($moreThanOneLang) {
                 $id_title .= '_' . $lang->sef;
                 $id_description .= '_' . $lang->sef;
 
@@ -539,16 +539,16 @@ class CustomtablesModelFields extends JModelAdmin
 
             $data[$id_title] = $data_extra[$id_title];
             $data[$id_description] = $data_extra[$id_description];
-            $morethanonelang = true; //More than one language installed
+            $moreThanOneLang = true; //More than one language installed
         }
 
-        // Alter the uniqe field for save as copy
+        // Alter the unique field for save as copy
         if ($input->get('task') === 'save2copy') {
             // Automatic handling of other unique fields
-            $uniqeFields = $this->getUniqeFields();
-            if (CustomtablesHelper::checkArray($uniqeFields)) {
-                foreach ($uniqeFields as $uniqeField) {
-                    $data[$uniqeField] = $this->generateUnique($uniqeField, $data[$uniqeField]);
+            $uniqueFields = $this->getUniqeFields();
+            if (CustomtablesHelper::checkArray($uniqueFields)) {
+                foreach ($uniqueFields as $uniqueField) {
+                    $data[$uniqueField] = $this->generateUnique($uniqueField, $data[$uniqueField]);
                 }
             }
         } else {
@@ -562,8 +562,17 @@ class CustomtablesModelFields extends JModelAdmin
             return false;
         }
 
-        if ($table_row->customtablename == '') //do not create fields to third-purty tables
+        if ($table_row->customtablename == '') //do not create fields to third-party tables
         {
+            if (!$this->update_physical_field($table_row, $fieldid, $data)) {
+                //Cannot create
+                return false;
+            }
+        } elseif ($table_row->customtablename == $table_row->tablename) {
+
+            $data['customfieldname'] = $data['fieldname'];
+
+            //Third-party table but managed by the Custom Tables
             if (!$this->update_physical_field($table_row, $fieldid, $data)) {
                 //Cannot create
                 return false;
@@ -608,7 +617,7 @@ class CustomtablesModelFields extends JModelAdmin
     {
         $db = Factory::getDBO();
 
-        $realtablename = $table_row->realtablename;//$db->getPrefix().'customtables_table_'.$establename;
+        $realtablename = $table_row->realtablename;
         $realtablename = str_replace('#__', $db->getPrefix(), $realtablename);
 
         if ($fieldid != 0) {
@@ -623,7 +632,9 @@ class CustomtablesModelFields extends JModelAdmin
             $realfieldname = '';
 
             if ($table_row->customtablename == '')
-                $realfieldname = 'es_' . $data['fieldname']; //Tablerow is not loaded and custom tables name not set so we assume that the field starts with es_
+                $realfieldname = 'es_' . $data['fieldname'];
+            elseif ($table_row->customtablename == $table_row->tablename)
+                $realfieldname = $data['fieldname'];
         }
 
         $new_typeparams = $data['typeparams'];

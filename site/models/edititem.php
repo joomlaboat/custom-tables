@@ -536,7 +536,7 @@ class CustomTablesModelEditItem extends JModelLegacy
             if ($this->ct->Table->tablerow['published_field_found'])
                 $saveQuery[] = 'published=' . $this->ct->Params->publishStatus;
 
-            $listing_id_temp = ESTables::insertRecords($this->ct->Table->realtablename, $this->ct->Table->realidfieldname, $saveQuery);
+            $listing_id_temp = ESTables::insertRecords($this->ct->Table->realtablename, $saveQuery);
         } else {
             $this->updateLog($saveField, $listing_id);
             $saveField->runUpdateQuery($saveQuery, $listing_id);
