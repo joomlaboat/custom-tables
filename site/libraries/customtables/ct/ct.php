@@ -67,7 +67,6 @@ class CT
     function setParams($menuParams = null, $blockExternalVars = true, $ModuleId = null): void
     {
         $this->Params->setParams($menuParams, $blockExternalVars, $ModuleId);
-        $this->Env->ItemId = $this->Params->ItemId;
     }
 
     function getTable($tablename_or_id, $userIdFieldName = null): void
@@ -234,18 +233,18 @@ class CT
         if ($this->Table->recordlist != null)
             return $this->Table->recordlist;
 
-        $recordlist = [];
+        $recordList = [];
 
         foreach ($this->Records as $row)
-            $recordlist[] = $row[$this->Table->realidfieldname];
+            $recordList[] = $row[$this->Table->realidfieldname];
 
-        $this->Table->recordlist = $recordlist;
-        return $recordlist;
+        $this->Table->recordlist = $recordList;
+        return $recordList;
     }
 
     function applyLimits(): void
     {
-        $limit_var = 'com_customtables.limit_' . $this->Env->ItemId;
+        $limit_var = 'com_customtables.limit_' . $this->Params->ItemId;
 
         $this->Limit = $this->app->getUserState($limit_var, 0);
 

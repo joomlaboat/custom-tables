@@ -62,16 +62,15 @@ class CustomtablesControllerListofRecords extends JControllerAdmin
 
         require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR . 'edititem.php');
         $editModel = JModelLegacy::getInstance('EditItem', 'CustomTablesModel', $_params);
-        $editModel->load($_params, true);
 
-        $ok = true;
+        $ct = new CT($_params, false);
+
+        $editModel->load($ct, false);
 
         foreach ($cid as $id) {
             if ($id != '') {
-                if ($editModel->setPublishStatusSingleRecord($id, $status) == -1) {
-                    $ok = false;
+                if ($editModel->setPublishStatusSingleRecord($id, $status) == -1)
                     break;
-                }
             }
         }
 
@@ -129,17 +128,16 @@ class CustomtablesControllerListofRecords extends JControllerAdmin
 
         require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR . 'edititem.php');
         $editModel = JModelLegacy::getInstance('EditItem', 'CustomTablesModel', $_params);
-        $editModel->load($_params, true);
 
-        $ok = true;
+        $ct = new CT($_params, false);
+
+        $editModel->load($ct);
 
         foreach ($cid as $id) {
             if ($id != '') {
-                $isok = $editModel->deleteSingleRecord($id);
-                if (!$isok) {
-                    $ok = false;
+                $ok = $editModel->deleteSingleRecord($id);
+                if (!$ok)
                     break;
-                }
             }
         }
 

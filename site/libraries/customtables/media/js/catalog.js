@@ -538,7 +538,8 @@ function ctCatalogOnDragOver(event) {
 
 function ctEditModal(url) {
 
-    let new_url = url + '&modal=1';
+    let new_url = url + '&modal=1&time=' + Date.now();
+
     let params = "";
     let http = CreateHTTPRequestObject();   // defined in ajax.js
 

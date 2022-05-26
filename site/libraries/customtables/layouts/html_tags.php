@@ -115,7 +115,7 @@ class Twig_Html_Tags
         if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
             return '';
 
-        if ($this->ct->Env->isPlugin or (!is_null($this->ct->Env->moduleId) and $this->ct->Env->moduleId != 0))
+        if ($this->ct->Env->isPlugin or (!is_null($this->ct->Params->ModuleId) and $this->ct->Params->ModuleId != 0))
             return '';
 
         if (!is_null($this->ct->Params->ModuleId))
@@ -168,7 +168,7 @@ class Twig_Html_Tags
         if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
             return '';
 
-        if ($this->ct->Env->isPlugin or (!is_null($this->ct->Env->moduleId) and $this->ct->Env->moduleId != 0))
+        if ($this->ct->Env->isPlugin or (!is_null($this->ct->Params->ModuleId) and $this->ct->Params->ModuleId != 0))
             return '';
 
         if ($this->ct->Table->recordcount <= $this->ct->Limit)
@@ -191,7 +191,7 @@ class Twig_Html_Tags
         if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
             return '';
 
-        if ($this->ct->Env->isPlugin or (!is_null($this->ct->Env->moduleId) and $this->ct->Env->moduleId != 0))
+        if ($this->ct->Env->isPlugin or (!is_null($this->ct->Params->ModuleId) and $this->ct->Params->ModuleId != 0))
             return '';
 
         if (!is_null($this->ct->Params->ModuleId))
@@ -211,7 +211,7 @@ class Twig_Html_Tags
         if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
             return '';
 
-        if ($this->ct->Env->isPlugin or (!is_null($this->ct->Env->moduleId) and $this->ct->Env->moduleId != 0))
+        if ($this->ct->Env->isPlugin or (!is_null($this->ct->Params->ModuleId) and $this->ct->Params->ModuleId != 0))
             return '';
 
         if (!is_null($this->ct->Params->ModuleId))
@@ -230,7 +230,7 @@ class Twig_Html_Tags
         if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
             return '';
 
-        if ($this->ct->Env->isPlugin or (!is_null($this->ct->Env->moduleId) and $this->ct->Env->moduleId != 0))
+        if ($this->ct->Env->isPlugin or (!is_null($this->ct->Params->ModuleId) and $this->ct->Params->ModuleId != 0))
             return '';
 
         if (!is_null($this->ct->Params->ModuleId))
@@ -350,7 +350,7 @@ class Twig_Html_Tags
         if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
             return '';
 
-        if ($this->ct->Env->isPlugin or (!is_null($this->ct->Env->moduleId) and $this->ct->Env->moduleId != 0))
+        if ($this->ct->Env->isPlugin or (!is_null($this->ct->Params->ModuleId) and $this->ct->Params->ModuleId != 0))
             return '';
 
         if (!is_null($this->ct->Params->ModuleId))
@@ -393,7 +393,7 @@ class Twig_Html_Tags
         if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
             return '';
 
-        if ($this->ct->Env->isPlugin or (!is_null($this->ct->Env->moduleId) and $this->ct->Env->moduleId != 0))
+        if ($this->ct->Env->isPlugin or (!is_null($this->ct->Params->ModuleId) and $this->ct->Params->ModuleId != 0))
             return '';
 
         if (!is_null($this->ct->Params->ModuleId))
@@ -545,7 +545,7 @@ class Twig_Html_Tags
         if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
             return '';
 
-        if ($this->ct->Env->isPlugin or (!is_null($this->ct->Env->moduleId) and $this->ct->Env->moduleId != 0))
+        if ($this->ct->Env->isPlugin or (!is_null($this->ct->Params->ModuleId) and $this->ct->Params->ModuleId != 0))
             return '';
 
         if (!is_null($this->ct->Params->ModuleId))
@@ -572,7 +572,7 @@ class Twig_Html_Tags
         if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
             return '';
 
-        if ($this->ct->Env->isPlugin or (!is_null($this->ct->Env->moduleId) and $this->ct->Env->moduleId != 0))
+        if ($this->ct->Env->isPlugin or (!is_null($this->ct->Params->ModuleId) and $this->ct->Params->ModuleId != 0))
             return '';
 
         if (!is_null($this->ct->Params->ModuleId))
@@ -635,7 +635,7 @@ class Twig_Html_Tags
         if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
             return '';
 
-        if ($this->ct->Env->isPlugin or (!is_null($this->ct->Env->moduleId) and $this->ct->Env->moduleId != 0))
+        if ($this->ct->Env->isPlugin or (!is_null($this->ct->Params->ModuleId) and $this->ct->Params->ModuleId != 0))
             return '';
 
         if (!is_null($this->ct->Params->ModuleId))
@@ -705,13 +705,12 @@ class Twig_Html_Tags
         else
             $formName = 'eseditForm';
 
-        if (!is_null($this->ct->Params->ModuleId))
-            $formName .= $this->ct->Params->ModuleId;
+        $formName .= $this->ct->Params->ModuleId;
 
         if ($this->ct->Env->frmt != '' and $this->ct->Env->frmt != 'html')
             return '';
 
-        if ($this->ct->Env->isPlugin or (!is_null($this->ct->Env->moduleId) and $this->ct->Env->moduleId != 0))
+        if ($this->ct->Env->isPlugin)
             return '';
 
         if ($redirectlink == null and !is_null($this->ct->Params->returnTo))

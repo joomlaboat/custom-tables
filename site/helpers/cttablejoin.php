@@ -49,6 +49,8 @@ class JHTMLCTTableJoin
         else
             $formID = 'eseditForm';
 
+        $formID .= $field->ct->Params->ModuleId;
+
         return '<div id="' . $control_name . 'Wrapper" ' . implode(' ', $data) . '><div id="' . $control_name . 'Selector0_0"></div></div>
 			<script>
 				ctUpdateTableJoinLink("' . $control_name . '",0,true,0,"","' . $formID . '");

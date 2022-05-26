@@ -28,6 +28,8 @@ class Environment
     var string $current_url;
     var string $current_sef_url;
     var string $encoded_current_url;
+    var string $encoded_current_url_no_return;
+
     var int $userid;
     var ?User $user;
     var bool $isUserAdministrator;
@@ -39,14 +41,13 @@ class Environment
     var Input $jinput;
     var bool $isMobile;
     var bool $isModal;
-    var int $Itemid;
+
     var string $field_prefix;
     var string $field_input_prefix;
 
     var bool $loadTwig;
     var string $toolbaricons;
     var bool $legacysupport;
-    var ?int $moduleId; //this can be set by calling the class from the module
     var bool $isPlugin; //this can be set by calling the class from the plugin
 
     function __construct()
@@ -73,6 +74,9 @@ class Environment
         $tmp_current_url = JoomlaBasicMisc::deleteURLQueryOption($tmp_current_url, 'number');
 
         $this->encoded_current_url = base64_encode($tmp_current_url);
+
+        $tmp_current_url = JoomlaBasicMisc::deleteURLQueryOption($tmp_current_url, 'returnto');
+        $this->encoded_current_url_no_return = base64_encode($tmp_current_url);
 
         if ($this->version < 4)
             $this->user = Factory::getUser();
@@ -111,15 +115,12 @@ class Environment
 
         $this->isMobile = $this->check_user_agent('mobile');
 
-        $this->ItemId = $this->jinput->getInt('Itemid', 0);
-
         $params = ComponentHelper::getParams('com_customtables');
 
         $this->loadTwig = $params->get('loadTwig') == '1';
         $this->toolbaricons = strval($params->get('toolbaricons'));
         $this->legacysupport = $params->get('legacysupport') == '';
 
-        $this->moduleId = null;
         $this->isPlugin = false;
     }
 

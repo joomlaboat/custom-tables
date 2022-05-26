@@ -22,12 +22,9 @@ class Catalog
 {
     var CT $ct;
 
-    //var ?int $moduleId;
-
-    function __construct(CT &$ct)//, $moduleId = null)
+    function __construct(CT &$ct)
     {
         $this->ct = &$ct;
-        //$this->moduleId = $moduleId;
     }
 
     function render(): string
