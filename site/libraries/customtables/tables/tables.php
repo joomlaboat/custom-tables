@@ -11,7 +11,6 @@
 namespace CustomTables;
 
 // no direct access
-use Joomla\CMS\Factory;
 
 defined('_JEXEC') or die('Restricted access');
 
@@ -21,7 +20,7 @@ class Tables
 
     function __construct(&$ct)
     {
-        $this->ct = $ct;
+        $this->ct = &$ct;
     }
 
     function loadRecords($tablename_or_id, string $filter = '', string $orderby = '', int $limit = 0)
@@ -32,10 +31,10 @@ class Tables
         if ($tablename_or_id == '')
             return null;
 
-        $this->ct->getTable($tablename_or_id, null);
+        $this->ct->getTable($tablename_or_id);
 
         if ($this->ct->Table->tablename == '') {
-            Factory::getApplication()->enqueueMessage('Table not found.', 'error');
+            $this->ct->app->enqueueMessage('Table not found.', 'error');
             return false;
         }
 
@@ -54,7 +53,7 @@ class Tables
         return true;
     }
 
-    function loadRecord($tablename_or_id, int $recordid = 0)
+    function loadRecord($tablename_or_id, string $recordId)
     {
         if (is_numeric($tablename_or_id) and (int)$tablename_or_id == 0)
             return null;
@@ -62,17 +61,17 @@ class Tables
         if ($tablename_or_id == '')
             return null;
 
-        $this->ct->getTable($tablename_or_id, null);
+        $this->ct->getTable($tablename_or_id);
 
         if ($this->ct->Table->tablename == '') {
-            Factory::getApplication()->enqueueMessage('Table not found.', 'error');
+            $this->ct->app->enqueueMessage('Table not found.', 'error');
             return null;
         }
 
         $this->ct->Table->recordcount = 0;
 
         $this->ct->setFilter('', 2);
-        $this->ct->Filter->where[] = $this->ct->Table->realidfieldname . '=' . (int)$recordid;
+        $this->ct->Filter->where[] = $this->ct->Table->realidfieldname . '=' . $this->ct->db->quote($recordId);
 
 
         $this->ct->Limit = 1;

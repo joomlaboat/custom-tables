@@ -26,7 +26,7 @@ class CustomTablesViewCatalog extends JViewLegacy
 
     function display($tpl = null)
     {
-        $this->ct = new CT;
+        $this->ct = new CT(null, false);
 
         $key = $this->ct->Env->jinput->getCmd('key');
         if ($key != '')
@@ -37,7 +37,7 @@ class CustomTablesViewCatalog extends JViewLegacy
 
     function renderCatalog($tpl): bool
     {
-        $this->ct->setParams(null, false);
+        //$this->ct->setParams(null, false);
         $this->catalog = new Catalog($this->ct);
 
         if ($this->ct->Env->frmt == 'csv') {
