@@ -421,7 +421,7 @@ function recaptchaCallback() {
     }
 }
 
-function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_index, parent_object_id, formId) {
+function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_index, parent_object_id, formId, attributes) {
     let wrapper = document.getElementById(control_name + "Wrapper");
     let filters = [];
     if (wrapper.dataset.valuefilters != '')
@@ -472,7 +472,7 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_ind
             if (next_index + 1 < filters.length) {
                 let result = '<div id="' + control_name + 'Selector' + next_index + '_' + next_sub_index + '"></div>';
                 document.getElementById(control_name + "Selector" + index + '_' + sub_index).innerHTML = result;
-                ctUpdateTableJoinLink(control_name, next_index, false, next_sub_index, parent_object_id, formId);
+                ctUpdateTableJoinLink(control_name, next_index, false, next_sub_index, parent_object_id, formId, attributes);
                 return result;
             } else
                 document.getElementById(control_name + "Selector" + index + '_' + sub_index).innerHTML = "No items to select..";
@@ -487,8 +487,8 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_ind
     let result = ''
 
     let cssClass = 'form-select valid form-control-success';
-    let objForm = document.getElementById(formId);//'eseditForm');
-    if (objForm.dataset.version < 4)
+    let objForm = document.getElementById(formId);
+    if (objForm && objForm.dataset.version < 4)
         cssClass = 'inputbox';
 
     if (next_index + 1 < filters.length) {
@@ -498,10 +498,10 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_ind
         if (Array.isArray(filters[index]))
             current_object_id += '_' + sub_index;
 
-        let onChangeAttribute = ' onChange="ctUpdateTableJoinLink(\'' + control_name + '\', ' + next_index + ', false, ' + next_sub_index + ',\'' + current_object_id + '\', \'' + formId + '\')"';
+        let onChangeAttribute = ' onChange="ctUpdateTableJoinLink(\'' + control_name + '\', ' + next_index + ', false, ' + next_sub_index + ',\'' + current_object_id + '\', \'' + formId + '\', \'' + attributes + '\')"';
         result += '<select id="' + current_object_id + '"' + onChangeAttribute + ' class="' + cssClass + '">';
     } else
-        result += '<select id="' + control_name + '" name="' + control_name + '" class="' + cssClass + '">';
+        result += '<select id="' + control_name + '" name="' + control_name + '" class="' + cssClass + '"' + Base64.decode(attributes) + '>';
 
     result += '<option value="">- Select</option>';
 
@@ -517,10 +517,10 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_ind
     document.getElementById(control_name + "Selector" + index + '_' + sub_index).innerHTML = result;
 
     if (execute_all && next_index + 1 < filters.length && val != null)
-        ctUpdateTableJoinLink(control_name, next_index, true, next_sub_index, null, formId);
+        ctUpdateTableJoinLink(control_name, next_index, true, next_sub_index, null, formId, attributes);
 }
 
-function ctUpdateTableJoinLink(control_name, index, execute_all, sub_index, object_id, formId) {
+function ctUpdateTableJoinLink(control_name, index, execute_all, sub_index, object_id, formId, attributes) {
     let wrapper = document.getElementById(control_name + "Wrapper");
 
     let link = location.href.split('administrator/index.php?option=com_customtables');
@@ -562,7 +562,7 @@ function ctUpdateTableJoinLink(control_name, index, execute_all, sub_index, obje
     fetch(url)
         .then(r => r.json())
         .then(r => {
-            ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_index, object_id, formId);
+            ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_index, object_id, formId, attributes);
         })
         .catch(error => console.error("Error", error));
 }

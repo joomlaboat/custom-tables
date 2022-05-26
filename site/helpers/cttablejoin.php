@@ -17,7 +17,7 @@ use Joomla\CMS\Factory;
 
 class JHTMLCTTableJoin
 {
-    static public function render($control_name, &$field, $value, &$option_list): string
+    static public function render($control_name, &$field, $value, &$option_list, $attributes): string
     {
         $filter = [];
 
@@ -43,7 +43,7 @@ class JHTMLCTTableJoin
         $data[] = 'data-valuefilters="' . base64_encode(json_encode($js_filters)) . '"';
         $data[] = 'data-value="' . $value . '"';
 
-        $app = JFactory::getApplication();
+        $app = Factory::getApplication();
         if ($app->getName() == 'administrator')   //since   3.2
             $formID = 'adminForm';
         else
@@ -53,7 +53,7 @@ class JHTMLCTTableJoin
 
         return '<div id="' . $control_name . 'Wrapper" ' . implode(' ', $data) . '><div id="' . $control_name . 'Selector0_0"></div></div>
 			<script>
-				ctUpdateTableJoinLink("' . $control_name . '",0,true,0,"","' . $formID . '");
+				ctUpdateTableJoinLink("' . $control_name . '",0,true,0,"","' . $formID . '","' . base64_encode($attributes) . '");
 			</script>
 ';
     }

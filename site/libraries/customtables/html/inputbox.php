@@ -1085,6 +1085,10 @@ class Inputbox
         //$this->option_list[0] - CSS Class
         //$this->option_list[1] - Optional Attributes
 
+        $sqljoin_attributes = $this->attributes . ' '
+            . 'data-valuerule="' . str_replace('"', '&quot;', $this->esfield['valuerule']) . '" '
+            . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->esfield['valuerulecaption']) . '" ';
+
         if ($this->isTwig) {
             //Twig Tag
             //Twig Example: [house:RedHouses,onChange('Alert("Value Changed")'),city=London]
@@ -1093,15 +1097,12 @@ class Inputbox
                 $this->prefix . $this->esfield['fieldname'],
                 $this->field,
                 $value,
-                $this->option_list);
+                $this->option_list,
+                $sqljoin_attributes);
         } else {
             //CT Tag
             if (isset($this->option_list[2]) and $this->option_list[2] != '')
                 $this->field->params[2] = $this->option_list[2];//Overwrites field type filter parameter.
-
-            $sqljoin_attributes = $this->attributes . ' '
-                . 'data-valuerule="' . str_replace('"', '&quot;', $this->esfield['valuerule']) . '" '
-                . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->esfield['valuerulecaption']) . '" ';
 
             $result .= JHTML::_('ESSQLJoin.render',
                 $this->field->params,
