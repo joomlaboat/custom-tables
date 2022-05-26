@@ -28,16 +28,16 @@ class Field
     var int $id;
     var array $params;
     var string $type;
-    var $isrequired;
-    var $defaultvalue;
+    var bool $isrequired;
+    var ?string $defaultvalue;
 
-    var $title;
-    var $description;
-    var $fieldname;
-    var $realfieldname;
-    var $comesfieldname;
-    var $valuerule;
-    var $valuerulecaption;
+    var string $title;
+    var ?string $description;
+    var string $fieldname;
+    var string $realfieldname;
+    var ?string $comesfieldname;
+    var ?string $valuerule;
+    var ?string $valuerulecaption;
 
     var array $fieldrow;
     var string $prefix; //part of the table class
@@ -72,7 +72,7 @@ class Field
 
         $this->fieldname = $fieldrow['fieldname'];
         $this->realfieldname = $fieldrow['realfieldname'];
-        $this->isrequired = $fieldrow['isrequired'];
+        $this->isrequired = (bool)intval($fieldrow['isrequired']);
         $this->defaultvalue = $fieldrow['defaultvalue'];
 
         $this->valuerule = $fieldrow['valuerule'];

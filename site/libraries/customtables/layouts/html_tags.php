@@ -442,10 +442,16 @@ class Twig_Html_Tags
         foreach ($list_of_fields as $field_name_string) {
             if ($field_name_string == '_id') {
                 $fld = array(
+                    'id' => 0,
                     'fieldname' => '_id',
                     'type' => '_id',
                     'typeparams' => '',
-                    'fieldtitle' . $this->ct->Languages->Postfix => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ID')
+                    'fieldtitle' . $this->ct->Languages->Postfix => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ID'),
+                    'realfieldname' => 'id',
+                    'isrequired' => false,
+                    'defaultvalue' => null,
+                    'valuerule' => null,
+                    'valuerulecaption' => null
                 );
             } else {
                 //Date search no implemented yet. It will be range search
@@ -487,6 +493,9 @@ class Twig_Html_Tags
         $default_Action = $reload ? ' onChange="ctSearchBoxDo();"' : ' ';//action should be a space not empty or this.value=this.value
 
         $objectname = $first_fld['fieldname'];
+
+        if (count($first_fld) == 0)
+            return 'Unsupported field type or field not found.';
 
         $vlu = $SearchBox->renderFieldBox('es_search_box_', $objectname, $first_fld,
             $cssclass, '0',
