@@ -12,12 +12,12 @@
 defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\CT;
+use CustomTables\Field;
 use CustomTables\Fields;
-use Joomla\CMS\Factory;
 
 class JHTMLCTTableJoin
 {
-    static public function render($control_name, &$field, $value, &$option_list, $attributes): string
+    static public function render($control_name, Field $field, $value, $option_list, $attributes): string
     {
         $filter = [];
 
@@ -27,14 +27,14 @@ class JHTMLCTTableJoin
         //Get initial table filters based on the value
 
         $js_filters = [];
-        $js_filters_selfparent = [];
+        $js_filters_selfParent = [];
         $parent_id = $value;
-        JHTMLCTTableJoin::processValue($filter, $parent_id, $js_filters, $js_filters_selfparent);
+        JHTMLCTTableJoin::processValue($filter, $parent_id, $js_filters, $js_filters_selfParent);
 
         $js_filters[] = $value;
 
         $key = JoomlaBasicMisc::generateRandomString();
-        Factory::getApplication()->setUserState($key, $filter);
+        $field->ct->app->setUserState($key, $filter);
 
         $data = [];
         $data[] = 'data-key="' . $key . '"';
@@ -43,8 +43,7 @@ class JHTMLCTTableJoin
         $data[] = 'data-valuefilters="' . base64_encode(json_encode($js_filters)) . '"';
         $data[] = 'data-value="' . $value . '"';
 
-        $app = Factory::getApplication();
-        if ($app->getName() == 'administrator')   //since   3.2
+        if ($field->ct->app->getName() == 'administrator')   //since   3.2
             $formID = 'adminForm';
         else
             $formID = 'eseditForm';
@@ -58,14 +57,14 @@ class JHTMLCTTableJoin
 ';
     }
 
-    protected static function parseTagArguments(&$option_list, &$filter)
+    protected static function parseTagArguments($option_list, &$filter)
     {
-        //Preselectors
+        //Preselects
         //example: city.edit("cssclass","attributes",[["province","name",true,"active=1","name"],["city","name",false,"active=1","name"],["streets","layout:TheStreeName",false,"active=1","streename"]])
-        //parameter 3 can be 1 or 2 dimentional array.
-        //One dimentioinal array will be converted to 2 dimentional array.
-        //$cssclass = $option_list[0]; // but it's have been already procressed
-        //$attribute = $option_list[1]; // but it's have been already procressed
+        //parameter 3 can be 1 or 2 dimensional array.
+        //One dimensional array will be converted to 2 dimensional array.
+        //$cssclass = $option_list[0]; // but it's have been already progressed
+        //$attribute = $option_list[1]; // but it's have been already progressed
 
         //Twig teg example:
         //{{ componentid.edit("mycss","readyonly",[["grades","grade"],["classes","class"]]) }}
@@ -97,7 +96,7 @@ class JHTMLCTTableJoin
         return $parent_filter_field_name;
     }
 
-    protected static function parseTypeParams(&$field, &$filter, &$parent_filter_field_name): bool
+    protected static function parseTypeParams($field, &$filter, &$parent_filter_field_name): bool
     {
         if (count($field->params) > 6 or (isset($field->params[7]) and ($field->params[7] == 'addforignkey' or $field->params[7] == 'noforignkey'))) {
             //Dynamic filter,
@@ -106,7 +105,7 @@ class JHTMLCTTableJoin
                 $temp_ct->getTable($field->params[0]);
 
                 if ($temp_ct->Table->tablename == '') {
-                    Factory::getApplication()->enqueueMessage('Dynamic filter field "' . $field->params[3] . '" : Table "' . $temp_ct->Table->tablename . '" not found.', 'error');
+                    $temp_ct->app->enqueueMessage('Dynamic filter field "' . $field->params[3] . '" : Table "' . $temp_ct->Table->tablename . '" not found.', 'error');
                     return false;
                 }
 
@@ -114,7 +113,7 @@ class JHTMLCTTableJoin
                 foreach ($temp_ct->Table->fields as $fld) {
                     if ($fld['fieldname'] == $field->params[3]) {
                         //Add dynamic filter parameters
-                        $temp_type_params = JoomlaBasicMisc::csv_explode(',', $fld['typeparams'], '"', false);
+                        $temp_type_params = JoomlaBasicMisc::csv_explode(',', $fld['typeparams']);
                         $filter[] = [$temp_type_params[0], $temp_type_params[1], $temp_type_params[5], $temp_type_params[2], $temp_type_params[4], $parent_filter_field_name];
 
                         $parent_filter_field_name = $temp_type_params[0];
@@ -131,7 +130,7 @@ class JHTMLCTTableJoin
         return true;
     }
 
-    protected static function processValue(&$filter, &$parent_id, &$js_filters, &$js_filters_selfParent)
+    protected static function processValue(&$filter, &$parent_id, &$js_filters, &$js_filters_selfParent): void
     {
         for ($i = count($filter) - 1; $i >= 0; $i--) {
             $flt = $filter[$i];
@@ -139,20 +138,17 @@ class JHTMLCTTableJoin
             $temp_ct = new CT;
             $temp_ct->getTable($tablename);
 
-            $is_selfParentTable = false;
-            $selfParentJoinField = '';
-
             if ($i > 0)//No need to filter first select element values
             {
                 $join_to_tablename = $flt[5];
-                $parent_id = JHTMLCTTableJoin::getParentFieltrID($temp_ct, $parent_id, $join_to_tablename);
+                $parent_id = JHTMLCTTableJoin::getParentFilterID($temp_ct, $parent_id, $join_to_tablename);
                 $js_filters[] = $parent_id;
             }
 
             //Check if this table has self-parent field - the TableJoing field linked with the same table.
             $selfParentField = Fields::getSelfParentField($temp_ct);
             if ($selfParentField != null) {
-                $selfParent_type_params = JoomlaBasicMisc::csv_explode(',', $selfParentField['typeparams'], '"', false);
+                $selfParent_type_params = JoomlaBasicMisc::csv_explode(',', $selfParentField['typeparams']);
 
                 if ($filter[$i][3] == '')
                     $filter[$i][3] = $selfParent_type_params[2];
@@ -161,18 +157,18 @@ class JHTMLCTTableJoin
                     $filter[$i][4] = $selfParent_type_params[4];
 
                 $filter[$i][6] = $selfParentField['fieldname'];
-                $js_filters_selfParent[] = ($selfParentField != null ? 1 : 0);
+                $js_filters_selfParent[] = 1;
 
                 $join_to_tablename = $filter[$i][0];
 
-                $selfparnt_filters = [];
+                $selfParent_filters = [];
                 while ($parent_id != null) {
-                    $parent_id = JHTMLCTTableJoin::getParentFieltrID($temp_ct, $parent_id, $join_to_tablename);
+                    $parent_id = JHTMLCTTableJoin::getParentFilterID($temp_ct, $parent_id, $join_to_tablename);
                     if ($parent_id != null)
-                        $selfparnt_filters[] = $parent_id;
+                        $selfParent_filters[] = $parent_id;
                 }
-                $selfparnt_filters[] = "";
-                $js_filters[] = array_reverse($selfparnt_filters);
+                $selfParent_filters[] = "";
+                $js_filters[] = array_reverse($selfParent_filters);
             }
         }
 
@@ -182,14 +178,13 @@ class JHTMLCTTableJoin
         $js_filters = array_reverse($js_filters);
     }
 
-    protected static function getParentFieltrID(&$temp_ct, $parent_id, $join_to_tablename)
+    protected static function getParentFilterID($temp_ct, $parent_id, $join_to_tablename)
     {
-        $db = Factory::getDBO();
         $join_realfieldname = '';
 
         foreach ($temp_ct->Table->fields as $fld) {
             if ($fld['type'] == 'sqljoin') {
-                $type_params = JoomlaBasicMisc::csv_explode(',', $fld['typeparams'], '"', false);
+                $type_params = JoomlaBasicMisc::csv_explode(',', $fld['typeparams']);
                 $join_tablename = $type_params[0];
 
                 if ($join_tablename == $join_to_tablename) {
@@ -203,10 +198,10 @@ class JHTMLCTTableJoin
             return null;
 
         $query = 'SELECT ' . $join_realfieldname . ' FROM ' . $temp_ct->Table->realtablename . ' WHERE '
-            . $temp_ct->Table->realidfieldname . '=' . $db->quote($parent_id) . ' LIMIT 1';
+            . $temp_ct->Table->realidfieldname . '=' . $temp_ct->db->quote($parent_id) . ' LIMIT 1';
 
-        $db->setQuery($query);
-        $recs = $db->loadAssocList();
+        $temp_ct->db->setQuery($query);
+        $recs = $temp_ct->db->loadAssocList();
         if (count($recs) == 0)
             return null;
 

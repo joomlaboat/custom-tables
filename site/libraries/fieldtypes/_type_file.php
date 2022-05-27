@@ -409,10 +409,8 @@ class CT_FieldTypeTag_file
         return $filename_new;
     }
 
-    public static function renderFileFieldBox(CT &$ct, array &$fieldrow, array &$row, $class): string
+    public static function renderFileFieldBox(CT &$ct, Field &$field, array &$row, $class): string
     {
-        $field = new Field($ct, $fieldrow);
-
         if (count($row) > 0 and $row[$ct->Table->realidfieldname] != '' and (is_numeric($row[$ct->Table->realidfieldname]) and $row[$ct->Table->realidfieldname] != 0)) {
             $file = strval($row[$field->realfieldname]);
         } else

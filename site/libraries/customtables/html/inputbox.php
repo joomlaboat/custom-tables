@@ -36,26 +36,23 @@ JHTML::addIncludePath(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTOR
 class Inputbox
 {
     var CT $ct;
-    var $field;
-    var $esfield;
-    var $jinput;
+    var Field $field;
 
-    var $cssclass;
-    var $cssstyle;
-    var $attributes;
-    var $onchange;
+    var string $cssclass;
+    var string $cssstyle;
+    var string $attributes;
+    var string $onchange;
 
-    var $option_list;
-    var $place_holder;
-    var $prefix;
-    var $isTwig;
+    var array $option_list;
+    var string $place_holder;
+    var string $prefix;
+    var bool $isTwig;
 
-    function __construct(CT &$ct, &$esfield, array $option_list = [], $isTwig = true, $onchange = '')
+    function __construct(CT &$ct, &$fieldRow, array $option_list = [], $isTwig = true, $onchange = '')
     {
         $this->ct = $ct;
 
         $this->isTwig = $isTwig;
-        $this->jinput = Factory::getApplication()->input;
 
         // $option_list[0] - CSS Class
         // $option_list[1] - Optional Parameter
@@ -71,19 +68,20 @@ class Inputbox
         }
 
         if (strpos($this->attributes, 'onchange="') !== false and $this->onchange != '') {
-            //if the attributes already containe "onchange" parameter then add onchange value to the attributes parameter
+            //if the attributes already contain "onchange" parameter then add onchange value to the attributes parameter
             $this->attributes = str_replace('onchange="', 'onchange="' . $this->onchange, $this->attributes);
         } elseif ($this->attributes != '')
             $this->attributes .= ' onchange="' . $onchange . '"';
         else
             $this->attributes = 'onchange="' . $onchange . '"';
 
-        $this->esfield = $esfield;
+        $this->field = new Field($this->ct, $fieldRow);
 
-        $this->cssclass .= ($this->ct->Env->version < 4 ? ' inputbox' : ' form-control') . ($this->esfield['isrequired'] ? ' required' : '');
+        $this->cssclass .= ($this->ct->Env->version < 4 ? ' inputbox' : ' form-control') . ($this->field->isrequired ? ' required' : '');
 
         $this->option_list = $option_list;
-        $this->place_holder = $esfield['fieldtitle' . $this->ct->Languages->Postfix];
+
+        $this->place_holder = $this->field->title;
     }
 
     static public function renderTableJoinSelectorJSON(CT &$ct, $key): void
@@ -192,7 +190,7 @@ class Inputbox
 
     function render($value, &$row)
     {
-        $this->field = new Field($this->ct, $this->esfield, $row);
+        $this->field = new Field($this->ct, $this->field->fieldrow, $row);
 
         $this->prefix = $this->ct->Env->field_input_prefix . (!$this->ct->isEditForm ? $row[$this->ct->Table->realidfieldname] . '_' : '');
 
@@ -207,16 +205,11 @@ class Inputbox
             case 'float':
                 return $this->render_float($value, $row);
 
+            case 'phponadd':
             case 'phponchange':
                 return $value . '<input type="hidden" '
-                    . 'name="' . $this->prefix . $this->esfield['fieldname'] . '" '
-                    . 'id="' . $this->prefix . $this->esfield['fieldname'] . '" '
-                    . 'value="' . $value . '" />';
-
-            case 'phponadd':
-                return $value . '<input type="hidden" '
-                    . 'name="' . $this->prefix . $this->esfield['fieldname'] . '" '
-                    . 'id="' . $this->prefix . $this->esfield['fieldname'] . '" '
+                    . 'name="' . $this->prefix . $this->field->fieldname . '" '
+                    . 'id="' . $this->prefix . $this->field->fieldname . '" '
                     . 'value="' . $value . '" />';
 
             case 'phponview':
@@ -254,42 +247,42 @@ class Inputbox
             case 'file':
                 $file_type_file = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_file.php';
                 require_once($file_type_file);
-                return CT_FieldTypeTag_file::renderFileFieldBox($this->ct, $this->esfield, $row, $this->cssclass);
+                return CT_FieldTypeTag_file::renderFileFieldBox($this->ct, $this->field, $row, $this->cssclass);
 
             case 'userid':
                 return $this->getUserBox($row, $value, false);
 
             case 'user':
                 if (count($row) == 0)
-                    $value = $this->jinput->get($this->ct->Env->field_prefix . $this->esfield['fieldname'], '', 'STRING');
+                    $value = $this->ct->Env->jinput->get($this->ct->Env->field_prefix . $this->field->fieldname, '', 'STRING');
 
                 return $this->getUserBox($row, $value, true);
 
             case 'usergroup':
                 if (count($row) == 0)
-                    $value = $this->jinput->get($this->ct->Env->field_prefix . $this->esfield['fieldname'], '', 'STRING');
+                    $value = $this->ct->Env->jinput->get($this->ct->Env->field_prefix . $this->field->fieldname, '', 'STRING');
 
                 return $this->getUserGroupBox($value);
 
             case 'usergroups':
                 return JHTML::_('ESUserGroups.render',
-                    $this->prefix . $this->esfield['fieldname'],
+                    $this->prefix . $this->field->fieldname,
                     $value,
                     $this->field->params
                 );
 
             case 'language':
                 if (count($row) != 0 and (int)$row[$this->ct->Table->realidfieldname] != 0) {
-                    $value = $this->jinput->get($this->ct->Env->field_prefix . $this->esfield['fieldname'], '', 'STRING');
+                    $value = $this->ct->Env->jinput->get($this->ct->Env->field_prefix . $this->field->fieldname, '', 'STRING');
                 } else {
                     //If it's a new record then default language is the current one
                     $langObj = Factory::getLanguage();
                     $value = $langObj->getTag();
                 }
                 $lang_attributes = array(
-                    'name' => $this->prefix . $this->esfield['fieldname'],
-                    'id' => $this->prefix . $this->esfield['fieldname'],
-                    'label' => $this->esfield['fieldtitle' . $this->ct->Languages->Postfix], 'readonly' => false);
+                    'name' => $this->prefix . $this->field->fieldname,
+                    'id' => $this->prefix . $this->field->fieldname,
+                    'label' => $this->field->title, 'readonly' => false);
 
                 return CTTypes::getField('language', $lang_attributes, $value)->input;
 
@@ -299,12 +292,12 @@ class Inputbox
             case 'filelink':
 
                 if (count($row) == 0)
-                    $value = $this->jinput->get($this->ct->Env->field_prefix . $this->esfield['fieldname'], '', 'STRING');
+                    $value = $this->ct->Env->jinput->get($this->ct->Env->field_prefix . $this->field->fieldname, '', 'STRING');
 
                 if ($value == '')
-                    $value = $this->esfield['defaultvalue'];
+                    $value = $this->field->defaultvalue;
 
-                return JHTML::_('ESFileLink.render', $this->prefix . $this->esfield['fieldname'], $value, $this->cssstyle, $this->cssclass, $this->field->params[0], $this->attributes);
+                return JHTML::_('ESFileLink.render', $this->prefix . $this->field->fieldname, $value, $this->cssstyle, $this->cssclass, $this->field->params[0], $this->attributes);
 
             case 'customtables':
                 return $this->render_customtables($row);
@@ -316,19 +309,19 @@ class Inputbox
                 return $this->render_records($value);
 
             case 'googlemapcoordinates':
-                return JHTML::_('GoogleMapCoordinates.render', $this->prefix . $this->esfield['fieldname'], $value);
+                return JHTML::_('GoogleMapCoordinates.render', $this->prefix . $this->field->fieldname, $value);
 
             case 'email';
                 return '<input '
                     . 'type="text" '
-                    . 'name="' . $this->prefix . $this->esfield['fieldname'] . '" '
-                    . 'id="' . $this->prefix . $this->esfield['fieldname'] . '" '
+                    . 'name="' . $this->prefix . $this->field->fieldname . '" '
+                    . 'id="' . $this->prefix . $this->field->fieldname . '" '
                     . 'class="' . $this->cssclass . '" '
                     . 'value="' . $value . '" maxlength="255" '
                     . $this->attributes . ' '
-                    . 'data-label="' . $this->esfield['fieldtitle' . $this->ct->Languages->Postfix] . '"'
-                    . 'data-valuerule="' . str_replace('"', '&quot;', $this->esfield['valuerule']) . '" '
-                    . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->esfield['valuerulecaption']) . '" '
+                    . 'data-label="' . $this->field->title . '"'
+                    . 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
+                    . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" '
                     . ' />';
 
             case 'url';
@@ -342,7 +335,7 @@ class Inputbox
 
             case 'article':
                 return JHTML::_('CTArticle.render',
-                    $this->prefix . $this->esfield['fieldname'],
+                    $this->prefix . $this->field->fieldname,
                     $value,
                     $this->cssclass,
                     $this->field->params
@@ -374,12 +367,12 @@ class Inputbox
         foreach ($this->field->params as $radiovalue) {
             $v = trim($radiovalue);
             $result .= '<td><input type="radio"
-									name="' . $this->prefix . $this->esfield['fieldname'] . '"
-									id="' . $this->prefix . $this->esfield['fieldname'] . '_' . $i . '"
+									name="' . $this->prefix . $this->field->fieldname . '"
+									id="' . $this->prefix . $this->field->fieldname . '_' . $i . '"
 									value="' . $v . '" '
                 . ($value == $v ? ' checked="checked" ' : '')
                 . ' /></td>';
-            $result .= '<td><label for="' . $this->prefix . $this->esfield['fieldname'] . '_' . $i . '">' . $v . '</label></td>';
+            $result .= '<td><label for="' . $this->prefix . $this->field->fieldname . '_' . $i . '">' . $v . '</label></td>';
             $i++;
         }
         $result .= '</tr></table>';
@@ -388,28 +381,28 @@ class Inputbox
         return $result;
     }
 
-    protected function render_int(&$value, &$row)
+    protected function render_int(&$value, &$row): string
     {
         $result = '';
 
         if (count($row) == 0)
-            $value = $this->jinput->get($this->ct->Env->field_prefix . $this->esfield['fieldname'], '', 'ALNUM');
+            $value = $this->ct->Env->jinput->get($this->ct->Env->field_prefix . $this->field->fieldname, '', 'ALNUM');
 
         if ($value == '')
-            $value = (int)$this->esfield['defaultvalue'];
+            $value = (int)$this->field->defaultvalue;
         else
             $value = (int)$value;
 
         $result .= '<input '
             . 'type="text" '
-            . 'name="' . $this->prefix . $this->esfield['fieldname'] . '" '
-            . 'id="' . $this->prefix . $this->esfield['fieldname'] . '" '
-            . 'label="' . $this->esfield['fieldname'] . '" '
+            . 'name="' . $this->prefix . $this->field->fieldname . '" '
+            . 'id="' . $this->prefix . $this->field->fieldname . '" '
+            . 'label="' . $this->field->fieldname . '" '
             . 'class="' . $this->cssclass . '" '
             . $this->attributes . ' '
-            . 'data-label="' . $this->esfield['fieldtitle' . $this->ct->Languages->Postfix] . '" '
-            . 'data-valuerule="' . str_replace('"', '&quot;', $this->esfield['valuerule']) . '" '
-            . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->esfield['valuerulecaption']) . '" '
+            . 'data-label="' . $this->field->title . '" '
+            . 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
+            . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" '
             . 'value="' . $value . '" />';
 
         return $result;
@@ -420,21 +413,21 @@ class Inputbox
         $result = '';
 
         if (count($row) == 0)
-            $value = $this->ct->Env->jinput->getCmd($this->ct->Env->field_prefix . $this->esfield['fieldname'], '');
+            $value = $this->ct->Env->jinput->getCmd($this->ct->Env->field_prefix . $this->field->fieldname, '');
 
         if ($value == '')
-            $value = (float)$this->esfield['defaultvalue'];
+            $value = (float)$this->field->defaultvalue;
         else
             $value = (float)$value;
 
         $result .= '<input '
             . 'type="text" '
-            . 'name="' . $this->prefix . $this->esfield['fieldname'] . '" '
-            . 'id="' . $this->prefix . $this->esfield['fieldname'] . '" '
+            . 'name="' . $this->prefix . $this->field->fieldname . '" '
+            . 'id="' . $this->prefix . $this->field->fieldname . '" '
             . 'class="' . $this->cssclass . '" '
-            . 'data-label="' . $this->esfield['fieldtitle' . $this->ct->Languages->Postfix] . '" '
-            . 'data-valuerule="' . str_replace('"', '&quot;', $this->esfield['valuerule']) . '" '
-            . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->esfield['valuerulecaption']) . '" '
+            . 'data-label="' . $this->field->title . '" '
+            . 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
+            . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" '
             . $this->attributes . ' ';
 
         $decimals = intval($this->field->params[0]);
@@ -455,20 +448,20 @@ class Inputbox
             $autocomplete = true;
 
         $result = '<input type="text" '
-            . 'name="' . $this->prefix . $this->esfield['fieldname'] . '" '
-            . 'id="' . $this->prefix . $this->esfield['fieldname'] . '" '
-            . 'label="' . $this->esfield['fieldname'] . '" '
-            . ($autocomplete ? 'list="' . $this->prefix . $this->esfield['fieldname'] . '_datalist" ' : '')
+            . 'name="' . $this->prefix . $this->field->fieldname . '" '
+            . 'id="' . $this->prefix . $this->field->fieldname . '" '
+            . 'label="' . $this->field->fieldname . '" '
+            . ($autocomplete ? 'list="' . $this->prefix . $this->field->fieldname . '_datalist" ' : '')
             . 'class="' . $this->cssclass . '" '
-            . 'data-label="' . $this->esfield['fieldtitle' . $this->ct->Languages->Postfix] . '" '
-            . 'data-valuerule="' . str_replace('"', '&quot;', $this->esfield['valuerule']) . '" '
-            . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->esfield['valuerulecaption']) . '" '
+            . 'data-label="' . $this->field->title . '" '
+            . 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
+            . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" '
             . 'value="' . $value . '" ' . ((int)$this->field->params[0] > 0 ? 'maxlength="' . (int)$this->field->params[0] . '"' : 'maxlength="255"') . ' ' . $this->attributes . ' />';
 
         if ($autocomplete) {
             $db = Factory::getDBO();
 
-            $query = 'SELECT ' . $this->esfield['realfieldname'] . ' FROM ' . $this->ct->Table->realtablename . ' GROUP BY ' . $this->field->realfieldname
+            $query = 'SELECT ' . $this->field->realfieldname . ' FROM ' . $this->ct->Table->realtablename . ' GROUP BY ' . $this->field->realfieldname
                 . ' ORDER BY ' . $this->field->realfieldname;
 
             $this->ct->db->setQuery($query);
@@ -487,14 +480,14 @@ class Inputbox
         $result = '';
 
         $result .= '<input type="text" '
-            . 'name="' . $this->prefix . $this->esfield['fieldname'] . '" '
-            . 'id="' . $this->prefix . $this->esfield['fieldname'] . '" '
-            . 'label="' . $this->esfield['fieldname'] . '" '
+            . 'name="' . $this->prefix . $this->field->fieldname . '" '
+            . 'id="' . $this->prefix . $this->field->fieldname . '" '
+            . 'label="' . $this->field->fieldname . '" '
             . 'class="' . $this->cssclass . '" '
             . ' ' . $this->attributes
-            . 'data-label="' . $this->esfield['fieldtitle' . $this->ct->Languages->Postfix] . '" '
-            . 'data-valuerule="' . str_replace('"', '&quot;', $this->esfield['valuerule']) . '" '
-            . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->esfield['valuerulecaption']) . '" '
+            . 'data-label="' . $this->field->title . '" '
+            . 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
+            . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" '
             . 'value="' . $value . '" ' . ((int)$this->field->params[0] > 0 ? 'maxlength="' . (int)$this->field->params[0] . '"' : 'maxlength="255"') . ' ' . $this->attributes . ' />';
 
         return $result;
@@ -554,13 +547,13 @@ class Inputbox
             $attributes_ = $this->attributes;
 
         if (count($row) == 0)
-            $value = $this->jinput->get($this->prefix . $this->field->fieldname . $postfix, '', 'STRING');
+            $value = $this->ct->Env->jinput->get($this->prefix . $this->field->fieldname . $postfix, '', 'STRING');
         else
-            $value = isset($row[$this->esfield['realfieldname'] . $postfix]) ? $row[$this->field->realfieldname . $postfix] : null;
+            $value = isset($row[$this->field->realfieldname . $postfix]) ? $row[$this->field->realfieldname . $postfix] : null;
 
         if ($addDynamicEvent) {
             $href = 'onchange="ct_UpdateSingleValue(\'' . $this->ct->Env->WebsiteRoot . '\','
-                . $this->ct->Params->ItemId . ',\'' . $this->esfield['fieldname'] . $postfix . '\','
+                . $this->ct->Params->ItemId . ',\'' . $this->field->fieldname . $postfix . '\','
                 . $row[$this->ct->Table->realidfieldname] . ',\'' . $langsef . '\',' . (int)$this->ct->Params->ModuleId . ')"';
 
             $attributes_ = ' ' . $href;
@@ -583,7 +576,7 @@ class Inputbox
     protected function render_text(&$value)
     {
         $result = '';
-        $fname = $this->prefix . $this->esfield['fieldname'];
+        $fname = $this->prefix . $this->field->fieldname;
 
         //if(strpos($this->attributes,'onchange="')!==false)
         //$attributes = str_replace('onchange="','onchange="'.$this->onchange,$this->attributes);// onchange event already exists add one before
@@ -605,9 +598,9 @@ class Inputbox
                 . 'id="' . $fname . '" '
                 . 'class="' . $this->cssclass . '" '
                 . $this->attributes . ' '
-                . 'data-label="' . $this->esfield['fieldtitle' . $this->ct->Languages->Postfix] . '"'
-                . 'data-valuerule="' . str_replace('"', '&quot;', $this->esfield['valuerule']) . '" '
-                . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->esfield['valuerulecaption']) . '" '
+                . 'data-label="' . $this->field->title . '"'
+                . 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
+                . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" '
                 . '>' . $value . '</textarea>';
         }
 
@@ -640,22 +633,22 @@ class Inputbox
             } else
                 $postfix = '_' . $lang->sef;
 
-            $fieldname = $this->esfield['fieldname'] . $postfix;
+            $fieldname = $this->field->fieldname . $postfix;
 
             if ($this->ct->Table->isRecordEmpty($row)) {
-                $value = $this->jinput->get($this->ct->Env->field_prefix . $fieldname, '', 'STRING');
+                $value = $this->ct->Env->jinput->get($this->ct->Env->field_prefix . $fieldname, '', 'STRING');
             } else {
                 if (array_key_exists($this->ct->Env->field_prefix . $fieldname, $row)) {
                     $value = $row[$this->ct->Env->field_prefix . $fieldname];
                 } else {
-                    Fields::addLanguageField($this->ct->Table->realtablename, $this->ct->Env->field_prefix . $this->esfield['fieldname'], $this->ct->Env->field_prefix . $fieldname);
+                    Fields::addLanguageField($this->ct->Table->realtablename, $this->ct->Env->field_prefix . $this->field->fieldname, $this->ct->Env->field_prefix . $fieldname);
 
                     Factory::getApplication()->enqueueMessage('Field "' . $this->ct->Env->field_prefix . $fieldname . '" not yet created. Go to /Custom Tables/Database schema/Checks to create that field.', 'error');
                     $value = '';
                 }
             }
 
-            $result .= ($this->esfield['isrequired'] ? ' ' . $RequiredLabel : '');
+            $result .= ($this->field->isrequired ? ' ' . $RequiredLabel : '');
 
             $result .= '<div id="' . $fieldname . '_div" class="multilangtext">';
 
@@ -675,10 +668,10 @@ class Inputbox
             } else {
                 $result .= '<textarea name="' . $this->prefix . $fieldname . '" '
                     . 'id="' . $this->prefix . $fieldname . '" '
-                    . 'class="' . $this->cssclass . ' ' . ($this->esfield['isrequired'] ? 'required' : '') . '">' . $value . '</textarea>'
+                    . 'class="' . $this->cssclass . ' ' . ($this->field->isrequired ? 'required' : '') . '">' . $value . '</textarea>'
                     . '<span class="language_label">' . $lang->caption . '</span>';
 
-                $result .= ($this->esfield['isrequired'] ? ' ' . $RequiredLabel : '');
+                $result .= ($this->field->isrequired ? ' ' . $RequiredLabel : '');
             }
 
             $result .= '</div>';
@@ -696,9 +689,9 @@ class Inputbox
             $format = "yesno";
 
         if ($format == "yesno") {
-            $element_id = $this->prefix . $this->esfield['fieldname'];
+            $element_id = $this->prefix . $this->field->fieldname;
             if ($this->ct->Env->version < 4) {
-                $result .= '<fieldset id="' . $this->prefix . $this->esfield['fieldname'] . '" class="' . $this->cssclass . ' btn-group radio btn-group-yesno" '
+                $result .= '<fieldset id="' . $this->prefix . $this->field->fieldname . '" class="' . $this->cssclass . ' btn-group radio btn-group-yesno" '
                     . 'style="border:none !important;background:none !important;">';
 
                 $result .= '<div style="position: absolute;visibility:hidden !important; display:none !important;">'
@@ -706,9 +699,9 @@ class Inputbox
                     . 'id="' . $element_id . '0" '
                     . 'name="' . $element_id . '" '
                     . 'value="1" '
-                    . 'data-label="' . $this->esfield['fieldtitle' . $this->ct->Languages->Postfix] . '" '
-                    . 'data-valuerule="' . str_replace('"', '&quot;', $this->esfield['valuerule']) . '" '
-                    . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->esfield['valuerulecaption']) . '" '
+                    . 'data-label="' . $this->field->title . '" '
+                    . 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
+                    . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" '
                     . $this->attributes . ' '
                     . ((int)$value == 1 ? ' checked="checked" ' : '')
                     . ' >'
@@ -721,9 +714,9 @@ class Inputbox
                     . 'name="' . $element_id . '" '
                     . $this->attributes . ' '
                     . 'value="0" '
-                    . 'data-label="' . $this->esfield['fieldtitle' . $this->ct->Languages->Postfix] . '" '
-                    . 'data-valuerule="' . str_replace('"', '&quot;', $this->esfield['valuerule']) . '" '
-                    . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->esfield['valuerulecaption']) . '" '
+                    . 'data-label="' . $this->field->title . '" '
+                    . 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
+                    . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" '
                     . ((int)$value == 0 ? ' checked="checked" ' : '')
                     . ' >'
                     . '</div>'
@@ -738,9 +731,9 @@ class Inputbox
                     . $this->attributes . ' '
                     . 'value="0" '
                     . 'class="active " '
-                    . 'data-label="' . $this->esfield['fieldtitle' . $this->ct->Languages->Postfix] . '" '
-                    . 'data-valuerule="' . str_replace('"', '&quot;', $this->esfield['valuerule']) . '" '
-                    . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->esfield['valuerulecaption']) . '" '
+                    . 'data-label="' . $this->field->title . '" '
+                    . 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
+                    . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" '
                     . ((int)$value == 0 ? ' checked="checked" ' : '')
                     . ' >'
                     . '<label for="' . $element_id . '0">' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NO') . '</label>'
@@ -749,9 +742,9 @@ class Inputbox
                     . 'name="' . $element_id . '" '
                     . $this->attributes . ' '
                     . 'value="1" '
-                    . 'data-label="' . $this->esfield['fieldtitle' . $this->ct->Languages->Postfix] . '" '
-                    . 'data-valuerule="' . str_replace('"', '&quot;', $this->esfield['valuerule']) . '" '
-                    . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->esfield['valuerulecaption']) . '" '
+                    . 'data-label="' . $this->field->title . '" '
+                    . 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
+                    . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" '
                     . ((int)$value == 1 ? ' checked="checked" ' : '')
                     . ' >'
                     . '<label for="' . $element_id . '1">' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YES') . '</label>'
@@ -760,7 +753,7 @@ class Inputbox
             }
         } else {
             if ($this->ct->Env->version < 4) {
-                $onchange = $this->prefix . $this->esfield['fieldname'] . '_off.value=(this.checked === true ? 0 : 1);';// this is to save unchecked value as well.
+                $onchange = $this->prefix . $this->field->fieldname . '_off.value=(this.checked === true ? 0 : 1);';// this is to save unchecked value as well.
 
                 if (strpos($this->attributes, 'onchange="') !== false)
                     $check_attributes = str_replace('onchange="', 'onchange="' . $onchange, $this->attributes);// onchange event already exists add one before
@@ -768,23 +761,23 @@ class Inputbox
                     $check_attributes = $this->attributes . 'onchange="' . $onchange;
 
                 $result .= '<input type="checkbox" '
-                    . 'id="' . $this->prefix . $this->esfield['fieldname'] . '" '
-                    . 'name="' . $this->prefix . $this->esfield['fieldname'] . '" '
-                    . 'data-label="' . $this->esfield['fieldtitle' . $this->ct->Languages->Postfix] . '" '
-                    . 'data-valuerule="' . str_replace('"', '&quot;', $this->esfield['valuerule']) . '" '
-                    . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->esfield['valuerulecaption']) . '" '
+                    . 'id="' . $this->prefix . $this->field->fieldname . '" '
+                    . 'name="' . $this->prefix . $this->field->fieldname . '" '
+                    . 'data-label="' . $this->field->title . '" '
+                    . 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
+                    . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" '
                     . ($value ? ' checked="checked" ' : '')
                     . ($this->cssstyle != '' ? ' class="' . $this->cssstyle . '" ' : '')
                     . ($this->cssclass != '' ? ' class="' . $this->cssclass . '" ' : '')
                     . ($check_attributes != '' ? ' ' . $check_attributes : '')
                     . '>'
                     . '<input type="hidden"'
-                    . ' id="' . $this->prefix . $this->esfield['fieldname'] . '_off" '
-                    . ' name="' . $this->prefix . $this->esfield['fieldname'] . '_off" '
+                    . ' id="' . $this->prefix . $this->field->fieldname . '_off" '
+                    . ' name="' . $this->prefix . $this->field->fieldname . '_off" '
                     . ((int)$value == 1 ? ' value="0" ' : 'value="1"')
                     . ' >';
             } else {
-                $element_id = $this->prefix . $this->esfield['fieldname'];
+                $element_id = $this->prefix . $this->field->fieldname;
 
                 $result .= '<div class="switcher">'
                     . '<input type="radio" '
@@ -792,9 +785,9 @@ class Inputbox
                     . 'name="' . $element_id . '" '
                     . 'value="0" '
                     . 'class="active " '
-                    . 'data-label="' . $this->esfield['fieldtitle' . $this->ct->Languages->Postfix] . '" '
-                    . 'data-valuerule="' . str_replace('"', '&quot;', $this->esfield['valuerule']) . '" '
-                    . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->esfield['valuerulecaption']) . '" '
+                    . 'data-label="' . $this->field->title . '" '
+                    . 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
+                    . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" '
                     . ((int)$value == 0 ? ' checked="checked" ' : '')
                     . ' >'
                     . '<label for="' . $element_id . '0">' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NO') . '</label>'
@@ -802,22 +795,22 @@ class Inputbox
                     . 'id="' . $element_id . '1" '
                     . 'name="' . $element_id . '" '
                     . 'value="1" '
-                    . 'data-label="' . $this->esfield['fieldtitle' . $this->ct->Languages->Postfix] . '" '
-                    . 'data-valuerule="' . str_replace('"', '&quot;', $this->esfield['valuerule']) . '" '
-                    . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->esfield['valuerulecaption']) . '" '
+                    . 'data-label="' . $this->field->title . '" '
+                    . 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
+                    . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" '
                     . ((int)$value == 1 ? ' checked="checked" ' : '') . ' >'
                     . '<label for="' . $element_id . '1">' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YES') . '</label>'
                     . '<span class="toggle-outside"><span class="toggle-inside"></span></span>'
                     . '<input type="hidden"'
-                    . ' id="' . $this->prefix . $this->esfield['fieldname'] . '_off" '
-                    . ' name="' . $this->prefix . $this->esfield['fieldname'] . '_off" '
+                    . ' id="' . $this->prefix . $this->field->fieldname . '_off" '
+                    . ' name="' . $this->prefix . $this->field->fieldname . '_off" '
                     . ((int)$value == 1 ? ' value="0" ' : 'value="1"')
                     . ' >'
                     . '</div>'
                     . '
 						<script>
-							document.getElementById("' . $element_id . '0").onchange = function(){if(this.checked === true)' . $this->prefix . $this->esfield['fieldname'] . '_off.value=1;' . $this->onchange . '};
-							document.getElementById("' . $element_id . '1").onchange = function(){if(this.checked === true)' . $this->prefix . $this->esfield['fieldname'] . '_off.value=0;' . $this->onchange . '};
+							document.getElementById("' . $element_id . '0").onchange = function(){if(this.checked === true)' . $this->prefix . $this->field->fieldname . '_off.value=1;' . $this->onchange . '};
+							document.getElementById("' . $element_id . '1").onchange = function(){if(this.checked === true)' . $this->prefix . $this->field->fieldname . '_off.value=0;' . $this->onchange . '};
 						</script>
 						
 						';
@@ -926,18 +919,18 @@ class Inputbox
         $result = '';
 
         if (count($row) == 0)
-            $value = $this->jinput->get($this->ct->Env->field_prefix . $this->esfield['fieldname'], '', 'ALNUM');
+            $value = $this->ct->Env->jinput->get($this->ct->Env->field_prefix . $this->field->fieldname, '', 'ALNUM');
 
         if ($value == '')
-            $value = $this->esfield['defaultvalue'];
+            $value = $this->field->defaultvalue;
 
         if ($value == '')
             $value = '';
 
         $att = array(
-            'name' => $this->prefix . $this->esfield['fieldname'],
-            'id' => $this->prefix . $this->esfield['fieldname'],
-            'label' => $this->esfield['fieldtitle' . $this->ct->Languages->Postfix]);
+            'name' => $this->prefix . $this->field->fieldname,
+            'id' => $this->prefix . $this->field->fieldname,
+            'label' => $this->field->title);
 
         if ($this->option_list[0] == 'transparent') {
             $att['format'] = 'rgba';
@@ -983,12 +976,11 @@ class Inputbox
 
     protected function prepareAttributes($attributes_, $attributes_str)
     {
-        //This function used only once in render(&$this->esfield) function
         //Used for 'color' field type
 
         if ($attributes_str != '') {
-            $atts_ = JoomlaBasicMisc::csv_explode(' ', $attributes_str, '"', false);
-            foreach ($atts_ as $a) {
+            $attributesList = JoomlaBasicMisc::csv_explode(' ', $attributes_str, '"', false);
+            foreach ($attributesList as $a) {
                 $pair = explode('=', $a);
 
                 if (count($pair) == 2) {
@@ -1003,15 +995,15 @@ class Inputbox
         return $attributes_;
     }
 
-    protected function render_customtables(&$row)
+    protected function render_customtables(&$row): string
     {
         $result = '';
 
         if (!isset($this->field->params[1]))
             return 'selector not specified';
 
-        $optionname = $this->field->params[0];
-        $parentid = Tree::getOptionIdFull($optionname);
+        $optionName = $this->field->params[0];
+        $parentid = Tree::getOptionIdFull($optionName);
 
         //$this->field->params[0] is structure parent
         //$this->field->params[1] is selector type (multi or single)
@@ -1019,54 +1011,54 @@ class Inputbox
         //$this->field->params[3] is requirementdepth
 
         if ($this->field->params[1] == 'multi') {
-            $value = $this->jinput->get($this->ct->Env->field_prefix . $this->esfield['fieldname'], null, 'STRING');
+            $value = $this->ct->Env->jinput->get($this->ct->Env->field_prefix . $this->field->fieldname, null, 'STRING');
             if (!isset($value)) {
                 $value = '';
-                if ($this->esfield['defaultvalue'] != '')
-                    $value = ',' . $this->field->params[0] . '.' . $this->esfield['defaultvalue'] . '.,';
+                if ($this->field->defaultvalue != '')
+                    $value = ',' . $this->field->params[0] . '.' . $this->field->defaultvalue . '.,';
             }
 
-            if (isset($row[$this->esfield['realfieldname']]))
-                $value = $row[$this->esfield['realfieldname']];
+            if (isset($row[$this->field->realfieldname]))
+                $value = $row[$this->field->realfieldname];
 
             $result .= JHTML::_('MultiSelector.render',
                 $this->prefix,
-                $parentid, $optionname,
+                $parentid, $optionName,
                 $this->ct->Languages->Postfix,
                 $this->ct->Table->tablename,
-                $this->esfield['fieldname'],
+                $this->field->fieldname,
                 $value,
                 '',
                 $this->place_holder);
         } elseif ($this->field->params[1] == 'single') {
-            $v = $this->jinput->get($this->ct->Env->field_prefix . $this->esfield['fieldname'], null, 'STRING');
+            $v = $this->ct->Env->jinput->get($this->ct->Env->field_prefix . $this->field->fieldname, null, 'STRING');
 
             if (!isset($v)) {
                 $v = '';
-                if ($this->esfield['defaultvalue'] != '')
-                    $v = ',' . $this->field->params[0] . '.' . $this->esfield['defaultvalue'] . '.,';
+                if ($this->field->defaultvalue != '')
+                    $v = ',' . $this->field->params[0] . '.' . $this->field->defaultvalue . '.,';
             }
 
-            if (isset($row[$this->esfield['realfieldname']]))
-                $v = $row[$this->esfield['realfieldname']];
+            if (isset($row[$this->field->realfieldname]))
+                $v = $row[$this->field->realfieldname];
 
             $result .= '<div style="float:left;">';
             $result .= JHTML::_('ESComboTree.render',
                 $this->prefix,
                 $this->ct->Table->tablename,
-                $this->esfield['fieldname'],
-                $optionname,
+                $this->field->fieldname,
+                $optionName,
                 $this->ct->Languages->Postfix,
                 $v,
                 '',
                 '',
                 '',
                 '',
-                $this->esfield['isrequired'],
+                $this->field->isrequired,
                 (isset($this->field->params[3]) ? (int)$this->field->params[3] : 1),
                 $this->place_holder,
-                $this->esfield['valuerule'],
-                $this->esfield['valuerulecaption']
+                $this->field->valuerule,
+                $this->field->valuerulecaption
             );
 
             $result .= '</div>';
@@ -1086,15 +1078,15 @@ class Inputbox
         //$this->option_list[1] - Optional Attributes
 
         $sqljoin_attributes = $this->attributes . ' '
-            . 'data-valuerule="' . str_replace('"', '&quot;', $this->esfield['valuerule']) . '" '
-            . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->esfield['valuerulecaption']) . '" ';
+            . 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
+            . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" ';
 
         if ($this->isTwig) {
             //Twig Tag
             //Twig Example: [house:RedHouses,onChange('Alert("Value Changed")'),city=London]
 
             $result .= JHTML::_('CTTableJoin.render',
-                $this->prefix . $this->esfield['fieldname'],
+                $this->prefix . $this->field->fieldname,
                 $this->field,
                 $value,
                 $this->option_list,
@@ -1109,7 +1101,7 @@ class Inputbox
                 $value,
                 false,
                 $this->ct->Languages->Postfix,
-                $this->prefix . $this->esfield['fieldname'],
+                $this->prefix . $this->field->fieldname,
                 $this->place_holder,
                 $this->cssclass,
                 $sqljoin_attributes);
@@ -1160,12 +1152,12 @@ class Inputbox
             $sortbyfield = '';
 
         $records_attributes = ($this->attributes != '' ? ' ' : '')
-            . 'data-valuerule="' . str_replace('"', '&quot;', $this->esfield['valuerule']) . '" '
-            . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->esfield['valuerulecaption']) . '" ';
+            . 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
+            . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" ';
 
         $result .= JHTML::_('ESRecords.render',
             $this->field->params,
-            $this->prefix . $this->esfield['fieldname'],
+            $this->prefix . $this->field->fieldname,
             $value,
             $esr_table,
             $esr_field,
@@ -1197,15 +1189,15 @@ class Inputbox
 
         $result .= '<input '
             . 'type="text" '
-            . 'name="' . $this->prefix . $this->esfield['fieldname'] . '" '
-            . 'id="' . $this->prefix . $this->esfield['fieldname'] . '" '
+            . 'name="' . $this->prefix . $this->field->fieldname . '" '
+            . 'id="' . $this->prefix . $this->field->fieldname . '" '
             . 'class="' . $this->cssclass . '" '
             . 'value="' . $value . '" maxlength="1024" '
             . 'data-sanitizers="trim" '
             . 'data-filters="' . implode(',', $filters) . '" '
-            . 'data-label="' . $this->esfield['fieldtitle' . $this->ct->Languages->Postfix] . '" '
-            . 'data-valuerule="' . str_replace('"', '&quot;', $this->esfield['valuerule']) . '" '
-            . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->esfield['valuerulecaption']) . '" '
+            . 'data-label="' . $this->field->title . '" '
+            . 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
+            . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" '
             . $this->attributes
             . ' />';
 
@@ -1224,11 +1216,11 @@ class Inputbox
         $attributes['placeholder'] = $this->place_holder;
         $attributes['onChange'] = '" '
             . 'data-label="' . $this->place_holder . '" '
-            . 'data-valuerule="' . str_replace('"', '&quot;', $this->esfield['valuerule']) . '" '
-            . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->esfield['valuerulecaption']); // closing quote is not needed because
+            . 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
+            . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption); // closing quote is not needed because
         //public static function calendar($value, $name, $element_id, $format = '%Y-%m-%d', $attribs = array())  will add it.
 
-        $attributes['required'] = ($this->esfield['isrequired'] ? 'required' : ''); //not working, don't know why.
+        $attributes['required'] = ($this->field->isrequired ? 'required' : ''); //not working, don't know why.
 
         $result .= JHTML::calendar($value, $this->prefix . $this->field->fieldname, $this->prefix . $this->field->fieldname,
             '%Y-%m-%d', $attributes);
@@ -1241,18 +1233,18 @@ class Inputbox
         $result = '';
 
         if (count($row) == 0)
-            $value = $this->jinput->get($this->ct->Env->field_prefix . $this->esfield['fieldname'], '', 'CMD');
+            $value = $this->ct->Env->jinput->get($this->ct->Env->field_prefix . $this->field->fieldname, '', 'CMD');
 
         if ($value == '')
-            $value = $this->esfield['defaultvalue'];
+            $value = $this->field->defaultvalue;
         else
             $value = (int)$value;
 
         $time_attributes = ($this->attributes != '' ? ' ' : '')
-            . 'data-valuerule="' . str_replace('"', '&quot;', $this->esfield['valuerule']) . '" '
-            . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->esfield['valuerulecaption']) . '" ';
+            . 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
+            . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" ';
 
-        $result .= JHTML::_('CTTime.render', $this->prefix . $this->esfield['fieldname'], $value, $this->cssclass, $time_attributes, $this->field->params, $this->option_list);
+        $result .= JHTML::_('CTTime.render', $this->prefix . $this->field->fieldname, $value, $this->cssclass, $time_attributes, $this->field->params, $this->option_list);
 
         return $result;
     }
@@ -1280,13 +1272,14 @@ class Inputbox
 
         if (CT_FieldTypeTag_imagegallery::getImageGallerySRC($getGalleryRows, $image_prefix, $listing_id, $this->field->fieldname,
             $this->field->params, $imagesrclist, $imagetaglist, $this->ct->Table->tableid)) {
-            $imagesrclist_arr = explode(';', $imagesrclist);
+            //$imagesrclist_arr = explode(';', $imagesrclist);
 
             $result .= '<div style="width:100%;overflow:scroll;border:1px dotted grey;background-image: url(\'' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/images/icons/bg.png\');">
 
 		<table><tbody><tr>';
 
-            foreach ($imagesrclist_arr as $img) {
+            //foreach ($imagesrclist_arr as $img) {
+            foreach ($imagesrclist as $img) {
                 $result .= '<td>';
                 $result .= '<a href="' . $img . '" target="_blank"><img src="' . $img . '" width="' . $img_width . '" />';
                 $result .= '</td>';
@@ -1330,12 +1323,12 @@ class Inputbox
             } else
                 $postfix = '_' . $lang->sef;
 
-            $fieldname = $this->esfield['fieldname'] . $postfix;
+            $fieldname = $this->field->fieldname . $postfix;
 
             if (count($row) == 0)
-                $value = $this->jinput->get($this->ct->Env->field_prefix . $fieldname, '', 'STRING');
+                $value = $this->ct->Env->jinput->get($this->ct->Env->field_prefix . $fieldname, '', 'STRING');
             else
-                $value = $row[$this->esfield['realfieldname'] . $postfix];
+                $value = $row[$this->field->realfieldname . $postfix];
 
             $result .= '
 				<tr>
