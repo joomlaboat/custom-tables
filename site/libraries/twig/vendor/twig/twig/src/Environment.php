@@ -109,16 +109,34 @@ class Environment
             'optimizations' => -1,
         ], $options);
 
-        $this->debug = (bool) $options['debug'];
+        $this->debug = (bool)$options['debug'];
         $this->setCharset($options['charset'] ?? 'UTF-8');
-        $this->autoReload = null === $options['auto_reload'] ? $this->debug : (bool) $options['auto_reload'];
-        $this->strictVariables = (bool) $options['strict_variables'];
+        $this->autoReload = null === $options['auto_reload'] ? $this->debug : (bool)$options['auto_reload'];
+        $this->strictVariables = (bool)$options['strict_variables'];
         $this->setCache($options['cache']);
         $this->extensionSet = new ExtensionSet();
 
         $this->addExtension(new CoreExtension());
         $this->addExtension(new EscaperExtension($options['autoescape']));
         $this->addExtension(new OptimizerExtension($options['optimizations']));
+    }
+
+    public function addExtension(ExtensionInterface $extension)
+    {
+        $this->extensionSet->addExtension($extension);
+        $this->updateOptionsHash();
+    }
+
+    private function updateOptionsHash(): void
+    {
+        $this->optionsHash = implode(':', [
+            $this->extensionSet->getSignature(),
+            \PHP_MAJOR_VERSION,
+            \PHP_MINOR_VERSION,
+            self::VERSION,
+            (int)$this->debug,
+            (int)$this->strictVariables,
+        ]);
     }
 
     /**
@@ -163,16 +181,6 @@ class Environment
     public function disableAutoReload()
     {
         $this->autoReload = false;
-    }
-
-    /**
-     * Checks if the auto_reload option is enabled.
-     *
-     * @return bool true if auto_reload is enabled, false otherwise
-     */
-    public function isAutoReload()
-    {
-        return $this->autoReload;
     }
 
     /**
@@ -240,30 +248,6 @@ class Environment
     }
 
     /**
-     * Gets the template class associated with the given string.
-     *
-     * The generated template class is based on the following parameters:
-     *
-     *  * The cache key for the given template;
-     *  * The currently enabled extensions;
-     *  * Whether the Twig C extension is available or not;
-     *  * PHP version;
-     *  * Twig version;
-     *  * Options with what environment was created.
-     *
-     * @param string   $name  The name for which to calculate the template class name
-     * @param int|null $index The index if it is an embedded template
-     *
-     * @internal
-     */
-    public function getTemplateClass(string $name, int $index = null): string
-    {
-        $key = $this->getLoader()->getCacheKey($name).$this->optionsHash;
-
-        return $this->templateClassPrefix.hash('sha256', $key).(null === $index ? '' : '___'.$index);
-    }
-
-    /**
      * Renders a template.
      *
      * @param string|TemplateWrapper $name The template name
@@ -275,20 +259,6 @@ class Environment
     public function render($name, array $context = []): string
     {
         return $this->load($name)->render($context);
-    }
-
-    /**
-     * Displays a template.
-     *
-     * @param string|TemplateWrapper $name The template name
-     *
-     * @throws LoaderError  When the template cannot be found
-     * @throws SyntaxError  When an error occurred during compilation
-     * @throws RuntimeError When an error occurred during rendering
-     */
-    public function display($name, array $context = []): void
-    {
-        $this->load($name)->display($context);
     }
 
     /**
@@ -315,8 +285,8 @@ class Environment
      * This method is for internal use only and should never be called
      * directly.
      *
-     * @param string $name  The template name
-     * @param int    $index The index if it is an embedded template
+     * @param string $name The template name
+     * @param int $index The index if it is an embedded template
      *
      * @throws LoaderError  When the template cannot be found
      * @throws RuntimeError When a previously generated cache is corrupted
@@ -328,7 +298,7 @@ class Environment
     {
         $mainCls = $cls;
         if (null !== $index) {
-            $cls .= '___'.$index;
+            $cls .= '___' . $index;
         }
 
         if (isset($this->loadedTemplates[$cls])) {
@@ -351,11 +321,11 @@ class Environment
 
                 if (!class_exists($mainCls, false)) {
                     /* Last line of defense if either $this->bcWriteCacheFile was used,
-                     * $this->cache is implemented as a no-op or we have a race condition
+                     * $this->cache is implemented as a no-op, or we have a race condition
                      * where the cache was cleared between the above calls to write to and load from
                      * the cache.
                      */
-                    eval('?>'.$content);
+                    eval('?>' . $content);
                 }
 
                 if (!class_exists($cls, false)) {
@@ -370,12 +340,139 @@ class Environment
     }
 
     /**
+     * Checks if the auto_reload option is enabled.
+     *
+     * @return bool true if auto_reload is enabled, false otherwise
+     */
+    public function isAutoReload()
+    {
+        return $this->autoReload;
+    }
+
+    /**
+     * Returns true if the template is still fresh.
+     *
+     * Besides checking the loader for freshness information,
+     * this method also checks if the enabled extensions have
+     * not changed.
+     *
+     * @param int $time The last modification time of the cached template
+     */
+    public function isTemplateFresh(string $name, int $time): bool
+    {
+        return $this->extensionSet->getLastModified() <= $time && $this->getLoader()->isFresh($name, $time);
+    }
+
+    public function getLoader(): LoaderInterface
+    {
+        return $this->loader;
+    }
+
+    public function setLoader(LoaderInterface $loader)
+    {
+        $this->loader = $loader;
+    }
+
+    /**
+     * Compiles a template source code.
+     *
+     * @throws SyntaxError When there was an error during tokenizing, parsing or compiling
+     */
+    public function compileSource(Source $source): string
+    {
+        try {
+            return $this->compile($this->parse($this->tokenize($source)));
+        } catch (Error $e) {
+            $e->setSourceContext($source);
+            throw $e;
+        } catch (\Exception $e) {
+            throw new SyntaxError(sprintf('An exception has been thrown during the compilation of a template ("%s").', $e->getMessage()), -1, $source, $e);
+        }
+    }
+
+    /**
+     * Compiles a node and returns the PHP code.
+     */
+    public function compile(Node $node): string
+    {
+        if (null === $this->compiler) {
+            $this->compiler = new Compiler($this);
+        }
+
+        return $this->compiler->compile($node)->getSource();
+    }
+
+    /**
+     * Converts a token stream to a node tree.
+     *
+     * @throws SyntaxError When the token stream is syntactically or semantically wrong
+     */
+    public function parse(TokenStream $stream): ModuleNode
+    {
+        if (null === $this->parser) {
+            $this->parser = new Parser($this);
+        }
+
+        return $this->parser->parse($stream);
+    }
+
+    /**
+     * @throws SyntaxError When the code is syntactically wrong
+     */
+    public function tokenize(Source $source): TokenStream
+    {
+        if (null === $this->lexer) {
+            $this->lexer = new Lexer($this);
+        }
+
+        return $this->lexer->tokenize($source);
+    }
+
+    /**
+     * Gets the template class associated with the given string.
+     *
+     * The generated template class is based on the following parameters:
+     *
+     *  * The cache key for the given template;
+     *  * The currently enabled extensions;
+     *  * Whether the Twig C extension is available or not;
+     *  * PHP version;
+     *  * Twig version;
+     *  * Options with what environment was created.
+     *
+     * @param string $name The name for which to calculate the template class name
+     * @param int|null $index The index if it is an embedded template
+     *
+     * @internal
+     */
+    public function getTemplateClass(string $name, int $index = null): string
+    {
+        $key = $this->getLoader()->getCacheKey($name) . $this->optionsHash;
+
+        return $this->templateClassPrefix . hash('sha256', $key) . (null === $index ? '' : '___' . $index);
+    }
+
+    /**
+     * Displays a template.
+     *
+     * @param string|TemplateWrapper $name The template name
+     *
+     * @throws LoaderError  When the template cannot be found
+     * @throws SyntaxError  When an error occurred during compilation
+     * @throws RuntimeError When an error occurred during rendering
+     */
+    public function display($name, array $context = []): void
+    {
+        $this->load($name)->display($context);
+    }
+
+    /**
      * Creates a template from source.
      *
      * This method should not be used as a generic way to load templates.
      *
      * @param string $template The template source
-     * @param string $name     An optional name of the template to be used in error messages
+     * @param string $name An optional name of the template to be used in error messages
      *
      * @throws LoaderError When the template cannot be found
      * @throws SyntaxError When an error occurred during compilation
@@ -400,20 +497,6 @@ class Environment
         } finally {
             $this->setLoader($current);
         }
-    }
-
-    /**
-     * Returns true if the template is still fresh.
-     *
-     * Besides checking the loader for freshness information,
-     * this method also checks if the enabled extensions have
-     * not changed.
-     *
-     * @param int $time The last modification time of the cached template
-     */
-    public function isTemplateFresh(string $name, int $time): bool
-    {
-        return $this->extensionSet->getLastModified() <= $time && $this->getLoader()->isFresh($name, $time);
     }
 
     /**
@@ -448,35 +531,9 @@ class Environment
         $this->lexer = $lexer;
     }
 
-    /**
-     * @throws SyntaxError When the code is syntactically wrong
-     */
-    public function tokenize(Source $source): TokenStream
-    {
-        if (null === $this->lexer) {
-            $this->lexer = new Lexer($this);
-        }
-
-        return $this->lexer->tokenize($source);
-    }
-
     public function setParser(Parser $parser)
     {
         $this->parser = $parser;
-    }
-
-    /**
-     * Converts a token stream to a node tree.
-     *
-     * @throws SyntaxError When the token stream is syntactically or semantically wrong
-     */
-    public function parse(TokenStream $stream): ModuleNode
-    {
-        if (null === $this->parser) {
-            $this->parser = new Parser($this);
-        }
-
-        return $this->parser->parse($stream);
     }
 
     public function setCompiler(Compiler $compiler)
@@ -484,43 +541,9 @@ class Environment
         $this->compiler = $compiler;
     }
 
-    /**
-     * Compiles a node and returns the PHP code.
-     */
-    public function compile(Node $node): string
+    public function getCharset(): string
     {
-        if (null === $this->compiler) {
-            $this->compiler = new Compiler($this);
-        }
-
-        return $this->compiler->compile($node)->getSource();
-    }
-
-    /**
-     * Compiles a template source code.
-     *
-     * @throws SyntaxError When there was an error during tokenizing, parsing or compiling
-     */
-    public function compileSource(Source $source): string
-    {
-        try {
-            return $this->compile($this->parse($this->tokenize($source)));
-        } catch (Error $e) {
-            $e->setSourceContext($source);
-            throw $e;
-        } catch (\Exception $e) {
-            throw new SyntaxError(sprintf('An exception has been thrown during the compilation of a template ("%s").', $e->getMessage()), -1, $source, $e);
-        }
-    }
-
-    public function setLoader(LoaderInterface $loader)
-    {
-        $this->loader = $loader;
-    }
-
-    public function getLoader(): LoaderInterface
-    {
-        return $this->loader;
+        return $this->charset;
     }
 
     public function setCharset(string $charset)
@@ -531,11 +554,6 @@ class Environment
         }
 
         $this->charset = $charset;
-    }
-
-    public function getCharset(): string
-    {
-        return $this->charset;
     }
 
     public function hasExtension(string $class): bool
@@ -575,12 +593,6 @@ class Environment
         }
 
         throw new RuntimeError(sprintf('Unable to load the "%s" runtime.', $class));
-    }
-
-    public function addExtension(ExtensionInterface $extension)
-    {
-        $this->extensionSet->addExtension($extension);
-        $this->updateOptionsHash();
     }
 
     /**
@@ -798,17 +810,5 @@ class Environment
     public function getBinaryOperators(): array
     {
         return $this->extensionSet->getBinaryOperators();
-    }
-
-    private function updateOptionsHash(): void
-    {
-        $this->optionsHash = implode(':', [
-            $this->extensionSet->getSignature(),
-            \PHP_MAJOR_VERSION,
-            \PHP_MINOR_VERSION,
-            self::VERSION,
-            (int) $this->debug,
-            (int) $this->strictVariables,
-        ]);
     }
 }

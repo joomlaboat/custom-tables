@@ -208,7 +208,8 @@ class CT_FieldTypeTag_image
         $element_id = 'ct_ubloadfile_box_' . $field->fieldname;
 
         return '
-        <div style="' . $style . '"' . ($field->isrequired ? ' class="inputbox required"' : '') . ' id="' . $element_id . '">
+        <!--suppress XmlDuplicatedId -->
+<div style="' . $style . '"' . ($field->isrequired ? ' class="inputbox required"' : '') . ' id="' . $element_id . '">
             <div id="ct_fileuploader_' . $field->fieldname . '"></div>
             <div id="ct_eventsmessage_' . $field->fieldname . '"></div>
             <script>
@@ -227,7 +228,8 @@ class CT_FieldTypeTag_image
                 ct_getUploader(' . $field->id . ',urlstr,' . $max_file_size . ',"jpg jpeg png gif svg webp","eseditForm",false,"ct_fileuploader_'
             . $field->fieldname . '","ct_eventsmessage_' . $field->fieldname . '","' . $fileId . '","' . $prefix . $field->fieldname . '","ct_ubloadedfile_box_' . $field->fieldname . '");
 
-            </script>
+ <!--suppress XmlDuplicatedId -->
+           </script>
             <input type="hidden" name="' . $prefix . $field->fieldname . '" id="' . $prefix . $field->fieldname . '" value=""' . ($field->isrequired ? ' class="required"' : '') . ' />
     ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE') . ': ' . JoomlaBasicMisc::formatSizeUnits($max_file_size) . '
         </div>

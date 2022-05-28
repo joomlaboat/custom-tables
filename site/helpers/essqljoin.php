@@ -3,9 +3,9 @@
  * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
- * @link http://www.joomlaboat.com
+ * @link https://www.joomlaboat.com
  * @copyright (C) 2018-2022 Ivan Komlev
- * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
+ * @license GNU/GPL Version 2 or later - https://www.gnu.org/licenses/gpl-2.0.html
  **/
 
 // Check to ensure this file is included in Joomla!
@@ -347,27 +347,17 @@ class JHTMLESSqlJoin
 
         $i = 0;
         foreach ($list_values as $list_value) {
-            if ($withtable)
-                $htmlresult .= '<tr><td>';
-            else
-                $htmlresult .= '<div id="sqljoin_table_' . $control_name . '_' . $list_value[0] . '">';
 
-            $htmlresult .= '<input type="radio" '
+            $htmlresult = ($withtable ? '<tr><td>' : '<div id="sqljoin_table_' . $control_name . '_' . $list_value[0] . '">')
+                . '<input type="radio" '
                 . ' name="' . $control_name . '"'
                 . ' id="' . $control_name . '_' . $i . '"'
                 . ' value="' . $list_value[0] . '"'
                 . ($list_value == ' ' . $current_value ? ' checked="checked" ' : '')
-                . ' data-type="sqljoin" />';
-
-            if ($withtable)
-                $htmlresult .= '</td><td>';
-
-            $htmlresult .= '<label for="' . $control_name . '_' . $i . '">' . $list_value[1] . '</label>';
-
-            if ($withtable)
-                $htmlresult .= '</td></tr>';
-            else
-                $htmlresult .= '</div>';
+                . ' data-type="sqljoin" />'
+                . ($withtable ? '</td><td>' : '')
+                . '<label for="' . $control_name . '_' . $i . '">' . $list_value[1] . '</label>'
+                . ($withtable ? '</td></tr>' : '</div>');
 
             $i++;
         }

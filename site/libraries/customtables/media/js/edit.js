@@ -449,7 +449,6 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_ind
         } else
             val = filters[next_index][next_sub_index];
 
-        selfparent = true;
     } else {
         next_index += 1;
         val = filters[next_index];
@@ -535,8 +534,8 @@ function ctUpdateTableJoinLink(control_name, index, execute_all, sub_index, obje
     if (wrapper.dataset.valuefilters != '')
         filters = JSON.parse(atob(wrapper.dataset.valuefilters));
 
-    if (Array.isArray(filters[index]))
-        url += '&subindex=' + sub_index;
+    //if (Array.isArray(filters[index]))
+    //url += '&subindex=' + sub_index;
 
     if (execute_all) {
         if (Array.isArray(filters[index])) {
@@ -899,7 +898,7 @@ function download(dataURL, filename) {
   window.URL.revokeObjectURL(url);
 }
 
-// One could simply use Canvas#toBlob method instead, but its just to show
+// One could simply use Canvas#toBlob method instead, but It's just to show
 // that it can be done using result of SignaturePad#toDataURL.
 function dataURLToBlob(dataURL) {
   // Code taken from https://github.com/ebidel/filer.js

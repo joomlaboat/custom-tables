@@ -43,7 +43,7 @@ class JFormFieldCTLayoutType extends JFormFieldList
         // Select the text.
         $query->select($db->quoteName('layouttype'));
         $query->from($db->quoteName('#__customtables_layouts'));
-        $query->order($db->quoteName('layouttype') . ' ASC');
+        $query->order($db->quoteName('layouttype'));
 
         // Reset the query using our newly populated query object.
         $db->setQuery($query);

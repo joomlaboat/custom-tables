@@ -254,9 +254,8 @@ class CustomTablesModelListOfOptions extends JModelList
             $db = Factory::getDBO();
 
             // Delete the menu items
-            $where = 'WHERE id = ' . implode(' OR id = ', $ids);
-
-            $query = 'DELETE FROM #__customtables_options ' . $where;
+            $query = 'DELETE FROM #__customtables_options WHERE id = ' . implode(' OR id = ', $ids);
+            $db->setQuery($query);
             $db->execute();
         }
         return true;

@@ -27,7 +27,7 @@ class ViewJSON
         $this->ct = &$ct;
     }
 
-    function render($pageLayoutContent, $itemLayoutContent, $layoutType): void
+    function render($pageLayoutContent, $itemLayoutContent, $layoutType, $obEndClean = true): ?string
     {
         $catalogTableCode = JoomlaBasicMisc::generateRandomString();//this is temporary replace placeholder. to not parse content result again
 
@@ -65,20 +65,24 @@ class ViewJSON
         if ($this->ct->Params->allowContentPlugins)
             JoomlaBasicMisc::applyContentPlugins($pageLayoutContent);
 
-        if (ob_get_contents()) ob_end_clean();
+        if ($obEndClean) {
+            echo 'ssss';
+            die;
+            if (ob_get_contents()) ob_end_clean();
 
-        $filename = $this->ct->Params->pageTitle;
-        if (is_null($filename))
-            $filename = 'ct';
+            $filename = $this->ct->Params->pageTitle;
+            if (is_null($filename))
+                $filename = 'ct';
 
-        $filename = JoomlaBasicMisc::makeNewFileName($filename, 'json');
+            $filename = JoomlaBasicMisc::makeNewFileName($filename, 'json');
 
-        header('Content-Disposition: attachment; filename="' . $filename . '"');
-        header('Content-Type: application/json; charset=utf-8');
-        header("Pragma: no-cache");
-        header("Expires: 0");
+            header('Content-Disposition: attachment; filename="' . $filename . '"');
+            header('Content-Type: application/json; charset=utf-8');
+            header("Pragma: no-cache");
+            header("Expires: 0");
 
-        echo $pageLayoutContent;
-        die;
+            die($pageLayoutContent);
+        }
+        return $pageLayoutContent;
     }
 }

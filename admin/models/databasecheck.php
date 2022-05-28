@@ -52,11 +52,6 @@ class CustomtablesModelDatabasecheck extends JModelList
         return $items;
     }
 
-    /**
-     * Method to auto-populate the model state.
-     *
-     * @return  void
-     */
     protected function populateState($ordering = 'a.id', $direction = 'asc')
     {
         if ($this->ct->Env->version < 4) {

@@ -53,7 +53,7 @@ $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_cu
         if (count($result) > 0)
             echo '<ol><li>' . implode('</li><li>', $result) . '</li></ol>';
         else
-            echo '<p>Database table structure is up to date.</p>';
+            echo '<p>Database table structure is up-to-date.</p>';
 
         echo JHtml::_('bootstrap.endTab');
 

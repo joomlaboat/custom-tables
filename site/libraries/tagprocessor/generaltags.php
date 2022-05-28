@@ -346,7 +346,7 @@ class tagProcessor_General
                 if ($WebsiteRoot != '' and $WebsiteRoot[$l - 1] == '/')
                     $WebsiteRoot = substr($WebsiteRoot, 0, $l - 1);//delete trailing slash
             } else {
-                if ($WebsiteRoot == '' or $WebsiteRoot[strlen($WebsiteRoot) - 1] != '/') //Root must have slash / in the end
+                if ($WebsiteRoot == '' or $WebsiteRoot[strlen($WebsiteRoot) - 1] != '/') //Root must have the slash charachter "/" in the end
                     $WebsiteRoot .= '/';
             }
 

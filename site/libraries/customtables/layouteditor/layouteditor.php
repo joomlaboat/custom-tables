@@ -111,7 +111,7 @@ function renderEditor($textareacode, $textareaid, $typeboxid, $textareatabid, &$
 function getKnownLanguages()
 {
     $db = Factory::getDbo();
-    $db->setQuery('SELECT sef, title_native FROM #__languages ORDER BY sef ASC');
+    $db->setQuery('SELECT sef, title_native FROM #__languages ORDER BY sef');
 
     $list = array();
     $rows = $db->loadObjectList();

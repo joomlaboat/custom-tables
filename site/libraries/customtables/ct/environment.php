@@ -96,7 +96,7 @@ class Environment
         $mainframe = Factory::getApplication();
         if ($mainframe->getCfg('sef')) {
             $this->WebsiteRoot = Uri::root(true);
-            if ($this->WebsiteRoot == '' or $this->WebsiteRoot[strlen($this->WebsiteRoot) - 1] != '/') //Root must have slash / in the end
+            if ($this->WebsiteRoot == '' or $this->WebsiteRoot[strlen($this->WebsiteRoot) - 1] != '/') //Root must have the slash character "/" in the end
                 $this->WebsiteRoot .= '/';
         } else
             $this->WebsiteRoot = '';

@@ -74,14 +74,6 @@ abstract class CustomtablesHelper
         }
     }
 
-    /**
-     *    Check if have a string with a length
-     *
-     * @input    string   The string to check
-     *
-     * @returns bool true on success
-     **/
-
     public static function checkString($string)
     {
         if (isset($string) && is_string($string) && strlen($string) > 0) {
@@ -153,14 +145,6 @@ abstract class CustomtablesHelper
         return false;
     }
 
-    /**
-     *    Making strings safe (various ways)
-     *
-     * @input    string   The you would like to make safe
-     *
-     * @returns string on success
-     **/
-
     public static function safeString($string, $type = 'L', $spacer = '_', $replaceNumbers = true)
     {
         if ($replaceNumbers === true) {
@@ -175,7 +159,7 @@ abstract class CustomtablesHelper
                 $string = str_replace('VDM', 'vDm', $string);
                 // Remove anything which isn't a word, whitespace, number
                 // or any of the following caracters -_()
-                // If you don't need to handle multi-byte characters
+                // If you don't need to handle multibyte characters
                 // you can use preg_replace rather than mb_ereg_replace
                 // Thanks @Łukasz Rysiak!
                 // $string = mb_ereg_replace("([^\w\s\d\-_\(\)])", '', $string);
@@ -183,7 +167,7 @@ abstract class CustomtablesHelper
                 // http://stackoverflow.com/a/2021729/1.8.177
                 return preg_replace('/\s+/', ' ', $string);
             }
-            // remove all other characters
+            // remove all others characters
             $string = trim($string);
             $string = preg_replace('/' . $spacer . '+/', ' ', $string);
             $string = preg_replace('/\s+/', ' ', $string);
@@ -250,14 +234,6 @@ abstract class CustomtablesHelper
         // return the string with no numbers remaining.
         return $string;
     }
-
-    /**
-     *    Check if have an array with a length
-     *
-     * @input    array   The array to check
-     *
-     * @returns bool true on success
-     **/
 
     public static function checkArray($array, $removeEmptyString = false)
     {

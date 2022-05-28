@@ -219,7 +219,7 @@ class TwigProcessor
         }
 
         if ($this->recordBlockFound) {
-            $number = 0;
+            $number = 1;
             $record_result = '';
             foreach ($this->ct->Records as $row) {
                 $row['_number'] = $number;

@@ -44,7 +44,7 @@ class CustomtablesController extends JControllerLegacy
 
                 Factory::getApplication()->enqueueMessage(JText::sprintf('JLIB_APPLICATION_ERROR_UNHELD_ID', $id), 'error');
 
-                // check if item was opened from other then its own list view
+                // check if item was opened from other than its own list view
                 $ref = $this->input->getCmd('ref', 0);
                 $refid = $this->input->getInt('refid', 0);
                 // set redirect

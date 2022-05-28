@@ -41,7 +41,7 @@ class JFormFieldCTField extends JFormFieldList
         // Select the text.
         $query->select($db->quoteName('type'));
         $query->from($db->quoteName('#__customtables_fields'));
-        $query->order($db->quoteName('type') . ' ASC');
+        $query->order($db->quoteName('type'));
 
         // Reset the query using our newly populated query object.
         $db->setQuery($query);

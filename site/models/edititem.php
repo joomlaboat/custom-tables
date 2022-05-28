@@ -150,8 +150,10 @@ class CustomTablesModelEditItem extends JModelLegacy
             $query = 'SELECT ' . $this->ct->Table->tablerow['query_selects'] . ' FROM ' . $this->ct->Table->realtablename
                 . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . $this->ct->db->quote($this->listing_id) . ' LIMIT 1';
 
+
             $this->ct->db->setQuery($query);
             $rows = $this->ct->db->loadAssocList();
+
             if (count($rows) < 1)
                 return -1;
 

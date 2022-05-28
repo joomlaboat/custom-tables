@@ -44,7 +44,7 @@ class CT_FieldTypeTag_records
         //$showpublished = 2 - show any
         $showpublished = (($field->params[6] ?? '') == '' ? 2 : ((int)($field->params[6] ?? 0) == 1 ? 0 : 1));
 
-        //this is important because it has been selected some how.
+        //this is important because it has been selected somehow.
         $ct->setFilter($filter, $showpublished);
 
         $ct->Filter->where[] = 'INSTR(' . $db->quote($rowValue) . ',' . $ct->Table->realidfieldname . ')';
@@ -119,7 +119,7 @@ class CT_FieldTypeTag_records
         if ($sortbyfield == '' and isset($field->params[5]))
             $sortbyfield = $field->params[5];
 
-        //this is important because it has been selected some how.
+        //this is important because it has been selected somehow.
         $esr_filter = '';
 
         $result = JHTML::_('ESRecordsView.render', $rowValue, $esr_table, $esr_field, $esr_selector, $esr_filter, $sortbyfield);

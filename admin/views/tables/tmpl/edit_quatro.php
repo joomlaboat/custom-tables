@@ -68,7 +68,7 @@ $document->addCustomTag('<link href="' . JURI::root(true) . '/components/com_cus
                     echo '
 					<div class="control-group">
 						<div class="control-label">
-						<label id="jform_tabletitle-lbl" for="jform_tabletitle" class="required">
+						<label id="jform_tabletitle-lbl" for="jform_' . $id . '" class="required">
 							Table Title' . (!$moreThanOneLang ? '<span class="star" aria-hidden="true">&nbsp;*</span>' : '') . '</label>
 							<br/><b>' . $lang->title . '</b>
 						</div>

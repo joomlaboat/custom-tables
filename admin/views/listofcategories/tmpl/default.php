@@ -38,7 +38,7 @@ JHtml::_('formbehavior.chosen', 'select');
             <p>Here's how it works. A Category contains Tables. One Table can only be in one Category.</p>
             <p>
                 If you will have a large number of tables on your site, the reason to use categories is to simply group
-                the tables so you can find them.
+                the tables, so you can find them.
                 For example, on the Custom Tables/Tables page, you can filter tables based on Category. So if you have
                 100 tables in your site, you can find a Tables more easily if you know its Category.</p>
             </p>

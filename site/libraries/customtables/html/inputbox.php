@@ -84,7 +84,7 @@ class Inputbox
         $this->place_holder = $this->field->title;
     }
 
-    static public function renderTableJoinSelectorJSON(CT &$ct, $key): void
+    static public function renderTableJoinSelectorJSON(CT &$ct, $key, $obEndClean = true): ?string
     {
         $index = $ct->Env->jinput->getInt('index');
 
@@ -93,11 +93,23 @@ class Inputbox
         if ($index < 0 or $index >= count($selectors))
             die(json_encode(['error' => 'Index out of range.' . $key]));
 
+        $additional_filter = $ct->Env->jinput->getCmd('filter', '');
+        $subFilter = $ct->Env->jinput->getCmd('subfilter');
+
+        return self::renderTableJoinSelectorJSON_Process($ct, $selectors, $index, $additional_filter, $subFilter, $obEndClean);
+    }
+
+    static public function renderTableJoinSelectorJSON_Process(CT &$ct, $selectors, $index, $additional_filter, $subFilter, $obEndClean = true): ?string
+    {
         $selector = $selectors[$index];
 
         $tablename = $selector[0];
-        if ($tablename == '')
-            die(json_encode(['error' => 'Table not selected']));
+        if ($tablename == '') {
+            if ($obEndClean)
+                die(json_encode(['error' => 'Table not selected']));
+            else
+                return 'Table not selected';
+        }
 
         $ct->getTable($tablename);
         if ($ct->Table->tablename == '')
@@ -113,8 +125,6 @@ class Inputbox
         $showPublished = (($selector[2] ?? '') == '' ? 2 : ((int)($selector[2] ?? 0) == 1 ? 0 : 1)); //$selector[2] can be "" or "true" or "false"
 
         $filter = $selector[3] ?? '';
-
-        $additional_filter = $ct->Env->jinput->getCmd('filter');
 
         $additional_where = '';
         //Find the field name that has a join to the parent (index-1) table
@@ -171,7 +181,7 @@ class Inputbox
         }
 
         $itemLayout = '{"id":"{{ record.id }}","label":"' . $fieldname_or_layout_tag . '"}';
-        $pageLayoutContent = '[{% block record %}' . $itemLayout . ',{% endblock %}{}]';
+        $pageLayoutContent = '[{% block record %}{% if record.number>1 %},{% endif %}' . $itemLayout . '{% endblock %}]';
 
         $paramsArray['establename'] = $tablename;
 
@@ -185,7 +195,7 @@ class Inputbox
         require_once($pathViews . 'json.php');
 
         $jsonOutput = new ViewJSON($ct);
-        $jsonOutput->render($pageLayoutContent, '', 10); //10 is the LayoutType = JSON
+        return $jsonOutput->render($pageLayoutContent, '', 10, $obEndClean); //10 is the LayoutType = JSON
     }
 
     function render($value, &$row)
@@ -371,8 +381,8 @@ class Inputbox
 									id="' . $this->prefix . $this->field->fieldname . '_' . $i . '"
 									value="' . $v . '" '
                 . ($value == $v ? ' checked="checked" ' : '')
-                . ' /></td>';
-            $result .= '<td><label for="' . $this->prefix . $this->field->fieldname . '_' . $i . '">' . $v . '</label></td>';
+                . ' /></td>'
+                . '<td><label for="' . $this->prefix . $this->field->fieldname . '_' . $i . '">' . $v . '</label></td>';
             $i++;
         }
         $result .= '</tr></table>';

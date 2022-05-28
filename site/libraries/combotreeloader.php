@@ -237,7 +237,7 @@ class ESDynamicComboTree
         $WebsiteRoot = str_replace("/components/com_customtables/libraries/", "", $WebsiteRoot);
         $WebsiteRoot = str_replace("/components/com_customtables/libraries", "", $WebsiteRoot);
 
-        if ($WebsiteRoot == '' or $WebsiteRoot[strlen($WebsiteRoot) - 1] != '/') //Root must have slash / in the end
+        if ($WebsiteRoot == '' or $WebsiteRoot[strlen($WebsiteRoot) - 1] != '/') //Root must have the slash character "/" in the end
             $WebsiteRoot .= '/';
 
         if ($simpleList)
