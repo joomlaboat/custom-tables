@@ -140,7 +140,7 @@ class Inputbox
                 } else {
                     //Check if this table has self-parent field - the TableJoin field linked with the same table.
                     if ($join_tablename == $tablename) {
-                        $subFilter = $ct->Env->jinput->getCmd('subfilter');
+
                         if ($subFilter == '')
                             $additional_where = '(' . $fld['realfieldname'] . ' IS NULL OR ' . $fld['realfieldname'] . '="")';
                         else
@@ -313,7 +313,7 @@ class Inputbox
                 return $this->render_customtables($row);
 
             case 'sqljoin':
-                return $this->render_tablejoin($value);
+                return $this->render_tablejoin($value, $row);
 
             case 'records':
                 return $this->render_records($value);
@@ -1078,7 +1078,7 @@ class Inputbox
         return $result;
     }
 
-    protected function render_tablejoin(&$value)
+    protected function render_tablejoin(&$value, $row)
     {
         $result = '';
 
@@ -1087,9 +1087,9 @@ class Inputbox
         //$this->option_list[0] - CSS Class
         //$this->option_list[1] - Optional Attributes
 
-        $sqljoin_attributes = $this->attributes . ' '
-            . 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
-            . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" ';
+        //$sqljoin_attributes = $this->attributes . ' '
+        $sqljoin_attributes = ' data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '"'
+            . ' data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '"';
 
         if ($this->isTwig) {
             //Twig Tag
@@ -1098,8 +1098,10 @@ class Inputbox
             $result .= JHTML::_('CTTableJoin.render',
                 $this->prefix . $this->field->fieldname,
                 $this->field,
+                $row[$this->ct->Table->realidfieldname],
                 $value,
                 $this->option_list,
+                $this->onchange,
                 $sqljoin_attributes);
         } else {
             //CT Tag

@@ -66,8 +66,7 @@ class ViewJSON
             JoomlaBasicMisc::applyContentPlugins($pageLayoutContent);
 
         if ($obEndClean) {
-            echo 'ssss';
-            die;
+
             if (ob_get_contents()) ob_end_clean();
 
             $filename = $this->ct->Params->pageTitle;

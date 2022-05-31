@@ -421,11 +421,15 @@ function recaptchaCallback() {
     }
 }
 
-function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_index, parent_object_id, formId, attributes) {
+function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_index, parent_object_id, formId) {
     let wrapper = document.getElementById(control_name + "Wrapper");
     let filters = [];
     if (wrapper.dataset.valuefilters != '')
         filters = JSON.parse(atob(wrapper.dataset.valuefilters));
+
+    //let attributes = atob(wrapper.dataset.attributes);
+    let onchange = atob(wrapper.dataset.onchange);
+    alert(onchange);
 
     let next_index = index;
     let next_sub_index = sub_index;
@@ -471,16 +475,30 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_ind
             if (next_index + 1 < filters.length) {
                 let result = '<div id="' + control_name + 'Selector' + next_index + '_' + next_sub_index + '"></div>';
                 document.getElementById(control_name + "Selector" + index + '_' + sub_index).innerHTML = result;
-                ctUpdateTableJoinLink(control_name, next_index, false, next_sub_index, parent_object_id, formId, attributes);
-                return result;
-            } else
-                document.getElementById(control_name + "Selector" + index + '_' + sub_index).innerHTML = "No items to select..";
+                ctUpdateTableJoinLink(control_name, next_index, false, next_sub_index, parent_object_id, formId, false);//
+                //alert(4);
+                //return '';//result + '4';
+                return false;
+            } else {
+                let selectorObject = document.getElementById(control_name + "Selector" + index + '_' + sub_index);
+
+                if (selectorObject) {
+                    selectorObject.innerHTML = '';//No items to select';//..<div id="' + control_name + 'Selector' + next_index + '_' + next_sub_index + '"></div>';
+                    //result += '';
+                } else {
+                    //alert(3);
+                    //return '3';
+                    return false;
+                }
+            }
         } else {
             document.getElementById(control_name + "Selector" + index + '_' + sub_index).innerHTML = "No items to select";
-            return '';
+            //alert(2);
+            return false;//'2';
         }
 
-        return '';
+        //alert(1);
+        //return '1';
     }
 
     let result = ''
@@ -490,37 +508,50 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_ind
     if (objForm && objForm.dataset.version < 4)
         cssClass = 'inputbox';
 
-    if (next_index + 1 < filters.length) {
-        //Add select box
-        let current_object_id = control_name + index;
 
-        if (Array.isArray(filters[index]))
-            current_object_id += '_' + sub_index;
+    //Add select box
+    let current_object_id = control_name + index + (Array.isArray(filters[index]) ? '_' + sub_index : '');
 
-        let onChangeAttribute = ' onChange="ctUpdateTableJoinLink(\'' + control_name + '\', ' + next_index + ', false, ' + next_sub_index + ',\'' + current_object_id + '\', \'' + formId + '\', \'' + attributes + '\')"';
+    //result += '(' + next_index + ',' + filters.length + ')';
+
+    if (r.length > 0) {
+
+        let updateValueString = (index + 1 == filters.length ? 'true' : 'false');
+
+        let onChangefunction = 'ctUpdateTableJoinLink(\'' + control_name + '\', ' + next_index + ', false, ' + next_sub_index + ',\'' + current_object_id + '\', \'' + formId + '\', ' + updateValueString + ');'
+        let onChangeAttribute = ' onChange="' + onChangefunction + onchange + '"';
+        //[' + index + ',' + filters.length + ']
         result += '<select id="' + current_object_id + '"' + onChangeAttribute + ' class="' + cssClass + '">';
-    } else
-        result += '<select id="' + control_name + '" name="' + control_name + '" class="' + cssClass + '"' + Base64.decode(attributes) + '>';
 
-    result += '<option value="">- Select</option>';
+        result += '<option value="">- Select</option>';
 
-    for (let i = 0; i < r.length; i++)
-        result += '<option value="' + r[i].id + '"' + (r[i].id == val ? ' selected="selected"' : '') + '>' + r[i].label + '</option>';
+        for (let i = 0; i < r.length; i++)
+            result += '<option value="' + r[i].id + '"' + (r[i].id == val ? ' selected="selected"' : '') + '>' + r[i].label + '</option>';
 
-    result += '</select>';
+        result += '</select>';
 
-    //Prepare the space for next elements
-    result += '<div id="' + control_name + 'Selector' + next_index + '_' + next_sub_index + '"></div>';
+        //Prepare the space for next elements
+        result += '<div id="' + control_name + 'Selector' + next_index + '_' + next_sub_index + '"></div>';
+    }
 
+
+    //if (r.length > 0) {
     //Add content to the element
     document.getElementById(control_name + "Selector" + index + '_' + sub_index).innerHTML = result;
+    //}
 
-    if (execute_all && next_index + 1 < filters.length && val != null)
-        ctUpdateTableJoinLink(control_name, next_index, true, next_sub_index, null, formId, attributes);
+    if (r.length > 0) {
+        if (execute_all && next_index + 1 < filters.length && val != null) {
+            alert(6);
+            ctUpdateTableJoinLink(control_name, next_index, true, next_sub_index, null, formId, false);//
+        } //else
+        //alert(5);
+    }
 }
 
-function ctUpdateTableJoinLink(control_name, index, execute_all, sub_index, object_id, formId, attributes) {
+function ctUpdateTableJoinLink(control_name, index, execute_all, sub_index, object_id, formId, updateValue) {//, attributes
     let wrapper = document.getElementById(control_name + "Wrapper");
+    //let onchange = atob(wrapper.dataset.onchange);
 
     let link = location.href.split('administrator/index.php?option=com_customtables');
     let url = '';
@@ -534,6 +565,9 @@ function ctUpdateTableJoinLink(control_name, index, execute_all, sub_index, obje
     if (wrapper.dataset.valuefilters != '')
         filters = JSON.parse(atob(wrapper.dataset.valuefilters));
 
+
+    //$result .= '<select id="' . $control_name . '" name="' . $control_name . '" class="' . $cssClass . '"' . $attributes . '>';
+
     //if (Array.isArray(filters[index]))
     //url += '&subindex=' + sub_index;
 
@@ -546,9 +580,35 @@ function ctUpdateTableJoinLink(control_name, index, execute_all, sub_index, obje
             url += '&filter=' + filters[index];
     } else {
         let obj = document.getElementById(object_id);
+
+        if (updateValue) {
+            let valueObj = document.getElementById(control_name);
+
+            if (obj.value == "") {
+
+                let indexTemp = index;
+                let sub_indexTemp = sub_index;
+
+                if (sub_indexTemp > 0)
+                    sub_indexTemp -= 2;
+                else {
+                    //TODO: descend IndexTemp
+                }
+
+                if (sub_indexTemp >= 0) {
+                    let tempCurrent_object_id = control_name + indexTemp + (Array.isArray(filters[indexTemp]) ? '_' + sub_indexTemp : '');
+                    let objTemp = document.getElementById(tempCurrent_object_id);
+                    valueObj.value = objTemp.value;
+                } else
+                    valueObj.value = obj.value;
+
+            } else
+                valueObj.value = obj.value;
+        }
+
         if (obj.value == "") {
             //Empty everything after
-            document.getElementById(control_name + "Selector" + index + '_' + sub_index).innerHTML = "Not selected";
+            document.getElementById(control_name + "Selector" + index + '_' + sub_index).innerHTML = '';//"Not selected";
             return false;
         }
 
@@ -558,10 +618,13 @@ function ctUpdateTableJoinLink(control_name, index, execute_all, sub_index, obje
             url += '&filter=' + obj.value;
     }
 
+    if (index >= filters.length)
+        return false;
+
     fetch(url)
         .then(r => r.json())
         .then(r => {
-            ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_index, object_id, formId, attributes);
+            ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_index, object_id, formId);//, attributes);
         })
         .catch(error => console.error("Error", error));
 }
