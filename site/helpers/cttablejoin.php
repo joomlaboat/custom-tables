@@ -63,7 +63,7 @@ class JHTMLCTTableJoin
 
         return '<input type="hidden" id="' . $control_name . '" name="' . $control_name . '" value="' . $value . '" ' . $attributes . '/>'
             . '<div id="' . $control_name . 'Wrapper" ' . implode(' ', $data) . '>'
-            . self::ctUpdateTableJoinLink($ct, $control_name, 0, 0, "", $formID, $attributes, $filter, $js_filters, $value)
+            . self::ctUpdateTableJoinLink($ct, $control_name, 0, 0, "", $formID, $attributes, $onchange, $filter, $js_filters, $value)
             . '</div>';
 
         /*
@@ -224,7 +224,7 @@ class JHTMLCTTableJoin
         return $recs[0][$join_realfieldname];
     }
 
-    protected static function ctUpdateTableJoinLink(CT &$ct, $control_name, $index, $sub_index, $object_id, $formId, $attributes, $filter, $js_filters, $value)
+    protected static function ctUpdateTableJoinLink(CT &$ct, $control_name, $index, $sub_index, $object_id, $formId, $attributes, $onchange, $filter, $js_filters, $value)
     {
         $subFilter = '';
         $additional_filter = '';
@@ -248,10 +248,10 @@ class JHTMLCTTableJoin
             //$result .= '<div id="' . $control_name . 'Selector' . $next_index . '_' . $next_sub_index . '"></div>';
         }
 
-        return self::ctRenderTableJoinSelectBox($ct, $control_name, $resultJSON, $index, $sub_index, $object_id, $formId, $attributes, $filter, $js_filters, $value);
+        return self::ctRenderTableJoinSelectBox($ct, $control_name, $resultJSON, $index, $sub_index, $object_id, $formId, $attributes, $onchange, $filter, $js_filters, $value);
     }
 
-    protected static function ctRenderTableJoinSelectBox(CT &$ct, $control_name, $r, $index, $sub_index, $parent_object_id, $formId, $attributes, $filter, $js_filters, $value)
+    protected static function ctRenderTableJoinSelectBox(CT &$ct, $control_name, $r, $index, $sub_index, $parent_object_id, $formId, $attributes, $onchange, $filter, $js_filters, $value)
     {
         $next_index = $index;
         $next_sub_index = $sub_index;
@@ -280,7 +280,7 @@ class JHTMLCTTableJoin
                     $next_index += 1;
                     $next_sub_index = 0;
 
-                    $result = self::ctUpdateTableJoinLink($ct, $control_name, $next_index, $next_sub_index, $parent_object_id, $formId, $attributes, $filter, $js_filters, $value);
+                    $result = self::ctUpdateTableJoinLink($ct, $control_name, $next_index, $next_sub_index, $parent_object_id, $formId, $attributes, $onchange, $filter, $js_filters, $value);
                     $result .= 'AAA<div id="' . $control_name . 'Selector' . $next_index . '_' . $next_sub_index . '"></div>';
 
                     return $result;
@@ -309,9 +309,12 @@ class JHTMLCTTableJoin
         if (count($r) > 0) {
 
             $updateValueString = ($index + 1 == count($js_filters) ? 'true' : 'false');
-            $onChangeAttribute = ' onChange="ctUpdateTableJoinLink(\'' . $control_name . '\', ' . $next_index . ', false, ' . $next_sub_index . ',\'' . $current_object_id . '\', \'' . $formId . '\', ' . $updateValueString . ')"';
-            //[' . $index . ',' . count($js_filters) . ']
-            $result .= '<select id="' . $current_object_id . '"' . $onChangeAttribute . ' class="' . $cssClass . '">';
+            $onChangeAttribute = 'ctUpdateTableJoinLink(\'' . $control_name . '\', ' . $next_index . ', false, ' . $next_sub_index . ',\'' . $current_object_id . '\', \'' . $formId . '\', ' . $updateValueString . ');';
+
+            if ($updateValueString)
+                $onChangeAttribute .= $onchange;
+
+            $result .= '<select id="' . $current_object_id . '" onChange="' . $onChangeAttribute . '"' . ' class="' . $cssClass . '">';
 
             $result .= '<option value="">- Select</option>';
 
@@ -324,7 +327,7 @@ class JHTMLCTTableJoin
             //Prepare the space for next elements
 
             if ($next_index < count($js_filters) && $val != null)// and !$value_found)
-                $result .= self::ctUpdateTableJoinLink($ct, $control_name, $next_index, $next_sub_index, null, $formId, $attributes, $filter, $js_filters, $value);
+                $result .= self::ctUpdateTableJoinLink($ct, $control_name, $next_index, $next_sub_index, null, $formId, $attributes, $onchange, $filter, $js_filters, $value);
             else
                 $result .= '<div id="' . $control_name . 'Selector' . $next_index . '_' . $next_sub_index . '"></div>';
 

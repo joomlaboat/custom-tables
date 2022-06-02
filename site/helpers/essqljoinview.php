@@ -140,7 +140,7 @@ class JHTMLESSQLJoinView
                 $row['_number'] = $number;
 
                 if ($ct->Env->legacysupport) {
-                    $LayoutProc = new LayoutProcessor($mct);
+                    $LayoutProc = new LayoutProcessor($ct);
                     $LayoutProc->layout = $layoutcode;
                     $vlu = $LayoutProc->fillLayout($row);
                 } else

@@ -429,7 +429,6 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_ind
 
     //let attributes = atob(wrapper.dataset.attributes);
     let onchange = atob(wrapper.dataset.onchange);
-    alert(onchange);
 
     let next_index = index;
     let next_sub_index = sub_index;
@@ -476,29 +475,21 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_ind
                 let result = '<div id="' + control_name + 'Selector' + next_index + '_' + next_sub_index + '"></div>';
                 document.getElementById(control_name + "Selector" + index + '_' + sub_index).innerHTML = result;
                 ctUpdateTableJoinLink(control_name, next_index, false, next_sub_index, parent_object_id, formId, false);//
-                //alert(4);
-                //return '';//result + '4';
                 return false;
             } else {
                 let selectorObject = document.getElementById(control_name + "Selector" + index + '_' + sub_index);
 
                 if (selectorObject) {
                     selectorObject.innerHTML = '';//No items to select';//..<div id="' + control_name + 'Selector' + next_index + '_' + next_sub_index + '"></div>';
-                    //result += '';
                 } else {
-                    //alert(3);
-                    //return '3';
                     return false;
                 }
             }
         } else {
             document.getElementById(control_name + "Selector" + index + '_' + sub_index).innerHTML = "No items to select";
-            //alert(2);
-            return false;//'2';
+            return false;
+            ;
         }
-
-        //alert(1);
-        //return '1';
     }
 
     let result = ''
@@ -542,10 +533,8 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_ind
 
     if (r.length > 0) {
         if (execute_all && next_index + 1 < filters.length && val != null) {
-            alert(6);
             ctUpdateTableJoinLink(control_name, next_index, true, next_sub_index, null, formId, false);//
-        } //else
-        //alert(5);
+        }
     }
 }
 
@@ -564,12 +553,6 @@ function ctUpdateTableJoinLink(control_name, index, execute_all, sub_index, obje
     let filters = [];
     if (wrapper.dataset.valuefilters != '')
         filters = JSON.parse(atob(wrapper.dataset.valuefilters));
-
-
-    //$result .= '<select id="' . $control_name . '" name="' . $control_name . '" class="' . $cssClass . '"' . $attributes . '>';
-
-    //if (Array.isArray(filters[index]))
-    //url += '&subindex=' + sub_index;
 
     if (execute_all) {
         if (Array.isArray(filters[index])) {
@@ -917,7 +900,7 @@ function ctInputbox_signature(inputbox_id, width, height, format) {
     /*
     document.getElementById(inputbox_id + '_save').addEventListener("click", function (event) {
         if (ct_signaturePad[inputbox_id].isEmpty()) {
-            alert("Please provide a signature first.");
+            "Please provide a signature first.";
         } else {
             //let dataURL = ct_signaturePad[inputbox_id].toDataURL('image/'+format+'+xml');
             let dataURL = ct_signaturePad[inputbox_id].toDataURL('image/'+format);
