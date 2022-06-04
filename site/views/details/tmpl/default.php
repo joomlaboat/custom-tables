@@ -11,25 +11,13 @@
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-use CustomTables\TwigProcessor;
+$this->ct->loadJSAndCSS();
+//$this->ct->document->addScript(JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/base64.js');
+//$this->ct->document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/catalog.js" type="text/javascript"></script>');
+//$this->ct->document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/ajax.js"></script>');
+//$this->ct->document->addCustomTag('<link href="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/css/style.css" type="text/css" rel="stylesheet" >');
 
-$this->ct->document->addScript(JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/base64.js');
-$this->ct->document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/catalog.js" type="text/javascript"></script>');
-$this->ct->document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/ajax.js"></script>');
-$this->ct->document->addCustomTag('<link href="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/css/style.css" type="text/css" rel="stylesheet" >');
-
-if ($this->ct->Env->legacysupport) {
-    require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'tagprocessor' . DIRECTORY_SEPARATOR . 'itemtags.php');
-    $LayoutProc = new LayoutProcessor($this->ct);
-    $LayoutProc->layout = $this->layoutDetailsContent;
-    $this->layoutDetailsContent = $LayoutProc->fillLayout($this->row);
-}
-
-$twig = new TwigProcessor($this->ct, $this->layoutDetailsContent);
-$results = $twig->process($this->row);
-
-if ($this->ct->Params->allowContentPlugins)
-    JoomlaBasicMisc::applyContentPlugins($results);
+$results = $this->details->render();
 
 if ($this->ct->Env->clean) {
     if ($this->ct->Env->frmt == 'csv') {
@@ -68,7 +56,9 @@ if ($this->ct->Params->showPageHeading) : ?>
     </div>
 <?php endif;
 
+//echo '<fieldset class="options-form">';
 echo $results;
+//echo '</fieldset>';
 ?>
 
 <!-- Modal content -->

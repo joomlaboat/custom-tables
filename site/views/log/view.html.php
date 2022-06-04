@@ -29,8 +29,6 @@ class CustomTablesViewLog extends JViewLegacy
     {
         $this->ct = new CT;
 
-        require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR . 'details.php');
-
         $user = Factory::getUser();
         $this->userid = $user->id;
 
@@ -54,8 +52,6 @@ class CustomTablesViewLog extends JViewLegacy
         $this->tableSelector = $this->gettables($this->tableid);
 
         parent::display($tpl);
-
-        return;
     }
 
     function getRecords($action, $userid, $tableid)

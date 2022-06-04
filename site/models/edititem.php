@@ -54,14 +54,15 @@ class CustomTablesModelEditItem extends JModelLegacy
 
         $this->userIdField_Unique = false;
 
-        $this->ct->Params->userIdField = $this->findUserIDField($this->ct->Params->userIdField);//to make sure that the field name is real and two userid fields can be used
-
         $this->ct->getTable($ct->Params->tableName, $this->ct->Params->userIdField);
 
         if ($this->ct->Table->tablename == '') {
             $this->ct->app->enqueueMessage('Table not selected (148).', 'error');
             return false;
         }
+
+        $this->ct->Params->userIdField = $this->findUserIDField($this->ct->Params->userIdField);//to make sure that the field name is real and two userid fields can be used
+
         if (is_null($ct->Params->msgItemIsSaved))
             $ct->Params->msgItemIsSaved = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORD_SAVED');
 

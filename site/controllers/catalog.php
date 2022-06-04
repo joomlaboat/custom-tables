@@ -48,7 +48,7 @@ if (array_key_exists($task, $PermissionIndexes))
 
 if ($task != '') {
 
-    $ct = new CT;
+    $ct = new CT(null, false);
 
     /*
     if (Factory::getUser()->authorise('core.admin', 'com_helloworld'))
@@ -86,7 +86,6 @@ if ($task != '') {
 
 function doTheTask(CT &$ct, $task, $edit_model, $this_)
 {
-    //Return link
     if ($ct->Params->returnTo != '') {
         $link = $ct->Params->returnTo;
         if (!str_contains($link, 'http:') and !str_contains($link, 'https:'))

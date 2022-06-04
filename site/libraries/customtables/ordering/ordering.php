@@ -229,15 +229,24 @@ class Ordering
 
         foreach ($this->Table->fields as $row) {
             if ($row['allowordering'] == 1) {
-                if (!isset($row['fieldtitle' . $this->Table->Languages->Postfix])) {
-                    Factory::getApplication()->enqueueMessage(
+
+                /*
+                if (!array_key_exists($row['fieldtitle' . $this->Table->Languages->Postfix])) {
+
+                    Factory::getApplication()->enqueueMessage('1:' .
                         JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_LANGFIELDNOTFOUND'), 'Error');
                     return null;
                 }
+                */
 
                 $fieldType = $row['type'];
                 $fieldname = $row['fieldname'];
-                $fieldtitle = $row['fieldtitle' . $this->Table->Languages->Postfix];
+
+                if ($row['fieldtitle' . $this->Table->Languages->Postfix] != '')
+                    $fieldtitle = $row['fieldtitle' . $this->Table->Languages->Postfix];
+                else
+                    $fieldtitle = $row['fieldtitle'];
+
                 $typeparams = $row['typeparams'];
 
                 if ($fieldType == 'string' or $fieldType == 'email' or $fieldType == 'url') {

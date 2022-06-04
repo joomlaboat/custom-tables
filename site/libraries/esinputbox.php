@@ -71,10 +71,7 @@ class ESInputBox
 
         $value = '';
 
-        if ($row == null)
-            $row = array();
-
-        if (count($row) == 0 or (isset($row[$this->ct->Table->realidfieldname]) and $row[$this->ct->Table->realidfieldname] == 0)) {
+        if ($this->ct->isRecordNull($row)) {
             $value = $this->ct->Env->jinput->getString($realFieldName);
             if ($value == '')
                 $value = $Inputbox->getWhereParameter($realFieldName);

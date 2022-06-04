@@ -64,6 +64,31 @@ class CT
         $this->Filter = null;
     }
 
+    function isRecordNull($row): bool
+    {
+        if (is_null($row))
+            return true;
+
+        if (count($row) == 0)
+            return true;
+
+        if (!isset($row[$this->Table->realidfieldname]))
+            return true;
+
+        $id = $row[$this->Table->realidfieldname];
+
+        if (is_null($id))
+            return true;
+
+        if ($id == '')
+            return true;
+
+        if (is_numeric($id) and intval($id) == 0)
+            return true;
+
+        return false;
+    }
+
     function setParams($menuParams = null, $blockExternalVars = true, $ModuleId = null): void
     {
         $this->Params->setParams($menuParams, $blockExternalVars, $ModuleId);
@@ -309,6 +334,8 @@ class CT
         $this->document->addCustomTag('<script type="text/javascript" src="https://maps.google.com/maps/api/js?key=' . $googlemapapikey . '&sensor=false"></script>');
 
         $this->document->addScript(URI::root(true) . '/components/com_customtables/libraries/customtables/media/js/combotree.js');
+
+        $this->document->addCustomTag('<script>let ctWebsiteRoot = "' . $this->Env->WebsiteRoot . '";let ctItemId = "' . $this->Params->ItemId . '";</script>');
 
         //Styles
         $this->document->addCustomTag('<link href="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/css/style.css" type="text/css" rel="stylesheet" >');

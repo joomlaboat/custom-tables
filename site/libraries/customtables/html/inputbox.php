@@ -61,13 +61,13 @@ class Inputbox
         $this->cssstyle = '';
         $this->onchange = $onchange;
 
-        if (strpos($this->cssclass, ':') !== false)//its a style, change it to attribute
+        if (str_contains($this->cssclass, ':'))//its a style, change it to attribute
         {
             $this->cssstyle = $this->cssclass;
             $this->cssclass = '';
         }
 
-        if (strpos($this->attributes, 'onchange="') !== false and $this->onchange != '') {
+        if (str_contains($this->attributes, 'onchange="') and $this->onchange != '') {
             //if the attributes already contain "onchange" parameter then add onchange value to the attributes parameter
             $this->attributes = str_replace('onchange="', 'onchange="' . $this->onchange, $this->attributes);
         } elseif ($this->attributes != '')
