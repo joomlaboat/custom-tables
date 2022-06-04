@@ -18,7 +18,7 @@ class OrderingHTML
         $order_values = $lists->values;
         $order_list = $lists->titles;
 
-        $result = '<select name="esordering" id="esordering" onChange="ctOrderChanged(this);" class="inputbox">
+        $result = '<select name="esordering" id="esordering" onChange="ctOrderChanged(this.value);" class="inputbox">
 ';
         for ($i = 0; $i < count($order_values); $i++) {
             $result .= '<option value="' . $order_values[$i] . '" ' . ($ordering->ordering_processed_string == $order_values[$i] ? ' selected ' : '') . '>' . $order_list[$i] . '</option>

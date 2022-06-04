@@ -225,8 +225,10 @@ class Twig_Html_Tags
             return $vlu;
     }
 
-    function goback($label = 'Go Back', $image_icon = '', $attribute = '', $returnto = '')
+    function goback($defaultLabel = 'COM_CUSTOMTABLES_GO_BACK', $image_icon = '', $attribute = '', $returnto = '')
     {
+        $label = JoomlaBasicMisc::JTextExtended($defaultLabel);
+
         if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
             return '';
 
@@ -244,13 +246,18 @@ class Twig_Html_Tags
 
         if ($attribute == '' and $image_icon == '') {
             if ($this->ct->Env->toolbaricons != '')
-                $vlu = '<a href="' . $returnto . '"><i class="ba-btn-transition ' . $this->ct->Env->toolbaricons . ' fa-angle-left" data-icon="' . $this->ct->Env->toolbaricons . ' fa-angle-left" title="' . $label . '" style="margin-right:10px;"></i>' . $label . '</a>';
+                $vlu = '<a href="' . $returnto . '"><i class="ba-btn-transition ' . $this->ct->Env->toolbaricons
+                    . ' fa-angle-left" data-icon="' . $this->ct->Env->toolbaricons . ' fa-angle-left" title="'
+                    . $label . '" style="margin-right:10px;"></i>' . $label . '</a>';
             else
                 $vlu = '<a href="' . $returnto . '" class="ct_goback"><div>' . $label . '</div></a>';
         } else {
-            if ($this->ct->Env->toolbaricons != '' or $image_icon == '')
-                $img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbaricons . ' fa-angle-left" data-icon="' . $this->ct->Env->toolbaricons . ' fa-angle-left" title="' . $label . '" style="margin-right:10px;"></i>' . $label . '</a>';
-            else
+
+            $img = '';
+            if (($this->ct->Env->toolbaricons != '' or $image_icon == '') and $attribute == '')
+                $img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbaricons . ' fa-angle-left" data-icon="'
+                    . $this->ct->Env->toolbaricons . ' fa-angle-left" title="' . $label . '" style="margin-right:10px;"></i>';
+            elseif ($this->ct->Env->toolbaricons == '')
                 $img = '<img src="' . $image_icon . '" alt="' . $label . '" />';
 
             $vlu = '<a href="' . $returnto . '" ' . $attribute . '><div>' . $img . $label . '</div></a>';

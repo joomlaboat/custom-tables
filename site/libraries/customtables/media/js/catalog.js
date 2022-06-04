@@ -145,13 +145,13 @@ function ctRefreshRecord(tableid, recordid, toolbarboxid, ModuleId) {
 
 }
 
-function ctOrderChanged(object) {
+function ctOrderChanged(objectValue) {
     const current_url = esPrepareLink(['returnto', 'task', 'orderby'], []);
     let returnto = btoa(current_url);
 
     let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + ctItemId;
 
-    link = esPrepareLink(['task'], ['task=setorderby', 'orderby=' + object.value, 'returnto=' + returnto], link);
+    link = esPrepareLink(['task'], ['task=setorderby', 'orderby=' + objectValue, 'returnto=' + returnto], link);
     window.location.href = link;
 }
 

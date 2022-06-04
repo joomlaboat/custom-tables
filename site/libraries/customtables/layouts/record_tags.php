@@ -43,6 +43,15 @@ class Twig_Record_Tags
         return $this->ct->Table->record[$this->ct->Table->realidfieldname];
     }
 
+    function label($allowSortBy = false)
+    {
+        $forms = new Forms($this->ct);
+
+        $field = ['type' => '_id', 'fieldname' => '_id', 'title' => '#', 'description' => '', 'isrequired' => false];
+        $vlu = $forms->renderFieldLabel((object)$field, $allowSortBy);
+        return new Markup($vlu, 'UTF-8');
+    }
+
     function link($add_returnto = false, $menu_item_alias = '', $custom_not_base64_returnto = '')
     {
         $menu_item_id = 0;
@@ -370,9 +379,9 @@ class Twig_Record_Tags
         if ($this->ct->Table->tablename != $sj_tablename) {
             //don't attach to specific record when it is the same table, example : to find averages
             $wheres[] = $this->ct->Table->realtablename . '.' . $this->ct->Table->tablerow['realidfieldname'] . '=' . $this->ct->db->quote($this->ct->Table->record[$this->ct->Table->realidfieldname]);
-        } else {
-            //$wheres[]='#__customtables_table_'.$sj_tablename.'.published=1';//to join with published record only, preferably set in parameters
-        }
+        }// else {
+        //$wheres[]='#__customtables_table_'.$sj_tablename.'.published=1';//to join with published record only, preferably set in parameters
+        //}
 
         if ($additional_where != '')
             $wheres[] = '(' . $additional_where . ')';

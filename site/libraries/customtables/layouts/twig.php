@@ -310,6 +310,11 @@ class fieldObject
         return intval($this->value());
     }
 
+    public function float()
+    {
+        return floatval($this->value());
+    }
+
     public function t()
     {
         return $this->title();
@@ -337,10 +342,10 @@ class fieldObject
         */
     }
 
-    public function label()
+    public function label($allowSortBy = false)
     {
         $forms = new Forms($this->ct);
-        $vlu = $forms->renderFieldLabel($this->field);
+        $vlu = $forms->renderFieldLabel($this->field, $allowSortBy);
         return new Markup($vlu, 'UTF-8');
     }
 
