@@ -30,7 +30,7 @@ class CustomtablesViewRecords extends JViewLegacy
     var CT $ct;
     var int $tableid;
     var string $pagelayout;
-    var array $row;
+    var ?array $row;
     var $state;
     var $canDo;
     var $canCreate;

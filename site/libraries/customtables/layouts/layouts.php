@@ -17,7 +17,6 @@ defined('_JEXEC') or die('Restricted access');
 
 use Exception;
 use JoomlaBasicMisc;
-use Joomla\CMS\Factory;
 
 class Layouts
 {
@@ -35,15 +34,13 @@ class Layouts
         if ($layoutname == '')
             return '';
 
-        $db = Factory::getDBO();
-
-        if ($db->serverType == 'postgresql')
-            $query = 'SELECT id, tableid, layoutcode, layoutmobile, layoutcss, layoutjs, extract(epoch FROM modified) AS ts, layouttype FROM #__customtables_layouts WHERE layoutname=' . $db->quote($layoutname) . ' LIMIT 1';
+        if ($this->ct->db->serverType == 'postgresql')
+            $query = 'SELECT id, tableid, layoutcode, layoutmobile, layoutcss, layoutjs, extract(epoch FROM modified) AS ts, layouttype FROM #__customtables_layouts WHERE layoutname=' . $this->ct->db->quote($layoutname) . ' LIMIT 1';
         else
-            $query = 'SELECT id, tableid, layoutcode, layoutmobile, layoutcss, layoutjs, UNIX_TIMESTAMP(modified) AS ts, layouttype FROM #__customtables_layouts WHERE layoutname=' . $db->quote($layoutname) . ' LIMIT 1';
+            $query = 'SELECT id, tableid, layoutcode, layoutmobile, layoutcss, layoutjs, UNIX_TIMESTAMP(modified) AS ts, layouttype FROM #__customtables_layouts WHERE layoutname=' . $this->ct->db->quote($layoutname) . ' LIMIT 1';
 
-        $db->setQuery($query);
-        $rows = $db->loadAssocList();
+        $this->ct->db->setQuery($query);
+        $rows = $this->ct->db->loadAssocList();
         if (count($rows) != 1)
             return '';
 
@@ -79,11 +76,10 @@ class Layouts
             $file_ts = filemtime($path . DIRECTORY_SEPARATOR . $filename);
 
             if ($db_layout_ts == 0) {
-                $db = Factory::getDBO();
-                $query = 'SELECT UNIX_TIMESTAMP(modified) AS ts FROM #__customtables_layouts WHERE id=' . $layout_id . ' LIMIT 1';
-                $db->setQuery($query);
 
-                $recs = $db->loadAssocList();
+                $query = 'SELECT UNIX_TIMESTAMP(modified) AS ts FROM #__customtables_layouts WHERE id=' . $layout_id . ' LIMIT 1';
+                $this->ct->db->setQuery($query);
+                $recs = $this->ct->db->loadAssocList();
 
                 if (count($recs) == 0)
                     $db_layout_ts = 0;
@@ -97,12 +93,10 @@ class Layouts
 
                 $content = file_get_contents($path . DIRECTORY_SEPARATOR . $filename);
 
-                $db = Factory::getDBO();
-
                 $query = 'UPDATE #__customtables_layouts SET layoutcode="' . addslashes($content) . '",modified=FROM_UNIXTIME(' . $file_ts . ') WHERE id=' . $layout_id;
 
-                $db->setQuery($query);
-                $db->execute();
+                $this->ct->db->setQuery($query);
+                $this->ct->db->execute();
 
                 return $content;
             }
@@ -139,22 +133,22 @@ class Layouts
         return true;
     }
 
-    protected function addCSSandJSIfNeeded($row): void
+    protected function addCSSandJSIfNeeded($layoutRow): void
     {
-        if (trim($row['layoutcss']) != '') {
-            $layout = trim($row['layoutcss']);
-            $twig = new TwigProcessor($this->ct, $layout);
-            $layout = $twig->process($row);
+        if (trim($layoutRow['layoutcss']) != '') {
+            $layoutContent = trim($layoutRow['layoutcss']);
+            $twig = new TwigProcessor($this->ct, $layoutContent);
+            $layoutContent = $twig->process($this->ct->Table->record);
 
-            $this->ct->document->addCustomTag('<style>' . $layout . '</style>');
+            $this->ct->document->addCustomTag('<style>' . $layoutContent . '</style>');
         }
 
-        if (trim($row['layoutjs']) != '') {
-            $layout = trim($row['layoutjs']);
-            $twig = new TwigProcessor($this->ct, $layout);
-            $layout = $twig->process($row);
+        if (trim($layoutRow['layoutjs']) != '') {
+            $layoutContent = trim($layoutRow['layoutjs']);
+            $twig = new TwigProcessor($this->ct, $layoutContent);
+            $layoutContent = $twig->process($this->ct->Table->record);
 
-            $this->ct->document->addCustomTag('<script>' . $layout . '</script>');
+            $this->ct->document->addCustomTag('<script>' . $layoutContent . '</script>');
         }
     }
 
@@ -218,22 +212,20 @@ class Layouts
         if ($file_ts == '') {
             //No permission -  file not saved
         } else {
-            $db = Factory::getDBO();
 
             $layout_id = (int)$data['id'];
 
             if ($layout_id == 0)
-                $query = 'UPDATE #__customtables_layouts SET modified=FROM_UNIXTIME(' . $file_ts . ') WHERE layoutname=' . $db->quote($data['layoutname']);
+                $query = 'UPDATE #__customtables_layouts SET modified=FROM_UNIXTIME(' . $file_ts . ') WHERE layoutname=' . $this->ct->db->quote($data['layoutname']);
             else
                 $query = 'UPDATE #__customtables_layouts SET modified=FROM_UNIXTIME(' . $file_ts . ') WHERE id=' . $layout_id;
 
-            $db->setQuery($query);
-            $db->execute();
+            $this->ct->db->setQuery($query);
+            $this->ct->db->execute();
         }
 
         return $file_ts;
     }
-
 
     public function layoutTypeTranslation(): array
     {

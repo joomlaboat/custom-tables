@@ -69,6 +69,9 @@ class CT
         if (is_null($row))
             return true;
 
+        if (!is_array($row))
+            return true;
+
         if (count($row) == 0)
             return true;
 

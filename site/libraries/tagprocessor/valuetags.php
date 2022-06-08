@@ -39,7 +39,7 @@ class tagProcessor_Value
         $isFileBoxLoaded = array();
         $getFileBoxRows = array();
 
-        if (isset($row) and is_array($row) and count($row) > 0) {
+        if (!$ct->isRecordNull($row)) {
             foreach ($ct->Table->fields as $ESField) {
                 $field = new Field($ct, $ESField, $row);
 

@@ -17,7 +17,6 @@ use Joomla\Input\Input;
 use JoomlaBasicMisc;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Router\Route;
-use Twig\Markup;
 
 class Twig_Fields_Tags
 {
@@ -351,39 +350,53 @@ class Twig_Document_Tags
         $this->ct->document->addCustomTag($tag);
     }
 
-    function layout($layoutname): Markup
+    function layout($layoutname): string
     {
         if (!isset($this->ct->Table)) {
             $this->ct->app->enqueueMessage('{{ document.layout }} - Table not loaded.', 'error');
-            return new Markup('', 'UTF-8');
+            return '';
         }
 
+        //echo '$layoutname=' . $layoutname . '*<br/>';
 
         $layouts = new Layouts($this->ct);
         $layout = $layouts->getLayout($layoutname);
 
+        //echo $layout;
+
         if ($layouts->tableid == null) {
             $this->ct->app->enqueueMessage('{{ document.layout("' . $layoutname . '") }} - Layout "' . $layoutname . ' not found.', 'error');
-            return new Markup('', 'UTF-8');
+            return '';
         }
 
         if ($layouts->tableid != $this->ct->Table->tableid) {
             $this->ct->app->enqueueMessage('{{ document.layout("' . $layoutname . '") }} - Layout Table ID and Current Table ID do not match.', 'error');
-            return new Markup('', 'UTF-8');
+            return '';
         }
 
-        $twig = new TwigProcessor($this->ct, '{% autoescape false %}' . $layout . '{% endautoescape %}');
+        $twig = new TwigProcessor($this->ct, $layout);
 
         $number = 1;
         $html_result = '';
 
-        foreach ($this->ct->Records as $row) {
-            $row['_number'] = $number;
-            $html_result .= $twig->process($row);
-            $number++;
+        if ($layouts->layouttype == 6) {
+            if (!is_null($this->ct->Records)) {
+
+                foreach ($this->ct->Records as $row) {
+                    $row['_number'] = $number;
+                    $html_result .= $twig->process($row);
+                    $number++;
+                }
+            }
+        } else {
+            ///if (!is_null($this->ct->Table->record))
+            $html_result = $twig->process($this->ct->Table->record);
         }
 
-        return new Markup($html_result, 'UTF-8');
+        //echo '$this->ct->Table->record=';
+        //print_r($this->ct->Table->record);
+
+        return $html_result;
     }
 
     function sitename(): string

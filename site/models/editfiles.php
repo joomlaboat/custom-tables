@@ -24,7 +24,7 @@ JTable::addIncludePath(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTO
 class CustomTablesModelEditFiles extends JModelLegacy
 {
     var CT $ct;
-    var array $row;
+    var ?array $row;
     var $filemethods;
     var $fileboxname;
     var $FileBoxTitle;

@@ -134,21 +134,4 @@ class Table
         $this->record = $recs[0];
         return $recs[0];
     }
-
-    function isRecordEmpty($row): bool
-    {
-        if (!is_array($row))
-            return true;
-
-        if (is_null($row[$this->realidfieldname]))
-            return true;
-
-        if ($row[$this->realidfieldname] == '')
-            return true;
-
-        if (is_numeric($row[$this->realidfieldname]) and (int)$row[$this->realidfieldname] == 0)
-            return true;
-
-        return false;
-    }
 }

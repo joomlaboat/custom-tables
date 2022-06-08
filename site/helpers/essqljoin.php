@@ -193,7 +193,7 @@ class JHTMLESSqlJoin
                 } else
                     $v = $layoutcode;
 
-                $twig = new TwigProcessor($ct, '{% autoescape false %}' . $v . '{% endautoescape %}');
+                $twig = new TwigProcessor($ct, $v );
                 $v = $twig->process($row);
             } else
                 $v = JoomlaBasicMisc::processValue($field, $ct, $row);//TODO try to replace processValue function

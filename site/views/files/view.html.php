@@ -20,7 +20,7 @@ class CustomTablesViewFiles extends JViewLegacy
 {
     var CT $ct;
 
-    var array $row;
+    var ?array $row;
     var string $key;
     var string $security;
     var string $listing_id;

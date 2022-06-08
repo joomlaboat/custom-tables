@@ -18,7 +18,6 @@ use JoomlaBasicMisc;
 use CT_FieldTypeTag_sqljoin;
 use CT_FieldTypeTag_records;
 use Twig\Loader\ArrayLoader;
-use Twig\Markup;
 use Twig\TwigFunction;
 
 use CT_FieldTypeTag_image;
@@ -35,8 +34,10 @@ class TwigProcessor
     var $recordBlockFound;
     var $recordBlockreplaceCode;
 
-    public function __construct(CT &$ct, $htmlresult_)
+    public function __construct(CT &$ct, $layoutContent)
     {
+        $htmlresult_ = '{% autoescape false %}' . $layoutContent . '{% endautoescape %}';
+
         $this->ct = $ct;
 
         $tag1 = '{% block record %}';
@@ -171,7 +172,7 @@ class TwigProcessor
                 'id' => $this->ct->Table->tableid,
                 'name' => $this->ct->Table->tablename,
                 'title' => $this->ct->Table->tabletitle,
-                'description' => new Markup($description, 'UTF-8'),
+                'description' => $description,
                 'records' => $this->ct->Table->recordcount,
                 'fields' => count($this->ct->Table->fields)
             ];
@@ -194,7 +195,6 @@ class TwigProcessor
 
                     $valueProcessor = new Value($this->ct);
                     return strval($valueProcessor->renderValue($this->ct->Table->fields[$index], $this->ct->Table->record, $args));
-                    //return new \Twig\Markup($vlu, 'UTF-8' ); //doesnt work because it cannot be converted to int or string
                 });
 
                 $this->twig->addFunction($function);
@@ -206,7 +206,7 @@ class TwigProcessor
         }
     }
 
-    public function process($row = null)
+    public function process(?array $row = null): string
     {
         if ($row !== null)
             $this->ct->Table->record = $row;
@@ -323,35 +323,17 @@ class fieldObject
     public function title()
     {
         return $this->field->title;
-        /*
-        if(!array_key_exists('fieldtitle'.$this->ct->Languages->Postfix,$this->field->fieldrow))
-        {
-            $this->ct->app->enqueueMessage(
-                    JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_LANGFIELDNOTFOUND' ), 'Error');
-
-            return 'fieldtitle'.$this->ct->Languages->Postfix.' - not found';
-        }
-        else
-        {
-            $vlu = $this->field->fieldrow['fieldtitle'.$this->ct->Languages->Postfix];
-            if($vlu == '')
-                return $this->field['fieldtitle'];
-            else
-                return $vlu;
-        }
-        */
     }
 
     public function label($allowSortBy = false)
     {
         $forms = new Forms($this->ct);
-        $vlu = $forms->renderFieldLabel($this->field, $allowSortBy);
-        return new Markup($vlu, 'UTF-8');
+        return $forms->renderFieldLabel($this->field, $allowSortBy);
     }
 
     public function description()
     {
-        return new Markup($this->field->description, 'UTF-8');
+        return $this->field->description;
     }
 
     public function type()
@@ -375,8 +357,9 @@ class fieldObject
         }
 
         if ($this->ct->isEditForm) {
+
             $Inputbox = new Inputbox($this->ct, $this->field->fieldrow, $args);
-            return new Markup($Inputbox->render($value, $this->ct->Table->record), 'UTF-8');
+            return $Inputbox->render($value, $this->ct->Table->record);
         } else {
             $postfix = '';
             $ajax_prefix = 'com_' . $this->ct->Table->record[$this->ct->Table->realidfieldname] . '_';//example: com_153_es_fieldname or com_153_ct_fieldname
@@ -420,7 +403,7 @@ class fieldObject
                 . $Inputbox->render($value, $this->ct->Table->record)
                 . '</div>';
 
-            return new Markup($edit_box, 'UTF-8');
+            return $edit_box;
         }
     }
 
@@ -460,7 +443,7 @@ class fieldObject
         } elseif ($this->field->type == 'records') {
             return CT_FieldTypeTag_records::resolveRecordTypeValue($this->field, $layoutcode, $this->ct->Table->record[$this->field->realfieldname], $args);
         }
-        return 'imposible';
+        return 'impossible';
 
     }
 }

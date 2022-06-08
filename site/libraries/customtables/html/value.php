@@ -251,7 +251,7 @@ class Value
         return $result;
     }
 
-    protected function multilang(array $row, array $option_list)
+    protected function multilang(?array $row, array $option_list)
     {
         $specific_lang = $option_list[4] ?? '';
 

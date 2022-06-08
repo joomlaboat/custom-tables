@@ -369,7 +369,7 @@ class SearchInputBox
         $result .= JHTML::_('ESComboTree.render',
             $prefix,
             $this->ct->Table->tablename,
-            $this->field->params->fieldname,
+            $this->field->fieldname,
             $optionname,
             $this->ct->Languages->Postfix,
             $value,

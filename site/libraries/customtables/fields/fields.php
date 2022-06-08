@@ -42,7 +42,7 @@ class Field
     var array $fieldrow;
     var string $prefix; //part of the table class
 
-    function __construct(CT &$ct, $fieldrow, $row = [])
+    function __construct(CT &$ct, $fieldrow, $row = null)
     {
         $this->ct = $ct;
 
@@ -99,7 +99,7 @@ class Field
             elseif (strpos($type_param, '{{') === false)
                 $new_params[] = $type_param;
             else {
-                $twig = new TwigProcessor($this->ct, '{% autoescape false %}' . $type_param . '{% endautoescape %}');
+                $twig = new TwigProcessor($this->ct, $type_param);
                 $new_params[] = $twig->process($row);
             }
         }

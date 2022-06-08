@@ -86,7 +86,7 @@ class CustomTablesModelEditItem extends JModelLegacy
             $this->getSpecificVersionIfSet();
         else {
             //default record values
-            $this->row = [$this->ct->Table->realidfieldname => '', 'listing_published' => 0];
+            $this->row = null;//[$this->ct->Table->realidfieldname => '', 'listing_published' => 0];
         }
 
         return true;
@@ -301,7 +301,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
     function makeEmptyRecord($listing_id, $published): array
     {
-        $row = [];
+        $row = null;
         $row[$this->ct->Table->realidfieldname] = $listing_id;
 
         if ($this->ct->Table->published_field_found)
@@ -1057,7 +1057,7 @@ class CustomTablesModelEditItem extends JModelLegacy
             $content = $LayoutProc->fillLayout($this->ct->Table->record);
         }
 
-        $twig = new TwigProcessor($this->ct, '{% autoescape false %}' . $content . '{% endautoescape %}');
+        $twig = new TwigProcessor($this->ct, $content);
         $content = $twig->process($this->ct->Table->record);
 
         if ($applyContentPlagins and $this->ct->Params->allowContentPlugins)

@@ -25,7 +25,7 @@ foreach ($this->ct->Table->fields as $field) {
     }
 }
 
-$twig = new TwigProcessor($this->ct, '{% autoescape false %}' . $recordLayout . '{% endautoescape %}');
+$twig = new TwigProcessor($this->ct, $recordLayout );
 
 ?>
 

@@ -29,7 +29,7 @@ class ESInputBox
         $this->requiredlabel = 'COM_CUSTOMTABLES_REQUIREDLABEL';
     }
 
-    function renderFieldBox(array &$fieldrow, array &$row, array $option_list): string
+    function renderFieldBox(array &$fieldrow, ?array &$row, array $option_list): string
     {
         $Inputbox = new Inputbox($this->ct, $fieldrow, $option_list, false);
 
@@ -89,7 +89,7 @@ class ESInputBox
                         tagProcessor_Value::processValues($this->ct, $row, $value, '[]');
                     }
 
-                    $twig = new TwigProcessor($this->ct, '{% autoescape false %}' . $value . '{% endautoescape %}');
+                    $twig = new TwigProcessor($this->ct, $value);
                     $value = $twig->process($row);
 
                     if ($value != '') {

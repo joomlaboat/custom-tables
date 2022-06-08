@@ -133,7 +133,7 @@ class Catalog
             $pagelayout = str_replace($catalogTableCode, $catalogTableContent, $pagelayout);
         }
 
-        $twig = new TwigProcessor($this->ct, $pagelayout);
+        $twig = new TwigProcessor($this->ct, $pagelayout );
         $pagelayout = $twig->process();
 
         if ($this->ct->Params->allowContentPlugins)

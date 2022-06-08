@@ -17,7 +17,6 @@ use JoomlaBasicMisc;
 use ESTables;
 
 use Joomla\CMS\Router\Route;
-use Twig\Markup;
 
 class Twig_Record_Tags
 {
@@ -35,8 +34,8 @@ class Twig_Record_Tags
             return '';
         }
 
-        if (!isset($this->ct->Table->record)) {
-            $this->ct->app->enqueueMessage('{{ record.id }} - Record not loaded.', 'error');
+        if (is_null($this->ct->Table->record)) {
+            //$this->ct->app->enqueueMessage('{{ record.id }} - Record not loaded.', 'error');
             return '';
         }
 
@@ -49,7 +48,7 @@ class Twig_Record_Tags
 
         $field = ['type' => '_id', 'fieldname' => '_id', 'title' => '#', 'description' => '', 'isrequired' => false];
         $vlu = $forms->renderFieldLabel((object)$field, $allowSortBy);
-        return new Markup($vlu, 'UTF-8');
+        return $vlu;
     }
 
     function link($add_returnto = false, $menu_item_alias = '', $custom_not_base64_returnto = '')
@@ -97,8 +96,7 @@ class Twig_Record_Tags
             $view_link .= ($returnto != '' ? '&amp;returnto=' . $returnto : '');
         }
 
-        $view_link = Route::_($view_link);
-        return new Markup($view_link, 'UTF-8'); //Twig replaces & with &amp;
+        return Route::_($view_link);
     }
 
     function published($type, $second_variable = null)
@@ -512,11 +510,11 @@ class Twig_Record_Tags
         $tables = new Tables($join_ct);
 
         if ($tables->loadRecords($layouts->tableid, $complete_filter, $orderby, $limit)) {
-            $twig = new TwigProcessor($join_ct, '{% autoescape false %}' . $pagelayout . '{% endautoescape %}');
+            $twig = new TwigProcessor($join_ct, $pagelayout);
             $vlu = $twig->process();
 
             //return $vlu;
-            return new Markup($vlu, 'UTF-8');
+            return $vlu;
         }
 
         $this->ct->app->enqueueMessage('{{ record.tablejoin("' . $layoutname . '","' . $filter . '","' . $orderby . '") }} - LCould not load records.', 'error');
@@ -619,10 +617,10 @@ class Twig_Tables_Tags
                 return '';
         }
 
-        $twig = new TwigProcessor($join_ct, '{% autoescape false %}' . $pagelayout . '{% endautoescape %}');
+        $twig = new TwigProcessor($join_ct, $pagelayout);
         $vlu = $twig->process($row);
 
-        return new Markup($vlu, 'UTF-8');
+        return $vlu;
     }
 
     function getrecords($layoutname = '', $filter = '', $orderby = '', $limit = 0)
@@ -644,10 +642,10 @@ class Twig_Tables_Tags
         }
 
         if ($tables->loadRecords($layouts->tableid, $filter, $orderby, $limit)) {
-            $twig = new TwigProcessor($join_ct, '{% autoescape false %}' . $pagelayout . '{% endautoescape %}');
+            $twig = new TwigProcessor($join_ct, $pagelayout);
             $vlu = $twig->process();
 
-            return new Markup($vlu, 'UTF-8');
+            return $vlu;
         }
 
         $this->ct->app->enqueueMessage('{{ html.records("' . $layoutname . '","' . $filter . '","' . $orderby . '") }} - Could not load records.', 'error');

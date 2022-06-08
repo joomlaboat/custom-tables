@@ -55,7 +55,7 @@ class Details
 
             //Save view log
             $this->SaveViewLogForRecord($this->row);
-            //$this->UpdatePHPOnView($Model, $this->row);
+            $this->UpdatePHPOnView();
         }
 
         return true;
@@ -223,9 +223,9 @@ class Details
         return null;
     }
 
-    protected function makeEmptyRecord($listing_id, $published): array
+    protected function makeEmptyRecord($listing_id, $published): ?array
     {
-        $row = [];
+        $row = null;
         $row[$this->ct->Table->realidfieldname] = $listing_id;
         $row['listing_published'] = $published;
 
@@ -290,6 +290,21 @@ class Details
         }
     }
 
+    protected function UpdatePHPOnView(): bool
+    {
+        if (!isset($row[$this->ct->Table->realidfieldname]))
+            return false;
+
+        foreach ($this->ct->Table->fields as $mFld) {
+            if ($mFld['type'] == 'phponview') {
+                $fieldname = $mFld['fieldname'];
+                $type_params = JoomlaBasicMisc::csv_explode(',', $mFld['typeparams']);
+                tagProcessor_PHP::processTempValue($this->ct, $this->row, $fieldname, $type_params);
+            }
+        }
+        return true;
+    }
+
     public function render()
     {
         $layoutDetailsContent = $this->layoutDetailsContent;
@@ -308,20 +323,5 @@ class Details
             $layoutDetailsContent = JoomlaBasicMisc::applyContentPlugins($layoutDetailsContent);
 
         return $layoutDetailsContent;
-    }
-
-    protected function UpdatePHPOnView($Model, $row): bool
-    {
-        if (!isset($row[$this->ct->Table->realidfieldname]))
-            return false;
-
-        foreach ($this->ct->Table->fields as $mFld) {
-            if ($mFld['type'] == 'phponview') {
-                $fieldname = $mFld['fieldname'];
-                $type_params = JoomlaBasicMisc::csv_explode(',', $mFld['typeparams']);
-                tagProcessor_PHP::processTempValue($Model, $row, $fieldname, $type_params);
-            }
-        }
-        return true;
     }
 }

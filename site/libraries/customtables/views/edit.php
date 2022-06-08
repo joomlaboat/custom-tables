@@ -52,7 +52,7 @@ function CTViewEdit(CT &$ct, $row, &$pagelayout, $formLink, $formName): void
     if ($ct->Env->legacysupport) {
         $LayoutProc = new LayoutProcessor($ct, $pagelayout);
 
-        //Better to run tag processor before rendering form edit elements because of IF statments that can exclude the part of the layout that contains form fields.
+        //Better to run tag processor before rendering form edit elements because of IF statements that can exclude the part of the layout that contains form fields.
         $pagelayout = $LayoutProc->fillLayout($row, null, '||', false, true);
 
         tagProcessor_Edit::process($ct, $pagelayout, $row);
@@ -62,7 +62,7 @@ function CTViewEdit(CT &$ct, $row, &$pagelayout, $formLink, $formName): void
     $pagelayout = $twig->process($row);
 
     if ($ct->Params->allowContentPlugins)
-        JoomlaBasicMisc::applyContentPlugins($pagelayout);
+        $pagelayout = JoomlaBasicMisc::applyContentPlugins($pagelayout);
 
     echo $pagelayout;
 

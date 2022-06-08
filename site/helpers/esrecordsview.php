@@ -166,7 +166,7 @@ class JHTMLESRecordsView
                 } else
                     $vlu = $layoutcode;
 
-                $twig = new TwigProcessor($ct, '{% autoescape false %}' . $vlu . '{% endautoescape %}');
+                $twig = new TwigProcessor($ct, $vlu);
                 $vlu = $twig->process($row);
 
                 if ($isTableLess)

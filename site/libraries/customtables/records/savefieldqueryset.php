@@ -33,7 +33,7 @@ class SaveFieldQuerySet
     var CT $ct;
     var $db;
     var Field $field;
-    var array $row;
+    var ?array $row;
     var bool $isCopy;
 
     function __construct(CT &$ct, &$row, $isCopy = false)

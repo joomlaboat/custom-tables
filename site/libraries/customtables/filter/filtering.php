@@ -72,7 +72,7 @@ class Filtering
                 $paramWhere = $LayoutProc->fillLayout();
             }
 
-            $twig = new TwigProcessor($this->ct, '{% autoescape false %}' . $paramWhere . '{% endautoescape %}');
+            $twig = new TwigProcessor($this->ct, $paramWhere);
             $paramWhere = $twig->process();
 
             if ($this->ct->Params->allowContentPlugins)
@@ -138,7 +138,7 @@ class Filtering
                             $value = $LayoutProc->fillLayout();
                         }
 
-                        $twig = new TwigProcessor($this->ct, '{% autoescape false %}' . $value . '{% endautoescape %}');
+                        $twig = new TwigProcessor($this->ct, $value);
                         $value = $twig->process();
 
                         foreach ($fieldNames as $fieldname_) {
@@ -519,7 +519,7 @@ class Filtering
 
                             $this->PathValue[] = $fieldrow['fieldtitle'
                                 . $this->ct->Languages->Postfix]
-                                . ' '
+                                . ''
                                 . $opt_title
                                 . ' '
                                 . $filterTitle;
@@ -628,7 +628,12 @@ class Filtering
         foreach ($vList as $vL) {
             if ($vL != '') {
                 $cArr[] = $fieldrow['realfieldname'] . $comparison_operator . (int)$vL;
-                $this->PathValue[] = $fieldrow['fieldtitle' . $this->ct->Languages->Postfix] . ' ' . $comparison_operator . ' ' . (int)$vL;
+
+                $opt_title = ' ' . $comparison_operator;
+                if ($comparison_operator == '=')
+                    $opt_title = ':';
+
+                $this->PathValue[] = $fieldrow['fieldtitle' . $this->ct->Languages->Postfix] . $opt_title . ' ' . (int)$vL;
             }
         }
 
@@ -738,7 +743,11 @@ class Filtering
                     $cArr[] = implode(' AND ', $new_v_list);
             }
 
-            $this->PathValue[] = $fieldrow['fieldtitle' . $this->ct->Languages->Postfix] . ' ' . $comparison_operator . ' ' . implode(', ', $PathValue);
+            $opt_title = ' ' . $comparison_operator;
+            if ($comparison_operator == '=')
+                $opt_title = ':';
+
+            $this->PathValue[] = $fieldrow['fieldtitle' . $this->ct->Languages->Postfix] . $opt_title . ' ' . implode(', ', $PathValue);
 
             if (count($cArr) > 1)
                 return '(' . implode(' OR ', $cArr) . ')';
@@ -758,7 +767,11 @@ class Filtering
             else
                 $where = $this->ct->db->quoteName($realfieldname) . $comparison_operator . $this->ct->db->quote($v);
 
-            $this->PathValue[] = $fieldrow['fieldtitle' . $this->ct->Languages->Postfix] . ' ' . $comparison_operator . ' ' . ($v == '' ? 'NOT SELECTED' : $v);
+            $opt_title = ' ' . $comparison_operator;
+            if ($comparison_operator == '=')
+                $opt_title = ':';
+
+            $this->PathValue[] = $fieldrow['fieldtitle' . $this->ct->Languages->Postfix] . $opt_title . ' ' . ($v == '' ? 'NOT SELECTED' : $v);
 
             return $where;
         }
@@ -779,7 +792,11 @@ class Filtering
             else
                 $cArr[] = $fieldrow['realfieldname'] . $comparison_operator . $this->ct->db->quote($vL);
 
-            $this->PathValue[] = $fieldrow['fieldtitle' . $this->ct->Languages->Postfix] . ' ' . $comparison_operator . ' ' . $vL;
+            $opt_title = ' ' . $comparison_operator;
+            if ($comparison_operator == '=')
+                $opt_title = ':';
+
+            $this->PathValue[] = $fieldrow['fieldtitle' . $this->ct->Languages->Postfix] . $opt_title . ' ' . $vL;
         }
 
         if (count($cArr) == 1)

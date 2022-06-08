@@ -27,7 +27,7 @@ class CT_FieldTypeTag_sqljoin
 
         $row = $ct->Table->loadRecord($listing_id);
 
-        $twig = new TwigProcessor($ct, '{% autoescape false %}' . $layoutcode . '{% endautoescape %}');
+        $twig = new TwigProcessor($ct, $layoutcode );
         return $twig->process($row);
     }
 
@@ -63,7 +63,7 @@ class CT_FieldTypeTag_sqljoin
         $join_ct->getTable($typeparams[0]);
         $row = $join_ct->Table->loadRecord($listing_id);
 
-        $twig = new TwigProcessor($join_ct, '{% autoescape false %}' . $result . '{% endautoescape %}');
+        $twig = new TwigProcessor($join_ct, $result );
         return $twig->process($row);
     }
 }

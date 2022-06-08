@@ -22,8 +22,6 @@ require_once($libpath . 'generaltags.php');//added to twig
 require_once($libpath . 'fieldtags.php');//added to twig
 require_once($libpath . 'settags.php'); //added to twig
 require_once($libpath . 'iftags.php'); //comes with twig
-require_once($libpath . 'tabstags.php');
-
 require_once($libpath . 'pagetags.php');//added to twig
 require_once($libpath . 'itemtags.php');//not all added to twig
 require_once($libpath . 'valuetags.php');//added to twig
@@ -45,20 +43,21 @@ class LayoutProcessor
         $this->ct = $ct;
         $this->version = $this->ct->Env->version;
         $this->advancedtagprocessor = $this->ct->Env->advancedtagprocessor;
-
         $this->layout = $layout;
     }
 
-    function fillLayout(array $row = [], $aLink = null, $tag_chars = '[]', $disable_advanced_tags = false, $add_label = false): string
+    function fillLayout(?array $row = null, $aLink = null, $tag_chars = '[]', $disable_advanced_tags = false, $add_label = false): string
     {
         $htmlresult = $this->layout;
 
         if ($this->advancedtagprocessor and !$disable_advanced_tags) {
             tagProcessor_If::process($this->ct, $htmlresult, $row);
-            tagProcessor_PHP::process($this->ct, $htmlresult, $row);
+
+            if ($this->ct->Env->CustomPHPEnabled)
+                tagProcessor_PHP::process($this->ct, $htmlresult, $row);
         }
 
-        if (strpos($htmlresult, 'ct_doc_tagset_free') === false)//explainf what is "ct_doc_tagset_free"
+        if (!str_contains($htmlresult, 'ct_doc_tagset_free'))//explain what is "ct_doc_tagset_free"
         {
             tagProcessor_If::process($this->ct, $htmlresult, $row);
 
@@ -67,8 +66,6 @@ class LayoutProcessor
             tagProcessor_Item::process($this->ct, $row, $htmlresult, $aLink, $add_label);
             tagProcessor_General::process($this->ct, $htmlresult, $row);
             tagProcessor_Page::process($this->ct, $htmlresult);
-
-            tagProcessor_Tabs::process($htmlresult);
 
             if ($this->advancedtagprocessor and !$disable_advanced_tags)
                 tagProcessor_Set::process($this->ct, $htmlresult);

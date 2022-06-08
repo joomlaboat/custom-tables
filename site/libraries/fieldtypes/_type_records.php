@@ -73,7 +73,7 @@ class CT_FieldTypeTag_records
         foreach ($CleanSearchResult as $row) {
             $row['_number'] = $number;
 
-            $twig = new TwigProcessor($ct, '{% autoescape false %}' . $layoutcode . '{% endautoescape %}');
+            $twig = new TwigProcessor($ct, $layoutcode );
             $htmlresult .= $twig->process($row);
 
             $number++;

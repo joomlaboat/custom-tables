@@ -45,6 +45,7 @@ class CustomTablesViewEditItem extends JViewLegacy
         if ($this->ct->Env->frmt == 'json')
             require_once('tmpl' . DIRECTORY_SEPARATOR . 'json.php');
         else {
+
             CTViewEdit($this->ct, $Model->row, $Model->pagelayout, $formLink, 'eseditForm');
 
             echo '

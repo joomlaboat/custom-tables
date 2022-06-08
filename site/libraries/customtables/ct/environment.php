@@ -13,6 +13,7 @@ namespace CustomTables;
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\User\User;
 use Joomla\Input\Input;
 use JoomlaBasicMisc;
@@ -50,8 +51,14 @@ class Environment
     var bool $legacysupport;
     var bool $isPlugin; //this can be set by calling the class from the plugin
 
+    var bool $CustomPHPEnabled;
+
     function __construct()
     {
+        $plugin = PluginHelper::getPlugin('content', 'customtables');
+        $pluginParams = new Registry($plugin->params);
+        $this->CustomPHPEnabled = (int)$pluginParams->get("phpPlugin") == 1;
+
         $this->field_prefix = 'es_';
         $this->field_input_prefix = 'com' . $this->field_prefix;
 

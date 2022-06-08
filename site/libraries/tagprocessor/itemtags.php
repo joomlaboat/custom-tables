@@ -20,7 +20,7 @@ use Joomla\CMS\Factory;
 
 class tagProcessor_Item
 {
-    public static function RenderResultLine(CT &$ct, $layoutType, &$twig, &$row)
+    public static function RenderResultLine(CT &$ct, $layoutType, &$twig, ?array &$row)
     {
         if ($ct->Env->print)
             $viewlink = '';
@@ -63,7 +63,7 @@ class tagProcessor_Item
         return $htmlresult;
     }
 
-    public static function process(CT &$ct, &$row, &$htmlresult, $aLink, $add_label = false)
+    public static function process(CT &$ct, ?array &$row, &$htmlresult, $aLink, $add_label = false)
     {
         if (is_null($ct->Table))
             return false;

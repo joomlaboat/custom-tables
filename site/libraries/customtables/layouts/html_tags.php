@@ -20,7 +20,6 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 use JHTML;
 use JPluginHelper;
-use Twig\Markup;
 
 class Twig_Html_Tags
 {
@@ -57,7 +56,7 @@ class Twig_Html_Tags
         $vlu = '<span class="ctCatalogRecordCount">' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FOUND') . ': ' . $this->ct->Table->recordcount
             . ' ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RESULT_S') . '</span>';
 
-        return new Markup($vlu, 'UTF-8');
+        return $vlu;
     }
 
     function add($Alias_or_ItemId = '')
@@ -105,7 +104,7 @@ class Twig_Html_Tags
         $vlu = '<a href="' . URI::root(true) . $link . '" id="ctToolBarAddNew' . $this->ct->Table->tableid . '" class="toolbarIcons">' . $img . '</a>';
 
         if ($this->isTwig)
-            return new Markup($vlu, 'UTF-8');
+            return $vlu;
         else
             return $vlu;
     }
@@ -158,7 +157,7 @@ class Twig_Html_Tags
 ';
 
         if ($this->isTwig)
-            return new Markup($vlu, 'UTF-8');
+            return $vlu;
         else
             return $vlu;
     }
@@ -181,7 +180,7 @@ class Twig_Html_Tags
         $vlu = '<div class="pagination">' . $pagination->getPagesLinks("") . '</div>';
 
         if ($this->isTwig)
-            return new Markup($vlu, 'UTF-8');
+            return $vlu;
         else
             return $vlu;
     }
@@ -201,7 +200,7 @@ class Twig_Html_Tags
         $vlu = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SHOW') . ': ' . $pagination->getLimitBox($the_step);
 
         if ($this->isTwig)
-            return new Markup($vlu, 'UTF-8');
+            return $vlu;
         else
             return $vlu;
     }
@@ -220,7 +219,7 @@ class Twig_Html_Tags
         $vlu = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ORDER_BY') . ': ' . OrderingHTML::getOrderBox($this->ct->Ordering);
 
         if ($this->isTwig)
-            return new Markup($vlu, 'UTF-8');
+            return $vlu;
         else
             return $vlu;
     }
@@ -264,7 +263,7 @@ class Twig_Html_Tags
         }
 
         if ($this->isTwig)
-            return new Markup($vlu, 'UTF-8');
+            return $vlu;
         else
             return $vlu;
     }
@@ -323,7 +322,7 @@ class Twig_Html_Tags
         $vlu = implode('', $html_buttons);
 
         if ($this->isTwig)
-            return new Markup($vlu, 'UTF-8');
+            return $vlu;
         else
             return $vlu;
     }
@@ -390,7 +389,7 @@ class Twig_Html_Tags
         }
 
         if ($this->isTwig)
-            return new Markup($vlu, 'UTF-8');
+            return $vlu;
         else
             return $vlu;
     }
@@ -515,7 +514,7 @@ class Twig_Html_Tags
         $vlu .= '<input type=\'hidden\' ctSearchBoxField=\'' . $field2search . '\' />';
 
         if ($this->isTwig)
-            return new Markup($vlu, 'UTF-8');
+            return $vlu;
         else
             return $vlu;
     }
@@ -556,7 +555,7 @@ class Twig_Html_Tags
         return '';
     }
 
-    function searchbutton($label = 'SEARCH', $class_ = '')
+    function searchbutton($label = '', $class_ = '')
     {
         if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
             return '';
@@ -574,13 +573,15 @@ class Twig_Html_Tags
         else
             $class .= ' btn button-apply btn-primary';
 
-        //JavascriptFunction
-        $vlu = '<input type=\'button\' value=\'' . $label . '\' class=\'' . $class . '\' onClick=\'ctSearchBoxDo()\' />';
+        if ($this->ct->Env->toolbaricons != '') {
+            $img = '<i class=\'' . $this->ct->Env->toolbaricons . ' fa-search\' data-icon=\'' . $this->ct->Env->toolbaricons . ' fa-search\' title=\'' . $label . '\'></i>';
+            $labelHtml = ($label !== '' ? '<span style=\'margin-left:10px;\'>' . $label . '</span>' : '');
+        } else {
+            $img = '';
+            $labelHtml = ($label !== '' ? '<span>' . $label . '</span>' : '');
+        }
 
-        if ($this->isTwig)
-            return new Markup($vlu, 'UTF-8');
-        else
-            return $vlu;
+        return '<button class=\'' . $class . '\' onClick=\'ctSearchBoxDo()\'>' . $img . $labelHtml . '</button>';
     }
 
     function message($text, $type = 'Message')
@@ -612,7 +613,7 @@ class Twig_Html_Tags
             return '';
         elseif ($list_type == '' or $list_type == 'list') {
             $vlu = '<ul' . ($ul_css_class != '' ? ' class="' . $ul_css_class . '"' : '') . '><li>' . implode('</li><li>', $PathValue) . '</li></ul>';
-            return new Markup($vlu, 'UTF-8');
+            return $vlu;
         } elseif ($list_type == 'comma')
             return implode(',', $PathValue);
         else
@@ -693,7 +694,7 @@ class Twig_Html_Tags
 	</div>';
 
         if ($this->isTwig)
-            return new Markup($vlu, 'UTF-8');
+            return $vlu;
         else
             return $vlu;
 
@@ -774,7 +775,7 @@ class Twig_Html_Tags
         }
 
         if ($this->isTwig)
-            return new Markup($vlu, 'UTF-8');
+            return $vlu;
         else
             return $vlu;
     }
@@ -928,7 +929,7 @@ class Twig_Html_Tags
 
         $result .= '</thead>';
 
-        return new Markup($result, 'UTF-8');
+        return $result;
     }
 
     function recordlist()
@@ -987,7 +988,7 @@ class Twig_Html_Tags
             $icons[] = $RecordToolbar->render($this->ct->Table->record, $mode);
 
         $vlu = implode('', $icons);
-        return new Markup($vlu, 'UTF-8');
+        return $vlu;
     }
 
     function base64encode($str)

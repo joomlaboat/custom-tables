@@ -26,7 +26,7 @@ trait render_json
         $layout = str_replace("\n", '', $layout);
         $layout = str_replace("\r", '', $layout);
 
-        $twig = new TwigProcessor($ct, $layout);
+        $twig = new TwigProcessor($ct, $layout );
 
         $records = [];
 
