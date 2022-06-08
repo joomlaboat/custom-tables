@@ -259,16 +259,16 @@ class Inputbox
             case 'file':
                 $file_type_file = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_file.php';
                 require_once($file_type_file);
-                return CT_FieldTypeTag_file::renderFileFieldBox($this->ct, $this->field, $this->row, $this->cssclass);
+                return CT_FieldTypeTag_file::renderFileFieldBox($this->ct, $this->field, $this->row);
 
             case 'userid':
-                return $this->getUserBox($value, false);
+                return $this->getUserBox($value);
 
             case 'user':
                 if ($this->ct->isRecordNull($this->row))
                     $value = $this->ct->Env->jinput->get($this->ct->Env->field_prefix . $this->field->fieldname, '', 'STRING');
 
-                return $this->getUserBox($value, true);
+                return $this->getUserBox($value);
 
             case 'usergroup':
                 if ($this->ct->isRecordNull($this->row))
@@ -864,7 +864,7 @@ class Inputbox
         return $result;
     }
 
-    protected function getUserBox($value, $require_authorization): string
+    protected function getUserBox($value): string
     {
         $result = '';
 
@@ -875,17 +875,15 @@ class Inputbox
 
         $usergroup = $this->field->params[0];
 
-        tagProcessor_General::process($this->ct, $usergroup, $this->row, '', 1);
-        tagProcessor_Item::process($this->ct, $this->row, $usergroup, '', '', 0);
-        tagProcessor_If::process($this->ct, $usergroup, $this->row, '', 0);
+        tagProcessor_General::process($this->ct, $usergroup, $this->row);
+        tagProcessor_Item::process($this->ct, $this->row, $usergroup, '');
+        tagProcessor_If::process($this->ct, $usergroup, $this->row);
         tagProcessor_Page::process($this->ct, $usergroup);
         tagProcessor_Value::processValues($this->ct, $this->row, $usergroup);
 
         $where = '';
         if (isset($this->field->params[3]))
             $where = 'INSTR(name,"' . $this->field->params[3] . '")';
-
-        //if ($require_authorization) //TODO: check this, it should be disabled to edit
 
         $result .= JHTML::_('ESUser.render', $this->prefix . $this->field->fieldname, $value, '', $attributes, $usergroup, '', $where);
         return $result;
@@ -1076,6 +1074,11 @@ class Inputbox
 
     protected function render_tablejoin($value): string
     {
+        if (is_null($value))
+
+
+            echo 'value = ' . $value . '*<br/>';
+
         $result = '';
 
         //CT Example: [house:RedHouses,onChange('Alert("Value Changed")'),city=London]
@@ -1342,6 +1345,53 @@ class Inputbox
         $result .= '</body></table>';
 
         return $result;
+    }
+
+    function getDefaultValueIfNeeded($row)
+    {
+        $value = null;
+
+        if ($this->ct->isRecordNull($row)) {
+            $value = $this->ct->Env->jinput->getString($this->field->realfieldname);
+
+            if ($value == '')
+                $value = $this->getWhereParameter($this->field->realfieldname);
+
+            if ($value == '') {
+                $value = $this->field->defaultvalue;
+
+                //Process default value, not processing PHP tag
+                if ($value != '') {
+                    if ($this->ct->Env->legacysupport) {
+                        tagProcessor_General::process($this->ct, $value, $row);
+                        tagProcessor_Item::process($this->ct, $row, $value);
+                        tagProcessor_If::process($this->ct, $value, $row);
+                        tagProcessor_Page::process($this->ct, $value);
+                        tagProcessor_Value::processValues($this->ct, $row, $value);
+                    }
+
+                    $twig = new TwigProcessor($this->ct, $value);
+                    $value = $twig->process($row);
+
+                    if ($value != '') {
+                        if ($this->ct->Params->allowContentPlugins)
+                            JoomlaBasicMisc::applyContentPlugins($htmlresult);
+
+                        if ($this->field->type == 'alias') {
+                            $listing_id = $row[$this->ct->Table->realidfieldname] ?? 0;
+
+                            $saveField = new SaveFieldQuerySet($this->ct, $this->ct->Table->record, false);
+                            $value = $saveField->prepare_alias_type_value($listing_id, $value);
+                        }
+                    }
+                }
+            }
+        } else {
+            if ($this->field->type != 'multilangstring' and $this->field->type != 'multilangtext' and $this->field->type != 'multilangarticle') {
+                $value = $row[$this->field->realfieldname] ?? null;
+            }
+        }
+        return $value;
     }
 
     public function getWhereParameter($field): string

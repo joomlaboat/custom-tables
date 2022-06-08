@@ -26,6 +26,8 @@ class JHTMLCTTableJoin
 
         $filter = [];
 
+        echo 'value = ' . $value . '*<br/>';
+
         $parent_filter_field_name = JHTMLCTTableJoin::parseTagArguments($option_list, $filter);
         JHTMLCTTableJoin::parseTypeParams($ct, $field, $filter, $parent_filter_field_name);
 

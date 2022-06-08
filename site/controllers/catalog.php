@@ -231,7 +231,7 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
 
         case 'createuser':
 
-            $ct->getTable($ct->Params->tableName, null);
+            $ct->getTable($ct->Params->tableName);
             if ($ct->Table->tablename == '') {
                 return (object)array('link' => $link, 'msg' => 'Table not selected.', 'status' => 'error');
             }
@@ -259,7 +259,7 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
 
         case 'resetpassword':
 
-            $ct->getTable($ct->Params->tableName, null);
+            $ct->getTable($ct->Params->tableName);
             if ($ct->Table->tablename == '')
                 return (object)array('link' => $link, 'msg' => 'Table not selected.', 'status' => 'error');
 
@@ -396,7 +396,7 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
                 }
 
                 if ($result != "") {
-                    $msg = $ct->Env->jinput->getString('msg', null);
+                    $msg = $ct->Env->jinput->getString('msg');
 
                     if ($msg == null)
                         return (object)array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SHOPPING_CART_UPDATED'), 'status' => null);

@@ -396,7 +396,7 @@ class tagProcessor_Value
 
             $esinputbox = new ESInputBox($ct);
             if ($ct->Params->requiredLabel != '')
-                $esinputbox->requiredlabel = $ct->Params->requiredLabel;
+                $esinputbox->requiredLabel = $ct->Params->requiredLabel;
 
             require_once(JPATH_SITE
                 . DIRECTORY_SEPARATOR . 'components'

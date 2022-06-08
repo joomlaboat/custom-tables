@@ -24,7 +24,7 @@ class tagProcessor_Field
         if ($add_label) {
             foreach ($ct->Table->fields as $fieldrow) {
                 $forms = new Forms($ct);
-                $field = new Field($ct, $fieldrow, $ct->Table->record);
+                $field = new Field($ct, $fieldrow);
                 $field_label = $forms->renderFieldLabel($field);
 
                 $pagelayout = str_replace('*' . $field->fieldname . '*', $field_label, $pagelayout);

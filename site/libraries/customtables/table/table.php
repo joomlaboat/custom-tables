@@ -13,35 +13,36 @@ namespace CustomTables;
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
-use \Joomla\CMS\Factory;
-
-use \ESTables;
-use CustomTables\Fields;
+use Joomla\CMS\Factory;
+use ESTables;
 
 class Table
 {
     use Logs;
 
-    var $Languages;
-    var $Env;
-    var $tableid;
-    var $tablerow;
-    var $tablename;
-    var $published_field_found;
-    var $customtablename;
-    var $realtablename;
-    var $realidfieldname;
-    var $tabletitle;
-    var $alias_fieldname;
-    var $useridfieldname;
-    var $useridrealfieldname;
-    var $fields;
-    var $record;
-    var $recordcount;
-    var $recordlist;
+    var Languages $Languages;
+    var Environment $Env;
+    var int $tableid;
+    var array $tablerow;
+    var string $tablename;
+    var bool $published_field_found;
+    var string $customtablename;
+    var string $realtablename;
+    var string $realidfieldname;
+    var string $tabletitle;
+    var string $alias_fieldname;
+    var ?string $useridfieldname;
+    var ?string $useridrealfieldname;
+    var ?array $fields;
+    var ?array $record;
+    var int $recordcount;
+    var ?array $recordlist;
     var $db;
 
-    function __construct(&$Languages, &$Env, $tablename_or_id_not_sanitized, $useridfieldname = null)
+    var ?array $imagegalleries;
+    var ?array $fileboxes;
+
+    function __construct($Languages, $Env, $tablename_or_id_not_sanitized, $useridfieldname = null)
     {
         $this->db = Factory::getDBO();
 
@@ -53,17 +54,20 @@ class Table
         elseif (is_numeric($tablename_or_id_not_sanitized)) {
             $this->tablerow = ESTables::getTableRowByIDAssoc((int)$tablename_or_id_not_sanitized);// int sanitizes the input
         } else {
-            $tablename_or_id = strtolower(trim(preg_replace('/[^a-zA-Z0-9]/', '', $tablename_or_id_not_sanitized)));
+            $tablename_or_id = strtolower(trim(preg_replace('/[^a-zA-Z\d]/', '', $tablename_or_id_not_sanitized)));
             $this->tablerow = ESTables::getTableRowByNameAssoc($tablename_or_id);
         }
 
         if (!isset($this->tablerow['id']))
             return;
 
-        $this->setTable($this->tablerow, $useridfieldname, $load_fields = true);
+        $this->setTable($this->tablerow, $useridfieldname);
+
+        $this->record = null;
+        $this->recordcount = 0;
     }
 
-    function setTable(&$tablerow, $useridfieldname = null, $load_fields = true): void
+    function setTable($tablerow, $useridfieldname = null): void
     {
         $this->tablerow = $tablerow;
         $this->tablename = $this->tablerow['tablename'];
@@ -101,7 +105,7 @@ class Table
 
                     if ($useridfieldname == null or $useridfieldname == $fld['fieldname']) {
                         $this->useridfieldname = $fld['fieldname'];
-                        $this->useridrealfieldname = $fld['realfieldname'];;
+                        $this->useridrealfieldname = $fld['realfieldname'];
                     }
                     break;
             }

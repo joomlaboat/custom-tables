@@ -12,18 +12,27 @@
 defined('_JEXEC') or die('Restricted access');
 
 use CustomTables\CT;
+use CustomTables\Details;
 use CustomTables\TwigProcessor;
 use Joomla\CMS\Factory;
 
 class CustomTablesViewLog extends JViewLegacy
 {
     var CT $ct;
+    var Details $details;
 
     var int $limit;
     var int $limitstart;
     var int $record_count;
     var int $userid;
     var string $action;
+
+    var int $tableid;
+    var bool $isUserAdministrator;
+    var ?array $records;
+    var string $actionSelector;
+    var string $userSelector;
+    var string $tableSelector;
 
     function display($tpl = null)
     {
@@ -41,7 +50,7 @@ class CustomTablesViewLog extends JViewLegacy
         $this->tableid = Factory::getApplication()->input->getInt('table', 0);
 
         //Is user super Admin?
-        $this->isUserAdministrator = JoomlaBasicMisc::isUserAdmin($this->userid);
+        $this->isUserAdministrator = $this->ct->Env->isUserAdministrator;
 
         $this->records = $this->getRecords($this->action, $this->userid, $this->tableid);
 
@@ -132,8 +141,7 @@ class CustomTablesViewLog extends JViewLegacy
 
         $rows = $db->loadAssocList();
 
-        $result = '';
-        $result .= '<select onchange="UserFilterChanged(this)">';
+        $result = '<select onchange="UserFilterChanged(this)">';
         $result .= '<option value="0" ' . ($userid == 0 ? 'selected="SELECTED"' : '') . '>- ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT') . '</option>';
 
         foreach ($rows as $row) {
@@ -145,7 +153,7 @@ class CustomTablesViewLog extends JViewLegacy
         return $result;
     }
 
-    function getTables($tableid)
+    function getTables($tableid): string
     {
         $db = Factory::getDBO();
 
@@ -155,8 +163,7 @@ class CustomTablesViewLog extends JViewLegacy
 
         $rows = $db->loadAssocList();
 
-        $result = '';
-        $result .= '<select onchange="TableFilterChanged(this)">';
+        $result = '<select onchange="TableFilterChanged(this)">';
         $result .= '<option value="0" ' . ($tableid == 0 ? 'selected="SELECTED"' : '') . '>- ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT') . '</option>';
 
         foreach ($rows as $row) {
@@ -168,7 +175,7 @@ class CustomTablesViewLog extends JViewLegacy
         return $result;
     }
 
-    function renderLogLine($rec)
+    function renderLogLine($rec): string
     {
         $actions = ['New', 'Edit', 'Publish', 'Unpublish', 'Delete', 'Image Uploaded', 'Image Deleted', 'File Uploaded', 'File Deleted', 'Refreshed'];
         $action_images = ['new.png', 'edit.png', 'publish.png', 'unpublish.png', 'delete.png', 'photomanager.png', 'photomanager.png', 'filemanager.png', 'filemanager.png', 'refresh.png'];
@@ -177,9 +184,7 @@ class CustomTablesViewLog extends JViewLegacy
         $a = (int)$rec['action'] - 1;
         $alt = $actions[$a];
 
-        $result = '';
-
-        $result .= '<tr>'
+        $result = '<tr>'
             . '<td>';
 
         if ($a == 1 or $a == 2) {
@@ -203,7 +208,7 @@ class CustomTablesViewLog extends JViewLegacy
         return $result;
     }
 
-    function getRecordValue($listing_id, $Itemid, $FieldName)
+    function getRecordValue($listing_id, $Itemid, $FieldName): string
     {
         if (!isset($FieldName) or $FieldName == '')
             return "Table/Field not found.";
@@ -215,21 +220,19 @@ class CustomTablesViewLog extends JViewLegacy
         $jinput->set('Itemid', $Itemid);
 
         $menu = $app->getMenu();
-        $menuparams = $menu->getParams($Itemid);
+        $menuParams = $menu->getParams($Itemid);
 
-        $ct = new CT;
-        $ct->setParams($menuparams);
+        $ct = new CT($menuParams, false);
 
-        $model = new CustomTablesModelDetails;
-        $model->load($ct);
+        $this->details = new Details($ct);
 
-        if ($model->ct->Table->tablename == '')
-            return "Table " . $model->ct->Table->tablename . "not found.";
+        if ($ct->Table->tablename == '')
+            return "Table " . $ct->Table->tablename . "not found.";
 
         $layoutContent = '{{ ' . $FieldName . ' }}';
-        $twig = new TwigProcessor($this->ct, $layoutContent);
+        $twig = new TwigProcessor($ct, $layoutContent);
 
-        $row = $model->ct->Table->loadRecord($listing_id);
+        $row = $ct->Table->loadRecord($listing_id);
 
         return $twig->process($row);
     }

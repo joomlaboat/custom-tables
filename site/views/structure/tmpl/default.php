@@ -22,18 +22,18 @@ echo '<form action="" method="post" name="escatalogform" id="escatalogform">
 
 if ($this->record_count > 5) {
     echo '
-	<table cellpadding=0 cellspacing=0 width="100%" >
+	<table>
         <tr height=30>
-                <td width="140" valign="top">' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SHOW') . ': ' . $this->pagination->getLimitBox("") . '</td>
-                <td align="center" valign="top">' . $this->pagination->getPagesLinks("") . '<br/></td>
-                <td width="140" valign="top"></td>
+                <td>' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SHOW') . ': ' . $this->pagination->getLimitBox("") . '</td>
+                <td>' . $this->pagination->getPagesLinks("") . '<br/></td>
+                <td></td>
         </tr>
     </table>
 	<hr>
 		';
 }
 
-$catalogResult = '<table width="100%">';
+$catalogResult = '<table>';
 $Itemid = $this->ct->Env->jinput->getInt('Itemid', 0);
 
 $tr = 0;

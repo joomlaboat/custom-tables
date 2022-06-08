@@ -73,7 +73,7 @@ class tagProcessor_Edit
         $inputBox = new ESInputBox($ct);
 
         if ($ct->Params->requiredLabel != '')
-            $inputBox->requiredlabel = $ct->Params->requiredLabel;
+            $inputBox->requiredLabel = $ct->Params->requiredLabel;
 
         //Calendars of the child should be built again, because when Dom was ready they didn't exist yet.
         $calendars = array();

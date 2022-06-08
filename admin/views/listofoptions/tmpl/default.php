@@ -57,5 +57,5 @@ $input = Factory::getApplication()->input;
     <input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>"/>
     <?php echo JHTML::_('form.token'); ?>
 </form>
-</div>
+
 <p><a href="index.php?option=com_customtables&view=listofoptions&task=RefreshFamily">Refresh Family Tree</a></p>

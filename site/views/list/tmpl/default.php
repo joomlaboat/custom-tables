@@ -18,12 +18,12 @@ use Joomla\CMS\Factory;
 <div style="width:100%;overflow: scroll;">
     <form action="index.php" method="post" name="adminForm">
 
-        <table width="100%">
+        <table>
             <tr>
-                <td align="left">
+                <td>
                     <h2>CustomTables - Structure</h2>
                 </td>
-                <td nowrap="nowrap" align="right">
+                <td nowrap="nowrap">
                     <a href="index.php?option=com_customtables&view=list&task=edit"><img
                                 src="<?php echo JURI::root(true); ?>"/components/com_customtables/libraries/customtables/media/images/icons/new.png"
                         alt="New" title="New" /></a>
@@ -40,7 +40,7 @@ use Joomla\CMS\Factory;
 
         <table>
             <tr>
-                <td align="left">
+                <td>
                     <?php echo JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FILTER'); ?>:
                     <input type="text" name="search" id="search" value="<?php echo $this->lists['search']; ?>"
                            class="text_area" onchange="document.adminForm.submit();"/>
@@ -64,10 +64,10 @@ use Joomla\CMS\Factory;
         <table class="adminlist">
             <thead>
             <tr>
-                <th width="20">
+                <th>
                     <?php echo JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NUM'); ?>
                 </th>
-                <th width="20">
+                <th>
                     <input type="checkbox" name="toggle" value=""
                            onclick="checkAll(<?php echo count($this->items); ?>);"/>
                 </th>
@@ -95,7 +95,7 @@ use Joomla\CMS\Factory;
                 ?>
 
 
-                <th width="8%" nowrap="nowrap">
+                <th nowrap="nowrap">
                     <?php echo JHTML::_('grid.sort', 'Order by', 'm.ordering', @$this->lists['order_Dir'], @$this->lists['order']); ?>
                     <?php if ($this->ordering) echo JHTML::_('grid.order', $this->items); ?>
                 </th>

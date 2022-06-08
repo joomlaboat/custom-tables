@@ -16,10 +16,10 @@ defined('_JEXEC') or die('Restricted access');
 use CustomTablesFileMethods;
 use CustomTablesImageMethods;
 use Exception;
-use \JoomlaBasicMisc;
-use \ESTables;
+use JoomlaBasicMisc;
+use ESTables;
 
-use \Joomla\CMS\Factory;
+use Joomla\CMS\Factory;
 
 class Field
 {
@@ -44,7 +44,7 @@ class Field
 
     function __construct(CT &$ct, $fieldrow, $row = null)
     {
-        $this->ct = $ct;
+        $this->ct = &$ct;
 
         $this->id = $fieldrow['id'];
         $this->type = $fieldrow['type'];
@@ -86,7 +86,7 @@ class Field
         $this->parseParams($row);
     }
 
-    function parseParams(&$row)
+    function parseParams($row): void
     {
         $new_params = [];
 
@@ -96,7 +96,7 @@ class Field
 
             if (is_numeric($type_param))
                 $new_params[] = $type_param;
-            elseif (strpos($type_param, '{{') === false)
+            elseif (!str_contains($type_param, '{{'))
                 $new_params[] = $type_param;
             else {
                 $twig = new TwigProcessor($this->ct, $type_param);
@@ -105,11 +105,30 @@ class Field
         }
         $this->params = $new_params;
     }
+
+    protected function checkIfAliasExists($exclude_id, $value, $realfieldname): bool
+    {
+        $query = 'SELECT count(' . $this->ct->Table->realidfieldname . ') AS c FROM ' . $this->ct->Table->realtablename . ' WHERE '
+            . $this->ct->Table->realidfieldname . '!=' . (int)$exclude_id . ' AND ' . $realfieldname . '=' . $this->ct->db->quote($value) . ' LIMIT 1';
+
+        $this->ct->db->setQuery($query);
+
+        $rows = $this->ct->db->loadObjectList();
+        if (count($rows) == 0)
+            return false;
+
+        $c = (int)$rows[0]->c;
+
+        if ($c > 0)
+            return true;
+
+        return false;
+    }
 }
 
 class Fields
 {
-    public static function getFieldID($tableid, $fieldname)
+    public static function getFieldID($tableid, $fieldname): int
     {
         $db = Factory::getDBO();
         $query = 'SELECT id FROM #__customtables_fields WHERE published=1 AND tableid=' . (int)$tableid . ' AND fieldname=' . $db->quote($fieldname);
@@ -125,7 +144,7 @@ class Fields
         return $row->id;
     }
 
-    public static function addLanguageField($tablename, $original_fieldname, $new_fieldname)
+    public static function addLanguageField($tablename, $original_fieldname, $new_fieldname): bool
     {
         $fields = Fields::getExistingFields($tablename, false);
 
@@ -174,45 +193,44 @@ class Fields
         return $db->loadAssocList();
     }
 
-    public static function AddMySQLFieldNotExist($realtablename, $realfieldname, $fieldtype, $options)
+    public static function AddMySQLFieldNotExist($realtablename, $realfieldname, $fieldtype, $options): void
     {
         $db = Factory::getDBO();
 
-        if (!Fields::checkIfFieldExists($realtablename, $realfieldname, false)) {
+        if (!Fields::checkIfFieldExists($realtablename, $realfieldname)) {
             $query = 'ALTER TABLE ' . $realtablename . ' ADD COLUMN ' . $realfieldname . ' ' . $fieldtype . ' ' . $options;
-
 
             $db->setQuery($query);
             $db->execute();
         }
     }
 
-    public static function checkIfFieldExists($realtablename, $realfieldname)//,$add_table_prefix=true)
+    public static function checkIfFieldExists($realtablename, $realfieldname): bool//,$add_table_prefix=true)
     {
-        $realfieldnames = Fields::getListOfExistingFields($realtablename, false);
+        $realFieldNames = Fields::getListOfExistingFields($realtablename, false);
 
-        return in_array($realfieldname, $realfieldnames);
+        return in_array($realfieldname, $realFieldNames);
     }
 
-    public static function getListOfExistingFields($tablename, $add_table_prefix = true)
+    public static function getListOfExistingFields($tablename, $add_table_prefix = true): array
     {
-        $realfieldnames = Fields::getExistingFields($tablename, $add_table_prefix);
+        $realFieldNames = Fields::getExistingFields($tablename, $add_table_prefix);
         $list = [];
 
-        foreach ($realfieldnames as $rec)
+        foreach ($realFieldNames as $rec)
             $list[] = $rec['column_name'];
 
         return $list;
     }
 
-    public static function addField(CT &$ct, $realtablename, $realfieldname, $fieldtype, $PureFieldType, $fieldtitle)
+    public static function addField(CT $ct, $realtablename, $realfieldname, $fieldtype, $PureFieldType, $fieldtitle): void
     {
         if ($PureFieldType == '')
-            return '';
+            return;
 
         $db = Factory::getDBO();
 
-        if (strpos($fieldtype, 'multilang') === false) {
+        if (!str_contains($fieldtype, 'multilang')) {
             $AdditionOptions = '';
             if ($db->serverType != 'postgresql')
                 $AdditionOptions = ' COMMENT ' . $db->Quote($fieldtitle);
@@ -253,7 +271,7 @@ class Fields
         }
     }
 
-    public static function CreateImageGalleryTable($tablename, $fieldname)
+    public static function CreateImageGalleryTable($tablename, $fieldname): bool
     {
         $image_gallery_table = '#__customtables_gallery_' . $tablename . '_' . $fieldname;
         $db = Factory::getDBO();
@@ -273,7 +291,7 @@ class Fields
         return true;
     }
 
-    public static function CreateFileBoxTable($tablename, $fieldname)
+    public static function CreateFileBoxTable($tablename, $fieldname): bool
     {
         $filebox_gallery_table = '#__customtables_filebox_' . $tablename . '_' . $fieldname;
         $db = Factory::getDBO();
@@ -293,7 +311,7 @@ class Fields
         return true;
     }
 
-    public static function deleteField_byID(CT &$ct, $fieldid)
+    public static function deleteField_byID(CT &$ct, $fieldid): bool
     {
         $db = Factory::getDBO();
 
@@ -306,15 +324,15 @@ class Fields
 
         $field = new Field($ct, $fieldrow);
 
-        $tablerow = ESTables::getTableRowByID($field->tableid);
+        $tablerow = ESTables::getTableRowByID($field->fieldrow['tableid']);
 
         //for Image Gallery
         if ($field->type == 'imagegallery') {
             //Delete all photos belongs to the gallery
 
-            $imagemethods = new CustomTablesImageMethods;
+            $imageMethods = new CustomTablesImageMethods;
             $gallery_table_name = '#__customtables_gallery_' . $tablerow->tablename . '_' . $field->fieldname;
-            $imagemethods->DeleteGalleryImages($gallery_table_name, $field->tableid, $field->fieldname, $field->params, true);
+            $imageMethods->DeleteGalleryImages($gallery_table_name, $field->fieldrow['tableid'], $field->fieldname, $field->params, true);
 
             //Delete gallery table
             $query = 'DROP TABLE IF EXISTS ' . $gallery_table_name;
@@ -323,18 +341,18 @@ class Fields
         } elseif ($field->type == 'filebox') {
             //Delete all files belongs to the filebox
 
-            $filebox_table_name = '#__customtables_filebox_' . $tablerow->tablename . '_' . $field->fieldname;
-            CustomTablesFileMethods::DeleteFileBoxFiles($filebox_table_name, $field->tableid, $field->fieldname, $field->params, true);
+            $fileBoxTableName = '#__customtables_filebox_' . $tablerow->tablename . '_' . $field->fieldname;
+            CustomTablesFileMethods::DeleteFileBoxFiles($fileBoxTableName, $field->fieldrow['tableid'], $field->fieldname, $field->params);
 
             //Delete gallery table
-            $query = 'DROP TABLE IF EXISTS ' . $filebox_table_name;
+            $query = 'DROP TABLE IF EXISTS ' . $fileBoxTableName;
             $db->setQuery($query);
             $db->execute();
         } elseif ($field->type == 'image') {
             if (Fields::checkIfFieldExists($tablerow->realtablename, $field->realfieldname)) {
-                $imagemethods = new CustomTablesImageMethods;
+                $imageMethods = new CustomTablesImageMethods;
                 //$imageparams=str_replace('|compare','|delete:',$field->params); //disable image comparision if set
-                $imagemethods->DeleteCustomImages($tablerow->realtablename, $field->realfieldname, $ImageFolder, $field->params[0], $tablerow->realidfieldname, true);
+                $imageMethods->DeleteCustomImages($tablerow->realtablename, $field->realfieldname, $ImageFolder, $field->params[0], $tablerow->realidfieldname, true);
             }
         } elseif ($field->type == 'user' or $field->type == 'userid' or $field->type == 'sqljoin') {
             Fields::removeForeignKey($tablerow->realtablename, $field->realfieldname);
@@ -344,10 +362,10 @@ class Fields
             //unlink($filename);
         }
 
-        $realfieldnames = array();
+        $realFieldNames = array();
 
-        if (strpos($field->type, 'multilang') === false) {
-            $realfieldnames[] = $field->realfieldname;
+        if (!str_contains($field->type, 'multilang')) {
+            $realFieldNames[] = $field->realfieldname;
         } else {
             $index = 0;
             foreach ($ct->Languages->LanguageList as $lang) {
@@ -356,11 +374,12 @@ class Fields
                 else
                     $postfix = '_' . $lang->sef;
 
-                $realfieldnames[] = $field->realfieldname . $postfix;
+                $realFieldNames[] = $field->realfieldname . $postfix;
+                $index += 1;
             }
         }
 
-        foreach ($realfieldnames as $realfieldname) {
+        foreach ($realFieldNames as $realfieldname) {
             if ($field->type != 'dummy') {
                 $msg = '';
                 Fields::deleteMYSQLField($tablerow->realtablename, $realfieldname, $msg);
@@ -391,7 +410,7 @@ class Fields
         return $rows[0];
     }
 
-    protected static function getFieldRowSelects()
+    protected static function getFieldRowSelects(): string
     {
         $db = Factory::getDBO();
 
@@ -403,23 +422,25 @@ class Fields
         return '*, ' . $realfieldname_query;
     }
 
-    public static function removeForeignKey($realtablename, $realfieldname)
+    public static function removeForeignKey($realtablename, $realfieldname): bool
     {
         $constrances = Fields::getTableConstrances($realtablename, $realfieldname);
 
-        foreach ($constrances as $constrance) {
-            Fields::removeForeignKey($realtablename, $constrance);
+        if (!is_null($constrances)) {
+            foreach ($constrances as $constrance) {
+                Fields::removeForeignKey($realtablename, $constrance);
+            }
+            return true;
         }
-
         return false;
     }
 
-    protected static function getTableConstrances($realtablename, $realfieldname)
+    protected static function getTableConstrances($realtablename, $realfieldname): ?array
     {
         $db = Factory::getDBO();
 
         if ($db->serverType == 'postgresql')
-            return false;
+            return null;
 
         //get constarnt name
         $query = 'show create table ' . $realtablename;
@@ -429,7 +450,7 @@ class Fields
         $tablecreatequery = $db->loadAssocList();
 
         if (count($tablecreatequery) == 0)
-            return false;
+            return null;
 
         $rec = $tablecreatequery[0];
 
@@ -442,7 +463,7 @@ class Fields
 
         foreach ($lines as $line_) {
             $line = trim(str_replace('`', '', $line_));
-            if (strpos($line, 'CONSTRAINT') !== false) {
+            if (str_contains($line, 'CONSTRAINT')) {
                 $pair = explode(' ', $line);
 
                 if ($realfieldname == '')
@@ -455,9 +476,9 @@ class Fields
         return $constrances;
     }
 
-    public static function deleteMYSQLField($realtablename, $realfieldname, &$msg)
+    public static function deleteMYSQLField($realtablename, $realfieldname, &$msg): bool
     {
-        if (Fields::checkIfFieldExists($realtablename, $realfieldname, false)) {
+        if (Fields::checkIfFieldExists($realtablename, $realfieldname)) {
             try {
                 $db = Factory::getDBO();
 
@@ -480,6 +501,7 @@ class Fields
                 return false;
             }
         }
+        return false;
     }
 
     public static function convertMySQLFieldTypeToCT($data_type, $column_type)
@@ -547,16 +569,14 @@ class Fields
         return ['type' => $type, 'typeparams' => $typeparams];
     }
 
-    public static function getPureFieldType($ct_fieldtype, $typeparams)
+    public static function getPureFieldType($ct_fieldtype, $typeparams): string
     {
         $ct_fieldtype_array = Fields::getProjectedFieldType($ct_fieldtype, $typeparams);
 
-        $type = Fields::makeProjectedFieldType($ct_fieldtype_array);
-
-        return $type;
+        return Fields::makeProjectedFieldType($ct_fieldtype_array);
     }
 
-    public static function getProjectedFieldType($ct_fieldtype, $typeparams)
+    public static function getProjectedFieldType($ct_fieldtype, $typeparams): array
     {
         //Returns an array of mysql column parameters
         switch (trim($ct_fieldtype)) {
@@ -570,19 +590,12 @@ class Fields
             case 'file':
             case 'url':
                 return ['data_type' => 'varchar', 'is_nullable' => true, 'is_unsigned' => null, 'length' => 1024, 'default' => null, 'extra' => null];
-            case 'alias':
-            case 'records':
-            case 'radio':
-            case 'email':
-            case 'server':
-            case 'usergroups':
-                return ['data_type' => 'varchar', 'is_nullable' => true, 'is_unsigned' => null, 'length' => 255, 'default' => null, 'extra' => null];
             case 'color':
                 return ['data_type' => 'varchar', 'is_nullable' => true, 'is_unsigned' => null, 'length' => 8, 'default' => null, 'extra' => null];
             case 'string':
             case 'multilangstring':
                 $l = (int)$typeparams;
-                return ['data_type' => 'varchar', 'is_nullable' => true, 'is_unsigned' => null, 'length' => ($l < 1 ? 255 : ($l > 1024 ? 1024 : $l)), 'default' => null, 'extra' => null];
+                return ['data_type' => 'varchar', 'is_nullable' => true, 'is_unsigned' => null, 'length' => ($l < 1 ? 255 : (min($l, 1024))), 'default' => null, 'extra' => null];
             case 'signature':
 
                 $typeparams_arr = explode(',', $typeparams);
@@ -600,6 +613,7 @@ class Fields
                 return ['data_type' => 'text', 'is_nullable' => true, 'is_unsigned' => null, 'length' => null, 'default' => null, 'extra' => null];
             case 'ordering':
                 return ['data_type' => 'int', 'is_nullable' => false, 'is_unsigned' => true, 'length' => null, 'default' => 0, 'extra' => null];
+            case 'time':
             case 'int':
                 return ['data_type' => 'int', 'is_nullable' => true, 'is_unsigned' => false, 'length' => null, 'default' => null, 'extra' => null];
             case 'float':
@@ -644,9 +658,6 @@ class Fields
             case 'date':
                 return ['data_type' => 'date', 'is_nullable' => true, 'is_unsigned' => null, 'length' => null, 'default' => null, 'extra' => null];
 
-            case 'time':
-                return ['data_type' => 'int', 'is_nullable' => true, 'is_unsigned' => false, 'length' => null, 'default' => null, 'extra' => null];
-
             case 'creationtime':
             case 'changetime':
             case 'lastviewtime':
@@ -654,14 +665,12 @@ class Fields
 
             case 'viewcount':
             case 'imagegallery':
+            case 'id':
             case 'filebox':
                 return ['data_type' => 'bigint', 'is_nullable' => true, 'is_unsigned' => true, 'length' => null, 'default' => null, 'extra' => null];
 
             case 'language':
                 return ['data_type' => 'varchar', 'is_nullable' => true, 'is_unsigned' => null, 'length' => 5, 'default' => null, 'extra' => null];
-
-            case 'id':
-                return ['data_type' => 'bigint', 'is_nullable' => true, 'is_unsigned' => true, 'length' => null, 'default' => null, 'extra' => null];
 
             case 'dummy':
                 return ['data_type' => null, 'is_nullable' => null, 'is_unsigned' => null, 'length' => null, 'default' => null, 'extra' => null];
@@ -685,7 +694,7 @@ class Fields
         }
     }
 
-    public static function makeProjectedFieldType($ct_fieldtype_array)
+    public static function makeProjectedFieldType($ct_fieldtype_array): string
     {
         $type = (object)$ct_fieldtype_array;
 
@@ -770,7 +779,7 @@ class Fields
         return implode(' ', $elements);
     }
 
-    public static function addForeignKey($realtablename_, $realfieldname, string $new_typeparams, string $join_with_table_name, string $join_with_table_field, &$msg)
+    public static function addForeignKey($realtablename_, $realfieldname, string $new_typeparams, string $join_with_table_name, string $join_with_table_field, &$msg): bool
     {
         $db = Factory::getDBO();
 
@@ -822,14 +831,15 @@ class Fields
             try {
                 $db->setQuery($query);
                 $db->execute();
+                return true;
             } catch (Exception $e) {
                 $msg = $e->getMessage();
             }
-            return false;
         }
+        return false;
     }
 
-    public static function cleanTableBeforeNormalization($realtablename, $realfieldname, $join_with_table_name, $join_with_table_field)
+    public static function cleanTableBeforeNormalization($realtablename, $realfieldname, $join_with_table_name, $join_with_table_field): void
     {
         $db = Factory::getDBO();
 
@@ -860,7 +870,7 @@ class Fields
         $db->execute();
     }
 
-    public static function addIndexIfNotExist($realtablename, $realfieldname)
+    public static function addIndexIfNotExist($realtablename, $realfieldname): void
     {
         $db = Factory::getDBO();
 
@@ -884,7 +894,7 @@ class Fields
         }
     }
 
-    public static function ConvertFieldType($realtablename, $realfieldname, $ex_type, $ex_typeparams, $ex_PureFieldType, $new_type, $new_typeparams, $PureFieldType, $fieldtitle)
+    public static function ConvertFieldType($realtablename, $realfieldname, $ex_type, $new_type, $new_typeparams, $PureFieldType, $fieldtitle): bool
     {
         if ($new_type == $ex_type)
             return true; //no need to convert
@@ -899,11 +909,11 @@ class Fields
         //Check and fix record
         if ($new_type == 'customtables') {
             //get number of string like "varchar(255)"
-            $maxlength = (int)preg_replace("/[^0-9]/", "", $PureFieldType);
-            $typeparamsarr = explode(',', $new_typeparams);
-            $optionname = $typeparamsarr[0];
+            $maxlength = (int)preg_replace("/\D/", "", $PureFieldType);
+            $typeParamsArray = explode(',', $new_typeparams);
+            $optionName = $typeParamsArray[0];
 
-            Fields::FixCustomTablesRecords($realtablename, $realfieldname, $optionname, $maxlength);
+            Fields::FixCustomTablesRecords($realtablename, $realfieldname, $optionName, $maxlength);
         }
 
         $db = Factory::getDBO();
@@ -913,44 +923,42 @@ class Fields
             $query = 'ALTER TABLE ' . $realtablename
                 . ' ALTER COLUMN ' . $realfieldname . ' TYPE ' . $parts[0];
 
-            $db->setQuery($query);
-            $db->execute();
         } else {
             $query = 'ALTER TABLE ' . $realtablename . ' CHANGE ' . $realfieldname . ' ' . $realfieldname . ' ' . $PureFieldType_;
             $query .= ' COMMENT ' . $db->quote($fieldtitle);
 
-            $db->setQuery($query);
-            $db->execute();
         }
+        $db->setQuery($query);
+        $db->execute();
         return true;
     }
 
     //MySQL only
 
-    public static function FixCustomTablesRecords($realtablename, $realfieldname, $optionname, $maxlenght)
+    public static function FixCustomTablesRecords($realtablename, $realfieldname, $optionname, $maxlenght): void
     {
         $db = Factory::getDBO();
 
-        //CutomTables field type
+        //CustomTables field type
         if ($db->serverType == 'postgresql')
             return;
 
-        $fixcount = 0;
+        $fixCount = 0;
 
-        $fixquery = 'SELECT id, ' . $realfieldname . ' AS fldvalue FROM ' . $realtablename . '';
+        $fixQuery = 'SELECT id, ' . $realfieldname . ' AS fldvalue FROM ' . $realtablename;
 
 
-        $db->setQuery($fixquery);
+        $db->setQuery($fixQuery);
 
-        $fixrows = $db->loadObjectList();
-        foreach ($fixrows as $fixrow) {
+        $fixRows = $db->loadObjectList();
+        foreach ($fixRows as $fixRow) {
 
-            $newrow = Fields::FixCustomTablesRecord($fixrow->fldvalue, $optionname, $maxlenght);
+            $newrow = Fields::FixCustomTablesRecord($fixRow->fldvalue, $optionname, $maxlenght);
 
-            if ($fixrow->fldvalue != $newrow) {
-                $fixcount++;
+            if ($fixRow->fldvalue != $newrow) {
+                $fixCount++;
 
-                $fixitquery = 'UPDATE ' . $realtablename . ' SET ' . $realfieldname . '="' . $newrow . '" WHERE id=' . $fixrow->id;
+                $fixitquery = 'UPDATE ' . $realtablename . ' SET ' . $realfieldname . '="' . $newrow . '" WHERE id=' . $fixRow->id;
                 $db->setQuery($fixitquery);
                 $db->execute();
 
@@ -958,7 +966,7 @@ class Fields
         }
     }
 
-    public static function FixCustomTablesRecord($record, $optionname, $maxlen)
+    public static function FixCustomTablesRecord($record, $optionname, $maxlen): string
     {
         $l = 2;
 
@@ -994,7 +1002,7 @@ class Fields
         return $newrow;
     }
 
-    public static function isLanguageFieldName($fieldname)
+    public static function isLanguageFieldName($fieldname): bool
     {
         $parts = explode('_', $fieldname);
         if ($parts[0] == 'es') {
@@ -1012,7 +1020,7 @@ class Fields
 
     }
 
-    public static function getLanguagelessFieldName($fieldname)
+    public static function getLanguagelessFieldName($fieldname): string
     {
         $parts = explode('_', $fieldname);
         if ($parts[0] == 'es') {
@@ -1055,7 +1063,7 @@ class Fields
             return $rec['Type'];
     }
 
-    public static function fixMYSQLField($realtablename, $fieldname, $PureFieldType, &$msg)
+    public static function fixMYSQLField($realtablename, $fieldname, $PureFieldType, &$msg): bool
     {
         $db = Factory::getDBO();
 
@@ -1063,10 +1071,11 @@ class Fields
             $constrances = Fields::getTableConstrances($realtablename, '');
 
             //Delete same table child-parent constrances
-
-            foreach ($constrances as $constrance) {
-                if ($constrance[7] == '(id)')
-                    Fields::removeForeignKeyConstrance($realtablename, $constrance[1]);
+            if (!is_null($constrances)) {
+                foreach ($constrances as $constrance) {
+                    if ($constrance[7] == '(id)')
+                        Fields::removeForeignKeyConstrance($realtablename, $constrance[1]);
+                }
             }
 
             $query = 'ALTER TABLE ' . $realtablename . ' CHANGE id id INT UNSIGNED NOT NULL AUTO_INCREMENT';
@@ -1093,7 +1102,7 @@ class Fields
         }
     }
 
-    protected static function removeForeignKeyConstrance($realtablename, $constrance)
+    protected static function removeForeignKeyConstrance($realtablename, $constrance): void
     {
         $db = Factory::getDBO();
 
@@ -1115,7 +1124,7 @@ class Fields
         $db->execute();
     }
 
-    public static function getFieldName($fieldid)
+    public static function getFieldName($fieldid): string
     {
         $db = Factory::getDBO();
 
@@ -1206,16 +1215,16 @@ class Fields
         return $rows[0];
     }
 
-    public static function FieldRowByName($fieldname, &$ctfields)
+    public static function FieldRowByName($fieldname, $ctFields)
     {
-        foreach ($ctfields as $field) {
+        foreach ($ctFields as $field) {
             if ($field['fieldname'] == $fieldname)
                 return $field;
         }
         return array();
     }
 
-    public static function getRealFieldName($fieldname, &$ctfields, $all_fields = false)
+    public static function getRealFieldName($fieldname, $ctfields, $all_fields = false)
     {
         foreach ($ctfields as $row) {
             if (($all_fields or $row['allowordering'] == 1) and $row['fieldname'] == $fieldname)
@@ -1250,17 +1259,17 @@ class Fields
     }
     */
 
-    public static function shortFieldObjects(&$ctfields)
+    public static function shortFieldObjects($fields): array
     {
         $field_objects = [];
 
-        foreach ($ctfields as $esfield)
-            $field_objects[] = Fields::shortFieldObject($esfield, null, []);
+        foreach ($fields as $fieldRow)
+            $field_objects[] = Fields::shortFieldObject($fieldRow, null, []);
 
         return $field_objects;
     }
 
-    public static function shortFieldObject(&$esfield, $value, $options)
+    public static function shortFieldObject($esfield, $value, $options): array
     {
         $field = [];
         $field['fieldname'] = $esfield['fieldname'];
@@ -1287,7 +1296,7 @@ class Fields
     }
 
 
-    public static function deleteTablelessFields()
+    public static function deleteTablelessFields(): void
     {
         $db = Factory::getDBO();
 
@@ -1297,7 +1306,7 @@ class Fields
         $db->execute();
     }
 
-    public static function getSelfParentField(&$ct)
+    public static function getSelfParentField($ct)
     {
         //Check if this table has self-parent field - the TableJoing field linked with the same table.
 

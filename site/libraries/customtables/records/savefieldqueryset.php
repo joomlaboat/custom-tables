@@ -13,6 +13,7 @@ namespace CustomTables;
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
+use CustomTablesImageMethods;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Component\ComponentHelper;
 
@@ -36,9 +37,9 @@ class SaveFieldQuerySet
     var ?array $row;
     var bool $isCopy;
 
-    function __construct(CT &$ct, &$row, $isCopy = false)
+    function __construct(CT &$ct, $row, $isCopy = false)
     {
-        $this->ct = $ct;
+        $this->ct = &$ct;
         $this->db = Factory::getDBO();
         $this->row = $row;
         $this->isCopy = $isCopy;
@@ -76,7 +77,7 @@ class SaveFieldQuerySet
 
             case 'sqljoin':
 
-                $value = $this->ct->Env->jinput->getInt($this->field->comesfieldname, null);
+                $value = $this->ct->Env->jinput->getInt($this->field->comesfieldname);
                 if (isset($value)) {
                     $this->row[$this->field->realfieldname] = $value;
 
@@ -88,7 +89,7 @@ class SaveFieldQuerySet
 
                 break;
             case 'radio':
-                $value = $this->ct->Env->jinput->getCmd($this->field->comesfieldname, null);
+                $value = $this->ct->Env->jinput->getCmd($this->field->comesfieldname);
 
                 if (isset($value)) {
                     $this->row[$this->field->realfieldname] = $value;
@@ -97,8 +98,10 @@ class SaveFieldQuerySet
 
                 break;
 
+            case 'string':
+            case 'filelink':
             case 'googlemapcoordinates':
-                $value = $this->ct->Env->jinput->getString($this->field->comesfieldname, null);
+                $value = $this->ct->Env->jinput->getString($this->field->comesfieldname);
 
                 if (isset($value)) {
                     $this->row[$this->field->realfieldname] = $value;
@@ -109,7 +112,7 @@ class SaveFieldQuerySet
 
             case 'color':
 
-                $value = $this->ct->Env->jinput->getString($this->field->comesfieldname, null);
+                $value = $this->ct->Env->jinput->getString($this->field->comesfieldname);
 
                 if (isset($value)) {
                     if (str_contains($value, 'rgb')) {
@@ -144,7 +147,7 @@ class SaveFieldQuerySet
                 break;
 
             case 'alias':
-                $value = $this->ct->Env->jinput->getString($this->field->comesfieldname, null);
+                $value = $this->ct->Env->jinput->getString($this->field->comesfieldname);
 
                 if (isset($value)) {
                     $value = $this->get_alias_type_value($listing_id);
@@ -153,23 +156,14 @@ class SaveFieldQuerySet
                 }
                 break;
 
-            case 'string':
-                $value = $this->ct->Env->jinput->getString($this->field->comesfieldname, null);
-
-                if (isset($value)) {
-                    $this->row[$this->field->realfieldname] = $value;
-                    return $this->field->realfieldname . '=' . $this->db->Quote($value);
-                }
-                break;
-
             case 'multilangstring':
 
-                $firstlanguage = true;
+                $firstLanguage = true;
                 $sets = [];
                 foreach ($this->ct->Languages->LanguageList as $lang) {
-                    if ($firstlanguage) {
+                    if ($firstLanguage) {
                         $postfix = '';
-                        $firstlanguage = false;
+                        $firstLanguage = false;
                     } else
                         $postfix = '_' . $lang->sef;
 
@@ -197,11 +191,11 @@ class SaveFieldQuerySet
             case 'multilangtext':
 
                 $sets = [];
-                $firstlanguage = true;
+                $firstLanguage = true;
                 foreach ($this->ct->Languages->LanguageList as $lang) {
-                    if ($firstlanguage) {
+                    if ($firstLanguage) {
                         $postfix = '';
-                        $firstlanguage = false;
+                        $firstLanguage = false;
                     } else
                         $postfix = '_' . $lang->sef;
 
@@ -216,23 +210,23 @@ class SaveFieldQuerySet
                 return (count($sets) > 0 ? $sets : null);
 
             case 'ordering':
-                $value = $this->ct->Env->jinput->getInt($this->field->comesfieldname, null);
+                $value = $this->ct->Env->jinput->getInt($this->field->comesfieldname);
 
-                if (isset($value)) // always check with isset(). null doesnt work as 0 is null somehow in PHP
+                if (isset($value)) // always check with isset(). null doesn't work as 0 is null somehow in PHP
                 {
                     $this->row[$this->field->realfieldname] = $value;
-                    return $this->field->realfieldname . '=' . (int)$value;
+                    return $this->field->realfieldname . '=' . $value;
                 }
 
                 break;
 
             case 'int':
-                $value = $this->ct->Env->jinput->getInt($this->field->comesfieldname, null);
+                $value = $this->ct->Env->jinput->getInt($this->field->comesfieldname);
 
-                if (!is_null($value)) // always check with isset(). null doesnt work as 0 is null somehow in PHP
+                if (!is_null($value)) // always check with isset(). null doesn't work as 0 is null somehow in PHP
                 {
                     $this->row[$this->field->realfieldname] = $value;
-                    return $this->field->realfieldname . '=' . (int)$value;
+                    return $this->field->realfieldname . '=' . $value;
                 }
 
                 break;
@@ -247,39 +241,39 @@ class SaveFieldQuerySet
                     if ($value == null)
                         return $this->field->realfieldname . '=null';
                     else
-                        return $this->field->realfieldname . '=' . (int)$value;
+                        return $this->field->realfieldname . '=' . $value;
                 }
 
                 break;
 
             case 'userid':
 
-                $value = $this->ct->Env->jinput->getInt($this->field->comesfieldname, null);
+                $value = $this->ct->Env->jinput->getInt($this->field->comesfieldname);
 
                 if ($this->row[$this->ct->Table->realidfieldname] == 0 or $this->row[$this->ct->Table->realidfieldname] == '' or $this->isCopy
                     or (int)$this->row[$this->field->realfieldname] == 0) {
                     if (!isset($value) or $value == 0) {
-                        $user = Factory::getUser();
-                        $value = ($user->id != 0 ? $user->id : 0);
+                        $value = ($this->ct->Env->userid != 0 ? $this->ct->Env->userid : 0);
                     }
 
                     $this->row[$this->field->realfieldname] = $value;
-                    return $this->field->realfieldname . '=' . (int)$value;
+                    return $this->field->realfieldname . '=' . $value;
                 }
 
                 if (isset($value) and $value != 0) {
                     $this->row[$this->field->realfieldname] = $value;
-                    return $this->field->realfieldname . '=' . (int)$value;
+                    return $this->field->realfieldname . '=' . $value;
                 }
 
                 break;
 
+            case 'article':
             case 'usergroup':
-                $value = $this->ct->Env->jinput->getInt($this->field->comesfieldname, null);
+                $value = $this->ct->Env->jinput->getInt($this->field->comesfieldname);
 
                 if (isset($value)) {
                     $this->row[$this->field->realfieldname] = $value;
-                    return $this->field->realfieldname . '=' . (int)$value;
+                    return $this->field->realfieldname . '=' . $value;
                 }
 
                 break;
@@ -293,15 +287,6 @@ class SaveFieldQuerySet
                 $value = $this->get_customtables_type_language();
                 $this->row[$this->field->realfieldname] = $value;
                 return ($value == null ? null : $this->field->realfieldname . '=' . $this->db->Quote($value));
-
-            case 'filelink':
-                $value = $this->ct->Env->jinput->getString($this->field->comesfieldname, null);
-                if (isset($value)) {
-                    $this->row[$this->field->realfieldname] = $value;
-                    return $this->field->realfieldname . '=' . $this->db->Quote($value);
-                }
-
-                break;
 
             case 'float':
                 $value = $this->ct->Env->jinput->get($this->field->comesfieldname, null, 'FLOAT');
@@ -345,32 +330,22 @@ class SaveFieldQuerySet
                 $this->row[$this->field->realfieldname] = $value;
                 return ($value == null ? null : $this->field->realfieldname . '=' . $this->db->Quote($value));
 
-            case 'article':
-                $value = $this->ct->Env->jinput->getInt($this->field->comesfieldname, null);
-
-                if (isset($value)) {
-                    $this->row[$this->field->realfieldname] = $value;
-                    return $this->field->realfieldname . '=' . $value;
-                }
-
-                break;
-
             case 'multilangarticle':
 
                 $sets = [];
-                $firstlanguage = true;
+                $firstLanguage = true;
                 foreach ($this->ct->Languages->LanguageList as $lang) {
-                    if ($firstlanguage) {
+                    if ($firstLanguage) {
                         $postfix = '';
-                        $firstlanguage = false;
+                        $firstLanguage = false;
                     } else
                         $postfix = '_' . $lang->sef;
 
-                    $value = $this->ct->Env->jinput->getInt($this->field->comesfieldname . $postfix, null);
+                    $value = $this->ct->Env->jinput->getInt($this->field->comesfieldname . $postfix);
 
                     if (isset($value)) {
                         $this->row[$this->field->realfieldname . $postfix] = $value;
-                        $sets[] = $this->field->realfieldname . $postfix . '=' . (int)$value;
+                        $sets[] = $this->field->realfieldname . $postfix . '=' . $value;
                     }
                 }
 
@@ -420,8 +395,8 @@ class SaveFieldQuerySet
                     else
                         $value = 0;
 
-                    $this->row[$this->field->realfieldname] = (int)$value;
-                    return $this->field->realfieldname . '=' . (int)$value;
+                    $this->row[$this->field->realfieldname] = $value;
+                    return $this->field->realfieldname . '=' . $value;
                 } else {
                     $value = $this->ct->Env->jinput->getCmd($this->field->comesfieldname . '_off');
                     if ($value != null) {
@@ -437,7 +412,7 @@ class SaveFieldQuerySet
                 break;
 
             case 'date':
-                $value = $this->ct->Env->jinput->getString($this->field->comesfieldname, null);
+                $value = $this->ct->Env->jinput->getString($this->field->comesfieldname);
                 if (isset($value)) {
                     if ($value == '' or $value == '0000-00-00') {
                         $this->row[$this->field->realfieldname] = null;
@@ -451,7 +426,7 @@ class SaveFieldQuerySet
                 break;
 
             case 'time':
-                $value = $this->ct->Env->jinput->getString($this->field->comesfieldname, null);
+                $value = $this->ct->Env->jinput->getString($this->field->comesfieldname);
                 if (isset($value)) {
                     if ($value == '') {
                         $this->row[$this->field->realfieldname] = null;
@@ -536,18 +511,20 @@ class SaveFieldQuerySet
     {
         if (count($this->field->params) > 2) {
             $esr_selector = $this->field->params[2];
-            $selectorpair = explode(':', $esr_selector);
+            $selectorPair = explode(':', $esr_selector);
 
-            switch ($selectorpair[0]) {
+            switch ($selectorPair[0]) {
                 case 'single';
 
-                    $value = $this->ct->Env->jinput->getString($this->field->comesfieldname, null);
+                    $value = $this->ct->Env->jinput->getString($this->field->comesfieldname);
 
                     if (isset($value))
                         return (int)$value;
 
                     break;
 
+                case 'radio':
+                case 'checkbox':
                 case 'multi';
                     $valuearray = $this->ct->Env->jinput->post->get($this->field->comesfieldname, null, 'array');
 
@@ -560,32 +537,16 @@ class SaveFieldQuerySet
                     $valuearray = $this->ct->Env->jinput->post->get($this->field->comesfieldname, null, 'array');
 
                     if (isset($valuearray)) {
-                        $clean_value = $this->getCleanRecordValue($valuearray);
-                        return $clean_value;
+                        return $this->getCleanRecordValue($valuearray);
                     }
                     break;
 
-                case 'radio';
-                    $valuearray = $this->ct->Env->jinput->post->get($this->field->comesfieldname, null, 'array');
-
-                    if (isset($valuearray))
-                        return $this->getCleanRecordValue($valuearray);
-
-                    break;
-
-                case 'checkbox';
-                    $valuearray = $this->ct->Env->jinput->post->get($this->field->comesfieldname, null, 'array');
-
-                    if (isset($valuearray))
-                        return $this->getCleanRecordValue($valuearray);
-
-                    break;
             }
         }
         return null;
     }
 
-    protected function getCleanRecordValue($array)
+    protected function getCleanRecordValue($array): string
     {
         $values = array();
         foreach ($array as $a) {
@@ -595,7 +556,7 @@ class SaveFieldQuerySet
         return ',' . implode(',', $values) . ',';
     }
 
-    protected function toHex($n)
+    protected function toHex($n): string
     {
         $n = intval($n);
         if (!$n)
@@ -637,20 +598,19 @@ class SaveFieldQuerySet
         $value_new = $val[0];
         $i = $val[1];
 
-        do {
+        while (1) {
             if ($this->checkIfAliasExists($listing_id, $value_new, $this->field->realfieldname)) {
                 //increase index
                 $i++;
                 $value_new = $val[0] . '-' . $i;
             } else
                 break;
-
-        } while (1 == 1);
+        }
 
         return $value_new;
     }
 
-    protected function checkIfAliasExists($exclude_id, $value, $realfieldname)
+    protected function checkIfAliasExists($exclude_id, $value, $realfieldname): bool
     {
         $query = 'SELECT count(' . $this->ct->Table->realidfieldname . ') AS c FROM ' . $this->ct->Table->realtablename . ' WHERE '
             . $this->ct->Table->realidfieldname . '!=' . (int)$exclude_id . ' AND ' . $realfieldname . '=' . $this->db->quote($value) . ' LIMIT 1';
@@ -669,7 +629,7 @@ class SaveFieldQuerySet
         return false;
     }
 
-    protected function splitStringToStringAndNumber($string)
+    protected function splitStringToStringAndNumber($string): array
     {
         if ($string == '')
             return array('', 0);
@@ -691,46 +651,31 @@ class SaveFieldQuerySet
         return $val;
     }
 
-    protected function get_usergroups_type_value()
+    protected function get_usergroups_type_value(): ?string
     {
         switch ($this->field->params[0]) {
+            case 'radio':
             case 'single';
-                $value = $this->ct->Env->jinput->getString($this->field->comesfieldname, null);
+                $value = $this->ct->Env->jinput->getString($this->field->comesfieldname);
                 if (isset($value))
                     return ',' . $value . ',';
 
                 break;
+            case 'multibox':
+            case 'checkbox':
             case 'multi';
-                $valuearray = $this->ct->Env->jinput->post->get($this->field->comesfieldname, null, 'array');
-                if (isset($valuearray))
-                    return ',' . implode(',', $valuearray) . ',';
-
-                break;
-            case 'multibox';
-                $valuearray = $this->ct->Env->jinput->post->get($this->field->comesfieldname, null, 'array');
-                if (isset($valuearray))
-                    return ',' . implode(',', $valuearray) . ',';
-
-                break;
-            case 'radio';
-                $value = $this->ct->Env->jinput->getString($this->field->comesfieldname, null);
-                if (isset($value))
-                    return ',' . $value . ',';
-
-                break;
-            case 'checkbox';
-                $valuearray = $this->ct->Env->jinput->post->get($this->field->comesfieldname, null, 'array');
-                if (isset($valuearray))
-                    return ',' . implode(',', $valuearray) . ',';
+                $valueArray = $this->ct->Env->jinput->post->get($this->field->comesfieldname, null, 'array');
+                if (isset($valueArray))
+                    return ',' . implode(',', $valueArray) . ',';
 
                 break;
         }
         return null;
     }
 
-    protected function get_customtables_type_language()
+    protected function get_customtables_type_language(): ?string
     {
-        $value = $this->ct->Env->jinput->getCmd($this->field->comesfieldname, null);
+        $value = $this->ct->Env->jinput->getCmd($this->field->comesfieldname);
 
         if (isset($value))
             return $value;
@@ -738,12 +683,12 @@ class SaveFieldQuerySet
         return null;
     }
 
-    protected function get_customtables_type_signature()
+    protected function get_customtables_type_signature(): ?string
     {
-        $value = $this->ct->Env->jinput->getString($this->field->comesfieldname, null);
+        $value = $this->ct->Env->jinput->getString($this->field->comesfieldname);
 
         if (isset($value)) {
-            $ImageFolder = \CustomTablesImageMethods::getImageFolder($this->field->params);
+            $ImageFolder = CustomTablesImageMethods::getImageFolder($this->field->params);
 
             $format = $this->field->params[3] ?? 'png';
 
@@ -774,10 +719,8 @@ class SaveFieldQuerySet
         return null;
     }
 
-    protected function get_customtables_type_value()
+    protected function get_customtables_type_value(): ?string
     {
-        $value = '';
-
         $optionname = $this->field->params[0];
 
         if ($this->field->params[1] == 'multi') {
@@ -802,7 +745,7 @@ class SaveFieldQuerySet
         return null;
     }
 
-    protected function getMultiString($parent)
+    protected function getMultiString($parent): ?string
     {
         $prefix = $this->field->prefix . 'multi_' . $this->ct->Table->tablename . '_' . $this->field->fieldname;
 
@@ -818,7 +761,7 @@ class SaveFieldQuerySet
 
     }
 
-    protected function getMultiSelector($parentid, $parentname, $prefix)
+    protected function getMultiSelector($parentid, $parentname, $prefix): ?array
     {
         $set = false;
         $resilt_list = array();
@@ -827,7 +770,6 @@ class SaveFieldQuerySet
         if (count($rows) < 1)
             return $resilt_list;
 
-        $count = count($rows);
         foreach ($rows as $row) {
             if (strlen($parentname) == 0)
                 $ChildList = $this->getMultiSelector($row->id, $row->optionname, $prefix);
@@ -842,7 +784,7 @@ class SaveFieldQuerySet
             if ($count_child > 0) {
                 $resilt_list = array_merge($resilt_list, $ChildList);
             } else {
-                $value = $this->ct->Env->jinput->getString($prefix . '_' . $row->id, null);
+                $value = $this->ct->Env->jinput->getString($prefix . '_' . $row->id);
                 if (isset($value)) {
                     $set = true;
 
@@ -867,7 +809,7 @@ class SaveFieldQuerySet
         return $this->db->loadObjectList();
     }
 
-    protected function getComboString($parent)
+    protected function getComboString($parent): ?string
     {
         $prefix = $this->field->prefix . 'combotree_' . $this->ct->Table->tablename . '_' . $this->field->fieldname;
 
@@ -919,21 +861,21 @@ class SaveFieldQuerySet
         }
     }
 
-    public function Try2CreateUserAccount(&$field): bool
+    public function Try2CreateUserAccount($field): bool
     {
         $uid = (int)$this->ct->Table->record[$field->realfieldname];
 
         if ($uid != 0) {
-            $user = Factory::getUser($uid);
-            $email = $user->email . '';
+
+            $email = $this->ct->Env->user->email . '';
             if ($email != '') {
-                Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_ALREADY_EXISTS', 'error'));
+                $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_ALREADY_EXISTS', 'error'));
                 return false; //all good, user already assigned.
             }
         }
 
         if (count($field->params) < 3) {
-            Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('User field name parameters count is less than 3.', 'error'));
+            $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('User field name parameters count is less than 3.', 'error'));
             return false;
         }
 
@@ -941,11 +883,11 @@ class SaveFieldQuerySet
         $new_parts = array();
 
         foreach ($field->params as $part) {
-            tagProcessor_General::process($this->ct, $part, $this->ct->Table->record, '', 1);
-            tagProcessor_Item::process($this->ct, $this->ct->Table->record, $part, '', '', 0);
-            tagProcessor_If::process($this->ct, $part, $this->ct->Table->record, '', 0);
+            tagProcessor_General::process($this->ct, $part, $this->ct->Table->record);
+            tagProcessor_Item::process($this->ct, $this->ct->Table->record, $part, '');
+            tagProcessor_If::process($this->ct, $part, $this->ct->Table->record);
             tagProcessor_Page::process($this->ct, $part);
-            tagProcessor_Value::processValues($this->ct, $this->ct->Table->record, $part, '[]');
+            tagProcessor_Value::processValues($this->ct, $this->ct->Table->record, $part);
 
             $new_parts[] = $part;
         }
@@ -955,13 +897,13 @@ class SaveFieldQuerySet
         $user_email = $new_parts[2];
 
         if ($user_groups == '') {
-            Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('User group field not set.'));
+            $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('User group field not set.'));
             return false;
         } elseif ($user_name == '') {
-            Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('User name field not set.'));
+            $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('User name field not set.'));
             return false;
         } elseif ($user_email == '') {
-            Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('User email field not set.'));
+            $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('User email field not set.'));
             return false;
         }
 
@@ -977,22 +919,22 @@ class SaveFieldQuerySet
                 CTUser::UpdateUserField($this->ct->Table->realtablename, $this->ct->Table->realidfieldname, $field->realfieldname,
                     $existing_user_id, $this->ct->Table->record[$this->ct->Table->realidfieldname]);
 
-                Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORD_USER_UPDATED'));
+                $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORD_USER_UPDATED'));
             } else {
-                Factory::getApplication()->enqueueMessage(
+                $this->ct->app->enqueueMessage(
                     JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_USER_WITH_EMAIL')
                     . ' "' . $user_email . '" '
                     . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_ALREADY_EXISTS'), 'Error');
             }
         } else {
-            $status = CTUser::CreateUser($this->ct->Table->realtablename, $this->ct->Table->realidfieldname, $user_email, $user_name,
+            CTUser::CreateUser($this->ct->Table->realtablename, $this->ct->Table->realidfieldname, $user_email, $user_name,
                 $user_groups, $this->ct->Table->record[$this->ct->Table->realidfieldname], $field->realfieldname);
         }
 
         return true;
     }
 
-    function runUpdateQuery(&$saveQuery, $listing_id): void
+    function runUpdateQuery($saveQuery, $listing_id): void
     {
         if (count($saveQuery) > 0) {
             $query = 'UPDATE ' . $this->ct->Table->realtablename . ' SET ' . implode(', ', $saveQuery) . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . $this->db->quote($listing_id);

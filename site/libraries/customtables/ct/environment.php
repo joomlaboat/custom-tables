@@ -92,7 +92,7 @@ class Environment
 
         $this->userid = is_null($this->user) ? 0 : $this->user->id;
 
-        $this->isUserAdministrator = JoomlaBasicMisc::isUserAdmin();
+        $this->isUserAdministrator = $this->user->authorise('core.edit', 'com_content');
         $this->print = (bool)$this->jinput->getInt('print', 0);
         $this->clean = (bool)$this->jinput->getInt('clean', 0);
         $this->isModal = (bool)$this->jinput->getInt('modal', 0);
@@ -133,7 +133,7 @@ class Environment
 
     /* USER-AGENTS ================================================== */
     //http://stackoverflow.com/questions/6524301/detect-mobile-browser
-    protected function check_user_agent($type = NULL)
+    protected function check_user_agent($type = NULL): bool
     {
         $user_agent = strtolower($_SERVER['HTTP_USER_AGENT'] ?? '');
         if ($type == 'bot') {
@@ -162,7 +162,7 @@ class Environment
         return false;
     }
 
-    protected static function check_user_agent_for_apple()
+    protected static function check_user_agent_for_apple(): bool
     {
         $user_agent = strtolower($_SERVER['HTTP_USER_AGENT']);
         if (preg_match("/iphone|itouch|ipod|ipad/", $user_agent)) {
@@ -173,12 +173,12 @@ class Environment
         return false;
     }
 
-    protected static function check_user_agent_for_ie()
+    protected static function check_user_agent_for_ie(): bool
     {
         $u = $_SERVER['HTTP_USER_AGENT'];
-        if (strpos($u, 'MSIE') !== FALSE)
+        if (str_contains($u, 'MSIE'))
             return true;
-        elseif (strpos($u, 'Trident') !== FALSE)
+        elseif (str_contains($u, 'Trident'))
             return true;
 
         return false;

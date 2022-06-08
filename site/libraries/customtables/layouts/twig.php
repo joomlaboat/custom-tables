@@ -28,11 +28,11 @@ require_once($types_path . '_type_image.php');
 class TwigProcessor
 {
     var CT $ct;
-    var $loaded = false;
-    var $twig;
-    var $variables = [];
-    var $recordBlockFound;
-    var $recordBlockreplaceCode;
+    var bool $loaded = false;
+    var \Twig\Environment $twig;
+    var array $variables = [];
+    var bool $recordBlockFound;
+    var string $recordBlockReplaceCode;
 
     public function __construct(CT &$ct, $layoutContent)
     {
@@ -58,9 +58,9 @@ class TwigProcessor
             $record_block = substr($htmlresult_, $pos1 + $tag1_length, $pos2 - $pos1 - $tag1_length);
             $record_block_replace = substr($htmlresult_, $pos1, $pos2 - $pos1 + strlen($tag2));
 
-            $this->recordBlockreplaceCode = JoomlaBasicMisc::generateRandomString();//this is temporary replace place holder. to not parse content result again
+            $this->recordBlockReplaceCode = JoomlaBasicMisc::generateRandomString();//this is temporary replace placeholder. to not parse content result again
 
-            $htmlresult = str_replace($record_block_replace, $this->recordBlockreplaceCode, $htmlresult_);
+            $htmlresult = str_replace($record_block_replace, $this->recordBlockReplaceCode, $htmlresult_);
 
             $loader = new ArrayLoader([
                 'index' => '{% autoescape false %}' . $htmlresult . '{% endautoescape %}',
@@ -228,7 +228,7 @@ class TwigProcessor
                 $number++;
             }
 
-            return str_replace($this->recordBlockreplaceCode, $record_result, $result);
+            return str_replace($this->recordBlockReplaceCode, $record_result, $result);
         }
 
         return $result;
@@ -238,7 +238,7 @@ class TwigProcessor
 class fieldObject
 {
     var CT $ct;
-    var $field;
+    var Field $field;
 
     function __construct(CT &$ct, $fieldrow)
     {
@@ -305,12 +305,12 @@ class fieldObject
             return $this->ct->Table->record[$rfn];
     }
 
-    public function int()
+    public function int(): int
     {
         return intval($this->value());
     }
 
-    public function float()
+    public function float(): float
     {
         return floatval($this->value());
     }
@@ -341,7 +341,7 @@ class fieldObject
         return $this->field->type;
     }
 
-    public function params()
+    public function params(): ?array
     {
         return $this->field->params;
     }
@@ -350,15 +350,11 @@ class fieldObject
     {
         $args = func_get_args();
 
-        $value = '';
-        if ($this->field->type != 'multilangstring' and $this->field->type != 'multilangtext' and $this->field->type != 'multilangarticle') {
-            $rfn = $this->field->realfieldname;
-            $value = $this->ct->Table->record[$rfn] ?? null;
-        }
-
         if ($this->ct->isEditForm) {
-
             $Inputbox = new Inputbox($this->ct, $this->field->fieldrow, $args);
+
+            $value = $Inputbox->getDefaultValueIfNeeded($this->ct->Table->record);
+
             return $Inputbox->render($value, $this->ct->Table->record);
         } else {
             $postfix = '';
@@ -399,15 +395,15 @@ class fieldObject
 
             $Inputbox = new Inputbox($this->ct, $this->field->fieldrow, $args, true, $onchange);
 
-            $edit_box = '<div' . $div_arg . ' id="' . $ajax_prefix . $this->field->fieldname . $postfix . '_div">'
+            $value = $Inputbox->getDefaultValueIfNeeded($this->ct->Table->record);
+
+            return '<div' . $div_arg . ' id="' . $ajax_prefix . $this->field->fieldname . $postfix . '_div">'
                 . $Inputbox->render($value, $this->ct->Table->record)
                 . '</div>';
-
-            return $edit_box;
         }
     }
 
-    public function get($fieldname, array $args = [])
+    public function get($fieldname, array $args = []): string
     {
         if ($this->field->type == 'sqljoin') {
             $layoutcode = '{{ ' . $fieldname . ' }}';
@@ -421,7 +417,7 @@ class fieldObject
         }
     }
 
-    public function layout(string $layoutname, array $args = [])
+    public function layout(string $layoutname, array $args = []): string
     {
         if ($this->field->type != 'sqljoin' and $this->field->type != 'records') {
             $this->ct->app->enqueueMessage('{{ ' . $this->field->fieldname . '.get }}. Wrong field type "' . $this->field->type . '". ".get" method is only available for Table Join and Records filed types.', 'error');

@@ -20,6 +20,7 @@ class JoomlaBasicMisc
 {
     static public function array_insert(array &$array, $insert, $position = -1)
     {
+        $tmp = [];
         $position = ($position == -1) ? (count($array)) : $position;
         if ($position != (count($array))) {
             $ta = $array;
@@ -69,7 +70,7 @@ class JoomlaBasicMisc
     protected static function parse_size(string $size): int
     {
         $unit = preg_replace('/[^bkmgtpezy]/i', '', $size); // Remove the non-unit characters from the size.
-        $size = preg_replace('/[^0-9\.]/', '', $size); // Remove the non-numeric characters from the size.
+        $size = preg_replace('/[^\d.]/', '', $size); // Remove the non-numeric characters from the size.
         if ($unit) {
             // Find the position of the unit in the ordered string which is the power of magnitude to multiply a kilobyte by.
             return round($size * pow(1024, stripos('bkmgtpezy', $unit[0])));
@@ -94,17 +95,6 @@ class JoomlaBasicMisc
             $bytes = '0 bytes';
 
         return $bytes;
-    }
-
-    public static function isUserAdmin(): bool
-    {
-        $user = Factory::getUser();
-
-        if ($user->authorise('core.edit', 'com_content'))
-            return true; //Editing permitted
-
-        //Editing not permitted
-        return false;
     }
 
     public static function deleteURLQueryOption(string $urlstr, string $opt_): string
@@ -219,8 +209,10 @@ class JoomlaBasicMisc
 
         $desc = strip_tags($text);
 
+        $matches = [];
+
         if ($count != 1)
-            preg_match('/([^\\s]*(?>\\s+|$)){0,' . $count . '}/', $desc, $matches);
+            preg_match('/(\S*(?>\\s+|$)){0,' . $count . '}/', $desc, $matches);
 
         $desc = trim($matches[0]);
         $desc = str_replace("/n", "", $desc);
@@ -238,7 +230,7 @@ class JoomlaBasicMisc
         return trim(preg_replace('/\s\s+/', ' ', $desc));
     }
 
-    public static function getListToReplace($par, &$options, &$text, string $qtype, $separator = ':', $quote_char = '"'): array
+    public static function getListToReplace($par, &$options, $text, string $qtype, $separator = ':', $quote_char = '"'): array
     {
         $fList = array();
         $l = strlen($par) + 2;
@@ -451,7 +443,7 @@ class JoomlaBasicMisc
         return $resArr;
     }
 
-    public static function processValue($field, &$ct, &$row)
+    public static function processValue($field, &$ct, $row)
     {
         $p = strpos($field, '->');
         if (!($p === false)) {
@@ -462,8 +454,7 @@ class JoomlaBasicMisc
         $options = '';
         $p = strpos($field, '(');
 
-        if ($p === false) {
-        } else {
+        if ($p !== false) {
             $e = strpos($field, '(', $p);
             if ($e === false)
                 return 'syntax error';
@@ -478,8 +469,6 @@ class JoomlaBasicMisc
         } else {
             $fieldrow = Fields::FieldRowByName($field, $ct->Table->fields);
             if (count($fieldrow) > 0) {
-                $getGalleryRows = array();
-                $getFileBoxRows = array();
 
                 $options_list = explode(',', $options);
 
@@ -487,8 +476,6 @@ class JoomlaBasicMisc
                     $fieldrow,
                     $row,
                     $options_list,
-                    $getGalleryRows,
-                    $getFileBoxRows,
                 );
 
                 $htmlresult = $v;
@@ -544,9 +531,9 @@ class JoomlaBasicMisc
             // Remove any runs of periods (thanks falstro!)
             $filename = mb_ereg_replace("([\.]{2,})", '', $filename);
         } else {
-            $filename = preg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '', $filename);
+            $filename = preg_replace("([^\w\s\d\-_~,;\[\]\().])", '', $filename);
             // Remove any runs of periods (thanks falstro!)
-            $filename = preg_replace("([\.]{2,})", '', $filename);
+            $filename = preg_replace("([.]{2,})", '', $filename);
         }
 
         if ($format != '')
@@ -560,7 +547,7 @@ class JoomlaBasicMisc
         if (is_null($value))
             $new_text = Text::_($text);
         else
-            $new_text = JText::sprintf($text, $value);
+            $new_text = Text::sprintf($text, $value);
 
         if ($new_text == $text) {
             $parts = explode('_', $text);
@@ -577,7 +564,7 @@ class JoomlaBasicMisc
                 if (is_null($value))
                     return Text::_($text);
                 else
-                    return JText::sprintf($text, $value);
+                    return Text::sprintf($text, $value);
             } else
                 return $text;
         } else
@@ -593,12 +580,12 @@ class JoomlaBasicMisc
         $tags = array_unique($tags[1]);
 
         if (is_array($tags) and count($tags) > 0) {
-            if ($invert == FALSE) {
+            if (!$invert) {
                 return preg_replace('@<(?!(?:' . implode('|', $tags) . ')\b)(\w+)\b.*?>.*?</\1>@si', '', $text);
             } else {
                 return preg_replace('@<(' . implode('|', $tags) . ')\b.*?>.*?</\1>@si', '', $text);
             }
-        } elseif ($invert == FALSE) {
+        } elseif (!$invert) {
             return preg_replace('@<(\w+)\b.*?>.*?</\1>@si', '', $text);
         }
         return $text;
@@ -620,7 +607,7 @@ class JoomlaBasicMisc
          */
     }
 
-    public static function slugify($text)
+    public static function slugify($text): string
     {
         //or use
         //JFilterOutput::stringURLSafe($this->alias);
@@ -678,7 +665,7 @@ class JoomlaBasicMisc
         return $recs[0];
     }
 
-    public static function checkUserGroupAccess($thegroup = 0)
+    public static function checkUserGroupAccess($thegroup = 0): bool
     {
         if ($thegroup == 0)
             return false;
@@ -701,7 +688,7 @@ class JoomlaBasicMisc
         $version_object = new Version;
         $version = (int)$version_object->getShortVersion();
 
-        $mainframe = Factory::getApplication('site');
+        $mainframe = Factory::getApplication();
 
         if (method_exists($mainframe, 'getParams')) {
             $mydoc = Factory::getDocument();
@@ -717,9 +704,9 @@ class JoomlaBasicMisc
 
             if ($version < 4) {
                 $dispatcher = JDispatcher::getInstance();
-                $results = $dispatcher->trigger('onContentPrepare', array('com_content.article', &$o, &$content_params, 0));
+                $dispatcher->trigger('onContentPrepare', array('com_content.article', &$o, &$content_params, 0));
             } else
-                $results = Factory::getApplication()->triggerEvent('onContentPrepare', array('com_content.article', &$o, &$content_params, 0));
+                Factory::getApplication()->triggerEvent('onContentPrepare', array('com_content.article', &$o, &$content_params, 0));
 
             $htmlresult = $o->text;
 
@@ -729,10 +716,10 @@ class JoomlaBasicMisc
         return $htmlresult;
     }
 
-    public static function suggest_TempFileName()
+    public static function suggest_TempFileName(): string
     {
         $output_dir = DIRECTORY_SEPARATOR . trim(sys_get_temp_dir(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
-        $random_name = JoomlaBasicMisc::generateRandomString(32);
+        $random_name = JoomlaBasicMisc::generateRandomString();
 
         while (1) {
             $file = $output_dir . $random_name;
@@ -751,4 +738,6 @@ class JoomlaBasicMisc
 
         return $randomString;
     }
+
+
 }

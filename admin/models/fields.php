@@ -635,18 +635,18 @@ class CustomtablesModelFields extends JModelAdmin
         $PureFieldType = Fields::getPureFieldType($new_type, $new_typeparams);
 
         if ($realfieldname != '')
-            $fieldfound = Fields::checkIfFieldExists($realtablename, $realfieldname, false);
+            $fieldFound = Fields::checkIfFieldExists($realtablename, $realfieldname, false);
         else
-            $fieldfound = false;
+            $fieldFound = false;
 
-        if ($fieldid != 0 and $fieldfound) {
-            $ex_PureFieldType = Fields::getPureFieldType($ex_type, $ex_typeparams);
+        if ($fieldid != 0 and $fieldFound) {
+            //$ex_PureFieldType = Fields::getPureFieldType($ex_type, $ex_typeparams);
 
             if ($PureFieldType == '') {
                 //do nothing. field can be deleted
                 $convert_ok = true;
             } else
-                $convert_ok = Fields::ConvertFieldType($realtablename, $realfieldname, $ex_type, $ex_typeparams, $ex_PureFieldType, $new_type, $new_typeparams, $PureFieldType, $fieldtitle);
+                $convert_ok = Fields::ConvertFieldType($realtablename, $realfieldname, $ex_type, $new_type, $new_typeparams, $PureFieldType, $fieldtitle);
 
             if (!$convert_ok) {
                 Factory::getApplication()->enqueueMessage('Cannot convert the type.', 'error');
@@ -677,7 +677,7 @@ class CustomtablesModelFields extends JModelAdmin
         }
         //---------------------------------- end convert field
 
-        if ($fieldid == 0 or !$fieldfound) {
+        if ($fieldid == 0 or !$fieldFound) {
             //Add Field
 
             Fields::addField($this->ct, $realtablename, $realfieldname, $new_type, $PureFieldType, $fieldtitle);
@@ -878,26 +878,5 @@ class CustomtablesModelFields extends JModelAdmin
         }
 
         return $item;
-    }
-
-    /**
-     * Method to change the title
-     *
-     * @param string $title The title.
-     *
-     * @return    array  Contains the modified title and alias.
-     *
-     */
-    protected function _generateNewTitle($title)
-    {
-
-        // Alter the title
-        $table = $this->getTable();
-
-        while ($table->load(array('title' => $title))) {
-            $title = StringHelper::increment($title);
-        }
-
-        return $title;
     }
 }

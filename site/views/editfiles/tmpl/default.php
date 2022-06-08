@@ -92,10 +92,10 @@ defined('_JEXEC') or die('Restricted access');
 
         <div name="addfileblock" id="addfileblock" style="display:block;">
             <h2><?php echo JoomlaBasicMisc::JTextExtended("Add New File"); ?></h2>
-            <table border="0" align="center" cellpadding="3" width="100%" class="bigtext">
+            <table class="bigtext">
                 <tr>
-                    <td valign="top"><?php echo JoomlaBasicMisc::JTextExtended("Upload File"); ?>:<br/></td>
-                    <td valign="top">
+                    <td><?php echo JoomlaBasicMisc::JTextExtended("Upload File"); ?>:<br/></td>
+                    <td>
                         <?php //<input type="hidden" name="max File Size" value="<?php echo $max_file_size;  ?>
                         <input name="uploadedfile" type="file"/><input type="button" class="button" value="Upload"
                                                                        onClick='this.form.task.value="add";this.form.submit()'>
