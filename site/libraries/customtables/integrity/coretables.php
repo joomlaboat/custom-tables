@@ -188,7 +188,7 @@ class IntegrityCoreTables extends \CustomTables\IntegrityChecks
             }
         }
 
-        if ($exst_field == null)
+        if ($exst_field === null)
             die('field not created ' . $realfieldname);
 
         if ($ct_fieldtype != null and $ct_fieldtype != '') {

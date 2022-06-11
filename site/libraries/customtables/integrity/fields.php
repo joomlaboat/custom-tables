@@ -212,7 +212,7 @@ class IntegrityFields extends IntegrityChecks
             if (count($parts) > 1) {
                 $length = str_replace(')', '', $parts[1]);
                 if ($length != '') {
-                    if ($projected->length == null)
+                    if ($projected->length === null)
                         return false;
 
                     $projected_length = (string)$projected->length;

@@ -109,7 +109,7 @@ $edit = "index.php?option=com_customtables&view=listoftables&task=tables.edit";
             <?php
             if (!$table_exists)
                 echo Text::_('COM_CUSTOMTABLES_TABLES_TABLE_NOT_CREATED');
-            elseif (($item->customtablename != null and $item->customtablename != '') and ($item->customidfield == null or $item->customidfield == ''))
+            elseif (($item->customtablename != null and $item->customtablename != '') and ($item->customidfield === null or $item->customidfield == ''))
                 echo Text::_('COM_CUSTOMTABLES_TABLES_ID_FIELD_NOT_SET');
             else {
                 echo '<a class="btn btn-secondary" aria-describedby="tip-tablerecords' . $item->id . '" href="' . JURI::root(true) . '/administrator/index.php?option=com_customtables&view=listofrecords&tableid=' . $item->id . '">'

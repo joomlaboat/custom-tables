@@ -51,7 +51,7 @@ class Table
         $this->tablename = null;
         $this->fields = null;
 
-        if ($tablename_or_id_not_sanitized == null or $tablename_or_id_not_sanitized == '')
+        if ($tablename_or_id_not_sanitized === null or $tablename_or_id_not_sanitized == '')
             return;
         elseif (is_numeric($tablename_or_id_not_sanitized)) {
             $this->tablerow = ESTables::getTableRowByIDAssoc((int)$tablename_or_id_not_sanitized);// int sanitizes the input
@@ -109,7 +109,7 @@ class Table
                 case 'user':
                 case 'userid':
 
-                    if ($useridfieldname == null or $useridfieldname == $fld['fieldname']) {
+                    if ($useridfieldname === null or $useridfieldname == $fld['fieldname']) {
                         $this->useridfieldname = $fld['fieldname'];
                         $this->useridrealfieldname = $fld['realfieldname'];
                     }

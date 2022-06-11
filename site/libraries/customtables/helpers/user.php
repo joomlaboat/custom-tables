@@ -34,14 +34,14 @@ class CTUser
         if ($ct->Env->clean)
             if (ob_get_contents()) ob_end_clean();
 
-        if ($ct->Table->useridrealfieldname == null or $ct->Table->useridrealfieldname == '') {
+        if ($ct->Table->useridrealfieldname === null or $ct->Table->useridrealfieldname == '') {
             Factory::getApplication()->enqueueMessage('User ID field not found.', 'error');
             return false;
         }
 
         $ct->Table->loadRecord($listing_id);
 
-        if ($ct->Table->record == null) {
+        if ($ct->Table->record === null) {
             Factory::getApplication()->enqueueMessage('User record ID: "' . $listing_id . '" not found.', 'error');
             return false;
         }

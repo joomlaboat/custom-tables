@@ -37,8 +37,7 @@ class JHTMLESSQLJoinView
         $_params = new JRegistry;
         $_params->loadArray($paramsArray);
 
-        $ct = new CT;
-        $ct->setParams($_params, true);
+        $ct = new CT($_params, true);
 
         // -------------------- Table
 

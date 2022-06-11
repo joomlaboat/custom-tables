@@ -89,7 +89,7 @@ function processFieldParams(&$fieldList, array &$fields): array
 function importCSVdata(string $filename, $ct_tableid): string
 {
     $arrayOfLines = getLines($filename);
-    if ($arrayOfLines == null)
+    if ($arrayOfLines === null)
         return JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_CSV_FILE_EMPTY');
 
     $tablerow = ESTables::getTableRowByID($ct_tableid);

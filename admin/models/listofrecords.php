@@ -75,7 +75,7 @@ class CustomtablesModelListofRecords extends JModelList
      */
     protected function populateState($ordering = null, $direction = 'asc')
     {
-        if ($this->ordering_realfieldname != '' and $ordering == null)
+        if ($this->ordering_realfieldname != '' and $ordering === null)
             $ordering = $this->ct->Table->realtablename . '.' . $this->ordering_realfieldname;
 
         if ($this->ct->Env->version < 4) {

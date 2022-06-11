@@ -65,7 +65,7 @@ class CT_FieldTypeTag_log
                     if (isset($data[3])) {
                         $decoded_data_rows = json_decode(base64_decode($data[3]), true);
 
-                        if ($decoded_data_rows == null) {
+                        if ($decoded_data_rows === null) {
                             //Log data is too long (longer than 65,535 bytes)
                             //JSON record is corrupted
                             //Update to 5.4.5
@@ -121,7 +121,7 @@ class CT_FieldTypeTag_log
                     {
 
                         $decoded_data_rows = json_decode(base64_decode($data[3]), true);
-                        if ($decoded_data_rows == null) {
+                        if ($decoded_data_rows === null) {
                             //Log data is too long (longer than 65,535 bytes)
                             //JSON record is corrupted
                             //Update to 5.4.5

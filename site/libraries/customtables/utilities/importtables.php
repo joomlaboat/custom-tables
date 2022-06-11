@@ -160,7 +160,7 @@ class ImportTables
                 if ($fieldname != '' and Fields::checkIfFieldExists($mysqltablename, $fieldname, false)) {
                     if ($rows_new[$key] != $rows_old[$key])// and $rows_new[$key]!=null)
                     {
-                        if ($rows_new[$key] == null) {
+                        if ($rows_new[$key] === null) {
 
                         }
 
@@ -296,7 +296,7 @@ class ImportTables
 
                         if ($filedtype != '') {
                             Fields::AddMySQLFieldNotExist($mysqltablename, $key, $filedtype, '');
-                            if ($rows[$key] == null) {
+                            if ($rows[$key] === null) {
 
                             }
 
@@ -316,8 +316,13 @@ class ImportTables
     {
         if (isset($table_new['tablecategory']))
             $categoryid_ = $table_new['tablecategory'];
-        else
+        elseif (isset($table_new['catid']))
             $categoryid_ = $table_new['catid'];
+        else
+            $categoryid_ = null;
+
+        if ($categoryid_ == '')
+            $categoryid_ = null;
 
         if ($categoryname == '')
             $categoryname = $table_new['categoryname'];
@@ -334,14 +339,14 @@ class ImportTables
                 } else//if($categoryname!='')
                 {
                     //Find Category By name
-                    $categoryid = 0;
+                    $categoryid = null;
                 }
 
             } else
-                $categoryid = 0;
+                $categoryid = null;
         }
 
-        if ($categoryid == 0 and $categoryname != '') {
+        if (is_null($categoryid)) {
             //Find Category By name
             $category_row = ImportTables::getRecordByField('#__customtables_categories', 'categoryname', $categoryname, false);
 
@@ -358,7 +363,7 @@ class ImportTables
         }
 
 
-        if ($categoryid != $categoryid_ or $categoryid == 0) {
+        if ($categoryid != $categoryid_ or is_null($categoryid)) {
             //Update Category ID in table
             $mysqltablename = '#__customtables_tables';
 
@@ -377,7 +382,11 @@ class ImportTables
             $mysqltablename = $table;
 
         $db = Factory::getDBO();
-        $query = 'SELECT * FROM ' . $mysqltablename . ' WHERE ' . $fieldname . '=' . $db->Quote($value);
+
+        if (is_null($value))
+            $query = 'SELECT * FROM ' . $mysqltablename . ' WHERE ' . $fieldname . ' IS NULL';
+        else
+            $query = 'SELECT * FROM ' . $mysqltablename . ' WHERE ' . $fieldname . '=' . $db->Quote($value);
 
         $db->setQuery($query);
 

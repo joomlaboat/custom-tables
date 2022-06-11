@@ -22,6 +22,8 @@ class IntegrityTables extends \CustomTables\IntegrityChecks
 {
     public static function checkTables(&$ct)
     {
+        $db = Factory::getDBO();
+
         $tables = IntegrityTables::getTables();
 
         IntegrityTables::checkIfTablesExists($tables);
@@ -29,29 +31,41 @@ class IntegrityTables extends \CustomTables\IntegrityChecks
         $result = [];
 
         foreach ($tables as $table) {
-            $ct->setTable($table, $useridfieldname = null, $load_fields = false);
 
-            //$link=JURI::root().'administrator/index.php?option=com_customtables&view=databasecheck&tableid='.$table['id'];
-            $link = Uri::root() . 'administrator/index.php?option=com_customtables&view=databasecheck&tableid=' . $table['id'];
+            $table['tablename'];
+            //Check if table exists
+            $query_check_table = 'SHOW TABLES LIKE ' . $db->quote(str_replace('#__', $db->getPrefix(), $table['tablename']));
+            $db->setQuery($query_check_table);
+            $rows = $db->loadObjectList();
 
-            $content = IntegrityFields::checkFields($ct, $link);
+            $tableExists = !(count($rows) == 0);
 
-            if ($ct->Env->advancedtagprocessor)
-                IntegrityOptions::checkOptions($ct);
+            if ($tableExists) {
 
-            $zeroId = IntegrityTables::getZeroRecordID($table['realtablename'], $table['realidfieldname']);
+                $ct->setTable($table, null, false);
 
-            if ($content != '' or $zeroId > 0) {
-                if (strpos($link, '?') === false)
-                    $link .= '?';
-                else
-                    $link .= '&';
+                //$link=JURI::root().'administrator/index.php?option=com_customtables&view=databasecheck&tableid='.$table['id'];
+                $link = Uri::root() . 'administrator/index.php?option=com_customtables&view=databasecheck&tableid=' . $table['id'];
 
-                $result[] = '<p><span style="font-size:1.3em;">' . $table['tabletitle'] . '</span><br/><span style="color:gray;">' . $table['realtablename'] . '</span>'
-                    . ' <a href="' . $link . 'task=fixfieldtype&fieldname=all_fields">Fix all fields</a>'
-                    . '</p>'
-                    . $content
-                    . ($zeroId > 0 ? '<p style="font-size:1.3em;color:red;">Records with ID = 0 found. Please fix it manually.</p>' : '');
+                $content = IntegrityFields::checkFields($ct, $link);
+
+                if ($ct->Env->advancedtagprocessor)
+                    IntegrityOptions::checkOptions($ct);
+
+                $zeroId = IntegrityTables::getZeroRecordID($table['realtablename'], $table['realidfieldname']);
+
+                if ($content != '' or $zeroId > 0) {
+                    if (!str_contains($link, '?'))
+                        $link .= '?';
+                    else
+                        $link .= '&';
+
+                    $result[] = '<p><span style="font-size:1.3em;">' . $table['tabletitle'] . '</span><br/><span style="color:gray;">' . $table['realtablename'] . '</span>'
+                        . ' <a href="' . $link . 'task=fixfieldtype&fieldname=all_fields">Fix all fields</a>'
+                        . '</p>'
+                        . $content
+                        . ($zeroId > 0 ? '<p style="font-size:1.3em;color:red;">Records with ID = 0 found. Please fix it manually.</p>' : '');
+                }
             }
         }
 
@@ -110,7 +124,7 @@ class IntegrityTables extends \CustomTables\IntegrityChecks
                 $database = $conf->get('db');
                 $dbprefix = $conf->get('dbprefix');
 
-                if ($row['customtablename'] == null or $row['customtablename'] == '') {
+                if ($row['customtablename'] === null or $row['customtablename'] == '') {
                     if (ESTables::createTableIfNotExists($database, $dbprefix, $row['tablename'], $row['tabletitle'], $row['customtablename'])) {
                         Factory::getApplication()->enqueueMessage('Table "' . $row['tabletitle'] . '" created.', 'notice');
                     }

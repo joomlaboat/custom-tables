@@ -199,7 +199,7 @@ class Filtering
     {
         $items = array();
 
-        if ($param == null)
+        if ($param === null)
             return $items;
 
         $a = JoomlaBasicMisc::csv_explode(' and ', $param, '"', true);
@@ -940,7 +940,7 @@ class LinkJoinFilters
     {
         $fieldrow = Fields::getFieldRowByName($dynamic_filter_fieldname, 0, $establename);
 
-        if ($fieldrow == null)
+        if ($fieldrow === null)
             return '';
 
         if ($fieldrow->type == 'sqljoin' or $fieldrow->type == 'records')

@@ -16,7 +16,7 @@ function CTLoader($inclide_utilities = false, $include_html = false)
     $params = JComponentHelper::getParams('com_customtables');
     $loadTwig = $params->get('loadTwig');
 
-    if (($loadTwig == null or $loadTwig or Factory::getApplication()->getName() == 'administrator') and !class_exists('Twig')) {
+    if (($loadTwig === null or $loadTwig or Factory::getApplication()->getName() == 'administrator') and !class_exists('Twig')) {
         $twig_file = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries'
             . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
 

@@ -115,7 +115,7 @@ class Inputbox
             die(json_encode(['error' => 'Table "' . $tablename . '"not found']));
 
         $fieldname_or_layout = $selector[1];
-        if ($fieldname_or_layout == null or $fieldname_or_layout == '')
+        if ($fieldname_or_layout === null or $fieldname_or_layout == '')
             $fieldname_or_layout = $ct->Table->fields[0]['fieldname'];//Get first field if not specified
 
         //$showPublished = 0 - show published

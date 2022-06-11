@@ -360,7 +360,7 @@ class Twig_Document_Tags
         $layouts = new Layouts($this->ct);
         $layout = $layouts->getLayout($layoutname);
 
-        if ($layouts->tableid == null) {
+        if (is_null($layouts->tableid)) {
             $this->ct->app->enqueueMessage('{{ document.layout("' . $layoutname . '") }} - Layout "' . $layoutname . ' not found.', 'error');
             return '';
         }

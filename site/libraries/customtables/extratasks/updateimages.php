@@ -54,7 +54,7 @@ class updateImages
 
         $status = updateImages::processImages($ct, $fieldrow, $old_params, $new_params, $startindex, $stepsize);
 
-        return array('count' => $count, 'success' => (int)($status == null), 'startindex' => $startindex, 'stepsize' => $stepsize, 'error' => $status);
+        return array('count' => $count, 'success' => (int)($status === null), 'startindex' => $startindex, 'stepsize' => $stepsize, 'error' => $status);
     }
 
     public static function countImages($realtablename, $realfieldname, $realidfieldname)

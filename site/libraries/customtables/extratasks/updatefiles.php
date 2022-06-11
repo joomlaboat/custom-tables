@@ -54,7 +54,7 @@ class updateFiles
 
         $status = updateFiles::processFiles($ct, $fieldrow, $old_params, $new_params, $startindex, $stepsize);
 
-        return array('count' => $count, 'success' => (int)($status == null), 'startindex' => $startindex, 'stepsize' => $stepsize, 'error' => $status);
+        return array('count' => $count, 'success' => (int)($status === null), 'startindex' => $startindex, 'stepsize' => $stepsize, 'error' => $status);
     }
 
     protected static function countFiles($realtablename, $realfieldname, $realidfieldname)

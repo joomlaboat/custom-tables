@@ -21,12 +21,14 @@ use JoomlaBasicMisc;
 class Layouts
 {
     var CT $ct;
-    var int $tableid;
-    var int $layouttype;
+    var ?int $tableid;
+    var ?int $layouttype;
 
     function __construct(&$ct)
     {
         $this->ct = &$ct;
+        $this->tableid = null;
+        $this->layouttype = null;
     }
 
     function processLayoutTag(&$htmlresult): bool

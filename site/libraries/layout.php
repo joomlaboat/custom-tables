@@ -38,7 +38,7 @@ class LayoutProcessor
 
     var CustomTables\CT $ct;
 
-    function __construct(CustomTables\CT &$ct, $layout = '')
+    function __construct(CT &$ct, $layout = '')
     {
         $this->ct = $ct;
         $this->version = $this->ct->Env->version;

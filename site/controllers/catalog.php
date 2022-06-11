@@ -236,13 +236,13 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
                 return (object)array('link' => $link, 'msg' => 'Table not selected.', 'status' => 'error');
             }
 
-            if ($ct->Table->useridfieldname == null) {
+            if ($ct->Table->useridfieldname === null) {
                 return (object)array('link' => $link, 'msg' => 'User field not found.', 'status' => 'error');
             }
 
             $listing_id = $ct->Env->jinput->getInt("listing_id");
             $ct->Table->loadRecord($listing_id);
-            if ($ct->Table->record == null) {
+            if ($ct->Table->record === null) {
                 $ct->app->enqueueMessage('User record ID: "' . $listing_id . '" not found.', 'error');
                 return (object)array('link' => $link, 'msg' => 'User record ID: "' . $listing_id . '" not found.', 'status' => 'error');
             }
@@ -398,7 +398,7 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
                 if ($result != "") {
                     $msg = $ct->Env->jinput->getString('msg');
 
-                    if ($msg == null)
+                    if ($msg === null)
                         return (object)array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SHOPPING_CART_UPDATED'), 'status' => null);
                     elseif ($param_msg != '')
                         return (object)array('link' => $link, 'msg' => $param_msg, 'status' => null);

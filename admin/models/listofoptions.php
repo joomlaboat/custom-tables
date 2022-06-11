@@ -29,7 +29,7 @@ class CustomTablesModelListOfOptions extends JModelList
 
     function &getPagination()
     {
-        if ($this->_pagination == null) {
+        if ($this->_pagination === null) {
             $this->getItems();
         }
         return $this->_pagination;

@@ -65,7 +65,7 @@ class updateImageGallery
 
         $status = updateImages::processImages($table_row->realtablename, $field_row->realfieldname, $old_params, $new_params, $startindex, $stepsize);
 
-        return array('count' => $count, 'success' => (int)($status == null), 'startindex' => $startindex, 'stepsize' => $stepsize, 'error' => $status);
+        return array('count' => $count, 'success' => (int)($status === null), 'startindex' => $startindex, 'stepsize' => $stepsize, 'error' => $status);
 
 
     }

@@ -38,7 +38,7 @@ class SearchInputBox
 
         $place_holder = $this->field->title;
 
-        if ($field_title == null)
+        if ($field_title === null)
             $field_title = $place_holder;
 
         $result = '';

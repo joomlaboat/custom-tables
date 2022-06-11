@@ -137,7 +137,7 @@ class Params
             $this->listing_id = $menu_params->get('listingid');
 
         $this->tableName = $menu_params->get('establename'); //Table name or id not sanitized
-        if ($this->tableName == null or $this->tableName == '')
+        if ($this->tableName === null or $this->tableName == '')
             $this->tableName = $menu_params->get('tableid'); //Used in the back-end
 
         //Filter

@@ -187,17 +187,17 @@ class Twig_Record_Tags
         if (!is_array($tablerow)) return '';
 
         $field_details = $this->join_getRealFieldName($field1_findwhat, $this->ct->Table->tablerow);
-        if ($field_details == null) return '';
+        if ($field_details === null) return '';
         $field1_findwhat_realname = $field_details[0];
         $field1_type = $field_details[1];
 
         $field_details = $this->join_getRealFieldName($field2_lookwhere, $tablerow);
-        if ($field_details == null) return '';
+        if ($field_details === null) return '';
         $field2_lookwhere_realname = $field_details[0];
         $field2_type = $field_details[1];
 
         $field_details = $this->join_getRealFieldName($field3_readvalue, $tablerow);
-        if ($field_details == null) return '';
+        if ($field_details === null) return '';
         $field3_readvalue_realname = $field_details[0];
 
         $sj_realtablename = $tablerow['realtablename'];
@@ -484,7 +484,7 @@ class Twig_Record_Tags
         $layouts = new Layouts($this->ct);
 
         $pagelayout = $layouts->getLayout($layoutname, false);//It is safier to process layout after rendering the table
-        if ($layouts->tableid == null) {
+        if ($layouts->tableid === null) {
             $this->ct->app->enqueueMessage('{{ record.tablejoin("' . $layoutname . '","' . $filter . '","' . $orderby . '") }} - Layout "' . $layoutname . ' not found.', 'error');
             return '';
         }
@@ -565,7 +565,7 @@ class Twig_Tables_Tags
 
         if (is_numeric($record_id_or_filter) and (int)$record_id_or_filter > 0) {
             $row = $tables->loadRecord($table, $record_id_or_filter);
-            if ($row == null)
+            if ($row === null)
                 return '';
         } else {
             if ($tables->loadRecords($table, $record_id_or_filter, $orderby, 1)) {
@@ -598,14 +598,14 @@ class Twig_Tables_Tags
         $layouts = new Layouts($join_ct);
 
         $pagelayout = $layouts->getLayout($layoutname, false);//It is safer to process layout after rendering the table
-        if ($layouts->tableid == null) {
+        if ($layouts->tableid === null) {
             $this->ct->app->enqueueMessage('{{ html.records("' . $layoutname . '","' . $record_id_or_filter . '","' . $orderby . '") }} - Layout "' . $layoutname . ' not found.', 'error');
             return '';
         }
 
         if (is_numeric($record_id_or_filter) and (int)$record_id_or_filter > 0) {
             $row = $tables->loadRecord($layouts->tableid, $record_id_or_filter);
-            if ($row == null)
+            if ($row === null)
                 return '';
         } else {
             if ($tables->loadRecords($layouts->tableid, $record_id_or_filter, $orderby, 1)) {
@@ -636,7 +636,7 @@ class Twig_Tables_Tags
         $tables = new Tables($join_ct);
         $layouts = new Layouts($join_ct);
         $pagelayout = $layouts->getLayout($layoutname, false);//It is safer to process layout after rendering the table
-        if ($layouts->tableid == null) {
+        if ($layouts->tableid === null) {
             $this->ct->app->enqueueMessage('{{ html.records("' . $layoutname . '","' . $filter . '","' . $orderby . '") }} - Layout "' . $layoutname . ' not found.', 'error');
             return '';
         }

@@ -73,7 +73,7 @@ class SaveFieldQuerySet
             case 'records':
                 $value = $this->get_record_type_value();
                 $this->row[$this->field->realfieldname] = $value;
-                return ($value == null ? null : $this->field->realfieldname . '=' . $this->db->Quote($value));
+                return ($value === null ? null : $this->field->realfieldname . '=' . $this->db->Quote($value));
 
             case 'sqljoin':
 
@@ -152,7 +152,7 @@ class SaveFieldQuerySet
                 if (isset($value)) {
                     $value = $this->get_alias_type_value($listing_id);
                     $this->row[$this->field->realfieldname] = $value;
-                    return ($value == null ? null : $this->field->realfieldname . '=' . $this->db->Quote($value));
+                    return ($value === null ? null : $this->field->realfieldname . '=' . $this->db->Quote($value));
                 }
                 break;
 
@@ -238,7 +238,7 @@ class SaveFieldQuerySet
                     $value = $this->ct->Env->jinput->getInt($this->field->comesfieldname);
                     $this->row[$this->field->realfieldname] = $value;
 
-                    if ($value == null)
+                    if ($value === null)
                         return $this->field->realfieldname . '=null';
                     else
                         return $this->field->realfieldname . '=' . $value;
@@ -280,12 +280,12 @@ class SaveFieldQuerySet
             case 'usergroups':
                 $value = $this->get_usergroups_type_value();
                 $this->row[$this->field->realfieldname] = $value;
-                return ($value == null ? null : $this->field->realfieldname . '=' . $this->db->Quote($value));
+                return ($value === null ? null : $this->field->realfieldname . '=' . $this->db->Quote($value));
 
             case 'language':
                 $value = $this->get_customtables_type_language();
                 $this->row[$this->field->realfieldname] = $value;
-                return ($value == null ? null : $this->field->realfieldname . '=' . $this->db->Quote($value));
+                return ($value === null ? null : $this->field->realfieldname . '=' . $this->db->Quote($value));
 
             case 'float':
                 $value = $this->ct->Env->jinput->get($this->field->comesfieldname, null, 'FLOAT');
@@ -304,7 +304,7 @@ class SaveFieldQuerySet
 
                 $value = CT_FieldTypeTag_image::get_image_type_value($this->field, $listing_id);
                 $this->row[$this->field->realfieldname] = $value;
-                return ($value == null ? null : $this->field->realfieldname . '=' . $this->db->Quote($value));
+                return ($value === null ? null : $this->field->realfieldname . '=' . $this->db->Quote($value));
 
             case 'file':
 
@@ -315,19 +315,19 @@ class SaveFieldQuerySet
 
                 $to_delete = $this->ct->Env->jinput->post->get($this->field->comesfieldname . '_delete', '', 'CMD');
 
-                if ($to_delete == 'true' and $value == null) {
+                if ($to_delete == 'true' and $value === null) {
                     $this->row[$this->field->realfieldname] = null;
                     return $this->field->realfieldname . '=NULL';
                 } else {
                     $this->row[$this->field->realfieldname] = $value;
-                    return ($value == null ? null : $this->field->realfieldname . '=' . $this->db->Quote($value));
+                    return ($value === null ? null : $this->field->realfieldname . '=' . $this->db->Quote($value));
                 }
 
             case 'signature':
 
                 $value = $this->get_customtables_type_signature();
                 $this->row[$this->field->realfieldname] = $value;
-                return ($value == null ? null : $this->field->realfieldname . '=' . $this->db->Quote($value));
+                return ($value === null ? null : $this->field->realfieldname . '=' . $this->db->Quote($value));
 
             case 'multilangarticle':
 
@@ -354,7 +354,7 @@ class SaveFieldQuerySet
 
                 $value = $this->get_customtables_type_value();
                 $this->row[$this->field->realfieldname] = $value;
-                return ($value == null ? null : $this->field->realfieldname . '=' . $this->db->Quote($value));
+                return ($value === null ? null : $this->field->realfieldname . '=' . $this->db->Quote($value));
 
             case 'email':
                 $value = $this->ct->Env->jinput->getString($this->field->comesfieldname);
@@ -750,7 +750,7 @@ class SaveFieldQuerySet
 
         $parentid = Tree::getOptionIdFull($parent);
         $a = $this->getMultiSelector($parentid, $parent, $prefix);
-        if ($a == null)
+        if ($a === null)
             return null;
 
         if (count($a) == 0)

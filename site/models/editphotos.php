@@ -85,7 +85,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy
     function getObject()
     {
         $this->row = $this->ct->Table->loadRecord($this->listing_id);
-        if ($this->row == null)
+        if ($this->row === null)
             return false;
 
         $this->Listing_Title = '';

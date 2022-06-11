@@ -667,14 +667,14 @@ class Twig_Html_Tags
         JHtml::_('behavior.keepalive');
 
         $p = $this->getReCaptchaParams();
-        if ($p == null) {
+        if ($p === null) {
             $this->ct->app->enqueueMessage('{{ html.captcha }} - Captcha plugin not enabled.', 'error');
             return '';
         }
 
         $reCaptchaParams = json_decode($p->params);
 
-        if ($reCaptchaParams == null or $reCaptchaParams->public_key == "" or !isset($reCaptchaParams->size)) {
+        if ($reCaptchaParams === null or $reCaptchaParams->public_key == "" or !isset($reCaptchaParams->size)) {
             $this->ct->app->enqueueMessage('{{ html.captcha }} - Captcha Public Key or size not set.', 'error');
             return '';
         }
@@ -736,7 +736,7 @@ class Twig_Html_Tags
         if ($this->ct->Env->isPlugin)
             return '';
 
-        if ($redirectlink == null and !is_null($this->ct->Params->returnTo))
+        if ($redirectlink === null and !is_null($this->ct->Params->returnTo))
             $redirectlink = $this->ct->Params->returnTo;
 
         switch ($type) {
@@ -955,7 +955,7 @@ class Twig_Html_Tags
             return '';
         }
 
-        if ($this->ct->Table->recordlist == null)
+        if ($this->ct->Table->recordlist === null)
             $this->ct->getRecordList();
 
         return implode(',', $this->ct->Table->recordlist);
