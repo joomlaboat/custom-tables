@@ -664,6 +664,13 @@ class CustomTablesModelEditItem extends JModelLegacy
         $twig = new TwigProcessor($this->ct, $this->pagelayout);
         $twig->process();
 
+        $backgroundFieldTypes = ['creationtime', 'changetime', 'server', 'id', 'md5', 'userid'];
+
+        foreach ($this->ct->Table->fields as $fieldrow) {
+            if (in_array($fieldrow['type'], $backgroundFieldTypes))
+                $this->ct->editFields[] = $fieldrow['fieldname'];
+        }
+
         return $this->ct->editFields;
     }
 
