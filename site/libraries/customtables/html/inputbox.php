@@ -206,6 +206,7 @@ class Inputbox
         $this->field = new Field($this->ct, $this->field->fieldrow, $this->row);
         $this->prefix = $this->ct->Env->field_input_prefix . (!$this->ct->isEditForm ? $this->row[$this->ct->Table->realidfieldname] . '_' : '');
 
+        $this->ct->editFields[] = $this->field->fieldname;
 
         switch ($this->field->type) {
             case 'radio':

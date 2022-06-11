@@ -649,6 +649,18 @@ class CustomTablesModelEditItem extends JModelLegacy
 
     function getFieldsToSave(): array
     {
+        $this->ct->isEditForm = true; //This changes inputbox prefix
+
+        if ($this->ct->Env->legacysupport) {
+            $path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR;
+            require_once($path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'edittags.php');
+            require_once($path . 'layout.php');
+
+            $LayoutProc = new LayoutProcessor($this->ct, $this->pagelayout);
+            $this->pagelayout = $LayoutProc->fillLayout(null, null, '||', false, true);
+            tagProcessor_Edit::process($this->ct, $this->pagelayout, $row);
+        }
+
         $twig = new TwigProcessor($this->ct, $this->pagelayout);
         $twig->process();
 
