@@ -649,39 +649,10 @@ class CustomTablesModelEditItem extends JModelLegacy
 
     function getFieldsToSave(): array
     {
-        $fields = array();
+        $twig = new TwigProcessor($this->ct, $this->pagelayout);
+        $twig->process();
 
-        $backgroundFieldTypes = ['creationtime', 'changetime', 'server', 'id', 'md5', 'userid'];
-
-        foreach ($this->ct->Table->fields as $fieldrow) {
-            if (in_array($fieldrow['type'], $backgroundFieldTypes)) {
-                $fields[] = $fieldrow['fieldname'];
-            } else {
-                $fn = $fieldrow['fieldname'];
-
-                $fn_str = array();
-                $fn_str[] = '[' . $fn . ':';
-                $fn_str[] = '[' . $fn . ']';
-
-                $fn_str[] = '"comes_' . $fn . '"';
-                $fn_str[] = "'comes_" . $fn . "'";
-
-                $fn_str[] = '[_edit:' . $fn . ':';
-                $fn_str[] = $fn . '.edit';
-
-                $found = false;
-                foreach ($fn_str as $s) {
-                    if (str_contains($this->pagelayout, $s)) {
-                        $found = true;
-                        break;
-                    }
-                }
-
-                if ($found)
-                    $fields[] = $fn;
-            }
-        }
-        return $fields;
+        return $this->ct->editFields;
     }
 
     function updateLog($saveField, $listing_id)

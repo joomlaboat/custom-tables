@@ -39,6 +39,7 @@ class CT
     var $app;
     var Document $document;
     var $db;
+    var array $editFields;
 
     var array $LayoutVariables;
 
@@ -55,6 +56,7 @@ class CT
         $this->GroupBy = '';
         $this->isEditForm = false;
         $this->LayoutVariables = [];
+        $this->editFields = [];
 
         $this->Limit = 0;
         $this->LimitStart = 0;

@@ -65,6 +65,10 @@ class JHTMLESRecordsView
 
         $ct->getRecords();
 
+        if (is_null($ct->Records)) {
+            return 'Records not loaded';
+        }
+
         $selectorPair = explode(':', $selector);
 
         if (!str_contains($field, ':')) {

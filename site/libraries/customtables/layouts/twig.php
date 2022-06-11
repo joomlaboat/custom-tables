@@ -355,6 +355,7 @@ class fieldObject
 
             $value = $Inputbox->getDefaultValueIfNeeded($this->ct->Table->record);
 
+            $this->ct->editFields[] = $this->field->fieldname;
             return $Inputbox->render($value, $this->ct->Table->record);
         } else {
             $postfix = '';
@@ -396,6 +397,8 @@ class fieldObject
             $Inputbox = new Inputbox($this->ct, $this->field->fieldrow, $args, true, $onchange);
 
             $value = $Inputbox->getDefaultValueIfNeeded($this->ct->Table->record);
+
+            $this->ct->editFields[] = $this->field->fieldname;
 
             return '<div' . $div_arg . ' id="' . $ajax_prefix . $this->field->fieldname . $postfix . '_div">'
                 . $Inputbox->render($value, $this->ct->Table->record)
