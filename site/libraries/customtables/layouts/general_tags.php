@@ -357,12 +357,8 @@ class Twig_Document_Tags
             return '';
         }
 
-        //echo '$layoutname=' . $layoutname . '*<br/>';
-
         $layouts = new Layouts($this->ct);
         $layout = $layouts->getLayout($layoutname);
-
-        //echo $layout;
 
         if ($layouts->tableid == null) {
             $this->ct->app->enqueueMessage('{{ document.layout("' . $layoutname . '") }} - Layout "' . $layoutname . ' not found.', 'error');
@@ -392,9 +388,6 @@ class Twig_Document_Tags
             ///if (!is_null($this->ct->Table->record))
             $html_result = $twig->process($this->ct->Table->record);
         }
-
-        //echo '$this->ct->Table->record=';
-        //print_r($this->ct->Table->record);
 
         return $html_result;
     }

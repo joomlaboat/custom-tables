@@ -20,6 +20,7 @@ use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Component\ComponentHelper;
 
 use CustomTablesKeywordSearch;
+use mysql_xdevapi\Exception;
 
 class CT
 {
@@ -117,7 +118,10 @@ class CT
 
     protected function prepareSEFLinkBase(): void
     {
-        if ($this->Table->fields == null)
+        if (is_null($this->Table))
+            return;
+
+        if (is_null($this->Table->fields))
             return;
 
         if (!str_contains($this->Env->current_url, 'option=com_customtables')) {
@@ -140,12 +144,12 @@ class CT
 
     function getRecords($all = false): bool
     {
-        $db = Factory::getDBO();
-
         $where = count($this->Filter->where) > 0 ? ' WHERE ' . implode(' AND ', $this->Filter->where) : '';
         $where = str_replace('\\', '', $where); //Just to make sure that there is nothing weird in the query
 
-        $this->getNumberOfRecords($where);
+        if ($this->getNumberOfRecords($where) == -1)
+            return false;
+
         $query = $this->buildQuery($where);
 
         if ($this->Table->recordcount > 0) {
@@ -153,7 +157,7 @@ class CT
 
             if ($all) {
                 if ($the_limit > 0)
-                    $db->setQuery($query, 0, 20000); //or we will run out of memory
+                    $this->db->setQuery($query, 0, 20000); //or we will run out of memory
             } else {
                 if ($the_limit > 20000)
                     $the_limit = 20000;
@@ -161,30 +165,42 @@ class CT
                 if ($the_limit == 0)
                     $the_limit = 20000; //or we will run out of memory
 
-
                 if ($this->Table->recordcount < $this->LimitStart or $this->Table->recordcount < $the_limit)
                     $this->LimitStart = 0;
 
-                $db->setQuery($query, $this->LimitStart, $the_limit);
+                $this->db->setQuery($query, $this->LimitStart, $the_limit);
             }
 
-            $this->Records = $db->loadAssocList();
+            $this->Records = $this->db->loadAssocList();
         } else
-            $this->Records = [];
+            $this->Records = null;
 
         return true;
     }
 
     function getNumberOfRecords($where): int
     {
-        $db = Factory::getDBO();
+        $query_check_table = 'SHOW TABLES LIKE ' . $this->db->quote(str_replace('#__', $this->db->getPrefix(), $this->Table->realtablename));
+        $this->db->setQuery($query_check_table);
+        $rows = $this->db->loadObjectList();
+        if (count($rows) == 0)
+            return -1;
 
         $query_analytical = 'SELECT COUNT(' . $this->Table->tablerow['realidfieldname'] . ') AS count FROM ' . $this->Table->realtablename . ' ' . $where;
 
-        $db->setQuery($query_analytical);
-        $rows = $db->loadObjectList();
+        try {
+
+            $this->db->setQuery($query_analytical);
+            $rows = $this->db->loadObjectList();
+
+        } catch (Exception $e) {
+            echo 'Database error happened';
+            echo $e->getMessage();
+            return 0;
+        }
+
         if (count($rows) == 0)
-            $this->Table->recordcount = 0;
+            $this->Table->recordcount = -1;
         else
             $this->Table->recordcount = $rows[0]->count;
 

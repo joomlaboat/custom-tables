@@ -217,6 +217,9 @@ class RecordToolbar
 
     protected function firstFieldValueLabel()
     {
+        if (is_null($this->Table->fields))
+            return null;
+
         $min_ordering = 99999999;
 
         $fieldtitlevalue = '';

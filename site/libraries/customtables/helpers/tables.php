@@ -86,11 +86,11 @@ class ESTables
     public static function getTableRowByID(int $tableid)
     {
         if ($tableid == 0)
-            return 0;
+            return null;
 
         $row = ESTables::getTableRowByIDAssoc($tableid);
         if (!is_array($row))
-            return 0;
+            return null;
 
         return (object)$row;
     }
@@ -98,7 +98,7 @@ class ESTables
     public static function getTableRowByIDAssoc(int $tableid)
     {
         if ($tableid == 0)
-            return 0;
+            return null;
 
         return ESTables::getTableRowByWhere('id=' . $tableid);
     }
@@ -112,7 +112,7 @@ class ESTables
 
         $rows = $db->loadAssocList();
         if (count($rows) != 1)
-            return 0;
+            return null;
 
         $row = $rows[0];
 
@@ -288,7 +288,7 @@ class ESTables
         }
     }
 
-    public static function getTableName($tableid = 0): string
+    public static function getTableName($tableid = 0): ?string
     {
         $db = Factory::getDBO();
 
@@ -300,7 +300,7 @@ class ESTables
 
         $rows = $db->loadObjectList();
         if (count($rows) != 1)
-            return '';
+            return null;
 
         return $rows[0]->tablename;
     }
@@ -383,11 +383,11 @@ class ESTables
     public static function getTableRowByName($tablename = '')
     {
         if ($tablename == '')
-            return 0;
+            return null;
 
         $row = ESTables::getTableRowByNameAssoc($tablename);
         if (!is_array($row))
-            return 0;
+            return null;
 
         return (object)$row;
     }
@@ -395,7 +395,7 @@ class ESTables
     public static function getTableRowByNameAssoc($tablename = '')
     {
         if ($tablename == '')
-            return 0;
+            return null;
 
         $db = Factory::getDBO();
 

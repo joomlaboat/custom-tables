@@ -165,7 +165,7 @@ class TwigProcessor
         //{{ tables.getrecord(layoutname,recordid_or_filter, orderby) }}
         //{{ tables.getrecords(layoutname,filter,orderby,limit) }}
 
-        if (isset($ct->Table)) {
+        if (isset($ct->Table) and !is_null($this->ct->Table->fields)) {
             $description = $ct->Table->tablerow['description' . $this->ct->Table->Languages->Postfix];
 
             $this->variables['table'] = [

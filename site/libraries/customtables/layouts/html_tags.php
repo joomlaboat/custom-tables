@@ -423,6 +423,12 @@ class Twig_Html_Tags
             } else {
                 //Check if field name is exist in selected table
                 $fld = Fields::FieldRowByName($field_name_string, $this->ct->Table->fields);
+
+                if (!is_array($fld)) {
+                    $this->ct->app->enqueueMessage('Search box: Field name "' . $field_name_string . '" not found.', 'error');
+                    return '';
+                }
+
                 if (count($fld) > 0)
                     $list_of_fields[] = $field_name_string;
             }

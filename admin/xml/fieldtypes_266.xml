@@ -303,7 +303,8 @@
         </valueparams>
     </type>
 
-    <type ct_name="blob" label="Blob (Save file into the data base)" description="A BLOB is a binary large object that can hold an entire file." priority="2">
+    <type ct_name="blob" label="Blob (Save file into the data base)"
+          description="A BLOB is a binary large object that can hold an entire file." priority="2">
         <params>
             <param name="size" label="Max File Size" example="8"
                    description="Obsolete. The max. upload file size is taken from PHP.ini file. No need to specify anything."
@@ -816,7 +817,7 @@
         </params>
     </type>
 
-    <type ct_name="records" label="SLQ Table Join (Multiple)"
+    <type ct_name="records" label="Multiple Table Join"
           description="Provides a Multiple Left Join to records of another table." priority="2">
         <params>
             <param name="table" label="Table" description="Type the name of the Custom Table to join/link with."

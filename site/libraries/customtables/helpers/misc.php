@@ -70,7 +70,8 @@ class JoomlaBasicMisc
     protected static function parse_size(string $size): int
     {
         $unit = preg_replace('/[^bkmgtpezy]/i', '', $size); // Remove the non-unit characters from the size.
-        $size = preg_replace('/[^\d.]/', '', $size); // Remove the non-numeric characters from the size.
+        $size = preg_replace('/[^0-9\.]/', '', $size); // Remove the non-numeric characters from the size.
+        //$size = preg_replace('/[^\d.]/', '', $size); // Remove the non-numeric characters from the size.
         if ($unit) {
             // Find the position of the unit in the ordered string which is the power of magnitude to multiply a kilobyte by.
             return round($size * pow(1024, stripos('bkmgtpezy', $unit[0])));
@@ -212,7 +213,7 @@ class JoomlaBasicMisc
         $matches = [];
 
         if ($count != 1)
-            preg_match('/(\S*(?>\\s+|$)){0,' . $count . '}/', $desc, $matches);
+            preg_match('/([^\\s]*(?>\\s+|$)){0,' . $count . '}/', $desc, $matches);
 
         $desc = trim($matches[0]);
         $desc = str_replace("/n", "", $desc);
@@ -531,9 +532,12 @@ class JoomlaBasicMisc
             // Remove any runs of periods (thanks falstro!)
             $filename = mb_ereg_replace("([\.]{2,})", '', $filename);
         } else {
-            $filename = preg_replace("([^\w\s\d\-_~,;\[\]\().])", '', $filename);
+            //$filename = preg_replace("([^\w\s\d\-_~,;\[\]\().])", '', $filename);
+
+            $filename = preg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '', $filename);
             // Remove any runs of periods (thanks falstro!)
-            $filename = preg_replace("([.]{2,})", '', $filename);
+            $filename = preg_replace("([\.]{2,})", '', $filename);
+            //$filename = preg_replace("([.]{2,})", '', $filename);
         }
 
         if ($format != '')
@@ -580,12 +584,14 @@ class JoomlaBasicMisc
         $tags = array_unique($tags[1]);
 
         if (is_array($tags) and count($tags) > 0) {
-            if (!$invert) {
+            //if (!$invert) {
+            if ($invert == FALSE) {
                 return preg_replace('@<(?!(?:' . implode('|', $tags) . ')\b)(\w+)\b.*?>.*?</\1>@si', '', $text);
             } else {
                 return preg_replace('@<(' . implode('|', $tags) . ')\b.*?>.*?</\1>@si', '', $text);
             }
-        } elseif (!$invert) {
+
+        } elseif ($invert == FALSE) {
             return preg_replace('@<(\w+)\b.*?>.*?</\1>@si', '', $text);
         }
         return $text;

@@ -46,6 +46,7 @@ class Catalog
             require_once($site_path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'fieldtags.php');
         }
 
+
 // -------------------- Table
 
         $this->ct->getTable($this->ct->Params->tableName);
@@ -111,15 +112,22 @@ class Catalog
         } else
             $pagelayout = '{catalog:,notable}';
 
+
         if ($this->ct->Params->itemLayout != null)
             $itemLayout = $Layouts->getLayout($this->ct->Params->itemLayout);
         else
             $itemLayout = '';
 
 // -------------------- Load Records
-        $this->ct->getRecords();
+        if (!$this->ct->getRecords()) {
+            $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_TABLE_NOT_FOUND'), 'error');
+            return '';
+        }
+
 // -------------------- Parse Layouts
+
         if ($this->ct->Env->legacysupport) {
+
             $catalogTableCode = JoomlaBasicMisc::generateRandomString();//this is temporary replace placeholder. to not parse content result again
 
             $catalogTableContent = tagProcessor_CatalogTableView::process($this->ct, $Layouts->layouttype, $pagelayout, $catalogTableCode);
@@ -133,7 +141,7 @@ class Catalog
             $pagelayout = str_replace($catalogTableCode, $catalogTableContent, $pagelayout);
         }
 
-        $twig = new TwigProcessor($this->ct, $pagelayout );
+        $twig = new TwigProcessor($this->ct, $pagelayout);
         $pagelayout = $twig->process();
 
         if ($this->ct->Params->allowContentPlugins)

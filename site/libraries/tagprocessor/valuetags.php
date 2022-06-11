@@ -39,7 +39,7 @@ class tagProcessor_Value
         $isFileBoxLoaded = array();
         $getFileBoxRows = array();
 
-        if (!$ct->isRecordNull($row)) {
+        if (!$ct->isRecordNull($row) and !is_null($ct->Table->fields)) {
             foreach ($ct->Table->fields as $ESField) {
                 $field = new Field($ct, $ESField, $row);
 
@@ -124,7 +124,7 @@ class tagProcessor_Value
             }
         }//isset
 
-        //replace temprary items with values
+        //replace temporary items with values
         foreach ($items_to_replace as $item)
             $htmlresult = str_replace($item[0], $item[1], $htmlresult);
 

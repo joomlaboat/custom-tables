@@ -111,12 +111,12 @@ class Inputbox
         }
 
         $ct->getTable($tablename);
-        if ($ct->Table->tablename == '')
+        if (is_null($ct->Table->tablename))
             die(json_encode(['error' => 'Table "' . $tablename . '"not found']));
 
         $fieldname_or_layout = $selector[1];
         if ($fieldname_or_layout == null or $fieldname_or_layout == '')
-            $fieldname_or_layout = $ct->Table->fields[0]['fieldname'];
+            $fieldname_or_layout = $ct->Table->fields[0]['fieldname'];//Get first field if not specified
 
         //$showPublished = 0 - show published
         //$showPublished = 1 - show unpublished
@@ -1005,7 +1005,7 @@ class Inputbox
             return 'selector not specified';
 
         $optionName = $this->field->params[0];
-        $parentid = Tree::getOptionIdFull($optionName);
+        $parentId = Tree::getOptionIdFull($optionName);
 
         //$this->field->params[0] is structure parent
         //$this->field->params[1] is selector type (multi or single)
@@ -1027,7 +1027,7 @@ class Inputbox
 
             $result .= JHTML::_('MultiSelector.render',
                 $this->prefix,
-                $parentid, $optionName,
+                $parentId, $optionName,
                 $this->ct->Languages->Postfix,
                 $this->ct->Table->tablename,
                 $this->field->fieldname,
@@ -1074,11 +1074,6 @@ class Inputbox
 
     protected function render_tablejoin($value): string
     {
-        if (is_null($value))
-
-
-            echo 'value = ' . $value . '*<br/>';
-
         $result = '';
 
         //CT Example: [house:RedHouses,onChange('Alert("Value Changed")'),city=London]
@@ -1086,7 +1081,6 @@ class Inputbox
         //$this->option_list[0] - CSS Class
         //$this->option_list[1] - Optional Attributes
 
-        //$sqljoin_attributes = $this->attributes . ' '
         $sqljoin_attributes = ' data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '"'
             . ' data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '"';
 
@@ -1148,7 +1142,7 @@ class Inputbox
 
         $dynamic_filter = $this->field->params[4] ?? '';
 
-        $sortbyfield = $this->field->params[5] ?? '';
+        $sortByField = $this->field->params[5] ?? '';
 
         $records_attributes = ($this->attributes != '' ? ' ' : '')
             . 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
@@ -1166,7 +1160,7 @@ class Inputbox
             $this->cssclass . ' ct_improved_selectbox',
             $records_attributes,
             $dynamic_filter,
-            $sortbyfield,
+            $sortByField,
             $this->ct->Languages->Postfix,
             $this->place_holder
         );
@@ -1217,7 +1211,6 @@ class Inputbox
             . 'data-label="' . $this->place_holder . '" '
             . 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
             . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption); // closing quote is not needed because
-        //public static function calendar($value, $name, $element_id, $format = '%Y-%m-%d', $attribs = array())  will add it.
 
         $attributes['required'] = ($this->field->isrequired ? 'required' : ''); //not working, don't know why.
 
@@ -1263,19 +1256,17 @@ class Inputbox
         else
             $img_width = 250;
 
-        $imagesrclist = array();
-        $imagetaglist = array();
+        $imageSRCList = array();
+        $imageTagList = array();
 
         if (CT_FieldTypeTag_imagegallery::getImageGallerySRC($getGalleryRows, $image_prefix, $listing_id, $this->field->fieldname,
-            $this->field->params, $imagesrclist, $imagetaglist, $this->ct->Table->tableid)) {
-            //$imagesrclist_arr = explode(';', $imagesrclist);
+            $this->field->params, $imageSRCList, $imageTagList, $this->ct->Table->tableid)) {
 
             $result .= '<div style="width:100%;overflow:scroll;border:1px dotted grey;background-image: url(\'' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/images/icons/bg.png\');">
 
 		<table><tbody><tr>';
 
-            //foreach ($imagesrclist_arr as $img) {
-            foreach ($imagesrclist as $img) {
+            foreach ($imageSRCList as $img) {
                 $result .= '<td>';
                 $result .= '<a href="' . $img . '" target="_blank"><img src="' . $img . '" width="' . $img_width . '" />';
                 $result .= '</td>';
@@ -1311,11 +1302,11 @@ class Inputbox
 		<table>
 			<tbody>';
 
-        $firstlanguage = true;
+        $firstLanguage = true;
         foreach ($this->ct->Languages->LanguageList as $lang) {
-            if ($firstlanguage) {
+            if ($firstLanguage) {
                 $postfix = '';
-                $firstlanguage = false;
+                $firstLanguage = false;
             } else
                 $postfix = '_' . $lang->sef;
 

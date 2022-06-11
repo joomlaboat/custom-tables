@@ -1217,11 +1217,14 @@ class Fields
 
     public static function FieldRowByName($fieldname, $ctFields)
     {
+        if (is_null($ctFields))
+            return null;
+
         foreach ($ctFields as $field) {
             if ($field['fieldname'] == $fieldname)
                 return $field;
         }
-        return array();
+        return null;
     }
 
     public static function getRealFieldName($fieldname, $ctfields, $all_fields = false)

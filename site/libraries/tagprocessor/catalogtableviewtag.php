@@ -69,7 +69,6 @@ class tagProcessor_CatalogTableView
                 $vlu = self::get_CatalogTable_HTML($ct, $layoutType, $fields, $class, $dragdrop);
                 $pagelayout = str_replace($fItem, $new_replaceitecode, $pagelayout);
             }
-
             $i++;
         }
         return $vlu;

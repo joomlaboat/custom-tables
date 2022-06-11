@@ -162,6 +162,9 @@ class Ordering
         if ($ordering_param_string == '')
             return null;
 
+        if (is_null($this->Table->fields))
+            return null;
+
         $db = Factory::getDBO();
 
         $this->ordering_processed_string = '';

@@ -166,7 +166,7 @@ class Filtering
                                 $fieldrow = Fields::FieldRowByName($fieldname, $this->ct->Table->fields);
                             }
 
-                            if (count($fieldrow) > 0) {
+                            if (!is_null($fieldrow)) {
                                 $w = $this->processSingleFieldWhereSyntax($fieldrow, $comparison_operator, $fieldname, $value, $field_extra_param);
                                 if ($w != '')
                                     $multi_field_where[] = $w;

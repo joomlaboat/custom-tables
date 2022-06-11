@@ -570,9 +570,29 @@ class CustomTablesImageMethods
 
         $rgb = $backgroundcolor;
         if ($fileExtension == "jpg" or $fileExtension == 'jpeg') {
-            $from = ImageCreateFromJpeg($src);
-            if ($rgb == -1)
-                $rgb = imagecolorat($from, 0, 0);
+
+            try {
+                $from = @ImageCreateFromJpeg($src);
+            } catch (Exception $e) {
+                echo 'e1.';
+                return -1;
+            }
+
+            if (!$from) {
+                echo 'e2.';
+                return -1;
+            }
+
+            if ($rgb == -1) {
+                try {
+                    $rgb = imagecolorat($from, 0, 0);
+                } catch (Exception $e) {
+                    echo 'e3.';
+                    return -1;
+                }
+            }
+            echo '*';
+
         } elseif ($fileExtension == "gif") {
             $from1 = ImageCreateFromGIF($src);
             $from = ImageCreateTrueColor($width, $height);

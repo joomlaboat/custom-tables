@@ -26,22 +26,34 @@ class JHTMLCTTableJoin
 
         $filter = [];
 
-        echo 'value = ' . $value . '*<br/>';
+        $parent_filter_table_and_field = JHTMLCTTableJoin::parseTagArguments($option_list, $filter);
 
-        $parent_filter_field_name = JHTMLCTTableJoin::parseTagArguments($option_list, $filter);
-        JHTMLCTTableJoin::parseTypeParams($ct, $field, $filter, $parent_filter_field_name);
+        $parent_filter_table_name = $parent_filter_table_and_field[0];
+        $parent_filter_field_name = $parent_filter_table_and_field[1];
+
+        $params_filter = [];
+        JHTMLCTTableJoin::parseTypeParams($field, $params_filter, $parent_filter_table_name, $parent_filter_field_name);
+        $params_filter = array_reverse($params_filter);
+
+        $filter = array_merge($filter, $params_filter);
+
 
         //Get initial table filters based on the value
 
         $js_filters = [];
         $js_filters_selfParent = [];
         $parent_id = $value;
+
         JHTMLCTTableJoin::processValue($filter, $parent_id, $js_filters, $js_filters_selfParent);
 
         if (count($js_filters) == 0)
             $js_filters[] = $value;
 
 
+        //echo '<pre>Filter:';
+        //echo '</pre>';
+
+//        return '';
         $key = JoomlaBasicMisc::generateRandomString();
         $ct->app->setUserState($key, $filter);
 
@@ -83,65 +95,148 @@ class JHTMLCTTableJoin
         //{{ componentid.edit("mycss","readyonly",["grades","grade"]) }}
         //{{ componentid.edit("mycss","readyonly","grades","grade") }}
 
+        $parent_filter_table_name = '';
         $parent_filter_field_name = '';
 
         if (isset($option_list[2])) {
             $option = $option_list[2];
             if (is_array($option)) {
+
+                //$filter[] = [table_name, field_name, allow_unpublished, filter, order_by];
+
                 if (is_array($option[0])) {
                     foreach ($option as $optionFilter) {
-                        $optionFilter[5] = $parent_filter_field_name;
+                        $optionFilter[5] = $parent_filter_table_name;
+                        $optionFilter[6] = $parent_filter_field_name;
+
                         $filter[] = $optionFilter;
-                        $parent_filter_field_name = $optionFilter[0];
+                        $parent_filter_table_name = $optionFilter[0];
+                        $parent_filter_field_name = $optionFilter[1];
                     }
                 } else {
-                    $filter[] = [$option[0], $option[1], $option[2], $option[3], $option[4], $parent_filter_field_name];
-                    $parent_filter_field_name = $option[0];
+
+                    //Example: "cssclass","attributes", [table_name, field_name, allow_unpublished, filter, order_by]
+
+                    $tableName = $option[0];
+                    $fieldName = $option[1];
+                    $allow_unpublished = $option[2];
+                    $whereFilter = $option[3];
+                    $orderBy = $option[4];
+
+                    //$filter[] = [table_name, field_name, allow_unpublished, filter, order_by];
+                    $filter[] = [$tableName, $fieldName, $allow_unpublished, $whereFilter, $orderBy, $parent_filter_table_name, $parent_filter_field_name];
+                    //$filter[] = [$option[0], $option[1], $option[2], $option[3], $option[4], $parent_filter_field_name];
+                    $parent_filter_table_name = $tableName;
+                    $parent_filter_field_name = $fieldName;
                 }
             } else {
+                //Example: "cssclass","attributes", table_name, field_name, allow_unpublished, filter, order_by
+
+                $tableName = $option;//same as $option_list[2]
+                $fieldName = $option_list[3];
+                $allow_unpublished = $option_list[4];
+                $whereFilter = $option_list[5];
+                $orderBy = $option_list[6];
+
                 //$filter[] = [table_name, field_name, allow_unpublished, filter, order_by];
-                $filter[] = [$option, $option_list[3], $option_list[4], $option_list[5], $option_list[6], $parent_filter_field_name];
-                $parent_filter_field_name = $option;
+                $filter[] = [$tableName, $fieldName, $allow_unpublished, $whereFilter, $orderBy, $parent_filter_table_name, $parent_filter_field_name];
+                $parent_filter_table_name = $tableName;
+                $parent_filter_field_name = $fieldName;
             }
         }
 
-        return $parent_filter_field_name;
+        return [$parent_filter_table_name, $parent_filter_field_name];
     }
 
-    protected static function parseTypeParams(CT $temp_ct, $field, &$filter, &$parent_filter_field_name): bool
+    protected static function parseTypeParams($field, &$filter, &$parent_filter_table_name, &$parent_filter_field_name): bool
     {
-        if (count($field->params) > 6 or (isset($field->params[7]) and ($field->params[7] == 'addforignkey' or $field->params[7] == 'noforignkey'))) {
-            //Dynamic filter,
-            if ($field->params[3] != null and $field->params[3] != '') {
-                $temp_ct->getTable($field->params[0]);
+        $params = new JRegistry;
+        $params->loadArray([]);
+        $temp_ct = new CT($params, true);
 
-                if ($temp_ct->Table->tablename == '') {
-                    $temp_ct->app->enqueueMessage('Dynamic filter field "' . $field->params[3] . '" : Table "' . $temp_ct->Table->tablename . '" not found.', 'error');
-                    return false;
-                }
+        //Table Join
+        //Example: table_name, field_name, where_filter, dynamic_filter, order_by, allow_unpublished
+        if ($field->type == 'sqljoin')
+            $dynamicFilter = $field->params[3] ?? null;
+        elseif ($field->type == 'records')
+            $dynamicFilter = $field->params[4] ?? null;
+        else
+            return false;
 
-                //Find dynamic filter field
-                foreach ($temp_ct->Table->fields as $fld) {
-                    if ($fld['fieldname'] == $field->params[3]) {
-                        //Add dynamic filter parameters
-                        $temp_type_params = JoomlaBasicMisc::csv_explode(',', $fld['typeparams']);
-                        $filter[] = [$temp_type_params[0], $temp_type_params[1], $temp_type_params[5], $temp_type_params[2], $temp_type_params[4], $parent_filter_field_name];
+        $tableName = $field->params[0];
+        $temp_ct->getTable($tableName);
 
-                        $parent_filter_field_name = $temp_type_params[0];
-                        break;
-                    }
-                }
+        //Dynamic filter,
+        if (!is_null($dynamicFilter) and $dynamicFilter != '') {
+
+            if ($temp_ct->Table->tablename == '') {
+                $temp_ct->app->enqueueMessage('Dynamic filter field "' . $dynamicFilter . '" : Table "' . $temp_ct->Table->tablename . '" not found.', 'error');
+                return false;
             }
 
-            $filter[] = [$field->params[0], $field->params[1], $field->params[5], $field->params[2], $field->params[4], $parent_filter_field_name];
-            $parent_filter_field_name = $field->params[0];
+            //Find dynamic filter field
+            foreach ($temp_ct->Table->fields as $fld) {
+                if ($fld['fieldname'] == $dynamicFilter) {
+
+                    $tempField = new Field($temp_ct, $fld);
+
+                    $parent_filter_table_name = $tempField->params[0];
+                    $parent_filter_field_name = $tempField->params[1];
+
+                    $filter[] = self::mapJoinTypeParams($field, $parent_filter_table_name, $parent_filter_field_name);
+
+                    $parent_filter_table_name = null;
+                    $parent_filter_field_name = null;
+
+                    self::parseTypeParams($tempField, $filter, $parent_filter_table_name, $parent_filter_field_name);
+
+                    break;
+                }
+            }
         } else {
-            $filter[] = [$field->params[0], $field->params[1], $field->params[2], $field->params[3], $field->params[4], $parent_filter_field_name];
+
+            $selfParentField = Fields::getSelfParentField($temp_ct);
+            if ($selfParentField != null) {
+
+                $parent_filter_table_name = $temp_ct->Table->tablename;
+                $parent_filter_field_name = $selfParentField['fieldname'];//it was 6
+
+            } else {
+                //$parent_filter_table_name = null;
+                //$parent_filter_field_name = null;
+            }
+
+            $filter[] = self::mapJoinTypeParams($field, $parent_filter_table_name, $parent_filter_field_name);
         }
+
+
         return true;
     }
 
-    protected static function processValue(&$filter, &$parent_id, &$js_filters, &$js_filters_selfParent): void
+    protected static function mapJoinTypeParams(Field $field, $parent_filter_table_name, $parent_filter_field_name): ?array
+    {
+        //echo '$field->type=' . $field->type . '<br/>';
+        if ($field->type = 'sqljoin') {
+            $tableName = $field->params[0];
+            $fieldName = $field->params[1];
+            $where_filter = $field->params[2] ?? null;
+            //$dynamicFilter = $field->params[3] ?? null;
+            $orderBy = $field->params[4] ?? null;
+            $allowUnpublished = $field->params[5] ?? null;
+        } elseif ($field->type = 'records') {
+            $tableName = $field->params[0];
+            $fieldName = $field->params[1];
+            $where_filter = $field->params[3] ?? null;
+            //$dynamicFilter = $field->params[4] ?? null;
+            $orderBy = $field->params[5] ?? null;
+            $allowUnpublished = $field->params[6] ?? null;
+        } else
+            return null;
+
+        return [$tableName, $fieldName, $allowUnpublished, $where_filter, $orderBy, $parent_filter_table_name, $parent_filter_field_name];
+    }
+
+    protected static function processValue(&$filter, &$parent_id, &$js_filters): void
     {
         for ($i = count($filter) - 1; $i >= 0; $i--) {
             $flt = $filter[$i];
@@ -151,41 +246,42 @@ class JHTMLCTTableJoin
             $temp_ct->getTable($tablename);
 
             $temp_js_filters = null;
+            $join_to_tablename = $flt[5];
 
-            if ($i > 0)//No need to filter first select element values
-            {
-                $join_to_tablename = $flt[5];
-                $parent_id = JHTMLCTTableJoin::getParentFilterID($temp_ct, $parent_id, $join_to_tablename);
-                $temp_js_filters = $parent_id;
-            }
+            $parent_id = JHTMLCTTableJoin::getParentFilterID($temp_ct, $parent_id, $join_to_tablename);
+            $temp_js_filters = $parent_id;
 
             //Check if this table has self-parent field - the TableJoin field linked with the same table.
-            $selfParentField = Fields::getSelfParentField($temp_ct);
-            if ($selfParentField != null) {
-                $selfParent_type_params = JoomlaBasicMisc::csv_explode(',', $selfParentField['typeparams']);
+            $selfParentField = $flt[0] == $flt[5];
 
-                if ($filter[$i][3] == '')
-                    $filter[$i][3] = $selfParent_type_params[2];
+            if ($selfParentField) {
 
-                if ($filter[$i][4] == '')
-                    $filter[$i][4] = $selfParent_type_params[4];
 
-                $filter[$i][6] = $selfParentField['fieldname'];
-                $js_filters_selfParent[] = 1;
+                //$selfParent_type_params = JoomlaBasicMisc::csv_explode(',', $selfParentField['typeparams']);
 
-                $join_to_tablename = $filter[$i][0];
+                //if ($filter[$i][3] == '')
+                //  $filter[$i][3] = $selfParent_type_params[2];
+
+                //if ($filter[$i][4] == '')
+                //$filter[$i][4] = $selfParent_type_params[4];
+
+                //$filter[$i][5] = $temp_ct->Table->tablename;
+                //$filter[$i][6] = $selfParentField['fieldname'];//it was 6
+                //$js_filters_selfParent[] = 1;
+
+                $join_to_tablename = $filter[$i][5];//it was 5
 
                 $selfParent_filters = [];
                 while ($parent_id != null) {
                     $selfParent_filters[] = $parent_id;
                     $parent_id = JHTMLCTTableJoin::getParentFilterID($temp_ct, $parent_id, $join_to_tablename);
                 }
+
                 $selfParent_filters[] = "";
 
                 if (count($selfParent_filters) > 0)
                     $temp_js_filters = array_reverse($selfParent_filters);
             }
-
             $js_filters[] = $temp_js_filters;
         }
 
@@ -196,14 +292,21 @@ class JHTMLCTTableJoin
     protected static function getParentFilterID($temp_ct, $parent_id, $join_to_tablename)
     {
         $join_realfieldname = '';
+        $where = '';
 
         foreach ($temp_ct->Table->fields as $fld) {
-            if ($fld['type'] == 'sqljoin') {
+            if ($fld['type'] == 'sqljoin' or $fld['type'] == 'records') {
                 $type_params = JoomlaBasicMisc::csv_explode(',', $fld['typeparams']);
                 $join_tablename = $type_params[0];
 
                 if ($join_tablename == $join_to_tablename) {
                     $join_realfieldname = $fld['realfieldname'];
+
+                    //if ($fld['type'] == 'sqljoin')
+                    $where = $temp_ct->Table->realidfieldname . '=' . $temp_ct->db->quote($parent_id);
+                    //else
+                    //$where = 'INSTR(' . $temp_ct->Table->realidfieldname . ',",' . (int)$parent_id . ',")';
+
                     break;
                 }
             }
@@ -212,8 +315,7 @@ class JHTMLCTTableJoin
         if ($join_realfieldname == '')
             return null;
 
-        $query = 'SELECT ' . $join_realfieldname . ' FROM ' . $temp_ct->Table->realtablename . ' WHERE '
-            . $temp_ct->Table->realidfieldname . '=' . $temp_ct->db->quote($parent_id) . ' LIMIT 1';
+        $query = 'SELECT ' . $join_realfieldname . ' FROM ' . $temp_ct->Table->realtablename . ' WHERE ' . $where . ' LIMIT 1';
 
         $temp_ct->db->setQuery($query);
         $recs = $temp_ct->db->loadAssocList();
@@ -245,6 +347,7 @@ class JHTMLCTTableJoin
         if (!is_array($resultJSON))
             return '';
 
+        //return '7';
         return self::ctRenderTableJoinSelectBox($ct, $control_name, $resultJSON, $index, $sub_index, $object_id, $formId, $attributes, $onchange, $filter, $js_filters, $value);
     }
 
@@ -262,7 +365,7 @@ class JHTMLCTTableJoin
                 $val = $js_filters[$next_index][$next_sub_index];
         } else {
             $next_index += 1;
-            $val = $js_filters[$index];
+            $val = $js_filters[$next_index];
         }
 
         if (is_null($val)) {
@@ -316,8 +419,16 @@ class JHTMLCTTableJoin
 
             $result .= '<option value="">- Select</option>';
 
-            for ($i = 0; $i < count($r); $i++)
-                $result .= '<option value="' . $r[$i]->id . '"' . ($r[$i]->id == $val ? ' selected="selected"' : '') . '>' . $r[$i]->label . '</option>';
+            for ($i = 0; $i < count($r); $i++) {
+
+
+                if ($r[$i]->id == $val)
+                    $result .= '<option value="' . $r[$i]->id . '" selected="selected">' . $r[$i]->label . '</option>';
+                elseif (str_contains($val, ',' . $r[$i]->id . ','))
+                    $result .= '<option value="' . $r[$i]->id . '" selected="selected">' . $r[$i]->label . '</option>';
+                else
+                    $result .= '<option value="' . $r[$i]->id . '">' . $r[$i]->label . '</option>';
+            }
 
             $result .= '</select>';
 
@@ -330,6 +441,8 @@ class JHTMLCTTableJoin
 
                     if ($next_sub_index < count($js_filters[$index]))
                         $result .= self::ctUpdateTableJoinLink($ct, $control_name, $next_index, $next_sub_index, null, $formId, $attributes, $onchange, $filter, $js_filters, $value);
+                } else {
+                    $result .= self::ctUpdateTableJoinLink($ct, $control_name, $next_index, $next_sub_index, null, $formId, $attributes, $onchange, $filter, $js_filters, $value);
                 }
             } else
                 $result .= '<div id="' . $control_name . 'Selector' . $next_index . '_' . $next_sub_index . '"></div>';

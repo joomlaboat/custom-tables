@@ -29,6 +29,35 @@ class Layouts
         $this->ct = &$ct;
     }
 
+    function processLayoutTag(&$htmlresult): bool
+    {
+        $options = array();
+        $fList = JoomlaBasicMisc::getListToReplace('layout', $options, $htmlresult, '{}');
+
+        if (count($fList) == 0)
+            return false;
+
+        $i = 0;
+        foreach ($fList as $fItem) {
+            $parts = JoomlaBasicMisc::csv_explode(',', $options[$i], '"', false);
+            $layoutname = $parts[0];
+
+            $ProcessContentPlugins = false;
+            if (isset($parts[1]) and $parts[1] == 'process')
+                $ProcessContentPlugins = true;
+
+            $layout = $this->getLayout($layoutname);
+
+            if ($ProcessContentPlugins)
+                JoomlaBasicMisc::applyContentPlugins($layout);
+
+            $htmlresult = str_replace($fItem, $layout, $htmlresult);
+            $i++;
+        }
+
+        return true;
+    }
+
     function getLayout(string $layoutname, bool $processLayoutTag = true)
     {
         if ($layoutname == '')
@@ -103,34 +132,6 @@ class Layouts
         }
 
         return '';
-    }
-
-    function processLayoutTag(&$htmlresult): bool
-    {
-        $options = array();
-        $fList = JoomlaBasicMisc::getListToReplace('layout', $options, $htmlresult, '{}');
-
-        if (count($fList) == 0)
-            return false;
-
-        $i = 0;
-        foreach ($fList as $fItem) {
-            $parts = JoomlaBasicMisc::csv_explode(',', $options[$i], '"', false);
-            $layoutname = $parts[0];
-
-            $ProcessContentPlugins = false;
-            if (isset($parts[1]) and $parts[1] == 'process')
-                $ProcessContentPlugins = true;
-
-            $layout = $this->getLayout($layoutname);
-
-            if ($ProcessContentPlugins)
-                JoomlaBasicMisc::applyContentPlugins($layout);
-
-            $htmlresult = str_replace($fItem, $layout, $htmlresult);
-            $i++;
-        }
-        return true;
     }
 
     protected function addCSSandJSIfNeeded($layoutRow): void

@@ -23,14 +23,14 @@ class Table
     var Languages $Languages;
     var Environment $Env;
     var int $tableid;
-    var array $tablerow;
-    var string $tablename;
+    var ?array $tablerow;
+    var ?string $tablename;
     var bool $published_field_found;
-    var string $customtablename;
+    var ?string $customtablename;
     var string $realtablename;
     var string $realidfieldname;
     var string $tabletitle;
-    var string $alias_fieldname;
+    var ?string $alias_fieldname;
     var ?string $useridfieldname;
     var ?string $useridrealfieldname;
     var ?array $fields;
@@ -48,6 +48,8 @@ class Table
 
         $this->Languages = $Languages;
         $this->Env = $Env;
+        $this->tablename = null;
+        $this->fields = null;
 
         if ($tablename_or_id_not_sanitized == null or $tablename_or_id_not_sanitized == '')
             return;
@@ -58,8 +60,12 @@ class Table
             $this->tablerow = ESTables::getTableRowByNameAssoc($tablename_or_id);
         }
 
+        if (is_null($this->tablerow))
+            return;
+
         if (!isset($this->tablerow['id']))
             return;
+
 
         $this->setTable($this->tablerow, $useridfieldname);
 

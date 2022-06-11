@@ -56,8 +56,12 @@ class Environment
     function __construct()
     {
         $plugin = PluginHelper::getPlugin('content', 'customtables');
-        $pluginParams = new Registry($plugin->params);
-        $this->CustomPHPEnabled = (int)$pluginParams->get("phpPlugin") == 1;
+
+        if (!is_null($plugin) and is_object($plugin) > 0) {
+            $pluginParams = new Registry($plugin->params);
+            $this->CustomPHPEnabled = (int)$pluginParams->get("phpPlugin") == 1;
+        } else
+            $this->CustomPHPEnabled = false;
 
         $this->field_prefix = 'es_';
         $this->field_input_prefix = 'com' . $this->field_prefix;

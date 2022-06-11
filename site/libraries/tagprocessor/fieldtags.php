@@ -20,6 +20,9 @@ class tagProcessor_Field
 {
     public static function process(CT &$ct, &$pagelayout, bool $add_label = false)
     {
+        if (is_null($ct->Table->fields))
+            return $pagelayout;
+
         //field title
         if ($add_label) {
             foreach ($ct->Table->fields as $fieldrow) {

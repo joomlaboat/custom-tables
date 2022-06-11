@@ -20,7 +20,7 @@ use Joomla\CMS\Factory;
 
 class tagProcessor_Item
 {
-    public static function RenderResultLine(CT &$ct, $layoutType, &$twig, ?array &$row)
+    public static function RenderResultLine(CT &$ct, $layoutType, &$twig, ?array &$row): string
     {
         if ($ct->Env->print)
             $viewlink = '';
@@ -44,8 +44,8 @@ class tagProcessor_Item
 
         $LayoutProc = new LayoutProcessor($ct);
 
+        $htmlresult = $twig->process($row);
         if ($layoutType == 2) {
-            $htmlresult = $twig->process($row);
 
             require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'tagprocessor' . DIRECTORY_SEPARATOR . 'edittags.php');
             $prefix = 'table_' . $ct->Table->tablename . '_' . $row[$ct->Table->realidfieldname] . '_';
@@ -54,7 +54,6 @@ class tagProcessor_Item
             $LayoutProc->layout = $htmlresult;//Temporary replace original layout with processed result
             $htmlresult = $LayoutProc->fillLayout($row, null, '||', false, true);//Process field values
         } else {
-            $htmlresult = $twig->process($row);
 
             $LayoutProc->layout = $htmlresult;//Layout was modified by Twig
             $htmlresult = $LayoutProc->fillLayout($row, $viewlink, '[]', false);

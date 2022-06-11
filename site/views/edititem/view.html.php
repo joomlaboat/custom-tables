@@ -58,7 +58,6 @@ class CustomTablesViewEditItem extends JViewLegacy
 </div><!-- end of the modal -->';
 
         }
-
         return true;
     }
 }

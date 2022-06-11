@@ -3,6 +3,7 @@
     "ext-fileinfo": "*",
     "ext-simplexml": "*",
     "ext-apcu": "*",
-    "ext-gd": "*"
+    "ext-gd": "*",
+    "ext-mysql_xdevapi": "*"
   }
 }

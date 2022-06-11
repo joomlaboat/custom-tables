@@ -75,7 +75,6 @@ class LayoutProcessor
                 $htmlresult = str_replace('</a>', '</span>', $htmlresult);
             }
         }
-
         return $htmlresult;
     }
 }
