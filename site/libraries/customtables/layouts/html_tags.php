@@ -584,6 +584,10 @@ class Twig_Html_Tags
             $labelHtml = ($label !== '' ? '<span style=\'margin-left:10px;\'>' . $label . '</span>' : '');
         } else {
             $img = '';
+
+            if ($label == '')
+                $label = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SEARCH');
+
             $labelHtml = ($label !== '' ? '<span>' . $label . '</span>' : '');
         }
 

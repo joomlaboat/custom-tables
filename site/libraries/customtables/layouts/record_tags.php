@@ -230,12 +230,12 @@ class Twig_Record_Tags
 
                 $temp_ctfields = Fields::getFields($tablerow['id']);
 
-                foreach ($temp_ctfields as $ESField) {
-                    if ($ESField['fieldname'] == $field3_readvalue) {
-                        $ESField['realfieldname'] = 'vlu';
+                foreach ($temp_ctfields as $fieldRow) {
+                    if ($fieldRow['fieldname'] == $field3_readvalue) {
+                        $fieldRow['realfieldname'] = 'vlu';
 
                         $valueProcessor = new Value($this->ct);
-                        $vlu = $valueProcessor->renderValue($ESField, $row, $value_option_list);
+                        $vlu = $valueProcessor->renderValue($fieldRow, $row, $value_option_list);
 
                         break;
                     }

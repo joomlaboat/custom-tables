@@ -175,7 +175,7 @@ class CT
 
             $this->Records = $this->db->loadAssocList();
         } else
-            $this->Records = null;
+            $this->Records = [];
 
         return true;
     }

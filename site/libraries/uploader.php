@@ -17,22 +17,22 @@ use Joomla\CMS\Factory;
 
 class ESFileUploader
 {
-    public static function getFileNameByID($fileid)
+    public static function getFileNameByID($fileId): string
     {
         $dir = JPATH_SITE . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR;
         $files = scandir($dir);
 
-        $lookfor = '_' . $fileid . '_';
+        $lookFor = '_' . $fileId . '_';
         foreach ($files as $file) {
-            if (strpos($file, $lookfor) !== false)
+            if (str_contains($file, $lookFor))
                 return $dir . $file;
         }
         return '';
     }
 
-    public static function uploadFile($fileid, $filetypes_str_argument = "")
+    public static function uploadFile($fileId, $filetypes_str_argument = ""): string
     {
-        $filetypes_str = ESFileUploader::getAcceptedFileTypes($filetypes_str_argument);//',,'.
+        $filetypes_str = ESFileUploader::getAcceptedFileTypes($filetypes_str_argument);
 
         $accepted_types = ESFileUploader::getAcceptableMimeTypes($filetypes_str);
 
@@ -42,14 +42,14 @@ class ESFileUploader
         $t = time();
 
         $jinput = Factory::getApplication()->input;
-        $file = ESFileUploader::getfile_SafeMIME($fileid, $filetypes_str);
+        $file = ESFileUploader::getfile_SafeMIME($fileId);
 
         $accepted_types = ESFileUploader::getAcceptableMimeTypes($filetypes_str);
 
         if (isset($file['name'])) {
             $ret = array();
             $parts = explode('.', $file['name']);
-            $fileextension = end($parts);
+            $fileExtension = end($parts);
 
             //	This is for custom errors;
 
@@ -61,31 +61,30 @@ class ESFileUploader
             {
                 $mime = mime_content_type($file["tmp_name"]);
 
-                if ($mime == 'application/zip' and $fileextension != 'zip') {
+                if ($mime == 'application/zip' and $fileExtension != 'zip') {
                     //could be docx, xlsx, pptx
-                    $mime = ESFileUploader::checkZIPfile_X($file["tmp_name"], $fileextension);
+                    $mime = ESFileUploader::checkZIPfile_X($file["tmp_name"], $fileExtension);
                 }
 
                 if (in_array($mime, $accepted_types)) {
 
                     $fileName = ESFileUploader::normalizeString($file['name']);
-                    $newFileName = $output_dir . 'ct_' . $t . '_' . $fileid . '_' . $fileName;
+                    $newFileName = $output_dir . 'ct_' . $t . '_' . $fileId . '_' . $fileName;
 
                     if ($jinput->getCmd('task') == 'importcsv') {
                         require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables'
                             . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'importcsv.php');
-
 
                         move_uploaded_file($file["tmp_name"], $newFileName);
                         $msg = importCSVfile($newFileName, $jinput->getInt('tableid', 0));
                         if ($msg != '' and $msg != 'success')
                             $ret = ['error' => $msg];
                         else
-                            $ret = ['status' => 'success', 'filename' => 'ct_' . $t . '_' . $fileid . '_' . $fileName];
+                            $ret = ['status' => 'success', 'filename' => 'ct_' . $t . '_' . $fileId . '_' . $fileName];
 
                     } else {
                         if (@move_uploaded_file($file["tmp_name"], $newFileName))
-                            $ret = ['status' => 'success', 'filename' => 'ct_' . $t . '_' . $fileid . '_' . $fileName];
+                            $ret = ['status' => 'success', 'filename' => 'ct_' . $t . '_' . $fileId . '_' . $fileName];
                         else
                             $ret = ['error' => 'Unable to upload the file.'];
                     }
@@ -103,10 +102,8 @@ class ESFileUploader
             return json_encode(['error' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FILE_IS_EMPTY')]);
     }
 
-    public static function getAcceptedFileTypes($fileextensions)
+    public static function getAcceptedFileTypes($fileExtensions): string
     {
-        //$pair=explode(',',$typeparams);
-
         $allowedExtensions = 'doc docx pdf txt xls xlsx psd ppt pptx odg odp ods odt'
             . ' xcf ai txt avi csv accdb htm html'
             . ' jpg bmp ico jpeg png webp gif svg ai'//Images
@@ -114,38 +111,38 @@ class ESFileUploader
             . ' aac flac mp3 wav ogg'//Audio
             . ' mp4 m4a m4p m4b m4r m4v wma flv mpg 3gp wmv mov';//Video
 
-        $allowedExts = explode(' ', $allowedExtensions);
+        $allowedExtensionsArray = explode(' ', $allowedExtensions);
         $file_formats = array();
 
-        if ($fileextensions != '') {
-            $file_formats_ = explode(' ', $fileextensions);
+        if ($fileExtensions != '') {
+            $file_formats_ = explode(' ', $fileExtensions);
             foreach ($file_formats_ as $f) {
-                if (in_array($f, $allowedExts))
+                if (in_array($f, $allowedExtensionsArray))
                     $file_formats[] = $f;
             }
         } else
-            $file_formats = $allowedExts;
+            $file_formats = $allowedExtensionsArray;
 
         return implode(' ', $file_formats);
     }
 
-    protected static function getAcceptableMimeTypes($filetypes_str = "")
+    protected static function getAcceptableMimeTypes($filetypes_str = ""): array
     {
         if ($filetypes_str == '') {
             $app = Factory::getApplication();
             $jinput = $app->input;
             $fieldname = $jinput->getCmd('fieldname', '');
 
-            $tablerow = ESFileUploader::getTableRawByItemid();
-            $estableid = $tablerow['id'];
+            $tableRow = ESFileUploader::getTableRawByItemid();
+            $tableId = $tableRow['id'];
 
-            $esfield = Fields::getFieldAsocByName($fieldname, $estableid);
+            $fieldRow = Fields::getFieldAsocByName($fieldname, $tableId);
 
-            if ($esfield['type'] == 'image')
+            if ($fieldRow['type'] == 'image')
                 return array('image/gif', 'image/png', 'image/jpeg', 'image/svg+xml', 'image/webp');
 
-            $fieldparams = $esfield['typeparams'];
-            $parts = JoomlaBasicMisc::csv_explode(',', $fieldparams, '"', false);
+            $fieldParams = $fieldRow['typeparams'];
+            $parts = JoomlaBasicMisc::csv_explode(',', $fieldParams);
 
             if (!isset($parts[2]))
                 return array();
@@ -186,15 +183,14 @@ class ESFileUploader
         $params = $menuItem->params;
 
         $esTable = new ESTables;
-        $establename = $params->get('establename');
-        if ($establename == '')
+        $tableName = $params->get('tableName');
+        if ($tableName == '')
             return 0;
 
-        return $esTable->getTableRowByNameAssoc($establename);
-
+        return $esTable->getTableRowByNameAssoc($tableName);
     }
 
-    public static function get_mime_type($filename)
+    public static function get_mime_type($filename): string
     {
         $filename_parts = explode('.', $filename);
         $filename_extension = strtolower(end($filename_parts));
@@ -276,25 +272,21 @@ class ESFileUploader
             'ods' => 'application/vnd.oasis.opendocument.spreadsheet',
         );
 
-        if (isset($mimeType[$filename_extension])) {
-            return $mimeType[$filename_extension];
-        } else {
-            return 'application/octet-stream';
-        }
+        return $mimeType[$filename_extension] ?? 'application/octet-stream';
     }
 
-    protected static function deleteOldFiles()
+    protected static function deleteOldFiles(): void
     {
         $path = JPATH_SITE . DIRECTORY_SEPARATOR . 'tmp';
 
-        $oldfiles = scandir($path);
+        $oldFiles = scandir($path);
 
-        foreach ($oldfiles as $oldfile) {
-            if ($oldfile != '.' and $oldfile != '..') {
-                $filename = $path . DIRECTORY_SEPARATOR . $oldfile;
+        foreach ($oldFiles as $oldFile) {
+            if ($oldFile != '.' and $oldFile != '..') {
+                $filename = $path . DIRECTORY_SEPARATOR . $oldFile;
 
-                if (strpos($oldfile, '.htm') === false and file_exists($filename)) {
-                    $parts = explode('_', $oldfile);
+                if (!str_contains($oldFile, '.htm') and file_exists($filename)) {
+                    $parts = explode('_', $oldFile);
                     if ($parts[0] == 'ct' and count($parts) >= 4) {
                         $t = (int)$parts[1];
 
@@ -308,7 +300,7 @@ class ESFileUploader
         }
     }
 
-    public static function getfile_SafeMIME($fileid)
+    public static function getfile_SafeMIME($fileId)
     {
         $ct = new CT;
 
@@ -318,50 +310,56 @@ class ESFileUploader
             //This will let PRO version users to upload zip files, please note that it will check if the file is zip or not (mime type).
             //If not then regular Joomla input method will be used
 
-            if (!isset($_FILES[$fileid])) {
+            if (!isset($_FILES[$fileId])) {
                 require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables'
                     . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'importcsv.php');
 
-                return json_encode(['error' => 'Failed to open file.']);
+                if ($ct->Env->clean)
+                    die(json_encode(['error' => 'Failed to open file.']));
+                else
+                    return [];
             }
 
-            $file = $_FILES[$fileid];
-            if ($file === null)
-                return json_encode(['error' => 'File is empty.']);
+            $file = $_FILES[$fileId];
 
             $mime = mime_content_type($file["tmp_name"]);//read mime type
 
             if ($mime != 'application/zip')//if not zip file
             {
-                $file = $jinput->files->get($fileid); //not zip -  regular Joomla input method will be used
+                $file = $jinput->files->get($fileId); //not zip -  regular Joomla input method will be used
 
                 if (!is_array($file) or count($file) == 0) //regular joomla imput method blocked custom table structure json file, because it may contain javascript
                 {
-                    $file = $_FILES[$fileid];//get file instance using php method - not safe, but we will validate it later
+                    $file = $_FILES[$fileId];//get file instance using php method - not safe, but we will validate it later
 
                     $handle = fopen($file["tmp_name"], "rb");
-                    if (FALSE === $handle)
-                        return json_encode(['error' => 'Failed to open file.']);
+                    if (FALSE === $handle) {
+                        if ($ct->Env->clean)
+                            die(json_encode(['error' => 'Failed to open file.']));
+                        else
+                            return [];
+                    }
 
-                    $magicnumber = '<customtablestableexport>';//to prove that this is Custom Tables Structure JSON file.
-                    $l = strlen($magicnumber);
+                    $magicNumber = '<customtablestableexport>';//to prove that this is Custom Tables Structure JSON file.
+                    $l = strlen($magicNumber);
                     $file_content = fread($handle, $l);
                     fclose($handle);
 
-                    if ($mime == 'text/plain' and $file_content == $magicnumber) {
-                        //All good
-                        //This is Custom Tables structure import file
-                    } else
-                        return json_encode(['error' => 'Illigal mime type (' . $mime . ') or content.']);
+                    if (!($mime == 'text/plain' and $file_content == $magicNumber)) {
+                        if ($ct->Env->clean)
+                            die(json_encode(['error' => 'Illegal mime type (' . $mime . ') or content.']));
+                        else
+                            return [];
+                    }
                 }
             }
         } else
-            $file = $jinput->files->get($fileid);
+            $file = $jinput->files->get($fileId);
 
         return $file;
     }
 
-    public static function checkZIPfile_X($filenamepath, $fileextension)
+    public static function checkZIPfile_X($fileNamePath, $fileExtension)
     {
         //Checks the file zip archive is actually a docx or xlsx or pptx
         //https://www.filesignatures.net/index.php?page=all&currentpage=6&order=EXT
@@ -379,7 +377,7 @@ class ESFileUploader
 
         $l = strlen($magicnumbers[0]);
 
-        $handle = fopen($filenamepath, "rb");
+        $handle = fopen($fileNamePath, "rb");
         if (FALSE === $handle) {
             exit("Failed to open file.");
         }
@@ -389,18 +387,18 @@ class ESFileUploader
 
         $c = substr($content, 0, $l);
         if ($c == $magicnumbers[0] or $c == $magicnumbers[1]) {
-            if ($fileextension == 'docx')
+            if ($fileExtension == 'docx')
                 return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-            elseif ($fileextension == 'xlsx')
+            elseif ($fileExtension == 'xlsx')
                 return 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-            elseif ($fileextension == 'pptx')
+            elseif ($fileExtension == 'pptx')
                 return 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
         }
 
         return 'application/zip';
     }
 
-    public static function normalizeString($str = '')
+    public static function normalizeString($str = ''): string
     {
         //String sanitizer for filename
         //https://stackoverflow.com/a/1.2.636
@@ -413,7 +411,6 @@ class ESFileUploader
         $str = preg_replace("/(&)([a-z])([a-z]+;)/i", '$2', $str);
         $str = str_replace(' ', '-', $str);
         $str = rawurlencode($str);
-        $str = str_replace('%', '-', $str);
-        return $str;
+        return str_replace('%', '-', $str);
     }
 }

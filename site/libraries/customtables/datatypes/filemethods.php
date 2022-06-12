@@ -30,37 +30,37 @@ class CustomTablesFileMethods
         return $file_ext;
     }
 
-    static public function getFileExtByID($establename, $estableid, $fileboxname, $file_id)
+    static public function getFileExtByID($tableName, $fileboxname, $file_id)
     {
         $db = Factory::getDBO();
 
-        $fileboxtablename = '#__customtables_filebox_' . $establename . '_' . $fileboxname;
-        $query = 'SELECT file_ext FROM ' . $fileboxtablename . ' WHERE fileid=' . (int)$file_id . ' LIMIT 1';
+        $fileBoxTableName = '#__customtables_filebox_' . $tableName . '_' . $fileboxname;
+        $query = 'SELECT file_ext FROM ' . $fileBoxTableName . ' WHERE fileid=' . (int)$file_id . ' LIMIT 1';
         $db->setQuery($query);
-        $filerows = $db->loadObjectList();
-        if (count($filerows) != 1)
+        $fileRows = $db->loadObjectList();
+        if (count($fileRows) != 1)
             return '';
 
-        $rec = $filerows[0];
+        $rec = $fileRows[0];
         return $rec->file_ext;
     }
 
-    static public function DeleteFileBoxFiles($filebox_table_name, $estableid, $fileboxname, $typeparams)
+    static public function DeleteFileBoxFiles($fileBoxTableName, $estableid, $fileBoxName, $typeparams)
     {
-        $filefolder = JPATH_SITE . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $typeparams);
+        $fileFolder = JPATH_SITE . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $typeparams);
 
         $db = Factory::getDBO();
 
-        $query = 'SELECT fileid FROM ' . $filebox_table_name;
+        $query = 'SELECT fileid FROM ' . $fileBoxTableName;
         $db->setQuery($query);
 
         $filerows = $db->loadObjectList();
 
         foreach ($filerows as $filerow) {
             CustomTablesFileMethods::DeleteExistingFileBoxFile(
-                $filefolder,
+                $fileFolder,
                 $estableid,
-                $fileboxname,
+                $fileBoxName,
                 $filerow->fileid,
                 $filerow->file_ext
             );

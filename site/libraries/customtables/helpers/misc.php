@@ -469,7 +469,7 @@ class JoomlaBasicMisc
             $htmlresult = $row[str_replace('_', '', $field)];
         } else {
             $fieldrow = Fields::FieldRowByName($field, $ct->Table->fields);
-            if (count($fieldrow) > 0) {
+            if (!is_null($fieldrow)) {
 
                 $options_list = explode(',', $options);
 

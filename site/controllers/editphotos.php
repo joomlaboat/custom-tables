@@ -38,15 +38,15 @@ if (!CTUser::CheckAuthorization($ct)) {
                 $msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_IMAGE_NOT_ADDED');
             }
 
-            $establename = Factory::getApplication()->input->getCmd('establename');
-            $galleryname = Factory::getApplication()->input->get('galleryname', '', 'CMD');
+            $tableName = Factory::getApplication()->input->getCmd('establename');
+            $galleryName = Factory::getApplication()->input->get('galleryname', '', 'CMD');
             $listing_id = Factory::getApplication()->input->get("listing_id", 0, 'INT');
             $returnto = Factory::getApplication()->input->get('returnto', '', 'BASE64');
             $Itemid = Factory::getApplication()->input->get('Itemid', 0, 'INT');
 
             $link = 'index.php?option=com_customtables&view=editphotos'
-                . '&establename=' . $establename
-                . '&galleryname=' . $galleryname
+                . '&establename=' . $tableName
+                . '&galleryname=' . $galleryName
                 . '&listing_id=' . $listing_id
                 . '&returnto=' . $returnto
                 . '&Itemid=' . $Itemid;
@@ -64,15 +64,15 @@ if (!CTUser::CheckAuthorization($ct)) {
                 $msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_IMAGE_NOT_DELETED');
             }
 
-            $establename = Factory::getApplication()->input->getCmd('establename');
-            $galleryname = Factory::getApplication()->input->get('galleryname', '', 'CMD');
+            $tableName = Factory::getApplication()->input->getCmd('establename');
+            $galleryName = Factory::getApplication()->input->get('galleryname', '', 'CMD');
             $listing_id = Factory::getApplication()->input->get("listing_id", 0, 'INT');
             $returnto = Factory::getApplication()->input->get('returnto', '', 'BASE64');
             $Itemid = Factory::getApplication()->input->get('Itemid', 0, 'INT');
 
             $link = 'index.php?option=com_customtables&view=editphotos'
-                . '&establename=' . $establename
-                . '&galleryname=' . $galleryname
+                . '&establename=' . $tableName
+                . '&galleryname=' . $galleryName
                 . '&listing_id=' . $listing_id
                 . '&returnto=' . $returnto
                 . '&Itemid=' . $Itemid;

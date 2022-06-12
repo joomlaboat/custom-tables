@@ -15,7 +15,7 @@ defined('_JEXEC') or die('Restricted access');
 
 class JHTMLESComboTree
 {
-    static function render($prefix, $establename, $esfieldname, $optionname, $langpostfix, $value, $cssclass = "", $onchange = "",
+    static function render($prefix, $tableName, $fieldName, $optionname, $langpostfix, $value, $cssclass = "", $onchange = "",
                            $where = "", $innerjoin = false, $isRequired = false, $requirementdepth = 0, $place_holder = '', $valuerule = '', $valuerulecaption = '')
     {
         $jinput = Factory::getApplication()->input;
@@ -24,7 +24,7 @@ class JHTMLESComboTree
             . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'combotreeloader.php');
 
         $MyESDynCombo = new ESDynamicComboTree();
-        $MyESDynCombo->initialize($establename, $esfieldname, $optionname, $prefix);
+        $MyESDynCombo->initialize($tableName, $fieldName, $optionname, $prefix);
         $MyESDynCombo->cssclass = $cssclass;
         $MyESDynCombo->onchange = $onchange;
         $MyESDynCombo->innerjoin = $innerjoin;

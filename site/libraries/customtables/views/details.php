@@ -168,9 +168,9 @@ class Details
                     $row = $this->makeEmptyRecord($row[$this->ct->Table->realidfieldname], $new_row['listing_published']);
 
                     //Copy values
-                    foreach ($this->ct->Table->fields as $ESField) {
-                        if (isset($new_row[$ESField['realfieldname']]))
-                            $row[$ESField['realfieldname']] = $new_row[$ESField['realfieldname']];
+                    foreach ($this->ct->Table->fields as $fieldRow) {
+                        if (isset($new_row[$fieldRow['realfieldname']]))
+                            $row[$fieldRow['realfieldname']] = $new_row[$fieldRow['realfieldname']];
                     }
                 }
 
@@ -183,9 +183,9 @@ class Details
 
     protected function getTypeFieldName($type)
     {
-        foreach ($this->ct->Table->fields as $ESField) {
-            if ($ESField['type'] == $type)
-                return $ESField['realfieldname'];
+        foreach ($this->ct->Table->fields as $fieldRow) {
+            if ($fieldRow['type'] == $type)
+                return $fieldRow['realfieldname'];
         }
         return '';
     }

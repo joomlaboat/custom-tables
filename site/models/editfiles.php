@@ -105,7 +105,7 @@ class CustomTablesModelEditFiles extends JModelLegacy
 
         foreach ($file_arr as $fileid) {
             if ($fileid != '') {
-                $file_ext = CustomTablesFileMethods::getFileExtByID($this->ct->Table->tablename, $this->ct->Table->tableid, $this->fileboxname, $fileid);
+                $file_ext = CustomTablesFileMethods::getFileExtByID($this->ct->Table->tablename, $this->fileboxname, $fileid);
 
                 CustomTablesFileMethods::DeleteExistingFileBoxFile($this->fileboxfolder, $this->ct->Table->tableid, $this->fileboxname, $fileid, $file_ext);
 

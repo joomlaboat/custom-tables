@@ -106,7 +106,6 @@ class tagProcessor_Catalog
                         $galleryRows = array();
                         $FileBoxRows = array();
                         $option = array();
-                        //getValueByType(CT &$ct,$ESField, $row, &$option_list,&$getGalleryRows,&$getFileBoxRows)
                         $GroupTitle = tagProcessor_Value::getValueByType($ct, $FieldRow, $row, $option, $galleryRows, $FileBoxRows);
                     }
 

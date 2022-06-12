@@ -15,17 +15,17 @@ require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARAT
 
 class JHTMLMultiSelector
 {
-    public static function render($prefix, $parentid, $parentname, $langpostfix, $establename, $esfieldname, $field_value, $attribute = '', $place_holder = '')
+    public static function render($prefix, $parentid, $parentname, $langpostfix, $tableName, $fieldName, $field_value, $attribute = '', $place_holder = '')
     {
-        $ObjectName = $prefix . 'esmulti_' . $establename . '_' . $esfieldname;
+        $ObjectName = $prefix . 'esmulti_' . $tableName . '_' . $fieldName;
         $ms = new ESMultiSelector;
         $result = '';
         $ItemList = "";
         $count = 0;
-        $listhtml = $ms->getMultiSelector($parentid, $parentname, $langpostfix, $ObjectName, $ItemList, $count, $field_value, $place_holder);
+        $listHTML = $ms->getMultiSelector($parentid, $parentname, $langpostfix, $ObjectName, $ItemList, $count, $field_value, $place_holder);
 
         if ($count > 0)
-            $result .= $listhtml;
+            $result .= $listHTML;
 
         return $result;
     }

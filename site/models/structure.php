@@ -33,7 +33,7 @@ class CustomTablesModelStructure extends JModel
     var $row_break;
 
     var $esTable;
-    var $establename;
+    var $tableName;
     var $estableid;
     var $fieldname;
     var $fieldtype;
@@ -52,9 +52,9 @@ class CustomTablesModelStructure extends JModel
         $params = $app->getParams();
 
         if ($this->ct->Env->jinput->get('establename', '', 'CMD'))
-            $this->establename = $this->ct->Env->jinput->get('establename', '', 'CMD');
+            $this->tableName = $this->ct->Env->jinput->get('establename', '', 'CMD');
         else
-            $this->establename = $params->get('establename');
+            $this->tableName = $params->get('establename');
 
         if ($this->ct->Env->jinput->get('esfieldname', '', 'CMD')) {
             $esfn = $this->ct->Env->jinput->get('esfieldname', '', 'CMD');
@@ -64,7 +64,7 @@ class CustomTablesModelStructure extends JModel
             $this->fieldname = strtolower(trim(preg_replace("/[^a-zA-Z]/", "", $esfn)));
         }
 
-        $tablerow = $this->esTable->getTableRowByName($this->establename);
+        $tablerow = $this->esTable->getTableRowByName($this->tableName);
         $this->estableid = $tablerow->id;
 
         // Get pagination request variables
@@ -147,12 +147,12 @@ class CustomTablesModelStructure extends JModel
         if ($this->ListingJoin) {
             $query = 'SELECT optionname, '
                 . 'CONCAT("",familytreestr,".",optionname) as theoptionname, '
-                . 'CONCAT( title' . $this->ct->Languages->Postfix . '," (",COUNT(#__customtables_table_' . $this->establename . '.id),")") AS optiontitle, '
+                . 'CONCAT( title' . $this->ct->Languages->Postfix . '," (",COUNT(#__customtables_table_' . $this->tableName . '.id),")") AS optiontitle, '
                 . 'image, '
                 . 'imageparams '
 
                 . 'FROM #__customtables_options '
-                . ' INNER JOIN #__customtables_table_' . $this->establename
+                . ' INNER JOIN #__customtables_table_' . $this->tableName
                 . ' ON INSTR(es_' . $this->esfieldname . ', CONCAT(familytreestr,".",optionname))'
                 . ' ' . $where
                 . ' GROUP BY #__customtables_options.id'

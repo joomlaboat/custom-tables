@@ -19,7 +19,7 @@ use CustomTables\TwigProcessor;
 
 class JHTMLESRecords
 {
-    static public function render($typeparams, $control_name, $value, $establename, $theField, $selector, $filter, $style = '',
+    static public function render($typeparams, $control_name, $value, $tableName, $theField, $selector, $filter, $style = '',
                                   $cssClass = '', $attribute = '', $dynamic_filter = '', $sortByField = '', $langPostfix = '', $place_holder = ''): string
     {
         $htmlresult = '';
@@ -32,18 +32,18 @@ class JHTMLESRecords
         else
             $allowUnpublished = false;
 
-        $ct = self::getCT($establename, $filter, $allowUnpublished, $sortByField, $field);
+        $ct = self::getCT($tableName, $filter, $allowUnpublished, $sortByField, $field);
         $ct_noFilter = null;
 
         if ($selectorPair[0] == 'single' or $selectorPair[0] == 'multibox')
-            $ct_noFilter = self::getCT($establename, '', $allowUnpublished, $sortByField, $field);
+            $ct_noFilter = self::getCT($tableName, '', $allowUnpublished, $sortByField, $field);
 
         $valueArray = explode(',', $value);
 
         if (!str_contains($field, ':')) {
             //without layout
 
-            $real_field_row = Fields::getFieldRowByName($field, '', $establename);
+            $real_field_row = Fields::getFieldRowByName($field, '', $tableName);
 
             switch ($selectorPair[0]) {
 
@@ -52,7 +52,7 @@ class JHTMLESRecords
                     $control_name_postfix = '';
 
                     $htmlresult .= JHTMLESRecords::getSingle($ct, $ct_noFilter, $valueArray, $field, $control_name,
-                        $control_name_postfix, $style, $cssClass, $attribute, $value, $establename, $dynamic_filter, $place_holder);
+                        $control_name_postfix, $style, $cssClass, $attribute, $value, $tableName, $dynamic_filter, $place_holder);
 
                     break;
 
@@ -145,7 +145,7 @@ class JHTMLESRecords
                 case 'multibox' :
 
                     $htmlresult .= JHTMLESRecords::getMultiBox($ct, $ct_noFilter, $valueArray, $field,
-                        $control_name, $style, $cssClass, $attribute, $establename, $dynamic_filter, $langPostfix, $place_holder);
+                        $control_name, $style, $cssClass, $attribute, $tableName, $dynamic_filter, $langPostfix, $place_holder);
 
                     break;
 
@@ -200,7 +200,7 @@ class JHTMLESRecords
                 } else
                     $layoutcode_tmp = $layoutcode;
 
-                $twig = new TwigProcessor($ct, $layoutcode_tmp );
+                $twig = new TwigProcessor($ct, $layoutcode_tmp);
                 $htmlresult .= $twig->process($row);
 
                 $htmlresult .= '</label>';
@@ -214,9 +214,9 @@ class JHTMLESRecords
         return $htmlresult;
     }
 
-    static protected function getCT($establename, $filter, $allowUnpublished, $sortByField, $field): ?CT
+    static protected function getCT($tableName, $filter, $allowUnpublished, $sortByField, $field): ?CT
     {
-        $menuParams = self::prepareParams($establename, $filter, $allowUnpublished, $sortByField, $field);
+        $menuParams = self::prepareParams($tableName, $filter, $allowUnpublished, $sortByField, $field);
 
         $ct = new CT;
         $ct->setParams($menuParams, true);
@@ -245,11 +245,11 @@ class JHTMLESRecords
         return $ct;
     }
 
-    static protected function prepareParams($establename, $filter, $allowUnpublished, $sortByField, $field)
+    static protected function prepareParams($tableName, $filter, $allowUnpublished, $sortByField, $field)
     {
         $paramsArray = array();
         $paramsArray['limit'] = 10000;
-        $paramsArray['establename'] = $establename;
+        $paramsArray['establename'] = $tableName;
         $paramsArray['filter'] = str_replace('****quote****', '"', $filter);
 
         if ($allowUnpublished)//0 - published only; 1 - hidden only; 2 - Any
@@ -272,7 +272,7 @@ class JHTMLESRecords
 
     static protected function getSingle(CT &$ct, CT &$ct_noFilter, $valueArray,
                                            $field, $control_name, $control_name_postfix, $style, $cssClass, $attribute, string $value,
-                                           $establename, $dynamic_filter = '', $place_holder = ''): string
+                                           $tableName, $dynamic_filter = '', $place_holder = ''): string
     {
 
         $htmlresult = '';
@@ -291,7 +291,7 @@ class JHTMLESRecords
                     break;
                 }
             }
-            $htmlresult .= LinkJoinFilters::getFilterBox($establename, $dynamic_filter, $control_name, $filterValue, $control_name_postfix);
+            $htmlresult .= LinkJoinFilters::getFilterBox($tableName, $dynamic_filter, $control_name, $filterValue, $control_name_postfix);
 
         }
 
@@ -372,9 +372,9 @@ class JHTMLESRecords
     }
 
     static protected function getMultiBox(CT &$ct, &$ct_noFilter, $valuearray, $field,
-                                             $control_name, $style, $cssclass, $attribute, $establename, $dynamic_filter, $langPostfix = '', $place_holder = ''): string
+                                             $control_name, $style, $cssclass, $attribute, $tableName, $dynamic_filter, $langPostfix = '', $place_holder = ''): string
     {
-        $real_field_row = Fields::getFieldRowByName($field, '', $establename);
+        $real_field_row = Fields::getFieldRowByName($field, '', $tableName);
 
         if ($real_field_row->type == "multilangstring" or $real_field_row->type == "multilangtext")
             $real_field = $real_field_row->realfieldname . $langPostfix;
@@ -403,7 +403,7 @@ class JHTMLESRecords
 		';
 
         $single_box = JHTMLESRecords::getSingle($ct, $ct_noFilter, $valuearray, $field,
-            $control_name, '_selector', $style, $cssclass, $attribute, '', $establename, $dynamic_filter, $place_holder);
+            $control_name, '_selector', $style, $cssclass, $attribute, '', $tableName, $dynamic_filter, $place_holder);
 
         $icon_path = JURI::root(true) . '/components/com_customtables/libraries/customtables/media/images/icons/';
         $htmlresult .= '<div style="padding-bottom:20px;"><div style="width:90%;" id="' . $control_name . '_box"></div>'

@@ -15,10 +15,10 @@ use Joomla\CMS\Factory;
 
 class CT_FieldTypeTag_imagegallery
 {
-    public static function getGalleryRows($establename, $galleryName, $listing_id)
+    public static function getGalleryRows($tableName, $galleryName, $listing_id)
     {
         $db = Factory::getDBO();
-        $photoTableName = '#__customtables_gallery_' . $establename . '_' . $galleryName;
+        $photoTableName = '#__customtables_gallery_' . $tableName . '_' . $galleryName;
 
         $query = 'SELECT photoid, photo_ext FROM ' . $photoTableName . ' WHERE listingid=' . (int)$listing_id . ' ORDER BY ordering, photoid';
         $db->setQuery($query);

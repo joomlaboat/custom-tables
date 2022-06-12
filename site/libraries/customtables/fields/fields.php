@@ -45,7 +45,6 @@ class Field
     function __construct(CT &$ct, $fieldrow, $row = null)
     {
         $this->ct = &$ct;
-
         $this->id = $fieldrow['id'];
         $this->type = $fieldrow['type'];
         $this->fieldrow = $fieldrow;
@@ -170,11 +169,10 @@ class Fields
         else
             $realtablename = $tablename;
 
+        $realtablename = str_replace('#__', $db->getPrefix(), $realtablename);
         if ($db->serverType == 'postgresql') {
-            $realtablename = str_replace('#__', $db->getPrefix(), $realtablename);
             $query = 'SELECT column_name, data_type, is_nullable, column_default FROM information_schema.columns WHERE table_name = ' . $db->quote($realtablename);
         } else {
-            $realtablename = str_replace('#__', $db->getPrefix(), $realtablename);
 
             $conf = Factory::getConfig();
             $database = $conf->get('db');
@@ -259,15 +257,15 @@ class Fields
             //Create table
             //get CT table name if possible
 
-            $establename = str_replace($db->getPrefix() . 'customtables_table', '', $realtablename);
-            $esfieldname = str_replace($ct->Env->field_prefix, '', $realfieldname);
-            Fields::CreateImageGalleryTable($establename, $esfieldname);
+            $tableName = str_replace($db->getPrefix() . 'customtables_table', '', $realtablename);
+            $fieldName = str_replace($ct->Env->field_prefix, '', $realfieldname);
+            Fields::CreateImageGalleryTable($tableName, $fieldName);
         } elseif ($fieldtype == 'filebox') {
             //Create table
             //get CT table name if possible
-            $establename = str_replace($db->getPrefix() . 'customtables_table', '', $realtablename);
-            $esfieldname = str_replace($ct->Env->field_prefix, '', $realfieldname);
-            Fields::CreateFileBoxTable($establename, $esfieldname);
+            $tableName = str_replace($db->getPrefix() . 'customtables_table', '', $realtablename);
+            $fieldName = str_replace($ct->Env->field_prefix, '', $realfieldname);
+            Fields::CreateFileBoxTable($tableName, $fieldName);
         }
     }
 
@@ -319,7 +317,7 @@ class Fields
 
         $fieldrow = Fields::getFieldRow($fieldid);
 
-        if (!is_object($fieldrow) or count($fieldrow) == 0)
+        if (is_null($fieldrow))
             return false;
 
         $field = new Field($ct, $fieldrow);
@@ -1272,21 +1270,21 @@ class Fields
         return $field_objects;
     }
 
-    public static function shortFieldObject($esfield, $value, $options): array
+    public static function shortFieldObject($fieldRow, $value, $options): array
     {
         $field = [];
-        $field['fieldname'] = $esfield['fieldname'];
-        $field['title'] = $esfield['fieldtitle'];
-        $field['defaultvalue'] = $esfield['defaultvalue'];
-        $field['description'] = $esfield['description'];
-        $field['isrequired'] = $esfield['isrequired'];
-        $field['isdisabled'] = $esfield['isdisabled'];
-        $field['type'] = $esfield['type'];
+        $field['fieldname'] = $fieldRow['fieldname'];
+        $field['title'] = $fieldRow['fieldtitle'];
+        $field['defaultvalue'] = $fieldRow['defaultvalue'];
+        $field['description'] = $fieldRow['description'];
+        $field['isrequired'] = $fieldRow['isrequired'];
+        $field['isdisabled'] = $fieldRow['isdisabled'];
+        $field['type'] = $fieldRow['type'];
 
-        $typeparams = JoomlaBasicMisc::csv_explode(',', $esfield['typeparams'], '"', false);
+        $typeparams = JoomlaBasicMisc::csv_explode(',', $fieldRow['typeparams'], '"', false);
         $field['typeparams'] = $typeparams;
-        $field['valuerule'] = $esfield['valuerule'];
-        $field['valuerulecaption'] = $esfield['valuerulecaption'];
+        $field['valuerule'] = $fieldRow['valuerule'];
+        $field['valuerulecaption'] = $fieldRow['valuerulecaption'];
 
         $field['value'] = $value;
 

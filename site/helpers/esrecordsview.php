@@ -19,7 +19,7 @@ require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARAT
 
 class JHTMLESRecordsView
 {
-    public static function render($value, $establename, $field, $selector, $filter, $sortByField = ""): ?string
+    public static function render($value, $tableName, $field, $selector, $filter, $sortByField = ""): ?string
     {
         if ($value == '' or $value == ',' or $value == ',,')
             return '';
@@ -29,7 +29,7 @@ class JHTMLESRecordsView
 
         $paramsArray = array();
         $paramsArray['limit'] = 0;
-        $paramsArray['establename'] = $establename;
+        $paramsArray['establename'] = $tableName;
         $paramsArray['filter'] = $filter;
         $paramsArray['showpublished'] = 2;//0 - published only; 1 - hidden only;
         $paramsArray['showpagination'] = 0;

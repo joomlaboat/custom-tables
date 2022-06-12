@@ -123,9 +123,9 @@ class CustomtablesModelListofRecords extends JModelList
         if ($search != '') {
             $wheres = [];
 
-            foreach ($this->ct->Table->fields as $esfield) {
-                if ($esfield['type'] == 'string') {
-                    $realfieldname = $esfield['realfieldname'];
+            foreach ($this->ct->Table->fields as $fieldRow) {
+                if ($fieldRow['type'] == 'string') {
+                    $realfieldname = $fieldRow['realfieldname'];
                     $where = $db->quote('%' . $db->escape($search) . '%');
                     $wheres[] = ('(' . $this->ct->Table->realtablename . '.' . $realfieldname . ' LIKE ' . $where . ')');
                 }

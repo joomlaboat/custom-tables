@@ -936,15 +936,15 @@ class Filtering
 
 class LinkJoinFilters
 {
-    static public function getFilterBox($establename, $dynamic_filter_fieldname, $control_name, $filtervalue, $control_name_postfix = ''): string
+    static public function getFilterBox($tableName, $dynamic_filter_fieldname, $control_name, $filterValue, $control_name_postfix = ''): string
     {
-        $fieldrow = Fields::getFieldRowByName($dynamic_filter_fieldname, 0, $establename);
+        $fieldrow = Fields::getFieldRowByName($dynamic_filter_fieldname, 0, $tableName);
 
         if ($fieldrow === null)
             return '';
 
         if ($fieldrow->type == 'sqljoin' or $fieldrow->type == 'records')
-            return LinkJoinFilters::getFilterElement_SqlJoin($fieldrow->typeparams, $control_name, $filtervalue, $control_name_postfix);
+            return LinkJoinFilters::getFilterElement_SqlJoin($fieldrow->typeparams, $control_name, $filterValue, $control_name_postfix);
 
         return '';
     }

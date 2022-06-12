@@ -251,8 +251,8 @@ class CustomTablesModelEditItem extends JModelLegacy
                     $this->row = $this->makeEmptyRecord($this->listing_id, $new_row['listing_published']);
 
                     //Copy values
-                    foreach ($this->ct->Table->fields as $ESField)
-                        $this->row[$ESField['realfieldname']] = $new_row[$ESField['realfieldname']];
+                    foreach ($this->ct->Table->fields as $fieldRow)
+                        $this->row[$fieldRow['realfieldname']] = $new_row[$fieldRow['realfieldname']];
                 }
             }
         }
@@ -260,9 +260,9 @@ class CustomTablesModelEditItem extends JModelLegacy
 
     function getTypeFieldName($type)
     {
-        foreach ($this->ct->Table->fields as $ESField) {
-            if ($ESField['type'] == $type)
-                return $ESField['realfieldname'];
+        foreach ($this->ct->Table->fields as $fieldRow) {
+            if ($fieldRow['type'] == $type)
+                return $fieldRow['realfieldname'];
         }
 
         return '';
@@ -309,8 +309,8 @@ class CustomTablesModelEditItem extends JModelLegacy
 
         $row['listing_published'] = $published;
 
-        foreach ($this->ct->Table->fields as $ESField)
-            $row[$ESField['realfieldname']] = '';
+        foreach ($this->ct->Table->fields as $fieldRow)
+            $row[$fieldRow['realfieldname']] = '';
 
         return $row;
     }

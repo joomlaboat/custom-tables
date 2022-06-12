@@ -31,7 +31,7 @@ class JHTMLESSqlJoin
             return '';
         }
 
-        $establename = $typeparams[0];
+        $tableName = $typeparams[0];
 
         if (isset($typeparams[1]))
             $value_field = $typeparams[1];
@@ -68,7 +68,7 @@ class JHTMLESSqlJoin
         } else
             $selector = 'dropdown';
 
-        if (ESTables::getTableID($establename) == '') {
+        if (ESTables::getTableID($tableName) == '') {
             Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_TABLE_NOT_FOUND'), 'error');
             return '';
         }
@@ -81,7 +81,7 @@ class JHTMLESSqlJoin
 
         //Get Database records
         $ct = new CT;
-        self::get_searchresult($ct, $filter, $establename, $order_by_field, $allowunpublished);
+        self::get_searchresult($ct, $filter, $tableName, $order_by_field, $allowunpublished);
 
         //Process records depending on field type and layout
         $list_values = self::get_List_Values($ct, $value_field, $langpostfix, $dynamic_filter);
@@ -101,7 +101,7 @@ class JHTMLESSqlJoin
 
             return $new_list;
         } elseif ($selector == 'dropdown' or $force_dropdown or $dynamic_filter) {
-            $htmlresult .= self::renderDynamicFilter($ct, $value, $establename, $dynamic_filter, $control_name);
+            $htmlresult .= self::renderDynamicFilter($ct, $value, $tableName, $dynamic_filter, $control_name);
             $htmlresult .= self::renderDropdownSelector_Box($list_values, $value, $control_name, $cssclass, $attribute, $place_holder, $dynamic_filter, $addNoValue);
         } else
             $htmlresult .= self::renderRadioSelector_Box($list_values, $value, $control_name, $cssclass, $attribute, $value_field);
@@ -109,13 +109,13 @@ class JHTMLESSqlJoin
         return $htmlresult;
     }
 
-    static protected function get_searchresult(CT &$ct, $filter, $establename, $order_by_field, $allowunpublished): bool
+    static protected function get_searchresult(CT &$ct, $filter, $tableName, $order_by_field, $allowUnpublished): bool
     {
         $paramsArray = array();
 
         $paramsArray['limit'] = 0;
-        $paramsArray['establename'] = $establename;
-        if ($allowunpublished)
+        $paramsArray['establename'] = $tableName;
+        if ($allowUnpublished)
             $paramsArray['showpublished'] = 2;//0 - published only; 1 - hidden only; 2 - Any
         else
             $paramsArray['showpublished'] = 0;//0 - published only; 1 - hidden only; 2 - Any
@@ -193,7 +193,7 @@ class JHTMLESSqlJoin
                 } else
                     $v = $layoutcode;
 
-                $twig = new TwigProcessor($ct, $v );
+                $twig = new TwigProcessor($ct, $v);
                 $v = $twig->process($row);
             } else
                 $v = JoomlaBasicMisc::processValue($field, $ct, $row);//TODO try to replace processValue function
@@ -233,20 +233,20 @@ class JHTMLESSqlJoin
         return $htmlresult;
     }
 
-    static protected function renderDynamicFilter(CT &$ct, $value, $establename, $dynamic_filter, $control_name): string
+    static protected function renderDynamicFilter(CT &$ct, $value, $tableName, $dynamic_filter, $control_name): string
     {
         $htmlresult = '';
 
         if ($dynamic_filter != '') {
-            $filtervalue = '';
+            $filterValue = '';
             foreach ($ct->Records as $row) {
                 if ($row[$ct->Table->realidfieldname] == $value) {
-                    $filtervalue = $row[$ct->Env->field_prefix . $dynamic_filter];
+                    $filterValue = $row[$ct->Env->field_prefix . $dynamic_filter];
                     break;
                 }
             }
 
-            $htmlresult .= LinkJoinFilters::getFilterBox($establename, $dynamic_filter, $control_name, $filtervalue);
+            $htmlresult .= LinkJoinFilters::getFilterBox($tableName, $dynamic_filter, $control_name, $filterValue);
         }
 
         return $htmlresult;

@@ -397,12 +397,12 @@ class ImportTables
         return $rows[0];
     }
 
-    protected static function processFields($tableid, $establename, $fields, &$msg)
+    protected static function processFields($tableid, $tableName, $fields, &$msg)
     {
         $ct = new CT;
 
         foreach ($fields as $field) {
-            $fieldid = ImportTables::processField($ct, $tableid, $establename, $field, $msg);
+            $fieldid = ImportTables::processField($ct, $tableid, $tableName, $field, $msg);
             if ($fieldid != 0) {
                 //Good
             } else {
@@ -414,15 +414,15 @@ class ImportTables
         return true;
     }
 
-    protected static function processField(CT &$ct, $tableid, $establename, &$field_new, &$msg)
+    protected static function processField(CT &$ct, $tableid, $tableName, &$field_new, &$msg)
     {
         //This function creates the table field and returns field's id.
         //If field with same name already exists then existing field will be updated and it's ID will be returned.
 
         $field_new['tableid'] = $tableid;//replace tableid
-        $esfieldname = $field_new['fieldname'];
+        $fieldName = $field_new['fieldname'];
 
-        $field_old = Fields::getFieldAsocByName($esfieldname, $tableid);
+        $field_old = Fields::getFieldAsocByName($fieldName, $tableid);
         if (is_array($field_old) and count($field_old) > 0) {
             $fieldid = $field_old['id'];
             ImportTables::updateRecords('fields', $field_new, $field_old);
@@ -433,7 +433,7 @@ class ImportTables
                 //Field added
                 //Lets create mysql field
                 $PureFieldType = Fields::getPureFieldType($field_new['type'], $field_new['typeparams']);
-                Fields::addField($ct, '#__customtables_table_' . $establename, $ct->Env->field_prefix . $esfieldname, $field_new['type'], $PureFieldType, $field_new['fieldtitle']);
+                Fields::addField($ct, '#__customtables_table_' . $tableName, $ct->Env->field_prefix . $fieldName, $field_new['type'], $PureFieldType, $field_new['fieldtitle']);
             }
         }
         return $fieldid;
@@ -624,26 +624,26 @@ class ImportTables
         return 1;// Root
     }
 
-    protected static function processRecords($establename, $records): bool
+    protected static function processRecords($tableName, $records): bool
     {
-        $mysqltablename = '#__customtables_table_' . $establename;
+        $mySQLTableName = '#__customtables_table_' . $tableName;
 
         foreach ($records as $record) {
-            $record_old = ImportTables::getRecordByField($mysqltablename, 'id', $record['id'], false);//get record by id
+            $record_old = ImportTables::getRecordByField($mySQLTableName, 'id', $record['id'], false);//get record by id
 
             if ($record_old != 0)
-                ImportTables::updateRecords($mysqltablename, $record, $record_old, false, array(), true);//update single existing record
+                ImportTables::updateRecords($mySQLTableName, $record, $record_old, false, array(), true);//update single existing record
             else
-                $listing_id = ImportTables::insertRecords($mysqltablename, $record, false, array(), true);//insert single new record
+                ImportTables::insertRecords($mySQLTableName, $record, false, array(), true);//insert single new record
         }
 
         return true;
     }
 
-    public static function addMenu($title, $alias, $link, $menutype_or_title, $extension_name, $access_, $menuParamsString, $home = 0)
+    public static function addMenu($title, $alias, $link, $menuTypeOrTitle, $extension_name, $access_, $menuParamsString, $home = 0)
     {
-        $menuType = JoomlaBasicMisc::slugify($menutype_or_title);
-        ImportTables::addMenutypeIfNotExist($menuType, $menutype_or_title);
+        $menuType = JoomlaBasicMisc::slugify($menuTypeOrTitle);
+        ImportTables::addMenutypeIfNotExist($menuType, $menuTypeOrTitle);
 
         if ((int)$access_ == 0) {
             //Try to find id by name

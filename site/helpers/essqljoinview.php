@@ -19,14 +19,14 @@ require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARAT
 
 class JHTMLESSQLJoinView
 {
-    public static function render($value, $establename, $field, $filter)
+    public static function render($value, $tableName, $field, $filter)
     {
         if ($value == 0 or $value == '')
             return '';
 
         $paramsArray = array();
         $paramsArray['limit'] = 0;
-        $paramsArray['establename'] = $establename;
+        $paramsArray['establename'] = $tableName;
         $paramsArray['filter'] = $filter;
         $paramsArray['showpublished'] = 0;
         $paramsArray['showpagination'] = 0;

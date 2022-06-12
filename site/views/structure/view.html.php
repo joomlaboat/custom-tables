@@ -18,24 +18,26 @@ jimport('joomla.application.component.view');
 class CustomTablesViewStructure extends JView
 {
     var CT $ct;
+    var $Model;
+    var array $rows;
+    var $pagination;
+    var int $record_count;
+    var $linkable;
+    var string $fieldName;
+    var $row_break;
+    var $image_prefix;
+    var string $optionname;
 
     function display($tpl = null)
     {
         $this->Model = $this->getModel();
-
         $this->ct = $this->Model->ct;
-
         $this->rows = $this->Model->getStructure();
         $this->pagination = $this->Model->getPagination();
-
         $this->record_count = $this->Model->record_count;
-
         $this->linkable = $this->Model->linkable;
-
-        $this->esfieldname = $this->Model->esfieldname;
-
+        $this->fieldName = $this->Model->esfieldname;
         $this->row_break = $this->Model->row_break;
-
         $this->image_prefix = $this->Model->image_prefix;
         $this->optionname = $this->Model->optionname;
 

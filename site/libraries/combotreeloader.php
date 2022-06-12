@@ -53,12 +53,12 @@ if (!defined('_JEXEC')) {
 if ($independat) {
     require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'combotreeloader.php');
 
-    $establename = Factory::getApplication()->input->get('establename', '', 'CMD');
-    $esfieldname = Factory::getApplication()->input->get('esfieldname', '', 'CMD');
-    $optionname = Factory::getApplication()->input->getCmd('optionname');
+    $tableName = Factory::getApplication()->input->get('establename', '', 'CMD');
+    $fieldName = Factory::getApplication()->input->get('esfieldname', '', 'CMD');
+    $optionName = Factory::getApplication()->input->getCmd('optionname');
 
     $MyESDynCombo = new ESDynamicComboTree();
-    $MyESDynCombo->initialize($establename, $esfieldname, $optionname, Factory::getApplication()->input->getString('prefix'));
+    $MyESDynCombo->initialize($tableName, $fieldName, $optionName, Factory::getApplication()->input->getString('prefix'));
     $MyESDynCombo->langpostfix = Factory::getApplication()->input->getCmd('langpostfix', '');
     $MyESDynCombo->cssclass = Factory::getApplication()->input->getString('cssclass');
     $MyESDynCombo->onchange = Factory::getApplication()->input->getString('onchange');
@@ -90,8 +90,8 @@ class ESDynamicComboTree
     var CT $ct;
 
     var $ObjectName;
-    var $establename;
-    var $esfieldname;
+    var $tableName;
+    var $fieldName;
     var $listingtable;
     var $optionname;
     var $cssclass = '';
@@ -109,16 +109,16 @@ class ESDynamicComboTree
         $this->ct = new CT;
     }
 
-    function initialize($tablename, $fieldname, $optionname, $prefix)
+    function initialize($tablename, $fieldname, $optionname, $prefix): void
     {
         $this->requirementdepth = 0;
         $this->prefix = $prefix;
 
-        $this->establename = $tablename;
-        $this->esfieldname = $fieldname;
+        $this->tableName = $tablename;
+        $this->fieldName = $fieldname;
         $this->optionname = $optionname;
-        $this->listingtable = '#__customtables_table_' . $this->establename;
-        $this->ObjectName = $this->prefix . 'combotree_' . $this->establename . '_' . $this->esfieldname;
+        $this->listingtable = '#__customtables_table_' . $this->tableName;
+        $this->ObjectName = $this->prefix . 'combotree_' . $this->tableName . '_' . $this->fieldName;
     }
 
     function renderComboBox(&$filterwhere, &$urlwhere, &$filterwherearr, &$urlwherearr, $simpleList = false,
@@ -133,7 +133,7 @@ class ESDynamicComboTree
 
         do {
             if ($this->innerjoin)
-                $rows = $this->getOptionListWhere($temp_parent, $filterwhere, $this->esfieldname);
+                $rows = $this->getOptionListWhere($temp_parent, $filterwhere, $this->fieldName);
             else
                 $rows = $this->getOptionList($temp_parent);
 
@@ -159,7 +159,7 @@ class ESDynamicComboTree
                 $temp_parent .= '.' . Factory::getApplication()->input->getCmd($object_name);
                 $this->parentname = $temp_parent;
 
-                $this->getInstrWhereAdv($object_name, $temp_parent, $filterwhere, $urlwhere, $filterwherearr, $urlwherearr, $this->esfieldname);
+                $this->getInstrWhereAdv($object_name, $temp_parent, $filterwhere, $urlwhere, $filterwherearr, $urlwherearr, $this->fieldName);
             } else
                 break;
 
@@ -249,8 +249,8 @@ class ESDynamicComboTree
                 . '\'' . $objectname . '\', '
                 . '\'' . $this->ObjectName . '\', '
                 . '\'' . $optional . '\', '
-                . '\'' . $this->establename . '\', '
-                . '\'' . $this->esfieldname . '\', '
+                . '\'' . $this->tableName . '\', '
+                . '\'' . $this->fieldName . '\', '
                 . '\'' . $this->optionname . '\', '
                 . '\'' . $this->innerjoin . '\', '
                 . '\'' . urlencode($this->cssclass) . '\', '

@@ -33,17 +33,17 @@ class CT_FieldTypeTag_log
         $version_size = 0;
 
         //get creation date
-        foreach ($ct->Table->fields as $ESField) {
-            if ($ESField['type'] == 'creationtime') {
-                $version_date = strtotime($row[$ct->Env->field_prefix . $ESField['fieldname']]);
+        foreach ($ct->Table->fields as $fieldRow) {
+            if ($fieldRow['type'] == 'creationtime') {
+                $version_date = strtotime($row[$ct->Env->field_prefix . $fieldRow['fieldname']]);
                 break;
             }
         }
 
         //get original author
-        foreach ($ct->Table->fields as $ESField) {
-            if ($ESField['type'] == 'userid') {
-                $version_author = JHTML::_('ESUserView.render', $row[$ct->Env->field_prefix . $ESField['fieldname']], '');
+        foreach ($ct->Table->fields as $fieldRow) {
+            if ($fieldRow['type'] == 'userid') {
+                $version_author = JHTML::_('ESUserView.render', $row[$ct->Env->field_prefix . $fieldRow['fieldname']], '');
                 break;
             }
         }
@@ -147,9 +147,9 @@ class CT_FieldTypeTag_log
     {
         $version_size = 0;
 
-        foreach ($ct->Table->fields as $ESField) {
-            if ($ESField['type'] != 'log' and $ESField['type'] != 'dummy') {
-                $field_name = $ct->Env->field_prefix . $ESField['fieldname'];
+        foreach ($ct->Table->fields as $fieldRow) {
+            if ($fieldRow['type'] != 'log' and $fieldRow['type'] != 'dummy') {
+                $field_name = $ct->Env->field_prefix . $fieldRow['fieldname'];
                 if (isset($decoded_data_row[$field_name]))
                     $version_size += strlen($decoded_data_row[$field_name]);
             }
