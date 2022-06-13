@@ -127,7 +127,7 @@ class Twig_Html_Tags
         $max_file_size = JoomlaBasicMisc::file_upload_max_size();
 
         $fileid = JoomlaBasicMisc::generateRandomString();
-        $fieldid = '9999';//some unique number
+        $fieldid = '9999999';//some unique number. TODO
         $objectname = 'importcsv';
 
         JHtml::_('behavior.formvalidator');
@@ -579,19 +579,25 @@ class Twig_Html_Tags
         else
             $class .= ' btn button-apply btn-primary';
 
-        if ($this->ct->Env->toolbaricons != '') {
-            $img = '<i class=\'' . $this->ct->Env->toolbaricons . ' fa-search\' data-icon=\'' . $this->ct->Env->toolbaricons . ' fa-search\' title=\'' . $label . '\'></i>';
-            $labelHtml = ($label !== '' ? '<span style=\'margin-left:10px;\'>' . $label . '</span>' : '');
-        } else {
-            $img = '';
+		if($label == strip_tags($label))
+		{
+			if ($this->ct->Env->toolbaricons != '') {
+				$img = '<i class=\'' . $this->ct->Env->toolbaricons . ' fa-search\' data-icon=\'' . $this->ct->Env->toolbaricons . ' fa-search\' title=\'' . $label . '\'></i>';
+				$labelHtml = ($label !== '' ? '<span style=\'margin-left:10px;\'>' . $label . '</span>' : '');
+			} else {
+				$img = '';
 
-            if ($label == '')
-                $label = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SEARCH');
+				if ($label == '')
+					$label = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SEARCH');
 
-            $labelHtml = ($label !== '' ? '<span>' . $label . '</span>' : '');
-        }
-
-        return '<button class=\'' . $class . '\' onClick=\'ctSearchBoxDo()\'>' . $img . $labelHtml . '</button>';
+				$labelHtml = ($label !== '' ? '<span>' . $label . '</span>' : '');
+			}
+			return '<button class=\'' . $class . '\' onClick=\'ctSearchBoxDo()\'>' . $img . $labelHtml . '</button>';
+		}
+		else
+		{
+			return '<button class=\'' . $class . '\' onClick=\'ctSearchBoxDo()\'>' . $label . '</button>';
+		}
     }
 
     function message($text, $type = 'Message')
