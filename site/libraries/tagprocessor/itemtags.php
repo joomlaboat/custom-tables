@@ -9,7 +9,9 @@
  **/
 
 // no direct access
-defined('_JEXEC') or die('Restricted access');
+if (!defined('_JEXEC') and !defined('WPINC')) {
+    die('Restricted access');
+}
 
 use CustomTables\CT;
 use CustomTables\Fields;

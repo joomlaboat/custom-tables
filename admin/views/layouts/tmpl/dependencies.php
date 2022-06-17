@@ -13,7 +13,9 @@
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 
-defined('_JEXEC') or die('Restricted access');
+if (!defined('_JEXEC') and !defined('WPINC')) {
+    die('Restricted access');
+}
 
 function renderDependencies($layout_row)
 {

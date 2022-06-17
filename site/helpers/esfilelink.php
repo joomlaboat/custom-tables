@@ -11,7 +11,9 @@
 // Check to ensure this file is included in Joomla!
 use Joomla\CMS\Language\Text;
 
-defined('_JEXEC') or die('Restricted access');
+if (!defined('_JEXEC') and !defined('WPINC')) {
+    die('Restricted access');
+}
 
 require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR . 'catalog.php');
 

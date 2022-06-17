@@ -11,19 +11,21 @@
 
 namespace CustomTables\Integrity;
 
-defined('_JEXEC') or die('Restricted access');
+if (!defined('_JEXEC') and !defined('WPINC')) {
+    die('Restricted access');
+}
 
+use CustomTables;
 use CustomTables\CT;
 use CustomTables\Fields;
+use CustomTables\IntegrityChecks;
 
 //use CustomTables\Integrity\IntegrityFields;
 
 use \Joomla\CMS\Factory;
-use \Joomla\CMS\Uri\Uri;
-
 use \ESTables;
 
-class IntegrityCoreTables extends \CustomTables\IntegrityChecks
+class IntegrityCoreTables extends IntegrityChecks
 {
     public static function checkCoreTables(&$ct)
     {

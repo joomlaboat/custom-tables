@@ -9,7 +9,9 @@
  **/
 
 // no direct access
-defined('_JEXEC') or die('Restricted access');
+if (!defined('_JEXEC') and !defined('WPINC')) {
+    die('Restricted access');
+}
 
 
 echo '<h5>' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FOUND') . ': ' . $this->record_count . ' ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RESULT_S') . '</h5>';

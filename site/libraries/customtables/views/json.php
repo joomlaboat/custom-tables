@@ -16,7 +16,9 @@ use LayoutProcessor;
 use tagProcessor_Catalog;
 use tagProcessor_CatalogTableView;
 
-defined('_JEXEC') or die('Restricted access');
+if (!defined('_JEXEC') and !defined('WPINC')) {
+    die('Restricted access');
+}
 
 class ViewJSON
 {

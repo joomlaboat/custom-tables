@@ -10,6 +10,11 @@
 
 namespace CustomTables;
 
+// no direct access
+if (!defined('_JEXEC') and !defined('WPINC')) {
+    die('Restricted access');
+}
+
 use Joomla\Registry\Registry;
 use tagProcessor_General;
 use tagProcessor_Item;
@@ -31,7 +36,8 @@ use JHTML;
 
 use CTTypes;
 
-JHTML::addIncludePath(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'helpers');
+if (defined('_JEXEC'))
+    JHTML::addIncludePath(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'helpers');
 
 class Inputbox
 {

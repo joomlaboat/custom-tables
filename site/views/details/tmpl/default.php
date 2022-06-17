@@ -9,7 +9,9 @@
  **/
 
 // no direct access
-defined('_JEXEC') or die('Restricted access');
+if (!defined('_JEXEC') and !defined('WPINC')) {
+    die('Restricted access');
+}
 
 $this->ct->loadJSAndCSS();
 //$this->ct->document->addScript(JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/base64.js');

@@ -11,7 +11,9 @@
 // No direct access to this file
 use Joomla\CMS\Language\Text;
 
-defined('_JEXEC') or die('Restricted access');
+if (!defined('_JEXEC') and !defined('WPINC')) {
+    die('Restricted access');
+}
 
 ?>
 <tr>

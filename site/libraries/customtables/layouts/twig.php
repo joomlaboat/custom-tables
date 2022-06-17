@@ -11,7 +11,9 @@
 namespace CustomTables;
 
 // no direct access
-defined('_JEXEC') or die('Restricted access');
+if (!defined('_JEXEC') and !defined('WPINC')) {
+    die('Restricted access');
+}
 
 use Exception;
 use JoomlaBasicMisc;
@@ -22,7 +24,8 @@ use Twig\TwigFunction;
 
 use CT_FieldTypeTag_image;
 
-$types_path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR;
+
+$types_path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR;
 require_once($types_path . '_type_image.php');
 
 class TwigProcessor

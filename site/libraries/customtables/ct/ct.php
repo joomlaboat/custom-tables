@@ -11,7 +11,9 @@
 namespace CustomTables;
 
 // no direct access
-defined('_JEXEC') or die('Restricted access');
+if (!defined('_JEXEC') and !defined('WPINC')) {
+    die('Restricted access');
+}
 
 use Joomla\CMS\Application\WebApplication;
 use Joomla\CMS\Document\Document;
@@ -40,7 +42,6 @@ class CT
     var Document $document;
     var $db;
     var array $editFields;
-
     var array $LayoutVariables;
 
     function __construct($menuParams = null, $blockExternalVars = true, $ModuleId = null)

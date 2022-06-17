@@ -9,7 +9,9 @@
  **/
 
 // No direct access to this file
-defined('_JEXEC') or die('Restricted access');
+if (!defined('_JEXEC') and !defined('WPINC')) {
+    die('Restricted access');
+}
 
 use CustomTables\CT;
 use CustomTables\Layouts;
@@ -181,8 +183,6 @@ class CustomtablesControllerRecords extends JControllerForm
     {        // In the absense of better information, revert to the component permissions.
         return parent::allowAdd($data);
     }
-
-
 
 
     protected function allowEdit($data = array(), $key = 'id')

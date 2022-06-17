@@ -11,12 +11,12 @@
 
 namespace CustomTables;
 
-defined('_JEXEC') or die('Restricted access');
+if (!defined('_JEXEC') and !defined('WPINC')) {
+    die('Restricted access');
+}
 
 use CustomTables\Integrity\IntegrityCoreTables;
 use CustomTables\Integrity\IntegrityTables;
-use CustomTables\Integrity\IntegrityFields;
-use CustomTables\Integrity\IntegrityOptions;
 
 class IntegrityChecks
 {

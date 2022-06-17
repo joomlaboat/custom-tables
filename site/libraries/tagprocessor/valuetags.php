@@ -9,7 +9,9 @@
  **/
 
 // no direct access
-defined('_JEXEC') or die('Restricted access');
+if (!defined('_JEXEC') and !defined('WPINC')) {
+    die('Restricted access');
+}
 
 use CustomTables\CT;
 use CustomTables\CTUser;
@@ -24,7 +26,9 @@ require_once($types_path . '_type_log.php');
 require_once($types_path . '_type_records.php');
 require_once($types_path . '_type_sqljoin.php');
 
-defined('_JEXEC') or die('Restricted access');
+if (!defined('_JEXEC') and !defined('WPINC')) {
+    die('Restricted access');
+}
 
 use CustomTables\Field;
 use Joomla\CMS\Factory;

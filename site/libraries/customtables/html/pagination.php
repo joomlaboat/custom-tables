@@ -9,7 +9,9 @@
  **/
 
 // no direct access
-defined('_JEXEC') or die('Restricted access');
+if (!defined('_JEXEC') and !defined('WPINC')) {
+    die('Restricted access');
+}
 
 use Joomla\CMS\Factory;
 
@@ -24,7 +26,7 @@ use Joomla\CMS\Factory;
 class JESPagination extends JObject
 {
     /**
-     * The record number to start dislpaying from.
+     * The record number to start displaying from.
      *
      * @var    integer
      * @since  11.1

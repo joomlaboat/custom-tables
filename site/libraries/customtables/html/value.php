@@ -11,7 +11,9 @@
 namespace CustomTables;
 
 // no direct access
-defined('_JEXEC') or die('Restricted access');
+if (!defined('_JEXEC') and !defined('WPINC')) {
+    die('Restricted access');
+}
 
 use CustomTables\DataTypes\Tree;
 use CustomTablesImageMethods;
@@ -33,7 +35,8 @@ use Joomla\CMS\Uri\Uri;
 
 use JHTML;
 
-$types_path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR;
+$types_path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR;
+
 require_once($types_path . '_type_ct.php');
 require_once($types_path . '_type_file.php');
 require_once($types_path . '_type_filebox.php');

@@ -13,7 +13,9 @@
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 
-defined('_JEXEC') or die('Restricted access');
+if (!defined('_JEXEC') and !defined('WPINC')) {
+    die('Restricted access');
+}
 
 // import Joomla controllerform library
 jimport('joomla.application.component.controllerform');

@@ -10,7 +10,9 @@
 
 
 // no direct access
-defined('_JEXEC') or die('Restricted access');
+if (!defined('_JEXEC') and !defined('WPINC')) {
+    die('Restricted access');
+}
 
 if ($this->ct->Env->frmt and is_null($this->ct->Params->listing_id)) //there is no need to have a header if we are loading a single record.
 {

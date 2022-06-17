@@ -9,7 +9,9 @@
  **/
 
 // no direct access
-defined('_JEXEC') or die('Restricted access');
+if (!defined('_JEXEC') and !defined('WPINC')) {
+    die('Restricted access');
+}
 
 use CustomTables\CT;
 use CustomTables\TwigProcessor;
@@ -27,7 +29,7 @@ class CT_FieldTypeTag_sqljoin
 
         $row = $ct->Table->loadRecord($listing_id);
 
-        $twig = new TwigProcessor($ct, $layoutcode );
+        $twig = new TwigProcessor($ct, $layoutcode);
         return $twig->process($row);
     }
 
@@ -63,7 +65,7 @@ class CT_FieldTypeTag_sqljoin
         $join_ct->getTable($typeparams[0]);
         $row = $join_ct->Table->loadRecord($listing_id);
 
-        $twig = new TwigProcessor($join_ct, $result );
+        $twig = new TwigProcessor($join_ct, $result);
         return $twig->process($row);
     }
 }

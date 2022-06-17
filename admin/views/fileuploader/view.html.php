@@ -11,7 +11,9 @@
 // no direct access
 use Joomla\CMS\Factory;
 
-defined('_JEXEC') or die('Restricted access');
+if (!defined('_JEXEC') and !defined('WPINC')) {
+    die('Restricted access');
+}
 
 // Import Joomla! libraries
 jimport('joomla.application.component.view');

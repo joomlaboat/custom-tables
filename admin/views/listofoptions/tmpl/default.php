@@ -12,7 +12,9 @@
 
 use Joomla\CMS\Factory;
 
-defined('_JEXEC') or die('Restricted access');
+if (!defined('_JEXEC') and !defined('WPINC')) {
+    die('Restricted access');
+}
 
 echo '<div id="j-sidebar-container" class="span2">';
 echo $this->sidebar;

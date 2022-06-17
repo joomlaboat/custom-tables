@@ -115,7 +115,7 @@
              twigclass="html">
             <params>
                 <param name="label" label="Button Label" type="string" example="Search"
-                       description="The label of the button."/>
+                       description="The label of the button. Leaving the label parameter empty will produce an icon only (a magnifying glass). You can also pass HTML code as the label argument to control the button look completely. "/>
                 <param type="string" name="cssclass" label="CSS Class"
                        description="Name or names of CSS classes separated by space."/>
             </params>
@@ -144,7 +144,7 @@
              description="renders HTML Pagination Bar." twigclass="html"/>
 
         <tag name="orderby" label="Order By (Sort By) box" startchar="{" endchar="}" proversion="1"
-             description="renders HTML Order By select box." twigclass="html" />
+             description="renders HTML Order By select box." twigclass="html"/>
 
         <tag name="limit" label="Limit records per page" startchar="{" endchar="}" proversion="1"
              description="renders HTML Limit box to limit the number of records per page." twigclass="html">
@@ -229,33 +229,33 @@
 
         <tag name="checkbox" label="Checkbox" startchar="{" endchar="}"
              description="Renders the checkbox for batch toolbar"
-             twigreplacement="html.batch" twigreplacementparams='"checkbox"' Deprecated="1"/>
+             twigreplacement="html.batch" twigreplacementparams='"checkbox"' deprecated="1"/>
 
         <tag name="_if" label="If statement" startchar="[" endchar="]" separator=":" twigreplacestartchar="{% if "
-             twigreplaceendchar=" %}" Deprecated="1"/>
+             twigreplaceendchar=" %}" deprecated="1"/>
         <tag name="_endif" label="EndIf statement" startchar="[" endchar="]" separator=":"
-             twigsimplereplacement="{% endif %}" Deprecated="1"/>
+             twigsimplereplacement="{% endif %}" deprecated="1"/>
 
         <tag name="catalog" label="Catalog" description="Renders Catalog Page" startchar="{" endchar="}" separator=":"
-             Deprecated="1"
+             deprecated="1"
              twigreplacement="document.layout">
         </tag>
-        <tag name="date" label="Date" startchar="{" endchar="}" Deprecated="1"
+        <tag name="date" label="Date" startchar="{" endchar="}" deprecated="1"
              twigsimplereplacement="{{ 'now'|date('Y-m-d') }}"/>
-        <tag name="today" label="Today" startchar="{" endchar="}" Deprecated="1"
+        <tag name="today" label="Today" startchar="{" endchar="}" deprecated="1"
              twigsimplereplacement="{{ 'now'|date('Y-m-d') }}"/>
 
         <tag name="if" label="If statement" startchar="{" endchar="}" separator=":" twigreplacestartchar="{% if "
-             twigreplaceendchar=" %}" Deprecated="1"/>
+             twigreplaceendchar=" %}" deprecated="1"/>
         <tag name="endif" label="EndIf statement" startchar="{" endchar="}" separator=":"
-             twigsimplereplacement="{% endif %}" Deprecated="1"/>
+             twigsimplereplacement="{% endif %}" deprecated="1"/>
 
-        <tag name="gobackbutton" label="Go Back Button" startchar="{" endchar="}" separator=":" Deprecated="1"
+        <tag name="gobackbutton" label="Go Back Button" startchar="{" endchar="}" separator=":" deprecated="1"
              twigreplacestartchar="{{ html.goback(" twigreplaceendchar=") }}"/>
 
         <tag name="batchtoolbar" label="Batch Toolbar" repeatative="1" startchar="{" endchar="}"
              description="Renders the batch toolbar" hidedefaultexample="1"
-             twigreplacement="html.batch" Deprecated="1"/>
+             twigreplacement="html.batch" deprecated="1"/>
 
     </tagset>
 
@@ -373,7 +373,7 @@
         </tag>
 
         <tag name="jointable" label="Join Table - Table" startchar="{" endchar="}" proversion="1"
-             description="Returns the records from another table these that connected to currnet record and match the filter. Records will be formatted by selected layout."
+             description="Returns the records from another table these that connected to current record and match the filter. Records will be formatted by selected layout."
              twigclass="record">
             <params>
                 <param type="layout" name="layout" label="Catalog Layout" table=""
@@ -423,7 +423,7 @@
 
         <tag name="cart" label="Shopping Cart" startchar="{" endchar="}" hidedefaultexample="1"
              layouttypes="1,6,3,4,8,9,10" proversion="1"
-             description="Returns Shopping Cart item count or renders Add to Shoping Cart button" Deprecated="1">
+             description="Returns Shopping Cart item count or renders Add to Shopping Cart button" deprecated="1">
             <params>
                 <param name="option" label="Option" type="list" description="Select on of the available options.">
                     <option value="count" label="Item count"
@@ -445,15 +445,15 @@
             </params>
         </tag>
 
-        <tag name="id" label="record ID" startchar="{" endchar="}" twigreplacement="record.id" Deprecated="1"/>
+        <tag name="id" label="record ID" startchar="{" endchar="}" twigreplacement="record.id" deprecated="1"/>
         <!--<tag name="number" label="Record Number" startchar="{" endchar="}" twigreplacement="record.number" />-->
 
-        <tag name="sqljoin" label="Table Join" startchar="{" endchar="}" Deprecated="1"
+        <tag name="sqljoin" label="Table Join" startchar="{" endchar="}" deprecated="1"
              description="Returns value of joined table field." hidedefaultexample="1"
              twigreplacement="record.advancedjoin"/>
 
         <tag name="linknoreturn" label="No Return Link (Deprecated)" startchar="{" endchar="}"
-             description="Link to detailed page without «returnto» link (Deprecated)" Deprecated="1"
+             description="Link to detailed page without «returnto» link (Deprecated)" deprecated="1"
              twigreplacement="record.link" twigreplacementparams=""/>
 
     </tagset>
@@ -481,21 +481,21 @@
 
         <!-- Deprecated -->
 
-        <tag name="table" label="Table Info" startchar="{" endchar="}" Deprecated="1"
+        <tag name="table" label="Table Info" startchar="{" endchar="}" deprecated="1"
              description="Returns the current table related information" hidedefaultexample="1"
              twigreplacement="table"
              twigoptionsreplacement="1"/>
 
         <tag name="description" label="Table Description (Deprecated)" startchar="{" endchar="}"
-             description="(Deprecated) Returns table description." proversion="1" Deprecated="1"
+             description="(Deprecated) Returns table description." proversion="1" deprecated="1"
              twigreplacement="table.description"/>
 
         <tag name="tabletitle" label="Table Title (Deprecated)" startchar="{" endchar="}"
-             description="(Deprecated) Returns a title of the current table" proversion="1" Deprecated="1"
+             description="(Deprecated) Returns a title of the current table" proversion="1" deprecated="1"
              twigreplacement="table.title"/>
 
         <tag name="tabledescription" label="Table Description (Deprecated)" startchar="{" endchar="}"
-             description="(Deprecated) Returns a description of the current table" proversion="1" Deprecated="1"
+             description="(Deprecated) Returns a description of the current table" proversion="1" deprecated="1"
              twigreplacement="table.description">
             <params>
                 <param name="box" label="Show in message box"
@@ -644,19 +644,19 @@
 
         <!-- Deprecated -->
 
-        <tag name="user" label="User" startchar="{" endchar="}" Deprecated="1"
+        <tag name="user" label="User" startchar="{" endchar="}" deprecated="1"
              description="Returns current user info (if user is logged in)" hidedefaultexample="1"
              twigreplacement="user"
              twigoptionsreplacement="1"/>
 
         <tag name="currentuserid" label="Current User ID (Deprecated)" startchar="{" endchar="}"
-             description="(Deprecated) Returns Current User ID" proversion="1" Deprecated="1"
+             description="(Deprecated) Returns Current User ID" proversion="1" deprecated="1"
              twigreplacement="user.id"/>
 
         <tag name="currentusertype" label="Current User Type (Deprecated)" startchar="{" endchar="}"
              twigsimplereplacement="{{ user.usergroups()|join(',') }}"
              description="(Deprecated) Returns Current User Type (Super Administrator, Editor, etc...)" proversion="1"
-             Deprecated="1"/><!-- pro only -->
+             deprecated="1"/><!-- pro only -->
 
     </tagset>
 
@@ -878,11 +878,11 @@
 
         <tag name="returnto" label="Encoded Current Page Link (Deprecated)" startchar="{" endchar="}"
              description="(Deprecated) Use {currenturl:base64} instead. Returns Base64 encrypted Link to catalog page with an anchor to a current record."
-             proversion="1" Deprecated="1" twigreplacement="url.base64"/>
+             proversion="1" deprecated="1" twigreplacement="url.base64"/>
 
 
         <tag name="currenturl" label="Current URL (Deprecated)" startchar="{" endchar="}" hidedefaultexample="1"
-             Deprecated="1"
+             deprecated="1"
              description="Returns current URL or any query parameter, it can also be base64 encoded if you include that keyword."
              twigreplacement="url"
              twigmapname="option"
@@ -907,7 +907,7 @@
             </params>
         </tag>
 
-        <tag name="websiteroot" label="Website Root" startchar="{" endchar="}" Deprecated="1"
+        <tag name="websiteroot" label="Website Root" startchar="{" endchar="}" deprecated="1"
              description="Returns website root path (https://example.com/)" twigreplacement="url.root">
             <params>
                 <param name="include_host" label="Include Host" description="Include Website protocol, host, port etc."
@@ -920,7 +920,7 @@
             </params>
         </tag>
 
-        <tag name="server" label="Server Info" startchar="{" endchar="}" Deprecated="1"
+        <tag name="server" label="Server Info" startchar="{" endchar="}" deprecated="1"
              description="Returns Sanitized (String) Server Environment value - $_SERVER" proversion="1"
              hidedefaultexample="1" twigreplacement="url.server"><!-- pro only -->
         </tag>
@@ -929,7 +929,7 @@
 
     <!-- Document Tags -->
     <tagset name="document" label="Document"
-            description="Document Tags to manipate current web page or to set system variables."
+            description="Document Tags to manipulate current web page or to set system variables."
             priority="3">
 
         <tag name="setpagetitle" label="Set Page Title" startchar="{" endchar="}" twigclass="document"
@@ -989,13 +989,13 @@
 
         <!-- Deprecated -->
 
-        <tag name="pagetitle" label="Set Page Title" startchar="{" endchar="}" Deprecated="1"
+        <tag name="pagetitle" label="Set Page Title" startchar="{" endchar="}" deprecated="1"
              twigreplacement="document.setPageTitle"/>
-        <tag name="headtag" label="HTML Document Head Tag" startchar="{" endchar="}" Deprecated="1"
+        <tag name="headtag" label="HTML Document Head Tag" startchar="{" endchar="}" deprecated="1"
              twigreplacement="document.setHeadTag"/>
-        <tag name="metakeywords" label="Set Meta Keywords" startchar="{" endchar="}" Deprecated="1"
+        <tag name="metakeywords" label="Set Meta Keywords" startchar="{" endchar="}" deprecated="1"
              twigreplacement="document.setMetaKeywords"/>
-        <tag name="metadescription" label="Set Meta Description" startchar="{" endchar="}" Deprecated="1"
+        <tag name="metadescription" label="Set Meta Description" startchar="{" endchar="}" deprecated="1"
              twigreplacement="document.setMetaDescription"/>
 
     </tagset>
@@ -1003,10 +1003,10 @@
     <!-- Available in PRO version and anywhere -->
 
     <tagset name="plugins" label="Plugins" description="Custom Tables Plugins." priority="3" proversion="1"
-            Deprecated="1">
+            deprecated="1">
 
         <tag name="tab" label="Tabs" startchar="{" endchar="} html code {/tabs}"
-             description="" hidedefaultexample="1" proversion="1" Deprecated="1">
+             description="" hidedefaultexample="1" proversion="1" deprecated="1">
             <params>
                 <param name="title" label="Title" type="string" description="Tab label" examplenoquotes="1"
                        example="Tab 1} First Tab Content {tab:Tab 2} Second Tab content{/tabs"/>

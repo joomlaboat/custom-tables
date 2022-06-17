@@ -11,7 +11,9 @@
 namespace CustomTables;
 
 // no direct access
-defined('_JEXEC') or die('Restricted access');
+if (!defined('_JEXEC') and !defined('WPINC')) {
+    die('Restricted access');
+}
 
 use JEventDispatcher;
 use JoomlaBasicMisc;
@@ -579,25 +581,22 @@ class Twig_Html_Tags
         else
             $class .= ' btn button-apply btn-primary';
 
-		if($label == strip_tags($label))
-		{
-			if ($this->ct->Env->toolbaricons != '') {
-				$img = '<i class=\'' . $this->ct->Env->toolbaricons . ' fa-search\' data-icon=\'' . $this->ct->Env->toolbaricons . ' fa-search\' title=\'' . $label . '\'></i>';
-				$labelHtml = ($label !== '' ? '<span style=\'margin-left:10px;\'>' . $label . '</span>' : '');
-			} else {
-				$img = '';
+        if ($label == strip_tags($label)) {
+            if ($this->ct->Env->toolbaricons != '') {
+                $img = '<i class=\'' . $this->ct->Env->toolbaricons . ' fa-search\' data-icon=\'' . $this->ct->Env->toolbaricons . ' fa-search\' title=\'' . $label . '\'></i>';
+                $labelHtml = ($label !== '' ? '<span style=\'margin-left:10px;\'>' . $label . '</span>' : '');
+            } else {
+                $img = '';
 
-				if ($label == '')
-					$label = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SEARCH');
+                if ($label == '')
+                    $label = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SEARCH');
 
-				$labelHtml = ($label !== '' ? '<span>' . $label . '</span>' : '');
-			}
-			return '<button class=\'' . $class . '\' onClick=\'ctSearchBoxDo()\'>' . $img . $labelHtml . '</button>';
-		}
-		else
-		{
-			return '<button class=\'' . $class . '\' onClick=\'ctSearchBoxDo()\'>' . $label . '</button>';
-		}
+                $labelHtml = ($label !== '' ? '<span>' . $label . '</span>' : '');
+            }
+            return '<button class=\'' . $class . '\' onClick=\'ctSearchBoxDo()\'>' . $img . $labelHtml . '</button>';
+        } else {
+            return '<button class=\'' . $class . '\' onClick=\'ctSearchBoxDo()\'>' . $label . '</button>';
+        }
     }
 
     function message($text, $type = 'Message')

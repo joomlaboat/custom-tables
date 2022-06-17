@@ -9,7 +9,9 @@
  **/
 
 // no direct access
-defined('_JEXEC') or die('Restricted access');
+if (!defined('_JEXEC') and !defined('WPINC')) {
+    die('Restricted access');
+}
 
 use Joomla\CMS\Factory;
 
@@ -73,7 +75,7 @@ class CT_FieldTypeTag_records
         foreach ($CleanSearchResult as $row) {
             $row['_number'] = $number;
 
-            $twig = new TwigProcessor($ct, $layoutcode );
+            $twig = new TwigProcessor($ct, $layoutcode);
             $htmlresult .= $twig->process($row);
 
             $number++;

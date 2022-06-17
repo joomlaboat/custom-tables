@@ -10,7 +10,9 @@
  **/
 
 // No direct access to this file
-defined('_JEXEC') or die('Restricted access');
+if (!defined('_JEXEC') and !defined('WPINC')) {
+    die('Restricted access');
+}
 
 use CustomTables\CT;
 use CustomTables\Fields;
@@ -376,7 +378,7 @@ class CustomtablesModelTables extends JModelAdmin
         if ($data['customtablename'] == '-new-') {
             $data['customtablename'] = $tablename;
             $data['customidfield'] = 'id';
-             
+
             if (parent::save($data)) {
 
                 ESTables::createTableIfNotExists($database, $dbprefix, $tablename, $tabletitle, $data['customtablename']);

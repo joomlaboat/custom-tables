@@ -2,7 +2,7 @@
 <fieldtypes>
 
     <type ct_name="alias" name="alias" label="Alias (For SEO Links)"
-          description="Alias field that can be used insted of listing_id for SEO purpose." ct_alias="alias"
+          description="Alias field that can be used instead of listing_id for SEO purpose." ct_alias="alias"
           disabled="false" ct_special="false" priority="1">
         <params>
         </params>
@@ -42,7 +42,7 @@
     </type>
 
     <type ct_name="color" name="color" label="Color"
-          description="Provides Color Picker functionality in the Edit Form or hexidecimal value as output."
+          description="Provides Color Picker functionality in the Edit Form or hexidecimal value as an output."
           ct_alias="color" disabled="false" ct_special="false" priority="2">
         <editparams name="color" label="Format" description="Color Picker format.">
             <params>
@@ -51,7 +51,7 @@
             </params>
         </editparams>
 
-        <valueparams name="color" label="Color Output Parameters" description="Fromat color code.">
+        <valueparams name="color" label="Color Output Parameters" description="Format color code.">
             <params>
                 <param name="format" label="Format"
                        description="Return formats: HEX is #rrggbb or #rrggbbaa, RGB is rgb(r,g,b) or rgbs(r,g,b,a)"
@@ -295,7 +295,7 @@
                 <param name="listformat" label="List Format" example="," description="How to the output list format."
                        default="" type="list">
                     <option value="" label="Ordered List - OL and OL HTML tags"/>
-                    <option value="ul" label="Unorderd List - UL and LI HTML tags"/>
+                    <option value="ul" label="Unordered List - UL and LI HTML tags"/>
                     <option value="," label="Comma separated list"/>
                     <option value=";" label="The list separated by semicolon"/>
                 </param>
@@ -441,7 +441,7 @@
                    default="2" type="number" min="1" max="30"/>
             <param name="numberofdigits" label="Precision" description="Maximum number of digits (the precision)."
                    default="20" type="number" min="1" max="65"/>
-            <param name="smart" label="Smart Imput"
+            <param name="smart" label="Smart Input"
                    description="Allows input without pressing decimal point key. Example: to type [12.67]  just type [1267] The decimal point will be placed by itself."
                    default="" type="radio" options="|No,smart|Yes" example="smart"/>
         </params>
@@ -484,7 +484,7 @@
         </editparams>
     </type>
 
-    <type ct_name="id" label="Custom Record ID" description="Autoincremented ID. parameter: start from number"
+    <type ct_name="id" label="Custom Record ID" description="Autoincrement ID. parameter: start from number"
           priority="2">
         <params>
             <param name="startnumber" example="3" label="Start Number" description="The value starts from number"
@@ -577,7 +577,7 @@
                 </sizeparam>
             </param>
             <param name="additionalparams" label="Image Processing Methods"
-                   description="Image processing methods that will be applied to a newly uploaded image. This option availabel in Pro Version Only."
+                   description="Image processing methods that will be applied to a newly uploaded image. This option available in Pro Version Only."
                    default="" type="multiselect">
                 <!--<option value="" label="- Keep it as it is" />-->
                 <!--<option value="compare" label="Compare With Existing Images" description="Compares images, pixel by pixel, to avoid saving duplicates, shortcuts will be used. " hasextra="true" proversion="1">
@@ -729,7 +729,7 @@
         </editparams>
     </type>
 
-    <type ct_name="multilangtext" name="multilangtext" label="Multilingual Text Area (Multilple Lines)"
+    <type ct_name="multilangtext" name="multilangtext" label="Multilingual Text Area (Multiple Lines)"
           description="Provides a set of textarea boxes for data entry. One textarea box for each language."
           ct_alias="multilangtext" disabled="false" ct_special="false" priority="1">
         <params>
@@ -762,7 +762,7 @@
                 <param name="cleanquotes" label="Clean Quotes" description="Deletes all quotes from the text."
                        default="" type="radio" options="|No,true|Yes"/>
                 <param name="language" label="Language"
-                       description="Specify the language. Default front-end languege will be used if not specified."
+                       description="Specify the language. Default front-end language will be used if not specified."
                        default="" type="language"/>
             </params>
         </valueparams>
@@ -987,7 +987,7 @@
             <param name="table" label="Table" example="products"
                    description="Type the name of the Custom Table to join/link with." default="" type="table"/>
             <param name="fieldname" label="Field Name" example="title"
-                   description="Type the field name to return the value by defualt. You may type layout name instead. options: 'layout:layout_name' or 'tablelesslayout:layout_name'"
+                   description="Type the field name to return the value by default. You may type layout name instead. options: 'layout:layout_name' or 'tablelesslayout:layout_name'"
                    default="" type="string" tableobject="fieldtype_param_0"/>
             <param name="filter" label="Filter"
                    description="Limits records using filter. Example: [age>30] where age is a field in joining table"
@@ -1070,7 +1070,7 @@
         </editparams>
     </type>
 
-    <type ct_name="text" name="text" label="Text Area (Multilple Lines)"
+    <type ct_name="text" name="text" label="Text Area (Multiple Lines)"
           description="Provides a textarea box for data entry." ct_alias="text" disabled="false" ct_special="false"
           priority="1">
         <params>
@@ -1161,13 +1161,13 @@
             <param type="string" name="mustincludedomainname" label="Domain Name"
                    description="Must include following domain name, separate domain names with the comma. Example: youtube.com,youtu.be"/>
             <param type="radio" name="allowquery" label="Allow Query Parameters"
-                   description="Allow the URL links include query parameters like ?param1=blahblahblah" default=""
+                   description="Allow the URL links include query parameters like ?param1=apple" default=""
                    options="|Yes,false|No"/>
         </params>
     </type>
 
     <type ct_name="user" label="User"
-          description="Provides User Selection box.  It can also create a New User account if all nessesary fields are set: Name,Email,User Group(s)"
+          description="Provides User Selection box.  It can also create a New User account if all necessary fields are set: Name,Email,User Group(s)"
           priority="2">
         <params>
             <param name="usergroups" label="User Groups"

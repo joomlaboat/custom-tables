@@ -11,7 +11,9 @@
 // No direct access to this file access');
 use Joomla\CMS\Factory;
 
-defined('_JEXEC') or die('Restricted access');
+if (!defined('_JEXEC') and !defined('WPINC')) {
+    die('Restricted access');
+}
 
 $edit = "index.php?option=com_customtables&view=listofcategories&task=categories.edit";
 

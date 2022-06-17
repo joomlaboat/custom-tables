@@ -12,7 +12,9 @@
 use CustomTables\ImportTables;
 use Joomla\CMS\Factory;
 
-defined('_JEXEC') or die('Restricted access');
+if (!defined('_JEXEC') and !defined('WPINC')) {
+    die('Restricted access');
+}
 
 //------------- CURRENTLY UNUSED
 

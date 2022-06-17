@@ -13,7 +13,9 @@ namespace CustomTables;
 /* All tags already implemented using Twig */
 
 // no direct access
-defined('_JEXEC') or die('Restricted access');
+if (!defined('_JEXEC') and !defined('WPINC')) {
+    die('Restricted access');
+}
 
 use Exception;
 use JoomlaBasicMisc;

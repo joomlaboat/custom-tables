@@ -9,7 +9,9 @@
  **/
 
 // no direct access
-defined('_JEXEC') or die('Restricted access');
+if (!defined('_JEXEC') and !defined('WPINC')) {
+    die('Restricted access');
+}
 
 use CustomTables\CT;
 use CustomTables\TwigProcessor;
@@ -26,7 +28,7 @@ trait render_json
         $layout = str_replace("\n", '', $layout);
         $layout = str_replace("\r", '', $layout);
 
-        $twig = new TwigProcessor($ct, $layout );
+        $twig = new TwigProcessor($ct, $layout);
 
         $records = [];
 

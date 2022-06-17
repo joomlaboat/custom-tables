@@ -11,7 +11,9 @@
 namespace CustomTables\DataTypes;
 
 // no direct access
-defined('_JEXEC') or die('Restricted access');
+if (!defined('_JEXEC') and !defined('WPINC')) {
+    die('Restricted access');
+}
 
 use Joomla\CMS\Language\Text;
 use \JoomlaBasicMisc;

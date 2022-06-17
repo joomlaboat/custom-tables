@@ -1,6 +1,9 @@
 <?php
 
-defined('_JEXEC') or die('Restricted access');
+// If this file is called directly, abort.
+if (!defined('_JEXEC') and !defined('WPINC')) {
+    die('Restricted access');
+}
 
 use \Joomla\CMS\Factory;
 
@@ -11,17 +14,28 @@ if (!function_exists('str_contains')) {
     }
 }
 
-function CTLoader($inclide_utilities = false, $include_html = false)
+function CTLoader($inclide_utilities = false, $include_html = false, $PLUGIN_NAME_DIR = null)
 {
-    $params = JComponentHelper::getParams('com_customtables');
-    $loadTwig = $params->get('loadTwig');
+    if (defined('_JEXEC')) {
+        $params = JComponentHelper::getParams('com_customtables');
+        $loadTwig = $params->get('loadTwig');
+    }
 
-    if (($loadTwig === null or $loadTwig or Factory::getApplication()->getName() == 'administrator') and !class_exists('Twig')) {
-        $twig_file = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries'
-            . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
+    if (defined('_JEXEC'))
+        $libraryPath = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries';
+    else
+        $libraryPath = $PLUGIN_NAME_DIR . 'libraries';
+
+    if (!defined('CUSTOMTABLES_LIBRARIES_PATH'))
+        define('CUSTOMTABLES_LIBRARIES_PATH', $libraryPath);
+
+    if (!defined('_JEXEC') or ($loadTwig === null or $loadTwig or Factory::getApplication()->getName() == 'administrator') and !class_exists('Twig')) {
+
+        $twig_file = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
 
         require_once($twig_file);
     }
+
 
     $path = dirname(__FILE__) . DIRECTORY_SEPARATOR;
 
@@ -38,10 +52,12 @@ function CTLoader($inclide_utilities = false, $include_html = false)
     //require_once($path_helpers.'customtablesmisc.php');
     //require_once($path_helpers.'fields.php');
 
+
     require_once($path_helpers . 'imagemethods.php');
     require_once($path_helpers . 'email.php');
     require_once($path_helpers . 'user.php');
     require_once($path_helpers . 'misc.php');
+    require_once($path_helpers . 'common.php');
     require_once($path_helpers . 'tables.php');
     require_once($path_helpers . 'compareimages.php');
     require_once($path_helpers . 'findsimilarimage.php');
@@ -53,6 +69,7 @@ function CTLoader($inclide_utilities = false, $include_html = false)
         require_once($path_utilities . 'importtables.php');
         require_once($path_utilities . 'exporttables.php');
     }
+
 
     $pathDataTypes = $path . 'ct' . DIRECTORY_SEPARATOR;
     require_once($pathDataTypes . 'ct.php');
@@ -66,6 +83,8 @@ function CTLoader($inclide_utilities = false, $include_html = false)
 
     $pathDataTypes = $path . 'layouts' . DIRECTORY_SEPARATOR;
     require_once($pathDataTypes . 'layouts.php');
+
+
     require_once($pathDataTypes . 'twig.php');
     require_once($pathDataTypes . 'general_tags.php');
     require_once($pathDataTypes . 'record_tags.php');
@@ -97,7 +116,9 @@ function CTLoader($inclide_utilities = false, $include_html = false)
     require_once($pathDataTypes . 'forms.php');
     require_once($pathDataTypes . 'inputbox.php');
     require_once($pathDataTypes . 'value.php');
-    require_once($pathDataTypes . 'pagination.php');
+
+    if (defined('_JEXEC'))
+        require_once($pathDataTypes . 'pagination.php');
 
     $pathDataTypes = $path . 'tables' . DIRECTORY_SEPARATOR;
     require_once($pathDataTypes . 'tables.php');
@@ -114,8 +135,7 @@ function CTLoader($inclide_utilities = false, $include_html = false)
     //$path_datatypes = $path . DIRECTORY_SEPARATOR . 'logs' . DIRECTORY_SEPARATOR;
     //require_once($path_datatypes.'Logs.php');
 
-    $pathViews = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries'
-        . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR;
+    $pathViews = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR;
 
     require_once($pathViews . 'edit.php');
     require_once($pathViews . 'catalog.php');
