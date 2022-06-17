@@ -55,7 +55,7 @@ class Inputbox
     var string $prefix;
     var bool $isTwig;
 
-    function __construct(CT &$ct, $fieldRow, array $option_list = [], $isTwig = true, $onchange = '')
+    function __construct(CT &$ct, $fieldRow, array $option_list = [], $isTwig = true, string $onchange = '')
     {
         $this->ct = &$ct;
 
@@ -1107,6 +1107,8 @@ class Inputbox
             //CT Tag
             if (isset($this->option_list[2]) and $this->option_list[2] != '')
                 $this->field->params[2] = $this->option_list[2];//Overwrites field type filter parameter.
+
+            $sqljoin_attributes .= ' onchange="' . $this->onchange . '"';
 
             $result .= JHTML::_('ESSQLJoin.render',
                 $this->field->params,

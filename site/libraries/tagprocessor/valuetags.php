@@ -455,7 +455,8 @@ class tagProcessor_Value
                             . $fieldRow['fieldname'] . '\',' . $row[$ct->Table->realidfieldname] . ',\''
                             . $postfix . '\',' . (int)$ct->Params->ModuleId . ');';
 
-                        $attributes = 'onchange="' . $onchange . '"' . $style;
+                        //$attributes = 'onchange="' . $onchange . '"' . $style;
+                        $attributes = $style;
 
                         if (isset($value_option_list[1]))
                             $value_option_list[1] .= ' ' . $attributes;
@@ -463,7 +464,7 @@ class tagProcessor_Value
                             $value_option_list[1] = $attributes;
 
                         $vlu = '<div class="" id="' . $ajax_prefix . $fieldRow['fieldname'] . $postfix . '_div">'
-                            . $esinputbox->renderFieldBox($fieldRow, $row, $value_option_list);
+                            . $esinputbox->renderFieldBox($fieldRow, $row, $value_option_list, $onchange);
                         $vlu .= '</div>';
                     } else {
                         //$fieldtype = $fieldRow['type'];

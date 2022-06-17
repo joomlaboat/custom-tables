@@ -30,9 +30,9 @@ class ESInputBox
         $this->requiredLabel = 'COM_CUSTOMTABLES_REQUIREDLABEL';
     }
 
-    function renderFieldBox(array $fieldrow, ?array $row, array $option_list)
+    function renderFieldBox(array $fieldrow, ?array $row, array $option_list, string $onchange = '')
     {
-        $Inputbox = new Inputbox($this->ct, $fieldrow, $option_list, false);
+        $Inputbox = new Inputbox($this->ct, $fieldrow, $option_list, false, $onchange);
 
         $realFieldName = $fieldrow['realfieldname'];
 

@@ -114,7 +114,7 @@ class tagProcessor_Edit
                         $calendars[] = $inputBox->ct->Env->field_prefix . $fieldrow['fieldname'];
 
                     if ($fieldrow['type'] != 'dummy')
-                        $result = $inputBox->renderFieldBox($fieldrow, $row, $option_list);
+                        $result = $inputBox->renderFieldBox($fieldrow, $row, $option_list, '');
 
                     if ($inputBox->ct->Env->frmt == 'json') {
                         $field_objects[] = $result;
