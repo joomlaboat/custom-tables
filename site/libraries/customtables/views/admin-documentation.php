@@ -35,7 +35,7 @@ class Documentation
 
     function getFieldTypes(): string
     {
-        $xml = $this->getXMLData('fieldtypes_266.xml');
+        $xml = $this->getXMLData('fieldtypes.xml');
         if (count($xml) == 0 or !isset($xml->type))
             return '';
 
@@ -502,7 +502,7 @@ class Documentation
 
     function getLayoutTags(): string
     {
-        $xml = $this->getXMLData('tags_266.xml');
+        $xml = $this->getXMLData('tags.xml');
 
         if (count($xml) == 0)
             return '';

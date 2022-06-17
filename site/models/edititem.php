@@ -661,7 +661,8 @@ class CustomTablesModelEditItem extends JModelLegacy
             $LayoutProc = new LayoutProcessor($this->ct, $this->pagelayout);
             $pagelayout = $LayoutProc->fillLayout(null, null, '||', false, true);
             tagProcessor_Edit::process($this->ct, $pagelayout, $row);
-        }
+        } else
+            $pagelayout = $this->pagelayout;
 
         $twig = new TwigProcessor($this->ct, $pagelayout);
         $twig->process($row);

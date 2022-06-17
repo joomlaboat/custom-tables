@@ -6,12 +6,13 @@ function ctCreateUser(msg, listing_id, toolbarboxid, ModuleId) {
 
         let returnto = btoa(window.location.href);
 
+        //ctWebsiteRoot is the global variable same like ctItemId
         let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + ctItemId;
 
         if (ModuleId !== 0)
-            link = esPrepareLink(['task', "listing_id", 'returnto', 'ids', 'option', 'view'], ['task=createuser', 'option=com_customtables', 'view=catalog', 'listing_id=' + recordid, 'returnto=' + returnto, 'ModuleId=' + ModuleId], link);
+            link = esPrepareLink(['task', "listing_id", 'returnto', 'ids', 'option', 'view'], ['task=createuser', 'option=com_customtables', 'view=catalog', 'listing_id=' + listing_id, 'returnto=' + returnto, 'ModuleId=' + ModuleId], link);
         else
-            link = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], ['task=createuser', 'listing_id=' + recordid, 'returnto=' + returnto], link);
+            link = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], ['task=createuser', 'listing_id=' + listing_id, 'returnto=' + returnto], link);
 
         window.location.href = link;
     }
@@ -25,9 +26,9 @@ function ctResetPassword(msg, listing_id, toolbarboxid, ModuleId) {
         let link = '';
 
         if (ModuleId !== 0)
-            link = esPrepareLink(['task', "listing_id", 'returnto', 'ids', 'option', 'view'], ['task=resetpassword', 'option=com_customtables', 'view=catalog', 'listing_id=' + recordid, 'returnto=' + returnto, 'ModuleId=' + ModuleId]);
+            link = esPrepareLink(['task', "listing_id", 'returnto', 'ids', 'option', 'view'], ['task=resetpassword', 'option=com_customtables', 'view=catalog', 'listing_id=' + listing_id, 'returnto=' + returnto, 'ModuleId=' + ModuleId]);
         else
-            link = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], ['task=resetpassword', 'listing_id=' + recordid, 'returnto=' + returnto]);
+            link = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], ['task=resetpassword', 'listing_id=' + listing_id, 'returnto=' + returnto]);
 
         window.location.href = link;
 
@@ -35,12 +36,8 @@ function ctResetPassword(msg, listing_id, toolbarboxid, ModuleId) {
 }
 
 function esPrepareLink(deleteParams, addParams, custom_link) {
-    let link = '';
 
-    if (custom_link && custom_link !== '')
-        link = custom_link;
-    else
-        link = window.location.href;
+    let link = custom_link !== '' ? custom_link : window.location.href;
 
     const pair = link.split('#');
     link = pair[0];
@@ -50,7 +47,7 @@ function esPrepareLink(deleteParams, addParams, custom_link) {
 
     for (let a = 0; a < addParams.length; a++) {
 
-        if (link.indexOf("?") == -1)
+        if (link.indexOf("?") === -1)
             link += "?"; else link += "&";
 
         link += addParams[a];
@@ -87,15 +84,15 @@ function runTheTask(task, tableid, recordid, url, responses, last) {
         http.open("GET", url, true);
         http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         http.onreadystatechange = function () {
-            if (http.readyState == 4) {
+            if (http.readyState === 4) {
                 let res = http.response.replace(/(\r\n|\n|\r)/gm, "");
 
-                if (responses.indexOf(res) != -1) {
+                if (responses.indexOf(res) !== -1) {
 
                     let element_tableid_tr = "ctTable_" + tableid + '_' + recordid;
                     let index = findRowIndexById("ctTable_" + tableid, element_tableid_tr);
 
-                    if (task == 'delete')
+                    if (task === 'delete')
                         document.getElementById("ctTable_" + tableid).deleteRow(index);
                     else
                         ctCatalogUpdate(tableid, recordid, index);
@@ -172,11 +169,7 @@ function ctPublishRecord(tableid, recordid, toolbarboxid, publish, ModuleId) {
 
     document.getElementById(toolbarboxid).innerHTML = '';
 
-    let task = '';
-    if (publish == 1)
-        task = 'task=publish';
-    else
-        task = 'task=unpublish';
+    let task = publish === 1 ? 'task=publish' : 'task=unpublish';
 
     let element_tableid_tr = "ctTable_" + tableid + '_' + recordid;
     let tr_object = document.getElementById(element_tableid_tr);
@@ -185,7 +178,7 @@ function ctPublishRecord(tableid, recordid, toolbarboxid, publish, ModuleId) {
 
     if (tr_object) {
         let url = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], [task, 'listing_id=' + recordid, 'clean=1', 'tmpl=component'], link);
-        runTheTask((publish == 0 ? 'unpublish' : 'publish'), tableid, recordid, url, ['published', 'unpublished'], false);
+        runTheTask((publish === 0 ? 'unpublish' : 'publish'), tableid, recordid, url, ['published', 'unpublished'], false);
     } else {
         let returnto = Base64.encode(window.location.href);
 
@@ -202,7 +195,7 @@ function findRowIndexById(tableid, rowid) {
 
     let rows = document.getElementById(tableid).rows;
     for (let i = 0; i < rows.length; i++) {
-        if (rows.item(i).id == rowid)
+        if (rows.item(i).id === rowid)
             return i;
     }
     return -1;
@@ -215,7 +208,6 @@ function ctDeleteRecord(msg, tableid, recordid, toolbarboxid, ModuleId) {
     es_LinkLoading = true;
 
     if (confirm(msg)) {
-        let obj = document.getElementById(toolbarboxid).innerHTML = '';
 
         let element_tableid_tr = "ctTable_" + tableid + '_' + recordid;
         let tr_object = document.getElementById(element_tableid_tr);
@@ -241,7 +233,7 @@ function ctDeleteRecord(msg, tableid, recordid, toolbarboxid, ModuleId) {
 }
 
 function es_SearchBoxKeyPress(e) {
-    if (e.keyCode == 13)//enter key pressed
+    if (e.keyCode === 13)//enter key pressed
         ctSearchBoxDo();
 }
 
@@ -261,10 +253,10 @@ function ctSearchBoxDo() {
         if (obj) {
             let o = obj.value;
 
-            if (o !== "" && (o !== "0" || obj.dataset.type == 'int' || obj.dataset.type == 'float' || obj.dataset.type == 'checkbox')) {
+            if (o !== "" && (o !== "0" || obj.dataset.type === 'int' || obj.dataset.type === 'float' || obj.dataset.type === 'checkbox')) {
                 if (n[2] === "") {
-                    if (o.indexOf("-to-") != -1) {
-                        if (o != "-to-")
+                    if (o.indexOf("-to-") !== -1) {
+                        if (o !== "-to-")
                             w.push(n[1] + "_r_=" + o);
                     } else
                         w.push(n[1] + "=" + o);
@@ -289,7 +281,7 @@ function esCheckboxAllclicked(tableid) {
     for (let i = 0; i < elements.length; i++) {
         const d = parseInt(elements[i].value);
 
-        if (ids.indexOf(d) == -1) {
+        if (ids.indexOf(d) === -1) {
             ids.push(d);
             const obj = document.getElementById(elements[i].id);
             obj.checked = checkboxobj.checked;
@@ -307,7 +299,7 @@ function getListOfSelectedRecords(tableid) {
         if (obj.checked) {
             const d = parseInt(elements[i].value);
 
-            if (selectedIds.indexOf(d) == -1)
+            if (selectedIds.indexOf(d) === -1)
                 selectedIds.push(d);
         }
     }
@@ -327,7 +319,7 @@ function ctToolBarDO(task, tableid) {
         return;
     }
 
-    if (task == 'delete') {
+    if (task === 'delete') {
         if (!confirm('Do you want to delete ' + elements.length + ' records?')) {
             es_LinkLoading = false;
             return;
@@ -345,18 +337,18 @@ function ctToolBarDO(task, tableid) {
     if (tr_object) {
 
         for (let i = 0; i < elements.length; i++) {
-            let recordid = elements[i];
-            let url = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], ['task=' + task, 'listing_id=' + recordid, 'clean=1', 'tmpl=component'], link);
+            let listing_id = elements[i];
+            let url = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], ['task=' + task, 'listing_id=' + listing_id, 'clean=1', 'tmpl=component'], link);
             let accept_responses = [];
-            if (task == 'refresh')
+            if (task === 'refresh')
                 accept_responses = ['refreshed'];
-            else if (task == 'publish' || task == 'unpublish')
+            else if (task === 'publish' || task === 'unpublish')
                 accept_responses = ['published', 'unpublished'];
-            else if (task == 'delete')
+            else if (task === 'delete')
                 accept_responses = ['published', 'deleted'];
 
-            let last = i == elements.length - 1;
-            runTheTask(task, tableid, recordid, url, accept_responses, last);
+            let last = i === elements.length - 1;
+            runTheTask(task, tableid, listing_id, url, accept_responses, last);
         }
 
 
@@ -399,9 +391,9 @@ function ct_UpdateSingleValue(WebsiteRoot, Itemid, fieldname_, record_id, postfi
     if (obj_checkbox_off) {
         //A bit confusing. But this is needed to save Unchecked values
         //It's because unchecked checkbox has value NULL
-        params = "comes_" + fieldname_ + "_off=" + obj_checkbox_off.value; // if this set 1 then the ckeckbox value will be 0
+        params = "comes_" + fieldname_ + "_off=" + obj_checkbox_off.value; // if this set 1 then the checkbox value will be 0
 
-        if (parseInt(obj_checkbox_off.value) == 1)
+        if (parseInt(obj_checkbox_off.value) === 1)
             params += "&comes_" + fieldname_ + "=0";
         else
             params += "&comes_" + fieldname_ + "=1";
@@ -412,7 +404,7 @@ function ct_UpdateSingleValue(WebsiteRoot, Itemid, fieldname_, record_id, postfi
 
     params += "&task=save";
     params += "&Itemid=" + Itemid;
-    if (ModuleId != 0)
+    if (ModuleId !== 0)
         params += "&ModuleId=" + ModuleId;
 
     params += "&listing_id=" + record_id;
@@ -427,18 +419,18 @@ function ct_UpdateSingleValue(WebsiteRoot, Itemid, fieldname_, record_id, postfi
         http.open("POST", url + "&clean=1", true);
         http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         http.onreadystatechange = function () {
-            if (http.readyState == 4) {
+            if (http.readyState === 4) {
                 let res = http.response;
                 res = res.replace(/<[^>]*>?/gm, '').trim();
 
-                if (res.indexOf("saved") != -1) {
+                if (res.indexOf("saved") !== -1) {
                     obj.className = "ct_checkmark ct_checkmark_hidden";//+css_class;
                 } else {
                     obj.className = "ct_checkmark_err ";
 
-                    if (res.indexOf('<div class="alert-message">Nothing to save</div>') != -1)
+                    if (res.indexOf('<div class="alert-message">Nothing to save</div>') !== -1)
                         alert('Nothing to save. Check Edit From layout.');
-                    else if (res.indexOf('view-login') != -1)
+                    else if (res.indexOf('view-login') !== -1)
                         alert('Session expired. Please login again.');
                 }
             }
@@ -463,7 +455,7 @@ function ctCatalogUpdate(tableid, recordsId, row_index) {
         http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         http.onreadystatechange = function () {
 
-            if (http.readyState == 4) {
+            if (http.readyState === 4) {
                 let res = http.response;
 
                 let rows = document.getElementById(element_tableid).rows;
@@ -478,7 +470,7 @@ function getContainerElementIDTable(obj) {
     while (true) {
 
         let parts = obj.id.split('_');
-        if (parts[0] == 'ctTable') {
+        if (parts[0] === 'ctTable') {
             return parts;
         }
 
@@ -486,7 +478,6 @@ function getContainerElementIDTable(obj) {
         if (obj == null)
             return null;
     }
-    return null;
 }
 
 function ctCatalogOnDrop(event) {
@@ -501,10 +492,10 @@ function ctCatalogOnDrop(event) {
 
     let to_id = to_parts.join("_");
 
-    if (importFromId == to_id)
+    if (importFromId === to_id)
         return false;
 
-    if (confirm("Do you want to copy field content to target record?") == true) {
+    if (confirm("Do you want to copy field content to target record?") === true) {
 
         let from_parts = importFromId.split('_');
 
@@ -557,12 +548,11 @@ function ctEditModal(url) {
         http.open("GET", new_url, true);
         http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         http.onreadystatechange = function () {
-            if (http.readyState == 4) {
+            if (http.readyState === 4) {
                 let res = http.response;
 
                 //let content_html = '<div style="overflow-y: scroll;overflow-x: hidden;height: 100%;width:100%;">' + res + '</div>';
-                let content_html = res;
-                ctShowPopUp(content_html, true);
+                ctShowPopUp(res, true);
             }
         }
         http.send(params);

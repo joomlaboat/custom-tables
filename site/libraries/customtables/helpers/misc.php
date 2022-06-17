@@ -205,7 +205,7 @@ class JoomlaBasicMisc
         return trim($desc);
     }
 
-    public static function words_trimtext($text, $count, $cleanbraces = false, $cleanquotes = false): string
+    public static function words_trimtext(string $text, int $count, bool $cleanbraces = false, bool $cleanquotes = false): string
     {
         if ($count == 0)
             return "";
@@ -233,7 +233,7 @@ class JoomlaBasicMisc
         return trim(preg_replace('/\s\s+/', ' ', $desc));
     }
 
-    public static function getListToReplace($par, &$options, $text, string $qtype, $separator = ':', $quote_char = '"'): array
+    public static function getListToReplace(string $par, array &$options, string $text, string $qtype, string $separator = ':', string $quote_char = '"'): array
     {
         $fList = array();
         $l = strlen($par) + 2;

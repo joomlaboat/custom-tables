@@ -55,14 +55,14 @@ function setTask(event, task, returnLink, submitForm, formName) {
 function submitModalForm(url, elements, tableid, recordid, hideModelOnSave) {
 
     let params = "";
+    let opt;
     for (let i = 0; i < elements.length; i++) {
-        if (elements[i].name && elements[i].name != '' && elements[i].name != 'returnto') {
+        if (elements[i].name && elements[i].name !== '' && elements[i].name !== 'returnto') {
 
-            if (elements[i].type == "select-multiple") {
+            if (elements[i].type === "select-multiple") {
 
                 const options = elements[i] && elements[i].options;
 
-                let result = [];
                 for (let x = 0; x < options.length; x++) {
                     opt = options[x];
                     if (opt.selected)
@@ -80,11 +80,11 @@ function submitModalForm(url, elements, tableid, recordid, hideModelOnSave) {
         http.open("POST", url + "&clean=1", true);
         http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         http.onreadystatechange = function () {
-            if (http.readyState == 4) {
+            if (http.readyState === 4) {
 
                 let res = http.response.replace(/<[^>]*>?/gm, '').trim();
 
-                if (res.indexOf("saved") != -1) {
+                if (res.indexOf("saved") !== -1) {
 
                     let element_tableid_tr = "ctTable_" + tableid + '_' + recordid;
                     let index = findRowIndexById("ctTable_" + tableid, element_tableid_tr);
@@ -122,7 +122,7 @@ function checkFilters() {
     for (let i = 0; i < inputs.length; i++) {
         let t = inputs[i].type.toLowerCase();
 
-        if (t == 'text' && inputs[i].value != "") {
+        if (t == 'text' && inputs[i].value !== "") {
             let n = inputs[i].name.toString();
             let d = inputs[i].dataset;
             let label = "";
@@ -232,7 +232,7 @@ function doFilters(obj, label, filters_string) {
                 alert('The ' + label + ' "' + value + '" is not a valid URL.');
                 return false;
             }
-        } else if (filter == 'https') {
+        } else if (filter === 'https') {
             if (value.indexOf("https") != 0) {
                 alert('The ' + label + ' "' + value + '" must be secure - must start with "https://".');
                 return false;
@@ -251,7 +251,7 @@ function doFilters(obj, label, filters_string) {
             let found = false;
             for (let f = 0; f < domains.length; f++) {
 
-                if (domains[f] == hostname) {
+                if (domains[f] === hostname) {
                     found = true;
                     break;
                 }
@@ -730,7 +730,7 @@ function ctInputboxRecords_showMultibox(control_name, control_name_postfix) {
     }
     v += '</tbody></table>';
 
-    const o = document.getElementById(control_name + "_box").innerHTML = v;
+    document.getElementById(control_name + "_box").innerHTML = v;
 }
 
 /* -------------------------- Filtering --------------------------- */
@@ -773,7 +773,7 @@ function ctInputbox_UpdateSQLJoinLink_do(control_name, control_name_postfix) {
 
     if (o) {
         if (o.selectedIndex == -1)
-            return;
+            return false;
 
         v = o.options[o.selectedIndex].value;
     }
@@ -815,6 +815,8 @@ function ctInputbox_UpdateSQLJoinLink_do(control_name, control_name_postfix) {
             }
         }
     }
+
+    return true;
 }
 
 // ------------------------ Google Map coordinates
@@ -969,36 +971,36 @@ function dataURLToBlob(dataURL) {
     const a = function (a) {
         "use strict";
         const b = function (a, b) {
-            var c = b || {};
+            const c = b || {};
             this.velocityFilterWeight = c.velocityFilterWeight || .7, this.minWidth = c.minWidth || .5, this.maxWidth = c.maxWidth || 2.5, this.dotSize = c.dotSize || function () {
                 return (this.minWidth + this.maxWidth) / 2
             }, this.penColor = c.penColor || "black", this.backgroundColor = c.backgroundColor || "rgba(0,0,0,0)", this.onEnd = c.onEnd, this.onBegin = c.onBegin, this._canvas = a, this._ctx = a.getContext("2d"), this.clear(), this._handleMouseEvents(), this._handleTouchEvents()
         };
         b.prototype.clear = function () {
-            var a = this._ctx, b = this._canvas;
+            const a = this._ctx, b = this._canvas;
             a.fillStyle = this.backgroundColor, a.clearRect(0, 0, b.width, b.height), a.fillRect(0, 0, b.width, b.height), this._reset()
         }, b.prototype.toDataURL = function () {
-            var a = this._canvas;
+            const a = this._canvas;
             return a.toDataURL.apply(a, arguments)
         }, b.prototype.fromDataURL = function (a) {
-            var b = this, c = new Image, d = window.devicePixelRatio || 1, e = this._canvas.width / d,
+            const b = this, c = new Image, d = window.devicePixelRatio || 1, e = this._canvas.width / d,
                 f = this._canvas.height / d;
             this._reset(), c.src = a, c.onload = function () {
                 b._ctx.drawImage(c, 0, 0, e, f)
             }, this._isEmpty = !1
         }, b.prototype._strokeUpdate = function (a) {
-            var b = this._createPoint(a);
+            const b = this._createPoint(a);
             this._addPoint(b)
         }, b.prototype._strokeBegin = function (a) {
             this._reset(), this._strokeUpdate(a), "function" == typeof this.onBegin && this.onBegin(a)
         }, b.prototype._strokeDraw = function (a) {
-            var b = this._ctx, c = "function" == typeof this.dotSize ? this.dotSize() : this.dotSize;
+            const b = this._ctx, c = "function" == typeof this.dotSize ? this.dotSize() : this.dotSize;
             b.beginPath(), this._drawPoint(a.x, a.y, c), b.closePath(), b.fill()
         }, b.prototype._strokeEnd = function (a) {
-            var b = this.points.length > 2, c = this.points[0];
+            const b = this.points.length > 2, c = this.points[0];
             !b && c && this._strokeDraw(c), "function" == typeof this.onEnd && this.onEnd(a)
         }, b.prototype._handleMouseEvents = function () {
-            var b = this;
+            const b = this;
             this._mouseButtonDown = !1, this._canvas.addEventListener("mousedown", function (a) {
                 1 === a.which && (b._mouseButtonDown = !0, b._strokeBegin(a))
             }), this._canvas.addEventListener("mousemove", function (a) {
@@ -1007,16 +1009,16 @@ function dataURLToBlob(dataURL) {
                 1 === a.which && b._mouseButtonDown && (b._mouseButtonDown = !1, b._strokeEnd(a))
             })
         }, b.prototype._handleTouchEvents = function () {
-            var b = this;
+            const b = this;
             this._canvas.style.msTouchAction = "none", this._canvas.addEventListener("touchstart", function (a) {
-                var c = a.changedTouches[0];
+                const c = a.changedTouches[0];
                 b._strokeBegin(c)
             }), this._canvas.addEventListener("touchmove", function (a) {
                 a.preventDefault();
-                var c = a.changedTouches[0];
+                const c = a.changedTouches[0];
                 b._strokeUpdate(c)
             }), a.addEventListener("touchend", function (a) {
-                var c = a.target === b._canvas;
+                const c = a.target === b._canvas;
                 c && b._strokeEnd(a)
             })
         }, b.prototype.isEmpty = function () {

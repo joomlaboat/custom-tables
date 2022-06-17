@@ -50,8 +50,23 @@ class Table
 
         $this->Languages = $Languages;
         $this->Env = $Env;
+        $this->tableid = 0;
+        $this->tablerow = null;
         $this->tablename = null;
+        $this->published_field_found = false;
+        $this->customtablename = null;
+        $this->realtablename = '';
+        $this->realidfieldname = '';
+        $this->tabletitle = '';
+        $this->alias_fieldname = null;
+        $this->useridfieldname = null;
+        $this->useridrealfieldname = null;
         $this->fields = null;
+        $this->record = null;
+        $this->recordcount = 0;
+        $this->recordlist = null;
+        $this->imagegalleries = null;
+        $this->fileboxes = null;
 
         if ($tablename_or_id_not_sanitized === null or $tablename_or_id_not_sanitized == '')
             return;
@@ -68,11 +83,7 @@ class Table
         if (!isset($this->tablerow['id']))
             return;
 
-
         $this->setTable($this->tablerow, $useridfieldname);
-
-        $this->record = null;
-        $this->recordcount = 0;
     }
 
     function setTable($tablerow, $useridfieldname = null): void
