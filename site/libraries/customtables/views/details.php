@@ -312,7 +312,7 @@ class Details
         $layoutDetailsContent = $this->layoutDetailsContent;
 
         if ($this->ct->Env->legacysupport) {
-            require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'tagprocessor' . DIRECTORY_SEPARATOR . 'itemtags.php');
+            require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR . 'layout.php');
             $LayoutProc = new LayoutProcessor($this->ct);
             $LayoutProc->layout = $layoutDetailsContent;
             $layoutDetailsContent = $LayoutProc->fillLayout($this->row);

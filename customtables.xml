@@ -75,7 +75,6 @@
             <folder>models</folder>
             <folder>tables</folder>
             <folder>views</folder>
-            <folder>xml</folder>
         </files>
 
         <languages folder="admin">

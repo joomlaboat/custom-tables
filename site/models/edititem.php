@@ -671,6 +671,18 @@ class CustomTablesModelEditItem extends JModelLegacy
         foreach ($this->ct->Table->fields as $fieldrow) {
             if (in_array($fieldrow['type'], $backgroundFieldTypes))
                 $this->ct->editFields[] = $fieldrow['fieldname'];
+
+            $fn_str = [];
+            $fn = $fieldrow['fieldname'];
+            $fn_str[] = '"comes_' . $fn . '"';
+            $fn_str[] = "'comes_" . $fn . "'";
+
+            foreach ($fn_str as $s) {
+                if (str_contains($this->pagelayout, $s)) {
+                    $this->ct->editFields[] = $fn;
+                    break;
+                }
+            }
         }
 
         return $this->ct->editFields;

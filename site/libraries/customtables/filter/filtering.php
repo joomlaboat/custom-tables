@@ -812,14 +812,14 @@ class Filtering
     {
         $fieldrow1 = Fields::FieldRowByName($fieldname, $this->ct->Table->fields);
 
-        if (count($fieldrow1) > 0) {
+        if (!is_null($fieldrow1)) {
             $title1 = $fieldrow1['fieldtitle' . $this->ct->Languages->Postfix];
         } else
             $title1 = $fieldname;
 
         $fieldrow2 = Fields::FieldRowByName($value, $this->ct->Table->fields);
 
-        if (count($fieldrow2) > 0)
+        if (!is_null($fieldrow2))
             $title2 = $fieldrow2['fieldtitle' . $this->ct->Languages->Postfix];
         else
             $title2 = $value;
