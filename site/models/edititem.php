@@ -495,17 +495,17 @@ class CustomTablesModelEditItem extends JModelLegacy
                 $listing_id = '';
         }
 
-        $fieldstosave = $this->getFieldsToSave(); //will Read page Layout to find fields to save
-
         $msg = '';
         $saveQuery = array();
 
-        $row_old = [];
+        $row_old = null;
 
         if ($listing_id != '')
             $row_old = $this->ct->Table->loadRecord($listing_id);
         else
             $row_old[$this->ct->Table->realidfieldname] = '';
+
+        $fieldstosave = $this->getFieldsToSave($row_old); //will Read page Layout to find fields to save
 
         $phpOnChangeFound = false;
         $phpOnAddFound = false;
@@ -649,7 +649,7 @@ class CustomTablesModelEditItem extends JModelLegacy
         return true;
     }
 
-    function getFieldsToSave(): array
+    function getFieldsToSave($row): array
     {
         $this->ct->isEditForm = true; //This changes inputbox prefix
 
@@ -659,27 +659,43 @@ class CustomTablesModelEditItem extends JModelLegacy
             require_once($path . 'layout.php');
 
             $LayoutProc = new LayoutProcessor($this->ct, $this->pagelayout);
-            $this->pagelayout = $LayoutProc->fillLayout(null, null, '||', false, true);
-            tagProcessor_Edit::process($this->ct, $this->pagelayout, $row);
+            $pagelayout = $LayoutProc->fillLayout(null, null, '||', false, true);
+            tagProcessor_Edit::process($this->ct, $pagelayout, $row);
         }
 
-        $twig = new TwigProcessor($this->ct, $this->pagelayout);
-        $twig->process();
+        $twig = new TwigProcessor($this->ct, $pagelayout);
+        $twig->process($row);
 
         $backgroundFieldTypes = ['creationtime', 'changetime', 'server', 'id', 'md5', 'userid'];
 
         foreach ($this->ct->Table->fields as $fieldrow) {
-            if (in_array($fieldrow['type'], $backgroundFieldTypes))
-                $this->ct->editFields[] = $fieldrow['fieldname'];
+
+            $fn = $fieldrow['fieldname'];
+
+            if (in_array($fieldrow['type'], $backgroundFieldTypes)) {
+
+                if (!in_array($fn, $this->ct->editFields))
+                    $this->ct->editFields[] = $fn;
+            }
 
             $fn_str = [];
-            $fn = $fieldrow['fieldname'];
+
+            if ($this->ct->Env->legacysupport) {
+                $fn_str[] = '[' . $fn . ':';
+                $fn_str[] = '[' . $fn . ']';
+
+                $fn_str[] = '[_edit:' . $fn . ':';
+                $fn_str[] = $fn . '.edit';
+            }
+
             $fn_str[] = '"comes_' . $fn . '"';
             $fn_str[] = "'comes_" . $fn . "'";
 
             foreach ($fn_str as $s) {
                 if (str_contains($this->pagelayout, $s)) {
-                    $this->ct->editFields[] = $fn;
+
+                    if (!in_array($fn, $this->ct->editFields))
+                        $this->ct->editFields[] = $fn;
                     break;
                 }
             }

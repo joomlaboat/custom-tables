@@ -70,7 +70,7 @@ class tagProcessor_Page
         tagProcessor_Page::SearchButton($ct_html, $pagelayout); //Converted to Twig. Original replaced.
         tagProcessor_Page::SearchBOX($ct_html, $pagelayout); //Converted to Twig. Original replaced.
 
-        tagProcessor_Page::RecordCountValue($ct_record, $pagelayout); //Converted to Twig. Original replaced.
+        tagProcessor_Page::RecordCountValue($ct, $pagelayout); //Converted to Twig. Original replaced.
         tagProcessor_Page::RecordCount($ct, $ct_html, $pagelayout); //Converted to Twig. Original replaced.
 
         tagProcessor_Page::PrintButton($ct_html, $pagelayout); //Converted to Twig. Original replaced.
@@ -250,18 +250,19 @@ class tagProcessor_Page
         }
     }
 
-    static protected function RecordCountValue(&$ct_record, &$pagelayout)
+    static protected function RecordCountValue(&$ct, &$pagelayout)
     {
         $options = array();
         $fList = JoomlaBasicMisc::getListToReplace('count', $options, $pagelayout, '{}');
 
         foreach ($fList as $fItem) {
-            $vlu = $ct_record->count();
+
+            $vlu = $ct->Table->recordcount;
             $pagelayout = str_replace($fItem, $vlu, $pagelayout);
         }
     }
 
-    static protected function RecordCount(&$ct, &$ct_html, &$pagelayout)
+    static protected function RecordCount(&$ct, &$ct_html, &$pagelayout): void
     {
         $options = array();
         $fList = JoomlaBasicMisc::getListToReplace('recordcount', $options, $pagelayout, '{}');
