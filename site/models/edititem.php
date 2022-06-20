@@ -505,6 +505,8 @@ class CustomTablesModelEditItem extends JModelLegacy
         else
             $row_old[$this->ct->Table->realidfieldname] = '';
 
+        print_r($row_old);
+
         $fieldstosave = $this->getFieldsToSave($row_old); //will Read page Layout to find fields to save
 
         $phpOnChangeFound = false;
@@ -516,6 +518,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
             if (in_array($fieldrow['fieldname'], $fieldstosave)) {
                 $saveFieldSet = $saveField->getSaveFieldSet($fieldrow);
+                echo '$saveFieldSet=' . $saveFieldSet . '<br/>';
 
                 if ($saveFieldSet != null) {
                     if (is_array($saveFieldSet))
@@ -538,7 +541,7 @@ class CustomTablesModelEditItem extends JModelLegacy
         if ($listing_id == 0 or $listing_id == '') {
             $isItNewRecords = true;
 
-            if ($this->ct->Table->tablerow['published_field_found'])
+            if ($this->ct->Table->published_field_found)
                 $saveQuery[] = 'published=' . $this->ct->Params->publishStatus;
 
             $listing_id_temp = ESTables::insertRecords($this->ct->Table->realtablename, $saveQuery);

@@ -170,7 +170,6 @@ class Params
 
         //Limit
         $this->limit = $menu_params->get('limit') ?? 20;
-        //echo 'limit: '.$this->limit.'*<br/>';
 
         //Layouts
         $this->pageLayout = $menu_params->get('escataloglayout');

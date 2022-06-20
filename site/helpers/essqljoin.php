@@ -34,26 +34,10 @@ class JHTMLESSqlJoin
         }
 
         $tableName = $typeparams[0];
-
-        if (isset($typeparams[1]))
-            $value_field = $typeparams[1];
-        else
-            $value_field = '';
-
-        if (isset($typeparams[2]))
-            $filter = $typeparams[2];
-        else
-            $filter = '';
-
-        if (isset($typeparams[3]))
-            $dynamic_filter = $typeparams[3];
-        else
-            $dynamic_filter = '';
-
-        if (isset($typeparams[4]))
-            $order_by_field = $typeparams[4];
-        else
-            $order_by_field = '';
+        $value_field = $typeparams[1] ?? '';
+        $filter = $typeparams[2] ?? '';
+        $dynamic_filter = $typeparams[3] ?? '';
+        $order_by_field = $typeparams[4] ?? '';
 
         if (isset($typeparams[5]) and $typeparams[5] == 'true')
             $allowunpublished = true;
@@ -82,7 +66,11 @@ class JHTMLESSqlJoin
             $place_holder = '- ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT');
 
         //Get Database records
-        $ct = new CT;
+
+        $_params = new JRegistry;
+        $_params->loadArray([]);
+
+        $ct = new CT($_params, true);
         self::get_searchresult($ct, $filter, $tableName, $order_by_field, $allowunpublished);
 
         //Process records depending on field type and layout

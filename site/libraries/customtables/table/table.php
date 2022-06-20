@@ -108,6 +108,10 @@ class Table
         $this->fields = Fields::getFields($this->tableid);
 
         foreach ($this->fields as $fld) {
+
+            if ($this->published_field_found and $fld['fieldname'] == 'published')
+                $this->published_field_found = false;
+
             switch ($fld['type']) {
                 case 'alias':
                     $this->alias_fieldname = $fld['fieldname'];

@@ -131,7 +131,9 @@ class Ordering
 
         if ($this->Params->blockExternalVars) {
             //module or plugin
-            if ($this->Params->sortBy != '')
+            if ($this->Params->forceSortBy != '')
+                $ordering_param_string = $this->Params->forceSortBy;
+            elseif ($this->Params->sortBy != '')
                 $ordering_param_string = $this->Params->sortBy;
         } else {
             if ($this->Params->forceSortBy != '') {

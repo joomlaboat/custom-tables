@@ -223,6 +223,40 @@ class Fields
         return $list;
     }
 
+    public static function isFieldNullable(string $realtablename, string $relafieldname)
+    {
+        $db = Factory::getDBO();
+
+        $realtablename = str_replace('#__', $db->getPrefix(), $realtablename);
+        if ($db->serverType == 'postgresql') {
+            $query = 'SELECT column_name, data_type, is_nullable, column_default FROM information_schema.columns WHERE table_name = ' . $db->quote($realtablename)
+                . ' AND column_name=' . $db->quote($relafieldname);
+        } else {
+
+            $conf = Factory::getConfig();
+            $database = $conf->get('db');
+
+            $query = 'SELECT COLUMN_NAME AS column_name,'
+                . 'DATA_TYPE AS data_type,'
+                . 'COLUMN_TYPE AS column_type,'
+                . 'IF(COLUMN_TYPE LIKE \'%unsigned\', \'YES\', \'NO\') AS is_unsigned,'
+                . 'IS_NULLABLE AS is_nullable,'
+                . 'COLUMN_DEFAULT AS column_default,'
+                . 'EXTRA AS extra'
+                . ' FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=' . $db->quote($database)
+                . ' AND TABLE_NAME=' . $db->quote($realtablename)
+                . ' AND column_name=' . $db->quote($relafieldname)
+                . ' LIMIT 1';
+        }
+
+        $db->setQuery($query);
+        $recs = $db->loadAssocList();
+
+        $rec = $recs[0];
+
+        return $rec['is_nullable'] == 'YES';
+    }
+
     public static function addField(CT $ct, $realtablename, $realfieldname, $fieldtype, $PureFieldType, $fieldtitle): void
     {
         if ($PureFieldType == '')

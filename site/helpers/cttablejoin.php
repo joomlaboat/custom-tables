@@ -51,11 +51,6 @@ class JHTMLCTTableJoin
         if (count($js_filters) == 0)
             $js_filters[] = $value;
 
-
-        //echo '<pre>Filter:';
-        //echo '</pre>';
-
-//        return '';
         $key = JoomlaBasicMisc::generateRandomString();
         $ct->app->setUserState($key, $filter);
 
