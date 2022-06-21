@@ -31,7 +31,7 @@ class tagProcessor_CatalogTableView
     use render_xml;
     use render_image;
 
-    public static function process(CT &$ct, $layoutType, &$pagelayout, $new_replaceitecode)
+    public static function process(CT &$ct, int $layoutType, string &$pagelayout, string $new_replaceitecode)
     {
         $vlu = '';
 

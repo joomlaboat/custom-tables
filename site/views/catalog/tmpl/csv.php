@@ -24,7 +24,7 @@ if ($this->ct->Env->legacysupport) {
     require_once($path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'catalogtag.php');
     require_once($path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'catalogtableviewtag.php');
 
-    $catalogTableContent = tagProcessor_CatalogTableView::process($this->ct, $this->layoutType, $this->pageLayoutContent, $itemlayout, $this->catalogTableCode);
+    $catalogTableContent = tagProcessor_CatalogTableView::process($this->ct, $this->layoutType, $this->pageLayoutContent, $this->catalogTableCode);
 
     if ($catalogTableContent == '')
         $catalogTableContent = tagProcessor_Catalog::process($this->ct, $this->layoutType, $this->pageLayoutContent, $itemlayout, $this->catalogTableCode);

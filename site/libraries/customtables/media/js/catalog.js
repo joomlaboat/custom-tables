@@ -26,9 +26,9 @@ function ctResetPassword(msg, listing_id, toolbarboxid, ModuleId) {
         let link = '';
 
         if (ModuleId !== 0)
-            link = esPrepareLink(['task', "listing_id", 'returnto', 'ids', 'option', 'view'], ['task=resetpassword', 'option=com_customtables', 'view=catalog', 'listing_id=' + listing_id, 'returnto=' + returnto, 'ModuleId=' + ModuleId]);
+            link = esPrepareLink(['task', "listing_id", 'returnto', 'ids', 'option', 'view'], ['task=resetpassword', 'option=com_customtables', 'view=catalog', 'listing_id=' + listing_id, 'returnto=' + returnto, 'ModuleId=' + ModuleId], '');
         else
-            link = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], ['task=resetpassword', 'listing_id=' + listing_id, 'returnto=' + returnto]);
+            link = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], ['task=resetpassword', 'listing_id=' + listing_id, 'returnto=' + returnto], '');
 
         window.location.href = link;
 
@@ -143,7 +143,7 @@ function ctRefreshRecord(tableid, recordid, toolbarboxid, ModuleId) {
 }
 
 function ctOrderChanged(objectValue) {
-    const current_url = esPrepareLink(['returnto', 'task', 'orderby'], []);
+    const current_url = esPrepareLink(['returnto', 'task', 'orderby'], [], '');
     let returnto = btoa(current_url);
 
     let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + ctItemId;
@@ -153,7 +153,7 @@ function ctOrderChanged(objectValue) {
 }
 
 function ctLimitChanged(object) {
-    const current_url = esPrepareLink(['returnto', 'task', 'limit'], []);
+    const current_url = esPrepareLink(['returnto', 'task', 'limit'], [], '');
     let returnto = btoa(current_url);
 
     let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + ctItemId;
