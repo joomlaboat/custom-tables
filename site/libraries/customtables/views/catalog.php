@@ -29,8 +29,10 @@ class Catalog
         $this->ct = &$ct;
     }
 
-    function render(): string
+    function render(?string $layout = null): string
     {
+
+
         if ($this->ct->Env->frmt == 'html') {
             $this->ct->loadJSAndCSS();
         }
@@ -107,18 +109,20 @@ class Catalog
         $Layouts = new Layouts($this->ct);
         $Layouts->layouttype = 0;
 
-        if ($this->ct->Params->pageLayout != null) {
-            $pagelayout = $Layouts->getLayout($this->ct->Params->pageLayout);
-            if ($pagelayout == '')
+        $pagelayout = '';
+        $itemLayout = '';
+
+        if (is_null($layout) or $layout == '') {
+            if (!is_null($this->ct->Params->pageLayout) and $this->ct->Params->pageLayout != '')
+                $pagelayout = $Layouts->getLayout($this->ct->Params->pageLayout);
+
+            if ($this->ct->Env->legacysupport and $pagelayout == '')
                 $pagelayout = '{catalog:,notable}';
+
+            if (!is_null($this->ct->Params->itemLayout))
+                $itemLayout = $Layouts->getLayout($this->ct->Params->itemLayout);
         } else
-            $pagelayout = '{catalog:,notable}';
-
-
-        if ($this->ct->Params->itemLayout != null)
-            $itemLayout = $Layouts->getLayout($this->ct->Params->itemLayout);
-        else
-            $itemLayout = '';
+            $pagelayout = $Layouts->getLayout($layout);
 
 // -------------------- Load Records
         if (!$this->ct->getRecords()) {

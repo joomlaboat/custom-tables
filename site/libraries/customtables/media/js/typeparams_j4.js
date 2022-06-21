@@ -830,8 +830,8 @@ function renderInput_Layout(id, param, value, onchange) {
         layout_table = param_att.table;
 
     let layout_type = "";
-    if (param_att.layoutype != null)
-        layout_type = param_att.layoutype;
+    if (param_att.layouttype != null)
+        layout_type = param_att.layouttype;
 
     let result = '<select id="' + id + '" ' + onchange + ' class="ct_improved_selectbox">';
 

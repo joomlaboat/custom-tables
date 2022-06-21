@@ -377,7 +377,7 @@
              twigclass="record">
             <params>
                 <param type="layout" name="layout" label="Catalog Layout" table=""
-                       layoutype="catalogpage,simplecatalog"/>
+                       layouttype="catalogpage,simplecatalog"/>
                 <param type="string" name="filter" label="Filter" description="Example: price>100"/>
                 <param type="string" name="orderby" label="Order By field" description="Example: name desc"/>
                 <param type="string" name="limit" label="Limit"
@@ -529,7 +529,8 @@
              description="Renders another table single record using selected layout."
              twigclass="tables" proversion="1">
             <params>
-                <param type="layout" name="layout" label="Catalog Layout" table="" layoutype="catalogpage,simplecatalog"
+                <param type="layout" name="layout" label="Catalog Layout" table=""
+                       layouttype="catalogpage,simplecatalog"
                        example="CountriesPage"/>
                 <param type="string" name="recordidorfilter" label="Record ID or filter"
                        description="Example 1: 65, example 2: population>1000000" example="62"/>
@@ -542,7 +543,8 @@
              description="Renders another table records using selected layout."
              twigclass="tables" proversion="1">
             <params>
-                <param type="layout" name="layout" label="Catalog Layout" table="" layoutype="catalogpage,simplecatalog"
+                <param type="layout" name="layout" label="Catalog Layout" table=""
+                       layouttype="catalogpage,simplecatalog"
                        example="CountriesPage"/>
                 <param type="string" name="filter" label="Filter" description="Example: price>100"
                        example="population>1000000"/>
@@ -690,8 +692,15 @@
                     <option value="48" label="48 x 48"/>
                 </param>
 
-                <param type="string" name="alias" label="Menu Itemid or Alias (Optional)"
-                       description="To redirect to a specific Menu Item."/>
+                <param type="layout" name="layout" label="CSV Layout" layouttype="csv"
+                       description="Please select the CSV File type Layout to render the export file content"/>
+
+                <param type="list" name="separator" label="Column separator"
+                       description="The delimiter/separator character may either be a semicolon (;) or comma (,) used to separate items in a CSV file. ">
+                    <option value="," label=","/>
+                    <option value=";" label=";"/>
+                </param>
+
             </params>
         </tag>
 
@@ -1021,9 +1030,9 @@
                 <param name="tablename" label="Table" type="table" description="Table Name" example="products"/>
 
                 <param name="pagelayout" label="Page Layout" type="layout" description="Catalog Layout"
-                       example="productspage" table="0" layoutype="catalogpage,simplecatalog"/>
+                       example="productspage" table="0" layouttype="catalogpage,simplecatalog"/>
                 <param name="itemlayout" label="Record Layout" type="layout" description="Record Layout"
-                       example="productrecord" table="0" layoutype="catalogitem,record"/>
+                       example="productrecord" table="0" layouttype="catalogitem,record"/>
 
                 <param name="state" label="Publish State" description="What record states to show." type="radio"
                        default="" example="1"
@@ -1051,7 +1060,7 @@
             <params>
                 <param name="tablename" label="Table" type="table" description="Table Name" example="products"/>
                 <param name="detailslayout" label="Layout" type="layout" description="Details Layout"
-                       example="productdetails" table="0" layoutype="details,record,catalogitem"/>
+                       example="productdetails" table="0" layouttype="details,record,catalogitem"/>
                 <param name="recordid" label="Record ID or Filter" example="[productid]"
                        description="Record ID or filter. Example 1: 2, Example 2: title=about, Example 3: title=$get_title"
                        type="string" default=""/>

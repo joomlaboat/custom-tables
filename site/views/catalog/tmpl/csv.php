@@ -12,38 +12,10 @@
 if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
-
-use CustomTables\TwigProcessor;
-
-if ($this->ct->Env->legacysupport) {
-
-    $itemlayout = str_replace("\n", '', $this->itemLayoutContent);
-
-    $path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR;
-    require_once($path . 'layout.php');
-    require_once($path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'catalogtag.php');
-    require_once($path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'catalogtableviewtag.php');
-
-    $catalogTableContent = tagProcessor_CatalogTableView::process($this->ct, $this->layoutType, $this->pageLayoutContent, $this->catalogTableCode);
-
-    if ($catalogTableContent == '')
-        $catalogTableContent = tagProcessor_Catalog::process($this->ct, $this->layoutType, $this->pageLayoutContent, $itemlayout, $this->catalogTableCode);
-
-    $LayoutProc = new LayoutProcessor($this->ct);
-    $LayoutProc->layout = $this->pageLayoutContent;
-    $pageLayoutContent = $LayoutProc->fillLayout();
-    $pageLayoutContent = strip_tags(str_replace('&&&&quote&&&&', '"', trim($pageLayoutContent))); // search boxes may return HTMl elements that contain placeholders with quotes like this: &&&&quote&&&&
-
-    $pageLayoutContent = str_replace($this->catalogTableCode, $catalogTableContent, $pageLayoutContent);
-} else
-    $pageLayoutContent = $this->pageLayoutContent;
-
-$twig = new TwigProcessor($this->ct, $pageLayoutContent);
-$pageLayoutContent = $twig->process();
-
-//Clean the output
-$pageLayoutContent = preg_replace('/(<(script|style)\b[^>]*>).*?(<\/\2>)/is', "$1$3", $this->pageLayoutContent);
-
+$layout = $this->ct->Env->jinput->getCmd('layout');
+$pageLayoutContent = $this->catalog->render($layout);
+$pageLayoutContent = preg_replace('/(<(script|style)\b[^>]*>).*?(<\/\2>)/is', "$1$3", $pageLayoutContent);
+/*
 $pageLayoutContent = str_ireplace('<th', '"<th', $pageLayoutContent);
 $pageLayoutContent = str_ireplace('</th>', '</th>",', $pageLayoutContent);
 
@@ -51,18 +23,18 @@ $pageLayoutContent = str_ireplace('<td', '"<td', $pageLayoutContent);
 $pageLayoutContent = str_ireplace('</td>', '</td>",', $pageLayoutContent);
 
 $pageLayoutContent = str_ireplace('</tr>', '****linebrake****', $pageLayoutContent);
-
+*/
 if ($this->ct->Params->allowContentPlugins)
     JoomlaBasicMisc::applyContentPlugins($pageLayoutContent);
-
+/*
 if ($this->layoutType != 9) //not CSV layout
 {
     $pageLayoutContent = str_replace("\n", '', $pageLayoutContent);
     $pageLayoutContent = str_replace("\r", '', $pageLayoutContent);
     $pageLayoutContent = str_replace("\t", '', $pageLayoutContent);
 }
-
-$pageLayoutContent = str_ireplace('****linebrake****', "\r" . "\n", $pageLayoutContent);
+*/
+//$pageLayoutContent = str_ireplace('****linebrake****', "\r" . "\n", $pageLayoutContent);
 
 if (ob_get_contents())
     ob_end_clean();

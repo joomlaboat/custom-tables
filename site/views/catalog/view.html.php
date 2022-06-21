@@ -25,9 +25,9 @@ class CustomTablesViewCatalog extends JViewLegacy
     var string $listing_id;
     var Catalog $catalog;
     var string $catalogTableCode;
-    var string $pageLayoutContent;
-    var string $itemLayoutContent;
-    var int $layoutType;
+    //var string $pageLayoutContent;
+    //var string $itemLayoutContent;
+    //var int $layoutType;
 
     function display($tpl = null)
     {
@@ -44,34 +44,10 @@ class CustomTablesViewCatalog extends JViewLegacy
     {
         $this->catalog = new Catalog($this->ct);
 
-        if ($this->ct->Env->frmt == 'csv' or $this->ct->Env->frmt == 'json') {
-            $this->catalogTableCode = JoomlaBasicMisc::generateRandomString();//this is temporary replace placeholder. to not parse content result again
-
-
-            // --------------------- Layouts
-            $Layouts = new Layouts($this->ct);
-            $Layouts->layouttype = 0;
-
-            $this->pageLayoutContent = '';
-
-            if ($this->ct->Params->pageLayout != null) {
-                $this->pageLayoutContent = $Layouts->getLayout($this->ct->Params->pageLayout);
-                if ($this->pageLayoutContent == '')
-                    $this->pageLayoutContent = '{catalog:,notable}';
-            } else
-                $this->pageLayoutContent = '{catalog:,notable}';
-
-            $this->layoutType = $Layouts->layouttype;
-
-            if ($this->ct->Params->itemLayout != null)
-                $this->itemLayoutContent = $Layouts->getLayout($this->ct->Params->itemLayout);
-            else
-                $this->itemLayoutContent = '';
-        }
-
         if ($this->ct->Env->frmt == 'csv') {
+
             if (function_exists('mb_convert_encoding')) {
-                $this->layoutType = 9;//CSV
+                //$this->layoutType = 9;//CSV
                 require_once('tmpl' . DIRECTORY_SEPARATOR . 'csv.php');
             } else {
                 $msg = '"mbstring" PHP extension not installed.<br/>
@@ -84,6 +60,7 @@ class CustomTablesViewCatalog extends JViewLegacy
 
                 $this->ct->app->appenqueueMessage($msg, 'error');
             }
+
         } elseif ($this->ct->Env->frmt == 'json') {
 
             // --------------------- Layouts

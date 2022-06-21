@@ -260,24 +260,25 @@ class Twig_Url_Tags
         return $_SERVER[$param];
     }
 
-    function format($format, $link_type = 'anchor', $image = '', $imagesize = '', $menu_item_alias = '', $csv_column_separator = ','): string
+    function format($format, $link_type = 'anchor', $image = '', $imagesize = '', $layoutname = '', $csv_column_separator = ','): string
     {
         if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
             return '';
         //$csv_column_separator parameter is only for csv output format
 
         $link = '';
-
-        if ($menu_item_alias != '') {
-            $menu_item = JoomlaBasicMisc::FindMenuItemRowByAlias($menu_item_alias);//Accepts menu Itemid and alias
-            if ($menu_item != 0) {
-                $menu_item_id = (int)$menu_item['id'];
-                $link = $menu_item['link'];
-                $link .= '&Itemid=' . $menu_item_id;//.'&returnto='.$returnto;
-            }
-        } else {
-            $link = JoomlaBasicMisc::deleteURLQueryOption($this->ct->Env->current_url, 'frmt');
-        }
+        /*
+                if ($menu_item_alias != '') {
+                    $menu_item = JoomlaBasicMisc::FindMenuItemRowByAlias($menu_item_alias);//Accepts menu Itemid and alias
+                    if ($menu_item != 0) {
+                        $menu_item_id = (int)$menu_item['id'];
+                        $link = $menu_item['link'];
+                        $link .= '&Itemid=' . $menu_item_id;//.'&returnto='.$returnto;
+                    }
+                } else {*/
+        $link = JoomlaBasicMisc::deleteURLQueryOption($this->ct->Env->current_url, 'frmt');
+        $link = JoomlaBasicMisc::deleteURLQueryOption($link, 'layout');
+        //}
 
         $link = Route::_($link);
 
@@ -287,6 +288,9 @@ class Twig_Url_Tags
             $format = 'csv';
 
         $link .= (!str_contains($link, '?') ? '?' : '&') . 'frmt=' . $format . '&clean=1';
+
+        if ($layoutname != '')
+            $link .= '&layout=' . $layoutname;
 
         if ($format == 'csv' and $csv_column_separator != ',')
             $link .= '&sep=' . $csv_column_separator;
