@@ -57,7 +57,17 @@ class CTUser
         $config = Factory::getConfig();
         $sitename = $config->get('sitename');
 
-        $user_full_name = ucwords(strtolower($userRow['name']));
+        if ($userRow !== null) {
+            $user_full_name = ucwords(strtolower($userRow['name']));
+            $user_name = $userRow['username'];
+            $user_email = $userRow['email'];
+        } else {
+
+            return false;
+            //$user_full_name = 'user: '.$realUserId.' not found.';
+            //$user_name = 'user: '.$realUserId.' not found.';
+            //$user_email = 'user: '.$realUserId.' not found.';
+        }
         $subject = 'Your {SITENAME} password reset request';
 
         $subject = str_replace('{SITENAME}', $sitename, $subject);
@@ -73,17 +83,16 @@ class CTUser
         $messageBody = str_replace('{SITEURL}', $siteURL, $messageBody);
 
         $messageBody = str_replace('{NAME}', $user_full_name, $messageBody);
-        $messageBody = str_replace('{USERNAME}', $userRow['username'], $messageBody);
+        $messageBody = str_replace('{USERNAME}', $user_name, $messageBody);
         $messageBody = str_replace('{PASSWORD_CLEAR}', $password, $messageBody);
-
 
         if ($ct->Env->clean)
             die;
 
-        if (Email::sendEmail($userRow['email'], $subject, $messageBody, $isHTML = true)) {
+        if (Email::sendEmail($user_email, $subject, $messageBody, $isHTML = true)) {
             //clean exit
 
-            Factory::getApplication()->enqueueMessage('User password has been reset and sent to the email "' . $userRow['email'] . '".');
+            Factory::getApplication()->enqueueMessage('User password has been reset and sent to the email "' . $user_email . '".');
             return true;
         }
 
@@ -102,7 +111,7 @@ class CTUser
         return $userid;
     }
 
-    static public function GetUserRow($userid)
+    static public function GetUserRow($userid): ?array
     {
         $db = Factory::getDBO();
         $query = 'SELECT * FROM #__users WHERE id=' . $userid . ' LIMIT 1';
@@ -111,7 +120,7 @@ class CTUser
 
         $recs = $db->loadAssocList();
         if (count($recs) == 0)
-            return array();
+            return null;
         else
             return $recs[0];
     }

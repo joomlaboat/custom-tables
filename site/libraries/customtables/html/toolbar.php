@@ -271,6 +271,7 @@ class RecordToolbar
         } else {
             $userrow = CTUser::GetUserRow($realuserid);
             if ($userrow !== null) {
+
                 $user_full_name = ucwords(strtolower($userrow['name']));
 
                 $rid = 'ctResetPasswordIcon' . $this->rid;

@@ -130,51 +130,56 @@ class tagProcessor_General
             if ($userid != 0) {
                 $user_row = (object)CTUser::GetUserRow($userid);
 
-                switch ($opts[0]) {
-                    case 'name':
-                        $vlu = $user_row->name;
-                        break;
+                if ($user_row === null) {
+                    $vlu = 'user: ' . $userid . ' not found.';
+                } else {
 
-                    case 'username':
-                        $vlu = $user_row->username;
-                        break;
+                    switch ($opts[0]) {
+                        case 'name':
+                            $vlu = $user_row->name;
+                            break;
 
-                    case 'email':
-                        $vlu = $user_row->email;
-                        break;
+                        case 'username':
+                            $vlu = $user_row->username;
+                            break;
 
-                    case 'id':
-                        $vlu = $userid;
-                        break;
+                        case 'email':
+                            $vlu = $user_row->email;
+                            break;
 
-                    case 'lastvisitDate':
-                        $vlu = $user_row->lastvisitDate;
+                        case 'id':
+                            $vlu = $userid;
+                            break;
 
-                        if ($vlu == '0000-00-00 00:00:00')
-                            $vlu = 'Never';
+                        case 'lastvisitDate':
+                            $vlu = $user_row->lastvisitDate;
+
+                            if ($vlu == '0000-00-00 00:00:00')
+                                $vlu = 'Never';
 
 
-                        break;
+                            break;
 
-                    case 'registerDate':
-                        $vlu = $user_row->registerDate;
+                        case 'registerDate':
+                            $vlu = $user_row->registerDate;
 
-                        if ($vlu == '0000-00-00 00:00:00')
-                            $vlu = 'Never';
+                            if ($vlu == '0000-00-00 00:00:00')
+                                $vlu = 'Never';
 
-                        break;
+                            break;
 
-                    case 'usergroupsid':
-                        $vlu = implode(',', array_keys($ct->Env->user->groups));
-                        break;
+                        case 'usergroupsid':
+                            $vlu = implode(',', array_keys($ct->Env->user->groups));
+                            break;
 
-                    case 'usergroups':
-                        $vlu = CTUser::GetUserGroups($userid);
-                        break;
+                        case 'usergroups':
+                            $vlu = CTUser::GetUserGroups($userid);
+                            break;
 
-                    default:
-                        $vlu = '';
-                        break;
+                        default:
+                            $vlu = '';
+                            break;
+                    }
                 }
             } else
                 $vlu = '';

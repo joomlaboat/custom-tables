@@ -78,8 +78,11 @@ class Twig_User_Tags
         if ($user_id == 0)
             return '';
 
-        $user_row = (object)CTUser::GetUserRow($user_id);
-        return $user_row->name;
+        $userRow = CTUser::GetUserRow($user_id);
+        if ($userRow !== null)
+            return $userRow['name'];
+
+        return 'user: ' . $user_id . ' not found.';
     }
 
     function username($user_id = 0): string
@@ -90,8 +93,11 @@ class Twig_User_Tags
         if ($user_id == 0)
             return '';
 
-        $user_row = (object)CTUser::GetUserRow($user_id);
-        return $user_row->username;
+        $userRow = CTUser::GetUserRow($user_id);
+        if ($userRow !== null)
+            return $userRow['username'];
+
+        return 'user: ' . $user_id . ' not found.';
     }
 
     function email($user_id = 0): string
@@ -102,8 +108,11 @@ class Twig_User_Tags
         if ($user_id == 0)
             return '';
 
-        $user_row = (object)CTUser::GetUserRow($user_id);
-        return $user_row->email;
+        $userRow = CTUser::GetUserRow($user_id);
+        if ($userRow !== null)
+            return $userRow['email'];
+
+        return 'user: ' . $user_id . ' not found.';
     }
 
     function id(): int
@@ -122,12 +131,15 @@ class Twig_User_Tags
         if ($user_id == 0)
             return '';
 
-        $user_row = (object)CTUser::GetUserRow($user_id);
+        $userRow = CTUser::GetUserRow($user_id);
+        if ($userRow !== null) {
+            if ($userRow['lastvisitDate'] == '0000-00-00 00:00:00')
+                return 'Never';
+            else
+                return $userRow['lastvisitDate'];
+        }
 
-        if ($user_row->lastvisitDate == '0000-00-00 00:00:00')
-            return 'Never';
-        else
-            return $user_row->lastvisitDate;
+        return 'user: ' . $user_id . ' not found.';
     }
 
     function registerdate($user_id = 0): string
@@ -138,12 +150,15 @@ class Twig_User_Tags
         if ($user_id == 0)
             return '';
 
-        $user_row = (object)CTUser::GetUserRow($user_id);
+        $userRow = CTUser::GetUserRow($user_id);
+        if ($userRow !== null) {
+            if ($userRow['registerDate'] == '0000-00-00 00:00:00')
+                return 'Never';
+            else
+                return $userRow['registerDate'];
+        }
 
-        if ($user_row->registerDate == '0000-00-00 00:00:00')
-            return 'Never';
-        else
-            return $user_row->registerDate;
+        return 'user: ' . $user_id . ' not found.';
     }
 
     function usergroups($user_id = 0): array
