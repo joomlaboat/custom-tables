@@ -520,7 +520,7 @@ class CustomTablesModelEditItem extends JModelLegacy
                 $saveFieldSet = $saveField->getSaveFieldSet($fieldrow);
                 echo '$saveFieldSet=' . $saveFieldSet . '<br/>';
 
-                if ($saveFieldSet != null) {
+                if ($saveFieldSet !== null) {
                     if (is_array($saveFieldSet))
                         $saveQuery = array_merge($saveQuery, $saveFieldSet);
                     else
@@ -558,7 +558,7 @@ class CustomTablesModelEditItem extends JModelLegacy
         if (($listing_id == 0 or $listing_id == '') and $listing_id_temp != 0) {
             $row = $this->ct->Table->loadRecord($listing_id_temp);
 
-            if ($row != null) {
+            if ($row !== null) {
                 $this->ct->Env->jinput->set("listing_id", $row[$this->ct->Table->realidfieldname]);
 
                 if ($phpOnAddFound)
@@ -576,7 +576,7 @@ class CustomTablesModelEditItem extends JModelLegacy
             $this->ct->Table->saveLog($listing_id, 2);
             $row = $this->ct->Table->loadRecord($listing_id);
 
-            if ($row != null) {
+            if ($row !== null) {
                 $this->ct->Env->jinput->set("listing_id", $row[$this->ct->Table->realidfieldname]);
 
                 if ($phpOnChangeFound or $this->ct->Table->tablerow['customphp'] != '')

@@ -753,7 +753,7 @@ class Fields
                 $elements[] = 'int';
 
                 if ($db->serverType != 'postgresql') {
-                    if ($type->is_nullable != null and $type->is_unsigned)
+                    if ($type->is_nullable !== null and $type->is_unsigned)
                         $elements[] = 'unsigned';
                 }
                 break;
@@ -762,7 +762,7 @@ class Fields
                 $elements[] = 'bigint';
 
                 if ($db->serverType != 'postgresql') {
-                    if ($type->is_nullable != null and $type->is_unsigned)
+                    if ($type->is_nullable !== null and $type->is_unsigned)
                         $elements[] = 'unsigned';
                 }
                 break;

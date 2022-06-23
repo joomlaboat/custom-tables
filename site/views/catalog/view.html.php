@@ -70,14 +70,14 @@ class CustomTablesViewCatalog extends JViewLegacy
 
             $pageLayoutContent = '';
 
-            if ($this->ct->Params->pageLayout != null) {
+            if ($this->ct->Params->pageLayout !== null) {
                 $pageLayoutContent = $Layouts->getLayout($this->ct->Params->pageLayout);
                 if ($pageLayoutContent == '')
                     $pageLayoutContent = '{catalog:,notable}';
             } else
                 $pageLayoutContent = '{catalog:,notable}';
 
-            if ($this->ct->Params->itemLayout != null)
+            if ($this->ct->Params->itemLayout !== null)
                 $itemLayoutContent = $Layouts->getLayout($this->ct->Params->itemLayout);
             else
                 $itemLayoutContent = '';

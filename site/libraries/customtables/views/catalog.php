@@ -31,11 +31,8 @@ class Catalog
 
     function render(?string $layout = null): string
     {
-
-
-        if ($this->ct->Env->frmt == 'html') {
+        if ($this->ct->Env->frmt == 'html')
             $this->ct->loadJSAndCSS();
-        }
 
         if ($this->ct->Env->legacysupport) {
 
@@ -50,14 +47,13 @@ class Catalog
             require_once($site_path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'fieldtags.php');
         }
 
-
 // -------------------- Table
 
         $this->ct->getTable($this->ct->Params->tableName);
 
         if ($this->ct->Table->tablename == '') {
             $this->ct->app->enqueueMessage('Catalog View: Table not selected.', 'error');
-            return false;
+            return 'Catalog View: Table not selected.';
         }
 
 // --------------------- Filter
@@ -104,7 +100,6 @@ class Catalog
 // --------------------- Limit
         $this->ct->applyLimits();
 
-
 // --------------------- Layouts
         $Layouts = new Layouts($this->ct);
         $Layouts->layouttype = 0;
@@ -127,7 +122,7 @@ class Catalog
 // -------------------- Load Records
         if (!$this->ct->getRecords()) {
             $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_TABLE_NOT_FOUND'), 'error');
-            return '';
+            return 'Table not found';
         }
 
 // -------------------- Parse Layouts
@@ -151,7 +146,7 @@ class Catalog
         $pagelayout = $twig->process();
 
         if ($this->ct->Params->allowContentPlugins)
-            JoomlaBasicMisc::applyContentPlugins($pagelayout);
+            $pagelayout = JoomlaBasicMisc::applyContentPlugins($pagelayout);
 
         return $pagelayout;
     }

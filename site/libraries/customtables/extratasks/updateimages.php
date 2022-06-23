@@ -103,7 +103,7 @@ class updateImages
 
             $status = updateImages::processImage($imgMethods, $old_imagesizes, $new_imagesizes, $img[$fieldrow->realfieldname], $old_ImageFolder, $new_ImageFolder);
             //if $status is null then all good, status is a text string with error message if any
-            if ($status != null)
+            if ($status !== null)
                 return $status;
         }
 
@@ -127,11 +127,11 @@ class updateImages
 
         $status = updateImages::processImage_Original($imgMethods, $rowValue, $old_ImageFolder, $new_ImageFolder, $original_image_file);
 
-        if ($status != null)
+        if ($status !== null)
             return null;//Skip if original file not found
 
         $status = updateImages::processImage_Thumbnail($imgMethods, $rowValue, $old_ImageFolder, $new_ImageFolder);
-        if ($status != null) {
+        if ($status !== null) {
             //Create Thumbnail file
             $r = $imgMethods->ProportionalResize(JPATH_SITE . DIRECTORY_SEPARATOR . $original_image_file, JPATH_SITE . DIRECTORY_SEPARATOR . $new_ImageFolder . DIRECTORY_SEPARATOR . '_esthumb_' . $rowValue . '.jpg', 150, 150, 1, true, -1, '');
 
@@ -148,14 +148,14 @@ class updateImages
         //Delete old files
         foreach ($image_sizes_to_delete as $img) {
             $status = updateImages::processImage_CustomSize_deleteFile($imgMethods, $rowValue, $new_ImageFolder, $prefix = $img[0], $imagefile_ext = $img[4], $original_image_file);
-            if ($status != null)
+            if ($status !== null)
                 return $status;
         }
 
         //Create custom size file that doesnt exist
         foreach ($new_imagesizes as $img) {
             $status = updateImages::processImage_CustomSize_createFile($imgMethods, $img, $rowValue, $new_ImageFolder, $prefix = $img[0], $imagefile_ext = $img[4], $original_image_file);
-            if ($status != null)
+            if ($status !== null)
                 return $status;
         }
 
@@ -214,7 +214,7 @@ class updateImages
         //Move files if neccesary
         foreach ($old_imagesizes as $img) {
             $status = updateImages::processImage_CustomSize_MoveFile($imgMethods, $img, $rowValue, $old_ImageFolder, $new_ImageFolder, $prefix = $img[0], $imagefile_ext = $img[4], $original_image_file);
-            if ($status != null)
+            if ($status !== null)
                 return $status;
         }
 

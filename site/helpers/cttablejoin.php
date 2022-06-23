@@ -193,7 +193,7 @@ class JHTMLCTTableJoin
         } else {
 
             $selfParentField = Fields::getSelfParentField($temp_ct);
-            if ($selfParentField != null) {
+            if ($selfParentField !== null) {
 
                 $parent_filter_table_name = $temp_ct->Table->tablename;
                 $parent_filter_field_name = $selfParentField['fieldname'];//it was 6
@@ -269,7 +269,7 @@ class JHTMLCTTableJoin
                 $join_to_tablename = $filter[$i][5];//it was 5
 
                 $selfParent_filters = [];
-                while ($parent_id != null) {
+                while ($parent_id !== null) {
                     $selfParent_filters[] = $parent_id;
                     $parent_id = JHTMLCTTableJoin::getParentFilterID($temp_ct, $parent_id, $join_to_tablename);
                 }
@@ -432,7 +432,7 @@ class JHTMLCTTableJoin
 
             //Prepare the space for next elements
 
-            if ($next_index < count($js_filters) && $val != null)// and !$value_found)
+            if ($next_index < count($js_filters) && $val !== null)// and !$value_found)
             {
                 if (is_array($js_filters[$index])) {
 

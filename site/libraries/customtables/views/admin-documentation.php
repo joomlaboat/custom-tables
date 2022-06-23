@@ -155,7 +155,7 @@ class Documentation
         $example_values = array();
         $example_values_count = 0;
 
-        if ($params_ != null) {
+        if ($params_ !== null) {
             $params = $params_->param;
 
             foreach ($params as $param) {
@@ -381,7 +381,7 @@ class Documentation
         $example_values_count = 0;
 
         $result = '';
-        if ($params_ != null) {
+        if ($params_ !== null) {
             $params = $params_->param;
 
             $count = 1;

@@ -221,12 +221,12 @@ class CT
 
         $selects = [$this->Table->tablerow['query_selects']];
 
-        if ($this->Ordering->ordering_processed_string != null) {
+        if ($this->Ordering->ordering_processed_string !== null) {
             $this->Ordering->parseOrderByString();
         }
 
-        if ($this->Ordering->orderby != null) {
-            if ($this->Ordering->selects != null)
+        if ($this->Ordering->orderby !== null) {
+            if ($this->Ordering->selects !== null)
                 $selects[] = $this->Ordering->selects;
 
             $ordering[] = $this->Ordering->orderby;
@@ -234,7 +234,7 @@ class CT
 
         $query = 'SELECT ' . implode(',', $selects) . ' FROM ' . $this->Table->realtablename . ' ';
 
-        //if ($this->Ordering->inner != null)
+        //if ($this->Ordering->inner !== null)
         //$query .= ' ' . $this->Ordering->inner;
 
         $query .= $where;
@@ -277,7 +277,7 @@ class CT
 
     function getRecordList(): array
     {
-        if ($this->Table->recordlist != null)
+        if ($this->Table->recordlist !== null)
             return $this->Table->recordlist;
 
         $recordList = [];

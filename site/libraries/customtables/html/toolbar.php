@@ -270,7 +270,7 @@ class RecordToolbar
             $action = 'ctCreateUser("' . $resetLabel . '", ' . $this->listing_id . ', "' . $rid . '",' . (int)$this->ct->Params->ModuleId . ')';
         } else {
             $userrow = CTUser::GetUserRow($realuserid);
-            if ($userrow != null) {
+            if ($userrow !== null) {
                 $user_full_name = ucwords(strtolower($userrow['name']));
 
                 $rid = 'ctResetPasswordIcon' . $this->rid;

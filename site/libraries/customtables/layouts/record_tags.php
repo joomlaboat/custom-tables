@@ -120,7 +120,7 @@ class Twig_Record_Tags
         elseif ($type == 'number')
             return (int)$this->ct->Table->record['listing_published'];
         else {
-            if ($second_variable != null)
+            if ($second_variable !== null)
                 return $this->ct->Table->record['listing_published'] == 1 ? $second_variable : '';
             else
                 return (int)$this->ct->Table->record['listing_published'];

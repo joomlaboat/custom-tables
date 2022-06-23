@@ -213,7 +213,7 @@ class tagProcessor_General
         $i = 0;
 
         foreach ($fList as $fItem) {
-            if ($ct->Params->ItemId != null)
+            if ($ct->Params->ItemId !== null)
                 $vlu = $ct->Params->ItemId;
             else
                 $vlu = 0;

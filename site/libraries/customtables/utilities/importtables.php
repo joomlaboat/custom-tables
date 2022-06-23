@@ -160,7 +160,7 @@ class ImportTables
                 $fieldname = ImportTables::checkFieldName($key, $force_id, $exceptions);
 
                 if ($fieldname != '' and Fields::checkIfFieldExists($mysqltablename, $fieldname, false)) {
-                    if ($rows_new[$key] != $rows_old[$key])// and $rows_new[$key]!=null)
+                    if ($rows_new[$key] != $rows_old[$key])// and $rows_new[$key]!==null)
                     {
                         if ($rows_new[$key] === null) {
 

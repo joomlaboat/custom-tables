@@ -41,19 +41,18 @@ class Ordering
 
     function parseOrderByString(): bool
     {
-        if (str_contains($this->ordering_processed_string, "DATE_FORMAT")) {
-            $this->orderby = $this->ordering_processed_string;
-            return true;
-        }
+        if ($this->ordering_processed_string === null or $this->ordering_processed_string == '')
+            return false;
 
-        $oPair = explode(' ', $this->ordering_processed_string);
+        $orderingStringPair = explode(' ', $this->ordering_processed_string);
 
         $direction = '';
-        if (isset($oPair[1])) {
-            $direction = (strtolower($oPair[1]) == 'desc' ? ' DESC' : '');
+        if (isset($orderingStringPair[1])) {
+            $direction = (strtolower($orderingStringPair[1]) == 'desc' ? ' DESC' : '');
         }
 
-        $this->fieldList = explode('.', $oPair[0]);
+        $this->fieldList = explode('.', $orderingStringPair[0]);
+
         $this->index = 0;
 
         $orderbyQuery = self::parseOrderByFieldName($this->fieldList[$this->index], $this->Table);
@@ -75,7 +74,7 @@ class Ordering
         $fieldRow = Fields::FieldRowByName($fieldName, $Table->fields);
         if ($fieldRow === null)
             return null;
-        
+
         $params = new JRegistry;
         $params->loadArray([]);
         $temp_ct = new CT($params, true);

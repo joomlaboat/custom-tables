@@ -97,7 +97,7 @@ class IntegrityCoreTables extends IntegrityChecks
 					
 					' . (count($indexes_sql) > 0 ? ',' . implode(',', $indexes_sql) : '') . '
 					
-				) ENGINE=InnoDB' . (isset($table->comments) and $table->comments != null ? ' COMMENT=' . $db->quoteName($table->comments) : '')
+				) ENGINE=InnoDB' . (isset($table->comments) and $table->comments !== null ? ' COMMENT=' . $db->quoteName($table->comments) : '')
                 . ' DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AUTO_INCREMENT=1;
 			';
 
@@ -193,7 +193,7 @@ class IntegrityCoreTables extends IntegrityChecks
         if ($exst_field === null)
             die('field not created ' . $realfieldname);
 
-        if ($ct_fieldtype != null and $ct_fieldtype != '') {
+        if ($ct_fieldtype !== null and $ct_fieldtype != '') {
             $projected_data_type = Fields::getProjectedFieldType($ct_fieldtype, $ct_typeparams);
 
             if (!IntegrityFields::compareFieldTypes($exst_field, $projected_data_type)) {

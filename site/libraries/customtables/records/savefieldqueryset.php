@@ -390,7 +390,7 @@ class SaveFieldQuerySet
             case 'checkbox':
                 $value = $this->ct->Env->jinput->getCmd($this->field->comesfieldname);
 
-                if ($value != null) {
+                if ($value !== null) {
                     if ((int)$value == 1 or $value == 'on')
                         $value = 1;
                     else
@@ -400,7 +400,7 @@ class SaveFieldQuerySet
                     return $this->field->realfieldname . '=' . $value;
                 } else {
                     $value = $this->ct->Env->jinput->getCmd($this->field->comesfieldname . '_off');
-                    if ($value != null) {
+                    if ($value !== null) {
                         if ((int)$value == 1) {
                             $this->row[$this->field->realfieldname] = 0;
                             return $this->field->realfieldname . '=0';
@@ -733,7 +733,7 @@ class SaveFieldQuerySet
         if ($this->field->params[1] == 'multi') {
             $value = $this->getMultiString($optionname);
 
-            if ($value != null) {
+            if ($value !== null) {
                 if ($value != '')
                     return ',' . $value . ',';
                 else
@@ -742,7 +742,7 @@ class SaveFieldQuerySet
         } elseif ($this->field->params[1] == 'single') {
             $value = $this->getComboString($optionname);
 
-            if ($value != null) {
+            if ($value !== null) {
                 if ($value != '')
                     return ',' . $value . ',';
                 else
@@ -783,7 +783,7 @@ class SaveFieldQuerySet
             else
                 $ChildList = $this->getMultiSelector($row->id, $parentname . '.' . $row->optionname, $prefix);
 
-            if ($ChildList != null)
+            if ($ChildList !== null)
                 $count_child = count($ChildList);
             else
                 $count_child = 0;

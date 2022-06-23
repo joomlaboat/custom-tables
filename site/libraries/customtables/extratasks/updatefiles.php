@@ -100,7 +100,7 @@ class updateFiles
 
             $status = updateFiles::processFile($file[$fieldrow->realfieldname], $old_FileFolder, $new_FileFolder);
             //if $status is null then all good, status is a text string with error message if any
-            if ($status != null)
+            if ($status !== null)
                 return $status;
         }
 
