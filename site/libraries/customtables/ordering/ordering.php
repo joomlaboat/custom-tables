@@ -73,6 +73,9 @@ class Ordering
             return 'published';
 
         $fieldRow = Fields::FieldRowByName($fieldName, $Table->fields);
+        if ($fieldRow === null)
+            return null;
+        
         $params = new JRegistry;
         $params->loadArray([]);
         $temp_ct = new CT($params, true);
