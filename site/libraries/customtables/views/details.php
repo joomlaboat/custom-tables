@@ -89,16 +89,21 @@ class Details
         if (!is_null($this->ct->Params->alias) and $this->ct->Table->alias_fieldname != '')
             $filter = $this->ct->Table->alias_fieldname . '=' . $this->ct->db->quote($this->ct->Params->alias);
 
-        if ($filter != '' and $this->ct->Params->alias == '') {
-            //Parse using layout
-            if ($this->ct->Env->legacysupport) {
-                $LayoutProc = new LayoutProcessor($this->ct);
-                $LayoutProc->layout = $filter;
-                $filter = $LayoutProc->fillLayout(array(), null, '[]', true);
-            }
+        if ($filter != '') {
+            if ($this->ct->Params->alias == '') {
+                //Parse using layout
+                if ($this->ct->Env->legacysupport) {
 
-            $twig = new TwigProcessor($this->ct, $filter);
-            $filter = $twig->process();
+                    require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables'
+                        . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'layout.php');
+                    $LayoutProc = new LayoutProcessor($this->ct);
+                    $LayoutProc->layout = $filter;
+                    $filter = $LayoutProc->fillLayout(array(), null, '[]', true);
+                }
+
+                $twig = new TwigProcessor($this->ct, $filter);
+                $filter = $twig->process();
+            }
 
             $this->row = $this->getDataByFilter($filter);
         } else
@@ -312,10 +317,14 @@ class Details
         $layoutDetailsContent = $this->layoutDetailsContent;
 
         if ($this->ct->Env->legacysupport) {
-            require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR . 'layout.php');
+
+            require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR
+                . 'libraries' . DIRECTORY_SEPARATOR . 'layout.php');
+
             $LayoutProc = new LayoutProcessor($this->ct);
             $LayoutProc->layout = $layoutDetailsContent;
             $layoutDetailsContent = $LayoutProc->fillLayout($this->row);
+
         }
 
         $twig = new TwigProcessor($this->ct, $layoutDetailsContent);

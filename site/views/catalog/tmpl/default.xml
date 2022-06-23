@@ -60,13 +60,15 @@ In this case, there will be two checks: the first one will check if the record b
 
             <field type="text" name="groupby" default="" label="Group By" description="Field name to group results by"/>
 
+            <field type="text" name="limit" default="0" label="Limit number of records per page" description=""/>
+
+        </fieldset>
+
+        <fieldset name="SORTBY">
             <field type="text" name="sortby" default="" label="Default sort by field"
                    description="Type field name to sort by and the order. Example 1: title desc Example 2: title asc. Note that keyword asc is not necessary."/>
             <field type="text" name="forcesortby" default="" label="Forced sort by field"
                    description="Type field name to sort by and the order. Example 1: title desc Example 2: title asc. Note that keyword asc is not necessary. Also, you may add MySql date_format() format specifiers. Example: 'birthdate:%m%d DESC' to sort by month and day. You can also use _id to sort by recird ID or _published to sort by Publish State"/>
-
-            <field type="text" name="limit" default="0" label="Limit number of records per page" description=""/>
-
         </fieldset>
 
         <fieldset

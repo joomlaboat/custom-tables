@@ -234,8 +234,8 @@ class CT
 
         $query = 'SELECT ' . implode(',', $selects) . ' FROM ' . $this->Table->realtablename . ' ';
 
-        if ($this->Ordering->inner != null)
-            $query .= ' ' . $this->Ordering->inner;
+        //if ($this->Ordering->inner != null)
+        //$query .= ' ' . $this->Ordering->inner;
 
         $query .= $where;
 
