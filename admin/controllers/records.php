@@ -69,34 +69,6 @@ class CustomtablesControllerRecords extends JControllerForm
         return $cancel;
     }
 
-    /**
-     * Method override to check if you can edit an existing record.
-     *
-     * @param array $data An array of input data.
-     * @param string $key The name of the key for the primary key.
-     *
-     * @return  boolean
-     *
-     * @since   1.6
-     */
-    /*
-    protected function checkEditId($data = array(), $key = 'id')
-    {
-        echo 'ddd';
-        die;
-    }
-    */
-    /**
-     * Method to save a record.
-     *
-     * @param string $key The name of the primary key of the URL variable.
-     * @param string $urlVar The name of the URL variable if different from the primary key (sometimes required to avoid router collisions).
-     *
-     * @return  boolean  True if successful, false otherwise.
-     *
-     * @throws Exception
-     * @since   12.2
-     */
     public function save($key = null, $urlVar = null): bool
     {
         $tablename = null;

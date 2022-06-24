@@ -212,7 +212,6 @@ class JHTMLCTTableJoin
 
     protected static function mapJoinTypeParams(Field $field, $parent_filter_table_name, $parent_filter_field_name): ?array
     {
-        //echo '$field->type=' . $field->type . '<br/>';
         if ($field->type = 'sqljoin') {
             $tableName = $field->params[0];
             $fieldName = $field->params[1];

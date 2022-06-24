@@ -67,6 +67,11 @@ class Layouts
         if ($layoutname == '')
             return '';
 
+        if (self::isLayoutContent($layoutname)) {
+            $this->layouttype = 0;
+            return $layoutname;
+        }
+
         if ($this->ct->db->serverType == 'postgresql')
             $query = 'SELECT id, tableid, layoutcode, layoutmobile, layoutcss, layoutjs, extract(epoch FROM modified) AS ts, layouttype FROM #__customtables_layouts WHERE layoutname=' . $this->ct->db->quote($layoutname) . ' LIMIT 1';
         else
@@ -98,6 +103,14 @@ class Layouts
         $this->addCSSandJSIfNeeded($row);
 
         return $layoutcode;
+    }
+
+    public static function isLayoutContent($layout)
+    {
+        if (str_contains($layout, '[') or str_contains($layout, '{'))
+            return true;
+
+        return false;
     }
 
     protected function getLayoutFileContent(int $layout_id, $db_layout_ts, $layoutname): string

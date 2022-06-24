@@ -549,19 +549,6 @@ class Twig_Tables_Tags
 
         $join_table_fields = Fields::getFields($table);
 
-        $value_realfieldname = '';
-        foreach ($join_table_fields as $join_table_field) {
-            if ($join_table_field['fieldname'] == $fieldname) {
-                $value_realfieldname = $join_table_field['realfieldname'];
-                break;
-            }
-        }
-
-        if (!$value_realfieldname) {
-            $this->ct->app->enqueueMessage('{{ ' . $tag . '("' . $table . '","' . $fieldname . '") }} - Value field "' . $fieldname . '" not found.', 'error');
-            return '';
-        }
-
         $join_ct = new CT;
         $tables = new Tables($join_ct);
 
@@ -579,7 +566,27 @@ class Twig_Tables_Tags
                 return '';
         }
 
-        return $row[$value_realfieldname];
+        if (Layouts::isLayoutContent($fieldname)) {
+
+            $twig = new TwigProcessor($join_ct, $fieldname);
+            return $twig->process($row);
+
+        } else {
+            $value_realfieldname = '';
+            foreach ($join_table_fields as $join_table_field) {
+                if ($join_table_field['fieldname'] == $fieldname) {
+                    $value_realfieldname = $join_table_field['realfieldname'];
+                    break;
+                }
+            }
+
+            if (!$value_realfieldname) {
+                $this->ct->app->enqueueMessage('{{ ' . $tag . '("' . $table . '","' . $fieldname . '") }} - Value field "' . $fieldname . '" not found.', 'error');
+                return '';
+            }
+
+            return $row[$value_realfieldname];
+        }
     }
 
     function getrecord($layoutname = '', $record_id_or_filter = '', $orderby = '')
@@ -598,8 +605,9 @@ class Twig_Tables_Tags
         $tables = new Tables($join_ct);
 
         $layouts = new Layouts($join_ct);
-
         $pagelayout = $layouts->getLayout($layoutname, false);//It is safer to process layout after rendering the table
+
+
         if ($layouts->tableid === null) {
             $this->ct->app->enqueueMessage('{{ html.records("' . $layoutname . '","' . $record_id_or_filter . '","' . $orderby . '") }} - Layout "' . $layoutname . ' not found.', 'error');
             return '';

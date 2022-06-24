@@ -505,8 +505,6 @@ class CustomTablesModelEditItem extends JModelLegacy
         else
             $row_old[$this->ct->Table->realidfieldname] = '';
 
-        print_r($row_old);
-
         $fieldstosave = $this->getFieldsToSave($row_old); //will Read page Layout to find fields to save
 
         $phpOnChangeFound = false;
@@ -518,7 +516,6 @@ class CustomTablesModelEditItem extends JModelLegacy
 
             if (in_array($fieldrow['fieldname'], $fieldstosave)) {
                 $saveFieldSet = $saveField->getSaveFieldSet($fieldrow);
-                echo '$saveFieldSet=' . $saveFieldSet . '<br/>';
 
                 if ($saveFieldSet !== null) {
                     if (is_array($saveFieldSet))
