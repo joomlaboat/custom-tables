@@ -50,7 +50,7 @@ class Tables
         $this->ct->Limit = $limit;
         $this->ct->LimitStart = 0;
 
-        $this->ct->getRecords();
+        $this->ct->getRecords(false, $limit);
 
         return true;
     }

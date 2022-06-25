@@ -145,7 +145,7 @@ class CT
             $this->Filter->addWhereExpression($filter_string);
     }
 
-    function getRecords($all = false): bool
+    function getRecords($all = false, $limit = 0): bool
     {
         $where = count($this->Filter->where) > 0 ? ' WHERE ' . implode(' AND ', $this->Filter->where) : '';
         $where = str_replace('\\', '', $where); //Just to make sure that there is nothing weird in the query
@@ -156,22 +156,27 @@ class CT
         $query = $this->buildQuery($where);
 
         if ($this->Table->recordcount > 0) {
-            $the_limit = $this->Limit;
 
-            if ($all) {
-                if ($the_limit > 0)
-                    $this->db->setQuery($query, 0, 20000); //or we will run out of memory
+            if ($limit > 0) {
+                $this->db->setQuery($query, 0, $limit);
             } else {
-                if ($the_limit > 20000)
-                    $the_limit = 20000;
+                $the_limit = $this->Limit;
 
-                if ($the_limit == 0)
-                    $the_limit = 20000; //or we will run out of memory
+                if ($all) {
+                    if ($the_limit > 0)
+                        $this->db->setQuery($query, 0, 20000); //or we will run out of memory
+                } else {
+                    if ($the_limit > 20000)
+                        $the_limit = 20000;
 
-                if ($this->Table->recordcount < $this->LimitStart or $this->Table->recordcount < $the_limit)
-                    $this->LimitStart = 0;
+                    if ($the_limit == 0)
+                        $the_limit = 20000; //or we will run out of memory
 
-                $this->db->setQuery($query, $this->LimitStart, $the_limit);
+                    if ($this->Table->recordcount < $this->LimitStart or $this->Table->recordcount < $the_limit)
+                        $this->LimitStart = 0;
+
+                    $this->db->setQuery($query, $this->LimitStart, $the_limit);
+                }
             }
 
             $this->Records = $this->db->loadAssocList();

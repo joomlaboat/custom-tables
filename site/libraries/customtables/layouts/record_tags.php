@@ -653,9 +653,7 @@ class Twig_Tables_Tags
 
         if ($tables->loadRecords($layouts->tableid, $filter, $orderby, $limit)) {
             $twig = new TwigProcessor($join_ct, $pagelayout);
-            $vlu = $twig->process();
-
-            return $vlu;
+            return $twig->process();
         }
 
         $this->ct->app->enqueueMessage('{{ html.records("' . $layoutname . '","' . $filter . '","' . $orderby . '") }} - Could not load records.', 'error');
