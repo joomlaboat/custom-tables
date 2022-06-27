@@ -291,8 +291,14 @@ class CT
         return $recordList;
     }
 
-    function applyLimits(): void
+    function applyLimits($limit = 0): void
     {
+        if ($limit != 0) {
+            $this->Limit = $limit;
+            $this->LimitStart = 0;
+            return;
+        }
+
         $limit_var = 'com_customtables.limit_' . $this->Params->ItemId;
 
         $this->Limit = $this->app->getUserState($limit_var, 0);

@@ -29,7 +29,7 @@ class Catalog
         $this->ct = &$ct;
     }
 
-    function render(?string $layout = null): string
+    function render(?string $layout = null, $limit = 0): string
     {
         if ($this->ct->Env->frmt == 'html')
             $this->ct->loadJSAndCSS();
@@ -98,7 +98,7 @@ class Catalog
         $this->ct->Ordering->parseOrderByParam();
 
 // --------------------- Limit
-        $this->ct->applyLimits();
+        $this->ct->applyLimits($limit);
 
 // --------------------- Layouts
         $Layouts = new Layouts($this->ct);

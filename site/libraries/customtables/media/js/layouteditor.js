@@ -770,7 +770,7 @@ function do_render_current_TagSets() {
         let tagset = tagsets[i];
         let a = tagset["@attributes"];
 
-        if (typeof (a.depricated) == "undefined" || a.depricated == "0") {
+        if (typeof (a.deprecated) == "undefined" || a.deprecated == "0") {
 
             tabs.push({
                 'id': 'layouteditor_tags' + index + '_' + i + '', 'title': a.label,
@@ -794,7 +794,7 @@ function renderTags(index, tagset) {
         let tag_object = tags[i];
         let tag = tag_object["@attributes"];
 
-        if (typeof (tag.depricated) == "undefined" || tag.depricated == "0") {
+        if (typeof (tag.deprecated) == "undefined" || tag.deprecated == "0") {
             let t = "";
             let params = getParamOptions(tag_object.params, 'param');
 
