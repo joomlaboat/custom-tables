@@ -18,7 +18,7 @@ use CustomTables\DataTypes\Tree;
 
 class CT_FieldTypeTag_ct
 {
-    public static function ResolveStructure(CT &$ct, &$htmlresult)
+    public static function ResolveStructure(CT &$ct, string &$htmlresult)
     {
         $options = array();
         $fList = JoomlaBasicMisc::getListToReplace('resolve', $options, $htmlresult, '{}');

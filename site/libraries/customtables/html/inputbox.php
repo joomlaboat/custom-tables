@@ -883,10 +883,10 @@ class Inputbox
         $usergroup = $this->field->params[0];
 
         tagProcessor_General::process($this->ct, $usergroup, $this->row);
-        tagProcessor_Item::process($this->ct, $this->row, $usergroup, '');
+        tagProcessor_Item::process($this->ct, $usergroup, $this->row, '');
         tagProcessor_If::process($this->ct, $usergroup, $this->row);
         tagProcessor_Page::process($this->ct, $usergroup);
-        tagProcessor_Value::processValues($this->ct, $this->row, $usergroup);
+        tagProcessor_Value::processValues($this->ct, $usergroup, $this->row);
 
         $where = '';
         if (isset($this->field->params[3]))
@@ -1364,10 +1364,10 @@ class Inputbox
                 if ($value != '') {
                     if ($this->ct->Env->legacysupport) {
                         tagProcessor_General::process($this->ct, $value, $row);
-                        tagProcessor_Item::process($this->ct, $row, $value);
+                        tagProcessor_Item::process($this->ct, $value, $row);
                         tagProcessor_If::process($this->ct, $value, $row);
                         tagProcessor_Page::process($this->ct, $value);
-                        tagProcessor_Value::processValues($this->ct, $row, $value);
+                        tagProcessor_Value::processValues($this->ct, $value, $row);
                     }
 
                     $twig = new TwigProcessor($this->ct, $value);

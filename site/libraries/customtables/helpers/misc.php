@@ -691,7 +691,7 @@ class JoomlaBasicMisc
         return false;
     }
 
-    public static function applyContentPlugins(&$htmlresult)
+    public static function applyContentPlugins(string &$htmlresult)
     {
         $version_object = new Version;
         $version = (int)$version_object->getShortVersion();

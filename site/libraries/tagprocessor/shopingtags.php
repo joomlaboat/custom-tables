@@ -18,7 +18,7 @@ use Joomla\CMS\Factory;
 
 class tagProcessor_Shopping
 {
-    public static function getShoppingCartLink(CT &$ct, &$htmlresult, &$row)
+    public static function getShoppingCartLink(CT &$ct, string &$htmlresult, ?array &$row)
     {
         $app = Factory::getApplication();
 

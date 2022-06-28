@@ -64,8 +64,8 @@ class LayoutProcessor
             tagProcessor_If::process($this->ct, $htmlresult, $row);
 
             //Item must be before General to let the following: currenturl:set,paymentid,{id}}
-            tagProcessor_Value::processValues($this->ct, $row, $htmlresult, $tag_chars);//to let sqljoin function work
-            tagProcessor_Item::process($this->ct, $row, $htmlresult, $aLink, $add_label);
+            tagProcessor_Value::processValues($this->ct, $htmlresult, $row, $tag_chars);//to let sqljoin function work
+            tagProcessor_Item::process($this->ct, $htmlresult, $row, $add_label);
             tagProcessor_General::process($this->ct, $htmlresult, $row);
             tagProcessor_Page::process($this->ct, $htmlresult);
 

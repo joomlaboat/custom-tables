@@ -18,11 +18,12 @@ use CustomTables\Fields;
 use CustomTables\RecordToolbar;
 use CustomTables\CTUser;
 use CustomTables\Twig_Record_Tags;
+use CustomTables\TwigProcessor;
 use Joomla\CMS\Factory;
 
 class tagProcessor_Item
 {
-    public static function RenderResultLine(CT &$ct, $layoutType, &$twig, ?array &$row): string
+    public static function RenderResultLine(CT &$ct, int $layoutType, TwigProcessor &$twig, ?array &$row): string
     {
         if ($ct->Env->print)
             $viewlink = '';
@@ -64,18 +65,18 @@ class tagProcessor_Item
         return $htmlresult;
     }
 
-    public static function process(CT &$ct, ?array &$row, &$htmlresult, $aLink, $add_label = false)
+    public static function process(CT &$ct, string &$htmlresult, ?array &$row, bool $add_label = false)
     {
-        if (is_null($ct->Table))
+        if ($ct->Table === null)
             return false;
 
-        if (!is_null($row))
+        if ($row !== null)
             $ct->Table->record = $row;
 
         $ct_record = new Twig_Record_Tags($ct);
 
-        tagProcessor_Item::processLink($ct_record, $row, $htmlresult); //Twig version added - original replaced
-        tagProcessor_Item::processNoReturnLink($ct_record, $row, $htmlresult); //Twig version added - original replaced
+        tagProcessor_Item::processLink($ct_record, $htmlresult); //Twig version added - original replaced
+        tagProcessor_Item::processNoReturnLink($ct_record, $htmlresult); //Twig version added - original replaced
         tagProcessor_Field::process($ct, $htmlresult, $add_label); //Twig version added - original not changed
 
         if ($ct->Env->advancedtagprocessor)
@@ -93,7 +94,7 @@ class tagProcessor_Item
         $htmlresult = str_replace('{number}', (isset($row['_number']) ? $row['_number'] : ''), $htmlresult); //Twig version added - original not changed
 
         if (isset($row) and isset($row['listing_published']))
-            tagProcessor_Item::processPublishStatus($row, $htmlresult); //Twig version added - original not changed
+            tagProcessor_Item::processPublishStatus($htmlresult, $row); //Twig version added - original not changed
 
         if (isset($row) and isset($row['listing_published']))
             tagProcessor_Item::GetSQLJoin($ct_record, $htmlresult);
@@ -104,7 +105,7 @@ class tagProcessor_Item
         CT_FieldTypeTag_ct::ResolveStructure($ct, $htmlresult);
     }//function GetSQLJoin(&$htmlresult)
 
-    protected static function processLink(&$ct_record, &$row, &$pagelayout): void
+    protected static function processLink(Twig_Record_Tags &$ct_record, string &$pagelayout): void
     {
         $options = array();
         $fList = JoomlaBasicMisc::getListToReplace('link', $options, $pagelayout, '{}', ':', '"');
@@ -119,7 +120,7 @@ class tagProcessor_Item
         }
     }
 
-    protected static function processNoReturnLink(&$ct_record, &$row, &$pagelayout): void
+    protected static function processNoReturnLink(Twig_Record_Tags &$ct_record, string &$pagelayout): void
     {
         $options = array();
         $fList = JoomlaBasicMisc::getListToReplace('linknoreturn', $options, $pagelayout, '{}', ':', '"');
@@ -134,7 +135,7 @@ class tagProcessor_Item
         }
     }
 
-    protected static function processPublishStatus(&$row, &$htmlresult): void
+    protected static function processPublishStatus(string &$htmlresult, ?array &$row): void
     {
         $htmlresult = str_replace('{_value:published}', $row['listing_published'] == 1, $htmlresult);
 
@@ -157,7 +158,7 @@ class tagProcessor_Item
         }
     }
 
-    protected static function GetSQLJoin($ct_record, &$htmlresult): void
+    protected static function GetSQLJoin(Twig_Record_Tags $ct_record, string &$htmlresult): void
     {
         $options = array();
         $fList = JoomlaBasicMisc::getListToReplace('sqljoin', $options, $htmlresult, '{}');
@@ -205,7 +206,7 @@ class tagProcessor_Item
         }//foreach($fList as $fItem)
     }
 
-    protected static function GetCustomToolBar(CT &$ct, &$htmlresult, &$row): void
+    protected static function GetCustomToolBar(CT &$ct, string &$htmlresult, ?array &$row): void
     {
         $options = array();
         $fList = JoomlaBasicMisc::getListToReplace('toolbar', $options, $htmlresult, '{}');

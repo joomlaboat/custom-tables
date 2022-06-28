@@ -50,35 +50,27 @@ use \CustomTables\Twig_Record_Tags;
 
 class tagProcessor_Page
 {
-    public static function process(CT &$ct, &$pagelayout)
+    public static function process(CT &$ct, string &$pagelayout): void
     {
         $ct_html = new Twig_Html_Tags($ct, false);
         $ct_url = new Twig_Url_Tags($ct, false);
-        $ct_record = new Twig_Record_Tags($ct, false);
+        $ct_record = new Twig_Record_Tags($ct);
 
         tagProcessor_Page::FormatLink($ct_url, $pagelayout);//{format:xls}  the link to the same page but in xls format
-
         tagProcessor_Page::PathValue($ct_html, $pagelayout); //Converted to Twig. Original replaced.
         tagProcessor_Page::AddNew($ct_html, $pagelayout); //Converted to Twig. Original replaced.
-
         tagProcessor_Page::Pagination($ct_html, $pagelayout); //Converted to Twig. Original replaced.
-
         tagProcessor_Page::PageToolBar($ct_html, $pagelayout); //Converted to Twig. Original replaced.
-
         tagProcessor_Page::PageToolBarCheckBox($ct_html, $pagelayout); //Converted to Twig. Original replaced.
-
         tagProcessor_Page::SearchButton($ct_html, $pagelayout); //Converted to Twig. Original replaced.
         tagProcessor_Page::SearchBOX($ct_html, $pagelayout); //Converted to Twig. Original replaced.
-
         tagProcessor_Page::RecordCountValue($ct, $pagelayout); //Converted to Twig. Original replaced.
         tagProcessor_Page::RecordCount($ct, $ct_html, $pagelayout); //Converted to Twig. Original replaced.
-
         tagProcessor_Page::PrintButton($ct_html, $pagelayout); //Converted to Twig. Original replaced.
-
-        tagProcessor_Page::processRecordlist($ct_record, $pagelayout); //Twig version added - original replaced
+        tagProcessor_Page::processRecordlist($pagelayout, $ct_record); //Twig version added - original replaced
     }
 
-    public static function FormatLink(&$ct_url, &$pagelayout)
+    public static function FormatLink(Twig_Url_Tags &$ct_url, string &$pagelayout): void
     {
         $options = array();
         $fList = JoomlaBasicMisc::getListToReplace('format', $options, $pagelayout, '{}');
@@ -103,7 +95,7 @@ class tagProcessor_Page
         }
     }
 
-    public static function PathValue(&$ct_html, &$pagelayout)
+    public static function PathValue(Twig_Html_Tags &$ct_html, string &$pagelayout): void
     {
         $options = array();
         $fList = JoomlaBasicMisc::getListToReplace('navigation', $options, $pagelayout, '{}');
@@ -123,7 +115,7 @@ class tagProcessor_Page
         }
     }
 
-    protected static function AddNew(&$ct_html, &$pagelayout)
+    protected static function AddNew(Twig_Html_Tags &$ct_html, string &$pagelayout): void
     {
         $options = array();
         $fList = JoomlaBasicMisc::getListToReplace('add', $options, $pagelayout, '{}');
@@ -145,7 +137,7 @@ class tagProcessor_Page
         }
     }
 
-    protected static function Pagination(&$ct_html, &$pagelayout)
+    protected static function Pagination(Twig_Html_Tags &$ct_html, string &$pagelayout): void
     {
         $options = array();
         $fList = JoomlaBasicMisc::getListToReplace('pagination', $options, $pagelayout, '{}');
@@ -180,7 +172,7 @@ class tagProcessor_Page
         }
     }
 
-    protected static function PageToolBar(&$ct_html, &$pagelayout)
+    protected static function PageToolBar(Twig_Html_Tags &$ct_html, string &$pagelayout): void
     {
         $options = array();
         $fList = JoomlaBasicMisc::getListToReplace('batchtoolbar', $options, $pagelayout, '{}');
@@ -195,7 +187,7 @@ class tagProcessor_Page
         }
     }
 
-    static protected function PageToolBarCheckBox(&$ct_html, &$pagelayout)
+    static protected function PageToolBarCheckBox(Twig_Html_Tags &$ct_html, string &$pagelayout): void
     {
         $options = array();
         $fList = JoomlaBasicMisc::getListToReplace('checkbox', $options, $pagelayout, '{}');
@@ -206,7 +198,7 @@ class tagProcessor_Page
         }
     }
 
-    static protected function SearchButton(&$ct_html, &$pagelayout)
+    static protected function SearchButton(Twig_Html_Tags &$ct_html, string &$pagelayout): void
     {
         $options = array();
         $fList = JoomlaBasicMisc::getListToReplace('searchbutton', $options, $pagelayout, '{}');
@@ -220,7 +212,7 @@ class tagProcessor_Page
         }
     }
 
-    static protected function SearchBOX(&$ct_html, &$pagelayout)
+    static protected function SearchBOX(Twig_Html_Tags &$ct_html, string &$pagelayout)
     {
         $options = array();
         $fList = JoomlaBasicMisc::getListToReplace('search', $options, $pagelayout, '{}');
@@ -250,7 +242,7 @@ class tagProcessor_Page
         }
     }
 
-    static protected function RecordCountValue(&$ct, &$pagelayout)
+    static protected function RecordCountValue(CT &$ct, string &$pagelayout): void
     {
         $options = array();
         $fList = JoomlaBasicMisc::getListToReplace('count', $options, $pagelayout, '{}');
@@ -262,7 +254,7 @@ class tagProcessor_Page
         }
     }
 
-    static protected function RecordCount(&$ct, &$ct_html, &$pagelayout): void
+    static protected function RecordCount(CT &$ct, Twig_Html_Tags &$ct_html, string &$pagelayout): void
     {
         $options = array();
         $fList = JoomlaBasicMisc::getListToReplace('recordcount', $options, $pagelayout, '{}');
@@ -280,7 +272,7 @@ class tagProcessor_Page
         }
     }
 
-    static protected function PrintButton(&$ct_html, &$pagelayout)
+    static protected function PrintButton(Twig_Html_Tags &$ct_html, string &$pagelayout): void
     {
         $options = array();
         $fList = JoomlaBasicMisc::getListToReplace('print', $options, $pagelayout, '{}');
@@ -299,7 +291,7 @@ class tagProcessor_Page
         }
     }
 
-    protected static function processRecordlist(&$ct_record, &$pagelayout)
+    protected static function processRecordlist(string &$pagelayout, Twig_Record_Tags &$ct_record): void
     {
         $options = array();
         $fList = JoomlaBasicMisc::getListToReplace('recordlist', $options, $pagelayout, '{}', ':', '"');

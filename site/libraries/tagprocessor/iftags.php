@@ -18,17 +18,17 @@ use Joomla\CMS\Factory;
 
 class tagProcessor_If
 {
-    protected static function processValue(CT &$ct, &$row, $value)
+    protected static function processValue(CT &$ct, string $value, ?array &$row): string
     {
         tagProcessor_General::process($ct, $value, $row);
         tagProcessor_Page::process($ct, $value);
-        tagProcessor_Item::process($ct, $row, $value, '');
-        tagProcessor_Value::processValues($ct, $row, $value, '[]');
+        tagProcessor_Item::process($ct, $value, $row, '');
+        tagProcessor_Value::processValues($ct, $value, $row, '[]');
 
         return $value;
     }
 
-    public static function process(CT &$ct, &$htmlresult, &$row)
+    public static function process(CT &$ct, string &$htmlresult, ?array &$row): void
     {
         $options = array();
         $fList = JoomlaBasicMisc::getListToReplace('if', $options, $htmlresult, '{}');
@@ -41,7 +41,7 @@ class tagProcessor_If
         }
 
         //outdated - obsolete, use Twig if statements instead. Example: {% if record.published == 1 %} ... {% endif %}
-        if (isset($row) and is_array($row) and isset($row['listing_published'])) {
+        if (!$ct->isRecordNull($row) and isset($row['listing_published'])) {
             //Row Publish Status IF,IFNOT statments
             tagProcessor_If::IFStatment('[_if_published]', '[_endif_published]', $htmlresult, !$row['listing_published'] == 1);
             tagProcessor_If::IFStatment('[_ifnot_published]', '[_endifnot_published]', $htmlresult, $row['listing_published'] == 1);
@@ -50,14 +50,10 @@ class tagProcessor_If
             tagProcessor_If::IFStatment('[_ifnot_published]', '[_endifnot_published]', $htmlresult, true);
         }
 
-        $user = Factory::getUser();
-        $currentuserid = (int)$user->get('id');
-
-        tagProcessor_If::IFUserTypeStatment($htmlresult, $user, $currentuserid);
-
+        tagProcessor_If::IFUserTypeStatment($htmlresult, $ct->Env->user, $ct->Env->userid);
     }
 
-    protected static function parseIfStatements($statement, &$ct, &$htmlresult, &$row)
+    protected static function parseIfStatements(string $statement, CT &$ct, string &$htmlresult, ?array &$row): void
     {
         $options = array();
         $fList = JoomlaBasicMisc::getListToReplaceAdvanced('{if:' . $statement . '}', '{endif}', $options, $htmlresult, '{if:');
@@ -84,10 +80,10 @@ class tagProcessor_If
                         $pair = array($item[1], '0');//boolean
                     }
 
-                    $processed_value1 = tagProcessor_If::processValue($ct, $row, $pair[0]);
-                    $processed_value2 = tagProcessor_If::processValue($ct, $row, $pair[1]);
+                    $processed_value1 = tagProcessor_If::processValue($ct, $pair[0], $row);
+                    $processed_value2 = tagProcessor_If::processValue($ct, $pair[1], $row);
 
-                    $isTrues[] = [$item[0], tagProcessor_If::doMath($processed_value1, $opr, $processed_value2)];
+                    $isTrues[] = [$item[0], tagProcessor_If::doMath($processed_value1, $processed_value2, $opr)];
 
                 }
             }
@@ -105,7 +101,7 @@ class tagProcessor_If
         }
     }
 
-    public static function ExplodeSmartParams($param)
+    public static function ExplodeSmartParams(string $param): array
     {
         $items = array();
         $a = explode(' and ', $param);
@@ -122,7 +118,7 @@ class tagProcessor_If
         return $items;
     }
 
-    protected static function getOpr($str)
+    protected static function getOpr(string $str): string
     {
         $opr = '';
 
@@ -143,7 +139,7 @@ class tagProcessor_If
         return $opr;
     }
 
-    protected static function doMath($value1, $operation, $value2)
+    protected static function doMath(string $value1, string $value2, string $operation): bool
     {
         $value1 = str_replace('"', '', $value1);
         $value2 = str_replace('"', '', $value2);
@@ -188,7 +184,7 @@ class tagProcessor_If
         return false;
     }
 
-    protected static function ifCompare($value1, $value2, $operation)
+    protected static function ifCompare(string $value1, string $value2, string $operation): bool
     {
         if ($operation == '>') {
             if ($value1 > $value2)
@@ -213,7 +209,7 @@ class tagProcessor_If
         return false;
     }//function ExplodeSmartParams($param)
 
-    protected static function doANDORs($isTrues)
+    protected static function doANDORs(array $isTrues): bool
     {
 
         $true_count = 0;
@@ -239,48 +235,39 @@ class tagProcessor_If
 
     //---------------------- old
 
-    public static function IFStatment($ifname, $endifname, &$htmlresult, $isEmpty)
+    public static function IFStatment(string $ifName, string $endIfName, string &$htmlresult, bool $isEmpty)
     {
 
         if ($isEmpty) {
-            do {
-                $textlength = strlen($htmlresult);
+            while (1) {
+                $startIf_ = strpos($htmlresult, $ifName);
 
-                $startif_ = strpos($htmlresult, $ifname);
-
-                if ($startif_ === false)
+                if ($startIf_ === false)
                     break;
 
-                if (!($startif_ === false)) {
-                    $endif_ = strpos($htmlresult, $endifname);
-                    if (!($endif_ === false)) {
-                        $p = $endif_ + strlen($endifname);
+                $endif_ = strpos($htmlresult, $endIfName);
+                if (!($endif_ === false)) {
+                    $p = $endif_ + strlen($endIfName);
 
-                        $htmlresult = substr($htmlresult, 0, $startif_) . substr($htmlresult, $p);
-                    }
+                    $htmlresult = substr($htmlresult, 0, $startIf_) . substr($htmlresult, $p);
                 }
-
-            } while (1 == 1);//$textlengthnew!=$textlength);
+            }
         } else {
-            $htmlresult = str_replace($ifname, '', $htmlresult);
-            $htmlresult = str_replace($endifname, '', $htmlresult);
+            $htmlresult = str_replace($ifName, '', $htmlresult);
+            $htmlresult = str_replace($endIfName, '', $htmlresult);
 
         }
     }
 
-    public static function IFUserTypeStatment(&$htmlresult, &$user, $currentuserid)
+    public static function IFUserTypeStatment(string &$htmlresult, &$user, $currentUserId)
     {
         $options = array();
         $fList = JoomlaBasicMisc::getListToReplace('_if_usertype', $options, $htmlresult, '[]');
 
-        if ($currentuserid == 0 or count($user->groups) == 0) {
-            $i = 0;
-            foreach ($fList as $fItem) {
-                $check_user_type = $options[$i];
+        if ($currentUserId == 0 or count($user->groups) == 0) {
+            foreach ($options as $check_user_type) {
                 tagProcessor_If::IFStatment('[_if_usertype:' . $check_user_type . ']', '[_endif_usertype:' . $check_user_type . ']', $htmlresult, true);
                 tagProcessor_If::IFStatment('[_ifnot_usertype:' . $check_user_type . ']', '[_endifnot_usertype:' . $check_user_type . ']', $htmlresult, false);
-
-                $i++;
             }
         } else {
             $usertypes = array_keys($user->groups);

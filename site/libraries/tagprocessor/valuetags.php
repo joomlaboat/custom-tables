@@ -35,7 +35,7 @@ use Joomla\CMS\Factory;
 
 class tagProcessor_Value
 {
-    public static function processValues(CT &$ct, &$row, &$htmlresult, $tag_chars = '[]'): void
+    public static function processValues(CT &$ct, string &$htmlresult, ?array &$row, string $tag_chars = '[]'): void
     {
         $items_to_replace = array();
         $isGalleryLoaded = array();
@@ -134,7 +134,8 @@ class tagProcessor_Value
 
     }
 
-    public static function processPureValues(CT &$ct, &$htmlresult, &$row, &$isGalleryLoaded, &$getGalleryRows, &$isFileBoxLoaded, &$getFileBoxRows, $tag_chars = '[]')
+    public static function processPureValues(CT &$ct, string &$htmlresult, ?array &$row, array &$isGalleryLoaded, array &$getGalleryRows
+        , array                                 &$isFileBoxLoaded, array &$getFileBoxRows, string $tag_chars = '[]')
     {
         $listing_id = ($row[$ct->Table->realidfieldname] ?? 0);
 
@@ -305,7 +306,7 @@ class tagProcessor_Value
 
     }//function
 
-    public static function isEmpty(&$rowValue, $field): bool
+    public static function isEmpty(&$rowValue, Field $field): bool
     {
         $fieldtype = $field->type;
 
@@ -348,9 +349,7 @@ class tagProcessor_Value
             else {
                 //check if file exists
                 $ImageFolder_ = CustomTablesImageMethods::getImageFolder($field->params);
-
                 $ImageFolder = str_replace('/', DIRECTORY_SEPARATOR, $ImageFolder_);
-
                 $image_prefix = '_esthumb';
 
                 $img = $rowValue;
@@ -385,7 +384,7 @@ class tagProcessor_Value
         }
     }
 
-    public static function processEditValues(CT &$ct, &$htmlresult, &$row, $tag_chars = '[]')
+    public static function processEditValues(CT &$ct, string &$htmlresult, ?array &$row, string $tag_chars = '[]')
     {
         $items_to_replace = array();
         $pureValueOptions = array();
@@ -486,17 +485,17 @@ class tagProcessor_Value
         return $items_to_replace;
     }
 
-    static public function getValueByType(CT &$ct, $fieldRow, $row, $option_list)
+    static public function getValueByType(CT &$ct, array $fieldRow, ?array $row, array $option_list)
     {
         $valueProcessor = new CustomTables\Value($ct);
 
         return $valueProcessor->renderValue($fieldRow, $row, $option_list);
     }
 
-    public static function showUserGroup($userid)
+    public static function showUserGroup(int $userid)
     {
         $db = Factory::getDBO();
-        $query = 'SELECT title FROM #__usergroups WHERE id=' . (int)$userid . ' LIMIT 1';
+        $query = 'SELECT title FROM #__usergroups WHERE id=' . $userid . ' LIMIT 1';
 
         $db->setQuery($query);
 
@@ -507,7 +506,7 @@ class tagProcessor_Value
         return '';
     }
 
-    public static function showUserGroups($valuearray_str)
+    public static function showUserGroups(string $valuearray_str)
     {
         if ($valuearray_str == '')
             return '';

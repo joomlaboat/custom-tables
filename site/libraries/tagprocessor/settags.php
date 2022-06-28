@@ -28,7 +28,7 @@ class tagProcessor_Set
         tagProcessor_Set::setPageTitle($ct, $pagelayout);
     }
 
-    protected static function setHeadTag(CT &$ct, &$htmlresult)
+    protected static function setHeadTag(CT &$ct, string &$htmlresult)
     {
         $options = array();
         $fList = JoomlaBasicMisc::getListToReplace('headtag', $options, $htmlresult, '{}');
@@ -48,7 +48,7 @@ class tagProcessor_Set
         }
     }
 
-    protected static function setMetaDescription(CT &$ct, &$htmlresult)
+    protected static function setMetaDescription(CT &$ct, string &$htmlresult)
     {
         $options = array();
         $fList = JoomlaBasicMisc::getListToReplace('metadescription', $options, $htmlresult, '{}');
@@ -69,7 +69,7 @@ class tagProcessor_Set
 
     }
 
-    protected static function setMetaKeywords(CT &$ct, &$htmlresult)
+    protected static function setMetaKeywords(CT &$ct, string &$htmlresult)
     {
         $options = array();
         $fList = JoomlaBasicMisc::getListToReplace('metakeywords', $options, $htmlresult, '{}');
@@ -92,7 +92,7 @@ class tagProcessor_Set
 
     }
 
-    protected static function setPageTitle(CT &$ct, &$htmlresult)
+    protected static function setPageTitle(CT &$ct, string &$htmlresult)
     {
         $options = array();
         $fList = JoomlaBasicMisc::getListToReplace('pagetitle', $options, $htmlresult, '{}');

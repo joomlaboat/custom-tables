@@ -33,7 +33,7 @@ class Layouts
         $this->layouttype = null;
     }
 
-    function processLayoutTag(&$htmlresult): bool
+    function processLayoutTag(string &$htmlresult): bool
     {
         $options = array();
         $fList = JoomlaBasicMisc::getListToReplace('layout', $options, $htmlresult, '{}');

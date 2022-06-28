@@ -102,7 +102,7 @@ function CustomTablesSave($task, $this_)
     $link = base64_decode($returnto);
 
     $jinput->set('task', '');
-    $ct = new CT;
+    $ct = new CT(null, false);
     $model = $this_->getModel('edititem');
 
     if (!$model->load($ct))
@@ -110,7 +110,6 @@ function CustomTablesSave($task, $this_)
 
     if (!CTUser::CheckAuthorization($ct)) {
         $link = $ct->Env->WebsiteRoot . 'index.php?option=com_users&view=login&return=' . base64_encode(JoomlaBasicMisc::curPageURL());
-
         $this_->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
     } else {
         $msg_ = '';

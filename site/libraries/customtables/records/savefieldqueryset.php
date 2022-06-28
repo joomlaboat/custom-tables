@@ -891,10 +891,10 @@ class SaveFieldQuerySet
 
         foreach ($field->params as $part) {
             tagProcessor_General::process($this->ct, $part, $this->ct->Table->record);
-            tagProcessor_Item::process($this->ct, $this->ct->Table->record, $part, '');
+            tagProcessor_Item::process($this->ct, $part, $this->ct->Table->record, '');
             tagProcessor_If::process($this->ct, $part, $this->ct->Table->record);
             tagProcessor_Page::process($this->ct, $part);
-            tagProcessor_Value::processValues($this->ct, $this->ct->Table->record, $part);
+            tagProcessor_Value::processValues($this->ct, $part, $this->ct->Table->record);
 
             $new_parts[] = $part;
         }

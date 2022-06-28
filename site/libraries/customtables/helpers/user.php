@@ -26,7 +26,7 @@ use tagProcessor_If;
 
 class CTUser
 {
-    public static function ResetPassword($ct, $listing_id)
+    public static function ResetPassword(CT $ct, $listing_id)
     {
         if ($listing_id == 0) {
             Factory::getApplication()->enqueueMessage('Table record selected.', 'error');
@@ -101,7 +101,7 @@ class CTUser
         return false;
     }
 
-    static protected function SetUserPassword($userid, $password)
+    static protected function SetUserPassword(int $userid, string $password): int
     {
         $db = Factory::getDBO();
         $query = 'UPDATE #__users SET password=md5("' . $password . '"), requireReset=0 WHERE id=' . $userid;
@@ -111,7 +111,7 @@ class CTUser
         return $userid;
     }
 
-    static public function GetUserRow($userid): ?array
+    static public function GetUserRow(int $userid): ?array
     {
         $db = Factory::getDBO();
         $query = 'SELECT * FROM #__users WHERE id=' . $userid . ' LIMIT 1';
@@ -125,7 +125,7 @@ class CTUser
             return $recs[0];
     }
 
-    static public function GetUserGroups($userid)
+    static public function GetUserGroups(int $userid)
     {
         $db = Factory::getDBO();
 
@@ -306,7 +306,7 @@ class CTUser
         return $usergroup_ids;
     }
 
-    static public function UpdateUserField($realtablename, $realidfieldname, $useridfieldname, $existing_user_id, $listing_id)
+    static public function UpdateUserField(string $realtablename, string $realidfieldname, string $useridfieldname, string $existing_user_id, $listing_id)
     {
         $db = Factory::getDBO();
 
@@ -316,11 +316,11 @@ class CTUser
         $db->execute();
     }
 
-    static public function CheckIfUserNameExist($username): bool
+    static public function CheckIfUserNameExist(string $username): bool
     {
         $db = Factory::getDBO();
 
-        $query = 'SELECT id FROM #__users WHERE username="' . $username . '" LIMIT 1';
+        $query = 'SELECT id FROM #__users WHERE username=' . $db->quote($username) . ' LIMIT 1';
 
         $db->setQuery($query);
 
@@ -332,10 +332,10 @@ class CTUser
 
     }
 
-    static public function CheckIfUserExist($username, $email)
+    static public function CheckIfUserExist(string $username, string $email)
     {
         $db = Factory::getDBO();
-        $query = 'SELECT id FROM #__users WHERE username="' . $username . '" AND email="' . $email . '" LIMIT 1';
+        $query = 'SELECT id FROM #__users WHERE username=' . $db->quote($username) . ' AND email=' . $db->quote($email) . ' LIMIT 1';
 
         $db->setQuery($query);
 
@@ -347,13 +347,13 @@ class CTUser
         return $rec['id'];
     }
 
-    static public function CheckIfEmailExist($email, &$existing_user, &$existing_name)
+    static public function CheckIfEmailExist(string $email, &$existing_user, &$existing_name)
     {
         $existing_user = '';
         $existing_name = '';
         $db = Factory::getDBO();
 
-        $query = 'SELECT id, username, name FROM #__users WHERE email="' . $email . '" LIMIT 1';
+        $query = 'SELECT id, username, name FROM #__users WHERE email=' . $db->quote($email) . ' LIMIT 1';
 
         $db->setQuery($query);
 
@@ -368,7 +368,7 @@ class CTUser
         return false;
     }
 
-    public static function checkIfRecordBelongsToUser(CT &$ct, $ug)
+    public static function checkIfRecordBelongsToUser(CT &$ct, int $ug)
     {
         if (!isset($ct->Env->isUserAdministrator))
             return false;
@@ -397,7 +397,7 @@ class CTUser
 
     //checkAccess
 
-    public static function CheckAuthorization(CT &$ct, $action = 1)
+    public static function CheckAuthorization(CT &$ct, int $action = 1)
     {
         if ($action == 5) //force edit
         {
@@ -414,14 +414,13 @@ class CTUser
             return false;
 
         //check is authorized or not
-
         if ($action == 1)
             $userGroup = $ct->Params->editUserGroups;
-        if ($action == 2)
+        elseif ($action == 2)
             $userGroup = $ct->Params->publishUserGroups;
-        if ($action == 3)
+        elseif ($action == 3)
             $userGroup = $ct->Params->deleteUserGroups;
-        if ($action == 4)
+        elseif ($action == 4)
             $userGroup = $ct->Params->addUserGroups;
         else
             $userGroup = null;

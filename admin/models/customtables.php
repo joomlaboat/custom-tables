@@ -64,6 +64,7 @@ class CustomtablesModelCustomtables extends JModelList
                 foreach ($views as $view) {
                     $action = true;
                     $add = false;
+                    $name = '';
                     // external views (links)
                     if (strpos($view, '||') !== false) {
                         $dwd = explode('||', $view);
