@@ -84,7 +84,6 @@ function processFieldParams(&$fieldList, array &$fields): array
             }
         }
     }
-
     return $fields;
 }
 

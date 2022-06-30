@@ -344,8 +344,6 @@ class Filtering
                     $comparison_operator = '=';
 
                 $vList = explode(',', $value);
-
-
                 $cArr = array();
                 foreach ($vList as $vL) {
                     //--------
@@ -353,14 +351,12 @@ class Filtering
                     $v = trim($vL);
                     if ($v != '') {
 
-
                         //to fix the line
                         if ($v[0] != ',')
                             $v = ',' . $v;
 
                         if ($v[strlen($v) - 1] != '.')
                             $v .= '.';
-
 
                         if ($comparison_operator == '=') {
                             $cArr[] = 'instr(' . $fieldrow['realfieldname'] . ',' . $this->ct->db->quote($v) . ')';

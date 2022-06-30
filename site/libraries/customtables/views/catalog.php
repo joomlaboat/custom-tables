@@ -59,9 +59,6 @@ class Catalog
 // --------------------- Filter
         $this->ct->setFilter($this->ct->Params->filter, $this->ct->Params->showPublished);
 
-        $this->ct->Filter->addMenuParamFilter();
-
-
         if (!$this->ct->Params->blockExternalVars) {
             if ($this->ct->Env->jinput->get('filter', '', 'STRING'))
                 $this->ct->Filter->addWhereExpression($this->ct->Env->jinput->get('filter', '', 'STRING'));
@@ -69,7 +66,6 @@ class Catalog
 
         if (!$this->ct->Params->blockExternalVars)
             $this->ct->Filter->addQueryWhereFilter();
-
 
 // --------------------- Shopping Cart
 

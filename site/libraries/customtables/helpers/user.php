@@ -97,7 +97,6 @@ class CTUser
         }
 
         //clean exit
-
         return false;
     }
 

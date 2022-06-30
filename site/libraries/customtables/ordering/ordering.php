@@ -56,6 +56,7 @@ class Ordering
         $this->index = 0;
 
         $orderbyQuery = self::parseOrderByFieldName($this->fieldList[$this->index], $this->Table);
+
         if ($orderbyQuery === null)
             return false;
 
@@ -89,7 +90,7 @@ class Ordering
                 return '(SELECT #__users.name FROM #__users WHERE #__users.id=' . $Table->realtablename . '.' . $field->realfieldname . ')';
 
             case 'customtables':
-                return '(SELECT #__customtables_options.title FROM #__users WHERE #__customtables_options.familytreestr=' . $field->realfieldname . ')';
+                return '(SELECT #__customtables_options.title FROM #__customtables_options WHERE #__customtables_options.familytreestr=' . $field->realfieldname . ')';
 
             case 'sqljoin':
 
