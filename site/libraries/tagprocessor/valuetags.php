@@ -506,16 +506,16 @@ class tagProcessor_Value
         return '';
     }
 
-    public static function showUserGroups(string $valuearray_str)
+    public static function showUserGroups(?string $valueArrayString)
     {
-        if ($valuearray_str == '')
+        if ($valueArrayString == '')
             return '';
 
         $db = Factory::getDBO();
 
         $where = array();
-        $valuearray = explode(',', $valuearray_str);
-        foreach ($valuearray as $value) {
+        $valueArray = explode(',', $valueArrayString);
+        foreach ($valueArray as $value) {
             if ($value != '') {
                 $where[] = 'id=' . (int)$value;
             }

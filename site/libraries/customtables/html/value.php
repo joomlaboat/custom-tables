@@ -197,7 +197,7 @@ class Value
                 return tagProcessor_Value::showUserGroup((int)$rowValue);
 
             case 'usergroups':
-                return tagProcessor_Value::showUserGroups((int)$rowValue);
+                return tagProcessor_Value::showUserGroups($rowValue);
 
             case 'filelink':
                 $processor_file = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_file.php';

@@ -14,7 +14,8 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
-if ($this->ct->Env->frmt and is_null($this->ct->Params->listing_id)) //there is no need to have a header if we are loading a single record.
+//$this->ct->Env->frmt and
+if (is_null($this->ct->Params->listing_id)) //there is no need to have a header if we are loading a single record.
 {
     if ($this->ct->Params->showPageHeading) {
         $title = JoomlaBasicMisc::JTextExtended($this->ct->Params->pageTitle);
@@ -28,13 +29,15 @@ if ($this->ct->Env->frmt and is_null($this->ct->Params->listing_id)) //there is 
 
 echo $this->catalog->render();
 
-?>
-
-<!-- Modal content -->
+//$this->ct->Env->frmt and
+if (is_null($this->ct->Params->listing_id)) //there is no need to have a header if we are loading a single record.
+{
+    echo '<!-- Modal content -->
 <div id="ctModal" class="ctModal">
     <div id="ctModal_box" class="ctModal_content">
         <span id="ctModal_close" class="ctModal_close">&times;</span>
         <div id="ctModal_content"></div>
     </div>
 </div>
-<!-- end of the modal -->
+<!-- end of the modal -->';
+}
