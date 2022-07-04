@@ -49,20 +49,6 @@ class JHTMLESSQLJoinView
             $ct->app->enqueueMessage('SQL Join field: Table no set.', 'error');
             return null;
         }
-        /*
-        // --------------------- Filter
-        $ct->setFilter('', $ct->Params->showPublished);
-        $ct->Filter->addMenuParamFilter();
-        $ct->Filter->where[] = $filter;
-
-        // --------------------- Sorting
-        $ct->Ordering->parseOrderByParam();
-
-        // --------------------- Limit
-        $ct->applyLimits();
-
-        $ct->getRecords();
-        */
 
         $htmlresult = '';
 

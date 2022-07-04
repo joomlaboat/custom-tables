@@ -55,8 +55,7 @@ class JHTMLESRecordsView
         }
 
         // --------------------- Filter
-        $ct->setFilter('', $ct->Params->showPublished);
-        $ct->Filter->addMenuParamFilter();
+        $ct->setFilter($ct->Params->filter, $ct->Params->showPublished);
         $ct->Filter->where[] = $value_where_filter;
 
         // --------------------- Sorting

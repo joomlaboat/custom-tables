@@ -137,8 +137,7 @@ class JHTMLESSqlJoin
         }
 
         // --------------------- Filter
-        $ct->setFilter('', $ct->Params->showPublished);
-        $ct->Filter->addMenuParamFilter();
+        $ct->setFilter($ct->Params->filter, $ct->Params->showPublished);
 
         // --------------------- Sorting
         $ct->Ordering->parseOrderByParam();

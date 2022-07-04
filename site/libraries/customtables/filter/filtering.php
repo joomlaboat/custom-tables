@@ -51,14 +51,13 @@ class Filtering
         }
     }
 
-    function addMenuParamFilter(): void
+    function addQueryWhereFilter(): void
     {
-        if ($this->ct->Params->filter !== null) {
-            $filter_string = $this->ct->Params->filter;
-
-            //Parse using layout, has no effect to layout itself
-
-            $filter_string = $this->sanitizeAndParseFilter($filter_string, true);
+        if ($this->ct->Env->jinput->get('where', '', 'BASE64')) {
+            $decodedurl = $this->ct->Env->jinput->get('where', '', 'BASE64');
+            $decodedurl = urldecode($decodedurl);
+            $decodedurl = str_replace(' ', '+', $decodedurl);
+            $filter_string = $this->sanitizeAndParseFilter(base64_decode($decodedurl));
 
             if ($filter_string != '')
                 $this->addWhereExpression($filter_string);
@@ -91,10 +90,12 @@ class Filtering
         return str_ireplace('insert ', '', $paramWhere);
     }
 
-    function addWhereExpression(string $param): void
+    function addWhereExpression(?string $param): void
     {
-        if ($param == '')
+        if ($param === null or $param == '')
             return;
+
+        $param = $this->sanitizeAndParseFilter($param, true);
 
         $wheres = [];
 
@@ -159,7 +160,7 @@ class Filtering
                                     'fieldname' => '_id',
                                     'type' => '_id',
                                     'typeparams' => '',
-                                    'realfieldname' => 'id'
+                                    'realfieldname' => $this->ct->Table->realidfieldname,
                                 );
                             } elseif ($fieldname == '_published') {
                                 $fieldrow = array(
@@ -895,7 +896,6 @@ class Filtering
 
                 return $this->ct->db->quote($value);
         }
-
     }
 
     function getInt_vL($vL)
@@ -909,19 +909,6 @@ class Filtering
         }
 
         return $vL;
-    }//function ExplodeSmartParams($param)
-
-    function addQueryWhereFilter(): void
-    {
-        if ($this->ct->Env->jinput->get('where', '', 'BASE64')) {
-            $decodedurl = $this->ct->Env->jinput->get('where', '', 'BASE64');
-            $decodedurl = urldecode($decodedurl);
-            $decodedurl = str_replace(' ', '+', $decodedurl);
-            $filter_string = $this->sanitizeAndParseFilter(base64_decode($decodedurl));
-
-            if ($filter_string != '')
-                $this->addWhereExpression($filter_string);
-        }
     }
 
     function getCmd_vL($vL)
