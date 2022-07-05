@@ -56,7 +56,7 @@ class SaveFieldQuerySet
         $query = $this->getSaveFieldSetType();
 
         if ($this->field->defaultvalue != "" and (is_null($query) or is_null($this->row[$this->field->realfieldname])))
-            return $this->applyDefaults();
+            return $this->applyDefaults($fieldrow);
         else
             return $query;
     }
