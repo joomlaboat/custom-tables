@@ -19,6 +19,7 @@ use Joomla\Input\Input;
 use JoomlaBasicMisc;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Router\Route;
+use LayoutProcessor;
 
 class Twig_Fields_Tags
 {
@@ -401,13 +402,29 @@ class Twig_Document_Tags
 
                 foreach ($this->ct->Records as $row) {
                     $row['_number'] = $number;
-                    $html_result .= $twig->process($row);
+
+                    $html_result_layout = $twig->process($row);
+
+                    if ($this->ct->Env->legacysupport) {
+                        $LayoutProc = new LayoutProcessor($this->ct);
+                        $LayoutProc->layout = $html_result_layout;
+                        $html_result_layout = $LayoutProc->fillLayout($row);
+                    }
+
+                    $html_result .= $html_result_layout;
+
                     $number++;
                 }
             }
         } else {
             ///if (!is_null($this->ct->Table->record))
             $html_result = $twig->process($this->ct->Table->record);
+
+            if ($this->ct->Env->legacysupport) {
+                $LayoutProc = new LayoutProcessor($this->ct);
+                $LayoutProc->layout = $html_result;
+                $html_result = $LayoutProc->fillLayout($this->ct->Table->record);
+            }
         }
 
         return $html_result;
