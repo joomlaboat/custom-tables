@@ -54,16 +54,9 @@ class SaveFieldQuerySet
 
         $query = $this->getSaveFieldSetType();
 
-        //Process default value
-        // or $this->row[$this->field->realfieldname] == ''
-
-        if ($this->field->defaultvalue != "" and (is_null($query) or is_null($this->row[$this->field->realfieldname]))) {
-            $twig = new TwigProcessor($this->ct, $this->field->defaultvalue);
-            $value = $twig->process($this->row);
-
-            $this->row[$this->field->realfieldname] = $value;
-            return $this->field->realfieldname . '=' . $this->db->quote($value);
-        } else
+        if ($this->field->defaultvalue != "" and (is_null($query) or is_null($this->row[$this->field->realfieldname])))
+            return $this->applyDefaults();
+        else
             return $query;
     }
 
@@ -866,6 +859,27 @@ class SaveFieldQuerySet
         } else {
             return $_SERVER['REMOTE_ADDR'];
         }
+    }
+
+    function applyDefaults($fieldrow)
+    {
+        $this->field = new Field($this->ct, $fieldrow, $this->row);
+
+        if ($this->field->defaultvalue != "" and is_null($this->row[$this->field->realfieldname]) and $this->field->type != 'dummie') {
+
+            if ($this->ct->Env->legacysupport) {
+                $LayoutProc = new LayoutProcessor($this->ct);
+                $LayoutProc->layout = $this->field->defaultvalue;
+                $this->field->defaultvalue = $LayoutProc->fillLayout($this->row);
+            }
+
+            $twig = new TwigProcessor($this->ct, $this->field->defaultvalue);
+            $value = $twig->process($this->row);
+
+            $this->row[$this->field->realfieldname] = $value;
+            return $this->field->realfieldname . '=' . $this->db->quote($value);
+        }
+        return null;
     }
 
     public function Try2CreateUserAccount($field): bool

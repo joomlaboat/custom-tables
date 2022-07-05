@@ -523,6 +523,8 @@ class CustomTablesModelEditItem extends JModelLegacy
                     else
                         $saveQuery[] = $saveFieldSet;
                 }
+            } else {
+                $saveField->applyDefaults($fieldrow);
             }
 
             if ($fieldrow['type'] == 'phponadd' and ($listing_id == 0 or $listing_id == '' or $isCopy))
