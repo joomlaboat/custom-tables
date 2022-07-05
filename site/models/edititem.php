@@ -514,17 +514,16 @@ class CustomTablesModelEditItem extends JModelLegacy
 
         foreach ($this->ct->Table->fields as $fieldrow) {
 
-            if (in_array($fieldrow['fieldname'], $fieldstosave)) {
+            if (in_array($fieldrow['fieldname'], $fieldstosave))
                 $saveFieldSet = $saveField->getSaveFieldSet($fieldrow);
+            else
+                $saveFieldSet = $saveField->applyDefaults($fieldrow);
 
-                if ($saveFieldSet !== null) {
-                    if (is_array($saveFieldSet))
-                        $saveQuery = array_merge($saveQuery, $saveFieldSet);
-                    else
-                        $saveQuery[] = $saveFieldSet;
-                }
-            } else {
-                $saveField->applyDefaults($fieldrow);
+            if ($saveFieldSet !== null) {
+                if (is_array($saveFieldSet))
+                    $saveQuery = array_merge($saveQuery, $saveFieldSet);
+                else
+                    $saveQuery[] = $saveFieldSet;
             }
 
             if ($fieldrow['type'] == 'phponadd' and ($listing_id == 0 or $listing_id == '' or $isCopy))
