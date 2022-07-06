@@ -69,6 +69,9 @@ class Filtering
         if ($parse) {
             //Parse using layout, has no effect to layout itself
             if ($this->ct->Env->legacysupport) {
+
+                require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'layout.php');
+
                 $LayoutProc = new LayoutProcessor($this->ct);
                 $LayoutProc->layout = $paramWhere;
                 $paramWhere = $LayoutProc->fillLayout();
