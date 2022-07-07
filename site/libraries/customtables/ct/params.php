@@ -99,7 +99,7 @@ class Params
                 $module = ModuleHelper::getModuleById(strval($ModuleId));
                 $params = new JRegistry;
                 $params->loadString($module->params);
-                $this->setParams($params, false, $ModuleId);
+                $this->setParams($params, false, $ModuleId); //Do not block external var parameters because this is the edit form or a task
             } elseif (method_exists($this->app, 'getParams')) {
                 $menu_params = $this->app->getParams();
                 $this->setParams($menu_params, $blockExternalVars, $ModuleId);
@@ -138,9 +138,16 @@ class Params
         else
             $this->listing_id = $menu_params->get('listingid');
 
-        $this->tableName = $menu_params->get('establename'); //Table name or id not sanitized
-        if ($this->tableName === null or $this->tableName == '')
-            $this->tableName = $menu_params->get('tableid'); //Used in the back-end
+        $this->tableName = null;
+
+        if ($this->jinput->getCmd("task") !== null)
+            $this->tableName = $this->jinput->getInt("tableid");//TODO: find better way
+
+        if ($this->tableName === null) {
+            $this->tableName = $menu_params->get('establename'); //Table name or id not sanitized
+            if ($this->tableName === null or $this->tableName == '')
+                $this->tableName = $menu_params->get('tableid'); //Used in the back-end
+        }
 
         //Filter
         $this->userIdField = $menu_params->get('useridfield');

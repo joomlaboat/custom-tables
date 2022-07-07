@@ -144,8 +144,11 @@ class JoomlaBasicMisc
         return $WebsiteRoot . $RequestURL;
     }
 
-    public static function getFirstImage(string $content): string
+    public static function getFirstImage(?string $content): string
     {
+        if ($content === null)
+            return "";
+
         preg_match_all('/<img[^>]+>/i', $content, $result);
         if (count($result[0]) == 0)
             return '';
@@ -205,9 +208,9 @@ class JoomlaBasicMisc
         return trim($desc);
     }
 
-    public static function words_trimtext(string $text, int $count, bool $cleanbraces = false, bool $cleanquotes = false): string
+    public static function words_trimtext(?string $text, int $count, bool $cleanbraces = false, bool $cleanquotes = false): string
     {
-        if ($count == 0)
+        if ($text === null or $count == 0)
             return "";
 
         $desc = strip_tags($text);

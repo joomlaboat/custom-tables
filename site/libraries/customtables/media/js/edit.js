@@ -164,8 +164,8 @@ function isValidURL(str) {
 }
 
 function doValuerules(obj, label, valuerules, caption) {
-    let ct_fielname = obj.name.replaceAll('comes_', '');
-    let valuerules_and_arguments = doValuerules_ParseValues(valuerules, ct_fielname);
+    let ct_fieldNname = obj.name.replaceAll('comes_', '');
+    let valuerules_and_arguments = doValuerules_ParseValues(valuerules, ct_fieldNname);
 
     if (valuerules_and_arguments == null)
         return true;
@@ -178,7 +178,8 @@ function doValuerules(obj, label, valuerules, caption) {
         let rules = new Function(rules_str); // this |x| refers global |x|
         result = rules(valuerules_and_arguments.new_args);
     } catch (error) {
-        alert('Validation rule "' + valuerules + '" has an error: ' + error);
+        //alert('Validation rule "' + valuerules + '" has an error: ' + error);
+        return true;//TODO replace it with JS Twig
     }
 
     if (result)
@@ -192,12 +193,12 @@ function doValuerules(obj, label, valuerules, caption) {
     return false;
 }
 
-function doValuerules_ParseValues(valuerules, ct_fielname) {
+function doValuerules_ParseValues(valuerules, ct_fieldName) {
     //let matches=valuerules.match(/(?<=\[)[^\][]*(?=])/g);  Doesn't work on Safari
     let matches = valuerules.match(/\[(.*?)\]/g); // return example: ["[subject]","[date]"]
 
     if (matches == null) {
-        valuerules = '[' + ct_fielname + ']' + valuerules;
+        valuerules = '[' + ct_fieldName + ']' + valuerules;
         matches = valuerules.match(/\[(.*?)\]/g); // return example: ["[subject]","[date]"]
 
         if (matches == null)
@@ -209,6 +210,7 @@ function doValuerules_ParseValues(valuerules, ct_fielname) {
     for (let i = 0; i < matches.length; i++) {
         let fieldname = matches[i].replace("[", "").replace("]", "");
         let objID = "comes_" + fieldname;
+
         let obj = document.getElementById(objID);
 
         if (obj) {

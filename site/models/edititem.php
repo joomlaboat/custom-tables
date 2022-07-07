@@ -490,7 +490,7 @@ class CustomTablesModelEditItem extends JModelLegacy
         }
 
         if ($listing_id == '') {
-            $listing_id = $this->ct->Env->jinput->getCmd("listing_id", ''); //TODO : this inconsistancy must be fixed
+            $listing_id = $this->ct->Env->jinput->getCmd("listing_id", ''); //TODO : this inconsistency must be fixed
             if ($listing_id == 0)
                 $listing_id = '';
         }
