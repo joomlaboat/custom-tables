@@ -313,13 +313,20 @@ function ctToolBarDO(task, tableid) {
     const elements = getListOfSelectedRecords(tableid);
 
     if (elements.length === 0) {
-        alert("Please select records first.");
+        alert(Joomla.JText._('COM_CUSTOMTABLES_JS_SELECT_RECORDS'));
         es_LinkLoading = false;
         return;
     }
 
     if (task === 'delete') {
-        if (!confirm('Do you want to delete ' + elements.length + ' records?')) {
+
+        let msg = '';
+        if(elements.length == 1)
+            msg = Joomla.JText._('COM_CUSTOMTABLES_JS_SELECT_DO_U_WANT_TO_DELETE1l');
+        else
+            msg = Joomla.JText._('COM_CUSTOMTABLES_JS_SELECT_DO_U_WANT_TO_DELETE').replace('%s', elements.length);
+
+        if (!confirm(msg) {
             es_LinkLoading = false;
             return;
         }
@@ -428,9 +435,9 @@ function ct_UpdateSingleValue(WebsiteRoot, Itemid, fieldname_, record_id, postfi
                     obj.className = "ct_checkmark_err ";
 
                     if (res.indexOf('<div class="alert-message">Nothing to save</div>') !== -1)
-                        alert('Nothing to save. Check Edit From layout.');
+                        alert(Joomla.JText._('COM_CUSTOMTABLES_JS_NOTHING_TO_SAVE'));
                     else if (res.indexOf('view-login') !== -1)
-                        alert('Session expired. Please login again.');
+                        alert(Joomla.JText._('COM_CUSTOMTABLES_JS_SESSION_EXPIRED'));
                 }
             }
         };

@@ -18,6 +18,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use Joomla\CMS\Application\WebApplication;
 use Joomla\CMS\Document\Document;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Component\ComponentHelper;
 
@@ -378,5 +379,11 @@ class CT
         $this->document->addCustomTag('<link href="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/css/style.css" type="text/css" rel="stylesheet" >');
         $this->document->addCustomTag('<link href="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/css/modal.css" type="text/css" rel="stylesheet" >');
         $this->document->addCustomTag('<link href="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/css/uploadfile.css" rel="stylesheet">');
+
+        Text::script('COM_CUSTOMTABLES_JS_SELECT_RECORDS');
+        Text::script('COM_CUSTOMTABLES_JS_SELECT_DO_U_WANT_TO_DELETE1');
+        Text::script('COM_CUSTOMTABLES_JS_SELECT_DO_U_WANT_TO_DELETE');
+        Text::script('COM_CUSTOMTABLES_JS_NOTHING_TO_SAVE');
+        Text::script('COM_CUSTOMTABLES_JS_SESSION_EXPIRED');
     }
 }
