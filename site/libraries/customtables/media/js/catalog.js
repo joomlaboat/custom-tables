@@ -321,12 +321,12 @@ function ctToolBarDO(task, tableid) {
     if (task === 'delete') {
 
         let msg = '';
-        if(elements.length == 1)
+        if (elements.length == 1)
             msg = Joomla.JText._('COM_CUSTOMTABLES_JS_SELECT_DO_U_WANT_TO_DELETE1l');
         else
             msg = Joomla.JText._('COM_CUSTOMTABLES_JS_SELECT_DO_U_WANT_TO_DELETE').replace('%s', elements.length);
 
-        if (!confirm(msg) {
+        if (!confirm(msg)) {
             es_LinkLoading = false;
             return;
         }
