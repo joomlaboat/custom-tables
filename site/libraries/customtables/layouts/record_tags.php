@@ -525,6 +525,90 @@ class Twig_Record_Tags
 
 }
 
+class Twig_Table_Tags
+{
+    var CT $ct;
+
+    function __construct(&$ct)
+    {
+        $this->ct = &$ct;
+    }
+
+    function allrecords()
+    {
+        if (!isset($this->ct->Table) or $this->ct->Table->fields === null)
+            return 'Table not selected';
+
+        return $this->ct->getNumberOfRecords();
+    }
+
+    function records()
+    {
+        if (!isset($this->ct->Table) or $this->ct->Table->fields === null)
+            return 'Table not selected';
+
+        return $this->ct->Table->recordcount;
+    }
+
+    function fields()
+    {
+        if (!isset($this->ct->Table) or $this->ct->Table->fields === null)
+            return 'Table not selected';
+
+        return count($this->ct->Table->fields);
+    }
+
+    function description()
+    {
+        if (!isset($this->ct->Table) or $this->ct->Table->fields === null)
+            return 'Table not selected';
+
+        return $this->ct->Table->tablerow['description' . $this->ct->Table->Languages->Postfix];
+    }
+
+    function title(): string
+    {
+        if (!isset($this->this->ct->Table) or $this->ct->Table->fields === null)
+            return 'Table not selected';
+
+        return $this->ct->Table->tabletitle;
+    }
+
+    function name(): ?string
+    {
+        if (!isset($this->ct->Table) or $this->ct->Table->fields === null)
+            return 'Table not selected';
+
+        return $this->ct->Table->tablename;
+    }
+
+    function id()
+    {
+        if (!isset($this->ct->Table) or $this->ct->Table->fields === null)
+            return 'Table not selected';
+
+        return $this->ct->Table->tableid;
+    }
+
+    function limit()
+    {
+        if (!isset($this->ct->Table) or $this->ct->Table->fields === null)
+            return 'Table not selected';
+
+        return $this->ct->Limit;
+    }
+
+    function start()
+    {
+        if (!isset($this->ct->Table) or $this->ct->Table->fields === null)
+            return 'Table not selected';
+
+        return $this->ct->LimitStart;
+    }
+
+
+}
+
 class Twig_Tables_Tags
 {
     var CT $ct;

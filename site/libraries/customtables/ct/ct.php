@@ -159,6 +159,7 @@ class CT
 
             if ($limit > 0) {
                 $this->db->setQuery($query, 0, $limit);
+                $this->Limit = $limit;
             } else {
                 $the_limit = $this->Limit;
 
@@ -183,10 +184,16 @@ class CT
         } else
             $this->Records = [];
 
+        if ($this->Limit == 0)
+            $this->Limit = 20000;
+
+        if ($this->Limit > count($this->Records))
+            $this->Limit = count($this->Records);
+
         return true;
     }
 
-    function getNumberOfRecords($where): int
+    function getNumberOfRecords(string $where = ''): int
     {
         $query_check_table = 'SHOW TABLES LIKE ' . $this->db->quote(str_replace('#__', $this->db->getPrefix(), $this->Table->realtablename));
         $this->db->setQuery($query_check_table);

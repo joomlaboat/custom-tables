@@ -464,6 +464,15 @@
         <tag name="records" label="Record Count (number)" startchar="{" endchar="}"
              description="Returns the number of records in the table that met filter criteria" twigclass="table"/>
 
+        <tag name="allrecords" label="Total Number of Records" startchar="{" endchar="}"
+             description="Returns the total number of records in the table" hidedefaultexample="1" twigclass="table"/>
+
+        <tag name="start" label="Start record number" startchar="{" endchar="}"
+             description="Returns the pagination start from record number" hidedefaultexample="1" twigclass="table"/>
+
+        <tag name="limit" label="Limit - number of records per page" startchar="{" endchar="}"
+             description="Returns number of records per page" hidedefaultexample="1" twigclass="table"/>
+
         <tag name="title" label="Table Title" startchar="{" endchar="}"
              description="Returns the current table title." hidedefaultexample="1" twigclass="table"/>
 

@@ -167,20 +167,21 @@ class TwigProcessor
         //{{ tables.getvalue(tablename,field_name,recordid_or_filter, orderby) }}
         //{{ tables.getrecord(layoutname,recordid_or_filter, orderby) }}
         //{{ tables.getrecords(layoutname,filter,orderby,limit) }}
+        /*
+                if (isset($ct->Table) and !is_null($this->ct->Table->fields)) {
+                    $description = $ct->Table->tablerow['description' . $this->ct->Table->Languages->Postfix];
 
-        if (isset($ct->Table) and !is_null($this->ct->Table->fields)) {
-            $description = $ct->Table->tablerow['description' . $this->ct->Table->Languages->Postfix];
-
-            $this->variables['table'] = [
-                'id' => $this->ct->Table->tableid,
-                'name' => $this->ct->Table->tablename,
-                'title' => $this->ct->Table->tabletitle,
-                'description' => $description,
-                'records' => $this->ct->Table->recordcount,
-                'fields' => count($this->ct->Table->fields)
-            ];
-        }
-
+                    $this->variables['table'] = [
+                        'id' => $this->ct->Table->tableid,
+                        'name' => $this->ct->Table->tablename,
+                        'title' => $this->ct->Table->tabletitle,
+                        'description' => $description,
+                        'records' => $this->ct->Table->recordcount,
+                        'fields' => count($this->ct->Table->fields)
+                    ];
+                }
+        */
+        $this->twig->addGlobal('table', new Twig_Table_Tags($this->ct));
         $this->twig->addGlobal('tables', new Twig_Tables_Tags($this->ct));
 
         if (isset($this->ct->Table->fields)) {
