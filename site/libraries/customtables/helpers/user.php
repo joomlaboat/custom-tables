@@ -162,7 +162,7 @@ class CTUser
             return false;
         }
 
-        if ($realUserId != 0) {
+        if ($realUserId !== null) {
             CTUser::UpdateUserField($realtablename, $realidfieldname, $useridfieldname, $realUserId, $listing_id);
             Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_USER_CREATE_PSW_SENT'));
         } else {
@@ -176,10 +176,13 @@ class CTUser
 
     //------------- USER CREATION
 
-    static public function CreateUserAccount($fullname, $username, $password, $email, $group_names, &$msg)
+    static public function CreateUserAccount($fullname, $username, $password, $email, $group_names, &$msg): ?int
     {
         //Get group IDs
         $group_ids = CTUser::getUserGroupIDsByName($group_names);
+
+        if ($group_ids === null)
+            return null;
 
         //Creates active user
         $useractivation = 0;//alreadey activated
@@ -210,7 +213,7 @@ class CTUser
         // Bind the data.
         if (!$user->bind($data)) {
             $msg = JoomlaBasicMisc::JTextExtended('COM_USERS_REGISTRATION_BIND_FAILED', $user->getError());
-            return false;
+            return null;
         }
 
         // Load the users plugin group.
@@ -220,7 +223,7 @@ class CTUser
         if (!$user->save()) {
 
             $msg = Text::sprintf('COM_USERS_REGISTRATION_SAVE_FAILED', $user->getError());
-            return false;
+            return null;
         }
 
         //Apply group
@@ -281,7 +284,7 @@ class CTUser
         return $user->id;
     }
 
-    static protected function getUserGroupIDsByName($group_names)
+    static protected function getUserGroupIDsByName($group_names): ?array
     {
         $new_names = array();
         $names = explode(',', $group_names);
@@ -290,6 +293,9 @@ class CTUser
             if ($n != '')
                 $new_names[] = 'title="' . $n . '"';
         }
+
+        if (count($new_names) == 0)
+            return null;
 
         $db = Factory::getDBO();
 
