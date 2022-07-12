@@ -461,16 +461,16 @@
     <!-- Table Tags -->
     <tagset name="table" label="Table" description="Tags related current to current table." priority="1">
 
-        <tag name="records" label="Record Count (number)" startchar="{" endchar="}"
+        <tag name="records" label="Record Count (filtered)" startchar="{" endchar="}"
              description="Returns the number of records in the table that met filter criteria" twigclass="table"/>
 
-        <tag name="allrecords" label="Total Number of Records" startchar="{" endchar="}"
+        <tag name="recordstotal" label="Total Number of Records" startchar="{" endchar="}"
              description="Returns the total number of records in the table" hidedefaultexample="1" twigclass="table"/>
 
-        <tag name="start" label="Start record number" startchar="{" endchar="}"
+        <tag name="recordpagestart" label="Page Start Record number" startchar="{" endchar="}"
              description="Returns the pagination start from record number" hidedefaultexample="1" twigclass="table"/>
 
-        <tag name="limit" label="Limit - number of records per page" startchar="{" endchar="}"
+        <tag name="recordsperpage" label="Number of records per page" startchar="{" endchar="}"
              description="Returns number of records per page" hidedefaultexample="1" twigclass="table"/>
 
         <tag name="title" label="Table Title" startchar="{" endchar="}"

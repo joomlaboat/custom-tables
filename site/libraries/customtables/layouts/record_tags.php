@@ -534,7 +534,7 @@ class Twig_Table_Tags
         $this->ct = &$ct;
     }
 
-    function allrecords()
+    function recordstotal()
     {
         if (!isset($this->ct->Table) or $this->ct->Table->fields === null)
             return 'Table not selected';
@@ -590,7 +590,7 @@ class Twig_Table_Tags
         return $this->ct->Table->tableid;
     }
 
-    function limit()
+    function recordsperpage()
     {
         if (!isset($this->ct->Table) or $this->ct->Table->fields === null)
             return 'Table not selected';
@@ -598,7 +598,7 @@ class Twig_Table_Tags
         return $this->ct->Limit;
     }
 
-    function start()
+    function recordpagestart()
     {
         if (!isset($this->ct->Table) or $this->ct->Table->fields === null)
             return 'Table not selected';
