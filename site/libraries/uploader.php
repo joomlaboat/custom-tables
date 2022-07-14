@@ -94,7 +94,7 @@ class ESFileUploader
                     unlink($file["tmp_name"]);
                     $msg = 'File type (' . $mime . ') not permitted.';
                     if ($filetypes_str != '')
-                        $msg .= ' ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PERMITTED_TYPES') . ' ' . implode(', ', $accepted_types);
+                        $msg .= ' ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PERMITTED_TYPES') . ' ' . $filetypes_str;//implode(', ', $accepted_types);
 
                     $ret = ['error' => $msg];
                 }
@@ -106,7 +106,7 @@ class ESFileUploader
 
     public static function getAcceptedFileTypes($fileExtensions): string
     {
-        $allowedExtensions = 'doc docx pdf txt xls xlsx psd ppt pptx odg odp ods odt'
+        $allowedExtensions = 'doc docx pdf rtf txt xls xlsx psd ppt pptx odg odp ods odt pages'
             . ' xcf ai txt avi csv accdb htm html'
             . ' jpg bmp ico jpeg png webp gif svg ai'//Images
             . ' zip'//Archive
@@ -261,7 +261,7 @@ class ESFileUploader
 
             // ms office
             'doc' => 'application/msword',
-            'rtf' => 'application/rtf',
+            'rtf' => 'text/rtf',
             'xls' => 'application/vnd.ms-excel',
             'ppt' => 'application/vnd.ms-powerpoint',
             'docx' => 'application/msword',
@@ -272,6 +272,9 @@ class ESFileUploader
             // open office
             'odt' => 'application/vnd.oasis.opendocument.text',
             'ods' => 'application/vnd.oasis.opendocument.spreadsheet',
+
+            // apple
+            'pages' => 'application/vnd.apple.pages'
         );
 
         return $mimeType[$filename_extension] ?? 'application/octet-stream';

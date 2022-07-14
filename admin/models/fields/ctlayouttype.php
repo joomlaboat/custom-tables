@@ -58,6 +58,8 @@ class JFormFieldCTLayoutType extends JFormFieldList
             $translations = $Layouts->layoutTypeTranslation();
             $results = array_unique($results);
 
+            $options[] = JHtml::_('select.option', '', Text::_('COM_CUSTOMTABLES_LAYOUTS_LAYOUTTYPE_SELECT'));
+
             foreach ($results as $layouttype) {
                 // Translate the layouttype selection
                 if ((int)$layouttype != 0) {

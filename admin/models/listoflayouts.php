@@ -128,9 +128,11 @@ class CustomtablesModelListOfLayouts extends JModelList
         $published = $this->getState('filter.published');
         if (is_numeric($published)) {
             $query->where('a.published = ' . (int)$published);
-        } elseif (is_null($published) or $published == '') {
+        } elseif (is_null($published)) {
             $query->where('a.published = 1');
-        }
+        }//or $published == ''
+
+
         // Filter by search.
         $search = $this->getState('filter.search');
         if (!empty($search)) {

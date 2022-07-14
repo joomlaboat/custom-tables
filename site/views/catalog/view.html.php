@@ -110,6 +110,12 @@ class CustomTablesViewCatalog extends JViewLegacy
         $user_groups = $this->ct->Env->user->get('groups');
         $allowed_fields = array();
 
+        if ($this->ct->Table === null)
+            return [];
+
+        if ($this->ct->Table->fields === null)
+            return [];
+
         foreach ($this->ct->Table->fields as $mFld) {
             if ($mFld['type'] == 'lastviewtime' or $mFld['type'] == 'viewcount' or $mFld['type'] == 'phponview') {
                 $pair = explode(',', $mFld['typeparams']);

@@ -166,7 +166,7 @@
                    description="Folder where all the files will be kept. By default /images" default="" type="folder"/>
             <param name="filetypes" label="File Types" example="doc docx"
                    description="List of acceptable file types (list separated by space)"
-                   default="doc docx xls xlsx pdf pages ppt pptx" type="string"/>
+                   default="doc docx xls xlsx pdf pages ppt pptx rtf" type="string"/>
             <param name="saveas" label="Save As File Name"
                    description="Specify the name of a newly uploaded file. You may use field tags [fieldname]"
                    default="" type="string"/>
@@ -239,7 +239,7 @@
                    description="Folder where all the files will be kept. By default /images" default="" type="folder"/>
             <param name="filetypes" label="File Type" example="pdf ppt"
                    description="List of acceptable file types (list separated by space)"
-                   default="doc docx xls xlsx pdf pages ppt pptx" type="string"/>
+                   default="doc docx xls xlsx pdf pages ppt pptx rtf" type="string"/>
         </params>
 
         <editparams name="filebox" label="Input Element Parameters" description="">

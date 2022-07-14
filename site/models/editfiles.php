@@ -44,7 +44,7 @@ class CustomTablesModelEditFiles extends JModelLegacy
 
         parent::__construct();
 
-        $this->allowedExtensions = 'doc docx pdf txt xls xlsx psd ppt pptx webp png mp3 jpg jpeg csv accdb';
+        $this->allowedExtensions = 'doc docx pdf rtf txt xls xlsx psd ppt pptx webp png mp3 jpg jpeg csv accdb pages';
 
         $this->maxfilesize = JoomlaBasicMisc::file_upload_max_size();
         $this->filemethods = new CustomTablesFileMethods;

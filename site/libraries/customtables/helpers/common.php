@@ -28,7 +28,7 @@ class common
                     $extension = strtolower($parts[0] . '_' . $parts[1]);
 
                 $lang = Factory::getLanguage();
-                $lang->load($extension, JPATH_BASE);
+                $lang->load($extension, JPATH_SITE);//JPATH_BASE);
 
                 if (is_null($value))
                     return Text::_($text);

@@ -17,7 +17,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 class CustomTablesFileMethods
 {
-    static public function FileExtenssion($src, $allowedExtensions = 'doc docx pdf txt xls xlsx psd ppt pptx png jpg jpeg gif webp mp3')
+    static public function FileExtenssion($src, $allowedExtensions = 'doc docx pdf rtf txt xls xlsx psd ppt pptx png jpg jpeg gif webp mp3 pages')
     {
         $name = explode(".", strtolower($src));
         if (count($name) < 2)
