@@ -38,6 +38,11 @@
              description="Example: Found 23 record(s)" twigclass="html">
         </tag>
 
+        <tag name="checkboxcount" label="Record Selected (as HTML SPAN tag)" startchar="{" endchar="}"
+             description="Renders an HTML SPAN tag that will hold the value - the number of selected records (checkboxes checked)"
+             twigclass="html">
+        </tag>
+
         <tag name="print" label="Print Button" startchar="{" endchar="}" twigclass="html"
              description="A button that opens a new controllers window without a template, only content.">
             <params>

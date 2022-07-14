@@ -92,7 +92,7 @@ class RecordToolbar
         elseif ($mode == 'publish')
             return $this->renderPublishIcon();
         elseif ($mode == 'checkbox')
-            return '<input type="checkbox" name="esCheckbox' . $this->Table->tableid . '" id="esCheckbox' . $this->rid . '" value="' . $this->listing_id . '" />';
+            return '<input type="checkbox" onClick="ctUpdateCheckboxCounter(' . $this->Table->tableid . ')" name="esCheckbox' . $this->Table->tableid . '" id="esCheckbox' . $this->rid . '" value="' . $this->listing_id . '" />';
 
         return '';
     }

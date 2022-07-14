@@ -564,3 +564,20 @@ function ctEditModal(url) {
         http.send(params);
     }
 }
+
+function ctUpdateCheckboxCounter(tableid) {
+
+    let counterID = 'ctTable' + tableid + 'CheckboxCount';
+    let counterIDObj = document.getElementById(counterID);
+    if (counterIDObj) {
+
+        let count = 0;
+        let elements = document.getElementsByName("esCheckbox" + tableid);
+        for (let i = 0; i < elements.length; i++) {
+            if (elements[i].checked)
+                count += 1;
+        }
+
+        counterIDObj.innerHTML = count.toString();
+    }
+}
