@@ -44,11 +44,13 @@ class CT_FieldTypeTag_records
         //$showpublished = 0 - show published
         //$showpublished = 1 - show unpublished
         //$showpublished = 2 - show any
-        $showpublished = (($field->params[6] ?? '') == '' ? 2 : ((int)($field->params[6] ?? 0) == 1 ? 0 : 1));
+        if ($field->params[6])
+            $showpublished = 2;
+        else
+            $showpublished = 0;
 
         //this is important because it has been selected somehow.
         $ct->setFilter($filter, $showpublished);
-
         $ct->Filter->where[] = 'INSTR(' . $db->quote($rowValue) . ',' . $ct->Table->realidfieldname . ')';
         $ct->getRecords();
 
