@@ -19,6 +19,7 @@ use JoomlaBasicMisc;
 use ESTables;
 
 use Joomla\CMS\Router\Route;
+use LayoutProcessor;
 
 class Twig_Record_Tags
 {
@@ -722,7 +723,7 @@ class Twig_Tables_Tags
         //Example {{ html.records("InvoicesPage","firstname=john","lastname") }}
 
         if ($layoutname == '') {
-            $this->ct->app->enqueueMessage('{{ html.records("' . $layoutname . '","' . $filter . '","' . $orderby . '") }} - Layout name not specified.', 'error');
+            $this->ct->app->enqueueMessage('{{ tables.getrecords("' . $layoutname . '","' . $filter . '","' . $orderby . '") }} - Layout name not specified.', 'error');
             return '';
         }
 
@@ -731,16 +732,23 @@ class Twig_Tables_Tags
         $layouts = new Layouts($join_ct);
         $pagelayout = $layouts->getLayout($layoutname, false);//It is safer to process layout after rendering the table
         if ($layouts->tableid === null) {
-            $this->ct->app->enqueueMessage('{{ html.records("' . $layoutname . '","' . $filter . '","' . $orderby . '") }} - Layout "' . $layoutname . ' not found.', 'error');
+            $this->ct->app->enqueueMessage('{{ tables.getrecords("' . $layoutname . '","' . $filter . '","' . $orderby . '") }} - Layout "' . $layoutname . ' not found.', 'error');
             return '';
         }
 
         if ($tables->loadRecords($layouts->tableid, $filter, $orderby, $limit)) {
+
+            if ($join_ct->Env->legacysupport) {
+                $LayoutProc = new LayoutProcessor($join_ct);
+                $LayoutProc->layout = $pagelayout;
+                $pagelayout = $LayoutProc->fillLayout();
+            }
+
             $twig = new TwigProcessor($join_ct, $pagelayout);
             return $twig->process();
         }
 
-        $this->ct->app->enqueueMessage('{{ html.records("' . $layoutname . '","' . $filter . '","' . $orderby . '") }} - Could not load records.', 'error');
+        $this->ct->app->enqueueMessage('{{ tables.getrecords("' . $layoutname . '","' . $filter . '","' . $orderby . '") }} - Could not load records.', 'error');
         return '';
     }
 }

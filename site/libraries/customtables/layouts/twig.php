@@ -20,6 +20,7 @@ use JoomlaBasicMisc;
 use CT_FieldTypeTag_sqljoin;
 use CT_FieldTypeTag_records;
 use Twig\Loader\ArrayLoader;
+use Twig\TwigFilter;
 use Twig\TwigFunction;
 
 use CT_FieldTypeTag_image;
@@ -167,20 +168,7 @@ class TwigProcessor
         //{{ tables.getvalue(tablename,field_name,recordid_or_filter, orderby) }}
         //{{ tables.getrecord(layoutname,recordid_or_filter, orderby) }}
         //{{ tables.getrecords(layoutname,filter,orderby,limit) }}
-        /*
-                if (isset($ct->Table) and !is_null($this->ct->Table->fields)) {
-                    $description = $ct->Table->tablerow['description' . $this->ct->Table->Languages->Postfix];
 
-                    $this->variables['table'] = [
-                        'id' => $this->ct->Table->tableid,
-                        'name' => $this->ct->Table->tablename,
-                        'title' => $this->ct->Table->tabletitle,
-                        'description' => $description,
-                        'records' => $this->ct->Table->recordcount,
-                        'fields' => count($this->ct->Table->fields)
-                    ];
-                }
-        */
         $this->twig->addGlobal('table', new Twig_Table_Tags($this->ct));
         $this->twig->addGlobal('tables', new Twig_Tables_Tags($this->ct));
 
@@ -208,6 +196,31 @@ class TwigProcessor
                 $index++;
             }
         }
+
+        $filter = new TwigFilter('base64encode', function ($string) {
+            return base64_encode($string);
+        });
+
+        $this->twig->addFilter($filter);
+
+        $filter = new TwigFilter('base64decode', function ($string) {
+            return base64_decode($string);
+        });
+
+        $this->twig->addFilter($filter);
+
+        $filter = new TwigFilter('ucwords', function ($string) {
+            $string = mb_strtolower($string, "UTF-8");
+            return mb_convert_case($string, MB_CASE_TITLE, "UTF-8");
+        });
+
+        $this->twig->addFilter($filter);
+
+        $filter = new TwigFilter('md5', function ($string) {
+            return md5($string);
+        });
+
+        $this->twig->addFilter($filter);
     }
 
     public function process(?array $row = null): string
