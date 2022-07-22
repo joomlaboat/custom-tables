@@ -359,8 +359,8 @@ class ESTables
                 $set_values['type'] = $db->quote($ct_field_type['type']);
                 $set_values['typeparams'] = $db->quote($ct_field_type['typeparams']);
                 $set_values['ordering'] = $ordering;
-                $set_values['defaultvalue'] = $field->column_default != '' ? $db->quote($field->column_default) : '';
-                $set_values['description'] = $field->column_comment != '' ? $db->quote($field->column_comment) : '';
+                $set_values['defaultvalue'] = $field->column_default != '' ? $db->quote($field->column_default) : 'NULL';
+                $set_values['description'] = $field->column_comment != '' ? $db->quote($field->column_comment) : 'NULL';
                 $set_values['customfieldname'] = $db->quote($field->column_name);
                 $set_values['isrequired'] = 0;
 
