@@ -82,7 +82,7 @@ function submitModalForm(url, elements, tableid, recordid, hideModelOnSave) {
         http.onreadystatechange = function () {
             if (http.readyState === 4) {
 
-                let res = http.response.replace(/<[^>]*>?/gm, '').trim();
+                let res = http.response.toString().trim().replace(/<[^>]*>?/gm, '');
 
                 if (res.indexOf("saved") !== -1) {
 
@@ -93,9 +93,9 @@ function submitModalForm(url, elements, tableid, recordid, hideModelOnSave) {
                     if (hideModelOnSave)
                         ctHidePopUp();
                 } else {
-                    if (res.indexOf('<div class="alert-message">Nothing to save</div>') != -1)
+                    if (res.indexOf('<div class="alert-message">Nothing to save</div>') !== -1)
                         alert('Nothing to save. Check Edit From layout.');
-                    else if (res.indexOf('view-login') != -1)
+                    else if (res.indexOf('view-login') !== -1)
                         alert('Session expired. Please login again.');
                 }
             }
@@ -104,6 +104,7 @@ function submitModalForm(url, elements, tableid, recordid, hideModelOnSave) {
     }
 }
 
+/*
 function recaptchaCallback() {
     let obj1 = document.getElementById("customtables_submitbutton");
     if (typeof obj1 != "undefined")
@@ -113,6 +114,7 @@ function recaptchaCallback() {
     if (typeof obj2 != "undefined")
         obj2.removeAttribute('disabled');
 }
+*/
 
 function checkFilters() {
 
@@ -122,7 +124,7 @@ function checkFilters() {
     for (let i = 0; i < inputs.length; i++) {
         let t = inputs[i].type.toLowerCase();
 
-        if (t == 'text' && inputs[i].value !== "") {
+        if (t === 'text' && inputs[i].value !== "") {
             let n = inputs[i].name.toString();
             let d = inputs[i].dataset;
             let label = "";
@@ -144,7 +146,7 @@ function checkFilters() {
                 if (d.valuerulecaption)
                     caption = d.valuerulecaption;
 
-                passed = doValuerules(inputs[i], label, d.valuerule, caption);
+                passed = doValueRules(inputs[i], label, d.valuerule, caption);
                 if (!passed)
                     return false;
             }
@@ -156,27 +158,23 @@ function checkFilters() {
 //https://stackoverflow.com/questions/5717093/check-if-a-javascript-string-is-a-url
 function isValidURL(str) {
     let regex = /(http|https):\/\/(\w+:{0,1}\w*)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/;
-    if (!regex.test(str)) {
-        return false;
-    } else {
-        return true;
-    }
+    return regex.test(str);
 }
 
-function doValuerules(obj, label, valuerules, caption) {
-    let ct_fieldNname = obj.name.replaceAll('comes_', '');
-    let valuerules_and_arguments = doValuerules_ParseValues(valuerules, ct_fieldNname);
+function doValueRules(obj, label, valueRules, caption) {
+    let ct_fieldName = obj.name.replaceAll('comes_', '');
+    let value_rules_and_arguments = doValuerules_ParseValues(valueRules, ct_fieldName);
 
-    if (valuerules_and_arguments == null)
+    if (value_rules_and_arguments === null)
         return true;
 
     let result = false;
 
-    let rules_str = "return " + valuerules_and_arguments.new_valuerules;
+    let rules_str = "return " + value_rules_and_arguments.new_valuerules;
 
     try {
         let rules = new Function(rules_str); // this |x| refers global |x|
-        result = rules(valuerules_and_arguments.new_args);
+        result = rules(value_rules_and_arguments.new_args);
     } catch (error) {
         //alert('Validation rule "' + valuerules + '" has an error: ' + error);
         return true;//TODO replace it with JS Twig
@@ -185,7 +183,7 @@ function doValuerules(obj, label, valuerules, caption) {
     if (result)
         return true;
 
-    if (caption == '')
+    if (caption === '')
         caption = 'Invalid value for "' + label + '"';
 
     alert(caption);
@@ -358,23 +356,13 @@ function checkRequiredFields() {
     return true;
 }
 
-function SetUsetInvalidClass(id, isOk) {
-    let frameObj = document.getElementById(id);
-
-    let c = frameObj.className;
-    if (c.indexOf("invalid") == -1) {
-        if (!isOk) {
-            if (c == "")
-                c = "invalid";
-            else
-                c = c + " invalid";
-        }
+function SetUsetInvalidClass(id, isValid) {
+    let obj = document.getElementById(id);
+    if (isValid) {
+        obj.classList.remove("invalid");
     } else {
-        if (isOk)
-            c = c.replace("invalid", "");
+        obj.classList.add("invalid");
     }
-
-    frameObj.className = c;
 }
 
 function CheckImageUploader(id) {
@@ -412,15 +400,7 @@ function CheckSQLJoinRadioSelections(id) {
     return true;
 }
 
-function clearListingID() {
-
-    let obj = document.getElementById("listing_id");
-    obj.value = "";
-
-    let frm = document.getElementById("eseditForm");
-    frm.submit();
-}
-
+/*
 function recaptchaCallback() {
     let buttons = ['save', 'saveandclose', 'saveandprint', 'saveandcopy', 'delete'];
     for (let i = 0; i < buttons.length; i++) {
@@ -431,6 +411,8 @@ function recaptchaCallback() {
             obj.disabled = false;
     }
 }
+*/
+
 
 function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_index, parent_object_id, formId) {
     let wrapper = document.getElementById(control_name + "Wrapper");
@@ -476,7 +458,7 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_ind
         return false;
     }
 
-    if (r.length == 0) {
+    if (r.length === 0) {
         if (Array.isArray(filters[next_index])) {
 
             next_sub_index = 0;
@@ -547,7 +529,7 @@ function ctUpdateTableJoinLink(control_name, index, execute_all, sub_index, obje
     //let onchange = atob(wrapper.dataset.onchange);
 
     let link = location.href.split('administrator/index.php?option=com_customtables');
-    let url = '';
+    let url;
 
     if (link.length == 2)//to make sure that it will work in the back-end
         url = 'index.php?option=com_customtables&view=records&from=json&key=' + wrapper.dataset.key + '&index=' + index;
@@ -838,17 +820,17 @@ let gmapmarker = [];
 function ctInputbox_googlemapcoordinates(inputbox_id) {
     let val = document.getElementById(inputbox_id).value;
     let val_list = val.split(",");
-    let def_longval = (val_list[0] != '' ? parseFloat(val_list[0]) : 120.994260);
-    let def_latval = (val_list.length > 1 && val_list[1] != '' ? parseFloat(val_list[1]) : 14.593999);
-    let def_zoomval = (val_list.length > 2 && val_list[2] != '' ? parseFloat(val_list[2]) : 10);
-    if (def_zoomval == 0)
+    let def_longval = (val_list[0] !== '' ? parseFloat(val_list[0]) : 120.994260);
+    let def_latval = (val_list.length > 1 && val_list[1] !== '' ? parseFloat(val_list[1]) : 14.593999);
+    let def_zoomval = (val_list.length > 2 && val_list[2] !== '' ? parseFloat(val_list[2]) : 10);
+    if (def_zoomval === 0)
         def_zoomval = 10;
 
     let curpoint = new google.maps.LatLng(def_latval, def_longval);
 
     let map_obj = document.getElementById(inputbox_id + "_map");
 
-    if (map_obj.style.display == "block") {
+    if (map_obj.style.display === "block") {
         map_obj.style.display = "none";
         map_obj.innerHTML = "";
         return false;

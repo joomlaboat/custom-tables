@@ -182,7 +182,6 @@ function replaceOldFieldTitleTagsWithTwigStyle() {
     }
 }
 
-
 function renderFieldsBox() {
     //1 - Simple Catalog
     //2 - Edit Form
@@ -575,7 +574,6 @@ function FillLayout() {
     }
     editor.getDoc().setValue(layout_obj.value);
 }
-
 
 function getLayout_Page() {
 

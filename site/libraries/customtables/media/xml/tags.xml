@@ -1093,4 +1093,14 @@
         <!--  </params> -->
         <!-- </tag> -->
     </tagset>
+
+    <tagset name="filters" label="Filters" description="Extended Twig Filters. {{ value | filter }}" priority="3"
+            proversion="1">
+        <tag name="base64encode" description="Encodes the given string with base64." examplevalue="'hello world'"/>
+        <tag name="base64decode" description="Decodes a base64 encoded string." examplevalue="'aGVsbG8gd29ybGQ='"/>
+        <tag name="md5" description="Calculates the MD5 hash of string." examplevalue="'hello world'"/>
+        <tag name="ucwords" description="Uppercase the first character of each word in a string."
+             examplevalue="'hello world'"/>
+    </tagset>
+
 </layouts>

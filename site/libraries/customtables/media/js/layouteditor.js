@@ -102,7 +102,7 @@ function loadTagParams(type_id, tags_box) {
 function loadTags(type_id, tags_box) {
     type_obj = document.getElementById(type_id);
 
-    const url = websiteSiteLibraries + "media/xml/tags.xml";
+    const url = websiteSiteLibraries + "media/xml/tags.xml?v=" + Math.floor(Math.random() * 100);
     const params = "";
 
     let http = CreateHTTPRequestObject();   // defined in ajax.js
@@ -756,7 +756,6 @@ function define_cmLayoutEditor1(modename, nextmodename) {
     });
 }
 
-
 function do_render_current_TagSets() {
     if (type_obj === null)
         return;
@@ -787,6 +786,8 @@ function do_render_current_TagSets() {
 
 function renderTags(index, tagset) {
 
+    let tagset_attributes = tagset["@attributes"];
+
     let tags = getParamOptions(tagset, 'tag');
     let result = '<div class="dynamic_values" style="padding-left:0px !important;">';
 
@@ -803,6 +804,9 @@ function renderTags(index, tagset) {
                 full_tagname = tag.twigclass + '.' + tag.name;
             else
                 full_tagname = tag.name;
+
+            if (tagset_attributes.name == 'filters')
+                full_tagname = tag.examplevalue + ' | ' + full_tagname;
 
             if (params.length == 0)
                 t = '{{ ' + full_tagname + ' }}'; // t=tag.startchar+tag.name+tag.endchar;
@@ -968,7 +972,6 @@ function htmlDecode2(input) {
     var doc = new DOMParser().parseFromString(input, "text/html");
     return doc.documentElement.textContent;
 }
-
 
 function adjustEditorHeight() {
     let editors = document.getElementsByClassName("CodeMirror");

@@ -563,17 +563,24 @@ class Documentation
                 if ($is4Pro)
                     $class = 'ct_doc_pro';
 
+                $label = '';
 
                 if ($tagsetname == 'plugins') {
                     $startchar = '{';
                     $endchar = '}';
+                    $label = $tag_att->label;
+                } elseif ($tagsetname == 'filters') {
+                    $startchar = '{{ ' . $tag_att->examplevalue . ' | ';
+                    $endchar = ' }}';
+                    $label = $tag_att->description;
                 } else {
                     $startchar = '{{ ' . $tag_att->twigclass . '.';
                     $endchar = ' }}';
+                    $label = $tag_att->label;
                 }
 
                 $result .= '<div class="' . $class . ' ct_readmoreClosed" id="ctDocTag_' . $tag_att->twigclass . '_' . $tag_att->name . '">';
-                $result .= '<a name="' . $tag_att->twigclass . '_' . $tag_att->name . '"></a><h4 onClick="readmoreOpenClose(\'ctDocTag_' . $tag_att->twigclass . '_' . $tag_att->name . '\')">' . $startchar . $tag_att->name . $endchar . ' - <span>' . $tag_att->label . '</span>';
+                $result .= '<a name="' . $tag_att->twigclass . '_' . $tag_att->name . '"></a><h4 onClick="readmoreOpenClose(\'ctDocTag_' . $tag_att->twigclass . '_' . $tag_att->name . '\')">' . $startchar . $tag_att->name . $endchar . ' - <span>' . $label . '</span>';
 
                 if ($is4Pro)
                     $result .= '<div class="ct_doc_pro_label"><a href="https://joomlaboat.com/custom-tables#buy-extension" target="_blank">' . common::translate('COM_CUSTOMTABLES_AVAILABLE') . '</a></div>';
@@ -609,7 +616,7 @@ class Documentation
             $tagset_att = $tagset->attributes();
 
             if ((int)$tagset_att->deprecated == 0 and $tagset_att->name != 'plugins') {
-                $result .= '# ' . $tagset_att->label . '<br/><br/>';
+                $result .= '# ' . $tagset_att->label . '<br/>' . $tagset_att->description . '<br/><br/>';
                 $result .= $this->renderTagsGitHub($tagset->tag, $tagset_att->name) . '<br/><br/><br/>';
             }
         }
@@ -627,17 +634,30 @@ class Documentation
 
             if (!$isDeprecated) {
 
-                $result .= '## ' . $tag_att->twigclass . '.' . $tag_att->name . '<br/><br/>' . $tag_att->description . '<br/><br/>';
+                if ($tagsetname == 'filters')
+                    $result .= '## {{ ' . $tag_att->examplevalue . ' | ' . $tag_att->name . ' }}<br/><br/>' . $tag_att->description . '<br/><br/>';
+                else
+                    $result .= '## ' . $tag_att->twigclass . '.' . $tag_att->name . '<br/><br/>' . $tag_att->description . '<br/><br/>';
 
                 if ($tagsetname != 'plugins') {
 
                     if (!empty($tag->params) and count($tag->params) > 0) {
-                        $content = $this->renderParametersGitHub($tag->params,
-                            '{{ ',
-                            '' . $tag_att->twigclass . '.' . $tag_att->name,
-                            '',
-                            ' }}',
-                            $hidedefaultexample);
+
+                        if ($tagsetname == 'filters') {
+                            $content = $this->renderParametersGitHub($tag->params,
+                                '{{ ',
+                                '' . $tag_att->examplevalue . ' | ' . $tag_att->name,
+                                '',
+                                ' }}',
+                                true);
+                        } else {
+                            $content = $this->renderParametersGitHub($tag->params,
+                                '{{ ',
+                                '' . $tag_att->twigclass . '.' . $tag_att->name,
+                                '',
+                                ' }}',
+                                $hidedefaultexample);
+                        }
 
                         if ($content != '')
                             $result .= '**' . common::translate('COM_CUSTOMTABLES_PARAMS') . '**<br><br>' . $content;
