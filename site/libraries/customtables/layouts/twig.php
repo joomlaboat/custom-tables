@@ -27,7 +27,9 @@ use CT_FieldTypeTag_image;
 
 
 $types_path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR;
-require_once($types_path . '_type_image.php');
+
+if (file_exists($types_path))
+    require_once($types_path . '_type_image.php');
 
 class TwigProcessor
 {

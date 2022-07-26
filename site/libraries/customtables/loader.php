@@ -14,15 +14,15 @@ if (!function_exists('str_contains')) {
     }
 }
 
-function CTLoader($inclide_utilities = false, $include_html = false, $PLUGIN_NAME_DIR = null)
+function CTLoader($inclide_utilities = false, $include_html = false, $PLUGIN_NAME_DIR = null, $componentName = 'com_customtables')
 {
     if (defined('_JEXEC')) {
-        $params = JComponentHelper::getParams('com_customtables');
+        $params = JComponentHelper::getParams($componentName);
         $loadTwig = $params->get('loadTwig');
     }
 
     if (defined('_JEXEC'))
-        $libraryPath = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries';
+        $libraryPath = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . $componentName . DIRECTORY_SEPARATOR . 'libraries';
     else
         $libraryPath = $PLUGIN_NAME_DIR . 'libraries';
 
@@ -31,9 +31,10 @@ function CTLoader($inclide_utilities = false, $include_html = false, $PLUGIN_NAM
 
     if (!defined('_JEXEC') or ($loadTwig === null or $loadTwig or Factory::getApplication()->getName() == 'administrator') and !class_exists('Twig')) {
 
-        $twig_file = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
-
-        require_once($twig_file);
+        if ($componentName == 'com_customtables') {
+            $twig_file = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'twig' . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
+            require_once($twig_file);
+        }
     }
 
 

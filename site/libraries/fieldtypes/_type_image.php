@@ -191,7 +191,7 @@ class CT_FieldTypeTag_image
     {
         //$style='margin:10px; border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;vertical-align:top;';
         $result = '<div style="" id="ct_uploadedfile_box_' . $field->fieldname . '">'
-            . '<img src="' . $imagesrc . '" width="150" /><br/>';
+            . '<img src="' . $imagesrc . '" alt="Uploaded Image" width="150" /><br/>';
 
         if (!$field->isrequired)
             $result .= '<input type="checkbox" name="' . $prefix . $field->fieldname . '_delete" id="' . $prefix . $field->fieldname . '_delete" value="true">'
@@ -211,10 +211,13 @@ class CT_FieldTypeTag_image
 
         return '
         <!--suppress XmlDuplicatedId -->
-<div style="' . $style . '"' . ($field->isrequired ? ' class="inputbox required"' : '') . ' id="' . $element_id . '">
-            <div id="ct_fileuploader_' . $field->fieldname . '"></div>
-            <div id="ct_eventsmessage_' . $field->fieldname . '"></div>
-            <script>
+<div style="' . $style . '"' . ($field->isrequired ? ' class="inputbox required"' : '') . ' id="' . $element_id . '" '
+            . 'data-label="' . $field->title . '" '
+            . 'data-valuerule="' . str_replace('"', '&quot;', $field->valuerule) . '" '
+            . 'data-valuerulecaption="' . str_replace('"', '&quot;', $field->valuerulecaption) . '" >'
+            . '<div id="ct_fileuploader_' . $field->fieldname . '"></div>'
+            . '<div id="ct_eventsmessage_' . $field->fieldname . '"></div>'
+            . '<script>
                 UploadFileCount=1;
                 AutoSubmitForm=false;
                 esUploaderFormID="eseditForm";
@@ -232,7 +235,9 @@ class CT_FieldTypeTag_image
 
  <!--suppress XmlDuplicatedId -->
            </script>
-            <input type="hidden" name="' . $prefix . $field->fieldname . '" id="' . $prefix . $field->fieldname . '" value=""' . ($field->isrequired ? ' class="required"' : '') . ' />
+            <input type="hidden" name="' . $prefix . $field->fieldname . '" id="' . $prefix . $field->fieldname . '" value=""'
+            . ($field->isrequired ? ' class="required"' : '')
+            . ' />
     ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE') . ': ' . JoomlaBasicMisc::formatSizeUnits($max_file_size) . '
         </div>
         ';

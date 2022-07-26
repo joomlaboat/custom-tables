@@ -285,6 +285,7 @@ function checkRequiredFields() {
         return false;
 
     let requiredFields = document.getElementsByClassName("required");
+    let label = "One field";
 
     for (let i = 0; i < requiredFields.length; i++) {
         if (typeof requiredFields[i].id != "undefined") {
@@ -294,8 +295,16 @@ function checkRequiredFields() {
 
             }
             if (requiredFields[i].id.indexOf("ct_ubloadfile_box_") != -1) {
-                if (!CheckImageUploader(requiredFields[i].id))
+                if (!CheckImageUploader(requiredFields[i].id)) {
+                    let d = requiredFields[i].dataset;
+                    if (d.label)
+                        label = d.label;
+                    else
+                        label = "Unlabeled field";
+
+                    alert(label + " required.");
                     return false;
+                }
             }
         }
 
@@ -306,11 +315,11 @@ function checkRequiredFields() {
 
                 let objname = n.replace('_selector', '');
 
-                let label = "One field";
-
                 let d = requiredFields[i].dataset;
                 if (d.label)
-                    label = d.label;
+                    label = d.label
+                else
+                    label = "Unlabeled field";
 
                 if (requiredFields[i].type == "text") {
                     let obj = document.getElementById(objname);

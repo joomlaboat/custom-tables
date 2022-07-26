@@ -37,14 +37,16 @@ use JHTML;
 
 $types_path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR;
 
-require_once($types_path . '_type_ct.php');
-require_once($types_path . '_type_file.php');
-require_once($types_path . '_type_filebox.php');
-require_once($types_path . '_type_gallery.php');
-require_once($types_path . '_type_image.php');
-require_once($types_path . '_type_log.php');
-require_once($types_path . '_type_records.php');
-require_once($types_path . '_type_sqljoin.php');
+if (file_exists($types_path . '_type_ct.php')) {
+    require_once($types_path . '_type_ct.php');
+    require_once($types_path . '_type_file.php');
+    require_once($types_path . '_type_filebox.php');
+    require_once($types_path . '_type_gallery.php');
+    require_once($types_path . '_type_image.php');
+    require_once($types_path . '_type_log.php');
+    require_once($types_path . '_type_records.php');
+    require_once($types_path . '_type_sqljoin.php');
+}
 
 class Value
 {
