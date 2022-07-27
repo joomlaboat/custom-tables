@@ -249,7 +249,7 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
                 return (object)array('link' => $link, 'msg' => 'User record ID: "' . $listing_id . '" not found.', 'status' => 'error');
             }
 
-            $fieldrow = Fields::getFieldAsocByName($ct->Table->useridfieldname, $ct->Table->tableid);
+            $fieldrow = Fields::getFieldAssocByName($ct->Table->useridfieldname, $ct->Table->tableid);
 
             $saveField = new SaveFieldQuerySet($ct, $ct->Table->record, false);
             $field = new Field($ct, $fieldrow);

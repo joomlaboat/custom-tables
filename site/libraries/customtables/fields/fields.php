@@ -315,7 +315,7 @@ class Fields
   listingid bigint not null,
   ordering int not null,
   photo_ext varchar(10) not null,
-  title varchar(100) not null,
+  title varchar(100) null,
    PRIMARY KEY  (photoid)
 ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AUTO_INCREMENT=1 ;
 ';
@@ -1229,7 +1229,7 @@ class Fields
         return $rows[0];
     }
 
-    public static function getFieldAsocByName($fieldname, $tableid)
+    public static function getFieldAssocByName($fieldname, $tableid): ?array
     {
         $db = Factory::getDBO();
 
@@ -1237,14 +1237,14 @@ class Fields
             $fieldname = Factory::getApplication()->input->get('fieldname', '', 'CMD');
 
         if ($fieldname == '')
-            return array();
+            return null;
 
         $query = 'SELECT ' . Fields::getFieldRowSelects() . ' FROM #__customtables_fields AS s WHERE s.published=1 AND tableid=' . (int)$tableid . ' AND fieldname="' . trim($fieldname) . '" LIMIT 1';
         $db->setQuery($query);
 
         $rows = $db->loadAssocList();
         if (count($rows) != 1) {
-            return array();
+            return null;
         }
         return $rows[0];
     }

@@ -84,7 +84,7 @@ function updateTypeParams(type_id, typeparams_id_, typeparams_box_id_)//type sel
 
 
 function getParamOptions(param, optionobjectname) {
-    var options = [];
+    let options = [];
 
     if (typeof (param) !== "undefined" && typeof (param[optionobjectname]) !== "undefined") {
         if (param[optionobjectname].constructor.name != "Array")
@@ -500,10 +500,10 @@ function BuildImageSizeTable() {
         result += '<tbody>';
 
 
-        var count_params = temp_imagesizeparams.length;
+        const count_params = temp_imagesizeparams.length;
 
-        for (var r = 0; r < count_list; r++) {
-            var values = value_array[r].split(',');
+        for (let r = 0; r < count_list; r++) {
+            const values = value_array[r].split(',');
 
             result += '<tr>';
             for (i = 0; i < count_params; i++) {
@@ -920,10 +920,14 @@ function renderInputBox(id, param, vlu, attributes) {
         } else if (param_att.type === "multiselect") {
             result = renderInput_Multiselect(id, param, vlu, attributes);
         } else if (param_att.type === "imagesizelist") {
+
+            vlu = vlu.replaceAll('****quote****', '');
+            vlu = vlu.replaceAll('****apos****', "");
+
             result = renderInput_ImageSizeList(id, param, vlu, attributes);
         } else if (param_att.type === "folder") {
-            vlu = vlu.replaceAll('****quote****', '&quot;');
-            vlu = vlu.replaceAll('****apos****', "&apos;");
+            vlu = vlu.replaceAll('****quote****', '');
+            vlu = vlu.replaceAll('****apos****', "");
 
             result = renderInput_Folder(id, vlu, attributes);
         } else if (param_att.type === "radio") {
@@ -940,8 +944,6 @@ function renderInputBox(id, param, vlu, attributes) {
             result += '<input type="text" id="' + id + '" value="' + vlu + '" ' + attributes + '>';
         }
     } else {
-
-
         result += '<input type="text" id="' + id + '" value="' + vlu + '" ' + attributes + '>';
     }
 

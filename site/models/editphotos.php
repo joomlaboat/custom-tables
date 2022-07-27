@@ -16,7 +16,8 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\CT;
 
 use CustomTables\Field;
-use \Joomla\CMS\Factory;
+use CustomTables\Fields;
+use Joomla\CMS\Factory;
 
 jimport('joomla.application.component.model');
 
@@ -39,6 +40,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy
     var $useridfield;
     var $phototablename;
     var $row;
+    var Field $field;
 
     function __construct()
     {
@@ -67,7 +69,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy
 
         if ($this->ct->Table->tablename == '') {
             Factory::getApplication()->enqueueMessage('Table not selected (62).', 'error');
-            return;
+            return false;
         }
 
         $this->listing_id = $this->ct->Env->jinput->getInt("listing_id", 0);
@@ -81,10 +83,12 @@ class CustomTablesModelEditPhotos extends JModelLegacy
         if (!$this->getGallery())
             return false;
 
-        $this->phototablename = '#__customtables_gallery_' . $this->ct->Table->tablename . '_' . $this->galleryname;
+        $db = Factory::getDBO();
+        $this->phototablename = $db->getPrefix() . 'customtables_gallery_' . $this->ct->Table->tablename . '_' . $this->galleryname;
+        return true;
     }
 
-    function getObject()
+    function getObject(): bool
     {
         $this->row = $this->ct->Table->loadRecord($this->listing_id);
         if ($this->row === null)
@@ -102,22 +106,17 @@ class CustomTablesModelEditPhotos extends JModelLegacy
                 break;
             }
         }
+
+        return true;
     }
 
-    function getGallery()
+    function getGallery(): bool
     {
-        $db = Factory::getDBO();
-        $query = 'SELECT id, fieldtitle' . $this->ct->Languages->Postfix . ' AS title,typeparams FROM #__customtables_fields WHERE published=1 AND tableid='
-            . $this->ct->Table->tableid . ' AND  fieldname="' . $this->galleryname . '" AND type="imagegallery" LIMIT 1';
-
-        $db->setQuery($query);
-
-        $fieldrows = $db->loadObjectList();
-
-        if (count($fieldrows) != 1)
+        $fieldrow = Fields::getFieldAssocByName($this->galleryname, $this->ct->Table->tableid);
+        if ($fieldrow === null)
             return false;
 
-        $this->field = new Field($this->ct, $fieldrows[0], $this->row);
+        $this->field = new Field($this->ct, $fieldrow, $this->row);
 
         $this->GalleryTitle = $this->field->title;
 
@@ -238,6 +237,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy
             $uploadedfile = $dst;
         }
 
+
         //Check file
         if (!$this->imagemethods->CheckImage($uploadedfile, JoomlaBasicMisc::file_upload_max_size()))//$this->maxfilesize
         {
@@ -248,12 +248,16 @@ class CustomTablesModelEditPhotos extends JModelLegacy
 
         //Save to DB
         $photo_ext = $this->imagemethods->FileExtenssion($uploadedfile);
-        $photoid = $this->addPhotoRecord($photo_ext);
+        $filenameParts = explode('/', $uploadedfile);
+        $filename = end($filenameParts);
+        $title = str_replace('.' . $photo_ext, '', $filename);
+
+        $photoId = $this->addPhotoRecord($photo_ext, $title);
 
         $isOk = true;
 
         //es Thumb
-        $newfilename = $this->imagefolder . DIRECTORY_SEPARATOR . $this->imagemainprefix . $this->ct->Table->tableid . '_' . $this->galleryname . '__esthumb_' . $photoid . ".jpg";
+        $newfilename = $this->imagefolder . DIRECTORY_SEPARATOR . $this->imagemainprefix . $this->ct->Table->tableid . '_' . $this->galleryname . '__esthumb_' . $photoId . ".jpg";
         $r = $this->imagemethods->ProportionalResize($uploadedfile, $newfilename, 150, 150, 1, true, -1, '');
 
         if ($r != 1)
@@ -273,7 +277,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy
             else
                 $ext = $photo_ext;
 
-            $newfilename = $this->imagefolder . DIRECTORY_SEPARATOR . $this->imagemainprefix . $this->ct->Table->tableid . '_' . $this->galleryname . '_' . $prefix . '_' . $photoid . "." . $ext;
+            $newfilename = $this->imagefolder . DIRECTORY_SEPARATOR . $this->imagemainprefix . $this->ct->Table->tableid . '_' . $this->galleryname . '_' . $prefix . '_' . $photoId . "." . $ext;
             $r = $this->imagemethods->ProportionalResize($uploadedfile, $newfilename, $width, $height, 1, true, $color, '');
 
             if ($r != 1)
@@ -282,7 +286,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy
         }
 
         if ($isOk) {
-            $originalname = $this->imagemainprefix . $this->ct->Table->tableid . '_' . $this->galleryname . '__original_' . $photoid . "." . $photo_ext;
+            $originalname = $this->imagemainprefix . $this->ct->Table->tableid . '_' . $this->galleryname . '__original_' . $photoId . "." . $photo_ext;
 
             if (!copy($uploadedfile, $this->imagefolder . DIRECTORY_SEPARATOR . $originalname)) {
                 unlink($uploadedfile);
@@ -313,17 +317,24 @@ class CustomTablesModelEditPhotos extends JModelLegacy
         return ($outputfile);
     }
 
-    function addPhotoRecord($photo_ext)
+    protected function addPhotoRecord(string $photo_ext, string $title): int
     {
         $db = Factory::getDBO();
 
         $query = 'INSERT ' . $this->phototablename . ' SET '
             . 'ordering=100, '
-            . 'photo_ext="' . $photo_ext . '", '
-            . 'listingid=' . $this->listing_id;
+            . 'photo_ext=' . $db->quote($photo_ext) . ', '
+            . 'listingid=' . $this->listing_id . ', '
+            . 'title=' . $db->quote($title);
 
         $db->setQuery($query);
-        $db->execute();
+
+        try {
+            $db->execute();
+        } catch (Exception $e) {
+            echo 'Caught exception: ', $e->getMessage(), "\n";
+            die;
+        }
 
         $this->AutoReorderPhotos();
 
@@ -331,10 +342,9 @@ class CustomTablesModelEditPhotos extends JModelLegacy
         $query = ' SELECT photoid FROM ' . $this->phototablename . ' WHERE listingid=' . $this->listing_id . ' ORDER BY photoid DESC LIMIT 1';
         $db->setQuery($query);
 
-        $espropertytype = $db->loadObjectList();
-        if (count($espropertytype) == 1) {
-            return $espropertytype[0]->photoid;
-        }
+        $rows = $db->loadObjectList();
+        if (count($rows) == 1)
+            return $rows[0]->photoid;
 
         return -1;
     }
@@ -351,8 +361,13 @@ class CustomTablesModelEditPhotos extends JModelLegacy
             $safetitle = Factory::getApplication()->input->getString('esphototitle' . $image->photoid);
             $safetitle = str_replace('"', "", $safetitle);
 
-            $query = 'UPDATE ' . $this->phototablename . ' SET ordering=' . $i . ', title' . $this->ct->Languages->Postfix . '="' . $safetitle . '" WHERE listingid='
-                . $this->listing_id . ' AND photoid=' . $image->photoid;
+            if ($safetitle != '') {
+                $query = 'UPDATE ' . $this->phototablename . ' SET ordering=' . $i . ', title' . $this->ct->Languages->Postfix . '=' . $db->quote($safetitle) . ' WHERE listingid='
+                    . $this->listing_id . ' AND photoid=' . $image->photoid;
+            } else {
+                $query = 'UPDATE ' . $this->phototablename . ' SET ordering=' . $i . ' WHERE listingid='
+                    . $this->listing_id . ' AND photoid=' . $image->photoid;
+            }
 
             $db->setQuery($query);
             $db->execute();

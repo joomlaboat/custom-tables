@@ -146,7 +146,6 @@ class TwigProcessor
         $this->twig->addGlobal('record', new Twig_Record_Tags($this->ct));
         //{{ record.advancedjoin(function, tablename, field_findwhat, field_lookwhere, field_readvalue, additional_where, order_by_option, value_option_list) }}	-	wizard ok
 
-
         //{{ record.joincount(join_table) }}
         //{{ record.joinavg(join_table,value_field_name) }}
         //{{ record.joinmin(join_table,value_field_name) }}

@@ -20,46 +20,46 @@ use Joomla\CMS\Factory;
 
 class updateImages
 {
-    public static function process()
+    public static function process(): array
     {
         $ct = new CT;
 
-        $stepsize = (int)$ct->Env->jinput->getInt('stepsize', 10);
-        $startindex = (int)$ct->Env->jinput->getInt('startindex', 0);
+        $stepsize = $ct->Env->jinput->getInt('stepsize', 10);
+        $startindex = $ct->Env->jinput->getInt('startindex', 0);
 
         $old_typeparams = base64_decode($ct->Env->jinput->get('old_typeparams', '', 'BASE64'));
         if ($old_typeparams == '')
             return array('error' => 'old_typeparams not set');
 
-        $old_params = JoomlaBasicMisc::csv_explode(',', $old_typeparams, '"', false);
+        $old_params = JoomlaBasicMisc::csv_explode(',', $old_typeparams);
 
         $new_typeparams = base64_decode($ct->Env->jinput->get('new_typeparams', '', 'BASE64'));
         if ($new_typeparams == '')
             return array('error' => 'new_typeparams not set');
 
-        $new_params = JoomlaBasicMisc::csv_explode(',', $new_typeparams, '"', false);
+        $new_params = JoomlaBasicMisc::csv_explode(',', $new_typeparams);
 
-        $fieldid = (int)$ct->Env->jinput->getInt('fieldid', 0);
+        $fieldid = $ct->Env->jinput->getInt('fieldid', 0);
         if ($fieldid == 0)
             return array('error' => 'fieldid not set');
 
-        $fieldrow = Fields::getFieldRow($fieldid);
+        $fieldRow = Fields::getFieldRow($fieldid);
 
-        $ct->getTable($fieldrow->tableid);
+        $ct->getTable($fieldRow->tableid);
 
         $count = 0;
         if ($startindex == 0) {
-            $count = updateImages::countImages($ct->Table->realtablename, $fieldrow->realfieldname, $ct->Table->realidfieldname);
+            $count = updateImages::countImages($ct->Table->realtablename, $fieldRow->realfieldname, $ct->Table->realidfieldname);
             if ($stepsize > $count)
                 $stepsize = $count;
         }
 
-        $status = updateImages::processImages($ct, $fieldrow, $old_params, $new_params, $startindex, $stepsize);
+        $status = updateImages::processImages($ct, $fieldRow, $old_params, $new_params, $startindex, $stepsize);
 
         return array('count' => $count, 'success' => (int)($status === null), 'startindex' => $startindex, 'stepsize' => $stepsize, 'error' => $status);
     }
 
-    public static function countImages($realtablename, $realfieldname, $realidfieldname)
+    public static function countImages(string $realtablename, string $realfieldname, string $realidfieldname): int
     {
         $db = Factory::getDBO();
         $query = 'SELECT count(' . $realidfieldname . ') AS c FROM ' . $realtablename . ' WHERE ' . $realfieldname . '>0';
@@ -68,19 +68,18 @@ class updateImages
         return (int)$recs[0]['c'];
     }
 
-    public static function processImages(CT &$ct, $fieldrow, array $old_params, array $new_params,
-                                            $startindex, $stepsize, $deleteOriginals = false)
+    public static function processImages(CT &$ct, $fieldRow, array $old_params, array $new_params, int $startindex, int $stepsize): ?string
     {
         $db = Factory::getDBO();
-        $query = 'SELECT ' . $fieldrow->realfieldname . ' FROM ' . $ct->Table->realtablename . ' WHERE ' . $fieldrow->realfieldname . '>0';
+        $query = 'SELECT ' . $fieldRow->realfieldname . ' FROM ' . $ct->Table->realtablename . ' WHERE ' . $fieldRow->realfieldname . '>0';
         $db->setQuery($query, $startindex, $stepsize);
 
         $imagelist = $db->loadAssocList();
-
+        $old_ImageFolder = '';
         $imgMethods = new CustomTablesImageMethods;
 
         foreach ($imagelist as $img) {
-            $field_row_old = (array)$fieldrow;
+            $field_row_old = (array)$fieldRow;
             $field_row_old['params'] = $old_params;
 
             $field_old = new Field($ct, $field_row_old, $img);
@@ -91,7 +90,7 @@ class updateImages
 
             $old_imagesizes = $imgMethods->getCustomImageOptions($field_old->params[0]);
 
-            $field_row_new = (array)$fieldrow;
+            $field_row_new = (array)$fieldRow;
 
             $field_new = new Field($ct, $field_row_new, $img);
             $field_new->params = $new_params;
@@ -101,13 +100,13 @@ class updateImages
 
             $new_imagesizes = $imgMethods->getCustomImageOptions($field_new->params[0]);
 
-            $status = updateImages::processImage($imgMethods, $old_imagesizes, $new_imagesizes, $img[$fieldrow->realfieldname], $old_ImageFolder, $new_ImageFolder);
+            $status = updateImages::processImage($imgMethods, $old_imagesizes, $new_imagesizes, $img[$fieldRow->realfieldname], $old_ImageFolder, $new_ImageFolder);
             //if $status is null then all good, status is a text string with error message if any
             if ($status !== null)
                 return $status;
         }
 
-        //Check if the old folder is already empty, if it is empty the delete the folder
+        //Check if the old folder is already empty, if it is empty to delete the folder
         $files = scandir(JPATH_SITE . DIRECTORY_SEPARATOR . $old_ImageFolder);
         $count = 0;
         foreach ($files as $file) {
@@ -209,11 +208,11 @@ class updateImages
         return null;
     }
 
-    protected static function processImage_CustomSizes(&$imgMethods, $old_imagesizes, $new_imagesizes, $rowValue, $old_ImageFolder, $new_ImageFolder, $original_image_file)
+    protected static function processImage_CustomSizes(&$imgMethods, $old_imagesizes, $new_imagesizes, $rowValue, $old_ImageFolder, $new_ImageFolder, $original_image_file): ?string
     {
-        //Move files if neccesary
+        //Move files if necessary
         foreach ($old_imagesizes as $img) {
-            $status = updateImages::processImage_CustomSize_MoveFile($imgMethods, $img, $rowValue, $old_ImageFolder, $new_ImageFolder, $prefix = $img[0], $imagefile_ext = $img[4], $original_image_file);
+            $status = updateImages::processImage_CustomSize_MoveFile($imgMethods, $img, $rowValue, $old_ImageFolder, $new_ImageFolder, $img[0], $img[4], $original_image_file);
             if ($status !== null)
                 return $status;
         }
@@ -221,12 +220,10 @@ class updateImages
         return null;
     }
 
-    protected static function processImage_CustomSize_MoveFile(&$imgMethods, $old_imagesize, $rowValue, $old_ImageFolder, $new_ImageFolder, $prefix, $imagefile_ext = "", $original_image_file)
+    protected static function processImage_CustomSize_MoveFile($imgMethods, $old_imagesize, $rowValue, $old_ImageFolder, $new_ImageFolder, $prefix, string $imagefile_ext, string $original_image_file)
     {
-        $old_imagefile = $old_ImageFolder . DIRECTORY_SEPARATOR . $prefix . '_' . $rowValue;
-
         if ($imagefile_ext == '')
-            $imagefile_ext = $imgMethods->getImageExtention(JPATH_SITE . DIRECTORY_SEPARATOR . $original_image_file);//file extension is unknow - let's find out based on original file
+            $imagefile_ext = $imgMethods->getImageExtention(JPATH_SITE . DIRECTORY_SEPARATOR . $original_image_file);//file extension is unknown - let's find out based on original file
 
         if ($imagefile_ext != '') {
             $old_imagefile = $old_ImageFolder . DIRECTORY_SEPARATOR . $prefix . '_' . $rowValue . '.' . $imagefile_ext;
@@ -260,7 +257,7 @@ class updateImages
         return null;
     }
 
-    protected static function findChangedOrDeletedCustomSizes(&$old_imagesizes, &$new_imagesizes)
+    protected static function findChangedOrDeletedCustomSizes($old_imagesizes, $new_imagesizes)
     {
         $image_sizes_to_delete = array();
 
@@ -283,16 +280,13 @@ class updateImages
                         break;
                 }
             }
-
         }
 
         return $image_sizes_to_delete;
     }
 
-    protected static function processImage_CustomSize_deleteFile(&$imgMethods, $rowValue, $old_ImageFolder, $prefix, $imagefile_ext = "", $original_image_file)
+    protected static function processImage_CustomSize_deleteFile($imgMethods, $rowValue, $old_ImageFolder, $prefix, string $imagefile_ext, string $original_image_file): ?string
     {
-        $old_imagefile = $old_ImageFolder . DIRECTORY_SEPARATOR . $prefix . '_' . $rowValue;
-
         if ($imagefile_ext == '')
             $imagefile_ext = $imgMethods->getImageExtention(JPATH_SITE . DIRECTORY_SEPARATOR . $original_image_file);//file extension is unknow - let's find out based on original file
 
@@ -308,10 +302,8 @@ class updateImages
         return null;
     }
 
-    protected static function processImage_CustomSize_createFile(&$imgMethods, $new_imagesize, $rowValue, $new_ImageFolder, $prefix, $imagefile_ext = "", $original_image_file)
+    protected static function processImage_CustomSize_createFile($imgMethods, $new_imagesize, $rowValue, $new_ImageFolder, $prefix, string $imagefile_ext, string $original_image_file): ?string
     {
-        $new_imagefile = $new_ImageFolder . DIRECTORY_SEPARATOR . $prefix . '_' . $rowValue;
-
         if ($imagefile_ext == '')
             $imagefile_ext = $imgMethods->getImageExtention(JPATH_SITE . DIRECTORY_SEPARATOR . $original_image_file);//file extension is unknow - let's find out based on original file
 

@@ -138,7 +138,9 @@ class ESFileUploader
             $tableRow = ESFileUploader::getTableRawByItemid();
             $tableId = $tableRow['id'];
 
-            $fieldRow = Fields::getFieldAsocByName($fieldname, $tableId);
+            $fieldRow = Fields::getFieldAssocByName($fieldname, $tableId);
+            if ($fieldRow === null)
+                return [];
 
             if ($fieldRow['type'] == 'image')
                 return array('image/gif', 'image/png', 'image/jpeg', 'image/svg+xml', 'image/webp');
@@ -147,7 +149,7 @@ class ESFileUploader
             $parts = JoomlaBasicMisc::csv_explode(',', $fieldParams);
 
             if (!isset($parts[2]))
-                return array();
+                return [];
 
             $filetypes_str = $parts[2];
         }
