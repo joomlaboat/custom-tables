@@ -952,8 +952,16 @@ function renderInputBox(id, param, vlu, attributes) {
         } else if (param_att.type === "multiselect") {
             result = renderInput_Multiselect(id, param, vlu, attributes);
         } else if (param_att.type === "imagesizelist") {
+
+            vlu = vlu.replaceAll('****quote****', '');
+            vlu = vlu.replaceAll('****apos****', "");
+
             result = renderInput_ImageSizeList(id, param, vlu, attributes);
         } else if (param_att.type === "folder") {
+
+            vlu = vlu.replaceAll('****quote****', '');
+            vlu = vlu.replaceAll('****apos****', "");
+
             result = renderInput_Folder(id, vlu, attributes);
         } else if (param_att.type === "radio") {
             result = renderInput_Radio(id, param, vlu, attributes);
