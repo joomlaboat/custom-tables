@@ -39,9 +39,7 @@ class CustomTablesModelEditFiles extends JModelLegacy
 
     function __construct()
     {
-        $this->ct = new CT;
-        $this->ct->setParams();
-
+        $this->ct = new CT(null, false);
         parent::__construct();
 
         $this->allowedExtensions = 'doc docx pdf rtf txt xls xlsx psd ppt pptx webp png mp3 jpg jpeg csv accdb pages';
@@ -93,7 +91,7 @@ class CustomTablesModelEditFiles extends JModelLegacy
     {
         // get database handle
         $db = Factory::getDBO();
-        $query = 'SELECT fileid, file_ext FROM ' . $this->fileboxtablename . ' WHERE listingid=' . $this->ct->Params->listing_id . ' ORDER BY fileid';
+        $query = 'SELECT fileid, file_ext FROM ' . $this->fileboxtablename . ' WHERE listingid=' . $db->quote($this->ct->Params->listing_id) . ' ORDER BY fileid';
         $db->setQuery($query);
         return $db->loadObjectList();
     }
@@ -102,8 +100,8 @@ class CustomTablesModelEditFiles extends JModelLegacy
     {
         $db = Factory::getDBO();
 
-        $fileids = $this->ct->Env->jinput->getString('fileids', '');
-        $file_arr = explode('*', $fileids);
+        $fileIds = $this->ct->Env->jinput->getString('fileids', '');
+        $file_arr = explode('*', $fileIds);
 
         foreach ($file_arr as $fileid) {
             if ($fileid != '') {
@@ -126,61 +124,71 @@ class CustomTablesModelEditFiles extends JModelLegacy
     {
         $file = $this->ct->Env->jinput->files->get('uploadedfile'); //not zip -  regular Joomla input method will be used
 
-        $uploadedfile = "tmp/" . basename($file['name']);
+        $uploadedFile = "tmp/" . basename($file['name']);
 
-        if (!move_uploaded_file($file['tmp_name'], $uploadedfile))
+        if (!move_uploaded_file($file['tmp_name'], $uploadedFile))
             return false;
 
 
         if ($this->ct->Env->jinput->getCmd('base64ecnoded', '') == "true") {
-            $src = $uploadedfile;
+            $src = $uploadedFile;
             $dst = "tmp/decoded_" . basename($file['name']);
             CustomTablesFileMethods::base64file_decode($src, $dst);
-            $uploadedfile = $dst;
+            $uploadedFile = $dst;
         }
 
         //Save to DB
 
-        $file_ext = CustomTablesFileMethods::FileExtenssion($uploadedfile, $this->allowedExtensions);
+        $file_ext = CustomTablesFileMethods::FileExtenssion($uploadedFile, $this->allowedExtensions);
         //or $allowed_ext.indexOf($file_ext)==-1
         if ($file_ext == '') {
             //unknown file extension (type)
-            unlink($uploadedfile);
+            unlink($uploadedFile);
 
             return false;
         }
 
-        $fileid = $this->addFileRecord($file_ext);
+        $filenameParts = explode('/', $uploadedFile);
+        $filename = end($filenameParts);
+        $title = str_replace('.' . $file_ext, '', $filename);
+
+        $fileid = $this->addFileRecord($file_ext, $title);
 
         //es Thumb
         $newfilename = $this->fileboxfolder . DIRECTORY_SEPARATOR . $this->ct->Table->tableid . '_' . $this->fileboxname . '_' . $fileid . "." . $file_ext;
 
-        if (!copy($uploadedfile, $newfilename)) {
-            unlink($uploadedfile);
+        if (!copy($uploadedFile, $newfilename)) {
+            unlink($uploadedFile);
             return false;
         }
 
-        unlink($uploadedfile);
+        unlink($uploadedFile);
 
         $this->ct->Table->saveLog($this->ct->Params->listing_id, 8);
         return true;
     }
 
 
-    function addFileRecord($file_ext): int
+    function addFileRecord(string $file_ext, string $title): int
     {
         $db = Factory::getDBO();
 
         $query = 'INSERT ' . $this->fileboxtablename . ' SET '
-            . 'file_ext="' . $file_ext . '", '
+            . 'file_ext=' . $db->quote($file_ext) . ', '
             . 'ordering=0, '
-            . 'title="", '
-            . 'listingid=' . $this->ct->Params->listing_id;
+            . 'listingid=' . $db->quote($this->ct->Params->listing_id) . ', '
+            . 'title=' . $db->quote($title);
 
         $db->setQuery($query);
-        $db->execute();
 
-        $query = ' SELECT fileid FROM ' . $this->fileboxtablename . ' WHERE listingid=' . $this->ct->Params->listing_id . ' ORDER BY fileid DESC LIMIT 1';
+        try {
+            $db->execute();
+        } catch (Exception $e) {
+            echo 'Caught exception: ', $e->getMessage(), "\n";
+            die;
+        }
+
+        $query = ' SELECT fileid FROM ' . $this->fileboxtablename . ' WHERE listingid=' . $db->quote($this->ct->Params->listing_id) . ' ORDER BY fileid DESC LIMIT 1';
         $db->setQuery($query);
 
         $rows = $db->loadObjectList();

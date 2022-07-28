@@ -324,7 +324,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy
         $query = 'INSERT ' . $this->phototablename . ' SET '
             . 'ordering=100, '
             . 'photo_ext=' . $db->quote($photo_ext) . ', '
-            . 'listingid=' . $this->listing_id . ', '
+            . 'listingid=' . $db->quote($this->listing_id) . ', '
             . 'title=' . $db->quote($title);
 
         $db->setQuery($query);
@@ -339,7 +339,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy
         $this->AutoReorderPhotos();
 
 
-        $query = ' SELECT photoid FROM ' . $this->phototablename . ' WHERE listingid=' . $this->listing_id . ' ORDER BY photoid DESC LIMIT 1';
+        $query = ' SELECT photoid FROM ' . $this->phototablename . ' WHERE listingid=' . $db->quote($this->listing_id) . ' ORDER BY photoid DESC LIMIT 1';
         $db->setQuery($query);
 
         $rows = $db->loadObjectList();

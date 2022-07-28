@@ -18,17 +18,23 @@ use Joomla\CMS\Factory;
 jimport('joomla.application.component.view'); //Important to get menu parameters
 class CustomTablesViewEditFiles extends JViewLegacy
 {
+    var int $max_file_size;
+    var $jinput;
+    var $FileBoxTitle;
+    var $listing_id;
+    var $fileboxname;
+    var $allowedExtensions;
+
     function display($tpl = null)
     {
         $user = Factory::getUser();
         $userid = $user->get('id');
         if ((int)$userid == 0) {
             Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
-            return false;
+            return;
         }
 
         $this->Model = $this->getModel();
-
         $this->files = $this->Model->getFileList();
 
         $this->idList = array();
@@ -37,15 +43,10 @@ class CustomTablesViewEditFiles extends JViewLegacy
             $this->idList[] = $file->fileid;
 
         $this->max_file_size = JoomlaBasicMisc::file_upload_max_size();
-
         $this->jinput = Factory::getApplication()->input;
-
         $this->FileBoxTitle = $this->Model->FileBoxTitle;
-
-        $this->listing_id = $this->Model->listing_id;
-
+        $this->listing_id = $this->Model->ct->Params->listing_id;
         $this->fileboxname = $this->Model->fileboxname;
-
         $this->allowedExtensions = $this->Model->allowedExtensions;
 
         parent::display($tpl);
@@ -56,17 +57,16 @@ class CustomTablesViewEditFiles extends JViewLegacy
         $htmlout = '
 		
 		<h2>' . JoomlaBasicMisc::JTextExtended("List of Files") . '</h2>
-		<table width="100%" border="0">
+		<table style="width:100%;border:none;">
 			<thead>
 				<tr>
-					<th valign="top" align="center" style="width:40px;"><input type="checkbox" name="SelectAllBox" id="SelectAllBox" onClick=SelectAll(this.checked) align="left" style="vertical-align:top";> Select All</th>
-					<th valign="top" align="center"></th>
+					<th style="vertical-align: top; text-align: center; width:40px;"><input type="checkbox" name="SelectAllBox" id="SelectAllBox" onClick=SelectAll(this.checked) style="text-align: left; vertical-align:top"> Select All</th>
+					<th style="vertical-align: top; text-align: center; "></th>
 				</tr>
 			</thead>
 			<tbody>
 		';
 
-        $i = 0;
         $c = 0;
         foreach ($this->files as $file) {
             $htmlout .= '
@@ -76,10 +76,10 @@ class CustomTablesViewEditFiles extends JViewLegacy
             $filepath = $this->Model->fileboxfolderweb . '/' . $filename;
 
             $htmlout .= '
-					<td valign="top" align="center">
-						<input type="checkbox" name="esfile' . $file->fileid . '" id="esfile' . $file->fileid . '" align="left" style="vertical-align:top">
+					<td  style="vertical-align: top; text-align: center; ">
+						<input type="checkbox" name="esfile' . $file->fileid . '" id="esfile' . $file->fileid . '" style="text-align: left;" style="vertical-align:top">
 					</td>
-					<td align="left"><a href="' . $filepath . '" target="_blank">' . $filename . '</a></td>
+					<td style="text-align: left;"><a href="' . $filepath . '" target="_blank">' . $filename . '</a></td>
 			';
 
             $c++;
