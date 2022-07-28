@@ -569,7 +569,7 @@ class Twig_Table_Tags
 
     function title(): string
     {
-        if (!isset($this->this->ct->Table) or $this->ct->Table->fields === null)
+        if (!isset($this->ct->Table) or $this->ct->Table->fields === null)
             return 'Table not selected';
 
         return $this->ct->Table->tabletitle;
@@ -691,7 +691,6 @@ class Twig_Tables_Tags
 
         $layouts = new Layouts($join_ct);
         $pagelayout = $layouts->getLayout($layoutname, false);//It is safer to process layout after rendering the table
-
 
         if ($layouts->tableid === null) {
             $this->ct->app->enqueueMessage('{{ html.records("' . $layoutname . '","' . $record_id_or_filter . '","' . $orderby . '") }} - Layout "' . $layoutname . ' not found.', 'error');

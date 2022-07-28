@@ -541,6 +541,7 @@ class Documentation
 
                 $result .= '<p>' . $tagSetAtt->description . '</p>';
                 $result .= $this->renderTagsInternal($tagSet->tag, $tagSetAtt->name);
+
                 $result .= '</div>';
             }
         }
@@ -602,6 +603,11 @@ class Documentation
                             $result .= '<h5>' . common::translate('COM_CUSTOMTABLES_PARAMS') . ':</h5>' . $content;
                     }
                 }
+
+                if ($tag_att->example !== null) {
+                    $result .= '<pre>Example: ' . $tag_att->example . '</pre>';
+                }
+
                 $result .= '</div>';
             }
         }
@@ -662,6 +668,10 @@ class Documentation
                         if ($content != '')
                             $result .= '**' . common::translate('COM_CUSTOMTABLES_PARAMS') . '**<br><br>' . $content;
                     }
+                }
+
+                if ($tag_att->example !== null) {
+                    $result .= 'Example: `' . $tag_att->example . '`<br><br>';
                 }
 
                 $result .= '<br/>';

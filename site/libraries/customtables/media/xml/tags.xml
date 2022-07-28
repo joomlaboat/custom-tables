@@ -473,10 +473,13 @@
              description="Returns the total number of records in the table" hidedefaultexample="1" twigclass="table"/>
 
         <tag name="recordpagestart" label="Page Start Record number" startchar="{" endchar="}"
-             description="Returns the pagination start from record number" hidedefaultexample="1" twigclass="table"/>
+             description="Returns the pagination start from record number" hidedefaultexample="1" twigclass="table"
+             example="{{ table.recordpagestart + table.recordsperpage }}"/>
 
         <tag name="recordsperpage" label="Number of records per page" startchar="{" endchar="}"
-             description="Returns number of records per page" hidedefaultexample="1" twigclass="table"/>
+             description="Returns number of records per page" hidedefaultexample="1" twigclass="table"
+             example="{{ table.recordpagestart + table.recordsperpage }}"
+        />
 
         <tag name="title" label="Table Title" startchar="{" endchar="}"
              description="Returns the current table title." hidedefaultexample="1" twigclass="table"/>
