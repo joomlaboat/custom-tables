@@ -1003,7 +1003,9 @@ function findTheType(typename) {
 
 function loadTypes_silent(processMessageBox) {
 
-    const url = websiteSiteLibraries + "media/xml/fieldtypes.xml";
+    let parts = location.href.split("/administrator/");
+    const url = parts[0] + '/index.php?option=com_customtables&view=xml&xmlfile=fieldtypes';
+
     const params = "";
 
     let http = CreateHTTPRequestObject();   // defined in ajax.js
@@ -1042,7 +1044,8 @@ function loadTypes_silent(processMessageBox) {
 function loadTypes(typeparams_box_obj, jform_type, jform_typeparams, typeparams_box) {
     typeparams_box_obj.innerHTML = 'Loading...';
 
-    const url = websiteSiteLibraries + "media/xml/fieldtypes.xml";
+    let parts = location.href.split("/administrator/");
+    const url = parts[0] + '/index.php?option=com_customtables&view=xml&xmlfile=fieldtypes';
 
     let http = null;
     const params = "";

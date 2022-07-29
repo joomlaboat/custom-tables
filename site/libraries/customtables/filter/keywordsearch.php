@@ -443,10 +443,7 @@ class CustomTablesKeywordSearch
 
             if (!$exist) {
                 $result_rows[] = $row;
-
-
                 $listing_ids[] = $row[$this->ct->Table->realidfieldname];
-
                 $count++;
             }
         }
@@ -454,18 +451,9 @@ class CustomTablesKeywordSearch
 
     function processLimit($result_rows, $limit, $limitstart)
     {
-
         $result_rows_new = array();
-
-        if ($limitstart + $limit > count($result_rows))
-            $limit_ = count($result_rows) - $limitstart;
-        else
-            $limit_ = $limit;
-
-
-        for ($i = $limitstart; $i < $limitstart + $limit_; $i++) {
+        for ($i = $limitstart; $i < $limitstart + $limit; $i++)
             $result_rows_new[] = $result_rows[$i];
-        }
 
         return $result_rows_new;
     }

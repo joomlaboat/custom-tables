@@ -188,9 +188,6 @@ class CT
         if ($this->Limit == 0)
             $this->Limit = 20000;
 
-        if ($this->Limit > count($this->Records))
-            $this->Limit = count($this->Records);
-
         return true;
     }
 
@@ -318,7 +315,7 @@ class CT
             $this->GroupBy = '';
 
         if ($this->Env->frmt != 'html') {
-            //export all records if firmat is csv, xml etc.
+            //export all records if format is csv, xml etc.
             $this->Limit = 0;
             $this->LimitStart = 0;
             return;

@@ -300,6 +300,9 @@ function checkRequiredFields() {
                     else
                         label = "Unlabeled field";
 
+                    if (document.getElementById(requiredFields[i].id).innerHTML != "")
+                        return true;
+
                     alert(label + " required.");
                     return false;
                 }

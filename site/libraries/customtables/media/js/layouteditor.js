@@ -102,7 +102,9 @@ function loadTagParams(type_id, tags_box) {
 function loadTags(type_id, tags_box) {
     type_obj = document.getElementById(type_id);
 
-    const url = websiteSiteLibraries + "media/xml/tags.xml?v=" + Math.floor(Math.random() * 100);
+    let parts = location.href.split("/administrator/");
+    const url = parts[0] + '/index.php?option=com_customtables&view=xml&xmlfile=tags';
+
     const params = "";
 
     let http = CreateHTTPRequestObject();   // defined in ajax.js

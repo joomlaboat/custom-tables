@@ -32,7 +32,6 @@ class JESPagination extends JObject
      * @since  11.1
      */
     public $limitstart = null;
-
     /**
      * Number of rows to display per page.
      *
@@ -40,7 +39,6 @@ class JESPagination extends JObject
      * @since  11.1
      */
     public $limit = null;
-
     /**
      * Total number of rows.
      *
@@ -48,7 +46,6 @@ class JESPagination extends JObject
      * @since  11.1
      */
     public $total = null;
-
     /**
      * Prefix used for request variables.
      *
@@ -56,7 +53,8 @@ class JESPagination extends JObject
      * @since  11.1
      */
     public $prefix = null;
-
+    protected bool $icons;
+    protected int $version;
     /**
      * View all flag
      *
@@ -82,8 +80,11 @@ class JESPagination extends JObject
      * @param integer $limit The number of items to display per page.
      * @param string $prefix The prefix used for request variables.
      */
-    function __construct($total, $limitstart, $limit, $prefix = '')
+    function __construct($total, $limitstart, $limit, $prefix = '', $version = 3, $icons = false)
     {
+        $this->version = $version;
+        $this->icons = $icons;
+
         // Value/type checking.
         $this->total = (int)$total;
         $this->limitstart = (int)max($limitstart, 0);
@@ -174,9 +175,7 @@ class JESPagination extends JObject
      */
     public function getAdditionalUrlParam($key)
     {
-        $result = isset($this->_additionalUrlParams[$key]) ? $this->_additionalUrlParams[$key] : null;
-
-        return $result;
+        return isset($this->_additionalUrlParams[$key]) ? $this->_additionalUrlParams[$key] : null;
     }
 
     /**
@@ -242,8 +241,14 @@ class JESPagination extends JObject
         }
 
         // Set the start and previous data objects.
-        $data->start = new JESPaginationObject(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_START'), $this->prefix);
-        $data->previous = new JESPaginationObject(JoomlaBasicMisc::JTextExtended('JPREV'), $this->prefix);
+
+        if ($this->icons) {
+            $data->start = new JESPaginationObject('<span class="icon-angle-double-left" aria-hidden="true"></span>', $this->prefix, null, null, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_START'));
+            $data->previous = new JESPaginationObject('<span class="icon-angle-left" aria-hidden="true"></span>', $this->prefix, null, null, JoomlaBasicMisc::JTextExtended('JPREV'));
+        } else {
+            $data->start = new JESPaginationObject(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_START'), $this->prefix);
+            $data->previous = new JESPaginationObject(JoomlaBasicMisc::JTextExtended('JPREV'), $this->prefix);
+        }
 
         if ($this->get('pages.current') > 1) {
             $page = ($this->get('pages.current') - 2) * $this->limit;
@@ -256,12 +261,17 @@ class JESPagination extends JObject
             if ($page == 0)
                 $data->previous->link = JRoute::_($query_paramsPlusPrefix);
             else
-                $data->previous->link = JRoute::_($query_paramsPlusPrefix . (strpos($query_paramsPlusPrefix, '?') === false ? '?' : '&') . 'start=' . $page);
+                $data->previous->link = JRoute::_($query_paramsPlusPrefix . (!str_contains($query_paramsPlusPrefix, '?') ? '?' : '&') . 'start=' . $page);
         }
 
         // Set the next and end data objects.
-        $data->next = new JESPaginationObject(JoomlaBasicMisc::JTextExtended('JNEXT'), $this->prefix);
-        $data->end = new JESPaginationObject(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_END'), $this->prefix);
+        if ($this->icons) {
+            $data->next = new JESPaginationObject('<span class="icon-angle-right" aria-hidden="true"></span>', $this->prefix, null, null, JoomlaBasicMisc::JTextExtended('JNEXT'));
+            $data->end = new JESPaginationObject('<span class="icon-angle-double-right" aria-hidden="true"></span>', $this->prefix, null, null, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_END'));
+        } else {
+            $data->next = new JESPaginationObject(JoomlaBasicMisc::JTextExtended('JNEXT'), $this->prefix);
+            $data->end = new JESPaginationObject(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_END'), $this->prefix);
+        }
 
         if ($this->get('pages.current') < $this->get('pages.total')) {
             $next = $this->get('pages.current') * $this->limit;
@@ -275,6 +285,7 @@ class JESPagination extends JObject
 
         $data->pages = array();
         $stop = $this->get('pages.stop');
+
         for ($i = $this->get('pages.start'); $i <= $stop; $i++) {
             $offset = ($i - 1) * $this->limit;
             // Set the empty for removal from route
@@ -410,7 +421,7 @@ class JESPagination extends JObject
      * @return  string   Pagination page list string.
      * @since   11.1
      */
-    public function getPagesLinks($columns)
+    public function getPagesLinks()
     {
         // Build the page navigation list.
         $data = $this->_buildDataObject();
@@ -461,12 +472,14 @@ class JESPagination extends JObject
 
         $list['pages'] = array(); //make sure it exists
         foreach ($data->pages as $i => $page) {
+
             if ($page->base !== null) {
                 $list['pages'][$i]['active'] = true;
                 $list['pages'][$i]['data'] = ($itemOverride) ? pagination_item_active($page) : $this->_item_active($page);
             } else {
                 $list['pages'][$i]['active'] = false;
                 $list['pages'][$i]['data'] = ($itemOverride) ? pagination_item_inactive($page) : $this->_item_inactive($page, $current_page = true);
+                $list['pages'][$i]['current'] = true;
             }
         }
 
@@ -495,29 +508,10 @@ class JESPagination extends JObject
 
     protected function _item_active(&$item)
     {
-        $app = Factory::getApplication();
-        if ($app->isClient('administrator')) {
-            if ($item->base > 0) {
-
-                $onClick = 'document.adminForm.' . $this->prefix . 'start.value=' . $item->base . '; Joomla.submitform();return false;';
-
-                return '<a'
-                    . ' title="' . $item->text . '"'
-                    . ' onclick="' . $onClick . '"'
-                    . '>'
-                    . $item->text . '</a>';
-            } else {
-
-                $onClick = 'document.adminForm.' . $this->prefix . 'start.value=0; Joomla.submitform();return false;';
-
-                return '<a'
-                    . ' title="' . $item->text . '"'
-                    . ' onclick="' . $onClick . '"'
-                    . '>'
-                    . $item->text . '</a>';
-            }
-        } else {
+        if ($this->version < 4) {
             return '<a title="' . $item->text . '" href="' . $item->link . '" class="pagenav">' . $item->text . '</a>';
+        } else {
+            return '<a title="' . $item->label . '" href="' . $item->link . '" class="page-link">' . $item->text . '</a>';
         }
     }
 
@@ -532,11 +526,10 @@ class JESPagination extends JObject
 
     protected function _item_inactive(&$item, $current_page = false)
     {
-        $app = Factory::getApplication();
-        if ($app->isClient('administrator'))
-            return "<span>" . $item->text . "</span>";
-        else
+        if ($this->version < 4)
             return "<span class=\"pagenav" . ($current_page ? ' active' : '') . "\">" . $item->text . "</span>";
+        else
+            return '<a class="page-link"' . ($current_page ? ' aria-current="true"' : '') . '>' . $item->text . '</a>';
     }
 
     /*
@@ -551,16 +544,33 @@ class JESPagination extends JObject
     protected function _list_render($list)
     {
         // Reverse output rendering for right-to-left display.
-        $html = '<ul>';
-        $html .= '<li class="pagination-start">' . $list['start']['data'] . '</li>';
-        $html .= '<li class="pagination-prev">' . $list['previous']['data'] . '</li>';
-        foreach ($list['pages'] as $page) {
-            $html .= '<li>' . $page['data'] . '</li>';
-        }
-        $html .= '<li class="pagination-next">' . $list['next']['data'] . '</li>';
-        $html .= '<li class="pagination-end">' . $list['end']['data'] . '</li>';
-        $html .= '</ul>';
+        if ($this->version < 4) {
 
+            $html = '<ul>';
+            $html .= '<li class="pagination-start">' . $list['start']['data'] . '</li>';
+            $html .= '<li class="pagination-prev">' . $list['previous']['data'] . '</li>';
+            foreach ($list['pages'] as $page) {
+                $html .= '<li>' . $page['data'] . '</li>';
+            }
+            $html .= '<li class="pagination-next">' . $list['next']['data'] . '</li>';
+            $html .= '<li class="pagination-end">' . $list['end']['data'] . '</li>';
+            $html .= '</ul>';
+        } else {
+            $html = '<ul class="pagination">';
+
+            $html .= '<li class="' . ($list['start']['active'] ? '' : 'disabled ') . 'page-item">' . $list['start']['data'] . '</li>';
+            $html .= '<li class="' . ($list['previous']['active'] ? '' : 'disabled ') . 'page-item">' . $list['previous']['data'] . '</li>';
+            foreach ($list['pages'] as $page) {
+                if ($page['current'] !== null)
+                    $html .= '<li class="active page-item">' . $page['data'] . '</li>';
+                else
+                    $html .= '<li class="page-item">' . $page['data'] . '</li>';
+
+            }
+            $html .= '<li class="' . ($list['next']['active'] ? '' : 'disabled ') . 'page-item">' . $list['next']['data'] . '</li>';
+            $html .= '<li class="' . ($list['end']['active'] ? '' : 'disabled ') . 'page-item">' . $list['end']['data'] . '</li>';
+            $html .= '</ul>';
+        }
         return $html;
     }
 
@@ -658,6 +668,7 @@ class JESPaginationObject extends JObject
      * @since  11.1
      */
     public $text;
+    public $label;
 
     /**
      *
@@ -694,9 +705,10 @@ class JESPaginationObject extends JObject
      * @return
      * @since    11.1
      */
-    public function __construct($text, $prefix = '', $base = null, $link = null)
+    public function __construct($text, $prefix = '', $base = null, $link = null, $label = null)
     {
         $this->text = $text;
+        $this->label = ($label === null ? $text : $label);
         $this->prefix = $prefix;
         $this->base = $base;
         $this->link = $link;

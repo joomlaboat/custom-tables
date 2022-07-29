@@ -9,6 +9,8 @@
  **/
 
 // no direct access
+use Joomla\CMS\Factory;
+
 if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
@@ -28,4 +30,24 @@ try {
 }
 
 // Redirect if set by the controller
+
+$jinput = Factory::getApplication()->input;
+$view = $jinput->getCmd('view');
+if ($view == 'xml') {
+    $file = $jinput->getCmd('xmlfile');
+
+    $xml = 'unknown file';
+    if ($file == 'tags')
+
+        $xml = file_get_contents(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR
+            . 'media' . DIRECTORY_SEPARATOR . 'xml' . DIRECTORY_SEPARATOR . $file . '.xml');
+
+    elseif ($file == 'fieldtypes')
+        $xml = file_get_contents(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR
+            . 'media' . DIRECTORY_SEPARATOR . 'xml' . DIRECTORY_SEPARATOR . $file . '.xml');
+
+    echo $xml;
+    die;
+}
+
 $controller->redirect();

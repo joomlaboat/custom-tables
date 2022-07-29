@@ -164,7 +164,7 @@ class Twig_Html_Tags
             return $vlu;
     }
 
-    function pagination()
+    function pagination($show_arrow_icons = false)
     {
         if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
             return '';
@@ -178,13 +178,12 @@ class Twig_Html_Tags
         if (!is_null($this->ct->Params->ModuleId))
             return '';
 
-        $pagination = new JESPagination($this->ct->Table->recordcount, $this->ct->LimitStart, $this->ct->Limit);
-        $vlu = '<div class="pagination">' . $pagination->getPagesLinks("") . '</div>';
+        $pagination = new JESPagination($this->ct->Table->recordcount, $this->ct->LimitStart, $this->ct->Limit, '', $this->ct->Env->version, $show_arrow_icons);
 
-        if ($this->isTwig)
-            return $vlu;
+        if ($this->ct->Env->version < 4)
+            return '<div class="pagination">' . $pagination->getPagesLinks() . '</div>';
         else
-            return $vlu;
+            return '<div style="display:inline-block">' . $pagination->getPagesLinks() . '</div>';
     }
 
     function limit($the_step = 5)
@@ -198,13 +197,8 @@ class Twig_Html_Tags
         if (!is_null($this->ct->Params->ModuleId))
             return '';
 
-        $pagination = new JESPagination($this->ct->Table->recordcount, $this->ct->LimitStart, $this->ct->Limit);
-        $vlu = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SHOW') . ': ' . $pagination->getLimitBox($the_step);
-
-        if ($this->isTwig)
-            return $vlu;
-        else
-            return $vlu;
+        $pagination = new JESPagination($this->ct->Table->recordcount, $this->ct->LimitStart, $this->ct->Limit, '', $this->ct->Env->version);
+        return JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SHOW') . ': ' . $pagination->getLimitBox($the_step);
     }
 
     function orderby()
