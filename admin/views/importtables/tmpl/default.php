@@ -32,7 +32,7 @@ $document->addCustomTag('<link href="' . JURI::root(true) . '/components/com_cus
 
 
 $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/jquery.form.js"></script>');
-$document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/jquery.uploadfile.min.js"></script>');
+$document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/jquery.uploadfile.js"></script>');
 $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/uploader.js"></script>');
 
 $fileid = $this->generateRandomString();

@@ -191,7 +191,7 @@ class CT_FieldTypeTag_image
     {
         //$style='margin:10px; border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;vertical-align:top;';
         $result = '<div style="" id="ct_uploadedfile_box_' . $field->fieldname . '">'
-            . '<img src="' . $imagesrc . '" alt="Uploaded Image" width="150" /><br/>';
+            . '<img src="' . $imagesrc . '" alt="Uploaded Image" width="150" id="ct_uploadfile_box_' . $field->fieldname . '_image" /><br/>';
 
         if (!$field->isrequired)
             $result .= '<input type="checkbox" name="' . $prefix . $field->fieldname . '_delete" id="' . $prefix . $field->fieldname . '_delete" value="true">'
@@ -207,7 +207,7 @@ class CT_FieldTypeTag_image
         $max_file_size = JoomlaBasicMisc::file_upload_max_size();
         $fileId = JoomlaBasicMisc::generateRandomString();
         $style = 'margin:10px; border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;vertical-align:top;';
-        $element_id = 'ct_ubloadfile_box_' . $field->fieldname;
+        $element_id = 'ct_uploadfile_box_' . $field->fieldname;
 
         return '
         <!--suppress XmlDuplicatedId -->

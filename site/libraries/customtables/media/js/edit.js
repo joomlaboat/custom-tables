@@ -290,9 +290,8 @@ function checkRequiredFields() {
             if (requiredFields[i].id.indexOf("sqljoin_table_comes_") != -1) {
                 if (!CheckSQLJoinRadioSelections(requiredFields[i].id))
                     return false;
-
             }
-            if (requiredFields[i].id.indexOf("ct_ubloadfile_box_") != -1) {
+            if (requiredFields[i].id.indexOf("ct_uploadfile_box_") != -1) {
                 if (!CheckImageUploader(requiredFields[i].id)) {
                     let d = requiredFields[i].dataset;
                     if (d.label)
@@ -300,7 +299,10 @@ function checkRequiredFields() {
                     else
                         label = "Unlabeled field";
 
-                    if (document.getElementById(requiredFields[i].id).innerHTML != "")
+                    let imageObjectName = 'ct_uploadfile_box_image_image';//requiredFields[i].id + '_image';
+                    let imageObject = document.getElementById(imageObjectName);
+
+                    if (imageObject)
                         return true;
 
                     alert(label + " required.");
@@ -369,7 +371,7 @@ function SetUsetInvalidClass(id, isValid) {
 }
 
 function CheckImageUploader(id) {
-    let objid = id.replace("ct_ubloadfile_box_", "comes_");
+    let objid = id.replace("ct_uploadfile_box_", "comes_");
     let obj = document.getElementById(objid);
     if (obj.value === "") {
         SetUsetInvalidClass(id, false);
