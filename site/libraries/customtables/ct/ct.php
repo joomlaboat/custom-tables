@@ -18,6 +18,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use Joomla\CMS\Application\WebApplication;
 use Joomla\CMS\Document\Document;
 use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Component\ComponentHelper;
@@ -349,8 +350,11 @@ class CT
         if ($this->Env->version < 4) {
             $this->document->addCustomTag('<script src="' . URI::root(true) . '/media/jui/js/jquery.min.js"></script>');
             $this->document->addCustomTag('<script src="' . URI::root(true) . '/media/jui/js/bootstrap.min.js"></script>');
-        } else
+        } else {
+
+            HTMLHelper::_('jquery.framework');
             $this->document->addCustomTag('<link rel="stylesheet" href="' . URI::root(true) . '/media/system/css/fields/switcher.css">');
+        }
 
         $this->document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/js/jquery.uploadfile.js"></script>');
         $this->document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/js/jquery.form.js"></script>');
