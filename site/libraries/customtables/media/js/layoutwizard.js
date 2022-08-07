@@ -597,7 +597,7 @@ function getLayout_Page() {
     result += '<table><thead><tr>';
 
     let fieldtypes_to_skip = ['log', 'imagegallery', 'filebox', 'dummy'];
-    let fieldtypes_withsearch = ['email', 'string', 'multilangstring', 'text', 'multilangtext', 'sqljoin', 'records'];
+    let fieldtypes_withsearch = ['email', 'string', 'multilangstring', 'text', 'multilangtext', 'sqljoin', 'records', 'user', 'userid', 'int', 'checkbox'];
 
     result += '<th>{{ html.batch("checkbox") }}</th>\r\n';
     result += '<th>#</th>\r\n';
@@ -706,7 +706,7 @@ function getLayout_SimpleCatalog() {
     result += '\r\n';
 
     let fieldtypes_to_skip = ['log', 'imagegallery', 'filebox', 'dummy'];
-    let fieldtypes_withsearch = ['email', 'string', 'multilangstring', 'text', 'multilangtext', 'sqljoin', 'records'];
+    let fieldtypes_withsearch = ['email', 'string', 'multilangstring', 'text', 'multilangtext', 'sqljoin', 'records', 'user', 'userid', 'int', 'checkbox'];
 
     let field_titles = [];
 
@@ -728,8 +728,6 @@ function getLayout_SimpleCatalog() {
     field_titles.push('"Action"');
 
     result += '\r\n<table>\r\n';
-    //result+='{{ html.tablehead(' + field_titles.join(",") + ') }}';
-
 
     result += '<thead><tr>';
 

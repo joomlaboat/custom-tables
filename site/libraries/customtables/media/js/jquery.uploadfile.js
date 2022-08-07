@@ -704,7 +704,6 @@
             return bar;
         }
 
-
         function ajaxFormSubmit(form, s, pd, fileArray, obj, file) {
             var currentXHR = null;
             var options = {

@@ -390,7 +390,7 @@ class Twig_Html_Tags
             return $vlu;
     }
 
-    function search($list_of_fields_string_or_array, $class = '', $reload = false, $improved = false)
+    function search($list_of_fields_string_or_array, $class = '', $reload = false, $improved = false): string
     {
         if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
             return '';
@@ -416,6 +416,8 @@ class Twig_Html_Tags
         foreach ($list_of_fields_string_array as $field_name_string) {
             if ($field_name_string == '_id') {
                 $list_of_fields[] = '_id';
+            } elseif ($field_name_string == '_published') {
+                $list_of_fields[] = '_published';
             } else {
                 //Check if field name is exist in selected table
                 $fld = Fields::FieldRowByName($field_name_string, $this->ct->Table->fields);
@@ -455,7 +457,20 @@ class Twig_Html_Tags
                     'type' => '_id',
                     'typeparams' => '',
                     'fieldtitle' . $this->ct->Languages->Postfix => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ID'),
-                    'realfieldname' => 'id',
+                    'realfieldname' => $this->ct->Table->realtablename,
+                    'isrequired' => false,
+                    'defaultvalue' => null,
+                    'valuerule' => null,
+                    'valuerulecaption' => null
+                );
+            } elseif ($field_name_string == '_published') {
+                $fld = array(
+                    'id' => 0,
+                    'fieldname' => '_published',
+                    'type' => '_published',
+                    'typeparams' => '',
+                    'fieldtitle' . $this->ct->Languages->Postfix => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PUBLISHED'),
+                    'realfieldname' => 'published',
                     'isrequired' => false,
                     'defaultvalue' => null,
                     'valuerule' => null,
@@ -488,29 +503,27 @@ class Twig_Html_Tags
         }
 
         //Add control elements
-        $fieldtitles = $this->getFieldTitles($list_of_fields);
-        $field_title = implode(' ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_OR') . ' ', $fieldtitles);
+        $fieldTitles = $this->getFieldTitles($list_of_fields);
+        $field_title = implode(' ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_OR') . ' ', $fieldTitles);
 
-        $cssclass = 'ctSearchBox';
+        $cssClass = 'ctSearchBox';
         if ($class != '')
-            $cssclass .= ' ' . $class;
+            $cssClass .= ' ' . $class;
 
         if ($improved)
-            $cssclass .= ' ct_improved_selectbox';
+            $cssClass .= ' ct_improved_selectbox';
 
         $default_Action = $reload ? ' onChange="ctSearchBoxDo();"' : ' ';//action should be a space not empty or this.value=this.value
 
-        $objectname = $first_fld['fieldname'];
+        $objectName = $first_fld['fieldname'];
 
         if (count($first_fld) == 0)
             return 'Unsupported field type or field not found.';
 
-        $vlu = $SearchBox->renderFieldBox('es_search_box_', $objectname, $first_fld,
-            $cssclass, '0',
+        $vlu = $SearchBox->renderFieldBox('es_search_box_', $objectName, $first_fld,
+            $cssClass, '0',
             '', false, '', $default_Action, $field_title);//action should be a space not empty or
-        //0 because its not an edit box and we pass onChange value even " " is the value;
-
-        //$vlu=str_replace('"','&&&&quote&&&&',$vlu);
+        //0 because it's not an edit box, and we pass onChange value even " " is the value;
 
         $field2search = $this->prepareSearchElement($first_fld);
         $vlu .= '<input type=\'hidden\' ctSearchBoxField=\'' . $field2search . '\' />';
@@ -521,12 +534,14 @@ class Twig_Html_Tags
             return $vlu;
     }
 
-    protected function getFieldTitles($list_of_fields)
+    protected function getFieldTitles($list_of_fields): array
     {
-        $field_titles = array();
+        $field_titles = [];
         foreach ($list_of_fields as $fieldname) {
             if ($fieldname == '_id')
                 $field_titles[] = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ID');
+            elseif ($fieldname == '_published')
+                $field_titles[] = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PUBLISHED');
             else {
                 foreach ($this->ct->Table->fields as $fld) {
                     if ($fld['fieldname'] == $fieldname) {
@@ -545,10 +560,10 @@ class Twig_Html_Tags
             return 'es_search_box_' . $fld['fieldname'] . ':' . implode(';', $fld['fields']) . ':';
         } else {
             if ($fld['type'] == 'customtables') {
-                $exparams = explode(',', $fld['typeparams']);
-                if (count($exparams) > 1) {
-                    $esroot = $exparams[0];
-                    return 'es_search_box_combotree_' . $this->ct->Table->tablename . '_' . $fld['fieldname'] . '_1:' . $fld['fieldname'] . ':' . $esroot;
+                $paramsList = explode(',', $fld['typeparams']);
+                if (count($paramsList) > 1) {
+                    $root = $paramsList[0];
+                    return 'es_search_box_combotree_' . $this->ct->Table->tablename . '_' . $fld['fieldname'] . '_1:' . $fld['fieldname'] . ':' . $root;
                 }
             } else
                 return 'es_search_box_' . $fld['fieldname'] . ':' . $fld['fieldname'] . ':';

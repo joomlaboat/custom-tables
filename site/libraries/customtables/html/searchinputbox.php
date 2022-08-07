@@ -64,7 +64,13 @@ class SearchInputBox
             $default_class = 'form-control';
 
         switch ($this->field->type) {
+
+            case '_published':
+                $result .= $this->getPublishedBox($default_Action, $index, $where, $wherelist, $objname_, $value, $cssclass);
+                break;
+
             case 'int':
+            case '_id':
                 $result .= '<input type="text" name="' . $objname_ . '" id="' . $objname_ . '" class="' . $cssclass . ' ' . $default_class . '"'
                     . ' value="' . $value . '" placeholder="' . $field_title . '"'
                     . ' onkeypress="es_SearchBoxKeyPress(event)"'
@@ -126,7 +132,7 @@ class SearchInputBox
                 break;
 
             case 'checkbox':
-                $result .= $this->getCheckBox($fieldrow, $default_Action, $index, $where, $wherelist, $objname_, $value, $cssclass);
+                $result .= $this->getCheckBox($default_Action, $index, $where, $wherelist, $objname_, $value, $cssclass);
                 break;
 
             case 'range':
@@ -215,11 +221,48 @@ class SearchInputBox
         $b = str_replace(' or ', ' and ', $b);
         $b = str_replace(' OR ', ' and ', $b);
         $b = str_replace(' AND ', ' and ', $b);
-        $list = explode(' and ', $b);
-        return $list;
+        return explode(' and ', $b);
     }
 
-    protected function getCheckBox(&$fieldrow, $default_Action, $index, $where, $wherelist, $objname_, $value, $cssclass)
+    protected function getPublishedBox($default_Action, $index, $where, $wherelist, $objname_, $value, $cssclass)
+    {
+        $result = '';
+
+        if ($this->ct->Env->version < 4)
+            $default_class = 'inputbox';
+        else
+            $default_class = 'form-select';
+
+        $translations = array(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ANY'), JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PUBLISHED'), JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_UNPUBLISHED'));
+
+        if ($default_Action != '') {
+            $onchange = $default_Action;
+        } else {
+            $onchange = ' onChange="' . $this->modulename . '_onChange('
+                . $index . ','
+                . 'this.value,'
+                . '\'' . $this->field->fieldname . '\','
+                . '\'' . urlencode($where) . '\','
+                . '\'' . urlencode($wherelist) . '\','
+                . '\'' . $this->ct->Languages->Postfix . '\''
+                . ')"';
+        }
+
+        $result .= '<select'
+            . ' id="' . $objname_ . '"'
+            . ' name="' . $objname_ . '"'
+            . ' ' . $onchange
+            . ' class="' . $cssclass . ' ' . $default_class . '"'
+            . ' data-type="checkbox">'
+            . '<option value="" ' . ($value == '' ? 'SELECTED' : '') . '>' . $translations[0] . '</option>'
+            . '<option value="1" ' . ($value == '1' ? 'SELECTED' : '') . '>' . $translations[1] . '</option>'
+            . '<option value="0" ' . ($value == '0' ? 'SELECTED' : '') . '>' . $translations[2] . '</option>'
+            . '</select>';
+
+        return $result;
+    }
+
+    protected function getCheckBox($default_Action, $index, $where, $wherelist, $objname_, $value, $cssclass)
     {
         $result = '';
 
@@ -259,7 +302,6 @@ class SearchInputBox
 
     protected function getRangeBox(&$fieldrow, $index, $where, $wherelist, $objname_, $value, $cssclass)
     {
-        $jinput = Factory::getApplication()->input;
         $result = '';
 
         if ($this->ct->Env->version < 4)
@@ -267,7 +309,7 @@ class SearchInputBox
         else
             $default_class = 'form-control';
 
-        $value_min = '';
+        $value_min = ''; //TODO: Check this
         $value_max = '';
 
         if ($this->field->params == 'date')
@@ -283,13 +325,13 @@ class SearchInputBox
             $value_max = $values[1];
 
         if ($value_min == '')
-            $value_min = $jinput->getString($objname_ . '_min');
+            $value_min = $this->ct->Env->jinput->getString($objname_ . '_min');
 
         if ($value_max == '')
-            $value_max = $jinput->getString($objname_ . '_max');
+            $value_max = $this->ct->Env->jinput->getString($objname_ . '_max');
 
         //header function
-        $document = Factory::getDocument();
+
         $js = '
 	function Update' . $objname_ . 'Values()
 	{
@@ -301,7 +343,7 @@ class SearchInputBox
 		//' . $this->modulename . '_onChange(' . $index . ',v_min+"' . $d . '"+v_max,"' . $this->field->fieldname . '","' . urlencode($where) . '","' . urlencode($wherelist) . '");
 	}
 ';
-        $document->addScriptDeclaration($js);
+        $this->ct->document->addScriptDeclaration($js);
         //end of header function
 
         $attribs = 'onChange="Update' . $objname_ . 'Values()" class="' . $default_class . '" ';
@@ -313,7 +355,7 @@ class SearchInputBox
             . ' onkeypress="es_SearchBoxKeyPress(event)"'
             . ' data-type="range" />';
 
-        $result .= '<table class="es_class_min_range_table" border="0" cellpadding="0" cellspacing="0" class="' . $cssclass . '" ><tbody><tr><td valign="middle">';
+        $result .= '<table class="es_class_min_range_table" style="border: none;" cellpadding="0" cellspacing="0" class="' . $cssclass . '" ><tbody><tr><td style="vertical-align: middle;">';
 
         //From
         if ($fieldrow['typeparams'] == 'date') {
@@ -328,9 +370,9 @@ class SearchInputBox
                 . ' data-type="range" />';
         }
 
-        $result .= '</td><td width="20" align="center">-</td><td align="left" width="140" valign="middle">';
+        $result .= '</td><td style="text-align:center;">-</td><td style="text-align:left;vertical-align: middle;width: 140px;">';
 
-        //To
+        //TODO: check if this is correct
         if ($fieldrow['typeparams'] == 'date') {
             $result .= JHTML::calendar($value_max, $objname_ . '_max', $objname_ . '_max', '%Y-%m-%d', $attribs);
         } else {
@@ -350,7 +392,6 @@ class SearchInputBox
     {
         $result = '';
         $optionname = $this->field->params[0];
-        $parentid = Tree::getOptionIdFull($optionname);
 
         if ($default_Action != '') {
             $onchange = $default_Action;
@@ -412,7 +453,6 @@ class SearchInputBox
         if ($this->ct->Env->user->id != 0)
             $result = JHTML::_('ESUser.render', $objname_, $value, '', 'class="' . $cssclass . ' ' . $default_class . '" ', $this->field->params[0], $onchange, $where, $mysqljoin);
 
-
         return $result;
     }
 
@@ -420,7 +460,6 @@ class SearchInputBox
     {
         $result = '';
         $mysqljoin = $this->ct->Table->realtablename . ' ON ' . $this->ct->Table->realtablename . '.' . $this->field->realfieldname . '=#__usergroups.id';
-        $usergroup = $this->field->params[0];
 
         if ($this->ct->Env->version < 4)
             $cssclass = 'class="inputbox ' . $cssclass . '" ';
@@ -494,7 +533,7 @@ class SearchInputBox
         if (is_array($value))
             $value = implode(',', $value);
 
-        $real_selector = $esr_selector;
+        $real_selector = $esr_selector;//TODO: check if this is correct
         $real_selector = 'single';
 
         $result .= JHTML::_('ESRecords.render', $this->field->params, $objname_,

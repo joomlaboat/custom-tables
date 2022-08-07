@@ -91,9 +91,8 @@ function updateTypeParams(type_id, typeparams_id_, typeparams_box_id_)//type sel
 
 }
 
-
 function getParamOptions(param, optionobjectname) {
-    var options = [];
+    let options = [];
 
     if (typeof (param) !== "undefined" && typeof (param[optionobjectname]) !== "undefined") {
         if (param[optionobjectname].constructor.name != "Array")
@@ -104,7 +103,6 @@ function getParamOptions(param, optionobjectname) {
 
     return options;
 }
-
 
 function renderParamList(typeparams, typeparams_box, paramvaluestring) {
     var result = '';
@@ -143,28 +141,20 @@ function renderParamList(typeparams, typeparams_box, paramvaluestring) {
 
 function renderParamBox(typeparams, typeparams_box, paramvaluestring) {
     //current_params_count=0;
-    var att = typeparams["@attributes"];
-
-    var result = '<h4>' + att.label + '</h4>';
-    result += '<p>' + att.description;
-
+    const att = typeparams["@attributes"];
+    let result = '<h4>' + att.label + '</h4><p>' + att.description;
 
     if (typeof (att.helplink) !== "undefined")
         result += ' <a href="' + att.helplink + '" target="_blank">Read more</a>';
 
-    result += '</p>';
+    result += '</p><div class="form-horizontal typeparams_box_area">';
 
-
-    result += '<div class="form-horizontal typeparams_box_area">';
-
-
-    var param_array = getParamOptions(typeparams.params, 'param');
-
+    const param_array = getParamOptions(typeparams.params, 'param');
 
     if (param_array.length > 0) {
         result += '<hr/>';
 
-        var tag_pair = [];
+        let tag_pair = [];
 
         if (typeof (att.name) !== "undefined")
             tag_pair = parseQuote(att.name, [':', '='], false);
@@ -177,16 +167,13 @@ function renderParamBox(typeparams, typeparams_box, paramvaluestring) {
 
     if (!proversion && typeof (att.proversion) !== "undefined" && att.proversion === "1") {
         result += '<div id="" class="fieldtype_disable_box"></div>';
-        result += '</div>';
-        result = '<p style="color:red;">This Field Type available in PRO version only.</p>' + result;
+        result += '</div><p style="color:red;">This Field Type available in PRO version only.</p>' + result;
 
     } else {
         result += '</div>';
     }
 
-
     return result;
-
 }
 
 function inputBoxPreRender(proversion, param, param_count, i, vlu, att, typeparams_box) {
@@ -714,23 +701,33 @@ function renderInput_Table(id, param, value, onchange) {
 }
 
 function renderInput_Field_do(id, value, onchange) {
-    var result = "";
+    let result = "";
 
     result += '<select id="' + id + '" ' + onchange + '>';
 
-    if (value == "")
+    if (value === "")
         result += '<option value="" selected="selected">- Select Field</option>';
     else
         result += '<option value="" >- Select Field</option>';
 
-    var l = wizardFields.length;
-    for (var index = 0; index < l; index++) {
-        var field = wizardFields[index];
-        if (field.fieldname == value)
+    const l = wizardFields.length;
+    for (let index = 0; index < l; index++) {
+        const field = wizardFields[index];
+        if (field.fieldname === value)
             result += '<option value="' + field.fieldname + '" selected="selected">' + field.fieldtitle + '</option>';
         else
             result += '<option value="' + field.fieldname + '">' + field.fieldtitle + '</option>';
     }
+
+    if (value === "_id")
+        result += '<option value="_id" selected="selected">- ID</option>';
+    else
+        result += '<option value="_id" >- ID</option>';
+
+    if (value === "_published")
+        result += '<option value="_published" selected="selected">- Published</option>';
+    else
+        result += '<option value="_published">- Published</option>';
 
     result += '</select>';
     return result;

@@ -48,7 +48,7 @@ function updateTagsParameters() {
 }
 
 function findTagSet(tagsetname) {
-    for (var i = 0; i < layout_tags.length; i++) {
+    for (let i = 0; i < layout_tags.length; i++) {
         var a = layout_tags[i]["@attributes"];
 
         var n = "";
@@ -88,7 +88,6 @@ function findTagSets(layouttypeid, priority) {
 }
 
 function loadTagParams(type_id, tags_box) {
-    current_params_count = 0;
 
     type_obj = document.getElementById(type_id);
 
@@ -256,34 +255,34 @@ function showModal() {
     resizeModalBox();
 }
 
-function showModalForm(tagstartchar, postfix, tagendchar, tag, top, left, line, positions, isnew) {
+function showModalForm(tagStartChar, postfix, tagEndChar, tag, top, left, line, positions, isNew) {
     //detect tag type first
-    if (tagstartchar === '{') {
+    if (tagStartChar === '{') {
         //Old style
-        showModalTagForm(tagstartchar, postfix, tagendchar, tag, top, left, line, positions, isnew);
-    } else if (tagstartchar === '{{') {
+        showModalTagForm(tagStartChar, postfix, tagEndChar, tag, top, left, line, positions, isNew);
+    } else if (tagStartChar === '{{') {
         //Twig tag
         let tag_pair = parseQuote(tag, ['.'], false);
         let twigclass = tag_pair[0].trim();
 
         let twigclasss = ['fields', 'users', 'url', 'html', 'document', 'record', 'records', 'text', 'table'];
         if (twigclasss.indexOf(twigclass) != -1) {
-            showModalTagForm('{{', postfix, '}}', tag.trim(), top, left, line, positions, isnew);
+            showModalTagForm('{{', postfix, '}}', tag.trim(), top, left, line, positions, isNew);
         } else if (tag_pair.length > 1) {
             postfix = '';
             if (tag_pair.length > 2)
                 postfix = tag_pair[1];
 
-            showModalFieldTagForm('[', postfix, ']', tag.trim(), top, left, line, positions, isnew);
+            showModalFieldTagForm('[', postfix, ']', tag.trim(), top, left, line, positions, isNew);
         } else {
             postfix = '';
-            showModalFieldTagForm('[', postfix, ']', tag.trim(), top, left, line, positions, isnew);
+            showModalFieldTagForm('[', postfix, ']', tag.trim(), top, left, line, positions, isNew);
         }
-    } else if (tagstartchar === '[') {
+    } else if (tagStartChar === '[') {
         let tag_pair = parseQuote(tag, [':', '='], false);
 
         if (tag_pair[0] == "_if" || tag_pair[0] == "_endif") {
-            showModalTagForm('[', postfix, ']', tag, top, left, line, positions, isnew);
+            showModalTagForm('[', postfix, ']', tag, top, left, line, positions, isNew);
         } else if (tag_pair[0] == "_value" || tag_pair[0] == "_edit") {
             if (tag_pair[0] == "_value")
                 postfix = '.value';
@@ -295,15 +294,15 @@ function showModalForm(tagstartchar, postfix, tagendchar, tag, top, left, line, 
             if (tag_pair.length == 3)
                 postfix += '("' + tag_pair[2] + '")';
 
-            showModalFieldTagForm(tagstartchar, postfix, tagendchar, clean_tag, top, left, line, positions, isnew);
+            showModalFieldTagForm(tagStartChar, postfix, tagEndChar, clean_tag, top, left, line, positions, isNew);
         } else {
             if (current_layout_type == 2)
                 postfix = '.edit';
 
-            showModalFieldTagForm(tagstartchar, postfix, tagendchar, tag, top, left, line, positions, isnew);
+            showModalFieldTagForm(tagStartChar, postfix, tagEndChar, tag, top, left, line, positions, isNew);
         }
     } else {
-        showModalFieldTagForm(tagstartchar, postfix, tagendchar, tag, top, left, line, positions, isnew);
+        showModalFieldTagForm(tagStartChar, postfix, tagEndChar, tag, top, left, line, positions, isNew);
     }
 }
 
@@ -312,8 +311,7 @@ function findTagParameter(tag) {
     let pos1 = tag.indexOf("(");
     let pos2 = tag.lastIndexOf(")");
 
-    let parems = tag.substring(pos1 + 1, pos2);
-    return parems;
+    return tag.substring(pos1 + 1, pos2);
 }
 
 function safeOld2NewParamConversion(old) {
@@ -685,9 +683,7 @@ function closeModal(e) {
 }
 
 function define_cmLayoutEditor() {
-
     define_cmLayoutEditor1('layouteditor', 'text/html');
-    //define_cmLayoutEditor2();
 }
 
 function define_cmLayoutEditor1(modename, nextmodename) {

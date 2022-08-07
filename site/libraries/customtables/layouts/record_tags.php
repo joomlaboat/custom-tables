@@ -50,8 +50,7 @@ class Twig_Record_Tags
         $forms = new Forms($this->ct);
 
         $field = ['type' => '_id', 'fieldname' => '_id', 'title' => '#', 'description' => '', 'isrequired' => false];
-        $vlu = $forms->renderFieldLabel((object)$field, $allowSortBy);
-        return $vlu;
+        return $forms->renderFieldLabel((object)$field, $allowSortBy);
     }
 
     function link($add_returnto = false, $menu_item_alias = '', $custom_not_base64_returnto = '')
