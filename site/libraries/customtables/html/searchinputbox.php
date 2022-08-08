@@ -233,7 +233,10 @@ class SearchInputBox
         else
             $default_class = 'form-select';
 
-        $translations = array(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ANY'), JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PUBLISHED'), JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_UNPUBLISHED'));
+        $published = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PUBLISHED');
+        $unpublished = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_UNPUBLISHED');
+        $any = $published . ' ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_AND') . ' ' . $unpublished;
+        $translations = array($any, $published, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_UNPUBLISHED'));
 
         if ($default_Action != '') {
             $onchange = $default_Action;
