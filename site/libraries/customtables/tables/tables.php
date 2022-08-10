@@ -34,7 +34,7 @@ class Tables
         $query->select('id,tablename,tabletitle');
         $query->from('#__customtables_tables');
         $query->where('published=1');
-        $query->order('tabletitle');
+        $query->order('tablename');
 
         $db->setQuery((string)$query);
 
