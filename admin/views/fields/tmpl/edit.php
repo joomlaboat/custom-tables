@@ -42,11 +42,17 @@ $input = Factory::getApplication()->input;
 if (in_array($input->getCmd('extratask', ''), $this->extrataskOptions)) {
     extraTasks::prepareJS();
 }
-//
-?>
+
+foreach ($this->allTables as $table) {
+    $fields = Fields::getFields($table[0], true);
+    $list = array();
+    foreach ($fields as $field)
+        $list[] = [$field->id, $field->fieldname];
+
+    echo '<div id="fieldsData' . $table[0] . '" style="display:none;">' . json_encode($list) . '</div>
+';
+} ?>
 <script type="text/javascript">
-    //websiteroot="<?php echo JURI::root(true); ?>";
-    // waiting spinner
 
     var outerDiv = jQuery('body');
     jQuery('<div id="loading"></div>')
@@ -75,15 +81,8 @@ if (in_array($input->getCmd('extratask', ''), $this->extrataskOptions)) {
 		proversion=true;
 ';
     }
-    ;
-
-    echo 'all_tables=' . $this->getAllTables() . ';';
-
+    echo 'all_tables=' . json_encode($this->allTables) . ';';
     ?>
-
-    //var json = JSON.parse(document.getElementById("fieldsData").innerHTML);
-    //wizardFields = Array.from(json);
-
 </script>
 <div id="customtables_loader" style="display: none;">
 

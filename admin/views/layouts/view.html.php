@@ -14,6 +14,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 
 use CustomTables\CT;
+use CustomTables\Tables;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\Language\Text;
@@ -30,6 +31,7 @@ class CustomtablesViewLayouts extends JViewLegacy
      */
 
     var CT $ct;
+    var $allTables;
 
     public function display($tpl = null)
     {
@@ -78,6 +80,8 @@ class CustomtablesViewLayouts extends JViewLegacy
             $this->active_tab = 'layoutcss-tab';
         elseif ($this->item->layoutjs != '')
             $this->active_tab = 'layoutjs-tab';
+
+        $this->allTables = Tables::getAllTables();
 
         // Display the template
         if ($this->ct->Env->version < 4)
@@ -208,9 +212,7 @@ class CustomtablesViewLayouts extends JViewLegacy
     }
 
     public function renderTextArea($value, $id, $typeboxid, &$onPageLoads)
-    {/*	<div class="span12">
-					<div class="control-group"></div>
-				</div>*/
+    {
         $result = '
 			
 						<div style="width: 100%;position: relative;">
@@ -228,7 +230,6 @@ class CustomtablesViewLayouts extends JViewLegacy
 
         $result .= renderEditor($textareacode, $textareaid, $typeboxid, $textareatabid, $onPageLoads);
         $result .= '
-						
 		';
 
         return $result;
@@ -317,25 +318,5 @@ class CustomtablesViewLayouts extends JViewLegacy
         $query->where('published=1');
         $db->setQuery((string)$query);
         return $db->loadObjectList();
-    }
-
-    protected function getAllTables()
-    {
-
-        $db = Factory::getDBO();
-        $query = $db->getQuery(true);
-        $query->select('id,tablename,tabletitle');
-        $query->from('#__customtables_tables');
-        $query->order('tabletitle');
-
-        $db->setQuery((string)$query);
-        $records = $db->loadObjectList();
-
-        $items = array();
-        foreach ($records as $rec) {
-            $items[] = '[' . $rec->id . ',"' . $rec->tablename . '","' . $rec->tabletitle . '"]';
-        }
-
-        return '[' . implode(',', $items) . ']';
     }
 }

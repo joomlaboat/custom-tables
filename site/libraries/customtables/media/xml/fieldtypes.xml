@@ -821,10 +821,10 @@
           description="Provides a Multiple Left Join to records of another table." priority="2">
         <params>
             <param name="table" label="Table" description="Type the name of the Custom Table to join/link with."
-                   example="products" default="" type="table"/>
+                   example="products" default="" type="table" fieldchild="fieldtype_param_1"/>
             <param name="fieldname" label="Field Name" example="title"
                    description="Type the field name to return the value from (that can be overwritten in Layout). You may type layout name instead. options: [layout:the layout or tablelesslayout:the layout]"
-                   default="" type="string"/>
+                   default="" type="field"/>
             <param name="selector" label="Selector" example="single" description="How to select records."
                    default="single" type="list">
                 <option value="single" label="Single Record (Dropdown List)"/>

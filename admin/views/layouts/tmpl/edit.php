@@ -14,6 +14,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\Fields;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Editor\Editor;
 use Joomla\CMS\Factory;
@@ -40,11 +41,19 @@ require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARAT
 $onPageLoads = array();
 $typeboxid = "jform_layouttype";
 
+foreach ($this->allTables as $table) {
+    $fields = Fields::getFields($table[0], true);
+    $list = array();
+    foreach ($fields as $field)
+        $list[] = [$field->id, $field->fieldname];
+
+    echo '<div id="fieldsData' . $table[0] . '" style="display:none;">' . json_encode($list) . '</div>
+';
+}
 ?>
 <script type="text/javascript">
-    <?php echo 'all_tables=' . $this->getAllTables() . ';'; ?>
+    <?php echo 'all_tables=' . json_encode($this->allTables) . ';'; ?>
 </script>
-
 
 <form action="<?php echo JRoute::_('index.php?option=com_customtables&layout=edit&id=' . (int)$this->item->id . $this->referral); ?>"
       method="post" name="adminForm" id="adminForm" class="form-validate" enctype="multipart/form-data">

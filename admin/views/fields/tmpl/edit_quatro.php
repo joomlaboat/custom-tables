@@ -52,25 +52,19 @@ foreach ($this->allTables as $table) {
     echo '<div id="fieldsData' . $table[0] . '" style="display:none;">' . json_encode($list) . '</div>
 ';
 }
-//<div id="fieldsData" style="display:none;"><?php echo json_encode(Fields::getFields($this->tableid, true)); ?></div>
+
 ?>
 
 <script type="text/javascript">
-
     <?php
 
     if ($this->ct->Env->advancedtagprocessor) {
         echo '
 		proversion=true;
 ';
-    };
-
+    }
     echo 'all_tables=' . json_encode($this->allTables) . ';';
     ?>
-
-    //var json = JSON.parse(document.getElementById("fieldsData").innerHTML);
-    //wizardFields = Array.from(json);
-
 </script>
 
 <form action="<?php echo JRoute::_('index.php?option=com_customtables&layout=edit&id=' . (int)($this->item->id) . $this->referral); ?>"

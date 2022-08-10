@@ -12,6 +12,8 @@ namespace CustomTables;
 
 // no direct access
 
+use Joomla\CMS\Factory;
+
 if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
@@ -23,6 +25,26 @@ class Tables
     function __construct(&$ct)
     {
         $this->ct = &$ct;
+    }
+
+    public static function getAllTables(): array
+    {
+        $db = Factory::getDBO();
+        $query = $db->getQuery(true);
+        $query->select('id,tablename,tabletitle');
+        $query->from('#__customtables_tables');
+        $query->where('published=1');
+        $query->order('tabletitle');
+
+        $db->setQuery((string)$query);
+
+        $records = $db->loadObjectList();
+
+        $allTables = [];
+        foreach ($records as $rec)
+            $allTables[] = [$rec->id, $rec->tablename, $rec->tabletitle];
+
+        return $allTables;
     }
 
     function loadRecords($tablename_or_id, string $filter = '', string $orderby = '', int $limit = 0)

@@ -326,8 +326,9 @@
              description="Calculates the average value of all the records that match." twigclass="record">
             <params>
                 <param name="tablename" label="Table" type="table"
-                       description="The name of the Table that has a Table Join type field." example="products"/>
-                <param name="value_of_field" label="Value Field" type="string"
+                       description="The name of the Table that has a Table Join type field." example="products"
+                       fieldchild="fieldtype_param_1"/>
+                <param name="value_of_field" label="Value Field" type="field"
                        description="Field of joined table to read the value from." example="_id"/>
                 <param name="filter" label="Filter" type="string"
                        description="Optional filter, ie. fieldname=some value."/>
@@ -338,8 +339,9 @@
              description="Finds minimum value of all the records that match." twigclass="record">
             <params>
                 <param name="tablename" label="Table" type="table"
-                       description="The name of the Table that has a Table Join type field." example="products"/>
-                <param name="value_of_field" label="Value Field" type="string"
+                       description="The name of the Table that has a Table Join type field." example="products"
+                       fieldchild="fieldtype_param_1"/>
+                <param name="value_of_field" label="Value Field" type="field"
                        description="Field of joined table to read the value from." example="_id"/>
                 <param name="filter" label="Filter" type="string"
                        description="Optional filter, ie. fieldname=some value."/>
@@ -350,8 +352,9 @@
              description="Finds maximum value of all the records that match." twigclass="record">
             <params>
                 <param name="tablename" label="Table" type="table"
-                       description="The name of the Table that has a Table Join type field." example="products"/>
-                <param name="value_of_field" label="Value Field" type="string"
+                       description="The name of the Table that has a Table Join type field." example="products"
+                       fieldchild="fieldtype_param_1"/>
+                <param name="value_of_field" label="Value Field" type="field"
                        description="Field of joined table to read the value from." example="_id"/>
                 <param name="filter" label="Filter" type="string"
                        description="Optional filter, ie. fieldname=some value."/>
@@ -362,8 +365,9 @@
              description="Summarizes values of a selected field of all the records that match." twigclass="record">
             <params>
                 <param name="tablename" label="Table" type="table"
-                       description="The name of the Table that has a Table Join type field." example="products"/>
-                <param name="value_of_field" label="Value Field" type="string"
+                       description="The name of the Table that has a Table Join type field." example="products"
+                       fieldchild="fieldtype_param_1"/>
+                <param name="value_of_field" label="Value Field" type="field"
                        description="Field of joined table to read the value from." example="_id"/>
                 <param name="filter" label="Filter" type="string"
                        description="Optional filter, ie. fieldname=some value."/>
@@ -374,8 +378,9 @@
              description="Returns the value of selected field of all the records that match." twigclass="record">
             <params>
                 <param name="tablename" label="Table" type="table"
-                       description="The name of the Table that has a Table Join type field." example="products"/>
-                <param name="value_of_field" label="Field of joined table to read the value from." type="string"
+                       description="The name of the Table that has a Table Join type field." example="products"
+                       fieldchild="fieldtype_param_1"/>
+                <param name="value_of_field" label="Field of joined table to read the value from." type="field"
                        description="Field of joined table to read the value from." example="_id"/>
                 <param name="filter" label="Filter" type="string"
                        description="Optional filter, ie. fieldname=some value."/>
@@ -416,13 +421,14 @@
                             description="Returns the value of selected field of all the records that match."/>
                     <!-- <option value="smart" label="Hierarchical" description="resolves value of selected field." proversion="1" /> -->
                 </param>
-                <param name="tablename" label="Join With Table" type="string"
-                       description="Table Name to join with (Where to look)" example="sales"/>
-                <param name="findwhat_field" label="Find What Field" type="string" example="_id"
+                <param name="tablename" label="Join With Table" type="table"
+                       description="Table Name to join with (Where to look)" example="sales"
+                       fieldchild="fieldtype_param_3,fieldtype_param_4"/>
+                <param name="findwhat_field" label="Find What Field" type="field" example="_id" currenttable="1"
                        description="The field of the current table. use '_id' to the find current table record id."/>
-                <param name="lookwhere_field" label="Where to Look Field" type="string"
+                <param name="lookwhere_field" label="Where to Look Field" type="field"
                        description="Field of a joined table" example="productid"/>
-                <param name="value_of_field" label="Value Field" type="string"
+                <param name="value_of_field" label="Value Field" type="field"
                        description="Value of joined table field." example="_id"/>
                 <param name="filter" label="Filter" type="string"
                        description="Optional filter, ie. fieldname=some value."/>
@@ -536,9 +542,10 @@
              twigclass="tables" proversion="1">
             <params>
                 <param name="tablename" label="Table" type="table"
-                       description="The name of the Table that has a Table Join type field." example="products"/>
+                       description="The name of the Table that has a Table Join type field." example="products"
+                       fieldchild="fieldtype_param_1"/>
 
-                <param type="string" name="valuefield" label="Value Field"
+                <param type="field" name="valuefield" label="Value Field"
                        description="Field of joined table to read the value from." example="_id"/>
                 <param type="string" name="recordidorfilter" label="Record ID or filter"
                        description="Example 1: 65, example 2: population>1000000" example="62"/>

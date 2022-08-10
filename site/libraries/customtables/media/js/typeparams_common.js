@@ -71,7 +71,14 @@ function renderInputBox(id, param, vlu, attributes) {
             }
 
         } else if (param_att.type === "field") {
-            result = renderInput_Field(id, param, vlu, attributes, SQLJoinTableID);
+
+            if (typeof (param_att.currenttable) != "undefined" && param_att.currenttable === "1") {
+
+                const obj = document.getElementById('jform_tableid');
+                const currentTableId = obj.value;
+                result = renderInput_Field(id, param, vlu, attributes, currentTableId);
+            } else
+                result = renderInput_Field(id, param, vlu, attributes, SQLJoinTableID);
         } else if (param_att.type === "layout") {
             result = renderInput_Layout(id, param, vlu, attributes);
         } else if (param_att.type === "multiselect") {
@@ -117,9 +124,6 @@ function typeChanged() {
 
 function updateTypeParams(type_id, typeparams_id_, typeparams_box_id_)//type selection
 {
-    //type_obj_id=type_id;
-
-    //current_params_count=0;
     type_obj = document.getElementById(type_id);
 
     typeparams_id = typeparams_id_;
@@ -186,7 +190,7 @@ function renderParamList(typeparams, typeparams_box, paramvaluestring) {
 }
 
 function renderParamBox(typeparams, typeparams_box, paramvaluestring) {
-    //current_params_count=0;
+
     const att = typeparams["@attributes"];
     let result = '<h4>' + att.label + '</h4><p>' + att.description;
 
@@ -663,7 +667,14 @@ function renderInput_Language(id, param, value, onchange) {
     return result;
 }
 
-function updateFieldSelectOptions(tableSelectElementId, fieldchild, selectedIndex) {
+function updateFieldSelectOptions(tableSelectElementId, fieldChildListStr, selectedIndex) {
+    let list = fieldChildListStr.split(",");
+    for (let i = 0; i < list.length; i++) {
+        updateFieldSelectOptionsDo(tableSelectElementId, list[i], selectedIndex);
+    }
+}
+
+function updateFieldSelectOptionsDo(tableSelectElementId, fieldchild, selectedIndex) {
 
     let selectObject = document.getElementById(fieldchild);
 
@@ -672,6 +683,8 @@ function updateFieldSelectOptions(tableSelectElementId, fieldchild, selectedInde
     }
 
     if (selectedIndex !== 0) {
+
+        //alert(tableSelectElementId);
 
         let tableSelectElement = document.getElementById(tableSelectElementId);
         let dataset = tableSelectElement.options[selectedIndex].dataset;//.tableid;
@@ -687,7 +700,7 @@ function updateFieldSelectOptions(tableSelectElementId, fieldchild, selectedInde
 
         for (let i = 0; i < fields.length; i++) {
             let option = document.createElement("option");
-            option.value = fields[i][0];
+            option.value = fields[i][1];
             option.text = fields[i][1];
             selectObject.add(option);
         }
@@ -706,7 +719,7 @@ function updateFieldSelectOptions(tableSelectElementId, fieldchild, selectedInde
 
 function renderInput_Table(id, param, value, onchange, fieldchild) {
     const obj = document.getElementById('jform_tableid');
-    const currentTable = obj.value;
+    //const currentTable = obj.value;
     let result = "";
 
     if (fieldchild !== null) {

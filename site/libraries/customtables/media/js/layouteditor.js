@@ -7,21 +7,14 @@
  * @copyright Copyright (C) 2018-2022. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
-
-var codemirror_editors = [];
-var codemirror_active_index = 0;
-var codemirror_active_areatext_id = null;
-var temp_params_tag = "";
-//let temp_params_tagstartchar = "";
-
-//var parts = location.href.split("/administrator/");
-//var websiteroot = parts[0] + "/administrator/";
-//var websiteSiteLibraries = parts[0] + "/components/com_customtables/libraries/customtables/";
-var layout_tags = [];
-var layout_tags_loaded = false;
-var tagsets = [];
-
-var current_layout_type = 0;
+const codemirror_editors = [];
+let codemirror_active_index = 0;
+let codemirror_active_areatext_id = null;
+let temp_params_tag = "";
+let layout_tags = [];
+let layout_tags_loaded = false;
+let tagsets = [];
+let current_layout_type = 0;
 
 function updateTagsParameters() {
     if (type_obj == null)
@@ -262,10 +255,10 @@ function showModalForm(tagStartChar, postfix, tagEndChar, tag, top, left, line, 
     } else if (tagStartChar === '{{') {
         //Twig tag
         let tag_pair = parseQuote(tag, ['.'], false);
-        let twigclass = tag_pair[0].trim();
+        let twigClass = tag_pair[0].trim();
 
-        let twigclasss = ['fields', 'users', 'url', 'html', 'document', 'record', 'records', 'text', 'table'];
-        if (twigclasss.indexOf(twigclass) != -1) {
+        let twigClasses = ['fields', 'user', 'url', 'html', 'document', 'record', 'records', 'plugins', 'table', 'tables'];
+        if (twigClasses.indexOf(twigClass) !== -1) {
             showModalTagForm('{{', postfix, '}}', tag.trim(), top, left, line, positions, isNew);
         } else if (tag_pair.length > 1) {
             postfix = '';

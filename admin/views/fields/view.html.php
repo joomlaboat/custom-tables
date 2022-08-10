@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomTables\CT;
+use CustomTables\Tables;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\Language\Text;
@@ -87,7 +88,7 @@ class CustomtablesViewFields extends JViewLegacy
             throw new Exception(implode("\n", $errors), 500);
         }
 
-        $this->getAllTables();
+        $this->allTables = Tables::getAllTables();
 
         // Display the template
         if ($this->version < 4)
@@ -157,32 +158,6 @@ class CustomtablesViewFields extends JViewLegacy
         //{
         //JToolbarHelper::help('COM_CUSTOMTABLES_HELP_MANAGER', false, $help_url);
         //}
-    }
-
-    protected function getAllTables()
-    {
-
-        $db = Factory::getDBO();
-        $query = $db->getQuery(true);
-        $query->select('id,tablename,tabletitle');
-        $query->from('#__customtables_tables');
-        $query->where('published=1');
-        $query->order('tabletitle');
-
-        $db->setQuery((string)$query);
-
-        $records = $db->loadObjectList();
-
-        $this->allTables = [];
-        foreach ($records as $rec)
-            $this->allTables[] = [$rec->id, $rec->tablename, $rec->tabletitle];
-        //{
-        //  $items[] = '[' . $rec->id . ',"' . $rec->tablename . '","' . $rec->tabletitle . '"]';
-        //}
-
-        //$this->allTables = $db->loadObjectList();
-
-        //return '[' . implode(',', $items) . ']';
     }
 
     /**
