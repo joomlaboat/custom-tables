@@ -3,10 +3,10 @@ function updateParameters() {
     if (type_obj == null)
         return;
 
-    var typename = type_obj.value;
+    const typename = type_obj.value;
 
     //find the type
-    var typeparams = findTheType(typename);
+    const typeparams = findTheType(typename);
 
     if (typeparams != null) {
 
@@ -21,35 +21,33 @@ function updateParameters() {
             });
         });
 
-        var param_att = typeparams["@attributes"];
-        var rawquotes = false;
-        if (typeof (param_att.rawquotes) != "undefined" && param_att.rawquotes == "1")
-            rawquotes = true;
+        const param_att = typeparams["@attributes"];
+        let rawQuotes = false;
+        if (typeof (param_att.rawquotes) != "undefined" && param_att.rawquotes === "1")
+            rawQuotes = true;
 
-        var param_array = getParamOptions(typeparams.params, 'param');
+        const param_array = getParamOptions(typeparams.params, 'param');
 
-
-        if (typeof (param_att.repeatative) !== "undefined" && param_att.repeatative === "1" && param_array.length == 1)
-            updateParamString('fieldtype_param_', 1, -1, typeparams_id, null, rawquotes);//unlimited number of parameters
+        if (typeof (param_att.repeatative) !== "undefined" && param_att.repeatative === "1" && param_array.length === 1)
+            updateParamString('fieldtype_param_', 1, -1, typeparams_id, null, rawQuotes);//unlimited number of parameters
         else
-            updateParamString('fieldtype_param_', 1, param_array.length, typeparams_id, null, rawquotes);
+            updateParamString('fieldtype_param_', 1, param_array.length, typeparams_id, null, rawQuotes);
 
     } else
         typeparams_box_obj.innerHTML = '<p class="msg_error">Unknown Field Type</p>';
 }
 
 function renderInput_Radio(objname, param, value, onchange) {
-    var param_att = param["@attributes"];
+    const param_att = param["@attributes"];
+    let result = '<fieldset id="' + objname + '" class="btn-group btn-group-yesno radio">';//
+    const options = param_att.options.split(",");
 
-    var result = '<fieldset id="' + objname + '" class="btn-group btn-group-yesno radio">';//
-    var options = param_att.options.split(",");
+    for (let o = 0; o < options.length; o++) {
+        const opt = options[o].split("|");
+        const id = objname + "" + o;
 
-    for (var o = 0; o < options.length; o++) {
-        var opt = options[o].split("|");
-        var id = objname + "" + o;
-
-        var c = 'btn';
-        if (opt[0] == value) {
+        let c = 'btn';
+        if (opt[0] === value) {
             result += '<input type="radio" id="' + id + '" name="' + objname + '" value="' + opt[0] + '" checked="checked" ' + onchange + ' />';
 
             c += ' active';
@@ -58,20 +56,15 @@ function renderInput_Radio(objname, param, value, onchange) {
 
         }
 
-        if (opt[0] == value) {
-            if (opt[0] != '' && opt[0] != '0')
+        if (opt[0] === value) {
+            if (opt[0] !== '' && opt[0] !== '0')
                 c += ' btn-success';
             else
                 c += ' btn-danger';
         }
 
         result += '<label class="' + c + '" for="' + id + '" id="' + id + '_label" >' + opt[1] + '</label>';
-
-
     }
-
-    result += '</fieldset>';
-
-    return result;
+    return +'</fieldset>';
 }
 
