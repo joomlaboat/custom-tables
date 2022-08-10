@@ -72,7 +72,7 @@ function renderInputBox(id, param, vlu, attributes) {
 
         } else if (param_att.type === "field") {
 
-            if (typeof (param_att.currenttable) != "undefined" && param_att.currenttable === "1") {
+            if (SQLJoinTableID === null || (typeof (param_att.currenttable) != "undefined" && param_att.currenttable === "1")) {
 
                 const obj = document.getElementById('jform_tableid');
                 const currentTableId = obj.value;
@@ -683,9 +683,6 @@ function updateFieldSelectOptionsDo(tableSelectElementId, fieldchild, selectedIn
     }
 
     if (selectedIndex !== 0) {
-
-        //alert(tableSelectElementId);
-
         let tableSelectElement = document.getElementById(tableSelectElementId);
         let dataset = tableSelectElement.options[selectedIndex].dataset;//.tableid;
         let tableid = dataset['tableid'];

@@ -230,7 +230,7 @@
         </tag>
 
         <tag name="base64encode" label="Base64 Encode" startchar="{" endchar="}"
-             description="Encodes the given string with base64." twigclass="html" proversion="1">
+             description="Encodes the given string with base64." twigclass="html" proversion="1" deprecated="1">
             <params>
                 <param name="parameter" label="String" type="string" description="The data to encode. "/>
             </params>
