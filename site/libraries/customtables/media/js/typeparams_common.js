@@ -39,14 +39,14 @@ function renderInputBox(id, param, vlu, attributes) {
                     vlu = param_att.default;
             }
 
-            var extra = "";
-            if (param.min != null)
+            let extra = "";
+            if (param.min !== null)
                 extra += ' min="' + param_att.min + '"';
 
-            if (param_att.max != null)
+            if (param_att.max !== null)
                 extra += ' max="' + param_att.max + '"';
 
-            if (param_att.min != null)
+            if (param_att.min !== null)
                 extra += ' step="' + param_att.step + '"';
 
             result += '<input type="number" id="' + id + '" value="' + vlu + '" ' + extra + ' ' + attributes + '>';
@@ -64,7 +64,7 @@ function renderInputBox(id, param, vlu, attributes) {
 
             for (let o = 0; o < all_tables.length; o++) {
                 let option = all_tables[o];
-                if (option[1] == vlu) {
+                if (option[1] === vlu) {
                     SQLJoinTableID = option[0];
                     break;
                 }
@@ -102,7 +102,7 @@ function renderInputBox(id, param, vlu, attributes) {
         } else if (param_att.type === "radio") {
             result = renderInput_Radio(id, param, vlu, attributes);
         } else {
-            if (vlu == '') {
+            if (vlu === '') {
                 if (typeof (param_att.default) != "undefined")
                     vlu = param_att.default;
             }
@@ -117,13 +117,6 @@ function renderInputBox(id, param, vlu, attributes) {
     }
 
     return result;
-}
-
-function typeChanged() {
-    if (typeparams_obj != null)
-        typeparams_obj.value = "";
-
-    updateParameters();
 }
 
 function updateTypeParams(type_id, typeparams_id_, typeparams_box_id_)//type selection
@@ -149,7 +142,7 @@ function getParamOptions(param, optionobjectname) {
     let options = [];
 
     if (typeof (param) !== "undefined" && typeof (param[optionobjectname]) !== "undefined") {
-        if (param[optionobjectname].constructor.name != "Array")
+        if (param[optionobjectname].constructor.name !== "Array")
             options.push(param[optionobjectname]);
         else
             options = param[optionobjectname];
@@ -159,14 +152,13 @@ function getParamOptions(param, optionobjectname) {
 }
 
 function renderParamList(typeparams, typeparams_box, paramvaluestring) {
-    var result = '';
-    var att = typeparams["@attributes"];
-    var param_array = getParamOptions(typeparams.params, 'param');
+    let result = '';
+    const att = typeparams["@attributes"];
+    const param_array = getParamOptions(typeparams.params, 'param');
+    let vlu = '';
+    const values = parseQuote(paramvaluestring, ',', true);
 
-    var vlu = '';
-    var values = parseQuote(paramvaluestring, ',', true);
-
-    if (typeof (att.repeatative) !== "undefined" && att.repeatative === "1" && param_array.length == 1) {
+    if (typeof (att.repeatative) !== "undefined" && att.repeatative === "1" && param_array.length === 1) {
         for (let i = 0; i < values.length; i++) {
             vlu = '';
             if (values.length > i)
@@ -174,8 +166,6 @@ function renderParamList(typeparams, typeparams_box, paramvaluestring) {
 
             result += inputBoxPreRender(proversion, param_array[0], -1, i, vlu, att, typeparams_box);
         }
-
-
         result += inputBoxPreRender(proversion, param_array[0], -1, values.length, '', att, typeparams_box);
 
     } else {
@@ -231,28 +221,26 @@ function renderParamBox(typeparams, typeparams_box, paramvaluestring) {
 }
 
 function inputBoxPreRender(proversion, param, param_count, i, vlu, att, typeparams_box) {
-    var repeatative = false;
+    let repeatative = false;
     if (typeof (att.repeatative) !== "undefined" && att.repeatative === "1")
         repeatative = true;
 
-    var result = '';
-
-    var param_att = param["@attributes"];
+    let result = '';
+    const param_att = param["@attributes"];
 
     if (proversion || typeof (param_att.proversion) === "undefined" || param_att.proversion === "0") {
 
         result += '<div class="control-group"><div class="control-label">';
-        //required'+param.label+'
 
-        var label = "";
+        let label = "";
         if (typeof (param_att) !== "undefined" && typeof (param_att.label) !== "undefined") {
-            if (param_count == -1)
+            if (param_count === -1)
                 label = param_att.label + " (" + (i + 1) + ")";
             else
                 label = param_att.label;
         }
 
-        var description = "";
+        let description = "";
         if (typeof (param_att) !== "undefined" && typeof (param_att.description) !== "undefined")
             description = param_att.description;
 
@@ -264,27 +252,22 @@ function inputBoxPreRender(proversion, param, param_count, i, vlu, att, typepara
         result += '</label>';
         result += '</div><div class="controls">';
 
-        //var vlu='';
-        //if(values.length>i)
-        //vlu=values[i];
-
-        var rawquotes = "false";
-        if (typeof (att.rawquotes) != "undefined" && att.rawquotes == "1")
+        let rawquotes = "false";
+        if (typeof (att.rawquotes) != "undefined" && att.rawquotes === "1")
             rawquotes = "true";
 
-        var startchar = "[";
+        let startchar = "[";
 
         if (typeof (att.startchar) !== "undefined")
             startchar = att.startchar;
 
-        var refresh = 'false';
+        let refresh = 'false';
         if (repeatative)
             refresh = 'true';
 
-        var attributes = 'onchange="updateParamString(\'fieldtype_param_\',1,' + param_count + ',\'' + typeparams_box + '\',event,' + rawquotes + ',' + refresh + ',\'' + startchar + '\');"';
+        const attributes = 'onchange="updateParamString(\'fieldtype_param_\',1,' + param_count + ',\'' + typeparams_box + '\',event,' + rawquotes + ',' + refresh + ',\'' + startchar + '\');"';
 
         result += renderInputBox('fieldtype_param_' + i, param, vlu, attributes);
-
         result += '</div></div>';
     }
     return result;
@@ -292,11 +275,11 @@ function inputBoxPreRender(proversion, param, param_count, i, vlu, att, typepara
 
 function getInputType(obj) {
     if (obj && typeof (obj) == "object" && obj.childNodes && typeof (obj.childNodes) !== "undefined") {
-        for (i = 0; i < obj.childNodes.length; i++) {
-            if (obj.childNodes[i].tagName == "INPUT") {
+        for (let i = 0; i < obj.childNodes.length; i++) {
+            if (obj.childNodes[i].tagName === "INPUT") {
                 return obj.childNodes[i].type;
             }
-            if (obj.childNodes[i].tagName == "SELECT") {
+            if (obj.childNodes[i].tagName === "SELECT") {
                 return 'select';
             }
         }
@@ -310,7 +293,7 @@ function updateParamString(inputboxid, countlist, countparams, objectid, e, rawq
         startchar = "{";
 
     let endchar = '}';
-    if (startchar == '[')
+    if (startchar === '[')
         endchar = ']';
 
     //objectid is the element id where value will be set
@@ -323,7 +306,7 @@ function updateParamString(inputboxid, countlist, countparams, objectid, e, rawq
     for (let r = 0; r < countlist; r++) {
         let params = [];
 
-        for (let i = 0; i < countparams || countparams == -1; i++) { // -1 "unlimited" number of parameters
+        for (let i = 0; i < countparams || countparams === -1; i++) { // -1 "unlimited" number of parameters
             let objectname = inputboxid;
 
             if (r > 0)
@@ -343,17 +326,17 @@ function updateParamString(inputboxid, countlist, countparams, objectid, e, rawq
                 else
                     v = obj.value;
 
-                if (isNaN(v) && v != 'true' && v != 'false') {
-                    if (v.indexOf('"') != -1)
+                if (isNaN(v) && v !== 'true' && v !== 'false') {
+                    if (v.indexOf('"') !== -1)
                         v = v.replaceAll('"', '****quote****');
 
-                    if (v.indexOf("'") != -1)
+                    if (v.indexOf("'") !== -1)
                         v = v.replaceAll("'", '****apos****');
 
                     v = '"' + v + '"';
                 }
                 params.push(v);
-                if (v != "")
+                if (v !== "")
                     count = i + 1; //to include all previous parameters even if they are empty
             } else
                 break;
@@ -366,7 +349,7 @@ function updateParamString(inputboxid, countlist, countparams, objectid, e, rawq
             for (let i2 = 0; i2 < count; i2++) {
 
                 let v = params[i2];
-                if (v == '')
+                if (v === '')
                     v = '"' + v + '"';
 
                 newparams.push(v);
@@ -400,11 +383,12 @@ function updateParamString(inputboxid, countlist, countparams, objectid, e, rawq
 }
 
 function getSelectValues(select) {
-    var result = [];
-    var options = select && select.options;
-    var opt;
+    const result = [];
+    const options = select && select.options;
+    let opt;
 
-    for (var i = 0, iLen = options.length; i < iLen; i++) {
+    let i = 0, iLen = options.length;
+    for (; i < iLen; i++) {
         opt = options[i];
 
         if (opt.selected) {
@@ -415,14 +399,14 @@ function getSelectValues(select) {
 }
 
 function getRadioValue(objectname) {
-    var radios = document.getElementsByName(objectname);
-    var v = "";
-    var length = radios.length;
+    const radios = document.getElementsByName(objectname);
+    let v = "";
+    const length = radios.length;
 
-    for (var i = 0; i < length; i++) {
-        var id = radios[i].getAttribute('id');
-        var label_obj = document.getElementById(id + "_label");
-        var label_class = label_obj.getAttribute('class');
+    for (let i = 0; i < length; i++) {
+        const id = radios[i].getAttribute('id');
+        const label_obj = document.getElementById(id + "_label");
+        let label_class = label_obj.getAttribute('class');
         label_class = "btn";//label_class.replace(" active","");
 
         if (radios[i].checked) {
@@ -435,34 +419,28 @@ function getRadioValue(objectname) {
 }
 
 function renderInput_Multiselect(id, param, values, onchange) {
-    var options = getParamOptions(param, 'option');
-
-    var values_array = values.split(",");
-
-    var result = "";
+    const options = getParamOptions(param, 'option');
+    const values_array = values.split(",");
+    let result = "";
 
     result += '<select id="' + id + '" ' + onchange + ' multiple="multiple">';
 
-    for (var o = 0; o < options.length; o++) {
-        var opt = options[o]["@attributes"];
+    for (let o = 0; o < options.length; o++) {
+        const opt = options[o]["@attributes"];
 
         if (proversion || typeof (opt.proversion) === "undefined" || opt.proversion === "0") {
-            if (values != '' && values_array.indexOf(opt.value) !== -1)
+            if (values !== '' && values_array.indexOf(opt.value) !== -1)
                 result += '<option value="' + opt.value + '" selected="selected">' + opt.label + '</option>';
             else
                 result += '<option value="' + opt.value + '" >' + opt.label + '</option>';
         }
-
     }
-
-    result += '</select>';
-
-    return result;
+    return result + '</select>';
 }
 
 function renderInput_ImageSizeList(id, param, value, attributes) {
 
-    var result = "";
+    let result = "";
     temp_imagesizeparams = getParamOptions(param, 'sizeparam');
     temp_imagesizelist_string = value;
 
@@ -487,19 +465,14 @@ function renderInput_ImageSizeList(id, param, value, attributes) {
 }
 
 function BuildImageSizeTable() {
-    var value = temp_imagesizelist_string;//document.getElementById(temp_imagesize_parambox_id).value;
-    var value_array = value.split(";");
-
-    var result = '';
-
-
-    var i;
-    var param = null;
-    var param_att = null;
-
-    var blank_value = [];
-
-    var count_list = value_array.length;
+    const value = temp_imagesizelist_string;//document.getElementById(temp_imagesize_parambox_id).value;
+    const value_array = value.split(";");
+    let result = '';
+    let i;
+    let param = null;
+    let param_att = null;
+    const blank_value = [];
+    let count_list = value_array.length;
     if (value === "")
         count_list = 0;
 
@@ -532,21 +505,18 @@ function BuildImageSizeTable() {
             for (i = 0; i < count_params; i++) {
                 param = temp_imagesizeparams[i];
                 param_att = param["@attributes"];
-
-                var vlu = "";
+                let vlu = "";
 
                 if (values.length > i)
                     vlu = values[i];
 
-                var id = 'size_param_';
+                let id = 'size_param_';
 
                 if (r > 0)
                     id += r + 'x';
 
                 id += i;
-
-
-                var attributes = 'onchange="updateParamString_ImageSizes(\'size_param_\',' + count_list + ',' + count_params + ',\'' + temp_imagesize_parambox_id + '\',event,false);"';
+                let attributes = 'onchange="updateParamString_ImageSizes(\'size_param_\',' + count_list + ',' + count_params + ',\'' + temp_imagesize_parambox_id + '\',event,false);"';
 
                 if (typeof (param_att.style) != "undefined")
                     attributes += 'style="' + param_att.style + '"';
@@ -556,12 +526,9 @@ function BuildImageSizeTable() {
             }
             result += '<td><div class="btn-wrapper" id="toolbar-delete"><button onclick="deleteImageSize(' + r + ');" type="button" class="btn btn-small"><span class="icon-delete"></span></button></div></td>';
             result += '</tr>';
-
         }
-
         result += '</tbody>';
         result += '</table>';
-
     }
 
     result += '<button onclick=\'addImageSize("' + blank_value.join(",") + '")\' class="btn btn-small btn-success" type="button" style="margin-top:5px;">';
@@ -570,74 +537,72 @@ function BuildImageSizeTable() {
     return result;
 }
 
+//Used in onchange event
 function updateParamString_ImageSizes(sizeparam, countlist, countparams, tempimagesizeparamboxid, e) {
 
     updateParamString(sizeparam, countlist, countparams, tempimagesizeparamboxid, e, false);
 
-    var obj = document.getElementById(temp_imagesize_parambox_id);
+    const obj = document.getElementById(temp_imagesize_parambox_id);
     temp_imagesizelist_string = obj.value;
 
-    var sizeparam_ = temp_imagesize_updateparent[0];
-    var countlist_ = temp_imagesize_updateparent[1];
-    var countparams_ = temp_imagesize_updateparent[2];
-    var tempimagesizeparamboxid_ = temp_imagesize_updateparent[3];
+    const sizeparam_ = temp_imagesize_updateparent[0];
+    const countlist_ = temp_imagesize_updateparent[1];
+    const countparams_ = temp_imagesize_updateparent[2];
+    const tempimagesizeparamboxid_ = temp_imagesize_updateparent[3];
 
     updateParamString(sizeparam_, countlist_, countparams_, tempimagesizeparamboxid_, null, false);
 
 }
 
 function deleteImageSize(index) {
-    var obj = document.getElementById(temp_imagesize_parambox_id);
-    var value = obj.value;
-    var value_array = value.split(";");
+    const obj = document.getElementById(temp_imagesize_parambox_id);
+    const value = obj.value;
+    const value_array = value.split(";");
     value_array.splice(index, 1);
 
     temp_imagesizelist_string = value_array.join(';');
     obj.value = temp_imagesizelist_string;
 
-    var obj2 = document.getElementById(temp_imagesize_box_id);
-    obj2.innerHTML = BuildImageSizeTable();
+    document.getElementById(temp_imagesize_box_id).innerHTML = BuildImageSizeTable();
 
-    var sizeparam_ = temp_imagesize_updateparent[0];
-    var countlist_ = temp_imagesize_updateparent[1];
-    var countparams_ = temp_imagesize_updateparent[2];
-    var tempimagesizeparamboxid_ = temp_imagesize_updateparent[3];
-
+    const sizeparam_ = temp_imagesize_updateparent[0];
+    const countlist_ = temp_imagesize_updateparent[1];
+    const countparams_ = temp_imagesize_updateparent[2];
+    const tempimagesizeparamboxid_ = temp_imagesize_updateparent[3];
 
     updateParamString(sizeparam_, countlist_, countparams_, tempimagesizeparamboxid_, null, false);
 }
 
 function addImageSize(vlu) {
-    var obj = document.getElementById(temp_imagesize_parambox_id);
-    var value = obj.value;
-    if (value == '')
-        temp_imagesizelist_string = value + ',';
+    const obj = document.getElementById(temp_imagesize_parambox_id);
+    const value = obj.value;
+    if (value === '')
+        temp_imagesizelist_string = vlu + ',';
     else
         temp_imagesizelist_string = value + ';';
     obj.value = temp_imagesizelist_string;
 
-    var obj2 = document.getElementById(temp_imagesize_box_id);
+    const obj2 = document.getElementById(temp_imagesize_box_id);
     obj2.innerHTML = BuildImageSizeTable();
 
-    var sizeparam_ = temp_imagesize_updateparent[0];
-    var countlist_ = temp_imagesize_updateparent[1];
-    var countparams_ = temp_imagesize_updateparent[2];
-    var tempimagesizeparamboxid_ = temp_imagesize_updateparent[3];
-
+    const sizeparam_ = temp_imagesize_updateparent[0];
+    const countlist_ = temp_imagesize_updateparent[1];
+    const countparams_ = temp_imagesize_updateparent[2];
+    const tempimagesizeparamboxid_ = temp_imagesize_updateparent[3];
 
     updateParamString(sizeparam_, countlist_, countparams_, tempimagesizeparamboxid_, null, false);
 }
 
 function renderInput_List(id, param, value, onchange) {
-    var options = getParamOptions(param, 'option');
-    var result = "";
+    const options = getParamOptions(param, 'option');
+    let result = "";
 
     result += '<select id="' + id + '" ' + onchange + '>';
 
-    for (var o = 0; o < options.length; o++) {
-        var opt = options[o]["@attributes"];
+    for (let o = 0; o < options.length; o++) {
+        const opt = options[o]["@attributes"];
 
-        if (opt.value == value)
+        if (opt.value === value)
             result += '<option value="' + opt.value + '" selected="selected">' + opt.label + '</option>';
         else
             result += '<option value="' + opt.value + '" >' + opt.label + '</option>';
@@ -649,33 +614,28 @@ function renderInput_List(id, param, value, onchange) {
 }
 
 function renderInput_Language(id, param, value, onchange) {
-    var result = "";
+    let result = '<select id="' + id + '" ' + onchange + '>';
 
-    result += '<select id="' + id + '" ' + onchange + '>';
-
-
-    if (value == "")
+    if (value === "")
         result += '<option value="" selected="selected">- Default Language</option>';
     else
         result += '<option value="" >- Default Language</option>';
 
-    for (var o = 0; o < languages.length; o++) {
-        if (languages[o][0] == value)
+    for (let o = 0; o < languages.length; o++) {
+        if (languages[o][0] === value)
             result += '<option value="' + languages[o][0] + '" selected="selected">' + languages[o][1] + '</option>';
         else
             result += '<option value="' + languages[o][0] + '" >' + languages[o][1] + '</option>';
     }
 
-    result += '</select>';
-
-    return result;
+    return result + '</select>';
 }
 
+//Used in onchange event
 function updateFieldSelectOptions(tableSelectElementId, fieldChildListStr, selectedIndex) {
     let list = fieldChildListStr.split(",");
-    for (let i = 0; i < list.length; i++) {
+    for (let i = 0; i < list.length; i++)
         updateFieldSelectOptionsDo(tableSelectElementId, list[i], selectedIndex);
-    }
 }
 
 function updateFieldSelectOptionsDo(tableSelectElementId, fieldchild, selectedIndex) {
@@ -719,8 +679,7 @@ function updateFieldSelectOptionsDo(tableSelectElementId, fieldchild, selectedIn
 }
 
 function renderInput_Table(id, param, value, onchange, fieldchild) {
-    const obj = document.getElementById('jform_tableid');
-    //const currentTable = obj.value;
+
     let result = "";
 
     if (fieldchild !== null) {
@@ -729,7 +688,7 @@ function renderInput_Table(id, param, value, onchange, fieldchild) {
 
     result += '<select id="' + id + '" ' + onchange + '>';
 
-    if (value == "")
+    if (value === "")
         result += '<option value="" selected="selected">- Select Table</option>';
     else
         result += '<option value="" >- Select Table</option>';
@@ -737,7 +696,7 @@ function renderInput_Table(id, param, value, onchange, fieldchild) {
     for (let o = 0; o < all_tables.length; o++) {
         const option = all_tables[o];
 
-        if (option[1] == value)
+        if (option[1] === value)
             result += '<option value="' + option[1] + '" data-tableid="' + option[0] + '" selected="selected">' + option[1] + '</option>';
         else
             result += '<option value="' + option[1] + '" data-tableid="' + option[0] + '" >' + option[1] + '</option>';
@@ -786,34 +745,35 @@ function renderInput_Field_do(id, value, onchange, SQLJoinTableID) {
     return result;
 }
 
+//Used in onchange event
 function renderInput_Field_readSelectBoxes(id) {
-    var value = '';
-    var i = 0;
-    var allHaveSelections = true;
-    var indexes = [];
-    var values = [];
-    var onchangefound = false;
-    var onchange_function = "";
+    let value = '';
+    let i = 0;
+    let allHaveSelections = true;
+    const indexes = [];
+    const values = [];
+    let onchangefound = false;
+    let onchange_function = "";
 
-    while (1 == 1) {
-        var obj = document.getElementById(id + '_' + i);
+    while (1) {
+        const obj = document.getElementById(id + '_' + i);
         if (!obj)
             break;
 
-        var v = obj.value;
+        const v = obj.value;
 
-        if (v != "") {
-            if (indexes.indexOf(obj.selectedIndex) == -1) {
-                if (value != '')
+        if (v !== "") {
+            if (indexes.indexOf(obj.selectedIndex) === -1) {
+                if (value !== '')
                     value += ',';
 
                 value += v;
             }
 
             if (!onchangefound) {
-                var o = String(obj.onchange);
-                var oParts = o.split(";");
-                if (oParts.length == 3) {
+                const o = String(obj.onchange);
+                const oParts = o.split(";");
+                if (oParts.length === 3) {
                     onchange_function = oParts[1];
                     onchangefound = true;
                 }
@@ -828,15 +788,12 @@ function renderInput_Field_readSelectBoxes(id) {
 
     document.getElementById(id).value = value;
 
-
     if (allHaveSelections) {
         //add new select box
         const selectboxes = document.getElementById(id + '_selectboxes');
 
         const o2 = 'onchange=\'renderInput_Field_readSelectBoxes("' + id + '");' + onchange_function + '\';';
-        const result = selectboxes.innerHTML + renderInput_Field_do(id + "_" + i, '', o2, null);
-
-        selectboxes.innerHTML = result;
+        selectboxes.innerHTML = selectboxes.innerHTML + renderInput_Field_do(id + "_" + i, '', o2, null);
 
         //update values
         for (let n = 0; n < i; n++) {
@@ -854,10 +811,10 @@ function renderInput_Field(id, param, value, onchange, SQLJoinTableID) {
 
     const param_att = param["@attributes"];
     let repeatative = 0;
-    if (typeof (param_att.repeatative) != "undefined" && param_att.repeatative == "1")
+    if (typeof (param_att.repeatative) != "undefined" && param_att.repeatative === "1")
         repeatative = 1;
 
-    if (repeatative == 1) {
+    if (repeatative === 1) {
         let result = "";
         const onchange_parts = onchange.split('"');
         if (onchange_parts.length < 3)
@@ -915,23 +872,23 @@ function renderInput_Layout(id, param, value, onchange) {
 
     let result = '<select id="' + id + '" ' + onchange + ' class="ct_improved_selectbox">';
 
-    result += '<option value="" ' + (value == "" ? 'selected="selected"' : '') + '>- Select Layout</option>';
+    result += '<option value="" ' + (value === "" ? 'selected="selected"' : '') + '>- Select Layout</option>';
 
     for (let o = 0; o < wizardLayouts.length; o++) {
         let ok = true;
         let option = wizardLayouts[o];
 
-        if (layout_table == "current") {
-            if (option.tableid != currentTable)
+        if (layout_table === "current") {
+            if (option.tableid !== currentTable)
                 ok = false;
         }
 
-        if (ok && option.layoutname != currentLayout) {   //table checked not checking layout type
+        if (ok && option.layoutname !== currentLayout) {   //table checked not checking layout type
             if (renderInput_Layout_checktype(layout_type, parseInt(option.layouttype)))
-                result += '<option value="' + option.layoutname + '"' + (option.layoutname == value ? 'selected="selected"' : '') + '>' + option.layoutname + '</option>';
+                result += '<option value="' + option.layoutname + '"' + (option.layoutname === value ? 'selected="selected"' : '') + '>' + option.layoutname + '</option>';
         }
     }
-    return result += '</select>';
+    return result + '</select>';
 }
 
 function renderInput_Folder(id, value, onchange) {
@@ -975,7 +932,8 @@ function findTheType(typename) {
     return null;
 }
 
-function loadTypes_silent(processMessageBox) {
+//Used in onchange event
+function loadTypes_silent() {
 
     let parts = location.href.split("/administrator/");
     const url = parts[0] + '/index.php?option=com_customtables&view=xml&xmlfile=fieldtypes';
@@ -989,7 +947,7 @@ function loadTypes_silent(processMessageBox) {
         http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         http.onreadystatechange = function () {
 
-            if (http.readyState == 4) {
+            if (http.readyState === 4) {
                 const res = http.response;
                 const parser = new DOMParser();
                 const xmlDoc = parser.parseFromString(res, "text/xml");
@@ -1028,7 +986,7 @@ function loadTypes(typeparams_box_obj, jform_type, jform_typeparams, typeparams_
         http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         http.onreadystatechange = function () {
 
-            if (http.readyState == 4) {
+            if (http.readyState === 4) {
                 let res = http.response;
                 let parser = new DOMParser();
                 let xmlDoc = parser.parseFromString(res, "application/xml");
@@ -1058,29 +1016,29 @@ function xmlToJson(xml) {
     // Create the return object
     let obj = {};
 
-    if (xml.nodeType == 1) { // element
+    if (xml.nodeType === 1) { // element
         // do attributes
         if (xml.attributes.length > 0) {
             obj["@attributes"] = {};
-            for (var j = 0; j < xml.attributes.length; j++) {
-                var attribute = xml.attributes.item(j);
+            for (let j = 0; j < xml.attributes.length; j++) {
+                const attribute = xml.attributes.item(j);
                 obj["@attributes"][attribute.nodeName] = attribute.nodeValue;
             }
         }
-    } else if (xml.nodeType == 3) { // text
+    } else if (xml.nodeType === 3) { // text
         obj = xml.nodeValue;
     }
 
     // do children
     if (xml.hasChildNodes()) {
-        for (var i = 0; i < xml.childNodes.length; i++) {
-            var item = xml.childNodes.item(i);
-            var nodeName = item.nodeName;
+        for (let i = 0; i < xml.childNodes.length; i++) {
+            const item = xml.childNodes.item(i);
+            const nodeName = item.nodeName;
             if (typeof (obj[nodeName]) == "undefined") {
                 obj[nodeName] = xmlToJson(item);
             } else {
                 if (typeof (obj[nodeName].push) == "undefined") {
-                    var old = obj[nodeName];
+                    const old = obj[nodeName];
                     obj[nodeName] = [];
                     obj[nodeName].push(old);
                 }
@@ -1093,18 +1051,18 @@ function xmlToJson(xml) {
 
 function parseQuote(str, separator, cleanquotes) {
 
-    var arr = [];
-    var quote = false;  // true means we're inside a quoted field
-    var c = 0;
+    const arr = [];
+    let quote = false;  // true means we're inside a quoted field
+    let c = 0;
 
     // iterate over each character, keep track of current field index (i)
-    for (var i = 0; c < str.length; c++) {
-        var cc = str[c];
+    for (let i = 0; c < str.length; c++) {
+        const cc = str[c];
         //    var nc = str[c+1];  // current character, next character
         arr[i] = arr[i] || '';           // create a new array value (start with empty string) if necessary
 
         // If it's just one quotation mark, begin/end quoted field
-        if (cc == '"') {
+        if (cc === '"') {
             quote = !quote;
 
             if (!cleanquotes)
@@ -1115,20 +1073,21 @@ function parseQuote(str, separator, cleanquotes) {
 
         // If it's a comma, and we're not in a quoted field, move on to the next field
         if (Array.isArray(separator)) {
-            var found = false
-            for (var s = 0; s < separator.length; s++) {
-                if (cc == separator[s] && !quote) {
+            let s;
+            let found = false;
+            for (s = 0; s < separator.length; s++) {
+                if (cc === separator[s] && !quote) {
                     found = true;
                     break;
                 }
             }
 
-            if (cc == separator[s] && !quote) {
+            if (cc === separator[s] && !quote) {
                 ++i;
                 continue;
             }
         } else {
-            if (cc == separator && !quote) {
+            if (cc === separator && !quote) {
                 ++i;
                 continue;
             }
@@ -1142,6 +1101,6 @@ function parseQuote(str, separator, cleanquotes) {
 }
 
 String.prototype.replaceAll = function (search, replacement) {
-    var target = this;
+    const target = this;
     return target.split(search).join(replacement);
 };
