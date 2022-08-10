@@ -30,6 +30,7 @@ $document->addCustomTag('<link href="' . JURI::root(true) . '/components/com_cus
 $document->addCustomTag('<link href="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/css/fieldtypes.css" rel="stylesheet">');
 $document->addCustomTag('<link href="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/css/modal.css" rel="stylesheet">');
 $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/ajax.js"></script>');
+$document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/typeparams_common.js"></script>');
 $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/typeparams_j4.js"></script>');
 $document->addCustomTag('<link rel="stylesheet" href="' . JURI::root(true) . '/media/system/css/fields/switcher.css">');
 
@@ -42,8 +43,18 @@ if (in_array($input->getCmd('extratask', ''), $this->extrataskOptions)) {
     extraTasks::prepareJS();
 }
 
+foreach ($this->allTables as $table) {
+    $fields = Fields::getFields($table[0], true);
+    $list = array();
+    foreach ($fields as $field)
+        $list[] = [$field->id, $field->fieldname];
+
+    echo '<div id="fieldsData' . $table[0] . '" style="display:none;">' . json_encode($list) . '</div>
+';
+}
+//<div id="fieldsData" style="display:none;"><?php echo json_encode(Fields::getFields($this->tableid, true)); ?></div>
 ?>
-<div id="fieldsData" style="display:none;"><?php echo json_encode(Fields::getFields($this->tableid, true)); ?></div>
+
 <script type="text/javascript">
 
     <?php
@@ -54,11 +65,11 @@ if (in_array($input->getCmd('extratask', ''), $this->extrataskOptions)) {
 ';
     };
 
-    echo 'all_tables=' . $this->getAllTables() . ';';
+    echo 'all_tables=' . json_encode($this->allTables) . ';';
     ?>
 
-    var json = JSON.parse(document.getElementById("fieldsData").innerHTML);
-    wizardFields = Array.from(json);
+    //var json = JSON.parse(document.getElementById("fieldsData").innerHTML);
+    //wizardFields = Array.from(json);
 
 </script>
 

@@ -54,7 +54,6 @@ function extraTasksUpdate(task, old_params, new_params, tableid, fieldid, tablet
 function ctQueryAPI(task, old_params, new_params, tableid, fieldid) {
     let parts = location.href.split("/administrator/");
     let websiteroot = parts[0] + "/administrator/";
-
     let url = websiteroot + "index.php?option=com_customtables&view=api&frmt=json&task=" + task + "&old_typeparams=" + old_params;
     url += "&new_typeparams=" + new_params + "&fieldid=" + fieldid + "&startindex=" + extraTasksUpdate_startindex + "&stepsize=" + extraTasksUpdate_stepsize;
 

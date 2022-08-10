@@ -25,6 +25,9 @@ $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_cu
 $version_object = new Version;
 $version = (int)$version_object->getShortVersion();
 
+$document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/typeparams_common.js"></script>');
+
+$document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/typeparams_common.js"></script>');
 if ($version < 4)
     $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/typeparams.js"></script>');
 else

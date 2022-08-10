@@ -32,6 +32,7 @@ class CustomtablesViewFields extends JViewLegacy
     var CT $ct;
     var $tableid;
     var $table_row;
+    var $allTables;
 
     public function display($tpl = null)
     {
@@ -85,6 +86,8 @@ class CustomtablesViewFields extends JViewLegacy
         if (count($errors = $this->get('Errors'))) {
             throw new Exception(implode("\n", $errors), 500);
         }
+
+        $this->getAllTables();
 
         // Display the template
         if ($this->version < 4)
@@ -156,6 +159,32 @@ class CustomtablesViewFields extends JViewLegacy
         //}
     }
 
+    protected function getAllTables()
+    {
+
+        $db = Factory::getDBO();
+        $query = $db->getQuery(true);
+        $query->select('id,tablename,tabletitle');
+        $query->from('#__customtables_tables');
+        $query->where('published=1');
+        $query->order('tabletitle');
+
+        $db->setQuery((string)$query);
+
+        $records = $db->loadObjectList();
+
+        $this->allTables = [];
+        foreach ($records as $rec)
+            $this->allTables[] = [$rec->id, $rec->tablename, $rec->tabletitle];
+        //{
+        //  $items[] = '[' . $rec->id . ',"' . $rec->tablename . '","' . $rec->tabletitle . '"]';
+        //}
+
+        //$this->allTables = $db->loadObjectList();
+
+        //return '[' . implode(',', $items) . ']';
+    }
+
     /**
      * Method to set up the document properties
      *
@@ -190,26 +219,6 @@ class CustomtablesViewFields extends JViewLegacy
         }
         // use the helper htmlEscape method instead.
         return CustomtablesHelper::htmlEscape($var, $this->_charset);
-    }
-
-    protected function getAllTables()
-    {
-
-        $db = Factory::getDBO();
-        $query = $db->getQuery(true);
-        $query->select('id,tablename,tabletitle');
-        $query->from('#__customtables_tables');
-        $query->order('tabletitle');
-
-        $db->setQuery((string)$query);
-        $records = $db->loadObjectList();
-
-        $items = array();
-        foreach ($records as $rec) {
-            $items[] = '[' . $rec->id . ',"' . $rec->tablename . '","' . $rec->tabletitle . '"]';
-        }
-
-        return '[' . implode(',', $items) . ']';
     }
 
 

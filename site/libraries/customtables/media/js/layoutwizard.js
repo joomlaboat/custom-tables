@@ -47,7 +47,9 @@ function loadFieldsData(tableid) {
     if (isNaN(tableid) || tableid === 0)
         return;//table not selected
 
-    var url = websiteroot + "index.php?option=com_customtables&view=api&frmt=json&task=getfields&tableid=" + tableid;
+    const parts = location.href.split("/administrator/");
+    const websiteroot = parts[0] + "/administrator/";
+    const url = websiteroot + "index.php?option=com_customtables&view=api&frmt=json&task=getfields&tableid=" + tableid;
 
     if (typeof fetch === "function") {
         fetch(url, {method: 'GET', mode: 'no-cors', credentials: 'same-origin'}).then(function (response) {

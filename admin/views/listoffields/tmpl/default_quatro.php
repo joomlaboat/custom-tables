@@ -12,7 +12,8 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
-
+use CustomTables\CT;
+use CustomTables\ListOfFields;
 use Joomla\CMS\Access\Access;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
@@ -39,10 +40,7 @@ if ($input->getCmd('extratask', '') == 'updateimages') {
 
     extraTasks::prepareJS();
 }
-
-
 ?>
-
 <form action="<?php echo Route::_('index.php?option=com_customtables&view=listoffields&tableid=' . $this->tableid); ?>"
       method="post" name="adminForm" id="adminForm">
     <div class="row">
@@ -78,7 +76,13 @@ if ($input->getCmd('extratask', '') == 'updateimages') {
                         <?php include('default_quatro_head.php'); ?>
                         </thead>
                         <tbody<?php if ($this->saveOrder) : ?> class="js-draggable" data-url="<?php echo $saveOrderingUrl; ?>" data-direction="<?php echo strtolower($this->listDirn); ?>" data-nested="true"<?php endif; ?>>
-                        <?php echo $this->loadTemplate('quatro_body'); ?>
+                        <?php
+
+                        $ListOfFields = new ListOfFields($this->ct, $this->tableid, $this->tablename, $this->tabletitle, $this->items, $this->canState,
+                            $this->canDelete, $this->canEdit, $this->saveOrder);
+                        echo $ListOfFields->renderBody();
+
+                        ?>
                         </tbody>
                     </table>
 

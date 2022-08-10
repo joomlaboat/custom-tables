@@ -24,6 +24,8 @@ $document->addCustomTag('<link href="' . JURI::root(true) . '/components/com_cus
 $document->addCustomTag('<link href="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/css/fieldtypes.css" rel="stylesheet">');
 $document->addCustomTag('<link href="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/css/modal.css" rel="stylesheet">');
 $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/ajax.js"></script>');
+
+$document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/typeparams_common.js"></script>');
 $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/typeparams.js"></script>');
 
 JHtml::addIncludePath(JPATH_COMPONENT . '/helpers/html');
@@ -40,10 +42,8 @@ $input = Factory::getApplication()->input;
 if (in_array($input->getCmd('extratask', ''), $this->extrataskOptions)) {
     extraTasks::prepareJS();
 }
-
+//
 ?>
-
-<div id="fieldsData" style="display:none;"><?php echo json_encode(Fields::getFields($this->tableid, true)); ?></div>
 <script type="text/javascript">
     //websiteroot="<?php echo JURI::root(true); ?>";
     // waiting spinner
@@ -79,12 +79,10 @@ if (in_array($input->getCmd('extratask', ''), $this->extrataskOptions)) {
 
     echo 'all_tables=' . $this->getAllTables() . ';';
 
-
-
     ?>
 
-    var json = JSON.parse(document.getElementById("fieldsData").innerHTML);
-    wizardFields = Array.from(json);
+    //var json = JSON.parse(document.getElementById("fieldsData").innerHTML);
+    //wizardFields = Array.from(json);
 
 </script>
 <div id="customtables_loader" style="display: none;">

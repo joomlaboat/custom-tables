@@ -65,9 +65,9 @@ class CustomtablesModelListoffields extends JModelList
             foreach ($items as $nr => &$item) {
                 // convert type
                 if (isset($translations[$item->type])) {
-                    $item->type = $translations[$item->type];
+                    $item->typeLabel = $translations[$item->type];
                 } else {
-                    $item->type = '<span style="color:red;">NOT SELECTED</span>';
+                    $item->typeLabel = '<span style="color:red;">NOT SELECTED</span>';
                 }
 
                 // convert isrequired

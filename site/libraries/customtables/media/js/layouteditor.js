@@ -11,13 +11,12 @@
 var codemirror_editors = [];
 var codemirror_active_index = 0;
 var codemirror_active_areatext_id = null;
-
 var temp_params_tag = "";
 //let temp_params_tagstartchar = "";
 
-var parts = location.href.split("/administrator/");
-var websiteroot = parts[0] + "/administrator/";
-var websiteSiteLibraries = parts[0] + "/components/com_customtables/libraries/customtables/";
+//var parts = location.href.split("/administrator/");
+//var websiteroot = parts[0] + "/administrator/";
+//var websiteSiteLibraries = parts[0] + "/components/com_customtables/libraries/customtables/";
 var layout_tags = [];
 var layout_tags_loaded = false;
 var tagsets = [];

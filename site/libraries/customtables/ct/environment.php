@@ -68,8 +68,11 @@ class Environment
         $this->field_prefix = 'es_';
         $this->field_input_prefix = 'com' . $this->field_prefix;
 
-        $version_object = new Version;
-        $this->version = (int)$version_object->getShortVersion();
+        if (defined('_JEXEC')) {
+            $version_object = new Version;
+            $this->version = (int)$version_object->getShortVersion();
+        } else
+            $this->version = 6;
 
         $this->jinput = Factory::getApplication()->input;
 

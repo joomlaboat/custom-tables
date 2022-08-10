@@ -985,10 +985,11 @@
           description="Left Join to another table, finds the record and reads value of any field." priority="3">
         <params>
             <param name="table" label="Table" example="products"
-                   description="Type the name of the Custom Table to join/link with." default="" type="table"/>
+                   description="Type the name of the Custom Table to join/link with." default="" type="table"
+                   fieldchild="fieldtype_param_1"/>
             <param name="fieldname" label="Field Name" example="title"
                    description="Type the field name to return the value by default. You may type layout name instead. options: 'layout:layout_name' or 'tablelesslayout:layout_name'"
-                   default="" type="string" tableobject="fieldtype_param_0"/>
+                   default="" type="field"/>
             <param name="filter" label="Filter"
                    description="Limits records using filter. Example: [age>30] where age is a field in joining table"
                    default="" type="string"/>
