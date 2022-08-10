@@ -1,24 +1,18 @@
 function updateScreenshots() {
-    var obj = document.getElementById("imageLoadProgress");
-    var url = "/administrator/index.php?option=com_templateshop&view=settings";
-
-
-    var http = null;
-    var params = "";
+    const obj = document.getElementById("imageLoadProgress");
+    const url = "/administrator/index.php?option=com_customtables&view=settings";
+    let params = "";
     params += "&task=settings.RefreshTemplates";
     params += "&clean=1";
 
-
-    if (!http) {
-        http = CreateHTTPRequestObject();   // defined in ajax.js
-    }
+    let http = CreateHTTPRequestObject();   // defined in ajax.js
 
     if (http) {
         http.open("POST", url, true);
         http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         http.onreadystatechange = function () {
 
-            if (http.readyState == 4) {
+            if (http.readyState === 4) {
                 const res = http.response;
 
                 if (!isJSONValid(res)) {
@@ -29,7 +23,7 @@ function updateScreenshots() {
                 const list = JSON && JSON.parse(res) || $.parseJSON(res);
 
                 let p = 0;
-                if (list.completed != 0)
+                if (list.completed !== 0)
                     p = Math.floor(100 / (list.total / list.completed));
 
                 document.getElementById("imageLoadProgress_completed").innerHTML = list.completed;
@@ -51,61 +45,6 @@ function updateScreenshots() {
     }
 }
 
-function updateCategories() {
-    const obj = document.getElementById("refreshcategoriesBox");
-    const url = "/administrator/index.php?option=com_templateshop&view=settings";
-
-    obj.innerHTML = '<p style="color:black;"><i>Updating...</i></p>';
-
-    let http = null;
-    let params = "";
-    params += "&task=settings.RefreshCategories";
-    params += "&clean=1";
-
-
-    if (!http) {
-        http = CreateHTTPRequestObject();   // defined in ajax.js
-    }
-
-    if (http) {
-        http.open("POST", url, true);
-        http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        http.onreadystatechange = function () {
-
-            if (http.readyState == 4) {
-                var res = http.response;
-
-                if (!isJSONValid(res)) {
-                    alert(res);
-                    return false;
-                }
-
-                var list = JSON && JSON.parse(res) || $.parseJSON(res);
-
-                if (list.status != 'error')
-                    obj.innerHTML = '<i>' + list.status + '</i>';
-                else {
-                    obj.innerHTML = '<p style="color:red;">Error: <i>' + list.msg + '</i></p>';
-
-                    if (list.msg == 'Unauthorized usage') {
-                        var obj2 = document.getElementById("templateUpdateBox");
-                        obj2.innerHTML = '<p style="color:red;font-weight:bold;">Please check your Template Monster Affiliate Login and API Password.</p>';
-                    }
-                }
-            }
-        };
-        http.send(params);
-    } else {
-        obj.innerHTML = "<span style='color:red;'>Cannot Refresh</span>";
-    }
-
-}
-
-
 function isJSONValid(text) {
-    if (/^[\],:{}\s]*$/.test(text.replace(/\\["\\\/bfnrtu]/g, '@').replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']').replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
-        //the json is ok
-        return true;
-    } else
-        return false;
+    return /^[\],:{}\s]*$/.test(text.replace(/\\["\\\/bfnrtu]/g, '@').replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']').replace(/(?:^|:|,)(?:\s*\[)+/g, ''));
 }

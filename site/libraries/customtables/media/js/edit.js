@@ -227,17 +227,17 @@ function doFilters(obj, label, filters_string) {
         let filter_parts = filters[i].split(':');
         let filter = filter_parts[0];
 
-        if (filter == 'url') {
+        if (filter === 'url') {
             if (!isValidURL(value)) {
                 alert('The ' + label + ' "' + value + '" is not a valid URL.');
                 return false;
             }
         } else if (filter === 'https') {
-            if (value.indexOf("https") != 0) {
+            if (value.indexOf("https") !== 0) {
                 alert('The ' + label + ' "' + value + '" must be secure - must start with "https://".');
                 return false;
             }
-        } else if (filter == 'domain' && filter_parts.length > 1) {
+        } else if (filter === 'domain' && filter_parts.length > 1) {
             let domains = filter_parts[1].split(",");
             let hostname = "";
 
@@ -314,7 +314,7 @@ function checkRequiredFields() {
         if (typeof requiredFields[i].name != "undefined") {
             let n = requiredFields[i].name.toString();
 
-            if (n.indexOf("comes_") != -1) {
+            if (n.indexOf("comes_") !== -1) {
 
                 let objname = n.replace('_selector', '');
 
@@ -324,21 +324,21 @@ function checkRequiredFields() {
                 else
                     label = "Unlabeled field";
 
-                if (requiredFields[i].type == "text") {
+                if (requiredFields[i].type === "text") {
                     let obj = document.getElementById(objname);
-                    if (obj.value == '') {
+                    if (obj.value === '') {
                         alert(label + " required.");
                         return false;
                     }
-                } else if (requiredFields[i].type == "select-one") {
+                } else if (requiredFields[i].type === "select-one") {
                     let obj = document.getElementById(objname);
                     let v = obj.value;
 
-                    if (obj.value === null || obj.value == '') {
+                    if (obj.value === null || obj.value === '') {
                         alert(label + " not selected.");
                         return false;
                     }
-                } else if (requiredFields[i].type == "select-multiple") {
+                } else if (requiredFields[i].type === "select-multiple") {
                     let count_multiple_obj = document.getElementById(lbln);
 
                     let options = count_multiple_obj.options;
@@ -536,21 +536,21 @@ function ctUpdateTableJoinLink(control_name, index, execute_all, sub_index, obje
     let link = location.href.split('administrator/index.php?option=com_customtables');
     let url;
 
-    if (link.length == 2)//to make sure that it will work in the back-end
+    if (link.length === 2)//to make sure that it will work in the back-end
         url = 'index.php?option=com_customtables&view=records&from=json&key=' + wrapper.dataset.key + '&index=' + index;
     else
         url = 'index.php?option=com_customtables&view=catalog&tmpl=component&from=json&key=' + wrapper.dataset.key + '&index=' + index;
 
     let filters = [];
-    if (wrapper.dataset.valuefilters != '')
+    if (wrapper.dataset.valuefilters !== '')
         filters = JSON.parse(atob(wrapper.dataset.valuefilters));
 
     if (execute_all) {
         if (Array.isArray(filters[index])) {
             //Self Parent field
-            if (filters[index][sub_index] != '')
+            if (filters[index][sub_index] !== '')
                 url += '&subfilter=' + filters[index][sub_index];
-        } else if (filters[index] != '')
+        } else if (filters[index] !== '')
             url += '&filter=' + filters[index];
     } else {
         let obj = document.getElementById(object_id);
@@ -558,7 +558,7 @@ function ctUpdateTableJoinLink(control_name, index, execute_all, sub_index, obje
         if (updateValue) {
             let valueObj = document.getElementById(control_name);
 
-            if (obj.value == "") {
+            if (obj.value === "") {
 
                 let indexTemp = index;
                 let sub_indexTemp = sub_index;
@@ -643,7 +643,7 @@ function ctInputboxRecords_addItem(control_name, control_name_postfix) {
 function ctInputboxRecords_DoAddItem(control_name, control_name_postfix) {
     //Old calls replaced
     let o = document.getElementById(control_name + control_name_postfix);
-    if (o.selectedIndex == -1)
+    if (o.selectedIndex === -1)
         return;
 
     let r = o.options[o.selectedIndex].value;
@@ -655,13 +655,13 @@ function ctInputboxRecords_DoAddItem(control_name, control_name_postfix) {
         let elementsID = document.getElementById(control_name + control_name_postfix + '_elementsID').innerHTML.split(",");
 
         for (let i = 0; i < elementsPublished.length; i++) {
-            if (elementsID[i] == r)
+            if (elementsID[i] === r)
                 p = elementsPublished[i];
         }
     }
 
     for (let x = 0; x < ctInputboxRecords_r[control_name].length; x++) {
-        if (ctInputboxRecords_r[control_name][x] == r) {
+        if (ctInputboxRecords_r[control_name][x] === r) {
             alert("Item already exists");
             return false;
         }
@@ -750,7 +750,7 @@ function ctInputbox_removeEmptyParents(control_name, control_name_postfix) {
 
                 let f_list = f.split(",");
 
-                if (f_list.indexOf(v) != -1)
+                if (f_list.indexOf(v) !== -1)
                     c++;
             }
         }
@@ -770,7 +770,7 @@ function ctInputbox_UpdateSQLJoinLink_do(control_name, control_name_postfix) {
     let v = '';
 
     if (o) {
-        if (o.selectedIndex == -1)
+        if (o.selectedIndex === -1)
             return false;
 
         v = o.options[o.selectedIndex].value;
@@ -779,7 +779,7 @@ function ctInputbox_UpdateSQLJoinLink_do(control_name, control_name_postfix) {
     let selectedValue = ctInputboxRecords_current_value[control_name];
     ctInputboxRecords_removeOptions(l);
 
-    if (control_name_postfix != '_selector') {
+    if (control_name_postfix !== '_selector') {
         let opt = document.createElement("option");
         opt.value = 0;
         opt.innerHTML = ctTranslates["COM_CUSTOMTABLES_SELECT"];
@@ -793,19 +793,19 @@ function ctInputbox_UpdateSQLJoinLink_do(control_name, control_name_postfix) {
 
     for (let i = 0; i <= elements.length; i++) {
         let f = elementsFilter[i];
-        if (typeof f != "undefined" && elements[i] != "") {
+        if (typeof f != "undefined" && elements[i] !== "") {
 
             let eid = elementsID[i];
             let published = elementsPublished[i];
             let f_list = f.split(",");
 
-            if (f_list.indexOf(v) != -1) {
+            if (f_list.indexOf(v) !== -1) {
                 let opt = document.createElement("option");
                 opt.value = eid;
-                if (eid == selectedValue)
+                if (eid === selectedValue)
                     opt.selected = true;
 
-                if (published == 0)
+                if (published === 0)
                     opt.style.cssText = "color:red;";
 
                 opt.innerHTML = elements[i];
@@ -967,6 +967,12 @@ function dataURLToBlob(dataURL) {
  * (c) 2015 Szymon Nowak | Released under the MIT license
  */
     const a = function (a) {
+        const d = function (a, b, c, d) {
+            this.startPoint = a, this.control1 = b, this.control2 = c, this.endPoint = d
+        };
+        const c = function (a, b, c) {
+            this.x = a, this.y = b, this.time = c || (new Date).getTime()
+        };
         "use strict";
         const b = function (a, b) {
             const c = b || {};
@@ -1024,43 +1030,37 @@ function dataURLToBlob(dataURL) {
         }, b.prototype._reset = function () {
             this.points = [], this._lastVelocity = 0, this._lastWidth = (this.minWidth + this.maxWidth) / 2, this._isEmpty = !0, this._ctx.fillStyle = this.penColor
         }, b.prototype._createPoint = function (a) {
-            var b = this._canvas.getBoundingClientRect();
+            const b = this._canvas.getBoundingClientRect();
             return new c(a.clientX - b.left, a.clientY - b.top)
         }, b.prototype._addPoint = function (a) {
-            var b, c, e, f, g = this.points;
+            let b, c, e, f, g = this.points;
             g.push(a), g.length > 2 && (3 === g.length && g.unshift(g[0]), f = this._calculateCurveControlPoints(g[0], g[1], g[2]), b = f.c2, f = this._calculateCurveControlPoints(g[1], g[2], g[3]), c = f.c1, e = new d(g[1], b, c, g[2]), this._addCurve(e), g.shift())
         }, b.prototype._calculateCurveControlPoints = function (a, b, d) {
-            var e = a.x - b.x, f = a.y - b.y, g = b.x - d.x, h = b.y - d.y,
+            const e = a.x - b.x, f = a.y - b.y, g = b.x - d.x, h = b.y - d.y,
                 i = {x: (a.x + b.x) / 2, y: (a.y + b.y) / 2}, j = {x: (b.x + d.x) / 2, y: (b.y + d.y) / 2},
                 k = Math.sqrt(e * e + f * f), l = Math.sqrt(g * g + h * h), m = i.x - j.x, n = i.y - j.y,
                 o = l / (k + l), p = {x: j.x + m * o, y: j.y + n * o}, q = b.x - p.x, r = b.y - p.y;
             return {c1: new c(i.x + q, i.y + r), c2: new c(j.x + q, j.y + r)}
         }, b.prototype._addCurve = function (a) {
-            var b, c, d = a.startPoint, e = a.endPoint;
+            let b, c, d = a.startPoint, e = a.endPoint;
             b = e.velocityFrom(d), b = this.velocityFilterWeight * b + (1 - this.velocityFilterWeight) * this._lastVelocity, c = this._strokeWidth(b), this._drawCurve(a, this._lastWidth, c), this._lastVelocity = b, this._lastWidth = c
         }, b.prototype._drawPoint = function (a, b, c) {
-            var d = this._ctx;
+            const d = this._ctx;
             d.moveTo(a, b), d.arc(a, b, c, 0, 2 * Math.PI, !1), this._isEmpty = !1
         }, b.prototype._drawCurve = function (a, b, c) {
-            var d, e, f, g, h, i, j, k, l, m, n, o = this._ctx, p = c - b;
+            let d, e, f, g, h, i, j, k, l, m, n, o = this._ctx, p = c - b;
             for (d = Math.floor(a.length()), o.beginPath(), f = 0; d > f; f++) g = f / d, h = g * g, i = h * g, j = 1 - g, k = j * j, l = k * j, m = l * a.startPoint.x, m += 3 * k * g * a.control1.x, m += 3 * j * h * a.control2.x, m += i * a.endPoint.x, n = l * a.startPoint.y, n += 3 * k * g * a.control1.y, n += 3 * j * h * a.control2.y, n += i * a.endPoint.y, e = b + i * p, this._drawPoint(m, n, e);
             o.closePath(), o.fill()
         }, b.prototype._strokeWidth = function (a) {
             return Math.max(this.maxWidth / (a + 1), this.minWidth)
-        };
-        var c = function (a, b, c) {
-            this.x = a, this.y = b, this.time = c || (new Date).getTime()
         };
         c.prototype.velocityFrom = function (a) {
             return this.time !== a.time ? this.distanceTo(a) / (this.time - a.time) : 1
         }, c.prototype.distanceTo = function (a) {
             return Math.sqrt(Math.pow(this.x - a.x, 2) + Math.pow(this.y - a.y, 2))
         };
-        var d = function (a, b, c, d) {
-            this.startPoint = a, this.control1 = b, this.control2 = c, this.endPoint = d
-        };
         return d.prototype.length = function () {
-            var a, b, c, d, e, f, g, h, i = 10, j = 0;
+            let a, b, c, d, e, f, g, h, i = 10, j = 0;
             for (a = 0; i >= a; a++) b = a / i, c = this._point(b, this.startPoint.x, this.control1.x, this.control2.x, this.endPoint.x), d = this._point(b, this.startPoint.y, this.control1.y, this.control2.y, this.endPoint.y), a > 0 && (g = c - e, h = d - f, j += Math.sqrt(g * g + h * h)), e = c, f = d;
             return j
         }, d.prototype._point = function (a, b, c, d, e) {
