@@ -72,13 +72,17 @@ function renderInputBox(id, param, vlu, attributes) {
 
         } else if (param_att.type === "field") {
 
-            if (SQLJoinTableID === null || (typeof (param_att.currenttable) != "undefined" && param_att.currenttable === "1")) {
-
-                const obj = document.getElementById('jform_tableid');
-                const currentTableId = obj.value;
-                result = renderInput_Field(id, param, vlu, attributes, currentTableId);
-            } else
-                result = renderInput_Field(id, param, vlu, attributes, SQLJoinTableID);
+            if (vlu.indexOf(':') !== -1) {
+                //if the default is a layout name then show input box but not select box
+                result += '<input type="text" id="' + id + '" value="' + vlu + '" ' + attributes + '>';
+            } else {
+                if (SQLJoinTableID === null || (typeof (param_att.currenttable) != "undefined" && param_att.currenttable === "1")) {
+                    const obj = document.getElementById('jform_tableid');
+                    const currentTableId = obj.value;
+                    result = renderInput_Field(id, param, vlu, attributes, currentTableId);
+                } else
+                    result = renderInput_Field(id, param, vlu, attributes, SQLJoinTableID);
+            }
         } else if (param_att.type === "layout") {
             result = renderInput_Layout(id, param, vlu, attributes);
         } else if (param_att.type === "multiselect") {
