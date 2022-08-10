@@ -39,38 +39,23 @@ function updateTagsParameters() {
     updateFieldsBox();
 }
 
-function findTagSet(tagsetname) {
-    for (let i = 0; i < layout_tags.length; i++) {
-        var a = layout_tags[i]["@attributes"];
-
-        var n = "";
-        if (typeof (a.name) != "undefined")
-            n = layout_tags[i]["@attributes"].name;
-
-        if (n == tagsetname) {
-            return layout_tags[i];
-        }
-    }
-    return [];
-}
-
 function findTagSets(layouttypeid, priority) {
-    var tagsets_ = [];
-    for (var i = 0; i < layout_tags.length; i++) {
-        var a = layout_tags[i]["@attributes"];
+    const tagsets_ = [];
+    for (let i = 0; i < layout_tags.length; i++) {
+        const a = layout_tags[i]["@attributes"];
 
-        var p = 0;
+        let p = 0;
         if (typeof (a.priority) != "undefined")
             p = layout_tags[i]["@attributes"].priority;
 
-        if (p == priority) {
-            var layouttypes = "";
+        if (p === priority) {
+            let layouttypes = "";
             if (typeof (a.layouttypes) != "undefined")
                 layouttypes = a.layouttypes;
 
-            var lta = layouttypes.split(',');
+            const lta = layouttypes.split(',');
 
-            if (layouttypes == "" || lta.indexOf(layouttypeid + "") != -1) {
+            if (layouttypes === "" || lta.indexOf(layouttypeid + "") !== -1) {
                 tagsets_.push(layout_tags[i]);
             }
         }
@@ -105,7 +90,7 @@ function loadTags(type_id, tags_box) {
         http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         http.onreadystatechange = function () {
 
-            if (http.readyState == 4) {
+            if (http.readyState === 4) {
                 const res = http.response;
 
                 const parser = new DOMParser();
@@ -137,19 +122,19 @@ function resizeModalBox() {
     setTimeout(
         function () {
 
-            var modal = document.getElementById('layouteditor_modalbox');
+            const modal = document.getElementById('layouteditor_modalbox');
 
-            var h = window.innerHeight;
-            var rect = modal.getBoundingClientRect();
+            const h = window.innerHeight;
+            const rect = modal.getBoundingClientRect();
 
-            var content_height = 0;
-            var modalBoxHeightChanged = false;
+            let content_height;
+            let modalBoxHeightChanged = false;
             if (rect.bottom > h - 100) {
                 content_height = h - 150;
                 modal.style.top = "50px";
                 modal.style.height = content_height + "px";
 
-                var content = document.getElementById('layouteditor_tagsContent0');
+                const content = document.getElementById('layouteditor_tagsContent0');
                 if (content)
                     content.style.height = (h - 250) + "px";
 
@@ -158,13 +143,13 @@ function resizeModalBox() {
                 content_height = rect.bottom - rect.top;
 
             if (modalBoxHeightChanged) {
-                var contentbox_rect = modal.getBoundingClientRect();
-                var contentbox = document.getElementById('modalParamList');
+                const contentbox_rect = modal.getBoundingClientRect();
+                let contentbox = document.getElementById('modalParamList');
                 if (contentbox) {
                     contentbox.style.height = (content_height - contentbox_rect.top - 30 - 120) + "px";
                 }
 
-                var contentbox = document.getElementById('layouteditor_fields');
+                contentbox = document.getElementById('layouteditor_fields');
                 if (contentbox) {
                     contentbox.style.height = (content_height - contentbox_rect.top - 30 - 10) + "px";
                 }
@@ -172,7 +157,7 @@ function resizeModalBox() {
 
             }
 
-            var box = document.getElementById("layouteditor_modalbox");
+            const box = document.getElementById("layouteditor_modalbox");
             box.style.visibility = "visible";
 
         }, 100);
@@ -183,45 +168,43 @@ function resizeModalBox() {
 function showModal() {
     // Get the modal
 
-    var modal = document.getElementById('layouteditor_Modal');
-
+    const modal = document.getElementById('layouteditor_Modal');
 
     // Get the <span> element that closes the modal
-    var span = document.getElementsByClassName("layouteditor_close")[0];
+    const span = document.getElementsByClassName("layouteditor_close")[0];
 
     // When the user clicks on <span> (x), close the modal
     span.onclick = function () {
         modal.style.display = "none";
-        var cm = codemirror_editors[0];
+        const cm = codemirror_editors[0];
         cm.focus();
     };
 
     // When the user clicks anywhere outside of the modal, close it
     window.onclick = function (event) {
-        if (event.target == modal) {
+        if (event.target === modal) {
             modal.style.display = "none";
-            var cm = codemirror_editors[0];
+            const cm = codemirror_editors[0];
             cm.focus();
         }
     };
 
-    var box = document.getElementById("layouteditor_modalbox");
+    const box = document.getElementById("layouteditor_modalbox");
     box.style.visibility = "hidden";
     box.style.height = "auto";
 
     modal.style.display = "block";
 
-    var d = document;
-    e = d.documentElement;
+    let e = document.documentElement;
 
-    var doc_w = e.clientWidth;
-    var doc_h = e.clientHeight;
+    const doc_w = e.clientWidth;
+    const doc_h = e.clientHeight;
 
-    var w = box.offsetWidth;
-    var h = box.offsetHeight;
+    const w = box.offsetWidth;
+    const h = box.offsetHeight;
 
     //var x=left-w/2;
-    var x = (doc_w / 2) - w / 2;
+    let x = (doc_w / 2) - w / 2;
     if (x < 10)
         x = 10;
 
@@ -229,12 +212,10 @@ function showModal() {
         x = doc_w - w - 10;
 
     //var y=top-h/2;
-    var y = (doc_h / 2) - h / 2;
-
+    let y = (doc_h / 2) - h / 2;
 
     if (y < 50)
         y = 50;
-
 
     if (y + h + 50 > doc_h) {
         y = doc_h - h - 50;
@@ -242,7 +223,6 @@ function showModal() {
 
     box.style.left = x + 'px';
     box.style.top = y + 'px';
-
 
     resizeModalBox();
 }
@@ -273,22 +253,22 @@ function showModalForm(tagStartChar, postfix, tagEndChar, tag, top, left, line, 
     } else if (tagStartChar === '[') {
         let tag_pair = parseQuote(tag, [':', '='], false);
 
-        if (tag_pair[0] == "_if" || tag_pair[0] == "_endif") {
+        if (tag_pair[0] === "_if" || tag_pair[0] === "_endif") {
             showModalTagForm('[', postfix, ']', tag, top, left, line, positions, isNew);
-        } else if (tag_pair[0] == "_value" || tag_pair[0] == "_edit") {
-            if (tag_pair[0] == "_value")
+        } else if (tag_pair[0] === "_value" || tag_pair[0] === "_edit") {
+            if (tag_pair[0] === "_value")
                 postfix = '.value';
-            else if (tag_pair[0] == "_edit")
+            else if (tag_pair[0] === "_edit")
                 postfix = '.edit';
 
             let clean_tag = tag_pair[1];
 
-            if (tag_pair.length == 3)
+            if (tag_pair.length === 3)
                 postfix += '("' + tag_pair[2] + '")';
 
             showModalFieldTagForm(tagStartChar, postfix, tagEndChar, clean_tag, top, left, line, positions, isNew);
         } else {
-            if (current_layout_type == 2)
+            if (current_layout_type === 2)
                 postfix = '.edit';
 
             showModalFieldTagForm(tagStartChar, postfix, tagEndChar, tag, top, left, line, positions, isNew);
@@ -313,7 +293,7 @@ function safeOld2NewParamConversion(old) {
 
     for (let i = 0; i < TempPairList1.length; i++) {
         let v = TempPairList1[i];
-        if ((isNaN(v) && v != 'true' && v != 'false') || v == '') {
+        if ((isNaN(v) && v !== 'true' && v !== 'false') || v === '') {
             v = '"' + v + '"';
         }
         TempPairList2.push(v);
@@ -324,7 +304,7 @@ function safeOld2NewParamConversion(old) {
 function showModalTagForm(tagstartchar, postfix, tagendchar, tag, top, left, line, positions, isnew) {
     let paramvaluestring = "";
 
-    if (tagstartchar == '{{') {
+    if (tagstartchar === '{{') {
         let tag_pair = parseQuote(tag, ['('], false);
         temp_params_tag = tag_pair[0].trim();
 
@@ -347,7 +327,7 @@ function showModalTagForm(tagstartchar, postfix, tagendchar, tag, top, left, lin
     let param_array = getParamOptions(tagobject.params, 'param');
     let param_att = tagobject["@attributes"];
 
-    if (tagstartchar == '{') {
+    if (tagstartchar === '{') {
         if (typeof (param_att.twigsimplereplacement) !== "undefined" && param_att.twigsimplereplacement !== "") {
             let cursor_from = {line: line, ch: positions[0]};
             let cursor_to = {line: line, ch: positions[1]};
@@ -375,14 +355,14 @@ function showModalTagForm(tagstartchar, postfix, tagendchar, tag, top, left, lin
 
                     for (let i3 = 0; i3 < param_array.length; i3++) {
                         let tmpPar = param_array[i3]["@attributes"];
-                        if (tmpPar.name == param_att.twigmapname) {
+                        if (tmpPar.name === param_att.twigmapname) {
                             let option_array = getParamOptions(param_array[i3], 'option');
                             let tmlLstOfParams = paramvaluestring.split(",");
 
                             for (let i4 = 0; i4 < option_array.length; i4++) {
                                 let tmpAtt = option_array[i4]["@attributes"];
 
-                                if (tmpAtt.value == tmlLstOfParams[0]) {
+                                if (tmpAtt.value === tmlLstOfParams[0]) {
                                     temp_params_tag = param_att.twigreplacement + '.' + tmpAtt.twigexactreplacement;
 
                                     if (tmlLstOfParams.length > 1)
@@ -396,7 +376,7 @@ function showModalTagForm(tagstartchar, postfix, tagendchar, tag, top, left, lin
                     }
                 }
 
-            } else if (typeof (param_att.twigoptionsreplacement) !== "undefined" && param_att.twigoptionsreplacement == "1") {
+            } else if (typeof (param_att.twigoptionsreplacement) !== "undefined" && param_att.twigoptionsreplacement === "1") {
                 temp_params_tag = param_att.twigreplacement + '.' + paramvaluestring;
                 paramvaluestring = '';
             } else
@@ -414,7 +394,7 @@ function showModalTagForm(tagstartchar, postfix, tagendchar, tag, top, left, lin
         } else if (typeof (param_att.twigclass) !== "undefined" && param_att.twigclass !== "")
             temp_params_tag = param_att.twigclass + '.' + temp_params_tag;
 
-    } else if (tagstartchar == '[') {
+    } else if (tagstartchar === '[') {
         if (typeof (param_att.twigreplacestartchar) !== "undefined" && param_att.twigreplacestartchar !== "" && typeof (param_att.twigreplaceendchar) !== "undefined" && param_att.twigreplaceendchar !== "") {
             let cursor_from = {line: line, ch: positions[0]};
             let cursor_to = {line: line, ch: positions[1]};
@@ -435,8 +415,8 @@ function showModalTagForm(tagstartchar, postfix, tagendchar, tag, top, left, lin
         return false;
     }
 
-    var countparams = param_array.length;
-    if (typeof (param_att.repeatative) !== "undefined" && param_att.repeatative === "1" && param_array.length == 1)
+    let countparams = param_array.length;
+    if (typeof (param_att.repeatative) !== "undefined" && param_att.repeatative === "1" && param_array.length === 1)
         countparams = -1;//unlimited number of parameters
 
     let form_content = getParamEditForm(tagobject, line, positions, isnew, countparams, '{{ ', postfix, ' }}', paramvaluestring);
@@ -445,7 +425,7 @@ function showModalTagForm(tagstartchar, postfix, tagendchar, tag, top, left, lin
         return false;
     }
 
-    var obj = document.getElementById("layouteditor_modal_content_box");
+    const obj = document.getElementById("layouteditor_modal_content_box");
     obj.innerHTML = form_content;
 
     if (joomlaVersion < 4) {
@@ -464,6 +444,7 @@ function showModalTagForm(tagstartchar, postfix, tagendchar, tag, top, left, lin
     showModal();
 }
 
+//Used in onchange event
 function addTag(tagstartchar, tagendchar, tag, param_count) {
 
     let postfix = '';
@@ -484,10 +465,10 @@ function addTag(tagstartchar, tagendchar, tag, param_count) {
 }
 
 function updateCodeMirror(text) {
-    var editor = codemirror_editors[codemirror_active_index];
+    const editor = codemirror_editors[codemirror_active_index];
 
-    var doc = editor.getDoc();
-    var cursor = doc.getCursor();
+    const doc = editor.getDoc();
+    const cursor = doc.getCursor();
     doc.replaceRange(text, cursor);
 }
 
@@ -495,7 +476,7 @@ function textarea_findindex(code) {
     for (let i = 0; i < text_areas.length; i++) {
         let a = text_areas[i][0];
 
-        if (a == 'jform_' + code)
+        if (a === 'jform_' + code)
             return text_areas[i][1];
     }
     return -1;
@@ -511,45 +492,45 @@ function findTagInLine(ch, str) {
 
     for (let i = ch; i > -1; i--) {
 
-        if ((str[i] == ']' || str[i] == '}') && i != ch)
+        if ((str[i] === ']' || str[i] === '}') && i !== ch)
             level++;
 
-        if (str[i] == '[' || str[i] == '{') {
+        if (str[i] === '[' || str[i] === '{') {
 
-            if (startchar == '')
+            if (startchar === '')
                 startchar = str[i];
 
             level--;
-            if (level == 0) {
+            if (level === 0) {
                 start_pos = i;
                 break;
             }
         }
     }
 
-    if (start_pos == -1)
+    if (start_pos === -1)
         return null;
 
     level = 1;
     for (let i2 = ch; i2 < str.length; i2++) {
 
-        if (str[i2] == '[' || str[i2] == '{')
+        if (str[i2] === '[' || str[i2] === '{')
             level++;
 
-        if (str[i2] == ']' || str[i2] == '}') {
+        if (str[i2] === ']' || str[i2] === '}') {
 
-            if (endchar == '')
+            if (endchar === '')
                 endchar = str[i2];
 
             level--;
-            if (level == 0) {
+            if (level === 0) {
                 end_pos = i2;
                 break;
             }
         }
     }
 
-    if (end_pos == -1)
+    if (end_pos === -1)
         return null;
 
     if (start_pos <= ch && end_pos >= ch)
@@ -560,16 +541,17 @@ function findTagInLine(ch, str) {
 
 function findTagObjectByName(tagstartchar, tagendchar, lookfor_tag) {
 
+    let s;
     let TwigTag = false;
 
-    if (tagstartchar == '{{') {
+    if (tagstartchar === '{{') {
         tagstartchar = '{';
         tagendchar = '}'
 
         TwigTag = true;
     }
 
-    for (var s = 0; s < tagsets.length; s++) {
+    for (s = 0; s < tagsets.length; s++) {
         let tagset = tagsets[s];
         let tags = getParamOptions(tagset, 'tag');
 
@@ -577,28 +559,27 @@ function findTagObjectByName(tagstartchar, tagendchar, lookfor_tag) {
             let tag = tags[i];
             let a = tag["@attributes"];
 
-            if (lookfor_tag.indexOf(".") == -1) {
+            if (lookfor_tag.indexOf(".") === -1) {
 
                 //Conversion - OLD to Twig
-                if (typeof (a.twigclass) == "undefined" || a.twigclass == "") {
+                if (typeof (a.twigclass) == "undefined" || a.twigclass === "") {
 
-                    if (a.name == lookfor_tag && a.startchar == tagstartchar && a.endchar == tagendchar)
+                    if (a.name === lookfor_tag && a.startchar === tagstartchar && a.endchar === tagendchar)
                         return tag;
                 }
 
             } else if (TwigTag && typeof (a.twigclass) !== "undefined" && a.twigclass !== "") {
 
                 //Twig Tag
-                if (a.twigclass + '.' + a.name == lookfor_tag && a.startchar == tagstartchar && a.endchar == tagendchar)
+                if (a.twigclass + '.' + a.name === lookfor_tag && a.startchar === tagstartchar && a.endchar === tagendchar)
                     return tag;
             }
         }
     }
 
-
     //If nothing found then simplify the search
 
-    for (var s = 0; s < tagsets.length; s++) {
+    for (s = 0; s < tagsets.length; s++) {
         let tagset = tagsets[s];
         let tags = getParamOptions(tagset, 'tag');
 
@@ -606,16 +587,16 @@ function findTagObjectByName(tagstartchar, tagendchar, lookfor_tag) {
             let tag = tags[i];
             let a = tag["@attributes"];
 
-            if (lookfor_tag.indexOf(".") == -1) {
+            if (lookfor_tag.indexOf(".") === -1) {
 
                 //Conversion - OLD to Twig
-                if (a.name == lookfor_tag && a.startchar == tagstartchar && a.endchar == tagendchar)
+                if (a.name === lookfor_tag && a.startchar === tagstartchar && a.endchar === tagendchar)
                     return tag;
 
             } else if (TwigTag && typeof (a.twigclass) !== "undefined" && a.twigclass !== "") {
 
                 //Twig Tag
-                if (a.twigclass + '.' + a.name == lookfor_tag && a.startchar == tagstartchar && a.endchar == tagendchar)
+                if (a.twigclass + '.' + a.name === lookfor_tag && a.startchar === tagstartchar && a.endchar === tagendchar)
                     return tag;
             }
         }
@@ -625,10 +606,8 @@ function findTagObjectByName(tagstartchar, tagendchar, lookfor_tag) {
 }
 
 function getParamEditForm(tagobject, line, positions, isnew, countparams, tagstartchar, postfix, tagendchar, paramvaluestring) {
-    let att = tagobject["@attributes"];
-    let result = "";
 
-    result += renderParamBox(tagobject, "current_tagparameter", paramvaluestring);
+    let result = renderParamBox(tagobject, "current_tagparameter", paramvaluestring);
     result += '<div class="dynamic_values"><span class="dynamic_values_label">Tag with parameter:</span> ';
     result += tagstartchar;
     result += temp_params_tag;
@@ -641,18 +620,18 @@ function getParamEditForm(tagobject, line, positions, isnew, countparams, tagsta
     return result;
 }
 
-function saveParams(e, countparams, line_number, pos1, pos2, isnew, tagstartchar, tagendchar, postfix) {
+function saveParams(e, countParams, line_number, pos1, pos2, isNew, tagStartChar, tagEndchar, postfix) {
 
-    updateParamString("fieldtype_param_", 1, countparams, "current_tagparameter", null, false);
+    updateParamString("fieldtype_param_", 1, countParams, "current_tagparameter", null, false);
     e.preventDefault();
-    let result = '';
-    let tmp_params = document.getElementById('current_tagparameter').innerHTML;
-    result = tagstartchar + temp_params_tag + postfix;
 
-    if (tmp_params != "")
+    let tmp_params = document.getElementById('current_tagparameter').innerHTML;
+    let result = tagStartChar + temp_params_tag + postfix;
+
+    if (tmp_params !== "")
         result += '(' + tmp_params + ')';//{{ tag.edit(par1,par2) }} where ".edit" is the postfix
 
-    result += tagendchar;
+    result += tagEndchar;
 
     let cursor_from = {line: line_number, ch: pos1};
     let cursor_to = {line: line_number, ch: pos2};
@@ -669,7 +648,7 @@ function closeModal(e) {
     e.preventDefault();
 
     document.getElementById('layouteditor_Modal').style.display = "none";
-    var cm = codemirror_editors[0];
+    const cm = codemirror_editors[0];
     cm.focus();
     return false;
 }
@@ -678,24 +657,25 @@ function define_cmLayoutEditor() {
     define_cmLayoutEditor1('layouteditor', 'text/html');
 }
 
+//Used in layouteditor/php
 function define_cmLayoutEditor1(modename, nextmodename) {
     CodeMirror.defineMode(modename, function (config, parserConfig) {
-        var layouteditorOverlay =
+        const layouteditorOverlay =
             {
                 token: function (stream, state) {
 
                     if (stream.match("[")) {
-                        var hasParameters = false;
-                        var level = 1;
-                        var ch = "";
+                        let hasParameters = false;
+                        let level = 1;
+                        let ch = "";
                         while ((ch = stream.next()) != null) {
-                            if (ch == "[") {
+                            if (ch === "[") {
                                 level++;
                             }
 
-                            if (ch == "]") {
+                            if (ch === "]") {
                                 level -= 1;
-                                if (level == 0) {
+                                if (level === 0) {
                                     stream.eat("]");
 
                                     if (hasParameters)
@@ -705,22 +685,22 @@ function define_cmLayoutEditor1(modename, nextmodename) {
                                 }
                             }
 
-                            if (ch == ':' && level == 1) {
+                            if (ch === ':' && level === 1) {
                                 hasParameters = true;
                             }
                         }
                     } else if (stream.match("{")) {
-                        var hasParameters2 = false;
-                        var level2 = 1;
-                        var ch2 = "";
+                        let hasParameters2 = false;
+                        let level2 = 1;
+                        let ch2 = "";
                         while ((ch2 = stream.next()) != null) {
-                            if (ch2 == "{") {
+                            if (ch2 === "{") {
                                 level2++;
                             }
 
-                            if (ch2 == "}") {
+                            if (ch2 === "}") {
                                 level2 -= 1;
-                                if (level2 == 0) {
+                                if (level2 === 0) {
                                     stream.eat("}");
 
                                     if (hasParameters2)
@@ -730,7 +710,7 @@ function define_cmLayoutEditor1(modename, nextmodename) {
                                 }
                             }
 
-                            if (ch2 == ':' && 2 == 1) {
+                            if (ch2 === ':' && 2 === 1) {
                                 hasParameters2 = true;
                             }
                         }
@@ -740,7 +720,6 @@ function define_cmLayoutEditor1(modename, nextmodename) {
                     return null;
                 }
             };
-
 
         return CodeMirror.overlayMode(CodeMirror.getMode(config, parserConfig.backdrop || nextmodename), layouteditorOverlay);
     });
@@ -759,7 +738,7 @@ function do_render_current_TagSets() {
         let tagset = tagsets[i];
         let a = tagset["@attributes"];
 
-        if (typeof (a.deprecated) == "undefined" || a.deprecated == "0") {
+        if (typeof (a.deprecated) == "undefined" || a.deprecated === "0") {
 
             tabs.push({
                 'id': 'layouteditor_tags' + index + '_' + i + '', 'title': a.label,
@@ -779,13 +758,13 @@ function renderTags(index, tagset) {
     let tagset_attributes = tagset["@attributes"];
 
     let tags = getParamOptions(tagset, 'tag');
-    let result = '<div class="dynamic_values" style="padding-left:0px !important;">';
+    let result = '<div class="dynamic_values" style="padding-left:0 !important;">';
 
     for (let i = 0; i < tags.length; i++) {
         let tag_object = tags[i];
         let tag = tag_object["@attributes"];
 
-        if (typeof (tag.deprecated) == "undefined" || tag.deprecated == "0") {
+        if (typeof (tag.deprecated) == "undefined" || tag.deprecated === "0") {
             let t = "";
             let params = getParamOptions(tag_object.params, 'param');
 
@@ -795,17 +774,17 @@ function renderTags(index, tagset) {
             else
                 full_tagname = tag.name;
 
-            if (tagset_attributes.name == 'filters')
+            if (tagset_attributes.name === 'filters')
                 full_tagname = tag.examplevalue + ' | ' + full_tagname;
 
-            if (params.length == 0)
+            if (params.length === 0)
                 t = '{{ ' + full_tagname + ' }}'; // t=tag.startchar+tag.name+tag.endchar;
             else
                 t = '{{ ' + full_tagname + '(<span>Params</span>)' + ' }}'; //t=tag.startchar+full_tagname+':<span>Params</span>'+tag.endchar;
 
-            result += '<div style="vertical-align:top; style="display:inline-block;"">';
+            result += '<div style="vertical-align:top;display:inline-block;">';
 
-            if (typeof (tag.proversion) === "undefined" || parseInt(tag.proversion) != 1) {
+            if (typeof (tag.proversion) === "undefined" || parseInt(tag.proversion) !== 1) {
                 result += '<a href=\'javascript:addTag("{{ "," }}","' + btoa(full_tagname) + '",' + params.length + ');\' class="btn-primary">' + t + '</a> ';
             } else {
                 if (proversion) {
@@ -837,9 +816,9 @@ function addTabExtraEvents3() {
             let codepair = a.split("#");
             let code = codepair[1].replace('-tab', '');
 
-            var index = textarea_findindex(code);
+            const index = textarea_findindex(code);
 
-            if (index != -1) {
+            if (index !== -1) {
                 setTimeout(function () {
                     console.log(index);
                     codemirror_active_index = index;
@@ -878,6 +857,7 @@ function addTabExtraEvent4(id) {
     }
 }
 
+//Used in layouteditor.php
 function addTabExtraEvents() {
 
     let tabs = ['layoutcode', 'layoutmobile', 'layoutcss', 'layoutjs']
@@ -908,8 +888,9 @@ function addTabExtraEvents() {
     cm.refresh();
 }
 
+//Used in layouteditor.php
 function addExtraEvents() {
-    let index = 0;
+
     setTimeout(function () {
         let editors = document.getElementsByClassName("CodeMirror");
 
@@ -930,42 +911,37 @@ function addExtraEvent(index) {
 
         if (positions != null) {
             let startchar = line.substring(positions[0], positions[0] + 1); //+1 to have 1 character
-            if (startchar == '{') {
+            if (startchar === '{') {
                 let startchar2 = line.substring(positions[0] - 1, positions[0] + 1);
-                if (startchar2 == '{{')
+                if (startchar2 === '{{')
                     startchar = '{{';
             }
 
             let endchar = line.substring(positions[1] - 1, positions[1] - 1 + 1);//-1 because position ends after the tag
-            if (endchar == '}') {
+            if (endchar === '}') {
                 let endchar2 = line.substring(positions[1] - 1, positions[1] - 1 + 2);
-                if (endchar2 == '}}')
+                if (endchar2 === '}}')
                     endchar = '}}';
             }
 
             let tag = line.substring(positions[0] + 1, positions[1] - 1);//-1 because position ends after the tag
 
-            if (startchar == '{{') {
+            if (startchar === '{{') {
                 positions[0] = positions[0] - 1;
                 positions[1] = positions[1] + 1;
             }
 
             let postfix = ''; //todo
-            let mousepos = cm.cursorCoords(cr, "window");
-            showModalForm(startchar, postfix, endchar, tag, mousepos.top, mousepos.left, cr.line, positions, 0);
+            let mousePos = cm.cursorCoords(cr, "window");
+            showModalForm(startchar, postfix, endchar, tag, mousePos.top, mousePos.left, cr.line, positions, 0);
         }
 
     }, true);
 }
 
-function htmlDecode2(input) {
-    var doc = new DOMParser().parseFromString(input, "text/html");
-    return doc.documentElement.textContent;
-}
-
 function adjustEditorHeight() {
     let editors = document.getElementsByClassName("CodeMirror");
-    if (editors.length == 0)
+    if (editors.length === 0)
         return false;//editor not found
 
     for (let i = 0; i < editors.length; i++) {
