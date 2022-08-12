@@ -7,10 +7,9 @@
  * @copyright Copyright (C) 2018-2022. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
-
-var extraTasksUpdate_count = 0;
-var extraTasksUpdate_startindex = 0;
-var extraTasksUpdate_stepsize = 10;
+let extraTasksUpdate_count = 0;
+let extraTasksUpdate_startindex = 0;
+let extraTasksUpdate_stepsize = 10;
 
 function extraTasksUpdate(task, old_params, new_params, tableid, fieldid, tabletitle, fieldtitle) {
     let result = '';

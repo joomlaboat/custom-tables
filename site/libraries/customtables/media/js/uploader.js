@@ -98,16 +98,7 @@ function ct_getUploader(index, urlstr, maxFileSize, allowedTypes, UploaderForm, 
             },
 
             afterUploadAll: function (obj) {
-                /*
-                    var msg='';
-                    if(uploaderParams[index].UploadFileCount==1)
-                        msg='File has been uploaded';
-                    else
-                        msg='All files are uploaded';
-
-
-                    $("#"+EventMessageBox).html($("#"+EventMessageBox).html()+"<br/>"+msg);
-                    */
+let
             },
             onError: function (files, status, errMsg, pd) {
 

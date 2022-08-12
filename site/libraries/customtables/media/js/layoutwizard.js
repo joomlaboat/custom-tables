@@ -93,7 +93,7 @@ function loadFieldsData(tableid) {
 
 function updateFieldsBox() {
 
-    //var result=renderFieldsBox();
+    //let result=renderFieldsBox();
     //result+='<p>Position cursor to the code editor where you want to insert a new dynamic tag and click on the Tag Button.</p>';
     //field_box_obj.innerHTML='';//<div class="dynamic_values">'+result+'</div>';
 }

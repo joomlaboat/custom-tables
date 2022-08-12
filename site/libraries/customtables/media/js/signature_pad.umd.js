@@ -5,9 +5,10 @@
 
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-    typeof define === 'function' && define.amd ? define(factory) :
-    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.SignaturePad = factory());
-}(this, (function () { 'use strict';
+        typeof define === 'function' && define.amd ? define(factory) :
+            (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.SignaturePad = factory());
+}(this, (function () {
+    'use strict';
 
     var Point = (function () {
         function Point(x, y, time) {
@@ -15,6 +16,7 @@
             this.y = y;
             this.time = time || Date.now();
         }
+
         Point.prototype.distanceTo = function (start) {
             return Math.sqrt(Math.pow(this.x - start.x, 2) + Math.pow(this.y - start.y, 2));
         };
@@ -29,7 +31,7 @@
         return Point;
     }());
 
-    var Bezier = (function () {
+    const Bezier = (function () {
         function Bezier(startPoint, control2, control1, endPoint, startWidth, endWidth) {
             this.startPoint = startPoint;
             this.control2 = control2;
@@ -38,6 +40,7 @@
             this.startWidth = startWidth;
             this.endWidth = endWidth;
         }
+
         Bezier.fromPoints = function (points, widths) {
             var c2 = this.calculateControlPoints(points[0], points[1], points[2]).c2;
             var c3 = this.calculateControlPoints(points[1], points[2], points[3]).c1;
@@ -48,14 +51,14 @@
             var dy1 = s1.y - s2.y;
             var dx2 = s2.x - s3.x;
             var dy2 = s2.y - s3.y;
-            var m1 = { x: (s1.x + s2.x) / 2.0, y: (s1.y + s2.y) / 2.0 };
-            var m2 = { x: (s2.x + s3.x) / 2.0, y: (s2.y + s3.y) / 2.0 };
+            var m1 = {x: (s1.x + s2.x) / 2.0, y: (s1.y + s2.y) / 2.0};
+            var m2 = {x: (s2.x + s3.x) / 2.0, y: (s2.y + s3.y) / 2.0};
             var l1 = Math.sqrt(dx1 * dx1 + dy1 * dy1);
             var l2 = Math.sqrt(dx2 * dx2 + dy2 * dy2);
             var dxm = m1.x - m2.x;
             var dym = m1.y - m2.y;
             var k = l2 / (l1 + l2);
-            var cm = { x: m2.x + dxm * k, y: m2.y + dym * k };
+            var cm = {x: m2.x + dxm * k, y: m2.y + dym * k};
             var tx = s2.x - cm.x;
             var ty = s2.y - cm.y;
             return {
@@ -92,13 +95,15 @@
     }());
 
     function throttle(fn, wait) {
-        if (wait === void 0) { wait = 250; }
-        var previous = 0;
-        var timeout = null;
-        var result;
-        var storedContext;
-        var storedArgs;
-        var later = function () {
+        if (wait === void 0) {
+            wait = 250;
+        }
+        let previous = 0;
+        let timeout = null;
+        let result;
+        let storedContext;
+        let storedArgs;
+        const later = function () {
             previous = Date.now();
             timeout = null;
             result = fn.apply(storedContext, storedArgs);
@@ -108,12 +113,12 @@
             }
         };
         return function wrapper() {
-            var args = [];
-            for (var _i = 0; _i < arguments.length; _i++) {
+            const args = [];
+            for (let _i = 0; _i < arguments.length; _i++) {
                 args[_i] = arguments[_i];
             }
-            var now = Date.now();
-            var remaining = wait - (now - previous);
+            const now = Date.now();
+            const remaining = wait - (now - previous);
             storedContext = this;
             storedArgs = args;
             if (remaining <= 0 || remaining > wait) {
@@ -127,18 +132,19 @@
                     storedContext = null;
                     storedArgs = [];
                 }
-            }
-            else if (!timeout) {
+            } else if (!timeout) {
                 timeout = window.setTimeout(later, remaining);
             }
             return result;
         };
     }
 
-    var SignaturePad = (function () {
+    const SignaturePad = (function () {
         function SignaturePad(canvas, options) {
-            var _this = this;
-            if (options === void 0) { options = {}; }
+            const _this = this;
+            if (options === void 0) {
+                options = {};
+            }
             this.canvas = canvas;
             this.options = options;
             this._handleMouseDown = function (event) {
@@ -187,9 +193,9 @@
                 : 5);
             this.dotSize =
                 options.dotSize ||
-                    function dotSize() {
-                        return (this.minWidth + this.maxWidth) / 2;
-                    };
+                function dotSize() {
+                    return (this.minWidth + this.maxWidth) / 2;
+                };
             this.penColor = options.penColor || 'black';
             this.backgroundColor = options.backgroundColor || 'rgba(0,0,0,0)';
             this.onBegin = options.onBegin;
@@ -201,6 +207,7 @@
             this.clear();
             this.on();
         }
+
         SignaturePad.prototype.clear = function () {
             var _a = this, ctx = _a._ctx, canvas = _a.canvas;
             ctx.fillStyle = this.backgroundColor;
@@ -212,7 +219,9 @@
         };
         SignaturePad.prototype.fromDataURL = function (dataUrl, options, callback) {
             var _this = this;
-            if (options === void 0) { options = {}; }
+            if (options === void 0) {
+                options = {};
+            }
             var image = new Image();
             var ratio = options.ratio || window.devicePixelRatio || 1;
             var width = options.width || this.canvas.width / ratio;
@@ -233,7 +242,9 @@
             this._isEmpty = false;
         };
         SignaturePad.prototype.toDataURL = function (type, encoderOptions) {
-            if (type === void 0) { type = 'image/png'; }
+            if (type === void 0) {
+                type = 'image/png';
+            }
             switch (type) {
                 case 'image/svg+xml':
                     return this._toSVG();
@@ -246,8 +257,7 @@
             this.canvas.style.msTouchAction = 'none';
             if (window.PointerEvent) {
                 this._handlePointerEvents();
-            }
-            else {
+            } else {
                 this._handleMouseEvents();
                 if ('ontouchstart' in window) {
                     this._handleTouchEvents();
@@ -275,10 +285,10 @@
             this.clear();
             this._fromData(pointGroups, function (_a) {
                 var color = _a.color, curve = _a.curve;
-                return _this._drawCurve({ color: color, curve: curve });
+                return _this._drawCurve({color: color, curve: curve});
             }, function (_a) {
                 var color = _a.color, point = _a.point;
-                return _this._drawDot({ color: color, point: point });
+                return _this._drawDot({color: color, point: point});
             });
             this._data = pointGroups;
         };
@@ -315,10 +325,9 @@
             if (!lastPoint || !(lastPoint && isLastPointTooClose)) {
                 var curve = this._addPoint(point);
                 if (!lastPoint) {
-                    this._drawDot({ color: color, point: point });
-                }
-                else if (curve) {
-                    this._drawCurve({ color: color, curve: curve });
+                    this._drawDot({color: color, point: point});
+                } else if (curve) {
+                    this._drawCurve({color: color, curve: curve});
                 }
                 lastPoints.push({
                     time: point.time,
@@ -447,11 +456,10 @@
                         }
                         var curve = this._addPoint(point);
                         if (curve) {
-                            drawCurve({ color: color, curve: curve });
+                            drawCurve({color: color, curve: curve});
                         }
                     }
-                }
-                else {
+                } else {
                     this._reset();
                     drawDot({
                         color: color,
@@ -507,18 +515,18 @@
                 (" width=\"" + maxX + "\"") +
                 (" height=\"" + maxY + "\"") +
                 '>';
-            var body = svg.innerHTML;
+            let body = svg.innerHTML;
             if (body === undefined) {
-                var dummy = document.createElement('dummy');
-                var nodes = svg.childNodes;
+                const dummy = document.createElement('dummy');
+                const nodes = svg.childNodes;
                 dummy.innerHTML = '';
-                for (var i = 0; i < nodes.length; i += 1) {
+                for (let i = 0; i < nodes.length; i += 1) {
                     dummy.appendChild(nodes[i].cloneNode(true));
                 }
                 body = dummy.innerHTML;
             }
-            var footer = '</svg>';
-            var data = header + body + footer;
+            const footer = '</svg>';
+            const data = header + body + footer;
             return prefix + btoa(data);
         };
         return SignaturePad;

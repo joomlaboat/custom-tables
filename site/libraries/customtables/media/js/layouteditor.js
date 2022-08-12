@@ -100,8 +100,7 @@ function loadTags(type_id, tags_box) {
                     //tags_box_obj.innerHTML='<p class="msg_error">Error: '+(new XMLSerializer()).serializeToString(xmlDoc)+'</p>';
                     return;
                 }
-                //tags_box_obj.innerHTML='Loaded.';
-                //var s=Array.from(xmlToJson(xmlDoc));
+
                 const s = xmlToJson(xmlDoc);
 
                 layout_tags = s.layouts.tagset;
@@ -203,7 +202,6 @@ function showModal() {
     const w = box.offsetWidth;
     const h = box.offsetHeight;
 
-    //var x=left-w/2;
     let x = (doc_w / 2) - w / 2;
     if (x < 10)
         x = 10;
@@ -211,7 +209,6 @@ function showModal() {
     if (x + w + 10 > doc_w)
         x = doc_w - w - 10;
 
-    //var y=top-h/2;
     let y = (doc_h / 2) - h / 2;
 
     if (y < 50)
@@ -826,9 +823,9 @@ function addTabExtraEvents3() {
                     let cm = codemirror_editors[index];
                     cm.refresh();
                     /*
-                    var h = window.innerHeight;
-                    var rect = cm.getBoundingClientRect();
-                    var editorHeight=h-rect.top-40;
+                    let h = window.innerHeight;
+                    let rect = cm.getBoundingClientRect();
+                    let editorHeight=h-rect.top-40;
                     cm.style.height = editorHeight+'px';
                     */
                     adjustEditorHeight();
