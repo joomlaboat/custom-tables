@@ -581,3 +581,24 @@ function ctUpdateCheckboxCounter(tableid) {
         counterIDObj.innerHTML = count.toString();
     }
 }
+
+function ctValue_googlemapcoordinates(boxId, lat, long, zoom) {
+
+    let cursorPoint = new google.maps.LatLng(lat, long);
+    let map_obj = document.getElementById(boxId);
+
+    gmapdata[boxId] = new google.maps.Map(map_obj, {
+        center: cursorPoint,
+        zoom: zoom,
+        mapTypeId: 'roadmap'
+    });
+
+    gmapmarker[boxId] = new google.maps.Marker({
+        map: gmapdata[boxId],
+        position: cursorPoint
+    });
+
+    let infoWindow = new google.maps.InfoWindow;
+
+    return false;
+}

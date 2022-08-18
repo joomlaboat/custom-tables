@@ -24,17 +24,19 @@ function updateTagsParameters() {
     if (isNaN(current_layout_type))
         current_layout_type = 0;
 
-    let t1 = findTagSets(current_layout_type, 1);
-    let t2 = findTagSets(current_layout_type, 2);
-    let t3 = findTagSets(current_layout_type, 3);
-    let t4 = findTagSets(current_layout_type, 4);
+    let t1 = findTagSets(current_layout_type, "1");
+    let t2 = findTagSets(current_layout_type, "2");
+    let t3 = findTagSets(current_layout_type, "3");
+    let t4 = findTagSets(current_layout_type, "4");
 
     tagsets = t1.concat(t2, t3, t4);
 
     if (tagsets.length > 0)
         do_render_current_TagSets();
-    else
-        tags_box_obj.innerHTML = '<p class="msg_error">Unknown Field Type</p>';
+    else {
+        const box = document.getElementById("layouteditor_modal_content_box");
+        box.innerHTML = '<p class="msg_error">Unknown Field Type</p>';
+    }
 
     updateFieldsBox();
 }
@@ -55,11 +57,9 @@ function findTagSets(layouttypeid, priority) {
 
             const lta = layouttypes.split(',');
 
-            if (layouttypes === "" || lta.indexOf(layouttypeid + "") !== -1) {
+            if (layouttypes === "" || lta.indexOf(layouttypeid + "") !== -1)
                 tagsets_.push(layout_tags[i]);
-            }
         }
-
     }
     return tagsets_;
 }

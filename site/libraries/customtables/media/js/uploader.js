@@ -98,7 +98,7 @@ function ct_getUploader(index, urlstr, maxFileSize, allowedTypes, UploaderForm, 
             },
 
             afterUploadAll: function (obj) {
-let
+
             },
             onError: function (files, status, errMsg, pd) {
 

@@ -51,6 +51,12 @@ function renderInputBox(id, param, vlu, attributes) {
 
             result += '<input type="number" id="' + id + '" value="' + vlu + '" ' + extra + ' ' + attributes + '>';
         } else if (param_att.type === "list") {
+
+            if (vlu === '') {
+                if (typeof (param_att.default) !== "undefined")
+                    vlu = param_att.default;
+            }
+
             result = renderInput_List(id, param, vlu, attributes);
         } else if (param_att.type === "language") {
             result = renderInput_Language(id, param, vlu, attributes);

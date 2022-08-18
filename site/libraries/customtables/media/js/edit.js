@@ -405,7 +405,6 @@ function CheckSQLJoinRadioSelections(id) {
     return true;
 }
 
-/*
 function recaptchaCallback() {
     let buttons = ['save', 'saveandclose', 'saveandprint', 'saveandcopy', 'delete'];
     for (let i = 0; i < buttons.length; i++) {
@@ -416,8 +415,6 @@ function recaptchaCallback() {
             obj.disabled = false;
     }
 }
-*/
-
 
 function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_index, parent_object_id, formId) {
     let wrapper = document.getElementById(control_name + "Wrapper");
@@ -583,7 +580,6 @@ function ctUpdateTableJoinLink(control_name, index, execute_all, sub_index, obje
         if (obj.value == "") {
             //Empty everything after
             document.getElementById(control_name + "Selector" + index + '_' + sub_index).innerHTML = '';//"Not selected";
-            //alert("Not selected")
             return false;
         }
 
@@ -825,8 +821,10 @@ let gmapmarker = [];
 function ctInputbox_googlemapcoordinates(inputbox_id) {
     let val = document.getElementById(inputbox_id).value;
     let val_list = val.split(",");
-    let def_longval = (val_list[0] !== '' ? parseFloat(val_list[0]) : 120.994260);
-    let def_latval = (val_list.length > 1 && val_list[1] !== '' ? parseFloat(val_list[1]) : 14.593999);
+
+    let def_latval = (val_list[0] !== '' ? parseFloat(val_list[0]) : -8);
+    let def_longval = (val_list.length > 1 && val_list[1] !== '' ? parseFloat(val_list[1]) : -79);
+
     let def_zoomval = (val_list.length > 2 && val_list[2] !== '' ? parseFloat(val_list[2]) : 10);
     if (def_zoomval === 0)
         def_zoomval = 10;
@@ -855,7 +853,7 @@ function ctInputbox_googlemapcoordinates(inputbox_id) {
     infoWindow = new google.maps.InfoWindow;
 
     google.maps.event.addListener(gmapdata[inputbox_id], 'click', function (event) {
-        document.getElementById(inputbox_id).value = event.latLng.lng().toFixed(6) + "," + event.latLng.lat().toFixed(6);
+        document.getElementById(inputbox_id).value = event.latLng.lat().toFixed(6) + "," + event.latLng.lng().toFixed(6);
         gmapmarker[inputbox_id].setPosition(event.latLng);
     });
 

@@ -85,12 +85,45 @@ class Value
             case 'phponadd':
             case 'phponchange':
             case 'phponview':
-            case 'googlemapcoordinates':
             case 'alias':
             case 'radio':
             case 'server':
             case 'email':
             case 'url':
+                return $rowValue;
+            case 'googlemapcoordinates':
+
+                if ($option_list[0] == 'map') {
+
+                    $parts = explode(',', $rowValue);
+                    $lat = $parts[0];
+                    $lng = $parts[1] ?? '';
+                    if ($lat == '' or $lng == '')
+                        return '';
+
+                    $width = $option_list[1] ?? '320px';
+                    if (!str_contains($width, '%') and !str_contains($width, 'px'))
+                        $width .= 'px';
+
+                    $height = $option_list[2] ?? '240px';
+                    if (!str_contains($height, '%') and !str_contains($height, 'px'))
+                        $height .= 'px';
+
+                    $zoom = (int)$option_list[3] ?? '10';
+                    if ($zoom == 0)
+                        $zoom = 10;
+
+                    $boxId = 'ct' . $this->field->fieldname . '_map' . $row[$this->ct->Table->realidfieldname];
+
+                    return '<div id="' . $boxId . '" style="width:' . $width . ';height:' . $height . '">'
+                        . '</div><script>ctValue_googlemapcoordinates("' . $boxId . '", ' . $lat . ',' . $lng . ',' . $zoom . ')</script>';
+
+                } elseif ($option_list[0] == 'latitude')
+                    return explode(',', $rowValue)[0];
+                elseif ($option_list[0] == 'longitude') {
+                    $parts = explode(',', $rowValue);
+                    return ($parts[1] ?? '');
+                }
                 return $rowValue;
 
             case 'multilangstring':

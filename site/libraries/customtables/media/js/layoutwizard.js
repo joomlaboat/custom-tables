@@ -99,7 +99,7 @@ function updateFieldsBox() {
 }
 
 function renderTabs(tabset_id, tabs) {
-    // Tabs is the the array of tab elements [{"title":"Tab Title","id":"Tab Name","content":"Tab Content"}...]
+    // Tabs is the array of tab elements [{"title":"Tab Title","id":"Tab Name","content":"Tab Content"}...]
 
     if (joomlaVersion < 4) {
         let result_li = '';
