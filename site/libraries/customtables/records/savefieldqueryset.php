@@ -16,7 +16,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomTablesImageMethods;
-use Joomla\CMS\Factory;
 use Joomla\CMS\Component\ComponentHelper;
 
 use CT_FieldTypeTag_image;
@@ -35,15 +34,13 @@ use JoomlaBasicMisc;
 class SaveFieldQuerySet
 {
     var CT $ct;
-    var $db;
-    var Field $field;
+    public Field $field;
     var ?array $row;
     var bool $isCopy;
 
     function __construct(CT &$ct, $row, $isCopy = false)
     {
         $this->ct = &$ct;
-        $this->db = Factory::getDBO();
         $this->row = $row;
         $this->isCopy = $isCopy;
     }
@@ -69,7 +66,7 @@ class SaveFieldQuerySet
             case 'records':
                 $value = $this->get_record_type_value();
                 $this->row[$this->field->realfieldname] = $value;
-                return ($value === null ? null : $this->field->realfieldname . '=' . $this->db->Quote($value));
+                return ($value === null ? null : $this->field->realfieldname . '=' . $this->ct->db->Quote($value));
 
             case 'sqljoin':
 
@@ -89,7 +86,7 @@ class SaveFieldQuerySet
 
                 if (isset($value)) {
                     $this->row[$this->field->realfieldname] = $value;
-                    return $this->field->realfieldname . '=' . $this->db->Quote($value);
+                    return $this->field->realfieldname . '=' . $this->ct->db->Quote($value);
                 }
 
                 break;
@@ -101,7 +98,7 @@ class SaveFieldQuerySet
 
                 if (isset($value)) {
                     $this->row[$this->field->realfieldname] = $value;
-                    return $this->field->realfieldname . '=' . $this->db->Quote($value);
+                    return $this->field->realfieldname . '=' . $this->ct->db->Quote($value);
                 }
 
                 break;
@@ -137,7 +134,7 @@ class SaveFieldQuerySet
                     $value = str_replace('#', '', $value);
                     if (ctype_xdigit($value) or $value == '') {
                         $this->row[$this->field->realfieldname] = $value;
-                        return $this->field->realfieldname . '=' . $this->db->Quote($value);
+                        return $this->field->realfieldname . '=' . $this->ct->db->Quote($value);
                     }
                 }
                 break;
@@ -148,7 +145,7 @@ class SaveFieldQuerySet
                 if (isset($value)) {
                     $value = $this->get_alias_type_value($listing_id);
                     $this->row[$this->field->realfieldname] = $value;
-                    return ($value === null ? null : $this->field->realfieldname . '=' . $this->db->Quote($value));
+                    return ($value === null ? null : $this->field->realfieldname . '=' . $this->ct->db->Quote($value));
                 }
                 break;
 
@@ -167,7 +164,7 @@ class SaveFieldQuerySet
 
                     if (isset($value)) {
                         $this->row[$this->field->realfieldname . $postfix] = $value;
-                        $sets[] = $this->field->realfieldname . $postfix . '=' . $this->db->Quote($value);
+                        $sets[] = $this->field->realfieldname . $postfix . '=' . $this->ct->db->Quote($value);
                     }
                 }
 
@@ -179,7 +176,7 @@ class SaveFieldQuerySet
 
                 if (isset($value)) {
                     $this->row[$this->field->realfieldname] = $value;
-                    return $this->field->realfieldname . '=' . $this->db->Quote(stripslashes($value));
+                    return $this->field->realfieldname . '=' . $this->ct->db->Quote(stripslashes($value));
                 }
 
                 break;
@@ -199,7 +196,7 @@ class SaveFieldQuerySet
 
                     if (isset($value)) {
                         $this->row[$this->field->realfieldname . $postfix] = $value;
-                        $sets[] = $this->field->realfieldname . $postfix . '=' . $this->db->Quote($value);
+                        $sets[] = $this->field->realfieldname . $postfix . '=' . $this->ct->db->Quote($value);
                     }
                 }
 
@@ -279,12 +276,12 @@ class SaveFieldQuerySet
             case 'usergroups':
                 $value = $this->get_usergroups_type_value();
                 $this->row[$this->field->realfieldname] = $value;
-                return ($value === null ? null : $this->field->realfieldname . '=' . $this->db->Quote($value));
+                return ($value === null ? null : $this->field->realfieldname . '=' . $this->ct->db->Quote($value));
 
             case 'language':
                 $value = $this->get_customtables_type_language();
                 $this->row[$this->field->realfieldname] = $value;
-                return ($value === null ? null : $this->field->realfieldname . '=' . $this->db->Quote($value));
+                return ($value === null ? null : $this->field->realfieldname . '=' . $this->ct->db->Quote($value));
 
             case 'float':
                 $value = $this->ct->Env->jinput->get($this->field->comesfieldname, null, 'FLOAT');
@@ -303,7 +300,7 @@ class SaveFieldQuerySet
 
                 $value = CT_FieldTypeTag_image::get_image_type_value($this->field, $listing_id);
                 $this->row[$this->field->realfieldname] = $value;
-                return ($value === null ? null : $this->field->realfieldname . '=' . $this->db->Quote($value));
+                return ($value === null ? null : $this->field->realfieldname . '=' . $this->ct->db->Quote($value));
 
             case 'file':
 
@@ -319,14 +316,14 @@ class SaveFieldQuerySet
                     return $this->field->realfieldname . '=NULL';
                 } else {
                     $this->row[$this->field->realfieldname] = $value;
-                    return ($value === null ? null : $this->field->realfieldname . '=' . $this->db->Quote($value));
+                    return ($value === null ? null : $this->field->realfieldname . '=' . $this->ct->db->Quote($value));
                 }
 
             case 'signature':
 
                 $value = $this->get_customtables_type_signature();
                 $this->row[$this->field->realfieldname] = $value;
-                return ($value === null ? null : $this->field->realfieldname . '=' . $this->db->Quote($value));
+                return ($value === null ? null : $this->field->realfieldname . '=' . $this->ct->db->Quote($value));
 
             case 'multilangarticle':
 
@@ -353,7 +350,7 @@ class SaveFieldQuerySet
 
                 $value = $this->get_customtables_type_value();
                 $this->row[$this->field->realfieldname] = $value;
-                return ($value === null ? null : $this->field->realfieldname . '=' . $this->db->Quote($value));
+                return ($value === null ? null : $this->field->realfieldname . '=' . $this->ct->db->Quote($value));
 
             case 'email':
                 $value = $this->ct->Env->jinput->getString($this->field->comesfieldname);
@@ -361,10 +358,10 @@ class SaveFieldQuerySet
                     $value = trim($value);
                     if (Email::checkEmail($value)) {
                         $this->row[$this->field->realfieldname] = $value;
-                        return $this->field->realfieldname . '=' . $this->db->Quote($value);
+                        return $this->field->realfieldname . '=' . $this->ct->db->Quote($value);
                     } else {
                         $this->row[$this->field->realfieldname] = null;
-                        return $this->field->realfieldname . '=' . $this->db->Quote("");//PostgreSQL compatible
+                        return $this->field->realfieldname . '=' . $this->ct->db->Quote("");//PostgreSQL compatible
                     }
                 }
                 break;
@@ -376,10 +373,10 @@ class SaveFieldQuerySet
 
                     if (filter_var($value, FILTER_VALIDATE_URL)) {
                         $this->row[$this->field->realfieldname] = $value;
-                        return $this->field->realfieldname . '=' . $this->db->Quote($value);
+                        return $this->field->realfieldname . '=' . $this->ct->db->Quote($value);
                     } else {
                         $this->row[$this->field->realfieldname] = null;
-                        return $this->field->realfieldname . '=' . $this->db->Quote("");//PostgreSQL compatible
+                        return $this->field->realfieldname . '=' . $this->ct->db->Quote("");//PostgreSQL compatible
                     }
                 }
                 break;
@@ -419,10 +416,10 @@ class SaveFieldQuerySet
                         if (Fields::isFieldNullable($this->ct->Table->realtablename, $this->field->realfieldname))
                             return $this->field->realfieldname . '=NULL';
                         else
-                            return $this->field->realfieldname . '=' . $this->db->Quote('0000-00-00 00:00:00');
+                            return $this->field->realfieldname . '=' . $this->ct->db->Quote('0000-00-00 00:00:00');
                     } else {
                         $this->row[$this->field->realfieldname] = $value;
-                        return $this->field->realfieldname . '=' . $this->db->Quote($value);
+                        return $this->field->realfieldname . '=' . $this->ct->db->Quote($value);
                     }
                 }
 
@@ -448,14 +445,14 @@ class SaveFieldQuerySet
                     $value = gmdate('Y-m-d H:i:s');
                     $this->row[$this->field->realfieldname] = $value;
 
-                    return $this->field->realfieldname . '=' . $this->db->Quote($value);
+                    return $this->field->realfieldname . '=' . $this->ct->db->Quote($value);
                 }
                 break;
 
             case 'changetime':
                 $value = gmdate('Y-m-d H:i:s');
                 $this->row[$this->field->realfieldname] = $value;
-                return $this->field->realfieldname . '=' . $this->db->Quote($value);
+                return $this->field->realfieldname . '=' . $this->ct->db->Quote($value);
 
             case 'server':
 
@@ -465,7 +462,7 @@ class SaveFieldQuerySet
                     $value = $this->ct->Env->jinput->server->get($this->field->params[0], '', 'STRING');
 
                 $this->row[$this->field->realfieldname] = $value;
-                return $this->field->realfieldname . '=' . $this->db->Quote($value);
+                return $this->field->realfieldname . '=' . $this->ct->db->Quote($value);
 
             case 'id':
                 //get max id
@@ -473,15 +470,15 @@ class SaveFieldQuerySet
                     $minid = (int)$this->field->params[0];
 
                     $query = 'SELECT MAX(' . $this->ct->Table->realidfieldname . ') AS maxid FROM ' . $this->ct->Table->realtablename . ' LIMIT 1';
-                    $this->db->setQuery($query);
-                    $rows = $this->db->loadObjectList();
+                    $this->ct->db->setQuery($query);
+                    $rows = $this->ct->db->loadObjectList();
                     if (count($rows) != 0) {
                         $value = (int)($rows[0]->maxid) + 1;
                         if ($value < $minid)
                             $value = $minid;
 
                         $this->row[$this->field->realfieldname] = $value;
-                        return $this->field->realfieldname . '=' . $this->db->Quote($value);
+                        return $this->field->realfieldname . '=' . $this->ct->db->Quote($value);
                     }
                 }
                 break;
@@ -503,7 +500,7 @@ class SaveFieldQuerySet
                 if ($vlu != '') {
                     $value = md5($vlu);
                     $this->row[$this->field->realfieldname] = $value;
-                    return $this->field->realfieldname . '=' . $this->db->Quote($value);
+                    return $this->field->realfieldname . '=' . $this->ct->db->Quote($value);
                 }
 
                 break;
@@ -617,11 +614,11 @@ class SaveFieldQuerySet
     protected function checkIfAliasExists($exclude_id, $value, $realfieldname): bool
     {
         $query = 'SELECT count(' . $this->ct->Table->realidfieldname . ') AS c FROM ' . $this->ct->Table->realtablename . ' WHERE '
-            . $this->ct->Table->realidfieldname . '!=' . (int)$exclude_id . ' AND ' . $realfieldname . '=' . $this->db->quote($value) . ' LIMIT 1';
+            . $this->ct->Table->realidfieldname . '!=' . (int)$exclude_id . ' AND ' . $realfieldname . '=' . $this->ct->db->quote($value) . ' LIMIT 1';
 
-        $this->db->setQuery($query);
+        $this->ct->db->setQuery($query);
 
-        $rows = $this->db->loadObjectList();
+        $rows = $this->ct->db->loadObjectList();
         if (count($rows) == 0)
             return false;
 
@@ -809,8 +806,8 @@ class SaveFieldQuerySet
     protected function getList($parentid)
     {
         $query = 'SELECT id, optionname FROM #__customtables_options WHERE parentid=' . (int)$parentid;
-        $this->db->setQuery($query);
-        return $this->db->loadObjectList();
+        $this->ct->db->setQuery($query);
+        return $this->ct->db->loadObjectList();
     }
 
     protected function getComboString($parent): ?string
@@ -881,7 +878,7 @@ class SaveFieldQuerySet
             $value = $twig->process($this->row);
 
             $this->row[$this->field->realfieldname] = $value;
-            return $this->field->realfieldname . '=' . $this->db->quote($value);
+            return $this->field->realfieldname . '=' . $this->ct->db->quote($value);
         }
         return null;
     }
@@ -962,9 +959,9 @@ class SaveFieldQuerySet
     function runUpdateQuery($saveQuery, $listing_id): void
     {
         if (count($saveQuery) > 0) {
-            $query = 'UPDATE ' . $this->ct->Table->realtablename . ' SET ' . implode(', ', $saveQuery) . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . $this->db->quote($listing_id);
-            $this->db->setQuery($query);
-            $this->db->execute();
+            $query = 'UPDATE ' . $this->ct->Table->realtablename . ' SET ' . implode(', ', $saveQuery) . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . $this->ct->db->quote($listing_id);
+            $this->ct->db->setQuery($query);
+            $this->ct->db->execute();
         }
     }
 

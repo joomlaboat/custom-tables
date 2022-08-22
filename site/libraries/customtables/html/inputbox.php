@@ -1381,6 +1381,7 @@ class Inputbox
                             $listing_id = $row[$this->ct->Table->realidfieldname] ?? 0;
 
                             $saveField = new SaveFieldQuerySet($this->ct, $this->ct->Table->record, false);
+                            $saveField->field = $this->field;
                             $value = $saveField->prepare_alias_type_value($listing_id, $value);
                         }
                     }
