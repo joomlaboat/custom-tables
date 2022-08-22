@@ -62,7 +62,8 @@ class DataTypes
             'md5' => 'COM_CUSTOMTABLES_FIELDS_MDFIVE_HASH',
             'log' => 'COM_CUSTOMTABLES_FIELDS_MODIFICATION_LOG',
             'usergroup' => 'COM_CUSTOMTABLES_FIELDS_USER_GROUP',
-            'usergroups' => 'COM_CUSTOMTABLES_FIELDS_USER_GROUPS'
+            'usergroups' => 'COM_CUSTOMTABLES_FIELDS_USER_GROUPS',
+            'blob' => 'COM_CUSTOMTABLES_FIELDS_BLOB'
         );
 
         return $typeArray;

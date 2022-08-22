@@ -28,6 +28,13 @@ let all_tables = [];
 let proversion = false;
 let SQLJoinTableID = null;
 
+function typeChanged() {
+    if (typeparams_obj != null)
+        typeparams_obj.value = "";
+
+    updateParameters();
+}
+
 function renderInputBox(id, param, vlu, attributes) {
     const param_att = param["@attributes"];
 

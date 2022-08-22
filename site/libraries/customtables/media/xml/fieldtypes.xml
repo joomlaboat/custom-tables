@@ -314,7 +314,7 @@
                    default="doc docx xls xlsx pdf pages ppt pptx" type="string"/>
             <param name="filenamefield" label="Field to get the file name from / to"
                    description="Specify the name of the field where to store the original file name. By the default file name will be the current timestamp and guessed file extension."
-                   default="" type="string"/>
+                   type="field"/>
             <param type="string" name="customphp" label="Custom PHP"
                    description="PHP file/function that will process file content before being downloaded by the user. File must be located at /components/com_customtables/customphp."
                    proversion="1"/>
