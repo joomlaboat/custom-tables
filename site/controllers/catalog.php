@@ -99,12 +99,13 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
 
     $link = JoomlaBasicMisc::deleteURLQueryOption($link, 'task');
 
-    if (!$edit_model->load($ct))
+    if (!$edit_model->load($ct, false))
         die('Model not loaded');
 
     switch ($task) {
 
         case 'delete':
+
             $count = $edit_model->delete();
             if ($count > 0) {
                 if ($ct->Env->clean == 1) {

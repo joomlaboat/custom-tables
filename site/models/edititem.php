@@ -50,7 +50,7 @@ class CustomTablesModelEditItem extends JModelLegacy
         parent::__construct();
     }
 
-    function load(CT $ct): bool
+    function load(CT $ct, bool $addHeaderCode = false): bool
     {
         $this->ct = $ct;
 
@@ -70,7 +70,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
         if ($this->ct->Params->editLayout != '') {
             $Layouts = new Layouts($this->ct);
-            $this->pagelayout = $Layouts->getLayout($this->ct->Params->editLayout);
+            $this->pagelayout = $Layouts->getLayout($this->ct->Params->editLayout, true, false, $addHeaderCode);
         } else
             $this->pagelayout = '';
 

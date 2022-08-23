@@ -62,7 +62,7 @@ class Layouts
         return true;
     }
 
-    function getLayout(string $layoutname, bool $processLayoutTag = true)
+    function getLayout(string $layoutname, bool $processLayoutTag = true, bool $checkLayoutFile = true, bool $addHeaderCode = true): string
     {
         if ($layoutname == '')
             return '';
@@ -100,7 +100,8 @@ class Layouts
         if ($processLayoutTag)
             $this->processLayoutTag($layoutcode);
 
-        $this->addCSSandJSIfNeeded($row);
+        if ($addHeaderCode)
+            $this->addCSSandJSIfNeeded($row);
 
         return $layoutcode;
     }
