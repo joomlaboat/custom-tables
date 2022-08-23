@@ -269,21 +269,29 @@ class Value
     {
         $orderby_pair = explode(' ', $this->ct->Ordering->orderby);
 
-        if ($orderby_pair[0] == $this->field->realfieldname)
-            $iconClass = '';
-        else
-            $iconClass = ' inactive tip-top hasTooltip" title="' . JHtml::_('tooltipText', 'COM_CUSTOMTABLES_FIELD_ORDERING_DISABLED');
+        if ($this->ct->Env->version < 4) {
 
-        $result = '
-			<span class="sortable-handler' . $iconClass . '">
-				<i class="icon-menu"></i>
-			</span>';
+            if ($orderby_pair[0] == $this->field->realfieldname)
+                $iconClass = '';
+            else
+                $iconClass = ' inactive tip-top hasTooltip" title="' . JHtml::_('tooltipText', 'COM_CUSTOMTABLES_FIELD_ORDERING_DISABLED');
 
-        if ($orderby_pair[0] == $this->field->realfieldname) {
-            $result .= '<input type="text" style="display:none" name="order[]" size="5" value="' . $value . '" class="width-20 text-area-order " />';
-            $result .= '<input type="checkbox" style="display:none" name="cid[]" value="' . $row[$this->ct->Table->realidfieldname] . '" class="width-20 text-area-order " />';
+            $result = '<span class="sortable-handler' . $iconClass . '"><i class="icon-menu"></i></span>';
 
-            $this->ct->LayoutVariables['ordering_field_type_found'] = true;
+            if ($orderby_pair[0] == $this->field->realfieldname) {
+                $result .= '<input type="text" style="display:none" name="order[]" size="5" value="' . $value . '" class="width-20 text-area-order " />';
+                $result .= '<input type="checkbox" style="display:none" name="cid[]" value="' . $row[$this->ct->Table->realidfieldname] . '" class="width-20 text-area-order " />';
+
+                $this->ct->LayoutVariables['ordering_field_type_found'] = true;
+            }
+
+        } else {
+            $result = '<span class="sortable-handler"><span class="icon-ellipsis-v" aria-hidden="true"></span></span>';
+
+            if ($orderby_pair[0] == $this->field->realfieldname) {
+                $result .= '<input type="text" name="order[]" size="5" value="' . $value . '" class="width-20 text-area-order " />';
+                $this->ct->LayoutVariables['ordering_field_type_found'] = true;
+            }
         }
 
         return $result;

@@ -102,6 +102,8 @@ trait render_html
 
         //Add Ordering Field Type code
         if (isset($ct->LayoutVariables['ordering_field_type_found']) and $ct->LayoutVariables['ordering_field_type_found']) {
+
+
             $saveOrderingUrl = 'index.php?option=com_customtables&view=catalog&task=ordering&tableid=' . $ct->Table->tableid . '&tmpl=component&clean=1';
             JHtml::_('sortablelist.sortable', 'ctTable_' . $ct->Table->tableid . '', 'ctTableForm_' . $ct->Table->tableid . '', 'asc', $saveOrderingUrl);
 

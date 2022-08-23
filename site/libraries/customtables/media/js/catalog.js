@@ -1,8 +1,8 @@
 let es_LinkLoading = false;
 
-function ctCreateUser(msg, listing_id, toolbarboxid, ModuleId) {
+function ctCreateUser(msg, listing_id, toolbarBoxId, ModuleId) {
     if (confirm(msg)) {
-        document.getElementById(toolbarboxid).innerHTML = '';
+        document.getElementById(toolbarBoxId).innerHTML = '';
 
         let returnto = btoa(window.location.href);
 
@@ -18,12 +18,11 @@ function ctCreateUser(msg, listing_id, toolbarboxid, ModuleId) {
     }
 }
 
-function ctResetPassword(msg, listing_id, toolbarboxid, ModuleId) {
+function ctResetPassword(msg, listing_id, toolbarBoxId, ModuleId) {
     if (confirm(msg)) {
-        document.getElementById(toolbarboxid).innerHTML = '';
+        document.getElementById(toolbarBoxId).innerHTML = '';
         let returnto = btoa(window.location.href);
-
-        let link = '';
+        let link;
 
         if (ModuleId !== 0)
             link = esPrepareLink(['task', "listing_id", 'returnto', 'ids', 'option', 'view'], ['task=resetpassword', 'option=com_customtables', 'view=catalog', 'listing_id=' + listing_id, 'returnto=' + returnto, 'ModuleId=' + ModuleId], '');
@@ -56,15 +55,15 @@ function esPrepareLink(deleteParams, addParams, custom_link) {
     return link;
 }
 
-function esEditObject(objid, toolbarboxid, Itemid, tmpl, returnto) {
+function esEditObject(objId, toolbarBoxId, Itemid, tmpl, returnto) {
     if (es_LinkLoading)
         return;
 
     es_LinkLoading = true;
-    document.getElementById(toolbarboxid).innerHTML = '';
+    document.getElementById(toolbarBoxId).innerHTML = '';
 
     let return_to = btoa(window.location.href);
-    let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=edititem&listing_id=' + objid + '&Itemid=' + Itemid + '&returnto=' + return_to;
+    let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=edititem&listing_id=' + objId + '&Itemid=' + Itemid + '&returnto=' + return_to;
 
     if (tmpl !== '')
         link += '&tmpl=' + tmpl;
@@ -74,7 +73,7 @@ function esEditObject(objid, toolbarboxid, Itemid, tmpl, returnto) {
     window.location.href = link;
 }
 
-function runTheTask(task, tableid, recordid, url, responses, last) {
+function runTheTask(task, tableid, recordId, url, responses, last) {
 
     let params = "";
     let http = CreateHTTPRequestObject();   // defined in ajax.js
@@ -89,19 +88,19 @@ function runTheTask(task, tableid, recordid, url, responses, last) {
 
                 if (responses.indexOf(res) !== -1) {
 
-                    let element_tableid_tr = "ctTable_" + tableid + '_' + recordid;
+                    let element_tableid_tr = "ctTable_" + tableid + '_' + recordId;
                     let index = findRowIndexById("ctTable_" + tableid, element_tableid_tr);
 
                     if (task === 'delete')
                         document.getElementById("ctTable_" + tableid).deleteRow(index);
                     else
-                        ctCatalogUpdate(tableid, recordid, index);
+                        ctCatalogUpdate(tableid, recordId, index);
 
                     es_LinkLoading = false;
 
                     if (last) {
-                        let toolbarboxid = 'esToolBar_' + task + '_box_' + tableid;
-                        document.getElementById(toolbarboxid).style.visibility = 'visible';
+                        let toolbarBoxId = 'esToolBar_' + task + '_box_' + tableid;
+                        document.getElementById(toolbarBoxId).style.visibility = 'visible';
                     }
 
                 } else
@@ -112,29 +111,29 @@ function runTheTask(task, tableid, recordid, url, responses, last) {
     }
 }
 
-function ctRefreshRecord(tableid, recordid, toolbarboxid, ModuleId) {
+function ctRefreshRecord(tableid, recordId, toolbarBoxId, ModuleId) {
     if (es_LinkLoading)
         return;
 
     es_LinkLoading = true;
 
-    document.getElementById(toolbarboxid).innerHTML = '';
+    document.getElementById(toolbarBoxId).innerHTML = '';
 
-    let element_tableid_tr = "ctTable_" + tableid + '_' + recordid;
+    let element_tableid_tr = "ctTable_" + tableid + '_' + recordId;
 
     let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + ctItemId;
 
     let tr_object = document.getElementById(element_tableid_tr);
     if (tr_object) {
-        let url = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], ['task=refresh', 'listing_id=' + recordid, 'clean=1', 'tmpl=component'], link);
-        runTheTask('refresh', tableid, recordid, url, ['refreshed'], false);
+        let url = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], ['task=refresh', 'listing_id=' + recordId, 'clean=1', 'tmpl=component'], link);
+        runTheTask('refresh', tableid, recordId, url, ['refreshed'], false);
     } else {
         let returnto = btoa(window.location.href);
 
         if (ModuleId !== 0)
-            link = esPrepareLink(['task', "listing_id", 'returnto', 'ids', 'option', 'view'], ['task=refresh', 'option=com_customtables', 'view=catalog', 'listing_id=' + recordid, 'returnto=' + returnto, 'ModuleId=' + ModuleId], link);
+            link = esPrepareLink(['task', "listing_id", 'returnto', 'ids', 'option', 'view'], ['task=refresh', 'option=com_customtables', 'view=catalog', 'listing_id=' + recordId, 'returnto=' + returnto, 'ModuleId=' + ModuleId], link);
         else
-            link = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], ['task=refresh', 'listing_id=' + recordid, 'returnto=' + returnto], link);
+            link = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], ['task=refresh', 'listing_id=' + recordId, 'returnto=' + returnto], link);
 
         window.location.href = link;
     }
@@ -161,41 +160,41 @@ function ctLimitChanged(object) {
     window.location.href = link;
 }
 
-function ctPublishRecord(tableid, recordid, toolbarboxid, publish, ModuleId) {
+function ctPublishRecord(tableid, recordId, toolbarBoxId, publish, ModuleId) {
     if (es_LinkLoading)
         return;
 
     es_LinkLoading = true;
 
-    document.getElementById(toolbarboxid).innerHTML = '';
+    document.getElementById(toolbarBoxId).innerHTML = '';
 
     let task = publish === 1 ? 'task=publish' : 'task=unpublish';
 
-    let element_tableid_tr = "ctTable_" + tableid + '_' + recordid;
+    let element_tableid_tr = "ctTable_" + tableid + '_' + recordId;
     let tr_object = document.getElementById(element_tableid_tr);
 
     let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + ctItemId;
 
     if (tr_object) {
-        let url = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], [task, 'listing_id=' + recordid, 'clean=1', 'tmpl=component'], link);
-        runTheTask((publish === 0 ? 'unpublish' : 'publish'), tableid, recordid, url, ['published', 'unpublished'], false);
+        let url = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], [task, 'listing_id=' + recordId, 'clean=1', 'tmpl=component'], link);
+        runTheTask((publish === 0 ? 'unpublish' : 'publish'), tableid, recordId, url, ['published', 'unpublished'], false);
     } else {
         let returnto = Base64.encode(window.location.href);
 
         if (ModuleId !== 0)
-            link = esPrepareLink(['task', "listing_id", 'returnto', 'ids', 'option', 'view'], [task, 'option=com_customtables', 'view=catalog', 'listing_id=' + recordid, 'returnto=' + returnto, 'ModuleId=' + ModuleId], link);
+            link = esPrepareLink(['task', "listing_id", 'returnto', 'ids', 'option', 'view'], [task, 'option=com_customtables', 'view=catalog', 'listing_id=' + recordId, 'returnto=' + returnto, 'ModuleId=' + ModuleId], link);
         else
-            link = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], [task, 'listing_id=' + recordid, 'returnto=' + returnto], link);
+            link = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], [task, 'listing_id=' + recordId, 'returnto=' + returnto], link);
 
         window.location.href = link;
     }
 }
 
-function findRowIndexById(tableid, rowid) {
+function findRowIndexById(tableid, rowId) {
 
     let rows = document.getElementById(tableid).rows;
     for (let i = 0; i < rows.length; i++) {
-        if (rows.item(i).id === rowid)
+        if (rows.item(i).id === rowId)
             return i;
     }
     return -1;
@@ -223,7 +222,7 @@ function ctDeleteRecord(msg, tableid, recordId, toolbarBoxId, ModuleId) {
 
         if (tr_object) {
 
-            runTheTask('delete', tableid, recordId, url, ['deleted'], false);
+            runTheTask('delete', tableid, recordId, link, ['deleted'], false);
         } else {
             window.location.href = link;
         }
@@ -272,8 +271,8 @@ function ctSearchBoxDo() {
     window.location.href = link;
 }
 
-function esCheckboxAllclicked(tableid) {
-    const checkboxobj = document.getElementById("esCheckboxAll" + tableid);
+function esCheckboxAllClicked(tableid) {
+    const checkboxObj = document.getElementById("esCheckboxAll" + tableid);
     const elements = document.getElementsByName("esCheckbox" + tableid);
 
     const ids = [];
@@ -283,7 +282,7 @@ function esCheckboxAllclicked(tableid) {
         if (ids.indexOf(d) === -1) {
             ids.push(d);
             const obj = document.getElementById(elements[i].id);
-            obj.checked = checkboxobj.checked;
+            obj.checked = checkboxObj.checked;
         }
     }
 }
@@ -320,8 +319,8 @@ function ctToolBarDO(task, tableid) {
 
     if (task === 'delete') {
 
-        let msg = '';
-        if (elements.length == 1)
+        let msg;
+        if (elements.length === 1)
             msg = Joomla.JText._('COM_CUSTOMTABLES_JS_SELECT_DO_U_WANT_TO_DELETE1l');
         else
             msg = Joomla.JText._('COM_CUSTOMTABLES_JS_SELECT_DO_U_WANT_TO_DELETE').replace('%s', elements.length);
@@ -332,8 +331,8 @@ function ctToolBarDO(task, tableid) {
         }
     }
 
-    const toolbarboxid = 'esToolBar_' + task + '_box_' + tableid;
-    document.getElementById(toolbarboxid).style.visibility = 'hidden';
+    const toolbarBoxId = 'esToolBar_' + task + '_box_' + tableid;
+    document.getElementById(toolbarBoxId).style.visibility = 'hidden';
 
     let element_tableid = "ctTable_" + tableid;
     let tr_object = document.getElementById(element_tableid);
@@ -369,10 +368,10 @@ function ctToolBarDO(task, tableid) {
 //https://stackoverflow.com/a/1634841
 function removeURLParameter(url, parameter) {
     //prefer to use l.search if you have a location/link object
-    const urlparts = url.split('?');
-    if (urlparts.length >= 2) {
+    const urlParts = url.split('?');
+    if (urlParts.length >= 2) {
         const prefix = encodeURIComponent(parameter) + '=';
-        const pars = urlparts[1].split(/[&;]/g);
+        const pars = urlParts[1].split(/[&;]/g);
 
         //reverse iteration as may be destructive
         for (let i = pars.length; i-- > 0;) {
@@ -382,7 +381,7 @@ function removeURLParameter(url, parameter) {
             }
         }
 
-        url = urlparts[0] + (pars.length > 0 ? '?' + pars.join('&') : "");
+        url = urlParts[0] + (pars.length > 0 ? '?' + pars.join('&') : "");
         return url;
     } else {
         return url;

@@ -16,6 +16,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use Exception;
+use JHtml;
 use JoomlaBasicMisc;
 use CT_FieldTypeTag_sqljoin;
 use CT_FieldTypeTag_records;
@@ -24,7 +25,6 @@ use Twig\TwigFilter;
 use Twig\TwigFunction;
 
 use CT_FieldTypeTag_image;
-
 
 $types_path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR;
 
@@ -224,6 +224,11 @@ class TwigProcessor
         $this->twig->addFilter($filter);
     }
 
+    /**
+     * @throws Twig\Error\RuntimeError
+     * @throws Twig\Error\SyntaxError
+     * @throws Twig\Error\LoaderError
+     */
     public function process(?array $row = null): string
     {
         if ($row !== null)
@@ -247,6 +252,16 @@ class TwigProcessor
             }
 
             return str_replace($this->recordBlockReplaceCode, $record_result, $result);
+        }
+
+
+        if (isset($this->ct->LayoutVariables['ordering_field_type_found']) and $this->ct->LayoutVariables['ordering_field_type_found']) {
+            echo 'Ordering field found.';
+
+            $saveOrderingUrl = 'index.php?option=com_customtables&view=catalog&task=ordering&tableid=' . $this->ct->Table->tableid . '&tmpl=component&clean=1';
+            JHtml::_('sortablelist.sortable', 'ctTable_' . $this->ct->Table->tableid, 'ctTableForm_' . $this->ct->Table->tableid . '', 'asc', $saveOrderingUrl);
+
+            $result = '<form id="ctTableForm_' . $this->ct->Table->tableid . '">' . $result . '</form>';
         }
 
         return $result;

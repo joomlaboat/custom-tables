@@ -294,7 +294,7 @@ class Twig_Html_Tags
 
         foreach ($buttons_array as $mode) {
             if ($mode == 'checkbox') {
-                $html_buttons[] = '<input type="checkbox" id="esCheckboxAll' . $this->ct->Table->tableid . '" onChange="esCheckboxAllclicked(' . $this->ct->Table->tableid . ')" />';
+                $html_buttons[] = '<input type="checkbox" id="esCheckboxAll' . $this->ct->Table->tableid . '" onChange="esCheckboxAllClicked(' . $this->ct->Table->tableid . ')" />';
             } else {
                 if (in_array($mode, $available_modes)) {
                     $rid = 'esToolBar_' . $mode . '_box_' . $this->ct->Table->tableid;
