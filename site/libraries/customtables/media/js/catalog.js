@@ -209,21 +209,22 @@ function ctDeleteRecord(msg, tableid, recordId, toolbarBoxId, ModuleId) {
     if (confirm(msg)) {
 
         let element_tableid_tr = "ctTable_" + tableid + '_' + recordId;
-        let tr_object = document.getElementById(element_tableid_tr);
-
         let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + ctItemId;
-        let returnto = btoa(window.location.href);
+        link = esPrepareLink(['task', "listing_id", 'returnto', 'ids', 'tableid'], ['tableid=' + tableid, 'task=delete', 'listing_id=' + recordId], link);
 
-        if (ModuleId !== 0)
-            link = esPrepareLink(['task', "listing_id", 'returnto', 'ids', 'option', 'view', 'ModuleId', 'tableid'], ['tableid=' + tableid, 'task=delete', 'option=com_customtables', 'view=catalog', 'listing_id=' + recordId, 'returnto=' + returnto, 'ModuleId=' + ModuleId], link);
-        else
-            link = esPrepareLink(['task', "listing_id", 'returnto', 'ids', 'tableid'], ['tableid=' + tableid, 'task=delete', 'listing_id=' + recordId, 'returnto=' + returnto], link);
-
-
+        let tr_object = document.getElementById(element_tableid_tr);
         if (tr_object) {
 
+            link = esPrepareLink([], ['clean=1', 'tmpl=component'], link);
             runTheTask('delete', tableid, recordId, link, ['deleted'], false);
         } else {
+
+            let returnto = btoa(window.location.href);
+            link = esPrepareLink([], ['returnto=' + returnto], link);
+
+            if (ModuleId !== 0)
+                link = esPrepareLink(['option', 'view', 'ModuleId'], ['option=com_customtables', 'view=catalog', 'ModuleId=' + ModuleId], link);
+
             window.location.href = link;
         }
     } else
