@@ -233,35 +233,48 @@ class TwigProcessor
         if ($row !== null)
             $this->ct->Table->record = $row;
 
-        try {
-            $result = @$this->twig->render('index', $this->variables);
-        } catch (Exception $e) {
-            $this->ct->app->enqueueMessage($e->getMessage(), 'error');
-            return $e->getMessage();
+        $isSingleRecord = false;
+
+        if ($row == null and in_array($this->ct->LayoutVariables['layout_type'], [1, 5])) {
+
+            if ($this->ct->Params->listing_id != '') {
+                $isSingleRecord = true;
+            }
+
+        }
+
+        if ($isSingleRecord) {
+            $result = '';
+        } else {
+            try {
+                $result = @$this->twig->render('index', $this->variables);
+            } catch (Exception $e) {
+                $this->ct->app->enqueueMessage($e->getMessage(), 'error');
+                return $e->getMessage();
+            }
         }
 
         if ($this->recordBlockFound) {
             $number = 1;
             $record_result = '';
 
-            if (isset($this->ct->LayoutVariables['ordering_field_type_found']) and $this->ct->LayoutVariables['ordering_field_type_found']) {
-                foreach ($this->ct->Records as $row) {
-                    $row['_number'] = $number;
-                    $this->ct->Table->record = $row;
-                    $row_result = @$this->twig->render('record', $this->variables);
-                    $row_result = str_ireplace('<tr ', '<tr id="ctTable_' . $this->ct->Table->tableid . '_' . $row[$this->ct->Table->realidfieldname] . '" ', $row_result);
-                    $row_result = str_ireplace('<tr>', '<tr id="ctTable_' . $this->ct->Table->tableid . '_' . $row[$this->ct->Table->realidfieldname] . '">', $row_result);
+            foreach ($this->ct->Records as $blockRow) {
+                $blockRow['_number'] = $number;
+                $this->ct->Table->record = $blockRow;
+                $row_result = @$this->twig->render('record', $this->variables);
+
+                //<tr id=...> is needed for ordering, modal edit, on page delete, publish and refresh functionality
+                $row_result = str_ireplace('<tr ', '<tr id="ctTable_' . $this->ct->Table->tableid . '_' . $blockRow[$this->ct->Table->realidfieldname] . '" ', $row_result);
+                $row_result = str_ireplace('<tr>', '<tr id="ctTable_' . $this->ct->Table->tableid . '_' . $blockRow[$this->ct->Table->realidfieldname] . '">', $row_result);
+
+                if ($isSingleRecord and $blockRow[$this->ct->Table->realidfieldname] == $this->ct->Params->listing_id)
+                    return $row_result; //This allows modal edit form functionality, to load single record after Save click
+                else
                     $record_result .= $row_result;
-                    $number++;
-                }
-            } else {
-                foreach ($this->ct->Records as $row) {
-                    $row['_number'] = $number;
-                    $this->ct->Table->record = $row;
-                    $record_result .= @$this->twig->render('record', $this->variables);
-                    $number++;
-                }
+
+                $number++;
             }
+
             $result = str_replace($this->recordBlockReplaceCode, $record_result, $result);
         }
 

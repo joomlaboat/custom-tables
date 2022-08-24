@@ -253,7 +253,7 @@ class Ordering
                     $order_values[] = $fieldname;
                     $order_list[] = $fieldtitle . ' ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ZA');
                     $order_values[] = $fieldname . ' desc';
-                } elseif ($fieldType == 'int' or $fieldType == 'float') {
+                } elseif ($fieldType == 'int' or $fieldType == 'float' or $fieldType == 'ordering') {
                     $order_list[] = $fieldtitle . ' ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_MINMAX');
                     $order_values[] = $fieldname;
                     $order_list[] = $fieldtitle . ' ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_MAXMIN');

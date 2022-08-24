@@ -17,7 +17,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
-//$this->ct->Env->frmt and
 if (is_null($this->ct->Params->listing_id)) //there is no need to have a header if we are loading a single record.
 {
     if ($this->ct->Params->showPageHeading) {
@@ -55,4 +54,6 @@ if (is_null($this->ct->Params->listing_id)) //there is no need to have a header 
     </div>
 </div>
 <!-- end of the modal -->';
+} else {
+    die;
 }

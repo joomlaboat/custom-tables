@@ -212,12 +212,10 @@ class Twig_Html_Tags
         if (!is_null($this->ct->Params->ModuleId))
             return '';
 
-        $vlu = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ORDER_BY') . ': ' . OrderingHTML::getOrderBox($this->ct->Ordering);
+        if ($this->ct->Params->forceSortBy !== null and $this->ct->Params->forceSortBy != '')
+            $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_SORT_BY_FIELD_LOCKED'), 'error');
 
-        if ($this->isTwig)
-            return $vlu;
-        else
-            return $vlu;
+        return JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ORDER_BY') . ': ' . OrderingHTML::getOrderBox($this->ct->Ordering);
     }
 
     function goback($defaultLabel = 'COM_CUSTOMTABLES_GO_BACK', $image_icon = '', $attribute = '', $returnto = '')

@@ -121,6 +121,8 @@ class Catalog
         } else
             $pagelayout = $Layouts->getLayout($layout);
 
+        $this->ct->LayoutVariables['layout_type'] = $Layouts->layouttype;
+
 // -------------------- Load Records
         if (!$this->ct->getRecords()) {
             $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_TABLE_NOT_FOUND'), 'error');

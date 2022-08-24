@@ -273,6 +273,7 @@ function ctSearchBoxDo() {
 }
 
 function esCheckboxAllClicked(tableid) {
+
     const checkboxObj = document.getElementById("esCheckboxAll" + tableid);
     const elements = document.getElementsByName("esCheckbox" + tableid);
 
@@ -289,6 +290,7 @@ function esCheckboxAllClicked(tableid) {
 }
 
 function getListOfSelectedRecords(tableid) {
+
     const selectedIds = [];
     const elements = document.getElementsByName("esCheckbox" + tableid);
 
@@ -306,6 +308,7 @@ function getListOfSelectedRecords(tableid) {
 }
 
 function ctToolBarDO(task, tableid) {
+
     if (es_LinkLoading)
         return;
 
@@ -390,6 +393,7 @@ function removeURLParameter(url, parameter) {
 }
 
 function ct_UpdateSingleValue(WebsiteRoot, Itemid, fieldname_, record_id, postfix, ModuleId) {
+
     const fieldname = fieldname_.split('_')[0];
     const url = ctWebsiteRoot + 'index.php?option=com_customtables&amp;view=edititem&amp;Itemid=' + Itemid;
     let params = "";
@@ -448,11 +452,8 @@ function ct_UpdateSingleValue(WebsiteRoot, Itemid, fieldname_, record_id, postfi
 function ctCatalogUpdate(tableid, recordsId, row_index) {
 
     let element_tableid = "ctTable_" + tableid;
-
     let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + ctItemId;
-
     let url = esPrepareLink(['task', "listing_id", 'returnto', 'ids', 'clean', 'component', 'frmt'], ['listing_id=' + recordsId, 'number=' + row_index], link);
-
     let params = "";
     let http = CreateHTTPRequestObject();   // defined in ajax.js
 
@@ -473,8 +474,8 @@ function ctCatalogUpdate(tableid, recordsId, row_index) {
 }
 
 function getContainerElementIDTable(obj) {
-    while (true) {
 
+    while (true) {
         let parts = obj.id.split('_');
         if (parts[0] === 'ctTable') {
             return parts;
@@ -507,12 +508,9 @@ function ctCatalogOnDrop(event) {
 
         let from = from_parts[2] + '_' + from_parts[3];
         let to = to_parts[2] + '_' + to_parts[3];
-
         let element_tableid_tr = "ctTable_" + to_parts[1] + '_' + to_parts[2];
         let index = findRowIndexById("ctTable_" + to_parts[1], element_tableid_tr);
-
         let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + ctItemId;
-
         let url = esPrepareLink(['task', "listing_id", 'returnto', 'ids', 'clean', 'component', 'frmt'], ['task=copycontent', 'from=' + from, 'to=' + to, 'clean=1', 'tmpl=component', 'frmt=json'], link);
 
         fetch(url)
@@ -546,7 +544,6 @@ function ctCatalogOnDragOver(event) {
 function ctEditModal(url) {
 
     let new_url = url + '&modal=1&time=' + Date.now();
-
     let params = "";
     let http = CreateHTTPRequestObject();   // defined in ajax.js
 
@@ -599,6 +596,5 @@ function ctValue_googlemapcoordinates(boxId, lat, long, zoom) {
     });
 
     let infoWindow = new google.maps.InfoWindow;
-
     return false;
 }

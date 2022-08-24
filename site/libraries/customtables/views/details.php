@@ -47,6 +47,8 @@ class Details
             }
         } else $this->layoutDetailsContent = $layoutDetailsContent;
 
+        $this->ct->LayoutVariables['layout_type'] = $this->layoutType;
+
         if (!is_null($this->row)) {
             //$returnto = $this->ct->Params->returnTo;
 

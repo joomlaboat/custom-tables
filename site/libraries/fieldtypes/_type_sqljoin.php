@@ -36,6 +36,9 @@ class CT_FieldTypeTag_sqljoin
     //Old function
     public static function resolveSQLJoinType($listing_id, $typeparams, $option_list): string
     {
+        if ($listing_id == '')
+            return '';
+
         if (count($typeparams) < 1)
             return 'table not specified';
 
@@ -63,6 +66,7 @@ class CT_FieldTypeTag_sqljoin
         //New method - fast and secure
         $join_ct = new CT;
         $join_ct->getTable($typeparams[0]);
+
         $row = $join_ct->Table->loadRecord($listing_id);
 
         $twig = new TwigProcessor($join_ct, $result);

@@ -77,6 +77,7 @@ function submitModalForm(url, elements, tableid, recordid, hideModelOnSave) {
     let http = CreateHTTPRequestObject();   // defined in ajax.js
 
     if (http) {
+
         http.open("POST", url + "&clean=1", true);
         http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         http.onreadystatechange = function () {
