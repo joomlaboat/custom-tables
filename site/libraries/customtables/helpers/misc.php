@@ -242,7 +242,7 @@ class JoomlaBasicMisc
         $l = strlen($par) + 2;
 
         $offset = 0;
-        do {
+        while (1) {
             if ($offset >= strlen($text))
                 break;
 
@@ -312,10 +312,8 @@ class JoomlaBasicMisc
             $options[] = trim(substr($text, $ps + $l, $pe - $ps - $l));
             $fList[] = $notestr;
 
-
             $offset = $ps + $l;
-
-        } while (!($pe === false));
+        }
 
         //for these with no parameters
         $ps = strpos($text, $qtype[0] . $par . $qtype[1]);
@@ -430,25 +428,6 @@ class JoomlaBasicMisc
         return json_decode($rawparams);
     }
 
-    public static function csv_explode(string $delim, string $str, string $enclose = '"', bool $preserve = false): array
-    {
-        //$delim=','
-
-        $resArr = array();
-        $n = 0;
-        $expEncArr = explode($enclose, $str);
-        foreach ($expEncArr as $EncItem) {
-            if ($n++ % 2) {
-                array_push($resArr, array_pop($resArr) . ($preserve ? $enclose : '') . $EncItem . ($preserve ? $enclose : ''));
-            } else {
-                $expDelArr = explode($delim, $EncItem);
-                array_push($resArr, array_pop($resArr) . array_shift($expDelArr));
-                $resArr = array_merge($resArr, $expDelArr);
-            }
-        }
-        return $resArr;
-    }
-
     public static function processValue($field, &$ct, $row)
     {
         $p = strpos($field, '->');
@@ -493,8 +472,6 @@ class JoomlaBasicMisc
 
     }
 
-    //-- only for "records" field type;
-
     public static function getGroupIdByTitle($grouptitle): string
     {
         $db = Factory::getDbo();
@@ -511,7 +488,9 @@ class JoomlaBasicMisc
             return '';
 
         return $rows[0]->id;
-    }//processValue()
+    }
+
+    //-- only for "records" field type;
 
     public static function makeNewFileName(string $filename, string $format): string
     {
@@ -549,7 +528,7 @@ class JoomlaBasicMisc
             $filename .= '.' . $format;
 
         return $filename;
-    }
+    }//processValue()
 
     public static function JTextExtended($text, $value = null)
     {
@@ -748,6 +727,38 @@ class JoomlaBasicMisc
             $randomString .= $characters[rand(0, $charactersLength - 1)];
 
         return $randomString;
+    }
+
+    public static function getHTMLTagParameters($tag)
+    {
+        $params = JoomlaBasicMisc::csv_explode(' ', $tag, '"', true);
+        $result = [];
+        foreach ($params as $param) {
+            $param = JoomlaBasicMisc::csv_explode('=', $param, '"', false);
+            if (count($param) == 2) {
+                $result[strtolower($param[0])] = $param[1];
+            }
+        }
+        return $result;
+    }
+
+    public static function csv_explode(string $delim, string $str, string $enclose = '"', bool $preserve = false): array
+    {
+        //$delim=','
+
+        $resArr = array();
+        $n = 0;
+        $expEncArr = explode($enclose, $str);
+        foreach ($expEncArr as $EncItem) {
+            if ($n++ % 2) {
+                array_push($resArr, array_pop($resArr) . ($preserve ? $enclose : '') . $EncItem . ($preserve ? $enclose : ''));
+            } else {
+                $expDelArr = explode($delim, $EncItem);
+                array_push($resArr, array_pop($resArr) . array_shift($expDelArr));
+                $resArr = array_merge($resArr, $expDelArr);
+            }
+        }
+        return $resArr;
     }
 
     function getXMLData($file)

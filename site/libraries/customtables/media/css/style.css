@@ -518,6 +518,7 @@
 
 /* ------------------------------------- ordering field type ------------------------------- */
 
+/*
 [class^="icon-"],
 [class*=" icon-"] {
     display: inline-block;
@@ -525,6 +526,7 @@
     height: 14px;
     margin-right: .25em;
     line-height: 14px;
+    padding: 0;
 }
 
 [class^="icon-"]:before,
@@ -537,8 +539,23 @@
     font-weight: normal;
 }
 
-.icon-menu:before {
-    content: url("data:image/svg+xml,<svg width='10' viewBox='0 0 8 8' xmlns='http://www.w3.org/2000/svg'><circle cx='4' cy='4' r='4' fill='#0000ffff' /></svg>");
+*/
+
+.sortable-handler {
+    width: 8px;
+    height: 24px;
+}
+
+/*
+.ctIconOrdering {
+    height: 24px;
+    border: 1px solid green;
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB4PSIwIiB5PSIwIiB2aWV3Qm94PSIwIDAgOCA4IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxjaXJjbGUgY3g9IjQiIGN5PSI0IiByPSI0IiBmaWxsPSIjZmYwMDAwIiAvPjwvc3ZnPg==');
+}
+*/
+.ctIconOrdering:before {
+    height: 24px;
+    content: url('data:image/svg+xml;base64,PHN2ZyB4PSIwIiB5PSIwIiB2aWV3Qm94PSIwIDAgOCAyNCIgd2lkdGg9IjhweCIgaGVpZ2h0PSIyNHB4IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxjaXJjbGUgY3g9IjQiIGN5PSI0IiByPSI0IiBmaWxsPSIjZmYwMDAwIiAvPjxjaXJjbGUgY3g9IjQiIGN5PSIxMiIgcj0iNCIgZmlsbD0iI2ZmZmYwMCIgLz48Y2lyY2xlIGN4PSI0IiBjeT0iMjAiIHI9IjQiIGZpbGw9IiNmZjAwZmYiIC8+PC9zdmc+');
 }
 
 .sortable-handler.inactive {

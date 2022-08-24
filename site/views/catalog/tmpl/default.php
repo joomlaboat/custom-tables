@@ -19,17 +19,21 @@ if (is_null($this->ct->Params->listing_id)) //there is no need to have a header 
 {
     if ($this->ct->Params->showPageHeading) {
         $title = JoomlaBasicMisc::JTextExtended($this->ct->Params->pageTitle);
-        echo '
-		<div class="page-header' . $this->ct->Params->pageClassSFX . '">
-			<h2 itemprop="headline">' . $title . '</h2>
-		</div>
-		';
+        echo '<div class="page-header' . $this->ct->Params->pageClassSFX . '"><h2 itemprop="headline">' . $title . '</h2></div>';
     }
 }
 
 echo $this->catalog->render();
 
-//$this->ct->Env->frmt and
+if (isset($this->ct->LayoutVariables['ordering_field_type_found']) and $this->ct->LayoutVariables['ordering_field_type_found']) {
+    $saveOrderingUrl = 'index.php?option=com_customtables&view=catalog&task=ordering&tableid=' . $this->ct->Table->tableid . '&tmpl=component&clean=1';
+    if ($this->ct->Env->version < 4) {
+        JHtml::_('sortablelist.sortable', 'ctTable_' . $this->ct->Table->tableid, 'ctTableForm_' . $this->ct->Table->tableid . '', 'asc', $saveOrderingUrl);
+    } else {
+        HTMLHelper::_('draggablelist.draggable');
+    }
+}
+
 if (is_null($this->ct->Params->listing_id)) //there is no need to have a header if we are loading a single record.
 {
     echo '<!-- Modal content -->

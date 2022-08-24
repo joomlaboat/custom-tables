@@ -17,6 +17,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use Exception;
 use JHtml;
+use Joomla\CMS\HTML\HTMLHelper;
 use JoomlaBasicMisc;
 use CT_FieldTypeTag_sqljoin;
 use CT_FieldTypeTag_records;
@@ -244,23 +245,32 @@ class TwigProcessor
         if ($this->recordBlockFound) {
             $number = 1;
             $record_result = '';
-            foreach ($this->ct->Records as $row) {
-                $row['_number'] = $number;
-                $this->ct->Table->record = $row;
-                $record_result .= @$this->twig->render('record', $this->variables);
-                $number++;
+
+            if (isset($this->ct->LayoutVariables['ordering_field_type_found']) and $this->ct->LayoutVariables['ordering_field_type_found']) {
+                foreach ($this->ct->Records as $row) {
+                    $row['_number'] = $number;
+                    $this->ct->Table->record = $row;
+                    $row_result = @$this->twig->render('record', $this->variables);
+                    $row_result = str_ireplace('<tr ', '<tr id="ctTable_' . $this->ct->Table->tableid . '_' . $row[$this->ct->Table->realidfieldname] . '" ', $row_result);
+                    $row_result = str_ireplace('<tr>', '<tr id="ctTable_' . $this->ct->Table->tableid . '_' . $row[$this->ct->Table->realidfieldname] . '">', $row_result);
+                    $record_result .= $row_result;
+                    $number++;
+                }
+            } else {
+                foreach ($this->ct->Records as $row) {
+                    $row['_number'] = $number;
+                    $this->ct->Table->record = $row;
+                    $record_result .= @$this->twig->render('record', $this->variables);
+                    $number++;
+                }
             }
 
-            return str_replace($this->recordBlockReplaceCode, $record_result, $result);
+            $result = str_replace($this->recordBlockReplaceCode, $record_result, $result);
         }
 
-
         if (isset($this->ct->LayoutVariables['ordering_field_type_found']) and $this->ct->LayoutVariables['ordering_field_type_found']) {
-            echo 'Ordering field found.';
 
-            $saveOrderingUrl = 'index.php?option=com_customtables&view=catalog&task=ordering&tableid=' . $this->ct->Table->tableid . '&tmpl=component&clean=1';
-            JHtml::_('sortablelist.sortable', 'ctTable_' . $this->ct->Table->tableid, 'ctTableForm_' . $this->ct->Table->tableid . '', 'asc', $saveOrderingUrl);
-
+            $result = Ordering::applyOrderingMethods($result, $this->ct->Table->tableid);
             $result = '<form id="ctTableForm_' . $this->ct->Table->tableid . '">' . $result . '</form>';
         }
 
