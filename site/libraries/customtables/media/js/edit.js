@@ -23,9 +23,9 @@ function setTask(event, task, returnLink, submitForm, formName) {
             ctInputbox_signature_apply();
 
             const tasks_with_validation = ['saveandcontinue', 'save', 'saveandprint', 'saveascopy'];
-
             let element_tableid = "ctTable_" + objForm.dataset.tableid;
             let table_object = document.getElementById(element_tableid);
+
             if (table_object && task !== 'saveascopy') {
 
                 let hideModelOnSave = true;

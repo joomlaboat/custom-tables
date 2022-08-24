@@ -44,7 +44,7 @@ if (isset($this->ct->LayoutVariables['ordering_field_type_found']) and $this->ct
     }
 }
 
-if (is_null($this->ct->Params->listing_id)) //there is no need to have a header if we are loading a single record.
+if ($this->ct->Params->listing_id == null or $this->ct->Params->listing_id == "") //there is no need to have a header if we are loading a single record.
 {
     echo '<!-- Modal content -->
 <div id="ctModal" class="ctModal">

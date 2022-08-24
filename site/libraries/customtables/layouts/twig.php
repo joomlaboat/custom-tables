@@ -237,10 +237,8 @@ class TwigProcessor
 
         if ($row == null and in_array($this->ct->LayoutVariables['layout_type'], [1, 5])) {
 
-            if ($this->ct->Params->listing_id != '') {
+            if ($this->ct->Params->listing_id != null and $this->ct->Params->listing_id != '')
                 $isSingleRecord = true;
-            }
-
         }
 
         if ($isSingleRecord) {
@@ -278,8 +276,9 @@ class TwigProcessor
             $result = str_replace($this->recordBlockReplaceCode, $record_result, $result);
         }
 
+        $result = Ordering::applyOrderingMethods($result, $this->ct->Table->tableid);
+
         if (isset($this->ct->LayoutVariables['ordering_field_type_found']) and $this->ct->LayoutVariables['ordering_field_type_found']) {
-            $result = Ordering::applyOrderingMethods($result, $this->ct->Table->tableid);
             $result = '<form id="ctTableForm_' . $this->ct->Table->tableid . '" method="post">' . $result . '</form>';
         }
         return $result;
