@@ -128,7 +128,7 @@ class Value
 
             case 'multilangstring':
             case 'multilangtext':
-                return $this->multilang($row, $option_list);
+                return $this->multilingual($row, $option_list);
 
             case 'string':
                 return $this->TextFunctions($rowValue, $option_list);
@@ -283,11 +283,10 @@ class Value
         else
             $iconClass = ' inactive tip-top hasTooltip" title="' . JHtml::_('tooltipText', 'COM_CUSTOMTABLES_FIELD_ORDERING_DISABLED');
 
-        if ($this->ct->Env->version < 4) {
+        if ($this->ct->Env->version < 4)
             $result = '<span class="sortable-handler' . $iconClass . '"><i class="ctIconOrdering"></i></span>';
-        } else {
+        else
             $result = '<span class="sortable-handler' . $iconClass . '"><span class="icon-ellipsis-v" aria-hidden="true"></span></span>';
-        }
 
         if ($orderby_pair[0] == $this->field->realfieldname) {
 
@@ -300,11 +299,10 @@ class Value
 
             $this->ct->LayoutVariables['ordering_field_type_found'] = true;
         }
-
         return $result;
     }
 
-    protected function multilang(?array $row, array $option_list)
+    protected function multilingual(?array $row, array $option_list)
     {
         $specific_lang = $option_list[4] ?? '';
 
@@ -343,16 +341,16 @@ class Value
                     $count = -1;
 
                 if (isset($parameters[2]) and $parameters[2] == 'true')
-                    $cleanbraces = true;
+                    $cleanBraces = true;
                 else
-                    $cleanbraces = false;
+                    $cleanBraces = false;
 
                 if (isset($parameters[3]) and $parameters[3] == 'true')
-                    $cleanquotes = true;
+                    $cleanQuotes = true;
                 else
-                    $cleanquotes = false;
+                    $cleanQuotes = false;
 
-                return JoomlaBasicMisc::chars_trimtext($content, $count, $cleanbraces, $cleanquotes);
+                return JoomlaBasicMisc::chars_trimtext($content, $count, $cleanBraces, $cleanQuotes);
 
             case "words" :
 
@@ -362,16 +360,16 @@ class Value
                     $count = -1;
 
                 if (isset($parameters[2]) and $parameters[2] == 'true')
-                    $cleanbraces = true;
+                    $cleanBraces = true;
                 else
-                    $cleanbraces = false;
+                    $cleanBraces = false;
 
                 if (isset($parameters[3]) and $parameters[3] == 'true')
-                    $cleanquotes = true;
+                    $cleanQuotes = true;
                 else
-                    $cleanquotes = false;
+                    $cleanQuotes = false;
 
-                return JoomlaBasicMisc::words_trimtext($content, $count, $cleanbraces, $cleanquotes);
+                return JoomlaBasicMisc::words_trimtext($content, $count, $cleanBraces, $cleanQuotes);
 
             case "firstimage" :
 

@@ -302,77 +302,77 @@
             </params>
         </valueparams>
     </type>
-
-    <type ct_name="blob" label="Blob (Save file into the data base)"
-          description="A BLOB is a binary large object that can hold an entire file." priority="2">
-        <params>
-            <param name="size" label="Max File Size" example="8"
-                   description="Obsolete. The max. upload file size is taken from PHP.ini file. No need to specify anything."
-                   default="" type="int" min="1" max="1000" disabled="false"/>
-            <param name="filetypes" label="File Types" example="doc docx"
-                   description="List of acceptable file types (list separated by space)"
-                   default="doc docx xls xlsx pdf pages ppt pptx" type="string"/>
-            <param name="filenamefield" label="Field to get the file name from / to"
-                   description="Specify the name of the field where to store the original file name. By the default file name will be the current timestamp and guessed file extension."
-                   type="field"/>
-            <param type="string" name="customphp" label="Custom PHP"
-                   description="PHP file/function that will process file content before being downloaded by the user. File must be located at /components/com_customtables/customphp."
-                   proversion="1"/>
-        </params>
-
-        <editparams name="file" label="Input Element Parameters" description="">
+    <!--
+        <type ct_name="blob" label="Blob (Save file into the data base)"
+              description="A BLOB is a binary large object that can hold an entire file." priority="2">
             <params>
-                <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)."/>
-                <param name="attributes" label="Attributes"
-                       description="Optional attributes like: disabled, onclick, onchange etc." default=""
-                       type="string"/>
+                <param name="size" label="Max File Size" example="8"
+                       description="Obsolete. The max. upload file size is taken from PHP.ini file. No need to specify anything."
+                       default="" type="int" min="1" max="1000" disabled="false"/>
+                <param name="filetypes" label="File Types" example="doc docx"
+                       description="List of acceptable file types (list separated by space)"
+                       default="doc docx xls xlsx pdf pages ppt pptx" type="string"/>
+                <param name="filenamefield" label="Field to get the file name from / to"
+                       description="Specify the name of the field where to store the original file name. By the default file name will be the current timestamp and guessed file extension."
+                       type="field"/>
+                <param type="string" name="customphp" label="Custom PHP"
+                       description="PHP file/function that will process file content before being downloaded by the user. File must be located at /components/com_customtables/customphp."
+                       proversion="1"/>
             </params>
-        </editparams>
 
-        <valueparams label="File link format" description="">
-            <params>
-                <param name="private" label="Security" example="timelimited"
-                       description="Encrypts the link to the file and limits access time to it." default="" type="list">
-                    <option value="" label="Public. Direct link to the file."/>
-                    <option value="timelimited" label="Time Limited (8-24 minutes)" code="d"/>
-                    <option value="timelimited_longterm" label="Time Limited (1.5 - 4 hours)" code="e"/>
-                    <option value="hostlimited" label="Time/Host Limited (8-24 minutes)" code="f"/>
-                    <option value="hostlimited_longterm" label="Time/Host Limited (1.5 - 4 hours)" code="g"/>
-                    <option value="private" label="Time/Host/User Limited (8-24 minutes)" code="h"/>
-                    <option value="private_longterm" label="Time/Host/User Limited (1.5 - 4 hours)" code="i"/>
-                </param>
+            <editparams name="file" label="Input Element Parameters" description="">
+                <params>
+                    <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)."/>
+                    <param name="attributes" label="Attributes"
+                           description="Optional attributes like: disabled, onclick, onchange etc." default=""
+                           type="string"/>
+                </params>
+            </editparams>
 
-                <param name="format" label="Link" example="filename-link" description="How to render the link"
-                       default="icon-filename-link" type="list">
-                    <option value="icon-filename-link" label="Clickable Icon and File Name"/>
-                    <option value="icon-link" label="Clickable Icon"/>
-                    <option value="filename-link" label="Clickable File Name"/>
-                    <option value="link-anchor" label="Clickable Link"/>
-                    <option value="icon" label="Icon (IMG tag)"/>
-                    <option value="" label="Link Only"/>
-                    <option value="filename" label="File Name"/>
-                    <option value="link-to-icon" label="Link to Icon file"/>
-                    <option value="extension" label="Extension"/>
-                </param>
+            <valueparams label="File link format" description="">
+                <params>
+                    <param name="private" label="Security" example="timelimited"
+                           description="Encrypts the link to the file and limits access time to it." default="" type="list">
+                        <option value="" label="Public. Direct link to the file."/>
+                        <option value="timelimited" label="Time Limited (8-24 minutes)" code="d"/>
+                        <option value="timelimited_longterm" label="Time Limited (1.5 - 4 hours)" code="e"/>
+                        <option value="hostlimited" label="Time/Host Limited (8-24 minutes)" code="f"/>
+                        <option value="hostlimited_longterm" label="Time/Host Limited (1.5 - 4 hours)" code="g"/>
+                        <option value="private" label="Time/Host/User Limited (8-24 minutes)" code="h"/>
+                        <option value="private_longterm" label="Time/Host/User Limited (1.5 - 4 hours)" code="i"/>
+                    </param>
 
-                <param name="icon" label="Icon" example="32" description="Select the icon size" default="32"
-                       type="list">
-                    <option value="16" label="16px X 16px Icon"/>
-                    <option value="32" label="32px X 32px Icon"/>
-                    <option value="48" label="48px X 48px Icon"/>
-                </param>
+                    <param name="format" label="Link" example="filename-link" description="How to render the link"
+                           default="icon-filename-link" type="list">
+                        <option value="icon-filename-link" label="Clickable Icon and File Name"/>
+                        <option value="icon-link" label="Clickable Icon"/>
+                        <option value="filename-link" label="Clickable File Name"/>
+                        <option value="link-anchor" label="Clickable Link"/>
+                        <option value="icon" label="Icon (IMG tag)"/>
+                        <option value="" label="Link Only"/>
+                        <option value="filename" label="File Name"/>
+                        <option value="link-to-icon" label="Link to Icon file"/>
+                        <option value="extension" label="Extension"/>
+                    </param>
 
-                <param name="target" label="Target Window" example="parent"
-                       description="Target browser window when opening the link" default="" type="list">
-                    <option value="" label="Parent"/>
-                    <option value="_blank" label="New Window With Navigation"/>
-                    <option value="savefile" label="Open Save File As Dialog Window"/>
-                </param>
+                    <param name="icon" label="Icon" example="32" description="Select the icon size" default="32"
+                           type="list">
+                        <option value="16" label="16px X 16px Icon"/>
+                        <option value="32" label="32px X 32px Icon"/>
+                        <option value="48" label="48px X 48px Icon"/>
+                    </param>
 
-            </params>
-        </valueparams>
-    </type>
+                    <param name="target" label="Target Window" example="parent"
+                           description="Target browser window when opening the link" default="" type="list">
+                        <option value="" label="Parent"/>
+                        <option value="_blank" label="New Window With Navigation"/>
+                        <option value="savefile" label="Open Save File As Dialog Window"/>
+                    </param>
 
+                </params>
+            </valueparams>
+        </type>
+            -->
     <type ct_name="filelink" label="File Link"
           description="Path to a folder on the server. Provides file selection from particular folder." priority="3">
         <params>

@@ -1,11 +1,6 @@
-.sortable-handler {
-    cursor: move
-}
-
 .required .star {
     color: red;
 }
-
 
 .ctFormLabel {
     display: inline-block !important; /*Somehow doesnt work*/
@@ -19,7 +14,7 @@
 
 .multilangtext textarea {
     width: 100%;
-    padding-top: 0px;
+    padding-top: 0;
     padding-bottom: 20px;
 }
 
@@ -47,8 +42,8 @@
     padding: 3px;
     border-top-left-radius: 3px;
     border-top-right-radius: 3px;
-    border-bottom-right-radius: 0px;
-    margin-bottom: 0px;
+    border-bottom-right-radius: 0;
+    margin-bottom: 0;
     margin-top: 10px;
 
 }
@@ -205,10 +200,10 @@
 }
 
 .datagrid table td:not(:first-child), .datagrid table th:not(:first-child) {
-    padding: 3px 3px;
+
     min-width: 100px;
     padding: 5px 1px 5px 3px !important;
-    border-left: 0px solid #FFFFFF;
+    border-left: 0 solid #FFFFFF;
     vertical-align: bottom;
 }
 
@@ -352,10 +347,7 @@
 
 .ct_loader {
     /*width: auto;*/
-    margin-left: -2px;
-    margin-top: -2px;
-    margin-right: 0;
-    margin-bottom: 0;
+    margin: -2px 0 0 -2px;
     padding: 2px;
     border-radius: 5px;
 
@@ -458,20 +450,14 @@
 
 .ct_checkmark {
     /*width: auto;*/
-    margin-left: -2px;
-    margin-top: -2px;
-    margin-right: 0;
-    margin-bottom: 0;
+    margin: -2px 0 0 -2px;
     padding: 2px;
     border-radius: 5px;
 }
 
 .ct_checkmark_err {
     width: auto;
-    margin-left: -2px;
-    margin-top: -2px;
-    margin-right: 0;
-    margin-bottom: 0;
+    margin: -2px 0 0 -2px;
     padding: 2px;
     border-radius: 5px;
     -webkit-animation: ct_error_border 1s infinite alternate;
@@ -518,44 +504,15 @@
 
 /* ------------------------------------- ordering field type ------------------------------- */
 
-/*
-[class^="icon-"],
-[class*=" icon-"] {
-    display: inline-block;
-    width: 14px;
-    height: 14px;
-    margin-right: .25em;
-    line-height: 14px;
-    padding: 0;
-}
-
-[class^="icon-"]:before,
-[class*=" icon-"]:before {
-    speak: none;
-}
-
-[class^="icon-"].disabled,
-[class*=" icon-"].disabled {
-    font-weight: normal;
-}
-
-*/
-
 .sortable-handler {
+    cursor: move;
     width: 8px;
     height: 24px;
 }
 
-/*
-.ctIconOrdering {
-    height: 24px;
-    border: 1px solid green;
-    background-image: url('data:image/svg+xml;base64,PHN2ZyB4PSIwIiB5PSIwIiB2aWV3Qm94PSIwIDAgOCA4IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxjaXJjbGUgY3g9IjQiIGN5PSI0IiByPSI0IiBmaWxsPSIjZmYwMDAwIiAvPjwvc3ZnPg==');
-}
-*/
 .ctIconOrdering:before {
     height: 24px;
-    content: url('data:image/svg+xml;base64,PHN2ZyB4PSIwIiB5PSIwIiB2aWV3Qm94PSIwIDAgOCAyNCIgd2lkdGg9IjhweCIgaGVpZ2h0PSIyNHB4IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxjaXJjbGUgY3g9IjQiIGN5PSI0IiByPSI0IiBmaWxsPSIjZmYwMDAwIiAvPjxjaXJjbGUgY3g9IjQiIGN5PSIxMiIgcj0iNCIgZmlsbD0iI2ZmZmYwMCIgLz48Y2lyY2xlIGN4PSI0IiBjeT0iMjAiIHI9IjQiIGZpbGw9IiNmZjAwZmYiIC8+PC9zdmc+');
+    content: url('data:image/svg+xml;base64,PHN2ZyB4PSIwIiB5PSIwIiB2aWV3Qm94PSIwIDAgNCAxNiIgd2lkdGg9IjRweCIgaGVpZ2h0PSIxNnB4IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBzdHlsZT0iZmlsbDpyZ2IoNTEsNTEsNTEpO3N0cm9rZS13aWR0aDowO3N0cm9rZTpyZ2IoMCwwLDApIiB4PSIwIiB5PSIwIiAvPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBzdHlsZT0iZmlsbDpyZ2IoNTEsNTEsNTEpO3N0cm9rZS13aWR0aDowO3N0cm9rZTpyZ2IoMCwwLDApIiB4PSIwIiB5PSI2IiAvPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBzdHlsZT0iZmlsbDpyZ2IoNTEsNTEsNTEpO3N0cm9rZS13aWR0aDowO3N0cm9rZTpyZ2IoMCwwLDApIiB4PSIwIiB5PSIxMiIgLz4KPC9zdmc+');
 }
 
 .sortable-handler.inactive {
