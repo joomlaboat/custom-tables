@@ -16,8 +16,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use Exception;
-use JHtml;
-use Joomla\CMS\HTML\HTMLHelper;
 use JoomlaBasicMisc;
 use CT_FieldTypeTag_sqljoin;
 use CT_FieldTypeTag_records;
@@ -264,16 +262,13 @@ class TwigProcessor
                     $number++;
                 }
             }
-
             $result = str_replace($this->recordBlockReplaceCode, $record_result, $result);
         }
 
         if (isset($this->ct->LayoutVariables['ordering_field_type_found']) and $this->ct->LayoutVariables['ordering_field_type_found']) {
-
             $result = Ordering::applyOrderingMethods($result, $this->ct->Table->tableid);
-            $result = '<form id="ctTableForm_' . $this->ct->Table->tableid . '">' . $result . '</form>';
+            $result = '<form id="ctTableForm_' . $this->ct->Table->tableid . '" method="post">' . $result . '</form>';
         }
-
         return $result;
     }
 }

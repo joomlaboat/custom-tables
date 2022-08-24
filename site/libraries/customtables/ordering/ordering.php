@@ -51,12 +51,10 @@ class Ordering
 
                 $params['id'] = 'ctTable_' . $tableid;
                 $params_str = [];
-                foreach ($params as $key => $value) {
+                foreach ($params as $key => $value)
                     $params_str[] = $key . '="' . $value . '"';
-                }
 
                 $val = '<table ' . implode(' ', $params_str) . '>';
-
                 $result = str_replace($fItem, $val, $result);
             }
             $i++;

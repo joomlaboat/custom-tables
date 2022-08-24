@@ -10,6 +10,9 @@
 
 
 // no direct access
+use CustomTables\CTUser;
+use Joomla\CMS\HTML\HTMLHelper;
+
 if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
@@ -26,11 +29,19 @@ if (is_null($this->ct->Params->listing_id)) //there is no need to have a header 
 echo $this->catalog->render();
 
 if (isset($this->ct->LayoutVariables['ordering_field_type_found']) and $this->ct->LayoutVariables['ordering_field_type_found']) {
-    $saveOrderingUrl = 'index.php?option=com_customtables&view=catalog&task=ordering&tableid=' . $this->ct->Table->tableid . '&tmpl=component&clean=1';
-    if ($this->ct->Env->version < 4) {
-        JHtml::_('sortablelist.sortable', 'ctTable_' . $this->ct->Table->tableid, 'ctTableForm_' . $this->ct->Table->tableid . '', 'asc', $saveOrderingUrl);
-    } else {
-        HTMLHelper::_('draggablelist.draggable');
+
+    $orderby_pair = explode(' ', $this->ct->Ordering->orderby);
+    $edit_userGroup = (int)$this->ct->Params->editUserGroups;
+    $isEditable = CTUser::checkIfRecordBelongsToUser($this->ct, $edit_userGroup);
+
+    if ($isEditable) {
+
+        $saveOrderingUrl = 'index.php?option=com_customtables&view=catalog&task=ordering&tableid=' . $this->ct->Table->tableid . '&tmpl=component&clean=1';
+        if ($this->ct->Env->version < 4) {
+            JHtml::_('sortablelist.sortable', 'ctTable_' . $this->ct->Table->tableid, 'ctTableForm_' . $this->ct->Table->tableid, 'asc', $saveOrderingUrl);
+        } else {
+            HTMLHelper::_('draggablelist.draggable');//, 'ctTable_' . $this->ct->Table->tableid, 'ctTableForm_' . $this->ct->Table->tableid, 'asc', $saveOrderingUrl);
+        }
     }
 }
 

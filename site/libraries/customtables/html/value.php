@@ -267,31 +267,40 @@ class Value
 
     protected function orderingProcess($value, $row): string
     {
+        if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
+            return $value;
+
+        if ($this->ct->Env->isPlugin)
+            return $value;
+
+        $edit_userGroup = (int)$this->ct->Params->editUserGroups;
+        $isEditable = CTUser::checkIfRecordBelongsToUser($this->ct, $edit_userGroup);
+
         $orderby_pair = explode(' ', $this->ct->Ordering->orderby);
 
+        if ($orderby_pair[0] == $this->field->realfieldname and $isEditable)
+            $iconClass = '';
+        else
+            $iconClass = ' inactive tip-top hasTooltip" title="' . JHtml::_('tooltipText', 'COM_CUSTOMTABLES_FIELD_ORDERING_DISABLED');
+
         if ($this->ct->Env->version < 4) {
-
-            if ($orderby_pair[0] == $this->field->realfieldname)
-                $iconClass = '';
-            else
-                $iconClass = ' inactive tip-top hasTooltip" title="' . JHtml::_('tooltipText', 'COM_CUSTOMTABLES_FIELD_ORDERING_DISABLED');
-
             $result = '<span class="sortable-handler' . $iconClass . '"><i class="ctIconOrdering"></i></span>';
-
-            if ($orderby_pair[0] == $this->field->realfieldname) {
-                $result .= '<input type="text" style="display:none" name="order[]" size="5" value="' . $value . '" class="width-20 text-area-order " />';
-                $result .= '<input type="checkbox" style="display:none" name="cid[]" value="' . $row[$this->ct->Table->realidfieldname] . '" class="width-20 text-area-order " />';
-
-                $this->ct->LayoutVariables['ordering_field_type_found'] = true;
-            }
         } else {
-            $result = '<span class="sortable-handler"><span class="icon-ellipsis-v" aria-hidden="true"></span></span>';
-
-            if ($orderby_pair[0] == $this->field->realfieldname) {
-                $result .= '<input type="text" name="order[]" size="5" value="' . $value . '" class="width-20 text-area-order hidden" />';
-                $this->ct->LayoutVariables['ordering_field_type_found'] = true;
-            }
+            $result = '<span class="sortable-handler' . $iconClass . '"><span class="icon-ellipsis-v" aria-hidden="true"></span></span>';
         }
+
+        if ($orderby_pair[0] == $this->field->realfieldname) {
+
+            if ($this->ct->Env->version < 4)
+                $result .= '<input type="text" style="display:none" name="order[]" size="5" value="' . $value . '" class="width-20 text-area-order " />';
+            else
+                $result .= '<input type="text" name="order[]" size="5" value="' . $value . '" class="width-20 text-area-order hidden" />';
+
+            $result .= '<input type="checkbox" style="display:none" name="cid[]" value="' . $row[$this->ct->Table->realidfieldname] . '" class="width-20 text-area-order " />';
+
+            $this->ct->LayoutVariables['ordering_field_type_found'] = true;
+        }
+
         return $result;
     }
 
