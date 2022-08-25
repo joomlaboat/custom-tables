@@ -292,10 +292,15 @@ class CT_FieldTypeTag_file
 
     protected static function UploadSingleFile($ExistingFile, $file_id, $field, $FileFolder)//,$realtablename='-options')
     {
-        $fileextensions = $field->params[2] ?? '';
+        if ($field->type == 'file')
+            $fileExtensions = $field->params[2] ?? '';
+        elseif ($field->type == 'blob')
+            $fileExtensions = $field->params[1] ?? '';
+        else
+            return false;
 
         if ($file_id != '') {
-            $accepted_file_types = explode(' ', ESFileUploader::getAcceptedFileTypes($fileextensions));
+            $accepted_file_types = explode(' ', ESFileUploader::getAcceptedFileTypes($fileExtensions));
 
             $accepted_filetypes = array();
 
@@ -412,6 +417,32 @@ class CT_FieldTypeTag_file
         return $filename_new;
     }
 
+    static public function get_blob_value(CustomTables\Field &$field, $listing_id)
+    {
+        $jinput = Factory::getApplication()->input;
+
+        $file_id = $jinput->post->get($field->comesfieldname, '', 'STRING');
+        $uploadedFile = JPATH_SITE . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR . $file_id;
+
+        if (!file_exists($uploadedFile))
+            return false;
+
+        $mime = mime_content_type($uploadedFile);
+
+        $parts = explode('.', $uploadedFile);
+        $fileExtension = end($parts);
+
+        if ($mime == 'application/zip' and $fileExtension != 'zip') {
+            //could be docx, xlsx, pptx
+            $mime = ESFileUploader::checkZIPfile_X($uploadedFile, $fileExtension);
+        }
+
+        $fileData = addslashes(file_get_contents($uploadedFile));
+
+        unlink($uploadedFile);
+        return $fileData;
+    }
+
     public static function renderFileFieldBox(CT &$ct, Field &$field, ?array &$row): string
     {
         if (!$ct->isRecordNull($row)) {
@@ -462,9 +493,14 @@ class CT_FieldTypeTag_file
 
     protected static function renderUploader(&$field): string
     {
-        $file_extensions = $field->params[2] ?? '';
+        if ($field->type == 'file')
+            $fileExtensions = $field->params[2] ?? '';
+        elseif ($field->type == 'blob')
+            $fileExtensions = $field->params[1] ?? '';
+        else
+            return false;
 
-        $accepted_file_types = ESFileUploader::getAcceptedFileTypes($file_extensions);
+        $accepted_file_types = ESFileUploader::getAcceptedFileTypes($fileExtensions);
 
         $custom_max_size = (int)$field->params[0];
         if ($custom_max_size != 0 and $custom_max_size < 10000)

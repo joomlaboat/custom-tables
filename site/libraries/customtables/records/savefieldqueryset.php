@@ -302,6 +302,19 @@ class SaveFieldQuerySet
                 $this->row[$this->field->realfieldname] = $value;
                 return ($value === null ? null : $this->field->realfieldname . '=' . $this->ct->db->Quote($value));
 
+            case 'blob':
+
+                $to_delete = $this->ct->Env->jinput->post->get($this->field->comesfieldname . '_delete', '', 'CMD');
+                $value = CT_FieldTypeTag_file::get_blob_value($this->field, $listing_id);
+
+                if ($to_delete == 'true' and $value === null) {
+                    $this->row[$this->field->realfieldname] = null;
+                    return $this->field->realfieldname . '=NULL';
+                } else {
+                    $this->row[$this->field->realfieldname] = $value;
+                    return ($value === null ? null : $this->field->realfieldname . '=' . $this->ct->db->Quote($value));
+                }
+
             case 'file':
 
                 $file_type_file = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_file.php';
