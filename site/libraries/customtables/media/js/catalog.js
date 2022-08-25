@@ -272,6 +272,17 @@ function ctSearchBoxDo() {
     window.location.href = link;
 }
 
+function ctSearchReset() {
+    if (es_LinkLoading)
+        return;
+
+    es_LinkLoading = true;
+
+    let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + ctItemId;
+    link = esPrepareLink(['where', 'task', "listing_id", 'returnto'], [], link);
+    window.location.href = link;
+}
+
 function esCheckboxAllClicked(tableid) {
 
     const checkboxObj = document.getElementById("esCheckboxAll" + tableid);

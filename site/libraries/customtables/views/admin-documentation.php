@@ -328,7 +328,12 @@ class Documentation
             $isDeprecated = (bool)(int)$type_att->deprecated;
 
             if (!$isDeprecated) {
+
                 $result .= '# ' . $type_att->ct_name . '<br/><br/>' . $type_att->label . ' - ' . $type_att->description . '<br/><br/>';
+
+                if (isset($type_att->image)) {
+                    $result .= '![' . $type_att->label . '](' . $type_att->image . ')<br/><br/>';
+                }
 
                 if (!empty($type->params) and count($type->params) > 0) {
                     $content = $this->renderParametersGitHub($type->params, '', '', '', '', true);
@@ -546,6 +551,7 @@ class Documentation
                 $result .= '</h3>';
 
                 $result .= '<p>' . $tagSetAtt->description . '</p>';
+
                 $result .= $this->renderTagsInternal($tagSet->tag, $tagSetAtt->name);
 
                 $result .= '</div>';
@@ -596,6 +602,10 @@ class Documentation
 
                 if ($tagsetname != 'plugins') {
                     $result .= '<p>' . $tag_att->description . '</p>';
+
+                    if (isset($tag_att->image)) {
+                        $result .= '<p><img src="' . $tag_att->image . '" alt="' . $tag_att->label . '" /></p>';
+                    }
 
                     if (!empty($tag->params) and count($tag->params) > 0) {
                         $content = $this->renderParametersInternal($tag->params,
@@ -650,6 +660,10 @@ class Documentation
                     $result .= '## {{ ' . $tag_att->examplevalue . ' | ' . $tag_att->name . ' }}<br/><br/>' . $tag_att->description . '<br/><br/>';
                 else
                     $result .= '## ' . $tag_att->twigclass . '.' . $tag_att->name . '<br/><br/>' . $tag_att->description . '<br/><br/>';
+
+                if (isset($tag_att->image)) {
+                    $result .= '![' . $tag_att->label . '](' . $tag_att->image . ')<br/><br/>';
+                }
 
                 if ($tagsetname != 'plugins') {
 

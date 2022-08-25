@@ -588,6 +588,8 @@ class Twig_Html_Tags
         else
             $class .= ' btn button-apply btn-primary';
 
+        $default_Label = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SEARCH');
+
         if ($label == strip_tags($label)) {
             if ($this->ct->Env->toolbaricons != '') {
                 $img = '<i class=\'' . $this->ct->Env->toolbaricons . ' fa-search\' data-icon=\'' . $this->ct->Env->toolbaricons . ' fa-search\' title=\'' . $label . '\'></i>';
@@ -596,13 +598,50 @@ class Twig_Html_Tags
                 $img = '';
 
                 if ($label == '')
-                    $label = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SEARCH');
+                    $label = $default_Label;
 
                 $labelHtml = ($label !== '' ? '<span>' . $label . '</span>' : '');
             }
-            return '<button class=\'' . $class . '\' onClick=\'ctSearchBoxDo()\'>' . $img . $labelHtml . '</button>';
+            return '<button class=\'' . $class . '\' onClick=\'ctSearchBoxDo()\' title=\'' . $default_Label . '\'>' . $img . $labelHtml . '</button>';
         } else {
-            return '<button class=\'' . $class . '\' onClick=\'ctSearchBoxDo()\'>' . $label . '</button>';
+            return '<button class=\'' . $class . '\' onClick=\'ctSearchBoxDo()\' title=\'' . $default_Label . '\'>' . $label . '</button>';
+        }
+    }
+
+    function searchreset($label = '', $class_ = '')
+    {
+        if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
+            return '';
+
+        if ($this->ct->Env->isPlugin or (!is_null($this->ct->Params->ModuleId) and $this->ct->Params->ModuleId != 0))
+            return '';
+
+        if (!is_null($this->ct->Params->ModuleId))
+            return '';
+
+        $class = 'ctSearchBox';
+
+        if (isset($class_) and $class_ != '')
+            $class .= ' ' . $class_;
+        else
+            $class .= ' btn button-apply btn-primary';
+
+        $default_Label = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SEARCHRESET');
+        if ($label == strip_tags($label)) {
+            if ($this->ct->Env->toolbaricons != '') {
+                $img = '<i class=\'' . $this->ct->Env->toolbaricons . ' fa-times\' data-icon=\'' . $this->ct->Env->toolbaricons . ' fa-times\' title=\'' . $label . '\'></i>';
+                $labelHtml = ($label !== '' ? '<span style=\'margin-left:10px;\'>' . $label . '</span>' : '');
+            } else {
+                $img = '';
+
+                if ($label == '')
+                    $label = $default_Label;
+
+                $labelHtml = ($label !== '' ? '<span>' . $label . '</span>' : '');
+            }
+            return '<button class=\'' . $class . '\' onClick=\'ctSearchReset()\' title=\'' . $default_Label . '\'>' . $img . $labelHtml . '</button>';
+        } else {
+            return '<button class=\'' . $class . '\' onClick=\'ctSearchReset()\' title=\'' . $default_Label . '\'>' . $label . '</button>';
         }
     }
 
