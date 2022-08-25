@@ -16,6 +16,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use Joomla\CMS\Version;
+use JoomlaBasicMisc;
 
 class Documentation
 {
@@ -82,6 +83,10 @@ class Documentation
 
                 $result .= '<p>' . $type_att->description . '</p>';
 
+                if (isset($type_att->image)) {
+                    $result .= '<p><img src="' . $type_att->image . '" alt="' . $type_att->label . '" /></p>';
+                }
+
                 if (!empty($type->params) and count($type->params) > 0) {
                     $content = $this->renderParametersInternal($type->params, '', '', '', '', true);
                     if ($content != '')
@@ -112,10 +117,23 @@ class Documentation
                     . '</pre></p>';
 
 
-                $result .= '<hr/><h5>' . common::translate('COM_CUSTOMTABLES_EDITRECPARAMS') . ':</h5><p>Example 1:<pre class="ct_doc_pre">'
-                    . '{{ <i>' . str_replace(' ', '', common::translate('COM_CUSTOMTABLES_FIELDNAME')) . '</i>.edit }}</pre></p>';
+                $result .= '<hr/><h5>' . common::translate('COM_CUSTOMTABLES_EDITRECPARAMS') . ':</h5>';
 
                 if (!empty($type->editparams)) {
+
+                    $editparams_att = $type->editparams->attributes();
+
+                    if (isset($editparams_att->image)) {
+                        $result .= '<p><img src="' . $editparams_att->image . '" alt="' . $editparams_att->label . '" /></p>';
+                    }
+                }
+
+                $result .= '<p>Example 1:<pre class="ct_doc_pre">'
+                    . '{{ <i>' . str_replace(' ', '', common::translate('COM_CUSTOMTABLES_FIELDNAME')) . '</i>.edit }}</pre></p>';
+
+
+                if (!empty($type->editparams)) {
+
                     foreach ($type->editparams as $p) {
                         $params = $p->params;
                         //$result.='<h5>'.common::translate('COM_CUSTOMTABLES_EDITRECPARAMS').':</h5>'

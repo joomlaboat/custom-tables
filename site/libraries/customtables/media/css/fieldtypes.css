@@ -7,66 +7,67 @@
  * @copyright Copyright (C) 2018-2020. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
- 
-.fullwidth{
-width:98%;
+
+.fullwidth {
+    width: 98%;
 }
 
-.ct_doc ul{
-    list-style: none!important;
+.ct_doc ul {
+    list-style: none !important;
 }
 
-.ct_doc ul ul{
-    list-style: none!important;
+.ct_doc ul ul {
+    list-style: none !important;
 }
 
-.ct_doc ul li{
-    list-style: none!important;
+.ct_doc ul li {
+    list-style: none !important;
 }
 
-.ct_doc ul ul li{
-    list-style: none!important;
+.ct_doc ul ul li {
+    list-style: none !important;
 }
 
-.ct_doc h4{
-    margin-top:3px;
+.ct_doc h4 {
+    margin-top: 3px;
     list-style: none;
-    padding:3px;
+    padding: 3px;
     cursor: pointer;
 
 }
 
-.ct_readmoreOpen{
-	-webkit-animation: ct_readmoreOpen_ani 0.3s ease-in;
+.ct_readmoreOpen {
+    -webkit-animation: ct_readmoreOpen_ani 0.3s ease-in;
 }
+
 @-webkit-keyframes ct_readmoreOpen_ani {
- 
+
     0% {
         height: 30px;
         overflow: hidden;
- 
+
     }
-    
+
     90% {
         overflow: hidden;
         height: 70px;
     }
-    
+
     100% {
-        
+
         overflow: visible;
         height: auto;
     }
 }
 
-.ct_readmoreClosed{
+.ct_readmoreClosed {
     overflow: hidden;
     height: 40px;
     box-sizing: border-box;
 }
- 
 
-.ct_readmoreClose{
+
+.ct_readmoreClose {
     overflow: hidden;
     height: 40px;
     box-sizing: border-box;
@@ -80,48 +81,47 @@ width:98%;
 */
 
 @-webkit-keyframes ct_readmoreClose_ani {
- 
+
     0% {
         overflow: visible;
         height: auto;
-        
+
     }
-    
+
     10% {
         overflow: hidden;
         height: 100px;
     }
-    
-    
-    
+
+
     100% {
         overflow: hidden;
         height: 30px;
     }
 }
 
-.ct_doc_param_options{
+.ct_doc_param_options {
     color: darkgreen;
     font-style: italic;
-	margin-top:10px;
-	margin-bottom:20px;
+    margin-top: 10px;
+    margin-bottom: 20px;
 }
 
-.ct_doc_pre{
-    display: inline-block;    
+.ct_doc_pre {
+    display: inline-block;
 }
 
-.ct_doc_pro{
+.ct_doc_pro {
     background-color: #eeffee;
-    padding:3px 10px 3px 10px;
+    padding: 3px 10px 3px 10px;
     border-top: 2px solid #aaeeaa;
     border-bottom: 2px solid #aaeeaa;
-    margin-bottom:10px;
+    margin-bottom: 10px;
     border-radius: 5px;
 }
 
-.ct_doc_free{
-    padding:3px 10px 3px 10px;
+.ct_doc_free {
+    padding: 3px 10px 3px 10px;
     border-top: 2px solid #aaaaee;
     border-bottom: 2px solid #aaaaee;
     margin-bottom: 10px;
@@ -129,35 +129,34 @@ width:98%;
     /* border-radius: 5px; */
 }
 
-.ct_doc_pro_label{
+.ct_doc_pro_label {
     display: inline-block;
     margin-left: 10px;
 }
 
-.typeparams_box{
-    border:1px solid lightgrey;
-    padding:10px;
+.typeparams_box {
+    border: 1px solid lightgrey;
+    padding: 10px;
     border-radius: 5px;
 }
 
-.typeparams_box input[type="text"]{
-    width:100%;
+.typeparams_box input[type="text"] {
+    width: 100%;
 }
 
-.typeparams_box_area
-{
-    width:95%;
-    position:relative;
+.typeparams_box_area {
+    width: 95%;
+    position: relative;
 }
 
 
-.msg_error{
-        line-height:24px;
-        color:white;
-        background-color:red;
-        padding:5px;
-        border-radius: 5px;
-        border:1px solid darkred;
+.msg_error {
+    line-height: 24px;
+    color: white;
+    background-color: red;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid darkred;
 }
 
 .fieldtype_disable_box {
@@ -171,10 +170,21 @@ width:98%;
 
     height: 110%; /* Full height */
     overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.2); /* Black w/ opacity */
+    background-color: rgb(0, 0, 0); /* Fallback color */
+    background-color: rgba(0, 0, 0, 0.2); /* Black w/ opacity */
 
     margin: 0 0px 0px -5px;
 
-	border-radius: 5px;
+    border-radius: 5px;
+}
+
+.ct_doc img {
+    border: 1px solid #fff;
+    border-radius: 4px;
+    padding: 5px;
+
+}
+
+.ct_doc img:hover {
+    box-shadow: 0 0 2px 1px rgba(0, 140, 186, 0.5);
 }

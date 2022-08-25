@@ -25,8 +25,10 @@
     </type>
 
     <type ct_name="checkbox" label="Checkbox (YES/NO)"
-          description="Provides a single checkbox to be checked or unchecked" priority="1">
-        <editparams name="checkbox" label="Input Element Parameters" description="">
+          description="Provides a single checkbox to be checked or unchecked" priority="1"
+          image="https://joomlaboat.com/images/components/ct/fieldtypes/checkbox.png">
+        <editparams name="checkbox" label="Input Element Parameters" description=""
+        >
             <params>
                 <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)."/>
                 <param name="attributes" label="Attributes"
@@ -43,8 +45,10 @@
 
     <type ct_name="color" name="color" label="Color"
           description="Provides Color Picker functionality in the Edit Form or hexidecimal value as an output."
-          ct_alias="color" disabled="false" ct_special="false" priority="2">
-        <editparams name="color" label="Format" description="Color Picker format.">
+          ct_alias="color" disabled="false" ct_special="false" priority="2"
+          image="https://joomlaboat.com/images/components/ct/fieldtypes/color.png">
+        <editparams name="color" label="Format" description="Color Picker format."
+        >
             <params>
                 <param name="transparent" label="Transparent" description="Allow transparency - alpha color." default=""
                        type="radio" options="|No,transparent|Yes"/>
@@ -819,7 +823,8 @@
 
     <type ct_name="ordering" name="ordering" label="Ordering/Sorting"
           description="Record custom position, a front-end tool to sort records in a custom order." ct_alias="ordering"
-          disabled="false" ct_special="false" priority="3"/>
+          disabled="false" ct_special="false" priority="3"
+          image="https://joomlaboat.com/images/components/ct/fieldtypes/ordering-catalog.png"/>
 
     <type ct_name="phponadd" label="PHP On Add"
           description="Executes PHP script after record has been added saves the return value." rawquotes="0"
