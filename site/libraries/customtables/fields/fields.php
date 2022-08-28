@@ -584,6 +584,9 @@ class Fields
             case 'blob':
             case 'mediumblob':
             case 'longblob':
+                $type = 'blob';
+                break;
+
             case 'text':
             case 'mediumtext':
             case 'longtext':
@@ -597,7 +600,6 @@ class Fields
             case 'date':
                 $type = 'date';
                 break;
-
         }
 
         return ['type' => $type, 'typeparams' => $typeparams];
@@ -605,9 +607,9 @@ class Fields
 
     public static function getPureFieldType($ct_fieldtype, $typeparams): string
     {
-        $ct_fieldtype_array = Fields::getProjectedFieldType($ct_fieldtype, $typeparams);
+        $ct_fieldTypeArray = Fields::getProjectedFieldType($ct_fieldtype, $typeparams);
 
-        return Fields::makeProjectedFieldType($ct_fieldtype_array);
+        return Fields::makeProjectedFieldType($ct_fieldTypeArray);
     }
 
     public static function getProjectedFieldType($ct_fieldtype, $typeparams): array
@@ -632,13 +634,27 @@ class Fields
                 return ['data_type' => 'varchar', 'is_nullable' => true, 'is_unsigned' => null, 'length' => ($l < 1 ? 255 : (min($l, 1024))), 'default' => null, 'extra' => null];
             case 'signature':
 
-                $typeparams_arr = explode(',', $typeparams);
+                $typeparams_arr = JoomlaBasicMisc::csv_explode(',', $typeparams);
                 $format = $typeparams_arr[3] ?? 'svg';
 
                 if ($format == 'svg-db')
                     return ['data_type' => 'text', 'is_nullable' => true, 'is_unsigned' => null, 'length' => null, 'default' => null, 'extra' => null];
                 else
                     return ['data_type' => 'bigint', 'is_nullable' => true, 'is_unsigned' => false, 'length' => null, 'default' => null, 'extra' => null];
+
+            case 'blob':
+                $typeparams_arr = JoomlaBasicMisc::csv_explode(',', $typeparams);
+
+                if ($typeparams_arr[0] == 'tiny')
+                    $type = 'tinyblob';
+                elseif ($typeparams_arr[0] == 'medium')
+                    $type = 'mediumblob';
+                elseif ($typeparams_arr[0] == 'long')
+                    $type = 'longblob';
+                else
+                    $type = 'blob';
+
+                return ['data_type' => $type, 'is_nullable' => true, 'is_unsigned' => null, 'length' => null, 'default' => null, 'extra' => null];
 
             case 'text':
             case 'multilangtext':
@@ -741,8 +757,36 @@ class Fields
                 $elements[] = 'varchar(' . $type->length . ')';
                 break;
 
+            case 'tinytext':
+                $elements[] = 'tinytext';
+                break;
+
             case 'text':
                 $elements[] = 'text';
+                break;
+
+            case 'mediumtext':
+                $elements[] = 'mediumtext';
+                break;
+
+            case 'longtext':
+                $elements[] = 'longtext';
+                break;
+
+            case 'tinyblob':
+                $elements[] = 'tinyblob';
+                break;
+
+            case 'blob':
+                $elements[] = 'blob';
+                break;
+
+            case 'mediumblob':
+                $elements[] = 'mediumblob';
+                break;
+
+            case 'longblob':
+                $elements[] = 'longblob';
                 break;
 
             case 'char':
@@ -930,7 +974,10 @@ class Fields
 
     public static function ConvertFieldType($realtablename, $realfieldname, $ex_type, $new_type, $new_typeparams, $PureFieldType, $fieldtitle): bool
     {
-        if ($new_type == $ex_type)
+        if ($new_type == $ex_type and $new_type != 'blob')
+            return true; //no need to convert
+
+        if ($new_type != 'blob' and $new_typeparams == $ex_typeparams)
             return true; //no need to convert
 
         $unconvertable_types = array('dummy', 'image', 'imagegallery', 'file', 'filebox', 'signature', 'records', 'customtables', 'log');
@@ -963,7 +1010,14 @@ class Fields
 
         }
         $db->setQuery($query);
-        $db->execute();
+
+        try {
+            $db->execute();
+        } catch (Exception $e) {
+            $app = Factory::getApplication();
+            $app->enqueueMessage($e->getMessage(), 'error');
+            return false;
+        }
         return true;
     }
 

@@ -307,12 +307,22 @@
         </valueparams>
     </type>
 
-    <type ct_name="blob" label="Blob (Save file into the data base)"
+    <type ct_name="blob" label="Blob (Save file into the database)"
           description="A BLOB is a binary large object that can hold an entire file." priority="2">
         <params>
-            <param name="size" label="Max File Size" example="8"
-                   description="Obsolete. The max. upload file size is taken from PHP.ini file. No need to specify anything."
-                   default="" type="int" min="1" max="1000" disabled="false"/>
+            <param name="type" label="Maximum length" example="medium" description="Maximum length of value to be held"
+                   default="" type="list">
+                <option value="tiny"
+                        label="255 Bytes (TINYBLOB)"
+                        description="A binary large object column with a maximum length of 255 (2^8 - 1) bytes. Each TINYBLOB value is stored using a one-byte length prefix that indicates the number of bytes in the value."/>
+                <option value="" label="64KB (BLOB)"
+                        description="A binary large object column with a maximum length of 65535 (2^16 - 1) bytes, or 64KB in storage. Each BLOB value is stored using a two-byte length prefix that indicates the number of bytes in the value."/>
+                <option value="medium" label="16MB (MEDIUMBLOB)"
+                        description="A binary large object column with a maximum length of 16777215 (2^24 - 1) bytes, or 16MB in storage. Each MEDIUMBLOB value is stored using a three-byte length prefix that indicates the number of bytes in the value."/>
+                <option value="long" label="4GB (LONGBLOB)"
+                        description="A binary large object column with a maximum length of 4294967295 (2^32 - 1) bytes, or 4GB in storage. Each LONGBLOB value is stored using a four-byte length prefix that indicates the number of bytes in the value."/>
+            </param>
+
             <param name="filetypes" label="File Types" example="doc docx"
                    description="List of acceptable file types (list separated by space)"
                    default="doc docx xls xlsx pdf pages ppt pptx" type="string"/>

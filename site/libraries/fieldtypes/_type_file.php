@@ -422,6 +422,10 @@ class CT_FieldTypeTag_file
         $jinput = Factory::getApplication()->input;
 
         $file_id = $jinput->post->get($field->comesfieldname, '', 'STRING');
+
+        if ($file_id == '')
+            return false;
+
         $uploadedFile = JPATH_SITE . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR . $file_id;
 
         if (!file_exists($uploadedFile))

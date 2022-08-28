@@ -642,7 +642,6 @@ class CustomtablesModelFields extends JModelAdmin
             $fieldFound = false;
 
         if ($fieldid != 0 and $fieldFound) {
-            //$ex_PureFieldType = Fields::getPureFieldType($ex_type, $ex_typeparams);
 
             if ($PureFieldType == '') {
                 //do nothing. field can be deleted

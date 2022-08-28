@@ -16,6 +16,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomTablesImageMethods;
+use Exception;
 use Joomla\CMS\Component\ComponentHelper;
 
 use CT_FieldTypeTag_image;
@@ -312,7 +313,7 @@ class SaveFieldQuerySet
                     return $this->field->realfieldname . '=NULL';
                 } else {
                     $this->row[$this->field->realfieldname] = $value;
-                    return ($value === null ? null : $this->field->realfieldname . '=' . $this->ct->db->Quote($value));
+                    return ($value === null ? null : $this->field->realfieldname . '=FROM_BASE64("' . base64_encode($value) . '")');
                 }
 
             case 'file':
@@ -973,9 +974,13 @@ class SaveFieldQuerySet
     {
         if (count($saveQuery) > 0) {
             $query = 'UPDATE ' . $this->ct->Table->realtablename . ' SET ' . implode(', ', $saveQuery) . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . $this->ct->db->quote($listing_id);
+
             $this->ct->db->setQuery($query);
-            $this->ct->db->execute();
+            try {
+                $this->ct->db->execute();
+            } catch (Exception $e) {
+                $this->ct->app->enqueueMessage($e->getMessage(), 'error');
+            }
         }
     }
-
 }

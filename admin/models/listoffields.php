@@ -121,7 +121,12 @@ class CustomtablesModelListoffields extends JModelList
 
         // Select some fields
         $tabletitle = '(SELECT tabletitle FROM #__customtables_tables AS tables WHERE tables.id=a.tableid)';
-        $query->select('a.*, ' . $tabletitle . ' AS tabletitle');
+        if ($db->serverType == 'postgresql')
+            $realfieldname_query = 'CASE WHEN customfieldname!=\'\' THEN customfieldname ELSE CONCAT(\'es_\',fieldname) END AS realfieldname';
+        else
+            $realfieldname_query = 'IF(customfieldname!=\'\', customfieldname, CONCAT(\'es_\',fieldname)) AS realfieldname';
+
+        $query->select('a.*, ' . $tabletitle . ' AS tabletitle, ' . $realfieldname_query);
 
         // From the customtables_item table
         $query->from($db->quoteName('#__customtables_fields', 'a'));

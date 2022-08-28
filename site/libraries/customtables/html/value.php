@@ -134,11 +134,10 @@ class Value
                 return $this->TextFunctions($rowValue, $option_list);
 
             case 'text':
+                return $this->TextFunctions($rowValue, $option_list);
 
-                if ($this->ct->Table->customtablename)
-                    return $this->blobProcess($rowValue, $option_list);
-                else
-                    return $this->TextFunctions($rowValue, $option_list);
+            case 'blob':
+                return $this->blobProcess($rowValue, $option_list);
 
             case 'color':
                 return $this->colorProcess($rowValue, $option_list);
@@ -275,7 +274,7 @@ class Value
 
         if (!in_array($this->ct->LayoutVariables['layout_type'], [1, 5, 6]))//If not Simple Catalog and not Catalog Page and not Catalog Item
             return $value;
-        
+
         $edit_userGroup = (int)$this->ct->Params->editUserGroups;
         $isEditable = CTUser::checkIfRecordBelongsToUser($this->ct, $edit_userGroup);
 

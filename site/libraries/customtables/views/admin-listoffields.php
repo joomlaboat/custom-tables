@@ -16,6 +16,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomtablesHelper;
+use JFilterInput;
 use JHtml;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
@@ -110,8 +111,8 @@ class ListOfFields
         } else
             $result .= $this->escape($item->fieldname);
 
-        if ($this->customtablename != '')
-            $result .= '<br/><span style="color:grey;">' . $this->customtablename . '.' . $item->customfieldname . '</span>';
+        if ($this->tablename != '')
+            $result .= '<br/><span style="color:grey;">' . $this->tablename . '.' . $item->realfieldname . '</span>';
 
         $result .= '</div></td>';
 
@@ -177,14 +178,64 @@ class ListOfFields
 
     public function escape($var)
     {
-
         if (strlen($var) > 50) {
             // use the helper htmlEscape method instead and shorten the string
-            return CustomtablesHelper::htmlEscape($var, $this->_charset, true);
+            return self::htmlEscape($var, 'UTF-8', true);
         }
         // use the helper htmlEscape method instead.
-        return CustomtablesHelper::htmlEscape($var, $this->_charset);
+        return self::htmlEscape($var);
     }
+
+    public static function htmlEscape($var, $charset = 'UTF-8', $shorten = false, $length = 40)
+    {
+        if (self::checkString($var)) {
+            $filter = new JFilterInput();
+            $string = $filter->clean(html_entity_decode(htmlentities($var, ENT_COMPAT, $charset)), 'HTML');
+            if ($shorten) {
+                return self::shorten($string, $length);
+            }
+            return $string;
+        } else {
+            return '';
+        }
+    }
+
+    public static function checkString($string)
+    {
+        if (isset($string) && is_string($string) && strlen($string) > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public static function shorten($string, $length = 40, $addTip = true)
+    {
+        if (self::checkString($string)) {
+            $initial = strlen($string);
+            $words = preg_split('/([\s\n\r]+)/', $string, null, PREG_SPLIT_DELIM_CAPTURE);
+            $words_count = count((array)$words);
+
+            $word_length = 0;
+            $last_word = 0;
+            for (; $last_word < $words_count; ++$last_word) {
+                $word_length += strlen($words[$last_word]);
+                if ($word_length > $length) {
+                    break;
+                }
+            }
+
+            $newString = implode(array_slice($words, 0, $last_word));
+            $final = strlen($newString);
+            if ($initial != $final && $addTip) {
+                $title = self::shorten($string, 400, false);
+                return '<span class="hasTip" title="' . $title . '" style="cursor:help">' . trim($newString) . '...</span>';
+            } elseif ($initial != $final && !$addTip) {
+                return trim($newString) . '...';
+            }
+        }
+        return $string;
+    }
+
 
     protected function checkTypeParams(string $type, string $typeparams): string
     {

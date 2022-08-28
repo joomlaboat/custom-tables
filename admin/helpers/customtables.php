@@ -16,7 +16,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\CT;
 
 use \Joomla\CMS\Component\ComponentHelper;
-use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\Language\Text;
 
 /**

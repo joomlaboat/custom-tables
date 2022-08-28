@@ -93,7 +93,7 @@ class CustomtablesControllerFields extends JControllerForm
     {
         $tableid = $this->input->get('tableid', 0, 'int');
 
-        // get the referal details
+        // get the referral details
         $this->ref = $this->input->get('ref', 0, 'word');
         $this->refid = $this->input->get('refid', 0, 'int');
 
@@ -101,7 +101,7 @@ class CustomtablesControllerFields extends JControllerForm
 
 
         if ($this->ref || $this->refid) {
-            // to make sure the item is checkedin on redirect
+            // to make sure the item is checked in on redirect
             $this->task = 'save';
         }
 
@@ -126,9 +126,7 @@ class CustomtablesControllerFields extends JControllerForm
         if ($saved) {
             // Redirect to the item screen.
             $this->setRedirect(
-                JRoute::_(
-                    $redirect, false
-                )
+                JRoute::_($redirect, false)
             );
         }
 
@@ -136,7 +134,7 @@ class CustomtablesControllerFields extends JControllerForm
     }
 
     protected function allowAdd($data = array())
-    {        // In the absense of better information, revert to the component permissions.
+    {        // In the absence of better information, revert to the component permissions.
         return parent::allowAdd($data);
     }
 
@@ -216,6 +214,5 @@ class CustomtablesControllerFields extends JControllerForm
 
     protected function postSaveHook(JModelLegacy $model, $validData = array())
     {
-        return;
     }
 }
