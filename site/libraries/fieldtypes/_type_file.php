@@ -16,6 +16,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\Field;
+use CustomTables\Fields;
 use Joomla\CMS\Factory;
 
 require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'uploader.php');
@@ -456,10 +457,35 @@ class CT_FieldTypeTag_file
 
         $result = '<div class="esUploadFileBox" style="vertical-align:top;">';
 
-        $result .= CT_FieldTypeTag_file::renderFileAndDeleteOption($file, $field);
+        if ($field->type == 'blob')
+            $result .= CT_FieldTypeTag_file::renderBlobAndDeleteOption($file, $field);
+        else
+            $result .= CT_FieldTypeTag_file::renderFileAndDeleteOption($file, $field);
+
         $result .= CT_FieldTypeTag_file::renderUploader($field);
 
         $result .= '</div>';
+        return $result;
+    }
+
+    protected static function renderBlobAndDeleteOption(string $file, &$field): string
+    {
+        if ($file == '')
+            return '';
+
+        $result = '
+                <div style="margin:10px; border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;vertical-align:top;" id="ct_uploadedfile_box_' . $field->fieldname . '">';
+
+
+        $result .= '[BLOB - ' . JoomlaBasicMisc::formatSizeUnits(strlen($file)) . ']<br/><br/>';
+
+        if (!$field->isrequired)
+            $result .= '<input type="checkbox" name="' . $field->prefix . $field->fieldname . '_delete" id="' . $field->prefix . $field->fieldname . '_delete" value="true">'
+                . ' Delete Data';
+
+        $result .= '
+                </div>';
+
         return $result;
     }
 
