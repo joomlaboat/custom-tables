@@ -242,12 +242,18 @@ class SaveFieldQuerySet
 
             case 'userid':
 
-                if ($this->ct->isRecordNull($this->row[$this->ct->Table->realidfieldname]) or $this->isCopy) {
+                if ($this->ct->isRecordNull($this->row) or $this->isCopy) {
 
                     $value = $this->ct->Env->jinput->getVar($this->field->comesfieldname);
 
-                    if ((!isset($value) or $value == 0) and ($this->row[$this->field->realfieldname] == null or $this->row[$this->field->realfieldname] == "")) {
-                        $value = ($this->ct->Env->userid != 0 ? $this->ct->Env->userid : 0);
+                    if ((!isset($value) or $value == 0)) {
+
+                        if (!$this->ct->isRecordNull($this->row)) {
+                            if ($this->row[$this->field->realfieldname] == null or $this->row[$this->field->realfieldname] == "")
+                                $value = ($this->ct->Env->userid != 0 ? $this->ct->Env->userid : 0);
+                        } else {
+                            $value = ($this->ct->Env->userid != 0 ? $this->ct->Env->userid : 0);
+                        }
                     }
 
                     $this->row[$this->field->realfieldname] = $value;

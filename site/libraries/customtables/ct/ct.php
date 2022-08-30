@@ -70,7 +70,7 @@ class CT
         $this->Filter = null;
     }
 
-    function isRecordNull($row): bool
+    function isRecordNull(?array $row): bool
     {
         if (is_null($row))
             return true;
