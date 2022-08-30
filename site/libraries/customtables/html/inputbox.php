@@ -631,8 +631,8 @@ class Inputbox
 
             if (file_exists($file_path)) {
                 $this->ct->document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/thirdparty/jsc/include.js"></script>');
-                $this->ct->document->addCustomTag('<script type="text/javascript">$Spelling.SpellCheckAsYouType("' . $fname . '");</script>');
-                $this->ct->document->addCustomTag('<script type="text/javascript">$Spelling.DefaultDictionary = "English";</script>');
+                $this->ct->document->addCustomTag('<script>$Spelling.SpellCheckAsYouType("' . $fname . '");</script>');
+                $this->ct->document->addCustomTag('<script>$Spelling.DefaultDictionary = "English";</script>');
             }
         }
 

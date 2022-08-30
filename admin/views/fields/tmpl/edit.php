@@ -52,7 +52,7 @@ foreach ($this->allTables as $table) {
     echo '<div id="fieldsData' . $table[0] . '" style="display:none;">' . json_encode($list) . '</div>
 ';
 } ?>
-<script type="text/javascript">
+<script>
 
     var outerDiv = jQuery('body');
     jQuery('<div id="loading"></div>')

@@ -246,7 +246,7 @@ class SaveFieldQuerySet
 
                     $value = $this->ct->Env->jinput->getVar($this->field->comesfieldname);
 
-                    if (!isset($value) or $value == 0) {
+                    if ((!isset($value) or $value == 0) and ($this->row[$this->field->realfieldname] == null or $this->row[$this->field->realfieldname] == "")) {
                         $value = ($this->ct->Env->userid != 0 ? $this->ct->Env->userid : 0);
                     }
 

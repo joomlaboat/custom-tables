@@ -144,7 +144,7 @@ function render_onPageLoads($onPageLoads, $LayoutType, $version)
 		';
 
     $result_js = '
-	<script type="text/javascript">
+	<script>
 
 	joomlaVersion =' . $version . ';
 	define_cmLayoutEditor();

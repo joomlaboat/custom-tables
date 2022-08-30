@@ -361,16 +361,16 @@ class CT
 
         $this->document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/js/ajax.js"></script>');
         $this->document->addScript(URI::root(true) . '/components/com_customtables/libraries/customtables/media/js/base64.js');
-        $this->document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/js/catalog.js" type="text/javascript"></script>');
+        $this->document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/js/catalog.js"></script>');
         $this->document->addScript(URI::root(true) . '/components/com_customtables/libraries/customtables/media/js/edit.js');
         $this->document->addScript(URI::root(true) . '/components/com_customtables/libraries/customtables/media/js/esmulti.js');
-        $this->document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/js/modal.js" type="text/javascript"></script>');
+        $this->document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/js/modal.js"></script>');
         $this->document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/js/uploader.js"></script>');
 
         $params = ComponentHelper::getParams('com_customtables');
         $googlemapapikey = $params->get('googlemapapikey');
 
-        $this->document->addCustomTag('<script type="text/javascript" src="https://maps.google.com/maps/api/js?key=' . $googlemapapikey . '&sensor=false"></script>');
+        $this->document->addCustomTag('<script src="https://maps.google.com/maps/api/js?key=' . $googlemapapikey . '&sensor=false"></script>');
 
         $this->document->addScript(URI::root(true) . '/components/com_customtables/libraries/customtables/media/js/combotree.js');
 
