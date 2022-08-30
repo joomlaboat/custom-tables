@@ -22,7 +22,7 @@ JHtml::_('dropdown.init');
 JHtml::_('formbehavior.chosen', 'select');
 
 ?>
-<script type="text/javascript">
+<script>
     Joomla.orderTable = function () {
         table = document.getElementById("sortTable");
         direction = document.getElementById("directionTable");

@@ -55,7 +55,7 @@ foreach ($this->allTables as $table) {
 
 ?>
 
-<script type="text/javascript">
+<script>
     <?php
 
     if ($this->ct->Env->advancedtagprocessor) {

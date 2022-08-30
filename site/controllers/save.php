@@ -211,7 +211,7 @@ function CustomTablesSave($task, $this_)
             if ($ct->Params->msgItemIsSaved == 'COM_CUSTOMTABLES_INCORRECT_CAPTCHA') {
                 Factory::getApplication()->enqueueMessage($msg_, 'error');
                 echo '
-				<script type="text/javascript">
+				<script>
 setTimeout("history.go(-1)", 3000);
 </script>';
 

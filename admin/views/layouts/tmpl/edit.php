@@ -51,7 +51,7 @@ foreach ($this->allTables as $table) {
 ';
 }
 ?>
-<script type="text/javascript">
+<script>
     <?php echo 'all_tables=' . json_encode($this->allTables) . ';'; ?>
 </script>
 

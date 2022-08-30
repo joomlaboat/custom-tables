@@ -15,7 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 $this->ct->loadJSAndCSS();
 //$this->ct->document->addScript(JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/base64.js');
-//$this->ct->document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/catalog.js" type="text/javascript"></script>');
+//$this->ct->document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/catalog.js"></script>');
 //$this->ct->document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/ajax.js"></script>');
 //$this->ct->document->addCustomTag('<link href="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/css/style.css" type="text/css" rel="stylesheet" >');
 
