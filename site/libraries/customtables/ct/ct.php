@@ -374,7 +374,7 @@ class CT
         $this->document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/js/combotree.js"></script>');
         $this->document->addCustomTag('<script>let ctWebsiteRoot = "' . $this->Env->WebsiteRoot . '";</script>');
 
-        if ($this->Params->ModuleId == null and !$this->$ctItemIdDeclared) {
+        if ($this->Params->ModuleId == null and !$this->ctItemIdDeclared) {
             $ctItemIdDeclared = true;
             $this->document->addCustomTag('<script>let ctItemId = "' . $this->Params->ItemId . '";</script>');
         }
