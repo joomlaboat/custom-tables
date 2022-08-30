@@ -45,6 +45,7 @@ class CT
     var $db;
     var array $editFields;
     var array $LayoutVariables;
+    var bool $ctItemIdDeclared = false;
 
     function __construct($menuParams = null, $blockExternalVars = true, $ModuleId = null)
     {
@@ -373,8 +374,10 @@ class CT
         $this->document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/js/combotree.js"></script>');
         $this->document->addCustomTag('<script>let ctWebsiteRoot = "' . $this->Env->WebsiteRoot . '";</script>');
 
-        if ($this->Params->ModuleId == null)
+        if ($this->Params->ModuleId == null and !$this->$ctItemIdDeclared) {
+            $ctItemIdDeclared = true;
             $this->document->addCustomTag('<script>let ctItemId = "' . $this->Params->ItemId . '";</script>');
+        }
 
         //Styles
         $this->document->addCustomTag('<link href="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/css/style.css" type="text/css" rel="stylesheet" >');
