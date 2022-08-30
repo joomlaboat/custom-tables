@@ -276,8 +276,10 @@ class TwigProcessor
             $result = str_replace($this->recordBlockReplaceCode, $record_result, $result);
         }
 
-        if ($this->ct->Table->tableid != null)
+        if ($this->ct->Table->tableid != null and $row == null and
+            isset($this->ct->LayoutVariables['layout_type']) and in_array($this->ct->LayoutVariables['layout_type'], [1, 5])) {
             $result = Ordering::applyOrderingMethods($result, $this->ct->Table->tableid);
+        }
 
         if (isset($this->ct->LayoutVariables['ordering_field_type_found']) and $this->ct->LayoutVariables['ordering_field_type_found']) {
             $result = '<form id="ctTableForm_' . $this->ct->Table->tableid . '" method="post">' . $result . '</form>';
