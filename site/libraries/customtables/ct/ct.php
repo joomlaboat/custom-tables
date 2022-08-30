@@ -374,7 +374,7 @@ class CT
         $this->document->addCustomTag('<script>let ctWebsiteRoot = "' . $this->Env->WebsiteRoot . '";</script>');
 
         if ($this->Params->ModuleId == null)
-            $this->document->addCustomTag('<script>let ctItemId = "' . $this->Params->ItemId . '";</script>');
+            $this->document->addCustomTag('<script>ctItemId = "' . $this->Params->ItemId . '";</script>');
 
         //Styles
         $this->document->addCustomTag('<link href="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/css/style.css" type="text/css" rel="stylesheet" >');
