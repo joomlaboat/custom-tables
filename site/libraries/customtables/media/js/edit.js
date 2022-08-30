@@ -1,3 +1,5 @@
+let ctItemId = 0;
+
 function setTask(event, task, returnLink, submitForm, formName) {
 
     event.preventDefault();
