@@ -92,6 +92,6 @@ class CustomtablesViewCustomtables extends JViewLegacy
         $document->setTitle(Text::_('COM_CUSTOMTABLES_DASHBOARD'));
 
         // add manifest to page JavaScript
-        $document->addScriptDeclaration("var manifest = jQuery.parseJSON('" . json_encode($this->manifest) . "');", "text/javascript");
+        $document->addScriptDeclaration("var manifest = jQuery.parseJSON('" . json_encode($this->manifest) . "');", "");
     }
 }

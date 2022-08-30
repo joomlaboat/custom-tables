@@ -125,7 +125,5 @@ class CustomTablesViewOptions extends JViewLegacy
             $this->document = Factory::getDocument();
         }
         $this->document->setTitle(Text::_($isNew ? 'COM_CUSTOMTABLES_OPTIONS_NEW' : 'COM_CUSTOMTABLES_OPTIONS_EDIT'));
-//		$this->document->addScript(JURI::root(true) . $this->script, (CustomtablesHelper::jVersion()->isCompatible('3.8.0')) ? array('version' => 'auto') : 'text/javascript');
-        //JText::script('view not acceptable. Error');
     }
 }

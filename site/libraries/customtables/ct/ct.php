@@ -358,12 +358,11 @@ class CT
 
         $this->document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/js/jquery.uploadfile.js"></script>');
         $this->document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/js/jquery.form.js"></script>');
-
         $this->document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/js/ajax.js"></script>');
-        $this->document->addScript(URI::root(true) . '/components/com_customtables/libraries/customtables/media/js/base64.js');
+        $this->document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/js/base64.js"></script>');
         $this->document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/js/catalog.js"></script>');
-        $this->document->addScript(URI::root(true) . '/components/com_customtables/libraries/customtables/media/js/edit.js');
-        $this->document->addScript(URI::root(true) . '/components/com_customtables/libraries/customtables/media/js/esmulti.js');
+        $this->document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/js/edit.js"></script>');
+        $this->document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/js/esmulti.js"></script>');
         $this->document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/js/modal.js"></script>');
         $this->document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/js/uploader.js"></script>');
 
@@ -371,9 +370,7 @@ class CT
         $googlemapapikey = $params->get('googlemapapikey');
 
         $this->document->addCustomTag('<script src="https://maps.google.com/maps/api/js?key=' . $googlemapapikey . '&sensor=false"></script>');
-
-        $this->document->addScript(URI::root(true) . '/components/com_customtables/libraries/customtables/media/js/combotree.js');
-
+        $this->document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/js/combotree.js"></script>');
         $this->document->addCustomTag('<script>let ctWebsiteRoot = "' . $this->Env->WebsiteRoot . '";let ctItemId = "' . $this->Params->ItemId . '";</script>');
 
         //Styles
