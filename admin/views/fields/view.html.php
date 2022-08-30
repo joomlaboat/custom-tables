@@ -172,9 +172,7 @@ class CustomtablesViewFields extends JViewLegacy
             $this->document = Factory::getDocument();
 
         $this->document->setTitle(Text::_($isNew ? 'COM_CUSTOMTABLES_FIELDS_NEW' : 'COM_CUSTOMTABLES_FIELDS_EDIT'));
-
-        //if($this->version < 4)
-        $this->document->addScript(JURI::root(true) . "/administrator/components/com_customtables/views/fields/submitbutton.js");
+        $this->document->addCustomTag('<script src="' . JURI::root(true) . '/administrator/components/com_customtables/views/fields/submitbutton.js"></script>');
 
         JText::script('view not acceptable. Error');
     }

@@ -188,8 +188,7 @@ class CustomtablesViewLayouts extends JViewLegacy
             $this->document = Factory::getDocument();
 
         $this->document->setTitle(Text::_($isNew ? 'COM_CUSTOMTABLES_LAYOUTS_NEW' : 'COM_CUSTOMTABLES_LAYOUTS_EDIT'));
-
-        $this->document->addScript(JURI::root(true) . "/administrator/components/com_customtables/views/layouts/submitbutton.js");
+        $this->document->addCustomTag('<script src="' . JURI::root(true) . '/administrator/components/com_customtables/views/layouts/submitbutton.js"></script>');
 
         JText::script('view not acceptable. Error');
     }

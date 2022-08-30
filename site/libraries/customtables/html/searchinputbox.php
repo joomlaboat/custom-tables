@@ -346,7 +346,7 @@ class SearchInputBox
 		//' . $this->modulename . '_onChange(' . $index . ',v_min+"' . $d . '"+v_max,"' . $this->field->fieldname . '","' . urlencode($where) . '","' . urlencode($wherelist) . '");
 	}
 ';
-        $this->ct->document->addScriptDeclaration($js);
+        $this->document->addCustomTag('<script>' . $js . '</script>');
         //end of header function
 
         $attribs = 'onChange="Update' . $objname_ . 'Values()" class="' . $default_class . '" ';

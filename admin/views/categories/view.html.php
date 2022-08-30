@@ -151,7 +151,7 @@ class CustomtablesViewCategories extends JViewLegacy
         $this->document->setTitle(Text::_($isNew ? 'COM_CUSTOMTABLES_CATEGORIES_NEW' : 'COM_CUSTOMTABLES_CATEGORIES_EDIT'));
 
         if ($this->version < 4)
-            $this->document->addScript(JURI::root(true) . "/administrator/components/com_customtables/views/categories/submitbutton.js");
+            $this->document->addCustomTag('<script src=' . JURI::root(true) . '/administrator/components/com_customtables/views/categories/submitbutton.js"></script>');
 
         JText::script('view not acceptable. Error');
     }

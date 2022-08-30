@@ -86,12 +86,12 @@ class CustomtablesViewCustomtables extends JViewLegacy
         $document = Factory::getDocument();
 
         // add dashboard style sheets
-        $document->addStyleSheet(JURI::root(true) . "/components/com_customtables/libraries/customtables/media/css/dashboard.css");
+        $this->document->addCustomTag('<link href="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/css/dashboard.css" type="text/css" rel="stylesheet" >');
 
         // set page title
         $document->setTitle(Text::_('COM_CUSTOMTABLES_DASHBOARD'));
 
         // add manifest to page JavaScript
-        $document->addScriptDeclaration("var manifest = jQuery.parseJSON('" . json_encode($this->manifest) . "');", "");
+        $this->document->addCustomTag('<script>var manifest = jQuery.parseJSON("' . json_encode($this->manifest) . '");</script>');
     }
 }
