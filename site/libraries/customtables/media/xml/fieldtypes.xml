@@ -44,7 +44,7 @@
     </type>
 
     <type ct_name="color" name="color" label="Color"
-          description="Provides Color Picker functionality in the Edit Form or hexidecimal value as an output."
+          description="Provides Color Picker functionality in the Edit Form or hexadecimal value as an output."
           ct_alias="color" disabled="false" ct_special="false" priority="2"
           image="https://joomlaboat.com/images/components/ct/field-types/color.png">
         <editparams name="color" label="Format" description="Color Picker format."
@@ -464,7 +464,7 @@
                      description="This dictates how to format the decimal value of the field.">
             <params>
                 <param name="decimals" label="Number of decimals" example="2"
-                       description="Format returning number. Add tracing 0 if needed. (useful when formating a currency)"
+                       description="Format returning number. Add tracing 0 if needed. (useful when formatting a currency)"
                        hidden="false" default="" type="number" min="0" max="30"/>
                 <param name="decimalseparator" label="Decimal Separator" example="."
                        description="Separate decimals with provided character. i.e. ',' or '.'" default=""
@@ -768,7 +768,7 @@
                 <param name="cleanquotes" label="Clean Quotes" description="Deletes all quotes from the text."
                        default="" type="radio" options="|No,true|Yes"/>
                 <param name="language" label="Language"
-                       description="Specify the language. Default front-end languege will be used if not specified."
+                       description="Specify the language. Default front-end language will be used if not specified."
                        default="" type="language"/>
             </params>
         </valueparams>
@@ -795,6 +795,24 @@
 
             <param name="spellcheck" label="Spell Checker" description="" default="" type="radio"
                    options="|No,spellcheck|Yes"/>
+
+            <param name="type" label="Maximum length" example="medium"
+                   description="Maximum length of value to be held. The effective maximum length is less. The Joomla default utf8mb4 Character Set (4-Byte UTF-8 Unicode Encoding)."
+                   default="" type="list">
+                TINYTEXT | 255 (2 8−1) bytes
+                TEXT | 65,535 (216−1) bytes = 64 KiB
+                MEDIUMTEXT | 16,777,215 (224−1) bytes = 16 MiB
+                LONGTEXT | 4,294,967,295 (232−1) bytes = 4 GiB
+                <option value="tiny"
+                        label="Up to 255 Bytes - 63 characters (TINYTEXT)"
+                        description="TINYTEXT can store up to 63 Unicode characters i.e 255 bytes. It is suitable for storing short comments, captions, titles etc."/>
+                <option value="" label="Up to 64KB - 16,383 characters (TEXT)"
+                        description="TEXT can store up to 16,383 Unicode characters i.e 64KB. It is suitable for storing summaries of articles, short notices, captions, etc."/>
+                <option value="medium" label="Up to 16MB - 4.2 million characters (MEDIUMTEXT)"
+                        description="MEDIUMTEXT can store up to 4,194,303 Unicode characters i.e 16MB. It is suitable for larger text strings like books, research papers, and code backup."/>
+                <option value="long" label="Up to 4GB - 10.7 billion characters (LONGTEXT)"
+                        description="LONGTEXT can store up to 1,073,741,822 Unicode characters i.e 4GB. This is more than enough storage for any long-form text strings. For example, a book that MEDIUMTEXT can’t hold can be stored using LONGTEXT."/>
+            </param>
         </params>
         <valueparams name="multilangtext" label="Text Output Parameters"
                      description="This dictates how to process the text value of the field.">
@@ -1137,6 +1155,23 @@
             </param>
             <param name="spellcheck" label="Spell Checker" description="" default="" type="radio"
                    options="|No,spellcheck|Yes"/>
+            <param name="type" label="Maximum length" example="medium"
+                   description="Maximum length of value to be held. The effective maximum length is less. The Joomla default utf8mb4 Character Set (4-Byte UTF-8 Unicode Encoding)."
+                   default="" type="list">
+                TINYTEXT | 255 (2 8−1) bytes
+                TEXT | 65,535 (216−1) bytes = 64 KiB
+                MEDIUMTEXT | 16,777,215 (224−1) bytes = 16 MiB
+                LONGTEXT | 4,294,967,295 (232−1) bytes = 4 GiB
+                <option value="tiny"
+                        label="Up to 255 Bytes - 63 characters (TINYTEXT)"
+                        description="TINYTEXT can store up to 63 Unicode characters i.e 255 bytes. It is suitable for storing short comments, captions, titles etc."/>
+                <option value="" label="Up to 64KB - 16,383 characters (TEXT)"
+                        description="TEXT can store up to 16,383 Unicode characters i.e 64KB. It is suitable for storing summaries of articles, short notices, captions, etc."/>
+                <option value="medium" label="Up to 16MB - 4.2 million characters (MEDIUMTEXT)"
+                        description="MEDIUMTEXT can store up to 4,194,303 Unicode characters i.e 16MB. It is suitable for larger text strings like books, research papers, and code backup."/>
+                <option value="long" label="Up to 4GB - 10.7 billion characters (LONGTEXT)"
+                        description="LONGTEXT can store up to 1,073,741,822 Unicode characters i.e 4GB. This is more than enough storage for any long-form text strings. For example, a book that MEDIUMTEXT can’t hold can be stored using LONGTEXT."/>
+            </param>
         </params>
 
         <valueparams name="text" label="Text Output Parameters"

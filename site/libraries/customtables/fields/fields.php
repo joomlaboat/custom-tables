@@ -658,6 +658,20 @@ class Fields
 
             case 'text':
             case 'multilangtext':
+
+                $typeparams_arr = JoomlaBasicMisc::csv_explode(',', $typeparams);
+                $type = 'text';
+                if (isset($typeparams_arr[2])) {
+                    if ($typeparams_arr[2] == 'tiny')
+                        $type = 'tinytext';
+                    elseif ($typeparams_arr[2] == 'medium')
+                        $type = 'mediumtext';
+                    elseif ($typeparams_arr[2] == 'long')
+                        $type = 'longtext';
+                }
+
+                return ['data_type' => $type, 'is_nullable' => true, 'is_unsigned' => null, 'length' => null, 'default' => null, 'extra' => null];
+
             case 'log':
                 //mediumtext
                 return ['data_type' => 'text', 'is_nullable' => true, 'is_unsigned' => null, 'length' => null, 'default' => null, 'extra' => null];
@@ -972,13 +986,15 @@ class Fields
         }
     }
 
-    public static function ConvertFieldType($realtablename, $realfieldname, $ex_type, $new_type, $new_typeparams, $PureFieldType, $fieldtitle): bool
+    public static function ConvertFieldType($realtablename, $realfieldname, $ex_type, $new_type, $ex_typeparams, $new_typeparams, $PureFieldType, $fieldtitle): bool
     {
-        if ($new_type == $ex_type and $new_type != 'blob')
-            return true; //no need to convert
-
-        if ($new_type != 'blob' and $new_typeparams == $ex_typeparams)
-            return true; //no need to convert
+        if ($new_type == 'blob' or $new_type == 'text' or $new_type == 'multilangtext') {
+            if ($new_typeparams == $ex_typeparams)
+                return true; //no need to convert
+        } else {
+            if ($new_type == $ex_type)
+                return true; //no need to convert
+        }
 
         $unconvertable_types = array('dummy', 'image', 'imagegallery', 'file', 'filebox', 'signature', 'records', 'customtables', 'log');
 

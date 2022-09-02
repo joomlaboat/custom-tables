@@ -276,7 +276,7 @@ class TwigProcessor
             $result = str_replace($this->recordBlockReplaceCode, $record_result, $result);
         }
 
-        if ($this->ct->Table->tableid != null and $row == null and
+        if ($this->ct->Table != null and $this->ct->Table->tableid != null and $row == null and
             isset($this->ct->LayoutVariables['layout_type']) and in_array($this->ct->LayoutVariables['layout_type'], [1, 5])) {
             $result = Ordering::applyOrderingMethods($result, $this->ct->Table->tableid);
         }

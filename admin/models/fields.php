@@ -647,7 +647,7 @@ class CustomtablesModelFields extends JModelAdmin
                 //do nothing. field can be deleted
                 $convert_ok = true;
             } else
-                $convert_ok = Fields::ConvertFieldType($realtablename, $realfieldname, $ex_type, $new_type, $new_typeparams, $PureFieldType, $fieldtitle);
+                $convert_ok = Fields::ConvertFieldType($realtablename, $realfieldname, $ex_type, $new_type, $ex_typeparams, $new_typeparams, $PureFieldType, $fieldtitle);
 
             if (!$convert_ok) {
                 Factory::getApplication()->enqueueMessage('Cannot convert the type.', 'error');

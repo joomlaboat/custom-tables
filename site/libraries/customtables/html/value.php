@@ -537,5 +537,4 @@ class Value
             return JHTML::date($PHPDate);
         }
     }
-
 }

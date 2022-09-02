@@ -949,10 +949,8 @@ function findTheType(typename) {
 function loadTypes_silent() {
 
     let parts = location.href.split("/administrator/");
-    const url = parts[0] + '/index.php?option=com_customtables&view=xml&xmlfile=fieldtypes';
-
+    const url = parts[0] + '/index.php?option=com_customtables&view=xml&xmlfile=fieldtypes&Itemid=-1';
     const params = "";
-
     let http = CreateHTTPRequestObject();   // defined in ajax.js
 
     if (http) {
@@ -988,10 +986,8 @@ function loadTypes(typeparams_box_obj, jform_type, jform_typeparams, typeparams_
     typeparams_box_obj.innerHTML = 'Loading...';
 
     let parts = location.href.split("/administrator/");
-    const url = parts[0] + '/index.php?option=com_customtables&view=xml&xmlfile=fieldtypes';
-
+    const url = parts[0] + '/index.php?option=com_customtables&view=xml&xmlfile=fieldtypes&Itemid=-1';
     const params = "";
-
     let http = CreateHTTPRequestObject();   // defined in ajax.js
 
     if (http) {
