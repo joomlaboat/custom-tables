@@ -761,7 +761,7 @@ class JoomlaBasicMisc
         return $resArr;
     }
 
-    function getXMLData($file)
+    static public function getXMLData($file)
     {
         $xml_content = file_get_contents(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR
             . 'media' . DIRECTORY_SEPARATOR . 'xml' . DIRECTORY_SEPARATOR . $file);

@@ -289,10 +289,17 @@ class Documentation
 
     function prepareExample($param): string
     {
-        if (!is_numeric($param) and $param != 'true' and $param != 'false')
-            return '"' . $param . '"';
+        $output = preg_replace('/[^0-9]/', '', $param);
+        if ($output != '')
+            return $param;
 
-        return $param;
+        if (is_numeric($param))
+            return $param;
+
+        if ($param == 'true' or $param == 'false')
+            return $param;
+
+        return '"' . $param . '"';
     }
 
     function cleanParams($params): array
