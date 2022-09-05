@@ -44,7 +44,10 @@ class Forms
             $field_label .= ' onClick="ctOrderChanged(\'' . $field->fieldname . ($OrderingField == $field->fieldname ? ($OrderingDirection == 'desc' ? '' : ' desc') : '') . '\')"';
         }
 
-        $field_label .= ' data-original-title="' . $field->title . '">' . $field->title;
+        $field_label .= ' data-original-title="' . $field->title . '">';
+
+        if (!$allowSortBy or $field->type != 'ordering')
+            $field_label .= $field->title;
 
         if ($allowSortBy) {
             if ($OrderingField == $field->fieldname) {
@@ -57,7 +60,7 @@ class Forms
                 $field_label .= '<span class="ms-1 icon-sort" aria-hidden="true"></span>';
         }
 
-        if ($field->isrequired)
+        if ($field->isrequired and isset($this->ct->LayoutVariables['ordering_field_type_found']) and $this->ct->LayoutVariables['ordering_field_type_found'])
             $field_label .= '<span class="star">&#160;*</span>';
 
         $field_label .= '</label>';

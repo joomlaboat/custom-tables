@@ -261,9 +261,13 @@ class TwigProcessor
                 $this->ct->Table->record = $blockRow;
                 $row_result = @$this->twig->render('record', $this->variables);
 
-                //<tr id=...> is needed for ordering, modal edit, on page delete, publish and refresh functionality
-                $row_result = str_ireplace('<tr ', '<tr id="ctTable_' . $this->ct->Table->tableid . '_' . $blockRow[$this->ct->Table->realidfieldname] . '" ', $row_result);
-                $row_result = str_ireplace('<tr>', '<tr id="ctTable_' . $this->ct->Table->tableid . '_' . $blockRow[$this->ct->Table->realidfieldname] . '">', $row_result);
+                $TR_tag_params = array();
+                $TR_tag_params['id'] = 'ctTable_' . $this->ct->Table->tableid . '_' . $blockRow[$this->ct->Table->realidfieldname];
+
+                if (isset($this->ct->LayoutVariables['ordering_field_type_found']) and $this->ct->LayoutVariables['ordering_field_type_found'])
+                    $TR_tag_params['data-draggable-group'] = $this->ct->Table->tableid;
+
+                $row_result = Ordering::addEditHTMLTagParams($row_result, 'tr', $TR_tag_params);
 
                 if ($isSingleRecord and $blockRow[$this->ct->Table->realidfieldname] == $this->ct->Params->listing_id)
                     return $row_result; //This allows modal edit form functionality, to load single record after Save click
@@ -278,10 +282,12 @@ class TwigProcessor
 
         if ($this->ct->Table != null and $this->ct->Table->tableid != null and $row == null and
             isset($this->ct->LayoutVariables['layout_type']) and in_array($this->ct->LayoutVariables['layout_type'], [1, 5])) {
-            $result = Ordering::applyOrderingMethods($result, $this->ct->Table->tableid);
+            $result = Ordering::addTableTagID($result, $this->ct->Table->tableid);
         }
 
         if (isset($this->ct->LayoutVariables['ordering_field_type_found']) and $this->ct->LayoutVariables['ordering_field_type_found']) {
+
+            $result = Ordering::addTableBodyTagParams($result, $this->ct->Table->tableid);
             $result = '<form id="ctTableForm_' . $this->ct->Table->tableid . '" method="post">' . $result . '</form>';
         }
         return $result;

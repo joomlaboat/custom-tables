@@ -873,7 +873,7 @@ function renderInput_Layout(id, param, value, onchange) {
     let param_att = param["@attributes"];
 
     let currentLayout = document.getElementById('jform_layoutname').value;
-    let currentTable = document.getElementById('jform_tableid').value;
+    let currentTable = parseInt(document.getElementById('jform_tableid').value);
 
     let layout_table = "";
     if (param_att.table != null)
@@ -891,8 +891,10 @@ function renderInput_Layout(id, param, value, onchange) {
         let ok = true;
         let option = wizardLayouts[o];
 
+
         if (layout_table === "current") {
-            if (option.tableid !== currentTable)
+
+            if (parseInt(option.tableid) !== currentTable)
                 ok = false;
         }
 

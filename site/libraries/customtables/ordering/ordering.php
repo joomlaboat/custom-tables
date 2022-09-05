@@ -38,28 +38,48 @@ class Ordering
         $this->fieldList = null;
     }
 
-    public static function applyOrderingMethods(string $result, int $tableid): string
+    public static function addTableTagID(string $result, int $tableid): string
+    {
+        $params = array();
+        $params['id'] = 'ctTable_' . $tableid;
+
+        return self::addEditHTMLTagParams($result, 'table', $params);
+    }
+
+    public static function addEditHTMLTagParams(string $result, string $tag, array $paramsToAddEdit): string
     {
         $options = array();
-        $fList = JoomlaBasicMisc::getListToReplace('table', $options, $result, "<>", ' ', '"');
+        $fList = JoomlaBasicMisc::getListToReplace($tag, $options, $result, "<>", ' ', '"');
         $i = 0;
         foreach ($fList as $fItem) {
 
             $params = JoomlaBasicMisc::getHTMLTagParameters(strtolower($options[$i]));
 
-            if (!isset($params['id'])) {
-
-                $params['id'] = 'ctTable_' . $tableid;
-                $params_str = [];
-                foreach ($params as $key => $value)
-                    $params_str[] = $key . '="' . $value . '"';
-
-                $val = '<table ' . implode(' ', $params_str) . '>';
-                $result = str_replace($fItem, $val, $result);
+            foreach ($paramsToAddEdit as $key => $value) {
+                $params[$key] = $value;
             }
+
+            $params_str = [];
+            foreach ($params as $key => $value)
+                $params_str[] = $key . '="' . $value . '"';
+
+            $val = '<' . $tag . ' ' . implode(' ', $params_str) . '>';
+            $result = str_replace($fItem, $val, $result);
+
             $i++;
         }
         return $result;
+    }
+
+    public static function addTableBodyTagParams(string $result, int $tableid): string
+    {
+        $params = array();
+        $params['class'] = 'js-draggable';
+        $params['data-url'] = '/index.php?option=com_customtables&view=catalog&task=ordering&tableid=' . $tableid . '&tmpl=component&clean=1';
+        $params['data-direction'] = 'asc';
+        $params['data-nested'] = 'true';
+
+        return self::addEditHTMLTagParams($result, 'tbody', $params);
     }
 
     function parseOrderByString(): bool

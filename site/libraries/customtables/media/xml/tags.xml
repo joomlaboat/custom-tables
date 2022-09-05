@@ -626,7 +626,6 @@
              description="Return the array of fields in JSON format" twigclass="fields"/>
     </tagset>
 
-
     <!-- User Tags -->
     <tagset name="user" label="User" description="Tags related Joomla user accounts." priority="2">
         <tag name="id" label="Current User ID" startchar="{" endchar="}"

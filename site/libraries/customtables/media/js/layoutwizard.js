@@ -69,11 +69,8 @@ function loadFieldsData(tableid) {
         });
     } else {
         //for IE
-        let http = null;
         let params = "";
-
-        if (!http)
-            http = CreateHTTPRequestObject();   // defined in ajax.js
+        let http = CreateHTTPRequestObject();   // defined in ajax.js
 
         if (http) {
             http.open("GET", url, true);
@@ -560,56 +557,17 @@ function getLayout_Page() {
     result += '<div class="datagrid">\r\n';
     result += '<div>{{ html.batch("edit","publish","unpublish","refresh","delete") }}</div>\r\n\r\n';
 
-    result += '<table><thead><tr>';
+    result += '<table>';
 
     let fieldtypes_to_skip = ['log', 'imagegallery', 'filebox', 'dummy'];
     let fieldtypes_withsearch = ['email', 'string', 'multilangstring', 'text', 'multilangtext', 'sqljoin', 'records', 'user', 'userid', 'int', 'checkbox'];
+    let fieldtypes_allowed_to_orderby = ['string', 'email', 'url', 'sqljoin', 'phponadd', 'phponchange', 'int', 'float', 'ordering', 'changetime', 'creationtime', 'date', 'multilangstring', 'customtables', 'userid', 'user'];
 
-    result += '<th>{{ html.batch("checkbox") }}</th>\r\n';
-    result += '<th>#</th>\r\n';
+    result += renderTableHead(fieldtypes_to_skip, fieldtypes_withsearch, fieldtypes_allowed_to_orderby);
 
-    for (let index = 0; index < l; index++) {
-        let field = wizardFields[index];
-
-        if (fieldtypes_to_skip.indexOf(field.type) === -1) {
-            if (fieldtypes_withsearch.indexOf(field.type) === -1)
-                result += '<th>{{ ' + field.fieldname + '.title }}</th>\r\n';
-            else
-                result += '<th>{{ ' + field.fieldname + '.title }}<br/>{{ html.search("' + field.fieldname + '") }}</th>\r\n';
-        }
-    }
-
-    result += '<th>Action<br/>{{ html.searchbutton }}</th>\r\n';
-    result += '</tr></thead>\r\n\r\n';
     result += '<tbody>\r\n';
-    /*
-        result+='{% block record %}';
 
-        result+='\r\n<tr>\r\n';
-
-        result+='<td>{{ html.toolbar("checkbox") }}</td>\r\n';
-        result+='<td><a href=\'{{ record.link(true) }}\'>{{ record.id }}</a></td>\r\n';
-
-        for (let index=0;index<l;index++)
-        {
-            let field=wizardFields[index];
-
-            if(fieldtypes_to_skip.indexOf(field.type)===-1){
-
-                if(fieldtypes_withsearch.indexOf(field.type)===-1)
-                    result+='<td>{{ '+field.fieldname+' }}</td>\r\n';
-                else
-                    result+='<td>{{ '+field.fieldname+' }}</td>\r\n';
-            }
-        }
-
-        result+='<td>{{ html.toolbar("edit","publish","refresh","delete") }}</td>\r\n';
-
-        result+='</tr>';
-
-        result+='\r\n{% endblock %}\r\n';
-    */
-    result += '{{ records.list("LAYOUT NAME") }}<!-- Please create a "Catalog Item" layout and type the name of that layout instead of LAYOUT NAME -->\r\n';
+    result += '{{ document.layout("LAYOUT NAME") }}<!-- Please create a "Catalog Item" layout and type the name of that layout instead of LAYOUT NAME -->\r\n';
 
     result += '</tbody>\r\n';
     result += '</table>\r\n';
@@ -627,15 +585,23 @@ function getLayout_Item() {
     let fieldtypes_to_skip = ['log', 'imagegallery', 'filebox', 'dummy'];
     let user_fieldtypes = ['user', 'userid'];
 
-    result += '<td>{{ html.toolbar("checkbox") }}</td>\r\n';
-    result += '<td><a href="{{ record.link(true) }}">{{ record.id }}</a></td>\r\n';
+    //Look for ordering field type
+    for (let index = 0; index < l; index++) {
+        let field = wizardFields[index];
+        if (field.type == 'ordering') {
+            result += '<td style="text-align:center;">{{ ' + field.fieldname + ' }}</td>\r\n';
+        }
+    }
+
+    result += '<td style="text-align:center;">{{ html.toolbar("checkbox") }}</td>\r\n';
+    result += '<td style="text-align:center;"><a href="{{ record.link(true) }}">{{ record.id }}</a></td>\r\n';
 
     let user_field = '';
 
     for (let index = 0; index < l; index++) {
         let field = wizardFields[index];
 
-        if (fieldtypes_to_skip.indexOf(field.type) === -1)
+        if (field.type != 'ordering' && fieldtypes_to_skip.indexOf(field.type) === -1)
             result += '<td>{{ ' + field.fieldname + ' }}</td>\r\n';
 
         if (user_fieldtypes.indexOf(field.type) !== -1)
@@ -673,60 +639,31 @@ function getLayout_SimpleCatalog() {
 
     let fieldtypes_to_skip = ['log', 'imagegallery', 'filebox', 'dummy'];
     let fieldtypes_withsearch = ['email', 'string', 'multilangstring', 'text', 'multilangtext', 'sqljoin', 'records', 'user', 'userid', 'int', 'checkbox'];
-
-    //let field_titles = [];
-
-    //field_titles.push('html.batch("checkbox")');
-    //field_titles.push('"#"');
-
-    /*
-    for (let index = 0; index < l; index++) {
-        let field = wizardFields[index];
-
-        if (fieldtypes_to_skip.indexOf(field.type) === -1) {
-
-            if (fieldtypes_withsearch.indexOf(field.type) === -1)
-                field_titles.push(field.fieldname + '.title');
-            else
-                field_titles.push(field.fieldname + '.title ~ "<br/>" ~ html.search(\'' + field.fieldname + '\')');
-        }
-    }
-    */
-
-    //field_titles.push('"Action"');
+    let fieldtypes_allowed_to_orderby = ['string', 'email', 'url', 'sqljoin', 'phponadd', 'phponchange', 'int', 'float', 'ordering', 'changetime', 'creationtime', 'date', 'multilangstring', 'customtables', 'userid', 'user'];
 
     result += '\r\n<table>\r\n';
 
-    result += '<thead><tr>';
-
-    result += '<th>{{ html.batch("checkbox") }}</th>\r\n';
-    result += '<th>#</th>\r\n';
-
-    for (let index = 0; index < l; index++) {
-        let field = wizardFields[index];
-
-        if (fieldtypes_to_skip.indexOf(field.type) === -1) {
-            if (fieldtypes_withsearch.indexOf(field.type) === -1)
-                result += '<th>{{ ' + field.fieldname + '.title }}</th>\r\n';
-            else
-                result += '<th>{{ ' + field.fieldname + '.title }}<br/>{{ html.search("' + field.fieldname + '") }}</th>\r\n';
-        }
-    }
-
-    result += '<th>Action<br/>{{ html.searchbutton }}</th>\r\n';
-    result += '</tr></thead>\r\n\r\n';
+    result += renderTableHead(fieldtypes_to_skip, fieldtypes_withsearch, fieldtypes_allowed_to_orderby);
 
     result += '\r\n<tbody>';
     result += '\r\n{% block record %}';
     result += '\r\n<tr>\r\n';
 
-    result += '<td>{{ html.toolbar("checkbox") }}</td>\r\n';
-    result += '<td><a href=\'{{ record.link(true) }}\'>{{ record.id }}</a></td>\r\n';
+    //Look for ordering field type
+    for (let index = 0; index < l; index++) {
+        let field = wizardFields[index];
+        if (field.type == 'ordering') {
+            result += '<td style="text-align:center;">{{ ' + field.fieldname + ' }}</td>\r\n';
+        }
+    }
+
+    result += '<td style="text-align:center;">{{ html.toolbar("checkbox") }}</td>\r\n';
+    result += '<td style="text-align:center;"><a href=\'{{ record.link(true) }}\'>{{ record.id }}</a></td>\r\n';
 
     for (let index = 0; index < l; index++) {
         let field = wizardFields[index];
 
-        if (fieldtypes_to_skip.indexOf(field.type) === -1) {
+        if (field.type != 'ordering' && fieldtypes_to_skip.indexOf(field.type) === -1) {
 
             if (fieldtypes_withsearch.indexOf(field.type) === -1)
                 result += '<td>{{ ' + field.fieldname + ' }}</td>\r\n';
@@ -746,6 +683,62 @@ function getLayout_SimpleCatalog() {
     result += '\r\n';
     result += '</div>\r\n';
     result += '<br/><div style=\'text-align:center;\'>{{ html.pagination }}</div>\r\n';
+    return result;
+}
+
+function renderTableHead(fieldtypes_to_skip, fieldtypes_withsearch, fieldtypes_allowed_to_orderby) {
+
+    let l = wizardFields.length;
+    let result = '';
+
+    result += '<thead><tr>\r\n';
+
+    //Look for ordering field type
+    for (let index = 0; index < l; index++) {
+        let field = wizardFields[index];
+        if (field.type == 'ordering') {
+            result += '<th class="short">{{ ' + field.fieldname + '.label(true) }}</th>\r\n';
+        }
+    }
+
+    result += '<th class="short">{{ html.batch("checkbox") }}</th>\r\n';
+    result += '<th class="short">{{ record.label(true) }}</th>\r\n';
+
+    for (let index = 0; index < l; index++) {
+
+        result += renderTableColumnHeader(wizardFields[index], fieldtypes_to_skip, fieldtypes_withsearch, fieldtypes_allowed_to_orderby)
+    }
+
+    result += '<th>Action<br/>{{ html.searchbutton }}</th>\r\n';
+    result += '</tr></thead>\r\n\r\n';
+
+    return result;
+}
+
+function renderTableColumnHeader(field, fieldtypes_to_skip, fieldtypes_withsearch, fieldtypes_allowed_to_orderby) {
+
+    let result = '';
+
+    if (field.type != 'ordering' && fieldtypes_to_skip.indexOf(field.type) === -1) {
+
+        result += '<th>';
+
+        if (field.allowordering && fieldtypes_allowed_to_orderby.indexOf(field.type) !== -1)
+            result += '{{ ' + field.fieldname + '.label(true) }}';
+        else
+            result += '{{ ' + field.fieldname + '.title }}';
+
+        if (fieldtypes_withsearch.indexOf(field.type) !== -1) {
+
+            if (field.type == 'checkbox' || field.type == 'sqljoin' || field.type == 'records')
+                result += '<br/>{{ html.search("' + field.fieldname + '","","reload") }}';
+            else
+                result += '<br/>{{ html.search("' + field.fieldname + '") }}';
+        }
+
+        result += '</th>\r\n';
+    }
+
     return result;
 }
 

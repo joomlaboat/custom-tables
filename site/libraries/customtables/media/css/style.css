@@ -156,10 +156,9 @@
 
 .datagrid table {
     border-collapse: collapse;
-    text-align: left;
+    /*    text-align: left;*/
     width: 100%;
 }
-
 
 .datagrid table tbody tr:nth-child(odd) {
     background: #fafbfc;
@@ -167,14 +166,11 @@
     border-right: 1px solid #ddd;
 }
 
-/*{background: #f2f2f2}*/
 .datagrid table tbody tr:nth-child(even) {
     background: #ffffff;
     border-bottom: 1px solid #ddd;
     border-right: 1px solid #ddd;
 }
-
-/*{background: #fafafa}*/
 
 .datagrid table tbody tr:nth-child(odd) td {
     border-right: 1px solid #f0f6fc;
@@ -191,20 +187,28 @@
     border: 2px solid #FFFFFF;
 }
 
-.datagrid thead tr th:first-child,
-.datagrid tbody tr td:first-child {
+/*.datagrid tbody tr td:first-child*/
+.datagrid thead tr th:first-child {
     width: 30px;
     text-align: center;
-
     vertical-align: middle;
 }
 
-.datagrid table td:not(:first-child), .datagrid table th:not(:first-child) {
+
+/*.datagrid table td:not(:first-child):not(.short),*/
+.datagrid table th:not(:first-child):not(.short) {
 
     min-width: 100px;
     padding: 5px 1px 5px 3px !important;
     border-left: 0 solid #FFFFFF;
     vertical-align: bottom;
+}
+
+.datagrid table tr .short {
+    width: 30px;
+    min-width: 30px;
+    text-align: center;
+    vertical-align: middle;
 }
 
 .datagrid thead tr th:last-child,
@@ -247,10 +251,12 @@
 }
 
 /*.datagrid table tbody .alt td { background: #F2F2F2; color: #545454; }*/
+/*
 .datagrid table tbody td:first-child {
     border-left: none;
     min-width: 30px !important;
 }
+*/
 
 .datagrid table tbody tr:last-child td {
     border-bottom: none;

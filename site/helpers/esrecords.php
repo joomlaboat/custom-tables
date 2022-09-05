@@ -35,6 +35,11 @@ class JHTMLESRecords
             $allowUnpublished = false;
 
         $ct = self::getCT($tableName, $filter, $allowUnpublished, $sortByField, $field);
+
+        if ($ct == null) {
+            return '<p>Table not selected</p>';
+        }
+
         $ct_noFilter = null;
 
         if ($selectorPair[0] == 'single' or $selectorPair[0] == 'multibox')

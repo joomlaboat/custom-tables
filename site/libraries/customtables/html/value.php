@@ -277,6 +277,11 @@ class Value
 
         $edit_userGroup = (int)$this->ct->Params->editUserGroups;
         $isEditable = CTUser::checkIfRecordBelongsToUser($this->ct, $edit_userGroup);
+        if (!$isEditable)
+            return '';
+
+        $edit_userGroup = (int)$this->ct->Params->editUserGroups;
+        $isEditable = CTUser::checkIfRecordBelongsToUser($this->ct, $edit_userGroup);
 
         $orderby_pair = explode(' ', $this->ct->Ordering->orderby);
 
