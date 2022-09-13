@@ -129,7 +129,6 @@ function CustomTablesSave($task, $this_)
                 $link .= '&';
 
             $link .= 'listing_id=' . $jinput->getInt("listing_id");
-
             //stay on the same page if "saveandcontinue"
         }
 

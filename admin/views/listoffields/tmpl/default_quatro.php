@@ -78,9 +78,11 @@ if ($input->getCmd('extratask', '') == 'updateimages') {
                         <tbody<?php if ($this->saveOrder) : ?> class="js-draggable" data-url="<?php echo $saveOrderingUrl; ?>" data-direction="<?php echo strtolower($this->listDirn); ?>" data-nested="true"<?php endif; ?>>
                         <?php
 
-                        $ListOfFields = new ListOfFields($this->ct, $this->tableid, $this->tablename, $this->tabletitle, $this->items, $this->canState,
-                            $this->canDelete, $this->canEdit, $this->saveOrder);
-                        echo $ListOfFields->renderBody();
+                        if ($this->tablename != null) {
+                            $ListOfFields = new ListOfFields($this->ct, $this->tableid, $this->tablename, $this->tabletitle, $this->items, $this->canState,
+                                $this->canDelete, $this->canEdit, $this->saveOrder);
+                            echo $ListOfFields->renderBody();
+                        }
 
                         ?>
                         </tbody>

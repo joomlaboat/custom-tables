@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\Fields;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Factory;
@@ -76,7 +77,7 @@ class CustomtablesControllerFields extends JControllerForm
             $redirect .= '&fieldid=' . $fieldid;
 
         }
-        $redirect .= '&view=fields&layout=edit&id=' . $fieldid . '&tableid=' . (int)$tableid . '&id=' . (int)$id;
+        $redirect .= '&view=fields&layout=edit&tableid=' . (int)$tableid . '&id=' . (int)$id;
 
         $context = 'com_customtables.edit.fields';
         Factory::getApplication()->setUserState($context . '.id', $id);
@@ -86,7 +87,6 @@ class CustomtablesControllerFields extends JControllerForm
         $application->redirect(Route::_($redirect, false));
         $application->close();
         exit(0);
-        //$this->setRedirect(JRoute::_($redirect, false));
     }
 
     public function save($key = null, $urlVar = null)
@@ -97,40 +97,43 @@ class CustomtablesControllerFields extends JControllerForm
         $this->ref = $this->input->get('ref', 0, 'word');
         $this->refid = $this->input->get('refid', 0, 'int');
 
-        $fieldid = $this->input->get('id', 0, 'int');
-
-
         if ($this->ref || $this->refid) {
             // to make sure the item is checked in on redirect
             $this->task = 'save';
         }
 
-        $saved = parent::save($key, $urlVar);
+        $fieldid = Fields::saveField();
+
+        if ($fieldid == null) {
+            $app = Factory::getApplication();
+            $app->enqueueMessage('Could not save the field.', 'error');
+        }
 
         $redirect = 'index.php?option=' . $this->option;
         $extratask = $this->input->getCmd('extratask', '');
 
-        //Pospone extra task
+        //Postpone extra task
         if ($extratask != '') {
             $redirect .= '&extratask=' . $this->input->getCmd('extratask', '');
             $redirect .= '&old_typeparams=' . $this->input->get('old_typeparams', '', 'BASE64');
             $redirect .= '&new_typeparams=' . $this->input->get('new_typeparams', '', 'BASE64');
-            $redirect .= '&fieldid=' . $this->input->getInt('fieldid', 0);
+            $redirect .= '&fieldid=' . $fieldid;
         }
 
-        if ($extratask != '' or $this->task == 'apply' or $this->task == 'save2new' or $this->task == 'save2copy')
+        if ($extratask != '' or $this->task == 'apply' or $this->task == 'save2new' or $this->task == 'save2copy') {
             $redirect .= '&view=listoffields&tableid=' . (int)$tableid . '&task=fields.edit&id=' . (int)$fieldid;
-        else
+        } else
             $redirect .= '&view=listoffields&tableid=' . (int)$tableid;
 
-        if ($saved) {
+        if ($fieldid != null) {
             // Redirect to the item screen.
             $this->setRedirect(
                 JRoute::_($redirect, false)
             );
+            return true;
         }
 
-        return $saved;
+        return false;
     }
 
     protected function allowAdd($data = array())
