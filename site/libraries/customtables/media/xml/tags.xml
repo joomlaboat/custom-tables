@@ -169,10 +169,14 @@
         <tag name="orderby" label="Order By (Sort By) box" startchar="{" endchar="}" proversion="1"
              description="renders HTML Order By select box." twigclass="html"/>
 
-        <tag name="limit" label="Limit records per page" startchar="{" endchar="}" proversion="1"
-             description="renders HTML Limit box to limit the number of records per page." twigclass="html">
+        <tag name="limit" label="A select box to change the number of records per page" startchar="{" endchar="}"
+             proversion="1"
+             description="Renders HTML Limit box to limit the number of records per page. To set default number of records per page go to Menu Item, Filters tab: 'Limit number of records per page'."
+             twigclass="html"
+             image="https://joomlaboat.com/images/components/ct/tags/html-limit.png">
             <params>
-                <param name="step" label="Step" type="list" example="10" default="5">
+                <param name="step" label="Step" type="list" example="10" default="5"
+                       description="This parameter sets the incremental step of the list. If you select 1 then the list of options will be: 1,2,3,4,5,6,10,20">
                     <option value="1" label="1"/>
                     <option value="5" label="5"/>
                     <option value="10" label="10"/>
