@@ -21,7 +21,7 @@ use CustomTables\TwigProcessor;
 class CT_FieldTypeTag_records
 {
     //New function
-    public static function resolveRecordTypeValue(&$field, $layoutcode, $rowValue, array $options)
+    public static function resolveRecordTypeValue(&$field, $layoutcode, $rowValue, $showPublishedString = '')
     {
         $db = Factory::getDBO();
 
@@ -33,21 +33,21 @@ class CT_FieldTypeTag_records
         if (count($field->params) < 3)
             return 'selector not specified';
 
-        $sortbyfield = '';
-        if ($options[0] != '')
-            $sortbyfield = $options[0];
-        elseif (isset($field->params[5]))
-            $sortbyfield = $field->params[5];
-
         $filter = $field->params[3] ?? '';
 
         //$showpublished = 0 - show published
         //$showpublished = 1 - show unpublished
         //$showpublished = 2 - show any
-        if ($field->params[6])
-            $showpublished = 2;
-        else
+
+        if ($showPublishedString == '' and isset($field->params[6]))
+            $showPublishedString = $field->params[6];
+
+        if ($showPublishedString == 'published')
             $showpublished = 0;
+        elseif ($showPublishedString == 'unpublished')
+            $showpublished = 1;
+        else
+            $showpublished = 2;
 
         //this is important because it has been selected somehow.
         $ct->setFilter($filter, $showpublished);

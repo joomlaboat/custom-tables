@@ -462,21 +462,21 @@ class fieldObject
         }
     }
 
-    public function get($fieldname, array $args = []): string
+    public function get($fieldname, string $showPublishedString = ''): string
     {
         if ($this->field->type == 'sqljoin') {
             $layoutcode = '{{ ' . $fieldname . ' }}';
-            return CT_FieldTypeTag_sqljoin::resolveSQLJoinTypeValue($this->field, $layoutcode, $this->ct->Table->record[$this->field->realfieldname], $args);
+            return CT_FieldTypeTag_sqljoin::resolveSQLJoinTypeValue($this->field, $layoutcode, $this->ct->Table->record[$this->field->realfieldname]);
         } elseif ($this->field->type == 'records') {
             $layoutcode = '{{ ' . $fieldname . ' }}';
-            return CT_FieldTypeTag_records::resolveRecordTypeValue($this->field, $layoutcode, $this->ct->Table->record[$this->field->realfieldname], $args);
+            return CT_FieldTypeTag_records::resolveRecordTypeValue($this->field, $layoutcode, $this->ct->Table->record[$this->field->realfieldname], $showPublishedString);
         } else {
             $this->ct->app->enqueueMessage('{{ ' . $this->field->fieldname . '.get }}. Wrong field type "' . $this->field->type . '". ".get" method is only available for Table Join and Records filed types.', 'error');
             return '';
         }
     }
 
-    public function layout(string $layoutname, array $args = []): string
+    public function layout(string $layoutname, string $showPublishedString = ''): string
     {
         if ($this->field->type != 'sqljoin' and $this->field->type != 'records') {
             $this->ct->app->enqueueMessage('{{ ' . $this->field->fieldname . '.get }}. Wrong field type "' . $this->field->type . '". ".get" method is only available for Table Join and Records filed types.', 'error');
@@ -494,9 +494,9 @@ class fieldObject
         }
 
         if ($this->field->type == 'sqljoin') {
-            return CT_FieldTypeTag_sqljoin::resolveSQLJoinTypeValue($this->field, $layoutcode, $this->ct->Table->record[$this->field->realfieldname], $args);
+            return CT_FieldTypeTag_sqljoin::resolveSQLJoinTypeValue($this->field, $layoutcode, $this->ct->Table->record[$this->field->realfieldname]);
         } elseif ($this->field->type == 'records') {
-            return CT_FieldTypeTag_records::resolveRecordTypeValue($this->field, $layoutcode, $this->ct->Table->record[$this->field->realfieldname], $args);
+            return CT_FieldTypeTag_records::resolveRecordTypeValue($this->field, $layoutcode, $this->ct->Table->record[$this->field->realfieldname], $showPublishedString);
         }
         return 'impossible';
 

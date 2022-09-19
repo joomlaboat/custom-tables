@@ -19,7 +19,7 @@ use CustomTables\TwigProcessor;
 class CT_FieldTypeTag_sqljoin
 {
     //New function
-    public static function resolveSQLJoinTypeValue(&$field, $layoutcode, $listing_id, array $options): string
+    public static function resolveSQLJoinTypeValue(&$field, $layoutcode, $listing_id): string
     {
         $ct = new CT;
         $ct->getTable($field->params[0]);
