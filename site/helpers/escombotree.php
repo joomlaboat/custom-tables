@@ -43,6 +43,7 @@ class JHTMLESComboTree
         $urlwherearr = array();
 
         //Set current value (count only firet one in case multi-value provided)
+        /*
         $value_arr = explode(',', $value);
         if (count($value_arr) > 0) {
             if (count($value_arr) < 2)
@@ -57,11 +58,12 @@ class JHTMLESComboTree
                     if ($opt == '')
                         break;
 
-                    $jinput->set($MyESDynCombo->ObjectName . '_' . $i, $opt);
+                    //$jinput->set($MyESDynCombo->ObjectName . '_' . $i, $opt);
                     $i++;
                 }
             }
         }
+        */
 
         $html_ =
             '<div id="' . $MyESDynCombo->ObjectName . '" name="' . $MyESDynCombo->ObjectName . '">'

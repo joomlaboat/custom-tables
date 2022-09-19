@@ -29,7 +29,7 @@ class CustomTablesViewEditItem extends JViewLegacy
         $this->ct = new CT(null, false);
 
         $Model = $this->getModel();
-        $Model->load($this->ct);
+        $Model->load($this->ct, true);
 
         if (!CTUser::CheckAuthorization($this->ct)) {
             //not authorized

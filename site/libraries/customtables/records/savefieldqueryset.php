@@ -833,13 +833,11 @@ class SaveFieldQuerySet
     protected function getComboString($parent): ?string
     {
         $prefix = $this->field->prefix . 'combotree_' . $this->ct->Table->tablename . '_' . $this->field->fieldname;
-
         $i = 1;
         $result = array();
         $v = '';
         $set = false;
         do {
-
             $value = $this->ct->Env->jinput->getCmd($prefix . '_' . $i);
             if (isset($value)) {
                 if ($value != '') {
@@ -849,7 +847,6 @@ class SaveFieldQuerySet
                 $set = true;
             } else
                 break;
-
 
         } while ($v != '');
 
