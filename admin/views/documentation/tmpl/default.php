@@ -36,8 +36,7 @@ use Joomla\CMS\Language\Text;
     <?php endif; ?>
 
         <?php echo CustomTables\common::translate('COM_CUSTOMTABLES_TABLEFIELDTYPES_DESC'); ?>
-        <?php echo $this->documentation->getFieldTypes();
-        ?>
+        <?php echo $this->documentation->getFieldTypes(); ?>
         <?php echo HTMLHelper::_('uitab.endTab'); ?>
 
 
@@ -45,9 +44,37 @@ use Joomla\CMS\Language\Text;
         <?php if ($this->documentation->internal_use): ?>
         <h3><?php echo CustomTables\common::translate('COM_CUSTOMTABLES_LAYOUTTAGS'); ?></h3><br/>
     <?php endif; ?>
-        <?php echo $this->documentation->getLayoutTags();
-        ?>
+        <?php echo $this->documentation->getLayoutTags(); ?>
         <?php echo HTMLHelper::_('uitab.endTab'); ?>
+
+
+        <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'menuitems', CustomTables\common::translate('COM_CUSTOMTABLES_LAYOUTS_MENUS')); ?>
+
+        <?php if ($this->documentation->internal_use) {
+        echo '<h3>' . CustomTables\common::translate('COM_CUSTOMTABLES_LAYOUTS_MENUS') . '</h3>';
+    } else {
+        echo '
+        # Add/Edit Record<br/>![Menu item - Records](https://joomlaboat.com/images/components/ct/menu-items/edit.png)<br/><br/>
+# Record Details<br/>![Menu item - Records](https://joomlaboat.com/images/components/ct/menu-items/details.png)<br/><br/>
+# Records<br/>![Menu item - Records](https://joomlaboat.com/images/components/ct/menu-items/records.png)<br/><br/>
+        # ' . CustomTables\common::translate('COM_CUSTOMTABLES_LAYOUTS_MENUS') . '<br/><br/>';
+    }
+        ?>
+
+        <?php echo CustomTables\common::translate('Complete list of Menu Item parameters, not all of them used in Add/Edit menu item type or Record Details. '); ?>
+        <br/>
+
+        <?php
+        if ($this->documentation->internal_use) {
+            echo '<img alt="Menu items - Parameters" src="https://joomlaboat.com/images/components/ct/menu-items/menu-items.png" /><br/><br/>';
+        } else {
+            echo '![Menu items - Parameters](https://joomlaboat.com/images/components/ct/menu-items/menu-items.png)<br/><br/>';
+        }
+
+        ?>
+        <?php echo $this->documentation->getMenuItems(); ?>
+        <?php echo HTMLHelper::_('uitab.endTab'); ?>
+
 
         <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'more_about', CustomTables\common::translate('COM_CUSTOMTABLES_MOREABOUT')); ?>
         <a href="https://joomlaboat.com/custom-tables" target="_blank"

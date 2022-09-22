@@ -708,6 +708,184 @@ class Documentation
         return $result;
     }
 
+    function getMenuItems(): string
+    {
+        $componentName = 'com_customtables';
+        $path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . $componentName . DIRECTORY_SEPARATOR . 'views'
+            . DIRECTORY_SEPARATOR . 'catalog' . DIRECTORY_SEPARATOR . 'tmpl';
+
+        $xml = JoomlaBasicMisc::getXMLData('default.xml', $path);
+
+        if (count($xml) == 0)
+            return '';
+
+        return $this->renderMenuItemTabs($xml->fields->fieldset);
+    }
+
+    function renderMenuItemTabs($fieldset): string
+    {
+        if ($this->internal_use)
+            return $this->renderMenuItemTabsInternal($fieldset);
+        else
+            return $this->renderMenuItemTabsGitHub($fieldset);
+    }
+
+    function renderMenuItemTabsInternal($fieldset): string
+    {
+        $result = '';
+
+        foreach ($fieldset as $fieldSet) {
+            $fieldSetAtt = $fieldSet->attributes();
+
+            if ((int)$fieldSetAtt->deprecated == 0) {
+                $is4Pro = (bool)(int)$fieldSetAtt->proversion;
+                $class = 'ct_doc_tagset_free';
+                if ($is4Pro)
+                    $class = 'ct_doc_tagset_pro';
+
+                $result .= '<div class="' . $class . '">';
+
+                $result .= '<h3>' . common::translate($fieldSetAtt->label);
+                if ($is4Pro)
+                    $result .= '<div class="ct_doc_pro_label"><a href="https://joomlaboat.com/custom-tables#buy-extension" target="_blank">' . common::translate('COM_CUSTOMTABLES_AVAILABLE') . '</a></div>';
+
+                $result .= '</h3>';
+
+                $result .= '<p>' . $fieldSetAtt->description . '</p><ul>';
+
+                foreach ($fieldSet->field as $field) {
+
+                    $param_att = $field->attributes();
+
+                    if (count($param_att) != 0) {
+                        $result .= '<li><h6>' . $param_att->label . '</h6>' . ($param_att->description != '' ? '<p>' . $param_att->description . '</p>' : '');
+
+                        if (!empty($param_att->type)) {
+                            $result .= $this->renderMenuItemFieldsInternal($field);
+                        }
+
+                        $result .= '</li>';
+                    }
+
+
+                }
+
+                $result .= '</ul></div>';
+            }
+        }
+        return $result;
+    }
+
+    function renderMenuItemFieldsInternal($field): string
+    {
+        $result = '';
+
+        $fieldAtt = $field->attributes();
+        /*
+                switch ($fieldAtt->type) {
+                    case 'number':
+
+                        $result .= '<ul class="ct_doc_param_options">
+                            <li><b>' . common::translate('COM_CUSTOMTABLES_DEFAULT') . '</b>: ' . $fieldAtt->default . '</li>
+        ';
+                        if (!empty($fieldAtt->min))
+                            $result .= '<li><b>' . common::translate('COM_CUSTOMTABLES_MIN') . '</b>: ' . $fieldAtt->min . '</li>';
+
+                        if (!empty($fieldAtt->max))
+                            $result .= '<li><b>' . common::translate('COM_CUSTOMTABLES_MAX') . '</b>: ' . $fieldAtt->max . '</li>';
+
+                        $result .= '</ul>';
+
+                        break;
+
+                    case 'radio':
+                        $options = explode(',', $fieldAtt->options);
+                        $value_example = '';
+                        //<p>'.common::translate('COM_CUSTOMTABLES_OPTIONS').':</p>
+                        $result .= '<ul class="ct_doc_param_options">';
+                        foreach ($options as $option) {
+                            $parts = explode('|', $option);
+
+                            if ($parts[0] == '')
+                                $result .= '<li>(' . $parts[1] . ' - default)</li>';
+                            else
+                                $result .= '<li><b>' . $parts[0] . '</b>: ' . $parts[1] . '</li>';
+
+                            if ($value_example == '' && $parts[0] != '')
+                                $value_example = $parts[0];
+                        }
+
+                        $result .= '</ul>';
+                        break;
+                        */
+        /*
+                    case 'list':
+
+                        $options = $fieldAtt->option;
+                        $value_example = '';
+
+                        if (!empty($param_att->example))
+                            $value_example = $param_att->example;
+
+                        $result .= '<p><ul class="ct_doc_param_options">';
+                        foreach ($options as $option) {
+                            $option_att = $option->attributes();
+
+                            $result .= '<li>';
+
+                            if ($option_att->value == '')
+                                $par = '(Default. ';
+                            else
+                                $par = '<b>' . $option_att->value . '</b> - (';
+
+                            $result .= $par . $option_att->label . ((!empty($option_att->description) and $option_att->description != '') ? '. ' . $option_att->description . '.' : '') . ')';
+
+                            $result .= '</li>';
+
+                            if ($value_example == '' and $option_att->value != '')
+                                $value_example = $option_att->value;
+                        }
+
+                        $result .= '</ul>';
+                        break;
+        */
+        //}
+
+        return $result;
+    }
+
+    function renderMenuItemTabsGitHub($fieldset): string
+    {
+        $result = '';
+
+        foreach ($fieldset as $fieldSet) {
+            $fieldSetAtt = $fieldSet->attributes();
+
+            if ((int)$fieldSetAtt->deprecated == 0) {
+
+                $result .= '## ' . common::translate($fieldSetAtt->label) . '<br/>' . $fieldSetAtt->description . '<br/><br/>';
+                $count = 1;
+
+                foreach ($fieldSet->field as $field) {
+
+                    $param_att = $field->attributes();
+
+                    if (count($param_att) != 0) {
+                        $result .= $count . '. ' . $param_att->label . ($param_att->description != '' ? ' - ' . $param_att->description : '') . '<br/>';
+                        //if (!empty($param_att->type)) {
+                        //$result .= $this->renderMenuItemFieldsInternal($field);
+                        //}
+                    }
+
+                    $count += 1;
+                }
+
+                $result .= '<br/><br/>';
+            }
+        }
+        return $result;
+    }
+
     function reIndexArray($arrays): array
     {
         $array = array();

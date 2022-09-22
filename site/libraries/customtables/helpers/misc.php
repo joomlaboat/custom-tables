@@ -761,10 +761,13 @@ class JoomlaBasicMisc
         return $resArr;
     }
 
-    static public function getXMLData($file)
+    static public function getXMLData(string $file, string $path = '')
     {
-        $xml_content = file_get_contents(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR
-            . 'media' . DIRECTORY_SEPARATOR . 'xml' . DIRECTORY_SEPARATOR . $file);
+        if ($path == '')
+            $path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR
+                . 'media' . DIRECTORY_SEPARATOR . 'xml';
+
+        $xml_content = file_get_contents($path . DIRECTORY_SEPARATOR . $file);
 
         if ($xml_content != '') {
             $xml = simplexml_load_string($xml_content) or die('Cannot load or parse "' . $file . '" file.');
