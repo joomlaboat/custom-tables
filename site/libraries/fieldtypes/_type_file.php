@@ -344,8 +344,13 @@ class CT_FieldTypeTag_file
         } elseif ($field->type == 'blob')
             $filepath = $filename;
         else {
+
             $FileFolder = CT_FieldTypeTag_file::getFileFolder($field->params[1] ?? '');
             $filepath = $FileFolder . '/' . $filename;
+
+            $full_filepath = JPATH_SITE . ($filepath[0] == '/' ? '' : '/') . $filepath;
+            if (file_exists($full_filepath))
+                $file_size = filesize($full_filepath);
         }
 
         if (!isset($option_list[2]))
