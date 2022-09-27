@@ -51,7 +51,7 @@ class CustomTablesModelListEdit extends JModel
     {
         $jinput = Factory::getApplication()->input;
 
-        $optionname = strtolower(trim(preg_replace("/[^a-zA-Z0-9]/", "", Factory::getApplication()->input->get('optionname', '', 'STRING'))));
+        $optionname = strtolower(trim(preg_replace("/[^a-zA-Z\d]/", "", Factory::getApplication()->input->get('optionname', '', 'STRING'))));
         $title = ucwords(strtolower(trim(Factory::getApplication()->input->get('title', '', 'STRING'))));
 
         Factory::getApplication()->input->set('optionname', $optionname);

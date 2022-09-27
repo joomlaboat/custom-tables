@@ -241,7 +241,7 @@ class RecordToolbar
         $fieldtitlevalue = $this->row[$titlefield];
         $deleteLabel = strip_tags($fieldtitlevalue);
 
-        $deleteLabel = trim(preg_replace("/[^a-zA-Z0-9 ,.]/", "", $deleteLabel));
+        $deleteLabel = trim(preg_replace("/[^a-zA-Z\d ,.]/", "", $deleteLabel));
         $deleteLabel = preg_replace('/\s{3,}/', ' ', $deleteLabel);
 
         return $deleteLabel;

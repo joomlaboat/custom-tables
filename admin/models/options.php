@@ -130,7 +130,7 @@ class CustomTablesModelOptions extends JModelAdmin
         $optiontitle = $data['title'];
 
         if ($data['id'] == 0) {
-            $optionname = strtolower(trim(preg_replace("/[^a-zA-Z0-9]/", "", $data['optionname'])));
+            $optionname = strtolower(trim(preg_replace("/[^a-zA-Z\d]/", "", $data['optionname'])));
             $data['optionname'] = $optionname;
         }
 

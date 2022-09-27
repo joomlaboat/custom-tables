@@ -129,7 +129,7 @@ class CustomTablesImageMethods
         foreach ($imagesizes as $imagesize) {
             $imageoptions = explode(',', $imagesize);
             if (count($imageoptions) > 1) {
-                $prefix = strtolower(trim(preg_replace("/[^a-zA-Z0-9]/", "", $imageoptions[0])));
+                $prefix = strtolower(trim(preg_replace("/[^a-zA-Z\d]/", "", $imageoptions[0])));
 
                 if (strlen($prefix) > 0) {
                     //name, width, height, color (0 - black, -1 - bg fill, -2 - trasparent)

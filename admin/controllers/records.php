@@ -245,7 +245,7 @@ class CustomtablesControllerRecords extends JControllerForm
 
         $append .= '&tableid=' . $tableid;
 
-        //This is to overwrite Joomla current record ID state value. Joomla converts ID to integer, but we want to support both int and cmd (A-Za-z0-9_-)
+        //This is to overwrite Joomla current record ID state value. Joomla converts ID to integer, but we want to support both int and cmd (A-Za-z\d_-)
         $values = (array)Factory::getApplication()->getUserState('com_customtables.edit.records.id');
         $values[] = $listing_id;
         Factory::getApplication()->setUserState('com_customtables.edit.records.id', $values);

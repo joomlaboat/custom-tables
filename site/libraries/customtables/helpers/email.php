@@ -22,7 +22,7 @@ class Email
 {
     public static function checkEmail($email): bool
     {
-        if (preg_match("/^([a-zA-Z0-9])+([a-zA-Z0-9\._-])*@([a-zA-Z0-9_-])+([a-zA-Z0-9\._-]+)+$/", $email)) {
+        if (preg_match("/^([a-zA-Z\d])+([a-zA-Z\d\._-])*@([a-zA-Z\d_-])+([a-zA-Z\d\._-]+)+$/", $email)) {
             if (Email::domain_exists($email))
                 return true;
             else

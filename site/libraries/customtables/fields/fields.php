@@ -779,7 +779,7 @@ class Fields
         $data = $input->get('jform', array(), 'ARRAY');
 
         //clean field name
-        $fieldName = strtolower(trim(preg_replace("/[^a-zA-Z0-9]/", "", $data['fieldname'])));
+        $fieldName = strtolower(trim(preg_replace("/[^a-zA-Z\d]/", "", $data['fieldname'])));
         if (strlen($fieldName) > 40)
             $fieldName = substr($fieldName, 0, 40);
 

@@ -47,7 +47,7 @@ class CustomTablesKeywordSearch
             return $result_rows;
 
 
-        $keywords = trim(preg_replace("/[^a-zA-Z0-9áéíóúýñÁÉÍÓÚÝÑ [:punct:]]/", "", $keywords));
+        $keywords = trim(preg_replace("/[^a-zA-Z\dáéíóúýñÁÉÍÓÚÝÑ [:punct:]]/", "", $keywords));
 
         $keywords = str_replace('\\', '', $keywords);
 

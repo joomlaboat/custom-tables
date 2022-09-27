@@ -75,7 +75,7 @@ class Table
         elseif (is_numeric($tablename_or_id_not_sanitized)) {
             $this->tablerow = ESTables::getTableRowByIDAssoc((int)$tablename_or_id_not_sanitized);// int sanitizes the input
         } else {
-            $tablename_or_id = strtolower(trim(preg_replace('/[^a-zA-Z\d]/', '', $tablename_or_id_not_sanitized)));
+            $tablename_or_id = strtolower(trim(preg_replace('/[^a-zA-Z_\d]/', '', $tablename_or_id_not_sanitized)));
             $this->tablerow = ESTables::getTableRowByNameAssoc($tablename_or_id);
         }
 

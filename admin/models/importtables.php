@@ -152,7 +152,7 @@ class CustomTablesModelImporttables extends JModelList
 
         if (count($rows) == 0) {
             //add item
-            $newoptionname_original = strtolower(trim(preg_replace("/[^a-zA-Z0-9]/", "", $optionTitle)));
+            $newoptionname_original = strtolower(trim(preg_replace("/[^a-zA-Z\d]/", "", $optionTitle)));
             $newoptionname = $newoptionname_original;
             $n = 0;
             do {
