@@ -52,6 +52,7 @@ class Value
 {
     var CT $ct;
     var Field $field;
+    var ?array $row;
 
     function __construct(CT &$ct)
     {
@@ -63,6 +64,7 @@ class Value
         $this->field = new Field($this->ct, $fieldrow, $row);
 
         $rfn = $this->field->realfieldname;
+        $this->row = $row;
         $rowValue = $row[$rfn] ?? null;
 
         switch ($this->field->type) {
@@ -144,7 +146,7 @@ class Value
 
             case 'file':
 
-                return CT_FieldTypeTag_file::process($rowValue, $this->field, $option_list, $row[$this->ct->Table->realidfieldname]);
+                return CT_FieldTypeTag_file::process($rowValue, $this->field, $option_list, $row[$this->ct->Table->realidfieldname], false, 0);
 
             case 'image':
                 $imageSRC = '';
@@ -184,7 +186,6 @@ class Value
                     return '<img src="' . $imagefileweb . '" width="' . $width . '" height="' . $height . '" alt="' . $sitename . '" title="' . $sitename . '" />';
                 }
                 return null;
-
 
             case 'article':
             case 'multilangarticle':
@@ -237,7 +238,7 @@ class Value
                 $processor_file = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_file.php';
                 require_once($processor_file);
 
-                return CT_FieldTypeTag_file::process($rowValue, $this->field, $option_list, $row[$this->ct->Table->realidfieldname]);
+                return CT_FieldTypeTag_file::process($rowValue, $this->field, $option_list, $row[$this->ct->Table->realidfieldname], 0);
 
             case 'log':
                 return CT_FieldTypeTag_log::getLogVersionLinks($this->ct, $rowValue, $row);
@@ -390,11 +391,22 @@ class Value
 
     protected function blobProcess($value, array $option_list)
     {
-        $fieldType = Fields::getFieldType($this->ct->Table->realtablename, $this->field->realfieldname);
-        if ($fieldType != 'blob' and $fieldType != 'tinyblob' and $fieldType != 'mediumblob' and $fieldType != 'longblob')
-            return self::TextFunctions($value, $option_list);
+        if (isset($this->field->params[2]) and $this->field->params[2] != '') {
 
-        return '[BLOB - ' . JoomlaBasicMisc::formatSizeUnits(strlen($value)) . ']';
+            $fileNameField_String = $this->field->params[2];
+            $fileNameField_Row = Fields::FieldRowByName($fileNameField_String, $this->ct->Table->fields);
+            $fileNameField = $fileNameField_Row['realfieldname'];
+            $filename = $this->row[$fileNameField];
+
+        } else {
+            $fieldType = Fields::getFieldType($this->ct->Table->realtablename, $this->field->realfieldname);
+            if ($fieldType != 'blob' and $fieldType != 'tinyblob' and $fieldType != 'mediumblob' and $fieldType != 'longblob')
+                return self::TextFunctions($value, $option_list);
+
+            $filename = '[BLOB - ' . JoomlaBasicMisc::formatSizeUnits($value) . ']';
+        }
+
+        return CT_FieldTypeTag_file::process($filename, $this->field, $option_list, $this->row[$this->ct->Table->realidfieldname], false, intval($value));
     }
 
     protected function colorProcess($value, array $option_list): string

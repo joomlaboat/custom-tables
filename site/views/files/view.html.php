@@ -17,6 +17,7 @@ require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARAT
 
 use CustomTables\CT;
 use CustomTables\Field;
+use CustomTables\Fields;
 
 class CustomTablesViewFiles extends JViewLegacy
 {
@@ -35,12 +36,11 @@ class CustomTablesViewFiles extends JViewLegacy
         $this->ct = new CT;
 
         $this->listing_id = $this->ct->Env->jinput->getCmd("listing_id");
+        $this->tableid = $this->ct->Env->jinput->getInt('tableid', 0);
+        $this->fieldid = $this->ct->Env->jinput->getInt('fieldid', 0);
 
         $this->security = $this->ct->Env->jinput->getCmd('security', 'd');
         $this->key = $this->ct->Env->jinput->getCmd('key', '');
-
-        $this->tableid = $this->ct->Env->jinput->getInt('tableid', 0);
-        $this->fieldid = $this->ct->Env->jinput->getInt('fieldid', 0);
 
         $this->ct->getTable($this->tableid);
         if ($this->ct->Table->tablename == '') {
@@ -62,19 +62,29 @@ class CustomTablesViewFiles extends JViewLegacy
         }
 
         $this->row = $this->ct->Table->loadRecord($this->listing_id);
-
         $this->field = new Field($this->ct, $fieldrow, $this->row);
 
-        $filepath = $this->getFilePath();
+        if ($this->field->type == 'blob') {
 
-        if ($filepath == '')
-            $this->ct->app->enqueueMessage('File path not set.', 'error');
+            $fileNameField_String = $this->field->params[2];
+            $fileNameField_Row = Fields::FieldRowByName($fileNameField_String, $this->ct->Table->fields);
+            $fileNameField = $fileNameField_Row['realfieldname'];
+            $filepath = $this->row[$fileNameField];
+
+        } else {
+            $filepath = $this->getFilePath();
+            if ($filepath == '')
+                $this->ct->app->enqueueMessage('File path not set.', 'error');
+        }
 
         $key = $this->key;
         $test_key = CT_FieldTypeTag_file::makeTheKey($filepath, $this->security, $this->listing_id, $this->fieldid, $this->tableid);
 
         if ($key == $test_key) {
-            $this->render_file_output($this->row, $filepath);
+            if ($this->field->type == 'blob')
+                $this->render_blob_output($filepath);
+            else
+                $this->render_file_output($filepath);
         } else
             $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_DOWNLOAD_LINK_IS_EXPIRED'), 'error');
     }
@@ -92,28 +102,25 @@ class CustomTablesViewFiles extends JViewLegacy
             return CT_FieldTypeTag_file::getFileFolder($this->field->params[1]) . '/' . $rowValue;
     }
 
-    function render_file_output($row, $filepath)
+    function render_blob_output($filename)
     {
-        if (strlen($filepath) > 8 and str_starts_with($filepath, '/images/'))
-            $file = JPATH_SITE . str_replace('/', DIRECTORY_SEPARATOR, $filepath);
-        else
-            $file = str_replace('/', DIRECTORY_SEPARATOR, $filepath);
+        $query = 'SELECT ' . $this->field->realfieldname . ' FROM ' . $this->ct->Table->realtablename . ' WHERE '
+            . $this->ct->Table->realidfieldname . '=' . $this->ct->db->quote($this->listing_id) . ' LIMIT 1';
 
-        if (!file_exists($file)) {
+        $this->ct->db->setQuery($query);
+        $recs = $this->ct->db->loadAssocList();
+
+        if (count($recs) < 1) {
             $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FILE_NOT_FOUND'), 'error');
             return;
         }
 
-        $content = file_get_contents($file);
-
-        $parts = explode('/', $file);
-        $filename = end($parts);
-
-        $content = $this->ProcessContentWithCustomPHP($content, $row);
+        $content = stripslashes($recs[0][$this->field->realfieldname]);
+        $content = $this->ProcessContentWithCustomPHP($content, $this->row);
 
         if (ob_get_contents()) ob_end_clean();
 
-        $mt = mime_content_type($file);
+        $mt = (new finfo(FILEINFO_MIME_TYPE))->buffer($content);
 
         @header('Content-Type: ' . $mt);
         @header("Pragma: public");
@@ -157,5 +164,42 @@ class CustomTablesViewFiles extends JViewLegacy
             }
         }
         return $content;
+    }
+
+    function render_file_output($filepath)
+    {
+        if (strlen($filepath) > 8 and str_starts_with($filepath, '/images/'))
+            $file = JPATH_SITE . str_replace('/', DIRECTORY_SEPARATOR, $filepath);
+        else
+            $file = str_replace('/', DIRECTORY_SEPARATOR, $filepath);
+
+        if (!file_exists($file)) {
+            $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FILE_NOT_FOUND'), 'error');
+            return;
+        }
+
+        $content = file_get_contents($file);
+
+        $parts = explode('/', $file);
+        $filename = end($parts);
+
+        $content = $this->ProcessContentWithCustomPHP($content, $this->row);
+
+        if (ob_get_contents()) ob_end_clean();
+
+        $mt = mime_content_type($file);
+
+        @header('Content-Type: ' . $mt);
+        @header("Pragma: public");
+        @header("Expires: 0");
+        @header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+        @header("Cache-Control: public");
+        @header("Content-Description: File Transfer");
+        @header("Content-Transfer-Encoding: binary");
+        @header("Content-Disposition: attachment; filename=\"" . $filename . "\"");
+
+        echo $content;
+
+        die;//clean exit
     }
 }

@@ -29,7 +29,6 @@ class CustomTablesRouter extends JComponentRouterView
             $segments[] = $query['alias'];
             unset($query['alias']);
         }
-
         return $segments;
     }
 
@@ -40,9 +39,13 @@ class CustomTablesRouter extends JComponentRouterView
         //Check if it's a file to download
         if (CustomTablesRouter::CheckIfFile2download($segments, $vars)) {
             //rerouted
+            $vars['option'] = 'com_customtables';
+            $segments[0] = null;
             return $vars;
         }
+
         if (isset($segments[0])) {
+
             $vars['option'] = 'com_customtables';
             $vars['view'] = 'details';
             $vars['alias'] = $segments[0];
@@ -58,12 +61,14 @@ class CustomTablesRouter extends JComponentRouterView
         CTLoader();
 
         if (str_contains(end($segments), '.')) {
+
             //could be a file
             $parts = explode('.', end($segments));
             if (count($parts) >= 2 and strlen($parts[0]) > 0 and strlen($parts[1]) > 0) {
+
                 //probably a file
                 $allowedExtensions = explode(' ', 'gslides doc docx pdf rtf txt xls xlsx psd ppt pptx mp3 wav ogg jpg bmp ico odg odp ods swf xcf jpeg png gif webp svg ai aac m4a wma flv mpg wmv mov flac txt avi csv accdb zip pages');
-                $ext = $parts[count($parts) - 1];
+                $ext = end($parts);
                 if (in_array($ext, $allowedExtensions)) {
                     $vars['view'] = 'files';
                     $vars['key'] = $segments[0];
@@ -83,7 +88,6 @@ class CustomTablesRouter extends JComponentRouterView
                 }
             }
         }
-
         return false;
     }
 }

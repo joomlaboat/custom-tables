@@ -280,6 +280,7 @@
                     <option value="filename" label="File Name"/>
                     <option value="link-to-icon" label="Link to Icon file"/>
                     <option value="extension" label="Extension"/>
+                    <option value="file-size" label="File Size"/>
                 </param>
 
                 <param name="icon" label="Icon" example="32" description="Select the icon size" default="32"
@@ -367,6 +368,7 @@
                     <option value="filename" label="File Name"/>
                     <option value="link-to-icon" label="Link to Icon file"/>
                     <option value="extension" label="Extension"/>
+                    <option value="file-size" label="File Size"/>
                 </param>
 
                 <param name="icon" label="Icon" example="32" description="Select the icon size" default="32"

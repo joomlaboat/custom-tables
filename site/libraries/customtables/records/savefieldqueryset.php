@@ -314,12 +314,37 @@ class SaveFieldQuerySet
                 $to_delete = $this->ct->Env->jinput->post->get($this->field->comesfieldname . '_delete', '', 'CMD');
                 $value = CT_FieldTypeTag_file::get_blob_value($this->field, $listing_id);
 
+                $fileNameField = '';
+                if (isset($this->field->params[2])) {
+                    $fileNameField_String = $this->field->params[2];
+                    $fileNameField_Row = Fields::FieldRowByName($fileNameField_String, $this->ct->Table->fields);
+                    $fileNameField = $fileNameField_Row['realfieldname'];
+                }
+
                 if ($to_delete == 'true' and $value === null) {
                     $this->row[$this->field->realfieldname] = null;
+
+                    if ($fileNameField != '')
+                        $this->row[$fileNameField] = null;
+
                     return $this->field->realfieldname . '=NULL';
                 } else {
-                    $this->row[$this->field->realfieldname] = $value;
-                    return ($value === null ? null : $this->field->realfieldname . '=FROM_BASE64("' . base64_encode($value) . '")');
+                    $this->row[$this->field->realfieldname] = strlen($value);
+
+                    if ($fileNameField != '') {
+                        $file_id = $this->ct->Env->jinput->post->get($this->field->comesfieldname, '', 'STRING');
+                        $file_name_parts = explode('_', $file_id);
+                        $file_name = implode('_', array_slice($file_name_parts, 3));
+                        $this->row[$fileNameField] = $file_name;
+
+                        $sets = array();
+                        if ($value !== null)
+                            $sets[] = $fileNameField . '=' . $this->ct->db->Quote($file_name);
+
+                        $sets[] = ($value === null ? null : $this->field->realfieldname . '=FROM_BASE64("' . base64_encode($value) . '")');
+                        return $sets;
+                    } else
+                        return ($value === null ? null : $this->field->realfieldname . '=FROM_BASE64("' . base64_encode($value) . '")');
                 }
 
             case 'file':

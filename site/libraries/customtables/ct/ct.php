@@ -230,7 +230,14 @@ class CT
             return null;
         }
 
-        $selects = [$this->Table->tablerow['query_selects']];
+        $selects = explode(',', $this->Table->tablerow['query_selects']);
+        $selects = array_slice($selects, 1);
+        foreach ($this->Table->fields as $field) {
+            if ($field['type'] == 'blob')
+                $selects[] = 'OCTET_LENGTH(' . $this->Table->realtablename . '.' . $field['realfieldname'] . ') AS ' . $field['realfieldname'];
+            else
+                $selects[] = $this->Table->realtablename . '.' . $field['realfieldname'];
+        }
 
         if ($this->Ordering->ordering_processed_string !== null) {
             $this->Ordering->parseOrderByString();
@@ -244,9 +251,7 @@ class CT
         }
 
         $query = 'SELECT ' . implode(',', $selects) . ' FROM ' . $this->Table->realtablename . ' ';
-
         $query .= $where;
-
         $query .= ' GROUP BY ' . $this->Table->realtablename . '.' . $this->Table->realidfieldname;
 
         if (count($ordering) > 0)

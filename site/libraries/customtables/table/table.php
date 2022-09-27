@@ -151,7 +151,16 @@ class Table
 
     function loadRecord($listing_id)
     {
-        $query = 'SELECT ' . $this->tablerow['query_selects'] . ' FROM ' . $this->realtablename . ' WHERE ' . $this->realidfieldname . '=' . $this->db->quote($listing_id) . ' LIMIT 1';
+        $selects = explode(',', $this->tablerow['query_selects']);
+        $selects = array_slice($selects, 1);
+        foreach ($this->fields as $field) {
+            if ($field['type'] == 'blob')
+                $selects[] = 'OCTET_LENGTH(' . $this->realtablename . '.' . $field['realfieldname'] . ') AS ' . $field['realfieldname'];
+            else
+                $selects[] = $this->realtablename . '.' . $field['realfieldname'];
+        }
+
+        $query = 'SELECT ' . implode(',', $selects) . ' FROM ' . $this->realtablename . ' WHERE ' . $this->realidfieldname . '=' . $this->db->quote($listing_id) . ' LIMIT 1';
         $this->db->setQuery($query);
 
         $recs = $this->db->loadAssocList();

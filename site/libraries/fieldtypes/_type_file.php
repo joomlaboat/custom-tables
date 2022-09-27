@@ -23,17 +23,20 @@ require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'uploader.php')
 
 class CT_FieldTypeTag_file
 {
-    public static function process($filename, CustomTables\Field $field, $option_list, $record_id, $filename_only = false)
+    public static function process($filename, CustomTables\Field $field, $option_list, $record_id, $filename_only = false, int $file_size = 0)
     {
         if ($filename == '')
             return '';
 
-        if ($field->type == 'filelink')
+        if ($field->type == 'filelink') {
             $FileFolder = CT_FieldTypeTag_file::getFileFolder($field->params[0]);
-        else
+            $filepath = $FileFolder . '/' . $filename;
+        } elseif ($field->type == 'blob')
+            $filepath = $filename;
+        else {
             $FileFolder = CT_FieldTypeTag_file::getFileFolder($field->params[1] ?? '');
-
-        $filepath = $FileFolder . '/' . $filename;
+            $filepath = $FileFolder . '/' . $filename;
+        }
 
         if (!isset($option_list[2]))
             $icon_size = '32';
@@ -52,9 +55,12 @@ class CT_FieldTypeTag_file
 
         $how_to_process = $option_list[0];
 
-        if ($how_to_process != '')
+        if ($how_to_process != '') {
             $filepath = CT_FieldTypeTag_file::get_private_file_path($filename, $how_to_process, $filepath, $record_id, $field->id, $field->ct->Table->tableid, $filename_only);
-
+        } elseif ($field->type == 'blob') {
+            $how_to_process = 'blob';//Not secure but BLOB
+            $filepath = CT_FieldTypeTag_file::get_private_file_path($filename, $how_to_process, $filepath, $record_id, $field->id, $field->ct->Table->tableid, $filename_only);
+        }
 
         $target = '';
         if (isset($option_list[3])) {
@@ -111,6 +117,9 @@ class CT_FieldTypeTag_file
             case 'extension':
                 return $fileExtension;
 
+            case 'file-size':
+                return JoomlaBasicMisc::formatSizeUnits($file_size);
+
             default:
                 return $filepath;
         }
@@ -152,12 +161,12 @@ class CT_FieldTypeTag_file
         return $folder;
     }
 
-    static protected function get_private_file_path($rowValue, $how_to_process, $filepath, $recid, $fieldid, $tableid, $filename_only = false): string
+    static protected function get_private_file_path($rowValue, $how_to_process, $filepath, $recId, $fieldid, $tableid, $filename_only = false): string
     {
         $security = CT_FieldTypeTag_file::get_security_letter($how_to_process);
 
         //make the key
-        $key = CT_FieldTypeTag_file::makeTheKey($filepath, $security, $recid, $fieldid, $tableid);
+        $key = CT_FieldTypeTag_file::makeTheKey($filepath, $security, $recId, $fieldid, $tableid);
 
         $currentURL = JoomlaBasicMisc::curPageURL();
         $currentURL = JoomlaBasicMisc::deleteURLQueryOption($currentURL, 'returnto');
@@ -186,6 +195,10 @@ class CT_FieldTypeTag_file
     static protected function get_security_letter($how_to_process): string
     {
         switch ($how_to_process) {
+
+            case 'blob':
+                return 'b';
+
             case 'timelimited':
                 return 'd';
 
@@ -209,7 +222,7 @@ class CT_FieldTypeTag_file
         }
     }
 
-    public static function makeTheKey(string $filepath, string $security, string $rec_id, string $fieldid, string $tableid): string
+    public static function makeTheKey(string $filepath, string $security, string $recId, string $fieldid, string $tableid): string
     {
         $user = Factory::getUser();
         $username = $user->get('username');
@@ -226,7 +239,7 @@ class CT_FieldTypeTag_file
 
         //get secs key char
         $sep = $security;//($secs==1000 ? 'a' : 'b');
-        $m2 = 'c' . $rec_id . $sep . $fieldid . $sep . $tableid;
+        $m2 = 'c' . $recId . $sep . $fieldid . $sep . $tableid;
 
         $m = '';
 
@@ -554,7 +567,7 @@ class CT_FieldTypeTag_file
             . (is_null($field->ct->Params->ModuleId) ? '' : '&ModuleId=' . $field->ct->Params->ModuleId)
             . '&fieldname=' . $field->fieldname . '";
                     	
-						ct_getUploader(' . $field->id . ',urlstr' . $field->id . ',' . $max_file_size . ',"' . $accepted_file_types . '","eseditForm",false,"ct_fileuploader_' . $field->fieldname . '","ct_eventsmessage_'
+			ct_getUploader(' . $field->id . ',urlstr' . $field->id . ',' . $max_file_size . ',"' . $accepted_file_types . '","eseditForm",false,"ct_fileuploader_' . $field->fieldname . '","ct_eventsmessage_'
             . $field->fieldname . '","' . $file_id . '","' . $field->prefix . $field->fieldname . '","ct_ubloadedfile_box_' . $field->fieldname . '")
 
                     </script>
@@ -567,7 +580,6 @@ class CT_FieldTypeTag_file
 
     public static function process_file_link($filename): void
     {
-
         $jinput = Factory::getApplication()->input;
         $parts = explode('.', $filename);
 
@@ -593,7 +605,8 @@ class CT_FieldTypeTag_file
         //security letters tells what method used
         $security = 'd';//Time Limited (8-24 minutes)
 
-        if (str_contains($key_params, 'e')) $security = 'e';//Time Limited (1.5 - 4 hours)
+        if (str_contains($key_params, 'b')) $security = 'b';//Blob - Not limited
+        elseif (str_contains($key_params, 'e')) $security = 'e';//Time Limited (1.5 - 4 hours)
         elseif (str_contains($key_params, 'f')) $security = 'f';//Time/Host Limited (8-24 minutes)
         elseif (str_contains($key_params, 'g')) $security = 'g';//Time/Host Limited (1.5 - 4 hours)
         elseif (str_contains($key_params, 'h')) $security = 'h';//Time/Host/User Limited (8-24 minutes)

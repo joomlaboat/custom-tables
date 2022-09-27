@@ -20,13 +20,14 @@ class CustomTablesController extends JControllerLegacy
     function display($cachable = false, $urlparams = array())
     {
         $jinput = Factory::getApplication()->input;
-        if ($jinput->getString('file') != '') {
+
+        $file = $jinput->getString('file');
+        if ($file != '') {
             //Load file instead
 
             $processor_file = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_file.php';
             require_once($processor_file);
-
-            CT_FieldTypeTag_file::process_file_link($jinput->getString('file'));
+            CT_FieldTypeTag_file::process_file_link($file);
 
             $jinput->set('view', 'files');
             parent::display();
