@@ -150,7 +150,7 @@ class CustomTablesModelEditItem extends JModelLegacy
     {
         if (is_numeric($this->listing_id) or (!str_contains($this->listing_id, '=') and !str_contains($this->listing_id, '<') and !str_contains($this->listing_id, '>'))) {
             //Normal listing ID or CMD
-            $query = 'SELECT ' . $this->ct->Table->tablerow['query_selects'] . ' FROM ' . $this->ct->Table->realtablename
+            $query = 'SELECT ' . implode(',', $this->ct->Table->selects) . ' FROM ' . $this->ct->Table->realtablename
                 . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . $this->ct->db->quote($this->listing_id) . ' LIMIT 1';
 
 
@@ -227,7 +227,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
         $wheres = array_merge($wheres, $wheres_user);
 
-        $query = 'SELECT ' . $this->ct->Table->tablerow['query_selects'] . ' FROM ' . $this->ct->Table->realtablename . ' WHERE ' . implode(' AND ', $wheres) . ' LIMIT 1';
+        $query = 'SELECT ' . implode(',', $this->ct->Table->selects) . ' FROM ' . $this->ct->Table->realtablename . ' WHERE ' . implode(' AND ', $wheres) . ' LIMIT 1';
 
         $this->ct->db->setQuery($query);
         $rows = $this->ct->db->loadAssocList();
@@ -1058,7 +1058,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
     function getListingRowByID($listing_id)
     {
-        $query = 'SELECT ' . $this->ct->Table->tablerow['query_selects'] . ' FROM ' . $this->ct->Table->realtablename . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . $this->ct->db->quote($listing_id) . ' LIMIT 1';
+        $query = 'SELECT ' . implode(',', $this->ct->Table->selects) . ' FROM ' . $this->ct->Table->realtablename . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . $this->ct->db->quote($listing_id) . ' LIMIT 1';
         $this->ct->db->setQuery($query);
 
         $rows = $this->ct->db->loadAssocList();
@@ -1197,7 +1197,7 @@ class CustomTablesModelEditItem extends JModelLegacy
         if ($link == '')
             return '';
 
-        $query = 'SELECT ' . $this->ct->Table->tablerow['query_selects'] . ' FROM ' . $this->ct->Table->realtablename . ' ORDER BY ' . $this->ct->Table->realidfieldname . ' DESC LIMIT 1';
+        $query = 'SELECT ' . implode(',', $this->ct->Table->selects) . ' FROM ' . $this->ct->Table->realtablename . ' ORDER BY ' . $this->ct->Table->realidfieldname . ' DESC LIMIT 1';
         $this->ct->db->setQuery($query);
 
         $rows = $this->ct->db->loadAssocList();
@@ -1243,7 +1243,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
     protected function RefreshSingleRecord($listing_id, $save_log): int
     {
-        $query = 'SELECT ' . $this->ct->Table->tablerow['query_selects'] . ' FROM ' . $this->ct->Table->realtablename . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . $this->ct->db->quote($listing_id) . ' LIMIT 1';
+        $query = 'SELECT ' . implode(',', $this->ct->Table->selects) . ' FROM ' . $this->ct->Table->realtablename . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . $this->ct->db->quote($listing_id) . ' LIMIT 1';
         $this->ct->db->setQuery($query);
 
         $rows = $this->ct->db->loadAssocList();

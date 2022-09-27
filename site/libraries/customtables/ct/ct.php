@@ -230,19 +230,11 @@ class CT
             return null;
         }
 
-        $selects = explode(',', $this->Table->tablerow['query_selects']);
-        $selects = array_slice($selects, 1);
-        foreach ($this->Table->fields as $field) {
-            if ($field['type'] == 'blob') {
-                $selects[] = 'OCTET_LENGTH(' . $this->Table->realtablename . '.' . $field['realfieldname'] . ') AS ' . $field['realfieldname'];
-                $selects[] = 'SUBSTRING(' . $this->Table->realtablename . '.' . $field['realfieldname'] . ',1,255) AS ' . $field['realfieldname'] . '_sample';
-            } else
-                $selects[] = $this->Table->realtablename . '.' . $field['realfieldname'];
-        }
-
         if ($this->Ordering->ordering_processed_string !== null) {
             $this->Ordering->parseOrderByString();
         }
+
+        $selects = $this->Table->selects;
 
         if ($this->Ordering->orderby !== null) {
             if ($this->Ordering->selects !== null)

@@ -71,7 +71,7 @@ class updateFiles
     protected static function processFiles(CT &$ct, $fieldrow, array $old_params, array $new_params, $startindex, $stepsize)
     {
         $db = Factory::getDBO();
-        $query = 'SELECT ' . $ct->Table->tablerow['query_selects'] . ' FROM ' . $ct->Table->realtablename . ' WHERE ' . $fieldrow->realfieldname . ' IS NOT NULL AND ' . $fieldrow->realfieldname . ' != ""';
+        $query = 'SELECT ' . implode(',', $ct->Table->selects) . ' FROM ' . $ct->Table->realtablename . ' WHERE ' . $fieldrow->realfieldname . ' IS NOT NULL AND ' . $fieldrow->realfieldname . ' != ""';
         $db->setQuery($query, $startindex, $stepsize);
 
         $filelist = $db->loadAssocList();

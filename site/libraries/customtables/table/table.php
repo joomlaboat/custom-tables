@@ -43,6 +43,7 @@ class Table
 
     var ?array $imagegalleries;
     var ?array $fileboxes;
+    var ?array $selects;
 
     function __construct($Languages, $Env, $tablename_or_id_not_sanitized, $useridfieldname = null)
     {
@@ -67,6 +68,7 @@ class Table
         $this->recordlist = null;
         $this->imagegalleries = null;
         $this->fileboxes = null;
+        $this->selects = null;
 
         if ($tablename_or_id_not_sanitized === null or $tablename_or_id_not_sanitized == '')
             return;
@@ -133,6 +135,23 @@ class Table
                     break;
             }
         }
+
+        //Selects
+        $this->selects = [];
+        $this->selects[] = $this->realtablename . '.' . $this->realidfieldname;
+
+        if ($this->tablerow['published_field_found'])
+            $this->selects[] = $this->realtablename . '.published AS listing_published';
+        else
+            $this->selects[] = '1 AS listing_published';
+
+        foreach ($this->fields as $field) {
+            if ($field['type'] == 'blob') {
+                $this->selects[] = 'OCTET_LENGTH(' . $this->realtablename . '.' . $field['realfieldname'] . ') AS ' . $field['realfieldname'];
+                $this->selects[] = 'SUBSTRING(' . $this->realtablename . '.' . $field['realfieldname'] . ',1,255) AS ' . $field['realfieldname'] . '_sample';
+            } else
+                $this->selects[] = $this->realtablename . '.' . $field['realfieldname'];
+        }
     }
 
     public function getRecordFieldValue($listingid, $resultfield)
@@ -151,17 +170,7 @@ class Table
 
     function loadRecord($listing_id)
     {
-        $selects = explode(',', $this->tablerow['query_selects']);
-        $selects = array_slice($selects, 1);
-        foreach ($this->fields as $field) {
-            if ($field['type'] == 'blob') {
-                $selects[] = 'OCTET_LENGTH(' . $this->realtablename . '.' . $field['realfieldname'] . ') AS ' . $field['realfieldname'];
-                $selects[] = 'SUBSTRING(' . $this->Table->realtablename . '.' . $field['realfieldname'] . ',1,255) AS ' . $field['realfieldname'] . '_sample';
-            } else
-                $selects[] = $this->realtablename . '.' . $field['realfieldname'];
-        }
-
-        $query = 'SELECT ' . implode(',', $selects) . ' FROM ' . $this->realtablename . ' WHERE ' . $this->realidfieldname . '=' . $this->db->quote($listing_id) . ' LIMIT 1';
+        $query = 'SELECT ' . implode(',', $this->selects) . ' FROM ' . $this->realtablename . ' WHERE ' . $this->realidfieldname . '=' . $this->db->quote($listing_id) . ' LIMIT 1';
         $this->db->setQuery($query);
 
         $recs = $this->db->loadAssocList();

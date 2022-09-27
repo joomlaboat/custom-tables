@@ -956,11 +956,18 @@ class LinkJoinFilters
         if (!is_object($fieldrow))
             return '<p style="color:white;background-color:red;">sqljoin: field "' . $field . '" not found</p>';
 
-        $where = '';
-        if ($tableRow['published_field_found'])
-            $where = 'WHERE published=1';
+        $selects = [];
+        $selects[] = $tableRow['realtablename'] . '.' . $tableRow['realidfieldname'];
 
-        $query = 'SELECT ' . $tableRow['query_selects'] . ' FROM ' . $tableRow['realtablename'] . ' ' . $where . ' ORDER BY ' . $fieldrow->realfieldname;
+        $where = '';
+        if ($tableRow['published_field_found']) {
+            $selects[] = $tableRow['realtablename'] . '.published AS listing_published';
+            $where = 'WHERE listing_published=1';
+        } else {
+            $selects[] = '1 AS listing_published';
+        }
+
+        $query = 'SELECT ' . implode(',', $selects) . ' FROM ' . $tableRow['realtablename'] . ' ' . $where . ' ORDER BY ' . $fieldrow->realfieldname;
 
         $db->setQuery($query);
         $records = $db->loadAssocList();

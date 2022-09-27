@@ -126,13 +126,6 @@ class ESTables
         }
         $row['published_field_found'] = $published_field_found;
 
-        if ($published_field_found)
-            $query_selects = '*,' . $row['realtablename'] . '.' . $row['realidfieldname'] . ',' . $row['realtablename'] . '.published AS listing_published';
-        else
-            $query_selects = '*,' . $row['realtablename'] . '.' . $row['realidfieldname'] . ', 1 AS listing_published';
-
-        $row['query_selects'] = $query_selects;
-
         return $row;
     }
 

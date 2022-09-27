@@ -103,7 +103,7 @@ class CustomtablesModelListofRecords extends JModelList
         $db = Factory::getDBO();
         $query = $db->getQuery(true);
 
-        $query->select($this->ct->Table->tablerow['query_selects']);
+        $query->select(implode(',', $this->ct->Table->selects));
 
         // From the customtables_item table
         $query->from($db->quoteName($this->ct->Table->realtablename, $this->ct->Table->realtablename));

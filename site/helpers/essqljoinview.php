@@ -53,7 +53,7 @@ class JHTMLESSQLJoinView
         $htmlresult = '';
 
         //Get Row
-        $query = 'SELECT ' . $ct->Table->tablerow['query_selects'] . ' FROM ' . $ct->Table->realtablename . ' WHERE '
+        $query = 'SELECT ' . implode(',', $ct->Table->selects) . ' FROM ' . $ct->Table->realtablename . ' WHERE '
             . $ct->Table->tablerow['realidfieldname'] . '=' . (int)$value;
 
         $ct->db->setQuery($query);
