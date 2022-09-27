@@ -33,9 +33,6 @@ if ($view == 'home') {
 
 $task = $jinput->getCmd('task');
 
-//$edit_model = $this->getModel('edititem');
-//$edit_model->listing_id = $ct->Env->jinput->getCmd("listing_id");
-
 //Check Authorization
 //3 - to delete
 $PermissionIndexes = ['clear' => 3, 'delete' => 3, 'copy' => 4, 'refresh' => 1, 'publish' => 2, 'unpublish' => 2, 'createuser' => 1, 'resetpassword' => 1];

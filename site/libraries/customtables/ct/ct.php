@@ -267,7 +267,6 @@ class CT
                 $KeywordSearcher->groupby = $this->GroupBy;
                 $KeywordSearcher->esordering = $this->Ordering->ordering_processed_string;
 
-
                 $this->Records = $KeywordSearcher->getRowsByKeywords(
                     $eskeysearch_,
                     $this->Table->recordcount,

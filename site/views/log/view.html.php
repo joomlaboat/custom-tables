@@ -95,7 +95,6 @@ class CustomTablesViewLog extends JViewLegacy
         if ($tableid != 0)
             $where[] = 'tableid=' . $tableid;
 
-
         $query = 'SELECT ' . implode(',', $selects) . ' FROM #__customtables_log ' . (count($where) > 0 ? ' WHERE ' . implode(' AND ', $where) : '') . ' ORDER BY datetime DESC';
 
         $this->record_count = 1000;
@@ -112,9 +111,7 @@ class CustomTablesViewLog extends JViewLegacy
 
         $db->setQuery($query, $this->limitstart, $the_limit);
 
-        $rows = $db->loadAssocList();
-
-        return $rows;
+        return $db->loadAssocList();
     }
 
     function ActionFilter($action)

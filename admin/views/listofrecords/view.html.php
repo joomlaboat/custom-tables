@@ -41,8 +41,6 @@ class CustomtablesViewListofrecords extends JViewLegacy
 
     function display($tpl = null)
     {
-        $app = Factory::getApplication();
-
         if ($this->getLayout() !== 'modal') {
             // Include helper submenu
             CustomtablesHelper::addSubmenu('listofrecords');

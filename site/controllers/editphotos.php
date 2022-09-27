@@ -21,8 +21,6 @@ $jinput = Factory::getApplication()->input;
 
 $ct = new CT;
 $model = $this->getModel('edititem');
-//$model->params=Factory::getApplication()->getParams();;
-//$model->listing_id = $jinput->getCmd("listing_id");
 
 if (!CTUser::CheckAuthorization($ct)) {
     //not authorized

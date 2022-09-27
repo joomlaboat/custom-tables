@@ -140,9 +140,11 @@ class Table
         $this->selects = [];
         $this->selects[] = $this->realtablename . '.' . $this->realidfieldname;
 
-        if ($this->tablerow['published_field_found'])
+        if ($this->tablerow['published_field_found']) {
+
             $this->selects[] = $this->realtablename . '.published AS listing_published';
-        else
+            $this->selects[] = $this->realtablename . '.published AS published'; //TODO: not used
+        } else
             $this->selects[] = '1 AS listing_published';
 
         foreach ($this->fields as $field) {

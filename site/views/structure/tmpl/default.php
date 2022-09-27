@@ -13,7 +13,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
-
 echo '<h5>' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FOUND') . ': ' . $this->record_count . ' ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RESULT_S') . '</h5>';
 
 echo '<form action="" method="post" name="escatalogform" id="escatalogform">
@@ -23,16 +22,11 @@ echo '<form action="" method="post" name="escatalogform" id="escatalogform">
         ';
 
 if ($this->record_count > 5) {
-    echo '
-	<table>
-        <tr height=30>
-                <td>' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SHOW') . ': ' . $this->pagination->getLimitBox("") . '</td>
-                <td>' . $this->pagination->getPagesLinks("") . '<br/></td>
-                <td></td>
-        </tr>
-    </table>
-	<hr>
-		';
+    echo '<table><tr height=30>'
+        . '<td>' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SHOW') . ': ' . $this->pagination->getLimitBox("") . '</td>'
+        . '<td>' . $this->pagination->getPagesLinks("") . '<br/></td>'
+        . '<td></td>'
+        . '</tr></table><hr/>';
 }
 
 $catalogResult = '<table>';

@@ -39,7 +39,7 @@ $twig = new TwigProcessor($this->ct, $recordLayout);
 
         <?php if ($this->canState or $this->canDelete): ?>
             <td scope="row" class="text-center">
-                <?php echo JHtml::_('grid.id', $i, $item->listing_id); ?>
+                <?php echo JHtml::_('grid.id', $i, $item_array[$this->ct->Table->realidfieldname]); ?>
             </td>
         <?php endif; ?>
 
@@ -58,7 +58,7 @@ $twig = new TwigProcessor($this->ct, $recordLayout);
 
                     $order_value = (int)$item_array[$this->ordering_realfieldname];
                     if ($order_value == 0)
-                        $order_value = $item->listing_id;
+                        $order_value = $item_array[$this->ct->Table->realidfieldname];
 
                     ?>
                     <input type="text" name="order[]" size="5" value="<?php echo $order_value; ?>"
@@ -70,7 +70,7 @@ $twig = new TwigProcessor($this->ct, $recordLayout);
         <?php
         $result = '';
 
-        $link = JURI::root(false) . 'administrator/index.php?option=com_customtables&view=records&task=records.edit&tableid=' . $this->ct->Table->tableid . '&id=' . $item->listing_id;
+        $link = JURI::root(false) . 'administrator/index.php?option=com_customtables&view=records&task=records.edit&tableid=' . $this->ct->Table->tableid . '&id=' . $item_array[$this->ct->Table->realidfieldname];
 
         $result = $twig->process($item_array);
 
@@ -81,15 +81,15 @@ $twig = new TwigProcessor($this->ct, $recordLayout);
         <?php if ($this->ct->Table->published_field_found): ?>
             <td class="text-center btns d-none d-md-table-cell">
                 <?php if ($this->canState) : ?>
-                    <?php echo JHtml::_('jgrid.published', $item->published, $i, 'listofrecords.', true, 'cb'); ?>
+                    <?php echo JHtml::_('jgrid.published', $item->listing_published, $i, 'listofrecords.', true, 'cb'); ?>
                 <?php else: ?>
-                    <?php echo JHtml::_('jgrid.published', $item->published, $i, 'listofrecords.', false, 'cb'); ?>
+                    <?php echo JHtml::_('jgrid.published', $item->listing_published, $i, 'listofrecords.', false, 'cb'); ?>
                 <?php endif; ?>
             </td>
         <?php endif; ?>
 
         <td class="d-none d-md-table-cell">
-            <?php echo $item->listing_id; ?>
+            <?php echo $item_array[$this->ct->Table->realidfieldname]; ?>
         </td>
     </tr>
 <?php endforeach; ?>

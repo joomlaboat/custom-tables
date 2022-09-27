@@ -54,9 +54,8 @@ if ($this->ct->Params->showPageHeading) : ?>
     </div>
 <?php endif;
 
-//echo '<fieldset class="options-form">';
 echo $results;
-//echo '</fieldset>';
+
 ?>
 
 <!-- Modal content -->

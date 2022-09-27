@@ -37,7 +37,7 @@ $twig = new TwigProcessor($this->ct, $recordLayout);
 
         <td class="nowrap center">
             <?php if ($this->canEdit): ?>
-                <?php echo JHtml::_('grid.id', $i, $item->listing_id); ?>
+                <?php echo JHtml::_('grid.id', $i, $item_array[$this->ct->Table->realidfieldname]); ?>
             <?php endif; ?>
         </td>
 
@@ -53,7 +53,7 @@ $twig = new TwigProcessor($this->ct, $recordLayout);
 
         <?php
 
-        $link = JURI::root(false) . 'administrator/index.php?option=com_customtables&view=records&task=records.edit&tableid=' . $this->ct->Table->tableid . '&id=' . $item->listing_id;
+        $link = JURI::root(false) . 'administrator/index.php?option=com_customtables&view=records&task=records.edit&tableid=' . $this->ct->Table->tableid . '&id=' . $item_array[$this->ct->Table->realidfieldname];
 
         $result = $twig->process($item_array);
 
@@ -64,15 +64,15 @@ $twig = new TwigProcessor($this->ct, $recordLayout);
         <?php if ($this->ct->Table->published_field_found): ?>
             <td class="center">
                 <?php if ($this->canState) : ?>
-                    <?php echo JHtml::_('jgrid.published', $item->published, $i, 'listofrecords.', true, 'cb'); ?>
+                    <?php echo JHtml::_('jgrid.published', $item->listing_published, $i, 'listofrecords.', true, 'cb'); ?>
                 <?php else: ?>
-                    <?php echo JHtml::_('jgrid.published', $item->published, $i, 'listofrecords.', false, 'cb'); ?>
+                    <?php echo JHtml::_('jgrid.published', $item->listing_published, $i, 'listofrecords.', false, 'cb'); ?>
                 <?php endif; ?>
             </td>
         <?php endif; ?>
 
         <td class="nowrap center hidden-phone">
-            <?php echo $item->listing_id; ?>
+            <?php echo $item_array[$this->ct->Table->realidfieldname]; ?>
         </td>
     </tr>
 <?php endforeach; ?>
