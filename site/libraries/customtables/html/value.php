@@ -395,32 +395,12 @@ class Value
         if ((int)$value == 0)
             return null;
 
-        $filename = '';
-        if (isset($this->field->params[2]) and $this->field->params[2] != '') {
+        $fieldType = Fields::getFieldType($this->ct->Table->realtablename, $this->field->realfieldname);
+        if ($fieldType != 'blob' and $fieldType != 'tinyblob' and $fieldType != 'mediumblob' and $fieldType != 'longblob')
+            return self::TextFunctions($value, $option_list);
 
-            $fileNameField_String = $this->field->params[2];
-            $fileNameField_Row = Fields::FieldRowByName($fileNameField_String, $this->ct->Table->fields);
-            $fileNameField = $fileNameField_Row['realfieldname'];
-            $filename = $this->row[$fileNameField];
-
-        } else {
-            $fieldType = Fields::getFieldType($this->ct->Table->realtablename, $this->field->realfieldname);
-            if ($fieldType != 'blob' and $fieldType != 'tinyblob' and $fieldType != 'mediumblob' and $fieldType != 'longblob')
-                return self::TextFunctions($value, $option_list);
-        }
-
-        if ($filename == '') {
-
-            $file_extension = 'bin';
-            $content = stripslashes($this->row[$this->field->realfieldname . '_sample']);
-            $mime = (new finfo(FILEINFO_MIME_TYPE))->buffer($content);
-            $mime_file_extension = JoomlaBasicMisc::mime2ext($mime);
-            if ($mime_file_extension)
-                $file_extension = $mime_file_extension;
-
-            $filename = 'blob-' . strtolower(str_replace(' ', '', JoomlaBasicMisc::formatSizeUnits((int)$value))) . '.' . $file_extension;
-        }
-
+        $filename = CT_FieldTypeTag_file::getBlobFileName($this->field, $value, $this->row, $this->ct->Table->fields);
+       
         return CT_FieldTypeTag_file::process($filename, $this->field, $option_list, $this->row[$this->ct->Table->realidfieldname], false, intval($value));
     }
 

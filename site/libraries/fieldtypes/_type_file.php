@@ -23,239 +23,6 @@ require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'uploader.php')
 
 class CT_FieldTypeTag_file
 {
-    public static function process($filename, CustomTables\Field $field, $option_list, $record_id, $filename_only = false, int $file_size = 0)
-    {
-        if ($filename == '')
-            return '';
-
-        if ($field->type == 'filelink') {
-            $FileFolder = CT_FieldTypeTag_file::getFileFolder($field->params[0]);
-            $filepath = $FileFolder . '/' . $filename;
-        } elseif ($field->type == 'blob')
-            $filepath = $filename;
-        else {
-            $FileFolder = CT_FieldTypeTag_file::getFileFolder($field->params[1] ?? '');
-            $filepath = $FileFolder . '/' . $filename;
-        }
-
-        if (!isset($option_list[2]))
-            $icon_size = '32';
-        else
-            $icon_size = $option_list[2];
-
-        if ($icon_size != "16" and $icon_size != "32" and $icon_size != "48")
-            $icon_size = '32';
-
-        $parts = explode('.', $filename);
-        $fileExtension = end($parts);
-        $icon = '/components/com_customtables/libraries/customtables/media/images/fileformats/' . $icon_size . 'px/' . $fileExtension . '.png';
-        $icon_File_Path = JPATH_SITE . $icon;
-        if (!file_exists($icon_File_Path))
-            $icon = '';
-
-        $how_to_process = $option_list[0];
-
-        if ($how_to_process != '') {
-            $filepath = CT_FieldTypeTag_file::get_private_file_path($filename, $how_to_process, $filepath, $record_id, $field->id, $field->ct->Table->tableid, $filename_only);
-        } elseif ($field->type == 'blob') {
-            $how_to_process = 'blob';//Not secure but BLOB
-            $filepath = CT_FieldTypeTag_file::get_private_file_path($filename, $how_to_process, $filepath, $record_id, $field->id, $field->ct->Table->tableid, $filename_only);
-        }
-
-        $target = '';
-        if (isset($option_list[3])) {
-            if ($option_list[3] == '_blank')
-                $target = ' target="_blank"';
-            if ($option_list[3] == 'savefile') {
-                if (!str_contains($filepath, '?'))
-                    $filepath .= '?';
-                else
-                    $filepath .= '&';
-
-                $filepath .= 'savefile=1'; //Will add HTTP Header: @header("Content-Disposition: attachment; filename=\"".$filename."\"");
-            }
-        }
-
-        $output_format = '';
-        if (isset($option_list[1]))
-            $output_format = $option_list[1];
-
-        switch ($output_format) {
-
-            case '':
-            case 'link':
-                //Link Only
-                return $filepath;
-
-            case 'icon-filename-link':
-                //Clickable Icon and File Name
-                return '<a href="' . $filepath . '"' . $target . '>'
-                    . ($icon != '' ? '<img src="' . $icon . '" alt="' . $filename . '" title="' . $filename . '" />' : '')
-                    . '<span>' . $filename . '</span></a>';
-
-            case 'icon-link':
-                //Clickable Icon
-                return '<a href="' . $filepath . '"' . $target . '>' . ($icon != '' ? '<img src="' . $icon . '" alt="' . $filename . '" title="' . $filename . '" />' : $filename) . '</a>';//show file name if icon not available
-
-            case 'filename-link':
-                //Clickable File Name
-                return '<a href="' . $filepath . '"' . $target . '>' . $filename . '</a>';
-
-            case 'link-anchor':
-                //Clickable Link
-                return '<a href="' . $filepath . '"' . $target . '>' . $filepath . '</a>';
-
-            case 'icon':
-                return ($icon != '' ? '<img src="' . $icon . '" alt="' . $filename . '" title="' . $filename . '" />' : '');//show nothing is icon not available
-
-            case 'link-to-icon':
-                return $icon;//show nothing if icon not available
-
-            case 'filename':
-                return $filename;
-
-            case 'extension':
-                return $fileExtension;
-
-            case 'file-size':
-                return JoomlaBasicMisc::formatSizeUnits($file_size);
-
-            default:
-                return $filepath;
-        }
-    }
-
-    public static function getFileFolder(string $folder): string
-    {
-        if ($folder == '')
-            $folder = '/images';    //default folder
-        elseif ($folder[0] == '/') {
-
-            //delete trailing slash if found
-            $p = substr($folder, strlen($folder) - 1, 1);
-            if ($p == '/')
-                $folder = substr($folder, 0, strlen($folder) - 1);
-        } else {
-            $folder = '/' . $folder;
-            if (strlen($folder) > 8)//add /images to relative path
-            {
-                $p = substr($folder, 0, 8);
-                if ($p != '/images/')
-                    $folder = '/images' . $folder;
-            } else {
-                $folder = '/images' . $folder;
-            }
-
-            //delete trailing slash if found
-            $p = substr($folder, strlen($folder) - 1, 1);
-            if ($p == '/')
-                $folder = substr($folder, 0, strlen($folder) - 1);
-        }
-
-        $folderPath = JPATH_SITE . str_replace('/', DIRECTORY_SEPARATOR, $folder); //relative path
-
-        //Create folder if not exists
-        if (!file_exists($folderPath))
-            mkdir($folderPath, 0755, true);
-
-        return $folder;
-    }
-
-    static protected function get_private_file_path($rowValue, $how_to_process, $filepath, $recId, $fieldid, $tableid, $filename_only = false): string
-    {
-        $security = CT_FieldTypeTag_file::get_security_letter($how_to_process);
-
-        //make the key
-        $key = CT_FieldTypeTag_file::makeTheKey($filepath, $security, $recId, $fieldid, $tableid);
-
-        $currentURL = JoomlaBasicMisc::curPageURL();
-        $currentURL = JoomlaBasicMisc::deleteURLQueryOption($currentURL, 'returnto');
-
-        //prepare new file name that includes the key
-        $fna = explode('.', $rowValue);
-        $filetype = $fna[count($fna) - 1];
-        array_splice($fna, count($fna) - 1);
-        $filename = implode('.', $fna);
-        $filepath = $filename . '_' . $key . '.' . $filetype;
-
-        if (!$filename_only) {
-            if (str_contains($currentURL, '?')) {
-                $filepath = $currentURL . '&file=' . $filepath;
-            } else {
-                if ($currentURL[strlen($currentURL) - 1] != '/')
-                    $filepath = $currentURL . '/' . $filepath;
-                else
-                    $filepath = $currentURL . $filepath;
-            }
-        }
-
-        return $filepath;
-    }
-
-    static protected function get_security_letter($how_to_process): string
-    {
-        switch ($how_to_process) {
-
-            case 'blob':
-                return 'b';
-
-            case 'timelimited':
-                return 'd';
-
-            case 'timelimited_longterm':
-                return 'e';
-
-            case 'hostlimited':
-                return 'f';
-
-            case 'hostlimited_longterm':
-                return 'g';
-
-            case 'private':
-                return 'h';
-
-            case 'private_longterm':
-                return 'i';
-
-            default:
-                return '';
-        }
-    }
-
-    public static function makeTheKey(string $filepath, string $security, string $recId, string $fieldid, string $tableid): string
-    {
-        $user = Factory::getUser();
-        $username = $user->get('username');
-        $current_user_id = (int)$user->get('id');
-
-        $t = time();
-        //prepare augmented timer
-        $secs = 1000;
-        if ($security == 'e' or $security == 'g' or $security == 'i')
-            $secs = 10000;
-
-        $tplus = floor(($t + $secs) / $secs) * $secs;
-        $ip = $_SERVER['REMOTE_ADDR'];
-
-        //get secs key char
-        $sep = $security;//($secs==1000 ? 'a' : 'b');
-        $m2 = 'c' . $recId . $sep . $fieldid . $sep . $tableid;
-
-        $m = '';
-
-        //calculate MD5
-        if ($security == 'd' or $security == 'e')
-            $m = md5($filepath . $tplus);
-        elseif ($security == 'f' or $security == 'g')
-            $m = md5($filepath . $tplus . $ip);
-        elseif ($security == 'h' or $security == 'i')
-            $m = md5($filepath . $tplus . $ip . $username . $current_user_id);
-
-        //replace rear part of the hash
-        $m3 = substr($m, 0, strlen($m) - strlen($m2));
-        return $m3 . $m2;
-    }
-
     static public function get_file_type_value(CustomTables\Field &$field, $listing_id)
     {
         $jinput = Factory::getApplication()->input;
@@ -302,6 +69,42 @@ class CT_FieldTypeTag_file
             return $value;
 
         return null;
+    }
+
+    public static function getFileFolder(string $folder): string
+    {
+        if ($folder == '')
+            $folder = '/images';    //default folder
+        elseif ($folder[0] == '/') {
+
+            //delete trailing slash if found
+            $p = substr($folder, strlen($folder) - 1, 1);
+            if ($p == '/')
+                $folder = substr($folder, 0, strlen($folder) - 1);
+        } else {
+            $folder = '/' . $folder;
+            if (strlen($folder) > 8)//add /images to relative path
+            {
+                $p = substr($folder, 0, 8);
+                if ($p != '/images/')
+                    $folder = '/images' . $folder;
+            } else {
+                $folder = '/images' . $folder;
+            }
+
+            //delete trailing slash if found
+            $p = substr($folder, strlen($folder) - 1, 1);
+            if ($p == '/')
+                $folder = substr($folder, 0, strlen($folder) - 1);
+        }
+
+        $folderPath = JPATH_SITE . str_replace('/', DIRECTORY_SEPARATOR, $folder); //relative path
+
+        //Create folder if not exists
+        if (!file_exists($folderPath))
+            mkdir($folderPath, 0755, true);
+
+        return $folder;
     }
 
     protected static function UploadSingleFile($ExistingFile, $file_id, $field, $FileFolder)//,$realtablename='-options')
@@ -471,7 +274,7 @@ class CT_FieldTypeTag_file
         $result = '<div class="esUploadFileBox" style="vertical-align:top;">';
 
         if ($field->type == 'blob')
-            $result .= CT_FieldTypeTag_file::renderBlobAndDeleteOption($file, $field);
+            $result .= CT_FieldTypeTag_file::renderBlobAndDeleteOption(intval($file), $field, $row, $ct->Table->fields, $row[$ct->Table->realidfieldname]);
         else
             $result .= CT_FieldTypeTag_file::renderFileAndDeleteOption($file, $field);
 
@@ -481,16 +284,19 @@ class CT_FieldTypeTag_file
         return $result;
     }
 
-    protected static function renderBlobAndDeleteOption(string $file, &$field): string
+    protected static function renderBlobAndDeleteOption(int $fileSize, &$field, &$row, &$fields, $listing_id): string
     {
-        if ($file == '')
+        if ($fileSize == '')
             return '';
 
         $result = '
                 <div style="margin:10px; border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;vertical-align:top;" id="ct_uploadedfile_box_' . $field->fieldname . '">';
 
+        $filename = CT_FieldTypeTag_file::getBlobFileName($field, $fileSize, $row, $fields);
 
-        $result .= '[BLOB - ' . JoomlaBasicMisc::formatSizeUnits(strlen($file)) . ']<br/><br/>';
+        $filename_Icon = CT_FieldTypeTag_file::process($filename, $field, ['', 'icon-filename-link', 48], $listing_id, false, $fileSize);
+
+        $result .= $filename_Icon . '<br/><br/>';
 
         if (!$field->isrequired)
             $result .= '<input type="checkbox" name="' . $field->prefix . $field->fieldname . '_delete" id="' . $field->prefix . $field->fieldname . '_delete" value="true">'
@@ -500,6 +306,228 @@ class CT_FieldTypeTag_file
                 </div>';
 
         return $result;
+    }
+
+    public static function getBlobFileName($field, $value, &$row, &$fields)
+    {
+        $filename = '';
+        if (isset($field->params[2]) and $field->params[2] != '') {
+
+            $fileNameField_String = $field->params[2];
+            $fileNameField_Row = Fields::FieldRowByName($fileNameField_String, $fields);
+            $fileNameField = $fileNameField_Row['realfieldname'];
+            $filename = $row[$fileNameField];
+        }
+
+        if ($filename == '') {
+
+            $file_extension = 'bin';
+            $content = stripslashes($row[$field->realfieldname . '_sample']);
+            $mime = (new finfo(FILEINFO_MIME_TYPE))->buffer($content);
+            $mime_file_extension = JoomlaBasicMisc::mime2ext($mime);
+            if ($mime_file_extension)
+                $file_extension = $mime_file_extension;
+
+            $filename = 'blob-' . strtolower(str_replace(' ', '', JoomlaBasicMisc::formatSizeUnits((int)$value))) . '.' . $file_extension;
+        }
+        return $filename;
+    }
+
+    public static function process($filename, CustomTables\Field $field, $option_list, $record_id, $filename_only = false, int $file_size = 0)
+    {
+        if ($filename == '')
+            return '';
+
+        if ($field->type == 'filelink') {
+            $FileFolder = CT_FieldTypeTag_file::getFileFolder($field->params[0]);
+            $filepath = $FileFolder . '/' . $filename;
+        } elseif ($field->type == 'blob')
+            $filepath = $filename;
+        else {
+            $FileFolder = CT_FieldTypeTag_file::getFileFolder($field->params[1] ?? '');
+            $filepath = $FileFolder . '/' . $filename;
+        }
+
+        if (!isset($option_list[2]))
+            $icon_size = '32';
+        else
+            $icon_size = $option_list[2];
+
+        if ($icon_size != "16" and $icon_size != "32" and $icon_size != "48")
+            $icon_size = '32';
+
+        $parts = explode('.', $filename);
+        $fileExtension = end($parts);
+        $icon = '/components/com_customtables/libraries/customtables/media/images/fileformats/' . $icon_size . 'px/' . $fileExtension . '.png';
+        $icon_File_Path = JPATH_SITE . $icon;
+        if (!file_exists($icon_File_Path))
+            $icon = '';
+
+        $how_to_process = $option_list[0];
+
+        if ($how_to_process != '') {
+            $filepath = CT_FieldTypeTag_file::get_private_file_path($filename, $how_to_process, $filepath, $record_id, $field->id, $field->ct->Table->tableid, $filename_only);
+        } elseif ($field->type == 'blob') {
+            $how_to_process = 'blob';//Not secure but BLOB
+            $filepath = CT_FieldTypeTag_file::get_private_file_path($filename, $how_to_process, $filepath, $record_id, $field->id, $field->ct->Table->tableid, $filename_only);
+        }
+
+        $target = '';
+        if (isset($option_list[3])) {
+            if ($option_list[3] == '_blank')
+                $target = ' target="_blank"';
+            if ($option_list[3] == 'savefile') {
+                if (!str_contains($filepath, '?'))
+                    $filepath .= '?';
+                else
+                    $filepath .= '&';
+
+                $filepath .= 'savefile=1'; //Will add HTTP Header: @header("Content-Disposition: attachment; filename=\"".$filename."\"");
+            }
+        }
+
+        $output_format = '';
+        if (isset($option_list[1]))
+            $output_format = $option_list[1];
+
+        switch ($output_format) {
+
+            case '':
+            case 'link':
+                //Link Only
+                return $filepath;
+
+            case 'icon-filename-link':
+                //Clickable Icon and File Name
+                return '<a href="' . $filepath . '"' . $target . '>'
+                    . ($icon != '' ? '<img src="' . $icon . '" alt="' . $filename . '" title="' . $filename . '" />' : '')
+                    . '<span>' . $filename . '</span></a>';
+
+            case 'icon-link':
+                //Clickable Icon
+                return '<a href="' . $filepath . '"' . $target . '>' . ($icon != '' ? '<img src="' . $icon . '" alt="' . $filename . '" title="' . $filename . '" />' : $filename) . '</a>';//show file name if icon not available
+
+            case 'filename-link':
+                //Clickable File Name
+                return '<a href="' . $filepath . '"' . $target . '>' . $filename . '</a>';
+
+            case 'link-anchor':
+                //Clickable Link
+                return '<a href="' . $filepath . '"' . $target . '>' . $filepath . '</a>';
+
+            case 'icon':
+                return ($icon != '' ? '<img src="' . $icon . '" alt="' . $filename . '" title="' . $filename . '" />' : '');//show nothing is icon not available
+
+            case 'link-to-icon':
+                return $icon;//show nothing if icon not available
+
+            case 'filename':
+                return $filename;
+
+            case 'extension':
+                return $fileExtension;
+
+            case 'file-size':
+                return JoomlaBasicMisc::formatSizeUnits($file_size);
+
+            default:
+                return $filepath;
+        }
+    }
+
+    static protected function get_private_file_path($rowValue, $how_to_process, $filepath, $recId, $fieldid, $tableid, $filename_only = false): string
+    {
+        $security = CT_FieldTypeTag_file::get_security_letter($how_to_process);
+
+        //make the key
+        $key = CT_FieldTypeTag_file::makeTheKey($filepath, $security, $recId, $fieldid, $tableid);
+
+        $currentURL = JoomlaBasicMisc::curPageURL();
+        $currentURL = JoomlaBasicMisc::deleteURLQueryOption($currentURL, 'returnto');
+
+        //prepare new file name that includes the key
+        $fna = explode('.', $rowValue);
+        $filetype = $fna[count($fna) - 1];
+        array_splice($fna, count($fna) - 1);
+        $filename = implode('.', $fna);
+        $filepath = $filename . '_' . $key . '.' . $filetype;
+
+        if (!$filename_only) {
+            if (str_contains($currentURL, '?')) {
+                $filepath = $currentURL . '&file=' . $filepath;
+            } else {
+                if ($currentURL[strlen($currentURL) - 1] != '/')
+                    $filepath = $currentURL . '/' . $filepath;
+                else
+                    $filepath = $currentURL . $filepath;
+            }
+        }
+
+        return $filepath;
+    }
+
+    static protected function get_security_letter($how_to_process): string
+    {
+        switch ($how_to_process) {
+
+            case 'blob':
+                return 'b';
+
+            case 'timelimited':
+                return 'd';
+
+            case 'timelimited_longterm':
+                return 'e';
+
+            case 'hostlimited':
+                return 'f';
+
+            case 'hostlimited_longterm':
+                return 'g';
+
+            case 'private':
+                return 'h';
+
+            case 'private_longterm':
+                return 'i';
+
+            default:
+                return '';
+        }
+    }
+
+    public static function makeTheKey(string $filepath, string $security, string $recId, string $fieldid, string $tableid): string
+    {
+        $user = Factory::getUser();
+        $username = $user->get('username');
+        $current_user_id = (int)$user->get('id');
+
+        $t = time();
+        //prepare augmented timer
+        $secs = 1000;
+        if ($security == 'e' or $security == 'g' or $security == 'i')
+            $secs = 10000;
+
+        $tplus = floor(($t + $secs) / $secs) * $secs;
+        $ip = $_SERVER['REMOTE_ADDR'];
+
+        //get secs key char
+        $sep = $security;//($secs==1000 ? 'a' : 'b');
+        $m2 = 'c' . $recId . $sep . $fieldid . $sep . $tableid;
+
+        $m = '';
+
+        //calculate MD5
+        if ($security == 'd' or $security == 'e')
+            $m = md5($filepath . $tplus);
+        elseif ($security == 'f' or $security == 'g')
+            $m = md5($filepath . $tplus . $ip);
+        elseif ($security == 'h' or $security == 'i')
+            $m = md5($filepath . $tplus . $ip . $username . $current_user_id);
+
+        //replace rear part of the hash
+        $m3 = substr($m, 0, strlen($m) - strlen($m2));
+        return $m3 . $m2;
     }
 
     protected static function renderFileAndDeleteOption(string $file, &$field): string
