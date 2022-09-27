@@ -17,6 +17,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\DataTypes\Tree;
 use CustomTablesImageMethods;
+use finfo;
 use JoomlaBasicMisc;
 use JHTMLCTTime;
 use tagProcessor_Value;
@@ -389,8 +390,12 @@ class Value
         }
     }
 
-    protected function blobProcess($value, array $option_list)
+    protected function blobProcess(?string $value, array $option_list): ?string
     {
+        if ((int)$value == 0)
+            return null;
+
+        $filename = '';
         if (isset($this->field->params[2]) and $this->field->params[2] != '') {
 
             $fileNameField_String = $this->field->params[2];
@@ -402,8 +407,18 @@ class Value
             $fieldType = Fields::getFieldType($this->ct->Table->realtablename, $this->field->realfieldname);
             if ($fieldType != 'blob' and $fieldType != 'tinyblob' and $fieldType != 'mediumblob' and $fieldType != 'longblob')
                 return self::TextFunctions($value, $option_list);
+        }
 
-            $filename = '[BLOB - ' . JoomlaBasicMisc::formatSizeUnits($value) . ']';
+        if ($filename == '') {
+
+            $file_extension = 'bin';
+            $content = stripslashes($this->row[$this->field->realfieldname . '_sample']);
+            $mime = (new finfo(FILEINFO_MIME_TYPE))->buffer($content);
+            $mime_file_extension = JoomlaBasicMisc::mime2ext($mime);
+            if ($mime_file_extension)
+                $file_extension = $mime_file_extension;
+
+            $filename = 'blob-' . strtolower(str_replace(' ', '', JoomlaBasicMisc::formatSizeUnits((int)$value))) . '.' . $file_extension;
         }
 
         return CT_FieldTypeTag_file::process($filename, $this->field, $option_list, $this->row[$this->ct->Table->realidfieldname], false, intval($value));

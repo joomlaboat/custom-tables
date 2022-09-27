@@ -154,9 +154,10 @@ class Table
         $selects = explode(',', $this->tablerow['query_selects']);
         $selects = array_slice($selects, 1);
         foreach ($this->fields as $field) {
-            if ($field['type'] == 'blob')
+            if ($field['type'] == 'blob') {
                 $selects[] = 'OCTET_LENGTH(' . $this->realtablename . '.' . $field['realfieldname'] . ') AS ' . $field['realfieldname'];
-            else
+                $selects[] = 'SUBSTRING(' . $this->Table->realtablename . '.' . $field['realfieldname'] . ',1,255) AS ' . $field['realfieldname'] . '_sample';
+            } else
                 $selects[] = $this->realtablename . '.' . $field['realfieldname'];
         }
 

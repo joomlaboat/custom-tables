@@ -66,10 +66,14 @@ class CustomTablesViewFiles extends JViewLegacy
 
         if ($this->field->type == 'blob') {
 
-            $fileNameField_String = $this->field->params[2];
-            $fileNameField_Row = Fields::FieldRowByName($fileNameField_String, $this->ct->Table->fields);
-            $fileNameField = $fileNameField_Row['realfieldname'];
-            $filepath = $this->row[$fileNameField];
+            if (isset($this->field->params[2])) {
+                $fileNameField_String = $this->field->params[2];
+                $fileNameField_Row = Fields::FieldRowByName($fileNameField_String, $this->ct->Table->fields);
+                $fileNameField = $fileNameField_Row['realfieldname'];
+                $filepath = $this->row[$fileNameField];
+            } else {
+                $filepath = 'blob-' . strtolower(str_replace(' ', '', JoomlaBasicMisc::formatSizeUnits((int)$this->row[$this->field->realfieldname]))) . '.bin';
+            }
 
         } else {
             $filepath = $this->getFilePath();
@@ -81,9 +85,12 @@ class CustomTablesViewFiles extends JViewLegacy
         $test_key = CT_FieldTypeTag_file::makeTheKey($filepath, $this->security, $this->listing_id, $this->fieldid, $this->tableid);
 
         if ($key == $test_key) {
-            if ($this->field->type == 'blob')
-                $this->render_blob_output($filepath);
-            else
+            if ($this->field->type == 'blob') {
+                if (isset($this->field->params[2]))
+                    $this->render_blob_output($filepath);
+                else
+                    $this->render_blob_output('');
+            } else
                 $this->render_file_output($filepath);
         } else
             $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_DOWNLOAD_LINK_IS_EXPIRED'), 'error');
@@ -120,9 +127,14 @@ class CustomTablesViewFiles extends JViewLegacy
 
         if (ob_get_contents()) ob_end_clean();
 
-        $mt = (new finfo(FILEINFO_MIME_TYPE))->buffer($content);
+        $mime = (new finfo(FILEINFO_MIME_TYPE))->buffer($content);
 
-        @header('Content-Type: ' . $mt);
+        if ($filename == '') {
+            $file_extension = JoomlaBasicMisc::mime2ext($mime);
+            $filename = 'blob.' . $file_extension;
+        }
+
+        @header('Content-Type: ' . $mime);
         @header("Pragma: public");
         @header("Expires: 0");
         @header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
