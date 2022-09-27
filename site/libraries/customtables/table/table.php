@@ -143,7 +143,7 @@ class Table
         if ($this->tablerow['published_field_found']) {
 
             $this->selects[] = $this->realtablename . '.published AS listing_published';
-            $this->selects[] = $this->realtablename . '.published AS published'; //TODO: not used
+            //$this->selects[] = $this->realtablename . '.published AS published'; //TODO: not used
         } else
             $this->selects[] = '1 AS listing_published';
 
@@ -151,7 +151,7 @@ class Table
             if ($field['type'] == 'blob') {
                 $this->selects[] = 'OCTET_LENGTH(' . $this->realtablename . '.' . $field['realfieldname'] . ') AS ' . $field['realfieldname'];
                 $this->selects[] = 'SUBSTRING(' . $this->realtablename . '.' . $field['realfieldname'] . ',1,255) AS ' . $field['realfieldname'] . '_sample';
-            } else
+            } elseif ($field['type'] != 'dummy')
                 $this->selects[] = $this->realtablename . '.' . $field['realfieldname'];
         }
     }

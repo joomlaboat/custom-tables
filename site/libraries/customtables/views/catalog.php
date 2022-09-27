@@ -130,9 +130,7 @@ class Catalog
         }
 
 // -------------------- Parse Layouts
-
         if ($this->ct->Env->legacysupport) {
-
             $catalogTableCode = JoomlaBasicMisc::generateRandomString();//this is temporary replace placeholder. to not parse content result again
 
             $catalogTableContent = tagProcessor_CatalogTableView::process($this->ct, $Layouts->layouttype, $pagelayout, $catalogTableCode);

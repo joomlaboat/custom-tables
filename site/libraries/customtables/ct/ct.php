@@ -181,7 +181,6 @@ class CT
                     $this->db->setQuery($query, $this->LimitStart, $the_limit);
                 }
             }
-
             $this->Records = $this->db->loadAssocList();
         } else
             $this->Records = [];
