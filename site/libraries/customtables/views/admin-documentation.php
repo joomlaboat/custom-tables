@@ -349,7 +349,7 @@ class Documentation
                 }
 
                 $result .= '**' . common::translate('COM_CUSTOMTABLES_VALUEPARAMS') . ':**<br/><br/>Example:'
-                    . '`{{ ' . str_replace(' ', '', common::translate('COM_CUSTOMTABLES_FIELDNAME')) . ' }}`';
+                    . '`{{ ' . str_replace(' ', '', common::translate('COM_CUSTOMTABLES_FIELDNAME')) . ' }}`<br/><br/>';
 
                 if (!empty($type->valueparams)) {
                     foreach ($type->valueparams as $p) {
