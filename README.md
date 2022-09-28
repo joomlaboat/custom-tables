@@ -15,3 +15,7 @@ Tables are stored in MySQL or Maria database, all queries and field values are s
 
 When creating a new Custom Table, it is important to get the schema right the first time, though this won't be difficult to change later.
 The schema is like the blueprint for the table. You need to define each field (column) along with its parameters.
+
+Bug Tracker
+------------
+Have a bug or a feature request? Feel free to open an issue via this link https://github.com/t3framework/t3/issues
