@@ -198,6 +198,8 @@ class CustomtablesViewListofrecords extends JViewLegacy
         JHtmlSidebar::setAction('index.php?option=com_customtables&view=listofrecords&tableid=' . $this->ct->Table->tableid);
         JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/records');
 
+        JToolBarHelper::back('COM_CUSTOMTABLES_BUTTON_BACK2TABLES', 'index.php?option=com_customtables&view=listoftables');
+
         if ($this->canCreate)
             $toolbar->addNew('records.add');
 
