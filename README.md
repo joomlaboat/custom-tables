@@ -16,6 +16,26 @@ Tables are stored in MySQL or Maria database, all queries and field values are s
 When creating a new Custom Table, it is important to get the schema right the first time, though this won't be difficult to change later.
 The schema is like the blueprint for the table. You need to define each field (column) along with its parameters.
 
+Download 
+--------
+- Lastest Build: [https://joomlaboat.com/custom-tables](https://joomlaboat.com/custom-tables)
+
+Help & Userguide
+------------
+- Documentation: [https://joomlaboat.com/custom-tables-wiki](https://joomlaboat.com/custom-tables-wiki)
+- Youtube Playlist: [https://www.youtube.com/user/ivankomlev/videos](https://www.youtube.com/user/ivankomlev/videos)
+
 Bug Tracker
 ------------
 Have a bug or a feature request? Feel free to open an issue via this link [https://github.com/joomlaboat/custom-tables/issues](https://github.com/joomlaboat/custom-tables/issues)
+
+Developer Network Update
+----------
+- July 2018: First stable release
+- Sep 2021: Joomla 4 ready.
+- May 2022: Twig template language added.
+
+Credits, Copyright and License
+----------
+  * Copyright (C) 2018 - 2022 JoomlaBoat.org. All rights reserved.
+  * Distributed under the GNU General Public License version 2 or later
