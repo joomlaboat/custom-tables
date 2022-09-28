@@ -77,8 +77,8 @@ use Joomla\CMS\Language\Text;
 
 
         <?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'more_about', CustomTables\common::translate('COM_CUSTOMTABLES_MOREABOUT')); ?>
-        <a href="https://joomlaboat.com/custom-tables" target="_blank"
-           style="color:#51A351;"><?php echo CustomTables\common::translate('COM_CUSTOMTABLES_MOREABOUT'); ?></a>
+        <?php echo CustomTables\common::translate('COM_CUSTOMTABLES_SUPPORT'); ?>
+
         <?php echo HTMLHelper::_('uitab.endTab'); ?>
 
         <?php echo HTMLHelper::_('uitab.endTabSet');
@@ -91,8 +91,8 @@ use Joomla\CMS\Language\Text;
             <li><a href="#layouttags"
                    data-toggle="tab"><?php echo CustomTables\common::translate('COM_CUSTOMTABLES_LAYOUTTAGS'); ?></a>
             </li>
-            <li><a href="https://joomlaboat.com/custom-tables" target="_blank"
-                   style="color:#51A351;"><?php echo CustomTables\common::translate('COM_CUSTOMTABLES_MOREABOUT'); ?></a>
+            <li><a href="#more_about" target="_blank" data-toggle="tab">
+                    <?php echo CustomTables\common::translate('COM_CUSTOMTABLES_MOREABOUT'); ?></a>
             </li>
         </ul>
 
@@ -107,18 +107,20 @@ use Joomla\CMS\Language\Text;
 
                 <?php echo $this->documentation->getFieldTypes(); ?></div>
 
-
             <div class="tab-pane" id="layouttags">
                 <?php if ($this->documentation->internal_use): ?>
                     <h3><?php echo CustomTables\common::translate('COM_CUSTOMTABLES_LAYOUTTAGS'); ?></h3>
                 <?php endif; ?>
 
                 <?php echo $this->documentation->getLayoutTags(); ?></div>
+
+            <div class="tab-pane" id="more_about">
+                <?php echo CustomTables\common::translate('COM_CUSTOMTABLES_SUPPORT'); ?>
+            </div>
+
         </div>
 
-    <?php
-    endif;
-    ?>
+    <?php endif; ?>
 
 </div>
    
