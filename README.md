@@ -18,4 +18,4 @@ The schema is like the blueprint for the table. You need to define each field (c
 
 Bug Tracker
 ------------
-Have a bug or a feature request? Feel free to open an issue via this link [https://github.com/t3framework/t3/issues](https://github.com/joomlaboat/custom-tables/issues)
+Have a bug or a feature request? Feel free to open an issue via this link [https://github.com/joomlaboat/custom-tables/issues](https://github.com/joomlaboat/custom-tables/issues)
