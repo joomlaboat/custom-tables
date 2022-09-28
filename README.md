@@ -29,11 +29,12 @@ Bug Tracker
 ------------
 Have a bug or a feature request? Feel free to open an issue via this link [https://github.com/joomlaboat/custom-tables/issues](https://github.com/joomlaboat/custom-tables/issues)
 
-Developer Network Update
+Major Updates
 ----------
 - July 2018: First stable release
 - Sep 2021: Joomla 4 ready.
 - May 2022: Twig template language added.
+- Complete list of updates [https://github.com/joomlaboat/custom-tables/wiki/15.-Change-Log](https://github.com/joomlaboat/custom-tables/wiki/15.-Change-Log)
 
 Credits, Copyright and License
 ----------
