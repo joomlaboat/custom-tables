@@ -578,9 +578,22 @@ class CT_FieldTypeTag_file
 
         $accepted_file_types = ESFileUploader::getAcceptedFileTypes($fileExtensions);
 
-        $custom_max_size = (int)$field->params[0];
-        if ($custom_max_size != 0 and $custom_max_size < 10000)
-            $custom_max_size = $custom_max_size * 1000000; //to change 20 to 20MB
+        if ($field->type == 'blob') {
+
+            if ($field->params[0] == 'tiny')
+                $custom_max_size = 255;
+            elseif ($field->params[0] == 'medium')
+                $custom_max_size = 16777215;
+            elseif ($field->params[0] == 'long')
+                $custom_max_size = 4294967295;
+            else
+                $custom_max_size = 65535;
+        } else {
+            $custom_max_size = (int)$field->params[0];
+
+            if ($custom_max_size != 0 and $custom_max_size < 10000)
+                $custom_max_size = $custom_max_size * 1000000; //to change 20 to 20MB
+        }
 
         $max_file_size = JoomlaBasicMisc::file_upload_max_size($custom_max_size);
 
