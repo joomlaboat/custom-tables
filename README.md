@@ -37,5 +37,5 @@ Developer Network Update
 
 Credits, Copyright and License
 ----------
-  * Copyright (C) 2018 - 2022 JoomlaBoat.org. All rights reserved.
+  * Copyright (C) 2018 - 2022 JoomlaBoat.com. All rights reserved.
   * Distributed under the GNU General Public License version 2 or later
