@@ -283,30 +283,4 @@ class CustomtablesControllerTables extends JControllerForm
     {
         return;
     }
-
-
-    /*
-    public function export()
-    {
-
-        $input	= Factory::getApplication()->input;
-        $pks = $input->get( 'cid',array(),'ARRAY');
-
-        $download_link=$this->getModel()->export($pks);
-        if($download_link!='')
-        {
-            $msg = Text::_( 'Table(s) Exported Successfully' );
-            if($download_link!='')
-                $msg.=' <a href="'.$download_link.'" target="_blank">[download]</a>';
-        }
-        else
-        {
-            $msg = Text::_( 'COM_CUSTOMTABLES_TABLES_UNABLETOEXPORT' );
-        }
-
-        $link 	= 'index.php?option=com_customtables&view=listoftables';
-        $this->setRedirect($link, $msg);
-    }
-    */
-
 }

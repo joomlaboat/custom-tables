@@ -12,17 +12,12 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
-use CustomTables\CT;
 use CustomTables\ListOfFields;
-use Joomla\CMS\Access\Access;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\LayoutHelper;
-use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\String\PunycodeHelper;
-
 use CustomTables\Integrity\IntegrityFields;
 
 if ($this->saveOrder && !empty($this->items)) {

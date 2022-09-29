@@ -61,6 +61,8 @@ class CustomtablesControllerFields extends JControllerForm
 
     public function edit($key = NULL, $urlVar = NULL)
     {
+        parent::edit($key, $urlVar);
+
         $redirect = 'index.php?option=' . $this->option;
 
         $tableid = $this->input->get('tableid', 0, 'int');
@@ -75,7 +77,6 @@ class CustomtablesControllerFields extends JControllerForm
             $redirect .= '&old_typeparams=' . $this->input->get('old_typeparams', '', 'BASE64');
             $redirect .= '&new_typeparams=' . $this->input->get('new_typeparams', '', 'BASE64');
             $redirect .= '&fieldid=' . $fieldid;
-
         }
         $redirect .= '&view=fields&layout=edit&tableid=' . (int)$tableid . '&id=' . (int)$id;
 

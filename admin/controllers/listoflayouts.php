@@ -22,15 +22,4 @@ jimport('joomla.application.component.controlleradmin');
 class CustomtablesControllerListoflayouts extends JControllerAdmin
 {
     protected $text_prefix = 'COM_CUSTOMTABLES_LISTOFLAYOUTS';
-
-    /**
-     * Proxy for getModel.
-     * @since    2.5
-     */
-    public function getModel($name = 'Layouts', $prefix = 'CustomtablesModel', $config = array())
-    {
-        $model = parent::getModel($name, $prefix, array('ignore_request' => true));
-
-        return $model;
-    }
 }

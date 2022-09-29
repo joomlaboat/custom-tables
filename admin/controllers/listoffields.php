@@ -26,13 +26,6 @@ class CustomtablesControllerListoffields extends JControllerAdmin
 {
     protected $text_prefix = 'COM_CUSTOMTABLES_LISTOFFIELDS';
 
-    public function getModel($name = 'Fields', $prefix = 'CustomtablesModel', $config = array())
-    {
-        $model = parent::getModel($name, $prefix, array('ignore_request' => true));
-
-        return $model;
-    }
-
     public function publish()
     {
         if ($this->task == 'publish')
@@ -165,5 +158,4 @@ class CustomtablesControllerListoffields extends JControllerAdmin
 
         return true;
     }
-
 }

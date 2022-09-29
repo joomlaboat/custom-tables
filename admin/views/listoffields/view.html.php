@@ -10,18 +10,13 @@
  **/
 
 // No direct access to this file
-\defined('_JEXEC') or die;
+defined('_JEXEC') or die;
 
 use CustomTables\CT;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\MVC\View\GenericDataException;
-use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
-use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Toolbar\Toolbar;
-use Joomla\CMS\Toolbar\ToolbarHelper;
-use Joomla\Database\DatabaseDriver;
 use Joomla\Component\Content\Administrator\Extension\ContentComponent;
 
 require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . 'admin-listoffields.php');
@@ -43,6 +38,7 @@ class CustomtablesViewListoffields extends JViewLegacy
 
     function display($tpl = null)
     {
+        $this->ct = new CT;
         $app = Factory::getApplication();
 
         if ($this->getLayout() !== 'modal') {
@@ -50,24 +46,27 @@ class CustomtablesViewListoffields extends JViewLegacy
             CustomtablesHelper::addSubmenu('listoffields');
         }
 
-        $model = $this->getModel();
-        $this->ct = $model->ct;
-
         $this->items = $this->get('Items');
         $this->pagination = $this->get('Pagination');
         $this->state = $this->get('State');
-        $this->user = Factory::getUser();
 
-        if ($this->ct->Env->version >= 4) {
-            $this->filterForm = $this->get('FilterForm');
-            $this->activeFilters = $this->get('ActiveFilters');
+        //if ($this->ct->Env->version >= 4) {
+        $this->filterForm = $this->get('FilterForm');
+        $this->activeFilters = $this->get('ActiveFilters');
+        //}
+
+        // Check for errors.
+        if (count($errors = $this->get('Errors'))) {
+            throw new Exception(implode("\n", $errors), 500);
         }
+
+        $this->user = Factory::getUser();
 
         $this->listOrder = $this->escape($this->state->get('list.ordering'));
         $this->listDirn = $this->escape($this->state->get('list.direction'));
         $this->saveOrder = $this->listOrder == 'ordering' || $this->listOrder == 'a.ordering';
-        // get global action permissions
 
+        // get global action permissions
         $this->canDo = ContentHelper::getActions('com_customtables', 'tables');
         $this->canEdit = $this->canDo->get('tables.edit');
         $this->canState = $this->canDo->get('tables.edit');
@@ -108,11 +107,6 @@ class CustomtablesViewListoffields extends JViewLegacy
             }
         }
 
-        // Check for errors.
-        if (count($errors = $this->get('Errors'))) {
-            throw new Exception(implode("\n", $errors), 500);
-        }
-
         $this->languages = $this->ct->Languages->LanguageList;
 
         // Display the template
@@ -120,39 +114,15 @@ class CustomtablesViewListoffields extends JViewLegacy
             parent::display($tpl);
         else
             parent::display('quatro');
-
-        // Set the document
-        $this->setDocument();
-    }
-
-    /**
-     * Escapes a value for output in a view script.
-     *
-     * @param mixed $var The output to escape.
-     *
-     * @return  mixed  The escaped value.
-     */
-    public function escape($var)
-    {
-        if (strlen($var) > 50) {
-            // use the helper htmlEscape method instead and shorten the string
-            return CustomtablesHelper::htmlEscape($var, $this->_charset, true);
-        }
-        // use the helper htmlEscape method instead.
-        return CustomtablesHelper::htmlEscape($var, $this->_charset);
     }
 
     protected function addToolBar_3()
     {
-        $app = Factory::getApplication();
-
         if ($this->tableid != 0) {
             JToolBarHelper::title('Table "' . $this->tabletitle . '" - ' . Text::_('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
         } else
             JToolBarHelper::title(Text::_('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
 
-
-        JHtmlSidebar::setAction('index.php?option=com_customtables&view=listoffields&tableid=' . $this->tableid);
         JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/fields');
 
         if ($this->canCreate) {
@@ -186,6 +156,7 @@ class CustomtablesViewListoffields extends JViewLegacy
             JToolBarHelper::preferences('com_customtables');
         }
 
+        /*
         if ($this->canState) {
 
             //$CTJStatus = JFormHelper::loadFieldType('CTJStatus', false);
@@ -209,6 +180,7 @@ class CustomtablesViewListoffields extends JViewLegacy
                 JHtml::_('select.options', $newOptions, 'value', 'text', $this->state->get('filter.published'), true)
             );
         }
+        */
 
         // Set Type Selection
         /*
@@ -223,29 +195,33 @@ class CustomtablesViewListoffields extends JViewLegacy
             );
         }
         */
+        /*
+                $CTField = JFormHelper::loadFieldType('CTField', false);
+                $CTFieldOptions = $CTField->getOptions(false); // works only if you set your field getOptions on public!!
 
-        $CTField = JFormHelper::loadFieldType('CTField', false);
-        $CTFieldOptions = $CTField->getOptions(false); // works only if you set your field getOptions on public!!
+                JHtmlSidebar::addFilter(
+                    '- Select ' . Text::_('COM_CUSTOMTABLES_FIELDS_TYPE_LABEL') . ' -',
+                    'filter_type',
+                    JHtml::_('select.options', $CTFieldOptions, 'value', 'text', $this->state->get('filter.type'))
+                );
 
-        JHtmlSidebar::addFilter(
-            '- Select ' . Text::_('COM_CUSTOMTABLES_FIELDS_TYPE_LABEL') . ' -',
-            'filter_type',
-            JHtml::_('select.options', $CTFieldOptions, 'value', 'text', $this->state->get('filter.type'))
-        );
+                */
 
         // Set Tableid Selection
         /*
         $CTTable = JFormHelper::loadFieldType('CTTable', false);
-        $CTTableOptions=$CTTable->getOptions(false); // works only if you set your field getOptions on public!!
+        $CTTableOptions = $CTTable->getOptions(false); // works only if you set your field getOptions on public!!
 
         JHtmlSidebar::addFilter(
-        Text::_('COM_CUSTOMTABLES_LAYOUTS_TABLEID_SELECT'),
-        'filter_tableid',
-        JHtml::_('select.options', $CTTableOptions, 'value', 'text', $this->state->get('filter.tableid'))
+            Text::_('COM_CUSTOMTABLES_LAYOUTS_TABLEID_SELECT'),
+            'filter_tableid',
+            JHtml::_('select.options', $CTTableOptions, 'value', 'text', $this->state->get('filter.tableid'))
         );
 
         $this->tableidOptions = $this->getTheTableidSelections();
         */
+
+        JHtmlSidebar::setAction('index.php?option=com_customtables&view=listoffields&tableid=' . $this->tableid);
     }
 
     /**
@@ -306,24 +282,11 @@ class CustomtablesViewListoffields extends JViewLegacy
     }
 
     /**
-     * Method to set up the document properties
-     *
-     * @return void
-     */
-    protected function setDocument()
-    {
-        if (!isset($this->document)) {
-            $this->document = Factory::getDocument();
-        }
-        $this->document->setTitle(Text::_('COM_CUSTOMTABLES_LISTOFFIELDS'));
-    }
-
-    /**
      * Returns an array of fields the table can be sorted by
      *
      * @return  array  Array containing the field name to sort by as the key and display text as value
      */
-
+    /*
     protected function getSortFields()
     {
         //Joomla 3 only
@@ -335,6 +298,7 @@ class CustomtablesViewListoffields extends JViewLegacy
             'a.id' => Text::_('JGRID_HEADING_ID')
         );
     }
+*/
 
     protected function getTheTypeSelections()
     {
@@ -356,12 +320,12 @@ class CustomtablesViewListoffields extends JViewLegacy
 
         if ($results) {
             // get model
-            $model = $this->getModel();
+            //$model = $this->getModel();
             $results = array_unique($results);
             $_filter = array();
             foreach ($results as $type) {
                 // Translate the type selection
-                $text = $model->selectionTranslation($type, 'type');
+                $text = '987';//$model->selectionTranslation($type, 'type');
                 // Now add the type and its text to the options array
                 $_filter[] = JHtml::_('select.option', $type, Text::_($text));
             }

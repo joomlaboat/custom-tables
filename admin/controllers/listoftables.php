@@ -29,17 +29,6 @@ class CustomtablesControllerListoftables extends JControllerAdmin
 {
     protected $text_prefix = 'COM_CUSTOMTABLES_LISTOFTABLES';
 
-    /**
-     * Proxy for getModel.
-     * @since    2.5
-     */
-    public function getModel($name = 'Tables', $prefix = 'CustomtablesModel', $config = array())
-    {
-        $model = parent::getModel($name, $prefix, array('ignore_request' => true));
-
-        return $model;
-    }
-
     public function export()
     {
         $cids = Factory::getApplication()->input->post->get('cid', array(), 'array');

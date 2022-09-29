@@ -9,33 +9,29 @@
  **/
 
 // no direct access
+use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
-/*
 
-jimport('joomla.form.helper');
 JFormHelper::loadFieldClass('list');
 
-//https://docs.joomla.org/Creating_a_custom_form_field_type
-class JFormFieldCTJStatus extends JFormFieldList
+class JFormFieldctj3status extends JFormFieldList
 {
+    public $type = 'ctj3table';
 
-    public $type = 'ctjstatus';
-
-    public function getOptions()//$name, $value, &$node, $control_name)$add_empty_option = true
+    public function getOptions()
     {
-        $options = array();
+        $options = [];
 
-        $options[] = JHtml::_('select.option', '', Text::_('>JOPTION_SELECT_PUBLISHED'));
+        $options[] = JHtml::_('select.option', '', Text::_('JOPTION_SELECT_PUBLISHED'));
         $options[] = JHtml::_('select.option', 1, Text::_('JPUBLISHED'));
         $options[] = JHtml::_('select.option', 0, Text::_('JUNPUBLISHED'));
         $options[] = JHtml::_('select.option', -2, Text::_('JTRASHED'));
-        $options[] = JHtml::_('select.option', -2, Text::_('JALL'));
+        $options[] = JHtml::_('select.option', '*', Text::_('JALL'));
 
         return $options;
     }
 }
-*/

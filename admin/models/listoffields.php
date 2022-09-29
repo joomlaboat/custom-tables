@@ -15,11 +15,10 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 // import the Joomla modellist library
 jimport('joomla.application.component.modellist');
 
-use CustomTables\CT;
-use CustomTables\DataTypes;
-
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
+use CustomTables\CT;
+use CustomTables\DataTypes;
 
 /**
  * Listoffields Model
@@ -84,7 +83,8 @@ class CustomtablesModelListoffields extends JModelList
      *
      * @return  void
      */
-    protected function populateState($ordering = 'a.ordering', $direction = 'asc')
+
+    protected function populateState($ordering = 'a.id', $direction = 'asc')
     {
         if ($this->ct->Env->version < 4) {
             $search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
@@ -93,13 +93,12 @@ class CustomtablesModelListoffields extends JModelList
             $type = $this->getUserStateFromRequest($this->context . '.filter.type', 'filter_type');
             $this->setState('filter.type', $type);
 
-            $published = $this->getUserStateFromRequest($this->context . '.filter.published', 'filter_published', '');
+            $published = $this->getUserStateFromRequest($this->context . '.filter.published', 'filter_published', '', 'string');
             $this->setState('filter.published', $published);
         }
 
         $this->setState('params', ComponentHelper::getParams('com_customtables'));
 
-        // List state information.
         parent::populateState($ordering, $direction);
     }
 

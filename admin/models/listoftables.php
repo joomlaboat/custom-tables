@@ -15,7 +15,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomTables\CT;
-
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 
@@ -25,7 +24,7 @@ jimport('joomla.application.component.modellist');
 /**
  * Listoftables Model
  */
-class CustomtablesModelListofTables extends JModelList
+class CustomtablesModelListOfTables extends JModelList
 {
     var CT $ct;
 
