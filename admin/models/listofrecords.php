@@ -25,7 +25,7 @@ jimport('joomla.application.component.modellist');
 /**
  * Listofrecords Model
  */
-class CustomtablesModelListofRecords extends JModelList
+class CustomtablesModelListOfRecords extends JModelList
 {
     var CT $ct;
     var $ordering_realfieldname;
@@ -115,7 +115,7 @@ class CustomtablesModelListofRecords extends JModelList
 
             if (is_numeric($published))
                 $wheres_and[] = $this->ct->Table->realtablename . '.published = ' . (int)$published;
-            elseif ($published === '')
+            elseif (is_null($published) or $published === '')
                 $wheres_and[] = '(' . $this->ct->Table->realtablename . '.published = 0 OR ' . $this->ct->Table->realtablename . '.published = 1)';
         }
 

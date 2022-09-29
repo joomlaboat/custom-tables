@@ -97,11 +97,11 @@ class CustomtablesModelListofcategories extends JModelList
 
         // Filter by published state
         $published = $this->getState('filter.published');
-        if (is_numeric($published)) {
+        if (is_numeric($published))
             $query->where('a.published = ' . (int)$published);
-        } elseif (is_null($published) or $published == '') {
-            $query->where('a.published = 1');
-        }
+        elseif (is_null($published) or $published === '')
+            $query->where('(a.published = 0 OR a.published = 1)');
+
         // Filter by search.
         $search = $this->getState('filter.search');
         if (!empty($search)) {
@@ -112,7 +112,6 @@ class CustomtablesModelListofcategories extends JModelList
                 $query->where('(a.categoryname LIKE ' . $search . ')');
             }
         }
-
 
         // Add the list ordering clause.
         $orderCol = $this->state->get('list.ordering', 'a.id');

@@ -14,6 +14,7 @@ use Joomla\CMS\Language\Text;
 if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
+/*
 
 jimport('joomla.form.helper');
 JFormHelper::loadFieldClass('list');
@@ -21,13 +22,7 @@ JFormHelper::loadFieldClass('list');
 //https://docs.joomla.org/Creating_a_custom_form_field_type
 class JFormFieldCTJStatus extends JFormFieldList
 {
-    /**
-     * Element name
-     *
-     * @access    public
-     * @var        string
-     *
-     */
+
     public $type = 'ctjstatus';
 
     public function getOptions()//$name, $value, &$node, $control_name)$add_empty_option = true
@@ -41,3 +36,4 @@ class JFormFieldCTJStatus extends JFormFieldList
         return $options;
     }
 }
+*/

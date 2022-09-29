@@ -92,8 +92,6 @@ class CustomtablesModelListofTables extends JModelList
      */
     protected function getListQuery()
     {
-        // Get the user object.
-        $user = Factory::getUser();
         // Create a new query object.
         $db = Factory::getDBO();
         $query = $db->getQuery(true);
@@ -115,11 +113,11 @@ class CustomtablesModelListofTables extends JModelList
 
         // Filter by published state
         $published = $this->getState('filter.published');
-        if (is_numeric($published)) {
+        if (is_numeric($published))
             $query->where('a.published = ' . (int)$published);
-        } elseif (is_null($published) or $published == '') {
-            $query->where('a.published = 1');
-        }
+        elseif (is_null($published) or $published === '')
+            $query->where('(a.published = 0 OR a.published = 1)');
+
         // Filter by search.
         $search = $this->getState('filter.search');
         if (!empty($search)) {
@@ -131,12 +129,10 @@ class CustomtablesModelListofTables extends JModelList
             }
         }
 
-        $search = $this->getState('filter.tablecategory');
         // Filter by Tableid.
         if ($category = $this->getState('filter.tablecategory')) {
             $query->where('a.tablecategory = ' . $db->quote((int)$category));
         }
-
 
         // Add the list ordering clause.
         $orderCol = $this->state->get('list.ordering', 'a.id');

@@ -141,10 +141,19 @@ class CustomtablesViewListoflayouts extends JViewLegacy
         }
 
         if ($this->canState) {
+
+            $options = JHtml::_('jgrid.publishedOptions');
+            $newOptions = [];
+            foreach ($options as $option) {
+
+                if ($option->value != 2)
+                    $newOptions[] = $option;
+            }
+
             JHtmlSidebar::addFilter(
                 Text::_('JOPTION_SELECT_PUBLISHED'),
                 'filter_published',
-                JHtml::_('select.options', JHtml::_('jgrid.publishedOptions'), 'value', 'text', $this->state->get('filter.published'), true)
+                JHtml::_('select.options', $newOptions, 'value', 'text', $this->state->get('filter.published'), true)
             );
         }
 

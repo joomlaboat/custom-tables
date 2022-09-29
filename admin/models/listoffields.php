@@ -113,8 +113,6 @@ class CustomtablesModelListoffields extends JModelList
         $jinput = Factory::getApplication()->input;
         $this->tableid = $jinput->getInt('tableid', 0);
 
-        // Get the user object.
-        $user = Factory::getUser();
         // Create a new query object.
         $db = Factory::getDBO();
         $query = $db->getQuery(true);
@@ -136,8 +134,8 @@ class CustomtablesModelListoffields extends JModelList
 
         if (is_numeric($published))
             $query->where('a.published = ' . (int)$published);
-        elseif (is_null($published) or $published == '')
-            $query->where('a.published = 1');
+        elseif (is_null($published) or $published === '')
+            $query->where('(a.published = 0 OR a.published = 1)');
 
         // Filter by search.
         $search = $this->getState('filter.search');

@@ -118,8 +118,6 @@ class CustomtablesViewListofrecords extends JViewLegacy
     {
         JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/fields');
 
-        $app = Factory::getApplication();
-
         if ($this->ct->Table->tableid != 0) {
             JToolBarHelper::title('Custom Tables - Table "' . $this->ct->Table->tabletitle . '" - ' . Text::_('COM_CUSTOMTABLES_LISTOFRECORDS'), 'joomla');
         } else

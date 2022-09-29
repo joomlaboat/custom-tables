@@ -12,7 +12,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
-
 use Joomla\CMS\Access\Access;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
@@ -23,8 +22,6 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\String\PunycodeHelper;
 
 HTMLHelper::_('behavior.multiselect');
-
-//$loggeduser = Factory::getUser(); used fo batch
 
 ?>
 <form action="<?php echo Route::_('index.php?option=com_customtables&view=listoflayouts'); ?>" method="post"

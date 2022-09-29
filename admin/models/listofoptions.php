@@ -24,9 +24,7 @@ use Joomla\Utilities\ArrayHelper;
 class CustomTablesModelListOfOptions extends JModelList
 {
     var CT $ct;
-
     var $_table = null;
-
     var $_pagination = null;
 
     function &getPagination()

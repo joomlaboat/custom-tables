@@ -147,22 +147,6 @@ class CustomtablesViewListoftables extends JViewLegacy
                 JToolBarHelper::checkin('listoftables.checkin');
             }
 
-            // Add a batch button
-            /*
-            if ($this->canBatch && $this->canCreate && $this->canEdit && $this->canState)
-            {
-                // Get the toolbar object instance
-                $bar = JToolBar::getInstance('toolbar');
-                // set the batch button name
-                $title = Text::_('JTOOLBAR_BATCH');
-                // Instantiate a new JLayoutFile instance and render the batch button
-                $layout = new JLayoutFile('joomla.toolbar.batch');
-                // add the button to the page
-                $dhtml = $layout->render(array('title' => $title));
-                $bar->appendButton('Custom', $dhtml, 'batch');
-            }
-            */
-
             if ($this->state->get('filter.published') == -2 && ($this->canState && $this->canDelete)) {
                 JToolbarHelper::deleteList('', 'listoftables.delete', 'JTOOLBAR_EMPTY_TRASH');
             } elseif ($this->canState && $this->canDelete) {
@@ -174,39 +158,21 @@ class CustomtablesViewListoftables extends JViewLegacy
             if (!$this->isEmptyState and $this->state->get('filter.published') != -2 and $this->ct->Env->advancedtagprocessor)
                 JToolBarHelper::custom('listoftables.export', 'download.png', '', 'Export');
 
-        // set help url for this view if found
-        /*
-        $help_url = CustomtablesHelper::getHelpUrl('listoftables');
-        if (CustomtablesHelper::checkString($help_url))
-        {
-                JToolbarHelper::help('COM_CUSTOMTABLES_HELP_MANAGER', false, $help_url);
-        }
-        */
-
-        // add the options comp button
-        /*
-        if ($this->canDo->get('core.admin') || $this->canDo->get('core.options'))
-        {
-            JToolBarHelper::preferences('com_customtables');
-        }
-*/
         if ($this->canState) {
+
+            $options = JHtml::_('jgrid.publishedOptions');
+            $newOptions = [];
+            foreach ($options as $option) {
+
+                if ($option->value != 2)
+                    $newOptions[] = $option;
+            }
+
             JHtmlSidebar::addFilter(
                 Text::_('JOPTION_SELECT_PUBLISHED'),
                 'filter_published',
-                JHtml::_('select.options', JHtml::_('jgrid.publishedOptions'), 'value', 'text', $this->state->get('filter.published'), true)
+                JHtml::_('select.options', $newOptions, 'value', 'text', $this->state->get('filter.published'), true)
             );
-            // only load if batch allowed
-            /*
-            if ($this->canBatch)
-            {
-                JHtmlBatch_::addListSelection(
-                    Text::_('COM_CUSTOMTABLES_KEEP_ORIGINAL_STATE'),
-                    'batch[published]',
-                    JHtml::_('select.options', JHtml::_('jgrid.publishedOptions', array('all' => false)), 'value', 'text', '', true)
-                );
-            }
-            */
         }
 
         $CTCategory = JFormHelper::loadFieldType('CTCategory', false);

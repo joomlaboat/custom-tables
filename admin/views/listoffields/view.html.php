@@ -187,22 +187,26 @@ class CustomtablesViewListoffields extends JViewLegacy
         }
 
         if ($this->canState) {
-            /*
+
+            //$CTJStatus = JFormHelper::loadFieldType('CTJStatus', false);
+            //$CTJStatusOptions = $CTJStatus->getOptions(false); // works only if you set your field getOptions on public!!
+
+            //$options[] = JHtml::_('select.option', -2, Text::_('JTRASHED'));
+            //$options[] = JHtml::_('select.option', 0, Text::_('JUNPUBLISHED'));
+            //$options[] = JHtml::_('select.option', 1, Text::_('JPUBLISHED'));
+
+            $options = JHtml::_('jgrid.publishedOptions');
+            $newOptions = [];
+            foreach ($options as $option) {
+
+                if ($option->value != 2)
+                    $newOptions[] = $option;
+            }
+
             JHtmlSidebar::addFilter(
                 Text::_('JOPTION_SELECT_PUBLISHED'),
                 'filter_published',
-                JHtml::_('select.options', JHtml::_('jgrid.publishedOptions'), 'value', 'text', $this->state->get('filter.published'), true)
-            );
-            */
-
-            $CTJStatus = JFormHelper::loadFieldType('CTJStatus', false);
-            $CTJStatusOptions = $CTJStatus->getOptions(false); // works only if you set your field getOptions on public!!
-
-
-            JHtmlSidebar::addFilter(
-                Text::_('JOPTION_SELECT_PUBLISHED'),
-                'filter_published',
-                JHtml::_('select.options', $CTJStatusOptions, 'value', 'text', $this->state->get('filter.published'))
+                JHtml::_('select.options', $newOptions, 'value', 'text', $this->state->get('filter.published'), true)
             );
         }
 

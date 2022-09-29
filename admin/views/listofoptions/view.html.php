@@ -62,15 +62,11 @@ class CustomTablesViewListOfOptions extends JViewLegacy
         parent::display($tpl);
     }
 
-
     protected function addToolBar()
     {
         JToolBarHelper::title(Text::_('Custom Tables - List'), 'menu.png');
-
-
         JToolBarHelper::addNew('options.add');
         JToolBarHelper::editList('options.edit');
-
         JToolBarHelper::custom('listofoptions.copy', 'copy.png', 'copy_f2.png', 'Copy', true);
         JToolBarHelper::deleteList('', 'listofoptions.delete');
     }
