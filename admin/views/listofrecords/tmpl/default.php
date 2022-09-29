@@ -24,6 +24,22 @@ if ($this->ordering_realfieldname != '') {
 }
 
 ?>
+
+<script type="text/javascript">
+    Joomla.orderTable = function () {
+        let table = document.getElementById("sortTable");
+        let direction = document.getElementById("directionTable");
+        let dirn;
+        order = table.options[table.selectedIndex].value;
+        if (order != '<?php echo $this->listOrder; ?>') {
+            dirn = 'asc';
+        } else {
+            dirn = direction.options[direction.selectedIndex].value;
+        }
+        Joomla.tableOrdering(order, dirn, '');
+    }
+</script>
+
 <form action="<?php echo JRoute::_('index.php?option=com_customtables&view=listofrecords'); ?>" method="post"
       name="adminForm" id="adminForm">
     <?php if (!empty($this->sidebar)): ?>
@@ -41,7 +57,7 @@ if ($this->ordering_realfieldname != '') {
                 </div>
             <?php else : ?>
 
-                <table class="table table-striped" id="recordsList">
+                <table class="table table-bordered table-striped table-hover" id="itemList" style="position: relative;">
                     <thead><?php echo $this->loadTemplate('head'); ?></thead>
                     <tfoot><?php echo $this->loadTemplate('foot'); ?></tfoot>
                     <tbody><?php echo $this->loadTemplate('body'); ?></tbody>

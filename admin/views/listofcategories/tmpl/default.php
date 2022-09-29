@@ -23,6 +23,20 @@ JHtml::_('formbehavior.chosen', 'select');
 
 ?>
 
+<script type="text/javascript">
+    Joomla.orderTable = function () {
+        let table = document.getElementById("sortTable");
+        let direction = document.getElementById("directionTable");
+        let dirn;
+        order = table.options[table.selectedIndex].value;
+        if (order != '<?php echo $this->listOrder; ?>') {
+            dirn = 'asc';
+        } else {
+            dirn = direction.options[direction.selectedIndex].value;
+        }
+        Joomla.tableOrdering(order, dirn, '');
+    }
+</script>
 
 <form action="<?php echo JRoute::_('index.php?option=com_customtables&view=listofcategories'); ?>" method="post"
       name="adminForm" id="adminForm">
@@ -54,7 +68,7 @@ JHtml::_('formbehavior.chosen', 'select');
             <?php else : ?>
             <?php echo $this->loadTemplate('toolbar'); ?>
 
-            <table class="table table-striped" id="categoriesList">
+            <table class="table table-bordered table-striped table-hover" id="itemList" style="position: relative;">
                 <thead><?php echo $this->loadTemplate('head'); ?></thead>
                 <tfoot><?php echo $this->loadTemplate('foot'); ?></tfoot>
                 <tbody><?php echo $this->loadTemplate('body'); ?></tbody>

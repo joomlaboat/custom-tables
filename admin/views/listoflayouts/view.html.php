@@ -248,7 +248,6 @@ class CustomtablesViewListoflayouts extends JViewLegacy
         $fields = Fields::getFields($row->tableid);
 
         // ------------------------ CT Original
-
         $original_ct_matches = 0;
 
         foreach ($original_ct_tags_s as $tag) {
@@ -284,9 +283,7 @@ class CustomtablesViewListoflayouts extends JViewLegacy
         }
 
         // ------------------------ Twig
-
         $twig_matches = 0;
-
 
         foreach ($twig_tags as $tag) {
             if (strpos($row->layoutcode, '{{ ' . $tag . '(') !== false)
@@ -309,21 +306,7 @@ class CustomtablesViewListoflayouts extends JViewLegacy
                 $twig_matches += 1;
         }
 
-        //preg_match_all('#\{(.*?)\}#',$row->layoutcode, $match);
-        //$original_ct_matches+=count($match[0]);
-
-
-        //preg_match_all('/\|(.*?)\|/',$row->layoutcode, $match);
-        //$original_ct_matches+=count($match[0]);
-
-        //preg_match_all('/\[(.*?)\]/',$row->layoutcode, $match);
-        //$original_ct_matches+=count($match[0]);
-
-
         return ['original' => $original_ct_matches, 'twig' => $twig_matches];
-        //return $twig_matches > $original_ct_matches or $original_ct_matches == 0;
-
-
     }
 
     /**
@@ -336,7 +319,7 @@ class CustomtablesViewListoflayouts extends JViewLegacy
         return array(
             'a.published' => Text::_('JSTATUS'),
             'a.layoutname' => Text::_('COM_CUSTOMTABLES_LAYOUTS_LAYOUTNAME_LABEL'),
-            'a.layouttype' => Text::_('COM_CUSTOMTABLES_LAYOUTS_LAYOUTTYPE_SELECT'),
+            'a.layouttype' => Text::_('COM_CUSTOMTABLES_LAYOUTS_LAYOUTTYPE'),
             'a.id' => Text::_('JGRID_HEADING_ID')
         );
     }

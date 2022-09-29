@@ -23,6 +23,20 @@ echo '</div>';
 $input = Factory::getApplication()->input;
 ?>
 
+<script>
+    Joomla.orderTable = function () {
+        table = document.getElementById("sortTable");
+        direction = document.getElementById("directionTable");
+        order = table.options[table.selectedIndex].value;
+        if (order != '<?php echo $this->listOrder; ?>') {
+            dirn = 'asc';
+        } else {
+            dirn = direction.options[direction.selectedIndex].value;
+        }
+        Joomla.tableOrdering(order, dirn, '');
+    }
+</script>
+
 <form action="<?php echo JRoute::_('index.php?option=com_customtables'); ?>" method="post" name="adminForm"
       id="adminForm">
     <?php
@@ -44,7 +58,7 @@ $input = Factory::getApplication()->input;
             </div>
         </div>
 
-        <table class="table table-striped" id="optionsList">
+        <table class="table table-bordered table-striped table-hover" id="itemList" style="position: relative;">
             <thead><?php echo $this->loadTemplate('head'); ?></thead>
             <?php //<tfoot>echo $this->loadTemplate('foot');</tfoot>?>
             <tbody><?php echo $this->loadTemplate('body'); ?></tbody>

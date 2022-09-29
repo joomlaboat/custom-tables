@@ -23,6 +23,21 @@ use Joomla\CMS\Language\Text;
 
 ?>
 
+<script type="text/javascript">
+    Joomla.orderTable = function () {
+        let table = document.getElementById("sortTable");
+        let direction = document.getElementById("directionTable");
+        let dirn;
+        order = table.options[table.selectedIndex].value;
+        if (order != '<?php echo $this->listOrder; ?>') {
+            dirn = 'asc';
+        } else {
+            dirn = direction.options[direction.selectedIndex].value;
+        }
+        Joomla.tableOrdering(order, dirn, '');
+    }
+</script>
+
 <form action="<?php echo JRoute::_('index.php?option=com_customtables&view=listoftables'); ?>" method="post"
       name="adminForm" id="adminForm">
     <?php if (!empty($this->sidebar)): ?>
@@ -44,8 +59,7 @@ use Joomla\CMS\Language\Text;
                 <?php
                 $result = IntegrityChecks::check($this->ct, true, false);
                 ?>
-
-                <table class="table table-striped" id="tablesList">
+                <table class="table table-bordered table-striped table-hover" id="itemList" style="position: relative;">
                     <thead><?php echo $this->loadTemplate('head'); ?></thead>
                     <tbody><?php echo $this->loadTemplate('body'); ?></tbody>
                     <tfoot><?php echo $this->loadTemplate('foot'); ?></tfoot>

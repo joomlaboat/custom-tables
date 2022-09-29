@@ -52,7 +52,8 @@ JHtml::_('formbehavior.chosen', 'select');
                 </div>
             <?php else : ?>
             <?php echo $this->loadTemplate('toolbar'); ?>
-            <table class="table table-striped" id="layoutsList">
+
+            <table class="table table-bordered table-striped table-hover" id="itemList" style="position: relative;">
                 <thead><?php include('default_head.php'); ?></thead>
                 <tfoot><?php echo $this->loadTemplate('foot'); ?></tfoot>
                 <tbody><?php echo $this->loadTemplate('body'); ?></tbody>
