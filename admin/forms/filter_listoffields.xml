@@ -16,7 +16,6 @@
                 onchange="this.form.submit();"
                 extension="com_content"
         >
-            <option value="">JOPTION_SELECT_PUBLISHED</option>
         </field>
     </fields>
     <fields name="list">

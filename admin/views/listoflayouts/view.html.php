@@ -52,14 +52,11 @@ class CustomtablesViewListoflayouts extends JViewLegacy
 
         // get global action permissions
         $this->canDo = ContentHelper::getActions('com_customtables', 'listoflayouts');
-
         $this->canCreate = $this->canDo->get('layouts.create');
         $this->canEdit = $this->canDo->get('layouts.edit');
         $this->canState = $this->canDo->get('layouts.edit.state');
         $this->canDelete = $this->canDo->get('layouts.delete');
-
         $this->isEmptyState = count($this->items) == 0;
-
 
         // We don't need toolbar in the modal window.
         if ($this->getLayout() !== 'modal') {
@@ -332,6 +329,4 @@ class CustomtablesViewListoflayouts extends JViewLegacy
             'a.id' => Text::_('JGRID_HEADING_ID')
         );
     }
-
-
 }

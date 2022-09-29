@@ -17,7 +17,9 @@ class CTRecordStatusField extends PredefinedlistField
     public $type = 'CTRecordStatus';
 
     protected $predefinedOptions = array(
-        0 => 'JUNPUBLISHED',
+
+        '' => 'JOPTION_SELECT_PUBLISHED',
         1 => 'JPUBLISHED',
+        0 => 'JUNPUBLISHED'
     );
 }

@@ -277,7 +277,7 @@ class JHTMLESRecords
     }
 
     static protected function getSingle(CT &$ct, CT &$ct_noFilter, $valueArray,
-                                           $field, $control_name, $control_name_postfix, $style, $cssClass, $attribute, string $value,
+                                           $field, $control_name, $control_name_postfix, $style, $cssClass, $attribute, ?string $value,
                                            $tableName, $dynamic_filter = '', $place_holder = ''): string
     {
 

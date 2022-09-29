@@ -17,8 +17,11 @@ class CTStatusField extends PredefinedlistField
     public $type = 'CTStatus';
 
     protected $predefinedOptions = array(
-        -2 => 'JTRASHED',
-        0 => 'JUNPUBLISHED',
+
+        '' => 'JOPTION_SELECT_PUBLISHED',
         1 => 'JPUBLISHED',
+        0 => 'JUNPUBLISHED',
+        -2 => 'JTRASHED',
+        '*' => 'JALL'
     );
 }

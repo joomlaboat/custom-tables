@@ -29,9 +29,11 @@ class JFormFieldCTJStatus extends JFormFieldList
     {
         $options = array();
 
-        $options[] = JHtml::_('select.option', -2, Text::_('JTRASHED'));
-        $options[] = JHtml::_('select.option', 0, Text::_('JUNPUBLISHED'));
+        $options[] = JHtml::_('select.option', '', Text::_('>JOPTION_SELECT_PUBLISHED'));
         $options[] = JHtml::_('select.option', 1, Text::_('JPUBLISHED'));
+        $options[] = JHtml::_('select.option', 0, Text::_('JUNPUBLISHED'));
+        $options[] = JHtml::_('select.option', -2, Text::_('JTRASHED'));
+        $options[] = JHtml::_('select.option', -2, Text::_('JALL'));
 
         return $options;
     }
