@@ -775,11 +775,15 @@ class Fields
     {
         $ct = new CT;
         $input = Factory::getApplication()->input;
-
         $data = $input->get('jform', array(), 'ARRAY');
 
         //clean field name
-        $fieldName = strtolower(trim(preg_replace("/[^a-zA-Z\d]/", "", $data['fieldname'])));
+        if (function_exists("transliterator_transliterate"))
+            $fieldName = transliterator_transliterate("Any-Latin; Latin-ASCII; Lower()", $data['fieldname']);
+        else
+            $fieldName = $data['fieldname'];
+
+        $fieldName = strtolower(trim(preg_replace("/[^a-zA-Z\d]/", "", $fieldName)));
         if (strlen($fieldName) > 40)
             $fieldName = substr($fieldName, 0, 40);
 
