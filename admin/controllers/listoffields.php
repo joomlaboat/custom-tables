@@ -33,12 +33,6 @@ class CustomtablesControllerListoffields extends JControllerAdmin
         return $model;
     }
 
-    public function edit()
-    {
-        echo 'e';
-        die;
-    }
-
     public function publish()
     {
         if ($this->task == 'publish')

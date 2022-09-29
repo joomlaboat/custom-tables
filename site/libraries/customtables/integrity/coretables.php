@@ -217,9 +217,7 @@ class IntegrityCoreTables extends IntegrityChecks
         $tables_projected_fields = [];
         $tables_projected_fields[] = ['name' => 'id', 'mysql_type' => 'INT UNSIGNED NOT NULL AUTO_INCREMENT', 'postgresql_type' => 'id INT check (id > 0) NOT NULL DEFAULT NEXTVAL (\'#__customtables_tables_seq\')'];
         $tables_projected_fields[] = ['name' => 'published', 'mysql_type' => 'TINYINT NOT NULL DEFAULT 1', 'postgresql_type' => 'SMALLINT NOT NULL DEFAULT 1'];
-
         $tables_projected_fields[] = ['name' => 'tablename', 'ct_fieldtype' => 'string', 'ct_typeparams' => 100, 'mysql_type' => 'VARCHAR(100) NOT NULL DEFAULT "tablename"', 'postgresql_type' => 'VARCHAR(100) NOT NULL DEFAULT \'\''];
-
         $tables_projected_fields[] = ['name' => 'tabletitle', 'mysql_type' => 'VARCHAR(255) NULL DEFAULT NULL', 'postgresql_type' => 'VARCHAR(255) NULL DEFAULT NULL', 'multilang' => true];
         $tables_projected_fields[] = ['name' => 'description', 'mysql_type' => 'TEXT NULL DEFAULT NULL', 'postgresql_type' => 'TEXT NULL DEFAULT NULL', 'multilang' => true];
 

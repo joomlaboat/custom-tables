@@ -120,9 +120,11 @@ class CustomtablesControllerFields extends JControllerForm
             $redirect .= '&fieldid=' . $fieldid;
         }
 
-        if ($extratask != '' or $this->task == 'apply' or $this->task == 'save2new' or $this->task == 'save2copy') {
+        if ($extratask != '' or $this->task == 'apply' or $this->task == 'save2copy')
             $redirect .= '&view=listoffields&tableid=' . (int)$tableid . '&task=fields.edit&id=' . (int)$fieldid;
-        } else
+        elseif ($this->task == 'save2new')
+            $redirect .= '&view=listoffields&tableid=' . (int)$tableid . '&task=fields.edit';
+        else
             $redirect .= '&view=listoffields&tableid=' . (int)$tableid;
 
         if ($fieldid != null) {

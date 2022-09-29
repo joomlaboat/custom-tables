@@ -104,23 +104,8 @@ class CustomtablesController extends JControllerLegacy
         if ($id) {
             $values = (array)Factory::getApplication()->getUserState($context . '.id');
 
-            $result = \in_array($id, $values); //To support both int and cmd IDs
-            /*
-                        if (\defined('JDEBUG') && JDEBUG) {
-                            Factory::getApplication()->getLogger()->info(
-                                sprintf(
-                                    'Checking edit ID %s.%s: %d %s',
-                                    $context,
-                                    $id,
-                                    (int)$result,
-                                    str_replace("\n", ' ', print_r($values, 1))
-                                ),
-                                array('category' => 'controller')
-                            );
-                        }
-                        */
-
-            return $result;
+            //To support both int and cmd IDs
+            return \in_array($id, $values);
         }
 
         // No id for a new item.
