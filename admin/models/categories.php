@@ -29,7 +29,6 @@ use Joomla\Utilities\ArrayHelper;
  */
 class CustomtablesModelCategories extends JModelAdmin
 {
-    var CT $ct;
     /**
      * The type alias for this content type.
      *
@@ -330,7 +329,7 @@ class CustomtablesModelCategories extends JModelAdmin
                 }
             }
 
-            // update all uniqe fields
+            // update all unique fields
             if (CustomtablesHelper::checkArray($uniqeFields)) {
                 foreach ($uniqeFields as $uniqeField) {
                     $this->table->$uniqeField = $this->generateUniqe($uniqeField, $this->table->$uniqeField);
@@ -398,14 +397,12 @@ class CustomtablesModelCategories extends JModelAdmin
      */
     protected function generateUniqe($field, $value)
     {
-
         // set field value uniqe
         $table = $this->getTable();
 
         while ($table->load(array($field => $value))) {
             $value = StringHelper::increment($value);
         }
-
         return $value;
     }
 
@@ -463,11 +460,9 @@ class CustomtablesModelCategories extends JModelAdmin
                 }
             }
 
-
             // Check the row.
             if (!$this->table->check()) {
                 $this->setError($this->table->getError());
-
                 return false;
             }
 
@@ -611,14 +606,6 @@ class CustomtablesModelCategories extends JModelAdmin
             $table->modified = $date->toSql();
             $table->modified_by = $user->id;
         }
-
-        /*
-                if (!empty($table->id))
-                {
-                    // Increment the items version number.
-                    $table->version++;
-                }
-                */
     }
 
     /**
@@ -665,13 +652,6 @@ class CustomtablesModelCategories extends JModelAdmin
                 $registry->loadString($item->metadata);
                 $item->metadata = $registry->toArray();
             }
-            /*
-                        if (!empty($item->id))
-                        {
-                            $item->tags = new JHelperTags;
-                            $item->tags->getTagIds($item->id, 'com_customtables.categories');
-                        }
-                        */
         }
 
         return $item;
@@ -682,12 +662,11 @@ class CustomtablesModelCategories extends JModelAdmin
      *
      * @param string $title The title.
      *
-     * @return    array  Contains the modified title and alias.
+     * @return array Contains the modified title and alias.
      *
      */
     protected function _generateNewTitle($title)
     {
-
         // Alter the title
         $table = $this->getTable();
 

@@ -12,7 +12,7 @@
 
         <field
                 name="published"
-                type="CTStatus"
+                type="ctj3status"
                 label="JOPTION_SELECT_PUBLISHED"
                 onchange="this.form.submit();"
                 extension="com_customtables"
@@ -21,7 +21,7 @@
 
         <field
                 name="layouttype"
-                type="CTLayoutType"
+                type="ctlayouttype"
                 label="COM_CUSTOMTABLES_LAYOUTS_LAYOUTTYPE_SELECT"
                 onchange="this.form.submit();"
                 extension="com_customtables"

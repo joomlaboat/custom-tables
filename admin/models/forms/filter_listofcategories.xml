@@ -5,29 +5,18 @@
                 name="search"
                 type="text"
                 inputmode="search"
-                label="COM_CUSTOMTABLES_LAYOUTS_SEARCH_TABLE_NAME"
-                description="COM_CUSTOMTABLES_LAYOUTS_SEARCH_TABLE_NAME_DESC"
+                label="COM_CUSTOMTABLES_SEARCH_CATEGORY_NAME"
+                description="COM_CUSTOMTABLES_CATEGORY_SEARCH_IN_NAME"
                 hint="JSEARCH_FILTER"
         />
-
         <field
                 name="published"
-                type="CTStatus"
+                type="ctj3status"
                 label="JOPTION_SELECT_PUBLISHED"
                 onchange="this.form.submit();"
                 extension="com_customtables"
         >
         </field>
-
-        <field
-                name="layouttype"
-                type="CTLayoutType"
-                label="COM_CUSTOMTABLES_LAYOUTS_LAYOUTTYPE_SELECT"
-                onchange="this.form.submit();"
-                extension="com_customtables"
-        >
-        </field>
-
     </fields>
     <fields name="list">
         <field
@@ -35,14 +24,14 @@
                 type="list"
                 label="JGLOBAL_SORT_BY"
                 onchange="this.form.submit();"
-                default="a.layoutname ASC"
+                default="a.categoryname ASC"
                 validate="options"
         >
             <option value="">JGLOBAL_SORT_BY</option>
-            <option value="a.layoutname ASC">COM_CUSTOMTABLES_LAYOUTS_HEADING_NAME_ASC</option>
-            <option value="a.layoutname DESC">COM_CUSTOMTABLES_LAYOUTS_HEADING_NAME_DESC</option>
-            <option value="a.published ASC">COM_CUSTOMTABLES_LAYOUTS_STATE_ASC</option>
-            <option value="a.published DESC">COM_CUSTOMTABLES_LAYOUTS_STATE_DESC</option>
+            <option value="a.categoryname ASC">COM_CUSTOMTABLES_CATEGORY_HEADING_NAME_ASC</option>
+            <option value="a.categoryname DESC">COM_CUSTOMTABLES_CATEGORY_HEADING_NAME_DESC</option>
+            <option value="a.published ASC">COM_CUSTOMTABLES_CATEGORY_HEADING_STATE_ASC</option>
+            <option value="a.published DESC">COM_CUSTOMTABLES_CATEGORY_HEADING_STATE_DESC</option>
             <option value="a.id ASC">JGRID_HEADING_ID_ASC</option>
             <option value="a.id DESC">JGRID_HEADING_ID_DESC</option>
         </field>

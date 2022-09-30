@@ -52,19 +52,14 @@ class CustomtablesViewListofcategories extends JViewLegacy
         $this->pagination = $this->get('Pagination');
         $this->state = $this->get('State');
         $this->user = Factory::getUser();
-
-        if ($this->ct->Env->version >= 4) {
-            $this->filterForm = $this->get('FilterForm');
-            $this->activeFilters = $this->get('ActiveFilters');
-        }
-
+        $this->filterForm = $this->get('FilterForm');
+        $this->activeFilters = $this->get('ActiveFilters');
         $this->listOrder = $this->escape($this->state->get('list.ordering'));
         $this->listDirn = $this->escape($this->state->get('list.direction'));
         $this->saveOrder = $this->listOrder == 'ordering';
+
         // get global action permissions
-
         $this->canDo = ContentHelper::getActions('com_customtables', 'categories');
-
         $this->canCreate = $this->canDo->get('categories.create');
         $this->canEdit = $this->canDo->get('categories.edit');
         $this->canState = $this->canDo->get('categories.edit.state');
@@ -97,33 +92,13 @@ class CustomtablesViewListofcategories extends JViewLegacy
             parent::display($tpl);
         else
             parent::display('quatro');
-
-        // Set the document
-        $this->setDocument();
-    }
-
-    /**
-     * Escapes a value for output in a view script.
-     *
-     * @param mixed $var The output to escape.
-     *
-     * @return  mixed  The escaped value.
-     */
-    public function escape($var)
-    {
-        if (strlen($var) > 50) {
-            // use the helper htmlEscape method instead and shorten the string
-            return CustomtablesHelper::htmlEscape($var, $this->_charset, true);
-        }
-        // use the helper htmlEscape method instead.
-        return CustomtablesHelper::htmlEscape($var, $this->_charset);
     }
 
     protected function addToolBar_3()
     {
         JToolBarHelper::title(Text::_('COM_CUSTOMTABLES_LISTOFCATEGORIES'), 'joomla');
         JHtmlSidebar::setAction('index.php?option=com_customtables&view=listofcategories');
-        JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/fields');
+        //JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/fields');
 
         if ($this->canCreate)
             JToolBarHelper::addNew('categories.add');
@@ -160,11 +135,13 @@ class CustomtablesViewListofcategories extends JViewLegacy
                     $newOptions[] = $option;
             }
 
+            /*
             JHtmlSidebar::addFilter(
                 Text::_('JOPTION_SELECT_PUBLISHED'),
                 'filter_published',
                 JHtml::_('select.options', $newOptions, 'value', 'text', $this->state->get('filter.published'), true)
             );
+            */
         }
     }
 
@@ -210,32 +187,5 @@ class CustomtablesViewListofcategories extends JViewLegacy
                     ->listCheck(true);
             }
         }
-    }
-
-    /**
-     * Method to set up the document properties
-     *
-     * @return void
-     */
-    protected function setDocument()
-    {
-        if (!isset($this->document)) {
-            $this->document = Factory::getDocument();
-        }
-        $this->document->setTitle(Text::_('COM_CUSTOMTABLES_LISTOFCATEGORIES'));
-    }
-
-    /**
-     * Returns an array of fields the table can be sorted by
-     *
-     * @return  array  Array containing the field name to sort by as the key and display text as value
-     */
-    protected function getSortFields()
-    {
-        return array(
-            'a.published' => Text::_('JSTATUS'),
-            'a.categoryname' => Text::_('COM_CUSTOMTABLES_CATEGORIES_CATEGORYNAME_LABEL'),
-            'a.id' => Text::_('JGRID_HEADING_ID')
-        );
     }
 }

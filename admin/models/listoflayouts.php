@@ -14,13 +14,11 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
-use CustomTables\Layouts;
-
 // import the Joomla modellist library
 jimport('joomla.application.component.modellist');
 
 use CustomTables\CT;
-
+use CustomTables\Layouts;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 
@@ -88,9 +86,6 @@ class CustomtablesModelListOfLayouts extends JModelList
 
             $tableid = $this->getUserStateFromRequest($this->context . '.filter.tableid', 'filter_tableid');
             $this->setState('filter.tableid', $tableid);
-
-            //$sorting = $this->getUserStateFromRequest($this->context . '.filter.sorting', 'filter_sorting', 0, 'int');
-            //$this->setState('filter.sorting', $sorting);
 
             $search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
             $this->setState('filter.search', $search);

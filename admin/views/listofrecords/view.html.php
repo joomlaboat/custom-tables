@@ -41,13 +41,13 @@ class CustomtablesViewListofrecords extends JViewLegacy
 
     function display($tpl = null)
     {
+        $this->ct = new CT;
+
         if ($this->getLayout() !== 'modal') {
             // Include helper submenu
             CustomtablesHelper::addSubmenu('listofrecords');
         }
 
-        $model = $this->getModel();
-        $this->ct = $model->ct;
         if ($this->ct->Table->tableid == 0)
             return;
 
@@ -59,15 +59,10 @@ class CustomtablesViewListofrecords extends JViewLegacy
         $this->pagination = $this->get('Pagination');
         $this->state = $this->get('State');
         $this->user = Factory::getUser();
-
-        if ($this->ct->Env->version >= 4) {
-            $this->filterForm = $this->get('FilterForm');
-            $this->activeFilters = $this->get('ActiveFilters');
-        }
-
+        $this->filterForm = $this->get('FilterForm');
+        $this->activeFilters = $this->get('ActiveFilters');
         $this->listOrder = $this->escape($this->state->get('list.ordering'));
         $this->listDirn = $this->escape($this->state->get('list.direction'));
-
         $this->saveOrder = $this->listOrder == 'custom';
 
         // get global action permissions
@@ -92,26 +87,6 @@ class CustomtablesViewListofrecords extends JViewLegacy
             parent::display($tpl);
         else
             parent::display('quatro');
-
-        // Set the document
-        $this->setDocument();
-    }
-
-    /**
-     * Escapes a value for output in a view script.
-     *
-     * @param mixed $var The output to escape.
-     *
-     * @return  mixed  The escaped value.
-     */
-    public function escape($var)
-    {
-        if (strlen($var) > 50) {
-            // use the helper htmlEscape method instead and shorten the string
-            return CustomtablesHelper::htmlEscape($var, $this->_charset, true);
-        }
-        // use the helper htmlEscape method instead.
-        return CustomtablesHelper::htmlEscape($var, $this->_charset);
     }
 
     protected function addToolBar_3()
@@ -224,18 +199,4 @@ class CustomtablesViewListofrecords extends JViewLegacy
             }
         }
     }
-
-    /**
-     * Method to set up the document properties
-     *
-     * @return void
-     */
-    protected function setDocument()
-    {
-        if (!isset($this->document)) {
-            $this->document = Factory::getDocument();
-        }
-        $this->document->setTitle(Text::_('COM_CUSTOMTABLES_LISTOFRECORDS'));
-    }
-
 }

@@ -49,18 +49,14 @@ class CustomtablesViewListoffields extends JViewLegacy
         $this->items = $this->get('Items');
         $this->pagination = $this->get('Pagination');
         $this->state = $this->get('State');
-
-        //if ($this->ct->Env->version >= 4) {
+        $this->user = Factory::getUser();
         $this->filterForm = $this->get('FilterForm');
         $this->activeFilters = $this->get('ActiveFilters');
-        //}
 
         // Check for errors.
         if (count($errors = $this->get('Errors'))) {
             throw new Exception(implode("\n", $errors), 500);
         }
-
-        $this->user = Factory::getUser();
 
         $this->listOrder = $this->escape($this->state->get('list.ordering'));
         $this->listDirn = $this->escape($this->state->get('list.direction'));
@@ -156,71 +152,6 @@ class CustomtablesViewListoffields extends JViewLegacy
             JToolBarHelper::preferences('com_customtables');
         }
 
-        /*
-        if ($this->canState) {
-
-            //$CTJStatus = JFormHelper::loadFieldType('CTJStatus', false);
-            //$CTJStatusOptions = $CTJStatus->getOptions(false); // works only if you set your field getOptions on public!!
-
-            //$options[] = JHtml::_('select.option', -2, Text::_('JTRASHED'));
-            //$options[] = JHtml::_('select.option', 0, Text::_('JUNPUBLISHED'));
-            //$options[] = JHtml::_('select.option', 1, Text::_('JPUBLISHED'));
-
-            $options = JHtml::_('jgrid.publishedOptions');
-            $newOptions = [];
-            foreach ($options as $option) {
-
-                if ($option->value != 2)
-                    $newOptions[] = $option;
-            }
-
-            JHtmlSidebar::addFilter(
-                Text::_('JOPTION_SELECT_PUBLISHED'),
-                'filter_published',
-                JHtml::_('select.options', $newOptions, 'value', 'text', $this->state->get('filter.published'), true)
-            );
-        }
-        */
-
-        // Set Type Selection
-        /*
-        $this->typeOptions = $this->getTheTypeSelections();
-        if ($this->typeOptions)
-        {
-            // Type Filter
-            JHtmlSidebar::addFilter(
-                '- Select '.Text::_('COM_CUSTOMTABLES_FIELDS_TYPE_LABEL').' -',
-                'filter_type',
-                JHtml::_('select.options', $this->typeOptions, 'value', 'text', $this->state->get('filter.type'))
-            );
-        }
-        */
-        /*
-                $CTField = JFormHelper::loadFieldType('CTField', false);
-                $CTFieldOptions = $CTField->getOptions(false); // works only if you set your field getOptions on public!!
-
-                JHtmlSidebar::addFilter(
-                    '- Select ' . Text::_('COM_CUSTOMTABLES_FIELDS_TYPE_LABEL') . ' -',
-                    'filter_type',
-                    JHtml::_('select.options', $CTFieldOptions, 'value', 'text', $this->state->get('filter.type'))
-                );
-
-                */
-
-        // Set Tableid Selection
-        /*
-        $CTTable = JFormHelper::loadFieldType('CTTable', false);
-        $CTTableOptions = $CTTable->getOptions(false); // works only if you set your field getOptions on public!!
-
-        JHtmlSidebar::addFilter(
-            Text::_('COM_CUSTOMTABLES_LAYOUTS_TABLEID_SELECT'),
-            'filter_tableid',
-            JHtml::_('select.options', $CTTableOptions, 'value', 'text', $this->state->get('filter.tableid'))
-        );
-
-        $this->tableidOptions = $this->getTheTableidSelections();
-        */
-
         JHtmlSidebar::setAction('index.php?option=com_customtables&view=listoffields&tableid=' . $this->tableid);
     }
 
@@ -280,25 +211,6 @@ class CustomtablesViewListoffields extends JViewLegacy
             }
         }
     }
-
-    /**
-     * Returns an array of fields the table can be sorted by
-     *
-     * @return  array  Array containing the field name to sort by as the key and display text as value
-     */
-    /*
-    protected function getSortFields()
-    {
-        //Joomla 3 only
-        return array(
-            'a.ordering' => Text::_('JGRID_HEADING_ORDERING'),
-            'a.published' => Text::_('JSTATUS'),
-            'a.fieldname' => Text::_('COM_CUSTOMTABLES_FIELDS_FIELDNAME_LABEL'),
-            'a.type' => Text::_('COM_CUSTOMTABLES_FIELDS_TYPE_LABEL'),
-            'a.id' => Text::_('JGRID_HEADING_ID')
-        );
-    }
-*/
 
     protected function getTheTypeSelections()
     {

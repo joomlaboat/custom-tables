@@ -28,25 +28,20 @@ class CustomtablesViewListoflayouts extends JViewLegacy
 
     function display($tpl = null)
     {
+        $this->ct = new CT;
+
         if ($this->getLayout() !== 'modal') {
             // Include helper submenu
             CustomtablesHelper::addSubmenu('listoflayouts');
         }
-
-        $model = $this->getModel();
-        $this->ct = $model->ct;
 
         // Assign data to the view
         $this->items = $this->get('Items');
         $this->pagination = $this->get('Pagination');
         $this->state = $this->get('State');
         $this->user = Factory::getUser();
-
-        if ($this->ct->Env->version >= 4) {
-            $this->filterForm = $this->get('FilterForm');
-            $this->activeFilters = $this->get('ActiveFilters');
-        }
-
+        $this->filterForm = $this->get('FilterForm');
+        $this->activeFilters = $this->get('ActiveFilters');
         $this->listOrder = $this->escape($this->state->get('list.ordering'));
         $this->listDirn = $this->escape($this->state->get('list.direction'));
 
@@ -83,33 +78,11 @@ class CustomtablesViewListoflayouts extends JViewLegacy
             parent::display($tpl);
         else
             parent::display('quatro');
-
-        // Set the document
-        $this->setDocument();
-    }
-
-    /**
-     * Escapes a value for output in a view script.
-     *
-     * @param mixed $var The output to escape.
-     *
-     * @return  mixed  The escaped value.
-     */
-    public function escape($var)
-    {
-        if (strlen($var) > 50) {
-            // use the helper htmlEscape method instead and shorten the string
-            return CustomtablesHelper::htmlEscape($var, $this->_charset, true);
-        }
-        // use the helper htmlEscape method instead.
-        return CustomtablesHelper::htmlEscape($var, $this->_charset);
     }
 
     protected function addToolBar_3()
     {
         JToolBarHelper::title(Text::_('COM_CUSTOMTABLES_LISTOFLAYOUTS'), 'joomla');
-        JHtmlSidebar::setAction('index.php?option=com_customtables&view=listoflayouts');
-        JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/fields');
 
         if ($this->canCreate) {
             JToolBarHelper::addNew('layouts.add');
@@ -147,24 +120,27 @@ class CustomtablesViewListoflayouts extends JViewLegacy
                     $newOptions[] = $option;
             }
 
+            /*
             JHtmlSidebar::addFilter(
                 Text::_('JOPTION_SELECT_PUBLISHED'),
                 'filter_published',
                 JHtml::_('select.options', $newOptions, 'value', 'text', $this->state->get('filter.published'), true)
             );
+            */
         }
+        /*
+                $CTLayoutType = JFormHelper::loadFieldType('CTLayoutType', false);
+                $CTLayoutTypeOptions = $CTLayoutType->getOptions(); // works only if you set your field getOptions on public!!
 
-        $CTLayoutType = JFormHelper::loadFieldType('CTLayoutType', false);
-        $CTLayoutTypeOptions = $CTLayoutType->getOptions(); // works only if you set your field getOptions on public!!
-
-        JHtmlSidebar::addFilter(
-            Text::_('COM_CUSTOMTABLES_LAYOUTS_LAYOUTTYPE_SELECT'),
-            'filter_layouttype',
-            JHtml::_('select.options', $CTLayoutTypeOptions, 'value', 'text', $this->state->get('filter.layouttype'))
-        );
-
+                JHtmlSidebar::addFilter(
+                    Text::_('COM_CUSTOMTABLES_LAYOUTS_LAYOUTTYPE_SELECT'),
+                    'filter_layouttype',
+                    JHtml::_('select.options', $CTLayoutTypeOptions, 'value', 'text', $this->state->get('filter.layouttype'))
+                );
+        */
         // Set Tableid Selection
 
+        /*
         $CTTable = JFormHelper::loadFieldType('CTTable', false);
         $CTTableOptions = $CTTable->getOptions(false); // works only if you set your field getOptions on public!!
 
@@ -174,6 +150,9 @@ class CustomtablesViewListoflayouts extends JViewLegacy
             JHtml::_('select.options', $CTTableOptions, 'value', 'text', $this->state->get('filter.tableid'))
         );
 
+        */
+
+        JHtmlSidebar::setAction('index.php?option=com_customtables&view=listoflayouts');
     }
 
     protected function addToolbar_4()
@@ -216,19 +195,6 @@ class CustomtablesViewListoflayouts extends JViewLegacy
                     ->listCheck(true);
             }
         }
-    }
-
-    /**
-     * Method to set up the document properties
-     *
-     * @return void
-     */
-    protected function setDocument()
-    {
-        if (!isset($this->document)) {
-            $this->document = Factory::getDocument();
-        }
-        $this->document->setTitle(Text::_('COM_CUSTOMTABLES_LISTOFLAYOUTS'));
     }
 
     function isTwig(&$row)
@@ -315,18 +281,4 @@ class CustomtablesViewListoflayouts extends JViewLegacy
         return ['original' => $original_ct_matches, 'twig' => $twig_matches];
     }
 
-    /**
-     * Returns an array of fields the table can be sorted by
-     *
-     * @return  array  Array containing the field name to sort by as the key and display text as value
-     */
-    protected function getSortFields()
-    {
-        return array(
-            'a.published' => Text::_('JSTATUS'),
-            'a.layoutname' => Text::_('COM_CUSTOMTABLES_LAYOUTS_LAYOUTNAME_LABEL'),
-            'a.layouttype' => Text::_('COM_CUSTOMTABLES_LAYOUTS_LAYOUTTYPE'),
-            'a.id' => Text::_('JGRID_HEADING_ID')
-        );
-    }
 }

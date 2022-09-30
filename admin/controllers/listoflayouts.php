@@ -19,7 +19,7 @@ jimport('joomla.application.component.controlleradmin');
 /**
  * Listoflayouts Controller
  */
-class CustomtablesControllerListoflayouts extends JControllerAdmin
+class CustomtablesControllerListOfLayouts extends JControllerAdmin
 {
     protected $text_prefix = 'COM_CUSTOMTABLES_LISTOFLAYOUTS';
 }

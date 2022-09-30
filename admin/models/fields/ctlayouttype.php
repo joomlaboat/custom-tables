@@ -32,7 +32,7 @@ class JFormFieldCTLayoutType extends JFormFieldList
      */
     public $type = 'ctlayouttype';
 
-    public function getOptions()//$name, $value, &$node, $control_name)
+    public function getOptions()
     {
         $ct = new CT;
 

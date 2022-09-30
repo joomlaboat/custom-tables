@@ -22,7 +22,7 @@ use Joomla\Utilities\ArrayHelper;
 /**
  * Listoffields Controller
  */
-class CustomtablesControllerListoffields extends JControllerAdmin
+class CustomtablesControllerListOfFields extends JControllerAdmin
 {
     protected $text_prefix = 'COM_CUSTOMTABLES_LISTOFFIELDS';
 

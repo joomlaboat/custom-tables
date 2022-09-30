@@ -39,6 +39,8 @@ class CustomtablesViewListoftables extends JViewLegacy
 
     function display($tpl = null)
     {
+        $this->ct = new CT;
+
         if ($this->getLayout() !== 'modal') {
             // Include helper submenu
             CustomtablesHelper::addSubmenu('listoftables');
@@ -51,25 +53,18 @@ class CustomtablesViewListoftables extends JViewLegacy
         $this->items = $this->get('Items');
         $this->pagination = $this->get('Pagination');
         $this->state = $this->get('State');
-
         $this->user = Factory::getUser();
-
-        if ($this->ct->Env->version >= 4) {
-            $this->filterForm = $this->get('FilterForm');
-            $this->activeFilters = $this->get('ActiveFilters');
-        }
-
+        $this->filterForm = $this->get('FilterForm');
+        $this->activeFilters = $this->get('ActiveFilters');
         $this->listOrder = $this->state->get('list.ordering');
         $this->listDirn = $this->escape($this->state->get('list.direction'));
 
         // get global action permissions
-
         $this->canDo = ContentHelper::getActions('com_customtables', 'tables');
         $this->canCreate = $this->canDo->get('tables.create');
         $this->canEdit = $this->canDo->get('tables.edit');
         $this->canState = $this->canDo->get('tables.edit.state');
         $this->canDelete = $this->canDo->get('tables.delete');
-
         $this->isEmptyState = $this->get('IsEmptyState');
         //$this->canBatch = false;//$this->canDo->get('core.batch');
 
@@ -100,26 +95,6 @@ class CustomtablesViewListoftables extends JViewLegacy
             parent::display($tpl);
         else
             parent::display('quatro');
-
-        // Set the document
-        $this->setDocument();
-    }
-
-    /**
-     * Escapes a value for output in a view script.
-     *
-     * @param mixed $var The output to escape.
-     *
-     * @return  mixed  The escaped value.
-     */
-    public function escape($var)
-    {
-        if (strlen($var) > 50) {
-            // use the helper htmlEscape method instead and shorten the string
-            return CustomtablesHelper::htmlEscape($var, $this->_charset, true);
-        }
-        // use the helper htmlEscape method instead.
-        return CustomtablesHelper::htmlEscape($var, $this->_charset);
     }
 
     protected function addToolBar_3()
@@ -168,13 +143,16 @@ class CustomtablesViewListoftables extends JViewLegacy
                     $newOptions[] = $option;
             }
 
+            /*
             JHtmlSidebar::addFilter(
                 Text::_('JOPTION_SELECT_PUBLISHED'),
                 'filter_published',
                 JHtml::_('select.options', $newOptions, 'value', 'text', $this->state->get('filter.published'), true)
             );
+            */
         }
 
+        /*
         $CTCategory = JFormHelper::loadFieldType('CTCategory', false);
         $CTCategoryOptions = $CTCategory->getOptions(false); // works only if you set your field getOptions on public!!
 
@@ -183,6 +161,7 @@ class CustomtablesViewListoftables extends JViewLegacy
             'filter_tablecategory',
             JHtml::_('select.options', $CTCategoryOptions, 'value', 'text', $this->state->get('filter.tablecategory'))
         );
+        */
     }
 
     protected function addToolbar_4()
@@ -232,34 +211,6 @@ class CustomtablesViewListoftables extends JViewLegacy
                     ->listCheck(true);
             }
         }
-    }
-
-    /**
-     * Method to set up the document properties
-     *
-     * @return void
-     */
-    protected function setDocument()
-    {
-        if (!isset($this->document)) {
-            $this->document = Factory::getDocument();
-        }
-        $this->document->setTitle(Text::_('COM_CUSTOMTABLES_LISTOFTABLES'));
-    }
-
-    /**
-     * Returns an array of fields the table can be sorted by
-     *
-     * @return  array  Array containing the field name to sort by as the key and display text as value
-     */
-    protected function getSortFields()
-    {
-        return array(
-            'a.published' => Text::_('JSTATUS'),
-            'a.tablename' => Text::_('COM_CUSTOMTABLES_TABLES_TABLENAME_LABEL'),
-            'a.tablecategory' => Text::_('COM_CUSTOMTABLES_TABLES_TABLECATEGORY_LABEL'),
-            'a.id' => Text::_('JGRID_HEADING_ID')
-        );
     }
 
     protected function getNumberOfRecords($realtablename, $realidfield)

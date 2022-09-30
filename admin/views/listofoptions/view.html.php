@@ -22,17 +22,17 @@ jimport('joomla.application.component.view');
 class CustomTablesViewListOfOptions extends JViewLegacy
 {
     var $languages;
+    var CT $ct;
 
     function display($tpl = null)
     {
+        $this->ct = new CT;
+
         // Set toolbar items for the page
         CustomtablesHelper::addSubmenu('Options');
 
         $this->addToolBar();
         $this->sidebar = JHtmlSidebar::render();
-
-        $model = $this->getModel();
-        $this->ct = $model->ct;
 
         $this->languages = $this->ct->Languages->LanguageList;
 
@@ -56,7 +56,6 @@ class CustomTablesViewListOfOptions extends JViewLegacy
         }
 
         JHTML::_('behavior.tooltip');
-
         $this->isselectable = true;
 
         parent::display($tpl);
