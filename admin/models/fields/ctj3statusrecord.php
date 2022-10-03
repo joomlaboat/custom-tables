@@ -18,9 +18,9 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 JFormHelper::loadFieldClass('list');
 
-class JFormFieldctj3recordstatus extends JFormFieldList
+class JFormFieldctj3statusrecord extends JFormFieldList
 {
-    public $type = 'ctj3recordstatus';
+    public $type = 'ctj3statusrecord';
 
     public function getOptions()
     {
@@ -28,7 +28,7 @@ class JFormFieldctj3recordstatus extends JFormFieldList
         $options[] = JHtml::_('select.option', '', Text::_('JOPTION_SELECT_PUBLISHED'));
         $options[] = JHtml::_('select.option', 1, Text::_('JPUBLISHED'));
         $options[] = JHtml::_('select.option', 0, Text::_('JUNPUBLISHED'));
-        $options[] = JHtml::_('select.option', '*', Text::_('JALL'));
+        //$options[] = JHtml::_('select.option', '*', Text::_('JALL'));
 
         return $options;
     }

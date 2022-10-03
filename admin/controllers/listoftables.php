@@ -14,7 +14,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
-// import Joomla controlleradmin library
 jimport('joomla.application.component.controlleradmin');
 
 use Joomla\CMS\Factory;
@@ -22,12 +21,14 @@ use Joomla\CMS\Language\Text;
 use Joomla\Utilities\ArrayHelper;
 use CustomTables\ExportTables;
 
-/**
- * Listoftables Controller
- */
 class CustomtablesControllerListoftables extends JControllerAdmin
 {
     protected $text_prefix = 'COM_CUSTOMTABLES_LISTOFTABLES';
+
+    public function getModel($name = 'Tables', $prefix = 'CustomtablesModel', $config = array())
+    {
+        return parent::getModel($name, $prefix, array('ignore_request' => true));
+    }
 
     public function export()
     {

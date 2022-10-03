@@ -60,7 +60,7 @@ class Forms
                 $field_label .= '<span class="ms-1 icon-sort" aria-hidden="true"></span>';
         }
 
-        if ($field->isrequired and isset($this->ct->LayoutVariables['ordering_field_type_found']) and $this->ct->LayoutVariables['ordering_field_type_found'])
+        if ($field->isrequired and isset($this->ct->LayoutVariables['layout_type']) and $this->ct->LayoutVariables['layout_type'] == 2)
             $field_label .= '<span class="star">&#160;*</span>';
 
         $field_label .= '</label>';

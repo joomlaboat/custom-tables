@@ -19,19 +19,17 @@ use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use CustomTables\CT;
 use CustomTables\DataTypes;
+use Joomla\CMS\Version;
 
 /**
  * Listoffields Model
  */
 class CustomtablesModelListoffields extends JModelList
 {
-    var CT $ct;
     var $tableid;
 
     public function __construct($config = array())
     {
-        $this->ct = new CT;
-
         if (empty($config['filter_fields'])) {
             $config['filter_fields'] = array(
                 'a.id', 'id',
@@ -86,7 +84,10 @@ class CustomtablesModelListoffields extends JModelList
 
     protected function populateState($ordering = 'a.id', $direction = 'asc')
     {
-        if ($this->ct->Env->version < 4) {
+        $version_object = new Version;
+        $version = (int)$version_object->getShortVersion();
+
+        if ($version < 4) {
             $search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
             $this->setState('filter.search', $search);
 
@@ -143,7 +144,7 @@ class CustomtablesModelListoffields extends JModelList
                 $query->where('a.id = ' . (int)substr($search, 3));
             } else {
                 $search = $db->quote('%' . $db->escape($search) . '%');
-                $query->where('(a.fieldtitle LIKE ' . $search . ')');
+                $query->where('(a.fieldname LIKE ' . $search . ' OR a.fieldtitle LIKE ' . $search . ')');
             }
         }
 

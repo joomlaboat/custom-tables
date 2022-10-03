@@ -13,28 +13,19 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
-// import Joomla controlleradmin library
 jimport('joomla.application.component.controlleradmin');
 
 use CustomTables\CT;
 use Joomla\CMS\Factory;
 use Joomla\Utilities\ArrayHelper;
 
-/**
- * Listoffields Controller
- */
 class CustomtablesControllerListofRecords extends JControllerAdmin
 {
     protected $text_prefix = 'COM_CUSTOMTABLES_LISTOFRECORDS';
 
-    /**
-     * Proxy for getModel.
-     * @since    2.5
-     */
     public function getModel($name = 'Records', $prefix = 'CustomtablesModel', $config = array())
     {
-        $model = parent::getModel($name, $prefix, array('ignore_request' => true));
-        return $model;
+        return parent::getModel($name, $prefix, array('ignore_request' => true));
     }
 
     public function publish()

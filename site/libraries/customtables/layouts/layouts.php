@@ -173,27 +173,19 @@ class Layouts
 
     function createDefaultLayout_Edit($fields, $addToolbar = true): string
     {
-        $result = '<div class="form-horizontal">
-
-';
+        $result = '<div class="form-horizontal">';
 
         $fieldtypes_to_skip = ['log', 'phponview', 'phponchange', 'phponadd', 'md5', 'id', 'server', 'userid', 'viewcount', 'lastviewtime', 'changetime', 'creationtime', 'imagegallery', 'filebox', 'dummy'];
 
         foreach ($fields as $field) {
             if (!in_array($field['type'], $fieldtypes_to_skip)) {
-                $result .= '	<div class="control-group">
-';
-                $result .= '		<div class="control-label">{{ ' . $field['fieldname'] . '.title }}</div><div class="controls">{{ ' . $field['fieldname'] . '.edit }}</div>
-';
-                $result .= '	</div>
-
-';
+                $result .= '<div class="control-group">';
+                $result .= '<div class="control-label">{{ ' . $field['fieldname'] . '.label }}</div><div class="controls">{{ ' . $field['fieldname'] . '.edit }}</div>';
+                $result .= '</div>';
             }
         }
 
-        $result .= '</div>
-
-';
+        $result .= '</div>';
 
         foreach ($fields as $field) {
             if ($field['type'] === "dummy") {

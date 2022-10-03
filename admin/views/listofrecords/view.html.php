@@ -41,7 +41,8 @@ class CustomtablesViewListofrecords extends JViewLegacy
 
     function display($tpl = null)
     {
-        $this->ct = new CT;
+        $model = $this->getModel();
+        $this->ct = $model->ct;
 
         if ($this->getLayout() !== 'modal') {
             // Include helper submenu
@@ -52,7 +53,13 @@ class CustomtablesViewListofrecords extends JViewLegacy
             return;
 
         //Check if ordering type field exists
-        $this->ordering_realfieldname = $model->ordering_realfieldname;
+        $this->ordering_realfieldname = '';
+        foreach ($this->ct->Table->fields as $field) {
+            if ($field['type'] == 'ordering') {
+                $this->ordering_realfieldname = $field['realfieldname'];
+                break;
+            }
+        }
 
         //Other parameters
         $this->items = $this->get('Items');
@@ -98,7 +105,6 @@ class CustomtablesViewListofrecords extends JViewLegacy
         } else
             JToolBarHelper::title(Text::_('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
 
-
         JHtmlSidebar::setAction('index.php?option=com_customtables&view=listofrecords&tableid=' . $this->ct->Table->tableid);
         JFormHelper::addFieldPath(JPATH_COMPONENT . '/models/records');
 
@@ -124,16 +130,19 @@ class CustomtablesViewListofrecords extends JViewLegacy
 
         if ($this->canState) {
             // Build the active state filter options.
+            /*
             $options = array();
             $options[] = JHtml::_('select.option', '1', 'COM_CUSTOMTABLES_PUBLISHED');
             $options[] = JHtml::_('select.option', '0', 'COM_CUSTOMTABLES_UNPUBLISHED');
             $options[] = JHtml::_('select.option', '*', 'COM_CUSTOMTABLES_ALL');
+
 
             JHtmlSidebar::addFilter(
                 Text::_('JOPTION_SELECT_PUBLISHED'),
                 'filter_published',
                 JHtml::_('select.options', $options, 'value', 'text', $this->state->get('filter.published'), true)
             );
+            */
             // only load if batch allowed
         }
 

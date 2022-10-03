@@ -15,25 +15,13 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 jimport('joomla.application.component.controller');
 
-/**
- * @package        Joomla
- * @subpackage    List
- */
 class CustomTablesControllerListOfOptions extends JControllerAdmin
 {
-
-
     protected $text_prefix = 'COM_CUSTOMTABLES_LISTOFOPTIONS';
 
-    /**
-     * Proxy for getModel.
-     * @since    2.5
-     */
     public function getModel($name = 'Options', $prefix = 'CustomtablesModel', $config = array())
     {
-        $model = parent::getModel($name, $prefix, array('ignore_request' => true));
-
-        return $model;
+        return parent::getModel($name, $prefix, array('ignore_request' => true));
     }
 }
 

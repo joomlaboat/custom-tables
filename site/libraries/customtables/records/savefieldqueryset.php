@@ -38,15 +38,19 @@ class SaveFieldQuerySet
     public Field $field;
     var ?array $row;
     var bool $isCopy;
+    var array $saveQuery;
 
     function __construct(CT &$ct, $row, $isCopy = false)
     {
         $this->ct = &$ct;
         $this->row = $row;
         $this->isCopy = $isCopy;
+
+        $this->saveQuery = [];
     }
 
     //Return type: null|string|array
+
     function getSaveFieldSet($fieldrow)
     {
         $this->field = new Field($this->ct, $fieldrow, $this->row);
@@ -226,7 +230,7 @@ class SaveFieldQuerySet
                 break;
 
             case 'user':
-                $value = $this->ct->Env->jinput->getVar($this->field->comesfieldname);
+                $value = $this->ct->Env->jinput->post->get($this->field->comesfieldname);
 
                 if (isset($value)) {
                     $value = $this->ct->Env->jinput->getInt($this->field->comesfieldname);
@@ -244,7 +248,7 @@ class SaveFieldQuerySet
 
                 if ($this->ct->isRecordNull($this->row) or $this->isCopy) {
 
-                    $value = $this->ct->Env->jinput->getVar($this->field->comesfieldname);
+                    $value = $this->ct->Env->jinput->post->get($this->field->comesfieldname);
 
                     if ((!isset($value) or $value == 0)) {
 
@@ -322,9 +326,10 @@ class SaveFieldQuerySet
                 }
 
                 if ($to_delete == 'true' and $value === null) {
+
                     $this->row[$this->field->realfieldname] = null;
 
-                    if ($fileNameField != '')
+                    if ($fileNameField != '' and !$this->checkIfFieldAlreadyInTheList($fileNameField))
                         $this->row[$fileNameField] = null;
 
                     return $this->field->realfieldname . '=NULL';
@@ -338,7 +343,7 @@ class SaveFieldQuerySet
                         $this->row[$fileNameField] = $file_name;
 
                         $sets = array();
-                        if ($value !== null)
+                        if ($value !== null and !$this->checkIfFieldAlreadyInTheList($fileNameField))
                             $sets[] = $fileNameField . '=' . $this->ct->db->Quote($file_name);
 
                         $sets[] = ($value === null ? null : $this->field->realfieldname . '=FROM_BASE64("' . base64_encode($value) . '")');
@@ -729,6 +734,17 @@ class SaveFieldQuerySet
         return null;
     }
 
+    function checkIfFieldAlreadyInTheList($fieldName): bool
+    {
+        foreach ($this->saveQuery as $query) {
+            $parts = explode('=', $query);
+
+            if ($parts[0] == $fieldName)
+                return true;
+        }
+        return false;
+    }
+
     protected function get_customtables_type_signature(): ?string
     {
         $value = $this->ct->Env->jinput->getString($this->field->comesfieldname);
@@ -807,20 +823,20 @@ class SaveFieldQuerySet
 
     }
 
-    protected function getMultiSelector($parentid, $parentname, $prefix): ?array
+    protected function getMultiSelector($parentId, $parentName, $prefix): ?array
     {
         $set = false;
-        $resilt_list = array();
+        $resultList = array();
 
-        $rows = $this->getList($parentid);
+        $rows = $this->getList($parentId);
         if (count($rows) < 1)
-            return $resilt_list;
+            return $resultList;
 
         foreach ($rows as $row) {
-            if (strlen($parentname) == 0)
+            if (strlen($parentName) == 0)
                 $ChildList = $this->getMultiSelector($row->id, $row->optionname, $prefix);
             else
-                $ChildList = $this->getMultiSelector($row->id, $parentname . '.' . $row->optionname, $prefix);
+                $ChildList = $this->getMultiSelector($row->id, $parentName . '.' . $row->optionname, $prefix);
 
             if ($ChildList !== null)
                 $count_child = count($ChildList);
@@ -828,16 +844,16 @@ class SaveFieldQuerySet
                 $count_child = 0;
 
             if ($count_child > 0) {
-                $resilt_list = array_merge($resilt_list, $ChildList);
+                $resultList = array_merge($resultList, $ChildList);
             } else {
                 $value = $this->ct->Env->jinput->getString($prefix . '_' . $row->id);
                 if (isset($value)) {
                     $set = true;
 
-                    if (strlen($parentname) == 0)
-                        $resilt_list[] = $row->optionname . '.';
+                    if (strlen($parentName) == 0)
+                        $resultList[] = $row->optionname . '.';
                     else
-                        $resilt_list[] = $parentname . '.' . $row->optionname . '.';
+                        $resultList[] = $parentName . '.' . $row->optionname . '.';
                 }
             }
         }
@@ -845,7 +861,7 @@ class SaveFieldQuerySet
         if (!$set)
             return null;
 
-        return $resilt_list;
+        return $resultList;
     }
 
     protected function getList($parentid)
@@ -904,7 +920,7 @@ class SaveFieldQuerySet
         }
     }
 
-    function applyDefaults($fieldrow)
+    function applyDefaults($fieldrow): ?string
     {
         $this->field = new Field($this->ct, $fieldrow, $this->row);
 

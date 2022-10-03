@@ -125,9 +125,6 @@ $edit = "index.php?option=com_customtables&view=listoftables&task=tables.edit";
             <div class="name">
                 <?php if ($this->canEdit): ?>
                     <a href="<?php echo $edit; ?>&id=<?php echo $item->id; ?>"><?php echo $this->escape($item->categoryname); ?></a>
-                    <?php if ($item->checked_out): ?>
-                        <?php echo JHtml::_('jgrid.checkedout', $i, $userChkOut->name, $item->checked_out_time, 'listofcategories.', $canCheckin); ?>
-                    <?php endif; ?>
                 <?php else: ?>
                     <?php echo $this->escape($item->categoryname); ?>
                 <?php endif; ?>

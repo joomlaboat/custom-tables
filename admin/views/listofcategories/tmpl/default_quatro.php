@@ -24,8 +24,6 @@ use Joomla\CMS\String\PunycodeHelper;
 
 HTMLHelper::_('behavior.multiselect');
 
-//$loggeduser = Factory::getUser(); used fo batch
-
 ?>
 <h3>Categories provide an optional method for organizing your Tables.</h3>
 <p>

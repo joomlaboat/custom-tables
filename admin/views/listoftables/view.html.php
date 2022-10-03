@@ -46,9 +46,6 @@ class CustomtablesViewListoftables extends JViewLegacy
             CustomtablesHelper::addSubmenu('listoftables');
         }
 
-        $model = $this->getModel();
-        $this->ct = $model->ct;
-
         // Assign data to the view
         $this->items = $this->get('Items');
         $this->pagination = $this->get('Pagination');
@@ -134,22 +131,22 @@ class CustomtablesViewListoftables extends JViewLegacy
                 JToolBarHelper::custom('listoftables.export', 'download.png', '', 'Export');
 
         if ($this->canState) {
-
-            $options = JHtml::_('jgrid.publishedOptions');
-            $newOptions = [];
-            foreach ($options as $option) {
-
-                if ($option->value != 2)
-                    $newOptions[] = $option;
-            }
-
             /*
-            JHtmlSidebar::addFilter(
-                Text::_('JOPTION_SELECT_PUBLISHED'),
-                'filter_published',
-                JHtml::_('select.options', $newOptions, 'value', 'text', $this->state->get('filter.published'), true)
-            );
-            */
+                        $options = JHtml::_('jgrid.publishedOptions');
+                        $newOptions = [];
+                        foreach ($options as $option) {
+
+                            if ($option->value != 2)
+                              $newOptions[] = $option;
+                        }
+
+                        /*
+                        JHtmlSidebar::addFilter(
+                            Text::_('JOPTION_SELECT_PUBLISHED'),
+                            'filter_published',
+                            JHtml::_('select.options', $newOptions, 'value', 'text', $this->state->get('filter.published'), true)
+                        );
+                        */
         }
 
         /*

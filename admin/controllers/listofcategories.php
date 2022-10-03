@@ -13,24 +13,14 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
-// import Joomla controlleradmin library
 jimport('joomla.application.component.controlleradmin');
 
-/**
- * Listofcategories Controller
- */
-class CustomtablesControllerListofcategories extends JControllerAdmin
+class CustomtablesControllerListOfCategories extends JControllerAdmin
 {
     protected $text_prefix = 'COM_CUSTOMTABLES_LISTOFCATEGORIES';
 
-    /**
-     * Proxy for getModel.
-     * @since    2.5
-     */
     public function getModel($name = 'Categories', $prefix = 'CustomtablesModel', $config = array())
     {
-        $model = parent::getModel($name, $prefix, array('ignore_request' => true));
-
-        return $model;
+        return parent::getModel($name, $prefix, array('ignore_request' => true));
     }
 }

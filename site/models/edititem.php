@@ -496,8 +496,6 @@ class CustomTablesModelEditItem extends JModelLegacy
         }
 
         $msg = '';
-        $saveQuery = array();
-
         $row_old = null;
 
         if ($listing_id != '')
@@ -514,16 +512,18 @@ class CustomTablesModelEditItem extends JModelLegacy
 
         foreach ($this->ct->Table->fields as $fieldrow) {
 
-            if (in_array($fieldrow['fieldname'], $fieldstosave))
-                $saveFieldSet = $saveField->getSaveFieldSet($fieldrow);
-            else
-                $saveFieldSet = $saveField->applyDefaults($fieldrow);
-
-            if ($saveFieldSet !== null) {
-                if (is_array($saveFieldSet))
-                    $saveQuery = array_merge($saveQuery, $saveFieldSet);
+            if (!$saveField->checkIfFieldAlreadyInTheList($fieldrow['fieldname'])) {
+                if (in_array($fieldrow['fieldname'], $fieldstosave))
+                    $saveFieldSet = $saveField->getSaveFieldSet($fieldrow);
                 else
-                    $saveQuery[] = $saveFieldSet;
+                    $saveFieldSet = $saveField->applyDefaults($fieldrow);
+
+                if ($saveFieldSet !== null) {
+                    if (is_array($saveFieldSet))
+                        $saveField->saveQuery = array_merge($saveField->saveQuery, $saveFieldSet);
+                    else
+                        $saveField->saveQuery[] = $saveFieldSet;
+                }
             }
 
             if ($fieldrow['type'] == 'phponadd' and ($listing_id == 0 or $listing_id == '' or $isCopy))
@@ -540,15 +540,15 @@ class CustomTablesModelEditItem extends JModelLegacy
             $isItNewRecords = true;
 
             if ($this->ct->Table->published_field_found)
-                $saveQuery[] = 'published=' . $this->ct->Params->publishStatus;
+                $saveField->saveQuery[] = 'published=' . $this->ct->Params->publishStatus;
 
-            $listing_id_temp = ESTables::insertRecords($this->ct->Table->realtablename, $saveQuery);
+            $listing_id_temp = ESTables::insertRecords($this->ct->Table->realtablename, $saveField->saveQuery);
         } else {
             $this->updateLog($saveField, $listing_id);
-            $saveField->runUpdateQuery($saveQuery, $listing_id);
+            $saveField->runUpdateQuery($saveField->saveQuery, $listing_id);
         }
 
-        if (count($saveQuery) < 1) {
+        if (count($saveField->saveQuery) < 1) {
             $this->ct->app->enqueueMessage('Nothing to save', 'Warning');
             return false;
         }
@@ -742,16 +742,16 @@ class CustomTablesModelEditItem extends JModelLegacy
 
         $data = base64_encode(json_encode($rows));
 
-        $saveQuery = [];
+        $saveLogQuery = [];
         foreach ($this->ct->Table->fields as $fieldrow) {
             if ($fieldrow['type'] == 'log') {
                 $value = time() . ',' . $this->ct->Env->userid . ',' . SaveFieldQuerySet::getUserIP() . ',' . $data . ';';
-                $saveQuery[] = $fieldrow['realfieldname'] . '=CONCAT(' . $fieldrow['realfieldname'] . ',"' . $value . '")';
+                $saveLogQuery[] = $fieldrow['realfieldname'] . '=CONCAT(' . $fieldrow['realfieldname'] . ',"' . $value . '")';
             }
         }
 
-        if (count($saveQuery) > 0)
-            $saveField->runUpdateQuery($saveQuery, $listing_id);
+        if (count($saveLogQuery) > 0)
+            $saveField->runUpdateQuery($saveLogQuery, $listing_id);
     }
 
     /*
@@ -967,8 +967,8 @@ class CustomTablesModelEditItem extends JModelLegacy
 
                 $row[$realfieldname] = $value;
 
-                $saveQuery = $realfieldname . '=' . $this->ct->db->quote($value);
-                $query = 'UPDATE ' . $this->ct->Table->realtablename . ' SET ' . $saveQuery . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . $this->ct->db->quote($listing_id);
+                $savePHPQuery = $realfieldname . '=' . $this->ct->db->quote($value);
+                $query = 'UPDATE ' . $this->ct->Table->realtablename . ' SET ' . $savePHPQuery . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . $this->ct->db->quote($listing_id);
 
                 $this->ct->db->setQuery($query);
                 $this->ct->db->execute();
@@ -1021,8 +1021,8 @@ class CustomTablesModelEditItem extends JModelLegacy
 
                 $row[$realfieldname] = $value;
 
-                $saveQuery = $realfieldname . '=' . $this->ct->db->quote($value);
-                $query = 'UPDATE ' . $this->ct->Table->realtablename . ' SET ' . $saveQuery . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . $this->ct->db->quote($listing_id);
+                $savePHPQuery = $realfieldname . '=' . $this->ct->db->quote($value);
+                $query = 'UPDATE ' . $this->ct->Table->realtablename . ' SET ' . $savePHPQuery . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . $this->ct->db->quote($listing_id);
 
                 $this->ct->db->setQuery($query);
                 $this->ct->db->execute();
@@ -1264,7 +1264,7 @@ class CustomTablesModelEditItem extends JModelLegacy
         if ($save_log == 1)
             $this->ct->Table->saveLog($listing_id, 10);
 
-        //TODO use $savefield
+        //TODO use $saveField->saveField
         //$this->updateDefaultValues($row);
 
         if ($this->ct->Env->advancedtagprocessor)
@@ -1285,7 +1285,7 @@ class CustomTablesModelEditItem extends JModelLegacy
     function updateMD5($saveField, $listing_id)
     {
         //TODO: Use savefield
-        $saveQuery = array();
+        $saveMD5Query = array();
         foreach ($this->ct->Table->fields as $fieldrow) {
             if ($fieldrow['type'] == 'md5') {
                 $fieldsToCount = explode(',', str_replace('"', '', $fieldrow['typeparams']));//only field names, nothing else
@@ -1300,11 +1300,11 @@ class CustomTablesModelEditItem extends JModelLegacy
                 }
 
                 if (count($fields) > 1)
-                    $saveQuery[] = $fieldrow['realfieldname'] . '=md5(CONCAT_WS(' . implode(',', $fields) . '))';
+                    $saveMD5Query[] = $fieldrow['realfieldname'] . '=md5(CONCAT_WS(' . implode(',', $fields) . '))';
             }
         }
 
-        $saveField->runUpdateQuery($saveQuery, $listing_id);
+        $saveField->runUpdateQuery($saveMD5Query, $listing_id);
     }
 
     function setPublishStatus($status): int

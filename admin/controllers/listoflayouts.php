@@ -13,13 +13,14 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
-// import Joomla controlleradmin library
 jimport('joomla.application.component.controlleradmin');
 
-/**
- * Listoflayouts Controller
- */
 class CustomtablesControllerListOfLayouts extends JControllerAdmin
 {
     protected $text_prefix = 'COM_CUSTOMTABLES_LISTOFLAYOUTS';
+
+    public function getModel($name = 'Layouts', $prefix = 'CustomtablesModel', $config = array())
+    {
+        return parent::getModel($name, $prefix, array('ignore_request' => true));
+    }
 }

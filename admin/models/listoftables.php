@@ -14,11 +14,10 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
-use CustomTables\CT;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Version;
 
-// import the Joomla modellist library
 jimport('joomla.application.component.modellist');
 
 /**
@@ -26,8 +25,6 @@ jimport('joomla.application.component.modellist');
  */
 class CustomtablesModelListOfTables extends JModelList
 {
-    var CT $ct;
-
     public function __construct($config = array())
     {
         if (empty($config['filter_fields'])) {
@@ -42,8 +39,6 @@ class CustomtablesModelListOfTables extends JModelList
         }
 
         parent::__construct($config);
-
-        $this->ct = new CT;
     }
 
     /**
@@ -54,9 +49,7 @@ class CustomtablesModelListOfTables extends JModelList
     public function getItems()
     {
         // load parent items
-        $items = parent::getItems();
-
-        return $items;
+        return parent::getItems();
     }
 
     /**
@@ -66,7 +59,10 @@ class CustomtablesModelListOfTables extends JModelList
      */
     protected function populateState($ordering = 'a.id', $direction = 'asc')
     {
-        if ($this->ct->Env->version < 4) {
+        $version_object = new Version;
+        $version = (int)$version_object->getShortVersion();
+
+        if ($version < 4) {
             $search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
             $this->setState('filter.search', $search);
 

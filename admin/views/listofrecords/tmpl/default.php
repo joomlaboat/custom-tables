@@ -7,7 +7,10 @@
  * @copyright Copyright (C) 2018-2020. All Rights Reserved
  * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
  **/
+
 // No direct access to this file access');
+use Joomla\CMS\Language\Text;
+
 if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
@@ -50,14 +53,18 @@ if ($this->ordering_realfieldname != '') {
         <?php else : ?>
         <div id="j-main-container">
             <?php endif; ?>
+
+            <?php echo JLayoutHelper::render('joomla.searchtools.default', array('view' => $this)); ?>
+            <div class="clearfix"></div>
+
             <?php if (empty($this->items)): ?>
                 <?php //echo $this->loadTemplate('toolbar');?>
                 <div class="alert alert-no-items">
-                    <?php //echo Text::_('JGLOBAL_NO_MATCHING_RESULTS'); ?>
+                    <?php echo Text::_('JGLOBAL_NO_MATCHING_RESULTS'); ?>
                 </div>
             <?php else : ?>
 
-                <table class="table table-bordered table-striped table-hover" id="itemList" style="position: relative;">
+                <table class="table table-striped table-hover" id="itemList" style="position: relative;">
                     <thead><?php echo $this->loadTemplate('head'); ?></thead>
                     <tfoot><?php echo $this->loadTemplate('foot'); ?></tfoot>
                     <tbody><?php echo $this->loadTemplate('body'); ?></tbody>

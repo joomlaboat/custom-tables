@@ -69,7 +69,6 @@
             <filename>index.html</filename>
             <filename>customtables.php</filename>
             <folder>controllers</folder>
-            <folder>forms</folder>
             <folder>helpers</folder>
             <folder>layouts</folder>
             <folder>models</folder>

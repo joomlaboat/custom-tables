@@ -380,121 +380,14 @@ class CustomTablesImageMethods
                 if (file_exists($original_image_file))
                     unlink($original_image_file);
 
-                unlink($uploadedFile);
+                if (file_exists($uploadedFile))
+                    unlink($uploadedFile);
+                
                 return -1;
             }
         }
         return 0;
     }
-
-    /*
-    function CreateNewCustomImages($realtablename, $realfieldname, $ImageFolder, $params, $startindex, $step, $realidfield)
-    {
-        $count=0;
-        $db = Factory::getDBO();
-
-        $query = 'SELECT '.$realfieldname.' FROM '.$realtablename.' WHERE '.$realfieldname.'>0';
-        $db->setQuery( $query );
-        $imagelist=$db->loadAssocList();
-
-        $compareexisting=false;
-        if(isset($params[1]))
-        {
-            //Additional Parameters
-            $second_pair=explode(':',$params[1]);
-
-            //Special Plugin
-            if(strpos($second_pair[0],'compareexisting')!==false)
-            {
-                $compareexisting=true;
-
-                $level_identity=4;
-                if(isset($second_pair[1]))
-                    $level_identity=(int)$second_pair[1];
-            }
-
-            if(isset($params[2]))
-                $ImageFolder=$params[2]; //Path
-        }
-
-        $customsizes=$this->getCustomImageOptions($params[0]);
-
-        foreach($imagelist as $img)
-        {
-            if($count>=$startindex)
-            {
-                $ImageID=$img[$realfieldname];
-                $originalImage=$ImageFolder.DIRECTORY_SEPARATOR.'_original_'.$ImageID;
-                $ImgExtention=$this->getImageExtention($originalImage);
-
-                if($ImgExtention!='')
-                {
-                    $originalImage.='.'.$ImgExtention;
-                    $DeleteExistingImage=false;
-                    if($compareexisting)
-                    {
-                        //check if the image has child or not
-                        $query = 'SELECT '.$realidfield.' AS photoid FROM '.$realtablename.' WHERE '.$realfieldname.'=-'.$ImageID;
-                        $db->setQuery($query);
-                        $db->execute();
-
-                        if($db->getNumRows()==0) //do not compare if there is a child
-                        {
-                            $NewImageID=-FindSimilarImage::find($originalImage,$level_identity,$realtablename,$realfieldname,$ImageFolder);
-                            if($NewImageID!=0)
-                            {
-                                $DeleteExistingImage=true;
-
-                                //Update Table
-                                $query = 'UPDATE '.$realtablename.' SET '.$realfieldname.'='.$NewImageID.' WHERE '.$realfieldname.'='.$ImageID;
-                                $db->setQuery( $query );
-                                $db->execute();
-                            }
-                        }//if
-                    }//if
-
-                    if($DeleteExistingImage)
-                    {
-                        //Delete Image
-                        CustomTablesImageMethods::DeleteOriginalImage($ImageID, $ImageFolder, $realtablename, $realfieldname, $realidfield);
-                    }
-                    else
-                    {
-                        $thumbimage=$ImageFolder.DIRECTORY_SEPARATOR.'_esthumb_'.$ImageID.'.jpg';
-                        if(!file_exists($thumbimage))
-                            $this->ProportionalResize($originalImage,$thumbimage, 150, 150,1,true, -1, '');
-
-                        foreach($customsizes as $imagesize)
-                        {
-                            $prefix=$imagesize[0];
-                            $width=(int)$imagesize[1];
-                            $height=(int)$imagesize[2];
-                            $color=(int)$imagesize[3];
-                            $watermark=$imagesize[5];
-
-                            //save as extention
-                            if($imagesize[4]!='')
-                                $ext=$imagesize[4];
-                            else
-                                $ext=$ImgExtention;
-
-                            $newfilename=$ImageFolder.DIRECTORY_SEPARATOR.$prefix.'_'.$ImageID.'.'.$ext;
-
-                            if(!file_exists($newfilename))
-                                $r=$this->ProportionalResize($originalImage, $newfilename, $width, $height,1,true, $color, $watermark);
-                        }//foreach
-                    }//if($DeleteExistingImage)
-                }//if($ImgExtention!='')
-            }
-            if($count-$startindex>=$step-1)
-                break;
-
-            $count++;
-        }//foreach($imagelist as $img)
-
-        return count($imagelist);
-    }
-    */
 
     function base64file_decode($inputfile, $outputfile)
     {
@@ -538,6 +431,9 @@ class CustomTablesImageMethods
         // 1 if everything is ok
         // -1 if file extension not supported
         // 2 if file already exists
+
+        if (!file_exists($src))
+            return -1;
 
         $fileExtension = $this->FileExtenssion($src);
         $fileExtension_dst = $this->FileExtenssion($dst);

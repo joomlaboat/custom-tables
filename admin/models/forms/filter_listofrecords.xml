@@ -9,9 +9,10 @@
                 description="COM_CUSTOMTABLES_SEARCH_RECORD_TEXT_DESC"
                 hint="JSEARCH_FILTER"
         />
+
         <field
                 name="published"
-                type="ctj3recordstatus"
+                type="ctj3statusrecord"
                 label="JOPTION_SELECT_PUBLISHED"
                 onchange="this.form.submit();"
                 extension="com_customtables"

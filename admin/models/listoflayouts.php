@@ -44,8 +44,7 @@ class CustomtablesModelListOfLayouts extends JModelList
         parent::__construct($config);
 
         $this->ct = new CT;
-        $params = ComponentHelper::getParams('com_customtables');
-        $this->ct->setParams($params);
+        $this->ct->setParams();//$params
     }
 
     /**

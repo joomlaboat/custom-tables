@@ -71,6 +71,7 @@ class CustomtablesViewRecords extends JViewLegacy
         $Model->load($this->ct);
 
         $Layouts = new Layouts($this->ct);
+        $this->ct->LayoutVariables['layout_type'] = 2;
         $this->pagelayout = $Layouts->createDefaultLayout_Edit($this->ct->Table->fields, false);
 
         $this->row = $Model->row;

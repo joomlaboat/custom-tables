@@ -33,7 +33,6 @@ class CustomtablesModelListOfRecords extends JModelList
     public function __construct($config = array())
     {
         $this->ct = new CT;
-
         $this->ct->getTable($this->ct->Env->jinput->getInt('tableid', 0), null);
 
         if ($this->ct->Table->tablename == '') {
@@ -141,16 +140,6 @@ class CustomtablesModelListOfRecords extends JModelList
         }
 
         // Add the list ordering clause.
-
-        //Check if ordering type field exists
-        $ordering_realfieldname = '';
-        foreach ($this->ct->Table->fields as $field) {
-            if ($field['type'] == 'ordering') {
-                $ordering_realfieldname = $field['realfieldname'];
-                break;
-            }
-        }
-
         $order_by_Col = $this->ct->Table->realtablename . '.' . $this->ct->Table->realidfieldname;
         $orderDirn = $this->state->get('list.direction', 'asc');
 
