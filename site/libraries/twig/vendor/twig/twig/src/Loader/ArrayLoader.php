@@ -28,7 +28,7 @@ use Twig\Source;
  */
 final class ArrayLoader implements LoaderInterface
 {
-    private array $templates;
+    private $templates = [];
 
     /**
      * @param array $templates An array of templates (keys are the names, and values are the source code)
