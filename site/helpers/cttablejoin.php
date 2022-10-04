@@ -27,9 +27,7 @@ class JHTMLCTTableJoin
         $ct = new CT($params, true);
 
         $filter = [];
-
         $parent_filter_table_and_field = JHTMLCTTableJoin::parseTagArguments($option_list, $filter);
-
         $parent_filter_table_name = $parent_filter_table_and_field[0];
         $parent_filter_field_name = $parent_filter_table_and_field[1];
 
@@ -39,9 +37,7 @@ class JHTMLCTTableJoin
 
         $filter = array_merge($filter, $params_filter);
 
-
         //Get initial table filters based on the value
-
         $js_filters = [];
         $js_filters_selfParent = [];
         $parent_id = $value;

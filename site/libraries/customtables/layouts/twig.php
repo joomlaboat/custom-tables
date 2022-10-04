@@ -38,9 +38,12 @@ class TwigProcessor
     var array $variables = [];
     var bool $recordBlockFound;
     var string $recordBlockReplaceCode;
+    var bool $getEditFieldNamesOnly;
 
-    public function __construct(CT &$ct, $layoutContent)
+    public function __construct(CT &$ct, $layoutContent, $getEditFieldNamesOnly = false)
     {
+        $this->getEditFieldNamesOnly = $getEditFieldNamesOnly;
+
         $htmlresult_ = '{% autoescape false %}' . $layoutContent . '{% endautoescape %}';
 
         $this->ct = $ct;
@@ -80,10 +83,22 @@ class TwigProcessor
 
         $this->twig = new \Twig\Environment($loader);
 
+        if (!$getEditFieldNamesOnly)
+            $this->addGlobals();
+
+        $this->addFieldValueMethods();
+
+        if (!$getEditFieldNamesOnly)
+            $this->addTwigFilters();
+    }
+
+    protected function addGlobals()
+    {
         $this->twig->addGlobal('fields', new Twig_Fields_Tags($this->ct));
         //{{ fields.list() }}	-	wizard ok
         //{{ fields.count() }}	-	wizard ok
         //{{ fields.json() }}	-	wizard ok
+
 
         $this->twig->addGlobal('user', new Twig_User_Tags($this->ct));
         //{{ user.name() }}	-	wizard ok
@@ -171,32 +186,39 @@ class TwigProcessor
 
         $this->twig->addGlobal('table', new Twig_Table_Tags($this->ct));
         $this->twig->addGlobal('tables', new Twig_Tables_Tags($this->ct));
+    }
 
+    protected function addFieldValueMethods()
+    {
         if (isset($this->ct->Table->fields)) {
             $index = 0;
             foreach ($this->ct->Table->fields as $fieldrow) {
 
-                $function = new TwigFunction($fieldrow['fieldname'], function () use (&$ct, $index) {
-                    //This function will process record values with field typeparams and with optional arguments
-                    //Example:
-                    //{{ price }}  - will return 35896.14 if field type parameter is 2,20 (2 decimals)
-                    //{{ price(3,",") }}  - will return 35,896.140 if field type parameter is 2,20 (2 decimals) but extra 0 added
+                if (!$this->getEditFieldNamesOnly) {
+                    $function = new TwigFunction($fieldrow['fieldname'], function () use (&$ct, $index) {
+                        //This function will process record values with field typeparams and with optional arguments
+                        //Example:
+                        //{{ price }}  - will return 35896.14 if field type parameter is 2,20 (2 decimals)
+                        //{{ price(3,",") }}  - will return 35,896.140 if field type parameter is 2,20 (2 decimals) but extra 0 added
 
-                    $args = func_get_args();
+                        $args = func_get_args();
 
+                        $valueProcessor = new Value($this->ct);
+                        return strval($valueProcessor->renderValue($this->ct->Table->fields[$index], $this->ct->Table->record, $args));
+                    });
 
-                    $valueProcessor = new Value($this->ct);
-                    return strval($valueProcessor->renderValue($this->ct->Table->fields[$index], $this->ct->Table->record, $args));
-                });
+                    $this->twig->addFunction($function);
+                }
 
-                $this->twig->addFunction($function);
-
-                $this->variables[$fieldrow['fieldname']] = new fieldObject($this->ct, $fieldrow);
+                $this->variables[$fieldrow['fieldname']] = new fieldObject($this->ct, $fieldrow, $this->getEditFieldNamesOnly);
 
                 $index++;
             }
         }
+    }
 
+    protected function addTwigFilters()
+    {
         $filter = new TwigFilter('base64encode', function ($string) {
             return base64_encode($string);
         });
@@ -244,12 +266,12 @@ class TwigProcessor
         if ($isSingleRecord) {
             $result = '';
         } else {
-            try {
-                $result = @$this->twig->render('index', $this->variables);
-            } catch (Exception $e) {
-                $this->ct->app->enqueueMessage($e->getMessage(), 'error');
-                return $e->getMessage();
-            }
+            //try {
+            $result = @$this->twig->render('index', $this->variables);
+            //} catch (Exception $e) {
+            //  $this->ct->app->enqueueMessage($e->getMessage(), 'error');
+            //return $e->getMessage();
+            //}
         }
 
         if ($this->recordBlockFound) {
@@ -298,9 +320,11 @@ class fieldObject
 {
     var CT $ct;
     var Field $field;
+    var bool $getEditFieldNamesOnly;
 
-    function __construct(CT &$ct, $fieldrow)
+    function __construct(CT &$ct, $fieldrow, $getEditFieldNamesOnly = false)
     {
+        $this->getEditFieldNamesOnly = $getEditFieldNamesOnly;
         $this->ct = &$ct;
         $this->field = new Field($ct, $fieldrow, $this->ct->Table->record);
     }
@@ -414,7 +438,12 @@ class fieldObject
 
             $value = $Inputbox->getDefaultValueIfNeeded($this->ct->Table->record);
 
-            return $Inputbox->render($value, $this->ct->Table->record);
+            if ($this->getEditFieldNamesOnly) {
+                $this->ct->editFields[] = $this->field->fieldname;
+                return '';
+            } else
+                return $Inputbox->render($value, $this->ct->Table->record);
+
         } else {
             $postfix = '';
             $ajax_prefix = 'com_' . $this->ct->Table->record[$this->ct->Table->realidfieldname] . '_';//example: com_153_es_fieldname or com_153_ct_fieldname

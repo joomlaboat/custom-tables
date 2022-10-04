@@ -17,7 +17,7 @@ use CustomTables\Twig_Html_Tags;
 
 class tagProcessor_Edit
 {
-    public static function process(CT &$ct, &$pagelayout, &$row): array
+    public static function process(CT &$ct, &$pagelayout, &$row, $getEditFieldNamesOnly = false): array
     {
         $ct_html = new Twig_Html_Tags($ct, false);
 
@@ -25,7 +25,7 @@ class tagProcessor_Edit
 
         $buttons = tagProcessor_Edit::process_button($ct_html, $pagelayout);
 
-        $fields = tagProcessor_Edit::process_fields($ct, $pagelayout, $row); //Converted to Twig. Original replaced.
+        $fields = tagProcessor_Edit::process_fields($ct, $pagelayout, $row, $getEditFieldNamesOnly); //Converted to Twig. Original replaced.
         return ['fields' => $fields, 'buttons' => $buttons];
     }
 
@@ -68,7 +68,7 @@ class tagProcessor_Edit
         return $ct_html->button_objects;
     }
 
-    protected static function process_fields(CT &$ct, &$pagelayout, &$row): array
+    protected static function process_fields(CT &$ct, &$pagelayout, &$row, $getEditFieldNamesOnly = false): array
     {
         require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'esinputbox.php');
 
@@ -82,7 +82,7 @@ class tagProcessor_Edit
         $replaceItCode = JoomlaBasicMisc::generateRandomString();
         $items_to_replace = array();
 
-        $field_objects = tagProcessor_Edit::renderFields($row, $pagelayout, $inputBox, $calendars, $replaceItCode, $items_to_replace);
+        $field_objects = self::renderFields($ct, $row, $pagelayout, $inputBox, $calendars, $replaceItCode, $items_to_replace, $getEditFieldNamesOnly);
 
         foreach ($items_to_replace as $item)
             $pagelayout = str_replace($item[0], $item[1], $pagelayout);
@@ -90,7 +90,7 @@ class tagProcessor_Edit
         return $field_objects;
     }
 
-    protected static function renderFields(&$row, &$pagelayout, $inputBox, &$calendars, $replaceItCode, &$items_to_replace): array
+    protected static function renderFields(CT &$ct, &$row, &$pagelayout, $inputBox, &$calendars, $replaceItCode, &$items_to_replace, $getEditFieldNamesOnly = false): array
     {
         $field_objects = [];
         $calendars = array();
@@ -106,24 +106,30 @@ class tagProcessor_Edit
 
             if (count($entries) > 0) {
                 for ($i = 0; $i < count($entries); $i++) {
-                    $option_list = JoomlaBasicMisc::csv_explode(',', $options[$i]);
 
-                    $result = '';
+                    if ($getEditFieldNamesOnly) {
+                        $ct->editFields[] = $fieldrow['fieldname'];
+                        $newReplaceItCode = '';
+                    } else {
+                        $option_list = JoomlaBasicMisc::csv_explode(',', $options[$i]);
 
-                    if ($fieldrow['type'] == 'date')
-                        $calendars[] = $inputBox->ct->Env->field_prefix . $fieldrow['fieldname'];
-
-                    if ($fieldrow['type'] != 'dummy')
-                        $result = $inputBox->renderFieldBox($fieldrow, $row, $option_list, '');
-
-                    if ($inputBox->ct->Env->frmt == 'json') {
-                        $field_objects[] = $result;
                         $result = '';
+
+                        if ($fieldrow['type'] == 'date')
+                            $calendars[] = $inputBox->ct->Env->field_prefix . $fieldrow['fieldname'];
+
+                        if ($fieldrow['type'] != 'dummy')
+                            $result = $inputBox->renderFieldBox($fieldrow, $row, $option_list, '');
+
+                        if ($inputBox->ct->Env->frmt == 'json') {
+                            $field_objects[] = $result;
+                            $result = '';
+                        }
+
+                        $newReplaceItCode = $replaceItCode . str_pad(count($items_to_replace), 9, '0', STR_PAD_LEFT) . str_pad($i, 4, '0', STR_PAD_LEFT);
+                        $items_to_replace[] = array($newReplaceItCode, $result);
                     }
 
-                    $newReplaceItCode = $replaceItCode . str_pad(count($items_to_replace), 9, '0', STR_PAD_LEFT) . str_pad($i, 4, '0', STR_PAD_LEFT);
-
-                    $items_to_replace[] = array($newReplaceItCode, $result);
                     $pagelayout = str_replace($entries[$i], $newReplaceItCode, $pagelayout);
                 }
             }

@@ -503,7 +503,7 @@ class CustomTablesModelEditItem extends JModelLegacy
         else
             $row_old[$this->ct->Table->realidfieldname] = '';
 
-        $fieldstosave = $this->getFieldsToSave($row_old); //will Read page Layout to find fields to save
+        $fieldsToSave = $this->getFieldsToSave($row_old); //will Read page Layout to find fields to save
 
         $phpOnChangeFound = false;
         $phpOnAddFound = false;
@@ -513,7 +513,7 @@ class CustomTablesModelEditItem extends JModelLegacy
         foreach ($this->ct->Table->fields as $fieldrow) {
 
             if (!$saveField->checkIfFieldAlreadyInTheList($fieldrow['fieldname'])) {
-                if (in_array($fieldrow['fieldname'], $fieldstosave))
+                if (in_array($fieldrow['fieldname'], $fieldsToSave))
                     $saveFieldSet = $saveField->getSaveFieldSet($fieldrow);
                 else
                     $saveFieldSet = $saveField->applyDefaults($fieldrow);
@@ -660,19 +660,17 @@ class CustomTablesModelEditItem extends JModelLegacy
 
             $LayoutProc = new LayoutProcessor($this->ct, $this->pagelayout);
             $pagelayout = $LayoutProc->fillLayout(null, null, '||', false, true);
-            tagProcessor_Edit::process($this->ct, $pagelayout, $row);
+            tagProcessor_Edit::process($this->ct, $pagelayout, $row, true);
         } else
             $pagelayout = $this->pagelayout;
 
-        $twig = new TwigProcessor($this->ct, $pagelayout);
-        $twig->process($row);
-
+        $twig = new TwigProcessor($this->ct, $pagelayout, true);
+        $pagelayout = $twig->process($row);
         $backgroundFieldTypes = ['creationtime', 'changetime', 'server', 'id', 'md5', 'userid'];
 
         foreach ($this->ct->Table->fields as $fieldrow) {
 
             $fn = $fieldrow['fieldname'];
-
             if (in_array($fieldrow['type'], $backgroundFieldTypes)) {
 
                 if (!in_array($fn, $this->ct->editFields))
@@ -680,15 +678,14 @@ class CustomTablesModelEditItem extends JModelLegacy
             }
 
             $fn_str = [];
-
-            if ($this->ct->Env->legacysupport) {
-                $fn_str[] = '[' . $fn . ':';
-                $fn_str[] = '[' . $fn . ']';
-
-                $fn_str[] = '[_edit:' . $fn . ':';
-                $fn_str[] = $fn . '.edit';
-            }
-
+            /*
+                        if ($this->ct->Env->legacysupport) {
+                            $fn_str[] = '[' . $fn . ':';
+                            $fn_str[] = '[' . $fn . ']';
+                            $fn_str[] = '[_edit:' . $fn . ':';
+                            $fn_str[] = $fn . '.edit';
+                        }
+            */
             $fn_str[] = '"comes_' . $fn . '"';
             $fn_str[] = "'comes_" . $fn . "'";
 
@@ -701,7 +698,6 @@ class CustomTablesModelEditItem extends JModelLegacy
                 }
             }
         }
-
         return $this->ct->editFields;
     }
 
@@ -728,7 +724,6 @@ class CustomTablesModelEditItem extends JModelLegacy
                 }
             } elseif ($fieldrow['type'] != 'log' and $fieldrow['type'] != 'dummy')
                 $fields_to_save[] = $fieldrow['realfieldname'];
-
         }
 
         //get data
