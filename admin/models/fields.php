@@ -582,13 +582,6 @@ class CustomtablesModelFields extends JModelAdmin
             $table->name = htmlspecialchars_decode($table->name, ENT_QUOTES);
         }
 
-        /*
-                if (isset($table->alias) && empty($table->alias))
-                {
-                    $table->generateAlias();
-                }
-                */
-
         if (empty($table->id)) {
             $table->created = $date->toSql();
             // set the user
@@ -610,14 +603,6 @@ class CustomtablesModelFields extends JModelAdmin
             $table->modified = $date->toSql();
             $table->modified_by = $user->id;
         }
-
-        /*
-        if (!empty($table->id))
-        {
-            // Increment the items version number.
-            $table->version++;
-        }
-        */
     }
 
     /**

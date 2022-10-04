@@ -340,12 +340,16 @@ class CustomtablesModelTables extends JModelAdmin
         }
 
         $tabletitle = $data['tabletitle'];
-
         $tableid = (int)$data['id'];
 
-        $tablename = strtolower(trim(preg_replace("/[^a-zA-Z_\d]/", "", $data['tablename'])));
+        if (function_exists("transliterator_transliterate"))
+            $tablename = transliterator_transliterate("Any-Latin; Latin-ASCII; Lower()", $data['tablename']);
+        else
+            $tablename = $data['tablename'];
 
-        //If its a new table, check if field name is unique or add number "_1" if its not.
+        $tablename = strtolower(trim(preg_replace("/[^a-zA-Z_\d]/", "", $tablename)));
+
+        //If it's a new table, check if field name is unique or add number "_1" if its not.
         if ($tableid == 0)
             $tablename = ESTables::checkTableName($tablename);
 

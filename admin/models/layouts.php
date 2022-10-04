@@ -513,6 +513,15 @@ class CustomtablesModelLayouts extends JModelAdmin
         $input = Factory::getApplication()->input;
         $filter = JFilterInput::getInstance();
 
+        if (function_exists("transliterator_transliterate"))
+            $layoutname = transliterator_transliterate("Any-Latin; Latin-ASCII;", $data['layoutname']);
+        else
+            $layoutname = $data['layoutname'];
+
+        //$layoutname = str_replace(" ", "_", $layoutname);
+        $layoutname = trim(preg_replace("/[^a-z A-Z_\d]/", "", $layoutname));
+        $data['layoutname'] = $layoutname;
+
         // set the metadata to the Item Data
         if (isset($data['metadata']) && isset($data['metadata']['author'])) {
             $data['metadata']['author'] = $filter->clean($data['metadata']['author'], 'TRIM');
