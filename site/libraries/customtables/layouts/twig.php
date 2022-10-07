@@ -40,9 +40,12 @@ class TwigProcessor
     var string $recordBlockReplaceCode;
     var bool $getEditFieldNamesOnly;
 
+    //var $layoutContent;
+
     public function __construct(CT &$ct, $layoutContent, $getEditFieldNamesOnly = false)
     {
         $this->getEditFieldNamesOnly = $getEditFieldNamesOnly;
+        //$this->layoutContent = $layoutContent;
 
         $htmlresult_ = '{% autoescape false %}' . $layoutContent . '{% endautoescape %}';
 
@@ -194,24 +197,20 @@ class TwigProcessor
             $index = 0;
             foreach ($this->ct->Table->fields as $fieldrow) {
 
-                if (!$this->getEditFieldNamesOnly) {
-                    $function = new TwigFunction($fieldrow['fieldname'], function () use (&$ct, $index) {
-                        //This function will process record values with field typeparams and with optional arguments
-                        //Example:
-                        //{{ price }}  - will return 35896.14 if field type parameter is 2,20 (2 decimals)
-                        //{{ price(3,",") }}  - will return 35,896.140 if field type parameter is 2,20 (2 decimals) but extra 0 added
+                $function = new TwigFunction($fieldrow['fieldname'], function () use (&$ct, $index) {
+                    //This function will process record values with field typeparams and with optional arguments
+                    //Example:
+                    //{{ price }}  - will return 35896.14 if field type parameter is 2,20 (2 decimals)
+                    //{{ price(3,",") }}  - will return 35,896.140 if field type parameter is 2,20 (2 decimals) but extra 0 added
 
-                        $args = func_get_args();
+                    $args = func_get_args();
 
-                        $valueProcessor = new Value($this->ct);
-                        return strval($valueProcessor->renderValue($this->ct->Table->fields[$index], $this->ct->Table->record, $args));
-                    });
+                    $valueProcessor = new Value($this->ct);
+                    return strval($valueProcessor->renderValue($this->ct->Table->fields[$index], $this->ct->Table->record, $args));
+                });
 
-                    $this->twig->addFunction($function);
-                }
-
+                $this->twig->addFunction($function);
                 $this->variables[$fieldrow['fieldname']] = new fieldObject($this->ct, $fieldrow, $this->getEditFieldNamesOnly);
-
                 $index++;
             }
         }
@@ -266,12 +265,16 @@ class TwigProcessor
         if ($isSingleRecord) {
             $result = '';
         } else {
-            //try {
-            $result = @$this->twig->render('index', $this->variables);
-            //} catch (Exception $e) {
-            //  $this->ct->app->enqueueMessage($e->getMessage(), 'error');
-            //return $e->getMessage();
-            //}
+            try {
+                $result = @$this->twig->render('index', $this->variables);
+            } catch (Exception $e) {
+                $this->ct->app->enqueueMessage($e->getMessage(), 'error');
+
+                //echo $this->layoutContent;
+                echo $e->getMessage();
+                die;
+                return 'Error:' . $e->getMessage();
+            }
         }
 
         if ($this->recordBlockFound) {
