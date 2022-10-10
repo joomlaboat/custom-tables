@@ -51,7 +51,6 @@ class ESTables
             return 0;
 
         $query = 'SELECT id FROM #__customtables_tables AS s WHERE tablename=' . $db->quote($tablename) . ' LIMIT 1';
-
         $db->setQuery($query);
 
         $rows = $db->loadObjectList();
