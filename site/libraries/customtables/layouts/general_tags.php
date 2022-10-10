@@ -347,7 +347,7 @@ class Twig_Document_Tags
 {
     var CT $ct;
 
-    function __construct(&$ct)
+    function __construct(CT &$ct)
     {
         $this->ct = &$ct;
     }
@@ -392,7 +392,7 @@ class Twig_Document_Tags
             return '';
         }
 
-        $twig = new TwigProcessor($this->ct, $layout);
+        $twig = new TwigProcessor($this->ct, $layout, $this->ct->LayoutVariables['getEditFieldNamesOnly']);
 
         $number = 1;
         $html_result = '';

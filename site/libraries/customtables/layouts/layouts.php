@@ -156,7 +156,7 @@ class Layouts
     {
         if (trim($layoutRow['layoutcss']) != '') {
             $layoutContent = trim($layoutRow['layoutcss']);
-            $twig = new TwigProcessor($this->ct, $layoutContent);
+            $twig = new TwigProcessor($this->ct, $layoutContent, $this->ct->LayoutVariables['getEditFieldNamesOnly']);
             $layoutContent = $twig->process($this->ct->Table->record);
 
             $this->ct->document->addCustomTag('<style>' . $layoutContent . '</style>');
@@ -164,7 +164,7 @@ class Layouts
 
         if (trim($layoutRow['layoutjs']) != '') {
             $layoutContent = trim($layoutRow['layoutjs']);
-            $twig = new TwigProcessor($this->ct, $layoutContent);
+            $twig = new TwigProcessor($this->ct, $layoutContent, $this->ct->LayoutVariables['getEditFieldNamesOnly']);
             $layoutContent = $twig->process($this->ct->Table->record);
 
             $this->ct->document->addCustomTag('<script>' . $layoutContent . '</script>');
