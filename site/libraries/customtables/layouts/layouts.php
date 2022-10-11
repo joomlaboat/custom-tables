@@ -148,7 +148,6 @@ class Layouts
                 return $content;
             }
         }
-
         return '';
     }
 
@@ -164,9 +163,8 @@ class Layouts
 
         if (trim($layoutRow['layoutjs']) != '') {
             $layoutContent = trim($layoutRow['layoutjs']);
-            $twig = new TwigProcessor($this->ct, $layoutContent, $this->ct->LayoutVariables['getEditFieldNamesOnly']);
+            $twig = new TwigProcessor($this->ct, $layoutContent, $this->ct->LayoutVariables['getEditFieldNamesOnly'] ?? false);
             $layoutContent = $twig->process($this->ct->Table->record);
-
             $this->ct->document->addCustomTag('<script>' . $layoutContent . '</script>');
         }
     }

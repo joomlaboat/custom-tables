@@ -392,7 +392,7 @@ class Twig_Document_Tags
             return '';
         }
 
-        $twig = new TwigProcessor($this->ct, $layout, $this->ct->LayoutVariables['getEditFieldNamesOnly']);
+        $twig = new TwigProcessor($this->ct, $layout, $this->ct->LayoutVariables['getEditFieldNamesOnly'] ?? false);
 
         $number = 1;
         $html_result = '';
