@@ -265,7 +265,7 @@ class TwigProcessor
                 $this->ct->app->enqueueMessage($e->getMessage(), 'error');
                 echo $e->getMessage();
                 die;
-                return 'Error:' . $e->getMessage();
+                //  return 'Error:' . $e->getMessage();
             }
         }
 

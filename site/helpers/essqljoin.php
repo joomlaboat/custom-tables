@@ -47,7 +47,7 @@ class JHTMLESSqlJoin
         if (isset($typeparams[6])) {
             if ($typeparams[6] == 'radio')
                 $selector = 'radio';
-            if ($typeparams[6] == 'json')
+            elseif ($typeparams[6] == 'json')
                 $selector = 'json';
             else
                 $selector = 'dropdown';
@@ -234,10 +234,8 @@ class JHTMLESSqlJoin
                     break;
                 }
             }
-
             $htmlresult .= LinkJoinFilters::getFilterBox($tableName, $dynamic_filter, $control_name, $filterValue);
         }
-
         return $htmlresult;
     }
 

@@ -924,7 +924,7 @@ class LinkJoinFilters
     static public function getFilterBox($tableName, $dynamic_filter_fieldname, $control_name, $filterValue, $control_name_postfix = ''): string
     {
         $fieldrow = Fields::getFieldRowByName($dynamic_filter_fieldname, 0, $tableName);
-
+        
         if ($fieldrow === null)
             return '';
 
@@ -937,9 +937,7 @@ class LinkJoinFilters
     static protected function getFilterElement_SqlJoin($typeparams, $control_name, $filterValue, $control_name_postfix = ''): string
     {
         $db = Factory::getDBO();
-
         $result = '';
-
         $pair = explode(',', $typeparams);
 
         $tablename = $pair[0];
@@ -962,10 +960,12 @@ class LinkJoinFilters
         $where = '';
         if ($tableRow['published_field_found']) {
             $selects[] = $tableRow['realtablename'] . '.published AS listing_published';
-            $where = 'WHERE listing_published=1';
+            $where = 'WHERE ' . $tableRow['realtablename'] . '.published=1';
         } else {
             $selects[] = '1 AS listing_published';
         }
+
+        $selects[] = $tableRow['realtablename'] . '.' . $fieldrow->realfieldname;
 
         $query = 'SELECT ' . implode(',', $selects) . ' FROM ' . $tableRow['realtablename'] . ' ' . $where . ' ORDER BY ' . $fieldrow->realfieldname;
 
