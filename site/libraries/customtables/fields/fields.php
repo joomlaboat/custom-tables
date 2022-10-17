@@ -343,7 +343,7 @@ class Fields
         if ($db->serverType == 'postgresql')
             return null;
 
-        //get constarnt name
+        //get constrant name
         $query = 'show create table ' . $realtablename;
 
         $db->setQuery($query);
@@ -405,7 +405,7 @@ class Fields
         return false;
     }
 
-    public static function convertMySQLFieldTypeToCT($data_type, $column_type)
+    public static function convertMySQLFieldTypeToCT($data_type, $column_type): array
     {
         $type = '';
         $typeparams = '';

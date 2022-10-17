@@ -17,7 +17,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 class CustomTablesFileMethods
 {
-    static public function FileExtenssion($src, $allowedExtensions = 'doc docx pdf rtf txt xls xlsx psd ppt pptx png jpg jpeg gif webp mp3 pages')
+    static public function FileExtension($src, $allowedExtensions = 'doc docx pdf rtf txt xls xlsx psd ppt pptx png jpg jpeg gif webp mp3 pages'): string
     {
         $name = explode(".", strtolower($src));
         if (count($name) < 2)
@@ -32,11 +32,11 @@ class CustomTablesFileMethods
         return $file_ext;
     }
 
-    static public function getFileExtByID($tableName, $fileboxname, $file_id)
+    static public function getFileExtByID($tableName, $fileBoxName, $file_id): string
     {
         $db = Factory::getDBO();
 
-        $fileBoxTableName = '#__customtables_filebox_' . $tableName . '_' . $fileboxname;
+        $fileBoxTableName = '#__customtables_filebox_' . $tableName . '_' . $fileBoxName;
         $query = 'SELECT file_ext FROM ' . $fileBoxTableName . ' WHERE fileid=' . (int)$file_id . ' LIMIT 1';
         $db->setQuery($query);
         $fileRows = $db->loadObjectList();
@@ -47,7 +47,7 @@ class CustomTablesFileMethods
         return $rec->file_ext;
     }
 
-    static public function DeleteFileBoxFiles($fileBoxTableName, $estableid, $fileBoxName, $typeparams)
+    static public function DeleteFileBoxFiles($fileBoxTableName, $estableid, $fileBoxName, $typeparams): void
     {
         $fileFolder = JPATH_SITE . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $typeparams);
 
@@ -69,7 +69,7 @@ class CustomTablesFileMethods
         }
     }
 
-    static public function DeleteExistingFileBoxFile($filefolder, $estableid, $fileboxname, $fileid, $ext)
+    static public function DeleteExistingFileBoxFile($filefolder, $estableid, $fileboxname, $fileid, $ext): void
     {
         $filename = $filefolder . DIRECTORY_SEPARATOR . $estableid . '_' . $fileboxname . '_' . $fileid . '.' . $ext;
 

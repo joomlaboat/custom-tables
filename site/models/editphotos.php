@@ -47,7 +47,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy
         parent::__construct();
     }
 
-    function load()
+    function load(): bool
     {
         $this->ct = new CT;
 
@@ -98,7 +98,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy
 
         foreach ($this->ct->Table->fields as $mFld) {
             $titlefield = $mFld['realfieldname'];
-            if (!(strpos($mFld['type'], 'multi') === false))
+            if (str_contains($mFld['type'], 'multi'))
                 $titlefield .= $this->ct->Languages->Postfix;
 
             if ($this->row[$titlefield] != '') {
@@ -117,15 +117,14 @@ class CustomTablesModelEditPhotos extends JModelLegacy
             return false;
 
         $this->field = new Field($this->ct, $fieldrow, $this->row);
-
         $this->GalleryTitle = $this->field->title;
-
         $this->imagefolderword = CustomTablesImageMethods::getImageFolder($this->field->params);
         $this->imagefolderweb = $this->imagefolderword;
 
         $this->imagefolder = JPATH_SITE;
         if ($this->imagefolder[strlen($this->imagefolder) - 1] != '/' and $this->imagefolderword[0] != '/')
             $this->imagefolder .= '/';
+
         $this->imagefolder .= str_replace('/', DIRECTORY_SEPARATOR, $this->imagefolderword);
         //Create folder if not exists
         if (!file_exists($this->imagefolder)) {
@@ -136,7 +135,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy
         return true;
     }
 
-    function reorder()
+    function reorder(): bool
     {
         $images = $this->getPhotoList();
 
@@ -144,38 +143,38 @@ class CustomTablesModelEditPhotos extends JModelLegacy
 
         //Apply Main Photo
         //Get New Ordering
-        $Mainphoto = Factory::getApplication()->input->getInt('esphotomain');
+        $MainPhoto = Factory::getApplication()->input->getInt('esphotomain');
 
         foreach ($images as $image) {
             $image->ordering = abs(Factory::getApplication()->input->getInt('esphotoorder' . $image->photoid, 0));
-            if ($Mainphoto == $image->photoid)
+            if ($MainPhoto == $image->photoid)
                 $image->ordering = -1;
         }
 
         //Increase all if main
         do {
-            $nonegative = true;
+            $noNegative = true;
             foreach ($images as $image) {
                 if ($image->ordering == -1)
-                    $nonegative = false;
+                    $noNegative = false;
             }
 
-            if (!$nonegative) {
+            if (!$noNegative) {
                 foreach ($images as $image)
                     $image->ordering++;
             }
 
-        } while (!$nonegative);
+        } while (!$noNegative);
 
         $db = Factory::getDBO();
 
         asort($images);
         $i = 0;
         foreach ($images as $image) {
-            $safetitle = Factory::getApplication()->input->getString('esphototitle' . $image->photoid);
-            $safetitle = str_replace('"', "", $safetitle);
+            $safeTitle = Factory::getApplication()->input->getString('esphototitle' . $image->photoid);
+            $safeTitle = str_replace('"', "", $safeTitle);
 
-            $query = 'UPDATE ' . $this->phototablename . ' SET ordering=' . $i . ', title' . $this->ct->Languages->Postfix . '="' . $safetitle . '" WHERE listingid='
+            $query = 'UPDATE ' . $this->phototablename . ' SET ordering=' . $i . ', title' . $this->ct->Languages->Postfix . '="' . $safeTitle . '" WHERE listingid='
                 . $this->listing_id . ' AND photoid=' . $image->photoid;
 
             $db->setQuery($query);
@@ -199,7 +198,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy
         return $db->loadObjectList();
     }
 
-    function delete()
+    function delete(): bool
     {
         $db = Factory::getDBO();
 
@@ -221,7 +220,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy
         return true;
     }
 
-    function add()
+    function add(): bool
     {
         $jinputfile = Factory::getApplication()->input->files;
         $file = $jinputfile->files->get('uploadedfile');
@@ -237,7 +236,6 @@ class CustomTablesModelEditPhotos extends JModelLegacy
             $uploadedfile = $dst;
         }
 
-
         //Check file
         if (!$this->imagemethods->CheckImage($uploadedfile, JoomlaBasicMisc::file_upload_max_size()))//$this->maxfilesize
         {
@@ -247,7 +245,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy
         }
 
         //Save to DB
-        $photo_ext = $this->imagemethods->FileExtenssion($uploadedfile);
+        $photo_ext = $this->imagemethods->FileExtension($uploadedfile);
         $filenameParts = explode('/', $uploadedfile);
         $filename = end($filenameParts);
         $title = str_replace('.' . $photo_ext, '', $filename);
@@ -257,15 +255,15 @@ class CustomTablesModelEditPhotos extends JModelLegacy
         $isOk = true;
 
         //es Thumb
-        $newfilename = $this->imagefolder . DIRECTORY_SEPARATOR . $this->imagemainprefix . $this->ct->Table->tableid . '_' . $this->galleryname . '__esthumb_' . $photoId . ".jpg";
-        $r = $this->imagemethods->ProportionalResize($uploadedfile, $newfilename, 150, 150, 1, true, -1, '');
+        $newFileName = $this->imagefolder . DIRECTORY_SEPARATOR . $this->imagemainprefix . $this->ct->Table->tableid . '_' . $this->galleryname . '__esthumb_' . $photoId . ".jpg";
+        $r = $this->imagemethods->ProportionalResize($uploadedfile, $newFileName, 150, 150, 1, true, -1, '');
 
         if ($r != 1)
             $isOk = false;
 
-        $customsizes = $this->imagemethods->getCustomImageOptions($this->field->params[0]);
+        $customSizes = $this->imagemethods->getCustomImageOptions($this->field->params[0]);
 
-        foreach ($customsizes as $imagesize) {
+        foreach ($customSizes as $imagesize) {
             $prefix = $imagesize[0];
             $width = (int)$imagesize[1];
             $height = (int)$imagesize[2];
@@ -277,18 +275,17 @@ class CustomTablesModelEditPhotos extends JModelLegacy
             else
                 $ext = $photo_ext;
 
-            $newfilename = $this->imagefolder . DIRECTORY_SEPARATOR . $this->imagemainprefix . $this->ct->Table->tableid . '_' . $this->galleryname . '_' . $prefix . '_' . $photoId . "." . $ext;
-            $r = $this->imagemethods->ProportionalResize($uploadedfile, $newfilename, $width, $height, 1, true, $color, '');
+            $newFileName = $this->imagefolder . DIRECTORY_SEPARATOR . $this->imagemainprefix . $this->ct->Table->tableid . '_' . $this->galleryname . '_' . $prefix . '_' . $photoId . "." . $ext;
+            $r = $this->imagemethods->ProportionalResize($uploadedfile, $newFileName, $width, $height, 1, true, $color, '');
 
             if ($r != 1)
                 $isOk = false;
-
         }
 
         if ($isOk) {
-            $originalname = $this->imagemainprefix . $this->ct->Table->tableid . '_' . $this->galleryname . '__original_' . $photoId . "." . $photo_ext;
+            $originalName = $this->imagemainprefix . $this->ct->Table->tableid . '_' . $this->galleryname . '__original_' . $photoId . "." . $photo_ext;
 
-            if (!copy($uploadedfile, $this->imagefolder . DIRECTORY_SEPARATOR . $originalname)) {
+            if (!copy($uploadedfile, $this->imagefolder . DIRECTORY_SEPARATOR . $originalName)) {
                 unlink($uploadedfile);
                 return false;
             }
@@ -349,20 +346,19 @@ class CustomTablesModelEditPhotos extends JModelLegacy
         return -1;
     }
 
-    function AutoReorderPhotos()
+    function AutoReorderPhotos(): bool
     {
         $images = $this->getPhotoList();
-
         $db = Factory::getDBO();
 
         asort($images);
         $i = 0;
         foreach ($images as $image) {
-            $safetitle = Factory::getApplication()->input->getString('esphototitle' . $image->photoid);
-            $safetitle = str_replace('"', "", $safetitle);
+            $safeTitle = Factory::getApplication()->input->getString('esphototitle' . $image->photoid);
+            $safeTitle = str_replace('"', "", $safeTitle);
 
-            if ($safetitle != '') {
-                $query = 'UPDATE ' . $this->phototablename . ' SET ordering=' . $i . ', title' . $this->ct->Languages->Postfix . '=' . $db->quote($safetitle) . ' WHERE listingid='
+            if ($safeTitle != '') {
+                $query = 'UPDATE ' . $this->phototablename . ' SET ordering=' . $i . ', title' . $this->ct->Languages->Postfix . '=' . $db->quote($safeTitle) . ' WHERE listingid='
                     . $this->listing_id . ' AND photoid=' . $image->photoid;
             } else {
                 $query = 'UPDATE ' . $this->phototablename . ' SET ordering=' . $i . ' WHERE listingid='
@@ -376,15 +372,15 @@ class CustomTablesModelEditPhotos extends JModelLegacy
         return true;
     }
 
-    function DoAutoResize($uploadedfile, $folder_resized, $image_width, $image_height, $photoid, $fileext)
+    function DoAutoResize($uploadedFile, $folder_resized, $image_width, $image_height, $photoid, $fileext): bool
     {
-        if (!file_exists($uploadedfile))
+        if (!file_exists($uploadedFile))
             return false;
 
-        $newfilename = $folder_resized . $photoid . '.' . $fileext;
+        $newFileName = $folder_resized . $photoid . '.' . $fileext;
 
         //hexdec ("#323131")
-        $r = $this->imagemethods->ProportionalResize($uploadedfile, $newfilename, $image_width, $image_height, 1, true, -1, '');
+        $r = $this->imagemethods->ProportionalResize($uploadedFile, $newFileName, $image_width, $image_height, 1, true, -1, '');
         if ($r != 1)
             return false;
 

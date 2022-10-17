@@ -188,15 +188,15 @@ class CustomtablesControllerFields extends JControllerForm
         $layout = $this->input->get('layout', 'edit', 'string');
 
         $ref = $this->input->get('ref', 0, 'string');
-        $refid = $this->input->get('refid', 0, 'int');
+        $refId = $this->input->get('refid', 0, 'int');
 
         $tableid = $this->input->getint('tableid', 0);
         // Setup redirect info.
 
         $append = '';
 
-        if ($refid) {
-            $append .= '&ref=' . (string)$ref . '&refid=' . (int)$refid;
+        if ($refId) {
+            $append .= '&ref=' . (string)$ref . '&refid=' . (int)$refId;
         } elseif ($ref) {
             $append .= '&ref=' . (string)$ref;
         }

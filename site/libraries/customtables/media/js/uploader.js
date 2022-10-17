@@ -15,7 +15,7 @@ function updateUploadedFileBox(index) {
     }
 }
 
-function checkIfLogedIn(data) {
+function checkIfLoggedIn(data) {
     if (data.indexOf('Please login first') !== -1) {
         alert("Session expired. Please login. You may login in a new tab or windows.");
         return false;
@@ -70,7 +70,7 @@ function ct_getUploader(index, urlstr, maxFileSize, allowedTypes, UploaderForm, 
                 const p = uploaderParams[index];
                 const data_ = data;
 
-                if (checkIfLogedIn(data_)) {
+                if (checkIfLoggedIn(data_)) {
                     let res = null;
                     try {
                         res = JSON.parse(data_);
@@ -114,7 +114,7 @@ function ct_getUploader(index, urlstr, maxFileSize, allowedTypes, UploaderForm, 
                     $.post(uploaderParams[index].ct_uploader_url, {op: "delete", name: filename},
                         function (resp, textStatus, jqXHR) {
                             //const data_ = resp;
-                            //if(checkIfLogedIn(data_)){
+                            //if(checkIfLoggedIn(data_)){
                             //	if(textStatus==='success')
                             //		const res = JSON.parse(data_);
                             //}

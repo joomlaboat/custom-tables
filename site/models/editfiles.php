@@ -138,9 +138,7 @@ class CustomTablesModelEditFiles extends JModelLegacy
         }
 
         //Save to DB
-
-        $file_ext = CustomTablesFileMethods::FileExtenssion($uploadedFile, $this->allowedExtensions);
-        //or $allowed_ext.indexOf($file_ext)==-1
+        $file_ext = CustomTablesFileMethods::FileExtension($uploadedFile, $this->allowedExtensions);
         if ($file_ext == '') {
             //unknown file extension (type)
             unlink($uploadedFile);

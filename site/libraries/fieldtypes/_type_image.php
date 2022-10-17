@@ -158,7 +158,7 @@ class CT_FieldTypeTag_image
         $isShortcut = false;
         if (isset($row[$realFieldName])) {
             $img = $row[$realFieldName];
-            if (strpos($img, '-') !== false) {
+            if (str_contains($img, '-')) {
                 $isShortcut = true;
                 $img = str_replace('-', '', $img);
             }
@@ -224,7 +224,7 @@ class CT_FieldTypeTag_image
                 ct_eventsmessage_element="ct_eventsmessage";
                 tempFileName="' . $fileId . '";
                 fieldValueInputBox="' . $prefix . $field->fieldname . '";
-                var urlstr="' . JURI::root(true) . '/index.php?option=com_customtables&view=fileuploader&tmpl=component&'
+                const urlstr="' . JURI::root(true) . '/index.php?option=com_customtables&view=fileuploader&tmpl=component&'
             . $field->fieldname . '_fileid=' . $fileId
             . '&Itemid=' . $field->ct->Params->ItemId
             . (is_null($field->ct->Params->ModuleId) ? '' : '&ModuleId=' . $field->ct->Params->ModuleId)
@@ -243,7 +243,7 @@ class CT_FieldTypeTag_image
 
     }
 
-    protected static function renderUploaderLimitations()
+    protected static function renderUploaderLimitations(): string
     {
         $max_file_size = JoomlaBasicMisc::file_upload_max_size();
 
