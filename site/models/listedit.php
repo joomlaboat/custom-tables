@@ -77,7 +77,7 @@ class CustomTablesModelListEdit extends JModel
             if (strlen($imageparams) == 0)
                 $imageparams = Tree::getHeritageInfo(Factory::getApplication()->input->get('parentid', 0, 'INT'), 'imageparams');
 
-            $value = $imagemethods->UploadSingleImage(0, $fieldname, $imagefolder, $imageparams, '-options');
+            $value = $imagemethods->UploadSingleImage('', $fieldname, $imagefolder, $imageparams, '-options');
         } else {
 
             $ExistingImage = Tree::isRecordExist($tree_id, 'id', 'image', '#__customtables_options');

@@ -201,23 +201,23 @@ class CustomTablesImageMethods
         $query = 'SELECT ' . $realfieldname . ' FROM ' . $realtablename . ' WHERE ' . $realfieldname . '>0';
 
         $db->setQuery($query);
-        $imagelist = $db->loadAssocList();
-        $customsizes = $this->getCustomImageOptions($imageparams);
+        $imageList = $db->loadAssocList();
+        $customSizes = $this->getCustomImageOptions($imageparams);
 
-        foreach ($imagelist as $img) {
+        foreach ($imageList as $img) {
             $ExistingImage = $img[$realfieldname];
 
             if ($deleteOriginals)
                 CustomTablesImageMethods::DeleteOriginalImage($ExistingImage, $ImageFolder, $realtablename, $realfieldname, $realidfield);
 
-            foreach ($customsizes as $customsize)
-                CustomTablesImageMethods::DeleteCustomImage($ExistingImage, $ImageFolder, $customsize[0]);
+            foreach ($customSizes as $customSize)
+                CustomTablesImageMethods::DeleteCustomImage($ExistingImage, $ImageFolder, $customSize[0]);
         }
     }
 
-    static protected function DeleteOriginalImage($ExistingImage, $ImageFolder, $realtablename, $realfieldname, $realidfield)
+    static protected function DeleteOriginalImage($ExistingImage, $ImageFolder, $realtablename, $realfieldname, $realIdField): bool
     {
-        //This function deletes original images in case image not ocupied by another record.
+        //This function deletes original images in case image not occupied by another record.
 
         //---------- find child ----------
         //check if the image has child or not
@@ -228,14 +228,14 @@ class CustomTablesImageMethods
                 $ExistingImage = 0;
 
             if ($ExistingImage > 0) {
-                //If its an original image not duplicate, find one duplicate and convert it to original
-                $query = 'SELECT ' . $realidfield . ' FROM ' . $realtablename . ' WHERE ' . $realfieldname . '=-' . $ExistingImage . ' LIMIT 1';
+                //If it's an original image not duplicate, find one duplicate and convert it to original
+                $query = 'SELECT ' . $realIdField . ' FROM ' . $realtablename . ' WHERE ' . $realfieldname . '=-' . $ExistingImage . ' LIMIT 1';
                 $db->setQuery($query);
-                $photorows = $db->loadAssocList();
+                $photoRows = $db->loadAssocList();
 
-                if (count($photorows) == 1) //do not compare if there is a child
+                if (count($photoRows) == 1) //do not compare if there is a child
                 {
-                    $photorow = $photorows[0];
+                    $photoRow = $photoRows[0];
 
                     //Null Parent
                     $query = 'UPDATE ' . $realtablename . ' SET ' . $realfieldname . '=0 WHERE ' . $realfieldname . '=' . $ExistingImage;
@@ -243,7 +243,7 @@ class CustomTablesImageMethods
                     $db->execute();
 
                     //Convert Child to Parent
-                    $query = 'UPDATE ' . $realtablename . ' SET ' . $realfieldname . '=' . $ExistingImage . ' WHERE ' . $realidfield . '=' . (int)$photorow[$realidfield];
+                    $query = 'UPDATE ' . $realtablename . ' SET ' . $realfieldname . '=' . $ExistingImage . ' WHERE ' . $realIdField . '=' . (int)$photoRow[$realIdField];
 
                     $db->setQuery($query);
                     $db->execute();
@@ -259,8 +259,9 @@ class CustomTablesImageMethods
             if (file_exists($ImageFolder . DIRECTORY_SEPARATOR . '_esthumb_' . $ExistingImage . '.' . $photo_ext))
                 unlink($ImageFolder . DIRECTORY_SEPARATOR . '_esthumb_' . $ExistingImage . '.' . $photo_ext);
         }
-    }
 
+        return true;
+    }
 
     static protected function DeleteCustomImage($ExistingImage, $ImageFolder, $CustomSize)
     {
@@ -281,21 +282,16 @@ class CustomTablesImageMethods
         return '';
     }
 
-    function UploadSingleImage($ExistingImage, $image_file_id, $realfieldname, $ImageFolder, $params, $realtablename, $realidfieldname)
+    function UploadSingleImage(string $ExistingImage, string $image_file_id, string $realfieldname, string $ImageFolder, array $params, string $realtablename, string $realidfieldname): ?string
     {
-        //$realtablename = '-options'
-
-        if (is_object('Factory::getApplication()'))
-            $jinput = Factory::getApplication()->input;
-        else
-            $jinput = null;
+        $fileNameType = $params[3] ?? '';
 
         if ($image_file_id != '') {
             $additional_params = '';
             if (isset($params[1]))
                 $additional_params = $params[1];
 
-            if (strpos($image_file_id, DIRECTORY_SEPARATOR) === false)//in case when other applications pass full path to the file
+            if (!str_contains($image_file_id, DIRECTORY_SEPARATOR))//in case when other applications pass full path to the file
                 $uploadedFile = JPATH_SITE . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR . $image_file_id;
             else
                 $uploadedFile = $image_file_id;
@@ -312,23 +308,45 @@ class CustomTablesImageMethods
                 $uploadedFile = $dst;
             }
 
-            //Delete Old Logo
-            if ($ExistingImage != 0)
+            //Delete
+            if ($ExistingImage != '')
                 $this->DeleteExistingSingleImage($ExistingImage, $ImageFolder, $params[0], $realtablename, $realfieldname, $realidfieldname);
 
             $new_photo_ext = $this->FileExtenssion($uploadedFile);
 
             //Get new file name and avoid possible duplicate
-
             $i = 0;
+
             do {
-                $ImageID = date("YmdHis") . ($i > 0 ? $i : '');
+                if ($fileNameType == '') {
+                    $ImageID = date("YmdHis") . ($i > 0 ? $i : '');
+                    $ImageID .= ($i > 0 ? $i : '');
+                } else {
+                    $ImageID = Factory::getApplication()->input->getString('com' . $realfieldname . '_filename', '');
+                    if ($fileNameType == 'transliterated') {
+
+                        if (function_exists("transliterator_transliterate"))
+                            $ImageID = transliterator_transliterate("Any-Latin; Latin-ASCII; Lower()", $ImageID);
+
+                        $ImageID = trim(str_replace(' ', '_', $ImageID));
+                        $ImageID = preg_replace("/(&)([a-z])([a-z]+;)/i", '$2', $ImageID);
+                    }
+
+                    $parts = explode('.', $ImageID);
+                    if (count($parts) < 1)
+                        return null;
+
+                    $parts[count($parts) - 2] .= ($i > 0 ? $i : '');
+                    $ImageID = implode('.', $parts);
+                }
+
                 //there is possible error, check all possible ext
                 $thumbnail_image_file = $ImageFolder . DIRECTORY_SEPARATOR . '_esthumb_' . $ImageID . '.jpg';
                 $original_image_file = $ImageFolder . DIRECTORY_SEPARATOR . '_original_' . $ImageID . '.' . $new_photo_ext;
 
                 $i++;
             } while (file_exists($thumbnail_image_file));
+
             $isOk = true;
 
             //es Thumb
@@ -338,35 +356,30 @@ class CustomTablesImageMethods
                 $isOk = false;
 
             //--------- compare thumbnails
-
             $duplicateImageID = $this->compareThumbs($additional_params, $realtablename, $realfieldname, $ImageFolder, $uploadedFile, $thumbnail_image_file);
 
             if ($duplicateImageID != 0)
                 return $duplicateImageID;
-
             //--------- end of compare thumbnails
-
 
             //custom images
             if ($isOk) {
-                $customsizes = $this->getCustomImageOptions($params[0]);
+                $customSizes = $this->getCustomImageOptions($params[0]);
 
-                foreach ($customsizes as $imagesize) {
+                foreach ($customSizes as $imagesize) {
                     $prefix = $imagesize[0];
                     $width = (int)$imagesize[1];
                     $height = (int)$imagesize[2];
-
                     $color = (int)$imagesize[3];
                     $watermark = $imagesize[5];
 
-                    //save as extention
+                    //save as extension
                     if ($imagesize[4] != '')
                         $ext = $imagesize[4];
                     else
                         $ext = $new_photo_ext;
 
                     $r = $this->ProportionalResize($uploadedFile, $ImageFolder . DIRECTORY_SEPARATOR . $prefix . '_' . $ImageID . '.' . $ext, $width, $height, 1, true, $color, $watermark);
-
                     if ($r != 1)
                         $isOk = false;
                 }
@@ -382,25 +395,33 @@ class CustomTablesImageMethods
 
                 if (file_exists($uploadedFile))
                     unlink($uploadedFile);
-                
-                return -1;
+
+                if ($fileNameType == '') {
+                    return '-1';
+                } else {
+                    return '';
+                }
             }
         }
-        return 0;
+
+        if ($fileNameType == '')
+            return '0';
+        else
+            return null;
     }
 
-    function base64file_decode($inputfile, $outputfile)
+    function base64file_decode($inputFile, $outputFile)
     {
         /* read data (binary) */
-        $ifp = fopen($inputfile, "rb");
-        $srcData = fread($ifp, filesize($inputfile));
+        $ifp = fopen($inputFile, "rb");
+        $srcData = fread($ifp, filesize($inputFile));
         fclose($ifp);
         /* encode & write data (binary) */
-        $ifp = fopen($outputfile, "wb");
+        $ifp = fopen($outputFile, "wb");
         fwrite($ifp, base64_decode($srcData));
         fclose($ifp);
         /* return output filename */
-        return $outputfile;
+        return $outputFile;
     }
 
     function DeleteExistingSingleImage($ExistingImage, $ImageFolder, string $imageparams, $realtablename, $realfieldname, $realidfield)
@@ -472,12 +493,10 @@ class CustomTablesImageMethods
             try {
                 $from = @ImageCreateFromJpeg($src);
             } catch (Exception $e) {
-                echo 'e1.';
                 return -1;
             }
 
             if (!$from) {
-                echo 'e2.';
                 return -1;
             }
 
@@ -485,11 +504,9 @@ class CustomTablesImageMethods
                 try {
                     $rgb = imagecolorat($from, 0, 0);
                 } catch (Exception $e) {
-                    echo 'e3.';
                     return -1;
                 }
             }
-            echo '*';
 
         } elseif ($fileExtension == "gif") {
             $from1 = ImageCreateFromGIF($src);

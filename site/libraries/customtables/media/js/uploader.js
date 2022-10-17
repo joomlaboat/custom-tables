@@ -80,9 +80,9 @@ function ct_getUploader(index, urlstr, maxFileSize, allowedTypes, UploaderForm, 
                     }
 
                     if (res.status === 'success') {
-                        const filename = res.filename;
-                        const obj = document.getElementById(p.fieldValueInputBox);
-                        obj.value = filename;
+
+                        document.getElementById(p.fieldValueInputBox).value = res.filename;
+                        document.getElementById(p.fieldValueInputBox + '_filename').value = res.originalfilename;
 
                         $("#" + EventMessageBox).html("");
                         p.files_uploaded += 1;

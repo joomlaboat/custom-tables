@@ -964,22 +964,29 @@ class Fields
             }
 
             $input = Factory::getApplication()->input;
-            $extratask = '';
+            $extraTask = '';
 
-            if ($ex_type == $new_type and $new_type == 'image' and ($ex_typeparams != $new_typeparams or strpos($new_typeparams, '|delete') !== false))
-                $extratask = 'updateimages'; //Resize all images if neaded
+            if ($ex_type == $new_type and $new_type == 'image' and ($ex_typeparams != $new_typeparams or str_contains($new_typeparams, '|delete'))) {
 
+                $ex_typeparams_array = JoomlaBasicMisc::csv_explode(',', $ex_typeparams);
+                $new_typeparams_array = JoomlaBasicMisc::csv_explode(',', $new_typeparams);
+
+                if ($ex_typeparams_array[0] != $new_typeparams_array[0])
+                    $extraTask = 'updateimages'; //Resize all images if needed
+                elseif (($ex_typeparams_array[2] ?? null) != ($new_typeparams_array[2] ?? null))
+                    $extraTask = 'updateimages'; //Move all images if needed
+            }
             if ($ex_type == $new_type and $new_type == 'file' and $ex_typeparams != $new_typeparams)
-                $extratask = 'updatefiles';
+                $extraTask = 'updatefiles';
 
             if ($ex_type == $new_type and $new_type == 'imagegallery' and $ex_typeparams != $new_typeparams)
-                $extratask = 'updateimagegallery'; //Resize or move all images in the gallery if neaded
+                $extraTask = 'updateimagegallery'; //Resize or move all images in the gallery if needed
 
             if ($ex_type == $new_type and $new_type == 'filebox' and $ex_typeparams != $new_typeparams)
-                $extratask = 'updatefilebox'; //Resize or move all images in the gallery if neaded
+                $extraTask = 'updatefilebox'; //Resize or move all images in the gallery if needed
 
-            if ($extratask != '') {
-                $input->set('extratask', $extratask);
+            if ($extraTask != '') {
+                $input->set('extratask', $extraTask);
                 $input->set('old_typeparams', base64_encode($ex_typeparams));
                 $input->set('new_typeparams', base64_encode($new_typeparams));
                 $input->set('fieldid', $fieldid);
@@ -1016,7 +1023,6 @@ class Fields
     public static function getPureFieldType($ct_fieldtype, $typeparams): string
     {
         $ct_fieldTypeArray = Fields::getProjectedFieldType($ct_fieldtype, $typeparams);
-
         return Fields::makeProjectedFieldType($ct_fieldTypeArray);
     }
 
@@ -1122,7 +1128,20 @@ class Fields
                 return ['data_type' => 'int', 'is_nullable' => true, 'is_unsigned' => true, 'length' => null, 'default' => null, 'extra' => null];
 
             case 'image':
-                return ['data_type' => 'bigint', 'is_nullable' => true, 'is_unsigned' => false, 'length' => null, 'default' => null, 'extra' => null];
+
+                $typeparams_arr = JoomlaBasicMisc::csv_explode(',', $typeparams);
+
+                $fileNameType = $typeparams_arr[3] ?? '';
+                $length = null;
+
+                if ($fileNameType == '') {
+                    $type = 'bigint';
+                } else {
+                    $type = 'varchar';
+                    $length = 1024;
+                }
+
+                return ['data_type' => $type, 'is_nullable' => true, 'is_unsigned' => false, 'length' => $length, 'default' => null, 'extra' => null];
 
             case 'checkbox':
                 return ['data_type' => 'tinyint', 'is_nullable' => false, 'is_unsigned' => false, 'length' => null, 'default' => 0, 'extra' => null];
@@ -1281,7 +1300,7 @@ class Fields
 
     public static function ConvertFieldType($realtablename, $realfieldname, $ex_type, $new_type, $ex_typeparams, $new_typeparams, $PureFieldType, $fieldtitle): bool
     {
-        if ($new_type == 'blob' or $new_type == 'text' or $new_type == 'multilangtext') {
+        if ($new_type == 'blob' or $new_type == 'text' or $new_type == 'multilangtext' or $new_type == 'image') {
             if ($new_typeparams == $ex_typeparams)
                 return true; //no need to convert
         } else {
@@ -1289,7 +1308,7 @@ class Fields
                 return true; //no need to convert
         }
 
-        $unconvertable_types = array('dummy', 'image', 'imagegallery', 'file', 'filebox', 'signature', 'records', 'customtables', 'log');
+        $unconvertable_types = array('dummy', 'imagegallery', 'file', 'filebox', 'signature', 'records', 'customtables', 'log');
 
         if (in_array($new_type, $unconvertable_types) or in_array($ex_type, $unconvertable_types))
             return false;

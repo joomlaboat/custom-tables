@@ -597,6 +597,16 @@
             </param>
             <param name="folder" example="/images/product_photos" label="Folder"
                    description="Folder where all the files will be kept. By default /images" default="" type="folder"/>
+
+            <param name="filename" label="Save As File Name"
+                   description=""
+                   default="" type="list">
+                <option value="" label="Date Time (YmdHis)"/>
+                <option value="transliterated" label="Filename (Transliterated)"
+                        description="Alphanumeric and transliterated also the whitespace is replaced with the underscore character. Extra Number can be added if the file name is not unique."/>
+                <option value="original" label="Filename As It Is"
+                        description="File name as it is, no changes. Extra Number can be added if the file name is not unique."/>
+            </param>
         </params>
         <editparams name="image" label="Input Element Parameters" description="">
             <params>

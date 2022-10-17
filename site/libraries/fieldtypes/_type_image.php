@@ -96,10 +96,10 @@ class CT_FieldTypeTag_image
         $ImageFolder = CustomTablesImageMethods::getImageFolder($field->params);
 
         $jinput = Factory::getApplication()->input;
-        $fileid = $jinput->post->get($field->comesfieldname, '', 'STRING');
+        $fileId = $jinput->post->get($field->comesfieldname, '', 'STRING');
 
         if ($listing_id == 0) {
-            $value = $imagemethods->UploadSingleImage(0, $fileid, $field->realfieldname, JPATH_SITE . DIRECTORY_SEPARATOR
+            $value = $imagemethods->UploadSingleImage('', $fileId, $field->realfieldname, JPATH_SITE . DIRECTORY_SEPARATOR
                 . $ImageFolder, $field->params, $field->ct->Table->realtablename, $field->ct->Table->realidfieldname);
         } else {
             $to_delete = $jinput->post->get($field->comesfieldname . '_delete', '', 'CMD');
@@ -118,16 +118,16 @@ class CT_FieldTypeTag_image
 
                 return $value;
             } else {
-                $value = $imagemethods->UploadSingleImage($ExistingImage, $fileid, $field->realfieldname,
+                $value = $imagemethods->UploadSingleImage($ExistingImage, $fileId, $field->realfieldname,
                     JPATH_SITE . DIRECTORY_SEPARATOR . $ImageFolder, $field->params, $field->ct->Table->realtablename, $field->ct->Table->realidfieldname);
             }
         }
 
-        if ($value == -1 or $value == 2) {
+        if ($value == "-1" or $value == "2") {
             // -1 if file extension not supported
             // 2 if file already exists
             Factory::getApplication()->enqueueMessage('Could not upload image file.', 'error');
-        } elseif ($value != 0)
+        } elseif ($value != '')
             return $value;
 
         return null;
@@ -235,12 +235,11 @@ class CT_FieldTypeTag_image
 
  <!--suppress XmlDuplicatedId -->
            </script>
-            <input type="hidden" name="' . $prefix . $field->fieldname . '" id="' . $prefix . $field->fieldname . '" value=""'
-            . ($field->isrequired ? ' class="required"' : '')
-            . ' />
-    ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE') . ': ' . JoomlaBasicMisc::formatSizeUnits($max_file_size) . '
-        </div>
-        ';
+            <input type="hidden" name="' . $prefix . $field->fieldname . '" id="' . $prefix . $field->fieldname . '" value="" ' . ($field->isrequired ? ' class="required"' : '') . ' />
+            <input type="hidden" name="' . $prefix . $field->fieldname . '_filename" id="' . $prefix . $field->fieldname . '_filename" value="" />'
+
+            . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE') . ': ' . JoomlaBasicMisc::formatSizeUnits($max_file_size) . '
+        </div>';
 
     }
 

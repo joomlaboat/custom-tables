@@ -618,6 +618,7 @@ class CT_FieldTypeTag_file
 
                     </script>
                     <input type="hidden" name="' . $field->prefix . $field->fieldname . '" id="' . $field->prefix . $field->fieldname . '" value="" />
+                    <input type="hidden" name="' . $field->prefix . $field->fieldname . '_filename" id="' . $field->prefix . $field->fieldname . '_filename" value="" />
                     ' . common::translate('COM_CUSTOMTABLES_PERMITTED_FILE_TYPES') . ': ' . $accepted_file_types . '<br/>
 					' . common::translate('COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE') . ': ' . JoomlaBasicMisc::formatSizeUnits($max_file_size) . '
                 </div>
