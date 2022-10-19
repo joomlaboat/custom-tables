@@ -120,9 +120,10 @@ const Base64 = {
     _utf8_decode: function (utftext) {
         let string = "";
         let i = 0;
-        let c = c1 = c2 = 0;
+        let c1;
         let c2;
         let c3;
+        let c = c1 = c2 = 0;
 
         while (i < utftext.length) {
 

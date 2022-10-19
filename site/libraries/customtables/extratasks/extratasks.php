@@ -36,14 +36,13 @@ class extraTasks
         $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/base64.js"></script>');
         $document->addCustomTag('<link href="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/css/modal.css" rel="stylesheet">');
 
-        $extratask = $input->getCmd('extratask', '');
+        $extraTask = $input->getCmd('extratask', '');
 
-        if ($extratask != '')// and isset($tasks[$extratask]))
-        {
+        if ($extraTask != '') {
             $js = '
 		<script>
 		window.addEventListener( "load", function( event ) {
-		extraTasksUpdate(\'' . $extratask . '\',\'' . $input->get('old_typeparams', '', 'BASE64') . '\',\'' . $input->get('new_typeparams', '', 'BASE64') . '\',' . (int)$tableid . ',' . (int)$fieldid . ',\'' . $table_row->tabletitle . '\',\'' . $field_row->fieldtitle . '\');
+		extraTasksUpdate(\'' . $extraTask . '\',\'' . $input->get('old_typeparams', '', 'BASE64') . '\',\'' . $input->get('new_typeparams', '', 'BASE64') . '\',' . (int)$tableid . ',' . (int)$fieldid . ',\'' . $table_row->tabletitle . '\',\'' . $field_row->fieldtitle . '\');
 	});
 		</script>
 ';

@@ -104,7 +104,7 @@ class JoomlaBasicMisc
     {
         $urlstr = str_replace('&amp;', '&', $urlstr);
         $link = '';
-        $newquery = array();
+        $newQuery = array();
         $opt = $opt_ . '=';
 
         $parts = explode('?', $urlstr);
@@ -117,16 +117,16 @@ class JoomlaBasicMisc
 
         foreach ($query as $q) {
             if (!str_contains($q, $opt))
-                $newquery[] = $q;
+                $newQuery[] = $q;
         }
 
-        if (count($newquery) == 0)
+        if (count($newQuery) == 0)
             return $link;
 
         if ($link == '')
-            return implode('&', $newquery);
+            return implode('&', $newQuery);
 
-        return $link . '?' . implode('&', $newquery);
+        return $link . '?' . implode('&', $newQuery);
     }
 
     public static function curPageURL(): string
@@ -966,5 +966,19 @@ class JoomlaBasicMisc
         ];
 
         return isset($mime_map[$mime]) ? $mime_map[$mime] : false;
+    }
+
+    public static function deleteFolderIfEmpty($folder)
+    {
+        //Check if the folder is already empty, if it is empty then delete the folder
+        $files = scandir(JPATH_SITE . DIRECTORY_SEPARATOR . $folder);
+        $count = 0;
+        foreach ($files as $file) {
+            if ($file != '.' and $file != '..')
+                $count += 1;
+        }
+
+        if ($count == 0)
+            rmdir(JPATH_SITE . DIRECTORY_SEPARATOR . $folder);
     }
 }
