@@ -37,8 +37,8 @@ function extraTasksUpdate(task, old_params, new_params, tableid, fieldid, tablet
     }
 
     //Delete non ASCII characters, just in case.
-    let op = Base64.decode(old_params).replace(/[^ -~]+/g, "");
-    let np = Base64.decode(new_params).replace(/[^ -~]+/g, "");
+    let op = Base64.decode(old_params).replace(/[^ -~]+/g, "").replaceAll('****quote****', '"');
+    let np = Base64.decode(new_params).replace(/[^ -~]+/g, "").replaceAll('****quote****', '"');
 
     result += '<p><b>Table:</b> ' + tabletitle + '<br/><b>Field:</b> ' + fieldtitle + '</p>';
     result += '<table><tbody><tr><td><b>Old Parameters:</b></td><td>' + op + '</td></tr><tr><td><b>New Parameters:</b></td><td>' + np + '</td></tr></tbody></table>';

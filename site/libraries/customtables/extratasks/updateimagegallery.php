@@ -47,7 +47,7 @@ class updateImageGallery
 
         $count = 0;
         if ($startindex == 0) {
-            $count = updateImages::countImages($ct->Table->realtablename, $fieldRow->realfieldname, $ct->Table->realidfieldname);
+            $count = self::countImages($ct->Table->realtablename, $fieldRow->realfieldname, $ct->Table->realidfieldname);
         }
 
         $status = updateImages::processImages($ct, $fieldRow, $old_params, $new_params, $startindex, $stepsize);

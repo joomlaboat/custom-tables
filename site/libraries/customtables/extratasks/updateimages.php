@@ -48,12 +48,12 @@ class updateImages
 
         $count = 0;
         if ($startIndex == 0) {
-            $count = updateImages::countImages($ct->Table->realtablename, $fieldRow->realfieldname, $ct->Table->realidfieldname);
+            $count = self::countImages($ct->Table->realtablename, $fieldRow->realfieldname, $ct->Table->realidfieldname);
             if ($stepSize > $count)
                 $stepSize = $count;
         }
 
-        $status = updateImages::processImages($ct, $fieldRow, $old_params, $new_params, $startIndex, $stepSize);
+        $status = self::processImages($ct, $fieldRow, $old_params, $new_params, $startIndex, $stepSize);
         return array('count' => $count, 'success' => (int)($status === null), 'startindex' => $startIndex, 'stepsize' => $stepSize, 'error' => $status);
     }
 
@@ -66,11 +66,11 @@ class updateImages
         return (int)$recs[0]['c'];
     }
 
-    public static function processImages(CT &$ct, $fieldRow, array $old_params, array $new_params, int $startindex, int $stepsize): ?string
+    public static function processImages(CT &$ct, $fieldRow, array $old_params, array $new_params, int $startIndex, int $stepSize): ?string
     {
         $db = Factory::getDBO();
         $query = 'SELECT ' . $fieldRow->realfieldname . ' FROM ' . $ct->Table->realtablename . ' WHERE ' . $fieldRow->realfieldname . ' IS NOT NULL';
-        $db->setQuery($query, $startindex, $stepsize);
+        $db->setQuery($query, $startIndex, $stepSize);
 
         $imageList = $db->loadAssocList();
         $old_ImageFolder = '';
@@ -100,7 +100,7 @@ class updateImages
 
                 $new_imageSizes = $imgMethods->getCustomImageOptions($field_new->params[0]);
 
-                $status = updateImages::processImage($imgMethods, $old_imageSizes, $new_imageSizes, $img[$fieldRow->realfieldname], $old_ImageFolder, $new_ImageFolder);
+                $status = self::processImage($imgMethods, $old_imageSizes, $new_imageSizes, $img[$fieldRow->realfieldname], $old_ImageFolder, $new_ImageFolder);
                 //if $status is null then all good, status is a text string with error message if any
                 if ($status !== null)
                     return $status;
@@ -114,42 +114,42 @@ class updateImages
     {
         $original_image_file = '';
 
-        $status = updateImages::processImage_Original($imgMethods, $rowValue, $old_ImageFolder, $new_ImageFolder, $original_image_file);
+        $status = self::processImage_Original($imgMethods, $rowValue, $old_ImageFolder, $new_ImageFolder, $original_image_file);
 
         if ($status !== null)
             return null;//Skip if original file not found
 
-        $status = updateImages::processImage_Thumbnail($imgMethods, $rowValue, $old_ImageFolder, $new_ImageFolder);
+        $status = self::processImage_Thumbnail($imgMethods, $rowValue, $old_ImageFolder, $new_ImageFolder);
         if ($status !== null) {
             //Create Thumbnail file
-            $r = $imgMethods->ProportionalResize(JPATH_SITE . DIRECTORY_SEPARATOR . $original_image_file, JPATH_SITE . DIRECTORY_SEPARATOR . $new_ImageFolder . DIRECTORY_SEPARATOR . '_esthumb_' . $rowValue . '.jpg', 150, 150, 1, true, -1, '');
+            $r = $imgMethods->ProportionalResize(JPATH_SITE . DIRECTORY_SEPARATOR . $original_image_file, JPATH_SITE . DIRECTORY_SEPARATOR . $new_ImageFolder . DIRECTORY_SEPARATOR . '_esthumb_' . $rowValue . '.jpg', 150, 150, 1, -1, '');
 
             if ($r != 1)
                 return null;//Skip could not create thumbnail
         }
 
         //Move custom size files to new folder, or create if custom size file in original folder is missing
-        $status = updateImages::processImage_CustomSizes($imgMethods, $old_imageSizes, $new_imageSizes, $rowValue, $old_ImageFolder, $new_ImageFolder, $original_image_file);
+        $status = self::processImage_CustomSizes($imgMethods, $old_imageSizes, $rowValue, $old_ImageFolder, $new_ImageFolder, $original_image_file);
+        if ($status !== null)
+            return $status;
 
-        //Delete custom size file if no longer in use or size or propery changed
-        $image_sizes_to_delete = updateImages::findChangedOrDeletedCustomSizes($old_imageSizes, $new_imageSizes);
+        //Delete custom size file if no longer in use or size or property changed
+        $image_sizes_to_delete = self::findChangedOrDeletedCustomSizes($old_imageSizes, $new_imageSizes);
 
         //Delete old files
         foreach ($image_sizes_to_delete as $img) {
-            $status = updateImages::processImage_CustomSize_deleteFile($imgMethods, $rowValue, $new_ImageFolder, $prefix = $img[0], $imagefile_ext = $img[4], $original_image_file);
+            $status = self::processImage_CustomSize_deleteFile($imgMethods, $rowValue, $new_ImageFolder, $img[0], $img[4], $original_image_file);
             if ($status !== null)
                 return $status;
         }
 
         //Create custom size file that doesn't exist
         foreach ($new_imageSizes as $img) {
-            $status = updateImages::processImage_CustomSize_createFile($imgMethods, $img, $rowValue, $new_ImageFolder, $prefix = $img[0], $imagefile_ext = $img[4], $original_image_file);
+            $status = self::processImage_CustomSize_createFile($imgMethods, $img, $rowValue, $new_ImageFolder, $img[0], $img[4], $original_image_file);
             if ($status !== null)
                 return $status;
         }
-
         return null;
-
     }
 
     protected static function processImage_Original(&$imgMethods, $rowValue, $old_ImageFolder, $new_ImageFolder, &$original_image_file)
@@ -198,11 +198,11 @@ class updateImages
         return null;
     }
 
-    protected static function processImage_CustomSizes(&$imgMethods, $old_imagesizes, $new_imagesizes, $rowValue, $old_ImageFolder, $new_ImageFolder, $original_image_file): ?string
+    protected static function processImage_CustomSizes(&$imgMethods, $imageSizes, $rowValue, $old_ImageFolder, $new_ImageFolder, $original_image_file): ?string
     {
         //Move files if necessary
-        foreach ($old_imagesizes as $img) {
-            $status = updateImages::processImage_CustomSize_MoveFile($imgMethods, $img, $rowValue, $old_ImageFolder, $new_ImageFolder, $img[0], $img[4], $original_image_file);
+        foreach ($imageSizes as $img) {
+            $status = self::processImage_CustomSize_MoveFile($imgMethods, $img, $rowValue, $old_ImageFolder, $new_ImageFolder, $img[0], $img[4], $original_image_file);
             if ($status !== null)
                 return $status;
         }
@@ -225,7 +225,7 @@ class updateImages
                 $color = (int)$old_imagesize[3];
                 $watermark = $old_imagesize[5];
 
-                $r = $imgMethods->ProportionalResize(JPATH_SITE . DIRECTORY_SEPARATOR . $original_image_file, JPATH_SITE . DIRECTORY_SEPARATOR . $old_imagefile, $width, $height, 1, true, $color, $watermark);
+                $r = $imgMethods->ProportionalResize(JPATH_SITE . DIRECTORY_SEPARATOR . $original_image_file, JPATH_SITE . DIRECTORY_SEPARATOR . $old_imagefile, $width, $height, 1, $color, $watermark);
 
                 if ($r != 1)
                     return 'cannot create file: ' . $old_imagefile;
@@ -245,14 +245,14 @@ class updateImages
         return null;
     }
 
-    protected static function findChangedOrDeletedCustomSizes($old_imagesizes, $new_imagesizes)
+    protected static function findChangedOrDeletedCustomSizes($old_imageSizes, $new_imageSizes)
     {
         $image_sizes_to_delete = array();
 
-        foreach ($old_imagesizes as $old_img) {
+        foreach ($old_imageSizes as $old_img) {
             $changed = false;
 
-            foreach ($new_imagesizes as $new_img) {
+            foreach ($new_imageSizes as $new_img) {
                 if ($old_img[0] == $new_img[0])//check if the size name is match
                 {
                     //Compare parameters
@@ -271,41 +271,42 @@ class updateImages
         return $image_sizes_to_delete;
     }
 
-    protected static function processImage_CustomSize_deleteFile($imgMethods, $rowValue, $old_ImageFolder, $prefix, string $imagefile_ext, string $original_image_file): ?string
+    protected static function processImage_CustomSize_deleteFile($imgMethods, $rowValue, $old_ImageFolder, $prefix, string $imageFile_ext, string $original_image_file): ?string
     {
-        if ($imagefile_ext == '')
-            $imagefile_ext = $imgMethods->getImageExtention(JPATH_SITE . DIRECTORY_SEPARATOR . $original_image_file);//file extension is unknown - let's find out based on original file
+        if ($imageFile_ext == '')
+            $imageFile_ext = $imgMethods->getImageExtention(JPATH_SITE . DIRECTORY_SEPARATOR . $original_image_file);//file extension is unknown - let's find out based on original file
 
-        if ($imagefile_ext != '') {
-            $old_imagefile = $old_ImageFolder . DIRECTORY_SEPARATOR . $prefix . '_' . $rowValue . '.' . $imagefile_ext;
+        if ($imageFile_ext != '') {
+            $old_imageFile = $old_ImageFolder . DIRECTORY_SEPARATOR . $prefix . '_' . $rowValue . '.' . $imageFile_ext;
 
-            if (file_exists(JPATH_SITE . DIRECTORY_SEPARATOR . $old_imagefile)) {
-                if (!@unlink(JPATH_SITE . DIRECTORY_SEPARATOR . $old_imagefile))
-                    return 'cannot delete old file: ' . $old_imagefile;
+            if (file_exists(JPATH_SITE . DIRECTORY_SEPARATOR . $old_imageFile)) {
+                if (!@unlink(JPATH_SITE . DIRECTORY_SEPARATOR . $old_imageFile))
+                    return 'cannot delete old file: ' . $old_imageFile;
             }
         }
         return null;
     }
 
-    protected static function processImage_CustomSize_createFile($imgMethods, $new_imagesize, $rowValue, $new_ImageFolder, $prefix, string $imagefile_ext, string $original_image_file): ?string
+    protected static function processImage_CustomSize_createFile($imgMethods, $new_imagesize, $rowValue, $new_ImageFolder, $prefix, string $imageFile_ext, string $original_image_file): ?string
     {
-        if ($imagefile_ext == '')
-            $imagefile_ext = $imgMethods->getImageExtention(JPATH_SITE . DIRECTORY_SEPARATOR . $original_image_file);//file extension is unknow - let's find out based on original file
+        if ($imageFile_ext == '')
+            $imageFile_ext = $imgMethods->getImageExtention(JPATH_SITE . DIRECTORY_SEPARATOR . $original_image_file);//file extension is unknown - let's find out based on original file
 
-        if ($imagefile_ext != '') {
-            $new_imagefile = $new_ImageFolder . DIRECTORY_SEPARATOR . $prefix . '_' . $rowValue . '.' . $imagefile_ext;
+        if ($imageFile_ext != '') {
+            $new_imageFile = $new_ImageFolder . DIRECTORY_SEPARATOR . $prefix . '_' . $rowValue . '.' . $imageFile_ext;
 
-            if (!file_exists(JPATH_SITE . DIRECTORY_SEPARATOR . $new_imagefile)) {
+            if (!file_exists(JPATH_SITE . DIRECTORY_SEPARATOR . $new_imageFile)) {
                 //Custom size file not found, create it
                 $width = (int)$new_imagesize[1];
                 $height = (int)$new_imagesize[2];
                 $color = (int)$new_imagesize[3];
                 $watermark = $new_imagesize[5];
 
-                $r = $imgMethods->ProportionalResize(JPATH_SITE . DIRECTORY_SEPARATOR . $original_image_file, JPATH_SITE . DIRECTORY_SEPARATOR . $new_imagefile, $width, $height, 1, true, $color, $watermark);
+                $r = $imgMethods->ProportionalResize(JPATH_SITE . DIRECTORY_SEPARATOR . $original_image_file, JPATH_SITE . DIRECTORY_SEPARATOR . $new_imageFile,
+                    $width, $height, 1, $color, $watermark);
 
                 if ($r != 1)
-                    return 'cannot create file: ' . $new_imagefile;
+                    return 'cannot create file: ' . $new_imageFile;
             }
         }
         return null;

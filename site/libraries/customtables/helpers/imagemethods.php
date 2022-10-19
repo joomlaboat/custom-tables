@@ -350,7 +350,7 @@ class CustomTablesImageMethods
             $isOk = true;
 
             //es Thumb
-            $r = $this->ProportionalResize($uploadedFile, $thumbnail_image_file, 150, 150, 1, true, -1, '');
+            $r = $this->ProportionalResize($uploadedFile, $thumbnail_image_file, 150, 150, 1, -1, '');
 
             if ($r != 1)
                 $isOk = false;
@@ -379,7 +379,7 @@ class CustomTablesImageMethods
                     else
                         $ext = $new_photo_ext;
 
-                    $r = $this->ProportionalResize($uploadedFile, $ImageFolder . DIRECTORY_SEPARATOR . $prefix . '_' . $ImageID . '.' . $ext, $width, $height, 1, true, $color, $watermark);
+                    $r = $this->ProportionalResize($uploadedFile, $ImageFolder . DIRECTORY_SEPARATOR . $prefix . '_' . $ImageID . '.' . $ext, $width, $height, 1, $color, $watermark);
                     if ($r != 1)
                         $isOk = false;
                 }
@@ -446,7 +446,7 @@ class CustomTablesImageMethods
         return '';
     }
 
-    function ProportionalResize($src, $dst, $dst_width, $dst_height, $LevelMax, $overwrite, $backgroundcolor, $watermark): int
+    function ProportionalResize(string $src, string $dst, int $dst_width, int $dst_height, int $LevelMax, int $backgroundColor, string $watermark): int
     {
         //Returns:
         // 1 if everything is ok
@@ -460,7 +460,7 @@ class CustomTablesImageMethods
         $fileExtension_dst = $this->FileExtension($dst);
 
         if ($fileExtension == '') {
-            //Factory::getApplication()->enqueueMessage('File type ('.$fileExtension.') not supported.', 'error');
+            //File type not supported
             return -1;
         }
 
@@ -470,13 +470,12 @@ class CustomTablesImageMethods
         //Check if destination file already exists
         if (file_exists($dst)) //Just in case
         {
-            //Factory::getApplication()->enqueueMessage('File with the same name ('.$dst.') already exists.', 'error');
+            //Distillation file with the same name already exists
             return 2;
         }
 
         $size = getImageSize($src);
-
-        $ms = $size[0] * $size[1] * 4;
+        //$ms = $size[0] * $size[1] * 4;
 
         $width = $size[0];
         $height = $size[1];
@@ -488,8 +487,8 @@ class CustomTablesImageMethods
             $dst_width = floor($dst_height * ($width / $height));
 
         $from = null;
-        
-        $rgb = $backgroundcolor;
+
+        $rgb = $backgroundColor;
         if ($fileExtension == "jpg" or $fileExtension == 'jpeg') {
 
             try {

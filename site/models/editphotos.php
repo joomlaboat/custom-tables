@@ -256,7 +256,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy
 
         //es Thumb
         $newFileName = $this->imagefolder . DIRECTORY_SEPARATOR . $this->imagemainprefix . $this->ct->Table->tableid . '_' . $this->galleryname . '__esthumb_' . $photoId . ".jpg";
-        $r = $this->imagemethods->ProportionalResize($uploadedfile, $newFileName, 150, 150, 1, true, -1, '');
+        $r = $this->imagemethods->ProportionalResize($uploadedfile, $newFileName, 150, 150, 1, -1, '');
 
         if ($r != 1)
             $isOk = false;
@@ -276,7 +276,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy
                 $ext = $photo_ext;
 
             $newFileName = $this->imagefolder . DIRECTORY_SEPARATOR . $this->imagemainprefix . $this->ct->Table->tableid . '_' . $this->galleryname . '_' . $prefix . '_' . $photoId . "." . $ext;
-            $r = $this->imagemethods->ProportionalResize($uploadedfile, $newFileName, $width, $height, 1, true, $color, '');
+            $r = $this->imagemethods->ProportionalResize($uploadedfile, $newFileName, $width, $height, 1, $color, '');
 
             if ($r != 1)
                 $isOk = false;
@@ -380,7 +380,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy
         $newFileName = $folder_resized . $photoid . '.' . $fileext;
 
         //hexdec ("#323131")
-        $r = $this->imagemethods->ProportionalResize($uploadedFile, $newFileName, $image_width, $image_height, 1, true, -1, '');
+        $r = $this->imagemethods->ProportionalResize($uploadedFile, $newFileName, $image_width, $image_height, 1, -1, '');
         if ($r != 1)
             return false;
 
