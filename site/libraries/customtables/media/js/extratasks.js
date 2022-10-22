@@ -1,5 +1,5 @@
 /**
- * CustomTables Joomla! 3.x Native Component
+ * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @subpackage extratasks.js
  * @author Ivan Komlev <support@joomlaboat.com>

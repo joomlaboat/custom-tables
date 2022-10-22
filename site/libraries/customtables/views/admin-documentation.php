@@ -67,10 +67,9 @@ class Documentation
                 $class = 'ct_doc_free';
                 if ($is4Pro)
                     $class = 'ct_doc_pro';
-
                 if ($this->internal_use) {
                     $result .= '<div class="' . $class . ' ct_readmoreClosed" id="ctDocType_' . $type_att->ct_name . '">';
-                    $result .= '<h4 onClick="readmoreOpenClose(\'ctDocType_' . $type_att->ct_name . '\')">' . $type_att->ct_name . ' - <span>' . $type_att->label . '</span>';
+                    $result .= '<h4 onClick="readmoreOpenClose(\'ctDocType_' . $type_att->ct_name . '\')">' . $type_att->label;
                 } else {
                     $result .= '<div class="' . $class . '" id="ctDocType_' . $type_att->ct_name . '">';
                     $result .= '<h4>' . $type_att->ct_name . ' - <span>' . $type_att->label . '</span>';
@@ -335,8 +334,7 @@ class Documentation
             $isDeprecated = (bool)(int)$type_att->deprecated;
 
             if (!$isDeprecated) {
-
-                $result .= '# ' . $type_att->ct_name . '<br/><br/>' . $type_att->label . ' - ' . $type_att->description . '<br/><br/>';
+                $result .= '# ' . $type_att->label . ' - ' . $type_att->description . '<br/><br/>';
 
                 if (isset($type_att->image)) {
                     $result .= '![' . $type_att->label . '](' . $type_att->image . ')<br/><br/>';
