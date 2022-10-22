@@ -69,7 +69,7 @@ class Details
     {
         $filter = '';
 
-        if ($this->ct->Params->filter != '' and $this->ct->Params->alias == '') {
+        if ($this->ct->Params->listing_id === null and $this->ct->Params->filter != '' and $this->ct->Params->alias == '') {
 
             $twig = new TwigProcessor($this->ct, $this->ct->Params->filter);
             $filter = $twig->process();
