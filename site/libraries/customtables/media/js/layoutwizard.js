@@ -355,59 +355,78 @@ function showModalFieldTagsList(e) {
     showModal();
 }
 
-function showModalFieldTagForm(tagstartchar, postfix, tagendchar, tag, top, left, line, positions, isnew) {
-    let modalcontentobj = document.getElementById("layouteditor_modal_content_box");
-    let paramvaluestring = "";
+function showModalFieldTagForm(tagStartChar, postfix, tagEndChar, tag, top, left, line, positions, isNew) {
+    let modalContentObject = document.getElementById("layouteditor_modal_content_box");
+    let paramValueString = "";
     let tag_pair = parseQuote(tag, '(', false)
 
     if (tag_pair.length > 1) {
-        temp_params_tag = tag_pair[0].trim();
-        paramvaluestring = findTagParameter(tag);
+
+        let sub_tag_pair = parseQuote(tag_pair[0], '.', false);
+        if (sub_tag_pair.length > 1) {
+            temp_params_tag = sub_tag_pair[0].trim();
+            postfix = '.' + sub_tag_pair[1].trim();
+        } else {
+            temp_params_tag = tag_pair[0].trim();
+        }
+
+        paramValueString = findTagParameter(tag);
     } else {
         tag_pair = parseQuote(tag, ':', false);
         if (tag_pair.length > 1) {
             if (tag_pair[0] === "_value" || tag_pair[0] === "_edit") {
 
+                if (tag_pair[0] === "_value")
+                    postfix = '.value';
+                else if (tag_pair[0] === "_edit")
+                    postfix = '.edit';
+
                 temp_params_tag = tag_pair[1].trim();
 
                 if (tag_pair.length === 2)
-                    paramvaluestring = tag_pair[1];
+                    paramValueString = tag_pair[1];
 
             } else {
                 temp_params_tag = tag_pair[0].trim();
 
                 let pos1 = tag.indexOf(":");
-                paramvaluestring = tag.substring(pos1 + 1, tag.length);
-                //paramvaluestring = tag.replace(temp_params_tag,'');
+                paramValueString = tag.substring(pos1 + 1, tag.length);
             }
         } else {
-            temp_params_tag = tag.trim();
+
+            tag_pair = parseQuote(tag, '.', false);
+            if (tag_pair.length > 1) {
+                temp_params_tag = tag_pair[0].trim();
+                postfix = '.' + tag_pair[1].trim();
+            } else {
+                temp_params_tag = tag.trim();
+            }
         }
     }
 
     const field = findFieldObjectByName(temp_params_tag);
     if (field == null) {
-        modalcontentobj.innerHTML = '<p>Cannot find the field. Probably the field does not belong to selected table.</p>';
+        modalContentObject.innerHTML = '<p>Cannot find the field. Probably the field does not belong to selected table.</p>';
         showModal();
         return;
     }
 
-    const param_group = getParamGroup(tagstartchar, postfix, tagendchar);
+    const param_group = getParamGroup(tagStartChar, postfix, tagEndChar);
 
     if (param_group === '') {
-        modalcontentobj.innerHTML = '<p>Something went wrong. Field Type Tag should not have any parameters in this Layout Type. Try to reload the page.</p>';
+        modalContentObject.innerHTML = '<p>Something went wrong. Field Type Tag should not have any parameters in this Layout Type. Try to reload the page.</p>';
         showModal();
         return;
     }
 
-    const fieldtypeobj = findTheType(field.type);
-    if (fieldtypeobj === null) {
-        modalcontentobj.innerHTML = '<p>Something went wrong. Field Type Tag doesnot not have any parameters. Try to reload the page.</p>';
+    const fieldTypeObject = findTheType(field.type);
+    if (fieldTypeObject === null) {
+        modalContentObject.innerHTML = "<p>Something went wrong. Field Type Tag doesn't have any parameters. Try to reload the page.</p>";
         showModal();
         return;
     }
-    const fieldtype_att = fieldtypeobj["@attributes"];
-    const group_params_object = fieldtypeobj[param_group];
+    const fieldType_att = fieldTypeObject["@attributes"];
+    const group_params_object = fieldTypeObject[param_group];
 
     if (!group_params_object || !group_params_object.params) {
         let cursor_from = {line: line, ch: positions[0]};
@@ -420,24 +439,24 @@ function showModalFieldTagForm(tagstartchar, postfix, tagendchar, tag, top, left
     }
 
     const param_array = getParamOptions(group_params_object.params, 'param');
-    const countparams = param_array.length;
-    const form_content = getParamEditForm(group_params_object, line, positions, isnew, countparams, '{{ ', postfix, ' }}', paramvaluestring);
+    const countParams = param_array.length;
+    const form_content = getParamEditForm(group_params_object, line, positions, isNew, countParams, '{{ ', postfix, ' }}', paramValueString);
 
     if (form_content == null)
         return false;
 
-    let result = '<h3>Field "<b>' + field.fieldtitle + '</b>"  <span style="font-size:smaller;">(<i>Type: ' + fieldtype_att.label + '</i>)</span>';
+    let result = '<h3>Field "<b>' + field.fieldtitle + '</b>"  <span style="font-size:smaller;">(<i>Type: ' + fieldType_att.label + '</i>)</span>';
 
-    if (typeof (fieldtype_att.helplink) !== "undefined")
-        result += ' <a href="' + fieldtype_att.helplink + '" target="_blank">Read more</a>';
+    if (typeof (fieldType_att.helplink) !== "undefined")
+        result += ' <a href="' + fieldType_att.helplink + '" target="_blank">Read more</a>';
 
     result += '</h3>';
 
-    modalcontentobj.innerHTML = result + form_content;
+    modalContentObject.innerHTML = result + form_content;
 
     if (joomlaVersion < 4) {
         jQuery(function ($) {
-            $(modalcontentobj).find(".hasPopover").popover({
+            $(modalContentObject).find(".hasPopover").popover({
                 "html": true,
                 "trigger": "hover focus",
                 "layouteditor_modal_content_box": "body"
@@ -445,12 +464,12 @@ function showModalFieldTagForm(tagstartchar, postfix, tagendchar, tag, top, left
         });
     }
 
-    updateParamString("fieldtype_param_", 1, countparams, "current_tagparameter", null, false);
+    updateParamString("fieldtype_param_", 1, countParams, "current_tagparameter", null, false);
     showModal();
 }
 
 //Used in generated html link
-function addFieldTag(tagstartchar, postfix, tagendchar, tag, param_count) {
+function addFieldTag(tagStartChar, postfix, tagEndChar, tag, param_count) {
     const index = 0;
     const cm = codemirror_editors[index];
 
@@ -459,9 +478,9 @@ function addFieldTag(tagstartchar, postfix, tagendchar, tag, param_count) {
         const positions = [cr.ch, cr.ch];
         const mousepos = cm.cursorCoords(cr, "window");
 
-        showModalFieldTagForm(tagstartchar, postfix, tagendchar, atob(tag), mousepos.top, mousepos.left, cr.line, positions, 1);
+        showModalFieldTagForm(tagStartChar, postfix, tagEndChar, atob(tag), mousepos.top, mousepos.left, cr.line, positions, 1);
     } else {
-        updateCodeMirror(tagstartchar + atob(tag) + postfix + tagendchar);////-----------------todo
+        updateCodeMirror(tagStartChar + atob(tag) + postfix + tagEndChar);////-----------------todo
 
         //in case modal window is open
         const modal = document.getElementById('layouteditor_Modal');
