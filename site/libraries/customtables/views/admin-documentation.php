@@ -334,7 +334,7 @@ class Documentation
             $isDeprecated = (bool)(int)$type_att->deprecated;
 
             if (!$isDeprecated) {
-                $result .= '# ' . $type_att->label . ' - ' . $type_att->description . '<br/><br/>';
+                $result .= '# ' . $type_att->label . '<br/><br/>' . $type_att->description . '<br/><br/>';
 
                 if (isset($type_att->image)) {
                     $result .= '![' . $type_att->label . '](' . $type_att->image . ')<br/><br/>';

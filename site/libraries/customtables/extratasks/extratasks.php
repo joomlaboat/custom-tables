@@ -37,12 +37,17 @@ class extraTasks
         $document->addCustomTag('<link href="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/css/modal.css" rel="stylesheet">');
 
         $extraTask = $input->getCmd('extratask', '');
+        $stepSize = $input->getInt('stepsize', 10);
 
         if ($extraTask != '') {
+            $extraTasksUpdate = 'extraTasksUpdate("' . $extraTask . '","' . $input->get('old_typeparams', '', 'BASE64') . '","'
+                . $input->get('new_typeparams', '', 'BASE64') . '",' . (int)$tableid . ',' . (int)$fieldid . ',"' . $table_row->tabletitle . '","'
+                . $field_row->fieldtitle . '",' . $stepSize . ');';
+
             $js = '
 		<script>
 		window.addEventListener( "load", function( event ) {
-		extraTasksUpdate(\'' . $extraTask . '\',\'' . $input->get('old_typeparams', '', 'BASE64') . '\',\'' . $input->get('new_typeparams', '', 'BASE64') . '\',' . (int)$tableid . ',' . (int)$fieldid . ',\'' . $table_row->tabletitle . '\',\'' . $field_row->fieldtitle . '\');
+		' . $extraTasksUpdate . '
 	});
 		</script>
 ';

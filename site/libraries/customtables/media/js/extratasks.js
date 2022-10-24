@@ -11,8 +11,9 @@ let extraTasksUpdate_count = 0;
 let extraTasksUpdate_startindex = 0;
 let extraTasksUpdate_stepsize = 10;
 
-function extraTasksUpdate(task, old_params, new_params, tableid, fieldid, tabletitle, fieldtitle) {
+function extraTasksUpdate(task, old_params, new_params, tableid, fieldid, tabletitle, fieldtitle, stepsize = 10) {
     let result = '';
+    extraTasksUpdate_stepsize = stepsize;
 
     switch (task) {
         case 'updateimages':
@@ -24,7 +25,7 @@ function extraTasksUpdate(task, old_params, new_params, tableid, fieldid, tablet
             break;
 
         case 'updateimagegallery':
-            result = '<h3>Processing image files...</h3>';
+            result = '<h3>Processing image gallery files...</h3>';
             break;
 
         case 'updatefilebox':

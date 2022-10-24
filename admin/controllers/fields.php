@@ -77,6 +77,9 @@ class CustomtablesControllerFields extends JControllerForm
             $redirect .= '&old_typeparams=' . $this->input->get('old_typeparams', '', 'BASE64');
             $redirect .= '&new_typeparams=' . $this->input->get('new_typeparams', '', 'BASE64');
             $redirect .= '&fieldid=' . $fieldid;
+
+            if ($this->input->getInt('stepsize', 10) != 10)
+                $redirect .= '&stepsize=' . $this->input->getInt('stepsize', 10);
         }
         $redirect .= '&view=fields&layout=edit&tableid=' . (int)$tableid . '&id=' . (int)$id;
 
@@ -115,10 +118,13 @@ class CustomtablesControllerFields extends JControllerForm
 
         //Postpone extra task
         if ($extratask != '') {
-            $redirect .= '&extratask=' . $this->input->getCmd('extratask', '');
+            $redirect .= '&extratask=' . $extratask;
             $redirect .= '&old_typeparams=' . $this->input->get('old_typeparams', '', 'BASE64');
             $redirect .= '&new_typeparams=' . $this->input->get('new_typeparams', '', 'BASE64');
             $redirect .= '&fieldid=' . $fieldid;
+
+            if ($this->input->getInt('stepsize', 10) != 10)
+                $redirect .= '&stepsize=' . $this->input->getInt('stepsize', 10);
         }
 
         if ($extratask != '' or $this->task == 'apply' or $this->task == 'save2copy')

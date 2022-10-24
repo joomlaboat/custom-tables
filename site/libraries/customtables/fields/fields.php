@@ -973,8 +973,10 @@ class Fields
 
                 if ($ex_typeparams_array[0] != $new_typeparams_array[0])
                     $extraTask = 'updateimages'; //Resize all images if needed
-                elseif (($ex_typeparams_array[2] ?? null) != ($new_typeparams_array[2] ?? null))
+                elseif (($ex_typeparams_array[2] ?? null) != ($new_typeparams_array[2] ?? null)) {
+                    $input->set('stepsize', 1000);
                     $extraTask = 'updateimages'; //Move all images if needed
+                }
             }
             if ($ex_type == $new_type and $new_type == 'file' and $ex_typeparams != $new_typeparams)
                 $extraTask = 'updatefiles';
