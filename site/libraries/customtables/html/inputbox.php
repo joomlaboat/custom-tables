@@ -385,21 +385,20 @@ class Inputbox
 
     protected function render_radio($value): string
     {
-        $result = '<table style="border:none;"><tr>';
+        $result = '<ul>';
         $i = 0;
+
         foreach ($this->field->params as $radiovalue) {
             $v = trim($radiovalue);
-            $result .= '<td><input type="radio"
+            $result .= '<li><input type="radio"
 									name="' . $this->prefix . $this->field->fieldname . '"
 									id="' . $this->prefix . $this->field->fieldname . '_' . $i . '"
 									value="' . $v . '" '
                 . ($value == $v ? ' checked="checked" ' : '')
-                . ' /></td>'
-                . '<td><label for="' . $this->prefix . $this->field->fieldname . '_' . $i . '">' . $v . '</label></td>';
+                . ' /><label for="' . $this->prefix . $this->field->fieldname . '_' . $i . '">' . $v . '</label></li>';
             $i++;
         }
-        $result .= '</tr></table>';
-
+        $result .= '</ul>';
 
         return $result;
     }

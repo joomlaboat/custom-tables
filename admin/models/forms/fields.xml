@@ -106,19 +106,20 @@
                description="COM_CUSTOMTABLES_FIELDS_TYPE_DESCRIPTION">
 
             <!-- Option Set.-->
+            <option value="string">COM_CUSTOMTABLES_FIELDS_STRING</option>
+            <option value="int">COM_CUSTOMTABLES_FIELDS_INTEGER</option>
+            <option value="float">COM_CUSTOMTABLES_FIELDS_FLOAT</option>
+
+            <option value="text">COM_CUSTOMTABLES_FIELDS_TEXT</option>
+            <option value="email">COM_CUSTOMTABLES_FIELDS_EMAIL</option>
             <option value="checkbox">COM_CUSTOMTABLES_FIELDS_CHECKBOX</option>
+            <option value="radio">COM_CUSTOMTABLES_FIELDS_RADIO_BUTTONS</option>
             <option value="date">COM_CUSTOMTABLES_FIELDS_DATE</option>
             <option value="time">COM_CUSTOMTABLES_FIELDS_TIME</option>
-            <option value="email">COM_CUSTOMTABLES_FIELDS_EMAIL</option>
             <option value="url">COM_CUSTOMTABLES_FIELDS_url</option>
-            <option value="float">COM_CUSTOMTABLES_FIELDS_FLOAT</option>
             <option value="googlemapcoordinates">COM_CUSTOMTABLES_FIELDS_GOOGLE_MAP_COORDINATES</option>
-            <option value="int">COM_CUSTOMTABLES_FIELDS_INTEGER</option>
-            <option value="string">COM_CUSTOMTABLES_FIELDS_STRING</option>
-            <option value="text">COM_CUSTOMTABLES_FIELDS_TEXT</option>
             <option value="alias">COM_CUSTOMTABLES_FIELDS_ALIAS</option>
             <option value="color">COM_CUSTOMTABLES_FIELDS_COLOR</option>
-            <!--<option value="radio">COM_CUSTOMTABLES_FIELDS_RADIO_BUTTONS</option>-->
 
             <option value="" disabled="disabled">_____ Multilingual _____</option>
             <option value="multilangstring">COM_CUSTOMTABLES_FIELDS_MULTILANGSTRING</option>
@@ -141,7 +142,7 @@
             <option value="" disabled="disabled">_____ Table Joins _____</option>
             <option value="sqljoin">COM_CUSTOMTABLES_FIELDS_SQL_JOIN</option>
             <option value="records">COM_CUSTOMTABLES_FIELDS_MULTI_SQL_JOIN</option>
-            <option value="customtables">COM_CUSTOMTABLES_FIELDS_EXTRA_SEARCH</option>
+            <!--<option value="customtables">COM_CUSTOMTABLES_FIELDS_EXTRA_SEARCH</option>-->
 
             <option value="" disabled="disabled">_____ Automatic Values _____</option>
             <option value="creationtime">COM_CUSTOMTABLES_FIELDS_AUTO_CREATION_DATE_TIME</option>

@@ -206,8 +206,15 @@ class CT_FieldTypeTag_image
     {
         $max_file_size = JoomlaBasicMisc::file_upload_max_size();
         $fileId = JoomlaBasicMisc::generateRandomString();
-        $style = 'margin:10px; border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;vertical-align:top;';
+        $style = 'border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;margin:10px;';//vertical-align:top;
         $element_id = 'ct_uploadfile_box_' . $field->fieldname;
+
+
+        $urlstr = JURI::root(true) . '/index.php?option=com_customtables&view=fileuploader&tmpl=component&' . $field->fieldname . '_fileid=' . $fileId
+            . '&Itemid=' . $field->ct->Params->ItemId
+            . (is_null($field->ct->Params->ModuleId) ? '' : '&ModuleId=' . $field->ct->Params->ModuleId)
+            . '&fieldname=' . $field->fieldname;
+        //urlstr="' . $urlstr . '";
 
         return '
         <!--suppress XmlDuplicatedId -->
@@ -224,13 +231,7 @@ class CT_FieldTypeTag_image
                 ct_eventsmessage_element="ct_eventsmessage";
                 tempFileName="' . $fileId . '";
                 fieldValueInputBox="' . $prefix . $field->fieldname . '";
-                const urlstr="' . JURI::root(true) . '/index.php?option=com_customtables&view=fileuploader&tmpl=component&'
-            . $field->fieldname . '_fileid=' . $fileId
-            . '&Itemid=' . $field->ct->Params->ItemId
-            . (is_null($field->ct->Params->ModuleId) ? '' : '&ModuleId=' . $field->ct->Params->ModuleId)
-            . '&fieldname=' . $field->fieldname . '";
-            
-                ct_getUploader(' . $field->id . ',urlstr,' . $max_file_size . ',"jpg jpeg png gif svg webp","eseditForm",false,"ct_fileuploader_'
+                ct_getUploader(' . $field->id . ',"' . $urlstr . '",' . $max_file_size . ',"jpg jpeg png gif svg webp","eseditForm",false,"ct_fileuploader_'
             . $field->fieldname . '","ct_eventsmessage_' . $field->fieldname . '","' . $fileId . '","' . $prefix . $field->fieldname . '","ct_ubloadedfile_box_' . $field->fieldname . '");
 
  <!--suppress XmlDuplicatedId -->
