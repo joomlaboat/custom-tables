@@ -138,6 +138,9 @@ class Params
         else
             $this->listing_id = $menu_params->get('listingid');
 
+        if ($this->listing_id == 0 or $this->listing_id == '' or $this->listing_id == '0')
+            $this->listing_id = null;
+
         $this->tableName = null;
 
         if ($this->jinput->getCmd("task") !== null)
