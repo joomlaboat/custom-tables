@@ -716,7 +716,8 @@ function renderInput_Field_do(id, value, onchange, SQLJoinTableID) {
 
     result += '<select id="' + id + '" ' + onchange + '>';
 
-    if (SQLJoinTableID !== null) {
+    if (SQLJoinTableID !== null && SQLJoinTableID !== "") {
+
         let fieldsStr = document.getElementById('fieldsData' + SQLJoinTableID).innerHTML
         let fields = JSON.parse(fieldsStr);
 
@@ -742,6 +743,8 @@ function renderInput_Field_do(id, value, onchange, SQLJoinTableID) {
             result += '<option value="_published" selected="selected">- Published</option>';
         else
             result += '<option value="_published">- Published</option>';
+    } else {
+        alert("Table not selected");
     }
 
     result += '</select>';
