@@ -84,9 +84,9 @@ class JHTMLCTTableJoin
         //$attribute = $option_list[1]; // but it's have been already progressed
 
         //Twig teg example:
-        //{{ componentid.edit("mycss","readyonly",[["grades","grade"],["classes","class"]]) }}
-        //{{ componentid.edit("mycss","readyonly",["grades","grade"]) }}
-        //{{ componentid.edit("mycss","readyonly","grades","grade") }}
+        //{{ componentid.edit("mycss","readonly",[["grades","grade"],["classes","class"]]) }}
+        //{{ componentid.edit("mycss","readonly",["grades","grade"]) }}
+        //{{ componentid.edit("mycss","readonly","grades","grade") }}
 
         $parent_filter_table_name = '';
         $parent_filter_field_name = '';
