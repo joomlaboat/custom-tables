@@ -38,7 +38,6 @@ function typeChanged() {
 function renderInputBox(id, param, vlu, attributes) {
     const param_att = param["@attributes"];
 
-    let result = '';
     if (param_att.type != null) {
         if (param_att.type === "number") {
             if (vlu === '') {
@@ -56,7 +55,7 @@ function renderInputBox(id, param, vlu, attributes) {
             if (param_att.min !== null)
                 extra += ' step="' + param_att.step + '"';
 
-            result += '<input type="number" id="' + id + '" value="' + vlu + '" ' + extra + ' ' + attributes + '>';
+            return '<input type="number" id="' + id + '" value="' + vlu + '" ' + extra + ' ' + attributes + '>';
         } else if (param_att.type === "list") {
 
             if (vlu === '') {
@@ -64,7 +63,7 @@ function renderInputBox(id, param, vlu, attributes) {
                     vlu = param_att.default;
             }
 
-            result = renderInput_List(id, param, vlu, attributes);
+            return renderInput_List(id, param, vlu, attributes);
         } else if (param_att.type === "language") {
             result = renderInput_Language(id, param, vlu, attributes);
         } else if (param_att.type === "table") {
@@ -92,28 +91,28 @@ function renderInputBox(id, param, vlu, attributes) {
                 if (SQLJoinTableID === null || (typeof (param_att.currenttable) != "undefined" && param_att.currenttable === "1")) {
                     const obj = document.getElementById('jform_tableid');
                     const currentTableId = obj.value;
-                    result = renderInput_Field(id, param, vlu, attributes, currentTableId);
+                    return renderInput_Field(id, param, vlu, attributes, currentTableId);
                 } else
-                    result = renderInput_Field(id, param, vlu, attributes, SQLJoinTableID);
+                    return renderInput_Field(id, param, vlu, attributes, SQLJoinTableID);
             }
         } else if (param_att.type === "layout") {
-            result = renderInput_Layout(id, param, vlu, attributes);
+            return renderInput_Layout(id, param, vlu, attributes);
         } else if (param_att.type === "multiselect") {
-            result = renderInput_Multiselect(id, param, vlu, attributes);
+            return renderInput_Multiselect(id, param, vlu, attributes);
         } else if (param_att.type === "imagesizelist") {
 
             vlu = vlu.replaceAll('****quote****', '');
             vlu = vlu.replaceAll('****apos****', "");
 
-            result = renderInput_ImageSizeList(id, param, vlu, attributes);
+            return renderInput_ImageSizeList(id, param, vlu, attributes);
         } else if (param_att.type === "folder") {
 
             vlu = vlu.replaceAll('****quote****', '');
             vlu = vlu.replaceAll('****apos****', "");
 
-            result = renderInput_Folder(id, vlu, attributes);
+            return renderInput_Folder(id, vlu, attributes);
         } else if (param_att.type === "radio") {
-            result = renderInput_Radio(id, param, vlu, attributes);
+            return renderInput_Radio(id, param, vlu, attributes);
         } else {
             if (vlu === '') {
                 if (typeof (param_att.default) != "undefined")
@@ -122,24 +121,16 @@ function renderInputBox(id, param, vlu, attributes) {
 
             vlu = vlu.replaceAll('****quote****', '&quot;');
             vlu = vlu.replaceAll('****apos****', "&apos;");
-
-            result += '<input type="text" id="' + id + '" value="' + vlu + '" ' + attributes + '>';
         }
-    } else {
-        result += '<input type="text" id="' + id + '" value="' + vlu + '" ' + attributes + '>';
     }
-
-    return result;
+    return '<input type="text" id="' + id + '" value="' + vlu + '" ' + attributes + '>';
 }
 
 function updateTypeParams(type_id, typeparams_id_, typeparams_box_id_)//type selection
 {
     type_obj = document.getElementById(type_id);
-
     typeparams_id = typeparams_id_;
     typeparams_obj = document.getElementById(typeparams_id);
-
-    //typeparams_id=typeparams_id;
     typeparams_box_id = typeparams_box_id_;
     typeparams_box_obj = document.getElementById(typeparams_box_id_);
 
@@ -148,30 +139,29 @@ function updateTypeParams(type_id, typeparams_id_, typeparams_box_id_)//type sel
     } else {
         updateParameters();
     }
-
 }
 
-function getParamOptions(param, optionobjectname) {
+function getParamOptions(param, optionObjectName) {
     let options = [];
 
-    if (typeof (param) !== "undefined" && typeof (param[optionobjectname]) !== "undefined") {
-        if (param[optionobjectname].constructor.name !== "Array")
-            options.push(param[optionobjectname]);
+    if (typeof (param) !== "undefined" && typeof (param[optionObjectName]) !== "undefined") {
+        if (param[optionObjectName].constructor.name !== "Array")
+            options.push(param[optionObjectName]);
         else
-            options = param[optionobjectname];
+            options = param[optionObjectName];
     }
-
     return options;
 }
 
-function renderParamList(typeparams, typeparams_box, paramvaluestring) {
+function renderParamList(typeparams, typeparams_box, paramValueString) {
     let result = '';
     const att = typeparams["@attributes"];
     const param_array = getParamOptions(typeparams.params, 'param');
     let vlu = '';
-    const values = parseQuote(paramvaluestring, ',', true);
+    const values = parseQuote(paramValueString, ',', true);
 
-    if (typeof (att.repeatative) !== "undefined" && att.repeatative === "1" && param_array.length === 1) {
+    if (typeof (att.repetitive) !== "undefined" && att.repetitive === "1" && param_array.length === 1) {
+
         for (let i = 0; i < values.length; i++) {
             vlu = '';
             if (values.length > i)
@@ -196,7 +186,7 @@ function renderParamList(typeparams, typeparams_box, paramvaluestring) {
     return result;
 }
 
-function renderParamBox(typeparams, typeparams_box, paramvaluestring) {
+function renderParamBox(typeparams, typeparams_box, paramValueString) {
 
     const att = typeparams["@attributes"];
     let result = '<h4>' + att.label + '</h4><p>' + att.description;
@@ -219,7 +209,7 @@ function renderParamBox(typeparams, typeparams_box, paramvaluestring) {
             tag_pair = parseQuote(att.ct_name, [':', '='], false);
 
         result += '<div id="modalParamTagName" style="display:none">' + tag_pair[0] + '</div>';
-        result += '<div id="modalParamList">' + renderParamList(typeparams, typeparams_box, paramvaluestring) + '</div>';
+        result += '<div id="modalParamList">' + renderParamList(typeparams, typeparams_box, paramValueString) + '</div>';
     }
 
     if (!proversion && typeof (att.proversion) !== "undefined" && att.proversion === "1") {
@@ -233,15 +223,15 @@ function renderParamBox(typeparams, typeparams_box, paramvaluestring) {
     return result;
 }
 
-function inputBoxPreRender(proversion, param, param_count, i, vlu, att, typeparams_box) {
-    let repeatative = false;
-    if (typeof (att.repeatative) !== "undefined" && att.repeatative === "1")
-        repeatative = true;
+function inputBoxPreRender(proVersion, param, param_count, i, vlu, att, typeparams_box) {
+    let repetitive = false;
+    if (typeof (att.repetitive) !== "undefined" && att.repetitive === "1")
+        repetitive = true;
 
     let result = '';
     const param_att = param["@attributes"];
 
-    if (proversion || typeof (param_att.proversion) === "undefined" || param_att.proversion === "0") {
+    if (proVersion || typeof (param_att.proversion) === "undefined" || param_att.proversion === "0") {
 
         result += '<div class="control-group"><div class="control-label">';
 
@@ -265,20 +255,20 @@ function inputBoxPreRender(proversion, param, param_count, i, vlu, att, typepara
         result += '</label>';
         result += '</div><div class="controls">';
 
-        let rawquotes = "false";
+        let rawQuotes = "false";
         if (typeof (att.rawquotes) != "undefined" && att.rawquotes === "1")
-            rawquotes = "true";
+            rawQuotes = "true";
 
-        let startchar = "[";
+        let startChar = '';
 
         if (typeof (att.startchar) !== "undefined")
-            startchar = att.startchar;
+            startChar = att.startchar;
 
         let refresh = 'false';
-        if (repeatative)
+        if (repetitive)
             refresh = 'true';
 
-        const attributes = 'onchange="updateParamString(\'fieldtype_param_\',1,' + param_count + ',\'' + typeparams_box + '\',event,' + rawquotes + ',' + refresh + ',\'' + startchar + '\');"';
+        const attributes = 'onchange="updateParamString(\'fieldtype_param_\',1,' + param_count + ',\'' + typeparams_box + '\',event,' + rawQuotes + ',' + refresh + ',\'' + startChar + '\');"';
 
         result += renderInputBox('fieldtype_param_' + i, param, vlu, attributes);
         result += '</div></div>';
@@ -300,40 +290,37 @@ function getInputType(obj) {
     return '';
 }
 
-function updateParamString(inputboxid, countlist, countparams, objectid, e, rawquotes, refresh, startchar) {
+function updateParamString(inputBoxId, countList, countParams, objectId, e, rawQuotes, refresh, startChar = '') {
 
-    if (typeof (startchar) == "undefined")
-        startchar = "{";
+    let endChar = '';
+    if (startChar === '{')
+        endChar = '}';
 
-    let endchar = '}';
-    if (startchar === '[')
-        endchar = ']';
-
-    //objectid is the element id where value will be set
+    //objectId is the element id where value will be set
     if (e != null)
         e.preventDefault();
 
     let count = 0;
     let list = [];
 
-    for (let r = 0; r < countlist; r++) {
+    for (let r = 0; r < countList; r++) {
         let params = [];
 
-        for (let i = 0; i < countparams || countparams === -1; i++) { // -1 "unlimited" number of parameters
-            let objectname = inputboxid;
+        for (let i = 0; i < countParams || countParams === -1; i++) { // -1 "unlimited" number of parameters
+            let objectName = inputBoxId;
 
             if (r > 0)
-                objectname += r + 'x';
+                objectName += r + 'x';
 
-            objectname += i;
-            let obj = document.getElementById(objectname);
+            objectName += i;
+            let obj = document.getElementById(objectName);
 
             if (obj) {
                 let t = getInputType(obj);
                 let v = "";
 
                 if (t === "radio")
-                    v = getRadioValue(objectname);
+                    v = getRadioValue(objectName);
                 else if (t === "multiselect")
                     v = getSelectValues(select).merge(",");
                 else
@@ -356,7 +343,7 @@ function updateParamString(inputboxid, countlist, countparams, objectid, e, rawq
         }
 
         let tmp_params = "";
-        let newparams = [];
+        let newParams = [];
 
         if (count > 0) {
             for (let i2 = 0; i2 < count; i2++) {
@@ -365,15 +352,15 @@ function updateParamString(inputboxid, countlist, countparams, objectid, e, rawq
                 if (v === '')
                     v = '"' + v + '"';
 
-                newparams.push(v);
+                newParams.push(v);
             }
-            tmp_params = newparams.join(",");
+            tmp_params = newParams.join(",");
         }
         list.push(tmp_params);
     }
 
     let tmp_list = list.join(";");
-    let typeparams_obj = document.getElementById(objectid);
+    let typeparams_obj = document.getElementById(objectId);
 
     if (typeparams_obj) {
         typeparams_obj.value = tmp_list;  // why is it here?
@@ -381,14 +368,21 @@ function updateParamString(inputboxid, countlist, countparams, objectid, e, rawq
     }
 
     if (refresh) {
-        let mptn = document.getElementById("modalParamTagName");
-        if (mptn) {
-            let typename = mptn.innerHTML;
-            let typeparams = findTagObjectByName(startchar, endchar, typename);
+
+        const modalParamTagNameObject = document.getElementById("modalParamTagName");
+        if (modalParamTagNameObject) {
+            let typename = modalParamTagNameObject.innerHTML;
+
+            let typeparams;
+            if (startChar === '{')
+                typeparams = findTagObjectByName(startChar, endChar, typename);
+            else
+                typeparams = findTheType(typename);
+
             if (typeparams != null) {
-                let obj2 = document.getElementById("modalParamList");
-                if (obj2)
-                    obj2.innerHTML = renderParamList(typeparams, "current_tagparameter", tmp_list);
+                let modalParamListObject = document.getElementById("modalParamList");
+                if (modalParamListObject)
+                    modalParamListObject.innerHTML = renderParamList(typeparams, "current_tagparameter", tmp_list);
             }
         }
     }
@@ -411,8 +405,8 @@ function getSelectValues(select) {
     return result;
 }
 
-function getRadioValue(objectname) {
-    const radios = document.getElementsByName(objectname);
+function getRadioValue(objectName) {
+    const radios = document.getElementsByName(objectName);
     let v = "";
     const length = radios.length;
 
@@ -426,9 +420,7 @@ function getRadioValue(objectname) {
             v = radios[i].value;
         }
     }
-
     return v;
-
 }
 
 function renderInput_Multiselect(id, param, values, onchange) {
@@ -456,8 +448,6 @@ function renderInput_ImageSizeList(id, param, value, attributes) {
     let result = "";
     temp_imagesizeparams = getParamOptions(param, 'sizeparam');
     temp_imagesizelist_string = value;
-
-
     temp_imagesize_parambox_id = id;
     temp_imagesize_box_id = 'temp_imagesize_box';
 
@@ -470,10 +460,7 @@ function renderInput_ImageSizeList(id, param, value, attributes) {
     temp_imagesize_updateparent = temp_imagesize_updateparent.replace(/[']/g, "");
     temp_imagesize_updateparent = temp_imagesize_updateparent.split(",");
 
-
     result += '<input type="text" id="' + id + '" value="' + value + '" style="display:none;width:100%;" ' + attributes + '>';// '+onchange+'>';
-
-
     return result;
 }
 
@@ -551,19 +538,19 @@ function BuildImageSizeTable() {
 }
 
 //Used in onchange event
-function updateParamString_ImageSizes(sizeparam, countlist, countparams, tempimagesizeparamboxid, e) {
+function updateParamString_ImageSizes(sizeParam, countList, countParams, tempImageSizeParamBoxId, e) {
 
-    updateParamString(sizeparam, countlist, countparams, tempimagesizeparamboxid, e, false);
+    updateParamString(sizeParam, countList, countParams, tempImageSizeParamBoxId, e, false);
 
     const obj = document.getElementById(temp_imagesize_parambox_id);
     temp_imagesizelist_string = obj.value;
 
-    const sizeparam_ = temp_imagesize_updateparent[0];
-    const countlist_ = temp_imagesize_updateparent[1];
-    const countparams_ = temp_imagesize_updateparent[2];
-    const tempimagesizeparamboxid_ = temp_imagesize_updateparent[3];
+    const sizeParam_ = temp_imagesize_updateparent[0];
+    const countList_ = temp_imagesize_updateparent[1];
+    const countParams_ = temp_imagesize_updateparent[2];
+    const tempImageSizeParamBoxId_ = temp_imagesize_updateparent[3];
 
-    updateParamString(sizeparam_, countlist_, countparams_, tempimagesizeparamboxid_, null, false);
+    updateParamString(sizeParam_, countList_, countParams_, tempImageSizeParamBoxId_, null, false);
 
 }
 
@@ -803,10 +790,71 @@ function renderInput_Field_readSelectBoxes(id) {
 
     if (allHaveSelections) {
         //add new select box
-        const selectboxes = document.getElementById(id + '_selectboxes');
+        const selectBoxes = document.getElementById(id + '_selectboxes');
 
         const o2 = 'onchange=\'renderInput_Field_readSelectBoxes("' + id + '");' + onchange_function + '\';';
-        selectboxes.innerHTML = selectboxes.innerHTML + renderInput_Field_do(id + "_" + i, '', o2, null);
+        selectBoxes.innerHTML = selectBoxes.innerHTML + renderInput_Field_do(id + "_" + i, '', o2, null);
+
+        //update values
+        for (let n = 0; n < i; n++) {
+            const obj2 = document.getElementById(id + '_' + n);
+            if (!obj2)
+                break;
+
+            obj2.selectedIndex = indexes[n];
+            obj2.value = values[n];
+        }
+    }
+}
+
+function renderInput_Field_readTextBoxes(id) {
+    let value = '';
+    let i = 0;
+    let allHaveSelections = true;
+    const indexes = [];
+    const values = [];
+    let onchangefound = false;
+    let onchange_function = "";
+
+    while (1) {
+        const obj = document.getElementById(id + '_' + i);
+        if (!obj)
+            break;
+
+        const v = obj.value;
+
+        if (v !== "") {
+            if (indexes.indexOf(obj.selectedIndex) === -1) {
+                if (value !== '')
+                    value += ',';
+
+                value += v;
+            }
+
+            if (!onchangefound) {
+                const o = String(obj.onchange);
+                const oParts = o.split(";");
+                if (oParts.length === 3) {
+                    onchange_function = oParts[1];
+                    onchangefound = true;
+                }
+            }
+        } else
+            allHaveSelections = false;
+
+        values.push(v);
+        indexes.push(obj.selectedIndex);
+        i++;
+    }
+
+    document.getElementById(id).value = value;
+
+    if (allHaveSelections) {
+        //add new select box
+        const selectBoxes = document.getElementById(id + '_selectboxes');
+
+        const o2 = 'onchange=\'renderInput_Field_readTextBoxes("' + id + '");' + onchange_function + '\';';
+        selectBoxes.innerHTML = selectBoxes.innerHTML + '<input type="text" id="' + id + "_" + i + '" value="" ' + o2 + '>';
 
         //update values
         for (let n = 0; n < i; n++) {
@@ -823,17 +871,17 @@ function renderInput_Field_readSelectBoxes(id) {
 function renderInput_Field(id, param, value, onchange, SQLJoinTableID) {
 
     const param_att = param["@attributes"];
-    let repeatative = 0;
-    if (typeof (param_att.repeatative) != "undefined" && param_att.repeatative === "1")
-        repeatative = 1;
+    let repetitive = 0;
+    if (typeof (param_att.repetitive) != "undefined" && param_att.repetitive === "1")
+        repetitive = 1;
 
-    if (repeatative === 1) {
+    if (repetitive === 1) {
         let result = "";
         const onchange_parts = onchange.split('"');
         if (onchange_parts.length < 3)
             return 'Something wrong with onchange attribute';
 
-        let onchange_function = onchange_parts[1];//onCahnage function
+        let onchange_function = onchange_parts[1];//onChange function
         onchange_function = onchange_function.replace(/'/g, '"');
 
         const o = 'onchange=\'renderInput_Field_readSelectBoxes("' + id + '");' + onchange_function + '\'';
@@ -1060,7 +1108,7 @@ function xmlToJson(xml) {
     return obj;
 }
 
-function parseQuote(str, separator, cleanquotes) {
+function parseQuote(str, separator, cleanQuotes) {
 
     const arr = [];
     let quote = false;  // true means we're inside a quoted field
@@ -1076,7 +1124,7 @@ function parseQuote(str, separator, cleanquotes) {
         if (cc === '"') {
             quote = !quote;
 
-            if (!cleanquotes)
+            if (!cleanQuotes)
                 arr[i] += cc;
 
             continue;

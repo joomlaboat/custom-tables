@@ -107,7 +107,6 @@ class Documentation
                             $hideDefaultExample);
                         break;
                     }
-
                 }
 
                 $result .= '<h5>' . common::translate('Pure Value (As it is)') . ':</h5>'
@@ -130,7 +129,6 @@ class Documentation
                 $result .= '<p>Example 1:<pre class="ct_doc_pre">'
                     . '{{ <i>' . str_replace(' ', '', common::translate('COM_CUSTOMTABLES_FIELDNAME')) . '</i>.edit }}</pre></p>';
 
-
                 if (!empty($type->editparams)) {
 
                     foreach ($type->editparams as $p) {
@@ -146,7 +144,6 @@ class Documentation
                     }
 
                 }
-
                 $result .= '</div>';
             }
         }
@@ -172,7 +169,6 @@ class Documentation
                     if (!empty($param_att->type)) {
                         $value_example = '';
                         $result .= $this->renderParamTypeInternal($param, $param_att, $value_example);
-
                         $example_values[] = $value_example;
 
                         if ($value_example != '')
@@ -185,10 +181,7 @@ class Documentation
         }
 
         $result_new = '';
-
         $cleanedParamsStr = implode(',', $this->cleanParams($example_values));
-        if ($cleanedParamsStr != '')
-            $cleanedParamsStr = '(' . $cleanedParamsStr . ')';
 
         if ($tag_name == '') {
             if (!(int)$hidedefaultexample) {
@@ -201,7 +194,6 @@ class Documentation
                     . $opening_char . $tag_name . $postfix . $cleanedParamsStr . $closing_char . '</pre></p>';
             }
         }
-
         return '<ol>' . $result . '</ol>' . $result_new;
     }
 
@@ -401,6 +393,7 @@ class Documentation
             $params = $params_->param;
 
             $count = 1;
+
             foreach ($params as $param) {
                 $param_att = $param->attributes();
 
@@ -410,7 +403,6 @@ class Documentation
                     if (!empty($param_att->type)) {
                         $value_example = '';
                         $result .= $this->renderParamTypeGitHub($param, $param_att, $value_example) . '<br/>';
-
 
                         if ($value_example != '') {
                             $example_values[] = $value_example;
@@ -423,10 +415,7 @@ class Documentation
         }
 
         $result_new = '';
-
         $cleanedParamsStr = implode(',', $this->cleanParams($example_values));
-        if ($cleanedParamsStr != '')
-            $cleanedParamsStr = '(' . $cleanedParamsStr . ')';
 
         if ($tag_name == '') {
             if (!(int)$hidedefaultexample)
@@ -435,14 +424,12 @@ class Documentation
             if ($example_values_count > 0)
                 $result_new .= '`' . $opening_char . $tag_name . $postfix . $cleanedParamsStr . $closing_char . '`<br/>';
         }
-
         return $result . $result_new;
     }
 
     function renderParamTypeGitHub($param, $param_att, &$value_example): string
     {
         $result = '';
-
         $value_example = $param_att->example;
 
         switch ($param_att->type) {
@@ -475,9 +462,6 @@ class Documentation
                     if ($value_example == '' && $parts[0] != '')
                         $value_example = $parts[0];
                 }
-
-                //$result.='<br/>';
-
                 break;
 
             case 'list':
@@ -504,9 +488,6 @@ class Documentation
                     if ($value_example == '' and $option_att->value != '')
                         $value_example = $option_att->value;
                 }
-
-                //$result.='<br/>';
-
                 break;
         }
 
@@ -581,8 +562,6 @@ class Documentation
                 if ($is4Pro)
                     $class = 'ct_doc_pro';
 
-                $label = '';
-
                 if ($tagsetname == 'plugins') {
                     $startchar = '{';
                     $endchar = '}';
@@ -632,7 +611,6 @@ class Documentation
                 $result .= '</div>';
             }
         }
-
         return $result;
     }
 
@@ -702,7 +680,6 @@ class Documentation
                 $result .= '<br/>';
             }
         }
-
         return $result;
     }
 
@@ -764,10 +741,7 @@ class Documentation
 
                         $result .= '</li>';
                     }
-
-
                 }
-
                 $result .= '</ul></div>';
             }
         }
@@ -877,7 +851,6 @@ class Documentation
 
                     $count += 1;
                 }
-
                 $result .= '<br/><br/>';
             }
         }

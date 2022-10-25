@@ -19,7 +19,7 @@ function updateParameters() {
 
         const param_array = getParamOptions(typeparams.params, 'param');
 
-        if (typeof (param_att.repeatative) !== "undefined" && param_att.repeatative === "1" && param_array.length === 1)
+        if (typeof (param_att.repetitive) !== "undefined" && param_att.repetitive === "1" && param_array.length === 1)
             updateParamString('fieldtype_param_', 1, -1, typeparams_id, null, rawQuotes);//unlimited number of parameters
         else
             updateParamString('fieldtype_param_', 1, param_array.length, typeparams_id, null, rawQuotes);

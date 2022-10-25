@@ -28,7 +28,7 @@ function updateParameters() {
 
         const param_array = getParamOptions(typeparams.params, 'param');
 
-        if (typeof (param_att.repeatative) !== "undefined" && param_att.repeatative === "1" && param_array.length === 1)
+        if (typeof (param_att.repetitive) !== "undefined" && param_att.repetitive === "1" && param_array.length === 1)
             updateParamString('fieldtype_param_', 1, -1, typeparams_id, null, rawQuotes);//unlimited number of parameters
         else
             updateParamString('fieldtype_param_', 1, param_array.length, typeparams_id, null, rawQuotes);
@@ -53,7 +53,6 @@ function renderInput_Radio(objname, param, value, onchange) {
             c += ' active';
         } else {
             result += '<input type="radio" id="' + id + '" name="' + objname + '" value="' + opt[0] + '" ' + onchange + '  />';
-
         }
 
         if (opt[0] === value) {

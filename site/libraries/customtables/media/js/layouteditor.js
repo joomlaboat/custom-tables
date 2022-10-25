@@ -413,7 +413,7 @@ function showModalTagForm(tagstartchar, postfix, tagendchar, tag, top, left, lin
     }
 
     let countparams = param_array.length;
-    if (typeof (param_att.repeatative) !== "undefined" && param_att.repeatative === "1" && param_array.length === 1)
+    if (typeof (param_att.repetitive) !== "undefined" && param_att.repetitive === "1" && param_array.length === 1)
         countparams = -1;//unlimited number of parameters
 
     let form_content = getParamEditForm(tagobject, line, positions, isnew, countparams, '{{ ', postfix, ' }}', paramvaluestring);
@@ -536,39 +536,40 @@ function findTagInLine(ch, str) {
     return null;
 }
 
-function findTagObjectByName(tagstartchar, tagendchar, lookfor_tag) {
+function findTagObjectByName(tagStartChar, tagEndChar, lookForTag) {
 
     let s;
     let TwigTag = false;
 
-    if (tagstartchar === '{{') {
-        tagstartchar = '{';
-        tagendchar = '}'
+    if (tagStartChar === '{{') {
+        tagStartChar = '{';
+        tagEndChar = '}'
 
         TwigTag = true;
     }
 
     for (s = 0; s < tagsets.length; s++) {
-        let tagset = tagsets[s];
-        let tags = getParamOptions(tagset, 'tag');
+        let tagSet = tagsets[s];
+        let tags = getParamOptions(tagSet, 'tag');
 
         for (let i = 0; i < tags.length; i++) {
             let tag = tags[i];
             let a = tag["@attributes"];
 
-            if (lookfor_tag.indexOf(".") === -1) {
+            if (lookForTag.indexOf(".") === -1) {
 
                 //Conversion - OLD to Twig
                 if (typeof (a.twigclass) == "undefined" || a.twigclass === "") {
 
-                    if (a.name === lookfor_tag && a.startchar === tagstartchar && a.endchar === tagendchar)
-                        return tag;
+                    if (a.name === lookForTag) {
+                        if (typeof (a.startchar) !== "undefined" && a.startchar === tagStartChar && a.endchar === tagEndChar)
+                            return tag;
+                    }
                 }
-
             } else if (TwigTag && typeof (a.twigclass) !== "undefined" && a.twigclass !== "") {
 
                 //Twig Tag
-                if (a.twigclass + '.' + a.name === lookfor_tag && a.startchar === tagstartchar && a.endchar === tagendchar)
+                if (a.twigclass + '.' + a.name === lookForTag && a.startchar === tagStartChar && a.endchar === tagEndChar)
                     return tag;
             }
         }
@@ -577,23 +578,23 @@ function findTagObjectByName(tagstartchar, tagendchar, lookfor_tag) {
     //If nothing found then simplify the search
 
     for (s = 0; s < tagsets.length; s++) {
-        let tagset = tagsets[s];
-        let tags = getParamOptions(tagset, 'tag');
+        let tagSet = tagsets[s];
+        let tags = getParamOptions(tagSet, 'tag');
 
         for (let i = 0; i < tags.length; i++) {
             let tag = tags[i];
             let a = tag["@attributes"];
 
-            if (lookfor_tag.indexOf(".") === -1) {
+            if (lookForTag.indexOf(".") === -1) {
 
                 //Conversion - OLD to Twig
-                if (a.name === lookfor_tag && a.startchar === tagstartchar && a.endchar === tagendchar)
+                if (a.name === lookForTag && a.startchar === tagStartChar && a.endchar === tagEndChar)
                     return tag;
 
             } else if (TwigTag && typeof (a.twigclass) !== "undefined" && a.twigclass !== "") {
 
                 //Twig Tag
-                if (a.twigclass + '.' + a.name === lookfor_tag && a.startchar === tagstartchar && a.endchar === tagendchar)
+                if (a.twigclass + '.' + a.name === lookForTag && a.startchar === tagStartChar && a.endchar === tagEndChar)
                     return tag;
             }
         }
