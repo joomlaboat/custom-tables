@@ -179,7 +179,7 @@ function showModal() {
         cm.focus();
     };
 
-    // When the user clicks anywhere outside of the modal, close it
+    // When the user clicks anywhere outside the modal, close it
     window.onclick = function (event) {
         if (event.target === modal) {
             modal.style.display = "none";
@@ -298,33 +298,33 @@ function safeOld2NewParamConversion(old) {
     return TempPairList2.join(",");
 }
 
-function showModalTagForm(tagstartchar, postfix, tagendchar, tag, top, left, line, positions, isnew) {
-    let paramvaluestring = "";
+function showModalTagForm(tagStartChar, postfix, tagEndChar, tag, top, left, line, positions, isNew) {
+    let paramValueString = "";
 
-    if (tagstartchar === '{{') {
+    if (tagStartChar === '{{') {
         let tag_pair = parseQuote(tag, ['('], false);
         temp_params_tag = tag_pair[0].trim();
 
-        paramvaluestring = findTagParameter(tag);
+        paramValueString = findTagParameter(tag);
     } else {
         let tag_pair = parseQuote(tag, [':', '='], false);
         temp_params_tag = tag_pair[0].trim();
 
         if (tag_pair.length > 1) {
             let pos1 = tag.indexOf(":");
-            paramvaluestring = tag.substring(pos1 + 1, tag.length);
+            paramValueString = tag.substring(pos1 + 1, tag.length);
         }
     }
 
-    let tagobject = findTagObjectByName(tagstartchar, tagendchar, temp_params_tag);
+    let tagObject = findTagObjectByName(tagStartChar, tagEndChar, temp_params_tag);
 
-    if (tagobject == null || typeof tagobject !== 'object')
+    if (tagObject == null || typeof tagObject !== 'object')
         return null;
 
-    let param_array = getParamOptions(tagobject.params, 'param');
-    let param_att = tagobject["@attributes"];
+    let param_array = getParamOptions(tagObject.params, 'param');
+    let param_att = tagObject["@attributes"];
 
-    if (tagstartchar === '{') {
+    if (tagStartChar === '{') {
         if (typeof (param_att.twigsimplereplacement) !== "undefined" && param_att.twigsimplereplacement !== "") {
             let cursor_from = {line: line, ch: positions[0]};
             let cursor_to = {line: line, ch: positions[1]};
@@ -337,9 +337,9 @@ function showModalTagForm(tagstartchar, postfix, tagendchar, tag, top, left, lin
             let cursor_from = {line: line, ch: positions[0]};
             let cursor_to = {line: line, ch: positions[1]};
 
-            paramvaluestring = safeOld2NewParamConversion(paramvaluestring);
+            paramValueString = safeOld2NewParamConversion(paramValueString);
 
-            let result = param_att.twigreplacestartchar + paramvaluestring + param_att.twigreplaceendchar;
+            let result = param_att.twigreplacestartchar + paramValueString + param_att.twigreplaceendchar;
             let editor = codemirror_editors[codemirror_active_index];
             let doc = editor.getDoc();
             doc.replaceRange(result, cursor_from, cursor_to, "");
@@ -354,7 +354,7 @@ function showModalTagForm(tagstartchar, postfix, tagendchar, tag, top, left, lin
                         let tmpPar = param_array[i3]["@attributes"];
                         if (tmpPar.name === param_att.twigmapname) {
                             let option_array = getParamOptions(param_array[i3], 'option');
-                            let tmlLstOfParams = paramvaluestring.split(",");
+                            let tmlLstOfParams = paramValueString.split(",");
 
                             for (let i4 = 0; i4 < option_array.length; i4++) {
                                 let tmpAtt = option_array[i4]["@attributes"];
@@ -363,9 +363,9 @@ function showModalTagForm(tagstartchar, postfix, tagendchar, tag, top, left, lin
                                     temp_params_tag = param_att.twigreplacement + '.' + tmpAtt.twigexactreplacement;
 
                                     if (tmlLstOfParams.length > 1)
-                                        paramvaluestring = safeOld2NewParamConversion(tmlLstOfParams[1]);
+                                        paramValueString = safeOld2NewParamConversion(tmlLstOfParams[1]);
                                     else
-                                        paramvaluestring = '';
+                                        paramValueString = '';
                                 }
                             }
                             break;
@@ -374,28 +374,25 @@ function showModalTagForm(tagstartchar, postfix, tagendchar, tag, top, left, lin
                 }
 
             } else if (typeof (param_att.twigoptionsreplacement) !== "undefined" && param_att.twigoptionsreplacement === "1") {
-                temp_params_tag = param_att.twigreplacement + '.' + paramvaluestring;
-                paramvaluestring = '';
+                temp_params_tag = param_att.twigreplacement + '.' + paramValueString;
+                paramValueString = '';
             } else
                 temp_params_tag = param_att.twigreplacement;
 
-            if (typeof (param_att.twigreplacementparams) !== "undefined" && param_att.twigreplacementparams !== "") {
-                paramvaluestring = param_att.twigreplacementparams;
-            }
+            if (typeof (param_att.twigreplacementparams) !== "undefined" && param_att.twigreplacementparams !== "")
+                paramValueString = param_att.twigreplacementparams;
 
-            tagobject = findTagObjectByName('{{', '}}', temp_params_tag);
-            //tagobject = findTagObjectByName(tagstartchar,tagendchar,temp_params_tag);
-
-            param_array = getParamOptions(tagobject.params, 'param');
-            param_att = tagobject["@attributes"];
+            tagObject = findTagObjectByName('{{', '}}', temp_params_tag);
+            param_array = getParamOptions(tagObject.params, 'param');
+            param_att = tagObject["@attributes"];
         } else if (typeof (param_att.twigclass) !== "undefined" && param_att.twigclass !== "")
             temp_params_tag = param_att.twigclass + '.' + temp_params_tag;
 
-    } else if (tagstartchar === '[') {
+    } else if (tagStartChar === '[') {
         if (typeof (param_att.twigreplacestartchar) !== "undefined" && param_att.twigreplacestartchar !== "" && typeof (param_att.twigreplaceendchar) !== "undefined" && param_att.twigreplaceendchar !== "") {
             let cursor_from = {line: line, ch: positions[0]};
             let cursor_to = {line: line, ch: positions[1]};
-            let result = param_att.twigreplacestartchar + paramvaluestring + param_att.twigreplaceendchar;
+            let result = param_att.twigreplacestartchar + paramValueString + param_att.twigreplaceendchar;
             let editor = codemirror_editors[codemirror_active_index];
             let doc = editor.getDoc();
             doc.replaceRange(result, cursor_from, cursor_to, "");
@@ -412,15 +409,14 @@ function showModalTagForm(tagstartchar, postfix, tagendchar, tag, top, left, lin
         return false;
     }
 
-    let countparams = param_array.length;
+    let countParams = param_array.length;
     if (typeof (param_att.repetitive) !== "undefined" && param_att.repetitive === "1" && param_array.length === 1)
-        countparams = -1;//unlimited number of parameters
+        countParams = -1;//unlimited number of parameters
 
-    let form_content = getParamEditForm(tagobject, line, positions, isnew, countparams, '{{ ', postfix, ' }}', paramvaluestring);
+    let form_content = getParamEditForm(tagObject, line, positions, isNew, countParams, '{{ ', postfix, ' }}', paramValueString);
 
-    if (form_content == null) {
+    if (form_content == null)
         return false;
-    }
 
     const obj = document.getElementById("layouteditor_modal_content_box");
     obj.innerHTML = form_content;
@@ -435,9 +431,7 @@ function showModalTagForm(tagstartchar, postfix, tagendchar, tag, top, left, lin
             });
         });
     }
-
-    updateParamString("fieldtype_param_", 1, countparams, "current_tagparameter", null, false, false, tagstartchar);
-
+    updateParamString("fieldtype_param_", 1, countParams, "current_tagparameter", null, false, false, tagStartChar);
     showModal();
 }
 
@@ -484,8 +478,8 @@ function findTagInLine(ch, str) {
     let start_pos = -1;
     let end_pos = -1;
     let level = 1;
-    let startchar = '';
-    let endchar = '';
+    let startChar = '';
+    let endChar = '';
 
     for (let i = ch; i > -1; i--) {
 
@@ -494,8 +488,8 @@ function findTagInLine(ch, str) {
 
         if (str[i] === '[' || str[i] === '{') {
 
-            if (startchar === '')
-                startchar = str[i];
+            if (startChar === '')
+                startChar = str[i];
 
             level--;
             if (level === 0) {
@@ -516,8 +510,8 @@ function findTagInLine(ch, str) {
 
         if (str[i2] === ']' || str[i2] === '}') {
 
-            if (endchar === '')
-                endchar = str[i2];
+            if (endChar === '')
+                endChar = str[i2];
 
             level--;
             if (level === 0) {
@@ -576,7 +570,6 @@ function findTagObjectByName(tagStartChar, tagEndChar, lookForTag) {
     }
 
     //If nothing found then simplify the search
-
     for (s = 0; s < tagsets.length; s++) {
         let tagSet = tagsets[s];
         let tags = getParamOptions(tagSet, 'tag');
@@ -599,26 +592,25 @@ function findTagObjectByName(tagStartChar, tagEndChar, lookForTag) {
             }
         }
     }
-
     return null;
 }
 
-function getParamEditForm(tagobject, line, positions, isnew, countparams, tagstartchar, postfix, tagendchar, paramvaluestring) {
+function getParamEditForm(tagObject, line, positions, isNew, countParams, tagStartChar, postfix, tagEndChar, paramValueString) {
 
-    let result = renderParamBox(tagobject, "current_tagparameter", paramvaluestring);
+    let result = renderParamBox(tagObject, "current_tagparameter", paramValueString);
     result += '<div class="dynamic_values"><span class="dynamic_values_label">Tag with parameter:</span> ';
-    result += tagstartchar;
+    result += tagStartChar;
     result += temp_params_tag;
-    result += postfix + '(<span id="current_tagparameter" style="">' + paramvaluestring + '</span>)';
-    result += tagendchar + '</div>';
+    result += postfix + '(<span id="current_tagparameter" style="">' + paramValueString + '</span>)';
+    result += tagEndChar + '</div>';
     result += '<div style="text-align:center;">';
-    result += '<button id="clsave" onclick=\'return saveParams(event,' + countparams + ',' + line + ',' + positions[0] + ',' + positions[1] + ',' + isnew + ',"' + tagstartchar + '","' + tagendchar + '","' + postfix + '");\' class="btn btn-small button-apply btn-success">Save</button>';
+    result += '<button id="clsave" onclick=\'return saveParams(event,' + countParams + ',' + line + ',' + positions[0] + ',' + positions[1] + ',' + isNew + ',"' + tagStartChar + '","' + tagEndChar + '","' + postfix + '");\' class="btn btn-small button-apply btn-success">Save</button>';
     result += ' <button id="clclose" onclick=\'return closeModal(event);\' class="btn btn-small button-cancel btn-danger">Cancel</button>';
     result += '</div>';
     return result;
 }
 
-function saveParams(e, countParams, line_number, pos1, pos2, isNew, tagStartChar, tagEndchar, postfix) {
+function saveParams(e, countParams, line_number, pos1, pos2, isNew, tagStartChar, tagEndChar, postfix) {
 
     updateParamString("fieldtype_param_", 1, countParams, "current_tagparameter", null, false);
     e.preventDefault();
@@ -629,7 +621,7 @@ function saveParams(e, countParams, line_number, pos1, pos2, isNew, tagStartChar
     if (tmp_params !== "")
         result += '(' + tmp_params + ')';//{{ tag.edit(par1,par2) }} where ".edit" is the postfix
 
-    result += tagEndchar;
+    result += tagEndChar;
 
     let cursor_from = {line: line_number, ch: pos1};
     let cursor_to = {line: line_number, ch: pos2};
@@ -656,9 +648,9 @@ function define_cmLayoutEditor() {
 }
 
 //Used in layouteditor/php
-function define_cmLayoutEditor1(modename, nextmodename) {
-    CodeMirror.defineMode(modename, function (config, parserConfig) {
-        const layouteditorOverlay =
+function define_cmLayoutEditor1(modeName, nextModeName) {
+    CodeMirror.defineMode(modeName, function (config, parserConfig) {
+        const layoutEditorOverlay =
             {
                 token: function (stream, state) {
 
@@ -719,7 +711,7 @@ function define_cmLayoutEditor1(modename, nextmodename) {
                 }
             };
 
-        return CodeMirror.overlayMode(CodeMirror.getMode(config, parserConfig.backdrop || nextmodename), layouteditorOverlay);
+        return CodeMirror.overlayMode(CodeMirror.getMode(config, parserConfig.backdrop || nextModeName), layoutEditorOverlay);
     });
 }
 
@@ -733,14 +725,14 @@ function do_render_current_TagSets() {
     let tabs = [];
 
     for (let i = 0; i < tagsets.length; i++) {
-        let tagset = tagsets[i];
-        let a = tagset["@attributes"];
+        let tagSet = tagsets[i];
+        let a = tagSet["@attributes"];
 
         if (typeof (a.deprecated) == "undefined" || a.deprecated === "0") {
 
             tabs.push({
                 'id': 'layouteditor_tags' + index + '_' + i + '', 'title': a.label,
-                'content': '<p>' + a.description + '</p>' + renderTags(index, tagset)
+                'content': '<p>' + a.description + '</p>' + renderTags(index, tagSet)
             });
         }
     }
@@ -751,11 +743,11 @@ function do_render_current_TagSets() {
         return '<div class="FieldTagWizard"><p>No Tags available for this Layout Type</p></div>';
 }
 
-function renderTags(index, tagset) {
+function renderTags(index, tagSet) {
 
-    let tagset_attributes = tagset["@attributes"];
+    let tagSetAttributes = tagSet["@attributes"];
 
-    let tags = getParamOptions(tagset, 'tag');
+    let tags = getParamOptions(tagSet, 'tag');
     let result = '<div class="dynamic_values" style="padding-left:0 !important;">';
 
     for (let i = 0; i < tags.length; i++) {
@@ -766,27 +758,27 @@ function renderTags(index, tagset) {
             let t = "";
             let params = getParamOptions(tag_object.params, 'param');
 
-            let full_tagname = '';
+            let fullTagName = '';
             if (typeof (tag.twigclass) !== "undefined" && tag.twigclass !== "")
-                full_tagname = tag.twigclass + '.' + tag.name;
+                fullTagName = tag.twigclass + '.' + tag.name;
             else
-                full_tagname = tag.name;
+                fullTagName = tag.name;
 
-            if (tagset_attributes.name === 'filters')
-                full_tagname = tag.examplevalue + ' | ' + full_tagname;
+            if (tagSetAttributes.name === 'filters')
+                fullTagName = tag.examplevalue + ' | ' + fullTagName;
 
             if (params.length === 0)
-                t = '{{ ' + full_tagname + ' }}'; // t=tag.startchar+tag.name+tag.endchar;
+                t = '{{ ' + fullTagName + ' }}';
             else
-                t = '{{ ' + full_tagname + '(<span>Params</span>)' + ' }}'; //t=tag.startchar+full_tagname+':<span>Params</span>'+tag.endchar;
+                t = '{{ ' + fullTagName + '(<span>Params</span>)' + ' }}';
 
             result += '<div style="vertical-align:top;display:inline-block;">';
 
             if (typeof (tag.proversion) === "undefined" || parseInt(tag.proversion) !== 1) {
-                result += '<a href=\'javascript:addTag("{{ "," }}","' + btoa(full_tagname) + '",' + params.length + ');\' class="btn-primary">' + t + '</a> ';
+                result += '<a href=\'javascript:addTag("{{ "," }}","' + btoa(fullTagName) + '",' + params.length + ');\' class="btn-primary">' + t + '</a> ';
             } else {
                 if (proversion) {
-                    result += '<a href=\'javascript:addTag("{{ "," }}","' + btoa(full_tagname) + '",' + params.length + ');\' class="btn-primary">' + t + '</a> ';
+                    result += '<a href=\'javascript:addTag("{{ "," }}","' + btoa(fullTagName) + '",' + params.length + ');\' class="btn-primary">' + t + '</a> ';
                 } else {
                     result += '<div style="display:inline-block;"><div class="btn-default">' + t + '</div></div> ';
                     result += '<div class="ct_doc_pro_label"><a href="https://joomlaboat.com/custom-tables#buy-extension" target="_blank">Available in PRO Version</a></div>';
@@ -811,8 +803,8 @@ function addTabExtraEvents3() {
         $(".nav-tabs a").click(function (e) {
             let a = e.target.href;
 
-            let codepair = a.split("#");
-            let code = codepair[1].replace('-tab', '');
+            let codePair = a.split("#");
+            let code = codePair[1].replace('-tab', '');
 
             const index = textarea_findindex(code);
 
@@ -908,30 +900,30 @@ function addExtraEvent(index) {
         let positions = findTagInLine(cr.ch, line);
 
         if (positions != null) {
-            let startchar = line.substring(positions[0], positions[0] + 1); //+1 to have 1 character
-            if (startchar === '{') {
-                let startchar2 = line.substring(positions[0] - 1, positions[0] + 1);
-                if (startchar2 === '{{')
-                    startchar = '{{';
+            let startChar = line.substring(positions[0], positions[0] + 1); //+1 to have 1 character
+            if (startChar === '{') {
+                let startChar2 = line.substring(positions[0] - 1, positions[0] + 1);
+                if (startChar2 === '{{')
+                    startChar = '{{';
             }
 
-            let endchar = line.substring(positions[1] - 1, positions[1] - 1 + 1);//-1 because position ends after the tag
-            if (endchar === '}') {
-                let endchar2 = line.substring(positions[1] - 1, positions[1] - 1 + 2);
-                if (endchar2 === '}}')
-                    endchar = '}}';
+            let endChar = line.substring(positions[1] - 1, positions[1] - 1 + 1);//-1 because position ends after the tag
+            if (endChar === '}') {
+                let endChar2 = line.substring(positions[1] - 1, positions[1] - 1 + 2);
+                if (endChar2 === '}}')
+                    endChar = '}}';
             }
 
             let tag = line.substring(positions[0] + 1, positions[1] - 1);//-1 because position ends after the tag
 
-            if (startchar === '{{') {
+            if (startChar === '{{') {
                 positions[0] = positions[0] - 1;
                 positions[1] = positions[1] + 1;
             }
 
             let postfix = ''; //todo
             let mousePos = cm.cursorCoords(cr, "window");
-            showModalForm(startchar, postfix, endchar, tag, mousePos.top, mousePos.left, cr.line, positions, 0);
+            showModalForm(startChar, postfix, endChar, tag, mousePos.top, mousePos.left, cr.line, positions, 0);
         }
 
     }, true);

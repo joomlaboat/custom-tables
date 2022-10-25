@@ -95,7 +95,7 @@ function updateFieldsBox() {
     //field_box_obj.innerHTML='';//<div class="dynamic_values">'+result+'</div>';
 }
 
-function renderTabs(tabset_id, tabs) {
+function renderTabs(tabSetId, tabs) {
     // Tabs is the array of tab elements [{"title":"Tab Title","id":"Tab Name","content":"Tab Content"}...]
 
     if (joomlaVersion < 4) {
@@ -113,7 +113,7 @@ function renderTabs(tabset_id, tabs) {
             result_li += '<li' + (cssclass !== '' ? ' class="' + cssclass + '"' : '') + '><a href="#' + tab.id + '" onclick="resizeModalBox();" data-toggle="tab">' + tab.title + '</a></li>';
             result_div += '<div id="' + tab.id + '" class="tab-pane' + (i === 0 ? ' active' : '') + '">' + tab.content + '</div>';
         }
-        return '<ul class="nav nav-tabs" >' + result_li + '</ul>\n\n<div class="tab-content" id="' + tabset_id + '">' + result_div + '</div>';
+        return '<ul class="nav nav-tabs" >' + result_li + '</ul>\n\n<div class="tab-content" id="' + tabSetId + '">' + result_div + '</div>';
     } else {
         //let result_li = '';
         let result_div = '';
@@ -129,20 +129,20 @@ function renderTabs(tabset_id, tabs) {
         }
 
         //let result_div_li = '<div role="tablist">' + result_li + '</div>';
-        return '<joomla-tab id="' + tabset_id + '" orientation="horizontal" recall="" breakpoint="768">' + result_div + '</joomla-tab>';
+        return '<joomla-tab id="' + tabSetId + '" orientation="horizontal" recall="" breakpoint="768">' + result_div + '</joomla-tab>';
     }
 }
 
 function replaceOldFieldTitleTagsWithTwigStyle() {
     let editor = codemirror_editors[codemirror_active_index];
-    let docuemntText = editor.getValue();
+    let documentText = editor.getValue();
     let count = 0;
     let changesMade = false;
 
     //Titles
     for (let i = 0; i < wizardFields.length; i++) {
         let oldFieldTag = '*' + wizardFields[i].fieldname + '*';
-        if (docuemntText.indexOf(oldFieldTag) !== -1)
+        if (documentText.indexOf(oldFieldTag) !== -1)
             count += 1;
     }
 
@@ -151,7 +151,7 @@ function replaceOldFieldTitleTagsWithTwigStyle() {
             for (let i = 0; i < wizardFields.length; i++) {
                 let oldFieldTag = '*' + wizardFields[i].fieldname + '*';
                 let newFieldTag = '{{ ' + wizardFields[i].fieldname + '.title }}';
-                docuemntText = docuemntText.replace(oldFieldTag, newFieldTag)
+                documentText = documentText.replace(oldFieldTag, newFieldTag)
                 changesMade = true;
             }
         }
@@ -162,7 +162,7 @@ function replaceOldFieldTitleTagsWithTwigStyle() {
     //values
     for (let i = 0; i < wizardFields.length; i++) {
         let oldFieldTag = '|' + wizardFields[i].fieldname + '|';
-        if (docuemntText.indexOf(oldFieldTag) !== -1)
+        if (documentText.indexOf(oldFieldTag) !== -1)
             count += 1;
     }
 
@@ -171,14 +171,14 @@ function replaceOldFieldTitleTagsWithTwigStyle() {
             for (let i = 0; i < wizardFields.length; i++) {
                 let oldFieldTag = '|' + wizardFields[i].fieldname + '|';
                 let newFieldTag = '{{ ' + wizardFields[i].fieldname + '.value }}';
-                docuemntText = docuemntText.replace(oldFieldTag, newFieldTag)
+                documentText = documentText.replace(oldFieldTag, newFieldTag)
                 changesMade = true;
             }
         }
     }
 
     if (changesMade === true) {
-        editor.setValue(docuemntText);
+        editor.setValue(documentText);
         editor.refresh();
     }
 }
@@ -275,7 +275,7 @@ function findFieldObjectByName(fieldname) {
     return null;
 }
 
-function renderFieldTags(startchar, postfix, endchar, fieldtypes_to_skip, param_group) {
+function renderFieldTags(startChar, postfix, endChar, fieldtypes_to_skip, param_group) {
     let result = '';
     const l = wizardFields.length;
 
@@ -304,20 +304,20 @@ function renderFieldTags(startchar, postfix, endchar, fieldtypes_to_skip, param_
                     }
                 }
 
-                button_value = startchar + t + endchar;
+                button_value = startChar + t + endChar;
             } else {
-                alt += ' (UNKNOW FIELD TYPE)';
+                alt += ' (UNKNOWN FIELD TYPE)';
 
-                button_value = '<span class="text_error">' + startchar + t + endchar + '</span>';
+                button_value = '<span class="text_error">' + startChar + t + endChar + '</span>';
             }
 
             result += '<div style="vertical-align:top;display:inline-block;">';
             result += '<div style="display:inline-block;">';
 
             if (joomlaVersion < 4)
-                result += '<a href=\'javascript:addFieldTag("' + startchar + '","' + postfix + '","' + endchar + '","' + btoa(field.fieldname) + '",' + p + ');\' class="btn" alt="' + alt + '" title="' + alt + '">' + button_value + '</a>';
+                result += '<a href=\'javascript:addFieldTag("' + startChar + '","' + postfix + '","' + endChar + '","' + btoa(field.fieldname) + '",' + p + ');\' class="btn" alt="' + alt + '" title="' + alt + '">' + button_value + '</a>';
             else
-                result += '<a href=\'javascript:addFieldTag("' + startchar + '","' + postfix + '","' + endchar + '","' + btoa(field.fieldname) + '",' + p + ');\' class="btn-primary" alt="' + alt + '" title="' + alt + '">' + button_value + '</a>';
+                result += '<a href=\'javascript:addFieldTag("' + startChar + '","' + postfix + '","' + endChar + '","' + btoa(field.fieldname) + '",' + p + ');\' class="btn-primary" alt="' + alt + '" title="' + alt + '">' + button_value + '</a>';
 
             result += '</div>';
             result += '</div>';
@@ -432,6 +432,11 @@ function showModalFieldTagForm(tagStartChar, postfix, tagEndChar, tag, top, left
         let cursor_from = {line: line, ch: positions[0]};
         let cursor_to = {line: line, ch: positions[1]};
         let result = '{{ ' + tag + postfix + ' }}';
+        let tagPair1 = parseQuote(tag, '(', false);
+        let tagPair2 = parseQuote(tagPair1[0], '.', false);
+        if (tagPair2[0] + postfix === tagPair1[0])
+            return;
+
         let editor = codemirror_editors[codemirror_active_index];
         let doc = editor.getDoc();
         doc.replaceRange(result, cursor_from, cursor_to, "");
@@ -568,7 +573,6 @@ function getLayout_Page() {
     result += '</style>\r\n';
 
     result += '<legend>{{ table.title }}</legend>\r\n';
-
     result += '<div style="float:right;">{{ html.recordcount }}</div>\r\n';
     result += '<div style="float:left;">{{ html.add }}</div>\r\n';
     result += '\r\n';
@@ -657,12 +661,12 @@ function getLayout_SimpleCatalog() {
     result += '\r\n';
 
     let fieldtypes_to_skip = ['log', 'imagegallery', 'filebox', 'dummy'];
-    let fieldtypes_withsearch = ['email', 'string', 'multilangstring', 'text', 'multilangtext', 'sqljoin', 'records', 'user', 'userid', 'int', 'checkbox'];
+    let fieldTypesWithSearch = ['email', 'string', 'multilangstring', 'text', 'multilangtext', 'sqljoin', 'records', 'user', 'userid', 'int', 'checkbox'];
     let fieldtypes_allowed_to_orderby = ['string', 'email', 'url', 'sqljoin', 'phponadd', 'phponchange', 'int', 'float', 'ordering', 'changetime', 'creationtime', 'date', 'multilangstring', 'customtables', 'userid', 'user'];
 
     result += '\r\n<table>\r\n';
 
-    result += renderTableHead(fieldtypes_to_skip, fieldtypes_withsearch, fieldtypes_allowed_to_orderby);
+    result += renderTableHead(fieldtypes_to_skip, fieldTypesWithSearch, fieldtypes_allowed_to_orderby);
 
     result += '\r\n<tbody>';
     result += '\r\n{% block record %}';
@@ -684,7 +688,7 @@ function getLayout_SimpleCatalog() {
 
         if (field.type != 'ordering' && fieldtypes_to_skip.indexOf(field.type) === -1) {
 
-            if (fieldtypes_withsearch.indexOf(field.type) === -1)
+            if (fieldTypesWithSearch.indexOf(field.type) === -1)
                 result += '<td>{{ ' + field.fieldname + ' }}</td>\r\n';
             else
                 result += '<td>{{ ' + field.fieldname + ' }}</td>\r\n';
@@ -705,7 +709,7 @@ function getLayout_SimpleCatalog() {
     return result;
 }
 
-function renderTableHead(fieldtypes_to_skip, fieldtypes_withsearch, fieldtypes_allowed_to_orderby) {
+function renderTableHead(fieldtypes_to_skip, fieldTypesWithSearch, fieldtypes_allowed_to_orderby) {
 
     let l = wizardFields.length;
     let result = '';
@@ -725,7 +729,7 @@ function renderTableHead(fieldtypes_to_skip, fieldtypes_withsearch, fieldtypes_a
 
     for (let index = 0; index < l; index++) {
 
-        result += renderTableColumnHeader(wizardFields[index], fieldtypes_to_skip, fieldtypes_withsearch, fieldtypes_allowed_to_orderby)
+        result += renderTableColumnHeader(wizardFields[index], fieldtypes_to_skip, fieldTypesWithSearch, fieldtypes_allowed_to_orderby)
     }
 
     result += '<th>Action<br/>{{ html.searchbutton }}</th>\r\n';
