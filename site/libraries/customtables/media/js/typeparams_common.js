@@ -381,8 +381,11 @@ function updateParamString(inputBoxId, countList, countParams, objectId, e, rawQ
 
             if (typeparams != null) {
                 let modalParamListObject = document.getElementById("modalParamList");
-                if (modalParamListObject)
-                    modalParamListObject.innerHTML = renderParamList(typeparams, "current_tagparameter", tmp_list);
+                if (modalParamListObject) {
+                    let v = renderParamList(typeparams, objectId, tmp_list);
+                    modalParamListObject.innerHTML = v;
+                } else
+                    alert("modalParamList not found.");
             }
         }
     }
