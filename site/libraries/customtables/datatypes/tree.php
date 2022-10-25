@@ -517,7 +517,7 @@ class Tree
     //Used in various files
     //TODO: replace - Very outdated
 
-    public static function isRecordExist($checkvalue, $checkfield, $resultfield, $table): string
+    public static function isRecordExist($checkvalue, $checkfield, $resultfield, $table): ?string
     {
         $db = Factory::getDBO();
         $query = ' SELECT ' . $resultfield . ' AS resultfield FROM ' . $table . ' WHERE ' . $checkfield . '="' . $checkvalue . '" LIMIT 1';
@@ -528,7 +528,7 @@ class Tree
         if (count($espropertytype) > 0)
             return $espropertytype[0]->resultfield;
 
-        return '';
+        return null;
     }
 
     //Used many times

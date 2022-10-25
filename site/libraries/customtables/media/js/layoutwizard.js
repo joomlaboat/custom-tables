@@ -431,11 +431,13 @@ function showModalFieldTagForm(tagStartChar, postfix, tagEndChar, tag, top, left
     if (!group_params_object || !group_params_object.params) {
         let cursor_from = {line: line, ch: positions[0]};
         let cursor_to = {line: line, ch: positions[1]};
-        let result = '{{ ' + tag + postfix + ' }}';
+
         let tagPair1 = parseQuote(tag, '(', false);
         let tagPair2 = parseQuote(tagPair1[0], '.', false);
-        if (tagPair2[0] + postfix === tagPair1[0])
+        if ((tagPair1.length > 1 || tagPair2.length > 1) && tagPair2[0] + postfix === tagPair1[0])
             return;
+
+        let result = '{{ ' + tag + postfix + ' }}';
 
         let editor = codemirror_editors[codemirror_active_index];
         let doc = editor.getDoc();

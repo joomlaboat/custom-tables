@@ -106,7 +106,7 @@ class CT_FieldTypeTag_image
             $ExistingImage = Tree::isRecordExist($listing_id, 'id', $field->realfieldname, $field->ct->Table->realtablename);
 
             if ($to_delete == 'true') {
-                if ($ExistingImage > 0) {
+                if ($ExistingImage !== null and $ExistingImage != '' and $ExistingImage > 0) {
                     $imagemethods->DeleteExistingSingleImage(
                         $ExistingImage,
                         JPATH_SITE . DIRECTORY_SEPARATOR . $ImageFolder,
@@ -118,8 +118,11 @@ class CT_FieldTypeTag_image
 
                 return $value;
             } else {
-                $value = $imagemethods->UploadSingleImage($ExistingImage, $fileId, $field->realfieldname,
-                    JPATH_SITE . DIRECTORY_SEPARATOR . $ImageFolder, $field->params, $field->ct->Table->realtablename, $field->ct->Table->realidfieldname);
+
+                if ($ExistingImage !== null) {
+                    $value = $imagemethods->UploadSingleImage($ExistingImage, $fileId, $field->realfieldname,
+                        JPATH_SITE . DIRECTORY_SEPARATOR . $ImageFolder, $field->params, $field->ct->Table->realtablename, $field->ct->Table->realidfieldname);
+                }
             }
         }
 
@@ -214,7 +217,6 @@ class CT_FieldTypeTag_image
             . '&Itemid=' . $field->ct->Params->ItemId
             . (is_null($field->ct->Params->ModuleId) ? '' : '&ModuleId=' . $field->ct->Params->ModuleId)
             . '&fieldname=' . $field->fieldname;
-        //urlstr="' . $urlstr . '";
 
         return '
         <!--suppress XmlDuplicatedId -->
@@ -231,6 +233,7 @@ class CT_FieldTypeTag_image
                 ct_eventsmessage_element="ct_eventsmessage";
                 tempFileName="' . $fileId . '";
                 fieldValueInputBox="' . $prefix . $field->fieldname . '";
+                urlstr="' . $urlstr . '";
                 ct_getUploader(' . $field->id . ',"' . $urlstr . '",' . $max_file_size . ',"jpg jpeg png gif svg webp","eseditForm",false,"ct_fileuploader_'
             . $field->fieldname . '","ct_eventsmessage_' . $field->fieldname . '","' . $fileId . '","' . $prefix . $field->fieldname . '","ct_ubloadedfile_box_' . $field->fieldname . '");
 
