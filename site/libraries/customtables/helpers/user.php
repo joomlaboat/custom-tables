@@ -258,29 +258,39 @@ class CTUser
             $data['activate'] = $base . 'index.php?option=com_users&task=registration.activate&token=' . $data['activation'];
         }
 
-        $subject = JoomlaBasicMisc::JTextExtended('COM_USERS_EMAIL_ACCOUNT_DETAILS');
-        $body = JoomlaBasicMisc::JTextExtended('COM_USERS_EMAIL_REGISTERED_BODY');
-
         $config = Factory::getConfig();
+        $siteName = $config->get('sitename');
+        $subject = JoomlaBasicMisc::JTextExtended('COM_USERS_EMAIL_ACCOUNT_DETAILS');
 
         $emailSubject = Text::sprintf(
             $subject,
             $fullname,
-            $config->get('sitename')
-
+            $siteName
         );
+
+        $emailSubject = str_replace('{NAME}', $fullname, $emailSubject);
+        $emailSubject = str_replace('{SITENAME}', $siteName, $emailSubject);
+
+        $body = JoomlaBasicMisc::JTextExtended('COM_USERS_EMAIL_REGISTERED_BODY');
+        $UriBase = Uri::base();
 
         $emailBody = Text::sprintf(
             $body,
             $fullname,
-            $config->get('sitename'),
-            Uri::base(),
+            $siteName,
+            $UriBase,
             $username,
             $password
         );
 
-        Email::sendEmail($email, $emailSubject, $emailBody);
+        $emailBody = str_replace('{NAME}', $fullname, $emailBody);
+        $emailBody = str_replace('{SITENAME}', $siteName, $emailBody);
+        $emailBody = str_replace('{SITEURL}', $UriBase, $emailBody);
+        $emailBody = str_replace('{USERNAME}', $username, $emailBody);
+        $emailBody = str_replace('{PASSWORD_CLEAR}', $password, $emailBody);
+        $emailBody = str_replace("\n", '<br/>', $emailBody);
 
+        Email::sendEmail($email, $emailSubject, $emailBody);
         return $user->id;
     }
 
