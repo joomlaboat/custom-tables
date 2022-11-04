@@ -199,6 +199,11 @@ class CustomtablesViewListofrecords extends JViewLegacy
             $childBar->unpublish('listofrecords.unpublish')->listCheck(true);
         }
 
+        //if (!$this->isEmptyState and $this->state->get('filter.published') != ContentComponent::CONDITION_TRASHED and $this->ct->Env->advancedtagprocessor)
+
+        if (!empty($this->items))
+            $toolbar->appendButton('Standard', 'download', 'Export to CSV', 'listofrecords.exportcsv', $listSelect = false, $formId = null);
+
         if (($this->canState && $this->canDelete)) {
             if (!$this->isEmptyState && $this->canDelete) {
                 $childBar->delete('listofrecords.delete')

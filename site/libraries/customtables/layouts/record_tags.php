@@ -380,8 +380,6 @@ class Twig_Record_Tags
             //don't attach to specific record when it is the same table, example : to find averages
             $wheres[] = $this->ct->Table->realtablename . '.' . $this->ct->Table->tablerow['realidfieldname'] . '=' . $this->ct->db->quote($this->ct->Table->record[$this->ct->Table->realidfieldname]);
         }// else {
-        //$wheres[]='#__customtables_table_'.$sj_tablename.'.published=1';//to join with published record only, preferably set in parameters
-        //}
 
         if ($additional_where != '')
             $wheres[] = '(' . $additional_where . ')';

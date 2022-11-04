@@ -155,9 +155,6 @@ class CustomtablesViewListoffields extends JViewLegacy
         JHtmlSidebar::setAction('index.php?option=com_customtables&view=listoffields&tableid=' . $this->tableid);
     }
 
-    /**
-     * Setting the toolbar
-     */
     protected function addToolbar_4()
     {
         $user = Factory::getUser();

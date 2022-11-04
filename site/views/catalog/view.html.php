@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\CatalogExportCSV;
 use CustomTables\CT;
 use CustomTables\Catalog;
 use CustomTables\Inputbox;
@@ -46,20 +47,25 @@ class CustomTablesViewCatalog extends JViewLegacy
 
         if ($this->ct->Env->frmt == 'csv') {
 
-            if (function_exists('mb_convert_encoding')) {
-                //$this->layoutType = 9;//CSV
-                require_once('tmpl' . DIRECTORY_SEPARATOR . 'csv.php');
-            } else {
-                $msg = '"mbstring" PHP extension not installed.<br/>
-				You need to install this extension. It depends on of your operating system, here are some examples:<br/><br/>
-				sudo apt-get install php-mbstring  # Debian, Ubuntu<br/>
-				sudo yum install php-mbstring  # RedHat, Fedora, CentOS<br/><br/>
-				Uncomment the following line in php.ini, and restart the Apache server:<br/>
-				extension=mbstring<br/><br/>
-				Then restart your webs\' server. Example:<br/>service apache2 restart';
+            if (ob_get_contents())
+                ob_end_clean();
 
-                $this->ct->app->appenqueueMessage($msg, 'error');
-            }
+            $pathViews = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR;
+            require_once($pathViews . 'catalog-csv.php');
+            $catalogCSV = new CatalogExportCSV($this->ct, $this->catalog);
+            if (!$catalogCSV->error) {
+                $filename = JoomlaBasicMisc::makeNewFileName($this->ct->Params->pageTitle, 'csv');
+                header('Content-Disposition: attachment; filename="' . $filename . '"');
+                header('Content-Type: text/csv; charset=utf-16');
+                header("Pragma: no-cache");
+                header("Expires: 0");
+
+                //layoutType: 9 CSV
+                $layout = $this->ct->Env->jinput->getCmd('layout');
+                echo $catalogCSV->render($layout);
+                die;
+            } else
+                return false;
 
         } elseif ($this->ct->Env->frmt == 'json') {
 

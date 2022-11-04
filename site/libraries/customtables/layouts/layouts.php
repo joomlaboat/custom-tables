@@ -169,8 +169,59 @@ class Layouts
         }
     }
 
+    function createDefaultLayout_SimpleCatalog($fields, $addToolbar = true): string
+    {
+        $this->layouttype = 1;
+
+        $result = 'Simple Catalog';
+
+        return $result;
+    }
+
+    function createDefaultLayout_CSV($fields): string
+    {
+        $this->layouttype = 9;
+
+        $result = '';
+
+        $fieldtypes_to_skip = ['log', 'imagegallery', 'filebox', 'dummy', 'ordering'];
+        $fieldtypes_to_pureValue = ['image', 'imagegallery', 'filebox', 'file'];
+
+        foreach ($fields as $field) {
+
+            if (!in_array($field['type'], $fieldtypes_to_skip)) {
+                if ($result !== '')
+                    $result .= ',';
+
+                $result .= '"{{ ' . $field['fieldname'] . '.title }}"';
+            }
+        }
+
+        $result .= "\r\n{% block record %}";
+
+        $firstField = true;
+        foreach ($fields as $field) {
+
+            if (!in_array($field['type'], $fieldtypes_to_skip)) {
+
+                if (!$firstField)
+                    $result .= ',';
+
+                if (!in_array($field['type'], $fieldtypes_to_pureValue))
+                    $result .= '"{{ ' . $field['fieldname'] . ' }}"';
+                else
+                    $result .= '"{{ ' . $field['fieldname'] . '.value }}"';
+
+                $firstField = false;
+            }
+        }
+        return $result . "\r\n{% endblock %}";
+    }
+
     function createDefaultLayout_Edit($fields, $addToolbar = true): string
     {
+        $this->layouttype = 2;
+
         $result = '<div class="form-horizontal">';
 
         $fieldtypes_to_skip = ['log', 'phponview', 'phponchange', 'phponadd', 'md5', 'id', 'server', 'userid', 'viewcount', 'lastviewtime', 'changetime', 'creationtime', 'imagegallery', 'filebox', 'dummy'];

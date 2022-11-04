@@ -171,4 +171,26 @@ class CustomtablesControllerListofRecords extends JControllerAdmin
             die('Something went wrong.');
         }
     }
+
+    public function exportcsv()
+    {
+        echo 'exportcsv<br/>';
+
+        $tableid = $this->input->get('tableid', 0, 'int');
+
+        if ($tableid != 0) {
+            $table = ESTables::getTableRowByID($tableid);
+            if (!is_object($table) and $table == 0) {
+                Factory::getApplication()->enqueueMessage('Table not found', 'error');
+                return;
+            } else {
+                $tablename = $table->tablename;
+            }
+        }
+
+        $cid = Factory::getApplication()->input->post->get('cid', array(), 'array');
+
+        print_r($cid);
+        die;
+    }
 }

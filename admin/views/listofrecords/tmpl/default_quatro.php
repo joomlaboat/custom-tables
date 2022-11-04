@@ -32,6 +32,36 @@ if ($this->saveOrder and $this->ordering_realfieldname != '') {
 ?>
 <form action="<?php echo Route::_('index.php?option=com_customtables&view=listofrecords&tableid=' . $this->ct->Table->tableid); ?>"
       method="post" name="adminForm" id="adminForm">
+
+    <script>
+
+        function atLeastOnCheckBoxSelected() {
+            let cidObject = document.getElementsByName('cid[]');
+
+            for (let i = 0; i < cidObject.length; i++) {
+                if (cidObject[i].checked) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        Joomla.submitbutton = function (task) {
+            if (task == 'listofrecords.exportcsv') {
+
+                if (atLeastOnCheckBoxSelected()) {
+                    Joomla.submitform(task);
+                } else {
+                    if (confirm(Joomla.JText._('Do you want to export all records?')))
+                        Joomla.submitform(task);
+                    else
+                        return false;
+                }
+            }
+        }
+    </script>
+
+
     <div class="row">
         <div class="col-md-12">
             <div id="j-main-container" class="j-main-container">

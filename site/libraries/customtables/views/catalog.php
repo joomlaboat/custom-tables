@@ -109,17 +109,20 @@ class Catalog
         $pagelayout = '';
         $itemLayout = '';
 
-        if (is_null($layout) or $layout == '') {
-            if (!is_null($this->ct->Params->pageLayout) and $this->ct->Params->pageLayout != '')
-                $pagelayout = $Layouts->getLayout($this->ct->Params->pageLayout);
-
-            if ($this->ct->Env->legacysupport and $pagelayout == '')
-                $pagelayout = '{catalog:,notable}';
-
-            if (!is_null($this->ct->Params->itemLayout))
-                $itemLayout = $Layouts->getLayout($this->ct->Params->itemLayout);
-        } else
+        if (!is_null($layout) and $layout != '') {
             $pagelayout = $Layouts->getLayout($layout);
+        } else {
+            if ($this->ct->Env->frmt == 'csv') {
+                $pagelayout = $Layouts->createDefaultLayout_CSV($this->ct->Table->fields);
+            } else {
+
+                if (!is_null($this->ct->Params->pageLayout) and $this->ct->Params->pageLayout != '')
+                    $pagelayout = $Layouts->getLayout($this->ct->Params->pageLayout);
+
+                if ($pagelayout == '')
+                    $pagelayout = $Layouts->createDefaultLayout_SimpleCatalog($this->ct->Table->fields);
+            }
+        }
 
         $this->ct->LayoutVariables['layout_type'] = $Layouts->layouttype;
 
