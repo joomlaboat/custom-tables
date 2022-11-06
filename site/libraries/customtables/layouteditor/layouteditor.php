@@ -14,7 +14,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use Joomla\CMS\Factory;
-use \Joomla\CMS\Version;
+use Joomla\CMS\Version;
 use CustomTables\CT;
 
 $theme = 'eclipse';
@@ -127,9 +127,8 @@ function getKnownLanguages()
     return implode(',', $list);
 }
 
-function render_onPageLoads($onPageLoads, $LayoutType, $version)
+function render_onPageLoads($onPageLoads, $version)
 {
-
     $result = '
 		<div id="layouteditor_Modal" class="layouteditor_modal">
 
@@ -149,7 +148,7 @@ function render_onPageLoads($onPageLoads, $LayoutType, $version)
 	joomlaVersion =' . $version . ';
 	define_cmLayoutEditor();
 
-	var text_areas=[];
+	let text_areas=[];
     window.onload = function()
 	{
 		//changeBackIcon();

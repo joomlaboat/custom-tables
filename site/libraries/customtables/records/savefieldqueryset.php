@@ -51,7 +51,7 @@ class SaveFieldQuerySet
 
     //Return type: null|string|array
 
-    function getSaveFieldSet($fieldrow)
+    function getSaveFieldSet($fieldrow): ?string
     {
         $this->field = new Field($this->ct, $fieldrow, $this->row);
 
@@ -772,8 +772,8 @@ class SaveFieldQuerySet
 
                 $parts = explode(';base64,', $value);
 
-                $deceded_binary = base64_decode($parts[1]);
-                file_put_contents($image_file, $deceded_binary);
+                $decoded_binary = base64_decode($parts[1]);
+                file_put_contents($image_file, $decoded_binary);
 
                 return $ImageID;
             }

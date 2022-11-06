@@ -41,8 +41,9 @@ $isNew = $this->item->id == 0;
             ?>
             <div class="control-group">
                 <div class="control-label"><?php echo $this->form->getLabel('title') . ' (' . $lang->caption . ')'; ?></div>
-                <div class="controls"><input type="text" name="jform[<?php echo $id; ?>]" id="jform_<?php echo $id; ?>"
-                                             class="inputbox" size="40" value="<?php echo $row_lang[$id]; ?>"/></div>
+                <?php echo '<div class="controls"><input type="text" name="jform[' . $id . ']" id="jform_' . $id . '"
+                                             class="inputbox" size="40" value="' . $row_lang[$id] . '"/></div>';
+                ?>
             </div>
 
             <?php

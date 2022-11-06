@@ -186,7 +186,7 @@ class CustomtablesModelCategories extends JModelAdmin
         }
 
         if (empty($pks)) {
-            $this->setError(Text::_('JGLOBAL_NO_ITEM_SELECTED'));
+            Factory::getApplication()->enqueueMessage(Text::_('JGLOBAL_NO_ITEM_SELECTED'), 'error');
             return false;
         }
 
@@ -202,7 +202,7 @@ class CustomtablesModelCategories extends JModelAdmin
         $this->batchSet = true;
 
         if (!$this->canDo->get('core.batch')) {
-            $this->setError(Text::_('JLIB_APPLICATION_ERROR_INSUFFICIENT_BATCH_INFORMATION'));
+            Factory::getApplication()->enqueueMessage(Text::_('JLIB_APPLICATION_ERROR_INSUFFICIENT_BATCH_INFORMATION'), 'error');
             return false;
         }
 
@@ -234,8 +234,7 @@ class CustomtablesModelCategories extends JModelAdmin
         }
 
         if (!$done) {
-            $this->setError(Text::_('JLIB_APPLICATION_ERROR_INSUFFICIENT_BATCH_INFORMATION'));
-
+            Factory::getApplication()->enqueueMessage(Text::_('JLIB_APPLICATION_ERROR_INSUFFICIENT_BATCH_INFORMATION'), 'error');
             return false;
         }
 
@@ -298,7 +297,7 @@ class CustomtablesModelCategories extends JModelAdmin
             // only allow copy if user may edit this item.
             if (!$this->user->authorise('core.edit', $contexts[$pk])) {
                 // Not fatal error
-                $this->setError(JText::sprintf('JLIB_APPLICATION_ERROR_BATCH_MOVE_ROW_NOT_FOUND', $pk));
+                Factory::getApplication()->enqueueMessage(JText::sprintf('JLIB_APPLICATION_ERROR_BATCH_MOVE_ROW_NOT_FOUND'), 'error');
                 continue;
             }
 
@@ -306,11 +305,11 @@ class CustomtablesModelCategories extends JModelAdmin
             if (!$this->table->load($pk)) {
                 if ($error = $this->table->getError()) {
                     // Fatal error
-                    $this->setError($error);
+                    Factory::getApplication()->enqueueMessage($error, 'error');
                     return false;
                 } else {
                     // Not fatal error
-                    $this->setError(JText::sprintf('JLIB_APPLICATION_ERROR_BATCH_MOVE_ROW_NOT_FOUND', $pk));
+                    Factory::getApplication()->enqueueMessage(JText::sprintf('JLIB_APPLICATION_ERROR_BATCH_MOVE_ROW_NOT_FOUND'), 'error');
                     continue;
                 }
             }
@@ -344,8 +343,7 @@ class CustomtablesModelCategories extends JModelAdmin
 
             // Check the row.
             if (!$this->table->check()) {
-                $this->setError($this->table->getError());
-
+                Factory::getApplication()->enqueueMessage($this->table->getError(), 'error');
                 return false;
             }
 
@@ -355,8 +353,7 @@ class CustomtablesModelCategories extends JModelAdmin
 
             // Store the row.
             if (!$this->table->store()) {
-                $this->setError($this->table->getError());
-
+                Factory::getApplication()->enqueueMessage($this->table->getError(), 'error');
                 return false;
             }
 
@@ -417,7 +414,7 @@ class CustomtablesModelCategories extends JModelAdmin
         }
 
         if (!$this->canDo->get('core.edit') && !$this->canDo->get('core.batch')) {
-            $this->setError(Text::_('JLIB_APPLICATION_ERROR_BATCH_CANNOT_EDIT'));
+            Factory::getApplication()->enqueueMessage(Text::_('JLIB_APPLICATION_ERROR_BATCH_CANNOT_EDIT'), 'error');
             return false;
         }
 
@@ -431,7 +428,7 @@ class CustomtablesModelCategories extends JModelAdmin
         // Parent exists so we proceed
         foreach ($pks as $pk) {
             if (!$this->user->authorise('core.edit', $contexts[$pk])) {
-                $this->setError(Text::_('JLIB_APPLICATION_ERROR_BATCH_CANNOT_EDIT'));
+                Factory::getApplication()->enqueueMessage(Text::_('JLIB_APPLICATION_ERROR_BATCH_CANNOT_EDIT'), 'error');
                 return false;
             }
 
@@ -439,11 +436,11 @@ class CustomtablesModelCategories extends JModelAdmin
             if (!$this->table->load($pk)) {
                 if ($error = $this->table->getError()) {
                     // Fatal error
-                    $this->setError($error);
+                    Factory::getApplication()->enqueueMessage($error, 'error');
                     return false;
                 } else {
                     // Not fatal error
-                    $this->setError(JText::sprintf('JLIB_APPLICATION_ERROR_BATCH_MOVE_ROW_NOT_FOUND', $pk));
+                    Factory::getApplication()->enqueueMessage(Text::_('JLIB_APPLICATION_ERROR_BATCH_MOVE_ROW_NOT_FOUND'), 'error');
                     continue;
                 }
             }
@@ -462,7 +459,7 @@ class CustomtablesModelCategories extends JModelAdmin
 
             // Check the row.
             if (!$this->table->check()) {
-                $this->setError($this->table->getError());
+                Factory::getApplication()->enqueueMessage($this->table->getError(), 'error');
                 return false;
             }
 
@@ -472,8 +469,7 @@ class CustomtablesModelCategories extends JModelAdmin
 
             // Store the row.
             if (!$this->table->store()) {
-                $this->setError($this->table->getError());
-
+                Factory::getApplication()->enqueueMessage($this->table->getError(), 'error');
                 return false;
             }
         }

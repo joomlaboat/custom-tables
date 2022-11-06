@@ -124,7 +124,7 @@ foreach ($this->allTables as $table) {
 
     <div class="clearfix"></div>
     <?php echo JLayoutHelper::render('layouts.details_under', $this);
-    echo render_onPageLoads($onPageLoads, $this->item->layouttype, 4);
+    echo render_onPageLoads($onPageLoads, 4);
     $this->getMenuItems();
     ?>
 

@@ -116,20 +116,18 @@ $max_file_size = JoomlaBasicMisc::file_upload_max_size();
                             </label><br/>
                         </td>
                         <td>
-                            <input type="text" name="title<?php echo $postfix; ?>" id="title<?php echo $postfix; ?>"
-                                   class="inputbox" size="40" value="<?php echo $vlu; ?>"/>
+                            <?php echo '<input type="text" name="title' . $postfix . '" id="title' . $postfix . '"
+                                   class="inputbox" size="40" value="' . $vlu . '"/>'; ?>
                         </td>
                     </tr>
 
 
                     <?php
                 }
-
                 ?>
 
-
                 <tr>
-                    <td width="150" class="key">
+                    <td style="width:150px" class="key">
                         <label for="parentid">
                             <?php echo JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PARENT_FIELD'); ?>
 

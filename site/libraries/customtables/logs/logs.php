@@ -15,11 +15,11 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
-use \Joomla\CMS\Factory;
+use Joomla\CMS\Factory;
 
 trait Logs
 {
-    public function saveLog($listing_id, $action)
+    public function saveLog($listing_id, $action): void
     {
         // 1 - New
         // 2 - Edit

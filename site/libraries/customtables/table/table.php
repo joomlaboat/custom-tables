@@ -75,7 +75,7 @@ class Table
         elseif (is_numeric($tablename_or_id_not_sanitized)) {
             $this->tablerow = ESTables::getTableRowByIDAssoc((int)$tablename_or_id_not_sanitized);// int sanitizes the input
         } else {
-            $tablename_or_id = strtolower(trim(preg_replace('/[^a-zA-Z_\d]/', '', $tablename_or_id_not_sanitized)));
+            $tablename_or_id = strtolower(trim(preg_replace('/\W/', '', $tablename_or_id_not_sanitized)));//[^a-zA-Z_\d]
             $this->tablerow = ESTables::getTableRowByNameAssoc($tablename_or_id);
         }
 
@@ -88,9 +88,9 @@ class Table
         $this->setTable($this->tablerow, $useridfieldname);
     }
 
-    function setTable($tablerow, $useridfieldname = null): void
+    function setTable($tableRow, $useridFieldName = null): void
     {
-        $this->tablerow = $tablerow;
+        $this->tablerow = $tableRow;
         $this->tablename = $this->tablerow['tablename'];
         $this->tableid = $this->tablerow['id'];
         $this->published_field_found = $this->tablerow['published_field_found'];
@@ -128,7 +128,7 @@ class Table
                 case 'user':
                 case 'userid':
 
-                    if ($useridfieldname === null or $useridfieldname == $fld['fieldname']) {
+                    if ($useridFieldName === null or $useridFieldName == $fld['fieldname']) {
                         $this->useridfieldname = $fld['fieldname'];
                         $this->useridrealfieldname = $fld['realfieldname'];
                     }
@@ -156,16 +156,16 @@ class Table
         }
     }
 
-    public function getRecordFieldValue($listingid, $resultfield)
+    public function getRecordFieldValue($listingid, $resultField)
     {
         $db = Factory::getDBO();
-        $query = ' SELECT ' . $resultfield . ' FROM ' . $this->realtablename . ' WHERE ' . $this->realidfieldname . '=' . $db->quote($listingid) . ' LIMIT 1';
+        $query = ' SELECT ' . $resultField . ' FROM ' . $this->realtablename . ' WHERE ' . $this->realidfieldname . '=' . $db->quote($listingid) . ' LIMIT 1';
 
         $db->setQuery($query);
         $recs = $db->loadAssocList();
 
         if (count($recs) > 0)
-            return $recs[0][$resultfield];
+            return $recs[0][$resultField];
 
         return "";
     }

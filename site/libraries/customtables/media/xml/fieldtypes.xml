@@ -1100,6 +1100,7 @@
                 <param name="parent-selector" label="Parent Selector"
                        description="Used for multilevel dependencies like Country, City, Street. List of parameters to set the sub-level select box. Example: [city_table_name, city_field_name, allow_unpublished(true or false), filter(population>100000), order_by(name)]. It is also possible to pass multiple selectors. Example: [ [city_table_name, city_field_name],[country_table_name, country_field_name, false]]"
                        default="" type="string"
+                       examplenoquotes="1"
                        example="[[city_table_name, city_field_name],[country_table_name, country_field_name, false]]"/>
             </params>
         </editparams>

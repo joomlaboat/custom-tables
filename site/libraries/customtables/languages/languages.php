@@ -15,12 +15,12 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
-use \Joomla\CMS\Factory;
+use Joomla\CMS\Factory;
 
 class Languages
 {
-    var $LanguageList;
-    var $Postfix;
+    var array $LanguageList;
+    var string $Postfix;
 
     function __construct()
     {
@@ -28,7 +28,7 @@ class Languages
         $this->Postfix = $this->getLangPostfix();
     }
 
-    function getLanguageList()
+    function getLanguageList(): array
     {
         $db = Factory::getDBO();
 
@@ -43,11 +43,10 @@ class Languages
             $row->sef = $parts[0];
             $this->LanguageList[] = $row;
         }
-
         return $this->LanguageList;
     }
 
-    function getLangPostfix()
+    function getLangPostfix(): string
     {
         $langObj = Factory::getLanguage();
         $nowLang = $langObj->getTag();
@@ -65,9 +64,8 @@ class Languages
         return '';
     }
 
-    function getLanguageTagByID($language_id)
+    function getLanguageTagByID($language_id): string
     {
-
         foreach ($this->LanguageList as $lang) {
             if ($lang->id == $language_id)
                 return $lang->language;
@@ -75,7 +73,7 @@ class Languages
         return '';
     }
 
-    function getLanguageByCODE($code)
+    function getLanguageByCODE($code): int
     {
         $db = Factory::getDBO();
 

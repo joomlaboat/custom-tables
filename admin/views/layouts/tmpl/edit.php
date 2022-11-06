@@ -114,7 +114,7 @@ foreach ($this->allTables as $table) {
     echo JHtml::_('bootstrap.endTabSet');
     echo JHtml::_('form.token');
 
-    echo render_onPageLoads($onPageLoads, $this->item->layouttype, 3);
+    echo render_onPageLoads($onPageLoads, 3);
 
     $this->getMenuItems();
     ?>

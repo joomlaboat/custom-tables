@@ -379,7 +379,6 @@ class Documentation
                 }
             }
         }
-
         return $result;
     }
 

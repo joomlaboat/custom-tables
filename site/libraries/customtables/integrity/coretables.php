@@ -22,8 +22,8 @@ use CustomTables\IntegrityChecks;
 
 //use CustomTables\Integrity\IntegrityFields;
 
-use \Joomla\CMS\Factory;
-use \ESTables;
+use Joomla\CMS\Factory;
+use ESTables;
 
 class IntegrityCoreTables extends IntegrityChecks
 {
@@ -48,7 +48,7 @@ class IntegrityCoreTables extends IntegrityChecks
             IntegrityCoreTables::checkCoreTable($ct, $table->realtablename, $table->fields);
     }
 
-    protected static function createCoreTable(CT &$ct, $table)
+    protected static function createCoreTable(CT &$ct, $table): bool
     {
         //TODO:
         //Add InnoDB Row Formats to config file
@@ -108,11 +108,10 @@ class IntegrityCoreTables extends IntegrityChecks
 
             return true;
         }
-
         return false;
     }
 
-    protected static function prepareAddFieldQuery(CT &$ct, $fields, $db_type)
+    protected static function prepareAddFieldQuery(CT &$ct, $fields, $db_type): array
     {
         $db = Factory::getDBO();
 
@@ -134,11 +133,10 @@ class IntegrityCoreTables extends IntegrityChecks
                 $fields_sql[] = $db->quoteName($field['name']) . ' ' . $field[$db_type];
             }
         }
-
         return $fields_sql;
     }
 
-    protected static function prepareAddIndexQuery($indexes)
+    protected static function prepareAddIndexQuery($indexes): array
     {
         $db = Factory::getDBO();
 
@@ -148,7 +146,6 @@ class IntegrityCoreTables extends IntegrityChecks
             $fld = $db->quoteName($index['field']);
             $indexes_sql[] = 'KEY ' . $index_name . ' (' . $fld . ')';
         }
-
         return $indexes_sql;
     }
 
@@ -182,21 +179,21 @@ class IntegrityCoreTables extends IntegrityChecks
 
     public static function checkCoreTableFields(CT &$ct, $realtablename, $ExistingFields, $realfieldname, $ct_fieldtype, $ct_typeparams = '')
     {
-        $exst_field = null;
-        foreach ($ExistingFields as $existing_field) {
-            if ($existing_field['column_name'] == $realfieldname) {
-                $exst_field = $existing_field;
+        $existinFieldFound = null;
+        foreach ($ExistingFields as $ExistingField) {
+            if ($ExistingField['column_name'] == $realfieldname) {
+                $existinFieldFound = $ExistingField;
                 break;
             }
         }
 
-        if ($exst_field === null)
+        if ($existinFieldFound === null)
             die('field not created ' . $realfieldname);
 
         if ($ct_fieldtype !== null and $ct_fieldtype != '') {
             $projected_data_type = Fields::getProjectedFieldType($ct_fieldtype, $ct_typeparams);
 
-            if (!IntegrityFields::compareFieldTypes($exst_field, $projected_data_type)) {
+            if (!IntegrityFields::compareFieldTypes($existinFieldFound, $projected_data_type)) {
                 $PureFieldType = Fields::makeProjectedFieldType($projected_data_type);
 
                 if (!Fields::fixMYSQLField($realtablename, $realfieldname, $PureFieldType, $msg)) {
@@ -205,11 +202,10 @@ class IntegrityCoreTables extends IntegrityChecks
                 }
             }
         }
-
         return true;
     }
 
-    protected static function getCoreTableFields_Tables()
+    protected static function getCoreTableFields_Tables(): object
     {
         $conf = Factory::getConfig();
         $dbprefix = $conf->get('dbprefix');
@@ -247,7 +243,7 @@ class IntegrityCoreTables extends IntegrityChecks
             'comment' => 'List of Custom Tables tables'];
     }
 
-    protected static function getCoreTableFields_Fields()
+    protected static function getCoreTableFields_Fields(): object
     {
         $conf = Factory::getConfig();
         $dbprefix = $conf->get('dbprefix');
@@ -295,7 +291,7 @@ class IntegrityCoreTables extends IntegrityChecks
             'comment' => 'Custom Tables Fields'];
     }
 
-    protected static function getCoreTableFields_Layouts()
+    protected static function getCoreTableFields_Layouts(): object
     {
         $conf = Factory::getConfig();
         $dbprefix = $conf->get('dbprefix');
@@ -334,7 +330,7 @@ class IntegrityCoreTables extends IntegrityChecks
             'comment' => 'Custom Tables Layouts'];
     }
 
-    protected static function getCoreTableFields_Categories()
+    protected static function getCoreTableFields_Categories(): object
     {
         $conf = Factory::getConfig();
         $dbprefix = $conf->get('dbprefix');
@@ -363,7 +359,7 @@ class IntegrityCoreTables extends IntegrityChecks
             'comment' => 'Custom Tables Categories'];
     }
 
-    protected static function getCoreTableFields_Log()
+    protected static function getCoreTableFields_Log(): object
     {
         $conf = Factory::getConfig();
         $dbprefix = $conf->get('dbprefix');
@@ -388,7 +384,7 @@ class IntegrityCoreTables extends IntegrityChecks
             'comment' => 'Custom Tables Action Log'];
     }
 
-    protected static function getCoreTableFields_Options()
+    protected static function getCoreTableFields_Options(): object
     {
         $conf = Factory::getConfig();
         $dbprefix = $conf->get('dbprefix');
