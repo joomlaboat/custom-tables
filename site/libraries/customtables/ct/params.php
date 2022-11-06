@@ -49,7 +49,7 @@ class Params
     var ?string $userIdField;
     var ?string $filter;
 
-    var ?int $showPublished;
+    var int $showPublished;
     var ?int $limit;
 
     var ?int $publishStatus;
@@ -85,6 +85,7 @@ class Params
 
     function __construct($menu_params = null, $blockExternalVars = false, $ModuleId = null)
     {
+        $this->ModuleId = null;
         $this->blockExternalVars = $blockExternalVars;
         $this->app = Factory::getApplication();
         $this->jinput = $this->app->input;
@@ -97,31 +98,74 @@ class Params
 
             if (!is_null($ModuleId)) {
                 $module = ModuleHelper::getModuleById(strval($ModuleId));
-                $params = new JRegistry;
-                $params->loadString($module->params);
-                $this->setParams($params, false, $ModuleId); //Do not block external var parameters because this is the edit form or a task
+                $menu_params = new JRegistry;
+                $menu_params->loadString($module->params);
+                $blockExternalVars = false;
+                //Do not block external var parameters because this is the edit form or a task
             } elseif (method_exists($this->app, 'getParams')) {
                 $menu_params = $this->app->getParams();
-                $this->setParams($menu_params, $blockExternalVars, $ModuleId);
             }
-        } else
-            $this->setParams($menu_params, $blockExternalVars, $ModuleId);
+        }
+        $this->setParams($menu_params, $blockExternalVars, $ModuleId);
     }
 
     function setParams($menu_params = null, $blockExternalVars = true, $ModuleId = null): void
     {
+        $this->blockExternalVars = $blockExternalVars;
         $this->ModuleId = $ModuleId;
 
         if (is_null($menu_params)) {
             if (method_exists($this->app, 'getParams')) {
 
                 $menu_params = $this->app->getParams();
-            } else
+            } else {
+                $this->pageTitle = null;
+                $this->showPageHeading = null;
+                $this->pageClassSFX = null;
+                $this->listing_id = null;
+                $this->tableName = null;
+                $this->pageLayout = null;
+                $this->itemLayout = null;
+                $this->detailsLayout = null;
+                $this->editLayout = null;
+                $this->groupBy = null;
+                $this->sortBy = null;
+                $this->forceSortBy = null;
+                $this->addUserGroups = null;
+                $this->editUserGroups = null;
+                $this->publishUserGroups = null;
+                $this->deleteUserGroups = null;
+                $this->allowContentPlugins = false;
+                $this->userIdField = null;
+                $this->filter = null;
+                $this->showPublished = 2;//Show Any
+                $this->limit = null;
+                $this->publishStatus = null;
+                $this->returnTo = null;
+                $this->guestCanAddNew = null;
+                $this->requiredLabel = null;
+                $this->msgItemIsSaved = null;
+                $this->onRecordAddSendEmail = null;
+                $this->sendEmailCondition = null;
+                $this->onRecordAddSendEmailTo = null;
+                $this->onRecordSaveSendEmailTo = null;
+                $this->onRecordAddSendEmailLayout = null;
+                $this->emailSentStatusField = null;
+                $this->showCartItemsOnly = false;
+                $this->showCartItemsPrefix = null;
+                $this->cartReturnTo = null;
+                $this->cartMsgItemAdded = null;
+                $this->cartMsgItemDeleted = null;
+                $this->cartMsgItemUpdated = null;
+                $this->ItemId = null;
+                $this->alias = null;
+                $this->recordsTable = null;
+                $this->recordsUserIdField = null;
+                $this->recordsField = null;
                 return;
+            }
         }
 
-
-        $this->blockExternalVars = $blockExternalVars;
         $this->getForceItemId($menu_params);
 
         if (!$blockExternalVars and $this->jinput->getString('alias', ''))
@@ -129,7 +173,7 @@ class Params
         else
             $this->alias = null;
 
-        $this->pageTitle = $menu_params->get('page_title');
+        $this->pageTitle = $menu_params->get('page_title') ?? null;
         $this->showPageHeading = $menu_params->get('show_page_heading', 1);
         $this->pageClassSFX = strip_tags($menu_params->get('pageclass_sfx'));
 
@@ -148,7 +192,7 @@ class Params
 
         if ($this->tableName === null) {
             $this->tableName = $menu_params->get('establename'); //Table name or id not sanitized
-            if ($this->tableName === null or $this->tableName == '')
+            if ($this->tableName === null or $this->tableName === null)
                 $this->tableName = $menu_params->get('tableid'); //Used in the back-end
         }
 

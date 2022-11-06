@@ -109,7 +109,7 @@ class Inputbox
         $selector = $selectors[$index];
 
         $tablename = $selector[0];
-        if ($tablename == '') {
+        if ($tablename === null) {
             if ($obEndClean)
                 die(json_encode(['error' => 'Table not selected']));
             else

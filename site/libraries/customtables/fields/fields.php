@@ -644,7 +644,7 @@ class Fields
         if ($fieldname == '')
             return array();
 
-        if ($sj_tablename == '')
+        if ($sj_tablename === null)
             $query = 'SELECT ' . Fields::getFieldRowSelects() . ' FROM #__customtables_fields AS s WHERE s.published=1 AND tableid=' . (int)$tableid . ' AND fieldname=' . $db->quote(trim($fieldname)) . ' LIMIT 1';
         else {
             $query = 'SELECT ' . Fields::getFieldRowSelects() . ' FROM #__customtables_fields AS s
@@ -825,7 +825,7 @@ class Fields
             return null;
         }
 
-        if ($table_row->customtablename == '') //do not create fields to third-party tables
+        if ($table_row->customtablename === null) //do not create fields to third-party tables
         {
             if (!self::update_physical_field($ct, $table_row, $fieldid, $data)) {
                 //Cannot create
@@ -931,7 +931,7 @@ class Fields
             $ex_typeparams = '';
             $realfieldname = '';
 
-            if ($table_row->customtablename == '')
+            if ($table_row->customtablename === null)
                 $realfieldname = 'es_' . $data['fieldname'];
             elseif ($table_row->customtablename == $table_row->tablename)
                 $realfieldname = $data['fieldname'];

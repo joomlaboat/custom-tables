@@ -35,7 +35,7 @@ class CustomtablesModelListOfRecords extends JModelList
         $this->ct = new CT;
         $this->ct->getTable($this->ct->Env->jinput->getInt('tableid', 0), null);
 
-        if ($this->ct->Table->tablename == '') {
+        if ($this->ct->Table->tablename === null) {
             Factory::getApplication()->enqueueMessage('Table not selected.', 'error');
             return;
         }

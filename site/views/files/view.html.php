@@ -43,7 +43,7 @@ class CustomTablesViewFiles extends JViewLegacy
         $this->key = $this->ct->Env->jinput->getCmd('key', '');
 
         $this->ct->getTable($this->tableid);
-        if ($this->ct->Table->tablename == '') {
+        if ($this->ct->Table->tablename === null) {
             $this->ct->app->enqueueMessage('Table not selected (79).', 'error');
             return;
         }

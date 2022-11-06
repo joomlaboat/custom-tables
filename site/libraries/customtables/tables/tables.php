@@ -57,7 +57,7 @@ class Tables
 
         $this->ct->getTable($tablename_or_id);
 
-        if ($this->ct->Table->tablename == '') {
+        if ($this->ct->Table->tablename === null) {
             $this->ct->app->enqueueMessage('Table not found.', 'error');
             return false;
         }
@@ -87,7 +87,7 @@ class Tables
 
         $this->ct->getTable($tablename_or_id);
 
-        if ($this->ct->Table->tablename == '') {
+        if ($this->ct->Table->tablename === null) {
             $this->ct->app->enqueueMessage('Table not found.', 'error');
             return null;
         }

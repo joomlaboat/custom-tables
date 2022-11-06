@@ -232,7 +232,7 @@ class JHTMLESRecords
 
         $ct->getTable($ct->Params->tableName);
 
-        if ($ct->Table->tablename == '') {
+        if ($ct->Table->tablename === null) {
             $ct->app->enqueueMessage('Catalog View: Table not selected.', 'error');
             return null;
         }

@@ -15,6 +15,8 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 jimport('joomla.application.component.controlleradmin');
 
+use CustomTables\Catalog;
+use CustomTables\CatalogExportCSV;
 use CustomTables\CT;
 use Joomla\CMS\Factory;
 use Joomla\Utilities\ArrayHelper;
@@ -159,7 +161,7 @@ class CustomtablesControllerListofRecords extends JControllerAdmin
         $tableid = $ct->Env->jinput->getInt('tableid');
         $ct->getTable($tableid);
 
-        if ($ct->Table->tablename == '') {
+        if ($ct->Table->tablename === null) {
             header("HTTP/1.1 500 Internal Server Error");
             die('Table not selected.');
         }
@@ -174,8 +176,6 @@ class CustomtablesControllerListofRecords extends JControllerAdmin
 
     public function exportcsv()
     {
-        echo 'exportcsv<br/>';
-
         $tableid = $this->input->get('tableid', 0, 'int');
 
         if ($tableid != 0) {
@@ -190,7 +190,45 @@ class CustomtablesControllerListofRecords extends JControllerAdmin
 
         $cid = Factory::getApplication()->input->post->get('cid', array(), 'array');
 
-        print_r($cid);
-        die;
+        $ct = new CT(null, false);
+        $ct->Env->frmt = 'csv';
+
+        $ct->getTable($tableid);
+        if ($ct->Table->tablename === null) {
+            $ct->app->enqueueMessage('Export to CSV: Table not selected.', 'error');
+            return false;
+        }
+
+        $wheres = [];
+        foreach ($cid as $id) {
+            if ($id != '') {
+                $wheres[] = '_id=' . $id;
+            }
+        }
+
+        $ct->Params->filter = implode('or', $wheres);
+
+        $catalog = new Catalog($ct);
+
+        $pathViews = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR;
+        require_once($pathViews . 'catalog-csv.php');
+        $catalogCSV = new CatalogExportCSV($ct, $catalog);
+
+        if (!$catalogCSV->error) {
+
+            if (ob_get_contents())
+                ob_end_clean();
+
+            $filename = JoomlaBasicMisc::makeNewFileName($ct->Table->tablename, 'csv');
+            header('Content-Disposition: attachment; filename="' . $filename . '"');
+            header('Content-Type: text/csv; charset=utf-16');
+            header("Pragma: no-cache");
+            header("Expires: 0");
+            echo $catalogCSV->render(null);
+            die;
+        } else {
+            $ct->app->enqueueMessage($catalogCSV->error, 'error');
+        }
+        return false;
     }
 }

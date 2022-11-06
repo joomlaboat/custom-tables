@@ -99,8 +99,8 @@ function _getTablesThisTableDependOn($table_id)
 
 function _getTablesThatDependOnThisTable($tablename)
 {
-    if ($tablename == '')
-        return array();
+    if ($tablename === null)
+        return [];
 
     $db = Factory::getDBO();
 

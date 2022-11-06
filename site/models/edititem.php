@@ -58,7 +58,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
         $this->ct->getTable($ct->Params->tableName, $this->ct->Params->userIdField);
 
-        if ($this->ct->Table->tablename == '') {
+        if ($this->ct->Table->tablename === null) {
             $this->ct->app->enqueueMessage('Table not selected (148).', 'error');
             return false;
         }

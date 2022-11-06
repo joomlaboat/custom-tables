@@ -182,7 +182,7 @@ class Twig_Record_Tags
     function advancedjoin($sj_function, $sj_tablename, $field1_findwhat, $field2_lookwhere, $field3_readvalue = '_id', $filter = '',
                           $order_by_option = '', $value_option_list = [])
     {
-        if ($sj_tablename == '') return '';
+        if ($sj_tablename === null) return '';
 
         $tablerow = ESTables::getTableRowByNameAssoc($sj_tablename);
 

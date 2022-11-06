@@ -47,7 +47,7 @@ class ESTables
 
         $db = Factory::getDBO();
 
-        if ($tablename == '')
+        if ($tablename === null)
             return 0;
 
         $query = 'SELECT id FROM #__customtables_tables AS s WHERE tablename=' . $db->quote($tablename) . ' LIMIT 1';
@@ -376,7 +376,7 @@ class ESTables
 
     public static function getTableRowByName($tablename = '')
     {
-        if ($tablename == '')
+        if ($tablename === null)
             return null;
 
         $row = ESTables::getTableRowByNameAssoc($tablename);
@@ -388,7 +388,7 @@ class ESTables
 
     public static function getTableRowByNameAssoc($tablename = '')
     {
-        if ($tablename == '')
+        if ($tablename === null)
             return null;
 
         $db = Factory::getDBO();
@@ -404,7 +404,7 @@ class ESTables
         //get ID of new table
         $new_table_id = ESTables::getTableID($new_table);
 
-        if ($customtablename == '') {
+        if ($customtablename === null) {
             //Do not copy real third-party tables
 
             if ($db->serverType == 'postgresql')

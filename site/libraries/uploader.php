@@ -190,7 +190,7 @@ class ESFileUploader
 
         $esTable = new ESTables;
         $tableName = $params->get('tableName');
-        if ($tableName == '')
+        if ($tableName === null)
             return 0;
 
         return $esTable->getTableRowByNameAssoc($tableName);

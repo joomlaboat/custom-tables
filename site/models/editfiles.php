@@ -49,7 +49,7 @@ class CustomTablesModelEditFiles extends JModelLegacy
 
         $this->ct->getTable($this->ct->Params->tableName, null);
 
-        if ($this->ct->Table->tablename == '') {
+        if ($this->ct->Table->tablename === null) {
             Factory::getApplication()->enqueueMessage('Table not selected (63).', 'error');
             return false;
         }

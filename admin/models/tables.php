@@ -141,9 +141,9 @@ class CustomtablesModelTables extends JModelAdmin
         foreach ($pks as $tableid) {
             $table_row = ESTables::getTableRowByID($tableid);
 
-            if (isset($table_row->tablename) and (!isset($table_row->customtablename) or $table_row->customtablename == '')) // do not delete third-party tables
+            if (isset($table_row->tablename) and (!isset($table_row->customtablename) or $table_row->customtablename === null)) // do not delete third-party tables
             {
-                $realtablename = $db->getPrefix() . 'customtables_table_' . $table_row->tablename; //not availabel for custom tablesnames
+                $realtablename = $db->getPrefix() . 'customtables_table_' . $table_row->tablename; //not available for custom tablenames
 
                 if ($db->serverType == 'postgresql')
                     $query = 'DROP TABLE IF EXISTS ' . $realtablename;

@@ -67,7 +67,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy
 
         $this->ct->getTable($params->get('establename'), $this->useridfield);
 
-        if ($this->ct->Table->tablename == '') {
+        if ($this->ct->Table->tablename === null) {
             Factory::getApplication()->enqueueMessage('Table not selected (62).', 'error');
             return false;
         }

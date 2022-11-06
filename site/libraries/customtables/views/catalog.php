@@ -49,23 +49,30 @@ class Catalog
 
 // -------------------- Table
 
-        $this->ct->getTable($this->ct->Params->tableName);
+        if ($this->ct->Table->tablename === null) {
+            $this->ct->getTable($this->ct->Params->tableName);
 
-        if ($this->ct->Table->tablename == '') {
-            $this->ct->app->enqueueMessage('Catalog View: Table not selected.', 'error');
-            return 'Catalog View: Table not selected.';
+            if ($this->ct->Table->tablename === null) {
+                $this->ct->app->enqueueMessage('Catalog View: Table not selected.', 'error');
+                return 'Catalog View: Table not selected.';
+            }
         }
 
 // --------------------- Filter
         $this->ct->setFilter($this->ct->Params->filter, $this->ct->Params->showPublished);
 
         if (!$this->ct->Params->blockExternalVars) {
-            if ($this->ct->Env->jinput->get('filter', '', 'STRING'))
-                $this->ct->Filter->addWhereExpression($this->ct->Env->jinput->get('filter', '', 'STRING'));
+            if ($this->ct->Env->jinput->getString('filter', '') and is_string($this->ct->Env->jinput->getString('filter', '')))
+                $this->ct->Filter->addWhereExpression($this->ct->Env->jinput->getString('filter', ''));
         }
 
         if (!$this->ct->Params->blockExternalVars)
             $this->ct->Filter->addQueryWhereFilter();
+        //echo 'w:';
+        //print_r($this->ct->Filter->where);
+
+        //echo '$ct->Params->filter=' . $this->ct->Params->filter;
+        //die;
 
 // --------------------- Shopping Cart
 

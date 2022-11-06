@@ -225,7 +225,7 @@ class CustomTablesViewLog extends JViewLegacy
 
         $this->details = new Details($ct);
 
-        if ($ct->Table->tablename == '')
+        if ($ct->Table->tablename === null)
             return "Table " . $ct->Table->tablename . "not found.";
 
         $layoutContent = '{{ ' . $FieldName . ' }}';

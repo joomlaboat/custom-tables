@@ -131,7 +131,7 @@ class JHTMLESSqlJoin
 
         $ct->getTable($ct->Params->tableName);
 
-        if ($ct->Table->tablename == '') {
+        if ($ct->Table->tablename === null) {
             $ct->app->enqueueMessage('Catalog View: Table not selected.', 'error');
             return false;
         }
@@ -144,7 +144,6 @@ class JHTMLESSqlJoin
 
         // --------------------- Limit
         $ct->applyLimits();
-
         $ct->getRecords();
 
         return true;
