@@ -153,13 +153,13 @@ class Value
                 $imageSRC = '';
                 $imagetag = '';
 
-                CT_FieldTypeTag_image::getImageSRClayoutview($option_list, $rowValue, $this->field->params, $imageSRC, $imagetag);
+                CT_FieldTypeTag_image::getImageSRCLayoutView($option_list, $rowValue, $this->field->params, $imageSRC, $imagetag);
 
                 return $imagetag;
 
             case 'signature':
 
-                CT_FieldTypeTag_image::getImageSRClayoutview($option_list, $rowValue, $this->field->params, $imageSRC, $imagetag);
+                CT_FieldTypeTag_image::getImageSRCLayoutView($option_list, $rowValue, $this->field->params, $imageSRC, $imagetag);
 
                 $conf = Factory::getConfig();
                 $sitename = $conf->get('config.sitename');
@@ -400,7 +400,7 @@ class Value
             return self::TextFunctions($value, $option_list);
 
         $filename = CT_FieldTypeTag_file::getBlobFileName($this->field, $value, $this->row, $this->ct->Table->fields);
-       
+
         return CT_FieldTypeTag_file::process($filename, $this->field, $option_list, $this->row[$this->ct->Table->realidfieldname], false, intval($value));
     }
 

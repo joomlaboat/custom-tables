@@ -301,17 +301,49 @@ class SaveFieldQuerySet
                     $this->row[$this->field->realfieldname] = $value;
                     return $this->field->realfieldname . '=' . (float)$value;
                 }
-
                 break;
 
             case 'image':
 
-                $image_type_file = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_image.php';
-                require_once($image_type_file);
+                $to_delete = $this->ct->Env->jinput->post->get($this->field->comesfieldname . '_delete', '', 'CMD');
+                $returnValue = null;
 
-                $value = CT_FieldTypeTag_image::get_image_type_value($this->field, $listing_id);
-                $this->row[$this->field->realfieldname] = $value;
-                return ($value === null ? null : $this->field->realfieldname . '=' . $this->ct->db->Quote($value));
+                if ($to_delete == 'true') {
+
+                    $this->row[$this->field->realfieldname] = null;
+                    $returnValue = $this->field->realfieldname . '=NULL';
+
+                    $ExistingImage = Tree::isRecordExist($listing_id, $this->ct->Table->realidfieldname, $this->field->realfieldname, $this->field->ct->Table->realtablename);
+
+                    if ($ExistingImage !== null and ($ExistingImage != '' or (is_numeric($ExistingImage) and $ExistingImage > 0))) {
+
+                        $imageMethods = new CustomTablesImageMethods;
+                        $ImageFolder = CustomTablesImageMethods::getImageFolder($this->field->params);
+                        $imageMethods->DeleteExistingSingleImage(
+                            $ExistingImage,
+                            JPATH_SITE . DIRECTORY_SEPARATOR . $ImageFolder,
+                            $this->field->params[0],
+                            $this->field->ct->Table->realtablename,
+                            $this->field->realfieldname,
+                            $this->field->ct->Table->realidfieldname);
+                    }
+                }
+
+                $tempValue = $this->ct->Env->jinput->post->getString($this->field->comesfieldname);
+                if ($tempValue !== null and $tempValue != '') {
+
+                    require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_image.php');
+
+                    $value = CT_FieldTypeTag_image::get_image_type_value($this->field, $this->ct->Table->realidfieldname, $listing_id);
+                    $this->row[$this->field->realfieldname] = $value;
+
+                    return ($value === null ? $this->field->realfieldname . '=NULL' : $this->field->realfieldname . '=' . $this->ct->db->Quote($value));
+                }
+
+                if ($returnValue !== null)
+                    return $returnValue;
+
+                break;
 
             case 'blob':
 
@@ -488,7 +520,6 @@ class SaveFieldQuerySet
                 }
 
                 break;
-
 
             case 'creationtime':
                 if ($this->row[$this->ct->Table->realidfieldname] == 0 or $this->row[$this->ct->Table->realidfieldname] == '' or $this->isCopy) {

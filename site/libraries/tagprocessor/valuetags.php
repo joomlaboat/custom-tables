@@ -240,7 +240,7 @@ class tagProcessor_Value
                                     $new_array[] = $pureValueOptionArr[$i];
                             }
 
-                            CT_FieldTypeTag_image::getImageSRClayoutview($new_array, $row[$field->realfieldname], $field->params, $imagesrc, $imagetag);
+                            CT_FieldTypeTag_image::getImageSRCLayoutView($new_array, $row[$field->realfieldname], $field->params, $imagesrc, $imagetag);
 
                             $vlu = $imagesrc;
                         } elseif ($fieldType == 'imagegallery') {

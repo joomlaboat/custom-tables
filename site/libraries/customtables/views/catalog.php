@@ -68,11 +68,6 @@ class Catalog
 
         if (!$this->ct->Params->blockExternalVars)
             $this->ct->Filter->addQueryWhereFilter();
-        //echo 'w:';
-        //print_r($this->ct->Filter->where);
-
-        //echo '$ct->Params->filter=' . $this->ct->Params->filter;
-        //die;
 
 // --------------------- Shopping Cart
 

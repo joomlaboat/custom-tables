@@ -366,7 +366,7 @@ class fieldObject
             $imagesrc = '';
             $imagetag = '';
 
-            CT_FieldTypeTag_image::getImageSRClayoutview($options, $this->ct->Table->record[$rfn], $this->field->params, $imagesrc, $imagetag);
+            CT_FieldTypeTag_image::getImageSRCLayoutView($options, $this->ct->Table->record[$rfn], $this->field->params, $imagesrc, $imagetag);
 
             return $imagesrc;
         } elseif ($this->field->type == 'records') {

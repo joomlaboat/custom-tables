@@ -53,9 +53,7 @@ class CustomTablesModelEditItem extends JModelLegacy
     function load(CT $ct, bool $addHeaderCode = false): bool
     {
         $this->ct = $ct;
-
         $this->userIdField_Unique = false;
-
         $this->ct->getTable($ct->Params->tableName, $this->ct->Params->userIdField);
 
         if ($this->ct->Table->tablename === null) {
@@ -266,15 +264,14 @@ class CustomTablesModelEditItem extends JModelLegacy
             if ($fieldRow['type'] == $type)
                 return $fieldRow['realfieldname'];
         }
-
         return '';
     }
 
     function getVersionData($row, $log_field, $version)
     {
         $creation_time_field = $this->getTypeFieldName('changetime');
-
         $versions = explode(';', $row[$log_field]);
+
         if ($version <= count($versions)) {
             $data_editor = explode(',', $versions[$version - 2]);
             $data_content = explode(',', $versions[$version - 1]);
@@ -344,22 +341,22 @@ class CustomTablesModelEditItem extends JModelLegacy
         return false;
     }
 
-    function getCustomTablesBranch($optionname, $startfrom, $langpostfix, $defaultvalue): array
+    function getCustomTablesBranch($optionName, $startFrom, $langPostFix, $defaultValue): array
     {
         $optionId = 0;
-        $filterRootParent = Tree::getOptionIdFull($optionname);
+        $filterRootParent = Tree::getOptionIdFull($optionName);
 
-        if ($optionname) {
+        if ($optionName) {
             $available_categories = Tree::getChildren($optionId, $filterRootParent, 1);
 
-            $query = ' SELECT optionname, id, title_' . $langpostfix . ' AS title FROM #__customtables_options WHERE ';
+            $query = ' SELECT optionname, id, title_' . $langPostFix . ' AS title FROM #__customtables_options WHERE ';
             $query .= ' id=' . $filterRootParent . ' LIMIT 1';
 
             $this->ct->db->setQuery($query);
 
             $rootParentName = $this->ct->db->loadObjectList();
 
-            if ($startfrom == 0) {
+            if ($startFrom == 0) {
                 if (count($rootParentName) == 1)
                     JoomlaBasicMisc::array_insert(
                         $available_categories,
@@ -373,17 +370,17 @@ class CustomTablesModelEditItem extends JModelLegacy
         } else {
             $available_categories = Tree::getChildren($optionId, 0, 1);
         }
-        if ($defaultvalue)
+        if ($defaultValue)
             JoomlaBasicMisc::array_insert(
                 $available_categories,
                 array(
                     "id" => 0,
-                    "name" => $defaultvalue,
+                    "name" => $defaultValue,
                     "fullpath" => ''
 
                 ), 0);
 
-        if ($startfrom == 0)
+        if ($startFrom == 0)
             JoomlaBasicMisc::array_insert($available_categories,
                 array("id" => 0,
                     "name" => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ROOT'),
@@ -408,10 +405,10 @@ class CustomTablesModelEditItem extends JModelLegacy
     function copy(&$msg, &$link)
     {
         $listing_id = $this->ct->Env->jinput->getCmd("listing_id", 0);
-
         $query = 'SELECT MAX(' . $this->ct->Table->realidfieldname . ') AS maxid FROM ' . $this->ct->Table->realtablename . ' LIMIT 1';
         $this->ct->db->setQuery($query);
         $rows = $this->ct->db->loadObjectList();
+
         if (count($rows) == 0)
             $msg = 'Table not found or something wrong.';
 
@@ -463,7 +460,6 @@ class CustomTablesModelEditItem extends JModelLegacy
         $this->ct->db->execute();
 
         return $this->store($msg, $link, true, $new_id);
-
     }
 
     function store(&$msg, &$link, $isCopy = false, $listing_id = '')
@@ -507,7 +503,6 @@ class CustomTablesModelEditItem extends JModelLegacy
 
         $phpOnChangeFound = false;
         $phpOnAddFound = false;
-
         $saveField = new SaveFieldQuerySet($this->ct, $row_old, $isCopy);
 
         foreach ($this->ct->Table->fields as $fieldrow) {
@@ -679,14 +674,7 @@ class CustomTablesModelEditItem extends JModelLegacy
             }
 
             $fn_str = [];
-            /*
-                        if ($this->ct->Env->legacysupport) {
-                            $fn_str[] = '[' . $fn . ':';
-                            $fn_str[] = '[' . $fn . ']';
-                            $fn_str[] = '[_edit:' . $fn . ':';
-                            $fn_str[] = $fn . '.edit';
-                        }
-            */
+
             $fn_str[] = '"comes_' . $fn . '"';
             $fn_str[] = "'comes_" . $fn . "'";
 
