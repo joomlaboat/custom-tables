@@ -224,10 +224,7 @@ class CustomTablesImageMethods
         if ($realtablename != '-options') {
             $db = Factory::getDBO();
 
-            if ($ExistingImage == '')
-                $ExistingImage = 0;
-
-            if ($ExistingImage > 0) {
+            if ($ExistingImage !== null and is_numeric($ExistingImage) and intval($ExistingImage) != 0) {
                 //If it's an original image not duplicate, find one duplicate and convert it to original
                 $query = 'SELECT ' . $realIdField . ' FROM ' . $realtablename . ' WHERE ' . $realfieldname . '=-' . $ExistingImage . ' LIMIT 1';
                 $db->setQuery($query);
@@ -271,7 +268,7 @@ class CustomTablesImageMethods
         }
     }
 
-    function getImageExtention($ImageName_noExt): string
+    function getImageExtension($ImageName_noExt): string
     {
         foreach (CustomTablesImageMethods::allowedExtensions as $photo_ext) {
             $filename = $ImageName_noExt . '.' . $photo_ext;
@@ -282,7 +279,7 @@ class CustomTablesImageMethods
         return '';
     }
 
-    function UploadSingleImage(string $ExistingImage, string $image_file_id, string $realfieldname, string $ImageFolder, array $params, string $realtablename, string $realidfieldname): ?string
+    function UploadSingleImage(?string $ExistingImage, string $image_file_id, string $realfieldname, string $ImageFolder, array $params, string $realtablename, string $realidfieldname): ?string
     {
         $fileNameType = $params[3] ?? '';
 
@@ -305,12 +302,12 @@ class CustomTablesImageMethods
                 $src = $uploadedFile;
                 $dst = JPATH_SITE . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR . 'decoded_' . basename($image_file_id);//TODO: Check this functionality
                 $this->base64file_decode($src, $dst);
-                $uploadedFile = $dst;
             }
 
             //Delete
-            if ($ExistingImage != '')
+            if ($ExistingImage !== null) {
                 $this->DeleteExistingSingleImage($ExistingImage, $ImageFolder, $params[0], $realtablename, $realfieldname, $realidfieldname);
+            }
 
             $new_photo_ext = $this->FileExtension($uploadedFile);
 
@@ -424,10 +421,8 @@ class CustomTablesImageMethods
         return $outputFile;
     }
 
-    function DeleteExistingSingleImage($ExistingImage, $ImageFolder, string $imageParams, $realtablename, $realfieldname, $realIdField): void
+    function DeleteExistingSingleImage(string $ExistingImage, $ImageFolder, string $imageParams, $realtablename, $realfieldname, $realIdField): void
     {
-        //$realtablename='-options'
-
         $customSizes = $this->getCustomImageOptions($imageParams);
         CustomTablesImageMethods::DeleteOriginalImage($ExistingImage, $ImageFolder, $realtablename, $realfieldname, $realIdField);
 

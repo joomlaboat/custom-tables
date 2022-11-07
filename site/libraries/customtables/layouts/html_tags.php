@@ -134,22 +134,21 @@ class Twig_Html_Tags
 
         JHtml::_('behavior.formvalidator');
 
-        $vlu = '<div>
-                    <div id="ct_fileuploader_' . $objectname . '"></div>
-                    <div id="ct_eventsmessage_' . $objectname . '"></div>
-                    <form action="" name="ctUploadCSVForm" id="ctUploadCSVForm">
-                	<script>
-                        UploadFileCount=1;
-
-                    	var urlstr="/index.php?option=com_customtables&amp;view=fileuploader&amp;tmpl=component&'
+        $urlstr = '/index.php?option=com_customtables&amp;view=fileuploader&amp;tmpl=component&'
             . 'tableid=' . $this->ct->Table->tableid . '&'
             . 'task=importcsv&'
             . $objectname . '_fileid=' . $fileid
             . '&Itemid=' . $this->ct->Params->ItemId
             . (is_null($this->ct->Params->ModuleId) ? '' : '&ModuleId=' . $this->ct->Params->ModuleId)
-            . '&fieldname=' . $objectname . '";
-                        
-                    	ct_getUploader(' . $fieldid . ',urlstr,' . $max_file_size . ',"csv","ctUploadCSVForm",true,"ct_fileuploader_' . $objectname . '","ct_eventsmessage_' . $objectname . '","' . $fileid . '","'
+            . '&fieldname=' . $objectname;
+
+        $vlu = '<div>
+                    <div id="ct_fileuploader_' . $objectname . '"></div>
+                    <div id="ct_eventsmessage_' . $objectname . '"></div>
+                    <form action="" name="ctUploadCSVForm" id="ctUploadCSVForm">
+                	<script>
+                        //UploadFileCount=1;
+                    	ct_getUploader(' . $fieldid . ',"' . $urlstr . '",' . $max_file_size . ',"csv","ctUploadCSVForm",true,"ct_fileuploader_' . $objectname . '","ct_eventsmessage_' . $objectname . '","' . $fileid . '","'
             . $this->ct->Env->field_input_prefix . $objectname . '","ct_uploadedfile_box_' . $objectname . '")
                     </script>
                     <input type="hidden" name="' . $this->ct->Env->field_input_prefix . $objectname . '" id="' . $this->ct->Env->field_input_prefix . $objectname . '" value="" />

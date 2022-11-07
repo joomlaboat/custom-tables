@@ -86,10 +86,8 @@ class CustomTablesModelListEdit extends JModel
             $filename = $file['name'];
             if ($filename == '') {
                 if ($jinput->getCmd('image_delete') == 'true') {
-                    if ($ExistingImage > 0)
+                    if ($ExistingImage !== null)
                         $imagemethods->DeleteExistingSingleImage($ExistingImage, $imagefolder, $imageparams, '-options', $fieldname);
-
-                    $savequery[] = '' . $fieldname . '=' . $value;
                 }
             } else {
                 $imageparams = $jinput->getString('imageparams');
@@ -102,28 +100,21 @@ class CustomTablesModelListEdit extends JModel
         if ($value != 0)
             $jinput->set('image', $value);
 
-
         $row = $this->getTable();
         // consume the post data with allow_html
-
         $data = $jinput->get('jform', array(), 'ARRAY');
 
-
-        $post = array();
-
-        if (!$row->bind($data)) {
+        if (!$row->bind($data))
             return false;
-        }
 
         // Make sure the  record is valid
-        if (!$row->check()) {
+        if (!$row->check())
             return false;
-        }
 
         // Store
-        if (!$row->store()) {
+        if (!$row->store())
             return false;
-        }
+
         $tree_id = $row->id;
         //set FamilyTree
         $row = $this->getTable();
@@ -132,17 +123,14 @@ class CustomTablesModelListEdit extends JModel
 
         // Store
         $row->familytree = '-' . Tree::getFamilyTree($tree_id, 0) . '-';
-        $familytreestr = Tree::getFamilyTreeString($tree_id, 0);
-        if ($familytreestr != '')
-            $row->familytreestr = ',' . $familytreestr . '.' . $row->optionname . '.';
+        $familyTreeStr = Tree::getFamilyTreeString($tree_id, 0);
+        if ($familyTreeStr != '')
+            $row->familytreestr = ',' . $familyTreeStr . '.' . $row->optionname . '.';
         else
             $row->familytreestr = ',' . $row->optionname . '.';
 
-
-        if (!$row->store()) {
+        if (!$row->store())
             return false;
-        }
-
 
         return true;
     }

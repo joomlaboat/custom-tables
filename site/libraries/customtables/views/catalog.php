@@ -49,7 +49,7 @@ class Catalog
 
 // -------------------- Table
 
-        if ($this->ct->Table->tablename === null) {
+        if ($this->ct->Table === null) {
             $this->ct->getTable($this->ct->Params->tableName);
 
             if ($this->ct->Table->tablename === null) {

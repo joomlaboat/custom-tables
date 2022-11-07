@@ -84,7 +84,7 @@ class CT_FieldTypeTag_imagegallery
                 }
             } elseif ($imagePrefix == '_original') {
                 $imageName = $imageFolderServer . DIRECTORY_SEPARATOR . $imageGalleryPrefix . $tableId . '_' . $galleryName . '_' . $imagePrefix . '_' . $photoRowPhotoId;
-                $imageFileExtension = $imgMethods->getImageExtention($imageName);
+                $imageFileExtension = $imgMethods->getImageExtension($imageName);
 
                 $imageFile = $imageName . '.' . $imageFileExtension;
 
@@ -100,7 +100,7 @@ class CT_FieldTypeTag_imagegallery
                 foreach ($imageSizes as $img) {
                     if ($img[0] == $imagePrefix) {
                         $imageName = $imageFolderServer . DIRECTORY_SEPARATOR . $imageGalleryPrefix . $tableId . '_' . $galleryName . '_' . $imagePrefix . '_' . $photoRowPhotoId;
-                        $imageFileExtension = $imgMethods->getImageExtention($imageName);
+                        $imageFileExtension = $imgMethods->getImageExtension($imageName);
 
                         if ($imageFileExtension != '') {
                             $imageNameWeb = $imageFolderWeb . '/' . $imageGalleryPrefix . $tableId . '_' . $galleryName . '_' . $imagePrefix . '_' . $photoRowPhotoId . '.' . $imageFileExtension;

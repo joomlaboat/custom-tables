@@ -322,27 +322,24 @@ class Tree
     public static function BuildULHtmlList(&$vlus, &$index, $langpostfix, $isFirstElement = true, $last = '')
     {
         $parent = 'topics';
-        $parentid = Tree::getOptionIdFull($parent);
+        $parentId = Tree::getOptionIdFull($parent);
         $count = 0;
         $field_value = implode(',', $vlus);
         $ItemList = '';
-        return Tree::getMultiSelector($parentid, $parent, $langpostfix, $ItemList, $count, $field_value);
+        return Tree::getMultiSelector($parentId, $parent, $langpostfix, $ItemList, $count, $field_value);
     }
 
-    //--------------------------
-
     //maybe not used
-
     public static function getOptionIdFull($optionname)
     {
         $names = explode(".", $optionname);
-        $parentid = 0;
+        $parentId = 0;
 
         foreach ($names as $name) {
-            $parentid = Tree::getOptionId($name, $parentid);
+            $parentId = Tree::getOptionId($name, $parentId);
         }
 
-        return $parentid;
+        return $parentId;
     }
 
     public static function getOptionId($optionname, $parentid)
@@ -351,41 +348,16 @@ class Tree
         $db = Factory::getDBO();
 
         $query = 'SELECT id FROM #__customtables_options WHERE parentid=' . $parentid . ' AND optionname="' . $optionname . '" LIMIT 1';
-
         $db->setQuery($query);
-
         $rows = $db->loadObjectList();
-
         if (count($rows) != 1) return 0;
 
         return $rows[0]->id;
     }
 
-
-    /*
-    function getESValue(&$a, &$innerrows)
-    {
-        if(!$a)return false;
-
-        foreach($innerrows as $row)
-        {
-            if($row->id==$a)
-            {
-                $a=$row->title;
-                return true;
-            }
-        }
-        return false;
-    }
-    */
-
-
     //Get Option ID
-
     public static function getMultiSelector($parentid, $parentname, $langpostfix, &$ItemList, &$count, $field_value)
     {
-        $ObjectName = 'temp_object';
-
         $result = '';
         $rows = Tree::getList($parentid, $langpostfix);
 
@@ -404,68 +376,32 @@ class Tree
             $count_child = 0;
 
             if (strlen($parentname) == 0)
-                $optionnamefull = $row->optionname;
+                $optionNameFull = $row->optionname;
             else
-                $optionnamefull = $parentname . '.' . $row->optionname;
+                $optionNameFull = $parentname . '.' . $row->optionname;
 
-
-            $ChildHTML = Tree::getMultiSelector($row->id, $optionnamefull, $langpostfix, $temp_Ids, $count_child, $field_value);
-
+            $ChildHTML = Tree::getMultiSelector($row->id, $optionNameFull, $langpostfix, $temp_Ids, $count_child, $field_value);
 
             if ($count_child > 0) {
-                if ((strpos($field_value, $optionnamefull . '.') === false)) {
-                    /*
-                    //<input type="checkbox" id="'.$ObjectName.'_'.$row->id.'" name="'.$ObjectName.'_'.$row->id.'" onClick=\'CustomTablesChildClick("'.$ObjectName.'_'.$row->id.'", "div'.$ObjectName.'_'.$row->id.'")\'  >
-                    $result.='<li>';
-                    //$result.='<b>'.$row->title.'</b> ('.$count_child.')';
-                    $result.='<div name="div'.$ObjectName.'_'.$row->id.'" id="div'.$ObjectName.'_'.$row->id.'" style="display: none;">';
-                    */
+                if ((!str_contains($field_value, $optionNameFull . '.'))) {
+
                 } else {
-                    //<input type="checkbox" id="'.$ObjectName.'_'.$row->id.'" name="'.$ObjectName.'_'.$row->id.'" onClick=\'CustomTablesChildClick("'.$ObjectName.'_'.$row->id.'", "div'.$ObjectName.'_'.$row->id.'")\' checked="checked" >
-
-
                     if ($ChildHTML == '')
                         $result .= '<li class="esSelectedElement">';
                     else
                         $result .= '<li class="esElementParent">';
 
-
-                    //$result.='<li class="esElementParent">';
-                    //'<span style="color:red;"><b>'.
-                    $result .= $row->title;//.'</b> ('.$count_child.')</span>';
-                    //name="div'.$ObjectName.'_'.$row->id.'" id="div'.$ObjectName.'_'.$row->id.'" style="display: block;"
-                    //$result.='<div>';
-
-                    //$result.=$ChildHTML.'</div></li>';
+                    $result .= $row->title;
                     $result .= $ChildHTML . '</li>';
                 }
-                /*
-                if($count_child>1)
-                    {
-                        $result.='
-                <div style="margin-left:100px">
-                <a href=\'javascript:ESCheckAll("'.$ObjectName.'",Array('.$temp_Ids.'))\'>'.Text::_( 'CHECK ALL' ).'</a>&nbsp;&nbsp;
-                <a href=\'javascript:ESUncheckAll("'.$ObjectName.'",Array('.$temp_Ids.'))\'>'.Text::_( 'UNCHECK ALL' ).'</a>
-                </div>';
-                    }
-                    */
-
-
             } else {
-
-
-                if ((strpos($field_value, $parentname . '.' . $row->optionname . '.') === false))
+                if ((!str_contains($field_value, $parentname . '.' . $row->optionname . '.')))
                     $ItemSelected = false;
                 else
                     $ItemSelected = true;
 
-                //<input type="checkbox" name="'.$ObjectName.'_'.$row->id.'" id="'.$ObjectName.'_'.$row->id.'" '.($ItemSelected ? ' checked="checked" ' :'').'>
-//				<span style="color:red;"></span>
                 if ($ItemSelected)
                     $result .= '<li class="esSelectedElement">' . $row->title . '</li>';
-                //else
-                //$result.='<li><span style="">'.$row->title.'</span></li>';
-
             }
 
 
@@ -481,10 +417,10 @@ class Tree
         return $result;
     }
 
-    public static function getList($parentid, $langpostfix)
+    public static function getList($parentId, $langPostfix)
     {
         $db = Factory::getDBO();
-        $query = 'SELECT id, optionname, title' . $langpostfix . ' AS title FROM #__customtables_options WHERE parentid=' . (int)$parentid;
+        $query = 'SELECT id, optionname, title' . $langPostfix . ' AS title FROM #__customtables_options WHERE parentid=' . (int)$parentId;
         $query .= ' ORDER BY ordering, title';
         $db->setQuery($query);
 
@@ -517,29 +453,33 @@ class Tree
     //Used in various files
     //TODO: replace - Very outdated
 
-    public static function isRecordExist($checkvalue, $checkfield, $resultfield, $table): ?string
+    public static function isRecordExist($checkValue, $checkField, $resultField, $table): ?string
     {
         $db = Factory::getDBO();
-        $query = ' SELECT ' . $resultfield . ' AS resultfield FROM ' . $table . ' WHERE ' . $checkfield . '="' . $checkvalue . '" LIMIT 1';
+        $query = ' SELECT ' . $resultField . ' AS resultfield FROM ' . $table . ' WHERE ' . $checkField . '="' . $checkValue . '" LIMIT 1';
         $db->setQuery($query);
 
-        $espropertytype = $db->loadObjectList();
+        $propertyType = $db->loadObjectList();
 
-        if (count($espropertytype) > 0)
-            return $espropertytype[0]->resultfield;
+        if (count($propertyType) > 0) {
 
+            if ($propertyType[0]->resultfield == '0')
+                return null;
+
+            return $propertyType[0]->resultfield;
+        }
         return null;
     }
 
     //Used many times
-    public static function getHeritageInfo($parentid, $fieldname)
+    public static function getHeritageInfo($parentId, $fieldname)
     {
-        if ((int)$parentid == 0)
+        if ((int)$parentId == 0)
             return '';
 
         $db = Factory::getDBO();
 
-        $query = 'SELECT id, ' . $fieldname . ' FROM #__customtables_options WHERE parentid="' . $parentid . '" LIMIT 1';
+        $query = 'SELECT id, ' . $fieldname . ' FROM #__customtables_options WHERE parentid="' . $parentId . '" LIMIT 1';
         $db->setQuery($query);
 
         $rows = $db->loadAssocList();

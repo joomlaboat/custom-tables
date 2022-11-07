@@ -43,6 +43,8 @@ echo '<h2>Import Tables</h2>';
 
 echo '<p>This may import Table Structure from .txt (json encoded) file.</p>';
 
+
+$urlstr = JURI::root(true) . '/administrator/index.php?option=com_customtables&view=fileuploader&tmpl=component&fileid=' . $fileid;
 echo '
 
     
@@ -52,9 +54,8 @@ echo '
     
 
 	<script>
-        UploadFileCount=1;
-		var urlstr="' . JURI::root(true) . '/administrator/index.php?option=com_customtables&view=fileuploader&tmpl=component&fileid=' . $fileid . '";
-		ct_getUploader(1,urlstr,' . $max_file_size . ',"txt html","esFileUploaderForm_Tables",true,"fileuploader","eventsmessage","' . $fileid . '","filetosubmit","ct_uploadedfile_box_file");//null);
+        //UploadFileCount=1;
+		ct_getUploader(1,"' . $urlstr . '",' . $max_file_size . ',"txt html","esFileUploaderForm_Tables",true,"fileuploader","eventsmessage","' . $fileid . '","filetosubmit","ct_uploadedfile_box_file");//null);
 
 	</script>
     <ul style="list-style: none;">

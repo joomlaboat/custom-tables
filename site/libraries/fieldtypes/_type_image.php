@@ -54,7 +54,7 @@ class CT_FieldTypeTag_image
 
             $imgMethods = new CustomTablesImageMethods;
 
-            $imagefile_ext = $imgMethods->getImageExtention(JPATH_SITE . DIRECTORY_SEPARATOR . $imgname);
+            $imagefile_ext = $imgMethods->getImageExtension(JPATH_SITE . DIRECTORY_SEPARATOR . $imgname);
 
             if ($imagefile_ext != '') {
                 $imagefileweb = JURI::root(false) . $ImageFolderWeb . '/' . $prefix . '_' . $rowValue . '.' . $imagefile_ext;
@@ -70,7 +70,7 @@ class CT_FieldTypeTag_image
         $imgMethods = new CustomTablesImageMethods;
         $imgname = $ImageFolder . DIRECTORY_SEPARATOR . $prefix . '_' . $rowValue;
 
-        $imagefile_ext = $imgMethods->getImageExtention(JPATH_SITE . DIRECTORY_SEPARATOR . $imgname);
+        $imagefile_ext = $imgMethods->getImageExtension(JPATH_SITE . DIRECTORY_SEPARATOR . $imgname);
         //--- WARNING - ERROR -- REAL EXT NEEDED - IT COMES FROM OPTIONS
         $imagefile = JURI::root(false) . $ImageFolderWeb . '/' . $prefix . '_' . $rowValue . '.' . $imagefile_ext;
         $imagesizes = $imgMethods->getCustomImageOptions($params[0]);
@@ -91,23 +91,23 @@ class CT_FieldTypeTag_image
     static public function get_image_type_value(&$field, $listing_id)
     {
         $value = 0;
-        $imagemethods = new CustomTablesImageMethods;
-
+        $imageMethods = new CustomTablesImageMethods;
         $ImageFolder = CustomTablesImageMethods::getImageFolder($field->params);
-
         $jinput = Factory::getApplication()->input;
         $fileId = $jinput->post->get($field->comesfieldname, '', 'STRING');
 
         if ($listing_id == 0) {
-            $value = $imagemethods->UploadSingleImage('', $fileId, $field->realfieldname, JPATH_SITE . DIRECTORY_SEPARATOR
+            $value = $imageMethods->UploadSingleImage('', $fileId, $field->realfieldname, JPATH_SITE . DIRECTORY_SEPARATOR
                 . $ImageFolder, $field->params, $field->ct->Table->realtablename, $field->ct->Table->realidfieldname);
         } else {
             $to_delete = $jinput->post->get($field->comesfieldname . '_delete', '', 'CMD');
             $ExistingImage = Tree::isRecordExist($listing_id, 'id', $field->realfieldname, $field->ct->Table->realtablename);
+            echo 'b$ExistingImage=' . $ExistingImage . '<br/>';
 
             if ($to_delete == 'true') {
+
                 if ($ExistingImage !== null and $ExistingImage != '' and $ExistingImage > 0) {
-                    $imagemethods->DeleteExistingSingleImage(
+                    $imageMethods->DeleteExistingSingleImage(
                         $ExistingImage,
                         JPATH_SITE . DIRECTORY_SEPARATOR . $ImageFolder,
                         $field->params[0],
@@ -118,13 +118,12 @@ class CT_FieldTypeTag_image
 
                 return $value;
             } else {
-
-                if ($ExistingImage !== null) {
-                    $value = $imagemethods->UploadSingleImage($ExistingImage, $fileId, $field->realfieldname,
-                        JPATH_SITE . DIRECTORY_SEPARATOR . $ImageFolder, $field->params, $field->ct->Table->realtablename, $field->ct->Table->realidfieldname);
-                }
+                $value = $imageMethods->UploadSingleImage($ExistingImage, $fileId, $field->realfieldname,
+                    JPATH_SITE . DIRECTORY_SEPARATOR . $ImageFolder, $field->params, $field->ct->Table->realtablename, $field->ct->Table->realidfieldname);
             }
         }
+
+        echo 'l$value=' . $value . '<br/>';
 
         if ($value == "-1" or $value == "2") {
             // -1 if file extension not supported
@@ -227,13 +226,12 @@ class CT_FieldTypeTag_image
             . '<div id="ct_fileuploader_' . $field->fieldname . '"></div>'
             . '<div id="ct_eventsmessage_' . $field->fieldname . '"></div>'
             . '<script>
-                UploadFileCount=1;
-                AutoSubmitForm=false;
-                esUploaderFormID="eseditForm";
-                ct_eventsmessage_element="ct_eventsmessage";
-                tempFileName="' . $fileId . '";
-                fieldValueInputBox="' . $prefix . $field->fieldname . '";
-                urlstr="' . $urlstr . '";
+                //UploadFileCount=1;
+                //AutoSubmitForm=false;
+                //esUploaderFormID="eseditForm";
+                //ct_eventsmessage_element="ct_eventsmessage";
+                //tempFileName="' . $fileId . '";
+                //fieldValueInputBox="' . $prefix . $field->fieldname . '";
                 ct_getUploader(' . $field->id . ',"' . $urlstr . '",' . $max_file_size . ',"jpg jpeg png gif svg webp","eseditForm",false,"ct_fileuploader_'
             . $field->fieldname . '","ct_eventsmessage_' . $field->fieldname . '","' . $fileId . '","' . $prefix . $field->fieldname . '","ct_ubloadedfile_box_' . $field->fieldname . '");
 
