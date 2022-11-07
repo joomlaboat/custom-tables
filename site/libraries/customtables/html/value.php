@@ -159,6 +159,8 @@ class Value
 
             case 'signature':
 
+                $imageSRC = '';
+                $imagetag = '';
                 CT_FieldTypeTag_image::getImageSRCLayoutView($option_list, $rowValue, $this->field->params, $imageSRC, $imagetag);
 
                 $conf = Factory::getConfig();
