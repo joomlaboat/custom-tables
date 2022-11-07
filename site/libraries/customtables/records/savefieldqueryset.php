@@ -51,7 +51,7 @@ class SaveFieldQuerySet
 
     //Return type: null|string|array
 
-    function getSaveFieldSet($fieldrow): ?string
+    function getSaveFieldSet($fieldrow)
     {
         $this->field = new Field($this->ct, $fieldrow, $this->row);
 
