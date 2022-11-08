@@ -45,7 +45,7 @@ function extraTasksUpdate(task, old_params, new_params, tableid, fieldid, tablet
     result += '<table><tbody><tr><td><b>Old Parameters:</b></td><td>' + op + '</td></tr><tr><td><b>New Parameters:</b></td><td>' + np + '</td></tr></tbody></table>';
     result += '<div id="ctStatus"></div><br/>';
 
-    result += '<div class="progress progress-striped active"><div id="ct_progressbar" class="ctProgressBar" role="progressbar" style="width: 0%;"></div></div><br/><p>Please keep this window open.</p>';
+    result += '<div class="progress progress-striped active"><div id="ct_progressbar" class="ctProgressBar" role="progressbar" style="width:0;"></div></div><br/><p>Please keep this window open.</p>';
 
     ctShowPopUp(result, false);
     ctQueryAPI(task, old_params, new_params, tableid, fieldid);

@@ -104,19 +104,15 @@ class tagProcessor_Catalog
                         $GroupTitle = implode(',', Tree::getMultyValueTitles($lastGroup, $ct->Languages->Postfix, 1, ' - '));
                     else {
                         $row['_number'] = $number;
-                        $galleryRows = array();
-                        $FileBoxRows = array();
                         $option = array();
-                        $GroupTitle = tagProcessor_Value::getValueByType($ct, $FieldRow, $row, $option, $galleryRows, $FileBoxRows);
+                        $GroupTitle = tagProcessor_Value::getValueByType($ct, $FieldRow, $row, $option);
                     }
 
                     $CatGroups[] = array($GroupTitle, $RealRows);
                     $RealRows = array();
                 }
                 $RealRows[] = tagProcessor_Item::RenderResultLine($ct, $layoutType, $twig, $row); //3ed parameter is to show record HTML anchor or not
-
                 $lastGroup = $row[$ct->Params->groupBy];
-
                 $number++;
             }
             if (count($RealRows) > 0) {

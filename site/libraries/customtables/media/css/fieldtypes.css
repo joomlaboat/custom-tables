@@ -173,7 +173,7 @@
     background-color: rgb(0, 0, 0); /* Fallback color */
     background-color: rgba(0, 0, 0, 0.2); /* Black w/ opacity */
 
-    margin: 0 0px 0px -5px;
+    margin: 0 0 0 -5px;
 
     border-radius: 5px;
 }

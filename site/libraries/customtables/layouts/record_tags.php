@@ -53,7 +53,7 @@ class Twig_Record_Tags
         return $forms->renderFieldLabel((object)$field, $allowSortBy);
     }
 
-    function link($add_returnto = false, $menu_item_alias = '', $custom_not_base64_returnto = '')
+    function link($add_returnto = false, $menu_item_alias = '', $custom_not_base64_returnto = ''): ?string
     {
         $menu_item_id = 0;
         $view_link = '';
@@ -182,7 +182,7 @@ class Twig_Record_Tags
     function advancedjoin($sj_function, $sj_tablename, $field1_findwhat, $field2_lookwhere, $field3_readvalue = '_id', $filter = '',
                           $order_by_option = '', $value_option_list = [])
     {
-        if ($sj_tablename === null) return '';
+        if ($sj_tablename === null or $sj_tablename == '') return '';
 
         $tablerow = ESTables::getTableRowByNameAssoc($sj_tablename);
 
@@ -249,7 +249,7 @@ class Twig_Record_Tags
         return $vlu;
     }
 
-    protected function join_getRealFieldName($fieldname, $tableRow)
+    protected function join_getRealFieldName($fieldname, $tableRow): ?array
     {
         $tableid = $tableRow['id'];
 
@@ -262,6 +262,7 @@ class Twig_Record_Tags
                 $this->ct->app->enqueueMessage('{{ record.join... }} - Table does not have "published" field.', 'error');
         } else {
             $field1_row = Fields::getFieldRowByName($fieldname, $tableid);
+
             if (is_object($field1_row)) {
                 return [$field1_row->realfieldname, $field1_row->type];
             } else
@@ -270,7 +271,7 @@ class Twig_Record_Tags
         return null;
     }
 
-    protected function join_processWhere($additional_where, $sj_realtablename, $sj_realidfieldname)
+    protected function join_processWhere($additional_where, $sj_realtablename, $sj_realidfieldname): string
     {
         if ($additional_where == '')
             return '';
@@ -332,7 +333,7 @@ class Twig_Record_Tags
         return $sj_realtablename . '.es_' . $str;
     }
 
-    protected function join_buildQuery($sj_function, $tablerow, $field1_findwhat, $field1_type, $field2_lookwhere, $field2_type, $field3_readvalue, $additional_where, $order_by_option)
+    protected function join_buildQuery($sj_function, $tablerow, $field1_findwhat, $field1_type, $field2_lookwhere, $field2_type, $field3_readvalue, $additional_where, $order_by_option): string
     {
         if ($sj_function == 'count')
             $query = 'SELECT count(' . $tablerow['realtablename'] . '.' . $field3_readvalue . ') AS vlu ';
@@ -472,7 +473,7 @@ class Twig_Record_Tags
         return $this->simple_join('value', $join_table, $value_field, 'record.joinvalue', $filter);
     }
 
-    function jointable($layoutname = '', $filter = '', $orderby = '', $limit = 0)
+    function jointable($layoutname = '', $filter = '', $orderby = '', $limit = 0): string
     {
         //Example {{ record.tablejoin("InvoicesPage","_published=1","name") }}
 
@@ -511,10 +512,7 @@ class Twig_Record_Tags
 
         if ($tables->loadRecords($layouts->tableid, $complete_filter, $orderby, $limit)) {
             $twig = new TwigProcessor($join_ct, $pageLayout);
-            $vlu = $twig->process();
-
-            //return $vlu;
-            return $vlu;
+            return $twig->process();
         }
 
         $this->ct->app->enqueueMessage('{{ record.tablejoin("' . $layoutname . '","' . $filter . '","' . $orderby . '") }} - LCould not load records.', 'error');
@@ -532,7 +530,7 @@ class Twig_Table_Tags
         $this->ct = &$ct;
     }
 
-    function recordstotal()
+    function recordstotal(): int
     {
         if (!isset($this->ct->Table) or $this->ct->Table->fields === null)
             return 'Table not selected';
@@ -540,18 +538,18 @@ class Twig_Table_Tags
         return $this->ct->getNumberOfRecords();
     }
 
-    function records()
+    function records(): int
     {
         if (!isset($this->ct->Table) or $this->ct->Table->fields === null)
-            return 'Table not selected';
+            return -1;
 
         return $this->ct->Table->recordcount;
     }
 
-    function fields()
+    function fields(): int
     {
         if (!isset($this->ct->Table) or $this->ct->Table->fields === null)
-            return 'Table not selected';
+            return -1;
 
         return count($this->ct->Table->fields);
     }
@@ -580,31 +578,29 @@ class Twig_Table_Tags
         return $this->ct->Table->tablename;
     }
 
-    function id()
+    function id(): int
     {
         if (!isset($this->ct->Table) or $this->ct->Table->fields === null)
-            return 'Table not selected';
+            return -1;
 
         return $this->ct->Table->tableid;
     }
 
-    function recordsperpage()
+    function recordsperpage(): int
     {
         if (!isset($this->ct->Table) or $this->ct->Table->fields === null)
-            return 'Table not selected';
+            return -1;
 
         return $this->ct->Limit;
     }
 
-    function recordpagestart()
+    function recordpagestart(): int
     {
         if (!isset($this->ct->Table) or $this->ct->Table->fields === null)
-            return 'Table not selected';
+            return -1;
 
         return $this->ct->LimitStart;
     }
-
-
 }
 
 class Twig_Tables_Tags
@@ -671,7 +667,7 @@ class Twig_Tables_Tags
         }
     }
 
-    function getrecord($layoutname = '', $record_id_or_filter = '', $orderby = '')
+    function getrecord($layoutname = '', $record_id_or_filter = '', $orderby = ''): string
     {
         if ($layoutname == '') {
             $this->ct->app->enqueueMessage('{{ html.records("' . $layoutname . '","' . $record_id_or_filter . '","' . $orderby . '") }} - Layout name not specified.', 'error');
@@ -709,12 +705,10 @@ class Twig_Tables_Tags
         }
 
         $twig = new TwigProcessor($join_ct, $pageLayout);
-        $vlu = $twig->process($row);
-
-        return $vlu;
+        return $twig->process($row);
     }
 
-    function getrecords($layoutname = '', $filter = '', $orderby = '', $limit = 0)
+    function getrecords($layoutname = '', $filter = '', $orderby = '', $limit = 0): string
     {
         //Example {{ html.records("InvoicesPage","firstname=john","lastname") }}
 

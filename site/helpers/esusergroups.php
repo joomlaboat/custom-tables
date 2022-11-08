@@ -19,28 +19,26 @@ require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARAT
 
 class JHTMLESUserGroups
 {
-    static public function render($control_name, $value, array &$typeParams_array)
+    static public function render($control_name, $value, array $typeParamsArray): string
     {
         $selector = $typeParamsArray[0];
-        $availableusergroups = $typeParams_array[1] ?? '';
-
-        $availableusergroups_list = (trim($availableusergroups) == '' ? [] : explode(',', trim($availableusergroups)));
-
+        $availableUserGroups = $typeParamsArray[1] ?? '';
+        $availableUserGroupList = (trim($availableUserGroups) == '' ? [] : explode(',', trim($availableUserGroups)));
         $htmlresult = '';
-        $valuearray = explode(',', $value);
+
         $db = Factory::getDBO();
 
         $query = $db->getQuery(true);
         $query->select('#__usergroups.id AS id, #__usergroups.title AS name');
         $query->from('#__usergroups');
 
-        if (count($availableusergroups_list) == 0) {
+        if (count($availableUserGroupList) == 0) {
             $query->where('#__usergroups.title!=' . $db->quote('Super Users'));
         } else {
             $where = [];
-            foreach ($availableusergroups_list as $availableusergroup) {
-                if ($availableusergroup != '')
-                    $where[] = '#__usergroups.title=' . $db->quote($availableusergroup);
+            foreach ($availableUserGroupList as $availableUserGroup) {
+                if ($availableUserGroup != '')
+                    $where[] = '#__usergroups.title=' . $db->quote($availableUserGroup);
             }
             $query->where(implode(' OR ', $where));
         }
@@ -49,18 +47,18 @@ class JHTMLESUserGroups
         $db->setQuery($query);
         $records = $db->loadObjectList();
 
-        $valuearray = explode(',', $value);
+        $valueArray = explode(',', $value);
 
         switch ($selector) {
             case 'single' :
-                $htmlresult = JHTMLESUserGroups::getSingle($records, $control_name, $valuearray);
+                $htmlresult = JHTMLESUserGroups::getSingle($records, $control_name, $valueArray);
                 break;
 
             case 'multi' :
                 $htmlresult .= '<SELECT name="' . $control_name . '[]" id="' . $control_name . '" MULTIPLE >';
                 foreach ($records as $row) {
                     $htmlresult .= '<option value="' . $row->id . '" '
-                        . ((in_array($row->id, $valuearray) and count($valuearray) > 0) ? ' SELECTED ' : '')
+                        . ((in_array($row->id, $valueArray) and count($valueArray) > 0) ? ' SELECTED ' : '')
                         . '>' . $row->name . '</option>';
                 }
 
@@ -71,14 +69,14 @@ class JHTMLESUserGroups
                 $htmlresult .= '<table style="border:none;" id="usergroups_table_' . $control_name . '">';
                 $i = 0;
                 foreach ($records as $row) {
-                    $htmlresult .= '<tr><td valign="middle">'
+                    $htmlresult .= '<tr><td style="vertical-align: middle">'
                         . '<input type="radio" '
                         . 'name="' . $control_name . '" '
                         . 'id="' . $control_name . '_' . $i . '" '
                         . 'value="' . $row->id . '" '
-                        . ((in_array($row->id, $valuearray) and count($valuearray) > 0) ? ' checked="checked" ' : '')
+                        . ((in_array($row->id, $valueArray) and count($valueArray) > 0) ? ' checked="checked" ' : '')
                         . ' /></td>'
-                        . '<td valign="middle">'
+                        . '<td style="vertical-align: middle">'
                         . '<label for="' . $control_name . '_' . $i . '">' . $row->name . '</label>'
                         . '</td></tr>';
                     $i++;
@@ -90,14 +88,14 @@ class JHTMLESUserGroups
                 $htmlresult .= '<table style="border:none;">';
                 $i = 0;
                 foreach ($records as $row) {
-                    $htmlresult .= '<tr><td valign="middle">'
+                    $htmlresult .= '<tr><td style="vertical-align: middle">'
                         . '<input type="checkbox" '
                         . 'name="' . $control_name . '[]" '
                         . 'id="' . $control_name . '_' . $i . '" '
                         . 'value="' . $row->id . '" '
-                        . ((in_array($row->id, $valuearray) and count($valuearray) > 0) ? ' checked="checked" ' : '')
+                        . ((in_array($row->id, $valueArray) and count($valueArray) > 0) ? ' checked="checked" ' : '')
                         . ' /></td>'
-                        . '<td valign="middle">'
+                        . '<td style="vertical-align: middle">'
                         . '<label for="' . $control_name . '_' . $i . '">' . $row->name . '</label>'
                         . '</td></tr>';
                     $i++;
@@ -106,7 +104,7 @@ class JHTMLESUserGroups
                 break;
 
             case 'multibox' :
-                $htmlresult .= JHTMLESUserGroups::getMultibox($records, $valuearray, $selector, $control_name);
+                $htmlresult .= JHTMLESUserGroups::getMultibox($records, $valueArray, $control_name);
                 break;
 
             default:
@@ -115,22 +113,21 @@ class JHTMLESUserGroups
         return $htmlresult;
     }
 
-    static protected function getSingle(&$records, $control_name, $valuearray)
+    static protected function getSingle($records, $control_name, $valueArray): string
     {
         $htmlresult = '<SELECT name="' . $control_name . '[]" id="' . $control_name . '">';
 
         foreach ($records as $row) {
             $htmlresult .= '<option value="' . $row->id . '" '
-                . ((in_array($row->id, $valuearray) and count($valuearray) > 0) ? ' SELECTED ' : '')
+                . ((in_array($row->id, $valueArray) and count($valueArray) > 0) ? ' SELECTED ' : '')
                 . '>' . $row->name . '</option>';
         }
 
         $htmlresult .= '</SELECT>';
-
         return $htmlresult;
     }
 
-    static protected function getMultibox(&$records, &$valuearray, $selector, $control_name)
+    static protected function getMultibox($records, $valueArray, $control_name): string
     {
         $ctInputboxRecords_r = [];
         $ctInputboxRecords_v = [];
@@ -138,7 +135,7 @@ class JHTMLESUserGroups
 
         foreach ((array)$records as $rec) {
             $row = (array)$rec;
-            if (in_array($row['id'], $valuearray) and count($valuearray) > 0) {
+            if (in_array($row['id'], $valueArray) and count($valueArray) > 0) {
                 $ctInputboxRecords_r[] = $row['id'];
                 $ctInputboxRecords_v[] = $row['name'];
                 $ctInputboxRecords_p[] = 1;
@@ -153,10 +150,7 @@ class JHTMLESUserGroups
 		</script>
 		';
 
-        $value = '';
-        $single_box = '';
-
-        $single_box .= JHTMLESUserGroups::getSingle($records, $control_name . '_selector', $valuearray);
+        $single_box = JHTMLESUserGroups::getSingle($records, $control_name . '_selector', $valueArray);
 
         $htmlresult .= '<div style="padding-bottom:20px;"><div style="width:90%;" id="' . $control_name . '_box"></div>'
             . '<div style="height:30px;">'

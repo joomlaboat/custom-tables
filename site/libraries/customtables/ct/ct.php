@@ -215,7 +215,7 @@ class CT
         if (count($rows) == 0)
             $this->Table->recordcount = -1;
         else
-            $this->Table->recordcount = $rows[0]->count;
+            $this->Table->recordcount = intval($rows[0]->count);
 
         return $this->Table->recordcount;
     }

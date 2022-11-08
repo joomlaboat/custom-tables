@@ -644,7 +644,7 @@ class Fields
         if ($fieldname == '')
             return array();
 
-        if ($sj_tablename === null)
+        if ($sj_tablename == '')
             $query = 'SELECT ' . Fields::getFieldRowSelects() . ' FROM #__customtables_fields AS s WHERE s.published=1 AND tableid=' . (int)$tableid . ' AND fieldname=' . $db->quote(trim($fieldname)) . ' LIMIT 1';
         else {
             $query = 'SELECT ' . Fields::getFieldRowSelects() . ' FROM #__customtables_fields AS s
@@ -653,15 +653,12 @@ class Fields
 			WHERE s.published=1 AND s.tableid=t.id AND s.fieldname=' . $db->quote(trim($fieldname)) . ' LIMIT 1';
         }
 
-
         $db->setQuery($query);
-
         $rows = $db->loadObjectList();
 
-
-        if (count($rows) != 1) {
+        if (count($rows) != 1)
             return null;
-        }
+        
         return $rows[0];
     }
 

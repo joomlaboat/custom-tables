@@ -103,7 +103,7 @@ function renderDependencies($layout_row)
 
 function _renderLayoutList($layouts)
 {
-    $result = '<ul style="list-style-type:none;margin:0px;">';
+    $result = '<ul style="list-style-type:none;margin:0;">';
 
     foreach ($layouts as $layout) {
         $link = '/administrator/index.php?option=com_customtables&view=layouts&layout=edit&id=' . $layout['id'];
@@ -116,7 +116,7 @@ function _renderLayoutList($layouts)
 
 function _renderMenuList($menus)
 {
-    $result = '<ul style="list-style-type:none;margin:0px;">';
+    $result = '<ul style="list-style-type:none;margin:0;">';
 
     foreach ($menus as $menu) {
         $link = '/administrator/index.php?option=com_menus&view=item&client_id=0&layout=edit&id=' . $menu['id'];
@@ -130,7 +130,7 @@ function _renderMenuList($menus)
 
 function _renderModuleList($modules)
 {
-    $result = '<ul style="list-style-type:none;margin:0px;">';
+    $result = '<ul style="list-style-type:none;margin:0;">';
 
     foreach ($modules as $module) {
         $link = '/administrator/index.php?option=com_modules&task=module.edit&id=' . $module['id'];
@@ -159,7 +159,7 @@ function _renderTableList($rows)
         $result .= '<tr>
         <td><a href="/administrator/index.php?option=com_customtables&view=listoffields&tableid=' . $row['tableid'] . '" target="_blank">' . $row['tablename'] . '</a></td>
 		<td><a href="/administrator/index.php?option=com_customtables&view=listoffields&tableid=' . $row['tableid'] . '" target="_blank">' . $row['tabletitle'] . '</a></td>
-        <td><ul style="list-style-type:none;margin:0px;">';
+        <td><ul style="list-style-type:none;margin:0;">';
 
         $fields = explode(';', $row['fields']);
 

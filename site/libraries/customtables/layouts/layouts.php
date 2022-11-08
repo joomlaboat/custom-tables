@@ -156,9 +156,8 @@ class Layouts
         if (trim($layoutRow['layoutcss']) != '') {
             $layoutContent = trim($layoutRow['layoutcss']);
             $twig = new TwigProcessor($this->ct, $layoutContent, $this->ct->LayoutVariables['getEditFieldNamesOnly'] ?? false);
-            $layoutContent = $twig->process($this->ct->Table->record);
-
-            $this->ct->document->addCustomTag('<style>' . $layoutContent . '</style>');
+            $layoutContent = '<style>' . $twig->process($this->ct->Table->record) . '</style>';
+            $this->ct->document->addCustomTag($layoutContent);
         }
 
         if (trim($layoutRow['layoutjs']) != '') {
@@ -172,10 +171,7 @@ class Layouts
     function createDefaultLayout_SimpleCatalog($fields, $addToolbar = true): string
     {
         $this->layouttype = 1;
-
-        $result = 'Simple Catalog';
-
-        return $result;
+        return 'Simple Catalog';
     }
 
     function createDefaultLayout_CSV($fields): string
