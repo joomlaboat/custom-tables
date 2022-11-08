@@ -31,13 +31,13 @@ class tagProcessor_CatalogTableView
     use render_xml;
     use render_image;
 
-    public static function process(CT &$ct, int $layoutType, string &$pagelayout, string $new_replaceitecode)
+    public static function process(CT &$ct, int $layoutType, string &$pageLayout, string $new_replaceitecode)
     {
         $vlu = '';
 
         //Catalog Table View
         $options = array();
-        $fList = JoomlaBasicMisc::getListToReplace('catalogtable', $options, $pagelayout, '{}');
+        $fList = JoomlaBasicMisc::getListToReplace('catalogtable', $options, $pageLayout, '{}');
 
         $i = 0;
         foreach ($fList as $fItem) {
@@ -46,13 +46,13 @@ class tagProcessor_CatalogTableView
 
             if ($ct->Env->frmt == 'csv') {
                 $vlu = self::get_CatalogTable_CSV($ct, $fields);
-                $pagelayout = str_replace($fItem, $new_replaceitecode, $pagelayout);
+                $pageLayout = str_replace($fItem, $new_replaceitecode, $pageLayout);
             } elseif ($ct->Env->frmt == 'json') {
                 $vlu = self::get_CatalogTable_JSON($ct, $fields);
-                $pagelayout = str_replace($fItem, $new_replaceitecode, $pagelayout);
+                $pageLayout = str_replace($fItem, $new_replaceitecode, $pageLayout);
             } elseif ($ct->Env->frmt == 'xml') {
                 $vlu = self::get_CatalogTable_XML($ct, $layoutType, $fields);
-                $pagelayout = str_replace($fItem, $new_replaceitecode, $pagelayout);
+                $pageLayout = str_replace($fItem, $new_replaceitecode, $pageLayout);
             } elseif ($ct->Env->frmt == 'xlsx') {
                 self::get_CatalogTable_XLSX($fields);
             } else {
@@ -69,7 +69,7 @@ class tagProcessor_CatalogTableView
                 }
 
                 $vlu = self::get_CatalogTable_HTML($ct, $layoutType, $fields, $class, $dragdrop);
-                $pagelayout = str_replace($fItem, $new_replaceitecode, $pagelayout);
+                $pageLayout = str_replace($fItem, $new_replaceitecode, $pageLayout);
             }
             $i++;
         }

@@ -99,9 +99,9 @@ trait render_csv
         return strip_tags($result);
     }
 
-    protected static function renderCSVoutput(CT &$ct, int $layoutType, string $itemlayout)
+    protected static function renderCSVoutput(CT &$ct, int $layoutType, string $itemLayout)
     {
-        $twig = new TwigProcessor($ct, $itemlayout);
+        $twig = new TwigProcessor($ct, $itemLayout);
 
         $number = 1 + $ct->LimitStart; //table row number, it can be used in the layout as {number}
         $tablecontent = '';

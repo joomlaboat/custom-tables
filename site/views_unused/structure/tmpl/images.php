@@ -17,7 +17,7 @@ use CustomTables\DataTypes\Tree;
 
 JHTML::stylesheet("default.css", JURI::root(true) . "/components/com_customtables/views/catalog/tmpl/");
 
-$catalogresult = '<table width="100%" align="center">';
+$catalogResult = '<table width="100%" align="center">';
 
 $tr = 0;
 $number_of_columns = 3;
@@ -48,28 +48,27 @@ if ($this->image_prefix == '_original') {
 
 foreach ($this->rows as $row) {
     if ($tr == 0)
-        $catalogresult .= '<tr>';
+        $catalogResult .= '<tr>';
 
     $imagefile_ = 'images/esoptimages/' . $image_prefix . '_' . $row['image'];
 
     if (file_exists($imagefile_ . '.jpg'))
-        $imagefile = $imagefile_ . '.jpg';
+        $imageFile = $imagefile_ . '.jpg';
     elseif (file_exists($imagefile_ . '.png'))
-        $imagefile = $imagefile_ . '.png';
+        $imageFile = $imagefile_ . '.png';
     elseif (file_exists($imagefile_ . '.webp'))
-        $imagefile = $imagefile_ . '.webp';
+        $imageFile = $imagefile_ . '.webp';
     else
-        $imagefile = '';
+        $imageFile = '';
 
-    if ($imagefile != '') {
-        $catalogresult .= '<td width="' . $column_width . '%" valign="top" align="center">';
+    if ($imageFile != '') {
+        $catalogResult .= '<td width="' . $column_width . '%" valign="top" align="center">';
 
         if ($this->esfieldname != '') {
             $aLink = 'index.php?option=com_customtables&view=catalog&';
 
             if ($this->ct->Params->pageLayout != '')
                 $aLink .= 'pagelayout=' . $this->ct->Params->pageLayout . '&';
-
 
             if ($this->ct->Params->ItemId != '')
                 $aLink .= 'Itemid=' . $this->ct->Params->ItemId . '&';
@@ -82,30 +81,30 @@ foreach ($this->rows as $row) {
             if ($row['optionname'] != '')
                 $aLink .= '.' . $row['optionname'];
 
-            $catalogresult .= '<a href="' . $aLink . '"><img src="' . $imagefile . '" border="0" /></a>';
+            $catalogResult .= '<a href="' . $aLink . '"><img src="' . $imageFile . '" border="0" /></a>';
         } else
-            $catalogresult .= '<img src="' . $imagefile . '" border="0" />';
+            $catalogResult .= '<img src="' . $imageFile . '" border="0" />';
 
-        $catalogresult .= '</td>';
+        $catalogResult .= '</td>';
 
         $tr++;
 
         if ($tr == $number_of_columns) {
-            $catalogresult .= '</tr>';
+            $catalogResult .= '</tr>';
 
             if ($this->row_break)
-                $catalogresult .= '<tr><td colspan="' . $number_of_columns . '"><hr /></td></tr>';
+                $catalogResult .= '<tr><td colspan="' . $number_of_columns . '"><hr /></td></tr>';
 
             $tr = 0;
         }
     }
 }
 
-$catalogresult .= '</tbody>
+$catalogResult .= '</tbody>
 </table>';
 
 if ((int)$this->ct->Params->allowContentPlugins == 1)
-    $catalogresult = JoomlaBasicMisc::applyContentPlugins($catalogresult);
+    $catalogResult = JoomlaBasicMisc::applyContentPlugins($catalogResult);
 
-echo $catalogresult;
+echo $catalogResult;
  

@@ -20,12 +20,12 @@ use Joomla\CMS\Factory;
 
 class tagProcessor_Set
 {
-    public static function process(CT &$ct, &$pagelayout)
+    public static function process(CT &$ct, &$pageLayout)
     {
-        tagProcessor_Set::setHeadTag($ct, $pagelayout);
-        tagProcessor_Set::setMetaDescription($ct, $pagelayout);
-        tagProcessor_Set::setMetaKeywords($ct, $pagelayout);
-        tagProcessor_Set::setPageTitle($ct, $pagelayout);
+        tagProcessor_Set::setHeadTag($ct, $pageLayout);
+        tagProcessor_Set::setMetaDescription($ct, $pageLayout);
+        tagProcessor_Set::setMetaKeywords($ct, $pageLayout);
+        tagProcessor_Set::setPageTitle($ct, $pageLayout);
     }
 
     protected static function setHeadTag(CT &$ct, string &$htmlresult)

@@ -35,9 +35,9 @@ class ViewJSON
 
         if ($this->ct->Env->legacysupport) {
 
-            $itemlayout = str_replace("\n", '', $itemLayoutContent);
-            $itemlayout = str_replace("\r", '', $itemlayout);
-            $itemlayout = str_replace("\t", '', $itemlayout);
+            $itemLayout = str_replace("\n", '', $itemLayoutContent);
+            $itemLayout = str_replace("\r", '', $itemLayout);
+            $itemLayout = str_replace("\t", '', $itemLayout);
 
             $path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR;
             require_once($path . 'layout.php');
@@ -46,7 +46,7 @@ class ViewJSON
             $catalogTableContent = tagProcessor_CatalogTableView::process($this->ct, $layoutType, $pageLayoutContent, $catalogTableCode);
 
             if ($catalogTableContent == '') {
-                $catalogTableContent = tagProcessor_Catalog::process($this->ct, $layoutType, $pageLayoutContent, $itemlayout, $catalogTableCode);
+                $catalogTableContent = tagProcessor_Catalog::process($this->ct, $layoutType, $pageLayoutContent, $itemLayout, $catalogTableCode);
 
                 $catalogTableContent = str_replace("\n", '', $catalogTableContent);
                 $catalogTableContent = str_replace("\r", '', $catalogTableContent);

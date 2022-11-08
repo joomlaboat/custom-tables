@@ -25,4 +25,4 @@ if ($this->ct->Env->version >= 4) {
 $document = Factory::getDocument();
 $document->addStyleSheet(JURI::root(true) . "/components/com_customtables/libraries/customtables/media/css/style.css");
 
-CTViewEdit($this->ct, $this->row, $this->pagelayout, $this->formLink, 'adminForm');
+CTViewEdit($this->ct, $this->row, $this->pageLayout, $this->formLink, 'adminForm');

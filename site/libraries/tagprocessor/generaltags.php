@@ -22,36 +22,36 @@ use CustomTables\CTUser;
 
 class tagProcessor_General
 {
-    public static function process(CT &$ct, string &$pagelayout, ?array &$row): void
+    public static function process(CT &$ct, string &$pageLayout, ?array &$row): void
     {
-        tagProcessor_General::TableInfo($ct, $pagelayout);
-        $pagelayout = str_replace('{today}', date('Y-m-d', time()), $pagelayout);
+        tagProcessor_General::TableInfo($ct, $pageLayout);
+        $pageLayout = str_replace('{today}', date('Y-m-d', time()), $pageLayout);
 
-        tagProcessor_General::getDate($pagelayout);
-        tagProcessor_General::getUser($ct, $pagelayout, $row);
-        tagProcessor_General::userid($ct, $pagelayout);
-        tagProcessor_General::Itemid($ct, $pagelayout);
-        tagProcessor_General::CurrentURL($ct, $pagelayout);
-        tagProcessor_General::ReturnTo($ct, $pagelayout);
-        tagProcessor_General::WebsiteRoot($pagelayout);
-        tagProcessor_General::getGoBackButton($ct, $pagelayout);
+        tagProcessor_General::getDate($pageLayout);
+        tagProcessor_General::getUser($ct, $pageLayout, $row);
+        tagProcessor_General::userid($ct, $pageLayout);
+        tagProcessor_General::Itemid($ct, $pageLayout);
+        tagProcessor_General::CurrentURL($ct, $pageLayout);
+        tagProcessor_General::ReturnTo($ct, $pageLayout);
+        tagProcessor_General::WebsiteRoot($pageLayout);
+        tagProcessor_General::getGoBackButton($ct, $pageLayout);
 
         $Layouts = new Layouts($ct);
-        $Layouts->processLayoutTag($pagelayout);
+        $Layouts->processLayoutTag($pageLayout);
     }
 
-    protected static function TableInfo(CT $ct, string &$pagelayout): void
+    protected static function TableInfo(CT $ct, string &$pageLayout): void
     {
-        tagProcessor_General::tableDesc($ct, $pagelayout, 'table');
-        tagProcessor_General::tableDesc($ct, $pagelayout, 'tabletitle', 'title');
-        tagProcessor_General::tableDesc($ct, $pagelayout, 'description', 'description');
-        tagProcessor_General::tableDesc($ct, $pagelayout, 'tabledescription', 'description');
+        tagProcessor_General::tableDesc($ct, $pageLayout, 'table');
+        tagProcessor_General::tableDesc($ct, $pageLayout, 'tabletitle', 'title');
+        tagProcessor_General::tableDesc($ct, $pageLayout, 'description', 'description');
+        tagProcessor_General::tableDesc($ct, $pageLayout, 'tabledescription', 'description');
     }
 
-    protected static function tableDesc(CT $ct, string &$pagelayout, string $tag, string $default = ''): void
+    protected static function tableDesc(CT $ct, string &$pageLayout, string $tag, string $default = ''): void
     {
         $options = array();
-        $fList = JoomlaBasicMisc::getListToReplace($tag, $options, $pagelayout, '{}');
+        $fList = JoomlaBasicMisc::getListToReplace($tag, $options, $pageLayout, '{}');
         $i = 0;
         foreach ($fList as $fItem) {
             $vlu = '';
@@ -79,18 +79,18 @@ class tagProcessor_General
 
             if ($extraopt == 'box') {
                 $ct->app->enqueueMessage($vlu, 'notice');//, 'error'
-                $pagelayout = str_replace($fItem, '', $pagelayout);
+                $pageLayout = str_replace($fItem, '', $pageLayout);
             } else
-                $pagelayout = str_replace($fItem, $vlu, $pagelayout);
+                $pageLayout = str_replace($fItem, $vlu, $pageLayout);
 
             $i++;
         }
     }
 
-    protected static function getDate(string &$pagelayout): void
+    protected static function getDate(string &$pageLayout): void
     {
         $options = array();
-        $fList = JoomlaBasicMisc::getListToReplace('date', $options, $pagelayout, '{}');
+        $fList = JoomlaBasicMisc::getListToReplace('date', $options, $pageLayout, '{}');
 
         $i = 0;
 
@@ -101,15 +101,15 @@ class tagProcessor_General
                 $vlu = JHTML::date();
 
 
-            $pagelayout = str_replace($fItem, $vlu, $pagelayout);
+            $pageLayout = str_replace($fItem, $vlu, $pageLayout);
             $i++;
         }
     }
 
-    protected static function getUser(CT &$ct, string &$pagelayout, ?array &$row): void
+    protected static function getUser(CT &$ct, string &$pageLayout, ?array &$row): void
     {
         $options = array();
-        $fList = JoomlaBasicMisc::getListToReplace('user', $options, $pagelayout, '{}');
+        $fList = JoomlaBasicMisc::getListToReplace('user', $options, $pageLayout, '{}');
 
         $i = 0;
         foreach ($fList as $fItem) {
@@ -184,36 +184,36 @@ class tagProcessor_General
             } else
                 $vlu = '';
 
-            $pagelayout = str_replace($fItem, $vlu, $pagelayout);
+            $pageLayout = str_replace($fItem, $vlu, $pageLayout);
             $i++;
         }
     }
 
-    protected static function userid(CT $ct, string &$pagelayout): void
+    protected static function userid(CT $ct, string &$pageLayout): void
     {
         $currentUserId = (int)$ct->Env->userid;
         if ($currentUserId != 0 and count($ct->Env->user->groups) > 0) {
-            $pagelayout = str_replace('{currentusertype}', implode(',', array_keys($ct->Env->user->groups)), $pagelayout);
+            $pageLayout = str_replace('{currentusertype}', implode(',', array_keys($ct->Env->user->groups)), $pageLayout);
         } else {
-            $pagelayout = str_replace('{currentusertype}', '0', $pagelayout);
+            $pageLayout = str_replace('{currentusertype}', '0', $pageLayout);
         }
 
 
         $options = array();
-        $fList = JoomlaBasicMisc::getListToReplace('currentuserid', $options, $pagelayout, '{}');
+        $fList = JoomlaBasicMisc::getListToReplace('currentuserid', $options, $pageLayout, '{}');
 
         $i = 0;
 
         foreach ($fList as $fItem) {
-            $pagelayout = str_replace($fItem, $currentUserId, $pagelayout);
+            $pageLayout = str_replace($fItem, $currentUserId, $pageLayout);
             $i++;
         }
     }
 
-    protected static function Itemid(CT $ct, string &$pagelayout): void
+    protected static function Itemid(CT $ct, string &$pageLayout): void
     {
         $options = array();
-        $fList = JoomlaBasicMisc::getListToReplace('itemid', $options, $pagelayout, '{}');
+        $fList = JoomlaBasicMisc::getListToReplace('itemid', $options, $pageLayout, '{}');
 
         $i = 0;
 
@@ -223,15 +223,15 @@ class tagProcessor_General
             else
                 $vlu = 0;
 
-            $pagelayout = str_replace($fItem, $vlu, $pagelayout);
+            $pageLayout = str_replace($fItem, $vlu, $pageLayout);
             $i++;
         }
     }
 
-    protected static function CurrentURL(CT $ct, string &$pagelayout): void
+    protected static function CurrentURL(CT $ct, string &$pageLayout): void
     {
         $options = array();
-        $fList = JoomlaBasicMisc::getListToReplace('currenturl', $options, $pagelayout, '{}');
+        $fList = JoomlaBasicMisc::getListToReplace('currenturl', $options, $pageLayout, '{}');
 
         $i = 0;
 
@@ -300,21 +300,21 @@ class tagProcessor_General
             }
 
 
-            $pagelayout = str_replace($fItem, $value, $pagelayout);
+            $pageLayout = str_replace($fItem, $value, $pageLayout);
             $i++;
         }
     }
 
-    protected static function ReturnTo(CT $ct, string &$pagelayout): void
+    protected static function ReturnTo(CT $ct, string &$pageLayout): void
     {
         //Deprecated. Use 	{currenturl:base64} instead
         $options = array();
-        $fList = JoomlaBasicMisc::getListToReplace('returnto', $options, $pagelayout, '{}');
+        $fList = JoomlaBasicMisc::getListToReplace('returnto', $options, $pageLayout, '{}');
 
         $i = 0;
 
         foreach ($fList as $fItem) {
-            $pagelayout = str_replace($fItem, $ct->Env->encoded_current_url, $pagelayout);
+            $pageLayout = str_replace($fItem, $ct->Env->encoded_current_url, $pageLayout);
             $i++;
         }
     }

@@ -105,7 +105,7 @@ class CustomtablesControllerRecords extends JControllerForm
 
         $Layouts = new Layouts($ct);
 
-        $editModel->pagelayout = $Layouts->createDefaultLayout_Edit($ct->Table->fields, false);
+        $editModel->pageLayout = $Layouts->createDefaultLayout_Edit($ct->Table->fields, false);
 
         $msg_ = '';
 

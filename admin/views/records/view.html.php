@@ -31,7 +31,7 @@ class CustomtablesViewRecords extends JViewLegacy
 {
     var CT $ct;
     var int $tableid;
-    var string $pagelayout;
+    var string $pageLayout;
     var ?array $row;
     var $state;
     var $canDo;
@@ -72,7 +72,7 @@ class CustomtablesViewRecords extends JViewLegacy
 
         $Layouts = new Layouts($this->ct);
         $this->ct->LayoutVariables['layout_type'] = 2;
-        $this->pagelayout = $Layouts->createDefaultLayout_Edit($this->ct->Table->fields, false);
+        $this->pageLayout = $Layouts->createDefaultLayout_Edit($this->ct->Table->fields, false);
 
         $this->row = $Model->row;
 

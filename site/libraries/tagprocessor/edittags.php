@@ -17,33 +17,33 @@ use CustomTables\Twig_Html_Tags;
 
 class tagProcessor_Edit
 {
-    public static function process(CT &$ct, &$pagelayout, &$row, $getEditFieldNamesOnly = false): array
+    public static function process(CT &$ct, &$pageLayout, &$row, $getEditFieldNamesOnly = false): array
     {
         $ct_html = new Twig_Html_Tags($ct, false);
 
-        tagProcessor_Edit::process_captcha($ct_html, $pagelayout); //Converted to Twig. Original replaced.
+        tagProcessor_Edit::process_captcha($ct_html, $pageLayout); //Converted to Twig. Original replaced.
 
-        $buttons = tagProcessor_Edit::process_button($ct_html, $pagelayout);
+        $buttons = tagProcessor_Edit::process_button($ct_html, $pageLayout);
 
-        $fields = tagProcessor_Edit::process_fields($ct, $pagelayout, $row, $getEditFieldNamesOnly); //Converted to Twig. Original replaced.
+        $fields = tagProcessor_Edit::process_fields($ct, $pageLayout, $row, $getEditFieldNamesOnly); //Converted to Twig. Original replaced.
         return ['fields' => $fields, 'buttons' => $buttons];
     }
 
-    protected static function process_captcha($ct_html, &$pagelayout): void
+    protected static function process_captcha($ct_html, &$pageLayout): void
     {
         $options = [];
-        $captchas = JoomlaBasicMisc::getListToReplace('captcha', $options, $pagelayout, '{}');
+        $captchas = JoomlaBasicMisc::getListToReplace('captcha', $options, $pageLayout, '{}');
 
         foreach ($captchas as $captcha) {
             $captcha_code = $ct_html->captcha();
-            $pagelayout = str_replace($captcha, $captcha_code, $pagelayout);
+            $pageLayout = str_replace($captcha, $captcha_code, $pageLayout);
         }
     }
 
-    protected static function process_button($ct_html, &$pagelayout)
+    protected static function process_button($ct_html, &$pageLayout)
     {
         $options = [];
-        $buttons = JoomlaBasicMisc::getListToReplace('button', $options, $pagelayout, '{}');
+        $buttons = JoomlaBasicMisc::getListToReplace('button', $options, $pageLayout, '{}');
 
         if (count($buttons) == 0)
             return null;
@@ -62,13 +62,13 @@ class tagProcessor_Edit
 
             $b = $ct_html->button($type, $title, $redirectlink, $optional_class);
 
-            $pagelayout = str_replace($buttons[$i], $b, $pagelayout);
+            $pageLayout = str_replace($buttons[$i], $b, $pageLayout);
         }
 
         return $ct_html->button_objects;
     }
 
-    protected static function process_fields(CT &$ct, &$pagelayout, &$row, $getEditFieldNamesOnly = false): array
+    protected static function process_fields(CT &$ct, &$pageLayout, &$row, $getEditFieldNamesOnly = false): array
     {
         require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'esinputbox.php');
 
@@ -82,15 +82,15 @@ class tagProcessor_Edit
         $replaceItCode = JoomlaBasicMisc::generateRandomString();
         $items_to_replace = array();
 
-        $field_objects = self::renderFields($ct, $row, $pagelayout, $inputBox, $calendars, $replaceItCode, $items_to_replace, $getEditFieldNamesOnly);
+        $field_objects = self::renderFields($ct, $row, $pageLayout, $inputBox, $calendars, $replaceItCode, $items_to_replace, $getEditFieldNamesOnly);
 
         foreach ($items_to_replace as $item)
-            $pagelayout = str_replace($item[0], $item[1], $pagelayout);
+            $pageLayout = str_replace($item[0], $item[1], $pageLayout);
 
         return $field_objects;
     }
 
-    protected static function renderFields(CT &$ct, &$row, &$pagelayout, $inputBox, &$calendars, $replaceItCode, &$items_to_replace, $getEditFieldNamesOnly = false): array
+    protected static function renderFields(CT &$ct, &$row, &$pageLayout, $inputBox, &$calendars, $replaceItCode, &$items_to_replace, $getEditFieldNamesOnly = false): array
     {
         $field_objects = [];
         $calendars = array();
@@ -102,7 +102,7 @@ class tagProcessor_Edit
         for ($f = 0; $f < count($inputBox->ct->Table->fields); $f++) {
             $fieldrow = $inputBox->ct->Table->fields[$f];
             $options = array();
-            $entries = JoomlaBasicMisc::getListToReplace($fieldrow['fieldname'], $options, $pagelayout, '[]');
+            $entries = JoomlaBasicMisc::getListToReplace($fieldrow['fieldname'], $options, $pageLayout, '[]');
 
             if (count($entries) > 0) {
                 for ($i = 0; $i < count($entries); $i++) {
@@ -130,7 +130,7 @@ class tagProcessor_Edit
                         $items_to_replace[] = array($newReplaceItCode, $result);
                     }
 
-                    $pagelayout = str_replace($entries[$i], $newReplaceItCode, $pagelayout);
+                    $pageLayout = str_replace($entries[$i], $newReplaceItCode, $pageLayout);
                 }
             }
         }

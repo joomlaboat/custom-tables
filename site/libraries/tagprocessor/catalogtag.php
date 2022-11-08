@@ -32,12 +32,12 @@ class tagProcessor_Catalog
     use render_json;
     use render_image;
 
-    public static function process(CT &$ct, $layoutType, &$pagelayout, $itemlayout, $newReplaceItCode): string
+    public static function process(CT &$ct, $layoutType, &$pageLayout, $itemLayout, $newReplaceItCode): string
     {
         $vlu = '';
         $options = array();
-        $fList = JoomlaBasicMisc::getListToReplace('catalog', $options, $pagelayout, '{}');
-        //---------------------
+        $fList = JoomlaBasicMisc::getListToReplace('catalog', $options, $pageLayout, '{}');
+
         $i = 0;
         foreach ($fList as $fItem) {
             $pair = JoomlaBasicMisc::csv_explode(',', $options[$i]);
@@ -47,24 +47,23 @@ class tagProcessor_Catalog
             $separator = $pair[2] ?? '';
 
             if ($ct->Env->frmt == 'csv') {
-                $vlu .= self::get_CatalogTable_singleline_CSV($ct, $layoutType, $itemlayout);
+                $vlu .= self::get_CatalogTable_singleline_CSV($ct, $layoutType, $itemLayout);
             } elseif ($ct->Env->frmt == 'json') {
-                //$pagelayout=str_replace($fItem,'',$pagelayout);//delete {catalog} tag
-                $vlu = self::get_CatalogTable_singleline_JSON($ct, $layoutType, $itemlayout);
+                $vlu = self::get_CatalogTable_singleline_JSON($ct, $layoutType, $itemLayout);
             } elseif ($ct->Env->frmt == 'image')
-                self::get_CatalogTable_singleline_IMAGE($ct, $layoutType, $pagelayout);
+                self::get_CatalogTable_singleline_IMAGE($ct, $layoutType, $pageLayout);
             elseif ($notable == 'notable')
-                $vlu .= self::get_Catalog($ct, $layoutType, $itemlayout, $tableClass, false, $separator);
+                $vlu .= self::get_Catalog($ct, $layoutType, $itemLayout, $tableClass, false, $separator);
             else
-                $vlu .= self::get_Catalog($ct, $layoutType, $itemlayout, $tableClass, true, $separator);
+                $vlu .= self::get_Catalog($ct, $layoutType, $itemLayout, $tableClass, true, $separator);
 
-            $pagelayout = str_replace($fItem, $newReplaceItCode, $pagelayout);
+            $pageLayout = str_replace($fItem, $newReplaceItCode, $pageLayout);
             $i++;
         }
         return $vlu;
     }
 
-    protected static function get_Catalog(CT &$ct, $layoutType, $itemlayout, $tableClass, $showTable = true, $separator = ''): string
+    protected static function get_Catalog(CT &$ct, $layoutType, $itemLayout, $tableClass, $showTable = true, $separator = ''): string
     {
         $catalogResult = '';
 
@@ -72,8 +71,7 @@ class tagProcessor_Catalog
             return '';
 
         $CatGroups = array();
-
-        $twig = new TwigProcessor($ct, $itemlayout);
+        $twig = new TwigProcessor($ct, $itemLayout);
 
         //Grouping
         if ($ct->Params->groupBy != '')
@@ -84,6 +82,7 @@ class tagProcessor_Catalog
         if ($groupBy == '') {
             $number = 1 + $ct->LimitStart;
             $RealRows = [];
+
             foreach ($ct->Records as $row) {
                 $row['_number'] = $number;
                 $RealRows[] = tagProcessor_Item::RenderResultLine($ct, $layoutType, $twig, $row); //3ed parameter is to show record HTML anchor or not
@@ -192,7 +191,7 @@ class tagProcessor_Catalog
 
             if ($showTable)
                 $catalogResult .= '<tr><td colspan="' . ($number_of_columns) . '"><hr/></td></tr>';
-        }    //	foreach($CatGroups as $cGroup)
+        }
 
         if ($showTable) {
             $catalogResult .= '</tbody>
@@ -201,7 +200,6 @@ class tagProcessor_Catalog
 
         return $catalogResult;
     }
-
 
     protected static function reorderCatGroups($CatGroups): array
     {
@@ -220,8 +218,6 @@ class tagProcessor_Catalog
                 }
             }
         }
-
         return $newCat;
     }
-
 }

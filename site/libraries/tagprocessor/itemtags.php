@@ -42,12 +42,10 @@ class tagProcessor_Item
         }
 
         $layout = '';
-
         $htmlresult = '';
-
         $LayoutProc = new LayoutProcessor($ct);
-
         $htmlresult = $twig->process($row);
+
         if ($layoutType == 2) {
 
             require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'tagprocessor' . DIRECTORY_SEPARATOR . 'edittags.php');
@@ -105,32 +103,32 @@ class tagProcessor_Item
         CT_FieldTypeTag_ct::ResolveStructure($ct, $htmlresult);
     }//function GetSQLJoin(&$htmlresult)
 
-    protected static function processLink(Twig_Record_Tags &$ct_record, string &$pagelayout): void
+    protected static function processLink(Twig_Record_Tags &$ct_record, string &$pageLayout): void
     {
         $options = array();
-        $fList = JoomlaBasicMisc::getListToReplace('link', $options, $pagelayout, '{}', ':', '"');
+        $fList = JoomlaBasicMisc::getListToReplace('link', $options, $pageLayout, '{}', ':', '"');
 
         $i = 0;
 
         foreach ($fList as $fItem) {
             $vlu = $ct_record->link(true, $options[$i]);
 
-            $pagelayout = str_replace($fItem, $vlu, $pagelayout);
+            $pageLayout = str_replace($fItem, $vlu, $pageLayout);
             $i++;
         }
     }
 
-    protected static function processNoReturnLink(Twig_Record_Tags &$ct_record, string &$pagelayout): void
+    protected static function processNoReturnLink(Twig_Record_Tags &$ct_record, string &$pageLayout): void
     {
         $options = array();
-        $fList = JoomlaBasicMisc::getListToReplace('linknoreturn', $options, $pagelayout, '{}', ':', '"');
+        $fList = JoomlaBasicMisc::getListToReplace('linknoreturn', $options, $pageLayout, '{}', ':', '"');
 
         $i = 0;
 
         foreach ($fList as $fItem) {
             $vlu = $ct_record->link(false, $options[$i]);
 
-            $pagelayout = str_replace($fItem, $vlu, $pagelayout);
+            $pageLayout = str_replace($fItem, $vlu, $pageLayout);
             $i++;
         }
     }

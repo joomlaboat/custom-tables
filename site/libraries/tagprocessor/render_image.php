@@ -20,7 +20,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 trait render_image
 {
 
-    protected static function get_CatalogTable_singleline_IMAGE(CT &$ct, $layoutType, &$pagelayout)
+    protected static function get_CatalogTable_singleline_IMAGE(CT &$ct, $layoutType, &$pageLayout)
     {
         require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_imagegenerator' . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'include.php');
         require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_imagegenerator' . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'misc.php');
@@ -30,7 +30,7 @@ trait render_image
         $IG = new IG();
 
         $IG->filename = JoomlaBasicMisc::makeNewFileName($ct->Params->pageTitle, '');
-        $IG->setImageGeneratorProfileFromText($pagelayout);
+        $IG->setImageGeneratorProfileFromText($pageLayout);
 
         $image_width = $IG->width;
         $image_height = $IG->height;
@@ -53,7 +53,7 @@ trait render_image
         $y_offset = 5;
         $c = 0;
 
-        $twig = new TwigProcessor($ct, $pagelayout);
+        $twig = new TwigProcessor($ct, $pageLayout);
 
         foreach ($ct->Records as $row) {
             $vlu = tagProcessor_Item::RenderResultLine($ct, $layoutType, $twig, $row);

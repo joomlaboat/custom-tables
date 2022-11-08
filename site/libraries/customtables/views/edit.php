@@ -18,7 +18,7 @@ use CustomTables\CT;
 use CustomTables\TwigProcessor;
 use Joomla\CMS\HTML\HTMLHelper;
 
-function CTViewEdit(CT &$ct, $row, &$pagelayout, $formLink, $formName): void
+function CTViewEdit(CT &$ct, $row, &$pageLayout, $formLink, $formName): void
 {
     if (!is_null($ct->Params->ModuleId))
         $formName .= $ct->Params->ModuleId;
@@ -52,21 +52,21 @@ function CTViewEdit(CT &$ct, $row, &$pagelayout, $formLink, $formName): void
     $ct->isEditForm = true; //This changes inputbox prefix
 
     if ($ct->Env->legacysupport) {
-        $LayoutProc = new LayoutProcessor($ct, $pagelayout);
+        $LayoutProc = new LayoutProcessor($ct, $pageLayout);
 
         //Better to run tag processor before rendering form edit elements because of IF statements that can exclude the part of the layout that contains form fields.
-        $pagelayout = $LayoutProc->fillLayout($row, null, '||', false, true);
+        $pageLayout = $LayoutProc->fillLayout($row, null, '||', false, true);
 
-        tagProcessor_Edit::process($ct, $pagelayout, $row);
+        tagProcessor_Edit::process($ct, $pageLayout, $row);
     }
 
-    $twig = new TwigProcessor($ct, $pagelayout);
-    $pagelayout = $twig->process($row);
+    $twig = new TwigProcessor($ct, $pageLayout);
+    $pageLayout = $twig->process($row);
 
     if ($ct->Params->allowContentPlugins)
-        $pagelayout = JoomlaBasicMisc::applyContentPlugins($pagelayout);
+        $pageLayout = JoomlaBasicMisc::applyContentPlugins($pageLayout);
 
-    echo $pagelayout;
+    echo $pageLayout;
 
     $returnto = '';
 

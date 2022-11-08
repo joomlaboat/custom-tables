@@ -42,7 +42,7 @@ class CustomTablesModelEditItem extends JModelLegacy
     var bool $userIdField_UniqueUsers;
     var ?string $listing_id;
     var bool $isAuthorized;
-    var string $pagelayout;
+    var string $pageLayout;
     var ?array $row;
 
     function __construct()
@@ -68,9 +68,9 @@ class CustomTablesModelEditItem extends JModelLegacy
 
         if ($this->ct->Params->editLayout != '') {
             $Layouts = new Layouts($this->ct);
-            $this->pagelayout = $Layouts->getLayout($this->ct->Params->editLayout, true, false, $addHeaderCode);
+            $this->pageLayout = $Layouts->getLayout($this->ct->Params->editLayout, true, false, $addHeaderCode);
         } else
-            $this->pagelayout = '';
+            $this->pageLayout = '';
 
         $this->listing_id = $this->ct->Params->listing_id;
 
@@ -625,7 +625,7 @@ class CustomTablesModelEditItem extends JModelLegacy
     function check_captcha(): bool
     {
         $options = array();
-        $captcha = JoomlaBasicMisc::getListToReplace('captcha', $options, $this->pagelayout, '{}');
+        $captcha = JoomlaBasicMisc::getListToReplace('captcha', $options, $this->pageLayout, '{}');
 
         if (count($captcha) == 0)
             return true;
@@ -653,14 +653,14 @@ class CustomTablesModelEditItem extends JModelLegacy
             require_once($path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'edittags.php');
             require_once($path . 'layout.php');
 
-            $LayoutProc = new LayoutProcessor($this->ct, $this->pagelayout);
-            $pagelayout = $LayoutProc->fillLayout(null, null, '||', false, true);
-            tagProcessor_Edit::process($this->ct, $pagelayout, $row, true);
+            $LayoutProc = new LayoutProcessor($this->ct, $this->pageLayout);
+            $pageLayout = $LayoutProc->fillLayout(null, null, '||', false, true);
+            tagProcessor_Edit::process($this->ct, $pageLayout, $row, true);
         } else
-            $pagelayout = $this->pagelayout;
+            $pageLayout = $this->pageLayout;
 
-        $twig = new TwigProcessor($this->ct, $pagelayout, true);
-        $pagelayout = $twig->process($row);
+        $twig = new TwigProcessor($this->ct, $pageLayout, true);
+        $pageLayout = $twig->process($row);
 
         $backgroundFieldTypes = ['creationtime', 'changetime', 'server', 'id', 'md5', 'userid'];
 
@@ -679,7 +679,7 @@ class CustomTablesModelEditItem extends JModelLegacy
             $fn_str[] = "'comes_" . $fn . "'";
 
             foreach ($fn_str as $s) {
-                if (str_contains($this->pagelayout, $s)) {
+                if (str_contains($this->pageLayout, $s)) {
 
                     if (!in_array($fn, $this->ct->editFields))
                         $this->ct->editFields[] = $fn;
@@ -878,11 +878,11 @@ class CustomTablesModelEditItem extends JModelLegacy
 				case 'customtables':
 
 						$typeParams_arr=explode(',',$typeParams);
-						$optionname=$typeparams_arr[0];
+						$optionname=$typeParamsArray[0];
 
-						if($typeparams_arr[1]=='multi')
+						if($typeParamsArray[1]=='multi')
 							$value=$this->getMultiString($optionname, $prefix.'multi_'.$this->ct->Table->tablename.'_'.$fieldname);
-						elseif($typeparams_arr[1]=='single')
+						elseif($typeParamsArray[1]=='single')
 							$value=$this->getComboString($optionname, $prefix.'combotree_'.$this->ct->Table->tablename.'_'.$fieldname);
 
 					break;
@@ -914,10 +914,10 @@ class CustomTablesModelEditItem extends JModelLegacy
 
         foreach ($this->ct->Table->fields as $fieldrow) {
             $realfieldname = $fieldrow['realfieldname'];
-            $typeparams = $fieldrow['typeparams'];
+            $typeParams = $fieldrow['typeparams'];
 
             if ($fieldrow['type'] == 'phponadd') {
-                $parts = JoomlaBasicMisc::csv_explode(',', $typeparams);
+                $parts = JoomlaBasicMisc::csv_explode(',', $typeParams);
 
                 if (count($parts) == 1 and str_contains($fieldrow['typeparams'], '"') and !str_contains($fieldrow['typeparams'], '****quote****'))
                     $theScript = $fieldrow['typeparams'];//to support older version when type params field could contain php script only. Also ****quote****  wasn't supported

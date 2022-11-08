@@ -38,12 +38,12 @@ else
     $listing_id = 0;
 
 require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'layout.php');
-$LayoutProc = new LayoutProcessor($this->ct, $this->pagelayout);
+$LayoutProc = new LayoutProcessor($this->ct, $this->pageLayout);
 
 //Better to run tag processor before rendering form edit elements because of IF statments that can exclude the part of the layout that contains form fields.
-$this->pagelayout = $LayoutProc->fillLayout($this->row, null, '||', false, true);
+$this->pageLayout = $LayoutProc->fillLayout($this->row, null, '||', false, true);
 
-$form_items = tagProcessor_Edit::process($this->ct, $this->pagelayout, $this->row, 'comes_');
+$form_items = tagProcessor_Edit::process($this->ct, $this->pageLayout, $this->row, 'comes_');
 
 $response_object = [];
 

@@ -249,17 +249,17 @@ class Twig_Record_Tags
         return $vlu;
     }
 
-    protected function join_getRealFieldName($fieldname, $tablerow)
+    protected function join_getRealFieldName($fieldname, $tableRow)
     {
-        $tableid = $tablerow['id'];
+        $tableid = $tableRow['id'];
 
         if ($fieldname == '_id') {
-            return [$tablerow['realidfieldname'], '_id'];
+            return [$tableRow['realidfieldname'], '_id'];
         } elseif ($fieldname == '_published') {
-            if ($tablerow['published_field_found'])
+            if ($tableRow['published_field_found'])
                 return ['published', '_published'];
             else
-                $this->ct->app->enqueueMessage('{{ record.join... }} - Table doesn\' have "published" field.', 'error');
+                $this->ct->app->enqueueMessage('{{ record.join... }} - Table does not have "published" field.', 'error');
         } else {
             $field1_row = Fields::getFieldRowByName($fieldname, $tableid);
             if (is_object($field1_row)) {
@@ -483,7 +483,7 @@ class Twig_Record_Tags
 
         $layouts = new Layouts($this->ct);
 
-        $pagelayout = $layouts->getLayout($layoutname, false);//It is safier to process layout after rendering the table
+        $pageLayout = $layouts->getLayout($layoutname, false);//It is safier to process layout after rendering the table
         if ($layouts->tableid === null) {
             $this->ct->app->enqueueMessage('{{ record.tablejoin("' . $layoutname . '","' . $filter . '","' . $orderby . '") }} - Layout "' . $layoutname . ' not found.', 'error');
             return '';
@@ -510,7 +510,7 @@ class Twig_Record_Tags
         $tables = new Tables($join_ct);
 
         if ($tables->loadRecords($layouts->tableid, $complete_filter, $orderby, $limit)) {
-            $twig = new TwigProcessor($join_ct, $pagelayout);
+            $twig = new TwigProcessor($join_ct, $pageLayout);
             $vlu = $twig->process();
 
             //return $vlu;
@@ -687,7 +687,7 @@ class Twig_Tables_Tags
         $tables = new Tables($join_ct);
 
         $layouts = new Layouts($join_ct);
-        $pagelayout = $layouts->getLayout($layoutname, false);//It is safer to process layout after rendering the table
+        $pageLayout = $layouts->getLayout($layoutname, false);//It is safer to process layout after rendering the table
 
         if ($layouts->tableid === null) {
             $this->ct->app->enqueueMessage('{{ html.records("' . $layoutname . '","' . $record_id_or_filter . '","' . $orderby . '") }} - Layout "' . $layoutname . ' not found.', 'error');
@@ -708,7 +708,7 @@ class Twig_Tables_Tags
                 return '';
         }
 
-        $twig = new TwigProcessor($join_ct, $pagelayout);
+        $twig = new TwigProcessor($join_ct, $pageLayout);
         $vlu = $twig->process($row);
 
         return $vlu;
@@ -726,7 +726,7 @@ class Twig_Tables_Tags
         $join_ct = new CT;
         $tables = new Tables($join_ct);
         $layouts = new Layouts($join_ct);
-        $pagelayout = $layouts->getLayout($layoutname, false);//It is safer to process layout after rendering the table
+        $pageLayout = $layouts->getLayout($layoutname, false);//It is safer to process layout after rendering the table
         if ($layouts->tableid === null) {
             $this->ct->app->enqueueMessage('{{ tables.getrecords("' . $layoutname . '","' . $filter . '","' . $orderby . '") }} - Layout "' . $layoutname . ' not found.', 'error');
             return '';
@@ -736,11 +736,11 @@ class Twig_Tables_Tags
 
             if ($join_ct->Env->legacysupport) {
                 $LayoutProc = new LayoutProcessor($join_ct);
-                $LayoutProc->layout = $pagelayout;
-                $pagelayout = $LayoutProc->fillLayout();
+                $LayoutProc->layout = $pageLayout;
+                $pageLayout = $LayoutProc->fillLayout();
             }
 
-            $twig = new TwigProcessor($join_ct, $pagelayout);
+            $twig = new TwigProcessor($join_ct, $pageLayout);
             return $twig->process();
         }
 

@@ -21,7 +21,7 @@ class JHTMLESUserGroups
 {
     static public function render($control_name, $value, array &$typeParams_array)
     {
-        $selector = $typeParams_array[0];
+        $selector = $typeParamsArray[0];
         $availableusergroups = $typeParams_array[1] ?? '';
 
         $availableusergroups_list = (trim($availableusergroups) == '' ? [] : explode(',', trim($availableusergroups)));

@@ -129,14 +129,14 @@ class Field
 
 class Fields
 {
-    public static function isFieldNullable(string $realtablename, string $relafieldname)
+    public static function isFieldNullable(string $realtablename, string $relaFieldName): bool
     {
         $db = Factory::getDBO();
 
         $realtablename = str_replace('#__', $db->getPrefix(), $realtablename);
         if ($db->serverType == 'postgresql') {
             $query = 'SELECT column_name, data_type, is_nullable, column_default FROM information_schema.columns WHERE table_name = ' . $db->quote($realtablename)
-                . ' AND column_name=' . $db->quote($relafieldname);
+                . ' AND column_name=' . $db->quote($relaFieldName);
         } else {
 
             $conf = Factory::getConfig();
@@ -151,7 +151,7 @@ class Fields
                 . 'EXTRA AS extra'
                 . ' FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=' . $db->quote($database)
                 . ' AND TABLE_NAME=' . $db->quote($realtablename)
-                . ' AND column_name=' . $db->quote($relafieldname)
+                . ' AND column_name=' . $db->quote($relaFieldName)
                 . ' LIMIT 1';
         }
 
@@ -1022,16 +1022,16 @@ class Fields
         return true;
     }
 
-    public static function getPureFieldType($ct_fieldtype, $typeParams): string
+    public static function getPureFieldType($ct_fieldType, $typeParams): string
     {
-        $ct_fieldTypeArray = Fields::getProjectedFieldType($ct_fieldtype, $typeParams);
+        $ct_fieldTypeArray = Fields::getProjectedFieldType($ct_fieldType, $typeParams);
         return Fields::makeProjectedFieldType($ct_fieldTypeArray);
     }
 
-    public static function getProjectedFieldType($ct_fieldtype, $typeParams): array
+    public static function getProjectedFieldType($ct_fieldType, $typeParams): array
     {
         //Returns an array of mysql column parameters
-        switch (trim($ct_fieldtype)) {
+        switch (trim($ct_fieldType)) {
             case '_id':
                 return ['data_type' => 'int', 'is_nullable' => false, 'is_unsigned' => true, 'length' => null, 'default' => null, 'extra' => 'auto_increment'];
 
@@ -1050,8 +1050,8 @@ class Fields
                 return ['data_type' => 'varchar', 'is_nullable' => true, 'is_unsigned' => null, 'length' => ($l < 1 ? 255 : (min($l, 1024))), 'default' => null, 'extra' => null];
             case 'signature':
 
-                $typeParams_arr = JoomlaBasicMisc::csv_explode(',', $typeParams);
-                $format = $typeParams_arr[3] ?? 'svg';
+                $typeParamsArray = JoomlaBasicMisc::csv_explode(',', $typeParams);
+                $format = $typeParamsArray[3] ?? 'svg';
 
                 if ($format == 'svg-db')
                     return ['data_type' => 'text', 'is_nullable' => true, 'is_unsigned' => null, 'length' => null, 'default' => null, 'extra' => null];
@@ -1059,13 +1059,13 @@ class Fields
                     return ['data_type' => 'bigint', 'is_nullable' => true, 'is_unsigned' => false, 'length' => null, 'default' => null, 'extra' => null];
 
             case 'blob':
-                $typeParams_arr = JoomlaBasicMisc::csv_explode(',', $typeparams);
+                $typeParamsArray = JoomlaBasicMisc::csv_explode(',', $typeParams);
 
-                if ($typeparams_arr[0] == 'tiny')
+                if ($typeParamsArray[0] == 'tiny')
                     $type = 'tinyblob';
-                elseif ($typeparams_arr[0] == 'medium')
+                elseif ($typeParamsArray[0] == 'medium')
                     $type = 'mediumblob';
-                elseif ($typeparams_arr[0] == 'long')
+                elseif ($typeParamsArray[0] == 'long')
                     $type = 'longblob';
                 else
                     $type = 'blob';
@@ -1075,14 +1075,14 @@ class Fields
             case 'text':
             case 'multilangtext':
 
-                $typeparams_arr = JoomlaBasicMisc::csv_explode(',', $typeparams);
+                $typeParamsArray = JoomlaBasicMisc::csv_explode(',', $typeParams);
                 $type = 'text';
-                if (isset($typeparams_arr[2])) {
-                    if ($typeparams_arr[2] == 'tiny')
+                if (isset($typeParamsArray[2])) {
+                    if ($typeParamsArray[2] == 'tiny')
                         $type = 'tinytext';
-                    elseif ($typeparams_arr[2] == 'medium')
+                    elseif ($typeParamsArray[2] == 'medium')
                         $type = 'mediumtext';
-                    elseif ($typeparams_arr[2] == 'long')
+                    elseif ($typeParamsArray[2] == 'long')
                         $type = 'longtext';
                 }
 
@@ -1098,23 +1098,23 @@ class Fields
                 return ['data_type' => 'int', 'is_nullable' => true, 'is_unsigned' => false, 'length' => null, 'default' => null, 'extra' => null];
             case 'float':
 
-                $typeparams_arr = explode(',', $typeparams);
+                $typeParamsArray = JoomlaBasicMisc::csv_explode(',', $typeParams);
 
-                if (count($typeparams_arr) == 1)
-                    $l = '20,' . (int)$typeparams_arr[0];
-                elseif (count($typeparams_arr) == 2)
-                    $l = (int)$typeparams_arr[1] . ',' . (int)$typeparams_arr[0];
+                if (count($typeParamsArray) == 1)
+                    $l = '20,' . (int)$typeParamsArray[0];
+                elseif (count($typeParamsArray) == 2)
+                    $l = (int)$typeParamsArray[1] . ',' . (int)$typeParamsArray[0];
                 else
                     $l = '20,2';
                 return ['data_type' => 'decimal', 'is_nullable' => true, 'is_unsigned' => false, 'length' => $l, 'default' => null, 'extra' => null];
 
             case 'customtables':
-                $typeparams_arr = explode(',', $typeparams);
+                $typeParamsArray = JoomlaBasicMisc::csv_explode(',', $typeParams);
 
-                if (count($typeparams_arr) < 255)
+                if (count($typeParamsArray) < 255)
                     $l = 255;
                 else
-                    $l = (int)$typeparams_arr[2];
+                    $l = (int)$typeParamsArray[2];
 
                 if ($l > 65535)
                     $l = 65535;
@@ -1131,9 +1131,9 @@ class Fields
 
             case 'image':
 
-                $typeparams_arr = JoomlaBasicMisc::csv_explode(',', $typeparams);
+                $typeParamsArray = JoomlaBasicMisc::csv_explode(',', $typeParams);
 
-                $fileNameType = $typeparams_arr[3] ?? '';
+                $fileNameType = $typeParamsArray[3] ?? '';
                 $length = null;
 
                 if ($fileNameType == '') {
@@ -1174,9 +1174,9 @@ class Fields
             case 'phponadd':
             case 'phponchange':
             case 'phponview':
-                $typeparams_arr = explode(',', $typeparams);
+                $typeParamsArray = explode(',', $typeParams);
 
-                if (isset($typeparams_arr[1]) and $typeparams_arr[1] == 'dynamic')
+                if (isset($typeParamsArray[1]) and $typeParamsArray[1] == 'dynamic')
                     return ['data_type' => null, 'is_nullable' => null, 'is_unsigned' => null, 'length' => null, 'default' => null, 'extra' => null]; //do not store field values
                 else
                     return ['data_type' => 'varchar', 'is_nullable' => true, 'is_unsigned' => null, 'length' => 255, 'default' => null, 'extra' => null];
@@ -1569,7 +1569,7 @@ class Fields
             return false;
 
         //Create Key only if possible
-        $typeparams = explode(',', $new_typeparams);
+        $typeParams = explode(',', $new_typeparams);
 
         if ($join_with_table_name == '') {
             if ($new_typeparams == '') {
@@ -1577,19 +1577,19 @@ class Fields
                 return false; //Exit if parameters not set
             }
 
-            if (count($typeparams) < 2) {
+            if (count($typeParams) < 2) {
                 $msg = 'Parameters not complete.';
                 return false;    // Exit if field not set (just in case)
             }
 
-            $tablerow = ESTables::getTableRowByName($typeparams[0]); //[0] - is tablename
-            if (!is_object($tablerow)) {
+            $tableRow = ESTables::getTableRowByName($typeParams[0]); //[0] - is tablename
+            if (!is_object($tableRow)) {
                 $msg = 'Join with table "' . $join_with_table_name . '" not found.';
                 return false;    // Exit if table to connect with not found
             }
 
-            $join_with_table_name = $tablerow->realtablename;
-            $join_with_table_field = $tablerow->realidfieldname;
+            $join_with_table_name = $tableRow->realtablename;
+            $join_with_table_field = $tableRow->realidfieldname;
         }
 
         $join_with_table_name = str_replace('#__', $dbPrefix, $join_with_table_name);
@@ -1599,7 +1599,7 @@ class Fields
 
         Fields::removeForeignKey($realtablename, $realfieldname);
 
-        if (isset($typeparams[7]) and $typeparams[7] == 'addforignkey') {
+        if (isset($typeParams[7]) and $typeParams[7] == 'addforignkey') {
             Fields::cleanTableBeforeNormalization($realtablename, $realfieldname, $join_with_table_name, $join_with_table_field);
 
             $query = 'ALTER TABLE ' . $db->quoteName($realtablename) . ' ADD FOREIGN KEY (' . $realfieldname . ') REFERENCES '

@@ -20,10 +20,10 @@ use Joomla\CMS\Factory;
 
 class tagProcessor_Field
 {
-    public static function process(CT &$ct, &$pagelayout, bool $add_label = false)
+    public static function process(CT &$ct, &$pageLayout, bool $add_label = false)
     {
         if (is_null($ct->Table->fields))
-            return $pagelayout;
+            return $pageLayout;
 
         //field title
         if ($add_label) {
@@ -32,7 +32,7 @@ class tagProcessor_Field
                 $field = new Field($ct, $fieldrow);
                 $field_label = $forms->renderFieldLabel($field);
 
-                $pagelayout = str_replace('*' . $field->fieldname . '*', $field_label, $pagelayout);
+                $pageLayout = str_replace('*' . $field->fieldname . '*', $field_label, $pageLayout);
             }
         } else {
             foreach ($ct->Table->fields as $fieldrow) {
@@ -40,11 +40,11 @@ class tagProcessor_Field
                     Factory::getApplication()->enqueueMessage(
                         JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_LANGFIELDNOTFOUND'), 'Error');
 
-                    $pagelayout = str_replace('*' . $fieldrow['fieldname'] . '*', '*fieldtitle' . $ct->Languages->Postfix . ' - not found*', $pagelayout);
+                    $pageLayout = str_replace('*' . $fieldrow['fieldname'] . '*', '*fieldtitle' . $ct->Languages->Postfix . ' - not found*', $pageLayout);
                 } else
-                    $pagelayout = str_replace('*' . $fieldrow['fieldname'] . '*', $fieldrow['fieldtitle' . $ct->Languages->Postfix], $pagelayout);
+                    $pageLayout = str_replace('*' . $fieldrow['fieldname'] . '*', $fieldrow['fieldtitle' . $ct->Languages->Postfix], $pageLayout);
             }
         }
-        return $pagelayout;
+        return $pageLayout;
     }
 }
