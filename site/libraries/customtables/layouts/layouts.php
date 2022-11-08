@@ -184,12 +184,12 @@ class Layouts
 
         $result = '';
 
-        $fieldtypes_to_skip = ['log', 'imagegallery', 'filebox', 'dummy', 'ordering'];
-        $fieldtypes_to_pureValue = ['image', 'imagegallery', 'filebox', 'file'];
+        $fieldTypes_to_skip = ['log', 'imagegallery', 'filebox', 'dummy', 'ordering'];
+        $fieldTypes_to_pureValue = ['image', 'imagegallery', 'filebox', 'file'];
 
         foreach ($fields as $field) {
 
-            if (!in_array($field['type'], $fieldtypes_to_skip)) {
+            if (!in_array($field['type'], $fieldTypes_to_skip)) {
                 if ($result !== '')
                     $result .= ',';
 
@@ -202,12 +202,12 @@ class Layouts
         $firstField = true;
         foreach ($fields as $field) {
 
-            if (!in_array($field['type'], $fieldtypes_to_skip)) {
+            if (!in_array($field['type'], $fieldTypes_to_skip)) {
 
                 if (!$firstField)
                     $result .= ',';
 
-                if (!in_array($field['type'], $fieldtypes_to_pureValue))
+                if (!in_array($field['type'], $fieldTypes_to_pureValue))
                     $result .= '"{{ ' . $field['fieldname'] . ' }}"';
                 else
                     $result .= '"{{ ' . $field['fieldname'] . '.value }}"';
@@ -224,10 +224,10 @@ class Layouts
 
         $result = '<div class="form-horizontal">';
 
-        $fieldtypes_to_skip = ['log', 'phponview', 'phponchange', 'phponadd', 'md5', 'id', 'server', 'userid', 'viewcount', 'lastviewtime', 'changetime', 'creationtime', 'imagegallery', 'filebox', 'dummy'];
+        $fieldTypes_to_skip = ['log', 'phponview', 'phponchange', 'phponadd', 'md5', 'id', 'server', 'userid', 'viewcount', 'lastviewtime', 'changetime', 'creationtime', 'imagegallery', 'filebox', 'dummy'];
 
         foreach ($fields as $field) {
-            if (!in_array($field['type'], $fieldtypes_to_skip)) {
+            if (!in_array($field['type'], $fieldTypes_to_skip)) {
                 $result .= '<div class="control-group">';
                 $result .= '<div class="control-label">{{ ' . $field['fieldname'] . '.label }}</div><div class="controls">{{ ' . $field['fieldname'] . '.edit }}</div>';
                 $result .= '</div>';

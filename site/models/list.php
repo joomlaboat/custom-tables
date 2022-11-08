@@ -69,7 +69,7 @@ class CustomTablesModelList extends JModel
 
         $where = array();
 
-        // just in case filter_order get's messed up
+        // just in case filter_order gets messed up
         if ($filter_order) {
             $orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir . ', m.parentid, m.ordering';
         } else {
@@ -117,8 +117,8 @@ class CustomTablesModelList extends JModel
 
             $fieldrow = Fields::getFieldRowByName($connect_with_field, '', $connect_with_table);
 
-            $typeparams_pair = explode(',', $fieldrow->typeparams);
-            $structure_parent_name = $typeparams_pair[0];
+            $typeParams_pair = explode(',', $fieldrow->typeparams);
+            $structure_parent_name = $typeParams_pair[0];
 
             if ($structure_parent_name != '') {
                 $parentid = JoomlaBasicMisc::getOptionIdFull($structure_parent_name);

@@ -70,7 +70,7 @@ class CustomtablesModelListOfRecords extends JModelList
     }
 
     /**
-     * Method to auto-populate the model state.
+     * Method to autopopulate the model state.
      *
      * @return  void
      */

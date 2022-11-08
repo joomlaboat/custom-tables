@@ -34,29 +34,29 @@ class CT_FieldTypeTag_sqljoin
     }
 
     //Old function
-    public static function resolveSQLJoinType($listing_id, $typeparams, $option_list): string
+    public static function resolveSQLJoinType($listing_id, $typeParams, $option_list): string
     {
         if ($listing_id == '')
             return '';
 
-        if (count($typeparams) < 1)
+        if (count($typeParams) < 1)
             return 'table not specified';
 
-        if (count($typeparams) < 2)
+        if (count($typeParams) < 2)
             return 'field or layout not specified';
 
-        $esr_table = $typeparams[0];
+        $esr_table = $typeParams[0];
 
         if (isset($option_list[0]) and $option_list[0] != '')
             $esr_field = $option_list[0];
         else
-            $esr_field = $typeparams[1];
+            $esr_field = $typeParams[1];
 
         //this is important because it has been selected somehow.
         //$esr_filter='';
 
-        if (count($typeparams) > 2)
-            $esr_filter = $typeparams[2];
+        if (count($typeParams) > 2)
+            $esr_filter = $typeParams[2];
         else
             $esr_filter = '';
 
@@ -65,7 +65,7 @@ class CT_FieldTypeTag_sqljoin
 
         //New method - fast and secure
         $join_ct = new CT;
-        $join_ct->getTable($typeparams[0]);
+        $join_ct->getTable($typeParams[0]);
 
         $row = $join_ct->Table->loadRecord($listing_id);
 

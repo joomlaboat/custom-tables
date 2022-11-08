@@ -58,7 +58,7 @@ final class MacroAutoImportNodeVisitor implements NodeVisitorInterface
                 $this->hasMacroCalls = true;
 
                 $name = $node->getNode('attribute')->getAttribute('value');
-                $node = new MethodCallExpression($node->getNode('node'), 'macro_'.$name, $node->getNode('arguments'), $node->getTemplateLine());
+                $node = new MethodCallExpression($node->getNode('node'), 'macro_' . $name, $node->getNode('arguments'), $node->getTemplateLine());
                 $node->setAttribute('safe', true);
             }
         }
@@ -68,7 +68,7 @@ final class MacroAutoImportNodeVisitor implements NodeVisitorInterface
 
     public function getPriority(): int
     {
-        // we must be ran before auto-escaping
+        // we must be run before auto-escaping
         return -10;
     }
 }

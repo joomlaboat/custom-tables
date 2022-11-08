@@ -21,7 +21,7 @@ use CustomTables\TwigProcessor;
 
 class JHTMLESRecords
 {
-    static public function render($typeparams, $control_name, $value, $tableName, $theField, $selector, $filter, $style = '',
+    static public function render($typeParams, $control_name, $value, $tableName, $theField, $selector, $filter, $style = '',
                                   $cssClass = '', $attribute = '', $dynamic_filter = '', $sortByField = '', $langPostfix = '', $place_holder = ''): string
     {
         $htmlresult = '';
@@ -29,7 +29,7 @@ class JHTMLESRecords
         $field = $fieldArray[0];
         $selectorPair = explode(':', $selector);
 
-        if (isset($typeparams[6]) and $typeparams[6] == 'true')
+        if (isset($typeParams[6]) and $typeParams[6] == 'true')
             $allowUnpublished = true;
         else
             $allowUnpublished = false;

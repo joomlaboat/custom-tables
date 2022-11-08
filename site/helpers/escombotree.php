@@ -17,8 +17,8 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 class JHTMLESComboTree
 {
-    static function render($prefix, $tableName, $fieldName, $optionname, $langpostfix, $value, $cssclass = "", $onchange = "",
-                           $where = "", $innerjoin = false, $isRequired = false, $requirementdepth = 0, $place_holder = '', $valuerule = '', $valuerulecaption = '')
+    static function render($prefix, $tableName, $fieldName, $optionname, $langPostfix, $value, $cssclass = "", $onchange = "",
+                           $where = "", $innerJoin = false, $isRequired = false, $requirementDepth = 0, $place_holder = '', $valuerule = '', $valuerulecaption = '')
     {
         $jinput = Factory::getApplication()->input;
 
@@ -29,18 +29,18 @@ class JHTMLESComboTree
         $MyESDynCombo->initialize($tableName, $fieldName, $optionname, $prefix);
         $MyESDynCombo->cssclass = $cssclass;
         $MyESDynCombo->onchange = $onchange;
-        $MyESDynCombo->innerjoin = $innerjoin;
-        $MyESDynCombo->langpostfix = $langpostfix;
+        $MyESDynCombo->innerjoin = $innerJoin;
+        $MyESDynCombo->langpostfix = $langPostfix;
         $MyESDynCombo->isRequired = $isRequired;
-        $MyESDynCombo->requirementdepth = $requirementdepth;
+        $MyESDynCombo->requirementdepth = $requirementDepth;
 
         $MyESDynCombo->where = $where;
 
-        $filterwhere = '';
-        $filterwherearr = array();
+        $filterWhere = '';
+        $filterWhereArray = array();
 
-        $urlwhere = '';
-        $urlwherearr = array();
+        $urlWhere = '';
+        $urlWhereArray = array();
 
         //Set current value (count only firet one in case multi-value provided)
         /*
@@ -65,10 +65,9 @@ class JHTMLESComboTree
         }
         */
 
-        $html_ =
-            '<div id="' . $MyESDynCombo->ObjectName . '" name="' . $MyESDynCombo->ObjectName . '">'
-            . $MyESDynCombo->renderComboBox($filterwhere, $urlwhere, $filterwherearr, $urlwherearr,
-                ($requirementdepth == 1 ? true : false),
+        return '<div id="' . $MyESDynCombo->ObjectName . '" name="' . $MyESDynCombo->ObjectName . '">'
+            . $MyESDynCombo->renderComboBox($filterWhere, $urlWhere, $filterWhereArray, $urlWhereArray,
+                ($requirementDepth == 1 ? true : false),
                 $value,
                 $place_holder,
                 $valuerule,
@@ -76,9 +75,6 @@ class JHTMLESComboTree
             )
 
             . '</div>';
-
-
-        return $html_;
     }
 
 }

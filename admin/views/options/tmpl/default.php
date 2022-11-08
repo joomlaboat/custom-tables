@@ -30,13 +30,13 @@ $isNew = $this->item->id == 0;
 
         <?php
         $row_lang = (array)$this->item;
-        $morethanonelang = false;
+        $moreThanOneLanguage = false;
         foreach ($this->languages as $lang) {
             $id = 'title';
-            if ($morethanonelang)
+            if ($moreThanOneLanguage)
                 $id .= '_' . $lang->sef;
             else
-                $morethanonelang = true; //More than one language installed
+                $moreThanOneLanguage = true; //More than one language installed
 
             ?>
             <div class="control-group">

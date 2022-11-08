@@ -42,12 +42,12 @@ class ESInputBox
             $shortFieldObject = Fields::shortFieldObject($fieldrow, ($row[$realFieldName] ?? null), $option_list);
 
             if ($fieldrow['type'] == 'sqljoin') {
-                $typeparams = JoomlaBasicMisc::csv_explode(',', $fieldrow['typeparams']);
+                $typeParams = JoomlaBasicMisc::csv_explode(',', $fieldrow['typeparams']);
 
                 if (isset($option_list[2]) and $option_list[2] != '')
-                    $typeparams[2] = $option_list[2];//Overwrites field type filter parameter.
+                    $typeParams[2] = $option_list[2];//Overwrites field type filter parameter.
 
-                $typeparams[6] = 'json'; // to get the Object instead of the HTML element.
+                $typeParams[6] = 'json'; // to get the Object instead of the HTML element.
 
                 $attributes_ = '';
                 $value = '';
@@ -55,7 +55,7 @@ class ESInputBox
                 $class = '';
 
                 $list_of_values = JHTML::_('ESSQLJoin.render',
-                    $typeparams,
+                    $typeParams,
                     $value,
                     false,
                     $this->ct->Languages->Postfix,

@@ -170,7 +170,7 @@ class tagProcessor_Item
         foreach ($fList as $fItem) {
             $opts = JoomlaBasicMisc::csv_explode(',', $options[$i], '"', false);
 
-            if (count($opts) >= 5) //dont even try if less than 5 parameters
+            if (count($opts) >= 5) //don't even try if less than 5 parameters
             {
                 $field2_type = '';
                 $order_by_option = '';

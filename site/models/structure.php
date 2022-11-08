@@ -38,7 +38,7 @@ class CustomTablesModelStructure extends JModel
     var $tableName;
     var $estableid;
     var $fieldname;
-    var $fieldtype;
+    var $fieldType;
 
     var $ListingJoin;
 
@@ -82,14 +82,14 @@ class CustomTablesModelStructure extends JModel
 
         //get field
         $row = $this->esTable->getFieldRowByName($this->esfieldname, $this->estableid);
-        $this->fieldtype = $row->type;
+        $this->fieldType = $row->type;
 
         if ($params->get('optionname') != '')
             $this->optionname = $params->get('optionname');
         else {
             //get OptionName by FieldName
-            $typeparams = explode(',', $row->typeparams);
-            $this->optionname = $typeparams[0];
+            $typeParams = explode(',', $row->typeparams);
+            $this->optionname = $typeParams[0];
         }
 
         if ($this->ct->Env->jinput->getString('image_prefix'))
@@ -126,7 +126,7 @@ class CustomTablesModelStructure extends JModel
 
     function getStructure()
     {
-        if (!$this->fieldtype == 'customtables')
+        if (!$this->fieldType == 'customtables')
             return array();
 
         $wherearr = array();

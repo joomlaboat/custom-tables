@@ -410,7 +410,7 @@ class ImportTables
     protected static function processField(CT &$ct, $tableid, $tableName, &$field_new, &$msg)
     {
         //This function creates the table field and returns field's id.
-        //If field with same name already exists then existing field will be updated and it's ID will be returned.
+        //If field with same name already exists then existing field will be updated, and it's ID will be returned.
 
         $field_new['tableid'] = $tableid;//replace tableid
         $fieldName = $field_new['fieldname'];
@@ -490,27 +490,26 @@ class ImportTables
 
     protected static function processMenuItem(&$menuitem_new, $menutype, &$msg, &$menus)
     {
-        //This function creates menuitem and returns it's id.
-        //If menuitem with same alias already exists then existing menuitem will be updated and it's ID will be returned.
-        $db = Factory::getDBO();
+        //This function creates menuitem and returns its id.
+        //If menuitem with same alias already exists then existing menuitem will be updated, and it's ID will be returned.
+
         $menuitem_alias = substr($menuitem_new['alias'], 0, 400);
-        $menuitemid = 0;
+        $menuItemId = 0;
 
         $component = ImportTables::getRecordByField('#__extensions', 'element', 'com_customtables', false);
         if (!is_array($component))
             return false;
 
         $component_id = (int)$component['extension_id'];
-
         $menuitem_new['component_id'] = (int)$component_id;
 
         if ($menutype != '' and $menutype != $menuitem_new['menutype'])
-            $new_menutype = $menutype;
+            $new_menuType = $menutype;
         else
-            $new_menutype = $menuitem_new['menutype'];
+            $new_menuType = $menuitem_new['menutype'];
 
         //Check NEW $menuitem_new['menutype']
-        $new_menutype_alias = substr(JoomlaBasicMisc::slugify($new_menutype), 0, 24);
+        $new_menutype_alias = substr(JoomlaBasicMisc::slugify($new_menuType), 0, 24);
         $menutype_old = ImportTables::getRecordByField('#__menu_types', 'menutype', $new_menutype_alias, false);
 
         if (!is_array($menutype_old) or count($menutype_old) == 0) {
@@ -519,7 +518,7 @@ class ImportTables
             $inserts = array();
             $inserts[] = 'asset_id=0';
             $inserts[] = 'menutype=' . $db->Quote($new_menutype_alias);
-            $inserts[] = 'title=' . $db->Quote($new_menutype);
+            $inserts[] = 'title=' . $db->Quote($new_menuType);
             $inserts[] = 'description=' . $db->Quote('Menu Type created by CustomTables');
 
             $menu_types_id = ESTables::insertRecords('#__menu_types', $inserts);
@@ -529,7 +528,7 @@ class ImportTables
         $menuitem_old = ImportTables::getRecordByField('#__menu', 'alias', $menuitem_alias, false);
 
         if (is_array($menuitem_old) and count($menuitem_old) > 0) {
-            $menuitemid = $menuitem_old['id'];
+            $menuItemId = $menuitem_old['id'];
             $old_menutype = ImportTables::getRecordByField('#__menu_types', 'menutype', $menuitem_old['menutype'], false);
             $menuitem_new['home'] = 0;// Menu parameter (default page) should not be copied into export file. #4
 
@@ -562,7 +561,7 @@ class ImportTables
 
             ImportTables::updateRecords('#__menu', $menuitem_new, $menuitem_old, false);
 
-            $menus[] = [$menuitem_alias, $menuitemid, $menuitem_old['id']];
+            $menus[] = [$menuitem_alias, $menuItemId, $menuitem_old['id']];
         } else {
             $menuitem_new['parent_id'] = 1;
 
@@ -583,14 +582,14 @@ class ImportTables
             //TODO: Add Menu First
 
             //Alias,New ID, Old ID
-            $menus[] = [$menuitem_alias, $menuitemid, 0];
+            $menus[] = [$menuitem_alias, $menuItemId, 0];
 
 
-            $menuitemid = ImportTables::insertRecords('#__menu', $menuitem_new, false);
-            $menuitem_new['id'] = $menuitemid;
+            $menuItemId = ImportTables::insertRecords('#__menu', $menuitem_new, false);
+            $menuitem_new['id'] = $menuItemId;
         }
 
-        return $menuitemid;
+        return $menuItemId;
     }
 
     public static function menuGetMaxRgt()

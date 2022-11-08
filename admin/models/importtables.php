@@ -67,7 +67,7 @@ class CustomTablesModelImporttables extends JModelList
 
     }
 
-    function parseLine(&$columns, &$allowedcolumns, $fieldtypes, $line, &$maxid)
+    function parseLine(&$columns, &$allowedcolumns, $fieldTypes, $line, &$maxid)
     {
         $result = array();
         $values = $this->line_explode($line);
@@ -78,32 +78,32 @@ class CustomTablesModelImporttables extends JModelList
         for ($i = 0; $i < count($values); $i++) {
             if ($allowedcolumns[$c]) {
                 //$result[]='"'.trim(preg_replace('/\s\s+/', ' ', $values[$i])).'"';
-                $fieldtypepair = explode(':', $fieldtypes[$c]);
+                $fieldTypePair = explode(':', $fieldTypes[$c]);
 
-                if ($fieldtypepair[0] == 'string' or $fieldtypepair[0] == 'multistring' or $fieldtypepair[0] == 'text' or $fieldtypepair[0] == 'multitext')
+                if ($fieldTypePair[0] == 'string' or $fieldTypePair[0] == 'multistring' or $fieldTypePair[0] == 'text' or $fieldTypePair[0] == 'multitext')
                     $result[] = '"' . $values[$i] . '"';
 
-                elseif ($fieldtypepair[0] == 'email')
+                elseif ($fieldTypePair[0] == 'email')
                     $result[] = '"' . $values[$i] . '"';
 
-                elseif ($fieldtypepair[0] == 'url')
+                elseif ($fieldTypePair[0] == 'url')
                     $result[] = '"' . $values[$i] . '"';
 
-                elseif ($fieldtypepair[0] == 'float' or $fieldtypepair[0] == 'int')
+                elseif ($fieldTypePair[0] == 'float' or $fieldTypePair[0] == 'int')
                     $result[] = $values[$i];
 
-                elseif ($fieldtypepair[0] == 'checkbox')
+                elseif ($fieldTypePair[0] == 'checkbox')
                     $result[] = $values[$i];
 
-                elseif ($fieldtypepair[0] == 'date')
+                elseif ($fieldTypePair[0] == 'date')
                     $result[] = '"' . $values[$i] . '"';
 
-                elseif ($fieldtypepair[0] == 'radio')
+                elseif ($fieldTypePair[0] == 'radio')
                     $result[] = '"' . $values[$i] . '"';
 
-                elseif ($fieldtypepair[0] == 'customtables') {
+                elseif ($fieldTypePair[0] == 'customtables') {
                     //this function must add item if not found
-                    $esValue = $this->getOptionListItem($fieldtypepair[1], $values[$i]);
+                    $esValue = $this->getOptionListItem($fieldTypePair[1], $values[$i]);
 
                     $result[] = '"' . $esValue . '"';
                 } else {

@@ -21,33 +21,33 @@ use Joomla\CMS\Factory;
 
 class JHTMLESSqlJoin
 {
-    static public function render(array $typeparams, $value, $force_dropdown, $langpostfix, $control_name, $place_holder, $cssclass = '', $attribute = '', $addNoValue = false)
+    static public function render(array $typeParams, $value, $force_dropdown, $langpostfix, $control_name, $place_holder, $cssclass = '', $attribute = '', $addNoValue = false)
     {
-        if (count($typeparams) < 1) {
+        if (count($typeParams) < 1) {
             Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_TABLE_NOT_SPECIFIED'), 'error');
             return '';
         }
 
-        if (count($typeparams) < 2) {
+        if (count($typeParams) < 2) {
             Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_UNKNOWN_FIELD_LAYOUT'), 'error');
             return '';
         }
 
-        $tableName = $typeparams[0];
-        $value_field = $typeparams[1] ?? '';
-        $filter = $typeparams[2] ?? '';
-        $dynamic_filter = $typeparams[3] ?? '';
-        $order_by_field = $typeparams[4] ?? '';
+        $tableName = $typeParams[0];
+        $value_field = $typeParams[1] ?? '';
+        $filter = $typeParams[2] ?? '';
+        $dynamic_filter = $typeParams[3] ?? '';
+        $order_by_field = $typeParams[4] ?? '';
 
-        if (isset($typeparams[5]) and $typeparams[5] == 'true')
+        if (isset($typeParams[5]) and $typeParams[5] == 'true')
             $allowunpublished = true;
         else
             $allowunpublished = false;
 
-        if (isset($typeparams[6])) {
-            if ($typeparams[6] == 'radio')
+        if (isset($typeParams[6])) {
+            if ($typeParams[6] == 'radio')
                 $selector = 'radio';
-            elseif ($typeparams[6] == 'json')
+            elseif ($typeParams[6] == 'json')
                 $selector = 'json';
             else
                 $selector = 'dropdown';

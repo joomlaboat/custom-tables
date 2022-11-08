@@ -47,10 +47,10 @@ $document->addCustomTag('<link href="' . JURI::root(true) . '/components/com_cus
 
                 <?php
 
-                $morethanonelang = false;
+                $moreThanOneLanguage = false;
                 foreach ($this->ct->Languages->LanguageList as $lang) {
                     $id = 'tabletitle';
-                    if ($morethanonelang) {
+                    if ($moreThanOneLanguage) {
                         $id .= '_' . $lang->sef;
 
                         $cssclass = 'text_area';
@@ -77,7 +77,7 @@ $document->addCustomTag('<link href="' . JURI::root(true) . '/components/com_cus
 					</div>
 					';
 
-                    $morethanonelang = true; //More than one language installed
+                    $moreThanOneLanguage = true; //More than one language installed
                 }
                 ?>
                 <hr/>
@@ -96,10 +96,10 @@ $document->addCustomTag('<link href="' . JURI::root(true) . '/components/com_cus
 
 
         <?php
-        $morethanonelang = false;
+        $moreThanOneLanguage = false;
         foreach ($this->ct->Languages->LanguageList as $lang) {
             $id = 'description';
-            if ($morethanonelang)
+            if ($moreThanOneLanguage)
                 $id .= '_' . $lang->sef;
 
             echo JHtml::_('bootstrap.addTab', 'tablesTab', $id, Text::_('COM_CUSTOMTABLES_TABLES_DESCRIPTION', true) . ' <b>' . $lang->title . '</b>');
@@ -123,7 +123,7 @@ $document->addCustomTag('<link href="' . JURI::root(true) . '/components/com_cus
 					</div>
 				</div>
 			</div>';
-            $morethanonelang = true; //More than one language installed
+            $moreThanOneLanguage = true; //More than one language installed
 
             echo JHtml::_('bootstrap.endTab');
         }

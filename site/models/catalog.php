@@ -18,8 +18,8 @@ use Joomla\CMS\Factory;
 
 jimport('joomla.application.component.model');
 
-$sitelib = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR;
-require_once($sitelib . 'layout.php');
+$siteLib = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR;
+require_once($siteLib . 'layout.php');
 
 class CustomTablesModelCatalog extends JModelLegacy
 {
@@ -32,7 +32,6 @@ class CustomTablesModelCatalog extends JModelLegacy
 
     function cart_emptycart()
     {
-
         $this->ct->Env->jinput->cookie->set($this->showcartitemsprefix . $this->ct->Table->tablename, '',
             time() - 3600,
             $this->ct->app->get('cookie_path', '/'),

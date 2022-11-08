@@ -507,7 +507,7 @@ class JoomlaBasicMisc
         $filename = implode('.', $filename_array);
 
         // Remove anything which isn't a word, whitespace, number
-        // or any of the following caracters -_~,;[]().
+        // or any of the following characters -_~,;[]().
         // If you don't need to handle multi-byte characters
         // you can use preg_replace rather than mb_ereg_replace
         // Thanks @Łukasz Rysiak!

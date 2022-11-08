@@ -35,10 +35,10 @@ class IntegrityFieldType_FileBox extends \CustomTables\IntegrityChecks
 
         $g_ExistingFields = Fields::getExistingFields($filebox_table_name, false);
 
-        $morethanonelang = false;
+        $moreThanOneLanguage = false;
         foreach ($ct->Languages->LanguageList as $lang) {
             $g_fieldname = 'title';
-            if ($morethanonelang)
+            if ($moreThanOneLanguage)
                 $g_fieldname .= '_' . $lang->sef;
 
             $g_found = false;
@@ -55,7 +55,7 @@ class IntegrityFieldType_FileBox extends \CustomTables\IntegrityChecks
                 Fields::AddMySQLFieldNotExist($filebox_table_name, $g_fieldname, 'varchar(100) null', '');
                 Factory::getApplication()->enqueueMessage('File Box Field "' . $g_fieldname . '" added.');
             }
-            $morethanonelang = true;
+            $moreThanOneLanguage = true;
         }
     }
 }

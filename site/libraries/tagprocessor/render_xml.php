@@ -55,7 +55,7 @@ trait render_xml
         $result = $LayoutProc->fillLayout();
         $result = str_replace('&&&&quote&&&&', '"', $result);
 
-        $number = 1 + $ct->LimitStart; //table row number, it maybe use in the layout as {number}
+        $number = 1 + $ct->LimitStart; //table row number, it maybe uses in the layout as {number}
 
         $twig = new TwigProcessor($ct, $recordline);
 

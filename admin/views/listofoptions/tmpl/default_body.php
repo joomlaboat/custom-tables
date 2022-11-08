@@ -45,13 +45,13 @@ foreach ($rows as $row) :
 
         <?php
         $row_lang = (array)$row;
-        $morethanonelang = false;
+        $moreThanOneLanguage = false;
         foreach ($this->languages as $lang) {
             $id = 'title';
-            if ($morethanonelang)
+            if ($moreThanOneLanguage)
                 $id .= '_' . $lang->sef;
             else
-                $morethanonelang = true; //More than one language installed
+                $moreThanOneLanguage = true; //More than one language installed
 
             echo '<td nowrap="nowrap">' . $row_lang[$id] . '</td>';
 

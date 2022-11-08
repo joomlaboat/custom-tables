@@ -216,7 +216,7 @@ class CTUser
             return null;
         }
 
-        // Load the users plugin group.
+        // Load the users' plugin group.
         //JPluginHelper::importPlugin('user');
 
         // Store the data.

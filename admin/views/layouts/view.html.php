@@ -210,27 +210,23 @@ class CustomtablesViewLayouts extends JViewLegacy
         return CustomtablesHelper::htmlEscape($var, $this->_charset);
     }
 
-    public function renderTextArea($value, $id, $typeboxid, &$onPageLoads)
+    public function renderTextArea($value, $id, $typeBoxId, &$onPageLoads)
     {
-        $result = '
-			
-						<div style="width: 100%;position: relative;">
-						';
+        $result = '<div style="width: 100%;position: relative;">';
 
         if ($value != "")
-            $result .= '				<div class="ct_tip">TIP: Double Click on a Layout Tag to edit parameters.</div>';
+            $result .= '				<div class="ct_tip">TIP: Double-Click on a Layout Tag to edit parameters.</div>';
         $result .= '	</div>
 						';
 
-        $textareaid = 'jform_' . $id;
-        $textareacode = '<textarea name="jform[' . $id . ']" id="' . $textareaid . '" filter="raw" style="width:100%" rows="30">' . $value . '</textarea>';
+        $textAreaId = 'jform_' . $id;
+        $textAreaCode = '<textarea name="jform[' . $id . ']" id="' . $textAreaId . '" filter="raw" style="width:100%" rows="30">' . $value . '</textarea>';
 
-        $textareatabid = $id . '-tab';
+        $textAreaTabId = $id . '-tab';
 
-        $result .= renderEditor($textareacode, $textareaid, $typeboxid, $textareatabid, $onPageLoads);
+        $result .= renderEditor($textAreaCode, $textAreaId, $typeBoxId, $textAreaTabId, $onPageLoads);
         $result .= '
 		';
-
         return $result;
     }
 
@@ -241,47 +237,47 @@ class CustomtablesViewLayouts extends JViewLegacy
 
         $result = '';
 
-        $wheretosearch = array();
-        $whattolookfor = array();
+        $whereToSearch = array();
+        $whatToLookFor = array();
 
         switch ($this->row->layouttype) {
             case 1:
-                $wheretosearch[] = 'escataloglayout';
-                $whattolookfor[] = $this->row->layoutname;
+                $whereToSearch[] = 'escataloglayout';
+                $whatToLookFor[] = $this->row->layoutname;
                 break;
 
             case 2:
-                $wheretosearch[] = 'eseditlayout';
-                $whattolookfor[] = $this->row->layoutname;
-                $wheretosearch[] = 'editlayout';
-                $whattolookfor[] = 'layout:' . $this->row->layoutname;
+                $whereToSearch[] = 'eseditlayout';
+                $whatToLookFor[] = $this->row->layoutname;
+                $whereToSearch[] = 'editlayout';
+                $whatToLookFor[] = 'layout:' . $this->row->layoutname;
                 break;
 
             case 4:
-                $wheretosearch[] = 'esdetailslayout';
-                $whattolookfor[] = $this->row->layoutname;
+                $whereToSearch[] = 'esdetailslayout';
+                $whatToLookFor[] = $this->row->layoutname;
                 break;
 
             case 5:
-                $wheretosearch[] = 'escataloglayout';
-                $whattolookfor[] = $this->row->layoutname;
+                $whereToSearch[] = 'escataloglayout';
+                $whatToLookFor[] = $this->row->layoutname;
                 break;
 
             case 6:
-                $wheretosearch[] = 'esitemlayout';
-                $whattolookfor[] = $this->row->layoutname;
+                $whereToSearch[] = 'esitemlayout';
+                $whatToLookFor[] = $this->row->layoutname;
                 break;
 
             case 7:
-                $wheretosearch[] = 'onrecordaddsendemaillayout';
-                $whattolookfor[] = $this->row->layoutname;
+                $whereToSearch[] = 'onrecordaddsendemaillayout';
+                $whatToLookFor[] = $this->row->layoutname;
                 break;
         }
 
         $where = array();
         $i = 0;
-        foreach ($wheretosearch as $w) {
-            $where[] = 'INSTR(params,\'"' . $w . '":"' . $whattolookfor[$i] . '"\')';
+        foreach ($whereToSearch as $w) {
+            $where[] = 'INSTR(params,\'"' . $w . '":"' . $whatToLookFor[$i] . '"\')';
             $i++;
         }
 

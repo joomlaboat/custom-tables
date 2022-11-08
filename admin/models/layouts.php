@@ -69,10 +69,10 @@ class CustomtablesModelLayouts extends JModelAdmin
             return false;
         }
 
-        // The front end calls this model and uses a_id to avoid id clashes so we need to check for that first.
+        // The front end calls this model and uses a_id to avoid id clashes, so we need to check for that first.
         if (Factory::getApplication()->input->get('a_id')) {
             $id = Factory::getApplication()->input->get('a_id', 0, 'INT');
-        } // The back end uses id so we use that the rest of the time and set it to 0 by default.
+        } // The back end uses id, so we use that the rest of the time and set it to 0 by default.
         else {
             $id = Factory::getApplication()->input->get('id', 0, 'INT');
         }

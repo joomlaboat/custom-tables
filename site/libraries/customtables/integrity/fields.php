@@ -17,20 +17,15 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\CT;
 use CustomTables\Fields;
-
 use CustomTables\IntegrityChecks;
-use \Joomla\CMS\Factory;
-
-use \ESTables;
-
-use CustomTables\Integrity\IntegrityFieldType_FileBox;
-use CustomTables\Integrity\IntegrityFieldType_Gallery;
+use Joomla\CMS\Factory;
+use ESTables;
 
 class IntegrityFields extends IntegrityChecks
 {
-    public static function checkFields(CT &$ct, $link)
+    public static function checkFields(CT &$ct, $link): string
     {
-        if (strpos($link, '?') === false)
+        if (!str_contains($link, '?'))
             $link .= '?';
         else
             $link .= '&';
@@ -46,62 +41,60 @@ class IntegrityFields extends IntegrityChecks
 
         $conf = Factory::getConfig();
         $database = $conf->get('db');
-        $dbprefix = $conf->get('dbprefix');
+        $dbPrefix = $conf->get('dbprefix');
 
-        if (ESTables::createTableIfNotExists($database, $dbprefix, $ct->Table->tablename, $ct->Table->tabletitle, $ct->Table->customtablename))
+        if (ESTables::createTableIfNotExists($database, $dbPrefix, $ct->Table->tablename, $ct->Table->tabletitle, $ct->Table->customtablename))
             $result .= '<p>Table "<span style="color:green;">' . $ct->Table->tabletitle . '</span>" <span style="color:green;">added.</span></p>';
 
 
         $ExistingFields = Fields::getExistingFields($ct->Table->realtablename, false);
-
         $jinput = Factory::getApplication()->input;
-
         $projected_fields = Fields::getFields($ct->Table->tableid, false, false);
 
-        //Delete unnesesary fields:
+        //Delete unnecessary fields:
         $projected_fields[] = ['realfieldname' => 'id', 'type' => '_id', 'typeparams' => ''];
         $projected_fields[] = ['realfieldname' => 'published', 'type' => '_published', 'typeparams' => ''];
 
         $task = $jinput->getCmd('task');
-        $taskfieldname = $jinput->getCmd('fieldname');
-        $tasktableid = $jinput->getInt('tableid');
+        $taskFieldName = $jinput->getCmd('fieldname');
+        $taskTableId = $jinput->getInt('tableid');
 
-        foreach ($ExistingFields as $existing_field) {
-            $exst_field = $existing_field['column_name'];
+        foreach ($ExistingFields as $ExistingField) {
+            $existingFieldName = $ExistingField['column_name'];
             $found = false;
 
             foreach ($projected_fields as $projected_field) {
                 $found_field = '';
 
-                if ($projected_field['realfieldname'] == 'id' and $exst_field == 'id') {
+                if ($projected_field['realfieldname'] == 'id' and $existingFieldName == 'id') {
                     $found = true;
                     $found_field = '_id';
                     $projected_data_type = Fields::getProjectedFieldType('_id', null);
 
                     break;
-                } elseif ($projected_field['realfieldname'] == 'published' and $exst_field == 'published') {
+                } elseif ($projected_field['realfieldname'] == 'published' and $existingFieldName == 'published') {
                     $found = true;
                     $found_field = '_published';
                     $projected_data_type = Fields::getProjectedFieldType('_published', null);
 
                     break;
                 } elseif ($projected_field['type'] == 'multilangstring' or $projected_field['type'] == 'multilangtext') {
-                    $morethanonelang = false;
+                    $moreThanOneLang = false;
                     foreach ($ct->Languages->LanguageList as $lang) {
                         $fieldname = $projected_field['realfieldname'];
-                        if ($morethanonelang)
+                        if ($moreThanOneLang)
                             $fieldname .= '_' . $lang->sef;
 
-                        if ($exst_field == $fieldname) {
+                        if ($existingFieldName == $fieldname) {
                             $projected_data_type = Fields::getProjectedFieldType($projected_field['type'], $projected_field['typeparams']);
                             $found_field = $projected_field['realfieldname'];
                             $found = true;
                             break;
                         }
-                        $morethanonelang = true;
+                        $moreThanOneLang = true;
                     }
                 } elseif ($projected_field['type'] == 'imagegallery') {
-                    if ($exst_field == $projected_field['realfieldname']) {
+                    if ($existingFieldName == $projected_field['realfieldname']) {
                         IntegrityFieldType_Gallery::checkGallery($ct, $projected_field['fieldname']);
 
                         $projected_data_type = Fields::getProjectedFieldType($projected_field['type'], $projected_field['typeparams']);
@@ -110,7 +103,7 @@ class IntegrityFields extends IntegrityChecks
                     }
 
                 } elseif ($projected_field['type'] == 'filebox') {
-                    if ($exst_field == $projected_field['realfieldname']) {
+                    if ($existingFieldName == $projected_field['realfieldname']) {
                         IntegrityFieldType_FileBox::checkFileBox($ct, $projected_field['fieldname']);
 
                         $projected_data_type = Fields::getProjectedFieldType($projected_field['type'], $projected_field['typeparams']);
@@ -119,12 +112,12 @@ class IntegrityFields extends IntegrityChecks
                         break;
                     }
                 } elseif ($projected_field['type'] == 'dummy') {
-                    if ($exst_field == $projected_field['realfieldname']) {
+                    if ($existingFieldName == $projected_field['realfieldname']) {
                         $found = false;
                         break;
                     }
                 } else {
-                    if ($exst_field == $projected_field['realfieldname']) {
+                    if ($existingFieldName == $projected_field['realfieldname']) {
                         $projected_data_type = Fields::getProjectedFieldType($projected_field['type'], $projected_field['typeparams']);
                         $found_field = $projected_field['realfieldname'];
                         $found = true;
@@ -133,24 +126,23 @@ class IntegrityFields extends IntegrityChecks
                 }
             }
 
-
             if (!$found) {
                 if ($found_field != '') {
                     //Delete field
-                    if ($ct->Table->tableid == $tasktableid and $task == 'deleteurfield' and $taskfieldname == $exst_field) {
-                        Fields::removeForeignKey($ct->Table->realtablename, $exst_field);
+                    if ($ct->Table->tableid == $taskTableId and $task == 'deleteurfield' and $taskFieldName == $existingFieldName) {
+                        Fields::removeForeignKey($ct->Table->realtablename, $existingFieldName);
 
                         $msg = '';
-                        if (Fields::deleteMYSQLField($ct->Table->realtablename, $exst_field, $msg))
-                            $result .= '<p>Field <span style="color:green;">' . $exst_field . '</span> not registered. <span style="color:green;">Deleted.</span></p>';
+                        if (Fields::deleteMYSQLField($ct->Table->realtablename, $existingFieldName, $msg))
+                            $result .= '<p>Field <span style="color:green;">' . $existingFieldName . '</span> not registered. <span style="color:green;">Deleted.</span></p>';
 
                         if ($msg != '')
                             $result .= $msg;
                     } else
-                        $result .= '<p>Field <span style="color:red;">' . $exst_field . '</span> not registered. <a href="' . $link . 'task=deleteurfield&fieldname=' . $exst_field . '">Delete?</a></p>';
+                        $result .= '<p>Field <span style="color:red;">' . $existingFieldName . '</span> not registered. <a href="' . $link . 'task=deleteurfield&fieldname=' . $existingFieldName . '">Delete?</a></p>';
                 }
             } elseif ($found_field != '') {
-                if (!IntegrityFields::compareFieldTypes($existing_field, $projected_data_type)) {
+                if (!IntegrityFields::compareFieldTypes($ExistingField, $projected_data_type)) {
                     $PureFieldType = Fields::makeProjectedFieldType($projected_data_type);
 
                     if ($found_field == '_id')
@@ -162,7 +154,7 @@ class IntegrityFields extends IntegrityChecks
                             . ($projected_field['typeparams'] != '' ? ' (' . $projected_field['typeparams'] . ')' : '');
                     }
 
-                    if ($ct->Table->tableid == $tasktableid and $task == 'fixfieldtype' and ($taskfieldname == $exst_field or $taskfieldname == 'all_fields')) {
+                    if ($ct->Table->tableid == $taskTableId and $task == 'fixfieldtype' and ($taskFieldName == $existingFieldName or $taskFieldName == 'all_fields')) {
                         $msg = '';
 
                         if ($found_field == '_id')
@@ -182,8 +174,8 @@ class IntegrityFields extends IntegrityChecks
                             $result .= $msg;
                     } else {
                         $result .= '<p>Field <span style="color:orange;">' . $nice_field_name . '</span>'
-                            . ' has wrong type <span style="color:red;">' . strtolower($existing_field['column_type']) . '</span> instead of <span style="color:green;">'
-                            . $PureFieldType . '</span> <a href="' . $link . 'task=fixfieldtype&fieldname=' . $exst_field . '">Fix?</a></p>';
+                            . ' has wrong type <span style="color:red;">' . strtolower($ExistingField['column_type']) . '</span> instead of <span style="color:green;">'
+                            . $PureFieldType . '</span> <a href="' . $link . 'task=fixfieldtype&fieldname=' . $existingFieldName . '">Fix?</a></p>';
                     }
                 }
             }
@@ -192,15 +184,14 @@ class IntegrityFields extends IntegrityChecks
         //Add missing fields
         foreach ($projected_fields as $projected_field) {
             $proj_field = $projected_field['realfieldname'];
-            $fieldtype = $projected_field['type'];
-            if ($fieldtype != 'dummy')
-                IntegrityFields::addFieldIfNotExists($ct, $ct->Table->realtablename, $ExistingFields, $proj_field, $fieldtype, $projected_field['typeparams']);
+            $fieldType = $projected_field['type'];
+            if ($fieldType != 'dummy')
+                IntegrityFields::addFieldIfNotExists($ct, $ct->Table->realtablename, $ExistingFields, $proj_field, $fieldType, $projected_field['typeparams']);
         }
-
         return $result;
     }
 
-    public static function compareFieldTypes($existing_field_data_type, $projected_field_data_type)
+    public static function compareFieldTypes($existing_field_data_type, $projected_field_data_type): bool
     {
         $existing = (object)$existing_field_data_type;
         $projected = (object)$projected_field_data_type;
@@ -245,13 +236,13 @@ class IntegrityFields extends IntegrityChecks
         return true;
     }
 
-    public static function addFieldIfNotExists(CT &$ct, $realtablename, $ExistingFields, $proj_field, $fieldtype, $typeparams)
+    public static function addFieldIfNotExists(CT $ct, $realtablename, $ExistingFields, $proj_field, $fieldType, $typeParams): bool
     {
-        if ($fieldtype == 'multilangstring' or $fieldtype == 'multilangtext') {
-            $morethanonelang = false;
+        if ($fieldType == 'multilangstring' or $fieldType == 'multilangtext') {
+            $moreThanOneLanguage = false;
             foreach ($ct->Languages->LanguageList as $lang) {
                 $fieldname = $proj_field;
-                if ($morethanonelang)
+                if ($moreThanOneLanguage)
                     $fieldname .= '_' . $lang->sef;
 
                 $found = false;
@@ -264,11 +255,11 @@ class IntegrityFields extends IntegrityChecks
 
                 if (!$found) {
                     //Add field
-                    IntegrityFields::addField($realtablename, $fieldname, $fieldtype, $typeparams);
+                    IntegrityFields::addField($realtablename, $fieldname, $fieldType, $typeParams);
                     return true;
                 }
 
-                $morethanonelang = true;
+                $moreThanOneLanguage = true;
             }
         } else {
             $found = false;
@@ -280,19 +271,17 @@ class IntegrityFields extends IntegrityChecks
             }
 
             if (!$found) {
-                IntegrityFields::addField($realtablename, $proj_field, $fieldtype, $typeparams);
+                IntegrityFields::addField($realtablename, $proj_field, $fieldType, $typeParams);
                 return true;
             }
         }
-
         return false;
     }
 
-    protected static function addField($realtablename, $realfieldname, $fieldtype, $typeparams)
+    protected static function addField($realtablename, $realfieldname, $fieldType, $typeParams)
     {
-        $PureFieldType = Fields::getPureFieldType($fieldtype, $typeparams);
+        $PureFieldType = Fields::getPureFieldType($fieldType, $typeParams);
         Fields::AddMySQLFieldNotExist($realtablename, $realfieldname, $PureFieldType, '');
-
         Factory::getApplication()->enqueueMessage('Field "' . $realfieldname . '" added.', 'notice');
     }
 }

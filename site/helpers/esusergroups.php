@@ -19,10 +19,10 @@ require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARAT
 
 class JHTMLESUserGroups
 {
-    static public function render($control_name, $value, array &$typeparams_array)
+    static public function render($control_name, $value, array &$typeParams_array)
     {
-        $selector = $typeparams_array[0];
-        $availableusergroups = $typeparams_array[1] ?? '';
+        $selector = $typeParams_array[0];
+        $availableusergroups = $typeParams_array[1] ?? '';
 
         $availableusergroups_list = (trim($availableusergroups) == '' ? [] : explode(',', trim($availableusergroups)));
 

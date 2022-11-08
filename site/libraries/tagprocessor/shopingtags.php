@@ -77,7 +77,7 @@ class tagProcessor_Shopping
                         $found = false;
                         for ($i = 0; $i < $cnt; $i++) {
                             $pair = explode(',', $items[$i]);
-                            if (count($pair) == 2) //otherwise ignore the shit
+                            if (count($pair) == 2) //otherwise ignore it
                             {
                                 if ((int)$pair[0] == $row[$ct->Table->realidfieldname])
                                     $vlu = (int)$pair[1];
@@ -121,7 +121,7 @@ class tagProcessor_Shopping
                         $found = false;
                         for ($i = 0; $i < $cnt; $i++) {
                             $pair = explode(',', $items[$i]);
-                            if (count($pair) == 2) //otherwise ignore the shit
+                            if (count($pair) == 2) //otherwise ignore it
                             {
                                 if ((int)$pair[0] == $row[$ct->Table->realidfieldname])
                                     $vlu = (int)$pair[1];

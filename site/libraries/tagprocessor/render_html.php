@@ -37,7 +37,7 @@ trait render_html
         $result = '
 		<table id="ctTable_' . $ct->Table->tableid . '" ' . ($class != '' ? ' class="' . $class . '" ' : '') . ' style="position: relative;"><thead><tr>';
 
-        $recordline = '<tr id="ctTable_' . $ct->Table->tableid . '_{{ record.id }}">';
+        $recordLine = '<tr id="ctTable_' . $ct->Table->tableid . '_{{ record.id }}">';
 
         foreach ($fieldarray as $field) {
             $fieldpair = JoomlaBasicMisc::csv_explode(':', $field, '"', false);
@@ -48,7 +48,7 @@ trait render_html
                 $result .= '<th>' . $fieldpair[0] . '</th>';//header
 
             if (!isset($fieldpair[1])) {
-                $recordline .= '<td>Catalog Layout Content field corrupted. Check the Layout.</td>';//content
+                $recordLine .= '<td>Catalog Layout Content field corrupted. Check the Layout.</td>';//content
             } else {
                 $attribute = '';
                 if ($dragdrop) {
@@ -59,7 +59,7 @@ trait render_html
                             . 'ondragstart="ctCatalogOnDragStart(event);" ondragover="ctCatalogOnDragOver(event);" ondrop="ctCatalogOnDrop(event);"';
                 }
 
-                $recordline .= '<td' . $attribute . '>' . $fieldpair[1] . '</td>';//content
+                $recordLine .= '<td' . $attribute . '>' . $fieldpair[1] . '</td>';//content
             }
         }
         $result .= '</tr></thead>';
@@ -77,28 +77,28 @@ trait render_html
         }
 
         //Complete record layout
-        $recordline .= '</tr>';
-        $recordline = str_replace('|(', '{', $recordline);//to support old parsing way
-        $recordline = str_replace(')|', '}', $recordline);//to support old parsing way
-        $recordline = str_replace('&&&&quote&&&&', '"', $recordline);
+        $recordLine .= '</tr>';
+        $recordLine = str_replace('|(', '{', $recordLine);//to support old parsing way
+        $recordLine = str_replace(')|', '}', $recordLine);//to support old parsing way
+        $recordLine = str_replace('&&&&quote&&&&', '"', $recordLine);
 
-        $number = 1 + $ct->LimitStart; //table row number, it maybe use in the layout as {number}
+        $number = 1 + $ct->LimitStart; //table row number, it maybe uses in the layout as {number}
 
-        $tablecontent = '';
+        $tableContent = '';
 
-        $twig = new TwigProcessor($ct, $recordline);
+        $twig = new TwigProcessor($ct, $recordLine);
 
         foreach ($ct->Records as $row) {
             $row['_number'] = ($custom_number > 0 ? $custom_number : $number);
-            $tablecontent .= tagProcessor_Item::RenderResultLine($ct, $layoutType, $twig, $row);//TODO
+            $tableContent .= tagProcessor_Item::RenderResultLine($ct, $layoutType, $twig, $row);//TODO
 
             $number++;
         }
 
         if ($listing_id != '')
-            die($tablecontent);
+            die($tableContent);
 
-        $result .= '<tbody>' . $tablecontent . '</tbody></table>';
+        $result .= '<tbody>' . $tableContent . '</tbody></table>';
         return $result;
     }
 

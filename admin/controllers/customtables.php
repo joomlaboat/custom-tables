@@ -13,7 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
-// import Joomla controlleradmin library
+// import Joomla controllerAdmin library
 jimport('joomla.application.component.controlleradmin');
 
 /**

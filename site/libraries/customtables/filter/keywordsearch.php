@@ -183,7 +183,7 @@ class CustomTablesKeywordSearch
             $inner = '';
             $inner_arr = array();
             $where_arr = array();
-            $fieldtypefound = false;
+            $fieldTypeFound = false;
 
             $kw_text_array = array();
 
@@ -196,90 +196,90 @@ class CustomTablesKeywordSearch
                 switch ($t) {
                     case 'email':
                         $where_arr[] = ' INSTR(es_' . $fieldrow['fieldname'] . ', "' . $kw . '")';
-                        $fieldtypefound = true;
+                        $fieldTypeFound = true;
                         break;
 
                     case 'url':
                         $where_arr[] = ' INSTR(es_' . $fieldrow['fieldname'] . ', "' . $kw . '")';
-                        $fieldtypefound = true;
+                        $fieldTypeFound = true;
                         break;
 
                     case 'string':
                         $where_arr[] = ' INSTR(es_' . $fieldrow['fieldname'] . ', "' . $kw . '")';
-                        $fieldtypefound = true;
+                        $fieldTypeFound = true;
                         break;
 
                     case 'phponadd':
                         $where_arr[] = ' INSTR(es_' . $fieldrow['fieldname'] . ', "' . $kw . '")';
-                        $fieldtypefound = true;
+                        $fieldTypeFound = true;
                         break;
 
                     case 'phponchange':
                         $where_arr[] = ' INSTR(es_' . $fieldrow['fieldname'] . ', "' . $kw . '")';
-                        $fieldtypefound = true;
+                        $fieldTypeFound = true;
                         break;
 
                     case 'text':
                         $where_arr[] = ' INSTR(es_' . $fieldrow['fieldname'] . ', "' . $kw . '")';
-                        $fieldtypefound = true;
+                        $fieldTypeFound = true;
                         break;
 
                     case 'multilangstring':
                         $where_arr[] = ' INSTR(es_' . $fieldrow['fieldname'] . $this->ct->Languages->Postfix . ', "' . $kw . '")';
-                        $fieldtypefound = true;
+                        $fieldTypeFound = true;
                         break;
 
                     case 'multilangtext':
                         $where_arr[] = ' INSTR(es_' . $fieldrow['fieldname'] . $this->ct->Languages->Postfix . ', "' . $kw . '")';
-                        $fieldtypefound = true;
+                        $fieldTypeFound = true;
                         break;
 
                     case 'records':
-                        $typeparamsarray = explode(',', $fieldrow['typeparams']);
+                        $typeParamsArrayy = explode(',', $fieldrow['typeparams']);
                         $filtertitle = '';
-                        if (count($typeparamsarray) < 1)
+                        if (count($typeParamsArrayy) < 1)
                             $filtertitle .= 'table not specified';
 
-                        if (count($typeparamsarray) < 2)
+                        if (count($typeParamsArrayy) < 2)
                             $filtertitle .= 'field or layout not specified';
 
-                        if (count($typeparamsarray) < 3)
+                        if (count($typeParamsArrayy) < 3)
                             $filtertitle .= 'selector not specified';
 
-                        $esr_table = '#__customtables_table_' . $typeparamsarray[0];
-                        $esr_field = $typeparamsarray[1];
+                        $esr_table = '#__customtables_table_' . $typeParamsArrayy[0];
+                        $esr_field = $typeParamsArrayy[1];
 
                         $inner = 'INNER JOIN ' . $esr_table . ' ON instr(#__customtables_table_' . $this->ct->Table->tablename . '.es_' . $fieldrow['fieldname'] . ',concat(",",' . $esr_table . '.id,","))';
                         if (!in_array($inner, $inner_arr))
                             $inner_arr[] = $inner;
 
                         $where_arr[] = 'instr(' . $esr_table . '.es_' . $esr_field . ',"' . $kw . '")';
-                        $fieldtypefound = true;
+                        $fieldTypeFound = true;
                         break;
 
                     case 'sqljoin':
                         Factory::getApplication()->enqueueMessage('Search box not ready yet.', 'error');
 
-                        $typeparamsarray = explode(',', $fieldrow['typeparams']);
+                        $typeParamsArrayy = explode(',', $fieldrow['typeparams']);
                         $filtertitle = '';
-                        if (count($typeparamsarray) < 1)
+                        if (count($typeParamsArrayy) < 1)
                             $filtertitle .= 'table not specified';
 
-                        if (count($typeparamsarray) < 2)
+                        if (count($typeParamsArrayy) < 2)
                             $filtertitle .= 'field or layout not specified';
 
-                        if (count($typeparamsarray) < 3)
+                        if (count($typeParamsArrayy) < 3)
                             $filtertitle .= 'selector not specified';
 
-                        $esr_table = '#__customtables_table_' . $typeparamsarray[0];
-                        $esr_field = $typeparamsarray[1];
+                        $esr_table = '#__customtables_table_' . $typeParamsArrayy[0];
+                        $esr_field = $typeParamsArrayy[1];
 
                         $inner = 'INNER JOIN ' . $esr_table . ' ON instr(#__customtables_table_' . $this->ct->Table->tablename . '.es_' . $fieldrow['fieldname'] . ',concat(",",' . $esr_table . '.id,","))';
                         if (!in_array($inner, $inner_arr))
                             $inner_arr[] = $inner;
 
                         $where_arr[] = 'instr(' . $esr_table . '.es_' . $esr_field . ',"' . $kw . '")';
-                        $fieldtypefound = true;
+                        $fieldTypeFound = true;
                         break;
 
                     case 'customtables':
@@ -288,7 +288,7 @@ class CustomTablesKeywordSearch
                             $inner_arr[] = $inner;
 
                         $where_arr[] = 'instr(#__customtables_options.title' . $this->ct->Languages->Postfix . ',"' . $kw . '")';
-                        $fieldtypefound = true;
+                        $fieldTypeFound = true;
                         break;
 
                     case 'user':
@@ -297,7 +297,7 @@ class CustomTablesKeywordSearch
                             $inner_arr[] = $inner;
 
                         $where_arr[] = ' #__users.name REGEXP "' . $kw . '"';
-                        $fieldtypefound = true;
+                        $fieldTypeFound = true;
                         break;
 
                     case 'userid':
@@ -306,7 +306,7 @@ class CustomTablesKeywordSearch
                             $inner_arr[] = $inner;
 
                         $where_arr[] = ' #__users.name REGEXP "' . $kw . '"';
-                        $fieldtypefound = true;
+                        $fieldTypeFound = true;
                         break;
                 }
             }
@@ -323,13 +323,13 @@ class CustomTablesKeywordSearch
         return $result_rows;
     }
 
-    function getRowsByKeywords_ProcessTypes($fieldtype, $fieldname, $typeparams, $regexpression, &$inner)
+    function getRowsByKeywords_ProcessTypes($fieldType, $fieldname, $typeParams, $regexpression, &$inner)
     {
         $where = '';
         $inner = '';
 
 
-        switch ($fieldtype) {
+        switch ($fieldType) {
             case 'string':
 
                 $where = ' es_' . $fieldname . ' REGEXP "' . $regexpression . '"';
@@ -366,13 +366,13 @@ class CustomTablesKeywordSearch
 
             case 'records':
 
-                $typeparamsarray = explode(',', $typeparams);
+                $typeParamsArrayy = explode(',', $typeParams);
 
-                if (count($typeparamsarray) < 3)
+                if (count($typeParamsArrayy) < 3)
                     return '';
 
-                $esr_table = '#__customtables_table_' . $typeparamsarray[0];
-                $esr_field = $typeparamsarray[1];
+                $esr_table = '#__customtables_table_' . $typeParamsArrayy[0];
+                $esr_field = $typeParamsArrayy[1];
 
                 $inner = 'INNER JOIN ' . $esr_table . ' ON instr(#__customtables_table_' . $this->ct->Table->tablename . '.es_' . $fieldname . ',concat(",",' . $esr_table . '.id,","))';
                 $where = ' ' . $esr_table . '.es_' . $esr_field . ' REGEXP "' . $regexpression . '"';

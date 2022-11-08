@@ -38,10 +38,10 @@ class IntegrityOptions extends \CustomTables\IntegrityChecks
 
         $g_ExistingFields = Fields::getExistingFields($table_name, false);
 
-        $morethanonelang = false;
+        $moreThanOneLanguage = false;
         foreach ($ct->Languages->LanguageList as $lang) {
             $g_fieldname = 'title';
-            if ($morethanonelang)
+            if ($moreThanOneLanguage)
                 $g_fieldname .= '_' . $lang->sef;
 
             $g_found = false;
@@ -58,7 +58,7 @@ class IntegrityOptions extends \CustomTables\IntegrityChecks
                 Fields::AddMySQLFieldNotExist($table_name, $g_fieldname, 'varchar(100) null', '');
                 Factory::getApplication()->enqueueMessage('Options Field "' . $g_fieldname . '" added.', 'notice');
             }
-            $morethanonelang = true;
+            $moreThanOneLanguage = true;
         }
     }
 }

@@ -61,8 +61,8 @@ function processFieldParams(&$fieldList, array &$fields): array
 {
     foreach ($fieldList as $f_index) {
         if ($f_index >= 0) {
-            $fieldtype = $fields[$f_index]->type;
-            if ($fieldtype == 'sqljoin') {
+            $fieldType = $fields[$f_index]->type;
+            if ($fieldType == 'sqljoin') {
                 $type_params = JoomlaBasicMisc::csv_explode(',', $fields[$f_index]->typeparams, '"', false);
 
                 $tablename = $type_params[0];
@@ -200,9 +200,9 @@ function prepareSQLQuery($fieldList, $fields, $line)
 
     foreach ($fieldList as $f_index) {
         if ($f_index >= 0) {
-            $fieldtype = $fields[$f_index]->type;
+            $fieldType = $fields[$f_index]->type;
 
-            if ($fieldtype == 'sqljoin') {
+            if ($fieldType == 'sqljoin') {
                 if (isset($fields[$f_index]->sqljoin)) {
                     $realtablename = $fields[$f_index]->sqljoin->table;
 
@@ -213,7 +213,7 @@ function prepareSQLQuery($fieldList, $fields, $line)
                         (bool)$fields[$f_index]->sqljoin->published_field_found,
                         $line[$i]);
 
-                    if (is_null($vlu))//Join table record doesnt exists
+                    if (is_null($vlu))//Join table record doesn't exists
                     {
                         $sub_sets = [];
                         $sub_sets[] = $db->quoteName($fields[$f_index]->sqljoin->field) . '=' . $db->quote($line[$i]);
@@ -233,7 +233,7 @@ function prepareSQLQuery($fieldList, $fields, $line)
                     else
                         $sets[] = $db->quoteName($fields[$f_index]->realfieldname) . '=NULL';
                 }
-            } elseif ($fieldtype == 'records') {
+            } elseif ($fieldType == 'records') {
                 if (isset($fields[$f_index]->sqljoin)) {
                     $realtablename = $fields[$f_index]->sqljoin->table;
 
@@ -262,22 +262,22 @@ function prepareSQLQuery($fieldList, $fields, $line)
                     else
                         $sets[] = $db->quoteName($fields[$f_index]->realfieldname) . '=NULL';
                 }
-            } elseif ($fieldtype == 'date' or $fieldtype == 'creationtime' or $fieldtype == 'changetime') {
+            } elseif ($fieldType == 'date' or $fieldType == 'creationtime' or $fieldType == 'changetime') {
                 if (isset($line[$i]) and $line[$i] != '')
                     $sets[] = $db->quoteName($fields[$f_index]->realfieldname) . '=' . $db->quote($line[$i]);
                 else
                     $sets[] = $db->quoteName($fields[$f_index]->realfieldname) . '=NULL';
-            } elseif ($fieldtype == 'int' or $fieldtype == 'user' or $fieldtype == 'userid') {
+            } elseif ($fieldType == 'int' or $fieldType == 'user' or $fieldType == 'userid') {
                 if (isset($line[$i]) and $line[$i] != '')
                     $sets[] = $db->quoteName($fields[$f_index]->realfieldname) . '=' . (int)$line[$i];
                 else
                     $sets[] = $db->quoteName($fields[$f_index]->realfieldname) . '=NULL';
-            } elseif ($fieldtype == 'float') {
+            } elseif ($fieldType == 'float') {
                 if (isset($line[$i]) and $line[$i] != '')
                     $sets[] = $db->quoteName($fields[$f_index]->realfieldname) . '=' . (float)$line[$i];
                 else
                     $sets[] = $db->quoteName($fields[$f_index]->realfieldname) . '=NULL';
-            } elseif ($fieldtype == 'checkbox') {
+            } elseif ($fieldType == 'checkbox') {
                 if (isset($line[$i]) and $line[$i] != '') {
                     if ($line[$i] == 'Yes' or $line[$i] == '1')
                         $vlu = 1;

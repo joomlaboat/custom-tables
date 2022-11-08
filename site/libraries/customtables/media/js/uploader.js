@@ -124,7 +124,7 @@ function ct_getUploader(index, urlstr, maxFileSize, allowedTypes, UploaderForm, 
                 document.getElementById(uploaderParams[index].fieldValueInputBox).value = "";
 
                 $("#" + EventMessageBox).html("");
-                pd.statusbar.hide(); //You choice to hide/not.
+                pd.statusbar.hide(); //You choose to hide/not.
                 uploaderParams[index].files_uploaded -= 1;
                 updateUploadedFileBox(index);
                 checkRequiredFields();

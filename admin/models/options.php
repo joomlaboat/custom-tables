@@ -46,10 +46,10 @@ class CustomTablesModelOptions extends JModelAdmin
             return false;
         }
 
-        // The front end calls this model and uses a_id to avoid id clashes so we need to check for that first.
+        // The front end calls this model and uses a_id to avoid id clashes, so we need to check for that first.
         if (Factory::getApplication()->input->get('a_id')) {
             $id = Factory::getApplication()->input->get('a_id', 0, 'INT');
-        } // The back end uses id so we use that the rest of the time and set it to 0 by default.
+        } // The back end uses id, so we use that the rest of the time and set it to 0 by default.
         else {
             $id = Factory::getApplication()->input->get('id', 0, 'INT');
         }
@@ -112,11 +112,11 @@ class CustomTablesModelOptions extends JModelAdmin
     {
         $data_extra = Factory::getApplication()->input->get('jform', array(), 'ARRAY');
 
-        $morethanonelang = false;
+        $moreThanOneLanguage = false;
         $fields = Fields::getListOfExistingFields('#__customtables_options', false);
         foreach ($this->ct->Languages->LanguageList as $lang) {
             $id_title = 'title';
-            if ($morethanonelang) {
+            if ($moreThanOneLanguage) {
                 $id_title .= '_' . $lang->sef;
 
                 if (!in_array($id_title, $fields))
@@ -124,7 +124,7 @@ class CustomTablesModelOptions extends JModelAdmin
 
             }
             $data[$id_title] = $data_extra[$id_title];
-            $morethanonelang = true; //More than one language installed
+            $moreThanOneLanguage = true; //More than one language installed
         }
 
         $optiontitle = $data['title'];

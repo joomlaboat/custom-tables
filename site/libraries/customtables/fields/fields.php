@@ -408,7 +408,7 @@ class Fields
     public static function convertMySQLFieldTypeToCT($data_type, $column_type): array
     {
         $type = '';
-        $typeparams = '';
+        $typeParams = '';
 
         switch (strtolower(trim($data_type))) {
             case 'bit':
@@ -430,7 +430,7 @@ class Fields
                 if (count($parts) > 1) {
                     $length = str_replace(')', '', $parts[1]);
                     if ($length != '')
-                        $typeparams = $length;
+                        $typeParams = $length;
                 }
                 $type = 'float';
                 break;
@@ -442,7 +442,7 @@ class Fields
                 if (count($parts) > 1) {
                     $length = str_replace(')', '', $parts[1]);
                     if ($length != '')
-                        $typeparams = $length;
+                        $typeParams = $length;
                 }
                 $type = 'string';
                 break;
@@ -469,7 +469,7 @@ class Fields
                 break;
         }
 
-        return ['type' => $type, 'typeparams' => $typeparams];
+        return ['type' => $type, 'typeparams' => $typeParams];
     }
 
     public static function isLanguageFieldName($fieldname): bool
@@ -727,8 +727,8 @@ class Fields
         $field['isdisabled'] = $fieldRow['isdisabled'];
         $field['type'] = $fieldRow['type'];
 
-        $typeparams = JoomlaBasicMisc::csv_explode(',', $fieldRow['typeparams'], '"', false);
-        $field['typeparams'] = $typeparams;
+        $typeParams = JoomlaBasicMisc::csv_explode(',', $fieldRow['typeparams'], '"', false);
+        $field['typeparams'] = $typeParams;
         $field['valuerule'] = $fieldRow['valuerule'];
         $field['valuerulecaption'] = $fieldRow['valuerulecaption'];
 
@@ -901,12 +901,12 @@ class Fields
         return false;
     }
 
-    public static function AddMySQLFieldNotExist($realtablename, $realfieldname, $fieldtype, $options): void
+    public static function AddMySQLFieldNotExist($realtablename, $realfieldname, $fieldType, $options): void
     {
         $db = Factory::getDBO();
 
         if (!Fields::checkIfFieldExists($realtablename, $realfieldname)) {
-            $query = 'ALTER TABLE ' . $realtablename . ' ADD COLUMN ' . $realfieldname . ' ' . $fieldtype . ' ' . $options;
+            $query = 'ALTER TABLE ' . $realtablename . ' ADD COLUMN ' . $realfieldname . ' ' . $fieldType . ' ' . $options;
 
             $db->setQuery($query);
             $db->execute();
@@ -1022,13 +1022,13 @@ class Fields
         return true;
     }
 
-    public static function getPureFieldType($ct_fieldtype, $typeparams): string
+    public static function getPureFieldType($ct_fieldtype, $typeParams): string
     {
-        $ct_fieldTypeArray = Fields::getProjectedFieldType($ct_fieldtype, $typeparams);
+        $ct_fieldTypeArray = Fields::getProjectedFieldType($ct_fieldtype, $typeParams);
         return Fields::makeProjectedFieldType($ct_fieldTypeArray);
     }
 
-    public static function getProjectedFieldType($ct_fieldtype, $typeparams): array
+    public static function getProjectedFieldType($ct_fieldtype, $typeParams): array
     {
         //Returns an array of mysql column parameters
         switch (trim($ct_fieldtype)) {
@@ -1046,12 +1046,12 @@ class Fields
                 return ['data_type' => 'varchar', 'is_nullable' => true, 'is_unsigned' => null, 'length' => 8, 'default' => null, 'extra' => null];
             case 'string':
             case 'multilangstring':
-                $l = (int)$typeparams;
+                $l = (int)$typeParams;
                 return ['data_type' => 'varchar', 'is_nullable' => true, 'is_unsigned' => null, 'length' => ($l < 1 ? 255 : (min($l, 1024))), 'default' => null, 'extra' => null];
             case 'signature':
 
-                $typeparams_arr = JoomlaBasicMisc::csv_explode(',', $typeparams);
-                $format = $typeparams_arr[3] ?? 'svg';
+                $typeParams_arr = JoomlaBasicMisc::csv_explode(',', $typeParams);
+                $format = $typeParams_arr[3] ?? 'svg';
 
                 if ($format == 'svg-db')
                     return ['data_type' => 'text', 'is_nullable' => true, 'is_unsigned' => null, 'length' => null, 'default' => null, 'extra' => null];
@@ -1059,7 +1059,7 @@ class Fields
                     return ['data_type' => 'bigint', 'is_nullable' => true, 'is_unsigned' => false, 'length' => null, 'default' => null, 'extra' => null];
 
             case 'blob':
-                $typeparams_arr = JoomlaBasicMisc::csv_explode(',', $typeparams);
+                $typeParams_arr = JoomlaBasicMisc::csv_explode(',', $typeparams);
 
                 if ($typeparams_arr[0] == 'tiny')
                     $type = 'tinyblob';
@@ -1444,19 +1444,19 @@ class Fields
         return $newrow;
     }
 
-    public static function addField(CT $ct, $realtablename, $realfieldname, $fieldtype, $PureFieldType, $fieldtitle): void
+    public static function addField(CT $ct, $realtablename, $realfieldname, $fieldType, $PureFieldType, $fieldtitle): void
     {
         if ($PureFieldType == '')
             return;
 
         $db = Factory::getDBO();
 
-        if (!str_contains($fieldtype, 'multilang')) {
+        if (!str_contains($fieldType, 'multilang')) {
             $AdditionOptions = '';
             if ($db->serverType != 'postgresql')
                 $AdditionOptions = ' COMMENT ' . $db->Quote($fieldtitle);
 
-            if ($fieldtype != 'dummy')
+            if ($fieldType != 'dummy')
                 Fields::AddMySQLFieldNotExist($realtablename, $realfieldname, $PureFieldType, $AdditionOptions);
         } else {
             $index = 0;
@@ -1476,14 +1476,14 @@ class Fields
             }
         }
 
-        if ($fieldtype == 'imagegallery') {
+        if ($fieldType == 'imagegallery') {
             //Create table
             //get CT table name if possible
 
             $tableName = str_replace($db->getPrefix() . 'customtables_table', '', $realtablename);
             $fieldName = str_replace($ct->Env->field_prefix, '', $realfieldname);
             Fields::CreateImageGalleryTable($tableName, $fieldName);
-        } elseif ($fieldtype == 'filebox') {
+        } elseif ($fieldType == 'filebox') {
             //Create table
             //get CT table name if possible
             $tableName = str_replace($db->getPrefix() . 'customtables_table', '', $realtablename);
@@ -1561,9 +1561,9 @@ class Fields
         $db = Factory::getDBO();
 
         $conf = Factory::getConfig();
-        $dbprefix = $conf->get('dbprefix');
+        $dbPrefix = $conf->get('dbprefix');
 
-        $realtablename = str_replace('#__', $dbprefix, $realtablename_);
+        $realtablename = str_replace('#__', $dbPrefix, $realtablename_);
 
         if ($db->serverType == 'postgresql')
             return false;
@@ -1592,7 +1592,7 @@ class Fields
             $join_with_table_field = $tablerow->realidfieldname;
         }
 
-        $join_with_table_name = str_replace('#__', $dbprefix, $join_with_table_name);
+        $join_with_table_name = str_replace('#__', $dbPrefix, $join_with_table_name);
 
         $conf = Factory::getConfig();
         $database = $conf->get('db');

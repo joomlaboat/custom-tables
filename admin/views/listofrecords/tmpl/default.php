@@ -31,15 +31,15 @@ if ($this->ordering_realfieldname != '') {
 <script type="text/javascript">
     Joomla.orderTable = function () {
         let table = document.getElementById("sortTable");
-        let direction = document.getElementById("directionTable");
-        let dirn;
-        order = table.options[table.selectedIndex].value;
+        let directionObject = document.getElementById("directionTable");
+        let direction;
+        let order = table.options[table.selectedIndex].value;
         if (order != '<?php echo $this->listOrder; ?>') {
-            dirn = 'asc';
+            direction = 'asc';
         } else {
-            dirn = direction.options[direction.selectedIndex].value;
+            direction = directionObject.options[directionObject.selectedIndex].value;
         }
-        Joomla.tableOrdering(order, dirn, '');
+        Joomla.tableOrdering(order, direction, '');
     }
 </script>
 

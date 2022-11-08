@@ -17,13 +17,13 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 class JHTMLCTFields
 {
-    public static function fields($tableid, $currentfieldid, $control_name, $value)
+    public static function fields($tableid, $currentFieldId, $control_name, $value)
     {
         $db = Factory::getDBO();
 
         $query = 'SELECT id, fieldname '
             . ' FROM #__customtables_fields '
-            . ' WHERE published=1 AND tableid=' . (int)$tableid . ' AND id!=' . (int)$currentfieldid
+            . ' WHERE published=1 AND tableid=' . (int)$tableid . ' AND id!=' . (int)$currentFieldId
             . ' AND type="checkbox"'
             . ' ORDER BY fieldname';
         $db->setQuery($query);

@@ -256,7 +256,7 @@ class Ordering
                 else
                     $fieldtitle = $row['fieldtitle'];
 
-                $typeparams = $row['typeparams'];
+                $typeParams = $row['typeparams'];
 
                 if ($fieldType == 'string' or $fieldType == 'email' or $fieldType == 'url') {
                     $order_list[] = $fieldtitle . ' ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_AZ');
@@ -265,9 +265,9 @@ class Ordering
                     $order_values[] = $fieldname . ' desc';
                 } elseif ($fieldType == 'sqljoin') {
                     $order_list[] = $fieldtitle . ' ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_AZ');
-                    $order_values[] = $fieldname . '.sqljoin.' . $typeparams;
+                    $order_values[] = $fieldname . '.sqljoin.' . $typeParams;
                     $order_list[] = $fieldtitle . ' ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ZA');
-                    $order_values[] = $fieldname . '.sqljoin.' . $typeparams . ' desc';
+                    $order_values[] = $fieldname . '.sqljoin.' . $typeParams . ' desc';
                 } elseif ($fieldType == 'phponadd' or $fieldType == 'phponchange') {
                     $order_list[] = $fieldtitle . ' ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_AZ');
                     $order_values[] = $fieldname;

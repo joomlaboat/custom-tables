@@ -118,16 +118,16 @@ class IntegrityCoreTables extends IntegrityChecks
         $fields_sql = [];
         foreach ($fields as $field) {
             if (isset($field['multilang']) and $field['multilang'] == true) {
-                $morethanonelang = false;
+                $moreThanOneLanguage = false;
                 foreach ($ct->Languages->LanguageList as $lang) {
                     $fieldname = $field['name'];
 
-                    if ($morethanonelang)
+                    if ($moreThanOneLanguage)
                         $fieldname .= '_' . $lang->sef;
 
                     $fields_sql[] = $db->quoteName($fieldname) . ' ' . $field[$db_type];
 
-                    $morethanonelang = true;
+                    $moreThanOneLanguage = true;
                 }
             } else {
                 $fields_sql[] = $db->quoteName($field['name']) . ' ' . $field[$db_type];
@@ -157,21 +157,21 @@ class IntegrityCoreTables extends IntegrityChecks
 
             if (isset($projected_field['ct_fieldtype']) and $projected_field['ct_fieldtype'] != '') {
                 $projected_realfieldname = $projected_field['name'];
-                $fieldtype = $projected_field['ct_fieldtype'];
+                $fieldType = $projected_field['ct_fieldtype'];
 
-                $typeparams = '';
+                $typeParams = '';
 
-                if (IntegrityFields::addFieldIfNotExists($ct, $realtablename, $ExistingFields, $projected_realfieldname, $fieldtype, $typeparams))
+                if (IntegrityFields::addFieldIfNotExists($ct, $realtablename, $ExistingFields, $projected_realfieldname, $fieldType, $typeParams))
                     $ExistingFields = Fields::getExistingFields($realtablename, false);//reload list of existing fields if one field has been added.
 
                 if (isset($projected_field['ct_fieldtype']) and $projected_field['ct_fieldtype'] != '') {
                     $ct_fieldtype = $projected_field['ct_fieldtype'];
 
-                    $typeparams = '';
+                    $typeParams = '';
                     if (isset($projected_field['ct_typeparams']) and $projected_field['ct_typeparams'] != '')
-                        $typeparams = $projected_field['ct_typeparams'];
+                        $typeParams = $projected_field['ct_typeparams'];
 
-                    IntegrityCoreTables::checkCoreTableFields($ct, $realtablename, $ExistingFields, $projected_realfieldname, $ct_fieldtype, $typeparams);
+                    IntegrityCoreTables::checkCoreTableFields($ct, $realtablename, $ExistingFields, $projected_realfieldname, $ct_fieldtype, $typeParams);
                 }
             }
         }
@@ -208,7 +208,7 @@ class IntegrityCoreTables extends IntegrityChecks
     protected static function getCoreTableFields_Tables(): object
     {
         $conf = Factory::getConfig();
-        $dbprefix = $conf->get('dbprefix');
+        $dbPrefix = $conf->get('dbprefix');
 
         $tables_projected_fields = [];
         $tables_projected_fields[] = ['name' => 'id', 'mysql_type' => 'INT UNSIGNED NOT NULL AUTO_INCREMENT', 'postgresql_type' => 'id INT check (id > 0) NOT NULL DEFAULT NEXTVAL (\'#__customtables_tables_seq\')'];
@@ -237,7 +237,7 @@ class IntegrityCoreTables extends IntegrityChecks
         $tables_projected_indexes[] = ['name' => 'idx_published', 'field' => 'published'];
         $tables_projected_indexes[] = ['name' => 'idx_tablename', 'field' => 'tablename'];
 
-        return (object)['realtablename' => $dbprefix . 'customtables_tables',
+        return (object)['realtablename' => $dbPrefix . 'customtables_tables',
             'fields' => $tables_projected_fields,
             'indexes' => $tables_projected_indexes,
             'comment' => 'List of Custom Tables tables'];
@@ -246,7 +246,7 @@ class IntegrityCoreTables extends IntegrityChecks
     protected static function getCoreTableFields_Fields(): object
     {
         $conf = Factory::getConfig();
-        $dbprefix = $conf->get('dbprefix');
+        $dbPrefix = $conf->get('dbprefix');
 
         $tables_projected_fields = array();
 
@@ -285,7 +285,7 @@ class IntegrityCoreTables extends IntegrityChecks
         $tables_projected_indexes[] = ['name' => 'idx_tableid', 'field' => 'tableid'];
         $tables_projected_indexes[] = ['name' => 'idx_fieldname', 'field' => 'fieldname'];
 
-        return (object)['realtablename' => $dbprefix . 'customtables_fields',
+        return (object)['realtablename' => $dbPrefix . 'customtables_fields',
             'fields' => $tables_projected_fields,
             'indexes' => $tables_projected_indexes,
             'comment' => 'Custom Tables Fields'];
@@ -294,7 +294,7 @@ class IntegrityCoreTables extends IntegrityChecks
     protected static function getCoreTableFields_Layouts(): object
     {
         $conf = Factory::getConfig();
-        $dbprefix = $conf->get('dbprefix');
+        $dbPrefix = $conf->get('dbprefix');
 
         $tables_projected_fields = array();
 
@@ -324,7 +324,7 @@ class IntegrityCoreTables extends IntegrityChecks
         $tables_projected_indexes[] = ['name' => 'idx_tableid', 'field' => 'tableid'];
         $tables_projected_indexes[] = ['name' => 'idx_layoutname', 'field' => 'layoutname'];
 
-        return (object)['realtablename' => $dbprefix . 'customtables_layouts',
+        return (object)['realtablename' => $dbPrefix . 'customtables_layouts',
             'fields' => $tables_projected_fields,
             'indexes' => $tables_projected_indexes,
             'comment' => 'Custom Tables Layouts'];
@@ -333,7 +333,7 @@ class IntegrityCoreTables extends IntegrityChecks
     protected static function getCoreTableFields_Categories(): object
     {
         $conf = Factory::getConfig();
-        $dbprefix = $conf->get('dbprefix');
+        $dbPrefix = $conf->get('dbprefix');
 
         $tables_projected_fields = array();
 
@@ -353,7 +353,7 @@ class IntegrityCoreTables extends IntegrityChecks
         $tables_projected_indexes[] = ['name' => 'idx_published', 'field' => 'published'];
         $tables_projected_indexes[] = ['name' => 'idx_categoryname', 'field' => 'categoryname'];
 
-        return (object)['realtablename' => $dbprefix . 'customtables_categories',
+        return (object)['realtablename' => $dbPrefix . 'customtables_categories',
             'fields' => $tables_projected_fields,
             'indexes' => $tables_projected_indexes,
             'comment' => 'Custom Tables Categories'];
@@ -362,7 +362,7 @@ class IntegrityCoreTables extends IntegrityChecks
     protected static function getCoreTableFields_Log(): object
     {
         $conf = Factory::getConfig();
-        $dbprefix = $conf->get('dbprefix');
+        $dbPrefix = $conf->get('dbprefix');
 
         $tables_projected_fields = array();
 
@@ -378,7 +378,7 @@ class IntegrityCoreTables extends IntegrityChecks
         $tables_projected_indexes[] = ['name' => 'idx_userid', 'field' => 'userid'];
         $tables_projected_indexes[] = ['name' => 'idx_action', 'field' => 'action'];
 
-        return (object)['realtablename' => $dbprefix . 'customtables_log',
+        return (object)['realtablename' => $dbPrefix . 'customtables_log',
             'fields' => $tables_projected_fields,
             'indexes' => $tables_projected_indexes,
             'comment' => 'Custom Tables Action Log'];
@@ -387,7 +387,7 @@ class IntegrityCoreTables extends IntegrityChecks
     protected static function getCoreTableFields_Options(): object
     {
         $conf = Factory::getConfig();
-        $dbprefix = $conf->get('dbprefix');
+        $dbPrefix = $conf->get('dbprefix');
 
         $tables_projected_fields = array();
         $tables_projected_fields[] = ['name' => 'id', 'ct_fieldtype' => '', 'mysql_type' => 'INT UNSIGNED NOT NULL AUTO_INCREMENT', 'postgresql_type' => 'id INT check (id > 0) NOT NULL DEFAULT NEXTVAL (\'#__customtables_options_seq\')'];
@@ -413,7 +413,7 @@ class IntegrityCoreTables extends IntegrityChecks
         //$tables_projected_indexes[]=['name'=>'idx_familytree','field'=>'familytree'];
         //$tables_projected_indexes[]=['name'=>'idx_familytreestr','field'=>'familytreestr'];
 
-        return (object)['realtablename' => $dbprefix . 'customtables_options',
+        return (object)['realtablename' => $dbPrefix . 'customtables_options',
             'fields' => $tables_projected_fields,
             'indexes' => $tables_projected_indexes,
             'comment' => 'Hierarchical structure records (Custom Tables field type)'];

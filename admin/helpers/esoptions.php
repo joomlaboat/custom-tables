@@ -19,14 +19,13 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 class JHTMLESOptions
 {
 
-    public static function options($currentoptionid, $control_name, $value)
+    public static function options($currentOptionId, $control_name, $value)
     {
-
         $db = Factory::getDBO();
 
         $query = 'SELECT id, optionname '
             . ' FROM #__customtables_options '
-            . ' WHERE id!=' . (int)$currentoptionid
+            . ' WHERE id!=' . (int)$currentOptionId
             . ' ORDER BY optionname';
         $db->setQuery($query);
         $optionlist = $db->loadAssocList();
@@ -35,9 +34,5 @@ class JHTMLESOptions
         $optionlist[] = array('id' => '0', 'optionname' => '- ROOT');
 
         return JHTML::_('select.genericlist', $optionlist, $control_name, 'class="inputbox"', 'id', 'optionname', $value);
-
-
     }
-
-
 }

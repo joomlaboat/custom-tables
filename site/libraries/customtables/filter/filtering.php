@@ -924,7 +924,7 @@ class LinkJoinFilters
     static public function getFilterBox($tableName, $dynamic_filter_fieldname, $control_name, $filterValue, $control_name_postfix = ''): string
     {
         $fieldrow = Fields::getFieldRowByName($dynamic_filter_fieldname, 0, $tableName);
-        
+
         if ($fieldrow === null)
             return '';
 
@@ -934,11 +934,11 @@ class LinkJoinFilters
         return '';
     }
 
-    static protected function getFilterElement_SqlJoin($typeparams, $control_name, $filterValue, $control_name_postfix = ''): string
+    static protected function getFilterElement_SqlJoin($typeParams, $control_name, $filterValue, $control_name_postfix = ''): string
     {
         $db = Factory::getDBO();
         $result = '';
-        $pair = explode(',', $typeparams);
+        $pair = explode(',', $typeParams);
 
         $tablename = $pair[0];
         if (isset($pair[1]))

@@ -34,7 +34,7 @@ class JHTMLESFileLink
             $real_path = $relativePath . $path; //use path relative to website root directory
         } else {
             $relativePath = '';
-            $real_path = $path;//unrelative path
+            $real_path = $path;//un-relative path
         }
 
         if (file_exists($real_path)) {

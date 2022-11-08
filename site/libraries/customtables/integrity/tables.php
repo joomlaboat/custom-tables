@@ -118,16 +118,16 @@ class IntegrityTables extends \CustomTables\IntegrityChecks
     protected static function checkIfTablesExists($tables_rows)
     {
         $conf = Factory::getConfig();
-        $dbprefix = $conf->get('dbprefix');
+        $dbPrefix = $conf->get('dbprefix');
 
         foreach ($tables_rows as $row) {
-            if (!ESTables::checkIfTableExists($dbprefix . 'customtables_table_' . $row['tablename'])) {
+            if (!ESTables::checkIfTableExists($dbPrefix . 'customtables_table_' . $row['tablename'])) {
                 $conf = Factory::getConfig();
                 $database = $conf->get('db');
-                $dbprefix = $conf->get('dbprefix');
+                $dbPrefix = $conf->get('dbprefix');
 
                 if ($row['customtablename'] === null or $row['customtablename'] == '') {
-                    if (ESTables::createTableIfNotExists($database, $dbprefix, $row['tablename'], $row['tabletitle'], $row['customtablename'])) {
+                    if (ESTables::createTableIfNotExists($database, $dbPrefix, $row['tablename'], $row['tabletitle'], $row['customtablename'])) {
                         Factory::getApplication()->enqueueMessage('Table "' . $row['tabletitle'] . '" created.', 'notice');
                     }
                 }

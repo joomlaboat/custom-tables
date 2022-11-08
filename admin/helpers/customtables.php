@@ -180,16 +180,16 @@ abstract class CustomtablesHelper
                 // default is to return lower
                 return strtolower($string);
             } elseif ($type === 'W') {
-                // return a string with all first letter of each word uppercase(no undersocre)
+                // return a string with all first letter of each word uppercase(no underscore)
                 return ucwords(strtolower($string));
             } elseif ($type === 'w' || $type === 'word') {
-                // return a string with all lowercase(no undersocre)
+                // return a string with all lowercase(no underscore)
                 return strtolower($string);
             } elseif ($type === 'Ww' || $type === 'Word') {
-                // return a string with first letter of the first word uppercase and all the rest lowercase(no undersocre)
+                // return a string with first letter of the first word uppercase and all the rest lowercase(no underscore)
                 return ucfirst(strtolower($string));
             } elseif ($type === 'WW' || $type === 'WORD') {
-                // return a string with all the uppercase(no undersocre)
+                // return a string with all the uppercase(no underscore)
                 return strtoupper($string);
             } elseif ($type === 'U' || $type === 'strtoupper') {
                 // replace white space with underscore
@@ -199,7 +199,7 @@ abstract class CustomtablesHelper
             } elseif ($type === 'F' || $type === 'ucfirst') {
                 // replace white space with underscore
                 $string = preg_replace('/\s+/', $spacer, $string);
-                // return with first caracter to upper
+                // return with first character to upper
                 return ucfirst(strtolower($string));
             } elseif ($type === 'cA' || $type === 'cAmel' || $type === 'camelcase') {
                 // convert all words to first letter uppercase

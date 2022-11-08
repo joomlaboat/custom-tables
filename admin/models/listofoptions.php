@@ -68,7 +68,7 @@ class CustomTablesModelListOfOptions extends JModelList
 
         $where = array();
 
-        // just in case filter_order get's messed up
+        // just in case filter_order gets messed up
         if ($filter_order) {
             $orderby = ' ORDER BY ' . $filter_order . ' ' . $filter_order_Dir . ', m.parentid, m.ordering';
         } else {

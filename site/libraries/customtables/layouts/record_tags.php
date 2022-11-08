@@ -168,8 +168,8 @@ class Twig_Record_Tags
 
         foreach ($join_table_fields as $join_table_field) {
             if ($join_table_field['type'] == 'sqljoin') {
-                $typeparams = JoomlaBasicMisc::csv_explode(',', $join_table_field['typeparams'], '"', false);
-                $join_table_join_to_table = $typeparams[0];
+                $typeParams = JoomlaBasicMisc::csv_explode(',', $join_table_field['typeparams'], '"', false);
+                $join_table_join_to_table = $typeParams[0];
                 if ($join_table_join_to_table == $this->ct->Table->tablename)
                     return intval($this->advancedjoin('count', $join_table, '_id', $join_table_field['fieldname'], '_id', $filter));
             }
@@ -439,8 +439,8 @@ class Twig_Record_Tags
 
         foreach ($join_table_fields as $join_table_field) {
             if ($join_table_field['type'] == 'sqljoin') {
-                $typeparams = JoomlaBasicMisc::csv_explode(',', $join_table_field['typeparams'], '"', false);
-                $join_table_join_to_table = $typeparams[0];
+                $typeParams = JoomlaBasicMisc::csv_explode(',', $join_table_field['typeparams'], '"', false);
+                $join_table_join_to_table = $typeParams[0];
                 if ($join_table_join_to_table == $this->ct->Table->tablename)
                     return $this->advancedjoin($function, $join_table, '_id', $join_table_field['fieldname'], $value_field, $filter);
             }
@@ -495,8 +495,8 @@ class Twig_Record_Tags
 
         foreach ($join_table_fields as $join_table_field) {
             if ($join_table_field['type'] == 'sqljoin') {
-                $typeparams = JoomlaBasicMisc::csv_explode(',', $join_table_field['typeparams'], '"', false);
-                $join_table_join_to_table = $typeparams[0];
+                $typeParams = JoomlaBasicMisc::csv_explode(',', $join_table_field['typeparams'], '"', false);
+                $join_table_join_to_table = $typeParams[0];
                 if ($join_table_join_to_table == $this->ct->Table->tablename) {
                     $complete_filter = $join_table_field['fieldname'] . '=' . $this->ct->Table->record[$this->ct->Table->realidfieldname];
                     if ($filter != '')

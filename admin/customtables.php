@@ -24,7 +24,7 @@ if (!Factory::getUser()->authorise('core.manage', 'com_customtables')) {
 
 $path = JPATH_COMPONENT_SITE . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR;
 require_once($path . 'loader.php');
-CTLoader($inclide_utilities = true);
+CTLoader($include_utilities = true);
 
 // require helper files
 JLoader::register('CustomtablesHelper', dirname(__FILE__) . '/helpers/customtables.php');

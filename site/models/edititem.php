@@ -739,19 +739,19 @@ class CustomTablesModelEditItem extends JModelLegacy
     }
 
     /*
-	function CheckValueRule($prefix,$fieldname, $fieldtype, $typeparams)
+	function CheckValueRule($prefix,$fieldname, $fieldType, $typeParams)
 	{
 		$valuearray=array();
 		$value='';
 
-		switch($fieldtype)
+		switch($fieldType)
 			{
 				case 'records':
 
-					$typeparamsarray=explode(',',$typeparams);
-					if(count($typeparamsarray)>2)
+					$typeParamsArrayy=explode(',',$typeParams);
+					if(count($typeParamsArrayy)>2)
 					{
-						$esr_selector=$typeparamsarray[2];
+						$esr_selector=$typeParamsArrayy[2];
 						$selectorpair=explode(':',$esr_selector);
 
 						switch($selectorpair[0])
@@ -877,7 +877,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 				case 'customtables':
 
-						$typeparams_arr=explode(',',$typeparams);
+						$typeParams_arr=explode(',',$typeParams);
 						$optionname=$typeparams_arr[0];
 
 						if($typeparams_arr[1]=='multi')

@@ -60,10 +60,10 @@ class tagProcessor_Value
                 $ValueOptions = array();
                 $ValueList = JoomlaBasicMisc::getListToReplace($field->fieldname, $ValueOptions, $htmlresult, $tag_chars);
 
-                $fieldtype = $field->type;
+                $fieldType = $field->type;
                 $fieldname = $field->fieldname;
 
-                if ($fieldtype == 'imagegallery') {
+                if ($fieldType == 'imagegallery') {
                     if (!isset($isGalleryLoaded[$fieldname]) or !$isGalleryLoaded[$fieldname]) {
                         $isGalleryLoaded[$fieldname] = true;
                         $r = CT_FieldTypeTag_imagegallery::getGalleryRows($ct->Table->tablename, $fieldname, $row[$ct->Table->realidfieldname]);
@@ -75,7 +75,7 @@ class tagProcessor_Value
                     else
                         $isEmpty = false;
 
-                } elseif ($fieldtype == 'filebox') {
+                } elseif ($fieldType == 'filebox') {
 
                     if (count($isFileBoxLoaded) > 0) {
                         if (!$isFileBoxLoaded[$fieldname]) {
@@ -308,42 +308,42 @@ class tagProcessor_Value
 
     public static function isEmpty(&$rowValue, Field $field): bool
     {
-        $fieldtype = $field->type;
+        $fieldType = $field->type;
 
-        if ($fieldtype == 'int' or $fieldtype == 'user' or $fieldtype == 'userid' or $fieldtype == 'usergroup') {
+        if ($fieldType == 'int' or $fieldType == 'user' or $fieldType == 'userid' or $fieldType == 'usergroup') {
             $v = (int)$rowValue;
             if ($v == 0)
                 return true;
             else
                 return false;
-        } elseif ($fieldtype == 'float') {
+        } elseif ($fieldType == 'float') {
             $v = (float)$rowValue;
             if ($v == 0)
                 return true;
             else
                 return false;
-        } elseif ($fieldtype == 'checkbox') {
+        } elseif ($fieldType == 'checkbox') {
             $v = (int)$rowValue;
             if ($v == 0)
                 return true;
             else
                 return false;
-        } elseif ($fieldtype == 'records' or $fieldtype == 'usergroups') {
+        } elseif ($fieldType == 'records' or $fieldType == 'usergroups') {
             if ($rowValue == '' or $rowValue == ',' or $rowValue == ',,')
                 return true;
             else
                 return false;
-        } elseif ($fieldtype == 'date') {
+        } elseif ($fieldType == 'date') {
             if ($rowValue == '' or $rowValue == '0000-00-00')
                 return true;
             else
                 return false;
-        } elseif ($fieldtype == 'time') {
+        } elseif ($fieldType == 'time') {
             if ($rowValue == '' or $rowValue == '0')
                 return true;
             else
                 return false;
-        } elseif ($fieldtype == 'image') {
+        } elseif ($fieldType == 'image') {
             if ($rowValue == '' or $rowValue == '-1' or $rowValue == '0')
                 return true;
             else {
@@ -366,12 +366,12 @@ class tagProcessor_Value
                 else
                     return true;
             }
-        } elseif ($fieldtype == 'customtables') {
+        } elseif ($fieldType == 'customtables') {
             if ($rowValue == '' or $rowValue == ',.')
                 return true;
             else
                 return false;
-        } elseif ($fieldtype == 'sqljoin') {
+        } elseif ($fieldType == 'sqljoin') {
             if ($rowValue == 0)
                 return true;
             else
@@ -466,11 +466,11 @@ class tagProcessor_Value
                             . $esinputbox->renderFieldBox($fieldRow, $row, $value_option_list, $onchange);
                         $vlu .= '</div>';
                     } else {
-                        //$fieldtype = $fieldRow['type'];
+                        //$fieldType = $fieldRow['type'];
                         //$fieldname = $fieldRow['fieldname'];
 
                         //$rowValue='';
-                        //tagProcessor_Value::doMultiValues($ct,$fieldRow,$row,$fieldtype,$rowValue,$fieldname);
+                        //tagProcessor_Value::doMultiValues($ct,$fieldRow,$row,$fieldType,$rowValue,$fieldname);
                         $vlu = $row[$fieldRow['realfieldname']];
                     }
 

@@ -104,10 +104,10 @@ foreach ($this->allTables as $table) {
 
                 <?php
 
-                $morethanonelang = false;
+                $moreThanOneLanguage = false;
                 foreach ($this->ct->Languages->LanguageList as $lang) {
                     $id = 'fieldtitle';
-                    if ($morethanonelang) {
+                    if ($moreThanOneLanguage) {
                         $id .= '_' . $lang->sef;
 
                         $cssclass = 'form-control valid form-control-success';
@@ -123,7 +123,7 @@ foreach ($this->allTables as $table) {
                     if (isset($item_array[$id]))
                         $vlu = $item_array[$id];
 
-                    if ($morethanonelang)
+                    if ($moreThanOneLanguage)
                         $field_label = Text::_('COM_CUSTOMTABLES_FIELDS_FIELDTITLE', true);
                     else
                         $field_label = $this->form->getLabel('fieldtitle');
@@ -139,7 +139,7 @@ foreach ($this->allTables as $table) {
 					</div>
 					';
 
-                    $morethanonelang = true; //More than one language installed
+                    $moreThanOneLanguage = true; //More than one language installed
                 }
                 ?>
 
@@ -207,10 +207,10 @@ foreach ($this->allTables as $table) {
 
         <?php
 
-        $morethanonelang = false;
+        $moreThanOneLanguage = false;
         foreach ($this->ct->Languages->LanguageList as $lang) {
             $id = 'description';
-            if ($morethanonelang)
+            if ($moreThanOneLanguage)
                 $id .= '_' . $lang->sef;
 
             echo HTMLHelper::_('uitab.addTab', 'fieldsTab', $id, $lang->title);
@@ -241,7 +241,7 @@ foreach ($this->allTables as $table) {
 					</div>
 				</div>
 			</div>';
-            $morethanonelang = true; //More than one language installed
+            $moreThanOneLanguage = true; //More than one language installed
 
             echo HTMLHelper::_('uitab.endTab');
         }

@@ -47,9 +47,9 @@ class CustomTablesFileMethods
         return $rec->file_ext;
     }
 
-    static public function DeleteFileBoxFiles($fileBoxTableName, $estableid, $fileBoxName, $typeparams): void
+    static public function DeleteFileBoxFiles($fileBoxTableName, $estableid, $fileBoxName, $typeParams): void
     {
-        $fileFolder = JPATH_SITE . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $typeparams);
+        $fileFolder = JPATH_SITE . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $typeParams);
 
         $db = Factory::getDBO();
 

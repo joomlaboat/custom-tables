@@ -67,10 +67,10 @@ class CustomtablesModelTables extends JModelAdmin
             return false;
         }
 
-        // The front end calls this model and uses a_id to avoid id clashes so we need to check for that first.
+        // The front end calls this model and uses a_id to avoid id clashes, so we need to check for that first.
         if ($this->ct->Env->jinput->get('a_id')) {
             $id = $this->ct->Env->jinput->get('a_id', 0, 'INT');
-        } // The back end uses id so we use that the rest of the time and set it to 0 by default.
+        } // The back end uses id, so we use that the rest of the time and set it to 0 by default.
         else {
             $id = $this->ct->Env->jinput->get('id', 0, 'INT');
         }
@@ -313,17 +313,17 @@ class CustomtablesModelTables extends JModelAdmin
         $conf = Factory::getConfig();
 
         $database = $conf->get('db');
-        $dbprefix = $conf->get('dbprefix');
+        $dbPrefix = $conf->get('dbprefix');
 
         $data_extra = $this->ct->Env->jinput->get('jform', array(), 'ARRAY');
 
-        $morethanonelang = false;
+        $moreThanOneLanguage = false;
 
         $fields = Fields::getListOfExistingFields('#__customtables_tables', false);
         foreach ($this->ct->Languages->LanguageList as $lang) {
             $id_title = 'tabletitle';
             $id_desc = 'description';
-            if ($morethanonelang) {
+            if ($moreThanOneLanguage) {
                 $id_title .= '_' . $lang->sef;
                 $id_desc .= '_' . $lang->sef;
 
@@ -336,7 +336,7 @@ class CustomtablesModelTables extends JModelAdmin
 
             $data[$id_title] = $data_extra[$id_title];
             $data[$id_desc] = $data_extra[$id_desc];
-            $morethanonelang = true; //More than one language installed
+            $moreThanOneLanguage = true; //More than one language installed
         }
 
         $tabletitle = $data['tabletitle'];
@@ -349,15 +349,15 @@ class CustomtablesModelTables extends JModelAdmin
 
         $tablename = strtolower(trim(preg_replace("/[^a-zA-Z_\d]/", "", $tablename)));
 
-        //If it's a new table, check if field name is unique or add number "_1" if its not.
+        //If it's a new table, check if field name is unique or add number "_1" if it's not.
         if ($tableid == 0)
             $tablename = ESTables::checkTableName($tablename);
 
         $data['tablename'] = $tablename;
 
-        if ($tableid != 0 and (string)$data['customtablename'] == '')//do not rename real table if its a third-party table - not part of the Custom Tables
+        if ($tableid != 0 and (string)$data['customtablename'] == '')//do not rename real table if it's a third-party table - not part of the Custom Tables
         {
-            ESTables::renameTableIfNeeded($tableid, $database, $dbprefix, $tablename);
+            ESTables::renameTableIfNeeded($tableid, $database, $dbPrefix, $tablename);
         }
 
         $old_tablename = '';
@@ -385,7 +385,7 @@ class CustomtablesModelTables extends JModelAdmin
 
             if (parent::save($data)) {
 
-                ESTables::createTableIfNotExists($database, $dbprefix, $tablename, $tabletitle, $data['customtablename']);
+                ESTables::createTableIfNotExists($database, $dbPrefix, $tablename, $tabletitle, $data['customtablename']);
                 return true;
             }
         } else {
@@ -395,7 +395,7 @@ class CustomtablesModelTables extends JModelAdmin
                 if ($originalTableId != 0 and $old_tablename != '')
                     ESTables::copyTable($this->ct, $originalTableId, $tablename, $old_tablename, $data['customtablename']);
 
-                ESTables::createTableIfNotExists($database, $dbprefix, $tablename, $tabletitle, $data['customtablename']);
+                ESTables::createTableIfNotExists($database, $dbPrefix, $tablename, $tabletitle, $data['customtablename']);
 
                 //Add fields if it's a third-party table and no fields added yet.
                 if ($data['customtablename'] !== null and $data['customtablename'] != '')
