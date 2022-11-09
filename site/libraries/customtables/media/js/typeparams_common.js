@@ -37,7 +37,7 @@ function typeChanged() {
 
 function renderInputBox(id, param, vlu, attributes) {
     const param_att = param["@attributes"];
-
+    let result = '';
     if (param_att.type != null) {
         if (param_att.type === "number") {
             if (vlu === '') {
@@ -330,8 +330,8 @@ function updateParamString(inputBoxId, countList, countParams, objectId, e, rawQ
                     if (v.indexOf('"') !== -1)
                         v = v.replaceAll('"', '****quote****');
 
-                    if (v.indexOf("'") !== -1)
-                        v = v.replaceAll("'", '****apos****');
+                    //if (v.indexOf("'") !== -1)
+                    //v = v.replaceAll("'", '****apos****');
 
                     v = '"' + v + '"';
                 }
@@ -382,8 +382,7 @@ function updateParamString(inputBoxId, countList, countParams, objectId, e, rawQ
             if (typeparams != null) {
                 let modalParamListObject = document.getElementById("modalParamList");
                 if (modalParamListObject) {
-                    let v = renderParamList(typeparams, objectId, tmp_list);
-                    modalParamListObject.innerHTML = v;
+                    modalParamListObject.innerHTML = renderParamList(typeparams, objectId, tmp_list);
                 } else
                     alert("modalParamList not found.");
             }

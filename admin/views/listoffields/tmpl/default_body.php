@@ -123,7 +123,7 @@ $edit = "index.php?option=com_customtables&view=listoffields&task=fields.edit&ta
             <?php echo Text::_($item->type); ?>
         </td>
         <td class="hidden-phone">
-            <?php echo $this->escape($item->typeparams); ?>
+            <?php echo str_replace('****apos****', "'", str_replace('****quote****', '"', $this->escape($item->typeparams))); ?>
         </td>
         <td class="hidden-phone">
             <?php echo Text::_($item->isrequired); ?>

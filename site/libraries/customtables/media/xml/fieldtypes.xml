@@ -1243,7 +1243,7 @@
                 <param name="attributes" label="Attributes"
                        description="Optional attributes like: disabled, onclick, onchange etc." default=""
                        type="string"/>
-                <param name="format" label="format" description="Date/Time format. Similar to PHP date format."
+                <param name="format" label="Format" description="Date/Time format. Similar to PHP date format."
                        default="H:i:s" type="string"/>
             </params>
         </editparams>

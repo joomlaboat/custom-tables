@@ -1045,13 +1045,13 @@
         <!-- Deprecated -->
 
         <tag name="pagetitle" label="Set Page Title" startchar="{" endchar="}" deprecated="1"
-             twigreplacement="document.setPageTitle"/>
+             twigreplacement="document.setpagetitle"/>
         <tag name="headtag" label="HTML Document Head Tag" startchar="{" endchar="}" deprecated="1"
-             twigreplacement="document.setHeadTag"/>
+             twigreplacement="document.setheadtag"/>
         <tag name="metakeywords" label="Set Meta Keywords" startchar="{" endchar="}" deprecated="1"
-             twigreplacement="document.setMetaKeywords"/>
+             twigreplacement="document.setnetakeywords"/>
         <tag name="metadescription" label="Set Meta Description" startchar="{" endchar="}" deprecated="1"
-             twigreplacement="document.setMetaDescription"/>
+             twigreplacement="document.setmetadescription"/>
 
     </tagset>
 

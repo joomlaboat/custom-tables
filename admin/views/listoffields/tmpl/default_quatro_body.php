@@ -58,7 +58,7 @@ $edit = "index.php?option=com_customtables&view=listoffields&task=fields.edit&ta
 			</span>
                 <?php if ($this->saveOrder) : ?>
                     <input type="text" name="order[]" size="5" value="<?php echo $item->ordering; ?>"
-                           class="width-20 text-area-order hidden">
+                           class="width-20 text-area-order hidden"/>
                 <?php endif; ?>
             </td>
         <?php endif; ?>
@@ -124,7 +124,7 @@ $edit = "index.php?option=com_customtables&view=listoffields&task=fields.edit&ta
             <?php echo Text::_($item->type); ?>
         </td>
         <td>
-            <?php echo $this->escape($item->typeparams); ?>
+            <?php echo str_replace('****apos****', "'", str_replace('****quote****', '"', $this->escape($item->typeparams))); ?>
         </td>
         <td>
             <?php echo Text::_($item->isrequired); ?>

@@ -190,17 +190,17 @@ class Twig_Record_Tags
 
         $field_details = $this->join_getRealFieldName($field1_findwhat, $this->ct->Table->tablerow);
         if ($field_details === null) return '';
-        $field1_findwhat_realname = $field_details[0];
+        $field1_findWhat_realName = $field_details[0];
         $field1_type = $field_details[1];
 
         $field_details = $this->join_getRealFieldName($field2_lookwhere, $tablerow);
         if ($field_details === null) return '';
-        $field2_lookwhere_realname = $field_details[0];
+        $field2_lookWhere_realName = $field_details[0];
         $field2_type = $field_details[1];
 
         $field_details = $this->join_getRealFieldName($field3_readvalue, $tablerow);
         if ($field_details === null) return '';
-        $field3_readvalue_realname = $field_details[0];
+        $field3_readValue_realName = $field_details[0];
 
         $sj_realtablename = $tablerow['realtablename'];
         $sj_realidfieldname = $tablerow['realidfieldname'];
@@ -208,13 +208,13 @@ class Twig_Record_Tags
 
         if ($order_by_option != '') {
             $field_details = $this->join_getRealFieldName($order_by_option, $tablerow);
-            $order_by_option_realname = $field_details[0] ?? '';
+            $order_by_option_realName = $field_details[0] ?? '';
         } else
-            $order_by_option_realname = '';
+            $order_by_option_realName = '';
 
 
-        $query = $this->join_buildQuery($sj_function, $tablerow, $field1_findwhat_realname, $field1_type, $field2_lookwhere_realname,
-            $field2_type, $field3_readvalue_realname, $additional_where, $order_by_option_realname);
+        $query = $this->join_buildQuery($sj_function, $tablerow, $field1_findWhat_realName, $field1_type, $field2_lookWhere_realName,
+            $field2_type, $field3_readValue_realName, $additional_where, $order_by_option_realName);
 
         $this->ct->db->setQuery($query);
 
@@ -333,44 +333,44 @@ class Twig_Record_Tags
         return $sj_realtablename . '.es_' . $str;
     }
 
-    protected function join_buildQuery($sj_function, $tablerow, $field1_findwhat, $field1_type, $field2_lookwhere, $field2_type, $field3_readvalue, $additional_where, $order_by_option): string
+    protected function join_buildQuery($sj_function, $tableRow, $field1_findWhat, $field1_type, $field2_lookWhere, $field2_type, $field3_readValue, $additional_where, $order_by_option): string
     {
         if ($sj_function == 'count')
-            $query = 'SELECT count(' . $tablerow['realtablename'] . '.' . $field3_readvalue . ') AS vlu ';
+            $query = 'SELECT count(' . $tableRow['realtablename'] . '.' . $field3_readValue . ') AS vlu ';
         elseif ($sj_function == 'sum')
-            $query = 'SELECT sum(' . $tablerow['realtablename'] . '.' . $field3_readvalue . ') AS vlu ';
+            $query = 'SELECT sum(' . $tableRow['realtablename'] . '.' . $field3_readValue . ') AS vlu ';
         elseif ($sj_function == 'avg')
-            $query = 'SELECT avg(' . $tablerow['realtablename'] . '.' . $field3_readvalue . ') AS vlu ';
+            $query = 'SELECT avg(' . $tableRow['realtablename'] . '.' . $field3_readValue . ') AS vlu ';
         elseif ($sj_function == 'min')
-            $query = 'SELECT min(' . $tablerow['realtablename'] . '.' . $field3_readvalue . ') AS vlu ';
+            $query = 'SELECT min(' . $tableRow['realtablename'] . '.' . $field3_readValue . ') AS vlu ';
         elseif ($sj_function == 'max')
-            $query = 'SELECT max(' . $tablerow['realtablename'] . '.' . $field3_readvalue . ') AS vlu ';
+            $query = 'SELECT max(' . $tableRow['realtablename'] . '.' . $field3_readValue . ') AS vlu ';
         else {
             //need to resolve record value if it's "records" type
-            $query = 'SELECT ' . $tablerow['realtablename'] . '.' . $field3_readvalue . ' AS vlu '; //value or smart
+            $query = 'SELECT ' . $tableRow['realtablename'] . '.' . $field3_readValue . ' AS vlu '; //value or smart
         }
 
         $query .= ' FROM ' . $this->ct->Table->realtablename . ' ';
 
-        $sj_tablename = $tablerow['tablename'];
+        $sj_tablename = $tableRow['tablename'];
 
         if ($this->ct->Table->tablename != $sj_tablename) {
             // Join not needed when we are in the same table
-            $query .= ' LEFT JOIN ' . $tablerow['realtablename'] . ' ON ';
+            $query .= ' LEFT JOIN ' . $tableRow['realtablename'] . ' ON ';
 
             if ($field1_type == 'records') {
                 if ($field2_type == 'records') {
                     $query .= '1==2'; //todo
                 } else {
-                    $query .= 'INSTR(' . $this->ct->Table->realtablename . '.' . $field1_findwhat . ',CONCAT(",",' . $tablerow['realtablename'] . '.' . $field2_lookwhere . ',","))';
+                    $query .= 'INSTR(' . $this->ct->Table->realtablename . '.' . $field1_findWhat . ',CONCAT(",",' . $tableRow['realtablename'] . '.' . $field2_lookWhere . ',","))';
                 }
             } else {
                 if ($field2_type == 'records') {
-                    $query .= 'INSTR(' . $tablerow['realtablename'] . '.' . $field2_lookwhere
-                        . ',  CONCAT(",",' . $this->ct->Table->realtablename . '.' . $field1_findwhat . ',","))';
+                    $query .= 'INSTR(' . $tableRow['realtablename'] . '.' . $field2_lookWhere
+                        . ',  CONCAT(",",' . $this->ct->Table->realtablename . '.' . $field1_findWhat . ',","))';
                 } else {
-                    $query .= ' ' . $this->ct->Table->realtablename . '.' . $field1_findwhat . ' = '
-                        . ' ' . $tablerow['realtablename'] . '.' . $field2_lookwhere;
+                    $query .= ' ' . $this->ct->Table->realtablename . '.' . $field1_findWhat . ' = '
+                        . ' ' . $tableRow['realtablename'] . '.' . $field2_lookWhere;
                 }
             }
         }
@@ -389,7 +389,7 @@ class Twig_Record_Tags
             $query .= ' WHERE ' . implode(' AND ', $wheres);
 
         if ($order_by_option != '')
-            $query .= ' ORDER BY ' . $tablerow['realtablename'] . '.' . $order_by_option;
+            $query .= ' ORDER BY ' . $tableRow['realtablename'] . '.' . $order_by_option;
 
         $query .= ' LIMIT 1';
 

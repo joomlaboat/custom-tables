@@ -315,9 +315,9 @@ function renderFieldTags(startChar, postfix, endChar, fieldtypes_to_skip, param_
             result += '<div style="display:inline-block;">';
 
             if (joomlaVersion < 4)
-                result += '<a href=\'javascript:addFieldTag("' + startChar + '","' + postfix + '","' + endChar + '","' + btoa(field.fieldname) + '",' + p + ');\' class="btn" alt="' + alt + '" title="' + alt + '">' + button_value + '</a>';
+                result += '<a href=\'javascript:addFieldTag("' + startChar + '","' + postfix + '","' + endChar + '","' + btoa(field.fieldname) + '",' + p + ');\' class="btn" title="' + alt + '">' + button_value + '</a>';
             else
-                result += '<a href=\'javascript:addFieldTag("' + startChar + '","' + postfix + '","' + endChar + '","' + btoa(field.fieldname) + '",' + p + ');\' class="btn-primary" alt="' + alt + '" title="' + alt + '">' + button_value + '</a>';
+                result += '<a href=\'javascript:addFieldTag("' + startChar + '","' + postfix + '","' + endChar + '","' + btoa(field.fieldname) + '",' + p + ');\' class="btn-primary" title="' + alt + '">' + button_value + '</a>';
 
             result += '</div>';
             result += '</div>';
@@ -567,7 +567,7 @@ function FillLayout() {
 function getLayout_Page() {
 
     let result = "";
-    let l = wizardFields.length;
+    //let l = wizardFields.length;
 
     result += '<style>\r\n';
     result += '.datagrid th{text-align:left;}\r\n';

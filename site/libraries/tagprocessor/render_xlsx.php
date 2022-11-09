@@ -65,7 +65,7 @@ trait render_xlsx
             $value = JoomlaBasicMisc::strip_tags_content($value, '<p><br><i><u><b><span>', FALSE);
 
             $value = strip_tags($value);//, '<center><p><br><i><u><b><span>');
-            self::simpleHTMLcorrections($value);
+            self::simpleHTMLCorrections($value);
 
 
             $richText = $value;//$wizard->toRichTextObject($value);
@@ -75,13 +75,13 @@ trait render_xlsx
 
             // Output Rows
 
-            $recordline = str_replace('|(', '{', $fieldPair[1]);
-            $recordline = str_replace(')|', '}', $recordline);
-            $recordline = str_replace('\'', '"', $recordline);
-            $recordline = str_replace('&&&&quote&&&&', '"', $recordline);
+            $recordLine = str_replace('|(', '{', $fieldPair[1]);
+            $recordLine = str_replace(')|', '}', $recordLine);
+            $recordLine = str_replace('\'', '"', $recordLine);
+            $recordLine = str_replace('&&&&quote&&&&', '"', $recordLine);
 
             $LayoutProc = new LayoutProcessor($ct);
-            $LayoutProc->layout = $recordline;
+            $LayoutProc->layout = $recordLine;
 
             $records = array();
 
@@ -134,9 +134,9 @@ trait render_xlsx
         return $r;
     }
 
-    protected static function simpleHTMLcorrections(&$text): void
+    protected static function simpleHTMLCorrections(&$text): void
     {
-        $text = str_ireplace('<center>', "<p style='text-align: center'>", $text);
-        $text = str_ireplace('</center>', '</p>', $text);
+        $text = str_ireplace('<' . 'center' . '>', "<p style='text-align: center'>", $text);
+        $text = str_ireplace('</' . 'center' . '>', '</p>', $text);
     }
 }
