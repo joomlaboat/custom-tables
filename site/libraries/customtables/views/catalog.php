@@ -124,8 +124,11 @@ class Catalog
                 if (!is_null($this->ct->Params->itemLayout) and $this->ct->Params->itemLayout != '')
                     $itemLayout = $Layouts->getLayout($this->ct->Params->itemLayout);
 
-                if ($pageLayout == '')
+                if ($pageLayout == '' and $itemLayout == '') {
                     $pageLayout = $Layouts->createDefaultLayout_SimpleCatalog($this->ct->Table->fields);
+                } elseif ($pageLayout == '' and $itemLayout != '') {
+                    $pageLayout = '{% block record %}' . $itemLayout . '{% endblock %}';
+                }
             }
         }
 
