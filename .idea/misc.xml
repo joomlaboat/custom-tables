@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectResources">
+    <resource url="https://schema.phpunit.de/9.3/phpunit.xsd" location="$PROJECT_DIR$" />
+  </component>
+</project>

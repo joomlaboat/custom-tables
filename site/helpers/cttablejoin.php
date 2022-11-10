@@ -34,6 +34,9 @@ class JHTMLCTTableJoin
         $params_filter = [];
         JHTMLCTTableJoin::parseTypeParams($field, $params_filter, $parent_filter_table_name, $parent_filter_field_name);
         $params_filter = array_reverse($params_filter);
+        if (count($params_filter) > 0 and isset($option_list[3])) {
+            $params_filter[0][1] = 'layout:' . $option_list[3];
+        }
 
         $filter = array_merge($filter, $params_filter);
 
@@ -74,7 +77,7 @@ class JHTMLCTTableJoin
             . '</div>';
     }
 
-    protected static function parseTagArguments($option_list, &$filter)
+    protected static function parseTagArguments($option_list, &$filter): array
     {
         //Preselects
         //example: city.edit("cssclass","attributes",[["province","name",true,"active=1","name"],["city","name",false,"active=1","name"],["streets","layout:TheStreetName",false,"active=1","streetname"]])
@@ -86,7 +89,7 @@ class JHTMLCTTableJoin
         //Twig teg example:
         //{{ componentid.edit("mycss","readonly",[["grades","grade"],["classes","class"]]) }}
         //{{ componentid.edit("mycss","readonly",["grades","grade"]) }}
-        //{{ componentid.edit("mycss","readonly","grades","grade") }}
+        //{{ componentid.edit("mycss","readonly",["grades","grade"],"gradesTitleLayout") }}
 
         $parent_filter_table_name = '';
         $parent_filter_field_name = '';
@@ -94,35 +97,41 @@ class JHTMLCTTableJoin
         if (isset($option_list[2])) {
             $option = $option_list[2];
             if (is_array($option)) {
-
-                //$filter[] = [table_name, field_name, allow_unpublished, filter, order_by];
-
-                if (is_array($option[0])) {
-                    foreach ($option as $optionFilter) {
-                        $optionFilter[5] = $parent_filter_table_name;
-                        $optionFilter[6] = $parent_filter_field_name;
-
-                        $filter[] = $optionFilter;
-                        $parent_filter_table_name = $optionFilter[0];
-                        $parent_filter_field_name = $optionFilter[1];
-                    }
-                } else {
-
-                    //Example: "cssclass","attributes", [table_name, field_name, allow_unpublished, filter, order_by]
-
-                    $tableName = $option[0];
-                    $fieldName = $option[1];
-                    $allow_unpublished = $option[2];
-                    $whereFilter = $option[3];
-                    $orderBy = $option[4];
-
+                if (count($option) > 0) {
                     //$filter[] = [table_name, field_name, allow_unpublished, filter, order_by];
-                    $filter[] = [$tableName, $fieldName, $allow_unpublished, $whereFilter, $orderBy, $parent_filter_table_name, $parent_filter_field_name];
-                    //$filter[] = [$option[0], $option[1], $option[2], $option[3], $option[4], $parent_filter_field_name];
-                    $parent_filter_table_name = $tableName;
-                    $parent_filter_field_name = $fieldName;
-                }
+
+                    if (is_array($option[0])) {
+                        foreach ($option as $optionFilter) {
+                            $optionFilter[5] = $parent_filter_table_name;
+                            $optionFilter[6] = $parent_filter_field_name;
+
+                            $filter[] = $optionFilter;
+                            $parent_filter_table_name = $optionFilter[0];
+                            $parent_filter_field_name = $optionFilter[1];
+                        }
+                    } else {
+
+                        //Example: "cssclass","attributes", [table_name, field_name, allow_unpublished, filter, order_by]
+
+                        $tableName = $option[0];
+                        $fieldName = $option[1];
+                        $allow_unpublished = $option[2];
+                        $whereFilter = $option[3];
+                        $orderBy = $option[4];
+
+                        //$filter[] = [table_name, field_name, allow_unpublished, filter, order_by];
+                        $filter[] = [$tableName, $fieldName, $allow_unpublished, $whereFilter, $orderBy, $parent_filter_table_name, $parent_filter_field_name];
+                        //$filter[] = [$option[0], $option[1], $option[2], $option[3], $option[4], $parent_filter_field_name];
+                        $parent_filter_table_name = $tableName;
+                        $parent_filter_field_name = $fieldName;
+                    }
+                } else
+                    return [];
             } else {
+
+                echo 'Table Join field: wrong option_list format - Parent Selector must be an array';
+                return [];
+                /*
                 //Example: "cssclass","attributes", table_name, field_name, allow_unpublished, filter, order_by
 
                 $tableName = $option;//same as $option_list[2]
@@ -135,6 +144,7 @@ class JHTMLCTTableJoin
                 $filter[] = [$tableName, $fieldName, $allow_unpublished, $whereFilter, $orderBy, $parent_filter_table_name, $parent_filter_field_name];
                 $parent_filter_table_name = $tableName;
                 $parent_filter_field_name = $fieldName;
+                */
             }
         }
 
@@ -201,8 +211,6 @@ class JHTMLCTTableJoin
 
             $filter[] = self::mapJoinTypeParams($field, $parent_filter_table_name, $parent_filter_field_name);
         }
-
-
         return true;
     }
 

@@ -191,18 +191,21 @@ class CT_FieldTypeTag_image
         $ct_getUploader = 'ct_getUploader(' . $field->id . ',"' . $urlString . '",' . $max_file_size . ',"jpg jpeg png gif svg webp","eseditForm",false,"ct_fileuploader_'
             . $field->fieldname . '","ct_eventsmessage_' . $field->fieldname . '","' . $fileId . '","' . $prefix . $field->fieldname . '","ct_ubloadedfile_box_' . $field->fieldname . '");';
 
+        $ct_fileuploader = '<div id="ct_fileuploader_' . $field->fieldname . '"></div>';
+        $ct_eventsmessage = '<div id="ct_eventsmessage_' . $field->fieldname . '"></div>';
+
+        $inputBoxFieldName = '<input type="hidden" name="' . $prefix . $field->fieldname . '" id="' . $prefix . $field->fieldname . '" value="" ' . ($field->isrequired ? ' class="required"' : '') . ' />';
+        $inputBoxFieldName_FileName = '<input type="hidden" name="' . $prefix . $field->fieldname . '_filename" id="' . $prefix . $field->fieldname . '_filename" value="" />';
+
         return '<div style="' . $style . '"' . ($field->isrequired ? ' class="inputbox required"' : '') . ' id="' . $element_id . '" '
             . 'data-label="' . $field->title . '" '
             . 'data-valuerule="' . str_replace('"', '&quot;', $field->valuerule) . '" '
             . 'data-valuerulecaption="' . str_replace('"', '&quot;', $field->valuerulecaption) . '" >'
-            . '<div id="ct_fileuploader_' . $field->fieldname . '"></div>'
-            . '<div id="ct_eventsmessage_' . $field->fieldname . '"></div>'
+            . $ct_fileuploader . $ct_eventsmessage
             . '<script>
                 ' . $ct_getUploader . '
            </script>
-            <input type="hidden" name="' . $prefix . $field->fieldname . '" id="' . $prefix . $field->fieldname . '" value="" ' . ($field->isrequired ? ' class="required"' : '') . ' />'
-            . '<input type="hidden" name="' . $prefix . $field->fieldname . '_filename" id="' . $prefix . $field->fieldname . '_filename" value="" />'
-            . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE') . ': ' . JoomlaBasicMisc::formatSizeUnits($max_file_size) . '</div>';
+           ' . $inputBoxFieldName . $inputBoxFieldName_FileName . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE') . ': ' . JoomlaBasicMisc::formatSizeUnits($max_file_size) . '</div>';
     }
 
     protected static function renderUploaderLimitations(): string

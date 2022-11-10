@@ -46,31 +46,27 @@ class Inputbox
     var ?array $row;
 
     var string $cssclass;
-    var string $cssstyle;
     var string $attributes;
     var string $onchange;
-
     var array $option_list;
     var string $place_holder;
     var string $prefix;
     var bool $isTwig;
+    protected string $cssStyle;
 
     function __construct(CT &$ct, $fieldRow, array $option_list = [], $isTwig = true, string $onchange = '')
     {
         $this->ct = &$ct;
-
         $this->isTwig = $isTwig;
 
-        // $option_list[0] - CSS Class
-        // $option_list[1] - Optional Parameter
         $this->cssclass = $option_list[0] ?? '';
-        $this->attributes = $option_list[1] ?? '';
-        $this->cssstyle = '';
+        $this->attributes = $option_list[1] ?? '';//Optional Parameter
+        $this->cssStyle = '';
         $this->onchange = $onchange;
 
         if (str_contains($this->cssclass, ':'))//it's a style, change it to attribute
         {
-            $this->cssstyle = $this->cssclass;
+            $this->cssStyle = $this->cssclass;
             $this->cssclass = '';
         }
 
@@ -321,7 +317,7 @@ class Inputbox
                 if ($value == '')
                     $value = $this->field->defaultvalue;
 
-                return JHTML::_('ESFileLink.render', $this->prefix . $this->field->fieldname, $value, $this->cssstyle, $this->cssclass, $this->field->params[0], $this->attributes);
+                return JHTML::_('ESFileLink.render', $this->prefix . $this->field->fieldname, $value, $this->cssStyle, $this->cssclass, $this->field->params[0], $this->attributes);
 
             case 'customtables':
                 return $this->render_customtables();
@@ -784,7 +780,7 @@ class Inputbox
                     . 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
                     . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" '
                     . ($value ? ' checked="checked" ' : '')
-                    . ($this->cssstyle != '' ? ' class="' . $this->cssstyle . '" ' : '')
+                    . ($this->cssStyle != '' ? ' class="' . $this->cssStyle . '" ' : '')
                     . ($this->cssclass != '' ? ' class="' . $this->cssclass . '" ' : '')
                     . ($check_attributes != '' ? ' ' . $check_attributes : '')
                     . '>'
@@ -1089,6 +1085,8 @@ class Inputbox
 
         //$this->option_list[0] - CSS Class
         //$this->option_list[1] - Optional Attributes
+        //$this->option_list[2] - Parent Selector - Array
+        //$this->option_list[3] - Custom Title Layout
 
         $sqljoin_attributes = ' data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '"'
             . ' data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '"';
@@ -1122,7 +1120,6 @@ class Inputbox
                 $this->cssclass,
                 $sqljoin_attributes);
         }
-
         return $result;
     }
 
