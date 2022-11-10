@@ -3,9 +3,9 @@
  * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan komlev <support@joomlaboat.com>
- * @link https://www.joomlaboat.com
+ * @link https://joomlaboat.com
  * @copyright Copyright (C) 2018-2022. All Rights Reserved
- * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
+ * @license GNU/GPL Version 2 or later - https://www.gnu.org/licenses/gpl-2.0.html
  **/
 
 namespace CustomTables;
@@ -723,7 +723,7 @@ class ImportTables
 
     public static function rebuildMenuTree($menuitem_new)
     {
-        // http://joomla.stackexchange.com/questions/5104/programmatically-add-menu-item-in-component
+        // https://joomla.stackexchange.com/questions/5104/programmatically-add-menu-item-in-component
         // sorts out the lft rgt issue
 
         $menuTable = JTableNested::getInstance('Menu');

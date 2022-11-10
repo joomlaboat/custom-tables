@@ -3,9 +3,9 @@
  * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan komlev <support@joomlaboat.com>
- * @link http://www.joomlaboat.com
+ * @link https://joomlaboat.com
  * @copyright Copyright (C) 2018-2021. All Rights Reserved
- * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
+ * @license GNU/GPL Version 2 or later - https://www.gnu.org/licenses/gpl-2.0.html
  **/
 
 // No direct access to this file
@@ -165,7 +165,7 @@ abstract class CustomtablesHelper
                 // Thanks @Łukasz Rysiak!
                 // $string = mb_ereg_replace("([^\w\s\d\-_\(\)])", '', $string);
                 $string = preg_replace("([^\w\s\d\-_\(\)])", '', $string);
-                // http://stackoverflow.com/a/2021729/1.8.177
+                // https://stackoverflow.com/a/2021729/1.8.177
                 return preg_replace('/\s+/', ' ', $string);
             }
             // remove all others characters

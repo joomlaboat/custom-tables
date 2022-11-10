@@ -3,9 +3,9 @@
  * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
- * @link http://www.joomlaboat.com
+ * @link https://joomlaboat.com
  * @copyright (C) 2018-2022 Ivan Komlev
- * @license GNU/GPL Version 2 or later - http://www.gnu.org/licenses/gpl-2.0.html
+ * @license GNU/GPL Version 2 or later - https://www.gnu.org/licenses/gpl-2.0.html
  **/
 
 namespace CustomTables;
@@ -1043,12 +1043,14 @@ class Twig_Html_Tags
         if (count($modes) == 0)
             $modes = ['edit', 'refresh', 'publish', 'delete'];
 
+        if ($this->ct->Table->record === null)
+            return '';
+
         $icons = [];
         foreach ($modes as $mode)
             $icons[] = $RecordToolbar->render($this->ct->Table->record, $mode);
 
-        $vlu = implode('', $icons);
-        return $vlu;
+        return implode('', $icons);
     }
 
     function base64encode($str)
