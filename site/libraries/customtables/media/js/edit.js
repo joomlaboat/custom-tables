@@ -1070,3 +1070,26 @@ function dataURLToBlob(dataURL) {
     }(document);
     return a
 });
+
+function activateJoomla3Tabs() {
+    jQuery(function ($) {
+        const tabs$ = $(".nav-tabs a");
+
+        $(window).on("hashchange", function () {
+            const hash = window.location.hash, // get current hash
+                menu_item$ = tabs$.filter('[href="' + hash + '"]'); // get the menu element
+
+            menu_item$.tab("show"); // call bootstrap to show the tab
+        }).trigger("hashchange");
+
+        const hash = window.location.hash;
+        hash && $('ul.nav a[href="' + hash + '"]').tab('show');
+
+        $('.nav-tabs a').click(function (e) {
+            $(this).tab('show');
+            const scrollMe = $('body').scrollTop() || $('html').scrollTop();
+            window.location.hash = this.hash;
+            $('html,body').scrollTop(scrollMe);
+        });
+    });
+}
