@@ -1099,9 +1099,12 @@
                        description="Optional attributes like: disabled, onclick, onchange etc." default=""/>
                 <param name="parent-selector" label="Parent Selector"
                        description="Used for multilevel dependencies like Country, City, Street. List of parameters to set the sub-level select box. Example: [city_table_name, city_field_name, allow_unpublished(true or false), filter(population>100000), order_by(name)]. It is also possible to pass multiple selectors. Example: [ [city_table_name, city_field_name],[country_table_name, country_field_name, false]]"
-                       default="" type="string"
+                       default="" type="array"
                        examplenoquotes="1"
                        example="[[city_table_name, city_field_name],[country_table_name, country_field_name, false]]"/>
+                <param type="layout" name="layout" label="Title Layout"
+                       description="Optional parameter set the option title format, instead of the field name set in the field type parameter. The layout may contain the field names surrounded by curly brackets. Example: {{ name }} - {{ title }}"
+                       layouttype="catalogitem,simplecatalog,record,details,email,xml,csv,json"/>
             </params>
         </editparams>
     </type>

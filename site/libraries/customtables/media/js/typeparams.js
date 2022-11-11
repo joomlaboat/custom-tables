@@ -39,7 +39,7 @@ function updateParameters() {
 
 function renderInput_Radio(objname, param, value, onchange) {
     const param_att = param["@attributes"];
-    let result = '<fieldset id="' + objname + '" class="btn-group btn-group-yesno radio">';
+    let result = '<fieldset id="' + objname + '" data-type="radio" class="btn-group btn-group-yesno radio">';
     const options = param_att.options.split(",");
 
     for (let o = 0; o < options.length; o++) {

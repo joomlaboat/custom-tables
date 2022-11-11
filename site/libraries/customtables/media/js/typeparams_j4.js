@@ -30,7 +30,7 @@ function updateParameters() {
 
 function renderInput_Radio(objName, param, value, onchange) {
     const param_att = param["@attributes"];
-    let result = '<fieldset><legend class="visually-hidden">Label3</legend><div class="switcher" id="' + objName + '">';
+    let result = '<fieldset><legend class="visually-hidden">Label3</legend><div class="switcher" id="' + objName + '" data-type="radio">';
 
     const options = param_att.options.split(",");
 

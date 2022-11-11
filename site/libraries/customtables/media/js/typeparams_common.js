@@ -55,7 +55,7 @@ function renderInputBox(id, param, vlu, attributes) {
             if (param_att.min !== null)
                 extra += ' step="' + param_att.step + '"';
 
-            return '<input type="number" id="' + id + '" value="' + vlu + '" ' + extra + ' ' + attributes + '>';
+            return '<input data-type="' + param_att.type + '" type="number" id="' + id + '" value="' + vlu + '" ' + extra + ' ' + attributes + '>';
         } else if (param_att.type === "list") {
 
             if (vlu === '') {
@@ -65,14 +65,14 @@ function renderInputBox(id, param, vlu, attributes) {
 
             return renderInput_List(id, param, vlu, attributes);
         } else if (param_att.type === "language") {
-            result = renderInput_Language(id, param, vlu, attributes);
+            return renderInput_Language(id, param, vlu, attributes);
         } else if (param_att.type === "table") {
 
-            let fieldchild = null;
+            let fieldChild = null;
             if (typeof (param_att.fieldchild) != "undefined" && param_att.fieldchild !== "")
-                fieldchild = param_att.fieldchild;
+                fieldChild = param_att.fieldchild;
 
-            result = renderInput_Table(id, param, vlu, attributes, fieldchild);
+            result = renderInput_Table(id, param, vlu, attributes, fieldChild);
 
             for (let o = 0; o < all_tables.length; o++) {
                 let option = all_tables[o];
@@ -81,12 +81,13 @@ function renderInputBox(id, param, vlu, attributes) {
                     break;
                 }
             }
+            return result;
 
         } else if (param_att.type === "field") {
 
             if (vlu.indexOf(':') !== -1) {
                 //if the default is a layout name then show input box but not select box
-                result += '<input type="text" id="' + id + '" value="' + vlu + '" ' + attributes + '>';
+                result += '<input data-type="field" type="text" id="' + id + '" value="' + vlu + '" ' + attributes + '>';
             } else {
                 if (SQLJoinTableID === null || (typeof (param_att.currenttable) != "undefined" && param_att.currenttable === "1")) {
                     const obj = document.getElementById('jform_tableid');
@@ -113,6 +114,9 @@ function renderInputBox(id, param, vlu, attributes) {
             return renderInput_Folder(id, vlu, attributes);
         } else if (param_att.type === "radio") {
             return renderInput_Radio(id, param, vlu, attributes);
+        } else if (param_att.type === "array") {
+            if (vlu == '')
+                vlu = '[]';
         } else {
             if (vlu === '') {
                 if (typeof (param_att.default) != "undefined")
@@ -123,7 +127,7 @@ function renderInputBox(id, param, vlu, attributes) {
             vlu = vlu.replaceAll('****apos****', "&apos;");
         }
     }
-    return '<input type="text" id="' + id + '" value="' + vlu + '" ' + attributes + '>';
+    return '<input data-type="' + param_att.type + '" type="text" id="' + id + '" value="' + vlu + '" ' + attributes + '>';
 }
 
 function updateTypeParams(type_id, typeparams_id_, typeparams_box_id_)//type selection
@@ -318,15 +322,24 @@ function updateParamString(inputBoxId, countList, countParams, objectId, e, rawQ
             if (obj) {
                 let t = getInputType(obj);
                 let v = "";
+                let inputBoxType = obj.dataset['type'];
 
                 if (t === "radio")
                     v = getRadioValue(objectName);
                 else if (t === "multiselect")
                     v = getSelectValues(select).merge(",");
-                else
-                    v = obj.value;
+                else {
+                    if (inputBoxType === 'array') {
+                        if (obj.value === '')
+                            v = '[]';
+                        else
+                            v = obj.value;
+                    } else {
+                        v = obj.value;
+                    }
+                }
 
-                if (isNaN(v) && v !== 'true' && v !== 'false') {
+                if (inputBoxType !== "array" && isNaN(v) && v !== 'true' && v !== 'false') {
                     if (v.indexOf('"') !== -1)
                         v = v.replaceAll('"', '****quote****');
 
@@ -430,7 +443,7 @@ function renderInput_Multiselect(id, param, values, onchange) {
     const values_array = values.split(",");
     let result = "";
 
-    result += '<select id="' + id + '" ' + onchange + ' multiple="multiple">';
+    result += '<select id="' + id + '" data-type="multiselect" ' + onchange + ' multiple="multiple">';
 
     for (let o = 0; o < options.length; o++) {
         const opt = options[o]["@attributes"];
@@ -462,7 +475,7 @@ function renderInput_ImageSizeList(id, param, value, attributes) {
     temp_imagesize_updateparent = temp_imagesize_updateparent.replace(/[']/g, "");
     temp_imagesize_updateparent = temp_imagesize_updateparent.split(",");
 
-    result += '<input type="text" id="' + id + '" value="' + value + '" style="display:none;width:100%;" ' + attributes + '>';// '+onchange+'>';
+    result += '<input type="text" id="' + id + '" data-type="imagesizelist" value="' + value + '" style="display:none;width:100%;" ' + attributes + '>';// '+onchange+'>';
     return result;
 }
 
@@ -599,7 +612,7 @@ function renderInput_List(id, param, value, onchange) {
     const options = getParamOptions(param, 'option');
     let result = "";
 
-    result += '<select id="' + id + '" ' + onchange + '>';
+    result += '<select id="' + id + '" data-type="list" ' + onchange + '>';
 
     for (let o = 0; o < options.length; o++) {
         const opt = options[o]["@attributes"];
@@ -688,7 +701,7 @@ function renderInput_Table(id, param, value, onchange, fieldchild) {
         onchange = onchange.replace('onchange="', 'onchange="updateFieldSelectOptions(\'' + id + '\',\'' + fieldchild + '\',this.selectedIndex);');
     }
 
-    result += '<select id="' + id + '" ' + onchange + '>';
+    result += '<select id="' + id + '" data-type="table" ' + onchange + '>';
 
     if (value === "")
         result += '<option value="" selected="selected">- Select Table</option>';
@@ -713,7 +726,7 @@ function renderInput_Field_do(id, value, onchange, SQLJoinTableID) {
 
     let result = "";
 
-    result += '<select id="' + id + '" ' + onchange + '>';
+    result += '<select id="' + id + '" data-type="field" ' + onchange + '>';
 
     if (SQLJoinTableID !== null && SQLJoinTableID !== "") {
 
@@ -900,7 +913,7 @@ function renderInput_Field(id, param, value, onchange, SQLJoinTableID) {
 
         result += renderInput_Field_do(id + "_" + i, '', o, SQLJoinTableID);
 
-        return '<input type="hidden" id="' + id + '" ' + onchange + ' value=\'' + value + '\' /><div id="' + id + '_selectboxes">' + result + '</div>';
+        return '<input type="hidden" data-type="field" id="' + id + '" ' + onchange + ' value=\'' + value + '\' /><div id="' + id + '_selectboxes">' + result + '</div>';
     } else
         return renderInput_Field_do(id, value, onchange, SQLJoinTableID);
 }
@@ -936,14 +949,16 @@ function renderInput_Layout(id, param, value, onchange) {
     if (param_att.layouttype != null)
         layout_type = param_att.layouttype;
 
-    let result = '<select id="' + id + '" ' + onchange + ' class="ct_improved_selectbox">';
+    let selectedLayoutName = '';
+    let selectedLayoutID = '';
+    onchange = onchange.replace('onchange="', 'onchange="renderInput_LayoutLinkUpdate(\'' + id + '\', this);');
+    let result = '<select id="' + id + '" data-type="layout" ' + onchange + ' class="ct_improved_selectbox">';
 
     result += '<option value="" ' + (value === "" ? 'selected="selected"' : '') + '>- Select Layout</option>';
 
     for (let o = 0; o < wizardLayouts.length; o++) {
         let ok = true;
         let option = wizardLayouts[o];
-
 
         if (layout_table === "current") {
 
@@ -953,10 +968,27 @@ function renderInput_Layout(id, param, value, onchange) {
 
         if (ok && option.layoutname !== currentLayout) {   //table checked not checking layout type
             if (renderInput_Layout_checktype(layout_type, parseInt(option.layouttype)))
-                result += '<option value="' + option.layoutname + '"' + (option.layoutname === value ? 'selected="selected"' : '') + '>' + option.layoutname + '</option>';
+                result += '<option value="' + option.layoutname + '"' + (option.layoutname === value ? 'selected="selected"' : '') + ' data-layoutid="' + option.id + '">' + option.layoutname + '</option>';
+        }
+
+        if (option.layoutname === value) {
+            selectedLayoutName = option.layoutname;
+            selectedLayoutID = option.id;
         }
     }
-    return result + '</select>';
+
+    result += '</select>';
+    result += '<div id="' + id + '_layoutLink" style="margin-left:20px;display: inline-block;">';
+    if (selectedLayoutName !== '')
+        result += '<a href="index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' + selectedLayoutID + '" target="_blank">' + selectedLayoutName + '</a>';
+
+    result += '</div>';
+    return result;
+}
+
+function renderInput_LayoutLinkUpdate(id, t) {
+    let dataSet = t.options[t.selectedIndex].dataset;
+    document.getElementById(id + '_layoutLink').innerHTML = '<a href="index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' + dataSet['layoutid'] + '" target="_blank">' + t.options[t.selectedIndex].value + '</a>';
 }
 
 function renderInput_Folder(id, value, onchange) {
@@ -981,7 +1013,7 @@ function renderInput_Folder(id, value, onchange) {
     datalist = datalist.replace(/option value=\"/g, 'option value="/images/');
     datalist = datalist.replace(/">/g, '">/images/');
 
-    let new_result = '<input list="' + id + '_list" id="' + id + '" style="width:90%" value="' + value + '" ' + onchange + '>';
+    let new_result = '<input list="' + id + '_list" id="' + id + '" data-type="folder" style="width:90%" value="' + value + '" ' + onchange + '>';
     new_result += '<datalist id="' + id + '_list">';
     new_result += datalist;
     new_result += '</datalist>';
