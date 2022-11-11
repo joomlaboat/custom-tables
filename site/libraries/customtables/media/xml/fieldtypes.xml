@@ -222,7 +222,7 @@
         </editparams>
     </type>
 
-    <!--<type ct_name="customtables" deprecated="1" name="customtables" label="Hierarchical List"
+    <type ct_name="customtables" deprecated="1" name="customtables" label="Hierarchical List"
           description="Hierarchical List"
           rawquotes="1" ct_alias="customtables" disabled="false" ct_special="false" priority="3" proversion="1">
         <params>
@@ -242,7 +242,7 @@
                        type="string"/>
             </params>
         </editparams>
-    </type>-->
+    </type>
 
     <type ct_name="id" label="Custom Record ID" description="Autoincrement ID. parameter: start from number"
           priority="2">

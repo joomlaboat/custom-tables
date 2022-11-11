@@ -788,9 +788,7 @@ function renderTags(index, tagSet) {
             result += '</div>';
         }
     }
-
     result += '</div>';
-
     return result;
 }
 
@@ -802,15 +800,12 @@ function addTabExtraEvents3() {
     jQuery(function ($) {
         $(".nav-tabs a").click(function (e) {
             let a = e.target.href;
-
             let codePair = a.split("#");
             let code = codePair[1].replace('-tab', '');
-
             const index = textarea_findindex(code);
 
             if (index !== -1) {
                 setTimeout(function () {
-                    console.log(index);
                     codemirror_active_index = index;
                     codemirror_active_areatext_id = 'jform_' + code;
                     let cm = codemirror_editors[index];
@@ -834,7 +829,6 @@ function addTabExtraEvent4(id) {
 
     for (let i = 0; i < tab_object.length; i++) {
         tab_object[i].addEventListener("click", function () {
-
             let index = textarea_findindex(id);
 
             setTimeout(function () {
@@ -886,11 +880,10 @@ function addExtraEvents() {
 
         for (let i = 0; i < editors.length; i++)
             addExtraEvent(i);
-    }, 100);
+    }, 500);
 }
 
 function addExtraEvent(index) {
-    codemirror_active_index = index;
     let cm = codemirror_editors[index];
     cm.refresh();
 

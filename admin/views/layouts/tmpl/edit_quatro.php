@@ -35,7 +35,7 @@ require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARAT
     . 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'layouteditor' . DIRECTORY_SEPARATOR . 'layouteditor.php');
 
 $onPageLoads = array();
-$typeboxid = "jform_layouttype";
+$typeBoxId = "jform_layouttype";
 
 foreach ($this->allTables as $table) {
     $fields = Fields::getFields($table[0], true);
@@ -47,19 +47,12 @@ foreach ($this->allTables as $table) {
 ';
 }
 ?>
-
 <script>
     <?php echo 'all_tables=' . json_encode($this->allTables) . ';'; ?>
 </script>
 
-<!--<div id="customtables_loader" style="display: none;">-->
 <form action="<?php echo JRoute::_('index.php?option=com_customtables&layout=edit&id=' . (int)$this->item->id . $this->referral); ?>"
       method="post" name="adminForm" id="adminForm" class="form-validate" enctype="multipart/form-data">
-
-    <!--
-    <div class="form-horizontal">
-        <div class="row-fluid form-horizontal-desktop">
-        -->
 
     <?php echo HTMLHelper::_('uitab.startTabSet', 'layouteditorTabs', ['active' => $this->active_tab, 'recall' => true, 'breakpoint' => 768]); ?>
 
@@ -86,13 +79,13 @@ foreach ($this->allTables as $table) {
     <?php echo HTMLHelper::_('uitab.endTab'); ?>
 
     <?php echo HTMLHelper::_('uitab.addTab', 'layouteditorTabs', 'layoutcode-tab', Text::_('COM_CUSTOMTABLES_LAYOUTS_HTML')); ?>
-    <?php echo $this->renderTextArea($this->item->layoutcode, 'layoutcode', $typeboxid, $onPageLoads); ?>
+    <?php echo $this->renderTextArea($this->item->layoutcode, 'layoutcode', $typeBoxId, $onPageLoads); ?>
     <?php echo HTMLHelper::_('uitab.endTab'); ?>
 
     <?php echo HTMLHelper::_('uitab.addTab', 'layouteditorTabs', 'layoutmobile-tab', Text::_('COM_CUSTOMTABLES_LAYOUTS_HTML_MOBILE')); ?>
     <?php
     if ($this->ct->Env->advancedtagprocessor)
-        echo $this->renderTextArea($this->item->layoutmobile, 'layoutmobile', $typeboxid, $onPageLoads);
+        echo $this->renderTextArea($this->item->layoutmobile, 'layoutmobile', $typeBoxId, $onPageLoads);
     else
         echo Text::_('COM_CUSTOMTABLES_AVAILABLE');
     ?>
@@ -101,7 +94,7 @@ foreach ($this->allTables as $table) {
     <?php echo HTMLHelper::_('uitab.addTab', 'layouteditorTabs', 'layoutcss-tab', Text::_('COM_CUSTOMTABLES_LAYOUTS_CSS')); ?>
     <?php
     if ($this->ct->Env->advancedtagprocessor)
-        echo $this->renderTextArea($this->item->layoutcss, 'layoutcss', $typeboxid, $onPageLoads);
+        echo $this->renderTextArea($this->item->layoutcss, 'layoutcss', $typeBoxId, $onPageLoads);
     else
         echo Text::_('COM_CUSTOMTABLES_AVAILABLE');
     ?>
@@ -110,7 +103,7 @@ foreach ($this->allTables as $table) {
     <?php echo HTMLHelper::_('uitab.addTab', 'layouteditorTabs', 'layoutjs-tab', Text::_('COM_CUSTOMTABLES_LAYOUTS_JS')); ?>
     <?php
     if ($this->ct->Env->advancedtagprocessor)
-        echo $this->renderTextArea($this->item->layoutjs, 'layoutjs', $typeboxid, $onPageLoads);
+        echo $this->renderTextArea($this->item->layoutjs, 'layoutjs', $typeBoxId, $onPageLoads);
     else
         echo Text::_('COM_CUSTOMTABLES_AVAILABLE');
     ?>
@@ -137,6 +130,4 @@ foreach ($this->allTables as $table) {
             require('dependencies.php');
             echo renderDependencies($this->item); // this will be shown upon the click in the toolbar
             ?>
-            <!--</div></div>-->
 </form>
-<!--</div>-->

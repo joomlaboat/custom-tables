@@ -24,7 +24,6 @@ $document = Factory::getDocument();
 $document->addCustomTag('<link href="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/css/fieldtypes.css" rel="stylesheet">');
 $document->addCustomTag('<link href="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/css/modal.css" rel="stylesheet">');
 $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/ajax.js"></script>');
-
 $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/typeparams_common.js"></script>');
 $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/typeparams.js"></script>');
 
@@ -39,7 +38,7 @@ require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARAT
     . 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'layouteditor' . DIRECTORY_SEPARATOR . 'layouteditor.php');
 
 $onPageLoads = array();
-$typeboxid = "jform_layouttype";
+$typeBoxId = "jform_layouttype";
 
 foreach ($this->allTables as $table) {
     $fields = Fields::getFields($table[0], true);
@@ -58,9 +57,7 @@ foreach ($this->allTables as $table) {
 <form action="<?php echo JRoute::_('index.php?option=com_customtables&layout=edit&id=' . (int)$this->item->id . $this->referral); ?>"
       method="post" name="adminForm" id="adminForm" class="form-validate" enctype="multipart/form-data">
 
-    <?php
-    echo JHtml::_('bootstrap.startTabSet', 'layoutsTab', array('active' => $this->active_tab));
-    ?>
+    <?php echo JHtml::_('bootstrap.startTabSet', 'layoutsTab', array('active' => $this->active_tab)); ?>
 
     <?php echo JHtml::_('bootstrap.addTab', 'layoutsTab', 'general', Text::_('COM_CUSTOMTABLES_LAYOUTS_GENERAL', true)); ?>
 
@@ -87,33 +84,32 @@ foreach ($this->allTables as $table) {
     <?php echo JHtml::_('bootstrap.endTab');
 
     echo JHtml::_('bootstrap.addTab', 'layoutsTab', 'layoutcode-tab', Text::_('COM_CUSTOMTABLES_LAYOUTS_HTML', true));
-    echo $this->renderTextArea($this->item->layoutcode, 'layoutcode', $typeboxid, $onPageLoads);
+    echo $this->renderTextArea($this->item->layoutcode, 'layoutcode', $typeBoxId, $onPageLoads);
     echo JHtml::_('bootstrap.endTab');
 
     echo JHtml::_('bootstrap.addTab', 'layoutsTab', 'layoutmobile-tab', Text::_('COM_CUSTOMTABLES_LAYOUTS_HTML_MOBILE', true));
     if ($this->ct->Env->advancedtagprocessor)
-        echo $this->renderTextArea($this->item->layoutmobile, 'layoutmobile', $typeboxid, $onPageLoads);
+        echo $this->renderTextArea($this->item->layoutmobile, 'layoutmobile', $typeBoxId, $onPageLoads);
     else
         echo Text::_('COM_CUSTOMTABLES_AVAILABLE');
     echo JHtml::_('bootstrap.endTab');
 
     echo JHtml::_('bootstrap.addTab', 'layoutsTab', 'layoutcss-tab', Text::_('COM_CUSTOMTABLES_LAYOUTS_CSS', true));
     if ($this->ct->Env->advancedtagprocessor)
-        echo $this->renderTextArea($this->item->layoutcss, 'layoutcss', $typeboxid, $onPageLoads);
+        echo $this->renderTextArea($this->item->layoutcss, 'layoutcss', $typeBoxId, $onPageLoads);
     else
         echo Text::_('COM_CUSTOMTABLES_AVAILABLE');
     echo JHtml::_('bootstrap.endTab');
 
     echo JHtml::_('bootstrap.addTab', 'layoutsTab', 'layoutjs-tab', Text::_('COM_CUSTOMTABLES_LAYOUTS_JS', true));
     if ($this->ct->Env->advancedtagprocessor)
-        echo $this->renderTextArea($this->item->layoutjs, 'layoutjs', $typeboxid, $onPageLoads);
+        echo $this->renderTextArea($this->item->layoutjs, 'layoutjs', $typeBoxId, $onPageLoads);
     else
         echo Text::_('COM_CUSTOMTABLES_AVAILABLE');
 
     echo JHtml::_('bootstrap.endTab');
     echo JHtml::_('bootstrap.endTabSet');
     echo JHtml::_('form.token');
-
     echo render_onPageLoads($onPageLoads, 3);
 
     $this->getMenuItems();
