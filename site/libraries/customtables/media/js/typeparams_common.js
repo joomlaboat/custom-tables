@@ -349,7 +349,7 @@ function updateParamString(inputBoxId, countList, countParams, objectId, e, rawQ
                     v = '"' + v + '"';
                 }
                 params.push(v);
-                if (v !== "")
+                if (v !== "" && v != '[]')
                     count = i + 1; //to include all previous parameters even if they are empty
             } else
                 break;
