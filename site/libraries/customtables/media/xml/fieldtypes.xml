@@ -1062,7 +1062,8 @@
         <params>
             <param name="table" label="Table" example="products"
                    description="Type the name of the Custom Table to join/link with." default="" type="table"
-                   fieldchild="fieldtype_param_1"/>
+                   fieldchild="fieldtype_param_1"
+                   image="https://joomlaboat.com/images/components/ct/field-types/tablejoin-selecttable.png"/>
             <param name="fieldname" label="Field Name" example="title"
                    description="Type the field name to return the value by default. You may type layout name instead. options: 'layout:layout_name' or 'tablelesslayout:layout_name'"
                    default="" type="field"/>
@@ -1104,7 +1105,8 @@
                        example="[[city_table_name, city_field_name],[country_table_name, country_field_name, false]]"/>
                 <param type="layout" name="layout" label="Title Layout"
                        description="Optional parameter set the option title format, instead of the field name set in the field type parameter. The layout may contain the field names surrounded by curly brackets. Example: {{ name }} - {{ title }}"
-                       layouttype="catalogitem,simplecatalog,record,details,email,xml,csv,json"/>
+                       layouttype="catalogitem,simplecatalog,record,details,email,xml,csv,json"
+                       image="https://joomlaboat.com/images/components/ct/field-types/tablejoin-customtitle.png"/>
             </params>
         </editparams>
     </type>

@@ -166,6 +166,10 @@ class Documentation
                 if (count($param_att) != 0) {
                     $result .= '<li><h6>' . $param_att->label . ($param_att->description != '' ? ' - ' . $param_att->description : '') . '</h6>';
 
+                    if (isset($param_att->image)) {
+                        $result .= '<p><img src="' . $param_att->image . '" alt="' . $param_att->label . '" /></p>';
+                    }
+
                     if (!empty($param_att->type)) {
                         $value_example = '';
                         $result .= $this->renderParamTypeInternal($param, $param_att, $value_example);
@@ -174,7 +178,6 @@ class Documentation
                         if ($value_example != '')
                             $example_values_count++;
                     }
-
                     $result .= '</li>';
                 }
             }
@@ -398,6 +401,10 @@ class Documentation
 
                 if (count($param_att) != 0) {
                     $result .= $count . '. ' . $param_att->label . ($param_att->description != '' ? ' - ' . $param_att->description : '') . '<br/>';
+
+                    if (isset($param_att->image)) {
+                        $result .= '![' . $param_att->label . '](' . $param_att->image . ')<br/><br/>';
+                    }
 
                     if (!empty($param_att->type)) {
                         $value_example = '';
