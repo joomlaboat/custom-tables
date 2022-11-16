@@ -45,25 +45,32 @@ class JHTMLESUserView
 
             return implode(',', $group_list);
         } else {
-            $allowedFields = array('id', 'name', 'email', 'username', 'registerDate', 'lastvisitDate');
+            $allowedFields = array('id', 'name', 'email', 'username', 'registerdate', 'lastvisitdate');
 
+            $field = strtolower($field);
             if ($field == '')
                 $field = 'name';
             elseif (!in_array($field, $allowedFields))
                 return 'wrong field "' . $field . '" !';
 
-
             $query = 'SELECT id, name, username, email, registerDate,lastvisitDate FROM #__users WHERE id=' . (int)$value . ' LIMIT 1';
-
             $db->setQuery($query);
 
             $options = $db->loadAssocList();
             if (count($options) != 0) {
                 $rec = $options[0];
-                if (($field == 'registerDate' or $field == 'lastvisitDate') and $rec[$field] == '0000-00-00 00:00:00')
+                if (($field == 'registerdate' or $field == 'lastvisitdate') and $rec[$field] == '0000-00-00 00:00:00')
                     return 'Never';
+
+                if ($field == 'registerdate')
+                    return $rec['registerDate'];
+                elseif ($field == 'lastvisitdate')
+                    return $rec['lastvisitDate'];
                 else
                     return $rec[$field];
+            } else {
+                if ((int)$value != 0)
+                    return 'User ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOTFOUND');
             }
         }
         return '';
