@@ -21,9 +21,14 @@ class Forms
 
     function renderFieldLabel($field, $allowSortBy = false)
     {
-        $OrderingStringPair = explode(' ', $this->ct->Ordering->ordering_processed_string);
-        $OrderingField = $OrderingStringPair[0];
-        $OrderingDirection = $OrderingStringPair[1] ?? '';
+        $OrderingField = null;
+        $OrderingDirection = null;
+        
+        if ($this->ct->Ordering->ordering_processed_string !== null) {
+            $OrderingStringPair = explode(' ', $this->ct->Ordering->ordering_processed_string);
+            $OrderingField = $OrderingStringPair[0];
+            $OrderingDirection = $OrderingStringPair[1] ?? '';
+        }
 
         if ($field->type == 'dummy')
             return $field->title;
@@ -39,7 +44,7 @@ class Forms
         if ($field->description != "")
             $field_label .= ' data-content="' . $field->description . '"';
 
-        if ($allowSortBy) {
+        if ($this->ct->Ordering->ordering_processed_string !== null and $allowSortBy) {
             $field_label .= ' style="cursor:pointer"';
             $field_label .= ' onClick="ctOrderChanged(\'' . $field->fieldname . ($OrderingField == $field->fieldname ? ($OrderingDirection == 'desc' ? '' : ' desc') : '') . '\')"';
         }
@@ -49,7 +54,7 @@ class Forms
         if (!$allowSortBy or $field->type != 'ordering')
             $field_label .= $field->title;
 
-        if ($allowSortBy) {
+        if ($this->ct->Ordering->ordering_processed_string !== null and $allowSortBy) {
             if ($OrderingField == $field->fieldname) {
                 if ($OrderingDirection == 'desc')
                     $field_label .= '<span class="ms-1 icon-caret-down" aria-hidden="true"></span>';

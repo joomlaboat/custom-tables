@@ -204,7 +204,7 @@ class Ordering
                 $ordering_param_string = $app->getUserState('com_customtables.orderby_' . $Itemid, '');
 
                 if ($ordering_param_string == '') {
-                    if ($this->Params->sortBy != '')
+                    if ($this->Params->sortBy !== null and $this->Params->sortBy != '')
                         $ordering_param_string = $this->Params->sortBy;
                 }
             }
@@ -335,7 +335,6 @@ class Ordering
             $db->setQuery($query);
             $db->execute();
         }
-
         return true;
     }
 }

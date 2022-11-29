@@ -26,9 +26,6 @@ class CustomTablesViewCatalog extends JViewLegacy
     var string $listing_id;
     var Catalog $catalog;
     var string $catalogTableCode;
-    //var string $pageLayoutContent;
-    //var string $itemLayoutContent;
-    //var int $layoutType;
 
     function display($tpl = null)
     {

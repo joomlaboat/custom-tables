@@ -487,7 +487,7 @@ class CustomTablesImageMethods
         if ($fileExtension == "jpg" or $fileExtension == 'jpeg') {
 
             try {
-                $from = @ImageCreateFromJpeg($src);
+                $from = @imagecreatefromjpeg($src);
             } catch (Exception $e) {
                 return -1;
             }

@@ -21,7 +21,7 @@ if (is_null($this->ct->Params->listing_id)) //there is no need to have a header 
 {
     if ($this->ct->Params->showPageHeading) {
         $title = JoomlaBasicMisc::JTextExtended($this->ct->Params->pageTitle);
-        echo '<div class="page-header' . $this->ct->Params->pageClassSFX . '"><h2 itemprop="headline">' . $title . '</h2></div>';
+        echo '<div class="page-header' . ($this->ct->Params->pageClassSFX ?? '') . '"><h2 itemprop="headline">' . $title . '</h2></div>';
     }
 }
 

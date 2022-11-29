@@ -89,6 +89,7 @@ class Params
         $this->blockExternalVars = $blockExternalVars;
         $this->app = Factory::getApplication();
         $this->jinput = $this->app->input;
+        $this->sortBy = null;
 
         if (is_null($menu_params)) {
 
@@ -175,7 +176,9 @@ class Params
 
         $this->pageTitle = $menu_params->get('page_title') ?? null;
         $this->showPageHeading = $menu_params->get('show_page_heading', 1);
-        $this->pageClassSFX = strip_tags($menu_params->get('pageclass_sfx'));
+
+        if ($menu_params->get('pageclass_sfx') !== null)
+            $this->pageClassSFX = strip_tags($menu_params->get('pageclass_sfx'));
 
         if (!$blockExternalVars and !is_null($this->jinput->getCmd("listing_id")))
             $this->listing_id = $this->jinput->getCmd("listing_id");
@@ -217,7 +220,7 @@ class Params
         //Sorting
         if (!$blockExternalVars and !is_null($this->jinput->getCmd('sortby')))
             $this->sortBy = strtolower($this->jinput->getCmd('sortby'));
-        else
+        elseif (!is_null($menu_params->get('sortby')))
             $this->sortBy = strtolower($menu_params->get('sortby'));
 
         $this->forceSortBy = $menu_params->get('forcesortby');

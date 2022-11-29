@@ -530,7 +530,7 @@ class JoomlaBasicMisc
         return $filename;
     }//processValue()
 
-    public static function JTextExtended($text, $value = null)
+    public static function JTextExtended(string $text, int $value = null)
     {
         if (is_null($value))
             $new_text = Text::_($text);

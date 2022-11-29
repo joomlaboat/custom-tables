@@ -48,14 +48,16 @@ if ($this->ct->Env->clean) {
     die;//clean exit
 }
 
-if ($this->ct->Params->showPageHeading) : ?>
-    <div class="page-header<?php echo $this->escape($this->ct->Params->pageClassSFX); ?>">
-        <h2 itemprop="headline"><?php echo JoomlaBasicMisc::JTextExtended($this->ct->document->getTitle()); ?></h2>
-    </div>
-<?php endif;
-
+if ($this->ct->Params->showPageHeading) {
+    if (isset($this->ct->Params->pageClassSFX)) {
+        echo '<div class="page-header' . $this->escape($this->ct->Params->pageClassSFX) . '"><h2 itemprop="headline">'
+            . JoomlaBasicMisc::JTextExtended($this->ct->document->getTitle()) . '</h2></div>';
+    } else {
+        echo '<div class="page-header"><h2 itemprop="headline">'
+            . JoomlaBasicMisc::JTextExtended($this->ct->document->getTitle()) . '</h2></div>';
+    }
+}
 echo $results;
-
 ?>
 
 <!-- Modal content -->

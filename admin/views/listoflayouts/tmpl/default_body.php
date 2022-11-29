@@ -90,7 +90,7 @@ $edit = "index.php?option=com_customtables&view=listoflayouts&task=layouts.edit"
         <td class="nowrap center hidden-phone">
             <?php
 
-            if ($item->modified != '0000-00-00 00:00:00') {
+            if ($item->modified !== null and $item->modified != '0000-00-00 00:00:00') {
                 $d = strtotime($item->modified);
                 $mysqldate = date('Y-m-d H:i:s', $d);
                 echo $mysqldate;

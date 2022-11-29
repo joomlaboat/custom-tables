@@ -96,22 +96,19 @@ class tagProcessor_Set
     {
         $options = array();
         $fList = JoomlaBasicMisc::getListToReplace('pagetitle', $options, $htmlresult, '{}');
-        $mydoc = Factory::getDocument();
+        $document = Factory::getDocument();
         $i = 0;
         foreach ($fList as $fItem) {
             $opts = JoomlaBasicMisc::csv_explode(',', $options[$i], '"', false);
 
-            if ($ct->Env->isModal) {
-            } else {
-                $mydoc->setTitle(JoomlaBasicMisc::JTextExtended($opts[0]));
-            }
+            if (!$ct->Env->isModal)
+                $document->setTitle(JoomlaBasicMisc::JTextExtended($opts[0]));
 
             $htmlresult = str_replace($fItem, '', $htmlresult);
-
             $i++;
         }
 
-        if (count($fList) == 0)
-            $mydoc->setTitle(JoomlaBasicMisc::JTextExtended($ct->Params->pageTitle));
+        if (count($fList) == 0 and $ct->Params->pageTitle !== null)
+            $document->setTitle(JoomlaBasicMisc::JTextExtended($ct->Params->pageTitle));
     }
 }

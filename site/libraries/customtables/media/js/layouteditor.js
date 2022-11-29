@@ -226,6 +226,7 @@ function showModal() {
 
 function showModalForm(tagStartChar, postfix, tagEndChar, tag, top, left, line, positions, isNew) {
     //detect tag type first
+
     if (tagStartChar === '{') {
         //Old style
         showModalTagForm(tagStartChar, postfix, tagEndChar, tag, top, left, line, positions, isNew);
@@ -471,6 +472,114 @@ function textarea_findindex(code) {
             return text_areas[i][1];
     }
     return -1;
+}
+
+function findTagInMultiline(cm, ch, startLine) {
+
+    let start_pos = [-1, -1];
+    let level = 1;
+    let str = cm.getLine(startLine);
+    start_pos[1] = startLine;
+
+    for (let i = ch; i > -1; i--) {
+
+        if ((str[i] === ']' || str[i] === '}') && i !== ch)
+            level++;
+
+        if (str[i] === '[') {
+
+            level--;
+            if (level === 0) {
+                start_pos[0] = i;
+                break;
+            }
+        } else if (str[i] === '{') {
+
+            level--;
+            if (level === 0) {
+
+                if (i > 0 && str[i - 1] === '{') {
+                    start_pos[0] = i - 1;
+                    break;
+                }
+
+                start_pos[0] = i;
+                break;
+            }
+        }
+    }
+
+    if (start_pos[0] === -1)
+        return null;
+
+    return findTagInMultilineMoveRight(cm, start_pos);
+}
+
+function findTagInMultilineMoveRight(cm, start_pos) {
+    let end_pos = [-1, -1];
+    let lines = cm.lineCount();
+    let levelList = [];
+    let i2 = start_pos[0];
+    let tagString = '';
+    let startLine = start_pos[1];
+    let str = cm.getLine(startLine);
+
+    while (1) {
+
+        tagString += str[i2];
+
+        if (str[i2] === '[') {
+            levelList.push('[');
+        } else if (str[i2] === ']') {
+            if (levelList.length === 0 || levelList[levelList.length - 1] !== '[') {
+                alert('Syntax error. Closing "]" appeared before opening "[".');
+                return null;
+            }
+            levelList = levelList.slice(0, -1);
+        } else if (str[i2] === '{') {
+            levelList.push('{');
+        } else if (str[i2] === '}') {
+            if (levelList.length === 0 || levelList[levelList.length - 1] !== '{') {
+                alert('Syntax error. Closing "}" appeared before opening "{".');
+                return null;
+            }
+            levelList = levelList.slice(0, -1);
+        } else if (str[i2] === '"') {
+            if (levelList.length === 0 || levelList[levelList.length - 1] !== '"')
+                levelList.push('"');
+            else
+                levelList = levelList.slice(0, -1);
+
+        } else if (str[i2] === "'") {
+            if (levelList.length === 0 || levelList[levelList.length - 1] !== "'")
+                levelList.push("'");
+            else
+                levelList = levelList.slice(0, -1);
+        }
+        if (levelList.length === 0) {
+            end_pos = [i2, startLine];
+            break;
+        }
+
+        i2++;
+
+        if (i2 > str.length - 1) {
+
+            startLine += 1;
+            if (startLine === lines)
+                break;
+
+            tagString += '\n';
+
+            str = cm.getLine(startLine);
+            i2 = 0;
+        }
+    }
+
+    if (end_pos[1] === -1)
+        return null;
+
+    return [start_pos, end_pos, tagString];
 }
 
 function findTagInLine(ch, str) {
@@ -888,6 +997,7 @@ function addExtraEvent(index) {
     cm.refresh();
 
     cm.on('dblclick', function () {
+
         let cr = cm.getCursor();
         let line = cm.getLine(cr.line);
         let positions = findTagInLine(cr.ch, line);
@@ -916,10 +1026,110 @@ function addExtraEvent(index) {
 
             let postfix = ''; //todo
             let mousePos = cm.cursorCoords(cr, "window");
+
             showModalForm(startChar, postfix, endChar, tag, mousePos.top, mousePos.left, cr.line, positions, 0);
+        } else {
+
+            let positionsRange = findTagInMultiline(cm, cr.ch, cr.line);
+            if (positionsRange !== null) {
+
+                convertOldSimpleCatalogToNew(cm, positionsRange);
+            } else {
+                alert("The tag has a syntax error or too complex for me to understand.")
+            }
         }
 
     }, true);
+}
+
+function convertOldSimpleCatalogToNew(cm, positionsRange) {
+
+    let tagTemp = splitQuoteSafe(positionsRange[2], ';', '"', true);
+    let tag = splitQuoteSafe(tagTemp[0], ',', '"', true);
+    let tagName = '';
+    let headValues = [];
+    let bodyValues = [];
+    let i;
+
+    for (i = 0; i < tag.length; i += 1) {
+        let tagPair = splitQuoteSafe(tag[i], ':', '"', false);
+
+        if (i == 0) {
+            tagName = tagPair[0];
+            headValues.push(tagPair[1].replaceAll('\n', ''));
+            bodyValues.push(tagPair[2].replaceAll('\n', ''));
+        } else {
+            headValues.push(tagPair[0].replaceAll('\n', ''));
+            bodyValues.push(tagPair[1].replaceAll('\n', ''));
+        }
+    }
+
+    if (tagName !== '{catalogtable') {
+        alert('Unsupported tag or its a multiline tag.')
+        return null;
+    }
+
+    let str = '\n<table>\n';
+    str += '<thead><tr>\n';
+    for (i = 0; i < headValues.length; i++) {
+        str += "<th>" + headValues[i] + "</th>\n";
+    }
+    str += "</tr></thead>\n";
+
+    str += '<tbody>\n{% block record %}\n<tr>\n';
+    for (i = 0; i < bodyValues.length; i++) {
+        str += '<td>' + bodyValues[i] + '</td>\n';
+    }
+    str += '</tr>\n{% endblock %}\n</tbody>\n';
+
+    str += '</table>\n';
+    // get the entire editor text from CodeMirror editor
+    let text = cm.getValue();
+
+    // edit the text, for example
+    text = text.replace(positionsRange[2], str);
+
+    // set the text back to the editor
+    cm.setValue(text);
+
+    //alert(JSON.stringify(tag));
+}
+
+function splitQuoteSafe(str, delimiter, quote, preserveQuotes) {
+
+    let list = [];
+    let levelList = [];
+    let i = 0;
+    let tempString = '';
+
+    while (1) {
+
+        if (str[i] === quote) {
+            if (levelList.length === 0 || levelList[levelList.length - 1] !== quote)
+                levelList.push(quote);
+            else
+                levelList = levelList.slice(0, -1);
+
+            if (preserveQuotes)
+                tempString += str[i];
+        } else {
+            if (levelList.length === 0 && str[i] === delimiter) {
+                list.push(tempString);
+                tempString = '';
+            } else
+                tempString += str[i];
+        }
+
+        i++;
+
+        if (i > str.length - 1)
+            break;
+    }
+
+    if (tempString !== '')
+        list.push(tempString);
+
+    return list;
 }
 
 function adjustEditorHeight() {

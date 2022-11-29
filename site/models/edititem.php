@@ -47,13 +47,14 @@ class CustomTablesModelEditItem extends JModelLegacy
 
     function __construct()
     {
+        $this->userIdField_Unique = false;
+        $this->userIdField_UniqueUsers = false;
         parent::__construct();
     }
 
     function load(CT $ct, bool $addHeaderCode = false): bool
     {
         $this->ct = $ct;
-        $this->userIdField_Unique = false;
         $this->ct->getTable($ct->Params->tableName, $this->ct->Params->userIdField);
 
         if ($this->ct->Table->tablename === null) {
@@ -137,20 +138,17 @@ class CustomTablesModelEditItem extends JModelLegacy
 
                 $index += 1;
             }
-
             return $userIdFieldsStr;
         }
-
         return '';
     }
 
     function processCustomListingID()
     {
-        if (is_numeric($this->listing_id) or (!str_contains($this->listing_id, '=') and !str_contains($this->listing_id, '<') and !str_contains($this->listing_id, '>'))) {
+        if ($this->listing_id !== null and (is_numeric($this->listing_id) or (!str_contains($this->listing_id, '=') and !str_contains($this->listing_id, '<') and !str_contains($this->listing_id, '>')))) {
             //Normal listing ID or CMD
             $query = 'SELECT ' . implode(',', $this->ct->Table->selects) . ' FROM ' . $this->ct->Table->realtablename
                 . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . $this->ct->db->quote($this->listing_id) . ' LIMIT 1';
-
 
             $this->ct->db->setQuery($query);
             $rows = $this->ct->db->loadAssocList();
@@ -159,7 +157,6 @@ class CustomTablesModelEditItem extends JModelLegacy
                 return -1;
 
             $this->row = $rows[0];
-
             return $this->listing_id;
         }
 
@@ -183,10 +180,6 @@ class CustomTablesModelEditItem extends JModelLegacy
         $filtering->addWhereExpression($filter);
         $whereArray = $filtering->where;
 
-        /*
-        if ($paramWhere != '')
-            $whereArray[] = ' (' . $paramWhere . ' )';
-        */
         if ($this->ct->Table->published_field_found)
             $whereArray[] = 'published=1';
 
@@ -208,9 +201,7 @@ class CustomTablesModelEditItem extends JModelLegacy
         }
 
         $this->row = $rows[0];
-
         $this->listing_id = $this->row[$this->ct->Table->realidfieldname];
-
         return $this->listing_id;
     }
 
@@ -222,11 +213,8 @@ class CustomTablesModelEditItem extends JModelLegacy
             $wheres[] = 'published=1';
 
         $wheres_user = CTUser::UserIDField_BuildWheres($this->ct, $this->ct->Params->userIdField, $this->listing_id);
-
         $wheres = array_merge($wheres, $wheres_user);
-
         $query = 'SELECT ' . implode(',', $this->ct->Table->selects) . ' FROM ' . $this->ct->Table->realtablename . ' WHERE ' . implode(' AND ', $wheres) . ' LIMIT 1';
-
         $this->ct->db->setQuery($query);
         $rows = $this->ct->db->loadAssocList();
 
@@ -234,7 +222,6 @@ class CustomTablesModelEditItem extends JModelLegacy
             return [];
 
         $this->row = $rows[0];
-
         return $this->row[$this->ct->Table->realidfieldname];
     }
 
@@ -351,9 +338,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
             $query = ' SELECT optionname, id, title_' . $langPostFix . ' AS title FROM #__customtables_options WHERE ';
             $query .= ' id=' . $filterRootParent . ' LIMIT 1';
-
             $this->ct->db->setQuery($query);
-
             $rootParentName = $this->ct->db->loadObjectList();
 
             if ($startFrom == 0) {
@@ -1378,14 +1363,16 @@ class CustomTablesModelEditItem extends JModelLegacy
                 $ImageFolder_ = CustomTablesImageMethods::getImageFolder($field->params);
 
                 //delete single image
-                $imageMethods->DeleteExistingSingleImage(
-                    $row[$field->realfieldname],
-                    $ImageFolder_,
-                    $field->params[0],
-                    $this->ct->Table->realtablename,
-                    $field->realfieldname,
-                    $this->ct->Table->realidfieldname
-                );
+                if ($row[$field->realfieldname] !== null) {
+                    $imageMethods->DeleteExistingSingleImage(
+                        $row[$field->realfieldname],
+                        $ImageFolder_,
+                        $field->params[0],
+                        $this->ct->Table->realtablename,
+                        $field->realfieldname,
+                        $this->ct->Table->realidfieldname
+                    );
+                }
             } elseif ($field->type == 'imagegallery') {
                 $ImageFolder_ = CustomTablesImageMethods::getImageFolder($field->params);
 

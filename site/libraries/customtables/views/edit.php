@@ -35,7 +35,7 @@ function CTViewEdit(CT &$ct, $row, &$pageLayout, $formLink, $formName): void
     $ct->loadJSAndCSS();
 
     if (!$ct->Params->blockExternalVars and $ct->Params->showPageHeading) {
-        echo '<div class="page-header' . strip_tags($ct->Params->pageClassSFX) . '"><h2 itemprop="headline">'
+        echo '<div class="page-header' . strip_tags($ct->Params->pageClassSFX ?? '') . '"><h2 itemprop="headline">'
             . JoomlaBasicMisc::JTextExtended($ct->Params->pageTitle) . '</h2></div>';
     }
 
