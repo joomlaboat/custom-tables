@@ -53,10 +53,11 @@ $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_cu
                 <?php
                 // Search tools bar
 
+                /*
                 echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this,
                     'options' => array('filtersHidden' => 0), 'filtersHidden' => 0
                 ));
-
+*/
                 ?>
 
                 <div id="canvas_container"></div>

@@ -275,13 +275,13 @@ class Documentation
                 break;
         }
 
-        if (!((int)$param_att->examplenoquotes))
+        if (!((int)$param_att->examplenoquotes) and $value_example != null)
             $value_example = $this->prepareExample($value_example);
 
         return $result;
     }
 
-    function prepareExample($param): string
+    function prepareExample(string $param): string
     {
         $output = preg_replace('/[^0-9]/', '', $param);
         if ($output != '')
@@ -296,23 +296,24 @@ class Documentation
         return '"' . $param . '"';
     }
 
-    function cleanParams($params): array
+    function cleanParams(array $params): array
     {
         $new_params = array();
         $count = 0;
 
         foreach ($params as $param_) {
             $count++;
-            $param = trim($param_);
-            if ($param != '' and $param != '""') {
-                for ($i = 1; $i < $count; $i++)
-                    $new_params[] = '""';
+            if ($param_ !== null) {
+                $param = trim($param_);
+                if ($param != '' and $param != '""') {
+                    for ($i = 1; $i < $count; $i++)
+                        $new_params[] = '""';
 
-                $param = str_replace('<', '&lt;', $param);
-                $param = str_replace('>', '&gt;', $param);
-                $new_params[] = $param;
-
-                $count = 0;
+                    $param = str_replace('<', '&lt;', $param);
+                    $param = str_replace('>', '&gt;', $param);
+                    $new_params[] = $param;
+                    $count = 0;
+                }
             }
         }
         return $new_params;
