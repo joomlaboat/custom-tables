@@ -10,7 +10,7 @@
  **/
 
 // No direct access to this file
-\defined('_JEXEC') or die;
+defined('_JEXEC') or die;
 
 use CustomTables\Fields;
 

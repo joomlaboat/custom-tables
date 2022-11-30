@@ -12,17 +12,12 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
-
-use Joomla\CMS\Access\Access;
-use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\LayoutHelper;
-use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\String\PunycodeHelper;
 
-HTMLHelper::_('behavior.multiselect');
+//HTMLHelper::_('behavior.multiselect');
 
 if ($this->saveOrder and $this->ordering_realfieldname != '') {
     $saveOrderingUrl = 'index.php?option=com_customtables&task=listofrecords.ordering&tableid=' . $this->ct->Table->tableid . '&tmpl=component';
@@ -36,6 +31,7 @@ if ($this->saveOrder and $this->ordering_realfieldname != '') {
     <script>
 
         function atLeastOnCheckBoxSelected() {
+
             let cidObject = document.getElementsByName('cid[]');
 
             for (let i = 0; i < cidObject.length; i++) {
@@ -47,6 +43,7 @@ if ($this->saveOrder and $this->ordering_realfieldname != '') {
         }
 
         Joomla.submitbutton = function (task) {
+
             if (task == 'listofrecords.exportcsv') {
 
                 if (atLeastOnCheckBoxSelected()) {
@@ -58,9 +55,11 @@ if ($this->saveOrder and $this->ordering_realfieldname != '') {
                         return false;
                 }
             }
+
+            Joomla.submitform(task);
+            return true;
         }
     </script>
-
 
     <div class="row">
         <div class="col-md-12">

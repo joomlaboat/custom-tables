@@ -43,7 +43,7 @@ class CustomtablesViewListoflayouts extends JViewLegacy
         $this->filterForm = $this->get('FilterForm');
         $this->activeFilters = $this->get('ActiveFilters');
         $this->listOrder = $this->escape($this->state->get('list.ordering'));
-        $this->listDirn = $this->escape($this->state->get('list.direction'));
+        $this->listDirn = $this->escape($this->state->get('list.direction')) ?? '';
 
         // get global action permissions
         $this->canDo = ContentHelper::getActions('com_customtables', 'listoflayouts');
