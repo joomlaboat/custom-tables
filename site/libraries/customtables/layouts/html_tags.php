@@ -391,7 +391,7 @@ class Twig_Html_Tags
     {
         if ($list_of_fields_string_or_array === null)
             return '{{ html.search() }} tag requires at least one field name.';
-        
+
         if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
             return '';
 
