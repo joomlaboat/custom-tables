@@ -39,12 +39,12 @@ if (isset($this->ct->LayoutVariables['ordering_field_type_found']) and $this->ct
         if ($this->ct->Env->version < 4) {
             JHtml::_('sortablelist.sortable', 'ctTable_' . $this->ct->Table->tableid, 'ctTableForm_' . $this->ct->Table->tableid, 'asc', $saveOrderingUrl);
         } else {
-            HTMLHelper::_('draggablelist.draggable');//, 'ctTable_' . $this->ct->Table->tableid, 'ctTableForm_' . $this->ct->Table->tableid, 'asc', $saveOrderingUrl);
+            HTMLHelper::_('draggablelist.draggable');
         }
     }
 }
 
-if ($this->ct->Params->listing_id == null or $this->ct->Params->listing_id == "") //there is no need to have a header if we are loading a single record.
+if (is_null($this->ct->Params->listing_id)) //there is no need to have a header if we are loading a single record.
 {
     echo '<!-- Modal content -->
 <div id="ctModal" class="ctModal">

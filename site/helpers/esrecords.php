@@ -70,7 +70,6 @@ class JHTMLESRecords
                     else
                         $real_field = $real_field_row->realfieldname;
 
-
                     $htmlresult .= '<SELECT name="' . $control_name . '[]"'
                         . ' id="' . $control_name . '" MULTIPLE';
 
@@ -162,6 +161,7 @@ class JHTMLESRecords
         } else {
             //with layout
             $pair = JoomlaBasicMisc::csv_explode(':', $field);
+
             if ($pair[0] != 'layout' and $pair[0] != 'tablelesslayout')
                 return '<p>unknown field/layout command "' . $field . '" should be like: "layout:' . $pair[1] . '".</p>';
 
@@ -217,7 +217,6 @@ class JHTMLESRecords
             }
             $htmlresult .= '</table>';
         }
-
         return $htmlresult;
     }
 
@@ -373,7 +372,6 @@ class JHTMLESRecords
 			';
             $htmlresult = $htmlResultJS . $htmlresult;
         }
-
         return $htmlresult;
     }
 

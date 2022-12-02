@@ -365,7 +365,10 @@ class JHTMLCTTableJoin
                 $val = $js_filters[$next_index][$next_sub_index];
         } else {
             $next_index += 1;
-            $val = $js_filters[$next_index];
+            if (count($js_filters) > $next_index)
+                $val = $js_filters[$next_index];
+            else
+                $val = null;
         }
 
         if (is_null($val)) {
@@ -373,7 +376,7 @@ class JHTMLCTTableJoin
                 $val = $value;
         }
 
-        if ($r->error)
+        if (isset($r->error) and $r->error)
             return $r->error;
 
         if (count($r) == 0) {
