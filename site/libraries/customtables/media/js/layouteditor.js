@@ -713,13 +713,17 @@ function getParamEditForm(tagObject, line, positions, isNew, countParams, tagSta
     result += postfix + '(<span id="current_tagparameter" style="">' + paramValueString + '</span>)';
     result += tagEndChar + '</div>';
     result += '<div style="text-align:center;">';
-    result += '<button id="clsave" onclick=\'return saveParams(event,' + countParams + ',' + line + ',' + positions[0] + ',' + positions[1] + ',' + isNew + ',"' + tagStartChar + '","' + tagEndChar + '","' + postfix + '");\' class="btn btn-small button-apply btn-success">Save</button>';
+
+    let postfixClean = postfix.replaceAll('"', '****quote****');
+    result += '<button id="clsave" onclick=\'return saveParams(event,' + countParams + ',' + line + ',' + positions[0] + ',' + positions[1] + ',' + isNew + ',"' + tagStartChar + '","' + tagEndChar + '","' + postfixClean + '");\' class="btn btn-small button-apply btn-success">Save</button>';
     result += ' <button id="clclose" onclick=\'return closeModal(event);\' class="btn btn-small button-cancel btn-danger">Cancel</button>';
     result += '</div>';
     return result;
 }
 
-function saveParams(e, countParams, line_number, pos1, pos2, isNew, tagStartChar, tagEndChar, postfix) {
+function saveParams(e, countParams, line_number, pos1, pos2, isNew, tagStartChar, tagEndChar, postfixClean) {
+
+    let postfix = postfixClean.replaceAll('****quote****', '"');
 
     updateParamString("fieldtype_param_", 1, countParams, "current_tagparameter", null, false);
     e.preventDefault();
