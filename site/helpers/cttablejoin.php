@@ -347,7 +347,6 @@ class JHTMLCTTableJoin
         if (!is_array($resultJSON))
             return '';
 
-        //return '7';
         return self::ctRenderTableJoinSelectBox($ct, $control_name, $resultJSON, $index, $sub_index, $object_id, $formId, $attributes, $onchange, $filter, $js_filters, $value);
     }
 
@@ -423,8 +422,6 @@ class JHTMLCTTableJoin
             $result .= '<option value="">- Select</option>';
 
             for ($i = 0; $i < count($r); $i++) {
-
-
                 if ($r[$i]->id == $val)
                     $result .= '<option value="' . $r[$i]->id . '" selected="selected">' . $r[$i]->label . '</option>';
                 elseif (str_contains($val, ',' . $r[$i]->id . ','))
@@ -435,21 +432,20 @@ class JHTMLCTTableJoin
 
             $result .= '</select>';
 
-
             //Prepare the space for next elements
-
             if ($next_index < count($js_filters) && $val !== null)// and !$value_found)
             {
                 if (is_array($js_filters[$index])) {
 
                     if ($next_sub_index < count($js_filters[$index]))
                         $result .= self::ctUpdateTableJoinLink($ct, $control_name, $next_index, $next_sub_index, null, $formId, $attributes, $onchange, $filter, $js_filters, $value);
+                    else
+                        $result .= '<div id="' . $control_name . 'Selector' . $next_index . '_' . $next_sub_index . '"></div>';
                 } else {
                     $result .= self::ctUpdateTableJoinLink($ct, $control_name, $next_index, $next_sub_index, null, $formId, $attributes, $onchange, $filter, $js_filters, $value);
                 }
             } else
                 $result .= '<div id="' . $control_name . 'Selector' . $next_index . '_' . $next_sub_index . '"></div>';
-
         }
         $result .= '</div>';
 

@@ -240,7 +240,7 @@ class JHTMLESSqlJoin
 
     static protected function renderDropdownSelector_Box($list_values, $current_value, $control_name, $cssclass, $attribute, $place_holder, $dynamic_filter, $addNoValue = false)
     {
-        if (strpos($cssclass, ' ct_improved_selectbox') !== false)
+        if (str_contains($cssclass, ' ct_improved_selectbox'))
             return self::renderDropdownSelector_Box_improved($list_values, $current_value, $control_name, $cssclass, $attribute, $place_holder, $dynamic_filter);
         else
             return self::renderDropdownSelector_Box_simple($list_values, $current_value, $control_name, $cssclass, $attribute, $place_holder, $dynamic_filter, $addNoValue);
