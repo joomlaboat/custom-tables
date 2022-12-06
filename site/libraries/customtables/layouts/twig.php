@@ -99,90 +99,88 @@ class TwigProcessor
         //{{ document.sitename() }}	-	wizard ok
         //{{ document.languagepostfix() }}	-	wizard ok
 
-        if (!$this->ct->LayoutVariables['getEditFieldNamesOnly']) {
-            $this->twig->addGlobal('fields', new Twig_Fields_Tags($this->ct));
-            //{{ fields.list() }}	-	wizard ok
-            //{{ fields.count() }}	-	wizard ok
-            //{{ fields.json() }}	-	wizard ok
+        $this->twig->addGlobal('fields', new Twig_Fields_Tags($this->ct));
+        //{{ fields.list() }}	-	wizard ok
+        //{{ fields.count() }}	-	wizard ok
+        //{{ fields.json() }}	-	wizard ok
 
-            $this->twig->addGlobal('user', new Twig_User_Tags($this->ct));
-            //{{ user.name() }}	-	wizard ok
-            //{{ user.username() }}	-	wizard ok
-            //{{ user.email() }}	-	wizard ok
-            //{{ user.id() }}	-	wizard ok
-            //{{ user.lastvisitdate() }}	-	wizard ok
-            //{{ user.registerdate() }}	-	wizard ok
-            //{{ user.usergroups() }}	-	wizard ok
+        $this->twig->addGlobal('user', new Twig_User_Tags($this->ct));
+        //{{ user.name() }}	-	wizard ok
+        //{{ user.username() }}	-	wizard ok
+        //{{ user.email() }}	-	wizard ok
+        //{{ user.id() }}	-	wizard ok
+        //{{ user.lastvisitdate() }}	-	wizard ok
+        //{{ user.registerdate() }}	-	wizard ok
+        //{{ user.usergroups() }}	-	wizard ok
 
-            $this->twig->addGlobal('url', new Twig_Url_Tags($this->ct));
-            //{{ url.link() }}	-	wizard ok
-            //{{ url.format() }}	-	wizard ok
-            //{{ url.base64() }}	-	wizard ok
-            //{{ url.root() }}	-	wizard ok
-            //{{ url.getint() }}	-	wizard ok
-            //{{ url.getstring() }}	-	wizard ok
-            //{{ url.getuint() }}	-	wizard ok
-            //{{ url.getfloat() }}	-	wizard ok
-            //{{ url.getword() }}	-	wizard ok
-            //{{ url.getalnum() }}	-	wizard ok
-            //{{ url.getcmd() }}	-	wizard ok
-            //{{ url.getstringandencode() }}	-	wizard ok
-            //{{ url.getstringanddecode() }}	-	wizard ok
-            //{{ url.itemid() }}	-	wizard ok
-            //{{ url.set() }}	-	wizard ok
-            //{{ url.server() }}	-	wizard ok
+        $this->twig->addGlobal('url', new Twig_Url_Tags($this->ct));
+        //{{ url.link() }}	-	wizard ok
+        //{{ url.format() }}	-	wizard ok
+        //{{ url.base64() }}	-	wizard ok
+        //{{ url.root() }}	-	wizard ok
+        //{{ url.getint() }}	-	wizard ok
+        //{{ url.getstring() }}	-	wizard ok
+        //{{ url.getuint() }}	-	wizard ok
+        //{{ url.getfloat() }}	-	wizard ok
+        //{{ url.getword() }}	-	wizard ok
+        //{{ url.getalnum() }}	-	wizard ok
+        //{{ url.getcmd() }}	-	wizard ok
+        //{{ url.getstringandencode() }}	-	wizard ok
+        //{{ url.getstringanddecode() }}	-	wizard ok
+        //{{ url.itemid() }}	-	wizard ok
+        //{{ url.set() }}	-	wizard ok
+        //{{ url.server() }}	-	wizard ok
 
-            $this->twig->addGlobal('html', new Twig_Html_Tags($this->ct));
-            //{{ html.add() }}	-	wizard ok
-            //{{ html.batch() }}	-	wizard ok
-            //{{ html.button() }}	-	wizard ok
-            //{{ html.captcha() }}	-	wizard ok
-            //{{ html.goback() }}	-	wizard ok
-            //{{ html.importcsv() }}	-	wizard ok
-            //{{ html.tablehead() }}	-	wizard ok
-            //{{ html.limit() }}	-	wizard ok
-            //{{ html.message() }}	-	wizard ok
-            //{{ html.navigation() }}	-	wizard ok
-            //{{ html.orderby() }}	-	wizard ok
-            //{{ html.pagination() }}	-	wizard ok
-            //{{ html.print() }}	-	wizard ok
-            //{{ html.recordcount }}	-	wizard ok
-            //{{ html.recordlist }}	-	wizard ok
-            //{{ html.search() }}	-	wizard ok
-            //{{ html.searchbutton() }}	-	wizard ok
-            //{{ html.toolbar() }}	-	wizard ok
-            //{{ html.base64encode() }}	-	wizard ok
+        $this->twig->addGlobal('html', new Twig_Html_Tags($this->ct));
+        //{{ html.add() }}	-	wizard ok
+        //{{ html.batch() }}	-	wizard ok
+        //{{ html.button() }}	-	wizard ok
+        //{{ html.captcha() }}	-	wizard ok
+        //{{ html.goback() }}	-	wizard ok
+        //{{ html.importcsv() }}	-	wizard ok
+        //{{ html.tablehead() }}	-	wizard ok
+        //{{ html.limit() }}	-	wizard ok
+        //{{ html.message() }}	-	wizard ok
+        //{{ html.navigation() }}	-	wizard ok
+        //{{ html.orderby() }}	-	wizard ok
+        //{{ html.pagination() }}	-	wizard ok
+        //{{ html.print() }}	-	wizard ok
+        //{{ html.recordcount }}	-	wizard ok
+        //{{ html.recordlist }}	-	wizard ok
+        //{{ html.search() }}	-	wizard ok
+        //{{ html.searchbutton() }}	-	wizard ok
+        //{{ html.toolbar() }}	-	wizard ok
+        //{{ html.base64encode() }}	-	wizard ok
 
-            $this->twig->addGlobal('record', new Twig_Record_Tags($this->ct));
-            //{{ record.advancedjoin(function, tablename, field_findwhat, field_lookwhere, field_readvalue, additional_where, order_by_option, value_option_list) }}	-	wizard ok
+        $this->twig->addGlobal('record', new Twig_Record_Tags($this->ct));
+        //{{ record.advancedjoin(function, tablename, field_findwhat, field_lookwhere, field_readvalue, additional_where, order_by_option, value_option_list) }}	-	wizard ok
 
-            //{{ record.joincount(join_table) }}
-            //{{ record.joinavg(join_table,value_field_name) }}
-            //{{ record.joinmin(join_table,value_field_name) }}
-            //{{ record.joinmax(join_table,value_field_name) }}
-            //{{ record.joinvalue(join_table,value_field_name) }}
-            //{{ record.jointable(layout,filter,orderby,limit) }}
+        //{{ record.joincount(join_table) }}
+        //{{ record.joinavg(join_table,value_field_name) }}
+        //{{ record.joinmin(join_table,value_field_name) }}
+        //{{ record.joinmax(join_table,value_field_name) }}
+        //{{ record.joinvalue(join_table,value_field_name) }}
+        //{{ record.jointable(layout,filter,orderby,limit) }}
 
-            //{{ record.id }}	-	wizard ok
-            //{{ record.number }}	-	wizard ok
-            //{{ record.published }}	-	wizard ok
+        //{{ record.id }}	-	wizard ok
+        //{{ record.number }}	-	wizard ok
+        //{{ record.published }}	-	wizard ok
 
-            $this->variables = [];
+        $this->variables = [];
 
-            //{{ table.id }}	-	wizard ok
-            //{{ table.name }}	-	wizard ok
-            //{{ table.title }}	-	wizard ok
-            //{{ table.description }}	-	wizard ok
-            //{{ table.records }} same as {{ records.count }}	-	wizard ok
-            //{{ table.fields }} same as {{ fields.count() }}	-	wizard ok
+        //{{ table.id }}	-	wizard ok
+        //{{ table.name }}	-	wizard ok
+        //{{ table.title }}	-	wizard ok
+        //{{ table.description }}	-	wizard ok
+        //{{ table.records }} same as {{ records.count }}	-	wizard ok
+        //{{ table.fields }} same as {{ fields.count() }}	-	wizard ok
 
-            //{{ tables.getvalue(tablename,field_name,recordid_or_filter, orderby) }}
-            //{{ tables.getrecord(layoutname,recordid_or_filter, orderby) }}
-            //{{ tables.getrecords(layoutname,filter,orderby,limit) }}
+        //{{ tables.getvalue(tablename,field_name,recordid_or_filter, orderby) }}
+        //{{ tables.getrecord(layoutname,recordid_or_filter, orderby) }}
+        //{{ tables.getrecords(layoutname,filter,orderby,limit) }}
 
-            $this->twig->addGlobal('table', new Twig_Table_Tags($this->ct));
-            $this->twig->addGlobal('tables', new Twig_Tables_Tags($this->ct));
-        }
+        $this->twig->addGlobal('table', new Twig_Table_Tags($this->ct));
+        $this->twig->addGlobal('tables', new Twig_Tables_Tags($this->ct));
     }
 
     protected function addFieldValueMethods()
@@ -431,7 +429,6 @@ class fieldObject
             $value = $Inputbox->getDefaultValueIfNeeded($this->ct->Table->record);
 
             if ($this->ct->LayoutVariables['getEditFieldNamesOnly']) {
-
                 $this->ct->editFields[] = $this->field->fieldname;
                 return '';
             } else

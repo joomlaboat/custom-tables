@@ -151,15 +151,28 @@ class Table
             if ($field['type'] == 'blob') {
                 $this->selects[] = 'OCTET_LENGTH(' . $this->realtablename . '.' . $field['realfieldname'] . ') AS ' . $field['realfieldname'];
                 $this->selects[] = 'SUBSTRING(' . $this->realtablename . '.' . $field['realfieldname'] . ',1,255) AS ' . $field['realfieldname'] . '_sample';
+            } elseif ($field['type'] == 'multilangstring' or $field['type'] == 'multilangtext' or $field['type'] == 'multilangarticle') {
+
+                $firstLanguage = true;
+                foreach ($this->Languages->LanguageList as $lang) {
+                    if ($firstLanguage) {
+                        $postfix = '';
+                        $firstLanguage = false;
+                    } else
+                        $postfix = '_' . $lang->sef;
+
+                    $this->selects[] = $this->realtablename . '.' . $field['realfieldname'] . $postfix;
+                }
+
             } elseif ($field['type'] != 'dummy')
                 $this->selects[] = $this->realtablename . '.' . $field['realfieldname'];
         }
     }
 
-    public function getRecordFieldValue($listingid, $resultField)
+    public function getRecordFieldValue($listingId, $resultField)
     {
         $db = Factory::getDBO();
-        $query = ' SELECT ' . $resultField . ' FROM ' . $this->realtablename . ' WHERE ' . $this->realidfieldname . '=' . $db->quote($listingid) . ' LIMIT 1';
+        $query = ' SELECT ' . $resultField . ' FROM ' . $this->realtablename . ' WHERE ' . $this->realidfieldname . '=' . $db->quote($listingId) . ' LIMIT 1';
 
         $db->setQuery($query);
         $recs = $db->loadAssocList();

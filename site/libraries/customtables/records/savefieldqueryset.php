@@ -45,7 +45,6 @@ class SaveFieldQuerySet
         $this->ct = &$ct;
         $this->row = $row;
         $this->isCopy = $isCopy;
-
         $this->saveQuery = [];
     }
 
@@ -66,7 +65,6 @@ class SaveFieldQuerySet
     protected function getSaveFieldSetType()
     {
         $listing_id = $this->row[$this->ct->Table->realidfieldname];
-
         switch ($this->field->type) {
             case 'records':
                 $value = $this->get_record_type_value();

@@ -515,11 +515,11 @@ class Inputbox
         if (isset($this->option_list[4])) {
             $language = $this->option_list[4];
 
-            $firstlanguage = true;
+            $firstLanguage = true;
             foreach ($this->ct->Languages->LanguageList as $lang) {
-                if ($firstlanguage) {
+                if ($firstLanguage) {
                     $postfix = '';
-                    $firstlanguage = false;
+                    $firstLanguage = false;
                 } else
                     $postfix = '_' . $lang->sef;
 
@@ -533,11 +533,11 @@ class Inputbox
         //show all languages
         $result .= '<div class="form-horizontal">';
 
-        $firstlanguage = true;
+        $firstLanguage = true;
         foreach ($this->ct->Languages->LanguageList as $lang) {
-            if ($firstlanguage) {
+            if ($firstLanguage) {
                 $postfix = '';
-                $firstlanguage = false;
+                $firstLanguage = false;
             } else
                 $postfix = '_' . $lang->sef;
 

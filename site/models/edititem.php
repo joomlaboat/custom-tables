@@ -493,6 +493,7 @@ class CustomTablesModelEditItem extends JModelLegacy
         foreach ($this->ct->Table->fields as $fieldrow) {
 
             if (!$saveField->checkIfFieldAlreadyInTheList($fieldrow['fieldname'])) {
+
                 if (in_array($fieldrow['fieldname'], $fieldsToSave))
                     $saveFieldSet = $saveField->getSaveFieldSet($fieldrow);
                 else
@@ -544,8 +545,6 @@ class CustomTablesModelEditItem extends JModelLegacy
 
                 if ($phpOnChangeFound)
                     $this->doPHPonChange($row);
-
-                //$this->updateDefaultValues($row);
 
                 $listing_id = $row[$this->ct->Table->realidfieldname];
             }
