@@ -74,9 +74,8 @@ class SaveFieldQuerySet
             case 'sqljoin':
 
                 $value = $this->ct->Env->jinput->getInt($this->field->comesfieldname);
-                if (isset($value)) {
-                    $this->row[$this->field->realfieldname] = $value;
 
+                if (isset($value)) {
                     if ($value == 0)
                         return $this->field->realfieldname . '=NULL';
                     else

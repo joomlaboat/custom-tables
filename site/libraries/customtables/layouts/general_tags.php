@@ -261,7 +261,7 @@ class Twig_Url_Tags
         return $this->jinput->getInt('Itemid', 0);
     }
 
-    function getint($param, $default = 0): int
+    function getint($param, $default = 0): ?int
     {
         return $this->jinput->getInt($param, $default);
     }

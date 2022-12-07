@@ -1088,6 +1088,9 @@ class Inputbox
         //$this->option_list[2] - Parent Selector - Array
         //$this->option_list[3] - Custom Title Layout
 
+        if ($this->ct->isRecordNull($this->row))
+            $value = $this->ct->Env->jinput->getInt($this->ct->Env->field_prefix . $this->field->fieldname, null);
+
         $sqljoin_attributes = ' data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '"'
             . ' data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '"';
 
