@@ -393,25 +393,22 @@ class CTUser
         else
             $usergroups = $ct->Env->user->get('groups');
 
-        $isok = false;
+        $isOk = false;
 
-        if ($ct->Env->isUserAdministrator or in_array($ug, $usergroups))
-            $isok = true;
-        else {
+        if ($ct->Env->isUserAdministrator or in_array($ug, $usergroups)) {
+            $isOk = true;
+        } else {
             if (isset($ct->Table->record) and isset($ct->Table->record['listing_published']) and $ct->Table->useridfieldname != '') {
                 $uid = $ct->Table->record[$ct->Table->useridrealfieldname];
 
                 if ($uid == $ct->Env->userid and $ct->Env->userid != 0)
-                    $isok = true;
+                    $isOk = true;
             }
         }
-
-        return $isok;
+        return $isOk;
     }
 
-
     //checkAccess
-
     public static function CheckAuthorization(CT &$ct, int $action = 1)
     {
         if ($action == 5) //force edit
@@ -584,5 +581,4 @@ class CTUser
 
         return $wheres;
     }
-
 }

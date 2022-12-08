@@ -101,7 +101,10 @@ class Environment
 
         $this->userid = is_null($this->user) ? 0 : $this->user->id;
 
-        $this->isUserAdministrator = $this->user->authorise('core.edit', 'com_content');
+        $usergroups = $this->user->get('groups');
+        $this->isUserAdministrator = in_array(8, $usergroups);//8 is Super Users
+        //$this->isUserAdministrator = $this->user->authorise('core.edit', 'com_content');
+        
         $this->print = (bool)$this->jinput->getInt('print', 0);
         $this->clean = (bool)$this->jinput->getInt('clean', 0);
         $this->isModal = (bool)$this->jinput->getInt('modal', 0);

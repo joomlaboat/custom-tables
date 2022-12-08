@@ -495,6 +495,20 @@ class fieldObject
         }
     }
 
+    public function getvalue($fieldname, string $showPublishedString = ''): string
+    {
+        if ($this->field->type == 'sqljoin') {
+            $layoutcode = '{{ ' . $fieldname . '.value }}';
+            return CT_FieldTypeTag_sqljoin::resolveSQLJoinTypeValue($this->field, $layoutcode, $this->ct->Table->record[$this->field->realfieldname]);
+        } elseif ($this->field->type == 'records') {
+            $layoutcode = '{{ ' . $fieldname . '.value }}';
+            return CT_FieldTypeTag_records::resolveRecordTypeValue($this->field, $layoutcode, $this->ct->Table->record[$this->field->realfieldname], $showPublishedString);
+        } else {
+            $this->ct->app->enqueueMessage('{{ ' . $this->field->fieldname . '.getvalue }}. Wrong field type "' . $this->field->type . '". ".getvalue" method is only available for Table Join and Records filed types.', 'error');
+            return '';
+        }
+    }
+
     public function layout(string $layoutname, string $showPublishedString = ''): string
     {
         if ($this->field->type != 'sqljoin' and $this->field->type != 'records') {
