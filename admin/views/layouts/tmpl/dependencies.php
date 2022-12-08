@@ -106,7 +106,7 @@ function _renderLayoutList($layouts)
     $result = '<ul style="list-style-type:none;margin:0;">';
 
     foreach ($layouts as $layout) {
-        $link = '/administrator/index.php?option=com_customtables&view=layouts&layout=edit&id=' . $layout['id'];
+        $link = '/administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $layout['id'];
         $result .= '<li><a href="' . $link . '" target="_blank">' . $layout['layoutname'] . '</a></li>';
     }
 
