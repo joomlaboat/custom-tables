@@ -422,10 +422,12 @@ class JHTMLCTTableJoin
             $result .= '<option value="">- Select</option>';
 
             for ($i = 0; $i < count($r); $i++) {
+                $label = htmlspecialchars_decode($r[$i]->label, ENT_HTML5);
+
                 if ($r[$i]->id == $val)
-                    $result .= '<option value="' . $r[$i]->id . '" selected="selected">' . $r[$i]->label . '</option>';
+                    $result .= '<option value="' . $r[$i]->id . '" selected="selected">' . $label . '</option>';
                 elseif (str_contains($val, ',' . $r[$i]->id . ','))
-                    $result .= '<option value="' . $r[$i]->id . '" selected="selected">' . $r[$i]->label . '</option>';
+                    $result .= '<option value="' . $r[$i]->id . '" selected="selected">' . $label . '</option>';
                 else
                     $result .= '<option value="' . $r[$i]->id . '">' . $r[$i]->label . '</option>';
             }
