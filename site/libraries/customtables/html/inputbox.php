@@ -123,7 +123,7 @@ class Inputbox
         //$showPublished = 0 - show published
         //$showPublished = 1 - show unpublished
         //$showPublished = 2 - show any
-        $showPublished = (($selector[2] ?? '') == '' ? 2 : ((int)($selector[2] ?? 0) == 1 ? 0 : 1)); //$selector[2] can be "" or "true" or "false"
+        $showPublished = (($selector[2] ?? '') == 'true' ? 2 : 0); //$selector[2] can be "" or "true" or "false"
 
         $filter = $selector[3] ?? '';
 
@@ -1101,7 +1101,7 @@ class Inputbox
             $result .= JHTML::_('CTTableJoin.render',
                 $this->prefix . $this->field->fieldname,
                 $this->field,
-                $this->row[$this->ct->Table->realidfieldname],
+                ($this->row !== null ? $this->row[$this->ct->Table->realidfieldname] : null),
                 $value,
                 $this->option_list,
                 $this->onchange,

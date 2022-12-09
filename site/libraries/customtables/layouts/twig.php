@@ -38,9 +38,11 @@ class TwigProcessor
     var array $variables = [];
     var bool $recordBlockFound;
     var string $recordBlockReplaceCode;
+    var bool $DoHTMLSpecialChars;
 
-    public function __construct(CT &$ct, $layoutContent, $getEditFieldNamesOnly = false)
+    public function __construct(CT &$ct, $layoutContent, $getEditFieldNamesOnly = false, $DoHTMLSpecialChars = false)
     {
+        $this->DoHTMLSpecialChars = $DoHTMLSpecialChars;
         $ct->LayoutVariables['getEditFieldNamesOnly'] = $getEditFieldNamesOnly;
         $this->ct = $ct;
 
@@ -202,7 +204,7 @@ class TwigProcessor
                 });
 
                 $this->twig->addFunction($function);
-                $this->variables[$fieldrow['fieldname']] = new fieldObject($this->ct, $fieldrow);
+                $this->variables[$fieldrow['fieldname']] = new fieldObject($this->ct, $fieldrow, $this->DoHTMLSpecialChars);
                 $index++;
             }
         }
@@ -313,9 +315,11 @@ class fieldObject
 {
     var CT $ct;
     var Field $field;
+    var bool $DoHTMLSpecialChars;
 
-    function __construct(CT &$ct, $fieldrow)
+    function __construct(CT &$ct, $fieldrow, $DoHTMLSpecialChars = false)
     {
+        $this->DoHTMLSpecialChars = $DoHTMLSpecialChars;
         $this->ct = $ct;
         $this->field = new Field($ct, $fieldrow, $this->ct->Table->record);
     }
@@ -324,6 +328,12 @@ class fieldObject
     {
         $valueProcessor = new Value($this->ct);
         $vlu = $valueProcessor->renderValue($this->field->fieldrow, $this->ct->Table->record, []);
+
+        if ($this->DoHTMLSpecialChars) {
+            $vlu = htmlentities($vlu, ENT_IGNORE + ENT_DISALLOWED + ENT_HTML5, "UTF-8");
+            $vlu = htmlspecialchars($vlu, ENT_IGNORE + ENT_DISALLOWED + ENT_HTML5, "UTF-8");
+        }
+
         return strval($vlu);
     }
 
@@ -374,9 +384,15 @@ class fieldObject
                 if ($c != "")
                     $b[] = $c;
             }
-            return implode(',', $b);
+            $vlu = implode(',', $b);
         } else
-            return $this->ct->Table->record[$rfn];
+            $vlu = $this->ct->Table->record[$rfn];
+
+        if ($this->DoHTMLSpecialChars) {
+            $vlu = htmlentities($vlu, ENT_IGNORE + ENT_DISALLOWED + ENT_HTML5, "UTF-8");
+            $vlu = htmlspecialchars($vlu, ENT_IGNORE + ENT_DISALLOWED + ENT_HTML5, "UTF-8");
+        }
+        return $vlu;
     }
 
     public function int(): int

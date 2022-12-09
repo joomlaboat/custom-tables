@@ -61,7 +61,7 @@ class ViewJSON
             $pageLayoutContent = str_replace($catalogTableCode, $catalogTableContent, $pageLayoutContent);
         }
 
-        $twig = new TwigProcessor($this->ct, $pageLayoutContent);
+        $twig = new TwigProcessor($this->ct, $pageLayoutContent, false, true);
         $pageLayoutContent = $twig->process();
 
         if ($this->ct->Params->allowContentPlugins)

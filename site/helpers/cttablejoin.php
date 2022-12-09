@@ -342,10 +342,10 @@ class JHTMLCTTableJoin
         if ($result == '')
             return '';
 
-        $resultJSON = json_decode($result);
+        $resultJSON = @json_decode($result, null, 512, JSON_INVALID_UTF8_IGNORE);
 
         if (!is_array($resultJSON))
-            return '';
+            return 'Table Join - Corrupted data or unsupported encoding.';
 
         return self::ctRenderTableJoinSelectBox($ct, $control_name, $resultJSON, $index, $sub_index, $object_id, $formId, $attributes, $onchange, $filter, $js_filters, $value);
     }

@@ -32,7 +32,7 @@ class Filtering
     var array $where;
     var int $showPublished;
 
-    function __construct(CT $ct, $showPublished = 0)
+    function __construct(CT $ct, int $showPublished = 0)
     {
         $this->ct = $ct;
         $this->PathValue = [];
