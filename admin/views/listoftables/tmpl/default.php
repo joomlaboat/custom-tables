@@ -12,18 +12,12 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
-// load tooltip behavior
-//JHtml::_('behavior.tooltip');
-//JHtml::_('behavior.multiselect');
-//JHtml::_('dropdown.init');
-//JHtml::_('formbehavior.chosen', 'select');
-
 use CustomTables\IntegrityChecks;
 use Joomla\CMS\Language\Text;
 
 ?>
 
-<script type="text/javascript">
+<script>
     Joomla.orderTable = function () {
         let table = document.getElementById("sortTable");
         let direction = document.getElementById("directionTable");

@@ -14,7 +14,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use Joomla\CMS\Factory;
-use Joomla\Registry\Registry;
 
 // import Joomla table library
 jimport('joomla.database.table');
@@ -24,7 +23,7 @@ jimport('joomla.database.table');
  */
 class CustomtablesTableRecords extends JTable
 {
-    //protected $_jsonEncode = array('params', 'metadata');
+    var $id = null;
 
     /**
      * Constructor
@@ -52,5 +51,4 @@ class CustomtablesTableRecords extends JTable
 
         parent::__construct($realtablename, 'id', $db);
     }
-
 }

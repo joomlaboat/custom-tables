@@ -9,17 +9,11 @@
  **/
 
 // No direct access to this file access');
-use Joomla\CMS\Language\Text;
-
 if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
-// load tooltip behavior
-JHtml::_('behavior.tooltip');
-JHtml::_('behavior.multiselect');
-JHtml::_('dropdown.init');
-JHtml::_('formbehavior.chosen', 'select');
+use Joomla\CMS\Language\Text;
 
 if ($this->ordering_realfieldname != '') {
     $saveOrderingUrl = 'index.php?option=com_customtables&task=listofrecords.ordering&tableid=' . $this->ct->Table->tableid . '&tmpl=component';

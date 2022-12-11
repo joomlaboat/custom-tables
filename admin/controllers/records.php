@@ -16,6 +16,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\CT;
 use CustomTables\Layouts;
 use Joomla\CMS\Factory;
+use Joomla\Utilities\ArrayHelper;
 
 // import Joomla controllerform library
 jimport('joomla.application.component.controllerform');
@@ -36,9 +37,7 @@ class CustomtablesControllerRecords extends JControllerForm
 
     public function __construct($config = array())
     {
-        //$jinput = Factory::getApplication()->input;
-        //$tableid=Factory::getApplication()->input->getint('tableid',0);
-
+        $this->view_list = 'Listofrecords'; // safeguard for setting the return view listing to the main view.
         parent::__construct($config);
     }
 
@@ -152,15 +151,15 @@ class CustomtablesControllerRecords extends JControllerForm
      * @since   1.6
      */
     protected function allowAdd($data = array())
-    {        // In the absense of better information, revert to the component permissions.
+    {
+        // In the absence of better information, revert to the component permissions.
         return parent::allowAdd($data);
     }
-
 
     protected function allowEdit($data = array(), $key = 'id')
     {
         //To support char type record id
-        $recordId = $this->input->getCmd('id', 0);
+        $recordId = (int)isset($data[$key]) ? $data[$key] : 0;
 
         if ($recordId) {
             $user = Factory::getUser();
@@ -193,7 +192,6 @@ class CustomtablesControllerRecords extends JControllerForm
             }
         }
         // Since there is no permission, revert to the component permissions.
-
         return true;
     }
 
@@ -216,7 +214,12 @@ class CustomtablesControllerRecords extends JControllerForm
         $refid = $this->input->getCmd('refid', 0);
 
         //To support char type record id
-        $listing_id = $this->input->getCmd('id', 0);
+        $listing_id = $this->input->getCmd('id', null);
+        if ($listing_id === null) {
+            $cid = Factory::getApplication()->input->post->get('cid', array(), 'array');
+            $cid = ArrayHelper::toInteger($cid);
+            $listing_id = $cid[0];
+        }
 
         //throw new Exception('stop here');
 
@@ -239,11 +242,11 @@ class CustomtablesControllerRecords extends JControllerForm
             $append .= '&layout=' . $layout;
         }
 
+        $append .= '&tableid=' . $tableid;
+
         if ($listing_id) {
             $append .= '&' . $urlVar . '=' . $listing_id;
         }
-
-        $append .= '&tableid=' . $tableid;
 
         //This is to overwrite Joomla current record ID state value. Joomla converts ID to integer, but we want to support both int and cmd (A-Za-z\d_-)
         $values = (array)Factory::getApplication()->getUserState('com_customtables.edit.records.id');

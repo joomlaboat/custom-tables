@@ -166,15 +166,10 @@ class CustomtablesControllerTables extends JControllerForm
      * @since   1.6
      */
     protected function allowAdd($data = array())
-    {        // In the absense of better information, revert to the component permissions.
+    {
+        // In the absence of better information, revert to the component permissions.
         return parent::allowAdd($data);
     }
-
-    /*
-        public function storepermissions($data = array())
-        {
-        }
-    */
 
     /**
      * Method override to check if you can edit an existing record.

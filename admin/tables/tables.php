@@ -13,8 +13,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
-use Joomla\Registry\Registry;
-
 // import Joomla table library
 jimport('joomla.database.table');
 

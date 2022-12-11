@@ -18,12 +18,9 @@ jimport('joomla.filter.input');
 
 class CustomtablesTableOptions extends JTable
 {
-
     var $id = null;
     var $optionname = null;
-
     var $title = null;
-
     var $image = null;
     var $imageparams = null;
     var $ordering = null;
@@ -32,7 +29,6 @@ class CustomtablesTableOptions extends JTable
     var $isselectable = true;
     var $optionalcode = null;
     var $link = null;
-
     var $familytree = null;
 
     function __construct(&$db)
