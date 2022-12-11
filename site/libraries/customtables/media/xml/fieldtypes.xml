@@ -1057,7 +1057,7 @@
     </type>
 
     <type ct_name="sqljoin" label="Table Join"
-          description="Left Join to another table. Finds the record to read a value of the specified field."
+          description="Left Join to another table. Finds the record to read a value of the specified field.&lt;br/&gt;&lt;br/&gt;To read any field of joined table use {{ fieldname.get('joined_table_field_name') }}.&lt;br/&gt;&lt;br/&gt;To read unprocessed value of the joined table field use this tag {{ fieldname.getvalue('joined_table_field_name') }}.&lt;br/&gt;&lt;br/&gt;To read joined table record processed using the Layout use this tag  {{ fieldname.layout('layout_name') }}."
           priority="3">
         <params>
             <param name="table" label="Table" example="products"
