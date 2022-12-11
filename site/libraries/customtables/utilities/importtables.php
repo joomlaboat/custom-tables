@@ -134,7 +134,7 @@ class ImportTables
         return $tableid;
     }
 
-    public static function updateRecords(string $table, array $rows_new, array $rows_old, $addPrefix = true, array $exceptions = array(), bool $force_id = false): void
+    public static function updateRecords(string $table, array $rows_new, array $rows_old, $addPrefix = true, array $exceptions = array(), bool $force_id = false, $save_checked_out = false): void
     {
         if ($addPrefix)
             $mySQLTableName = '#__customtables_' . $table;
@@ -146,8 +146,12 @@ class ImportTables
         $sets = array();
         $keys = array_keys($rows_new);
 
-        $ignore_fields = ['asset_id', 'created_by', 'modified_by', 'checked_out',
-            'checked_out_time', 'version', 'hits', 'publish_up', 'publish_down', 'checked_out_time'];
+        $ignore_fields = ['asset_id', 'created_by', 'modified_by', 'version', 'hits', 'publish_up', 'publish_down'];
+
+        if (!$save_checked_out) {
+            $ignore_fields[] = 'checked_out';
+            $ignore_fields[] = 'checked_out_time';
+        }
 
         foreach ($keys as $key) {
             $type = null;
@@ -156,7 +160,7 @@ class ImportTables
                 $fieldname = ImportTables::checkFieldName($key, $force_id, $exceptions);
 
                 if ($fieldname != '' and Fields::checkIfFieldExists($mySQLTableName, $fieldname)) {
-                    if (isset($rows_new[$key]) and (!isset($rows_old[$key]) or $rows_new[$key] != $rows_old[$key])) {
+                    if (array_key_exists($key, $rows_new) and (!array_key_exists($key, $rows_old) or $rows_new[$key] != $rows_old[$key])) {
                         $sets[] = $fieldname . '=' . ImportTables::dbQuoteByType($rows_new[$key], $type);
                     }
                 }
@@ -165,7 +169,6 @@ class ImportTables
 
         if (count($sets) > 0) {
             $query = 'UPDATE ' . $mySQLTableName . ' SET ' . implode(', ', $sets) . ' WHERE id=' . (int)$rows_old['id'];
-
             $db->setQuery($query);
             $db->execute();
         }
@@ -230,7 +233,8 @@ class ImportTables
         return null;
     }
 
-    public static function insertRecords($table, $rows, $addPrefix = true, $exceptions = array(), $force_id = false, $add_field_prefix = '', $field_conversion_map = array())
+    public static function insertRecords($table, $rows, $addPrefix = true, $exceptions = array(), $force_id = false,
+                                         $add_field_prefix = '', $field_conversion_map = array(), $save_checked_out = false)
     {
         if ($addPrefix)
             $mysqltablename = '#__customtables_' . $table;
@@ -243,8 +247,12 @@ class ImportTables
 
         $keys = array_keys($rows);
 
-        $ignore_fields = ['asset_id', 'created_by', 'modified_by', 'checked_out',
-            'checked_out_time', 'version', 'hits', 'publish_up', 'publish_down', 'checked_out_time'];
+        $ignore_fields = ['asset_id', 'created_by', 'modified_by', 'version', 'hits', 'publish_up', 'publish_down', 'checked_out_time'];
+
+        if (!$save_checked_out) {
+            $ignore_fields[] = 'checked_out';
+            $ignore_fields[] = 'checked_out_time';
+        }
 
         $core_fields = ['id', 'published'];
 

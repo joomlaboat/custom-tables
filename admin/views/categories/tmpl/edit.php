@@ -13,8 +13,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
-use \Joomla\CMS\Component\ComponentHelper;
-
 JHtml::addIncludePath(JPATH_COMPONENT . '/helpers/html');
 
 if ($this->version >= 4) {
@@ -25,15 +23,11 @@ if ($this->version >= 4) {
     JHtml::_('behavior.keepalive');
     JHtml::_('behavior.formvalidation');
 }
-
 ?>
 
 <form action="<?php echo JRoute::_('index.php?option=com_customtables&layout=edit&id=' . (int)$this->item->id . $this->referral); ?>"
       method="post" name="adminForm" id="adminForm" class="form-validate" enctype="multipart/form-data">
     <div class="form-horizontal">
-
-        <?php //echo JHtml::_('bootstrap.startTabSet', 'categoriesTab', array('active' => 'general')); ?>
-
 
         <div class="row-fluid form-horizontal-desktop">
             <div class="span12">
@@ -46,22 +40,9 @@ if ($this->version >= 4) {
             </div>
         </div>
 
-
-        <?php //echo JHtml::_('bootstrap.addTab', 'categoriesTab', 'general', Text::_('COM_CUSTOMTABLES_CATEGORIES_GENERAL', true));
-        /*
-            <div class="row-fluid form-horizontal-desktop">
-                <div class="span12">
-                    <?php echo JLayoutHelper::render('categories.general_left', $this); ?>
-                </div>
-            </div>
-         */ //echo JHtml::_('bootstrap.endTab'); ?>
-
-        <?php //echo JHtml::_('bootstrap.endTabSet'); ?>
-
         <div>
             <input type="hidden" name="task" value="categories.edit"/>
             <?php echo JHtml::_('form.token'); ?>
         </div>
     </div>
 </form>
-<!--</div>-->

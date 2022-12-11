@@ -88,7 +88,7 @@ class CustomtablesModelLayouts extends JModelAdmin
             // Disable fields while saving.
             $form->setFieldAttribute('published', 'filter', 'unset');
         }
-        // If this is a new item insure the greated by is set.
+        // If this is a new item insure the created by is set.
         if (0 == $id) {
             // Set the created_by to this user
             $form->setValue('created_by', null, $user->id);

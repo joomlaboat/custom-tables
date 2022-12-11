@@ -272,6 +272,5 @@
                required="false"
                filter="CMD"
                hint="COM_CUSTOMTABLES_FIELDS_CUSTOMFIELDNAME_HINT"/>
-
     </fieldset>
 </form>

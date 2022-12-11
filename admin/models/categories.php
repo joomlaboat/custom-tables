@@ -80,12 +80,12 @@ class CustomtablesModelCategories extends JModelAdmin
             // Disable fields while saving.
             $form->setFieldAttribute('published', 'filter', 'unset');
         }
-        // If this is a new item insure the greated by is set.
+        // If this is a new item insure the created by is set.
         if (0 == $id) {
             // Set the created_by to this user
             $form->setValue('created_by', null, $user->id);
         }
-        // Modify the form based on Edit Creaded By access controls.
+        // Modify the form based on Edit Created By access controls.
         if (!$user->authorise('core.edit.created_by', 'com_customtables')) {
             // Disable fields for display.
             $form->setFieldAttribute('created_by', 'disabled', 'true');
@@ -94,7 +94,7 @@ class CustomtablesModelCategories extends JModelAdmin
             // Disable fields while saving.
             $form->setFieldAttribute('created_by', 'filter', 'unset');
         }
-        // Modify the form based on Edit Creaded Date access controls.
+        // Modify the form based on Edit Created Date access controls.
         if (!$user->authorise('core.edit.created', 'com_customtables')) {
             // Disable fields for display.
             $form->setFieldAttribute('created', 'disabled', 'true');

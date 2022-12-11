@@ -44,7 +44,6 @@ class CustomtablesModelTables extends JModelAdmin
     public function __construct($config = array())
     {
         parent::__construct($config);
-
         $this->ct = new CT;
     }
 
@@ -84,7 +83,7 @@ class CustomtablesModelTables extends JModelAdmin
             // Disable fields while saving.
             $form->setFieldAttribute('published', 'filter', 'unset');
         }
-        // If this is a new item insure the greated by is set.
+        // If this is a new item insure the created by is set.
         if (0 == $id) {
             // Set the created_by to this user
             $form->setValue('created_by', null, $this->ct->Env->user->id);

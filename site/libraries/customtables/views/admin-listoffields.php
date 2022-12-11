@@ -30,7 +30,6 @@ class ListOfFields
     var int $tableid;
     var string $tablename;
     var string $tabletitle;
-    //var $languages;
     var array $items;
     var string $editLink;
 
@@ -212,7 +211,7 @@ class ListOfFields
     {
         if (self::checkString($string)) {
             $initial = strlen($string);
-            $words = preg_split('/([\s\n\r]+)/', $string, null, PREG_SPLIT_DELIM_CAPTURE);
+            $words = preg_split('/([\s\n\r]+)/', $string, -1, PREG_SPLIT_DELIM_CAPTURE);
             $words_count = count((array)$words);
 
             $word_length = 0;

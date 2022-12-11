@@ -791,10 +791,10 @@ class Fields
         if ($fieldid == 0)
             $fieldName = self::checkFieldName($tableid, $fieldName);
 
-        $data['fieldname'] = $fieldName;
+        $data['checked_out'] = 0;
+        $data['checked_out_time'] = null;
 
         //Add language fields to the fields' table if necessary
-
         $moreThanOneLang = false;
         $fields = Fields::getListOfExistingFields('#__customtables_fields', false);
         foreach ($ct->Languages->LanguageList as $lang) {
@@ -840,11 +840,10 @@ class Fields
         }
 
         if ($fieldid != 0) {
-
             $data_old = ['id' => $fieldid];
-            ImportTables::updateRecords('#__customtables_fields', $data, $data_old, false, array(), true);
+            ImportTables::updateRecords('#__customtables_fields', $data, $data_old, false, array(), true, true);
         } else
-            $fieldid = ImportTables::insertRecords('#__customtables_fields', $data, false, array(), true);
+            $fieldid = ImportTables::insertRecords('#__customtables_fields', $data, false, array(), true, '', [], true);
 
         return $fieldid;
     }

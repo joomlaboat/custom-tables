@@ -101,11 +101,6 @@ class CustomtablesControllerFields extends JControllerForm
         $this->ref = $this->input->get('ref', 0, 'word');
         $this->refid = $this->input->get('refid', 0, 'int');
 
-        if ($this->ref || $this->refid) {
-            // to make sure the item is checked in on redirect
-            $this->task = 'save';
-        }
-
         $fieldid = Fields::saveField();
 
         if ($fieldid == null) {
@@ -114,11 +109,11 @@ class CustomtablesControllerFields extends JControllerForm
         }
 
         $redirect = 'index.php?option=' . $this->option;
-        $extratask = $this->input->getCmd('extratask', '');
+        $extraTask = $this->input->getCmd('extratask', '');
 
         //Postpone extra task
-        if ($extratask != '') {
-            $redirect .= '&extratask=' . $extratask;
+        if ($extraTask != '') {
+            $redirect .= '&extratask=' . $extraTask;
             $redirect .= '&old_typeparams=' . $this->input->get('old_typeparams', '', 'BASE64');
             $redirect .= '&new_typeparams=' . $this->input->get('new_typeparams', '', 'BASE64');
             $redirect .= '&fieldid=' . $fieldid;
@@ -127,7 +122,7 @@ class CustomtablesControllerFields extends JControllerForm
                 $redirect .= '&stepsize=' . $this->input->getInt('stepsize', 10);
         }
 
-        if ($extratask != '' or $this->task == 'apply' or $this->task == 'save2copy')
+        if ($extraTask != '' or $this->task == 'apply' or $this->task == 'save2copy')
             $redirect .= '&view=listoffields&tableid=' . (int)$tableid . '&task=fields.edit&id=' . (int)$fieldid;
         elseif ($this->task == 'save2new')
             $redirect .= '&view=listoffields&tableid=' . (int)$tableid . '&task=fields.edit';
@@ -197,8 +192,8 @@ class CustomtablesControllerFields extends JControllerForm
         $refId = $this->input->get('refid', 0, 'int');
 
         $tableid = $this->input->getint('tableid', 0);
-        // Setup redirect info.
 
+        // Setup redirect info.
         $append = '';
 
         if ($refId) {
@@ -215,11 +210,11 @@ class CustomtablesControllerFields extends JControllerForm
             $append .= '&layout=' . $layout;
         }
 
+        $append .= '&tableid=' . $tableid;
+
         if ($recordId) {
             $append .= '&' . $urlVar . '=' . $recordId;
         }
-
-        $append .= '&tableid=' . $tableid;
 
         return $append;
     }

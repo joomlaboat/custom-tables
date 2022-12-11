@@ -29,6 +29,10 @@ use Joomla\CMS\Version;
 class CustomtablesViewTables extends JViewLegacy
 {
     var CT $ct;
+    var $state;
+    var $canDo;
+    var $canCreate;
+    var $canEdit;
 
     /**
      * display method of View
@@ -60,10 +64,10 @@ class CustomtablesViewTables extends JViewLegacy
         $this->refid = Factory::getApplication()->input->get('refid', 0, 'int');
         $this->referral = '';
         if ($this->refid) {
-            // return to the item that refered to this item
+            // return to the item that referred to this item
             $this->referral = '&ref=' . (string)$this->ref . '&refid=' . (int)$this->refid;
         } elseif ($this->ref) {
-            // return to the list view that refered to this item
+            // return to the list view that referred to this item
             $this->referral = '&ref=' . (string)$this->ref;
         }
 
@@ -95,34 +99,7 @@ class CustomtablesViewTables extends JViewLegacy
         $isNew = $this->item->id == 0;
 
         JToolbarHelper::title(Text::_($isNew ? 'COM_CUSTOMTABLES_TABLES_NEW' : 'COM_CUSTOMTABLES_TABLES_EDIT'), 'pencil-2 article-add');
-        // Built the actions for new and existing records.
-        /*
-        if ($this->refid || $this->ref)
-        {
-            if ($this->canDo->get('core.create') && $isNew)
-            {
-                // We can create the record.
-                JToolBarHelper::save('tables.save', 'JTOOLBAR_SAVE');
-            }
-            elseif ($this->canDo->get('core.edit'))
-            {
-                // We can save the record.
-                JToolBarHelper::save('tables.save', 'JTOOLBAR_SAVE');
-            }
-            if ($isNew)
-            {
-                // Do not creat but cancel.
-                JToolBarHelper::cancel('tables.cancel', 'JTOOLBAR_CANCEL');
-            }
-            else
-            {
-                // We can close it.
-                JToolBarHelper::cancel('tables.cancel', 'JTOOLBAR_CLOSE');
-            }
-        }
-        else
-        {
-            */
+
         if ($isNew) {
             // For new records, check the create permission.
             if ($this->canCreate) {
@@ -149,12 +126,6 @@ class CustomtablesViewTables extends JViewLegacy
         }
         //}
         JToolbarHelper::divider();
-        // set help url for this view if found
-        //$help_url = CustomtablesHelper::getHelpUrl('tables');
-        //if (CustomtablesHelper::checkString($help_url))
-        //{
-        //JToolbarHelper::help('COM_CUSTOMTABLES_HELP_MANAGER', false, $help_url);
-        //}
     }
 
     /**

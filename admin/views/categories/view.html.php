@@ -54,11 +54,11 @@ class CustomtablesViewCategories extends JViewLegacy
         $this->refid = Factory::getApplication()->input->get('refid', 0, 'int');
         $this->referral = '';
         if ($this->refid) {
-            // return to the item that refered to this item
-            $this->referral = '&ref=' . (string)$this->ref . '&refid=' . (int)$this->refid;
+            // return to the item that referred to this item
+            $this->referral = '&ref=' . $this->ref . '&refid=' . (int)$this->refid;
         } elseif ($this->ref) {
-            // return to the list view that refered to this item
-            $this->referral = '&ref=' . (string)$this->ref;
+            // return to the list view that referred to this item
+            $this->referral = '&ref=' . $this->ref;
         }
 
         // Set the toolbar
@@ -75,7 +75,6 @@ class CustomtablesViewCategories extends JViewLegacy
         // Set the document
         $this->setDocument();
     }
-
 
     /**
      * Setting the toolbar

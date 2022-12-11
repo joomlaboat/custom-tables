@@ -87,7 +87,7 @@ abstract class CustomtablesHelper
     {
         if (self::checkString($string)) {
             $initial = strlen($string);
-            $words = preg_split('/([\s\n\r]+)/', $string, null, PREG_SPLIT_DELIM_CAPTURE);
+            $words = preg_split('/([\s\n\r]+)/', $string, -1, PREG_SPLIT_DELIM_CAPTURE);
             $words_count = count((array)$words);
 
             $word_length = 0;

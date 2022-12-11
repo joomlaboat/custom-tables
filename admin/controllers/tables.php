@@ -34,7 +34,6 @@ class CustomtablesControllerTables extends JControllerForm
      */
     protected $task;
 
-
     public function __construct($config = array())
     {
         $this->view_list = 'Listoftables'; // safeguard for setting the return view listing to the main view.
@@ -123,7 +122,7 @@ class CustomtablesControllerTables extends JControllerForm
      */
     public function save($key = null, $urlVar = null)
     {
-        // get the referal details
+        // get the referral details
         $this->ref = $this->input->get('ref', 0, 'word');
         $this->refid = $this->input->get('refid', 0, 'int');
 
@@ -144,7 +143,7 @@ class CustomtablesControllerTables extends JControllerForm
                 )
             );
         } elseif ($this->ref && $saved) {
-            $redirect = '&view=' . (string)$this->ref;
+            $redirect = '&view=' . $this->ref;
 
             // Redirect to the list screen.
             $this->setRedirect(
@@ -276,6 +275,5 @@ class CustomtablesControllerTables extends JControllerForm
      */
     protected function postSaveHook(JModelLegacy $model, $validData = array())
     {
-        return;
     }
 }

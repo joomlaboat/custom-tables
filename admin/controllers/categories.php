@@ -121,7 +121,7 @@ class CustomtablesControllerCategories extends JControllerForm
      */
     public function save($key = null, $urlVar = null)
     {
-        // get the referal details
+        // get the referral details
         $this->ref = $this->input->get('ref', 0, 'word');
         $this->refid = $this->input->get('refid', 0, 'int');
 

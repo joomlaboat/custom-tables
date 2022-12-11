@@ -1,52 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form>
-	<fieldset>
-                <!-- Default Fields. addfieldpath="/administrator/components/com_customtables/models/fields"-->
-                <!-- Id Field. Type: Text (joomla)-->
-                <field name="id"
-			type="number" 
-			id="id"
-                       class="readonly"
-                       label="JGLOBAL_FIELD_ID_LABEL"
-                       description="JGLOBAL_FIELD_ID_DESC"
-                       size="10"
-			readonly="true" 
-                       default="0" />
-                <field name="categoryname"
-			type="text"
-                       id="categoryname"
-                       label="COM_CUSTOMTABLES_CATEGORIES_CATEGORYNAME_LABEL"
-                       maxlength="50"
-                       description="JFIELD_TITLE_DESC"
-                       class="text_area"
-                       readonly="false"
-                       disabled="false"
-                       required="true"
-                       filter="STRING"
-                       message="COM_CUSTOMTABLES_CATEGORIES_CATEGORYNAME_MESSAGE"
-                       hint="COM_CUSTOMTABLES_CATEGORIES_CATEGORYNAME_HINT"
-                       autocomplete="on" />
+    <fieldset>
+        <!-- Id Field. Type: Text (joomla)-->
+        <field name="id"
+               type="number"
+               id="id"
+               class="readonly"
+               label="JGLOBAL_FIELD_ID_LABEL"
+               description="JGLOBAL_FIELD_ID_DESC"
+               size="10"
+               readonly="true"
+               default="0"/>
+        <field name="categoryname"
+               type="text"
+               id="categoryname"
+               label="COM_CUSTOMTABLES_CATEGORIES_CATEGORYNAME_LABEL"
+               maxlength="50"
+               description="JFIELD_TITLE_DESC"
+               class="text_area"
+               readonly="false"
+               disabled="false"
+               required="true"
+               filter="STRING"
+               message="COM_CUSTOMTABLES_CATEGORIES_CATEGORYNAME_MESSAGE"
+               hint="COM_CUSTOMTABLES_CATEGORIES_CATEGORYNAME_HINT"
+               autocomplete="on"/>
 
-		<field
-			name="created"
-			type="calendar"
-			translateformat="true"
-			id="created"
-			filter="unset" 
-		/>
+        <field
+                name="created"
+                type="calendar"
+                translateformat="true"
+                id="created"
+                filter="unset"
+        />
 
-                <field name="modified"
-                       type="calendar"
-                       class="readonly"
-                       label="COM_CUSTOMTABLES_CATEGORIES_MODIFIED_DATE_LABEL"
-                       description="COM_CUSTOMTABLES_CATEGORIES_MODIFIED_DATE_DESC"
-                       size="22"
-                       readonly="true"
-                       format="%Y-%m-%d %H:%M:%S"
-                       filter="user_utc" />
-
-
-
-        </fieldset>
-	
+        <field name="modified"
+               type="calendar"
+               class="readonly"
+               label="COM_CUSTOMTABLES_CATEGORIES_MODIFIED_DATE_LABEL"
+               description="COM_CUSTOMTABLES_CATEGORIES_MODIFIED_DATE_DESC"
+               size="22"
+               readonly="true"
+               format="%Y-%m-%d %H:%M:%S"
+               filter="user_utc"/>
+    </fieldset>
 </form>

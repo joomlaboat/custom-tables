@@ -66,16 +66,15 @@ class CustomtablesViewFields extends JViewLegacy
         $this->canEdit = $this->canDo->get('tables.edit');
 
         // get input
-        $jinput = Factory::getApplication()->input;
         $this->ref = Factory::getApplication()->input->get('ref', 0, 'word');
         $this->refid = Factory::getApplication()->input->get('refid', 0, 'int');
         $this->referral = '';
         if ($this->refid) {
-            // return to the item that refered to this item
-            $this->referral = '&ref=' . (string)$this->ref . '&refid=' . (int)$this->refid;
+            // return to the item that referred to this item
+            $this->referral = '&ref=' . $this->ref . '&refid=' . (int)$this->refid;
         } elseif ($this->ref) {
-            // return to the list view that refered to this item
-            $this->referral = '&ref=' . (string)$this->ref;
+            // return to the list view that referred to this item
+            $this->referral = '&ref=' . $this->ref;
         }
 
         // Set the toolbar
@@ -152,12 +151,6 @@ class CustomtablesViewFields extends JViewLegacy
             }
         }
         JToolbarHelper::divider();
-        // set help url for this view if found
-        //$help_url = CustomtablesHelper::getHelpUrl('fields');
-        //if (CustomtablesHelper::checkString($help_url))
-        //{
-        //JToolbarHelper::help('COM_CUSTOMTABLES_HELP_MANAGER', false, $help_url);
-        //}
     }
 
     /**
@@ -193,6 +186,4 @@ class CustomtablesViewFields extends JViewLegacy
         // use the helper htmlEscape method instead.
         return CustomtablesHelper::htmlEscape($var, $this->_charset);
     }
-
-
 }
