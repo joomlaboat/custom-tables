@@ -47,7 +47,7 @@ class Tables
         return $allTables;
     }
 
-    function loadRecords($tablename_or_id, string $filter = '', string $orderby = '', int $limit = 0)
+    function loadRecords($tablename_or_id, string $filter = '', ?string $orderby = null, int $limit = 0)
     {
         if (is_numeric($tablename_or_id) and (int)$tablename_or_id == 0)
             return null;
@@ -66,7 +66,7 @@ class Tables
 
         $this->ct->setFilter($filter, 2);
 
-        $this->ct->Ordering->ordering_processed_string = $orderby;
+        $this->ct->Ordering->ordering_processed_string = $orderby ?? '';
         $this->ct->Ordering->parseOrderByString();
 
         $this->ct->Limit = $limit;
