@@ -9,31 +9,23 @@
  **/
 
 Joomla.submitbutton = function (task) {
+
     if (task == '') {
         return false;
     } else {
-        var isValid = true;
-        var action = task.split('.');
+        const action = task.split('.');
         if (action[1] != 'cancel' && action[1] != 'close') {
-
             let form = document.getElementById('adminForm');
             if (!document.formvalidator.isValid(form))
-                isValid = false;
+                return false;
         }
-        if (isValid) {
-            Joomla.submitform(task);
-            return true;
-        } else {
-            //Joomla.JText._('tables, some values are not acceptable.','Some values are unacceptable');
-            return false;
-        }
+        Joomla.submitform(task);
+        return true;
     }
 }
 
 function disableProField(object_name) {
     let object = document.getElementById(object_name);
-
     object.value = "Available in Pro version";
-
     object.disabled = true;
 }

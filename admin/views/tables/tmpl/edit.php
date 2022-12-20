@@ -18,12 +18,9 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 //JHtml::_('behavior.tooltip');
+JHtml::_('behavior.formvalidation');
+JHtml::_('behavior.keepalive');
 //JHtml::_('formbehavior.chosen', 'select');
-
-if ($this->ct->Env->version >= 4) {
-    JHtml::_('behavior.formvalidation');
-    JHtml::_('behavior.keepalive');
-}
 
 $document = Factory::getDocument();
 $document->addCustomTag('<link href="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/css/style.css" rel="stylesheet">');

@@ -9,11 +9,11 @@
  **/
 
 // no direct access
-use Joomla\CMS\Factory;
-
 if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
+
+use Joomla\CMS\Factory;
 
 $path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR;
 require_once($path . 'loader.php');

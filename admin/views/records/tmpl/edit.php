@@ -18,8 +18,10 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Factory;
 
 if ($this->ct->Env->version >= 4) {
-    HTMLHelper::_('behavior.formvalidator');
-    HTMLHelper::_('behavior.keepalive');
+
+    $wa = $this->document->getWebAssetManager();
+    $wa->useScript('keepalive')
+        ->useScript('form.validate');
 }
 
 $document = Factory::getDocument();

@@ -20,8 +20,8 @@ if ($this->version >= 4) {
     $wa->useScript('keepalive')
         ->useScript('form.validate');
 } else {
-    JHtml::_('behavior.keepalive');
     JHtml::_('behavior.formvalidation');
+    JHtml::_('behavior.keepalive');
 }
 ?>
 
