@@ -85,9 +85,7 @@ class TwigProcessor
 
         $this->addGlobals();
         $this->addFieldValueMethods();
-
-        if (!$this->ct->LayoutVariables['getEditFieldNamesOnly'])
-            $this->addTwigFilters();
+        $this->addTwigFilters();
     }
 
     protected function addGlobals()
