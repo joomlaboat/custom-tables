@@ -499,6 +499,7 @@ class CustomTablesModelEditItem extends JModelLegacy
                 else
                     $saveFieldSet = $saveField->applyDefaults($fieldrow);
 
+                $this->row = $saveField->row;
                 if ($saveFieldSet !== null) {
                     if (is_array($saveFieldSet))
                         $saveField->saveQuery = array_merge($saveField->saveQuery, $saveFieldSet);
@@ -515,8 +516,8 @@ class CustomTablesModelEditItem extends JModelLegacy
         }
 
         $listing_id_temp = 0;
-
         $isItNewRecords = false;
+        
         if ($listing_id == 0 or $listing_id == '') {
             $isItNewRecords = true;
 

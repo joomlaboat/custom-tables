@@ -76,10 +76,13 @@ class SaveFieldQuerySet
                 $value = $this->ct->Env->jinput->getInt($this->field->comesfieldname);
 
                 if (isset($value)) {
-                    if ($value == 0)
+                    if ($value == 0) {
+                        $this->row[$this->field->realfieldname] = null;
                         return $this->field->realfieldname . '=NULL';
-                    else
+                    } else {
+                        $this->row[$this->field->realfieldname] = $value;
                         return $this->field->realfieldname . '=' . $value;
+                    }
                 }
 
                 break;
@@ -951,8 +954,7 @@ class SaveFieldQuerySet
     function applyDefaults($fieldrow): ?string
     {
         $this->field = new Field($this->ct, $fieldrow, $this->row);
-
-        if ($this->field->defaultvalue != "" and is_null($this->row[$this->field->realfieldname]) and $this->field->type != 'dummie') {
+        if ($this->field->defaultvalue != "" and (!isset($this->row[$this->field->realfieldname]) or is_null($this->row[$this->field->realfieldname])) and $this->field->type != 'dummie') {
 
             if ($this->ct->Env->legacysupport) {
                 $LayoutProc = new LayoutProcessor($this->ct);
@@ -962,7 +964,6 @@ class SaveFieldQuerySet
 
             $twig = new TwigProcessor($this->ct, $this->field->defaultvalue);
             $value = $twig->process($this->row);
-
             $this->row[$this->field->realfieldname] = $value;
             return $this->field->realfieldname . '=' . $this->ct->db->quote($value);
         }
