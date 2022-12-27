@@ -33,14 +33,12 @@ class Twig_Record_Tags
     function id()
     {
         if (!isset($this->ct->Table)) {
-            //$this->ct->app->enqueueMessage('{{ record.id }} - Table not loaded.', 'error');
             return '{{ record.id }} - Table not loaded.';
         }
 
-        if (is_null($this->ct->Table->record)) {
-            //$this->ct->app->enqueueMessage('{{ record.id }} - Record not loaded.', 'error');
-            return '{{ record.id }} - Record not loaded.';
-        }
+        if (is_null($this->ct->Table->record))
+            return '';
+
         return $this->ct->Table->record[$this->ct->Table->realidfieldname];
     }
 
