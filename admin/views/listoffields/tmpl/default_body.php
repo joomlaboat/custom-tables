@@ -18,6 +18,10 @@ use Joomla\CMS\Factory;
 
 $edit = "index.php?option=com_customtables&view=listoffields&task=fields.edit&tableid=" . $this->tableid;
 
+$conf = Factory::getConfig();
+$dbPrefix = $conf->get('dbprefix');
+$hashRealTableName = str_replace($dbPrefix, '#__', $this->ct->Table->realtablename);
+
 ?>
 <?php foreach ($this->items as $i => $item): ?>
     <?php
@@ -80,8 +84,8 @@ $edit = "index.php?option=com_customtables&view=listoffields&task=fields.edit&ta
 
             <?php
 
-            if ($this->customtablename != '')
-                echo '<br/><span style="color:grey;">' . $this->customtablename . '.' . $item->customfieldname . '</span>';
+            if ($this->ct->Env->advancedtagprocessor and $this->ct->Table->realtablename != '')
+                echo '<br/><span style="color:grey;">' . $hashRealTableName . '.' . $item->realfieldname . '</span>';
 
             ?>
         </td>
@@ -129,7 +133,7 @@ $edit = "index.php?option=com_customtables&view=listoffields&task=fields.edit&ta
             <?php echo Text::_($item->isrequired); ?>
         </td>
         <td class="hidden-phone">
-            <?php echo $this->escape($item->tabletitle); ?>
+            <?php echo $this->escape($this->ct->Table->tabletitle); ?>
         </td>
         <td class="center">
             <?php if ($this->canState) : ?>

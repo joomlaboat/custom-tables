@@ -20,6 +20,7 @@ use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Router\Route;
 use CustomTables\Integrity\IntegrityFields;
 
+$saveOrderingUrl = '';
 if ($this->saveOrder && !empty($this->items)) {
     $saveOrderingUrl = 'index.php?option=com_customtables&task=listoffields.saveOrderAjax&tableid=' . $this->tableid . '&tmpl=component';
     HTMLHelper::_('draggablelist.draggable');
@@ -73,8 +74,8 @@ if ($input->getCmd('extratask', '') == 'updateimages') {
                         <tbody<?php if ($this->saveOrder) : ?> class="js-draggable" data-url="<?php echo $saveOrderingUrl; ?>" data-direction="<?php echo strtolower($this->listDirn); ?>" data-nested="true"<?php endif; ?>>
                         <?php
 
-                        if ($this->tablename != null) {
-                            $ListOfFields = new ListOfFields($this->ct, $this->tableid, $this->tablename, $this->tabletitle, $this->items, $this->canState,
+                        if ($this->ct->Table->realtablename != null) {
+                            $ListOfFields = new ListOfFields($this->ct, $this->items, $this->canState,
                                 $this->canDelete, $this->canEdit, $this->saveOrder);
                             echo $ListOfFields->renderBody();
                         }

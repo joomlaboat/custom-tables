@@ -32,18 +32,18 @@ class CustomtablesControllerListoftables extends JControllerAdmin
 
     public function export()
     {
-        $cids = Factory::getApplication()->input->post->get('cid', array(), 'array');
-        $cids = ArrayHelper::toInteger($cids);
+        $cIds = Factory::getApplication()->input->post->get('cid', array(), 'array');
+        $cIds = ArrayHelper::toInteger($cIds);
 
-        $download_link = ExportTables::export($cids);
+        $download_link = ExportTables::export($cIds);
 
         if ($download_link != '') {
             $msg = 'COM_CUSTOMTABLES_LISTOFTABLES_N_ITEMS_EXPORTED';
 
-            if (count($cids) == 1)
+            if (count($cIds) == 1)
                 $msg .= '_1';
 
-            $msg = JText::sprintf($msg, count($cids));
+            $msg = JText::sprintf($msg, count($cIds));
 
             $msg .= '&nbsp;&nbsp;<a href="' . $download_link . '" target="_blank">Download (Click Save Link As...)</a>';
         } else {

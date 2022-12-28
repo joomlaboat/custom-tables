@@ -791,6 +791,7 @@ class Fields
         if ($fieldid == 0)
             $fieldName = self::checkFieldName($tableid, $fieldName);
 
+        $data['fieldname'] = $fieldName;
         $data['checked_out'] = 0;
         $data['checked_out_time'] = null;
 
@@ -810,7 +811,6 @@ class Fields
 
                 if (!in_array($id_description, $fields))
                     Fields::addLanguageField('#__customtables_fields', 'description', $id_description);
-
             }
             $moreThanOneLang = true; //More than one language installed
         }

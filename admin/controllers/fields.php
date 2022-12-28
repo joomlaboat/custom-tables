@@ -47,15 +47,12 @@ class CustomtablesControllerFields extends JControllerForm
     public function cancel($key = null)
     {
         $tableid = $this->input->get('tableid', 0, 'int');
-
         $cancel = parent::cancel($key);
-
         $this->setRedirect(
             JRoute::_(
                 'index.php?option=' . $this->option . '&view=listoffields&tableid=' . (int)$tableid, false
             )
         );
-
         return $cancel;
     }
 

@@ -20,16 +20,14 @@ use \Joomla\CMS\Uri\Uri;
 
 class ExportTables
 {
-    //this function creates json(.txt) file that will include instruction to create selected tables and depended menu items and layouts.
+    //this function creates json(.txt) file that will include instruction to create selected tables and depended on menu items and layouts.
     //Records can be exported too, if it set in table parameters
-    //file is creaated in /tmp folder or as set in $path parameter
+    //file is created in /tmp folder or as set in $path parameter
 
-    public static function export(&$table_ids, $path = 'tmp')
+    public static function export(&$table_ids, $path = 'tmp'): string
     {
         $db = Factory::getDBO();
-
         $link = '';
-
         $tables = array();
         $output = array();
 
@@ -41,7 +39,7 @@ class ExportTables
             $db->setQuery($query);
             $table_rows = $db->loadAssocList();
 
-            //Add the table with dependances to export array
+            //Add the table with dependencies to export array
             if (count($table_rows) == 1) {
                 $tables[] = $table_rows[0]['tablename'];
                 $output[] = ExportTables::processTable($table_rows[0]);
@@ -55,24 +53,26 @@ class ExportTables
 
             $tmp_path = JPATH_SITE . DIRECTORY_SEPARATOR . $path . DIRECTORY_SEPARATOR;
             $filename = implode('_', $tables);
-            $filename_available = $filename;
+
             $a = '';
             $i = 0;
-            do {
+            while (1) {
                 if (!file_exists($tmp_path . $filename . $a . '.txt')) {
                     $filename_available = $filename . $a . '.txt';
                     break;
                 }
-
                 $i++;
                 $a = $i . '';
-
-            } while (1 == 1);
+            }
 
             //Save file
-            $link = Uri::root(false) . $path . DIRECTORY_SEPARATOR . $filename_available;
+            $link = str_replace(DIRECTORY_SEPARATOR, '/', Uri::root(false));
+
+            if ($link[strlen($link) - 1] != '/' and $path[0] != '/')
+                $link .= '/';
+
+            $link .= $path . '/' . $filename_available;
             file_put_contents($tmp_path . $filename_available, $output_str);
-            $output_str = null;
         }
         return $link;
     }

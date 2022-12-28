@@ -46,7 +46,7 @@ class CustomTablesControllerImportTables extends JControllerForm
 
         $link = 'index.php?option=com_customtables&view=importtables';
         $msg = '';
-        if ($model->importtables($msg)) {
+        if ($model->importTables($msg)) {
             $this->setRedirect($link, Text::_('Tables Imported Successfully'));
         } else {
             $this->setRedirect($link, Text::_('Tables was Unabled to Import: ' . $msg), 'error');

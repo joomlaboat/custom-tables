@@ -19,6 +19,9 @@ use CustomTables\Fields;
 
 $edit = "index.php?option=com_customtables&view=listoftables&task=tables.edit";
 
+$conf = Factory::getConfig();
+$dbPrefix = $conf->get('dbprefix');
+
 ?>
 <?php foreach ($this->items as $i => $item): ?>
     <?php
@@ -54,7 +57,12 @@ $edit = "index.php?option=com_customtables&view=listoftables&task=tables.edit";
                     <?php echo $this->escape($item->tablename); ?>
                 <?php endif; ?>
 
-                <br/><span style="color:grey;"><?php echo $item->realtablename; ?></span>
+                <?php
+                if ($this->ct->Env->advancedtagprocessor) {
+                    $hashRealTableName = str_replace($dbPrefix, '#__', $item->realtablename);
+                    echo '<br/><span style="color:grey;">' . $hashRealTableName . '</span>';
+                }
+                ?>
             </div>
         </td>
 

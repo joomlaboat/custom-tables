@@ -46,8 +46,12 @@ $db = Factory::getDBO();
         <td class="hidden-phone"><a href="<?php echo $edit; ?>&id=<?php echo $item->id; ?>">
                 <?php
                 echo $this->escape($item->tablename);
-                echo '<br/><span style="color:grey;">' . $item->realtablename . '</span>';
 
+                if ($this->ct->Env->advancedtagprocessor) {
+                    $hashRealTableName = str_replace($dbPrefix, '#__', $item->realtablename);
+                    echo '<br/><span style="color:grey;">' . $hashRealTableName . '</span>';
+                }
+                
                 ?>
                 <?php if ($this->canEdit): ?>
                     <?php if ($item->checked_out): ?>

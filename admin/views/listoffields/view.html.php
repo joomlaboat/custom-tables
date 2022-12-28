@@ -32,8 +32,6 @@ class CustomtablesViewListoffields extends JViewLegacy
      */
     var CT $ct;
     var $tableid;
-    var $tablename;
-    var $tabletitle;
     var $languages;
 
     function display($tpl = null)
@@ -74,19 +72,14 @@ class CustomtablesViewListoffields extends JViewLegacy
 
         // We don't need toolbar in the modal window.
         $this->tableid = $app->input->getInt('tableid', 0);
-        $this->customtablename = '';
 
         if ($this->tableid != 0) {
-            $table = ESTables::getTableRowByIDAssoc($this->tableid);
-            if (!is_object($table) and $table == 0) {
+            $tableRow = ESTables::getTableRowByIDAssoc($this->tableid);
+            if (!is_object($tableRow) and $tableRow == 0) {
                 Factory::getApplication()->enqueueMessage('Table not found', 'error');
                 $this->tableid = 0;
             } else {
-                $this->ct->setTable($table, $useridfieldname = null, $load_fields = false);
-
-                $this->tablename = $table['tablename'];
-                $this->tabletitle = $table['tabletitle'];
-                $this->customtablename = $table['customtablename'];
+                $this->ct->setTable($tableRow, null, false);
             }
         }
 
@@ -115,7 +108,7 @@ class CustomtablesViewListoffields extends JViewLegacy
     protected function addToolBar_3()
     {
         if ($this->tableid != 0) {
-            JToolBarHelper::title('Table "' . $this->tabletitle . '" - ' . Text::_('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
+            JToolBarHelper::title('Table "' . $this->ct->Table->tabletitle . '" - ' . Text::_('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
         } else
             JToolBarHelper::title(Text::_('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
 
@@ -163,7 +156,7 @@ class CustomtablesViewListoffields extends JViewLegacy
         $toolbar = Toolbar::getInstance('toolbar');
 
         if ($this->tableid != 0) {
-            JToolBarHelper::title('Custom Tables - Table "' . $this->tabletitle . '" - ' . Text::_('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
+            JToolBarHelper::title('Custom Tables - Table "' . $this->ct->Table->tabletitle . '" - ' . Text::_('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
         } else
             JToolBarHelper::title(Text::_('COM_CUSTOMTABLES_LISTOFFIELDS'), 'joomla');
 

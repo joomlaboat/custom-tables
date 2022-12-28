@@ -27,9 +27,6 @@ use CustomTables\Fields;
 class ListOfFields
 {
     var CT $ct;
-    var int $tableid;
-    var string $tablename;
-    var string $tabletitle;
     var array $items;
     var string $editLink;
 
@@ -38,16 +35,11 @@ class ListOfFields
     var bool $canEdit;
     var bool $saveOrder;
 
-    function __construct(CT $ct, int $tableid, string $tablename, string $tabletitle, array $items, bool $canState, bool $canDelete, bool $canEdit, bool $saveOrder)
+    function __construct(CT $ct, array $items, bool $canState, bool $canDelete, bool $canEdit, bool $saveOrder)
     {
         $this->ct = $ct;
-        $this->tableid = $tableid;
-        $this->tablename = $tablename;
-        $this->tabletitle = $tabletitle;
-        //$this->languages = $languages;
         $this->items = $items;
-        $this->editLink = "index.php?option=com_customtables&view=listoffields&task=fields.edit&tableid=" . $this->tableid;
-
+        $this->editLink = "index.php?option=com_customtables&view=listoffields&task=fields.edit&tableid=" . $this->ct->Table->tableid;
         $this->canState = $canState;
         $this->canDelete = $canDelete;
         $this->canEdit = $canEdit;
@@ -64,13 +56,16 @@ class ListOfFields
 
             $result .= $this->renderBodyLine($item, $i, $canCheckin, $userChkOut);
         }
-
         return $result;
     }
 
     protected function renderBodyLine(object $item, int $i, $canCheckin, $userChkOut): string
     {
-        $result = '<tr class="row' . ($i % 2) . '" data-draggable-group="' . $this->tableid . '">';
+        $conf = Factory::getConfig();
+        $dbPrefix = $conf->get('dbprefix');
+        $hashRealTableName = str_replace($dbPrefix, '#__', $this->ct->Table->realtablename);
+
+        $result = '<tr class="row' . ($i % 2) . '" data-draggable-group="' . $this->ct->Table->tableid . '">';
 
         if ($this->canState or $this->canDelete) {
             $result .= '<td class="text-center">';
@@ -110,8 +105,8 @@ class ListOfFields
         } else
             $result .= $this->escape($item->fieldname);
 
-        if ($this->tablename != '')
-            $result .= '<br/><span style="color:grey;">' . $this->tablename . '.' . $item->realfieldname . '</span>';
+        if ($this->ct->Env->advancedtagprocessor and $this->ct->Table->realtablename != '')
+            $result .= '<br/><span style="color:grey;">' . $hashRealTableName . '.' . $item->realfieldname . '</span>';
 
         $result .= '</div></td>';
 
@@ -139,7 +134,6 @@ class ListOfFields
             }
 
             $result .= '<li>' . (count($this->ct->Languages->LanguageList) > 1 ? $lang->title . ': ' : '') . '<b>' . $this->escape($item_array[$fieldTitle]) . '</b></li>';
-
             $moreThanOneLang = true; //More than one language installed
         }
 
@@ -151,7 +145,7 @@ class ListOfFields
         $result .= '<td>' . Text::_($item->typeLabel) . '</td>';
         $result .= '<td>' . $this->escape($item->typeparams) . $this->checkTypeParams($item->type, $item->typeparams) . '</td>';
         $result .= '<td>' . Text::_($item->isrequired) . '</td>';
-        $result .= '<td>' . $this->escape($item->tabletitle) . '</td>';
+        $result .= '<td>' . $this->escape($this->ct->Table->tabletitle) . '</td>';
         $result .= '<td class="text-center btns d-none d-md-table-cell">';
         if ($this->canState) {
             if ($item->checked_out) {
