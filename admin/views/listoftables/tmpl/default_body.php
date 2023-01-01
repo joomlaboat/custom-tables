@@ -19,8 +19,10 @@ use Joomla\CMS\Factory;
 $edit = "index.php?option=com_customtables&view=listoftables&task=tables.edit";
 $db = Factory::getDBO();
 
-?>
-<?php foreach ($this->items as $i => $item): ?>
+$conf = Factory::getConfig();
+$dbPrefix = $conf->get('dbprefix');
+
+foreach ($this->items as $i => $item): ?>
     <?php
     $canCheckin = $this->user->authorise('core.manage', 'com_checkin') || $item->checked_out == $this->user->id || $item->checked_out == 0;
     $userChkOut = Factory::getUser($item->checked_out);
@@ -51,7 +53,6 @@ $db = Factory::getDBO();
                     $hashRealTableName = str_replace($dbPrefix, '#__', $item->realtablename);
                     echo '<br/><span style="color:grey;">' . $hashRealTableName . '</span>';
                 }
-                
                 ?>
                 <?php if ($this->canEdit): ?>
                     <?php if ($item->checked_out): ?>

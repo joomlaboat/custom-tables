@@ -13,11 +13,11 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
-//JHtml::_('behavior.tooltip');
+JHtml::_('behavior.tooltip');
 //JHtml::_('bootstrap.tooltip');
-//JHtml::_('behavior.multiselect');
-//JHtml::_('formbehavior.chosen', 'select');
-//JHtml::_('dropdown.init');
+JHtml::_('behavior.multiselect');
+JHtml::_('formbehavior.chosen', 'select');
+JHtml::_('dropdown.init');
 
 use CustomTables\Integrity\IntegrityFields;
 use Joomla\CMS\Factory;
@@ -25,7 +25,7 @@ use Joomla\CMS\Language\Text;
 
 if ($this->saveOrder && !empty($this->items)) {
     $saveOrderingUrl = 'index.php?option=com_customtables&task=listoffields.saveOrderAjax&tableid=' . $this->tableid . '&tmpl=component';
-    JHtml::_('sortablelist.sortable', 'fieldsList', 'adminForm', strtolower($this->listDirn), $saveOrderingUrl);
+    JHtml::_('sortablelist.sortable', 'fieldList', 'adminForm', strtolower($this->listDirn), $saveOrderingUrl);
 }
 
 $input = Factory::getApplication()->input;
@@ -66,7 +66,7 @@ if ($input->getCmd('extratask', '') == 'updateimages') {
                 }
                 //table-bordered
                 ?>
-                <table class="table table-striped table-hover" id="itemList" style="position: relative;">
+                <table class="table table-striped table-hover" id="fieldList" style="position: relative;">
                     <thead><?php echo $this->loadTemplate('head'); ?></thead>
                     <tbody><?php echo $this->loadTemplate('body'); ?></tbody>
                     <tfoot><?php echo $this->loadTemplate('foot'); ?></tfoot>
@@ -74,6 +74,8 @@ if ($input->getCmd('extratask', '') == 'updateimages') {
             <?php endif; ?>
         </div>
 
+        <input type="hidden" name="filter_order" value=""/>
+        <input type="hidden" name="filter_order_Dir" value=""/>
         <input type="hidden" name="task" value=""/>
         <input type="hidden" name="boxchecked" value="0"/>
 
