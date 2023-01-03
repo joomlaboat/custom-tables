@@ -30,16 +30,16 @@
                 validate="options"
         >
             <option value="">JGLOBAL_SORT_BY</option>
-            <option value="a.ordering asc">JGRID_HEADING_ORDERING_ASC</option>
-            <option value="a.ordering desc">JGRID_HEADING_ORDERING_DESC</option>
-            <option value="a.fieldname asc">COM_CUSTOMTABLES_FIELD_HEADING_NAME_ASC</option>
-            <option value="a.fieldname desc">COM_CUSTOMTABLES_FIELD_HEADING_NAME_DESC</option>
-            <option value="a.type asc">COM_CUSTOMTABLES_FIELD_HEADING_TYPE_ASC</option>
-            <option value="a.type desc">COM_CUSTOMTABLES_FIELD_HEADING_TYPE_DESC</option>
-            <option value="a.published asc">COM_CUSTOMTABLES_FIELD_HEADING_STATE_ASC</option>
-            <option value="a.published desc">COM_CUSTOMTABLES_FIELD_HEADING_STATE_DESC</option>
-            <option value="a.id asc">JGRID_HEADING_ID_ASC</option>
-            <option value="a.id desc">JGRID_HEADING_ID_DESC</option>
+            <option value="a.ordering ASC">JGRID_HEADING_ORDERING_ASC</option>
+            <option value="a.ordering DESC">JGRID_HEADING_ORDERING_DESC</option>
+            <option value="a.fieldname ASC">COM_CUSTOMTABLES_FIELD_HEADING_NAME_ASC</option>
+            <option value="a.fieldname DESC">COM_CUSTOMTABLES_FIELD_HEADING_NAME_DESC</option>
+            <option value="a.type ASC">COM_CUSTOMTABLES_FIELD_HEADING_TYPE_ASC</option>
+            <option value="a.type DESC">COM_CUSTOMTABLES_FIELD_HEADING_TYPE_DESC</option>
+            <option value="a.published ASC">COM_CUSTOMTABLES_FIELD_HEADING_STATE_ASC</option>
+            <option value="a.published DESC">COM_CUSTOMTABLES_FIELD_HEADING_STATE_DESC</option>
+            <option value="a.id ASC">JGRID_HEADING_ID_ASC</option>
+            <option value="a.id DESC">JGRID_HEADING_ID_DESC</option>
         </field>
         <field
                 name="limit"

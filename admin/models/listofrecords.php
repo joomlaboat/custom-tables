@@ -94,7 +94,7 @@ class CustomtablesModelListOfRecords extends JModelList
 
         if ($this->ct->Env->version < 4) {
             $ordering = $this->state->get('list.ordering');
-            $direction = $this->state->get('list.direction');
+            $direction = strtoupper($this->state->get('list.direction'));
             $app = Factory::getApplication();
             $app->setUserState($this->context . '.list.fullordering', $ordering . ' ' . $direction);
         }
