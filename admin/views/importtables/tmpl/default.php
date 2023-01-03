@@ -29,34 +29,27 @@ if ($this->version >= 4) {
 
 $document->addCustomTag('<link href="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/css/uploadfile.css" rel="stylesheet">');
 $document->addCustomTag('<link href="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/css/style.css" rel="stylesheet">');
-
-
 $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/jquery.form.js"></script>');
 $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/jquery.uploadfile.js"></script>');
 $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/uploader.js"></script>');
 
-$fileid = $this->generateRandomString();
+$fileId = $this->generateRandomString();
 $max_file_size = JoomlaBasicMisc::file_upload_max_size();
 
 echo '<form method="post" action="" id="esFileUploaderForm_Tables">';
 echo '<h2>Import Tables</h2>';
-
 echo '<p>This may import Table Structure from .txt (json encoded) file.</p>';
 
-
-$urlstr = JURI::root(true) . '/administrator/index.php?option=com_customtables&view=fileuploader&tmpl=component&fileid=' . $fileid;
+$urlString = JURI::root(true) . '/administrator/index.php?option=com_customtables&view=fileuploader&tmpl=component&fileid=' . $fileId;
 echo '
 
     
     <div id="ct_uploadedfile_box_file"></div>
 	<div id="fileuploader"></div>
 	<div id="eventsmessage"></div>
-    
 
 	<script>
-        //UploadFileCount=1;
-		ct_getUploader(1,"' . $urlstr . '",' . $max_file_size . ',"txt html","esFileUploaderForm_Tables",true,"fileuploader","eventsmessage","' . $fileid . '","filetosubmit","ct_uploadedfile_box_file");//null);
-
+		ct_getUploader(1,"' . $urlString . '",' . $max_file_size . ',"txt html","esFileUploaderForm_Tables",true,"fileuploader","eventsmessage","' . $fileId . '","filetosubmit","ct_uploadedfile_box_file");//null);
 	</script>
     <ul style="list-style: none;">
         <li><input type="checkbox" name="importfields" value="1" checked="checked" /> Import Table Fields</li>
@@ -64,9 +57,9 @@ echo '
         <li><input type="checkbox" name="importmenu" value="1" checked="checked" /> Import Menu</li>
 
     </ul>
-
     <input type="hidden" id="filetosubmit" name="filetosubmit" value="" checked="checked" />
-	<input type="hidden" name="fileid" value="' . $fileid . '" />
+    <input type="hidden" id="filetosubmit_filename" name="filetosubmit_filename" value="" />
+	<input type="hidden" name="fileid" value="' . $fileId . '" />
 	<input type="hidden" name="option" value="com_customtables" />
 	<!--<input type="hidden" name="controller" value="importtables" />-->
 	<input type="hidden" name="task" value="importtables.importtables" />

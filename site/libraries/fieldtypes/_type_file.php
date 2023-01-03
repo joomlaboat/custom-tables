@@ -719,5 +719,4 @@ class CT_FieldTypeTag_file
         Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
         return false;
     }
-
 }
