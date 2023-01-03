@@ -2,7 +2,7 @@
 /**
  * CustomTables Joomla! 3.x/4.x Native Component
  * @author Ivan Komlev <support@joomlaboat.com>
- * @copyright (C) 2018-2022 Ivan Komlev
+ * @copyright (C) 2018-2023 Ivan Komlev
  * @link https://joomlaboat.com
  * @license GNU/GPL
  **/
