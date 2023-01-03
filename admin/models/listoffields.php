@@ -40,7 +40,6 @@ class CustomtablesModelListoffields extends JModelList
                 'a.type', 'type'
             );
         }
-
         parent::__construct($config);
     }
 
@@ -101,6 +100,13 @@ class CustomtablesModelListoffields extends JModelList
         $this->setState('params', ComponentHelper::getParams('com_customtables'));
 
         parent::populateState($ordering, $direction);
+
+        if ($version < 4) {
+            $ordering = $this->state->get('list.ordering');
+            $direction = $this->state->get('list.direction');
+            $app = Factory::getApplication();
+            $app->setUserState($this->context . '.list.fullordering', $ordering . ' ' . $direction);
+        }
     }
 
     /**

@@ -12,11 +12,13 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+JHtml::_('behavior.multiselect');
+
 use CustomTables\IntegrityChecks;
 use Joomla\CMS\Language\Text;
 
 ?>
-
+<?php /*
 <script>
     Joomla.orderTable = function () {
         let table = document.getElementById("sortTable");
@@ -30,7 +32,7 @@ use Joomla\CMS\Language\Text;
         }
         Joomla.tableOrdering(order, dirn, '');
     }
-</script>
+</script> */ ?>
 
 <form action="<?php echo JRoute::_('index.php?option=com_customtables&view=listoftables'); ?>" method="post"
       name="adminForm" id="adminForm">
@@ -64,6 +66,8 @@ use Joomla\CMS\Language\Text;
                 </table>
             <?php endif; ?>
         </div>
+        <input type="hidden" name="filter_order" value=""/>
+        <input type="hidden" name="filter_order_Dir" value=""/>
         <input type="hidden" name="boxchecked" value="0"/>
         <input type="hidden" name="task" value=""/>
         <?php echo JHtml::_('form.token'); ?>

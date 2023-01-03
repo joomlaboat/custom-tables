@@ -91,6 +91,13 @@ class CustomtablesModelListOfRecords extends JModelList
 
         // List state information.
         parent::populateState($ordering, $direction);
+
+        if ($this->ct->Env->version < 4) {
+            $ordering = $this->state->get('list.ordering');
+            $direction = $this->state->get('list.direction');
+            $app = Factory::getApplication();
+            $app->setUserState($this->context . '.list.fullordering', $ordering . ' ' . $direction);
+        }
     }
 
     protected function getListQuery()

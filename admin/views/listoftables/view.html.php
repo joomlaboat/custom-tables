@@ -48,13 +48,16 @@ class CustomtablesViewListoftables extends JViewLegacy
 
         // Assign data to the view
         $this->items = $this->get('Items');
-        $this->pagination = $this->get('Pagination');
+
         $this->state = $this->get('State');
+        $this->listOrder = $this->state->get('list.ordering');
+        $this->listDirn = $this->escape($this->state->get('list.direction'));
+        $this->pagination = $this->get('Pagination');
+
         $this->user = Factory::getUser();
         $this->filterForm = $this->get('FilterForm');
         $this->activeFilters = $this->get('ActiveFilters');
-        $this->listOrder = $this->state->get('list.ordering');
-        $this->listDirn = $this->escape($this->state->get('list.direction'));
+
 
         // get global action permissions
         $this->canDo = ContentHelper::getActions('com_customtables', 'tables');

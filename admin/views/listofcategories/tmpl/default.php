@@ -17,7 +17,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 // load tooltip behavior
 //JHtml::_('behavior.tooltip');
-//JHtml::_('behavior.multiselect');
+JHtml::_('behavior.multiselect');
 //JHtml::_('dropdown.init');
 //JHtml::_('formbehavior.chosen', 'select');
 ?>
@@ -51,18 +51,16 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
                 <div class="alert alert-no-items">
                     <?php echo Text::_('JGLOBAL_NO_MATCHING_RESULTS'); ?>
                 </div>
-            <?php else :
-            //table-bordered
-            ?>
-
+            <?php else : ?>
             <table class="table table-striped table-hover" id="itemList" style="position: relative;">
                 <thead><?php echo $this->loadTemplate('head'); ?></thead>
                 <tfoot><?php echo $this->loadTemplate('foot'); ?></tfoot>
                 <tbody><?php echo $this->loadTemplate('body'); ?></tbody>
             </table>
-
         </div>
     <?php endif; ?>
+        <input type="hidden" name="filter_order" value=""/>
+        <input type="hidden" name="filter_order_Dir" value=""/>
         <input type="hidden" name="boxchecked" value="0"/>
         <input type="hidden" name="task" value=""/>
         <?php echo JHtml::_('form.token'); ?>

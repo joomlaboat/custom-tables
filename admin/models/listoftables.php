@@ -31,6 +31,7 @@ class CustomtablesModelListOfTables extends JModelList
             $config['filter_fields'] = array(
                 'a.id', 'id',
                 'a.published', 'published',
+                'a.ordering', 'ordering',
                 //'a.created_by','created_by',
                 //'a.modified_by','modified_by',
                 'a.tablecategory', 'tablecategory',
@@ -78,6 +79,13 @@ class CustomtablesModelListOfTables extends JModelList
 
         // List state information.
         parent::populateState($ordering, $direction);
+
+        if ($version < 4) {
+            $ordering = $this->state->get('list.ordering');
+            $direction = $this->state->get('list.direction');
+            $app = Factory::getApplication();
+            $app->setUserState($this->context . '.list.fullordering', $ordering . ' ' . $direction);
+        }
     }
 
     /**

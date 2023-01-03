@@ -78,6 +78,5 @@ if ($input->getCmd('extratask', '') == 'updateimages') {
         <input type="hidden" name="filter_order_Dir" value=""/>
         <input type="hidden" name="task" value=""/>
         <input type="hidden" name="boxchecked" value="0"/>
-
         <?php echo JHtml::_('form.token'); ?>
 </form>
