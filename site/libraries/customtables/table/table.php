@@ -99,7 +99,7 @@ class Table
         $this->realidfieldname = $this->tablerow['realidfieldname'];
 
         if (isset($this->tablerow['tabletitle' . $this->Languages->Postfix]) and $this->tablerow['tabletitle' . $this->Languages->Postfix] != "")
-            $this->tabletitle = $this->tablerow['tabletitle'];
+            $this->tabletitle = $this->tablerow['tabletitle' . $this->Languages->Postfix];
 
         $this->alias_fieldname = '';
         $this->imagegalleries = array();
