@@ -163,7 +163,7 @@ class CustomtablesModelTables extends JModelAdmin
         if (!parent::delete($pks))
             return false;
 
-        Fields::deleteTablelessFields();
+        Fields::deleteTableLessFields();
 
         return true;
     }

@@ -76,17 +76,22 @@ class tagProcessor_Value
                         $isEmpty = false;
 
                 } elseif ($fieldType == 'filebox') {
+                    /*
+                                        if (count($isFileBoxLoaded) > 0) {
 
-                    if (count($isFileBoxLoaded) > 0) {
-                        if (!$isFileBoxLoaded[$fieldname]) {
-                            $isFileBoxLoaded[$fieldname] = true;
-                            $getFileBoxRows[$fieldname] = CT_FieldTypeTag_filebox::getFileBoxRows($ct->Table->tablename, $fieldname, $row[$ct->Table->realidfieldname]);
-                        }
-                    } else {
-                        $isFileBoxLoaded[$fieldname] = true;
-                        $getFileBoxRows[$fieldname] = CT_FieldTypeTag_filebox::getFileBoxRows($ct->Table->tablename, $fieldname, $row[$ct->Table->realidfieldname]);
-                    }
+                                            echo '$fieldname=' . $fieldname . '<br/>';
+                                            print_r($isFileBoxLoaded);
+                                            die;
 
+                                            if (!$isFileBoxLoaded[$fieldname]) {
+                                                $isFileBoxLoaded[$fieldname] = true;
+                                                $getFileBoxRows[$fieldname] = CT_FieldTypeTag_filebox::getFileBoxRows($ct->Table->tablename, $fieldname, $row[$ct->Table->realidfieldname]);
+                                            }
+                                            */
+                    //} else {
+                    $isFileBoxLoaded[$fieldname] = true;
+                    $getFileBoxRows[$fieldname] = CT_FieldTypeTag_filebox::getFileBoxRows($ct->Table->tablename, $fieldname, $row[$ct->Table->realidfieldname]);
+                    //}
 
                     if (isset($isFileBoxLoaded[$fieldname]) and count($getFileBoxRows[$fieldname]) == 0)
                         $isEmpty = true;

@@ -342,7 +342,12 @@ class JHTMLCTTableJoin
         if ($result == '')
             return '';
 
-        $resultJSON = @json_decode($result, null, 512, JSON_INVALID_UTF8_IGNORE);
+        $resultJSON_encoded = @json_decode($result, null, 512, JSON_INVALID_UTF8_IGNORE);
+        $resultJSON = [];
+        foreach ($resultJSON_encoded as $j) {
+            $j->label = html_entity_decode($j->label);
+            $resultJSON[] = $j;
+        }
 
         if (!is_array($resultJSON))
             return 'Table Join - Corrupted data or unsupported encoding.';

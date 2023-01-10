@@ -157,18 +157,14 @@ class Fields
 
         $db->setQuery($query);
         $recs = $db->loadAssocList();
-
         $rec = $recs[0];
-
         return $rec['is_nullable'] == 'YES';
     }
 
     public static function deleteField_byID(CT &$ct, $fieldid): bool
     {
         $db = Factory::getDBO();
-
         $ImageFolder = JPATH_SITE . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'esimages';
-
         $fieldrow = Fields::getFieldRow($fieldid);
 
         if (is_null($fieldrow))
@@ -176,14 +172,14 @@ class Fields
 
         $field = new Field($ct, $fieldrow);
 
-        $tablerow = ESTables::getTableRowByID($field->fieldrow['tableid']);
+        $tableRow = ESTables::getTableRowByID($field->fieldrow['tableid']);
 
         //for Image Gallery
         if ($field->type == 'imagegallery') {
             //Delete all photos belongs to the gallery
 
             $imageMethods = new CustomTablesImageMethods;
-            $gallery_table_name = '#__customtables_gallery_' . $tablerow->tablename . '_' . $field->fieldname;
+            $gallery_table_name = '#__customtables_gallery_' . $tableRow->tablename . '_' . $field->fieldname;
             $imageMethods->DeleteGalleryImages($gallery_table_name, $field->fieldrow['tableid'], $field->fieldname, $field->params, true);
 
             //Delete gallery table
@@ -193,7 +189,7 @@ class Fields
         } elseif ($field->type == 'filebox') {
             //Delete all files belongs to the filebox
 
-            $fileBoxTableName = '#__customtables_filebox_' . $tablerow->tablename . '_' . $field->fieldname;
+            $fileBoxTableName = '#__customtables_filebox_' . $tableRow->tablename . '_' . $field->fieldname;
             CustomTablesFileMethods::DeleteFileBoxFiles($fileBoxTableName, $field->fieldrow['tableid'], $field->fieldname, $field->params);
 
             //Delete gallery table
@@ -201,13 +197,12 @@ class Fields
             $db->setQuery($query);
             $db->execute();
         } elseif ($field->type == 'image') {
-            if (Fields::checkIfFieldExists($tablerow->realtablename, $field->realfieldname)) {
+            if (Fields::checkIfFieldExists($tableRow->realtablename, $field->realfieldname)) {
                 $imageMethods = new CustomTablesImageMethods;
-                //$imageparams=str_replace('|compare','|delete:',$field->params); //disable image comparision if set
-                $imageMethods->DeleteCustomImages($tablerow->realtablename, $field->realfieldname, $ImageFolder, $field->params[0], $tablerow->realidfieldname, true);
+                $imageMethods->DeleteCustomImages($tableRow->realtablename, $field->realfieldname, $ImageFolder, $field->params[0], $tableRow->realidfieldname, true);
             }
         } elseif ($field->type == 'user' or $field->type == 'userid' or $field->type == 'sqljoin') {
-            Fields::removeForeignKey($tablerow->realtablename, $field->realfieldname);
+            Fields::removeForeignKey($tableRow->realtablename, $field->realfieldname);
         } elseif ($field->type == 'file') {
             // delete all files
             //if(file_exists($filename))
@@ -234,7 +229,7 @@ class Fields
         foreach ($realFieldNames as $realfieldname) {
             if ($field->type != 'dummy') {
                 $msg = '';
-                Fields::deleteMYSQLField($tablerow->realtablename, $realfieldname, $msg);
+                Fields::deleteMYSQLField($tableRow->realtablename, $realfieldname, $msg);
             }
         }
 
@@ -274,10 +269,9 @@ class Fields
         return '*, ' . $realfieldname_query;
     }
 
-    public static function checkIfFieldExists($realtablename, $realfieldname): bool//,$add_table_prefix=true)
+    public static function checkIfFieldExists($realtablename, $realfieldname): bool
     {
         $realFieldNames = Fields::getListOfExistingFields($realtablename, false);
-
         return in_array($realfieldname, $realFieldNames);
     }
 
@@ -348,19 +342,15 @@ class Fields
 
         $db->setQuery($query);
         $db->execute();
-        $tablecreatequery = $db->loadAssocList();
+        $tableCreateQuery = $db->loadAssocList();
 
-        if (count($tablecreatequery) == 0)
+        if (count($tableCreateQuery) == 0)
             return null;
 
-        $rec = $tablecreatequery[0];
-
-
+        $rec = $tableCreateQuery[0];
         $constrances = array();
-
         $q = $rec['Create Table'];
         $lines = explode(',', $q);
-
 
         foreach ($lines as $line_) {
             $line = trim(str_replace('`', '', $line_));
@@ -373,7 +363,6 @@ class Fields
                     $constrances[] = $pair[1];
             }
         }
-
         return $constrances;
     }
 
@@ -468,7 +457,6 @@ class Fields
                 $type = 'date';
                 break;
         }
-
         return ['type' => $type, 'typeparams' => $typeParams];
     }
 
@@ -487,10 +475,9 @@ class Fields
             return true;
         else
             return false;
-
     }
 
-    public static function getLanguagelessFieldName($fieldname): string
+    public static function getLanguageLessFieldName($fieldname): string
     {
         $parts = explode('_', $fieldname);
         if ($parts[0] == 'es') {
@@ -741,19 +728,17 @@ class Fields
 
     //MySQL only
 
-    public static function deleteTablelessFields(): void
+    public static function deleteTableLessFields(): void
     {
         $db = Factory::getDBO();
-
         $query = 'DELETE FROM #__customtables_fields AS f WHERE (SELECT id FROM #__customtables_tables AS t WHERE t.id = f.tableid) IS NULL';
-
         $db->setQuery($query);
         $db->execute();
     }
 
     public static function getSelfParentField($ct)
     {
-        //Check if this table has self-parent field - the TableJoing field linked with the same table.
+        //Check if this table has self-parent field - the TableJoin field linked with the same table.
 
         foreach ($ct->Table->fields as $fld) {
             if ($fld['type'] == 'sqljoin') {
@@ -839,12 +824,16 @@ class Fields
             }
         }
 
+        self::findAndFixFieldOrdering();
+
         if ($fieldid != 0) {
             $data_old = ['id' => $fieldid];
             ImportTables::updateRecords('#__customtables_fields', $data, $data_old, false, array(), true, true);
-        } else
-            $fieldid = ImportTables::insertRecords('#__customtables_fields', $data, false, array(), true, '', [], true);
+        } else {
 
+            $data['ordering'] = self::getMaxOrdering($tableid) + 1;
+            return ImportTables::insertRecords('#__customtables_fields', $data, false, array(), true, '', [], true);
+        }
         return $fieldid;
     }
 
@@ -942,7 +931,7 @@ class Fields
         $PureFieldType = Fields::getPureFieldType($new_type, $new_typeparams);
 
         if ($realfieldname != '')
-            $fieldFound = Fields::checkIfFieldExists($realtablename, $realfieldname, false);
+            $fieldFound = Fields::checkIfFieldExists($realtablename, $realfieldname);
         else
             $fieldFound = false;
 
@@ -1186,9 +1175,7 @@ class Fields
     public static function makeProjectedFieldType($ct_fieldtype_array): string
     {
         $type = (object)$ct_fieldtype_array;
-
         $db = Factory::getDBO();
-
         $elements = [];
 
         switch ($type->data_type) {
@@ -1356,58 +1343,25 @@ class Fields
             return;
 
         $fixCount = 0;
-
         $fixQuery = 'SELECT id, ' . $realfieldname . ' AS fldvalue FROM ' . $realtablename;
-
-
         $db->setQuery($fixQuery);
-
         $fixRows = $db->loadObjectList();
         foreach ($fixRows as $fixRow) {
 
-            $newrow = Fields::FixCustomTablesRecord($fixRow->fldvalue, $optionname, $maxlenght);
+            $newRow = Fields::FixCustomTablesRecord($fixRow->fldvalue, $optionname, $maxlenght);
 
-            if ($fixRow->fldvalue != $newrow) {
+            if ($fixRow->fldvalue != $newRow) {
                 $fixCount++;
-
-                $fixitquery = 'UPDATE ' . $realtablename . ' SET ' . $realfieldname . '="' . $newrow . '" WHERE id=' . $fixRow->id;
-                $db->setQuery($fixitquery);
+                $fixitQuery = 'UPDATE ' . $realtablename . ' SET ' . $realfieldname . '="' . $newRow . '" WHERE id=' . $fixRow->id;
+                $db->setQuery($fixitQuery);
                 $db->execute();
-
             }
         }
     }
-
-    /*
-    public static function checkField($ExistingFields,$realtablename,$proj_field,$type)
-    {
-        $db = Factory::getDBO();
-
-        $found=false;
-
-        foreach($ExistingFields as $existing_field)
-        {
-            if($proj_field==$existing_field['column_name'])
-            {
-                $found=true;
-                break;
-            }
-        }
-
-        if(!$found)
-        {
-            $query='ALTER TABLE '.$realtablename.' ADD COLUMN '.$proj_field.' '.$type;
-
-            $db->setQuery($query);
-            $db->execute();
-        }
-    }
-    */
 
     public static function FixCustomTablesRecord($record, $optionname, $maxlen): string
     {
         $l = 2;
-
         $e = explode(',', $record);
         $r = array();
 
@@ -1433,11 +1387,11 @@ class Fields
         }
 
         if (count($r) > 0)
-            $newrow = ',' . implode(',', $r) . ',';
+            $newRow = ',' . implode(',', $r) . ',';
         else
-            $newrow = '';
+            $newRow = '';
 
-        return $newrow;
+        return $newRow;
     }
 
     public static function addField(CT $ct, $realtablename, $realfieldname, $fieldType, $PureFieldType, $fieldtitle): void
@@ -1589,7 +1543,6 @@ class Fields
         }
 
         $join_with_table_name = str_replace('#__', $dbPrefix, $join_with_table_name);
-
         $conf = Factory::getConfig();
         $database = $conf->get('db');
 
@@ -1628,7 +1581,6 @@ class Fields
         $db->execute();
 
         $rows = $db->loadAssocList();
-
         $where_ids = array();
         $where_ids[] = $realfieldname . '=0';
 
@@ -1636,12 +1588,32 @@ class Fields
             if ($row['customtables_distinct_temp_id'] != '')
                 $where_ids[] = $realfieldname . '=' . $row['customtables_distinct_temp_id'];
         }
-
         $query = 'UPDATE ' . $realtablename . ' SET ' . $realfieldname . '=NULL WHERE ' . implode(' OR ', $where_ids) . ';';
-
         $db->setQuery($query);
         $db->execute();
     }
-}
 
+    protected static function findAndFixFieldOrdering(): void
+    {
+        $db = Factory::getDBO();
+        $query = 'UPDATE #__customtables_fields SET ordering=id WHERE ordering IS NULL';
+        $db->setQuery($query);
+
+        try {
+            $db->execute();
+        } catch (Exception $e) {
+            echo 'Caught exception: ', $e->getMessage(), "\n";
+            die;
+        }
+    }
+
+    protected static function getMaxOrdering($tableid): int
+    {
+        $db = Factory::getDBO();
+        $query = 'SELECT MAX(ordering) as max_ordering FROM #__customtables_fields WHERE published=1 AND tableid=' . (int)$tableid;
+        $db->setQuery($query);
+        $rows = $db->loadObjectList();
+        return (int)$rows[0]->max_ordering;
+    }
+}
 
