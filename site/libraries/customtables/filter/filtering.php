@@ -938,7 +938,7 @@ class LinkJoinFilters
     {
         $db = Factory::getDBO();
         $result = '';
-        $pair = explode(',', $typeParams);
+        $pair = JoomlaBasicMisc::csv_explode(',', $typeParams, '"', false);
 
         $tablename = $pair[0];
         if (isset($pair[1]))
