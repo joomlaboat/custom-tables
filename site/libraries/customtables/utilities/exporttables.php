@@ -52,7 +52,7 @@ class ExportTables
             $output_str = '<customtablestableexport>' . json_encode($output);
 
             $tmp_path = JPATH_SITE . DIRECTORY_SEPARATOR . $path . DIRECTORY_SEPARATOR;
-            $filename = implode('_', $tables);
+            $filename = substr(implode('_', $tables), 0, 128);
 
             $a = '';
             $i = 0;
