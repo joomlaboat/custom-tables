@@ -17,33 +17,34 @@ $this->ct->loadJSAndCSS();
 
 $results = $this->details->render();
 
-if ($this->ct->Env->clean) {
-    if ($this->ct->Env->frmt == 'csv') {
-        $filename = JoomlaBasicMisc::makeNewFileName($this->ct->document->getTitle(), 'csv');
+if ($this->ct->Env->frmt == 'csv') {
+    $filename = JoomlaBasicMisc::makeNewFileName($this->ct->document->getTitle(), 'csv');
 
-        if (ob_get_contents())
-            ob_end_clean();
+    if (ob_get_contents())
+        ob_end_clean();
 
-        header('Content-Disposition: attachment; filename="' . $filename . '"');
-        header('Content-Type: text/csv; charset=utf-8');
-        header("Pragma: no-cache");
-        header("Expires: 0");
+    header('Content-Disposition: attachment; filename="' . $filename . '"');
+    header('Content-Type: text/csv; charset=utf-8');
+    header("Pragma: no-cache");
+    header("Expires: 0");
 
-        echo mb_convert_encoding($results, 'UTF-16LE', 'UTF-8');
+    echo mb_convert_encoding($results, 'UTF-16LE', 'UTF-8');
 
-        die;//clean exit
-    } elseif ($this->ct->Env->frmt == 'xml') {
-        $filename = JoomlaBasicMisc::makeNewFileName($this->ct->document->getTitle(), 'xml');
+    die;//clean exit
+} elseif ($this->ct->Env->frmt == 'xml') {
+    $filename = JoomlaBasicMisc::makeNewFileName($this->ct->document->getTitle(), 'xml');
 
-        if (ob_get_contents())
-            ob_end_clean();
+    if (ob_get_contents())
+        ob_end_clean();
 
-        header('Content-Disposition: attachment; filename="' . $filename . '"');
-        header('Content-Type: text/xml; charset=utf-8');
-        header("Pragma: no-cache");
-        header("Expires: 0");
-    }
+    header('Content-Disposition: attachment; filename="' . $filename . '"');
+    header('Content-Type: text/xml; charset=utf-8');
+    header("Pragma: no-cache");
+    header("Expires: 0");
 
+    echo $results;
+    die;//clean exit
+} elseif ($this->ct->Env->clean) {
     echo $results;
     die;//clean exit
 }

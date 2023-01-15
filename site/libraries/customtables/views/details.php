@@ -43,6 +43,12 @@ class Details
             if ($this->ct->Params->detailsLayout != '') {
                 $Layouts = new Layouts($this->ct);
                 $this->layoutDetailsContent = $Layouts->getLayout($this->ct->Params->detailsLayout);
+
+                if ($Layouts->layouttype === null) {
+                    echo 'Layout "' . $this->ct->Params->detailsLayout . '" not found or the type is not set.';
+                    return false;
+                }
+
                 $this->layoutType = $Layouts->layouttype;
             }
         } else $this->layoutDetailsContent = $layoutDetailsContent;
