@@ -50,7 +50,7 @@ class com_customtablesInstallerScript
     {
         // get application
         $app = Factory::getApplication();
-        // is redundant ...hmmm
+        // is redundant ...mmm
         if ($type == 'uninstall') {
             return true;
         }
@@ -79,7 +79,7 @@ class com_customtablesInstallerScript
         $app = Factory::getApplication();
         // set the default component settings
         if ($type == 'install') {
-            // Install the global extenstion assets permission.
+            // Install the global extension assets permission.
             $db = Factory::getDbo();
             $query = $db->getQuery(true);
             // Field to update.
@@ -94,7 +94,7 @@ class com_customtablesInstallerScript
             $db->setQuery($query);
             $allDone = $db->execute();
 
-            // Install the global extenstion params.
+            // Install the global extension params.
             $query = $db->getQuery(true);
             // Field to update.
             $fields = array(
@@ -118,6 +118,15 @@ class com_customtablesInstallerScript
 				<img src="' . JURI::root(false) . 'components/com_customtables/libraries/customtables/media/images/controlpanel/customtables.jpg"/>
 				</a>
 				<h3>Upgrade was Successful!</h3>';
+        }
+
+        $file = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR
+            . 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . '_es2ct.php';
+
+        if (file_exists($file)) {
+            echo 'Updating Extrasearch Tables';
+            require_once($file);
+            updateESTables();
         }
 
         if (!file_exists(JPATH_SITE . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'ct_images'))

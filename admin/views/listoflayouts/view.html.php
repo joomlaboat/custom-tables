@@ -51,7 +51,7 @@ class CustomtablesViewListoflayouts extends JViewLegacy
         $this->canEdit = $this->canDo->get('layouts.edit');
         $this->canState = $this->canDo->get('layouts.edit.state');
         $this->canDelete = $this->canDo->get('layouts.delete');
-        $this->isEmptyState = count($this->items) == 0;
+        $this->isEmptyState = count($this->items ?? 0) == 0;
 
         // We don't need toolbar in the modal window.
         if ($this->getLayout() !== 'modal') {
