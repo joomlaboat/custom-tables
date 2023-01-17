@@ -149,7 +149,7 @@ function CustomTablesSave($task, $this_)
 
                 $LayoutProc = new LayoutProcessor($ct);
                 $LayoutProc->layout = $msg;
-                $msg = $LayoutProc->fillLayout(array(), null, '[]', true);
+                $msg = $LayoutProc->fillLayout(null, null, '[]', true);
             }
 
             $twig = new TwigProcessor($ct, $msg);

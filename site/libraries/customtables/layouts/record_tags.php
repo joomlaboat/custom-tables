@@ -52,6 +52,12 @@ class Twig_Record_Tags
 
     function link($add_returnto = false, $menu_item_alias = '', $custom_not_base64_returnto = ''): ?string
     {
+        if ($this->ct->Table->record === null)
+            return '';
+
+        if (count($this->ct->Table->record) == 0)
+            return 'record.link tag cannot be used on empty record.';
+
         $menu_item_id = 0;
         $view_link = '';
 

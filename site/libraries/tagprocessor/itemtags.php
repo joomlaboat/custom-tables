@@ -21,6 +21,9 @@ use CustomTables\TwigProcessor;
 
 class tagProcessor_Item
 {
+    /**
+     * @throws Exception if the record row arre has 0 elements
+     */
     public static function RenderResultLine(CT &$ct, int $layoutType, TwigProcessor $twig, ?array &$row): string
     {
         if ($ct->Env->print)
@@ -28,8 +31,12 @@ class tagProcessor_Item
         else {
             $returnto = $ct->Env->current_url . '#a' . $row[$ct->Table->realidfieldname];
 
-            if ($row !== null)
+            if ($row !== null) {
+                if (count($row) == 0)
+                    throw new Exception('The Record row can be NULL or with more than one item.');
+
                 $ct->Table->record = $row;
+            }
 
             $ct_record = new Twig_Record_Tags($ct);
 
@@ -61,13 +68,21 @@ class tagProcessor_Item
         return $htmlresult;
     }
 
+    /**
+     * @throws Exception if the record row arre has 0 elements
+     */
     public static function process(CT &$ct, string &$htmlresult, ?array &$row, bool $add_label = false): bool
     {
         if ($ct->Table === null)
             return false;
 
-        if ($row !== null)
+        if ($row !== null) {
+
+            if (count($row) == 0)
+                throw new Exception('The Record row can be NULL or with more than one item.');
+
             $ct->Table->record = $row;
+        }
 
         $ct_record = new Twig_Record_Tags($ct);
 
@@ -110,8 +125,8 @@ class tagProcessor_Item
         $i = 0;
 
         foreach ($fList as $fItem) {
-            $vlu = $ct_record->link(true, $options[$i]);
 
+            $vlu = $ct_record->link(true, $options[$i]);
             $pageLayout = str_replace($fItem, $vlu, $pageLayout);
             $i++;
         }

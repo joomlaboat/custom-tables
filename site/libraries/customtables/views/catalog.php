@@ -150,7 +150,7 @@ class Catalog
 
             $LayoutProc = new LayoutProcessor($this->ct);
             $LayoutProc->layout = $pageLayout;
-            $pageLayout = $LayoutProc->fillLayout(array(), null, '');
+            $pageLayout = $LayoutProc->fillLayout(null, null, '');
             $pageLayout = str_replace('&&&&quote&&&&', '"', $pageLayout); // search boxes may return HTMl elements that contain placeholders with quotes like this: &&&&quote&&&&
             $pageLayout = str_replace($catalogTableCode, $catalogTableContent, $pageLayout);
         }

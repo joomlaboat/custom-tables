@@ -479,7 +479,7 @@ class JESPagination extends JObject
             } else {
                 $list['pages'][$i]['active'] = false;
                 $list['pages'][$i]['data'] = ($itemOverride) ? pagination_item_inactive($page) : $this->_item_inactive($page, $current_page = true);
-                $list['pages'][$i]['current'] = true;
+                //$list['pages'][$i]['current'] = true;
             }
         }
 
@@ -561,7 +561,8 @@ class JESPagination extends JObject
             $html .= '<li class="' . ($list['start']['active'] ? '' : 'disabled ') . 'page-item">' . $list['start']['data'] . '</li>';
             $html .= '<li class="' . ($list['previous']['active'] ? '' : 'disabled ') . 'page-item">' . $list['previous']['data'] . '</li>';
             foreach ($list['pages'] as $page) {
-                if ($page['current'] !== null)
+
+                if ($page['active'] !== true)
                     $html .= '<li class="active page-item">' . $page['data'] . '</li>';
                 else
                     $html .= '<li class="page-item">' . $page['data'] . '</li>';

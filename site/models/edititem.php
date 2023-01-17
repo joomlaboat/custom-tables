@@ -167,7 +167,7 @@ class CustomTablesModelEditItem extends JModelLegacy
         if ($this->ct->Env->legacysupport) {
             $LayoutProc = new LayoutProcessor($this->ct);
             $LayoutProc->layout = $filter;
-            $filter = $LayoutProc->fillLayout(array(), null, '[]', true);
+            $filter = $LayoutProc->fillLayout(null, null, '[]', true);
         }
 
         $twig = new TwigProcessor($this->ct, $filter);
@@ -517,7 +517,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
         $listing_id_temp = 0;
         $isItNewRecords = false;
-        
+
         if ($listing_id == 0 or $listing_id == '') {
             $isItNewRecords = true;
 

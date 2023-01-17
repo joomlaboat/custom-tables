@@ -106,7 +106,7 @@ class Details
                         . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'layout.php');
                     $LayoutProc = new LayoutProcessor($this->ct);
                     $LayoutProc->layout = $filter;
-                    $filter = $LayoutProc->fillLayout(array(), null, '[]', true);
+                    $filter = $LayoutProc->fillLayout(null, null, '[]', true);
                 }
 
                 $twig = new TwigProcessor($this->ct, $filter);
