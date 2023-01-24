@@ -16,6 +16,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use Exception;
+use Joomla\CMS\Factory;
 use JoomlaBasicMisc;
 use CT_FieldTypeTag_sqljoin;
 use CT_FieldTypeTag_records;
@@ -50,6 +51,11 @@ class TwigProcessor
 
         $tag1 = '{% block record %}';
         $pos1 = strpos($htmlresult_, $tag1);
+
+        if (!class_exists('Twig\Loader\ArrayLoader')) {
+            Factory::getApplication()->enqueueMessage('Twig not loaded. Go to Global Configuration/ Custom Tables Configuration to enable it.', 'error');
+            return;
+        }
 
         if ($pos1 !== false) {
             $this->recordBlockFound = true;
@@ -243,6 +249,9 @@ class TwigProcessor
      */
     public function process(?array $row = null): string
     {
+        if (!class_exists('Twig\Loader\ArrayLoader'))
+            return '';
+
         if ($row !== null)
             $this->ct->Table->record = $row;
 
