@@ -92,16 +92,18 @@ class Field
         $new_params = [];
 
         foreach ($this->params as $type_param) {
-            $type_param = str_replace('****quote****', '"', $type_param);
-            $type_param = str_replace('****apos****', '"', $type_param);
+            if ($type_param !== null) {
+                $type_param = str_replace('****quote****', '"', $type_param);
+                $type_param = str_replace('****apos****', '"', $type_param);
 
-            if (is_numeric($type_param))
-                $new_params[] = $type_param;
-            elseif (!str_contains($type_param, '{{'))
-                $new_params[] = $type_param;
-            else {
-                $twig = new TwigProcessor($this->ct, $type_param);
-                $new_params[] = $twig->process($row);
+                if (is_numeric($type_param))
+                    $new_params[] = $type_param;
+                elseif (!str_contains($type_param, '{{'))
+                    $new_params[] = $type_param;
+                else {
+                    $twig = new TwigProcessor($this->ct, $type_param);
+                    $new_params[] = $twig->process($row);
+                }
             }
         }
         $this->params = $new_params;

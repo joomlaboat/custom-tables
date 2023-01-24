@@ -497,6 +497,10 @@ class Inputbox
 
     protected function render_alias($value): string
     {
+        $maxlength = 0;
+        if ($this->field->params !== null and count($this->field->params) > 0)
+            $maxlength = (int)$this->field->params[0];
+
         return '<input type="text" '
             . 'name="' . $this->prefix . $this->field->fieldname . '" '
             . 'id="' . $this->prefix . $this->field->fieldname . '" '
@@ -506,7 +510,7 @@ class Inputbox
             . 'data-label="' . $this->field->title . '" '
             . 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
             . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" '
-            . 'value="' . $value . '" ' . ((int)$this->field->params[0] > 0 ? 'maxlength="' . (int)$this->field->params[0] . '"' : 'maxlength="255"') . ' ' . $this->attributes . ' />';
+            . 'value="' . $value . '" ' . ($maxlength > 0 ? 'maxlength="' . $maxlength . '"' : 'maxlength="255"') . ' ' . $this->attributes . ' />';
     }
 
     protected function getMultilingualString(): string
