@@ -34,18 +34,16 @@ class SearchInputBox
         $this->modulename = $modulename;
     }
 
-    function renderFieldBox($prefix, $objname, &$fieldrow, $cssclass, $index, $where, $innerjoin, $wherelist, $default_Action, $field_title = null)
+    function renderFieldBox($prefix, $objName, &$fieldrow, $cssclass, $index, $where, $innerJoin, $whereList, $default_Action, $field_title = null)
     {
         $this->field = new Field($this->ct, $fieldrow);
-
         $place_holder = $this->field->title;
 
         if ($field_title === null)
             $field_title = $place_holder;
 
         $result = '';
-
-        $value = Factory::getApplication()->input->getCmd($prefix . $objname);
+        $value = Factory::getApplication()->input->getCmd($prefix . $objName);
 
         if ($value == '') {
             if (isset($fieldrow['fields']) and count($fieldrow['fields']) > 0)
@@ -56,7 +54,7 @@ class SearchInputBox
             $value = $this->getWhereParameter($where_name);
         }
 
-        $objname_ = $prefix . $objname;
+        $objName_ = $prefix . $objName;
 
         if ($this->ct->Env->version < 4)
             $default_class = 'inputbox';
@@ -66,26 +64,26 @@ class SearchInputBox
         switch ($this->field->type) {
 
             case '_published':
-                $result .= $this->getPublishedBox($default_Action, $index, $where, $wherelist, $objname_, $value, $cssclass);
+                $result .= $this->getPublishedBox($default_Action, $index, $where, $whereList, $objName_, $value, $cssclass);
                 break;
 
             case 'int':
             case '_id':
-                $result .= '<input type="text" name="' . $objname_ . '" id="' . $objname_ . '" class="' . $cssclass . ' ' . $default_class . '"'
+                $result .= '<input type="text" name="' . $objName_ . '" id="' . $objName_ . '" class="' . $cssclass . ' ' . $default_class . '"'
                     . ' value="' . $value . '" placeholder="' . $field_title . '"'
                     . ' onkeypress="es_SearchBoxKeyPress(event)"'
                     . ' data-type="' . $this->field->type . '" />';
                 break;
 
             case 'float':
-                $result .= '<input type="text" name="' . $objname_ . '" id="' . $objname_ . '" class="' . $cssclass . ' ' . $default_class . '" value="' . $value . '"'
+                $result .= '<input type="text" name="' . $objName_ . '" id="' . $objName_ . '" class="' . $cssclass . ' ' . $default_class . '" value="' . $value . '"'
                     . ' value="' . $value . '" placeholder="' . $field_title . '"'
                     . ' onkeypress="es_SearchBoxKeyPress(event)" '
                     . ' data-type="' . $this->field->type . '" />';
                 break;
 
             case 'string':
-                $result .= '<input type="text" name="' . $objname_ . '" id="' . $objname_ . '" class="' . $cssclass . ' ' . $default_class . '" '
+                $result .= '<input type="text" name="' . $objName_ . '" id="' . $objName_ . '" class="' . $cssclass . ' ' . $default_class . '" '
                     . ' value="' . $value . '" ' . ((int)$this->field->params[0] > 0 ? 'maxlength="' . (int)$this->field->params[0] . '"' : 'maxlength="255"')
                     . ' placeholder="' . $field_title . '"'
                     . ' onkeypress="es_SearchBoxKeyPress(event)"'
@@ -93,7 +91,7 @@ class SearchInputBox
                 break;
 
             case 'phponchange':
-                $result .= '<input type="text" name="' . $objname_ . '" id="' . $objname_ . '" class="' . $cssclass . ' ' . $default_class . '" '
+                $result .= '<input type="text" name="' . $objName_ . '" id="' . $objName_ . '" class="' . $cssclass . ' ' . $default_class . '" '
                     . ' value="' . $value . '" ' . ((int)$this->field->params[0] > 0 ? 'maxlength="' . (int)$this->field->params[0] . '"' : 'maxlength="255"')
                     . ' placeholder="' . $field_title . '"'
                     . ' onkeypress="es_SearchBoxKeyPress(event)"'
@@ -101,7 +99,7 @@ class SearchInputBox
                 break;
 
             case 'phponadd':
-                $result .= '<input type="text" name="' . $objname_ . '" id="' . $objname_ . '" class="' . $cssclass . ' ' . $default_class . '" '
+                $result .= '<input type="text" name="' . $objName_ . '" id="' . $objName_ . '" class="' . $cssclass . ' ' . $default_class . '" '
                     . ' value="' . $value . '" ' . ((int)$this->field->params[0] > 0 ? 'maxlength="' . (int)$this->field->params[0] . '"' : 'maxlength="255"')
                     . ' placeholder="' . $field_title . '"'
                     . ' onkeypress="es_SearchBoxKeyPress(event)"'
@@ -109,7 +107,7 @@ class SearchInputBox
                 break;
 
             case 'multilangstring':
-                $result .= '<input type="text" name="' . $objname_ . '" id="' . $objname_ . '" class="' . $cssclass . ' ' . $default_class . '" '
+                $result .= '<input type="text" name="' . $objName_ . '" id="' . $objName_ . '" class="' . $cssclass . ' ' . $default_class . '" '
                     . ' value="' . $value . '" ' . ((int)$this->field->params[0] > 0 ? 'maxlength="' . (int)$this->field->params[0] . '"' : 'maxlength="255"')
                     . ' placeholder="' . $field_title . '"'
                     . ' onkeypress="es_SearchBoxKeyPress(event)"'
@@ -117,7 +115,7 @@ class SearchInputBox
                 break;
 
             case 'text':
-                $result .= '<input type="text" name="' . $objname_ . '" id="' . $objname_ . '" class="' . $cssclass . ' ' . $default_class . '" '
+                $result .= '<input type="text" name="' . $objName_ . '" id="' . $objName_ . '" class="' . $cssclass . ' ' . $default_class . '" '
                     . ' value="' . $value . '" ' . ((int)$this->field->params[0] > 0 ? 'maxlength="' . (int)$this->field->params[0] . '"' : 'maxlength="255"')
                     . ' placeholder="' . $field_title . '"'
                     . ' onkeypress="es_SearchBoxKeyPress(event)"'
@@ -125,50 +123,44 @@ class SearchInputBox
                 break;
 
             case 'multilangtext':
-                $result .= '<input type="text" name="' . $objname_ . '" id="' . $objname_ . '" class="' . $cssclass . ' ' . $default_class . '" '
+                $result .= '<input type="text" name="' . $objName_ . '" id="' . $objName_ . '" class="' . $cssclass . ' ' . $default_class . '" '
                     . ' value="' . $value . '" ' . ((int)$this->field->params[0] > 0 ? 'maxlength="' . (int)$this->field->params[0] . '"' : 'maxlength="255"')
                     . ' placeholder="' . $field_title . '" onkeypress="es_SearchBoxKeyPress(event)"'
                     . ' data-type="' . $this->field->type . '" />';
                 break;
 
             case 'checkbox':
-                $result .= $this->getCheckBox($default_Action, $index, $where, $wherelist, $objname_, $value, $cssclass);
+                $result .= $this->getCheckBox($default_Action, $index, $where, $whereList, $objName_, $value, $cssclass);
                 break;
 
             case 'range':
-                $result .= $this->getRangeBox($fieldrow, $index, $where, $wherelist, $objname_, $value, $cssclass);
+                $result .= $this->getRangeBox($fieldrow, $index, $where, $whereList, $objName_, $value, $cssclass);
                 break;
 
             case 'customtables':
-                $result .= $this->getCustomTablesBox($prefix, $innerjoin, $default_Action, $index, $where, $wherelist, $objname_, $value, $cssclass, $place_holder);
-                break;
-
-            case 'userid':
-                $result .= $this->getUserBox($default_Action, $index, $where, $wherelist, $objname_, $value, $cssclass);
+                $result .= $this->getCustomTablesBox($prefix, $innerJoin, $default_Action, $index, $where, $whereList, $objName_, $value, $cssclass, $place_holder);
                 break;
 
             case 'user':
-                $result .= $this->getUserBox($default_Action, $index, $where, $wherelist, $objname_, $value, $cssclass);
-                break;
-
-            case 'usergroup':
-                $result .= $this->getUserGroupBox($default_Action, $index, $where, $wherelist, $objname_, $value, $cssclass);
+            case 'userid':
+                $result .= $this->getUserBox($default_Action, $index, $where, $whereList, $objName_, $value, $cssclass);
                 break;
 
             case 'usergroups':
-                $result .= $this->getUserGroupBox($default_Action, $index, $where, $wherelist, $objname_, $value, $cssclass);
+            case 'usergroup':
+                $result .= $this->getUserGroupBox($default_Action, $index, $where, $whereList, $objName_, $value, $cssclass);
                 break;
 
             case 'records':
-                $result .= $this->getRecordsBox($default_Action, $index, $where, $wherelist, $objname_, $value, $cssclass);
+                $result .= $this->getRecordsBox($default_Action, $index, $where, $whereList, $objName_, $value, $cssclass);
                 break;
 
             case 'sqljoin':
-                $result .= $this->getTableJoinBox($default_Action, $index, $where, $wherelist, $objname_, $value, $cssclass);
+                $result .= $this->getTableJoinBox($default_Action, $objName_, $value, $cssclass);
                 break;
 
             case 'email';
-                $result .= '<input type="text" name="' . $objname_ . '" id="' . $objname_ . '" class="' . $cssclass . ' ' . $default_class . '" '
+                $result .= '<input type="text" name="' . $objName_ . '" id="' . $objName_ . '" class="' . $cssclass . ' ' . $default_class . '" '
                     . ' placeholder="' . $field_title . '"'
                     . ' onkeypress="es_SearchBoxKeyPress(event)"'
                     . ' value="' . $value . '" maxlength="255"'
@@ -176,7 +168,7 @@ class SearchInputBox
                 break;
 
             case 'url';
-                $result .= '<input type="text" name="' . $objname_ . '" id="' . $objname_ . '" class="' . $cssclass . ' ' . $default_class . '" '
+                $result .= '<input type="text" name="' . $objName_ . '" id="' . $objName_ . '" class="' . $cssclass . ' ' . $default_class . '" '
                     . ' placeholder="' . $field_title . '"'
                     . ' onkeypress="es_SearchBoxKeyPress(event)"'
                     . ' value="' . $value . '" maxlength="1024"'
@@ -184,7 +176,7 @@ class SearchInputBox
                 break;
 
             case 'date';
-                $result .= JHTML::calendar($value, $objname_, $objname_);
+                $result .= JHTML::calendar($value, $objName_, $objName_);
                 break;
         }
         return $result;
@@ -547,7 +539,7 @@ class SearchInputBox
         return $result;
     }
 
-    protected function getTableJoinBox($default_Action, $index, $where, $wherelist, $objname_, $value, $cssclass)
+    protected function getTableJoinBox($default_Action, $objname_, $value, $cssclass)
     {
         $result = '';
 
@@ -563,6 +555,9 @@ class SearchInputBox
             $default_class = 'inputbox';
         else
             $default_class = 'form-control';
+
+        if ($this->field->layout !== null)
+            $this->field->params[1] = 'tablelesslayout:' . $this->field->layout;
 
         try {
             $result .= '<div class="' . $cssclass . '">' . JHTML::_('ESSQLJoin.render', $this->field->params, $value, true, $this->ct->Languages->Postfix, $objname_,

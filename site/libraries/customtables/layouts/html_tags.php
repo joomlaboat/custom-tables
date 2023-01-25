@@ -411,9 +411,19 @@ class Twig_Html_Tags
             return '';
         }
 
+        $first_fld_layout = null;
+
         //Clean list of fields
         $list_of_fields = [];
-        foreach ($list_of_fields_string_array as $field_name_string) {
+
+        $wrong_list_of_fields = [];
+        foreach ($list_of_fields_string_array as $field_name_string_pair) {
+
+            $field_name_pair = explode(':', $field_name_string_pair);
+            $field_name_string = $field_name_pair[0];
+            if ($first_fld_layout === null and isset($field_name_pair[1]))
+                $first_fld_layout = $field_name_pair[1];
+
             if ($field_name_string == '_id') {
                 $list_of_fields[] = '_id';
             } elseif ($field_name_string == '_published') {
@@ -428,12 +438,14 @@ class Twig_Html_Tags
                 }
 
                 if (count($fld) > 0)
-                    $list_of_fields[] = $field_name_string;
+                    $list_of_fields[] = $field_name_pair[0];
+                else
+                    $wrong_list_of_fields[] = $field_name_string_pair;
             }
         }
 
         if (count($list_of_fields) == 0) {
-            $this->ct->app->enqueueMessage('Search box: Field name "' . implode(',', $list_of_fields_string_or_array) . '" not found.', 'error');
+            $this->ct->app->enqueueMessage('Search box: Field' . (count($wrong_list_of_fields) > 0 ? 's' : '') . ' "' . implode(',', $wrong_list_of_fields) . '" not found.', 'error');
             return '';
         }
 
@@ -444,9 +456,7 @@ class Twig_Html_Tags
 
         $SearchBox = new SearchInputBox($this->ct, 'esSearchBox');
 
-        $fld = [];
-
-        $first_fld = $fld;
+        $first_fld = [];
         $first_field_type = '';
 
         foreach ($list_of_fields as $field_name_string) {
@@ -502,6 +512,8 @@ class Twig_Html_Tags
             $first_fld['typeparams'] = '';
         }
 
+        $first_fld['layout'] = $first_fld_layout;
+
         //Add control elements
         $fieldTitles = $this->getFieldTitles($list_of_fields);
         $field_title = implode(' ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_OR') . ' ', $fieldTitles);
@@ -514,7 +526,6 @@ class Twig_Html_Tags
             $cssClass .= ' ct_improved_selectbox';
 
         $default_Action = $reload ? ' onChange="ctSearchBoxDo();"' : ' ';//action should be a space not empty or this.value=this.value
-
         $objectName = $first_fld['fieldname'];
 
         if (count($first_fld) == 0)
@@ -528,16 +539,17 @@ class Twig_Html_Tags
         $field2search = $this->prepareSearchElement($first_fld);
         $vlu .= '<input type=\'hidden\' ctSearchBoxField=\'' . $field2search . '\' />';
 
-        if ($this->isTwig)
-            return $vlu;
-        else
-            return $vlu;
+        return $vlu;
     }
 
     protected function getFieldTitles($list_of_fields): array
     {
         $field_titles = [];
-        foreach ($list_of_fields as $fieldname) {
+        foreach ($list_of_fields as $fieldname_string) {
+
+            $fieldname_pair = explode(':', $fieldname_string);
+            $fieldname = $fieldname_pair[0];
+
             if ($fieldname == '_id')
                 $field_titles[] = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ID');
             elseif ($fieldname == '_published')

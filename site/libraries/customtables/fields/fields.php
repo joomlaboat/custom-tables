@@ -44,12 +44,15 @@ class Field
     var array $fieldrow;
     var string $prefix; //part of the table class
 
+    var ?string $layout; //output layout, used in Search Boxes
+
     function __construct(CT &$ct, $fieldrow, $row = null)
     {
         $this->ct = &$ct;
         $this->id = $fieldrow['id'];
         $this->type = $fieldrow['type'];
         $this->fieldrow = $fieldrow;
+        $this->layout = $fieldrow['layout'] ?? null; //rendering layout
 
         if (!array_key_exists('fieldtitle' . $ct->Languages->Postfix, $fieldrow)) {
             $this->title = 'fieldtitle' . $ct->Languages->Postfix . ' - not found';
