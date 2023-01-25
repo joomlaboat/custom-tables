@@ -566,7 +566,7 @@ class Twig_Html_Tags
         return $field_titles;
     }
 
-    protected function prepareSearchElement($fld)
+    protected function prepareSearchElement($fld): string
     {
         if (isset($fld['fields']) and count($fld['fields']) > 0) {
             return 'es_search_box_' . $fld['fieldname'] . ':' . implode(';', $fld['fields']) . ':';
@@ -584,7 +584,7 @@ class Twig_Html_Tags
         return '';
     }
 
-    function searchbutton($label = '', $class_ = '')
+    function searchbutton($label = '', $class_ = ''): string
     {
         if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
             return '';
