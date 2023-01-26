@@ -100,7 +100,8 @@
              description="An input or select box to enter the search parameter." twigclass="html"
              image="https://joomlaboat.com/images/components/ct/tags/search-box.png">
             <params>
-                <param type="field" name="field" label="Field(s)" description="Select Table Field to search in."
+                <param type="field" name="field" label="Field(s)"
+                       description="Select Table Field to search in. To search in multiple fields type the field names separated by comma. In case of the Table Join and Records Join field types a rendering layout ca be used. Example {{ html.search('fieldname:layoutname') }}"
                        repetitive="0"/>
 
                 <param type="string" name="cssclass" label="CSS Class"
@@ -115,7 +116,6 @@
                        description="Improve Select box to include in-list search." type="radio" default=""
                        example="reload"
                        options="|Standard,improved|Improved"/>
-
             </params>
         </tag>
 
