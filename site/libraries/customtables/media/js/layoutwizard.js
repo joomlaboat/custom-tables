@@ -688,13 +688,8 @@ function getLayout_SimpleCatalog() {
     for (let index = 0; index < l; index++) {
         let field = wizardFields[index];
 
-        if (field.type != 'ordering' && fieldtypes_to_skip.indexOf(field.type) === -1) {
-
-            if (fieldTypesWithSearch.indexOf(field.type) === -1)
-                result += '<td>{{ ' + field.fieldname + ' }}</td>\r\n';
-            else
-                result += '<td>{{ ' + field.fieldname + ' }}</td>\r\n';
-        }
+        if (field.type != 'ordering' && fieldtypes_to_skip.indexOf(field.type) === -1)
+            result += '<td>{{ ' + field.fieldname + ' }}</td>\r\n';
     }
 
     result += '<td>{{ html.toolbar("edit","publish","refresh","delete") }}</td>\r\n';
@@ -730,8 +725,7 @@ function renderTableHead(fieldtypes_to_skip, fieldTypesWithSearch, fieldtypes_al
     result += '<th class="short">{{ record.label(true) }}</th>\r\n';
 
     for (let index = 0; index < l; index++) {
-
-        result += renderTableColumnHeader(wizardFields[index], fieldtypes_to_skip, fieldTypesWithSearch, fieldtypes_allowed_to_orderby)
+        result += renderTableColumnHeader(wizardFields[index], fieldtypes_to_skip, fieldTypesWithSearch, fieldtypes_allowed_to_orderby);
     }
 
     result += '<th>Action<br/>{{ html.searchbutton }}</th>\r\n';

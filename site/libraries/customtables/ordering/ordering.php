@@ -175,7 +175,6 @@ class Ordering
             default:
                 return $field->realfieldname;
         }
-
     }
 
     function parseOrderByParam(): void

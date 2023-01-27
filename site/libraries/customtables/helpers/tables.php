@@ -30,8 +30,8 @@ class ESTables
             if ($already_exists != 0) {
                 $pair = explode('_', $new_tablename);
 
-                $cleantablename = $pair[0];
-                $new_tablename = $cleantablename . '_' . $i;
+                $cleanTableName = $pair[0];
+                $new_tablename = $cleanTableName . '_' . $i;
                 $i++;
             } else
                 break;
@@ -47,7 +47,7 @@ class ESTables
 
         $db = Factory::getDBO();
 
-        if ($tablename === null)
+        if ($tablename == '')
             return 0;
 
         $query = 'SELECT id FROM #__customtables_tables AS s WHERE tablename=' . $db->quote($tablename) . ' LIMIT 1';
@@ -116,11 +116,12 @@ class ESTables
             return null;
 
         $row = $rows[0];
-
         $published_field_found = true;
+
         if ($row['customtablename'] != '') {
-            $realfields = Fields::getListOfExistingFields($row['realtablename'], false);
-            if (!in_array('published', $realfields))
+            $realFields = Fields::getListOfExistingFields($row['realtablename'], false);
+
+            if (!in_array('published', $realFields))
                 $published_field_found = false;
         }
         $row['published_field_found'] = $published_field_found;
@@ -245,15 +246,15 @@ class ESTables
         $db = Factory::getDBO();
 
         if ($db->serverType == 'postgresql') {
-            $set_fieldnames = array();
+            $set_fieldNames = array();
             $set_values = array();
             foreach ($sets as $set) {
                 $break_sets = explode('=', $set);
-                $set_fieldnames[] = $break_sets[0];
+                $set_fieldNames[] = $break_sets[0];
                 $set_values[] = $break_sets[1];
             }
 
-            $query = 'INSERT INTO ' . $realtablename . ' (' . implode(',', $set_fieldnames) . ') VALUES (' . implode(',', $set_values) . ')';
+            $query = 'INSERT INTO ' . $realtablename . ' (' . implode(',', $set_fieldNames) . ') VALUES (' . implode(',', $set_values) . ')';
         } else {
             $query = 'INSERT ' . $realtablename . ' SET ' . implode(', ', $sets);
 
@@ -328,7 +329,7 @@ class ESTables
         $db->setQuery($query);
         $fields = $db->loadObjectList();
 
-        $set_fieldnames = ['tableid', 'fieldname', 'fieldtitle', 'allowordering', 'type', 'typeparams', 'ordering', 'defaultvalue', 'description', 'customfieldname', 'isrequired'];
+        $set_fieldNames = ['tableid', 'fieldname', 'fieldtitle', 'allowordering', 'type', 'typeparams', 'ordering', 'defaultvalue', 'description', 'customfieldname', 'isrequired'];
 
         $primary_key_column = '';
         $ordering = 1;
@@ -356,7 +357,7 @@ class ESTables
                 $set_values['customfieldname'] = $db->quote($field->column_name);
                 $set_values['isrequired'] = 0;
 
-                $query = 'INSERT INTO #__customtables_fields (' . implode(',', $set_fieldnames) . ') VALUES (' . implode(',', $set_values) . ')';
+                $query = 'INSERT INTO #__customtables_fields (' . implode(',', $set_fieldNames) . ') VALUES (' . implode(',', $set_values) . ')';
 
                 $db->setQuery($query);
                 $db->execute();
@@ -396,7 +397,7 @@ class ESTables
         return ESTables::getTableRowByWhere('tablename=' . $db->quote($tablename));
     }
 
-    public static function copyTable(CT $ct, $originaltableid, $new_table, $old_table, $customtablename = '')
+    public static function copyTable(CT $ct, $originalTableId, $new_table, $old_table, $customTableName = '')
     {
         //Copy Table
         $db = Factory::getDBO();
@@ -404,7 +405,7 @@ class ESTables
         //get ID of new table
         $new_table_id = ESTables::getTableID($new_table);
 
-        if ($customtablename === null) {
+        if ($customTableName === null) {
             //Do not copy real third-party tables
 
             if ($db->serverType == 'postgresql')
@@ -442,7 +443,7 @@ class ESTables
             }
         }
 
-        $query = 'SELECT * FROM #__customtables_fields WHERE published=1 AND tableid=' . $originaltableid;
+        $query = 'SELECT * FROM #__customtables_fields WHERE published=1 AND tableid=' . $originalTableId;
         $db->setQuery($query);
 
         $rows = $db->loadAssocList();
