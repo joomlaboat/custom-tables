@@ -75,7 +75,7 @@ class Value
                 return number_format((int)$rowValue, 0, '', $thousand_sep);
 
             case 'float':
-                $decimals = $option_list[0] != '' ? (int)$option_list[0] : ($this->field->params[0] != '' ? (int)$this->field->params[0] : 2);
+                $decimals = $option_list[0] != '' ? (int)$option_list[0] : (count($this->field->params) > 0 and $this->field->params[0] != '' ? (int)$this->field->params[0] : 2);
                 $decimals_sep = $option_list[1] ?? '.';
                 $thousand_sep = $option_list[2] ?? '';
                 return number_format((float)$rowValue, $decimals, $decimals_sep, $thousand_sep);

@@ -162,13 +162,12 @@ class Ordering
                 return '(SELECT ' . $select . ' FROM ' . $sqljoin_temp_ct->Table->realtablename
                     . ' WHERE ' . $sqljoin_temp_ct->Table->realtablename . '.' . $sqljoin_temp_ct->Table->realidfieldname . '=' . $Table->realtablename . '.' . $field->realfieldname . ')';
 
-
             case 'date':
             case 'creationtime':
             case 'changetime':
             case 'lastviewtime':
 
-                if ($field->params[0] != '') {
+                if (count($field->params) > 0 and $field->params[0] != '') {
                     return 'DATE_FORMAT(' . $field->realfieldname . ', ' . $Table->db->quote($field->params[0]) . ')';
                 } else
                     return $field->realfieldname;
