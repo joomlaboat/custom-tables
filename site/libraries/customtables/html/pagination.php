@@ -138,201 +138,6 @@ class JESPagination extends JObject
     }
 
     /**
-     * Method to set an additional URL parameter to be added to all pagination class generated
-     * links.
-     *
-     * @param string $key The name of the URL parameter for which to set a value.
-     * @param mixed $value The value to set for the URL parameter.
-     *
-     * @return  mixed    The old value for the parameter.
-     *
-     * @since   11.1
-     */
-    public function setAdditionalUrlParam($key, $value)
-    {
-        // Get the old value to return and set the new one for the URL parameter.
-        $result = isset($this->_additionalUrlParams[$key]) ? $this->_additionalUrlParams[$key] : null;
-
-        // If the passed parameter value is null unset the parameter, otherwise set it to the given value.
-        if ($value === null) {
-            unset($this->_additionalUrlParams[$key]);
-        } else {
-            $this->_additionalUrlParams[$key] = $value;
-        }
-
-        return $result;
-    }
-
-    /**
-     * Method to get an additional URL parameter (if it exists) to be added to
-     * all pagination class generated links.
-     *
-     * @param string $key The name of the URL parameter for which to get the value.
-     *
-     * @return  mixed    The value if it exists or null if it does not.
-     *
-     * @since   11.1
-     */
-    public function getAdditionalUrlParam($key)
-    {
-        return isset($this->_additionalUrlParams[$key]) ? $this->_additionalUrlParams[$key] : null;
-    }
-
-    /**
-     * Return the rationalised offset for a row with a given index.
-     *
-     * @param integer $index The row index
-     *
-     * @return  integer  Rationalised offset for a row with a given index.
-     * @since   11.1
-     */
-    public function getRowOffset($index)
-    {
-        return $index + 1 + $this->limitstart;
-    }
-
-    /**
-     * Return the pagination data object, only creating it if it doesn't already exist.
-     *
-     * @return  object   Pagination data object.
-     * @since   11.1
-     */
-    public function getData()
-    {
-        static $data;
-        if (!is_object($data)) {
-            $data = $this->_buildDataObject();
-        }
-        return $data;
-    }
-
-    /**
-     * Create and return the pagination data object.
-     *
-     * @return  object  Pagination data object.
-     * @since   11.1
-     */
-    protected function _buildDataObject()
-    {
-        // Initialise variables.
-        $data = new stdClass;
-
-        // Build the additional URL parameters string.
-        $query_params = '';
-        if (!empty($this->_additionalUrlParams)) {
-            foreach ($this->_additionalUrlParams as $key => $value) {
-                $query_params .= '&' . $key . '=' . $value;
-            }
-        }
-
-        $query_paramsPlusPrefix = JoomlaBasicMisc::curPageURL();
-        $query_paramsPlusPrefix = JoomlaBasicMisc::deleteURLQueryOption($query_paramsPlusPrefix, 'start');
-
-        if ($query_params != '')
-            $query_paramsPlusPrefix .= (strpos($query_paramsPlusPrefix, '?') === false ? '?' : '&') . $this->prefix;
-
-        if ($this->prefix != '')
-            $query_paramsPlusPrefix .= (strpos($query_paramsPlusPrefix, '?') === false ? '?' : '&') . $this->prefix;
-
-        $data->all = new JESPaginationObject(JoomlaBasicMisc::JTextExtended('JLIB_HTML_VIEW_ALL'), $this->prefix);
-        if (!$this->_viewall) {
-            $data->all->base = '0';
-            $data->all->link = JRoute::_($query_paramsPlusPrefix);
-        }
-
-        // Set the start and previous data objects.
-
-        if ($this->icons) {
-            $data->start = new JESPaginationObject('<span class="icon-angle-double-left" aria-hidden="true"></span>', $this->prefix, null, null, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_START'));
-            $data->previous = new JESPaginationObject('<span class="icon-angle-left" aria-hidden="true"></span>', $this->prefix, null, null, JoomlaBasicMisc::JTextExtended('JPREV'));
-        } else {
-            $data->start = new JESPaginationObject(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_START'), $this->prefix);
-            $data->previous = new JESPaginationObject(JoomlaBasicMisc::JTextExtended('JPREV'), $this->prefix);
-        }
-
-        if ($this->get('pages.current') > 1) {
-            $page = ($this->get('pages.current') - 2) * $this->limit;
-
-            // Set the empty for removal from route
-            $data->start->base = '0';
-            $data->start->link = JRoute::_($query_paramsPlusPrefix);
-            $data->previous->base = $page;
-
-            if ($page == 0)
-                $data->previous->link = JRoute::_($query_paramsPlusPrefix);
-            else
-                $data->previous->link = JRoute::_($query_paramsPlusPrefix . (!str_contains($query_paramsPlusPrefix, '?') ? '?' : '&') . 'start=' . $page);
-        }
-
-        // Set the next and end data objects.
-        if ($this->icons) {
-            $data->next = new JESPaginationObject('<span class="icon-angle-right" aria-hidden="true"></span>', $this->prefix, null, null, JoomlaBasicMisc::JTextExtended('JNEXT'));
-            $data->end = new JESPaginationObject('<span class="icon-angle-double-right" aria-hidden="true"></span>', $this->prefix, null, null, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_END'));
-        } else {
-            $data->next = new JESPaginationObject(JoomlaBasicMisc::JTextExtended('JNEXT'), $this->prefix);
-            $data->end = new JESPaginationObject(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_END'), $this->prefix);
-        }
-
-        if ($this->get('pages.current') < $this->get('pages.total')) {
-            $next = $this->get('pages.current') * $this->limit;
-            $end = ($this->get('pages.total') - 1) * $this->limit;
-
-            $data->next->base = $next;
-            $data->next->link = JRoute::_($query_paramsPlusPrefix . (strpos($query_paramsPlusPrefix, '?') === false ? '?' : '&') . 'start=' . $next);
-            $data->end->base = $end;
-            $data->end->link = JRoute::_($query_paramsPlusPrefix . (strpos($query_paramsPlusPrefix, '?') === false ? '?' : '&') . 'start=' . $end);
-        }
-
-        $data->pages = array();
-        $stop = $this->get('pages.stop');
-
-        for ($i = $this->get('pages.start'); $i <= $stop; $i++) {
-            $offset = ($i - 1) * $this->limit;
-            // Set the empty for removal from route
-
-            $data->pages[$i] = new JESPaginationObject($i, $this->prefix);
-            if ($i != $this->get('pages.current') || $this->_viewall) {
-                $data->pages[$i]->base = $offset;
-                if ($offset == 0)
-                    $data->pages[$i]->link = JRoute::_($query_paramsPlusPrefix);
-                else
-                    $data->pages[$i]->link = JRoute::_($query_paramsPlusPrefix . (strpos($query_paramsPlusPrefix, '?') === false ? '?' : '&') . 'start=' . $offset);
-            }
-        }
-        return $data;
-    }
-
-    /**
-     * Create and return the pagination result set counter string, e.g. Results 1-10 of 42
-     *
-     * @return  string   Pagination result set counter string.
-     * @since   11.1
-     */
-    public function getResultsCounter()
-    {
-        // Initialise variables.
-        $html = null;
-        $fromResult = $this->limitstart + 1;
-
-        // If the limit is reached before the end of the list.
-        if ($this->limitstart + $this->limit < $this->total) {
-            $toResult = $this->limitstart + $this->limit;
-        } else {
-            $toResult = $this->total;
-        }
-
-        // If there are results found.
-        if ($this->total > 0) {
-            $msg = JText::sprintf('JLIB_HTML_RESULTS_OF', $fromResult, $toResult, $this->total);
-            $html .= "\n" . $msg;
-        } else {
-            $html .= "\n" . JoomlaBasicMisc::JTextExtended('JLIB_HTML_NO_RECORDS_FOUND');
-        }
-
-        return $html;
-    }
-
-    /**
      * Return the pagination footer.
      *
      * @return  string   Pagination footer.
@@ -432,20 +237,6 @@ class JESPagination extends JObject
         $itemOverride = false;
         $listOverride = false;
 
-        /*
-        $chromePath = JPATH_THEMES . '/' . $app->getTemplate() . '/html/pagination.php';
-        if (file_exists($chromePath))
-        {
-            require_once $chromePath;
-            if (function_exists('pagination_item_active') && function_exists('pagination_item_inactive')) {
-                $itemOverride = true;
-            }
-            if (function_exists('pagination_list_render')) {
-                $listOverride = true;
-            }
-        }
-        */
-
         // Build the select list
         if ($data->all->base !== null) {
             $list['all']['active'] = true;
@@ -504,6 +295,102 @@ class JESPagination extends JObject
         } else {
             return '';
         }
+    }
+
+    /**
+     * Create and return the pagination data object.
+     *
+     * @return  object  Pagination data object.
+     * @since   11.1
+     */
+    protected function _buildDataObject()
+    {
+        // Initialise variables.
+        $data = new stdClass;
+
+        // Build the additional URL parameters string.
+        $query_params = '';
+        if (!empty($this->_additionalUrlParams)) {
+            foreach ($this->_additionalUrlParams as $key => $value) {
+                $query_params .= '&' . $key . '=' . $value;
+            }
+        }
+
+        $query_paramsPlusPrefix = JoomlaBasicMisc::curPageURL();
+        $query_paramsPlusPrefix = JoomlaBasicMisc::deleteURLQueryOption($query_paramsPlusPrefix, 'start');
+
+        if ($query_params != '')
+            $query_paramsPlusPrefix .= (strpos($query_paramsPlusPrefix, '?') === false ? '?' : '&') . $this->prefix;
+
+        if ($this->prefix != '')
+            $query_paramsPlusPrefix .= (strpos($query_paramsPlusPrefix, '?') === false ? '?' : '&') . $this->prefix;
+
+        $data->all = new JESPaginationObject(JoomlaBasicMisc::JTextExtended('JLIB_HTML_VIEW_ALL'), $this->prefix);
+        if (!$this->_viewall) {
+            $data->all->base = '0';
+            $data->all->link = JRoute::_($query_paramsPlusPrefix);
+        }
+
+        // Set the start and previous data objects.
+
+        if ($this->icons) {
+            $data->start = new JESPaginationObject('<span class="icon-angle-double-left" aria-hidden="true"></span>', $this->prefix, null, null, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_START'));
+            $data->previous = new JESPaginationObject('<span class="icon-angle-left" aria-hidden="true"></span>', $this->prefix, null, null, JoomlaBasicMisc::JTextExtended('JPREV'));
+        } else {
+            $data->start = new JESPaginationObject(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_START'), $this->prefix);
+            $data->previous = new JESPaginationObject(JoomlaBasicMisc::JTextExtended('JPREV'), $this->prefix);
+        }
+
+        if ($this->get('pages.current') > 1) {
+            $page = ($this->get('pages.current') - 2) * $this->limit;
+
+            // Set the empty for removal from route
+            $data->start->base = '0';
+            $data->start->link = JRoute::_($query_paramsPlusPrefix);
+            $data->previous->base = $page;
+
+            if ($page == 0)
+                $data->previous->link = JRoute::_($query_paramsPlusPrefix);
+            else
+                $data->previous->link = JRoute::_($query_paramsPlusPrefix . (!str_contains($query_paramsPlusPrefix, '?') ? '?' : '&') . 'start=' . $page);
+        }
+
+        // Set the next and end data objects.
+        if ($this->icons) {
+            $data->next = new JESPaginationObject('<span class="icon-angle-right" aria-hidden="true"></span>', $this->prefix, null, null, JoomlaBasicMisc::JTextExtended('JNEXT'));
+            $data->end = new JESPaginationObject('<span class="icon-angle-double-right" aria-hidden="true"></span>', $this->prefix, null, null, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_END'));
+        } else {
+            $data->next = new JESPaginationObject(JoomlaBasicMisc::JTextExtended('JNEXT'), $this->prefix);
+            $data->end = new JESPaginationObject(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_END'), $this->prefix);
+        }
+
+        if ($this->get('pages.current') < $this->get('pages.total')) {
+            $next = $this->get('pages.current') * $this->limit;
+            $end = ($this->get('pages.total') - 1) * $this->limit;
+
+            $data->next->base = $next;
+            $data->next->link = JRoute::_($query_paramsPlusPrefix . (strpos($query_paramsPlusPrefix, '?') === false ? '?' : '&') . 'start=' . $next);
+            $data->end->base = $end;
+            $data->end->link = JRoute::_($query_paramsPlusPrefix . (strpos($query_paramsPlusPrefix, '?') === false ? '?' : '&') . 'start=' . $end);
+        }
+
+        $data->pages = array();
+        $stop = $this->get('pages.stop');
+
+        for ($i = $this->get('pages.start'); $i <= $stop; $i++) {
+            $offset = ($i - 1) * $this->limit;
+            // Set the empty for removal from route
+
+            $data->pages[$i] = new JESPaginationObject($i, $this->prefix);
+            if ($i != $this->get('pages.current') || $this->_viewall) {
+                $data->pages[$i]->base = $offset;
+                if ($offset == 0)
+                    $data->pages[$i]->link = JRoute::_($query_paramsPlusPrefix);
+                else
+                    $data->pages[$i]->link = JRoute::_($query_paramsPlusPrefix . (strpos($query_paramsPlusPrefix, '?') === false ? '?' : '&') . 'start=' . $offset);
+            }
+        }
+        return $data;
     }
 
     protected function _item_active(&$item)

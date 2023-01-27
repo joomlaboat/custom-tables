@@ -982,4 +982,26 @@ class JoomlaBasicMisc
         if ($count == 0)
             rmdir(JPATH_SITE . DIRECTORY_SEPARATOR . $folder);
     }
+
+    public static function parse_query($var)
+    {
+        $arr = array();
+
+        $var = parse_url($var);
+        $varQuery = $var['query'] ?? '';
+
+        if ($varQuery == '')
+            return $arr;
+
+        $var = html_entity_decode($varQuery);
+        $var = explode('&', $var);
+
+
+        foreach ($var as $val) {
+            $x = explode('=', $val);
+            $arr[$x[0]] = $x[1];
+        }
+        unset($val, $x, $var);
+        return $arr;
+    }
 }

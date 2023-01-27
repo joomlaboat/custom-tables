@@ -79,10 +79,6 @@ class tagProcessor_Value
                     /*
                                         if (count($isFileBoxLoaded) > 0) {
 
-                                            echo '$fieldname=' . $fieldname . '<br/>';
-                                            print_r($isFileBoxLoaded);
-                                            die;
-
                                             if (!$isFileBoxLoaded[$fieldname]) {
                                                 $isFileBoxLoaded[$fieldname] = true;
                                                 $getFileBoxRows[$fieldname] = CT_FieldTypeTag_filebox::getFileBoxRows($ct->Table->tablename, $fieldname, $row[$ct->Table->realidfieldname]);

@@ -120,6 +120,7 @@ class com_customtablesInstallerScript
 				<h3>Upgrade was Successful!</h3>';
         }
 
+        /*
         $file = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR
             . 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . '_es2ct.php';
 
@@ -128,6 +129,7 @@ class com_customtablesInstallerScript
             require_once($file);
             updateESTables();
         }
+        */
 
         if (!file_exists(JPATH_SITE . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'ct_images'))
             mkdir(JPATH_SITE . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'ct_images');

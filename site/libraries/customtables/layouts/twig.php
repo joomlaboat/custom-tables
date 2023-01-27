@@ -94,7 +94,7 @@ class TwigProcessor
         $this->addTwigFilters();
     }
 
-    protected function addGlobals()
+    protected function addGlobals(): void
     {
         $this->twig->addGlobal('document', new Twig_Document_Tags($this->ct));
         //{{ document.setmetakeywords() }}	-	wizard ok
@@ -189,7 +189,7 @@ class TwigProcessor
         $this->twig->addGlobal('tables', new Twig_Tables_Tags($this->ct));
     }
 
-    protected function addFieldValueMethods()
+    protected function addFieldValueMethods(): void
     {
         if (isset($this->ct->Table->fields)) {
             $index = 0;
