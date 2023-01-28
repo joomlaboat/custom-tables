@@ -39,10 +39,10 @@ class tagProcessor_Field
                 if (!array_key_exists('fieldtitle' . $ct->Languages->Postfix, $fieldrow)) {
                     Factory::getApplication()->enqueueMessage(
                         JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_LANGFIELDNOTFOUND'), 'Error');
-
                     $pageLayout = str_replace('*' . $fieldrow['fieldname'] . '*', '*fieldtitle' . $ct->Languages->Postfix . ' - not found*', $pageLayout);
-                } else
-                    $pageLayout = str_replace('*' . $fieldrow['fieldname'] . '*', $fieldrow['fieldtitle' . $ct->Languages->Postfix], $pageLayout);
+                } else {
+                    $pageLayout = str_replace('*' . $fieldrow['fieldname'] . '*', $fieldrow['fieldtitle' . $ct->Languages->Postfix] ?? '', $pageLayout);
+                }
             }
         }
         return $pageLayout;

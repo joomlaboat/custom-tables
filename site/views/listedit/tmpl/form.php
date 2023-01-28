@@ -13,7 +13,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomTables\DataTypes\Tree;
-use CustomTables\Languages;
 use Joomla\CMS\Factory;
 
 $max_file_size = JoomlaBasicMisc::file_upload_max_size();
@@ -58,11 +57,7 @@ $max_file_size = JoomlaBasicMisc::file_upload_max_size();
 
 
     <div>
-
-
         <fieldset class="adminform">
-
-
             <table class="admintable" cellspacing="1">
                 <tr>
                     <td width="150" class="key">
@@ -91,8 +86,6 @@ $max_file_size = JoomlaBasicMisc::file_upload_max_size();
                         <?php echo !$isReadOnly ? '' : ' Readonly'; ?>
                     </td>
                 </tr>
-
-
                 <?php
 
                 $row_array = (array)$this->optionRecord;
@@ -140,10 +133,8 @@ $max_file_size = JoomlaBasicMisc::file_upload_max_size();
 
                     </td>
                 </tr>
-
-
                 <tr>
-                    <td width="150" class="key">
+                    <td class="key">
                         <label for="isselectable">
                             <?php echo JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_IS_SELECTABLE'); ?>
                         </label>
@@ -156,25 +147,18 @@ $max_file_size = JoomlaBasicMisc::file_upload_max_size();
                         <input type="radio" value="0" name="isselectable" id="isselectable"
                                size="40" <?php echo(!$this->optionRecord->isselectable ? 'CHECKED' : ''); ?> >
                         <?php echo JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NO'); ?>
-
-
                     </td>
                 </tr>
-
-
                 <tr>
-                    <td width="150" class="key">
+                    <td class="key">
                         <label>
                             <?php echo JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_IMAGE'); ?>
-
                         </label><br/>
-
                     </td>
                     <td>
                         <table border="0" align="center" cellpadding="3" width="100%" class="bigtext">
-
                             <tr>
-                                <td valign="top">
+                                <td>
                                     <input type="hidden" name="MAX_FILE_SIZE" value="<?php echo $max_file_size; ?>"/>
                                     <input name="imagefile" type="file"/>
                                     <BR><BR>
@@ -183,9 +167,8 @@ $max_file_size = JoomlaBasicMisc::file_upload_max_size();
                                     <?php echo JoomlaBasicMisc::JTextExtended("COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE") . ': ' . JoomlaBasicMisc::formatSizeUnits($max_file_size); ?>
                                     <br/>
                                     <?php echo JoomlaBasicMisc::JTextExtended("FORMAT"); ?>: JPEG, GIF, PNG, WEBP
-
                                 </td>
-                                <td align="center" valign="top">
+                                <td>
                                     <?php
 
                                     $imagefile_ = '../images/esoptimages/_esthumb_' . $this->optionRecord->image;
@@ -240,9 +223,8 @@ $max_file_size = JoomlaBasicMisc::file_upload_max_size();
                         </table>
                     </td>
                 </tr>
-
                 <tr>
-                    <td width="150" class="key">
+                    <td class="key">
                         <label for="imageparams">
                             <?php echo JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_IMAGE_PARAMETERS'); ?>
 
@@ -255,8 +237,6 @@ $max_file_size = JoomlaBasicMisc::file_upload_max_size();
                         be kept.
                     </td>
                 </tr>
-
-
                 <tr>
                     <td class="key">
                         <label for="optionalcode">
@@ -273,37 +253,27 @@ $max_file_size = JoomlaBasicMisc::file_upload_max_size();
                     </td>
                 </tr>
                 <tr>
-                    <td width="150">
-
-                    </td>
+                    <td></td>
                 </tr>
-
                 <tr>
-                    <td width="150" class="key">
+                    <td class="key">
                         <label for="link">
                             <?php echo JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_OPTIONAL_LINK'); ?>
 
                         </label><br/>
-
                     </td>
                     <td>
                         <input type="text" name="link" id="link" class="inputbox" size="40"
                                value="<?php echo $this->optionRecord->link; ?>"/>
                     </td>
                 </tr>
-
-
             </table>
         </fieldset>
     </div>
     <input type="hidden" name="option" value="com_customtables"/>
     <input type="hidden" name="view" value="list"/>
-
     <input type="hidden" name="id" value="<?php echo $this->optionRecord->id; ?>"/>
     <input type="hidden" name="task" value=""/>
-
     <input type="hidden" name="Itemid"
            value="<?php echo Factory::getApplication()->input->get('Itemid', 0, 'INT'); ?>"/>
-
-
 </form>
