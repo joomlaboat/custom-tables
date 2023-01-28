@@ -812,33 +812,30 @@ class Fields
             return null;
         }
 
-        if ($table_row->customtablename === null) //do not create fields to third-party tables
-        {
-            if (!self::update_physical_field($ct, $table_row, $fieldid, $data)) {
-                //Cannot create
-                return null;
-            }
-        } elseif ($table_row->customtablename == $table_row->tablename) {
-
-            $data['customfieldname'] = $data['fieldname'];
-
+        if ($table_row->customtablename == $table_row->tablename) {
+            //do not create fields to third-party tables
             //Third-party table but managed by the Custom Tables
-            if (!self::update_physical_field($ct, $table_row, $fieldid, $data)) {
-                //Cannot create
-                return null;
-            }
+            $data['customfieldname'] = $data['fieldname'];
         }
-
-        self::findAndFixFieldOrdering();
 
         if ($fieldid != 0) {
             $data_old = ['id' => $fieldid];
             ImportTables::updateRecords('#__customtables_fields', $data, $data_old, false, array(), true, true);
         } else {
-
             $data['ordering'] = self::getMaxOrdering($tableid) + 1;
-            return ImportTables::insertRecords('#__customtables_fields', $data, false, array(), true, '', [], true);
+            $fieldid = ImportTables::insertRecords('#__customtables_fields', $data, false, array(), true, '', [], true);
         }
+
+        if (!self::update_physical_field($ct, $table_row, $fieldid, $data)) {
+            //Cannot create
+            return null;
+        }
+
+        self::findAndFixFieldOrdering();
+
+        if ($data['type'] == 'ordering')
+            self::findAndFixOrderingFieldRecords($table_row, (($data['customfieldname'] ?? '') != '' ? $data['customfieldname'] : 'es_' . $data['fieldname']));
+
         return $fieldid;
     }
 
@@ -891,16 +888,24 @@ class Fields
         return false;
     }
 
-    public static function AddMySQLFieldNotExist($realtablename, $realfieldname, $fieldType, $options): void
+    public static function AddMySQLFieldNotExist(string $realtablename, string $realfieldname, string $fieldType, string $options): void
     {
         $db = Factory::getDBO();
 
         if (!Fields::checkIfFieldExists($realtablename, $realfieldname)) {
             $query = 'ALTER TABLE ' . $realtablename . ' ADD COLUMN ' . $realfieldname . ' ' . $fieldType . ' ' . $options;
-
             $db->setQuery($query);
             $db->execute();
         }
+    }
+
+    protected static function getMaxOrdering($tableid): int
+    {
+        $db = Factory::getDBO();
+        $query = 'SELECT MAX(ordering) as max_ordering FROM #__customtables_fields WHERE published=1 AND tableid=' . (int)$tableid;
+        $db->setQuery($query);
+        $rows = $db->loadObjectList();
+        return (int)$rows[0]->max_ordering;
     }
 
     protected static function update_physical_field(CT $ct, $table_row, $fieldid, $data)
@@ -1601,7 +1606,7 @@ class Fields
     protected static function findAndFixFieldOrdering(): void
     {
         $db = Factory::getDBO();
-        $query = 'UPDATE #__customtables_fields SET ordering=id WHERE ordering IS NULL';
+        $query = 'UPDATE #__customtables_fields SET ordering=id WHERE ordering IS NULL or ordering = 0';
         $db->setQuery($query);
 
         try {
@@ -1612,13 +1617,22 @@ class Fields
         }
     }
 
-    protected static function getMaxOrdering($tableid): int
+    protected static function findAndFixOrderingFieldRecords(object $table_row, string $realFieldName): void
     {
+        $ct = new CT;
+        $table_row_array = (array)$table_row;
+        $ct->setTable($table_row_array, null, false);
+
         $db = Factory::getDBO();
-        $query = 'SELECT MAX(ordering) as max_ordering FROM #__customtables_fields WHERE published=1 AND tableid=' . (int)$tableid;
+        $query = 'UPDATE ' . $ct->Table->realtablename . ' SET ' . $db->quoteName($realFieldName) . '=' . $db->quoteName($ct->Table->realidfieldname) . ' WHERE ' . $db->quoteName($realFieldName) . ' IS NULL OR ' . $db->quoteName($realFieldName) . ' = 0';
         $db->setQuery($query);
-        $rows = $db->loadObjectList();
-        return (int)$rows[0]->max_ordering;
+
+        try {
+            $db->execute();
+        } catch (Exception $e) {
+            echo 'Caught exception: ', $e->getMessage(), "\n";
+            die;
+        }
     }
 }
 

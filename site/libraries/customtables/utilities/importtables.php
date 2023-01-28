@@ -225,8 +225,8 @@ class ImportTables
         return null;
     }
 
-    public static function insertRecords($table, $rows, $addPrefix = true, $exceptions = array(), $force_id = false,
-                                         $add_field_prefix = '', $field_conversion_map = array(), $save_checked_out = false)
+    public static function insertRecords(string $table, array $rows, bool $addPrefix = true, array $exceptions = array(), bool $force_id = false,
+                                         string $add_field_prefix = '', array $field_conversion_map = array(), bool $save_checked_out = false): int
     {
         if ($addPrefix)
             $mysqlTableName = '#__customtables_' . $table;
@@ -270,7 +270,7 @@ class ImportTables
             }
 
             if ($isOk and !in_array($fieldname, $ignore_fields)) {
-                if (!Fields::checkIfFieldExists($mysqlTableName, $fieldname, false)) {
+                if (!Fields::checkIfFieldExists($mysqlTableName, $fieldname)) {
                     //Add field
                     $isLanguageFieldName = Fields::isLanguageFieldName($fieldname);
 

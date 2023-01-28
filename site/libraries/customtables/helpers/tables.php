@@ -241,7 +241,7 @@ class ESTables
         return $db->loadObjectList();
     }
 
-    public static function insertRecords($realtablename, $sets)
+    public static function insertRecords(string $realtablename, array $sets): int
     {
         $db = Factory::getDBO();
 
