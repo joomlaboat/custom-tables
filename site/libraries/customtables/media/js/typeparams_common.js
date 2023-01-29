@@ -490,15 +490,20 @@ function renderInput_ImageSizeList(id, param, value, attributes) {
 function renderInput_ImageSizeSelector(id, param, value, attributes, fieldTypeParametersList) {
 
     let imageSizes = parseQuote(fieldTypeParametersList[0], ';', true);
-    
+
     temp_imagesizeparams = getParamOptions(param, 'sizeparam');
 
     let result = '<select id="' + id + '" data-type="imagesizeselector" ' + attributes + '>';
 
-    if (value === "")
-        result += '<option value="" selected="selected">- Select Size</option>';
+    if (value === "" || value === "_thumb" || value === "_thumbnail")
+        result += '<option value="" selected="selected">- Thumbnail (100x100)</option>';
     else
-        result += '<option value="" >- Select Field</option>';
+        result += '<option value="" >- Thumbnail (100x100)</option>';
+
+    if (value === "_original")
+        result += '<option value="_original" selected="selected">- Original Image</option>';
+    else
+        result += '<option value="_original" >- Original Image</option>';
 
     for (let i = 0; i < imageSizes.length; i++) {
         let pair = parseQuote(imageSizes[i], ',', true);
