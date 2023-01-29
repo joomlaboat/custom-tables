@@ -20,18 +20,18 @@ require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARAT
 
 class JHTMLESUser
 {
-    static public function render($control_name, $value, $style, $cssclass, string $usergroup = '', $attribute = '', $mysqlwhere = '', $mysqljoin = '')
+    static public function render(string $control_name, string $value, string $style, string $cssclass, ?string $userGroup = '', string $attribute = '', string $mysqlWhere = '', string $mysqlJoin = '')
     {
         $db = Factory::getDBO();
         $query = $db->getQuery(true);
         $query->select('#__users.id AS id, #__users.name AS name');
         $query->from('#__users ');
 
-        if ($usergroup != '') {
+        if ($userGroup !== null and $userGroup != '') {
             $query->join('INNER', '#__user_usergroup_map ON user_id=id ');
             $query->join('INNER', '#__usergroups ON #__usergroups.id = #__user_usergroup_map.group_id ');
 
-            $ug = explode(",", $usergroup);
+            $ug = explode(",", $userGroup);
             $w = array();
             foreach ($ug as $u)
                 $w[] = '#__usergroups.title=' . $db->quote($u);
@@ -40,11 +40,11 @@ class JHTMLESUser
                 $query->where(' ' . implode(' OR ', $w) . ' ');
         }
 
-        if ($mysqljoin != '')
-            $query->join('INNER', $mysqljoin);
+        if ($mysqlJoin != '')
+            $query->join('INNER', $mysqlJoin);
 
-        if ($mysqlwhere != '')
-            $query->where($mysqlwhere);
+        if ($mysqlWhere != '')
+            $query->where($mysqlWhere);
 
         $query->group("#__users" . "." . "id");
         $query->order("#__users" . "." . "name");
