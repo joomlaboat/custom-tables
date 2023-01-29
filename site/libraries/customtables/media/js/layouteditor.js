@@ -414,7 +414,7 @@ function showModalTagForm(tagStartChar, postfix, tagEndChar, tag, top, left, lin
     if (typeof (param_att.repetitive) !== "undefined" && param_att.repetitive === "1" && param_array.length === 1)
         countParams = -1;//unlimited number of parameters
 
-    let form_content = getParamEditForm(tagObject, line, positions, isNew, countParams, '{{ ', postfix, ' }}', paramValueString);
+    let form_content = getParamEditForm(tagObject, line, positions, isNew, countParams, '{{ ', postfix, ' }}', paramValueString, []);
 
     if (form_content == null)
         return false;
@@ -704,9 +704,9 @@ function findTagObjectByName(tagStartChar, tagEndChar, lookForTag) {
     return null;
 }
 
-function getParamEditForm(tagObject, line, positions, isNew, countParams, tagStartChar, postfix, tagEndChar, paramValueString) {
+function getParamEditForm(tagObject, line, positions, isNew, countParams, tagStartChar, postfix, tagEndChar, paramValueString, fieldTypeParametersList) {
 
-    let result = renderParamBox(tagObject, "current_tagparameter", paramValueString);
+    let result = renderParamBox(tagObject, "current_tagparameter", paramValueString, fieldTypeParametersList);
     result += '<div class="dynamic_values"><span class="dynamic_values_label">Tag with parameter:</span> ';
     result += tagStartChar;
     result += temp_params_tag;

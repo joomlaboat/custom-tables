@@ -27,10 +27,21 @@ class CT_FieldTypeTag_imagegallery
         return $db->loadObjectList();
     }
 
-    public static function getImageGallerySRC($photoRows, $imagePrefix, $object_id, $galleryName, array $params, &$imageSRCList, &$imageTagList, $tableId): bool
+    public static function getImageGalleryTagList(array $imageSRCList)//, array $params
+    {
+        $conf = Factory::getConfig();
+        $sitename = $conf->get('config.sitename');
+
+        $tags = [];
+        foreach ($imageSRCList as $imageSRC) {
+            $tags[] = '<img src="' . $imageSRC . '" alt="' . $sitename . '" title="' . $sitename . '" />';
+        }
+        return $tags;
+    }
+
+    public static function getImageGallerySRC(array $photoRows, string $imagePrefix, string $galleryName, array $params, int $tableId, bool $addFolderPath = false): array
     {
         $imageGalleryPrefix = 'g';
-
         $imageFolder = CustomTablesImageMethods::getImageFolder($params);
 
         if ($imageFolder == '') {
@@ -50,49 +61,31 @@ class CT_FieldTypeTag_imagegallery
                 $imageFolderServer = JPATH_SITE . DIRECTORY_SEPARATOR;
                 $imageFolderWeb = '';
             }
-
-
         }
-
-
-        if (!isset($photoRows))
-            return false;
-
-        $conf = Factory::getConfig();
-        $sitename = $conf->get('config.sitename');
 
         //the returned list should be separated by ;
         $imageSRCListArray = array();
-        $imageTagListArray = array();
-
         $imgMethods = new CustomTablesImageMethods;
 
         foreach ($photoRows as $photoRow) {
             $photoRowPhotoId = $photoRow->photoid;
-            if (str_contains($photoRowPhotoId, '-')) {
-                //$isShortcut=true;
+            if (str_contains($photoRowPhotoId, '-'))
                 $photoRowPhotoId = str_replace('-', '', $photoRowPhotoId);
-            }
 
             if ($imagePrefix == '') {
                 $imageFile = $imageFolderServer . DIRECTORY_SEPARATOR . $imageGalleryPrefix . $tableId . '_' . $galleryName . '__esthumb_' . $photoRowPhotoId . '.jpg';
-                $imageFileWeb = $imageFolderWeb . '/' . $imageGalleryPrefix . $tableId . '_' . $galleryName . '__esthumb_' . $photoRowPhotoId . '.jpg';
 
-                if ($imageFile != '') {
-                    $imageTagListArray[] = '<img src="' . $imageFileWeb . '" width="150" height="150" alt="' . $sitename . '" title="' . $sitename . '" />';
-                    $imageSRCListArray[] = $imageGalleryPrefix . $tableId . '_' . $galleryName . '__esthumb_' . $photoRowPhotoId . '.jpg';
-                }
+                if ($imageFile != '')
+                    $imageSRCListArray[] = ($addFolderPath ? $imageFolderWeb . '/' : '') . $imageGalleryPrefix . $tableId . '_' . $galleryName . '__esthumb_' . $photoRowPhotoId . '.jpg';
+
             } elseif ($imagePrefix == '_original') {
                 $imageName = $imageFolderServer . DIRECTORY_SEPARATOR . $imageGalleryPrefix . $tableId . '_' . $galleryName . '_' . $imagePrefix . '_' . $photoRowPhotoId;
                 $imageFileExtension = $imgMethods->getImageExtension($imageName);
-
                 $imageFile = $imageName . '.' . $imageFileExtension;
 
-                $imageFileWeb = $imageFolderWeb . '/' . $imageGalleryPrefix . $tableId . '_' . $galleryName . '_' . $imagePrefix . '_' . $photoRowPhotoId . '.jpg';
-                if ($imageFile != '') {
-                    $imageTagListArray[] = '<img src="' . $imageFileWeb . '" alt="' . $sitename . '" title="' . $sitename . '" />';
-                    $imageSRCListArray[] = $imageGalleryPrefix . $tableId . '_' . $galleryName . '_' . $imagePrefix . '_' . $photoRowPhotoId . '.' . $imageFileExtension;
-                }
+                if ($imageFile != '')
+                    $imageSRCListArray[] = ($addFolderPath ? $imageFolderWeb . '/' : '') . $imageGalleryPrefix . $tableId . '_' . $galleryName . '_' . $imagePrefix . '_' . $photoRowPhotoId . '.' . $imageFileExtension;
+
             } else {
                 $imageSizes = $imgMethods->getCustomImageOptions($params[0]);
                 $foundImageSize = false;
@@ -103,26 +96,18 @@ class CT_FieldTypeTag_imagegallery
                         $imageFileExtension = $imgMethods->getImageExtension($imageName);
 
                         if ($imageFileExtension != '') {
-                            $imageNameWeb = $imageFolderWeb . '/' . $imageGalleryPrefix . $tableId . '_' . $galleryName . '_' . $imagePrefix . '_' . $photoRowPhotoId . '.' . $imageFileExtension;
-
-                            $imageTagListArray[] = '<img src="' . $imageNameWeb . '" ' . ($img[1] > 0 ? 'width="' . $img[1] . '"' : '') . ' ' . ($img[2] > 0 ? 'height="' . $img[2] . '"' : '') . ' alt="' . $sitename . '" title="' . $sitename . '" />';
-                            $imageSRCListArray[] = $imageGalleryPrefix . $tableId . '_' . $galleryName . '_' . $imagePrefix . '_' . $photoRowPhotoId . '.' . $imageFileExtension;
+                            $imageSRCListArray[] = ($addFolderPath ? $imageFolderWeb . '/' : '') . $imageGalleryPrefix . $tableId . '_' . $galleryName . '_' . $imagePrefix . '_' . $photoRowPhotoId . '.' . $imageFileExtension;
                             $foundImageSize = true;
                             break;
                         }
                     }
                 }
 
-                if (!$foundImageSize) {
-
-                    $imageTagListArray[] = 'filenotfound';
+                if (!$foundImageSize)
                     $imageSRCListArray[] = 'filenotfound';
-                }
             }
         }
 
-        $imageSRCList = implode(';', $imageSRCListArray);
-        $imageTagList = implode('', $imageTagListArray);
-        return true;
+        return $imageSRCListArray;
     }
 }

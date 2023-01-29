@@ -19,7 +19,7 @@ class CustomTablesImageMethods
 {
     const allowedExtensions = ['jpg', 'png', 'gif', 'jpeg', 'webp'];
 
-    public static function getImageFolder($params)//$imageparams)
+    public static function getImageFolder(array $params)
     {
         $ImageFolder = 'images' . DIRECTORY_SEPARATOR . 'ct_images';
 

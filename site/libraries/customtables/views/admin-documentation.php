@@ -151,7 +151,7 @@ class Documentation
         return $result;
     }
 
-    function renderParametersInternal($params_, $opening_char, $tag_name, $postfix, $closing_char, $hidedefaultexample): string
+    function renderParametersInternal($params_, $opening_char, $tag_name, $postfix, $closing_char, $hideDefaultExample): string
     {
         $result = '';
         $example_values = array();
@@ -187,7 +187,7 @@ class Documentation
         $cleanedParamsStr = implode(',', $this->cleanParams($example_values));
 
         if ($tag_name == '') {
-            if (!(int)$hidedefaultexample) {
+            if (!(int)$hideDefaultExample) {
                 $result_new .= '<p>' . common::translate('COM_CUSTOMTABLES_EXAMPLE') . ': <pre class="ct_doc_pre">'
                     . $opening_char . $tag_name . $postfix . $cleanedParamsStr . $closing_char . '</pre></p>';
             }

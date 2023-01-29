@@ -708,6 +708,16 @@
                        type="string"/>
             </params>
         </editparams>
+
+        <valueparams name="imagegallery" label="Image Gallery"
+                     description="How to show the images, what size and how to separate them.">
+            <params>
+                <param type="imagesizeselector" name="size" label="Size" description="Select the image size variant."
+                       example="preview"/>
+                <param name="separator" label="List Separator" example=";"
+                       description="Separate images with a character. i.e. ',' or ';'" default=";" type="string"/>
+            </params>
+        </valueparams>
     </type>
 
     <type ct_name="int" name="int" label="Integer Number" description="Provides an integer number inputbox."

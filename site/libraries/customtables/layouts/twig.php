@@ -15,6 +15,8 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CT_FieldTypeTag_filebox;
+use CT_FieldTypeTag_imagegallery;
 use Exception;
 use Joomla\CMS\Factory;
 use JoomlaBasicMisc;
@@ -378,12 +380,12 @@ class fieldObject
         $rfn = $this->field->realfieldname;
 
         if ($this->field->type == 'image') {
-            $imagesrc = '';
+            $imageSRC = '';
             $imagetag = '';
 
-            CT_FieldTypeTag_image::getImageSRCLayoutView($options, $this->ct->Table->record[$rfn], $this->field->params, $imagesrc, $imagetag);
+            CT_FieldTypeTag_image::getImageSRCLayoutView($options, $this->ct->Table->record[$rfn], $this->field->params, $imageSRC, $imagetag);
 
-            return $imagesrc;
+            return $imageSRC;
         } elseif ($this->field->type == 'records') {
             $a = explode(",", $this->ct->Table->record[$rfn]);
             $b = array();
@@ -392,8 +394,17 @@ class fieldObject
                     $b[] = $c;
             }
             $vlu = implode(',', $b);
+        } elseif ($this->field->type == 'imagegallery') {
+            $id = $this->ct->Table->record[$this->ct->Table->realidfieldname];
+            $rows = CT_FieldTypeTag_imagegallery::getGalleryRows($this->ct->Table->tablename, $this->field->fieldname, $id);
+            $imageSRCList = CT_FieldTypeTag_imagegallery::getImageGallerySRC($rows, $options[0] ?? '', $this->field->fieldname, $this->field->params, $this->ct->Table->tableid);
+
+            $vlu = implode(($options[1] ?? ';'), $imageSRCList);
+
+        } elseif ($this->field->type == 'filebox') {
+            $vlu = implode(',', CT_FieldTypeTag_filebox::getFileBoxRows($this->ct->Table->tablename, $this->field->fieldname, $this->ct->Table->record[$this->ct->Table->realidfieldname]));
         } else
-            $vlu = $this->ct->Table->record[$rfn];
+            $vlu = (string)$this->ct->Table->record[$rfn];
 
         if ($this->DoHTMLSpecialChars) {
             $vlu = htmlentities($vlu, ENT_IGNORE + ENT_DISALLOWED + ENT_HTML5, "UTF-8");

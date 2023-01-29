@@ -10,7 +10,7 @@ function updateParameters() {
 
     if (typeparams != null) {
 
-        typeparams_box_obj.innerHTML = renderParamBox(typeparams, typeparams_id, typeparams_obj.value);
+        typeparams_box_obj.innerHTML = renderParamBox(typeparams, typeparams_id, typeparams_obj.value, []);
 
         const param_att = typeparams["@attributes"];
         let rawQuotes = false;

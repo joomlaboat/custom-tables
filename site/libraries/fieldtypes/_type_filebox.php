@@ -60,9 +60,9 @@ class CT_FieldTypeTag_filebox
     public static function getFileBoxRows($tablename, $fieldname, $listing_id)
     {
         $db = Factory::getDBO();
-        $fileboxtablename = '#__customtables_filebox_' . $tablename . '_' . $fieldname;
+        $fileBoxTableName = '#__customtables_filebox_' . $tablename . '_' . $fieldname;
 
-        $query = 'SELECT fileid, file_ext FROM ' . $fileboxtablename . ' WHERE listingid=' . (int)$listing_id . ' ORDER BY fileid';
+        $query = 'SELECT fileid, file_ext FROM ' . $fileBoxTableName . ' WHERE listingid=' . (int)$listing_id . ' ORDER BY fileid';
         $db->setQuery($query);
 
         return $db->loadObjectList();

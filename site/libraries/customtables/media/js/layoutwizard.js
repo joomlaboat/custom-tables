@@ -266,6 +266,7 @@ function renderFieldsBox() {
 }
 
 function findFieldObjectByName(fieldname) {
+
     let l = wizardFields.length;
     for (let index = 0; index < l; index++) {
         let field = wizardFields[index];
@@ -445,9 +446,11 @@ function showModalFieldTagForm(tagStartChar, postfix, tagEndChar, tag, top, left
         return;
     }
 
+    let fieldTypeParametersList = parseQuote(field.typeparams, ",", true);
+
     const param_array = getParamOptions(group_params_object.params, 'param');
     const countParams = param_array.length;
-    const form_content = getParamEditForm(group_params_object, line, positions, isNew, countParams, '{{ ', postfix, ' }}', paramValueString);
+    const form_content = getParamEditForm(group_params_object, line, positions, isNew, countParams, '{{ ', postfix, ' }}', paramValueString, fieldTypeParametersList);
 
     if (form_content == null)
         return false;

@@ -35,7 +35,7 @@ function typeChanged() {
     updateParameters();
 }
 
-function renderInputBox(id, param, vlu, attributes) {
+function renderInputBox(id, param, vlu, attributes, fieldTypeParametersList) {
     const param_att = param["@attributes"];
     let result = '';
     if (param_att.type != null) {
@@ -106,6 +106,12 @@ function renderInputBox(id, param, vlu, attributes) {
             vlu = vlu.replaceAll('****apos****', "");
 
             return renderInput_ImageSizeList(id, param, vlu, attributes);
+        } else if (param_att.type === "imagesizeselector") {
+
+            vlu = vlu.replaceAll('****quote****', '');
+            vlu = vlu.replaceAll('****apos****', "");
+
+            return renderInput_ImageSizeSelector(id, param, vlu, attributes, fieldTypeParametersList);
         } else if (param_att.type === "folder") {
 
             vlu = vlu.replaceAll('****quote****', '');
@@ -157,7 +163,7 @@ function getParamOptions(param, optionObjectName) {
     return options;
 }
 
-function renderParamList(typeparams, typeparams_box, paramValueString) {
+function renderParamList(typeparams, typeparams_box, paramValueString, fieldTypeParametersList) {
     let result = '';
     const att = typeparams["@attributes"];
     const param_array = getParamOptions(typeparams.params, 'param');
@@ -171,9 +177,9 @@ function renderParamList(typeparams, typeparams_box, paramValueString) {
             if (values.length > i)
                 vlu = values[i];
 
-            result += inputBoxPreRender(proversion, param_array[0], -1, i, vlu, att, typeparams_box);
+            result += inputBoxPreRender(proversion, param_array[0], -1, i, vlu, att, typeparams_box, fieldTypeParametersList);
         }
-        result += inputBoxPreRender(proversion, param_array[0], -1, values.length, '', att, typeparams_box);
+        result += inputBoxPreRender(proversion, param_array[0], -1, values.length, '', att, typeparams_box, fieldTypeParametersList);
 
     } else {
         for (let i2 = 0; i2 < param_array.length; i2++) {
@@ -183,14 +189,14 @@ function renderParamList(typeparams, typeparams_box, paramValueString) {
 
             const param = param_array[i2];
 
-            result += inputBoxPreRender(proversion, param, param_array.length, i2, vlu, att, typeparams_box);
+            result += inputBoxPreRender(proversion, param, param_array.length, i2, vlu, att, typeparams_box, fieldTypeParametersList);
         }
     }
 
     return result;
 }
 
-function renderParamBox(typeparams, typeparams_box, paramValueString) {
+function renderParamBox(typeparams, typeparams_box, paramValueString, fieldTypeParametersList) {
 
     const att = typeparams["@attributes"];
     let result = '<h4>' + att.label + '</h4><p>' + att.description;
@@ -213,7 +219,7 @@ function renderParamBox(typeparams, typeparams_box, paramValueString) {
             tag_pair = parseQuote(att.ct_name, [':', '='], false);
 
         result += '<div id="modalParamTagName" style="display:none">' + tag_pair[0] + '</div>';
-        result += '<div id="modalParamList">' + renderParamList(typeparams, typeparams_box, paramValueString) + '</div>';
+        result += '<div id="modalParamList">' + renderParamList(typeparams, typeparams_box, paramValueString, fieldTypeParametersList) + '</div>';
     }
 
     if (!proversion && typeof (att.proversion) !== "undefined" && att.proversion === "1") {
@@ -227,7 +233,7 @@ function renderParamBox(typeparams, typeparams_box, paramValueString) {
     return result;
 }
 
-function inputBoxPreRender(proVersion, param, param_count, i, vlu, att, typeparams_box) {
+function inputBoxPreRender(proVersion, param, param_count, i, vlu, att, typeparams_box, fieldTypeParametersList) {
     let repetitive = false;
     if (typeof (att.repetitive) !== "undefined" && att.repetitive === "1")
         repetitive = true;
@@ -274,7 +280,7 @@ function inputBoxPreRender(proVersion, param, param_count, i, vlu, att, typepara
 
         const attributes = 'onchange="updateParamString(\'fieldtype_param_\',1,' + param_count + ',\'' + typeparams_box + '\',event,' + rawQuotes + ',' + refresh + ',\'' + startChar + '\');"';
 
-        result += renderInputBox('fieldtype_param_' + i, param, vlu, attributes);
+        result += renderInputBox('fieldtype_param_' + i, param, vlu, attributes, fieldTypeParametersList);
         result += '</div></div>';
     }
     return result;
@@ -395,7 +401,9 @@ function updateParamString(inputBoxId, countList, countParams, objectId, e, rawQ
             if (typeparams != null) {
                 let modalParamListObject = document.getElementById("modalParamList");
                 if (modalParamListObject) {
-                    modalParamListObject.innerHTML = renderParamList(typeparams, objectId, tmp_list);
+
+                    let fieldTypeParametersList = [];//TODO: do something
+                    modalParamListObject.innerHTML = renderParamList(typeparams, objectId, tmp_list, fieldTypeParametersList);
                 } else
                     alert("modalParamList not found.");
             }
@@ -479,6 +487,32 @@ function renderInput_ImageSizeList(id, param, value, attributes) {
     return result;
 }
 
+function renderInput_ImageSizeSelector(id, param, value, attributes, fieldTypeParametersList) {
+
+    let imageSizes = parseQuote(fieldTypeParametersList[0], ';', true);
+    
+    temp_imagesizeparams = getParamOptions(param, 'sizeparam');
+
+    let result = '<select id="' + id + '" data-type="imagesizeselector" ' + attributes + '>';
+
+    if (value === "")
+        result += '<option value="" selected="selected">- Select Size</option>';
+    else
+        result += '<option value="" >- Select Field</option>';
+
+    for (let i = 0; i < imageSizes.length; i++) {
+        let pair = parseQuote(imageSizes[i], ',', true);
+
+        if (pair[0] === value)
+            result += '<option value="' + pair[0] + '" selected="selected">' + pair[0] + '</option>';
+        else
+            result += '<option value="' + pair[0] + '">' + pair[0] + '</option>';
+    }
+
+    result += '</select>';
+    return result;
+}
+
 function BuildImageSizeTable() {
     const value = temp_imagesizelist_string;//document.getElementById(temp_imagesize_parambox_id).value;
     const value_array = value.split(";");
@@ -536,7 +570,8 @@ function BuildImageSizeTable() {
                 if (typeof (param_att.style) != "undefined")
                     attributes += 'style="' + param_att.style + '"';
 
-                result += '<td style="padding-right:5px;">' + renderInputBox(id, param, vlu, attributes) + '</td>';
+                let fieldTypeParametersList = [1, 2, 3, 4, 5];//TODO: do something
+                result += '<td style="padding-right:5px;">' + renderInputBox(id, param, vlu, attributes, fieldTypeParametersList) + '</td>';
 
             }
             result += '<td><div class="btn-wrapper" id="toolbar-delete"><button onclick="deleteImageSize(' + r + ');" type="button" class="btn btn-small"><span class="icon-delete"></span></button></div></td>';

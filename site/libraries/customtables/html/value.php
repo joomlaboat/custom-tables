@@ -201,13 +201,10 @@ class Value
                 if ($option_list[0] == '_count')
                     return count($getGalleryRows);
 
-                $imageSRCList = '';
-                $imageTagList = '';
+                $imageSRCList = CT_FieldTypeTag_imagegallery::getImageGallerySRC($getGalleryRows, $option_list[0] ?? '', $this->field->fieldname, $this->field->params, $this->ct->Table->tableid, true);
+                $imageTagList = CT_FieldTypeTag_imagegallery::getImageGalleryTagList($imageSRCList);
 
-                CT_FieldTypeTag_imagegallery::getImageGallerySRC($getGalleryRows, $option_list[0],
-                    $row[$this->ct->Table->realidfieldname], $this->field->fieldname, $this->field->params, $imageSRCList, $imageTagList, $this->ct->Table->tableid);
-
-                return $imageTagList;
+                return implode('', $imageTagList);
 
             case 'filebox':
 

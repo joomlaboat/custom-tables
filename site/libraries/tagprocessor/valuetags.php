@@ -245,8 +245,6 @@ class tagProcessor_Value
 
                             $vlu = $imagesrc;
                         } elseif ($fieldType == 'imagegallery') {
-                            $imagetaglist = '';
-                            $imagesrclist = '';
 
                             $new_array = array();
 
@@ -257,11 +255,12 @@ class tagProcessor_Value
 
                             if (count($new_array) > 0) {
                                 $option = $new_array[0];
-                                CT_FieldTypeTag_imagegallery::getImageGallerySRC($getGalleryRows[$fieldname],
-                                    $option, $row[$ct->Table->realidfieldname], $fieldname, $field->params, $imagesrclist, $imagetaglist, $ct->Table->tableid);
+                                $imageSRCList = CT_FieldTypeTag_imagegallery::getImageGallerySRC($getGalleryRows[$fieldname],
+                                    $option, $fieldname, $field->params, $ct->Table->tableid);
+
+                                $vlu = implode(',', $imageSRCList);
                             }
 
-                            $vlu = $imagesrclist;
                         } elseif ($fieldType == 'filebox') {
                             $vlu = CT_FieldTypeTag_filebox::process($getFileBoxRows[$fieldname], $field, $row[$ct->Table->realidfieldname], ['', 'link', '32', '_blank', ';']);
                         } elseif ($fieldType == 'records') {
