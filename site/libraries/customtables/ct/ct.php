@@ -361,9 +361,11 @@ class CT
         $this->document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/js/uploader.js"></script>');
 
         $params = ComponentHelper::getParams('com_customtables');
-        $googlemapapikey = $params->get('googlemapapikey');
+        $googleMapAPIKey = $params->get('googlemapapikey');
 
-        $this->document->addCustomTag('<script src="https://maps.google.com/maps/api/js?key=' . $googlemapapikey . '&sensor=false"></script>');
+        if ($googleMapAPIKey !== null and $googleMapAPIKey != '')
+            $this->document->addCustomTag('<script src="https://maps.google.com/maps/api/js?key=' . $googleMapAPIKey . '&sensor=false"></script>');
+
         $this->document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/js/combotree.js"></script>');
         $this->document->addCustomTag('<script>let ctWebsiteRoot = "' . $this->Env->WebsiteRoot . '";</script>');
 

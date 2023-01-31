@@ -138,10 +138,12 @@
 
 /* table */
 
+/*
 .datagrid input, .datagrid select {
     width: 100%;
     max-width: 250px;
 }
+*/
 
 .datagrid {
     width: 100% !important;
