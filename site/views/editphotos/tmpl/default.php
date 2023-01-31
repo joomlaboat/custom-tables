@@ -57,7 +57,7 @@ $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_cu
 
         <div name="addphotoblock" id="addphotoblock" style="display: block;">
             <h4><?php echo JoomlaBasicMisc::JTextExtended("COM_CUSTOMTABLES_ADD_NEW_PHOTO"); ?></h4>
-            <table border="0" align="center" cellpadding="3" width="100%" class="bigtext">
+            <table border="0" align="center" cellpadding="3" style="width:100%" class="bigtext">
                 <tbody>
                 <tr>
                     <td valign="top"><?php echo JoomlaBasicMisc::JTextExtended("COM_CUSTOMTABLES_UPLOAD_PHOTO"); ?>

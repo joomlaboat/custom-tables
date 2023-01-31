@@ -37,7 +37,7 @@ $max_file_size = JoomlaBasicMisc::file_upload_max_size();
 <form action="index.php" method="post" name="adminForm" id="adminForm" enctype="multipart/form-data">
 
 
-    <table width="100%">
+    <table style="width:100%">
         <tr>
             <td align="left">
                 <h2>CustomTables - Structure (<?php echo($this->optionRecord->id != 0 ? 'Edit' : 'New'); ?>)</h2>
@@ -60,7 +60,7 @@ $max_file_size = JoomlaBasicMisc::file_upload_max_size();
         <fieldset class="adminform">
             <table class="admintable" cellspacing="1">
                 <tr>
-                    <td width="150" class="key">
+                    <td style="width:150px;" class="key">
                         <label for="optionname">
                             <?php echo JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_OPTION_NAME'); ?>
 
@@ -102,10 +102,9 @@ $max_file_size = JoomlaBasicMisc::file_upload_max_size();
 
                     ?>
                     <tr>
-                        <td width="150" class="key">
+                        <td style="width:150px;" class="key">
                             <label for="title<?php echo $postfix; ?>">
                                 <?php echo JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_TITLE') . $lang->caption; ?>
-
                             </label><br/>
                         </td>
                         <td>
@@ -156,7 +155,7 @@ $max_file_size = JoomlaBasicMisc::file_upload_max_size();
                         </label><br/>
                     </td>
                     <td>
-                        <table border="0" align="center" cellpadding="3" width="100%" class="bigtext">
+                        <table border="0" align="center" cellpadding="3" style="width:100%" class="bigtext">
                             <tr>
                                 <td>
                                     <input type="hidden" name="MAX_FILE_SIZE" value="<?php echo $max_file_size; ?>"/>
@@ -193,7 +192,7 @@ $max_file_size = JoomlaBasicMisc::file_upload_max_size();
                                         $imagefile_original = '';
 
                                     if ($imagefile != '')
-                                        echo '<a href="' . $imagefile_original . '" target="_blank"><img src="' . $imagefile . '" width="150" border=0 /></a><br/>
+                                        echo '<a href="' . $imagefile_original . '" target="_blank"><img src="' . $imagefile . '" style="width:150px;border:none;" /></a><br/>
 						<input type="checkbox" name="image_delete" value="true"> Delete Image';
 
 

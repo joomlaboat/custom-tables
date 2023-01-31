@@ -84,8 +84,8 @@ class CustomTablesViewEditPhotos extends JViewLegacy
 						<input type="checkbox" name="esphoto' . $image->photoid . '" id="esphoto' . $image->photoid . '" align="left" style="vertical-align:top";>
 					</td>
 
-					<td' . ($c == 0 ? ' class="MainImage" ' : '') . ' width="170" align="center">
-						<a href="' . $imageFileOriginal . '" rel="shadowbox"><img src="' . $imageFile . '" border="0" alt="' . $image->title . '" title="' . $image->title . '" width="150" height="150" /></a>
+					<td' . ($c == 0 ? ' class="MainImage" ' : '') . ' style="width:170px;text-align:center;">
+						<a href="' . $imageFileOriginal . '" rel="shadowbox"><img src="' . $imageFile . '" alt="' . $image->title . '" title="' . $image->title . '" style="border:none;width:150px;height:150px;" /></a>
 					</td>
 
 					<td valign="top" align="left">

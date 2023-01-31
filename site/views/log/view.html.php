@@ -188,9 +188,9 @@ class CustomTablesViewLog extends JViewLegacy
 
         if ($a == 1 or $a == 2) {
             $link = '/index.php?option=com_customtables&view=edititem&listing_id=' . $rec['listingid'] . '&Itemid=' . $rec['Itemid'];
-            $result .= '<a href="' . $link . '" target="_blank"><img src="' . $action_image_path . $action_images[$a] . '" alt=' . $alt . ' title=' . $alt . ' width="16" height="16" /></a>';
+            $result .= '<a href="' . $link . '" target="_blank"><img src="' . $action_image_path . $action_images[$a] . '" alt=' . $alt . ' title=' . $alt . ' style="width:16px;height:16px;" /></a>';
         } else
-            $result .= '<img src="' . $action_image_path . $action_images[$a] . '" alt=' . $alt . ' title=' . $alt . ' width="16" height="16" />';
+            $result .= '<img src="' . $action_image_path . $action_images[$a] . '" alt=' . $alt . ' title=' . $alt . ' style="width:16px;height:16px;" />';
 
         $result .= '</td>'
             . '<td>' . $rec['UserName'] . '</td>';

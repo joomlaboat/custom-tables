@@ -328,10 +328,10 @@ class Twig_Url_Tags
                     $img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbaricons . ' fa-file-csv" data-icon="' . $this->ct->Env->toolbaricons . ' fa-file-csv" title="' . $alt . '"></i>';
                 } else {
                     $image = '/components/com_customtables/libraries/customtables/media/images/fileformats/' . $imagesize . 'px/' . $format_image . '.png';
-                    $img = '<img src="' . $image . '" alt="' . $alt . '" title="' . $alt . '" width="' . $imagesize . '" height="' . $imagesize . '">';
+                    $img = '<img src="' . $image . '" alt="' . $alt . '" title="' . $alt . '" style="width:' . $imagesize . 'px;height:' . $imagesize . 'px;">';
                 }
             } else
-                $img = '<img src="' . $image . '" alt="' . $alt . '" title="' . $alt . '" width="' . $imagesize . '" height="' . $imagesize . '">';
+                $img = '<img src="' . $image . '" alt="' . $alt . '" title="' . $alt . '" style="width:' . $imagesize . 'px;height:' . $imagesize . 'px;">';
 
             return '<a href="' . $link . '" class="toolbarIcons" id="ctToolBarExport2CSV" target="_blank">' . $img . '</a>';
 

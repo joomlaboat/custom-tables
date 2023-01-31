@@ -17,7 +17,7 @@ use CustomTables\DataTypes\Tree;
 
 JHTML::stylesheet("default.css", JURI::root(true) . "/components/com_customtables/views/catalog/tmpl/");
 
-$catalogResult = '<table width="100%" align="center">';
+$catalogResult = '<table style="width:100%;text-align:center">';
 
 $tr = 0;
 $number_of_columns = 3;
@@ -62,7 +62,7 @@ foreach ($this->rows as $row) {
         $imageFile = '';
 
     if ($imageFile != '') {
-        $catalogResult .= '<td width="' . $column_width . '%" valign="top" align="center">';
+        $catalogResult .= '<td style="width:' . $column_width . '%;vertical-align:top;text-align:center">';
 
         if ($this->esfieldname != '') {
             $aLink = 'index.php?option=com_customtables&view=catalog&';

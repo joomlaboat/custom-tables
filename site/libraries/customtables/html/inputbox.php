@@ -1282,7 +1282,7 @@ class Inputbox
 
             foreach ($imageSRCList as $img) {
                 $result .= '<td>';
-                $result .= '<a href="' . $img . '" target="_blank"><img src="' . $img . '" width="' . $img_width . '" />';
+                $result .= '<a href="' . $img . '" target="_blank"><img src="' . $img . '" style="width:' . $img_width . 'px;" />';
                 $result .= '</td>';
             }
 

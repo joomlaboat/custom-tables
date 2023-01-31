@@ -555,7 +555,7 @@ class CT_FieldTypeTag_file
         $result = '
                 <div style="margin:10px; border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;vertical-align:top;" id="ct_uploadedfile_box_' . $field->fieldname . '">';
 
-        $result .= '<a href="' . $link . '" target="_blank" title="' . $file . '"><img src="' . $image_src . '" width="48" alt="' . $file . '" /></a><br/>';
+        $result .= '<a href="' . $link . '" target="_blank" title="' . $file . '"><img src="' . $image_src . '" style="width:48px;" alt="' . $file . '" /></a><br/>';
 
         if (!$field->isrequired)
             $result .= '<input type="checkbox" name="' . $field->prefix . $field->fieldname . '_delete" id="' . $field->prefix . $field->fieldname . '_delete" value="true">'

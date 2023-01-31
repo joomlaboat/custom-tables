@@ -41,7 +41,7 @@ class CT_FieldTypeTag_image
             $imageFileWeb = JURI::root() . $ImageFolderWeb . '/' . $prefix . '_' . $rowValue . '.' . $imageFileExtension;
             $imageFile = $ImageFolder . DIRECTORY_SEPARATOR . $prefix . '_' . $rowValue . '.' . $imageFileExtension;
             if (file_exists(JPATH_SITE . DIRECTORY_SEPARATOR . $imageFile)) {
-                $imageTag = '<img src="' . $imageFileWeb . '" width="150" height="150" alt="' . $sitename . '" title="' . $sitename . '" />';
+                $imageTag = '<img src="' . $imageFileWeb . '" style="width:150px;height:150px;" alt="' . $sitename . '" title="' . $sitename . '" />';
                 $imageSrc = $imageFileWeb;
                 return true;
             }
@@ -76,7 +76,16 @@ class CT_FieldTypeTag_image
         foreach ($imageSizes as $img) {
             if ($img[0] == $option) {
                 if ($imageFile != '') {
-                    $imageTag = '<img src="' . $imageFile . '" ' . ($img[1] > 0 ? 'width="' . $img[1] . '"' : '') . ' ' . ($img[2] > 0 ? 'height="' . $img[2] . '"' : '') . ' alt="' . $sitename . '" title="' . $sitename . '" />';
+                    $styles = [];
+                    if ($img[1] > 0)
+                        $styles[] = 'width:' . $img[1] . 'px;';
+
+                    if ($img[2] > 0)
+                        $styles[] = 'height:' . $img[2] . 'px;';
+
+                    $imageTag = '<img src="' . $imageFile . '" alt="' . $sitename . '" title="' . $sitename . '"'
+                        . (count($styles) > 0 ? ' style="' . implode(";", $styles) . '"' : '') . ' />';
+
                     $imageSrc = $imageFile;
                     return true;
                 }
@@ -165,7 +174,7 @@ class CT_FieldTypeTag_image
     protected static function renderImageAndDeleteOption(Field $field, string $prefix, string $imageSrc, bool $isShortcut): string
     {
         $result = '<div style="" id="ct_uploadedfile_box_' . $field->fieldname . '">'
-            . '<img src="' . $imageSrc . '" alt="Uploaded Image" width="150" id="ct_uploadfile_box_' . $field->fieldname . '_image" /><br/>';
+            . '<img src="' . $imageSrc . '" alt="Uploaded Image" style="width:150px;" id="ct_uploadfile_box_' . $field->fieldname . '_image" /><br/>';
 
         if (!$field->isrequired)
             $result .= '<input type="checkbox" name="' . $prefix . $field->fieldname . '_delete" id="' . $prefix . $field->fieldname . '_delete" value="true">'

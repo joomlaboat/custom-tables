@@ -43,7 +43,7 @@ foreach ($this->rows as $row) {
     if ($tr == 0)
         $catalogResult .= '<tr>';
 
-    $catalogResult .= '<td width="' . $column_width . '%" valign="top" align="left">';
+    $catalogResult .= '<td style="width:' . $column_width . '%;vertical-valign:top;text-align:left;">';
 
     if ($this->linkable)
         $catalogResult .= '<a href="' . $aLink . '&es_' . $this->esfieldname . '_1=' . $row['optionname'] . '">' . $row['optiontitle'] . '</a>';

@@ -186,7 +186,7 @@ class Value
                     $width = $this->field->params[0] ?? 300;
                     $height = $this->field->params[1] ?? 150;
 
-                    return '<img src="' . $imagefileweb . '" width="' . $width . '" height="' . $height . '" alt="' . $sitename . '" title="' . $sitename . '" />';
+                    return '<img src="' . $imagefileweb . '" alt="' . $sitename . '" title="' . $sitename . '" />';
                 }
                 return null;
 
