@@ -1035,6 +1035,7 @@ class Fields
 
             case 'filelink':
             case 'file':
+            case 'alias':
             case 'url':
                 return ['data_type' => 'varchar', 'is_nullable' => true, 'is_unsigned' => null, 'length' => 1024, 'default' => null, 'extra' => null];
             case 'color':
@@ -1177,7 +1178,6 @@ class Fields
                     return ['data_type' => 'varchar', 'is_nullable' => true, 'is_unsigned' => null, 'length' => 255, 'default' => null, 'extra' => null];
 
             default:
-
                 return ['data_type' => 'varchar', 'is_nullable' => true, 'is_unsigned' => null, 'length' => 255, 'default' => null, 'extra' => null];
         }
     }
