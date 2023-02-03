@@ -744,7 +744,7 @@ class JoomlaBasicMisc
 
     public static function csv_explode(string $separator, string $string, string $enclosure = '"', bool $preserve = false): array
     {
-        if (!$preserve)
+        if (!$preserve and strlen($separator) == 1)
             return str_getcsv($string, $separator, $enclosure, "\\");
 
         $resArr = array();
@@ -752,7 +752,7 @@ class JoomlaBasicMisc
         $expEncArr = explode($enclosure, $string);
         foreach ($expEncArr as $EncItem) {
             if ($n++ % 2) {
-                $resArr[] = array_pop($resArr) . $enclosure . $EncItem . $enclosure;
+                $resArr[] = array_pop($resArr) . ($preserve ? $enclosure : '') . $EncItem . ($preserve ? $enclosure : '');
             } else {
                 $expDelArr = explode($separator, $EncItem);
                 $resArr[] = array_pop($resArr) . array_shift($expDelArr);

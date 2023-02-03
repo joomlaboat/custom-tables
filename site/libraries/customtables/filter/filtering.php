@@ -717,7 +717,6 @@ class Filtering
     function Search_String($value, $fieldrow, $comparison_operator, $isMultilingual = false): string
     {
         $realfieldname = $fieldrow['realfieldname'] . ($isMultilingual ? $this->ct->Languages->Postfix : '');
-
         $v = $this->getString_vL($value);
 
         if ($comparison_operator == '=' and $v != "") {
@@ -753,7 +752,6 @@ class Filtering
             else
                 return implode(' OR ', $cArr);
 
-
         } else {
             //search exactly what requested
             if ($comparison_operator == '==')
@@ -771,7 +769,6 @@ class Filtering
                 $opt_title = ':';
 
             $this->PathValue[] = $fieldrow['fieldtitle' . $this->ct->Languages->Postfix] . $opt_title . ' ' . ($v == '' ? 'NOT SELECTED' : $v);
-
             return $where;
         }
     }
@@ -870,7 +867,6 @@ class Filtering
 
             $options = array();
             $fList = JoomlaBasicMisc::getListToReplace('now', $options, $value, '{}');
-
             $i = 0;
 
             foreach ($fList as $fItem) {
@@ -889,7 +885,6 @@ class Filtering
             if (count($fList) > 0)// or trim(strtolower($value))=="null")
                 return $value;
             else
-
                 return $this->ct->db->quote($value);
         }
     }
@@ -903,7 +898,6 @@ class Filtering
                 return '';
             return $this->ct->Env->jinput->getInt($getPar);
         }
-
         return $vL;
     }
 
@@ -990,8 +984,6 @@ class LinkJoinFilters
         }
         $result .= '</select>
 ';
-
         return $result;
     }
-
 }
