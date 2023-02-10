@@ -446,7 +446,7 @@ class SearchInputBox
             $default_class = 'form-control';
 
         if ($this->ct->Env->user->id != 0)
-            $result = JHTML::_('ESUser.render', $objnName, $value, '', 'class="' . $cssclass . ' ' . $default_class . '" ', $this->field->params[0], $onchange, $where, $mysqlJoin);
+            $result = JHTML::_('ESUser.render', $objnName, $value, '', 'class="' . $cssclass . ' ' . $default_class . '" ', ($this->field->params[0] ?? ''), $onchange, $where, $mysqlJoin);
 
         return $result;
     }
