@@ -35,7 +35,7 @@ use Joomla\CMS\Factory;
 
 class tagProcessor_Value
 {
-    public static function processValues(CT &$ct, string &$htmlresult, ?array &$row, string $tag_chars = '[]'): void
+    public static function processValues(CT &$ct, string &$pageLayout, ?array &$row, string $tag_chars = '[]'): void
     {
         $items_to_replace = array();
         $isGalleryLoaded = array();
@@ -49,16 +49,16 @@ class tagProcessor_Value
 
                 $replaceItCode = md5(JoomlaBasicMisc::generateRandomString() . ($row[$ct->Table->realidfieldname] ?? '') . $field->fieldname);
 
-                $temp_items_to_replace = tagProcessor_Value::processPureValues($ct, $htmlresult, $row, $isGalleryLoaded, $getGalleryRows, $isFileBoxLoaded, $getFileBoxRows, $tag_chars);
+                $temp_items_to_replace = tagProcessor_Value::processPureValues($ct, $pageLayout, $row, $isGalleryLoaded, $getGalleryRows, $isFileBoxLoaded, $getFileBoxRows, $tag_chars);
                 if (count($temp_items_to_replace) != 0)
                     $items_to_replace = array_merge($items_to_replace, $temp_items_to_replace);
 
-                $temp_items_to_replace = tagProcessor_Value::processEditValues($ct, $htmlresult, $row, $tag_chars);
+                $temp_items_to_replace = tagProcessor_Value::processEditValues($ct, $pageLayout, $row, $tag_chars);
                 if (count($temp_items_to_replace) != 0)
                     $items_to_replace = array_merge($items_to_replace, $temp_items_to_replace);
 
                 $ValueOptions = array();
-                $ValueList = JoomlaBasicMisc::getListToReplace($field->fieldname, $ValueOptions, $htmlresult, $tag_chars);
+                $ValueList = JoomlaBasicMisc::getListToReplace($field->fieldname, $ValueOptions, $pageLayout, $tag_chars);
 
                 $fieldType = $field->type;
                 $fieldname = $field->fieldname;
@@ -100,14 +100,14 @@ class tagProcessor_Value
                 }
 
                 // IF
-                tagProcessor_If::IFStatment('[_if:' . $field->fieldname . ']', '[_endif:' . $field->fieldname . ']', $htmlresult, $isEmpty);
+                tagProcessor_If::IFStatment('[_if:' . $field->fieldname . ']', '[_endif:' . $field->fieldname . ']', $pageLayout, $isEmpty);
 
                 // IF NOT
-                tagProcessor_If::IFStatment('[_ifnot:' . $field->fieldname . ']', '[_endifnot:' . $field->fieldname . ']', $htmlresult, !$isEmpty);
+                tagProcessor_If::IFStatment('[_ifnot:' . $field->fieldname . ']', '[_endifnot:' . $field->fieldname . ']', $pageLayout, !$isEmpty);
 
                 if ($isEmpty) {
                     foreach ($ValueList as $ValueListItem)
-                        $htmlresult = str_replace($ValueListItem, '', $htmlresult);
+                        $pageLayout = str_replace($ValueListItem, '', $pageLayout);
                 } else {
                     $i = 0;
                     foreach ($ValueOptions as $ValueOption) {
@@ -119,7 +119,7 @@ class tagProcessor_Value
                         $new_replaceitecode = $replaceItCode . str_pad($field->id, 9, '0', STR_PAD_LEFT) . str_pad($i, 4, '0', STR_PAD_LEFT);
 
                         $items_to_replace[] = array($new_replaceitecode, $vlu);
-                        $htmlresult = str_replace($ValueList[$i], $new_replaceitecode, $htmlresult);
+                        $pageLayout = str_replace($ValueList[$i], $new_replaceitecode, $pageLayout);
 
                         $i++;
                     }
@@ -131,7 +131,7 @@ class tagProcessor_Value
 
         //replace temporary items with values
         foreach ($items_to_replace as $item)
-            $htmlresult = str_replace($item[0], $item[1], $htmlresult);
+            $pageLayout = str_replace($item[0], $item[1], $pageLayout);
 
     }
 

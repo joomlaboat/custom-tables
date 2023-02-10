@@ -71,7 +71,7 @@ class tagProcessor_Item
     /**
      * @throws Exception if the record row arre has 0 elements
      */
-    public static function process(CT &$ct, string &$htmlresult, ?array &$row, bool $add_label = false): bool
+    public static function process(CT &$ct, string &$pageLayout, ?array &$row, bool $add_label = false): bool
     {
         if ($ct->Table === null)
             return false;
@@ -86,14 +86,14 @@ class tagProcessor_Item
 
         $ct_record = new Twig_Record_Tags($ct);
 
-        tagProcessor_Item::processLink($ct_record, $htmlresult); //Twig version added - original replaced
-        tagProcessor_Item::processNoReturnLink($ct_record, $htmlresult); //Twig version added - original replaced
-        tagProcessor_Field::process($ct, $htmlresult, $add_label); //Twig version added - original not changed
+        tagProcessor_Item::processLink($ct_record, $pageLayout); //Twig version added - original replaced
+        tagProcessor_Item::processNoReturnLink($ct_record, $pageLayout); //Twig version added - original replaced
+        tagProcessor_Field::process($ct, $pageLayout, $add_label); //Twig version added - original not changed
 
         if ($ct->Env->advancedtagprocessor)
-            tagProcessor_Server::process($htmlresult); //Twig version added - original not changed
+            tagProcessor_Server::process($pageLayout); //Twig version added - original not changed
 
-        tagProcessor_Shopping::getShoppingCartLink($ct, $htmlresult, $row);
+        tagProcessor_Shopping::getShoppingCartLink($ct, $pageLayout, $row);
 
         //Listing ID
         $listing_id = 0;
@@ -101,19 +101,19 @@ class tagProcessor_Item
         if (isset($row) and isset($row[$ct->Table->realidfieldname]))
             $listing_id = (int)$row[$ct->Table->realidfieldname];
 
-        $htmlresult = str_replace('{id}', $listing_id, $htmlresult); //Twig version added - original not changed
-        $htmlresult = str_replace('{number}', ($row['_number'] ?? ''), $htmlresult); //Twig version added - original not changed
+        $pageLayout = str_replace('{id}', $listing_id, $pageLayout); //Twig version added - original not changed
+        $pageLayout = str_replace('{number}', ($row['_number'] ?? ''), $pageLayout); //Twig version added - original not changed
 
         if (isset($row) and isset($row['listing_published']))
-            tagProcessor_Item::processPublishStatus($htmlresult, $row); //Twig version added - original not changed
+            tagProcessor_Item::processPublishStatus($pageLayout, $row); //Twig version added - original not changed
 
         if (isset($row) and isset($row['listing_published']))
-            tagProcessor_Item::GetSQLJoin($ct_record, $htmlresult);
+            tagProcessor_Item::GetSQLJoin($ct_record, $pageLayout);
 
         if (isset($row) and isset($row['listing_published']))
-            tagProcessor_Item::GetCustomToolBar($ct, $htmlresult, $row);
+            tagProcessor_Item::GetCustomToolBar($ct, $pageLayout, $row);
 
-        CT_FieldTypeTag_ct::ResolveStructure($ct, $htmlresult);
+        CT_FieldTypeTag_ct::ResolveStructure($ct, $pageLayout);
         return true;
     }
 

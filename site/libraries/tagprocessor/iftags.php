@@ -28,29 +28,29 @@ class tagProcessor_If
         return $value;
     }
 
-    public static function process(CT &$ct, string &$htmlresult, ?array &$row): void
+    public static function process(CT &$ct, string &$pageLayout, ?array &$row): void
     {
         $options = array();
-        $fList = JoomlaBasicMisc::getListToReplace('if', $options, $htmlresult, '{}');
+        $fList = JoomlaBasicMisc::getListToReplace('if', $options, $pageLayout, '{}');
 
         $i = 0;
 
         foreach ($fList as $fItem) {
-            tagProcessor_If::parseIfStatements($options[$i], $ct, $htmlresult, $row);
+            tagProcessor_If::parseIfStatements($options[$i], $ct, $pageLayout, $row);
             $i++;
         }
 
         //outdated - obsolete, use Twig if statements instead. Example: {% if record.published == 1 %} ... {% endif %}
         if (!$ct->isRecordNull($row) and isset($row['listing_published'])) {
             //Row Publish Status IF,IFNOT statments
-            tagProcessor_If::IFStatment('[_if_published]', '[_endif_published]', $htmlresult, !$row['listing_published'] == 1);
-            tagProcessor_If::IFStatment('[_ifnot_published]', '[_endifnot_published]', $htmlresult, $row['listing_published'] == 1);
+            tagProcessor_If::IFStatment('[_if_published]', '[_endif_published]', $pageLayout, !$row['listing_published'] == 1);
+            tagProcessor_If::IFStatment('[_ifnot_published]', '[_endifnot_published]', $pageLayout, $row['listing_published'] == 1);
         } else {
-            tagProcessor_If::IFStatment('[_if_published]', '[_endif_published]', $htmlresult, false);
-            tagProcessor_If::IFStatment('[_ifnot_published]', '[_endifnot_published]', $htmlresult, true);
+            tagProcessor_If::IFStatment('[_if_published]', '[_endif_published]', $pageLayout, false);
+            tagProcessor_If::IFStatment('[_ifnot_published]', '[_endifnot_published]', $pageLayout, true);
         }
 
-        tagProcessor_If::IFUserTypeStatment($htmlresult, $ct->Env->user, $ct->Env->userid);
+        tagProcessor_If::IFUserTypeStatment($pageLayout, $ct->Env->user, $ct->Env->userid);
     }
 
     protected static function parseIfStatements(string $statement, CT &$ct, string &$htmlresult, ?array &$row): void

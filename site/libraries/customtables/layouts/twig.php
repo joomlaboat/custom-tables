@@ -268,14 +268,14 @@ class TwigProcessor
         if ($isSingleRecord) {
             $result = '';
         } else {
-            try {
-                $result = @$this->twig->render('index', $this->variables);
-            } catch (Exception $e) {
-                $this->ct->app->enqueueMessage($e->getMessage(), 'error');
-                echo $e->getMessage();
-                die;
-                //  return 'Error:' . $e->getMessage();
-            }
+            //try {
+            $result = $this->twig->render('index', $this->variables);
+            //} catch (Exception $e) {
+//                $this->ct->app->enqueueMessage($e->getMessage(), 'error');
+            //              echo $e->getMessage();
+            //  die;
+            //  return 'Error:' . $e->getMessage();
+            //}
         }
 
         if ($this->recordBlockFound) {

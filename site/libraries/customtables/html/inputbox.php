@@ -882,19 +882,19 @@ class Inputbox
 
         $attributes = 'class="' . $this->cssclass . '" ' . $this->attributes;
 
-        $usergroup = $this->field->params[0];
+        $userGroup = $this->field->params[0] ?? '';
 
-        tagProcessor_General::process($this->ct, $usergroup, $this->row);
-        tagProcessor_Item::process($this->ct, $usergroup, $this->row, '');
-        tagProcessor_If::process($this->ct, $usergroup, $this->row);
-        tagProcessor_Page::process($this->ct, $usergroup);
-        tagProcessor_Value::processValues($this->ct, $usergroup, $this->row);
+        tagProcessor_General::process($this->ct, $userGroup, $this->row);
+        tagProcessor_Item::process($this->ct, $userGroup, $this->row);
+        tagProcessor_If::process($this->ct, $userGroup, $this->row);
+        tagProcessor_Page::process($this->ct, $userGroup);
+        tagProcessor_Value::processValues($this->ct, $userGroup, $this->row);
 
         $where = '';
         if (isset($this->field->params[3]))
             $where = 'INSTR(name,"' . $this->field->params[3] . '")';
 
-        $result .= JHTML::_('ESUser.render', $this->prefix . $this->field->fieldname, $value, '', $attributes, $usergroup, '', $where);
+        $result .= JHTML::_('ESUser.render', $this->prefix . $this->field->fieldname, $value, '', $attributes, $userGroup, '', $where);
         return $result;
     }
 

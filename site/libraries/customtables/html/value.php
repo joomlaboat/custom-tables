@@ -226,7 +226,7 @@ class Value
 
             case 'user':
             case 'userid':
-                return JHTML::_('ESUserView.render', $rowValue, $option_list[0]);
+                return JHTML::_('ESUserView.render', $rowValue, $option_list[0] ?? '');
 
             case 'usergroup':
                 return tagProcessor_Value::showUserGroup((int)$rowValue);
@@ -524,7 +524,7 @@ class Value
 
         $PHPDate = strtotime($rowValue);
 
-        if ($option_list[0] != '') {
+        if (($option_list[0] ?? '') != '') {
             if ($option_list[0] == 'timestamp')
                 return $PHPDate;
 
@@ -536,7 +536,7 @@ class Value
     protected function timeProcess($value, array $option_list): string
     {
         $PHPDate = strtotime($value);
-        if ($option_list[0] != '') {
+        if (isset($option_list[0]) and $option_list[0] != '') {
             if ($option_list[0] == 'timestamp')
                 return $PHPDate;
 
