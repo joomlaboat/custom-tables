@@ -59,7 +59,7 @@ class JHTMLESUserView
             $options = $db->loadAssocList();
             if (count($options) != 0) {
                 $rec = $options[0];
-                if (($field == 'registerdate' or $field == 'lastvisitdate') and $rec[$field] == '0000-00-00 00:00:00')
+                if (($field == 'registerDate' or $field == 'lastvisitDate') and $rec[$field] == '0000-00-00 00:00:00')
                     return 'Never';
 
                 if ($field == 'registerdate')
