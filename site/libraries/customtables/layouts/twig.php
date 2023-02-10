@@ -268,14 +268,14 @@ class TwigProcessor
         if ($isSingleRecord) {
             $result = '';
         } else {
-            //try {
-            $result = $this->twig->render('index', $this->variables);
-            //} catch (Exception $e) {
-//                $this->ct->app->enqueueMessage($e->getMessage(), 'error');
-            //              echo $e->getMessage();
-            //  die;
-            //  return 'Error:' . $e->getMessage();
-            //}
+            try {
+                $result = $this->twig->render('index', $this->variables);
+            } catch (Exception $e) {
+                $this->ct->app->enqueueMessage($e->getMessage(), 'error');
+                echo $e->getMessage();
+                die;
+                return 'Error:' . $e->getMessage();
+            }
         }
 
         if ($this->recordBlockFound) {
@@ -485,7 +485,7 @@ class fieldObject
             }
 
             //Deafult style (borderless)
-            if (isset($args[0]) or $args[0] != '') {
+            if (isset($args[0]) and $args[0] != '') {
                 $class_str = $args[0];
 
                 if (str_contains($class_str, ':'))//it's a style, change it to attribute
