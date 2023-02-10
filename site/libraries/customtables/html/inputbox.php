@@ -873,7 +873,7 @@ class Inputbox
         return $result;
     }
 
-    protected function getUserBox($value): string
+    protected function getUserBox(?string $value): string
     {
         $result = '';
 
@@ -894,7 +894,7 @@ class Inputbox
         if (isset($this->field->params[3]))
             $where = 'INSTR(name,"' . $this->field->params[3] . '")';
 
-        $result .= JHTML::_('ESUser.render', $this->prefix . $this->field->fieldname, $value, '', $attributes, $userGroup, '', $where);
+        $result .= JHTML::_('ESUser.render', $this->prefix . $this->field->fieldname, $value ?? '', '', $attributes, $userGroup, '', $where);
         return $result;
     }
 
