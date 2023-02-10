@@ -89,7 +89,7 @@ class CT_FieldTypeTag_records
     //Old function
     public static function resolveRecordType(CT &$ct, $rowValue, $field, array $options)
     {
-        $sortbyfield = '';
+        $sortByField = '';
         $result = '';
 
         if (count($field->params) < 1)
@@ -103,13 +103,10 @@ class CT_FieldTypeTag_records
 
         $esr_table = $field->params[0];
 
-        if ($options[0] != '') {
+        if (($options[0] ?? '') != '') {
             $esr_field = $options[0];
-
-            if (isset($options[1])) {
-                $sortbyfield = $options[1];
-            }
-
+            if (isset($options[1]))
+                $sortByField = $options[1];
         } else
             $esr_field = $field->params[1];
 
@@ -120,13 +117,13 @@ class CT_FieldTypeTag_records
         else
             $esr_filter = '';
 
-        if ($sortbyfield == '' and isset($field->params[5]))
-            $sortbyfield = $field->params[5];
+        if ($sortByField == '' and isset($field->params[5]))
+            $sortByField = $field->params[5];
 
         //this is important because it has been selected somehow.
         $esr_filter = '';
 
-        $result = JHTML::_('ESRecordsView.render', $rowValue, $esr_table, $esr_field, $esr_selector, $esr_filter, $sortbyfield);
+        $result = JHTML::_('ESRecordsView.render', $rowValue, $esr_table, $esr_field, $esr_selector, $esr_filter, $sortByField);
 
         return $result;
     }
