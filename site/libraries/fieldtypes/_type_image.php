@@ -27,7 +27,7 @@ class CT_FieldTypeTag_image
         $conf = Factory::getConfig();
         $sitename = $conf->get('config.sitename');
 
-        $option = $option_list[0];
+        $option = $option_list[0] ?? '';
         $ImageFolder_ = CustomTablesImageMethods::getImageFolder($params);
         $ImageFolderWeb = str_replace(DIRECTORY_SEPARATOR, '/', $ImageFolder_);
         $ImageFolder = str_replace('/', DIRECTORY_SEPARATOR, $ImageFolder_);
