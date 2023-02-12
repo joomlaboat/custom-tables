@@ -15,7 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
-use CT_FieldTypeTag_filebox;
+use CT_FieldTypeTag_FileBox;
 use CT_FieldTypeTag_imagegallery;
 use Exception;
 use Joomla\CMS\Factory;
@@ -268,14 +268,15 @@ class TwigProcessor
         if ($isSingleRecord) {
             $result = '';
         } else {
-            try {
-                $result = $this->twig->render('index', $this->variables);
-            } catch (Exception $e) {
-                $this->ct->app->enqueueMessage($e->getMessage(), 'error');
-                echo $e->getMessage();
-                die;
-                return 'Error:' . $e->getMessage();
-            }
+            //try {
+            $result = $this->twig->render('index', $this->variables);
+            /*
+        } catch (Exception $e) {
+            $this->ct->app->enqueueMessage($e->getMessage(), 'error');
+            echo $e->getMessage();
+            die;
+            return 'Error:' . $e->getMessage();
+        }*/
         }
 
         if ($this->recordBlockFound) {
@@ -402,7 +403,7 @@ class fieldObject
             $vlu = implode(($options[1] ?? ';'), $imageSRCList);
 
         } elseif ($this->field->type == 'filebox') {
-            $vlu = implode(',', CT_FieldTypeTag_filebox::getFileBoxRows($this->ct->Table->tablename, $this->field->fieldname, $this->ct->Table->record[$this->ct->Table->realidfieldname]));
+            $vlu = implode(',', CT_FieldTypeTag_FileBox::getFileBoxRows($this->ct->Table->tablename, $this->field->fieldname, $this->ct->Table->record[$this->ct->Table->realidfieldname]));
         } else
             $vlu = (string)$this->ct->Table->record[$rfn];
 

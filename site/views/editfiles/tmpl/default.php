@@ -77,10 +77,10 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     $toolbar = '
 	<div style="height:40px;">
 		<div style="float:left;">
-			<input type="button" class="button" value="' . JoomlaBasicMisc::JTextExtended('Finish') . '" onClick=\'this.form.task.value="cancel";this.form.submit()\'>
+			<input type="button" class="button" value="' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FINISH') . '" onClick=\'this.form.task.value="cancel";this.form.submit()\'>
 		</div>
 		<div style="float:right;">
-			<input type="button" class="button" value="' . JoomlaBasicMisc::JTextExtended('Delete') . '" onClick=\'DeleteFiles()\'>
+			<input type="button" class="button" value="' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_DELETE') . '" onClick=\'DeleteFiles()\'>
 		</div>
 	</div>
 	';
@@ -90,16 +90,16 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     ?>
 
     <fieldset class="adminform">
-        <legend><?php echo JoomlaBasicMisc::JTextExtended("File Manager"); ?></legend>
+        <legend><?php echo JoomlaBasicMisc::JTextExtended("COM_CUSTOMTABLES_FILE_MANAGER"); ?></legend>
 
         <div name="addfileblock" id="addfileblock" style="display:block;">
-            <h2><?php echo JoomlaBasicMisc::JTextExtended("Add New File"); ?></h2>
+            <h2><?php echo JoomlaBasicMisc::JTextExtended("COM_CUSTOMTABLES_ADD_NEW_FILE"); ?></h2>
             <table class="bigtext">
                 <tr>
-                    <td><?php echo JoomlaBasicMisc::JTextExtended("Upload File"); ?>:<br/></td>
+                    <td><?php echo JoomlaBasicMisc::JTextExtended("COM_CUSTOMTABLES_ADD_NEW_FILE"); ?>:<br/></td>
                     <td>
-                        <?php //<input type="hidden" name="max File Size" value="<?php echo $max_file_size;  ?>
-                        <input name="uploadedfile" type="file"/><input type="button" class="button" value="Upload"
+                        <input name="uploadedfile" type="file"/><input type="button" class="button"
+                                                                       value="<?php echo JoomlaBasicMisc::JTextExtended("COM_CUSTOMTABLES_UPLOAD_FILE"); ?>"
                                                                        onClick='this.form.task.value="add";this.form.submit()'>
                     </td>
                 </tr>
@@ -107,7 +107,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
                     <td colspan="2">
                         <?php echo JoomlaBasicMisc::JTextExtended("COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE") . ': ' . JoomlaBasicMisc::formatSizeUnits($this->max_file_size); ?>
                         <br/>
-                        <?php echo JoomlaBasicMisc::JTextExtended("File Formats"); ?>:
+                        <?php echo JoomlaBasicMisc::JTextExtended("COM_CUSTOMTABLES_FORMATS"); ?>:
                         <b><?php echo str_replace(' ', ', ', $this->allowedExtensions); ?></b>
                     </td>
                 </tr>

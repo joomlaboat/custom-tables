@@ -25,7 +25,7 @@ use tagProcessor_Value;
 use CT_FieldTypeTag_file;
 use CT_FieldTypeTag_image;
 use CT_FieldTypeTag_imagegallery;
-use CT_FieldTypeTag_filebox;
+use CT_FieldTypeTag_FileBox;
 use CT_FieldTypeTag_sqljoin;
 use CT_FieldTypeTag_records;
 use CT_FieldTypeTag_log;
@@ -41,13 +41,16 @@ $types_path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes' .
 if (file_exists($types_path . '_type_ct.php')) {
     require_once($types_path . '_type_ct.php');
     require_once($types_path . '_type_file.php');
-    require_once($types_path . '_type_filebox.php');
     require_once($types_path . '_type_gallery.php');
     require_once($types_path . '_type_image.php');
     require_once($types_path . '_type_log.php');
     require_once($types_path . '_type_records.php');
     require_once($types_path . '_type_sqljoin.php');
 }
+
+$new_types_path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'datatypes' . DIRECTORY_SEPARATOR;
+if (file_exists($new_types_path . 'filebox.php'))
+    require_once($new_types_path . 'filebox.php');
 
 class Value
 {
@@ -75,7 +78,11 @@ class Value
                 return number_format((int)$rowValue, 0, '', $thousand_sep);
 
             case 'float':
-                $decimals = $option_list[0] != '' ? (int)$option_list[0] : (count($this->field->params) > 0 and $this->field->params[0] != '' ? (int)$this->field->params[0] : 2);
+
+                $option_list_value = (int)($option_list[0] ?? 0);
+                $params_value = ((count($this->field->params) > 0 and $this->field->params[0] != '') ? (int)$this->field->params[0] : 2);
+
+                $decimals = $option_list_value != '' ? $option_list_value : $params_value;
                 $decimals_sep = $option_list[1] ?? '.';
                 $thousand_sep = $option_list[2] ?? '';
                 return number_format((float)$rowValue, $decimals, $decimals_sep, $thousand_sep);
@@ -198,7 +205,7 @@ class Value
 
                 $getGalleryRows = CT_FieldTypeTag_imagegallery::getGalleryRows($this->ct->Table->tablename, $this->field->fieldname, $row[$this->ct->Table->realidfieldname]);
 
-                if ($option_list[0] == '_count')
+                if ($option_list[0] ?? '' == '_count')
                     return count($getGalleryRows);
 
                 $imageSRCList = CT_FieldTypeTag_imagegallery::getImageGallerySRC($getGalleryRows, $option_list[0] ?? '', $this->field->fieldname, $this->field->params, $this->ct->Table->tableid, true);
@@ -208,12 +215,12 @@ class Value
 
             case 'filebox':
 
-                $FileBoxRows = CT_FieldTypeTag_filebox::getFileBoxRows($this->ct->Table->tablename, $this->field->fieldname, $row[$this->ct->Table->realidfieldname]);
+                $FileBoxRows = CT_FieldTypeTag_FileBox::getFileBoxRows($this->ct->Table->tablename, $this->field->fieldname, $row[$this->ct->Table->realidfieldname]);
 
                 if ($option_list[0] == '_count')
                     return count($FileBoxRows);
 
-                return CT_FieldTypeTag_filebox::process($FileBoxRows, $this->field, $row[$this->ct->Table->realidfieldname], $option_list);
+                return CT_FieldTypeTag_FileBox::process($FileBoxRows, $this->field, $row[$this->ct->Table->realidfieldname], $option_list);
 
             case 'customtables':
                 return $this->listProcess($rowValue, $option_list);
@@ -256,7 +263,7 @@ class Value
             case 'time':
                 require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'helpers' . DIRECTORY_SEPARATOR . 'cttime.php');
                 $seconds = JHTMLCTTime::ticks2Seconds($rowValue, $this->field->params);
-                return JHTMLCTTime::seconds2FormatedTime($seconds, $option_list[0]);
+                return JHTMLCTTime::seconds2FormatedTime($seconds, $option_list[0] ?? '');
 
             case 'changetime':
             case 'creationtime':

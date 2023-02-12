@@ -10,6 +10,7 @@
 
 namespace CustomTables;
 
+use CT_FieldTypeTag_FileBox;
 use JoomlaBasicMisc;
 use Joomla\CMS\Uri\Uri;
 
@@ -70,7 +71,7 @@ class RecordToolbar
 
                 case 'filebox':
                     if (is_array($this->Table->fileboxes) and count($this->Table->fileboxes) > 0)
-                        return $this->renderFileBoxIcon();
+                        return $this->renderFileBoxIcons();
                     else
                         return '';
 
@@ -158,35 +159,12 @@ class RecordToolbar
         return implode('', $imageGalleries);
     }
 
-    protected function renderFileBoxIcon(): string
+    protected function renderFileBoxIcons(): string
     {
         $fileBoxes = [];
 
-        foreach ($this->Table->fileboxes as $fileBox) {
-            $fileManagerLink = 'index.php?option=com_customtables&amp;view=editfiles'
-                . '&amp;establename=' . $this->Table->tablename
-                . '&amp;fileboxname=' . $fileBox[0]
-                . '&amp;listing_id=' . $this->listing_id
-                . '&amp;returnto=' . $this->ct->Env->encoded_current_url;
-
-            if ($this->ct->Env->jinput->get('tmpl', '', 'CMD') != '')
-                $fileManagerLink .= '&tmpl=' . $this->ct->Env->jinput->get('tmpl', '', 'CMD');
-
-            if ($this->ct->Params->ItemId > 0)
-                $fileManagerLink .= '&amp;Itemid=' . $this->ct->Params->ItemId;
-
-            if (!is_null($this->ct->Params->ModuleId))
-                $fileManagerLink .= '&amp;ModuleId=' . $this->ct->Params->ModuleId;
-
-            $alt = $fileBox[1];
-
-            if ($this->ct->Env->toolbaricons != '')
-                $img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbaricons . ' fa-folder" data-icon="' . $this->ct->Env->toolbaricons . ' fa-folder" title="' . $alt . '"></i>';
-            else
-                $img = '<img src="' . $this->iconPath . 'filemanager.png" border="0" alt="' . $alt . '" title="' . $alt . '">';
-
-            $fileBoxes[] = '<div id="esFileBoxIcon' . $this->rid . '" class="toolbarIcons"><a href="' . $this->ct->Env->WebsiteRoot . $fileManagerLink . '">' . $img . '</a></div>';
-        }
+        foreach ($this->Table->fileboxes as $fileBox)
+            $fileBoxes[] = CT_FieldTypeTag_FileBox::renderFileBoxIcon($this->ct, $this->listing_id, $fileBox[0], $fileBox[1]);
 
         return implode('', $fileBoxes);
     }

@@ -24,7 +24,7 @@ use tagProcessor_Value;
 use CT_FieldTypeTag_image;
 use CT_FieldTypeTag_file;
 use CT_FieldTypeTag_imagegallery;
-use CT_FieldTypeTag_filebox;
+use CT_FieldTypeTag_FileBox;
 
 use CustomTables\DataTypes\Tree;
 
@@ -257,12 +257,8 @@ class Inputbox
             case 'signature':
                 return $this->render_signature();
 
-            case 'file':
-                $file_type_file = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_file.php';
-                require_once($file_type_file);
-                return CT_FieldTypeTag_file::renderFileFieldBox($this->ct, $this->field, $this->row);
-
             case 'blob':
+            case 'file':
                 $file_type_file = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_file.php';
                 require_once($file_type_file);
                 return CT_FieldTypeTag_file::renderFileFieldBox($this->ct, $this->field, $this->row);
@@ -1299,15 +1295,28 @@ class Inputbox
 
     protected function getFileBox($listing_id): string
     {
-        require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_filebox.php');
+        require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR
+            . 'customtables' . DIRECTORY_SEPARATOR . 'datatypes' . DIRECTORY_SEPARATOR . 'filebox.php');
 
-        $FileBoxRows = CT_FieldTypeTag_filebox::getFileBoxRows($this->ct->Table->tablename, $this->field->fieldname, $listing_id);
+        $manageButton = '';
+
+        $FileBoxRows = CT_FieldTypeTag_FileBox::getFileBoxRows($this->ct->Table->tablename, $this->field->fieldname, $listing_id);
+
+        foreach ($this->ct->Table->fileboxes as $fileBox) {
+            if ($fileBox[0] == $this->field->fieldname) {
+                $manageButton = CT_FieldTypeTag_FileBox::renderFileBoxIcon($this->ct, $listing_id, $fileBox[0], $fileBox[1]);
+                break;
+            }
+        }
 
         if (count($FileBoxRows) > 0) {
-            $vlu = CT_FieldTypeTag_filebox::process($FileBoxRows, $this->field, $listing_id, ['', 'icon-filename-link', '32', '_blank', 'ol']);
-            return '<div style="width:100%;overflow:scroll;background-image: url(\'components/com_customtables/libraries/customtables/media/images/icons/bg.png\');">' . $vlu . '</div>';
+            $vlu = CT_FieldTypeTag_FileBox::process($FileBoxRows, $this->field, $listing_id, ['', 'icon-filename-link', '32', '_blank', 'ol']);
+            $result = '<div style="width:100%;overflow:scroll;background-image: url(\'components/com_customtables/libraries/customtables/media/images/icons/bg.png\');">'
+                . $manageButton . '<br/>' . $vlu . '</div>';
         } else
-            return 'No Files';
+            $result = 'No Files ' . $manageButton;
+
+        return $result;
     }
 
     protected function render_multilangarticle(): string

@@ -19,12 +19,16 @@ use CustomTables\CTUser;
 $types_path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR;
 require_once($types_path . '_type_ct.php');
 require_once($types_path . '_type_file.php');
-require_once($types_path . '_type_filebox.php');
 require_once($types_path . '_type_gallery.php');
 require_once($types_path . '_type_image.php');
 require_once($types_path . '_type_log.php');
 require_once($types_path . '_type_records.php');
 require_once($types_path . '_type_sqljoin.php');
+
+$types_path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR
+    . 'customtables' . DIRECTORY_SEPARATOR . 'datatypes' . DIRECTORY_SEPARATOR;
+
+require_once($types_path . 'filebox.php');
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
@@ -86,7 +90,7 @@ class tagProcessor_Value
                                             */
                     //} else {
                     $isFileBoxLoaded[$fieldname] = true;
-                    $getFileBoxRows[$fieldname] = CT_FieldTypeTag_filebox::getFileBoxRows($ct->Table->tablename, $fieldname, $row[$ct->Table->realidfieldname]);
+                    $getFileBoxRows[$fieldname] = CT_FieldTypeTag_FileBox::getFileBoxRows($ct->Table->tablename, $fieldname, $row[$ct->Table->realidfieldname]);
                     //}
 
                     if (isset($isFileBoxLoaded[$fieldname]) and count($getFileBoxRows[$fieldname]) == 0)
@@ -183,13 +187,13 @@ class tagProcessor_Value
                             if (!$isFileBoxLoaded[$fieldname]) {
                                 //load if not loaded
                                 $isFileBoxLoaded[$fieldname] = true;
-                                $getFileBoxRows[$fieldname] = CT_FieldTypeTag_filebox::getFileBoxRows($ct->Table->tablename, $fieldname, $row[$ct->Table->realidfieldname]);
+                                $getFileBoxRows[$fieldname] = CT_FieldTypeTag_FileBox::getFileBoxRows($ct->Table->tablename, $fieldname, $row[$ct->Table->realidfieldname]);
                             }
 
                         } else {
                             //load if not loaded
                             $isFileBoxLoaded[$fieldname] = true;
-                            $getFileBoxRows[$fieldname] = CT_FieldTypeTag_filebox::getFileBoxRows($ct->Table->tablename, $fieldname, $row[$ct->Table->realidfieldname]);
+                            $getFileBoxRows[$fieldname] = CT_FieldTypeTag_FileBox::getFileBoxRows($ct->Table->tablename, $fieldname, $row[$ct->Table->realidfieldname]);
                         }
 
                         if (count($getFileBoxRows[$fieldname]) == 0)
@@ -262,7 +266,7 @@ class tagProcessor_Value
                             }
 
                         } elseif ($fieldType == 'filebox') {
-                            $vlu = CT_FieldTypeTag_filebox::process($getFileBoxRows[$fieldname], $field, $row[$ct->Table->realidfieldname], ['', 'link', '32', '_blank', ';']);
+                            $vlu = CT_FieldTypeTag_FileBox::process($getFileBoxRows[$fieldname], $field, $row[$ct->Table->realidfieldname], ['', 'link', '32', '_blank', ';']);
                         } elseif ($fieldType == 'records') {
                             $a = explode(",", $row[$field->realfieldname]);
                             $b = array();
