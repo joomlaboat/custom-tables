@@ -189,15 +189,17 @@
                hint="COM_CUSTOMTABLES_FIELDS_TYPEPARAMS_HINT"
                autocomplete="on"/>
         <!-- Isrequired Field. Type: Radio. (joomla)-->
-        <field type="radio"
+        <field type="list"
                name="isrequired"
-               label="COM_CUSTOMTABLES_FIELDS_ISREQUIRED_LABEL"
-               description="COM_CUSTOMTABLES_FIELDS_ISREQUIRED_DESCRIPTION"
+               label="COM_CUSTOMTABLES_FIELDS_REQUIREDGENERATED"
+               description="COM_CUSTOMTABLES_FIELDS_REQUIREDGENERATED_DESCRIPTION"
                class="btn-group btn-group-yesno"
                default="0">
             <!-- Option Set.-->
-            <option value="1">COM_CUSTOMTABLES_FIELDS_YES</option>
-            <option value="0">COM_CUSTOMTABLES_FIELDS_NO</option>
+            <option value="1">COM_CUSTOMTABLES_FIELDS_REQUIRED</option>
+            <option value="0">COM_CUSTOMTABLES_FIELDS_NOTREQUIRED</option>
+            <option value="2">COM_CUSTOMTABLES_FIELDS_GENERATED_VIRTUAL</option>
+            <option value="3">COM_CUSTOMTABLES_FIELDS_GENERATED_STORED</option>
         </field>
         <!-- Tableid Field. Type: Sql. (joomla)-->
         <field type="cttable"

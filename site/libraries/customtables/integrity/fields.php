@@ -20,6 +20,7 @@ use CustomTables\Fields;
 use CustomTables\IntegrityChecks;
 use Joomla\CMS\Factory;
 use ESTables;
+use JoomlaBasicMisc;
 
 class IntegrityFields extends IntegrityChecks
 {
@@ -52,8 +53,8 @@ class IntegrityFields extends IntegrityChecks
         $projected_fields = Fields::getFields($ct->Table->tableid, false, false);
 
         //Delete unnecessary fields:
-        $projected_fields[] = ['realfieldname' => 'id', 'type' => '_id', 'typeparams' => ''];
-        $projected_fields[] = ['realfieldname' => 'published', 'type' => '_published', 'typeparams' => ''];
+        $projected_fields[] = ['realfieldname' => 'id', 'type' => '_id', 'typeparams' => '', 'isrequired' => 1];
+        $projected_fields[] = ['realfieldname' => 'published', 'type' => '_published', 'typeparams' => '', 'isrequired' => 1];
 
         $task = $jinput->getCmd('task');
         $taskFieldName = $jinput->getCmd('fieldname');
@@ -142,7 +143,27 @@ class IntegrityFields extends IntegrityChecks
                         $result .= '<p>Field <span style="color:red;">' . $existingFieldName . '</span> not registered. <a href="' . $link . 'task=deleteurfield&fieldname=' . $existingFieldName . '">Delete?</a></p>';
                 }
             } elseif ($found_field != '') {
+
+                //Check for virtuality
+                $isRequiredOrGenerated = (int)$projected_field['isrequired'];
+                if ($isRequiredOrGenerated == 2 or $isRequiredOrGenerated == 3) {
+                    $expression = Fields::addFieldPrefixToExpression($ct->Table->tableid, $projected_field['defaultvalue']);
+                    $projected_data_type['generation_expression'] = $expression;
+                    $projected_data_type['extra'] = ($isRequiredOrGenerated == 2 ? 'VIRTUAL' : 'STORED') . ' GENERATED';
+                    $projected_data_type['required_or_generated'] = $isRequiredOrGenerated;
+                } else {
+                    $projected_data_type['required_or_generated'] = null;
+                }
+
+
+                if (isset($ExistingField['extra']) and str_contains($ExistingField['extra'], 'GENERATED')) {
+                    $ExistingField['generation_expression'] = str_replace('_utf8mb4\\\'', '\'', $ExistingField['generation_expression']);
+                    $ExistingField['generation_expression'] = str_replace('\\\'', '\'', $ExistingField['generation_expression']);
+                    $ExistingField['generation_expression'] = str_replace('`', '', $ExistingField['generation_expression']);
+                }
+
                 if (!IntegrityFields::compareFieldTypes($ExistingField, $projected_data_type)) {
+
                     $PureFieldType = Fields::makeProjectedFieldType($projected_data_type);
 
                     if ($found_field == '_id')
@@ -165,7 +186,8 @@ class IntegrityFields extends IntegrityChecks
                             $real_field_name = $found_field;
 
                         if (Fields::fixMYSQLField($ct->Table->realtablename, $real_field_name, $PureFieldType, $msg)) {
-                            $result .= '<p>Field <span style="color:green;">' . $nice_field_name . '</span> fixed.</p>';
+                            $result .= '<p>' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FIELD') . ' <span style="color:green;">'
+                                . $nice_field_name . '</span> ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FIELD_FIXED') . '.</p>';
                         } else {
                             Factory::getApplication()->enqueueMessage($msg, 'error');
                         }
@@ -173,9 +195,17 @@ class IntegrityFields extends IntegrityChecks
                         if ($msg != '')
                             $result .= $msg;
                     } else {
-                        $result .= '<p>Field <span style="color:orange;">' . $nice_field_name . '</span>'
-                            . ' has wrong type <span style="color:red;">' . strtolower($ExistingField['column_type']) . '</span> instead of <span style="color:green;">'
-                            . $PureFieldType . '</span> <a href="' . $link . 'task=fixfieldtype&fieldname=' . $existingFieldName . '">Fix?</a></p>';
+
+                        $length = self::parse_column_type($ExistingField['column_type']);
+                        if ($length != '')
+                            $ExistingField['length'] = $length;
+
+                        $existing_field_type_string = Fields::makeProjectedFieldType($ExistingField);
+
+                        $result .= '<p>' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FIELD') . ' <span style="color:orange;">' . $nice_field_name . '</span>'
+                            . ' ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FIELD_HAS_WRONG_TYPE') . ' <span style="color:red;">'
+                            . $existing_field_type_string . '</span> ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FIELD_INSTEAD_OF') . ' <span style="color:green;">'
+                            . $PureFieldType . '</span> <a href="' . $link . 'task=fixfieldtype&fieldname=' . $existingFieldName . '">' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FIELD_TOFIX') . '</a></p>';
                     }
                 }
             }
@@ -191,7 +221,7 @@ class IntegrityFields extends IntegrityChecks
         return $result;
     }
 
-    public static function compareFieldTypes($existing_field_data_type, $projected_field_data_type): bool
+    public static function compareFieldTypes(array $existing_field_data_type, array $projected_field_data_type): bool
     {
         $existing = (object)$existing_field_data_type;
         $projected = (object)$projected_field_data_type;
@@ -201,18 +231,18 @@ class IntegrityFields extends IntegrityChecks
 
         //parse column_type
         if ($existing->data_type == 'varchar' or $existing->data_type == 'char' or $existing->data_type == 'decimal') {
-            $parts = explode('(', $existing->column_type);
-            if (count($parts) > 1) {
-                $length = str_replace(')', '', $parts[1]);
-                if ($length != '') {
-                    if ($projected->length === null)
-                        return false;
 
-                    $projected_length = (string)$projected->length;
+            $length = self::parse_column_type($existing->column_type);
 
-                    if ($length != $projected_length)
-                        return false;
-                }
+            if ($length != '') {
+
+                if ($projected->length === null)
+                    return false;
+
+                $projected_length = (string)$projected->length;
+
+                if ($length != $projected_length)
+                    return false;
             }
         }
 
@@ -230,10 +260,27 @@ class IntegrityFields extends IntegrityChecks
             return false;
         }
 
-        if ($existing->extra != $projected->extra)
+        if ($existing->extra != $projected->extra) {
             return false;
+        } else {
+            if (($existing->extra == 'VIRTUAL GENERATED' or $existing->extra == 'STORED GENERATED') and
+                $existing->generation_expression != $projected->generation_expression) {
+                return false;
+            }
+        }
 
         return true;
+    }
+
+    protected static function parse_column_type(string $parse_column_type_string)
+    {
+        $parts = explode('(', $parse_column_type_string);
+        if (count($parts) > 1) {
+            $length = str_replace(')', '', $parts[1]);
+            if ($length != '')
+                return $length;
+        }
+        return '';
     }
 
     public static function addFieldIfNotExists(CT $ct, $realtablename, $ExistingFields, $proj_field, $fieldType, $typeParams): bool

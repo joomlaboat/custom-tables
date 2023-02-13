@@ -490,6 +490,13 @@
         </valueparams>
     </type>
 
+    <!--
+    <type ct_name="virtual" name="virtual" label="Virtual Field"
+          description="Virtual field the value of which is computed - processed by Twig."
+          ct_alias="virtual" disabled="false" ct_special="false" priority="1">
+    </type>
+    -->
+
     <type ct_name="float" name="float" label="Float (Decimal) Number" description="Provides a decimal number inputbox."
           ct_alias="float" disabled="false" ct_special="false" priority="1">
         <params>

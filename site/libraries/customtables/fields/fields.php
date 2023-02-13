@@ -302,7 +302,7 @@ class Fields
 
         $realtablename = str_replace('#__', $db->getPrefix(), $realtablename);
         if ($db->serverType == 'postgresql') {
-            $query = 'SELECT column_name, data_type, is_nullable, column_default FROM information_schema.columns WHERE table_name = ' . $db->quote($realtablename);
+            $query = 'SELECT column_name, data_type, is_nullable, column_default,generation_expression FROM information_schema.columns WHERE table_name = ' . $db->quote($realtablename);
         } else {
 
             $conf = Factory::getConfig();
@@ -314,7 +314,8 @@ class Fields
                 . 'IF(COLUMN_TYPE LIKE \'%unsigned\', \'YES\', \'NO\') AS is_unsigned,'
                 . 'IS_NULLABLE AS is_nullable,'
                 . 'COLUMN_DEFAULT AS column_default,'
-                . 'EXTRA AS extra'
+                . 'EXTRA AS extra,'
+                . 'GENERATION_EXPRESSION AS generation_expression'
                 . ' FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=' . $db->quote($database) . ' AND TABLE_NAME=' . $db->quote($realtablename);
         }
 
@@ -525,7 +526,7 @@ class Fields
             return $rec['Type'];
     }
 
-    public static function fixMYSQLField($realtablename, $fieldname, $PureFieldType, &$msg): bool
+    public static function fixMYSQLField(string $realtablename, string $fieldname, string $PureFieldType, string &$msg): bool
     {
         $db = Factory::getDBO();
 
@@ -601,32 +602,6 @@ class Fields
             return '';
 
         return $rows[0]->fieldname;
-    }
-
-    public static function getFields($tableid_or_name, $as_object = false, $order_fields = true)
-    {
-        $db = Factory::getDBO();
-
-        if ($order_fields)
-            $order = ' ORDER BY f.ordering, f.fieldname';
-        else
-            $order = '';
-
-        if ((int)$tableid_or_name > 0)
-            $where = 'f.published=1 AND f.tableid=' . (int)$tableid_or_name;
-        else {
-            $w1 = '(SELECT t.id FROM #__customtables_tables AS t WHERE t.tablename=' . $db->quote($tableid_or_name) . ' LIMIT 1)';
-            $where = 'f.published=1 AND f.tableid=' . $w1;
-        }
-
-        $query = 'SELECT ' . Fields::getFieldRowSelects() . ' FROM #__customtables_fields AS f WHERE ' . $where . $order;
-
-        $db->setQuery($query);
-
-        if ($as_object)
-            return $db->loadObjectList();
-        else
-            return $db->loadAssocList();
     }
 
     public static function getFieldRowByName($fieldname, $tableid = 0, $sj_tablename = '')
@@ -731,8 +706,6 @@ class Fields
         return $field;
     }
 
-    //MySQL only
-
     public static function deleteTableLessFields(): void
     {
         $db = Factory::getDBO();
@@ -740,6 +713,8 @@ class Fields
         $db->setQuery($query);
         $db->execute();
     }
+
+    //MySQL only
 
     public static function getSelfParentField($ct)
     {
@@ -894,8 +869,14 @@ class Fields
 
         if (!Fields::checkIfFieldExists($realtablename, $realfieldname)) {
             $query = 'ALTER TABLE ' . $realtablename . ' ADD COLUMN ' . $realfieldname . ' ' . $fieldType . ' ' . $options;
-            $db->setQuery($query);
-            $db->execute();
+
+            try {
+                $db->setQuery($query);
+                $db->execute();
+            } catch (Exception $e) {
+                $app = Factory::getApplication();
+                $app->enqueueMessage($e->getMessage(), 'error');
+            }
         }
     }
 
@@ -908,7 +889,7 @@ class Fields
         return (int)$rows[0]->max_ordering;
     }
 
-    protected static function update_physical_field(CT $ct, $table_row, $fieldid, $data)
+    protected static function update_physical_field(CT $ct, object $table_row, int $fieldid, array $data): bool
     {
         $db = Factory::getDBO();
 
@@ -938,7 +919,15 @@ class Fields
         //---------------------------------- Convert Field
 
         $new_type = $data['type'];
-        $PureFieldType = Fields::getPureFieldType($new_type, $new_typeparams);
+
+        //Virtuality
+        if (isset($data['isrequired']) == 2 and ((int)$data['isrequired'] == 2 or (int)$data['isrequired'] == 3)) {
+            $defaultValue = self::addFieldPrefixToExpression($table_row->id, $data['defaultvalue']);
+        } else {
+            $defaultValue = $data['defaultvalue'];
+        }
+
+        $PureFieldType = Fields::getPureFieldType($new_type, $new_typeparams, (int)$data['isrequired'], $defaultValue);
 
         if ($realfieldname != '')
             $fieldFound = Fields::checkIfFieldExists($realtablename, $realfieldname);
@@ -993,7 +982,6 @@ class Fields
 
         if ($fieldid == 0 or !$fieldFound) {
             //Add Field
-
             Fields::addField($ct, $realtablename, $realfieldname, $new_type, $PureFieldType, $fieldtitle);
         }
 
@@ -1017,13 +1005,82 @@ class Fields
         return true;
     }
 
-    public static function getPureFieldType($ct_fieldType, $typeParams): string
+    public static function addFieldPrefixToExpression(int $tableId, string $expression): string
+    {
+        //This function adds 'es_' prefix to field name in the expression. Example:
+        //concat(namelat," ",namerus)
+        //concat(es_namelat," ",es_namerus)
+        $prefix = 'es_';
+
+        $fields = self::getFields($tableId);
+
+        foreach ($fields as $field) {
+            $fieldName = $field['fieldname'];
+
+            $pos = 0;
+            while (1) {
+                $pos1 = strpos($expression, $fieldName, $pos);
+
+                if ($pos1) {
+                    $pos2 = strpos($expression, $prefix . $fieldName);
+
+                    if ($pos1 - 3 != $pos2) {
+
+                        $expression1 = substr($expression, 0, $pos1);
+                        $expression2 = substr($expression, $pos1 + strlen($fieldName), strlen($expression) - strlen($fieldName));
+                        $expression = $expression1 . $prefix . $fieldName . $expression2;
+                    } else {
+                        $pos = $pos1 + strlen($fieldName);
+                    }
+                } else {
+                    break;
+                }
+            }
+        }
+        return $expression;
+    }
+
+    public static function getFields($tableid_or_name, $as_object = false, $order_fields = true)
+    {
+        $db = Factory::getDBO();
+
+        if ($order_fields)
+            $order = ' ORDER BY f.ordering, f.fieldname';
+        else
+            $order = '';
+
+        if ((int)$tableid_or_name > 0)
+            $where = 'f.published=1 AND f.tableid=' . (int)$tableid_or_name;
+        else {
+            $w1 = '(SELECT t.id FROM #__customtables_tables AS t WHERE t.tablename=' . $db->quote($tableid_or_name) . ' LIMIT 1)';
+            $where = 'f.published=1 AND f.tableid=' . $w1;
+        }
+
+        $query = 'SELECT ' . Fields::getFieldRowSelects() . ' FROM #__customtables_fields AS f WHERE ' . $where . $order;
+
+        $db->setQuery($query);
+
+        if ($as_object)
+            return $db->loadObjectList();
+        else
+            return $db->loadAssocList();
+    }
+
+    public static function getPureFieldType($ct_fieldType, $typeParams, int $isRequiredOrGenerated = 0, ?string $defaultValue = null): string
     {
         $ct_fieldTypeArray = Fields::getProjectedFieldType($ct_fieldType, $typeParams);
+        if ($isRequiredOrGenerated == 2 or $isRequiredOrGenerated == 3) {
+            $ct_fieldTypeArray['generation_expression'] = $defaultValue;
+            $ct_fieldTypeArray['extra'] = ($isRequiredOrGenerated == 2 ? 'VIRTUAL' : 'STORED') . ' GENERATED';
+            $ct_fieldTypeArray['required_or_generated'] = $isRequiredOrGenerated;
+        } else {
+            $ct_fieldTypeArray['required_or_generated'] = null;
+        }
+
         return Fields::makeProjectedFieldType($ct_fieldTypeArray);
     }
 
-    public static function getProjectedFieldType($ct_fieldType, $typeParams): array
+    public static function getProjectedFieldType(string $ct_fieldType, ?string $typeParams): array
     {
         //Returns an array of mysql column parameters
         switch (trim($ct_fieldType)) {
@@ -1182,9 +1239,9 @@ class Fields
         }
     }
 
-    public static function makeProjectedFieldType($ct_fieldtype_array): string
+    public static function makeProjectedFieldType(array $ct_fieldTypeArray): string
     {
-        $type = (object)$ct_fieldtype_array;
+        $type = (object)$ct_fieldTypeArray;
         $db = Factory::getDBO();
         $elements = [];
 
@@ -1279,15 +1336,36 @@ class Fields
                 return '';
         }
 
+        //Check for virtuality
+        if (isset($type->extra) and str_contains($type->extra, 'GENERATED')) {
+
+            $type->default = null;
+
+            if ($type->extra == 'VIRTUAL GENERATED')
+                $elements[] = 'AS (' . $ct_fieldTypeArray['generation_expression'] . ') VIRTUAL';
+
+            if ($type->extra == 'STORED GENERATED')
+                $elements[] = 'AS (' . $ct_fieldTypeArray['generation_expression'] . ') STORED';
+        } elseif (isset($type->required_or_generated)) {
+
+            $type->default = null;
+
+            if ($type->required_or_generated == 2)
+                $elements[] = 'AS (' . $ct_fieldTypeArray['generation_expression'] . ') VIRTUAL';
+
+            if ($type->required_or_generated == 3)
+                $elements[] = 'AS (' . $ct_fieldTypeArray['generation_expression'] . ') STORED';
+        }
+
         if ($type->is_nullable)
             $elements[] = 'null';
         else
             $elements[] = 'not null';
 
-        if ($type->default !== null)
+        if (isset($type->default))
             $elements[] = 'default ' . (is_numeric($type->default) ? $type->default : $db->quote($type->default));
 
-        if ($type->extra !== null)
+        if ($type->extra !== null and !str_contains($type->extra, 'GENERATED'))
             $elements[] = $type->extra;
 
         return implode(' ', $elements);

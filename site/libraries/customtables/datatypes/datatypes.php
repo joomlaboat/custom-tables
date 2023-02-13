@@ -69,13 +69,13 @@ class DataTypes
         return $typeArray;
     }
 
-    public static function isrequiredTranslation()
+    public static function isrequiredTranslation(): array
     {
-        $isrequiredArray = array(
-            1 => 'COM_CUSTOMTABLES_FIELDS_YES',
-            0 => 'COM_CUSTOMTABLES_FIELDS_NO'
+        return array(
+            1 => 'COM_CUSTOMTABLES_FIELDS_REQUIRED',
+            0 => 'COM_CUSTOMTABLES_FIELDS_NOTREQUIRED',
+            2 => 'COM_CUSTOMTABLES_FIELDS_GENERATED_VIRTUAL',
+            3 => 'COM_CUSTOMTABLES_FIELDS_GENERATED_STORED'
         );
-
-        return $isrequiredArray;
     }
 }

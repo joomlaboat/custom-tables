@@ -167,7 +167,6 @@ class IntegrityCoreTables extends IntegrityChecks
                 if (isset($projected_field['ct_fieldtype']) and $projected_field['ct_fieldtype'] != '') {
                     $ct_fieldtype = $projected_field['ct_fieldtype'];
 
-                    $typeParams = '';
                     if (isset($projected_field['ct_typeparams']) and $projected_field['ct_typeparams'] != '')
                         $typeParams = $projected_field['ct_typeparams'];
 
@@ -179,21 +178,21 @@ class IntegrityCoreTables extends IntegrityChecks
 
     public static function checkCoreTableFields(CT &$ct, $realtablename, $ExistingFields, $realfieldname, $ct_fieldtype, $ct_typeparams = '')
     {
-        $existinFieldFound = null;
+        $existingFieldFound = null;
         foreach ($ExistingFields as $ExistingField) {
             if ($ExistingField['column_name'] == $realfieldname) {
-                $existinFieldFound = $ExistingField;
+                $existingFieldFound = $ExistingField;
                 break;
             }
         }
 
-        if ($existinFieldFound === null)
+        if ($existingFieldFound === null)
             die('field not created ' . $realfieldname);
 
         if ($ct_fieldtype !== null and $ct_fieldtype != '') {
             $projected_data_type = Fields::getProjectedFieldType($ct_fieldtype, $ct_typeparams);
 
-            if (!IntegrityFields::compareFieldTypes($existinFieldFound, $projected_data_type)) {
+            if (!IntegrityFields::compareFieldTypes($existingFieldFound, $projected_data_type)) {
                 $PureFieldType = Fields::makeProjectedFieldType($projected_data_type);
 
                 if (!Fields::fixMYSQLField($realtablename, $realfieldname, $PureFieldType, $msg)) {
