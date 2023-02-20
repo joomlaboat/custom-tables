@@ -193,7 +193,7 @@
                name="isrequired"
                label="COM_CUSTOMTABLES_FIELDS_REQUIREDGENERATED"
                description="COM_CUSTOMTABLES_FIELDS_REQUIREDGENERATED_DESCRIPTION"
-               class="btn-group btn-group-yesno"
+               class="list_class"
                default="0">
             <!-- Option Set.-->
             <option value="1">COM_CUSTOMTABLES_FIELDS_REQUIRED</option>

@@ -22,6 +22,41 @@ class CustomtablesControllerListOfFields extends JControllerAdmin
 {
     protected $text_prefix = 'COM_CUSTOMTABLES_LISTOFFIELDS';
 
+    public function checkin($model = null)
+    {
+        $tableid = $this->input->get('tableid', 0, 'int');
+        $redirect = 'index.php?option=' . $this->option;
+        $redirect .= '&view=listoffields&tableid=' . (int)$tableid;
+
+        $cid = Factory::getApplication()->input->post->get('cid', array(), 'array');
+        $cid = ArrayHelper::toInteger($cid);
+        $count = count($cid);
+
+        $db = Factory::getDBO();
+
+        foreach ($cid as $id) {
+            $query = 'UPDATE #__customtables_fields SET checked_out=0, checked_out_time=NULL WHERE id=' . $id;
+            $db->setQuery($query);
+            $db->execute();
+        }
+
+        if ($count == 1)
+            $msg = 'COM_CUSTOMTABLES_N_ITEMS_CHECKED_IN';
+        elseif ($count == 0)
+            $msg = 'COM_CUSTOMTABLES_N_ITEMS_CHECKED_IN_0';
+        else
+            $msg = 'COM_CUSTOMTABLES_N_ITEMS_CHECKED_IN_MORE';
+
+        Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended($msg, $count), 'success');
+
+        // Redirect to the item screen.
+        $this->setRedirect(
+            JRoute::_(
+                $redirect, false
+            )
+        );
+    }
+
     public function getModel($name = 'Fields', $prefix = 'CustomtablesModel', $config = array())
     {
         return parent::getModel($name, $prefix, array('ignore_request' => true));

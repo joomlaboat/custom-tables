@@ -157,6 +157,8 @@ class IntegrityFields extends IntegrityChecks
 
 
                 if (isset($ExistingField['extra']) and str_contains($ExistingField['extra'], 'GENERATED')) {
+
+                    $ExistingField['generation_expression'] = str_replace("_utf8mb3", "", $ExistingField['generation_expression']);
                     $ExistingField['generation_expression'] = str_replace('_utf8mb4\\\'', '\'', $ExistingField['generation_expression']);
                     $ExistingField['generation_expression'] = str_replace('\\\'', '\'', $ExistingField['generation_expression']);
                     $ExistingField['generation_expression'] = str_replace('`', '', $ExistingField['generation_expression']);

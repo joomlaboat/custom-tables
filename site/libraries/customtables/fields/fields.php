@@ -738,6 +738,7 @@ class Fields
         $ct = new CT;
         $input = Factory::getApplication()->input;
         $data = $input->get('jform', array(), 'ARRAY');
+        $task = $input->getCmd('task');
 
         //clean field name
         if (function_exists("transliterator_transliterate"))
@@ -749,8 +750,19 @@ class Fields
         if (strlen($fieldName) > 40)
             $fieldName = substr($fieldName, 0, 40);
 
-        $tableid = $data['tableid'];
         $fieldid = $input->getInt('id');
+        $tableid = $data['tableid'];
+
+        if ($task == 'save2copy') {
+
+            $db = Factory::getDBO();
+            $query = 'UPDATE #__customtables_fields SET checked_out=0, checked_out_time=NULL WHERE id=' . $fieldid;
+            $db->setQuery($query);
+            $db->execute();
+
+            $fieldid = 0;
+        }
+
         $data['id'] = $fieldid;
 
         if ($fieldid == 0)
@@ -1016,19 +1028,33 @@ class Fields
 
         foreach ($fields as $field) {
             $fieldName = $field['fieldname'];
-
             $pos = 0;
             while (1) {
                 $pos1 = strpos($expression, $fieldName, $pos);
 
                 if ($pos1) {
-                    $pos2 = strpos($expression, $prefix . $fieldName);
 
-                    if ($pos1 - 3 != $pos2) {
+                    $word = true;
+                    if ($pos1 > 0) {
+                        if (ctype_alnum($expression[$pos1 - 1]))
+                            $word = false;
+                    }
 
-                        $expression1 = substr($expression, 0, $pos1);
-                        $expression2 = substr($expression, $pos1 + strlen($fieldName), strlen($expression) - strlen($fieldName));
-                        $expression = $expression1 . $prefix . $fieldName . $expression2;
+                    if ($pos1 + strlen($fieldName) < strlen($expression)) {
+                        if (ctype_alnum($expression[$pos1 + strlen($fieldName)]))
+                            $word = false;
+                    }
+
+                    if ($word) {
+                        $pos2 = strpos($expression, $prefix . $fieldName, $pos);
+
+                        if ($pos1 - 3 != $pos2) {
+                            $expression1 = substr($expression, 0, $pos1);
+                            $expression2 = substr($expression, $pos1 + strlen($fieldName), strlen($expression) - strlen($fieldName));
+                            $expression = $expression1 . $prefix . $fieldName . $expression2;
+                        } else {
+                            $pos = $pos1 + strlen($fieldName);
+                        }
                     } else {
                         $pos = $pos1 + strlen($fieldName);
                     }

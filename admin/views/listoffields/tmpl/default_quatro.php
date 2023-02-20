@@ -20,6 +20,8 @@ use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Router\Route;
 use CustomTables\Integrity\IntegrityFields;
 
+HTMLHelper::_('behavior.multiselect');
+
 $saveOrderingUrl = '';
 if ($this->saveOrder && !empty($this->items)) {
     $saveOrderingUrl = 'index.php?option=com_customtables&task=listoffields.saveOrderAjax&tableid=' . $this->tableid . '&tmpl=component';
