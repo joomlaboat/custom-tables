@@ -101,7 +101,7 @@
              image="https://joomlaboat.com/images/components/ct/tags/search-box.png">
             <params>
                 <param type="field" name="field" label="Field(s)"
-                       description="Select Table Field to search in. To search in multiple fields type the field names separated by comma. In case of the Table Join and Records Join field types a rendering layout ca be used. Example {{ html.search('fieldname:layoutname') }}"
+                       description="Select Table Field to search in. To search in multiple fields type the field names separated by comma. Example: {{ html.search('firstname,lastname') }} In case of the Table Join and Records Join field types a rendering layout ca be used. Example {{ html.search('fieldname:layoutname') }}"
                        repetitive="0"/>
 
                 <param type="string" name="cssclass" label="CSS Class"
@@ -743,8 +743,8 @@
 
                 <param type="list" name="separator" label="Column separator"
                        description="The delimiter/separator character may either be a semicolon (;) or comma (,) used to separate items in a CSV file. ">
-                    <option value="," label=","/>
-                    <option value=";" label=";"/>
+                    <option value="," label="Comma separated"/>
+                    <option value=";" label="Semicolon separated"/>
                 </param>
 
             </params>
