@@ -48,10 +48,6 @@ if (file_exists($types_path . '_type_ct.php')) {
     require_once($types_path . '_type_sqljoin.php');
 }
 
-$new_types_path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'datatypes' . DIRECTORY_SEPARATOR;
-if (file_exists($new_types_path . 'filebox.php'))
-    require_once($new_types_path . 'filebox.php');
-
 class Value
 {
     var CT $ct;

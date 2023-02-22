@@ -25,11 +25,6 @@ require_once($types_path . '_type_log.php');
 require_once($types_path . '_type_records.php');
 require_once($types_path . '_type_sqljoin.php');
 
-$types_path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR
-    . 'customtables' . DIRECTORY_SEPARATOR . 'datatypes' . DIRECTORY_SEPARATOR;
-
-require_once($types_path . 'filebox.php');
-
 if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
