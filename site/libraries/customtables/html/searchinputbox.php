@@ -327,9 +327,10 @@ class SearchInputBox
 
         if ($this->field->params == 'date')
             $d = '-to-';
-
-        if ($this->field->params == 'float')
+        elseif ($this->field->params == 'float')
             $d = '-';
+        else
+            return 'Cannot search by date';
 
         $values = explode($d, $value);
         $value_min = $values[0];
@@ -356,7 +357,7 @@ class SearchInputBox
 		//' . $this->modulename . '_onChange(' . $index . ',v_min+"' . $d . '"+v_max,"' . $this->field->fieldname . '","' . urlencode($where) . '","' . urlencode($whereList) . '");
 	}
 ';
-        $this->document->addCustomTag('<script>' . $js . '</script>');
+        $this->ct->document->addCustomTag('<script>' . $js . '</script>');
         //end of header function
 
         $attribs = 'onChange="Update' . $objectName . 'Values()" class="' . $default_class . '" ';

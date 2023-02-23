@@ -60,7 +60,7 @@ class IntegrityCoreTables extends IntegrityChecks
         $indexes_sql = IntegrityCoreTables::prepareAddIndexQuery($table->indexes);
 
         if ($db->serverType == 'postgresql') {
-            //PostgreSQL
+            //PostgreeSQL
 
             $fields = Fields::getListOfExistingFields($table->realtablename, false);
 
@@ -195,6 +195,7 @@ class IntegrityCoreTables extends IntegrityChecks
             if (!IntegrityFields::compareFieldTypes($existingFieldFound, $projected_data_type)) {
                 $PureFieldType = Fields::makeProjectedFieldType($projected_data_type);
 
+                $msg = '';
                 if (!Fields::fixMYSQLField($realtablename, $realfieldname, $PureFieldType, $msg)) {
                     Factory::getApplication()->enqueueMessage($msg, 'error');
                     return false;

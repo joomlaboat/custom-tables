@@ -157,7 +157,7 @@ class Layouts
         if (trim($layoutRow['layoutcss']) != '') {
             $layoutContent = trim($layoutRow['layoutcss']);
             $twig = new TwigProcessor($this->ct, $layoutContent, $this->ct->LayoutVariables['getEditFieldNamesOnly'] ?? false);
-            $layoutContent = '<style>' . $twig->process($this->ct->Table->record) . '</style>';
+            $layoutContent = '<style>' . $twig->process($this->ct->Table->record ?? null) . '</style>';
             $this->ct->document->addCustomTag($layoutContent);
         }
 
