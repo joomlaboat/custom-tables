@@ -85,6 +85,8 @@ class SearchInputBox
             case 'string':
 
                 $length = count($this->field->params) > 0 ? (int)($this->field->params[0] ?? 255) : 255;
+                if ($length == 0)
+                    $length = 1024;
 
                 $result .= '<input type="text" name="' . $objName_ . '" id="' . $objName_ . '" class="' . $cssclass . ' ' . $default_class . '" '
                     . ' value="' . $value . '" maxlength="' . $length . '"'
@@ -96,6 +98,8 @@ class SearchInputBox
             case 'phponchange':
 
                 $length = count($this->field->params) > 0 ? (int)($this->field->params[0] ?? 255) : 255;
+                if ($length == 0)
+                    $length = 1024;
 
                 $result .= '<input type="text" name="' . $objName_ . '" id="' . $objName_ . '" class="' . $cssclass . ' ' . $default_class . '" '
                     . ' value="' . $value . '" maxlength="' . $length . '"'
@@ -107,6 +111,8 @@ class SearchInputBox
             case 'phponadd':
 
                 $length = count($this->field->params) > 0 ? (int)($this->field->params[0] ?? 255) : 255;
+                if ($length == 0)
+                    $length = 1024;
 
                 $result .= '<input type="text" name="' . $objName_ . '" id="' . $objName_ . '" class="' . $cssclass . ' ' . $default_class . '" '
                     . ' value="' . $value . '" maxlength="' . $length . '"'
@@ -118,6 +124,8 @@ class SearchInputBox
             case 'multilangstring':
 
                 $length = count($this->field->params) > 0 ? (int)($this->field->params[0] ?? 255) : 255;
+                if ($length == 0)
+                    $length = 1024;
 
                 $result .= '<input type="text" name="' . $objName_ . '" id="' . $objName_ . '" class="' . $cssclass . ' ' . $default_class . '" '
                     . ' value="' . $value . '" maxlength="' . $length . '"'
@@ -129,6 +137,8 @@ class SearchInputBox
             case 'text':
 
                 $length = count($this->field->params) > 0 ? (int)($this->field->params[0] ?? 255) : 255;
+                if ($length == 0)
+                    $length = 1024;
 
                 $result .= '<input type="text" name="' . $objName_ . '" id="' . $objName_ . '" class="' . $cssclass . ' ' . $default_class . '" '
                     . ' value="' . $value . '" maxlength="' . $length . '"'
@@ -140,6 +150,8 @@ class SearchInputBox
             case 'multilangtext':
 
                 $length = count($this->field->params) > 0 ? (int)($this->field->params[0] ?? 255) : 255;
+                if ($length == 0)
+                    $length = 1024;
 
                 $result .= '<input type="text" name="' . $objName_ . '" id="' . $objName_ . '" class="' . $cssclass . ' ' . $default_class . '" '
                     . ' value="' . $value . '" maxlength="' . $length . '"'

@@ -379,7 +379,7 @@ class fieldObject
     {
         if ($this->ct->Table->record === null)
             return '';
-        
+
         $options = func_get_args();
         $rfn = $this->field->realfieldname;
 
