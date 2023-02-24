@@ -27,7 +27,7 @@ if (file_exists($uploader_path))
 
 class CT_FieldTypeTag_file
 {
-    static public function get_file_type_value(CustomTables\Field &$field, $listing_id)
+    static public function get_file_type_value(CustomTables\Field $field, $listing_id): ?string
     {
         $jinput = Factory::getApplication()->input;
 
@@ -37,8 +37,6 @@ class CT_FieldTypeTag_file
             $FileFolder = CT_FieldTypeTag_file::getFileFolder($field->params[1]);
 
         $file_id = $jinput->post->get($field->comesfieldname, '', 'STRING');
-
-        $value_found = false;
 
         $filepath = str_replace('/', DIRECTORY_SEPARATOR, $FileFolder);
         if (substr($filepath, 0, 1) == DIRECTORY_SEPARATOR)
@@ -60,19 +58,11 @@ class CT_FieldTypeTag_file
                     if (file_exists($filename_full))
                         unlink($filename_full);
                 }
-
-                $value_found = true;
             }
 
             $value = CT_FieldTypeTag_file::UploadSingleFile($ExistingFile, $file_id, $field, JPATH_SITE . $FileFolder);
         }
-        if ($value)
-            $value_found = true;
-
-        if ($value_found)
-            return $value;
-
-        return null;
+        return $value;
     }
 
     public static function getFileFolder(string $folder): string
@@ -111,14 +101,14 @@ class CT_FieldTypeTag_file
         return $folder;
     }
 
-    protected static function UploadSingleFile($ExistingFile, $file_id, $field, $FileFolder)//,$realtablename='-options')
+    protected static function UploadSingleFile($ExistingFile, $file_id, $field, $FileFolder): ?string
     {
         if ($field->type == 'file')
             $fileExtensions = $field->params[2] ?? '';
         elseif ($field->type == 'blob')
             $fileExtensions = $field->params[1] ?? '';
         else
-            return false;
+            return null;
 
         if ($file_id != '') {
             $accepted_file_types = explode(' ', ESFileUploader::getAcceptedFileTypes($fileExtensions));
@@ -137,17 +127,17 @@ class CT_FieldTypeTag_file
                     $accepted_filetypes[] = 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
             }
 
-            $uploadedfile = JPATH_SITE . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR . $file_id;
+            $uploadedFile = JPATH_SITE . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR . $file_id;
 
             $is_base64encoded = Factory::getApplication()->input->get('base64encoded', '', 'CMD');
             if ($is_base64encoded == "true") {
-                $src = $uploadedfile;
+                $src = $uploadedFile;
 
                 $jinput = Factory::getApplication()->input;
                 $file = $jinput->post->get($field->comesfieldname, '', 'STRING');
                 $dst = JPATH_SITE . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR . 'decoded_' . basename($file['name']);
                 CustomTablesFileMethods::base64file_decode($src, $dst);
-                $uploadedfile = $dst;
+                $uploadedFile = $dst;
             }
 
             if ($ExistingFile != '' and !CT_FieldTypeTag_file::checkIfTheFileBelongsToAnotherRecord($ExistingFile, $field)) {
@@ -158,16 +148,16 @@ class CT_FieldTypeTag_file
                     unlink($filename_full);
             }
 
-            if (!file_exists($uploadedfile))
-                return false;
+            if (!file_exists($uploadedFile))
+                return null;
 
-            $mime = mime_content_type($uploadedfile);
+            $mime = mime_content_type($uploadedFile);
 
-            $parts = explode('.', $uploadedfile);
-            $fileextension = end($parts);
-            if ($mime == 'application/zip' and $fileextension != 'zip') {
+            $parts = explode('.', $uploadedFile);
+            $fileExtension = end($parts);
+            if ($mime == 'application/zip' and $fileExtension != 'zip') {
                 //could be docx, xlsx, pptx
-                $mime = ESFileUploader::checkZIPfile_X($uploadedfile, $fileextension);
+                $mime = ESFileUploader::checkZIPfile_X($uploadedFile, $fileExtension);
             }
 
             if (in_array($mime, $accepted_filetypes)) {
@@ -175,23 +165,23 @@ class CT_FieldTypeTag_file
                 $new_filename = CT_FieldTypeTag_file::getCleanAndAvailableFileName($file_id, $FileFolder);
                 $new_filename_path = str_replace('/', DIRECTORY_SEPARATOR, $FileFolder . DIRECTORY_SEPARATOR . $new_filename);
 
-                if (@copy($uploadedfile, $new_filename_path)) {
-                    unlink($uploadedfile);
+                if (@copy($uploadedFile, $new_filename_path)) {
+                    unlink($uploadedFile);
 
                     //Copied
                     return $new_filename;
                 } else {
-                    unlink($uploadedfile);
+                    unlink($uploadedFile);
 
                     //Cannot copy
-                    return false;
+                    return null;
                 }
             } else {
-                unlink($uploadedfile);
-                return false;
+                unlink($uploadedFile);
+                return null;
             }
         }
-        return false;
+        return null;
     }
 
     static protected function checkIfTheFileBelongsToAnotherRecord(string $filename, CustomTables\Field $field): bool
@@ -221,7 +211,7 @@ class CT_FieldTypeTag_file
         $filename_raw = strtolower($new_filename);
         $filename_raw = str_replace(' ', '_', $filename_raw);
         $filename_raw = str_replace('-', '_', $filename_raw);
-        $filename = preg_replace("/[^a-z0-9._]/", "", $filename_raw);
+        $filename = preg_replace("/[^a-z\d._]/", "", $filename_raw);
 
         $i = 0;
         $filename_new = $filename;
@@ -234,14 +224,12 @@ class CT_FieldTypeTag_file
             } else
                 break;
         }
-
         return $filename_new;
     }
 
-    static public function get_blob_value(CustomTables\Field &$field, $listing_id)
+    static public function get_blob_value(CustomTables\Field $field)
     {
         $jinput = Factory::getApplication()->input;
-
         $file_id = $jinput->post->get($field->comesfieldname, '', 'STRING');
 
         if ($file_id == '')
@@ -268,7 +256,7 @@ class CT_FieldTypeTag_file
         return $fileData;
     }
 
-    public static function renderFileFieldBox(CT &$ct, Field &$field, ?array &$row): string
+    public static function renderFileFieldBox(CT $ct, Field &$field, ?array $row): string
     {
         if (!$ct->isRecordNull($row)) {
             $file = strval($row[$field->realfieldname]);
@@ -288,7 +276,7 @@ class CT_FieldTypeTag_file
         return $result;
     }
 
-    protected static function renderBlobAndDeleteOption(int $fileSize, &$field, &$row, &$fields, $listing_id): string
+    protected static function renderBlobAndDeleteOption(int $fileSize, $field, $row, $fields, $listing_id): string
     {
         if ($fileSize == '')
             return '';
@@ -312,7 +300,7 @@ class CT_FieldTypeTag_file
         return $result;
     }
 
-    public static function getBlobFileName($field, $value, &$row, &$fields)
+    public static function getBlobFileName($field, $value, $row, $fields)
     {
         $filename = '';
         if (isset($field->params[2]) and $field->params[2] != '') {
@@ -372,7 +360,7 @@ class CT_FieldTypeTag_file
         if (!file_exists($icon_File_Path))
             $icon = '';
 
-        $how_to_process = $option_list[0];
+        $how_to_process = $option_list[0] ?? '';
 
         if ($how_to_process != '') {
             $filepath = CT_FieldTypeTag_file::get_private_file_path($filename, $how_to_process, $filepath, $record_id, $field->id, $field->ct->Table->tableid, $filename_only);
@@ -539,7 +527,7 @@ class CT_FieldTypeTag_file
         return $m3 . $m2;
     }
 
-    protected static function renderFileAndDeleteOption(string $file, &$field): string
+    protected static function renderFileAndDeleteOption(string $file, $field): string
     {
         if ($file == '')
             return '';
@@ -571,7 +559,7 @@ class CT_FieldTypeTag_file
         return $result;
     }
 
-    protected static function renderUploader(&$field): string
+    protected static function renderUploader($field): string
     {
         if ($field->type == 'file')
             $fileExtensions = $field->params[2] ?? '';

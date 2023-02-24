@@ -348,7 +348,7 @@ class SaveFieldQuerySet
             case 'blob':
 
                 $to_delete = $this->ct->Env->jinput->post->get($this->field->comesfieldname . '_delete', '', 'CMD');
-                $value = CT_FieldTypeTag_file::get_blob_value($this->field, $listing_id);
+                $value = CT_FieldTypeTag_file::get_blob_value($this->field);
 
                 $fileNameField = '';
                 if (isset($this->field->params[2])) {
