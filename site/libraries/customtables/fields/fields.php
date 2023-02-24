@@ -30,7 +30,7 @@ class Field
     var int $id;
     var array $params;
     var string $type;
-    var bool $isrequired;
+    var int $isrequired;
     var ?string $defaultvalue;
 
     var string $title;
@@ -76,7 +76,7 @@ class Field
 
         $this->fieldname = $fieldrow['fieldname'];
         $this->realfieldname = $fieldrow['realfieldname'];
-        $this->isrequired = (bool)intval($fieldrow['isrequired']);
+        $this->isrequired = intval($fieldrow['isrequired']);
         $this->defaultvalue = $fieldrow['defaultvalue'];
 
         $this->valuerule = $fieldrow['valuerule'];
@@ -1737,6 +1737,12 @@ class Fields
             echo 'Caught exception: ', $e->getMessage(), "\n";
             die;
         }
+    }
+
+    public static function isVirtualField(array $fieldRow): bool
+    {
+        $isrequired = (int)$fieldRow['isrequired'];
+        return $isrequired == 2 or $isrequired == 3;
     }
 }
 

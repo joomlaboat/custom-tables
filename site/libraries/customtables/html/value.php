@@ -215,7 +215,7 @@ class Value
 
                 $FileBoxRows = CT_FieldTypeTag_FileBox::getFileBoxRows($this->ct->Table->tablename, $this->field->fieldname, $row[$this->ct->Table->realidfieldname]);
 
-                if ($option_list[0] == '_count')
+                if (($option_list[0] ?? '') == '_count')
                     return count($FileBoxRows);
 
                 return CT_FieldTypeTag_FileBox::process($FileBoxRows, $this->field, $row[$this->ct->Table->realidfieldname], $option_list);

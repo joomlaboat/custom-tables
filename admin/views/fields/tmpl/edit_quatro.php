@@ -275,7 +275,6 @@ foreach ($this->allTables as $table) {
         ?></div>
 
 </form>
-<!--</div>-->
 
 <!-- Modal content -->
 <div id="ctModal" class="ctModal">

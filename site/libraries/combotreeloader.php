@@ -152,7 +152,7 @@ class ESDynamicComboTree
             if ($result != '')
                 $result .= '<br/>';
 
-            if ($i <= $this->requirementdepth and $this->isRequired)
+            if ($i <= $this->requirementdepth and $this->isRequired == 1)
                 $result .= $this->renderSelectBox($object_name, $rows, $urlwhere, 'class="inputbox required"', $simpleList, $value, $place_holder, $valuerule, $valuerulecaption);
             else
                 $result .= $this->renderSelectBox($object_name, $rows, $urlwhere, 'class="inputbox"', $simpleList, $value, $place_holder, $valuerule, $valuerulecaption);

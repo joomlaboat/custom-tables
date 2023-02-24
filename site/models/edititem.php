@@ -649,30 +649,39 @@ class CustomTablesModelEditItem extends JModelLegacy
 
         $backgroundFieldTypes = ['creationtime', 'changetime', 'server', 'id', 'md5', 'userid'];
 
-        foreach ($this->ct->Table->fields as $fieldrow) {
+        $fieldsToEdit = [];
 
-            $fn = $fieldrow['fieldname'];
-            if (in_array($fieldrow['type'], $backgroundFieldTypes)) {
+        foreach ($this->ct->Table->fields as $fieldRow) {
 
-                if (!in_array($fn, $this->ct->editFields))
-                    $this->ct->editFields[] = $fn;
-            }
+            $fieldName = $fieldRow['fieldname'];
 
-            $fn_str = [];
+            if (in_array($fieldName, $this->ct->editFields)) {
+                if (!Fields::isVirtualField($fieldRow))
+                    $fieldsToEdit[] = $fieldName;
 
-            $fn_str[] = '"comes_' . $fn . '"';
-            $fn_str[] = "'comes_" . $fn . "'";
+            } else {
+                if (in_array($fieldRow['type'], $backgroundFieldTypes)) {
 
-            foreach ($fn_str as $s) {
-                if (str_contains($this->pageLayout, $s)) {
+                    if (!in_array($fieldName, $fieldsToEdit) and !Fields::isVirtualField($fieldRow))
+                        $fieldsToEdit[] = $fieldName;
+                }
 
-                    if (!in_array($fn, $this->ct->editFields))
-                        $this->ct->editFields[] = $fn;
-                    break;
+                $fn_str = [];
+
+                $fn_str[] = '"comes_' . $fieldName . '"';
+                $fn_str[] = "'comes_" . $fieldName . "'";
+
+                foreach ($fn_str as $s) {
+                    if (str_contains($this->pageLayout, $s)) {
+
+                        if (!in_array($fieldName, $fieldsToEdit) and !Fields::isVirtualField($fieldRow))
+                            $fieldsToEdit[] = $fieldName;
+                        break;
+                    }
                 }
             }
         }
-        return $this->ct->editFields;
+        return $fieldsToEdit;
     }
 
     function updateLog($saveField, $listing_id)

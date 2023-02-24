@@ -290,7 +290,7 @@ class CT_FieldTypeTag_file
 
         $result .= $filename_Icon . '<br/><br/>';
 
-        if (!$field->isrequired)
+        if ($field->isrequired !== 1)
             $result .= '<input type="checkbox" name="' . $field->prefix . $field->fieldname . '_delete" id="' . $field->prefix . $field->fieldname . '_delete" value="true">'
                 . ' Delete Data';
 
@@ -549,7 +549,7 @@ class CT_FieldTypeTag_file
 
         $result .= '<a href="' . $link . '" target="_blank" title="' . $file . '"><img src="' . $image_src . '" style="width:48px;" alt="' . $file . '" /></a><br/>';
 
-        if (!$field->isrequired)
+        if ($field->isrequired !== 1)
             $result .= '<input type="checkbox" name="' . $field->prefix . $field->fieldname . '_delete" id="' . $field->prefix . $field->fieldname . '_delete" value="true">'
                 . ' Delete File';
 

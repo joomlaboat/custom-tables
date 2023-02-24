@@ -34,7 +34,7 @@ class Forms
             return $field->title;
 
         $field_label = '<label id="' . $this->ct->Env->field_input_prefix . $field->fieldname . '-lbl" for="' . $this->ct->Env->field_input_prefix . $field->fieldname . '" ';
-        $class = ($field->description != '' ? 'hasPopover' : '') . ($field->isrequired ? ' required' : '');
+        $class = ($field->description != '' ? 'hasPopover' : '') . ($field->isrequired == 1 ? ' required' : '');
 
         if ($class != '')
             $field_label .= ' class="' . $class . '"';
@@ -65,7 +65,7 @@ class Forms
                 $field_label .= '<span class="ms-1 icon-sort" aria-hidden="true"></span>';
         }
 
-        if ($field->isrequired and isset($this->ct->LayoutVariables['layout_type']) and $this->ct->LayoutVariables['layout_type'] == 2)
+        if ($field->isrequired == 1 and isset($this->ct->LayoutVariables['layout_type']) and $this->ct->LayoutVariables['layout_type'] == 2)
             $field_label .= '<span class="star">&#160;*</span>';
 
         $field_label .= '</label>';

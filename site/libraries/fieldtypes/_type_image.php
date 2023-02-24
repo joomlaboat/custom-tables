@@ -176,7 +176,7 @@ class CT_FieldTypeTag_image
         $result = '<div style="" id="ct_uploadedfile_box_' . $field->fieldname . '">'
             . '<img src="' . $imageSrc . '" alt="Uploaded Image" style="width:150px;" id="ct_uploadfile_box_' . $field->fieldname . '_image" /><br/>';
 
-        if (!$field->isrequired)
+        if ($field->isrequired !== 1)
             $result .= '<input type="checkbox" name="' . $prefix . $field->fieldname . '_delete" id="' . $prefix . $field->fieldname . '_delete" value="true">'
                 . ' Delete ' . ($isShortcut ? 'Shortcut' : 'Image');
 
@@ -203,10 +203,10 @@ class CT_FieldTypeTag_image
         $ct_fileuploader = '<div id="ct_fileuploader_' . $field->fieldname . '"></div>';
         $ct_eventsmessage = '<div id="ct_eventsmessage_' . $field->fieldname . '"></div>';
 
-        $inputBoxFieldName = '<input type="hidden" name="' . $prefix . $field->fieldname . '" id="' . $prefix . $field->fieldname . '" value="" ' . ($field->isrequired ? ' class="required"' : '') . ' />';
+        $inputBoxFieldName = '<input type="hidden" name="' . $prefix . $field->fieldname . '" id="' . $prefix . $field->fieldname . '" value="" ' . ($field->isrequired == 1 ? ' class="required"' : '') . ' />';
         $inputBoxFieldName_FileName = '<input type="hidden" name="' . $prefix . $field->fieldname . '_filename" id="' . $prefix . $field->fieldname . '_filename" value="" />';
 
-        return '<div style="' . $style . '"' . ($field->isrequired ? ' class="inputbox required"' : '') . ' id="' . $element_id . '" '
+        return '<div style="' . $style . '"' . ($field->isrequired == 1 ? ' class="inputbox required"' : '') . ' id="' . $element_id . '" '
             . 'data-label="' . $field->title . '" '
             . 'data-valuerule="' . str_replace('"', '&quot;', $field->valuerule) . '" '
             . 'data-valuerulecaption="' . str_replace('"', '&quot;', $field->valuerulecaption) . '" >'

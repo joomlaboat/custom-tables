@@ -80,7 +80,7 @@ class Inputbox
 
         $this->field = new Field($this->ct, $fieldRow);
 
-        $this->cssclass .= ($this->ct->Env->version < 4 ? ' inputbox' : ' form-control') . ($this->field->isrequired ? ' required' : '');
+        $this->cssclass .= ($this->ct->Env->version < 4 ? ' inputbox' : ' form-control') . ($this->field->isrequired == 1 ? ' required' : '');
         $this->option_list = $option_list;
         $this->place_holder = $this->field->title;
     }
@@ -252,7 +252,7 @@ class Inputbox
                 $image_type_file = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_image.php';
                 require_once($image_type_file);
 
-                return CT_FieldTypeTag_image::renderImageFieldBox($this->field, $this->prefix, $this->row, $this->cssclass, $this->attributes);
+                return CT_FieldTypeTag_image::renderImageFieldBox($this->field, $this->prefix, $this->row);
 
             case 'signature':
                 return $this->render_signature();
@@ -369,7 +369,7 @@ class Inputbox
 
             case 'multilangarticle':
                 if (!$this->ct->isRecordNull($this->row))
-                    return $this->render_multilangarticle();
+                    return $this->renderMultilingualArticle();
                 break;
         }
         return '';
@@ -380,8 +380,8 @@ class Inputbox
         $result = '<ul>';
         $i = 0;
 
-        foreach ($this->field->params as $radiovalue) {
-            $v = trim($radiovalue);
+        foreach ($this->field->params as $radioValue) {
+            $v = trim($radioValue);
             $result .= '<li><input type="radio"
 									name="' . $this->prefix . $this->field->fieldname . '"
 									id="' . $this->prefix . $this->field->fieldname . '_' . $i . '"
@@ -525,7 +525,7 @@ class Inputbox
 
                 if ($language == $lang->sef) {
                     //show single edit box
-                    return $this->getMultilangStringItem($postfix, $lang->sef);
+                    return $this->getMultilingualStringItem($postfix, $lang->sef);
                 }
             }
         }
@@ -544,14 +544,14 @@ class Inputbox
             $result .= '
 			<div class="control-group">
 				<div class="control-label">' . $lang->caption . '</div>
-				<div class="controls">' . $this->getMultilangStringItem($postfix, $lang->sef) . '</div>
+				<div class="controls">' . $this->getMultilingualStringItem($postfix, $lang->sef) . '</div>
 			</div>';
         }
         $result .= '</div>';
         return $result;
     }
 
-    protected function getMultilangStringItem($postfix, $langsef): string
+    protected function getMultilingualStringItem($postfix, $langSEF): string
     {
         $attributes_ = '';
         $addDynamicEvent = false;
@@ -570,7 +570,7 @@ class Inputbox
         if ($addDynamicEvent) {
             $href = 'onchange="ct_UpdateSingleValue(\'' . $this->ct->Env->WebsiteRoot . '\','
                 . $this->ct->Params->ItemId . ',\'' . $this->field->fieldname . $postfix . '\','
-                . $this->row[$this->ct->Table->realidfieldname] . ',\'' . $langsef . '\',' . (int)$this->ct->Params->ModuleId . ')"';
+                . $this->row[$this->ct->Table->realidfieldname] . ',\'' . $langSEF . '\',' . (int)$this->ct->Params->ModuleId . ')"';
 
             $attributes_ = ' ' . $href;
         }
@@ -590,12 +590,7 @@ class Inputbox
     protected function render_text($value): string
     {
         $result = '';
-        $fname = $this->prefix . $this->field->fieldname;
-
-        //if(strpos($this->attributes,'onchange="')!==false)
-        //$attributes = str_replace('onchange="','onchange="'.$this->onchange,$this->attributes);// onchange event already exists add one before
-        //else
-        //$attributes = $this->attributes.' onchange="'.$onchange;
+        $fullFieldName = $this->prefix . $this->field->fieldname;
 
         if (in_array('rich', $this->field->params)) {
             $w = 500;
@@ -606,10 +601,10 @@ class Inputbox
             $editor_name = $this->ct->app->get('editor');
             $editor = Editor::getInstance($editor_name);
 
-            $result .= '<div>' . $editor->display($fname, $value, $w, $h, $c, $l) . '</div>';
+            $result .= '<div>' . $editor->display($fullFieldName, $value, $w, $h, $c, $l) . '</div>';
         } else {
-            $result .= '<textarea name="' . $fname . '" '
-                . 'id="' . $fname . '" '
+            $result .= '<textarea name="' . $fullFieldName . '" '
+                . 'id="' . $fullFieldName . '" '
                 . 'class="' . $this->cssclass . '" '
                 . $this->attributes . ' '
                 . 'data-label="' . $this->field->title . '"'
@@ -624,7 +619,7 @@ class Inputbox
 
             if (file_exists($file_path)) {
                 $this->ct->document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/thirdparty/jsc/include.js"></script>');
-                $this->ct->document->addCustomTag('<script>$Spelling.SpellCheckAsYouType("' . $fname . '");</script>');
+                $this->ct->document->addCustomTag('<script>$Spelling.SpellCheckAsYouType("' . $fullFieldName . '");</script>');
                 $this->ct->document->addCustomTag('<script>$Spelling.DefaultDictionary = "English";</script>');
             }
         }
@@ -661,7 +656,7 @@ class Inputbox
                 }
             }
 
-            $result .= ($this->field->isrequired ? ' ' . $RequiredLabel : '');
+            $result .= ($this->field->isrequired == 1 ? ' ' . $RequiredLabel : '');
 
             $result .= '<div id="' . $fieldname . '_div" class="multilangtext">';
 
@@ -676,15 +671,15 @@ class Inputbox
                 $editor_name = $this->ct->app->get('editor');
                 $editor = Editor::getInstance($editor_name);
 
-                $fname = $this->prefix . $fieldname;
-                $result .= '<div>' . $editor->display($fname, $value, $w, $h, $c, $l) . '</div>';
+                $fullFieldName = $this->prefix . $fieldname;
+                $result .= '<div>' . $editor->display($fullFieldName, $value, $w, $h, $c, $l) . '</div>';
             } else {
                 $result .= '<textarea name="' . $this->prefix . $fieldname . '" '
                     . 'id="' . $this->prefix . $fieldname . '" '
-                    . 'class="' . $this->cssclass . ' ' . ($this->field->isrequired ? 'required' : '') . '">' . $value . '</textarea>'
+                    . 'class="' . $this->cssclass . ' ' . ($this->field->isrequired == 1 ? 'required' : '') . '">' . $value . '</textarea>'
                     . '<span class="language_label">' . $lang->caption . '</span>';
 
-                $result .= ($this->field->isrequired ? ' ' . $RequiredLabel : '');
+                $result .= ($this->field->isrequired == 1 ? ' ' . $RequiredLabel : '');
             }
 
             $result .= '</div>';
@@ -909,9 +904,9 @@ class Inputbox
             $where_string = '#__usergroups.title!=' . $this->ct->db->quote('Super Users');
         } else {
             $where = [];
-            foreach ($availableUserGroupsList as $availableusergroup) {
-                if ($availableusergroup != '')
-                    $where[] = '#__usergroups.title=' . $this->ct->db->quote($availableusergroup);
+            foreach ($availableUserGroupsList as $availableUserGroup) {
+                if ($availableUserGroup != '')
+                    $where[] = '#__usergroups.title=' . $this->ct->db->quote($availableUserGroup);
             }
             $where_string = '(' . implode(' OR ', $where) . ')';
         }
@@ -1089,7 +1084,7 @@ class Inputbox
         //$this->option_list[3] - Custom Title Layout
 
         if ($this->ct->isRecordNull($this->row))
-            $value = $this->ct->Env->jinput->getInt($this->ct->Env->field_prefix . $this->field->fieldname, null);
+            $value = $this->ct->Env->jinput->getInt($this->ct->Env->field_prefix . $this->field->fieldname);
 
         $sqljoin_attributes = ' data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '"'
             . ' data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '"';
@@ -1223,7 +1218,7 @@ class Inputbox
             . 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
             . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption); // closing quote is not needed because
 
-        $attributes['required'] = ($this->field->isrequired ? 'required' : ''); //not working, don't know why.
+        $attributes['required'] = ($this->field->isrequired == 1 ? 'required' : ''); //not working, don't know why.
 
         $result .= JHTML::calendar($value, $this->prefix . $this->field->fieldname, $this->prefix . $this->field->fieldname,
             '%Y-%m-%d', $attributes);
@@ -1319,7 +1314,7 @@ class Inputbox
         return $result;
     }
 
-    protected function render_multilangarticle(): string
+    protected function renderMultilingualArticle(): string
     {
         $result = '
 		<table>

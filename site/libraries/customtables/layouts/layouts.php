@@ -339,7 +339,6 @@ class Layouts
     function createDefaultLayout_Edit($fields, $addToolbar = true): string
     {
         $this->layouttype = 2;
-
         $result = '<div class="form-horizontal">';
 
         $fieldTypes_to_skip = ['log', 'phponview', 'phponchange', 'phponadd', 'md5', 'id', 'server', 'userid', 'viewcount', 'lastviewtime', 'changetime', 'creationtime', 'imagegallery', 'filebox', 'dummy'];

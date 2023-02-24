@@ -460,6 +460,9 @@ class fieldObject
 
     public function edit()
     {
+        if (Fields::isVirtualField($this->field->fieldrow))
+            return $this->value();
+
         $args = func_get_args();
 
         if ($this->ct->isEditForm) {
