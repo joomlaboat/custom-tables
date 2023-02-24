@@ -17,7 +17,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\DataTypes\Tree;
 use CustomTablesImageMethods;
-use finfo;
 use JoomlaBasicMisc;
 use JHTMLCTTime;
 use tagProcessor_Value;
@@ -136,10 +135,8 @@ class Value
             case 'multilangtext':
                 return $this->multilingual($row, $option_list);
 
-            case 'string':
-                return $this->TextFunctions($rowValue, $option_list);
-
             case 'text':
+            case 'string':
                 return $this->TextFunctions($rowValue, $option_list);
 
             case 'blob':
@@ -182,14 +179,19 @@ class Value
                 if ($format == 'jpeg')
                     $format = 'jpg';
 
-                $imagefileweb = URI::root() . $ImageFolderWeb . '/' . $rowValue . '.' . $format;
-                $imagefile = $ImageFolder . DIRECTORY_SEPARATOR . $rowValue . '.' . $format;
+                $imageFileWeb = URI::root() . $ImageFolderWeb . '/' . $rowValue . '.' . $format;
+                $imageFile = $ImageFolder . DIRECTORY_SEPARATOR . $rowValue . '.' . $format;
 
-                if (file_exists(JPATH_SITE . DIRECTORY_SEPARATOR . $imagefile)) {
-                    $width = $this->field->params[0] ?? 300;
-                    $height = $this->field->params[1] ?? 150;
+                if (file_exists(JPATH_SITE . DIRECTORY_SEPARATOR . $imageFile)) {
+                    $width = $this->field->params[0] ?? '300px';
+                    if (((string)intval($width)) == $width)
+                        $width .= 'px';
 
-                    return '<img src="' . $imagefileweb . '" alt="' . $sitename . '" title="' . $sitename . '" />';
+                    $height = $this->field->params[1] ?? '150px';
+                    if (((string)intval($height)) == $height)
+                        $height .= 'px';
+
+                    return '<img src="' . $imageFileWeb . '" alt="' . $sitename . '" title="' . $sitename . '" style="width:' . $width . ';height:' . $height . ';" />';
                 }
                 return null;
 
@@ -383,11 +385,9 @@ class Value
                 return JoomlaBasicMisc::words_trimtext($content, $count, $cleanBraces, $cleanQuotes);
 
             case "firstimage" :
-
                 return JoomlaBasicMisc::getFirstImage($content);
 
             default:
-
                 return $content;
         }
     }
@@ -411,7 +411,7 @@ class Value
         if ($value == '')
             $value = '000000';
 
-        if ($option_list[0] == "rgba") {
+        if (($option_list[0] ?? '') == "rgba") {
             $colors = array();
             if (strlen($value) >= 6) {
                 $colors[] = hexdec(substr($value, 0, 2));
