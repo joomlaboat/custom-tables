@@ -42,12 +42,14 @@ class TwigProcessor
     var bool $recordBlockFound;
     var string $recordBlockReplaceCode;
     var bool $DoHTMLSpecialChars;
+    var bool $getEditFieldNamesOnly;
 
     public function __construct(CT &$ct, $layoutContent, $getEditFieldNamesOnly = false, $DoHTMLSpecialChars = false)
     {
         $this->DoHTMLSpecialChars = $DoHTMLSpecialChars;
-        $ct->LayoutVariables['getEditFieldNamesOnly'] = $getEditFieldNamesOnly;
         $this->ct = $ct;
+        $this->getEditFieldNamesOnly = $getEditFieldNamesOnly;
+        $this->ct->LayoutVariables['getEditFieldNamesOnly'] = $getEditFieldNamesOnly;
 
         $htmlresult_ = '{% autoescape false %}' . $layoutContent . '{% endautoescape %}';
 
@@ -210,7 +212,7 @@ class TwigProcessor
                 });
 
                 $this->twig->addFunction($function);
-                $this->variables[$fieldrow['fieldname']] = new fieldObject($this->ct, $fieldrow, $this->DoHTMLSpecialChars);
+                $this->variables[$fieldrow['fieldname']] = new fieldObject($this->ct, $fieldrow, $this->DoHTMLSpecialChars, $this->getEditFieldNamesOnly);
                 $index++;
             }
         }
@@ -268,15 +270,15 @@ class TwigProcessor
         if ($isSingleRecord) {
             $result = '';
         } else {
-            //try {
-            $result = $this->twig->render('index', $this->variables);
-            /*
-        } catch (Exception $e) {
-            $this->ct->app->enqueueMessage($e->getMessage(), 'error');
-            echo $e->getMessage();
-            die;
-            return 'Error:' . $e->getMessage();
-        }*/
+            try {
+                $result = $this->twig->render('index', $this->variables);
+
+            } catch (Exception $e) {
+                $this->ct->app->enqueueMessage($e->getMessage(), 'error');
+                echo $e->getMessage();
+                die;
+                return 'Error:' . $e->getMessage();
+            }
         }
 
         if ($this->recordBlockFound) {
@@ -326,12 +328,14 @@ class fieldObject
     var CT $ct;
     var Field $field;
     var bool $DoHTMLSpecialChars;
+    var bool $getEditFieldNamesOnly;
 
-    function __construct(CT &$ct, $fieldrow, $DoHTMLSpecialChars = false)
+    function __construct(CT &$ct, $fieldrow, $DoHTMLSpecialChars = false, $getEditFieldNamesOnly = false)
     {
         $this->DoHTMLSpecialChars = $DoHTMLSpecialChars;
         $this->ct = $ct;
         $this->field = new Field($ct, $fieldrow, $this->ct->Table->record);
+        $this->getEditFieldNamesOnly = $getEditFieldNamesOnly;
     }
 
     public function __toString()
@@ -469,7 +473,7 @@ class fieldObject
             $Inputbox = new Inputbox($this->ct, $this->field->fieldrow, $args);
             $value = $Inputbox->getDefaultValueIfNeeded($this->ct->Table->record);
 
-            if ($this->ct->LayoutVariables['getEditFieldNamesOnly']) {
+            if ($this->getEditFieldNamesOnly) {
                 $this->ct->editFields[] = $this->field->fieldname;
                 return '';
             } else

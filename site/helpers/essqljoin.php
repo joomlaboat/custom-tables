@@ -71,7 +71,7 @@ class JHTMLESSqlJoin
         $_params->loadArray([]);
 
         $ct = new CT($_params, true);
-        self::get_searchresult($ct, $filter, $tableName, $order_by_field, $allowunpublished);
+        self::getSearchResult($ct, $filter, $tableName, $order_by_field, $allowunpublished);
 
         //Process records depending on field type and layout
         $list_values = self::get_List_Values($ct, $value_field, $langpostfix, $dynamic_filter);
@@ -99,7 +99,7 @@ class JHTMLESSqlJoin
         return $htmlresult;
     }
 
-    static protected function get_searchresult(CT &$ct, $filter, $tableName, $order_by_field, $allowUnpublished): bool
+    static protected function getSearchResult(CT &$ct, $filter, $tableName, $order_by_field, $allowUnpublished): bool
     {
         $paramsArray = array();
 

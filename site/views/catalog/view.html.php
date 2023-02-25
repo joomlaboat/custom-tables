@@ -66,26 +66,6 @@ class CustomTablesViewCatalog extends JViewLegacy
 
         } elseif ($this->ct->Env->frmt == 'json') {
 
-            // --------------------- Layouts
-            /*
-            $Layouts = new Layouts($this->ct);
-            $Layouts->layouttype = 0;
-
-            $pageLayoutContent = '';
-
-            if ($this->ct->Params->pageLayout !== null) {
-                $pageLayoutContent = $Layouts->getLayout($this->ct->Params->pageLayout);
-                if ($pageLayoutContent == '')
-                    $pageLayoutContent = '{catalog:,notable}';
-            } else
-                $pageLayoutContent = '{catalog:,notable}';
-
-            if ($this->ct->Params->itemLayout !== null)
-                $itemLayoutContent = $Layouts->getLayout($this->ct->Params->itemLayout);
-            else
-                $itemLayoutContent = '';
-            */
-
             $pathViews = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries'
                 . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR;
 

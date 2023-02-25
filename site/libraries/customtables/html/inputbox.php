@@ -60,9 +60,16 @@ class Inputbox
         $this->isTwig = $isTwig;
 
         $this->cssclass = $option_list[0] ?? '';
-        $this->attributes = $option_list[1] ?? '';//Optional Parameter
+        $this->attributes = str_replace('****quote****', '"', $option_list[1] ?? '');//Optional Parameter
+
+        preg_match('/onchange="([^"]*)"/', $this->attributes, $matches);
+        $onchange_value = $matches[1] ?? '';
+
+        $this->attributes = str_replace($onchange_value, '', $this->attributes);
+        $this->attributes = str_replace('onchange=""', '', $this->attributes);
+        $this->attributes = str_replace("onchange=''", '', $this->attributes);
         $this->cssStyle = '';
-        $this->onchange = $onchange;
+        $this->onchange = ($onchange_value != '' and $onchange_value[strlen($onchange_value) - 1] != ';') ? $onchange_value . ';' . $onchange : $onchange_value . $onchange;
 
         if (str_contains($this->cssclass, ':'))//it's a style, change it to attribute
         {
@@ -156,6 +163,15 @@ class Inputbox
         $ct->setFilter($filter, $showPublished);
         if ($additional_where != '')
             $ct->Filter->where[] = $additional_where;
+
+        /*
+        if (count($selectors) > $index + 1) {
+            $currentFilter = $selectors[$index];
+            $nextFilter = $selectors[$index + 1];
+            $ct->Filter->where[] = '(SELECT COUNT(id) FROM #__customtables_table_' . $nextFilter[0]
+                . ' WHERE #__customtables_table_' . $nextFilter[0] . '.es_' . $nextFilter[4] . '=#__customtables_table_' . $currentFilter[0] . '.id) >0';
+        }
+        */
 
         $orderby = $selector[4] ?? '';
 
