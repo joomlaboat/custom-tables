@@ -228,7 +228,6 @@ class ESTables
                 return true;
             }
         }
-
         return false;
     }
 
@@ -259,8 +258,15 @@ class ESTables
             $query = 'INSERT ' . $realtablename . ' SET ' . implode(', ', $sets);
 
         }
-        $db->setQuery($query);
-        $db->execute();
+
+        try {
+            $db->setQuery($query);
+            $db->execute();
+        } catch (Exception $e) {
+            Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
+            return false;
+        }
+
         return $db->insertid();
     }
 

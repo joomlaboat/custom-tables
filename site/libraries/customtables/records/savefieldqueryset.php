@@ -951,10 +951,10 @@ class SaveFieldQuerySet
         }
     }
 
-    function applyDefaults($fieldrow): ?string
+    function applyDefaults($fieldRow): ?string
     {
-        $this->field = new Field($this->ct, $fieldrow, $this->row);
-        if ($this->field->defaultvalue != "" and (!isset($this->row[$this->field->realfieldname]) or is_null($this->row[$this->field->realfieldname])) and $this->field->type != 'dummie') {
+        $this->field = new Field($this->ct, $fieldRow, $this->row);
+        if (!Fields::isVirtualField($fieldRow) and $this->field->defaultvalue != "" and (!isset($this->row[$this->field->realfieldname]) or is_null($this->row[$this->field->realfieldname])) and $this->field->type != 'dummie') {
 
             if ($this->ct->Env->legacysupport) {
                 $LayoutProc = new LayoutProcessor($this->ct);
