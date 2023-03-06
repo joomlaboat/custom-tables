@@ -1380,7 +1380,8 @@
                    description="Store the value for future use in search or order by.">
                 <option value="virtual" label="Virtual (Computed on request)"/>
                 <option value="storedstring" label="Stored String"/>
-                <option value="storedinteger" label="Stored Integer"/>
+                <option value="storedintegersigned" label="Stored Integer Signed"/>
+                <option value="storedintegerunsigned" label="Stored Integer Unsigned"/>
             </param>
 
             <param name="length" label="Length"

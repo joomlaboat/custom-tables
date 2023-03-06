@@ -970,6 +970,31 @@ class SaveFieldQuerySet
 
             $this->row[$this->field->realfieldname] = $value;
             return $this->field->realfieldname . '=' . $this->ct->db->quote($value);
+        } elseif ($fieldRow['type'] == 'virtual') {
+            $paramsList = JoomlaBasicMisc::csv_explode(',', $fieldRow['typeparams'], '"', false);
+            $storage = $paramsList[1] ?? '';
+
+            if ($storage == "storedintegersigned" or $storage == "storedintegerunsigned" or $storage == "storedstring") {
+
+                try {
+                    $twig = new TwigProcessor($this->ct, $paramsList[0], false, false, true);
+                    $value = @$twig->process($this->row);
+
+                    if ($twig->errorMessage !== null) {
+                        $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
+                        return null;
+                    }
+
+                } catch (Exception $e) {
+                    $this->ct->app->enqueueMessage($e->getMessage(), 'error');
+                    return null;
+                }
+
+                if ($storage == "storedintegersigned" or $storage == "storedintegerunsigned")
+                    return $this->field->realfieldname . '=' . (int)$value;
+
+                return $this->field->realfieldname . '=' . $this->ct->db->quote($value);
+            }
         }
         return null;
     }

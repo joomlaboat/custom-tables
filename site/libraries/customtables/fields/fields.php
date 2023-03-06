@@ -1123,7 +1123,6 @@ class Fields
 
     public static function getProjectedFieldType(string $ct_fieldType, ?string $typeParams): array
     {
-        echo '$ct_fieldType=' . $ct_fieldType . '<br/>';
         //Returns an array of mysql column parameters
         switch (trim($ct_fieldType)) {
             case '_id':
@@ -1271,8 +1270,10 @@ class Fields
                 if ($storage == 'storedstring') {
                     $l = (int)$typeParamsArray[2] ?? 255;
                     return ['data_type' => 'varchar', 'is_nullable' => true, 'is_unsigned' => null, 'length' => ($l < 1 ? 255 : (min($l, 4069))), 'default' => null, 'extra' => null];
-                } elseif ($storage == 'storedinteger')
+                } elseif ($storage == 'storedintegersigned')
                     return ['data_type' => 'int', 'is_nullable' => true, 'is_unsigned' => false, 'length' => null, 'default' => null, 'extra' => null];
+                elseif ($storage == 'storedintegerunsigned')
+                    return ['data_type' => 'int', 'is_nullable' => true, 'is_unsigned' => true, 'length' => null, 'default' => null, 'extra' => null];
                 else
                     return ['data_type' => null, 'is_nullable' => null, 'is_unsigned' => null, 'length' => null, 'default' => null, 'extra' => null];
 
