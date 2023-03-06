@@ -80,6 +80,9 @@ class CT_FieldTypeTag_records
             $twig = new TwigProcessor($ct, $layoutcode);
             $htmlresult .= $twig->process($row);
 
+            if ($twig->errorMessage !== null)
+                $ct->app->enqueueMessage($twig->errorMessage, 'error');
+
             $number++;
         }
 

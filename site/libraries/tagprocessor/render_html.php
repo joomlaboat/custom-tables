@@ -73,7 +73,9 @@ trait render_html
             $result = str_replace('&&&&quote&&&&', '"', $result);
 
             $twig = new TwigProcessor($ct, $result);
-            $result = $htmlresult = $twig->process();
+            $result = $twig->process();
+            if ($twig->errorMessage !== null)
+                $ct->app->enqueueMessage($twig->errorMessage, 'error');
         }
 
         //Complete record layout

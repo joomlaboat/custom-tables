@@ -51,6 +51,9 @@ class tagProcessor_Item
         $LayoutProc = new LayoutProcessor($ct);
         $htmlresult = $twig->process($row);
 
+        if ($twig->errorMessage !== null)
+            $ct->app->enqueueMessage($twig->errorMessage, 'error');
+
         if ($layoutType == 2) {
 
             require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'tagprocessor' . DIRECTORY_SEPARATOR . 'edittags.php');

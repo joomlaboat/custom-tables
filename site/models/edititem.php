@@ -173,6 +173,9 @@ class CustomTablesModelEditItem extends JModelLegacy
         $twig = new TwigProcessor($this->ct, $filter);
         $filter = $twig->process();
 
+        if ($twig->errorMessage !== null)
+            $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
+
         //TODO
         $this->ct->app->enqueueMessage('Filtering not done.', 'error');
 
@@ -649,6 +652,9 @@ class CustomTablesModelEditItem extends JModelLegacy
         $twig = new TwigProcessor($this->ct, $pageLayout, true);
         $pageLayout = $twig->process($row);
 
+        if ($twig->errorMessage !== null)
+            $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
+
         $backgroundFieldTypes = ['creationtime', 'changetime', 'server', 'id', 'md5', 'userid'];
 
         $fieldsToEdit = [];
@@ -932,6 +938,9 @@ class CustomTablesModelEditItem extends JModelLegacy
                 $twig = new TwigProcessor($this->ct, $theScript);
                 $theScript = $twig->process();
 
+                if ($twig->errorMessage !== null)
+                    $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
+
                 if ($this->ct->Params->allowContentPlugins)
                     $theScript = JoomlaBasicMisc::applyContentPlugins($theScript);
 
@@ -985,6 +994,9 @@ class CustomTablesModelEditItem extends JModelLegacy
 
                 $twig = new TwigProcessor($this->ct, $theScript);
                 $theScript = $twig->process();
+
+                if ($twig->errorMessage !== null)
+                    $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
 
                 if ($this->ct->Params->allowContentPlugins)
                     $theScript = JoomlaBasicMisc::applyContentPlugins($theScript);
@@ -1060,6 +1072,9 @@ class CustomTablesModelEditItem extends JModelLegacy
 
         $twig = new TwigProcessor($this->ct, $content);
         $content = $twig->process($this->ct->Table->record);
+
+        if ($twig->errorMessage !== null)
+            $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
 
         if ($applyContentPlagins and $this->ct->Params->allowContentPlugins)
             $content = JoomlaBasicMisc::applyContentPlugins($content);

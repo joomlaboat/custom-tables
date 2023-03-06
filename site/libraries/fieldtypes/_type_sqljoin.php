@@ -30,7 +30,13 @@ class CT_FieldTypeTag_sqljoin
         $row = $ct->Table->loadRecord($listing_id);
 
         $twig = new TwigProcessor($ct, $layoutcode);
-        return $twig->process($row);
+
+        $value = $twig->process($row);
+
+        if ($twig->errorMessage !== null)
+            $ct->app->enqueueMessage($twig->errorMessage, 'error');
+
+        return $value;
     }
 
     //Old function
@@ -70,6 +76,12 @@ class CT_FieldTypeTag_sqljoin
         $row = $join_ct->Table->loadRecord($listing_id);
 
         $twig = new TwigProcessor($join_ct, $result);
-        return $twig->process($row);
+
+        $value = $twig->process($row);
+
+        if ($twig->errorMessage !== null)
+            $join_ct->app->enqueueMessage($twig->errorMessage, 'error');
+
+        return $value;
     }
 }

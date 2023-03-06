@@ -515,7 +515,12 @@ class Twig_Record_Tags
 
         if ($tables->loadRecords($layouts->tableid, $complete_filter, $orderby, $limit)) {
             $twig = new TwigProcessor($join_ct, $pageLayout);
-            return $twig->process();
+
+            $value = $twig->process();
+            if ($twig->errorMessage !== null)
+                $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
+
+            return $value;
         }
 
         $this->ct->app->enqueueMessage('{{ record.tablejoin("' . $layoutname . '","' . $filter . '","' . $orderby . '") }} - LCould not load records.', 'error');
@@ -650,7 +655,13 @@ class Twig_Tables_Tags
         if (Layouts::isLayoutContent($fieldname)) {
 
             $twig = new TwigProcessor($join_ct, $fieldname);
-            return $twig->process($row);
+
+            $value = $twig->process($row);
+
+            if ($twig->errorMessage !== null)
+                $join_ct->app->enqueueMessage($twig->errorMessage, 'error');
+
+            return $value;
 
         } else {
             $value_realfieldname = '';
@@ -708,7 +719,12 @@ class Twig_Tables_Tags
         }
 
         $twig = new TwigProcessor($join_ct, $pageLayout);
-        return $twig->process($row);
+
+        $value = $twig->process($row);
+        if ($twig->errorMessage !== null)
+            $join_ct->app->enqueueMessage($twig->errorMessage, 'error');
+
+        return $value;
     }
 
     function getrecords($layoutname = '', $filter = '', $orderby = '', $limit = 0): string
@@ -738,7 +754,13 @@ class Twig_Tables_Tags
             }
 
             $twig = new TwigProcessor($join_ct, $pageLayout);
-            return $twig->process();
+
+            $value = $twig->process();
+
+            if ($twig->errorMessage !== null)
+                $join_ct->app->enqueueMessage($twig->errorMessage, 'error');
+
+            return $value;
         }
 
         $this->ct->app->enqueueMessage('{{ tables.getrecords("' . $layoutname . '","' . $filter . '","' . $orderby . '") }} - Could not load records.', 'error');

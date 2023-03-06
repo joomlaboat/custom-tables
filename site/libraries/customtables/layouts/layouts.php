@@ -158,6 +158,10 @@ class Layouts
             $layoutContent = trim($layoutRow['layoutcss']);
             $twig = new TwigProcessor($this->ct, $layoutContent, $this->ct->LayoutVariables['getEditFieldNamesOnly'] ?? false);
             $layoutContent = '<style>' . $twig->process($this->ct->Table->record ?? null) . '</style>';
+
+            if ($twig->errorMessage !== null)
+                $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
+
             $this->ct->document->addCustomTag($layoutContent);
         }
 
@@ -165,6 +169,10 @@ class Layouts
             $layoutContent = trim($layoutRow['layoutjs']);
             $twig = new TwigProcessor($this->ct, $layoutContent, $this->ct->LayoutVariables['getEditFieldNamesOnly'] ?? false);
             $layoutContent = $twig->process($this->ct->Table->record);
+
+            if ($twig->errorMessage !== null)
+                $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
+            
             $this->ct->document->addCustomTag('<script>' . $layoutContent . '</script>');
         }
     }

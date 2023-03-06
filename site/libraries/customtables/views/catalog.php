@@ -158,6 +158,9 @@ class Catalog
         $twig = new TwigProcessor($this->ct, $pageLayout);
         $pageLayout = $twig->process();
 
+        if ($twig->errorMessage !== null)
+            $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
+
         if ($this->ct->Params->allowContentPlugins)
             $pageLayout = JoomlaBasicMisc::applyContentPlugins($pageLayout);
 

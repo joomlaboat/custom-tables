@@ -154,6 +154,8 @@ function CustomTablesSave($task, $this_)
 
             $twig = new TwigProcessor($ct, $msg);
             $msg = $twig->process();
+            if ($twig->errorMessage !== null)
+                $ct->app->enqueueMessage($twig->errorMessage, 'error');
 
 
             if (Factory::getApplication()->input->get('clean', 0, 'INT') == 1) {

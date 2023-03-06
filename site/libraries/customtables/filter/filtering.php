@@ -80,6 +80,9 @@ class Filtering
             $twig = new TwigProcessor($this->ct, $paramWhere);
             $paramWhere = $twig->process();
 
+            if ($twig->errorMessage !== null)
+                $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
+
             if ($this->ct->Params->allowContentPlugins)
                 $paramWhere = JoomlaBasicMisc::applyContentPlugins($paramWhere);
         }
@@ -151,6 +154,9 @@ class Filtering
 
                         $twig = new TwigProcessor($this->ct, $value);
                         $value = $twig->process();
+
+                        if ($twig->errorMessage !== null)
+                            $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
 
                         foreach ($fieldNames as $fieldname_) {
                             $fieldname_parts = explode(':', $fieldname_);

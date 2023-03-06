@@ -404,6 +404,8 @@ class Twig_Document_Tags
                     $row['_number'] = $number;
 
                     $html_result_layout = $twig->process($row);
+                    if ($twig->errorMessage !== null)
+                        $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
 
                     if ($this->ct->Env->legacySupport) {
                         $LayoutProc = new LayoutProcessor($this->ct);
@@ -419,6 +421,8 @@ class Twig_Document_Tags
         } else {
             ///if (!is_null($this->ct->Table->record))
             $html_result = $twig->process($this->ct->Table->record);
+            if ($twig->errorMessage !== null)
+                $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
 
             if ($this->ct->Env->legacySupport) {
                 $LayoutProc = new LayoutProcessor($this->ct);

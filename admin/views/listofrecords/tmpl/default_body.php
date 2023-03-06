@@ -56,6 +56,8 @@ $twig = new TwigProcessor($this->ct, $recordLayout);
         $link = JURI::root(false) . 'administrator/index.php?option=com_customtables&view=records&task=records.edit&tableid=' . $this->ct->Table->tableid . '&id=' . $item_array[$this->ct->Table->realidfieldname];
 
         $result = $twig->process($item_array);
+        if ($twig->errorMessage !== null)
+            $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
 
         echo str_replace('****link****', $link, $result);
 

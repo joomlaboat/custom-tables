@@ -107,6 +107,9 @@ class Field
                 else {
                     $twig = new TwigProcessor($this->ct, $type_param, false, false, false);
                     $new_params[] = $twig->process($row);
+
+                    if ($twig->errorMessage !== null)
+                        $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
                 }
             }
         }

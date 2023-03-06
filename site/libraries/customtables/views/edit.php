@@ -63,6 +63,9 @@ function CTViewEdit(CT &$ct, $row, &$pageLayout, $formLink, $formName): void
     $twig = new TwigProcessor($ct, $pageLayout);
     $pageLayout = $twig->process($row);
 
+    if ($twig->errorMessage !== null)
+        $ct->app->enqueueMessage($twig->errorMessage, 'error');
+
     if ($ct->Params->allowContentPlugins)
         $pageLayout = JoomlaBasicMisc::applyContentPlugins($pageLayout);
 

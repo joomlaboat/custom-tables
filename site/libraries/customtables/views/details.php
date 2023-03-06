@@ -79,6 +79,9 @@ class Details
 
             $twig = new TwigProcessor($this->ct, $this->ct->Params->filter);
             $filter = $twig->process();
+
+            if ($twig->errorMessage !== null)
+                $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
         }
 
         if (!is_null($this->ct->Params->recordsTable) and !is_null($this->ct->Params->recordsUserIdField) and !is_null($this->ct->Params->recordsField)) {
@@ -111,6 +114,9 @@ class Details
 
                 $twig = new TwigProcessor($this->ct, $filter);
                 $filter = $twig->process();
+
+                if ($twig->errorMessage !== null)
+                    $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
             }
 
             $this->row = $this->getDataByFilter($filter);
@@ -337,6 +343,9 @@ class Details
 
         $twig = new TwigProcessor($this->ct, $layoutDetailsContent);
         $layoutDetailsContent = $twig->process($this->row);
+
+        if ($twig->errorMessage !== null)
+            $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
 
         if ($this->ct->Params->allowContentPlugins)
             $layoutDetailsContent = JoomlaBasicMisc::applyContentPlugins($layoutDetailsContent);

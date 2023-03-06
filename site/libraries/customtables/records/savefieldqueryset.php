@@ -964,6 +964,10 @@ class SaveFieldQuerySet
 
             $twig = new TwigProcessor($this->ct, $this->field->defaultvalue);
             $value = $twig->process($this->row);
+
+            if ($twig->errorMessage !== null)
+                $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
+
             $this->row[$this->field->realfieldname] = $value;
             return $this->field->realfieldname . '=' . $this->ct->db->quote($value);
         }

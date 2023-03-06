@@ -209,6 +209,8 @@ class JHTMLESRecords
 
                 $twig = new TwigProcessor($ct, $layoutcode_tmp);
                 $htmlresult .= $twig->process($row);
+                if ($twig->errorMessage !== null)
+                    $ct->app->enqueueMessage($twig->errorMessage, 'error');
 
                 $htmlresult .= '</label>';
 

@@ -183,6 +183,10 @@ class JHTMLESSqlJoin
 
                 $twig = new TwigProcessor($ct, $v);
                 $v = $twig->process($row);
+
+                if ($twig->errorMessage !== null)
+                    $ct->app->enqueueMessage($twig->errorMessage, 'error');
+
             } else
                 $v = JoomlaBasicMisc::processValue($field, $ct, $row);//TODO try to replace processValue function
 

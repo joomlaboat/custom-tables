@@ -1398,6 +1398,9 @@ class Inputbox
                     $twig = new TwigProcessor($this->ct, $value);
                     $value = $twig->process($row);
 
+                    if ($twig->errorMessage !== null)
+                        $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
+
                     if ($value != '') {
                         if ($this->ct->Params->allowContentPlugins)
                             JoomlaBasicMisc::applyContentPlugins($value);

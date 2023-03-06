@@ -173,6 +173,8 @@ class JHTMLESRecordsView
 
                 $twig = new TwigProcessor($ct, $vlu);
                 $vlu = $twig->process($row);
+                if ($twig->errorMessage !== null)
+                    $ct->app->enqueueMessage($twig->errorMessage, 'error');
 
                 if ($isTableLess)
                     $htmlresult .= $vlu;

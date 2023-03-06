@@ -561,6 +561,9 @@ class Value
         try {
             $twig = new TwigProcessor($this->ct, $this->field->params[0], false, false, true);
             $value = @$twig->process($this->row);
+
+            if ($twig->errorMessage !== null)
+                return 'Error:' . $twig->errorMessage;
         } catch (Exception $e) {
             return 'Error:' . $e->getMessage();
         }
