@@ -123,6 +123,14 @@ function renderInputBox(id, param, vlu, attributes, fieldTypeParametersList) {
         } else if (param_att.type === "array") {
             if (vlu == '')
                 vlu = '[]';
+        } else if (param_att.type === "fieldlayout") {
+            if (vlu === '') {
+                if (typeof (param_att.default) != "undefined")
+                    vlu = param_att.default;
+            }
+
+            vlu = vlu.replaceAll('****quote****', '&quot;');
+            vlu = vlu.replaceAll('****apos****', "&apos;");
         } else {
             if (vlu === '') {
                 if (typeof (param_att.default) != "undefined")

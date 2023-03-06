@@ -100,7 +100,7 @@ class Details
         if ($filter != '') {
             if ($this->ct->Params->alias == '') {
                 //Parse using layout
-                if ($this->ct->Env->legacysupport) {
+                if ($this->ct->Env->legacySupport) {
 
                     require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables'
                         . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'layout.php');
@@ -324,7 +324,7 @@ class Details
     {
         $layoutDetailsContent = $this->layoutDetailsContent;
 
-        if ($this->ct->Env->legacysupport) {
+        if ($this->ct->Env->legacySupport) {
 
             require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR
                 . 'libraries' . DIRECTORY_SEPARATOR . 'layout.php');

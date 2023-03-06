@@ -84,7 +84,7 @@ foreach ($this->allTables as $table) {
 
     <?php echo HTMLHelper::_('uitab.addTab', 'layouteditorTabs', 'layoutmobile-tab', Text::_('COM_CUSTOMTABLES_LAYOUTS_HTML_MOBILE')); ?>
     <?php
-    if ($this->ct->Env->advancedtagprocessor)
+    if ($this->ct->Env->advancedTagProcessor)
         echo $this->renderTextArea($this->item->layoutmobile, 'layoutmobile', $typeBoxId, $onPageLoads);
     else
         echo Text::_('COM_CUSTOMTABLES_AVAILABLE');
@@ -93,7 +93,7 @@ foreach ($this->allTables as $table) {
 
     <?php echo HTMLHelper::_('uitab.addTab', 'layouteditorTabs', 'layoutcss-tab', Text::_('COM_CUSTOMTABLES_LAYOUTS_CSS')); ?>
     <?php
-    if ($this->ct->Env->advancedtagprocessor)
+    if ($this->ct->Env->advancedTagProcessor)
         echo $this->renderTextArea($this->item->layoutcss, 'layoutcss', $typeBoxId, $onPageLoads);
     else
         echo Text::_('COM_CUSTOMTABLES_AVAILABLE');
@@ -102,7 +102,7 @@ foreach ($this->allTables as $table) {
 
     <?php echo HTMLHelper::_('uitab.addTab', 'layouteditorTabs', 'layoutjs-tab', Text::_('COM_CUSTOMTABLES_LAYOUTS_JS')); ?>
     <?php
-    if ($this->ct->Env->advancedtagprocessor)
+    if ($this->ct->Env->advancedTagProcessor)
         echo $this->renderTextArea($this->item->layoutjs, 'layoutjs', $typeBoxId, $onPageLoads);
     else
         echo Text::_('COM_CUSTOMTABLES_AVAILABLE');

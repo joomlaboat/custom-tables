@@ -314,7 +314,7 @@ class ESFileUploader
 
         $jinput = Factory::getApplication()->input;
 
-        if ($ct->Env->advancedtagprocessor) {
+        if ($ct->Env->advancedTagProcessor) {
             //This will let PRO version users to upload zip files, please note that it will check if the file is zip or not (mime type).
             //If not then regular Joomla input method will be used
 

@@ -98,8 +98,8 @@ class Twig_Html_Tags
 
         $alt = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ADD');
 
-        if ($this->ct->Env->toolbaricons != '')
-            $img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbaricons . ' fa-plus-circle" data-icon="' . $this->ct->Env->toolbaricons . ' fa-plus-circle" title="' . $alt . '"></i>';
+        if ($this->ct->Env->toolbarIcons != '')
+            $img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbarIcons . ' fa-plus-circle" data-icon="' . $this->ct->Env->toolbarIcons . ' fa-plus-circle" title="' . $alt . '"></i>';
         else
             $img = '<img src="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/images/icons/new.png" alt="' . $alt . '" title="' . $alt . '" />';
 
@@ -237,19 +237,19 @@ class Twig_Html_Tags
             return '';
 
         if ($attribute == '' and $image_icon == '') {
-            if ($this->ct->Env->toolbaricons != '')
-                $vlu = '<a href="' . $returnto . '"><i class="ba-btn-transition ' . $this->ct->Env->toolbaricons
-                    . ' fa-angle-left" data-icon="' . $this->ct->Env->toolbaricons . ' fa-angle-left" title="'
+            if ($this->ct->Env->toolbarIcons != '')
+                $vlu = '<a href="' . $returnto . '"><i class="ba-btn-transition ' . $this->ct->Env->toolbarIcons
+                    . ' fa-angle-left" data-icon="' . $this->ct->Env->toolbarIcons . ' fa-angle-left" title="'
                     . $label . '" style="margin-right:10px;"></i>' . $label . '</a>';
             else
                 $vlu = '<a href="' . $returnto . '" class="ct_goback"><div>' . $label . '</div></a>';
         } else {
 
             $img = '';
-            if (($this->ct->Env->toolbaricons != '' or $image_icon == '') and $attribute == '')
-                $img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbaricons . ' fa-angle-left" data-icon="'
-                    . $this->ct->Env->toolbaricons . ' fa-angle-left" title="' . $label . '" style="margin-right:10px;"></i>';
-            elseif ($this->ct->Env->toolbaricons == '')
+            if (($this->ct->Env->toolbarIcons != '' or $image_icon == '') and $attribute == '')
+                $img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbarIcons . ' fa-angle-left" data-icon="'
+                    . $this->ct->Env->toolbarIcons . ' fa-angle-left" title="' . $label . '" style="margin-right:10px;"></i>';
+            elseif ($this->ct->Env->toolbarIcons == '')
                 $img = '<img src="' . $image_icon . '" alt="' . $label . '" />';
 
             $vlu = '<a href="' . $returnto . '" ' . $attribute . '><div>' . $img . $label . '</div></a>';
@@ -297,9 +297,9 @@ class Twig_Html_Tags
                     $rid = 'esToolBar_' . $mode . '_box_' . $this->ct->Table->tableid;
                     $alt = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_' . strtoupper($mode) . '_SELECTED');
 
-                    if ($this->ct->Env->toolbaricons != '') {
+                    if ($this->ct->Env->toolbarIcons != '') {
                         $icons = ['publish' => 'fa-check-circle', 'unpublish' => 'fa-ban', 'refresh' => 'fa-sync', 'delete' => 'fa-trash'];
-                        $img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbaricons . ' ' . $icons[$mode] . '" data-icon="' . $this->ct->Env->toolbaricons . ' ' . $icons[$mode] . '" title="' . $alt . '"></i>';
+                        $img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbarIcons . ' ' . $icons[$mode] . '" data-icon="' . $this->ct->Env->toolbarIcons . ' ' . $icons[$mode] . '" title="' . $alt . '"></i>';
                     } else
                         $img = '<img src="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/images/icons/' . $mode . '.png" border="0" alt="' . $alt . '" title="' . $alt . '" />';
 
@@ -605,8 +605,8 @@ class Twig_Html_Tags
         $default_Label = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SEARCH');
 
         if ($label == strip_tags($label)) {
-            if ($this->ct->Env->toolbaricons != '') {
-                $img = '<i class=\'' . $this->ct->Env->toolbaricons . ' fa-search\' data-icon=\'' . $this->ct->Env->toolbaricons . ' fa-search\' title=\'' . $label . '\'></i>';
+            if ($this->ct->Env->toolbarIcons != '') {
+                $img = '<i class=\'' . $this->ct->Env->toolbarIcons . ' fa-search\' data-icon=\'' . $this->ct->Env->toolbarIcons . ' fa-search\' title=\'' . $label . '\'></i>';
                 $labelHtml = ($label !== '' ? '<span style=\'margin-left:10px;\'>' . $label . '</span>' : '');
             } else {
                 $img = '';
@@ -642,8 +642,8 @@ class Twig_Html_Tags
 
         $default_Label = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SEARCHRESET');
         if ($label == strip_tags($label)) {
-            if ($this->ct->Env->toolbaricons != '') {
-                $img = '<i class=\'' . $this->ct->Env->toolbaricons . ' fa-times\' data-icon=\'' . $this->ct->Env->toolbaricons . ' fa-times\' title=\'' . $label . '\'></i>';
+            if ($this->ct->Env->toolbarIcons != '') {
+                $img = '<i class=\'' . $this->ct->Env->toolbarIcons . ' fa-times\' data-icon=\'' . $this->ct->Env->toolbarIcons . ' fa-times\' title=\'' . $label . '\'></i>';
                 $labelHtml = ($label !== '' ? '<span style=\'margin-left:10px;\'>' . $label . '</span>' : '');
             } else {
                 $img = '';

@@ -154,7 +154,7 @@ class CustomtablesViewListofcategories extends JViewLegacy
 
         ToolbarHelper::title(Text::_('COM_CUSTOMTABLES_LISTOFCATEGORIES'), 'joomla');
 
-        if ($this->canCreate and $this->ct->Env->advancedtagprocessor)
+        if ($this->canCreate and $this->ct->Env->advancedTagProcessor)
             $toolbar->addNew('categories.add');
 
         $dropdown = $toolbar->dropdownButton('status-group')

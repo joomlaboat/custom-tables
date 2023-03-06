@@ -105,7 +105,7 @@ class ListOfFields
         } else
             $result .= $this->escape($item->fieldname);
 
-        if ($this->ct->Env->advancedtagprocessor and $this->ct->Table->realtablename != '')
+        if ($this->ct->Env->advancedTagProcessor and $this->ct->Table->realtablename != '')
             $result .= '<br/><span style="color:grey;">' . $hashRealTableName . '.' . $item->realfieldname . '</span>';
 
         $result .= '</div></td>';

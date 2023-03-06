@@ -1387,7 +1387,7 @@ class Inputbox
 
                 //Process default value, not processing PHP tag
                 if ($value != '') {
-                    if ($this->ct->Env->legacysupport) {
+                    if ($this->ct->Env->legacySupport) {
                         tagProcessor_General::process($this->ct, $value, $row);
                         tagProcessor_Item::process($this->ct, $value, $row);
                         tagProcessor_If::process($this->ct, $value, $row);

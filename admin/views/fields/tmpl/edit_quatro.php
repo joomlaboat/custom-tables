@@ -59,7 +59,7 @@ foreach ($this->allTables as $table) {
 <script>
     <?php
 
-    if ($this->ct->Env->advancedtagprocessor) {
+    if ($this->ct->Env->advancedTagProcessor) {
         echo '
 		proversion=true;
 ';
@@ -181,7 +181,7 @@ foreach ($this->allTables as $table) {
                     <div class="controls"><?php echo $this->form->getInput('isrequired'); ?></div>
                 </div>
 
-                <div class="control-group<?php echo(!$this->ct->Env->advancedtagprocessor ? ' ct_pro' : ''); ?>">
+                <div class="control-group<?php echo(!$this->ct->Env->advancedTagProcessor ? ' ct_pro' : ''); ?>">
                     <div class="control-label"><?php echo $this->form->getLabel('defaultvalue'); ?></div>
                     <div class="controls"><?php echo $this->form->getInput('defaultvalue'); ?></div>
                 </div>
@@ -191,12 +191,12 @@ foreach ($this->allTables as $table) {
                     <div class="controls"><?php echo $this->form->getInput('allowordering'); ?></div>
                 </div>
 
-                <div class="control-group<?php echo(!$this->ct->Env->advancedtagprocessor ? ' ct_pro' : ''); ?>">
+                <div class="control-group<?php echo(!$this->ct->Env->advancedTagProcessor ? ' ct_pro' : ''); ?>">
                     <div class="control-label"><?php echo $this->form->getLabel('valuerule'); ?></div>
                     <div class="controls"><?php echo $this->form->getInput('valuerule'); ?></div>
                 </div>
 
-                <div class="control-group<?php echo(!$this->ct->Env->advancedtagprocessor ? ' ct_pro' : ''); ?>">
+                <div class="control-group<?php echo(!$this->ct->Env->advancedTagProcessor ? ' ct_pro' : ''); ?>">
                     <div class="control-label"><?php echo $this->form->getLabel('valuerulecaption'); ?></div>
                     <div class="controls"><?php echo $this->form->getInput('valuerulecaption'); ?></div>
                 </div>
@@ -259,7 +259,7 @@ foreach ($this->allTables as $table) {
 
         <script>
             updateTypeParams("jform_type", "jform_typeparams", "typeparams_box");
-            <?php if(!$this->ct->Env->advancedtagprocessor): ?>
+            <?php if(!$this->ct->Env->advancedTagProcessor): ?>
             disableProField("jform_defaultvalue");
             disableProField("jform_valuerule");
             disableProField("jform_valuerulecaption");

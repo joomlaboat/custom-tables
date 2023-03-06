@@ -22,7 +22,7 @@
                 </field>
 
         -->
-        <!--		<field name="autorTitle"
+        <!--		<field name="authorTitle"
                     type="spacer"
                     label="COM_CUSTOMTABLES_CONFIG_AUTHOR"
                 />
@@ -66,8 +66,8 @@
                 name="legacysupport"
                 type="list"
                 label="Legacy Support"
-                default=""
-                description="Support old style layout syntaxis, example: *fieldname*, [fieldname], |fieldname|, {button:save}. Use Twig tags instead: {{ fieldname.title }}, {{ fieldname }}, {{ fieldname.value }}, {{ html.button('save') }}"
+                default="puretwig"
+                description="Support old style layout syntax, example: *fieldname*, [fieldname], |fieldname|, {button:save}. Use Twig tags instead: {{ fieldname.title }}, {{ fieldname }}, {{ fieldname.value }}, {{ html.button('save') }}"
         >
             <option value="">Twig and Legacy</option>
             <option value="puretwig">Pure Twig</option>

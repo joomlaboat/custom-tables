@@ -956,7 +956,7 @@ class SaveFieldQuerySet
         $this->field = new Field($this->ct, $fieldRow, $this->row);
         if (!Fields::isVirtualField($fieldRow) and $this->field->defaultvalue != "" and (!isset($this->row[$this->field->realfieldname]) or is_null($this->row[$this->field->realfieldname])) and $this->field->type != 'dummie') {
 
-            if ($this->ct->Env->legacysupport) {
+            if ($this->ct->Env->legacySupport) {
                 $LayoutProc = new LayoutProcessor($this->ct);
                 $LayoutProc->layout = $this->field->defaultvalue;
                 $this->field->defaultvalue = $LayoutProc->fillLayout($this->row);

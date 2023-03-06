@@ -81,10 +81,10 @@ $document->addCustomTag('<link href="' . JURI::root(true) . '/components/com_cus
                 }
                 ?>
                 <hr/>
-                <div class="control-group<?php echo(!$this->ct->Env->advancedtagprocessor ? ' ct_pro' : ''); ?>">
+                <div class="control-group<?php echo(!$this->ct->Env->advancedTagProcessor ? ' ct_pro' : ''); ?>">
                     <div class="control-label"><?php echo $this->form->getLabel('tablecategory'); ?></div>
                     <div class="controls"><?php
-                        if (!$this->ct->Env->advancedtagprocessor)
+                        if (!$this->ct->Env->advancedTagProcessor)
                             echo '<input type="text" value="Available in Pro Version" disabled="disabled" class="form-control valid form-control-success" />';
                         else
                             echo $this->form->getInput('tablecategory');
@@ -131,18 +131,18 @@ $document->addCustomTag('<link href="' . JURI::root(true) . '/components/com_cus
         ?>
 
         <?php
-        //if($this->ct->Env->advancedtagprocessor):
+        //if($this->ct->Env->advancedTagProcessor):
 
         echo JHtml::_('bootstrap.addTab', 'tablesTab', 'advanced', Text::_('COM_CUSTOMTABLES_TABLES_ADVANCED', true)); ?>
 
         <div class="row-fluid form-horizontal-desktop">
             <div class="span12">
 
-                <div class="control-group<?php echo(!$this->ct->Env->advancedtagprocessor ? ' ct_pro' : ''); ?>">
+                <div class="control-group<?php echo(!$this->ct->Env->advancedTagProcessor ? ' ct_pro' : ''); ?>">
                     <div class="control-label"><?php echo $this->form->getLabel('customphp'); ?></div>
                     <div class="controls"><?php
 
-                        if (!$this->ct->Env->advancedtagprocessor)
+                        if (!$this->ct->Env->advancedTagProcessor)
                             echo '<input type="text" value="Available in Pro Version" disabled="disabled" class="form-control valid form-control-success" />';
                         else
                             echo $this->form->getInput('customphp');
@@ -150,17 +150,17 @@ $document->addCustomTag('<link href="' . JURI::root(true) . '/components/com_cus
                         ?></div>
                 </div>
 
-                <div class="control-group<?php echo(!$this->ct->Env->advancedtagprocessor ? ' ct_pro' : ''); ?>">
+                <div class="control-group<?php echo(!$this->ct->Env->advancedTagProcessor ? ' ct_pro' : ''); ?>">
                     <div class="control-label"><?php echo $this->form->getLabel('allowimportcontent'); ?></div>
                     <div class="controls"><?php echo $this->form->getInput('allowimportcontent'); ?></div>
                 </div>
 
-                <div class="control-group<?php echo(!$this->ct->Env->advancedtagprocessor ? ' ct_pro' : ''); ?>">
+                <div class="control-group<?php echo(!$this->ct->Env->advancedTagProcessor ? ' ct_pro' : ''); ?>">
                     <div class="control-label"><?php echo $this->form->getLabel('customtablename'); ?></div>
                     <div class="controls"><?php echo $this->form->getInput('customtablename'); ?></div>
                 </div>
 
-                <div class="control-group<?php echo(!$this->ct->Env->advancedtagprocessor ? ' ct_pro' : ''); ?>">
+                <div class="control-group<?php echo(!$this->ct->Env->advancedTagProcessor ? ' ct_pro' : ''); ?>">
                     <div class="control-label"><?php echo $this->form->getLabel('customidfield'); ?></div>
                     <div class="controls"><?php echo $this->form->getInput('customidfield'); ?></div>
                 </div>
@@ -201,7 +201,7 @@ $document->addCustomTag('<link href="' . JURI::root(true) . '/components/com_cus
     <div class="clearfix"></div>
     <?php echo JLayoutHelper::render('tables.details_under', $this); ?>
 
-    <?php if (!$this->ct->Env->advancedtagprocessor): ?>
+    <?php if (!$this->ct->Env->advancedTagProcessor): ?>
         <script>
             disableProField("jform_customtablename");
             disableProField("jform_customidfield");

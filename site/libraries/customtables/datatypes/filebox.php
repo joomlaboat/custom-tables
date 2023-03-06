@@ -90,8 +90,8 @@ class CT_FieldTypeTag_FileBox
         if (!is_null($ct->Params->ModuleId))
             $fileManagerLink .= '&amp;ModuleId=' . $ct->Params->ModuleId;
 
-        if ($ct->Env->toolbaricons != '')
-            $img = '<i class="ba-btn-transition ' . $ct->Env->toolbaricons . ' fa-folder" data-icon="' . $ct->Env->toolbaricons . ' fa-folder" title="' . $title . '"></i>';
+        if ($ct->Env->toolbarIcons != '')
+            $img = '<i class="ba-btn-transition ' . $ct->Env->toolbarIcons . ' fa-folder" data-icon="' . $ct->Env->toolbarIcons . ' fa-folder" title="' . $title . '"></i>';
         else
             $img = '<img src="' . $iconPath . 'filemanager.png" border="0" alt="' . $title . '" title="' . $title . '">';
 

@@ -174,7 +174,7 @@ class JHTMLESSqlJoin
 
         foreach ($ct->Records as $row) {
             if ($layout_mode) {
-                if ($ct->Env->legacysupport) {
+                if ($ct->Env->legacySupport) {
                     $LayoutProc = new LayoutProcessor($ct);
                     $LayoutProc->layout = $layoutcode;
                     $v = $LayoutProc->fillLayout($row);

@@ -164,7 +164,7 @@ class CustomTablesModelEditItem extends JModelLegacy
         if ($filter == '')
             return 0;
 
-        if ($this->ct->Env->legacysupport) {
+        if ($this->ct->Env->legacySupport) {
             $LayoutProc = new LayoutProcessor($this->ct);
             $LayoutProc->layout = $filter;
             $filter = $LayoutProc->fillLayout(null, null, '[]', true);
@@ -588,16 +588,18 @@ class CustomTablesModelEditItem extends JModelLegacy
         }
 
         //Prepare "Accept Return To" Link
-        $art_link = $this->PrepareAcceptReturnToLink($this->ct->Env->jinput->get('returnto', '', 'BASE64'));
-        if ($art_link != '')
-            $link = $art_link;
 
-        $link = str_replace('*new*', $row[$this->ct->Table->realidfieldname], $link);
+        $return2Link = $this->ct->Env->jinput->get('returnto', '', 'BASE64');
+        if ($return2Link != '')
+            $link = $this->PrepareAcceptReturnToLink($return2Link, $msg);
+
+        //$link = str_replace('*new*', $row[$this->ct->Table->realidfieldname], $link);
 
         //Refresh menu if needed
-        $msg = $this->ct->Params->msgItemIsSaved;
+        if ($msg != '')
+            $msg = $this->ct->Params->msgItemIsSaved;
 
-        if ($this->ct->Env->advancedtagprocessor)
+        if ($this->ct->Env->advancedTagProcessor)
             CleanExecute::executeCustomPHPfile($this->ct->Table->tablerow['customphp'], $row, $row_old);
 
         if ($isDebug)
@@ -633,7 +635,7 @@ class CustomTablesModelEditItem extends JModelLegacy
     {
         $this->ct->isEditForm = true; //This changes inputbox prefix
 
-        if ($this->ct->Env->legacysupport) {
+        if ($this->ct->Env->legacySupport) {
             $path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR;
             require_once($path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'edittags.php');
             require_once($path . 'layout.php');
@@ -921,7 +923,7 @@ class CustomTablesModelEditItem extends JModelLegacy
                     $theScript = str_replace('****apos****', "'", $theScript);
                 }
 
-                if ($this->ct->Env->legacysupport) {
+                if ($this->ct->Env->legacySupport) {
                     $LayoutProc = new LayoutProcessor($this->ct);
                     $LayoutProc->layout = $theScript;
                     $theScript = $LayoutProc->fillLayout($row, '', '[]', true);
@@ -976,7 +978,7 @@ class CustomTablesModelEditItem extends JModelLegacy
                     $theScript = str_replace('****apos****', "'", $theScript);
                 }
 
-                if ($this->ct->Env->legacysupport) {
+                if ($this->ct->Env->legacySupport) {
                     $LayoutProc->layout = $theScript;
                     $theScript = $LayoutProc->fillLayout($row, '', '[]', true);
                 }
@@ -1048,7 +1050,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
     function parseRowLayoutContent($content, $applyContentPlagins = true)
     {
-        if ($this->ct->Env->legacysupport) {
+        if ($this->ct->Env->legacySupport) {
             require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'layout.php');
 
             $LayoutProc = new LayoutProcessor($this->ct);
@@ -1165,7 +1167,7 @@ class CustomTablesModelEditItem extends JModelLegacy
         return $status;
     }
 
-    function PrepareAcceptReturnToLink($encoded_link): string
+    function PrepareAcceptReturnToLink($encoded_link, string &$msg): string
     {
         if ($encoded_link == '')
             return '';
@@ -1184,15 +1186,29 @@ class CustomTablesModelEditItem extends JModelLegacy
 
         $row = $rows[0];
 
-        if ($this->ct->Env->legacysupport) {
+        if ($this->ct->Env->legacySupport) {
             require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'layout.php');
             $LayoutProc = new LayoutProcessor($this->ct);
             $LayoutProc->layout = $link;
             $link = $LayoutProc->fillLayout($row, "", '[]', true);
         }
 
-        $twig = new TwigProcessor($this->ct, $link);
-        return $twig->process($row);
+        try {
+            $twig = new TwigProcessor($this->ct, $link);
+            $link = $twig->process($row);
+        } catch (Exception $e) {
+            $this->ct->app->enqueueMessage($e->getMessage(), 'error');
+            $link = '';
+            $msg = $twig->errorMessage;
+        }
+
+        if ($twig->errorMessage !== null) {
+            $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
+            $link = '';
+            $msg = $twig->errorMessage;
+        }
+
+        return $link;
     }
 
     function Refresh($save_log = 1): int
@@ -1245,7 +1261,7 @@ class CustomTablesModelEditItem extends JModelLegacy
         //TODO use $saveField->saveField
         //$this->updateDefaultValues($row);
 
-        if ($this->ct->Env->advancedtagprocessor)
+        if ($this->ct->Env->advancedTagProcessor)
             CleanExecute::executeCustomPHPfile($this->ct->Table->tablerow['customphp'], $row, $row);
 
         //Send email note if applicable
@@ -1418,7 +1434,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
         $new_row = array();
 
-        if ($this->ct->Env->advancedtagprocessor)
+        if ($this->ct->Env->advancedTagProcessor)
             CleanExecute::executeCustomPHPfile($this->ct->Table->tablerow['customphp'], $new_row, $row);
 
         return 1;

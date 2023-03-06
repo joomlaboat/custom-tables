@@ -82,7 +82,7 @@ $hashRealTableName = str_replace($dbPrefix, '#__', $this->ct->Table->realtablena
 
             <?php
 
-            if ($this->ct->Env->advancedtagprocessor and $this->ct->Table->realtablename != '')
+            if ($this->ct->Env->advancedTagProcessor and $this->ct->Table->realtablename != '')
                 echo '<br/><span style="color:grey;">' . $hashRealTableName . '.' . $item->realfieldname . '</span>';
 
             ?>

@@ -40,7 +40,7 @@ class Environment
     var bool $clean;
     var string $frmt;
     var string $WebsiteRoot;
-    var bool $advancedtagprocessor;
+    var bool $advancedTagProcessor;
     var Input $jinput;
     var bool $isMobile;
     var bool $isModal;
@@ -49,8 +49,8 @@ class Environment
     var string $field_input_prefix;
 
     var bool $loadTwig;
-    var string $toolbaricons;
-    var bool $legacysupport;
+    var string $toolbarIcons;
+    var bool $legacySupport;
     var bool $isPlugin; //this can be set by calling the class from the plugin
 
     var bool $CustomPHPEnabled;
@@ -104,7 +104,7 @@ class Environment
         $usergroups = $this->user->get('groups');
         $this->isUserAdministrator = in_array(8, $usergroups);//8 is Super Users
         //$this->isUserAdministrator = $this->user->authorise('core.edit', 'com_content');
-        
+
         $this->print = (bool)$this->jinput->getInt('print', 0);
         $this->clean = (bool)$this->jinput->getInt('clean', 0);
         $this->isModal = (bool)$this->jinput->getInt('modal', 0);
@@ -120,25 +120,28 @@ class Environment
         } else
             $this->WebsiteRoot = '';
 
-        $this->advancedtagprocessor = false;
+        $this->advancedTagProcessor = false;
 
         $path = JPATH_SITE . DIRECTORY_SEPARATOR . 'plugins' . DIRECTORY_SEPARATOR . 'content' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'protagprocessor' . DIRECTORY_SEPARATOR;
-        $phptagprocessor = $path . 'phptags.php';
-        if (file_exists($phptagprocessor)) {
-            $this->advancedtagprocessor = true;
-
-            require_once($phptagprocessor);
-            require_once($path . 'customphp.php');
-            require_once($path . 'servertags.php');
+        $phpTagProcessor = $path . 'phptags.php';
+        if (file_exists($phpTagProcessor)) {
+            $this->advancedTagProcessor = true;
+            require_once($phpTagProcessor);
         }
+
+        if (file_exists($path . 'customphp.php'))
+            require_once($path . 'customphp.php');
+
+        if (file_exists($path . 'servertags.php'))
+            require_once($path . 'servertags.php');
 
         $this->isMobile = $this->check_user_agent('mobile');
 
         $params = ComponentHelper::getParams('com_customtables');
 
         $this->loadTwig = $params->get('loadTwig') == '1';
-        $this->toolbaricons = strval($params->get('toolbaricons'));
-        $this->legacysupport = $params->get('legacysupport') == '';
+        $this->toolbarIcons = strval($params->get('toolbaricons'));
+        $this->legacySupport = $params->get('legacysupport') == '';
 
         $this->isPlugin = false;
     }

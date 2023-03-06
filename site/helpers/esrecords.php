@@ -200,7 +200,7 @@ class JHTMLESRecords
                 //process layout
                 $htmlresult .= '<label for="' . $control_name . '_' . $i . '">';
 
-                if ($ct->Env->legacysupport) {
+                if ($ct->Env->legacySupport) {
                     $LayoutProc = new LayoutProcessor($ct);
                     $LayoutProc->layout = $layoutcode;
                     $layoutcode_tmp = $LayoutProc->fillLayout($row);

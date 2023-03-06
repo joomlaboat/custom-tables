@@ -167,7 +167,7 @@
             <option value="" disabled="disabled">_____ Extra _____</option>
             <option value="log">COM_CUSTOMTABLES_FIELDS_MODIFICATION_LOG</option>
             <option value="ordering">COM_CUSTOMTABLES_FIELDS_ORDERING</option>
-            <!--<option value="post">COM_CUSTOMTABLES_FIELDS_HTTP_POST</option>-->
+            <option value="virtual">COM_CUSTOMTABLES_FIELDS_VIRTUAL</option>
 
             <option value="" disabled="disabled">_____ Obsolete _____</option>
             <option value="phponadd">COM_CUSTOMTABLES_FIELDS_PHP_ONADD_SCRIPT</option>

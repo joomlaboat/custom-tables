@@ -399,8 +399,8 @@ function CheckSQLJoinRadioSelections(id) {
     }
 
     if (!selected) {
-        let lblobj = document.getElementById(obj_name + "-lbl");
-        let label = lblobj.innerHTML;
+        let labelObject = document.getElementById(obj_name + "-lbl");
+        let label = labelObject.innerHTML;
         alert(label + " not selected.");
         return false;
     }
@@ -419,7 +419,14 @@ function recaptchaCallback() {
     }
 }
 
+function decodeHtml(html) {
+    let txt = document.createElement("textarea");
+    txt.innerHTML = html;
+    return txt.value;
+}
+
 function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_index, parent_object_id, formId) {
+
     let wrapper = document.getElementById(control_name + "Wrapper");
     let filters = [];
     if (wrapper.dataset.valuefilters != '')
@@ -510,8 +517,11 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_ind
 
         result += '<option value="">- Select</option>';
 
-        for (let i = 0; i < r.length; i++)
-            result += '<option value="' + r[i].id + '">' + r[i].label + '</option>';
+        for (let i = 0; i < r.length; i++) {
+
+            let optionLabel = decodeHtml(r[i].label);
+            result += '<option value="' + r[i].id + '">' + optionLabel + '</option>';
+        }
 
         result += '</select>';
 

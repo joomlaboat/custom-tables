@@ -46,7 +46,7 @@ class Field
 
     var ?string $layout; //output layout, used in Search Boxes
 
-    function __construct(CT &$ct, $fieldrow, $row = null)
+    function __construct(CT &$ct, $fieldrow, $row = null, $parseParams = true)
     {
         $this->ct = &$ct;
         $this->id = $fieldrow['id'];
@@ -87,7 +87,8 @@ class Field
 
         $this->params = JoomlaBasicMisc::csv_explode(',', $fieldrow['typeparams'], '"', false);
 
-        $this->parseParams($row);
+        if ($parseParams and $this->type != 'virtual')
+            $this->parseParams($row);
     }
 
     function parseParams($row): void
@@ -101,10 +102,10 @@ class Field
 
                 if (is_numeric($type_param))
                     $new_params[] = $type_param;
-                elseif (!str_contains($type_param, '{{'))
+                elseif (!str_contains($type_param, '{{') and !str_contains($type_param, '{%'))
                     $new_params[] = $type_param;
                 else {
-                    $twig = new TwigProcessor($this->ct, $type_param);
+                    $twig = new TwigProcessor($this->ct, $type_param, false, false, false);
                     $new_params[] = $twig->process($row);
                 }
             }

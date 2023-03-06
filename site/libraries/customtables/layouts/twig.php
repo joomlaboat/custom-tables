@@ -43,8 +43,9 @@ class TwigProcessor
     var string $recordBlockReplaceCode;
     var bool $DoHTMLSpecialChars;
     var bool $getEditFieldNamesOnly;
+    var ?string $errorMessage;
 
-    public function __construct(CT &$ct, $layoutContent, $getEditFieldNamesOnly = false, $DoHTMLSpecialChars = false)
+    public function __construct(CT &$ct, $layoutContent, $getEditFieldNamesOnly = false, $DoHTMLSpecialChars = false, $parseParams = true)
     {
         $this->DoHTMLSpecialChars = $DoHTMLSpecialChars;
         $this->ct = $ct;
@@ -94,8 +95,10 @@ class TwigProcessor
         $this->twig = new \Twig\Environment($loader);
 
         $this->addGlobals();
-        $this->addFieldValueMethods();
+        $this->addFieldValueMethods($parseParams);
         $this->addTwigFilters();
+
+        $this->errorMessage = null;
     }
 
     protected function addGlobals(): void
@@ -193,7 +196,7 @@ class TwigProcessor
         $this->twig->addGlobal('tables', new Twig_Tables_Tags($this->ct));
     }
 
-    protected function addFieldValueMethods(): void
+    protected function addFieldValueMethods($parseParams = true): void
     {
         if (isset($this->ct->Table->fields)) {
             $index = 0;
@@ -212,7 +215,7 @@ class TwigProcessor
                 });
 
                 $this->twig->addFunction($function);
-                $this->variables[$fieldrow['fieldname']] = new fieldObject($this->ct, $fieldrow, $this->DoHTMLSpecialChars, $this->getEditFieldNamesOnly);
+                $this->variables[$fieldrow['fieldname']] = new fieldObject($this->ct, $fieldrow, $this->DoHTMLSpecialChars, $this->getEditFieldNamesOnly, $parseParams);
                 $index++;
             }
         }
@@ -271,12 +274,11 @@ class TwigProcessor
             $result = '';
         } else {
             try {
-                $result = $this->twig->render('index', $this->variables);
+                $result = @$this->twig->render('index', $this->variables);
 
             } catch (Exception $e) {
-                $this->ct->app->enqueueMessage($e->getMessage(), 'error');
-                echo $e->getMessage();
-                die;
+                //$this->ct->app->enqueueMessage($e->getMessage(), 'error');
+                $this->errorMessage = $e->getMessage();
                 return 'Error:' . $e->getMessage();
             }
         }
@@ -330,11 +332,11 @@ class fieldObject
     var bool $DoHTMLSpecialChars;
     var bool $getEditFieldNamesOnly;
 
-    function __construct(CT &$ct, $fieldrow, $DoHTMLSpecialChars = false, $getEditFieldNamesOnly = false)
+    function __construct(CT &$ct, $fieldrow, $DoHTMLSpecialChars = false, $getEditFieldNamesOnly = false, $parseParams = true)
     {
         $this->DoHTMLSpecialChars = $DoHTMLSpecialChars;
         $this->ct = $ct;
-        $this->field = new Field($ct, $fieldrow, $this->ct->Table->record);
+        $this->field = new Field($ct, $fieldrow, $this->ct->Table->record, $parseParams);
         $this->getEditFieldNamesOnly = $getEditFieldNamesOnly;
     }
 

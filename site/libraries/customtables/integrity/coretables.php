@@ -35,7 +35,7 @@ class IntegrityCoreTables extends IntegrityChecks
         IntegrityCoreTables::createCoreTableIfNotExists($ct, IntegrityCoreTables::getCoreTableFields_Categories());
         IntegrityCoreTables::createCoreTableIfNotExists($ct, IntegrityCoreTables::getCoreTableFields_Log());
 
-        if ($ct->Env->advancedtagprocessor) {
+        if ($ct->Env->advancedTagProcessor) {
             IntegrityCoreTables::createCoreTableIfNotExists($ct, IntegrityCoreTables::getCoreTableFields_Options());
         }
     }

@@ -90,7 +90,7 @@ class tagProcessor_Item
         tagProcessor_Item::processNoReturnLink($ct_record, $pageLayout); //Twig version added - original replaced
         tagProcessor_Field::process($ct, $pageLayout, $add_label); //Twig version added - original not changed
 
-        if ($ct->Env->advancedtagprocessor)
+        if ($ct->Env->advancedTagProcessor)
             tagProcessor_Server::process($pageLayout); //Twig version added - original not changed
 
         tagProcessor_Shopping::getShoppingCartLink($ct, $pageLayout, $row);

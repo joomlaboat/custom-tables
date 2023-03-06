@@ -34,7 +34,7 @@ class Catalog
         if ($this->ct->Env->frmt == 'html')
             $this->ct->loadJSAndCSS();
 
-        if ($this->ct->Env->legacysupport) {
+        if ($this->ct->Env->legacySupport) {
 
             $site_path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR;
 
@@ -141,7 +141,7 @@ class Catalog
         }
 
 // -------------------- Parse Layouts
-        if ($this->ct->Env->legacysupport) {
+        if ($this->ct->Env->legacySupport) {
             $catalogTableCode = JoomlaBasicMisc::generateRandomString();//this is temporary replace placeholder. to not parse content result again
 
             $catalogTableContent = tagProcessor_CatalogTableView::process($this->ct, $Layouts->layouttype, $pageLayout, $catalogTableCode);

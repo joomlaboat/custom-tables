@@ -33,7 +33,7 @@ class ViewJSON
     {
         $catalogTableCode = JoomlaBasicMisc::generateRandomString();//this is temporary replace placeholder. to not parse content result again
 
-        if ($this->ct->Env->legacysupport) {
+        if ($this->ct->Env->legacySupport) {
 
             $itemLayout = str_replace("\n", '', $itemLayoutContent);
             $itemLayout = str_replace("\r", '', $itemLayout);

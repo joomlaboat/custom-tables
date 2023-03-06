@@ -324,8 +324,8 @@ class Twig_Url_Tags
             $alt = 'Download ' . strtoupper($format) . ' file';
 
             if ($image == '') {
-                if ($this->ct->Env->toolbaricons != '' and $format == 'csv') {
-                    $img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbaricons . ' fa-file-csv" data-icon="' . $this->ct->Env->toolbaricons . ' fa-file-csv" title="' . $alt . '"></i>';
+                if ($this->ct->Env->toolbarIcons != '' and $format == 'csv') {
+                    $img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbarIcons . ' fa-file-csv" data-icon="' . $this->ct->Env->toolbarIcons . ' fa-file-csv" title="' . $alt . '"></i>';
                 } else {
                     $image = '/components/com_customtables/libraries/customtables/media/images/fileformats/' . $imagesize . 'px/' . $format_image . '.png';
                     $img = '<img src="' . $image . '" alt="' . $alt . '" title="' . $alt . '" style="width:' . $imagesize . 'px;height:' . $imagesize . 'px;">';
@@ -405,7 +405,7 @@ class Twig_Document_Tags
 
                     $html_result_layout = $twig->process($row);
 
-                    if ($this->ct->Env->legacysupport) {
+                    if ($this->ct->Env->legacySupport) {
                         $LayoutProc = new LayoutProcessor($this->ct);
                         $LayoutProc->layout = $html_result_layout;
                         $html_result_layout = $LayoutProc->fillLayout($row);
@@ -420,7 +420,7 @@ class Twig_Document_Tags
             ///if (!is_null($this->ct->Table->record))
             $html_result = $twig->process($this->ct->Table->record);
 
-            if ($this->ct->Env->legacysupport) {
+            if ($this->ct->Env->legacySupport) {
                 $LayoutProc = new LayoutProcessor($this->ct);
                 $LayoutProc->layout = $html_result;
                 $html_result = $LayoutProc->fillLayout($this->ct->Table->record);

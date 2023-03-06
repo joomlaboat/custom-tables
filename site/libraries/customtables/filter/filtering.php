@@ -68,7 +68,7 @@ class Filtering
     {
         if ($parse) {
             //Parse using layout, has no effect to layout itself
-            if ($this->ct->Env->legacysupport) {
+            if ($this->ct->Env->legacySupport) {
 
                 require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'layout.php');
 
@@ -140,7 +140,7 @@ class Filtering
                         $fieldNames = explode(';', $fieldNamesString);
                         $value = trim($whr[1]);
 
-                        if ($this->ct->Env->legacysupport) {
+                        if ($this->ct->Env->legacySupport) {
 
                             require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables'
                                 . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'layout.php');

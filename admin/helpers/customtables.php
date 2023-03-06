@@ -118,7 +118,7 @@ abstract class CustomtablesHelper
         // load the submenus to sidebar
         JHtmlSidebar::addEntry(Text::_('COM_CUSTOMTABLES_SUBMENU_DASHBOARD'), 'index.php?option=com_customtables&view=customtables', $submenu === 'customtables');
 
-        if ($ct->Env->advancedtagprocessor)
+        if ($ct->Env->advancedTagProcessor)
             JHtmlSidebar::addEntry(Text::_('COM_CUSTOMTABLES_SUBMENU_LISTOFCATEGORIES'), 'index.php?option=com_customtables&view=listofcategories', $submenu === 'listofcategories');
 
         JHtmlSidebar::addEntry(Text::_('COM_CUSTOMTABLES_SUBMENU_LISTOFTABLES'), 'index.php?option=com_customtables&view=listoftables', $submenu === 'listoftables');

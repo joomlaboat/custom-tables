@@ -731,7 +731,7 @@ class Twig_Tables_Tags
 
         if ($tables->loadRecords($layouts->tableid, $filter, $orderby, $limit)) {
 
-            if ($join_ct->Env->legacysupport) {
+            if ($join_ct->Env->legacySupport) {
                 $LayoutProc = new LayoutProcessor($join_ct);
                 $LayoutProc->layout = $pageLayout;
                 $pageLayout = $LayoutProc->fillLayout();

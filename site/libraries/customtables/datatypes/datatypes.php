@@ -59,6 +59,7 @@ class DataTypes
             'dummy' => 'COM_CUSTOMTABLES_FIELDS_DUMMY_USED_FOR_TRANSLATION',
             'article' => 'COM_CUSTOMTABLES_FIELDS_ARTICLE_LINK',
             'multilangarticle' => 'COM_CUSTOMTABLES_FIELDS_MULTILINGUAL_ARTICLE',
+            'virtual' => 'COM_CUSTOMTABLES_FIELDS_VIRTUAL',
             'md5' => 'COM_CUSTOMTABLES_FIELDS_MDFIVE_HASH',
             'log' => 'COM_CUSTOMTABLES_FIELDS_MODIFICATION_LOG',
             'usergroup' => 'COM_CUSTOMTABLES_FIELDS_USER_GROUP',

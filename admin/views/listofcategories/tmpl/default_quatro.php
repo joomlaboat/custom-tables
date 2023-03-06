@@ -34,7 +34,7 @@ HTMLHelper::_('behavior.multiselect');
     For example, on the Custom Tables/Tables page, you can filter tables based on Category. So if you have 100 tables in
     your site, you can find a Tables more easily if you know its Category.
 </p>
-<?php if (!$this->ct->Env->advancedtagprocessor): ?><p>AVAILABE IN PRO VERSION ONLY</p><?php endif; ?>
+<?php if (!$this->ct->Env->advancedTagProcessor): ?><p>AVAILABE IN PRO VERSION ONLY</p><?php endif; ?>
 
 <form action="<?php echo Route::_('index.php?option=com_customtables&view=listofcategories'); ?>" method="post"
       name="adminForm" id="adminForm">

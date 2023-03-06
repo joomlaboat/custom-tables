@@ -94,7 +94,7 @@ function renderEditor($textareacode, $textareaid, $typeboxid, $textareatabid, &$
 			';
 
 
-        if ($ct->Env->advancedtagprocessor) {
+        if ($ct->Env->advancedTagProcessor) {
             $code .= '
 			proversion=true;
 	';

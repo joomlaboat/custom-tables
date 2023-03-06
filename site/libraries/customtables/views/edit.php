@@ -23,7 +23,7 @@ function CTViewEdit(CT &$ct, $row, &$pageLayout, $formLink, $formName): void
     if (!is_null($ct->Params->ModuleId))
         $formName .= $ct->Params->ModuleId;
 
-    if ($ct->Env->legacysupport) {
+    if ($ct->Env->legacySupport) {
         $path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR;
         require_once($path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'edittags.php');
         require_once($path . 'layout.php');
@@ -51,7 +51,7 @@ function CTViewEdit(CT &$ct, $row, &$pageLayout, $formLink, $formName): void
 
     $ct->isEditForm = true; //This changes inputbox prefix
 
-    if ($ct->Env->legacysupport) {
+    if ($ct->Env->legacySupport) {
         $LayoutProc = new LayoutProcessor($ct, $pageLayout);
 
         //Better to run tag processor before rendering form edit elements because of IF statements that can exclude the part of the layout that contains form fields.

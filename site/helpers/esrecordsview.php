@@ -164,7 +164,7 @@ class JHTMLESRecordsView
                 //process layout
                 $row['_number'] = $number;
 
-                if ($ct->Env->legacysupport) {
+                if ($ct->Env->legacySupport) {
                     $LayoutProc = new LayoutProcessor($ct);
                     $LayoutProc->layout = $layoutcode;
                     $vlu = $LayoutProc->fillLayout($row);

@@ -83,7 +83,7 @@ class Value
                 return number_format((float)$rowValue, $decimals, $decimals_sep, $thousand_sep);
 
             case 'ordering':
-                return $this->orderingProcess($rowValue, $row);
+                return $this->orderingProcess($rowValue);
 
             case 'id':
             case 'md5':
@@ -118,7 +118,7 @@ class Value
                     if ($zoom == 0)
                         $zoom = 10;
 
-                    $boxId = 'ct' . $this->field->fieldname . '_map' . $row[$this->ct->Table->realidfieldname];
+                    $boxId = 'ct' . $this->field->fieldname . '_map' . $this->row[$this->ct->Table->realidfieldname];
 
                     return '<div id="' . $boxId . '" style="width:' . $width . ';height:' . $height . '">'
                         . '</div><script>ctValue_googlemapcoordinates("' . $boxId . '", ' . $lat . ',' . $lng . ',' . $zoom . ')</script>';
@@ -133,7 +133,7 @@ class Value
 
             case 'multilangstring':
             case 'multilangtext':
-                return $this->multilingual($row, $option_list);
+                return $this->multilingual($option_list);
 
             case 'text':
             case 'string':
@@ -201,7 +201,7 @@ class Value
 
             case 'imagegallery':
 
-                $getGalleryRows = CT_FieldTypeTag_imagegallery::getGalleryRows($this->ct->Table->tablename, $this->field->fieldname, $row[$this->ct->Table->realidfieldname]);
+                $getGalleryRows = CT_FieldTypeTag_imagegallery::getGalleryRows($this->ct->Table->tablename, $this->field->fieldname, $this->row[$this->ct->Table->realidfieldname]);
 
                 if ($option_list[0] ?? '' == '_count')
                     return count($getGalleryRows);
@@ -213,12 +213,12 @@ class Value
 
             case 'filebox':
 
-                $FileBoxRows = CT_FieldTypeTag_FileBox::getFileBoxRows($this->ct->Table->tablename, $this->field->fieldname, $row[$this->ct->Table->realidfieldname]);
+                $FileBoxRows = CT_FieldTypeTag_FileBox::getFileBoxRows($this->ct->Table->tablename, $this->field->fieldname, $this->row[$this->ct->Table->realidfieldname]);
 
                 if (($option_list[0] ?? '') == '_count')
                     return count($FileBoxRows);
 
-                return CT_FieldTypeTag_FileBox::process($FileBoxRows, $this->field, $row[$this->ct->Table->realidfieldname], $option_list);
+                return CT_FieldTypeTag_FileBox::process($FileBoxRows, $this->field, $this->row[$this->ct->Table->realidfieldname], $option_list);
 
             case 'customtables':
                 return $this->listProcess($rowValue, $option_list);
@@ -243,10 +243,10 @@ class Value
                 $processor_file = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_file.php';
                 require_once($processor_file);
 
-                return CT_FieldTypeTag_file::process($rowValue, $this->field, $option_list, $row[$this->ct->Table->realidfieldname], 0);
+                return CT_FieldTypeTag_file::process($rowValue, $this->field, $option_list, $this->row[$this->ct->Table->realidfieldname], 0);
 
             case 'log':
-                return CT_FieldTypeTag_log::getLogVersionLinks($this->ct, $rowValue, $row);
+                return CT_FieldTypeTag_log::getLogVersionLinks($this->ct, $rowValue, $this->row);
 
             case 'checkbox':
                 if ((int)$rowValue)
@@ -266,11 +266,13 @@ class Value
             case 'changetime':
             case 'creationtime':
                 return $this->timeProcess($rowValue, $option_list);
+            case 'virtual':
+                return $this->virtualProcess();
         }
         return null;
     }
 
-    protected function orderingProcess($value, $row): string
+    protected function orderingProcess($value): string
     {
         if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
             return $value;
@@ -308,14 +310,14 @@ class Value
             else
                 $result .= '<input type="text" name="order[]" size="5" value="' . $value . '" class="width-20 text-area-order hidden" />';
 
-            $result .= '<input type="checkbox" style="display:none" name="cid[]" value="' . $row[$this->ct->Table->realidfieldname] . '" class="width-20 text-area-order " />';
+            $result .= '<input type="checkbox" style="display:none" name="cid[]" value="' . $this->row[$this->ct->Table->realidfieldname] . '" class="width-20 text-area-order " />';
 
             $this->ct->LayoutVariables['ordering_field_type_found'] = true;
         }
         return $result;
     }
 
-    protected function multilingual(?array $row, array $option_list)
+    protected function multilingual(array $option_list)
     {
         $specific_lang = $option_list[4] ?? '';
 
@@ -335,7 +337,7 @@ class Value
             $postfix = $this->ct->Languages->Postfix; //front-end default language
 
         $fieldname = $this->field->realfieldname . $postfix;
-        $rowValue = $row[$fieldname] ?? null;
+        $rowValue = $this->row[$fieldname] ?? null;
 
         return $this->TextFunctions($rowValue, $option_list);
     }
@@ -459,8 +461,7 @@ class Value
         if (count($rows) != 1)
             return ""; //return nothing if article not found
 
-        $row = $rows[0];
-        return $row[$field];
+        return $rows[0][$field];
     }
 
     protected function listProcess($rowValue, array $option_list): string
@@ -550,5 +551,20 @@ class Value
 
             return JHTML::date($PHPDate);
         }
+    }
+
+    protected function virtualProcess(): string
+    {
+        if (count($this->field->params) == 0)
+            return '';
+
+        try {
+            $twig = new TwigProcessor($this->ct, $this->field->params[0], false, false, true);
+            $value = @$twig->process($this->row);
+        } catch (Exception $e) {
+            return 'Error:' . $e->getMessage();
+        }
+
+        return $value;
     }
 }

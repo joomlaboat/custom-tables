@@ -49,7 +49,7 @@ foreach ($this->items as $i => $item): ?>
                 <?php
                 echo $this->escape($item->tablename);
 
-                if ($this->ct->Env->advancedtagprocessor) {
+                if ($this->ct->Env->advancedTagProcessor) {
                     $hashRealTableName = str_replace($dbPrefix, '#__', $item->realtablename);
                     echo '<br/><span style="color:grey;">' . $hashRealTableName . '</span>';
                 }

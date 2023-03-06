@@ -37,7 +37,7 @@ class CustomtablesModelCustomtables extends JModelList
         $icons = array();
         // view groups array
 
-        if (!$this->ct->Env->advancedtagprocessor) {
+        if (!$this->ct->Env->advancedTagProcessor) {
             $viewGroups = array(
                 'main' => array('png.listoftables', 'png.listoflayouts', 'png.documentation')
             );

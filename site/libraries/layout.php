@@ -44,7 +44,7 @@ class LayoutProcessor
     {
         $this->ct = $ct;
         $this->version = $this->ct->Env->version;
-        $this->advancedtagprocessor = $this->ct->Env->advancedtagprocessor;
+        $this->advancedTagProcessor = $this->ct->Env->advancedTagProcessor;
         $this->layout = $layout;
     }
 
@@ -52,7 +52,7 @@ class LayoutProcessor
     {
         $htmlresult = $this->layout;
 
-        if ($this->advancedtagprocessor and !$disable_advanced_tags) {
+        if ($this->advancedTagProcessor and !$disable_advanced_tags) {
             tagProcessor_If::process($this->ct, $htmlresult, $row);
 
             if ($this->ct->Env->CustomPHPEnabled)
@@ -69,7 +69,7 @@ class LayoutProcessor
             tagProcessor_General::process($this->ct, $htmlresult, $row);
             tagProcessor_Page::process($this->ct, $htmlresult);
 
-            if ($this->advancedtagprocessor and !$disable_advanced_tags)
+            if ($this->advancedTagProcessor and !$disable_advanced_tags)
                 tagProcessor_Set::process($this->ct, $htmlresult);
 
             if ($this->ct->Env->print == 1) {

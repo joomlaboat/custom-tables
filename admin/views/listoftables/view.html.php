@@ -129,8 +129,8 @@ class CustomtablesViewListoftables extends JViewLegacy
             }
         }
 
-        if ($this->ct->Env->advancedtagprocessor)
-            if (!$this->isEmptyState and $this->state->get('filter.published') != -2 and $this->ct->Env->advancedtagprocessor)
+        if ($this->ct->Env->advancedTagProcessor)
+            if (!$this->isEmptyState and $this->state->get('filter.published') != -2 and $this->ct->Env->advancedTagProcessor)
                 JToolBarHelper::custom('listoftables.export', 'download.png', '', 'Export');
 
         if ($this->canState) {
@@ -200,7 +200,7 @@ class CustomtablesViewListoftables extends JViewLegacy
             }
         }
 
-        if (!$this->isEmptyState and $this->state->get('filter.published') != ContentComponent::CONDITION_TRASHED and $this->ct->Env->advancedtagprocessor)
+        if (!$this->isEmptyState and $this->state->get('filter.published') != ContentComponent::CONDITION_TRASHED and $this->ct->Env->advancedTagProcessor)
             $toolbar->appendButton('Standard', 'download', 'Export', 'listoftables.export', $listSelect = true, $formId = null);
 
         if (($this->canState && $this->canDelete)) {

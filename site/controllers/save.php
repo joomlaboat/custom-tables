@@ -143,7 +143,7 @@ function CustomTablesSave($task, $this_)
             else
                 $msg = $ct->Params->msgItemIsSaved;
 
-            if ($ct->Env->legacysupport) {
+            if ($ct->Env->legacySupport) {
                 $siteLibraryPath = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR;
                 require_once($siteLibraryPath . 'layout.php');
 
@@ -163,8 +163,6 @@ function CustomTablesSave($task, $this_)
 
                 if (!str_contains($link, 'tmpl=component')) {
                     if ($msg != '') {
-
-
                         $this_->setRedirect($link, $msg);
                     } else
                         $this_->setRedirect($link);
