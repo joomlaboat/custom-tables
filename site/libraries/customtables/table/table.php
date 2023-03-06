@@ -161,7 +161,7 @@ class Table
                     $this->selects[] = $this->realtablename . '.' . $field['realfieldname'] . $postfix;
                 }
 
-            } elseif ($field['type'] != 'dummy')
+            } elseif ($field['type'] != 'dummy' and !Fields::isVirtualField($field))
                 $this->selects[] = $this->realtablename . '.' . $field['realfieldname'];
         }
     }

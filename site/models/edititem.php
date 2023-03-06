@@ -713,7 +713,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
                     $fields_to_save[] = $fieldrow['realfieldname'] . $postfix;
                 }
-            } elseif ($fieldrow['type'] != 'log' and $fieldrow['type'] != 'dummy')
+            } elseif ($fieldrow['type'] != 'log' and $fieldrow['type'] != 'dummy' and !Fields::isVirtualField($fieldrow))
                 $fields_to_save[] = $fieldrow['realfieldname'];
         }
 

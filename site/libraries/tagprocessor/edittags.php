@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomTables\CT;
+use CustomTables\Fields;
 use CustomTables\Twig_Html_Tags;
 
 class tagProcessor_Edit
@@ -118,7 +119,7 @@ class tagProcessor_Edit
                         if ($fieldrow['type'] == 'date')
                             $calendars[] = $inputBox->ct->Env->field_prefix . $fieldrow['fieldname'];
 
-                        if ($fieldrow['type'] != 'dummy')
+                        if ($fieldrow['type'] != 'dummy' and !Fields::isVirtualField($fieldrow))
                             $result = $inputBox->renderFieldBox($fieldrow, $row, $option_list, '');
 
                         if ($inputBox->ct->Env->frmt == 'json') {

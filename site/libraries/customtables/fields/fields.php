@@ -236,7 +236,7 @@ class Fields
         }
 
         foreach ($realFieldNames as $realfieldname) {
-            if ($field->type != 'dummy') {
+            if ($field->type != 'dummy' and !Fields::isVirtualField($fieldrow)) {
                 $msg = '';
                 Fields::deleteMYSQLField($tableRow->realtablename, $realfieldname, $msg);
             }
@@ -374,6 +374,17 @@ class Fields
             }
         }
         return $constrances;
+    }
+
+    public static function isVirtualField(array $fieldRow): bool
+    {
+        $isrequired = (int)$fieldRow['isrequired'];
+
+        if ($fieldRow['type'] == 'virtual') {
+            $paramsList = JoomlaBasicMisc::csv_explode(',', $fieldRow['typeparams'], '"', false);
+            return ($paramsList[1] ?? 'virtual') == 'virtual' or '';
+        } else
+            return $isrequired == 2 or $isrequired == 3;
     }
 
     public static function deleteMYSQLField($realtablename, $realfieldname, &$msg): bool
@@ -710,6 +721,8 @@ class Fields
         return $field;
     }
 
+    //MySQL only
+
     public static function deleteTableLessFields(): void
     {
         $db = Factory::getDBO();
@@ -717,8 +730,6 @@ class Fields
         $db->setQuery($query);
         $db->execute();
     }
-
-    //MySQL only
 
     public static function getSelfParentField($ct)
     {
@@ -913,11 +924,11 @@ class Fields
         $realtablename = str_replace('#__', $db->getPrefix(), $realtablename);
 
         if ($fieldid != 0) {
-            $fieldrow = Fields::getFieldRow($fieldid);
+            $fieldRow = Fields::getFieldRow($fieldid);
 
-            $ex_type = $fieldrow->type;
-            $ex_typeparams = $fieldrow->typeparams;
-            $realfieldname = $fieldrow->realfieldname;
+            $ex_type = $fieldRow->type;
+            $ex_typeparams = $fieldRow->typeparams;
+            $realfieldname = $fieldRow->realfieldname;
         } else {
             $ex_type = '';
             $ex_typeparams = '';
@@ -930,7 +941,7 @@ class Fields
         }
 
         $new_typeparams = $data['typeparams'];
-        $fieldtitle = $data['fieldtitle'];
+        $fieldTitle = $data['fieldtitle'];
 
         //---------------------------------- Convert Field
 
@@ -956,7 +967,7 @@ class Fields
                 //do nothing. field can be deleted
                 $convert_ok = true;
             } else
-                $convert_ok = Fields::ConvertFieldType($realtablename, $realfieldname, $ex_type, $new_type, $ex_typeparams, $new_typeparams, $PureFieldType, $fieldtitle);
+                $convert_ok = Fields::ConvertFieldType($realtablename, $realfieldname, $ex_type, $new_type, $ex_typeparams, $new_typeparams, $PureFieldType, $fieldTitle);
 
             if (!$convert_ok) {
                 Factory::getApplication()->enqueueMessage('Cannot convert the type.', 'error');
@@ -998,7 +1009,7 @@ class Fields
 
         if ($fieldid == 0 or !$fieldFound) {
             //Add Field
-            Fields::addField($ct, $realtablename, $realfieldname, $new_type, $PureFieldType, $fieldtitle);
+            Fields::addField($ct, $realtablename, $realfieldname, $new_type, $PureFieldType, $fieldTitle, $data);
         }
 
         if ($new_type == 'sqljoin') {
@@ -1112,6 +1123,7 @@ class Fields
 
     public static function getProjectedFieldType(string $ct_fieldType, ?string $typeParams): array
     {
+        echo '$ct_fieldType=' . $ct_fieldType . '<br/>';
         //Returns an array of mysql column parameters
         switch (trim($ct_fieldType)) {
             case '_id':
@@ -1250,6 +1262,19 @@ class Fields
 
             case 'dummy':
                 return ['data_type' => null, 'is_nullable' => null, 'is_unsigned' => null, 'length' => null, 'default' => null, 'extra' => null];
+
+            case 'virtual':
+
+                $typeParamsArray = JoomlaBasicMisc::csv_explode(',', $typeParams);
+                $storage = $typeParamsArray[1] ?? '';
+
+                if ($storage == 'storedstring') {
+                    $l = (int)$typeParamsArray[2] ?? 255;
+                    return ['data_type' => 'varchar', 'is_nullable' => true, 'is_unsigned' => null, 'length' => ($l < 1 ? 255 : (min($l, 4069))), 'default' => null, 'extra' => null];
+                } elseif ($storage == 'storedinteger')
+                    return ['data_type' => 'int', 'is_nullable' => true, 'is_unsigned' => false, 'length' => null, 'default' => null, 'extra' => null];
+                else
+                    return ['data_type' => null, 'is_nullable' => null, 'is_unsigned' => null, 'length' => null, 'default' => null, 'extra' => null];
 
             case 'md5':
                 return ['data_type' => 'char', 'is_nullable' => true, 'is_unsigned' => null, 'length' => 32, 'default' => null, 'extra' => null];
@@ -1411,9 +1436,9 @@ class Fields
                 return true; //no need to convert
         }
 
-        $unconvertable_types = array('dummy', 'imagegallery', 'file', 'filebox', 'signature', 'records', 'customtables', 'log');
+        $inconvertible_types = array('dummy', 'virtual', 'imagegallery', 'file', 'filebox', 'signature', 'records', 'customtables', 'log');
 
-        if (in_array($new_type, $unconvertable_types) or in_array($ex_type, $unconvertable_types))
+        if (in_array($new_type, $inconvertible_types) or in_array($ex_type, $inconvertible_types))
             return false;
 
         $PureFieldType_ = $PureFieldType;
@@ -1512,7 +1537,7 @@ class Fields
         return $newRow;
     }
 
-    public static function addField(CT $ct, $realtablename, $realfieldname, $fieldType, $PureFieldType, $fieldtitle): void
+    public static function addField(CT $ct, $realtablename, $realfieldname, $fieldType, $PureFieldType, $fieldTitle, array $fieldRow): void
     {
         if ($PureFieldType == '')
             return;
@@ -1522,9 +1547,9 @@ class Fields
         if (!str_contains($fieldType, 'multilang')) {
             $AdditionOptions = '';
             if ($db->serverType != 'postgresql')
-                $AdditionOptions = ' COMMENT ' . $db->Quote($fieldtitle);
+                $AdditionOptions = ' COMMENT ' . $db->Quote($fieldTitle);
 
-            if ($fieldType != 'dummy')
+            if ($fieldType != 'dummy' and !Fields::isVirtualField($fieldRow))
                 Fields::AddMySQLFieldNotExist($realtablename, $realfieldname, $PureFieldType, $AdditionOptions);
         } else {
             $index = 0;
@@ -1536,7 +1561,7 @@ class Fields
 
                 $AdditionOptions = '';
                 if ($db->serverType != 'postgresql')
-                    $AdditionOptions = ' COMMENT ' . $db->Quote($fieldtitle);
+                    $AdditionOptions = ' COMMENT ' . $db->Quote($fieldTitle);
 
                 Fields::AddMySQLFieldNotExist($realtablename, $realfieldname . $postfix, $PureFieldType, $AdditionOptions);
 
@@ -1741,12 +1766,6 @@ class Fields
             echo 'Caught exception: ', $e->getMessage(), "\n";
             die;
         }
-    }
-
-    public static function isVirtualField(array $fieldRow): bool
-    {
-        $isrequired = (int)$fieldRow['isrequired'];
-        return $isrequired == 2 or $isrequired == 3;
     }
 }
 

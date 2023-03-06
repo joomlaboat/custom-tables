@@ -14,6 +14,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomTables\CT;
+use CustomTables\Fields;
 use Joomla\CMS\Factory;
 
 class CT_FieldTypeTag_log
@@ -150,13 +151,12 @@ class CT_FieldTypeTag_log
         $version_size = 0;
 
         foreach ($ct->Table->fields as $fieldRow) {
-            if ($fieldRow['type'] != 'log' and $fieldRow['type'] != 'dummy') {
+            if ($fieldRow['type'] != 'log' and $fieldRow['type'] != 'dummy' and !Fields::isVirtualField($fieldRow)) {
                 $field_name = $ct->Env->field_prefix . $fieldRow['fieldname'];
                 if (isset($decoded_data_row[$field_name]))
                     $version_size += strlen($decoded_data_row[$field_name]);
             }
         }
-
         return $version_size;
     }
 }

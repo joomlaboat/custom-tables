@@ -117,6 +117,18 @@ class IntegrityFields extends IntegrityChecks
                         $found = false;
                         break;
                     }
+                } elseif ($projected_field['type'] == 'virtual') {
+
+                    if ($existingFieldName == $projected_field['realfieldname']) {
+                        if (fields::isVirtualField($projected_field)) {
+                            $found = false;
+                        } else {
+                            $projected_data_type = Fields::getProjectedFieldType($projected_field['type'], $projected_field['typeparams']);
+                            $found_field = $projected_field['realfieldname'];
+                            $found = true;
+                        }
+                        break;
+                    }
                 } else {
                     if ($existingFieldName == $projected_field['realfieldname']) {
                         $projected_data_type = Fields::getProjectedFieldType($projected_field['type'], $projected_field['typeparams']);
@@ -217,8 +229,9 @@ class IntegrityFields extends IntegrityChecks
         foreach ($projected_fields as $projected_field) {
             $proj_field = $projected_field['realfieldname'];
             $fieldType = $projected_field['type'];
-            if ($fieldType != 'dummy')
+            if ($fieldType != 'dummy' and !Fields::isVirtualField($projected_field)) {
                 IntegrityFields::addFieldIfNotExists($ct, $ct->Table->realtablename, $ExistingFields, $proj_field, $fieldType, $projected_field['typeparams']);
+            }
         }
         return $result;
     }

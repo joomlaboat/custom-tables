@@ -1375,6 +1375,18 @@
           ct_alias="virtual" disabled="false" ct_special="false" priority="1">
         <params>
             <param name="layout" label="Layout" description="Value Layout" default="" type="fieldlayout"/>
+
+            <param name="storage" label="Value Storage" type="list" default="virtual"
+                   description="Store the value for future use in search or order by.">
+                <option value="virtual" label="Virtual (Computed on request)"/>
+                <option value="storedstring" label="Stored String"/>
+                <option value="storedinteger" label="Stored Integer"/>
+            </param>
+
+            <param name="length" label="Length"
+                   description="Number of characters. Applied for Stored String only."
+                   hidden="false" default="255" type="number" min="1" max="4096"
+                   example="30"/>
         </params>
     </type>
 </fieldtypes>

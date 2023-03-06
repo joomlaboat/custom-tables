@@ -397,7 +397,7 @@ class ImportTables
         return true;
     }
 
-    protected static function processField(CT &$ct, $tableid, $tableName, &$field_new, &$msg)
+    protected static function processField(CT &$ct, $tableid, $tableName, &$field_new)
     {
         //This function creates the table field and returns field's id.
         //If field with same name already exists then existing field will be updated, and it's ID will be returned.
@@ -416,7 +416,7 @@ class ImportTables
                 //Field added
                 //Lets create mysql field
                 $PureFieldType = Fields::getPureFieldType($field_new['type'], $field_new['typeparams']);
-                Fields::addField($ct, '#__customtables_table_' . $tableName, $ct->Env->field_prefix . $fieldName, $field_new['type'], $PureFieldType, $field_new['fieldtitle']);
+                Fields::addField($ct, '#__customtables_table_' . $tableName, $ct->Env->field_prefix . $fieldName, $field_new['type'], $PureFieldType, $field_new['fieldtitle'], $field_new['type']);
             }
         }
         return $fieldid;

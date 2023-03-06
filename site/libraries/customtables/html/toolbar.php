@@ -195,8 +195,11 @@ class RecordToolbar
         foreach ($this->Table->fields as $mFld) {
             $ordering = (int)$mFld['ordering'];
             if ($mFld['type'] != 'dummy' and $ordering < $min_ordering) {
-                $min_ordering = $ordering;
-                $fieldTitleValue = $this->getFieldCleanValue4RDI($mFld);
+
+                if ($mFld['type'] != 'virtual' and !Fields::isVirtualField($mFld)) {
+                    $min_ordering = $ordering;
+                    $fieldTitleValue = $this->getFieldCleanValue4RDI($mFld);
+                }
             }
         }
         return substr($fieldTitleValue, -100);
