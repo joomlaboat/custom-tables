@@ -275,9 +275,7 @@ class TwigProcessor
         } else {
             try {
                 $result = @$this->twig->render('index', $this->variables);
-
             } catch (Exception $e) {
-                //$this->ct->app->enqueueMessage($e->getMessage(), 'error');
                 $this->errorMessage = $e->getMessage();
                 return 'Error:' . $e->getMessage();
             }

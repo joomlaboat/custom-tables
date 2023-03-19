@@ -111,21 +111,21 @@ class Inputbox
     {
         $selector = $selectors[$index];
 
-        $tablename = $selector[0];
-        if ($tablename === null) {
+        $tableName = $selector[0];
+        if ($tableName === null) {
             if ($obEndClean)
                 die(json_encode(['error' => 'Table not selected']));
             else
                 return 'Table not selected';
         }
 
-        $ct->getTable($tablename);
+        $ct->getTable($tableName);
         if (is_null($ct->Table->tablename))
-            die(json_encode(['error' => 'Table "' . $tablename . '"not found']));
+            die(json_encode(['error' => 'Table "' . $tableName . '"not found']));
 
-        $fieldname_or_layout = $selector[1];
-        if ($fieldname_or_layout === null or $fieldname_or_layout == '')
-            $fieldname_or_layout = $ct->Table->fields[0]['fieldname'];//Get first field if not specified
+        $fieldName_or_layout = $selector[1];
+        if ($fieldName_or_layout === null or $fieldName_or_layout == '')
+            $fieldName_or_layout = $ct->Table->fields[0]['fieldname'];//Get first field if not specified
 
         //$showPublished = 0 - show published
         //$showPublished = 1 - show unpublished
@@ -140,16 +140,16 @@ class Inputbox
             if ($fld['type'] == 'sqljoin' or $fld['type'] == 'records') {
                 $type_params = JoomlaBasicMisc::csv_explode(',', $fld['typeparams']);
 
-                $join_tablename = $type_params[0];
-                $join_to_tablename = $selector[5];
+                $join_tableName = $type_params[0];
+                $join_to_tableName = $selector[5];
 
                 if ($additional_filter != '') {
-                    if ($join_tablename == $join_to_tablename) {
+                    if ($join_tableName == $join_to_tableName) {
                         $filter .= ' and ' . $fld['fieldname'] . '=' . $additional_filter;
                     }
                 } else {
                     //Check if this table has self-parent field - the TableJoin field linked with the same table.
-                    if ($join_tablename == $tablename) {
+                    if ($join_tableName == $tableName) {
 
                         if ($subFilter == '')
                             $additional_where = '(' . $fld['realfieldname'] . ' IS NULL OR ' . $fld['realfieldname'] . '="")';
@@ -173,37 +173,40 @@ class Inputbox
         }
         */
 
-        $orderby = $selector[4] ?? '';
+        $orderBy = $selector[4] ?? '';
 
         //sorting
-        $ct->Ordering->ordering_processed_string = $orderby;
+        $ct->Ordering->ordering_processed_string = $orderBy;
         $ct->Ordering->parseOrderByString();
 
         $ct->getRecords();
 
-        if (!str_contains($fieldname_or_layout, '{{') and !str_contains($fieldname_or_layout, 'layout')) {
-            $fieldname_or_layout_tag = '{{ ' . $fieldname_or_layout . ' }}';
+        if (!str_contains($fieldName_or_layout, '{{') and !str_contains($fieldName_or_layout, 'layout')) {
+            $fieldName_or_layout_tag = '{{ ' . $fieldName_or_layout . ' }}';
         } else {
-            $pair = explode(':', $fieldname_or_layout);
+            $pair = explode(':', $fieldName_or_layout);
 
             if (count($pair) == 2) {
                 $layout_mode = true;
                 if ($pair[0] != 'layout' and $pair[0] != 'tablelesslayout')
-                    die(json_encode(['error' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_UNKNOWN_FIELD_LAYOUT') . ' "' . $fieldname_or_layout . '"']));
+                    die(json_encode(['error' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_UNKNOWN_FIELD_LAYOUT') . ' "' . $fieldName_or_layout . '"']));
 
                 $Layouts = new Layouts($ct);
-                $fieldname_or_layout_tag = $Layouts->getLayout($pair[1]);
+                $fieldName_or_layout_tag = $Layouts->getLayout($pair[1]);
 
-                if (!isset($fieldname_or_layout_tag) or $fieldname_or_layout_tag == '')
-                    die(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_LAYOUT_NOT_FOUND') . ' "' . $pair[1] . '"');
+                if (!isset($fieldName_or_layout_tag) or $fieldName_or_layout_tag == '') {
+                    $result_js = ['error' => JoomlaBasicMisc::JTextExtended(
+                            'COM_CUSTOMTABLES_ERROR_LAYOUT_NOT_FOUND') . ' "' . $pair[1] . '"'];
+                    return json_encode($result_js);
+                }
             } else
-                $fieldname_or_layout_tag = $fieldname_or_layout;
+                $fieldName_or_layout_tag = $fieldName_or_layout;
         }
 
-        $itemLayout = '{"id":"{{ record.id }}","label":"' . $fieldname_or_layout_tag . '"}';
+        $itemLayout = '{"id":"{{ record.id }}","label":"' . $fieldName_or_layout_tag . '"}';
         $pageLayoutContent = '[{% block record %}{% if record.number>1 %},{% endif %}' . $itemLayout . '{% endblock %}]';
 
-        $paramsArray['establename'] = $tablename;
+        $paramsArray['establename'] = $tableName;
 
         $params = new Registry;
         $params->loadArray($paramsArray);

@@ -239,18 +239,18 @@ class CustomtablesViewListoflayouts extends JViewLegacy
         }
 
         foreach ($fields as $field) {
-            $fieldname = $field['fieldname'];
+            $fieldName = $field['fieldname'];
 
-            if (strpos($row->layoutcode, '*' . $fieldname . '*') !== false)
+            if (strpos($row->layoutcode, '*' . $fieldName . '*') !== false)
                 $original_ct_matches += 1;
 
-            if (strpos($row->layoutcode, '|' . $fieldname . '|') !== false)
+            if (strpos($row->layoutcode, '|' . $fieldName . '|') !== false)
                 $original_ct_matches += 1;
 
-            if (strpos($row->layoutcode, '[' . $fieldname . ':') !== false)
+            if (strpos($row->layoutcode, '[' . $fieldName . ':') !== false)
                 $original_ct_matches += 1;
 
-            if (strpos($row->layoutcode, '[' . $fieldname . ']') !== false)
+            if (strpos($row->layoutcode, '[' . $fieldName . ']') !== false)
                 $original_ct_matches += 1;
         }
 
@@ -266,15 +266,15 @@ class CustomtablesViewListoflayouts extends JViewLegacy
         }
 
         foreach ($fields as $field) {
-            $fieldname = $field['fieldname'];
+            $fieldName = $field['fieldname'];
 
-            if (strpos($row->layoutcode, '{{ ' . $fieldname . '(') !== false)
+            if (strpos($row->layoutcode, '{{ ' . $fieldName . '(') !== false)
                 $twig_matches += 1;
 
-            if (strpos($row->layoutcode, '{{ ' . $fieldname . ' }}') !== false)
+            if (strpos($row->layoutcode, '{{ ' . $fieldName . ' }}') !== false)
                 $twig_matches += 1;
 
-            if (strpos($row->layoutcode, '{{ ' . $fieldname . '.') !== false)
+            if (strpos($row->layoutcode, '{{ ' . $fieldName . '.') !== false)
                 $twig_matches += 1;
         }
 

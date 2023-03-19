@@ -152,6 +152,7 @@ class Twig_Html_Tags
             . $this->ct->Env->field_input_prefix . $objectname . '","ct_uploadedfile_box_' . $objectname . '")
                     </script>
                     <input type="hidden" name="' . $this->ct->Env->field_input_prefix . $objectname . '" id="' . $this->ct->Env->field_input_prefix . $objectname . '" value="" />
+                    <input type="hidden" name="' . $this->ct->Env->field_input_prefix . $objectname . '_filename" id="' . $this->ct->Env->field_input_prefix . $objectname . '_filename" value="" />
 			' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE') . ': ' . JoomlaBasicMisc::formatSizeUnits($max_file_size) . '
                     </form>
                 </div>

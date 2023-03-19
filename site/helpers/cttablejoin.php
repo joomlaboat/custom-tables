@@ -28,24 +28,25 @@ class JHTMLCTTableJoin
 
         $filter = [];
         $parent_filter_table_and_field = JHTMLCTTableJoin::parseTagArguments($option_list, $filter);
-        $parent_filter_table_name = $parent_filter_table_and_field[0];
-        $parent_filter_field_name = $parent_filter_table_and_field[1];
+        $parent_filter_table_name = $parent_filter_table_and_field[0] ?? '';
+        $parent_filter_field_name = $parent_filter_table_and_field[1] ?? '';
 
         $params_filter = [];
-        JHTMLCTTableJoin::parseTypeParams($field, $params_filter, $parent_filter_table_name, $parent_filter_field_name);
-        $params_filter = array_reverse($params_filter);
-        if (count($params_filter) > 0 and isset($option_list[3])) {
-            $params_filter[0][1] = 'layout:' . $option_list[3];
+        if ($parent_filter_table_name == '' and $parent_filter_field_name == '') {
+            JHTMLCTTableJoin::parseTypeParams($field, $params_filter, $parent_filter_table_name, $parent_filter_field_name);
+            $params_filter = array_reverse($params_filter);
+            if (count($params_filter) > 0 and isset($option_list[3])) {
+                $params_filter[0][1] = 'layout:' . $option_list[3];
+            }
         }
 
         $filter = array_merge($filter, $params_filter);
 
         //Get initial table filters based on the value
         $js_filters = [];
-        $js_filters_selfParent = [];
         $parent_id = $value;
 
-        JHTMLCTTableJoin::processValue($filter, $parent_id, $js_filters, $js_filters_selfParent);
+        JHTMLCTTableJoin::processValue($filter, $parent_id, $js_filters);
 
         if (count($js_filters) == 0)
             $js_filters[] = $value;
@@ -60,8 +61,6 @@ class JHTMLCTTableJoin
         $data[] = 'data-valuefilters="' . base64_encode(json_encode($js_filters)) . '"';
         $data[] = 'data-onchange="' . base64_encode($onchange) . '"';
         $data[] = 'data-listing_id="' . $listing_is . '"';
-        //$data[] = 'data-attributes="' . base64_encode($attributes) . '"';
-
         $data[] = 'data-value="' . $value . '"';
 
         if ($ct->app->getName() == 'administrator')   //since   3.2
@@ -83,8 +82,8 @@ class JHTMLCTTableJoin
         //example: city.edit("cssclass","attributes",[["province","name",true,"active=1","name"],["city","name",false,"active=1","name"],["streets","layout:TheStreetName",false,"active=1","streetname"]])
         //parameter 3 can be 1 or 2 dimensional array.
         //One dimensional array will be converted to 2 dimensional array.
-        //$cssclass = $option_list[0]; // but it's have been already progressed
-        //$attribute = $option_list[1]; // but it's have been already progressed
+        //$cssclass = $option_list[0]; // but it's having been already progressed
+        //$attribute = $option_list[1]; // but it's having been already progressed
 
         //Twig teg example:
         //{{ componentid.edit("mycss","readonly",[["grades","grade"],["classes","class"]]) }}
@@ -236,19 +235,19 @@ class JHTMLCTTableJoin
         return [$tableName, $fieldName, $allowUnpublished, $where_filter, $orderBy, $parent_filter_table_name, $parent_filter_field_name];
     }
 
-    protected static function processValue(&$filter, &$parent_id, &$js_filters): void
+    protected static function processValue($filter, &$parent_id, &$js_filters): void
     {
         for ($i = count($filter) - 1; $i >= 0; $i--) {
             $flt = $filter[$i];
-            $tablename = $flt[0];
+            $tableName = $flt[0];
 
             $temp_ct = new CT;
-            $temp_ct->getTable($tablename);
+            $temp_ct->getTable($tableName);
 
             $temp_js_filters = null;
-            $join_to_tablename = $flt[5];
+            $join_to_tableName = $flt[5];
 
-            $parent_id = JHTMLCTTableJoin::getParentFilterID($temp_ct, $parent_id, $join_to_tablename);
+            $parent_id = JHTMLCTTableJoin::getParentFilterID($temp_ct, $parent_id, $join_to_tableName);
             $temp_js_filters = $parent_id;
 
             //Check if this table has self-parent field - the TableJoin field linked with the same table.
@@ -269,12 +268,12 @@ class JHTMLCTTableJoin
                 //$filter[$i][6] = $selfParentField['fieldname'];//it was 6
                 //$js_filters_selfParent[] = 1;
 
-                $join_to_tablename = $filter[$i][5];//it was 5
+                $join_to_tableName = $filter[$i][5];//it was 5
 
                 $selfParent_filters = [];
                 while ($parent_id !== null) {
                     $selfParent_filters[] = $parent_id;
-                    $parent_id = JHTMLCTTableJoin::getParentFilterID($temp_ct, $parent_id, $join_to_tablename);
+                    $parent_id = JHTMLCTTableJoin::getParentFilterID($temp_ct, $parent_id, $join_to_tableName);
                 }
 
                 $selfParent_filters[] = "";
@@ -343,6 +342,10 @@ class JHTMLCTTableJoin
             return '';
 
         $resultJSON_encoded = @json_decode($result, null, 512, JSON_INVALID_UTF8_IGNORE);
+
+        if (isset($resultJSON_encoded->error))
+            return $resultJSON_encoded->error;
+
         $resultJSON = [];
         foreach ($resultJSON_encoded as $j) {
             $j->label = html_entity_decode($j->label);
@@ -350,7 +353,7 @@ class JHTMLCTTableJoin
         }
 
         if (!is_array($resultJSON))
-            return 'Table Join - Corrupted data or unsupported encoding.';
+            return 'Table Join - Corrupted or not supported encoding.';
 
         return self::ctRenderTableJoinSelectBox($ct, $control_name, $resultJSON, $index, $sub_index, $object_id, $formId, $attributes, $onchange, $filter, $js_filters, $value);
     }

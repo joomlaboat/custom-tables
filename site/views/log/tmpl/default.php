@@ -13,27 +13,27 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
-$currenturl = JoomlaBasicMisc::curPageURL();
-$cleanurl = JoomlaBasicMisc::deleteURLQueryOption($currenturl, 'action');
-$cleanurl = JoomlaBasicMisc::deleteURLQueryOption($cleanurl, 'user');
+$currentURL = JoomlaBasicMisc::curPageURL();
+$cleanURL = JoomlaBasicMisc::deleteURLQueryOption($currentURL, 'action');
+$cleanURL = JoomlaBasicMisc::deleteURLQueryOption($cleanURL, 'user');
 
-if (strpos($cleanurl, "?") === false)
-    $cleanurl .= '?';
+if (strpos($cleanURL, "?") === false)
+    $cleanURL .= '?';
 else
-    $cleanurl .= '&';
+    $cleanURL .= '&';
 
 echo '
 <script>
 function ActionFilterChanged(o){
-	location.href="' . $cleanurl . 'user=' . $this->userid . '&table=' . $this->tableid . '&action="+o.value;
+	location.href="' . $cleanURL . 'user=' . $this->userid . '&table=' . $this->tableId . '&action="+o.value;
 }
 
 function UserFilterChanged(o){
-	location.href="' . $cleanurl . 'action=' . $this->action . '&table=' . $this->tableid . '&user="+o.value;
+	location.href="' . $cleanURL . 'action=' . $this->action . '&table=' . $this->tableId . '&user="+o.value;
 }
 
 function TableFilterChanged(o){
-	location.href="' . $cleanurl . 'action=' . $this->action . '&user=' . $this->userid . '&table="+o.value;
+	location.href="' . $cleanURL . 'action=' . $this->action . '&user=' . $this->userid . '&table="+o.value;
 }
 </script>';
 
@@ -47,11 +47,11 @@ echo '<div class="datagrid">'
     . '<thead>'
     . '<tr>'
     . '<th>A</th>'
-    . '<th>User</th>'
-    . '<th>Time</th>'
-    . '<th>Table</th>'
-    . '<th>Record</th>'
-    . '<th>Action</th>'
+    . '<th style="text-align:left;">User</th>'
+    . '<th style="text-align:left;">Time</th>'
+    . '<th style="text-align:left;">Table</th>'
+    . '<th style="text-align:left;">Record</th>'
+    . '<th style="text-align:left;">Action</th>'
     . '</tr>'
     . '</thead>'
     . '<tbody>';

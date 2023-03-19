@@ -198,8 +198,8 @@
             <!-- Option Set.-->
             <option value="1">COM_CUSTOMTABLES_FIELDS_REQUIRED</option>
             <option value="0">COM_CUSTOMTABLES_FIELDS_NOTREQUIRED</option>
-            <option value="2">COM_CUSTOMTABLES_FIELDS_GENERATED_VIRTUAL</option>
-            <option value="3">COM_CUSTOMTABLES_FIELDS_GENERATED_STORED</option>
+            <!--<option value="2">COM_CUSTOMTABLES_FIELDS_GENERATED_VIRTUAL</option>
+            <option value="3">COM_CUSTOMTABLES_FIELDS_GENERATED_STORED</option>-->
         </field>
         <!-- Tableid Field. Type: Sql. (joomla)-->
         <field type="cttable"

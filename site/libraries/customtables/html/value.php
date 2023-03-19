@@ -558,8 +558,11 @@ class Value
         if (count($this->field->params) == 0)
             return '';
 
+        $layout = str_replace('****quote****', '"', $this->field->params[0]);
+        $layout = str_replace('****apos****', '"', $layout);
+
         try {
-            $twig = new TwigProcessor($this->ct, $this->field->params[0], false, false, true);
+            $twig = new TwigProcessor($this->ct, $layout, false, false, true);
             $value = @$twig->process($this->row);
 
             if ($twig->errorMessage !== null)
@@ -567,7 +570,6 @@ class Value
         } catch (Exception $e) {
             return 'Error:' . $e->getMessage();
         }
-
         return $value;
     }
 }

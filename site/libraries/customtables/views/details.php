@@ -32,7 +32,7 @@ class Details
         $this->layoutType = 0;
     }
 
-    function load($layoutDetailsContent = null): ?string
+    function load($layoutDetailsContent = null): bool
     {
         if (!$this->loadRecord())
             return false;
@@ -56,18 +56,10 @@ class Details
         $this->ct->LayoutVariables['layout_type'] = $this->layoutType;
 
         if (!is_null($this->row)) {
-            //$returnto = $this->ct->Params->returnTo;
-
-            //if ((!isset($this->row[$this->ct->Table->realidfieldname]) or (int)$this->row[$this->ct->Table->realidfieldname] == 0) and $returnto != '') {
-            //  $this->ct->app->redirect($returnto);
-            //}
-
-
             //Save view log
             $this->SaveViewLogForRecord($this->row);
             $this->UpdatePHPOnView();
         }
-
         return true;
     }
 

@@ -22,14 +22,12 @@ class CustomTablesViewLog extends JViewLegacy
 {
     var CT $ct;
     var Details $details;
-
     var int $limit;
-    var int $limitstart;
+    var int $limitStart;
     var int $record_count;
     var int $userid;
     var string $action;
-
-    var int $tableid;
+    var int $tableId;
     var bool $isUserAdministrator;
     var ?array $records;
     var string $actionSelector;
@@ -39,7 +37,6 @@ class CustomTablesViewLog extends JViewLegacy
     function display($tpl = null)
     {
         $this->ct = new CT;
-
         $user = Factory::getUser();
         $this->userid = $user->id;
 
@@ -48,19 +45,14 @@ class CustomTablesViewLog extends JViewLegacy
             $this->action = -1;
 
         $this->userid = Factory::getApplication()->input->getInt('user', 0);
-
-        $this->tableid = Factory::getApplication()->input->getInt('table', 0);
+        $this->tableId = Factory::getApplication()->input->getInt('table', 0);
 
         //Is user super Admin?
         $this->isUserAdministrator = $this->ct->Env->isUserAdministrator;
-
-        $this->records = $this->getRecords($this->action, $this->userid, $this->tableid);
-
+        $this->records = $this->getRecords($this->action, $this->userid, $this->tableId);
         $this->actionSelector = $this->ActionFilter($this->action);
-
         $this->userSelector = $this->getUsers($this->userid);
-
-        $this->tableSelector = $this->gettables($this->tableid);
+        $this->tableSelector = $this->gettables($this->tableId);
 
         parent::display($tpl);
     }
@@ -72,9 +64,9 @@ class CustomTablesViewLog extends JViewLegacy
         if ($this->limit == 0)
             $this->limit = 20;
 
-        $this->limitstart = Factory::getApplication()->input->get('start', 0, 'INT');
+        $this->limitStart = Factory::getApplication()->input->get('start', 0, 'INT');
         // In case limit has been changed, adjust it
-        $this->limitstart = ($this->limit != 0 ? (floor($this->limitstart / $this->limit) * $this->limit) : 0);
+        $this->limitStart = ($this->limit != 0 ? (floor($this->limitStart / $this->limit) * $this->limit) : 0);
 
         $db = Factory::getDBO();
 
@@ -96,7 +88,6 @@ class CustomTablesViewLog extends JViewLegacy
             $where[] = 'tableid=' . $tableid;
 
         $query = 'SELECT ' . implode(',', $selects) . ' FROM #__customtables_log ' . (count($where) > 0 ? ' WHERE ' . implode(' AND ', $where) : '') . ' ORDER BY datetime DESC';
-
         $this->record_count = 1000;
 
         $the_limit = $this->limit;
@@ -106,15 +97,14 @@ class CustomTablesViewLog extends JViewLegacy
         if ($the_limit == 0)
             $the_limit = 500;
 
-        if ($this->record_count < $this->limitstart or $this->record_count < $the_limit)
-            $this->limitstart = 0;
+        if ($this->record_count < $this->limitStart or $this->record_count < $the_limit)
+            $this->limitStart = 0;
 
-        $db->setQuery($query, $this->limitstart, $the_limit);
-
+        $db->setQuery($query, $this->limitStart, $the_limit);
         return $db->loadAssocList();
     }
 
-    function ActionFilter($action)
+    function ActionFilter($action): string
     {
         $actions = ['New', 'Edit', 'Publish', 'Unpublish', 'Delete', 'Image Uploaded', 'Image Deleted', 'File Uploaded', 'File Deleted', 'Refreshed'];
         $result = '<select onchange="ActionFilterChanged(this)">';
@@ -125,52 +115,41 @@ class CustomTablesViewLog extends JViewLegacy
             $result .= '<option value="' . $v . '" ' . ($action == $v ? 'selected="SELECTED"' : '') . '>' . $a . '</option>';
             $v++;
         }
-
         $result .= '</select>';
         return $result;
     }
 
-    function getUsers($userid)
+    function getUsers($userid): string
     {
         $db = Factory::getDBO();
-
         $query = 'SELECT #__users.id AS id, #__users.name AS name FROM #__customtables_log INNER JOIN #__users ON #__users.id=#__customtables_log.userid GROUP BY #__users.id ORDER BY name';
-
         $db->setQuery($query);
-
         $rows = $db->loadAssocList();
-
         $result = '<select onchange="UserFilterChanged(this)">';
         $result .= '<option value="0" ' . ($userid == 0 ? 'selected="SELECTED"' : '') . '>- ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT') . '</option>';
 
         foreach ($rows as $row) {
             $result .= '<option value="' . $row['id'] . '" ' . ($userid == $row['id'] ? 'selected="SELECTED"' : '') . '>' . $row['name'] . '</option>';
         }
-
         $result .= '</select>';
-
         return $result;
     }
 
-    function getTables($tableid): string
+    function getTables($tableId): string
     {
         $db = Factory::getDBO();
-
         $query = 'SELECT id,tablename FROM #__customtables_tables ORDER BY tablename';
-
         $db->setQuery($query);
-
         $rows = $db->loadAssocList();
 
         $result = '<select onchange="TableFilterChanged(this)">';
-        $result .= '<option value="0" ' . ($tableid == 0 ? 'selected="SELECTED"' : '') . '>- ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT') . '</option>';
+        $result .= '<option value="0" ' . ($tableId == 0 ? 'selected="SELECTED"' : '') . '>- ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT') . '</option>';
 
         foreach ($rows as $row) {
-            $result .= '<option value="' . $row['id'] . '" ' . ($tableid == $row['id'] ? 'selected="SELECTED"' : '') . '>' . $row['tablename'] . '</option>';
+            $result .= '<option value="' . $row['id'] . '" ' . ($tableId == $row['id'] ? 'selected="SELECTED"' : '') . '>' . $row['tablename'] . '</option>';
         }
 
         $result .= '</select>';
-
         return $result;
     }
 
@@ -198,9 +177,14 @@ class CustomTablesViewLog extends JViewLegacy
         $link = '/index.php?option=com_customtables&view=details&listing_id=' . $rec['listingid'] . '&Itemid=' . $rec['Itemid'];
 
         $result .= '<td><a href="' . $link . '" target="_blank">' . $rec['datetime'] . '</a></td>'
+            . '<td style="vertical-align:top;">' . $rec['TableName'] . '</td>';
 
-            . '<td>' . $rec['TableName'] . '</td>'
-            . '<td>' . $this->getRecordValue($rec['listingid'], $rec['Itemid'], $rec['FieldName']) . '<br/>(id: ' . $rec['listingid'] . ')</td>'
+
+        $recordValue = $this->getRecordValue($rec['listingid'], $rec['Itemid'], $rec['FieldName']);
+        if ($recordValue != '')
+            $recordValue .= '<br/>';
+
+        $result .= '<td style="vertical-align:top;">' . $recordValue . '(id: ' . $rec['listingid'] . ')</td>'
             . '<td>' . $alt . '</td>'
             . '</tr>';
 
@@ -213,10 +197,10 @@ class CustomTablesViewLog extends JViewLegacy
             return "Table/Field not found.";
 
         $app = Factory::getApplication();
-        $jinput = Factory::getApplication()->input;
+        $jInput = Factory::getApplication()->input;
 
-        $jinput->set("listing_id", $listing_id);
-        $jinput->set('Itemid', $Itemid);
+        $jInput->set("listing_id", $listing_id);
+        $jInput->set('Itemid', $Itemid);
 
         $menu = $app->getMenu();
         $menuParams = $menu->getParams($Itemid);
@@ -224,9 +208,10 @@ class CustomTablesViewLog extends JViewLegacy
         $ct = new CT($menuParams, false);
 
         $this->details = new Details($ct);
+        $this->details->load();
 
-        if ($ct->Table->tablename === null)
-            return "Table " . $ct->Table->tablename . "not found.";
+        if ($ct->Table === null or $ct->Table->tablename === null)
+            return "Table not found.";
 
         $layoutContent = '{{ ' . $FieldName . ' }}';
         $twig = new TwigProcessor($ct, $layoutContent);
