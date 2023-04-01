@@ -977,7 +977,11 @@ class SaveFieldQuerySet
             if ($storage == "storedintegersigned" or $storage == "storedintegerunsigned" or $storage == "storedstring") {
 
                 try {
-                    $twig = new TwigProcessor($this->ct, $paramsList[0], false, false, true);
+
+                    $code = str_replace('****quote****', '"', $paramsList[0]);
+                    $code = str_replace('****apos****', "'", $code);
+
+                    $twig = new TwigProcessor($this->ct, $code, false, false, true);
                     $value = @$twig->process($this->row);
 
                     if ($twig->errorMessage !== null) {

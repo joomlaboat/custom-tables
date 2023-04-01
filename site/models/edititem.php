@@ -1222,7 +1222,6 @@ class CustomTablesModelEditItem extends JModelLegacy
             $link = '';
             $msg = $twig->errorMessage;
         }
-
         return $link;
     }
 

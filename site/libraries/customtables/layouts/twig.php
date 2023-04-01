@@ -411,8 +411,9 @@ class fieldObject
 
         } elseif ($this->field->type == 'filebox') {
             $vlu = implode(',', CT_FieldTypeTag_FileBox::getFileBoxRows($this->ct->Table->tablename, $this->field->fieldname, $this->ct->Table->record[$this->ct->Table->realidfieldname]));
-        } else
-            $vlu = (string)$this->ct->Table->record[$rfn];
+        } else {
+            $vlu = $this->ct->Table->record[$rfn];
+        }
 
         if ($this->DoHTMLSpecialChars) {
             $vlu = htmlentities($vlu, ENT_IGNORE + ENT_DISALLOWED + ENT_HTML5, "UTF-8");
