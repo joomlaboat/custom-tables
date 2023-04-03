@@ -133,7 +133,6 @@ class Documentation
 
                     foreach ($type->editparams as $p) {
                         $params = $p->params;
-                        //$result.='<h5>'.common::translate('COM_CUSTOMTABLES_EDITRECPARAMS').':</h5>'
                         $result .= $this->renderParametersInternal($params,
                             '{{ ',
                             '<i>' . str_replace(' ', '', common::translate('COM_CUSTOMTABLES_FIELDNAME')) . '</i>',
@@ -144,6 +143,27 @@ class Documentation
                     }
 
                 }
+
+                if (!empty($type->subvalueparams)) {
+
+                    foreach ($type->subvalueparams as $p) {
+
+                        $params_att = $p->attributes();
+                        //print_r($p);
+                        //$params = $p->params;
+                        $result .= '<h5>' . $params_att->label . ':</h5>';
+                        /*$result .= $this->renderParametersInternal($params,
+                            '{{ ',
+                            '<i>' . str_replace(' ', '', common::translate('COM_CUSTOMTABLES_FIELDNAME')) . '</i>',
+                            '.edit',
+                            ' }}',
+                            $hideDefaultExample);
+                        break;
+                        */
+                    }
+
+                }
+
                 $result .= '</div>';
             }
         }

@@ -130,7 +130,8 @@ class Inputbox
         //$showPublished = 0 - show published
         //$showPublished = 1 - show unpublished
         //$showPublished = 2 - show any
-        $showPublished = (($selector[2] ?? '') == 'true' ? 2 : 0); //$selector[2] can be "" or "true" or "false"
+        $showPublishedString = $selector[2] ?? '';
+        $showPublished = ($showPublishedString == 'true' ? 2 : 0); //$selector[2] can be "" or "true" or "false"
 
         $filter = $selector[3] ?? '';
 

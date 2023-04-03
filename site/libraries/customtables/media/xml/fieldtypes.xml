@@ -895,6 +895,46 @@
                        type="string"/>
             </params>
         </editparams>
+
+        <subvalueparams name="get" label="Read processed value of selected field of joined table.">
+            <param name="fieldName" label="Field name"
+                   description="Specify the name of the field to get the value from."
+                   type="field"/>
+            <param name="showPublished" label="Show Published Records"
+                   description="Filter the list of records, show published, unpublished or all records." hidden="false"
+                   default="published" type="list">
+                <option value="published" label="Only Published"/>
+                <option value="unpublished" label="Only Unpublished"/>
+                <option value="all" label="Show all records"/>
+            </param>
+        </subvalueparams>
+
+        <subvalueparams name="getvalue" label="Read unprocessed value of selected field of joined table.">
+            <param name="fieldName" label="Field name"
+                   description="Specify the name of the field to get the value from."
+                   type="field"/>
+            <param name="showPublished" label="Show Published Records"
+                   description="Filter the list of records, show published, unpublished or all records." hidden="false"
+                   default="published" type="list">
+                <option value="published" label="Only Published"/>
+                <option value="unpublished" label="Only Unpublished"/>
+                <option value="all" label="Show all records"/>
+            </param>
+        </subvalueparams>
+
+        <subvalueparams name="layout" label="Render the value of joined table using selected layout.">
+            <param type="layout" name="layout" label="Layout"
+                   description="The layout to render joined table record."
+                   layouttype="catalogitem,simplecatalog,record,details,email,xml,csv,json"/>
+            <param name="showPublished" label="Show Published Records"
+                   description="Filter the list of records, show published, unpublished or all records." hidden="false"
+                   default="published" type="list">
+                <option value="published" label="Only Published"/>
+                <option value="unpublished" label="Only Unpublished"/>
+                <option value="all" label="Show all records"/>
+            </param>
+        </subvalueparams>
+
     </type>
 
     <type ct_name="ordering" name="ordering" label="Ordering/Sorting"
@@ -1119,6 +1159,24 @@
                        image="https://joomlaboat.com/images/components/ct/field-types/tablejoin-customtitle.png"/>
             </params>
         </editparams>
+
+        <subvalueparams name="get" label="Read selected field processed value from joined table.">
+            <param name="fieldName" label="Field name"
+                   description="Specify the name of the field to get the value from."
+                   type="field"/>
+        </subvalueparams>
+
+        <subvalueparams name="getvalue" label="Read unprocessed value of selected field of joined table.">
+            <param name="fieldName" label="Field name"
+                   description="Specify the name of the field to get the value from."
+                   type="field"/>
+        </subvalueparams>
+
+        <subvalueparams name="layout" label="Render the value of joined table using selected layout.">
+            <param type="layout" name="layout" label="Layout"
+                   description="The layout to render joined table record."
+                   layouttype="catalogitem,simplecatalog,record,details,email,xml,csv,json"/>
+        </subvalueparams>
     </type>
 
     <type ct_name="text" name="text" label="Text Area (Multiple Lines)"

@@ -21,7 +21,7 @@ use CustomTables\TwigProcessor;
 class CT_FieldTypeTag_records
 {
     //New function
-    public static function resolveRecordTypeValue(&$field, $layoutcode, $rowValue, $showPublishedString = '')
+    public static function resolveRecordTypeValue(&$field, $layoutcode, $rowValue, string $showPublishedString = '')
     {
         $db = Factory::getDBO();
 
