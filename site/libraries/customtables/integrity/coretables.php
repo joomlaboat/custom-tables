@@ -170,13 +170,13 @@ class IntegrityCoreTables extends IntegrityChecks
                     if (isset($projected_field['ct_typeparams']) and $projected_field['ct_typeparams'] != '')
                         $typeParams = $projected_field['ct_typeparams'];
 
-                    IntegrityCoreTables::checkCoreTableFields($ct, $realtablename, $ExistingFields, $projected_realfieldname, $ct_fieldtype, $typeParams);
+                    IntegrityCoreTables::checkCoreTableFields($realtablename, $ExistingFields, $projected_realfieldname, $ct_fieldtype, $typeParams);
                 }
             }
         }
     }
 
-    public static function checkCoreTableFields(CT &$ct, $realtablename, $ExistingFields, $realfieldname, $ct_fieldtype, $ct_typeparams = '')
+    public static function checkCoreTableFields($realtablename, $ExistingFields, $realfieldname, $ct_fieldType, $ct_typeparams = '')
     {
         $existingFieldFound = null;
         foreach ($ExistingFields as $ExistingField) {
@@ -189,8 +189,8 @@ class IntegrityCoreTables extends IntegrityChecks
         if ($existingFieldFound === null)
             die('field not created ' . $realfieldname);
 
-        if ($ct_fieldtype !== null and $ct_fieldtype != '') {
-            $projected_data_type = Fields::getProjectedFieldType($ct_fieldtype, $ct_typeparams);
+        if ($ct_fieldType !== null and $ct_fieldType != '') {
+            $projected_data_type = Fields::getProjectedFieldType($ct_fieldType, $ct_typeparams);
 
             if (!IntegrityFields::compareFieldTypes($existingFieldFound, $projected_data_type)) {
                 $PureFieldType = Fields::makeProjectedFieldType($projected_data_type);
