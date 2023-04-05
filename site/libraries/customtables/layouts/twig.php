@@ -369,11 +369,6 @@ class fieldObject
         return 'unknown';
     }
 
-    /*public function fieldname()
-    {
-        return $this->field->fieldname;
-    }*/
-
     public function v()
     {
         return $this->value();
