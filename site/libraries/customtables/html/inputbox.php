@@ -1159,6 +1159,10 @@ class Inputbox
         $esr_table = $this->field->params[0];
         $esr_field = $this->field->params[1] ?? '';
 
+        if (isset($this->option_list[3])) {
+            $esr_field = 'layout:' . $this->option_list[3];
+        }
+
         $esr_selector = $this->field->params[2] ?? '';
 
         if (count($this->field->params) > 3)
