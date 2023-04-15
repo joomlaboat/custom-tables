@@ -224,7 +224,7 @@ class Value
                 return $this->listProcess($rowValue, $option_list);
 
             case 'records':
-                return CT_FieldTypeTag_records::resolveRecordType($this->ct, $rowValue, $this->field, $option_list);
+                return CT_FieldTypeTag_records::resolveRecordType($rowValue, $this->field, $option_list);
 
             case 'sqljoin':
                 return CT_FieldTypeTag_sqljoin::resolveSQLJoinType($rowValue, $this->field->params, $option_list);

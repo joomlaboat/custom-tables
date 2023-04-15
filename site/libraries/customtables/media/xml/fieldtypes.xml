@@ -887,6 +887,21 @@
             <param name="allowunpublished" label="Allow Unpublished" description="Allow to select unpublished records."
                    default="" type="radio" options="|No,true|Yes"/>
         </params>
+
+        <valueparams name="records" label="How to show the list of records selected.">
+            <params>
+                <param name="fieldname" label="Field Name" example="title"
+                       description="Type the field name to return the value from. You may type layout name instead. options: [layout:layoutname or tablelesslayout:layoutname]"
+                       default="" type="string"/>
+                <param name="orderby" label="Order By" example="price" description="Field name to sort records by"
+                       default=""
+                       type="string"/>
+                <param name="separator" label="List Separator" example=","
+                       description="Separate record values with a character. i.e. ',' or ';'" default=","
+                       type="string"/>
+            </params>
+        </valueparams>
+
         <editparams name="records" label="Input Element Parameters" description="">
             <params>
                 <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)."/>
@@ -1133,7 +1148,7 @@
                    description="Requires that joining table contains Table Join field to use it as a Category Filter"
                    default="" type="string"/>
             <param name="orderby" label="Order By" example="title" description="Field name to sort record by" default=""
-                   type="string"/>
+                   type="field"/>
             <param name="allowunpublished" example="" label="Allow Unpublished"
                    description="Allow to select unpublished records." default="" type="radio" options="|No,true|Yes"/>
             <param name="selector" label="Selector" example="dropdown" description="How to select records."

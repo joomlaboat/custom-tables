@@ -104,7 +104,7 @@ class Twig_Record_Tags
         return Route::_($view_link);
     }
 
-    function published($type, $second_variable = null)
+    function published(string $type = '', string $customTextPositive = "Published", string $customTextNegative = "Unpublished")
     {
         if (!isset($this->ct->Table)) {
             $this->ct->app->enqueueMessage('{{ record.published }} - Table not loaded.', 'error');
@@ -116,18 +116,14 @@ class Twig_Record_Tags
             return null;
         }
 
-        if ($type == 'yesno' or $type == '')
-            return (int)$this->ct->Table->record['listing_published'] == 1 ? JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YES') : JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NO');
-        elseif ($type == 'bool' or $type == 'boolean')
+        if ($type == 'bool' or $type == 'boolean')
             return ((int)$this->ct->Table->record['listing_published'] ? 'true' : 'false');
         elseif ($type == 'number')
             return (int)$this->ct->Table->record['listing_published'];
-        else {
-            if ($second_variable !== null)
-                return $this->ct->Table->record['listing_published'] == 1 ? $second_variable : '';
-            else
-                return (int)$this->ct->Table->record['listing_published'];
-        }
+        elseif ($type == 'custom')
+            return $this->ct->Table->record['listing_published'] == 1 ? $customTextPositive : $customTextNegative;
+        else
+            return (int)$this->ct->Table->record['listing_published'] == 1 ? JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YES') : JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NO');
     }
 
     function number(): ?int

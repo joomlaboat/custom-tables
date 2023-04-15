@@ -90,26 +90,28 @@ class CT_FieldTypeTag_records
     }
 
     //Old function
-    public static function resolveRecordType(CT &$ct, $rowValue, $field, array $options)
+    public static function resolveRecordType($rowValue, $field, array $options)
     {
-        $sortByField = '';
-        $result = '';
-
         if (count($field->params) < 1)
-            $result .= 'table not specified';
+            return 'table not specified';
 
         if (count($field->params) < 2)
-            $result .= 'field or layout not specified';
+            return 'field or layout not specified';
 
         if (count($field->params) < 3)
-            $result .= 'selector not specified';
+            return 'selector not specified';
 
         $esr_table = $field->params[0];
 
+        $sortByField = '';
+        if (isset($field->params[5]))
+            $sortByField = $field->params[5];
+
+        if (($options[1] ?? '') != '')
+            $sortByField = $options[1];
+
         if (($options[0] ?? '') != '') {
             $esr_field = $options[0];
-            if (isset($options[1]))
-                $sortByField = $options[1];
         } else
             $esr_field = $field->params[1];
 
@@ -120,14 +122,11 @@ class CT_FieldTypeTag_records
         else
             $esr_filter = '';
 
-        if ($sortByField == '' and isset($field->params[5]))
-            $sortByField = $field->params[5];
+        if (($options[2] ?? '') != '')
+            $separator = $options[1];
+        else
+            $separator = '';
 
-        //this is important because it has been selected somehow.
-        $esr_filter = '';
-
-        $result = JHTML::_('ESRecordsView.render', $rowValue, $esr_table, $esr_field, $esr_selector, $esr_filter, $sortByField);
-
-        return $result;
+        return JHTML::_('ESRecordsView.render', $rowValue, $esr_table, $esr_field, $esr_selector, $esr_filter, $sortByField, $separator);
     }
 }

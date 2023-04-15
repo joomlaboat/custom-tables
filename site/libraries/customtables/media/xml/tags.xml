@@ -308,7 +308,9 @@
                             description="Word 'true' will be returned if record is published or word 'false' instead"/>
                     <option value="custom" label="Custom" description="Custom text to show if the record is published"/>
                 </param>
-                <param type="string" name="customtext" label="Custom Text( Optional)"
+                <param type="string" name="customtextpositive" label="Custom Text (Published)"
+                       description="Custom text to show if the record is published"/>
+                <param type="string" name="customtextnegative" label="Custom Text (Unpublished)"
                        description="Custom text to show if the record is published"/>
             </params>
         </tag>

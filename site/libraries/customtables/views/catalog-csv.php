@@ -50,24 +50,11 @@ class CatalogExportCSV
         $pageLayoutContent = $this->catalog->render($layout);
         $pageLayoutContent = preg_replace('/(<(script|style)\b[^>]*>).*?(<\/\2>)/is', "$1$3", $pageLayoutContent);
         /*
-        $pageLayoutContent = str_ireplace('<th', '"<th', $pageLayoutContent);
-        $pageLayoutContent = str_ireplace('</th>', '</th>",', $pageLayoutContent);
-
-        $pageLayoutContent = str_ireplace('<td', '"<td', $pageLayoutContent);
-        $pageLayoutContent = str_ireplace('</td>', '</td>",', $pageLayoutContent);
-
         $pageLayoutContent = str_ireplace('</tr>', '****linebrake****', $pageLayoutContent);
         */
         if ($this->ct->Params->allowContentPlugins)
             JoomlaBasicMisc::applyContentPlugins($pageLayoutContent);
-        /*
-        if ($this->layoutType != 9) //not CSV layout
-        {
-            $pageLayoutContent = str_replace("\n", '', $pageLayoutContent);
-            $pageLayoutContent = str_replace("\r", '', $pageLayoutContent);
-            $pageLayoutContent = str_replace("\t", '', $pageLayoutContent);
-        }
-        */
+
 //$pageLayoutContent = str_ireplace('****linebrake****', "\r" . "\n", $pageLayoutContent);
 
 //echo chr(255).chr(254);

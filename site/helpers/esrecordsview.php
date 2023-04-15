@@ -21,7 +21,7 @@ require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARAT
 
 class JHTMLESRecordsView
 {
-    public static function render($value, $tableName, $field, $selector, $filter, $sortByField = ""): ?string
+    public static function render($value, $tableName, $field, $selector, $filter, $sortByField = "", string $separator = ","): ?string
     {
         if ($value == '' or $value == ',' or $value == ',,')
             return '';
@@ -63,55 +63,23 @@ class JHTMLESRecordsView
 
         // --------------------- Limit
         $ct->applyLimits();
-
         $ct->getRecords();
 
         if (is_null($ct->Records)) {
             return 'Records not loaded';
         }
 
-        $selectorPair = explode(':', $selector);
-
         if (!str_contains($field, ':')) {
             //without layout
             $valueArray = explode(',', $value);
-            switch ($selectorPair[0]) {
-                case 'single' :
 
-                    //$getGalleryRows=array();
-                    foreach ($ct->Records as $row) {
-                        if (in_array($row[$ct->Table->realidfieldname], $valueArray))
-                            $htmlresult .= JoomlaBasicMisc::processValue($field, $ct, $row);
-                    }
+            $vArray = array();
 
-                    break;
-
-                case 'checkbox':
-                case 'multibox':
-                case 'multi' :
-
-                    $vArray = array();
-
-                    foreach ($ct->Records as $row) {
-                        if (in_array($row[$ct->Table->realidfieldname], $valueArray))
-                            $vArray[] = JoomlaBasicMisc::processValue($field, $ct, $row);
-                    }
-                    $htmlresult .= implode(',', $vArray);
-
-                    break;
-
-                case 'radio' :
-
-                    foreach ($ct->Records as $row) {
-                        if (in_array($row[$ct->Table->realidfieldname], $valueArray))
-                            $htmlresult .= JoomlaBasicMisc::processValue($field, $ct, $row);
-                    }
-
-                    break;
-
-                default:
-                    return '<p>Incorrect selector</p>';
+            foreach ($ct->Records as $row) {
+                if (in_array($row[$ct->Table->realidfieldname], $valueArray))
+                    $vArray[] = JoomlaBasicMisc::processValue($field, $ct, $row);
             }
+            $htmlresult .= implode($separator, $vArray);
         } else {
             $pair = JoomlaBasicMisc::csv_explode(':', $field);
 
@@ -140,60 +108,93 @@ class JHTMLESRecordsView
 
             $valueArray = explode(',', $value);
 
-            if (!$isTableLess)
-                $htmlresult .= '<table style="border:none;">';
-
-            $number = 1;
-
-
-            $tr = 0;
-
-            $CleanSearchResult = [];
-            foreach ($ct->Records as $row) {
-                if (in_array($row[$ct->Table->realidfieldname], $valueArray))
-                    $CleanSearchResult[] = $row;
-            }
-
-            foreach ($CleanSearchResult as $row) {
-                if ($tr == $columns)
-                    $tr = 0;
-
-                if (!$isTableLess and $tr == 0)
-                    $htmlresult .= '<tr>';
-
-                //process layout
-                $row['_number'] = $number;
-
-                if ($ct->Env->legacySupport) {
-                    $LayoutProc = new LayoutProcessor($ct);
-                    $LayoutProc->layout = $layoutcode;
-                    $vlu = $LayoutProc->fillLayout($row);
-                } else
-                    $vlu = $layoutcode;
-
-                $twig = new TwigProcessor($ct, $vlu);
-                $vlu = $twig->process($row);
-                if ($twig->errorMessage !== null)
-                    $ct->app->enqueueMessage($twig->errorMessage, 'error');
-
-                if ($isTableLess)
-                    $htmlresult .= $vlu;
-                else
-                    $htmlresult .= '<td style="border:none;">' . $vlu . '</td>';
-
-                $tr++;
-                if (!$isTableLess and $tr == $columns)
-                    $htmlresult .= '</tr>';
-
-                $number++;
-            }
-
-            if (!$isTableLess and $tr < $columns)
-                $htmlresult .= '</tr>';
-
-            if (!$isTableLess)
-                $htmlresult .= '</table><!-- records view : end of table -->';
+            if ($isTableLess)
+                $htmlresult .= self::renderResultsAsTableLess($ct, $valueArray, $layoutcode, $separator);
+            else
+                $htmlresult .= self::renderResultsAsTable($ct, $valueArray, $columns, $layoutcode);
         }
         return $htmlresult;
+    }
+
+    protected static function renderResultsAsTableLess(CT &$ct, array $valueArray, string $layoutcode, string $separator = ','): string
+    {
+        $vArray = array();
+        $number = 1;
+
+        $CleanSearchResult = [];
+        foreach ($ct->Records as $row) {
+            if (in_array($row[$ct->Table->realidfieldname], $valueArray))
+                $CleanSearchResult[] = $row;
+        }
+
+        foreach ($CleanSearchResult as $row) {
+
+            //process layout
+            $row['_number'] = $number;
+
+            if ($ct->Env->legacySupport) {
+                $LayoutProc = new LayoutProcessor($ct);
+                $LayoutProc->layout = $layoutcode;
+                $vlu = $LayoutProc->fillLayout($row);
+            } else
+                $vlu = $layoutcode;
+
+            $twig = new TwigProcessor($ct, $vlu);
+            $vlu = $twig->process($row);
+            if ($twig->errorMessage !== null)
+                $ct->app->enqueueMessage($twig->errorMessage, 'error');
+
+            $vArray[] = $vlu;
+            $number++;
+        }
+        return implode($separator, $vArray);
+    }
+
+    protected static function renderResultsAsTable(CT &$ct, array $valueArray, int $columns, string $layoutcode): string
+    {
+        $htmlresult = '<table style="border:none;">';
+
+        $number = 1;
+        $tr = 0;
+
+        $CleanSearchResult = [];
+        foreach ($ct->Records as $row) {
+            if (in_array($row[$ct->Table->realidfieldname], $valueArray))
+                $CleanSearchResult[] = $row;
+        }
+
+        foreach ($CleanSearchResult as $row) {
+            if ($tr == $columns)
+                $tr = 0;
+
+            $htmlresult .= '<tr>';
+
+            //process layout
+            $row['_number'] = $number;
+
+            if ($ct->Env->legacySupport) {
+                $LayoutProc = new LayoutProcessor($ct);
+                $LayoutProc->layout = $layoutcode;
+                $vlu = $LayoutProc->fillLayout($row);
+            } else
+                $vlu = $layoutcode;
+
+            $twig = new TwigProcessor($ct, $vlu);
+            $vlu = $twig->process($row);
+            if ($twig->errorMessage !== null)
+                $ct->app->enqueueMessage($twig->errorMessage, 'error');
+
+            $htmlresult .= '<td style="border:none;">' . $vlu . '</td>';
+
+            $tr++;
+            if ($tr == $columns)
+                $htmlresult .= '</tr>';
+
+            $number++;
+        }
+
+        $htmlresult .= '</tr>';
+
+        return $htmlresult . '</table>';
     }
 }
