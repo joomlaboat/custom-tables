@@ -144,9 +144,7 @@ function ctRefreshRecord(tableid, recordId, toolbarBoxId, ModuleId) {
 function ctOrderChanged(objectValue) {
     const current_url = esPrepareLink(['returnto', 'task', 'orderby'], [], '');
     let returnto = btoa(current_url);
-
     let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + ctItemId;
-
     link = esPrepareLink(['task'], ['task=setorderby', 'orderby=' + objectValue, 'returnto=' + returnto], link);
     window.location.href = link;
 }
@@ -154,7 +152,6 @@ function ctOrderChanged(objectValue) {
 function ctLimitChanged(object) {
     const current_url = esPrepareLink(['returnto', 'task', 'limit'], [], '');
     let returnto = btoa(current_url);
-
     let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + ctItemId;
     link = esPrepareLink(['task'], ['task=setlimit', 'limit=' + object.value, 'returnto=' + returnto], link);
     window.location.href = link;
@@ -165,14 +162,11 @@ function ctPublishRecord(tableid, recordId, toolbarBoxId, publish, ModuleId) {
         return;
 
     es_LinkLoading = true;
-
     document.getElementById(toolbarBoxId).innerHTML = '';
 
     let task = publish === 1 ? 'task=publish' : 'task=unpublish';
-
     let element_tableid_tr = "ctTable_" + tableid + '_' + recordId;
     let tr_object = document.getElementById(element_tableid_tr);
-
     let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + ctItemId;
 
     if (tr_object) {

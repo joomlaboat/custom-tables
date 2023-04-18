@@ -411,6 +411,9 @@ class CTUser
     //checkAccess
     public static function CheckAuthorization(CT &$ct, int $action = 1)
     {
+        if ($action == 0)
+            return true;
+
         if ($action == 5) //force edit
         {
             $action = 1;

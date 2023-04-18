@@ -14,7 +14,7 @@ if (!function_exists('str_contains')) {
     }
 }
 
-function CTLoader($inclide_utilities = false, $include_html = false, $PLUGIN_NAME_DIR = null, $componentName = 'com_customtables')
+function CTLoader($include_utilities = false, $include_html = false, $PLUGIN_NAME_DIR = null, $componentName = 'com_customtables')
 {
     if (defined('_JEXEC')) {
         $params = JComponentHelper::getParams($componentName);
@@ -65,7 +65,7 @@ function CTLoader($inclide_utilities = false, $include_html = false, $PLUGIN_NAM
     //require_once($path_helpers.'layouts.php');
     require_once($path_helpers . 'types.php');
 
-    if ($inclide_utilities) {
+    if ($include_utilities) {
         $path_utilities = $path . 'utilities' . DIRECTORY_SEPARATOR;
         require_once($path_utilities . 'importtables.php');
         require_once($path_utilities . 'exporttables.php');
