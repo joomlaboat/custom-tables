@@ -1557,7 +1557,7 @@ class Fields
         return $newRow;
     }
 
-    public static function addField(CT $ct, $realtablename, $realfieldname, $fieldType, $PureFieldType, $fieldTitle, array $fieldRow): void
+    public static function addField(CT $ct, string $realtablename, string $realfieldname, string $fieldType, string $PureFieldType, string $fieldTitle, array $fieldRow): void
     {
         if ($PureFieldType == '')
             return;

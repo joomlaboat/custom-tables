@@ -416,7 +416,8 @@ class ImportTables
                 //Field added
                 //Lets create mysql field
                 $PureFieldType = Fields::getPureFieldType($field_new['type'], $field_new['typeparams']);
-                Fields::addField($ct, '#__customtables_table_' . $tableName, $ct->Env->field_prefix . $fieldName, $field_new['type'], $PureFieldType, $field_new['fieldtitle'], $field_new['type']);
+                Fields::addField($ct, '#__customtables_table_' . $tableName, $ct->Env->field_prefix . $fieldName,
+                    $field_new['type'], $PureFieldType, $field_new['fieldtitle'], $field_new);
             }
         }
         return $fieldid;
