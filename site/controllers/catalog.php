@@ -34,10 +34,9 @@ if ($view == 'home') {
 $task = $jinput->getCmd('task');
 
 //Check Authorization
-//3 - to delete
 $PermissionIndexes = ['setorderby' => 0, 'setorderby' => 0, 'clear' => 3, 'delete' => 3, 'copy' => 4, 'copycontent' => 4, 'refresh' => 1, 'publish' => 2, 'unpublish' => 2, 'createuser' => 1, 'resetpassword' => 1];
 //$PermissionWords=['clear'=>'core.delete','delete'=>'core.delete','copy'=>'core.create','refresh'=>'core.edit','publish'=>'core.edit.state','unpublish'=>'core.edit.state','createuser'=>'core.edit'];
-//$PermissionIndex = 0;
+$PermissionIndex = 0;
 //$PermissionWord='';
 //if (array_key_exists($task,$PermissionWords))
 //$PermissionWord=$PermissionWords[$task];

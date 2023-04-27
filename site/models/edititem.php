@@ -460,11 +460,6 @@ class CustomTablesModelEditItem extends JModelLegacy
         if (in_array($USER_IP, $IP_Black_List))
             return true;
 
-        if (!$this->check_captcha()) {
-            $msg = 'Incorrect Captcha';
-            return false;
-        }
-
         $isDebug = $this->ct->Env->jinput->getInt('debug', 0);
 
         if ($listing_id == '') {
@@ -488,6 +483,13 @@ class CustomTablesModelEditItem extends JModelLegacy
             $row_old[$this->ct->Table->realidfieldname] = '';
 
         $fieldsToSave = $this->getFieldsToSave($row_old); //will Read page Layout to find fields to save
+
+        if (($this->ct->LayoutVariables['captcha'] ?? null)) {
+            if (!$this->check_captcha()) {
+                $msg = 'COM_CUSTOMTABLES_INCORRECT_CAPTCHA';
+                return false;
+            }
+        }
 
         $phpOnChangeFound = false;
         $phpOnAddFound = false;
@@ -612,28 +614,6 @@ class CustomTablesModelEditItem extends JModelLegacy
         return true;
     }
 
-    function check_captcha(): bool
-    {
-        $options = array();
-        $captcha = JoomlaBasicMisc::getListToReplace('captcha', $options, $this->pageLayout, '{}');
-
-        if (count($captcha) == 0)
-            return true;
-
-        $config = Factory::getConfig()->get('captcha');
-        $captcha = JCaptcha::getInstance($config);
-        try {
-            $completed = $captcha->CheckAnswer(null);//null because nothing should be provided
-
-            if ($completed === false)
-                return false;
-
-        } catch (Exception $e) {
-            return false;
-        }
-        return true;
-    }
-
     function getFieldsToSave($row): array
     {
         $this->ct->isEditForm = true; //This changes inputbox prefix
@@ -690,6 +670,22 @@ class CustomTablesModelEditItem extends JModelLegacy
             }
         }
         return $fieldsToEdit;
+    }
+
+    function check_captcha(): bool
+    {
+        $config = Factory::getConfig()->get('captcha');
+        $captcha = JCaptcha::getInstance($config);
+        try {
+            $completed = $captcha->CheckAnswer(null);//null because nothing should be provided
+
+            if ($completed === false)
+                return false;
+
+        } catch (Exception $e) {
+            return false;
+        }
+        return true;
     }
 
     function updateLog($saveField, $listing_id)

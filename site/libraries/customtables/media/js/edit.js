@@ -230,7 +230,17 @@ function doFilters(obj, label, filters_string) {
         let filter_parts = filters[i].split(':');
         let filter = filter_parts[0];
 
-        if (filter === 'url') {
+        if (filter === 'email') {
+            // /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+            let lastAtPos = value.lastIndexOf('@');
+            let lastDotPos = value.lastIndexOf('.');
+            let isEmailValid = (lastAtPos < lastDotPos && lastAtPos > 0 && value.indexOf('@@') == -1 && lastDotPos > 2 && (value.length - lastDotPos) > 2);
+            if (!isEmailValid) {
+                alert('The ' + label + ' "' + value + '" is not a valid Email.');
+                return false;
+            }
+        } else if (filter === 'url') {
             if (!isValidURL(value)) {
                 alert('The ' + label + ' "' + value + '" is not a valid URL.');
                 return false;
@@ -474,6 +484,7 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_ind
         if (Array.isArray(filters[next_index])) {
 
             next_sub_index = 0;
+            alert("next_index:" + next_index);
             next_index += 1;
 
             if (next_index + 1 < filters.length) {
@@ -539,7 +550,10 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_ind
     }
 }
 
-function ctUpdateTableJoinLink(control_name, index, execute_all, sub_index, object_id, formId, updateValue) {//, attributes
+function ctUpdateTableJoinLink(control_name, index, execute_all, sub_index, object_id, formId, updateValue) {
+
+    alert("index:" + index);
+
     let wrapper = document.getElementById(control_name + "Wrapper");
     //let onchange = atob(wrapper.dataset.onchange);
 

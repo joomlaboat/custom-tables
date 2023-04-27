@@ -207,11 +207,12 @@ function CustomTablesSave($task, $this_)
                 }
             }
         } else {
-            if ($ct->Params->msgItemIsSaved == 'COM_CUSTOMTABLES_INCORRECT_CAPTCHA') {
-                Factory::getApplication()->enqueueMessage($msg_, 'error');
+            if ($msg_ == 'COM_CUSTOMTABLES_INCORRECT_CAPTCHA') {
+                $msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_INCORRECT_CAPTCHA');
+                Factory::getApplication()->enqueueMessage($msg, 'error');
                 echo '
 				<script>
-setTimeout("history.go(-1)", 3000);
+setTimeout("history.go(-1)", 2000);
 </script>';
 
             } else {

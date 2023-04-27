@@ -14,7 +14,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 $this->ct->loadJSAndCSS();
-
 $results = $this->details->render();
 
 if ($this->ct->Env->frmt == 'csv') {
@@ -34,6 +33,8 @@ if ($this->ct->Env->frmt == 'csv') {
 } elseif ($this->ct->Env->frmt == 'xml') {
     $filename = JoomlaBasicMisc::makeNewFileName($this->ct->document->getTitle(), 'xml');
 
+    ob_end_clean();
+
     if (ob_get_contents())
         ob_end_clean();
 
@@ -41,8 +42,9 @@ if ($this->ct->Env->frmt == 'csv') {
     header('Content-Type: text/xml; charset=utf-8');
     header("Pragma: no-cache");
     header("Expires: 0");
-
+    ob_start();
     echo $results;
+    ob_flush();
     die;//clean exit
 } elseif ($this->ct->Env->clean) {
     echo $results;

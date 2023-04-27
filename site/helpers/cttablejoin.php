@@ -97,30 +97,39 @@ class JHTMLCTTableJoin
             $option = $option_list[2];
             if (is_array($option)) {
                 if (count($option) > 0) {
-                    //$filter[] = [table_name, field_name, allow_unpublished, filter, order_by];
-
                     if (is_array($option[0])) {
-                        foreach ($option as $optionFilter) {
-                            $optionFilter[5] = $parent_filter_table_name;
-                            $optionFilter[6] = $parent_filter_field_name;
 
-                            $filter[] = $optionFilter;
+                        foreach ($option as $optionFilter) {
+                            $tableName = $optionFilter[0];
+                            $fieldName = $optionFilter[1];
+                            $allow_unpublished = $optionFilter[2];
+                            $whereFilter = $optionFilter[3];
+                            $orderBy = $optionFilter[4];
+
+                            if ($parent_filter_field_name == '' and isset($optionFilter[5])) {
+                                $parent_filter_table_name = $optionFilter[0];
+                                $parent_filter_field_name = $optionFilter[5];
+                            }
+
+                            $filter[] = [$tableName, $fieldName, $allow_unpublished, $whereFilter, $orderBy, $parent_filter_table_name, $parent_filter_field_name];
                             $parent_filter_table_name = $optionFilter[0];
                             $parent_filter_field_name = $optionFilter[1];
                         }
                     } else {
 
                         //Example: "cssclass","attributes", [table_name, field_name, allow_unpublished, filter, order_by]
-
                         $tableName = $option[0];
                         $fieldName = $option[1];
                         $allow_unpublished = $option[2];
                         $whereFilter = $option[3];
                         $orderBy = $option[4];
 
-                        //$filter[] = [table_name, field_name, allow_unpublished, filter, order_by];
+                        if ($parent_filter_field_name == '' and isset($option[5])) {
+                            $parent_filter_table_name = $option[0];
+                            $parent_filter_field_name = $option[5];
+                        }
+
                         $filter[] = [$tableName, $fieldName, $allow_unpublished, $whereFilter, $orderBy, $parent_filter_table_name, $parent_filter_field_name];
-                        //$filter[] = [$option[0], $option[1], $option[2], $option[3], $option[4], $parent_filter_field_name];
                         $parent_filter_table_name = $tableName;
                         $parent_filter_field_name = $fieldName;
                     }
@@ -130,20 +139,6 @@ class JHTMLCTTableJoin
 
                 echo 'Table Join field: wrong option_list format - Parent Selector must be an array';
                 return [];
-                /*
-                //Example: "cssclass","attributes", table_name, field_name, allow_unpublished, filter, order_by
-
-                $tableName = $option;//same as $option_list[2]
-                $fieldName = $option_list[3];
-                $allow_unpublished = $option_list[4];
-                $whereFilter = $option_list[5];
-                $orderBy = $option_list[6];
-
-                //$filter[] = [table_name, field_name, allow_unpublished, filter, order_by];
-                $filter[] = [$tableName, $fieldName, $allow_unpublished, $whereFilter, $orderBy, $parent_filter_table_name, $parent_filter_field_name];
-                $parent_filter_table_name = $tableName;
-                $parent_filter_field_name = $fieldName;
-                */
             }
         }
 
@@ -191,7 +186,6 @@ class JHTMLCTTableJoin
                     $parent_filter_field_name = null;
 
                     self::parseTypeParams($tempField, $filter, $parent_filter_table_name, $parent_filter_field_name);
-
                     break;
                 }
             }
@@ -251,25 +245,9 @@ class JHTMLCTTableJoin
             $temp_js_filters = $parent_id;
 
             //Check if this table has self-parent field - the TableJoin field linked with the same table.
-            $selfParentField = $flt[0] == $flt[5];
+            $selfParentFieldProvided = $flt[0] == $flt[5];
 
-            if ($selfParentField) {
-
-
-                //$selfParent_type_params = JoomlaBasicMisc::csv_explode(',', $selfParentField['typeparams']);
-
-                //if ($filter[$i][3] == '')
-                //  $filter[$i][3] = $selfParent_type_params[2];
-
-                //if ($filter[$i][4] == '')
-                //$filter[$i][4] = $selfParent_type_params[4];
-
-                //$filter[$i][5] = $temp_ct->Table->tablename;
-                //$filter[$i][6] = $selfParentField['fieldname'];//it was 6
-                //$js_filters_selfParent[] = 1;
-
-                $join_to_tableName = $filter[$i][5];//it was 5
-
+            if ($selfParentFieldProvided) {
                 $selfParent_filters = [];
                 while ($parent_id !== null) {
                     $selfParent_filters[] = $parent_id;
@@ -358,7 +336,7 @@ class JHTMLCTTableJoin
         return self::ctRenderTableJoinSelectBox($ct, $control_name, $resultJSON, $index, $sub_index, $object_id, $formId, $attributes, $onchange, $filter, $js_filters, $value);
     }
 
-    protected static function ctRenderTableJoinSelectBox(CT &$ct, $control_name, $r, $index, $sub_index, $parent_object_id, $formId, $attributes, $onchange, $filter, $js_filters, $value)
+    protected static function ctRenderTableJoinSelectBox(CT &$ct, $control_name, $r, int $index, int $sub_index, $parent_object_id, $formId, $attributes, $onchange, $filter, $js_filters, ?string $value)
     {
         $next_index = $index;
         $next_sub_index = $sub_index;
@@ -368,13 +346,14 @@ class JHTMLCTTableJoin
             $next_sub_index += 1;
             if ($next_sub_index == count($js_filters[$index])) {
                 $val = null;
-            } else
+            } else {
                 $val = $js_filters[$next_index][$next_sub_index];
+            }
         } else {
             $next_index += 1;
-            if (count($js_filters) > $next_index)
+            if (count($js_filters) > $next_index) {
                 $val = $js_filters[$next_index];
-            else
+            } else
                 $val = null;
         }
 
@@ -426,7 +405,6 @@ class JHTMLCTTableJoin
             $onChangeAttribute .= $onchange;
 
             $result .= '<select id="' . $current_object_id . '" onChange="' . $onChangeAttribute . '"' . ' class="' . $cssClass . '">';
-
             $result .= '<option value="">- Select</option>';
 
             for ($i = 0; $i < count($r); $i++) {

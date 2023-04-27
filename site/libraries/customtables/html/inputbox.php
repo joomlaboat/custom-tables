@@ -355,6 +355,7 @@ class Inputbox
                     . 'class="' . $this->cssclass . '" '
                     . 'value="' . $value . '" maxlength="255" '
                     . $this->attributes . ' '
+                    . 'data-filters="email" '
                     . 'data-label="' . $this->field->title . '"'
                     . 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
                     . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" '

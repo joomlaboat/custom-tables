@@ -27,8 +27,6 @@ class Twig_Html_Tags
 {
     var CT $ct;
     var bool $isTwig;
-
-    var bool $captcha_found;
     var array $button_objects = []; //Not clear where and how this variable used.
 
     function __construct(CT &$ct, $isTwig = true)
@@ -36,7 +34,7 @@ class Twig_Html_Tags
         $this->ct = &$ct;
         $this->isTwig = $isTwig;
 
-        $this->captcha_found = false;
+        $this->ct->LayoutVariables['captcha'] = null;
         $this->button_objects = [];//Not clear where and how this variable used.
     }
 
@@ -103,12 +101,7 @@ class Twig_Html_Tags
         else
             $img = '<img src="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/images/icons/new.png" alt="' . $alt . '" title="' . $alt . '" />';
 
-        $vlu = '<a href="' . URI::root(true) . $link . '" id="ctToolBarAddNew' . $this->ct->Table->tableid . '" class="toolbarIcons">' . $img . '</a>';
-
-        if ($this->isTwig)
-            return $vlu;
-        else
-            return $vlu;
+        return '<a href="' . URI::root(true) . $link . '" id="ctToolBarAddNew' . $this->ct->Table->tableid . '" class="toolbarIcons">' . $img . '</a>';
     }
 
     function importcsv()
@@ -142,7 +135,7 @@ class Twig_Html_Tags
             . (is_null($this->ct->Params->ModuleId) ? '' : '&ModuleId=' . $this->ct->Params->ModuleId)
             . '&fieldname=' . $objectname;
 
-        $vlu = '<div>
+        return '<div>
                     <div id="ct_fileuploader_' . $objectname . '"></div>
                     <div id="ct_eventsmessage_' . $objectname . '"></div>
                     <form action="" name="ctUploadCSVForm" id="ctUploadCSVForm">
@@ -157,11 +150,6 @@ class Twig_Html_Tags
                     </form>
                 </div>
 ';
-
-        if ($this->isTwig)
-            return $vlu;
-        else
-            return $vlu;
     }
 
     function pagination($show_arrow_icons = false)
@@ -758,8 +746,6 @@ class Twig_Html_Tags
             $this->ct->app->triggerEvent('onInit', array(null, 'my_captcha_div', 'class=""'));
         }
 
-        $this->captcha_found = true;
-
         $vlu = '
     <div id="my_captcha_div"
 		class="g-recaptcha"
@@ -769,11 +755,8 @@ class Twig_Html_Tags
 		data-callback="recaptchaCallback">
 	</div>';
 
-        if ($this->isTwig)
-            return $vlu;
-        else
-            return $vlu;
-
+        $this->ct->LayoutVariables['captcha'] = true;
+        return $vlu;
     }
 
     protected function getReCaptchaParams()
@@ -865,7 +848,7 @@ class Twig_Html_Tags
             return $title;
 
         $attribute = '';
-        if ($this->captcha_found)
+        if (($this->ct->LayoutVariables['captcha'] ?? null))
             $attribute = ' disabled="disabled"';
 
         if ($optional_class != '')
@@ -892,7 +875,7 @@ class Twig_Html_Tags
 
         $attribute .= '\'';
 
-        if ($this->captcha_found)
+        if (($this->ct->LayoutVariables['captcha'] ?? null))
             $attribute .= ' disabled="disabled"';
 
         if ($optional_class != '')
@@ -915,7 +898,7 @@ class Twig_Html_Tags
         $attribute .= 'setTask(event, "saveandprint","' . base64_encode($redirectlink) . '",true,"' . $formName . '");';
         $attribute .= '\'';
 
-        if ($this->captcha_found)
+        if (($this->ct->LayoutVariables['captcha'] ?? null))
             $attribute = ' disabled="disabled"';
 
         if ($optional_class != '')
@@ -935,7 +918,7 @@ class Twig_Html_Tags
             return $title;
 
         $attribute = '';//onClick="return checkRequiredFields();"';
-        if ($this->captcha_found)
+        if (($this->ct->LayoutVariables['captcha'] ?? null))
             $attribute = ' disabled="disabled"';
 
         if ($optional_class != '')

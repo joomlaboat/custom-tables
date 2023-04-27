@@ -312,15 +312,34 @@ class Fields
             $conf = Factory::getConfig();
             $database = $conf->get('db');
 
-            $query = 'SELECT COLUMN_NAME AS column_name,'
-                . 'DATA_TYPE AS data_type,'
-                . 'COLUMN_TYPE AS column_type,'
-                . 'IF(COLUMN_TYPE LIKE \'%unsigned\', \'YES\', \'NO\') AS is_unsigned,'
-                . 'IS_NULLABLE AS is_nullable,'
-                . 'COLUMN_DEFAULT AS column_default,'
-                . 'EXTRA AS extra,'
-                . 'GENERATION_EXPRESSION AS generation_expression'
-                . ' FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=' . $db->quote($database) . ' AND TABLE_NAME=' . $db->quote($realtablename);
+
+            //Check MySQL Version:
+            $query = 'select @@version';
+            $db->setQuery($query);
+            $versionValue = $db->loadAssocList();
+
+            $mySQLVersion = floatval($versionValue[0]['@@version']);
+            if ($mySQLVersion < 5.7) {
+                $query = 'SELECT COLUMN_NAME AS column_name,'
+                    . 'DATA_TYPE AS data_type,'
+                    . 'COLUMN_TYPE AS column_type,'
+                    . 'IF(COLUMN_TYPE LIKE \'%unsigned\', \'YES\', \'NO\') AS is_unsigned,'
+                    . 'IS_NULLABLE AS is_nullable,'
+                    . 'COLUMN_DEFAULT AS column_default,'
+                    . 'EXTRA AS extra,'
+                    . '"" AS generation_expression'
+                    . ' FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=' . $db->quote($database) . ' AND TABLE_NAME=' . $db->quote($realtablename);
+            } else {
+                $query = 'SELECT COLUMN_NAME AS column_name,'
+                    . 'DATA_TYPE AS data_type,'
+                    . 'COLUMN_TYPE AS column_type,'
+                    . 'IF(COLUMN_TYPE LIKE \'%unsigned\', \'YES\', \'NO\') AS is_unsigned,'
+                    . 'IS_NULLABLE AS is_nullable,'
+                    . 'COLUMN_DEFAULT AS column_default,'
+                    . 'EXTRA AS extra,'
+                    . 'GENERATION_EXPRESSION AS generation_expression'
+                    . ' FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=' . $db->quote($database) . ' AND TABLE_NAME=' . $db->quote($realtablename);
+            }
         }
 
         $db->setQuery($query);
