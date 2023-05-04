@@ -75,8 +75,8 @@ class DataTypes
         return array(
             1 => 'COM_CUSTOMTABLES_FIELDS_REQUIRED',
             0 => 'COM_CUSTOMTABLES_FIELDS_NOTREQUIRED',
-            2 => 'COM_CUSTOMTABLES_FIELDS_GENERATED_VIRTUAL',
-            3 => 'COM_CUSTOMTABLES_FIELDS_GENERATED_STORED'
+            //2 => 'COM_CUSTOMTABLES_FIELDS_GENERATED_VIRTUAL',
+            //3 => 'COM_CUSTOMTABLES_FIELDS_GENERATED_STORED'
         );
     }
 }

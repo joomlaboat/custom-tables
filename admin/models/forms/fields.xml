@@ -191,8 +191,8 @@
         <!-- Isrequired Field. Type: Radio. (joomla)-->
         <field type="list"
                name="isrequired"
-               label="COM_CUSTOMTABLES_FIELDS_REQUIREDGENERATED"
-               description="COM_CUSTOMTABLES_FIELDS_REQUIREDGENERATED_DESCRIPTION"
+               label="COM_CUSTOMTABLES_FIELDS_REQUIRED"
+               description="COM_CUSTOMTABLES_FIELDS_REQUIRED_DESCRIPTION"
                class="list_class"
                default="0">
             <!-- Option Set.-->

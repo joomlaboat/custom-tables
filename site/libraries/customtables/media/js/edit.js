@@ -552,8 +552,6 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_ind
 
 function ctUpdateTableJoinLink(control_name, index, execute_all, sub_index, object_id, formId, updateValue) {
 
-    alert("index:" + index);
-
     let wrapper = document.getElementById(control_name + "Wrapper");
     //let onchange = atob(wrapper.dataset.onchange);
 

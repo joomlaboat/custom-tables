@@ -1421,6 +1421,7 @@ class Fields
 
             if ($type->extra == 'STORED GENERATED')
                 $elements[] = 'AS (' . $ct_fieldTypeArray['generation_expression'] . ') STORED';
+
         } elseif (isset($type->required_or_generated)) {
 
             $type->default = null;

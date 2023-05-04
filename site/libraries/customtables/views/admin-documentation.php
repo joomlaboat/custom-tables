@@ -149,8 +149,7 @@ class Documentation
                     foreach ($type->subvalueparams as $p) {
 
                         $params_att = $p->attributes();
-                        //print_r($p);
-                        //$params = $p->params;
+
                         $result .= '<h5>' . $params_att->label . ':</h5>';
                         /*$result .= $this->renderParametersInternal($params,
                             '{{ ',
