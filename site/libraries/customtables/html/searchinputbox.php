@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomTables\DataTypes\Tree;
+use Joomla\CMS\Language\Text;
 use \JoomlaBasicMisc;
 
 use \Joomla\CMS\Factory;
@@ -25,13 +26,13 @@ JHTML::addIncludePath(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTOR
 class SearchInputBox
 {
     var CT $ct;
-    var $modulename;
-    var $field;
+    var string $moduleName;
+    var Field $field;
 
-    function __construct(CT &$ct, $moduleName)
+    function __construct(CT &$ct, string $moduleName)
     {
         $this->ct = $ct;
-        $this->modulename = $moduleName;
+        $this->moduleName = $moduleName;
     }
 
     function renderFieldBox($prefix, $objName, &$fieldrow, $cssclass, $index, $where, $innerJoin, $whereList, $default_Action, $field_title = null): string
@@ -167,6 +168,10 @@ class SearchInputBox
                 $result .= $this->getRangeBox($fieldrow, $index, $where, $whereList, $objName_, $value, $cssclass);
                 break;
 
+            case 'radio':
+                $result .= $this->getRadioBox($default_Action, $index, $where, $whereList, $objName_, $value, $cssclass);
+                break;
+
             case 'customtables':
                 $result .= $this->getCustomTablesBox($prefix, $innerJoin, $default_Action, $index, $where, $whereList, $value, $cssclass, $place_holder);
                 break;
@@ -263,7 +268,7 @@ class SearchInputBox
         if ($default_Action != '') {
             $onchange = $default_Action;
         } else {
-            $onchange = ' onChange="' . $this->modulename . '_onChange('
+            $onchange = ' onChange="' . $this->moduleName . '_onChange('
                 . $index . ','
                 . 'this.value,'
                 . '\'' . $this->field->fieldname . '\','
@@ -301,7 +306,7 @@ class SearchInputBox
         if ($default_Action != '') {
             $onchange = $default_Action;
         } else {
-            $onchange = ' onChange="' . $this->modulename . '_onChange('
+            $onchange = ' onChange="' . $this->moduleName . '_onChange('
                 . $index . ','
                 . 'this.value,'
                 . '\'' . $this->field->fieldname . '\','
@@ -366,7 +371,7 @@ class SearchInputBox
 		var v_max=document.getElementById("' . $objectName . '_max").value;
 		o.value=v_min+"' . $d . '"+v_max;
 
-		//' . $this->modulename . '_onChange(' . $index . ',v_min+"' . $d . '"+v_max,"' . $this->field->fieldname . '","' . urlencode($where) . '","' . urlencode($whereList) . '");
+		//' . $this->moduleName . '_onChange(' . $index . ',v_min+"' . $d . '"+v_max,"' . $this->field->fieldname . '","' . urlencode($where) . '","' . urlencode($whereList) . '");
 	}
 ';
         $this->ct->document->addCustomTag('<script>' . $js . '</script>');
@@ -414,6 +419,34 @@ class SearchInputBox
         return '</td></tr></tbody></table>';
     }
 
+    protected function getRadioBox($default_Action, $index, $where, $whereList, $objName, $value, $cssclass)
+    {
+        if ($this->ct->Env->version < 4)
+            $cssclass = 'class="inputbox ' . $cssclass . '" ';
+        else
+            $cssclass = 'class="form-control ' . $cssclass . '" ';
+
+        if ($default_Action != '') {
+            $onchange = $default_Action;
+        } else {
+            $onchange = ' onChange=   "' . $this->moduleName . '_onChange('
+                . $index . ','
+                . 'this.value,'
+                . '\'' . $this->field->fieldname . '\','
+                . '\'' . urlencode($where) . '\','
+                . '\'' . urlencode($whereList) . '\','
+                . '\'' . $this->ct->Languages->Postfix . '\''
+                . ')"';
+        }
+
+        $options = [];
+        $options[] = ['id' => '', 'data-type' => 'radio', 'name' => '- ' . Text::_('COM_CUSTOMTABLES_SELECT') . ' ' . $this->field->title];
+        foreach ($this->field->params as $param)
+            $options[] = ['id' => $param, 'data-type' => 'radio', 'name' => $param];
+
+        return JHTML::_('select.genericlist', $options, $objName, $cssclass . ' ' . $onchange . ' ', 'id', 'name', $value, $objName);
+    }
+
     protected function getCustomTablesBox($prefix, $innerJoin, $default_Action, $index, $where, $whereList, $value, $cssclass, $place_holder = ''): string
     {
         $result = '';
@@ -423,7 +456,7 @@ class SearchInputBox
             $onchange = $default_Action;
             $requirementDepth = 1;
         } else {
-            $onchange = $this->modulename . '_onChange('
+            $onchange = $this->moduleName . '_onChange('
                 . $index . ','
                 . 'me.value,'
                 . '\'' . $this->field->params->fieldname . '\','
@@ -453,7 +486,7 @@ class SearchInputBox
         return $result;
     }
 
-    protected function getUserBox($default_Action, $index, $where, $whereList, $objnName, $value, $cssclass)
+    protected function getUserBox($default_Action, $index, $where, $whereList, $objName, $value, $cssclass)
     {
         $result = '';
         $mysqlJoin = $this->ct->Table->realtablename . ' ON ' . $this->ct->Table->realtablename . '.' . $this->field->realfieldname . '=#__users.id';
@@ -461,7 +494,7 @@ class SearchInputBox
         if ($default_Action != '') {
             $onchange = $default_Action;
         } else {
-            $onchange = ' onChange=   "' . $this->modulename . '_onChange('
+            $onchange = ' onChange=   "' . $this->moduleName . '_onChange('
                 . $index . ','
                 . 'this.value,'
                 . '\'' . $this->field->fieldname . '\','
@@ -477,7 +510,8 @@ class SearchInputBox
             $default_class = 'form-control';
 
         if ($this->ct->Env->user->id != 0)
-            $result = JHTML::_('ESUser.render', $objnName, $value, '', 'class="' . $cssclass . ' ' . $default_class . '" ', ($this->field->params[0] ?? ''), $onchange, $where, $mysqlJoin);
+            $result = JHTML::_('ESUser.render', $objName, $value, '', 'class="' . $cssclass . ' ' . $default_class . '" ',
+                ($this->field->params[0] ?? ''), $onchange, $where, $mysqlJoin);
 
         return $result;
     }
@@ -497,7 +531,7 @@ class SearchInputBox
         if ($default_Action != '') {
             $onchange = $default_Action;
         } else {
-            $onchange = ' onChange=   "' . $this->modulename . '_onChange('
+            $onchange = ' onChange=   "' . $this->moduleName . '_onChange('
                 . $index . ','
                 . 'this.value,'
                 . '\'' . $this->field->fieldname . '\','

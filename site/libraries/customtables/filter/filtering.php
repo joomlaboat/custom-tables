@@ -325,6 +325,7 @@ class Filtering
             case 'phponchange':
             case 'text':
             case 'phponadd':
+            case 'radio':
 
                 $c = $this->Search_String($value, $fieldrow, $comparison_operator);
                 break;
