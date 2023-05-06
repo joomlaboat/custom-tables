@@ -567,7 +567,6 @@ class CustomTablesModelEditItem extends JModelLegacy
 
                 if ($phpOnAddFound and $isCopy)
                     $this->doPHPonAdd($row);
-
             }
         }
 

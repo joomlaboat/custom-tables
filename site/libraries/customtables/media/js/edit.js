@@ -128,7 +128,7 @@ function checkFilters() {
         let t = inputs[i].type.toLowerCase();
 
         if (t === 'text' && inputs[i].value !== "") {
-            let n = inputs[i].name.toString();
+            //let n = inputs[i].name.toString();
             let d = inputs[i].dataset;
             let label = "";
 
@@ -329,7 +329,7 @@ function checkRequiredFields() {
 
             if (n.indexOf("comes_") !== -1) {
 
-                let objname = n.replace('_selector', '');
+                let objName = n.replace('_selector', '');
 
                 let d = requiredFields[i].dataset;
                 if (d.label)
@@ -338,14 +338,14 @@ function checkRequiredFields() {
                     label = "Unlabeled field";
 
                 if (requiredFields[i].type === "text") {
-                    let obj = document.getElementById(objname);
+                    let obj = document.getElementById(objName);
                     if (obj.value === '') {
                         alert(label + " required.");
                         return false;
                     }
                 } else if (requiredFields[i].type === "select-one") {
-                    let obj = document.getElementById(objname);
-                    let v = obj.value;
+                    let obj = document.getElementById(objName);
+                    //let v = obj.value;
 
                     if (obj.value === null || obj.value === '') {
                         alert(label + " not selected.");
@@ -384,8 +384,8 @@ function SetUsetInvalidClass(id, isValid) {
 }
 
 function CheckImageUploader(id) {
-    let objid = id.replace("ct_uploadfile_box_", "comes_");
-    let obj = document.getElementById(objid);
+    let objId = id.replace("ct_uploadfile_box_", "comes_");
+    let obj = document.getElementById(objId);
     if (obj.value === "") {
         SetUsetInvalidClass(id, false);
         return false;
@@ -447,7 +447,7 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_ind
 
     let next_index = index;
     let next_sub_index = sub_index;
-    let val = ''
+    let val;
 
     if (Array.isArray(filters[index])) {
         //Self Parent field
@@ -484,12 +484,11 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_ind
         if (Array.isArray(filters[next_index])) {
 
             next_sub_index = 0;
-            alert("next_index:" + next_index);
+            //alert("next_index:" + next_index);
             next_index += 1;
 
             if (next_index + 1 < filters.length) {
-                let result = '<div id="' + control_name + 'Selector' + next_index + '_' + next_sub_index + '"></div>';
-                document.getElementById(control_name + "Selector" + index + '_' + sub_index).innerHTML = result;
+                document.getElementById(control_name + "Selector" + index + '_' + sub_index).innerHTML = '<div id="' + control_name + 'Selector' + next_index + '_' + next_sub_index + '"></div>';
                 ctUpdateTableJoinLink(control_name, next_index, false, next_sub_index, parent_object_id, formId, false);//
                 return false;
             } else {
@@ -507,8 +506,7 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_ind
         }
     }
 
-    let result = ''
-
+    let result = '';
     let cssClass = 'form-select valid form-control-success';
     let objForm = document.getElementById(formId);
     if (objForm && objForm.dataset.version < 4)
@@ -552,6 +550,7 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_ind
 
 function ctUpdateTableJoinLink(control_name, index, execute_all, sub_index, object_id, formId, updateValue) {
 
+    //alert("index:" + index);
     let wrapper = document.getElementById(control_name + "Wrapper");
     //let onchange = atob(wrapper.dataset.onchange);
 
@@ -625,7 +624,6 @@ function ctUpdateTableJoinLink(control_name, index, execute_all, sub_index, obje
         .catch(error => console.error("Error", error));
 }
 
-
 // --------------------- Inputbox: Records
 
 let ctInputboxRecords_r = [];
@@ -693,7 +691,6 @@ function ctInputboxRecords_DoAddItem(control_name, control_name_postfix) {
     ctInputboxRecords_p[control_name].push(p);
 
     o.remove(o.selectedIndex);
-
     ctInputboxRecords_showMultibox(control_name, control_name_postfix);
 }
 
@@ -718,7 +715,7 @@ function ctInputboxRecords_showMultibox(control_name, control_name_postfix) {
     ctInputboxRecords_removeOptions(l);
 
     let opt1 = document.createElement("option");
-    opt1.value = 0;
+    opt1.value = '0';
     opt1.innerHTML = "";
     opt1.setAttribute("selected", "selected");
     l.appendChild(opt1);
@@ -758,12 +755,12 @@ let ctTranslates = [];
 
 function ctInputbox_removeEmptyParents(control_name, control_name_postfix) {
     //Old calls replaced
-    let selectobj = document.getElementById(control_name + 'SQLJoinLink');
+    let selectObj = document.getElementById(control_name + 'SQLJoinLink');
     let elementsFilter = document.getElementById(control_name + control_name_postfix + '_elementsFilter').innerHTML.split(";");
 
-    for (let o = selectobj.options.length - 1; o >= 0; o--) {
-        c = 0;
-        let v = selectobj.options[o].value;
+    for (let o = selectObj.options.length - 1; o >= 0; o--) {
+        let c = 0;
+        let v = selectObj.options[o].value;
 
         for (let i = 0; i < control_name + elementsFilter.length; i++) {
             let f = elementsFilter[i];
@@ -802,7 +799,7 @@ function ctInputbox_UpdateSQLJoinLink_do(control_name, control_name_postfix) {
 
     if (control_name_postfix !== '_selector') {
         let opt = document.createElement("option");
-        opt.value = 0;
+        opt.value = '0';
         opt.innerHTML = ctTranslates["COM_CUSTOMTABLES_SELECT"];
         l.appendChild(opt);
     }
