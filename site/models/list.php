@@ -115,7 +115,7 @@ class CustomTablesModelList extends JModel
         if ($connect_with_table != '' and $connect_with_field != '') {
             $query .= ' GROUP BY m.id ';
 
-            $fieldrow = Fields::getFieldRowByName($connect_with_field, '', $connect_with_table);
+            $fieldrow = Fields::getFieldRowByName($connect_with_field, null, $connect_with_table);
 
             $typeParams_pair = explode(',', $fieldrow->typeparams);
             $structure_parent_name = $typeParams_pair[0];

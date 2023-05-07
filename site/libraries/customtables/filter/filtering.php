@@ -922,15 +922,15 @@ class Filtering
 
 class LinkJoinFilters
 {
-    static public function getFilterBox($tableName, $dynamic_filter_fieldname, $control_name, $filterValue, $control_name_postfix = ''): string
+    static public function getFilterBox($tableName, $dynamicFilterFieldName, $control_name, $filterValue, $control_name_postfix = ''): string
     {
-        $fieldrow = Fields::getFieldRowByName($dynamic_filter_fieldname, 0, $tableName);
+        $fieldRow = Fields::getFieldRowByName($dynamicFilterFieldName, null, $tableName);
 
-        if ($fieldrow === null)
+        if ($fieldRow === null)
             return '';
 
-        if ($fieldrow->type == 'sqljoin' or $fieldrow->type == 'records')
-            return LinkJoinFilters::getFilterElement_SqlJoin($fieldrow->typeparams, $control_name, $filterValue, $control_name_postfix);
+        if ($fieldRow->type == 'sqljoin' or $fieldRow->type == 'records')
+            return LinkJoinFilters::getFilterElement_SqlJoin($fieldRow->typeparams, $control_name, $filterValue, $control_name_postfix);
 
         return '';
     }
@@ -976,7 +976,7 @@ class LinkJoinFilters
         $result .= '
 		<script>
 			ctTranslates["COM_CUSTOMTABLES_SELECT"] = "- ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT') . '";
-			ctInputboxRecords_current_value["' . $control_name . '"]="";
+			ctInputBoxRecords_current_value["' . $control_name . '"]="";
 		</script>
 		';
 

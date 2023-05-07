@@ -248,29 +248,29 @@ class Twig_Record_Tags
         return $vlu;
     }
 
-    protected function join_getRealFieldName($fieldname, $tableRow): ?array
+    protected function join_getRealFieldName($fieldName, $tableRow): ?array
     {
-        $tableid = $tableRow['id'];
+        $tableId = $tableRow['id'];
 
-        if ($fieldname == '_id') {
+        if ($fieldName == '_id') {
             return [$tableRow['realidfieldname'], '_id'];
-        } elseif ($fieldname == '_published') {
+        } elseif ($fieldName == '_published') {
             if ($tableRow['published_field_found'])
                 return ['published', '_published'];
             else
                 $this->ct->app->enqueueMessage('{{ record.join... }} - Table does not have "published" field.', 'error');
         } else {
-            $field1_row = Fields::getFieldRowByName($fieldname, $tableid);
+            $field1_row = Fields::getFieldRowByName($fieldName, $tableId);
 
             if (is_object($field1_row)) {
                 return [$field1_row->realfieldname, $field1_row->type];
             } else
-                $this->ct->app->enqueueMessage('{{ record.join... }} - Field "' . $fieldname . '" not found.', 'error');
+                $this->ct->app->enqueueMessage('{{ record.join... }} - Field "' . $fieldName . '" not found.', 'error');
         }
         return null;
     }
 
-    protected function join_processWhere($additional_where, $sj_realtablename, $sj_realidfieldname): string
+    protected function join_processWhere($additional_where, $sj_realTableName, $sj_realIdFieldName): string
     {
         if ($additional_where == '')
             return '';
@@ -285,7 +285,7 @@ class Twig_Record_Tags
                     $b = str_replace('$now', 'now()', $b);
 
                     //read $get_ values
-                    $b = $this->join_ApplyQueryGetValue($b, $sj_realtablename, $sj_realidfieldname);
+                    $b = $this->join_ApplyQueryGetValue($b, $sj_realTableName, $sj_realIdFieldName);
 
                     $w[] = $b;
                 } else

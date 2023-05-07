@@ -638,20 +638,20 @@ class Fields
         return $rows[0]->fieldname;
     }
 
-    public static function getFieldRowByName($fieldname, $tableid = 0, $sj_tablename = '')
+    public static function getFieldRowByName(string $fieldName, ?int $tableId = null, string $tableName = '')
     {
         $db = Factory::getDBO();
 
-        if ($fieldname == '')
+        if ($fieldName == '')
             return array();
 
-        if ($sj_tablename == '')
-            $query = 'SELECT ' . Fields::getFieldRowSelects() . ' FROM #__customtables_fields AS s WHERE s.published=1 AND tableid=' . (int)$tableid . ' AND fieldname=' . $db->quote(trim($fieldname)) . ' LIMIT 1';
+        if ($tableName == '')
+            $query = 'SELECT ' . Fields::getFieldRowSelects() . ' FROM #__customtables_fields AS s WHERE s.published=1 AND tableid=' . $tableId . ' AND fieldname=' . $db->quote(trim($fieldName)) . ' LIMIT 1';
         else {
             $query = 'SELECT ' . Fields::getFieldRowSelects() . ' FROM #__customtables_fields AS s
 
-			INNER JOIN #__customtables_tables AS t ON t.tablename=' . $db->quote($sj_tablename) . '
-			WHERE s.published=1 AND s.tableid=t.id AND s.fieldname=' . $db->quote(trim($fieldname)) . ' LIMIT 1';
+			INNER JOIN #__customtables_tables AS t ON t.tablename=' . $db->quote($tableName) . '
+			WHERE s.published=1 AND s.tableid=t.id AND s.fieldname=' . $db->quote(trim($fieldName)) . ' LIMIT 1';
         }
 
         $db->setQuery($query);

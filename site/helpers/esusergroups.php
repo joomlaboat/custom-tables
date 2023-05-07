@@ -129,24 +129,24 @@ class JHTMLESUserGroups
 
     static protected function getMultibox($records, $valueArray, $control_name): string
     {
-        $ctInputboxRecords_r = [];
-        $ctInputboxRecords_v = [];
-        $ctInputboxRecords_p = [];
+        $ctInputBoxRecords_r = [];
+        $ctInputBoxRecords_v = [];
+        $ctInputBoxRecords_p = [];
 
         foreach ((array)$records as $rec) {
             $row = (array)$rec;
             if (in_array($row['id'], $valueArray) and count($valueArray) > 0) {
-                $ctInputboxRecords_r[] = $row['id'];
-                $ctInputboxRecords_v[] = $row['name'];
-                $ctInputboxRecords_p[] = 1;
+                $ctInputBoxRecords_r[] = $row['id'];
+                $ctInputBoxRecords_v[] = $row['name'];
+                $ctInputBoxRecords_p[] = 1;
             }
         }
 
         $htmlresult = '
 		<script>
-			ctInputboxRecords_r["' . $control_name . '"] = ' . json_encode($ctInputboxRecords_r) . ';
-			ctInputboxRecords_v["' . $control_name . '"] = ' . json_encode($ctInputboxRecords_v) . ';
-			ctInputboxRecords_p["' . $control_name . '"] = ' . json_encode($ctInputboxRecords_p) . ';
+			ctInputBoxRecords_r["' . $control_name . '"] = ' . json_encode($ctInputBoxRecords_r) . ';
+			ctInputBoxRecords_v["' . $control_name . '"] = ' . json_encode($ctInputBoxRecords_v) . ';
+			ctInputBoxRecords_p["' . $control_name . '"] = ' . json_encode($ctInputBoxRecords_p) . ';
 		</script>
 		';
 
@@ -155,13 +155,13 @@ class JHTMLESUserGroups
         $htmlresult .= '<div style="padding-bottom:20px;"><div style="width:90%;" id="' . $control_name . '_box"></div>'
             . '<div style="height:30px;">'
             . '<div id="' . $control_name . '_addButton" style="visibility:visible;"><img src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/images/icons/new.png" alt="Add" title="Add" style="cursor: pointer;" '
-            . 'onClick="ctInputboxRecords_addItem(\'' . $control_name . '\',\'_selector\')" /></div>'
+            . 'onClick="ctInputBoxRecords_addItem(\'' . $control_name . '\',\'_selector\')" /></div>'
             . '<div id="' . $control_name . '_addBox" style="visibility:hidden;">'
             . '<div style="float:left;">' . $single_box . '</div>'
             . '<img src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/images/icons/plus.png" alt="Add" title="Add" '
-            . 'style="cursor: pointer;float:left;margin-top:8px;margin-left:3px;" onClick="ctInputboxRecords_DoAddItem(\'' . $control_name . '\',\'_selector\')" />'
+            . 'style="cursor: pointer;float:left;margin-top:8px;margin-left:3px;" onClick="ctInputBoxRecords_DoAddItem(\'' . $control_name . '\',\'_selector\')" />'
             . '<img src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/images/icons/cancel.png" alt="Cancel" title="Cancel" style="cursor: pointer;float:left;margin-top:6px;margin-left:10px;" '
-            . 'onClick="ctInputboxRecords_cancel(\'' . $control_name . '\')" />'
+            . 'onClick="ctInputBoxRecords_cancel(\'' . $control_name . '\')" />'
 
             . '</div>'
             . '</div>'
@@ -169,7 +169,7 @@ class JHTMLESUserGroups
             . '</div>
 		
 		<script>
-			ctInputboxRecords_showMultibox("' . $control_name . '","");
+			ctInputBoxRecords_showMultibox("' . $control_name . '","");
 		</script>
 		';
         return $htmlresult;

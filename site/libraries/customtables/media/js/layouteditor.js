@@ -710,7 +710,11 @@ function getParamEditForm(tagObject, line, positions, isNew, countParams, tagSta
     result += '<div class="dynamic_values"><span class="dynamic_values_label">Tag with parameter:</span> ';
     result += tagStartChar;
     result += temp_params_tag;
-    result += postfix + '(<span id="current_tagparameter" style="">' + paramValueString + '</span>)';
+
+    let paramValueStringTemp = paramValueString.replaceAll('<', '&lt;');
+    paramValueStringTemp = paramValueStringTemp.replaceAll('>', '&gt;');
+
+    result += postfix + '(<span id="current_tagparameter">' + paramValueStringTemp + '</span>)';
     result += tagEndChar + '</div>';
     result += '<div style="text-align:center;">';
 
@@ -729,7 +733,11 @@ function saveParams(e, countParams, line_number, pos1, pos2, isNew, tagStartChar
     e.preventDefault();
 
     let tmp_params = document.getElementById('current_tagparameter').innerHTML;
-    let result = tagStartChar + temp_params_tag + postfix;
+
+    let paramValueStringTemp = temp_params_tag.replaceAll('<', '&lt;');
+    paramValueStringTemp = paramValueStringTemp.replaceAll('>', '&gt;');
+
+    let result = tagStartChar + paramValueStringTemp + postfix;
 
     if (tmp_params !== "")
         result += '(' + tmp_params + ')';//{{ tag.edit(par1,par2) }} where ".edit" is the postfix

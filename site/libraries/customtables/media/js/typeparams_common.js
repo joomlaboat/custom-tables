@@ -391,7 +391,11 @@ function updateParamString(inputBoxId, countList, countParams, objectId, e, rawQ
 
     if (typeparams_obj) {
         typeparams_obj.value = tmp_list;  // why is it here?
-        typeparams_obj.innerHTML = tmp_list;
+
+        let paramValueStringTemp = tmp_list.replaceAll('<', '&lt;');
+        paramValueStringTemp = paramValueStringTemp.replaceAll('>', '&gt;');
+
+        typeparams_obj.innerHTML = paramValueStringTemp;
     }
 
     if (refresh) {

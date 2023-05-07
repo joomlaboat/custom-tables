@@ -65,22 +65,22 @@ function processFieldParams(&$fieldList, array &$fields): array
             if ($fieldType == 'sqljoin') {
                 $type_params = JoomlaBasicMisc::csv_explode(',', $fields[$f_index]->typeparams, '"', false);
 
-                $tablename = $type_params[0];
-                $fieldname = $type_params[1];
+                $tableName = $type_params[0];
+                $fieldName = $type_params[1];
+                $tableRow = ESTables::getTableRowByName($tableName);
 
-                $tablerow = ESTables::getTableRowByName($tablename);
-                if (!is_object($tablerow)) {
+                if (!is_object($tableRow)) {
                     echo json_encode(['error' => 'sqljoin field(' . $fields[$f_index]->fieldtitle . ') table not found']);
                     die;
                 }
 
-                $sqljoin_field = Fields::getFieldRowByName($fieldname, $tablerow->id);
+                $SQJJoinField = Fields::getFieldRowByName($fieldName, $tableRow->id);
 
                 $fields[$f_index]->sqljoin = (object)[
-                    'table' => $tablerow->realtablename,
-                    'field' => $sqljoin_field->realfieldname,
-                    'realidfieldname' => $tablerow->realidfieldname,
-                    'published_field_found' => $tablerow->published_field_found];
+                    'table' => $tableRow->realtablename,
+                    'field' => $SQJJoinField->realfieldname,
+                    'realidfieldname' => $tableRow->realidfieldname,
+                    'published_field_found' => $tableRow->published_field_found];
             }
         }
     }

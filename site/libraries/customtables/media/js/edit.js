@@ -626,27 +626,27 @@ function ctUpdateTableJoinLink(control_name, index, execute_all, sub_index, obje
 
 // --------------------- Inputbox: Records
 
-let ctInputboxRecords_r = [];
-let ctInputboxRecords_v = [];
-let ctInputboxRecords_p = [];
-let ctInputboxRecords_dynamic_filter = [];
-let ctInputboxRecords_current_value = [];
+let ctInputBoxRecords_r = [];
+let ctInputBoxRecords_v = [];
+let ctInputBoxRecords_p = [];
+let ctInputBoxRecords_dynamic_filter = [];
+let ctInputBoxRecords_current_value = [];
 
-function ctInputboxRecords_removeOptions(selectobj) {
+function ctInputBoxRecords_removeOptions(selectobj) {
     //Old calls replaced
     for (let i = selectobj.options.length - 1; i >= 0; i--) {
         selectobj.remove(i);
     }
 }
 
-function ctInputboxRecords_addItem(control_name, control_name_postfix) {
+function ctInputBoxRecords_addItem(control_name, control_name_postfix) {
     //Old calls replaced
     let o = document.getElementById(control_name + control_name_postfix);
     o.selectedIndex = 0;
 
-    if (ctInputboxRecords_dynamic_filter[control_name] != '') {
+    if (ctInputBoxRecords_dynamic_filter[control_name] != '') {
 
-        ctInputboxRecords_current_value[control_name] = "";
+        ctInputBoxRecords_current_value[control_name] = "";
 
         let SQLJoinLink = document.getElementById(control_name + control_name_postfix + 'SQLJoinLink');
         if (SQLJoinLink) {
@@ -659,7 +659,7 @@ function ctInputboxRecords_addItem(control_name, control_name_postfix) {
     document.getElementById(control_name + '_addBox').style.visibility = "visible";
 }
 
-function ctInputboxRecords_DoAddItem(control_name, control_name_postfix) {
+function ctInputBoxRecords_DoAddItem(control_name, control_name_postfix) {
     //Old calls replaced
     let o = document.getElementById(control_name + control_name_postfix);
     if (o.selectedIndex === -1)
@@ -679,40 +679,40 @@ function ctInputboxRecords_DoAddItem(control_name, control_name_postfix) {
         }
     }
 
-    for (let x = 0; x < ctInputboxRecords_r[control_name].length; x++) {
-        if (ctInputboxRecords_r[control_name][x] === r) {
+    for (let x = 0; x < ctInputBoxRecords_r[control_name].length; x++) {
+        if (ctInputBoxRecords_r[control_name][x] === r) {
             alert("Item already exists");
             return false;
         }
     }
 
-    ctInputboxRecords_r[control_name].push(r);
-    ctInputboxRecords_v[control_name].push(t);
-    ctInputboxRecords_p[control_name].push(p);
+    ctInputBoxRecords_r[control_name].push(r);
+    ctInputBoxRecords_v[control_name].push(t);
+    ctInputBoxRecords_p[control_name].push(p);
 
     o.remove(o.selectedIndex);
-    ctInputboxRecords_showMultibox(control_name, control_name_postfix);
+    ctInputBoxRecords_showMultibox(control_name, control_name_postfix);
 }
 
-function ctInputboxRecords_cancel(control_name) {
+function ctInputBoxRecords_cancel(control_name) {
     //Old calls replaced
     document.getElementById(control_name + '_addButton').style.visibility = "visible";
     document.getElementById(control_name + '_addBox').style.visibility = "hidden";
 }
 
-function ctInputboxRecords_deleteItem(control_name, control_name_postfix, index) {
+function ctInputBoxRecords_deleteItem(control_name, control_name_postfix, index) {
     //Old calls replaced
-    ctInputboxRecords_r[control_name].splice(index, 1);
-    ctInputboxRecords_v[control_name].splice(index, 1);
-    ctInputboxRecords_p[control_name].splice(index, 1);
-    ctInputboxRecords_showMultibox(control_name, control_name_postfix);
+    ctInputBoxRecords_r[control_name].splice(index, 1);
+    ctInputBoxRecords_v[control_name].splice(index, 1);
+    ctInputBoxRecords_p[control_name].splice(index, 1);
+    ctInputBoxRecords_showMultibox(control_name, control_name_postfix);
 }
 
-function ctInputboxRecords_showMultibox(control_name, control_name_postfix) {
+function ctInputBoxRecords_showMultibox(control_name, control_name_postfix) {
     //Old calls replaced
 
     let l = document.getElementById(control_name);// + control_name_postfix);
-    ctInputboxRecords_removeOptions(l);
+    ctInputBoxRecords_removeOptions(l);
 
     let opt1 = document.createElement("option");
     opt1.value = '0';
@@ -721,24 +721,26 @@ function ctInputboxRecords_showMultibox(control_name, control_name_postfix) {
     l.appendChild(opt1);
 
     let v = '<table style="width:100%;"><tbody>';
-    for (let i = 0; i < ctInputboxRecords_r[control_name].length; i++) {
+    for (let i = 0; i < ctInputBoxRecords_r[control_name].length; i++) {
         v += '<tr><td style="border-bottom:1px dotted grey;">';
-        if (ctInputboxRecords_p[control_name][i] == 0)
-            v += ctInputboxRecords_v[control_name][i];
+        if (ctInputBoxRecords_p[control_name][i] == 0)
+            v += ctInputBoxRecords_v[control_name][i];
         else
-            v += ctInputboxRecords_v[control_name][i];
+            v += ctInputBoxRecords_v[control_name][i];
 
-        let deleteimage = 'components/com_customtables/libraries/customtables/media/images/icons/cancel.png';
+        v += '</td>';
+
+        let deleteImage = 'components/com_customtables/libraries/customtables/media/images/icons/cancel.png';
 
         v += '<td style="border-bottom:1px dotted grey;min-width:16px;">';
-        let onClick = "ctInputboxRecords_deleteItem('" + control_name + "','" + control_name_postfix + "'," + i + ")";
-        v += '<img src="' + deleteimage + '" alt="Delete" title="Delete" style="width:16px;height:16px;cursor: pointer;" onClick="' + onClick + '" />';
+        let onClick = "ctInputBoxRecords_deleteItem('" + control_name + "','" + control_name_postfix + "'," + i + ")";
+        v += '<img src="' + deleteImage + '" alt="Delete" title="Delete" style="width:16px;height:16px;cursor: pointer;" onClick="' + onClick + '" />';
         v += '</td>';
         v += '</tr>';
 
         const opt = document.createElement("option");
-        opt.value = ctInputboxRecords_r[control_name][i];
-        opt.innerHTML = ctInputboxRecords_v[control_name][i];
+        opt.value = ctInputBoxRecords_r[control_name][i];
+        opt.innerHTML = ctInputBoxRecords_v[control_name][i];
         opt.style.cssText = "color:red;";
         opt.setAttribute("selected", "selected");
 
@@ -794,8 +796,8 @@ function ctInputbox_UpdateSQLJoinLink_do(control_name, control_name_postfix) {
         v = o.options[o.selectedIndex].value;
     }
 
-    let selectedValue = ctInputboxRecords_current_value[control_name];
-    ctInputboxRecords_removeOptions(l);
+    let selectedValue = ctInputBoxRecords_current_value[control_name];
+    ctInputBoxRecords_removeOptions(l);
 
     if (control_name_postfix !== '_selector') {
         let opt = document.createElement("option");
