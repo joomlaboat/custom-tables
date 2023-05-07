@@ -293,7 +293,6 @@ class JHTMLCTTableJoin
             return null;
 
         $query = 'SELECT ' . $join_realfieldname . ' FROM ' . $temp_ct->Table->realtablename . ' WHERE ' . $where . ' LIMIT 1';
-
         $temp_ct->db->setQuery($query);
         $recs = $temp_ct->db->loadAssocList();
         if (count($recs) == 0)

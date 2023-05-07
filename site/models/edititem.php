@@ -910,7 +910,7 @@ class CustomTablesModelEditItem extends JModelLegacy
         require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'layout.php');
 
         foreach ($this->ct->Table->fields as $fieldrow) {
-            $realfieldname = $fieldrow['realfieldname'];
+            $realFieldName = $fieldrow['realfieldname'];
             $typeParams = $fieldrow['typeparams'];
 
             if ($fieldrow['type'] == 'phponadd') {
@@ -949,9 +949,9 @@ class CustomTablesModelEditItem extends JModelLegacy
                     return false;
                 }
 
-                $row[$realfieldname] = $value;
+                $row[$realFieldName] = $value;
 
-                $savePHPQuery = $realfieldname . '=' . $this->ct->db->quote($value);
+                $savePHPQuery = $realFieldName . '=' . $this->ct->db->quote($value);
                 $query = 'UPDATE ' . $this->ct->Table->realtablename . ' SET ' . $savePHPQuery . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . $this->ct->db->quote($listing_id);
 
                 $this->ct->db->setQuery($query);

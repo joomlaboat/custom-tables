@@ -50,14 +50,14 @@ class SaveFieldQuerySet
 
     //Return type: null|string|array
 
-    function getSaveFieldSet($fieldrow)
+    function getSaveFieldSet($fieldRow)
     {
-        $this->field = new Field($this->ct, $fieldrow, $this->row);
+        $this->field = new Field($this->ct, $fieldRow, $this->row);
 
         $query = $this->getSaveFieldSetType();
 
         if ($this->field->defaultvalue != "" and (is_null($query) or is_null($this->row[$this->field->realfieldname])))
-            return $this->applyDefaults($fieldrow);
+            return $this->applyDefaults($fieldRow);
         else
             return $query;
     }
@@ -72,7 +72,6 @@ class SaveFieldQuerySet
                 return ($value === null ? null : $this->field->realfieldname . '=' . $this->ct->db->Quote($value));
 
             case 'sqljoin':
-
                 $value = $this->ct->Env->jinput->getString($this->field->comesfieldname);
                 $value = preg_replace("/[^A-Za-z\d\-]/", '', $value);
 
@@ -82,6 +81,8 @@ class SaveFieldQuerySet
                             $this->row[$this->field->realfieldname] = null;
                             return $this->field->realfieldname . '=NULL';
                         }
+                        $this->row[$this->field->realfieldname] = $value;
+                        return $this->field->realfieldname . '=' . $value;
                     } else {
                         if ($value == '') {
                             $this->row[$this->field->realfieldname] = null;
@@ -100,7 +101,6 @@ class SaveFieldQuerySet
                     $this->row[$this->field->realfieldname] = $value;
                     return $this->field->realfieldname . '=' . $this->ct->db->Quote($value);
                 }
-
                 break;
 
             case 'string':
@@ -112,7 +112,6 @@ class SaveFieldQuerySet
                     $this->row[$this->field->realfieldname] = $value;
                     return $this->field->realfieldname . '=' . $this->ct->db->Quote($value);
                 }
-
                 break;
 
             case 'color':
@@ -140,7 +139,6 @@ class SaveFieldQuerySet
 
                     } else
                         $value = $this->ct->Env->jinput->get($this->field->comesfieldname, '', 'ALNUM');
-
 
                     $value = strtolower($value);
                     $value = str_replace('#', '', $value);
@@ -179,7 +177,6 @@ class SaveFieldQuerySet
                         $sets[] = $this->field->realfieldname . $postfix . '=' . $this->ct->db->Quote($value);
                     }
                 }
-
                 return (count($sets) > 0 ? $sets : null);
 
             case 'text':
@@ -190,7 +187,6 @@ class SaveFieldQuerySet
                     $this->row[$this->field->realfieldname] = $value;
                     return $this->field->realfieldname . '=' . $this->ct->db->Quote(stripslashes($value));
                 }
-
                 break;
 
             case 'multilangtext':
@@ -211,7 +207,6 @@ class SaveFieldQuerySet
                         $sets[] = $this->field->realfieldname . $postfix . '=' . $this->ct->db->Quote($value);
                     }
                 }
-
                 return (count($sets) > 0 ? $sets : null);
 
             case 'ordering':
@@ -222,7 +217,6 @@ class SaveFieldQuerySet
                     $this->row[$this->field->realfieldname] = $value;
                     return $this->field->realfieldname . '=' . $value;
                 }
-
                 break;
 
             case 'int':
@@ -233,7 +227,6 @@ class SaveFieldQuerySet
                     $this->row[$this->field->realfieldname] = $value;
                     return $this->field->realfieldname . '=' . $value;
                 }
-
                 break;
 
             case 'user':
@@ -248,7 +241,6 @@ class SaveFieldQuerySet
                     else
                         return $this->field->realfieldname . '=' . $value;
                 }
-
                 break;
 
             case 'userid':
@@ -266,7 +258,6 @@ class SaveFieldQuerySet
                             $value = ($this->ct->Env->userid != 0 ? $this->ct->Env->userid : 0);
                         }
                     }
-
                     $this->row[$this->field->realfieldname] = $value;
                     return $this->field->realfieldname . '=' . $value;
                 }
@@ -277,7 +268,6 @@ class SaveFieldQuerySet
                     $this->row[$this->field->realfieldname] = $value;
                     return $this->field->realfieldname . '=' . $value;
                 }
-
                 break;
 
             case 'article':
@@ -288,7 +278,6 @@ class SaveFieldQuerySet
                     $this->row[$this->field->realfieldname] = $value;
                     return $this->field->realfieldname . '=' . $value;
                 }
-
                 break;
 
             case 'usergroups':
@@ -316,7 +305,6 @@ class SaveFieldQuerySet
                 $returnValue = null;
 
                 if ($to_delete == 'true') {
-
                     $this->row[$this->field->realfieldname] = null;
                     $returnValue = $this->field->realfieldname . '=NULL';
 
@@ -511,7 +499,6 @@ class SaveFieldQuerySet
                         return $this->field->realfieldname . '=' . $this->ct->db->Quote($value);
                     }
                 }
-
                 break;
 
             case 'time':
@@ -525,7 +512,6 @@ class SaveFieldQuerySet
                         return $this->field->realfieldname . '=' . (int)$value;
                     }
                 }
-
                 break;
 
             case 'creationtime':
@@ -590,7 +576,6 @@ class SaveFieldQuerySet
                     $this->row[$this->field->realfieldname] = $value;
                     return $this->field->realfieldname . '=' . $this->ct->db->Quote($value);
                 }
-
                 break;
         }
         return null;
@@ -629,7 +614,6 @@ class SaveFieldQuerySet
                         return $this->getCleanRecordValue($valuearray);
                     }
                     break;
-
             }
         }
         return null;
@@ -695,7 +679,6 @@ class SaveFieldQuerySet
             } else
                 break;
         }
-
         return $value_new;
     }
 
@@ -849,8 +832,8 @@ class SaveFieldQuerySet
     {
         $prefix = $this->field->prefix . 'multi_' . $this->ct->Table->tablename . '_' . $this->field->fieldname;
 
-        $parentid = Tree::getOptionIdFull($parent);
-        $a = $this->getMultiSelector($parentid, $parent, $prefix);
+        $parentId = Tree::getOptionIdFull($parent);
+        $a = $this->getMultiSelector($parentId, $parent, $prefix);
         if ($a === null)
             return null;
 
@@ -902,9 +885,9 @@ class SaveFieldQuerySet
         return $resultList;
     }
 
-    protected function getList($parentid)
+    protected function getList($parentId)
     {
-        $query = 'SELECT id, optionname FROM #__customtables_options WHERE parentid=' . (int)$parentid;
+        $query = 'SELECT id, optionname FROM #__customtables_options WHERE parentid=' . (int)$parentId;
         $this->ct->db->setQuery($query);
         return $this->ct->db->loadObjectList();
     }
@@ -1079,7 +1062,6 @@ class SaveFieldQuerySet
             CTUser::CreateUser($this->ct->Table->realtablename, $this->ct->Table->realidfieldname, $user_email, $user_name,
                 $user_groups, $this->ct->Table->record[$this->ct->Table->realidfieldname], $field->realfieldname);
         }
-
         return true;
     }
 
