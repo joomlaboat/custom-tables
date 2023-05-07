@@ -101,18 +101,17 @@ class CT
         $this->Params->setParams($menuParams, $blockExternalVars, $ModuleId);
     }
 
-    function getTable($tablename_or_id, $userIdFieldName = null): void
+    function getTable($tableNameOrID, $userIdFieldName = null): void
     {
-        $this->Table = new Table($this->Languages, $this->Env, $tablename_or_id, $userIdFieldName);
+        $this->Table = new Table($this->Languages, $this->Env, $tableNameOrID, $userIdFieldName);
         $this->Ordering = new Ordering($this->Table, $this->Params);
-
         $this->prepareSEFLinkBase();
     }
 
-    public function setTable(array &$tablerow, $useridfieldname = null, bool $load_fields = true): void
+    public function setTable(array &$tableRow, $userIdFieldName = null): void
     {
         $this->Table = new Table($this->Languages, $this->Env, 0);
-        $this->Table->setTable($tablerow, $useridfieldname, $load_fields);
+        $this->Table->setTable($tableRow, $userIdFieldName);
 
         $this->Ordering = new Ordering($this->Table, $this->Params);
 
@@ -252,10 +251,10 @@ class CT
 
     function getRecordsByKeyword(): void
     {
-        $moduleid = $this->Env->jinput->get('moduleid', 0, 'INT');
-        if ($moduleid != 0) {
-            $eskeysearch_ = $this->Env->jinput->get('eskeysearch_' . $moduleid, '', 'STRING');
-            if ($eskeysearch_ != '') {
+        $moduleId = $this->Env->jinput->get('moduleid', 0, 'INT');
+        if ($moduleId != 0) {
+            $keywordSearch = $this->Env->jinput->get('eskeysearch_' . $moduleId, '', 'STRING');
+            if ($keywordSearch != '') {
                 require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR
                     . 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'filter' . DIRECTORY_SEPARATOR . 'keywordsearch.php');
 
@@ -265,7 +264,7 @@ class CT
                 $KeywordSearcher->esordering = $this->Ordering->ordering_processed_string;
 
                 $this->Records = $KeywordSearcher->getRowsByKeywords(
-                    $eskeysearch_,
+                    $keywordSearch,
                     $this->Table->recordcount,
                     (int)$this->app->getState('limit'),
                     $this->LimitStart
@@ -300,7 +299,6 @@ class CT
         }
 
         $limit_var = 'com_customtables.limit_' . $this->Params->ItemId;
-
         $this->Limit = $this->app->getUserState($limit_var, 0);
 
         //Grouping
