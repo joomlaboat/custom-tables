@@ -380,5 +380,6 @@ class CT
         Text::script('COM_CUSTOMTABLES_JS_SELECT_DO_U_WANT_TO_DELETE');
         Text::script('COM_CUSTOMTABLES_JS_NOTHING_TO_SAVE');
         Text::script('COM_CUSTOMTABLES_JS_SESSION_EXPIRED');
+        Text::script('COM_CUSTOMTABLES_SELECT');
     }
 }

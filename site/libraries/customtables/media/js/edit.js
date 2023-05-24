@@ -523,11 +523,9 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_ind
         let onChangeAttribute = ' onChange="' + onChangeFunction + onchange + '"';
         //[' + index + ',' + filters.length + ']
         result += '<select id="' + current_object_id + '"' + onChangeAttribute + ' class="' + cssClass + '">';
-
-        result += '<option value="">- Select</option>';
+        result += '<option value="">- ' + Joomla.JText._('COM_CUSTOMTABLES_SELECT') + '</option>';
 
         for (let i = 0; i < r.length; i++) {
-
             let optionLabel = decodeHtml(r[i].label);
             result += '<option value="' + r[i].id + '">' + optionLabel + '</option>';
         }
@@ -786,7 +784,6 @@ function ctInputbox_UpdateSQLJoinLink_do(control_name, control_name_postfix) {
     //Old calls replaced
     let l = document.getElementById(control_name + control_name_postfix);
     let o = document.getElementById(control_name + 'SQLJoinLink');
-
     let v = '';
 
     if (o) {
