@@ -404,7 +404,7 @@ class JHTMLCTTableJoin
             $onChangeAttribute .= $onchange;
 
             $result .= '<select id="' . $current_object_id . '" onChange="' . $onChangeAttribute . '"' . ' class="' . $cssClass . '">';
-            $result .= '<option value="">- ' . JoomlaBasicMisc::JTextExtended(COM_CUSTOMTABLES_SELECT) . '</option>';
+            $result .= '<option value="">- ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT') . '</option>';
             //$result .= '<option value="">- Select4</option>';
 
             for ($i = 0; $i < count($r); $i++) {
