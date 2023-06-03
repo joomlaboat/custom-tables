@@ -370,18 +370,15 @@ class JHTMLCTTableJoin
                 if ($next_index + 2 < count($js_filters)) {
                     $next_index += 1;
                     $next_sub_index = 0;
-
                     $result = self::ctUpdateTableJoinLink($ct, $control_name, $next_index, $next_sub_index, $parent_object_id, $formId, $attributes, $onchange, $filter, $js_filters, $value);
                     $result .= '<div id="' . $control_name . 'Selector' . $next_index . '_' . $next_sub_index . '"></div>';
-
                     return $result;
 
-                } else {
+                } else
                     return '<div id="' . $control_name . 'Selector' . $index . '_' . $sub_index . '"></div>';
-                }
-            } else {
-                return "No items to select";
-            }
+
+            } else
+                return JoomlaBasicMisc::JTextExtended("COM_CUSTOMTABLES_SELECT_NOTHING");
         }
 
         $result = '';

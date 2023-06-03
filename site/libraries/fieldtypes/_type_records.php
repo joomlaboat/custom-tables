@@ -21,7 +21,7 @@ use CustomTables\TwigProcessor;
 class CT_FieldTypeTag_records
 {
     //New function
-    public static function resolveRecordTypeValue(&$field, $layoutcode, $rowValue, string $showPublishedString = '')
+    public static function resolveRecordTypeValue(&$field, $layoutcode, $rowValue, string $showPublishedString = '', string $separatorCharacter = ',')
     {
         $db = Factory::getDBO();
 
@@ -54,30 +54,31 @@ class CT_FieldTypeTag_records
         $ct->Filter->where[] = 'INSTR(' . $db->quote($rowValue) . ',' . $ct->Table->realidfieldname . ')';
         $ct->getRecords();
 
-        return CT_FieldTypeTag_records::processRecordRecords($ct, $layoutcode, $rowValue, $ct->Records);
+        return CT_FieldTypeTag_records::processRecordRecords($ct, $layoutcode, $rowValue, $ct->Records, $separatorCharacter);
     }
 
-    protected static function processRecordRecords(CT &$ct, $layoutcode, $rowValue, &$records)
+    protected static function processRecordRecords(CT &$ct, $layoutcode, $rowValue, &$records, string $separatorCharacter = ',')
     {
-        $valuearray = explode(',', $rowValue);
+        $valueArray = explode(',', $rowValue);
 
         $number = 1;
 
         //To make sure that records belong to the value
         $CleanSearchResult = array();
         foreach ($records as $row) {
-            if (in_array($row[$ct->Table->realidfieldname], $valuearray))
+            if (in_array($row[$ct->Table->realidfieldname], $valueArray))
                 $CleanSearchResult[] = $row;
         }
-
-        $result_count = count($CleanSearchResult);
 
         $htmlresult = '';
 
         foreach ($CleanSearchResult as $row) {
             $row['_number'] = $number;
-
             $twig = new TwigProcessor($ct, $layoutcode);
+
+            if ($htmlresult != '')
+                $htmlresult .= $separatorCharacter;
+
             $htmlresult .= $twig->process($row);
 
             if ($twig->errorMessage !== null)
