@@ -1334,7 +1334,7 @@ class Inputbox
             $result = '<div style="width:100%;overflow:scroll;background-image: url(\'components/com_customtables/libraries/customtables/media/images/icons/bg.png\');">'
                 . $manageButton . '<br/>' . $vlu . '</div>';
         } else
-            $result = 'No Files ' . $manageButton;
+            $result = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FILE_NO_FILES') . ' ' . $manageButton;
 
         return $result;
     }

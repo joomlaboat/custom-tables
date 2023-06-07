@@ -52,15 +52,16 @@ class CustomTablesViewEditFiles extends JViewLegacy
         parent::display($tpl);
     }
 
-    function drawFiles()
+    function drawFiles(): string
     {
-        $htmlout = '
+        $HTMLOut = '
 		
-		<h2>' . JoomlaBasicMisc::JTextExtended("List of Files") . '</h2>
+		<h2>' . JoomlaBasicMisc::JTextExtended("COM_CUSTOMTABLES_FILE_LIST_OF_FILES") . '</h2>
 		<table style="width:100%;border:none;">
 			<thead>
 				<tr>
-					<th style="vertical-align: top; text-align: center; width:40px;"><input type="checkbox" name="SelectAllBox" id="SelectAllBox" onClick=SelectAll(this.checked) style="text-align: left; vertical-align:top"> Select All</th>
+					<th style="vertical-align: top; text-align: center; width:40px;">
+					    <input type="checkbox" name="SelectAllBox" id="SelectAllBox" onClick=SelectAll(this.checked) style="text-align: left; vertical-align:top"> ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT_ALL') . '</th>
 					<th style="vertical-align: top; text-align: center; "></th>
 				</tr>
 			</thead>
@@ -69,13 +70,13 @@ class CustomTablesViewEditFiles extends JViewLegacy
 
         $c = 0;
         foreach ($this->files as $file) {
-            $htmlout .= '
+            $HTMLOut .= '
 				<tr>';
 
             $filename = $this->Model->ct->Table->tableid . '_' . $this->fileboxname . '_' . $file->fileid . '.' . $file->file_ext;
             $filepath = $this->Model->fileboxfolderweb . '/' . $filename;
 
-            $htmlout .= '
+            $HTMLOut .= '
 					<td  style="vertical-align: top; text-align: center; ">
 						<input type="checkbox" name="esfile' . $file->fileid . '" id="esfile' . $file->fileid . '" style="text-align: left;" style="vertical-align:top">
 					</td>
@@ -83,15 +84,15 @@ class CustomTablesViewEditFiles extends JViewLegacy
 			';
 
             $c++;
-            $htmlout .= '
+            $HTMLOut .= '
 				</tr>';
         }
 
-        $htmlout .= '
+        $HTMLOut .= '
 			</tbody>
 		</table>
 		';
 
-        return $htmlout;
+        return $HTMLOut;
     }
 }
