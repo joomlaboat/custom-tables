@@ -46,46 +46,52 @@ class Field
 
     var ?string $layout; //output layout, used in Search Boxes
 
-    function __construct(CT &$ct, $fieldrow, $row = null, $parseParams = true)
+    function __construct(CT &$ct, array $fieldRow, $row = null, $parseParams = true)
     {
         $this->ct = &$ct;
-        $this->id = $fieldrow['id'];
-        $this->type = $fieldrow['type'];
-        $this->fieldrow = $fieldrow;
-        $this->layout = $fieldrow['layout'] ?? null; //rendering layout
 
-        if (!array_key_exists('fieldtitle' . $ct->Languages->Postfix, $fieldrow)) {
+        if (!array_key_exists('id', $fieldRow)) {
+            echo 'Field not found.';
+            return;
+        }
+
+        $this->id = $fieldRow['id'];
+        $this->type = $fieldRow['type'];
+        $this->fieldrow = $fieldRow;
+        $this->layout = $fieldRow['layout'] ?? null; //rendering layout
+
+        if (!array_key_exists('fieldtitle' . $ct->Languages->Postfix, $fieldRow)) {
             $this->title = 'fieldtitle' . $ct->Languages->Postfix . ' - not found';
         } else {
-            $vlu = $fieldrow['fieldtitle' . $ct->Languages->Postfix];
+            $vlu = $fieldRow['fieldtitle' . $ct->Languages->Postfix];
             if ($vlu == '')
-                $this->title = $fieldrow['fieldtitle'];
+                $this->title = $fieldRow['fieldtitle'];
             else
                 $this->title = $vlu;
         }
 
-        if (!array_key_exists('description' . $ct->Languages->Postfix, $fieldrow)) {
+        if (!array_key_exists('description' . $ct->Languages->Postfix, $fieldRow)) {
             $this->description = 'description' . $ct->Languages->Postfix . ' - not found';
         } else {
-            $vlu = $fieldrow['description' . $ct->Languages->Postfix];
+            $vlu = $fieldRow['description' . $ct->Languages->Postfix];
             if ($vlu == '')
-                $this->description = $fieldrow['description'];
+                $this->description = $fieldRow['description'];
             else
                 $this->description = $vlu;
         }
 
-        $this->fieldname = $fieldrow['fieldname'];
-        $this->realfieldname = $fieldrow['realfieldname'];
-        $this->isrequired = intval($fieldrow['isrequired']);
-        $this->defaultvalue = $fieldrow['defaultvalue'];
+        $this->fieldname = $fieldRow['fieldname'];
+        $this->realfieldname = $fieldRow['realfieldname'];
+        $this->isrequired = intval($fieldRow['isrequired']);
+        $this->defaultvalue = $fieldRow['defaultvalue'];
 
-        $this->valuerule = $fieldrow['valuerule'];
-        $this->valuerulecaption = $fieldrow['valuerulecaption'];
+        $this->valuerule = $fieldRow['valuerule'];
+        $this->valuerulecaption = $fieldRow['valuerulecaption'];
 
         $this->prefix = $this->ct->Env->field_input_prefix;
         $this->comesfieldname = $this->prefix . $this->fieldname;
 
-        $this->params = JoomlaBasicMisc::csv_explode(',', $fieldrow['typeparams'], '"', false);
+        $this->params = JoomlaBasicMisc::csv_explode(',', $fieldRow['typeparams'], '"', false);
 
         if ($parseParams and $this->type != 'virtual')
             $this->parseParams($row);

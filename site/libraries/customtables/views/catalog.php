@@ -29,7 +29,7 @@ class Catalog
         $this->ct = &$ct;
     }
 
-    function render(?string $layout = null, $limit = 0): string
+    function render(?string $layoutName = null, $limit = 0): string
     {
         if ($this->ct->Env->frmt == 'html')
             $this->ct->loadJSAndCSS();
@@ -106,33 +106,45 @@ class Catalog
 
 // --------------------- Layouts
         $Layouts = new Layouts($this->ct);
-        $Layouts->layouttype = 0;
-
-        $pageLayout = '';
+        $Layouts->layoutType = 0;
         $itemLayout = '';
+        $pageLayoutNameString = null;
+        $pageLayoutLink = null;
+        $itemLayoutNameString = null;
 
-        if (!is_null($layout) and $layout != '') {
-            $pageLayout = $Layouts->getLayout($layout);
+        if (!is_null($layoutName) and $layoutName != '') {
+            $pageLayout = $Layouts->getLayout($layoutName);
+            $pageLayoutNameString = (($layoutName ?? '') == '' ? 'InlinePageLayout' : $layoutName);
+            $pageLayoutLink = '/administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $Layouts->layoutId;
         } else {
             if ($this->ct->Env->frmt == 'csv') {
                 $pageLayout = $Layouts->createDefaultLayout_CSV($this->ct->Table->fields);
             } else {
 
-                if (!is_null($this->ct->Params->pageLayout) and $this->ct->Params->pageLayout != '')
+                if (!is_null($this->ct->Params->pageLayout) and $this->ct->Params->pageLayout != '') {
                     $pageLayout = $Layouts->getLayout($this->ct->Params->pageLayout);
+                    $pageLayoutNameString = $this->ct->Params->pageLayout;
+                    $pageLayoutLink = '/administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $Layouts->layoutId;
 
-                if (!is_null($this->ct->Params->itemLayout) and $this->ct->Params->itemLayout != '')
-                    $itemLayout = $Layouts->getLayout($this->ct->Params->itemLayout);
-
-                if ($pageLayout == '' and $itemLayout == '') {
+                } else {
                     $pageLayout = $Layouts->createDefaultLayout_SimpleCatalog($this->ct->Table->fields);
-                } elseif ($pageLayout == '' and $itemLayout != '') {
-                    $pageLayout = '{% block record %}' . $itemLayout . '{% endblock %}';
+                    $pageLayoutNameString = 'Generated_Page_Layout';
+                }
+
+                if (!is_null($this->ct->Params->itemLayout) and $this->ct->Params->itemLayout != '') {
+                    $itemLayout = $Layouts->getLayout($this->ct->Params->itemLayout);
+                    $itemLayoutNameString = $this->ct->Params->itemLayout;
+
+                    if ($pageLayout == '') {
+                        $pageLayout = '{% block record %}' . $itemLayout . '{% endblock %}';
+                    }
+                } else {
+                    $itemLayoutNameString = $pageLayoutNameString . '_Inline_Item';
                 }
             }
         }
 
-        $this->ct->LayoutVariables['layout_type'] = $Layouts->layouttype;
+        $this->ct->LayoutVariables['layout_type'] = $Layouts->layoutType;
 
 // -------------------- Load Records
         if (!$this->ct->getRecords()) {
@@ -144,9 +156,9 @@ class Catalog
         if ($this->ct->Env->legacySupport) {
             $catalogTableCode = JoomlaBasicMisc::generateRandomString();//this is temporary replace placeholder. to not parse content result again
 
-            $catalogTableContent = tagProcessor_CatalogTableView::process($this->ct, $Layouts->layouttype, $pageLayout, $catalogTableCode);
+            $catalogTableContent = tagProcessor_CatalogTableView::process($this->ct, $Layouts->layoutType, $pageLayout, $catalogTableCode);
             if ($catalogTableContent == '')
-                $catalogTableContent = tagProcessor_Catalog::process($this->ct, $Layouts->layouttype, $pageLayout, $itemLayout, $catalogTableCode);
+                $catalogTableContent = tagProcessor_Catalog::process($this->ct, $Layouts->layoutType, $pageLayout, $itemLayout, $catalogTableCode);
 
             $LayoutProc = new LayoutProcessor($this->ct);
             $LayoutProc->layout = $pageLayout;
@@ -155,7 +167,7 @@ class Catalog
             $pageLayout = str_replace($catalogTableCode, $catalogTableContent, $pageLayout);
         }
 
-        $twig = new TwigProcessor($this->ct, $pageLayout);
+        $twig = new TwigProcessor($this->ct, $pageLayout, false, false, true, $pageLayoutNameString, $pageLayoutLink);
         $pageLayout = $twig->process();
 
         if ($twig->errorMessage !== null)

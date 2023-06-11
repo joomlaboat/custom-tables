@@ -60,7 +60,6 @@ class Forms
                     $field_label .= '<span class="ms-1 icon-caret-down" aria-hidden="true"></span>';
                 else
                     $field_label .= '<span class="ms-1 icon-caret-up" aria-hidden="true"></span>';
-
             } else
                 $field_label .= '<span class="ms-1 icon-sort" aria-hidden="true"></span>';
         }
@@ -69,9 +68,6 @@ class Forms
             $field_label .= '<span class="star">&#160;*</span>';
 
         $field_label .= '</label>';
-
         return $field_label;
     }
-
-
 }

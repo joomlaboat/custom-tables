@@ -44,29 +44,41 @@ class TwigProcessor
     var bool $DoHTMLSpecialChars;
     var bool $getEditFieldNamesOnly;
     var ?string $errorMessage;
+    var string $pageLayoutName;
+    var ?string $pageLayoutLink;
+    var string $itemLayoutName;
+    var string $itemLayoutLineStart;
 
-    public function __construct(CT &$ct, $layoutContent, $getEditFieldNamesOnly = false, $DoHTMLSpecialChars = false, $parseParams = true)
+    public function __construct(CT &$ct, $layoutContent, $getEditFieldNamesOnly = false, $DoHTMLSpecialChars = false, $parseParams = true, ?string $layoutName = null, ?string $pageLayoutLink = null)
     {
         $this->DoHTMLSpecialChars = $DoHTMLSpecialChars;
         $this->ct = $ct;
         $this->getEditFieldNamesOnly = $getEditFieldNamesOnly;
         $this->ct->LayoutVariables['getEditFieldNamesOnly'] = $getEditFieldNamesOnly;
 
-        $htmlresult_ = '{% autoescape false %}' . $layoutContent . '{% endautoescape %}';
+        $layoutContent = '{% autoescape false %}' . $layoutContent . '{% endautoescape %}';
+
+        $this->pageLayoutName = preg_replace("/[^A-Za-z\d\-]/", '', ($layoutName ?? 'Inline_Layout'));
+        $this->pageLayoutLink = $pageLayoutLink;
+        $this->itemLayoutName = $this->pageLayoutName . '_Item';
 
         $tag1 = '{% block record %}';
-        $pos1 = strpos($htmlresult_, $tag1);
+        $pos1 = strpos($layoutContent, $tag1);
 
         if (!class_exists('Twig\Loader\ArrayLoader')) {
             Factory::getApplication()->enqueueMessage('Twig not loaded. Go to Global Configuration/ Custom Tables Configuration to enable it.', 'error');
             return;
         }
 
+        $this->itemLayoutLineStart = 0;
         if ($pos1 !== false) {
             $this->recordBlockFound = true;
 
+            $tempContentBeforeBlock = substr($layoutContent, 0, $pos1);
+            $this->itemLayoutLineStart = substr_count($tempContentBeforeBlock, "\n");
+
             $tag2 = '{% endblock %}';
-            $pos2 = strpos($htmlresult_, $tag2, $pos1 + strlen($tag1));
+            $pos2 = strpos($layoutContent, $tag2, $pos1 + strlen($tag1));
 
             if ($pos2 === false) {
                 $this->ct->app->enqueueMessage('{% endblock %} is missing', 'error');
@@ -74,21 +86,21 @@ class TwigProcessor
             }
 
             $tag1_length = strlen($tag1);
-            $record_block = substr($htmlresult_, $pos1 + $tag1_length, $pos2 - $pos1 - $tag1_length);
-            $record_block_replace = substr($htmlresult_, $pos1, $pos2 - $pos1 + strlen($tag2));
+            $record_block = substr($layoutContent, $pos1 + $tag1_length, $pos2 - $pos1 - $tag1_length);
+            $record_block_replace = substr($layoutContent, $pos1, $pos2 - $pos1 + strlen($tag2));
 
             $this->recordBlockReplaceCode = JoomlaBasicMisc::generateRandomString();//this is temporary replace placeholder. to not parse content result again
 
-            $htmlresult = str_replace($record_block_replace, $this->recordBlockReplaceCode, $htmlresult_);
+            $pageLayoutContent = str_replace($record_block_replace, $this->recordBlockReplaceCode, $layoutContent);
 
             $loader = new ArrayLoader([
-                'index' => '{% autoescape false %}' . $htmlresult . '{% endautoescape %}',
-                'record' => '{% autoescape false %}' . $record_block . '{% endautoescape %}',
+                $this->pageLayoutName => '{% autoescape false %}' . $pageLayoutContent . '{% endautoescape %}',
+                $this->itemLayoutName => '{% autoescape false %}' . $record_block . '{% endautoescape %}',
             ]);
         } else {
             $this->recordBlockFound = false;
             $loader = new ArrayLoader([
-                'index' => $htmlresult_,
+                $this->pageLayoutName => $layoutContent,
             ]);
         }
 
@@ -200,23 +212,26 @@ class TwigProcessor
     {
         if (isset($this->ct->Table->fields)) {
             $index = 0;
-            foreach ($this->ct->Table->fields as $fieldrow) {
+            foreach ($this->ct->Table->fields as $fieldRow) {
+                if ($fieldRow === null or count($fieldRow) == 0) {
+                    $this->errorMessage = 'addFieldValueMethods: Field row is empty.';
+                } else {
+                    $function = new TwigFunction($fieldRow['fieldname'], function () use (&$ct, $index) {
+                        //This function will process record values with field typeparams and with optional arguments
+                        //Example:
+                        //{{ price }}  - will return 35896.14 if field type parameter is 2,20 (2 decimals)
+                        //{{ price(3,",") }}  - will return 35,896.140 if field type parameter is 2,20 (2 decimals) but extra 0 added
 
-                $function = new TwigFunction($fieldrow['fieldname'], function () use (&$ct, $index) {
-                    //This function will process record values with field typeparams and with optional arguments
-                    //Example:
-                    //{{ price }}  - will return 35896.14 if field type parameter is 2,20 (2 decimals)
-                    //{{ price(3,",") }}  - will return 35,896.140 if field type parameter is 2,20 (2 decimals) but extra 0 added
+                        $args = func_get_args();
 
-                    $args = func_get_args();
+                        $valueProcessor = new Value($this->ct);
+                        return strval($valueProcessor->renderValue($this->ct->Table->fields[$index], $this->ct->Table->record, $args));
+                    });
 
-                    $valueProcessor = new Value($this->ct);
-                    return strval($valueProcessor->renderValue($this->ct->Table->fields[$index], $this->ct->Table->record, $args));
-                });
-
-                $this->twig->addFunction($function);
-                $this->variables[$fieldrow['fieldname']] = new fieldObject($this->ct, $fieldrow, $this->DoHTMLSpecialChars, $this->getEditFieldNamesOnly, $parseParams);
-                $index++;
+                    $this->twig->addFunction($function);
+                    $this->variables[$fieldRow['fieldname']] = new fieldObject($this->ct, $fieldRow, $this->DoHTMLSpecialChars, $this->getEditFieldNamesOnly, $parseParams);
+                    $index++;
+                }
             }
         }
     }
@@ -274,10 +289,15 @@ class TwigProcessor
             $result = '';
         } else {
             try {
-                $result = @$this->twig->render('index', $this->variables);
+                $result = $this->twig->render($this->pageLayoutName, $this->variables);
             } catch (Exception $e) {
                 $this->errorMessage = $e->getMessage();
-                return 'Error:' . $e->getMessage();
+
+                $msg = $e->getMessage();
+                if ($this->pageLayoutLink !== null)
+                    $msg = str_replace($this->pageLayoutName, '<a href="' . $this->pageLayoutLink . '" target="_blank">' . $this->pageLayoutName . '</a>', $msg);
+
+                return 'Error: ' . $msg;
             }
         }
 
@@ -288,7 +308,27 @@ class TwigProcessor
             foreach ($this->ct->Records as $blockRow) {
                 $blockRow['_number'] = $number;
                 $this->ct->Table->record = $blockRow;
-                $row_result = @$this->twig->render('record', $this->variables);
+                try {
+                    $row_result = @$this->twig->render($this->itemLayoutName, $this->variables);
+                } catch (Exception $e) {
+                    $this->errorMessage = $e->getMessage();
+
+                    $msg = $e->getMessage();
+                    $pos = strpos($msg, '" at line ');
+
+                    if ($pos !== false) {
+                        $lineNumberString = intval(substr($msg, $pos + 10, -1));
+                        $lineNumber = intval($lineNumberString);
+                        $msg = str_replace('" at line ' . $lineNumberString, '" at line ' . ($lineNumber + $this->itemLayoutLineStart), $msg);
+                    }
+
+                    $msg = str_replace($this->itemLayoutName, $this->pageLayoutName, $msg);
+
+                    if ($this->pageLayoutLink !== null)
+                        $msg = str_replace($this->pageLayoutName, '<a href="' . $this->pageLayoutLink . '" target="_blank">' . $this->pageLayoutName . '</a>', $msg);
+
+                    return 'Error: ' . $msg;
+                }
 
                 $TR_tag_params = array();
                 $TR_tag_params['id'] = 'ctTable_' . $this->ct->Table->tableid . '_' . $blockRow[$this->ct->Table->realidfieldname];
@@ -305,7 +345,6 @@ class TwigProcessor
 
                 $number++;
             }
-
             $result = str_replace($this->recordBlockReplaceCode, $record_result, $result);
         }
 
@@ -330,16 +369,25 @@ class fieldObject
     var bool $DoHTMLSpecialChars;
     var bool $getEditFieldNamesOnly;
 
-    function __construct(CT &$ct, $fieldrow, $DoHTMLSpecialChars = false, $getEditFieldNamesOnly = false, $parseParams = true)
+    function __construct(CT &$ct, $fieldRow, $DoHTMLSpecialChars = false, $getEditFieldNamesOnly = false, $parseParams = true)
     {
         $this->DoHTMLSpecialChars = $DoHTMLSpecialChars;
         $this->ct = $ct;
-        $this->field = new Field($ct, $fieldrow, $this->ct->Table->record, $parseParams);
+
+        try {
+            $this->field = new Field($ct, $fieldRow, $this->ct->Table->record, $parseParams);
+        } catch (Exception $e) {
+            echo $e->getMessage();
+        }
         $this->getEditFieldNamesOnly = $getEditFieldNamesOnly;
     }
 
     public function __toString()
     {
+        if (!isset($this->field)) {
+            return 'Field not initialized.';
+        }
+
         $valueProcessor = new Value($this->ct);
         $vlu = $valueProcessor->renderValue($this->field->fieldrow, $this->ct->Table->record, []);
 
@@ -353,6 +401,7 @@ class fieldObject
 
     public function __call($name, $arguments)
     {
+        return 'f';
         if ($this->field->fieldname == 'user') {
             $user_parameters = ['name', 'username', 'email', 'id', 'lastvisitdate', 'registerdate', 'usergroups'];
             if (in_array($name, $user_parameters)) {
@@ -376,6 +425,9 @@ class fieldObject
 
     public function value()
     {
+        if (!isset($this->field))
+            return 'Field not initialized.';
+
         if ($this->ct->Table->record === null)
             return '';
 
@@ -444,6 +496,10 @@ class fieldObject
 
     public function label($allowSortBy = false)
     {
+        if (!isset($this->field)) {
+            return 'Field not initialized.';
+        }
+
         $forms = new Forms($this->ct);
         return $forms->renderFieldLabel($this->field, $allowSortBy);
     }
@@ -496,7 +552,7 @@ class fieldObject
                 }
             }
 
-            //Deafult style (borderless)
+            //Default style (borderless)
             if (isset($args[0]) and $args[0] != '') {
                 $class_str = $args[0];
 

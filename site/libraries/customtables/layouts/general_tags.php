@@ -382,12 +382,12 @@ class Twig_Document_Tags
         $layouts = new Layouts($this->ct);
         $layout = $layouts->getLayout($layoutname);
 
-        if (is_null($layouts->tableid)) {
+        if (is_null($layouts->tableId)) {
             $this->ct->app->enqueueMessage('{{ document.layout("' . $layoutname . '") }} - Layout "' . $layoutname . ' not found.', 'error');
             return '';
         }
 
-        if ($layouts->tableid != $this->ct->Table->tableid) {
+        if ($layouts->tableId != $this->ct->Table->tableid) {
             $this->ct->app->enqueueMessage('{{ document.layout("' . $layoutname . '") }} - Layout Table ID and Current Table ID do not match.', 'error');
             return '';
         }
@@ -397,7 +397,7 @@ class Twig_Document_Tags
         $number = 1;
         $html_result = '';
 
-        if ($layouts->layouttype == 6) {
+        if ($layouts->layoutType == 6) {
             if (!is_null($this->ct->Records)) {
 
                 foreach ($this->ct->Records as $row) {

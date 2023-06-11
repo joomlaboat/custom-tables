@@ -24,14 +24,15 @@ use JoomlaBasicMisc;
 class Layouts
 {
     var CT $ct;
-    var ?int $tableid;
-    var ?int $layouttype;
+    var ?int $tableId;
+    var ?int $layoutId;
+    var ?int $layoutType;
 
     function __construct(&$ct)
     {
         $this->ct = &$ct;
-        $this->tableid = null;
-        $this->layouttype = null;
+        $this->tableId = null;
+        $this->layoutType = null;
     }
 
     function processLayoutTag(string &$htmlresult): bool
@@ -63,20 +64,20 @@ class Layouts
         return true;
     }
 
-    function getLayout(string $layoutname, bool $processLayoutTag = true, bool $checkLayoutFile = true, bool $addHeaderCode = true): string
+    function getLayout(string $layoutName, bool $processLayoutTag = true, bool $checkLayoutFile = true, bool $addHeaderCode = true): string
     {
-        if ($layoutname == '')
+        if ($layoutName == '')
             return '';
 
-        if (self::isLayoutContent($layoutname)) {
-            $this->layouttype = 0;
-            return $layoutname;
+        if (self::isLayoutContent($layoutName)) {
+            $this->layoutType = 0;
+            return $layoutName;
         }
 
         if ($this->ct->db->serverType == 'postgresql')
-            $query = 'SELECT id, tableid, layoutcode, layoutmobile, layoutcss, layoutjs, extract(epoch FROM modified) AS ts, layouttype FROM #__customtables_layouts WHERE layoutname=' . $this->ct->db->quote($layoutname) . ' LIMIT 1';
+            $query = 'SELECT id, tableid, layoutcode, layoutmobile, layoutcss, layoutjs, extract(epoch FROM modified) AS ts, layouttype FROM #__customtables_layouts WHERE layoutname=' . $this->ct->db->quote($layoutName) . ' LIMIT 1';
         else
-            $query = 'SELECT id, tableid, layoutcode, layoutmobile, layoutcss, layoutjs, UNIX_TIMESTAMP(modified) AS ts, layouttype FROM #__customtables_layouts WHERE layoutname=' . $this->ct->db->quote($layoutname) . ' LIMIT 1';
+            $query = 'SELECT id, tableid, layoutcode, layoutmobile, layoutcss, layoutjs, UNIX_TIMESTAMP(modified) AS ts, layouttype FROM #__customtables_layouts WHERE layoutname=' . $this->ct->db->quote($layoutName) . ' LIMIT 1';
 
         $this->ct->db->setQuery($query);
         $rows = $this->ct->db->loadAssocList();
@@ -84,11 +85,11 @@ class Layouts
             return '';
 
         $row = $rows[0];
-        $this->tableid = (int)$row['tableid'];
+        $this->tableId = (int)$row['tableid'];
+        $this->layoutId = (int)$row['id'];
+        $this->layoutType = (int)$row['layouttype'];
 
-        $this->layouttype = (int)$row['layouttype'];
-
-        $content = $this->getLayoutFileContent($row['id'], $row['ts'], $layoutname);
+        $content = $this->getLayoutFileContent($row['id'], $row['ts'], $layoutName);
         if ($content != '')
             return $content;
 
@@ -179,7 +180,7 @@ class Layouts
 
     function createDefaultLayout_SimpleCatalog($fields, $addToolbar = true): string
     {
-        $this->layouttype = 1;
+        $this->layoutType = 1;
 
         $result = '<style>' . PHP_EOL . 'datagrid th{text-align:left;}' . PHP_EOL . '.datagrid td{text-align:left;}' . PHP_EOL . '</style>' . PHP_EOL;
         $result .= '<div style="float:right;">{{ html.recordcount }}</div>' . PHP_EOL;
@@ -311,7 +312,7 @@ class Layouts
 
     function createDefaultLayout_CSV($fields): string
     {
-        $this->layouttype = 9;
+        $this->layoutType = 9;
 
         $result = '';
 
@@ -351,7 +352,7 @@ class Layouts
 
     function createDefaultLayout_Edit($fields, $addToolbar = true): string
     {
-        $this->layouttype = 2;
+        $this->layoutType = 2;
         $result = '<div class="form-horizontal">';
 
         $fieldTypes_to_skip = ['log', 'phponview', 'phponchange', 'phponadd', 'md5', 'id', 'server', 'userid', 'viewcount', 'lastviewtime', 'changetime', 'creationtime', 'imagegallery', 'filebox', 'dummy', 'virtual'];

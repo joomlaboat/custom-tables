@@ -67,7 +67,7 @@ class SaveFieldQuerySet
         $listing_id = $this->row[$this->ct->Table->realidfieldname];
         switch ($this->field->type) {
             case 'records':
-                $value = $this->get_record_type_value();
+                $value = self::get_record_type_value($this->ct, $this->field->params);
                 $this->row[$this->field->realfieldname] = $value;
                 return ($value === null ? null : $this->field->realfieldname . '=' . $this->ct->db->Quote($value));
 
@@ -581,16 +581,16 @@ class SaveFieldQuerySet
         return null;
     }
 
-    protected function get_record_type_value()
+    public static function get_record_type_value(CT $ct, Field $field)
     {
-        if (count($this->field->params) > 2) {
-            $esr_selector = $this->field->params[2];
+        if (count($field->params) > 2) {
+            $esr_selector = $field->params[2];
             $selectorPair = explode(':', $esr_selector);
 
             switch ($selectorPair[0]) {
                 case 'single';
 
-                    $value = $this->ct->Env->jinput->getString($this->field->comesfieldname);
+                    $value = $ct->Env->jinput->getString($field->comesfieldname);
 
                     if (isset($value))
                         return (int)$value;
@@ -600,18 +600,18 @@ class SaveFieldQuerySet
                 case 'radio':
                 case 'checkbox':
                 case 'multi';
-                    $valuearray = $this->ct->Env->jinput->post->get($this->field->comesfieldname, null, 'array');
+                    $valueArray = $ct->Env->jinput->post->get($field->comesfieldname, null, 'array');
 
-                    if (isset($valuearray))
-                        return $this->getCleanRecordValue($valuearray);
+                    if (isset($valueArray))
+                        return self::getCleanRecordValue($valueArray);
 
                     break;
 
                 case 'multibox';
-                    $valuearray = $this->ct->Env->jinput->post->get($this->field->comesfieldname, null, 'array');
+                    $valueArray = $ct->Env->jinput->post->get($field->comesfieldname, null, 'array');
 
-                    if (isset($valuearray)) {
-                        return $this->getCleanRecordValue($valuearray);
+                    if (isset($valueArray)) {
+                        return self::getCleanRecordValue($valueArray);
                     }
                     break;
             }
@@ -619,7 +619,7 @@ class SaveFieldQuerySet
         return null;
     }
 
-    protected function getCleanRecordValue($array): string
+    protected static function getCleanRecordValue($array): string
     {
         $values = array();
         foreach ($array as $a) {
