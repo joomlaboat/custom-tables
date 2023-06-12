@@ -31,7 +31,7 @@ class CustomtablesTableLayouts extends JTable
     var $layoutjs = null;
 
     var $layoutname = null;
-    var $layouttype = null;
+    var $layoutType = null;
     var $tableid = null;
     var $published = null;
     var $created_by = null;

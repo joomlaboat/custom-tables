@@ -40,7 +40,6 @@ class CustomtablesModelRecords extends JModelAdmin
 
     public function getTable($type = 'records', $prefix = 'CustomtablesTable', $config = array())
     {
-
         return JTable::getInstance($type, $prefix, $config);
     }
 
@@ -86,7 +85,6 @@ class CustomtablesModelRecords extends JModelAdmin
         if (!parent::publish($pks, $value)) {
             return false;
         }
-
         return true;
     }
 
@@ -173,18 +171,4 @@ class CustomtablesModelRecords extends JModelAdmin
         // Check the session for previously entered form data.
         return null;//$data;
     }
-
-    /**
-     * Method to get the unique records of this table.
-     *
-     * @return  mixed  An array of field names, boolean false if none is set.
-     *
-     * @since   3.0
-     */
-
-    protected function getUniqeRecords()
-    {
-        return false;
-    }
-
 }

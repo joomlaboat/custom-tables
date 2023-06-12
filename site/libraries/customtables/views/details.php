@@ -25,6 +25,8 @@ class Details
     var string $layoutDetailsContent;
     var ?array $row;
     var int $layoutType;
+    var ?string $pageLayoutNameString;
+    var ?string $pageLayoutLink;
 
     function __construct(CT &$ct)
     {
@@ -37,12 +39,17 @@ class Details
         if (!$this->loadRecord())
             return false;
 
+        $this->pageLayoutNameString = null;
+        $this->pageLayoutLink = null;
+
         if (is_null($layoutDetailsContent)) {
             $this->layoutDetailsContent = '';
 
             if ($this->ct->Params->detailsLayout != '') {
                 $Layouts = new Layouts($this->ct);
                 $this->layoutDetailsContent = $Layouts->getLayout($this->ct->Params->detailsLayout);
+                $this->pageLayoutNameString = $this->ct->Params->detailsLayout;
+                $this->pageLayoutLink = '/administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $Layouts->layoutId;
 
                 if ($Layouts->layoutType === null) {
                     echo 'Layout "' . $this->ct->Params->detailsLayout . '" not found or the type is not set.';
@@ -78,7 +85,7 @@ class Details
 
         if (!is_null($this->ct->Params->recordsTable) and !is_null($this->ct->Params->recordsUserIdField) and !is_null($this->ct->Params->recordsField)) {
             if (!$this->checkRecordUserJoin($this->ct->Params->recordsTable, $this->ct->Params->recordsUserIdField, $this->ct->Params->recordsField, $this->ct->Params->listing_id)) {
-                //YOU ARE NOT AUTHORIZED TO ACCESS THIS SOURCE';
+                //YOU ARE NOT AUTHORIZED TO ACCESS THIS SOURCE;
                 $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'), 'error');
                 return false;
             }
@@ -223,15 +230,12 @@ class Details
                 $new_row[$this->ct->Table->realidfieldname] = $row[$this->ct->Table->realidfieldname];
                 $new_row[$log_field] = $row[$log_field];
 
-
                 if ($creation_time_field) {
                     $timestamp = date('Y-m-d H:i:s', (int)$data_editor[0]);
                     $new_row[$creation_time_field] = $timestamp; //time (int)
                 }
-
                 return $new_row;
             }
-
         }
         return null;
     }
@@ -272,7 +276,6 @@ class Details
     protected function SaveViewLogForRecord($rec): void
     {
         $updateFields = array();
-
         $allowedTypes = ['lastviewtime', 'viewcount'];
 
         foreach ($this->ct->Table->fields as $mFld) {
@@ -318,7 +321,7 @@ class Details
         return true;
     }
 
-    public function render()
+    public function render(): string
     {
         $layoutDetailsContent = $this->layoutDetailsContent;
 
@@ -330,10 +333,9 @@ class Details
             $LayoutProc = new LayoutProcessor($this->ct);
             $LayoutProc->layout = $layoutDetailsContent;
             $layoutDetailsContent = $LayoutProc->fillLayout($this->row);
-
         }
 
-        $twig = new TwigProcessor($this->ct, $layoutDetailsContent);
+        $twig = new TwigProcessor($this->ct, $layoutDetailsContent, false, false, true, $this->pageLayoutNameString, $this->pageLayoutLink);
         $layoutDetailsContent = $twig->process($this->row);
 
         if ($twig->errorMessage !== null)

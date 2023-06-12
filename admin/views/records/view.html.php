@@ -30,25 +30,25 @@ require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARAT
 class CustomtablesViewRecords extends JViewLegacy
 {
     var CT $ct;
-    var int $tableid;
+    var int $tableId;
     var string $pageLayout;
     var ?array $row;
-    var $state;
     var $canDo;
-    var $canCreate;
-    var $canEdit;
-    var int $refid;
+    var bool $canCreate;
+    var bool $canEdit;
+    var int $refId;
     var string $referral;
+    var string $formLink;
 
     public function display($tpl = null)
     {
         $app = Factory::getApplication();
 
-        $this->tableid = $app->input->getint('tableid', 0);
+        $this->tableId = $app->input->getint('tableid', 0);
         $listing_id = $app->input->getCmd('id');
 
         $paramsArray = array();
-        $paramsArray['tableid'] = $this->tableid;
+        $paramsArray['tableid'] = $this->tableId;
         $paramsArray['publishstatus'] = 1;
         $paramsArray['listingid'] = $listing_id;
 
@@ -56,7 +56,9 @@ class CustomtablesViewRecords extends JViewLegacy
         $params->loadArray($paramsArray);
 
         $this->ct = new CT;
-        $this->ct->setParams($params, true);
+        $this->ct->setParams($params);
+        $this->ct->getTable($this->tableId);
+        $this->row = $this->ct->Table->loadRecord($listing_id);
 
         $key = $this->ct->Env->jinput->getCmd('key');
         if ($key != '') {
@@ -65,18 +67,16 @@ class CustomtablesViewRecords extends JViewLegacy
             $this->renderForm($tpl, $params);
     }
 
-    protected function renderForm($tpl, $params): bool
+    protected function renderForm($tpl): bool
     {
-        $Model = JModelLegacy::getInstance('EditItem', 'CustomTablesModel', $params);
-        $Model->load($this->ct);
-
+        //$Model = JModelLegacy::getInstance('EditItem', 'CustomTablesModel', $params);
+        //$Model->load($this->ct);
         $Layouts = new Layouts($this->ct);
         $this->ct->LayoutVariables['layout_type'] = 2;
         $this->pageLayout = $Layouts->createDefaultLayout_Edit($this->ct->Table->fields, false);
+        //$this->row = $Model->row;
 
-        $this->row = $Model->row;
-
-        $this->state = $this->get('State');
+        //$this->state = $this->get('State');
         // get action permissions
 
         $this->canDo = ContentHelper::getActions('com_customtables', 'tables');
@@ -85,14 +85,14 @@ class CustomtablesViewRecords extends JViewLegacy
 
         // get input
         $this->ref = Factory::getApplication()->input->get('ref', 0, 'word');
-        $this->refid = Factory::getApplication()->input->get('refid', 0, 'int');
+        $this->refId = Factory::getApplication()->input->get('refid', 0, 'int');
         $this->referral = '';
-        if ($this->refid) {
+        if ($this->refId) {
             // return to the item that referred to this item
-            $this->referral = '&ref=' . (string)$this->ref . '&refid=' . (int)$this->refid;
+            $this->referral = '&ref=' . $this->ref . '&refid=' . (int)$this->refId;
         } elseif ($this->ref) {
             // return to the list view that referred to this item
-            $this->referral = '&ref=' . (string)$this->ref;
+            $this->referral = '&ref=' . $this->ref;
         }
 
         // Set the toolbar
@@ -104,20 +104,18 @@ class CustomtablesViewRecords extends JViewLegacy
         }
 
         // Display the template
-        $this->formLink = JURI::root(false) . 'administrator/index.php?option=com_customtables&amp;view=records&amp;layout=edit&amp;tableid=' . $this->tableid . '&id=' . $this->ct->Params->listing_id;
+        $this->formLink = JURI::root(false) . 'administrator/index.php?option=com_customtables&amp;view=records&amp;layout=edit&amp;tableid=' . $this->tableId . '&id=' . $this->ct->Params->listing_id;
 
         parent::display($tpl);
 
         // Set the document
         $this->setDocument();
-
         return true;
     }
 
     protected function addToolBar()
     {
         Factory::getApplication()->input->set('hidemainmenu', true);
-
         $isNew = $this->ct->Params->listing_id == 0;
 
         JToolbarHelper::title(Text::_($isNew ? 'COM_CUSTOMTABLES_RECORDS_NEW' : 'COM_CUSTOMTABLES_RECORDS_EDIT'), 'pencil-2 article-add');

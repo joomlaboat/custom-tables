@@ -15,87 +15,156 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomTables\CT;
+use CustomTables\Layouts;
 use CustomTables\TwigProcessor;
 use Joomla\CMS\HTML\HTMLHelper;
 
-function CTViewEdit(CT &$ct, $row, &$pageLayout, $formLink, $formName): void
+class Edit
 {
-    if (!is_null($ct->Params->ModuleId))
-        $formName .= $ct->Params->ModuleId;
+    var CT $ct;
+    var string $layoutContent;
+    var ?array $row;
+    var int $layoutType;
+    var ?string $pageLayoutNameString;
+    var ?string $pageLayoutLink;
 
-    if ($ct->Env->legacySupport) {
-        $path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR;
-        require_once($path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'edittags.php');
-        require_once($path . 'layout.php');
+    function __construct(CT &$ct)
+    {
+        $this->ct = &$ct;
+        $this->layoutType = 0;
+        $this->layoutContent = '';
+        $this->pageLayoutNameString = null;
+        $this->pageLayoutLink = null;
     }
 
-    HTMLHelper::_('jquery.framework');
-    jimport('joomla.html.html.bootstrap');
+    function load(): bool
+    {
+        if ($this->ct->Params->editLayout != '') {
+            $Layouts = new Layouts($this->ct);
+            $this->layoutContent = $Layouts->getLayout($this->ct->Params->editLayout);
+            $this->pageLayoutNameString = $this->ct->Params->editLayout;
+            $this->pageLayoutLink = '/administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $Layouts->layoutId;
 
-    $ct->loadJSAndCSS();
-
-    if (!$ct->Params->blockExternalVars and $ct->Params->showPageHeading) {
-        echo '<div class="page-header' . strip_tags($ct->Params->pageClassSFX ?? '') . '"><h2 itemprop="headline">'
-            . JoomlaBasicMisc::JTextExtended($ct->Params->pageTitle) . '</h2></div>';
+            if ($Layouts->layoutType === null) {
+                $this->ct->app->enqueueMessage('Layout "' . $this->ct->Params->editLayout . '" not found or the type is not set.', 'error');
+                return false;
+            }
+            $this->layoutType = $Layouts->layoutType;
+        } else {
+            $this->ct->app->enqueueMessage('Layout not set.', 'error');
+            return false;
+        }
+        $this->ct->LayoutVariables['layout_type'] = $this->layoutType;
+        return true;
     }
 
-    $listing_id = $row[$ct->Table->realidfieldname] ?? 0;
+    public function processLayout(?array $row = null): string
+    {
+        if ($row !== null)
+            $this->row = $row;
 
-    echo '<form action="' . $formLink . '" method="post" name="' . $formName . '" id="' . $formName . '" class="form-validate form-horizontal well" '
-        . 'data-tableid="' . $ct->Table->tableid . '" data-recordid="' . $listing_id . '" '
-        . 'data-version=' . $ct->Env->version . '>';
+        if ($this->ct->Env->legacySupport) {
+            $path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR;
+            require_once($path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'edittags.php');
+            require_once($path . 'layout.php');
 
-    echo($ct->Env->version < 4 ? '<fieldset>' : '<fieldset class="options-form">');
+            $LayoutProc = new LayoutProcessor($this->ct, $this->layoutContent);
+            $this->layoutContent = $LayoutProc->fillLayout(null, null, '||', false, true);
+            tagProcessor_Edit::process($this->ct, $this->layoutContent, $row, true);
+        }
 
-    //Calendars of the child should be built again, because when Dom was ready they didn't exist yet.
+        $twig = new TwigProcessor($this->ct, $this->layoutContent, true);
+        $result = $twig->process($this->row);
 
-    $ct->isEditForm = true; //This changes inputbox prefix
+        if ($twig->errorMessage !== null)
+            $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
 
-    if ($ct->Env->legacySupport) {
-        $LayoutProc = new LayoutProcessor($ct, $pageLayout);
-
-        //Better to run tag processor before rendering form edit elements because of IF statements that can exclude the part of the layout that contains form fields.
-        $pageLayout = $LayoutProc->fillLayout($row, null, '||', false, true);
-
-        tagProcessor_Edit::process($ct, $pageLayout, $row);
+        return $result;
     }
 
-    $twig = new TwigProcessor($ct, $pageLayout);
-    $pageLayout = $twig->process($row);
+    function render($row, $formLink, $formName): string
+    {
+        $result = '';
 
-    if ($twig->errorMessage !== null)
-        $ct->app->enqueueMessage($twig->errorMessage, 'error');
+        if ($row !== null)
+            $this->row = $row;
 
-    if ($ct->Params->allowContentPlugins)
-        $pageLayout = JoomlaBasicMisc::applyContentPlugins($pageLayout);
+        if (!is_null($this->ct->Params->ModuleId))
+            $formName .= $this->ct->Params->ModuleId;
 
-    echo $pageLayout;
+        if ($this->ct->Env->legacySupport) {
+            $path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR;
+            require_once($path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'edittags.php');
+            require_once($path . 'layout.php');
+        }
 
-    $returnto = '';
+        HTMLHelper::_('jquery.framework');
+        jimport('joomla.html.html.bootstrap');
 
-    if ($ct->Env->jinput->get('returnto', '', 'BASE64'))
-        $returnto = base64_decode($ct->Env->jinput->get('returnto', '', 'BASE64'));
-    elseif ($ct->Params->returnTo)
-        $returnto = $ct->Params->returnTo;
+        $this->ct->loadJSAndCSS();
 
-    $encoded_returnto = base64_encode($returnto);
+        if (!$this->ct->Params->blockExternalVars and $this->ct->Params->showPageHeading) {
+            $result .= '<div class="page-header' . strip_tags($this->ct->Params->pageClassSFX ?? '') . '"><h2 itemprop="headline">'
+                . JoomlaBasicMisc::JTextExtended($this->ct->Params->pageTitle) . '</h2></div>';
+        }
 
-    if ($listing_id == 0) {
-        echo '<input type="hidden" name="published" value="' . (int)$ct->Params->publishStatus . '" />';
-    }
+        $listing_id = $this->row[$this->ct->Table->realidfieldname] ?? 0;
 
-    echo '<input type="hidden" name="task" id="task" value="save" />'
-        . '<input type="hidden" name="returnto" id="returnto" value="' . $encoded_returnto . '" />'
-        . '<input type="hidden" name="listing_id" id="listing_id" value="' . $listing_id . '" />';
+        $result .= '<form action="' . $formLink . '" method="post" name="' . $formName . '" id="' . $formName . '" class="form-validate form-horizontal well" '
+            . 'data-tableid="' . $this->ct->Table->tableid . '" data-recordid="' . $listing_id . '" '
+            . 'data-version=' . $this->ct->Env->version . '>';
 
-    if (!is_null($ct->Params->ModuleId))
-        echo '<input type="hidden" name="ModuleId" id="ModuleId" value="' . $ct->Params->ModuleId . '" />';
+        $result .= ($this->ct->Env->version < 4 ? '<fieldset>' : '<fieldset class="options-form">');
 
-    echo ($ct->Env->jinput->getCmd('tmpl', '') != '' ? '<input type="hidden" name="tmpl" value="' . $ct->Env->jinput->getCmd('tmpl', '') . '" />' : '')
-        . JHtml::_('form.token')
-        . '</fieldset>
+        //Calendars of the child should be built again, because when Dom was ready they didn't exist yet.
+
+        $this->ct->isEditForm = true; //This changes input box prefix
+
+        if ($this->ct->Env->legacySupport) {
+            $LayoutProc = new LayoutProcessor($this->ct, $this->layoutContent);
+
+            //Better to run tag processor before rendering form edit elements because of IF statements that can exclude the part of the layout that contains form fields.
+            $pageLayout = $LayoutProc->fillLayout($this->row, null, '||', false, true);
+            tagProcessor_Edit::process($this->ct, $pageLayout, $this->row);
+        } else
+            $pageLayout = $this->layoutContent;
+
+        $twig = new TwigProcessor($this->ct, $pageLayout, false, false, true, $this->pageLayoutNameString, $this->pageLayoutLink);
+        $pageLayout = $twig->process($this->row);
+
+        if ($twig->errorMessage !== null)
+            $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
+
+        if ($this->ct->Params->allowContentPlugins)
+            $pageLayout = JoomlaBasicMisc::applyContentPlugins($pageLayout);
+
+        $result .= $pageLayout;
+
+        $returnTo = '';
+
+        if ($this->ct->Env->jinput->get('returnto', '', 'BASE64'))
+            $returnTo = base64_decode($this->ct->Env->jinput->get('returnto', '', 'BASE64'));
+        elseif ($this->ct->Params->returnTo)
+            $returnTo = $this->ct->Params->returnTo;
+
+        $encodedReturnTo = base64_encode($returnTo);
+
+        if ($listing_id == 0) {
+            $result .= '<input type="hidden" name="published" value="' . (int)$this->ct->Params->publishStatus . '" />';
+        }
+
+        $result .= '<input type="hidden" name="task" id="task" value="save" />'
+            . '<input type="hidden" name="returnto" id="returnto" value="' . $encodedReturnTo . '" />'
+            . '<input type="hidden" name="listing_id" id="listing_id" value="' . $listing_id . '" />';
+
+        if (!is_null($this->ct->Params->ModuleId))
+            $result .= '<input type="hidden" name="ModuleId" id="ModuleId" value="' . $this->ct->Params->ModuleId . '" />';
+
+        $result .= ($this->ct->Env->jinput->getCmd('tmpl', '') != '' ? '<input type="hidden" name="tmpl" value="' . $this->ct->Env->jinput->getCmd('tmpl', '') . '" />' : '')
+            . JHtml::_('form.token')
+            . '</fieldset>
 </form>';
 
-    if ($ct->Env->isModal)
-        die;
+        return $result;
+    }
 }

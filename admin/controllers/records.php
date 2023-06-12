@@ -53,60 +53,42 @@ class CustomtablesControllerRecords extends JControllerForm
     public function cancel($key = null): bool
     {
         // get the referral details
-        $tableid = $this->input->get('tableid', 0, 'int');
+        $tableId = $this->input->get('tableid', 0, 'int');
 
         $cancel = parent::cancel($key);
 
         // Redirect to the items screen.
         $this->setRedirect(
             JRoute::_(
-                'index.php?option=' . $this->option . '&view=listofrecords&tableid=' . (int)$tableid, false
-            //'index.php?option=' . $this->option . '&view=listofrecords&layout=edit&tableid='.(int)$tableid, false
-            )
+                'index.php?option=' . $this->option . '&view=listofrecords&tableid=' . (int)$tableId, false)
         );
-
         return $cancel;
     }
 
     public function save($key = null, $urlVar = null): bool
     {
-        $tablename = null;
-
-        $tableid = $this->input->get('tableid', 0, 'int');
-        if ($tableid != 0) {
-            $table = ESTables::getTableRowByID($tableid);
-            if (!is_object($table) and $table == 0) {
-                Factory::getApplication()->enqueueMessage('Table not found', 'error');
-                return false;
-            } else {
-                $tablename = $table->tablename;
-            }
-        }
+        $ct = new CT;
+        $tableId = $this->input->get('tableid', 0, 'int');
+        $ct->getTable($tableId);
 
         $listing_id = $this->input->getCmd('id', 0);
 
-        $paramsArray = array();
-        $paramsArray['tableid'] = $tableid;
-        $paramsArray['establename'] = $tablename;
-        $paramsArray['publishstatus'] = 1;
-        $paramsArray['listingid'] = $listing_id;
-
-
         $params = new JRegistry;
-        $params->loadArray($paramsArray);
-
-        $ct = new CT;
+        $params->loadArray(['listingid' => $listing_id]);
         $ct->setParams($params, true);
 
         require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR . 'edititem.php');
         $editModel = JModelLegacy::getInstance('EditItem', 'CustomTablesModel', $params);
-        $editModel->load($ct);
+        $editModel->ct = $ct;
+        $editModel->editForm = new Edit($ct);
+        $editModel->listing_id = $listing_id;
 
         $Layouts = new Layouts($ct);
-
-        $editModel->pageLayout = $Layouts->createDefaultLayout_Edit($ct->Table->fields, false);
+        $editModel->editForm->layoutContent = $Layouts->createDefaultLayout_Edit($ct->Table->fields, false);
 
         $msg_ = '';
+        $link = '';
+        $saved = false;
 
         if ($this->task == 'save2copy')
             $saved = $editModel->copy($msg_, $link);
@@ -117,24 +99,22 @@ class CustomtablesControllerRecords extends JControllerForm
 
         if ($this->task == 'apply') {
             Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORD_SAVED'), 'success');
-            $redirect .= '&view=records&layout=edit&id=' . $listing_id . '&tableid=' . (int)$tableid;
+            $redirect .= '&view=records&layout=edit&id=' . $listing_id . '&tableid=' . (int)$tableId;
         } elseif ($this->task == 'save2copy') {
             Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORDS_COPIED'), 'success');
-            $redirect .= '&view=records&task=records.edit&tableid=' . (int)$tableid . '&id=' . $ct->Params->listing_id;
+            $redirect .= '&view=records&task=records.edit&tableid=' . (int)$tableId . '&id=' . $ct->Params->listing_id;
         } elseif ($this->task == 'save2new') {
             Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORD_SAVED'), 'success');
-            $redirect .= '&view=records&task=records.edit&tableid=' . (int)$tableid;
+            $redirect .= '&view=records&task=records.edit&tableid=' . (int)$tableId;
         } else {
             Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORD_SAVED'), 'success');
-            $redirect .= '&view=listofrecords&tableid=' . (int)$tableid;
+            $redirect .= '&view=listofrecords&tableid=' . (int)$tableId;
         }
 
         if ($saved) {
             // Redirect to the item screen.
             $this->setRedirect(
-                JRoute::_(
-                    $redirect, false
-                )
+                JRoute::_($redirect, false)
             );
         }
 

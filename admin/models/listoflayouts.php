@@ -62,8 +62,8 @@ class CustomtablesModelListOfLayouts extends JModelList
             $Layouts = new Layouts($this->ct);
             $translations = $Layouts->layoutTypeTranslation();
 
-            foreach ($items as $nr => &$item) {
-                // convert layouttype
+            foreach ($items as &$item) {
+                // convert layoutType
                 if (isset($translations[$item->layouttype])) {
                     $item->layouttype = $translations[$item->layouttype];
                 } else {
@@ -77,8 +77,8 @@ class CustomtablesModelListOfLayouts extends JModelList
     protected function populateState($ordering = null, $direction = null)
     {
         if ($this->ct->Env->version < 4) {
-            $layouttype = $this->getUserStateFromRequest($this->context . '.filter.layouttype', 'filter_layouttype');
-            $this->setState('filter.layouttype', $layouttype);
+            $layoutType = $this->getUserStateFromRequest($this->context . '.filter.layouttype', 'filter_layouttype');
+            $this->setState('filter.layouttype', $layoutType);
 
             $tableid = $this->getUserStateFromRequest($this->context . '.filter.tableid', 'filter_tableid');
             $this->setState('filter.tableid', $tableid);
@@ -147,8 +147,8 @@ class CustomtablesModelListOfLayouts extends JModelList
         }
 
         // Filter by Layouttype.
-        if ($layouttype = $this->getState('filter.layouttype')) {
-            $query->where('a.layouttype = ' . $db->quote($db->escape($layouttype)));
+        if ($layoutType = $this->getState('filter.layouttype')) {
+            $query->where('a.layouttype = ' . $db->quote($db->escape($layoutType)));
         }
         // Filter by Tableid.
         if ($tableid = $this->getState('filter.tableid')) {

@@ -136,12 +136,10 @@ class JHTMLCTTableJoin
                 } else
                     return [];
             } else {
-
                 echo 'Table Join field: wrong option_list format - Parent Selector must be an array';
                 return [];
             }
         }
-
         return [$parent_filter_table_name, $parent_filter_field_name];
     }
 

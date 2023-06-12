@@ -48,7 +48,10 @@ class CustomTablesViewEditItem extends JViewLegacy
             require_once('tmpl' . DIRECTORY_SEPARATOR . 'json.php');
         else {
 
-            CTViewEdit($this->ct, $Model->row, $Model->pageLayout, $formLink, 'eseditForm');
+            echo $Model->editForm->render($Model->row, $formLink, 'eseditForm');
+
+            if ($this->ct->Env->isModal)
+                die;
 
             echo '
             <!-- Modal content -->

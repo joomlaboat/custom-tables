@@ -42,8 +42,8 @@ class CustomTablesModelEditItem extends JModelLegacy
     var bool $userIdField_UniqueUsers;
     var ?string $listing_id;
     var bool $isAuthorized;
-    var string $pageLayout;
     var ?array $row;
+    var Edit $editForm;
 
     function __construct()
     {
@@ -52,7 +52,7 @@ class CustomTablesModelEditItem extends JModelLegacy
         parent::__construct();
     }
 
-    function load(CT $ct, bool $addHeaderCode = false): bool
+    function load(CT $ct): bool
     {
         $this->ct = $ct;
         $this->ct->getTable($ct->Params->tableName, $this->ct->Params->userIdField);
@@ -66,12 +66,6 @@ class CustomTablesModelEditItem extends JModelLegacy
 
         if (is_null($ct->Params->msgItemIsSaved))
             $ct->Params->msgItemIsSaved = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORD_SAVED');
-
-        if ($this->ct->Params->editLayout != '') {
-            $Layouts = new Layouts($this->ct);
-            $this->pageLayout = $Layouts->getLayout($this->ct->Params->editLayout, true, false, $addHeaderCode);
-        } else
-            $this->pageLayout = '';
 
         $this->listing_id = $this->ct->Params->listing_id;
 
@@ -87,9 +81,11 @@ class CustomTablesModelEditItem extends JModelLegacy
             $this->getSpecificVersionIfSet();
         else {
             //default record values
-            $this->row = null;//[$this->ct->Table->realidfieldname => '', 'listing_published' => 0];
+            $this->row = null;
         }
 
+        $this->editForm = new Edit($ct);
+        $this->editForm->load();
         return true;
     }
 
@@ -495,14 +491,14 @@ class CustomTablesModelEditItem extends JModelLegacy
         $phpOnAddFound = false;
         $saveField = new SaveFieldQuerySet($this->ct, $row_old, $isCopy);
 
-        foreach ($this->ct->Table->fields as $fieldrow) {
+        foreach ($this->ct->Table->fields as $fieldRow) {
 
-            if (!$saveField->checkIfFieldAlreadyInTheList($fieldrow['fieldname'])) {
+            if (!$saveField->checkIfFieldAlreadyInTheList($fieldRow['fieldname'])) {
 
-                if (in_array($fieldrow['fieldname'], $fieldsToSave))
-                    $saveFieldSet = $saveField->getSaveFieldSet($fieldrow);
+                if (in_array($fieldRow['fieldname'], $fieldsToSave))
+                    $saveFieldSet = $saveField->getSaveFieldSet($fieldRow);
                 else
-                    $saveFieldSet = $saveField->applyDefaults($fieldrow);
+                    $saveFieldSet = $saveField->applyDefaults($fieldRow);
 
                 $this->row = $saveField->row;
                 if ($saveFieldSet !== null) {
@@ -513,10 +509,10 @@ class CustomTablesModelEditItem extends JModelLegacy
                 }
             }
 
-            if ($fieldrow['type'] == 'phponadd' and ($listing_id == 0 or $listing_id == '' or $isCopy))
+            if ($fieldRow['type'] == 'phponadd' and ($listing_id == 0 or $listing_id == '' or $isCopy))
                 $phpOnAddFound = true;
 
-            if ($fieldrow['type'] == 'phponchange')
+            if ($fieldRow['type'] == 'phponchange')
                 $phpOnChangeFound = true;
         }
 
@@ -615,27 +611,10 @@ class CustomTablesModelEditItem extends JModelLegacy
 
     function getFieldsToSave($row): array
     {
-        $this->ct->isEditForm = true; //This changes inputbox prefix
+        $this->ct->isEditForm = true; //This changes input box prefix
 
-        if ($this->ct->Env->legacySupport) {
-            $path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR;
-            require_once($path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'edittags.php');
-            require_once($path . 'layout.php');
-
-            $LayoutProc = new LayoutProcessor($this->ct, $this->pageLayout);
-            $pageLayout = $LayoutProc->fillLayout(null, null, '||', false, true);
-            tagProcessor_Edit::process($this->ct, $pageLayout, $row, true);
-        } else
-            $pageLayout = $this->pageLayout;
-
-        $twig = new TwigProcessor($this->ct, $pageLayout, true);
-        $pageLayout = $twig->process($row);
-
-        if ($twig->errorMessage !== null)
-            $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
-
+        $pageLayout = $this->editForm->processLayout($row);
         $backgroundFieldTypes = ['creationtime', 'changetime', 'server', 'id', 'md5', 'userid'];
-
         $fieldsToEdit = [];
 
         foreach ($this->ct->Table->fields as $fieldRow) {
@@ -659,7 +638,7 @@ class CustomTablesModelEditItem extends JModelLegacy
                 $fn_str[] = "'comes_" . $fieldName . "'";
 
                 foreach ($fn_str as $s) {
-                    if (str_contains($this->pageLayout, $s)) {
+                    if (str_contains($pageLayout, $s)) {
 
                         if (!in_array($fieldName, $fieldsToEdit) and !Fields::isVirtualField($fieldRow))
                             $fieldsToEdit[] = $fieldName;
