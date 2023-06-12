@@ -289,8 +289,8 @@ class CustomtablesModelFields extends JModelAdmin
             return false;
         }
 
-        // get list of uniqe fields
-        $uniqeFields = $this->getUniqeFields();
+        // get list of unique fields
+        $uniqueFields = $this->getUniqueFields();
         // remove move_copy from array
         unset($values['move_copy']);
 
@@ -343,10 +343,10 @@ class CustomtablesModelFields extends JModelAdmin
                 }
             }
 
-            // update all uniqe fields
-            if (CustomtablesHelper::checkArray($uniqeFields)) {
-                foreach ($uniqeFields as $uniqeField) {
-                    $this->table->$uniqeField = $this->generateUnique($uniqeField, $this->table->$uniqeField);
+            // update all unique fields
+            if (CustomtablesHelper::checkArray($uniqueFields)) {
+                foreach ($uniqueFields as $uniqueField) {
+                    $this->table->$uniqueField = $this->generateUnique($uniqueField, $this->table->$uniqueField);
                 }
             }
 
@@ -394,7 +394,7 @@ class CustomtablesModelFields extends JModelAdmin
      *
      * @since   3.0
      */
-    protected function getUniqeFields()
+    protected function getUniqueFields()
     {
         return false;
     }

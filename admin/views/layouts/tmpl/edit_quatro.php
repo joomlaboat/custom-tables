@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomTables\Fields;
+use CustomTables\Layouts;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Editor\Editor;
 use Joomla\CMS\Factory;
@@ -79,32 +80,78 @@ foreach ($this->allTables as $table) {
     <?php echo HTMLHelper::_('uitab.endTab'); ?>
 
     <?php echo HTMLHelper::_('uitab.addTab', 'layouteditorTabs', 'layoutcode-tab', Text::_('COM_CUSTOMTABLES_LAYOUTS_HTML')); ?>
-    <?php echo $this->renderTextArea($this->item->layoutcode, 'layoutcode', $typeBoxId, $onPageLoads); ?>
+
+    <?php
+    $layoutCode = $this->item->layoutcode;
+    if ($this->ct->Env->folderToSaveLayouts !== null) {
+        $layouts = new Layouts($this->ct);
+        $content = $layouts->getLayoutFileContent($this->item->id, $this->item->ts, $this->item->layoutname . '.html', 'layoutcode');
+        if ($content != null)
+            $layoutCode = $content;
+    }
+    echo $this->renderTextArea($this->item->layoutcode, 'layoutcode', $typeBoxId, $onPageLoads);
+    if ($this->ct->Env->folderToSaveLayouts !== null)
+        echo '<br/>Path: ' . $this->ct->Env->folderToSaveLayouts . DIRECTORY_SEPARATOR . $this->item->layoutname . '.html';
+
+    ?>
     <?php echo HTMLHelper::_('uitab.endTab'); ?>
 
-    <?php echo HTMLHelper::_('uitab.addTab', 'layouteditorTabs', 'layoutmobile-tab', Text::_('COM_CUSTOMTABLES_LAYOUTS_HTML_MOBILE')); ?>
     <?php
-    if ($this->ct->Env->advancedTagProcessor)
-        echo $this->renderTextArea($this->item->layoutmobile, 'layoutmobile', $typeBoxId, $onPageLoads);
-    else
+
+    echo HTMLHelper::_('uitab.addTab', 'layouteditorTabs', 'layoutmobile-tab', Text::_('COM_CUSTOMTABLES_LAYOUTS_HTML_MOBILE')); ?>
+    <?php
+    if ($this->ct->Env->advancedTagProcessor) {
+        $layoutCode = $this->item->layoutmobile;
+        if ($this->ct->Env->folderToSaveLayouts !== null) {
+            $layouts = new Layouts($this->ct);
+            $content = $layouts->getLayoutFileContent($this->item->id, $this->item->ts, $this->item->layoutname . '_mobile.html', 'layoutmobile');
+            if ($content != null)
+                $layoutCode = $content;
+        }
+        echo $this->renderTextArea($layoutCode, 'layoutmobile', $typeBoxId, $onPageLoads);
+
+        if ($this->ct->Env->folderToSaveLayouts !== null)
+            echo '<br/>Path: ' . $this->ct->Env->folderToSaveLayouts . DIRECTORY_SEPARATOR . $this->item->layoutname . '_mobile.html';
+    } else
         echo Text::_('COM_CUSTOMTABLES_AVAILABLE');
     ?>
     <?php echo HTMLHelper::_('uitab.endTab'); ?>
 
     <?php echo HTMLHelper::_('uitab.addTab', 'layouteditorTabs', 'layoutcss-tab', Text::_('COM_CUSTOMTABLES_LAYOUTS_CSS')); ?>
     <?php
-    if ($this->ct->Env->advancedTagProcessor)
+    if ($this->ct->Env->advancedTagProcessor) {
+        $layoutCode = $this->item->layoutcss;
+        if ($this->ct->Env->folderToSaveLayouts !== null) {
+            $layouts = new Layouts($this->ct);
+            $content = $layouts->getLayoutFileContent($this->item->id, $this->item->ts, $this->item->layoutname . '.css', 'layoutcss');
+            if ($content != null)
+                $layoutCode = $content;
+        }
         echo $this->renderTextArea($this->item->layoutcss, 'layoutcss', $typeBoxId, $onPageLoads);
-    else
+
+        if ($this->ct->Env->folderToSaveLayouts !== null)
+            echo '<br/>Path: ' . $this->ct->Env->folderToSaveLayouts . DIRECTORY_SEPARATOR . $this->item->layoutname . '.css';
+    } else
         echo Text::_('COM_CUSTOMTABLES_AVAILABLE');
     ?>
     <?php echo HTMLHelper::_('uitab.endTab'); ?>
 
     <?php echo HTMLHelper::_('uitab.addTab', 'layouteditorTabs', 'layoutjs-tab', Text::_('COM_CUSTOMTABLES_LAYOUTS_JS')); ?>
     <?php
-    if ($this->ct->Env->advancedTagProcessor)
+    if ($this->ct->Env->advancedTagProcessor) {
+        $layoutCode = $this->item->layoutjs;
+        if ($this->ct->Env->folderToSaveLayouts !== null) {
+            $layouts = new Layouts($this->ct);
+            $content = $layouts->getLayoutFileContent($this->item->id, $this->item->ts, $this->item->layoutname . '.js', 'layoutjs');
+            if ($content != null)
+                $layoutCode = $content;
+        }
         echo $this->renderTextArea($this->item->layoutjs, 'layoutjs', $typeBoxId, $onPageLoads);
-    else
+
+        if ($this->ct->Env->folderToSaveLayouts !== null)
+            echo '<br/>Path: ' . $this->ct->Env->folderToSaveLayouts . DIRECTORY_SEPARATOR . $this->item->layoutname . '.js';
+
+    } else
         echo Text::_('COM_CUSTOMTABLES_AVAILABLE');
     ?>
     <?php echo HTMLHelper::_('uitab.endTab'); ?>

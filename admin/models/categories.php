@@ -274,8 +274,8 @@ class CustomtablesModelCategories extends JModelAdmin
             return false;
         }
 
-        // get list of uniqe fields
-        $uniqeFields = $this->getUniqeFields();
+        // get list of unique fields
+        $uniqueFields = $this->getUniqueFields();
         // remove move_copy from array
         unset($values['move_copy']);
 
@@ -316,7 +316,7 @@ class CustomtablesModelCategories extends JModelAdmin
 
             // Only for strings
             if (CustomtablesHelper::checkString($this->table->categoryname) && !is_numeric($this->table->categoryname)) {
-                $this->table->categoryname = $this->generateUniqe('categoryname', $this->table->categoryname);
+                $this->table->categoryname = $this->generateUnique('categoryname', $this->table->categoryname);
             }
 
             // insert all set values
@@ -329,9 +329,9 @@ class CustomtablesModelCategories extends JModelAdmin
             }
 
             // update all unique fields
-            if (CustomtablesHelper::checkArray($uniqeFields)) {
-                foreach ($uniqeFields as $uniqeField) {
-                    $this->table->$uniqeField = $this->generateUniqe($uniqeField, $this->table->$uniqeField);
+            if (CustomtablesHelper::checkArray($uniqueFields)) {
+                foreach ($uniqueFields as $uniqueField) {
+                    $this->table->$uniqueField = $this->generateUnique($uniqueField, $this->table->$uniqueField);
                 }
             }
 
@@ -377,13 +377,13 @@ class CustomtablesModelCategories extends JModelAdmin
      *
      * @since   3.0
      */
-    protected function getUniqeFields()
+    protected function getUniqueFields()
     {
         return false;
     }
 
     /**
-     * Method to generate a uniqe value.
+     * Method to generate a unique value.
      *
      * @param string $field name.
      * @param string $value data.
@@ -392,9 +392,9 @@ class CustomtablesModelCategories extends JModelAdmin
      *
      * @since   3.0
      */
-    protected function generateUniqe($field, $value)
+    protected function generateUnique($field, $value)
     {
-        // set field value uniqe
+        // set field value unique
         $table = $this->getTable();
 
         while ($table->load(array($field => $value))) {
@@ -495,11 +495,11 @@ class CustomtablesModelCategories extends JModelAdmin
         $input = Factory::getApplication()->input;
 
         if ($input->get('task') === 'save2copy') {
-            // Automatic handling of other uniqe fields
-            $uniqeFields = $this->getUniqeFields();
-            if (CustomtablesHelper::checkArray($uniqeFields)) {
-                foreach ($uniqeFields as $uniqeField) {
-                    $data[$uniqeField] = $this->generateUniqe($uniqeField, $data[$uniqeField]);
+            // Automatic handling of other unique fields
+            $uniqueFields = $this->getUniqueFields();
+            if (CustomtablesHelper::checkArray($uniqueFields)) {
+                foreach ($uniqueFields as $uniqueField) {
+                    $data[$uniqueField] = $this->generateUnique($uniqueField, $data[$uniqueField]);
                 }
             }
         }

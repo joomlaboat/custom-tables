@@ -37,10 +37,32 @@ class CustomtablesViewLayouts extends JViewLegacy
     {
         $model = $this->getModel();
         $this->ct = $model->ct;
+        $layoutId = $this->ct->Env->jinput->getInt('id', 0);
 
         // Assign the variables
         $this->form = $this->get('Form');
-        $this->item = $this->get('Item');
+
+        if ($this->ct->db->serverType == 'postgresql')
+            $query = 'SELECT id, tableid, layoutname, layoutcode, layoutmobile, layoutcss, layoutjs, '
+                . 'CASE WHEN modified IS NULL THEN extract(epoch FROM created) '
+                . 'ELSE extract(epoch FROM modified) AS ts, '
+                . 'layouttype '
+                . 'FROM #__customtables_layouts WHERE id=' . $layoutId . ' LIMIT 1';
+        else
+            $query = 'SELECT id, tableid, layoutname, layoutcode, layoutmobile, layoutcss, layoutjs, '
+                . 'IF(modified IS NULL,UNIX_TIMESTAMP(created),UNIX_TIMESTAMP(modified)) AS ts, '
+                . 'layouttype '
+                . 'FROM #__customtables_layouts WHERE id=' . $layoutId . ' LIMIT 1';
+
+        $this->ct->db->setQuery($query);
+        $rows = $this->ct->db->loadObjectList();
+        if (count($rows) == 1)
+            $this->item = $rows[0];
+        else {
+            $emptyItem = ['id' => 0, 'tableid' => null, 'layoutname' => null, 'layoutcode' => null, 'layoutmobile' => null, 'layoutcss' => null, 'layoutjs' => null, 'ts' => 0];
+            $this->item = (object)$emptyItem;
+        }
+
         $this->script = $this->get('Script');
         $this->state = $this->get('State');
         // get action permissions
@@ -92,7 +114,6 @@ class CustomtablesViewLayouts extends JViewLegacy
         // Set the document
         $this->setDocument();
     }
-
 
     /**
      * Setting the toolbar

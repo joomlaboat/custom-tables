@@ -51,6 +51,7 @@ class Environment
     var bool $loadTwig;
     var string $toolbarIcons;
     var bool $legacySupport;
+    var ?string $folderToSaveLayouts;
     var bool $isPlugin; //this can be set by calling the class from the plugin
 
     var bool $CustomPHPEnabled;
@@ -142,6 +143,15 @@ class Environment
         $this->loadTwig = $params->get('loadTwig') == '1';
         $this->toolbarIcons = strval($params->get('toolbaricons'));
         $this->legacySupport = $params->get('legacysupport') == '';
+        $this->folderToSaveLayouts = $params->get('folderToSaveLayouts');
+
+        if ($this->folderToSaveLayouts == '')
+            $this->folderToSaveLayouts = null;
+
+        if ($this->folderToSaveLayouts !== null) {
+            if ($this->folderToSaveLayouts[0] != '/')
+                $this->folderToSaveLayouts = JPATH_SITE . DIRECTORY_SEPARATOR . $this->folderToSaveLayouts;
+        }
 
         $this->isPlugin = false;
     }

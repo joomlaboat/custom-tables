@@ -80,6 +80,8 @@ foreach ($this->allTables as $table) {
     <?php echo JHtml::_('bootstrap.endTab');
 
     echo JHtml::_('bootstrap.addTab', 'layoutsTab', 'layoutcode-tab', Text::_('COM_CUSTOMTABLES_LAYOUTS_HTML', true));
+
+
     echo $this->renderTextArea($this->item->layoutcode, 'layoutcode', $typeBoxId, $onPageLoads);
     echo JHtml::_('bootstrap.endTab');
 

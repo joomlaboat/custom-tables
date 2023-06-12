@@ -372,7 +372,7 @@ class Twig_Document_Tags
         $this->ct->document->addCustomTag($tag);
     }
 
-    function layout($layoutname): string
+    function layout($layoutName): string
     {
         if (!isset($this->ct->Table)) {
             $this->ct->app->enqueueMessage('{{ document.layout }} - Table not loaded.', 'error');
@@ -380,15 +380,15 @@ class Twig_Document_Tags
         }
 
         $layouts = new Layouts($this->ct);
-        $layout = $layouts->getLayout($layoutname);
+        $layout = $layouts->getLayout($layoutName);
 
         if (is_null($layouts->tableId)) {
-            $this->ct->app->enqueueMessage('{{ document.layout("' . $layoutname . '") }} - Layout "' . $layoutname . ' not found.', 'error');
+            $this->ct->app->enqueueMessage('{{ document.layout("' . $layoutName . '") }} - Layout "' . $layoutName . ' not found.', 'error');
             return '';
         }
 
         if ($layouts->tableId != $this->ct->Table->tableid) {
-            $this->ct->app->enqueueMessage('{{ document.layout("' . $layoutname . '") }} - Layout Table ID and Current Table ID do not match.', 'error');
+            $this->ct->app->enqueueMessage('{{ document.layout("' . $layoutName . '") }} - Layout Table ID and Current Table ID do not match.', 'error');
             return '';
         }
 

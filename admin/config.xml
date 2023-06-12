@@ -73,6 +73,14 @@
             <option value="puretwig">Pure Twig</option>
         </field>
 
+        <field
+                name="folderToSaveLayouts"
+                type="text"
+                label="Folder where to save Layouts (Optional)"
+                default=""
+                description="The layout source code can be save as files if the path is specified."
+        />
+
         <field name="autorName"
                type="text"
                label="COM_CUSTOMTABLES_CONFIG_AUTHOR_NAME_LABEL"

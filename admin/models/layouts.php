@@ -14,6 +14,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\CT;
 
+use CustomTables\Layouts;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\Registry\Registry;
@@ -283,8 +284,8 @@ class CustomtablesModelLayouts extends JModelAdmin
             return false;
         }
 
-        // get list of uniqe fields
-        $uniqeFields = $this->getUniqeFields();
+        // get list of unique fields
+        $uniqueFields = $this->getUniqueFields();
         // remove move_copy from array
         unset($values['move_copy']);
 
@@ -325,7 +326,7 @@ class CustomtablesModelLayouts extends JModelAdmin
 
             // Only for strings
             if (CustomtablesHelper::checkString($this->table->layoutname) && !is_numeric($this->table->layoutname)) {
-                $this->table->layoutname = $this->generateUniqe('layoutname', $this->table->layoutname);
+                $this->table->layoutname = $this->generateUnique('layoutname', $this->table->layoutname);
             }
 
             // insert all set values
@@ -337,10 +338,10 @@ class CustomtablesModelLayouts extends JModelAdmin
                 }
             }
 
-            // update all uniqe fields
-            if (CustomtablesHelper::checkArray($uniqeFields)) {
-                foreach ($uniqeFields as $uniqeField) {
-                    $this->table->$uniqeField = $this->generateUniqe($uniqeField, $this->table->$uniqeField);
+            // update all unique fields
+            if (CustomtablesHelper::checkArray($uniqueFields)) {
+                foreach ($uniqueFields as $uniqueField) {
+                    $this->table->$uniqueField = $this->generateUnique($uniqueField, $this->table->$uniqueField);
                 }
             }
 
@@ -387,13 +388,13 @@ class CustomtablesModelLayouts extends JModelAdmin
      *
      * @since   3.0
      */
-    protected function getUniqeFields()
+    protected function getUniqueFields()
     {
         return false;
     }
 
     /**
-     * Method to generate a uniqe value.
+     * Method to generate a unique value.
      *
      * @param string $field name.
      * @param string $value data.
@@ -402,16 +403,15 @@ class CustomtablesModelLayouts extends JModelAdmin
      *
      * @since   3.0
      */
-    protected function generateUniqe($field, $value)
+    protected function generateUnique($field, $value)
     {
 
-        // set field value uniqe
+        // set field value unique
         $table = $this->getTable();
 
         while ($table->load(array($field => $value))) {
             $value = StringHelper::increment($value);
         }
-
         return $value;
     }
 
@@ -514,13 +514,13 @@ class CustomtablesModelLayouts extends JModelAdmin
         $filter = JFilterInput::getInstance();
 
         if (function_exists("transliterator_transliterate"))
-            $layoutname = transliterator_transliterate("Any-Latin; Latin-ASCII;", $data['layoutname']);
+            $layoutName = transliterator_transliterate("Any-Latin; Latin-ASCII;", $data['layoutname']);
         else
-            $layoutname = $data['layoutname'];
+            $layoutName = $data['layoutname'];
 
-        //$layoutname = str_replace(" ", "_", $layoutname);
-        $layoutname = trim(preg_replace("/[^a-z A-Z_\d]/", "", $layoutname));
-        $data['layoutname'] = $layoutname;
+        $layoutName = str_replace(" ", "_", $layoutName);
+        $layoutName = trim(preg_replace("/[^a-z A-Z_\d]/", "", $layoutName));
+        $data['layoutname'] = $layoutName;
 
         // set the metadata to the Item Data
         if (isset($data['metadata']) && isset($data['metadata']['author'])) {
@@ -538,16 +538,19 @@ class CustomtablesModelLayouts extends JModelAdmin
             $data['params'] = (string)$params;
         }
 
-        // Alter the uniqe field for save as copy
+        // Alter the unique field for save as copy
         if ($input->get('task') === 'save2copy') {
-            // Automatic handling of other uniqe fields
-            $uniqeFields = $this->getUniqeFields();
-            if (CustomtablesHelper::checkArray($uniqeFields)) {
-                foreach ($uniqeFields as $uniqeField) {
-                    $data[$uniqeField] = $this->generateUniqe($uniqeField, $data[$uniqeField]);
+            // Automatic handling of other unique fields
+            $uniqueFields = $this->getUniqueFields();
+            if (CustomtablesHelper::checkArray($uniqueFields)) {
+                foreach ($uniqueFields as $uniqueField) {
+                    $data[$uniqueField] = $this->generateUnique($uniqueField, $data[$uniqueField]);
                 }
             }
         }
+
+        $Layouts = new Layouts($this->ct);
+        $Layouts->storeAsFile($data);
 
         if (parent::save($data)) {
             return true;
@@ -633,15 +636,8 @@ class CustomtablesModelLayouts extends JModelAdmin
         $date = Factory::getDate();
         $user = Factory::getUser();
 
-        if (isset($table->name)) {
+        if (isset($table->name))
             $table->name = htmlspecialchars_decode($table->name, ENT_QUOTES);
-        }
-        /*
-                if (isset($table->alias) && empty($table->alias))
-                {
-                    $table->generateAlias();
-                }
-                */
 
         if (empty($table->id)) {
             $table->created = $date->toSql();
@@ -653,14 +649,6 @@ class CustomtablesModelLayouts extends JModelAdmin
             $table->modified = $date->toSql();
             $table->modified_by = $user->id;
         }
-
-        /*
-        if (!empty($table->id))
-        {
-            // Increment the items version number.
-            $table->version++;
-        }
-        */
     }
 
     /**
@@ -674,33 +662,10 @@ class CustomtablesModelLayouts extends JModelAdmin
     {
         // Check the session for previously entered form data.
         $data = Factory::getApplication()->getUserState('com_customtables.edit.layouts.data', array());
-
         if (empty($data)) {
             $data = $this->getItem();
         }
-
         return $data;
-    }
-
-    public function getItem($pk = null)
-    {
-        if ($item = parent::getItem($pk)) {
-            if (!empty($item->params) && !is_array($item->params)) {
-                // Convert the params field to an array.
-                $registry = new Registry;
-                $registry->loadString($item->params);
-                $item->params = $registry->toArray();
-            }
-
-            if (!empty($item->metadata)) {
-                // Convert the metadata field to an array.
-                $registry = new Registry;
-                $registry->loadString($item->metadata);
-                $item->metadata = $registry->toArray();
-            }
-        }
-
-        return $item;
     }
 
     /**
@@ -711,16 +676,13 @@ class CustomtablesModelLayouts extends JModelAdmin
      * @return    array  Contains the modified title and alias.
      *
      */
-    protected function _generateNewTitle($title)
+    protected function _generateNewTitle(string $title)
     {
-
         // Alter the title
         $table = $this->getTable();
-
         while ($table->load(array('title' => $title))) {
             $title = StringHelper::increment($title);
         }
-
         return $title;
     }
 }

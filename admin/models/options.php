@@ -254,7 +254,7 @@ class CustomTablesModelOptions extends JModelAdmin
         return $item;
     }
 
-    protected function getUniqeFields()
+    protected function getUniqueFields()
     {
         return false;
     }

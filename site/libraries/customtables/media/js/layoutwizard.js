@@ -768,7 +768,9 @@ function getLayout_Edit() {
     let result = "";
     let l = wizardFields.length;
 
-    result += '<legend>{{ table.title }}</legend>\r\n\r\n<div class="form-horizontal">\r\n{{ html.goback("Go back") }}\r\n';
+    result += '<legend>{{ table.title }}</legend>\r\n\r\n';
+    result += '{{ html.goback("Go back") }}\r\n\r\n';
+    result += '<div class="form-horizontal">';
 
     let fieldtypes_to_skip = ['log', 'phponview', 'phponchange', 'phponadd', 'md5', 'id', 'server', 'userid', 'viewcount', 'lastviewtime', 'changetime', 'creationtime', 'imagegallery', 'filebox', 'dummy'];
 
@@ -801,7 +803,9 @@ function getLayout_Details() {
     let result = "";
     let l = wizardFields.length;
 
-    result += '{{ html.goback("Go back") }}\r\n\r\n<div class="form-horizontal">\r\n\r\n';
+    result += '<legend>{{ table.title }}</legend>\r\n\r\n';
+    result += '{{ html.goback("Go back") }}\r\n\r\n'
+    result += '<div class="form-horizontal">\r\n\r\n';
 
     let fieldtypes_to_skip = ['log', 'imagegallery', 'filebox', 'dummy'];
 
