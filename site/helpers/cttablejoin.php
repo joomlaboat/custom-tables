@@ -104,7 +104,7 @@ class JHTMLCTTableJoin
                             $fieldName = $optionFilter[1];
                             $allow_unpublished = $optionFilter[2];
                             $whereFilter = $optionFilter[3];
-                            $orderBy = $optionFilter[4];
+                            $orderBy = $optionFilter[4] ?? null;
 
                             if ($parent_filter_field_name == '' and isset($optionFilter[5])) {
                                 $parent_filter_table_name = $optionFilter[0];
