@@ -31,6 +31,7 @@ class Edit
     function __construct(CT &$ct)
     {
         $this->ct = &$ct;
+        $this->row = null;
         $this->layoutType = 0;
         $this->layoutContent = '';
         $this->pageLayoutNameString = null;
@@ -118,7 +119,7 @@ class Edit
 
         //Calendars of the child should be built again, because when Dom was ready they didn't exist yet.
 
-        $this->ct->isEditForm = true; //This changes input box prefix
+        $this->ct->isEditForm = true; //These changes input box prefix
 
         if ($this->ct->Env->legacySupport) {
             $LayoutProc = new LayoutProcessor($this->ct, $this->layoutContent);

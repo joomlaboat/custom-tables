@@ -305,45 +305,49 @@ class TwigProcessor
             $number = 1;
             $record_result = '';
 
-            foreach ($this->ct->Records as $blockRow) {
-                $blockRow['_number'] = $number;
-                $this->ct->Table->record = $blockRow;
-                try {
-                    $row_result = @$this->twig->render($this->itemLayoutName, $this->variables);
-                } catch (Exception $e) {
-                    $this->errorMessage = $e->getMessage();
+            if ($this->ct->Records !== null) {
+                foreach ($this->ct->Records as $blockRow) {
+                    $blockRow['_number'] = $number;
+                    $this->ct->Table->record = $blockRow;
+                    try {
+                        $row_result = @$this->twig->render($this->itemLayoutName, $this->variables);
+                    } catch (Exception $e) {
+                        $this->errorMessage = $e->getMessage();
 
-                    $msg = $e->getMessage();
-                    $pos = strpos($msg, '" at line ');
+                        $msg = $e->getMessage();
+                        $pos = strpos($msg, '" at line ');
 
-                    if ($pos !== false) {
-                        $lineNumberString = intval(substr($msg, $pos + 10, -1));
-                        $lineNumber = intval($lineNumberString);
-                        $msg = str_replace('" at line ' . $lineNumberString, '" at line ' . ($lineNumber + $this->itemLayoutLineStart), $msg);
+                        if ($pos !== false) {
+                            $lineNumberString = intval(substr($msg, $pos + 10, -1));
+                            $lineNumber = intval($lineNumberString);
+                            $msg = str_replace('" at line ' . $lineNumberString, '" at line ' . ($lineNumber + $this->itemLayoutLineStart), $msg);
+                        }
+
+                        $msg = str_replace($this->itemLayoutName, $this->pageLayoutName, $msg);
+
+                        if ($this->pageLayoutLink !== null)
+                            $msg = str_replace($this->pageLayoutName, '<a href="' . $this->pageLayoutLink . '" target="_blank">' . $this->pageLayoutName . '</a>', $msg);
+
+                        return 'Error: ' . $msg;
                     }
 
-                    $msg = str_replace($this->itemLayoutName, $this->pageLayoutName, $msg);
+                    $TR_tag_params = array();
+                    $TR_tag_params['id'] = 'ctTable_' . $this->ct->Table->tableid . '_' . $blockRow[$this->ct->Table->realidfieldname];
 
-                    if ($this->pageLayoutLink !== null)
-                        $msg = str_replace($this->pageLayoutName, '<a href="' . $this->pageLayoutLink . '" target="_blank">' . $this->pageLayoutName . '</a>', $msg);
+                    if (isset($this->ct->LayoutVariables['ordering_field_type_found']) and $this->ct->LayoutVariables['ordering_field_type_found'])
+                        $TR_tag_params['data-draggable-group'] = $this->ct->Table->tableid;
 
-                    return 'Error: ' . $msg;
+                    $row_result = Ordering::addEditHTMLTagParams($row_result, 'tr', $TR_tag_params);
+
+                    if ($isSingleRecord and $blockRow[$this->ct->Table->realidfieldname] == $this->ct->Params->listing_id)
+                        return $row_result; //This allows modal edit form functionality, to load single record after Save click
+                    else
+                        $record_result .= $row_result;
+
+                    $number++;
                 }
-
-                $TR_tag_params = array();
-                $TR_tag_params['id'] = 'ctTable_' . $this->ct->Table->tableid . '_' . $blockRow[$this->ct->Table->realidfieldname];
-
-                if (isset($this->ct->LayoutVariables['ordering_field_type_found']) and $this->ct->LayoutVariables['ordering_field_type_found'])
-                    $TR_tag_params['data-draggable-group'] = $this->ct->Table->tableid;
-
-                $row_result = Ordering::addEditHTMLTagParams($row_result, 'tr', $TR_tag_params);
-
-                if ($isSingleRecord and $blockRow[$this->ct->Table->realidfieldname] == $this->ct->Params->listing_id)
-                    return $row_result; //This allows modal edit form functionality, to load single record after Save click
-                else
-                    $record_result .= $row_result;
-
-                $number++;
+            } else {
+                $record_result = 'Catalog Page or Simple Catalog layout with "{% block record %}" used as Table Join value. Use Catalog Item or Details layout instead.';
             }
             $result = str_replace($this->recordBlockReplaceCode, $record_result, $result);
         }

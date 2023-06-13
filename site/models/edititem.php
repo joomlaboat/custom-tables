@@ -56,9 +56,10 @@ class CustomTablesModelEditItem extends JModelLegacy
     {
         $this->ct = $ct;
         $this->ct->getTable($ct->Params->tableName, $this->ct->Params->userIdField);
+        $this->row = null;
 
         if ($this->ct->Table->tablename === null) {
-            $this->ct->app->enqueueMessage('Table not selected (148).', 'error');
+            $this->ct->app->enqueueMessage('Table not selected (61).', 'error');
             return false;
         }
 
@@ -79,10 +80,6 @@ class CustomTablesModelEditItem extends JModelLegacy
 
         if (isset($this->row))
             $this->getSpecificVersionIfSet();
-        else {
-            //default record values
-            $this->row = null;
-        }
 
         $this->editForm = new Edit($ct);
         $this->editForm->load();

@@ -122,7 +122,7 @@ class JHTMLCTTableJoin
                         $fieldName = $option[1];
                         $allow_unpublished = $option[2];
                         $whereFilter = $option[3];
-                        $orderBy = $option[4];
+                        $orderBy = $option[4] ?? '';
 
                         if ($parent_filter_field_name == '' and isset($option[5])) {
                             $parent_filter_table_name = $option[0];
@@ -363,7 +363,7 @@ class JHTMLCTTableJoin
             return $r->error;
 
         if (count($r) == 0) {
-            if (is_array($js_filters[$next_index])) {
+            if (isset($js_filters[$next_index]) and is_array($js_filters[$next_index])) {
 
                 if ($next_index + 2 < count($js_filters)) {
                     $next_index += 1;

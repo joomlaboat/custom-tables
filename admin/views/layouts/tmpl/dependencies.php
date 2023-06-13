@@ -256,6 +256,8 @@ function _getLayoutsThatUseThisLayout($layoutname)
         ':layout:' . $layoutname . ']',    //example: [field:layout]
         ':tablelesslayout:' . $layoutname . ',',    //example: [tablelesslayout:layout,someparameter]
         ':tablelesslayout:' . $layoutname . ']',    //example: [tablelesslayout:layout]
+        '"' . $layoutname . '"',    //example: "layout"
+        "'" . $layoutname . "'",    //example: 'layout'
         ',' . $layoutname . ','];        //For plugins
     //':'.$layoutname];
     $w = array();

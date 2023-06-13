@@ -100,7 +100,7 @@ class Layouts
 
             $layoutCode = $row['layoutmobile'];
             if ($checkLayoutFile and $this->ct->Env->folderToSaveLayouts !== null) {
-                $content = $this->getLayoutFileContent($row['id'], $row['ts'], $layoutName . '_mobile.html', 'layoutmobile');
+                $content = $this->getLayoutFileContent($row['id'], $layoutName, $layoutCode, $row['ts'], $layoutName . '_mobile.html', 'layoutmobile');
                 if ($content != null)
                     $layoutCode = $content;
             }
@@ -109,7 +109,7 @@ class Layouts
 
             $layoutCode = $row['layoutcode'];
             if ($checkLayoutFile and $this->ct->Env->folderToSaveLayouts !== null) {
-                $content = $this->getLayoutFileContent($row['id'], $row['ts'], $layoutName . '.html', 'layoutcode');
+                $content = $this->getLayoutFileContent($row['id'], $layoutName, $layoutCode, $row['ts'], $layoutName . '.html', 'layoutcode');
                 if ($content != null)
                     $layoutCode = $content;
             }
@@ -133,7 +133,7 @@ class Layouts
         return false;
     }
 
-    public function getLayoutFileContent(int $layout_id, int $db_layout_ts, string $filename, string $fieldName): ?string
+    public function getLayoutFileContent(int $layout_id, string $layoutName, string $layoutCode, int $db_layout_ts, string $filename, string $fieldName): ?string
     {
         if (file_exists($this->ct->Env->folderToSaveLayouts . DIRECTORY_SEPARATOR . $filename)) {
             $file_ts = filemtime($this->ct->Env->folderToSaveLayouts . DIRECTORY_SEPARATOR . $filename);
@@ -157,8 +157,42 @@ class Layouts
                 $this->ct->db->execute();
                 return $content;
             }
+        } else {
+            $this->storeLayoutAsFile($layout_id, $layoutName, $layoutCode, $filename);
         }
         return null;
+    }
+
+    public function storeLayoutAsFile(int $layout_id, string $layoutName, string $layoutCode, string $filename): bool
+    {
+        try {
+            @file_put_contents($this->ct->Env->folderToSaveLayouts . DIRECTORY_SEPARATOR . $filename, $layoutCode);
+        } catch (Exception $e) {
+            Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
+            return false;
+        }
+
+        try {
+            @$file_ts = filemtime($this->ct->Env->folderToSaveLayouts . DIRECTORY_SEPARATOR . $filename);
+        } catch (Exception $e) {
+            Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
+            return false;
+        }
+
+        if ($file_ts == '') {
+            Factory::getApplication()->enqueueMessage('No permission -  file not saved', 'error');
+            return false;
+        } else {
+
+            if ($layout_id == 0)
+                $query = 'UPDATE #__customtables_layouts SET modified=FROM_UNIXTIME(' . $file_ts . ') WHERE layoutname=' . $this->ct->db->quote($layoutName);
+            else
+                $query = 'UPDATE #__customtables_layouts SET modified=FROM_UNIXTIME(' . $file_ts . ') WHERE id=' . $layout_id;
+
+            $this->ct->db->setQuery($query);
+            $this->ct->db->execute();
+        }
+        return true;
     }
 
     protected function addCSSandJSIfNeeded(array $layoutRow, bool $checkLayoutFile = true): void
@@ -166,7 +200,7 @@ class Layouts
         $layoutContent = trim($layoutRow['layoutcss']);
 
         if ($checkLayoutFile and $this->ct->Env->folderToSaveLayouts !== null) {
-            $content = $this->getLayoutFileContent($layoutRow['id'], $layoutRow['ts'], $layoutRow['layoutname'] . '.css', 'layoutcss');
+            $content = $this->getLayoutFileContent($layoutRow['id'], $layoutRow['layoutname'], $layoutContent, $layoutRow['ts'], $layoutRow['layoutname'] . '.css', 'layoutcss');
             if ($content != null)
                 $layoutContent = $content;
         }
@@ -183,7 +217,7 @@ class Layouts
 
         $layoutContent = trim($layoutRow['layoutjs']);
         if ($checkLayoutFile and $this->ct->Env->folderToSaveLayouts !== null) {
-            $content = $this->getLayoutFileContent($layoutRow['id'], $layoutRow['ts'], $layoutRow['layoutname'] . '.js', 'layoutjs');
+            $content = $this->getLayoutFileContent($layoutRow['id'], $layoutRow['layoutname'], $layoutContent, $layoutRow['ts'], $layoutRow['layoutname'] . '.js', 'layoutjs');
             if ($content != null)
                 $layoutContent = $content;
         }
@@ -415,38 +449,6 @@ class Layouts
 
         if (trim($data['layoutjs'] ?? '') !== '')
             $this->storeLayoutAsFile((int)$data['id'], $data['layoutname'], $data['layoutjs'], $data['layoutname'] . '.js');
-    }
-
-    public function storeLayoutAsFile(int $layout_id, string $layoutName, string $layoutCode, string $filename): bool
-    {
-        try {
-            @file_put_contents($this->ct->Env->folderToSaveLayouts . DIRECTORY_SEPARATOR . $filename, $layoutCode);
-        } catch (Exception $e) {
-            Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
-            return false;
-        }
-
-        try {
-            @$file_ts = filemtime($this->ct->Env->folderToSaveLayouts . DIRECTORY_SEPARATOR . $filename);
-        } catch (Exception $e) {
-            Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
-            return false;
-        }
-
-        if ($file_ts == '') {
-            Factory::getApplication()->enqueueMessage('No permission -  file not saved', 'error');
-            return false;
-        } else {
-
-            if ($layout_id == 0)
-                $query = 'UPDATE #__customtables_layouts SET modified=FROM_UNIXTIME(' . $file_ts . ') WHERE layoutname=' . $this->ct->db->quote($layoutName);
-            else
-                $query = 'UPDATE #__customtables_layouts SET modified=FROM_UNIXTIME(' . $file_ts . ') WHERE id=' . $layout_id;
-
-            $this->ct->db->setQuery($query);
-            $this->ct->db->execute();
-        }
-        return true;
     }
 
     public function layoutTypeTranslation(): array
