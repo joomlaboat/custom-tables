@@ -1148,6 +1148,16 @@ function adjustEditorHeight() {
         let h = window.innerHeight;
         let rect = editor.getBoundingClientRect();
         let editorHeight = h - rect.top - 40;
+
+        let layoutFilePathDivs = document.getElementsByClassName("layoutFilePath");
+        if (layoutFilePathDivs.length > 0)
+            editorHeight -= 15;
+
+        if (joomlaVersion < 4)
+            editorHeight -= 5;
+        else
+            editorHeight += 20;
+
         editor.style.height = editorHeight + 'px';
     }
 }
