@@ -48,6 +48,7 @@ foreach ($this->allTables as $table) {
 ';
 }
 ?>
+
 <script>
     <?php echo 'all_tables=' . json_encode($this->allTables) . ';'; ?>
 </script>
@@ -83,7 +84,7 @@ foreach ($this->allTables as $table) {
 
     <?php
     $layoutCode = $this->item->layoutcode;
-    if ($this->ct->Env->folderToSaveLayouts !== null) {
+    if ($this->item->id != 0 and $this->ct->Env->folderToSaveLayouts !== null) {
         $layouts = new Layouts($this->ct);
         $content = $layouts->getLayoutFileContent($this->item->id, $this->item->layoutname, $layoutCode, $this->item->ts, $this->item->layoutname . '.html', 'layoutcode');
         if ($content != null)
@@ -91,7 +92,7 @@ foreach ($this->allTables as $table) {
     }
     echo $this->renderTextArea($this->item->layoutcode, 'layoutcode', $typeBoxId, $onPageLoads);
     if ($this->ct->Env->folderToSaveLayouts !== null)
-        echo '<br/>Path: ' . $this->ct->Env->folderToSaveLayouts . DIRECTORY_SEPARATOR . $this->item->layoutname . '.html';
+        echo '<div class="layoutFilePath">Path: ' . $this->ct->Env->folderToSaveLayouts . DIRECTORY_SEPARATOR . $this->item->layoutname . '.html</div>';
 
     ?>
     <?php echo HTMLHelper::_('uitab.endTab'); ?>
@@ -102,7 +103,7 @@ foreach ($this->allTables as $table) {
     <?php
     if ($this->ct->Env->advancedTagProcessor) {
         $layoutCode = $this->item->layoutmobile;
-        if ($this->ct->Env->folderToSaveLayouts !== null) {
+        if ($this->item->id != 0 and $this->ct->Env->folderToSaveLayouts !== null) {
             $layouts = new Layouts($this->ct);
             $content = $layouts->getLayoutFileContent($this->item->id, $this->item->layoutname, $layoutCode, $this->item->ts, $this->item->layoutname . '_mobile.html', 'layoutmobile');
             if ($content != null)
@@ -111,7 +112,7 @@ foreach ($this->allTables as $table) {
         echo $this->renderTextArea($layoutCode, 'layoutmobile', $typeBoxId, $onPageLoads);
 
         if ($this->ct->Env->folderToSaveLayouts !== null)
-            echo '<br/>Path: ' . $this->ct->Env->folderToSaveLayouts . DIRECTORY_SEPARATOR . $this->item->layoutname . '_mobile.html';
+            echo '<div class="layoutFilePath">Path: ' . $this->ct->Env->folderToSaveLayouts . DIRECTORY_SEPARATOR . $this->item->layoutname . '_mobile.html</div>';
     } else
         echo Text::_('COM_CUSTOMTABLES_AVAILABLE');
     ?>
@@ -121,7 +122,7 @@ foreach ($this->allTables as $table) {
     <?php
     if ($this->ct->Env->advancedTagProcessor) {
         $layoutCode = $this->item->layoutcss;
-        if ($this->ct->Env->folderToSaveLayouts !== null) {
+        if ($this->item->id != 0 and $this->ct->Env->folderToSaveLayouts !== null) {
             $layouts = new Layouts($this->ct);
             $content = $layouts->getLayoutFileContent($this->item->id, $this->item->layoutname, $layoutCode, $this->item->ts, $this->item->layoutname . '.css', 'layoutcss');
             if ($content != null)
@@ -130,7 +131,7 @@ foreach ($this->allTables as $table) {
         echo $this->renderTextArea($this->item->layoutcss, 'layoutcss', $typeBoxId, $onPageLoads);
 
         if ($this->ct->Env->folderToSaveLayouts !== null)
-            echo '<br/>Path: ' . $this->ct->Env->folderToSaveLayouts . DIRECTORY_SEPARATOR . $this->item->layoutname . '.css';
+            echo '<div class="layoutFilePath">Path: ' . $this->ct->Env->folderToSaveLayouts . DIRECTORY_SEPARATOR . $this->item->layoutname . '.css</div>';
     } else
         echo Text::_('COM_CUSTOMTABLES_AVAILABLE');
     ?>
@@ -140,7 +141,7 @@ foreach ($this->allTables as $table) {
     <?php
     if ($this->ct->Env->advancedTagProcessor) {
         $layoutCode = $this->item->layoutjs;
-        if ($this->ct->Env->folderToSaveLayouts !== null) {
+        if ($this->item->id != 0 and $this->ct->Env->folderToSaveLayouts !== null) {
             $layouts = new Layouts($this->ct);
             $content = $layouts->getLayoutFileContent($this->item->id, $this->item->layoutname, $layoutCode, $this->item->ts, $this->item->layoutname . '.js', 'layoutjs');
             if ($content != null)
@@ -149,7 +150,7 @@ foreach ($this->allTables as $table) {
         echo $this->renderTextArea($this->item->layoutjs, 'layoutjs', $typeBoxId, $onPageLoads);
 
         if ($this->ct->Env->folderToSaveLayouts !== null)
-            echo '<br/>Path: ' . $this->ct->Env->folderToSaveLayouts . DIRECTORY_SEPARATOR . $this->item->layoutname . '.js';
+            echo '<div class="layoutFilePath">Path: ' . $this->ct->Env->folderToSaveLayouts . DIRECTORY_SEPARATOR . $this->item->layoutname . '.js</div>';
 
     } else
         echo Text::_('COM_CUSTOMTABLES_AVAILABLE');

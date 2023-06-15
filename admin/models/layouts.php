@@ -146,9 +146,15 @@ class CustomtablesModelLayouts extends JModelAdmin
      */
     public function delete(&$pks)
     {
-        if (!parent::delete($pks)) {
-            return false;
+        $Layouts = new Layouts($this->ct);
+
+        foreach ($pks as $layoutId) {
+            $row = $Layouts->getLayoutRowById($layoutId);
+            $Layouts->deleteLayoutFiles($row['layoutname']);
         }
+
+        if (!parent::delete($pks))
+            return false;
 
         return true;
     }

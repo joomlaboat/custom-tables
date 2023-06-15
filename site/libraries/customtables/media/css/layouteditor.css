@@ -190,7 +190,17 @@
 
 .customlayoutform {
     width: 100%;
-    margin-top: 10px;
+    /*margin-top: 10px;*/
+}
+
+#layoutcode-tab, #layoutmobile-tab, #layoutcss-tab, #layoutjs-tab {
+    padding: 0 !important;
+}
+
+
+.layoutFilePath {
+    color: gray;
+    padding-left: 5px;
 }
 
 .customlayoutform td {

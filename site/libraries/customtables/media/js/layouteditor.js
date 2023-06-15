@@ -931,14 +931,7 @@ function addTabExtraEvents3() {
                     codemirror_active_areatext_id = 'jform_' + code;
                     let cm = codemirror_editors[index];
                     cm.refresh();
-                    /*
-                    let h = window.innerHeight;
-                    let rect = cm.getBoundingClientRect();
-                    let editorHeight=h-rect.top-40;
-                    cm.style.height = editorHeight+'px';
-                    */
                     adjustEditorHeight();
-
                 }, 100);
             }
         });
@@ -957,6 +950,7 @@ function addTabExtraEvent4(id) {
                 codemirror_active_areatext_id = 'jform_' + id;
                 let cm = codemirror_editors[index];
                 cm.refresh();
+                adjustEditorHeight();
             }, 100);
         });
     }
