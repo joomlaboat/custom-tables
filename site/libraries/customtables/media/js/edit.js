@@ -548,7 +548,6 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_ind
 
 function ctUpdateTableJoinLink(control_name, index, execute_all, sub_index, object_id, formId, updateValue) {
 
-    //alert("index:" + index);
     let wrapper = document.getElementById(control_name + "Wrapper");
     //let onchange = atob(wrapper.dataset.onchange);
 
@@ -591,10 +590,13 @@ function ctUpdateTableJoinLink(control_name, index, execute_all, sub_index, obje
                 if (sub_indexTemp >= 0) {
                     let tempCurrent_object_id = control_name + indexTemp + (Array.isArray(filters[indexTemp]) ? '_' + sub_indexTemp : '');
                     let objTemp = document.getElementById(tempCurrent_object_id);
-                    valueObj.value = objTemp.value;
+
+                    if (objTemp === null)
+                        valueObj.value = obj.value;
+                    else
+                        valueObj.value = objTemp.value;
                 } else
                     valueObj.value = obj.value;
-
             } else
                 valueObj.value = obj.value;
         }
@@ -617,7 +619,7 @@ function ctUpdateTableJoinLink(control_name, index, execute_all, sub_index, obje
     fetch(url)
         .then(r => r.json())
         .then(r => {
-            ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_index, object_id, formId);//, attributes);
+            ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_index, object_id, formId);
         })
         .catch(error => console.error("Error", error));
 }
@@ -1110,4 +1112,28 @@ function activateJoomla3Tabs() {
             $('html,body').scrollTop(scrollMe);
         });
     });
+}
+
+
+function setUpdateChildTableJoinField(childFieldName, parentFieldName, childFilterFieldName) {
+    document.getElementById('comes_' + parentFieldName + '0').addEventListener('change', function () {
+        updateChildTableJoinField(childFieldName, parentFieldName, childFilterFieldName);
+    });
+}
+
+function updateChildTableJoinField(childFieldName, parentFieldName, childFilterFieldName) {
+    //This function updates the list of items in Table Join field based on its parent value;
+
+    let parentValue = document.getElementById('comes_' + parentFieldName).value;
+    let key = document.getElementById('comes_' + childFieldName + 'Wrapper').dataset.key;
+    let where = childFilterFieldName + '=' + parentValue;
+    let url = 'index.php?option=com_customtables&view=catalog&tmpl=component&from=json&key=' + key + '&index=0&where=' + Base64.encode(where);
+
+    fetch(url)
+
+        .then(r => r.json())
+        .then(r => {
+            ctRenderTableJoinSelectBox('comes_' + childFieldName, r, 0, false, 0, 'comes_' + childFieldName + '0', 'eseditForm');
+        })
+        .catch(error => console.error("Error", error));
 }

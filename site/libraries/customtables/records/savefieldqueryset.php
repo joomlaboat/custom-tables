@@ -73,9 +73,10 @@ class SaveFieldQuerySet
 
             case 'sqljoin':
                 $value = $this->ct->Env->jinput->getString($this->field->comesfieldname);
-                $value = preg_replace("/[^A-Za-z\d\-]/", '', $value);
 
                 if (isset($value)) {
+                    $value = preg_replace("/[^A-Za-z\d\-]/", '', $value);
+
                     if (is_numeric($value)) {
                         if ($value == 0) {
                             $this->row[$this->field->realfieldname] = null;
@@ -92,7 +93,6 @@ class SaveFieldQuerySet
                         return $this->field->realfieldname . '=' . $this->ct->db->Quote($value);
                     }
                 }
-
                 break;
             case 'radio':
                 $value = $this->ct->Env->jinput->getCmd($this->field->comesfieldname);

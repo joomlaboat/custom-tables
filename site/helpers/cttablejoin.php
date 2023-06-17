@@ -102,8 +102,8 @@ class JHTMLCTTableJoin
                         foreach ($option as $optionFilter) {
                             $tableName = $optionFilter[0];
                             $fieldName = $optionFilter[1];
-                            $allow_unpublished = $optionFilter[2];
-                            $whereFilter = $optionFilter[3];
+                            $allow_unpublished = $optionFilter[2] ?? 'published';
+                            $whereFilter = $optionFilter[3] ?? '';
                             $orderBy = $optionFilter[4] ?? null;
 
                             if ($parent_filter_field_name == '' and isset($optionFilter[5])) {
@@ -119,10 +119,15 @@ class JHTMLCTTableJoin
 
                         //Example: "cssclass","attributes", [table_name, field_name, allow_unpublished, filter, order_by]
                         $tableName = $option[0];
-                        $fieldName = $option[1];
-                        $allow_unpublished = $option[2];
-                        $whereFilter = $option[3];
-                        $orderBy = $option[4] ?? '';
+                        $fieldName = $option[1] ?? null;
+                        if ($fieldName === null) {
+                            echo 'Table Field or Layout not specified.';
+                            return [];
+                        }
+
+                        $allow_unpublished = $option[2] ?? null;
+                        $whereFilter = $option[3] ?? null;
+                        $orderBy = $option[4] ?? null;
 
                         if ($parent_filter_field_name == '' and isset($option[5])) {
                             $parent_filter_table_name = $option[0];
