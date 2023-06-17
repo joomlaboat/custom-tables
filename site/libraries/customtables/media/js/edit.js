@@ -80,7 +80,7 @@ function submitModalForm(url, elements, tableid, recordid, hideModelOnSave) {
 
     if (http) {
 
-        http.open("POST", url + "&clean=1", true);
+        http.open("POST", url + "&clean=1&ctmodalform=1", true);
         http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         http.onreadystatechange = function () {
             if (http.readyState === 4) {

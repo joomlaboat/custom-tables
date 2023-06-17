@@ -190,8 +190,8 @@ class Params
 
         $this->tableName = null;
 
-        if ($this->jinput->getCmd("task") !== null)
-            $this->tableName = $this->jinput->getInt("tableid");//TODO: find better way
+        if ($this->jinput->getInt("ctmodalform", 0) == 1)
+            $this->tableName = $this->jinput->getInt("tableid");//Used in Save Modal form content.
 
         if ($this->tableName === null) {
             $this->tableName = $menu_params->get('establename'); //Table name or id not sanitized

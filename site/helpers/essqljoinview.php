@@ -42,7 +42,6 @@ class JHTMLESSQLJoinView
         $ct = new CT($_params, true);
 
         // -------------------- Table
-
         $ct->getTable($ct->Params->tableName);
 
         if ($ct->Table->tablename === null) {
@@ -57,7 +56,6 @@ class JHTMLESSQLJoinView
             . $ct->Table->tablerow['realidfieldname'] . '=' . (int)$value;
 
         $ct->db->setQuery($query);
-
         $records = $ct->db->loadAssocList();
 
         if (!str_contains($field, ':')) {
