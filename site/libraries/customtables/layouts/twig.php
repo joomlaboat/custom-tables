@@ -589,6 +589,9 @@ class fieldObject
 
     public function get($fieldName, string $showPublishedString = ''): string
     {
+        if ($this->ct->isRecordNull($this->ct->Table->record))
+            return '';
+
         if ($this->field->type == 'sqljoin') {
             $layoutcode = '{{ ' . $fieldName . ' }}';
             return CT_FieldTypeTag_sqljoin::resolveSQLJoinTypeValue($this->field, $layoutcode, $this->ct->Table->record[$this->field->realfieldname]);
@@ -603,6 +606,9 @@ class fieldObject
 
     public function getvalue($fieldName, string $showPublishedString = '', string $separatorCharacter = ','): string
     {
+        if ($this->ct->isRecordNull($this->ct->Table->record))
+            return '';
+
         if ($this->field->type == 'sqljoin') {
             $layoutcode = '{{ ' . $fieldName . '.value }}';
             return CT_FieldTypeTag_sqljoin::resolveSQLJoinTypeValue($this->field, $layoutcode, $this->ct->Table->record[$this->field->realfieldname]);
@@ -622,6 +628,9 @@ class fieldObject
             return '';
         }
 
+        if ($this->ct->isRecordNull($this->ct->Table->record))
+            return '';
+        
         $Layouts = new Layouts($this->ct);
         $layoutCode = $Layouts->getLayout($layoutName);
 
