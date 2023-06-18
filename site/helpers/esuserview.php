@@ -70,7 +70,7 @@ class JHTMLESUserView
                     return $rec[$field];
             } else {
                 if ((int)$value != 0)
-                    return JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FIELDS_USER') . ' ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOTFOUND');
+                    return JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FIELDS_USER_NOT_FOUND');
             }
         }
         return '';

@@ -67,7 +67,7 @@ class SaveFieldQuerySet
         $listing_id = $this->row[$this->ct->Table->realidfieldname];
         switch ($this->field->type) {
             case 'records':
-                $value = self::get_record_type_value($this->ct, $this->field->params);
+                $value = self::get_record_type_value($this->ct, $this->field);
                 $this->row[$this->field->realfieldname] = $value;
                 return ($value === null ? null : $this->field->realfieldname . '=' . $this->ct->db->Quote($value));
 

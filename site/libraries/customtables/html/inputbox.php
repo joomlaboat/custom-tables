@@ -1252,7 +1252,7 @@ class Inputbox
             . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" ';
 
         if ($value === null) {
-            $value = SaveFieldQuerySet::get_record_type_value($this->ct, $this->field->params);
+            $value = SaveFieldQuerySet::get_record_type_value($this->ct, $this->field);
             $this->ct->Env->jinput->getInt($this->ct->Env->field_prefix . $this->field->fieldname);
             if ($value == '')
                 $value = $this->defaultValue;
