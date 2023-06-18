@@ -208,6 +208,9 @@ class Twig_Html_Tags
 
     function goback($defaultLabel = 'COM_CUSTOMTABLES_GO_BACK', $image_icon = '', $attribute = '', $returnto = '')
     {
+        if ($defaultLabel === null)
+            $defaultLabel = 'COM_CUSTOMTABLES_GO_BACK';
+        
         $label = JoomlaBasicMisc::JTextExtended($defaultLabel);
 
         if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))

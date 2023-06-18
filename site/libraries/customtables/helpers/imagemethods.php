@@ -165,6 +165,8 @@ class CustomTablesImageMethods
 
     function getColorDec($vlu): int
     {
+        $vlu = strtolower(trim($vlu));
+
         if ($vlu == 'transparent')
             return -2;
 
@@ -189,9 +191,11 @@ class CustomTablesImageMethods
         elseif ($vlu == 'yellow')
             return hexdec('ffff00');
 
-        elseif (!(!str_contains($vlu, '#')))
-            return hexdec(str_replace('#', '', $vlu));//As of PHP 7.4.0 supplying any invalid characters is deprecated.
-        else
+        elseif (str_contains($vlu, '#')) {
+
+            $vlu = preg_replace("/[^0-9A-Fa-f]/", '', $vlu); // Gets a proper hex string
+            return hexdec($vlu);//As of PHP 7.4.0 supplying any invalid characters is deprecated.
+        } else
             return (int)$vlu;
     }
 
