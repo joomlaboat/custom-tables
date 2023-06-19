@@ -706,16 +706,36 @@ class JoomlaBasicMisc
         return $htmlresult;
     }
 
-    public static function suggest_TempFileName(): string
+    public static function suggest_TempFileName(&$webFileLink, ?string $fileExtension = null): ?string
     {
-        $output_dir = DIRECTORY_SEPARATOR . trim(sys_get_temp_dir(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+        $tempDir = trim(sys_get_temp_dir());
+        if (str_contains($tempDir, ':')) {
+            $output_dir = $tempDir . DIRECTORY_SEPARATOR;
+            $webDir = $output_dir;
+        } else {
+            if ($tempDir[0] != '/' and $tempDir != '\\') {
+                $output_dir = JPATH_SITE . DIRECTORY_SEPARATOR . $tempDir . DIRECTORY_SEPARATOR;
+                $webDir = $tempDir . DIRECTORY_SEPARATOR;
+            } else {
+                $output_dir = JPATH_SITE . $tempDir . DIRECTORY_SEPARATOR;
+                $webDir = substr($tempDir, 1) . DIRECTORY_SEPARATOR;
+            }
+        }
+
         $random_name = JoomlaBasicMisc::generateRandomString();
 
         while (1) {
-            $file = $output_dir . $random_name;
-            if (!file_exists($file))
+
+            $fileName = $random_name . ($fileExtension !== null ? '.' . $fileExtension : '');
+            $file = $output_dir . $fileName;
+            if (!file_exists($file)) {
+
+                $webFileLink = $webDir . $fileName;
                 return $file;
+            }
         }
+
+        return null;
     }
 
     public static function generateRandomString(int $length = 32): string

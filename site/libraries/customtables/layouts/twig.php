@@ -191,6 +191,12 @@ class TwigProcessor
         //{{ record.number }}	-	wizard ok
         //{{ record.published }}	-	wizard ok
 
+        $CustomTablesWordPluginPath = JPATH_SITE . DIRECTORY_SEPARATOR . 'plugins' . DIRECTORY_SEPARATOR . 'content' . DIRECTORY_SEPARATOR . 'customtablesword' . DIRECTORY_SEPARATOR . 'customtablesword.php';
+        if (file_exists($CustomTablesWordPluginPath)) {
+            require_once($CustomTablesWordPluginPath);
+            $this->twig->addGlobal('phpword', new Twig_PHPWord_Tags());
+        }
+
         $this->variables = [];
 
         //{{ table.id }}	-	wizard ok
@@ -630,7 +636,7 @@ class fieldObject
 
         if ($this->ct->isRecordNull($this->ct->Table->record))
             return '';
-        
+
         $Layouts = new Layouts($this->ct);
         $layoutCode = $Layouts->getLayout($layoutName);
 
