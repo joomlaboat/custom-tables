@@ -985,9 +985,9 @@ class LinkJoinFilters
 
         foreach ($records as $row) {
             if ($row[$tableRow['realidfieldname']] == $filterValue or str_contains($filterValue, ',' . $row[$tableRow['realidfieldname']] . ','))
-                $result .= '<option value="' . $row[$tableRow['realidfieldname']] . '" selected>' . $row[$fieldrow->realfieldname] . '</option>';
+                $result .= '<option value="' . $row[$tableRow['realidfieldname']] . '" selected>' . htmlspecialchars($row[$fieldrow->realfieldname]) . '</option>';
             else
-                $result .= '<option value="' . $row[$tableRow['realidfieldname']] . '">' . $row[$fieldrow->realfieldname] . '</option>';
+                $result .= '<option value="' . $row[$tableRow['realidfieldname']] . '">' . htmlspecialchars($row[$fieldrow->realfieldname]) . '</option>';
         }
         $result .= '</select>
 ';

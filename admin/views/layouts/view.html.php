@@ -238,16 +238,15 @@ class CustomtablesViewLayouts extends JViewLegacy
         if ($value != "")
             $result .= '				<div class="ct_tip">TIP: Double-Click on a Layout Tag to edit parameters.</div>';
         $result .= '	</div>
-						';
+';
 
         $textAreaId = 'jform_' . $id;
-        $textAreaCode = '<textarea name="jform[' . $id . ']" id="' . $textAreaId . '" filter="raw" style="width:100%" rows="30">' . $value . '</textarea>';
-
+        $textAreaCode = '<textarea name="jform[' . $id . ']" id="' . $textAreaId . '" filter="raw" style="width:100%" rows="30">' . htmlspecialchars($value) . '</textarea>';
         $textAreaTabId = $id . '-tab';
 
         $result .= renderEditor($textAreaCode, $textAreaId, $typeBoxId, $textAreaTabId, $onPageLoads);
         $result .= '
-		';
+';
         return $result;
     }
 

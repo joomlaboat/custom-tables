@@ -61,7 +61,7 @@ class Ordering
 
             $params_str = [];
             foreach ($params as $key => $value)
-                $params_str[] = $key . '="' . $value . '"';
+                $params_str[] = $key . '="' . htmlspecialchars($value) . '"';
 
             $val = '<' . $tag . ' ' . implode(' ', $params_str) . '>';
             $result = str_replace($fItem, $val, $result);

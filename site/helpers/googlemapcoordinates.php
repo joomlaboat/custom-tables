@@ -23,7 +23,7 @@ class JHTMLGoogleMapCoordinates
     {
         $html = [];
         $html[] = '<div class="controls"><div class="field-calendar"><div class="input-group has-success">';
-        $html[] = '<input type="text" class="form-control valid form-control-success" id="' . $control_name . '" name="' . $control_name . '" value="' . $value . '" />';
+        $html[] = '<input type="text" class="form-control valid form-control-success" id="' . $control_name . '" name="' . $control_name . '" value="' . htmlspecialchars($value) . '" />';
         $html[] = '<button type="button" class="btn btn-primary" onclick="ctInputbox_googlemapcoordinates(\'' . $control_name . '\')" data-inputfield="comes_' . $control_name . '" data-button="comes_' . $control_name . '_btn">&nbsp;...&nbsp;</button>';
         $html[] = '</div></div></div>';
         $html[] = '<div id="' . $control_name . '_map" style="width: 480px; height: 540px;display:none;"></div>';

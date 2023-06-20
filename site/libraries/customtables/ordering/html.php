@@ -12,21 +12,20 @@ namespace CustomTables;
 
 class OrderingHTML
 {
-    public static function getOrderBox(Ordering &$ordering)//$SelectedCategory
+    public static function getOrderBox(Ordering &$ordering): string
     {
         $lists = $ordering->getSortByFields();
         $order_values = $lists->values;
         $order_list = $lists->titles;
+        $result = '<select name="esordering" id="esordering" onChange="ctOrderChanged(this.value);" class="inputbox">' . PHP_EOL;
 
-        $result = '<select name="esordering" id="esordering" onChange="ctOrderChanged(this.value);" class="inputbox">
-';
         for ($i = 0; $i < count($order_values); $i++) {
-            $result .= '<option value="' . $order_values[$i] . '" ' . ($ordering->ordering_processed_string == $order_values[$i] ? ' selected ' : '') . '>' . $order_list[$i] . '</option>
-';
+            $result .= '<option value="' . $order_values[$i] . '" ' . ($ordering->ordering_processed_string == $order_values[$i] ? ' selected ' : '') . '>'
+                . htmlspecialchars($order_list[$i])
+                . '</option>' . PHP_EOL;
         }
 
-        $result .= '</select>
-';
+        $result .= '</select>' . PHP_EOL;
         return $result;
     }
 }

@@ -61,7 +61,7 @@ class JHTMLCTTableJoin
         $data[] = 'data-valuefilters="' . base64_encode(json_encode($js_filters)) . '"';
         $data[] = 'data-onchange="' . base64_encode($onchange) . '"';
         $data[] = 'data-listing_id="' . $listing_is . '"';
-        $data[] = 'data-value="' . $value . '"';
+        $data[] = 'data-value="' . htmlspecialchars($value) . '"';
 
         if ($ct->app->getName() == 'administrator')   //since   3.2
             $formID = 'adminForm';
@@ -70,7 +70,7 @@ class JHTMLCTTableJoin
 
         $formID .= $field->ct->Params->ModuleId;
 
-        return '<input type="hidden" id="' . $control_name . '" name="' . $control_name . '" value="' . $value . '" ' . $attributes . '/>'
+        return '<input type="hidden" id="' . $control_name . '" name="' . $control_name . '" value="' . htmlspecialchars($value) . '" ' . $attributes . '/>'
             . '<div id="' . $control_name . 'Wrapper" ' . implode(' ', $data) . '>'
             . self::ctUpdateTableJoinLink($ct, $control_name, 0, 0, "", $formID, $attributes, $onchange, $filter, $js_filters, $value)
             . '</div>';
@@ -411,11 +411,11 @@ class JHTMLCTTableJoin
                 $label = htmlspecialchars_decode($r[$i]->label, ENT_HTML5);
 
                 if ($r[$i]->id == $val)
-                    $result .= '<option value="' . $r[$i]->id . '" selected="selected">' . $label . '</option>';
+                    $result .= '<option value="' . $r[$i]->id . '" selected="selected">' . htmlspecialchars($label) . '</option>';
                 elseif (str_contains($val, ',' . $r[$i]->id . ','))
-                    $result .= '<option value="' . $r[$i]->id . '" selected="selected">' . $label . '</option>';
+                    $result .= '<option value="' . $r[$i]->id . '" selected="selected">' . htmlspecialchars($label) . '</option>';
                 else
-                    $result .= '<option value="' . $r[$i]->id . '">' . $r[$i]->label . '</option>';
+                    $result .= '<option value="' . $r[$i]->id . '">' . htmlspecialchars($r[$i]->label) . '</option>';
             }
 
             $result .= '</select>';
