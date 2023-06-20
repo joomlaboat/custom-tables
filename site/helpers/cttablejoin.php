@@ -326,6 +326,12 @@ class JHTMLCTTableJoin
         if (isset($resultJSON_encoded->error))
             return $resultJSON_encoded->error;
 
+        if (!is_array($resultJSON_encoded)) {
+            echo '$resultJSON_encoded is not an array: "';
+            print_r($result);
+            echo '"<br/>';
+        }
+
         $resultJSON = [];
         foreach ($resultJSON_encoded as $j) {
             $j->label = html_entity_decode($j->label);

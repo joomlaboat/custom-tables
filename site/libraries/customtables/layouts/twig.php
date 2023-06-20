@@ -394,24 +394,22 @@ class fieldObject
 
     public function __toString()
     {
-        if (!isset($this->field)) {
+        if (!isset($this->field))
             return 'Field not initialized.';
-        }
 
         $valueProcessor = new Value($this->ct);
         $vlu = $valueProcessor->renderValue($this->field->fieldrow, $this->ct->Table->record, []);
 
         if ($this->DoHTMLSpecialChars) {
-            $vlu = htmlentities($vlu, ENT_IGNORE + ENT_DISALLOWED + ENT_HTML5, "UTF-8");
-            $vlu = htmlspecialchars($vlu, ENT_IGNORE + ENT_DISALLOWED + ENT_HTML5, "UTF-8");
+            $vlu = htmlentities($vlu, ENT_QUOTES + ENT_IGNORE + ENT_DISALLOWED + ENT_HTML5, "UTF-8");
+            //$vlu = htmlentities($vlu, ENT_IGNORE + ENT_DISALLOWED + ENT_HTML5, "UTF-8");
+            //$vlu = htmlspecialchars($vlu, ENT_IGNORE + ENT_DISALLOWED + ENT_HTML5, "UTF-8");
         }
-
         return strval($vlu);
     }
 
     public function __call($name, $arguments)
     {
-        return 'f';
         if ($this->field->fieldname == 'user') {
             $user_parameters = ['name', 'username', 'email', 'id', 'lastvisitdate', 'registerdate', 'usergroups'];
             if (in_array($name, $user_parameters)) {
@@ -424,7 +422,6 @@ class fieldObject
                 return $user->{$name}($single_argument);
             }
         }
-
         return 'unknown';
     }
 
@@ -472,10 +469,9 @@ class fieldObject
             $vlu = $this->ct->Table->record[$rfn];
         }
 
-        if ($this->DoHTMLSpecialChars) {
-            $vlu = htmlentities($vlu, ENT_IGNORE + ENT_DISALLOWED + ENT_HTML5, "UTF-8");
-            $vlu = htmlspecialchars($vlu, ENT_IGNORE + ENT_DISALLOWED + ENT_HTML5, "UTF-8");
-        }
+        if ($this->DoHTMLSpecialChars)
+            $vlu = htmlentities($vlu, ENT_QUOTES + ENT_IGNORE + ENT_DISALLOWED + ENT_HTML5, "UTF-8");
+
         return $vlu;
     }
 
