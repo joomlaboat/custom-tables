@@ -1035,19 +1035,7 @@ class Inputbox
             $att['keywords'] = 'transparent,initial,inherit';
 
             //convert value to rgba: rgba(255, 0, 255, 0.1)
-            $colors = array();
-
-            if (strlen($value) >= 6) {
-                $colors[] = hexdec(substr($value, 0, 2));
-                $colors[] = hexdec(substr($value, 2, 2));
-                $colors[] = hexdec(substr($value, 4, 2));
-            }
-
-            if (strlen($value) == 8) {
-                $a = hexdec(substr($value, 6, 2));
-                $colors[] = round($a / 255, 2);
-            }
-            $value = 'rgba(' . implode(',', $colors) . ')';
+            $value = JoomlaBasicMisc::colorStringValueToCSSRGB($value);
         }
         $array_attributes = $this->prepareAttributes($att, $this->attributes);
         $inputbox = CTTypes::getField('color', $array_attributes, $value)->input;

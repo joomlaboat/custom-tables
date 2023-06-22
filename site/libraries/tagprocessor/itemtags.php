@@ -204,7 +204,7 @@ class tagProcessor_Item
                 $additional_where = $opts[5] ?? '';
                 $order_by_option = $opts[6] ?? '';
 
-                $vlu = $ct_record->advancedjoin($sj_function, $sj_tablename, $field1_findWhat, $field2_lookWhere, $field3_readValue, $additional_where, $order_by_option, $value_option_list);
+                $vlu = $ct_record->advancedJoin($sj_function, $sj_tablename, $field1_findWhat, $field2_lookWhere, $field3_readValue, $additional_where, $order_by_option, $value_option_list);
 
                 $htmlresult = str_replace($fItem, $vlu, $htmlresult);
                 $i++;

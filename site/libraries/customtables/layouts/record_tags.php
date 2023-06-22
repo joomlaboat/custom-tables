@@ -170,7 +170,7 @@ class Twig_Record_Tags
                 $typeParams = JoomlaBasicMisc::csv_explode(',', $join_table_field['typeparams'], '"', false);
                 $join_table_join_to_table = $typeParams[0];
                 if ($join_table_join_to_table == $this->ct->Table->tablename)
-                    return intval($this->advancedjoin('count', $join_table, '_id', $join_table_field['fieldname'], '_id', $filter));
+                    return intval($this->advancedJoin('count', $join_table, '_id', $join_table_field['fieldname'], '_id', $filter));
             }
         }
 
@@ -178,45 +178,45 @@ class Twig_Record_Tags
         return null;
     }
 
-    function advancedjoin($sj_function, $sj_tablename, $field1_findwhat, $field2_lookwhere, $field3_readvalue = '_id', $filter = '',
+    function advancedJoin($sj_function, $sj_tablename, $field1_findWhat, $field2_lookWhere, $field3_readValue = '_id', $filter = '',
                           $order_by_option = '', $value_option_list = [])
     {
         if ($sj_tablename === null or $sj_tablename == '') return '';
 
-        $tablerow = ESTables::getTableRowByNameAssoc($sj_tablename);
+        $tableRow = ESTables::getTableRowByNameAssoc($sj_tablename);
 
-        if (!is_array($tablerow)) return '';
+        if (!is_array($tableRow)) return '';
 
-        $field_details = $this->join_getRealFieldName($field1_findwhat, $this->ct->Table->tablerow);
+        $field_details = $this->join_getRealFieldName($field1_findWhat, $this->ct->Table->tablerow);
         if ($field_details === null) return '';
         $field1_findWhat_realName = $field_details[0];
         $field1_type = $field_details[1];
 
-        $field_details = $this->join_getRealFieldName($field2_lookwhere, $tablerow);
+        $field_details = $this->join_getRealFieldName($field2_lookWhere, $tableRow);
         if ($field_details === null) return '';
         $field2_lookWhere_realName = $field_details[0];
         $field2_type = $field_details[1];
 
-        $field_details = $this->join_getRealFieldName($field3_readvalue, $tablerow);
+        $field_details = $this->join_getRealFieldName($field3_readValue, $tableRow);
         if ($field_details === null) return '';
         $field3_readValue_realName = $field_details[0];
 
-        $sj_realtablename = $tablerow['realtablename'];
-        $sj_realidfieldname = $tablerow['realidfieldname'];
-        $additional_where = $this->join_processWhere($filter, $sj_realtablename, $sj_realidfieldname);
+        $newCt = new CT();
+        $newCt->setTable($tableRow);
+        $f = new Filtering($newCt, 2);
+        $f->addWhereExpression($filter);
+        $additional_where = implode(' AND ', $f->where);
 
         if ($order_by_option != '') {
-            $field_details = $this->join_getRealFieldName($order_by_option, $tablerow);
+            $field_details = $this->join_getRealFieldName($order_by_option, $tableRow);
             $order_by_option_realName = $field_details[0] ?? '';
         } else
             $order_by_option_realName = '';
 
-
-        $query = $this->join_buildQuery($sj_function, $tablerow, $field1_findWhat_realName, $field1_type, $field2_lookWhere_realName,
+        $query = $this->join_buildQuery($sj_function, $tableRow, $field1_findWhat_realName, $field1_type, $field2_lookWhere_realName,
             $field2_type, $field3_readValue_realName, $additional_where, $order_by_option_realName);
 
         $this->ct->db->setQuery($query);
-
         $rows = $this->ct->db->loadAssocList();
 
         if (count($rows) == 0) {
@@ -226,25 +226,20 @@ class Twig_Record_Tags
 
             if ($sj_function == 'smart') {
                 //TODO: review smart advanced join
-
                 $vlu = $row['vlu'];
+                $tempCTFields = Fields::getFields($tableRow['id']);
 
-                $temp_ctfields = Fields::getFields($tablerow['id']);
-
-                foreach ($temp_ctfields as $fieldRow) {
-                    if ($fieldRow['fieldname'] == $field3_readvalue) {
+                foreach ($tempCTFields as $fieldRow) {
+                    if ($fieldRow['fieldname'] == $field3_readValue) {
                         $fieldRow['realfieldname'] = 'vlu';
-
                         $valueProcessor = new Value($this->ct);
                         $vlu = $valueProcessor->renderValue($fieldRow, $row, $value_option_list);
-
                         break;
                     }
                 }
             } else
                 $vlu = $row['vlu'];
         }
-
         return $vlu;
     }
 
@@ -270,68 +265,6 @@ class Twig_Record_Tags
         return null;
     }
 
-    protected function join_processWhere($additional_where, $sj_realTableName, $sj_realIdFieldName): string
-    {
-        if ($additional_where == '')
-            return '';
-
-        $w = array();
-
-        $af = explode(' ', $additional_where);
-        foreach ($af as $a) {
-            $b = strtolower(trim($a));
-            if ($b != '') {
-                if ($b != 'and' and $b != 'or') {
-                    $b = str_replace('$now', 'now()', $b);
-
-                    //read $get_ values
-                    $b = $this->join_ApplyQueryGetValue($b, $sj_realTableName, $sj_realIdFieldName);
-
-                    $w[] = $b;
-                } else
-                    $w[] = $b;
-            }
-        }
-        return implode(' ', $w);
-    }
-
-    protected function join_ApplyQueryGetValue($str, $sj_realtablename, $sj_realidfieldname): string
-    {
-        $list = explode('$get_', $str);
-        if (count($list) == 2) {
-            $q = $list[1];
-
-            $v = $this->ct->Env->jinput->getString($q);
-            $v = str_replace('"', '', $v);
-            $v = str_replace("'", '', $v);
-
-            if (strpos($v, ',')) {
-                $f = $sj_realtablename . '.es_' . str_replace('$get_' . $q, '', $str);
-                $values = explode(',', $v);
-
-
-                $vls = array();
-                foreach ($values as $v1) {
-                    $vls[] = $f . '"' . $v1 . '"';
-                }
-
-                return '(' . implode(' or ', $vls) . ')';
-            }
-
-            return $sj_realtablename . '.es_' . str_replace('$get_' . $q, '"' . $v . '"', $str);
-        } else {
-            if (str_contains($str, '_id'))
-                return $sj_realtablename . '.' . str_replace('_id', $sj_realidfieldname, $str);
-            elseif (str_contains($str, '_published'))
-                return $sj_realtablename . '.' . str_replace('_published', 'published', $str);//TODO replace publish with realpublish field name
-        }
-
-        $str = str_replace('!=null', ' IS NOT NULL', $str);
-        $str = str_replace('=null', ' IS NULL', $str);
-
-        return $sj_realtablename . '.es_' . $str;
-    }
-
     protected function join_buildQuery($sj_function, $tableRow, $field1_findWhat, $field1_type, $field2_lookWhere, $field2_type, $field3_readValue, $additional_where, $order_by_option): string
     {
         if ($sj_function == 'count')
@@ -350,7 +283,6 @@ class Twig_Record_Tags
         }
 
         $query .= ' FROM ' . $this->ct->Table->realtablename . ' ';
-
         $sj_tablename = $tableRow['tablename'];
 
         if ($this->ct->Table->tablename != $sj_tablename) {
@@ -442,7 +374,7 @@ class Twig_Record_Tags
                 $typeParams = JoomlaBasicMisc::csv_explode(',', $join_table_field['typeparams'], '"', false);
                 $join_table_join_to_table = $typeParams[0];
                 if ($join_table_join_to_table == $this->ct->Table->tablename)
-                    return $this->advancedjoin($function, $join_table, '_id', $join_table_field['fieldname'], $value_field, $filter);
+                    return $this->advancedJoin($function, $join_table, '_id', $join_table_field['fieldname'], $value_field, $filter);
             }
         }
 
@@ -450,12 +382,12 @@ class Twig_Record_Tags
         return '';
     }
 
-    /* --------------------------- PROTECTED FUNCTIONS ------------------- */
-
     function joinmin(string $join_table = '', string $value_field = '', string $filter = '')
     {
         return $this->simple_join('min', $join_table, $value_field, 'record.joinmin', $filter);
     }
+
+    /* --------------------------- PROTECTED FUNCTIONS ------------------- */
 
     function joinmax(string $join_table = '', string $value_field = '', string $filter = '')
     {
@@ -523,6 +455,124 @@ class Twig_Record_Tags
         return '';
     }
 
+    function min(string $tableName = '', string $value_field = '', string $filter = ''): ?int
+    {
+        return $this->countOrSumRecords($tableName, $value_field, $filter);
+    }
+
+    protected function countOrSumRecords(string $tableName = '', string $fieldName = '', string $filter = ''): ?int
+    {
+        if ($tableName == '') {
+            $this->ct->app->enqueueMessage('{{ record.count("' . $tableName . '") }} - Table not specified.', 'error');
+            return null;
+        }
+
+        $tableRow = ESTables::getTableRowByNameAssoc($tableName);
+        if (!is_array($tableRow)) {
+            $this->ct->app->enqueueMessage('{{ record.count("' . $tableName . '") }} - Table not found.', 'error');
+            return null;
+        }
+
+        if ($fieldName == '') {
+            $this->ct->app->enqueueMessage('{{ record.count("' . $fieldName . '") }} - Field not specified.', 'error');
+            return null;
+        }
+
+        if (!isset($this->ct->Table)) {
+            $this->ct->app->enqueueMessage('{{ record.count("' . $tableName . '","' . $fieldName . '","' . $filter . '") }} - Parent table not loaded.', 'error');
+            return null;
+        }
+
+        if ($fieldName == '_id') {
+            $fieldRealFieldName = $tableRow['realidfieldname'];
+        } elseif ($fieldName == '_published') {
+            $fieldRealFieldName = $tableRow['published'];
+        } else {
+            $tableFields = Fields::getFields($tableName);
+
+            if (count($tableFields) == 0) {
+                $this->ct->app->enqueueMessage('{{ record.count("' . $tableName . '") }} - Table not found or it has no fields.', 'error');
+                return null;
+            }
+
+            $field = null;
+            foreach ($tableFields as $tableField) {
+                if ($tableField['fieldname'] == $fieldName) {
+                    $field = new Field($this->ct, $tableField);
+                    break;
+                }
+            }
+
+            if ($field === null) {
+                $this->ct->app->enqueueMessage('{{ record.count("' . $tableName . '") }} - Table found but the field that links to this table not found.', 'error');
+                return null;
+            }
+            $fieldRealFieldName = $field->realfieldname;
+        }
+
+        $newCt = new CT();
+        $newCt->setTable($tableRow);
+
+        $f = new Filtering($newCt, 2);
+        $f->addWhereExpression($filter);
+        $additional_where = implode(' AND ', $f->where);
+        $query = $this->count_buildQuery('count', $tableRow['realtablename'], $fieldRealFieldName, $additional_where);
+        $this->ct->db->setQuery($query);
+        $rows = $this->ct->db->loadAssocList();
+
+        if (count($rows) == 0)
+            return 'no records found';
+        else
+            return $rows[0]['vlu'];
+    }
+
+    protected function count_buildQuery($sj_function, $realTableName, $realFieldName, $additional_where): ?string
+    {
+        if ($sj_function == 'count')
+            $query = 'SELECT count(' . $realFieldName . ') AS vlu ';
+        elseif ($sj_function == 'sum')
+            $query = 'SELECT sum(' . $realFieldName . ') AS vlu ';
+        elseif ($sj_function == 'avg')
+            $query = 'SELECT avg(' . $realFieldName . ') AS vlu ';
+        elseif ($sj_function == 'min')
+            $query = 'SELECT min(' . $realFieldName . ') AS vlu ';
+        elseif ($sj_function == 'max')
+            $query = 'SELECT max(' . $realFieldName . ') AS vlu ';
+        else {
+            return null;
+        }
+
+        $query .= ' FROM ' . $realTableName . ' ';
+        $wheres = array();
+        if ($additional_where != '')
+            $wheres[] = '(' . $additional_where . ')';
+
+        if (count($wheres) > 0)
+            $query .= ' WHERE ' . implode(' AND ', $wheres);
+
+        $query .= ' LIMIT 1';
+        return $query;
+    }
+
+    function max(string $tableName = '', string $value_field = '', string $filter = ''): ?int
+    {
+        return $this->countOrSumRecords($tableName, $value_field, $filter);
+    }
+
+    function avg(string $tableName = '', string $value_field = '', string $filter = ''): ?int
+    {
+        return $this->countOrSumRecords($tableName, $value_field, $filter);
+    }
+
+    function sum(string $tableName = '', string $value_field = '', string $filter = ''): ?int
+    {
+        return $this->countOrSumRecords($tableName, $value_field, $filter);
+    }
+
+    function count(string $tableName = '', string $filter = ''): ?int
+    {
+        return $this->countOrSumRecords($tableName, '_id', $filter);
+    }
 }
 
 class Twig_Table_Tags

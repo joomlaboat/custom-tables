@@ -585,7 +585,6 @@ class CustomTablesModelEditItem extends JModelLegacy
         }
 
         //Prepare "Accept Return To" Link
-
         $return2Link = $this->ct->Env->jinput->get('returnto', '', 'BASE64');
         if ($return2Link != '')
             $link = $this->PrepareAcceptReturnToLink($return2Link, $msg);
@@ -608,7 +607,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
     function getFieldsToSave($row): array
     {
-        $this->ct->isEditForm = true; //This changes input box prefix
+        $this->ct->isEditForm = true; //These changes input box prefix
 
         $pageLayout = $this->editForm->processLayout($row);
         $backgroundFieldTypes = ['creationtime', 'changetime', 'server', 'id', 'md5', 'userid'];

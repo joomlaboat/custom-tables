@@ -90,7 +90,6 @@ class TwigProcessor
             $record_block_replace = substr($layoutContent, $pos1, $pos2 - $pos1 + strlen($tag2));
 
             $this->recordBlockReplaceCode = JoomlaBasicMisc::generateRandomString();//this is temporary replace placeholder. to not parse content result again
-
             $pageLayoutContent = str_replace($record_block_replace, $this->recordBlockReplaceCode, $layoutContent);
 
             $loader = new ArrayLoader([
@@ -103,13 +102,10 @@ class TwigProcessor
                 $this->pageLayoutName => $layoutContent,
             ]);
         }
-
         $this->twig = new \Twig\Environment($loader);
-
         $this->addGlobals();
         $this->addFieldValueMethods($parseParams);
         $this->addTwigFilters();
-
         $this->errorMessage = null;
     }
 
@@ -295,7 +291,7 @@ class TwigProcessor
             $result = '';
         } else {
             try {
-                $result = $this->twig->render($this->pageLayoutName, $this->variables);
+                $result = @$this->twig->render($this->pageLayoutName, $this->variables);
             } catch (Exception $e) {
                 $this->errorMessage = $e->getMessage();
 
@@ -591,7 +587,7 @@ class fieldObject
 
     public function get($fieldName, string $showPublishedString = ''): string
     {
-        if ($this->ct->isRecordNull($this->ct->Table->record))
+        if ($this->ct->isRecordNull($this->ct->Table->record) and count($this->ct->Table->record) < 2)
             return '';
 
         if ($this->field->type == 'sqljoin') {
@@ -608,14 +604,14 @@ class fieldObject
 
     public function getvalue($fieldName, string $showPublishedString = '', string $separatorCharacter = ','): string
     {
-        if ($this->ct->isRecordNull($this->ct->Table->record))
+        $layoutcode = '{{ ' . $fieldName . '.value }}';
+
+        if ($this->ct->isRecordNull($this->ct->Table->record) and count($this->ct->Table->record) < 2)
             return '';
 
         if ($this->field->type == 'sqljoin') {
-            $layoutcode = '{{ ' . $fieldName . '.value }}';
             return CT_FieldTypeTag_sqljoin::resolveSQLJoinTypeValue($this->field, $layoutcode, $this->ct->Table->record[$this->field->realfieldname]);
         } elseif ($this->field->type == 'records') {
-            $layoutcode = '{{ ' . $fieldName . '.value }}';
             return CT_FieldTypeTag_records::resolveRecordTypeValue($this->field, $layoutcode, $this->ct->Table->record[$this->field->realfieldname], $showPublishedString, $separatorCharacter);
         } else {
             $this->ct->app->enqueueMessage('{{ ' . $this->field->fieldname . '.getvalue }}. Wrong field type "' . $this->field->type . '". ".getvalue" method is only available for Table Join and Records filed types.', 'error');
@@ -630,7 +626,7 @@ class fieldObject
             return '';
         }
 
-        if ($this->ct->isRecordNull($this->ct->Table->record))
+        if ($this->ct->isRecordNull($this->ct->Table->record) and count($this->ct->Table->record) < 2)
             return '';
 
         $Layouts = new Layouts($this->ct);

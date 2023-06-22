@@ -17,6 +17,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\DataTypes\Tree;
 use CustomTablesImageMethods;
+use Exception;
 use JoomlaBasicMisc;
 use JHTMLCTTime;
 use tagProcessor_Value;
@@ -58,7 +59,7 @@ class Value
         $this->ct = &$ct;
     }
 
-    function renderValue(array $fieldrow, ?array &$row, array $option_list)
+    function renderValue(array $fieldrow, ?array $row, array $option_list)
     {
         $this->field = new Field($this->ct, $fieldrow, $row);
 
@@ -147,7 +148,7 @@ class Value
 
             case 'file':
 
-                return CT_FieldTypeTag_file::process($rowValue, $this->field, $option_list, $row[$this->ct->Table->realidfieldname], false, 0);
+                return CT_FieldTypeTag_file::process($rowValue, $this->field, $option_list, $row[$this->ct->Table->realidfieldname], false);
 
             case 'image':
                 $imageSRC = '';
@@ -208,7 +209,6 @@ class Value
 
                 $imageSRCList = CT_FieldTypeTag_imagegallery::getImageGallerySRC($getGalleryRows, $option_list[0] ?? '', $this->field->fieldname, $this->field->params, $this->ct->Table->tableid, true);
                 $imageTagList = CT_FieldTypeTag_imagegallery::getImageGalleryTagList($imageSRCList);
-
                 return implode('', $imageTagList);
 
             case 'filebox':
@@ -349,24 +349,6 @@ class Value
 
         switch ($parameters[0]) {
             case "chars" :
-
-                if (isset($parameters[1]))
-                    $count = (int)$parameters[1];
-                else
-                    $count = -1;
-
-                if (isset($parameters[2]) and $parameters[2] == 'true')
-                    $cleanBraces = true;
-                else
-                    $cleanBraces = false;
-
-                if (isset($parameters[3]) and $parameters[3] == 'true')
-                    $cleanQuotes = true;
-                else
-                    $cleanQuotes = false;
-
-                return JoomlaBasicMisc::chars_trimtext($content, $count, $cleanBraces, $cleanQuotes);
-
             case "words" :
 
                 if (isset($parameters[1]))
@@ -384,7 +366,10 @@ class Value
                 else
                     $cleanQuotes = false;
 
-                return JoomlaBasicMisc::words_trimtext($content, $count, $cleanBraces, $cleanQuotes);
+                if ($parameters[0] == "chars")
+                    return JoomlaBasicMisc::charsTrimText($content, $count, $cleanBraces, $cleanQuotes);
+                else
+                    return JoomlaBasicMisc::wordsTrimText($content, $count, $cleanBraces, $cleanQuotes);
 
             case "firstimage" :
                 return JoomlaBasicMisc::getFirstImage($content);
@@ -414,22 +399,7 @@ class Value
             $value = '000000';
 
         if (($option_list[0] ?? '') == "rgba") {
-            $colors = array();
-            if (strlen($value) >= 6) {
-                $colors[] = hexdec(substr($value, 0, 2));
-                $colors[] = hexdec(substr($value, 2, 2));
-                $colors[] = hexdec(substr($value, 4, 2));
-            }
-
-            if (strlen($value) == 8) {
-                $a = hexdec(substr($value, 6, 2));
-                $colors[] = round($a / 255, 2);
-            }
-
-            if (strlen($value) == 8)
-                return 'rgba(' . implode(',', $colors) . ')';
-            else
-                return 'rgb(' . implode(',', $colors) . ')';
+            return JoomlaBasicMisc::colorStringValueToCSSRGB($value);
         } else
             return "#" . $value;
     }

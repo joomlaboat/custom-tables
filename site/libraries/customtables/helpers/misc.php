@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\Fields;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
@@ -72,7 +73,7 @@ class JoomlaBasicMisc
     protected static function parse_size(string $size): int
     {
         $unit = preg_replace('/[^bkmgtpezy]/i', '', $size); // Remove the non-unit characters from the size.
-        $size = preg_replace('/[^0-9\.]/', '', $size); // Remove the non-numeric characters from the size.
+        $size = preg_replace('/[^\d\.]/', '', $size); // Remove the non-numeric characters from the size.
         //$size = preg_replace('/[^\d.]/', '', $size); // Remove the non-numeric characters from the size.
         if ($unit) {
             // Find the position of the unit in the ordered string which is the power of magnitude to multiply a kilobyte by.
@@ -100,14 +101,14 @@ class JoomlaBasicMisc
         return $bytes;
     }
 
-    public static function deleteURLQueryOption(string $urlstr, string $opt_): string
+    public static function deleteURLQueryOption(string $urlString, string $opt_): string
     {
-        $urlstr = str_replace('&amp;', '&', $urlstr);
+        $urlString = str_replace('&amp;', '&', $urlString);
         $link = '';
         $newQuery = array();
         $opt = $opt_ . '=';
 
-        $parts = explode('?', $urlstr);
+        $parts = explode('?', $urlString);
 
         if (isset($parts[1])) {
             $link = $parts[0];
@@ -184,7 +185,7 @@ class JoomlaBasicMisc
         return null;
     }
 
-    public static function chars_trimtext($text, $count, $cleanbraces = false, $cleanquotes = false): string
+    public static function charsTrimText($text, $count, $cleanBraces = false, $cleanQuotes = false): string
     {
         if ($count == 0)
             return "";
@@ -197,43 +198,61 @@ class JoomlaBasicMisc
         if (strlen($desc) > $count and $count != 1)
             $desc = substr($desc, 0, $count);
 
-        if ($cleanbraces)
+        if ($cleanBraces)
             $desc = preg_replace('!{.*?}!s', '', $desc);
 
-        if ($cleanquotes) {
+        if ($cleanQuotes) {
             $desc = str_replace('"', '', $desc);
             $desc = str_replace('\'', '', $desc);
         }
-
         return trim($desc);
     }
 
-    public static function words_trimtext(?string $text, int $count, bool $cleanbraces = false, bool $cleanquotes = false): string
+    public static function wordsTrimText(?string $text, int $count, bool $cleanBraces = false, bool $cleanQuotes = false): string
     {
         if ($text === null or $count == 0)
             return "";
 
         $desc = strip_tags($text);
-
         $matches = [];
 
         if ($count != 1)
-            preg_match('/([^\\s]*(?>\\s+|$)){0,' . $count . '}/', $desc, $matches);
+            preg_match('/(\S*(?>\\s+|$)){0,' . $count . '}/', $desc, $matches);
 
         $desc = trim($matches[0]);
         $desc = str_replace("/n", "", $desc);
         $desc = str_replace("/r", "", $desc);
-        $desc = str_replace("+", "_", $desc);
+        //$desc = str_replace("+", "&plus;", $desc);
 
-        if ($cleanbraces)
+        if ($cleanBraces)
             $desc = preg_replace('!{.*?}!s', '', $desc);
 
-        if ($cleanquotes) {
+        if ($cleanQuotes) {
             $desc = str_replace('"', '', $desc);
             $desc = str_replace('\'', '', $desc);
         }
-
         return trim(preg_replace('/\s\s+/', ' ', $desc));
+    }
+
+    public static function colorStringValueToCSSRGB($value): string
+    {
+        $colors = [];
+
+        if (strlen($value) >= 6) {
+            $colors[] = hexdec(substr($value, 0, 2));
+            $colors[] = hexdec(substr($value, 2, 2));
+            $colors[] = hexdec(substr($value, 4, 2));
+        }
+
+        if (strlen($value) == 8) {
+            $a = hexdec(substr($value, 6, 2));
+            $colors[] = round($a / 255, 2);
+        }
+
+        if (strlen($value) == 8)
+            return 'rgba(' . implode(',', $colors) . ')';
+        else
+            return 'rgb(' . implode(',', $colors) . ')';
     }
 
     public static function getListToReplace(string $par, array &$options, string $text, string $qtype, string $separator = ':', string $quote_char = '"'): array
@@ -325,10 +344,10 @@ class JoomlaBasicMisc
         return $fList;
     }
 
-    public static function getListToReplaceAdvanced($begining_tag, $ending_tag, &$options, &$text, $sub_begining_tag = ''): array
+    public static function getListToReplaceAdvanced($beginning_tag, $ending_tag, &$options, $text, $sub_beginning_tag = ''): array
     {
         $fList = array();
-        $l = strlen($begining_tag);//+1;
+        $l = strlen($beginning_tag);//+1;
 
         $skip_count = 0;
 
@@ -337,7 +356,7 @@ class JoomlaBasicMisc
             if ($offset >= strlen($text))
                 break;
 
-            $ps = strpos($text, $begining_tag, $offset);
+            $ps = strpos($text, $beginning_tag, $offset);
             if ($ps === false)
                 break;
 
@@ -359,9 +378,9 @@ class JoomlaBasicMisc
                 $peq = strpos($text, '"', $ps1);
                 $pe = strpos($text, $ending_tag, $ps1);
 
-                if (!$quote_open and $sub_begining_tag != '')// this part to all sub-entries, example:  {if:[a]=1} Hello {if:[b]=1} Sir {endif}. How do you do?{endif}
+                if (!$quote_open and $sub_beginning_tag != '')// this part to all sub-entries, example:  {if:[a]=1} Hello {if:[b]=1} Sir {endif}. How do you do?{endif}
                 {
-                    $sub_bt = strpos($text, $sub_begining_tag, $ps1);
+                    $sub_bt = strpos($text, $sub_beginning_tag, $ps1);
                     if ($sub_bt !== false and $sub_bt < $pe and ($peq === false or $peq > $sub_bt))
                         $skip_count++;//sub entry found. Increase skip count
                 }
@@ -401,18 +420,17 @@ class JoomlaBasicMisc
         } while (!($pe === false));
 
         //for these with no parameters
-        $ps = strpos($text, $begining_tag . $ending_tag);
+        $ps = strpos($text, $beginning_tag . $ending_tag);
         if (!($ps === false)) {
             $options[] = '';
-            $fList[] = $begining_tag . $ending_tag;
+            $fList[] = $beginning_tag . $ending_tag;
         }
-
         return $fList;
     }
 
-    public static function getMenuParams($Itemid, $rawparams = '')
+    public static function getMenuParams($Itemid, $rawParams = '')
     {
-        if ($rawparams == '') {
+        if ($rawParams == '') {
             $db = Factory::getDBO();
             $query = 'SELECT params FROM #__menu WHERE id=' . (int)$Itemid . ' LIMIT 1';
             $db->setQuery($query);
@@ -422,10 +440,9 @@ class JoomlaBasicMisc
                 return '';
 
             $row = $rows[0];
-            $rawparams = $row->params;
+            $rawParams = $row->params;
         }
-
-        return json_decode($rawparams);
+        return json_decode($rawParams);
     }
 
     public static function processValue($field, &$ct, $row)
@@ -448,7 +465,7 @@ class JoomlaBasicMisc
             $field = substr($field, 0, $p);
         }
 
-        //getting filed row (we need field typeparams, to render formated value)
+        //getting filed row (we need field typeparams, to render formatted value)
         if ($field == '_id' or $field == '_published') {
             $htmlresult = $row[str_replace('_', '', $field)];
         } else {
@@ -469,7 +486,6 @@ class JoomlaBasicMisc
             }
         }
         return $htmlresult;
-
     }
 
     public static function getGroupIdByTitle($grouptitle): string
@@ -491,7 +507,6 @@ class JoomlaBasicMisc
     }
 
     //-- only for "records" field type;
-
     public static function makeNewFileName(string $filename, string $format): string
     {
         //Use translation if needed
@@ -508,7 +523,7 @@ class JoomlaBasicMisc
 
         // Remove anything which isn't a word, whitespace, number
         // or any of the following characters -_~,;[]().
-        // If you don't need to handle multi-byte characters
+        // If you don't need to handle multibyte characters
         // you can use preg_replace rather than mb_ereg_replace
         // Thanks @Łukasz Rysiak!
         if (function_exists('mb_ereg_replace')) {
@@ -520,7 +535,7 @@ class JoomlaBasicMisc
 
             $filename = preg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '', $filename);
             // Remove any runs of periods (thanks falstro!)
-            $filename = preg_replace("([\.]{2,})", '', $filename);
+            $filename = preg_replace("(\.{2,})", '', $filename);
             //$filename = preg_replace("([.]{2,})", '', $filename);
         }
 
@@ -528,54 +543,29 @@ class JoomlaBasicMisc
             $filename .= '.' . $format;
 
         return $filename;
-    }//processValue()
+    }
 
-    public static function JTextExtended(string $text, int $value = null)
+    public static function JTextExtended(string $text, int $value = null): string
     {
-        if (is_null($value))
-            $new_text = Text::_($text);
-        else
-            $new_text = Text::sprintf($text, $value);
-
-        if ($new_text == $text) {
-            $parts = explode('_', $text);
-            if (count($parts) > 1) {
-                $type = $parts[0];
-                if ($type == 'PLG' and count($parts) > 2) {
-                    $extension = strtolower($parts[0] . '_' . $parts[1] . '_' . $parts[2]);
-                } else
-                    $extension = strtolower($parts[0] . '_' . $parts[1]);
-
-                $lang = Factory::getLanguage();
-                $lang->load($extension, JPATH_BASE);
-
-                if (is_null($value))
-                    return Text::_($text);
-                else
-                    return Text::sprintf($text, $value);
-            } else
-                return $text;
-        } else
-            return $new_text;
-
+        return common::translate($text, $value);
     }
 
     public static function strip_tags_content($text, $tags = '', $invert = FALSE)
     {
         //$tags - list of tags. Example: <b><span>
 
-        preg_match_all('/<(.+?)[\s]*\/?[\s]*>/si', trim($tags), $tags);
+        preg_match_all('/<(.+?)\s*\/?\s*>/si', trim($tags), $tags);
         $tags = array_unique($tags[1]);
 
-        if (is_array($tags) and count($tags) > 0) {
+        if (count($tags) > 0) {
             //if (!$invert) {
-            if ($invert == FALSE) {
+            if (!$invert) {
                 return preg_replace('@<(?!(?:' . implode('|', $tags) . ')\b)(\w+)\b.*?>.*?</\1>@si', '', $text);
             } else {
                 return preg_replace('@<(' . implode('|', $tags) . ')\b.*?>.*?</\1>@si', '', $text);
             }
 
-        } elseif ($invert == FALSE) {
+        } elseif (!$invert) {
             return preg_replace('@<(\w+)\b.*?>.*?</\1>@si', '', $text);
         }
         return $text;
@@ -673,7 +663,7 @@ class JoomlaBasicMisc
         return false;
     }
 
-    public static function applyContentPlugins(string &$htmlresult)
+    public static function applyContentPlugins(string &$htmlresult): string
     {
         $version_object = new Version;
         $version = (int)$version_object->getShortVersion();
@@ -681,8 +671,8 @@ class JoomlaBasicMisc
         $mainframe = Factory::getApplication();
 
         if (method_exists($mainframe, 'getParams')) {
-            $mydoc = Factory::getDocument();
-            $pagetitle = $mydoc->getTitle(); //because content plugins may overwrite the title
+            $myDoc = Factory::getDocument();
+            $pageTitle = $myDoc->getTitle(); //because content plugins may overwrite the title
 
             $content_params = $mainframe->getParams('com_content');
 
@@ -699,10 +689,8 @@ class JoomlaBasicMisc
                 Factory::getApplication()->triggerEvent('onContentPrepare', array('com_content.article', &$o, &$content_params, 0));
 
             $htmlresult = $o->text;
-
-            $mydoc->setTitle(JoomlaBasicMisc::JTextExtended($pagetitle)); //because content plugins may overwrite the title
+            $myDoc->setTitle(JoomlaBasicMisc::JTextExtended($pageTitle)); //because content plugins may overwrite the title
         }
-
         return $htmlresult;
     }
 
@@ -721,7 +709,6 @@ class JoomlaBasicMisc
                 $webDir = substr($tempDir, 1) . DIRECTORY_SEPARATOR;
             }
         }
-
         $random_name = JoomlaBasicMisc::generateRandomString();
 
         while (1) {
@@ -729,12 +716,10 @@ class JoomlaBasicMisc
             $fileName = $random_name . ($fileExtension !== null ? '.' . $fileExtension : '');
             $file = $output_dir . $fileName;
             if (!file_exists($file)) {
-
                 $webFileLink = $webDir . $fileName;
                 return $file;
             }
         }
-
         return null;
     }
 
@@ -749,7 +734,7 @@ class JoomlaBasicMisc
         return $randomString;
     }
 
-    public static function getHTMLTagParameters($tag)
+    public static function getHTMLTagParameters($tag): array
     {
         $params = JoomlaBasicMisc::csv_explode(' ', $tag, '"', true);
         $result = [];
@@ -985,7 +970,6 @@ class JoomlaBasicMisc
             'multipart/x-zip' => 'zip',
             'text/x-scriptzsh' => 'zsh',
         ];
-
         return isset($mime_map[$mime]) ? $mime_map[$mime] : false;
     }
 
@@ -1003,7 +987,7 @@ class JoomlaBasicMisc
             rmdir(JPATH_SITE . DIRECTORY_SEPARATOR . $folder);
     }
 
-    public static function parse_query($var)
+    public static function parse_query($var): array
     {
         $arr = array();
 
@@ -1015,7 +999,6 @@ class JoomlaBasicMisc
 
         $var = html_entity_decode($varQuery);
         $var = explode('&', $var);
-
 
         foreach ($var as $val) {
             $x = explode('=', $val);

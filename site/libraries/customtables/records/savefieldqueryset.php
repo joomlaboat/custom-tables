@@ -53,7 +53,6 @@ class SaveFieldQuerySet
     function getSaveFieldSet($fieldRow)
     {
         $this->field = new Field($this->ct, $fieldRow, $this->row);
-
         $query = $this->getSaveFieldSetType();
 
         if ($this->field->defaultvalue != "" and (is_null($query) or is_null($this->row[$this->field->realfieldname])))
@@ -107,7 +106,6 @@ class SaveFieldQuerySet
             case 'filelink':
             case 'googlemapcoordinates':
                 $value = $this->ct->Env->jinput->getString($this->field->comesfieldname);
-
                 if (isset($value)) {
                     $this->row[$this->field->realfieldname] = $value;
                     return $this->field->realfieldname . '=' . $this->ct->db->Quote($value);
@@ -115,9 +113,7 @@ class SaveFieldQuerySet
                 break;
 
             case 'color':
-
                 $value = $this->ct->Env->jinput->getString($this->field->comesfieldname);
-
                 if (isset($value)) {
                     if (str_contains($value, 'rgb')) {
                         $parts = str_replace('rgba(', '', $value);
@@ -961,16 +957,14 @@ class SaveFieldQuerySet
             $this->row[$this->field->realfieldname] = $value;
             return $this->field->realfieldname . '=' . $this->ct->db->quote($value);
         } elseif ($fieldRow['type'] == 'virtual') {
-            $paramsList = JoomlaBasicMisc::csv_explode(',', $fieldRow['typeparams'], '"', false);
-            $storage = $paramsList[1] ?? '';
+
+            $storage = $this->field->params[1] ?? '';
 
             if ($storage == "storedintegersigned" or $storage == "storedintegerunsigned" or $storage == "storedstring") {
 
                 try {
-
-                    $code = str_replace('****quote****', '"', $paramsList[0]);
+                    $code = str_replace('****quote****', '"', $this->field->params[0]);
                     $code = str_replace('****apos****', "'", $code);
-
                     $twig = new TwigProcessor($this->ct, $code, false, false, true);
                     $value = @$twig->process($this->row);
 
