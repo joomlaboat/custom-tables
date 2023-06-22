@@ -330,9 +330,72 @@
                        description="Example: {{ link(true,'','/index.php/thank-you') }}"/>
             </params>
         </tag>
+        --------------------
+        <tag name="count" label="Count" startchar="{" endchar="}" proversion="1"
+             description="Returns the number of records in selected table." twigclass="record">
+            <params>
+                <param name="tablename" label="Table" type="table"
+                       description="The name of the Table to count records from." example="products"/>
+                <param name="filter" label="Filter" type="string"
+                       description="Optional filter, ie. fieldname=some value."/>
+            </params>
+        </tag>
+
+        <tag name="avg" label="Average" startchar="{" endchar="}" proversion="1"
+             description="Calculates the average value of all the records that match the filter." twigclass="record">
+            <params>
+                <param name="tablename" label="Table" type="table"
+                       description="The name of the Table to count records from." example="products"
+                       fieldchild="fieldtype_param_1"/>
+                <param name="value_of_field" label="Value Field" type="field"
+                       description="The field to read the value from." example="_id"/>
+                <param name="filter" label="Filter" type="string"
+                       description="Optional filter, ie. fieldname=some value."/>
+            </params>
+        </tag>
+
+        <tag name="joinmin" label="Table Join - Minimum" startchar="{" endchar="}" proversion="1"
+             description="Finds the minimum value of all the records that match." twigclass="record">
+            <params>
+                <param name="tablename" label="Table" type="table"
+                       description="The name of the Table to count records from." example="products"
+                       fieldchild="fieldtype_param_1"/>
+                <param name="value_of_field" label="Value Field" type="field"
+                       description="The field to read the value from." example="_id"/>
+                <param name="filter" label="Filter" type="string"
+                       description="Optional filter, ie. fieldname=some value."/>
+            </params>
+        </tag>
+
+        <tag name="joinmax" label="Table Join - Maximum" startchar="{" endchar="}" proversion="1"
+             description="Finds the maximum value of all the records that match the filter." twigclass="record">
+            <params>
+                <param name="tablename" label="Table" type="table"
+                       description="The name of the Table to count records from." example="products"
+                       fieldchild="fieldtype_param_1"/>
+                <param name="value_of_field" label="Value Field" type="field"
+                       description="The field to read the value from." example="_id"/>
+                <param name="filter" label="Filter" type="string"
+                       description="Optional filter, ie. fieldname=some value."/>
+            </params>
+        </tag>
+
+        <tag name="sum" label="Sum" startchar="{" endchar="}" proversion="1"
+             description="Summarizes values of a selected field of all the records that match the filter."
+             twigclass="record">
+            <params>
+                <param name="tablename" label="Table" type="table"
+                       description="The name of the Table to count records from." example="products"
+                       fieldchild="fieldtype_param_1"/>
+                <param name="value_of_field" label="Value Field" type="field"
+                       description="The field to read the value from." example="_id"/>
+                <param name="filter" label="Filter" type="string"
+                       description="Optional filter, ie. fieldname=some value."/>
+            </params>
+        </tag>
 
         <tag name="joincount" label="Table Join - Count" startchar="{" endchar="}" proversion="1"
-             description="Returns the number of records in the joined table (Table Join) that are connected to the current record."
+             description="Counts records from a joined table (Table Join)."
              twigclass="record">
             <params>
                 <param name="tablename" label="Table" type="table"
@@ -343,7 +406,7 @@
         </tag>
 
         <tag name="joinavg" label="Table Join - Average" startchar="{" endchar="}" proversion="1"
-             description="Calculates the average value of all the records that match." twigclass="record">
+             description="Calculates the average value of all the records that match the filter." twigclass="record">
             <params>
                 <param name="tablename" label="Table" type="table"
                        description="The name of the Table that has a Table Join type field." example="products"
@@ -356,7 +419,7 @@
         </tag>
 
         <tag name="joinmin" label="Table Join - Minimum" startchar="{" endchar="}" proversion="1"
-             description="Finds minimum value of all the records that match." twigclass="record">
+             description="Finds the minimum value of all the records that match the filter." twigclass="record">
             <params>
                 <param name="tablename" label="Table" type="table"
                        description="The name of the Table that has a Table Join type field." example="products"
@@ -369,7 +432,7 @@
         </tag>
 
         <tag name="joinmax" label="Table Join - Maximum" startchar="{" endchar="}" proversion="1"
-             description="Finds maximum value of all the records that match." twigclass="record">
+             description="Finds the maximum value of all the records that match the filter." twigclass="record">
             <params>
                 <param name="tablename" label="Table" type="table"
                        description="The name of the Table that has a Table Join type field." example="products"
@@ -382,7 +445,8 @@
         </tag>
 
         <tag name="joinsum" label="Table Join - Sum" startchar="{" endchar="}" proversion="1"
-             description="Summarizes values of a selected field of all the records that match." twigclass="record">
+             description="Summarizes values of a selected field of all the records that match the filter."
+             twigclass="record">
             <params>
                 <param name="tablename" label="Table" type="table"
                        description="The name of the Table that has a Table Join type field." example="products"
