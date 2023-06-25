@@ -36,9 +36,8 @@ class JHTMLESRecords
 
         $ct = self::getCT($tableName, $filter, $allowUnpublished, $sortByField, $field);
 
-        if ($ct == null) {
+        if ($ct == null)
             return '<p>Table not selected</p>';
-        }
 
         $ct_noFilter = null;
 
@@ -49,7 +48,6 @@ class JHTMLESRecords
 
         if (!str_contains($field, ':')) {
             //without layout
-
             $real_field_row = Fields::getFieldRowByName($field, null, $tableName);
 
             switch ($selectorPair[0]) {
@@ -155,7 +153,7 @@ class JHTMLESRecords
                     break;
 
                 default:
-                    return '<p>Incorrect selector</p>';
+                    return '<p>Incorrect (unknown) selector</p>';
             }
         } else {
             //with layout

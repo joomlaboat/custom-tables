@@ -17,12 +17,9 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
-function renderDependencies($layout_row)
+function renderDependencies($layout_row): string
 {
     $db = Factory::getDBO();
-
-    if ($db->serverType == 'postgresql')
-        return '';
 
     $count = 0;
     $layoutname = $layout_row->layoutname;
@@ -31,19 +28,17 @@ function renderDependencies($layout_row)
 
     if ($db->serverType == 'postgresql') {
         $w1 = '(' . $db->quoteName('type') . '=\'sqljoin\' OR ' . $db->quoteName('type') . '=\'records\')';
-        //$w2a='POSITOIN(\'layout:'.$layoutname.'\' IN SUBSTRING_INDEX(typeparams,",",2))>0';
-        //$w2b='POSITOIN(\'tablelesslayout:'.$layoutname.'\' IN SUBSTRING_INDEX(typeparams,",",2))>0';
-        //$w2='('.$w2a.' OR '.$w2b.')';
-        $wF = 'f.published=1 AND f.tableid=t.id';// AND '.$w1.' AND '.$w2;
+        $w2a = 'POSITOIN(\'layout:' . $layoutname . '\' IN SUBSTRING_INDEX(typeparams,",",2))>0';
+        $w2b = 'POSITOIN(\'tablelesslayout:' . $layoutname . '\' IN SUBSTRING_INDEX(typeparams,",",2))>0';
     } else {
         $w1 = '(' . $db->quoteName('type') . '="sqljoin" OR ' . $db->quoteName('type') . '="records")';
         $w2a = 'INSTR(SUBSTRING_INDEX(typeparams,",",2),"layout:' . $layoutname . '")';
         $w2b = 'INSTR(SUBSTRING_INDEX(typeparams,",",2),"tablelesslayout:' . $layoutname . '")';
-        $w2 = '(' . $w2a . ' OR ' . $w2b . ')';
-        $wF = 'f.published=1 AND f.tableid=t.id AND ' . $w1 . ' AND ' . $w2;
     }
+    $w2 = '(' . $w2a . ' OR ' . $w2b . ')';
+    $wF = 'f.published=1 AND f.tableid=t.id AND ' . $w1 . ' AND ' . $w2;
 
-    $rows = _getTablesThatUseThisLayout($layout_row->layoutname, $wF);
+    $rows = _getTablesThatUseThisLayout($wF);
 
     if (count($rows) > 0) {
         $count += count($rows);
@@ -60,7 +55,7 @@ function renderDependencies($layout_row)
     }
 
     $wF = '(' . $w2a . ' OR ' . $w2b . ')';
-    $rows = _getTablesThatUseThisLayout($layout_row->layoutname, $wF);
+    $rows = _getTablesThatUseThisLayout($wF);
 
     if (count($rows) > 0) {
         $count += count($rows);
@@ -90,18 +85,16 @@ function renderDependencies($layout_row)
         $count += count($layouts);
         $result .= '<h3>' . Text::_('COM_CUSTOMTABLES_DASHBOARD_LISTOFLAYOUTS', true) . '</h3>';
         $result .= _renderLayoutList($layouts);
-
     }
 
     if ($count == 0)
         $result .= '<p>' . Text::_('COM_CUSTOMTABLES_LAYOUTS_THIS_LAYOUT_IS_NOT_IN_USE', true) . '</p>';
 
     $result .= '</div>';
-
     return $result;
 }
 
-function _renderLayoutList($layouts)
+function _renderLayoutList($layouts): string
 {
     $result = '<ul style="list-style-type:none;margin:0;">';
 
@@ -114,7 +107,7 @@ function _renderLayoutList($layouts)
     return $result;
 }
 
-function _renderMenuList($menus)
+function _renderMenuList($menus): string
 {
     $result = '<ul style="list-style-type:none;margin:0;">';
 
@@ -127,8 +120,7 @@ function _renderMenuList($menus)
     return $result;
 }
 
-
-function _renderModuleList($modules)
+function _renderModuleList($modules): string
 {
     $result = '<ul style="list-style-type:none;margin:0;">';
 
@@ -141,7 +133,7 @@ function _renderModuleList($modules)
     return $result;
 }
 
-function _renderTableList($rows)
+function _renderTableList($rows): string
 {
     $result = '
         <table class="table table-striped">
@@ -154,7 +146,6 @@ function _renderTableList($rows)
             ';
 
     foreach ($rows as $row) {
-
 
         $result .= '<tr>
         <td><a href="/administrator/index.php?option=com_customtables&view=listoffields&tableid=' . $row['tableid'] . '" target="_blank">' . $row['tablename'] . '</a></td>
@@ -169,33 +160,24 @@ function _renderTableList($rows)
                 $result .= '<li><a href="/administrator/index.php?option=com_customtables&view=listoffields&task=fields.edit&tableid=' . $row['tableid'] . '&id=' . $pair[0] . '" target="_blank">' . $pair[1] . '</a></li>';
             }
         }
-
         $result .= '</ul></td></tr>';
-
     }
 
     $result .= '</tbody>
             <tfoot></tfoot>
 		</table>
     ';
-
     return $result;
 }
 
-function _getTablesThatUseThisLayout($layoutname, $wF)
+function _getTablesThatUseThisLayout($wF)
 {
     $db = Factory::getDBO();
     $fields = '(SELECT GROUP_CONCAT(CONCAT(f.id,",",fieldname),";") FROM #__customtables_fields AS f WHERE ' . $wF . ' ORDER BY fieldname) AS fields';
-
-
     $w = '(SELECT tableid FROM #__customtables_fields AS f WHERE ' . $wF . ' LIMIT 1) IS NOT NULL';
     $query = 'SELECT id AS tableid, tabletitle,tablename, ' . $fields . ' FROM #__customtables_tables AS t WHERE ' . $w . ' ORDER BY tablename';
-
     $db->setQuery($query);
-
-    $rows = $db->loadAssocList();
-
-    return $rows;
+    return $db->loadAssocList();
 }
 
 function _getMenuItemsThatUseThisLayout($layoutname)
@@ -213,11 +195,8 @@ function _getMenuItemsThatUseThisLayout($layoutname)
         $w[] = 'INSTR(params,' . $db->quote($toSearch) . ')';
     }
     $wheres[] = '(' . implode(' OR ', $w) . ')';
-
     $query = 'SELECT id,title FROM #__menu WHERE ' . implode(' AND ', $wheres);
-
     $db->setQuery($query);
-
     return $db->loadAssocList();
 }
 
@@ -236,40 +215,44 @@ function _getModulesThatUseThisLayout($layoutname)
         $w[] = 'INSTR(params,' . $db->quote($toSearch) . ')';
     }
     $wheres[] = '(' . implode(' OR ', $w) . ')';
-
     $query = 'SELECT id,title FROM #__modules WHERE ' . implode(' AND ', $wheres);
-
     $db->setQuery($query);
-
     return $db->loadAssocList();
 }
 
-function _getLayoutsThatUseThisLayout($layoutname)
+function _getLayoutsThatUseThisLayout(string $layoutName)
 {
     $db = Factory::getDBO();
-
     $wheres = array();
     $wheres[] = 'published=1';
 
-    $layout_params = ['{layout:' . $layoutname . '}',    //example: {layout:layoutname}
-        ':layout:' . $layoutname . ',',    //example: [field:layout,someparameter]
-        ':layout:' . $layoutname . ']',    //example: [field:layout]
-        ':tablelesslayout:' . $layoutname . ',',    //example: [tablelesslayout:layout,someparameter]
-        ':tablelesslayout:' . $layoutname . ']',    //example: [tablelesslayout:layout]
-        '"' . $layoutname . '"',    //example: "layout"
-        "'" . $layoutname . "'",    //example: 'layout'
-        ',' . $layoutname . ','];        //For plugins
-    //':'.$layoutname];
-    $w = array();
+    $layout_params = ['{layout:' . $layoutName . '}',    //example: {layout:layoutname}
+        ':layout:' . $layoutName . ',',    //example: [field:layout,someparameter]
+        ':layout:' . $layoutName . ']',    //example: [field:layout]
+        ':tablelesslayout:' . $layoutName . ',',    //example: [tablelesslayout:layout,someparameter]
+        ':tablelesslayout:' . $layoutName . ']',    //example: [tablelesslayout:layout]
+        '"' . $layoutName . '"',    //example: "layout"
+        "'" . $layoutName . "'",    //example: 'layout'
+        ',' . $layoutName . ','];        //For plugins
+
+    $w = [];
+    foreach ($layout_params as $l)
+        $w[] = 'INSTR(layoutcode,' . $db->quote($l) . ')';
+
+    foreach ($layout_params as $l)
+        $w[] = 'INSTR(layoutmobile,' . $db->quote($l) . ')';
+
+    foreach ($layout_params as $l)
+        $w[] = 'INSTR(layoutcss,' . $db->quote($l) . ')';
+
+    foreach ($layout_params as $l)
+        $w[] = 'INSTR(layoutjs,' . $db->quote($l) . ')';
+
     foreach ($layout_params as $l) {
         $w[] = 'INSTR(layoutcode,' . $db->quote($l) . ')';
     }
     $wheres[] = '(' . implode(' OR ', $w) . ')';
-
-
     $query = 'SELECT id,layoutname FROM #__customtables_layouts WHERE ' . implode(' AND ', $wheres);
-
     $db->setQuery($query);
-
     return $db->loadAssocList();
 }

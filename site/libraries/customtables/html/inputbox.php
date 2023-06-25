@@ -1203,21 +1203,22 @@ class Inputbox
             $result .= 'selector not specified';
 
         $esr_table = $this->field->params[0];
-        $esr_field = $this->field->params[1] ?? '';
 
-        if (isset($this->option_list[3])) {
+        if (isset($this->option_list[3]))
             $esr_field = 'layout:' . $this->option_list[3];
-        }
+        else
+            $esr_field = $this->field->params[1] ?? '';
 
         $esr_selector = $this->field->params[2] ?? '';
 
-        if (count($this->field->params) > 3)
+        if (isset($this->option_list[5]))
+            $esr_filter = $this->option_list[5];
+        elseif (count($this->field->params) > 3)
             $esr_filter = $this->field->params[3];
         else
             $esr_filter = '';
 
         $dynamic_filter = $this->field->params[4] ?? '';
-
         $sortByField = $this->field->params[5] ?? '';
 
         $records_attributes = ($this->attributes != '' ? ' ' : '')
