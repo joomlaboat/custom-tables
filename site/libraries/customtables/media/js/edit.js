@@ -620,7 +620,17 @@ function ctUpdateTableJoinLink(control_name, index, execute_all, sub_index, obje
                 document.getElementById(control_name + "Selector" + index + '_' + sub_index).innerHTML = '';//"Not selected";
                 return false;
             } else if (obj.value == "%addRecord%") {
-                ctEditModal('/index.php/' + wrapper.dataset.addrecordmenualias + '?view=edititem', wrapper.dataset.formname + '.' + wrapper.dataset.fieldname)
+
+                let query = '/index.php/';
+                query += wrapper.dataset.addrecordmenualias;
+                if (wrapper.dataset.addrecordmenualias.indexOf('?') === -1)
+                    query += '?';
+                else
+                    query += '&';
+
+                query += 'view=edititem';
+
+                ctEditModal(query, wrapper.dataset.formname + '.' + wrapper.dataset.fieldname)
             }
         }
 
