@@ -158,8 +158,11 @@ function CustomTablesSave($task, $this_)
                 $ct->app->enqueueMessage($twig->errorMessage, 'error');
 
 
-            if (Factory::getApplication()->input->get('clean', 0, 'INT') == 1) {
-                die('saved');
+            if (Factory::getApplication()->input->getInt('clean', 0) == 1) {
+
+                $res = ['status' => 'saved', 'id' => $model->listing_id];
+                die(json_encode($res));
+
             } elseif ($link != '') {
                 $link = str_replace('$get_listing_id', Factory::getApplication()->input->get("listing_id", 0, 'INT'), $link);
 

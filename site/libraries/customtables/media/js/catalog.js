@@ -89,18 +89,25 @@ function runTheTask(task, tableid, recordId, url, responses, last) {
                 if (responses.indexOf(res) !== -1) {
 
                     let element_tableid_tr = "ctTable_" + tableid + '_' + recordId;
-                    let index = findRowIndexById("ctTable_" + tableid, element_tableid_tr);
 
-                    if (task === 'delete')
-                        document.getElementById("ctTable_" + tableid).deleteRow(index);
-                    else
-                        ctCatalogUpdate(tableid, recordId, index);
+                    let table_object = document.getElementById("ctTable_" + tableid);
+                    if (table_object) {
+                        let index = findRowIndexById("ctTable_" + tableid, element_tableid_tr);
+
+                        if (task === 'delete')
+                            document.getElementById("ctTable_" + tableid).deleteRow(index);
+                        else
+                            ctCatalogUpdate(tableid, recordId, index);
+                    }
 
                     es_LinkLoading = false;
 
                     if (last) {
                         let toolbarBoxId = 'esToolBar_' + task + '_box_' + tableid;
-                        document.getElementById(toolbarBoxId).style.visibility = 'visible';
+                        let toolbarBoxIdObject = document.getElementById(toolbarBoxId);
+
+                        if (toolbarBoxIdObject)
+                            toolbarBoxIdObject.style.visibility = 'visible';
                     }
 
                 } else
@@ -186,10 +193,14 @@ function ctPublishRecord(tableid, recordId, toolbarBoxId, publish, ModuleId) {
 
 function findRowIndexById(tableid, rowId) {
 
-    let rows = document.getElementById(tableid).rows;
-    for (let i = 0; i < rows.length; i++) {
-        if (rows.item(i).id === rowId)
-            return i;
+    let table_object = document.getElementById(tableid);
+
+    if (table_object) {
+        let rows = table_object.rows;
+        for (let i = 0; i < rows.length; i++) {
+            if (rows.item(i).id === rowId)
+                return i;
+        }
     }
     return -1;
 }
@@ -435,18 +446,25 @@ function ct_UpdateSingleValue(WebsiteRoot, Itemid, fieldname_, record_id, postfi
         http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         http.onreadystatechange = function () {
             if (http.readyState === 4) {
-                let res = http.response;
-                res = res.replace(/<[^>]*>?/gm, '').trim();
 
-                if (res.indexOf("saved") !== -1) {
+                let response;
+                try {
+                    response = JSON.parse(http.response.toString());
+                } catch (e) {
+                    return console.error(e);
+                }
+
+                if (response.status == "saved") {
                     obj.className = "ct_checkmark ct_checkmark_hidden";//+css_class;
                 } else {
                     obj.className = "ct_checkmark_err ";
 
-                    if (res.indexOf('<div class="alert-message">Nothing to save</div>') !== -1)
+                    if (http.response.indexOf('<div class="alert-message">Nothing to save</div>') !== -1)
                         alert(Joomla.JText._('COM_CUSTOMTABLES_JS_NOTHING_TO_SAVE'));
-                    else if (res.indexOf('view-login') !== -1)
+                    else if (http.response.indexOf('view-login') !== -1)
                         alert(Joomla.JText._('COM_CUSTOMTABLES_JS_SESSION_EXPIRED'));
+                    else
+                        alert(http.response);
                 }
             }
         };
@@ -514,7 +532,13 @@ function ctCatalogOnDrop(event) {
         let from = from_parts[2] + '_' + from_parts[3];
         let to = to_parts[2] + '_' + to_parts[3];
         let element_tableid_tr = "ctTable_" + to_parts[1] + '_' + to_parts[2];
-        let index = findRowIndexById("ctTable_" + to_parts[1], element_tableid_tr);
+
+        let table_object = document.getElementById("ctTable_" + to_parts[1]);
+
+        let index;
+        if (table_object)
+            index = findRowIndexById("ctTable_" + to_parts[1], element_tableid_tr);
+
         let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + ctItemId;
         let url = esPrepareLink(['task', "listing_id", 'returnto', 'ids', 'clean', 'component', 'frmt'], ['task=copycontent', 'from=' + from, 'to=' + to, 'clean=1', 'tmpl=component', 'frmt=json'], link);
 
@@ -524,9 +548,10 @@ function ctCatalogOnDrop(event) {
                 if (r.error) {
                     alert(r.error);
                     return false;
-                } else
-                    ctCatalogUpdate(to_parts[1], to_parts[2], index);
-
+                } else {
+                    if (table_object)
+                        ctCatalogUpdate(to_parts[1], to_parts[2], index);
+                }
             })
             .catch(error => console.error("Error", error));
 
@@ -546,10 +571,14 @@ function ctCatalogOnDragOver(event) {
     event.preventDefault();
 }
 
-function ctEditModal(url) {
+function ctEditModal(url, parentFieldToUpdate = null) {
 
     let new_url = url + '&modal=1&time=' + Date.now();
     let params = "";
+
+    if (parentFieldToUpdate !== null)
+        new_url += '&parentfield=' + parentFieldToUpdate
+
     let http = CreateHTTPRequestObject();   // defined in ajax.js
 
     if (http) {

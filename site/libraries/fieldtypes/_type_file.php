@@ -270,7 +270,7 @@ class CT_FieldTypeTag_file
         else
             $result .= CT_FieldTypeTag_file::renderFileAndDeleteOption($file, $field);
 
-        $result .= CT_FieldTypeTag_file::renderUploader($field);
+        $result .= CT_FieldTypeTag_file::renderUploader($ct, $field);
 
         $result .= '</div>';
         return $result;
@@ -559,7 +559,7 @@ class CT_FieldTypeTag_file
         return $result;
     }
 
-    protected static function renderUploader($field): string
+    protected static function renderUploader(CT $ct, Field $field): string
     {
         if ($field->type == 'file')
             $fileExtensions = $field->params[2] ?? '';
@@ -596,6 +596,17 @@ class CT_FieldTypeTag_file
             . (is_null($field->ct->Params->ModuleId) ? '' : '&ModuleId=' . $field->ct->Params->ModuleId)
             . '&fieldname=' . $field->fieldname;
 
+        if ($ct->app->getName() == 'administrator')   //since   3.2
+            $formName = 'adminForm';
+        else {
+            if ($ct->Env->isModal)
+                $formName = 'ctEditModalForm';
+            else {
+                $formName = 'ctEditForm';
+                $formName .= $ct->Params->ModuleId;
+            }
+        }
+
         return '
                 <div style="margin:10px; border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;vertical-align:top;">
                 
@@ -603,7 +614,7 @@ class CT_FieldTypeTag_file
                     <div id="ct_eventsmessage_' . $field->fieldname . '"></div>
                 	<script>
                         //UploadFileCount=1;
-			            ct_getUploader(' . $field->id . ',"' . $urlstr . '",' . $max_file_size . ',"' . $accepted_file_types . '","eseditForm",false,"ct_fileuploader_' . $field->fieldname . '","ct_eventsmessage_'
+			            ct_getUploader(' . $field->id . ',"' . $urlstr . '",' . $max_file_size . ',"' . $accepted_file_types . '","' . $formName . '",false,"ct_fileuploader_' . $field->fieldname . '","ct_eventsmessage_'
             . $field->fieldname . '","' . $file_id . '","' . $field->prefix . $field->fieldname . '","ct_ubloadedfile_box_' . $field->fieldname . '")
 
                     </script>

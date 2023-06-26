@@ -781,10 +781,14 @@ class Twig_Html_Tags
     {
         if ($this->ct->app->getName() == 'administrator')   //since   3.2
             $formName = 'adminForm';
-        else
-            $formName = 'eseditForm';
-
-        $formName .= $this->ct->Params->ModuleId;
+        else {
+            if ($this->ct->Env->isModal)
+                $formName = 'ctEditModalForm';
+            else {
+                $formName = 'ctEditForm';
+                $formName .= $this->ct->Params->ModuleId;
+            }
+        }
 
         if ($this->ct->Env->frmt != '' and $this->ct->Env->frmt != 'html')
             return '';
@@ -859,7 +863,13 @@ class Twig_Html_Tags
         else
             $the_class = 'ctEditFormButton btn button-apply btn-success';
 
-        $onclick = 'setTask(event, "saveandcontinue","' . $this->ct->Env->encoded_current_url . '",true,"' . $formName . '");';
+        $isModal = ($this->ct->Env->isModal ? 'true' : 'false');
+        $parentField = $this->ct->Env->jinput->getCmd('parentfield');
+
+        if ($parentField === null)
+            $attribute .= 'setTask(event, "saveandcontinue","' . $this->ct->Env->encoded_current_url . '",true,"' . $formName . '",' . $isModal . ',null);';
+        else
+            $attribute .= 'setTask(event, "saveandcontinue","' . $this->ct->Env->encoded_current_url . '",true,"' . $formName . '",' . $isModal . ',"' . $parentField . '");';
 
         return '<input id="customtables_button_save" type="submit" class="' . $the_class . ' validate"' . $attribute . ' onClick=\'' . $onclick . '\' value="' . $title . '">';
     }
@@ -872,9 +882,14 @@ class Twig_Html_Tags
         if ($this->ct->Env->frmt == 'json')
             return $title;
 
+        $parentField = $this->ct->Env->jinput->getCmd('parentfield');
         $attribute = 'onClick=\'';
+        $isModal = ($this->ct->Env->isModal ? 'true' : 'false');
 
-        $attribute .= 'setTask(event, "save","' . base64_encode($redirectlink) . '",true,"' . $formName . '");';
+        if ($parentField === null)
+            $attribute .= 'setTask(event, "save","' . base64_encode($redirectlink) . '",true,"' . $formName . '",' . $isModal . ',null);';
+        else
+            $attribute .= 'setTask(event, "save","' . base64_encode($redirectlink) . '",true,"' . $formName . '",' . $isModal . ',"' . $parentField . '");';
 
         $attribute .= '\'';
 
@@ -897,8 +912,15 @@ class Twig_Html_Tags
         if ($this->ct->Env->frmt == 'json')
             return $title;
 
+        $parentField = $this->ct->Env->jinput->getCmd('parentfield');
         $attribute = 'onClick=\'';
-        $attribute .= 'setTask(event, "saveandprint","' . base64_encode($redirectlink) . '",true,"' . $formName . '");';
+        $isModal = ($this->ct->Env->isModal ? 'true' : 'false');
+
+        if ($parentField === null)
+            $attribute .= 'setTask(event, "saveandprint","' . base64_encode($redirectlink) . '",true,"' . $formName . '",' . $isModal . ',null);';
+        else
+            $attribute .= 'setTask(event, "saveandprint","' . base64_encode($redirectlink) . '",true,"' . $formName . '",' . $isModal . ',"' . $parentField . '");';
+
         $attribute .= '\'';
 
         if (($this->ct->LayoutVariables['captcha'] ?? null))
@@ -925,11 +947,17 @@ class Twig_Html_Tags
             $attribute = ' disabled="disabled"';
 
         if ($optional_class != '')
-            $the_class = $optional_class;//$the_class='ctEditFormButton '.$optional_class;
+            $the_class = $optional_class;
         else
             $the_class = 'ctEditFormButton btn button-apply btn-success';
 
-        $onclick = 'setTask(event, "saveascopy","' . base64_encode($redirectlink) . '",true,"' . $formName . '");';
+        $isModal = ($this->ct->Env->isModal ? 'true' : 'false');
+        $parentField = $this->ct->Env->jinput->getCmd('parentfield');
+
+        if ($parentField === null)
+            $attribute .= 'setTask(event, "saveascopy","' . base64_encode($redirectlink) . '",true,"' . $formName . '",' . $isModal . ',null);';
+        else
+            $attribute .= 'setTask(event, "saveascopy","' . base64_encode($redirectlink) . '",true,"' . $formName . '",' . $isModal . ',"' . $parentField . '");';
 
         return '<input id="customtables_button_saveandcopy" type="submit" class="' . $the_class . ' validate"' . $attribute . ' onClick=\'' . $onclick . '\' value="' . $title . '">';
     }
@@ -950,7 +978,7 @@ class Twig_Html_Tags
         else
             $cancel_class = 'ctEditFormButton btn button-cancel';
 
-        $onclick = 'setTask(event, "cancel","' . base64_encode($redirectlink) . '",true,"' . $formName . '");';
+        $onclick = 'setTask(event, "cancel","' . base64_encode($redirectlink) . '",true,"' . $formName . '",false,null);';
         return '<input id="customtables_button_cancel" type="button" class="' . $cancel_class . '" value="' . $title . '" onClick=\'' . $onclick . '\'>';
     }
 

@@ -601,6 +601,7 @@ class CustomTablesModelEditItem extends JModelLegacy
         if ($isDebug)
             die('Debug mode.');//debug mode
 
+        $this->listing_id = $listing_id;
         $this->ct->Env->jinput->set("listing_id", $listing_id);
         return true;
     }

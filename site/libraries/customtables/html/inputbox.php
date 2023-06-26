@@ -292,7 +292,7 @@ class Inputbox
                 $image_type_file = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_image.php';
                 require_once($image_type_file);
 
-                return CT_FieldTypeTag_image::renderImageFieldBox($this->field, $this->prefix, $this->row);
+                return CT_FieldTypeTag_image::renderImageFieldBox($this->ct, $this->field, $this->prefix, $this->row);
 
             case 'signature': //Default value cannot be used with this data type.
                 return $this->render_signature();

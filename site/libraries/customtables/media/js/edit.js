@@ -1,6 +1,6 @@
 let ctItemId = 0;
 
-function setTask(event, task, returnLink, submitForm, formName) {
+function setTask(event, task, returnLink, submitForm, formName, isModal, modalFormParentField) {
 
     event.preventDefault();
 
@@ -17,18 +17,13 @@ function setTask(event, task, returnLink, submitForm, formName) {
         alert("Task Element not found.");
 
     if (submitForm) {
-
         let objForm = document.getElementById(formName);
-
         if (objForm) {
 
             ctInputbox_signature_apply();
-
             const tasks_with_validation = ['saveandcontinue', 'save', 'saveandprint', 'saveascopy'];
-            let element_tableid = "ctTable_" + objForm.dataset.tableid;
-            let table_object = document.getElementById(element_tableid);
 
-            if (table_object && task !== 'saveascopy') {
+            if (isModal && task !== 'saveascopy') {
 
                 let hideModelOnSave = true;
                 if (task === 'saveandcontinue')
@@ -36,9 +31,9 @@ function setTask(event, task, returnLink, submitForm, formName) {
 
                 if (tasks_with_validation.includes(task)) {
                     if (checkRequiredFields())
-                        submitModalForm(objForm.action, objForm.elements, objForm.dataset.tableid, objForm.dataset.recordid, hideModelOnSave)
+                        submitModalForm(objForm.action, objForm.elements, objForm.dataset.tableid, objForm.dataset.recordid, hideModelOnSave, modalFormParentField)
                 } else
-                    submitModalForm(objForm.action, objForm.elements, objForm.dataset.tableid, objForm.dataset.recordid, hideModelOnSave)
+                    submitModalForm(objForm.action, objForm.elements, objForm.dataset.tableid, objForm.dataset.recordid, hideModelOnSave, modalFormParentField)
 
                 return false;
             } else {
@@ -48,13 +43,12 @@ function setTask(event, task, returnLink, submitForm, formName) {
                 } else
                     objForm.submit();
             }
-
         } else
             alert("Form not found.");
     }
 }
 
-function submitModalForm(url, elements, tableid, recordid, hideModelOnSave) {
+function submitModalForm(url, elements, tableid, recordId, hideModelOnSave, modalFormParentField) {
 
     let params = "";
     let opt;
@@ -85,21 +79,37 @@ function submitModalForm(url, elements, tableid, recordid, hideModelOnSave) {
         http.onreadystatechange = function () {
             if (http.readyState === 4) {
 
-                let res = http.response.toString().trim().replace(/<[^>]*>?/gm, '');
+                let response;
+                try {
+                    response = JSON.parse(http.response.toString());
+                } catch (e) {
+                    return console.error(e);
+                }
 
-                if (res.indexOf("saved") !== -1) {
+                if (response.status == "saved") {
+                    let element_tableid_tr = "ctTable_" + tableid + '_' + recordId;
+                    let table_object = document.getElementById("ctTable_" + tableid);
 
-                    let element_tableid_tr = "ctTable_" + tableid + '_' + recordid;
-                    let index = findRowIndexById("ctTable_" + tableid, element_tableid_tr);
-                    ctCatalogUpdate(tableid, recordid, index);
+                    if (table_object) {
+                        let index = findRowIndexById("ctTable_" + tableid, element_tableid_tr);
+                        ctCatalogUpdate(tableid, recordId, index);
+                    }
+
+                    if (modalFormParentField !== null) {
+                        let parts = modalFormParentField.split('.');
+                        let parentField = parts[1];
+                        refreshTableJoinField(parentField, response.id);
+                    }
 
                     if (hideModelOnSave)
                         ctHidePopUp();
                 } else {
-                    if (res.indexOf('<div class="alert-message">Nothing to save</div>') !== -1)
+                    if (http.response.indexOf('<div class="alert-message">Nothing to save</div>') !== -1)
                         alert('Nothing to save. Check Edit From layout.');
-                    else if (res.indexOf('view-login') !== -1)
+                    else if (http.response.indexOf('view-login') !== -1)
                         alert('Session expired. Please login again.');
+                    else
+                        alert(http.response);
                 }
             }
         };
@@ -235,7 +245,7 @@ function doFilters(obj, label, filters_string) {
 
             let lastAtPos = value.lastIndexOf('@');
             let lastDotPos = value.lastIndexOf('.');
-            let isEmailValid = (lastAtPos < lastDotPos && lastAtPos > 0 && value.indexOf('@@') == -1 && lastDotPos > 2 && (value.length - lastDotPos) > 2);
+            let isEmailValid = (lastAtPos < lastDotPos && lastAtPos > 0 && value.indexOf('@@') === -1 && lastDotPos > 2 && (value.length - lastDotPos) > 2);
             if (!isEmailValid) {
                 alert('The ' + label + ' "' + value + '" is not a valid Email.');
                 return false;
@@ -284,7 +294,7 @@ function doSanitanization(obj, sanitizers_string) {
     let value = obj.value;
 
     for (let i = 0; i < sanitizers.length; i++) {
-        if (sanitizers[i] == 'trim')
+        if (sanitizers[i] === 'trim')
             value = value.trim();
     }
 
@@ -435,11 +445,11 @@ function decodeHtml(html) {
     return txt.value;
 }
 
-function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_index, parent_object_id, formId) {
+function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_index, parent_object_id, formId, forceValue) {
 
     let wrapper = document.getElementById(control_name + "Wrapper");
     let filters = [];
-    if (wrapper.dataset.valuefilters != '')
+    if (wrapper.dataset.valuefilters !== '')
         filters = JSON.parse(atob(wrapper.dataset.valuefilters));
 
     //let attributes = atob(wrapper.dataset.attributes);
@@ -452,7 +462,7 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_ind
     if (Array.isArray(filters[index])) {
         //Self Parent field
         next_sub_index += 1;
-        if (next_sub_index == filters[index].length) {
+        if (next_sub_index === filters[index].length) {
             // Max sub index reached
             /*
             next_sub_index = 0;
@@ -484,12 +494,11 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_ind
         if (Array.isArray(filters[next_index])) {
 
             next_sub_index = 0;
-            //alert("next_index:" + next_index);
             next_index += 1;
 
             if (next_index + 1 < filters.length) {
                 document.getElementById(control_name + "Selector" + index + '_' + sub_index).innerHTML = '<div id="' + control_name + 'Selector' + next_index + '_' + next_sub_index + '"></div>';
-                ctUpdateTableJoinLink(control_name, next_index, false, next_sub_index, parent_object_id, formId, false);//
+                ctUpdateTableJoinLink(control_name, next_index, false, next_sub_index, parent_object_id, formId, false, null);
                 return false;
             } else {
                 let selectorObject = document.getElementById(control_name + "Selector" + index + '_' + sub_index);
@@ -517,8 +526,7 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_ind
 
     if (r.length > 0) {
 
-        let updateValueString = (index + 1 == filters.length ? 'true' : 'false');
-
+        let updateValueString = (index + 1 === filters.length ? 'true' : 'false');
         let onChangeFunction = 'ctUpdateTableJoinLink(\'' + control_name + '\', ' + next_index + ', false, ' + next_sub_index + ',\'' + current_object_id + '\', \'' + formId + '\', ' + updateValueString + ');'
         let onChangeAttribute = ' onChange="' + onChangeFunction + onchange + '"';
         //[' + index + ',' + filters.length + ']
@@ -539,18 +547,21 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_ind
     //Add content to the element
     document.getElementById(control_name + "Selector" + index + '_' + sub_index).innerHTML = result;
 
+    if (forceValue !== null) {
+        let obj = document.getElementById(current_object_id);
+        obj.value = forceValue;
+    }
+
     if (r.length > 0) {
         if (execute_all && next_index + 1 < filters.length && val != null) {
-            ctUpdateTableJoinLink(control_name, next_index, true, next_sub_index, null, formId, false);//
+            ctUpdateTableJoinLink(control_name, next_index, true, next_sub_index, null, formId, false, null);
         }
     }
 }
 
-function ctUpdateTableJoinLink(control_name, index, execute_all, sub_index, object_id, formId, updateValue) {
+function ctUpdateTableJoinLink(control_name, index, execute_all, sub_index, object_id, formId, updateValue, forceValue) {
 
     let wrapper = document.getElementById(control_name + "Wrapper");
-    //let onchange = atob(wrapper.dataset.onchange);
-
     let link = location.href.split('administrator/index.php?option=com_customtables');
     let url;
 
@@ -571,40 +582,46 @@ function ctUpdateTableJoinLink(control_name, index, execute_all, sub_index, obje
         } else if (filters[index] !== '')
             url += '&filter=' + filters[index];
     } else {
+
+        let valueObj = document.getElementById(control_name);
         let obj = document.getElementById(object_id);
 
-        if (updateValue) {
-            let valueObj = document.getElementById(control_name);
+        if (forceValue !== null) {
+            valueObj.value = forceValue;
+        } else {
+            if (updateValue) {
+                if (obj.value === "") {
 
-            if (obj.value === "") {
+                    let indexTemp = index;
+                    let sub_indexTemp = sub_index;
 
-                let indexTemp = index;
-                let sub_indexTemp = sub_index;
+                    if (sub_indexTemp > 0)
+                        sub_indexTemp -= 2;
+                    else {
+                        //TODO: descend IndexTemp
+                    }
 
-                if (sub_indexTemp > 0)
-                    sub_indexTemp -= 2;
-                else {
-                    //TODO: descend IndexTemp
-                }
+                    if (sub_indexTemp >= 0) {
+                        let tempCurrent_object_id = control_name + indexTemp + (Array.isArray(filters[indexTemp]) ? '_' + sub_indexTemp : '');
+                        let objTemp = document.getElementById(tempCurrent_object_id);
 
-                if (sub_indexTemp >= 0) {
-                    let tempCurrent_object_id = control_name + indexTemp + (Array.isArray(filters[indexTemp]) ? '_' + sub_indexTemp : '');
-                    let objTemp = document.getElementById(tempCurrent_object_id);
-
-                    if (objTemp === null)
+                        if (objTemp === null)
+                            valueObj.value = obj.value;
+                        else
+                            valueObj.value = objTemp.value;
+                    } else
                         valueObj.value = obj.value;
-                    else
-                        valueObj.value = objTemp.value;
                 } else
                     valueObj.value = obj.value;
-            } else
-                valueObj.value = obj.value;
-        }
+            }
 
-        if (obj.value == "") {
-            //Empty everything after
-            document.getElementById(control_name + "Selector" + index + '_' + sub_index).innerHTML = '';//"Not selected";
-            return false;
+            if (obj.value == "") {
+                //Empty everything after
+                document.getElementById(control_name + "Selector" + index + '_' + sub_index).innerHTML = '';//"Not selected";
+                return false;
+            } else if (obj.value == "%addRecord%") {
+                ctEditModal('/index.php/' + wrapper.dataset.addrecordmenualias + '?view=edititem', wrapper.dataset.formname + '.' + wrapper.dataset.fieldname)
+            }
         }
 
         if (Array.isArray(filters[index]))
@@ -619,7 +636,7 @@ function ctUpdateTableJoinLink(control_name, index, execute_all, sub_index, obje
     fetch(url)
         .then(r => r.json())
         .then(r => {
-            ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_index, object_id, formId);
+            ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_index, object_id, formId, forceValue);
         })
         .catch(error => console.error("Error", error));
 }
@@ -1125,7 +1142,8 @@ function updateChildTableJoinField(childFieldName, parentFieldName, childFilterF
     //This function updates the list of items in Table Join field based on its parent value;
 
     let parentValue = document.getElementById('comes_' + parentFieldName).value;
-    let key = document.getElementById('comes_' + childFieldName + 'Wrapper').dataset.key;
+    let wrapper = document.getElementById('comes_' + childFieldName + 'Wrapper');
+    let key = wrapper.dataset.key;
     let where = childFilterFieldName + '=' + parentValue;
     let url = 'index.php?option=com_customtables&view=catalog&tmpl=component&from=json&key=' + key + '&index=0&where=' + Base64.encode(where);
 
@@ -1133,7 +1151,12 @@ function updateChildTableJoinField(childFieldName, parentFieldName, childFilterF
 
         .then(r => r.json())
         .then(r => {
-            ctRenderTableJoinSelectBox('comes_' + childFieldName, r, 0, false, 0, 'comes_' + childFieldName + '0', 'eseditForm');
+            ctRenderTableJoinSelectBox('comes_' + childFieldName, r, 0, false, 0, 'comes_' + childFieldName + '0', wrapper.dataset.formname, null);
         })
         .catch(error => console.error("Error", error));
+}
+
+function refreshTableJoinField(fieldName, value) {
+    let wrapper = document.getElementById('comes_' + fieldName + 'Wrapper');
+    ctUpdateTableJoinLink('comes_' + fieldName, 0, false, 0, 'comes_' + fieldName + '0', wrapper.dataset.formname, false, value);
 }

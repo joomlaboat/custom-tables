@@ -120,7 +120,7 @@ class CT_FieldTypeTag_image
         return $value;
     }
 
-    public static function renderImageFieldBox(Field $field, string $prefix, ?array $row): string
+    public static function renderImageFieldBox(CT $ct, Field $field, string $prefix, ?array $row): string
     {
         $ImageFolder = CustomTablesImageMethods::getImageFolder($field->params);
         $imageFile = '';
@@ -131,7 +131,7 @@ class CT_FieldTypeTag_image
         if ($imageFile != '')
             $result .= CT_FieldTypeTag_image::renderImageAndDeleteOption($field, $prefix, $imageSRC, $isShortcut);
 
-        $result .= CT_FieldTypeTag_image::renderUploader($field, $prefix);
+        $result .= CT_FieldTypeTag_image::renderUploader($ct, $field, $prefix);
         $result .= '</div>';
         return $result;
     }
@@ -185,7 +185,7 @@ class CT_FieldTypeTag_image
         return $result;
     }
 
-    protected static function renderUploader($field, $prefix): string
+    protected static function renderUploader(CT $ct, $field, $prefix): string
     {
         $max_file_size = JoomlaBasicMisc::file_upload_max_size();
         $fileId = JoomlaBasicMisc::generateRandomString();
@@ -197,7 +197,18 @@ class CT_FieldTypeTag_image
             . (is_null($field->ct->Params->ModuleId) ? '' : '&ModuleId=' . $field->ct->Params->ModuleId)
             . '&fieldname=' . $field->fieldname;
 
-        $ct_getUploader = 'ct_getUploader(' . $field->id . ',"' . $urlString . '",' . $max_file_size . ',"jpg jpeg png gif svg webp","eseditForm",false,"ct_fileuploader_'
+        if ($ct->app->getName() == 'administrator')   //since   3.2
+            $formName = 'adminForm';
+        else {
+            if ($ct->Env->isModal)
+                $formName = 'ctEditModalForm';
+            else {
+                $formName = 'ctEditForm';
+                $formName .= $ct->Params->ModuleId;
+            }
+        }
+
+        $ct_getUploader = 'ct_getUploader(' . $field->id . ',"' . $urlString . '",' . $max_file_size . ',"jpg jpeg png gif svg webp","' . $formName . '",false,"ct_fileuploader_'
             . $field->fieldname . '","ct_eventsmessage_' . $field->fieldname . '","' . $fileId . '","' . $prefix . $field->fieldname . '","ct_ubloadedfile_box_' . $field->fieldname . '");';
 
         $ct_fileuploader = '<div id="ct_fileuploader_' . $field->fieldname . '"></div>';

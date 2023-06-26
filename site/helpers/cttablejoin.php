@@ -63,16 +63,31 @@ class JHTMLCTTableJoin
         $data[] = 'data-listing_id="' . $listing_is . '"';
         $data[] = 'data-value="' . htmlspecialchars($value) . '"';
 
+        $addRecordMenuAlias = $option_list[4] ?? null;
+        if ($addRecordMenuAlias == '')
+            $addRecordMenuAlias = null;
+
+        if ($addRecordMenuAlias !== null)
+            $data[] = 'data-addrecordmenualias="' . $addRecordMenuAlias . '"';
+
         if ($ct->app->getName() == 'administrator')   //since   3.2
             $formID = 'adminForm';
-        else
-            $formID = 'eseditForm';
+        else {
 
-        $formID .= $field->ct->Params->ModuleId;
+            if ($ct->Env->isModal)
+                $formID = 'ctEditModalForm';
+            else {
+                $formID = 'ctEditForm';
+                $formID .= $field->ct->Params->ModuleId;
+            }
+        }
+
+        $data[] = 'data-formname="' . $formID . '"';
 
         return '<input type="hidden" id="' . $control_name . '" name="' . $control_name . '" value="' . htmlspecialchars($value) . '" ' . $attributes . '/>'
             . '<div id="' . $control_name . 'Wrapper" ' . implode(' ', $data) . '>'
-            . self::ctUpdateTableJoinLink($ct, $control_name, 0, 0, "", $formID, $attributes, $onchange, $filter, $js_filters, $value)
+            . self::ctUpdateTableJoinLink($ct, $control_name, 0, 0, "", $formID, $attributes, $onchange,
+                $filter, $js_filters, $value, $addRecordMenuAlias)
             . '</div>';
     }
 
@@ -129,7 +144,7 @@ class JHTMLCTTableJoin
                         $whereFilter = $option[3] ?? null;
                         $orderBy = $option[4] ?? null;
 
-                        if ($parent_filter_field_name == '' and isset($option[5])) {
+                        if (isset($option[5])) {
                             $parent_filter_table_name = $option[0];
                             $parent_filter_field_name = $option[5];
                         }
@@ -304,7 +319,8 @@ class JHTMLCTTableJoin
         return $recs[0][$join_realfieldname];
     }
 
-    protected static function ctUpdateTableJoinLink(CT &$ct, $control_name, $index, $sub_index, $object_id, $formId, $attributes, $onchange, $filter, $js_filters, $value)
+    protected static function ctUpdateTableJoinLink(CT &$ct, $control_name, $index, $sub_index, $object_id, $formId, $attributes, $onchange, $filter,
+                                                       $js_filters, $value, ?string $addRecordMenuAlias = null)
     {
         $subFilter = '';
         $additional_filter = '';
@@ -341,10 +357,12 @@ class JHTMLCTTableJoin
         if (!is_array($resultJSON))
             return 'Table Join - Corrupted or not supported encoding.';
 
-        return self::ctRenderTableJoinSelectBox($ct, $control_name, $resultJSON, $index, $sub_index, $object_id, $formId, $attributes, $onchange, $filter, $js_filters, $value);
+        return self::ctRenderTableJoinSelectBox($ct, $control_name, $resultJSON, $index, $sub_index, $object_id, $formId, $attributes, $onchange,
+            $filter, $js_filters, $value, $addRecordMenuAlias);
     }
 
-    protected static function ctRenderTableJoinSelectBox(CT &$ct, $control_name, $r, int $index, int $sub_index, $parent_object_id, $formId, $attributes, $onchange, $filter, $js_filters, ?string $value)
+    protected static function ctRenderTableJoinSelectBox(CT &$ct, $control_name, $r, int $index, int $sub_index, $parent_object_id, $formId,
+                                                            $attributes, $onchange, $filter, $js_filters, ?string $value, ?string $addRecordMenuAlias = null)
     {
         $next_index = $index;
         $next_sub_index = $sub_index;
@@ -379,7 +397,8 @@ class JHTMLCTTableJoin
                 if ($next_index + 2 < count($js_filters)) {
                     $next_index += 1;
                     $next_sub_index = 0;
-                    $result = self::ctUpdateTableJoinLink($ct, $control_name, $next_index, $next_sub_index, $parent_object_id, $formId, $attributes, $onchange, $filter, $js_filters, $value);
+                    $result = self::ctUpdateTableJoinLink($ct, $control_name, $next_index, $next_sub_index, $parent_object_id, $formId, $attributes,
+                        $onchange, $filter, $js_filters, $value, $addRecordMenuAlias);
                     $result .= '<div id="' . $control_name . 'Selector' . $next_index . '_' . $next_sub_index . '"></div>';
                     return $result;
 
@@ -404,14 +423,16 @@ class JHTMLCTTableJoin
         if (count($r) > 0) {
 
             $updateValueString = ($index + 1 == count($js_filters) ? 'true' : 'false');
-            $onChangeAttribute = 'ctUpdateTableJoinLink(\'' . $control_name . '\', ' . $next_index . ', false, ' . $next_sub_index . ',\'' . $current_object_id . '\', \'' . $formId . '\', ' . $updateValueString . ');';
+            $onChangeAttribute = 'ctUpdateTableJoinLink(\'' . $control_name . '\', ' . $next_index . ', false, ' . $next_sub_index . ',\'' . $current_object_id . '\', \'' . $formId . '\', ' . $updateValueString . ',null);';
 
             //if ($updateValueString)
             $onChangeAttribute .= $onchange;
 
             $result .= '<select id="' . $current_object_id . '" onChange="' . $onChangeAttribute . '"' . ' class="' . $cssClass . '">';
             $result .= '<option value="">- ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT') . '</option>';
-            //$result .= '<option value="">- Select4</option>';
+
+            if ($addRecordMenuAlias !== null)
+                $result .= '<option value="%addRecord%">- ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ADD') . '</option>';
 
             for ($i = 0; $i < count($r); $i++) {
                 $label = htmlspecialchars_decode($r[$i]->label, ENT_HTML5);
@@ -432,17 +453,16 @@ class JHTMLCTTableJoin
                 if (is_array($js_filters[$index])) {
 
                     if ($next_sub_index < count($js_filters[$index]))
-                        $result .= self::ctUpdateTableJoinLink($ct, $control_name, $next_index, $next_sub_index, null, $formId, $attributes, $onchange, $filter, $js_filters, $value);
+                        $result .= self::ctUpdateTableJoinLink($ct, $control_name, $next_index, $next_sub_index, null, $formId, $attributes, $onchange, $filter, $js_filters, $value, $addRecordMenuAlias);
                     else
                         $result .= '<div id="' . $control_name . 'Selector' . $next_index . '_' . $next_sub_index . '"></div>';
                 } else {
-                    $result .= self::ctUpdateTableJoinLink($ct, $control_name, $next_index, $next_sub_index, null, $formId, $attributes, $onchange, $filter, $js_filters, $value);
+                    $result .= self::ctUpdateTableJoinLink($ct, $control_name, $next_index, $next_sub_index, null, $formId, $attributes, $onchange, $filter, $js_filters, $value, $addRecordMenuAlias);
                 }
             } else
                 $result .= '<div id="' . $control_name . 'Selector' . $next_index . '_' . $next_sub_index . '"></div>';
         }
         $result .= '</div>';
-
         return $result;
     }
 }
