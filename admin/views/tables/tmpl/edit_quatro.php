@@ -141,8 +141,6 @@ $document->addCustomTag('<link href="' . JURI::root(true) . '/components/com_cus
             echo HTMLHelper::_('uitab.endTab');
         }
 
-        //if($this->ct->Env->advancedTagProcessor):
-
         echo HTMLHelper::_('uitab.addTab', 'tablesTab', 'advanced', Text::_('COM_CUSTOMTABLES_TABLES_ADVANCED')); ?>
 
         <div class="row-fluid form-horizontal-desktop">
@@ -182,23 +180,25 @@ $document->addCustomTag('<link href="' . JURI::root(true) . '/components/com_cus
         <?php
 
         echo HTMLHelper::_('uitab.endTab');
-        //endif;
 
-        echo HTMLHelper::_('uitab.addTab', 'tablesTab', 'dependencies', Text::_('COM_CUSTOMTABLES_TABLES_DEPENDENCIES'));
+        if ($this->item->tablename !== null) {
+            echo HTMLHelper::_('uitab.addTab', 'tablesTab', 'dependencies', Text::_('COM_CUSTOMTABLES_TABLES_DEPENDENCIES'));
 
-        include('_dependencies.php');
-        ?>
+            include('_dependencies.php');
+            ?>
 
-        <div class="row-fluid form-horizontal-desktop">
-            <div class="span12">
+            <div class="row-fluid form-horizontal-desktop">
+                <div class="span12">
 
-                <?php
-                echo renderDependencies($this->item->id, $this->item->tablename);
-                ?>
+                    <?php
+                    echo renderDependencies($this->item->id, $this->item->tablename);
+                    ?>
 
+                </div>
             </div>
-        </div>
-        <?php echo HTMLHelper::_('uitab.endTab'); ?>
+            <?php echo HTMLHelper::_('uitab.endTab');
+        }
+        ?>
 
         <?php /* if ($this->canDo->get('core.admin')) : ?>
 	

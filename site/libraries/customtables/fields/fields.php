@@ -121,25 +121,6 @@ class Field
         }
         $this->params = $new_params;
     }
-
-    protected function checkIfAliasExists($exclude_id, $value, $realfieldname): bool
-    {
-        $query = 'SELECT count(' . $this->ct->Table->realidfieldname . ') AS c FROM ' . $this->ct->Table->realtablename . ' WHERE '
-            . $this->ct->Table->realidfieldname . '!=' . (int)$exclude_id . ' AND ' . $realfieldname . '=' . $this->ct->db->quote($value) . ' LIMIT 1';
-
-        $this->ct->db->setQuery($query);
-
-        $rows = $this->ct->db->loadObjectList();
-        if (count($rows) == 0)
-            return false;
-
-        $c = (int)$rows[0]->c;
-
-        if ($c > 0)
-            return true;
-
-        return false;
-    }
 }
 
 class Fields

@@ -175,7 +175,10 @@ foreach ($this->allTables as $table) {
         <h3><?php echo Text::_('COM_CUSTOMTABLES_LAYOUTS_WHAT_IS_USING_IT', true); ?></h3>
         <div id="layouteditor_tagsContent0" class="dynamic_values_list dynamic_values">
             <?php
-            require('dependencies.php');
-            echo renderDependencies($this->item); // this will be shown upon the click in the toolbar
+
+            if ($this->item->layoutname !== null) {
+                require('dependencies.php');
+                echo renderDependencies($this->item); // this will be shown upon the click in the toolbar
+            }
             ?>
 </form>

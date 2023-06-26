@@ -174,20 +174,25 @@ $document->addCustomTag('<link href="' . JURI::root(true) . '/components/com_cus
         ?>
 
         <?php
-        echo JHtml::_('bootstrap.addTab', 'tablesTab', 'dependencies', Text::_('COM_CUSTOMTABLES_TABLES_DEPENDENCIES', true));
-        include('_dependencies.php');
-        ?>
 
-        <div class="row-fluid form-horizontal-desktop">
-            <div class="span12">
+        if ($this->item->tablename !== null) {
 
-                <?php
-                echo renderDependencies($this->item->id, $this->item->tablename);
-                ?>
+            echo JHtml::_('bootstrap.addTab', 'tablesTab', 'dependencies', Text::_('COM_CUSTOMTABLES_TABLES_DEPENDENCIES', true));
+            include('_dependencies.php');
+            ?>
 
+            <div class="row-fluid form-horizontal-desktop">
+                <div class="span12">
+
+                    <?php
+                    echo renderDependencies($this->item->id, $this->item->tablename);
+                    ?>
+
+                </div>
             </div>
-        </div>
-        <?php echo JHtml::_('bootstrap.endTab'); ?>
+            <?php echo JHtml::_('bootstrap.endTab');
+        }
+        ?>
 
         <?php echo JHtml::_('bootstrap.endTabSet'); ?>
 

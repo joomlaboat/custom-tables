@@ -969,11 +969,13 @@ class SaveFieldQuerySet
                     $value = @$twig->process($this->row);
 
                     if ($twig->errorMessage !== null) {
+                        echo $twig->errorMessage;
                         $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
                         return null;
                     }
 
                 } catch (Exception $e) {
+                    echo $e->getMessage();
                     $this->ct->app->enqueueMessage($e->getMessage(), 'error');
                     return null;
                 }

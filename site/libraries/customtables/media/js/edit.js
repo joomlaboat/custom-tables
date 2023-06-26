@@ -83,6 +83,7 @@ function submitModalForm(url, elements, tableid, recordId, hideModelOnSave, moda
                 try {
                     response = JSON.parse(http.response.toString());
                 } catch (e) {
+                    console.log(http.response.toString());
                     return console.error(e);
                 }
 
@@ -527,7 +528,7 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_ind
     if (r.length > 0) {
 
         let updateValueString = (index + 1 === filters.length ? 'true' : 'false');
-        let onChangeFunction = 'ctUpdateTableJoinLink(\'' + control_name + '\', ' + next_index + ', false, ' + next_sub_index + ',\'' + current_object_id + '\', \'' + formId + '\', ' + updateValueString + ');'
+        let onChangeFunction = 'ctUpdateTableJoinLink(\'' + control_name + '\', ' + next_index + ', false, ' + next_sub_index + ',\'' + current_object_id + '\', \'' + formId + '\', ' + updateValueString + ',null);'
         let onChangeAttribute = ' onChange="' + onChangeFunction + onchange + '"';
         //[' + index + ',' + filters.length + ']
         result += '<select id="' + current_object_id + '"' + onChangeAttribute + ' class="' + cssClass + '">';
