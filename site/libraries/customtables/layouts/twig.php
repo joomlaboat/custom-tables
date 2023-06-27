@@ -570,7 +570,7 @@ class fieldObject
 
             $onchange = 'ct_UpdateSingleValue(\'' . $this->ct->Env->WebsiteRoot . '\',' . $this->ct->Params->ItemId . ',\''
                 . $this->field->fieldname . '\',' . $this->ct->Table->record[$this->ct->Table->realidfieldname] . ',\''
-                . $postfix . '\',' . (int)$this->ct->Params->ModuleId . ');';
+                . $postfix . '\',' . $this->ct->Params->ModuleId . ');';
 
             if (isset($value_option_list[1]))
                 $args[1] .= $value_option_list[1];

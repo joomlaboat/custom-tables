@@ -72,7 +72,7 @@ class Params
     var ?string $cartMsgItemUpdated;
 
     var ?int $ItemId;
-    var ?int $ModuleId;
+    var ?string $ModuleId;
     var ?string $alias;
     var $app;
     var $jinput;
@@ -83,7 +83,7 @@ class Params
 
     var bool $blockExternalVars;
 
-    function __construct($menu_params = null, $blockExternalVars = false, $ModuleId = null)
+    function __construct($menu_params = null, $blockExternalVars = false, ?string $ModuleId = null)
     {
         $this->ModuleId = null;
         $this->blockExternalVars = $blockExternalVars;
@@ -94,11 +94,15 @@ class Params
         if (is_null($menu_params)) {
 
             if (is_null($ModuleId)) {
-                $ModuleId = $this->jinput->getInt('ModuleId');
+                $ModuleIdInt = $this->jinput->getInt('ModuleId');
+                if ($ModuleIdInt)
+                    $ModuleId = strval($ModuleIdInt);
+                else
+                    $ModuleId = null;
             }
 
             if (!is_null($ModuleId)) {
-                $module = ModuleHelper::getModuleById(strval($ModuleId));
+                $module = ModuleHelper::getModuleById($ModuleId);
                 $menu_params = new JRegistry;
                 $menu_params->loadString($module->params);
                 $blockExternalVars = false;
@@ -110,7 +114,7 @@ class Params
         $this->setParams($menu_params, $blockExternalVars, $ModuleId);
     }
 
-    function setParams($menu_params = null, $blockExternalVars = true, $ModuleId = null): void
+    function setParams($menu_params = null, $blockExternalVars = true, ?string $ModuleId = null): void
     {
         $this->blockExternalVars = $blockExternalVars;
         $this->ModuleId = $ModuleId;

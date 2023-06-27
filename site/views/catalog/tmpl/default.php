@@ -20,8 +20,11 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 if (is_null($this->ct->Params->listing_id)) //there is no need to have a header if we are loading a single record.
 {
     if ($this->ct->Params->showPageHeading) {
-        $title = JoomlaBasicMisc::JTextExtended($this->ct->Params->pageTitle);
-        echo '<div class="page-header' . ($this->ct->Params->pageClassSFX ?? '') . '"><h2 itemprop="headline">' . $title . '</h2></div>';
+
+        if ($this->ct->Params->pageTitle) {
+            $title = JoomlaBasicMisc::JTextExtended($this->ct->Params->pageTitle);
+            echo '<div class="page-header' . ($this->ct->Params->pageClassSFX ?? '') . '"><h2 itemprop="headline">' . $title . '</h2></div>';
+        }
     }
 }
 

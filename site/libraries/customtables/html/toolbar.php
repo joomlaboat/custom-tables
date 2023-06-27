@@ -232,7 +232,7 @@ class RecordToolbar
                 $img = '<img src="' . $this->iconPath . 'key-add.png" border="0" alt="' . $alt . '" title="' . $alt . '">';
 
             $resetLabel = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_USERWILLBECREATED') . ' ' . $this->firstFieldValueLabel();
-            $action = 'ctCreateUser("' . $resetLabel . '", ' . $this->listing_id . ', "' . $rid . '",' . (int)$this->ct->Params->ModuleId . ')';
+            $action = 'ctCreateUser("' . $resetLabel . '", ' . $this->listing_id . ', "' . $rid . '",' . $this->ct->Params->ModuleId . ')';
         } else {
             $userRow = CTUser::GetUserRow($realUserId);
             if ($userRow !== null) {
@@ -248,7 +248,7 @@ class RecordToolbar
                     $img = '<img src="' . $this->iconPath . 'key.png" border="0" alt="' . $alt . '" title="' . $alt . '">';
 
                 $resetLabel = 'Would you like to reset ' . $user_full_name . ' (' . $userRow['username'] . ') password?';
-                $action = 'ctResetPassword("' . $resetLabel . '", ' . $this->listing_id . ', "' . $rid . '",' . (int)$this->ct->Params->ModuleId . ')';
+                $action = 'ctResetPassword("' . $resetLabel . '", ' . $this->listing_id . ', "' . $rid . '",' . $this->ct->Params->ModuleId . ')';
             } else
                 return 'User account deleted, open and save the record.';
         }
@@ -268,7 +268,7 @@ class RecordToolbar
             $img = '<img src="' . $this->iconPath . 'delete.png" border="0" alt="' . $alt . '" title="' . $alt . '">';
 
         $msg = 'Do you want to delete (' . $deleteLabel . ')?';
-        $href = 'javascript:ctDeleteRecord(\'' . $msg . '\', ' . $this->Table->tableid . ', \'' . $this->listing_id . '\', \'esDeleteIcon' . $this->rid . '\', ' . (int)$this->ct->Params->ModuleId . ');';
+        $href = 'javascript:ctDeleteRecord(\'' . $msg . '\', ' . $this->Table->tableid . ', \'' . $this->listing_id . '\', \'esDeleteIcon' . $this->rid . '\', ' . $this->ct->Params->ModuleId . ');';
         return '<div id="esDeleteIcon' . $this->rid . '" class="toolbarIcons"><a href="' . $href . '">' . $img . '</a></div>';
     }
 
@@ -278,7 +278,7 @@ class RecordToolbar
             $rid = 'esPublishIcon' . $this->rid;
 
             if ($this->row['listing_published']) {
-                $link = 'javascript:ctPublishRecord(' . $this->Table->tableid . ',\'' . $this->listing_id . '\', \'' . $rid . '\',0,' . (int)$this->ct->Params->ModuleId . ');';
+                $link = 'javascript:ctPublishRecord(' . $this->Table->tableid . ',\'' . $this->listing_id . '\', \'' . $rid . '\',0,' . $this->ct->Params->ModuleId . ');';
                 $alt = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_UNPUBLISH');
 
                 if ($this->ct->Env->toolbarIcons != '')
@@ -286,7 +286,7 @@ class RecordToolbar
                 else
                     $img = '<img src="' . $this->iconPath . 'publish.png" border="0" alt="' . $alt . '" title="' . $alt . '">';
             } else {
-                $link = 'javascript:ctPublishRecord(' . $this->Table->tableid . ',\'' . $this->listing_id . '\', \'' . $rid . '\',1,' . (int)$this->ct->Params->ModuleId . ');';
+                $link = 'javascript:ctPublishRecord(' . $this->Table->tableid . ',\'' . $this->listing_id . '\', \'' . $rid . '\',1,' . $this->ct->Params->ModuleId . ');';
                 $alt = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PUBLISH');
 
                 if ($this->ct->Env->toolbarIcons != '')

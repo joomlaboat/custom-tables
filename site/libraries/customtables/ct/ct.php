@@ -44,7 +44,7 @@ class CT
     var array $editFields;
     var array $LayoutVariables;
 
-    function __construct($menuParams = null, $blockExternalVars = true, $ModuleId = null)
+    function __construct($menuParams = null, $blockExternalVars = true, ?string $ModuleId = null)
     {
         $this->app = Factory::getApplication();
         $this->document = $this->app->getDocument();
@@ -96,7 +96,7 @@ class CT
         return false;
     }
 
-    function setParams($menuParams = null, $blockExternalVars = true, $ModuleId = null): void
+    function setParams($menuParams = null, $blockExternalVars = true, ?string $ModuleId = null): void
     {
         $this->Params->setParams($menuParams, $blockExternalVars, $ModuleId);
     }
