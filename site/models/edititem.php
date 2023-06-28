@@ -1167,8 +1167,10 @@ class CustomTablesModelEditItem extends JModelLegacy
         $this->ct->db->setQuery($query);
 
         $rows = $this->ct->db->loadAssocList();
-        if (count($rows) != 1)
+        if (count($rows) != 1) {
+            $msg = 'Record not saved';
             return '';
+        }
 
         $row = $rows[0];
 

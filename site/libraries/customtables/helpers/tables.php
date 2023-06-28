@@ -252,7 +252,6 @@ class ESTables
                 $set_fieldNames[] = $break_sets[0];
                 $set_values[] = $break_sets[1];
             }
-
             $query = 'INSERT INTO ' . $realtablename . ' (' . implode(',', $set_fieldNames) . ') VALUES (' . implode(',', $set_values) . ')';
         } else {
             $query = 'INSERT ' . $realtablename . ' SET ' . implode(', ', $sets);

@@ -954,8 +954,14 @@ class SaveFieldQuerySet
             if ($twig->errorMessage !== null)
                 $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
 
-            $this->row[$this->field->realfieldname] = $value;
-            return $this->field->realfieldname . '=' . $this->ct->db->quote($value);
+            if ($value == '') {
+                $this->row[$this->field->realfieldname] = null;
+                return $this->field->realfieldname . '=NULL';
+            } else {
+                $this->row[$this->field->realfieldname] = $value;
+                return $this->field->realfieldname . '=' . $this->ct->db->quote($value);
+            }
+
         } elseif ($fieldRow['type'] == 'virtual') {
 
             $storage = $this->field->params[1] ?? '';
