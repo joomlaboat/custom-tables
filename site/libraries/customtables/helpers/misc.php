@@ -696,19 +696,16 @@ class JoomlaBasicMisc
 
     public static function suggest_TempFileName(&$webFileLink, ?string $fileExtension = null): ?string
     {
-        $tempDir = trim(sys_get_temp_dir());
-        if (str_contains($tempDir, ':')) {
-            $output_dir = $tempDir . DIRECTORY_SEPARATOR;
-            $webDir = $output_dir;
+        $tempDir = 'tmp';
+        
+        if ($tempDir[0] != '/' and $tempDir[0] != '\\') {
+            $output_dir = JPATH_SITE . DIRECTORY_SEPARATOR . $tempDir . DIRECTORY_SEPARATOR;
+            $webDir = DIRECTORY_SEPARATOR . $tempDir . DIRECTORY_SEPARATOR;
         } else {
-            if ($tempDir[0] != '/' and $tempDir != '\\') {
-                $output_dir = JPATH_SITE . DIRECTORY_SEPARATOR . $tempDir . DIRECTORY_SEPARATOR;
-                $webDir = $tempDir . DIRECTORY_SEPARATOR;
-            } else {
-                $output_dir = JPATH_SITE . $tempDir . DIRECTORY_SEPARATOR;
-                $webDir = substr($tempDir, 1) . DIRECTORY_SEPARATOR;
-            }
+            $output_dir = JPATH_SITE . $tempDir . DIRECTORY_SEPARATOR;
+            $webDir = DIRECTORY_SEPARATOR . substr($tempDir, 1) . DIRECTORY_SEPARATOR;
         }
+
         $random_name = JoomlaBasicMisc::generateRandomString();
 
         while (1) {
