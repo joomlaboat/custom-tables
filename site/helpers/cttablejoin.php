@@ -91,7 +91,7 @@ class JHTMLCTTableJoin
             . '</div>';
     }
 
-    protected static function parseTagArguments($option_list, &$filter): array
+    public static function parseTagArguments($option_list, &$filter): array
     {
         //Preselects
         //example: city.edit("cssclass","attributes",[["province","name",true,"active=1","name"],["city","name",false,"active=1","name"],["streets","layout:TheStreetName",false,"active=1","streetname"]])
@@ -163,7 +163,7 @@ class JHTMLCTTableJoin
         return [$parent_filter_table_name, $parent_filter_field_name];
     }
 
-    protected static function parseTypeParams($field, &$filter, &$parent_filter_table_name, &$parent_filter_field_name): bool
+    public static function parseTypeParams($field, &$filter, &$parent_filter_table_name, &$parent_filter_field_name): bool
     {
         $params = new JRegistry;
         $params->loadArray([]);
@@ -247,7 +247,7 @@ class JHTMLCTTableJoin
         return [$tableName, $fieldName, $allowUnpublished, $where_filter, $orderBy, $parent_filter_table_name, $parent_filter_field_name];
     }
 
-    protected static function processValue($filter, &$parent_id, &$js_filters): void
+    public static function processValue($filter, &$parent_id, &$js_filters): void
     {
         for ($i = count($filter) - 1; $i >= 0; $i--) {
             $flt = $filter[$i];

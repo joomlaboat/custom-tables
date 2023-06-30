@@ -1191,63 +1191,94 @@ class Inputbox
     {
         $result = '';
 
-        //records : table, [fieldname || layout:layoutname], [selector: multi || single], filter, |datalength|
+        //CT Example: [house:RedHouses,onChange('Alert("Value Changed")'),city=London]
 
-        if (count($this->field->params) < 1)
-            $result .= 'table not specified';
-
-        if (count($this->field->params) < 2)
-            $result .= 'field or layout not specified';
-
-        if (count($this->field->params) < 3)
-            $result .= 'selector not specified';
-
-        $esr_table = $this->field->params[0];
-
-        if (isset($this->option_list[3]))
-            $esr_field = 'layout:' . $this->option_list[3];
-        else
-            $esr_field = $this->field->params[1] ?? '';
-
-        $esr_selector = $this->field->params[2] ?? '';
-
-        if (isset($this->option_list[5]))
-            $esr_filter = $this->option_list[5];
-        elseif (count($this->field->params) > 3)
-            $esr_filter = $this->field->params[3];
-        else
-            $esr_filter = '';
-
-        $dynamic_filter = $this->field->params[4] ?? '';
-        $sortByField = $this->field->params[5] ?? '';
-
-        $records_attributes = ($this->attributes != '' ? ' ' : '')
-            . 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
-            . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" ';
+        //$this->option_list[0] - CSS Class
+        //$this->option_list[1] - Optional Attributes
+        //$this->option_list[2] - Parent Selector - Array
+        //$this->option_list[3] - Custom Title Layout
 
         if ($value === null) {
-            $value = SaveFieldQuerySet::get_record_type_value($this->ct, $this->field);
-            $this->ct->Env->jinput->getInt($this->ct->Env->field_prefix . $this->field->fieldname);
-            if ($value == '')
+            $value = $this->ct->Env->jinput->getInt($this->ct->Env->field_prefix . $this->field->fieldname, 0);
+            if ($value == 0)
                 $value = $this->defaultValue;
         }
 
-        $result .= JHTML::_('ESRecords.render',
-            $this->field->params,
-            $this->prefix . $this->field->fieldname,
-            $value,
-            $esr_table,
-            $esr_field,
-            $esr_selector,
-            $esr_filter,
-            '',
-            $this->cssclass . ' ct_improved_selectbox',
-            $records_attributes,
-            $dynamic_filter,
-            $sortByField,
-            $this->ct->Languages->Postfix,
-            $this->place_holder
-        );
+        $sqljoin_attributes = ' data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '"'
+            . ' data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '"';
+
+        if ($this->isTwig) {
+            //Twig Tag
+            //Twig Example: [house:RedHouses,onChange('Alert("Value Changed")'),city=London]
+
+            $result .= JHTML::_('CTTableMultiJoin.render',
+                $this->prefix . $this->field->fieldname,
+                $this->field,
+                ($this->row !== null ? $this->row[$this->ct->Table->realidfieldname] : null),
+                $value,
+                $this->option_list,
+                $this->onchange,
+                $sqljoin_attributes);
+        } else {
+
+            //records : table, [fieldname || layout:layoutname], [selector: multi || single], filter, |datalength|
+
+            if (count($this->field->params) < 1)
+                $result .= 'table not specified';
+
+            if (count($this->field->params) < 2)
+                $result .= 'field or layout not specified';
+
+            if (count($this->field->params) < 3)
+                $result .= 'selector not specified';
+
+            $esr_table = $this->field->params[0];
+
+            if (isset($this->option_list[3]))
+                $esr_field = 'layout:' . $this->option_list[3];
+            else
+                $esr_field = $this->field->params[1] ?? '';
+
+            $esr_selector = $this->field->params[2] ?? '';
+
+            if (isset($this->option_list[5]))
+                $esr_filter = $this->option_list[5];
+            elseif (count($this->field->params) > 3)
+                $esr_filter = $this->field->params[3];
+            else
+                $esr_filter = '';
+
+            $dynamic_filter = $this->field->params[4] ?? '';
+            $sortByField = $this->field->params[5] ?? '';
+
+            $records_attributes = ($this->attributes != '' ? ' ' : '')
+                . 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
+                . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" ';
+
+            if ($value === null) {
+                $value = SaveFieldQuerySet::get_record_type_value($this->ct, $this->field);
+                $this->ct->Env->jinput->getInt($this->ct->Env->field_prefix . $this->field->fieldname);
+                if ($value == '')
+                    $value = $this->defaultValue;
+            }
+
+            $result .= JHTML::_('ESRecords.render',
+                $this->field->params,
+                $this->prefix . $this->field->fieldname,
+                $value,
+                $esr_table,
+                $esr_field,
+                $esr_selector,
+                $esr_filter,
+                '',
+                $this->cssclass . ' ct_improved_selectbox',
+                $records_attributes,
+                $dynamic_filter,
+                $sortByField,
+                $this->ct->Languages->Postfix,
+                $this->place_holder
+            );
+        }
         return $result;
     }
 

@@ -48,7 +48,7 @@ class JHTMLCTTime
         if (isset($option_list[2]))
             $format = $option_list[2];
 
-        for ($i = $from; $i <= $to; $i += $step) {
+        for ($i = $from; $i < $to + $step; $i += $step) {
             $tick = floor((($i) - $from + $offset) / $ticks);
 
             $options[] = array('id' => $tick, 'name' => JHTMLCTTime::seconds2FormatedTime($i, $format));

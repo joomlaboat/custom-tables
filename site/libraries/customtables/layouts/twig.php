@@ -49,7 +49,7 @@ class TwigProcessor
     var string $itemLayoutName;
     var string $itemLayoutLineStart;
 
-    public function __construct(CT &$ct, $layoutContent, $getEditFieldNamesOnly = false, $DoHTMLSpecialChars = false, $parseParams = true, ?string $layoutName = null, ?string $pageLayoutLink = null)
+    public function __construct(CT $ct, $layoutContent, $getEditFieldNamesOnly = false, $DoHTMLSpecialChars = false, $parseParams = true, ?string $layoutName = null, ?string $pageLayoutLink = null)
     {
         $this->DoHTMLSpecialChars = $DoHTMLSpecialChars;
         $this->ct = $ct;
@@ -261,6 +261,18 @@ class TwigProcessor
 
         $filter = new TwigFilter('md5', function ($string) {
             return md5($string);
+        });
+
+        $this->twig->addFilter($filter);
+
+        $filter = new TwigFilter('json_decode', function ($string) {
+            return json_decode($string);
+        });
+
+        $this->twig->addFilter($filter);
+
+        $filter = new TwigFilter('json_encode', function ($string) {
+            return json_encode($string);
         });
 
         $this->twig->addFilter($filter);
