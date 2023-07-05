@@ -86,7 +86,7 @@ class JHTMLCTTableJoin
 
         return '<input type="hidden" id="' . $control_name . '" name="' . $control_name . '" value="' . htmlspecialchars($value) . '" ' . $attributes . '/>'
             . '<div id="' . $control_name . 'Wrapper" ' . implode(' ', $data) . '>'
-            . self::ctUpdateTableJoinLink($ct, $control_name, 0, 0, "", $formID, $attributes, $onchange,
+            . JHTMLCTTableJoin::ctUpdateTableJoinLink($ct, $control_name, 0, 0, "", $formID, $attributes, $onchange,
                 $filter, $js_filters, $value, $addRecordMenuAlias)
             . '</div>';
     }
@@ -319,8 +319,8 @@ class JHTMLCTTableJoin
         return $recs[0][$join_realfieldname];
     }
 
-    protected static function ctUpdateTableJoinLink(CT &$ct, $control_name, $index, $sub_index, $object_id, $formId, $attributes, $onchange, $filter,
-                                                       $js_filters, $value, ?string $addRecordMenuAlias = null)
+    public static function ctUpdateTableJoinLink(CT &$ct, $control_name, $index, $sub_index, $object_id, $formId, $attributes, $onchange, $filter,
+                                                    $js_filters, $value, ?string $addRecordMenuAlias = null)
     {
         $subFilter = '';
         $additional_filter = '';
@@ -397,7 +397,7 @@ class JHTMLCTTableJoin
                 if ($next_index + 2 < count($js_filters)) {
                     $next_index += 1;
                     $next_sub_index = 0;
-                    $result = self::ctUpdateTableJoinLink($ct, $control_name, $next_index, $next_sub_index, $parent_object_id, $formId, $attributes,
+                    $result = JHTMLCTTableJoin::ctUpdateTableJoinLink($ct, $control_name, $next_index, $next_sub_index, $parent_object_id, $formId, $attributes,
                         $onchange, $filter, $js_filters, $value, $addRecordMenuAlias);
                     $result .= '<div id="' . $control_name . 'Selector' . $next_index . '_' . $next_sub_index . '"></div>';
                     return $result;
@@ -453,11 +453,11 @@ class JHTMLCTTableJoin
                 if (is_array($js_filters[$index])) {
 
                     if ($next_sub_index < count($js_filters[$index]))
-                        $result .= self::ctUpdateTableJoinLink($ct, $control_name, $next_index, $next_sub_index, null, $formId, $attributes, $onchange, $filter, $js_filters, $value, $addRecordMenuAlias);
+                        $result .= JHTMLCTTableJoin::ctUpdateTableJoinLink($ct, $control_name, $next_index, $next_sub_index, null, $formId, $attributes, $onchange, $filter, $js_filters, $value, $addRecordMenuAlias);
                     else
                         $result .= '<div id="' . $control_name . 'Selector' . $next_index . '_' . $next_sub_index . '"></div>';
                 } else {
-                    $result .= self::ctUpdateTableJoinLink($ct, $control_name, $next_index, $next_sub_index, null, $formId, $attributes, $onchange, $filter, $js_filters, $value, $addRecordMenuAlias);
+                    $result .= JHTMLCTTableJoin::ctUpdateTableJoinLink($ct, $control_name, $next_index, $next_sub_index, null, $formId, $attributes, $onchange, $filter, $js_filters, $value, $addRecordMenuAlias);
                 }
             } else
                 $result .= '<div id="' . $control_name . 'Selector' . $next_index . '_' . $next_sub_index . '"></div>';

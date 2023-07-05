@@ -25,7 +25,7 @@ class JHTMLCTTableMultiJoin
         $params = new JRegistry;
         $params->loadArray([]);
         $ct = new CT($params, true);
-        
+
         $filter = [];
         $parent_filter_table_and_field = JHTMLCTTableJoin::parseTagArguments($option_list, $filter);
         $parent_filter_table_name = $parent_filter_table_and_field[0] ?? '';
@@ -85,7 +85,7 @@ class JHTMLCTTableMultiJoin
 
         return '<input type="hidden" id="' . $control_name . '" name="' . $control_name . '" value="' . htmlspecialchars($value) . '" ' . $attributes . '/>'
             . '<div id="' . $control_name . 'Wrapper" ' . implode(' ', $data) . '>'
-            . self::ctUpdateTableJoinLink($ct, $control_name, 0, 0, "", $formID, $attributes, $onchange,
+            . JHTMLCTTableJoin::ctUpdateTableJoinLink($ct, $control_name, 0, 0, "", $formID, $attributes, $onchange,
                 $filter, $js_filters, $value, $addRecordMenuAlias)
             . '</div>';
     }

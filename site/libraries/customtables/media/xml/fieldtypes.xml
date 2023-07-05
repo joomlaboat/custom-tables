@@ -890,8 +890,9 @@
 
         <valueparams name="records" label="How to show the list of records selected.">
             <params>
-                <param name="fieldname" label="Field Name" example="title"
+                <param name="fieldname" label="Field Name"
                        description="Type the field name to return the value from. You may type layout name instead. options: [layout:layoutname or tablelesslayout:layoutname]"
+                       example="products"
                        default="" type="string"/>
                 <param name="orderby" label="Order By" example="price" description="Field name to sort records by"
                        default=""
@@ -904,9 +905,11 @@
 
         <editparams name="records" label="Input Element Parameters" description="">
             <params>
-                <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)."/>
+                <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)."
+                       example=""/>
                 <param name="attributes" label="Attributes"
                        description="Optional attributes like: disabled, onclick, onchange etc." default=""
+                       example=""
                        type="string"/>
                 <param name="parent-selector" label="Parent Selector"
                        description="Used for multilevel dependencies like Country, City, Street. List of parameters to set the sub-level select box. Example: [city_table_name, city_field_name, allow_unpublished(true or false), filter(population>100000), order_by(name)]. It is also possible to pass multiple selectors. Example: [ [city_table_name, city_field_name],[country_table_name, country_field_name, false]]"
@@ -920,45 +923,72 @@
             </params>
         </editparams>
 
-        <subvalueparams name="get" label="Read processed value of selected field of joined table.">
-            <param name="fieldName" label="Field name"
-                   description="Specify the name of the field to get the value from."
-                   type="field"/>
-            <param name="showPublished" label="Show Published Records"
-                   description="Filter the list of records, show published, unpublished or all records." hidden="false"
-                   default="published" type="list">
-                <option value="published" label="Only Published"/>
-                <option value="unpublished" label="Only Unpublished"/>
-                <option value="all" label="Show all records"/>
-            </param>
+        <subvalueparams name="get" label="Read processed value of selected field of joined table">
+            <params>
+                <param name="fieldName" label="Field name"
+                       description="Specify the name of the field to get the value from."
+                       example="workers"
+                       type="field"/>
+                <param name="showPublished" label="Show Published Records"
+                       description="Filter the list of records, show published, unpublished or all records."
+                       hidden="false"
+                       example="any" optional="1"
+                       default="published" type="list">
+                    <option value="published" label="Only Published"/>
+                    <option value="unpublished" label="Only Unpublished"/>
+                    <option value="all" label="Show all records"/>
+                </param>
+
+                <param name="separator" label="List Separator" example="," optional="1"
+                       description="Separate record values with a character. i.e. ',' or ';'" default=","
+                       type="string"/>
+            </params>
         </subvalueparams>
 
-        <subvalueparams name="getvalue" label="Read unprocessed value of selected field of joined table.">
-            <param name="fieldName" label="Field name"
-                   description="Specify the name of the field to get the value from."
-                   type="field"/>
-            <param name="showPublished" label="Show Published Records"
-                   description="Filter the list of records, show published, unpublished or all records." hidden="false"
-                   default="published" type="list">
-                <option value="published" label="Only Published"/>
-                <option value="unpublished" label="Only Unpublished"/>
-                <option value="all" label="Show all records"/>
-            </param>
+        <subvalueparams name="getvalue" label="Read unprocessed value of selected field of joined table">
+            <params>
+                <param name="fieldName" label="Field name"
+                       description="Specify the name of the field to get the value from."
+                       example="workers"
+                       type="field"/>
+                <param name="showPublished" label="Show Published Records"
+                       description="Filter the list of records, show published, unpublished or all records."
+                       hidden="false"
+                       example="any" optional="1"
+                       default="published" type="list">
+                    <option value="published" label="Only Published"/>
+                    <option value="unpublished" label="Only Unpublished"/>
+                    <option value="all" label="Show all records"/>
+                </param>
+
+                <param name="separator" label="List Separator" example="," optional="1"
+                       description="Separate record values with a character. i.e. ',' or ';'" default=","
+                       type="string"/>
+            </params>
         </subvalueparams>
 
-        <subvalueparams name="layout" label="Render the value of joined table using selected layout.">
-            <param type="layout" name="layout" label="Layout"
-                   description="The layout to render joined table record."
-                   layouttype="catalogitem,simplecatalog,record,details,email,xml,csv,json"/>
-            <param name="showPublished" label="Show Published Records"
-                   description="Filter the list of records, show published, unpublished or all records." hidden="false"
-                   default="published" type="list">
-                <option value="published" label="Only Published"/>
-                <option value="unpublished" label="Only Unpublished"/>
-                <option value="all" label="Show all records"/>
-            </param>
-        </subvalueparams>
+        <subvalueparams name="layout" label="Render the value of joined table using selected layout">
+            <params>
+                <param type="layout" name="layout" label="Layout"
+                       description="The layout to render joined table record."
+                       example="PeopleLayout"
+                       layouttype="catalogitem,simplecatalog,record,details,email,xml,csv,json"/>
+                <param name="showPublished" label="Show Published Records"
+                       description="Show published, unpublished or all records."
+                       hidden="false"
+                       example="published" optional="1"
+                       default="published" type="list">
+                    <option value="published" label="Only Published"/>
+                    <option value="unpublished" label="Only Unpublished"/>
+                    <option value="all" label="Show all records"/>
+                </param>
 
+                <param name="separator" label="List Separator"
+                       description="Separate record values with a character. i.e. ',' or ';'" default=","
+                       example="," optional="1"
+                       type="string"/>
+            </params>
+        </subvalueparams>
     </type>
 
     <type ct_name="ordering" name="ordering" label="Ordering/Sorting"
@@ -1184,22 +1214,36 @@
             </params>
         </editparams>
 
-        <subvalueparams name="get" label="Read selected field processed value from joined table.">
-            <param name="fieldName" label="Field name"
-                   description="Specify the name of the field to get the value from."
-                   type="field"/>
+        <subvalueparams name="get" label="Read selected field processed value from joined table">
+            <params>
+                <param name="fieldName" label="Field name"
+                       description="Specify the name of the field to get the value from."
+                       example="birthdate"
+                       type="field"/>
+
+                <param name="Options" label="Value Processing Parameters"
+                       description="An array of parameters to process the Joined Table field value."
+                       example="[&quot;Y-m-d&quot;]"
+                       type="array" examplenoquotes="1" optional="1"/>
+            </params>
         </subvalueparams>
 
-        <subvalueparams name="getvalue" label="Read unprocessed value of selected field of joined table.">
-            <param name="fieldName" label="Field name"
-                   description="Specify the name of the field to get the value from."
-                   type="field"/>
+        <subvalueparams name="getvalue" label="Read unprocessed (pure) value of selected field of joined table">
+            <params>
+                <param name="fieldName" label="Field name"
+                       description="Specify the name of the field to get the value from."
+                       example="country"
+                       type="field"/>
+            </params>
         </subvalueparams>
 
         <subvalueparams name="layout" label="Render the value of joined table using selected layout.">
-            <param type="layout" name="layout" label="Layout"
-                   description="The layout to render joined table record."
-                   layouttype="catalogitem,simplecatalog,record,details,email,xml,csv,json"/>
+            <params>
+                <param type="layout" name="layout" label="Layout"
+                       description="The layout to render joined table record."
+                       example="PersonProfileLayout"
+                       layouttype="catalogitem,simplecatalog,record,details,email,xml,csv,json"/>
+            </params>
         </subvalueparams>
     </type>
 

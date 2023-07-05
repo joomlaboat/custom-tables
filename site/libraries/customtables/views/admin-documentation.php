@@ -141,7 +141,6 @@ class Documentation
                             $hideDefaultExample);
                         break;
                     }
-
                 }
 
                 if (!empty($type->subvalueparams)) {
@@ -149,57 +148,52 @@ class Documentation
                     foreach ($type->subvalueparams as $p) {
 
                         $params_att = $p->attributes();
+                        $result .= '<hr/><h5>' . $params_att->label . ':</h5>';
+                        $params = ((array)$p->params)['param'];
 
-                        $result .= '<h5>' . $params_att->label . ':</h5>';
-                        /*$result .= $this->renderParametersInternal($params,
+                        if (is_object($params)) {
+                            $params = [$params];
+                        }
+
+                        $result .= $this->renderParametersInternal2($params,
                             '{{ ',
                             '<i>' . str_replace(' ', '', common::translate('COM_CUSTOMTABLES_FIELDNAME')) . '</i>',
-                            '.edit',
+                            '.' . $params_att->name,
                             ' }}',
                             $hideDefaultExample);
-                        break;
-                        */
                     }
-
                 }
-
                 $result .= '</div>';
             }
         }
-
         return $result;
     }
 
-    function renderParametersInternal($params_, $opening_char, $tag_name, $postfix, $closing_char, $hideDefaultExample): string
+    function renderParametersInternal($params, $opening_char, $tag_name, $postfix, $closing_char, $hideDefaultExample): string
     {
         $result = '';
         $example_values = array();
         $example_values_count = 0;
 
-        if ($params_ !== null) {
-            $params = $params_->param;
+        foreach ($params->param as $param) {
 
-            foreach ($params as $param) {
-                $param_att = $param->attributes();
+            $param_att = $param->attributes();
+            $result .= '<li><h6>' . $param_att->label . ($param_att->description != '' ? ' - ' . $param_att->description : '') . '</h6>';
 
-                if (count($param_att) != 0) {
-                    $result .= '<li><h6>' . $param_att->label . ($param_att->description != '' ? ' - ' . $param_att->description : '') . '</h6>';
-
-                    if (isset($param_att->image)) {
-                        $result .= '<p><img src="' . $param_att->image . '" alt="' . $param_att->label . '" /></p>';
-                    }
-
-                    if (!empty($param_att->type)) {
-                        $value_example = '';
-                        $result .= $this->renderParamTypeInternal($param, $param_att, $value_example);
-                        $example_values[] = $value_example;
-
-                        if ($value_example != '')
-                            $example_values_count++;
-                    }
-                    $result .= '</li>';
-                }
+            if (isset($param_att->image)) {
+                $result .= '<p><img src="' . $param_att->image . '" alt="' . $param_att->label . '" /></p>';
             }
+
+            if (!empty($param_att->type)) {
+                $value_example = '';
+                $result .= $this->renderParamTypeInternal($param, $param_att, $value_example);
+                $example_values[] = $value_example;
+
+                if ($value_example != '')
+                    $example_values_count++;
+            }
+            $result .= '</li>';
+
         }
 
         $result_new = '';
@@ -292,10 +286,15 @@ class Documentation
 
                 $result .= '</ul>';
                 break;
+
+            //case 'array':
         }
 
         if (!((int)$param_att->examplenoquotes) and $value_example != null)
             $value_example = $this->prepareExample($value_example);
+
+        if (isset($param_att->optional) and $param_att->optional == "1")
+            $value_example = '***italic***' . $value_example . '***end-of-italic***';
 
         return $result;
     }
@@ -336,6 +335,61 @@ class Documentation
             }
         }
         return $new_params;
+    }
+
+    function renderParametersInternal2($paramsArray, $opening_char, $tag_name, $postfix, $closing_char, $hideDefaultExample): string
+    {
+        $result = '';
+        $example_values = array();
+        $example_values_count = 0;
+
+        foreach ($paramsArray as $param) {
+
+            $param_att = $param->attributes();
+
+            if (count($param_att) != 0) {
+
+                if (isset($param_att->optional) and $param_att->optional == '1')
+                    $optional = true;
+                else
+                    $optional = false;
+
+                $result .= '<li><h6>' . $param_att->label . ($param_att->description != '' ? ' - ' . $param_att->description : '') . ($optional ? ' (Optional)' : '') . '</h6>';
+
+                if (isset($param_att->image)) {
+                    $result .= '<p><img src="' . $param_att->image . '" alt="' . $param_att->label . '" /></p>';
+                }
+
+                if (!empty($param_att->type)) {
+                    $value_example = '';
+                    $result .= $this->renderParamTypeInternal($param, $param_att, $value_example);
+                    $example_values[] = $value_example;
+
+                    if ($value_example != '')
+                        $example_values_count++;
+                }
+                $result .= '</li>';
+            }
+        }
+
+        $result_new = '';
+        $cleanedParamsStr = implode(',', $this->cleanParams($example_values));
+
+        $cleanedParamsStr = str_replace('***italic***', '<i>', $cleanedParamsStr);
+        $cleanedParamsStr = str_replace('***end-of-italic***', '</i>', $cleanedParamsStr);
+
+        if ($tag_name == '') {
+            if (!(int)$hideDefaultExample) {
+                $result_new .= '<p>' . common::translate('COM_CUSTOMTABLES_EXAMPLE') . ': <pre class="ct_doc_pre">'
+                    . $opening_char . $tag_name . $postfix . ($cleanedParamsStr != "" ? '(' . $cleanedParamsStr . ')' : '') . $closing_char . '</pre></p>';
+            }
+        } else {
+            if ($example_values_count > 0) {
+                $result_new .= '<p>' . common::translate('COM_CUSTOMTABLES_EXAMPLE') . ': <pre class="ct_doc_pre">'
+                    . $opening_char . $tag_name . $postfix . ($cleanedParamsStr != "" ? '(' . $cleanedParamsStr . ')' : '') . $closing_char . '</pre></p>';
+            }
+        }
+        return '<ol>' . $result . '</ol>' . $result_new;
     }
 
     function renderFieldTypesGitHub($types): string
@@ -400,6 +454,28 @@ class Documentation
                         break;
                     }
                 }
+            }
+
+            if (!empty($type->subvalueparams)) {
+
+                foreach ($type->subvalueparams as $p) {
+
+                    $params_att = $p->attributes();
+                    $result .= '<br/><br/>**' . $params_att->label . ':**<br/><br/>';
+                    $params = ((array)$p->params)['param'];
+
+                    if (is_object($params)) {
+                        $params = [$params];
+                    }
+
+                    $result .= $this->renderParametersGitHub2($params,
+                        '{{ ',
+                        str_replace(' ', '', common::translate('COM_CUSTOMTABLES_FIELDNAME')),
+                        '.' . $params_att->name,
+                        ' }}',
+                        $hideDefaultExample);
+                }
+                $result .= '<br/>';
             }
         }
         return $result;
@@ -525,6 +601,52 @@ class Documentation
             $value_example = $this->prepareExample($value_example);
 
         return $result;
+    }
+
+    function renderParametersGitHub2($params, $opening_char, $tag_name, $postfix, $closing_char, $hidedefaultexample): string
+    {
+        $example_values = [];
+        $example_values_count = 0;
+
+        $result = '';
+
+
+        $count = 1;
+
+        foreach ($params as $param) {
+            $param_att = $param->attributes();
+
+            if (count($param_att) != 0) {
+                $result .= $count . '. ' . $param_att->label . ($param_att->description != '' ? ' - ' . $param_att->description : '') . '<br/>';
+
+                if (isset($param_att->image)) {
+                    $result .= '![' . $param_att->label . '](' . $param_att->image . ')<br/><br/>';
+                }
+
+                if (!empty($param_att->type)) {
+                    $value_example = '';
+                    $result .= $this->renderParamTypeGitHub($param, $param_att, $value_example) . '<br/>';
+
+                    if ($value_example != '') {
+                        $example_values[] = $value_example;
+                        $example_values_count++;
+                    }
+                }
+            }
+            $count += 1;
+        }
+
+        $result_new = '';
+        $cleanedParamsStr = implode(',', $this->cleanParams($example_values));
+
+        if ($tag_name == '') {
+            if (!(int)$hidedefaultexample)
+                $result_new .= '`' . $opening_char . $tag_name . $postfix . ($cleanedParamsStr != "" ? '(' . $cleanedParamsStr . ')' : '') . $closing_char . '`<br/>';
+        } else {
+            if ($example_values_count > 0)
+                $result_new .= '`' . $opening_char . $tag_name . $postfix . ($cleanedParamsStr != "" ? '(' . $cleanedParamsStr . ')' : '') . $closing_char . '`<br/>';
+        }
+        return $result . $result_new;
     }
 
     function getLayoutTags(): string

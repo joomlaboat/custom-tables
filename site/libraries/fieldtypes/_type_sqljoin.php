@@ -14,18 +14,19 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomTables\CT;
+use CustomTables\Field;
 use CustomTables\TwigProcessor;
 
 class CT_FieldTypeTag_sqljoin
 {
     //New function
-    public static function resolveSQLJoinTypeValue(&$field, $layoutcode, $listing_id): string
+    public static function resolveSQLJoinTypeValue(Field &$field, string $layoutcode, $listing_id): string
     {
         $ct = new CT;
         $ct->getTable($field->params[0]);
 
         //TODO: add selector to the output box
-        $selector = $field->params[6] ?? 'dropdown';
+        //$selector = $field->params[6] ?? 'dropdown';
 
         $row = $ct->Table->loadRecord($listing_id);
 

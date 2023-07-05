@@ -597,33 +597,105 @@ class fieldObject
         }
     }
 
-    public function get($fieldName, string $showPublishedString = ''): string
+    public function get(): string
     {
         if ($this->ct->isRecordNull($this->ct->Table->record) and count($this->ct->Table->record) < 2)
             return '';
 
+        $functionParams = func_get_args();
+        //1. $fieldName
+        if (isset($functionParams[0]))
+            $fieldName = $functionParams[0];
+        else {
+            $this->ct->app->enqueueMessage('{{ ' . $this->field->fieldname . '.get(field_name) }} field name not specified.', 'error');
+            return '{{ ' . $this->field->fieldname . '.get(field_name) }} field name not specified.';
+        }
+
         if ($this->field->type == 'sqljoin') {
-            $layoutcode = '{{ ' . $fieldName . ' }}';
+            //2. ?array $options = null
+            if (isset($functionParams[1])) {
+                if (!is_array($functionParams[1])) {
+                    $this->ct->app->enqueueMessage('{{ ' . $this->field->fieldname . '.get("' . $fieldName . '",' . $functionParams[1] . ') }} value parameters must be an array.', 'error');
+                    return '{{ ' . $this->field->fieldname . '.get(field_name) }} field name not specified.';
+                }
+                $options = $functionParams[1];
+            } else
+                $options = null;
+
+            if ($options) {
+                $layoutcode = '{{ ' . $fieldName . '(' . self::optionsArrayToString($options) . ') }}';
+            } else
+                $layoutcode = '{{ ' . $fieldName . ' }}';
+
             return CT_FieldTypeTag_sqljoin::resolveSQLJoinTypeValue($this->field, $layoutcode, $this->ct->Table->record[$this->field->realfieldname]);
         } elseif ($this->field->type == 'records') {
+            //2. ?string $showPublishedString = ''
+            if (isset($functionParams[1]) and is_array($functionParams[1]))
+                $showPublishedString = $functionParams[1];
+            else
+                $showPublishedString = '';
+
+            //3. ?string $separatorCharacter = ''
+            if (isset($functionParams[2]) and is_array($functionParams[2]))
+                $separatorCharacter = $functionParams[2];
+            else
+                $separatorCharacter = null;
+
             $layoutcode = '{{ ' . $fieldName . ' }}';
-            return CT_FieldTypeTag_records::resolveRecordTypeValue($this->field, $layoutcode, $this->ct->Table->record[$this->field->realfieldname], $showPublishedString);
+            return CT_FieldTypeTag_records::resolveRecordTypeValue($this->field, $layoutcode, $this->ct->Table->record[$this->field->realfieldname],
+                $showPublishedString, $separatorCharacter);
         } else {
             $this->ct->app->enqueueMessage('{{ ' . $this->field->fieldname . '.get }}. Wrong field type "' . $this->field->type . '". ".get" method is only available for Table Join and Records filed types.', 'error');
             return '';
         }
     }
 
-    public function getvalue($fieldName, string $showPublishedString = '', string $separatorCharacter = ','): string
+    protected function optionsArrayToString(array $options): string
     {
-        $layoutcode = '{{ ' . $fieldName . '.value }}';
+        $new_options = [];
+        foreach ($options as $option) {
+            if (is_numeric($option))
+                $new_options[] = $option;
+            elseif (is_array($option))
+                $new_options[] = '[' . self::optionsArrayToString($option) . ']';
+            else
+                $new_options[] = '"' . $option . '"';
+        }
+        return implode(',', $new_options);
+    }
 
+    public function getvalue(): string
+    {
         if ($this->ct->isRecordNull($this->ct->Table->record) and count($this->ct->Table->record) < 2)
             return '';
+
+        $functionParams = func_get_args();
+        //1. $fieldName
+        if (isset($functionParams[0]) and is_array($functionParams[0]))
+            $fieldName = $functionParams[0];
+        else {
+            $this->ct->app->enqueueMessage('{{ ' . $this->field->fieldname . '.get(field_name) }}. field_name name not specified.', 'error');
+            return '{{ ' . $this->field->fieldname . '.get(field_name) }}. field_name name not specified.';
+        }
+
+        $layoutcode = '{{ ' . $fieldName . '.value }}';
 
         if ($this->field->type == 'sqljoin') {
             return CT_FieldTypeTag_sqljoin::resolveSQLJoinTypeValue($this->field, $layoutcode, $this->ct->Table->record[$this->field->realfieldname]);
         } elseif ($this->field->type == 'records') {
+
+            //2. ?string $showPublishedString = ''
+            if (isset($functionParams[1]) and is_array($functionParams[1]))
+                $showPublishedString = $functionParams[1];
+            else
+                $showPublishedString = '';
+
+            //3. ?string $separatorCharacter = ''
+            if (isset($functionParams[2]) and is_array($functionParams[2]))
+                $separatorCharacter = $functionParams[2];
+            else
+                $separatorCharacter = null;
+
             return CT_FieldTypeTag_records::resolveRecordTypeValue($this->field, $layoutcode, $this->ct->Table->record[$this->field->realfieldname], $showPublishedString, $separatorCharacter);
         } else {
             $this->ct->app->enqueueMessage('{{ ' . $this->field->fieldname . '.getvalue }}. Wrong field type "' . $this->field->type . '". ".getvalue" method is only available for Table Join and Records filed types.', 'error');
