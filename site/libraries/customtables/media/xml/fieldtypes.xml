@@ -1305,6 +1305,10 @@
                 <param name="attributes" label="Attributes"
                        description="Optional attributes like: disabled, onclick, onchange etc." default=""
                        type="string"/>
+                <param name="width" label="Editor Width" description="Editor Width in Pixels or %"
+                       default="100%" example="100%" type="string"/>
+                <param name="height" label="Editor Height" description="Editor Width in Pixels or %"
+                       default="" example="300px" type="string"/>
             </params>
         </editparams>
     </type>

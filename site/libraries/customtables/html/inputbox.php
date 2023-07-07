@@ -210,8 +210,11 @@ class Inputbox
                 $fieldName_or_layout_tag = $fieldName_or_layout;
         }
 
-        $itemLayout = '{"id":"{{ record.id }}","label":"' . $fieldName_or_layout_tag . '"}';
-        $pageLayoutContent = '[{% block record %}{% if record.number>1 %},{% endif %}' . $itemLayout . '{% endblock %}]';
+        $selector1 = JoomlaBasicMisc::generateRandomString();
+        $selector2 = JoomlaBasicMisc::generateRandomString() . '*';
+
+        $itemLayout = '{{ record.id }}' . $selector1 . $fieldName_or_layout_tag . $selector2;
+        $pageLayoutContent = '{% block record %}' . $itemLayout . '{% endblock %}';
 
         $paramsArray['establename'] = $tableName;
 
@@ -225,7 +228,29 @@ class Inputbox
         require_once($pathViews . 'json.php');
 
         $jsonOutput = new ViewJSON($ct);
-        return $jsonOutput->render($pageLayoutContent, '', 10, $obEndClean); //10 is the LayoutType = JSON
+        $output = $jsonOutput->render($pageLayoutContent, '', 10, false);//$obEndClean); //10 is the LayoutType = JSON
+        $outputList = JoomlaBasicMisc::csv_explode($selector2, $output, '"', false);
+        $outputArray = [];
+        foreach ($outputList as $outputListItems) {
+            $items = JoomlaBasicMisc::csv_explode($selector1, $outputListItems, '"', false);
+            if ($items[0] != '') {
+                //$outputArray[] = '{"id":"' . $items[0] . '","label":"' . $items[1] . '"}';
+                $outputArray[] = ["id" => $items[0], "label" => $items[1]];//utf8_encode()
+            }
+        }
+
+        $outputString = json_encode($outputArray);
+
+        if ($obEndClean) {
+            if (ob_get_contents()) ob_end_clean();
+            header('Content-Type: application/json; charset=utf-8');
+            header("Pragma: no-cache");
+            header("Expires: 0");
+
+            die($outputString);
+        }
+
+        return $outputString;
     }
 
     function render($value, $row)
@@ -681,8 +706,8 @@ class Inputbox
         $fullFieldName = $this->prefix . $this->field->fieldname;
 
         if (in_array('rich', $this->field->params)) {
-            $w = 500;
-            $h = 200;
+            $w = $this->option_list[2] ?? '100%';
+            $h = $this->option_list[3] ?? '300';
             $c = 0;
             $l = 0;
 
