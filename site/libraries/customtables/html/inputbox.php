@@ -135,11 +135,14 @@ class Inputbox
         $showPublishedString = $selector[2] ?? '';
         $showPublished = ($showPublishedString == 'true' ? 2 : 0); //$selector[2] can be "" or "true" or "false"
 
+        $filter = $selector[3] ?? '';
         $filterOverride = $ct->Env->jinput->getstring('where');
-        if ($filterOverride !== null)
-            $filter = base64_decode($filterOverride);
-        else
-            $filter = $selector[3] ?? '';
+        if ($filterOverride !== null) {
+            if ($filter != '')
+                $filter .= ' and ';
+
+            $filter .= base64_decode($filterOverride);
+        }
 
         $additional_where = '';
         //Find the field name that has a join to the parent (index-1) table

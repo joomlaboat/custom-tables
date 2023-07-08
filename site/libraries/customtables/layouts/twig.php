@@ -671,11 +671,11 @@ class fieldObject
 
         $functionParams = func_get_args();
         //1. $fieldName
-        if (isset($functionParams[0]) and is_array($functionParams[0]))
+        if (isset($functionParams[0]))
             $fieldName = $functionParams[0];
         else {
-            $this->ct->app->enqueueMessage('{{ ' . $this->field->fieldname . '.get(field_name) }}. field_name name not specified.', 'error');
-            return '{{ ' . $this->field->fieldname . '.get(field_name) }}. field_name name not specified.';
+            $this->ct->app->enqueueMessage('{{ ' . $this->field->fieldname . '.getvalue(field_name) }}. field_name name not specified.', 'error');
+            return '{{ ' . $this->field->fieldname . '.getvalue(field_name) }}. field_name name not specified.';
         }
 
         $layoutcode = '{{ ' . $fieldName . '.value }}';

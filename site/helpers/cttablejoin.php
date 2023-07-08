@@ -45,7 +45,6 @@ class JHTMLCTTableJoin
         //Get initial table filters based on the value
         $js_filters = [];
         $parent_id = $value;
-
         JHTMLCTTableJoin::processValue($filter, $parent_id, $js_filters);
 
         if (count($js_filters) == 0)
