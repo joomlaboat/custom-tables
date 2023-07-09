@@ -67,8 +67,15 @@ class SaveFieldQuerySet
         switch ($this->field->type) {
             case 'records':
                 $value = self::get_record_type_value($this->ct, $this->field);
+                if ($value === null) {
+                    $this->row[$this->field->realfieldname] = null;
+                    return null;
+                } elseif ($value === '') {
+                    $this->row[$this->field->realfieldname] = null;
+                    return $this->field->realfieldname . '=NULL';
+                }
                 $this->row[$this->field->realfieldname] = $value;
-                return ($value === null ? null : $this->field->realfieldname . '=' . $this->ct->db->Quote($value));
+                return $this->field->realfieldname . '=' . $this->ct->db->Quote($value);
 
             case 'sqljoin':
                 $value = $this->ct->Env->jinput->getString($this->field->comesfieldname);
@@ -577,7 +584,7 @@ class SaveFieldQuerySet
         return null;
     }
 
-    public static function get_record_type_value(CT $ct, Field $field)
+    public static function get_record_type_value(CT $ct, Field $field): ?string
     {
         if (count($field->params) > 2) {
             $esr_selector = $field->params[2];
@@ -585,23 +592,31 @@ class SaveFieldQuerySet
 
             switch ($selectorPair[0]) {
                 case 'single';
-
-                    $value = $ct->Env->jinput->getString($field->comesfieldname);
+                    $value = $ct->Env->jinput->getInt($field->comesfieldname);
 
                     if (isset($value))
-                        return (int)$value;
+                        return $value;
 
                     break;
 
                 case 'radio':
                 case 'checkbox':
-                case 'multi';
+                case 'multi':
+
+                    //returns NULL if field parameter not found - nothing to save
+                    //returns empty array if nothing selected - save empty value
                     $valueArray = $ct->Env->jinput->post->get($field->comesfieldname, null, 'array');
 
-                    if (isset($valueArray))
+                    if ($valueArray) {
                         return self::getCleanRecordValue($valueArray);
-
-                    break;
+                    } else {
+                        $value_off = $ct->Env->jinput->post->getInt($field->comesfieldname . '_off');
+                        if ($value_off) {
+                            return '';
+                        } else {
+                            return null;
+                        }
+                    }
 
                 case 'multibox';
                     $valueArray = $ct->Env->jinput->post->get($field->comesfieldname, null, 'array');

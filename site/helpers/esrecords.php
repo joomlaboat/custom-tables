@@ -143,7 +143,12 @@ class JHTMLESRecords
 
                         $i++;
                     }
-                    $htmlResult .= '</table>';
+                    $htmlResult .= '</table>'
+                        . '<input type="hidden"'
+                        . ' id="' . $control_name . '_off" '
+                        . ' name="' . $control_name . '_off" '
+                        . 'value="1" >';
+
                     break;
 
                 case 'multibox' :
@@ -214,7 +219,11 @@ class JHTMLESRecords
                 $htmlResult .= '</td></tr>';
                 $i++;
             }
-            $htmlResult .= '</table>';
+            $htmlResult .= '</table>'
+                . '<input type="hidden"'
+                . ' id="' . $control_name . '_off" '
+                . ' name="' . $control_name . '_off" '
+                . 'value="1" >';
         }
         return $htmlResult;
     }

@@ -1251,6 +1251,7 @@ class Inputbox
         */
         //records : table, [fieldname || layout:layoutname], [selector: multi || single], filter, |datalength|
 
+        //Check minimum requirements
         if (count($this->field->params) < 1)
             $result .= 'table not specified';
 
@@ -1262,22 +1263,37 @@ class Inputbox
 
         $esr_table = $this->field->params[0];
 
-        if (isset($this->option_list[3]))
+        $advancedOption = null;
+        if (isset($this->option_list[2]) and is_array($this->option_list[2]))
+            $advancedOption = $this->option_list[2];
+
+        if (isset($this->option_list[3])) {
             $esr_field = 'layout:' . $this->option_list[3];
-        else
-            $esr_field = $this->field->params[1] ?? '';
+        } else {
+            if ($advancedOption and isset($advancedOption[1]) and $advancedOption[1] and $advancedOption[1] != "")
+                $esr_field = $advancedOption[1];
+            else
+                $esr_field = $this->field->params[1] ?? '';
+        }
 
         $esr_selector = $this->field->params[2] ?? '';
 
-        if (isset($this->option_list[5]))
+        if (isset($this->option_list[5])) {
+            //To back-support old style
             $esr_filter = $this->option_list[5];
-        elseif (count($this->field->params) > 3)
+        } elseif ($advancedOption and isset($advancedOption[3]) and $advancedOption[3] and $advancedOption[3] != "") {
+            $esr_filter = $advancedOption[3];
+        } elseif (count($this->field->params) > 3)
             $esr_filter = $this->field->params[3];
         else
             $esr_filter = '';
 
         $dynamic_filter = $this->field->params[4] ?? '';
-        $sortByField = $this->field->params[5] ?? '';
+
+        if ($advancedOption and isset($advancedOption[4]) and $advancedOption[4] and $advancedOption[4] != "")
+            $sortByField = $advancedOption[4];
+        else
+            $sortByField = $this->field->params[5] ?? '';
 
         $records_attributes = ($this->attributes != '' ? ' ' : '')
             . 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
