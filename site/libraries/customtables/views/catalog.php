@@ -126,20 +126,13 @@ class Catalog
                     $pageLayoutNameString = $this->ct->Params->pageLayout;
                     $pageLayoutLink = '/administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $Layouts->layoutId;
 
+                } elseif (!is_null($this->ct->Params->itemLayout) and $this->ct->Params->itemLayout != '') {
+                    $itemLayout = $Layouts->getLayout($this->ct->Params->itemLayout);
+                    $pageLayout = '{% block record %}' . $itemLayout . '{% endblock %}';
+                    $pageLayoutNameString = 'Generated_Basic_Page_Layout';
                 } else {
                     $pageLayout = $Layouts->createDefaultLayout_SimpleCatalog($this->ct->Table->fields);
                     $pageLayoutNameString = 'Generated_Page_Layout';
-                }
-
-                if (!is_null($this->ct->Params->itemLayout) and $this->ct->Params->itemLayout != '') {
-                    $itemLayout = $Layouts->getLayout($this->ct->Params->itemLayout);
-                    $itemLayoutNameString = $this->ct->Params->itemLayout;
-
-                    if ($pageLayout == '') {
-                        $pageLayout = '{% block record %}' . $itemLayout . '{% endblock %}';
-                    }
-                } else {
-                    $itemLayoutNameString = $pageLayoutNameString . '_Inline_Item';
                 }
             }
         }
