@@ -855,7 +855,8 @@ class Twig_Html_Tags
             true, "saveandcontinue");
     }
 
-    protected function renderButtonHTML($optional_class, string $title, $formName, string $buttonId, string $redirect, bool $checkCaptcha = true, string $task): string
+    protected function renderButtonHTML($optional_class, string $title, $formName, string $buttonId,
+                                        string $redirect, bool $checkCaptcha, string $task): string
     {
         if ($this->ct->Env->frmt == 'json')
             return $title;
