@@ -457,10 +457,10 @@ class Twig_Record_Tags
 
     function min(string $tableName = '', string $value_field = '', string $filter = ''): ?int
     {
-        return $this->countOrSumRecords($tableName, $value_field, $filter);
+        return $this->countOrSumRecords('min', $tableName, $value_field, $filter);
     }
 
-    protected function countOrSumRecords(string $tableName = '', string $fieldName = '', string $filter = ''): ?int
+    protected function countOrSumRecords(string $function = 'count', string $tableName = '', string $fieldName = '', string $filter = ''): ?int
     {
         if ($tableName == '') {
             $this->ct->app->enqueueMessage('{{ record.count("' . $tableName . '") }} - Table not specified.', 'error');
@@ -516,7 +516,7 @@ class Twig_Record_Tags
         $f = new Filtering($newCt, 2);
         $f->addWhereExpression($filter);
         $additional_where = implode(' AND ', $f->where);
-        $query = $this->count_buildQuery('count', $tableRow['realtablename'], $fieldRealFieldName, $additional_where);
+        $query = $this->count_buildQuery($function, $tableRow['realtablename'], $fieldRealFieldName, $additional_where);
         $this->ct->db->setQuery($query);
         $rows = $this->ct->db->loadAssocList();
 
@@ -556,22 +556,22 @@ class Twig_Record_Tags
 
     function max(string $tableName = '', string $value_field = '', string $filter = ''): ?int
     {
-        return $this->countOrSumRecords($tableName, $value_field, $filter);
+        return $this->countOrSumRecords('max', $tableName, $value_field, $filter);
     }
 
     function avg(string $tableName = '', string $value_field = '', string $filter = ''): ?int
     {
-        return $this->countOrSumRecords($tableName, $value_field, $filter);
+        return $this->countOrSumRecords('avg', $tableName, $value_field, $filter);
     }
 
     function sum(string $tableName = '', string $value_field = '', string $filter = ''): ?int
     {
-        return $this->countOrSumRecords($tableName, $value_field, $filter);
+        return $this->countOrSumRecords('sum', $tableName, $value_field, $filter);
     }
 
     function count(string $tableName = '', string $filter = ''): ?int
     {
-        return $this->countOrSumRecords($tableName, '_id', $filter);
+        return $this->countOrSumRecords('count', $tableName, '_id', $filter);
     }
 }
 
