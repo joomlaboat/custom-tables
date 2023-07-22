@@ -89,7 +89,12 @@ class Inputbox
 
         $this->field = new Field($this->ct, $fieldRow);
 
-        $this->cssclass .= ($this->ct->Env->version < 4 ? ' inputbox' : ' form-control') . ($this->field->isrequired == 1 ? ' required' : '');
+        if ($this->field->type != "records")
+            $this->cssclass .= ($this->ct->Env->version < 4 ? ' inputbox' : ' form-control');
+
+        if ($this->field->isrequired == 1)
+            $this->cssclass .= ' required';
+
         $this->option_list = $option_list;
         $this->place_holder = $this->field->title;
     }
@@ -1315,7 +1320,7 @@ class Inputbox
             $esr_selector,
             $esr_filter,
             '',
-            $this->cssclass . ' ct_improved_selectbox',
+            ($this->cssclass == '' ? 'ct_improved_selectbox' : $this->cssclass),
             $records_attributes,
             $dynamic_filter,
             $sortByField,
