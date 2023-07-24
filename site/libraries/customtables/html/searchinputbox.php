@@ -535,20 +535,22 @@ class SearchInputBox
         if (is_array($value))
             $value = implode(',', $value);
 
-        if ($this->ct->Env->version < 4)
-            $default_class = 'inputbox';
-        else
-            $default_class = 'form-control';
+        if ($this->ct->Env->version < 4) {
+            if (!str_contains($cssclass, 'inputbox'))
+                $cssclass .= ' inputbox';
+        } else {
+            if (!str_contains($cssclass, 'form-select'))
+                $cssclass .= ' form-select';//form-control
+        }
 
         if ($this->field->layout !== null)
             $this->field->params[1] = 'tablelesslayout:' . $this->field->layout;
 
         try {
-            $result .= '<div class="' . $cssclass . '">' . JHTML::_('ESSQLJoin.render', $this->field->params, $value, true, $this->ct->Languages->Postfix, $objectName,
-                    $this->field->title,
-                    ' ' . $default_class . ' es_class_sqljoin', $onchange, true) . '</div>';
+            $result .= JHTML::_('ESSQLJoin.render', $this->field->params, $value, true, $this->ct->Languages->Postfix, $objectName,
+                $this->field->title,
+                ' ' . $cssclass . ' es_class_sqljoin', $onchange, true);
         } catch (Exception $e) {
-
             echo $e->getMessage();
             die;
         }

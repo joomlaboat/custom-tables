@@ -1199,18 +1199,26 @@
                     description="Input/Select box etc HTML element parameters.">
             <params>
                 <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)."
-                       example="inputbox"/>
+                       example="inputbox" optional="1"/>
                 <param type="string" name="attributes" label="Attributes"
-                       description="Optional attributes like: disabled, onclick, onchange etc." default=""/>
+                       description="Optional attributes like: disabled, onclick, onchange etc." default=""
+                       optional="1"/>
                 <param name="parent-selector" label="Parent Selector"
                        description="Used for multilevel dependencies like Country, City, Street. List of parameters to set the sub-level select box. Example: [city_table_name, city_field_name, allow_unpublished(true or false), filter(population>100000), order_by(name)]. It is also possible to pass multiple selectors. Example: [ [city_table_name, city_field_name],[country_table_name, country_field_name, false]]"
                        default="" type="array"
-                       examplenoquotes="1"
+                       examplenoquotes="1" optional="1"
                        example="[[city_table_name, city_field_name],[country_table_name, country_field_name, false]]"/>
                 <param type="layout" name="layout" label="Title Layout"
                        description="Optional parameter set the option title format, instead of the field name set in the field type parameter. The layout may contain the field names surrounded by curly brackets. Example: {{ name }} - {{ title }}"
-                       layouttype="catalogitem,simplecatalog,record,details,email,xml,csv,json"
+                       layouttype="catalogitem,simplecatalog,record,details,email,xml,csv,json" optional="1"
                        image="https://joomlaboat.com/images/components/ct/field-types/tablejoin-customtitle.png"/>
+                <param type="string" name="menu_item_alias" label="Menu Item alias"
+                       description="Menu Item alias to open the link using specific menu item parameters."
+                       optional="1"/>
+                <param name="improved" label="Improve Select Box"
+                       description="Improve Select box to include in-list search." type="radio" default=""
+                       example="reload" optional="1"
+                       options="|Standard,improved|Improved"/>
             </params>
         </editparams>
 

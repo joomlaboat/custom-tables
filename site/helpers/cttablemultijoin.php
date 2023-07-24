@@ -53,6 +53,8 @@ class JHTMLCTTableMultiJoin
         $key = JoomlaBasicMisc::generateRandomString();
         $ct->app->setUserState($key, $filter);
 
+        $cssClass = '';
+
         $data = [];
         $data[] = 'data-key="' . $key . '"';
         $data[] = 'data-fieldname="' . $field->fieldname . '"';
@@ -86,7 +88,7 @@ class JHTMLCTTableMultiJoin
         return '<input type="hidden" id="' . $control_name . '" name="' . $control_name . '" value="' . htmlspecialchars($value) . '" ' . $attributes . '/>'
             . '<div id="' . $control_name . 'Wrapper" ' . implode(' ', $data) . '>'
             . JHTMLCTTableJoin::ctUpdateTableJoinLink($ct, $control_name, 0, 0, "", $formID, $attributes, $onchange,
-                $filter, $js_filters, $value, $addRecordMenuAlias)
+                $filter, $js_filters, $value, $addRecordMenuAlias, $cssClass)
             . '</div>';
     }
 }
