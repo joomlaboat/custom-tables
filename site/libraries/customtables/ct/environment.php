@@ -143,7 +143,9 @@ class Environment
         $this->loadTwig = $params->get('loadTwig') == '1';
         $this->toolbarIcons = strval($params->get('toolbaricons'));
         $this->legacySupport = $params->get('legacysupport') == '';
+
         $this->folderToSaveLayouts = $params->get('folderToSaveLayouts');
+        $this->folderToSaveLayouts = str_replace('/', DIRECTORY_SEPARATOR, $this->folderToSaveLayouts);
 
         if ($this->folderToSaveLayouts == '')
             $this->folderToSaveLayouts = null;

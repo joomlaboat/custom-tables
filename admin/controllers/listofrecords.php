@@ -103,34 +103,30 @@ class CustomtablesControllerListofRecords extends JControllerAdmin
         $tableid = $this->input->get('tableid', 0, 'int');
 
         if ($tableid != 0) {
-            $table = ESTables::getTableRowByID($tableid);
-            if (!is_object($table) and $table == 0) {
+            $tableRow = ESTables::getTableRowByIDAssoc($tableid);
+            if (!is_array($tableRow) and $tableRow == 0) {
                 Factory::getApplication()->enqueueMessage('Table not found', 'error');
                 return;
             } else {
-                $tablename = $table->tablename;
+                $tablename = $tableRow['tablename'];
             }
+        } else {
+            Factory::getApplication()->enqueueMessage('Table not set', 'error');
+            return;
         }
 
         $cid = Factory::getApplication()->input->post->get('cid', array(), 'array');
-        //$cid = ArrayHelper::toInteger($cid);
-
-        //Get Edit model
         $paramsArray = $this->getRecordParams($tableid, $tablename, 0);
 
         $_params = new JRegistry;
         $_params->loadArray($paramsArray);
 
-        require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'models' . DIRECTORY_SEPARATOR . 'edititem.php');
-        $editModel = JModelLegacy::getInstance('EditItem', 'CustomTablesModel', $_params);
-
         $ct = new CT($_params, false);
-
-        $editModel->load($ct);
+        $ct->setTable($tableRow);
 
         foreach ($cid as $id) {
             if ($id != '') {
-                $ok = $editModel->deleteSingleRecord($id);
+                $ok = $ct->deleteSingleRecord($id);
                 if (!$ok)
                     break;
             }

@@ -683,6 +683,8 @@ class Twig_Tables_Tags
 
         $join_ct = new CT;
         $tables = new Tables($join_ct);
+        $tableRow = ESTables::getTableRowByNameAssoc($table);
+        $join_ct->setTable($tableRow);
 
         if (is_numeric($record_id_or_filter) and (int)$record_id_or_filter > 0) {
             $row = $tables->loadRecord($table, $record_id_or_filter);
@@ -711,10 +713,21 @@ class Twig_Tables_Tags
 
         } else {
             $value_realfieldname = '';
-            foreach ($join_table_fields as $join_table_field) {
-                if ($join_table_field['fieldname'] == $fieldname) {
-                    $value_realfieldname = $join_table_field['realfieldname'];
-                    break;
+            if ($fieldname == '_id')
+                $value_realfieldname = $join_ct->Table->realidfieldname;
+            elseif ($fieldname == '_published')
+                if ($join_ct->Table->published_field_found) {
+                    $value_realfieldname = 'published';
+                } else {
+                    $this->ct->app->enqueueMessage('{{ ' . $tag . '("' . $table . '","published") }} - "published" does not exist in the table.', 'error');
+                    return '';
+                }
+            else {
+                foreach ($join_table_fields as $join_table_field) {
+                    if ($join_table_field['fieldname'] == $fieldname) {
+                        $value_realfieldname = $join_table_field['realfieldname'];
+                        break;
+                    }
                 }
             }
 

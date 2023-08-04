@@ -31,9 +31,9 @@ function setTask(event, task, returnLink, submitForm, formName, isModal, modalFo
 
                 if (tasks_with_validation.includes(task)) {
                     if (checkRequiredFields())
-                        submitModalForm(objForm.action, objForm.elements, objForm.dataset.tableid, objForm.dataset.recordid, hideModelOnSave, modalFormParentField)
+                        submitModalForm(objForm.action, objForm.elements, objForm.dataset.tableid, objForm.dataset.recordid, hideModelOnSave, modalFormParentField, returnLink)
                 } else
-                    submitModalForm(objForm.action, objForm.elements, objForm.dataset.tableid, objForm.dataset.recordid, hideModelOnSave, modalFormParentField)
+                    submitModalForm(objForm.action, objForm.elements, objForm.dataset.tableid, objForm.dataset.recordid, hideModelOnSave, modalFormParentField, returnLink)
 
                 return false;
             } else {
@@ -48,7 +48,7 @@ function setTask(event, task, returnLink, submitForm, formName, isModal, modalFo
     }
 }
 
-function submitModalForm(url, elements, tableid, recordId, hideModelOnSave, modalFormParentField) {
+function submitModalForm(url, elements, tableid, recordId, hideModelOnSave, modalFormParentField, returnLinkEncoded) {
 
     let params = "";
     let opt;
@@ -104,6 +104,10 @@ function submitModalForm(url, elements, tableid, recordId, hideModelOnSave, moda
 
                     if (hideModelOnSave)
                         ctHidePopUp();
+
+                    if (returnLinkEncoded !== "")
+                        location.href = Base64.decode(returnLinkEncoded);
+
                 } else {
                     if (http.response.indexOf('<div class="alert-message">Nothing to save</div>') !== -1)
                         alert('Nothing to save. Check Edit From layout.');

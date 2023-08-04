@@ -161,7 +161,7 @@ class Fields
     {
         $db = Factory::getDBO();
         $ImageFolder = JPATH_SITE . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'esimages';
-        $fieldrow = Fields::getFieldRow($fieldid);
+        $fieldrow = Fields::getFieldRow($fieldid, true);
 
         if (is_null($fieldrow))
             return false;
@@ -230,13 +230,13 @@ class Fields
         }
 
         //Delete field from the list
-        $query = 'DELETE FROM #__customtables_fields WHERE published=1 AND id=' . $fieldid;
+        $query = 'DELETE FROM #__customtables_fields WHERE id=' . $fieldid;
         $db->setQuery($query);
         $db->execute();
         return true;
     }
 
-    public static function getFieldRow($fieldid = 0)
+    public static function getFieldRow($fieldid = 0, $assocList = false)
     {
         $db = Factory::getDBO();
 
@@ -246,9 +246,13 @@ class Fields
         $query = 'SELECT ' . Fields::getFieldRowSelects() . ' FROM #__customtables_fields AS s WHERE id=' . $fieldid . ' LIMIT 1';//published=1 AND
 
         $db->setQuery($query);
-        $rows = $db->loadObjectList();
+        if ($assocList)
+            $rows = $db->loadAssocList();
+        else
+            $rows = $db->loadObjectList();
+
         if (count($rows) != 1)
-            return array();
+            return null;
 
         return $rows[0];
     }

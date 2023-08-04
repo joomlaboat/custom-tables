@@ -15,6 +15,8 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 jimport('joomla.application.component.controlleradmin');
 
+use CustomTables\CT;
+use CustomTables\Fields;
 use Joomla\CMS\Factory;
 use Joomla\Utilities\ArrayHelper;
 
@@ -141,28 +143,36 @@ class CustomtablesControllerListOfFields extends JControllerAdmin
         $tableid = $this->input->get('tableid', 0, 'int');
 
         if ($tableid != 0) {
-            $table = ESTables::getTableRowByID($tableid);
-            if (!is_object($table) and $table == 0) {
+            $tableRow = ESTables::getTableRowByIDAssoc($tableid);
+            if (!is_object($tableRow) and $tableRow == 0) {
                 Factory::getApplication()->enqueueMessage('Table not found', 'error');
                 return;
             } else {
-                $tablename = $table->tablename;
+                $tablename = $tableRow['tablename'];
             }
+        } else {
+            Factory::getApplication()->enqueueMessage('Table not set', 'error');
+            return;
         }
+
+        $paramsArray = [];
+        $paramsArray['estableid'] = $tableid;
+        $paramsArray['establename'] = $tablename;
+        $_params = new JRegistry;
+        $_params->loadArray($paramsArray);
+
+        $ct = new CT($_params, false);
+        $ct->setTable($tableRow);
 
         $cid = Factory::getApplication()->input->post->get('cid', array(), 'array');
         $cid = ArrayHelper::toInteger($cid);
 
-        $ok = true;
-
         foreach ($cid as $id) {
             if ((int)$id != 0) {
                 $id = (int)$id;
-                $isok = $this->deleteSingleRecord($id);
-                if (!$isok) {
-                    $ok = false;
+                $ok = Fields::deleteField_byID($ct, $id);
+                if (!$ok)
                     break;
-                }
             }
         }
 
@@ -181,17 +191,5 @@ class CustomtablesControllerListOfFields extends JControllerAdmin
                 $redirect, false
             )
         );
-    }
-
-    protected function deleteSingleRecord($id)
-    {
-        $db = Factory::getDBO();
-
-        $query = 'DELETE FROM #__customtables_fields WHERE id=' . (int)$id;
-
-        $db->setQuery($query);
-        $db->execute();
-
-        return true;
     }
 }

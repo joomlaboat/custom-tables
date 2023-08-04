@@ -1339,7 +1339,7 @@ class CustomTablesModelEditItem extends JModelLegacy
             foreach ($listing_ids_ as $listing_id) {
                 if ($listing_id != '') {
                     $listing_id = preg_replace("/[^a-zA-Z_\d-]/", "", $listing_id);
-                    if ($this->deleteSingleRecord($listing_id) == -1)
+                    if ($this->ct->deleteSingleRecord($listing_id) == -1)
                         return -count($listing_ids_); //negative value means that there is an error
                 }
             }
@@ -1350,81 +1350,7 @@ class CustomTablesModelEditItem extends JModelLegacy
         if ($listing_id == '' or $listing_id == 0)
             return 0;
 
-        return $this->deleteSingleRecord($listing_id);
-    }
-
-    public function deleteSingleRecord($listing_id): int
-    {
-        //delete images if exist
-        $imageMethods = new CustomTablesImageMethods;
-
-        $query = 'SELECT * FROM ' . $this->ct->Table->realtablename . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . $this->ct->db->quote($listing_id);
-
-        $this->ct->db->setQuery($query);
-        $rows = $this->ct->db->loadAssocList();
-
-        if (count($rows) == 0)
-            return -1;
-
-        $row = $rows[0];
-
-        foreach ($this->ct->Table->fields as $fieldrow) {
-            $field = new Field($this->ct, $fieldrow, $row);
-
-            if ($field->type == 'image') {
-                $ImageFolder_ = CustomTablesImageMethods::getImageFolder($field->params);
-
-                //delete single image
-                if ($row[$field->realfieldname] !== null) {
-                    $imageMethods->DeleteExistingSingleImage(
-                        $row[$field->realfieldname],
-                        $ImageFolder_,
-                        $field->params[0],
-                        $this->ct->Table->realtablename,
-                        $field->realfieldname,
-                        $this->ct->Table->realidfieldname
-                    );
-                }
-            } elseif ($field->type == 'imagegallery') {
-                $ImageFolder_ = CustomTablesImageMethods::getImageFolder($field->params);
-
-                //delete gallery images if exist
-                $galleryName = $field->fieldname;
-                $photoTableName = '#__customtables_gallery_' . $this->ct->Table->tablename . '_' . $galleryName;
-
-                $query = 'SELECT photoid FROM ' . $photoTableName . ' WHERE listingid=' . $this->ct->db->quote($listing_id);
-                $this->ct->db->setQuery($query);
-
-                $photoRows = $this->ct->db->loadObjectList();
-
-                $imageGalleryPrefix = 'g';
-
-                foreach ($photoRows as $photoRow) {
-                    $imageMethods->DeleteExistingGalleryImage(
-                        $ImageFolder_,
-                        $imageGalleryPrefix,
-                        $this->ct->Table->tableid,
-                        $galleryName,
-                        $photoRow->photoid,
-                        $field->params[0],
-                        true
-                    );
-                }
-            }
-        }
-
-        $query = 'DELETE FROM ' . $this->ct->Table->realtablename . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . $this->ct->db->quote($listing_id);
-        $this->ct->db->setQuery($query);
-        $this->ct->db->execute();
-
-        $this->ct->Table->saveLog($listing_id, 5);
-
-        $new_row = array();
-
-        if ($this->ct->Env->advancedTagProcessor)
-            CleanExecute::executeCustomPHPfile($this->ct->Table->tablerow['customphp'], $new_row, $row);
-
-        return 1;
+        return $this->ct->deleteSingleRecord($listing_id);
     }
 
     public function copyContent($from, $to)
