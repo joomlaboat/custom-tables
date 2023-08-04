@@ -35,14 +35,14 @@ final class TemplateWrapper
 
     public function render(array $context = []): string
     {
-        // using func_get_args() allows to not expose the blocks' argument
+        // using func_get_args() allows to not expose the blocks argument
         // as it should only be used by internal code
         return $this->template->render($context, \func_get_args()[1] ?? []);
     }
 
     public function display(array $context = [])
     {
-        // using func_get_args() allows to not expose the blocks' argument
+        // using func_get_args() allows to not expose the blocks argument
         // as it should only be used by internal code
         $this->template->display($context, \func_get_args()[1] ?? []);
     }
@@ -67,9 +67,7 @@ final class TemplateWrapper
         if ($this->env->isDebug()) {
             ob_start();
         } else {
-            ob_start(function () {
-                return '';
-            });
+            ob_start(function () { return ''; });
         }
         try {
             $this->template->displayBlock($name, $context);
@@ -100,9 +98,9 @@ final class TemplateWrapper
     }
 
     /**
-     * @return Template
      * @internal
      *
+     * @return Template
      */
     public function unwrap()
     {
