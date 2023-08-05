@@ -590,6 +590,15 @@ function ctEditModal(url, parentFieldToUpdate = null) {
 
                 //let content_html = '<div style="overflow-y: scroll;overflow-x: hidden;height: 100%;width:100%;">' + res + '</div>';
                 ctShowPopUp(res, true);
+
+
+                //Activate Calendars if found
+                let elements = document.querySelectorAll(".field-calendar");
+
+                for (let i = 0, l = elements.length; i < l; i++) {
+                    JoomlaCalendar.init(elements[i]);
+                }
+
             }
         }
         http.send(params);

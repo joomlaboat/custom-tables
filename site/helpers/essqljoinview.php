@@ -53,17 +53,18 @@ class JHTMLESSQLJoinView
 
         //Get Row
         $query = 'SELECT ' . implode(',', $ct->Table->selects) . ' FROM ' . $ct->Table->realtablename . ' WHERE '
-            . $ct->Table->tablerow['realidfieldname'] . '=' . (int)$value;
+            . $ct->Table->tablerow['realidfieldname'] . '=' . $ct->db->quote($value) . ' LIMIT 1';
 
         $ct->db->setQuery($query);
         $records = $ct->db->loadAssocList();
 
         if (!str_contains($field, ':')) {
             //without layout
-            foreach ($records as $row) {
-                if ($row[$ct->Table->realidfieldname] == $value)
-                    $htmlresult .= JoomlaBasicMisc::processValue($field, $ct, $row);
+            if (count($records) == 1) {
+                if ($records[0][$ct->Table->realidfieldname] == $value)
+                    $htmlresult .= JoomlaBasicMisc::processValue($field, $ct, $records[0]);
             }
+
         } else {
             $pair = explode(':', $field);
 
