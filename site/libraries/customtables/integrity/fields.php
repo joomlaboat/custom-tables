@@ -181,7 +181,7 @@ class IntegrityFields extends IntegrityChecks
                     $PureFieldType = Fields::makeProjectedFieldType($projected_data_type);
 
                     if ($found_field == '_id')
-                        $nice_field_name = $ct->Table->realtablename . '.id';
+                        $nice_field_name = $ct->Table->realtablename . '.' . $ct->Table->realidfieldname;
                     elseif ($found_field == '_published')
                         $nice_field_name = $ct->Table->realtablename . '.published';
                     else {

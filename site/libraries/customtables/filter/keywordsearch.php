@@ -249,7 +249,7 @@ class CustomTablesKeywordSearch
                         $esr_table = '#__customtables_table_' . $typeParamsArrayy[0];
                         $esr_field = $typeParamsArrayy[1];
 
-                        $inner = 'INNER JOIN ' . $esr_table . ' ON instr(#__customtables_table_' . $this->ct->Table->tablename . '.es_' . $fieldrow['fieldname'] . ',concat(",",' . $esr_table . '.id,","))';
+                        $inner = 'INNER JOIN ' . $esr_table . ' ON instr(#__customtables_table_' . $this->ct->Table->tablename . $fieldrow['realfieldname'] . ',concat(",",' . $esr_table . '.' . $this->ct->Table->realidfieldname . ',","))';//TODO
                         if (!in_array($inner, $inner_arr))
                             $inner_arr[] = $inner;
 
@@ -274,11 +274,11 @@ class CustomTablesKeywordSearch
                         $esr_table = '#__customtables_table_' . $typeParamsArrayy[0];
                         $esr_field = $typeParamsArrayy[1];
 
-                        $inner = 'INNER JOIN ' . $esr_table . ' ON instr(#__customtables_table_' . $this->ct->Table->tablename . '.es_' . $fieldrow['fieldname'] . ',concat(",",' . $esr_table . '.id,","))';
+                        $inner = 'INNER JOIN ' . $esr_table . ' ON instr(#__customtables_table_' . $this->ct->Table->tablename . $fieldrow['realfieldname'] . ',concat(",",' . $esr_table . '.' . $this->ct->Table->realidfieldname . ',","))';
                         if (!in_array($inner, $inner_arr))
                             $inner_arr[] = $inner;
 
-                        $where_arr[] = 'instr(' . $esr_table . '.es_' . $esr_field . ',"' . $kw . '")';
+                        $where_arr[] = 'instr(' . $esr_table . '.es_' . $esr_field . ',"' . $kw . '")';//TODO
                         $fieldTypeFound = true;
                         break;
 
@@ -374,7 +374,7 @@ class CustomTablesKeywordSearch
                 $esr_table = '#__customtables_table_' . $typeParamsArrayy[0];
                 $esr_field = $typeParamsArrayy[1];
 
-                $inner = 'INNER JOIN ' . $esr_table . ' ON instr(#__customtables_table_' . $this->ct->Table->tablename . '.es_' . $fieldname . ',concat(",",' . $esr_table . '.id,","))';
+                $inner = 'INNER JOIN ' . $esr_table . ' ON instr(#__customtables_table_' . $this->ct->Table->tablename . '.es_' . $fieldname . ',concat(",",' . $esr_table . '.id,","))';//TODO
                 $where = ' ' . $esr_table . '.es_' . $esr_field . ' REGEXP "' . $regexpression . '"';
 
                 break;
@@ -410,8 +410,9 @@ class CustomTablesKeywordSearch
     {
         $db = Factory::getDBO();
         $inner = array($inner_str);
-        $tablename = '#__customtables_table_' . $this->ct->Table->tablename;
-        $query = 'SELECT *, ' . $tablename . '.id AS listing_id, ' . $tablename . '.published As  listing_published ';
+        $query = 'SELECT *, ' . $this->ct->Table->realtablename . '.' . $this->ct->Table->realidfieldname . ' AS listing_id';
+        if ($this->ct->Table->published_field_found)
+            $query .= ',' . $this->ct->Table->realtablename . '.published As listing_published ';
 
         $ordering = array();
 
@@ -419,14 +420,11 @@ class CustomTablesKeywordSearch
             $ordering[] = $this->ct->Env->field_prefix . $this->groupby;
 
         if ($this->esordering)
-            Ordering::getOrderingQuery($ordering, $query, $inner, $this->esordering, $this->ct->Languages->Postfix, $tablename);
+            Ordering::getOrderingQuery($ordering, $query, $inner, $this->esordering, $this->ct->Languages->Postfix, $this->ct->Table->realtablename);
 
-        $query .= ' FROM ' . $tablename . ' ';
-
+        $query .= ' FROM ' . $this->ct->Table->realtablename . ' ';
         $query .= implode(' ', $inner) . ' ';
-
         $query .= ' WHERE ' . $where . ' ';
-
         $query .= ' GROUP BY listing_id ';
 
         if (count($ordering) > 0)
@@ -449,10 +447,10 @@ class CustomTablesKeywordSearch
         }
     }
 
-    function processLimit($result_rows, $limit, $limitstart)
+    function processLimit($result_rows, $limit, $limitStart): array
     {
         $result_rows_new = array();
-        for ($i = $limitstart; $i < $limitstart + $limit; $i++)
+        for ($i = $limitStart; $i < $limitStart + $limit; $i++)
             $result_rows_new[] = $result_rows[$i];
 
         return $result_rows_new;

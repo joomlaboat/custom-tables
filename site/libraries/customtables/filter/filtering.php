@@ -103,11 +103,8 @@ class Filtering
             return;
 
         $param = $this->sanitizeAndParseFilter($param, true);
-
         $wheres = [];
-
         $items = $this->ExplodeSmartParams($param);
-
         $logic_operator = '';
 
         foreach ($items as $item) {
@@ -246,9 +243,9 @@ class Filtering
                 $vList = explode(',', $value);
                 $cArr = array();
                 foreach ($vList as $vL) {
-                    $cArr[] = $this->ct->Table->realtablename . '.id' . $comparison_operator . (int)$vL;
+                    $cArr[] = $this->ct->Table->realtablename . '.' . $this->ct->Table->realidfieldname . $comparison_operator . $this->ct->db->quote($vL);
 
-                    $this->PathValue[] = 'ID ' . $comparison_operator . ' ' . (int)$vL;
+                    $this->PathValue[] = 'ID ' . $comparison_operator . ' ' . $vL;
                 }
                 if (count($cArr) == 1)
                     $c = $cArr[0];

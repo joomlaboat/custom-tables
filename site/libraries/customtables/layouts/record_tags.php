@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use Exception;
 use JoomlaBasicMisc;
 use ESTables;
 
@@ -687,23 +688,33 @@ class Twig_Tables_Tags
         $join_ct->setTable($tableRow);
 
         if (is_numeric($record_id_or_filter) and (int)$record_id_or_filter > 0) {
-            $row = $tables->loadRecord($table, $record_id_or_filter);
-            if ($row === null)
-                return '';
-        } else {
-            if ($tables->loadRecords($table, $record_id_or_filter, $orderby, 1)) {
-                if (count($join_ct->Records) > 0)
-                    $row = $join_ct->Records[0];
-                else
+            try {
+                $row = $tables->loadRecord($table, $record_id_or_filter);
+                if ($row === null)
                     return '';
-            } else
+            } catch (Exception $e) {
+                $join_ct->app->enqueueMessage($e->getMessage(), 'error');
                 return '';
+            }
+        } else {
+
+            try {
+                if ($tables->loadRecords($table, $record_id_or_filter, $orderby, 1)) {
+                    if (count($join_ct->Records) > 0)
+                        $row = $join_ct->Records[0];
+                    else
+                        return '';
+                } else
+                    return '';
+            } catch (Exception $e) {
+                $join_ct->app->enqueueMessage($e->getMessage(), 'error');
+                return '';
+            }
         }
 
         if (Layouts::isLayoutContent($fieldname)) {
 
             $twig = new TwigProcessor($join_ct, $fieldname);
-
             $value = $twig->process($row);
 
             if ($twig->errorMessage !== null)
