@@ -390,7 +390,7 @@ class Inputbox
                 return JHTML::_('ESFileLink.render', $this->prefix . $this->field->fieldname, $value, $this->cssStyle, $this->cssclass, $this->field->params[0], $this->attributes);
 
             case 'customtables'://dok
-                return $this->render_customtables();
+                return $this->render_customtables($value);
 
             case 'sqljoin'://dok
                 return $this->render_tablejoin($value);
