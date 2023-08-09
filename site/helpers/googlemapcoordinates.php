@@ -19,8 +19,11 @@ require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARAT
 
 class JHTMLGoogleMapCoordinates
 {
-    static public function render(string $control_name, string $value): string
+    static public function render(string $control_name, ?string $value): string
     {
+        if ($value === null)
+            return '';
+
         $html = [];
         $html[] = '<div class="controls"><div class="field-calendar"><div class="input-group has-success">';
         $html[] = '<input type="text" class="form-control valid form-control-success" id="' . $control_name . '" name="' . $control_name . '" value="' . htmlspecialchars($value) . '" />';
