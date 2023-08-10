@@ -393,9 +393,18 @@ class JHTMLCTTableJoin
                 $val = null;
         }
 
+        $parentElementNotSelected = false;
+
         if (is_null($val)) {
-            if ($index == count($js_filters) - 1)
+
+            if ($index == count($js_filters) - 1) {
                 $val = $value;
+            } else {
+                if ($value != '') {
+                    $parentElementNotSelected = true;
+                    $js_filters[$next_index] = 'NULL';
+                }
+            }
         }
 
         if (isset($r->error) and $r->error)
@@ -449,24 +458,29 @@ class JHTMLCTTableJoin
             if (str_contains($cssClass, ' ct_improved_selectbox'))
                 JHtml::_('formbehavior.chosen', '.ct_improved_selectbox');
 
-            $result .= '<select id="' . $current_object_id . '" onChange="' . $onChangeAttribute . '"' . ' class="' . $cssClass . '">';
-            $result .= '<option value="">- ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT') . '</option>';
+            if ($parentElementNotSelected) {
+                $result .= '<div>Selected value does not have a parent.</div>';
+            } else {
 
-            if ($addRecordMenuAlias !== null)
-                $result .= '<option value="%addRecord%">- ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ADD') . '</option>';
+                $result .= '<select id="' . $current_object_id . '" onChange="' . $onChangeAttribute . '"' . ' class="' . $cssClass . '">';
+                $result .= '<option value="">- ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT') . '</option>';
 
-            for ($i = 0; $i < count($r); $i++) {
-                $label = htmlspecialchars_decode($r[$i]->label, ENT_HTML5);
+                if ($addRecordMenuAlias !== null)
+                    $result .= '<option value="%addRecord%">- ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ADD') . '</option>';
 
-                if ($r[$i]->id == $val)
-                    $result .= '<option value="' . $r[$i]->id . '" selected="selected">' . $label . '</option>';
-                elseif (str_contains($val, ',' . $r[$i]->id . ','))
-                    $result .= '<option value="' . $r[$i]->id . '" selected="selected">' . $label . '</option>';
-                else
-                    $result .= '<option value="' . $r[$i]->id . '">' . $r[$i]->label . '</option>';
+                for ($i = 0; $i < count($r); $i++) {
+                    $label = htmlspecialchars_decode($r[$i]->label, ENT_HTML5);
+
+                    if ($r[$i]->id == $val)
+                        $result .= '<option value="' . $r[$i]->id . '" selected="selected">' . $label . '</option>';
+                    elseif (str_contains($val, ',' . $r[$i]->id . ','))
+                        $result .= '<option value="' . $r[$i]->id . '" selected="selected">' . $label . '</option>';
+                    else
+                        $result .= '<option value="' . $r[$i]->id . '">' . $r[$i]->label . '</option>';
+                }
+
+                $result .= '</select>';
             }
-
-            $result .= '</select>';
 
             //Prepare the space for next elements
             if ($next_index < count($js_filters) && $val !== null)// and !$value_found)
@@ -480,8 +494,23 @@ class JHTMLCTTableJoin
                 } else {
                     $result .= JHTMLCTTableJoin::ctUpdateTableJoinLink($ct, $control_name, $next_index, $next_sub_index, null, $formId, $attributes, $onchange, $filter, $js_filters, $value, $addRecordMenuAlias, $cssClass);
                 }
-            } else
+            } else {
+
+                if ($next_index < count($js_filters) && $value !== null) {
+
+                    if (is_array($js_filters[$index])) {
+
+                        if ($next_sub_index < count($js_filters[$index]))
+                            $result .= JHTMLCTTableJoin::ctUpdateTableJoinLink($ct, $control_name, $next_index, $next_sub_index, null, $formId, $attributes, $onchange, $filter, $js_filters, $value, $addRecordMenuAlias, $cssClass);
+                        else
+                            $result .= '<div id="' . $control_name . 'Selector' . $next_index . '_' . $next_sub_index . '"></div>';
+                    } else {
+                        $result .= JHTMLCTTableJoin::ctUpdateTableJoinLink($ct, $control_name, $next_index, $next_sub_index, null, $formId, $attributes, $onchange, $filter, $js_filters, $value, $addRecordMenuAlias, $cssClass);
+                    }
+                }
+
                 $result .= '<div id="' . $control_name . 'Selector' . $next_index . '_' . $next_sub_index . '"></div>';
+            }
         }
         $result .= '</div>';
         return $result;

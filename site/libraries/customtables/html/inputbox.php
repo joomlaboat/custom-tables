@@ -159,9 +159,9 @@ class Inputbox
                 $join_to_tableName = $selector[5];
 
                 if ($additional_filter != '') {
-                    if ($join_tableName == $join_to_tableName) {
+                    if ($join_tableName == $join_to_tableName)
                         $filter .= ' and ' . $fld['fieldname'] . '=' . $additional_filter;
-                    }
+
                 } else {
                     //Check if this table has self-parent field - the TableJoin field linked with the same table.
                     if ($join_tableName == $tableName) {
