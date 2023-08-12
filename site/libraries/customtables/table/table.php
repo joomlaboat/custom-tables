@@ -48,7 +48,6 @@ class Table
     function __construct($Languages, $Env, $tablename_or_id_not_sanitized, $useridfieldname = null)
     {
         $this->db = Factory::getDBO();
-
         $this->Languages = $Languages;
         $this->Env = $Env;
         $this->tableid = 0;
@@ -168,11 +167,9 @@ class Table
 
     public function getRecordFieldValue($listingId, $resultField)
     {
-        $db = Factory::getDBO();
-        $query = ' SELECT ' . $resultField . ' FROM ' . $this->realtablename . ' WHERE ' . $this->realidfieldname . '=' . $db->quote($listingId) . ' LIMIT 1';
-
-        $db->setQuery($query);
-        $recs = $db->loadAssocList();
+        $query = ' SELECT ' . $resultField . ' FROM ' . $this->realtablename . ' WHERE ' . $this->realidfieldname . '=' . $this->db->quote($listingId) . ' LIMIT 1';
+        $this->db->setQuery($query);
+        $recs = $this->db->loadAssocList();
 
         if (count($recs) > 0)
             return $recs[0][$resultField];

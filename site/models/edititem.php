@@ -15,11 +15,8 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\CT;
 use CustomTables\CTUser;
-use CustomTables\Email;
-use CustomTables\Field;
 use CustomTables\Fields;
 use CustomTables\Filtering;
-use CustomTables\Layouts;
 use CustomTables\DataTypes\Tree;
 use CustomTables\CustomPHP\CleanExecute;
 use CustomTables\TwigProcessor;
@@ -539,11 +536,13 @@ class CustomTablesModelEditItem extends JModelLegacy
             if ($row !== null) {
                 $this->ct->Env->jinput->set("listing_id", $row[$this->ct->Table->realidfieldname]);
 
-                if ($phpOnAddFound)
-                    $this->doPHPonAdd($row);
+                if ($this->ct->Env->advancedTagProcessor) {
+                    if ($phpOnAddFound)
+                        CleanExecute::doPHPonAdd($this->ct, $row);
 
-                if ($phpOnChangeFound)
-                    $this->doPHPonChange($row);
+                    if ($phpOnChangeFound)
+                        CleanExecute::doPHPonChange($this->ct, $row);
+                }
 
                 $listing_id = $row[$this->ct->Table->realidfieldname];
             }
@@ -555,30 +554,32 @@ class CustomTablesModelEditItem extends JModelLegacy
             if ($row !== null) {
                 $this->ct->Env->jinput->set("listing_id", $row[$this->ct->Table->realidfieldname]);
 
-                if ($phpOnChangeFound or $this->ct->Table->tablerow['customphp'] != '')
-                    $this->doPHPonChange($row);
+                if ($this->ct->Env->advancedTagProcessor) {
+                    if ($phpOnChangeFound or $this->ct->Table->tablerow['customphp'] != '')
+                        CleanExecute::doPHPonChange($this->ct, $row);
 
-                if ($phpOnAddFound and $isCopy)
-                    $this->doPHPonAdd($row);
+                    if ($phpOnAddFound and $isCopy)
+                        CleanExecute::doPHPonAdd($this->ct, $row);
+                }
             }
         }
 
         if ($this->ct->Params->onRecordSaveSendEmailTo != '' or $this->ct->Params->onRecordAddSendEmailTo != '') {
             if ($this->ct->Params->onRecordAddSendEmail == 3) {
                 //check conditions
-                if ($this->checkSendEmailConditions($listing_id, $this->ct->Params->sendEmailCondition)) {
+                if ($saveField->checkSendEmailConditions($listing_id, $this->ct->Params->sendEmailCondition)) {
                     //Send email conditions met
-                    $this->sendEmailIfAddressSet($listing_id, $row);
+                    $saveField->sendEmailIfAddressSet($listing_id, $row);
                 }
             } else {
                 if ($isItNewRecords or $isCopy) {
                     //New record
                     if ($this->ct->Params->onRecordAddSendEmail == 1 or $this->ct->Params->onRecordAddSendEmail == 2)
-                        $this->sendEmailIfAddressSet($listing_id, $row);
+                        $saveField->sendEmailIfAddressSet($listing_id, $row);
                 } else {
                     //Old record
                     if ($this->ct->Params->onRecordAddSendEmail == 2) {
-                        $this->sendEmailIfAddressSet($listing_id, $row);
+                        $saveField->sendEmailIfAddressSet($listing_id, $row);
                     }
                 }
             }
@@ -884,279 +885,6 @@ class CustomTablesModelEditItem extends JModelLegacy
 	}
 	*/
 
-    function doPHPonAdd(&$row): bool
-    {
-        $listing_id = $row[$this->ct->Table->realidfieldname];
-        require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'layout.php');
-
-        foreach ($this->ct->Table->fields as $fieldrow) {
-            $realFieldName = $fieldrow['realfieldname'];
-            $typeParams = $fieldrow['typeparams'];
-
-            if ($fieldrow['type'] == 'phponadd') {
-                $parts = JoomlaBasicMisc::csv_explode(',', $typeParams);
-
-                if (count($parts) == 1 and str_contains($fieldrow['typeparams'], '"') and !str_contains($fieldrow['typeparams'], '****quote****'))
-                    $theScript = $fieldrow['typeparams'];//to support older version when type params field could contain php script only. Also ****quote****  wasn't supported
-                else {
-                    $theScript = $parts[0];
-                    $theScript = str_replace('****quote****', '"', $theScript);
-                    $theScript = str_replace('****apos****', "'", $theScript);
-                }
-
-                if ($this->ct->Env->legacySupport) {
-                    $LayoutProc = new LayoutProcessor($this->ct);
-                    $LayoutProc->layout = $theScript;
-                    $theScript = $LayoutProc->fillLayout($row, '', '[]', true);
-                }
-
-                $twig = new TwigProcessor($this->ct, $theScript);
-                $theScript = $twig->process();
-
-                if ($twig->errorMessage !== null)
-                    $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
-
-                if ($this->ct->Params->allowContentPlugins)
-                    $theScript = JoomlaBasicMisc::applyContentPlugins($theScript);
-
-                $theScript = 'return ' . $theScript . ';';
-
-                $error = '';
-                $value = CleanExecute::execute($theScript, $error);
-
-                if ($error != '') {
-                    $this->ct->app->enqueueMessage($error, 'error');
-                    return false;
-                }
-
-                $row[$realFieldName] = $value;
-
-                $savePHPQuery = $realFieldName . '=' . $this->ct->db->quote($value);
-                $query = 'UPDATE ' . $this->ct->Table->realtablename . ' SET ' . $savePHPQuery . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . $this->ct->db->quote($listing_id);
-
-                $this->ct->db->setQuery($query);
-                $this->ct->db->execute();
-            }
-        }
-        return true;
-    }
-
-    function doPHPonChange(&$row): bool
-    {
-        $listing_id = $row[$this->ct->Table->realidfieldname];
-        require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'layout.php');
-
-        $LayoutProc = new LayoutProcessor($this->ct);
-
-        foreach ($this->ct->Table->fields as $fieldrow) {
-            $realfieldname = $fieldrow['realfieldname'];
-
-            if ($fieldrow['type'] == 'phponchange') {
-                $parts = JoomlaBasicMisc::csv_explode(',', $fieldrow['typeparams']);
-
-                if (count($parts) == 1 and str_contains($fieldrow['typeparams'], '"') and !str_contains($fieldrow['typeparams'], '****quote****')) {
-                    $theScript = $fieldrow['typeparams'];//to support older version when type params field could countain php script only. Also ****quote****  wasn't supported
-                } else {
-                    $theScript = $parts[0];
-                    $theScript = str_replace('****quote****', '"', $theScript);
-                    $theScript = str_replace('****apos****', "'", $theScript);
-                }
-
-                if ($this->ct->Env->legacySupport) {
-                    $LayoutProc->layout = $theScript;
-                    $theScript = $LayoutProc->fillLayout($row, '', '[]', true);
-                }
-
-                $twig = new TwigProcessor($this->ct, $theScript);
-                $theScript = $twig->process();
-
-                if ($twig->errorMessage !== null)
-                    $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
-
-                if ($this->ct->Params->allowContentPlugins)
-                    $theScript = JoomlaBasicMisc::applyContentPlugins($theScript);
-
-                $theScript = 'return ' . $theScript . ';';
-
-                $error = '';
-                $value = CleanExecute::execute($theScript, $error);
-
-                if ($error != '') {
-                    $this->ct->app->enqueueMessage($error, 'error');
-                    return false;
-                }
-
-                $row[$realfieldname] = $value;
-
-                $savePHPQuery = $realfieldname . '=' . $this->ct->db->quote($value);
-                $query = 'UPDATE ' . $this->ct->Table->realtablename . ' SET ' . $savePHPQuery . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . $this->ct->db->quote($listing_id);
-
-                $this->ct->db->setQuery($query);
-                $this->ct->db->execute();
-            }
-        }
-        return true;
-    }
-
-    function checkSendEmailConditions($listing_id, $condition): bool
-    {
-        if ($condition == '')
-            return true; //if no conditions
-
-        $this->ct->Table->record = $this->getListingRowByID($listing_id);
-        $parsed_condition = $this->parseRowLayoutContent($condition);
-
-        $parsed_condition = '(' . $parsed_condition . ' ? 1 : 0)';
-
-        $error = '';
-        $value = CleanExecute::execute($parsed_condition, $error);
-
-        if ($error != '') {
-            $this->ct->app->enqueueMessage($error, 'error');
-            return false;
-        }
-
-        if ((int)$value == 1)
-            return true;
-
-        return false;
-
-    }
-
-    function getListingRowByID($listing_id)
-    {
-        $query = 'SELECT ' . implode(',', $this->ct->Table->selects) . ' FROM ' . $this->ct->Table->realtablename . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . $this->ct->db->quote($listing_id) . ' LIMIT 1';
-        $this->ct->db->setQuery($query);
-
-        $rows = $this->ct->db->loadAssocList();
-        if (count($rows) != 1)
-            return false;
-
-        return $rows[0];
-    }
-
-    function parseRowLayoutContent($content, $applyContentPlagins = true)
-    {
-        if ($this->ct->Env->legacySupport) {
-            require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'layout.php');
-
-            $LayoutProc = new LayoutProcessor($this->ct);
-            $LayoutProc->layout = $content;
-            $content = $LayoutProc->fillLayout($this->ct->Table->record);
-        }
-
-        $twig = new TwigProcessor($this->ct, $content);
-        $content = $twig->process($this->ct->Table->record);
-
-        if ($twig->errorMessage !== null)
-            $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
-
-        if ($applyContentPlagins and $this->ct->Params->allowContentPlugins)
-            $content = JoomlaBasicMisc::applyContentPlugins($content);
-
-        return $content;
-    }
-
-    function sendEmailIfAddressSet($listing_id, $row)//,$new_username,$new_password)
-    {
-        if ($this->ct->Params->onRecordAddSendEmailTo != '')
-            $status = $this->sendEmailNote($listing_id, $this->ct->Params->onRecordAddSendEmailTo, $row);
-        else
-            $status = $this->sendEmailNote($listing_id, $this->ct->Params->onRecordSaveSendEmailTo, $row);
-
-        if ($this->ct->Params->emailSentStatusField != '') {
-
-            foreach ($this->ct->Table->fields as $fieldrow) {
-                $fieldname = $fieldrow['fieldname'];
-                if ($this->ct->Params->emailSentStatusField == $fieldname) {
-
-                    $query = 'UPDATE ' . $this->ct->Table->realtablename . ' SET es_' . $fieldname . '=' . $status . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . $this->ct->db->quote($listing_id);
-
-                    $this->ct->db->setQuery($query);
-                    $this->ct->db->execute();
-                    return;
-                }
-            }
-        }
-    }
-
-    function sendEmailNote($listing_id, $emails, $row): int
-    {
-        $this->ct->Table->record = $this->getListingRowByID($listing_id);
-
-        //Prepare Email List
-        $emails_raw = JoomlaBasicMisc::csv_explode(',', $emails, '"', true);
-
-        $emails = array();
-        foreach ($emails_raw as $SendToEmail) {
-            $EmailPair = JoomlaBasicMisc::csv_explode(':', trim($SendToEmail));
-
-            $EmailTo = $this->parseRowLayoutContent(trim($EmailPair[0]), false);
-
-            if (isset($EmailPair[1]) and $EmailPair[1] != '')
-                $Subject = $this->parseRowLayoutContent($EmailPair[1]);
-            else
-                $Subject = 'Record added to "' . $this->ct->Table->tabletitle . '"';
-
-            if ($EmailTo != '')
-                $emails[] = array('email' => $EmailTo, 'subject' => $Subject);
-        }
-
-        $Layouts = new Layouts($this->ct);
-        $message_layout_content = $Layouts->getLayout($this->ct->Params->onRecordAddSendEmailLayout);
-
-        $note = $this->parseRowLayoutContent($message_layout_content);
-
-        $status = 0;
-
-        foreach ($emails as $SendToEmail) {
-            $EmailTo = $SendToEmail['email'];
-            $Subject = $SendToEmail['subject'];
-
-            $attachments = [];
-
-            $options = array();
-            $fList = JoomlaBasicMisc::getListToReplace('attachment', $options, $note, '{}');
-            $i = 0;
-            $note_final = $note;
-            foreach ($fList as $fItem) {
-                $filename = $options[$i];
-                if (file_exists($filename)) {
-                    $attachments[] = $filename;//TODO: Check the functionality
-                    $vlu = '';
-                } else
-                    $vlu = '<p>File "' . $filename . '"not found.</p>';
-
-                $note_final = str_replace($fItem, $vlu, $note);
-                $i++;
-            }
-
-            foreach ($this->ct->Table->fields as $fieldrow) {
-                if ($fieldrow['type'] == 'file') {
-                    $field = new Field($this->ct, $fieldrow, $row);
-                    $FileFolder = CT_FieldTypeTag_file::getFileFolder($field->params[0]);
-
-                    $filename = $FileFolder . $this->ct->Table->record[$fieldrow['realfieldname']];
-                    if (file_exists($filename))
-                        $attachments[] = $filename;//TODO: Check the functionality
-                }
-            }
-
-            $sent = Email::sendEmail($EmailTo, $Subject, $note_final, true, $attachments);
-
-            if ($sent !== true) {
-                //Something went wrong. Email not sent.
-                $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_SENDING_EMAIL') . ': ' . $EmailTo . ' (' . $Subject . ')', 'error');
-                $status = 0;
-            } else {
-                $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_EMAIL_SENT_TO') . ': ' . $EmailTo . ' (' . $Subject . ')');
-                $status = 1;
-            }
-        }
-
-        return $status;
-    }
-
     function PrepareAcceptReturnToLink($encoded_link, string &$msg): string
     {
         if ($encoded_link == '')
@@ -1185,8 +913,8 @@ class CustomTablesModelEditItem extends JModelLegacy
             $link = $LayoutProc->fillLayout($row, "", '[]', true);
         }
 
+        $twig = new TwigProcessor($this->ct, $link);
         try {
-            $twig = new TwigProcessor($this->ct, $link);
             $link = $twig->process($row);
         } catch (Exception $e) {
             $this->ct->app->enqueueMessage($e->getMessage(), 'error');
@@ -1211,7 +939,7 @@ class CustomTablesModelEditItem extends JModelLegacy
             foreach ($listing_ids_ as $listing_id) {
                 if ($listing_id != '') {
                     $listing_id = preg_replace("/[^a-zA-Z_\d-]/", "", $listing_id);
-                    if ($this->RefreshSingleRecord($listing_id, $save_log) == -1)
+                    if ($this->ct->RefreshSingleRecord($listing_id, $save_log) == -1)
                         return -count($listing_ids_); //negative value means that there is an error
                 }
             }
@@ -1223,73 +951,7 @@ class CustomTablesModelEditItem extends JModelLegacy
         if ($listing_id == 0 or $listing_id == '')
             return 0;
 
-        return $this->RefreshSingleRecord($listing_id, $save_log);
-    }
-
-    protected function RefreshSingleRecord($listing_id, $save_log): int
-    {
-        $query = 'SELECT ' . implode(',', $this->ct->Table->selects) . ' FROM ' . $this->ct->Table->realtablename . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . $this->ct->db->quote($listing_id) . ' LIMIT 1';
-        $this->ct->db->setQuery($query);
-
-        $rows = $this->ct->db->loadAssocList();
-        if (count($rows) == 0)
-            return -1;
-
-        $row = $rows[0];
-
-        $saveField = new SaveFieldQuerySet($this->ct, $row, false);
-
-        $this->ct->Env->jinput->set("listing_id", $listing_id);
-
-        $this->doPHPonChange($row);
-
-        //update MD5s
-        $this->updateMD5($saveField, $listing_id);
-
-        if ($save_log == 1)
-            $this->ct->Table->saveLog($listing_id, 10);
-
-        //TODO use $saveField->saveField
-        //$this->updateDefaultValues($row);
-
-        if ($this->ct->Env->advancedTagProcessor)
-            CleanExecute::executeCustomPHPfile($this->ct->Table->tablerow['customphp'], $row, $row);
-
-        //Send email note if applicable
-        if ($this->ct->Params->onRecordAddSendEmail == 3 and ($this->ct->Params->onRecordSaveSendEmailTo != '' or $this->ct->Params->onRecordAddSendEmailTo != '')) {
-            //check conditions
-            if ($this->checkSendEmailConditions($listing_id, $this->ct->Params->sendEmailCondition)) {
-                //Send email conditions met
-                $this->sendEmailIfAddressSet($listing_id, $row);//,$new_username,$new_password);
-            }
-        }
-
-        return 1;
-    }
-
-    function updateMD5($saveField, $listing_id)
-    {
-        //TODO: Use savefield
-        $saveMD5Query = array();
-        foreach ($this->ct->Table->fields as $fieldrow) {
-            if ($fieldrow['type'] == 'md5') {
-                $fieldsToCount = explode(',', str_replace('"', '', $fieldrow['typeparams']));//only field names, nothing else
-
-                $fields = array();
-                foreach ($fieldsToCount as $f) {
-                    //to make sure that field exists
-                    foreach ($this->ct->Table->fields as $fieldrow2) {
-                        if ($fieldrow2['fieldname'] == $f and $fieldrow['fieldname'] != $f)
-                            $fields[] = 'COALESCE(' . $fieldrow2['realfieldname'] . ')';
-                    }
-                }
-
-                if (count($fields) > 1)
-                    $saveMD5Query[] = $fieldrow['realfieldname'] . '=md5(CONCAT_WS(' . implode(',', $fields) . '))';
-            }
-        }
-
-        $saveField->runUpdateQuery($saveMD5Query, $listing_id);
+        return $this->ct->RefreshSingleRecord($listing_id, $save_log);
     }
 
     function setPublishStatus($status): int
@@ -1300,7 +962,7 @@ class CustomTablesModelEditItem extends JModelLegacy
             foreach ($listing_ids_ as $listing_id) {
                 if ($listing_id != '') {
                     $listing_id = preg_replace("/[^a-zA-Z_\d-]/", "", $listing_id);
-                    if ($this->setPublishStatusSingleRecord($listing_id, $status) == -1)
+                    if ($this->ct->setPublishStatusSingleRecord($listing_id, $status) == -1)
                         return -count($listing_ids_); //negative value means that there is an error
                 }
             }
@@ -1311,27 +973,7 @@ class CustomTablesModelEditItem extends JModelLegacy
         if ($listing_id == '' or $listing_id == 0)
             return 0;
 
-        return $this->setPublishStatusSingleRecord($listing_id, $status);
-    }
-
-    public function setPublishStatusSingleRecord($listing_id, $status): int
-    {
-        if (!$this->ct->Table->published_field_found)
-            return -1;
-
-        $query = 'UPDATE ' . $this->ct->Table->realtablename . ' SET published=' . (int)$status . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . $this->ct->db->quote($listing_id);
-
-        $this->ct->db->setQuery($query);
-        $this->ct->db->execute();
-
-        if ($status == 1)
-            $this->ct->Table->saveLog($listing_id, 3);
-        else
-            $this->ct->Table->saveLog($listing_id, 4);
-
-        $this->RefreshSingleRecord($listing_id, 0);
-
-        return 1;
+        return $this->ct->setPublishStatusSingleRecord($listing_id, $status);
     }
 
     function delete(): int

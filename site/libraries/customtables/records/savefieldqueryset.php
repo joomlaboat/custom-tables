@@ -29,7 +29,7 @@ use tagProcessor_Item;
 use tagProcessor_If;
 use tagProcessor_Page;
 use tagProcessor_Value;
-
+use CustomTables\CustomPHP\CleanExecute;
 use JoomlaBasicMisc;
 
 class SaveFieldQuerySet
@@ -1095,4 +1095,129 @@ class SaveFieldQuerySet
             }
         }
     }
+
+    public function checkSendEmailConditions(string $listing_id, string $condition): bool
+    {
+        if ($condition == '')
+            return true; //if no conditions
+
+        $this->ct->Table->loadRecord($listing_id);
+        $Layouts = new Layouts($this->ct);
+        $parsed_condition = $Layouts->parseRawLayoutContent($condition);
+        $parsed_condition = '(' . $parsed_condition . ' ? 1 : 0)';
+
+        $error = '';
+        if ($this->ct->Env->advancedTagProcessor)
+            $value = CleanExecute::execute($parsed_condition, $error);
+        else
+            $value = $parsed_condition;
+
+        if ($error != '') {
+            $this->ct->app->enqueueMessage($error, 'error');
+            return false;
+        }
+
+        if ((int)$value == 1)
+            return true;
+
+        return false;
+    }
+
+    function sendEmailIfAddressSet(string $listing_id, array $row)//,$new_username,$new_password)
+    {
+        if ($this->ct->Params->onRecordAddSendEmailTo != '')
+            $status = $this->sendEmailNote($listing_id, $this->ct->Params->onRecordAddSendEmailTo, $row);
+        else
+            $status = $this->sendEmailNote($listing_id, $this->ct->Params->onRecordSaveSendEmailTo, $row);
+
+        if ($this->ct->Params->emailSentStatusField != '') {
+
+            foreach ($this->ct->Table->fields as $fieldrow) {
+                $fieldname = $fieldrow['fieldname'];
+                if ($this->ct->Params->emailSentStatusField == $fieldname) {
+
+                    $query = 'UPDATE ' . $this->ct->Table->realtablename . ' SET es_' . $fieldname . '=' . $status . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . $this->ct->db->quote($listing_id);
+
+                    $this->ct->db->setQuery($query);
+                    $this->ct->db->execute();
+                    return;
+                }
+            }
+        }
+    }
+
+    function sendEmailNote(string $listing_id, string $emails, array $row): int
+    {
+        $this->ct->Table->loadRecord($listing_id);
+
+        //Prepare Email List
+        $emails_raw = JoomlaBasicMisc::csv_explode(',', $emails, '"', true);
+
+        $emails = array();
+        foreach ($emails_raw as $SendToEmail) {
+            $EmailPair = JoomlaBasicMisc::csv_explode(':', trim($SendToEmail));
+            $Layouts = new Layouts($this->ct);
+            $EmailTo = $Layouts->parseRawLayoutContent(trim($EmailPair[0]), false);
+
+            if (isset($EmailPair[1]) and $EmailPair[1] != '')
+                $Subject = $Layouts->parseRawLayoutContent($EmailPair[1]);
+            else
+                $Subject = 'Record added to "' . $this->ct->Table->tabletitle . '"';
+
+            if ($EmailTo != '')
+                $emails[] = array('email' => $EmailTo, 'subject' => $Subject);
+        }
+
+        $Layouts = new Layouts($this->ct);
+        $message_layout_content = $Layouts->getLayout($this->ct->Params->onRecordAddSendEmailLayout);
+        $note = $Layouts->parseRawLayoutContent($message_layout_content);
+        $status = 0;
+
+        foreach ($emails as $SendToEmail) {
+            $EmailTo = $SendToEmail['email'];
+            $Subject = $SendToEmail['subject'];
+
+            $attachments = [];
+
+            $options = array();
+            $fList = JoomlaBasicMisc::getListToReplace('attachment', $options, $note, '{}');
+            $i = 0;
+            $note_final = $note;
+            foreach ($fList as $fItem) {
+                $filename = $options[$i];
+                if (file_exists($filename)) {
+                    $attachments[] = $filename;//TODO: Check the functionality
+                    $vlu = '';
+                } else
+                    $vlu = '<p>File "' . $filename . '"not found.</p>';
+
+                $note_final = str_replace($fItem, $vlu, $note);
+                $i++;
+            }
+
+            foreach ($this->ct->Table->fields as $fieldrow) {
+                if ($fieldrow['type'] == 'file') {
+                    $field = new Field($this->ct, $fieldrow, $row);
+                    $FileFolder = CT_FieldTypeTag_file::getFileFolder($field->params[0]);
+
+                    $filename = $FileFolder . $this->ct->Table->record[$fieldrow['realfieldname']];
+                    if (file_exists($filename))
+                        $attachments[] = $filename;//TODO: Check the functionality
+                }
+            }
+
+            $sent = Email::sendEmail($EmailTo, $Subject, $note_final, true, $attachments);
+
+            if ($sent !== true) {
+                //Something went wrong. Email not sent.
+                $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_SENDING_EMAIL') . ': ' . $EmailTo . ' (' . $Subject . ')', 'error');
+                $status = 0;
+            } else {
+                $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_EMAIL_SENT_TO') . ': ' . $EmailTo . ' (' . $Subject . ')');
+                $status = 1;
+            }
+        }
+        return $status;
+    }
+
 }

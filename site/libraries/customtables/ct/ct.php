@@ -36,7 +36,7 @@ class CT
     var string $GroupBy;
     var ?Ordering $Ordering;
     var ?Filtering $Filter;
-    var $alias_fieldname;
+    var ?string $alias_fieldname;
     var int $Limit;
     var int $LimitStart;
     var bool $isEditForm;
@@ -110,7 +110,7 @@ class CT
         $this->prepareSEFLinkBase();
     }
 
-    public function setTable(array &$tableRow, $userIdFieldName = null): void
+    public function setTable(array $tableRow, $userIdFieldName = null): void
     {
         $this->Table = new Table($this->Languages, $this->Env, 0);
         $this->Table->setTable($tableRow, $userIdFieldName);
@@ -461,5 +461,91 @@ class CT
             CleanExecute::executeCustomPHPfile($this->Table->tablerow['customphp'], $new_row, $row);
 
         return 1;
+    }
+
+    public function setPublishStatusSingleRecord($listing_id, $status): int
+    {
+        if (!$this->Table->published_field_found)
+            return -1;
+
+        $query = 'UPDATE ' . $this->Table->realtablename . ' SET published=' . (int)$status . ' WHERE ' . $this->Table->realidfieldname . '=' . $this->db->quote($listing_id);
+
+        $this->db->setQuery($query);
+        $this->db->execute();
+
+        if ($status == 1)
+            $this->Table->saveLog($listing_id, 3);
+        else
+            $this->Table->saveLog($listing_id, 4);
+
+        $this->RefreshSingleRecord($listing_id, 0);
+        return 1;
+    }
+
+    public function RefreshSingleRecord($listing_id, $save_log): int
+    {
+        $query = 'SELECT ' . implode(',', $this->Table->selects) . ' FROM ' . $this->Table->realtablename
+            . ' WHERE ' . $this->Table->realidfieldname . '=' . $this->db->quote($listing_id) . ' LIMIT 1';
+
+        $this->db->setQuery($query);
+        $rows = $this->db->loadAssocList();
+
+        if (count($rows) == 0)
+            return -1;
+
+        $row = $rows[0];
+
+        $saveField = new SaveFieldQuerySet($this, $row, false);
+        $this->Env->jinput->set("listing_id", $listing_id);
+
+        if ($this->Env->advancedTagProcessor)
+            CleanExecute::doPHPonChange($this, $row);
+
+        //update MD5s
+        $this->updateMD5($saveField, $listing_id);
+
+        if ($save_log == 1)
+            $this->Table->saveLog($listing_id, 10);
+
+        //TODO use $saveField->saveField
+        //$this->updateDefaultValues($row);
+
+        if ($this->Env->advancedTagProcessor)
+            CleanExecute::executeCustomPHPfile($this->Table->tablerow['customphp'], $row, $row);
+
+        //Send email note if applicable
+        if ($this->Params->onRecordAddSendEmail == 3 and ($this->Params->onRecordSaveSendEmailTo != '' or $this->Params->onRecordAddSendEmailTo != '')) {
+            //check conditions
+
+            if ($saveField->checkSendEmailConditions($listing_id, $this->Params->sendEmailCondition)) {
+                //Send email conditions met
+                $saveField->sendEmailIfAddressSet($listing_id, $row);//,$new_username,$new_password);
+            }
+        }
+        return 1;
+    }
+
+    protected function updateMD5(SaveFieldQuerySet $saveField, string $listing_id)
+    {
+        //TODO: Use savefield
+        $saveMD5Query = array();
+        foreach ($this->Table->fields as $fieldrow) {
+            if ($fieldrow['type'] == 'md5') {
+                $fieldsToCount = explode(',', str_replace('"', '', $fieldrow['typeparams']));//only field names, nothing else
+
+                $fields = array();
+                foreach ($fieldsToCount as $f) {
+                    //to make sure that field exists
+                    foreach ($this->Table->fields as $fieldrow2) {
+                        if ($fieldrow2['fieldname'] == $f and $fieldrow['fieldname'] != $f)
+                            $fields[] = 'COALESCE(' . $fieldrow2['realfieldname'] . ')';
+                    }
+                }
+
+                if (count($fields) > 1)
+                    $saveMD5Query[] = $fieldrow['realfieldname'] . '=md5(CONCAT_WS(' . implode(',', $fields) . '))';
+            }
+        }
+        $saveField->runUpdateQuery($saveMD5Query, $listing_id);
     }
 }

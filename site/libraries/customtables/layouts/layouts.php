@@ -20,6 +20,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use Exception;
 use Joomla\CMS\Factory;
 use JoomlaBasicMisc;
+use LayoutProcessor;
 
 class Layouts
 {
@@ -517,5 +518,27 @@ class Layouts
             9 => 'COM_CUSTOMTABLES_LAYOUTS_CSV',
             10 => 'COM_CUSTOMTABLES_LAYOUTS_JSON'
         );
+    }
+
+    function parseRawLayoutContent(string $content, bool $applyContentPlugins = true): string
+    {
+        if ($this->ct->Env->legacySupport) {
+            require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'layout.php');
+
+            $LayoutProc = new LayoutProcessor($this->ct);
+            $LayoutProc->layout = $content;
+            $content = $LayoutProc->fillLayout($this->ct->Table->record);
+        }
+
+        $twig = new TwigProcessor($this->ct, $content);
+        $content = $twig->process($this->ct->Table->record);
+
+        if ($twig->errorMessage !== null)
+            $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
+
+        if ($applyContentPlugins and $this->ct->Params->allowContentPlugins)
+            $content = JoomlaBasicMisc::applyContentPlugins($content);
+
+        return $content;
     }
 }
