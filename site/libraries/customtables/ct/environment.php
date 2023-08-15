@@ -189,18 +189,7 @@ class Environment
         return false;
     }
 
-    protected static function check_user_agent_for_apple(): bool
-    {
-        $user_agent = strtolower($_SERVER['HTTP_USER_AGENT']);
-        if (preg_match("/iphone|itouch|ipod|ipad/", $user_agent)) {
-            // these are the most common
-            return true;
-        }
-
-        return false;
-    }
-
-    protected static function check_user_agent_for_ie(): bool
+    public static function check_user_agent_for_ie(): bool
     {
         $u = $_SERVER['HTTP_USER_AGENT'];
         if (str_contains($u, 'MSIE'))
@@ -208,6 +197,16 @@ class Environment
         elseif (str_contains($u, 'Trident'))
             return true;
 
+        return false;
+    }
+
+    protected static function check_user_agent_for_apple(): bool
+    {
+        $user_agent = strtolower($_SERVER['HTTP_USER_AGENT']);
+        if (preg_match("/iphone|itouch|ipod|ipad/", $user_agent)) {
+            // these are the most common
+            return true;
+        }
         return false;
     }
 }
