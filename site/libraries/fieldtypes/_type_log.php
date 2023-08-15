@@ -97,7 +97,7 @@ class CT_FieldTypeTag_log
                         $result .= '<a href="' . $new_url . '" target="_blank">' . $str . '</a>';
                 } else {
                     if ($data[3] != '') {
-                        if (strpos($new_url, '?') === false)
+                        if (!str_contains($new_url, '?'))
                             $link = $new_url . '?version=' . $i;
                         else
                             $link = $new_url . '&version=' . $i;

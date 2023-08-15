@@ -55,7 +55,7 @@ function getESTables()
                 //	die;
             }
 
-        } elseif (strpos($tablename, '_customtables_') !== false) {
+        } elseif (str_contains($tablename, '_customtables_')) {
             updateFields($tablename);
         }
     }
@@ -386,11 +386,10 @@ function fixFields($tablename)
 
         foreach ($a as $b) {
 
-
-            if (strpos($fn, $b) !== false) {
+            if (str_contains($fn, $b)) {
                 //Do something
 
-                if ($b == '_1' and strpos($fn, '_10') === false) {
+                if ($b == '_1' and !str_contains($fn, '_10')) {
                     //rename
                     $newcolumnname = str_replace('_1', '', $field['Field']);
                     $query = 'ALTER TABLE `' . $tablename . '` CHANGE `' . $fn . '` `' . $newcolumnname . '` ' . $type . ' ' . ($null != 'NO' ? 'NULL' : '') . ';';

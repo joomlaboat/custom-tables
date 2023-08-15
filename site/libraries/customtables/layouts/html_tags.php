@@ -347,7 +347,7 @@ class Twig_Html_Tags
         if (!is_null($this->ct->Params->ModuleId))
             return '';
 
-        $link = $this->ct->Env->current_url . (strpos($this->ct->Env->current_url, '?') === false ? '?' : '&') . 'tmpl=component&amp;print=1';
+        $link = $this->ct->Env->current_url . (!str_contains($this->ct->Env->current_url, '?') ? '?' : '&') . 'tmpl=component&amp;print=1';
 
         if ($this->ct->Env->jinput->getInt('moduleid', 0) != 0) {
             //search module
@@ -701,12 +701,11 @@ class Twig_Html_Tags
             else {
                 $found = false;
                 foreach ($newPath as $newitem) {
-                    if (!(strpos($newitem, $item) === false)) {
+                    if (str_contains($newitem, $item)) {
                         $found = true;
                         break;
                     }
                 }
-
                 if (!$found)
                     $newPath[] = $item;
             }

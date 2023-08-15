@@ -122,19 +122,19 @@ class tagProcessor_If
     {
         $opr = '';
 
-        if (strpos($str, '<=') !== false)
+        if (str_contains($str, '<='))
             $opr = '<=';
-        elseif (strpos($str, '>=') !== false)
+        elseif (str_contains($str, '>='))
             $opr = '>=';
-        elseif (strpos($str, '!=') !== false)
+        elseif (str_contains($str, '!='))
             $opr = '!=';
-        elseif (strpos($str, '==') !== false)
+        elseif (str_contains($str, '=='))
             $opr = '==';
-        elseif (strpos($str, '=') !== false)
+        elseif (str_contains($str, '='))
             $opr = '=';
-        elseif (strpos($str, '<') !== false)
+        elseif (str_contains($str, '<'))
             $opr = '<';
-        elseif (strpos($str, '>') !== false)
+        elseif (str_contains($str, '>'))
             $opr = '>';
         return $opr;
     }
@@ -146,12 +146,12 @@ class tagProcessor_If
 
         if (is_numeric($value1))
             $value1 = (float)$value1;
-        elseif (strpos($value1, ',') !== false)
+        elseif (str_contains($value1, ','))
             $value1 = explode(',', $value1);
 
         if (is_numeric($value2))
             $value2 = (float)$value2;
-        elseif (strpos($value2, ',') !== false)
+        elseif (str_contains($value2, ','))
             $value2 = explode(',', $value2);
 
         if (is_array($value1) and !is_array($value2)) {

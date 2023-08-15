@@ -65,7 +65,7 @@ class Tree
 
     public static function getMultyValueTitles($PropertyTypes, $langpostfix, $StartFrom, $Separator, array $list_of_params = [])
     {
-        if (strpos($PropertyTypes, '.') === false and count($list_of_params) > 0)
+        if (!str_contains($PropertyTypes, '.') and count($list_of_params) > 0)
             $PropertyTypes = ',' . $list_of_params[0] . '.' . $PropertyTypes . '.,';
 
         $RowPropertyTypes = explode(",", $PropertyTypes);
@@ -161,163 +161,23 @@ class Tree
         return $title;
     }
 
-
-
-    /*
-    function getParamValue($pars,$lookfor)
+    public static function CleanLink($newParams, $deleteWhat)
     {
-        $r=explode('.',$lookfor);
-        $c=count($r);
-        foreach($pars as $par)
-        {
-            $p=strpos($par,$lookfor.".");
-            if(!($p===false))
-            {
-                if($p==0)
-                {
-                    $res=explode(".",$par);
-                    if(count($res)>1) return $res[$c];
-                }
-            }
-        }
-
-        return "";
-    }
-    */
-
-    /*
-    function getParamFullValue($pars,$lookfor)
-    {
-        foreach($pars as $par)
-        {
-            $p=strpos($par,$lookfor.".");
-            if(!($p===false))
-            {
-                if($p==0)
-                {
-                    return $par;
-                }
-            }
-        }
-
-        return "";
-    }
-    */
-
-    /*
-    function CleanLinkMulti($newparams, $deletewhat)
-    {
-        foreach($deletewhat as $what)
-        {
-            $newparams=Tree::CleanLink($newparams, $what);
-        }
-        return $newparams;
-    }
-    */
-
-    public static function CleanLink($newparams, $deletewhat)
-    {
-
         $i = 0;
         do {
-            $npv = substr($newparams[$i], 0, strlen($deletewhat));
-            if (!(strpos($npv, $deletewhat) === false)) {
-                unset($newparams[$i]);
-                $newparams = array_values($newparams);
-                if (count($newparams) == 0) return $newparams;
-
+            $npv = substr($newParams[$i], 0, strlen($deleteWhat));
+            if (str_contains($npv, $deleteWhat)) {
+                unset($newParams[$i]);
+                $newParams = array_values($newParams);
+                if (count($newParams) == 0) return $newParams;
                 $i = 0;
 
             } else
                 $i++;
 
-        } while ($i < count($newparams));
-
-        return $newparams;
-
+        } while ($i < count($newParams));
+        return $newParams;
     }
-    /*
-    function CleanLink($newparams, $deletewhat)
-    {
-        $i=0;
-        do
-        {
-            if(!(strpos($newparams[$i],$deletewhat)===false))
-            {
-            unset($newparams[$i]);
-            $newparams=array_values($newparams);
-            if(count($newparams)==0) return $newparams;
-
-            $i=0;
-
-            }
-            else
-            $i++;
-
-        }while($i<count($newparams));
-
-        return $newparams;
-    }
-    */
-
-    /*
-    function getOnlyOneParam($vlu)
-    {
-
-        $vluarray=explode(',',$vlu);
-        foreach($vluarray as $item)
-        {
-            $a=trim($item);
-            if($a!='')
-            {
-                return $a;
-            }
-
-        }
-        return '';
-    }
-    */
-
-    /*
-    function ShortenParam($vlu, $count)
-    {
-        $vluarr=explode('.',$vlu);
-        $parms=array();
-        $c=0;
-        foreach($vluarr as $item)
-        {
-            $parms[]=$item;
-            $c++;
-            if($c>=$count)
-                break;
-        }
-        return implode('.',$parms);
-    }
-    */
-
-    /*
-    function ShortenParambyOne($vlu)
-    {
-        $vluarr=explode('.',$vlu);
-        $count=count($vluarr)-2;
-
-        if($count==0)
-            return '';
-
-
-        $parms=array();
-        $c=0;
-        foreach($vluarr as $item)
-        {
-            $parms[]=$item;
-            $c++;
-            if($c>=$count)
-                break;
-        }
-
-        return implode('.',$parms);
-    }
-    */
 
     public static function BuildULHtmlList(&$vlus, &$index, $langpostfix, $isFirstElement = true, $last = '')
     {
@@ -403,8 +263,6 @@ class Tree
                 if ($ItemSelected)
                     $result .= '<li class="esSelectedElement">' . $row->title . '</li>';
             }
-
-
         }
 
         if ($result == '<ul>')
@@ -413,7 +271,6 @@ class Tree
             $result .= '</ul>';
 
         $ItemList = '"' . implode('","', $list_ids) . '"';
-
         return $result;
     }
 
@@ -423,7 +280,6 @@ class Tree
         $query = 'SELECT id, optionname, title' . $langPostfix . ' AS title FROM #__customtables_options WHERE parentid=' . (int)$parentId;
         $query .= ' ORDER BY ordering, title';
         $db->setQuery($query);
-
         return $db->loadObjectList();
     }
 

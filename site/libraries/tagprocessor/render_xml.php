@@ -38,7 +38,7 @@ trait render_xml
             if (isset($fieldpair[1])) {
                 $vlu = str_replace("'", '"', $fieldpair[1]);
 
-                if (strpos($vlu, ',') !== false)
+                if (str_contains($vlu, ','))
                     $vlu = '"' . $vlu . '"';
             } else
                 $vlu = "";

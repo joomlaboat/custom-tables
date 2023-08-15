@@ -54,7 +54,7 @@ class ESMultiSelector
 
 
             if ($count_child > 0) {
-                if ((strpos($field_value, $optionnamefull . '.') === false)) {
+                if ((!str_contains($field_value, $optionnamefull . '.'))) {
                     $result .= '<li><input type="checkbox" id="' . $ObjectName . '_' . $row->id . '" name="' . $ObjectName . '_' . $row->id . '" onClick=\'CustomTablesChildClick("' . $ObjectName . '_' . $row->id . '", "div' . $ObjectName . '_' . $row->id . '")\'  >';
                     $result .= '<b>' . $row->title . '</b> (' . $count_child . ')';
                     $result .= '<div name="div' . $ObjectName . '_' . $row->id . '" id="div' . $ObjectName . '_' . $row->id . '" style="display: none;">';

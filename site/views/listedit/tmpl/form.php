@@ -75,7 +75,7 @@ $max_file_size = JoomlaBasicMisc::file_upload_max_size();
                         if (!$this->isNew)
                             $isReadOnly = true;
 
-                        if (!(strpos($this->optionRecord->optionname, ' ') === false))
+                        if (!(!str_contains($this->optionRecord->optionname, ' ')))
                             $isReadOnly = false;
                         ?>
                         <input type="text" name="optionname" id="optionname" class="inputbox" size="40"

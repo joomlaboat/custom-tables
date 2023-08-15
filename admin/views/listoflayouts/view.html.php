@@ -223,15 +223,15 @@ class CustomtablesViewListoflayouts extends JViewLegacy
         $original_ct_matches = 0;
 
         foreach ($original_ct_tags_s as $tag) {
-            if (strpos($row->layoutcode, '[' . $tag . ':') !== false)
+            if (str_contains($row->layoutcode, '[' . $tag . ':'))
                 $original_ct_matches += 1;
 
-            if (strpos($row->layoutcode, '[' . $tag . ']') !== false)
+            if (str_contains($row->layoutcode, '[' . $tag . ']'))
                 $original_ct_matches += 1;
         }
 
         foreach ($original_ct_tags_q as $tag) {
-            if (strpos($row->layoutcode, '{' . $tag . ':') !== false)
+            if (str_contains($row->layoutcode, '{' . $tag . ':'))
                 $original_ct_matches += 1;
 
             if (strpos($row->layoutcode, '{' . $tag . '}') !== false)
@@ -241,16 +241,16 @@ class CustomtablesViewListoflayouts extends JViewLegacy
         foreach ($fields as $field) {
             $fieldName = $field['fieldname'];
 
-            if (strpos($row->layoutcode, '*' . $fieldName . '*') !== false)
+            if (str_contains($row->layoutcode, '*' . $fieldName . '*'))
                 $original_ct_matches += 1;
 
-            if (strpos($row->layoutcode, '|' . $fieldName . '|') !== false)
+            if (str_contains($row->layoutcode, '|' . $fieldName . '|'))
                 $original_ct_matches += 1;
 
-            if (strpos($row->layoutcode, '[' . $fieldName . ':') !== false)
+            if (str_contains($row->layoutcode, '[' . $fieldName . ':'))
                 $original_ct_matches += 1;
 
-            if (strpos($row->layoutcode, '[' . $fieldName . ']') !== false)
+            if (str_contains($row->layoutcode, '[' . $fieldName . ']'))
                 $original_ct_matches += 1;
         }
 
@@ -258,23 +258,23 @@ class CustomtablesViewListoflayouts extends JViewLegacy
         $twig_matches = 0;
 
         foreach ($twig_tags as $tag) {
-            if (strpos($row->layoutcode, '{{ ' . $tag . '(') !== false)
+            if (str_contains($row->layoutcode, '{{ ' . $tag . '('))
                 $twig_matches += 1;
 
-            if (strpos($row->layoutcode, '{{ ' . $tag . ' }}') !== false)
+            if (str_contains($row->layoutcode, '{{ ' . $tag . ' }}'))
                 $twig_matches += 1;
         }
 
         foreach ($fields as $field) {
             $fieldName = $field['fieldname'];
 
-            if (strpos($row->layoutcode, '{{ ' . $fieldName . '(') !== false)
+            if (str_contains($row->layoutcode, '{{ ' . $fieldName . '('))
                 $twig_matches += 1;
 
-            if (strpos($row->layoutcode, '{{ ' . $fieldName . ' }}') !== false)
+            if (str_contains($row->layoutcode, '{{ ' . $fieldName . ' }}'))
                 $twig_matches += 1;
 
-            if (strpos($row->layoutcode, '{{ ' . $fieldName . '.') !== false)
+            if (str_contains($row->layoutcode, '{{ ' . $fieldName . '.'))
                 $twig_matches += 1;
         }
 

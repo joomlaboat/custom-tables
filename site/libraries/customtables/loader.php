@@ -37,9 +37,7 @@ function CTLoader($include_utilities = false, $include_html = false, $PLUGIN_NAM
         }
     }
 
-
     $path = dirname(__FILE__) . DIRECTORY_SEPARATOR;
-
     $pathIntegrity = $path . 'integrity' . DIRECTORY_SEPARATOR;
 
     require_once($pathIntegrity . 'integrity.php');

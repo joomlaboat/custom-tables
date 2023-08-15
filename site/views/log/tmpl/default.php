@@ -17,7 +17,7 @@ $currentURL = JoomlaBasicMisc::curPageURL();
 $cleanURL = JoomlaBasicMisc::deleteURLQueryOption($currentURL, 'action');
 $cleanURL = JoomlaBasicMisc::deleteURLQueryOption($cleanURL, 'user');
 
-if (strpos($cleanURL, "?") === false)
+if (!str_contains($cleanURL, "?"))
     $cleanURL .= '?';
 else
     $cleanURL .= '&';

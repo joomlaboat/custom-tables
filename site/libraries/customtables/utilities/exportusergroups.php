@@ -25,7 +25,7 @@ class ImportExportUserGroups
         if (file_exists($filename)) {
             $data = file_get_contents($filename);
 
-            if (strpos($data, '<usergroupsexport>') === false) {
+            if (!str_contains($data, '<usergroupsexport>')) {
                 $msg = 'Uploaded file does not contain User Groups JSON data.';
                 return false;
             }

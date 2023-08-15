@@ -320,10 +320,10 @@ class JESPagination extends JObject
         $query_paramsPlusPrefix = JoomlaBasicMisc::deleteURLQueryOption($query_paramsPlusPrefix, 'start');
 
         if ($query_params != '')
-            $query_paramsPlusPrefix .= (strpos($query_paramsPlusPrefix, '?') === false ? '?' : '&') . $this->prefix;
+            $query_paramsPlusPrefix .= (!str_contains($query_paramsPlusPrefix, '?') ? '?' : '&') . $this->prefix;
 
         if ($this->prefix != '')
-            $query_paramsPlusPrefix .= (strpos($query_paramsPlusPrefix, '?') === false ? '?' : '&') . $this->prefix;
+            $query_paramsPlusPrefix .= (!str_contains($query_paramsPlusPrefix, '?') ? '?' : '&') . $this->prefix;
 
         $data->all = new JESPaginationObject(JoomlaBasicMisc::JTextExtended('JLIB_HTML_VIEW_ALL'), $this->prefix);
         if (!$this->_viewall) {
@@ -369,9 +369,9 @@ class JESPagination extends JObject
             $end = ($this->get('pages.total') - 1) * $this->limit;
 
             $data->next->base = $next;
-            $data->next->link = JRoute::_($query_paramsPlusPrefix . (strpos($query_paramsPlusPrefix, '?') === false ? '?' : '&') . 'start=' . $next);
+            $data->next->link = JRoute::_($query_paramsPlusPrefix . (!str_contains($query_paramsPlusPrefix, '?') ? '?' : '&') . 'start=' . $next);
             $data->end->base = $end;
-            $data->end->link = JRoute::_($query_paramsPlusPrefix . (strpos($query_paramsPlusPrefix, '?') === false ? '?' : '&') . 'start=' . $end);
+            $data->end->link = JRoute::_($query_paramsPlusPrefix . (!str_contains($query_paramsPlusPrefix, '?') ? '?' : '&') . 'start=' . $end);
         }
 
         $data->pages = array();
@@ -387,7 +387,7 @@ class JESPagination extends JObject
                 if ($offset == 0)
                     $data->pages[$i]->link = JRoute::_($query_paramsPlusPrefix);
                 else
-                    $data->pages[$i]->link = JRoute::_($query_paramsPlusPrefix . (strpos($query_paramsPlusPrefix, '?') === false ? '?' : '&') . 'start=' . $offset);
+                    $data->pages[$i]->link = JRoute::_($query_paramsPlusPrefix . (!str_contains($query_paramsPlusPrefix, '?') ? '?' : '&') . 'start=' . $offset);
             }
         }
         return $data;
