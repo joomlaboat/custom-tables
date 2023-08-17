@@ -22,7 +22,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 class ImportTables
 {
-    public static function processFile($filename, $menutype, &$msg, $category = '', $importfields = true, $importlayouts = true, $importmenu = true)
+    public static function processFile($filename, $menuType, &$msg, $category = '', $importFields = true, $importLayouts = true, $importMenu = true): bool
     {
         $ct = new CT;
 
@@ -32,15 +32,16 @@ class ImportTables
                 $msg = 'Uploaded file "' . $filename . '" is empty.';
                 return false;
             }
+            $ct->Env->folderToSaveLayouts = null;
 
-            return ImportTables::processContent($ct, $data, $menutype, $msg, $category, $importfields, $importlayouts, $importmenu);
+            return ImportTables::processContent($ct, $data, $menuType, $msg, $category, $importFields, $importLayouts, $importMenu);
         } else {
             $msg = 'Uploaded file "' . $filename . '" not found.';
             return false;
         }
     }
 
-    public static function processContent(CT &$ct, $data, $menutype, &$msg, $category = '', $importfields = true, $importlayouts = true, $importmenu = true)
+    public static function processContent(CT &$ct, $data, $menutype, &$msg, $category = '', $importFields = true, $importLayouts = true, $importMenu = true)
     {
         $keyword = '<customtablestableexport>';
         if (!str_contains($data, $keyword)) {
@@ -52,7 +53,7 @@ class ImportTables
         }
 
         $JSON_data = json_decode(str_replace($keyword, '', $data), true);
-        return ImportTables::processData($ct, $JSON_data, $menutype, $msg, $category, $importfields, $importlayouts, $importmenu);
+        return ImportTables::processData($ct, $JSON_data, $menutype, $msg, $category, $importFields, $importLayouts, $importMenu);
     }
 
     protected static function processData(CT &$ct, $jsondata, $menutype, &$msg, $category, $importfields, $importlayouts, $importmenu)
