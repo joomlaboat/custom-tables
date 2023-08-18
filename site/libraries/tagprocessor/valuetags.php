@@ -490,49 +490,4 @@ class tagProcessor_Value
 
         return $valueProcessor->renderValue($fieldRow, $row, $option_list);
     }
-
-    public static function showUserGroup(int $userid)
-    {
-        $db = Factory::getDBO();
-        $query = 'SELECT title FROM #__usergroups WHERE id=' . $userid . ' LIMIT 1';
-
-        $db->setQuery($query);
-
-        $options = $db->loadAssocList();
-        if (count($options) != 0)
-            return $options[0]['title'];
-
-        return '';
-    }
-
-    public static function showUserGroups(?string $valueArrayString)
-    {
-        if ($valueArrayString == '')
-            return '';
-
-        $db = Factory::getDBO();
-
-        $where = array();
-        $valueArray = explode(',', $valueArrayString);
-        foreach ($valueArray as $value) {
-            if ($value != '') {
-                $where[] = 'id=' . (int)$value;
-            }
-        }
-
-        $query = 'SELECT title FROM #__usergroups WHERE ' . implode(' OR ', $where) . ' ORDER BY title';
-
-        $db->setQuery($query);
-
-        $options = $db->loadAssocList();
-
-        if (count($options) == 0)
-            return '';
-
-        $groups = array();
-        foreach ($options as $opt)
-            $groups[] = $opt['title'];
-
-        return implode(',', $groups);
-    }
 }

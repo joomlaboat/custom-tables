@@ -136,7 +136,7 @@ class Environment
         if (file_exists($path . 'servertags.php'))
             require_once($path . 'servertags.php');
 
-        $this->isMobile = $this->check_user_agent('mobile');
+        $this->isMobile = self::check_user_agent('mobile');
 
         $params = ComponentHelper::getParams('com_customtables');
 
@@ -160,7 +160,7 @@ class Environment
 
     /* USER-AGENTS ================================================== */
     //https://stackoverflow.com/questions/6524301/detect-mobile-browser
-    protected function check_user_agent($type = NULL): bool
+    public static function check_user_agent($type = NULL): bool
     {
         $user_agent = strtolower($_SERVER['HTTP_USER_AGENT'] ?? '');
         if ($type == 'bot') {
@@ -200,7 +200,7 @@ class Environment
         return false;
     }
 
-    protected static function check_user_agent_for_apple(): bool
+    public static function check_user_agent_for_apple(): bool
     {
         $user_agent = strtolower($_SERVER['HTTP_USER_AGENT']);
         if (preg_match("/iphone|itouch|ipod|ipad/", $user_agent)) {

@@ -584,4 +584,46 @@ class CTUser
 
         return $wheres;
     }
+
+    public static function showUserGroup(int $userid): string
+    {
+        $db = Factory::getDBO();
+        $query = 'SELECT title FROM #__usergroups WHERE id=' . $userid . ' LIMIT 1';
+        $db->setQuery($query);
+
+        $options = $db->loadAssocList();
+        if (count($options) != 0)
+            return $options[0]['title'];
+
+        return '';
+    }
+
+    public static function showUserGroups(?string $valueArrayString): string
+    {
+        if ($valueArrayString == '')
+            return '';
+
+        $db = Factory::getDBO();
+
+        $where = array();
+        $valueArray = explode(',', $valueArrayString);
+        foreach ($valueArray as $value) {
+            if ($value != '') {
+                $where[] = 'id=' . (int)$value;
+            }
+        }
+
+        $query = 'SELECT title FROM #__usergroups WHERE ' . implode(' OR ', $where) . ' ORDER BY title';
+        $db->setQuery($query);
+        $options = $db->loadAssocList();
+
+        if (count($options) == 0)
+            return '';
+
+        $groups = array();
+        foreach ($options as $opt)
+            $groups[] = $opt['title'];
+
+        return implode(',', $groups);
+    }
 }
