@@ -44,8 +44,9 @@ class JHTMLCTTableJoin
 
         //Get initial table filters based on the value
         $js_filters = [];
+        $js_filters_FieldName = [];
         $parent_id = $value;
-        JHTMLCTTableJoin::processValue($filter, $parent_id, $js_filters);
+        JHTMLCTTableJoin::processValue($filter, $parent_id, $js_filters, $js_filters_FieldName);
 
         if (count($js_filters) == 0)
             $js_filters[] = $value;
@@ -66,6 +67,7 @@ class JHTMLCTTableJoin
         $data[] = 'data-fieldname="' . $field->fieldname . '"';
         $data[] = 'data-controlname="' . $control_name . '"';
         $data[] = 'data-valuefilters="' . base64_encode(json_encode($js_filters)) . '"';
+        $data[] = 'data-valuefiltersnames="' . base64_encode(json_encode($js_filters_FieldName)) . '"';
         $data[] = 'data-onchange="' . base64_encode($onchange) . '"';
         $data[] = 'data-listing_id="' . $listing_is . '"';
         $data[] = 'data-value="' . htmlspecialchars($value) . '"';
@@ -96,7 +98,7 @@ class JHTMLCTTableJoin
         return '<input type="hidden" id="' . $control_name . '" name="' . $control_name . '" value="' . htmlspecialchars($value) . '" ' . $attributes . '/>'
             . '<div id="' . $control_name . 'Wrapper" ' . implode(' ', $data) . '>'
             . JHTMLCTTableJoin::ctUpdateTableJoinLink($ct, $control_name, 0, 0, "", $formID, $attributes, $onchange,
-                $filter, $js_filters, $value, $addRecordMenuAlias, $cssClass)
+                $filter, $js_filters, $js_filters_FieldName, $value, $addRecordMenuAlias, $cssClass)
             . '</div>';
     }
 
@@ -207,7 +209,7 @@ class JHTMLCTTableJoin
                     $parent_filter_table_name = $tempField->params[0];
                     $parent_filter_field_name = $tempField->params[1];
 
-                    $filter[] = self::mapJoinTypeParams($field, $parent_filter_table_name, $parent_filter_field_name);
+                    $filter[] = self::mapJoinTypeParams($field, $parent_filter_table_name, $parent_filter_field_name, $dynamicFilter);
 
                     $parent_filter_table_name = null;
                     $parent_filter_field_name = null;
@@ -229,12 +231,12 @@ class JHTMLCTTableJoin
                 //$parent_filter_field_name = null;
             }
 
-            $filter[] = self::mapJoinTypeParams($field, $parent_filter_table_name, $parent_filter_field_name);
+            $filter[] = self::mapJoinTypeParams($field, $parent_filter_table_name, $parent_filter_field_name, null);
         }
         return true;
     }
 
-    protected static function mapJoinTypeParams(Field $field, $parent_filter_table_name, $parent_filter_field_name): ?array
+    protected static function mapJoinTypeParams(Field $field, $parent_filter_table_name, $parent_filter_field_name, ?string $dynamicFilter): ?array
     {
         if ($field->type = 'sqljoin') {
             $tableName = $field->params[0];
@@ -253,10 +255,10 @@ class JHTMLCTTableJoin
         } else
             return null;
 
-        return [$tableName, $fieldName, $allowUnpublished, $where_filter, $orderBy, $parent_filter_table_name, $parent_filter_field_name];
+        return [$tableName, $fieldName, $allowUnpublished, $where_filter, $orderBy, $parent_filter_table_name, $parent_filter_field_name, $dynamicFilter];
     }
 
-    public static function processValue($filter, &$parent_id, &$js_filters): void
+    public static function processValue($filter, &$parent_id, &$js_filters, &$js_filters_FieldName): void
     {
         for ($i = count($filter) - 1; $i >= 0; $i--) {
             $flt = $filter[$i];
@@ -287,10 +289,13 @@ class JHTMLCTTableJoin
                     $temp_js_filters = array_reverse($selfParent_filters);
             }
             $js_filters[] = $temp_js_filters;
+            $js_filters_FieldName[] = $flt[7];
         }
 
-        if (count($js_filters) > 0)
+        if (count($js_filters) > 0) {
             $js_filters = array_reverse($js_filters);
+            $js_filters_FieldName = array_reverse($js_filters_FieldName);
+        }
     }
 
     protected static function getParentFilterID($temp_ct, $parent_id, $join_to_tablename)
@@ -329,7 +334,7 @@ class JHTMLCTTableJoin
     }
 
     public static function ctUpdateTableJoinLink(CT &$ct, $control_name, $index, $sub_index, $object_id, $formId, $attributes, $onchange, $filter,
-                                                    $js_filters, $value, ?string $addRecordMenuAlias = null, string $cssClass = '')
+                                                    $js_filters, $js_filters_FieldName, $value, ?string $addRecordMenuAlias = null, string $cssClass = '')
     {
         $subFilter = '';
         $additional_filter = '';
@@ -367,11 +372,11 @@ class JHTMLCTTableJoin
             return 'Table Join - Corrupted or not supported encoding.';
 
         return self::ctRenderTableJoinSelectBox($ct, $control_name, $resultJSON, $index, $sub_index, $object_id, $formId, $attributes, $onchange,
-            $filter, $js_filters, $value, $addRecordMenuAlias, $cssClass);
+            $filter, $js_filters, $js_filters_FieldName, $value, $addRecordMenuAlias, $cssClass);
     }
 
     protected static function ctRenderTableJoinSelectBox(CT      &$ct, $control_name, $r, int $index, int $sub_index, $parent_object_id, $formId,
-                                                                 $attributes, $onchange, $filter, $js_filters, ?string $value,
+                                                                 $attributes, $onchange, $filter, $js_filters, $js_filters_FieldName, ?string $value,
                                                          ?string $addRecordMenuAlias = null, string $cssClass = '')
     {
         $next_index = $index;
@@ -431,7 +436,7 @@ class JHTMLCTTableJoin
                     $next_index += 1;
                     $next_sub_index = 0;
                     $result = JHTMLCTTableJoin::ctUpdateTableJoinLink($ct, $control_name, $next_index, $next_sub_index, $parent_object_id, $formId, $attributes,
-                        $onchange, $filter, $js_filters, $value, $addRecordMenuAlias, $cssClass);
+                        $onchange, $filter, $js_filters, $js_filters_FieldName, $value, $addRecordMenuAlias, $cssClass);
                     $result .= '<div id="' . $control_name . 'Selector' . $next_index . '_' . $next_sub_index . '"></div>';
                     return $result;
 
@@ -462,7 +467,10 @@ class JHTMLCTTableJoin
                 $result .= '<div>Selected value does not have a parent.</div>';
             } else {
 
-                $result .= '<select id="' . $current_object_id . '" onChange="' . $onChangeAttribute . '"' . ' class="' . $cssClass . '">';
+                $childTableField = $js_filters_FieldName[$next_index];
+
+                $result .= '<select id="' . $current_object_id . '" onChange="' . $onChangeAttribute . '"' . ' class="' . $cssClass . '"'
+                    . ' data-childtablefield="' . $childTableField . '">';
                 $result .= '<option value="">- ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT') . '</option>';
 
                 if ($addRecordMenuAlias !== null)
@@ -487,12 +495,14 @@ class JHTMLCTTableJoin
             {
                 if (is_array($js_filters[$index])) {
 
-                    if ($next_sub_index < count($js_filters[$index]))
-                        $result .= JHTMLCTTableJoin::ctUpdateTableJoinLink($ct, $control_name, $next_index, $next_sub_index, null, $formId, $attributes, $onchange, $filter, $js_filters, $value, $addRecordMenuAlias, $cssClass);
+                    if ($next_sub_index < count($js_filters[$index]))//TODO: check this part
+                        $result .= JHTMLCTTableJoin::ctUpdateTableJoinLink($ct, $control_name, $next_index, $next_sub_index, null, $formId,
+                            $attributes, $onchange, $filter, $js_filters, $js_filters_FieldName, $value, $addRecordMenuAlias, $cssClass);
                     else
                         $result .= '<div id="' . $control_name . 'Selector' . $next_index . '_' . $next_sub_index . '"></div>';
                 } else {
-                    $result .= JHTMLCTTableJoin::ctUpdateTableJoinLink($ct, $control_name, $next_index, $next_sub_index, null, $formId, $attributes, $onchange, $filter, $js_filters, $value, $addRecordMenuAlias, $cssClass);
+                    $result .= JHTMLCTTableJoin::ctUpdateTableJoinLink($ct, $control_name, $next_index, $next_sub_index, null, $formId,
+                        $attributes, $onchange, $filter, $js_filters, $js_filters_FieldName, $value, $addRecordMenuAlias, $cssClass);
                 }
             } else {
 
@@ -501,11 +511,13 @@ class JHTMLCTTableJoin
                     if (is_array($js_filters[$index])) {
 
                         if ($next_sub_index < count($js_filters[$index]))
-                            $result .= JHTMLCTTableJoin::ctUpdateTableJoinLink($ct, $control_name, $next_index, $next_sub_index, null, $formId, $attributes, $onchange, $filter, $js_filters, $value, $addRecordMenuAlias, $cssClass);
+                            $result .= JHTMLCTTableJoin::ctUpdateTableJoinLink($ct, $control_name, $next_index, $next_sub_index, null, $formId,
+                                $attributes, $onchange, $filter, $js_filters, $js_filters_FieldName, $value, $addRecordMenuAlias, $cssClass);
                         else
                             $result .= '<div id="' . $control_name . 'Selector' . $next_index . '_' . $next_sub_index . '"></div>';
                     } else {
-                        $result .= JHTMLCTTableJoin::ctUpdateTableJoinLink($ct, $control_name, $next_index, $next_sub_index, null, $formId, $attributes, $onchange, $filter, $js_filters, $value, $addRecordMenuAlias, $cssClass);
+                        $result .= JHTMLCTTableJoin::ctUpdateTableJoinLink($ct, $control_name, $next_index, $next_sub_index, null, $formId,
+                            $attributes, $onchange, $filter, $js_filters, $js_filters_FieldName, $value, $addRecordMenuAlias, $cssClass);
                     }
                 }
 

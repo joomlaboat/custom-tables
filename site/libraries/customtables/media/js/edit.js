@@ -30,7 +30,7 @@ function setTask(event, task, returnLink, submitForm, formName, isModal, modalFo
                     hideModelOnSave = false;
 
                 if (tasks_with_validation.includes(task)) {
-                    if (checkRequiredFields())
+                    if (checkRequiredFields(objForm))
                         submitModalForm(objForm.action, objForm.elements, objForm.dataset.tableid, objForm.dataset.recordid, hideModelOnSave, modalFormParentField, returnLink)
                 } else
                     submitModalForm(objForm.action, objForm.elements, objForm.dataset.tableid, objForm.dataset.recordid, hideModelOnSave, modalFormParentField, returnLink)
@@ -38,7 +38,7 @@ function setTask(event, task, returnLink, submitForm, formName, isModal, modalFo
                 return false;
             } else {
                 if (tasks_with_validation.includes(task)) {
-                    if (checkRequiredFields())
+                    if (checkRequiredFields(objForm))
                         objForm.submit();
                 } else
                     objForm.submit();
@@ -74,12 +74,12 @@ function submitModalForm(url, elements, tableid, recordId, hideModelOnSave, moda
 
     if (http) {
 
-        http.open("POST", url + "&clean=1&ctmodalform=1", true);
+        http.open("POST", url + "&clean=1&ctmodalform=1&load=1", true);
         http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         http.onreadystatechange = function () {
             if (http.readyState === 4) {
-
                 let response;
+
                 try {
                     response = JSON.parse(http.response.toString());
                 } catch (e) {
@@ -87,7 +87,7 @@ function submitModalForm(url, elements, tableid, recordId, hideModelOnSave, moda
                     return console.error(e);
                 }
 
-                if (response.status == "saved") {
+                if (response.status === "saved") {
                     let element_tableid_tr = "ctTable_" + tableid + '_' + recordId;
                     let table_object = document.getElementById("ctTable_" + tableid);
 
@@ -99,7 +99,7 @@ function submitModalForm(url, elements, tableid, recordId, hideModelOnSave, moda
                     if (modalFormParentField !== null) {
                         let parts = modalFormParentField.split('.');
                         let parentField = parts[1];
-                        refreshTableJoinField(parentField, response.id);
+                        refreshTableJoinField(parentField, response);
                     }
 
                     if (hideModelOnSave)
@@ -306,20 +306,20 @@ function doSanitanization(obj, sanitizers_string) {
     obj.value = value;
 }
 
-function checkRequiredFields() {
+function checkRequiredFields(formObject) {
     if (!checkFilters())
         return false;
 
-    let requiredFields = document.getElementsByClassName("required");
+    let requiredFields = formObject.getElementsByClassName("required");
     let label = "One field";
 
     for (let i = 0; i < requiredFields.length; i++) {
         if (typeof requiredFields[i].id != "undefined") {
-            if (requiredFields[i].id.indexOf("sqljoin_table_comes_") != -1) {
+            if (requiredFields[i].id.indexOf("sqljoin_table_comes_") !== -1) {
                 if (!CheckSQLJoinRadioSelections(requiredFields[i].id))
                     return false;
             }
-            if (requiredFields[i].id.indexOf("ct_uploadfile_box_") != -1) {
+            if (requiredFields[i].id.indexOf("ct_uploadfile_box_") !== -1) {
                 if (!CheckImageUploader(requiredFields[i].id)) {
                     let d = requiredFields[i].dataset;
                     if (d.label)
@@ -385,11 +385,10 @@ function checkRequiredFields() {
             }
         }
     }
-
     return true;
 }
 
-function SetUsetInvalidClass(id, isValid) {
+function SetUnsetInvalidClass(id, isValid) {
     let obj = document.getElementById(id);
     if (isValid) {
         obj.classList.remove("invalid");
@@ -402,11 +401,10 @@ function CheckImageUploader(id) {
     let objId = id.replace("ct_uploadfile_box_", "comes_");
     let obj = document.getElementById(objId);
     if (obj.value === "") {
-        SetUsetInvalidClass(id, false);
+        SetUnsetInvalidClass(id, false);
         return false;
     }
-
-    SetUsetInvalidClass(id, true);
+    SetUnsetInvalidClass(id, true);
     return true;
 }
 
@@ -515,7 +513,17 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_ind
                 }
             }
         } else {
-            document.getElementById(control_name + "Selector" + index + '_' + sub_index).innerHTML = "No items to select";
+
+            let NoItemsText;
+
+            if (typeof wrapper.dataset.addrecordmenualias !== 'undefined' && wrapper.dataset.addrecordmenualias !== '') {
+                let js = 'ctTableJoinAddRecordModalForm(\'' + control_name + '\',' + sub_index + ');';
+                let addText = Joomla.JText._('COM_CUSTOMTABLES_ADD');
+                NoItemsText = addText + '<a href="javascript:' + js + '" className="toolbarIcons"><img src="/components/com_customtables/libraries/customtables/media/images/icons/new.png" alt="' + addText + '" title="' + addText + '"></a>';
+            } else
+                NoItemsText = Joomla.JText._('COM_CUSTOMTABLES_SELECT_NOTHING')
+
+            document.getElementById(control_name + "Selector" + index + '_' + sub_index).innerHTML = NoItemsText;
             return false;
         }
     }
@@ -537,6 +545,9 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_ind
         //[' + index + ',' + filters.length + ']
         result += '<select id="' + current_object_id + '"' + onChangeAttribute + ' class="' + cssClass + '">';
         result += '<option value="">- ' + Joomla.JText._('COM_CUSTOMTABLES_SELECT') + '</option>';
+
+        if (typeof wrapper.dataset.addrecordmenualias !== 'undefined' && wrapper.dataset.addrecordmenualias !== '')
+            result += '<option value="%addRecord%">- ' + Joomla.JText._('COM_CUSTOMTABLES_ADD') + '</option>';
 
         for (let i = 0; i < r.length; i++) {
             let optionLabel = decodeHtml(r[i].label);
@@ -562,6 +573,26 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_ind
             ctUpdateTableJoinLink(control_name, next_index, true, next_sub_index, null, formId, false, null);
         }
     }
+}
+
+function ctTableJoinAddRecordModalForm(control_name, sub_index) {
+
+    let wrapper = document.getElementById(control_name + "Wrapper");
+    let query = '/index.php/' + wrapper.dataset.addrecordmenualias;
+    if (wrapper.dataset.addrecordmenualias.indexOf('?') === -1)
+        query += '?';
+    else
+        query += '&';
+
+    query += 'view=edititem';
+
+    let parentObjectValue = null;
+    let sub_indexObject = document.getElementById(control_name + sub_index);
+    if (sub_indexObject) {
+        parentObjectValue = sub_indexObject.value;
+        query += '&es_' + sub_indexObject.dataset.childtablefield + '=' + parentObjectValue;
+    }
+    ctEditModal(query, wrapper.dataset.formname + '.' + wrapper.dataset.fieldname)
 }
 
 function ctUpdateTableJoinLink(control_name, index, execute_all, sub_index, object_id, formId, updateValue, forceValue) {
@@ -625,17 +656,7 @@ function ctUpdateTableJoinLink(control_name, index, execute_all, sub_index, obje
                 document.getElementById(control_name + "Selector" + index + '_' + sub_index).innerHTML = '';//"Not selected";
                 return false;
             } else if (obj.value == "%addRecord%") {
-
-                let query = '/index.php/';
-                query += wrapper.dataset.addrecordmenualias;
-                if (wrapper.dataset.addrecordmenualias.indexOf('?') === -1)
-                    query += '?';
-                else
-                    query += '&';
-
-                query += 'view=edititem';
-
-                ctEditModal(query, wrapper.dataset.formname + '.' + wrapper.dataset.fieldname)
+                ctTableJoinAddRecordModalForm(control_name, sub_index);
             }
         }
 
@@ -1171,7 +1192,33 @@ function updateChildTableJoinField(childFieldName, parentFieldName, childFilterF
         .catch(error => console.error("Error", error));
 }
 
-function refreshTableJoinField(fieldName, value) {
+function refreshTableJoinField(fieldName, response) {
+
+    let valueObject = document.getElementById('comes_' + fieldName);
+    valueObject.value = response['id'];
+
     let wrapper = document.getElementById('comes_' + fieldName + 'Wrapper');
-    ctUpdateTableJoinLink('comes_' + fieldName, 0, false, 0, 'comes_' + fieldName + '0', wrapper.dataset.formname, false, value);
+    let valueFiltersStr = Base64.decode(wrapper.dataset.valuefilters).replace(/[^\x00-\x7F]/g, "");
+    let valueFiltersNamesStr = Base64.decode(wrapper.dataset.valuefiltersnames).replace(/[^\x00-\x7F]/g, "");
+    let valueFiltersNames = JSON.parse(valueFiltersNamesStr);
+    let NewValueFilters = [];
+
+    for (let i = 0; i < valueFiltersNames.length; i++) {
+        if (valueFiltersNames[i] !== null) {
+            let value = response['record']['es_' + valueFiltersNames[i]];
+            NewValueFilters.push(value);
+
+            let index = i - 1;
+            let selectorID = 'comes_' + fieldName + index;
+            let selector = document.getElementById(selectorID);
+            selector.value = value;
+        } else {
+            NewValueFilters.push(null);
+        }
+    }
+    let newValueFiltersStr = JSON.stringify(NewValueFilters);
+    wrapper.dataset.valuefilters = Base64.encode(newValueFiltersStr);
+
+    let index = NewValueFilters.length - 1;
+    ctUpdateTableJoinLink('comes_' + fieldName, index, true, 0, 'comes_' + fieldName + '0', wrapper.dataset.formname, true, response.id);
 }

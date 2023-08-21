@@ -93,8 +93,10 @@ function ct_getUploader(index, urlstr, maxFileSize, allowedTypes, UploaderForm, 
                         $("#" + EventMessageBox).html('Error : <span style="color:red;">' + res.error + '</span>');
                 }
 
-                if (typeof checkRequiredFields === 'function')
-                    checkRequiredFields();
+                if (typeof checkRequiredFields === 'function') {
+                    let formObject = document.getElementById(UploaderForm);
+                    checkRequiredFields(formObject);
+                }
             },
 
             afterUploadAll: function (obj) {
@@ -127,7 +129,9 @@ function ct_getUploader(index, urlstr, maxFileSize, allowedTypes, UploaderForm, 
                 pd.statusbar.hide(); //You choose to hide/not.
                 uploaderParams[index].files_uploaded -= 1;
                 updateUploadedFileBox(index);
-                checkRequiredFields();
+
+                let formObject = document.getElementById(UploaderForm);
+                checkRequiredFields(formObject);
             }
         });
 

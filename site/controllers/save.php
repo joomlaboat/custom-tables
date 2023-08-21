@@ -161,6 +161,12 @@ function CustomTablesSave($task, $this_)
             if (Factory::getApplication()->input->getInt('clean', 0) == 1) {
 
                 $res = ['status' => 'saved', 'id' => $model->listing_id];
+
+                if (Factory::getApplication()->input->getInt('load', 0) == 1) {
+                    $ct->Table->loadRecord($model->listing_id);
+                    $res['record'] = $ct->Table->record;
+                }
+
                 die(json_encode($res));
 
             } elseif ($link != '') {

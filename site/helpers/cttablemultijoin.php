@@ -43,9 +43,10 @@ class JHTMLCTTableMultiJoin
         $filter = array_merge($filter, $params_filter);
         //Get initial table filters based on the value
         $js_filters = [];
+        $js_filters_FieldName = [];
         $parent_id = $value;
 
-        JHTMLCTTableJoin::processValue($filter, $parent_id, $js_filters);
+        JHTMLCTTableJoin::processValue($filter, $parent_id, $js_filters, $js_filters_FieldName);
 
         if (count($js_filters) == 0)
             $js_filters[] = $value;
@@ -60,6 +61,7 @@ class JHTMLCTTableMultiJoin
         $data[] = 'data-fieldname="' . $field->fieldname . '"';
         $data[] = 'data-controlname="' . $control_name . '"';
         $data[] = 'data-valuefilters="' . base64_encode(json_encode($js_filters)) . '"';
+        $data[] = 'data-valuefiltersnames="' . base64_encode(json_encode($js_filters_FieldName)) . '"';
         $data[] = 'data-onchange="' . base64_encode($onchange) . '"';
         $data[] = 'data-listing_id="' . $listing_is . '"';
         $data[] = 'data-value="' . htmlspecialchars($value) . '"';
@@ -88,7 +90,7 @@ class JHTMLCTTableMultiJoin
         return '<input type="hidden" id="' . $control_name . '" name="' . $control_name . '" value="' . htmlspecialchars($value) . '" ' . $attributes . '/>'
             . '<div id="' . $control_name . 'Wrapper" ' . implode(' ', $data) . '>'
             . JHTMLCTTableJoin::ctUpdateTableJoinLink($ct, $control_name, 0, 0, "", $formID, $attributes, $onchange,
-                $filter, $js_filters, $value, $addRecordMenuAlias, $cssClass)
+                $filter, $js_filters, $js_filters_FieldName, $value, $addRecordMenuAlias, $cssClass)
             . '</div>';
     }
 }

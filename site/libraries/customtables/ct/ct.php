@@ -387,6 +387,8 @@ class CT
         Text::script('COM_CUSTOMTABLES_JS_NOTHING_TO_SAVE');
         Text::script('COM_CUSTOMTABLES_JS_SESSION_EXPIRED');
         Text::script('COM_CUSTOMTABLES_SELECT');
+        Text::script('COM_CUSTOMTABLES_SELECT_NOTHING');
+        Text::script('COM_CUSTOMTABLES_ADD');
     }
 
     public function deleteSingleRecord($listing_id): int
