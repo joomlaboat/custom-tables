@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="component" version="3.2" method="upgrade">
     <name>COM_CUSTOMTABLES</name>
-    <creationDate>July 2023</creationDate>
+    <creationDate>August 2023</creationDate>
     <author>JoomlaBoat.com</author>
     <authorEmail>support@joomlaboat.com</authorEmail>
     <authorUrl>https://joomlaboat.com</authorUrl>
     <copyright>Copyright (C) 2018-2023 Ivan Komlev</copyright>
     <license>GNU/GPL Version 2 or later - https://www.gnu.org/licenses/gpl-2.0.html</license>
-    <version>3.1.4</version>
+    <version>3.1.5</version>
     <description><![CDATA[
 		<h1>Custom Tables</h1>
 		<div style="clear: both;"></div>
