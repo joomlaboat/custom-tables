@@ -460,14 +460,28 @@ class ESTables
 
             $inserts = array('tableid=' . $new_table_id);
             foreach ($fields as $fld) {
-                $value = $row[$fld];
-                $value = str_replace('"', '\"', $value);
 
-                $inserts[] = $fld . '="' . $value . '"';
+                if ($fld == 'parentid') {
+                    if ((int)$row[$fld] == 0)
+                        $inserts[] = $fld . '=NULL';
+                    else
+                        $inserts[] = $fld . '=' . (int)$row[$fld];
+                } elseif ($fld == 'created_by' or $fld == 'modified_by') {
+                    if ((int)$row[$fld] == 0)
+                        $inserts[] = $fld . '=' . $ct->Env->userid;
+                    else
+                        $inserts[] = $fld . '=' . (int)$row[$fld];
+                } elseif ($fld == 'created' or $fld == 'modified') {
+                    if ($row[$fld] == "")
+                        $inserts[] = $fld . '=NOW()';
+                    else
+                        $inserts[] = $fld . '="' . $row[$fld] . '"';
+                } else {
+                    $value = str_replace('"', '\"', $row[$fld]);
+                    $inserts[] = $fld . '="' . $value . '"';
+                }
             }
-
             $iq = 'INSERT INTO #__customtables_fields SET ' . implode(', ', $inserts);
-
             $db->setQuery($iq);
             $db->execute();
         }
