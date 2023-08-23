@@ -431,8 +431,8 @@ class ESTables
         }
 
         //Copy Fields
-        $fields = array('fieldname', 'type', 'typeparams', 'ordering', 'defaultvalue', 'allowordering', 'parentid', 'isrequired', 'valuerulecaption', 'valuerule',
-            'customfieldname', 'isdisabled', 'savevalue', 'alwaysupdatevalue', 'created_by', 'modified_by', 'created', 'modified');
+        $fields = array('fieldname', 'allowordering', 'isrequired', 'isdisabled', 'alwaysupdatevalue', 'parentid', 'ordering', 'defaultvalue', 'customfieldname', 'type', 'typeparams', 'valuerule', 'valuerulecaption',
+            'created_by', 'modified_by', 'created', 'modified');
 
         $moreThanOneLanguage = false;
 
