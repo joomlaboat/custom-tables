@@ -26,6 +26,16 @@ class JHTMLCTTableJoin
         $params->loadArray([]);
         $ct = new CT($params, true);
 
+        //Check if Value exists
+        if ($value !== null and $value !== '' and $value !== 0) {
+            $tableName = $field->params[0];
+            $tableRow = ESTables::getTableRowByNameAssoc($tableName);
+            $ct->setTable($tableRow);
+            if (!$ct->Table->isRecordExists($value))
+                $value = null;
+        }
+
+        //Prepare the input box
         $filter = [];
         $parent_filter_table_and_field = JHTMLCTTableJoin::parseTagArguments($option_list, $filter);
         $parent_filter_table_name = $parent_filter_table_and_field[0] ?? '';
@@ -125,6 +135,8 @@ class JHTMLCTTableJoin
                 if (count($option) > 0) {
                     if (is_array($option[0])) {
 
+                        $previousTableName = null;
+
                         foreach ($option as $optionFilter) {
                             $tableName = $optionFilter[0];
                             $fieldName = $optionFilter[1];
@@ -137,9 +149,15 @@ class JHTMLCTTableJoin
                                 $parent_filter_field_name = $optionFilter[5];
                             }
 
-                            $filter[] = [$tableName, $fieldName, $allow_unpublished, $whereFilter, $orderBy, $parent_filter_table_name, $parent_filter_field_name];
+                            if (count($filter) == 0) {
+                                $dynamicFilter = null;
+                            } else {
+                                $dynamicFilter = self::findDynamicFilter($tableName, $previousTableName);
+                            }
+                            $filter[] = [$tableName, $fieldName, $allow_unpublished, $whereFilter, $orderBy, $parent_filter_table_name, $parent_filter_field_name, $dynamicFilter];
                             $parent_filter_table_name = $optionFilter[0];
                             $parent_filter_field_name = $optionFilter[1];
+                            $previousTableName = $tableName;
                         }
                     } else {
 
@@ -172,6 +190,27 @@ class JHTMLCTTableJoin
             }
         }
         return [$parent_filter_table_name, $parent_filter_field_name];
+    }
+
+    public static function findDynamicFilter(string $tableName, $previousTableName): ?string
+    {
+        $ct = new CT();
+        $ct->getTable($tableName);
+        if (is_null($ct->Table->tablename))
+            die(json_encode(['error' => 'Table "' . $tableName . '"not found']));
+
+        //Find the field name that has a join to the parent (index-1) table
+        foreach ($ct->Table->fields as $fld) {
+            if ($fld['type'] == 'sqljoin' or $fld['type'] == 'records') {
+                $type_params = JoomlaBasicMisc::csv_explode(',', $fld['typeparams']);
+
+                $join_tableName = $type_params[0];
+
+                if ($join_tableName == $previousTableName)
+                    return $fld['fieldname'];
+            }
+        }
+        return null;
     }
 
     public static function parseTypeParams($field, &$filter, &$parent_filter_table_name, &$parent_filter_field_name): bool

@@ -1167,7 +1167,6 @@ function activateJoomla3Tabs() {
     });
 }
 
-
 function setUpdateChildTableJoinField(childFieldName, parentFieldName, childFilterFieldName) {
     document.getElementById('comes_' + parentFieldName + '0').addEventListener('change', function () {
         updateChildTableJoinField(childFieldName, parentFieldName, childFilterFieldName);

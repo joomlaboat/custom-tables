@@ -189,4 +189,15 @@ class Table
         $this->record = $recs[0];
         return $recs[0];
     }
+
+    function isRecordExists($listing_id): bool
+    {
+        if ($listing_id === null or $listing_id === '' or (is_numeric($listing_id) and $listing_id === 0))
+            return false;
+
+        $query = 'SELECT ' . $this->realidfieldname . ' FROM ' . $this->realtablename . ' WHERE ' . $this->realidfieldname . '=' . $this->db->quote($listing_id) . ' LIMIT 1';
+        $this->db->setQuery($query);
+        $this->db->execute();
+        return $this->db->getNumRows() == 1;
+    }
 }
