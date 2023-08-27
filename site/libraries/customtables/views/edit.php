@@ -52,7 +52,13 @@ class Edit
             }
             $this->layoutType = $Layouts->layoutType;
         } else {
-            $this->ct->app->enqueueMessage('Layout not set.', 'error');
+
+            if ($this->ct->app->input->getInt('clean', 0) == 1) {
+                $res = ['status' => 'error', 'message' => 'Edit Layout not set.'];
+                die(json_encode($res));
+            }
+
+            $this->ct->app->enqueueMessage('Edit Layout not set.', 'error');
             return false;
         }
         $this->ct->LayoutVariables['layout_type'] = $this->layoutType;

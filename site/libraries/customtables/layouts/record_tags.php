@@ -574,6 +574,37 @@ class Twig_Record_Tags
     {
         return $this->countOrSumRecords('count', $tableName, '_id', $filter);
     }
+
+    function MissingFields($separator = ','): string
+    {
+        return implode($separator, $this->MissingFieldsList());
+    }
+
+    function MissingFieldsList(): array
+    {
+        if ($this->ct->Table->isRecordNull())
+            return [];
+
+        $fieldTitles = [];
+        foreach ($this->ct->Table->fields as $field) {
+            if ($field['published'] == 1 and $field['isrequired'] == 1 and !Fields::isVirtualField($field)) {
+                $value = $this->ct->Table->record[$field['realfieldname']];
+                if ($value === null or $value == '') {
+                    if (!array_key_exists('fieldtitle' . $this->ct->Languages->Postfix, $field)) {
+                        $fieldTitles[] = 'fieldtitle' . $this->ct->Languages->Postfix . ' - not found';
+                    } else {
+                        $vlu = $field['fieldtitle' . $this->ct->Languages->Postfix];
+                        if ($vlu == '')
+                            $fieldTitles[] = $field['fieldtitle'];
+                        else
+                            $fieldTitles[] = $vlu;
+                    }
+                }
+            }
+        }
+        return $fieldTitles;
+    }
+
 }
 
 class Twig_Table_Tags

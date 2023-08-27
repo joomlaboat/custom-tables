@@ -200,4 +200,32 @@ class Table
         $this->db->execute();
         return $this->db->getNumRows() == 1;
     }
+
+    function isRecordNull(): bool
+    {
+        if (is_null($this->record))
+            return true;
+
+        if (!is_array($this->record))
+            return true;
+
+        if (count($this->record) == 0)
+            return true;
+
+        if (!isset($this->record[$this->realidfieldname]))
+            return true;
+
+        $id = $this->record[$this->realidfieldname];
+
+        if (is_null($id))
+            return true;
+
+        if ($id == '')
+            return true;
+
+        if (is_numeric($id) and intval($id) == 0)
+            return true;
+
+        return false;
+    }
 }

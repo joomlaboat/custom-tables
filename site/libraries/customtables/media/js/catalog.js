@@ -448,6 +448,7 @@ function ct_UpdateSingleValue(WebsiteRoot, Itemid, fieldname_, record_id, postfi
             if (http.readyState === 4) {
 
                 let response;
+
                 try {
                     response = JSON.parse(http.response.toString());
                 } catch (e) {
@@ -456,6 +457,9 @@ function ct_UpdateSingleValue(WebsiteRoot, Itemid, fieldname_, record_id, postfi
 
                 if (response.status == "saved") {
                     obj.className = "ct_checkmark ct_checkmark_hidden";//+css_class;
+                } else if (response.status == "error") {
+                    obj.className = "ct_checkmark_err";
+                    alert(response.message);
                 } else {
                     obj.className = "ct_checkmark_err ";
 
