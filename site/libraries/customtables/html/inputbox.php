@@ -261,7 +261,7 @@ class Inputbox
         return $outputString;
     }
 
-    function render($value, $row)
+    function render($value, ?array $row)
     {
         $this->row = $row;
         $this->field = new Field($this->ct, $this->field->fieldrow, $this->row);
@@ -576,10 +576,15 @@ class Inputbox
             . 'label="' . $this->field->fieldname . '" '
             . ($autocomplete ? 'list="' . $this->prefix . $this->field->fieldname . '_datalist" ' : '')
             . 'class="' . $this->cssclass . '" '
+            . 'title="' . $this->place_holder . '" '
             . 'data-label="' . $this->field->title . '" '
             . 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
-            . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" '
-            . 'value="' . htmlspecialchars($value) . '" ' . ((int)$this->field->params[0] > 0 ? 'maxlength="' . (int)$this->field->params[0] . '"' : 'maxlength="255"') . ' ' . $this->attributes . ' />';
+            . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" ';
+
+        if ($this->row === null)
+            $result .= 'placeholder="' . $this->place_holder . '" ';
+
+        $result .= 'value="' . htmlspecialchars($value) . '" ' . ((int)$this->field->params[0] > 0 ? 'maxlength="' . (int)$this->field->params[0] . '"' : 'maxlength="255"') . ' ' . $this->attributes . ' />';
 
         if ($autocomplete) {
 
@@ -609,7 +614,7 @@ class Inputbox
                 $value = $this->defaultValue;
         }
 
-        return '<input type="text" '
+        $result = '<input type="text" '
             . 'name="' . $this->prefix . $this->field->fieldname . '" '
             . 'id="' . $this->prefix . $this->field->fieldname . '" '
             . 'label="' . $this->field->fieldname . '" '
@@ -617,8 +622,14 @@ class Inputbox
             . ' ' . $this->attributes
             . 'data-label="' . $this->field->title . '" '
             . 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
-            . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" '
-            . 'value="' . htmlspecialchars($value) . '" ' . ($maxlength > 0 ? 'maxlength="' . $maxlength . '"' : 'maxlength="255"') . ' ' . $this->attributes . ' />';
+            . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" ';
+
+        if ($this->row === null)
+            $result .= 'placeholder="' . $this->place_holder . '" ';
+
+        $result .= 'value="' . htmlspecialchars($value) . '" ' . ($maxlength > 0 ? 'maxlength="' . $maxlength . '"' : 'maxlength="255"') . ' ' . $this->attributes . ' />';
+
+        return $result;
     }
 
     protected function getMultilingualString(): string
@@ -1386,11 +1397,22 @@ class Inputbox
 
         $attributes = [];
         $attributes['class'] = $this->cssclass;
-        $attributes['placeholder'] = $this->place_holder;
-        $attributes['onChange'] = '" '
-            . 'data-label="' . $this->place_holder . '" '
-            . 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
-            . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption); // closing quote is not needed because
+
+        $att = [];
+
+        if ($this->row === null)
+            $att[] = 'placeholder="' . $this->place_holder . '"';
+
+        $att[] = 'title="' . $this->place_holder . '"';
+        $att[] = 'data-label="' . $this->place_holder . '"';
+        $att[] = 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '"';
+        $att[] = 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption); // closing quote is not needed because onchange parameter already has opening and closing quotes.
+
+        if ($this->attributes != '' and str_contains($this->attributes, 'onchange=')) {
+            $attributes['onChange'] = str_replace('onchange="', '', $this->attributes) . ' ' . implode(' ', $att);
+        } else {
+            $attributes['onChange'] = '" ' . implode(' ', $att);
+        }
 
         $attributes['required'] = ($this->field->isrequired == 1 ? 'required' : ''); //not working, don't know why.
 

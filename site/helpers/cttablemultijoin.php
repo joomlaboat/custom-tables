@@ -87,10 +87,12 @@ class JHTMLCTTableMultiJoin
 
         $data[] = 'data-formname="' . $formID . '"';
 
+        $Placeholder = $field->title;
+
         return '<input type="hidden" id="' . $control_name . '" name="' . $control_name . '" value="' . htmlspecialchars($value) . '" ' . $attributes . '/>'
             . '<div id="' . $control_name . 'Wrapper" ' . implode(' ', $data) . '>'
             . JHTMLCTTableJoin::ctUpdateTableJoinLink($ct, $control_name, 0, 0, "", $formID, $attributes, $onchange,
-                $filter, $js_filters, $js_filters_FieldName, $value, $addRecordMenuAlias, $cssClass)
+                $filter, $js_filters, $js_filters_FieldName, $value, $addRecordMenuAlias, $cssClass, $Placeholder)
             . '</div>';
     }
 }

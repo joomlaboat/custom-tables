@@ -390,7 +390,8 @@ function ct_UpdateAllRecordsValues(WebsiteRoot, Itemid, fieldname_, record_ids, 
 
         for (let i = 0; i < ids.length; i++) {
             let objectName = "comes_" + ids[i] + "_" + fieldname_;
-            document.getElementById(objectName).value = value;
+            let obj = document.getElementById(objectName);
+            obj.value = value;
             ct_UpdateSingleValue(WebsiteRoot, Itemid, fieldname_, ids[i], postfix, ModuleId);
         }
     }

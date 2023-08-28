@@ -105,10 +105,12 @@ class JHTMLCTTableJoin
 
         $data[] = 'data-formname="' . $formID . '"';
 
+        $Placeholder = $field->title;
+
         return '<input type="hidden" id="' . $control_name . '" name="' . $control_name . '" value="' . htmlspecialchars($value) . '" ' . $attributes . '/>'
             . '<div id="' . $control_name . 'Wrapper" ' . implode(' ', $data) . '>'
             . JHTMLCTTableJoin::ctUpdateTableJoinLink($ct, $control_name, 0, 0, "", $formID, $attributes, $onchange,
-                $filter, $js_filters, $js_filters_FieldName, $value, $addRecordMenuAlias, $cssClass)
+                $filter, $js_filters, $js_filters_FieldName, $value, $addRecordMenuAlias, $cssClass, $Placeholder)
             . '</div>';
     }
 
@@ -373,7 +375,7 @@ class JHTMLCTTableJoin
     }
 
     public static function ctUpdateTableJoinLink(CT &$ct, $control_name, $index, $sub_index, $object_id, $formId, $attributes, $onchange, $filter,
-                                                    $js_filters, $js_filters_FieldName, $value, ?string $addRecordMenuAlias = null, string $cssClass = '')
+                                                    $js_filters, $js_filters_FieldName, $value, ?string $addRecordMenuAlias = null, string $cssClass = '', string $Placeholder = '')
     {
         $subFilter = '';
         $additional_filter = '';
@@ -411,12 +413,12 @@ class JHTMLCTTableJoin
             return 'Table Join - Corrupted or not supported encoding.';
 
         return self::ctRenderTableJoinSelectBox($ct, $control_name, $resultJSON, $index, $sub_index, $object_id, $formId, $attributes, $onchange,
-            $filter, $js_filters, $js_filters_FieldName, $value, $addRecordMenuAlias, $cssClass);
+            $filter, $js_filters, $js_filters_FieldName, $value, $addRecordMenuAlias, $cssClass, $Placeholder);
     }
 
     protected static function ctRenderTableJoinSelectBox(CT      &$ct, $control_name, $r, int $index, int $sub_index, $parent_object_id, $formId,
                                                                  $attributes, $onchange, $filter, $js_filters, $js_filters_FieldName, ?string $value,
-                                                         ?string $addRecordMenuAlias = null, string $cssClass = '')
+                                                         ?string $addRecordMenuAlias = null, string $cssClass = '', string $Placeholder = '')
     {
         $next_index = $index;
         $next_sub_index = $sub_index;
@@ -475,7 +477,7 @@ class JHTMLCTTableJoin
                     $next_index += 1;
                     $next_sub_index = 0;
                     $result = JHTMLCTTableJoin::ctUpdateTableJoinLink($ct, $control_name, $next_index, $next_sub_index, $parent_object_id, $formId, $attributes,
-                        $onchange, $filter, $js_filters, $js_filters_FieldName, $value, $addRecordMenuAlias, $cssClass);
+                        $onchange, $filter, $js_filters, $js_filters_FieldName, $value, $addRecordMenuAlias, $cssClass, $Placeholder);
                     $result .= '<div id="' . $control_name . 'Selector' . $next_index . '_' . $next_sub_index . '"></div>';
                     return $result;
 
@@ -508,7 +510,7 @@ class JHTMLCTTableJoin
 
                 $childTableField = $js_filters_FieldName[$next_index];
 
-                $result .= '<select id="' . $current_object_id . '" onChange="' . $onChangeAttribute . '"' . ' class="' . $cssClass . '"'
+                $result .= '<select id="' . $current_object_id . '" title="' . $Placeholder . '" placeholder="' . $Placeholder . '" onChange="' . $onChangeAttribute . '"' . ' class="' . $cssClass . '"'
                     . ' data-childtablefield="' . $childTableField . '">';
                 $result .= '<option value="">- ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT') . '</option>';
 
@@ -536,12 +538,12 @@ class JHTMLCTTableJoin
 
                     if ($next_sub_index < count($js_filters[$index]))//TODO: check this part
                         $result .= JHTMLCTTableJoin::ctUpdateTableJoinLink($ct, $control_name, $next_index, $next_sub_index, null, $formId,
-                            $attributes, $onchange, $filter, $js_filters, $js_filters_FieldName, $value, $addRecordMenuAlias, $cssClass);
+                            $attributes, $onchange, $filter, $js_filters, $js_filters_FieldName, $value, $addRecordMenuAlias, $cssClass, $Placeholder);
                     else
                         $result .= '<div id="' . $control_name . 'Selector' . $next_index . '_' . $next_sub_index . '"></div>';
                 } else {
                     $result .= JHTMLCTTableJoin::ctUpdateTableJoinLink($ct, $control_name, $next_index, $next_sub_index, null, $formId,
-                        $attributes, $onchange, $filter, $js_filters, $js_filters_FieldName, $value, $addRecordMenuAlias, $cssClass);
+                        $attributes, $onchange, $filter, $js_filters, $js_filters_FieldName, $value, $addRecordMenuAlias, $cssClass, $Placeholder);
                 }
             } else {
 
@@ -551,12 +553,12 @@ class JHTMLCTTableJoin
 
                         if ($next_sub_index < count($js_filters[$index]))
                             $result .= JHTMLCTTableJoin::ctUpdateTableJoinLink($ct, $control_name, $next_index, $next_sub_index, null, $formId,
-                                $attributes, $onchange, $filter, $js_filters, $js_filters_FieldName, $value, $addRecordMenuAlias, $cssClass);
+                                $attributes, $onchange, $filter, $js_filters, $js_filters_FieldName, $value, $addRecordMenuAlias, $cssClass, $Placeholder);
                         else
                             $result .= '<div id="' . $control_name . 'Selector' . $next_index . '_' . $next_sub_index . '"></div>';
                     } else {
                         $result .= JHTMLCTTableJoin::ctUpdateTableJoinLink($ct, $control_name, $next_index, $next_sub_index, null, $formId,
-                            $attributes, $onchange, $filter, $js_filters, $js_filters_FieldName, $value, $addRecordMenuAlias, $cssClass);
+                            $attributes, $onchange, $filter, $js_filters, $js_filters_FieldName, $value, $addRecordMenuAlias, $cssClass, $Placeholder);
                     }
                 }
 
