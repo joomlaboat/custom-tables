@@ -44,7 +44,6 @@ class CTTypes
 
             $class = 'JFormField' . $type;
             $field = new $class();
-
             $field->setup($xml, $field_value);
 
             return $field;

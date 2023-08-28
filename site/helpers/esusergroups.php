@@ -55,7 +55,7 @@ class JHTMLESUserGroups
                 break;
 
             case 'multi' :
-                $htmlresult .= '<SELECT name="' . $control_name . '[]" id="' . $control_name . '" MULTIPLE >';
+                $htmlresult .= '<SELECT name="' . $control_name . '[]" id="' . $control_name . '" data-type="usergroups" MULTIPLE >';
                 foreach ($records as $row) {
                     $htmlresult .= '<option value="' . $row->id . '" '
                         . ((in_array($row->id, $valueArray) and count($valueArray) > 0) ? ' SELECTED ' : '')
@@ -74,6 +74,7 @@ class JHTMLESUserGroups
                         . 'name="' . $control_name . '" '
                         . 'id="' . $control_name . '_' . $i . '" '
                         . 'value="' . $row->id . '" '
+                        . 'data-type="usergroups" '
                         . ((in_array($row->id, $valueArray) and count($valueArray) > 0) ? ' checked="checked" ' : '')
                         . ' /></td>'
                         . '<td style="vertical-align: middle">'
@@ -93,6 +94,7 @@ class JHTMLESUserGroups
                         . 'name="' . $control_name . '[]" '
                         . 'id="' . $control_name . '_' . $i . '" '
                         . 'value="' . $row->id . '" '
+                        . 'data-type="usergroups" '
                         . ((in_array($row->id, $valueArray) and count($valueArray) > 0) ? ' checked="checked" ' : '')
                         . ' /></td>'
                         . '<td style="vertical-align: middle">'
@@ -115,7 +117,7 @@ class JHTMLESUserGroups
 
     static protected function getSingle($records, $control_name, $valueArray): string
     {
-        $htmlresult = '<SELECT name="' . $control_name . '[]" id="' . $control_name . '">';
+        $htmlresult = '<SELECT name="' . $control_name . '[]" id="' . $control_name . '" data-type="usergroups">';
 
         foreach ($records as $row) {
             $htmlresult .= '<option value="' . $row->id . '" '

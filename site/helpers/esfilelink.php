@@ -38,14 +38,17 @@ class JHTMLESFileLink
         }
 
         if (file_exists($real_path)) {
-            $options[] = array('id' => '', 'name' => '- ' . Text::_('COM_CUSTOMTABLES_SELECT'));
+            $options[] = array('id' => '', 'name' => '- ' . Text::_('COM_CUSTOMTABLES_SELECT'),
+                'data-type' => "filelink");
             $files = scandir($real_path);
             foreach ($files as $f) {
                 if (!is_dir($relativePath . $f) and str_contains($f, '.'))
                     $options[] = array('id' => $f, 'name' => $f);
             }
         } else
-            $options[] = array('id' => '', 'name' => '- ' . Text::_('COM_CUSTOMTABLES_PATH') . ' (' . $path . ') ' . Text::_('COM_CUSTOMTABLES_NOTFOUND'));
+            $options[] = array('id' => '',
+                'data-type' => "filelink",
+                'name' => '- ' . Text::_('COM_CUSTOMTABLES_PATH') . ' (' . $path . ') ' . Text::_('COM_CUSTOMTABLES_NOTFOUND'));
 
         return JHTML::_('select.genericlist', $options, $control_name, $cssclass . ' style="' . $style . '" ' . $attribute . ' ', 'id', 'name', $value, $control_name);
 

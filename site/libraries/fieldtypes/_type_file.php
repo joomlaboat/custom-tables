@@ -607,23 +607,25 @@ class CT_FieldTypeTag_file
             }
         }
 
-        return '
-                <div style="margin:10px; border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;vertical-align:top;">
-                
-                	<div id="ct_fileuploader_' . $field->fieldname . '"></div>
-                    <div id="ct_eventsmessage_' . $field->fieldname . '"></div>
-                	<script>
+        return '<div style="margin:10px; border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;vertical-align:top;" '
+            . 'data-type="' . $field->type . '" '
+            . 'data-label="' . $field->title . '" '
+            . 'data-valuerule="' . str_replace('"', '&quot;', $field->valuerule) . '" '
+            . 'data-valuerulecaption="' . str_replace('"', '&quot;', $field->valuerulecaption) . '" >'
+            . '>'
+            . '<div id="ct_fileuploader_' . $field->fieldname . '"></div>'
+            . '<div id="ct_eventsmessage_' . $field->fieldname . '"></div>'
+            . '<script>
                         //UploadFileCount=1;
 			            ct_getUploader(' . $field->id . ',"' . $urlstr . '",' . $max_file_size . ',"' . $accepted_file_types . '","' . $formName . '",false,"ct_fileuploader_' . $field->fieldname . '","ct_eventsmessage_'
             . $field->fieldname . '","' . $file_id . '","' . $field->prefix . $field->fieldname . '","ct_ubloadedfile_box_' . $field->fieldname . '")
 
-                    </script>
-                    <input type="hidden" name="' . $field->prefix . $field->fieldname . '" id="' . $field->prefix . $field->fieldname . '" value="" />
-                    <input type="hidden" name="' . $field->prefix . $field->fieldname . '_filename" id="' . $field->prefix . $field->fieldname . '_filename" value="" />
-                    ' . common::translate('COM_CUSTOMTABLES_PERMITTED_FILE_TYPES') . ': ' . $accepted_file_types . '<br/>
-					' . common::translate('COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE') . ': ' . JoomlaBasicMisc::formatSizeUnits($max_file_size) . '
-                </div>
-                ';
+                    </script>'
+            . '<input type="hidden" name="' . $field->prefix . $field->fieldname . '" id="' . $field->prefix . $field->fieldname . '" value="" />'
+            . '<input type="hidden" name="' . $field->prefix . $field->fieldname . '_filename" id="' . $field->prefix . $field->fieldname . '_filename" value="" />'
+            . common::translate('COM_CUSTOMTABLES_PERMITTED_FILE_TYPES') . ': ' . $accepted_file_types . '<br/>'
+            . common::translate('COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE') . ': ' . JoomlaBasicMisc::formatSizeUnits($max_file_size)
+            . '</div>';
     }
 
     public static function CheckIfFile2download(&$segments, &$vars): bool

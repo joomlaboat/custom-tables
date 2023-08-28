@@ -213,20 +213,22 @@ class CT_FieldTypeTag_image
             . $field->fieldname . '","ct_eventsmessage_' . $field->fieldname . '","' . $fileId . '","' . $prefix . $field->fieldname . '","ct_ubloadedfile_box_' . $field->fieldname . '");';
 
         $ct_fileuploader = '<div id="ct_fileuploader_' . $field->fieldname . '"></div>';
-        $ct_eventsmessage = '<div id="ct_eventsmessage_' . $field->fieldname . '"></div>';
+        $ct_eventsMessage = '<div id="ct_eventsmessage_' . $field->fieldname . '"></div>';
 
         $inputBoxFieldName = '<input type="hidden" name="' . $prefix . $field->fieldname . '" id="' . $prefix . $field->fieldname . '" value="" ' . ($field->isrequired == 1 ? ' class="required"' : '') . ' />';
         $inputBoxFieldName_FileName = '<input type="hidden" name="' . $prefix . $field->fieldname . '_filename" id="' . $prefix . $field->fieldname . '_filename" value="" />';
 
         return '<div style="' . $style . '"' . ($field->isrequired == 1 ? ' class="inputbox required"' : '') . ' id="' . $element_id . '" '
+            . 'data-type="' . $field->type . '" '
             . 'data-label="' . $field->title . '" '
             . 'data-valuerule="' . str_replace('"', '&quot;', $field->valuerule) . '" '
             . 'data-valuerulecaption="' . str_replace('"', '&quot;', $field->valuerulecaption) . '" >'
-            . $ct_fileuploader . $ct_eventsmessage
+            . $ct_fileuploader . $ct_eventsMessage
             . '<script>
                 ' . $ct_getUploader . '
            </script>
-           ' . $inputBoxFieldName . $inputBoxFieldName_FileName . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE') . ': ' . JoomlaBasicMisc::formatSizeUnits($max_file_size) . '</div>';
+           ' . $inputBoxFieldName . $inputBoxFieldName_FileName
+            . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PERMITTED_MAX_FILE_SIZE') . ': ' . JoomlaBasicMisc::formatSizeUnits($max_file_size) . '</div>';
     }
 
     protected static function renderUploaderLimitations(): string
