@@ -562,7 +562,11 @@ class fieldObject
 
         } else {
             $postfix = '';
-            $ajax_prefix = 'com_' . $this->ct->Table->record[$this->ct->Table->realidfieldname] . '_';//example: com_153_es_fieldname or com_153_ct_fieldname
+
+            if ($this->ct->Table->record === null)
+                $ajax_prefix = 'com__';//example: com_153_es_fieldname or com_153_ct_fieldname
+            else
+                $ajax_prefix = 'com_' . $this->ct->Table->record[$this->ct->Table->realidfieldname] . '_';//example: com_153_es_fieldname or com_153_ct_fieldname
 
             if ($this->field->type == 'multilangstring') {
                 if (isset($args[4])) {
@@ -590,9 +594,20 @@ class fieldObject
             // Default attribute - action to save the value
             $args[0] = 'border:none !important;width:auto;box-shadow:none;';
 
-            $onchange = 'ct_UpdateSingleValue(\'' . $this->ct->Env->WebsiteRoot . '\',' . $this->ct->Params->ItemId . ',\''
-                . $this->field->fieldname . '\',' . $this->ct->Table->record[$this->ct->Table->realidfieldname] . ',\''
-                . $postfix . '\',' . $this->ct->Params->ModuleId . ');';
+            if ($this->ct->Table->record === null) {
+
+                if ($this->ct->Table->recordlist === null)
+                    $this->ct->getRecordList();
+
+                $listOfRecords = implode(',', $this->ct->Table->recordlist);
+                $onchange = 'ct_UpdateAllRecordsValues(\'' . $this->ct->Env->WebsiteRoot . '\',' . $this->ct->Params->ItemId . ',\''
+                    . $this->field->fieldname . '\',\'' . $listOfRecords . '\',\''
+                    . $postfix . '\',' . ($this->ct->Params->ModuleId ?? 0) . ');';
+            } else {
+                $onchange = 'ct_UpdateSingleValue(\'' . $this->ct->Env->WebsiteRoot . '\',' . $this->ct->Params->ItemId . ',\''
+                    . $this->field->fieldname . '\',\'' . $this->ct->Table->record[$this->ct->Table->realidfieldname] . '\',\''
+                    . $postfix . '\',' . ($this->ct->Params->ModuleId ?? 0) . ');';
+            }
 
             if (isset($value_option_list[1]))
                 $args[1] .= $value_option_list[1];
@@ -601,9 +616,15 @@ class fieldObject
 
             $value = $Inputbox->getDefaultValueIfNeeded($this->ct->Table->record);
 
-            return '<div' . $div_arg . ' id="' . $ajax_prefix . $this->field->fieldname . $postfix . '_div">'
-                . $Inputbox->render($value, $this->ct->Table->record)
-                . '</div>';
+            if ($this->ct->Table->record === null) {
+                return '<div' . $div_arg . ' id="' . $ajax_prefix . $this->field->fieldname . $postfix . '_div">'
+                    . $Inputbox->render($value, null)
+                    . '</div>';
+            } else {
+                return '<div' . $div_arg . ' id="' . $ajax_prefix . $this->field->fieldname . $postfix . '_div">'
+                    . $Inputbox->render($value, $this->ct->Table->record)
+                    . '</div>';
+            }
         }
     }
 
@@ -717,7 +738,7 @@ class fieldObject
     {
         if ($showPublishedString === null)
             $showPublishedString = '';
-                
+
         if ($this->field->type != 'sqljoin' and $this->field->type != 'records') {
             $this->ct->app->enqueueMessage('{{ ' . $this->field->fieldname . '.get }}. Wrong field type "' . $this->field->type . '". ".get" method is only available for Table Join and Records filed types.', 'error');
             return '';

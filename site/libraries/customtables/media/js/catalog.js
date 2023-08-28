@@ -9,10 +9,7 @@ function ctCreateUser(msg, listing_id, toolbarBoxId, ModuleId) {
         //ctWebsiteRoot is the global variable same like ctItemId
         let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + ctItemId;
 
-        if (ModuleId !== 0)
-            link = esPrepareLink(['task', "listing_id", 'returnto', 'ids', 'option', 'view'], ['task=createuser', 'option=com_customtables', 'view=catalog', 'listing_id=' + listing_id, 'returnto=' + returnto, 'ModuleId=' + ModuleId], link);
-        else
-            link = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], ['task=createuser', 'listing_id=' + listing_id, 'returnto=' + returnto], link);
+        if (ModuleId !== 0) link = esPrepareLink(['task', "listing_id", 'returnto', 'ids', 'option', 'view'], ['task=createuser', 'option=com_customtables', 'view=catalog', 'listing_id=' + listing_id, 'returnto=' + returnto, 'ModuleId=' + ModuleId], link); else link = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], ['task=createuser', 'listing_id=' + listing_id, 'returnto=' + returnto], link);
 
         window.location.href = link;
     }
@@ -24,10 +21,7 @@ function ctResetPassword(msg, listing_id, toolbarBoxId, ModuleId) {
         let returnto = btoa(window.location.href);
         let link;
 
-        if (ModuleId !== 0)
-            link = esPrepareLink(['task', "listing_id", 'returnto', 'ids', 'option', 'view'], ['task=resetpassword', 'option=com_customtables', 'view=catalog', 'listing_id=' + listing_id, 'returnto=' + returnto, 'ModuleId=' + ModuleId], '');
-        else
-            link = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], ['task=resetpassword', 'listing_id=' + listing_id, 'returnto=' + returnto], '');
+        if (ModuleId !== 0) link = esPrepareLink(['task', "listing_id", 'returnto', 'ids', 'option', 'view'], ['task=resetpassword', 'option=com_customtables', 'view=catalog', 'listing_id=' + listing_id, 'returnto=' + returnto, 'ModuleId=' + ModuleId], ''); else link = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], ['task=resetpassword', 'listing_id=' + listing_id, 'returnto=' + returnto], '');
 
         window.location.href = link;
 
@@ -41,13 +35,11 @@ function esPrepareLink(deleteParams, addParams, custom_link) {
     const pair = link.split('#');
     link = pair[0];
 
-    for (let i = 0; i < deleteParams.length; i++)
-        link = removeURLParameter(link, deleteParams[i]);
+    for (let i = 0; i < deleteParams.length; i++) link = removeURLParameter(link, deleteParams[i]);
 
     for (let a = 0; a < addParams.length; a++) {
 
-        if (link.indexOf("?") === -1)
-            link += "?"; else link += "&";
+        if (link.indexOf("?") === -1) link += "?"; else link += "&";
 
         link += addParams[a];
     }
@@ -56,8 +48,7 @@ function esPrepareLink(deleteParams, addParams, custom_link) {
 }
 
 function esEditObject(objId, toolbarBoxId, Itemid, tmpl, returnto) {
-    if (es_LinkLoading)
-        return;
+    if (es_LinkLoading) return;
 
     es_LinkLoading = true;
     document.getElementById(toolbarBoxId).innerHTML = '';
@@ -65,8 +56,7 @@ function esEditObject(objId, toolbarBoxId, Itemid, tmpl, returnto) {
     let return_to = btoa(window.location.href);
     let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=edititem&listing_id=' + objId + '&Itemid=' + Itemid + '&returnto=' + return_to;
 
-    if (tmpl !== '')
-        link += '&tmpl=' + tmpl;
+    if (tmpl !== '') link += '&tmpl=' + tmpl;
 
     link += '&returnto=' + returnto;
 
@@ -94,10 +84,7 @@ function runTheTask(task, tableid, recordId, url, responses, last) {
                     if (table_object) {
                         let index = findRowIndexById("ctTable_" + tableid, element_tableid_tr);
 
-                        if (task === 'delete')
-                            document.getElementById("ctTable_" + tableid).deleteRow(index);
-                        else
-                            ctCatalogUpdate(tableid, recordId, index);
+                        if (task === 'delete') document.getElementById("ctTable_" + tableid).deleteRow(index); else ctCatalogUpdate(tableid, recordId, index);
                     }
 
                     es_LinkLoading = false;
@@ -106,12 +93,10 @@ function runTheTask(task, tableid, recordId, url, responses, last) {
                         let toolbarBoxId = 'esToolBar_' + task + '_box_' + tableid;
                         let toolbarBoxIdObject = document.getElementById(toolbarBoxId);
 
-                        if (toolbarBoxIdObject)
-                            toolbarBoxIdObject.style.visibility = 'visible';
+                        if (toolbarBoxIdObject) toolbarBoxIdObject.style.visibility = 'visible';
                     }
 
-                } else
-                    alert(res);
+                } else alert(res);
             }
         }
         http.send(params);
@@ -119,8 +104,7 @@ function runTheTask(task, tableid, recordId, url, responses, last) {
 }
 
 function ctRefreshRecord(tableid, recordId, toolbarBoxId, ModuleId) {
-    if (es_LinkLoading)
-        return;
+    if (es_LinkLoading) return;
 
     es_LinkLoading = true;
 
@@ -137,10 +121,7 @@ function ctRefreshRecord(tableid, recordId, toolbarBoxId, ModuleId) {
     } else {
         let returnto = btoa(window.location.href);
 
-        if (ModuleId !== 0)
-            link = esPrepareLink(['task', "listing_id", 'returnto', 'ids', 'option', 'view'], ['task=refresh', 'option=com_customtables', 'view=catalog', 'listing_id=' + recordId, 'returnto=' + returnto, 'ModuleId=' + ModuleId], link);
-        else
-            link = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], ['task=refresh', 'listing_id=' + recordId, 'returnto=' + returnto], link);
+        if (ModuleId !== 0) link = esPrepareLink(['task', "listing_id", 'returnto', 'ids', 'option', 'view'], ['task=refresh', 'option=com_customtables', 'view=catalog', 'listing_id=' + recordId, 'returnto=' + returnto, 'ModuleId=' + ModuleId], link); else link = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], ['task=refresh', 'listing_id=' + recordId, 'returnto=' + returnto], link);
 
         window.location.href = link;
     }
@@ -165,8 +146,7 @@ function ctLimitChanged(object) {
 }
 
 function ctPublishRecord(tableid, recordId, toolbarBoxId, publish, ModuleId) {
-    if (es_LinkLoading)
-        return;
+    if (es_LinkLoading) return;
 
     es_LinkLoading = true;
     document.getElementById(toolbarBoxId).innerHTML = '';
@@ -182,10 +162,7 @@ function ctPublishRecord(tableid, recordId, toolbarBoxId, publish, ModuleId) {
     } else {
         let returnto = Base64.encode(window.location.href);
 
-        if (ModuleId !== 0)
-            link = esPrepareLink(['task', "listing_id", 'returnto', 'ids', 'option', 'view'], [task, 'option=com_customtables', 'view=catalog', 'listing_id=' + recordId, 'returnto=' + returnto, 'ModuleId=' + ModuleId], link);
-        else
-            link = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], [task, 'listing_id=' + recordId, 'returnto=' + returnto], link);
+        if (ModuleId !== 0) link = esPrepareLink(['task', "listing_id", 'returnto', 'ids', 'option', 'view'], [task, 'option=com_customtables', 'view=catalog', 'listing_id=' + recordId, 'returnto=' + returnto, 'ModuleId=' + ModuleId], link); else link = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], [task, 'listing_id=' + recordId, 'returnto=' + returnto], link);
 
         window.location.href = link;
     }
@@ -198,16 +175,14 @@ function findRowIndexById(tableid, rowId) {
     if (table_object) {
         let rows = table_object.rows;
         for (let i = 0; i < rows.length; i++) {
-            if (rows.item(i).id === rowId)
-                return i;
+            if (rows.item(i).id === rowId) return i;
         }
     }
     return -1;
 }
 
 function ctDeleteRecord(msg, tableid, recordId, toolbarBoxId, ModuleId) {
-    if (es_LinkLoading)
-        return;
+    if (es_LinkLoading) return;
 
     es_LinkLoading = true;
 
@@ -227,13 +202,11 @@ function ctDeleteRecord(msg, tableid, recordId, toolbarBoxId, ModuleId) {
             let returnto = btoa(window.location.href);
             link = esPrepareLink([], ['returnto=' + returnto], link);
 
-            if (ModuleId !== 0)
-                link = esPrepareLink(['option', 'view', 'ModuleId'], ['option=com_customtables', 'view=catalog', 'ModuleId=' + ModuleId], link);
+            if (ModuleId !== 0) link = esPrepareLink(['option', 'view', 'ModuleId'], ['option=com_customtables', 'view=catalog', 'ModuleId=' + ModuleId], link);
 
             window.location.href = link;
         }
-    } else
-        es_LinkLoading = false;
+    } else es_LinkLoading = false;
 }
 
 function es_SearchBoxKeyPress(e) {
@@ -242,8 +215,7 @@ function es_SearchBoxKeyPress(e) {
 }
 
 function ctSearchBoxDo() {
-    if (es_LinkLoading)
-        return;
+    if (es_LinkLoading) return;
 
     es_LinkLoading = true;
     let w = [];
@@ -260,12 +232,9 @@ function ctSearchBoxDo() {
             if (o !== "" && (o !== "0" || obj.dataset.type === 'int' || obj.dataset.type === 'float' || obj.dataset.type === 'checkbox')) {
                 if (n[2] === "") {
                     if (o.indexOf("-to-") !== -1) {
-                        if (o !== "-to-")
-                            w.push(n[1] + "_r_=" + o);
-                    } else
-                        w.push(n[1] + "=" + o);
-                } else
-                    w.push(n[1] + "=" + n[2] + "." + o);//Custom Tables Structure
+                        if (o !== "-to-") w.push(n[1] + "_r_=" + o);
+                    } else w.push(n[1] + "=" + o);
+                } else w.push(n[1] + "=" + n[2] + "." + o);//Custom Tables Structure
             }
         } else {
             alert('Element "' + elementId + '" not found.');
@@ -278,8 +247,7 @@ function ctSearchBoxDo() {
 }
 
 function ctSearchReset() {
-    if (es_LinkLoading)
-        return;
+    if (es_LinkLoading) return;
 
     es_LinkLoading = true;
 
@@ -316,8 +284,7 @@ function getListOfSelectedRecords(tableid) {
         if (obj.checked) {
             const d = parseInt(elements[i].value);
 
-            if (selectedIds.indexOf(d) === -1)
-                selectedIds.push(d);
+            if (selectedIds.indexOf(d) === -1) selectedIds.push(d);
         }
     }
     return selectedIds;
@@ -325,8 +292,7 @@ function getListOfSelectedRecords(tableid) {
 
 function ctToolBarDO(task, tableid) {
 
-    if (es_LinkLoading)
-        return;
+    if (es_LinkLoading) return;
 
     es_LinkLoading = true;
     const elements = getListOfSelectedRecords(tableid);
@@ -340,10 +306,7 @@ function ctToolBarDO(task, tableid) {
     if (task === 'delete') {
 
         let msg;
-        if (elements.length === 1)
-            msg = Joomla.JText._('COM_CUSTOMTABLES_JS_SELECT_DO_U_WANT_TO_DELETE1l');
-        else
-            msg = Joomla.JText._('COM_CUSTOMTABLES_JS_SELECT_DO_U_WANT_TO_DELETE').replace('%s', elements.length);
+        if (elements.length === 1) msg = Joomla.JText._('COM_CUSTOMTABLES_JS_SELECT_DO_U_WANT_TO_DELETE1l'); else msg = Joomla.JText._('COM_CUSTOMTABLES_JS_SELECT_DO_U_WANT_TO_DELETE').replace('%s', elements.length);
 
         if (!confirm(msg)) {
             es_LinkLoading = false;
@@ -365,12 +328,7 @@ function ctToolBarDO(task, tableid) {
             let listing_id = elements[i];
             let url = esPrepareLink(['task', "listing_id", 'returnto', 'ids'], ['task=' + task, 'listing_id=' + listing_id, 'clean=1', 'tmpl=component'], link);
             let accept_responses = [];
-            if (task === 'refresh')
-                accept_responses = ['refreshed'];
-            else if (task === 'publish' || task === 'unpublish')
-                accept_responses = ['published', 'unpublished'];
-            else if (task === 'delete')
-                accept_responses = ['published', 'deleted'];
+            if (task === 'refresh') accept_responses = ['refreshed']; else if (task === 'publish' || task === 'unpublish') accept_responses = ['published', 'unpublished']; else if (task === 'delete') accept_responses = ['published', 'deleted'];
 
             let last = i === elements.length - 1;
             runTheTask(task, tableid, listing_id, url, accept_responses, last);
@@ -408,36 +366,69 @@ function removeURLParameter(url, parameter) {
     }
 }
 
+function ct_UpdateAllRecordsValues(WebsiteRoot, Itemid, fieldname_, record_ids, postfix, ModuleId) {
+    let ids = record_ids.split(',');
+    const obj_checkbox_off = document.getElementById("comes__" + fieldname_ + "_off");
+    if (obj_checkbox_off) {
+
+        for (let i = 0; i < ids.length; i++) {
+            let objectNameOff = "comes_" + ids[i] + "_" + fieldname_ + "_off";
+            document.getElementById(objectNameOff).value = obj_checkbox_off.value;
+
+            let objectName = "comes_" + ids[i] + "_" + fieldname_;
+            if (parseInt(obj_checkbox_off.value) === 1)
+                document.getElementById(objectName).checked = true;
+            else
+                document.getElementById(objectName).checked = false;
+
+            ct_UpdateSingleValue(WebsiteRoot, Itemid, fieldname_, ids[i], postfix, ModuleId);
+        }
+
+    } else {
+        let objectName = "comes__" + fieldname_;
+        let value = document.getElementById(objectName).value;
+
+        for (let i = 0; i < ids.length; i++) {
+            let objectName = "comes_" + ids[i] + "_" + fieldname_;
+            document.getElementById(objectName).value = value;
+            ct_UpdateSingleValue(WebsiteRoot, Itemid, fieldname_, ids[i], postfix, ModuleId);
+        }
+    }
+}
+
 function ct_UpdateSingleValue(WebsiteRoot, Itemid, fieldname_, record_id, postfix, ModuleId) {
 
-    const fieldname = fieldname_.split('_')[0];
-    const url = ctWebsiteRoot + 'index.php?option=com_customtables&amp;view=edititem&amp;Itemid=' + Itemid;
     let params = "";
+
     const obj_checkbox_off = document.getElementById("comes_" + record_id + "_" + fieldname_ + "_off");
     if (obj_checkbox_off) {
         //A bit confusing. But this is needed to save Unchecked values
         //It's because unchecked checkbox has value NULL
         params = "comes_" + fieldname_ + "_off=" + obj_checkbox_off.value; // if this set 1 then the checkbox value will be 0
 
-        if (parseInt(obj_checkbox_off.value) === 1)
-            params += "&comes_" + fieldname_ + "=0";
-        else
-            params += "&comes_" + fieldname_ + "=1";
+        if (parseInt(obj_checkbox_off.value) === 1) params += "&comes_" + fieldname_ + "=0"; else params += "&comes_" + fieldname_ + "=1";
     } else {
         let objectName = "comes_" + record_id + "_" + fieldname_;
         params += "&comes_" + fieldname_ + "=" + document.getElementById(objectName).value;
     }
+    ct_UpdateSingleValueSet(WebsiteRoot, Itemid, fieldname_, record_id, postfix, ModuleId, params);
+}
 
+function ct_UpdateSingleValueSet(WebsiteRoot, Itemid, fieldname_, record_id, postfix, ModuleId, valueParam) {
+
+    const fieldname = fieldname_.split('_')[0];
+    const url = ctWebsiteRoot + 'index.php?option=com_customtables&amp;view=edititem&amp;Itemid=' + Itemid;
+    let params = "";
+
+    params += valueParam;
     params += "&task=save";
     params += "&Itemid=" + Itemid;
-    if (ModuleId !== 0)
-        params += "&ModuleId=" + ModuleId;
+    if (ModuleId !== 0) params += "&ModuleId=" + ModuleId;
 
     params += "&listing_id=" + record_id;
 
     const obj = document.getElementById("com_" + record_id + "_" + fieldname + postfix + "_div");
-    if (obj)
-        obj.className = "ct_loader";
+    if (obj) obj.className = "ct_loader";
 
     let http = CreateHTTPRequestObject();   // defined in ajax.js
 
@@ -463,12 +454,7 @@ function ct_UpdateSingleValue(WebsiteRoot, Itemid, fieldname_, record_id, postfi
                 } else {
                     obj.className = "ct_checkmark_err ";
 
-                    if (http.response.indexOf('<div class="alert-message">Nothing to save</div>') !== -1)
-                        alert(Joomla.JText._('COM_CUSTOMTABLES_JS_NOTHING_TO_SAVE'));
-                    else if (http.response.indexOf('view-login') !== -1)
-                        alert(Joomla.JText._('COM_CUSTOMTABLES_JS_SESSION_EXPIRED'));
-                    else
-                        alert(http.response);
+                    if (http.response.indexOf('<div class="alert-message">Nothing to save</div>') !== -1) alert(Joomla.JText._('COM_CUSTOMTABLES_JS_NOTHING_TO_SAVE')); else if (http.response.indexOf('view-login') !== -1) alert(Joomla.JText._('COM_CUSTOMTABLES_JS_SESSION_EXPIRED')); else alert(http.response);
                 }
             }
         };
@@ -509,8 +495,7 @@ function getContainerElementIDTable(obj) {
         }
 
         obj = obj.parentElement;
-        if (obj == null)
-            return null;
+        if (obj == null) return null;
     }
 }
 
@@ -521,13 +506,11 @@ function ctCatalogOnDrop(event) {
         .getData('text');
 
     let to_parts = getContainerElementIDTable(event.target);
-    if (to_parts == null)
-        return false;
+    if (to_parts == null) return false;
 
     let to_id = to_parts.join("_");
 
-    if (importFromId === to_id)
-        return false;
+    if (importFromId === to_id) return false;
 
     if (confirm("Do you want to copy field content to target record?") === true) {
 
@@ -540,8 +523,7 @@ function ctCatalogOnDrop(event) {
         let table_object = document.getElementById("ctTable_" + to_parts[1]);
 
         let index;
-        if (table_object)
-            index = findRowIndexById("ctTable_" + to_parts[1], element_tableid_tr);
+        if (table_object) index = findRowIndexById("ctTable_" + to_parts[1], element_tableid_tr);
 
         let link = ctWebsiteRoot + 'index.php?option=com_customtables&view=catalog&Itemid=' + ctItemId;
         let url = esPrepareLink(['task', "listing_id", 'returnto', 'ids', 'clean', 'component', 'frmt'], ['task=copycontent', 'from=' + from, 'to=' + to, 'clean=1', 'tmpl=component', 'frmt=json'], link);
@@ -553,8 +535,7 @@ function ctCatalogOnDrop(event) {
                     alert(r.error);
                     return false;
                 } else {
-                    if (table_object)
-                        ctCatalogUpdate(to_parts[1], to_parts[2], index);
+                    if (table_object) ctCatalogUpdate(to_parts[1], to_parts[2], index);
                 }
             })
             .catch(error => console.error("Error", error));
@@ -580,8 +561,7 @@ function ctEditModal(url, parentFieldToUpdate = null) {
     let new_url = url + '&modal=1&time=' + Date.now();
     let params = "";
 
-    if (parentFieldToUpdate !== null)
-        new_url += '&parentfield=' + parentFieldToUpdate
+    if (parentFieldToUpdate !== null) new_url += '&parentfield=' + parentFieldToUpdate
 
     let http = CreateHTTPRequestObject();   // defined in ajax.js
 
@@ -618,8 +598,7 @@ function ctUpdateCheckboxCounter(tableid) {
         let count = 0;
         let elements = document.getElementsByName("esCheckbox" + tableid);
         for (let i = 0; i < elements.length; i++) {
-            if (elements[i].checked)
-                count += 1;
+            if (elements[i].checked) count += 1;
         }
 
         counterIDObj.innerHTML = count.toString();
@@ -632,14 +611,11 @@ function ctValue_googlemapcoordinates(boxId, lat, long, zoom) {
     let map_obj = document.getElementById(boxId);
 
     gmapdata[boxId] = new google.maps.Map(map_obj, {
-        center: cursorPoint,
-        zoom: zoom,
-        mapTypeId: 'roadmap'
+        center: cursorPoint, zoom: zoom, mapTypeId: 'roadmap'
     });
 
     gmapmarker[boxId] = new google.maps.Marker({
-        map: gmapdata[boxId],
-        position: cursorPoint
+        map: gmapdata[boxId], position: cursorPoint
     });
 
     let infoWindow = new google.maps.InfoWindow;
