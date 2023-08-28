@@ -423,6 +423,7 @@ class Inputbox
                     . 'class="' . $this->cssclass . '" '
                     . 'value="' . htmlspecialchars($value) . '" maxlength="255" '
                     . $this->attributes . ' '
+                    . 'data-type="email" '
                     . 'data-filters="email" '
                     . 'data-label="' . $this->field->title . '"'
                     . 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
@@ -577,6 +578,7 @@ class Inputbox
             . ($autocomplete ? 'list="' . $this->prefix . $this->field->fieldname . '_datalist" ' : '')
             . 'class="' . $this->cssclass . '" '
             . 'title="' . $this->place_holder . '" '
+            . 'data-type="string" '
             . 'data-label="' . $this->field->title . '" '
             . 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
             . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" ';
@@ -1404,6 +1406,7 @@ class Inputbox
             $att[] = 'placeholder="' . $this->place_holder . '"';
 
         $att[] = 'title="' . $this->place_holder . '"';
+        $att[] = 'data-type="date"';
         $att[] = 'data-label="' . $this->place_holder . '"';
         $att[] = 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '"';
         $att[] = 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption); // closing quote is not needed because onchange parameter already has opening and closing quotes.

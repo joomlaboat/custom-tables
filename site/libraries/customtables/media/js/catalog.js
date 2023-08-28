@@ -393,6 +393,17 @@ function ct_UpdateAllRecordsValues(WebsiteRoot, Itemid, fieldname_, record_ids, 
             let obj = document.getElementById(objectName);
             obj.value = value;
             ct_UpdateSingleValue(WebsiteRoot, Itemid, fieldname_, ids[i], postfix, ModuleId);
+            if (obj.dataset.type == "sqljoin") {
+
+                let tableid = obj.dataset.tableid;
+                let table_object = document.getElementById("ctTable_" + tableid);
+
+                if (table_object) {
+                    let element_tableid_tr = "ctTable_" + tableid + '_' + ids[i];
+                    let index = findRowIndexById("ctTable_" + tableid, element_tableid_tr);
+                    ctCatalogUpdate(tableid, ids[i], index);
+                }
+            }
         }
     }
 }
