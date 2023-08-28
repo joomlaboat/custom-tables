@@ -479,7 +479,7 @@ class Inputbox
         $i = 0;
 
         if ($value === null) {
-            $value = $this->ct->Env->jinput->getString($this->ct->Env->field_prefix . $this->field->fieldname, '',);
+            $value = $this->ct->Env->jinput->getString($this->ct->Env->field_prefix . $this->field->fieldname, '');
             $value = preg_replace("/[^A-Za-z\d\-]/", '', $value);
             if ($value == '')
                 $value = $this->defaultValue;
@@ -1153,7 +1153,7 @@ class Inputbox
         //$this->field->params[3] is requirement depth
 
         if ($value === null) {
-            $value = $this->ct->Env->jinput->getString($this->ct->Env->field_prefix . $this->field->fieldname, null);
+            $value = $this->ct->Env->jinput->getString($this->ct->Env->field_prefix . $this->field->fieldname);
             if ($value === null) {
                 if ($this->field->defaultvalue !== null and $this->field->defaultvalue != '')
                     $value = ',' . $this->field->params[0] . '.' . $this->defaultValue . '.,';
@@ -1365,7 +1365,7 @@ class Inputbox
         if ($value === null) {
             $value = $this->ct->Env->jinput->getString($this->ct->Env->field_prefix . $this->field->fieldname, '');
             //https://stackoverflow.com/questions/58265286/remove-all-special-characters-from-string-to-make-it-a-valid-email-but-keep-%C3%A4%C3%B6%C3%BC
-            $value = preg_replace('/[^\p{L}0-9\-.;@_]/u', '', $value);
+            $value = preg_replace('/[^\p{L}\d\-.;@_]/u', '', $value);
 
             if ($value == '')
                 $value = $this->defaultValue;
