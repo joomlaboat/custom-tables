@@ -41,7 +41,7 @@ class CT
     var int $LimitStart;
     var bool $isEditForm;
     var $app;
-    var Document $document;
+    var ?Document $document;
     var $db;
     var array $editFields;
     var array $LayoutVariables;
@@ -498,6 +498,19 @@ class CT
         $row = $rows[0];
 
         $saveField = new SaveFieldQuerySet($this, $row, false);
+        /*
+                //--------------
+                foreach ($this->ct->Table->fields as $fieldRow) {
+
+                    if (!$saveField->checkIfFieldAlreadyInTheList($fieldRow['fieldname'])) {
+
+                        if (in_array($fieldRow['fieldname'], $fieldsToSave))
+                            $saveFieldSet = $saveField->getSaveFieldSet($fieldRow);
+                        else
+                            $saveFieldSet = $saveField->applyDefaults($fieldRow);
+
+                        //-------------
+        */
         $this->Env->jinput->set("listing_id", $listing_id);
 
         if ($this->Env->advancedTagProcessor)

@@ -28,11 +28,9 @@ function updateESTables()
 function getESTables()
 {
     $conf = JFactory::getConfig();
-
     $query = 'SHOW TABLES';
     $db = JFactory::getDBO();
     $db->setQuery($query);
-
     $tables = $db->loadAssocList();
     $database = $conf->get('db');
 
@@ -42,11 +40,9 @@ function getESTables()
         if (str_contains($tablename, '_extrasearch_'))//dont change this line _e x t r a  s e a r c h_
         {
             $new_tablename = str_replace('_extrasearch_', '_customtables_', $tablename);//dont change this line. First must be _e x t r a  s e a r c h_
-
             $query = 'DROP TABLE IF EXISTS ' . $new_tablename;
             $db->setQuery($query);
             $db->execute();
-
             $query = 'RENAME TABLE ' . $tablename . ' TO ' . $new_tablename;
             $db->setQuery($query);
             $db->execute();
@@ -54,7 +50,6 @@ function getESTables()
             if (fixFields($new_tablename)) {
                 //	die;
             }
-
         } elseif (str_contains($tablename, '_customtables_')) {
             updateFields($tablename);
         }

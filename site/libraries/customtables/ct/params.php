@@ -108,7 +108,12 @@ class Params
                 $blockExternalVars = false;
                 //Do not block external var parameters because this is the edit form or a task
             } elseif (method_exists($this->app, 'getParams')) {
-                $menu_params = $this->app->getParams();
+
+                try {
+                    $menu_params = $this->app->getParams();
+                } catch (Exception $e) {
+                    $menu_params = new JRegistry;
+                }
             }
         }
         $this->setParams($menu_params, $blockExternalVars, $ModuleId);
@@ -116,13 +121,20 @@ class Params
 
     function setParams($menu_params = null, $blockExternalVars = true, ?string $ModuleId = null): void
     {
+        $lang = $this->app->getLanguage();
+
         $this->blockExternalVars = $blockExternalVars;
         $this->ModuleId = $ModuleId;
 
         if (is_null($menu_params)) {
             if (method_exists($this->app, 'getParams')) {
 
-                $menu_params = $this->app->getParams();
+                try {
+                    $menu_params = $this->app->getParams();
+                } catch (Exception $e) {
+                    $menu_params = new JRegistry;
+                }
+
             } else {
                 $this->pageTitle = null;
                 $this->showPageHeading = null;
