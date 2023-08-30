@@ -42,7 +42,6 @@ class Ordering
     {
         $params = array();
         $params['id'] = 'ctTable_' . $tableid;
-
         return self::addEditHTMLTagParams($result, 'table', $params);
     }
 
@@ -65,7 +64,6 @@ class Ordering
 
             $val = '<' . $tag . ' ' . implode(' ', $params_str) . '>';
             $result = str_replace($fItem, $val, $result);
-
             $i++;
         }
         return $result;
@@ -78,7 +76,6 @@ class Ordering
         $params['data-url'] = '/index.php?option=com_customtables&view=catalog&task=ordering&tableid=' . $tableid . '&tmpl=component&clean=1';
         $params['data-direction'] = 'asc';
         $params['data-nested'] = 'true';
-
         return self::addEditHTMLTagParams($result, 'tbody', $params);
     }
 
@@ -88,23 +85,20 @@ class Ordering
             return false;
 
         $orderingStringPair = explode(' ', $this->ordering_processed_string);
-
         $direction = '';
+
         if (isset($orderingStringPair[1])) {
             $direction = (strtolower($orderingStringPair[1]) == 'desc' ? ' DESC' : '');
         }
 
         $this->fieldList = explode('.', $orderingStringPair[0]);
-
         $this->index = 0;
-
         $orderbyQuery = self::parseOrderByFieldName($this->fieldList[$this->index], $this->Table);
 
         if ($orderbyQuery === null)
             return false;
 
         $this->orderby = $orderbyQuery . $direction;
-
         return true;
     }
 
@@ -138,7 +132,6 @@ class Ordering
             case 'sqljoin':
 
                 $join_table = $field->params[0];
-
                 $params = new JRegistry;
                 $params->loadArray([]);
                 $sqljoin_temp_ct = new CT($params, true);
@@ -182,7 +175,6 @@ class Ordering
         //get sort field (and direction) example "price desc"
         $app = Factory::getApplication();
         $jinput = $app->input;
-
         $ordering_param_string = '';
 
         if ($this->Params->blockExternalVars) {
@@ -207,7 +199,6 @@ class Ordering
                 }
             }
         }
-
         $this->ordering_processed_string = $ordering_param_string;
 
         //set state
@@ -311,7 +302,6 @@ class Ordering
         // Sanitize the input
         $pks = ArrayHelper::toInteger($pks);
         $order = ArrayHelper::toInteger($order);
-
         $realFieldName = '';
 
         foreach ($this->Table->fields as $field) {
