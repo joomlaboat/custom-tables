@@ -496,21 +496,24 @@ class CT
             return -1;
 
         $row = $rows[0];
-
         $saveField = new SaveFieldQuerySet($this, $row, false);
-        /*
-                //--------------
-                foreach ($this->ct->Table->fields as $fieldRow) {
 
-                    if (!$saveField->checkIfFieldAlreadyInTheList($fieldRow['fieldname'])) {
+        //Apply default values
+        foreach ($this->Table->fields as $fieldRow) {
 
-                        if (in_array($fieldRow['fieldname'], $fieldsToSave))
-                            $saveFieldSet = $saveField->getSaveFieldSet($fieldRow);
-                        else
-                            $saveFieldSet = $saveField->applyDefaults($fieldRow);
+            if (!$saveField->checkIfFieldAlreadyInTheList($fieldRow['fieldname'])) {
+                $saveFieldSet = $saveField->applyDefaults($fieldRow);
+                if ($saveFieldSet !== null) {
+                    $saveField->saveQuery[] = $saveFieldSet;
+                }
+            }
+        }
 
-                        //-------------
-        */
+        if (count($saveField->saveQuery) > 0) {
+            $saveField->runUpdateQuery($saveField->saveQuery, $listing_id);
+        }
+        //End of Apply default values
+
         $this->Env->jinput->set("listing_id", $listing_id);
 
         if ($this->Env->advancedTagProcessor)

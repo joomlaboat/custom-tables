@@ -14,9 +14,9 @@ if (!function_exists('str_contains')) {
     }
 }
 
-function CTLoader($include_utilities = false, $include_html = false, $PLUGIN_NAME_DIR = null, $componentName = 'com_customtables')
+function CTLoader($include_utilities = false, $include_html = false, $PLUGIN_NAME_DIR = null, $componentName = 'com_customtables', ?bool $loadTwig = null)
 {
-    if (defined('_JEXEC')) {
+    if ($loadTwig === null and defined('_JEXEC')) {
         $params = JComponentHelper::getParams($componentName);
         $loadTwig = $params->get('loadTwig');
     }

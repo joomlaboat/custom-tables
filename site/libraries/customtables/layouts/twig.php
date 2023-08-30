@@ -51,6 +51,7 @@ class TwigProcessor
 
     public function __construct(CT $ct, $layoutContent, $getEditFieldNamesOnly = false, $DoHTMLSpecialChars = false, $parseParams = true, ?string $layoutName = null, ?string $pageLayoutLink = null)
     {
+        $this->errorMessage = null;
         $this->DoHTMLSpecialChars = $DoHTMLSpecialChars;
         $this->ct = $ct;
         $this->getEditFieldNamesOnly = $getEditFieldNamesOnly;
@@ -66,7 +67,8 @@ class TwigProcessor
         $pos1 = strpos($layoutContent, $tag1);
 
         if (!class_exists('Twig\Loader\ArrayLoader')) {
-            Factory::getApplication()->enqueueMessage('Twig not loaded. Go to Global Configuration/ Custom Tables Configuration to enable it.', 'error');
+            $this->errorMessage = 'Twig not loaded. Go to Global Configuration/ Custom Tables Configuration to enable it.';
+            Factory::getApplication()->enqueueMessage($this->errorMessage, 'error');
             return;
         }
 
@@ -106,7 +108,6 @@ class TwigProcessor
         $this->addGlobals();
         $this->addFieldValueMethods($parseParams);
         $this->addTwigFilters();
-        $this->errorMessage = null;
     }
 
     protected function addGlobals(): void
