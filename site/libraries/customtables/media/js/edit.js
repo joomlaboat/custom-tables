@@ -452,12 +452,12 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_ind
 
     let wrapper = document.getElementById(control_name + "Wrapper");
     let filters = [];
-    if (wrapper.dataset.valuefilters !== '')
-        filters = JSON.parse(atob(wrapper.dataset.valuefilters));
+    if (wrapper.dataset.valuefilters !== '') {
+        let decodedFilterString = Base64.decode(wrapper.dataset.valuefilters).replace(/[^ -~]+/g, "");
+        filters = JSON.parse(decodedFilterString);
+    }
 
-    //let attributes = atob(wrapper.dataset.attributes);
-    let onchange = atob(wrapper.dataset.onchange);
-
+    let onchange = Base64.decode(wrapper.dataset.onchange).replace(/[^ -~]+/g, "");
     let next_index = index;
     let next_sub_index = sub_index;
     let val;
@@ -607,8 +607,10 @@ function ctUpdateTableJoinLink(control_name, index, execute_all, sub_index, obje
         url = 'index.php?option=com_customtables&view=catalog&tmpl=component&from=json&key=' + wrapper.dataset.key + '&index=' + index;
 
     let filters = [];
-    if (wrapper.dataset.valuefilters !== '')
-        filters = JSON.parse(atob(wrapper.dataset.valuefilters));
+    if (wrapper.dataset.valuefilters !== '') {
+        let decodedFilterString = Base64.decode(wrapper.dataset.valuefilters).replace(/[^ -~]+/g, "");
+        filters = JSON.parse(decodedFilterString);
+    }
 
     if (execute_all) {
         if (Array.isArray(filters[index])) {
@@ -669,12 +671,32 @@ function ctUpdateTableJoinLink(control_name, index, execute_all, sub_index, obje
     if (index >= filters.length)
         return false;
 
-    fetch(url)
-        .then(r => r.json())
-        .then(r => {
-            ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_index, object_id, formId, forceValue);
-        })
-        .catch(error => console.error("Error", error));
+    ctRenderTableJoinSelectBoxLoadRecords(url, control_name, index, execute_all, sub_index, object_id, formId, forceValue)
+}
+
+function ctRenderTableJoinSelectBoxLoadRecords(url, control_name, index, execute_all, sub_index, object_id, formId, forceValue) {
+
+    let http = CreateHTTPRequestObject();   // defined in ajax.js
+
+    if (http) {
+
+        http.open("GET", url, true);
+        http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        http.onreadystatechange = function () {
+            if (http.readyState === 4) {
+                let response;
+
+                try {
+                    response = JSON.parse(http.response.toString());
+                } catch (e) {
+                    console.log(http.response.toString());
+                    return console.error(e);
+                }
+                ctRenderTableJoinSelectBox(control_name, response, index, execute_all, sub_index, object_id, formId, forceValue);
+            }
+        };
+        http.send();
+    }
 }
 
 // --------------------- Inputbox: Records

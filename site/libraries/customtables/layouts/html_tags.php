@@ -447,7 +447,6 @@ class Twig_Html_Tags
             . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . 'searchinputbox.php');
 
         $SearchBox = new SearchInputBox($this->ct, 'esSearchBox');
-
         $first_fld = [];
         $first_field_type = '';
 
@@ -496,7 +495,6 @@ class Twig_Html_Tags
                     $first_field_type = 'string';
             }
         }
-
         $first_fld['type'] = $first_field_type;
 
         if (count($list_of_fields) > 1) {
@@ -509,8 +507,8 @@ class Twig_Html_Tags
         //Add control elements
         $fieldTitles = $this->getFieldTitles($list_of_fields);
         $field_title = implode(' ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_OR') . ' ', $fieldTitles);
-
         $cssClass = 'ctSearchBox';
+        
         if ($class != '')
             $cssClass .= ' ' . $class;
 

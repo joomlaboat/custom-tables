@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use Exception;
 use Joomla\CMS\Factory;
 
 trait Logs
@@ -45,7 +46,11 @@ trait Logs
         $fields = ['userid', 'datetime', 'tableid', 'listingid', 'action', 'Itemid'];
         $query = 'INSERT INTO #__customtables_log (' . implode(',', $fields) . ') VALUES (' . implode(',', $sets) . ')';
 
-        $db->setQuery($query);
-        $db->execute();
+        try {
+            $db->setQuery($query);
+            @$db->execute();
+        } catch (Exception $e) {
+            echo $e->getMessage();
+        }
     }
 }

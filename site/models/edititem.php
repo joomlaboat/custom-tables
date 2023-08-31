@@ -550,14 +550,11 @@ class CustomTablesModelEditItem extends JModelLegacy
         } else {
             $this->ct->Table->saveLog($listing_id, 2);
             $row = $this->ct->Table->loadRecord($listing_id);
-
             if ($row !== null) {
                 $this->ct->Env->jinput->set("listing_id", $row[$this->ct->Table->realidfieldname]);
-
                 if ($this->ct->Env->advancedTagProcessor) {
                     if ($phpOnChangeFound or $this->ct->Table->tablerow['customphp'] != '')
                         CleanExecute::doPHPonChange($this->ct, $row);
-
                     if ($phpOnAddFound and $isCopy)
                         CleanExecute::doPHPonAdd($this->ct, $row);
                 }

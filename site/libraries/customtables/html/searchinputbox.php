@@ -161,6 +161,14 @@ class SearchInputBox
                     . ' data-type="' . $this->field->type . '" />';
                 break;
 
+            case 'virtual';
+                $result .= '<input type="text" name="' . $objName_ . '" id="' . $objName_ . '" class="' . $cssclass . ' ' . $default_class . '" '
+                    . ' placeholder="' . $field_title . '"'
+                    . ' onkeypress="es_SearchBoxKeyPress(event)"'
+                    . ' value="' . htmlspecialchars($value) . '" maxlength="1024"'
+                    . ' data-type="' . $this->field->type . '" />';
+                break;
+
             case 'date';
                 $result .= JHTML::calendar($value, $objName_, $objName_);
                 break;
