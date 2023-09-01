@@ -82,7 +82,7 @@ class updateFiles
 
             $field_old = new Field($ct, $field_row_old, $file);
             $field_old->params = $old_params;
-            $field_old->parseParams($file);
+            $field_old->parseParams($file, $field_old->type);
 
             $old_FileFolder = CT_FieldTypeTag_file::getFileFolder($field_old->params[1]);
 
@@ -92,7 +92,7 @@ class updateFiles
 
             $field_new = new Field($ct, $field_row_new, $file);
             $field_new->params = $new_params;
-            $field_new->parseParams($file);
+            $field_new->parseParams($file, $field_old->type);
 
             $new_FileFolder = CT_FieldTypeTag_file::getFileFolder($field_new->params[1]);
 

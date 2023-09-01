@@ -84,23 +84,21 @@ class Field
         $this->realfieldname = $fieldRow['realfieldname'];
         $this->isrequired = intval($fieldRow['isrequired']);
         $this->defaultvalue = $fieldRow['defaultvalue'];
-
         $this->valuerule = $fieldRow['valuerule'];
         $this->valuerulecaption = $fieldRow['valuerulecaption'];
-
         $this->prefix = $this->ct->Env->field_input_prefix;
         $this->comesfieldname = $this->prefix . $this->fieldname;
-
         $this->params = JoomlaBasicMisc::csv_explode(',', $fieldRow['typeparams'], '"', false);
 
         if ($parseParams and $this->type != 'virtual')
-            $this->parseParams($row);
+            $this->parseParams($row, $this->type);
     }
 
-    function parseParams($row): void
+    function parseParams(?array $row, string $type): void
     {
         $new_params = [];
 
+        $index = 0;
         foreach ($this->params as $type_param) {
             if ($type_param !== null) {
                 $type_param = str_replace('****quote****', '"', $type_param);
@@ -111,13 +109,20 @@ class Field
                 elseif (!str_contains($type_param, '{{') and !str_contains($type_param, '{%'))
                     $new_params[] = $type_param;
                 else {
-                    $twig = new TwigProcessor($this->ct, $type_param, false, false, false);
-                    $new_params[] = $twig->process($row);
 
-                    if ($twig->errorMessage !== null)
-                        $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
+                    if ($type == 'user' and ($index == 1 or $index = 2)) {
+                        //Do not parse
+                        $new_params[] = $type_param;
+                    } else {
+                        $twig = new TwigProcessor($this->ct, $type_param, false, false, false);
+                        $new_params[] = $twig->process($row);
+
+                        if ($twig->errorMessage !== null)
+                            $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
+                    }
                 }
             }
+            $index++;
         }
         $this->params = $new_params;
     }

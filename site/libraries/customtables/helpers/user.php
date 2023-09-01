@@ -16,6 +16,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use ESTables;
+use Exception;
 use JoomlaBasicMisc;
 use JUserHelper;
 use Joomla\CMS\Uri\Uri;
@@ -147,11 +148,10 @@ class CTUser
     {
         $msg = '';
         $password = strtolower(JUserHelper::genRandomPassword());
-
         $articleId = 0;
 
-        if (!Email::checkEmail($email)) {
-            Factory::getApplication()->enqueueMessage('Incorrect email "' . $email . '"', 'error');
+        if (!@Email::checkEmail($email)) {
+            Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_INCORRECT_EMAIL') . ' "' . $email . '"', 'error');
             return false;
         }
 
@@ -166,16 +166,13 @@ class CTUser
             CTUser::UpdateUserField($realtablename, $realidfieldname, $useridfieldname, $realUserId, $listing_id);
             Factory::getApplication()->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_USER_CREATE_PSW_SENT'));
         } else {
-
             $msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_USER_NOTCREATED');
             Factory::getApplication()->enqueueMessage($msg, 'error');
         }
-
         return true;
     }
 
     //------------- USER CREATION
-
     static public function CreateUserAccount($fullname, $username, $password, $email, $group_names, &$msg): ?int
     {
         //Get group IDs
@@ -185,7 +182,7 @@ class CTUser
             return null;
 
         //Creates active user
-        $useractivation = 0;//alreadey activated
+        $useractivation = 0;//already activated
 
         $config = Factory::getConfig();
 
@@ -296,24 +293,27 @@ class CTUser
 
     static protected function getUserGroupIDsByName($group_names): ?array
     {
+        $db = Factory::getDBO();
         $new_names = array();
         $names = explode(',', $group_names);
         foreach ($names as $name) {
-            $n = trim($name);
+            $n = preg_replace("/[^[:alnum:][:space:]]/u", '', trim($name));
             if ($n != '')
-                $new_names[] = 'title="' . $n . '"';
+                $new_names[] = 'title=' . $db->quote($n);
         }
 
         if (count($new_names) == 0)
             return null;
 
-        $db = Factory::getDBO();
-
         $query = 'SELECT id FROM #__usergroups WHERE ' . implode(' OR ', $new_names);
 
-        $db->setQuery($query);
+        try {
+            $db->setQuery($query);
+            $rows = $db->loadObjectList();
+        } catch (Exception $e) {
+            return null;
+        }
 
-        $rows = $db->loadObjectList();
         $usergroup_ids = array();
         foreach ($rows as $row) {
             $usergroup_ids[] = $row->id;

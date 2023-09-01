@@ -273,8 +273,8 @@ class SearchInputBox
             . ' class="' . $cssclass . ' ' . $default_class . '"'
             . ' data-type="checkbox">'
             . '<option value="" ' . ($value == '' ? 'SELECTED' : '') . '>' . $this->field->title . ' - ' . $translations[0] . '</option>'
-            . '<option value="true" ' . ($value == 'true' ? 'SELECTED' : '') . '>' . $this->field->title . ' - ' . $translations[1] . '</option>'
-            . '<option value="false" ' . ($value == 'false' ? 'SELECTED' : '') . '>' . $this->field->title . ' - ' . $translations[2] . '</option>'
+            . '<option value="1" ' . (($value == '1' or $value == 'true') ? 'SELECTED' : '') . '>' . $this->field->title . ' - ' . $translations[1] . '</option>'
+            . '<option value="0" ' . (($value == '0' or $value == 'false') ? 'SELECTED' : '') . '>' . $this->field->title . ' - ' . $translations[2] . '</option>'
             . '</select>';
 
         return $result;

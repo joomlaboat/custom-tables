@@ -59,10 +59,9 @@ class Value
         $this->ct = &$ct;
     }
 
-    function renderValue(array $fieldrow, ?array $row, array $option_list)
+    function renderValue(array $fieldrow, ?array $row, array $option_list, bool $parseParams = true)
     {
-        $this->field = new Field($this->ct, $fieldrow, $row);
-
+        $this->field = new Field($this->ct, $fieldrow, $row, $parseParams);
         $rfn = $this->field->realfieldname;
         $this->row = $row;
         $rowValue = $row[$rfn] ?? null;

@@ -1018,13 +1018,13 @@ class SaveFieldQuerySet
 
             $email = $this->ct->Env->user->email . '';
             if ($email != '') {
-                $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_ALREADY_EXISTS', 'error'));
+                $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_ALREADY_EXISTS'), 'error');
                 return false; //all good, user already assigned.
             }
         }
 
         if (count($field->params) < 3) {
-            $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('User field name parameters count is less than 3.', 'error'));
+            $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('User field name parameters count is less than 3.'), 'error');
             return false;
         }
 
@@ -1032,11 +1032,22 @@ class SaveFieldQuerySet
         $new_parts = array();
 
         foreach ($field->params as $part) {
-            tagProcessor_General::process($this->ct, $part, $this->ct->Table->record);
-            tagProcessor_Item::process($this->ct, $part, $this->ct->Table->record, '');
-            tagProcessor_If::process($this->ct, $part, $this->ct->Table->record);
-            tagProcessor_Page::process($this->ct, $part);
-            tagProcessor_Value::processValues($this->ct, $part, $this->ct->Table->record);
+
+            if ($this->ct->Env->legacySupport) {
+                tagProcessor_General::process($this->ct, $part, $this->ct->Table->record);
+                tagProcessor_Item::process($this->ct, $part, $this->ct->Table->record, '');
+                tagProcessor_If::process($this->ct, $part, $this->ct->Table->record);
+                tagProcessor_Page::process($this->ct, $part);
+                tagProcessor_Value::processValues($this->ct, $part, $this->ct->Table->record);
+            }
+
+            $twig = new TwigProcessor($this->ct, $part, false, false, false);
+            $part = $twig->process($this->ct->Table->record);
+
+            if ($twig->errorMessage !== null) {
+                $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
+                return false;
+            }
 
             $new_parts[] = $part;
         }

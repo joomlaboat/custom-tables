@@ -1427,10 +1427,10 @@
             <param name="usergroups" label="User Groups"
                    description="Limit selection to certain User Group(s). Or used as default User Group(s) when creating a new user account."
                    default="" type="string"/>
-            <param type="string" name="nametags" label="Name"
-                   description="Used to create new user account only. Field tags, example: [firstname] [lastname]"/>
-            <param type="string" name="emailtag" label="Email"
-                   description="Used to create new user account only. Field tags, example: [email]"/>
+            <param type="string" name="nametags" label="Name" parse="0"
+                   description="Used to create new user account only. Field tags, example: {{ firstname }} {{ lastname }}"/>
+            <param type="string" name="emailtag" label="Email" parse="0"
+                   description="Used to create new user account only. Field tags, example: {{ email }}"/>
             <param name="namefilter" label="Name Filter"
                    description="Limit selection to certain name - name must content this characters." default=""
                    type="string"/>

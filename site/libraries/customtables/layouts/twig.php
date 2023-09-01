@@ -48,9 +48,11 @@ class TwigProcessor
     var ?string $pageLayoutLink;
     var string $itemLayoutName;
     var string $itemLayoutLineStart;
+    var bool $parseParams;
 
     public function __construct(CT $ct, $layoutContent, $getEditFieldNamesOnly = false, $DoHTMLSpecialChars = false, $parseParams = true, ?string $layoutName = null, ?string $pageLayoutLink = null)
     {
+        $this->parseParams = $parseParams;
         $this->errorMessage = null;
         $this->DoHTMLSpecialChars = $DoHTMLSpecialChars;
         $this->ct = $ct;
@@ -106,7 +108,7 @@ class TwigProcessor
         }
         $this->twig = new \Twig\Environment($loader);
         $this->addGlobals();
-        $this->addFieldValueMethods($parseParams);
+        $this->addFieldValueMethods();
         $this->addTwigFilters();
     }
 
@@ -211,7 +213,7 @@ class TwigProcessor
         $this->twig->addGlobal('tables', new Twig_Tables_Tags($this->ct));
     }
 
-    protected function addFieldValueMethods($parseParams = true): void
+    protected function addFieldValueMethods(): void
     {
         if (isset($this->ct->Table->fields)) {
             $index = 0;
@@ -219,20 +221,35 @@ class TwigProcessor
                 if ($fieldRow === null or count($fieldRow) == 0) {
                     $this->errorMessage = 'addFieldValueMethods: Field row is empty.';
                 } else {
-                    $function = new TwigFunction($fieldRow['fieldname'], function () use (&$ct, $index) {
-                        //This function will process record values with field typeparams and with optional arguments
-                        //Example:
-                        //{{ price }}  - will return 35896.14 if field type parameter is 2,20 (2 decimals)
-                        //{{ price(3,",") }}  - will return 35,896.140 if field type parameter is 2,20 (2 decimals) but extra 0 added
+                    if ($this->parseParams) {
+                        $function = new TwigFunction($fieldRow['fieldname'], function () use (&$ct, $index) {
+                            //This function will process record values with field typeparams and with optional arguments
+                            //Example:
+                            //{{ price }}  - will return 35896.14 if field type parameter is 2,20 (2 decimals)
+                            //{{ price(3,",") }}  - will return 35,896.140 if field type parameter is 2,20 (2 decimals) but extra 0 added
 
-                        $args = func_get_args();
+                            $args = func_get_args();
 
-                        $valueProcessor = new Value($this->ct);
-                        return strval($valueProcessor->renderValue($this->ct->Table->fields[$index], $this->ct->Table->record, $args));
-                    });
+                            $valueProcessor = new Value($this->ct);
+                            return strval($valueProcessor->renderValue($this->ct->Table->fields[$index], $this->ct->Table->record, $args, true));
+                        });
+                    } else {
+                        $function = new TwigFunction($fieldRow['fieldname'], function () use (&$ct, $index) {
+                            //This function will process record values with field typeparams and with optional arguments
+                            //Example:
+                            //{{ price }}  - will return 35896.14 if field type parameter is 2,20 (2 decimals)
+                            //{{ price(3,",") }}  - will return 35,896.140 if field type parameter is 2,20 (2 decimals) but extra 0 added
+
+                            $args = func_get_args();
+
+                            $valueProcessor = new Value($this->ct);
+                            return strval($valueProcessor->renderValue($this->ct->Table->fields[$index], $this->ct->Table->record, $args, false));
+                        });
+                    }
 
                     $this->twig->addFunction($function);
-                    $this->variables[$fieldRow['fieldname']] = new fieldObject($this->ct, $fieldRow, $this->DoHTMLSpecialChars, $this->getEditFieldNamesOnly, $parseParams);
+                    $this->variables[$fieldRow['fieldname']] = new fieldObject($this->ct, $fieldRow, $this->DoHTMLSpecialChars,
+                        $this->getEditFieldNamesOnly, $this->parseParams);
                     $index++;
                 }
             }
@@ -387,14 +404,16 @@ class fieldObject
     var Field $field;
     var bool $DoHTMLSpecialChars;
     var bool $getEditFieldNamesOnly;
+    var bool $parseParams;
 
     function __construct(CT &$ct, $fieldRow, $DoHTMLSpecialChars = false, $getEditFieldNamesOnly = false, $parseParams = true)
     {
+        $this->parseParams = $parseParams;
         $this->DoHTMLSpecialChars = $DoHTMLSpecialChars;
         $this->ct = $ct;
 
         try {
-            $this->field = new Field($ct, $fieldRow, $this->ct->Table->record, $parseParams);
+            $this->field = new Field($ct, $fieldRow, $this->ct->Table->record, $this->parseParams);
         } catch (Exception $e) {
             echo $e->getMessage();
         }
@@ -407,7 +426,7 @@ class fieldObject
             return 'Field not initialized.';
 
         $valueProcessor = new Value($this->ct);
-        $vlu = $valueProcessor->renderValue($this->field->fieldrow, $this->ct->Table->record, []);
+        $vlu = $valueProcessor->renderValue($this->field->fieldrow, $this->ct->Table->record, [], $this->parseParams);
 
         if ($this->DoHTMLSpecialChars) {
             $vlu = htmlentities($vlu, ENT_QUOTES + ENT_IGNORE + ENT_DISALLOWED + ENT_HTML5, "UTF-8");
