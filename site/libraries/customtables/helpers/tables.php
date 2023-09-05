@@ -265,7 +265,6 @@ class ESTables
             Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
             return false;
         }
-
         return $db->insertid();
     }
 

@@ -332,7 +332,7 @@
         </tag>
         --------------------
         <tag name="count" label="Count" startchar="{" endchar="}" proversion="1"
-             description="Returns the number of records in selected table." twigclass="record">
+             description="Returns the number of records in selected table that match the filter." twigclass="record">
             <params>
                 <param name="tablename" label="Table" type="table"
                        description="The name of the Table to count records from." example="products"/>
@@ -354,8 +354,8 @@
             </params>
         </tag>
 
-        <tag name="joinmin" label="Table Join - Minimum" startchar="{" endchar="}" proversion="1"
-             description="Finds the minimum value of all the records that match." twigclass="record">
+        <tag name="min" label="Minimum" startchar="{" endchar="}" proversion="1"
+             description="Returns the minimum of all the records that match the filter." twigclass="record">
             <params>
                 <param name="tablename" label="Table" type="table"
                        description="The name of the Table to count records from." example="products"
@@ -367,8 +367,8 @@
             </params>
         </tag>
 
-        <tag name="joinmax" label="Table Join - Maximum" startchar="{" endchar="}" proversion="1"
-             description="Finds the maximum value of all the records that match the filter." twigclass="record">
+        <tag name="max" label="Maximum" startchar="{" endchar="}" proversion="1"
+             description="Returns the maximum of all the records that match the filter." twigclass="record">
             <params>
                 <param name="tablename" label="Table" type="table"
                        description="The name of the Table to count records from." example="products"

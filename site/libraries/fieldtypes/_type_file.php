@@ -612,7 +612,6 @@ class CT_FieldTypeTag_file
             . 'data-label="' . $field->title . '" '
             . 'data-valuerule="' . str_replace('"', '&quot;', $field->valuerule) . '" '
             . 'data-valuerulecaption="' . str_replace('"', '&quot;', $field->valuerulecaption) . '" >'
-            . '>'
             . '<div id="ct_fileuploader_' . $field->fieldname . '"></div>'
             . '<div id="ct_eventsmessage_' . $field->fieldname . '"></div>'
             . '<script>

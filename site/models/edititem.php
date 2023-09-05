@@ -66,7 +66,6 @@ class CustomTablesModelEditItem extends JModelLegacy
             $ct->Params->msgItemIsSaved = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RECORD_SAVED');
 
         $this->listing_id = $this->ct->Params->listing_id;
-
         //Load the record
         $this->listing_id = $this->processCustomListingID();
 
@@ -198,7 +197,7 @@ class CustomTablesModelEditItem extends JModelLegacy
         return $this->listing_id;
     }
 
-    function findRecordByUserID()
+    function findRecordByUserID(): ?string
     {
         $wheres = array();
 
@@ -212,7 +211,7 @@ class CustomTablesModelEditItem extends JModelLegacy
         $rows = $this->ct->db->loadAssocList();
 
         if (count($rows) < 1)
-            return [];
+            return null;
 
         $this->row = $rows[0];
         return $this->row[$this->ct->Table->realidfieldname];
@@ -513,7 +512,7 @@ class CustomTablesModelEditItem extends JModelLegacy
         $listing_id_temp = 0;
         $isItNewRecords = false;
 
-        if ($listing_id == 0 or $listing_id == '') {
+        if ($listing_id === null or $listing_id == 0 or $listing_id == '') {
             $isItNewRecords = true;
 
             if ($this->ct->Table->published_field_found)
