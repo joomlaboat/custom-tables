@@ -83,6 +83,7 @@ function submitModalForm(url, elements, tableid, recordId, hideModelOnSave, moda
                 try {
                     response = JSON.parse(http.response.toString());
                 } catch (e) {
+                    console.log(url + "&clean=1&ctmodalform=1&load=1");
                     console.log(http.response.toString());
                     return console.error(e);
                 }
