@@ -27,7 +27,6 @@ if (is_null($this->ct->Params->listing_id)) //there is no need to have a header 
         }
     }
 }
-
 echo $this->catalog->render();
 
 if (isset($this->ct->LayoutVariables['ordering_field_type_found']) and $this->ct->LayoutVariables['ordering_field_type_found']) {

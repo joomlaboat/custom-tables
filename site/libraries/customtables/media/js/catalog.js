@@ -125,8 +125,6 @@ function ctRefreshRecord(tableid, recordId, toolbarBoxId, ModuleId) {
 
         window.location.href = link;
     }
-
-
 }
 
 function ctOrderChanged(objectValue) {
