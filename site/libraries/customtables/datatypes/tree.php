@@ -31,23 +31,17 @@ class Tree
         $query .= ' AND parentid=' . $parentid;
         $query .= ' ORDER BY name';
 
-
         $db->setQuery($query);
-
         $rows = $db->loadObjectList();
-
 
         foreach ($rows as $item) {
 
             JoomlaBasicMisc::array_insert($result, array("id" => $item->id, "name" => $item->name), count($result));
-
-
-            $childs = Tree::getChildren($optionid, $item->id, $level + 1);
-            if (count($childs) > 0) {
-                $result = array_merge($result, $childs);
+            $children = Tree::getChildren($optionid, $item->id, $level + 1);
+            if (count($children) > 0) {
+                $result = array_merge($result, $children);
             }
         }
-
         return $result;
     }
 

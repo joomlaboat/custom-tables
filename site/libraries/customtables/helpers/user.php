@@ -228,7 +228,6 @@ class CTUser
 
         foreach ($group_ids as $group_id) {
             $query = 'INSERT #__user_usergroup_map SET user_id=' . $user->id . ', group_id=' . $group_id;
-
             $db->setQuery($query);
             $db->execute();
         }
