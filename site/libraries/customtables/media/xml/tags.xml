@@ -519,6 +519,13 @@
             </params>
         </tag>
 
+        <tag name="missingfields" label="Returns a List of required fields that are missing." startchar="{" endchar="}"
+             proversion="1" twigclass="record"
+             description="Returns a string List, separated by a Separator, of required fields (field names) that are missing or NULL."/>
+
+        <tag name="missingfieldslist" label="Returns an Array of required fields that are missing." startchar="{"
+             endchar="}" proversion="1" twigclass="record"
+             description="Returns an Array of required fields (field names) that are missing or NULL."/>
         <!-- Deprecated -->
 
         <tag name="cart" label="Shopping Cart" startchar="{" endchar="}" hidedefaultexample="1"
@@ -555,7 +562,6 @@
         <tag name="linknoreturn" label="No Return Link (Deprecated)" startchar="{" endchar="}"
              description="Link to detailed page without «returnto» link (Deprecated)" deprecated="1"
              twigreplacement="record.link" twigreplacementparams=""/>
-
     </tagset>
 
     <!-- Table Tags -->
