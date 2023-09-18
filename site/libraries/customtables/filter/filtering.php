@@ -616,8 +616,8 @@ class Filtering
     {
         if (str_contains($vL, '$get_')) {
             $getPar = str_replace('$get_', '', $vL);
-            //$v=$this->ct->app->input->get($getPar,'','STRING');
-            $v = (string)preg_replace('/[^A-Z\d_.,-]/i', '', $this->ct->app->input->getString($getPar));
+            $v = (string)preg_replace("/[^\p{L}\d.,_-]/u", "", $this->ct->app->input->getString($getPar));
+            //$v = (string)preg_replace('/[^A-Z\d_.,-]/i', '', $this->ct->app->input->getString($getPar));
         } else
             $v = $vL;
 
@@ -910,7 +910,7 @@ class Filtering
                 $i++;
             }
 
-            if (count($fList) > 0)// or trim(strtolower($value))=="null")
+            if (count($fList) > 0)
                 return $value;
             else
                 return $this->ct->db->quote($value);
@@ -1006,9 +1006,9 @@ class LinkJoinFilters
 
         foreach ($records as $row) {
             if ($row[$tableRow['realidfieldname']] == $filterValue or str_contains($filterValue, ',' . $row[$tableRow['realidfieldname']] . ','))
-                $result .= '<option value="' . $row[$tableRow['realidfieldname']] . '" selected>' . htmlspecialchars($row[$fieldrow->realfieldname]) . '</option>';
+                $result .= '<option value="' . $row[$tableRow['realidfieldname']] . '" selected>' . htmlspecialchars($row[$fieldrow->realfieldname] ?? '') . '</option>';
             else
-                $result .= '<option value="' . $row[$tableRow['realidfieldname']] . '">' . htmlspecialchars($row[$fieldrow->realfieldname]) . '</option>';
+                $result .= '<option value="' . $row[$tableRow['realidfieldname']] . '">' . htmlspecialchars($row[$fieldrow->realfieldname] ?? '') . '</option>';
         }
         $result .= '</select>
 ';

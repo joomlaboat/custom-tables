@@ -235,7 +235,7 @@ class Layouts
 
     protected function addCSSandJSIfNeeded(array $layoutRow, bool $checkLayoutFile = true): void
     {
-        $layoutContent = trim($layoutRow['layoutcss']);
+        $layoutContent = trim($layoutRow['layoutcss'] ?? '');
 
         if ($checkLayoutFile and $this->ct->Env->folderToSaveLayouts !== null) {
             $content = $this->getLayoutFileContent($layoutRow['id'], $layoutRow['layoutname'], $layoutContent, $layoutRow['ts'], $layoutRow['layoutname'] . '.css', 'layoutcss');
@@ -253,7 +253,7 @@ class Layouts
             $this->ct->document->addCustomTag($layoutContent);
         }
 
-        $layoutContent = trim($layoutRow['layoutjs']);
+        $layoutContent = trim($layoutRow['layoutjs'] ?? '');
         if ($checkLayoutFile and $this->ct->Env->folderToSaveLayouts !== null) {
             $content = $this->getLayoutFileContent($layoutRow['id'], $layoutRow['layoutname'], $layoutContent, $layoutRow['ts'], $layoutRow['layoutname'] . '.js', 'layoutjs');
             if ($content != null)

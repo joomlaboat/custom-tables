@@ -70,14 +70,14 @@ class SearchInputBox
             case 'int':
             case '_id':
                 $result .= '<input type="text" name="' . $objName_ . '" id="' . $objName_ . '" class="' . $cssclass . ' ' . $default_class . '"'
-                    . ' value="' . htmlspecialchars($value) . '" placeholder="' . $field_title . '"'
+                    . ' value="' . htmlspecialchars($value ?? '') . '" placeholder="' . $field_title . '"'
                     . ' onkeypress="es_SearchBoxKeyPress(event)"'
                     . ' data-type="' . $this->field->type . '" />';
                 break;
 
             case 'float':
                 $result .= '<input type="text" name="' . $objName_ . '" id="' . $objName_ . '" class="' . $cssclass . ' ' . $default_class . '" value="' . htmlspecialchars($value) . '"'
-                    . ' value="' . htmlspecialchars($value) . '" placeholder="' . $field_title . '"'
+                    . ' value="' . htmlspecialchars($value ?? '') . '" placeholder="' . $field_title . '"'
                     . ' onkeypress="es_SearchBoxKeyPress(event)" '
                     . ' data-type="' . $this->field->type . '" />';
                 break;
@@ -93,7 +93,7 @@ class SearchInputBox
                     $length = 1024;
 
                 $result .= '<input type="text" name="' . $objName_ . '" id="' . $objName_ . '" class="' . $cssclass . ' ' . $default_class . '" '
-                    . ' value="' . htmlspecialchars($value) . '" maxlength="' . $length . '"'
+                    . ' value="' . htmlspecialchars($value ?? '') . '" maxlength="' . $length . '"'
                     . ' placeholder="' . $field_title . '"'
                     . ' onkeypress="es_SearchBoxKeyPress(event)"'
                     . ' data-type="' . $this->field->type . '" />';
@@ -106,7 +106,7 @@ class SearchInputBox
                     $length = 1024;
 
                 $result .= '<input type="text" name="' . $objName_ . '" id="' . $objName_ . '" class="' . $cssclass . ' ' . $default_class . '" '
-                    . ' value="' . htmlspecialchars($value) . '" maxlength="' . $length . '"'
+                    . ' value="' . htmlspecialchars($value ?? '') . '" maxlength="' . $length . '"'
                     . ' placeholder="' . $field_title . '" onkeypress="es_SearchBoxKeyPress(event)"'
                     . ' data-type="' . $this->field->type . '" />';
                 break;
@@ -149,7 +149,7 @@ class SearchInputBox
                 $result .= '<input type="text" name="' . $objName_ . '" id="' . $objName_ . '" class="' . $cssclass . ' ' . $default_class . '" '
                     . ' placeholder="' . $field_title . '"'
                     . ' onkeypress="es_SearchBoxKeyPress(event)"'
-                    . ' value="' . htmlspecialchars($value) . '" maxlength="255"'
+                    . ' value="' . htmlspecialchars($value ?? '') . '" maxlength="255"'
                     . ' data-type="' . $this->field->type . '" />';
                 break;
 
@@ -157,7 +157,7 @@ class SearchInputBox
                 $result .= '<input type="text" name="' . $objName_ . '" id="' . $objName_ . '" class="' . $cssclass . ' ' . $default_class . '" '
                     . ' placeholder="' . $field_title . '"'
                     . ' onkeypress="es_SearchBoxKeyPress(event)"'
-                    . ' value="' . htmlspecialchars($value) . '" maxlength="1024"'
+                    . ' value="' . htmlspecialchars($value ?? '') . '" maxlength="1024"'
                     . ' data-type="' . $this->field->type . '" />';
                 break;
 

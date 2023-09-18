@@ -46,14 +46,14 @@ class CT
     var array $editFields;
     var array $LayoutVariables;
 
-    function __construct($menuParams = null, $blockExternalVars = true, ?string $ModuleId = null)
+    function __construct(?\Joomla\Registry\Registry $menuParams = null, $blockExternalVars = true, ?string $ModuleId = null, bool $enablePlugin = true)
     {
         $this->app = Factory::getApplication();
         $this->document = $this->app->getDocument();
         $this->db = Factory::getDBO();
 
         $this->Languages = new Languages;
-        $this->Env = new Environment;
+        $this->Env = new Environment($enablePlugin);
         $this->Params = new Params($menuParams, $blockExternalVars, $ModuleId);
 
         $this->GroupBy = '';

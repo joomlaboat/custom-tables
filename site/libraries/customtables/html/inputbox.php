@@ -298,7 +298,7 @@ class Inputbox
                     . 'name="' . $this->prefix . $this->field->fieldname . '" '
                     . 'id="' . $this->prefix . $this->field->fieldname . '" '
                     . 'data-type="' . $this->field->type . '" '
-                    . 'value="' . htmlspecialchars($value) . '" />';
+                    . 'value="' . htmlspecialchars($value ?? '') . '" />';
 
             case 'phponview':
                 return $value;
@@ -423,7 +423,7 @@ class Inputbox
                     . 'name="' . $this->prefix . $this->field->fieldname . '" '
                     . 'id="' . $this->prefix . $this->field->fieldname . '" '
                     . 'class="' . $this->cssclass . '" '
-                    . 'value="' . htmlspecialchars($value) . '" maxlength="255" '
+                    . 'value="' . htmlspecialchars($value ?? '') . '" maxlength="255" '
                     . $this->attributes . ' '
                     . 'data-type="email" '
                     . 'data-filters="email" '
@@ -528,7 +528,7 @@ class Inputbox
             . 'data-label="' . $this->field->title . '" '
             . 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
             . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" '
-            . 'value="' . htmlspecialchars($value) . '" />';
+            . 'value="' . htmlspecialchars($value ?? '') . '" />';
 
         return $result;
     }
@@ -561,7 +561,7 @@ class Inputbox
         if (isset($values[2]) and $values[2] == 'smart')
             $result .= 'onkeypress="ESsmart_float(this,event,' . $decimals . ')" ';
 
-        $result .= 'value="' . htmlspecialchars($value) . '" />';
+        $result .= 'value="' . htmlspecialchars($value ?? '') . '" />';
         return $result;
     }
 
@@ -592,7 +592,7 @@ class Inputbox
         if ($this->row === null)
             $result .= 'placeholder="' . $this->place_holder . '" ';
 
-        $result .= 'value="' . htmlspecialchars($value) . '" ' . ((int)$this->field->params[0] > 0 ? 'maxlength="' . (int)$this->field->params[0] . '"' : 'maxlength="255"') . ' ' . $this->attributes . ' />';
+        $result .= 'value="' . htmlspecialchars($value ?? '') . '" ' . ((int)$this->field->params[0] > 0 ? 'maxlength="' . (int)$this->field->params[0] . '"' : 'maxlength="255"') . ' ' . $this->attributes . ' />';
 
         if ($autocomplete) {
 
@@ -636,7 +636,7 @@ class Inputbox
         if ($this->row === null)
             $result .= 'placeholder="' . $this->place_holder . '" ';
 
-        $result .= 'value="' . htmlspecialchars($value) . '" ' . ($maxlength > 0 ? 'maxlength="' . $maxlength . '"' : 'maxlength="255"') . ' ' . $this->attributes . ' />';
+        $result .= 'value="' . htmlspecialchars($value ?? '') . '" ' . ($maxlength > 0 ? 'maxlength="' . $maxlength . '"' : 'maxlength="255"') . ' ' . $this->attributes . ' />';
 
         return $result;
     }
@@ -714,7 +714,7 @@ class Inputbox
             . 'name="' . $this->prefix . $this->field->fieldname . $postfix . '" '
             . 'id="' . $this->prefix . $this->field->fieldname . $postfix . '" '
             . 'class="' . $this->cssclass . '" '
-            . 'value="' . htmlspecialchars($value) . '" '
+            . 'value="' . htmlspecialchars($value ?? '') . '" '
             . 'data-type="' . $this->field->type . '" '
             . 'data-label="' . $this->field->title . '" '
             . 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
@@ -751,7 +751,7 @@ class Inputbox
                 . 'data-label="' . $this->field->title . '" '
                 . 'data-valuerule="' . str_replace('"', '&quot;', $this->field->valuerule) . '" '
                 . 'data-valuerulecaption="' . str_replace('"', '&quot;', $this->field->valuerulecaption) . '" '
-                . '>' . htmlspecialchars($value) . '</textarea>';
+                . '>' . htmlspecialchars($value ?? '') . '</textarea>';
         }
 
         if (in_array('spellcheck', $this->field->params)) {
@@ -817,7 +817,7 @@ class Inputbox
                 $result .= '<textarea name="' . $this->prefix . $fieldname . '" '
                     . 'id="' . $this->prefix . $fieldname . '" '
                     . 'data-type="' . $this->field->type . '" '
-                    . 'class="' . $this->cssclass . ' ' . ($this->field->isrequired == 1 ? 'required' : '') . '">' . htmlspecialchars($value) . '</textarea>'
+                    . 'class="' . $this->cssclass . ' ' . ($this->field->isrequired == 1 ? 'required' : '') . '">' . htmlspecialchars($value ?? '') . '</textarea>'
                     . '<span class="language_label">' . $lang->caption . '</span>';
 
                 $result .= ($this->field->isrequired == 1 ? ' ' . $RequiredLabel : '');
@@ -1386,7 +1386,7 @@ class Inputbox
             . 'name="' . $this->prefix . $this->field->fieldname . '" '
             . 'id="' . $this->prefix . $this->field->fieldname . '" '
             . 'class="' . $this->cssclass . '" '
-            . 'value="' . htmlspecialchars($value) . '" '
+            . 'value="' . htmlspecialchars($value ?? '') . '" '
             . 'maxlength="1024" '
             . 'data-type="' . $this->field->type . '"'
             . 'data-sanitizers="trim" '

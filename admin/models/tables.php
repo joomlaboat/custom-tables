@@ -487,7 +487,7 @@ class CustomtablesModelTables extends JModelAdmin
         $date = Factory::getDate();
 
         if (isset($table->name)) {
-            $table->name = htmlspecialchars_decode($table->name, ENT_QUOTES);
+            $table->name = htmlspecialchars_decode($table->name ?? '', ENT_QUOTES);
         }
 
         if (empty($table->id)) {

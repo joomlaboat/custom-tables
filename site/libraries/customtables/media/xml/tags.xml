@@ -348,7 +348,7 @@
                        description="The name of the Table to count records from." example="products"
                        fieldchild="fieldtype_param_1"/>
                 <param name="value_of_field" label="Value Field" type="field"
-                       description="The field to read the value from." example="_id"/>
+                       description="The field to read the value from." example="price"/>
                 <param name="filter" label="Filter" type="string"
                        description="Optional filter, ie. fieldname=some value."/>
             </params>
@@ -361,8 +361,8 @@
                        description="The name of the Table to count records from." example="products"
                        fieldchild="fieldtype_param_1"/>
                 <param name="value_of_field" label="Value Field" type="field"
-                       description="The field to read the value from." example="_id"/>
-                <param name="filter" label="Filter" type="string"
+                       description="The field to read the value from." example="weight"/>
+                <param name="filter" label="Filter" type="string" example="height>10"
                        description="Optional filter, ie. fieldname=some value."/>
             </params>
         </tag>
@@ -374,7 +374,7 @@
                        description="The name of the Table to count records from." example="products"
                        fieldchild="fieldtype_param_1"/>
                 <param name="value_of_field" label="Value Field" type="field"
-                       description="The field to read the value from." example="_id"/>
+                       description="The field to read the value from." example="price"/>
                 <param name="filter" label="Filter" type="string"
                        description="Optional filter, ie. fieldname=some value."/>
             </params>
@@ -388,7 +388,7 @@
                        description="The name of the Table to count records from." example="products"
                        fieldchild="fieldtype_param_1"/>
                 <param name="value_of_field" label="Value Field" type="field"
-                       description="The field to read the value from." example="_id"/>
+                       description="The field to read the value from." example="price"/>
                 <param name="filter" label="Filter" type="string"
                        description="Optional filter, ie. fieldname=some value."/>
             </params>
@@ -412,7 +412,7 @@
                        description="The name of the Table that has a Table Join type field." example="products"
                        fieldchild="fieldtype_param_1"/>
                 <param name="value_of_field" label="Value Field" type="field"
-                       description="Field of joined table to read the value from." example="_id"/>
+                       description="Field of joined table to read the value from." example="price"/>
                 <param name="filter" label="Filter" type="string"
                        description="Optional filter, ie. fieldname=some value."/>
             </params>
@@ -425,7 +425,7 @@
                        description="The name of the Table that has a Table Join type field." example="products"
                        fieldchild="fieldtype_param_1"/>
                 <param name="value_of_field" label="Value Field" type="field"
-                       description="Field of joined table to read the value from." example="_id"/>
+                       description="Field of joined table to read the value from." example="price"/>
                 <param name="filter" label="Filter" type="string"
                        description="Optional filter, ie. fieldname=some value."/>
             </params>
@@ -438,7 +438,7 @@
                        description="The name of the Table that has a Table Join type field." example="products"
                        fieldchild="fieldtype_param_1"/>
                 <param name="value_of_field" label="Value Field" type="field"
-                       description="Field of joined table to read the value from." example="_id"/>
+                       description="Field of joined table to read the value from." example="price"/>
                 <param name="filter" label="Filter" type="string"
                        description="Optional filter, ie. fieldname=some value."/>
             </params>
@@ -452,7 +452,7 @@
                        description="The name of the Table that has a Table Join type field." example="products"
                        fieldchild="fieldtype_param_1"/>
                 <param name="value_of_field" label="Value Field" type="field"
-                       description="Field of joined table to read the value from." example="_id"/>
+                       description="Field of joined table to read the value from." example="price"/>
                 <param name="filter" label="Filter" type="string"
                        description="Optional filter, ie. fieldname=some value."/>
             </params>
@@ -465,7 +465,7 @@
                        description="The name of the Table that has a Table Join type field." example="products"
                        fieldchild="fieldtype_param_1"/>
                 <param name="value_of_field" label="Field of joined table to read the value from." type="field"
-                       description="Field of joined table to read the value from." example="_id"/>
+                       description="Field of joined table to read the value from." example="productname"/>
                 <param name="filter" label="Filter" type="string"
                        description="Optional filter, ie. fieldname=some value."/>
             </params>

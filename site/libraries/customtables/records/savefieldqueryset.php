@@ -435,7 +435,7 @@ class SaveFieldQuerySet
             case 'email':
                 $value = $this->ct->Env->jinput->getString($this->field->comesfieldname);
                 if (isset($value)) {
-                    $value = trim($value);
+                    $value = trim($value ?? '');
                     if (Email::checkEmail($value)) {
                         $this->row[$this->field->realfieldname] = $value;
                         return $this->field->realfieldname . '=' . $this->ct->db->Quote($value);
@@ -449,7 +449,7 @@ class SaveFieldQuerySet
             case 'url':
                 $value = $this->ct->Env->jinput->getString($this->field->comesfieldname);
                 if (isset($value)) {
-                    $value = trim($value);
+                    $value = trim($value ?? '');
 
                     if (filter_var($value, FILTER_VALIDATE_URL)) {
                         $this->row[$this->field->realfieldname] = $value;
@@ -942,7 +942,11 @@ class SaveFieldQuerySet
     {
         if (array_key_exists('HTTP_X_FORWARDED_FOR', $_SERVER) && !empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
             if (strpos($_SERVER['HTTP_X_FORWARDED_FOR'], ',') > 0) {
+                if ($_SERVER['HTTP_X_FORWARDED_FOR'] == '')
+                    return '';
+
                 $address = explode(",", $_SERVER['HTTP_X_FORWARDED_FOR']);
+
                 return trim($address[0]);
             } else {
                 return $_SERVER['HTTP_X_FORWARDED_FOR'];

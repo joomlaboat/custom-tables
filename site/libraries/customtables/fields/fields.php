@@ -659,7 +659,7 @@ class Fields
         return $rows[0];
     }
 
-    public static function getFieldAssocByName($fieldname, $tableid): ?array
+    public static function getFieldAssocByName(string $fieldname, int $tableid): ?array
     {
         $db = Factory::getDBO();
 
@@ -669,7 +669,7 @@ class Fields
         if ($fieldname == '')
             return null;
 
-        $query = 'SELECT ' . Fields::getFieldRowSelects() . ' FROM #__customtables_fields AS s WHERE s.published=1 AND tableid=' . (int)$tableid . ' AND fieldname="' . trim($fieldname) . '" LIMIT 1';
+        $query = 'SELECT ' . Fields::getFieldRowSelects() . ' FROM #__customtables_fields AS s WHERE s.published=1 AND tableid=' . $tableid . ' AND fieldname="' . trim($fieldname) . '" LIMIT 1';
         $db->setQuery($query);
 
         $rows = $db->loadAssocList();

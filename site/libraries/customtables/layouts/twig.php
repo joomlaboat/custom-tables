@@ -428,11 +428,9 @@ class fieldObject
         $valueProcessor = new Value($this->ct);
         $vlu = $valueProcessor->renderValue($this->field->fieldrow, $this->ct->Table->record, [], $this->parseParams);
 
-        if ($this->DoHTMLSpecialChars) {
+        if ($this->DoHTMLSpecialChars)
             $vlu = htmlentities($vlu, ENT_QUOTES + ENT_IGNORE + ENT_DISALLOWED + ENT_HTML5, "UTF-8");
-            //$vlu = htmlentities($vlu, ENT_IGNORE + ENT_DISALLOWED + ENT_HTML5, "UTF-8");
-            //$vlu = htmlspecialchars($vlu, ENT_IGNORE + ENT_DISALLOWED + ENT_HTML5, "UTF-8");
-        }
+
         return strval($vlu);
     }
 
@@ -497,11 +495,9 @@ class fieldObject
             $valueProcessor = new Value($this->ct);
             $vlu = $valueProcessor->renderValue($this->field->fieldrow, $this->ct->Table->record, []);
 
-            if ($this->DoHTMLSpecialChars) {
+            if ($this->DoHTMLSpecialChars)
                 $vlu = htmlentities($vlu, ENT_QUOTES + ENT_IGNORE + ENT_DISALLOWED + ENT_HTML5, "UTF-8");
-                //$vlu = htmlentities($vlu, ENT_IGNORE + ENT_DISALLOWED + ENT_HTML5, "UTF-8");
-                //$vlu = htmlspecialchars($vlu, ENT_IGNORE + ENT_DISALLOWED + ENT_HTML5, "UTF-8");
-            }
+
             return $vlu;
         } else {
             $vlu = $this->ct->Table->record[$rfn];

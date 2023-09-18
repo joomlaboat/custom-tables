@@ -64,7 +64,7 @@ class JHTMLCTTableMultiJoin
         $data[] = 'data-valuefiltersnames="' . base64_encode(json_encode($js_filters_FieldName)) . '"';
         $data[] = 'data-onchange="' . base64_encode($onchange) . '"';
         $data[] = 'data-listing_id="' . $listing_is . '"';
-        $data[] = 'data-value="' . htmlspecialchars($value) . '"';
+        $data[] = 'data-value="' . htmlspecialchars($value ?? '') . '"';
 
         $addRecordMenuAlias = $option_list[4] ?? null;
         if ($addRecordMenuAlias == '')
@@ -89,7 +89,7 @@ class JHTMLCTTableMultiJoin
 
         $Placeholder = $field->title;
 
-        return '<input type="hidden" id="' . $control_name . '" name="' . $control_name . '" value="' . htmlspecialchars($value) . '" ' . $attributes . '/>'
+        return '<input type="hidden" id="' . $control_name . '" name="' . $control_name . '" value="' . htmlspecialchars($value ?? '') . '" ' . $attributes . '/>'
             . '<div id="' . $control_name . 'Wrapper" ' . implode(' ', $data) . '>'
             . JHTMLCTTableJoin::ctUpdateTableJoinLink($ct, $control_name, 0, 0, "", $formID, $attributes, $onchange,
                 $filter, $js_filters, $js_filters_FieldName, $value, $addRecordMenuAlias, $cssClass, $Placeholder)

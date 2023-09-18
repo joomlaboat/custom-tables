@@ -577,7 +577,7 @@ class CustomtablesModelFields extends JModelAdmin
         $user = Factory::getUser();
 
         if (isset($table->name)) {
-            $table->name = htmlspecialchars_decode($table->name, ENT_QUOTES);
+            $table->name = htmlspecialchars_decode($table->name ?? '', ENT_QUOTES);
         }
 
         if (empty($table->id)) {

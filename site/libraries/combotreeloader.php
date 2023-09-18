@@ -281,7 +281,7 @@ class ESDynamicComboTree
         $count = 0;
 
         foreach ($rows as $row) {
-            $result .= '<option value="' . $row->tempid . '" ' . ($value == $row->tempid ? ' SELECTED ' : '') . '>' . htmlspecialchars($row->optiontitle);
+            $result .= '<option value="' . $row->tempid . '" ' . ($value == $row->tempid ? ' SELECTED ' : '') . '>' . htmlspecialchars($row->optiontitle ?? '');
 
             if ($this->innerjoin)
                 $result .= ' (' . $row->listingcount . ')';

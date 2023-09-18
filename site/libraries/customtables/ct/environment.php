@@ -56,15 +56,18 @@ class Environment
 
     var bool $CustomPHPEnabled;
 
-    function __construct()
+    function __construct(bool $enablePlugin = true)
     {
-        $plugin = PluginHelper::getPlugin('content', 'customtables');
+        $this->CustomPHPEnabled = false;
 
-        if (!is_null($plugin) and is_object($plugin) > 0) {
-            $pluginParams = new Registry($plugin->params);
-            $this->CustomPHPEnabled = (int)$pluginParams->get("phpPlugin") == 1;
-        } else
-            $this->CustomPHPEnabled = false;
+        if ($enablePlugin) {
+            $plugin = PluginHelper::getPlugin('content', 'customtables');
+
+            if (!is_null($plugin) and is_object($plugin) > 0) {
+                $pluginParams = new Registry($plugin->params);
+                $this->CustomPHPEnabled = (int)$pluginParams->get("phpPlugin") == 1;
+            }
+        }
 
         $this->field_prefix = 'es_';
         $this->field_input_prefix = 'com' . $this->field_prefix;
@@ -102,7 +105,11 @@ class Environment
 
         $this->userid = is_null($this->user) ? 0 : $this->user->id;
 
-        $usergroups = $this->user->get('groups');
+        if ($this->user !== null)
+            $usergroups = $this->user->get('groups');
+        else
+            $usergroups = [];
+
         $this->isUserAdministrator = in_array(8, $usergroups);//8 is Super Users
         //$this->isUserAdministrator = $this->user->authorise('core.edit', 'com_content');
 
@@ -145,7 +152,8 @@ class Environment
         $this->legacySupport = $params->get('legacysupport') == '';
 
         $this->folderToSaveLayouts = $params->get('folderToSaveLayouts');
-        $this->folderToSaveLayouts = str_replace('/', DIRECTORY_SEPARATOR, $this->folderToSaveLayouts);
+        if ($this->folderToSaveLayouts !== null)
+            $this->folderToSaveLayouts = str_replace('/', DIRECTORY_SEPARATOR, $this->folderToSaveLayouts);
 
         if ($this->folderToSaveLayouts == '')
             $this->folderToSaveLayouts = null;

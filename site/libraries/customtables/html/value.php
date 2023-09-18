@@ -305,9 +305,9 @@ class Value
         if ($orderby_pair[0] == $this->field->realfieldname) {
 
             if ($this->ct->Env->version < 4)
-                $result .= '<input type="text" style="display:none" name="order[]" size="5" value="' . htmlspecialchars($value) . '" class="width-20 text-area-order " />';
+                $result .= '<input type="text" style="display:none" name="order[]" size="5" value="' . htmlspecialchars($value ?? '') . '" class="width-20 text-area-order " />';
             else
-                $result .= '<input type="text" name="order[]" size="5" value="' . htmlspecialchars($value) . '" class="width-20 text-area-order hidden" />';
+                $result .= '<input type="text" name="order[]" size="5" value="' . htmlspecialchars($value ?? '') . '" class="width-20 text-area-order hidden" />';
 
             $result .= '<input type="checkbox" style="display:none" name="cid[]" value="' . $this->row[$this->ct->Table->realidfieldname] . '" class="width-20 text-area-order " />';
 

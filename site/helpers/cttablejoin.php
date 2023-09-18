@@ -80,8 +80,8 @@ class JHTMLCTTableJoin
         $data[] = 'data-valuefiltersnames="' . base64_encode(json_encode($js_filters_FieldName)) . '"';
         $data[] = 'data-onchange="' . base64_encode($onchange) . '"';
         $data[] = 'data-listing_id="' . $listing_is . '"';
-        $data[] = 'data-value="' . htmlspecialchars($value) . '"';
-        $data[] = 'data-cssclass="' . htmlspecialchars($cssClass) . '"';
+        $data[] = 'data-value="' . htmlspecialchars($value ?? '') . '"';
+        $data[] = 'data-cssclass="' . htmlspecialchars($cssClass ?? '') . '"';
 
         $addRecordMenuAlias = $option_list[4] ?? null;
 
@@ -107,7 +107,7 @@ class JHTMLCTTableJoin
 
         $Placeholder = $field->title;
 
-        return '<input type="hidden" id="' . $control_name . '" name="' . $control_name . '" value="' . htmlspecialchars($value) . '" '
+        return '<input type="hidden" id="' . $control_name . '" name="' . $control_name . '" value="' . htmlspecialchars($value ?? '') . '" '
             . 'data-type="sqljoin" '
             . 'data-tableid="' . $field->ct->Table->tableid . '" '
             . $attributes . '/>'
@@ -521,7 +521,7 @@ class JHTMLCTTableJoin
                     $result .= '<option value="%addRecord%">- ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ADD') . '</option>';
 
                 for ($i = 0; $i < count($r); $i++) {
-                    $label = htmlspecialchars_decode($r[$i]->label, ENT_HTML5);
+                    $label = htmlspecialchars_decode($r[$i]->label ?? '', ENT_HTML5);
 
                     if ($r[$i]->id == $val)
                         $result .= '<option value="' . $r[$i]->id . '" selected="selected">' . $label . '</option>';

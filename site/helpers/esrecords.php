@@ -90,7 +90,7 @@ class JHTMLESRecords
                             . ((in_array($row[$ct->Table->realidfieldname], $valueArray) and count($valueArray) > 0) ? ' SELECTED ' : '')
                             . ' ' . $style . '>';
 
-                        $htmlResult .= htmlspecialchars($row[$real_field]) . '</option>';
+                        $htmlResult .= htmlspecialchars($row[$real_field] ?? '') . '</option>';
                     }
 
                     $htmlResult .= '</SELECT>';
@@ -324,7 +324,7 @@ class JHTMLESRecords
                 $htmlResult_options .= '<option value="' . $row[$ct->Table->realidfieldname] . '" ' . ($row['listing_published'] == 0 ? ' disabled="disabled"' : '') . '>';
 
             $v = JoomlaBasicMisc::processValue($field, $ct, $row);
-            $htmlResult_options .= htmlspecialchars($v);
+            $htmlResult_options .= htmlspecialchars($v ?? '');
 
             if ($dynamic_filter != '') {
                 $elements[] = $v;
@@ -346,7 +346,7 @@ class JHTMLESRecords
                     $htmlResult_options .= '<option value="' . $row[$ct_noFilter->Table->realidfieldname] . '" ' . ($row['listing_published'] == 0 ? ' disabled="disabled"' : '') . '>';
 
                 $v = JoomlaBasicMisc::processValue($field, $ct_noFilter, $row);
-                $htmlResult_options .= htmlspecialchars($v);
+                $htmlResult_options .= htmlspecialchars($v ?? '');
 
                 if ($dynamic_filter != '') {
                     $elements[] = $v;

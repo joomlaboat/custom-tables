@@ -59,7 +59,7 @@ class JHTMLESUserGroups
                 foreach ($records as $row) {
                     $htmlresult .= '<option value="' . $row->id . '" '
                         . ((in_array($row->id, $valueArray) and count($valueArray) > 0) ? ' SELECTED ' : '')
-                        . '>' . htmlspecialchars($row->name) . '</option>';
+                        . '>' . htmlspecialchars($row->name ?? '') . '</option>';
                 }
 
                 $htmlresult .= '</SELECT>';
@@ -122,7 +122,7 @@ class JHTMLESUserGroups
         foreach ($records as $row) {
             $htmlresult .= '<option value="' . $row->id . '" '
                 . ((in_array($row->id, $valueArray) and count($valueArray) > 0) ? ' SELECTED ' : '')
-                . '>' . htmlspecialchars($row->name) . '</option>';
+                . '>' . htmlspecialchars($row->name ?? '') . '</option>';
         }
 
         $htmlresult .= '</SELECT>';

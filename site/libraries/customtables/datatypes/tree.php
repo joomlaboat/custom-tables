@@ -65,8 +65,8 @@ class Tree
         $RowPropertyTypes = explode(",", $PropertyTypes);
 
         $titles = array();
-        foreach ($RowPropertyTypes as $row) {
-            $a = trim($row);
+        foreach ($RowPropertyTypes as $type) {
+            $a = trim($type);
             if (strlen($a) > 0) {
                 $b = Tree::getOptionTitleFullMulti($a, $langpostfix, $StartFrom);
                 $titles[] = implode($Separator, $b);

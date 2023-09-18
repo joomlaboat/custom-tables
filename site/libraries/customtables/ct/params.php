@@ -84,7 +84,7 @@ class Params
 
     var bool $blockExternalVars;
 
-    function __construct($menu_params = null, $blockExternalVars = false, ?string $ModuleId = null)
+    function __construct(?\Joomla\Registry\Registry $menu_params = null, $blockExternalVars = false, ?string $ModuleId = null)
     {
         $this->ModuleId = null;
         $this->blockExternalVars = $blockExternalVars;

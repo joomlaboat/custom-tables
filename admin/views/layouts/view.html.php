@@ -241,7 +241,7 @@ class CustomtablesViewLayouts extends JViewLegacy
 ';
 
         $textAreaId = 'jform_' . $id;
-        $textAreaCode = '<textarea name="jform[' . $id . ']" id="' . $textAreaId . '" filter="raw" style="width:100%" rows="30">' . htmlspecialchars($value) . '</textarea>';
+        $textAreaCode = '<textarea name="jform[' . $id . ']" id="' . $textAreaId . '" filter="raw" style="width:100%" rows="30">' . htmlspecialchars($value ?? '') . '</textarea>';
         $textAreaTabId = $id . '-tab';
 
         $result .= renderEditor($textAreaCode, $textAreaId, $typeBoxId, $textAreaTabId, $onPageLoads);

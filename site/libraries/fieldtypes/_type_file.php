@@ -211,7 +211,8 @@ class CT_FieldTypeTag_file
         $filename_raw = strtolower($new_filename);
         $filename_raw = str_replace(' ', '_', $filename_raw);
         $filename_raw = str_replace('-', '_', $filename_raw);
-        $filename = preg_replace("/[^a-z\d._]/", "", $filename_raw);
+        //$filename = preg_replace("/[^a-z\d._]/", "", $filename_raw);
+        $filename = preg_replace("/[^\p{L}\d._]/u", "", $filename_raw);
 
         $i = 0;
         $filename_new = $filename;

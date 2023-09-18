@@ -185,7 +185,7 @@ class JoomlaBasicMisc
         return null;
     }
 
-    public static function charsTrimText($text, $count, $cleanBraces = false, $cleanQuotes = false): string
+    public static function charsTrimText(string $text, int $count, bool $cleanBraces = false, $cleanQuotes = false): string
     {
         if ($count == 0)
             return "";
@@ -697,7 +697,7 @@ class JoomlaBasicMisc
     public static function suggest_TempFileName(&$webFileLink, ?string $fileExtension = null): ?string
     {
         $tempDir = 'tmp';
-        
+
         if ($tempDir[0] != '/' and $tempDir[0] != '\\') {
             $output_dir = JPATH_SITE . DIRECTORY_SEPARATOR . $tempDir . DIRECTORY_SEPARATOR;
             $webDir = DIRECTORY_SEPARATOR . $tempDir . DIRECTORY_SEPARATOR;

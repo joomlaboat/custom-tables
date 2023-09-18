@@ -21,7 +21,7 @@ class OrderingHTML
 
         for ($i = 0; $i < count($order_values); $i++) {
             $result .= '<option value="' . $order_values[$i] . '" ' . ($ordering->ordering_processed_string == $order_values[$i] ? ' selected ' : '') . '>'
-                . htmlspecialchars($order_list[$i])
+                . htmlspecialchars($order_list[$i] ?? '')
                 . '</option>' . PHP_EOL;
         }
 

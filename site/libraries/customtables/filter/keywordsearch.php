@@ -73,7 +73,7 @@ class CustomTablesKeywordSearch
         return $result_rows;
     }
 
-    function getRowsByKeywords_Processor($keywords, $mod_fieldlist, $AndOrOr)
+    function getRowsByKeywords_Processor(string $keywords, array $mod_fieldlist, string $AndOrOr)
     {
         $keyword_arr = explode(' ', $keywords);
         $count = 0;
@@ -87,7 +87,6 @@ class CustomTablesKeywordSearch
         if ($AndOrOr == 'AND')
             $AndOrOr_text = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_AND');
 
-
         foreach ($mod_fieldlist as $mod_field) {
             $where = '';
             $inner = '';
@@ -95,7 +94,6 @@ class CustomTablesKeywordSearch
             $fieldrow = ESTables::FieldRowByName($f, $this->ct->Table->fields);//2011.6.1
 
             //exact match
-            $fields = array();
             if (isset($fieldrow['type']) and isset($fieldrow['fieldname']))
                 $where = $this->getRowsByKeywords_ProcessTypes($fieldrow['type'], $fieldrow['fieldname'], $fieldrow['typeparams'], '[[:<:]]' . $keywords . '[[:>:]]', $inner, $this->ct->Languages->Postfix);
 
@@ -170,10 +168,7 @@ class CustomTablesKeywordSearch
 
         // -------------------
         foreach ($mod_fieldlist as $mod_field) {
-            if (isset($fieldrow['fieldtitle' . $this->ct->Languages->Postfix]))
-                $fields[] = $fieldrow['fieldtitle' . $this->ct->Languages->Postfix];
 
-            $where = '';
             $f = trim($mod_field);
             $fieldrow = ESTables::FieldRowByName($f, $this->ct->Table->fields);//2011.6.1
 
