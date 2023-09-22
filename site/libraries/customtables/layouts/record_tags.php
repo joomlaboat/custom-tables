@@ -785,12 +785,12 @@ class Twig_Tables_Tags
     function getrecord($layoutname = '', $record_id_or_filter = '', $orderby = ''): string
     {
         if ($layoutname == '') {
-            $this->ct->app->enqueueMessage('{{ html.records("' . $layoutname . '","' . $record_id_or_filter . '","' . $orderby . '") }} - Layout name not specified.', 'error');
+            $this->ct->app->enqueueMessage('{{ tables.getrecord("' . $layoutname . '","' . $record_id_or_filter . '","' . $orderby . '") }} - Layout name not specified.', 'error');
             return '';
         }
 
         if ($record_id_or_filter == '') {
-            $this->ct->app->enqueueMessage('{{ html.records("' . $layoutname . '","' . $record_id_or_filter . '","' . $orderby . '") }} - Record id or filter not set.', 'error');
+            $this->ct->app->enqueueMessage('{{ tables.getrecord("' . $layoutname . '","' . $record_id_or_filter . '","' . $orderby . '") }} - Record id or filter not set.', 'error');
             return '';
         }
 
@@ -801,7 +801,7 @@ class Twig_Tables_Tags
         $pageLayout = $layouts->getLayout($layoutname, false);//It is safer to process layout after rendering the table
 
         if ($layouts->tableId === null) {
-            $this->ct->app->enqueueMessage('{{ html.records("' . $layoutname . '","' . $record_id_or_filter . '","' . $orderby . '") }} - Layout "' . $layoutname . ' not found.', 'error');
+            $this->ct->app->enqueueMessage('{{ tables.getrecord("' . $layoutname . '","' . $record_id_or_filter . '","' . $orderby . '") }} - Layout "' . $layoutname . ' not found.', 'error');
             return '';
         }
 
