@@ -338,8 +338,15 @@ class Layouts
 
         foreach ($fields as $field) {
 
-            if ($field['type'] != 'ordering' && !in_array($field['type'], $fieldtypes_to_skip))
-                $result .= '<td>{{ ' . $field['fieldname'] . ' }}</td>' . PHP_EOL;
+            if ($field['type'] != 'ordering' && !in_array($field['type'], $fieldtypes_to_skip)) {
+
+                if ($field['type'] == 'url')
+                    $fieldValue = '<a href="{{ ' . $field['fieldname'] . ' }}" target="_blank">{{ ' . $field['fieldname'] . ' }}</a>';
+                else
+                    $fieldValue = '{{ ' . $field['fieldname'] . ' }}';
+
+                $result .= '<td>' . $fieldValue . '</td>' . PHP_EOL;
+            }
         }
 
         if ($addToolbar)

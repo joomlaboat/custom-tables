@@ -629,8 +629,16 @@ function getLayout_Item() {
     for (let index = 0; index < l; index++) {
         let field = wizardFields[index];
 
-        if (field.type != 'ordering' && fieldtypes_to_skip.indexOf(field.type) === -1)
-            result += '<td>{{ ' + field.fieldname + ' }}</td>\r\n';
+        if (field.type != 'ordering' && fieldtypes_to_skip.indexOf(field.type) === -1) {
+
+            let fieldValue = '';
+            if (field.type == 'url')
+                fieldValue = '<a href="{{ ' + field.fieldname + ' }}" target="_blank">{{ ' + field.fieldname + ' }}</a>';
+            else
+                fieldValue = '{{ ' + field.fieldname + ' }}';
+
+            result += '<td>' + fieldValue + '</td>\r\n';
+        }
 
         if (user_fieldtypes.indexOf(field.type) !== -1)
             user_field = field.fieldname;
@@ -691,8 +699,16 @@ function getLayout_SimpleCatalog() {
     for (let index = 0; index < l; index++) {
         let field = wizardFields[index];
 
-        if (field.type != 'ordering' && fieldtypes_to_skip.indexOf(field.type) === -1)
-            result += '<td>{{ ' + field.fieldname + ' }}</td>\r\n';
+        if (field.type != 'ordering' && fieldtypes_to_skip.indexOf(field.type) === -1) {
+
+            let fieldValue = '';
+            if (field.type == 'url')
+                fieldValue = '<a href="{{ ' + field.fieldname + ' }}" target="_blank">{{ ' + field.fieldname + ' }}</a>';
+            else
+                fieldValue = '{{ ' + field.fieldname + ' }}';
+
+            result += '<td>' + fieldValue + '</td>\r\n';
+        }
     }
 
     result += '<td>{{ html.toolbar("edit","publish","refresh","delete") }}</td>\r\n';
@@ -814,7 +830,15 @@ function getLayout_Details() {
 
         if (fieldtypes_to_skip.indexOf(field.type) === -1) {
             result += '\t<div class="control-group">\r\n';
-            result += '\t\t<div class="control-label">{{ ' + field.fieldname + '.title }}</div><div class="controls">{{ ' + field.fieldname + ' }}</div>\r\n';
+            result += '\t\t<div class="control-label">{{ ' + field.fieldname + '.title }}</div>';
+
+            let fieldValue = '';
+            if (field.type == 'url')
+                fieldValue = '<a href="{{ ' + field.fieldname + ' }}" target="_blank">{{ ' + field.fieldname + ' }}</a>';
+            else
+                fieldValue = '{{ ' + field.fieldname + ' }}';
+
+            result += '<div class="controls">' + fieldValue + '</div>\r\n';
             result += '\t</div>\r\n\r\n';
         }
     }
