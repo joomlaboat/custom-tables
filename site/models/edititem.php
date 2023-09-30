@@ -261,7 +261,7 @@ class CustomTablesModelEditItem extends JModelLegacy
                 $new_row = $obj[0];
 
                 if ($this->ct->Table->published_field_found)
-                    $new_row['published'] = $row['published'];
+                    $new_row['listing_published'] = $row['listing_published'];
 
                 $new_row[$this->ct->Table->realidfieldname] = $row[$this->ct->Table->realidfieldname];
 
@@ -283,9 +283,9 @@ class CustomTablesModelEditItem extends JModelLegacy
         $row[$this->ct->Table->realidfieldname] = $listing_id;
 
         if ($this->ct->Table->published_field_found)
-            $row['published'] = $published;
+            $row['listing_published'] = $published;
 
-        $row['listing_published'] = $published;
+        //$row['listing_published'] = $published;
 
         foreach ($this->ct->Table->fields as $fieldRow)
             $row[$fieldRow['realfieldname']] = '';

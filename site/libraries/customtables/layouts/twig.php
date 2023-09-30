@@ -760,7 +760,7 @@ class fieldObject
             return '';
         }
 
-        if ($this->ct->isRecordNull($this->ct->Table->record) and count($this->ct->Table->record) < 2)
+        if ($this->ct->isRecordNull($this->ct->Table->record) or count($this->ct->Table->record) < 2)
             return '';
 
         $Layouts = new Layouts($this->ct);

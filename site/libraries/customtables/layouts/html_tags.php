@@ -471,7 +471,7 @@ class Twig_Html_Tags
                     'type' => '_published',
                     'typeparams' => '',
                     'fieldtitle' . $this->ct->Languages->Postfix => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PUBLISHED'),
-                    'realfieldname' => 'published',
+                    'realfieldname' => 'listing_published',
                     'isrequired' => false,
                     'defaultvalue' => null,
                     'valuerule' => null,
@@ -508,7 +508,7 @@ class Twig_Html_Tags
         $fieldTitles = $this->getFieldTitles($list_of_fields);
         $field_title = implode(' ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_OR') . ' ', $fieldTitles);
         $cssClass = 'ctSearchBox';
-        
+
         if ($class != '')
             $cssClass .= ' ' . $class;
 

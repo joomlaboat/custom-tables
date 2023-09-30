@@ -174,7 +174,7 @@ class Filtering
                                     'fieldname' => '_published',
                                     'type' => '_published',
                                     'typeparams' => '',
-                                    'realfieldname' => 'published'
+                                    'realfieldname' => 'listing_published'
                                 );
                             } else {
                                 $fieldrow = Fields::FieldRowByName($fieldname, $this->ct->Table->fields);

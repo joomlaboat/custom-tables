@@ -107,7 +107,7 @@ class Ordering
         if ($fieldName == '_id')
             return $Table->realidfieldname;
         elseif ($fieldName == '_published' and $Table->published_field_found)
-            return 'published';
+            return 'listing_published';
 
         $fieldRow = Fields::FieldRowByName($fieldName, $Table->fields);
         if ($fieldRow === null)
