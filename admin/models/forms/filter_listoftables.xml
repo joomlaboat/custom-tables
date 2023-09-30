@@ -19,6 +19,15 @@
         >
         </field>
 
+        <field
+                name="tablecategory"
+                type="ctcategory"
+                label="JOPTION_SELECT_CATEGORY"
+                onchange="this.form.submit();"
+                extension="com_customtables"
+        >
+        </field>
+
     </fields>
     <fields name="list">
         <field
