@@ -239,6 +239,9 @@ class SaveFieldQuerySet
                     $value = $this->ct->Env->jinput->getInt($this->field->comesfieldname);
                     $this->row[$this->field->realfieldname] = $value;
 
+                    if ($value == 0)
+                        $value = null;
+
                     if ($value === null)
                         return $this->field->realfieldname . '=null';
                     else
@@ -254,6 +257,9 @@ class SaveFieldQuerySet
 
                     if ((!isset($value) or $value == 0)) {
 
+                        if ($value == 0)
+                            $value = null;
+
                         if (!$this->ct->isRecordNull($this->row)) {
                             if ($this->row[$this->field->realfieldname] == null or $this->row[$this->field->realfieldname] == "")
                                 $value = ($this->ct->Env->userid != 0 ? $this->ct->Env->userid : 0);
@@ -266,6 +272,8 @@ class SaveFieldQuerySet
                 }
 
                 $value = $this->ct->Env->jinput->getInt($this->field->comesfieldname);
+                if ($value == 0)
+                    $value = null;
 
                 if (isset($value) and $value != 0) {
                     $this->row[$this->field->realfieldname] = $value;

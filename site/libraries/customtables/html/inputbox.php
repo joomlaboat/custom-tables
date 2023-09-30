@@ -1034,12 +1034,6 @@ class Inputbox
         $attributes = 'class="' . $this->cssclass . '" ' . $this->attributes;
         $userGroup = $this->field->params[0] ?? '';
 
-        tagProcessor_General::process($this->ct, $userGroup, $this->row);
-        tagProcessor_Item::process($this->ct, $userGroup, $this->row);
-        tagProcessor_If::process($this->ct, $userGroup, $this->row);
-        tagProcessor_Page::process($this->ct, $userGroup);
-        tagProcessor_Value::processValues($this->ct, $userGroup, $this->row);
-
         $where = '';
         if (isset($this->field->params[3]))
             $where = 'INSTR(name,"' . $this->field->params[3] . '")';

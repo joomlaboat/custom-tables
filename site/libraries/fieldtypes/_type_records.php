@@ -21,8 +21,11 @@ use CustomTables\TwigProcessor;
 class CT_FieldTypeTag_records
 {
     //New function
-    public static function resolveRecordTypeValue(&$field, $layoutcode, $rowValue, string $showPublishedString = '', string $separatorCharacter = ',')
+    public static function resolveRecordTypeValue(&$field, $layoutcode, $rowValue, string $showPublishedString = '', ?string $separatorCharacter = ',')
     {
+        if ($separatorCharacter === null)
+            $separatorCharacter = ',';
+
         $db = Factory::getDBO();
 
         $ct = new CT;

@@ -110,7 +110,7 @@ class Field
                     $new_params[] = $type_param;
                 else {
 
-                    if ($type == 'user' and ($index == 1 or $index = 2)) {
+                    if ($type == 'user' and ($index == 1 or $index == 2)) {
                         //Do not parse
                         $new_params[] = $type_param;
                     } else {

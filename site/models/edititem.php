@@ -593,7 +593,16 @@ class CustomTablesModelEditItem extends JModelLegacy
             $msg = $this->ct->Params->msgItemIsSaved;
 
         if ($this->ct->Env->advancedTagProcessor) {
-            CleanExecute::executeCustomPHPfile($this->ct->Table->tablerow['customphp'], $row, $row_old);
+
+            try {
+                CleanExecute::executeCustomPHPfile($this->ct->Table->tablerow['customphp'], $row, $row_old);
+            } catch (Exception $e) {
+
+                echo 'Custom PHP file: ' . $this->ct->Table->tablerow['customphp'] . '<br/>';
+                $msg = $e->getMessage();
+                echo $msg;
+                die;
+            }
             $return2Link_Updated = $this->ct->Env->jinput->get('returnto', '', 'BASE64');
             if ($return2Link != $return2Link_Updated)
                 $link = base64_decode($return2Link_Updated);
