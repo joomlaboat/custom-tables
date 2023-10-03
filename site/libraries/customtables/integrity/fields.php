@@ -160,20 +160,22 @@ class IntegrityFields extends IntegrityChecks
                 $isRequiredOrGenerated = (int)$projected_field['isrequired'];
                 if ($isRequiredOrGenerated == 2 or $isRequiredOrGenerated == 3) {
                     $expression = Fields::addFieldPrefixToExpression($ct->Table->tableid, $projected_field['defaultvalue']);
-                    $projected_data_type['generation_expression'] = $expression;
+                    //$projected_data_type['generation_expression'] = $expression;
                     $projected_data_type['extra'] = ($isRequiredOrGenerated == 2 ? 'VIRTUAL' : 'STORED') . ' GENERATED';
-                    $projected_data_type['required_or_generated'] = $isRequiredOrGenerated;
+                    //$projected_data_type['required_or_generated'] = $isRequiredOrGenerated;
                 } else {
-                    $projected_data_type['required_or_generated'] = null;
+                    //$projected_data_type['required_or_generated'] = null;
                 }
 
 
                 if (isset($ExistingField['extra']) and str_contains($ExistingField['extra'], 'GENERATED')) {
 
+                    /*
                     $ExistingField['generation_expression'] = str_replace("_utf8mb3", "", $ExistingField['generation_expression']);
                     $ExistingField['generation_expression'] = str_replace('_utf8mb4\\\'', '\'', $ExistingField['generation_expression']);
                     $ExistingField['generation_expression'] = str_replace('\\\'', '\'', $ExistingField['generation_expression']);
                     $ExistingField['generation_expression'] = str_replace('`', '', $ExistingField['generation_expression']);
+                    */
                 }
 
                 if (!IntegrityFields::compareFieldTypes($ExistingField, $projected_data_type)) {
@@ -278,10 +280,12 @@ class IntegrityFields extends IntegrityChecks
         if ($existing->extra != $projected->extra) {
             return false;
         } else {
+            /*
             if (($existing->extra == 'VIRTUAL GENERATED' or $existing->extra == 'STORED GENERATED') and
                 $existing->generation_expression != $projected->generation_expression) {
                 return false;
             }
+            */
         }
 
         return true;

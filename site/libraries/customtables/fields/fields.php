@@ -302,7 +302,8 @@ class Fields
 
         $realtablename = str_replace('#__', $db->getPrefix(), $realtablename);
         if ($db->serverType == 'postgresql') {
-            $query = 'SELECT column_name, data_type, is_nullable, column_default,generation_expression FROM information_schema.columns WHERE table_name = ' . $db->quote($realtablename);
+            //,generation_expression
+            $query = 'SELECT column_name, data_type, is_nullable, column_default FROM information_schema.columns WHERE table_name = ' . $db->quote($realtablename);
         } else {
 
             $conf = Factory::getConfig();
@@ -322,9 +323,9 @@ class Fields
                     . 'IF(COLUMN_TYPE LIKE \'%unsigned\', \'YES\', \'NO\') AS is_unsigned,'
                     . 'IS_NULLABLE AS is_nullable,'
                     . 'COLUMN_DEFAULT AS column_default,'
-                    . 'EXTRA AS extra,'
-                    . '"" AS generation_expression'
+                    . 'EXTRA AS extra'
                     . ' FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=' . $db->quote($database) . ' AND TABLE_NAME=' . $db->quote($realtablename);
+                //. '"" AS generation_expression'
             } else {
                 $query = 'SELECT COLUMN_NAME AS column_name,'
                     . 'DATA_TYPE AS data_type,'
@@ -332,9 +333,9 @@ class Fields
                     . 'IF(COLUMN_TYPE LIKE \'%unsigned\', \'YES\', \'NO\') AS is_unsigned,'
                     . 'IS_NULLABLE AS is_nullable,'
                     . 'COLUMN_DEFAULT AS column_default,'
-                    . 'EXTRA AS extra,'
-                    . 'GENERATION_EXPRESSION AS generation_expression'
+                    . 'EXTRA AS extra'
                     . ' FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=' . $db->quote($database) . ' AND TABLE_NAME=' . $db->quote($realtablename);
+                //. 'GENERATION_EXPRESSION AS generation_expression'
             }
         }
 
@@ -1126,11 +1127,11 @@ class Fields
     {
         $ct_fieldTypeArray = Fields::getProjectedFieldType($ct_fieldType, $typeParams);
         if ($isRequiredOrGenerated == 2 or $isRequiredOrGenerated == 3) {
-            $ct_fieldTypeArray['generation_expression'] = $defaultValue;
+            //$ct_fieldTypeArray['generation_expression'] = $defaultValue;
             $ct_fieldTypeArray['extra'] = ($isRequiredOrGenerated == 2 ? 'VIRTUAL' : 'STORED') . ' GENERATED';
-            $ct_fieldTypeArray['required_or_generated'] = $isRequiredOrGenerated;
+            //$ct_fieldTypeArray['required_or_generated'] = $isRequiredOrGenerated;
         } else {
-            $ct_fieldTypeArray['required_or_generated'] = null;
+            //$ct_fieldTypeArray['required_or_generated'] = null;
         }
 
         return Fields::makeProjectedFieldType($ct_fieldTypeArray);
@@ -1411,22 +1412,24 @@ class Fields
         if (isset($type->extra) and str_contains($type->extra, 'GENERATED')) {
 
             $type->default = null;
-
+            /*
             if ($type->extra == 'VIRTUAL GENERATED')
                 $elements[] = 'AS (' . $ct_fieldTypeArray['generation_expression'] . ') VIRTUAL';
 
             if ($type->extra == 'STORED GENERATED')
                 $elements[] = 'AS (' . $ct_fieldTypeArray['generation_expression'] . ') STORED';
+            */
 
         } elseif (isset($type->required_or_generated)) {
 
             $type->default = null;
-
+            /*
             if ($type->required_or_generated == 2)
                 $elements[] = 'AS (' . $ct_fieldTypeArray['generation_expression'] . ') VIRTUAL';
 
             if ($type->required_or_generated == 3)
                 $elements[] = 'AS (' . $ct_fieldTypeArray['generation_expression'] . ') STORED';
+            */
         }
 
         if ($type->is_nullable)
