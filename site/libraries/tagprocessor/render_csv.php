@@ -108,6 +108,7 @@ trait render_csv
 
         foreach ($ct->Records as $row) {
             $row['_number'] = $number;
+            $row['_islast'] = $number == count($ct->Records);
 
             $tablecontent .= '
 ' . strip_tags(tagProcessor_Item::RenderResultLine($ct, $layoutType, $twig, $row));//TODO

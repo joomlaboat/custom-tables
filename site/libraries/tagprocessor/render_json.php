@@ -61,6 +61,7 @@ trait render_json
 
         foreach ($ct->Records as $row) {
             $row['_number'] = $number;
+            $row['_islast'] = $number == count($ct->Records);
             $i = 0;
             $vlu2 = array();
             foreach ($header_fields as $header_field) {

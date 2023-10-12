@@ -605,6 +605,25 @@ class Twig_Record_Tags
         return $fieldTitles;
     }
 
+    function isLast(): bool
+    {
+        if (!isset($this->ct->Table)) {
+            $this->ct->app->enqueueMessage('{{ record.islast }} - Table not loaded.', 'error');
+            return false;
+        }
+
+        if (!isset($this->ct->Table->record)) {
+            $this->ct->app->enqueueMessage('{{ record.islast }} - Record not loaded.', 'error');
+            return false;
+        }
+
+        if (!isset($this->ct->Table->record['_islast'])) {
+            $this->ct->app->enqueueMessage('{{ record.islast }} - Record number not set.', 'error');
+            return false;
+        }
+
+        return (bool)$this->ct->Table->record['_islast'];
+    }
 }
 
 class Twig_Table_Tags

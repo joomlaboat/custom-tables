@@ -131,6 +131,7 @@ class JHTMLESRecordsView
 
             //process layout
             $row['_number'] = $number;
+            $row['_islast'] = $number == count($CleanSearchResult);
 
             if ($ct->Env->legacySupport) {
                 $LayoutProc = new LayoutProcessor($ct);
@@ -171,6 +172,7 @@ class JHTMLESRecordsView
 
             //process layout
             $row['_number'] = $number;
+            $row['_islast'] = $number == count($CleanSearchResult);
 
             if ($ct->Env->legacySupport) {
                 $LayoutProc = new LayoutProcessor($ct);

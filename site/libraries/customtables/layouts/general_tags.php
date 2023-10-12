@@ -402,6 +402,7 @@ class Twig_Document_Tags
 
                 foreach ($this->ct->Records as $row) {
                     $row['_number'] = $number;
+                    $row['_islast'] = $number == count($this->ct->Records);
 
                     $html_result_layout = $twig->process($row);
                     if ($twig->errorMessage !== null)

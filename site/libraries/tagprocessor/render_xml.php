@@ -62,7 +62,7 @@ trait render_xml
         $tablecontent = '';
         foreach ($ct->Records as $row) {
             $row['_number'] = $number;
-
+            $row['_islast'] = $number == count($ct->Records);
             if ($tablecontent != "")
                 $tablecontent .= "\r\n";
             $tablecontent .= tagProcessor_Item::RenderResultLine($ct, $layoutType, $twig, $row);

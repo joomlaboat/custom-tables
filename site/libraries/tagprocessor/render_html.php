@@ -23,10 +23,7 @@ trait render_html
         //for reload single record functionality
         $listing_id = $ct->Env->jinput->getCmd("listing_id", '');
         $custom_number = $ct->Env->jinput->getInt('number', 0);
-        $start = $ct->Env->jinput->getInt('start', 0); //pagination
         // end of for reload single record functionality
-
-        $catalogresult = '';
 
         $fields = str_replace("\n", '', $fields);
         $fields = str_replace("\r", '', $fields);
@@ -84,14 +81,14 @@ trait render_html
         $recordLine = str_replace(')|', '}', $recordLine);//to support old parsing way
         $recordLine = str_replace('&&&&quote&&&&', '"', $recordLine);
 
-        $number = 1 + $ct->LimitStart; //table row number, it maybe uses in the layout as {number}
+        $number = 1;// + $ct->LimitStart; //table row number, it maybe used in the layout as {number}
 
         $tableContent = '';
-
         $twig = new TwigProcessor($ct, $recordLine);
 
         foreach ($ct->Records as $row) {
-            $row['_number'] = ($custom_number > 0 ? $custom_number : $number);
+            $row['_number'] = $number;//($custom_number > 0 ? $custom_number : $number);
+            $row['_islast'] = $number == count($ct->Records);
             $tableContent .= tagProcessor_Item::RenderResultLine($ct, $layoutType, $twig, $row);//TODO
 
             $number++;

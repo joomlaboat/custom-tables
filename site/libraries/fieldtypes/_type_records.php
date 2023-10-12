@@ -77,6 +77,8 @@ class CT_FieldTypeTag_records
 
         foreach ($CleanSearchResult as $row) {
             $row['_number'] = $number;
+            $row['_islast'] = $number == count($CleanSearchResult);
+
             $twig = new TwigProcessor($ct, $layoutcode);
 
             if ($htmlresult != '')

@@ -85,6 +85,7 @@ class tagProcessor_Catalog
 
             foreach ($ct->Records as $row) {
                 $row['_number'] = $number;
+                $row['_islast'] = $number == count($ct->Records);
                 $RealRows[] = tagProcessor_Item::RenderResultLine($ct, $layoutType, $twig, $row); //3ed parameter is to show record HTML anchor or not
                 $number++;
             }
@@ -104,6 +105,7 @@ class tagProcessor_Catalog
                         $GroupTitle = implode(',', Tree::getMultyValueTitles($lastGroup, $ct->Languages->Postfix, 1, ' - '));
                     else {
                         $row['_number'] = $number;
+                        $row['_islast'] = $number == count($ct->Records);
                         $option = array();
                         $GroupTitle = tagProcessor_Value::getValueByType($ct, $FieldRow, $row, $option);
                     }

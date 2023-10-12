@@ -340,6 +340,8 @@ class TwigProcessor
             if ($this->ct->Records !== null) {
                 foreach ($this->ct->Records as $blockRow) {
                     $blockRow['_number'] = $number;
+                    $blockRow['_islast'] = $number == count($this->ct->Records);
+
                     $this->ct->Table->record = $blockRow;
                     try {
                         $row_result = @$this->twig->render($this->itemLayoutName, $this->variables);
