@@ -318,7 +318,7 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
             } else {
                 if ($ct->Env->clean == 1) {
                     if ($frmt == 'json')
-                        die(json_encode(['error' => 'not copied']));
+                        die(json_encode(['status' => 'error', 'msg' => 'not copied']));
                     else
                         die('error');
                 } else {

@@ -236,15 +236,13 @@ class Inputbox
         require_once($pathViews . 'json.php');
 
         $jsonOutput = new ViewJSON($ct);
-        $output = $jsonOutput->render($pageLayoutContent, '', 10, false);//$obEndClean); //10 is the LayoutType = JSON
+        $output = $jsonOutput->render($pageLayoutContent, false);
         $outputList = JoomlaBasicMisc::csv_explode($selector2, $output, '"', false);
         $outputArray = [];
         foreach ($outputList as $outputListItems) {
             $items = JoomlaBasicMisc::csv_explode($selector1, $outputListItems, '"', false);
-            if ($items[0] != '') {
-                //$outputArray[] = '{"id":"' . $items[0] . '","label":"' . $items[1] . '"}';
-                $outputArray[] = ["id" => $items[0], "label" => $items[1]];//utf8_encode()
-            }
+            if ($items[0] != '')
+                $outputArray[] = ["id" => $items[0], "label" => $items[1]];
         }
 
         $outputString = json_encode($outputArray);

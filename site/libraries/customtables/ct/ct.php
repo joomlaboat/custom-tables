@@ -309,13 +309,6 @@ class CT
         else
             $this->GroupBy = '';
 
-        if ($this->Env->frmt != 'html') {
-            //export all records if format is csv, xml etc.
-            $this->Limit = 0;
-            $this->LimitStart = 0;
-            return;
-        }
-
         if ($this->Params->blockExternalVars) {
             if ((int)$this->Params->limit > 0) {
                 $this->Limit = (int)$this->Params->limit;

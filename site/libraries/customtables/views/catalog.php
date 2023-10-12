@@ -147,17 +147,41 @@ class Catalog
 
 // -------------------- Parse Layouts
         if ($this->ct->Env->legacySupport) {
+
+            if ($this->ct->Env->frmt == 'json') {
+                $itemLayout = str_replace("\n", '', $itemLayout);
+                $itemLayout = str_replace("\r", '', $itemLayout);
+                $itemLayout = str_replace("\t", '', $itemLayout);
+            }
+
             $catalogTableCode = JoomlaBasicMisc::generateRandomString();//this is temporary replace placeholder. to not parse content result again
 
             $catalogTableContent = tagProcessor_CatalogTableView::process($this->ct, $Layouts->layoutType, $pageLayout, $catalogTableCode);
-            if ($catalogTableContent == '')
+            if ($catalogTableContent == '') {
                 $catalogTableContent = tagProcessor_Catalog::process($this->ct, $Layouts->layoutType, $pageLayout, $itemLayout, $catalogTableCode);
+
+                if ($this->ct->Env->frmt == 'json') {
+                    $catalogTableContent = str_replace("\n", '', $catalogTableContent);
+                    $catalogTableContent = str_replace("\r", '', $catalogTableContent);
+                    $catalogTableContent = str_replace("\t", '', $catalogTableContent);
+                }
+            }
 
             $LayoutProc = new LayoutProcessor($this->ct);
             $LayoutProc->layout = $pageLayout;
             $pageLayout = $LayoutProc->fillLayout(null, null, '');
             $pageLayout = str_replace('&&&&quote&&&&', '"', $pageLayout); // search boxes may return HTMl elements that contain placeholders with quotes like this: &&&&quote&&&&
             $pageLayout = str_replace($catalogTableCode, $catalogTableContent, $pageLayout);
+        }
+
+        if ($this->ct->Env->frmt == 'json') {
+
+            $pathViews = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries'
+                . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR;
+
+            require_once($pathViews . 'json.php');
+            $jsonOutput = new ViewJSON($this->ct);
+            die($jsonOutput->render($pageLayout));
         }
 
         $twig = new TwigProcessor($this->ct, $pageLayout, false, false, true, $pageLayoutNameString, $pageLayoutLink);

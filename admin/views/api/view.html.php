@@ -87,7 +87,6 @@ class CustomtablesViewAPI extends JViewLegacy
                 break;
         }
 
-
         if ($frmt == 'json') {
             header('Content-Type: application/json');
             echo json_encode($result);

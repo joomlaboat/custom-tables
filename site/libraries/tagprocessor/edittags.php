@@ -130,7 +130,6 @@ class tagProcessor_Edit
                         $newReplaceItCode = $replaceItCode . str_pad(count($items_to_replace), 9, '0', STR_PAD_LEFT) . str_pad($i, 4, '0', STR_PAD_LEFT);
                         $items_to_replace[] = array($newReplaceItCode, $result);
                     }
-
                     $pageLayout = str_replace($entries[$i], $newReplaceItCode, $pageLayout);
                 }
             }

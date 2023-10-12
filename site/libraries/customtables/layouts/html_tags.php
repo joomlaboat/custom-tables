@@ -837,10 +837,7 @@ class Twig_Html_Tags
             return $title;
         }
 
-        if ($this->isTwig)
-            return $vlu;
-        else
-            return $vlu;
+        return $vlu;
     }
 
     protected function renderSaveButton($optional_class, $title, $formName): string

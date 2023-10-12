@@ -63,17 +63,6 @@ class CustomTablesViewCatalog extends JViewLegacy
                 die;
             } else
                 return false;
-
-        } elseif ($this->ct->Env->frmt == 'json') {
-
-            $pathViews = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries'
-                . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR;
-
-            require_once($pathViews . 'json.php');
-
-            $jsonOutput = new ViewJSON($ct);
-            $jsonOutput->render($this->pageLayoutContent, $this->itemLayoutContent, $this->layoutType);
-
         } else {
             parent::display($tpl);
         }
@@ -84,7 +73,6 @@ class CustomTablesViewCatalog extends JViewLegacy
             foreach ($this->ct->Records as $rec)
                 $this->SaveViewLogForRecord($rec, $allowed_fields);
         }
-
         return true;
     }
 

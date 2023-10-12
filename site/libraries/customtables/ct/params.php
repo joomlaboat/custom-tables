@@ -243,7 +243,7 @@ class Params
         $this->forceSortBy = $menu_params->get('forcesortby');
 
         //Limit
-        $this->limit = $menu_params->get('limit') ?? 20;
+        $this->limit = $this->jinput->getInt('limit', ($menu_params->get('limit') ?? 20));
 
         //Layouts
         $this->pageLayout = $menu_params->get('escataloglayout');

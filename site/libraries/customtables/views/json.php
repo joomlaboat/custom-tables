@@ -29,43 +29,13 @@ class ViewJSON
         $this->ct = &$ct;
     }
 
-    function render($pageLayoutContent, $itemLayoutContent, $layoutType, $obEndClean = true): ?string
+    function render(string $pageLayoutContent, bool $obEndClean = true): ?string
     {
-        $catalogTableCode = JoomlaBasicMisc::generateRandomString();//this is temporary replace placeholder. to not parse content result again
-
-        if ($this->ct->Env->legacySupport) {
-
-            $itemLayout = str_replace("\n", '', $itemLayoutContent);
-            $itemLayout = str_replace("\r", '', $itemLayout);
-            $itemLayout = str_replace("\t", '', $itemLayout);
-
-            $path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR;
-            require_once($path . 'layout.php');
-            require_once($path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'catalogtag.php');
-            require_once($path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'catalogtableviewtag.php');
-            $catalogTableContent = tagProcessor_CatalogTableView::process($this->ct, $layoutType, $pageLayoutContent, $catalogTableCode);
-
-            if ($catalogTableContent == '') {
-                $catalogTableContent = tagProcessor_Catalog::process($this->ct, $layoutType, $pageLayoutContent, $itemLayout, $catalogTableCode);
-
-                $catalogTableContent = str_replace("\n", '', $catalogTableContent);
-                $catalogTableContent = str_replace("\r", '', $catalogTableContent);
-                $catalogTableContent = str_replace("\t", '', $catalogTableContent);
-            }
-
-            $LayoutProc = new LayoutProcessor($this->ct);
-            $LayoutProc->layout = $pageLayoutContent;
-            $pageLayoutContent = $LayoutProc->fillLayout();
-
-            $pageLayoutContent = str_replace('&&&&quote&&&&', '"', $pageLayoutContent); // search boxes may return HTML elements that contain placeholders with quotes like this: &&&&quote&&&&
-            $pageLayoutContent = str_replace($catalogTableCode, $catalogTableContent, $pageLayoutContent);
-        }
-
         $twig = new TwigProcessor($this->ct, $pageLayoutContent, false, true);
         $pageLayoutContent = $twig->process();
 
         if ($twig->errorMessage !== null)
-            $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
+            return (object)array('msg' => $twig->errorMessage, 'status' => 'error');
 
         if ($this->ct->Params->allowContentPlugins)
             JoomlaBasicMisc::applyContentPlugins($pageLayoutContent);

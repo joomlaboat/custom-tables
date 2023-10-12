@@ -568,7 +568,7 @@ function ctCatalogOnDragOver(event) {
 
 function ctEditModal(url, parentFieldToUpdate = null) {
 
-    let new_url = url + '&modal=1&time=' + Date.now();
+    let new_url = url + (url.indexOf('?') === -1 ? '?' : '&') + 'modal=1&time=' + Date.now();
     let params = "";
 
     if (parentFieldToUpdate !== null) new_url += '&parentfield=' + parentFieldToUpdate
@@ -582,9 +582,7 @@ function ctEditModal(url, parentFieldToUpdate = null) {
             if (http.readyState === 4) {
                 let res = http.response;
 
-                //let content_html = '<div style="overflow-y: scroll;overflow-x: hidden;height: 100%;width:100%;">' + res + '</div>';
                 ctShowPopUp(res, true);
-
 
                 //Activate Calendars if found
                 let elements = document.querySelectorAll(".field-calendar");
@@ -592,7 +590,6 @@ function ctEditModal(url, parentFieldToUpdate = null) {
                 for (let i = 0, l = elements.length; i < l; i++) {
                     JoomlaCalendar.init(elements[i]);
                 }
-
             }
         }
         http.send(params);
