@@ -1248,14 +1248,15 @@ function refreshTableJoinField(fieldName, response) {
 async function onCTVirtualSelectServerSearch(searchValue, virtualSelect) {
 
     let selectorElement = document.getElementById(virtualSelect.dropboxWrapper);
-    //alert(selectorElement.dataset.fieldname);
-    let fieldnameObject = document.getElementById(selectorElement.dataset.fieldname);
-    //alert(fieldnameObject.value);
+    //let fieldnameObject = document.getElementById(selectorElement.dataset.fieldname);
+
     let wrapper = document.getElementById(selectorElement.dataset.wrapper);
     let key = wrapper.dataset.key;
     let url = 'index.php?option=com_customtables&view=catalog&tmpl=component&from=json&key=' + key + '&index=0&limit=20&';
     if (searchValue != "")
         url += "&search=" + searchValue;
+
+    let newList = [];
 
     try {
         const response = await fetch(url);
@@ -1264,8 +1265,17 @@ async function onCTVirtualSelectServerSearch(searchValue, virtualSelect) {
             throw new TypeError("Oops, we haven't got JSON!");
         }
         const jsonData = await response.json();
-        virtualSelect.setServerOptions(jsonData);
+
+        for (let i = 0; i < jsonData.length; i++) {
+
+            let doc = new DOMParser().parseFromString(jsonData[i].label, 'text/html');
+            let label = doc.documentElement.textContent;
+
+            newList.push({value: jsonData[i].value, label: decodeURI(label)});
+        }
+        virtualSelect.setServerOptions(newList);
     } catch (error) {
+        alert(error);
         console.error("Error:", error);
     }
 }
