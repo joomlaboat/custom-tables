@@ -171,6 +171,9 @@ class ListOfFields
 
     public function escape($var)
     {
+        if ($var === null)
+            $var = '';
+
         if (strlen($var) > 50) {
             // use the helper htmlEscape method instead and shorten the string
             return self::htmlEscape($var, 'UTF-8', true);

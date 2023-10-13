@@ -74,12 +74,15 @@ class Value
 
             case 'float':
 
-                $option_list_value = (int)($option_list[0] ?? 0);
                 $params_value = ((count($this->field->params) > 0 and $this->field->params[0] != '') ? (int)$this->field->params[0] : 2);
-
-                $decimals = $option_list_value != '' ? $option_list_value : $params_value;
-                $decimals_sep = $option_list[1] ?? '.';
-                $thousand_sep = $option_list[2] ?? '';
+                $decimals = $params_value;
+                $decimals_sep = '.';
+                $thousand_sep = '';
+                if (count($option_list) > 0) {
+                    $decimals = (int)($option_list[0] ?? 0);
+                    $decimals_sep = $option_list[1] ?? '.';
+                    $thousand_sep = $option_list[2] ?? '';
+                }
                 return number_format((float)$rowValue, $decimals, $decimals_sep, $thousand_sep);
 
             case 'ordering':
