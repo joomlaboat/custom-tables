@@ -1217,12 +1217,15 @@ function refreshTableJoinField(fieldName, response) {
 
     let valueObject = document.getElementById('comes_' + fieldName);
     valueObject.value = response['id'];
+    if (valueObject.onchange) {
+        valueObject.dispatchEvent(new Event('change'));
+    }
 
     let wrapper = document.getElementById('comes_' + fieldName + 'Wrapper');
     if (wrapper === null)
         return;
 
-    let valueFiltersStr = Base64.decode(wrapper.dataset.valuefilters).replace(/[^\x00-\x7F]/g, "");
+    //let valueFiltersStr = Base64.decode(wrapper.dataset.valuefilters).replace(/[^\x00-\x7F]/g, "");
     let valueFiltersNamesStr = Base64.decode(wrapper.dataset.valuefiltersnames).replace(/[^\x00-\x7F]/g, "");
     let valueFiltersNames = JSON.parse(valueFiltersNamesStr);
     let NewValueFilters = [];
