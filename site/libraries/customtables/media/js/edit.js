@@ -1219,6 +1219,9 @@ function refreshTableJoinField(fieldName, response) {
     valueObject.value = response['id'];
 
     let wrapper = document.getElementById('comes_' + fieldName + 'Wrapper');
+    if (wrapper === null)
+        return;
+
     let valueFiltersStr = Base64.decode(wrapper.dataset.valuefilters).replace(/[^\x00-\x7F]/g, "");
     let valueFiltersNamesStr = Base64.decode(wrapper.dataset.valuefiltersnames).replace(/[^\x00-\x7F]/g, "");
     let valueFiltersNames = JSON.parse(valueFiltersNamesStr);

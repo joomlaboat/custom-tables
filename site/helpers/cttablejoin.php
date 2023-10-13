@@ -501,7 +501,6 @@ class JHTMLCTTableJoin
             $onChangeAttribute = 'ctUpdateTableJoinLink(\'' . $control_name . '\', ' . $next_index . ', false, ' . $next_sub_index
                 . ',\'' . $current_object_id . '\', \'' . $formId . '\', ' . $updateValueString . ',null,\'\');';
 
-            //if ($updateValueString)
             $onChangeAttribute .= $onchange;
 
             if (str_contains($cssClass, ' ct_improved_selectbox'))
