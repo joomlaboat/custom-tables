@@ -379,7 +379,7 @@ class Twig_Html_Tags
             return $vlu;
     }
 
-    function search($list_of_fields_string_or_array = null, $class = '', $reload = false, $improved = false): string
+    function search($list_of_fields_string_or_array = null, $class = '', $reload = false, $improved = ''): string
     {
         if ($list_of_fields_string_or_array === null)
             return '{{ html.search() }} tag requires at least one field name.';
@@ -512,8 +512,10 @@ class Twig_Html_Tags
         if ($class != '')
             $cssClass .= ' ' . $class;
 
-        if ($improved)
+        if ($improved == 'improved')
             $cssClass .= ' ct_improved_selectbox';
+        elseif ($improved == 'virtualselect')
+            $cssClass .= ($cssClass == '' ? '' : ' ') . ' ct_virtualselect_selectbox';
 
         $default_Action = $reload ? ' onChange="ctSearchBoxDo();"' : ' ';//action should be a space not empty or this.value=this.value
         $objectName = $first_fld['fieldname'];

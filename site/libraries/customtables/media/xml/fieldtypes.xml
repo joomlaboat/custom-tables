@@ -1216,9 +1216,12 @@
                        description="Menu Item alias to open the link using specific menu item parameters."
                        optional="1"/>
                 <param name="improved" label="Improve Select Box"
-                       description="Improve Select box to include in-list search." type="radio" default=""
-                       example="reload" optional="1"
-                       options="|Standard,improved|Improved"/>
+                       description="Improve Select box to include in-list search." type="list" default=""
+                       example="reload" optional="1">
+                    <option value="" label="Standard"/>
+                    <option value="improved" label="Improved (Joomla)"/>
+                    <option value="virtualselect" label="Improved (Virtual Select)"/>
+                </param>
             </params>
         </editparams>
 

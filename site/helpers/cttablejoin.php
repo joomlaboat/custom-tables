@@ -65,12 +65,12 @@ class JHTMLCTTableJoin
         $ct->app->setUserState($key, $filter);
 
         $cssClass = $option_list[0] ?? '';
-        $improved = false;
-        if (($option_list[5] ?? '') == 'improved')
-            $improved = true;
+        $improved = ($option_list[5] ?? '');// '','improved' or 'virtualselect'
 
-        if ($improved)
+        if ($improved == 'improved')
             $cssClass .= ($cssClass == '' ? '' : ' ') . ' ct_improved_selectbox';
+        elseif ($improved == 'virtualselect')
+            $cssClass .= ($cssClass == '' ? '' : ' ') . ' ct_virtualselect_selectbox';
 
         $data = [];
         $data[] = 'data-key="' . $key . '"';
@@ -104,7 +104,6 @@ class JHTMLCTTableJoin
         }
 
         $data[] = 'data-formname="' . $formID . '"';
-
         $Placeholder = $field->title;
 
         return '<input type="hidden" id="' . $control_name . '" name="' . $control_name . '" value="' . htmlspecialchars($value ?? '') . '" '
@@ -390,7 +389,7 @@ class JHTMLCTTableJoin
         } else if ($js_filters[$index] != '')
             $additional_filter = $js_filters[$index];
 
-        $result = Inputbox::renderTableJoinSelectorJSON_Process($ct, $filter, $index, $additional_filter, $subFilter, false);
+        $result = Inputbox::renderTableJoinSelectorJSON_Process($ct, $filter, $index, $additional_filter, $subFilter, null, false);
 
         if ($result == '')
             return '';
@@ -499,7 +498,8 @@ class JHTMLCTTableJoin
         if (count($r) > 0) {
 
             $updateValueString = ($index + 1 == count($js_filters) ? 'true' : 'false');
-            $onChangeAttribute = 'ctUpdateTableJoinLink(\'' . $control_name . '\', ' . $next_index . ', false, ' . $next_sub_index . ',\'' . $current_object_id . '\', \'' . $formId . '\', ' . $updateValueString . ',null,\'\');';
+            $onChangeAttribute = 'ctUpdateTableJoinLink(\'' . $control_name . '\', ' . $next_index . ', false, ' . $next_sub_index
+                . ',\'' . $current_object_id . '\', \'' . $formId . '\', ' . $updateValueString . ',null,\'\');';
 
             //if ($updateValueString)
             $onChangeAttribute .= $onchange;
@@ -510,28 +510,89 @@ class JHTMLCTTableJoin
             if ($parentElementNotSelected) {
                 $result .= '<div>Selected value does not have a parent.</div>';
             } else {
-
                 $childTableField = $js_filters_FieldName[$next_index];
 
-                $result .= '<select id="' . $current_object_id . '" title="' . $Placeholder . '" placeholder="' . $Placeholder . '" onChange="' . $onChangeAttribute . '"' . ' class="' . $cssClass . '"'
-                    . ' data-childtablefield="' . $childTableField . '">';
-                $result .= '<option value="">- ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT') . '</option>';
+                if (str_contains($cssClass, ' ct_virtualselect_selectbox')) {
 
-                if ($addRecordMenuAlias !== null)
-                    $result .= '<option value="%addRecord%">- ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ADD') . '</option>';
+                    $selectBoxParams = [];
+                    $selectBoxParams [] = 'id="' . $current_object_id . '"';
+                    $selectBoxParams [] = 'title="' . $Placeholder . '"';
+                    $selectBoxParams [] = 'placeholder="' . $Placeholder . '"';
+                    //$selectBoxParams [] = 'onChange="' . $onChangeAttribute . '"';
+                    $selectBoxParams [] = 'data-wrapper="' . $control_name . 'Wrapper"';
+                    $selectBoxParams [] = 'data-fieldname="' . $control_name . '"';
+                    //$selectBoxParams [] = 'class="' . $cssClass . '"';
+                    $selectBoxParams [] = 'data-childtablefield="' . $childTableField . '"';
+                    $selectBoxParams [] = 'data-js_filters_FieldName="' . $js_filters_FieldName[$index] . '"';
 
-                for ($i = 0; $i < count($r); $i++) {
-                    $label = htmlspecialchars_decode($r[$i]->label ?? '', ENT_HTML5);
 
-                    if ($r[$i]->id == $val)
-                        $result .= '<option value="' . $r[$i]->id . '" selected="selected">' . $label . '</option>';
-                    elseif (str_contains($val, ',' . $r[$i]->id . ','))
-                        $result .= '<option value="' . $r[$i]->id . '" selected="selected">' . $label . '</option>';
-                    else
-                        $result .= '<option value="' . $r[$i]->id . '">' . $r[$i]->label . '</option>';
+                    $selectedValue = null;
+                    $options = [];
+                    $maxLimitCount = 0;
+
+                    for ($i = 0; $i < count($r); $i++) {
+                        $label = htmlspecialchars_decode($r[$i]->label ?? '', ENT_HTML5);
+
+                        if ($r[$i]->value == $val or str_contains($val, ',' . $r[$i]->value . ',')) {
+                            $selectedValue = $r[$i]->value;
+                            $options [] = '{ label: "' . strip_tags($label) . '", value: "' . $r[$i]->value . '" },';
+                        } elseif ($maxLimitCount < 5)
+                            $options [] = '{ label: "' . strip_tags($label) . '", value: "' . $r[$i]->value . '" },';
+
+                        $maxLimitCount += 1;
+                    }
+
+                    $VirtualSelectParams = [];
+                    $VirtualSelectParams [] = 'ele: "#' . $current_object_id . '"';
+                    $VirtualSelectParams [] = 'options: [' . implode(',', $options) . ']';
+                    $VirtualSelectParams [] = 'dropboxWrapper: "' . $current_object_id . '"';
+
+                    if ($selectedValue !== null)
+                        $VirtualSelectParams [] = 'selectedValue: "' . $selectedValue . '"';
+
+                    $VirtualSelectParams [] = 'search: true';
+                    $VirtualSelectParams [] = 'onServerSearch: onCTVirtualSelectServerSearch';
+                    $current_object_id_tmp = $current_object_id . '_Tmp';
+                    $result .= '<input id="' . $current_object_id_tmp . '" value="" type="hidden" /><div ' . implode(' ', $selectBoxParams) . '></div>'
+                        . '<script>VirtualSelect.init({' . implode(',', $VirtualSelectParams) . '});
+
+                        document.querySelector("#' . $current_object_id . '").addEventListener("change", function() {
+                        document.getElementById("' . $current_object_id_tmp . '").value = this.value;
+                        ctUpdateTableJoinLink("' . $control_name . '",' . $next_index . ', false, ' . $next_sub_index . ',"' . $current_object_id_tmp
+                        . '", "' . $formId . '", ' . $updateValueString . ',null,"");
+});
+</script>';
+                } else {
+                    $selectBoxParams = [];
+                    $selectBoxParams [] = 'id="' . $current_object_id . '"';
+                    $selectBoxParams [] = 'title="' . $Placeholder . '"';
+                    $selectBoxParams [] = 'placeholder="' . $Placeholder . '"';
+                    $selectBoxParams [] = 'onChange="' . $onChangeAttribute . '"';
+                    $selectBoxParams [] = 'class="' . $cssClass . '"';
+                    $selectBoxParams [] = 'data-childtablefield="' . $childTableField . '"';
+
+                    if (str_contains($cssClass, ' ct_virtualselect_selectbox'))
+                        $selectBoxParams [] = 'data-search="true" style="visibility:hidden;"';
+
+                    $result .= '<select ' . implode(' ', $selectBoxParams) . ' >';
+                    $result .= '<option value="">- ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT') . '</option>';
+
+                    if ($addRecordMenuAlias !== null)
+                        $result .= '<option value=" % addRecord % ">- ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ADD') . '</option>';
+
+                    for ($i = 0; $i < count($r); $i++) {
+                        $label = htmlspecialchars_decode($r[$i]->label ?? '', ENT_HTML5);
+
+                        if ($r[$i]->value == $val)
+                            $result .= '<option value="' . $r[$i]->value . '" selected="selected">' . $label . '</option>';
+                        elseif (str_contains($val, ',' . $r[$i]->value . ','))
+                            $result .= '<option value="' . $r[$i]->value . '" selected="selected">' . $label . '</option>';
+                        else
+                            $result .= '<option value="' . $r[$i]->value . '">' . $r[$i]->label . '</option>';
+                    }
+
+                    $result .= '</select>';
                 }
-
-                $result .= '</select>';
             }
 
             //Prepare the space for next elements

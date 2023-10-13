@@ -259,13 +259,23 @@ class JHTMLESSqlJoin
     static protected function renderDropdownSelector_Box_simple($list_values, $current_value, $control_name, $cssclass, $attribute, $place_holder, $dynamic_filter, $addNoValue = false)
     {
         $htmlresult = '';
-        $htmlresult_select = '<SELECT'
-            . ' name="' . $control_name . '"'
-            . ' id="' . $control_name . '"'
-            . ($cssclass != '' ? ' class="' . $cssclass . '"' : '')
-            . ($attribute != '' ? ' ' . $attribute : '')
-            . ' data-label="' . $place_holder . '"'
-            . ' data-type="sqljoin">';
+
+        $selectBoxParams = [];
+        $selectBoxParams [] = 'name="' . $control_name . '"';
+        $selectBoxParams [] = 'id="' . $control_name . '"';
+        $selectBoxParams [] = 'data-label="' . $place_holder . '"';
+        $selectBoxParams [] = 'data-type="sqljoin"';
+
+        if ($cssclass != '')
+            $selectBoxParams [] = 'class="' . $cssclass . '"';
+
+        if ($attribute != '')
+            $selectBoxParams [] = $attribute;
+
+        if (str_contains($cssclass, ' ct_virtualselect_selectbox'))
+            $selectBoxParams [] = 'data-search="true"';
+
+        $htmlresult_select = '<SELECT ' . implode(' ', $selectBoxParams) . '>';
 
         $htmlresult_select .= '<option value="">- ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT') . ' ' . $place_holder . '</option>';
 
@@ -310,7 +320,13 @@ class JHTMLESSqlJoin
 			<script>
 				ctInputBoxRecords_current_value["' . $control_name . '"]="' . $current_value . '";
 				ctInputbox_removeEmptyParents("' . $control_name . '","");
-				ctInputbox_UpdateSQLJoinLink("' . $control_name . '","");
+				ctInputbox_UpdateSQLJoinLink("' . $control_name . '","");';
+
+            if (str_contains($cssclass, ' ct_virtualselect_selectbox'))
+                $htmlresult .= '
+                VirtualSelect.init({ ele: "' . $control_name . '" });';
+
+            $htmlresult .= '
 			</script>
 			';
         } else {

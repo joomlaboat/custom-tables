@@ -232,11 +232,9 @@ class tagProcessor_Page
 
                 $class = $opair[1] ?? '';
                 $reload = isset($opair[2]) and $opair[2] == 'reload';
-                $improved = isset($opair[3]) and $opair[3] == 'improved';
-
+                $improved = ($opair[3] ?? '');// '','improved' or 'virtualselect'
                 $vlu = $ct_html->search($list_of_fields_string_array, $class, $reload, $improved);
             }
-
             $pageLayout = str_replace($fItem, $vlu, $pageLayout);
             $i++;
         }

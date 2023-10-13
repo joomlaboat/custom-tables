@@ -353,6 +353,9 @@ class CT
         $this->document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/js/modal.js"></script>');
         $this->document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/js/uploader.js"></script>');
 
+        $this->document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/libraries/virtualselect/virtual-select.min.js"></script>');
+        $this->document->addCustomTag('<link rel="stylesheet" href="' . URI::root(true) . '/components/com_customtables/libraries/virtualselect/virtual-select.min.css" />');
+
         $params = ComponentHelper::getParams('com_customtables');
         $googleMapAPIKey = $params->get('googlemapapikey');
 

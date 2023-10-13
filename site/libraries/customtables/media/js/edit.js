@@ -552,7 +552,7 @@ function ctRenderTableJoinSelectBox(control_name, r, index, execute_all, sub_ind
 
         for (let i = 0; i < r.length; i++) {
             let optionLabel = decodeHtml(r[i].label);
-            result += '<option value="' + r[i].id + '">' + optionLabel + '</option>';
+            result += '<option value="' + r[i].value + '">' + optionLabel + '</option>';
         }
 
         result += '</select>';
@@ -1198,7 +1198,6 @@ function setUpdateChildTableJoinField(childFieldName, parentFieldName, childFilt
 
 function updateChildTableJoinField(childFieldName, parentFieldName, childFilterFieldName) {
     //This function updates the list of items in Table Join field based on its parent value;
-
     let parentValue = document.getElementById('comes_' + parentFieldName).value;
     let wrapper = document.getElementById('comes_' + childFieldName + 'Wrapper');
     let key = wrapper.dataset.key;
@@ -1243,4 +1242,30 @@ function refreshTableJoinField(fieldName, response) {
 
     let index = NewValueFilters.length - 1;
     ctUpdateTableJoinLink('comes_' + fieldName, index, true, 0, 'comes_' + fieldName + '0', wrapper.dataset.formname, true, response.id);
+}
+
+//Virtual Select
+async function onCTVirtualSelectServerSearch(searchValue, virtualSelect) {
+
+    let selectorElement = document.getElementById(virtualSelect.dropboxWrapper);
+    //alert(selectorElement.dataset.fieldname);
+    let fieldnameObject = document.getElementById(selectorElement.dataset.fieldname);
+    //alert(fieldnameObject.value);
+    let wrapper = document.getElementById(selectorElement.dataset.wrapper);
+    let key = wrapper.dataset.key;
+    let url = 'index.php?option=com_customtables&view=catalog&tmpl=component&from=json&key=' + key + '&index=0&limit=20&';
+    if (searchValue != "")
+        url += "&search=" + searchValue;
+
+    try {
+        const response = await fetch(url);
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+            throw new TypeError("Oops, we haven't got JSON!");
+        }
+        const jsonData = await response.json();
+        virtualSelect.setServerOptions(jsonData);
+    } catch (error) {
+        console.error("Error:", error);
+    }
 }

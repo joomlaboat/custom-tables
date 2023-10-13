@@ -526,3 +526,11 @@
     opacity: 0.3;
     filter: alpha(opacity=30);
 }
+
+/* ------------------ Virtual Select --------------- */
+.vscomp-search-input {
+    padding: 0 !important;
+    border: none !important;
+    background: none !important;
+    box-shadow: none !important;
+}

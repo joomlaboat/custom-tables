@@ -110,11 +110,12 @@ class Inputbox
 
         $additional_filter = $ct->Env->jinput->getCmd('filter', '');
         $subFilter = $ct->Env->jinput->getCmd('subfilter');
+        $search = $ct->Env->jinput->getString('search');
 
-        return self::renderTableJoinSelectorJSON_Process($ct, $selectors, $index, $additional_filter, $subFilter, $obEndClean);
+        return self::renderTableJoinSelectorJSON_Process($ct, $selectors, $index, $additional_filter, $subFilter, $search, $obEndClean);
     }
 
-    static public function renderTableJoinSelectorJSON_Process(CT &$ct, $selectors, $index, $additional_filter, $subFilter, $obEndClean = true): ?string
+    static public function renderTableJoinSelectorJSON_Process(CT &$ct, $selectors, $index, $additional_filter, $subFilter, ?string $search = null, $obEndClean = true): ?string
     {
         $selector = $selectors[$index];
 
@@ -165,7 +166,6 @@ class Inputbox
                 } else {
                     //Check if this table has self-parent field - the TableJoin field linked with the same table.
                     if ($join_tableName == $tableName) {
-
                         if ($subFilter == '')
                             $additional_where = '(' . $fld['realfieldname'] . ' IS NULL OR ' . $fld['realfieldname'] . '="")';
                         else
@@ -179,6 +179,13 @@ class Inputbox
         if ($additional_where != '')
             $ct->Filter->where[] = $additional_where;
 
+        if ($search !== null and $search != '') {
+            foreach ($ct->Table->fields as $fld) {
+                if ($fieldName_or_layout == $fld['fieldname']) {
+                    $ct->Filter->where[] = 'INSTR(' . $fld['realfieldname'] . ',' . $ct->db->quote($search) . ')';
+                }
+            }
+        }
         /*
         if (count($selectors) > $index + 1) {
             $currentFilter = $selectors[$index];
@@ -242,7 +249,7 @@ class Inputbox
         foreach ($outputList as $outputListItems) {
             $items = JoomlaBasicMisc::csv_explode($selector1, $outputListItems, '"', false);
             if ($items[0] != '')
-                $outputArray[] = ["id" => $items[0], "label" => $items[1]];
+                $outputArray[] = ["value" => $items[0], "label" => $items[1]];
         }
 
         $outputString = json_encode($outputArray);
