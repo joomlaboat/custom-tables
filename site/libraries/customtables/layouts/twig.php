@@ -492,7 +492,13 @@ class fieldObject
             $vlu = implode(($options[1] ?? ';'), $imageSRCList);
 
         } elseif ($this->field->type == 'filebox') {
-            $vlu = implode(',', CT_FieldTypeTag_FileBox::getFileBoxRows($this->ct->Table->tablename, $this->field->fieldname, $this->ct->Table->record[$this->ct->Table->realidfieldname]));
+
+            $files = CT_FieldTypeTag_FileBox::getFileBoxRows($this->ct->Table->tablename, $this->field->fieldname, $this->ct->Table->record[$this->ct->Table->realidfieldname]);
+            $fileList = [];
+            foreach ($files as $file)
+                $fileList[] = $file->fileid . '.' . $file->file_ext;
+
+            $vlu = implode(',', $fileList);
         } elseif ($this->field->type == 'virtual') {
             $valueProcessor = new Value($this->ct);
             $vlu = $valueProcessor->renderValue($this->field->fieldrow, $this->ct->Table->record, []);
