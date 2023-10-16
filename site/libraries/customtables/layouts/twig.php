@@ -721,7 +721,7 @@ class fieldObject
 
     public function getvalue(): string
     {
-        if ($this->ct->isRecordNull($this->ct->Table->record) and count($this->ct->Table->record) < 2)
+        if ($this->ct->isRecordNull($this->ct->Table->record) or count($this->ct->Table->record) < 2)
             return '';
 
         $functionParams = func_get_args();
