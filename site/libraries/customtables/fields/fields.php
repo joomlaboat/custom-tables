@@ -156,15 +156,13 @@ class Fields
                 . ' LIMIT 1';
         }
 
-        $db->setQuery($query);
-        $recs = $db->loadAssocList();
-        $rec = $recs[0];
-        return $rec['is_nullable'] == 'YES';
+        $rows = database::loadAssocList($query);
+        $row = $rows[0];
+        return $row['is_nullable'] == 'YES';
     }
 
     public static function deleteField_byID(CT &$ct, $fieldid): bool
     {
-        $db = Factory::getDBO();
         $ImageFolder = JPATH_SITE . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'esimages';
         $fieldrow = Fields::getFieldRow($fieldid, true);
 
@@ -172,7 +170,6 @@ class Fields
             return false;
 
         $field = new Field($ct, $fieldrow);
-
         $tableRow = ESTables::getTableRowByID($field->fieldrow['tableid']);
 
         //for Image Gallery
@@ -353,9 +350,7 @@ class Fields
 
         //get constrant name
         $query = 'show create table ' . $realtablename;
-
-        database::setQuery($query);
-        $tableCreateQuery = $db->loadAssocList();
+        $tableCreateQuery = database::loadAssocList($query);
 
         if (count($tableCreateQuery) == 0)
             return null;
@@ -524,19 +519,17 @@ class Fields
         else
             $query = 'SHOW COLUMNS FROM ' . $realtablename . ' WHERE ' . $db->quoteName('field') . '=' . $db->quote($realfieldname);
 
-        $db->setQuery($query);
+        $rows = database::loadAssocList($query);
 
-        $recs = $db->loadAssocList();
-
-        if (count($recs) == 0)
+        if (count($rows) == 0)
             return '';
 
-        $rec = $recs[0];
+        $row = $rows[0];
         $serverType = database::getServerType();
         if ($serverType == 'postgresql')
-            return $rec['data_type'];
+            return $row['data_type'];
         else
-            return $rec['Type'];
+            return $row['Type'];
     }
 
     public static function fixMYSQLField(string $realtablename, string $fieldname, string $PureFieldType, string &$msg): bool
@@ -631,8 +624,6 @@ class Fields
 
     public static function getFieldAssocByName(string $fieldname, int $tableid): ?array
     {
-        $db = Factory::getDBO();
-
         if ($fieldname == '')
             $fieldname = common::inputGet('fieldname', '', 'CMD');
 
@@ -640,12 +631,10 @@ class Fields
             return null;
 
         $query = 'SELECT ' . Fields::getFieldRowSelects() . ' FROM #__customtables_fields AS s WHERE s.published=1 AND tableid=' . $tableid . ' AND fieldname="' . trim($fieldname) . '" LIMIT 1';
-        $db->setQuery($query);
-
-        $rows = $db->loadAssocList();
-        if (count($rows) != 1) {
+        $rows = database::loadAssocList($query);
+        if (count($rows) != 1)
             return null;
-        }
+
         return $rows[0];
     }
 

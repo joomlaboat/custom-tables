@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\database;
 use CustomTables\Field;
 use CustomTables\Fields;
 use Joomla\CMS\Factory;
@@ -60,24 +61,19 @@ class updateImages
 
     public static function countImages(string $realtablename, string $realfieldname, string $realidfieldname): int
     {
-        $db = Factory::getDBO();
         $query = 'SELECT count(' . $realidfieldname . ') AS c FROM ' . $realtablename . ' WHERE ' . $realfieldname . ' IS NOT NULL';
-        $db->setQuery($query);
-        $recs = $db->loadAssocList();
-        return (int)$recs[0]['c'];
+        $rows = database::loadAssocList($query);
+        return (int)$rows[0]['c'];
     }
 
     public static function processImages(CT &$ct, $fieldRow, array $old_params, array $new_params, int $startIndex, int $stepSize): ?string
     {
-        $db = Factory::getDBO();
         $query = 'SELECT ' . $fieldRow->realfieldname . ' FROM ' . $ct->Table->realtablename . ' WHERE ' . $fieldRow->realfieldname . ' IS NOT NULL';
-        $db->setQuery($query, $startIndex, $stepSize);
-
-        $imageList = $db->loadAssocList();
+        $rows = database::loadAssocList($query);
         $old_ImageFolder = '';
         $imgMethods = new CustomTablesImageMethods;
 
-        foreach ($imageList as $img) {
+        foreach ($rows as $img) {
 
             if ((is_numeric($img) and intval($img) > 0) or !is_numeric($img)) {
                 $field_row_old = (array)$fieldRow;

@@ -377,8 +377,6 @@ function fixFields($tablename)
 
 function getExistingFields($tablename)
 {
-    $db = JFactory::getDBO();
     $query = 'SHOW COLUMNS FROM ' . $tablename;
-    $db->setQuery($query);
-    return $db->loadAssocList();
+    return database::loadAssocList($query);
 }

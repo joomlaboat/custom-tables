@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\database;
 use CustomTables\Details;
 use CustomTables\TwigProcessor;
 use Joomla\CMS\Factory;
@@ -101,8 +102,7 @@ class CustomTablesViewLog extends JViewLegacy
         if ($this->record_count < $this->limitStart or $this->record_count < $the_limit)
             $this->limitStart = 0;
 
-        $db->setQuery($query, $this->limitStart, $the_limit);
-        return $db->loadAssocList();
+        return database::loadAssocList($query, $this->limitStart, $the_limit);
     }
 
     function ActionFilter($action): string
@@ -122,26 +122,21 @@ class CustomTablesViewLog extends JViewLegacy
 
     function getUsers($userid): string
     {
-        $db = Factory::getDBO();
         $query = 'SELECT #__users.id AS id, #__users.name AS name FROM #__customtables_log INNER JOIN #__users ON #__users.id=#__customtables_log.userid GROUP BY #__users.id ORDER BY name';
-        $db->setQuery($query);
-        $rows = $db->loadAssocList();
+        $rows = database::loadAssocList($query);
         $result = '<select onchange="UserFilterChanged(this)">';
         $result .= '<option value="0" ' . ($userid == 0 ? 'selected="SELECTED"' : '') . '>- ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT') . '</option>';
 
-        foreach ($rows as $row) {
+        foreach ($rows as $row)
             $result .= '<option value="' . $row['id'] . '" ' . ($userid == $row['id'] ? 'selected="SELECTED"' : '') . '>' . $row['name'] . '</option>';
-        }
+
         $result .= '</select>';
         return $result;
     }
 
     function getTables($tableId): string
     {
-        $db = Factory::getDBO();
-        $query = 'SELECT id,tablename FROM #__customtables_tables ORDER BY tablename';
-        $db->setQuery($query);
-        $rows = $db->loadAssocList();
+        $rows = database::loadAssocList('SELECT id,tablename FROM #__customtables_tables ORDER BY tablename');
 
         $result = '<select onchange="TableFilterChanged(this)">';
         $result .= '<option value="0" ' . ($tableId == 0 ? 'selected="SELECTED"' : '') . '>- ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT') . '</option>';

@@ -141,8 +141,7 @@ class CustomTablesModelEditItem extends JModelLegacy
             $query = 'SELECT ' . implode(',', $this->ct->Table->selects) . ' FROM ' . $this->ct->Table->realtablename
                 . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . $this->ct->db->quote($this->listing_id) . ' LIMIT 1';
 
-            $this->ct->db->setQuery($query);
-            $rows = $this->ct->db->loadAssocList();
+            $rows = database::loadAssocList($query);
 
             if (count($rows) < 1)
                 return -1;
@@ -185,9 +184,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
         $query .= ' ORDER BY ' . $this->ct->Table->realidfieldname . ' DESC'; //show last
         $query .= ' LIMIT 1';
-
-        $this->ct->db->setQuery($query);
-        $rows = $this->ct->db->loadAssocList();
+        $rows = database::loadAssocList($query);
 
         if (count($rows) < 1) {
             $this->row = array();
@@ -209,8 +206,7 @@ class CustomTablesModelEditItem extends JModelLegacy
         $wheres_user = CTUser::UserIDField_BuildWheres($this->ct, $this->ct->Params->userIdField, $this->listing_id);
         $wheres = array_merge($wheres, $wheres_user);
         $query = 'SELECT ' . implode(',', $this->ct->Table->selects) . ' FROM ' . $this->ct->Table->realtablename . ' WHERE ' . implode(' AND ', $wheres) . ' LIMIT 1';
-        $this->ct->db->setQuery($query);
-        $rows = $this->ct->db->loadAssocList();
+        $rows = database::loadAssocList($query);
 
         if (count($rows) < 1)
             return null;
@@ -693,10 +689,8 @@ class CustomTablesModelEditItem extends JModelLegacy
 
         //get data
         $query = 'SELECT ' . implode(',', $fields_to_save) . ' FROM ' . $this->ct->Table->realtablename . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . $this->ct->db->quote($listing_id) . ' LIMIT 1';
+        $rows = database::loadAssocList($query);
 
-        $this->ct->db->setQuery($query);
-
-        $rows = $this->ct->db->loadAssocList();
         if (count($rows) != 1)
             return;
 
@@ -895,8 +889,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
         $query = 'SELECT ' . implode(',', $this->ct->Table->selects) . ' FROM ' . $this->ct->Table->realtablename . ' ORDER BY ' . $this->ct->Table->realidfieldname . ' DESC LIMIT 1';
         $this->ct->db->setQuery($query);
-
-        $rows = $this->ct->db->loadAssocList();
+        $rows = database::loadAssocList($query);
         if (count($rows) != 1) {
             $msg = 'Record not saved';
             return '';

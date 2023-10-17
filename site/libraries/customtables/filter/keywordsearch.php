@@ -11,6 +11,7 @@
 // no direct access
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\database;
 use CustomTables\Ordering;
 use Joomla\CMS\Factory;
 
@@ -367,8 +368,7 @@ class CustomTablesKeywordSearch
         if (count($ordering) > 0)
             $query .= ' ORDER BY ' . implode(',', $ordering);
 
-        $db->setQuery($query);
-        $rows = $db->loadAssocList();
+        $rows = database::loadAssocList($query);
 
         foreach ($rows as $row) {
             if (in_array($row[$this->ct->Table->realidfieldname], $listing_ids))

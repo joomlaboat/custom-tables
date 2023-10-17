@@ -115,15 +115,14 @@ class CustomTablesViewFiles extends JViewLegacy
         $query = 'SELECT ' . $this->field->realfieldname . ' FROM ' . $this->ct->Table->realtablename . ' WHERE '
             . $this->ct->Table->realidfieldname . '=' . $this->ct->db->quote($this->listing_id) . ' LIMIT 1';
 
-        $this->ct->db->setQuery($query);
-        $recs = $this->ct->db->loadAssocList();
+        $rows = database::loadAssocList($query);
 
-        if (count($recs) < 1) {
+        if (count($rows) < 1) {
             $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FILE_NOT_FOUND'), 'error');
             return;
         }
 
-        $content = stripslashes($recs[0][$this->field->realfieldname]);
+        $content = stripslashes($rows[0][$this->field->realfieldname]);
         $content = $this->ProcessContentWithCustomPHP($content, $this->row);
 
         if (ob_get_contents()) ob_end_clean();

@@ -102,12 +102,8 @@ class ESTables
 
     public static function getTableRowByWhere($where)
     {
-        $db = Factory::getDBO();
-
         $query = 'SELECT ' . ESTables::getTableRowSelects() . ' FROM #__customtables_tables AS s WHERE ' . $where . ' LIMIT 1';
-        $db->setQuery($query);
-
-        $rows = $db->loadAssocList();
+        $rows = database::loadAssocList($query);
         if (count($rows) != 1)
             return null;
 
@@ -416,9 +412,7 @@ class ESTables
         }
 
         $query = 'SELECT * FROM #__customtables_fields WHERE published=1 AND tableid=' . $originalTableId;
-        $db->setQuery($query);
-
-        $rows = $db->loadAssocList();
+        $rows = database::loadAssocList($query);
 
         if (count($rows) == 0)
             die('Original table has no fields.');

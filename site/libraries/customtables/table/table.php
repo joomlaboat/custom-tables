@@ -168,11 +168,10 @@ class Table
     public function getRecordFieldValue($listingId, $resultField)
     {
         $query = ' SELECT ' . $resultField . ' FROM ' . $this->realtablename . ' WHERE ' . $this->realidfieldname . '=' . $this->db->quote($listingId) . ' LIMIT 1';
-        $this->db->setQuery($query);
-        $recs = $this->db->loadAssocList();
+        $rows = database::loadAssocList($query);
 
-        if (count($recs) > 0)
-            return $recs[0][$resultField];
+        if (count($rows) > 0)
+            return $rows[0][$resultField];
 
         return "";
     }
@@ -180,14 +179,12 @@ class Table
     function loadRecord($listing_id)
     {
         $query = 'SELECT ' . implode(',', $this->selects) . ' FROM ' . $this->realtablename . ' WHERE ' . $this->realidfieldname . '=' . $this->db->quote($listing_id) . ' LIMIT 1';
-        $this->db->setQuery($query);
+        $rows = database::loadAssocList($query);
 
-        $recs = $this->db->loadAssocList();
+        if (count($rows) < 1) return $this->record = null;
 
-        if (count($recs) < 1) return $this->record = null;
-
-        $this->record = $recs[0];
-        return $recs[0];
+        $this->record = $rows[0];
+        return $rows[0];
     }
 
     function isRecordExists($listing_id): bool

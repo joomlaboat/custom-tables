@@ -303,12 +303,8 @@ class CustomtablesViewLayouts extends JViewLegacy
 
         if (count($where) > 0) {
 
-            $db = Factory::getDBO();
             $query = 'SELECT id,title FROM #__menu WHERE ' . implode(' OR ', $where);
-
-            $db->setQuery($query);
-
-            $recs = $db->loadAssocList();
+            $recs = database::loadAssocList($query);
 
             if (count($recs) > 0) {
                 $result = '<hr/><p>List of Menu Items that use this layout:</p><ul>';
@@ -319,7 +315,6 @@ class CustomtablesViewLayouts extends JViewLegacy
                 $result .= '</ul>';
             }
         }
-
         return $result;
     }
 

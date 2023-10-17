@@ -217,8 +217,7 @@ class Twig_Record_Tags
         $query = $this->join_buildQuery($sj_function, $tableRow, $field1_findWhat_realName, $field1_type, $field2_lookWhere_realName,
             $field2_type, $field3_readValue_realName, $additional_where, $order_by_option_realName);
 
-        $this->ct->db->setQuery($query);
-        $rows = $this->ct->db->loadAssocList();
+        $rows = database::loadAssocList($query);
 
         if (count($rows) == 0) {
             $vlu = 'no records found';
@@ -518,8 +517,7 @@ class Twig_Record_Tags
         $f->addWhereExpression($filter);
         $additional_where = implode(' AND ', $f->where);
         $query = $this->count_buildQuery($function, $tableRow['realtablename'], $fieldRealFieldName, $additional_where);
-        $this->ct->db->setQuery($query);
-        $rows = $this->ct->db->loadAssocList();
+        $rows = database::loadAssocList($query);
 
         if (count($rows) == 0)
             return 'no records found';

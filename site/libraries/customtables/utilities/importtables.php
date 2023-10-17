@@ -369,9 +369,7 @@ class ImportTables
         else
             $query = 'SELECT * FROM ' . $mysqlTableName . ' WHERE ' . $fieldname . '=' . $db->Quote($value);
 
-        $db->setQuery($query);
-
-        $rows = $db->loadAssocList();
+        $rows = database::loadAssocList($query);
         if (count($rows) == 0)
             return 0;
 
@@ -564,12 +562,8 @@ class ImportTables
 
     public static function menuGetMaxRgt()
     {
-        $db = Factory::getDBO();
         $query = 'SELECT rgt FROM #__menu ORDER BY rgt DESC LIMIT 1';
-
-        $db->setQuery($query);
-
-        $rows = $db->loadAssocList();
+        $rows = database::loadAssocList($query);
         if (count($rows) == 0)
             return 0;
 

@@ -9,6 +9,7 @@
  **/
 
 // no direct access
+use CustomTables\database;
 use CustomTables\ImportTables;
 use Joomla\CMS\Factory;
 
@@ -69,22 +70,13 @@ class ImportExportUserGroups
     public static function exportUserGroups()
     {
         //This function will export user groups
-
-        $output = array();
-
-        $db = Factory::getDBO();
-
         $query = 'SELECT * FROM #__usergroups';
-        $db->setQuery($query);
-
-        $usergroups = $db->loadAssocList();
+        $usergroups = database::loadAssocList($query);
         if (count($usergroups) == 0)
             return false;
 
         $query = 'SELECT * FROM #__viewlevels';
-        $db->setQuery($query);
-
-        $viewlevels = $db->loadAssocList();
+        $viewlevels = database::loadAssocList($query);
         if (count($viewlevels) == 0)
             return false;
 

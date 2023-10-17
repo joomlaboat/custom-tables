@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\database;
 use CustomTables\Field;
 use CustomTables\Fields;
 use Joomla\CMS\Factory;
@@ -62,22 +63,17 @@ class updateFiles
 
     protected static function countFiles($realtablename, $realfieldname, $realidfieldname)
     {
-        $db = Factory::getDBO();
         $query = 'SELECT count(' . $realidfieldname . ') AS c FROM ' . $realtablename . ' WHERE ' . $realfieldname . ' IS NOT NULL AND ' . $realfieldname . ' != ""';
-        $db->setQuery($query);
-        $recs = $db->loadAssocList();
-        return (int)$recs[0]['c'];
+        $rows = database::loadAssocList($query);
+        return (int)$rows[0]['c'];
     }
 
     protected static function processFiles(CT &$ct, $fieldrow, array $old_params, array $new_params, $startindex, $stepsize)
     {
-        $db = Factory::getDBO();
         $query = 'SELECT ' . implode(',', $ct->Table->selects) . ' FROM ' . $ct->Table->realtablename . ' WHERE ' . $fieldrow->realfieldname . ' IS NOT NULL AND ' . $fieldrow->realfieldname . ' != ""';
-        $db->setQuery($query, $startindex, $stepsize);
+        $rows = database::loadAssocList($query);
 
-        $filelist = $db->loadAssocList();
-
-        foreach ($filelist as $file) {
+        foreach ($rows as $file) {
             $field_row_old = (array)$fieldrow;
             $field_row_old['params'] = $old_params;
 

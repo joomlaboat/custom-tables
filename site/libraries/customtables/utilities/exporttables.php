@@ -35,9 +35,7 @@ class ExportTables
             //get table
             $s1 = '(SELECT categoryname FROM #__customtables_categories WHERE #__customtables_categories.id=#__customtables_tables.tablecategory) AS categoryname';
             $query = 'SELECT *,' . $s1 . ' FROM #__customtables_tables WHERE published=1 AND id=' . (int)$table_id . ' LIMIT 1';
-
-            $db->setQuery($query);
-            $table_rows = $db->loadAssocList();
+            $table_rows = database::loadAssocList($query);
 
             //Add the table with dependencies to export array
             if (count($table_rows) == 1) {
@@ -83,13 +81,11 @@ class ExportTables
 
         //get fields
         $query = 'SELECT * FROM #__customtables_fields WHERE published=1 AND tableid=' . (int)$table['id'] . '';
-        $db->setQuery($query);
-        $fields = $db->loadAssocList();
+        $fields = database::loadAssocList($query);
 
         //get layouts
         $query = 'SELECT * FROM #__customtables_layouts WHERE published=1 AND tableid=' . (int)$table['id'] . '';
-        $db->setQuery($query);
-        $layouts = $db->loadAssocList();
+        $layouts = database::loadAssocList($query);
 
         //Get depended menu items
         $wheres = array();
@@ -105,14 +101,12 @@ class ExportTables
         }
 
         $query = 'SELECT * FROM #__menu WHERE ' . implode(' AND ', $wheres);
-        $db->setQuery($query);
-        $menu = $db->loadAssocList();
+        $menu = database::loadAssocList($query);
 
         //Get depended records
         if (intval($table['allowimportcontent']) == 1) {
             $query = 'SELECT * FROM #__customtables_table_' . $table['tablename'] . ' WHERE published=1';
-            $db->setQuery($query);
-            $records = $db->loadAssocList();
+            $records = database::loadAssocList($query);
         } else
             $records = null;
 

@@ -181,8 +181,7 @@ function _getTablesThatUseThisLayout($wF)
     $fields = '(SELECT GROUP_CONCAT(CONCAT(f.id,",",fieldname),";") FROM #__customtables_fields AS f WHERE ' . $wF . ' ORDER BY fieldname) AS fields';
     $w = '(SELECT tableid FROM #__customtables_fields AS f WHERE ' . $wF . ' LIMIT 1) IS NOT NULL';
     $query = 'SELECT id AS tableid, tabletitle,tablename, ' . $fields . ' FROM #__customtables_tables AS t WHERE ' . $w . ' ORDER BY tablename';
-    $db->setQuery($query);
-    return $db->loadAssocList();
+    return database::loadAssocList($query);
 }
 
 function _getMenuItemsThatUseThisLayout($layoutname)
@@ -201,8 +200,7 @@ function _getMenuItemsThatUseThisLayout($layoutname)
     }
     $wheres[] = '(' . implode(' OR ', $w) . ')';
     $query = 'SELECT id,title FROM #__menu WHERE ' . implode(' AND ', $wheres);
-    $db->setQuery($query);
-    return $db->loadAssocList();
+    return database::loadAssocList($query);
 }
 
 function _getModulesThatUseThisLayout($layoutname)
@@ -221,8 +219,7 @@ function _getModulesThatUseThisLayout($layoutname)
     }
     $wheres[] = '(' . implode(' OR ', $w) . ')';
     $query = 'SELECT id,title FROM #__modules WHERE ' . implode(' AND ', $wheres);
-    $db->setQuery($query);
-    return $db->loadAssocList();
+    return database::loadAssocList($query);
 }
 
 function _getLayoutsThatUseThisLayout(string $layoutName)
@@ -258,6 +255,5 @@ function _getLayoutsThatUseThisLayout(string $layoutName)
     }
     $wheres[] = '(' . implode(' OR ', $w) . ')';
     $query = 'SELECT id,layoutname FROM #__customtables_layouts WHERE ' . implode(' AND ', $wheres);
-    $db->setQuery($query);
-    return $db->loadAssocList();
+    return database::loadAssocList($query);
 }

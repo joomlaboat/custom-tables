@@ -9,6 +9,7 @@
  **/
 
 // Check to ensure this file is included in Joomla!
+use CustomTables\database;
 use Joomla\CMS\Factory;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
@@ -21,14 +22,11 @@ class JHTMLESOptions
 
     public static function options($currentOptionId, $control_name, $value)
     {
-        $db = Factory::getDBO();
-
         $query = 'SELECT id, optionname '
             . ' FROM #__customtables_options '
             . ' WHERE id!=' . (int)$currentOptionId
             . ' ORDER BY optionname';
-        $db->setQuery($query);
-        $optionlist = $db->loadAssocList();
+        $optionlist = database::loadAssocList($query);
         if (!$optionlist) $optionlist = array();
 
         $optionlist[] = array('id' => '0', 'optionname' => '- ROOT');

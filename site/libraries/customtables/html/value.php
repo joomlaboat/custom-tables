@@ -425,9 +425,7 @@ class Value
     {
         // get database handle
         $query = 'SELECT ' . $field . ' FROM #__content WHERE id=' . (int)$articleId . ' LIMIT 1';
-        $this->ct->db->setQuery($query);
-
-        $rows = $this->ct->db->loadAssocList();
+        $rows = database::loadAssocList($query);
 
         if (count($rows) != 1)
             return ""; //return nothing if article not found

@@ -17,6 +17,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 jimport('joomla.application.component.view');
 
 use CustomTables\CT;
+use CustomTables\database;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Version;
 use Joomla\CMS\Language\Text;
@@ -108,26 +109,17 @@ class CustomtablesViewDataBaseCheck extends JViewLegacy
 
     protected function getAllTables($categoryid)
     {
-        $db = Factory::getDBO();
         $query = 'SELECT * FROM #__customtables_tables WHERE published = 1'
             . ($categoryid != 0 ? ' AND tablecategory=' . $categoryid : '')
             . ' ORDER BY tablename';
 
-        $db->setQuery($query);
-        $rows = $db->loadAssocList();
-
-        return $rows;
+        return database::loadAssocList($query);
     }
 
     protected function getAllFields()
     {
-        $db = Factory::getDBO();
         $query = 'SELECT * FROM #__customtables_fields WHERE published = 1 ORDER BY fieldname';
-
-        $db->setQuery($query);
-        $rows = $db->loadAssocList();
-
-        return $rows;
+        return database::loadAssocList($query);
     }
 
     protected function setDocument()

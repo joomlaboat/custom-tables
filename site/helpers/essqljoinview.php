@@ -55,8 +55,7 @@ class JHTMLESSQLJoinView
         $query = 'SELECT ' . implode(',', $ct->Table->selects) . ' FROM ' . $ct->Table->realtablename . ' WHERE '
             . $ct->Table->tablerow['realidfieldname'] . '=' . $ct->db->quote($value) . ' LIMIT 1';
 
-        $ct->db->setQuery($query);
-        $records = $ct->db->loadAssocList();
+        $records = database::loadAssocList($query);
 
         if (!str_contains($field, ':')) {
             //without layout

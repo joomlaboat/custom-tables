@@ -316,9 +316,7 @@ class Tree
         $db = Factory::getDBO();
 
         $query = 'SELECT id, ' . $fieldname . ' FROM #__customtables_options WHERE parentid="' . $parentId . '" LIMIT 1';
-        $db->setQuery($query);
-
-        $rows = $db->loadAssocList();
+        $rows = database::loadAssocList($query);
         if (count($rows) == 1) {
             $row = $rows[0];
             $vlu = $row[$fieldname];
@@ -337,15 +335,10 @@ class Tree
         if ((int)$parentid == 0)
             return array();
 
-        $db = Factory::getDBO();
-
         $query = 'SELECT * FROM #__customtables_options WHERE parentid="' . $parentid . '" '
             . ($where != '' ? ' AND ' . $where : '')
             . ($limit != '' ? ' LIMIT ' . $limit : '');
-        $db->setQuery($query);
-
-        $rows = $db->loadAssocList();
-        return $rows;
+        return database::loadAssocList($query);
     }
 
     //Used in import

@@ -9,6 +9,7 @@
  **/
 
 // Check to ensure this file is included in Joomla!
+use CustomTables\database;
 use Joomla\CMS\Factory;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
@@ -19,15 +20,13 @@ class JHTMLCTFields
 {
     public static function fields($tableid, $currentFieldId, $control_name, $value)
     {
-        $db = Factory::getDBO();
-
         $query = 'SELECT id, fieldname '
             . ' FROM #__customtables_fields '
             . ' WHERE published=1 AND tableid=' . (int)$tableid . ' AND id!=' . (int)$currentFieldId
             . ' AND type="checkbox"'
             . ' ORDER BY fieldname';
-        $db->setQuery($query);
-        $fields = $db->loadAssocList();
+
+        $fields = database::loadAssocList($query);
         if (!$fields) $fields = array();
 
         $fields[] = array('id' => '0', 'fieldname' => '- ROOT');

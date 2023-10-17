@@ -486,7 +486,7 @@ class JoomlaBasicMisc
 
         // Execute the query and load the rules from the result.
         $rows = database::loadObjectList($query);
-        
+
         if (count($rows) < 1)
             return '';
 
@@ -608,13 +608,11 @@ class JoomlaBasicMisc
     {
         $db = Factory::getDBO();
         $query = 'SELECT id FROM #__menu WHERE published=1 AND alias=' . $db->Quote($alias);
+        $rows = database::loadAssocList($query);
+        if (!$rows) return 0;
+        if (count($rows) < 1) return 0;
 
-        $db->setQuery($query);
-        $recs = $db->loadAssocList();
-        if (!$recs) return 0;
-        if (count($recs) < 1) return 0;
-
-        $r = $recs[0];
+        $r = $rows[0];
         return $r['id'];
     }
 
@@ -622,14 +620,11 @@ class JoomlaBasicMisc
     {
         $db = Factory::getDBO();
         $query = 'SELECT * FROM #__menu WHERE published=1 AND alias=' . $db->Quote($alias);
+        $rows = database::loadAssocList($query);
+        if (!$rows) return 0;
+        if (count($rows) < 1) return 0;
 
-        $db->setQuery($query);
-
-        $recs = $db->loadAssocList();
-        if (!$recs) return 0;
-        if (count($recs) < 1) return 0;
-
-        return $recs[0];
+        return $rows[0];
     }
 
     public static function checkUserGroupAccess($thegroup = 0): bool

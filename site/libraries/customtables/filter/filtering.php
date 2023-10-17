@@ -991,9 +991,7 @@ class LinkJoinFilters
         $selects[] = $tableRow['realtablename'] . '.' . $fieldrow->realfieldname;
 
         $query = 'SELECT ' . implode(',', $selects) . ' FROM ' . $tableRow['realtablename'] . ' ' . $where . ' ORDER BY ' . $fieldrow->realfieldname;
-
-        $db->setQuery($query);
-        $records = $db->loadAssocList();
+        $rows = database::loadAssocList($query);
 
         $result .= '
 		<script>
@@ -1005,7 +1003,7 @@ class LinkJoinFilters
         $result .= '<select id="' . $control_name . 'SQLJoinLink" onchange="ctInputbox_UpdateSQLJoinLink(\'' . $control_name . '\',\'' . $control_name_postfix . '\')">';
         $result .= '<option value="">- ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT') . '</option>';
 
-        foreach ($records as $row) {
+        foreach ($rows as $row) {
             if ($row[$tableRow['realidfieldname']] == $filterValue or str_contains($filterValue, ',' . $row[$tableRow['realidfieldname']] . ','))
                 $result .= '<option value="' . $row[$tableRow['realidfieldname']] . '" selected>' . htmlspecialchars($row[$fieldrow->realfieldname] ?? '') . '</option>';
             else

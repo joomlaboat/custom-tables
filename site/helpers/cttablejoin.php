@@ -14,6 +14,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomTables\CT;
+use CustomTables\database;
 use CustomTables\Field;
 use CustomTables\Fields;
 use CustomTables\Inputbox;
@@ -368,12 +369,11 @@ class JHTMLCTTableJoin
             return null;
 
         $query = 'SELECT ' . $join_realfieldname . ' FROM ' . $temp_ct->Table->realtablename . ' WHERE ' . $where . ' LIMIT 1';
-        $temp_ct->db->setQuery($query);
-        $recs = $temp_ct->db->loadAssocList();
-        if (count($recs) == 0)
+        $rows = database::loadAssocList($query);
+        if (count($rows) == 0)
             return null;
 
-        return $recs[0][$join_realfieldname];
+        return $rows[0][$join_realfieldname];
     }
 
     public static function ctUpdateTableJoinLink(CT &$ct, $control_name, $index, $sub_index, $object_id, $formId, $attributes, $onchange, $filter,

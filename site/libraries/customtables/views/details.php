@@ -132,8 +132,7 @@ class Details
         $query = 'SELECT COUNT(*) AS count FROM #__customtables_table_' . $recordsTable . ' WHERE es_' . $recordsUserIdField . '='
             . $this->ct->Env->user->id . ' AND INSTR(es_' . $recordsField . ',",' . $listing_id . ',") LIMIT 1';
 
-        $this->ct->db->setQuery($query);
-        $rows = $this->ct->db->loadAssocList();
+        $rows = database::loadAssocList($query);
         $num_rows = $rows[0]['count'];
 
         if ($num_rows == 0)
@@ -159,9 +158,7 @@ class Details
 
         $query = $this->ct->buildQuery($where);
         $query .= ' LIMIT 1';
-
-        $this->ct->db->setQuery($query);
-        $rows = $this->ct->db->loadAssocList();
+        $rows = database::loadAssocList($query);
 
         if (count($rows) < 1)
             return null;
@@ -261,9 +258,7 @@ class Details
 
         $query = $this->ct->buildQuery('WHERE id=' . $this->ct->db->quote($listing_id));
         $query .= ' LIMIT 1';
-
-        $this->ct->db->setQuery($query);
-        $rows = $this->ct->db->loadAssocList();
+        $rows = database::loadAssocList($query);
 
         if (count($rows) < 1)
             return null;

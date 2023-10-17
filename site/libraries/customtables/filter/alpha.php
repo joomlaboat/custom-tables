@@ -1,4 +1,7 @@
 <?php
+
+use CustomTables\database;
+
 /**
  * CustomTables Joomla! 3.x/4.x Native Component
  * @package Custom Tables
@@ -52,9 +55,7 @@ class Alpha
 								common::inputGet('alpha','','STRING').'"'
 								.' ';
 
-						$db->setQuery( $query );
-						
-						$rows=$db->loadAssocList();
+						$rows = database::loadAssocList($query);
 
 						$wherelist=array();
 						foreach($rows as $row)

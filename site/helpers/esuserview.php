@@ -9,6 +9,7 @@
  **/
 
 // Check to ensure this file is included in Joomla!
+use CustomTables\database;
 use Joomla\CMS\Factory;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
@@ -25,9 +26,7 @@ class JHTMLESUserView
 
         if ($field == 'online') {
             $query = 'SELECT userid FROM #__session WHERE userid=' . (int)$value . ' LIMIT 1';
-            $db->setQuery($query);
-
-            $options = $db->loadAssocList();
+            $options = database::loadAssocList($query);
             if (count($options) == 0)
                 return 0;
             else
@@ -37,7 +36,7 @@ class JHTMLESUserView
             $query = 'SELECT ' . $selects . ' FROM #__user_usergroup_map AS m WHERE user_id=' . (int)$value;
             $groups = database::loadObjectList($query);
             $group_list = [];
-            
+
             foreach ($groups as $group)
                 $group_list[] = $group->group_title;
 
@@ -52,16 +51,14 @@ class JHTMLESUserView
                 return 'wrong field "' . $field . '" !';
 
             $query = 'SELECT id, name, username, email, registerDate,lastvisitDate FROM #__users WHERE id=' . (int)$value . ' LIMIT 1';
-            $db->setQuery($query);
-
-            $options = $db->loadAssocList();
-            if (count($options) != 0) {
-                $rec = $options[0];
-                if (($field == 'registerDate' or $field == 'lastvisitDate') and $rec[$field] == '0000-00-00 00:00:00')
+            $db = Factory::getDBO();
+            if (count($rows) != 0) {
+                $row = $rows[0];
+                if (($field == 'registerDate' or $field == 'lastvisitDate') and $row[$field] == '0000-00-00 00:00:00')
                     return 'Never';
 
                 if ($field == 'registerdate')
-                    return $rec['registerDate'];
+                    return $row['registerDate'];
                 elseif ($field == 'lastvisitdate')
                     return $rec['lastvisitDate'];
                 else

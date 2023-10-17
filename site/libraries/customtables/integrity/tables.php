@@ -77,13 +77,8 @@ class IntegrityTables extends \CustomTables\IntegrityChecks
     protected static function getTables()
     {
         // Create a new query object.
-        $db = Factory::getDBO();
         $query = IntegrityTables::getTablesQuery();
-
-        $db->setQuery($query);
-        $rows = $db->loadAssocList();
-
-        return $rows;
+        return database::loadAssocList($query);
     }
 
     protected static function getTablesQuery()
@@ -142,9 +137,7 @@ class IntegrityTables extends \CustomTables\IntegrityChecks
         $query->from($db->quoteName($realtablename, 'a'));
         $query->where($realidfieldname . ' = 0');
         $query->setLimit(1);
-
-        $db->setQuery($query);
-        $rows = $db->loadAssocList();
+        $rows = database::loadAssocList((string)$query);
         $row = $rows[0];
 
         return $row['cd_zeroIdRecords'];

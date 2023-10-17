@@ -152,16 +152,12 @@ class CTUser
 
     static public function GetUserRow(int $userid): ?array
     {
-        $db = Factory::getDBO();
         $query = 'SELECT * FROM #__users WHERE id=' . $userid . ' LIMIT 1';
-
-        $db->setQuery($query);
-
-        $recs = $db->loadAssocList();
-        if (count($recs) == 0)
+        $rows = database::loadAssocList($query);
+        if (count($rows) == 0)
             return null;
         else
-            return $recs[0];
+            return $rows[0];
     }
 
     static public function GetUserGroups(int $userid)
@@ -367,32 +363,24 @@ class CTUser
     static public function CheckIfUserNameExist(string $username): bool
     {
         $db = Factory::getDBO();
-
         $query = 'SELECT id FROM #__users WHERE username=' . $db->quote($username) . ' LIMIT 1';
-
-        $db->setQuery($query);
-
-        $recs = $db->loadAssocList();
-        if (count($recs) == 1)
+        $rows = database::loadAssocList($query);
+        if (count($rows) == 1)
             return true;
 
         return false;
-
     }
 
     static public function CheckIfUserExist(string $username, string $email)
     {
         $db = Factory::getDBO();
         $query = 'SELECT id FROM #__users WHERE username=' . $db->quote($username) . ' AND email=' . $db->quote($email) . ' LIMIT 1';
-
-        $db->setQuery($query);
-
-        $recs = $db->loadAssocList();
-        if (count($recs) != 1)
+        $rows = database::loadAssocList($query);
+        if (count($rows) != 1)
             return 0;
 
-        $rec = $recs[0];
-        return $rec['id'];
+        $row = $rows[0];
+        return $row['id'];
     }
 
     static public function CheckIfEmailExist(string $email, &$existing_user, &$existing_name)
@@ -400,19 +388,14 @@ class CTUser
         $existing_user = '';
         $existing_name = '';
         $db = Factory::getDBO();
-
         $query = 'SELECT id, username, name FROM #__users WHERE email=' . $db->quote($email) . ' LIMIT 1';
-
-        $db->setQuery($query);
-
-        $recs = $db->loadAssocList();
-        if (count($recs) == 1) {
-            $rec = $recs[0];
-            $existing_user = $rec['username'];
-            $existing_name = $rec['name'];
-            return $rec['id'];
+        $rows = database::loadAssocList($query);
+        if (count($rows) == 1) {
+            $row = $rows[0];
+            $existing_user = $row['username'];
+            $existing_name = $row['name'];
+            return $row['id'];
         }
-
         return false;
     }
 
@@ -616,11 +599,8 @@ class CTUser
 
     public static function showUserGroup(int $userid): string
     {
-        $db = Factory::getDBO();
         $query = 'SELECT title FROM #__usergroups WHERE id=' . $userid . ' LIMIT 1';
-        $db->setQuery($query);
-
-        $options = $db->loadAssocList();
+        $options = database::loadAssocList($query);
         if (count($options) != 0)
             return $options[0]['title'];
 
@@ -643,8 +623,7 @@ class CTUser
         }
 
         $query = 'SELECT title FROM #__usergroups WHERE ' . implode(' OR ', $where) . ' ORDER BY title';
-        $db->setQuery($query);
-        $options = $db->loadAssocList();
+        $options = database::loadAssocList($query);
 
         if (count($options) == 0)
             return '';

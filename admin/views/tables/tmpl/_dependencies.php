@@ -118,8 +118,7 @@ function _getLayoutsThatUseThisTable($tableId, $tableName)
 
     $wheres[] = '(' . implode(' OR ', $w) . ')';
     $query = 'SELECT id,layoutname FROM #__customtables_layouts WHERE ' . implode(' AND ', $wheres);
-    $db->setQuery($query);
-    return $db->loadAssocList();
+    return database::loadAssocList($query);
 }
 
 function _getMenuItemsThatUseThisTable($tablename)
@@ -131,8 +130,7 @@ function _getMenuItemsThatUseThisTable($tablename)
     $toSearch = '"establename":"' . $tablename . '"';
     $wheres[] = 'INSTR(params,' . $db->quote($toSearch) . ')';
     $query = 'SELECT id,title FROM #__menu WHERE ' . implode(' AND ', $wheres);
-    $db->setQuery($query);
-    return $db->loadAssocList();
+    return database::loadAssocList($query);
 }
 
 function _getTablesThisTableDependOn($table_id)
@@ -162,8 +160,7 @@ function _getTablesThisTableDependOn($table_id)
             . ' AND ' . $db->quoteName('type') . '="sqljoin"'
             . ' ORDER BY tabletitle';
     }
-    $db->setQuery($query);
-    return $db->loadAssocList();
+    return database::loadAssocList($query);
 }
 
 function _getTablesThatDependOnThisTable($tablename)
@@ -186,8 +183,7 @@ function _getTablesThatDependOnThisTable($tablename)
     $query = 'SELECT id, tableid,fieldtitle,typeparams,' . $select_tablename . ' AS tabletitle,published FROM #__customtables_fields AS f WHERE '
         . implode(' AND ', $where) . ' ORDER BY tabletitle';
 
-    $db->setQuery($query);
-    return $db->loadAssocList();
+    return database::loadAssocList($query);
 }
 
 function _renderMenuList($menus): string

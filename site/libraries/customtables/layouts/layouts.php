@@ -51,8 +51,7 @@ class Layouts
                 . 'layouttype '
                 . 'FROM #__customtables_layouts WHERE id=' . $layoutId . ' LIMIT 1';
 
-        $this->ct->db->setQuery($query);
-        $rows = $this->ct->db->loadAssocList();
+        $rows = database::loadAssocList($query);
         if (count($rows) != 1)
             return null;
 
@@ -110,8 +109,7 @@ class Layouts
                 . 'layouttype '
                 . 'FROM #__customtables_layouts WHERE layoutname=' . $this->ct->db->quote($layoutName) . ' LIMIT 1';
 
-        $this->ct->db->setQuery($query);
-        $rows = $this->ct->db->loadAssocList();
+        $rows = database::loadAssocList($query);
         if (count($rows) != 1)
             return '';
 
@@ -165,12 +163,11 @@ class Layouts
             if ($db_layout_ts == 0) {
 
                 $query = 'SELECT UNIX_TIMESTAMP(modified) AS ts FROM #__customtables_layouts WHERE id=' . $layout_id . ' LIMIT 1';
-                $this->ct->db->setQuery($query);
-                $recs = $this->ct->db->loadAssocList();
+                $rows = database::loadAssocList($query);
 
-                if (count($recs) != 0) {
-                    $rec = $recs[0];
-                    $db_layout_ts = $rec['ts'];
+                if (count($rows) != 0) {
+                    $row = $rows[0];
+                    $db_layout_ts = $row['ts'];
                 }
             }
 

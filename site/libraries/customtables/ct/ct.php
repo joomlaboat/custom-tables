@@ -160,14 +160,16 @@ class CT
         if ($this->Table->recordcount > 0) {
 
             if ($limit > 0) {
-                $this->db->setQuery($query, 0, $limit);
+                $this->Records = database::loadAssocList($query, 0, $limit);
                 $this->Limit = $limit;
             } else {
                 $the_limit = $this->Limit;
 
                 if ($all) {
                     if ($the_limit > 0)
-                        $this->db->setQuery($query, 0, 20000); //or we will run out of memory
+                        $this->Records = database::loadAssocList($query, 0, 20000);
+                    else
+                        $this->Records = database::loadAssocList($query);
                 } else {
                     if ($the_limit > 20000)
                         $the_limit = 20000;
@@ -178,10 +180,9 @@ class CT
                     if ($this->Table->recordcount < $this->LimitStart or $this->Table->recordcount < $the_limit)
                         $this->LimitStart = 0;
 
-                    $this->db->setQuery($query, $this->LimitStart, $the_limit);
+                    $this->Records = database::loadAssocList($query, $this->LimitStart, $the_limit);
                 }
             }
-            $this->Records = $this->db->loadAssocList();
         } else
             $this->Records = [];
 
@@ -390,9 +391,7 @@ class CT
         $imageMethods = new CustomTablesImageMethods;
 
         $query = 'SELECT * FROM ' . $this->Table->realtablename . ' WHERE ' . $this->Table->realidfieldname . '=' . $this->db->quote($listing_id);
-
-        $this->db->setQuery($query);
-        $rows = $this->db->loadAssocList();
+        $rows = database::loadAssocList($query);
 
         if (count($rows) == 0)
             return -1;
@@ -474,8 +473,7 @@ class CT
         $query = 'SELECT ' . implode(',', $this->Table->selects) . ' FROM ' . $this->Table->realtablename
             . ' WHERE ' . $this->Table->realidfieldname . '=' . $this->db->quote($listing_id) . ' LIMIT 1';
 
-        $this->db->setQuery($query);
-        $rows = $this->db->loadAssocList();
+        $rows = database::loadAssocList($query);
 
         if (count($rows) == 0)
             return -1;

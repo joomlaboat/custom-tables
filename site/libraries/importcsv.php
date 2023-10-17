@@ -131,20 +131,16 @@ function importCSVdata(string $filename, $ct_tableid): string
 
 function findRecord($realtablename, $realidfieldname, bool $published_field_found, array $wheres)
 {
-    $db = Factory::getDBO();
-
     if ($published_field_found)
         $wheres[] = 'published=1';
 
     $query = 'SELECT ' . $realidfieldname . ' FROM ' . $realtablename . ' WHERE ' . implode(' AND ', $wheres) . ' LIMIT 1';
+    $rows = database::loadAssocList($query);
 
-    $db->setQuery($query);
-    $records = $db->loadAssocList();
-
-    if (count($records) == 0)
+    if (count($rows) == 0)
         return null;
 
-    return $records[0][$realidfieldname];
+    return $rows[0][$realidfieldname];
 }
 
 function findSQLRecordJoin($realtablename, $join_realfieldname, $realidfieldname, bool $published_field_found, $vlus_str)
@@ -161,15 +157,14 @@ function findSQLRecordJoin($realtablename, $join_realfieldname, $realidfieldname
         $wheres[] = 'published=1';
 
     $query = 'SELECT ' . $realidfieldname . ' FROM ' . $realtablename . ' WHERE ' . implode(' AND ', $wheres);
-    $db->setQuery($query);
-    $records = $db->loadAssocList();
+    $rows = database::loadAssocList($query);
 
-    if (count($records) == 0)
+    if (count($rows) == 0)
         return null;
 
     $listing_ids = array();
-    foreach ($records as $record)
-        $listing_ids[] = $record[$realidfieldname];
+    foreach ($rows as $row)
+        $listing_ids[] = $row[$realidfieldname];
 
     return $listing_ids;
 }

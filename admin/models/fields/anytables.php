@@ -73,12 +73,10 @@ class JFormFieldAnyTables extends JFormFieldList
         }
 
         $list = array();
+        $rows = database::loadAssocList($query);
 
-        $db->setQuery($query);
-        $recs = $db->loadAssocList();
-
-        foreach ($recs as $rec)
-            $list[] = $rec['table_name'];
+        foreach ($rows as $row)
+            $list[] = $row['table_name'];
 
         return $list;
     }

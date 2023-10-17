@@ -195,11 +195,8 @@ class CustomTablesImageMethods
 
     function DeleteCustomImages($realtablename, $realfieldname, $ImageFolder, $imageparams, $realidfield, $deleteOriginals = false): void
     {
-        $db = Factory::getDBO();
         $query = 'SELECT ' . $realfieldname . ' FROM ' . $realtablename . ' WHERE ' . $realfieldname . '>0';
-
-        $db->setQuery($query);
-        $imageList = $db->loadAssocList();
+        $imageList = database::loadAssocList($query);
         $customSizes = $this->getCustomImageOptions($imageparams);
 
         foreach ($imageList as $img) {
@@ -225,8 +222,7 @@ class CustomTablesImageMethods
             if ($ExistingImage !== null and is_numeric($ExistingImage) and intval($ExistingImage) != 0) {
                 //If it's an original image not duplicate, find one duplicate and convert it to original
                 $query = 'SELECT ' . $realIdField . ' FROM ' . $realtablename . ' WHERE ' . $realfieldname . '=-' . $ExistingImage . ' LIMIT 1';
-                $db->setQuery($query);
-                $photoRows = $db->loadAssocList();
+                $photoRows = database::loadAssocList($query);
 
                 if (count($photoRows) == 1) //do not compare if there is a child
                 {
