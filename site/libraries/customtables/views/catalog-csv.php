@@ -44,7 +44,7 @@ class CatalogExportCSV
         }
     }
 
-    public function render(?string $layout = null, ?int $layoutType = null): string
+    public function render(?string $layout = null): string
     {
         $pageLayoutContent = $this->catalog->render($layout);
         $pageLayoutContent = preg_replace('/(<(script|style)\b[^>]*>).*?(<\/\2>)/is', "$1$3", $pageLayoutContent);

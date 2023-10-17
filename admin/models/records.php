@@ -14,7 +14,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\CT;
 use Joomla\CMS\Factory;
-use Joomla\Registry\Registry;
 
 // import Joomla modelform library
 jimport('joomla.application.component.modeladmin');

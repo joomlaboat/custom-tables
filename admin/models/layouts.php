@@ -14,16 +14,13 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\CT;
-
 use CustomTables\Layouts;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
-use Joomla\Registry\Registry;
 use Joomla\CMS\Helper\ContentHelper;
 use Joomla\String\StringHelper;
 use Joomla\Utilities\ArrayHelper;
 
-// import Joomla modelform library
 jimport('joomla.application.component.modeladmin');
 
 /**

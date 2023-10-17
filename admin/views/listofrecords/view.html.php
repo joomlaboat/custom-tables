@@ -12,19 +12,10 @@
 // No direct access to this file
 defined('_JEXEC') or die;
 
-use CustomTables\Fields;
-
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\MVC\View\GenericDataException;
-use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
-use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Toolbar\Toolbar;
-use Joomla\CMS\Toolbar\ToolbarHelper;
-use Joomla\Database\DatabaseDriver;
-use Joomla\Component\Content\Administrator\Extension\ContentComponent;
-
 use CustomTables\CT;
 
 /**

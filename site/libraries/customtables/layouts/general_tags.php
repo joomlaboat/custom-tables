@@ -15,7 +15,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
-use Joomla\Input\Input;
 use JoomlaBasicMisc;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Router\Route;

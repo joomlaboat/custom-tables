@@ -16,8 +16,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use Joomla\CMS\Plugin\PluginHelper;
-use Joomla\CMS\User\User;
-use Joomla\Input\Input;
 use JoomlaBasicMisc;
 use Joomla\CMS\Version;
 use Joomla\CMS\Factory;

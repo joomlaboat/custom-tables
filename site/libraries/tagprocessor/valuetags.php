@@ -30,7 +30,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomTables\Field;
-use Joomla\CMS\Factory;
 
 class tagProcessor_Value
 {

@@ -14,8 +14,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomTables\CT;
-use CustomTables\Fields;
-use CustomTables\SearchInputBox;
 
 /* All tags are implemented using Twig
 

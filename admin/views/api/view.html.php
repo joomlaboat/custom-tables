@@ -15,7 +15,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\Fields;
-use Joomla\CMS\Factory;
 
 // import Joomla view library
 jimport('joomla.application.component.view');

@@ -15,7 +15,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\Fields;
 use CustomTables\Inputbox;
-use Joomla\CMS\Factory;
 
 class ESInputBox
 {

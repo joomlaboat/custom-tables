@@ -32,7 +32,7 @@ if ($view == 'home') {
 $task = common::inputGetCmd('task');
 
 //Check Authorization
-$PermissionIndexes = ['setorderby' => 0, 'setorderby' => 0, 'clear' => 3, 'delete' => 3, 'copy' => 4, 'copycontent' => 4, 'refresh' => 1, 'publish' => 2, 'unpublish' => 2, 'createuser' => 1, 'resetpassword' => 1];
+$PermissionIndexes = ['setorderby' => 0, 'clear' => 3, 'delete' => 3, 'copy' => 4, 'copycontent' => 4, 'refresh' => 1, 'publish' => 2, 'unpublish' => 2, 'createuser' => 1, 'resetpassword' => 1];
 //$PermissionWords=['clear'=>'core.delete','delete'=>'core.delete','copy'=>'core.create','refresh'=>'core.edit','publish'=>'core.edit.state','unpublish'=>'core.edit.state','createuser'=>'core.edit'];
 $PermissionIndex = 0;
 //$PermissionWord='';

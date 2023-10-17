@@ -20,7 +20,6 @@ use CustomTablesImageMethods;
 use Exception;
 use JoomlaBasicMisc;
 use JHTMLCTTime;
-use tagProcessor_Value;
 
 use CT_FieldTypeTag_file;
 use CT_FieldTypeTag_image;

@@ -18,7 +18,6 @@ jimport('joomla.application.component.modellist');
 use CustomTables\common;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
-use CustomTables\CT;
 use CustomTables\DataTypes;
 use Joomla\CMS\Version;
 

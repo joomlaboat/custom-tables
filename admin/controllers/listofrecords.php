@@ -20,7 +20,6 @@ use CustomTables\CatalogExportCSV;
 use CustomTables\common;
 use CustomTables\CT;
 use Joomla\CMS\Factory;
-use Joomla\Utilities\ArrayHelper;
 
 class CustomtablesControllerListofRecords extends JControllerAdmin
 {

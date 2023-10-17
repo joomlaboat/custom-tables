@@ -10,7 +10,6 @@
 
 // no direct access
 use CustomTables\common;
-use Joomla\CMS\Factory;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');

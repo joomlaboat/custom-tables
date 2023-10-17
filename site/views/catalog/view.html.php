@@ -18,8 +18,6 @@ use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\Catalog;
 use CustomTables\Inputbox;
-use CustomTables\Layouts;
-use CustomTables\ViewJSON;
 
 class CustomTablesViewCatalog extends JViewLegacy
 {

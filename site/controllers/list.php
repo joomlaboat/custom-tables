@@ -10,7 +10,6 @@
 
 // no direct access
 use CustomTables\common;
-use Joomla\CMS\Factory;
 use Joomla\Utilities\ArrayHelper;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {

@@ -16,8 +16,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\Fields;
 use CustomTables\Layouts;
-use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Editor\Editor;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 

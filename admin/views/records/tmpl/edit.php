@@ -14,7 +14,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
-use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Factory;
 
 if ($this->ct->Env->version >= 4) {
