@@ -9,6 +9,7 @@
  **/
 
 // no direct access
+use CustomTables\common;
 use Joomla\CMS\Factory;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
@@ -298,7 +299,7 @@ class CustomTablesImageMethods
                 $uploadedFile = $image_file_id;
 
             if (is_object('Factory::getApplication()'))
-                $is_base64encoded = Factory::getApplication()->input->get('base64encoded', '', 'CMD');
+                $is_base64encoded = common::inputGet('base64encoded', '', 'CMD');
             else
                 $is_base64encoded = '';
 
@@ -323,7 +324,7 @@ class CustomTablesImageMethods
                     $ImageID = date("YmdHis") . ($i > 0 ? $i : '');
                     $ImageID .= ($i > 0 ? $i : '');
                 } else {
-                    $ImageID = Factory::getApplication()->input->getString('com' . $realfieldname . '_filename', '');
+                    $ImageID = common::inputGetString('com' . $realfieldname . '_filename', '');
                     if ($fileNameType == 'transliterated') {
 
                         if (function_exists("transliterator_transliterate"))

@@ -37,11 +37,7 @@ class CustomTablesViewEditPhotos extends JViewLegacy
             $this->idList[] = $image->photoid;
 
         $this->max_file_size = JoomlaBasicMisc::file_upload_max_size();
-
-        $this->jinput = Factory::getApplication()->input;
-
         $this->Listing_Title = $this->Model->Listing_Title;
-
         $this->listing_id = $this->Model->listing_id;
         $this->galleryname = $this->Model->galleryname;
 

@@ -13,7 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
-use Joomla\CMS\Factory;
+use CustomTables\common;
 
 $path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR;
 require_once($path . 'loader.php');
@@ -31,10 +31,9 @@ try {
 
 // Redirect if set by the controller
 
-$jinput = Factory::getApplication()->input;
-$view = $jinput->getCmd('view');
+$view = common::inputGetCmd('view');
 if ($view == 'xml') {
-    $file = $jinput->getCmd('xmlfile');
+    $file = common::inputGetCmd('xmlfile');
 
     $xml = 'unknown file';
     if ($file == 'tags')

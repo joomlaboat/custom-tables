@@ -33,15 +33,14 @@ class Environment
     var string $encoded_current_url;
     var string $encoded_current_url_no_return;
 
-    var int $userid;
-    var ?User $user;
+    //var int $userid;
+    var ?CTUser $user;
     var bool $isUserAdministrator;
     var bool $print;
     var bool $clean;
     var string $frmt;
     var string $WebsiteRoot;
     var bool $advancedTagProcessor;
-    var Input $jinput;
     var bool $isMobile;
     var bool $isModal;
 
@@ -60,16 +59,19 @@ class Environment
     {
         $this->CustomPHPEnabled = false;
 
-        if ($enablePlugin) {
-            $plugin = PluginHelper::getPlugin('content', 'customtables');
+        if (defined('_JEXEC')) {
+            if ($enablePlugin) {
+                $plugin = PluginHelper::getPlugin('content', 'customtables');
 
-            if (!is_null($plugin) and is_object($plugin) > 0) {
-                $pluginParams = new Registry($plugin->params);
-                $this->CustomPHPEnabled = (int)$pluginParams->get("phpPlugin") == 1;
+                if (!is_null($plugin) and is_object($plugin) > 0) {
+                    $pluginParams = new Registry($plugin->params);
+                    $this->CustomPHPEnabled = (int)$pluginParams->get("phpPlugin") == 1;
+                }
             }
-        }
+            $this->field_prefix = 'es_';
+        } else
+            $this->field_prefix = 'ct_';
 
-        $this->field_prefix = 'es_';
         $this->field_input_prefix = 'com' . $this->field_prefix;
 
         if (defined('_JEXEC')) {
@@ -77,8 +79,6 @@ class Environment
             $this->version = (int)$version_object->getShortVersion();
         } else
             $this->version = 6;
-
-        $this->jinput = Factory::getApplication()->input;
 
         $this->current_url = JoomlaBasicMisc::curPageURL();
 
@@ -98,6 +98,9 @@ class Environment
         $tmp_current_url = JoomlaBasicMisc::deleteURLQueryOption($tmp_current_url, 'returnto');
         $this->encoded_current_url_no_return = base64_encode($tmp_current_url);
 
+        $this->user = new CTUser();
+
+        /*
         if ($this->version < 4)
             $this->user = Factory::getUser();
         else
@@ -109,60 +112,99 @@ class Environment
             $usergroups = $this->user->get('groups');
         else
             $usergroups = [];
+        */
 
-        $this->isUserAdministrator = in_array(8, $usergroups);//8 is Super Users
+        $this->isUserAdministrator = $this->user->isUserAdministrator;//in_array(8, $this->user->groups);//8 is Super Users
         //$this->isUserAdministrator = $this->user->authorise('core.edit', 'com_content');
 
-        $this->print = (bool)$this->jinput->getInt('print', 0);
-        $this->clean = (bool)$this->jinput->getInt('clean', 0);
-        $this->isModal = (bool)$this->jinput->getInt('modal', 0);
-        $this->frmt = $this->jinput->getCmd('frmt', 'html');
-        if ($this->jinput->getCmd('layout', '') == 'json')
+        $this->print = (bool)common::inputGetInt('print', 0);
+        $this->clean = (bool)common::inputGetInt('clean', 0);
+        $this->isModal = (bool)common::inputGetInt('modal', 0);
+        $this->frmt = common::inputGetCmd('frmt', 'html');
+        if (common::inputGetCmd('layout', '') == 'json')
             $this->frmt = 'json';
 
-        $mainframe = Factory::getApplication();
-        if ($mainframe->getCfg('sef')) {
-            $this->WebsiteRoot = Uri::root(true);
-            if ($this->WebsiteRoot == '' or $this->WebsiteRoot[strlen($this->WebsiteRoot) - 1] != '/') //Root must have the slash character "/" in the end
-                $this->WebsiteRoot .= '/';
-        } else
-            $this->WebsiteRoot = '';
+        if (defined('_JEXEC')) {
+            $mainframe = Factory::getApplication();
+            if ($mainframe->getCfg('sef')) {
+                $this->WebsiteRoot = Uri::root(true);
+                if ($this->WebsiteRoot == '' or $this->WebsiteRoot[strlen($this->WebsiteRoot) - 1] != '/') //Root must have the slash character "/" in the end
+                    $this->WebsiteRoot .= '/';
+            } else
+                $this->WebsiteRoot = '';
+        } else {
+            if (get_option('permalink_structure')) {
+                $website_root = home_url();
+                if (substr($website_root, -1) !== '/') {
+                    $website_root .= '/';
+                }
+            } else {
+                $website_root = '';
+            }
+        }
 
         $this->advancedTagProcessor = false;
 
-        $path = JPATH_SITE . DIRECTORY_SEPARATOR . 'plugins' . DIRECTORY_SEPARATOR . 'content' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'protagprocessor' . DIRECTORY_SEPARATOR;
-        $phpTagProcessor = $path . 'phptags.php';
-        if (file_exists($phpTagProcessor)) {
-            $this->advancedTagProcessor = true;
-            require_once($phpTagProcessor);
+        if (defined('_JEXEC')) {
+            $path = JPATH_SITE . DIRECTORY_SEPARATOR . 'plugins' . DIRECTORY_SEPARATOR . 'content' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'protagprocessor' . DIRECTORY_SEPARATOR;
+            $phpTagProcessor = $path . 'phptags.php';
+            if (file_exists($phpTagProcessor)) {
+                $this->advancedTagProcessor = true;
+                require_once($phpTagProcessor);
+            }
+
+            if (file_exists($path . 'customphp.php'))
+                require_once($path . 'customphp.php');
+
+            if (file_exists($path . 'servertags.php'))
+                require_once($path . 'servertags.php');
         }
-
-        if (file_exists($path . 'customphp.php'))
-            require_once($path . 'customphp.php');
-
-        if (file_exists($path . 'servertags.php'))
-            require_once($path . 'servertags.php');
 
         $this->isMobile = self::check_user_agent('mobile');
 
-        $params = ComponentHelper::getParams('com_customtables');
+        if (defined('_JEXEC')) {
+            $params = ComponentHelper::getParams('com_customtables');
 
-        $this->loadTwig = $params->get('loadTwig') == '1';
-        $this->toolbarIcons = strval($params->get('toolbaricons'));
-        $this->legacySupport = $params->get('legacysupport') == '';
+            $this->loadTwig = $params->get('loadTwig') == '1';
+            $this->toolbarIcons = strval($params->get('toolbaricons'));
+            $this->legacySupport = $params->get('legacysupport') == '';
 
-        $this->folderToSaveLayouts = $params->get('folderToSaveLayouts');
-        if ($this->folderToSaveLayouts !== null)
-            $this->folderToSaveLayouts = str_replace('/', DIRECTORY_SEPARATOR, $this->folderToSaveLayouts);
+            $this->folderToSaveLayouts = $params->get('folderToSaveLayouts');
+            if ($this->folderToSaveLayouts !== null)
+                $this->folderToSaveLayouts = str_replace('/', DIRECTORY_SEPARATOR, $this->folderToSaveLayouts);
 
-        if ($this->folderToSaveLayouts == '')
+            if ($this->folderToSaveLayouts == '')
+                $this->folderToSaveLayouts = null;
+
+            if ($this->folderToSaveLayouts !== null) {
+                if ($this->folderToSaveLayouts[0] != '/')
+                    $this->folderToSaveLayouts = JPATH_SITE . DIRECTORY_SEPARATOR . $this->folderToSaveLayouts;
+            }
+
+        } else {
+
+            $this->loadTwig = true;
+            $this->toolbarIcons = '';
+            $this->legacySupport = false;
             $this->folderToSaveLayouts = null;
 
-        if ($this->folderToSaveLayouts !== null) {
-            if ($this->folderToSaveLayouts[0] != '/')
-                $this->folderToSaveLayouts = JPATH_SITE . DIRECTORY_SEPARATOR . $this->folderToSaveLayouts;
-        }
+            /*
+             *
+             * TODO:
+             *
+            In WordPress, plugin settings are typically stored in the WordPress database. Plugin developers can use the WordPress Options API or Custom Post Types to store and retrieve settings.
 
+            Options API: This is the most common way for plugins to store settings. Plugins can use functions like add_option(), update_option(), and get_option() to save and retrieve settings. These settings are stored in the wp_options table in the database.
+
+            Custom Post Types: Some plugins might create custom post types to store settings. This is less common for simple settings, but it can be used for more complex configurations.
+
+            Settings API: WordPress provides a Settings API that allows developers to create a settings page in the WordPress admin area. This API handles the form creation, validation, and saving of settings.
+
+            Configuration Files: Some plugins may use configuration files (typically PHP files) to store settings. These files might be located within the plugin's directory.
+
+            The exact location and structure of these settings can vary depending on how the plugin developer chose to implement them. It's important to note that well-developed plugins should handle settings securely and follow WordPress coding standards.
+            */
+        }
         $this->isPlugin = false;
     }
 

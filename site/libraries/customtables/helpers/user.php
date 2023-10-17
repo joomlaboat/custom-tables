@@ -17,6 +17,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use ESTables;
 use Exception;
+use Joomla\CMS\Version;
 use JoomlaBasicMisc;
 use JUserHelper;
 use Joomla\CMS\Uri\Uri;
@@ -27,6 +28,47 @@ use tagProcessor_If;
 
 class CTUser
 {
+    var int $id;
+    var array $groups;
+    var bool $isUserAdministrator;
+
+    public function __construct()
+    {
+        $this->id = 0;
+        $this->groups = [];
+
+        if (defined('_JEXEC')) {
+            $version_object = new Version;
+            $version = (int)$version_object->getShortVersion();
+
+            if ($version < 4)
+                $user = Factory::getUser();
+            else
+                $user = Factory::getApplication()->getIdentity();
+
+            $this->id = is_null($user) ? 0 : $user->id;
+
+            if ($user !== null)
+                $this->groups = $user->get('groups');
+
+            $this->isUserAdministrator = in_array(8, $this->groups);//8 is Super Users
+
+        } else {
+            $this->id = get_current_user_id();
+
+            $current_user = wp_get_current_user();
+            $this->groups = $current_user->roles;
+
+            if (current_user_can('activate_plugins'))
+                $this->isUserAdministrator = true;
+            else
+                $this->isUserAdministrator = false;
+
+            //$current_user = wp_get_current_user();
+            //$has_capability = $current_user->has_cap('capability_name');
+        }
+    }
+
     public static function ResetPassword(CT $ct, $listing_id)
     {
         if ($listing_id == 0) {
@@ -390,7 +432,7 @@ class CTUser
         if ($ug == 1)
             $usergroups = array();
         else
-            $usergroups = $ct->Env->user->get('groups');
+            $usergroups = $ct->Env->user->groups;
 
         $isOk = false;
 
@@ -400,7 +442,7 @@ class CTUser
             if (isset($ct->Table->record) and isset($ct->Table->record['listing_published']) and $ct->Table->useridfieldname != '') {
                 $uid = $ct->Table->record[$ct->Table->useridrealfieldname];
 
-                if ($uid == $ct->Env->userid and $ct->Env->userid != 0)
+                if ($uid == $ct->Env->user->id and $ct->Env->user->id != 0)
                     $isOk = true;
             }
         }
@@ -439,7 +481,7 @@ class CTUser
         else
             $userGroup = null;
 
-        if ($ct->Env->userid == 0)
+        if ($ct->Env->user->id == 0)
             return false;
 
         if ($ct->Env->isUserAdministrator) {
@@ -490,7 +532,7 @@ class CTUser
                 //example: user
                 //check if the record belong to the current user
                 $user_field_row = Fields::FieldRowByName($field, $ct->Table->fields);
-                $wheres_owner[] = [$item[0], $user_field_row['realfieldname'] . '=' . $ct->Env->userid];
+                $wheres_owner[] = [$item[0], $user_field_row['realfieldname'] . '=' . $ct->Env->user->id];
             } else {
                 //example: parents(children).user
                 $statement_parts = explode('.', $field);
@@ -546,7 +588,7 @@ class CTUser
 
                 $parent_wheres = [];
 
-                $parent_wheres[] = 'p.' . $parent_user_field_row['realfieldname'] . '=' . $ct->Env->userid;
+                $parent_wheres[] = 'p.' . $parent_user_field_row['realfieldname'] . '=' . $ct->Env->user->id;
 
                 $fieldType = $parent_join_field_row['type'];
                 if ($fieldType != 'sqljoin' and $fieldType != 'records')

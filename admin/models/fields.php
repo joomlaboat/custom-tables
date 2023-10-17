@@ -14,6 +14,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\Fields;
 
@@ -70,11 +71,11 @@ class CustomtablesModelFields extends JModelAdmin
         }
 
         // The front end calls this model and uses a_id to avoid id clashes, so we need to check for that first.
-        if (Factory::getApplication()->input->get('a_id')) {
-            $id = Factory::getApplication()->input->get('a_id', 0, 'INT');
+        if (common::inputGet('a_id')) {
+            $id = common::inputGet('a_id', 0, 'INT');
         } // The back end uses id, so we use that the rest of the time and set it to 0 by default.
         else {
-            $id = Factory::getApplication()->input->get('id', 0, 'INT');
+            $id = common::inputGet('id', 0, 'INT');
         }
 
         $user = Factory::getUser();
@@ -114,9 +115,9 @@ class CustomtablesModelFields extends JModelAdmin
         // Only load these values if no id is found
         if (0 == $id) {
             // Set redirected field name
-            $redirectedField = Factory::getApplication()->input->get('ref', null, 'STRING');
+            $redirectedField = common::inputGet('ref', null, 'STRING');
             // Set redirected field value
-            $redirectedValue = Factory::getApplication()->input->get('refid', 0, 'INT');
+            $redirectedValue = common::inputGet('refid', 0, 'INT');
             if (0 != $redirectedValue && $redirectedField) {
                 // Now set the local-redirected field default value
                 $form->setValue($redirectedField, null, $redirectedValue);

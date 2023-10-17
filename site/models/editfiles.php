@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\Field;
 use CustomTables\Fields;
@@ -54,11 +55,10 @@ class CustomTablesModelEditFiles extends JModelLegacy
             return false;
         }
 
-        if (!$this->ct->Env->jinput->getCmd('fileboxname'))
+        if (!common::inputGetCmd('fileboxname'))
             return false;
 
-        $this->fileboxname = $this->ct->Env->jinput->getCmd('fileboxname');
-
+        $this->fileboxname = common::inputGetCmd('fileboxname');
         $this->row = $this->ct->Table->loadRecord($this->ct->Params->listing_id);
 
         if (!$this->getFileBox())
@@ -100,7 +100,7 @@ class CustomTablesModelEditFiles extends JModelLegacy
     {
         $db = Factory::getDBO();
 
-        $fileIds = $this->ct->Env->jinput->getString('fileids', '');
+        $fileIds = common::inputGetString('fileids', '');
         $file_arr = explode('*', $fileIds);
 
         foreach ($file_arr as $fileid) {
@@ -122,7 +122,7 @@ class CustomTablesModelEditFiles extends JModelLegacy
 
     function add(): bool
     {
-        $file = $this->ct->Env->jinput->files->get('uploadedfile'); //not zip -  regular Joomla input method will be used
+        $file = common::inputFiles('uploadedfile'); //not zip -  regular Joomla input method will be used
 
         $uploadedFile = "tmp/" . basename($file['name']);
 
@@ -130,7 +130,7 @@ class CustomTablesModelEditFiles extends JModelLegacy
             return false;
 
 
-        if ($this->ct->Env->jinput->getCmd('base64ecnoded', '') == "true") {
+        if (common::inputGetCmd('base64ecnoded', '') == "true") {
             $src = $uploadedFile;
             $dst = "tmp/decoded_" . basename($file['name']);
             CustomTablesFileMethods::base64file_decode($src, $dst);

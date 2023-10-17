@@ -50,7 +50,7 @@ class tagProcessor_If
             tagProcessor_If::IFStatment('[_ifnot_published]', '[_endifnot_published]', $pageLayout, true);
         }
 
-        tagProcessor_If::IFUserTypeStatment($pageLayout, $ct->Env->user, $ct->Env->userid);
+        tagProcessor_If::IFUserTypeStatment($pageLayout, $ct->Env->user, $ct->Env->user->id);
     }
 
     protected static function parseIfStatements(string $statement, CT &$ct, string &$htmlresult, ?array &$row): void

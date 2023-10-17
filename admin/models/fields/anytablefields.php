@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\Fields;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
@@ -30,9 +31,7 @@ class JFormFieldAnyTableFields extends JFormFieldList
     {
         $options = array();
         $options[] = JHtml::_('select.option', '', Text::_('COM_CUSTOMTABLES_FIELDS_SELECT_LABEL'));
-
-        $app = Factory::getApplication();
-        $tableid = $app->input->getInt('tableid', 0);
+        $tableid = common::inputGetInt('tableid', 0);
         if ($tableid != 0) {
             $table_row = ESTables::getTableRowByID($tableid);
             if ($table_row->customtablename != '') {

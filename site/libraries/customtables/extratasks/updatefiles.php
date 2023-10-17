@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\Field;
 use CustomTables\Fields;
@@ -24,22 +25,22 @@ class updateFiles
     {
         $ct = new CT;
 
-        $stepsize = (int)$ct->Env->jinput->getInt('stepsize', 10);
-        $startindex = (int)$ct->Env->jinput->getInt('startindex', 0);
+        $stepsize = (int)common::inputGetInt('stepsize', 10);
+        $startindex = (int)common::inputGetInt('startindex', 0);
 
-        $old_typeparams = base64_decode($ct->Env->jinput->get('old_typeparams', '', 'BASE64'));
+        $old_typeparams = base64_decode(common::inputGet('old_typeparams', '', 'BASE64'));
         if ($old_typeparams == '')
             return array('error' => 'old_typeparams not set');
 
         $old_params = JoomlaBasicMisc::csv_explode(',', $old_typeparams, '"', false);
 
-        $new_typeparams = base64_decode($ct->Env->jinput->get('new_typeparams', '', 'BASE64'));
+        $new_typeparams = base64_decode(common::inputGet('new_typeparams', '', 'BASE64'));
         if ($new_typeparams == '')
             return array('error' => 'new_typeparams not set');
 
         $new_params = JoomlaBasicMisc::csv_explode(',', $new_typeparams, '"', false);
 
-        $fieldid = (int)$ct->Env->jinput->getInt('fieldid', 0);
+        $fieldid = (int)common::inputGetInt('fieldid', 0);
         if ($fieldid == 0)
             return array('error' => 'fieldid not set');
 

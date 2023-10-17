@@ -17,6 +17,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 // import Joomla view library
 //jimport('joomla.application.component.view');
 
+use CustomTables\common;
 use CustomTables\CT;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
@@ -60,8 +61,8 @@ class CustomtablesViewTables extends JViewLegacy
 
         // get input
 
-        $this->ref = Factory::getApplication()->input->get('ref', 0, 'word');
-        $this->refid = Factory::getApplication()->input->get('refid', 0, 'int');
+        $this->ref = common::inputGet('ref', 0, 'word');
+        $this->refid = common::inputGet('refid', 0, 'int');
         $this->referral = '';
         if ($this->refid) {
             // return to the item that referred to this item
@@ -95,7 +96,7 @@ class CustomtablesViewTables extends JViewLegacy
      */
     protected function addToolBar()
     {
-        Factory::getApplication()->input->set('hidemainmenu', true);
+        common::inputSet('hidemainmenu', true);
         $isNew = $this->item->id == 0;
 
         JToolbarHelper::title(Text::_($isNew ? 'COM_CUSTOMTABLES_TABLES_NEW' : 'COM_CUSTOMTABLES_TABLES_EDIT'), 'pencil-2 article-add');

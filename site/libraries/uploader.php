@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\Fields;
 use Joomla\CMS\Factory;
@@ -42,8 +43,6 @@ class ESFileUploader
 
         $output_dir = JPATH_SITE . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR;
         $t = time();
-
-        $jinput = Factory::getApplication()->input;
         $file = ESFileUploader::getfile_SafeMIME($fileId);
 
         $accepted_types = ESFileUploader::getAcceptableMimeTypes($filetypes_str);
@@ -73,12 +72,12 @@ class ESFileUploader
                     $fileName = ESFileUploader::normalizeString($file['name']);
                     $newFileName = $output_dir . 'ct_' . $t . '_' . $fileId . '_' . $fileName;
 
-                    if ($jinput->getCmd('task') == 'importcsv') {
+                    if (common::inputGetCmd('task') == 'importcsv') {
                         require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables'
                             . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'importcsv.php');
 
                         move_uploaded_file($file["tmp_name"], $newFileName);
-                        $msg = importCSVfile($newFileName, $jinput->getInt('tableid', 0));
+                        $msg = importCSVfile($newFileName, common::inputGetInt('tableid', 0));
                         if ($msg != '' and $msg != 'success')
                             $ret = ['error' => $msg];
                         else
@@ -133,13 +132,9 @@ class ESFileUploader
     protected static function getAcceptableMimeTypes($filetypes_str = ""): array
     {
         if ($filetypes_str == '') {
-            $app = Factory::getApplication();
-            $jinput = $app->input;
-            $fieldname = $jinput->getCmd('fieldname', '');
-
+            $fieldname = common::inputGetCmd('fieldname', '');
             $tableRow = ESFileUploader::getTableRawByItemid();
             $tableId = $tableRow['id'];
-
             $fieldRow = Fields::getFieldAssocByName($fieldname, $tableId);
             if ($fieldRow === null)
                 return [];
@@ -181,8 +176,7 @@ class ESFileUploader
     protected static function getTableRawByItemid()
     {
         $app = Factory::getApplication();
-        $jinput = $app->input;
-        $Itemid = $jinput->getInt('Itemid', 0);
+        $Itemid = common::inputGetInt('Itemid', 0);
 
         $menuItem = $app->getMenu()->getItem($Itemid);
         // Get params for menuItem
@@ -311,9 +305,6 @@ class ESFileUploader
     public static function getfile_SafeMIME($fileId)
     {
         $ct = new CT;
-
-        $jinput = Factory::getApplication()->input;
-
         if ($ct->Env->advancedTagProcessor) {
             //This will let PRO version users to upload zip files, please note that it will check if the file is zip or not (mime type).
             //If not then regular Joomla input method will be used
@@ -334,9 +325,9 @@ class ESFileUploader
 
             if ($mime != 'application/zip')//if not zip file
             {
-                $file = $jinput->files->get($fileId); //not zip -  regular Joomla input method will be used
+                $file = common::inputFiles($fileId); //not zip -  regular Joomla input method will be used
 
-                if (!is_array($file) or count($file) == 0) //regular joomla imput method blocked custom table structure json file, because it may contain javascript
+                if (!is_array($file) or count($file) == 0) //regular joomla input method blocked custom table structure json file, because it may contain javascript
                 {
                     $file = $_FILES[$fileId];//get file instance using php method - not safe, but we will validate it later
 
@@ -362,7 +353,7 @@ class ESFileUploader
                 }
             }
         } else
-            $file = $jinput->files->get($fileId);
+            $file = common::inputFiles($fileId);
 
         return $file;
     }

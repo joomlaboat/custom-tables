@@ -53,8 +53,8 @@ class Filtering
 
     function addQueryWhereFilter(): void
     {
-        if ($this->ct->Env->jinput->get('where', '', 'BASE64')) {
-            $decodedURL = $this->ct->Env->jinput->get('where', '', 'BASE64');
+        if (common::inputGet('where', '', 'BASE64')) {
+            $decodedURL = common::inputGet('where', '', 'BASE64');
             $decodedURL = urldecode($decodedURL);
             $decodedURL = str_replace(' ', '+', $decodedURL);
             $filter_string = $this->sanitizeAndParseFilter(base64_decode($decodedURL));
@@ -616,8 +616,8 @@ class Filtering
     {
         if (str_contains($vL, '$get_')) {
             $getPar = str_replace('$get_', '', $vL);
-            $v = (string)preg_replace("/[^\p{L}\d.,_-]/u", "", $this->ct->app->input->getString($getPar));
-            //$v = (string)preg_replace('/[^A-Z\d_.,-]/i', '', $this->ct->app->input->getString($getPar));
+            $v = (string)preg_replace("/[^\p{L}\d.,_-]/u", "", common::inputGetString($getPar));
+            //$v = (string)preg_replace('/[^A-Z\d_.,-]/i', '', common::inputGetString($getPar));
         } else
             $v = $vL;
 
@@ -921,10 +921,10 @@ class Filtering
     {
         if (str_contains($vL, '$get_')) {
             $getPar = str_replace('$get_', '', $vL);
-            $a = $this->ct->Env->jinput->get($getPar, '', 'CMD');
+            $a = common::inputGet($getPar, '', 'CMD');
             if ($a == '')
                 return '';
-            return $this->ct->Env->jinput->getInt($getPar);
+            return common::inputGetInt($getPar);
         }
         return $vL;
     }
@@ -933,7 +933,7 @@ class Filtering
     {
         if (str_contains($vL, '$get_')) {
             $getPar = str_replace('$get_', '', $vL);
-            return $this->ct->Env->jinput->get($getPar, '', 'CMD');
+            return common::inputGet($getPar, '', 'CMD');
         }
 
         return $vL;

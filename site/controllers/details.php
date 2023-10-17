@@ -11,12 +11,12 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\CTUser;
 use Joomla\CMS\Factory;
 
-$jinput = Factory::getApplication()->input;
-$task = Factory::getApplication()->input->getCmd('task', '');
+$task = common::inputGetCmd('task', '');
 
 $ct = null;
 if ($task != '')
@@ -82,7 +82,7 @@ switch ($task) {
                     $pair[1] = JoomlaBasicMisc::deleteURLQueryOption($pair[1], 'task');
                     $pair[1] = JoomlaBasicMisc::deleteURLQueryOption($pair[1], 'cartprefix');
                 }
-                $link = implode('?', $pair); //'index.php?option=com_customtables&view=catalog&Itemid='.Factory::getApplication()->input->getInt(
+                $link = implode('?', $pair); //'index.php?option=com_customtables&view=catalog&Itemid='.common::inputGetInt(
             }
 
             $param_msg = '';
@@ -116,8 +116,8 @@ switch ($task) {
             }
 
             if ($result) {
-                if (Factory::getApplication()->input->getString('msg'))
-                    $msg = Factory::getApplication()->input->getString('msg');
+                if (common::inputGetString('msg'))
+                    $msg = common::inputGetString('msg');
                 elseif ($param_msg != '')
                     $msg = $param_msg;
                 else

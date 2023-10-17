@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\CT;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
@@ -81,8 +82,8 @@ class CT_FieldTypeTag_FileBox
             . '&amp;listing_id=' . $listing_id
             . '&amp;returnto=' . $ct->Env->encoded_current_url;
 
-        if ($ct->Env->jinput->get('tmpl', '', 'CMD') != '')
-            $fileManagerLink .= '&tmpl=' . $ct->Env->jinput->get('tmpl', '', 'CMD');
+        if (common::inputGet('tmpl', '', 'CMD') != '')
+            $fileManagerLink .= '&tmpl=' . common::inputGet('tmpl', '', 'CMD');
 
         if ($ct->Params->ItemId > 0)
             $fileManagerLink .= '&amp;Itemid=' . $ct->Params->ItemId;

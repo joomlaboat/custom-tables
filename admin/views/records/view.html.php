@@ -14,6 +14,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\Inputbox;
 use CustomTables\Layouts;
@@ -42,10 +43,8 @@ class CustomtablesViewRecords extends JViewLegacy
 
     public function display($tpl = null)
     {
-        $app = Factory::getApplication();
-
-        $this->tableId = $app->input->getint('tableid', 0);
-        $listing_id = $app->input->getCmd('id');
+        $this->tableId = common::inputGetInt('tableid', 0);
+        $listing_id = common::inputGetCmd('id');
 
         $paramsArray = array();
         $paramsArray['tableid'] = $this->tableId;
@@ -60,7 +59,7 @@ class CustomtablesViewRecords extends JViewLegacy
         $this->ct->getTable($this->tableId);
         $this->row = $this->ct->Table->loadRecord($listing_id);
 
-        $key = $this->ct->Env->jinput->getCmd('key');
+        $key = common::inputGetCmd('key');
         if ($key != '') {
             Inputbox::renderTableJoinSelectorJSON($this->ct, $key);
         } else
@@ -84,8 +83,8 @@ class CustomtablesViewRecords extends JViewLegacy
         $this->canEdit = $this->canDo->get('tables.edit');
 
         // get input
-        $this->ref = Factory::getApplication()->input->get('ref', 0, 'word');
-        $this->refId = Factory::getApplication()->input->get('refid', 0, 'int');
+        $this->ref = common::inputGet('ref', 0, 'word');
+        $this->refId = common::inputGet('refid', 0, 'int');
         $this->referral = '';
         if ($this->refId) {
             // return to the item that referred to this item
@@ -115,7 +114,7 @@ class CustomtablesViewRecords extends JViewLegacy
 
     protected function addToolBar()
     {
-        Factory::getApplication()->input->set('hidemainmenu', true);
+        common::inputSet('hidemainmenu', true);
         $isNew = $this->ct->Params->listing_id == 0;
 
         JToolbarHelper::title(Text::_($isNew ? 'COM_CUSTOMTABLES_RECORDS_NEW' : 'COM_CUSTOMTABLES_RECORDS_EDIT'), 'pencil-2 article-add');

@@ -19,7 +19,6 @@ jimport('joomla.application.component.view'); //Important to get menu parameters
 class CustomTablesViewEditFiles extends JViewLegacy
 {
     var int $max_file_size;
-    var $jinput;
     var $FileBoxTitle;
     var $listing_id;
     var $fileboxname;
@@ -43,12 +42,10 @@ class CustomTablesViewEditFiles extends JViewLegacy
             $this->idList[] = $file->fileid;
 
         $this->max_file_size = JoomlaBasicMisc::file_upload_max_size();
-        $this->jinput = Factory::getApplication()->input;
         $this->FileBoxTitle = $this->Model->FileBoxTitle;
         $this->listing_id = $this->Model->ct->Params->listing_id;
         $this->fileboxname = $this->Model->fileboxname;
         $this->allowedExtensions = $this->Model->allowedExtensions;
-
         parent::display($tpl);
     }
 

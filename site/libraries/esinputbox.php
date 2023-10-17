@@ -21,12 +21,10 @@ class ESInputBox
 {
     var string $requiredLabel = '';
     var CustomTables\CT $ct;
-    var $jinput;
 
     function __construct(CustomTables\CT &$ct)
     {
         $this->ct = &$ct;
-        $this->jinput = Factory::getApplication()->input;
         $this->requiredLabel = 'COM_CUSTOMTABLES_REQUIREDLABEL';
     }
 

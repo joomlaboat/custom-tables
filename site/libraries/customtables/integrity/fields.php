@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\Fields;
 use CustomTables\IntegrityChecks;
@@ -49,16 +50,16 @@ class IntegrityFields extends IntegrityChecks
 
 
         $ExistingFields = Fields::getExistingFields($ct->Table->realtablename, false);
-        $jinput = Factory::getApplication()->input;
         $projected_fields = Fields::getFields($ct->Table->tableid, false, false);
 
         //Delete unnecessary fields:
         $projected_fields[] = ['realfieldname' => 'id', 'type' => '_id', 'typeparams' => '', 'isrequired' => 1];
         $projected_fields[] = ['realfieldname' => 'published', 'type' => '_published', 'typeparams' => '', 'isrequired' => 1];
 
-        $task = $jinput->getCmd('task');
-        $taskFieldName = $jinput->getCmd('fieldname');
-        $taskTableId = $jinput->getInt('tableid');
+        $task = common::inputGetCmd('task');
+        $taskFieldName = common::inputGetCmd('fieldname');
+        $taskTableId = common::inputGetInt('tableid');
+        $projected_data_type = null;
 
         foreach ($ExistingFields as $ExistingField) {
             $existingFieldName = $ExistingField['column_name'];

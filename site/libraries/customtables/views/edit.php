@@ -14,6 +14,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\Layouts;
 use CustomTables\TwigProcessor;
@@ -53,7 +54,7 @@ class Edit
             $this->layoutType = $Layouts->layoutType;
         } else {
 
-            if ($this->ct->app->input->getInt('clean', 0) == 1) {
+            if (common::inputGetInt('clean', 0) == 1) {
                 $res = ['status' => 'error', 'message' => 'Edit Layout not set.'];
                 die(json_encode($res));
             }
@@ -149,8 +150,8 @@ class Edit
 
         $returnTo = '';
 
-        if ($this->ct->Env->jinput->get('returnto', '', 'BASE64'))
-            $returnTo = base64_decode($this->ct->Env->jinput->get('returnto', '', 'BASE64'));
+        if (common::inputGet('returnto', '', 'BASE64'))
+            $returnTo = base64_decode(common::inputGet('returnto', '', 'BASE64'));
         elseif ($this->ct->Params->returnTo)
             $returnTo = $this->ct->Params->returnTo;
 
@@ -167,7 +168,7 @@ class Edit
         if (!is_null($this->ct->Params->ModuleId))
             $result .= '<input type="hidden" name="ModuleId" id="ModuleId" value="' . $this->ct->Params->ModuleId . '" />';
 
-        $result .= ($this->ct->Env->jinput->getCmd('tmpl', '') != '' ? '<input type="hidden" name="tmpl" value="' . $this->ct->Env->jinput->getCmd('tmpl', '') . '" />' : '')
+        $result .= (common::inputGetCmd('tmpl', '') != '' ? '<input type="hidden" name="tmpl" value="' . common::inputGetCmd('tmpl', '') . '" />' : '')
             . JHtml::_('form.token')
             . '</fieldset>
 </form>';

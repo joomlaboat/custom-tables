@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\Fields;
 
@@ -33,7 +34,7 @@ class CustomtablesModelListOfRecords extends JModelList
     public function __construct($config = array())
     {
         $this->ct = new CT;
-        $this->ct->getTable($this->ct->Env->jinput->getInt('tableid', 0), null);
+        $this->ct->getTable(common::inputGetInt('tableid', 0), null);
 
         if ($this->ct->Table->tablename === null) {
             Factory::getApplication()->enqueueMessage('Table not selected.', 'error');

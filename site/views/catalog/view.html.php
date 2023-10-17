@@ -14,6 +14,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomTables\CatalogExportCSV;
+use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\Catalog;
 use CustomTables\Inputbox;
@@ -31,7 +32,7 @@ class CustomTablesViewCatalog extends JViewLegacy
     {
         $this->ct = new CT(null, false);
 
-        $key = $this->ct->Env->jinput->getCmd('key');
+        $key = common::inputGetCmd('key');
         if ($key != '')
             Inputbox::renderTableJoinSelectorJSON($this->ct, $key);
         else
@@ -58,7 +59,7 @@ class CustomTablesViewCatalog extends JViewLegacy
                 header("Expires: 0");
 
                 //layoutType: 9 CSV
-                $layout = $this->ct->Env->jinput->getCmd('layout');
+                $layout = common::inputGetCmd('layout');
                 echo $catalogCSV->render($layout);
                 die;
             } else
@@ -78,7 +79,7 @@ class CustomTablesViewCatalog extends JViewLegacy
 
     function SaveViewLog_CheckIfNeeded(): array
     {
-        $user_groups = $this->ct->Env->user->get('groups');
+        $user_groups = $this->ct->Env->user->groups;
         $allowed_fields = array();
 
         if ($this->ct->Table === null)

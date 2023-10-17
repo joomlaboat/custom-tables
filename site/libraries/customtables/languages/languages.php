@@ -30,36 +30,41 @@ class Languages
 
     function getLanguageList(): array
     {
-        $db = Factory::getDBO();
+        if (defined('_JEXEC')) {
+            $db = Factory::getDBO();
 
-        $query = 'SELECT lang_id AS id, lang_code AS language, title AS caption, title, sef AS original_sef FROM #__languages WHERE published=1 ORDER BY lang_id';
-        $db->setQuery($query);
+            $query = 'SELECT lang_id AS id, lang_code AS language, title AS caption, title, sef AS original_sef FROM #__languages WHERE published=1 ORDER BY lang_id';
+            $db->setQuery($query);
 
-        $rows = $db->loadObjectList();
+            $rows = $db->loadObjectList();
 
-        $this->LanguageList = array();
-        foreach ($rows as $row) {
-            $parts = explode('-', $row->original_sef);
-            $row->sef = $parts[0];
-            $this->LanguageList[] = $row;
-        }
-        return $this->LanguageList;
+            $this->LanguageList = array();
+            foreach ($rows as $row) {
+                $parts = explode('-', $row->original_sef);
+                $row->sef = $parts[0];
+                $this->LanguageList[] = $row;
+            }
+            return $this->LanguageList;
+        } else
+            return [];
     }
 
     function getLangPostfix(): string
     {
-        $langObj = Factory::getLanguage();
-        $nowLang = $langObj->getTag();
-        $index = 0;
-        foreach ($this->LanguageList as $lang) {
-            if ($lang->language == $nowLang) {
-                if ($index == 0)
-                    return '';
-                else
-                    return '_' . $lang->sef;
-            }
+        if (defined('_JEXEC')) {
+            $langObj = Factory::getLanguage();
+            $nowLang = $langObj->getTag();
+            $index = 0;
+            foreach ($this->LanguageList as $lang) {
+                if ($lang->language == $nowLang) {
+                    if ($index == 0)
+                        return '';
+                    else
+                        return '_' . $lang->sef;
+                }
 
-            $index++;
+                $index++;
+            }
         }
         return '';
     }
@@ -75,15 +80,17 @@ class Languages
 
     function getLanguageByCODE($code): int
     {
-        $db = Factory::getDBO();
+        if (defined('_JEXEC')) {
+            $db = Factory::getDBO();
+            $query = ' SELECT lang_id AS id FROM #__languages WHERE lang_code="' . $code . '" LIMIT 1';
 
-        $query = ' SELECT lang_id AS id FROM #__languages WHERE lang_code="' . $code . '" LIMIT 1';
+            $db->setQuery($query);
+            $rows = $db->loadObjectList();
+            if (count($rows) != 1)
+                return -1;
 
-        $db->setQuery($query);
-        $rows = $db->loadObjectList();
-        if (count($rows) != 1)
-            return -1;
-
-        return $rows[0]->id;
+            return $rows[0]->id;
+        }
+        return -1;
     }
 }

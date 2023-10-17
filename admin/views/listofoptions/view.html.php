@@ -10,6 +10,8 @@
  **/
 
 // No direct access to this file
+use CustomTables\common;
+use CustomTables\CT;
 use CustomTables\DataTypes\Tree;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
@@ -35,13 +37,10 @@ class CustomTablesViewListOfOptions extends JViewLegacy
         $this->sidebar = JHtmlSidebar::render();
 
         $this->languages = $this->ct->Languages->LanguageList;
-
         $document = Factory::getDocument();
         $document->setTitle(Text::_('View List Items'));
 
-        $input = Factory::getApplication()->input;
-
-        $this->limitstart = $input->getInt('limitstart', '0');
+        $this->limitstart = common::inputGetInt('limitstart', '0');
         $this->items = $this->get('Items');
         $this->pagination = $this->get('Pagination');
         $this->lists = $this->_getViewLists();

@@ -14,6 +14,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\Tables;
 use Joomla\CMS\Factory;
@@ -50,7 +51,7 @@ class CustomtablesViewFields extends JViewLegacy
         $this->item = $this->get('Item');
 
         if ((int)$this->item->id == 0)
-            $this->tableid = $app->input->getint('tableid', 0);
+            $this->tableid = common::inputGetInt('tableid', 0);
         else
             $this->tableid = $this->item->tableid;
 
@@ -66,8 +67,8 @@ class CustomtablesViewFields extends JViewLegacy
         $this->canEdit = $this->canDo->get('tables.edit');
 
         // get input
-        $this->ref = Factory::getApplication()->input->get('ref', 0, 'word');
-        $this->refid = Factory::getApplication()->input->get('refid', 0, 'int');
+        $this->ref = common::inputGet('ref', 0, 'word');
+        $this->refid = common::inputGet('refid', 0, 'int');
         $this->referral = '';
         if ($this->refid) {
             // return to the item that referred to this item
@@ -104,7 +105,7 @@ class CustomtablesViewFields extends JViewLegacy
      */
     protected function addToolBar()
     {
-        Factory::getApplication()->input->set('hidemainmenu', true);
+        common::inputSet('hidemainmenu', true);
         $isNew = $this->item->id == 0;
 
         JToolbarHelper::title(Text::_($isNew ? 'COM_CUSTOMTABLES_FIELDS_NEW' : 'COM_CUSTOMTABLES_FIELDS_EDIT'), 'pencil-2 article-add');

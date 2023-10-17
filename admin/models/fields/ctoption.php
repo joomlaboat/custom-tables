@@ -9,6 +9,7 @@
  **/
 
 // no direct access
+use CustomTables\common;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 
@@ -33,11 +34,9 @@ class JFormFieldCTOption extends JFormFieldList
 
     protected function getOptions()//$name, $value, &$node, $control_name)
     {
-        $jinput = Factory::getApplication()->input;
-
         $currentoptionid = 0;
-        if ($jinput->get('id'))
-            $currentoptionid = $jinput->getInt('id', 0);
+        if (common::inputGet('id'))
+            $currentoptionid = common::inputGetInt('id', 0);
 
         $db = Factory::getDBO();
         $query = $db->getQuery(true);

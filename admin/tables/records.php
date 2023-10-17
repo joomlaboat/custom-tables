@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use Joomla\CMS\Factory;
 
 // import Joomla table library
@@ -33,15 +34,16 @@ class CustomtablesTableRecords extends JTable
 
     function __construct(&$db)
     {
-        $jinput = Factory::getApplication()->input;
-        $tableid = $jinput->getInt('tableid', 0);
-
+        $tableid = common::inputGetInt('tableid', 0);
         if ($tableid != 0) {
             $table = ESTables::getTableRowByID($tableid);
             if (!is_object($table) and $table == 0) {
-                Factory::getApplication()->enqueueMessage('Table not found', 'error');
+                Factory::getApplication()->enqueueMessage('Table not found.', 'error');
                 return null;
             }
+        } else {
+            Factory::getApplication()->enqueueMessage('Table ID cannot be 0.', 'error');
+            return null;
         }
 
         if ($table->customtablename != '')

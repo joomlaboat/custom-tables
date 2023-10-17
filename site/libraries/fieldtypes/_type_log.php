@@ -13,9 +13,9 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\Fields;
-use Joomla\CMS\Factory;
 
 class CT_FieldTypeTag_log
 {
@@ -28,8 +28,7 @@ class CT_FieldTypeTag_log
 
         $result = '';
         $versions = explode(';', $rowValue);
-
-        $version = Factory::getApplication()->input->get('version', 0, 'INT');
+        $version = common::inputGet('version', 0, 'INT');
 
         $version_date = '';
         $version_author = '';

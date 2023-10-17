@@ -9,6 +9,7 @@
  * @license GNU/GPL Version 2 or later - https://www.gnu.org/licenses/gpl-2.0.html
  **/
 
+use CustomTables\common;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 
@@ -34,8 +35,8 @@ class CustomTablesViewOptions extends JViewLegacy
         $this->canDo = CustomtablesHelper::getActions('options', $this->item);
         // get input
 
-        $this->ref = Factory::getApplication()->input->get('ref', 0, 'word');
-        $this->refid = Factory::getApplication()->input->get('refid', 0, 'int');
+        $this->ref = common::inputGet('ref', 0, 'word');
+        $this->refid = common::inputGet('refid', 0, 'int');
         $this->referral = '';
         if ($this->refid) {
             // return to the item that refered to this item
@@ -63,7 +64,7 @@ class CustomTablesViewOptions extends JViewLegacy
 
     protected function addToolBar()
     {
-        Factory::getApplication()->input->set('hidemainmenu', true);
+        common::inputSet('hidemainmenu', true);
         $isNew = $this->item->id == 0;
 
         JToolbarHelper::title(Text::_($isNew ? 'COM_CUSTOMTABLES_OPTIONS_NEW' : 'COM_CUSTOMTABLES_OPTIONS_EDIT'), 'pencil-2 article-add');

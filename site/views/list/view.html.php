@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\DataTypes\Tree;
 use Joomla\CMS\Factory;
 use Joomla\String\StringHelper;
@@ -25,11 +26,10 @@ class CustomTablesViewList extends JView
 
     function display($tpl = null)
     {
-        $jinput = Factory::getApplication()->input;
         $mainframe = Factory::getApplication();
         $this->_layout = 'default';
 
-        $this->limitstart = Factory::getApplication()->input->getInt('limitstart', '0');
+        $this->limitstart = common::inputGetInt('limitstart', '0');
         $this->items = $this->get('Items');
         $this->pagination = $this->get('Pagination');
         $this->lists = $this->_getViewLists();

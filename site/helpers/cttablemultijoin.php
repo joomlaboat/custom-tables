@@ -15,8 +15,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\CT;
 use CustomTables\Field;
-use CustomTables\Fields;
-use CustomTables\Inputbox;
 
 class JHTMLCTTableMultiJoin
 {

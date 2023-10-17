@@ -19,8 +19,8 @@ JHtml::_('behavior.multiselect');
 JHtml::_('formbehavior.chosen', 'select');
 JHtml::_('dropdown.init');
 
+use CustomTables\common;
 use CustomTables\Integrity\IntegrityFields;
-use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 
 if ($this->saveOrder && !empty($this->items)) {
@@ -28,9 +28,7 @@ if ($this->saveOrder && !empty($this->items)) {
     JHtml::_('sortablelist.sortable', 'fieldList', 'adminForm', strtolower($this->listDirn), $saveOrderingUrl);
 }
 
-$input = Factory::getApplication()->input;
-
-if ($input->getCmd('extratask', '') == 'updateimages') {
+if (common::inputGetCmd('extratask', '') == 'updateimages') {
     $path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR
         . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'extratasks' . DIRECTORY_SEPARATOR;
 

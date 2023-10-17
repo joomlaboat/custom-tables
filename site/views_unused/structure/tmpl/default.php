@@ -9,6 +9,8 @@
  **/
 
 // no direct access
+use CustomTables\common;
+
 if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
@@ -30,7 +32,7 @@ if ($this->record_count > 5) {
 }
 
 $catalogResult = '<table>';
-$Itemid = $this->ct->Env->jinput->getInt('Itemid', 0);
+$Itemid = common::inputGetInt('Itemid', 0);
 
 $tr = 0;
 $number_of_columns = 3;

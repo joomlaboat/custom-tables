@@ -14,6 +14,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\Fields;
 
 use Joomla\CMS\HTML\HTMLHelper;
@@ -38,9 +39,7 @@ $document->addCustomTag('<link rel="stylesheet" href="' . JURI::root(true) . '/m
 require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries'
     . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'extratasks' . DIRECTORY_SEPARATOR . 'extratasks.php');
 
-$input = Factory::getApplication()->input;
-
-if (in_array($input->getCmd('extratask', ''), $this->extrataskOptions)) {
+if (in_array(common::inputGetCmd('extratask', ''), $this->extrataskOptions)) {
     extraTasks::prepareJS();
 }
 

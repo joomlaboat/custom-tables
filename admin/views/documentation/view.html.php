@@ -16,6 +16,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 // import Joomla view library
 jimport('joomla.application.component.view');
 
+use CustomTables\common;
 use CustomTables\Documentation;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Version;
@@ -38,13 +39,10 @@ class CustomtablesViewDocumentation extends JViewLegacy
     {
         $version = new Version;
         $this->version = (float)$version->getShortVersion();
-
         $this->documentation = new Documentation();
-
         $this->documentation->internal_use = true;
-        $jinput = Factory::getApplication()->input;
 
-        if ($jinput->getCmd('tmpl', '') == 'component')
+        if (common::inputGetCmd('tmpl', '') == 'component')
             $this->documentation->internal_use = false;
 
         if ($this->getLayout() !== 'modal') {

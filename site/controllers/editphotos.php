@@ -9,15 +9,13 @@
  **/
 
 // no direct access
+use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\CTUser;
-use Joomla\CMS\Factory;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
-
-$jinput = Factory::getApplication()->input;
 
 $ct = new CT;
 $model = $this->getModel('edititem');
@@ -27,7 +25,7 @@ if (!CTUser::CheckAuthorization($ct)) {
     $link = JRoute::_('index.php?option=com_users&view=login&return=' . base64_encode(JoomlaBasicMisc::curPageURL()));
     $this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_YOU_MUST_LOGIN_FIRST'));
 } else {
-    switch (Factory::getApplication()->input->getCmd('task')) {
+    switch (common::inputGetCmd('task')) {
         case 'add' :
             $model = $this->getModel('editphotos');
             $model->load($ct);
@@ -38,11 +36,11 @@ if (!CTUser::CheckAuthorization($ct)) {
                 $msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_IMAGE_NOT_ADDED');
             }
 
-            $tableName = Factory::getApplication()->input->getCmd('establename');
-            $galleryName = Factory::getApplication()->input->get('galleryname', '', 'CMD');
-            $listing_id = Factory::getApplication()->input->get("listing_id", 0, 'INT');
-            $returnto = Factory::getApplication()->input->get('returnto', '', 'BASE64');
-            $Itemid = Factory::getApplication()->input->get('Itemid', 0, 'INT');
+            $tableName = common::inputGetCmd('establename');
+            $galleryName = common::inputGet('galleryname', '', 'CMD');
+            $listing_id = common::inputGet("listing_id", 0, 'INT');
+            $returnto = common::inputGet('returnto', '', 'BASE64');
+            $Itemid = common::inputGet('Itemid', 0, 'INT');
 
             $link = 'index.php?option=com_customtables&view=editphotos'
                 . '&establename=' . $tableName
@@ -64,11 +62,11 @@ if (!CTUser::CheckAuthorization($ct)) {
                 $msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_IMAGE_NOT_DELETED');
             }
 
-            $tableName = Factory::getApplication()->input->getCmd('establename');
-            $galleryName = Factory::getApplication()->input->get('galleryname', '', 'CMD');
-            $listing_id = Factory::getApplication()->input->get("listing_id", 0, 'INT');
-            $returnto = Factory::getApplication()->input->get('returnto', '', 'BASE64');
-            $Itemid = Factory::getApplication()->input->get('Itemid', 0, 'INT');
+            $tableName = common::inputGetCmd('establename');
+            $galleryName = common::inputGet('galleryname', '', 'CMD');
+            $listing_id = common::inputGet("listing_id", 0, 'INT');
+            $returnto = common::inputGet('returnto', '', 'BASE64');
+            $Itemid = common::inputGet('Itemid', 0, 'INT');
 
             $link = 'index.php?option=com_customtables&view=editphotos'
                 . '&establename=' . $tableName
@@ -90,15 +88,15 @@ if (!CTUser::CheckAuthorization($ct)) {
                 $msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_IMAGE_ORDER_NOT_SAVED');
             }
 
-            $returnto = Factory::getApplication()->input->get('returnto', '', 'BASE64');
+            $returnto = common::inputGet('returnto', '', 'BASE64');
 
-            $link = $returnto = base64_decode(Factory::getApplication()->input->get('returnto', '', 'BASE64'));
+            $link = $returnto = base64_decode(common::inputGet('returnto', '', 'BASE64'));
             $this->setRedirect($link, $msg);
             break;
 
         case 'cancel' :
             $msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_EDIT_CANCELED');
-            $link = $returnto = base64_decode(Factory::getApplication()->input->get('returnto', '', 'BASE64'));
+            $link = $returnto = base64_decode(common::inputGet('returnto', '', 'BASE64'));
             $this->setRedirect($link, $msg);
             break;
         default:

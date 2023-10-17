@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\CTUser;
 use CustomTables\Fields;
@@ -220,7 +221,7 @@ class CustomTablesModelEditItem extends JModelLegacy
     function getSpecificVersionIfSet()
     {
         //get specific Version if set
-        $version = $this->ct->Env->jinput->get('version', 0, 'INT');
+        $version = common::inputGet('version', 0, 'INT');
         if ($version != 0) {
             //get log field
             $log_field = $this->getTypeFieldName('log');
@@ -381,7 +382,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
     function copy(&$msg, &$link)
     {
-        $listing_id = $this->ct->Env->jinput->getCmd("listing_id", 0);
+        $listing_id = common::inputGetCmd("listing_id", 0);
         $query = 'SELECT MAX(' . $this->ct->Table->realidfieldname . ') AS maxid FROM ' . $this->ct->Table->realtablename . ' LIMIT 1';
         $this->ct->db->setQuery($query);
         $rows = $this->ct->db->loadObjectList();
@@ -424,8 +425,8 @@ class CustomTablesModelEditItem extends JModelLegacy
         $this->ct->db->setQuery($query);
         $this->ct->db->execute();
 
-        $this->ct->Env->jinput->set("listing_id", $new_id);
-        $this->ct->Env->jinput->set('old_listing_id', $listing_id);
+        common::inputSet("listing_id", $new_id);
+        common::inputSet('old_listing_id', $listing_id);
         $this->listing_id = $new_id;
 
         if ($this->ct->db->serverType == 'postgresql') {
@@ -449,7 +450,7 @@ class CustomTablesModelEditItem extends JModelLegacy
         if (in_array($USER_IP, $IP_Black_List))
             return true;
 
-        $isDebug = $this->ct->Env->jinput->getInt('debug', 0);
+        $isDebug = common::inputGetInt('debug', 0);
 
         if ($listing_id == '') {
             $listing_id = $this->ct->Params->listing_id;
@@ -458,7 +459,7 @@ class CustomTablesModelEditItem extends JModelLegacy
         }
 
         if ($listing_id == '') {
-            $listing_id = $this->ct->Env->jinput->getCmd("listing_id", ''); //TODO : this inconsistency must be fixed
+            $listing_id = common::inputGetCmd("listing_id", ''); //TODO : this inconsistency must be fixed
             if ($listing_id == 0)
                 $listing_id = '';
         }
@@ -533,7 +534,7 @@ class CustomTablesModelEditItem extends JModelLegacy
             $row = $this->ct->Table->loadRecord($listing_id_temp);
 
             if ($row !== null) {
-                $this->ct->Env->jinput->set("listing_id", $row[$this->ct->Table->realidfieldname]);
+                common::inputSet("listing_id", $row[$this->ct->Table->realidfieldname]);
 
                 if ($this->ct->Env->advancedTagProcessor) {
                     if ($phpOnAddFound)
@@ -550,7 +551,7 @@ class CustomTablesModelEditItem extends JModelLegacy
             $this->ct->Table->saveLog($listing_id, 2);
             $row = $this->ct->Table->loadRecord($listing_id);
             if ($row !== null) {
-                $this->ct->Env->jinput->set("listing_id", $row[$this->ct->Table->realidfieldname]);
+                common::inputSet("listing_id", $row[$this->ct->Table->realidfieldname]);
                 if ($this->ct->Env->advancedTagProcessor) {
                     if ($phpOnChangeFound or $this->ct->Table->tablerow['customphp'] != '')
                         CleanExecute::doPHPonChange($this->ct, $row);
@@ -582,7 +583,7 @@ class CustomTablesModelEditItem extends JModelLegacy
         }
 
         //Prepare "Accept Return To" Link
-        $return2Link = $this->ct->Env->jinput->get('returnto', '', 'BASE64');
+        $return2Link = common::inputGet('returnto', '', 'BASE64');
         if ($return2Link != '')
             $link = $this->PrepareAcceptReturnToLink($return2Link, $msg);
 
@@ -603,7 +604,7 @@ class CustomTablesModelEditItem extends JModelLegacy
                 echo $msg;
                 die;
             }
-            $return2Link_Updated = $this->ct->Env->jinput->get('returnto', '', 'BASE64');
+            $return2Link_Updated = common::inputGet('returnto', '', 'BASE64');
             if ($return2Link != $return2Link_Updated)
                 $link = base64_decode($return2Link_Updated);
         }
@@ -612,7 +613,7 @@ class CustomTablesModelEditItem extends JModelLegacy
             die('Debug mode.');//debug mode
 
         $this->listing_id = $listing_id;
-        $this->ct->Env->jinput->set("listing_id", $listing_id);
+        common::inputSet("listing_id", $listing_id);
         return true;
     }
 
@@ -712,7 +713,7 @@ class CustomTablesModelEditItem extends JModelLegacy
         $saveLogQuery = [];
         foreach ($this->ct->Table->fields as $fieldrow) {
             if ($fieldrow['type'] == 'log') {
-                $value = time() . ',' . $this->ct->Env->userid . ',' . SaveFieldQuerySet::getUserIP() . ',' . $data . ';';
+                $value = time() . ',' . $this->ct->Env->user->id . ',' . SaveFieldQuerySet::getUserIP() . ',' . $data . ';';
                 $saveLogQuery[] = $fieldrow['realfieldname'] . '=CONCAT(' . $fieldrow['realfieldname'] . ',"' . $value . '")';
             }
         }
@@ -740,24 +741,24 @@ class CustomTablesModelEditItem extends JModelLegacy
 						switch($selectorpair[0])
 						{
 							case 'single';
-									$value=$this->ct->Env->jinput->getString($prefix.$fieldname);
+									$value=common::inputGetString($prefix.$fieldname);
 								break;
 
 							case 'multi';
-									$valuearray = $this->ct->Env->jinput->get( $prefix.$fieldname, array(), 'post', 'array' );
+									$valuearray = common::inputGet( $prefix.$fieldname, array(), 'post', 'array' );
 									$value='"'.implode('","',$valuearray).'"';
 								break;
 							case 'multibox';
-									$valuearray = $this->ct->Env->jinput->get( $prefix.$fieldname, array(), 'post', 'array' );
+									$valuearray = common::inputGet( $prefix.$fieldname, array(), 'post', 'array' );
 									$value='"'.implode('","',$valuearray).'"';
 								break;
 
 							case 'radio';
-									$value=$this->ct->Env->jinput->getString($prefix.$fieldname);
+									$value=common::inputGetString($prefix.$fieldname);
 								break;
 
 							case 'checkbox';
-									$valuearray = $this->ct->Env->jinput->get( $prefix.$fieldname, array(), 'post', 'array' );
+									$valuearray = common::inputGet( $prefix.$fieldname, array(), 'post', 'array' );
 									$value='"'.implode('","',$valuearray).'"';
 								break;
 						}
@@ -766,15 +767,15 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 					break;
 				case 'radio':
-						$value=$this->ct->Env->jinput->getString($prefix.$fieldname);
+						$value=common::inputGetString($prefix.$fieldname);
 					break;
 
 				case 'googlemapcoordinates':
-						$value=$this->ct->Env->jinput->getString($prefix.$fieldname);
+						$value=common::inputGetString($prefix.$fieldname);
 					break;
 
 				case 'string':
-						$value=$this->ct->Env->jinput->getString($prefix.$fieldname);
+						$value=common::inputGetString($prefix.$fieldname);
 					break;
 
 				case 'multilangstring':
@@ -790,7 +791,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 						else
 							$postfix='_'.$lang->sef;
 
-						$valuearray[]=$this->ct->Env->jinput->getString($prefix.$fieldname.$postfix);
+						$valuearray[]=common::inputGetString($prefix.$fieldname.$postfix);
 
 					}
 					$value='"'.implode('","',$valuearray).'"';
@@ -798,7 +799,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
 
 				case 'text':
-					$value = ComponentHelper::filterText($this->ct->Env->jinput->post->get($prefix.$fieldname, '', 'raw'));
+					$value = ComponentHelper::filterText(common::inputPost($prefix.$fieldname, '', 'raw'));
 					break;
 
 				case 'multilangtext':
@@ -814,7 +815,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 						else
 							$postfix='_'.$lang->sef;
 
-						$value_ = ComponentHelper::filterText($this->ct->Env->jinput->post->get($prefix.$fieldname.$postfix, '', 'raw'));
+						$value_ = ComponentHelper::filterText(common::inputPost($prefix.$fieldname.$postfix, '', 'raw'));
 
 						$valuearray[]=$value_;
 
@@ -823,20 +824,20 @@ class CustomTablesModelEditItem extends JModelLegacy
 					break;
 
 				case 'int':
-						$value=$this->ct->Env->jinput->getInt($prefix.$fieldname,0);
+						$value=common::inputGetInt($prefix.$fieldname,0);
 					break;
 
 				case 'user':
-						$value=(int)$this->ct->Env->jinput->getInt($prefix.$fieldname,0);
+						$value=(int)common::inputGetInt($prefix.$fieldname,0);
 					break;
 
 				case 'float':
-						$value=$this->ct->Env->jinput->get($prefix.$fieldname,0,'FLOAT');
+						$value=common::inputGet($prefix.$fieldname,0,'FLOAT');
 					break;
 
 
 				case 'article':
-						$value=$this->ct->Env->jinput->getInt($prefix.$fieldname,0);
+						$value=common::inputGetInt($prefix.$fieldname,0);
 					break;
 
 				case 'multilangarticle':
@@ -852,7 +853,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 						else
 							$postfix='_'.$lang->sef;
 
-						$valuearray[]=$this->ct->Env->jinput->getInt($prefix.$fieldname.$postfix,0);
+						$valuearray[]=common::inputGetInt($prefix.$fieldname.$postfix,0);
 
 					}
 					$value='"'.implode('","',$valuearray).'"';
@@ -871,15 +872,15 @@ class CustomTablesModelEditItem extends JModelLegacy
 					break;
 
 				case 'email':
-						$value=$this->ct->Env->jinput->getString($prefix.$fieldname);
+						$value=common::inputGetString($prefix.$fieldname);
 					break;
 
 				case 'checkbox':
-						$value=$this->ct->Env->jinput->getCmd($prefix.$fieldname);
+						$value=common::inputGetCmd($prefix.$fieldname);
 					break;
 
 				case 'date':
-						$value=$this->ct->Env->jinput->getString($prefix.$fieldname);
+						$value=common::inputGetString($prefix.$fieldname);
 					break;
 			}
 
@@ -937,7 +938,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
     function Refresh($save_log = 1): int
     {
-        $listing_ids_str = $this->ct->Env->jinput->getString('ids', '');
+        $listing_ids_str = common::inputGetString('ids', '');
 
         if ($listing_ids_str != '') {
             $listing_ids_ = explode(',', $listing_ids_str);
@@ -951,7 +952,7 @@ class CustomTablesModelEditItem extends JModelLegacy
             return count($listing_ids_);
         }
 
-        $listing_id = $this->ct->Env->jinput->getCmd("listing_id", 0);
+        $listing_id = common::inputGetCmd("listing_id", 0);
 
         if ($listing_id == 0 or $listing_id == '')
             return 0;
@@ -961,7 +962,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
     function setPublishStatus($status): int
     {
-        $listing_ids_str = $this->ct->Env->jinput->getString('ids', '');
+        $listing_ids_str = common::inputGetString('ids', '');
         if ($listing_ids_str != '') {
             $listing_ids_ = explode(',', $listing_ids_str);
             foreach ($listing_ids_ as $listing_id) {
@@ -983,7 +984,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
     function delete(): int
     {
-        $listing_ids_str = $this->ct->Env->jinput->getString('ids', '');
+        $listing_ids_str = common::inputGetString('ids', '');
         if ($listing_ids_str != '') {
 
             $listing_ids_ = explode(',', $listing_ids_str);
@@ -997,7 +998,7 @@ class CustomTablesModelEditItem extends JModelLegacy
             return count($listing_ids_);
         }
 
-        $listing_id = $this->ct->Env->jinput->getCmd("listing_id", 0);
+        $listing_id = common::inputGetCmd("listing_id", 0);
         if ($listing_id == '' or $listing_id == 0)
             return 0;
 

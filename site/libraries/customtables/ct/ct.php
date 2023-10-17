@@ -16,7 +16,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomTablesImageMethods;
-use Joomla\CMS\Document\Document;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
@@ -40,17 +39,21 @@ class CT
     var int $Limit;
     var int $LimitStart;
     var bool $isEditForm;
-    var $app;
-    var ?Document $document;
-    var $db;
     var array $editFields;
     var array $LayoutVariables;
 
+    //Joomla Specific
+    var $app;
+    var $document;
+    var $db;
+
     function __construct(?\Joomla\Registry\Registry $menuParams = null, $blockExternalVars = true, ?string $ModuleId = null, bool $enablePlugin = true)
     {
-        $this->app = Factory::getApplication();
-        $this->document = $this->app->getDocument();
-        $this->db = Factory::getDBO();
+        if (defined('_JEXEC')) {
+            $this->app = Factory::getApplication();
+            $this->document = $this->app->getDocument();
+            $this->db = Factory::getDBO();
+        }
 
         $this->Languages = new Languages;
         $this->Env = new Environment($enablePlugin);
@@ -253,9 +256,9 @@ class CT
 
     function getRecordsByKeyword(): void
     {
-        $moduleId = $this->Env->jinput->get('moduleid', 0, 'INT');
+        $moduleId = common::inputGet('moduleid', 0, 'INT');
         if ($moduleId != 0) {
-            $keywordSearch = $this->Env->jinput->get('eskeysearch_' . $moduleId, '', 'STRING');
+            $keywordSearch = common::inputGet('eskeysearch_' . $moduleId, '', 'STRING');
             if ($keywordSearch != '') {
                 require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR
                     . 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'filter' . DIRECTORY_SEPARATOR . 'keywordsearch.php');
@@ -312,14 +315,14 @@ class CT
         if ($this->Params->blockExternalVars) {
             if ((int)$this->Params->limit > 0) {
                 $this->Limit = (int)$this->Params->limit;
-                $this->LimitStart = $this->Env->jinput->getInt('start', 0);
+                $this->LimitStart = common::inputGetInt('start', 0);
                 $this->LimitStart = ($this->Limit != 0 ? (floor($this->LimitStart / $this->Limit) * $this->Limit) : 0);
             } else {
                 $this->Limit = 0;
                 $this->LimitStart = 0;
             }
         } else {
-            $this->LimitStart = $this->Env->jinput->getInt('start', 0);
+            $this->LimitStart = common::inputGetInt('start', 0);
             $this->Limit = $this->app->getUserState($limit_var, 0);
 
             if ($this->Limit == 0 and (int)$this->Params->limit > 0) {
@@ -510,7 +513,7 @@ class CT
         }
         //End of Apply default values
 
-        $this->Env->jinput->set("listing_id", $listing_id);
+        common::inputSet("listing_id", $listing_id);
 
         if ($this->Env->advancedTagProcessor)
             CleanExecute::doPHPonChange($this, $row);

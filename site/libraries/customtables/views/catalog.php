@@ -62,8 +62,8 @@ class Catalog
         $this->ct->setFilter($this->ct->Params->filter, $this->ct->Params->showPublished);
 
         if (!$this->ct->Params->blockExternalVars) {
-            if ($this->ct->Env->jinput->getString('filter', '') and is_string($this->ct->Env->jinput->getString('filter', '')))
-                $this->ct->Filter->addWhereExpression($this->ct->Env->jinput->getString('filter', ''));
+            if (common::inputGetString('filter', '') and is_string(common::inputGetString('filter', '')))
+                $this->ct->Filter->addWhereExpression(common::inputGetString('filter', ''));
         }
 
         if (!$this->ct->Params->blockExternalVars)
@@ -72,7 +72,7 @@ class Catalog
 // --------------------- Shopping Cart
 
         if ($this->ct->Params->showCartItemsOnly) {
-            $cookieValue = $this->ct->Env->jinput->cookie->get($this->ct->Params->showCartItemsPrefix . $this->ct->Table->tablename);
+            $cookieValue = common::inputCookieGet($this->ct->Params->showCartItemsPrefix . $this->ct->Table->tablename);
 
             if (isset($cookieValue)) {
                 if ($cookieValue == '') {

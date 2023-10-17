@@ -105,8 +105,8 @@ class RecordToolbar
         $editLink = $this->ct->Env->WebsiteRoot . 'index.php?option=com_customtables&amp;view=edititem'
             . '&amp;listing_id=' . $this->listing_id;
 
-        if ($this->ct->Env->jinput->get('tmpl', '', 'CMD') != '')
-            $editLink .= '&tmpl=' . $this->ct->Env->jinput->get('tmpl', '', 'CMD');
+        if (common::inputGet('tmpl', '', 'CMD') != '')
+            $editLink .= '&tmpl=' . common::inputGet('tmpl', '', 'CMD');
 
         if ($this->ct->Params->ItemId > 0)
             $editLink .= '&amp;Itemid=' . $this->ct->Params->ItemId;
@@ -137,8 +137,8 @@ class RecordToolbar
                 . '&amp;listing_id=' . $this->listing_id
                 . '&amp;returnto=' . $this->ct->Env->encoded_current_url;
 
-            if ($this->ct->Env->jinput->get('tmpl', '', 'CMD') != '')
-                $imageManagerLink .= '&tmpl=' . $this->ct->Env->jinput->get('tmpl', '', 'CMD');
+            if (common::inputGet('tmpl', '', 'CMD') != '')
+                $imageManagerLink .= '&tmpl=' . common::inputGet('tmpl', '', 'CMD');
 
             if ($this->ct->Params->ItemId > 0)
                 $imageManagerLink .= '&amp;Itemid=' . $this->ct->Params->ItemId;

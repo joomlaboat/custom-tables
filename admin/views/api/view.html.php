@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\Fields;
 use Joomla\CMS\Factory;
 
@@ -39,16 +40,14 @@ class CustomtablesViewAPI extends JViewLegacy
     function display($tpl = null)
     {
         if (ob_get_contents()) ob_end_clean();
-        $jinput = Factory::getApplication()->input;
-
-        $task = $jinput->getCmd('task', '');
-        $frmt = $jinput->getCmd('frmt', '');
+        $task = common::inputGetCmd('task', '');
+        $frmt = common::inputGetCmd('frmt', '');
 
         $result = array();
         switch ($task) {
             case 'getfields':
 
-                $tableid = $jinput->getInt('tableid', 0);
+                $tableid = common::inputGetInt('tableid', 0);
                 if ($tableid == 0) {
                     $result = array('error' => 'tableid not set');
                 } else {

@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\Fields;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
@@ -46,7 +47,7 @@ class CustomtablesControllerFields extends JControllerForm
 
     public function cancel($key = null)
     {
-        $tableid = $this->input->get('tableid', 0, 'int');
+        $tableid = common::inputGet('tableid', 0, 'int');
         $cancel = parent::cancel($key);
         $this->setRedirect(
             JRoute::_(
@@ -62,21 +63,21 @@ class CustomtablesControllerFields extends JControllerForm
 
         $redirect = 'index.php?option=' . $this->option;
 
-        $tableid = $this->input->get('tableid', 0, 'int');
-        $fieldid = $this->input->getInt('fieldid', 0);
-        $id = $this->input->get('id', 0, 'int');
+        $tableid = common::inputGet('tableid', 0, 'int');
+        $fieldid = common::inputGetInt('fieldid', 0);
+        $id = common::inputGet('id', 0, 'int');
 
-        $extratask = $this->input->getCmd('extratask', '');
+        $extratask = common::inputGetCmd('extratask', '');
 
         //Postpone extra task
         if ($extratask != '') {
-            $redirect .= '&extratask=' . $this->input->getCmd('extratask', '');
-            $redirect .= '&old_typeparams=' . $this->input->get('old_typeparams', '', 'BASE64');
-            $redirect .= '&new_typeparams=' . $this->input->get('new_typeparams', '', 'BASE64');
+            $redirect .= '&extratask=' . common::inputGetCmd('extratask', '');
+            $redirect .= '&old_typeparams=' . common::inputGet('old_typeparams', '', 'BASE64');
+            $redirect .= '&new_typeparams=' . common::inputGet('new_typeparams', '', 'BASE64');
             $redirect .= '&fieldid=' . $fieldid;
 
-            if ($this->input->getInt('stepsize', 10) != 10)
-                $redirect .= '&stepsize=' . $this->input->getInt('stepsize', 10);
+            if (common::inputGetInt('stepsize', 10) != 10)
+                $redirect .= '&stepsize=' . common::inputGetInt('stepsize', 10);
         }
         $redirect .= '&view=fields&layout=edit&tableid=' . (int)$tableid . '&id=' . (int)$id;
 
@@ -92,11 +93,11 @@ class CustomtablesControllerFields extends JControllerForm
 
     public function save($key = null, $urlVar = null)
     {
-        $tableid = $this->input->get('tableid', 0, 'int');
+        $tableid = common::inputGet('tableid', 0, 'int');
 
         // get the referral details
-        $this->ref = $this->input->get('ref', 0, 'word');
-        $this->refid = $this->input->get('refid', 0, 'int');
+        $this->ref = common::inputGet('ref', 0, 'word');
+        $this->refid = common::inputGet('refid', 0, 'int');
 
         $fieldid = Fields::saveField();
 
@@ -106,17 +107,17 @@ class CustomtablesControllerFields extends JControllerForm
         }
 
         $redirect = 'index.php?option=' . $this->option;
-        $extraTask = $this->input->getCmd('extratask', '');
+        $extraTask = common::inputGetCmd('extratask', '');
 
         //Postpone extra task
         if ($extraTask != '') {
             $redirect .= '&extratask=' . $extraTask;
-            $redirect .= '&old_typeparams=' . $this->input->get('old_typeparams', '', 'BASE64');
-            $redirect .= '&new_typeparams=' . $this->input->get('new_typeparams', '', 'BASE64');
+            $redirect .= '&old_typeparams=' . common::inputGet('old_typeparams', '', 'BASE64');
+            $redirect .= '&new_typeparams=' . common::inputGet('new_typeparams', '', 'BASE64');
             $redirect .= '&fieldid=' . $fieldid;
 
-            if ($this->input->getInt('stepsize', 10) != 10)
-                $redirect .= '&stepsize=' . $this->input->getInt('stepsize', 10);
+            if (common::inputGetInt('stepsize', 10) != 10)
+                $redirect .= '&stepsize=' . common::inputGetInt('stepsize', 10);
         }
 
         if ($extraTask != '' or $this->task == 'apply' or $this->task == 'save2copy')
@@ -182,13 +183,13 @@ class CustomtablesControllerFields extends JControllerForm
 
     protected function getRedirectToItemAppend($recordId = null, $urlVar = 'id')
     {
-        $tmpl = $this->input->get('tmpl');
-        $layout = $this->input->get('layout', 'edit', 'string');
+        $tmpl = common::inputGet('tmpl');
+        $layout = common::inputGet('layout', 'edit', 'string');
 
-        $ref = $this->input->get('ref', 0, 'string');
-        $refId = $this->input->get('refid', 0, 'int');
+        $ref = common::inputGet('ref', 0, 'string');
+        $refId = common::inputGet('refid', 0, 'int');
 
-        $tableid = $this->input->getint('tableid', 0);
+        $tableid = common::inputGetInt('tableid', 0);
 
         // Setup redirect info.
         $append = '';

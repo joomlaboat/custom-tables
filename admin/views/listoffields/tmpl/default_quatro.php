@@ -12,6 +12,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\ListOfFields;
 use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
@@ -28,9 +29,7 @@ if ($this->saveOrder && !empty($this->items)) {
     HTMLHelper::_('draggablelist.draggable');
 }
 
-$input = Factory::getApplication()->input;
-
-if ($input->getCmd('extratask', '') == 'updateimages') {
+if (common::inputGetCmd('extratask', '') == 'updateimages') {
     $path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR
         . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'extratasks' . DIRECTORY_SEPARATOR;
 

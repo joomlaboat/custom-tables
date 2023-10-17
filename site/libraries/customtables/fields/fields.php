@@ -246,7 +246,7 @@ class Fields
         $db = Factory::getDBO();
 
         if ($fieldid == 0)
-            $fieldid = Factory::getApplication()->input->get('fieldid', 0, 'INT');
+            $fieldid = common::inputGet('fieldid', 0, 'INT');
 
         $query = 'SELECT ' . Fields::getFieldRowSelects() . ' FROM #__customtables_fields AS s WHERE id=' . $fieldid . ' LIMIT 1';//published=1 AND
 
@@ -623,7 +623,7 @@ class Fields
         $db = Factory::getDBO();
 
         if ($fieldid == 0)
-            $fieldid = Factory::getApplication()->input->get('fieldid', 0, 'INT');
+            $fieldid = common::inputGet('fieldid', 0, 'INT');
 
         $query = 'SELECT fieldname FROM #__customtables_fields AS s WHERE s.published=1 AND s.id=' . $fieldid . ' LIMIT 1';
         $db->setQuery($query);
@@ -665,7 +665,7 @@ class Fields
         $db = Factory::getDBO();
 
         if ($fieldname == '')
-            $fieldname = Factory::getApplication()->input->get('fieldname', '', 'CMD');
+            $fieldname = common::inputGet('fieldname', '', 'CMD');
 
         if ($fieldname == '')
             return null;
@@ -767,9 +767,8 @@ class Fields
     public static function saveField()
     {
         $ct = new CT;
-        $input = Factory::getApplication()->input;
-        $data = $input->get('jform', array(), 'ARRAY');
-        $task = $input->getCmd('task');
+        $data = common::inputGet('jform', array(), 'ARRAY');
+        $task = common::inputGetCmd('task');
 
         //clean field name
         if (function_exists("transliterator_transliterate"))
@@ -781,7 +780,7 @@ class Fields
         if (strlen($fieldName) > 40)
             $fieldName = substr($fieldName, 0, 40);
 
-        $fieldid = $input->getInt('id');
+        $fieldid = common::inputGetInt('id');
         $tableid = $data['tableid'];
 
         if ($task == 'save2copy') {
@@ -990,7 +989,6 @@ class Fields
                 return false;
             }
 
-            $input = Factory::getApplication()->input;
             $extraTask = '';
 
             if ($ex_type == $new_type and $new_type == 'image' and ($ex_typeparams != $new_typeparams or str_contains($new_typeparams, '|delete'))) {
@@ -1001,7 +999,7 @@ class Fields
                 if ($ex_typeparams_array[0] != $new_typeparams_array[0])
                     $extraTask = 'updateimages'; //Resize all images if needed
                 elseif (($ex_typeparams_array[2] ?? null) != ($new_typeparams_array[2] ?? null)) {
-                    $input->set('stepsize', 1000);
+                    common::inputSet('stepsize', 1000);
                     $extraTask = 'updateimages'; //Move all images if needed
                 }
             }
@@ -1015,10 +1013,10 @@ class Fields
                 $extraTask = 'updatefilebox'; //Resize or move all images in the gallery if needed
 
             if ($extraTask != '') {
-                $input->set('extratask', $extraTask);
-                $input->set('old_typeparams', base64_encode($ex_typeparams));
-                $input->set('new_typeparams', base64_encode($new_typeparams));
-                $input->set('fieldid', $fieldid);
+                common::inputSet('extratask', $extraTask);
+                common::inputSet('old_typeparams', base64_encode($ex_typeparams));
+                common::inputSet('new_typeparams', base64_encode($new_typeparams));
+                common::inputSet('fieldid', $fieldid);
             }
         }
         //---------------------------------- end convert field

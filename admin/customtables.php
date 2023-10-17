@@ -14,6 +14,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 
@@ -37,7 +38,7 @@ jimport('joomla.application.component.controller');
 $controller = JControllerLegacy::getInstance('Customtables');
 
 // Perform the Request task
-$controller->execute(Factory::getApplication()->input->getCmd('task'));
+$controller->execute(common::inputGetCmd('task'));
 
 // Redirect if set by the controller
 $controller->redirect();

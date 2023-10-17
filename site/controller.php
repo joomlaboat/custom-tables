@@ -13,15 +13,13 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
-use Joomla\CMS\Factory;
+use CustomTables\common;
 
 class CustomTablesController extends JControllerLegacy
 {
     function display($cachable = false, $urlparams = array())
     {
-        $jinput = Factory::getApplication()->input;
-
-        $file = $jinput->getString('file');
+        $file = common::inputGetString('file');
         if ($file != '') {
             //Load file instead
 
@@ -29,17 +27,17 @@ class CustomTablesController extends JControllerLegacy
             require_once($processor_file);
             CT_FieldTypeTag_file::process_file_link($file);
 
-            $jinput->set('view', 'files');
+            common::inputSet('view', 'files');
             parent::display();
             return;
         }
 
         // Make sure we have the default view
-        if ($jinput->getCmd('view') == '') {
-            $jinput->set('view', 'catalog');
+        if (common::inputGetCmd('view') == '') {
+            common::inputSet('view', 'catalog');
             parent::display();
         } else {
-            $view = $jinput->getCmd('view');
+            $view = common::inputGetCmd('view');
 
             switch ($view) {
                 case 'log' :

@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 jimport('joomla.application.component.controlleradmin');
 
+use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\Fields;
 use Joomla\CMS\Factory;
@@ -26,11 +27,11 @@ class CustomtablesControllerListOfFields extends JControllerAdmin
 
     public function checkin($model = null)
     {
-        $tableid = $this->input->get('tableid', 0, 'int');
+        $tableid = common::inputGet('tableid', 0, 'int');
         $redirect = 'index.php?option=' . $this->option;
         $redirect .= '&view=listoffields&tableid=' . (int)$tableid;
 
-        $cid = Factory::getApplication()->input->post->get('cid', array(), 'array');
+        $cid = common::inputPost('cid', array(), 'array');
         $cid = ArrayHelper::toInteger($cid);
         $count = count($cid);
 
@@ -75,7 +76,7 @@ class CustomtablesControllerListOfFields extends JControllerAdmin
         else
             return;
 
-        $tableid = $this->input->get('tableid', 0, 'int');
+        $tableid = common::inputGet('tableid', 0, 'int');
 
         if ($tableid != 0) {
             $table = ESTables::getTableRowByID($tableid);
@@ -87,7 +88,7 @@ class CustomtablesControllerListOfFields extends JControllerAdmin
             }
         }
 
-        $cid = Factory::getApplication()->input->post->get('cid', array(), 'array');
+        $cid = common::inputPost('cid', array(), 'array');
         $cid = ArrayHelper::toInteger($cid);
 
         $ok = true;
@@ -140,7 +141,7 @@ class CustomtablesControllerListOfFields extends JControllerAdmin
 
     public function delete()
     {
-        $tableid = $this->input->get('tableid', 0, 'int');
+        $tableid = common::inputGet('tableid', 0, 'int');
 
         if ($tableid != 0) {
             $tableRow = ESTables::getTableRowByIDAssoc($tableid);
@@ -164,7 +165,7 @@ class CustomtablesControllerListOfFields extends JControllerAdmin
         $ct = new CT($_params, false);
         $ct->setTable($tableRow);
 
-        $cid = Factory::getApplication()->input->post->get('cid', array(), 'array');
+        $cid = common::inputPost('cid', array(), 'array');
         $cid = ArrayHelper::toInteger($cid);
 
         foreach ($cid as $id) {

@@ -20,8 +20,6 @@ class JHTMLESComboTree
     static function render($prefix, $tableName, $fieldName, $optionname, $langPostfix, $value, $cssclass = "", $onchange = "",
                            $where = "", $innerJoin = false, $isRequired = false, $requirementDepth = 0, $place_holder = '', $valuerule = '', $valuerulecaption = '')
     {
-        $jinput = Factory::getApplication()->input;
-
         require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR
             . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'combotreeloader.php');
 
@@ -58,7 +56,7 @@ class JHTMLESComboTree
                     if ($opt == '')
                         break;
 
-                    //$jinput->set($MyESDynCombo->ObjectName . '_' . $i, $opt);
+                    //common::inputSet($MyESDynCombo->ObjectName . '_' . $i, $opt);
                     $i++;
                 }
             }

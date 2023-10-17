@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\Fields;
 use Joomla\CMS\Factory;
@@ -291,7 +292,7 @@ class ESTables
         $db = Factory::getDBO();
 
         if ($tableid == 0)
-            $tableid = Factory::getApplication()->input->get('tableid', 0, 'INT');
+            $tableid = common::inputGet('tableid', 0, 'INT');
 
         $query = 'SELECT tablename FROM #__customtables_tables AS s WHERE id=' . (int)$tableid . ' LIMIT 1';
         $db->setQuery($query);
@@ -466,7 +467,7 @@ class ESTables
                         $inserts[] = $fld . '=' . (int)$row[$fld];
                 } elseif ($fld == 'created_by' or $fld == 'modified_by') {
                     if ((int)$row[$fld] == 0)
-                        $inserts[] = $fld . '=' . $ct->Env->userid;
+                        $inserts[] = $fld . '=' . $ct->Env->user->id;
                     else
                         $inserts[] = $fld . '=' . (int)$row[$fld];
                 } elseif ($fld == 'created' or $fld == 'modified') {

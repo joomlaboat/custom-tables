@@ -26,14 +26,12 @@ class CT_FieldTypeTag_file
 {
     static public function get_file_type_value(CustomTables\Field $field, $listing_id): ?string
     {
-        $jinput = Factory::getApplication()->input;
-
         if ($field->type == 'filelink')
             $FileFolder = CT_FieldTypeTag_file::getFileFolder($field->params[0]);
         else
             $FileFolder = CT_FieldTypeTag_file::getFileFolder($field->params[1]);
 
-        $file_id = $jinput->post->get($field->comesfieldname, '', 'STRING');
+        $file_id = common::inputPost($field->comesfieldname, '', 'STRING');
 
         $filepath = str_replace('/', DIRECTORY_SEPARATOR, $FileFolder);
         if (substr($filepath, 0, 1) == DIRECTORY_SEPARATOR)
@@ -44,7 +42,7 @@ class CT_FieldTypeTag_file
         if ($listing_id == 0) {
             $value = CT_FieldTypeTag_file::UploadSingleFile('', $file_id, $field, JPATH_SITE . $FileFolder);
         } else {
-            $to_delete = $jinput->post->get($field->comesfieldname . '_delete', '', 'CMD');
+            $to_delete = common::inputPost($field->comesfieldname . '_delete', '', 'CMD');
 
             $ExistingFile = $field->ct->Table->getRecordFieldValue($listing_id, $field->realfieldname);
 
@@ -126,12 +124,11 @@ class CT_FieldTypeTag_file
 
             $uploadedFile = JPATH_SITE . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR . $file_id;
 
-            $is_base64encoded = Factory::getApplication()->input->get('base64encoded', '', 'CMD');
+            $is_base64encoded = common::inputGet('base64encoded', '', 'CMD');
             if ($is_base64encoded == "true") {
                 $src = $uploadedFile;
 
-                $jinput = Factory::getApplication()->input;
-                $file = $jinput->post->get($field->comesfieldname, '', 'STRING');
+                $file = common::inputPost($field->comesfieldname, '', 'STRING');
                 $dst = JPATH_SITE . DIRECTORY_SEPARATOR . 'tmp' . DIRECTORY_SEPARATOR . 'decoded_' . basename($file['name']);
                 CustomTablesFileMethods::base64file_decode($src, $dst);
                 $uploadedFile = $dst;
@@ -227,8 +224,7 @@ class CT_FieldTypeTag_file
 
     static public function get_blob_value(CustomTables\Field $field)
     {
-        $jinput = Factory::getApplication()->input;
-        $file_id = $jinput->post->get($field->comesfieldname, '', 'STRING');
+        $file_id = common::inputPost($field->comesfieldname, '', 'STRING');
 
         if ($file_id == '')
             return false;
@@ -648,13 +644,10 @@ class CT_FieldTypeTag_file
                     require_once($processor_file);
 
                     CT_FieldTypeTag_file::process_file_link(end($segments));
-
-                    $jinput = Factory::getApplication()->input;
-                    $vars["listing_id"] = $jinput->getInt("listing_id", 0);
-                    $vars['fieldid'] = $jinput->getInt('fieldid', 0);
-                    $vars['security'] = $jinput->getCmd('security', 0);//security level letter (d,e,f,g,h,i)
-                    $vars['tableid'] = $jinput->getInt('tableid', 0);
-
+                    $vars["listing_id"] = common::inputGetInt("listing_id", 0);
+                    $vars['fieldid'] = common::inputGetInt('fieldid', 0);
+                    $vars['security'] = common::inputGetCmd('security', 0);//security level letter (d,e,f,g,h,i)
+                    $vars['tableid'] = common::inputGetInt('tableid', 0);
                     return true;
                 }
             }
@@ -664,7 +657,6 @@ class CT_FieldTypeTag_file
 
     public static function process_file_link($filename): void
     {
-        $jinput = Factory::getApplication()->input;
         $parts = explode('.', $filename);
 
         if (count($parts) == 1)
@@ -681,7 +673,7 @@ class CT_FieldTypeTag_file
         if (count($key_parts) == 1)
             CT_FieldTypeTag_file::wrong();
 
-        $jinput->set('key', $key);
+        common::inputSet('key', $key);
 
         $key_params = $key_parts[count($key_parts) - 1];
 
@@ -696,23 +688,23 @@ class CT_FieldTypeTag_file
         elseif (str_contains($key_params, 'h')) $security = 'h';//Time/Host/User Limited (8-24 minutes)
         elseif (str_contains($key_params, 'i')) $security = 'i';//Time/Host/User Limited (1.5 - 4 hours)
 
-        $jinput->set('security', $security);
+        common::inputSet('security', $security);
 
         $key_params_a = explode($security, $key_params);
         if (count($key_params_a) != 2)
             CT_FieldTypeTag_file::wrong();
 
         $listing_id = $key_params_a[0];
-        $jinput->set("listing_id", $listing_id);
+        common::inputSet("listing_id", $listing_id);
 
         if (isset($key_params_a[1])) {
             $fieldid = $key_params_a[1];
-            $jinput->set('fieldid', $fieldid);
+            common::inputSet('fieldid', $fieldid);
         }
 
         if (isset($key_params_a[2])) {
             $tableid = $key_params_a[2];
-            $jinput->set('tableid', $tableid);
+            common::inputSet('tableid', $tableid);
         }
     }
 

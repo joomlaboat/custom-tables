@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 
+use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\Tables;
 use Joomla\CMS\Factory;
@@ -37,7 +38,7 @@ class CustomtablesViewLayouts extends JViewLegacy
     {
         $model = $this->getModel();
         $this->ct = $model->ct;
-        $layoutId = $this->ct->Env->jinput->getInt('id', 0);
+        $layoutId = common::inputGetInt('id', 0);
 
         // Assign the variables
         $this->form = $this->get('Form');
@@ -73,9 +74,8 @@ class CustomtablesViewLayouts extends JViewLegacy
 
         // get input
 
-        $jinput = Factory::getApplication()->input;
-        $this->ref = $jinput->get('ref', 0, 'word');
-        $this->refid = $jinput->get('refid', 0, 'int');
+        $this->ref = common::inputGet('ref', 0, 'word');
+        $this->refid = common::inputGet('refid', 0, 'int');
         $this->referral = '';
         if ($this->refid) {
             // return to the item that refered to this item
@@ -120,7 +120,7 @@ class CustomtablesViewLayouts extends JViewLegacy
      */
     protected function addToolBar()
     {
-        Factory::getApplication()->input->set('hidemainmenu', true);
+        common::inputSet('hidemainmenu', true);
         $isNew = $this->item->id == 0;
 
         JToolbarHelper::title(Text::_($isNew ? 'COM_CUSTOMTABLES_LAYOUTS_NEW' : 'COM_CUSTOMTABLES_LAYOUTS_EDIT'), 'pencil-2 article-add');

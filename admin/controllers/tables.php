@@ -10,6 +10,7 @@
  **/
 
 // No direct access to this file
+use CustomTables\common;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 
@@ -74,8 +75,8 @@ class CustomtablesControllerTables extends JControllerForm
     public function cancel($key = null)
     {
         // get the referal details
-        $this->ref = $this->input->get('ref', 0, 'word');
-        $this->refid = $this->input->get('refid', 0, 'int');
+        $this->ref = common::inputGet('ref', 0, 'word');
+        $this->refid = common::inputGet('refid', 0, 'int');
 
         $cancel = parent::cancel($key);
 
@@ -123,8 +124,8 @@ class CustomtablesControllerTables extends JControllerForm
     public function save($key = null, $urlVar = null)
     {
         // get the referral details
-        $this->ref = $this->input->get('ref', 0, 'word');
-        $this->refid = $this->input->get('refid', 0, 'int');
+        $this->ref = common::inputGet('ref', 0, 'word');
+        $this->refid = common::inputGet('refid', 0, 'int');
 
         if ($this->ref || $this->refid) {
             // to make sure the item is checkedin on redirect
@@ -231,11 +232,11 @@ class CustomtablesControllerTables extends JControllerForm
      */
     protected function getRedirectToItemAppend($recordId = null, $urlVar = 'id')
     {
-        $tmpl = $this->input->get('tmpl');
-        $layout = $this->input->get('layout', 'edit', 'string');
+        $tmpl = common::inputGet('tmpl');
+        $layout = common::inputGet('layout', 'edit', 'string');
 
-        $ref = $this->input->get('ref', 0, 'string');
-        $refid = $this->input->get('refid', 0, 'int');
+        $ref = common::inputGet('ref', 0, 'string');
+        $refid = common::inputGet('refid', 0, 'int');
 
         // Setup redirect info.
 
@@ -260,20 +261,5 @@ class CustomtablesControllerTables extends JControllerForm
         }
 
         return $append;
-    }
-
-    /**
-     * Function that allows child controller access to model data
-     * after the data has been saved.
-     *
-     * @param JModel  &$model The data model object.
-     * @param array $validData The validated data.
-     *
-     * @return  void
-     *
-     * @since   11.1
-     */
-    protected function postSaveHook(JModelLegacy $model, $validData = array())
-    {
     }
 }

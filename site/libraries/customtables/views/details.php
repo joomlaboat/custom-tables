@@ -130,7 +130,7 @@ class Details
         //TODO: avoid es_
 
         $query = 'SELECT COUNT(*) AS count FROM #__customtables_table_' . $recordsTable . ' WHERE es_' . $recordsUserIdField . '='
-            . $this->ct->Env->userid . ' AND INSTR(es_' . $recordsField . ',",' . $listing_id . ',") LIMIT 1';
+            . $this->ct->Env->user->id . ' AND INSTR(es_' . $recordsField . ',",' . $listing_id . ',") LIMIT 1';
 
         $this->ct->db->setQuery($query);
         $rows = $this->ct->db->loadAssocList();
@@ -177,7 +177,7 @@ class Details
             return $row;
 
         //get specific Version
-        $version = $this->ct->Env->jinput->getInt('version', 0);
+        $version = common::inputGetInt('version', 0);
 
         if ($version != 0) {
             //get log field
@@ -285,7 +285,7 @@ class Details
                 $allow_count = true;
                 $author_user_field = $mFld['typeparams'];
 
-                if (!isset($author_user_field) or $author_user_field == '' or $rec[$this->ct->Env->field_prefix . $author_user_field] == $this->ct->Env->userid)
+                if (!isset($author_user_field) or $author_user_field == '' or $rec[$this->ct->Env->field_prefix . $author_user_field] == $this->ct->Env->user->id)
                     $allow_count = false;
 
                 if ($allow_count) {

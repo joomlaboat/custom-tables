@@ -132,17 +132,7 @@ class JoomlaBasicMisc
 
     public static function curPageURL(): string
     {
-        $WebsiteRoot = str_replace(JURI::root(true), '', JURI::root(false));
-        $RequestURL = $_SERVER["REQUEST_URI"];
-
-        if ($WebsiteRoot != '' and $WebsiteRoot[strlen($WebsiteRoot) - 1] == '/') {
-            if ($RequestURL != '' and $RequestURL[0] == '/') {
-                //Delete $WebsiteRoot end /
-                $WebsiteRoot = substr($WebsiteRoot, 0, strlen($WebsiteRoot) - 1);
-            }
-        }
-
-        return $WebsiteRoot . $RequestURL;
+        return common::curPageURL();
     }
 
     public static function getFirstImage(?string $content): string

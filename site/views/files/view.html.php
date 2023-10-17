@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 jimport('joomla.application.component.view'); //Important to get menu parameters
 require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_file.php');
 
+use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\Field;
 use CustomTables\Fields;
@@ -35,12 +36,12 @@ class CustomTablesViewFiles extends JViewLegacy
     {
         $this->ct = new CT;
 
-        $this->listing_id = $this->ct->Env->jinput->getCmd("listing_id");
-        $this->tableid = $this->ct->Env->jinput->getInt('tableid', 0);
-        $this->fieldid = $this->ct->Env->jinput->getInt('fieldid', 0);
+        $this->listing_id = common::inputGetCmd("listing_id");
+        $this->tableid = common::inputGetInt('tableid', 0);
+        $this->fieldid = common::inputGetInt('fieldid', 0);
 
-        $this->security = $this->ct->Env->jinput->getCmd('security', 'd');
-        $this->key = $this->ct->Env->jinput->getCmd('key', '');
+        $this->security = common::inputGetCmd('security', 'd');
+        $this->key = common::inputGetCmd('key', '');
 
         $this->ct->getTable($this->tableid);
         if ($this->ct->Table->tablename === null) {

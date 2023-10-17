@@ -43,7 +43,7 @@ class SearchInputBox
             $field_title = $place_holder;
 
         $result = '';
-        $value = Factory::getApplication()->input->getCmd($prefix . $objName);
+        $value = common::inputGetCmd($prefix . $objName);
 
         if ($value == '') {
             if (isset($fieldrow['fields']) and count($fieldrow['fields']) > 0)
@@ -196,7 +196,7 @@ class SearchInputBox
 
     protected function getWhereParameters(): array
     {
-        $value = Factory::getApplication()->input->getString('where');
+        $value = common::inputGetString('where');
         $value = str_replace('update', '', $value);
         $value = str_replace('select', '', $value);
         $value = str_replace('drop', '', $value);
@@ -306,10 +306,10 @@ class SearchInputBox
             $value_max = $values[1];
 
         if ($value_min == '')
-            $value_min = $this->ct->Env->jinput->getString($objectName . '_min');
+            $value_min = common::inputGetString($objectName . '_min');
 
         if ($value_max == '')
-            $value_max = $this->ct->Env->jinput->getString($objectName . '_max');
+            $value_max = common::inputGetString($objectName . '_max');
 
         //header function
 

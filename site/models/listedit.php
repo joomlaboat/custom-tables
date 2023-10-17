@@ -13,22 +13,19 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\DataTypes\Tree;
-use \Joomla\CMS\Factory;
 
 jimport('joomla.application.component.model');
 
 class CustomTablesModelListEdit extends JModel
 {
-    var $imagefolder = "images/esoptimages";
+    var string $imagefolder = "images/esoptimages";
 
     function __construct()
     {
         parent::__construct();
-
-        $jinput = Factory::getApplication()->input;
-        $array = $jinput->get('cid', array(), 'array');
-
+        $array = common::inputGet('cid', array(), 'array');
         $this->setId((int)$array[0]);
     }
 
@@ -49,60 +46,58 @@ class CustomTablesModelListEdit extends JModel
 
     function store()
     {
-        $jinput = Factory::getApplication()->input;
+        $optionname = strtolower(trim(preg_replace("/[^a-zA-Z\d]/", "", common::inputGet('optionname', '', 'STRING'))));
+        $title = ucwords(strtolower(trim(common::inputGet('title', '', 'STRING'))));
 
-        $optionname = strtolower(trim(preg_replace("/[^a-zA-Z\d]/", "", Factory::getApplication()->input->get('optionname', '', 'STRING'))));
-        $title = ucwords(strtolower(trim(Factory::getApplication()->input->get('title', '', 'STRING'))));
-
-        Factory::getApplication()->input->set('optionname', $optionname);
-        Factory::getApplication()->input->set('title', $title);
+        common::inputSet('optionname', $optionname);
+        common::inputSet('title', $title);
 
         //save image if needed
         $fieldname = 'imagefile';
         $value = 0;
         $imagemethods = new CustomTablesImageMethods;
-        $tree_id = Factory::getApplication()->input->get('id', 0, 'INT');
+        $tree_id = common::inputGet('id', 0, 'INT');
         $imagefolder = JPATH_SITE . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'esoptimages';
 
         $imageparams = '';
 
 
         if ($tree_id == 0)
-            $file = $jinput->input->getVar($fieldname, '', 'files', 'array');
+            $file = common::inputGet($fieldname, '', 'files', 'array');
 
         $filename = $file['name'];
         if ($filename != '') {
-            $imageparams = $jinput->get('imageparams', '', 'string');
+            $imageparams = common::inputGet('imageparams', '', 'string');
 
             if (strlen($imageparams) == 0)
-                $imageparams = Tree::getHeritageInfo(Factory::getApplication()->input->get('parentid', 0, 'INT'), 'imageparams');
+                $imageparams = Tree::getHeritageInfo(common::inputGet('parentid', 0, 'INT'), 'imageparams');
 
             $value = $imagemethods->UploadSingleImage('', $fieldname, $imagefolder, $imageparams, '-options');
         } else {
 
             $ExistingImage = Tree::isRecordExist($tree_id, 'id', 'image', '#__customtables_options');
-            $file = $jinput->getVar($fieldname, '', 'files', 'array');
+            $file = common::inputGet($fieldname, '', 'files', 'array');
 
             $filename = $file['name'];
             if ($filename == '') {
-                if ($jinput->getCmd('image_delete') == 'true') {
+                if (common::inputGetCmd('image_delete') == 'true') {
                     if ($ExistingImage !== null)
                         $imagemethods->DeleteExistingSingleImage($ExistingImage, $imagefolder, $imageparams, '-options', $fieldname);
                 }
             } else {
-                $imageparams = $jinput->getString('imageparams');
+                $imageparams = common::inputGetString('imageparams');
                 if (strlen($imageparams) == 0)
-                    $imageparams = Tree::getHeritageInfo($jinput->get('parentid', 0, 'INT'), 'imageparams');
+                    $imageparams = Tree::getHeritageInfo(common::inputGet('parentid', 0, 'INT'), 'imageparams');
 
                 $value = $imagemethods->UploadSingleImage($ExistingImage, $fieldname, $imagefolder, $imageparams, '-options');
             }
         }
         if ($value != 0)
-            $jinput->set('image', $value);
+            common::inputSet('image', $value);
 
         $row = $this->getTable();
         // consume the post data with allow_html
-        $data = $jinput->get('jform', array(), 'ARRAY');
+        $data = common::inputGet('jform', array(), 'ARRAY');
 
         if (!$row->bind($data))
             return false;
@@ -137,9 +132,7 @@ class CustomTablesModelListEdit extends JModel
 
     function delete()
     {
-        $jinput = Factory::getApplication()->input;
-
-        $cids = $jinput->get->post('cid', array(), 'array');
+        $cids = common::inputPost('cid', array(), 'array');
         $row = $this->getTable();
 
         if (count($cids)) {

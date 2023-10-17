@@ -101,16 +101,16 @@ class Inputbox
 
     static public function renderTableJoinSelectorJSON(CT &$ct, $key, $obEndClean = true): ?string
     {
-        $index = $ct->Env->jinput->getInt('index');
+        $index = common::inputGetInt('index');
 
         $selectors = (array)$ct->app->getUserState($key);
 
         if ($index < 0 or $index >= count($selectors))
             die(json_encode(['error' => 'Index out of range.' . $key]));
 
-        $additional_filter = $ct->Env->jinput->getCmd('filter', '');
-        $subFilter = $ct->Env->jinput->getCmd('subfilter');
-        $search = $ct->Env->jinput->getString('search');
+        $additional_filter = common::inputGetCmd('filter', '');
+        $subFilter = common::inputGetCmd('subfilter');
+        $search = common::inputGetString('search');
 
         return self::renderTableJoinSelectorJSON_Process($ct, $selectors, $index, $additional_filter, $subFilter, $search, $obEndClean);
     }
@@ -142,7 +142,7 @@ class Inputbox
         $showPublished = ($showPublishedString == 'true' ? 2 : 0); //$selector[2] can be "" or "true" or "false"
 
         $filter = $selector[3] ?? '';
-        $filterOverride = $ct->Env->jinput->getstring('where');
+        $filterOverride = common::inputGetString('where');
         if ($filterOverride !== null) {
             if ($filter != '')
                 $filter .= ' and ';
@@ -293,7 +293,7 @@ class Inputbox
             case 'phponchange':
 
                 if ($value === null) {
-                    $value = $this->ct->Env->jinput->getString($this->ct->Env->field_prefix . $this->field->fieldname, '');
+                    $value = common::inputGetString($this->ct->Env->field_prefix . $this->field->fieldname, '');
                     $value = preg_replace("/[^A-Za-z\d\-]/", '', $value);
                     if ($value == '')
                         $value = $this->defaultValue;
@@ -351,7 +351,7 @@ class Inputbox
 
             case 'usergroups':
                 if ($value === null) {
-                    $value = $this->ct->Env->jinput->getString($this->ct->Env->field_prefix . $this->field->fieldname, '');
+                    $value = common::inputGetString($this->ct->Env->field_prefix . $this->field->fieldname, '');
                     $value = preg_replace('/[^\0-9]/u', '', $value);
                     if ($value == '')
                         $value = $this->defaultValue;
@@ -365,7 +365,7 @@ class Inputbox
 
             case 'language':
                 if ($value === null) {
-                    $value = $this->ct->Env->jinput->getString($this->ct->Env->field_prefix . $this->field->fieldname, '');
+                    $value = common::inputGetString($this->ct->Env->field_prefix . $this->field->fieldname, '');
                     if ($value == '') {
                         if ($this->defaultValue === null or $this->defaultValue === '') {
                             //If it's a new record then current language will be used.
@@ -389,7 +389,7 @@ class Inputbox
 
             case 'filelink':
                 if ($value === null) {
-                    $value = $this->ct->Env->jinput->getString($this->ct->Env->field_prefix . $this->field->fieldname, '');
+                    $value = common::inputGetString($this->ct->Env->field_prefix . $this->field->fieldname, '');
                     if ($value == '')
                         $value = $this->defaultValue;
                 }
@@ -407,7 +407,7 @@ class Inputbox
 
             case 'googlemapcoordinates'://dok
                 if ($value === null) {
-                    $value = $this->ct->Env->jinput->getCmd($this->ct->Env->field_prefix . $this->field->fieldname, '');
+                    $value = common::inputGetCmd($this->ct->Env->field_prefix . $this->field->fieldname, '');
                     if ($value == '')
                         $value = $this->defaultValue;
                 }
@@ -415,7 +415,7 @@ class Inputbox
 
             case 'email'://dok
                 if ($value === null) {
-                    $value = $this->ct->Env->jinput->getString($this->ct->Env->field_prefix . $this->field->fieldname, '');
+                    $value = common::inputGetString($this->ct->Env->field_prefix . $this->field->fieldname, '');
                     //https://stackoverflow.com/questions/58265286/remove-all-special-characters-from-string-to-make-it-a-valid-email-but-keep-%C3%A4%C3%B6%C3%BC
                     $value = preg_replace('/[^\p{L}\d\-.;@_]/u', '', $value);
 
@@ -448,7 +448,7 @@ class Inputbox
 
             case 'article':
                 if ($value === null) {
-                    $value = $this->ct->Env->jinput->getInt($this->ct->Env->field_prefix . $this->field->fieldname);
+                    $value = common::inputGetInt($this->ct->Env->field_prefix . $this->field->fieldname);
                     if ($value === null)
                         $value = (int)$this->defaultValue;
                 }
@@ -484,7 +484,7 @@ class Inputbox
         $i = 0;
 
         if ($value === null) {
-            $value = $this->ct->Env->jinput->getString($this->ct->Env->field_prefix . $this->field->fieldname, '');
+            $value = common::inputGetString($this->ct->Env->field_prefix . $this->field->fieldname, '');
             $value = preg_replace("/[^A-Za-z\d\-]/", '', $value);
             if ($value == '')
                 $value = $this->defaultValue;
@@ -512,7 +512,7 @@ class Inputbox
         $result = '';
 
         if ($value === null) {
-            $value = $this->ct->Env->jinput->get($this->ct->Env->field_prefix . $this->field->fieldname, '', 'ALNUM');
+            $value = common::inputGet($this->ct->Env->field_prefix . $this->field->fieldname, '', 'ALNUM');
             if ($value == '')
                 $value = $this->defaultValue;
         }
@@ -543,7 +543,7 @@ class Inputbox
         $result = '';
 
         if ($value === null) {
-            $value = $this->ct->Env->jinput->getCmd($this->ct->Env->field_prefix . $this->field->fieldname, '');
+            $value = common::inputGetCmd($this->ct->Env->field_prefix . $this->field->fieldname, '');
             if ($value == '')
                 $value = (float)$this->defaultValue;
         }
@@ -573,7 +573,7 @@ class Inputbox
     protected function getTextBox($value): string
     {
         if ($value === null) {
-            $value = $this->ct->Env->jinput->getString($this->ct->Env->field_prefix . $this->field->fieldname, '');
+            $value = common::inputGetString($this->ct->Env->field_prefix . $this->field->fieldname, '');
             if ($value == '')
                 $value = $this->defaultValue;
         }
@@ -622,7 +622,7 @@ class Inputbox
             $maxlength = (int)$this->field->params[0];
 
         if ($value === null) {
-            $value = $this->ct->Env->jinput->getString($this->ct->Env->field_prefix . $this->field->fieldname, '');
+            $value = common::inputGetString($this->ct->Env->field_prefix . $this->field->fieldname, '');
             if ($value == '')
                 $value = $this->defaultValue;
         }
@@ -702,7 +702,7 @@ class Inputbox
 
         $value = $this->row[$this->field->realfieldname . $postfix] ?? null;
         if ($value === null) {
-            $value = $this->ct->Env->jinput->get($this->prefix . $this->field->fieldname . $postfix, '', 'STRING');
+            $value = common::inputGet($this->prefix . $this->field->fieldname . $postfix, '', 'STRING');
             if ($value == '')
                 $value = $this->defaultValue;
         }
@@ -731,7 +731,7 @@ class Inputbox
     protected function render_text(?string $value): string
     {
         if ($value === null) {
-            $value = $this->ct->Env->jinput->getString($this->ct->Env->field_prefix . $this->field->fieldname, '');
+            $value = common::inputGetString($this->ct->Env->field_prefix . $this->field->fieldname, '');
             if ($value == '')
                 $value = $this->defaultValue;
         }
@@ -796,7 +796,7 @@ class Inputbox
             }
 
             if ($value === null) {
-                $value = $this->ct->Env->jinput->getString($this->ct->Env->field_prefix . $this->field->fieldname, '');
+                $value = common::inputGetString($this->ct->Env->field_prefix . $this->field->fieldname, '');
                 if ($value == '')
                     $value = $this->defaultValue;
             }
@@ -835,7 +835,7 @@ class Inputbox
     protected function render_checkbox(?string $value_): string
     {
         if ($value_ === null) {
-            $value = $this->ct->Env->jinput->getInt($this->ct->Env->field_prefix . $this->field->fieldname, 0);
+            $value = common::inputGetInt($this->ct->Env->field_prefix . $this->field->fieldname, 0);
             if ($value == 0)
                 $value = (int)$this->defaultValue;
         } else {
@@ -1027,13 +1027,13 @@ class Inputbox
     protected function getUserBox(?string $value): string
     {
         if ($value === null) {
-            $value = $this->ct->Env->jinput->getInt($this->ct->Env->field_prefix . $this->field->fieldname, 0);
+            $value = common::inputGetInt($this->ct->Env->field_prefix . $this->field->fieldname, 0);
             if ($value == 0)
                 $value = $this->defaultValue;
         }
         $result = '';
 
-        if ($this->ct->Env->userid == 0)
+        if ($this->ct->Env->user->id == 0)
             return '';
 
         $attributes = 'class="' . $this->cssclass . '" ' . $this->attributes;
@@ -1050,13 +1050,13 @@ class Inputbox
     protected function getUserGroupBox(?string $value): string
     {
         if ($value === null) {
-            $value = $this->ct->Env->jinput->getInt($this->ct->Env->field_prefix . $this->field->fieldname, 0);
+            $value = common::inputGetInt($this->ct->Env->field_prefix . $this->field->fieldname, 0);
             if ($value == 0)
                 $value = $this->defaultValue;
         }
         $result = '';
 
-        if ($this->ct->Env->userid == 0)
+        if ($this->ct->Env->user->id == 0)
             return '';
 
         $attributes = 'class="' . $this->cssclass . '" ' . $this->attributes;
@@ -1079,7 +1079,7 @@ class Inputbox
     protected function render_color(?string $value): string
     {
         if ($value === null) {
-            $value = $this->ct->Env->jinput->get($this->ct->Env->field_prefix . $this->field->fieldname, '', 'ALNUM');
+            $value = common::inputGet($this->ct->Env->field_prefix . $this->field->fieldname, '', 'ALNUM');
             if ($value == '')
                 $value = $this->defaultValue;
         }
@@ -1152,7 +1152,7 @@ class Inputbox
         //$this->field->params[3] is requirement depth
 
         if ($value === null) {
-            $value = $this->ct->Env->jinput->getString($this->ct->Env->field_prefix . $this->field->fieldname);
+            $value = common::inputGetString($this->ct->Env->field_prefix . $this->field->fieldname);
             if ($value === null) {
                 if ($this->field->defaultvalue !== null and $this->field->defaultvalue != '')
                     $value = ',' . $this->field->params[0] . '.' . $this->defaultValue . '.,';
@@ -1208,7 +1208,7 @@ class Inputbox
         //$this->option_list[3] - Custom Title Layout
 
         if ($value === null) {
-            $value = $this->ct->Env->jinput->getInt($this->ct->Env->field_prefix . $this->field->fieldname, 0);
+            $value = common::inputGetInt($this->ct->Env->field_prefix . $this->field->fieldname, 0);
             if ($value == 0)
                 $value = $this->defaultValue;
         }
@@ -1260,7 +1260,7 @@ class Inputbox
         //$this->option_list[3] - Custom Title Layout
 
         if ($value === null) {
-            $value = $this->ct->Env->jinput->getInt($this->ct->Env->field_prefix . $this->field->fieldname, 0);
+            $value = common::inputGetInt($this->ct->Env->field_prefix . $this->field->fieldname, 0);
             if ($value == 0)
                 $value = $this->defaultValue;
         }
@@ -1335,7 +1335,7 @@ class Inputbox
 
         if ($value === null) {
             $value = SaveFieldQuerySet::get_record_type_value($this->ct, $this->field);
-            $this->ct->Env->jinput->getInt($this->ct->Env->field_prefix . $this->field->fieldname);
+            common::inputGetInt($this->ct->Env->field_prefix . $this->field->fieldname);
             if ($value == '')
                 $value = $this->defaultValue;
         }
@@ -1362,7 +1362,7 @@ class Inputbox
     protected function render_url(?string $value): string
     {
         if ($value === null) {
-            $value = $this->ct->Env->jinput->getString($this->ct->Env->field_prefix . $this->field->fieldname, '');
+            $value = common::inputGetString($this->ct->Env->field_prefix . $this->field->fieldname, '');
             //https://stackoverflow.com/questions/58265286/remove-all-special-characters-from-string-to-make-it-a-valid-email-but-keep-%C3%A4%C3%B6%C3%BC
             $value = preg_replace('/[^\p{L}\d\-.;@_]/u', '', $value);
 
@@ -1404,7 +1404,7 @@ class Inputbox
         $result = '';
 
         if ($value === null) {
-            $value = $this->ct->Env->jinput->getString($this->ct->Env->field_prefix . $this->field->fieldname, '');
+            $value = common::inputGetString($this->ct->Env->field_prefix . $this->field->fieldname, '');
             $value = preg_replace('/[^\0-9]/u', '', $value);
 
             if ($value == '')
@@ -1447,7 +1447,7 @@ class Inputbox
         $result = '';
 
         if ($value === null) {
-            $value = $this->ct->Env->jinput->get($this->ct->Env->field_prefix . $this->field->fieldname, '', 'CMD');
+            $value = common::inputGet($this->ct->Env->field_prefix . $this->field->fieldname, '', 'CMD');
 
             if ($value == '')
                 $value = $this->defaultValue;
@@ -1542,7 +1542,7 @@ class Inputbox
             $fieldname = $this->field->fieldname . $postfix;
 
             if ($this->ct->isRecordNull($this->row))
-                $value = $this->ct->Env->jinput->get($this->ct->Env->field_prefix . $fieldname, '', 'STRING');
+                $value = common::inputGet($this->ct->Env->field_prefix . $fieldname, '', 'STRING');
             else
                 $value = $this->row[$this->field->realfieldname . $postfix];
 
@@ -1571,7 +1571,7 @@ class Inputbox
         $value = null;
 
         if ($this->ct->isRecordNull($row)) {
-            $value = $this->ct->Env->jinput->getString($this->field->realfieldname);
+            $value = common::inputGetString($this->field->realfieldname);
 
             if ($value == '')
                 $value = $this->getWhereParameter($this->field->realfieldname);
@@ -1632,7 +1632,7 @@ class Inputbox
 
     protected function getWhereParameters(): array
     {
-        $value = $this->ct->Env->jinput->get('where', '', 'BASE64');
+        $value = common::inputGet('where', '', 'BASE64');
         $b = base64_decode($value);
         $b = str_replace(' or ', ' and ', $b);
         $b = str_replace(' OR ', ' and ', $b);

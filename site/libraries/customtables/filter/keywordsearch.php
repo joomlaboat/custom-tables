@@ -9,6 +9,7 @@
  **/
 
 // no direct access
+use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\Ordering;
 use Joomla\CMS\Factory;
@@ -38,38 +39,28 @@ class CustomTablesKeywordSearch
     function getRowsByKeywords($keywords, &$record_count, $limit, $limitstart)
     {
         $result_rows = array();
-        $listing_ids = array();
 
-        if (!Factory::getApplication()->input->getString('esfieldlist', ''))
+        if (!common::inputGetString('esfieldlist', ''))
             return $result_rows;
 
         if ($keywords == '')
             return $result_rows;
 
-
         $keywords = trim(preg_replace("/[^a-zA-Z\dáéíóúýñÁÉÍÓÚÝÑ [:punct:]]/", "", $keywords));
-
         $keywords = str_replace('\\', '', $keywords);
+        $mod_fieldlist = explode(',', common::inputGetString('esfieldlist', ''));
 
-
-        $mod_fieldlist = explode(',', Factory::getApplication()->input->getString('esfieldlist', ''));
-
-        //Strict (all words in a serash must be there)
+        //Strict (all words in a search must be there)
         $result_rows = $this->getRowsByKeywords_Processor($keywords, $mod_fieldlist, 'AND');
-
 
         //At least one word is match
         if (count($result_rows) == 0)
             $result_rows = $this->getRowsByKeywords_Processor($keywords, $mod_fieldlist, 'OR');
 
-
         $record_count = count($result_rows);
-
 
         //Process Limit
         $result_rows = $this->processLimit($result_rows, $limit, $limitstart);
-
-
         return $result_rows;
     }
 
@@ -77,7 +68,6 @@ class CustomTablesKeywordSearch
     {
         $keyword_arr = explode(' ', $keywords);
         $count = 0;
-
         $result_rows = array();
         $listing_ids = array();
 

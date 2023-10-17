@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use Joomla\CMS\Factory;
 
 $document = Factory::getDocument();
@@ -32,7 +33,7 @@ $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_cu
 
 <h3><?php echo $this->Listing_Title; ?></h3>
 
-<form action="index.php?option=com_customtables&view=editphotos&Itemid=<?php echo $this->jinput->getInt('Itemid', 0); ?>"
+<form action="index.php?option=com_customtables&view=editphotos&Itemid=<?php echo common::inputGetInt('Itemid', 0); ?>"
       method="POST" name="eseditphotos" id="eseditphotos" enctype="multipart/form-data">
     <?php
 
@@ -87,8 +88,8 @@ $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_cu
 
         <input type="hidden" name="option" value="com_customtables"/>
         <input type="hidden" name="view" value="editphotos"/>
-        <input type="hidden" name="Itemid" value="<?php echo $this->jinput->get('Itemid', 0, 'INT'); ?>"/>
-        <input type="hidden" name="returnto" value="<?php echo $this->jinput->get('returnto', '', 'BASE64');; ?>"/>
+        <input type="hidden" name="Itemid" value="<?php echo common::inputGet('Itemid', 0, 'INT'); ?>"/>
+        <input type="hidden" name="returnto" value="<?php echo common::inputGet('returnto', '', 'BASE64');; ?>"/>
 
         <input type="hidden" name="vlu" id="vlu" value=""/>
         <input type="hidden" name="task" id="photoedit_task" value=""/>

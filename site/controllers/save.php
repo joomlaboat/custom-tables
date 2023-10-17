@@ -13,14 +13,13 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\CTUser;
 use CustomTables\TwigProcessor;
 use Joomla\CMS\Factory;
 
-$jinput = Factory::getApplication()->input;
-
-$task = $jinput->getCmd('task');
+$task = common::inputGetCmd('task');
 
 switch ($task) {
     case 'saveandcontinue':
@@ -34,7 +33,7 @@ switch ($task) {
     case 'cancel':
 
         $msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_EDIT_CANCELED');
-        $link = $returnto = base64_decode(Factory::getApplication()->input->get('returnto', '', 'BASE64'));
+        $link = $returnto = base64_decode(common::inputGet('returnto', '', 'BASE64'));
         $this->setRedirect($link, $msg);
 
         break;
@@ -51,8 +50,6 @@ switch ($task) {
 
 function CustomTablesDelete($this_)
 {
-    $jinput = Factory::getApplication()->input;
-
     $ct = new CT;
 
     $edit_model = $this_->getModel('edititem');
@@ -71,7 +68,7 @@ function CustomTablesDelete($this_)
         }
         return true;
     } else {
-        $returnto = $jinput->get('returnto', '', 'BASE64');
+        $returnto = common::inputGet('returnto', '', 'BASE64');
         $decodedReturnTo = base64_decode($returnto);
 
         if ($returnto != '') {
@@ -97,11 +94,10 @@ function CustomTablesDelete($this_)
 
 function CustomTablesSave($task, $this_)
 {
-    $jinput = Factory::getApplication()->input;
-    $returnto = $jinput->get('returnto', '', 'BASE64');
+    $returnto = common::inputGet('returnto', '', 'BASE64');
     $link = base64_decode($returnto);
 
-    $jinput->set('task', '');
+    common::inputSet('task', '');
     $ct = new CT(null, false);
     $model = $this_->getModel('edititem');
 
@@ -128,7 +124,7 @@ function CustomTablesSave($task, $this_)
             else
                 $link .= '&';
 
-            $link .= 'listing_id=' . $jinput->getInt("listing_id");
+            $link .= 'listing_id=' . common::inputGetInt("listing_id");
             //stay on the same page if "saveandcontinue"
         }
 
@@ -158,11 +154,11 @@ function CustomTablesSave($task, $this_)
                 $ct->app->enqueueMessage($twig->errorMessage, 'error');
 
 
-            if (Factory::getApplication()->input->getInt('clean', 0) == 1) {
+            if (common::inputGetInt('clean', 0) == 1) {
 
                 $res = ['status' => 'saved', 'id' => $model->listing_id];
 
-                if (Factory::getApplication()->input->getInt('load', 0) == 1) {
+                if (common::inputGetInt('load', 0) == 1) {
                     $ct->Table->loadRecord($model->listing_id);
                     $res['record'] = $ct->Table->record;
                 }
@@ -170,7 +166,7 @@ function CustomTablesSave($task, $this_)
                 die(json_encode($res));
 
             } elseif ($link != '') {
-                $link = str_replace('$get_listing_id', Factory::getApplication()->input->get("listing_id", 0, 'INT'), $link);
+                $link = str_replace('$get_listing_id', common::inputGet("listing_id", 0, 'INT'), $link);
 
                 if (!str_contains($link, 'tmpl=component')) {
                     if ($msg != '') {
@@ -184,10 +180,10 @@ function CustomTablesSave($task, $this_)
                 }
 
             } else {
-                if (Factory::getApplication()->input->get('submitbutton', '', 'CMD') == 'nextprint') {
+                if (common::inputGet('submitbutton', '', 'CMD') == 'nextprint') {
                     $link = $ct->Env->WebsiteRoot . 'index.php?option=com_customtables&view=details'
-                        . '&Itemid=' . Factory::getApplication()->input->get('Itemid', 0, 'INT')
-                        . '&listing_id=' . Factory::getApplication()->input->get("listing_id", 0, 'INT')
+                        . '&Itemid=' . common::inputGet('Itemid', 0, 'INT')
+                        . '&listing_id=' . common::inputGet("listing_id", 0, 'INT')
                         . '&tmpl=component'
                         . '&print=1';
 
@@ -198,14 +194,14 @@ function CustomTablesSave($task, $this_)
 					onClick=\'window.open("' . $link . '","win2","' . $status . '"); return false; \'>
 					</p>';
 
-                    Factory::getApplication()->input->get('view', 'details');
+                    common::inputGet('view', 'details');
 
 
                     return true;
 
 
                 } else {
-                    $link = $ct->Env->WebsiteRoot . 'index.php?option=com_customtables&view=catalog&Itemid=' . Factory::getApplication()->input->get('Itemid', 0, 'INT');
+                    $link = $ct->Env->WebsiteRoot . 'index.php?option=com_customtables&view=catalog&Itemid=' . common::inputGet('Itemid', 0, 'INT');
 
                     if ($msg != '')
                         $this_->setRedirect($link, $msg);

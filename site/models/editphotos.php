@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\CT;
 
 use CustomTables\Field;
@@ -72,11 +73,11 @@ class CustomTablesModelEditPhotos extends JModelLegacy
             return false;
         }
 
-        $this->listing_id = $this->ct->Env->jinput->getInt("listing_id", 0);
-        if (!$this->ct->Env->jinput->getCmd('galleryname'))
+        $this->listing_id = common::inputGetInt("listing_id", 0);
+        if (!common::inputGetCmd('galleryname'))
             return false;
 
-        $this->galleryname = $this->ct->Env->jinput->getCmd('galleryname');
+        $this->galleryname = common::inputGetCmd('galleryname');
 
         $this->getObject();
 
@@ -143,10 +144,10 @@ class CustomTablesModelEditPhotos extends JModelLegacy
 
         //Apply Main Photo
         //Get New Ordering
-        $MainPhoto = Factory::getApplication()->input->getInt('esphotomain');
+        $MainPhoto = common::inputGetInt('esphotomain');
 
         foreach ($images as $image) {
-            $image->ordering = abs(Factory::getApplication()->input->getInt('esphotoorder' . $image->photoid, 0));
+            $image->ordering = abs(common::inputGetInt('esphotoorder' . $image->photoid, 0));
             if ($MainPhoto == $image->photoid)
                 $image->ordering = -1;
         }
@@ -171,7 +172,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy
         asort($images);
         $i = 0;
         foreach ($images as $image) {
-            $safeTitle = Factory::getApplication()->input->getString('esphototitle' . $image->photoid);
+            $safeTitle = common::inputGetString('esphototitle' . $image->photoid);
             $safeTitle = str_replace('"', "", $safeTitle);
 
             $query = 'UPDATE ' . $this->phototablename . ' SET ordering=' . $i . ', title' . $this->ct->Languages->Postfix . '="' . $safeTitle . '" WHERE listingid='
@@ -202,7 +203,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy
     {
         $db = Factory::getDBO();
 
-        $photoids = Factory::getApplication()->input->getString('photoids', '');
+        $photoids = common::inputGetString('photoids', '');
         $photo_arr = explode('*', $photoids);
 
         foreach ($photo_arr as $photoid) {
@@ -222,14 +223,13 @@ class CustomTablesModelEditPhotos extends JModelLegacy
 
     function add(): bool
     {
-        $jinputfile = Factory::getApplication()->input->files;
-        $file = $jinputfile->files->get('uploadedfile');
+        $file = common::inputFiles('uploadedfile');
 
         $uploadedfile = "tmp/" . basename($file['name']);
         if (!move_uploaded_file($file['tmp_name'], $uploadedfile))
             return false;
 
-        if (Factory::getApplication()->input->getCmd('base64ecnoded', '') == "true") {
+        if (common::inputGetCmd('base64ecnoded', '') == "true") {
             $src = $uploadedfile;
             $dst = "tmp/decoded_" . basename($file['name']);
             $this->base64file_decode($src, $dst);
@@ -354,7 +354,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy
         asort($images);
         $i = 0;
         foreach ($images as $image) {
-            $safeTitle = Factory::getApplication()->input->getString('esphototitle' . $image->photoid);
+            $safeTitle = common::inputGetString('esphototitle' . $image->photoid);
             $safeTitle = str_replace('"', "", $safeTitle);
 
             if ($safeTitle != '') {

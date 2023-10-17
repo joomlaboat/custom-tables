@@ -23,8 +23,6 @@ class IntegrityOptions extends \CustomTables\IntegrityChecks
 {
     public static function checkOptions(&$ct)
     {
-        $jinput = Factory::getApplication()->input;
-
         IntegrityOptions::checkOptionsTitleFields($ct);
     }
 

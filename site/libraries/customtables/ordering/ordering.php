@@ -174,7 +174,6 @@ class Ordering
     {
         //get sort field (and direction) example "price desc"
         $app = Factory::getApplication();
-        $jinput = $app->input;
         $ordering_param_string = '';
 
         if ($this->Params->blockExternalVars) {
@@ -186,11 +185,11 @@ class Ordering
         } else {
             if ($this->Params->forceSortBy != '') {
                 $ordering_param_string = $this->Params->forceSortBy;
-            } elseif ($jinput->get('esordering', '', 'CMD')) {
-                $ordering_param_string = $jinput->getString('esordering', '');
+            } elseif (common::inputGet('esordering', '', 'CMD')) {
+                $ordering_param_string = common::inputGetString('esordering', '');
                 $ordering_param_string = trim(preg_replace("/[^a-zA-Z-+%.: ,_]/", "", $ordering_param_string));
             } else {
-                $Itemid = $jinput->getInt('Itemid', 0);
+                $Itemid = common::inputGetInt('Itemid', 0);
                 $ordering_param_string = $app->getUserState('com_customtables.orderby_' . $Itemid, '');
 
                 if ($ordering_param_string == '') {
@@ -296,8 +295,8 @@ class Ordering
     public function saveorder(): bool
     {
         // Get the input
-        $pks = $this->Table->Env->jinput->post->get('cid', array(), 'array');
-        $order = $this->Table->Env->jinput->post->get('order', array(), 'array');
+        $pks = common::inputPost('cid', array(), 'array');
+        $order = common::inputPost('order', array(), 'array');
 
         // Sanitize the input
         $pks = ArrayHelper::toInteger($pks);

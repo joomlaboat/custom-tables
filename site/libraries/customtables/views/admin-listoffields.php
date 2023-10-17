@@ -15,14 +15,11 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
-use CustomtablesHelper;
 use JFilterInput;
 use JHtml;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
-
-use CustomTables\Fields;
 
 class ListOfFields
 {

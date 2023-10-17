@@ -9,11 +9,11 @@
  **/
 
 // no direct access
+use CustomTables\common;
+
 if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
-
-use Joomla\CMS\Factory;
 
 ?>
 
@@ -192,7 +192,7 @@ use Joomla\CMS\Factory;
         <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>"/>
         <input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>"/>
         <input type="hidden" name="Itemid"
-               value="<?php echo Factory::getApplication()->input->get('Itemid', 0, 'INT'); ?>"/>
+               value="<?php echo common::inputGet('Itemid', 0, 'INT'); ?>"/>
 
         <?php echo JHTML::_('form.token'); ?>
     </form>

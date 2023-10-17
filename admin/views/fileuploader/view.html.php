@@ -9,6 +9,7 @@
  **/
 
 // no direct access
+use CustomTables\common;
 use Joomla\CMS\Factory;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
@@ -26,9 +27,7 @@ class CustomTablesViewFileUploader extends JViewLegacy
 
         if (ob_get_contents()) ob_end_clean();
 
-        $jinput = Factory::getApplication()->input;
-        $fileid = $jinput->getCmd('fileid', '');
-
+        $fileid = common::inputGetCmd('fileid', '');
         echo ESFileUploader::uploadFile($fileid, 'txt html');
 
         die; //to stop rendering template and staff

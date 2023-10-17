@@ -12,6 +12,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\DataTypes\Tree;
 use Joomla\CMS\Factory;
 
@@ -274,5 +275,5 @@ $max_file_size = JoomlaBasicMisc::file_upload_max_size();
     <input type="hidden" name="id" value="<?php echo $this->optionRecord->id; ?>"/>
     <input type="hidden" name="task" value=""/>
     <input type="hidden" name="Itemid"
-           value="<?php echo Factory::getApplication()->input->get('Itemid', 0, 'INT'); ?>"/>
+           value="<?php echo common::inputGet('Itemid', 0, 'INT'); ?>"/>
 </form>

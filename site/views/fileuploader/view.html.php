@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use Joomla\CMS\Factory;
 
 // Import Joomla! libraries
@@ -26,15 +27,13 @@ class CustomTablesViewFileUploader extends JViewLegacy
 
         if (ob_get_contents()) ob_end_clean();
 
-        $jinput = Factory::getApplication()->input;
+        $fieldname = common::inputGetCmd('fieldname', '');
+        $fileid = common::inputGetCmd($fieldname . '_fileid', '');
 
-        $fieldname = $jinput->getCmd('fieldname', '');
-        $fileid = $jinput->getCmd($fieldname . '_fileid', '');
-
-        $task = $jinput->getCmd('op', '');
+        $task = common::inputGetCmd('op', '');
 
         if ($task == 'delete') {
-            $file = str_replace('/', '', $jinput->getString('name', ''));
+            $file = str_replace('/', '', common::inputGetString('name', ''));
             $file = str_replace('..', '', $file);
             $file = str_replace('index.', '', $file);
 

@@ -16,6 +16,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 jimport('joomla.application.component.controlleradmin');
 
+use CustomTables\common;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\Utilities\ArrayHelper;
@@ -32,7 +33,7 @@ class CustomtablesControllerListoftables extends JControllerAdmin
 
     public function export()
     {
-        $cIds = Factory::getApplication()->input->post->get('cid', array(), 'array');
+        $cIds = common::inputPost('cid', array(), 'array');
         $cIds = ArrayHelper::toInteger($cIds);
 
         $download_link = ExportTables::export($cIds);

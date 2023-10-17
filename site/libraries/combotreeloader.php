@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\DataTypes\Tree;
 use Joomla\CMS\Factory;
@@ -55,20 +56,20 @@ if (!defined('_JEXEC')) {
 if ($independat) {
     require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'combotreeloader.php');
 
-    $tableName = Factory::getApplication()->input->get('establename', '', 'CMD');
-    $fieldName = Factory::getApplication()->input->get('esfieldname', '', 'CMD');
-    $optionName = Factory::getApplication()->input->getCmd('optionname');
+    $tableName = common::inputGet('establename', '', 'CMD');
+    $fieldName = common::inputGet('esfieldname', '', 'CMD');
+    $optionName = common::inputGetCmd('optionname');
 
     $MyESDynCombo = new ESDynamicComboTree();
-    $MyESDynCombo->initialize($tableName, $fieldName, $optionName, Factory::getApplication()->input->getString('prefix'));
-    $MyESDynCombo->langpostfix = Factory::getApplication()->input->getCmd('langpostfix', '');
-    $MyESDynCombo->cssclass = Factory::getApplication()->input->getString('cssclass');
-    $MyESDynCombo->onchange = Factory::getApplication()->input->getString('onchange');
-    $MyESDynCombo->innerjoin = Factory::getApplication()->input->getInt('innerjoin');
-    $MyESDynCombo->isRequired = Factory::getApplication()->input->get('isrequired', 0, 'INT');
-    $MyESDynCombo->requirementdepth = Factory::getApplication()->input->getInt('requirementdepth');
-    $MyESDynCombo->where = Factory::getApplication()->input->getString('where');
-    $MyESDynCombo->place_holder = Factory::getApplication()->input->getString('place_holder');
+    $MyESDynCombo->initialize($tableName, $fieldName, $optionName, common::inputGetString('prefix'));
+    $MyESDynCombo->langpostfix = common::inputGetCmd('langpostfix', '');
+    $MyESDynCombo->cssclass = common::inputGetString('cssclass');
+    $MyESDynCombo->onchange = common::inputGetString('onchange');
+    $MyESDynCombo->innerjoin = common::inputGetInt('innerjoin');
+    $MyESDynCombo->isRequired = common::inputGet('isrequired', 0, 'INT');
+    $MyESDynCombo->requirementdepth = common::inputGetInt('requirementdepth');
+    $MyESDynCombo->where = common::inputGetString('where');
+    $MyESDynCombo->place_holder = common::inputGetString('place_holder');
 
     $MyESDynCombo->parentname = '';
 
@@ -157,8 +158,8 @@ class ESDynamicComboTree
             else
                 $result .= $this->renderSelectBox($object_name, $rows, $urlwhere, 'class="inputbox"', $simpleList, $value, $place_holder, $valuerule, $valuerulecaption);
 
-            if (Factory::getApplication()->input->getCmd($object_name)) {
-                $temp_parent .= '.' . Factory::getApplication()->input->getCmd($object_name);
+            if (common::inputGetCmd($object_name)) {
+                $temp_parent .= '.' . common::inputGetCmd($object_name);
                 $this->parentname = $temp_parent;
 
                 $this->getInstrWhereAdv($object_name, $temp_parent, $filterwhere, $urlwhere, $filterwherearr, $urlwherearr, $this->fieldName);
@@ -167,7 +168,7 @@ class ESDynamicComboTree
 
             $i++;
 
-        } while (Factory::getApplication()->input->getCmd($object_name));
+        } while (common::inputGetCmd($object_name));
         return $result;
     }
 
@@ -231,7 +232,7 @@ class ESDynamicComboTree
         $optional = implode("&", $optionalarr);
 
         if ($value == '')
-            $value = Factory::getApplication()->input->getCmd($objectname, '');
+            $value = common::inputGetCmd($objectname, '');
 
         $result = '';
 
@@ -295,9 +296,9 @@ class ESDynamicComboTree
 
     function getInstrWhereAdv($object_name, $temp_parent, &$filterwhere, &$urlwhere, &$filterwherearr, &$urlwherearr, $field)
     {
-        if (strlen(Factory::getApplication()->input->getString($object_name, '')) > 0) {
+        if (strlen(common::inputGetString($object_name, '')) > 0) {
             $filterwherearr[] = 'INSTR(' . $this->listingtable . '.es_' . $field . ', ",' . $temp_parent . '.")';
-            $urlwherearr[] = $object_name . '=' . Factory::getApplication()->input->getCmd($object_name, '');
+            $urlwherearr[] = $object_name . '=' . common::inputGetCmd($object_name, '');
         }
 
         if (count($filterwherearr) > 0) {

@@ -9,6 +9,8 @@
  **/
 
 // no direct access
+use CustomTables\common;
+
 if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
@@ -71,7 +73,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 <h2><?php echo $this->FileBoxTitle; ?></h2>
 
-<form action="index.php?Itemid=<?php echo $this->jinput->get('Itemid', 0, 'INT'); ?>" method="POST" name="eseditfiles"
+<form action="index.php?Itemid=<?php echo common::inputGet('Itemid', 0, 'INT'); ?>" method="POST" name="eseditfiles"
       id="eseditfiles" enctype="multipart/form-data">
     <?php
     $toolbar = '
@@ -119,8 +121,8 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
         <input type="hidden" name="option" value="com_customtables"/>
         <input type="hidden" name="view" value="editfiles"/>
-        <input type="hidden" name="Itemid" value="<?php echo $this->jinput->get('Itemid', 0, 'INT'); ?>"/>
-        <input type="hidden" name="returnto" value="<?php echo $this->jinput->get('returnto', '', 'BASE64');; ?>"/>
+        <input type="hidden" name="Itemid" value="<?php echo common::inputGet('Itemid', 0, 'INT'); ?>"/>
+        <input type="hidden" name="returnto" value="<?php echo common::inputGet('returnto', '', 'BASE64');; ?>"/>
 
         <input type="hidden" name="vlu" id="vlu" value=""/>
         <input type="hidden" name="task" id="fileedit_task" value=""/>

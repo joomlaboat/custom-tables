@@ -9,6 +9,7 @@
  **/
 
 // no direct access
+use CustomTables\common;
 use Joomla\CMS\Factory;
 use Joomla\Utilities\ArrayHelper;
 
@@ -16,14 +17,14 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
-$layout = Factory::getApplication()->input->get('layout', '', 'CMD');
+$layout = common::inputGet('layout', '', 'CMD');
 
 
-switch (Factory::getApplication()->input->get('task', '', 'CMD')) {
+switch (common::inputGet('task', '', 'CMD')) {
     case 'edit':
 
-        Factory::getApplication()->input->set('view', 'listedit');
-        Factory::getApplication()->input->set('layout', 'form');
+        common::inputSet('view', 'listedit');
+        common::inputSet('layout', 'form');
 
         parent::display();
 
@@ -33,7 +34,7 @@ switch (Factory::getApplication()->input->get('task', '', 'CMD')) {
 
         $model = $this->getModel('listedit');
 
-        $link = 'index.php?option=com_customtables&view=list&Itemid=' . Factory::getApplication()->input->get('Itemid', 0, 'INT');
+        $link = 'index.php?option=com_customtables&view=list&Itemid=' . common::inputGet('Itemid', 0, 'INT');
         if ($model->store()) {
             $msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_OPTION_SAVED');
             $this->setRedirect($link, $msg);
@@ -46,7 +47,7 @@ switch (Factory::getApplication()->input->get('task', '', 'CMD')) {
 
     case 'cancel':
 
-        $link = 'index.php?option=com_customtables&view=list&Itemid=' . Factory::getApplication()->input->get('Itemid', 0, 'INT');
+        $link = 'index.php?option=com_customtables&view=list&Itemid=' . common::inputGet('Itemid', 0, 'INT');
 
         $msg = '';
 
@@ -58,14 +59,14 @@ switch (Factory::getApplication()->input->get('task', '', 'CMD')) {
     case 'remove':
 
 
-        $link = 'index.php?option=com_customtables&view=list&Itemid=' . Factory::getApplication()->input->get('Itemid', 0, 'INT');
+        $link = 'index.php?option=com_customtables&view=list&Itemid=' . common::inputGet('Itemid', 0, 'INT');
 
         // Check for request forgeries
         JSession::checkToken() or jexit('COM_CUSTOMTABLES_INVALID_TOKEN');
 
         // Get some variables from the request
 
-        $cid = Factory::getApplication()->input->post->get('cid', array(), 'array');
+        $cid = common::inputPost('cid', array(), 'array');
         ArrayHelper::toInteger($cid);
 
         if (!count($cid)) {
@@ -85,7 +86,7 @@ switch (Factory::getApplication()->input->get('task', '', 'CMD')) {
 
     default:
 
-        Factory::getApplication()->input->set('view', 'list');
+        common::inputSet('view', 'list');
         parent::display();
 
         break;

@@ -9,7 +9,6 @@
  **/
 
 // no direct access
-use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {

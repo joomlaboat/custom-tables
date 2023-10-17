@@ -15,7 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 // import Joomla view library
-//jimport('joomla.application.component.view');
+use CustomTables\common;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\Language\Text;
@@ -50,8 +50,8 @@ class CustomtablesViewCategories extends JViewLegacy
         $this->canDelete = $this->canDo->get('categories.delete');
 
         // get input
-        $this->ref = Factory::getApplication()->input->get('ref', 0, 'word');
-        $this->refid = Factory::getApplication()->input->get('refid', 0, 'int');
+        $this->ref = common::inputGet('ref', 0, 'word');
+        $this->refid = common::inputGet('refid', 0, 'int');
         $this->referral = '';
         if ($this->refid) {
             // return to the item that referred to this item
@@ -81,7 +81,7 @@ class CustomtablesViewCategories extends JViewLegacy
      */
     protected function addToolBar()
     {
-        Factory::getApplication()->input->set('hidemainmenu', true);
+        common::inputSet('hidemainmenu', true);
         $isNew = $this->item->id == 0;
 
         JToolbarHelper::title(Text::_($isNew ? 'COM_CUSTOMTABLES_CATEGORIES_NEW' : 'COM_CUSTOMTABLES_CATEGORIES_EDIT'), 'pencil-2 article-add');
@@ -152,7 +152,7 @@ class CustomtablesViewCategories extends JViewLegacy
         if ($this->version < 4)
             $this->document->addCustomTag('<script src=' . JURI::root(true) . '/administrator/components/com_customtables/views/categories/submitbutton.js"></script>');
 
-        JText::script('view not acceptable. Error');
+        //JText::script('view not acceptable. Error');
     }
 
     /**

@@ -46,13 +46,11 @@ trait render_xlsx
             ->setKeywords("")
             ->setCategory("");
 
-
         $wizard = new PHPExcel_Helper_HTML;
-
         if (ob_get_contents()) ob_end_clean();
 
         $allRecords = array();
-
+        $records = array();
         $column = 0;
         foreach ($fieldArray as $field) {
 
@@ -82,20 +80,15 @@ trait render_xlsx
 
             $LayoutProc = new LayoutProcessor($ct);
             $LayoutProc->layout = $recordLine;
-
             $records = array();
 
             foreach ($ct->Records as $row) {
                 $htmlresult = $LayoutProc->fillLayout($row);
-
                 $htmlresult = JoomlaBasicMisc::strip_tags_content($htmlresult, '<a><p><br><i><u><b><span>', FALSE);
                 $htmlresult = strip_tags($htmlresult);//, '<center><p><br><i><u><b><span>');
-
                 $records[] = $htmlresult;//$richText;
-
             }
             $allRecords[] = $records;
-
             $column++;
         }
 

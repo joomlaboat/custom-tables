@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\Details;
 use CustomTables\TwigProcessor;
@@ -40,12 +41,12 @@ class CustomTablesViewLog extends JViewLegacy
         $user = Factory::getUser();
         $this->userid = $user->id;
 
-        $this->action = Factory::getApplication()->input->getString('action', '');
+        $this->action = common::inputGetString('action', '');
         if ($this->action == '')
             $this->action = -1;
 
-        $this->userid = Factory::getApplication()->input->getInt('user', 0);
-        $this->tableId = Factory::getApplication()->input->getInt('table', 0);
+        $this->userid = common::inputGetInt('user', 0);
+        $this->tableId = common::inputGetInt('table', 0);
 
         //Is user super Admin?
         $this->isUserAdministrator = $this->ct->Env->isUserAdministrator;
@@ -64,7 +65,7 @@ class CustomTablesViewLog extends JViewLegacy
         if ($this->limit == 0)
             $this->limit = 20;
 
-        $this->limitStart = Factory::getApplication()->input->get('start', 0, 'INT');
+        $this->limitStart = common::inputGet('start', 0, 'INT');
         // In case limit has been changed, adjust it
         $this->limitStart = ($this->limit != 0 ? (floor($this->limitStart / $this->limit) * $this->limit) : 0);
 
@@ -197,10 +198,8 @@ class CustomTablesViewLog extends JViewLegacy
             return "Table/Field not found.";
 
         $app = Factory::getApplication();
-        $jInput = Factory::getApplication()->input;
-
-        $jInput->set("listing_id", $listing_id);
-        $jInput->set('Itemid', $Itemid);
+        common::inputSet("listing_id", $listing_id);
+        common::inputSet('Itemid', $Itemid);
 
         $menu = $app->getMenu();
         $menuParams = $menu->getParams($Itemid);

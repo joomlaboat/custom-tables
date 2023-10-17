@@ -76,7 +76,6 @@ class Params
     var ?string $ModuleId;
     var ?string $alias;
     var $app;
-    var $jinput;
 
     var ?string $recordsTable;
     var ?string $recordsUserIdField;
@@ -88,14 +87,22 @@ class Params
     {
         $this->ModuleId = null;
         $this->blockExternalVars = $blockExternalVars;
-        $this->app = Factory::getApplication();
-        $this->jinput = $this->app->input;
         $this->sortBy = null;
+
+        if (defined('_JEXEC'))
+            $this->constructJoomlaParams($menu_params, $blockExternalVars, $ModuleId);
+        else
+            $this->constructWPParams($menu_params);
+    }
+
+    protected function constructJoomlaParams(?\Joomla\Registry\Registry $menu_params = null, $blockExternalVars = true, ?string $ModuleId = null): void
+    {
+        $this->app = Factory::getApplication();
 
         if (is_null($menu_params)) {
 
             if (is_null($ModuleId)) {
-                $ModuleIdInt = $this->jinput->getInt('ModuleId');
+                $ModuleIdInt = common::inputGetInt('ModuleId');
                 if ($ModuleIdInt)
                     $ModuleId = strval($ModuleIdInt);
                 else
@@ -124,6 +131,16 @@ class Params
 
     function setParams($menu_params = null, $blockExternalVars = true, ?string $ModuleId = null): void
     {
+        if (defined('_JEXEC'))
+            $this->setJoomlaParams($menu_params, $blockExternalVars, $ModuleId);
+        else {
+            $this->setDefault();
+            $this->setWPParams($menu_params, $blockExternalVars, $ModuleId);
+        }
+    }
+
+    function setJoomlaParams($menu_params = null, $blockExternalVars = true, ?string $ModuleId = null): void
+    {
         $this->blockExternalVars = $blockExternalVars;
         $this->ModuleId = $ModuleId;
 
@@ -137,57 +154,16 @@ class Params
                 }
 
             } else {
-                $this->pageTitle = null;
-                $this->showPageHeading = null;
-                $this->pageClassSFX = null;
-                $this->listing_id = null;
-                $this->tableName = null;
-                $this->pageLayout = null;
-                $this->itemLayout = null;
-                $this->detailsLayout = null;
-                $this->editLayout = null;
-                $this->groupBy = null;
-                $this->sortBy = null;
-                $this->forceSortBy = null;
-                $this->addUserGroups = null;
-                $this->editUserGroups = null;
-                $this->publishUserGroups = null;
-                $this->deleteUserGroups = null;
-                $this->allowContentPlugins = false;
-                $this->userIdField = null;
-                $this->filter = null;
-                $this->showPublished = 2;//Show Any
-                $this->limit = null;
-                $this->publishStatus = null;
-                $this->returnTo = null;
-                $this->guestCanAddNew = null;
-                $this->requiredLabel = null;
-                $this->msgItemIsSaved = null;
-                $this->onRecordAddSendEmail = null;
-                $this->sendEmailCondition = null;
-                $this->onRecordAddSendEmailTo = null;
-                $this->onRecordSaveSendEmailTo = null;
-                $this->onRecordAddSendEmailLayout = null;
-                $this->emailSentStatusField = null;
-                $this->showCartItemsOnly = false;
-                $this->showCartItemsPrefix = null;
-                $this->cartReturnTo = null;
-                $this->cartMsgItemAdded = null;
-                $this->cartMsgItemDeleted = null;
-                $this->cartMsgItemUpdated = null;
-                $this->ItemId = null;
-                $this->alias = null;
-                $this->recordsTable = null;
-                $this->recordsUserIdField = null;
-                $this->recordsField = null;
+                $this->setDefault();
+
                 return;
             }
         }
 
         $this->getForceItemId($menu_params);
 
-        if (!$blockExternalVars and $this->jinput->getString('alias', ''))
-            $this->alias = JoomlaBasicMisc::slugify($this->jinput->getString('alias'));
+        if (!$blockExternalVars and common::inputGetString('alias', ''))
+            $this->alias = JoomlaBasicMisc::slugify(common::inputGetString('alias'));
         else
             $this->alias = null;
 
@@ -197,8 +173,8 @@ class Params
         if ($menu_params->get('pageclass_sfx') !== null)
             $this->pageClassSFX = strip_tags($menu_params->get('pageclass_sfx'));
 
-        if (!$blockExternalVars and !is_null($this->jinput->getCmd("listing_id")))
-            $this->listing_id = $this->jinput->getCmd("listing_id");
+        if (!$blockExternalVars and !is_null(common::inputGetCmd("listing_id")))
+            $this->listing_id = common::inputGetCmd("listing_id");
         else
             $this->listing_id = $menu_params->get('listingid');
 
@@ -207,8 +183,8 @@ class Params
 
         $this->tableName = null;
 
-        if ($this->jinput->getInt("ctmodalform", 0) == 1)
-            $this->tableName = $this->jinput->getInt("tableid");//Used in Save Modal form content.
+        if (common::inputGetInt("ctmodalform", 0) == 1)
+            $this->tableName = common::inputGetInt("tableid");//Used in Save Modal form content.
 
         if ($this->tableName === null) {
             $this->tableName = $menu_params->get('establename'); //Table name or id not sanitized
@@ -219,9 +195,9 @@ class Params
         //Filter
         $this->userIdField = $menu_params->get('useridfield');
 
-        if (!$blockExternalVars and $this->jinput->getString('filter', '')) {
+        if (!$blockExternalVars and common::inputGetString('filter', '')) {
 
-            $filter = $this->jinput->getString('filter', '');
+            $filter = common::inputGetString('filter', '');
             if (is_array($filter)) {
                 $this->filter = $filter['search'];
             } else
@@ -235,15 +211,15 @@ class Params
         $this->groupBy = $menu_params->get('groupby');
 
         //Sorting
-        if (!$blockExternalVars and !is_null($this->jinput->getCmd('sortby')))
-            $this->sortBy = strtolower($this->jinput->getCmd('sortby'));
+        if (!$blockExternalVars and !is_null(common::inputGetCmd('sortby')))
+            $this->sortBy = strtolower(common::inputGetCmd('sortby'));
         elseif (!is_null($menu_params->get('sortby')))
             $this->sortBy = strtolower($menu_params->get('sortby'));
 
         $this->forceSortBy = $menu_params->get('forcesortby');
 
         //Limit
-        $this->limit = $this->jinput->getInt('limit', ($menu_params->get('limit') ?? 20));
+        $this->limit = common::inputGetInt('limit', ($menu_params->get('limit') ?? 20));
 
         //Layouts
         $this->pageLayout = $menu_params->get('escataloglayout');
@@ -296,7 +272,7 @@ class Params
         $this->publishStatus = $menu_params->get('publishstatus');
 
         if (!$blockExternalVars and is_null($this->publishStatus))
-            $this->publishStatus = $this->jinput->getInt('published');
+            $this->publishStatus = common::inputGetInt('published');
         else
             $this->publishStatus = 1;
 
@@ -309,8 +285,8 @@ class Params
 
         //Form Saved
 
-        if (!$blockExternalVars and $this->jinput->get('returnto', '', 'BASE64'))
-            $this->returnTo = base64_decode($this->jinput->get('returnto', '', 'BASE64'));
+        if (!$blockExternalVars and common::inputGet('returnto', '', 'BASE64'))
+            $this->returnTo = base64_decode(common::inputGet('returnto', '', 'BASE64'));
         else
             $this->returnTo = $menu_params->get('returnto');
 
@@ -320,6 +296,53 @@ class Params
         $this->recordsTable = $menu_params->get('recordstable');
         $this->recordsUserIdField = $menu_params->get('recordsuseridfield');
         $this->recordsField = $menu_params->get('recordsfield');
+    }
+
+    protected function setDefault(): void
+    {
+        $this->pageTitle = null;
+        $this->showPageHeading = null;
+        $this->pageClassSFX = null;
+        $this->listing_id = null;
+        $this->tableName = null;
+        $this->pageLayout = null;
+        $this->itemLayout = null;
+        $this->detailsLayout = null;
+        $this->editLayout = null;
+        $this->groupBy = null;
+        $this->sortBy = null;
+        $this->forceSortBy = null;
+        $this->addUserGroups = null;
+        $this->editUserGroups = null;
+        $this->publishUserGroups = null;
+        $this->deleteUserGroups = null;
+        $this->allowContentPlugins = false;
+        $this->userIdField = null;
+        $this->filter = null;
+        $this->showPublished = 2;//Show Any
+        $this->limit = null;
+        $this->publishStatus = null;
+        $this->returnTo = null;
+        $this->guestCanAddNew = null;
+        $this->requiredLabel = null;
+        $this->msgItemIsSaved = null;
+        $this->onRecordAddSendEmail = null;
+        $this->sendEmailCondition = null;
+        $this->onRecordAddSendEmailTo = null;
+        $this->onRecordSaveSendEmailTo = null;
+        $this->onRecordAddSendEmailLayout = null;
+        $this->emailSentStatusField = null;
+        $this->showCartItemsOnly = false;
+        $this->showCartItemsPrefix = null;
+        $this->cartReturnTo = null;
+        $this->cartMsgItemAdded = null;
+        $this->cartMsgItemDeleted = null;
+        $this->cartMsgItemUpdated = null;
+        $this->ItemId = null;
+        $this->alias = null;
+        $this->recordsTable = null;
+        $this->recordsUserIdField = null;
+        $this->recordsField = null;
     }
 
     protected function getForceItemId($menu_params): void
@@ -341,6 +364,16 @@ class Params
             }
         }
 
-        $this->ItemId = $this->app->input->getInt('Itemid', 0);
+        $this->ItemId = common::inputGetInt('Itemid', 0);
+    }
+
+    function setWPParams($menu_params = null, $blockExternalVars = true, ?string $ModuleId = null): void
+    {
+
+    }
+
+    protected function constructWPParams(array $menu_params = null): void
+    {
+
     }
 }

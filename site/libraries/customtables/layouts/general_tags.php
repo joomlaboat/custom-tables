@@ -68,7 +68,7 @@ class Twig_User_Tags
     function __construct(&$ct)
     {
         $this->ct = &$ct;
-        $this->user_id = (int)$this->ct->Env->userid;
+        $this->user_id = (int)$this->ct->Env->user->id;
     }
 
     function name($user_id = 0): string
@@ -178,13 +178,11 @@ class Twig_Url_Tags
 {
     var CT $ct;
     var bool $isTwig;
-    var Input $jinput;
 
     function __construct(CT &$ct, $isTwig = true)
     {
         $this->ct = &$ct;
         $this->isTwig = $isTwig;
-        $this->jinput = $this->ct->app->input;
     }
 
     function link(): string
@@ -218,57 +216,57 @@ class Twig_Url_Tags
 
     function getuint($param, $default = 0)
     {
-        return $this->jinput->get($param, $default, 'UINT');
+        return common::inputGet($param, $default, 'UINT');
     }
 
     function getfloat($param, $default = 0): float
     {
-        return $this->jinput->getFloat($param, $default);
+        return common::inputGetFloat($param, $default);
     }
 
     function getword($param, $default = ''): string
     {
-        return $this->jinput->get($param, $default, 'WORD');
+        return common::inputGet($param, $default, 'WORD');
     }
 
     function getalnum($param, $default = ''): string
     {
-        return $this->jinput->getCmd($param, $default);
+        return common::inputGetCmd($param, $default);
     }
 
     function getcmd($param, $default = ''): string
     {
-        return $this->jinput->getCmd($param, $default);
+        return common::inputGetCmd($param, $default);
     }
 
     function getstringandencode($param, $default = ''): string
     {
-        return base64_encode(strip_tags($this->jinput->getString($param, $default)));
+        return base64_encode(strip_tags(common::inputGetString($param, $default)));
     }
 
     function getstring($param, $default = ''): string
     {
-        return $this->jinput->getString($param, $default);
+        return common::inputGetString($param, $default);
     }
 
     function getstringanddecode($param, $default = ''): string
     {
-        return strip_tags(base64_decode($this->jinput->getString($param, $default)));
+        return strip_tags(base64_decode(common::inputGetString($param, $default)));
     }
 
     function itemid(): int
     {
-        return $this->jinput->getInt('Itemid', 0);
+        return common::inputGetInt('Itemid', 0);
     }
 
     function getint($param, $default = 0): ?int
     {
-        return $this->jinput->getInt($param, $default);
+        return common::inputGetInt($param, $default);
     }
 
     function set($option, $param = ''): void
     {
-        $this->jinput->set($option, $param);
+        common::inputSet($option, $param);
     }
 
     function server($param)

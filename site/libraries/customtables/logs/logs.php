@@ -40,7 +40,7 @@ trait Logs
         $sets[] = (int)$this->tableid;
         $sets[] = (int)$listing_id;
         $sets[] = (int)$action;
-        $sets[] = (int)Factory::getApplication()->input->get('Itemid', 0, 'INT');
+        $sets[] = (int)common::inputGet('Itemid', 0, 'INT');
 
         //Value from sets
         $fields = ['userid', 'datetime', 'tableid', 'listingid', 'action', 'Itemid'];

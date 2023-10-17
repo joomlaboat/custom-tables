@@ -12,6 +12,7 @@
 // No direct access to this file
 defined('_JEXEC') or die;
 
+use CustomTables\common;
 use CustomTables\CT;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
@@ -71,7 +72,7 @@ class CustomtablesViewListoffields extends JViewLegacy
         $this->isEmptyState = $this->get('IsEmptyState');
 
         // We don't need toolbar in the modal window.
-        $this->tableid = $app->input->getInt('tableid', 0);
+        $this->tableid = common::inputGetInt('tableid', 0);
 
         if ($this->tableid != 0) {
             $tableRow = ESTables::getTableRowByIDAssoc($this->tableid);

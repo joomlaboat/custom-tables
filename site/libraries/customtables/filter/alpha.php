@@ -15,8 +15,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
-use Joomla\CMS\Factory;
-
 //This function is too old and used to get the where parameter out of module select boxes
 
 //TODO: Review the use of this class
@@ -25,15 +23,13 @@ class Alpha
 {
 	function getAlphaWhere($alpha,&$wherearr)
 	{
-        $jinput=Factory::getApplication()->input;
-		$alpha = $jinput->get('alpha','','STRING')
+		$alpha = common::inputGet('alpha','','STRING')
 			
 				if($this->ct->Params->blockExternalVars)
 						return;
 
-				$jinput = Factory::getApplication()->input;
-				$esfieldtype=$jinput->get('esfieldtype','','CMD');
-				$esfieldname=$jinput->get('esfieldname','','CMD');
+				$esfieldtype=common::inputGet('esfieldtype','','CMD');
+				$esfieldname=common::inputGet('esfieldname','','CMD');
 
 				if($esfieldtype!='customtables')
 				{
@@ -47,13 +43,13 @@ class Alpha
 				{
 						$db = Factory::getDBO();
 
-						$parentid=Tree::getOptionIdFull($jinput->get('optionname','','STRING'));
+						$parentid=Tree::getOptionIdFull(common::inputGet('optionname','','STRING'));
 
 
 						$query = 'SELECT familytreestr, optionname '
 								.' FROM #__customtables_options'
 								.' WHERE INSTR(familytree,"-'.$parentid.'-") AND SUBSTRING(title'.$this->ct->Languages->Postfix.',1,1)="'.
-								$jinput->get('alpha','','STRING').'"'
+								common::inputGet('alpha','','STRING').'"'
 								.' ';
 
 						$db->setQuery( $query );
@@ -77,7 +73,7 @@ class Alpha
 						foreach($wherelist as $row)
 						{
 
-								$wherearr_[]='instr(es_'.$jinput->getCMD('esfieldname','').',"'.$row.'")';
+								$wherearr_[]='instr(es_'.common::inputGetCmd('esfieldname','').',"'.$row.'")';
 						}
 						$wherearr[]=' ('.implode(' OR ',$wherearr_).')';
 				}

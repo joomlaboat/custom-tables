@@ -14,6 +14,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use Joomla\CMS\Factory;
 
 // import Joomla controller library
@@ -34,10 +35,10 @@ class CustomtablesController extends JControllerLegacy
     function display($cachable = false, $urlparams = false)
     {
         // set default view if not set
-        $view = $this->input->getCmd('view', 'customtables');
+        $view = common::inputGetCmd('view', 'customtables');
         $data = $this->getViewRelation($view);
-        $layout = $this->input->get('layout', null, 'WORD');
-        $id = $this->input->getCmd('id');
+        $layout = common::inputGet('layout', null, 'WORD');
+        $id = common::inputGetCmd('id');
 
         // Check for edit form.
         if (CustomtablesHelper::checkArray($data)) {
@@ -47,13 +48,13 @@ class CustomtablesController extends JControllerLegacy
                 Factory::getApplication()->enqueueMessage(JText::sprintf('JLIB_APPLICATION_ERROR_UNHELD_ID', $id), 'error');
 
                 // check if item was opened from other than its own list view
-                $ref = $this->input->getCmd('ref', 0);
-                $refid = $this->input->getInt('refid', 0);
+                $ref = common::inputGetCmd('ref', 0);
+                $refid = common::inputGetInt('refid', 0);
                 // set redirect
                 if ($refid > 0 && CustomtablesHelper::checkString($ref)) {
                     // redirect to item of ref
                     if ($ref == 'records') {
-                        $refid = $this->input->getCmd('refid', 0);
+                        $refid = common::inputGetCmd('refid', 0);
                         $this->setRedirect(JRoute::_('index.php?option=com_customtables&view=' . $ref . '&layout=edit&id=' . $refid, false));
                     } else
                         $this->setRedirect(JRoute::_('index.php?option=com_customtables&view=' . $ref . '&layout=edit&id=' . $refid, false));

@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\DataTypes\Tree;
 
 JHTML::stylesheet("default.css", JURI::root(true) . "/components/com_customtables/views/catalog/tmpl/");
@@ -73,7 +74,7 @@ foreach ($this->rows as $row) {
             if ($this->ct->Params->ItemId != '')
                 $aLink .= 'Itemid=' . $this->ct->Params->ItemId . '&';
             else
-                $aLink .= 'Itemid=' . $this->ct->Env->jinput->getInt('Itemid', 0) . '&';
+                $aLink .= 'Itemid=' . common::inputGetInt('Itemid', 0) . '&';
 
             $aLink .= '&establename=' . $this->ct->Table->tablename;
             $aLink .= '&filter=' . $this->esfieldname . urlencode('=') . $this->optionname;

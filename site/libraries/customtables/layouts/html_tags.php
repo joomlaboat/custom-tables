@@ -53,13 +53,11 @@ class Twig_Html_Tags
             return '';
         }
 
-        $vlu = '<span class="ctCatalogRecordCount">' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FOUND') . ': ' . $this->ct->Table->recordcount
+        return '<span class="ctCatalogRecordCount">' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FOUND') . ': ' . $this->ct->Table->recordcount
             . ' ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_RESULT_S') . '</span>';
-
-        return $vlu;
     }
 
-    function add($Alias_or_ItemId = '')
+    function add($Alias_or_ItemId = ''): string
     {
         if ($this->ct->Env->print == 1 or ($this->ct->Env->frmt != 'html' and $this->ct->Env->frmt != ''))
             return '';
@@ -67,7 +65,7 @@ class Twig_Html_Tags
         if ($this->ct->Env->isPlugin)
             return '';
 
-        $usergroups = $this->ct->Env->user->get('groups');
+        $usergroups = $this->ct->Env->user->groups;
 
         $add_userGroup = (int)$this->ct->Params->addUserGroups;
 
@@ -88,8 +86,8 @@ class Twig_Html_Tags
         if (!is_null($this->ct->Params->ModuleId))
             $link .= '&amp;ModuleId=' . $this->ct->Params->ModuleId;
 
-        if ($this->ct->Env->jinput->getCmd('tmpl', '') != '')
-            $link .= '&amp;tmpl=' . $this->ct->Env->jinput->get('tmpl', '', 'CMD');
+        if (common::inputGetCmd('tmpl', '') != '')
+            $link .= '&amp;tmpl=' . common::inputGet('tmpl', '', 'CMD');
 
         if (!is_null($this->ct->Params->ModuleId))
             $link .= '&amp;ModuleId=' . $this->ct->Params->ModuleId;
@@ -115,7 +113,7 @@ class Twig_Html_Tags
         if (!is_null($this->ct->Params->ModuleId))
             return '';
 
-        $usergroups = $this->ct->Env->user->get('groups');
+        $usergroups = $this->ct->Env->user->groups;
         if (!$this->ct->Env->isUserAdministrator and !in_array($this->ct->Params->addUserGroups, $usergroups))
             return ''; //Not permitted
 
@@ -223,7 +221,7 @@ class Twig_Html_Tags
             return '';
 
         if ($returnto == '')
-            $returnto = base64_decode($this->ct->Env->jinput->get('returnto', '', 'BASE64'));
+            $returnto = base64_decode(common::inputGet('returnto', '', 'BASE64'));
 
         if ($returnto == '')
             return '';
@@ -349,15 +347,15 @@ class Twig_Html_Tags
 
         $link = $this->ct->Env->current_url . (!str_contains($this->ct->Env->current_url, '?') ? '?' : '&') . 'tmpl=component&amp;print=1';
 
-        if ($this->ct->Env->jinput->getInt('moduleid', 0) != 0) {
+        if (common::inputGetInt('moduleid', 0) != 0) {
             //search module
 
-            $moduleid = $this->ct->Env->jinput->getInt('moduleid', 0);
+            $moduleid = common::inputGetInt('moduleid', 0);
             $link .= '&amp;moduleid=' . $moduleid;
 
             //keyword search
             $inputbox_name = 'eskeysearch_' . $moduleid;
-            $link .= '&amp;' . $inputbox_name . '=' . $this->ct->Env->jinput->getString($inputbox_name, '');
+            $link .= '&amp;' . $inputbox_name . '=' . common::inputGetString($inputbox_name, '');
         }
 
         $onClick = 'window.open("' . $link . '","win2","status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=no,resizable=yes,width=640,height=480,directories=no,location=no");return false;';
@@ -869,7 +867,7 @@ class Twig_Html_Tags
         $the_class .= ' validate';
 
         $isModal = ($this->ct->Env->isModal ? 'true' : 'false');
-        $parentField = $this->ct->Env->jinput->getCmd('parentfield');
+        $parentField = common::inputGetCmd('parentfield');
 
         if ($parentField === null)
             $onclick = 'setTask(event, "' . $task . '","' . $redirect . '",true,"' . $formName . '",' . $isModal . ',null);';

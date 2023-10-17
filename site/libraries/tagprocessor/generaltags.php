@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\Fields;
 use CustomTables\Layouts;
@@ -124,7 +125,7 @@ class tagProcessor_General
                 tagProcessor_Page::process($ct, $userid_value);
                 $userid = (int)$userid_value;
             } else {
-                $userid = (int)$ct->Env->userid;
+                $userid = (int)$ct->Env->user->id;
             }
 
             if ($userid != 0) {
@@ -191,7 +192,7 @@ class tagProcessor_General
 
     protected static function userid(CT $ct, string &$pageLayout): void
     {
-        $currentUserId = (int)$ct->Env->userid;
+        $currentUserId = (int)$ct->Env->user->id;
         if ($currentUserId != 0 and count($ct->Env->user->groups) > 0) {
             $pageLayout = str_replace('{currentusertype}', implode(',', array_keys($ct->Env->user->groups)), $pageLayout);
         } else {
@@ -242,41 +243,41 @@ class tagProcessor_General
                 switch ($optionPair[0]) {
                     case 'string':
                     case '':
-                        $value = strip_tags($ct->Env->jinput->getString($optionPair[1], ''));
+                        $value = strip_tags(common::inputGetString($optionPair[1], ''));
                         break;
                     case 'int':
-                        $value = $ct->Env->jinput->getInt($optionPair[1], 0);
+                        $value = common::inputGetInt($optionPair[1], 0);
                         break;
                     case 'integer'://legacy
-                        $value = $ct->Env->jinput->getInt($optionPair[1], 0);
+                        $value = common::inputGetInt($optionPair[1], 0);
                         break;
                     case 'uint':
-                        $value = $ct->Env->jinput->get($optionPair[1], 0, 'UINT');
+                        $value = common::inputGet($optionPair[1], 0, 'UINT');
                         break;
                     case 'float':
-                        $value = $ct->Env->jinput->getFloat($optionPair[1], 0);
+                        $value = common::inputGetFloat($optionPair[1], 0);
                         break;
                     case 'word':
-                        $value = $ct->Env->jinput->get($optionPair[1], '', 'WORD');
+                        $value = common::inputGet($optionPair[1], '', 'WORD');
                         break;
                     case 'alnum':
-                        $value = $ct->Env->jinput->get($optionPair[1], '', 'ALNUM');
+                        $value = common::inputGet($optionPair[1], '', 'ALNUM');
                         break;
                     case 'cmd':
-                        $value = $ct->Env->jinput->getCmd($optionPair[1], '');
+                        $value = common::inputGetCmd($optionPair[1], '');
                         break;
                     case 'base64decode':
-                        $value = strip_tags(base64_decode($ct->Env->jinput->get($optionPair[1], '', 'BASE64')));
+                        $value = strip_tags(base64_decode(common::inputGet($optionPair[1], '', 'BASE64')));
                         break;
                     case 'base64encode':
                     case 'base64':
-                        $value = base64_encode(strip_tags($ct->Env->jinput->getString($optionPair[1], '')));
+                        $value = base64_encode(strip_tags(common::inputGetString($optionPair[1], '')));
                         break;
                     case 'set':
                         if (isset($optionPair[2]))
-                            $ct->Env->jinput->set($optionPair[1], $optionPair[2]);
+                            common::inputSet($optionPair[1], $optionPair[2]);
                         else
-                            $ct->Env->jinput->set($optionPair[1], '');
+                            common::inputSet($optionPair[1], '');
 
                         $value = '';
                         break;
@@ -354,7 +355,7 @@ class tagProcessor_General
 
     public static function getGoBackButton(CT $ct, string &$layout_code): void
     {
-        $returnto = base64_decode($ct->Env->jinput->get('returnto', '', 'BASE64'));
+        $returnto = base64_decode(common::inputGet('returnto', '', 'BASE64'));
 
         $options = array();
         $fList = JoomlaBasicMisc::getListToReplace('gobackbutton', $options, $layout_code, '{}');

@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\Fields;
 use Joomla\CMS\Factory;
 
@@ -20,9 +21,7 @@ class extraTasks
 {
     public static function prepareJS()
     {
-        $input = Factory::getApplication()->input;
-
-        $fieldid = $input->getInt('fieldid', 0);
+        $fieldid = common::inputGetInt('fieldid', 0);
         if ($fieldid == 0)
             return;
 
@@ -36,12 +35,12 @@ class extraTasks
         $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/base64.js"></script>');
         $document->addCustomTag('<link href="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/css/modal.css" rel="stylesheet">');
 
-        $extraTask = $input->getCmd('extratask', '');
-        $stepSize = $input->getInt('stepsize', 10);
+        $extraTask = common::inputGetCmd('extratask', '');
+        $stepSize = common::inputGetInt('stepsize', 10);
 
         if ($extraTask != '') {
-            $extraTasksUpdate = 'extraTasksUpdate("' . $extraTask . '","' . $input->get('old_typeparams', '', 'BASE64') . '","'
-                . $input->get('new_typeparams', '', 'BASE64') . '",' . (int)$tableid . ',' . (int)$fieldid . ',"' . $table_row->tabletitle . '","'
+            $extraTasksUpdate = 'extraTasksUpdate("' . $extraTask . '","' . common::inputGet('old_typeparams', '', 'BASE64') . '","'
+                . common::inputGet('new_typeparams', '', 'BASE64') . '",' . (int)$tableid . ',' . (int)$fieldid . ',"' . $table_row->tabletitle . '","'
                 . $field_row->fieldtitle . '",' . $stepSize . ');';
 
             $js = '

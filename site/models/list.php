@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\Fields;
 use \Joomla\CMS\Factory;
 use Joomla\String\StringHelper;
@@ -245,7 +246,7 @@ class CustomTablesModelList extends JModel
         $groupings = array();
 
 
-        $order = Factory::getApplication()->input->post->get('order', array(), 'array');
+        $order = common::inputPost('order', array(), 'array');
         ArrayHelper::toInteger($order);
 
 

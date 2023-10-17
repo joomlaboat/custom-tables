@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\DataTypes\Tree;
 use CustomTables\Field;
@@ -99,8 +100,7 @@ class CT_FieldTypeTag_image
     {
         $imageMethods = new CustomTablesImageMethods;
         $ImageFolder = CustomTablesImageMethods::getImageFolder($field->params);
-        $jinput = Factory::getApplication()->input;
-        $fileId = $jinput->post->getString($field->comesfieldname);
+        $fileId = common::inputPostString($field->comesfieldname);
 
         if ($listing_id == null or $listing_id == '' or (is_numeric($listing_id) and intval($listing_id) < 0)) {
             $value = $imageMethods->UploadSingleImage('', $fileId, $field->realfieldname, JPATH_SITE . DIRECTORY_SEPARATOR

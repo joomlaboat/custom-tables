@@ -9,6 +9,7 @@
  **/
 
 // no direct access
+use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\CTUser;
 use Joomla\CMS\Factory;
@@ -16,8 +17,6 @@ use Joomla\CMS\Factory;
 if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
-
-$jinput = Factory::getApplication()->input;
 
 $ct = new CT;
 
@@ -27,7 +26,7 @@ $model->load($ct);
 $model->params = Factory::getApplication()->getParams();
 
 
-$model->listing_id = $jinput->getCmd("listing_id");
+$model->listing_id = common::inputGetCmd("listing_id");
 
 if (!CTUser::CheckAuthorization($ct, 5)) {
     //not authorized
@@ -38,7 +37,7 @@ if (!CTUser::CheckAuthorization($ct, 5)) {
     $this->setRedirect($link, JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_NOT_AUTHORIZED'));
     return;
 } else {
-    switch (Factory::getApplication()->input->getCmd('task')) {
+    switch (common::inputGetCmd('task')) {
 
         case 'add' :
 
@@ -50,10 +49,10 @@ if (!CTUser::CheckAuthorization($ct, 5)) {
                 $msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FILE_NOT_ADDED');
             }
 
-            $fileboxname = Factory::getApplication()->input->getCmd('fileboxname');
-            $listing_id = Factory::getApplication()->input->get("listing_id", 0, 'INT');
-            $returnto = Factory::getApplication()->input->get('returnto', '', 'BASE64');
-            $Itemid = Factory::getApplication()->input->get('Itemid', 0, 'INT');
+            $fileboxname = common::inputGetCmd('fileboxname');
+            $listing_id = common::inputGet("listing_id", 0, 'INT');
+            $returnto = common::inputGet('returnto', '', 'BASE64');
+            $Itemid = common::inputGet('Itemid', 0, 'INT');
 
             $link = 'index.php?option=com_customtables&view=editfiles'
 
@@ -75,11 +74,11 @@ if (!CTUser::CheckAuthorization($ct, 5)) {
             } else {
                 $msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FILE_NOT_DELETED');
             }
-            //$establename=Factory::getApplication()->input->getCmd( 'establename');
-            $fileboxname = Factory::getApplication()->input->getCmd('fileboxname');
-            $listing_id = Factory::getApplication()->input->get("listing_id", 0, 'INT');
-            $returnto = Factory::getApplication()->input->get('returnto', '', 'BASE64');
-            $Itemid = Factory::getApplication()->input->get('Itemid', 0, 'INT');
+            //$establename=common::inputGetCmd( 'establename');
+            $fileboxname = common::inputGetCmd('fileboxname');
+            $listing_id = common::inputGet("listing_id", 0, 'INT');
+            $returnto = common::inputGet('returnto', '', 'BASE64');
+            $Itemid = common::inputGet('Itemid', 0, 'INT');
 
             $link = 'index.php?option=com_customtables&view=editfiles'
 
@@ -102,9 +101,9 @@ if (!CTUser::CheckAuthorization($ct, 5)) {
             } else {
                 $msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FILE_ORDER_NOT_SAVED');
             }
-            $returnto = Factory::getApplication()->input->get('returnto', '', 'BASE64');
+            $returnto = common::inputGet('returnto', '', 'BASE64');
 
-            $link = $returnto = base64_decode(Factory::getApplication()->input->get('returnto', '', 'BASE64'));
+            $link = $returnto = base64_decode(common::inputGet('returnto', '', 'BASE64'));
 
 
             $this->setRedirect($link, $msg);
@@ -114,7 +113,7 @@ if (!CTUser::CheckAuthorization($ct, 5)) {
         case 'cancel' :
 
             $msg = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_EDIT_CANCELED');
-            $link = $returnto = base64_decode(Factory::getApplication()->input->get('returnto', '', 'BASE64'));
+            $link = $returnto = base64_decode(common::inputGet('returnto', '', 'BASE64'));
 
             $this->setRedirect($link, $msg);
 
@@ -123,4 +122,4 @@ if (!CTUser::CheckAuthorization($ct, 5)) {
 
             parent::display();
     }
-}//switch(Factory::getApplication()->input->get('task','','CMD'))
+}//switch(common::inputGet('task','','CMD'))

@@ -9,6 +9,7 @@
  **/
 
 // no direct access
+use CustomTables\common;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 
@@ -29,13 +30,12 @@ class CustomTablesControllerImportTables extends JControllerForm
 
     function display($cachable = false, $urlparams = array())
     {
-        $input = Factory::getApplication()->input;
-        $task = $input->getCmd('task', '');
+        $task = common::inputGetCmd('task', '');
 
         if ($task == 'importtables')
             $this->importtables();
         else {
-            $input->set('view', 'importtables');
+            common::inputSet('view', 'importtables');
             parent::display();
         }
     }

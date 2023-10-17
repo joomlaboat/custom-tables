@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\CT;
 use Joomla\CMS\Factory;
 
@@ -42,7 +43,7 @@ class tagProcessor_Shopping
             switch ($option_pair[0]) {
                 case 'count' :
 
-                    $cookieValue = $app->input->cookie->getVar($cart_prefix . $ct->Table->tablename);
+                    $cookieValue = common::inputCookieGet($cart_prefix . $ct->Table->tablename);
 
                     $vlu = '0';
                     if (isset($cookieValue)) {
@@ -70,11 +71,11 @@ class tagProcessor_Shopping
 
                 case 'form_addtocart' :
 
-                    $cookieValue = $app->input->cookie->getVar($cart_prefix . $ct->Table->tablename);
+                    $cookieValue = common::inputCookieGet($cart_prefix . $ct->Table->tablename);
                     if (isset($cookieValue)) {
                         $items = explode(';', $cookieValue);
                         $cnt = count($items);
-                        $found = false;
+
                         for ($i = 0; $i < $cnt; $i++) {
                             $pair = explode(',', $items[$i]);
                             if (count($pair) == 2) //otherwise ignore it
@@ -114,11 +115,13 @@ class tagProcessor_Shopping
 
                 case 'setitemcount' :
 
-                    $cookieValue = $app->input->cookie->getVar($cart_prefix . $ct->Table->tablename);
+                    $cookieValue = common::inputCookieGet($cart_prefix . $ct->Table->tablename);
+                    $vlu = '0';
+
                     if (isset($cookieValue)) {
                         $items = explode(';', $cookieValue);
                         $cnt = count($items);
-                        $found = false;
+
                         for ($i = 0; $i < $cnt; $i++) {
                             $pair = explode(',', $items[$i]);
                             if (count($pair) == 2) //otherwise ignore it
@@ -127,9 +130,7 @@ class tagProcessor_Shopping
                                     $vlu = (int)$pair[1];
                             }
                         }
-
-                    } else
-                        $vlu = '0';
+                    }
 
                     if (isset($option_pair[2]) and $option_pair[2] != '')
                         $button_label = $option_pair[2];

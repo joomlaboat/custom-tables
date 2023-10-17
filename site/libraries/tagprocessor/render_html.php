@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\TwigProcessor;
 
@@ -21,8 +22,8 @@ trait render_html
     protected static function get_CatalogTable_HTML(CT &$ct, $layoutType, $fields, $class, $dragdrop = false)
     {
         //for reload single record functionality
-        $listing_id = $ct->Env->jinput->getCmd("listing_id", '');
-        $custom_number = $ct->Env->jinput->getInt('number', 0);
+        $listing_id = common::inputGetCmd("listing_id", '');
+        $custom_number = common::inputGetInt('number', 0);
         // end of for reload single record functionality
 
         $fields = str_replace("\n", '', $fields);

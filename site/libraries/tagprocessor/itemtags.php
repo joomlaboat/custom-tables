@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\RecordToolbar;
 use CustomTables\CTUser;
@@ -42,8 +43,8 @@ class tagProcessor_Item
 
             $viewLink = $ct_record->link(true, '', $returnto);
 
-            if ($ct->Env->jinput->getCmd('tmpl') != '')
-                $viewLink .= '&amp;tmpl=' . $ct->Env->jinput->getCmd('tmpl');
+            if (common::inputGetCmd('tmpl') != '')
+                $viewLink .= '&amp;tmpl=' . common::inputGetCmd('tmpl');
         }
 
         $layout = '';

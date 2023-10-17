@@ -13,25 +13,23 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\Field;
 use CustomTables\Fields;
 use CustomTables\CTUser;
 use CustomTables\SaveFieldQuerySet;
-use Joomla\CMS\Factory;
 
-
-$jinput = Factory::getApplication()->input;
-$view = $jinput->getCmd('view');
+$view = common::inputGetCmd('view');
 
 if ($view == 'home') {
-    $jinput->set('homeparent', 'home');
-    $jinput->set('view', 'catalog');
+    common::inputSet('homeparent', 'home');
+    common::inputSet('view', 'catalog');
 
     parent::display();
 }
 
-$task = $jinput->getCmd('task');
+$task = common::inputGetCmd('task');
 
 //Check Authorization
 $PermissionIndexes = ['setorderby' => 0, 'setorderby' => 0, 'clear' => 3, 'delete' => 3, 'copy' => 4, 'copycontent' => 4, 'refresh' => 1, 'publish' => 2, 'unpublish' => 2, 'createuser' => 1, 'resetpassword' => 1];
@@ -239,7 +237,7 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
                 return (object)array('link' => $link, 'msg' => 'User field not found.', 'status' => 'error');
             }
 
-            $listing_id = $ct->Env->jinput->getInt("listing_id");
+            $listing_id = common::inputGetInt("listing_id");
             $ct->Table->loadRecord($listing_id);
             if ($ct->Table->record === null) {
                 $ct->app->enqueueMessage('User record ID: "' . $listing_id . '" not found.', 'error');
@@ -262,7 +260,7 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
             if ($ct->Table->tablename === null)
                 return (object)array('link' => $link, 'msg' => 'Table not selected.', 'status' => 'error');
 
-            $listing_id = $ct->Env->jinput->getInt("listing_id");
+            $listing_id = common::inputGetInt("listing_id");
             if (CTUser::ResetPassword($ct, $listing_id)) {
                 if ($ct->Env->clean == 1)
                     die('password has been reset');
@@ -277,7 +275,7 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
 
         case 'setorderby':
 
-            $order_by = $ct->Env->jinput->getString('orderby', '');
+            $order_by = common::inputGetString('orderby', '');
             $order_by = trim(preg_replace("/[^a-zA-Z-+%.: ,_]/", "", $order_by));
 
             $ct->app->setUserState('com_customtables.orderby_' . $ct->Params->ItemId, $order_by);
@@ -289,7 +287,7 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
 
         case 'setlimit':
 
-            $limit = $ct->Env->jinput->getInt('limit', '');
+            $limit = common::inputGetInt('limit', '');
 
             $ct->app->setUserState('com_customtables.limit_' . $ct->Params->ItemId, $limit);
 
@@ -300,10 +298,10 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
 
         case 'copycontent':
 
-            $frmt = $ct->Env->jinput->getCmd('frmt', '');
+            $frmt = common::inputGetCmd('frmt', '');
 
-            $from = $ct->Env->jinput->getCmd('from', '');
-            $to = $ct->Env->jinput->getCmd('to', '');
+            $from = common::inputGetCmd('from', '');
+            $to = common::inputGetCmd('to', '');
 
             if ($edit_model->copyContent($from, $to)) {
                 if ($ct->Env->clean == 1) {
@@ -329,7 +327,7 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
 
         case 'ordering':
 
-            $tableid = $ct->Env->jinput->getInt('tableid');
+            $tableid = common::inputGetInt('tableid');
             $ct->getTable($tableid);
 
             if ($ct->Table->tablename === null) {
@@ -395,7 +393,7 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
                 }
 
                 if ($result != "") {
-                    $msg = $ct->Env->jinput->getString('msg');
+                    $msg = common::inputGetString('msg');
 
                     if ($msg === null)
                         return (object)array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SHOPPING_CART_UPDATED'), 'status' => null);

@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\CT;
 
 use CustomTables\DataTypes\Tree;
@@ -202,9 +203,7 @@ class CustomTablesModelListOfOptions extends JModelList
         $total = count($items);
         $row = JTable::getInstance('List', 'Table');
         $groupings = array();
-
-        $input = Factory::getApplication()->input;
-        $order = $input->post('order', array(), 'ARRAY');
+        $order = common::inputPost('order', array(), 'ARRAY');
 
         ArrayHelper::toInteger($order);
         // update ordering values

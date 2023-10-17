@@ -14,6 +14,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\Fields;
 
@@ -67,11 +68,11 @@ class CustomtablesModelTables extends JModelAdmin
         }
 
         // The front end calls this model and uses a_id to avoid id clashes, so we need to check for that first.
-        if ($this->ct->Env->jinput->get('a_id')) {
-            $id = $this->ct->Env->jinput->get('a_id', 0, 'INT');
+        if (common::inputGet('a_id')) {
+            $id = common::inputGet('a_id', 0, 'INT');
         } // The back end uses id, so we use that the rest of the time and set it to 0 by default.
         else {
-            $id = $this->ct->Env->jinput->get('id', 0, 'INT');
+            $id = common::inputGet('id', 0, 'INT');
         }
 
         // Check for existing item.
@@ -107,9 +108,9 @@ class CustomtablesModelTables extends JModelAdmin
         // Only load these values if no id is found
         if (0 == $id) {
             // Set redirected field name
-            $redirectedField = $this->ct->Env->jinput->get('ref', null, 'STRING');
+            $redirectedField = common::inputGet('ref', null, 'STRING');
             // Set redirected field value
-            $redirectedValue = $this->ct->Env->jinput->get('refid', 0, 'INT');
+            $redirectedValue = common::inputGet('refid', 0, 'INT');
             if (0 != $redirectedValue && $redirectedField) {
                 // Now set the local-redirected field default value
                 $form->setValue($redirectedField, null, $redirectedValue);
@@ -314,7 +315,7 @@ class CustomtablesModelTables extends JModelAdmin
         $database = $conf->get('db');
         $dbPrefix = $conf->get('dbprefix');
 
-        $data_extra = $this->ct->Env->jinput->get('jform', array(), 'ARRAY');
+        $data_extra = common::inputGet('jform', array(), 'ARRAY');
 
         $moreThanOneLanguage = false;
 
@@ -362,8 +363,8 @@ class CustomtablesModelTables extends JModelAdmin
         $old_tablename = '';
 
         // Alter the unique field for save as copy
-        if ($this->ct->Env->jinput->get('task') === 'save2copy') {
-            $originalTableId = $this->ct->Env->jinput->getInt('originaltableid', 0);
+        if (common::inputGet('task') === 'save2copy') {
+            $originalTableId = common::inputGetInt('originaltableid', 0);
 
             if ($originalTableId != 0) {
                 $old_tablename = ESTables::getTableName($originalTableId);
@@ -389,7 +390,7 @@ class CustomtablesModelTables extends JModelAdmin
             }
         } else {
             if (parent::save($data)) {
-                $originalTableId = $this->ct->Env->jinput->getInt('originaltableid', 0);
+                $originalTableId = common::inputGetInt('originaltableid', 0);
 
                 if ($originalTableId != 0 and $old_tablename != '')
                     ESTables::copyTable($this->ct, $originalTableId, $tablename, $old_tablename, $data['customtablename']);

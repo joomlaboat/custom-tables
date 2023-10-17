@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 // import the Joomla modellist library
 jimport('joomla.application.component.modellist');
 
+use CustomTables\common;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use CustomTables\CT;
@@ -116,8 +117,7 @@ class CustomtablesModelListoffields extends JModelList
      */
     protected function getListQuery()
     {
-        $jinput = Factory::getApplication()->input;
-        $this->tableid = $jinput->getInt('tableid', 0);
+        $this->tableid = common::inputGetInt('tableid', 0);
 
         // Create a new query object.
         $db = Factory::getDBO();

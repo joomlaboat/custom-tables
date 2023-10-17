@@ -14,6 +14,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\DataTypes\Tree;
 use CustomTables\ImportTables;
@@ -35,16 +36,13 @@ class CustomTablesModelImportTables extends JModelList
 
     function importTables(&$msg): bool
     {
-        $jinput = Factory::getApplication()->input;
-
-        $fileId = $jinput->getCmd('fileid', '');
-
+        $fileId = common::inputGetCmd('fileid', '');
         $filename = ESFileUploader::getFileNameByID($fileId);
         $menuType = 'Custom Tables Import Menu';
 
-        $importFields = $jinput->getInt('importfields', 0);
-        $importLayouts = $jinput->getInt('importlayouts', 0);
-        $importMenu = $jinput->getInt('importmenu', 0);
+        $importFields = common::inputGetInt('importfields', 0);
+        $importLayouts = common::inputGetInt('importlayouts', 0);
+        $importMenu = common::inputGetInt('importmenu', 0);
 
         $category = '';
         return ImportTables::processFile($filename, $menuType, $msg, $category, $importFields, $importLayouts, $importMenu);

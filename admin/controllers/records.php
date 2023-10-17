@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\Layouts;
 use Joomla\CMS\Factory;
@@ -53,7 +54,7 @@ class CustomtablesControllerRecords extends JControllerForm
     public function cancel($key = null): bool
     {
         // get the referral details
-        $tableId = $this->input->get('tableid', 0, 'int');
+        $tableId = common::inputGet('tableid', 0, 'int');
 
         $cancel = parent::cancel($key);
 
@@ -68,10 +69,10 @@ class CustomtablesControllerRecords extends JControllerForm
     public function save($key = null, $urlVar = null): bool
     {
         $ct = new CT;
-        $tableId = $this->input->get('tableid', 0, 'int');
+        $tableId = common::inputGet('tableid', 0, 'int');
         $ct->getTable($tableId);
 
-        $listing_id = $this->input->getCmd('id', 0);
+        $listing_id = common::inputGetCmd('id', 0);
 
         $params = new JRegistry;
         $params->loadArray(['listingid' => $listing_id]);
@@ -187,23 +188,23 @@ class CustomtablesControllerRecords extends JControllerForm
      */
     protected function getRedirectToItemAppend($listing_id = null, $urlVar = 'id'): string
     {
-        $tmpl = $this->input->get('tmpl');
-        $layout = $this->input->get('layout', 'edit', 'string');
+        $tmpl = common::inputGet('tmpl');
+        $layout = common::inputGet('layout', 'edit', 'string');
 
-        $ref = $this->input->get('ref', 0, 'string');
-        $refid = $this->input->getCmd('refid', 0);
+        $ref = common::inputGet('ref', 0, 'string');
+        $refid = common::inputGetCmd('refid', 0);
 
         //To support char type record id
-        $listing_id = $this->input->getCmd('id', null);
+        $listing_id = common::inputGetCmd('id', null);
         if ($listing_id === null) {
-            $cid = Factory::getApplication()->input->post->get('cid', array(), 'array');
+            $cid = common::inputPost('cid', array(), 'array');
             $cid = ArrayHelper::toInteger($cid);
             $listing_id = $cid[0];
         }
 
         //throw new Exception('stop here');
 
-        $tableid = $this->input->getInt('tableid', 0);
+        $tableid = common::inputGetInt('tableid', 0);
         // Setup redirect info.
 
         $append = '';

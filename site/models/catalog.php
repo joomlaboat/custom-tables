@@ -13,8 +13,8 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\common;
 use CustomTables\CT;
-use Joomla\CMS\Factory;
 
 jimport('joomla.application.component.model');
 
@@ -30,18 +30,18 @@ class CustomTablesModelCatalog extends JModelLegacy
         parent::__construct();
     }
 
-    function cart_emptycart()
+    function cart_emptycart(): bool
     {
-        $this->ct->Env->jinput->cookie->set($this->showcartitemsprefix . $this->ct->Table->tablename, '',
+        common::inputCookieSet($this->showcartitemsprefix . $this->ct->Table->tablename, '',
             time() - 3600,
             $this->ct->app->get('cookie_path', '/'),
             $this->ct->app->get('cookie_domain'), $this->ct->app->isSSLConnection());
         return true;
     }
 
-    function cart_deleteitem()
+    function cart_deleteitem(): bool
     {
-        $listing_id = $this->ct->Env->jinput->getCmd("listing_id", '');
+        $listing_id = common::inputGetCmd("listing_id", '');
         if ($listing_id == '' or (is_numeric($listing_id) and $listing_id == 0))
             return false;
 
@@ -50,16 +50,16 @@ class CustomTablesModelCatalog extends JModelLegacy
         return true;
     }
 
-    function cart_setitemcount($itemcount = -1)
+    function cart_setitemcount($itemcount = -1): bool
     {
-        $listing_id = $this->ct->Env->jinput->getCmd("listing_id", '');
+        $listing_id = common::inputGetCmd("listing_id", '');
         if ($listing_id == '' or (is_numeric($listing_id) and $listing_id == 0))
             return false;
 
         if ($itemcount == -1)
-            $itemcount = $this->ct->Env->jinput->getInt('itemcount', 0);
+            $itemcount = common::inputGetInt('itemcount', 0);
 
-        $cookieValue = $this->ct->Env->jinput->cookie->getVar($this->showcartitemsprefix . $this->ct->Table->tablename);
+        $cookieValue = common::inputCookieGet($this->showcartitemsprefix . $this->ct->Table->tablename);
 
         if (isset($cookieValue)) {
             $items = explode(';', $cookieValue);
@@ -96,16 +96,16 @@ class CustomTablesModelCatalog extends JModelLegacy
         return true;
     }
 
-    function cart_form_addtocart($itemcount = -1)
+    function cart_form_addtocart($itemcount = -1): bool
     {
-        $listing_id = $this->ct->Env->jinput->getCmd("listing_id", '');
+        $listing_id = common::inputGetCmd("listing_id", '');
         if ($listing_id == '' or (is_numeric($listing_id) and $listing_id == 0))
             return false;
 
         if ($itemcount == -1)
-            $itemcount = $this->ct->Env->jinput->getInt('itemcount', 0);
+            $itemcount = common::inputGetInt('itemcount', 0);
 
-        $cookieValue = $this->ct->Env->jinput->cookie->get($this->showcartitemsprefix . $this->ct->Table->tablename);
+        $cookieValue = common::inputCookieGet($this->showcartitemsprefix . $this->ct->Table->tablename);
 
         if (isset($cookieValue)) {
             $items = explode(';', $cookieValue);
@@ -120,13 +120,12 @@ class CustomTablesModelCatalog extends JModelLegacy
                         $new_itemcount = (int)$pair[1] + $itemcount;
                         if ($new_itemcount == 0) {
                             unset($items[$i]); //delete item
-                            $found = true;
                         } else {
                             //update counter
                             $pair[1] = $new_itemcount;
                             $items[$i] = implode(',', $pair);
-                            $found = true;
                         }
+                        $found = true;
                     }
                 }
             }//for
@@ -145,11 +144,11 @@ class CustomTablesModelCatalog extends JModelLegacy
 
     function cart_addtocart()
     {
-        $listing_id = $this->ct->Env->jinput->getCmd("listing_id", '');
+        $listing_id = common::inputGetCmd("listing_id", '');
         if ($listing_id == '' or (is_numeric($listing_id) and $listing_id == 0))
             return false;
 
-        $cookieValue = $this->ct->Env->jinput->cookie->getVar($this->showcartitemsprefix . $this->ct->Table->tablename);
+        $cookieValue = common::inputCookieGet($this->showcartitemsprefix . $this->ct->Table->tablename);
 
         if (isset($cookieValue)) {
             $items = explode(';', $cookieValue);
@@ -178,10 +177,9 @@ class CustomTablesModelCatalog extends JModelLegacy
 
         $nc = implode(';', $items);
 
-        $this->ct->Env->jinput->cookie->set($this->showcartitemsprefix . $this->ct->Table->tablename, $nc, time() + 3600 * 24,
+        common::inputCookieSet($this->showcartitemsprefix . $this->ct->Table->tablename, $nc, time() + 3600 * 24,
             $this->ct->app->get('cookie_path', '/'), $this->ct->app->get('cookie_domain'), $this->ct->app->isSSLConnection());
 
         return true;
     }
-
 }

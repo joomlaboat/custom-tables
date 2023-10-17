@@ -17,6 +17,7 @@ jimport('joomla.application.component.controlleradmin');
 
 use CustomTables\Catalog;
 use CustomTables\CatalogExportCSV;
+use CustomTables\common;
 use CustomTables\CT;
 use Joomla\CMS\Factory;
 use Joomla\Utilities\ArrayHelper;
@@ -33,7 +34,7 @@ class CustomtablesControllerListofRecords extends JControllerAdmin
     public function publish()
     {
         $status = (int)($this->task == 'publish');
-        $tableid = $this->input->get('tableid', 0, 'int');
+        $tableid = common::inputGet('tableid', 0, 'int');
 
         if ($tableid != 0) {
             $tableRow = ESTables::getTableRowByIDAssoc($tableid);
@@ -48,7 +49,7 @@ class CustomtablesControllerListofRecords extends JControllerAdmin
             return;
         }
 
-        $cid = Factory::getApplication()->input->post->get('cid', array(), 'array');
+        $cid = common::inputPost('cid', array(), 'array');
         $paramsArray = $this->getRecordParams($tableid, $tablename, 0);
 
         $_params = new JRegistry;
@@ -95,7 +96,7 @@ class CustomtablesControllerListofRecords extends JControllerAdmin
 
     public function delete()
     {
-        $tableid = $this->input->get('tableid', 0, 'int');
+        $tableid = common::inputGet('tableid', 0, 'int');
 
         if ($tableid != 0) {
             $tableRow = ESTables::getTableRowByIDAssoc($tableid);
@@ -110,7 +111,7 @@ class CustomtablesControllerListofRecords extends JControllerAdmin
             return;
         }
 
-        $cid = Factory::getApplication()->input->post->get('cid', array(), 'array');
+        $cid = common::inputPost('cid', array(), 'array');
         $paramsArray = $this->getRecordParams($tableid, $tablename, 0);
 
         $_params = new JRegistry;
@@ -149,7 +150,7 @@ class CustomtablesControllerListofRecords extends JControllerAdmin
     {
         $ct = new CT;
 
-        $tableid = $ct->Env->jinput->getInt('tableid');
+        $tableid = common::inputGetInt('tableid');
         $ct->getTable($tableid);
 
         if ($ct->Table->tablename === null) {
@@ -167,7 +168,7 @@ class CustomtablesControllerListofRecords extends JControllerAdmin
 
     public function exportcsv()
     {
-        $tableid = $this->input->get('tableid', 0, 'int');
+        $tableid = common::inputGet('tableid', 0, 'int');
 
         if ($tableid != 0) {
             $table = ESTables::getTableRowByID($tableid);
@@ -179,7 +180,7 @@ class CustomtablesControllerListofRecords extends JControllerAdmin
             }
         }
 
-        $cid = Factory::getApplication()->input->post->get('cid', array(), 'array');
+        $cid = common::inputPost('cid', array(), 'array');
 
         $ct = new CT(null, false);
         $ct->Env->frmt = 'csv';

@@ -11,7 +11,6 @@
 namespace CustomTables;
 
 use JoomlaBasicMisc;
-use CustomTables\Catalog;
 
 // no direct access
 if (!defined('_JEXEC') and !defined('WPINC')) {
