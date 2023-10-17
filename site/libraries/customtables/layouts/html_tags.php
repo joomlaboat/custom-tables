@@ -763,9 +763,7 @@ class Twig_Html_Tags
     {
         $db = Factory::getDBO();
         $query = 'SELECT params FROM #__extensions WHERE ' . $db->quoteName("name") . '=' . $db->Quote("plg_captcha_recaptcha") . ' LIMIT 1';
-        $db->setQuery($query);
-
-        $rows = $db->loadObjectList();
+        $rows = database::loadObjectList($query);
         if (count($rows) == 0)
             return null;
 

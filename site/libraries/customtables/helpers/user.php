@@ -345,8 +345,7 @@ class CTUser
         $query = 'SELECT id FROM #__usergroups WHERE ' . implode(' OR ', $new_names);
 
         try {
-            $db->setQuery($query);
-            $rows = $db->loadObjectList();
+            $rows = database::loadObjectList($query);
         } catch (Exception $e) {
             return null;
         }

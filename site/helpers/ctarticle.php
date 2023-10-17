@@ -9,6 +9,7 @@
  **/
 
 // No direct access to this file
+use CustomTables\database;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 
@@ -30,8 +31,7 @@ class JHTMLCTArticle
 
         $query->from('#__content');
         $query->order('title');
-        $db->setQuery($query);
-        $options = $db->loadObjectList();
+        $options = database::loadObjectList((string)$query);
         $options = array_merge(array(array(
             'id' => '',
             'data-type' => 'article',

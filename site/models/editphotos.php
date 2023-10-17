@@ -187,15 +187,9 @@ class CustomTablesModelEditPhotos extends JModelLegacy
 
     function getPhotoList()
     {
-        // get database handle
-        $db = Factory::getDBO();
-
         $query = 'SELECT ordering, photoid,  title' . $this->ct->Languages->Postfix . ' AS title, photo_ext FROM ' . $this->phototablename
             . ' WHERE listingid=' . $this->listing_id . ' ORDER BY ordering, photoid';
-
-        $db->setQuery($query);
-
-        return $db->loadObjectList();
+        return database::loadObjectList($query);
     }
 
     function delete(): bool
@@ -333,9 +327,8 @@ class CustomTablesModelEditPhotos extends JModelLegacy
 
 
         $query = ' SELECT photoid FROM ' . $this->phototablename . ' WHERE listingid=' . $db->quote($this->listing_id) . ' ORDER BY photoid DESC LIMIT 1';
-        $db->setQuery($query);
+        $rows = database::loadObjectList($query);
 
-        $rows = $db->loadObjectList();
         if (count($rows) == 1)
             return $rows[0]->photoid;
 

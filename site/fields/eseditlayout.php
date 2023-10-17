@@ -35,8 +35,7 @@ class JFormFieldESEditLayout extends JFormFieldList
         $query->where('published=1 AND layouttype=2');
         $query->order('tablename,layoutname');
 
-        $db->setQuery((string)$query);
-        $messages = $db->loadObjectList();
+        $messages = database::loadObjectList((string)$query);
         $options = array();
 
         $options[] = JHtml::_('select.option', '', '- ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT'));

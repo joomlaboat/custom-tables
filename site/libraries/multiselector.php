@@ -94,10 +94,8 @@ class ESMultiSelector
 
     function getList($parentid, $langpostfix)
     {
-        $db = Factory::getDBO();
         $query = 'SELECT id, optionname, title' . $langpostfix . ' AS title FROM #__customtables_options WHERE parentid=' . (int)$parentid;
         $query .= ' ORDER BY ordering, title';
-        $db->setQuery($query);
-        return $db->loadObjectList();
+        return database::loadObjectList($query);
     }
 }

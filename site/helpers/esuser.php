@@ -48,10 +48,8 @@ class JHTMLESUser
 
         $query->group("#__users" . "." . "id");
         $query->order("#__users" . "." . "name");
+        $options = database::loadObjectList((string)$query);
 
-        $db->setQuery($query);
-
-        $options = $db->loadObjectList();
         $att = ['id' => '', 'data-type' => 'user', 'name' => '- ' . Text::_('COM_CUSTOMTABLES_SELECT')];
         $options = array_merge(array($att), $options);
 

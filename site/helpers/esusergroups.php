@@ -9,6 +9,7 @@
  **/
 
 // Check to ensure this file is included in Joomla!
+use CustomTables\database;
 use Joomla\CMS\Factory;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
@@ -44,9 +45,7 @@ class JHTMLESUserGroups
         }
 
         $query->order('#__usergroups.title');
-        $db->setQuery($query);
-        $records = $db->loadObjectList();
-
+        $records = database::loadObjectList((string)$query);
         $valueArray = explode(',', $value);
 
         switch ($selector) {

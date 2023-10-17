@@ -35,10 +35,7 @@ class Tables
         $query->from('#__customtables_tables');
         $query->where('published=1');
         $query->order('tablename');
-
-        $db->setQuery((string)$query);
-
-        $records = $db->loadObjectList();
+        $records = database::loadObjectList((string)$query);
 
         $allTables = [];
         foreach ($records as $rec)

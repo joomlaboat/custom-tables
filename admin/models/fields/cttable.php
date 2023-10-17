@@ -33,8 +33,7 @@ class JFormFieldCTTable extends JFormFieldList
         $query->order('tabletitle');
         $query->where('published=1');
 
-        $db->setQuery((string)$query);
-        $records = $db->loadObjectList();
+        $records = database::loadObjectList((string)$query);
 
         $options = array();
         if ($records) {

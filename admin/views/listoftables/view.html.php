@@ -13,6 +13,7 @@
 \defined('_JEXEC') or die;
 
 use CustomTables\CT;
+use CustomTables\database;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\Language\Text;
@@ -215,8 +216,7 @@ class CustomtablesViewListoftables extends JViewLegacy
         $query = 'SELECT COUNT(' . $realidfield . ') AS count FROM ' . $realtablename . ' LIMIT 1';
 
         try {
-            $db->setQuery($query);
-            $rows = $db->loadObjectList();
+            $rows = database::loadObjectList($query);
         } catch (Exception $e) {
             echo $e->getMessage();
 

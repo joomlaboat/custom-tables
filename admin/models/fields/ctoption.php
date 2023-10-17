@@ -10,6 +10,7 @@
 
 // no direct access
 use CustomTables\common;
+use CustomTables\database;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 
@@ -45,8 +46,7 @@ class JFormFieldCTOption extends JFormFieldList
         $query->order('title');
         $query->where('id!=' . $currentoptionid);
 
-        $db->setQuery((string)$query);
-        $records = $db->loadObjectList();
+        $records = database::loadObjectList($query);
 
         $options = array();
         if ($records) {

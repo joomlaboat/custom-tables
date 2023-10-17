@@ -605,7 +605,7 @@ class Inputbox
                 . ' ORDER BY ' . $this->field->realfieldname;
 
             $this->ct->db->setQuery($query);
-            $records = $this->ct->db->loadColumn();
+            $records = database::loadObjectList($query);
 
             $result .= '<datalist id="' . $this->prefix . $this->field->fieldname . '_datalist">'
                 . (count($records) > 0 ? '<option value="' . implode('"><option value="', $records) . '">' : '')

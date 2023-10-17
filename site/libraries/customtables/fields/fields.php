@@ -247,11 +247,10 @@ class Fields
 
         $query = 'SELECT ' . Fields::getFieldRowSelects() . ' FROM #__customtables_fields AS s WHERE id=' . $fieldid . ' LIMIT 1';//published=1 AND
 
-        $db->setQuery($query);
         if ($assocList)
-            $rows = $db->loadAssocList();
+            $rows = database::loadAssocList($query);
         else
-            $rows = $db->loadObjectList();
+            $rows = database::loadObjectList($query);
 
         if (count($rows) != 1)
             return null;
@@ -599,9 +598,7 @@ class Fields
             $fieldid = common::inputGet('fieldid', 0, 'INT');
 
         $query = 'SELECT fieldname FROM #__customtables_fields AS s WHERE s.published=1 AND s.id=' . $fieldid . ' LIMIT 1';
-        $db->setQuery($query);
-
-        $rows = $db->loadObjectList();
+        $rows = database::loadObjectList($query);
         if (count($rows) != 1)
             return '';
 
@@ -624,8 +621,7 @@ class Fields
 			WHERE s.published=1 AND s.tableid=t.id AND s.fieldname=' . $db->quote(trim($fieldName)) . ' LIMIT 1';
         }
 
-        $db->setQuery($query);
-        $rows = $db->loadObjectList();
+        $rows = database::loadObjectList($query);
 
         if (count($rows) != 1)
             return null;
@@ -849,12 +845,11 @@ class Fields
 
         $db->setQuery($query);
 
-        $rows2 = $db->loadObjectList();
-        if (count($rows2) == 0)
+        $rows = database::loadObjectList($query);
+        if (count($rows) == 0)
             return 0;
 
-        $row = $rows2[0];
-
+        $row = $rows[0];
         return $row->id;
     }
 
@@ -893,10 +888,8 @@ class Fields
 
     protected static function getMaxOrdering($tableid): int
     {
-        $db = Factory::getDBO();
         $query = 'SELECT MAX(ordering) as max_ordering FROM #__customtables_fields WHERE published=1 AND tableid=' . (int)$tableid;
-        $db->setQuery($query);
-        $rows = $db->loadObjectList();
+        $rows = database::loadObjectList($query);
         return (int)$rows[0]->max_ordering;
     }
 
@@ -1080,12 +1073,10 @@ class Fields
 
         $query = 'SELECT ' . Fields::getFieldRowSelects() . ' FROM #__customtables_fields AS f WHERE ' . $where . $order;
 
-        $db->setQuery($query);
-
         if ($as_object)
-            return $db->loadObjectList();
+            return database::loadObjectList($query);
         else
-            return $db->loadAssocList();
+            return database::loadAssocList($query);
     }
 
     public static function getPureFieldType($ct_fieldType, $typeParams, int $isRequiredOrGenerated = 0, ?string $defaultValue = null): string
@@ -1474,8 +1465,7 @@ class Fields
 
         $fixCount = 0;
         $fixQuery = 'SELECT id, ' . $realfieldname . ' AS fldvalue FROM ' . $realtablename;
-        $db->setQuery($fixQuery);
-        $fixRows = $db->loadObjectList();
+        $fixRows = database::loadObjectList($fixQuery);
         foreach ($fixRows as $fixRow) {
 
             $newRow = Fields::FixCustomTablesRecord($fixRow->fldvalue, $optionname, $maxlenght);
@@ -1611,18 +1601,15 @@ class Fields
 
     public static function addIndexIfNotExist($realtablename, $realfieldname): void
     {
-        $db = Factory::getDBO();
         $serverType = database::getServerType();
 
         if ($serverType == 'postgresql') {
             //Indexes not yet supported
         } else {
-            $db = Factory::getDBO();
             $query = 'SHOW INDEX FROM ' . $realtablename . ' WHERE Key_name = "' . $realfieldname . '"';
-            database::setQuery($query);
-            $rows2 = $db->loadObjectList();
+            $rows = database::loadObjectList($query);
 
-            if (count($rows2) == 0) {
+            if (count($rows) == 0) {
                 $query = 'ALTER TABLE ' . $realtablename . ' ADD INDEX(' . $realfieldname . ');';
                 database::setQuery($query);
             }

@@ -115,14 +115,10 @@ function renderEditor($textareacode, $textareaid, $typeboxid, $textareatabid, &$
 
 function getKnownLanguages()
 {
-    $db = Factory::getDbo();
-    $db->setQuery('SELECT sef, title_native FROM #__languages ORDER BY sef');
-
     $list = array();
-    $rows = $db->loadObjectList();
-    foreach ($rows as $row) {
+    $rows = database::loadObjectList('SELECT sef, title_native FROM #__languages ORDER BY sef');
+    foreach ($rows as $row)
         $list[] = '["' . $row->sef . '","' . $row->title_native . '"]';
-    }
 
     return implode(',', $list);
 }

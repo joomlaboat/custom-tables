@@ -38,8 +38,7 @@ class IntegrityTables extends \CustomTables\IntegrityChecks
             $table['tablename'];
             //Check if table exists
             $query_check_table = 'SHOW TABLES LIKE ' . $db->quote(database::realTableName($table['tablename']));
-            $db->setQuery($query_check_table);
-            $rows = $db->loadObjectList();
+            $rows = database::loadObjectList($query_check_table);
 
             $tableExists = !(count($rows) == 0);
 

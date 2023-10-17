@@ -9,6 +9,7 @@
  **/
 
 // no direct access
+use CustomTables\database;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 
@@ -39,9 +40,7 @@ class JFormFieldCTCategory extends JFormFieldList
         $query->from('#__customtables_categories');
         $query->order('categoryname');
         $query->where('published=1');
-
-        $db->setQuery((string)$query);
-        $records = $db->loadObjectList();
+        $records = database::loadObjectList((string)$query);
 
         $options = array();
         if ($records) {

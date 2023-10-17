@@ -332,8 +332,7 @@ class CustomTablesModelEditItem extends JModelLegacy
 
             $query = ' SELECT optionname, id, title_' . $langPostFix . ' AS title FROM #__customtables_options WHERE ';
             $query .= ' id=' . $filterRootParent . ' LIMIT 1';
-            $this->ct->db->setQuery($query);
-            $rootParentName = $this->ct->db->loadObjectList();
+            $rootParentName = database::loadObjectList($query);
 
             if ($startFrom == 0) {
                 if (count($rootParentName) == 1)
@@ -385,8 +384,7 @@ class CustomTablesModelEditItem extends JModelLegacy
     {
         $listing_id = common::inputGetCmd("listing_id", 0);
         $query = 'SELECT MAX(' . $this->ct->Table->realidfieldname . ') AS maxid FROM ' . $this->ct->Table->realtablename . ' LIMIT 1';
-        $this->ct->db->setQuery($query);
-        $rows = $this->ct->db->loadObjectList();
+        $rows = database::loadObjectList($query);
 
         if (count($rows) == 0)
             $msg = 'Table not found or something wrong.';

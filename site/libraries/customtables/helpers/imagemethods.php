@@ -66,19 +66,11 @@ class CustomTablesImageMethods
         $imagegalleryprefix = 'g';
 
         //delete gallery images if exist
-        $db = Factory::getDBO();
-
         //check if table exists
-        $query = 'SHOW TABLES LIKE "' . $gallery_table_name . '"';
-        $db->setQuery($query);
-
-        $recs = $db->loadObjectList();
+        $recs = database::loadObjectList('SHOW TABLES LIKE "' . $gallery_table_name . '"');
 
         if (count($recs) > 0) {
-            $query = 'SELECT photoid FROM ' . $gallery_table_name;
-            $db->setQuery($query);
-
-            $photorows = $db->loadObjectList();
+            $photorows = database::loadObjectList('SELECT photoid FROM ' . $gallery_table_name);
 
             foreach ($photorows as $photorow) {
                 $this->DeleteExistingGalleryImage(

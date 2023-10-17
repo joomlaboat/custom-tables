@@ -101,7 +101,6 @@ class database
             else
                 $db->setQuery($query);
 
-            $db->setQuery($query);
             return $db->loadObjectList();
         } elseif (defined('WPINC')) {
             global $wpdb;
@@ -111,7 +110,7 @@ class database
 
             if ($limitStart !== null)
                 $query .= ' OFFSET ' . $limitStart;
-            
+
             return $wpdb->get_results(str_replace('#__', $wpdb->prefix, $query));
         }
         return null;

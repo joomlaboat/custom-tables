@@ -9,6 +9,7 @@
  **/
 
 // no direct access
+use CustomTables\database;
 use Joomla\CMS\Factory;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
@@ -38,8 +39,7 @@ class CustomTablesFileMethods
 
         $fileBoxTableName = '#__customtables_filebox_' . $tableName . '_' . $fileBoxName;
         $query = 'SELECT file_ext FROM ' . $fileBoxTableName . ' WHERE fileid=' . (int)$file_id . ' LIMIT 1';
-        $db->setQuery($query);
-        $fileRows = $db->loadObjectList();
+        $fileRows = database::loadObjectList($query);
         if (count($fileRows) != 1)
             return '';
 
@@ -50,13 +50,8 @@ class CustomTablesFileMethods
     static public function DeleteFileBoxFiles($fileBoxTableName, $estableid, $fileBoxName, $typeParams): void
     {
         $fileFolder = JPATH_SITE . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $typeParams);
-
-        $db = Factory::getDBO();
-
         $query = 'SELECT fileid FROM ' . $fileBoxTableName;
-        $db->setQuery($query);
-
-        $filerows = $db->loadObjectList();
+        $filerows = database::loadObjectList($query);
 
         foreach ($filerows as $filerow) {
             CustomTablesFileMethods::DeleteExistingFileBoxFile(

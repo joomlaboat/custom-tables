@@ -31,12 +31,8 @@ class Languages
     function getLanguageList(): array
     {
         if (defined('_JEXEC')) {
-            $db = Factory::getDBO();
-
             $query = 'SELECT lang_id AS id, lang_code AS language, title AS caption, title, sef AS original_sef FROM #__languages WHERE published=1 ORDER BY lang_id';
-            $db->setQuery($query);
-
-            $rows = $db->loadObjectList();
+            $rows = database::loadObjectList($query);
 
             $this->LanguageList = array();
             foreach ($rows as $row) {
@@ -81,11 +77,8 @@ class Languages
     function getLanguageByCODE($code): int
     {
         if (defined('_JEXEC')) {
-            $db = Factory::getDBO();
             $query = ' SELECT lang_id AS id FROM #__languages WHERE lang_code="' . $code . '" LIMIT 1';
-
-            $db->setQuery($query);
-            $rows = $db->loadObjectList();
+            $rows = database::loadObjectList($query);
             if (count($rows) != 1)
                 return -1;
 

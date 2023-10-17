@@ -130,10 +130,7 @@ class CustomTablesModelList extends JModel
             $parentid = 0;
 
         $query .= $orderby;
-
-        $db->setQuery($query);
-
-        $rows = $db->loadObjectList();
+        $rows = database::loadObjectList($query);
 
         $children = array();
         // first pass - collect children
@@ -316,8 +313,7 @@ class CustomTablesModelList extends JModel
         $query = 'SELECT id' .
             ' FROM #__customtables_options' .
             ' WHERE parentid = ' . (int)$tree_id;
-        $db->setQuery($query);
-        $rows = $db->loadObjectList();
+        $rows = database::loadObjectList($query);
 
         // Make sure there aren't any errors
         if ($db->getErrorNum()) {

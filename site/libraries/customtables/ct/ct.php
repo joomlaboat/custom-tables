@@ -45,14 +45,12 @@ class CT
     //Joomla Specific
     var $app;
     var $document;
-    var $db;
 
     function __construct(?\Joomla\Registry\Registry $menuParams = null, $blockExternalVars = true, ?string $ModuleId = null, bool $enablePlugin = true)
     {
         if (defined('_JEXEC')) {
             $this->app = Factory::getApplication();
             $this->document = $this->app->getDocument();
-            $this->db = Factory::getDBO();
         }
 
         $this->Languages = new Languages;
@@ -426,10 +424,7 @@ class CT
                 $photoTableName = '#__customtables_gallery_' . $this->Table->tablename . '_' . $galleryName;
 
                 $query = 'SELECT photoid FROM ' . $photoTableName . ' WHERE listingid=' . $this->db->quote($listing_id);
-                $this->db->setQuery($query);
-
-                $photoRows = $this->db->loadObjectList();
-
+                $photoRows = database::loadObjectList($query);
                 $imageGalleryPrefix = 'g';
 
                 foreach ($photoRows as $photoRow) {

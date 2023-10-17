@@ -42,8 +42,7 @@ class JFormFieldESTable extends JFormFieldList
         $query->from('#__customtables_tables');
         $query->order('tablename');
 
-        $db->setQuery((string)$query);
-        $messages = $db->loadObjectList();
+        $messages = database::loadObjectList((string)$query);
         $options = array();
         if ($messages) {
             foreach ($messages as $message)

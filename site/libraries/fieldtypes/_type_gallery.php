@@ -13,18 +13,15 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\database;
 use Joomla\CMS\Factory;
 
 class CT_FieldTypeTag_imagegallery
 {
     public static function getGalleryRows($tableName, $galleryName, $listing_id)
     {
-        $db = Factory::getDBO();
         $photoTableName = '#__customtables_gallery_' . $tableName . '_' . $galleryName;
-
-        $query = 'SELECT photoid, photo_ext FROM ' . $photoTableName . ' WHERE listingid=' . (int)$listing_id . ' ORDER BY ordering, photoid';
-        $db->setQuery($query);
-        return $db->loadObjectList();
+        return database::loadObjectList('SELECT photoid, photo_ext FROM ' . $photoTableName . ' WHERE listingid=' . (int)$listing_id . ' ORDER BY ordering, photoid');
     }
 
     public static function getImageGalleryTagList(array $imageSRCList)//, array $params

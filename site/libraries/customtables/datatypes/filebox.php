@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\database;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 
@@ -62,13 +63,8 @@ class CT_FieldTypeTag_FileBox
 
     public static function getFileBoxRows($tablename, $fieldname, $listing_id)
     {
-        $db = Factory::getDBO();
         $fileBoxTableName = '#__customtables_filebox_' . $tablename . '_' . $fieldname;
-
-        $query = 'SELECT fileid, file_ext FROM ' . $fileBoxTableName . ' WHERE listingid=' . (int)$listing_id . ' ORDER BY fileid';
-        $db->setQuery($query);
-
-        return $db->loadObjectList();
+        return database::loadObjectList('SELECT fileid, file_ext FROM ' . $fileBoxTableName . ' WHERE listingid=' . (int)$listing_id . ' ORDER BY fileid');
     }
 
     public static function renderFileBoxIcon(CT $ct, string $listing_id, string $fileBoxName, string $title): string

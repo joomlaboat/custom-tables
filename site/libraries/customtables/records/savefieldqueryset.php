@@ -555,8 +555,7 @@ class SaveFieldQuerySet
                     $minid = (int)$this->field->params[0];
 
                     $query = 'SELECT MAX(' . $this->ct->Table->realidfieldname . ') AS maxid FROM ' . $this->ct->Table->realtablename . ' LIMIT 1';
-                    $this->ct->db->setQuery($query);
-                    $rows = $this->ct->db->loadObjectList();
+                    $rows = database::loadObjectList($query);
                     if (count($rows) != 0) {
                         $value = (int)($rows[0]->maxid) + 1;
                         if ($value < $minid)
@@ -706,9 +705,7 @@ class SaveFieldQuerySet
         $query = 'SELECT count(' . $this->ct->Table->realidfieldname . ') AS c FROM ' . $this->ct->Table->realtablename . ' WHERE '
             . $this->ct->Table->realidfieldname . '!=' . (int)$exclude_id . ' AND ' . $realfieldname . '=' . $this->ct->db->quote($value) . ' LIMIT 1';
 
-        $this->ct->db->setQuery($query);
-
-        $rows = $this->ct->db->loadObjectList();
+        $rows = database::loadObjectList($query);
         if (count($rows) == 0)
             return false;
 
@@ -907,8 +904,7 @@ class SaveFieldQuerySet
     protected function getList($parentId)
     {
         $query = 'SELECT id, optionname FROM #__customtables_options WHERE parentid=' . (int)$parentId;
-        $this->ct->db->setQuery($query);
-        return $this->ct->db->loadObjectList();
+        return database::loadObjectList($query);
     }
 
     protected function getComboString($parent): ?string

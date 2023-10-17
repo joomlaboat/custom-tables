@@ -30,11 +30,7 @@ class JFormFieldCTUserGroup extends JFormFieldList
         $query->select('id,title');
         $query->from('#__usergroups');
         $query->order('title');
-
-        $db->setQuery($query);
-
-        $records = $db->loadObjectList();
-
+        $records = database::loadObjectList((string)$query);
         $options = [];
 
         if ($records) {

@@ -53,9 +53,8 @@ class ESTables
             return 0;
 
         $query = 'SELECT id FROM #__customtables_tables AS s WHERE tablename=' . $db->quote($tablename) . ' LIMIT 1';
-        $db->setQuery($query);
+        $rows = database::loadObjectList($query);
 
-        $rows = $db->loadObjectList();
         if (count($rows) != 1)
             return 0;
 
@@ -220,10 +219,7 @@ class ESTables
     public static function getTableStatus($database, $dbPrefix, $tablename)
     {
         $db = Factory::getDBO();
-        $query = 'SHOW TABLE STATUS FROM ' . $db->quoteName($database) . ' LIKE ' . $db->quote($dbPrefix . 'customtables_table_' . $tablename);
-        $db->setQuery($query);
-
-        return $db->loadObjectList();
+        return database::loadObjectList('SHOW TABLE STATUS FROM ' . $db->quoteName($database) . ' LIKE ' . $db->quote($dbPrefix . 'customtables_table_' . $tablename));
     }
 
     public static function insertRecords(string $realtablename, array $sets): int
@@ -278,9 +274,7 @@ class ESTables
             $tableid = common::inputGet('tableid', 0, 'INT');
 
         $query = 'SELECT tablename FROM #__customtables_tables AS s WHERE id=' . (int)$tableid . ' LIMIT 1';
-        $db->setQuery($query);
-
-        $rows = $db->loadObjectList();
+        $rows = database::loadObjectList($query);
         if (count($rows) != 1)
             return null;
 
@@ -313,9 +307,7 @@ class ESTables
                 . 'COLUMN_KEY AS column_key,'
                 . 'EXTRA AS extra FROM information_schema.columns WHERE table_schema = ' . $db->quote($database) . ' AND table_name = ' . $db->quote($realtablename);
 
-        $db->setQuery($query);
-        $fields = $db->loadObjectList();
-
+        $fields = database::loadObjectList($query);
         $set_fieldNames = ['tableid', 'fieldname', 'fieldtitle', 'allowordering', 'type', 'typeparams', 'ordering', 'defaultvalue', 'description', 'customfieldname', 'isrequired'];
 
         $primary_key_column = '';

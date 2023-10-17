@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\database;
 use Joomla\CMS\Language\Text;
 use \JoomlaBasicMisc;
 use \Joomla\CMS\Factory;
@@ -31,8 +32,7 @@ class Tree
         $query .= ' AND parentid=' . $parentid;
         $query .= ' ORDER BY name';
 
-        $db->setQuery($query);
-        $rows = $db->loadObjectList();
+        $rows = database::loadObjectList($query);
 
         foreach ($rows as $item) {
 
@@ -50,8 +50,7 @@ class Tree
         $db = Factory::getDBO();
 
         $query = "SELECT id, optionname FROM #__customtables_options WHERE parentid=0 ORDER BY optionname";
-        $db->setQuery($query);
-        $available_rootparents = $db->loadObjectList();
+        $available_rootparents = database::loadObjectList($query);
         JoomlaBasicMisc::array_insert($available_rootparents, array("id" => 0, "optionname" => Text::_('-Select Parent')), 0);
         return $available_rootparents;
 
@@ -120,13 +119,8 @@ class Tree
     protected static function getOptionTitle($optionname, $parentid, &$title, $langpostfix)
     {
         // get database handle
-        $db = Factory::getDBO();
-
         $query = 'SELECT id, title' . $langpostfix . ' AS title FROM #__customtables_options WHERE parentid=' . $parentid . ' AND optionname="' . $optionname . '" LIMIT 1';
-
-        $db->setQuery($query);
-
-        $rows = $db->loadObjectList();
+        $rows = database::loadObjectList($query);
 
         if (count($rows) != 1) {
             $title = "[no name]";
@@ -202,8 +196,7 @@ class Tree
         $db = Factory::getDBO();
 
         $query = 'SELECT id FROM #__customtables_options WHERE parentid=' . $parentid . ' AND optionname="' . $optionname . '" LIMIT 1';
-        $db->setQuery($query);
-        $rows = $db->loadObjectList();
+        $rows = database::loadObjectList($query);
         if (count($rows) != 1) return 0;
 
         return $rows[0]->id;
@@ -270,11 +263,9 @@ class Tree
 
     public static function getList($parentId, $langPostfix)
     {
-        $db = Factory::getDBO();
         $query = 'SELECT id, optionname, title' . $langPostfix . ' AS title FROM #__customtables_options WHERE parentid=' . (int)$parentId;
         $query .= ' ORDER BY ordering, title';
-        $db->setQuery($query);
-        return $db->loadObjectList();
+        return database::loadObjectList($query);
     }
 
     /*
@@ -288,10 +279,7 @@ class Tree
 
         $db = Factory::getDBO();
         $query = 'SELECT link FROM #__customtables_options WHERE id='.$optid.' LIMIT 1';
-
-        $db->setQuery($query);
-
-        $rows=$db->loadObjectList();
+        $rows=$database::loadObjectList($query);
 
         if(count($rows)!=1)
             return "";
@@ -307,9 +295,7 @@ class Tree
     {
         $db = Factory::getDBO();
         $query = ' SELECT ' . $resultField . ' AS resultfield FROM ' . $table . ' WHERE ' . $checkField . '="' . $checkValue . '" LIMIT 1';
-        $db->setQuery($query);
-
-        $propertyType = $db->loadObjectList();
+        $propertyType = database::loadObjectList($query);
 
         if (count($propertyType) > 0) {
 
@@ -374,11 +360,9 @@ class Tree
     //Used many times
     public static function getFamilyTree($optionid, $level)
     {
-        $db = Factory::getDBO();
         $query = 'SELECT parentid FROM #__customtables_options WHERE id="' . $optionid . '" LIMIT 1';
-        $db->setQuery($query);
+        $rows = database::loadObjectList($query);
 
-        $rows = $db->loadObjectList();
         if (count($rows) != 1)
             return '';
 
@@ -398,11 +382,9 @@ class Tree
     //Used many times
     public static function getFamilyTreeString($optionid, $level)
     {
-        $db = Factory::getDBO();
         $query = 'SELECT parentid, optionname FROM #__customtables_options WHERE id="' . $optionid . '" LIMIT 1';
-        $db->setQuery($query);
+        $rows = database::loadObjectList($query);
 
-        $rows = $db->loadObjectList();
         if (count($rows) != 1)
             return '';
 
@@ -414,7 +396,6 @@ class Tree
             if ($level > 0)
                 $parentstring = $rows[0]->optionname;
         }
-
         return $parentstring;
     }
 }

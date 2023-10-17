@@ -92,9 +92,7 @@ class CustomTablesModelEditFiles extends JModelLegacy
     {
         // get database handle
         $db = Factory::getDBO();
-        $query = 'SELECT fileid, file_ext FROM ' . $this->fileboxtablename . ' WHERE listingid=' . $db->quote($this->ct->Params->listing_id) . ' ORDER BY fileid';
-        $db->setQuery($query);
-        return $db->loadObjectList();
+        return database::loadObjectList('SELECT fileid, file_ext FROM ' . $this->fileboxtablename . ' WHERE listingid=' . $db->quote($this->ct->Params->listing_id) . ' ORDER BY fileid');
     }
 
     function delete(): bool
@@ -185,9 +183,8 @@ class CustomTablesModelEditFiles extends JModelLegacy
         }
 
         $query = ' SELECT fileid FROM ' . $this->fileboxtablename . ' WHERE listingid=' . $db->quote($this->ct->Params->listing_id) . ' ORDER BY fileid DESC LIMIT 1';
-        $db->setQuery($query);
+        $rows = database::loadObjectList($query);
 
-        $rows = $db->loadObjectList();
         if (count($rows) == 1) {
             return $rows[0]->fileid;
         }

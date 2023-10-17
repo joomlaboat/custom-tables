@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\database;
 use CustomTables\DataTypes\Tree;
 use Joomla\CMS\Factory;
 
@@ -197,9 +198,7 @@ class ESDynamicComboTree
             $where[] = $filterwhere;
 
         $query .= ' WHERE ' . implode(' AND ', $where) . ' GROUP BY optionid ORDER BY ordering, optiontitle';
-
-        $db->setQuery($query);
-        return $db->loadObjectList();
+        return database::loadObjectList($query);
     }
 
     function getOptionList($parentname)
@@ -215,9 +214,7 @@ class ESDynamicComboTree
             . ' WHERE parentid=' . $parentid . ' ';
 
         $query .= ' ORDER BY ordering, optiontitle';
-
-        $db->setQuery($query);
-        return $db->loadObjectList();
+        return database::loadObjectList($query);
     }
 
     function renderSelectBox($objectname, $rows, $urlwhere, $optionalOptions, $simpleList = false, $value = '', $place_holder = '', $valuerule = '', $valuerulecaption = '')

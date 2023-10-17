@@ -85,10 +85,7 @@ class CustomTablesModelListOfOptions extends JModelList
 
                 ' LOWER( m.title ) LIKE ' . $db->Quote('%' . $search . '%', false);
 
-
-            $db->setQuery($query);
-            $search_rows = $db->loadObjectList();
-
+            $search_rows = database::loadObjectList($query);
         }
 
         if ($filter_rootparent)
@@ -106,10 +103,8 @@ class CustomTablesModelListOfOptions extends JModelList
             $WhereStr .
             $orderby;
 
+        $rows = database::loadObjectList($query);
 
-        $db->setQuery($query);
-
-        $rows = $db->loadObjectList();
         $children = array();
         // first pass - collect children
         foreach ($rows as $v) {
@@ -120,7 +115,6 @@ class CustomTablesModelListOfOptions extends JModelList
         }
 
         // second pass - get an indent list of the items
-
         $list = JHTML::_('menu.treerecurse', 0, '', array(), $children, max(0, $levellimit - 1));
         $list = $this->treerecurse(0, '', array(), $children, max(0, $levellimit - 1));
 
@@ -265,8 +259,7 @@ class CustomTablesModelListOfOptions extends JModelList
         $query = 'SELECT id' .
             ' FROM #__customtables_options' .
             ' WHERE parentid = ' . (int)$id;
-        $db->setQuery($query);
-        $rows = $db->loadObjectList();
+        $rows = database::loadObjectList($query);
 
         // Make sure there aren't any errors
         if ($db->getErrorNum()) {
@@ -359,9 +352,7 @@ class CustomTablesModelListOfOptions extends JModelList
         $db = Factory::getDBO();
 
         $query = "SELECT id, optionname FROM #__customtables_options";// WHERE parentid!=0";
-        $db->setQuery($query);
-
-        $rows = $db->loadObjectList();
+        $rows = database::loadObjectList($query);
         foreach ($rows as $row) {
             $familytreestr = Tree::getFamilyTreeString($row->id, 0);
             if ($familytreestr != '')

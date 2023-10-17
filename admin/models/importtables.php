@@ -152,10 +152,8 @@ class CustomTablesModelImportTables extends JModelList
 
     function findMaxId($table): int
     {
-        $db = Factory::getDBO();
         $query = ' SELECT id FROM #__customtables_table_' . $table . ' ORDER BY id DESC LIMIT 1';
-        $db->setQuery($query);
-        $maxIdRecords = $db->loadObjectList();
+        $maxIdRecords = database::loadObjectList($query);
 
         if (count($maxIdRecords) != 1)
             return -1;
@@ -169,8 +167,7 @@ class CustomTablesModelImportTables extends JModelList
 
         $db = Factory::getDBO();
         $query = ' SELECT id FROM #__customtables_languages WHERE language="' . $code . '" LIMIT 1';
-        $db->setQuery($query);
-        $rows = $db->loadObjectList();
+        $rows = database::loadObjectList($query);
         if (count($rows) != 1)
             return -1;
 

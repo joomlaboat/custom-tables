@@ -36,10 +36,7 @@ class JHTMLESUserGroupsView
 
         $query->where(implode(' OR ', $where));
         $query->orderby('title');
-
-        $db->setQuery($query);
-
-        $options = $db->loadObjectList();
+        $options = database::loadObjectList((string)$query);
 
         if (count($options) == 0)
             return '';

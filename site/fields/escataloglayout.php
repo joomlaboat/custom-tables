@@ -9,6 +9,7 @@
  **/
 
 // no direct access
+use CustomTables\database;
 use Joomla\CMS\Factory;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
@@ -35,8 +36,7 @@ class JFormFieldESCatalogLayout extends JFormFieldList
         $query->where('published=1 AND (layouttype=1 OR layouttype=5 OR layouttype=8 OR layouttype=9 OR layouttype=10)');
         $query->order('tablename,layoutname');
 
-        $db->setQuery((string)$query);
-        $messages = $db->loadObjectList();
+        $messages = database::loadObjectList((string)$query);
         $options = array();
 
         $options[] = JHtml::_('select.option', '', '- ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT'));

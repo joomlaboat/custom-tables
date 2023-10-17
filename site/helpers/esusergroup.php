@@ -9,6 +9,7 @@
  **/
 
 // Check to ensure this file is included in Joomla!
+use CustomTables\database;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 
@@ -34,8 +35,7 @@ class JHTMLESUserGroup
             $query->where($mysqlwhere);
 
         $query->order('#__usergroups.title');
-        $db->setQuery($query);
-        $options = $db->loadObjectList();
+        $options = database::loadObjectList((string)$query);
         $att = ['id' => '', 'data-type' => 'usergroup', 'name' => '- ' . Text::_('COM_CUSTOMTABLES_SELECT')];
         $options = array_merge(array($att), $options);
         return JHTML::_('select.genericlist', $options, $control_name, $cssclass . ' style="' . $style . '" ' . $attribute . ' ', 'id', 'name', $value, $control_name);

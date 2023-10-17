@@ -28,9 +28,7 @@ class JHTMLESUserGroupView
         $query->where('id=' . (int)$value);
         $query->limit('1');
 
-        $db->setQuery($query);
-
-        $options = $db->loadObjectList();
+        $options = database::loadObjectList((string)$query);
 
         if (count($options) == 0)
             return '';

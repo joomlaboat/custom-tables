@@ -23,13 +23,7 @@ class FindSimilarImage
             $level_identity = 0;
 
         $ci = new compareImages;
-
-        $db = Factory::getDBO();
-
-        $query = 'SELECT ' . $realfieldname . ' AS photoid FROM ' . $realtablename . ' WHERE ' . $realfieldname . '>0' . ($additional_filter != '' ? ' AND ' . $additional_filter : '');
-
-        $db->setQuery($query);
-        $photorows = $db->loadObjectList();
+        $photorows = database::loadObjectList('SELECT ' . $realfieldname . ' AS photoid FROM ' . $realtablename . ' WHERE ' . $realfieldname . '>0' . ($additional_filter != '' ? ' AND ' . $additional_filter : ''));
 
         foreach ($photorows as $photorow) {
             $photoid = $photorow->photoid;

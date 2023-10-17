@@ -14,6 +14,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomTables\common;
+use CustomTables\database;
 use CustomTables\Fields;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Version;
@@ -422,8 +423,7 @@ class JoomlaBasicMisc
         if ($rawParams == '') {
             $db = Factory::getDBO();
             $query = 'SELECT params FROM #__menu WHERE id=' . (int)$Itemid . ' LIMIT 1';
-            $db->setQuery($query);
-            $rows = $db->loadObjectList();
+            $rows = database::loadObjectList($query);
 
             if (count($rows) == 0)
                 return '';
@@ -485,10 +485,8 @@ class JoomlaBasicMisc
         $query = 'SELECT id FROM #__usergroups WHERE title=' . $db->quote(trim($grouptitle)) . ' LIMIT 1';
 
         // Execute the query and load the rules from the result.
-
-        $db->setQuery($query);
-
-        $rows = $db->loadObjectList();
+        $rows = database::loadObjectList($query);
+        
         if (count($rows) < 1)
             return '';
 

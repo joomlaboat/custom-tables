@@ -56,8 +56,7 @@ class CustomtablesViewLayouts extends JViewLegacy
                 . 'layouttype '
                 . 'FROM #__customtables_layouts WHERE id=' . $layoutId . ' LIMIT 1';
 
-        $this->ct->db->setQuery($query);
-        $rows = $this->ct->db->loadObjectList();
+        $rows = database::loadObjectList($query);
         if (count($rows) == 1)
             $this->item = $rows[0];
         else {
@@ -332,7 +331,6 @@ class CustomtablesViewLayouts extends JViewLegacy
         $query->from('#__customtables_layouts');
         $query->order('layoutname');
         $query->where('published=1');
-        $db->setQuery((string)$query);
-        return $db->loadObjectList();
+        return database::loadObjectList((string)$query);
     }
 }
