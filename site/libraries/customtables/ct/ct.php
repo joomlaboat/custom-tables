@@ -447,11 +447,8 @@ class CT
         }
 
         $query = 'DELETE FROM ' . $this->Table->realtablename . ' WHERE ' . $this->Table->realidfieldname . '=' . $this->db->quote($listing_id);
-        $this->db->setQuery($query);
-        $this->db->execute();
-
+        database::setQuery($query);
         $this->Table->saveLog($listing_id, 5);
-
         $new_row = array();
 
         if ($this->Env->advancedTagProcessor)
@@ -466,9 +463,7 @@ class CT
             return -1;
 
         $query = 'UPDATE ' . $this->Table->realtablename . ' SET published=' . (int)$status . ' WHERE ' . $this->Table->realidfieldname . '=' . $this->db->quote($listing_id);
-
-        $this->db->setQuery($query);
-        $this->db->execute();
+        database::setQuery($query);
 
         if ($status == 1)
             $this->Table->saveLog($listing_id, 3);

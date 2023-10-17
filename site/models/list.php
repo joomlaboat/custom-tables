@@ -14,6 +14,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomTables\common;
+use CustomTables\database;
 use CustomTables\Fields;
 use \Joomla\CMS\Factory;
 use Joomla\String\StringHelper;
@@ -297,16 +298,10 @@ class CustomTablesModelList extends JModel
                 $this->_addChildren((int)$tree_id, $tree_ids);
             }
 
-            $db = Factory::getDBO();
-
-
             // Delete the menu items
             $query = 'DELETE FROM #__customtables_options WHERE id = ' . implode(' OR id = ', $tree_ids);
-            $db->setQuery($query);
-            $db->execute();
+            database::setQuery($query);
         }
-
-
         return true;
     }
 
@@ -361,19 +356,17 @@ class CustomTablesModelList extends JModel
         $cids = array();
         if ($level == 0) {
             $query = 'UPDATE #__customtables_options SET sublevel = 0 WHERE parentid = 0';
-            $db->setQuery($query);
-            $db->execute();
+            database::setQuery($query);
+
             $query = 'SELECT id FROM #__customtables_options WHERE parentid = 0';
-            $db->setQuery($query);
-            $cids = $db->loadResultArray(0);
+            $cids = database::loadResultArray($query);
         } else {
             $query = 'UPDATE #__customtables_options SET sublevel = ' . (int)$level
                 . ' WHERE parentid IN (' . $tree_ids . ')';
-            $db->setQuery($query);
-            $db->execute();
+            database::setQuery($query);
+
             $query = 'SELECT id FROM #__customtables_options WHERE parentid IN (' . $tree_ids . ')';
-            $db->setQuery($query);
-            $cids = $db->loadResultArray(0);
+            $cids = database::loadResultArray($query);
         }
         if (!empty($cids)) {
             $this->_rebuildSubLevel($cids, $level + 1);

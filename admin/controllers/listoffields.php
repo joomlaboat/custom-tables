@@ -35,12 +35,9 @@ class CustomtablesControllerListOfFields extends JControllerAdmin
         $cid = ArrayHelper::toInteger($cid);
         $count = count($cid);
 
-        $db = Factory::getDBO();
-
         foreach ($cid as $id) {
             $query = 'UPDATE #__customtables_fields SET checked_out=0, checked_out_time=NULL WHERE id=' . $id;
-            $db->setQuery($query);
-            $db->execute();
+            database::setQuery($query);
         }
 
         if ($count == 1)
@@ -129,13 +126,8 @@ class CustomtablesControllerListOfFields extends JControllerAdmin
 
     protected function setPublishStatusSingleRecord($id, $status)
     {
-        $db = Factory::getDBO();
-
         $query = 'UPDATE #__customtables_fields SET published=' . (int)$status . ' WHERE id=' . (int)$id;
-
-        $db->setQuery($query);
-        $db->execute();
-
+        database::setQuery($query);
         return true;
     }
 

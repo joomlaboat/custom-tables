@@ -159,9 +159,7 @@ class ESTables
 
             if (count($fields) == 0) {
                 //create new table
-                $db->setQuery('CREATE SEQUENCE IF NOT EXISTS ' . $table_name . '_seq');
-                $db->execute();
-
+                database::setQuery('CREATE SEQUENCE IF NOT EXISTS ' . $table_name . '_seq');
 
                 $query = '
 				CREATE TABLE IF NOT EXISTS ' . $table_name . '
@@ -171,12 +169,8 @@ class ESTables
 					PRIMARY KEY (id)
 				)';
 
-                $db->setQuery($query);
-                $db->execute();
-
-                $db->setQuery('ALTER SEQUENCE ' . $table_name . '_seq RESTART WITH 1');
-                $db->execute();
-
+                database::setQuery($query);
+                database::setQuery('ALTER SEQUENCE ' . $table_name . '_seq RESTART WITH 1');
                 return true;
             }
         } else {
@@ -192,14 +186,11 @@ class ESTables
 
                     if ($row2->Engine != 'InnoDB') {
                         $query = 'ALTER TABLE ' . $table_name . ' ENGINE = InnoDB';
-                        $db->setQuery($query);
-                        $db->execute();
+                        database::setQuery($query);
                     }
 
                     $query = 'ALTER TABLE ' . $table_name . ' COMMENT = "' . $tabletitle . '";';
-                    $db->setQuery($query);
-                    $db->execute();
-
+                    database::setQuery($query);
                     return false;
                 }
             } else {
@@ -219,9 +210,7 @@ class ESTables
 						PRIMARY KEY (id)
 					) ENGINE=InnoDB COMMENT="' . $tabletitle . '" DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AUTO_INCREMENT=1;
 ';
-                $db->setQuery($query);
-                $db->execute();
-
+                database::setQuery($query);
                 return true;
             }
         }
@@ -255,8 +244,7 @@ class ESTables
         }
 
         try {
-            $db->setQuery($query);
-            $db->execute();
+            database::setQuery($query);
         } catch (Exception $e) {
             Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
             return false;
@@ -277,8 +265,7 @@ class ESTables
                 $query = 'RENAME TABLE ' . $db->quoteName($database . '.' . $dbPrefix . 'customtables_table_' . $old_tablename) . ' TO '
                     . $db->quoteName($database . '.' . $dbPrefix . 'customtables_table_' . $tablename) . ';';
 
-                $db->setQuery($query);
-                $db->execute();
+                database::setQuery($query);
             }
         }
     }
@@ -358,10 +345,7 @@ class ESTables
                 $set_values['isrequired'] = 0;
 
                 $query = 'INSERT INTO #__customtables_fields (' . implode(',', $set_fieldNames) . ') VALUES (' . implode(',', $set_values) . ')';
-
-                $db->setQuery($query);
-                $db->execute();
-
+                database::setQuery($query);
                 $ordering += 1;
             }
         }
@@ -369,8 +353,7 @@ class ESTables
         if ($primary_key_column != '') {
             //Update primary key column
             $query = 'UPDATE #__customtables_tables SET customidfield = ' . $db->quote($primary_key_column) . ' WHERE id = ' . (int)$tablerow->id;
-            $db->setQuery($query);
-            $db->execute();
+            database::setQuery($query);
         }
         return true;
     }
@@ -413,16 +396,13 @@ class ESTables
             else
                 $query = 'CREATE TABLE #__customtables_table_' . $new_table . ' AS SELECT * FROM #__customtables_table_' . $old_table;
 
-            $db->setQuery($query);
-            $db->execute();
+            database::setQuery($query);
 
             $query = 'ALTER TABLE #__customtables_table_' . $new_table . ' ADD PRIMARY KEY (id)';
-            $db->setQuery($query);
-            $db->execute();
+            database::setQuery($query);
 
             $query = 'ALTER TABLE #__customtables_table_' . $new_table . ' CHANGE id id INT UNSIGNED NOT NULL AUTO_INCREMENT';
-            $db->setQuery($query);
-            $db->execute();
+            database::setQuery($query);
         }
 
         //Copy Fields
@@ -477,8 +457,7 @@ class ESTables
                 }
             }
             $iq = 'INSERT INTO #__customtables_fields SET ' . implode(', ', $inserts);
-            $db->setQuery($iq);
-            $db->execute();
+            database::setQuery($iq);
         }
         return true;
     }

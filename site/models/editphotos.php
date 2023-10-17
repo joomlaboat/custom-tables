@@ -16,6 +16,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\common;
 use CustomTables\CT;
 
+use CustomTables\database;
 use CustomTables\Field;
 use CustomTables\Fields;
 use Joomla\CMS\Factory;
@@ -178,9 +179,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy
             $query = 'UPDATE ' . $this->phototablename . ' SET ordering=' . $i . ', title' . $this->ct->Languages->Postfix . '="' . $safeTitle . '" WHERE listingid='
                 . $this->listing_id . ' AND photoid=' . $image->photoid;
 
-            $db->setQuery($query);
-            $db->execute();
-
+            database::setQuery($query);
             $i++;
         }
         return true;
@@ -212,8 +211,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy
                     $photoid, $this->field->params[0], true);
 
                 $query = 'DELETE FROM ' . $this->phototablename . ' WHERE listingid=' . $this->listing_id . ' AND photoid=' . $photoid;
-                $db->setQuery($query);
-                $db->execute();
+                database::setQuery($query);
             }
         }
 
@@ -324,10 +322,8 @@ class CustomTablesModelEditPhotos extends JModelLegacy
             . 'listingid=' . $db->quote($this->listing_id) . ', '
             . 'title=' . $db->quote($title);
 
-        $db->setQuery($query);
-
         try {
-            $db->execute();
+            database::setQuery($query);
         } catch (Exception $e) {
             echo 'Caught exception: ', $e->getMessage(), "\n";
             die;
@@ -365,8 +361,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy
                     . $this->listing_id . ' AND photoid=' . $image->photoid;
             }
 
-            $db->setQuery($query);
-            $db->execute();
+            database::setQuery($query);
             $i++;
         }
         return true;

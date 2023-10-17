@@ -121,8 +121,7 @@ class ImportTables
                 ) ENGINE=InnoDB COMMENT="' . $tabletitle . '" DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AUTO_INCREMENT=1;
         ';
 
-        $db->setQuery($query);
-        $db->execute();
+        database::setQuery($query);
 
         ImportTables::updateTableCategory($tableid, $table_new, $categoryname);
         return $tableid;
@@ -162,8 +161,7 @@ class ImportTables
 
         if (count($sets) > 0) {
             $query = 'UPDATE ' . $mySQLTableName . ' SET ' . implode(', ', $sets) . ' WHERE id=' . (int)$rows_old['id'];
-            $db->setQuery($query);
-            $db->execute();
+            database::setQuery($query);
         }
     }
 
@@ -353,9 +351,7 @@ class ImportTables
             $mysqlTableName = '#__customtables_tables';
 
             $query = 'UPDATE ' . $mysqlTableName . ' SET tablecategory=' . (int)$categoryId . ' WHERE id=' . (int)$tableid;
-
-            $db->setQuery($query);
-            $db->execute();
+            database::setQuery($query);
         }
     }
 

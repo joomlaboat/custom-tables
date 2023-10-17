@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\database;
 use CustomTables\DataTypes\Tree;
 use Joomla\CMS\Factory;
 use Joomla\String\StringHelper;
@@ -244,16 +245,12 @@ class CustomTablesModelListOfOptions extends JModelList
         if (!empty($ids)) {
 
             // Add all children to the list
-            foreach ($ids as $id) {
+            foreach ($ids as $id)
                 $this->_addChildren($id, $ids);
-            }
-
-            $db = Factory::getDBO();
 
             // Delete the menu items
             $query = 'DELETE FROM #__customtables_options WHERE id = ' . implode(' OR id = ', $ids);
-            $db->setQuery($query);
-            $db->execute();
+            database::setQuery($query);
         }
         return true;
     }
@@ -308,8 +305,7 @@ class CustomTablesModelListOfOptions extends JModelList
 
         if ($level == 0) {
             $query = 'UPDATE #__customtables_options SET sublevel = 0 WHERE parentid = 0';
-            $db->setQuery($query);
-            $db->execute();
+            database::setQuery($query);
 
             $query = 'SELECT id FROM #__customtables_options WHERE parentid = 0';
             $db->setQuery($query);
@@ -317,8 +313,7 @@ class CustomTablesModelListOfOptions extends JModelList
         } else {
             $query = 'UPDATE #__customtables_options SET sublevel = ' . (int)$level
                 . ' WHERE parentid IN (' . $ids . ')';
-            $db->setQuery($query);
-            $db->execute();
+            database::setQuery($query);
 
             $query = 'SELECT id FROM #__customtables_options WHERE parentid IN (' . $ids . ')';
             $db->setQuery($query);
@@ -374,9 +369,7 @@ class CustomTablesModelListOfOptions extends JModelList
             else
                 $familytreestr = ',' . $row->optionname . '.';
 
-            $uquery = 'UPDATE #__customtables_options SET familytreestr="' . $familytreestr . '" WHERE id=' . $row->id;
-            $db->setQuery($uquery);
-            $db->execute();
+            database::setQuery('UPDATE #__customtables_options SET familytreestr="' . $familytreestr . '" WHERE id=' . $row->id);
         }
         return true;
     }

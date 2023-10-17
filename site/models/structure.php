@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\database;
 use CustomTables\DataTypes\Tree;
 
 use \Joomla\CMS\Factory;
@@ -172,18 +173,12 @@ class CustomTablesModelStructure extends JModel
                 . ' ORDER BY title' . $this->ct->Languages->Postfix;
         }
 
-        $db->setQuery($query);
-        $db->execute();
-
-        $this->record_count = $db->getNumRows();
-
-        $db->setQuery($query, $this->getState('limitstart'), $this->getState('limit'));
-
-        $rows = $db->loadAssocList();
-        $newrows = array();
+        $this->record_count = database::getNumRowsOnly($query);
+        $rows = database::loadAssocList($query, $this->getState('limitstart'), $this->getState('limit'));
+        $newRows = [];
         foreach ($rows as $row)
-            $newrows[] = $row;
+            $newRows[] = $row;
 
-        return $newrows;
+        return $newRows;
     }
 }

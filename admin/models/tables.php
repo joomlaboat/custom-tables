@@ -151,15 +151,13 @@ class CustomtablesModelTables extends JModelAdmin
                 else
                     $query = 'DROP TABLE IF EXISTS ' . $db->quoteName($realtablename);
 
-                $db->setQuery($query);
-                $db->execute();
+                database::setQuery($query);
 
                 $serverType = database::getServerType();
 
                 if ($serverType == 'postgresql') {
                     $query = 'DROP SEQUENCE IF EXISTS ' . $realtablename . '_seq CASCADE';
-                    $db->setQuery($query);
-                    $db->execute();
+                    database::setQuery($query);
                 }
             }
         }

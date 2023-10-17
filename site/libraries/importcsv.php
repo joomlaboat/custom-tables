@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\database;
 use CustomTables\Fields;
 use Joomla\CMS\Factory;
 
@@ -121,8 +122,7 @@ function importCSVdata(string $filename, $ct_tableid): string
 
             if (is_null($listing_id)) {
                 $query = 'INSERT ' . $tablerow->realtablename . ' SET ' . implode(', ', $sets);
-                $db->setQuery($query);
-                $db->execute();
+                database::setQuery($query);
             }
         }
     }
@@ -185,11 +185,8 @@ function findSQLJoin($realtablename, $join_realfieldname, $realidfieldname, bool
 
 function addSQLJoinSets($realtablename, $sets)
 {
-    $db = Factory::getDBO();
     $query = 'INSERT ' . $realtablename . ' SET ' . implode(',', $sets);
-
-    $db->setQuery($query);
-    $db->execute();
+    database::setQuery($query);
 }
 
 function prepareSQLQuery($fieldList, $fields, $line)

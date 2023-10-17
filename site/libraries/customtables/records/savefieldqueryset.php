@@ -1110,9 +1110,8 @@ class SaveFieldQuerySet
         if (count($saveQuery) > 0) {
             $query = 'UPDATE ' . $this->ct->Table->realtablename . ' SET ' . implode(', ', $saveQuery) . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . $this->ct->db->quote($listing_id);
 
-            $this->ct->db->setQuery($query);
             try {
-                $this->ct->db->execute();
+                database::setQuery($query);
             } catch (Exception $e) {
                 $this->ct->app->enqueueMessage($e->getMessage(), 'error');
             }
@@ -1160,9 +1159,7 @@ class SaveFieldQuerySet
                 if ($this->ct->Params->emailSentStatusField == $fieldname) {
 
                     $query = 'UPDATE ' . $this->ct->Table->realtablename . ' SET es_' . $fieldname . '=' . $status . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . $this->ct->db->quote($listing_id);
-
-                    $this->ct->db->setQuery($query);
-                    $this->ct->db->execute();
+                    database::setQuery($query);
                     return;
                 }
             }

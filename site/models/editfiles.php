@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\database;
 use CustomTables\Field;
 use CustomTables\Fields;
 
@@ -110,8 +111,7 @@ class CustomTablesModelEditFiles extends JModelLegacy
                 CustomTablesFileMethods::DeleteExistingFileBoxFile($this->fileboxfolder, $this->ct->Table->tableid, $this->fileboxname, $fileid, $file_ext);
 
                 $query = 'DELETE FROM ' . $this->fileboxtablename . ' WHERE listingid=' . $this->ct->Params->listing_id . ' AND fileid=' . $fileid;
-                $db->setQuery($query);
-                $db->execute();
+                database::setQuery($query);
             }
         }
 
@@ -177,10 +177,8 @@ class CustomTablesModelEditFiles extends JModelLegacy
             . 'listingid=' . $db->quote($this->ct->Params->listing_id) . ', '
             . 'title=' . $db->quote($title);
 
-        $db->setQuery($query);
-
         try {
-            $db->execute();
+            database::setQuery($query);
         } catch (Exception $e) {
             echo 'Caught exception: ', $e->getMessage(), "\n";
             die;

@@ -89,14 +89,29 @@ class database
         return null;
     }
 
-    public static function loadObjectList($query)
+    public static function loadObjectList($query, $limitStart = null, $limit = null)
     {
         if (defined('_JEXEC')) {
             $db = Factory::getDBO();
+
+            if ($limitStart !== null and $limit !== null)
+                $db->setQuery($query, $limitStart, $limit);
+            elseif ($limitStart !== null)
+                $db->setQuery($query, $limitStart);
+            else
+                $db->setQuery($query);
+
             $db->setQuery($query);
             return $db->loadObjectList();
         } elseif (defined('WPINC')) {
             global $wpdb;
+
+            if ($limit !== null)
+                $query .= ' LIMIT ' . $limit;
+
+            if ($limitStart !== null)
+                $query .= ' OFFSET ' . $limitStart;
+            
             return $wpdb->get_results(str_replace('#__', $wpdb->prefix, $query));
         }
         return null;
@@ -114,20 +129,47 @@ class database
         }
     }
 
+    public static function getNumRowsOnly($query): int
+    {
+        if (defined('_JEXEC')) {
+            $db = Factory::getDBO();
+            $db->setQuery($query);
+            $db->execute();
+            return $db->getNumRows();
+        } elseif (defined('WPINC')) {
+            global $wpdb;
+            $wpdb->query(str_replace('#__', $wpdb->prefix, $query));
+            return $wpdb->num_rows;
+        }
+    }
+
     public static function getVersion(): ?float
     {
         $result = self::loadAssocList('select @@version');
         return floatval($result[0]['@@version']);
     }
 
-    public static function loadAssocList($query)
+    public static function loadAssocList($query, $limitStart = null, $limit = null)
     {
         if (defined('_JEXEC')) {
             $db = Factory::getDBO();
-            $db->setQuery($query);
+            if ($limitStart !== null and $limit !== null)
+                $db->setQuery($query, $limitStart, $limit);
+            elseif ($limitStart !== null)
+                $db->setQuery($query, $limitStart);
+            else
+                $db->setQuery($query);
+
             return $db->loadAssocList();
         } elseif (defined('WPINC')) {
             global $wpdb;
+
+            if ($limit !== null)
+                $query .= ' LIMIT ' . $limit;
+
+            if ($limitStart !== null)
+                $query .= ' OFFSET ' . $limitStart;
+
             return $wpdb->get_results(str_replace('#__', $wpdb->prefix, $query), ARRAY_A);
         }
         return null;

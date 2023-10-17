@@ -47,8 +47,7 @@ trait Logs
         $query = 'INSERT INTO #__customtables_log (' . implode(',', $fields) . ') VALUES (' . implode(',', $sets) . ')';
 
         try {
-            $db->setQuery($query);
-            @$db->execute();
+            @database::setQuery($query);
         } catch (Exception $e) {
             echo $e->getMessage();
         }

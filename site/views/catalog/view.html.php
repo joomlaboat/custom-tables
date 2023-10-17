@@ -17,6 +17,7 @@ use CustomTables\CatalogExportCSV;
 use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\Catalog;
+use CustomTables\database;
 use CustomTables\Inputbox;
 
 class CustomTablesViewCatalog extends JViewLegacy
@@ -125,8 +126,7 @@ class CustomTablesViewCatalog extends JViewLegacy
         if (count($update_fields) > 0) {
 
             $query = 'UPDATE ' . $this->ct->Table->realtablename . ' SET ' . implode(', ', $update_fields) . ' WHERE id=' . $rec[$this->ct->Table->realidfieldname];
-            $this->ct->db->setQuery($query);
-            $this->ct->db->execute();
+            database::setQuery($query);
         }
     }
 }

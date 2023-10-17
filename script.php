@@ -18,6 +18,7 @@ jimport('joomla.installer.installer');
 jimport('joomla.installer.helper');
 
 use CustomTables\CT;
+use CustomTables\database;
 use CustomTables\IntegrityChecks;
 use Joomla\CMS\Factory;
 
@@ -91,8 +92,7 @@ class com_customtablesInstallerScript
                 $db->quoteName('name') . ' = ' . $db->quote('com_customtables')
             );
             $query->update($db->quoteName('#__assets'))->set($fields)->where($conditions);
-            $db->setQuery($query);
-            $allDone = $db->execute();
+            database::setQuery($query);
 
             // Install the global extension params.
             $query = $db->getQuery(true);
@@ -105,8 +105,7 @@ class com_customtablesInstallerScript
                 $db->quoteName('element') . ' = ' . $db->quote('com_customtables')
             );
             $query->update($db->quoteName('#__extensions'))->set($fields)->where($conditions);
-            $db->setQuery($query);
-            $allDone = $db->execute();
+            database::setQuery($query);
 
             echo '<a target="_blank" href="https://joomlaboat.com" title="Custom Tables">
 				<img src="' . JURI::root(false) . 'components/com_customtables/libraries/customtables/media/images/controlpanel/customtables.jpg"/>

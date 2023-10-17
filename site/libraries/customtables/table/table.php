@@ -196,9 +196,7 @@ class Table
             return false;
 
         $query = 'SELECT ' . $this->realidfieldname . ' FROM ' . $this->realtablename . ' WHERE ' . $this->realidfieldname . '=' . $this->db->quote($listing_id) . ' LIMIT 1';
-        $this->db->setQuery($query);
-        $this->db->execute();
-        return $this->db->getNumRows() == 1;
+        return database::getNumRowsOnly($query) == 1;
     }
 
     function isRecordNull(): bool

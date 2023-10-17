@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\database;
 use CustomTables\Field;
 use CustomTables\Fields;
 use Joomla\CMS\Factory;
@@ -180,13 +181,8 @@ class CT_FieldTypeTag_file
 
     static protected function checkIfTheFileBelongsToAnotherRecord(string $filename, CustomTables\Field $field): bool
     {
-        $db = Factory::getDBO();
-        $query = 'SELECT * FROM ' . $field->ct->Table->realtablename . ' WHERE ' . $field->realfieldname . '=' . $db->quote($filename) . ' LIMIT 2';
-
-        $db->setQuery($query);
-        $db->execute();
-
-        return $db->getNumRows() > 1;
+        $query = 'SELECT * FROM ' . $field->ct->Table->realtablename . ' WHERE ' . $field->realfieldname . '=' . database::quote($filename) . ' LIMIT 2';
+        return database::getNumRowsOnly($query) > 1;
     }
 
     static protected function getCleanAndAvailableFileName(string $filename, string $FileFolder): string

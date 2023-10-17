@@ -398,33 +398,28 @@ class CustomTablesModelEditItem extends JModelLegacy
         else
             $query = 'DROP TEMPORARY TABLE IF EXISTS ct_tmp';
 
-        $this->ct->db->setQuery($query);
-        $this->ct->db->execute();
+        database::setQuery($query);
+
         $serverType = database::getServerType();
         if ($serverType == 'postgresql') {
             $query = 'CREATE TEMPORARY TABLE ct_tmp AS TABLE ' . $this->ct->Table->realtablename . ' WITH NO DATA';
-
-            $this->ct->db->setQuery($query);
-            $this->ct->db->execute();
+            database::setQuery($query);
 
             $query = 'INSERT INTO ct_tmp (SELECT * FROM ' . $this->ct->Table->realtablename . ' WHERE ' . $this->ct->Table->realidfieldname . ' = ' . $this->ct->db->quote($listing_id) . ')';
 
         } else {
             $query = 'CREATE TEMPORARY TABLE ct_tmp SELECT * FROM ' . $this->ct->Table->realtablename . ' WHERE ' . $this->ct->Table->realidfieldname . ' = ' . $this->ct->db->quote($listing_id);
         }
-        $this->ct->db->setQuery($query);
-        $this->ct->db->execute();
+        database::setQuery($query);
 
         $sets = array();
         $sets[] = $this->ct->Table->realidfieldname . '=' . $this->ct->db->quote($new_id);
 
         $query = 'UPDATE ct_tmp SET ' . implode(',', $sets) . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . $this->ct->db->quote($listing_id);
-        $this->ct->db->setQuery($query);
-        $this->ct->db->execute();
+        database::setQuery($query);
 
         $query = 'INSERT INTO ' . $this->ct->Table->realtablename . ' SELECT * FROM ct_tmp WHERE ' . $this->ct->Table->realidfieldname . '=' . $this->ct->db->quote($new_id);
-        $this->ct->db->setQuery($query);
-        $this->ct->db->execute();
+        database::setQuery($query);
 
         common::inputSet("listing_id", $new_id);
         common::inputSet('old_listing_id', $listing_id);
@@ -435,9 +430,7 @@ class CustomTablesModelEditItem extends JModelLegacy
         } else {
             $query = 'DROP TEMPORARY TABLE IF EXISTS ct_tmp';
         }
-        $this->ct->db->setQuery($query);
-        $this->ct->db->execute();
-
+        database::setQuery($query);
         return $this->store($msg, $link, true, $new_id);
     }
 
@@ -1113,11 +1106,9 @@ class CustomTablesModelEditItem extends JModelLegacy
                 . ' SET ' . $to_field['realfieldname'] . '= ' . $this->ct->db->quote($new_value)
                 . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . $this->ct->db->quote($to_listing_id);
 
-            $this->ct->db->setQuery($query);
-            $this->ct->db->execute();
+            database::setQuery($query);
             return true;
         }
-
         return false;
     }
 }

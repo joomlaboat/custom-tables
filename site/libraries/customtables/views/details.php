@@ -300,9 +300,7 @@ class Details
 
         if (count($updateFields) > 0) {
             $query = 'UPDATE #__customtables_table_' . $this->ct->Table->tablename . ' SET ' . implode(', ', $updateFields) . ' WHERE id=' . $rec[$this->ct->Table->realidfieldname];
-
-            $this->ct->db->setQuery($query);
-            $this->ct->db->execute();
+            database::setQuery($query);
         }
     }
 

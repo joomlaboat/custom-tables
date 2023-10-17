@@ -145,11 +145,8 @@ class CTUser
 
     static protected function SetUserPassword(int $userid, string $password): int
     {
-        $db = Factory::getDBO();
         $query = 'UPDATE #__users SET password=md5("' . $password . '"), requireReset=0 WHERE id=' . $userid;
-
-        $db->setQuery($query);
-        $db->execute();
+        database::setQuery($query);
         return $userid;
     }
 
@@ -270,8 +267,7 @@ class CTUser
 
         foreach ($group_ids as $group_id) {
             $query = 'INSERT #__user_usergroup_map SET user_id=' . $user->id . ', group_id=' . $group_id;
-            $db->setQuery($query);
-            $db->execute();
+            database::setQuery($query);
         }
 
         //---------------------------------------
@@ -365,11 +361,8 @@ class CTUser
     static public function UpdateUserField(string $realtablename, string $realidfieldname, string $useridfieldname, string $existing_user_id, $listing_id)
     {
         $db = Factory::getDBO();
-
         $query = 'UPDATE ' . $realtablename . ' SET ' . $useridfieldname . '=' . $existing_user_id . ' WHERE ' . $realidfieldname . '=' . $db->quote($listing_id) . ' LIMIT 1';
-
-        $db->setQuery($query);
-        $db->execute();
+        database::setQuery($query);
     }
 
     static public function CheckIfUserNameExist(string $username): bool
@@ -506,13 +499,9 @@ class CTUser
     public static function checkIfItemBelongsToUser(CT &$ct, string $userIdField, string $listing_id): bool
     {
         $wheres = self::UserIDField_BuildWheres($ct, $userIdField, $listing_id);
-
         $query = 'SELECT c.' . $ct->Table->realidfieldname . ' FROM ' . $ct->Table->realtablename . ' AS c WHERE ' . implode(' AND ', $wheres) . ' LIMIT 1';
 
-        $ct->db->setQuery($query);
-        $ct->db->execute();
-
-        if ($ct->db->getNumRows() == 1) {
+        if (database::getNumRowsOnly($query) == 1) {
             return true;
         }
         return false;

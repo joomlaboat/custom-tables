@@ -16,6 +16,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\database;
 use CustomTables\DataTypes\Tree;
 use CustomTables\ImportTables;
 use Joomla\CMS\Factory;
@@ -140,8 +141,7 @@ class CustomTablesModelImportTables extends JModelList
                 . $db->quoteName('familytree') . '=' . $db->quote($familyTree) . ', '
                 . $db->quoteName('title') . '=' . $db->quote($optionTitle);
 
-            $db->setQuery($query);
-            $db->execute();
+            database::setQuery($query);
 
             return ',' . $optionname . '.' . $newOptionName . '.,';
         } else {

@@ -10,6 +10,7 @@
 
 */
 
+use CustomTables\database;
 use CustomTables\Fields;
 
 defined('_JEXEC') or die('Restricted access');
@@ -28,9 +29,7 @@ function updateESTables()
 function getESTables()
 {
     $query = 'SHOW TABLES';
-    $db = JFactory::getDBO();
-    $db->setQuery($query);
-    $tables = $db->loadAssocList();
+    $tables = database::loadAssocList($query);
     $database = database::getDataBaseName();
 
     foreach ($tables as $table) {
@@ -40,11 +39,9 @@ function getESTables()
         {
             $new_tablename = str_replace('_extrasearch_', '_customtables_', $tablename);//dont change this line. First must be _e x t r a  s e a r c h_
             $query = 'DROP TABLE IF EXISTS ' . $new_tablename;
-            $db->setQuery($query);
-            $db->execute();
+            database::setQuery($query);
             $query = 'RENAME TABLE ' . $tablename . ' TO ' . $new_tablename;
-            $db->setQuery($query);
-            $db->execute();
+            database::setQuery($query);
 
             if (fixFields($new_tablename)) {
                 //	die;
@@ -73,8 +70,6 @@ function getESTables()
 
 function fixTableCategory()
 {
-    $db = JFactory::getDBO();
-
     $tablename = '#__customtables_tables';
     $fields = getExistingFields($tablename);
 
@@ -84,18 +79,15 @@ function fixTableCategory()
     if ($tablecategory == null and is_array($catid)) {
         //rename field
         $query = 'ALTER TABLE `' . $tablename . '` CHANGE `catid` `tablecategory` int(11);';
-        $db->setQuery($query);
-        $db->execute();
+        database::setQuery($query);
 
     } elseif (is_array($tablecategory) and is_array($catid)) {
         //delete tablecategory
         $query = 'ALTER TABLE `' . $tablename . '` DROP column `tablecategory`';
-        $db->setQuery($query);
-        $db->execute();
+        database::setQuery($query);
 
         $query = 'ALTER TABLE `' . $tablename . '` CHANGE `catid` `tablecategory` int(11);';
-        $db->setQuery($query);
-        $db->execute();
+        database::setQuery($query);
     }
 }
 
@@ -112,11 +104,8 @@ function findFileByName($fields, $fieldname)
 function updateLayoutVerticalBarTags()
 {
     $db = JFactory::getDBO();
-
     $query = 'SELECT id, layoutcode FROM #__customtables_layouts WHERE INSTR(layoutcode,"|toolbar") OR INSTR(layoutcode,"|search")';
-    $db->setQuery($query);
-
-    $records = $db->loadAssocList();
+    $records = database::loadAssocList($query);
 
     foreach ($records as $record) {
         $c = str_replace('|toolbar', '|batchtoolbar', $record['layoutcode']);
@@ -132,9 +121,7 @@ function updateLayoutVerticalBarTags()
             $query = 'UPDATE `#__customtables_layouts` SET
 				layoutcode=' . $db->quote($c) . ' WHERE id=' . $record['id'];
 
-
-            $db->setQuery($query);
-            $db->execute();
+            database::setQuery($query);
 
             echo '<p>Layout #' . $record['id'] . ' updated.</p>';
         }
@@ -185,8 +172,7 @@ function updateImageFieldTypeParama()
     $db = JFactory::getDBO();
     $query = 'UPDATE `#__customtables_fields` SET typeparams=CONCAT(\'"\',REPLACE(typeparams,\'|\',\'",\')) WHERE (`type`="image" OR `type`="imagegallery") AND INSTR(typeparams,\'|\')';
 
-    $db->setQuery($query);
-    $db->execute();
+    database::setQuery($query);
 }
 
 function updateMenuItems()
@@ -200,8 +186,7 @@ function updateMenuItems()
     $query = 'UPDATE #__menu SET ' . implode(',', $sets)
         . ' WHERE instr(link,"com_extrasearch")';
 
-    $db->setQuery($query);
-    $db->execute();
+    database::setQuery($query);
 
     $sets = array();
 
@@ -212,37 +197,25 @@ function updateMenuItems()
     $query = 'UPDATE #__menu SET ' . implode(',', $sets)
         . ' WHERE instr(link,"com_customtables")';
 
-    $db->setQuery($query);
-    $db->execute();
-
-
+    database::setQuery($query);
 }
 
 function updatefieldTypes()
 {
-    $db = JFactory::getDBO();
     $query = 'UPDATE #__customtables_fields SET `type`="customtables" WHERE INSTR(`type`,"extrasearch")';
-
-    $db->setQuery($query);
-    $db->execute();
+    database::setQuery($query);
 }
 
 function updateLayouts()
 {
-    $db = JFactory::getDBO();
     $query = 'UPDATE #__customtables_layouts set layoutcode=replace(layoutcode,"extrasearch","customtables") where instr(layoutcode,"extrasearch")';
-
-    $db->setQuery($query);
-    $db->execute();
+    database::setQuery($query);
 }
 
 function updateContent()
 {
-    $db = JFactory::getDBO();
     $query = 'UPDATE #__content set introtext=replace(introtext,"{extrasearch","{customtables") where INSTR(introtext,"extrasearch")';
-
-    $db->setQuery($query);
-    $db->execute();
+    database::setQuery($query);
 }
 
 
@@ -265,8 +238,7 @@ function fixNewCTTables($mysqltable)
     $ads[]='`hits` INT(10) unsigned NOT NULL DEFAULT 0';
     $ads[]='`ordering` INT(11) NOT NULL DEFAULT 0';
     $query='ALTER TABLE `ow94h_customtables_categories` ADD '.implode(', ADD ',$ads);
-    $db->setQuery( $query );
-    $db->execute();
+    database::setQuery( $query );
 }
 */
 
@@ -291,8 +263,7 @@ function addCetegoriesTable()
 	KEY `idx_categoryname` (`categoryname`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;';
 
-    $db->setQuery($query);
-    $db->execute();
+    database::setQuery($query);
 }
 
 function updateFields($new_tablename)
@@ -395,8 +366,7 @@ function fixFields($tablename)
                     $query = 'ALTER TABLE `' . $tablename . '` DROP column `' . $fn . '`';
                 }
 
-                $db->setQuery($query);
-                $db->execute();
+                database::setQuery($query);
                 $found = true;
                 break;
             }

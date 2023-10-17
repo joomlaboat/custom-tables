@@ -185,8 +185,7 @@ class Fields
 
             //Delete gallery table
             $query = 'DROP TABLE IF EXISTS ' . $gallery_table_name;
-            $db->setQuery($query);
-            $db->execute();
+            database::setQuery($query);
         } elseif ($field->type == 'filebox') {
             //Delete all files belongs to the filebox
 
@@ -195,8 +194,7 @@ class Fields
 
             //Delete gallery table
             $query = 'DROP TABLE IF EXISTS ' . $fileBoxTableName;
-            $db->setQuery($query);
-            $db->execute();
+            database::setQuery($query);
         } elseif ($field->type == 'image') {
             if (Fields::checkIfFieldExists($tableRow->realtablename, $field->realfieldname)) {
                 $imageMethods = new CustomTablesImageMethods;
@@ -236,8 +234,7 @@ class Fields
 
         //Delete field from the list
         $query = 'DELETE FROM #__customtables_fields WHERE id=' . $fieldid;
-        $db->setQuery($query);
-        $db->execute();
+        database::setQuery($query);
         return true;
     }
 
@@ -358,8 +355,7 @@ class Fields
         //get constrant name
         $query = 'show create table ' . $realtablename;
 
-        $db->setQuery($query);
-        $db->execute();
+        database::setQuery($query);
         $tableCreateQuery = $db->loadAssocList();
 
         if (count($tableCreateQuery) == 0)
@@ -399,20 +395,15 @@ class Fields
     {
         if (Fields::checkIfFieldExists($realtablename, $realfieldname)) {
             try {
-                $db = Factory::getDBO();
-
                 $query = 'SET foreign_key_checks = 0;';
-                $db->setQuery($query);
-                $db->execute();
+                database::setQuery($query);
 
                 $query = 'ALTER TABLE ' . $realtablename . ' DROP ' . $realfieldname;
 
-                $db->setQuery($query);
-                $db->execute();
+                database::setQuery($query);
 
                 $query = 'SET foreign_key_checks = 1;';
-                $db->setQuery($query);
-                $db->execute();
+                database::setQuery($query);
 
                 return true;
             } catch (Exception $e) {
@@ -585,24 +576,19 @@ class Fields
 
     protected static function removeForeignKeyConstrance($realtablename, $constrance): void
     {
-        $db = Factory::getDBO();
-
         $query = 'SET foreign_key_checks = 0;';
-        $db->setQuery($query);
-        $db->execute();
+        database::setQuery($query);
 
         $query = 'ALTER TABLE ' . $realtablename . ' DROP FOREIGN KEY ' . $constrance;
 
         try {
-            $db->setQuery($query);
-            $db->execute();
+            database::setQuery($query);
         } catch (Exception $e) {
             Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
         }
 
         $query = 'SET foreign_key_checks = 1;';
-        $db->setQuery($query);
-        $db->execute();
+        database::setQuery($query);
     }
 
     public static function getFieldName($fieldid): string
@@ -730,8 +716,7 @@ class Fields
     {
         $db = Factory::getDBO();
         $query = 'DELETE FROM #__customtables_fields AS f WHERE (SELECT id FROM #__customtables_tables AS t WHERE t.id = f.tableid) IS NULL';
-        $db->setQuery($query);
-        $db->execute();
+        database::setQuery($query);
     }
 
     public static function getSelfParentField($ct)
@@ -774,9 +759,7 @@ class Fields
 
             $db = Factory::getDBO();
             $query = 'UPDATE #__customtables_fields SET checked_out=0, checked_out_time=NULL WHERE id=' . $fieldid;
-            $db->setQuery($query);
-            $db->execute();
-
+            database::setQuery($query);
             $fieldid = 0;
         }
 
@@ -900,8 +883,7 @@ class Fields
             $query = 'ALTER TABLE ' . $realtablename . ' ADD COLUMN ' . $realfieldname . ' ' . $fieldType . ' ' . $options;
 
             try {
-                $db->setQuery($query);
-                $db->execute();
+                database::setQuery($query);
             } catch (Exception $e) {
                 $app = Factory::getApplication();
                 $app->enqueueMessage($e->getMessage(), 'error');
@@ -1470,10 +1452,9 @@ class Fields
             $query .= ' COMMENT ' . $db->quote($fieldtitle);
 
         }
-        $db->setQuery($query);
 
         try {
-            $db->execute();
+            database::setQuery($query);
         } catch (Exception $e) {
             $app = Factory::getApplication();
             $app->enqueueMessage($e->getMessage(), 'error');
@@ -1502,8 +1483,7 @@ class Fields
             if ($fixRow->fldvalue != $newRow) {
                 $fixCount++;
                 $fixitQuery = 'UPDATE ' . $realtablename . ' SET ' . $realfieldname . '="' . $newRow . '" WHERE id=' . $fixRow->id;
-                $db->setQuery($fixitQuery);
-                $db->execute();
+                database::setQuery($fixitQuery);
             }
         }
     }
@@ -1607,9 +1587,7 @@ class Fields
    PRIMARY KEY  (photoid)
 ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AUTO_INCREMENT=1 ;
 ';
-        $db->setQuery($query);
-        $db->execute();
-
+        database::setQuery($query);
         return true;
     }
 
@@ -1627,9 +1605,7 @@ class Fields
    PRIMARY KEY  (fileid)
 ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AUTO_INCREMENT=1 ;
 ';
-        $db->setQuery($query);
-        $db->execute();
-
+        database::setQuery($query);
         return true;
     }
 
@@ -1643,17 +1619,12 @@ class Fields
         } else {
             $db = Factory::getDBO();
             $query = 'SHOW INDEX FROM ' . $realtablename . ' WHERE Key_name = "' . $realfieldname . '"';
-            $db->setQuery($query);
-            $db->execute();
-
+            database::setQuery($query);
             $rows2 = $db->loadObjectList();
-
 
             if (count($rows2) == 0) {
                 $query = 'ALTER TABLE ' . $realtablename . ' ADD INDEX(' . $realfieldname . ');';
-
-                $db->setQuery($query);
-                $db->execute();
+                database::setQuery($query);
             }
         }
     }
@@ -1702,8 +1673,7 @@ class Fields
                 . $db->quoteName($database . '.' . $join_with_table_name) . ' (' . $join_with_table_field . ') ON DELETE RESTRICT ON UPDATE RESTRICT;';
 
             try {
-                $db->setQuery($query);
-                $db->execute();
+                database::setQuery($query);
                 return true;
             } catch (Exception $e) {
                 $msg = $e->getMessage();
@@ -1724,10 +1694,7 @@ class Fields
 			' . $realtablename . ' a LEFT JOIN ' . $join_with_table_name . ' b ON a.' . $realfieldname . '=b.' . $join_with_table_field
             . ' WHERE b.' . $join_with_table_field . ' IS NULL;';
 
-        $db->setQuery($query);
-        $db->execute();
-
-        $rows = $db->loadAssocList();
+        $rows = database::loadAssocList($query);
         $where_ids = array();
         $where_ids[] = $realfieldname . '=0';
 
@@ -1736,18 +1703,15 @@ class Fields
                 $where_ids[] = $realfieldname . '=' . $row['customtables_distinct_temp_id'];
         }
         $query = 'UPDATE ' . $realtablename . ' SET ' . $realfieldname . '=NULL WHERE ' . implode(' OR ', $where_ids) . ';';
-        $db->setQuery($query);
-        $db->execute();
+        database::setQuery($query);
     }
 
     protected static function findAndFixFieldOrdering(): void
     {
-        $db = Factory::getDBO();
         $query = 'UPDATE #__customtables_fields SET ordering=id WHERE ordering IS NULL or ordering = 0';
-        $db->setQuery($query);
 
         try {
-            $db->execute();
+            database::setQuery($query);
         } catch (Exception $e) {
             echo 'Caught exception: ', $e->getMessage(), "\n";
             die;
@@ -1762,10 +1726,10 @@ class Fields
 
         $db = Factory::getDBO();
         $query = 'UPDATE ' . $ct->Table->realtablename . ' SET ' . $db->quoteName($realFieldName) . '=' . $db->quoteName($ct->Table->realidfieldname) . ' WHERE ' . $db->quoteName($realFieldName) . ' IS NULL OR ' . $db->quoteName($realFieldName) . ' = 0';
-        $db->setQuery($query);
+
 
         try {
-            $db->execute();
+            database::setQuery($query);
         } catch (Exception $e) {
             echo 'Caught exception: ', $e->getMessage(), "\n";
             die;

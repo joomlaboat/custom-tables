@@ -10,6 +10,7 @@
 
 // no direct access
 use CustomTables\common;
+use CustomTables\database;
 use Joomla\CMS\Factory;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
@@ -241,14 +242,12 @@ class CustomTablesImageMethods
 
                     //Null Parent
                     $query = 'UPDATE ' . $realtablename . ' SET ' . $realfieldname . '=0 WHERE ' . $realfieldname . '=' . $ExistingImage;
-                    $db->setQuery($query);
-                    $db->execute();
+                    database::setQuery($query);
 
                     //Convert Child to Parent
                     $query = 'UPDATE ' . $realtablename . ' SET ' . $realfieldname . '=' . $ExistingImage . ' WHERE ' . $realIdField . '=' . (int)$photoRow[$realIdField];
 
-                    $db->setQuery($query);
-                    $db->execute();
+                    database::setQuery($query);
                     return true;
                 }
             }//if
