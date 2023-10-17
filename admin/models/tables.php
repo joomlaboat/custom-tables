@@ -16,6 +16,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\database;
 use CustomTables\Fields;
 
 use Joomla\CMS\Factory;
@@ -144,8 +145,8 @@ class CustomtablesModelTables extends JModelAdmin
             if (isset($table_row->tablename) and (!isset($table_row->customtablename) or $table_row->customtablename === null)) // do not delete third-party tables
             {
                 $realtablename = $db->getPrefix() . 'customtables_table_' . $table_row->tablename; //not available for custom tablenames
-
-                if ($db->serverType == 'postgresql')
+                $serverType = database::getServerType();
+                if ($serverType == 'postgresql')
                     $query = 'DROP TABLE IF EXISTS ' . $realtablename;
                 else
                     $query = 'DROP TABLE IF EXISTS ' . $db->quoteName($realtablename);
@@ -153,7 +154,9 @@ class CustomtablesModelTables extends JModelAdmin
                 $db->setQuery($query);
                 $db->execute();
 
-                if ($db->serverType == 'postgresql') {
+                $serverType = database::getServerType();
+
+                if ($serverType == 'postgresql') {
                     $query = 'DROP SEQUENCE IF EXISTS ' . $realtablename . '_seq CASCADE';
                     $db->setQuery($query);
                     $db->execute();
@@ -310,13 +313,9 @@ class CustomtablesModelTables extends JModelAdmin
 
     public function save($data)
     {
-        $conf = Factory::getConfig();
-
-        $database = $conf->get('db');
-        $dbPrefix = $conf->get('dbprefix');
-
+        $database = database::getDataBaseName();
+        $dbPrefix = database::getDBPrefix();
         $data_extra = common::inputGet('jform', array(), 'ARRAY');
-
         $moreThanOneLanguage = false;
 
         $fields = Fields::getListOfExistingFields('#__customtables_tables', false);

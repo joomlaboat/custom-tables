@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\database;
 use \Joomla\CMS\Factory;
 use \Joomla\CMS\Uri\Uri;
 
@@ -36,7 +37,7 @@ class IntegrityTables extends \CustomTables\IntegrityChecks
 
             $table['tablename'];
             //Check if table exists
-            $query_check_table = 'SHOW TABLES LIKE ' . $db->quote(str_replace('#__', $db->getPrefix(), $table['tablename']));
+            $query_check_table = 'SHOW TABLES LIKE ' . $db->quote(database::realTableName($table['tablename']));
             $db->setQuery($query_check_table);
             $rows = $db->loadObjectList();
 
@@ -117,14 +118,11 @@ class IntegrityTables extends \CustomTables\IntegrityChecks
 
     protected static function checkIfTablesExists($tables_rows)
     {
-        $conf = Factory::getConfig();
-        $dbPrefix = $conf->get('dbprefix');
+        $dbPrefix = database::getDBPrefix();
 
         foreach ($tables_rows as $row) {
             if (!ESTables::checkIfTableExists($dbPrefix . 'customtables_table_' . $row['tablename'])) {
-                $conf = Factory::getConfig();
-                $database = $conf->get('db');
-                $dbPrefix = $conf->get('dbprefix');
+                $database = database::getDataBaseName();
 
                 if ($row['customtablename'] === null or $row['customtablename'] == '') {
                     if (ESTables::createTableIfNotExists($database, $dbPrefix, $row['tablename'], $row['tabletitle'], $row['customtablename'])) {

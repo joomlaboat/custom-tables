@@ -58,10 +58,7 @@ class ListOfFields
 
     protected function renderBodyLine(object $item, int $i, $canCheckin, $userChkOut): string
     {
-        $conf = Factory::getConfig();
-        $dbPrefix = $conf->get('dbprefix');
-        $hashRealTableName = str_replace($dbPrefix, '#__', $this->ct->Table->realtablename);
-
+        $hashRealTableName = database::realTableName($this->ct->Table->realtablename);
         $result = '<tr class="row' . ($i % 2) . '" data-draggable-group="' . $this->ct->Table->tableid . '">';
 
         if ($this->canState or $this->canDelete) {

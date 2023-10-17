@@ -17,6 +17,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables;
 use CustomTables\CT;
+use CustomTables\database;
 use CustomTables\Fields;
 use CustomTables\IntegrityChecks;
 
@@ -32,7 +33,10 @@ class IntegrityCoreTables extends IntegrityChecks
         IntegrityCoreTables::createCoreTableIfNotExists($ct, IntegrityCoreTables::getCoreTableFields_Tables());
         IntegrityCoreTables::createCoreTableIfNotExists($ct, IntegrityCoreTables::getCoreTableFields_Fields());
         IntegrityCoreTables::createCoreTableIfNotExists($ct, IntegrityCoreTables::getCoreTableFields_Layouts());
-        IntegrityCoreTables::createCoreTableIfNotExists($ct, IntegrityCoreTables::getCoreTableFields_Categories());
+
+        if (defined('_JEXEC'))
+            IntegrityCoreTables::createCoreTableIfNotExists($ct, IntegrityCoreTables::getCoreTableFields_Categories());
+        
         IntegrityCoreTables::createCoreTableIfNotExists($ct, IntegrityCoreTables::getCoreTableFields_Log());
 
         if ($ct->Env->advancedTagProcessor) {
@@ -54,20 +58,17 @@ class IntegrityCoreTables extends IntegrityChecks
         //Add InnoDB Row Formats to config file
         //https://dev.mysql.com/doc/refman/5.7/en/innodb-row-format.html
 
-        $db = Factory::getDBO();
-
-        $fields_sql = IntegrityCoreTables::prepareAddFieldQuery($ct, $table->fields, ($db->serverType == 'postgresql' ? 'postgresql_type' : 'mysql_type'));
+        $serverType = database::getServerType();
+        $fields_sql = IntegrityCoreTables::prepareAddFieldQuery($ct, $table->fields, ($serverType == 'postgresql' ? 'postgresql_type' : 'mysql_type'));
         $indexes_sql = IntegrityCoreTables::prepareAddIndexQuery($table->indexes);
 
-        if ($db->serverType == 'postgresql') {
+        if ($serverType == 'postgresql') {
             //PostgreeSQL
-
             $fields = Fields::getListOfExistingFields($table->realtablename, false);
 
             if (count($fields) == 0) {
                 //create new table
-                $db->setQuery('CREATE SEQUENCE IF NOT EXISTS ' . $table->realtablename . '_seq');
-                $db->execute();
+                database::setQuery('CREATE SEQUENCE IF NOT EXISTS ' . $table->realtablename . '_seq');
 
                 $query = '
 				CREATE TABLE IF NOT EXISTS ' . $table->realtablename . '
@@ -76,14 +77,10 @@ class IntegrityCoreTables extends IntegrityChecks
 					PRIMARY KEY (id)
 				)';
 
-                $db->setQuery($query);
-                $db->execute();
-
-                $db->setQuery('ALTER SEQUENCE ' . $table->realtablename . '_seq RESTART WITH 1');
-                $db->execute();
+                database::setQuery($query);
+                database::setQuery('ALTER SEQUENCE ' . $table->realtablename . '_seq RESTART WITH 1');
 
                 Factory::getApplication()->enqueueMessage('Table "' . $table->realtablename . '" added.', 'notice');
-
                 return true;
             }
         } else {
@@ -97,15 +94,12 @@ class IntegrityCoreTables extends IntegrityChecks
 					
 					' . (count($indexes_sql) > 0 ? ',' . implode(',', $indexes_sql) : '') . '
 					
-				) ENGINE=InnoDB' . (isset($table->comments) and $table->comments !== null ? ' COMMENT=' . $db->quoteName($table->comments) : '')
+				) ENGINE=InnoDB' . (isset($table->comments) and $table->comments !== null ? ' COMMENT=' . database::quoteName($table->comments) : '')
                 . ' DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci AUTO_INCREMENT=1;
 			';
 
-            $db->setQuery($query);
-            $db->execute();
-
-            Factory::getApplication()->enqueueMessage('Table "' . $table->realtablename . '" added.', 'notice');
-
+            database::setQuery($query);
+            CustomTables\common::enqueueMessage('Table "' . $table->realtablename . '" added.', 'notice');
             return true;
         }
         return false;
@@ -113,8 +107,6 @@ class IntegrityCoreTables extends IntegrityChecks
 
     protected static function prepareAddFieldQuery(CT &$ct, $fields, $db_type): array
     {
-        $db = Factory::getDBO();
-
         $fields_sql = [];
         foreach ($fields as $field) {
             if (isset($field['multilang']) and $field['multilang'] == true) {
@@ -125,12 +117,12 @@ class IntegrityCoreTables extends IntegrityChecks
                     if ($moreThanOneLanguage)
                         $fieldname .= '_' . $lang->sef;
 
-                    $fields_sql[] = $db->quoteName($fieldname) . ' ' . $field[$db_type];
+                    $fields_sql[] = database::quoteName($fieldname) . ' ' . $field[$db_type];
 
                     $moreThanOneLanguage = true;
                 }
             } else {
-                $fields_sql[] = $db->quoteName($field['name']) . ' ' . $field[$db_type];
+                $fields_sql[] = database::quoteName($field['name']) . ' ' . $field[$db_type];
             }
         }
         return $fields_sql;
@@ -138,12 +130,10 @@ class IntegrityCoreTables extends IntegrityChecks
 
     protected static function prepareAddIndexQuery($indexes): array
     {
-        $db = Factory::getDBO();
-
         $indexes_sql = [];
         foreach ($indexes as $index) {
-            $index_name = $db->quoteName($index['name']);
-            $fld = $db->quoteName($index['field']);
+            $index_name = database::quoteName($index['name']);
+            $fld = database::quoteName($index['field']);
             $indexes_sql[] = 'KEY ' . $index_name . ' (' . $fld . ')';
         }
         return $indexes_sql;
@@ -207,8 +197,7 @@ class IntegrityCoreTables extends IntegrityChecks
 
     protected static function getCoreTableFields_Tables(): object
     {
-        $conf = Factory::getConfig();
-        $dbPrefix = $conf->get('dbprefix');
+        $dbPrefix = database::getDBPrefix();
 
         $tables_projected_fields = [];
         $tables_projected_fields[] = ['name' => 'id', 'mysql_type' => 'INT UNSIGNED NOT NULL AUTO_INCREMENT', 'postgresql_type' => 'id INT check (id > 0) NOT NULL DEFAULT NEXTVAL (\'#__customtables_tables_seq\')'];
@@ -245,9 +234,7 @@ class IntegrityCoreTables extends IntegrityChecks
 
     protected static function getCoreTableFields_Fields(): object
     {
-        $conf = Factory::getConfig();
-        $dbPrefix = $conf->get('dbprefix');
-
+        $dbPrefix = database::getDBPrefix();
         $tables_projected_fields = array();
 
         $tables_projected_fields[] = ['name' => 'id', 'ct_fieldtype' => '_id', 'mysql_type' => 'INT UNSIGNED NOT NULL AUTO_INCREMENT', 'postgresql_type' => 'id INT check (id > 0) NOT NULL DEFAULT NEXTVAL (\'#__customtables_options_seq\')'];
@@ -293,9 +280,7 @@ class IntegrityCoreTables extends IntegrityChecks
 
     protected static function getCoreTableFields_Layouts(): object
     {
-        $conf = Factory::getConfig();
-        $dbPrefix = $conf->get('dbprefix');
-
+        $dbPrefix = database::getDBPrefix();
         $tables_projected_fields = array();
 
         $tables_projected_fields[] = ['name' => 'id', 'ct_fieldtype' => '', 'mysql_type' => 'INT UNSIGNED NOT NULL AUTO_INCREMENT', 'postgresql_type' => 'id INT check (id > 0) NOT NULL DEFAULT NEXTVAL (\'#__customtables_options_seq\')'];
@@ -332,9 +317,7 @@ class IntegrityCoreTables extends IntegrityChecks
 
     protected static function getCoreTableFields_Categories(): object
     {
-        $conf = Factory::getConfig();
-        $dbPrefix = $conf->get('dbprefix');
-
+        $dbPrefix = database::getDBPrefix();
         $tables_projected_fields = array();
 
         $tables_projected_fields[] = ['name' => 'id', 'ct_fieldtype' => '', 'mysql_type' => 'INT UNSIGNED NOT NULL AUTO_INCREMENT', 'postgresql_type' => 'id INT check (id > 0) NOT NULL DEFAULT NEXTVAL (\'#__customtables_options_seq\')'];
@@ -361,9 +344,7 @@ class IntegrityCoreTables extends IntegrityChecks
 
     protected static function getCoreTableFields_Log(): object
     {
-        $conf = Factory::getConfig();
-        $dbPrefix = $conf->get('dbprefix');
-
+        $dbPrefix = database::getDBPrefix();
         $tables_projected_fields = array();
 
         $tables_projected_fields[] = ['name' => 'id', 'ct_fieldtype' => '', 'mysql_type' => 'INT UNSIGNED NOT NULL AUTO_INCREMENT', 'postgresql_type' => 'id INT check (id > 0) NOT NULL DEFAULT NEXTVAL (\'#__customtables_options_seq\')'];
@@ -386,10 +367,9 @@ class IntegrityCoreTables extends IntegrityChecks
 
     protected static function getCoreTableFields_Options(): object
     {
-        $conf = Factory::getConfig();
-        $dbPrefix = $conf->get('dbprefix');
-
+        $dbPrefix = database::getDBPrefix();
         $tables_projected_fields = array();
+
         $tables_projected_fields[] = ['name' => 'id', 'ct_fieldtype' => '', 'mysql_type' => 'INT UNSIGNED NOT NULL AUTO_INCREMENT', 'postgresql_type' => 'id INT check (id > 0) NOT NULL DEFAULT NEXTVAL (\'#__customtables_options_seq\')'];
         $tables_projected_fields[] = ['name' => 'published', 'ct_fieldtype' => '', 'mysql_type' => 'TINYINT NOT NULL DEFAULT 1', 'postgresql_type' => 'SMALLINT NOT NULL DEFAULT 1'];
         $tables_projected_fields[] = ['name' => 'optionname', 'ct_fieldtype' => 'string', 'ct_typeparams' => 50, 'mysql_type' => 'VARCHAR(50) NULL DEFAULT NULL', 'postgresql_type' => 'VARCHAR(50) CHARACTER SET latin1 COLLATE latin1_general_ci NULL DEFAULT NULL'];

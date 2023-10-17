@@ -16,6 +16,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 jimport('joomla.application.component.modellist');
 
 use CustomTables\common;
+use CustomTables\database;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use CustomTables\DataTypes;
@@ -124,7 +125,9 @@ class CustomtablesModelListoffields extends JModelList
 
         // Select some fields
         $tabletitle = '(SELECT tabletitle FROM #__customtables_tables AS tables WHERE tables.id=a.tableid)';
-        if ($db->serverType == 'postgresql')
+        $serverType = database::getServerType();
+
+        if ($serverType == 'postgresql')
             $realfieldname_query = 'CASE WHEN customfieldname!=\'\' THEN customfieldname ELSE CONCAT(\'es_\',fieldname) END AS realfieldname';
         else
             $realfieldname_query = 'IF(customfieldname!=\'\', customfieldname, CONCAT(\'es_\',fieldname)) AS realfieldname';

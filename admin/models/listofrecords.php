@@ -32,7 +32,7 @@ class CustomtablesModelListOfRecords extends JModelList
     public function __construct($config = array())
     {
         $this->ct = new CT;
-        $this->ct->getTable(common::inputGetInt('tableid', 0), null);
+        $this->ct->getTable(common::inputGetInt('tableid', 0));
 
         if ($this->ct->Table->tablename === null) {
             Factory::getApplication()->enqueueMessage('Table not selected.', 'error');

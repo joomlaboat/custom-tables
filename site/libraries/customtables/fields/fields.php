@@ -134,14 +134,14 @@ class Fields
     {
         $db = Factory::getDBO();
 
-        $realtablename = str_replace('#__', $db->getPrefix(), $realtablename);
-        if ($db->serverType == 'postgresql') {
+        $realtablename = database::realTableName($realtablename);
+        $serverType = database::getServerType();
+        if ($serverType == 'postgresql') {
             $query = 'SELECT column_name, data_type, is_nullable, column_default FROM information_schema.columns WHERE table_name = ' . $db->quote($realtablename)
                 . ' AND column_name=' . $db->quote($relaFieldName);
         } else {
 
-            $conf = Factory::getConfig();
-            $database = $conf->get('db');
+            $database = database::getDataBaseName();
 
             $query = 'SELECT COLUMN_NAME AS column_name,'
                 . 'DATA_TYPE AS data_type,'
@@ -265,8 +265,8 @@ class Fields
     protected static function getFieldRowSelects(): string
     {
         $db = Factory::getDBO();
-
-        if ($db->serverType == 'postgresql')
+        $serverType = database::getServerType();
+        if ($serverType == 'postgresql')
             $realfieldname_query = 'CASE WHEN customfieldname!=\'\' THEN customfieldname ELSE CONCAT(\'es_\',fieldname) END AS realfieldname';
         else
             $realfieldname_query = 'IF(customfieldname!=\'\', customfieldname, CONCAT(\'es_\',fieldname)) AS realfieldname';
@@ -293,29 +293,22 @@ class Fields
 
     public static function getExistingFields($tablename, $add_table_prefix = true)
     {
-        $db = Factory::getDBO();
-
         if ($add_table_prefix)
             $realtablename = '#__customtables_table_' . $tablename;
         else
             $realtablename = $tablename;
 
-        $realtablename = str_replace('#__', $db->getPrefix(), $realtablename);
-        if ($db->serverType == 'postgresql') {
+        $realtablename = database::realTableName($realtablename);
+        $serverType = database::getServerType();
+        if ($serverType == 'postgresql') {
             //,generation_expression
-            $query = 'SELECT column_name, data_type, is_nullable, column_default FROM information_schema.columns WHERE table_name = ' . $db->quote($realtablename);
+            $query = 'SELECT column_name, data_type, is_nullable, column_default FROM information_schema.columns WHERE table_name = ' . database::quote($realtablename);
         } else {
 
-            $conf = Factory::getConfig();
-            $database = $conf->get('db');
-
-
+            $database = database::getDataBaseName();
             //Check MySQL Version:
-            $query = 'select @@version';
-            $db->setQuery($query);
-            $versionValue = $db->loadAssocList();
 
-            $mySQLVersion = floatval($versionValue[0]['@@version']);
+            $mySQLVersion = database::getVersion();
             if ($mySQLVersion < 5.7) {
                 $query = 'SELECT COLUMN_NAME AS column_name,'
                     . 'DATA_TYPE AS data_type,'
@@ -324,7 +317,7 @@ class Fields
                     . 'IS_NULLABLE AS is_nullable,'
                     . 'COLUMN_DEFAULT AS column_default,'
                     . 'EXTRA AS extra'
-                    . ' FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=' . $db->quote($database) . ' AND TABLE_NAME=' . $db->quote($realtablename);
+                    . ' FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=' . database::quote($database) . ' AND TABLE_NAME=' . database::quote($realtablename);
                 //. '"" AS generation_expression'
             } else {
                 $query = 'SELECT COLUMN_NAME AS column_name,'
@@ -334,13 +327,12 @@ class Fields
                     . 'IS_NULLABLE AS is_nullable,'
                     . 'COLUMN_DEFAULT AS column_default,'
                     . 'EXTRA AS extra'
-                    . ' FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=' . $db->quote($database) . ' AND TABLE_NAME=' . $db->quote($realtablename);
+                    . ' FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=' . database::quote($database) . ' AND TABLE_NAME=' . database::quote($realtablename);
                 //. 'GENERATION_EXPRESSION AS generation_expression'
             }
         }
 
-        $db->setQuery($query);
-        return $db->loadAssocList();
+        return database::loadAssocList($query);
     }
 
     public static function removeForeignKey($realtablename, $realfieldname): bool
@@ -359,8 +351,8 @@ class Fields
     protected static function getTableConstrances($realtablename, $realfieldname): ?array
     {
         $db = Factory::getDBO();
-
-        if ($db->serverType == 'postgresql')
+        $serverType = database::getServerType();
+        if ($serverType == 'postgresql')
             return null;
 
         //get constrant name
@@ -535,9 +527,9 @@ class Fields
     {
         $db = Factory::getDBO();
 
-        $realtablename = str_replace('#__', $db->getPrefix(), $realtablename);
-
-        if ($db->serverType == 'postgresql')
+        $realtablename = database::realTableName($realtablename);
+        $serverType = database::getServerType();
+        if ($serverType == 'postgresql')
             $query = 'SELECT data_type FROM information_schema.columns WHERE table_name = ' . $db->quote($realtablename) . ' AND column_name=' . $db->quote($realfieldname);
         else
             $query = 'SHOW COLUMNS FROM ' . $realtablename . ' WHERE ' . $db->quoteName('field') . '=' . $db->quote($realfieldname);
@@ -550,8 +542,8 @@ class Fields
             return '';
 
         $rec = $recs[0];
-
-        if ($db->serverType == 'postgresql')
+        $serverType = database::getServerType();
+        if ($serverType == 'postgresql')
             return $rec['data_type'];
         else
             return $rec['Type'];
@@ -559,8 +551,6 @@ class Fields
 
     public static function fixMYSQLField(string $realtablename, string $fieldname, string $PureFieldType, string &$msg): bool
     {
-        $db = Factory::getDBO();
-
         if ($fieldname == 'id') {
             $constrances = Fields::getTableConstrances($realtablename, '');
 
@@ -573,9 +563,7 @@ class Fields
             }
 
             $query = 'ALTER TABLE ' . $realtablename . ' CHANGE id id INT UNSIGNED NOT NULL AUTO_INCREMENT';
-
-            $db->setQuery($query);
-            $db->execute();
+            database::setQuery($query);
 
             $msg = '';
             return true;
@@ -585,8 +573,7 @@ class Fields
             $query = 'ALTER TABLE ' . $realtablename . ' CHANGE ' . $fieldname . ' ' . $fieldname . ' ' . $PureFieldType;
 
         try {
-            $db->setQuery($query);
-            $db->execute();
+            database::setQuery($query);
 
             $msg = '';
             return true;
@@ -933,10 +920,8 @@ class Fields
 
     protected static function update_physical_field(CT $ct, object $table_row, int $fieldid, array $data): bool
     {
-        $db = Factory::getDBO();
-
         $realtablename = $table_row->realtablename;
-        $realtablename = str_replace('#__', $db->getPrefix(), $realtablename);
+        $realtablename = database::realTableName($realtablename);
 
         if ($fieldid != 0) {
             $fieldRow = Fields::getFieldRow($fieldid);
@@ -1312,7 +1297,6 @@ class Fields
     public static function makeProjectedFieldType(array $ct_fieldTypeArray): string
     {
         $type = (object)$ct_fieldTypeArray;
-        $db = Factory::getDBO();
         $elements = [];
 
         switch ($type->data_type) {
@@ -1358,8 +1342,8 @@ class Fields
 
             case 'int':
                 $elements[] = 'int';
-
-                if ($db->serverType != 'postgresql') {
+                $serverType = database::getServerType();
+                if ($serverType != 'postgresql') {
                     if ($type->is_nullable !== null and $type->is_unsigned)
                         $elements[] = 'unsigned';
                 }
@@ -1367,15 +1351,16 @@ class Fields
 
             case 'bigint':
                 $elements[] = 'bigint';
-
-                if ($db->serverType != 'postgresql') {
+                $serverType = database::getServerType();
+                if ($serverType != 'postgresql') {
                     if ($type->is_nullable !== null and $type->is_unsigned)
                         $elements[] = 'unsigned';
                 }
                 break;
 
             case 'decimal':
-                if ($db->serverType == 'postgresql')
+                $serverType = database::getServerType();
+                if ($serverType == 'postgresql')
                     $elements[] = 'numeric(' . $type->length . ')';
                 else
                     $elements[] = 'decimal(' . $type->length . ')';
@@ -1383,7 +1368,8 @@ class Fields
                 break;
 
             case 'tinyint':
-                if ($db->serverType == 'postgresql')
+                $serverType = database::getServerType();
+                if ($serverType == 'postgresql')
                     $elements[] = 'smallint';
                 else
                     $elements[] = 'tinyint';
@@ -1395,7 +1381,8 @@ class Fields
                 break;
 
             case 'datetime':
-                if ($db->serverType == 'postgresql')
+                $serverType = database::getServerType();
+                if ($serverType == 'postgresql')
                     $elements[] = 'TIMESTAMP';
                 else
                     $elements[] = 'datetime';
@@ -1436,7 +1423,7 @@ class Fields
             $elements[] = 'not null';
 
         if (isset($type->default))
-            $elements[] = 'default ' . (is_numeric($type->default) ? $type->default : $db->quote($type->default));
+            $elements[] = 'default ' . (is_numeric($type->default) ? $type->default : database::quote($type->default));
 
         if ($type->extra !== null and !str_contains($type->extra, 'GENERATED'))
             $elements[] = $type->extra;
@@ -1473,7 +1460,7 @@ class Fields
 
         $db = Factory::getDBO();
 
-        if ($db->serverType == 'postgresql') {
+        if ($serverType == 'postgresql') {
             $parts = explode(' ', $PureFieldType_);
             $query = 'ALTER TABLE ' . $realtablename
                 . ' ALTER COLUMN ' . $realfieldname . ' TYPE ' . $parts[0];
@@ -1500,7 +1487,8 @@ class Fields
         $db = Factory::getDBO();
 
         //CustomTables field type
-        if ($db->serverType == 'postgresql')
+        $serverType = database::getServerType();
+        if ($serverType == 'postgresql')
             return;
 
         $fixCount = 0;
@@ -1564,7 +1552,8 @@ class Fields
 
         if (!str_contains($fieldType, 'multilang')) {
             $AdditionOptions = '';
-            if ($db->serverType != 'postgresql')
+            $serverType = database::getServerType();
+            if ($serverType != 'postgresql')
                 $AdditionOptions = ' COMMENT ' . $db->Quote($fieldTitle);
 
             if ($fieldType != 'dummy' and !Fields::isVirtualField($fieldRow))
@@ -1578,7 +1567,8 @@ class Fields
                     $postfix = '_' . $lang->sef;
 
                 $AdditionOptions = '';
-                if ($db->serverType != 'postgresql')
+                $serverType = database::getServerType();
+                if ($serverType != 'postgresql')
                     $AdditionOptions = ' COMMENT ' . $db->Quote($fieldTitle);
 
                 Fields::AddMySQLFieldNotExist($realtablename, $realfieldname . $postfix, $PureFieldType, $AdditionOptions);
@@ -1646,8 +1636,9 @@ class Fields
     public static function addIndexIfNotExist($realtablename, $realfieldname): void
     {
         $db = Factory::getDBO();
+        $serverType = database::getServerType();
 
-        if ($db->serverType == 'postgresql') {
+        if ($serverType == 'postgresql') {
             //Indexes not yet supported
         } else {
             $db = Factory::getDBO();
@@ -1670,13 +1661,9 @@ class Fields
     public static function addForeignKey($realtablename_, $realfieldname, string $new_typeparams, string $join_with_table_name, string $join_with_table_field, &$msg): bool
     {
         $db = Factory::getDBO();
-
-        $conf = Factory::getConfig();
-        $dbPrefix = $conf->get('dbprefix');
-
-        $realtablename = str_replace('#__', $dbPrefix, $realtablename_);
-
-        if ($db->serverType == 'postgresql')
+        $realtablename = database::realTableName($realtablename_);
+        $serverType = database::getServerType();
+        if ($serverType == 'postgresql')
             return false;
 
         //Create Key only if possible
@@ -1703,9 +1690,8 @@ class Fields
             $join_with_table_field = $tableRow->realidfieldname;
         }
 
-        $join_with_table_name = str_replace('#__', $dbPrefix, $join_with_table_name);
-        $conf = Factory::getConfig();
-        $database = $conf->get('db');
+        $join_with_table_name = database::realTableName($join_with_table_name);
+        $database = database::getDataBaseName();
 
         Fields::removeForeignKey($realtablename, $realfieldname);
 
@@ -1729,8 +1715,8 @@ class Fields
     public static function cleanTableBeforeNormalization($realtablename, $realfieldname, $join_with_table_name, $join_with_table_field): void
     {
         $db = Factory::getDBO();
-
-        if ($db->serverType == 'postgresql')
+        $serverType = database::getServerType();
+        if ($serverType == 'postgresql')
             return;
 
         //Find broken records

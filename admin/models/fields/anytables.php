@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\database;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 
@@ -45,8 +46,8 @@ class JFormFieldAnyTables extends JFormFieldList
     {
         $db = Factory::getDBO();
         $prefix = $db->getPrefix();
-
-        if ($db->serverType == 'postgresql') {
+        $serverType = database::getServerType();
+        if ($serverType == 'postgresql') {
             $wheres = array();
             $wheres[] = 'table_type = \'BASE TABLE\'';
             $wheres[] = 'table_schema NOT IN (\'pg_catalog\', \'information_schema\')';
@@ -58,8 +59,7 @@ class JFormFieldAnyTables extends JFormFieldList
 
             $query = 'SELECT table_name FROM information_schema.tables WHERE ' . implode(' AND ', $wheres) . ' ORDER BY table_name';
         } else {
-            $conf = Factory::getConfig();
-            $database = $conf->get('db');
+            $database = database::getDataBaseName();
 
             $wheres = array();
             $wheres[] = 'table_schema=\'' . $database . '\'';

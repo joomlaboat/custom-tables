@@ -195,19 +195,15 @@ class CT
 
     function getNumberOfRecords(string $where = ''): int
     {
-        $query_check_table = 'SHOW TABLES LIKE ' . $this->db->quote(str_replace('#__', $this->db->getPrefix(), $this->Table->realtablename));
-        $this->db->setQuery($query_check_table);
-        $rows = $this->db->loadObjectList();
+        $query_check_table = 'SHOW TABLES LIKE ' . database::quote(database::realTableName($this->Table->realtablename));
+        $rows = database::loadObjectList($query_check_table);
         if (count($rows) == 0)
             return -1;
 
         $query_analytical = 'SELECT COUNT(' . $this->Table->tablerow['realidfieldname'] . ') AS count FROM ' . $this->Table->realtablename . ' ' . $where;
 
         try {
-
-            $this->db->setQuery($query_analytical);
-            $rows = $this->db->loadObjectList();
-
+            $rows = database::loadObjectList($query_analytical);
         } catch (Exception $e) {
             echo 'Database error happened';
             echo $e->getMessage();

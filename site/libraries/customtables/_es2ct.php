@@ -27,12 +27,11 @@ function updateESTables()
 
 function getESTables()
 {
-    $conf = JFactory::getConfig();
     $query = 'SHOW TABLES';
     $db = JFactory::getDBO();
     $db->setQuery($query);
     $tables = $db->loadAssocList();
-    $database = $conf->get('db');
+    $database = database::getDataBaseName();
 
     foreach ($tables as $table) {
         $tablename = $table['Tables_in_' . $database];
@@ -298,8 +297,7 @@ function addCetegoriesTable()
 
 function updateFields($new_tablename)
 {
-    $conf = JFactory::getConfig();
-    $dbprefix = $conf->get('dbprefix');
+    $dbPrefix = database::getDBPrefix();
 
     if ($new_tablename == $dbprefix . 'customtables_tables') {
         //Fields::AddMySQLFieldNotExist($new_tablename, 'asset_id', 'INT(10) unsigned NOT NULL DEFAULT 0', '');

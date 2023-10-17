@@ -14,6 +14,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\database;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 
@@ -142,8 +143,9 @@ function _getTablesThisTableDependOn($table_id)
     $db = Factory::getDBO();
 
     $select_tableTitle = '(SELECT id FROM #__customtables_tables AS t1 WHERE t1.id=f.tableid LIMIT 1) ';
+    $serverType = database::getServerType();
 
-    if ($db->serverType == 'postgresql') {
+    if ($serverType == 'postgresql') {
         $select_tableNameCheck = '(SELECT id FROM #__customtables_tables AS t2 WHERE POSITION(CONCAT(t2.tablename,\',\') IN f.typeparams)>0 LIMIT 1) ';
         $query = 'SELECT id, tableid,fieldtitle,typeparams,' . $select_tableTitle . ' AS tabletitle FROM #__customtables_fields AS f '
             . 'WHERE'
@@ -174,8 +176,8 @@ function _getTablesThatDependOnThisTable($tablename)
 
     $where = [];
     $where[] = '(published=1 or published=0)';
-
-    if ($db->serverType == 'postgresql')
+    $serverType = database::getServerType();
+    if ($serverType == 'postgresql')
         $where[] = 'typeparams LIKE \'' . $tablename . ',%\'';
     else {
         $where[] = '(typeparams LIKE "' . $tablename . ',%" OR typeparams LIKE \'"' . $tablename . '",%\')';

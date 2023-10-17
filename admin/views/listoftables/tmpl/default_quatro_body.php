@@ -12,15 +12,14 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\database;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 
 use CustomTables\Fields;
 
 $edit = "index.php?option=com_customtables&view=listoftables&task=tables.edit";
-
-$conf = Factory::getConfig();
-$dbPrefix = $conf->get('dbprefix');
+$dbPrefix = database::getDBPrefix();
 
 ?>
 <?php foreach ($this->items as $i => $item): ?>
@@ -59,7 +58,7 @@ $dbPrefix = $conf->get('dbprefix');
 
                 <?php
                 if ($this->ct->Env->advancedTagProcessor) {
-                    $hashRealTableName = str_replace($dbPrefix, '#__', $item->realtablename);
+                    $hashRealTableName = database::realTableName($item->realtablename);
                     echo '<br/><span style="color:grey;">' . $hashRealTableName . '</span>';
                 }
                 ?>

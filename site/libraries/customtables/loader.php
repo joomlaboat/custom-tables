@@ -56,6 +56,7 @@ function CTLoader($include_utilities = false, $include_html = false, $PLUGIN_NAM
     require_once($path_helpers . 'email.php');
     require_once($path_helpers . 'user.php');
     require_once($path_helpers . 'misc.php');
+    require_once($path_helpers . 'database.php');
     require_once($path_helpers . 'common.php');
     require_once($path_helpers . 'tables.php');
     require_once($path_helpers . 'compareimages.php');

@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\database;
 use CustomTables\Fields;
 use Joomla\CMS\Factory;
 
@@ -63,20 +64,15 @@ class ESTables
 
     public static function checkIfTableExists(string $realtablename): bool
     {
-        $conf = Factory::getConfig();
-        $database = $conf->get('db');
+        $database = database::getDataBaseName();
+        $realtablename = database::realTableName($realtablename);
 
-        $db = Factory::getDBO();
-
-        $realtablename = str_replace('#__', $db->getPrefix(), $realtablename);
-
-        if ($db->serverType == 'postgresql')
-            $query = 'SELECT COUNT(*) AS c FROM information_schema.columns WHERE table_name = ' . $db->quote($realtablename) . ' LIMIT 1';
+        if (database::getServerType() == 'postgresql')
+            $query = 'SELECT COUNT(*) AS c FROM information_schema.columns WHERE table_name = ' . database::quote($realtablename) . ' LIMIT 1';
         else
-            $query = 'SELECT COUNT(*) AS c FROM information_schema.tables WHERE table_schema = ' . $db->quote($database) . ' AND table_name = ' . $db->quote($realtablename) . ' LIMIT 1';
+            $query = 'SELECT COUNT(*) AS c FROM information_schema.tables WHERE table_schema = ' . database::quote($database) . ' AND table_name = ' . database::quote($realtablename) . ' LIMIT 1';
 
-        $db->setQuery($query);
-        $rows = $db->loadObjectList();
+        $rows = database::loadObjectList($query);
 
         $c = (int)$rows[0]->c;
         if ($c > 0)
@@ -133,8 +129,8 @@ class ESTables
     public static function getTableRowSelects(): string
     {
         $db = Factory::getDBO();
-
-        if ($db->serverType == 'postgresql') {
+        $serverType = database::getServerType();
+        if ($serverType == 'postgresql') {
             $realtablename_query = 'CASE WHEN customtablename!=\'\' THEN customtablename ELSE CONCAT(\'#__customtables_table_\', tablename) END AS realtablename';
             $realidfieldname_query = 'CASE WHEN customidfield!=\'\' THEN customidfield ELSE \'id\' END AS realidfieldname';
         } else {
@@ -148,8 +144,8 @@ class ESTables
     public static function createTableIfNotExists($database, $dbPrefix, $tablename, $tabletitle, $complete_table_name = ''): bool
     {
         $db = Factory::getDBO();
-
-        if ($db->serverType == 'postgresql') {
+        $serverType = database::getServerType();
+        if ($serverType == 'postgresql') {
             //PostgreSQL
             //Check if table exists
             if ($complete_table_name == '')
@@ -244,8 +240,8 @@ class ESTables
     public static function insertRecords(string $realtablename, array $sets): int
     {
         $db = Factory::getDBO();
-
-        if ($db->serverType == 'postgresql') {
+        $serverType = database::getServerType();
+        if ($serverType == 'postgresql') {
             $set_fieldNames = array();
             $set_values = array();
             foreach ($sets as $set) {
@@ -315,8 +311,8 @@ class ESTables
         $tablerow = ESTables::getTableRowByName($tablename);
 
         $db = Factory::getDBO();
-
-        if ($db->serverType == 'postgresql')
+        $serverType = database::getServerType();
+        if ($serverType == 'postgresql')
             $query = 'SELECT column_name, data_type, is_nullable, column_default FROM information_schema.columns WHERE table_name = ' . $db->quote($realtablename);
         else
             $query = 'SELECT '
@@ -411,8 +407,8 @@ class ESTables
 
         if ($customTableName === null) {
             //Do not copy real third-party tables
-
-            if ($db->serverType == 'postgresql')
+            $serverType = database::getServerType();
+            if ($serverType == 'postgresql')
                 $query = 'CREATE TABLE #__customtables_table_' . $new_table . ' AS TABLE #__customtables_table_' . $old_table;
             else
                 $query = 'CREATE TABLE #__customtables_table_' . $new_table . ' AS SELECT * FROM #__customtables_table_' . $old_table;

@@ -38,7 +38,8 @@ class Layouts
 
     function getLayoutRowById(int $layoutId): ?array
     {
-        if ($this->ct->db->serverType == 'postgresql')
+        $serverType = database::getServerType();
+        if ($serverType == 'postgresql')
             $query = 'SELECT id, tableid, layoutname, layoutcode, layoutmobile, layoutcss, layoutjs, '
                 . 'CASE WHEN modified IS NULL THEN extract(epoch FROM created) '
                 . 'ELSE extract(epoch FROM modified) AS ts, '
@@ -96,8 +97,8 @@ class Layouts
             $this->layoutType = 0;
             return $layoutName;
         }
-
-        if ($this->ct->db->serverType == 'postgresql')
+        $serverType = database::getServerType();
+        if ($serverType == 'postgresql')
             $query = 'SELECT id, tableid, layoutname, layoutcode, layoutmobile, layoutcss, layoutjs, '
                 . 'CASE WHEN modified IS NULL THEN extract(epoch FROM created) '
                 . 'ELSE extract(epoch FROM modified) AS ts, '

@@ -17,6 +17,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\database;
 use CustomTables\Fields;
 use CustomTables\IntegrityChecks;
 use Joomla\CMS\Factory;
@@ -41,13 +42,11 @@ class IntegrityFields extends IntegrityChecks
         if ($ct->Table->customtablename != '')
             return $result;
 
-        $conf = Factory::getConfig();
-        $database = $conf->get('db');
-        $dbPrefix = $conf->get('dbprefix');
+        $database = database::getDataBaseName();
+        $dbPrefix = database::getDBPrefix();
 
         if (ESTables::createTableIfNotExists($database, $dbPrefix, $ct->Table->tablename, $ct->Table->tabletitle, $ct->Table->customtablename))
             $result .= '<p>Table "<span style="color:green;">' . $ct->Table->tabletitle . '</span>" <span style="color:green;">added.</span></p>';
-
 
         $ExistingFields = Fields::getExistingFields($ct->Table->realtablename, false);
         $projected_fields = Fields::getFields($ct->Table->tableid, false, false);

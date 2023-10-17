@@ -746,6 +746,7 @@ class Filtering
     {
         $realfieldname = $fieldrow['realfieldname'] . ($isMultilingual ? $this->ct->Languages->Postfix : '');
         $v = $this->getString_vL($value);
+        $serverType = database::getServerType();
 
         if ($comparison_operator == '=' and $v != "") {
             $PathValue = [];
@@ -758,7 +759,7 @@ class Filtering
                 $v_list = explode(' ', $vL);
                 foreach ($v_list as $vl) {
 
-                    if ($this->ct->db->serverType == 'postgresql')
+                    if ($serverType == 'postgresql')
                         $new_v_list[] = 'CAST ( ' . $this->ct->Table->realtablename . '.' . $realfieldname . ' AS text ) LIKE ' . $this->ct->db->quote('%' . $vl . '%');
                     else
                         $new_v_list[] = $this->ct->Table->realtablename . '.' . $realfieldname . ' LIKE ' . $this->ct->db->quote('%' . $vl . '%');

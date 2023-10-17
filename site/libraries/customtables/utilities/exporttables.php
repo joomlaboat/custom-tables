@@ -95,7 +95,8 @@ class ExportTables
         $wheres = array();
         $wheres[] = 'published=1';
 
-        if ($db->serverType == 'postgresql') {
+        $serverType = database::getServerType();
+        if ($serverType == 'postgresql') {
             $wheres[] = 'POSITION(' . $db->quote("index.php?option=com_customtables&view=") . ' IN link)>0';
             $wheres[] = 'POSITION(' . $db->quote('"establename":"' . $table['tablename'] . '"') . ' IN params)>0';
         } else {

@@ -10,6 +10,7 @@
  **/
 
 // No direct access to this file
+use CustomTables\database;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 
@@ -26,7 +27,9 @@ function renderDependencies($layout_row): string
 
     $result = '<div id="layouteditor_modal_content_box">';
 
-    if ($db->serverType == 'postgresql') {
+    $serverType = database::getServerType();
+
+    if ($serverType == 'postgresql') {
         $w1 = '(' . $db->quoteName('type') . '=\'sqljoin\' OR ' . $db->quoteName('type') . '=\'records\')';
         $w2a = 'POSITOIN(\'layout:' . $layoutname . '\' IN SUBSTRING_INDEX(typeparams,",",2))>0';
         $w2b = 'POSITOIN(\'tablelesslayout:' . $layoutname . '\' IN SUBSTRING_INDEX(typeparams,",",2))>0';
@@ -46,7 +49,9 @@ function renderDependencies($layout_row): string
         $result .= _renderTableList($rows);
     }
 
-    if ($db->serverType == 'postgresql') {
+    $serverType = database::getServerType();
+
+    if ($serverType == 'postgresql') {
         $w2a = 'POSITION(\'layout:' . $layoutname . '\' IN SUBSTRING_INDEX(defaultvalue,",",2))>0';
         $w2b = 'POSITION(\'tablelesslayout:' . $layoutname . '\' IN SUBSTRING_INDEX(defaultvalue,",",2))>0';
     } else {

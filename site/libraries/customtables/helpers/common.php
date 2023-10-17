@@ -8,6 +8,15 @@ use JUri;
 
 class common
 {
+    public static function enqueueMessage($text, $type)
+    {
+        if (defined('_JEXEC')) {
+            Factory::getApplication()->enqueueMessage($text, $type);
+        } elseif (defined('WPINC')) {
+            echo '<div class="success-message">' . $text . '</div>';
+        }
+    }
+
     public static function translate($text, $value = null)
     {
         if (defined('WPINC')) {

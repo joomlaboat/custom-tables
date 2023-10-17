@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\database;
 use CustomTables\Tables;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
@@ -41,8 +42,9 @@ class CustomtablesViewLayouts extends JViewLegacy
 
         // Assign the variables
         $this->form = $this->get('Form');
+        $serverType = database::getServerType();
 
-        if ($this->ct->db->serverType == 'postgresql')
+        if ($serverType == 'postgresql')
             $query = 'SELECT id, tableid, layoutname, layoutcode, layoutmobile, layoutcss, layoutjs, '
                 . 'CASE WHEN modified IS NULL THEN extract(epoch FROM created) '
                 . 'ELSE extract(epoch FROM modified) AS ts, '

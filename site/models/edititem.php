@@ -16,6 +16,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\CTUser;
+use CustomTables\database;
 use CustomTables\Fields;
 use CustomTables\Filtering;
 use CustomTables\DataTypes\Tree;
@@ -391,16 +392,16 @@ class CustomTablesModelEditItem extends JModelLegacy
             $msg = 'Table not found or something wrong.';
 
         $new_id = (int)($rows[0]->maxid) + 1;
-
-        if ($this->ct->db->serverType == 'postgresql')
+        $serverType = database::getServerType();
+        if ($serverType == 'postgresql')
             $query = 'DROP TABLE IF EXISTS ct_tmp';
         else
             $query = 'DROP TEMPORARY TABLE IF EXISTS ct_tmp';
 
         $this->ct->db->setQuery($query);
         $this->ct->db->execute();
-
-        if ($this->ct->db->serverType == 'postgresql') {
+        $serverType = database::getServerType();
+        if ($serverType == 'postgresql') {
             $query = 'CREATE TEMPORARY TABLE ct_tmp AS TABLE ' . $this->ct->Table->realtablename . ' WITH NO DATA';
 
             $this->ct->db->setQuery($query);
@@ -428,8 +429,8 @@ class CustomTablesModelEditItem extends JModelLegacy
         common::inputSet("listing_id", $new_id);
         common::inputSet('old_listing_id', $listing_id);
         $this->listing_id = $new_id;
-
-        if ($this->ct->db->serverType == 'postgresql') {
+        $serverType = database::getServerType();
+        if ($serverType == 'postgresql') {
             $query = 'DROP TABLE IF EXISTS ct_tmp';
         } else {
             $query = 'DROP TEMPORARY TABLE IF EXISTS ct_tmp';
