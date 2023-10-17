@@ -15,7 +15,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\database;
 use CustomTables\DataTypes\Tree;
-use Joomla\CMS\Factory;
 
 class ESMultiSelector
 {

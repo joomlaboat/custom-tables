@@ -18,7 +18,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\database;
 use Joomla\CMS\Language\Text;
 use \JoomlaBasicMisc;
-use \Joomla\CMS\Factory;
 
 class Tree
 {

@@ -14,8 +14,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomTables\database;
-use Joomla\CMS\Factory;
-
 use CustomTables\CT;
 use CustomTables\TwigProcessor;
 

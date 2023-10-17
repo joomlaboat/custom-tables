@@ -18,7 +18,6 @@ use CustomTables\CT;
 use CustomTables\database;
 use CustomTables\Field;
 use CustomTables\Fields;
-use Joomla\CMS\Factory;
 
 class updateFiles
 {

@@ -10,7 +10,6 @@
 
 namespace CustomTables;
 
-// no direct access
 if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
@@ -19,7 +18,6 @@ use CustomTables\DataTypes\Tree;
 use ESTables;
 use JoomlaBasicMisc;
 use LayoutProcessor;
-use Joomla\CMS\Factory;
 use JHTML;
 
 if (defined('_JEXEC'))

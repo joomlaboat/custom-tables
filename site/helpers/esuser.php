@@ -8,9 +8,7 @@
  * @license GNU/GPL Version 2 or later - https://www.gnu.org/licenses/gpl-2.0.html
  **/
 
-// Check to ensure this file is included in Joomla!
 use CustomTables\database;
-use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {

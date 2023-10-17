@@ -10,7 +10,6 @@
 
 // No direct access to this file
 use CustomTables\database;
-use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 
 defined('_JEXEC') or die('Restricted Access');

@@ -8,10 +8,8 @@
  * @license GNU/GPL Version 2 or later - https://www.gnu.org/licenses/gpl-2.0.html
  **/
 
-// no direct access
 use CustomTables\database;
 use CustomTables\ImportTables;
-use Joomla\CMS\Factory;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');

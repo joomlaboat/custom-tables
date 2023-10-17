@@ -15,7 +15,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomTables\database;
-use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 
 function renderDependencies($table_id, $tablename): string
@@ -97,7 +96,7 @@ function _getLayoutsThatUseThisTable($tableId, $tableName)
     $wheres = array();
     $wheres[] = 'published=1';
     $layout_params = ['"' . $tableName . '"', "'" . $tableName . "'"];
-    $w = ['tableid=' . database::quote($tableId];
+    $w = ['tableid=' . database::quote($tableId)];
 
     foreach ($layout_params as $l)
         $w[] = 'INSTR(layoutcode,' . database::quote($l) . ')';

@@ -10,11 +10,7 @@
 
 namespace CustomTables;
 
-// no direct access
 use JoomlaBasicMisc;
-use LayoutProcessor;
-use tagProcessor_Catalog;
-use tagProcessor_CatalogTableView;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');

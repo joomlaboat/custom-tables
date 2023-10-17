@@ -109,9 +109,6 @@ class JHTMLCTTime
         else
             $offset = '0';
 
-
-        $seconds = (int)$number_of_ticks * $ticks + $from - $offset;
-
-        return $seconds;
+        return (int)$number_of_ticks * $ticks + $from - $offset;
     }
 }

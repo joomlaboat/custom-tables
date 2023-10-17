@@ -9,13 +9,12 @@
  **/
 
 // no direct access
-use CustomTables\database;
-use Joomla\CMS\Factory;
-use Joomla\CMS\Language\Text;
-
 if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
+
+use CustomTables\database;
+use Joomla\CMS\Language\Text;
 
 jimport('joomla.form.helper');
 JFormHelper::loadFieldClass('list');

@@ -9,12 +9,11 @@
  **/
 
 // Check to ensure this file is included in Joomla!
-use CustomTables\database;
-use Joomla\CMS\Factory;
-
 if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
+
+use CustomTables\database;
 
 jimport('joomla.form.helper');
 JFormHelper::loadFieldClass('list');

@@ -14,7 +14,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomTables\database;
-use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 
 jimport('joomla.form.helper');

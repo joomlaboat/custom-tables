@@ -8,7 +8,6 @@
  * @license GNU/GPL Version 2 or later - https://www.gnu.org/licenses/gpl-2.0.html
  **/
 
-// no direct access
 if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
@@ -16,7 +15,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\database;
-use Joomla\CMS\Factory;
 use Joomla\CMS\Uri\Uri;
 
 class CT_FieldTypeTag_FileBox

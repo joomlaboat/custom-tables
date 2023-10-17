@@ -19,7 +19,6 @@ use CustomTables\CT;
 use CustomTables\database;
 use CustomTables\DataTypes\Tree;
 use CustomTables\ImportTables;
-use Joomla\CMS\Factory;
 
 // Import Joomla! libraries
 jimport('joomla.application.component.model');
