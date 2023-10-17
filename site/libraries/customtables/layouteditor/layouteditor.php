@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\database;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Version;
 use CustomTables\CT;
@@ -113,7 +114,7 @@ function renderEditor($textareacode, $textareaid, $typeboxid, $textareatabid, &$
     return $result;
 }
 
-function getKnownLanguages()
+function getKnownLanguages(): string
 {
     $list = array();
     $rows = database::loadObjectList('SELECT sef, title_native FROM #__languages ORDER BY sef');

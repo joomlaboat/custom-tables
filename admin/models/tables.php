@@ -137,19 +137,17 @@ class CustomtablesModelTables extends JModelAdmin
      */
     public function delete(&$pks)
     {
-        $db = Factory::getDBO();
-
         foreach ($pks as $tableid) {
             $table_row = ESTables::getTableRowByID($tableid);
 
             if (isset($table_row->tablename) and (!isset($table_row->customtablename) or $table_row->customtablename === null)) // do not delete third-party tables
             {
-                $realtablename = $db->getPrefix() . 'customtables_table_' . $table_row->tablename; //not available for custom tablenames
+                $realtablename = database::getDBPrefix() . 'customtables_table_' . $table_row->tablename; //not available for custom tablenames
                 $serverType = database::getServerType();
                 if ($serverType == 'postgresql')
                     $query = 'DROP TABLE IF EXISTS ' . $realtablename;
                 else
-                    $query = 'DROP TABLE IF EXISTS ' . $db->quoteName($realtablename);
+                    $query = 'DROP TABLE IF EXISTS ' . database::quoteName($realtablename);
 
                 database::setQuery($query);
 

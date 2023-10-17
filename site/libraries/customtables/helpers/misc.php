@@ -421,7 +421,6 @@ class JoomlaBasicMisc
     public static function getMenuParams($Itemid, $rawParams = '')
     {
         if ($rawParams == '') {
-            $db = Factory::getDBO();
             $query = 'SELECT params FROM #__menu WHERE id=' . (int)$Itemid . ' LIMIT 1';
             $rows = database::loadObjectList($query);
 
@@ -479,10 +478,8 @@ class JoomlaBasicMisc
 
     public static function getGroupIdByTitle($grouptitle): string
     {
-        $db = Factory::getDbo();
-
         // Build the database query to get the rules for the asset.
-        $query = 'SELECT id FROM #__usergroups WHERE title=' . $db->quote(trim($grouptitle)) . ' LIMIT 1';
+        $query = 'SELECT id FROM #__usergroups WHERE title=' . database::quote(trim($grouptitle)) . ' LIMIT 1';
 
         // Execute the query and load the rules from the result.
         $rows = database::loadObjectList($query);
@@ -606,8 +603,7 @@ class JoomlaBasicMisc
 
     public static function FindItemidbyAlias($alias)
     {
-        $db = Factory::getDBO();
-        $query = 'SELECT id FROM #__menu WHERE published=1 AND alias=' . $db->Quote($alias);
+        $query = 'SELECT id FROM #__menu WHERE published=1 AND alias=' . database::quote($alias);
         $rows = database::loadAssocList($query);
         if (!$rows) return 0;
         if (count($rows) < 1) return 0;
@@ -618,8 +614,7 @@ class JoomlaBasicMisc
 
     public static function FindMenuItemRowByAlias($alias)
     {
-        $db = Factory::getDBO();
-        $query = 'SELECT * FROM #__menu WHERE published=1 AND alias=' . $db->Quote($alias);
+        $query = 'SELECT * FROM #__menu WHERE published=1 AND alias=' . database::quote($alias);
         $rows = database::loadAssocList($query);
         if (!$rows) return 0;
         if (count($rows) < 1) return 0;

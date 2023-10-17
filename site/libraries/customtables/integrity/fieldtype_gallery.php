@@ -26,8 +26,6 @@ class IntegrityFieldType_Gallery extends \CustomTables\IntegrityChecks
     {
         $gallery_table_name = '#__customtables_gallery_' . $ct->Table->tablename . '_' . $fieldname;
 
-        $db = Factory::getDBO();
-
         if (!ESTables::checkIfTableExists($gallery_table_name)) {
             Fields::CreateImageGalleryTable($ct->Table->tablename, $fieldname);
             Factory::getApplication()->enqueueMessage('Gallery Table "' . $gallery_table_name . '" created.');

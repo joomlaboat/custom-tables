@@ -9,6 +9,7 @@
  **/
 
 // no direct access
+use CustomTables\database;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 
@@ -26,13 +27,7 @@ class JFormFieldCTTable extends JFormFieldList
 
     public function getOptions($add_empty_option = true)//$name, $value, &$node, $control_name)
     {
-        $db = Factory::getDBO();
-        $query = $db->getQuery(true);
-        $query->select('id,tabletitle');
-        $query->from('#__customtables_tables');
-        $query->order('tabletitle');
-        $query->where('published=1');
-
+        $query = 'SELECT id,tabletitle FROM #__customtables_tables WHERE published=1 ORDER BY tabletitle';
         $records = database::loadObjectList((string)$query);
 
         $options = array();

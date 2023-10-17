@@ -761,8 +761,7 @@ class Twig_Html_Tags
 
     protected function getReCaptchaParams()
     {
-        $db = Factory::getDBO();
-        $query = 'SELECT params FROM #__extensions WHERE ' . $db->quoteName("name") . '=' . $db->Quote("plg_captcha_recaptcha") . ' LIMIT 1';
+        $query = 'SELECT params FROM #__extensions WHERE ' . database::quoteName("name") . '=' . database::quote("plg_captcha_recaptcha") . ' LIMIT 1';
         $rows = database::loadObjectList($query);
         if (count($rows) == 0)
             return null;

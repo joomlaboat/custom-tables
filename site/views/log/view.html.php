@@ -70,8 +70,6 @@ class CustomTablesViewLog extends JViewLegacy
         // In case limit has been changed, adjust it
         $this->limitStart = ($this->limit != 0 ? (floor($this->limitStart / $this->limit) * $this->limit) : 0);
 
-        $db = Factory::getDBO();
-
         $selects = array();
         $selects[] = '*';
         $selects[] = '(SELECT name FROM #__users WHERE id=userid) AS UserName';

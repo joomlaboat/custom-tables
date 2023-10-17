@@ -85,8 +85,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy
         if (!$this->getGallery())
             return false;
 
-        $db = Factory::getDBO();
-        $this->phototablename = $db->getPrefix() . 'customtables_gallery_' . $this->ct->Table->tablename . '_' . $this->galleryname;
+        $this->phototablename = database::getDBPrefix() . 'customtables_gallery_' . $this->ct->Table->tablename . '_' . $this->galleryname;
         return true;
     }
 
@@ -168,8 +167,6 @@ class CustomTablesModelEditPhotos extends JModelLegacy
 
         } while (!$noNegative);
 
-        $db = Factory::getDBO();
-
         asort($images);
         $i = 0;
         foreach ($images as $image) {
@@ -194,8 +191,6 @@ class CustomTablesModelEditPhotos extends JModelLegacy
 
     function delete(): bool
     {
-        $db = Factory::getDBO();
-
         $photoids = common::inputGetString('photoids', '');
         $photo_arr = explode('*', $photoids);
 
@@ -308,13 +303,11 @@ class CustomTablesModelEditPhotos extends JModelLegacy
 
     protected function addPhotoRecord(string $photo_ext, string $title): int
     {
-        $db = Factory::getDBO();
-
         $query = 'INSERT ' . $this->phototablename . ' SET '
             . 'ordering=100, '
-            . 'photo_ext=' . $db->quote($photo_ext) . ', '
-            . 'listingid=' . $db->quote($this->listing_id) . ', '
-            . 'title=' . $db->quote($title);
+            . 'photo_ext=' . database::quote($photo_ext) . ', '
+            . 'listingid=' . database::quote($this->listing_id) . ', '
+            . 'title=' . database::quote($title);
 
         try {
             database::setQuery($query);
@@ -326,7 +319,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy
         $this->AutoReorderPhotos();
 
 
-        $query = ' SELECT photoid FROM ' . $this->phototablename . ' WHERE listingid=' . $db->quote($this->listing_id) . ' ORDER BY photoid DESC LIMIT 1';
+        $query = ' SELECT photoid FROM ' . $this->phototablename . ' WHERE listingid=' . database::quote($this->listing_id) . ' ORDER BY photoid DESC LIMIT 1';
         $rows = database::loadObjectList($query);
 
         if (count($rows) == 1)
@@ -338,8 +331,6 @@ class CustomTablesModelEditPhotos extends JModelLegacy
     function AutoReorderPhotos(): bool
     {
         $images = $this->getPhotoList();
-        $db = Factory::getDBO();
-
         asort($images);
         $i = 0;
         foreach ($images as $image) {
@@ -347,7 +338,7 @@ class CustomTablesModelEditPhotos extends JModelLegacy
             $safeTitle = str_replace('"', "", $safeTitle);
 
             if ($safeTitle != '') {
-                $query = 'UPDATE ' . $this->phototablename . ' SET ordering=' . $i . ', title' . $this->ct->Languages->Postfix . '=' . $db->quote($safeTitle) . ' WHERE listingid='
+                $query = 'UPDATE ' . $this->phototablename . ' SET ordering=' . $i . ', title' . $this->ct->Languages->Postfix . '=' . database::quote($safeTitle) . ' WHERE listingid='
                     . $this->listing_id . ' AND photoid=' . $image->photoid;
             } else {
                 $query = 'UPDATE ' . $this->phototablename . ' SET ordering=' . $i . ' WHERE listingid='

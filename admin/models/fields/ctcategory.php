@@ -32,15 +32,10 @@ class JFormFieldCTCategory extends JFormFieldList
      */
     public $type = 'ctcategory';
 
-    public function getOptions($add_empty_option = true)//$name, $value, &$node, $control_name)
+    public function getOptions($add_empty_option = true)
     {
-        $db = Factory::getDBO();
-        $query = $db->getQuery(true);
-        $query->select('id,categoryname');
-        $query->from('#__customtables_categories');
-        $query->order('categoryname');
-        $query->where('published=1');
-        $records = database::loadObjectList((string)$query);
+        $query = 'SELECT id,categoryname FROM #__customtables_categories WHERE published=1 ORDER BY categoryname';
+        $records = database::loadObjectList($query);
 
         $options = array();
         if ($records) {

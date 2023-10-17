@@ -113,9 +113,7 @@ function importCSVdata(string $filename, $ct_tableid): string
     if ($first_line_fieldnames)
         $offset = 1;
 
-    $db = Factory::getDBO();
-
-    for ($i = 0 + $offset; $i < count($arrayOfLines); $i++) {
+    for ($i = $offset; $i < count($arrayOfLines); $i++) {
         if (count($arrayOfLines[$i]) > 0) {
             $sets = prepareSQLQuery($fieldList, $fields, $arrayOfLines[$i]);
             $listing_id = findRecord($tablerow->realtablename, $tablerow->realidfieldname, $tablerow->published_field_found, $sets);
@@ -145,11 +143,10 @@ function findRecord($realtablename, $realidfieldname, bool $published_field_foun
 
 function findSQLRecordJoin($realtablename, $join_realfieldname, $realidfieldname, bool $published_field_found, $vlus_str)
 {
-    $db = Factory::getDBO();
     $vlus = explode(',', $vlus_str);
     $wheres_or = array();
     foreach ($vlus as $vlu)
-        $wheres_or[] = $db->quoteName($join_realfieldname) . '=' . $db->quote($vlu);
+        $wheres_or[] = database::quoteName($join_realfieldname) . '=' . database::quote($vlu);
 
     $wheres[] = '(' . implode(' OR ', $wheres_or) . ')';
 
@@ -171,9 +168,7 @@ function findSQLRecordJoin($realtablename, $join_realfieldname, $realidfieldname
 
 function findSQLJoin($realtablename, $join_realfieldname, $realidfieldname, bool $published_field_found, $vlu)
 {
-    $db = Factory::getDBO();
-
-    $wheres = [$db->quoteName($join_realfieldname) . '=' . $db->quote($vlu)];
+    $wheres = [database::quoteName($join_realfieldname) . '=' . database::quote($vlu)];
 
     return findRecord($realtablename, $realidfieldname, $published_field_found, $wheres);
 }
@@ -186,7 +181,6 @@ function addSQLJoinSets($realtablename, $sets)
 
 function prepareSQLQuery($fieldList, $fields, $line)
 {
-    $db = Factory::getDBO();
     $sets = array();
     $i = 0;
 
@@ -208,7 +202,7 @@ function prepareSQLQuery($fieldList, $fields, $line)
                     if (is_null($vlu))//Join table record doesn't exists
                     {
                         $sub_sets = [];
-                        $sub_sets[] = $db->quoteName($fields[$f_index]->sqljoin->field) . '=' . $db->quote($line[$i]);
+                        $sub_sets[] = database::quoteName($fields[$f_index]->sqljoin->field) . '=' . database::quote($line[$i]);
                         addSQLJoinSets($realtablename, $sub_sets);
 
                         $vlu = findSQLJoin(
@@ -221,9 +215,9 @@ function prepareSQLQuery($fieldList, $fields, $line)
                     }
 
                     if ((int)$vlu > 0)
-                        $sets[] = $db->quoteName($fields[$f_index]->realfieldname) . '=' . (int)$vlu;
+                        $sets[] = database::quoteName($fields[$f_index]->realfieldname) . '=' . (int)$vlu;
                     else
-                        $sets[] = $db->quoteName($fields[$f_index]->realfieldname) . '=NULL';
+                        $sets[] = database::quoteName($fields[$f_index]->realfieldname) . '=NULL';
                 }
             } elseif ($fieldType == 'records') {
                 if (isset($fields[$f_index]->sqljoin)) {
@@ -238,7 +232,7 @@ function prepareSQLQuery($fieldList, $fields, $line)
 
                     if (is_null($vlu)) {
                         $sub_sets = [];
-                        $sub_sets[] = $db->quoteName($fields[$f_index]->sqljoin->field) . '=' . $db->quote($line[$i]);
+                        $sub_sets[] = database::quoteName($fields[$f_index]->sqljoin->field) . '=' . database::quote($line[$i]);
                         addSQLJoinSets($realtablename, $sub_sets);
 
                         $vlu = findSQLRecordJoin(
@@ -250,25 +244,25 @@ function prepareSQLQuery($fieldList, $fields, $line)
                     }
 
                     if (!is_null($vlu) and $vlu != '')
-                        $sets[] = $db->quoteName($fields[$f_index]->realfieldname) . '=' . $db->quote(',' . implode(',', $vlu) . ',');
+                        $sets[] = database::quoteName($fields[$f_index]->realfieldname) . '=' . database::quote(',' . implode(',', $vlu) . ',');
                     else
-                        $sets[] = $db->quoteName($fields[$f_index]->realfieldname) . '=NULL';
+                        $sets[] = database::quoteName($fields[$f_index]->realfieldname) . '=NULL';
                 }
             } elseif ($fieldType == 'date' or $fieldType == 'creationtime' or $fieldType == 'changetime') {
                 if (isset($line[$i]) and $line[$i] != '')
-                    $sets[] = $db->quoteName($fields[$f_index]->realfieldname) . '=' . $db->quote($line[$i]);
+                    $sets[] = database::quoteName($fields[$f_index]->realfieldname) . '=' . database::quote($line[$i]);
                 else
-                    $sets[] = $db->quoteName($fields[$f_index]->realfieldname) . '=NULL';
+                    $sets[] = database::quoteName($fields[$f_index]->realfieldname) . '=NULL';
             } elseif ($fieldType == 'int' or $fieldType == 'user' or $fieldType == 'userid') {
                 if (isset($line[$i]) and $line[$i] != '')
-                    $sets[] = $db->quoteName($fields[$f_index]->realfieldname) . '=' . (int)$line[$i];
+                    $sets[] = database::quoteName($fields[$f_index]->realfieldname) . '=' . (int)$line[$i];
                 else
-                    $sets[] = $db->quoteName($fields[$f_index]->realfieldname) . '=NULL';
+                    $sets[] = database::quoteName($fields[$f_index]->realfieldname) . '=NULL';
             } elseif ($fieldType == 'float') {
                 if (isset($line[$i]) and $line[$i] != '')
-                    $sets[] = $db->quoteName($fields[$f_index]->realfieldname) . '=' . (float)$line[$i];
+                    $sets[] = database::quoteName($fields[$f_index]->realfieldname) . '=' . (float)$line[$i];
                 else
-                    $sets[] = $db->quoteName($fields[$f_index]->realfieldname) . '=NULL';
+                    $sets[] = database::quoteName($fields[$f_index]->realfieldname) . '=NULL';
             } elseif ($fieldType == 'checkbox') {
                 if (isset($line[$i]) and $line[$i] != '') {
                     if ($line[$i] == 'Yes' or $line[$i] == '1')
@@ -276,13 +270,13 @@ function prepareSQLQuery($fieldList, $fields, $line)
                     else
                         $vlu = 0;
 
-                    $sets[] = $db->quoteName($fields[$f_index]->realfieldname) . '=' . $vlu;
+                    $sets[] = database::quoteName($fields[$f_index]->realfieldname) . '=' . $vlu;
                 }
 
             } else {
                 if (isset($line[$i])) {
                     $vlu = $line[$i];
-                    $sets[] = $db->quoteName($fields[$f_index]->realfieldname) . '=' . $db->quote($vlu);
+                    $sets[] = database::quoteName($fields[$f_index]->realfieldname) . '=' . database::quote($vlu);
                 }
             }
         }

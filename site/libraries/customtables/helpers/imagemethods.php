@@ -217,8 +217,6 @@ class CustomTablesImageMethods
         //---------- find child ----------
         //check if the image has child or not
         if ($realtablename != '-options') {
-            $db = Factory::getDBO();
-
             if ($ExistingImage !== null and is_numeric($ExistingImage) and intval($ExistingImage) != 0) {
                 //If it's an original image not duplicate, find one duplicate and convert it to original
                 $query = 'SELECT ' . $realIdField . ' FROM ' . $realtablename . ' WHERE ' . $realfieldname . '=-' . $ExistingImage . ' LIMIT 1';

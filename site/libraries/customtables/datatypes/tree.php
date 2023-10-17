@@ -24,8 +24,6 @@ class Tree
 {
     public static function getChildren($optionid, $parentid, $level)
     {
-        $db = Factory::getDBO();
-
         $result = array();
 
         $query = ' SELECT concat("' . str_repeat('- ', $level) . '", optionname) AS name, id FROM #__customtables_options WHERE id!=' . $optionid . ' ';
@@ -47,8 +45,6 @@ class Tree
 
     public static function getAllRootParents()
     {
-        $db = Factory::getDBO();
-
         $query = "SELECT id, optionname FROM #__customtables_options WHERE parentid=0 ORDER BY optionname";
         $available_rootparents = database::loadObjectList($query);
         JoomlaBasicMisc::array_insert($available_rootparents, array("id" => 0, "optionname" => Text::_('-Select Parent')), 0);
@@ -192,9 +188,6 @@ class Tree
 
     public static function getOptionId($optionname, $parentid)
     {
-        // get database handle
-        $db = Factory::getDBO();
-
         $query = 'SELECT id FROM #__customtables_options WHERE parentid=' . $parentid . ' AND optionname="' . $optionname . '" LIMIT 1';
         $rows = database::loadObjectList($query);
         if (count($rows) != 1) return 0;
@@ -276,10 +269,8 @@ class Tree
         if($optid==0)
             return "";
 
-
-        $db = Factory::getDBO();
         $query = 'SELECT link FROM #__customtables_options WHERE id='.$optid.' LIMIT 1';
-        $rows=$database::loadObjectList($query);
+        $rows=database::loadObjectList($query);
 
         if(count($rows)!=1)
             return "";
@@ -293,7 +284,6 @@ class Tree
 
     public static function isRecordExist($checkValue, $checkField, $resultField, $table): ?string
     {
-        $db = Factory::getDBO();
         $query = ' SELECT ' . $resultField . ' AS resultfield FROM ' . $table . ' WHERE ' . $checkField . '="' . $checkValue . '" LIMIT 1';
         $propertyType = database::loadObjectList($query);
 
@@ -312,8 +302,6 @@ class Tree
     {
         if ((int)$parentId == 0)
             return '';
-
-        $db = Factory::getDBO();
 
         $query = 'SELECT id, ' . $fieldname . ' FROM #__customtables_options WHERE parentid="' . $parentId . '" LIMIT 1';
         $rows = database::loadAssocList($query);

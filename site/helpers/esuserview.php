@@ -22,8 +22,6 @@ class JHTMLESUserView
 {
     public static function render($value, $field = '')
     {
-        $db = Factory::getDBO();
-
         if ($field == 'online') {
             $query = 'SELECT userid FROM #__session WHERE userid=' . (int)$value . ' LIMIT 1';
             $options = database::loadAssocList($query);
@@ -51,7 +49,8 @@ class JHTMLESUserView
                 return 'wrong field "' . $field . '" !';
 
             $query = 'SELECT id, name, username, email, registerDate,lastvisitDate FROM #__users WHERE id=' . (int)$value . ' LIMIT 1';
-            $db = Factory::getDBO();
+            $rows = database::loadAssocList($query);
+
             if (count($rows) != 0) {
                 $row = $rows[0];
                 if (($field == 'registerDate' or $field == 'lastvisitDate') and $row[$field] == '0000-00-00 00:00:00')
@@ -60,9 +59,9 @@ class JHTMLESUserView
                 if ($field == 'registerdate')
                     return $row['registerDate'];
                 elseif ($field == 'lastvisitdate')
-                    return $rec['lastvisitDate'];
+                    return $row['lastvisitDate'];
                 else
-                    return $rec[$field];
+                    return $row[$field];
             } else {
                 if ((int)$value != 0)
                     return JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FIELDS_USER_NOT_FOUND');

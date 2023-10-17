@@ -9,6 +9,7 @@
  **/
 
 // no direct access
+use CustomTables\database;
 use Joomla\CMS\Factory;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {

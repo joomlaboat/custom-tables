@@ -47,12 +47,10 @@ class ESTables
         if (str_contains($tablename, '"'))
             return 0;
 
-        $db = Factory::getDBO();
-
         if ($tablename == '')
             return 0;
 
-        $query = 'SELECT id FROM #__customtables_tables AS s WHERE tablename=' . $db->quote($tablename) . ' LIMIT 1';
+        $query = 'SELECT id FROM #__customtables_tables AS s WHERE tablename=' . database::quote($tablename) . ' LIMIT 1';
         $rows = database::loadObjectList($query);
 
         if (count($rows) != 1)
@@ -123,7 +121,6 @@ class ESTables
 
     public static function getTableRowSelects(): string
     {
-        $db = Factory::getDBO();
         $serverType = database::getServerType();
         if ($serverType == 'postgresql') {
             $realtablename_query = 'CASE WHEN customtablename!=\'\' THEN customtablename ELSE CONCAT(\'#__customtables_table_\', tablename) END AS realtablename';
@@ -138,7 +135,6 @@ class ESTables
 
     public static function createTableIfNotExists($database, $dbPrefix, $tablename, $tabletitle, $complete_table_name = ''): bool
     {
-        $db = Factory::getDBO();
         $serverType = database::getServerType();
         if ($serverType == 'postgresql') {
             //PostgreSQL
@@ -214,13 +210,11 @@ class ESTables
 
     public static function getTableStatus($database, $dbPrefix, $tablename)
     {
-        $db = Factory::getDBO();
-        return database::loadObjectList('SHOW TABLE STATUS FROM ' . $db->quoteName($database) . ' LIKE ' . $db->quote($dbPrefix . 'customtables_table_' . $tablename));
+        return database::loadObjectList('SHOW TABLE STATUS FROM ' . database::quoteName($database) . ' LIKE ' . database::quote($dbPrefix . 'customtables_table_' . $tablename));
     }
 
     public static function insertRecords(string $realtablename, array $sets): int
     {
-        $db = Factory::getDBO();
         $serverType = database::getServerType();
         if ($serverType == 'postgresql') {
             $set_fieldNames = array();
@@ -236,17 +230,15 @@ class ESTables
         }
 
         try {
-            database::setQuery($query);
+            return database::insert($query);
         } catch (Exception $e) {
             Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
             return false;
         }
-        return $db->insertid();
     }
 
     public static function renameTableIfNeeded($tableid, $database, $dbPrefix, $tablename): void
     {
-        $db = Factory::getDBO();
         $old_tablename = ESTables::getTableName($tableid);
 
         if ($old_tablename != $tablename) {
@@ -254,8 +246,8 @@ class ESTables
             $tablestatus = ESTables::getTableStatus($database, $dbPrefix, $old_tablename);
 
             if (count($tablestatus) > 0) {
-                $query = 'RENAME TABLE ' . $db->quoteName($database . '.' . $dbPrefix . 'customtables_table_' . $old_tablename) . ' TO '
-                    . $db->quoteName($database . '.' . $dbPrefix . 'customtables_table_' . $tablename) . ';';
+                $query = 'RENAME TABLE ' . database::quoteName($database . '.' . $dbPrefix . 'customtables_table_' . $old_tablename) . ' TO '
+                    . database::quoteName($database . '.' . $dbPrefix . 'customtables_table_' . $tablename) . ';';
 
                 database::setQuery($query);
             }
@@ -264,8 +256,6 @@ class ESTables
 
     public static function getTableName($tableid = 0): ?string
     {
-        $db = Factory::getDBO();
-
         if ($tableid == 0)
             $tableid = common::inputGet('tableid', 0, 'INT');
 
@@ -287,10 +277,9 @@ class ESTables
 
         $tablerow = ESTables::getTableRowByName($tablename);
 
-        $db = Factory::getDBO();
         $serverType = database::getServerType();
         if ($serverType == 'postgresql')
-            $query = 'SELECT column_name, data_type, is_nullable, column_default FROM information_schema.columns WHERE table_name = ' . $db->quote($realtablename);
+            $query = 'SELECT column_name, data_type, is_nullable, column_default FROM information_schema.columns WHERE table_name = ' . database::quote($realtablename);
         else
             $query = 'SELECT '
                 . 'COLUMN_NAME AS column_name,'
@@ -301,7 +290,7 @@ class ESTables
                 . 'COLUMN_DEFAULT AS column_default,'
                 . 'COLUMN_COMMENT AS column_comment,'
                 . 'COLUMN_KEY AS column_key,'
-                . 'EXTRA AS extra FROM information_schema.columns WHERE table_schema = ' . $db->quote($database) . ' AND table_name = ' . $db->quote($realtablename);
+                . 'EXTRA AS extra FROM information_schema.columns WHERE table_schema = ' . database::quote($database) . ' AND table_name = ' . database::quote($realtablename);
 
         $fields = database::loadObjectList($query);
         $set_fieldNames = ['tableid', 'fieldname', 'fieldtitle', 'allowordering', 'type', 'typeparams', 'ordering', 'defaultvalue', 'description', 'customfieldname', 'isrequired'];
@@ -321,15 +310,15 @@ class ESTables
                 }
 
                 $set_values['tableid'] = (int)$tablerow->id;
-                $set_values['fieldname'] = $db->quote(strtolower($field->column_name));
-                $set_values['fieldtitle'] = $db->quote(ucwords(strtolower($field->column_name)));
+                $set_values['fieldname'] = database::quote(strtolower($field->column_name));
+                $set_values['fieldtitle'] = database::quote(ucwords(strtolower($field->column_name)));
                 $set_values['allowordering'] = 'true';
-                $set_values['type'] = $db->quote($ct_field_type['type']);
-                $set_values['typeparams'] = $db->quote($ct_field_type['typeparams']);
+                $set_values['type'] = database::quote($ct_field_type['type']);
+                $set_values['typeparams'] = database::quote($ct_field_type['typeparams']);
                 $set_values['ordering'] = $ordering;
-                $set_values['defaultvalue'] = $field->column_default != '' ? $db->quote($field->column_default) : 'NULL';
-                $set_values['description'] = $field->column_comment != '' ? $db->quote($field->column_comment) : 'NULL';
-                $set_values['customfieldname'] = $db->quote($field->column_name);
+                $set_values['defaultvalue'] = $field->column_default != '' ? database::quote($field->column_default) : 'NULL';
+                $set_values['description'] = $field->column_comment != '' ? database::quote($field->column_comment) : 'NULL';
+                $set_values['customfieldname'] = database::quote($field->column_name);
                 $set_values['isrequired'] = 0;
 
                 $query = 'INSERT INTO #__customtables_fields (' . implode(',', $set_fieldNames) . ') VALUES (' . implode(',', $set_values) . ')';
@@ -340,7 +329,7 @@ class ESTables
 
         if ($primary_key_column != '') {
             //Update primary key column
-            $query = 'UPDATE #__customtables_tables SET customidfield = ' . $db->quote($primary_key_column) . ' WHERE id = ' . (int)$tablerow->id;
+            $query = 'UPDATE #__customtables_tables SET customidfield = ' . database::quote($primary_key_column) . ' WHERE id = ' . (int)$tablerow->id;
             database::setQuery($query);
         }
         return true;
@@ -363,16 +352,12 @@ class ESTables
         if ($tablename === null)
             return null;
 
-        $db = Factory::getDBO();
-
-        return ESTables::getTableRowByWhere('tablename=' . $db->quote($tablename));
+        return ESTables::getTableRowByWhere('tablename=' . database::quote($tablename));
     }
 
     public static function copyTable(CT $ct, $originalTableId, $new_table, $old_table, $customTableName = '')
     {
         //Copy Table
-        $db = Factory::getDBO();
-
         //get ID of new table
         $new_table_id = ESTables::getTableID($new_table);
 

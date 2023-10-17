@@ -90,15 +90,11 @@ class CustomTablesModelEditFiles extends JModelLegacy
 
     function getFileList()
     {
-        // get database handle
-        $db = Factory::getDBO();
-        return database::loadObjectList('SELECT fileid, file_ext FROM ' . $this->fileboxtablename . ' WHERE listingid=' . $db->quote($this->ct->Params->listing_id) . ' ORDER BY fileid');
+        return database::loadObjectList('SELECT fileid, file_ext FROM ' . $this->fileboxtablename . ' WHERE listingid=' . database::quote($this->ct->Params->listing_id) . ' ORDER BY fileid');
     }
 
     function delete(): bool
     {
-        $db = Factory::getDBO();
-
         $fileIds = common::inputGetString('fileids', '');
         $file_arr = explode('*', $fileIds);
 
@@ -167,13 +163,11 @@ class CustomTablesModelEditFiles extends JModelLegacy
 
     function addFileRecord(string $file_ext, string $title): int
     {
-        $db = Factory::getDBO();
-
         $query = 'INSERT ' . $this->fileboxtablename . ' SET '
-            . 'file_ext=' . $db->quote($file_ext) . ', '
+            . 'file_ext=' . database::quote($file_ext) . ', '
             . 'ordering=0, '
-            . 'listingid=' . $db->quote($this->ct->Params->listing_id) . ', '
-            . 'title=' . $db->quote($title);
+            . 'listingid=' . database::quote($this->ct->Params->listing_id) . ', '
+            . 'title=' . database::quote($title);
 
         try {
             database::setQuery($query);
@@ -182,7 +176,7 @@ class CustomTablesModelEditFiles extends JModelLegacy
             die;
         }
 
-        $query = ' SELECT fileid FROM ' . $this->fileboxtablename . ' WHERE listingid=' . $db->quote($this->ct->Params->listing_id) . ' ORDER BY fileid DESC LIMIT 1';
+        $query = ' SELECT fileid FROM ' . $this->fileboxtablename . ' WHERE listingid=' . database::quote($this->ct->Params->listing_id) . ' ORDER BY fileid DESC LIMIT 1';
         $rows = database::loadObjectList($query);
 
         if (count($rows) == 1) {

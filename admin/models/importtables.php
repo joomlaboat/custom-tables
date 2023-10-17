@@ -114,9 +114,8 @@ class CustomTablesModelImportTables extends JModelList
 
     function getOptionListItem($optionname, $optionTitle): string
     {
-        $db = Factory::getDbo();
         $parentId = Tree::getOptionIdFull($optionname);
-        $rows = Tree::getHeritage($parentId, $db->quoteName('title') . '=' . $db->quote($optionTitle), 1);
+        $rows = Tree::getHeritage($parentId, database::quoteName('title') . '=' . database::quote($optionTitle), 1);
 
         if (count($rows) == 0) {
             //add item
@@ -124,7 +123,7 @@ class CustomTablesModelImportTables extends JModelList
             $newOptionName = $newOptionName_original;
             $n = 0;
             while (1) {
-                $rows_check = Tree::getHeritage($parentId, $db->quoteName('optionname') . '=' . $db->quote($newOptionName), 1);
+                $rows_check = Tree::getHeritage($parentId, database::quoteName('optionname') . '=' . database::quote($newOptionName), 1);
                 if (count($rows_check)) {
                     $n++;
                     $newOptionName = $newOptionName_original . $n;
@@ -134,12 +133,11 @@ class CustomTablesModelImportTables extends JModelList
 
             $familyTree = Tree::getFamilyTreeByParentID($parentId) . '-';
 
-            $db = Factory::getDBO();
             $query = 'INSERT #__customtables_options SET '
-                . $db->quoteName('parentid') . '=' . $db->quote($parentId) . ', '
-                . $db->quoteName('optionname') . '=' . $db->quote($newOptionName) . ', '
-                . $db->quoteName('familytree') . '=' . $db->quote($familyTree) . ', '
-                . $db->quoteName('title') . '=' . $db->quote($optionTitle);
+                . database::quoteName('parentid') . '=' . database::quote($parentId) . ', '
+                . database::quoteName('optionname') . '=' . database::quote($newOptionName) . ', '
+                . database::quoteName('familytree') . '=' . database::quote($familyTree) . ', '
+                . database::quoteName('title') . '=' . database::quote($optionTitle);
 
             database::setQuery($query);
 
@@ -164,8 +162,6 @@ class CustomTablesModelImportTables extends JModelList
     function getLanguageByCODE($code): int
     {
         //Example: $code='en-GB';
-
-        $db = Factory::getDBO();
         $query = ' SELECT id FROM #__customtables_languages WHERE language="' . $code . '" LIMIT 1';
         $rows = database::loadObjectList($query);
         if (count($rows) != 1)

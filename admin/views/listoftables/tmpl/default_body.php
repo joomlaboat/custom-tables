@@ -18,7 +18,6 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 
 $edit = "index.php?option=com_customtables&view=listoftables&task=tables.edit";
-$db = Factory::getDBO();
 $dbPrefix = database::getDBPrefix();
 
 foreach ($this->items as $i => $item): ?>

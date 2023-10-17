@@ -87,7 +87,8 @@ class CustomtablesViewTables extends JViewLegacy
             parent::display('quatro');
 
         // Set the document
-        $this->setDocument();
+        $document = Factory::getDocument();
+        $this->setDocument($document);
     }
 
 
@@ -134,14 +135,11 @@ class CustomtablesViewTables extends JViewLegacy
      *
      * @return void
      */
-    protected function setDocument()
+    public function setDocument(Joomla\CMS\Document\Document $document): void
     {
         $isNew = ($this->item->id < 1);
-        if (!isset($this->document)) {
-            $this->document = Factory::getDocument();
-        }
-        $this->document->setTitle(Text::_($isNew ? 'COM_CUSTOMTABLES_TABLES_NEW' : 'COM_CUSTOMTABLES_TABLES_EDIT'));
-        $this->document->addCustomTag('<script src="' . JURI::root(true) . '/administrator/components/com_customtables/views/tables/submitbutton.js"></script>');
+        $document->setTitle(Text::_($isNew ? 'COM_CUSTOMTABLES_TABLES_NEW' : 'COM_CUSTOMTABLES_TABLES_EDIT'));
+        $document->addCustomTag('<script src="' . JURI::root(true) . '/administrator/components/com_customtables/views/tables/submitbutton.js"></script>');
     }
 
     /**

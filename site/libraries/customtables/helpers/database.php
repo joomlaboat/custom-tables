@@ -128,6 +128,21 @@ class database
         }
     }
 
+    public static function insert($query): ?int
+    {
+        if (defined('_JEXEC')) {
+            $db = Factory::getDBO();
+            $db->setQuery($query);
+            $db->execute();
+            return $db->insertid();
+        } elseif (defined('WPINC')) {
+            global $wpdb;
+            $wpdb->query(str_replace('#__', $wpdb->prefix, $query));
+            return $wpdb->insert_id;
+        }
+        return null;
+    }
+
     public static function getNumRowsOnly($query): int
     {
         if (defined('_JEXEC')) {
@@ -140,6 +155,7 @@ class database
             $wpdb->query(str_replace('#__', $wpdb->prefix, $query));
             return $wpdb->num_rows;
         }
+        return -1;
     }
 
     public static function getVersion(): ?float
@@ -173,4 +189,58 @@ class database
         }
         return null;
     }
+
+    public static function loadRowList($query, $limitStart = null, $limit = null): ?array
+    {
+        if (defined('_JEXEC')) {
+            $db = Factory::getDBO();
+            if ($limitStart !== null and $limit !== null)
+                $db->setQuery($query, $limitStart, $limit);
+            elseif ($limitStart !== null)
+                $db->setQuery($query, $limitStart);
+            else
+                $db->setQuery($query);
+
+            return $db->loadRowList();
+        } elseif (defined('WPINC')) {
+            global $wpdb;
+
+            if ($limit !== null)
+                $query .= ' LIMIT ' . $limit;
+
+            if ($limitStart !== null)
+                $query .= ' OFFSET ' . $limitStart;
+
+            return $wpdb->get_results(str_replace('#__', $wpdb->prefix, $query), ARRAY_N);
+        }
+        return null;
+    }
+
+    public static function loadColumn($query, $limitStart = null, $limit = null): ?array
+    {
+        if (defined('_JEXEC')) {
+            $db = Factory::getDBO();
+            if ($limitStart !== null and $limit !== null)
+                $db->setQuery($query, $limitStart, $limit);
+            elseif ($limitStart !== null)
+                $db->setQuery($query, $limitStart);
+            else
+                $db->setQuery($query);
+
+            return $db->loadColumn();
+        } elseif (defined('WPINC')) {
+            global $wpdb;
+
+            if ($limit !== null)
+                $query .= ' LIMIT ' . $limit;
+
+            if ($limitStart !== null)
+                $query .= ' OFFSET ' . $limitStart;
+
+            return $wpdb->get_col(str_replace('#__', $wpdb->prefix, $query));
+        }
+        return null;
+    }
+
+
 }

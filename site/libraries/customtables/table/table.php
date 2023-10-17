@@ -39,8 +39,6 @@ class Table
     var ?array $record;
     var int $recordcount;
     var ?array $recordlist;
-    var $db;
-
     var ?array $imagegalleries;
     var ?array $fileboxes;
     var ?array $selects;
@@ -167,7 +165,7 @@ class Table
 
     public function getRecordFieldValue($listingId, $resultField)
     {
-        $query = ' SELECT ' . $resultField . ' FROM ' . $this->realtablename . ' WHERE ' . $this->realidfieldname . '=' . $this->db->quote($listingId) . ' LIMIT 1';
+        $query = ' SELECT ' . $resultField . ' FROM ' . $this->realtablename . ' WHERE ' . $this->realidfieldname . '=' . database::quote($listingId) . ' LIMIT 1';
         $rows = database::loadAssocList($query);
 
         if (count($rows) > 0)
@@ -178,7 +176,7 @@ class Table
 
     function loadRecord($listing_id)
     {
-        $query = 'SELECT ' . implode(',', $this->selects) . ' FROM ' . $this->realtablename . ' WHERE ' . $this->realidfieldname . '=' . $this->db->quote($listing_id) . ' LIMIT 1';
+        $query = 'SELECT ' . implode(',', $this->selects) . ' FROM ' . $this->realtablename . ' WHERE ' . $this->realidfieldname . '=' . database::quote($listing_id) . ' LIMIT 1';
         $rows = database::loadAssocList($query);
 
         if (count($rows) < 1) return $this->record = null;
@@ -192,7 +190,7 @@ class Table
         if ($listing_id === null or $listing_id === '' or (is_numeric($listing_id) and $listing_id === 0))
             return false;
 
-        $query = 'SELECT ' . $this->realidfieldname . ' FROM ' . $this->realtablename . ' WHERE ' . $this->realidfieldname . '=' . $this->db->quote($listing_id) . ' LIMIT 1';
+        $query = 'SELECT ' . $this->realidfieldname . ' FROM ' . $this->realtablename . ' WHERE ' . $this->realidfieldname . '=' . database::quote($listing_id) . ' LIMIT 1';
         return database::getNumRowsOnly($query) == 1;
     }
 

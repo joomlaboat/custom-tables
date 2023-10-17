@@ -28,12 +28,8 @@ class IntegrityOptions extends \CustomTables\IntegrityChecks
 
     protected static function checkOptionsTitleFields(&$ct)
     {
-        $db = Factory::getDBO();
-
         $column_name_field = 'column_name';
-
         $table_name = '#__customtables_options';
-
         $g_ExistingFields = Fields::getExistingFields($table_name, false);
 
         $moreThanOneLanguage = false;

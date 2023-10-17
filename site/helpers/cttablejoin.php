@@ -356,7 +356,7 @@ class JHTMLCTTableJoin
                     $join_realfieldname = $fld['realfieldname'];
 
                     //if ($fld['type'] == 'sqljoin')
-                    $where = $temp_ct->Table->realidfieldname . '=' . $temp_ct->db->quote($parent_id);
+                    $where = $temp_ct->Table->realidfieldname . '=' . database::quote($parent_id);
                     //else
                     //$where = 'INSTR(' . $temp_ct->Table->realidfieldname . ',",' . (int)$parent_id . ',")';
 

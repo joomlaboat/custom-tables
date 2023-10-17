@@ -51,7 +51,8 @@ class CustomtablesViewCustomtables extends JViewLegacy
         parent::display($tpl);
 
         // Set the document
-        $this->setDocument();
+        $document = Factory::getDocument();
+        $this->setDocument($document);
     }
 
     /**
@@ -82,17 +83,15 @@ class CustomtablesViewCustomtables extends JViewLegacy
      *
      * @return void
      */
-    protected function setDocument()
+    public function setDocument(Joomla\CMS\Document\Document $document): void
     {
-        $document = Factory::getDocument();
-
         // add dashboard style sheets
-        $this->document->addCustomTag('<link href="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/css/dashboard.css" type="text/css" rel="stylesheet" >');
+        $document->addCustomTag('<link href="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/css/dashboard.css" type="text/css" rel="stylesheet" >');
 
         // set page title
         $document->setTitle(Text::_('COM_CUSTOMTABLES_DASHBOARD'));
 
         // add manifest to page JavaScript
-        $this->document->addCustomTag('<script>var manifest = jQuery.parseJSON("' . json_encode($this->manifest) . '");</script>');
+        //$document->addCustomTag('<script>var manifest = jQuery.parseJSON("' . json_encode($this->manifest) . '");</script>');
     }
 }

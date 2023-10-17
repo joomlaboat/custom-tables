@@ -26,8 +26,6 @@ class IntegrityFieldType_FileBox extends \CustomTables\IntegrityChecks
     {
         $filebox_table_name = '#__customtables_filebox_' . $ct->Table->tablename . '_' . $fieldname;
 
-        $db = Factory::getDBO();
-
         if (!ESTables::checkIfTableExists($filebox_table_name)) {
             Fields::CreateFileBoxTable($ct->Table->tablename, $fieldname);
             Factory::getApplication()->enqueueMessage('File Box Table "' . $filebox_table_name . '" created.');

@@ -94,27 +94,22 @@ function _renderTableList($rows): string
 
 function _getLayoutsThatUseThisTable($tableId, $tableName)
 {
-    $db = Factory::getDBO();
-
     $wheres = array();
     $wheres[] = 'published=1';
     $layout_params = ['"' . $tableName . '"', "'" . $tableName . "'"];
-
-    $w = [];
-
-    $w[] = 'tableid=' . $db->quote($tableId);
+    $w = ['tableid=' . database::quote($tableId];
 
     foreach ($layout_params as $l)
-        $w[] = 'INSTR(layoutcode,' . $db->quote($l) . ')';
+        $w[] = 'INSTR(layoutcode,' . database::quote($l) . ')';
 
     foreach ($layout_params as $l)
-        $w[] = 'INSTR(layoutmobile,' . $db->quote($l) . ')';
+        $w[] = 'INSTR(layoutmobile,' . database::quote($l) . ')';
 
     foreach ($layout_params as $l)
-        $w[] = 'INSTR(layoutcss,' . $db->quote($l) . ')';
+        $w[] = 'INSTR(layoutcss,' . database::quote($l) . ')';
 
     foreach ($layout_params as $l)
-        $w[] = 'INSTR(layoutjs,' . $db->quote($l) . ')';
+        $w[] = 'INSTR(layoutjs,' . database::quote($l) . ')';
 
     $wheres[] = '(' . implode(' OR ', $w) . ')';
     $query = 'SELECT id,layoutname FROM #__customtables_layouts WHERE ' . implode(' AND ', $wheres);
@@ -123,12 +118,11 @@ function _getLayoutsThatUseThisTable($tableId, $tableName)
 
 function _getMenuItemsThatUseThisTable($tablename)
 {
-    $db = Factory::getDBO();
     $wheres = array();
     $wheres[] = 'published=1';
     $wheres[] = 'INSTR(link,"index.php?option=com_customtables&view=")';
     $toSearch = '"establename":"' . $tablename . '"';
-    $wheres[] = 'INSTR(params,' . $db->quote($toSearch) . ')';
+    $wheres[] = 'INSTR(params,' . database::quote($toSearch) . ')';
     $query = 'SELECT id,title FROM #__menu WHERE ' . implode(' AND ', $wheres);
     return database::loadAssocList($query);
 }
@@ -137,8 +131,6 @@ function _getTablesThisTableDependOn($table_id)
 {
     if ((int)$table_id == 0)
         return array();
-
-    $db = Factory::getDBO();
 
     $select_tableTitle = '(SELECT id FROM #__customtables_tables AS t1 WHERE t1.id=f.tableid LIMIT 1) ';
     $serverType = database::getServerType();
@@ -149,7 +141,7 @@ function _getTablesThisTableDependOn($table_id)
             . 'WHERE'
             . ' tableid=' . (int)$table_id
             . ' AND ' . $select_tableNameCheck . ' IS NOT NULL'
-            . ' AND ' . $db->quoteName('type') . '=\'sqljoin\''
+            . ' AND ' . database::quoteName('type') . '=\'sqljoin\''
             . ' ORDER BY tabletitle';
     } else {
         $select_tableNameCheck = '(SELECT id FROM #__customtables_tables AS t2 WHERE t2.tablename LIKE SUBSTRING_INDEX(f.typeparams,",",1) LIMIT 1) ';
@@ -157,7 +149,7 @@ function _getTablesThisTableDependOn($table_id)
             . ' WHERE'
             . ' tableid=' . (int)$table_id
             . ' AND ' . $select_tableNameCheck . ' IS NOT NULL'
-            . ' AND ' . $db->quoteName('type') . '="sqljoin"'
+            . ' AND ' . database::quoteName('type') . '="sqljoin"'
             . ' ORDER BY tabletitle';
     }
     return database::loadAssocList($query);
@@ -168,7 +160,6 @@ function _getTablesThatDependOnThisTable($tablename)
     if ($tablename === null)
         return [];
 
-    $db = Factory::getDBO();
     $select_tablename = '(SELECT tabletitle FROM #__customtables_tables AS t WHERE t.id=f.tableid LIMIT 1)';
 
     $where = [];

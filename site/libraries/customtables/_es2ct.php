@@ -103,7 +103,6 @@ function findFileByName($fields, $fieldname)
 
 function updateLayoutVerticalBarTags()
 {
-    $db = JFactory::getDBO();
     $query = 'SELECT id, layoutcode FROM #__customtables_layouts WHERE INSTR(layoutcode,"|toolbar") OR INSTR(layoutcode,"|search")';
     $records = database::loadAssocList($query);
 
@@ -119,7 +118,7 @@ function updateLayoutVerticalBarTags()
         if ($c != $record['layoutcode']) {
             //update
             $query = 'UPDATE `#__customtables_layouts` SET
-				layoutcode=' . $db->quote($c) . ' WHERE id=' . $record['id'];
+				layoutcode=' . database::quote($c) . ' WHERE id=' . $record['id'];
 
             database::setQuery($query);
 
@@ -159,25 +158,18 @@ function fixToolBarTags($htmlresult, $w)
         //$changed=true;
         $htmlresult = $vlu;
     }
-
-    //if($changed)
     return $htmlresult;
-
-    //return '';
 }
 
 
 function updateImageFieldTypeParama()
 {
-    $db = JFactory::getDBO();
     $query = 'UPDATE `#__customtables_fields` SET typeparams=CONCAT(\'"\',REPLACE(typeparams,\'|\',\'",\')) WHERE (`type`="image" OR `type`="imagegallery") AND INSTR(typeparams,\'|\')';
-
     database::setQuery($query);
 }
 
 function updateMenuItems()
 {
-    $db = JFactory::getDBO();
     $sets = array();
 
     $sets[] = 'link=replace(link,"com_extrasearch","com_customtables")';
@@ -222,8 +214,6 @@ function updateContent()
 /*
 function fixNewCTTables($mysqltable)
 {
-    $db = JFactory::getDBO();
-
     $ads=array();
     $ads[]='`asset_id` INT(10) NOT NULL AFTER `parentid`';
     $ads[]='`params` TEXT NULL AFTER `asset_id`';
@@ -244,7 +234,6 @@ function fixNewCTTables($mysqltable)
 
 function addCetegoriesTable()
 {
-    $db = JFactory::getDBO();
     $query = 'CREATE TABLE IF NOT EXISTS `#__customtables_categories` (
 	`id` INT(11) NOT NULL AUTO_INCREMENT,
 	`published` TINYINT(3) NOT NULL DEFAULT 1,
@@ -270,7 +259,7 @@ function updateFields($new_tablename)
 {
     $dbPrefix = database::getDBPrefix();
 
-    if ($new_tablename == $dbprefix . 'customtables_tables') {
+    if ($new_tablename == $dbPrefix . 'customtables_tables') {
         //Fields::AddMySQLFieldNotExist($new_tablename, 'asset_id', 'INT(10) unsigned NOT NULL DEFAULT 0', '');
         //Fields::AddMySQLFieldNotExist($new_tablename, 'params', 'text NULL', '');
         Fields::AddMySQLFieldNotExist($new_tablename, 'published', 'TINYINT(3) NOT NULL DEFAULT 1', '');
@@ -285,7 +274,7 @@ function updateFields($new_tablename)
         //Fields::AddMySQLFieldNotExist($new_tablename, 'ordering', 'INT(11) NOT NULL DEFAULT 0', '');
         Fields::AddMySQLFieldNotExist($new_tablename, 'tablecategory', 'INT(11) NOT NULL DEFAULT 0', '');
 
-    } elseif ($new_tablename == $dbprefix . 'customtables_layouts') {
+    } elseif ($new_tablename == database::getDBPrefix() . 'customtables_layouts') {
         //Fields::AddMySQLFieldNotExist($new_tablename, 'asset_id', 'INT(10) unsigned NOT NULL DEFAULT 0', '');
         //Fields::AddMySQLFieldNotExist($new_tablename, 'params', 'text NULL', '');
         Fields::AddMySQLFieldNotExist($new_tablename, 'published', 'TINYINT(3) NOT NULL DEFAULT 1', '');
@@ -299,7 +288,7 @@ function updateFields($new_tablename)
         //Fields::AddMySQLFieldNotExist($new_tablename, 'hits', 'INT(10) unsigned NOT NULL DEFAULT 0', '');
         //Fields::AddMySQLFieldNotExist($new_tablename, 'ordering', 'INT(11) NOT NULL DEFAULT 0', '');
 
-    } elseif ($new_tablename == $dbprefix . 'customtables_fields') {
+    } elseif ($new_tablename == database::getDBPrefix() . 'customtables_fields') {
         //Fields::AddMySQLFieldNotExist($new_tablename, 'asset_id', 'INT(10) unsigned NOT NULL DEFAULT 0', '');
         //Fields::AddMySQLFieldNotExist($new_tablename, 'params', 'text NULL', '');
         Fields::AddMySQLFieldNotExist($new_tablename, 'published', 'TINYINT(3) NOT NULL DEFAULT 1', '');
@@ -317,7 +306,7 @@ function updateFields($new_tablename)
         Fields::AddMySQLFieldNotExist($new_tablename, 'isdisabled', 'tinyint(1) NOT NULL default "0"', '');
         Fields::AddMySQLFieldNotExist($new_tablename, 'phponadd', 'text NULL', '');
         Fields::AddMySQLFieldNotExist($new_tablename, 'phponchange', 'text NULL', '');
-    } elseif ($new_tablename == $dbprefix . 'customtables_categories') {
+    } elseif ($new_tablename == database::getDBPrefix() . 'customtables_categories') {
         //Fields::AddMySQLFieldNotExist($new_tablename, 'asset_id', 'INT(10) unsigned NOT NULL DEFAULT 0', '');
         //Fields::AddMySQLFieldNotExist($new_tablename, 'params', 'text NULL', '');
         Fields::AddMySQLFieldNotExist($new_tablename, 'published', 'TINYINT(3) NOT NULL DEFAULT 1', '');
@@ -336,9 +325,7 @@ function updateFields($new_tablename)
 
 function fixFields($tablename)
 {
-    $db = JFactory::getDBO();
     $found = false;
-
     $a = array('_10', '_1', '_2', '_3', '_4', '_5', '_6', '_7', '_8', '_9');
     $fields = getExistingFields($tablename);
 

@@ -16,6 +16,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\database;
 use CustomTables\Fields;
 
 use Joomla\CMS\Factory;
@@ -589,13 +590,9 @@ class CustomtablesModelFields extends JModelAdmin
             }
             // Set ordering to the last item if not set
             if (empty($table->ordering)) {
-                $db = Factory::getDbo();
-                $query = $db->getQuery(true)
-                    ->select('MAX(ordering)')
-                    ->from($db->quoteName('#__customtables_fields'));
-                $db->setQuery($query);
-                $max = $db->loadResult();
-
+                $query = 'SELECT MAX(ordering) FROM ' . database::quoteName('#__customtables_fields');
+                $col = database::loadColumn($query);
+                $max = $col[0];
                 $table->ordering = $max + 1;
             }
         } else {

@@ -9,6 +9,7 @@
  **/
 
 // no direct access
+use CustomTables\database;
 use Joomla\CMS\Factory;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
@@ -36,13 +37,9 @@ class JFormFieldESTable extends JFormFieldList
         require_once($path . 'loader.php');
         CTLoader();
 
-        $db = Factory::getDBO();
-        $query = $db->getQuery(true);
-        $query->select('id,tablename');
-        $query->from('#__customtables_tables');
-        $query->order('tablename');
+        $query = 'SELECT id,tablename FROM #__customtables_tables ORDER BY tablename';
 
-        $messages = database::loadObjectList((string)$query);
+        $messages = database::loadObjectList($query);
         $options = array();
         if ($messages) {
             foreach ($messages as $message)

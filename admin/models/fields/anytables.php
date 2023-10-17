@@ -44,8 +44,7 @@ class JFormFieldAnyTables extends JFormFieldList
 
     protected function getListOfExistingTables()
     {
-        $db = Factory::getDBO();
-        $prefix = $db->getPrefix();
+        $prefix = database::getDBPrefix();
         $serverType = database::getServerType();
         if ($serverType == 'postgresql') {
             $wheres = array();

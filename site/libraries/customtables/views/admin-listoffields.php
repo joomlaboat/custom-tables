@@ -48,6 +48,7 @@ class ListOfFields
         $result = '';
 
         foreach ($this->items as $i => $item) {
+
             $canCheckin = $this->ct->Env->user->authorise('core.manage', 'com_checkin') || $item->checked_out == $this->ct->Env->user->id || $item->checked_out == 0;
             $userChkOut = Factory::getUser($item->checked_out);
 

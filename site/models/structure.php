@@ -142,8 +142,6 @@ class CustomTablesModelStructure extends JModel
             $wherearr[] = 'parentid=' . (int)$this->parentid;
         }
 
-        $db = Factory::getDBO();
-
         $where = '';
         if (count($wherearr) > 0)
             $where = ' WHERE ' . implode(" AND ", $wherearr);

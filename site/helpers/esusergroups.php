@@ -10,7 +10,6 @@
 
 // Check to ensure this file is included in Joomla!
 use CustomTables\database;
-use Joomla\CMS\Factory;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
@@ -27,25 +26,23 @@ class JHTMLESUserGroups
         $availableUserGroupList = (trim($availableUserGroups) == '' ? [] : explode(',', trim($availableUserGroups)));
         $htmlresult = '';
 
-        $db = Factory::getDBO();
-
-        $query = $db->getQuery(true);
-        $query->select('#__usergroups.id AS id, #__usergroups.title AS name');
-        $query->from('#__usergroups');
+        $query = 'SELECT #__usergroups.id AS id, #__usergroups.title AS name FROM #__usergroups';
+        $where = [];
 
         if (count($availableUserGroupList) == 0) {
-            $query->where('#__usergroups.title!=' . $db->quote('Super Users'));
+            $where [] = '#__usergroups.title!=' . database::quote('Super Users');
         } else {
-            $where = [];
+            $whereOr = [];
             foreach ($availableUserGroupList as $availableUserGroup) {
                 if ($availableUserGroup != '')
-                    $where[] = '#__usergroups.title=' . $db->quote($availableUserGroup);
+                    $whereOr[] = '#__usergroups.title=' . database::quote($availableUserGroup);
             }
-            $query->where(implode(' OR ', $where));
+            $where [] = (implode(' OR ', $whereOr));
         }
+        $query .= ' WHERE ' . implode(' AND ', $where);
+        $query .= ' ORDER BY #__usergroups.title';
 
-        $query->order('#__usergroups.title');
-        $records = database::loadObjectList((string)$query);
+        $records = database::loadObjectList($query);
         $valueArray = explode(',', $value);
 
         switch ($selector) {

@@ -15,14 +15,12 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\database;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
-
 use CustomTables\Fields;
 
 $edit = "index.php?option=com_customtables&view=listoftables&task=tables.edit";
 $dbPrefix = database::getDBPrefix();
 
-?>
-<?php foreach ($this->items as $i => $item): ?>
+foreach ($this->items as $i => $item): ?>
     <?php
     $canCheckin = $this->user->authorise('core.manage', 'com_checkin') || $item->checked_out == $this->user->id || $item->checked_out == 0;
     $userChkOut = Factory::getUser($item->checked_out);

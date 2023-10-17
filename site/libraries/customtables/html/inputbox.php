@@ -169,7 +169,7 @@ class Inputbox
                         if ($subFilter == '')
                             $additional_where = '(' . $fld['realfieldname'] . ' IS NULL OR ' . $fld['realfieldname'] . '="")';
                         else
-                            $additional_where = $fld['realfieldname'] . '=' . $ct->db->quote($subFilter);
+                            $additional_where = $fld['realfieldname'] . '=' . database::quote($subFilter);
                     }
                 }
             }
@@ -182,7 +182,7 @@ class Inputbox
         if ($search !== null and $search != '') {
             foreach ($ct->Table->fields as $fld) {
                 if ($fieldName_or_layout == $fld['fieldname']) {
-                    $ct->Filter->where[] = 'INSTR(' . $fld['realfieldname'] . ',' . $ct->db->quote($search) . ')';
+                    $ct->Filter->where[] = 'INSTR(' . $fld['realfieldname'] . ',' . database::quote($search) . ')';
                 }
             }
         }
@@ -604,7 +604,6 @@ class Inputbox
             $query = 'SELECT ' . $this->field->realfieldname . ' FROM ' . $this->ct->Table->realtablename . ' GROUP BY ' . $this->field->realfieldname
                 . ' ORDER BY ' . $this->field->realfieldname;
 
-            $this->ct->db->setQuery($query);
             $records = database::loadObjectList($query);
 
             $result .= '<datalist id="' . $this->prefix . $this->field->fieldname . '_datalist">'
@@ -1063,12 +1062,12 @@ class Inputbox
         $availableUserGroupsList = ($this->field->params[0] == '' ? [] : $this->field->params);
 
         if (count($availableUserGroupsList) == 0) {
-            $where_string = '#__usergroups.title!=' . $this->ct->db->quote('Super Users');
+            $where_string = '#__usergroups.title!=' . database::quote('Super Users');
         } else {
             $where = [];
             foreach ($availableUserGroupsList as $availableUserGroup) {
                 if ($availableUserGroup != '')
-                    $where[] = '#__usergroups.title=' . $this->ct->db->quote($availableUserGroup);
+                    $where[] = '#__usergroups.title=' . database::quote($availableUserGroup);
             }
             $where_string = '(' . implode(' OR ', $where) . ')';
         }

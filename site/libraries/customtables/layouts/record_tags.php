@@ -310,7 +310,7 @@ class Twig_Record_Tags
 
         if ($this->ct->Table->tablename != $sj_tablename) {
             //don't attach to specific record when it is the same table, example : to find averages
-            $wheres[] = $this->ct->Table->realtablename . '.' . $this->ct->Table->tablerow['realidfieldname'] . '=' . $this->ct->db->quote($this->ct->Table->record[$this->ct->Table->realidfieldname]);
+            $wheres[] = $this->ct->Table->realtablename . '.' . $this->ct->Table->tablerow['realidfieldname'] . '=' . database::quote($this->ct->Table->record[$this->ct->Table->realidfieldname]);
         }// else {
 
         if ($additional_where != '')

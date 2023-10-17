@@ -32,8 +32,6 @@ trait Logs
         // 8 - File Uploaded
         // 9 - File Deleted
 
-        $db = Factory::getDBO();
-
         $sets = array();
         $sets[] = (int)$this->Env->userid;
         $sets[] = 'NOW()';

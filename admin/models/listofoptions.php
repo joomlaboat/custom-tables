@@ -46,9 +46,6 @@ class CustomTablesModelListOfOptions extends JModelList
         if (isset($items)) {
             return $items;
         }
-
-        $db = Factory::getDBO();
-
         $context = 'com_customtables.list.';
 
         $filter_order = $mainframe->getUserStateFromRequest($context . 'filter_order', 'filter_order', 'm.ordering', 'cmd');
@@ -83,7 +80,7 @@ class CustomTablesModelListOfOptions extends JModelList
                 ' FROM #__customtables_options AS m' .
                 ' WHERE ' .
 
-                ' LOWER( m.title ) LIKE ' . $db->Quote('%' . $search . '%', false);
+                ' LOWER( m.title ) LIKE ' . database::quote('%' . $search . '%', false);
 
             $search_rows = database::loadObjectList($query);
         }
@@ -255,17 +252,18 @@ class CustomTablesModelListOfOptions extends JModelList
         $return = true;
 
         // Get all rows with parentid of $id
-        $db = Factory::getDBO();
         $query = 'SELECT id' .
             ' FROM #__customtables_options' .
             ' WHERE parentid = ' . (int)$id;
         $rows = database::loadObjectList($query);
 
         // Make sure there aren't any errors
+        /*
         if ($db->getErrorNum()) {
             $this->setError($db->getErrorMsg());
             return false;
         }
+        */
 
         // Recursively iterate through all children... kinda messy
         // TODO: Cleanup this method
@@ -293,7 +291,6 @@ class CustomTablesModelListOfOptions extends JModelList
     function _rebuildSubLevel($cid = array(0), $level = 0)
     {
         ArrayHelper::toInteger($cid, array(0));
-        $db = Factory::getDBO();
         $ids = implode(',', $cid);
 
         if ($level == 0) {
@@ -301,16 +298,14 @@ class CustomTablesModelListOfOptions extends JModelList
             database::setQuery($query);
 
             $query = 'SELECT id FROM #__customtables_options WHERE parentid = 0';
-            $db->setQuery($query);
-            $cids = $db->loadResultArray(0);
+            $cids = database::loadColumn($query);
         } else {
             $query = 'UPDATE #__customtables_options SET sublevel = ' . (int)$level
                 . ' WHERE parentid IN (' . $ids . ')';
             database::setQuery($query);
 
             $query = 'SELECT id FROM #__customtables_options WHERE parentid IN (' . $ids . ')';
-            $db->setQuery($query);
-            $cids = $db->loadResultArray(0);
+            $cids = database::loadColumn($query);
         }
         if (!empty($cids)) {
             $this->_rebuildSubLevel($cids, $level + 1);
@@ -349,8 +344,6 @@ class CustomTablesModelListOfOptions extends JModelList
 
     function RefreshFamily()
     {
-        $db = Factory::getDBO();
-
         $query = "SELECT id, optionname FROM #__customtables_options";// WHERE parentid!=0";
         $rows = database::loadObjectList($query);
         foreach ($rows as $row) {

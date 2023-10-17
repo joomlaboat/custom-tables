@@ -81,30 +81,14 @@ class com_customtablesInstallerScript
         // set the default component settings
         if ($type == 'install') {
             // Install the global extension assets permission.
-            $db = Factory::getDbo();
-            $query = $db->getQuery(true);
-            // Field to update.
-            $fields = array(
-                $db->quoteName('rules') . ' = ' . $db->quote('{"site.catalog.access":{"1":1}}'),
-            );
-            // Condition.
-            $conditions = array(
-                $db->quoteName('name') . ' = ' . $db->quote('com_customtables')
-            );
-            $query->update($db->quoteName('#__assets'))->set($fields)->where($conditions);
+            $query = 'UPDATE ' . database::quoteName('#__assets') . ' SET '
+                . database::quoteName('rules') . ' = ' . database::quote('{"site.catalog.access":{"1":1}}')
+                . ' WHERE ' . database::quoteName('name') . ' = ' . database::quote('com_customtables');
             database::setQuery($query);
 
-            // Install the global extension params.
-            $query = $db->getQuery(true);
-            // Field to update.
-            $fields = array(
-                $db->quoteName('params') . ' = ' . $db->quote('{"autorName":"Ivan Komlev","autorEmail":"support@joomlaboat.com"}'),
-            );
-            // Condition.
-            $conditions = array(
-                $db->quoteName('element') . ' = ' . $db->quote('com_customtables')
-            );
-            $query->update($db->quoteName('#__extensions'))->set($fields)->where($conditions);
+            $query = 'UPDATE ' . database::quoteName('#__extensions') . ' SET '
+                . database::quoteName('params') . ' = ' . database::quote('{"autorName":"Ivan Komlev","autorEmail":"support@joomlaboat.com"}')
+                . ' WHERE ' . database::quoteName('element') . ' = ' . database::quote('com_customtables');
             database::setQuery($query);
 
             echo '<a target="_blank" href="https://joomlaboat.com" title="Custom Tables">

@@ -17,6 +17,7 @@ require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARAT
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\database;
 use CustomTables\Field;
 use CustomTables\Fields;
 
@@ -113,7 +114,7 @@ class CustomTablesViewFiles extends JViewLegacy
     function render_blob_output($filename)
     {
         $query = 'SELECT ' . $this->field->realfieldname . ' FROM ' . $this->ct->Table->realtablename . ' WHERE '
-            . $this->ct->Table->realidfieldname . '=' . $this->ct->db->quote($this->listing_id) . ' LIMIT 1';
+            . $this->ct->Table->realidfieldname . '=' . database::quote($this->listing_id) . ' LIMIT 1';
 
         $rows = database::loadAssocList($query);
 

@@ -26,7 +26,6 @@ class ExportTables
 
     public static function export(&$table_ids, $path = 'tmp'): string
     {
-        $db = Factory::getDBO();
         $link = '';
         $tables = array();
         $output = array();
@@ -77,8 +76,6 @@ class ExportTables
 
     protected static function processTable($table): array
     {
-        $db = Factory::getDBO();
-
         //get fields
         $query = 'SELECT * FROM #__customtables_fields WHERE published=1 AND tableid=' . (int)$table['id'] . '';
         $fields = database::loadAssocList($query);
@@ -93,11 +90,11 @@ class ExportTables
 
         $serverType = database::getServerType();
         if ($serverType == 'postgresql') {
-            $wheres[] = 'POSITION(' . $db->quote("index.php?option=com_customtables&view=") . ' IN link)>0';
-            $wheres[] = 'POSITION(' . $db->quote('"establename":"' . $table['tablename'] . '"') . ' IN params)>0';
+            $wheres[] = 'POSITION(' . database::quote("index.php?option=com_customtables&view=") . ' IN link)>0';
+            $wheres[] = 'POSITION(' . database::quote('"establename":"' . $table['tablename'] . '"') . ' IN params)>0';
         } else {
-            $wheres[] = 'INSTR(link,' . $db->quote("index.php?option=com_customtables&view=") . ')';
-            $wheres[] = 'INSTR(params,' . $db->quote('"establename":"' . $table['tablename'] . '"') . ')';
+            $wheres[] = 'INSTR(link,' . database::quote("index.php?option=com_customtables&view=") . ')';
+            $wheres[] = 'INSTR(params,' . database::quote('"establename":"' . $table['tablename'] . '"') . ')';
         }
 
         $query = 'SELECT * FROM #__menu WHERE ' . implode(' AND ', $wheres);

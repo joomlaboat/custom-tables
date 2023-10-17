@@ -296,11 +296,6 @@ class TwigProcessor
         $this->twig->addFilter($filter);
     }
 
-    /**
-     * @throws Twig\Error\RuntimeError
-     * @throws Twig\Error\SyntaxError
-     * @throws Twig\Error\LoaderError
-     */
     public function process(?array $row = null): string
     {
         if (!class_exists('Twig\Loader\ArrayLoader'))

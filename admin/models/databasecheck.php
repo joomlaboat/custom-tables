@@ -78,11 +78,6 @@ class CustomtablesModelDatabasecheck extends JModelList
    {
        // Get the user object.
        $user = Factory::getUser();
-       // Create a new query object.
-       $db = Factory::getDBO();
-       $query = $db->getQuery(true);
-
-       // Select some fields
 
        $categoryname='(SELECT categoryname FROM #__customtables_categories AS categories WHERE categories.id=a.tablecategory LIMIT 1)';
        $fieldcount='(SELECT COUNT(fields.id) FROM #__customtables_fields AS fields WHERE fields.tableid=a.id AND fields.published=1 LIMIT 1)';
@@ -92,51 +87,40 @@ class CustomtablesModelDatabasecheck extends JModelList
        $selects[]=$fieldcount.' AS fieldcount';
 
 
-       $query->select(implode(',',$selects));
+       $query = 'SELECT '.select(implode(',',$selects)).' FROM '.database::quoteName('#__customtables_tables').' AS a';
 
-       // From the customtables_item table
-       $query->from($db->quoteName('#__customtables_tables', 'a'));
-
+       $where = [];
        // Filter by published state
        $published = $this->getState('filter.published');
        if (is_numeric($published))
-       {
-           $query->where('a.published = ' . (int) $published);
-       }
+           $where [] = 'a.published = ' . (int) $published;
        elseif ($published === '')
-       {
-           $query->where('(a.published = 0 OR a.published = 1)');
-       }
+           $where [] = '(a.published = 0 OR a.published = 1)';
        // Filter by search.
        $search = $this->getState('filter.search');
        if (!empty($search))
        {
            if (stripos($search, 'id:') === 0)
-           {
-               $query->where('a.id = ' . (int) substr($search, 3));
-           }
+               $where [] = 'a.id = ' . (int) substr($search, 3);
            else
            {
-               $search = $db->quote('%' . $db->escape($search) . '%');
-               $query->where('(a.tablename LIKE '.$search.')');
+               $search = database::quote('%' . $search . '%');
+               $where [] = 'a.tablename LIKE '.$search.';
            }
        }
 
        $search = $this->getState('filter.tablecategory');
        // Filter by Tableid.
        if ($category = $this->getState('filter.tablecategory'))
-       {
-           $query->where('a.tablecategory = ' . $db->quote((int)$category));
-       }
-
+           $where [] = 'a.tablecategory = ' . (int)$category;
 
        // Add the list ordering clause.
        $orderCol = $this->state->get('list.ordering', 'a.id');
        $orderDirn = $this->state->get('list.direction', 'asc');
+
+       $query .= ' WHERE '.implode(' AND ',$where);
        if ($orderCol != '')
-       {
-           $query->order($db->escape($orderCol . ' ' . $orderDirn));
-       }
+           $query .= ' ORDER BY '.database::quoteName($orderCol) . ' ' . $orderDirn;
 
        return $query;
    }

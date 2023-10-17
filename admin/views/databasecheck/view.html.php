@@ -71,13 +71,14 @@ class CustomtablesViewDataBaseCheck extends JViewLegacy
 
         $this->AllFields = $this->getAllFields();
 
-        // Set the document
-        $this->setDocument();
-
         if ($this->version < 4)
             parent::display($tpl);
         else
             parent::display('quatro');
+
+        // Set the document
+        $document = Factory::getDocument();
+        $this->setDocument($document);
     }
 
     protected function addToolBar_3()
@@ -122,13 +123,10 @@ class CustomtablesViewDataBaseCheck extends JViewLegacy
         return database::loadAssocList($query);
     }
 
-    protected function setDocument()
+    public function setDocument(Joomla\CMS\Document\Document $document): void
     {
-        if (!isset($this->document))
-            $this->document = Factory::getDocument();
-
-        $this->document->setTitle(Text::_('COM_CUSTOMTABLES_DATABASECHECK'));
-        $this->document->addStyleSheet(JURI::root(true) . "/components/com_customtables/libraries/customtables/media/css/fieldtypes.css");
+        $document->setTitle(Text::_('COM_CUSTOMTABLES_DATABASECHECK'));
+        $document->addStyleSheet(JURI::root(true) . "/components/com_customtables/libraries/customtables/media/css/fieldtypes.css");
     }
 
     protected function prepareTables()

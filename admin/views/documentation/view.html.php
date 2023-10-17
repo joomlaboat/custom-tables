@@ -54,10 +54,11 @@ class CustomtablesViewDocumentation extends JViewLegacy
                 $this->sidebar = JHtmlSidebar::render();
         }
 
-        // Set the document
-        $this->setDocument();
-
         parent::display($tpl);
+
+        // Set the document
+        $document = Factory::getDocument();
+        $this->setDocument($document);
     }
 
     protected function addToolBar()
@@ -66,13 +67,10 @@ class CustomtablesViewDocumentation extends JViewLegacy
         JHtmlSidebar::setAction('index.php?option=com_customtables&view=documentation');
     }
 
-    protected function setDocument()
+    public function setDocument(Joomla\CMS\Document\Document $document): void
     {
-        if (!isset($this->document)) {
-            $this->document = Factory::getDocument();
-        }
-        $this->document->setTitle(CustomTables\common::translate('COM_CUSTOMTABLES_DOCUMENTATION'));
-        $this->document->addStyleSheet(JURI::root(true) . "/components/com_customtables/libraries/customtables/media/css/fieldtypes.css");
+        $document->setTitle(CustomTables\common::translate('COM_CUSTOMTABLES_DOCUMENTATION'));
+        $document->addStyleSheet(JURI::root(true) . "/components/com_customtables/libraries/customtables/media/css/fieldtypes.css");
 
         $script = '
 		<script>
@@ -92,6 +90,6 @@ class CustomtablesViewDocumentation extends JViewLegacy
 		</script>
 		';
 
-        $this->document->addCustomTag($script);
+        $document->addCustomTag($script);
     }
 }

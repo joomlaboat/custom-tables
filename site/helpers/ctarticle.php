@@ -20,18 +20,13 @@ class JHTMLCTArticle
     static public function render($control_name, $value, $cssclass, $params, $attribute = '')
     {
         $catid = (int)$params[0];
-
-        $db = Factory::getDBO();
-
-        $query = $db->getQuery(true);
-        $query->select('id, title');
+        $query = 'SELECT id, title FROM #__content';
 
         if ($catid != 0)
-            $query->where('catid=' . $catid);
+            $query .= ' WHERE catid=' . $catid;
 
-        $query->from('#__content');
-        $query->order('title');
-        $options = database::loadObjectList((string)$query);
+        $query .= ' ORDER BY title';
+        $options = database::loadObjectList($query);
         $options = array_merge(array(array(
             'id' => '',
             'data-type' => 'article',

@@ -41,10 +41,6 @@ class CustomTablesModelList extends JModel
     {
         $mainframe = Factory::getApplication();
 
-        static $items;
-
-        $db = Factory::getDBO();
-
         if ($noState) {
 
             $filter_order = 'm.ordering';
@@ -84,9 +80,9 @@ class CustomTablesModelList extends JModel
             $query = 'SELECT m.id' .
                 ' FROM #__customtables_options AS m' .
                 ' WHERE ' .
-                ' LOWER( m.title ) LIKE ' . $db->Quote('%' . $search . '%', false);
-            $db->setQuery($query);
-            $search_rows = $db->loadResultArray();
+                ' LOWER( m.title ) LIKE ' . database::quote('%' . $search . '%', false);
+
+            $search_rows = database::loadColumn($query);
         }
 
 
@@ -305,21 +301,21 @@ class CustomTablesModelList extends JModel
 
     function _addChildren($tree_id, &$list)
     {
-        // Initialize variables
         $return = true;
 
         // Get all rows with parentid of $tree_id
-        $db = Factory::getDBO();
         $query = 'SELECT id' .
             ' FROM #__customtables_options' .
             ' WHERE parentid = ' . (int)$tree_id;
         $rows = database::loadObjectList($query);
 
         // Make sure there aren't any errors
+        /*
         if ($db->getErrorNum()) {
             $this->setError($db->getErrorMsg());
             return false;
         }
+        */
 
         // Recursively iterate through all children... kinda messy
         // TODO: Cleanup this method
@@ -347,26 +343,24 @@ class CustomTablesModelList extends JModel
     function _rebuildSubLevel($cid = array(0), $level = 0)
     {
         ArrayHelper::toInteger($cid, array(0));
-        $db = Factory::getDBO();
         $tree_ids = implode(',', $cid);
-        $cids = array();
+
         if ($level == 0) {
             $query = 'UPDATE #__customtables_options SET sublevel = 0 WHERE parentid = 0';
             database::setQuery($query);
 
             $query = 'SELECT id FROM #__customtables_options WHERE parentid = 0';
-            $cids = database::loadResultArray($query);
+            $cids = database::loadColumn($query);
         } else {
             $query = 'UPDATE #__customtables_options SET sublevel = ' . (int)$level
                 . ' WHERE parentid IN (' . $tree_ids . ')';
             database::setQuery($query);
 
             $query = 'SELECT id FROM #__customtables_options WHERE parentid IN (' . $tree_ids . ')';
-            $cids = database::loadResultArray($query);
+            $cids = database::loadColumn($query);
         }
-        if (!empty($cids)) {
+        if (!empty($cids))
             $this->_rebuildSubLevel($cids, $level + 1);
-        }
     }
 
     function GetNewParentID($parentid, &$AssociatedTable)

@@ -73,7 +73,8 @@ class CustomtablesViewCategories extends JViewLegacy
         parent::display($tpl);
 
         // Set the document
-        $this->setDocument();
+        $document = Factory::getDocument();
+        $this->setDocument($document);
     }
 
     /**
@@ -141,16 +142,13 @@ class CustomtablesViewCategories extends JViewLegacy
      *
      * @return void
      */
-    protected function setDocument()
+    public function setDocument(Joomla\CMS\Document\Document $document): void
     {
         $isNew = ($this->item->id < 1);
-        if (!isset($this->document)) {
-            $this->document = Factory::getDocument();
-        }
-        $this->document->setTitle(Text::_($isNew ? 'COM_CUSTOMTABLES_CATEGORIES_NEW' : 'COM_CUSTOMTABLES_CATEGORIES_EDIT'));
+        $document->setTitle(Text::_($isNew ? 'COM_CUSTOMTABLES_CATEGORIES_NEW' : 'COM_CUSTOMTABLES_CATEGORIES_EDIT'));
 
         if ($this->version < 4)
-            $this->document->addCustomTag('<script src=' . JURI::root(true) . '/administrator/components/com_customtables/views/categories/submitbutton.js"></script>');
+            $document->addCustomTag('<script src=' . JURI::root(true) . '/administrator/components/com_customtables/views/categories/submitbutton.js"></script>');
 
         //JText::script('view not acceptable. Error');
     }

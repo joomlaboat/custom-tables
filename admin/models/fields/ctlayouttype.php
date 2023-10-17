@@ -14,6 +14,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomTables\CT;
+use CustomTables\database;
 use CustomTables\Layouts;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
@@ -36,21 +37,11 @@ class JFormFieldCTLayoutType extends JFormFieldList
     {
         $ct = new CT;
 
-        // Get a db connection.
-        $db = Factory::getDbo();
-
         // Create a new query object.
-        $query = $db->getQuery(true);
-
-        // Select the text.
-        $query->select($db->quoteName('layouttype'));
-        $query->from($db->quoteName('#__customtables_layouts'));
-        $query->order($db->quoteName('layouttype'));
+        $query = 'SELECT ' . database::quoteName('layouttype') . ' FROM ' . database::quoteName('#__customtables_layouts') . ' ORDER BY ' . database::quoteName('layouttype');
 
         // Reset the query using our newly populated query object.
-        $db->setQuery($query);
-
-        $results = $db->loadColumn();
+        $results = database::loadColumn($query);
 
         $options = array();
         if ($results) {

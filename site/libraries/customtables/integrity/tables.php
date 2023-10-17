@@ -25,30 +25,22 @@ class IntegrityTables extends \CustomTables\IntegrityChecks
 {
     public static function checkTables(&$ct)
     {
-        $db = Factory::getDBO();
-
         $tables = IntegrityTables::getTables();
-
         IntegrityTables::checkIfTablesExists($tables);
-
         $result = [];
 
         foreach ($tables as $table) {
 
             $table['tablename'];
             //Check if table exists
-            $query_check_table = 'SHOW TABLES LIKE ' . $db->quote(database::realTableName($table['tablename']));
+            $query_check_table = 'SHOW TABLES LIKE ' . database::quote(database::realTableName($table['tablename']));
             $rows = database::loadObjectList($query_check_table);
-
             $tableExists = !(count($rows) == 0);
 
             if ($tableExists) {
 
                 $ct->setTable($table, null, false);
-
-                //$link=JURI::root().'administrator/index.php?option=com_customtables&view=databasecheck&tableid='.$table['id'];
                 $link = Uri::root() . 'administrator/index.php?option=com_customtables&view=databasecheck&tableid=' . $table['id'];
-
                 $content = IntegrityFields::checkFields($ct, $link);
 
                 if ($ct->Env->advancedTagProcessor)
@@ -83,11 +75,6 @@ class IntegrityTables extends \CustomTables\IntegrityChecks
 
     protected static function getTablesQuery()
     {
-        // Create a new query object.
-        $db = Factory::getDBO();
-        $query = $db->getQuery(true);
-
-        // Select some fields
         $categoryname = '(SELECT categoryname FROM #__customtables_categories AS categories WHERE categories.id=a.tablecategory LIMIT 1)';
         $fieldcount = '(SELECT COUNT(fields.id) FROM #__customtables_fields AS fields WHERE fields.tableid=a.id AND fields.published=1 LIMIT 1)';
 
@@ -96,18 +83,12 @@ class IntegrityTables extends \CustomTables\IntegrityChecks
         $selects[] = $categoryname . ' AS categoryname';
         $selects[] = $fieldcount . ' AS fieldcount';
 
-        $query->select(implode(',', $selects));
-
-        // From the customtables_item table
-        $query->from($db->quoteName('#__customtables_tables', 'a'));
-        $query->where('a.published = 1');
-
         // Add the list ordering clause.
         $orderCol = 'tablename';
-        $orderDirn = 'asc';
-        $query->order($db->escape($orderCol . ' ' . $orderDirn));
+        $orderDirection = 'asc';
 
-        return $query;
+        return 'SELECT ' . implode(',', $selects) . ' FROM ' . database::quoteName('#__customtables_tables') . ' AS a WHERE a.published = 1 ORDER BY '
+            . database::quoteName($orderCol) . ' ' . $orderDirection;
     }
 
     protected static function checkIfTablesExists($tables_rows)
@@ -129,15 +110,10 @@ class IntegrityTables extends \CustomTables\IntegrityChecks
 
     protected static function getZeroRecordID($realtablename, $realidfieldname)
     {
-        // Create a new query object.
-        $db = Factory::getDBO();
-        $query = $db->getQuery(true);
+        $query = 'SELECT COUNT(' . $realidfieldname . ') AS cd_zeroIdRecords FROM ' . database::quoteName($realtablename) . ' AS a'
+            . ' WHERE ' . $realidfieldname . '=0 LIMIT 1';
 
-        $query->select('COUNT(' . $realidfieldname . ') AS cd_zeroIdRecords');
-        $query->from($db->quoteName($realtablename, 'a'));
-        $query->where($realidfieldname . ' = 0');
-        $query->setLimit(1);
-        $rows = database::loadAssocList((string)$query);
+        $rows = database::loadAssocList($query);
         $row = $rows[0];
 
         return $row['cd_zeroIdRecords'];

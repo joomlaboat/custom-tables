@@ -35,8 +35,6 @@ class CustomTablesFileMethods
 
     static public function getFileExtByID($tableName, $fileBoxName, $file_id): string
     {
-        $db = Factory::getDBO();
-
         $fileBoxTableName = '#__customtables_filebox_' . $tableName . '_' . $fileBoxName;
         $query = 'SELECT file_ext FROM ' . $fileBoxTableName . ' WHERE fileid=' . (int)$file_id . ' LIMIT 1';
         $fileRows = database::loadObjectList($query);

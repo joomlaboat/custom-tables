@@ -9,6 +9,7 @@
  **/
 
 // Check to ensure this file is included in Joomla!
+use CustomTables\database;
 use Joomla\CMS\Factory;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
@@ -19,24 +20,18 @@ class JHTMLESUserGroupsView
 {
     public static function render($valuearray_str, $field = '')
     {
-        $db = Factory::getDBO();
+        $query = 'SELECT #__usergroups.title AS name FROM #__usergroups';
+        $where = [];
+        $valueArray = explode(',', $valuearray_str);
 
-        $query = $db->getQuery(true);
-        $query->select('#__usergroups.title AS name');
-        $query->from('#__usergroups');
-
-        $where = array();
-        $valuearray = explode(',', $valuearray_str);
-
-        foreach ($valuearray as $value) {
+        foreach ($valueArray as $value) {
             if ($value != '') {
                 $where[] = 'id=' . (int)$value;
             }
         }
 
-        $query->where(implode(' OR ', $where));
-        $query->orderby('title');
-        $options = database::loadObjectList((string)$query);
+        $query .= ' WHERE ' . implode(' OR ', $where) . ' ORDER BY title';
+        $options = database::loadObjectList($query);
 
         if (count($options) == 0)
             return '';

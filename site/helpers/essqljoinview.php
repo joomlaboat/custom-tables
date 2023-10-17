@@ -14,6 +14,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomTables\CT;
+use CustomTables\database;
 use CustomTables\Layouts;
 use CustomTables\TwigProcessor;
 
@@ -53,7 +54,7 @@ class JHTMLESSQLJoinView
 
         //Get Row
         $query = 'SELECT ' . implode(',', $ct->Table->selects) . ' FROM ' . $ct->Table->realtablename . ' WHERE '
-            . $ct->Table->tablerow['realidfieldname'] . '=' . $ct->db->quote($value) . ' LIMIT 1';
+            . $ct->Table->tablerow['realidfieldname'] . '=' . database::quote($value) . ' LIMIT 1';
 
         $records = database::loadAssocList($query);
 

@@ -93,7 +93,7 @@ class Catalog
         }
 
         if ($this->ct->Params->listing_id !== null)
-            $this->ct->Filter->where[] = $this->ct->Table->realtablename . '.' . $this->ct->Table->tablerow['realidfieldname'] . '=' . $this->ct->db->quote($this->ct->Params->listing_id);
+            $this->ct->Filter->where[] = $this->ct->Table->realtablename . '.' . $this->ct->Table->tablerow['realidfieldname'] . '=' . database::quote($this->ct->Params->listing_id);
 
 // --------------------- Sorting
         $this->ct->Ordering->parseOrderByParam();

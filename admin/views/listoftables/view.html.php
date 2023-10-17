@@ -62,7 +62,7 @@ class CustomtablesViewListoftables extends JViewLegacy
         $this->canEdit = $this->canDo->get('tables.edit');
         $this->canState = $this->canDo->get('tables.edit.state');
         $this->canDelete = $this->canDo->get('tables.delete');
-        $this->isEmptyState = $this->get('IsEmptyState');
+        $this->isEmptyState = count($this->items ?? 0) == 0;
         //$this->canBatch = false;//$this->canDo->get('core.batch');
 
         // We don't need toolbar in the modal window.
@@ -212,7 +212,6 @@ class CustomtablesViewListoftables extends JViewLegacy
 
     protected function getNumberOfRecords($realtablename, $realidfield)
     {
-        $db = Factory::getDBO();
         $query = 'SELECT COUNT(' . $realidfield . ') AS count FROM ' . $realtablename . ' LIMIT 1';
 
         try {

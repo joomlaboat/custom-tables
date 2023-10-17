@@ -102,12 +102,12 @@ class Layouts
                 . 'CASE WHEN modified IS NULL THEN extract(epoch FROM created) '
                 . 'ELSE extract(epoch FROM modified) AS ts, '
                 . 'layouttype '
-                . 'FROM #__customtables_layouts WHERE layoutname=' . $this->ct->db->quote($layoutName) . ' LIMIT 1';
+                . 'FROM #__customtables_layouts WHERE layoutname=' . database::quote($layoutName) . ' LIMIT 1';
         else
             $query = 'SELECT id, tableid, layoutname, layoutcode, layoutmobile, layoutcss, layoutjs, '
                 . 'IF(modified IS NULL,UNIX_TIMESTAMP(created),UNIX_TIMESTAMP(modified)) AS ts, '
                 . 'layouttype '
-                . 'FROM #__customtables_layouts WHERE layoutname=' . $this->ct->db->quote($layoutName) . ' LIMIT 1';
+                . 'FROM #__customtables_layouts WHERE layoutname=' . database::quote($layoutName) . ' LIMIT 1';
 
         $rows = database::loadAssocList($query);
         if (count($rows) != 1)
@@ -220,7 +220,7 @@ class Layouts
         } else {
 
             if ($layout_id == 0)
-                $query = 'UPDATE #__customtables_layouts SET modified=FROM_UNIXTIME(' . $file_ts . ') WHERE layoutname=' . $this->ct->db->quote($layoutName);
+                $query = 'UPDATE #__customtables_layouts SET modified=FROM_UNIXTIME(' . $file_ts . ') WHERE layoutname=' . database::quote($layoutName);
             else
                 $query = 'UPDATE #__customtables_layouts SET modified=FROM_UNIXTIME(' . $file_ts . ') WHERE id=' . $layout_id;
 

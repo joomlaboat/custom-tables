@@ -9,6 +9,7 @@
  **/
 
 // Check to ensure this file is included in Joomla!
+use CustomTables\database;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 
@@ -22,33 +23,33 @@ class JHTMLESUser
 {
     static public function render(string $control_name, string $value, string $style, string $cssclass, ?string $userGroup = '', string $attribute = '', string $mysqlWhere = '', string $mysqlJoin = '')
     {
-        $db = Factory::getDBO();
-        $query = $db->getQuery(true);
-        $query->select('#__users.id AS id, #__users.name AS name');
-        $query->from('#__users ');
+        $query = 'SELECT #__users.id AS id, #__users.name AS name FROM #__users';
 
+        if ($mysqlJoin != '')
+            $query .= 'INNER JOIN ' . $mysqlJoin;
+
+        $where = [];
         if ($userGroup !== null and $userGroup != '') {
-            $query->join('INNER', '#__user_usergroup_map ON user_id=id ');
-            $query->join('INNER', '#__usergroups ON #__usergroups.id = #__user_usergroup_map.group_id ');
+            $query .= ' INNER JOIN #__user_usergroup_map ON user_id=id';
+            $query .= ' INNER JOIN #__usergroups ON #__usergroups.id = #__user_usergroup_map.group_id';
 
             $ug = explode(",", $userGroup);
             $w = array();
             foreach ($ug as $u)
-                $w[] = '#__usergroups.title=' . $db->quote($u);
+                $w[] = '#__usergroups.title=' . database::quote($u);
 
             if (count($w) > 0)
-                $query->where(' ' . implode(' OR ', $w) . ' ');
+                $where [] = '(' . implode(' OR ', $w) . ')';
         }
 
-        if ($mysqlJoin != '')
-            $query->join('INNER', $mysqlJoin);
-
         if ($mysqlWhere != '')
-            $query->where($mysqlWhere);
+            $where [] = $mysqlWhere;
 
-        $query->group("#__users" . "." . "id");
-        $query->order("#__users" . "." . "name");
-        $options = database::loadObjectList((string)$query);
+        $query .= ' WHERE ' . implode(' AND ', $where);
+
+        $query .= ' GROUP BY #__users.id';
+        $query .= ' ORDER BY #__users.name';
+        $options = database::loadObjectList($query);
 
         $att = ['id' => '', 'data-type' => 'user', 'name' => '- ' . Text::_('COM_CUSTOMTABLES_SELECT')];
         $options = array_merge(array($att), $options);

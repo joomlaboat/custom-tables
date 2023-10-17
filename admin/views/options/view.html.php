@@ -59,7 +59,8 @@ class CustomTablesViewOptions extends JViewLegacy
         parent::display($tpl);
 
         // Set the document
-        $this->setDocument();
+        $document = Factory::getDocument();
+        $this->setDocument($document);
     }
 
     protected function addToolBar()
@@ -118,13 +119,9 @@ class CustomTablesViewOptions extends JViewLegacy
         }
     }
 
-
-    protected function setDocument()
+    public function setDocument(Joomla\CMS\Document\Document $document): void
     {
         $isNew = ($this->item->id < 1);
-        if (!isset($this->document)) {
-            $this->document = Factory::getDocument();
-        }
-        $this->document->setTitle(Text::_($isNew ? 'COM_CUSTOMTABLES_OPTIONS_NEW' : 'COM_CUSTOMTABLES_OPTIONS_EDIT'));
+        $document->setTitle(Text::_($isNew ? 'COM_CUSTOMTABLES_OPTIONS_NEW' : 'COM_CUSTOMTABLES_OPTIONS_EDIT'));
     }
 }

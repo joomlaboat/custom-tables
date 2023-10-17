@@ -132,13 +132,11 @@ class Fields
 {
     public static function isFieldNullable(string $realtablename, string $relaFieldName): bool
     {
-        $db = Factory::getDBO();
-
         $realtablename = database::realTableName($realtablename);
         $serverType = database::getServerType();
         if ($serverType == 'postgresql') {
-            $query = 'SELECT column_name, data_type, is_nullable, column_default FROM information_schema.columns WHERE table_name = ' . $db->quote($realtablename)
-                . ' AND column_name=' . $db->quote($relaFieldName);
+            $query = 'SELECT column_name, data_type, is_nullable, column_default FROM information_schema.columns WHERE table_name = ' . database::quote($realtablename)
+                . ' AND column_name=' . database::quote($relaFieldName);
         } else {
 
             $database = database::getDataBaseName();
@@ -150,9 +148,9 @@ class Fields
                 . 'IS_NULLABLE AS is_nullable,'
                 . 'COLUMN_DEFAULT AS column_default,'
                 . 'EXTRA AS extra'
-                . ' FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=' . $db->quote($database)
-                . ' AND TABLE_NAME=' . $db->quote($realtablename)
-                . ' AND column_name=' . $db->quote($relaFieldName)
+                . ' FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=' . database::quote($database)
+                . ' AND TABLE_NAME=' . database::quote($realtablename)
+                . ' AND column_name=' . database::quote($relaFieldName)
                 . ' LIMIT 1';
         }
 
@@ -237,8 +235,6 @@ class Fields
 
     public static function getFieldRow($fieldid = 0, $assocList = false)
     {
-        $db = Factory::getDBO();
-
         if ($fieldid == 0)
             $fieldid = common::inputGet('fieldid', 0, 'INT');
 
@@ -257,7 +253,6 @@ class Fields
 
     protected static function getFieldRowSelects(): string
     {
-        $db = Factory::getDBO();
         $serverType = database::getServerType();
         if ($serverType == 'postgresql')
             $realfieldname_query = 'CASE WHEN customfieldname!=\'\' THEN customfieldname ELSE CONCAT(\'es_\',fieldname) END AS realfieldname';
@@ -343,7 +338,6 @@ class Fields
 
     protected static function getTableConstrances($realtablename, $realfieldname): ?array
     {
-        $db = Factory::getDBO();
         $serverType = database::getServerType();
         if ($serverType == 'postgresql')
             return null;
@@ -510,14 +504,12 @@ class Fields
 
     public static function getFieldType(string $realtablename, $realfieldname)
     {
-        $db = Factory::getDBO();
-
         $realtablename = database::realTableName($realtablename);
         $serverType = database::getServerType();
         if ($serverType == 'postgresql')
-            $query = 'SELECT data_type FROM information_schema.columns WHERE table_name = ' . $db->quote($realtablename) . ' AND column_name=' . $db->quote($realfieldname);
+            $query = 'SELECT data_type FROM information_schema.columns WHERE table_name = ' . database::quote($realtablename) . ' AND column_name=' . database::quote($realfieldname);
         else
-            $query = 'SHOW COLUMNS FROM ' . $realtablename . ' WHERE ' . $db->quoteName('field') . '=' . $db->quote($realfieldname);
+            $query = 'SHOW COLUMNS FROM ' . $realtablename . ' WHERE ' . database::quoteName('field') . '=' . database::quote($realfieldname);
 
         $rows = database::loadAssocList($query);
 
@@ -585,8 +577,6 @@ class Fields
 
     public static function getFieldName($fieldid): string
     {
-        $db = Factory::getDBO();
-
         if ($fieldid == 0)
             $fieldid = common::inputGet('fieldid', 0, 'INT');
 
@@ -600,18 +590,16 @@ class Fields
 
     public static function getFieldRowByName(string $fieldName, ?int $tableId = null, string $tableName = '')
     {
-        $db = Factory::getDBO();
-
         if ($fieldName == '')
             return array();
 
         if ($tableName == '')
-            $query = 'SELECT ' . Fields::getFieldRowSelects() . ' FROM #__customtables_fields AS s WHERE s.published=1 AND tableid=' . $tableId . ' AND fieldname=' . $db->quote(trim($fieldName)) . ' LIMIT 1';
+            $query = 'SELECT ' . Fields::getFieldRowSelects() . ' FROM #__customtables_fields AS s WHERE s.published=1 AND tableid=' . $tableId . ' AND fieldname=' . database::quote(trim($fieldName)) . ' LIMIT 1';
         else {
             $query = 'SELECT ' . Fields::getFieldRowSelects() . ' FROM #__customtables_fields AS s
 
-			INNER JOIN #__customtables_tables AS t ON t.tablename=' . $db->quote($tableName) . '
-			WHERE s.published=1 AND s.tableid=t.id AND s.fieldname=' . $db->quote(trim($fieldName)) . ' LIMIT 1';
+			INNER JOIN #__customtables_tables AS t ON t.tablename=' . database::quote($tableName) . '
+			WHERE s.published=1 AND s.tableid=t.id AND s.fieldname=' . database::quote(trim($fieldName)) . ' LIMIT 1';
         }
 
         $rows = database::loadObjectList($query);
@@ -699,7 +687,6 @@ class Fields
 
     public static function deleteTableLessFields(): void
     {
-        $db = Factory::getDBO();
         $query = 'DELETE FROM #__customtables_fields AS f WHERE (SELECT id FROM #__customtables_tables AS t WHERE t.id = f.tableid) IS NULL';
         database::setQuery($query);
     }
@@ -741,8 +728,6 @@ class Fields
         $tableid = $data['tableid'];
 
         if ($task == 'save2copy') {
-
-            $db = Factory::getDBO();
             $query = 'UPDATE #__customtables_fields SET checked_out=0, checked_out_time=NULL WHERE id=' . $fieldid;
             database::setQuery($query);
             $fieldid = 0;
@@ -829,11 +814,7 @@ class Fields
 
     public static function getFieldID($tableid, $fieldname): int
     {
-        $db = Factory::getDBO();
-        $query = 'SELECT id FROM #__customtables_fields WHERE published=1 AND tableid=' . (int)$tableid . ' AND fieldname=' . $db->quote($fieldname);
-
-        $db->setQuery($query);
-
+        $query = 'SELECT id FROM #__customtables_fields WHERE published=1 AND tableid=' . (int)$tableid . ' AND fieldname=' . database::quote($fieldname);
         $rows = database::loadObjectList($query);
         if (count($rows) == 0)
             return 0;
@@ -861,8 +842,6 @@ class Fields
 
     public static function AddMySQLFieldNotExist(string $realtablename, string $realfieldname, string $fieldType, string $options): void
     {
-        $db = Factory::getDBO();
-
         if (!Fields::checkIfFieldExists($realtablename, $realfieldname)) {
             $query = 'ALTER TABLE ' . $realtablename . ' ADD COLUMN ' . $realfieldname . ' ' . $fieldType . ' ' . $options;
 
@@ -1046,8 +1025,6 @@ class Fields
 
     public static function getFields($tableid_or_name, $as_object = false, $order_fields = true)
     {
-        $db = Factory::getDBO();
-
         if ($order_fields)
             $order = ' ORDER BY f.ordering, f.fieldname';
         else
@@ -1056,7 +1033,7 @@ class Fields
         if ((int)$tableid_or_name > 0)
             $where = 'f.published=1 AND f.tableid=' . (int)$tableid_or_name;
         else {
-            $w1 = '(SELECT t.id FROM #__customtables_tables AS t WHERE t.tablename=' . $db->quote($tableid_or_name) . ' LIMIT 1)';
+            $w1 = '(SELECT t.id FROM #__customtables_tables AS t WHERE t.tablename=' . database::quote($tableid_or_name) . ' LIMIT 1)';
             $where = 'f.published=1 AND f.tableid=' . $w1;
         }
 
@@ -1420,7 +1397,7 @@ class Fields
             Fields::FixCustomTablesRecords($realtablename, $realfieldname, $optionName, $maxlength);
         }
 
-        $db = Factory::getDBO();
+        $serverType = database::getServerType();
 
         if ($serverType == 'postgresql') {
             $parts = explode(' ', $PureFieldType_);
@@ -1429,8 +1406,7 @@ class Fields
 
         } else {
             $query = 'ALTER TABLE ' . $realtablename . ' CHANGE ' . $realfieldname . ' ' . $realfieldname . ' ' . $PureFieldType_;
-            $query .= ' COMMENT ' . $db->quote($fieldtitle);
-
+            $query .= ' COMMENT ' . database::quote($fieldtitle);
         }
 
         try {
@@ -1445,8 +1421,6 @@ class Fields
 
     public static function FixCustomTablesRecords($realtablename, $realfieldname, $optionname, $maxlenght): void
     {
-        $db = Factory::getDBO();
-
         //CustomTables field type
         $serverType = database::getServerType();
         if ($serverType == 'postgresql')
@@ -1507,13 +1481,11 @@ class Fields
         if ($PureFieldType == '')
             return;
 
-        $db = Factory::getDBO();
-
         if (!str_contains($fieldType, 'multilang')) {
             $AdditionOptions = '';
             $serverType = database::getServerType();
             if ($serverType != 'postgresql')
-                $AdditionOptions = ' COMMENT ' . $db->Quote($fieldTitle);
+                $AdditionOptions = ' COMMENT ' . database::quote($fieldTitle);
 
             if ($fieldType != 'dummy' and !Fields::isVirtualField($fieldRow))
                 Fields::AddMySQLFieldNotExist($realtablename, $realfieldname, $PureFieldType, $AdditionOptions);
@@ -1528,7 +1500,7 @@ class Fields
                 $AdditionOptions = '';
                 $serverType = database::getServerType();
                 if ($serverType != 'postgresql')
-                    $AdditionOptions = ' COMMENT ' . $db->Quote($fieldTitle);
+                    $AdditionOptions = ' COMMENT ' . database::quote($fieldTitle);
 
                 Fields::AddMySQLFieldNotExist($realtablename, $realfieldname . $postfix, $PureFieldType, $AdditionOptions);
 
@@ -1540,13 +1512,13 @@ class Fields
             //Create table
             //get CT table name if possible
 
-            $tableName = str_replace($db->getPrefix() . 'customtables_table', '', $realtablename);
+            $tableName = str_replace(database::getDBPrefix() . 'customtables_table', '', $realtablename);
             $fieldName = str_replace($ct->Env->field_prefix, '', $realfieldname);
             Fields::CreateImageGalleryTable($tableName, $fieldName);
         } elseif ($fieldType == 'filebox') {
             //Create table
             //get CT table name if possible
-            $tableName = str_replace($db->getPrefix() . 'customtables_table', '', $realtablename);
+            $tableName = str_replace(database::getDBPrefix() . 'customtables_table', '', $realtablename);
             $fieldName = str_replace($ct->Env->field_prefix, '', $realfieldname);
             Fields::CreateFileBoxTable($tableName, $fieldName);
         }
@@ -1555,7 +1527,6 @@ class Fields
     public static function CreateImageGalleryTable($tablename, $fieldname): bool
     {
         $image_gallery_table = '#__customtables_gallery_' . $tablename . '_' . $fieldname;
-        $db = Factory::getDBO();
 
         $query = 'CREATE TABLE IF not EXISTS ' . $image_gallery_table . ' (
   photoid bigint not null auto_increment,
@@ -1573,7 +1544,6 @@ class Fields
     public static function CreateFileBoxTable($tablename, $fieldname): bool
     {
         $filebox_gallery_table = '#__customtables_filebox_' . $tablename . '_' . $fieldname;
-        $db = Factory::getDBO();
 
         $query = 'CREATE TABLE IF not EXISTS ' . $filebox_gallery_table . ' (
   fileid bigint not null auto_increment,
@@ -1607,7 +1577,6 @@ class Fields
 
     public static function addForeignKey($realtablename_, $realfieldname, string $new_typeparams, string $join_with_table_name, string $join_with_table_field, &$msg): bool
     {
-        $db = Factory::getDBO();
         $realtablename = database::realTableName($realtablename_);
         $serverType = database::getServerType();
         if ($serverType == 'postgresql')
@@ -1645,8 +1614,8 @@ class Fields
         if (isset($typeParams[7]) and $typeParams[7] == 'addforignkey') {
             Fields::cleanTableBeforeNormalization($realtablename, $realfieldname, $join_with_table_name, $join_with_table_field);
 
-            $query = 'ALTER TABLE ' . $db->quoteName($realtablename) . ' ADD FOREIGN KEY (' . $realfieldname . ') REFERENCES '
-                . $db->quoteName($database . '.' . $join_with_table_name) . ' (' . $join_with_table_field . ') ON DELETE RESTRICT ON UPDATE RESTRICT;';
+            $query = 'ALTER TABLE ' . database::quoteName($realtablename) . ' ADD FOREIGN KEY (' . $realfieldname . ') REFERENCES '
+                . database::quoteName($database . '.' . $join_with_table_name) . ' (' . $join_with_table_field . ') ON DELETE RESTRICT ON UPDATE RESTRICT;';
 
             try {
                 database::setQuery($query);
@@ -1660,7 +1629,6 @@ class Fields
 
     public static function cleanTableBeforeNormalization($realtablename, $realfieldname, $join_with_table_name, $join_with_table_field): void
     {
-        $db = Factory::getDBO();
         $serverType = database::getServerType();
         if ($serverType == 'postgresql')
             return;
@@ -1699,10 +1667,7 @@ class Fields
         $ct = new CT;
         $table_row_array = (array)$table_row;
         $ct->setTable($table_row_array, null, false);
-
-        $db = Factory::getDBO();
-        $query = 'UPDATE ' . $ct->Table->realtablename . ' SET ' . $db->quoteName($realFieldName) . '=' . $db->quoteName($ct->Table->realidfieldname) . ' WHERE ' . $db->quoteName($realFieldName) . ' IS NULL OR ' . $db->quoteName($realFieldName) . ' = 0';
-
+        $query = 'UPDATE ' . $ct->Table->realtablename . ' SET ' . database::quoteName($realFieldName) . '=' . database::quoteName($ct->Table->realidfieldname) . ' WHERE ' . database::quoteName($realFieldName) . ' IS NULL OR ' . database::quoteName($realFieldName) . ' = 0';
 
         try {
             database::setQuery($query);

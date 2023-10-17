@@ -17,6 +17,7 @@ jimport('joomla.application.component.controlleradmin');
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\database;
 use CustomTables\Fields;
 use Joomla\CMS\Factory;
 use Joomla\Utilities\ArrayHelper;

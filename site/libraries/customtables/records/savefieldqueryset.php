@@ -75,7 +75,7 @@ class SaveFieldQuerySet
                     return $this->field->realfieldname . '=NULL';
                 }
                 $this->row[$this->field->realfieldname] = $value;
-                return $this->field->realfieldname . '=' . $this->ct->db->Quote($value);
+                return $this->field->realfieldname . '=' . database::quote($value);
 
             case 'sqljoin':
                 $value = common::inputGetString($this->field->comesfieldname);
@@ -96,7 +96,7 @@ class SaveFieldQuerySet
                             return $this->field->realfieldname . '=NULL';
                         }
                         $this->row[$this->field->realfieldname] = $value;
-                        return $this->field->realfieldname . '=' . $this->ct->db->Quote($value);
+                        return $this->field->realfieldname . '=' . database::quote($value);
                     }
                 }
                 break;
@@ -105,7 +105,7 @@ class SaveFieldQuerySet
 
                 if (isset($value)) {
                     $this->row[$this->field->realfieldname] = $value;
-                    return $this->field->realfieldname . '=' . $this->ct->db->Quote($value);
+                    return $this->field->realfieldname . '=' . database::quote($value);
                 }
                 break;
 
@@ -115,7 +115,7 @@ class SaveFieldQuerySet
                 $value = common::inputGetString($this->field->comesfieldname);
                 if (isset($value)) {
                     $this->row[$this->field->realfieldname] = $value;
-                    return $this->field->realfieldname . '=' . $this->ct->db->Quote($value);
+                    return $this->field->realfieldname . '=' . database::quote($value);
                 }
                 break;
 
@@ -147,7 +147,7 @@ class SaveFieldQuerySet
                     $value = str_replace('#', '', $value);
                     if (ctype_xdigit($value) or $value == '') {
                         $this->row[$this->field->realfieldname] = $value;
-                        return $this->field->realfieldname . '=' . $this->ct->db->Quote($value);
+                        return $this->field->realfieldname . '=' . database::quote($value);
                     }
                 }
                 break;
@@ -158,7 +158,7 @@ class SaveFieldQuerySet
                 if (isset($value)) {
                     $value = $this->get_alias_type_value($listing_id);
                     $this->row[$this->field->realfieldname] = $value;
-                    return ($value === null ? null : $this->field->realfieldname . '=' . $this->ct->db->Quote($value));
+                    return ($value === null ? null : $this->field->realfieldname . '=' . database::quote($value));
                 }
                 break;
 
@@ -177,7 +177,7 @@ class SaveFieldQuerySet
 
                     if (isset($value)) {
                         $this->row[$this->field->realfieldname . $postfix] = $value;
-                        $sets[] = $this->field->realfieldname . $postfix . '=' . $this->ct->db->Quote($value);
+                        $sets[] = $this->field->realfieldname . $postfix . '=' . database::quote($value);
                     }
                 }
                 return (count($sets) > 0 ? $sets : null);
@@ -188,7 +188,7 @@ class SaveFieldQuerySet
 
                 if (isset($value)) {
                     $this->row[$this->field->realfieldname] = $value;
-                    return $this->field->realfieldname . '=' . $this->ct->db->Quote(stripslashes($value));
+                    return $this->field->realfieldname . '=' . database::quote(stripslashes($value));
                 }
                 break;
 
@@ -207,7 +207,7 @@ class SaveFieldQuerySet
 
                     if (isset($value)) {
                         $this->row[$this->field->realfieldname . $postfix] = $value;
-                        $sets[] = $this->field->realfieldname . $postfix . '=' . $this->ct->db->Quote($value);
+                        $sets[] = $this->field->realfieldname . $postfix . '=' . database::quote($value);
                     }
                 }
                 return (count($sets) > 0 ? $sets : null);
@@ -294,12 +294,12 @@ class SaveFieldQuerySet
             case 'usergroups':
                 $value = $this->get_usergroups_type_value();
                 $this->row[$this->field->realfieldname] = $value;
-                return ($value === null ? null : $this->field->realfieldname . '=' . $this->ct->db->Quote($value));
+                return ($value === null ? null : $this->field->realfieldname . '=' . database::quote($value));
 
             case 'language':
                 $value = $this->get_customtables_type_language();
                 $this->row[$this->field->realfieldname] = $value;
-                return ($value === null ? null : $this->field->realfieldname . '=' . $this->ct->db->Quote($value));
+                return ($value === null ? null : $this->field->realfieldname . '=' . database::quote($value));
 
             case 'float':
                 $value = common::inputGet($this->field->comesfieldname, null, 'FLOAT');
@@ -343,7 +343,7 @@ class SaveFieldQuerySet
                     $value = CT_FieldTypeTag_image::get_image_type_value($this->field, $this->ct->Table->realidfieldname, $listing_id);
                     $this->row[$this->field->realfieldname] = $value;
 
-                    return ($value === null ? $this->field->realfieldname . '=NULL' : $this->field->realfieldname . '=' . $this->ct->db->Quote($value));
+                    return ($value === null ? $this->field->realfieldname . '=NULL' : $this->field->realfieldname . '=' . database::quote($value));
                 }
 
                 if ($returnValue !== null)
@@ -382,7 +382,7 @@ class SaveFieldQuerySet
 
                         $sets = array();
                         if ($value !== null and !$this->checkIfFieldAlreadyInTheList($fileNameField))
-                            $sets[] = $fileNameField . '=' . $this->ct->db->Quote($file_name);
+                            $sets[] = $fileNameField . '=' . database::quote($file_name);
 
                         $sets[] = ($value === null ? null : $this->field->realfieldname . '=FROM_BASE64("' . base64_encode($value) . '")');
                         return $sets;
@@ -404,14 +404,14 @@ class SaveFieldQuerySet
                     return $this->field->realfieldname . '=NULL';
                 } else {
                     $this->row[$this->field->realfieldname] = $value;
-                    return ($value === null ? null : $this->field->realfieldname . '=' . $this->ct->db->Quote($value));
+                    return ($value === null ? null : $this->field->realfieldname . '=' . database::quote($value));
                 }
 
             case 'signature':
 
                 $value = $this->get_customtables_type_signature();
                 $this->row[$this->field->realfieldname] = $value;
-                return ($value === null ? null : $this->field->realfieldname . '=' . $this->ct->db->Quote($value));
+                return ($value === null ? null : $this->field->realfieldname . '=' . database::quote($value));
 
             case 'multilangarticle':
 
@@ -438,7 +438,7 @@ class SaveFieldQuerySet
 
                 $value = $this->get_customtables_type_value();
                 $this->row[$this->field->realfieldname] = $value;
-                return ($value === null ? null : $this->field->realfieldname . '=' . $this->ct->db->Quote($value));
+                return ($value === null ? null : $this->field->realfieldname . '=' . database::quote($value));
 
             case 'email':
                 $value = common::inputGetString($this->field->comesfieldname);
@@ -446,10 +446,10 @@ class SaveFieldQuerySet
                     $value = trim($value ?? '');
                     if (Email::checkEmail($value)) {
                         $this->row[$this->field->realfieldname] = $value;
-                        return $this->field->realfieldname . '=' . $this->ct->db->Quote($value);
+                        return $this->field->realfieldname . '=' . database::quote($value);
                     } else {
                         $this->row[$this->field->realfieldname] = null;
-                        return $this->field->realfieldname . '=' . $this->ct->db->Quote("");//PostgreSQL compatible
+                        return $this->field->realfieldname . '=' . database::quote("");//PostgreSQL compatible
                     }
                 }
                 break;
@@ -461,10 +461,10 @@ class SaveFieldQuerySet
 
                     if (filter_var($value, FILTER_VALIDATE_URL)) {
                         $this->row[$this->field->realfieldname] = $value;
-                        return $this->field->realfieldname . '=' . $this->ct->db->Quote($value);
+                        return $this->field->realfieldname . '=' . database::quote($value);
                     } else {
                         $this->row[$this->field->realfieldname] = null;
-                        return $this->field->realfieldname . '=' . $this->ct->db->Quote("");//PostgreSQL compatible
+                        return $this->field->realfieldname . '=' . database::quote("");//PostgreSQL compatible
                     }
                 }
                 break;
@@ -504,10 +504,10 @@ class SaveFieldQuerySet
                         if (Fields::isFieldNullable($this->ct->Table->realtablename, $this->field->realfieldname))
                             return $this->field->realfieldname . '=NULL';
                         else
-                            return $this->field->realfieldname . '=' . $this->ct->db->Quote('0000-00-00 00:00:00');
+                            return $this->field->realfieldname . '=' . database::quote('0000-00-00 00:00:00');
                     } else {
                         $this->row[$this->field->realfieldname] = $value;
-                        return $this->field->realfieldname . '=' . $this->ct->db->Quote($value);
+                        return $this->field->realfieldname . '=' . database::quote($value);
                     }
                 }
                 break;
@@ -530,14 +530,14 @@ class SaveFieldQuerySet
                     $value = gmdate('Y-m-d H:i:s');
                     $this->row[$this->field->realfieldname] = $value;
 
-                    return $this->field->realfieldname . '=' . $this->ct->db->Quote($value);
+                    return $this->field->realfieldname . '=' . database::quote($value);
                 }
                 break;
 
             case 'changetime':
                 $value = gmdate('Y-m-d H:i:s');
                 $this->row[$this->field->realfieldname] = $value;
-                return $this->field->realfieldname . '=' . $this->ct->db->Quote($value);
+                return $this->field->realfieldname . '=' . database::quote($value);
 
             case 'server':
 
@@ -547,7 +547,7 @@ class SaveFieldQuerySet
                     $value = common::inputServer($this->field->params[0], '', 'STRING');
 
                 $this->row[$this->field->realfieldname] = $value;
-                return $this->field->realfieldname . '=' . $this->ct->db->Quote($value);
+                return $this->field->realfieldname . '=' . database::quote($value);
 
             case 'id':
                 //get max id
@@ -562,7 +562,7 @@ class SaveFieldQuerySet
                             $value = $minid;
 
                         $this->row[$this->field->realfieldname] = $value;
-                        return $this->field->realfieldname . '=' . $this->ct->db->Quote($value);
+                        return $this->field->realfieldname . '=' . database::quote($value);
                     }
                 }
                 break;
@@ -584,7 +584,7 @@ class SaveFieldQuerySet
                 if ($vlu != '') {
                     $value = md5($vlu);
                     $this->row[$this->field->realfieldname] = $value;
-                    return $this->field->realfieldname . '=' . $this->ct->db->Quote($value);
+                    return $this->field->realfieldname . '=' . database::quote($value);
                 }
                 break;
         }
@@ -703,7 +703,7 @@ class SaveFieldQuerySet
     protected function checkIfAliasExists($exclude_id, $value, $realfieldname): bool
     {
         $query = 'SELECT count(' . $this->ct->Table->realidfieldname . ') AS c FROM ' . $this->ct->Table->realtablename . ' WHERE '
-            . $this->ct->Table->realidfieldname . '!=' . (int)$exclude_id . ' AND ' . $realfieldname . '=' . $this->ct->db->quote($value) . ' LIMIT 1';
+            . $this->ct->Table->realidfieldname . '!=' . (int)$exclude_id . ' AND ' . $realfieldname . '=' . database::quote($value) . ' LIMIT 1';
 
         $rows = database::loadObjectList($query);
         if (count($rows) == 0)
@@ -982,7 +982,7 @@ class SaveFieldQuerySet
                 return $this->field->realfieldname . '=NULL';
             } else {
                 $this->row[$this->field->realfieldname] = $value;
-                return $this->field->realfieldname . '=' . $this->ct->db->quote($value);
+                return $this->field->realfieldname . '=' . database::quote($value);
             }
 
         } elseif ($fieldRow['type'] == 'virtual') {
@@ -1012,7 +1012,7 @@ class SaveFieldQuerySet
                 if ($storage == "storedintegersigned" or $storage == "storedintegerunsigned")
                     return $this->field->realfieldname . '=' . (int)$value;
 
-                return $this->field->realfieldname . '=' . $this->ct->db->quote($value);
+                return $this->field->realfieldname . '=' . database::quote($value);
             }
         }
         return null;
@@ -1104,7 +1104,7 @@ class SaveFieldQuerySet
     function runUpdateQuery($saveQuery, $listing_id): void
     {
         if (count($saveQuery) > 0) {
-            $query = 'UPDATE ' . $this->ct->Table->realtablename . ' SET ' . implode(', ', $saveQuery) . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . $this->ct->db->quote($listing_id);
+            $query = 'UPDATE ' . $this->ct->Table->realtablename . ' SET ' . implode(', ', $saveQuery) . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . database::quote($listing_id);
 
             try {
                 database::setQuery($query);
@@ -1154,7 +1154,7 @@ class SaveFieldQuerySet
                 $fieldname = $fieldrow['fieldname'];
                 if ($this->ct->Params->emailSentStatusField == $fieldname) {
 
-                    $query = 'UPDATE ' . $this->ct->Table->realtablename . ' SET es_' . $fieldname . '=' . $status . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . $this->ct->db->quote($listing_id);
+                    $query = 'UPDATE ' . $this->ct->Table->realtablename . ' SET es_' . $fieldname . '=' . $status . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . database::quote($listing_id);
                     database::setQuery($query);
                     return;
                 }

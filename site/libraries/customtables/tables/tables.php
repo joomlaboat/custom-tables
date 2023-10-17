@@ -29,13 +29,8 @@ class Tables
 
     public static function getAllTables(): array
     {
-        $db = Factory::getDBO();
-        $query = $db->getQuery(true);
-        $query->select('id,tablename,tabletitle');
-        $query->from('#__customtables_tables');
-        $query->where('published=1');
-        $query->order('tablename');
-        $records = database::loadObjectList((string)$query);
+        $query = 'SELECT id,tablename,tabletitle FROM #__customtables_tables WHERE published=1 ORDER BY tablename';
+        $records = database::loadObjectList($query);
 
         $allTables = [];
         foreach ($records as $rec)
@@ -92,7 +87,7 @@ class Tables
         $this->ct->Table->recordcount = 0;
 
         $this->ct->setFilter('', 2);
-        $this->ct->Filter->where[] = $this->ct->Table->realidfieldname . '=' . $this->ct->db->quote($recordId);
+        $this->ct->Filter->where[] = $this->ct->Table->realidfieldname . '=' . database::quote($recordId);
 
 
         $this->ct->Limit = 1;

@@ -72,8 +72,6 @@ class CustomTablesViewListOfOptions extends JViewLegacy
     function &_getViewLists()
     {
         $mainframe = Factory::getApplication();
-        $db = Factory::getDBO();
-
         $context = 'com_customtables.listofoptions.';
 
         $filter_order = $mainframe->getUserStateFromRequest($context . "filter_order", 'filter_order', 'optionname', 'cmd');

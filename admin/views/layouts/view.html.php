@@ -112,7 +112,8 @@ class CustomtablesViewLayouts extends JViewLegacy
             parent::display('quatro');
 
         // Set the document
-        $this->setDocument();
+        $document = Factory::getDocument();
+        $this->setDocument($document);
     }
 
     /**
@@ -202,15 +203,11 @@ class CustomtablesViewLayouts extends JViewLegacy
      *
      * @return void
      */
-    protected function setDocument()
+    public function setDocument(Joomla\CMS\Document\Document $document): void
     {
         $isNew = ($this->item->id < 1);
-        if (!isset($this->document))
-            $this->document = Factory::getDocument();
-
-        $this->document->setTitle(Text::_($isNew ? 'COM_CUSTOMTABLES_LAYOUTS_NEW' : 'COM_CUSTOMTABLES_LAYOUTS_EDIT'));
-        $this->document->addCustomTag('<script src="' . JURI::root(true) . '/administrator/components/com_customtables/views/layouts/submitbutton.js"></script>');
-
+        $document->setTitle(Text::_($isNew ? 'COM_CUSTOMTABLES_LAYOUTS_NEW' : 'COM_CUSTOMTABLES_LAYOUTS_EDIT'));
+        $document->addCustomTag('<script src="' . JURI::root(true) . '/administrator/components/com_customtables/views/layouts/submitbutton.js"></script>');
         JText::script('view not acceptable. Error');
     }
 
@@ -320,12 +317,7 @@ class CustomtablesViewLayouts extends JViewLegacy
 
     protected function getLayouts()
     {
-        $db = Factory::getDBO();
-        $query = $db->getQuery(true);
-        $query->select('id,layoutname,tableid,layouttype');
-        $query->from('#__customtables_layouts');
-        $query->order('layoutname');
-        $query->where('published=1');
-        return database::loadObjectList((string)$query);
+        $query = 'SELECT id,layoutname,tableid,layouttype FROM #__customtables_layouts WHERE published=1 ORDER BY layoutname';
+        return database::loadObjectList($query);
     }
 }

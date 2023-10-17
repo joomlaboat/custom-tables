@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\database;
 use CustomTables\DataTypes\Tree;
 use Joomla\CMS\Factory;
 
@@ -92,9 +93,9 @@ class ESMultiSelector
         return $result;
     }
 
-    function getList($parentid, $langpostfix)
+    function getList($parentId, $langpostfix)
     {
-        $query = 'SELECT id, optionname, title' . $langpostfix . ' AS title FROM #__customtables_options WHERE parentid=' . (int)$parentid;
+        $query = 'SELECT id, optionname, title' . $langpostfix . ' AS title FROM #__customtables_options WHERE parentid=' . (int)$parentId;
         $query .= ' ORDER BY ordering, title';
         return database::loadObjectList($query);
     }

@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\CT;
 
+use CustomTables\database;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 
@@ -90,40 +91,32 @@ class CustomtablesModelListofcategories extends JModelList
      */
     protected function getListQuery()
     {
-        // Create a new query object.
-        $db = Factory::getDBO();
-        $query = $db->getQuery(true);
-
-        // Select some fields
-        $query->select('a.*');
-
-        // From the customtables_item table
-        $query->from($db->quoteName('#__customtables_categories', 'a'));
-
+        $query = 'SELECT a.* FROM ' . database::quoteName('#__customtables_categories') . ' AS a';
+        $where = [];
         // Filter by published state
         $published = $this->getState('filter.published');
         if (is_numeric($published))
-            $query->where('a.published = ' . (int)$published);
+            $where [] = 'a.published = ' . (int)$published;
         elseif (is_null($published) or $published === '')
-            $query->where('(a.published = 0 OR a.published = 1)');
+            $where [] = '(a.published = 0 OR a.published = 1)';
 
         // Filter by search.
         $search = $this->getState('filter.search');
         if (!empty($search)) {
             if (stripos($search, 'id:') === 0) {
-                $query->where('a.id = ' . (int)substr($search, 3));
+                $where [] = 'a.id = ' . (int)substr($search, 3);
             } else {
-                $search = $db->quote('%' . $db->escape($search) . '%');
-                $query->where('(a.categoryname LIKE ' . $search . ')');
+                $search = database::quote('%' . $search . '%');
+                $where [] = '(a.categoryname LIKE ' . $search . ')';
             }
         }
 
+        $query .= ' WHERE ' . implode(' AND ', $where);
         // Add the list ordering clause.
         $orderCol = $this->state->get('list.ordering', 'a.id');
         $orderDirn = $this->state->get('list.direction', 'asc');
-        if ($orderCol != '') {
-            $query->order($db->escape($orderCol . ' ' . $orderDirn));
-        }
+        if ($orderCol != '')
+            $query .= ' ORDER BY ' . database::quoteName($orderCol) . ' ' . $orderDirn;
 
         return $query;
     }

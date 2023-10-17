@@ -20,8 +20,6 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 function renderDependencies($layout_row): string
 {
-    $db = Factory::getDBO();
-
     $count = 0;
     $layoutname = $layout_row->layoutname;
 
@@ -30,11 +28,11 @@ function renderDependencies($layout_row): string
     $serverType = database::getServerType();
 
     if ($serverType == 'postgresql') {
-        $w1 = '(' . $db->quoteName('type') . '=\'sqljoin\' OR ' . $db->quoteName('type') . '=\'records\')';
+        $w1 = '(' . database::quoteName('type') . '=\'sqljoin\' OR ' . database::quoteName('type') . '=\'records\')';
         $w2a = 'POSITOIN(\'layout:' . $layoutname . '\' IN SUBSTRING_INDEX(typeparams,",",2))>0';
         $w2b = 'POSITOIN(\'tablelesslayout:' . $layoutname . '\' IN SUBSTRING_INDEX(typeparams,",",2))>0';
     } else {
-        $w1 = '(' . $db->quoteName('type') . '="sqljoin" OR ' . $db->quoteName('type') . '="records")';
+        $w1 = '(' . database::quoteName('type') . '="sqljoin" OR ' . database::quoteName('type') . '="records")';
         $w2a = 'INSTR(SUBSTRING_INDEX(typeparams,",",2),"layout:' . $layoutname . '")';
         $w2b = 'INSTR(SUBSTRING_INDEX(typeparams,",",2),"tablelesslayout:' . $layoutname . '")';
     }
@@ -177,7 +175,6 @@ function _renderTableList($rows): string
 
 function _getTablesThatUseThisLayout($wF)
 {
-    $db = Factory::getDBO();
     $fields = '(SELECT GROUP_CONCAT(CONCAT(f.id,",",fieldname),";") FROM #__customtables_fields AS f WHERE ' . $wF . ' ORDER BY fieldname) AS fields';
     $w = '(SELECT tableid FROM #__customtables_fields AS f WHERE ' . $wF . ' LIMIT 1) IS NOT NULL';
     $query = 'SELECT id AS tableid, tabletitle,tablename, ' . $fields . ' FROM #__customtables_tables AS t WHERE ' . $w . ' ORDER BY tablename';
@@ -186,8 +183,6 @@ function _getTablesThatUseThisLayout($wF)
 
 function _getMenuItemsThatUseThisLayout($layoutname)
 {
-    $db = Factory::getDBO();
-
     $wheres = array();
     $wheres[] = 'published=1';
     $wheres[] = 'INSTR(link,"index.php?option=com_customtables&view=")';
@@ -196,7 +191,7 @@ function _getMenuItemsThatUseThisLayout($layoutname)
     $w = array();
     foreach ($layout_params as $l) {
         $toSearch = '"' . $l . '":"' . $layoutname . '"';
-        $w[] = 'INSTR(params,' . $db->quote($toSearch) . ')';
+        $w[] = 'INSTR(params,' . database::quote($toSearch) . ')';
     }
     $wheres[] = '(' . implode(' OR ', $w) . ')';
     $query = 'SELECT id,title FROM #__menu WHERE ' . implode(' AND ', $wheres);
@@ -205,17 +200,15 @@ function _getMenuItemsThatUseThisLayout($layoutname)
 
 function _getModulesThatUseThisLayout($layoutname)
 {
-    $db = Factory::getDBO();
-
     $wheres = array();
     $wheres[] = 'published=1';
-    $wheres[] = 'module=' . $db->quote('mod_ctcatalog');
+    $wheres[] = 'module=' . database::quote('mod_ctcatalog');
 
     $layout_params = ['ct_pagelayout', 'ct_itemlayout'];
     $w = array();
     foreach ($layout_params as $l) {
         $toSearch = '"' . $l . '":"' . $layoutname . '"';
-        $w[] = 'INSTR(params,' . $db->quote($toSearch) . ')';
+        $w[] = 'INSTR(params,' . database::quote($toSearch) . ')';
     }
     $wheres[] = '(' . implode(' OR ', $w) . ')';
     $query = 'SELECT id,title FROM #__modules WHERE ' . implode(' AND ', $wheres);
@@ -224,7 +217,6 @@ function _getModulesThatUseThisLayout($layoutname)
 
 function _getLayoutsThatUseThisLayout(string $layoutName)
 {
-    $db = Factory::getDBO();
     $wheres = array();
     $wheres[] = 'published=1';
 
@@ -239,19 +231,19 @@ function _getLayoutsThatUseThisLayout(string $layoutName)
 
     $w = [];
     foreach ($layout_params as $l)
-        $w[] = 'INSTR(layoutcode,' . $db->quote($l) . ')';
+        $w[] = 'INSTR(layoutcode,' . database::quote($l) . ')';
 
     foreach ($layout_params as $l)
-        $w[] = 'INSTR(layoutmobile,' . $db->quote($l) . ')';
+        $w[] = 'INSTR(layoutmobile,' . database::quote($l) . ')';
 
     foreach ($layout_params as $l)
-        $w[] = 'INSTR(layoutcss,' . $db->quote($l) . ')';
+        $w[] = 'INSTR(layoutcss,' . database::quote($l) . ')';
 
     foreach ($layout_params as $l)
-        $w[] = 'INSTR(layoutjs,' . $db->quote($l) . ')';
+        $w[] = 'INSTR(layoutjs,' . database::quote($l) . ')';
 
     foreach ($layout_params as $l) {
-        $w[] = 'INSTR(layoutcode,' . $db->quote($l) . ')';
+        $w[] = 'INSTR(layoutcode,' . database::quote($l) . ')';
     }
     $wheres[] = '(' . implode(' OR ', $w) . ')';
     $query = 'SELECT id,layoutname FROM #__customtables_layouts WHERE ' . implode(' AND ', $wheres);

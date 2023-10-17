@@ -118,12 +118,6 @@ class CustomtablesModelListoffields extends JModelList
     protected function getListQuery()
     {
         $this->tableid = common::inputGetInt('tableid', 0);
-
-        // Create a new query object.
-        $db = Factory::getDBO();
-        $query = $db->getQuery(true);
-
-        // Select some fields
         $tabletitle = '(SELECT tabletitle FROM #__customtables_tables AS tables WHERE tables.id=a.tableid)';
         $serverType = database::getServerType();
 
@@ -132,46 +126,44 @@ class CustomtablesModelListoffields extends JModelList
         else
             $realfieldname_query = 'IF(customfieldname!=\'\', customfieldname, CONCAT(\'es_\',fieldname)) AS realfieldname';
 
-        $query->select('a.*, ' . $tabletitle . ' AS tabletitle, ' . $realfieldname_query);
-
-        // From the customtables_item table
-        $query->from($db->quoteName('#__customtables_fields', 'a'));
+        $query = 'SELECT a.*, ' . $tabletitle . ' AS tabletitle, ' . $realfieldname_query . ' FROM ' . database::quoteName('#__customtables_fields') . ' AS a';
+        $where = [];
 
         // Filter by published state
         $published = $this->getState('filter.published');
 
         if (is_numeric($published))
-            $query->where('a.published = ' . (int)$published);
+            $where [] = 'a.published = ' . (int)$published;
         elseif (is_null($published) or $published === '')
-            $query->where('(a.published = 0 OR a.published = 1)');
+            $where [] = '(a.published = 0 OR a.published = 1)';
 
         // Filter by search.
         $search = $this->getState('filter.search');
         if (!empty($search)) {
             if (stripos($search, 'id:') === 0) {
-                $query->where('a.id = ' . (int)substr($search, 3));
+                $where [] = 'a.id = ' . (int)substr($search, 3);
             } else {
-                $search = $db->quote('%' . $db->escape($search) . '%');
-                $query->where('(a.fieldname LIKE ' . $search . ' OR a.fieldtitle LIKE ' . $search . ')');
+                $search = database::quote('%' . database::quote($search) . '%');
+                $where [] = '(a.fieldname LIKE ' . $search . ' OR a.fieldtitle LIKE ' . $search . ')';
             }
         }
 
         // Filter by Type.
-        if ($type = $this->getState('filter.type')) {
-            $query->where('a.type = ' . $db->quote($db->escape($type)));
-        }
+        if ($type = $this->getState('filter.type'))
+            $where [] = 'a.type = ' . database::quote($type);
 
         if ($this->tableid != 0) {
-            $query->where('a.tableid = ' . $db->quote($db->escape($this->tableid)));
+            $where [] = 'a.tableid = ' . database::quote($this->tableid);
         }
 
         // Add the list ordering clause.
         $orderCol = $this->state->get('list.ordering', 'a.ordering');
         $orderDirn = $this->state->get('list.direction', 'asc');
 
-        if ($orderCol != '') {
-            $query->order($db->escape($orderCol . ' ' . $orderDirn));
-        }
+        $query .= ' WHERE ' . implode(' AND ', $where);
+
+        if ($orderCol != '')
+            $query .= ' ORDER BY ' . database::quoteName($orderCol) . ' ' . $orderDirn;
 
         return $query;
     }

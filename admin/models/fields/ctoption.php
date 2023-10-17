@@ -39,13 +39,7 @@ class JFormFieldCTOption extends JFormFieldList
         if (common::inputGet('id'))
             $currentoptionid = common::inputGetInt('id', 0);
 
-        $db = Factory::getDBO();
-        $query = $db->getQuery(true);
-        $query->select('id,title');
-        $query->from('#__customtables_options');
-        $query->order('title');
-        $query->where('id!=' . $currentoptionid);
-
+        $query = 'SELECT id,title FROM #__customtables_options WHERE id!=' . $currentoptionid . ' ORDER BY title';
         $records = database::loadObjectList($query);
 
         $options = array();

@@ -69,8 +69,7 @@ class CustomtablesViewListofrecords extends JViewLegacy
         $this->canState = $this->canDo->get('tables.edit');
         $this->canCreate = $this->canDo->get('tables.edit');
         $this->canDelete = $this->canDo->get('tables.edit');
-
-        $this->isEmptyState = $this->get('IsEmptyState');
+        $this->isEmptyState = count($this->items ?? 0) == 0;
 
         if ($this->getLayout() !== 'modal') {
             if ($this->ct->Env->version < 4) {

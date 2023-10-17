@@ -390,7 +390,7 @@ class CT
         //delete images if exist
         $imageMethods = new CustomTablesImageMethods;
 
-        $query = 'SELECT * FROM ' . $this->Table->realtablename . ' WHERE ' . $this->Table->realidfieldname . '=' . $this->db->quote($listing_id);
+        $query = 'SELECT * FROM ' . $this->Table->realtablename . ' WHERE ' . $this->Table->realidfieldname . '=' . database::quote($listing_id);
         $rows = database::loadAssocList($query);
 
         if (count($rows) == 0)
@@ -422,7 +422,7 @@ class CT
                 $galleryName = $field->fieldname;
                 $photoTableName = '#__customtables_gallery_' . $this->Table->tablename . '_' . $galleryName;
 
-                $query = 'SELECT photoid FROM ' . $photoTableName . ' WHERE listingid=' . $this->db->quote($listing_id);
+                $query = 'SELECT photoid FROM ' . $photoTableName . ' WHERE listingid=' . database::quote($listing_id);
                 $photoRows = database::loadObjectList($query);
                 $imageGalleryPrefix = 'g';
 
@@ -440,7 +440,7 @@ class CT
             }
         }
 
-        $query = 'DELETE FROM ' . $this->Table->realtablename . ' WHERE ' . $this->Table->realidfieldname . '=' . $this->db->quote($listing_id);
+        $query = 'DELETE FROM ' . $this->Table->realtablename . ' WHERE ' . $this->Table->realidfieldname . '=' . database::quote($listing_id);
         database::setQuery($query);
         $this->Table->saveLog($listing_id, 5);
         $new_row = array();
@@ -456,7 +456,7 @@ class CT
         if (!$this->Table->published_field_found)
             return -1;
 
-        $query = 'UPDATE ' . $this->Table->realtablename . ' SET published=' . (int)$status . ' WHERE ' . $this->Table->realidfieldname . '=' . $this->db->quote($listing_id);
+        $query = 'UPDATE ' . $this->Table->realtablename . ' SET published=' . (int)$status . ' WHERE ' . $this->Table->realidfieldname . '=' . database::quote($listing_id);
         database::setQuery($query);
 
         if ($status == 1)
@@ -471,7 +471,7 @@ class CT
     public function RefreshSingleRecord($listing_id, $save_log): int
     {
         $query = 'SELECT ' . implode(',', $this->Table->selects) . ' FROM ' . $this->Table->realtablename
-            . ' WHERE ' . $this->Table->realidfieldname . '=' . $this->db->quote($listing_id) . ' LIMIT 1';
+            . ' WHERE ' . $this->Table->realidfieldname . '=' . database::quote($listing_id) . ' LIMIT 1';
 
         $rows = database::loadAssocList($query);
 

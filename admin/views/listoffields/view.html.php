@@ -14,6 +14,7 @@ defined('_JEXEC') or die;
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\database;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\Language\Text;
@@ -68,8 +69,7 @@ class CustomtablesViewListoffields extends JViewLegacy
         $this->canCreate = $this->canDo->get('tables.edit');
         $this->canDelete = $this->canDo->get('tables.edit');
         //$this->canBatch = $this->canDo->get('tables.edit');
-
-        $this->isEmptyState = $this->get('IsEmptyState');
+        $this->isEmptyState = count($this->items ?? 0) == 0;
 
         // We don't need toolbar in the modal window.
         $this->tableid = common::inputGetInt('tableid', 0);
@@ -205,25 +205,10 @@ class CustomtablesViewListoffields extends JViewLegacy
 
     protected function getTheTypeSelections()
     {
-        // Get a db connection.
-        $db = Factory::getDbo();
-
-        // Create a new query object.
-        $query = $db->getQuery(true);
-
-        // Select the text.
-        $query->select($db->quoteName('type'));
-        $query->from($db->quoteName('#__customtables_fields'));
-        $query->order($db->quoteName('type'));
-
-        // Reset the query using our newly populated query object.
-        $db->setQuery($query);
-
-        $results = $db->loadColumn();
+        $query = 'SELECT ' . database::quoteName('type') . ' FROM ' . database::quoteName('#__customtables_fields') . ' ORDER BY ' . database::quoteName('type');
+        $results = database::loadColumn($query);
 
         if ($results) {
-            // get model
-            //$model = $this->getModel();
             $results = array_unique($results);
             $_filter = array();
             foreach ($results as $type) {

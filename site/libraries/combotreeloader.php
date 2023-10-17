@@ -176,7 +176,6 @@ class ESDynamicComboTree
     function getOptionListWhere($parentname, $filterwhere, $listingfield)
     {
         $parentid = Tree::getOptionIdFull($parentname);
-        $db = Factory::getDBO();
 
         $query = 'SELECT '
             . ' #__customtables_options.id AS optionid, '
@@ -204,7 +203,6 @@ class ESDynamicComboTree
     function getOptionList($parentname)
     {
         $parentid = Tree::getOptionIdFull($parentname);
-        $db = Factory::getDBO();
 
         $query = 'SELECT '
             . ' id AS optionid, '

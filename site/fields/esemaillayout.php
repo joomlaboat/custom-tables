@@ -9,6 +9,7 @@
  **/
 
 // no direct access
+use CustomTables\database;
 use Joomla\CMS\Factory;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
@@ -28,12 +29,9 @@ class JFormFieldESEmailLayout extends JFormFieldList
         require_once($path . 'loader.php');
         CTLoader();
 
-        $db = Factory::getDBO();
-        $query = $db->getQuery(true);
-        $query->select('id,layoutname, (SELECT tablename FROM #__customtables_tables WHERE id=tableid) AS tablename');
-        $query->from('#__customtables_layouts');
-        $query->where('published=1 AND layouttype=7');
-        $query->order('tablename,layoutname');
+        $query = 'SELECT id,layoutname, (SELECT tablename FROM #__customtables_tables WHERE id=tableid) AS tablename FROM #__customtables_layouts'
+            . ' WHERE published=1 AND layouttype=7'
+            . ' ORDER BY tablename,layoutname';
 
         $messages = database::loadObjectList((string)$query);
         $options = array();

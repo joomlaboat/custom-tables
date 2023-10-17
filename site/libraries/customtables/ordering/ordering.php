@@ -161,7 +161,7 @@ class Ordering
             case 'lastviewtime':
 
                 if (count($field->params) > 0 and $field->params[0] != '') {
-                    return 'DATE_FORMAT(' . $field->realfieldname . ', ' . $Table->db->quote($field->params[0]) . ')';
+                    return 'DATE_FORMAT(' . $field->realfieldname . ', ' . database::quote($field->params[0]) . ')';
                 } else
                     return $field->realfieldname;
 
@@ -313,11 +313,9 @@ class Ordering
         if ($realFieldName == '')
             return false;
 
-        $db = Factory::getDBO();
-
         for ($i = 0; $i < count($pks); $i++) {
-            $query = 'UPDATE ' . $this->Table->realtablename . ' SET ' . $db->quoteName($realFieldName) . '=' . $order[$i] . ' WHERE '
-                . $db->quoteName($this->Table->realidfieldname) . '=' . (int)$pks[$i];
+            $query = 'UPDATE ' . $this->Table->realtablename . ' SET ' . database::quoteName($realFieldName) . '=' . $order[$i] . ' WHERE '
+                . database::quoteName($this->Table->realidfieldname) . '=' . (int)$pks[$i];
 
             database::setQuery($query);
         }

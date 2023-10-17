@@ -97,7 +97,7 @@ class Details
             return false;
 
         if (!is_null($this->ct->Params->alias) and $this->ct->Table->alias_fieldname != '')
-            $filter = $this->ct->Table->alias_fieldname . '=' . $this->ct->db->quote($this->ct->Params->alias);
+            $filter = $this->ct->Table->alias_fieldname . '=' . database::quote($this->ct->Params->alias);
 
         if ($filter != '') {
             if ($this->ct->Params->alias == '') {
@@ -256,7 +256,7 @@ class Details
             return null;
         }
 
-        $query = $this->ct->buildQuery('WHERE id=' . $this->ct->db->quote($listing_id));
+        $query = $this->ct->buildQuery('WHERE id=' . database::quote($listing_id));
         $query .= ' LIMIT 1';
         $rows = database::loadAssocList($query);
 

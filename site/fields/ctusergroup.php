@@ -9,6 +9,7 @@
  **/
 
 // Check to ensure this file is included in Joomla!
+use CustomTables\database;
 use Joomla\CMS\Factory;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
@@ -22,15 +23,10 @@ class JFormFieldCTUserGroup extends JFormFieldList
 {
     public $type = 'CTUserGroup';
 
-    protected function getOptions()//$name, $value, &$node, $control_name)
+    protected function getOptions()
     {
-        $db = Factory::getDBO();
-
-        $query = $db->getQuery(true);
-        $query->select('id,title');
-        $query->from('#__usergroups');
-        $query->order('title');
-        $records = database::loadObjectList((string)$query);
+        $query = 'SELECT id,title FROM #__usergroups ORDER BY title';
+        $records = database::loadObjectList($query);
         $options = [];
 
         if ($records) {

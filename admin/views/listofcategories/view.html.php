@@ -59,7 +59,7 @@ class CustomtablesViewListofcategories extends JViewLegacy
         $this->canState = $this->canDo->get('categories.edit.state');
         $this->canDelete = $this->canDo->get('categories.delete');
 
-        $this->isEmptyState = $this->get('IsEmptyState');
+        $this->isEmptyState = count($this->items ?? 0) == 0;
         //$this->canBatch = $this->canDo->get('core.batch');
 
         // We don't need toolbar in the modal window.

@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\database;
 use Joomla\CMS\Factory;
 
 use CustomTables\CT;
@@ -25,8 +26,6 @@ class CT_FieldTypeTag_records
     {
         if ($separatorCharacter === null)
             $separatorCharacter = ',';
-
-        $db = Factory::getDBO();
 
         $ct = new CT;
         $ct->getTable($field->params[0]);
@@ -54,7 +53,7 @@ class CT_FieldTypeTag_records
 
         //this is important because it has been selected somehow.
         $ct->setFilter($filter, $showpublished);
-        $ct->Filter->where[] = 'INSTR(' . $db->quote($rowValue) . ',' . $ct->Table->realidfieldname . ')';
+        $ct->Filter->where[] = 'INSTR(' . database::quote($rowValue) . ',' . $ct->Table->realidfieldname . ')';
         $ct->getRecords();
 
         return CT_FieldTypeTag_records::processRecordRecords($ct, $layoutcode, $rowValue, $ct->Records, $separatorCharacter);

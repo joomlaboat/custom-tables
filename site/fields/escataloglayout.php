@@ -10,7 +10,6 @@
 
 // no direct access
 use CustomTables\database;
-use Joomla\CMS\Factory;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
@@ -23,20 +22,17 @@ class JFormFieldESCatalogLayout extends JFormFieldList
 {
     protected $type = 'escataloglayout';
 
-    protected function getOptions()
+    protected function getOptions(): array
     {
         $path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR;
         require_once($path . 'loader.php');
         CTLoader();
 
-        $db = Factory::getDBO();
-        $query = $db->getQuery(true);
-        $query->select('id,layoutname, (SELECT tablename FROM #__customtables_tables WHERE id=tableid) AS tablename');
-        $query->from('#__customtables_layouts');
-        $query->where('published=1 AND (layouttype=1 OR layouttype=5 OR layouttype=8 OR layouttype=9 OR layouttype=10)');
-        $query->order('tablename,layoutname');
+        $query = 'SELECT id,layoutname, (SELECT tablename FROM #__customtables_tables WHERE id=tableid) AS tablename'
+            . ' FROM #__customtables_layouts WHERE published=1 AND (layouttype=1 OR layouttype=5 OR layouttype=8 OR layouttype=9 OR layouttype=10)'
+            . ' ORDER BY tablename,layoutname';
 
-        $messages = database::loadObjectList((string)$query);
+        $messages = database::loadObjectList($query);
         $options = array();
 
         $options[] = JHtml::_('select.option', '', '- ' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_SELECT'));

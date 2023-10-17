@@ -23,19 +23,16 @@ class JHTMLESUserGroup
 {
     static public function render($control_name, $value, $style, $cssclass, $attribute = '', $mysqlwhere = '', $mysqljoin = '')
     {
-        $db = Factory::getDBO();
-        $query = $db->getQuery(true);
-        $query->select('#__usergroups.id AS id, #__usergroups.title AS name');
-        $query->from('#__usergroups');
+        $query = 'SELECT #__usergroups.id AS id, #__usergroups.title AS name FROM #__usergroups';
 
         if ($mysqljoin != '')
-            $query->join('INNER', $mysqljoin);
+            $query .= ' INNER ' . $mysqljoin;
 
         if ($mysqlwhere != '')
-            $query->where($mysqlwhere);
+            $query .= 'WHERE ' . $mysqlwhere;
 
-        $query->order('#__usergroups.title');
-        $options = database::loadObjectList((string)$query);
+        $query .= '#__usergroups.title';
+        $options = database::loadObjectList($query);
         $att = ['id' => '', 'data-type' => 'usergroup', 'name' => '- ' . Text::_('COM_CUSTOMTABLES_SELECT')];
         $options = array_merge(array($att), $options);
         return JHTML::_('select.genericlist', $options, $control_name, $cssclass . ' style="' . $style . '" ' . $attribute . ' ', 'id', 'name', $value, $control_name);

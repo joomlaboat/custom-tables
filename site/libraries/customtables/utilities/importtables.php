@@ -94,7 +94,6 @@ class ImportTables
         //This function creates the table and returns table's id.
         //If table with same name already exists then existing table will be updated, and it's ID will be returned.
 
-        $db = Factory::getDBO();
         $tablename = $table_new['tablename'];
 
         $table_old = ESTables::getTableRowByNameAssoc($tablename);
@@ -134,7 +133,6 @@ class ImportTables
         else
             $mySQLTableName = $table;
 
-        $db = Factory::getDBO();
         $sets = array();
         $keys = array_keys($rows_new);
 
@@ -197,8 +195,6 @@ class ImportTables
 
     protected static function dbQuoteByType($value, $type = null)
     {
-        $db = Factory::getDBO();
-
         if ($type === null) {
             if ($value === null)
                 return 'NULL';
@@ -213,7 +209,7 @@ class ImportTables
         }
 
         if ($type == '' or $type == 'string')
-            return $db->Quote($value);
+            return database::quote($value);
 
         if ($type == 'int')
             return (int)$value;
@@ -311,7 +307,6 @@ class ImportTables
         if ($categoryName == '')
             $categoryName = $table_new['categoryname'];
 
-        $db = Factory::getDBO();
         $categoryId = $categoryId_;
 
         if ($categoryId != 0) {
@@ -339,7 +334,7 @@ class ImportTables
             } else {
                 //Create Category
                 $inserts = array();
-                $inserts[] = 'categoryname=' . $db->Quote($categoryName);
+                $inserts[] = 'categoryname=' . database::quote($categoryName);
 
                 $categoryId = ESTables::insertRecords('#__customtables_categories', $inserts);
             }
@@ -362,12 +357,10 @@ class ImportTables
         else
             $mysqlTableName = $table;
 
-        $db = Factory::getDBO();
-
         if (is_null($value))
             $query = 'SELECT * FROM ' . $mysqlTableName . ' WHERE ' . $fieldname . ' IS NULL';
         else
-            $query = 'SELECT * FROM ' . $mysqlTableName . ' WHERE ' . $fieldname . '=' . $db->Quote($value);
+            $query = 'SELECT * FROM ' . $mysqlTableName . ' WHERE ' . $fieldname . '=' . database::quote($value);
 
         $rows = database::loadAssocList($query);
         if (count($rows) == 0)
@@ -493,12 +486,11 @@ class ImportTables
 
         if (!is_array($menutype_old) or count($menutype_old) == 0) {
             //Create new menu type
-            $db = Factory::getDBO();
             $inserts = array();
             $inserts[] = 'asset_id=0';
-            $inserts[] = 'menutype=' . $db->Quote($new_menutype_alias);
-            $inserts[] = 'title=' . $db->Quote($new_menuType);
-            $inserts[] = 'description=' . $db->Quote('Menu Type created by CustomTables');
+            $inserts[] = 'menutype=' . database::quote($new_menutype_alias);
+            $inserts[] = 'title=' . database::quote($new_menuType);
+            $inserts[] = 'description=' . database::quote('Menu Type created by CustomTables');
             $menu_types_id = ESTables::insertRecords('#__menu_types', $inserts);
         }
 
@@ -674,12 +666,11 @@ class ImportTables
 
         if (!is_array($menutype_old) or count($menutype_old) == 0) {
             //Create new menu type
-            $db = Factory::getDBO();
             $inserts = array();
             $inserts[] = 'asset_id=0';
-            $inserts[] = 'menutype=' . $db->Quote($menutype);
-            $inserts[] = 'title=' . $db->Quote($menutype_title);
-            $inserts[] = 'description=' . $db->Quote('Menu Type created by CustomTables');
+            $inserts[] = 'menutype=' . database::quote($menutype);
+            $inserts[] = 'title=' . database::quote($menutype_title);
+            $inserts[] = 'description=' . database::quote('Menu Type created by CustomTables');
         }
     }
 

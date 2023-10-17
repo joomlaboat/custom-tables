@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
+use CustomTables\database;
 use CustomTables\DataTypes;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
@@ -34,28 +35,17 @@ class JFormFieldCTField extends JFormFieldList
 
     public function getOptions($add_empty_option = true)//$name, $value, &$node, $control_name)
     {
-        // Get a db connection.
-        $db = Factory::getDbo();
-
         // Create a new query object.
-        $query = $db->getQuery(true);
-
-        // Select the text.
-        $query->select($db->quoteName('type'));
-        $query->from($db->quoteName('#__customtables_fields'));
-        $query->order($db->quoteName('type'));
+        $query = 'SELECT ' . database::quoteName('type') . ' FROM ' . database::quoteName('#__customtables_fields') . ' ORDER BY ' . database::quoteName('type');
 
         // Reset the query using our newly populated query object.
-        $db->setQuery($query);
-
-        $results = $db->loadColumn();
+        $results = database::loadColumn($query);
 
         $translations = DataTypes::fieldTypeTranslation();
         $_filter = array();
 
         if ($results) {
             // get model
-            //$model = $this->getModel();
             $results = array_unique($results);
 
             foreach ($results as $type) {

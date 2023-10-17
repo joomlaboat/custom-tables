@@ -64,6 +64,10 @@ class CustomtablesViewRecords extends JViewLegacy
             Inputbox::renderTableJoinSelectorJSON($this->ct, $key);
         } else
             $this->renderForm($tpl, $params);
+
+        // Set the document
+        $document = Factory::getDocument();
+        $this->setDocument($document);
     }
 
     protected function renderForm($tpl): bool
@@ -148,12 +152,9 @@ class CustomtablesViewRecords extends JViewLegacy
         JToolbarHelper::divider();
     }
 
-    protected function setDocument(): void
+    public function setDocument(Joomla\CMS\Document\Document $document): void
     {
         $isNew = $this->ct->Params->listing_id == 0;
-        if (!isset($this->document)) {
-            $this->document = Factory::getDocument();
-        }
-        $this->document->setTitle(Text::_($isNew ? 'COM_CUSTOMTABLES_RECORDS_NEW' : 'COM_CUSTOMTABLES_RECORDS_EDIT'));
+        $document->setTitle(Text::_($isNew ? 'COM_CUSTOMTABLES_RECORDS_NEW' : 'COM_CUSTOMTABLES_RECORDS_EDIT'));
     }
 }

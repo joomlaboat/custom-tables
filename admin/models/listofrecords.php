@@ -15,6 +15,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\common;
 use CustomTables\CT;
+use CustomTables\database;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 
@@ -64,14 +65,13 @@ class CustomtablesModelListOfRecords extends JModelList
     public function getItems()
     {
         // load parent items
-        $items = parent::getItems();
-        return $items;
+        return parent::getItems();
     }
 
     /**
      * Method to autopopulate the model state.
      *
-     * @return  void
+     * @return void
      */
     protected function populateState($ordering = null, $direction = 'asc')
     {
@@ -101,17 +101,9 @@ class CustomtablesModelListOfRecords extends JModelList
 
     protected function getListQuery()
     {
-        // Get the user object.
-        $user = Factory::getUser();
-
         // Create a new query object.
-        $db = Factory::getDBO();
-        $query = $db->getQuery(true);
-
-        $query->select(implode(',', $this->ct->Table->selects));
-
-        // From the customtables_item table
-        $query->from($db->quoteName($this->ct->Table->realtablename, $this->ct->Table->realtablename));
+        $query = 'SELECT ' . implode(',', $this->ct->Table->selects)
+            . ' FROM ' . database::quoteName($this->ct->Table->realtablename);
 
         $wheres_and = [];
         // Filter by published state
@@ -133,21 +125,19 @@ class CustomtablesModelListOfRecords extends JModelList
             foreach ($this->ct->Table->fields as $fieldRow) {
                 if ($fieldRow['type'] == 'string') {
                     $realfieldname = $fieldRow['realfieldname'];
-                    $where = $db->quote('%' . $db->escape($search) . '%');
+                    $where = database::quote('%' . $search . '%');
                     $wheres[] = ('(' . $this->ct->Table->realtablename . '.' . $realfieldname . ' LIKE ' . $where . ')');
                 }
             }
             $wheres_and[] = '(' . implode(' OR ', $wheres) . ')';
         }
 
-        if (count($wheres_and) > 0) {
-            $where_str = implode(' AND ', $wheres_and);
-            $query->where($where_str);
-        }
+        if (count($wheres_and) > 0)
+            $query .= ' WHERE ' . implode(' AND ', $wheres_and);
 
         // Add the list ordering clause.
         $order_by_Col = $this->ct->Table->realtablename . '.' . $this->ct->Table->realidfieldname;
-        $orderDirn = $this->state->get('list.direction', 'asc');
+        $orderDirection = $this->state->get('list.direction', 'asc');
 
         if ($this->ct->Env->version < 4) {
             if ($this->ordering_realfieldname != '')
@@ -155,16 +145,12 @@ class CustomtablesModelListOfRecords extends JModelList
         } else {
             $orderCol = $this->state->get('list.ordering', ($this->ordering_realfieldname != '' ? 'custom' : 'id'));
 
-            if ($orderCol == 'id')
-                $order_by_Col = $this->ct->Table->realtablename . '.' . $this->ct->Table->realidfieldname;
-            elseif ($orderCol == 'published')
+            if ($orderCol == 'published')
                 $order_by_Col = $this->ct->Table->realtablename . '.published';
             elseif ($orderCol == 'custom' and $this->ordering_realfieldname != '')
                 $order_by_Col = $this->ct->Table->realtablename . '.' . $this->ordering_realfieldname;
         }
-
-        $query->order($db->escape($order_by_Col . ' ' . $orderDirn));
-
+        $query .= ' ORDER BY ' . database::quoteName($order_by_Col) . ' ' . $orderDirection;
         return $query;
     }
 

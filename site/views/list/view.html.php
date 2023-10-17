@@ -54,8 +54,6 @@ class CustomTablesViewList extends JView
     function &_getViewLists()
     {
         $mainframe = Factory::getApplication();
-        $db = Factory::getDBO();
-
         $context = 'com_customtables.list.';
 
         $filter_order = $mainframe->getUserStateFromRequest($context . "filter_order", 'filter_order', 'm.ordering', 'cmd');

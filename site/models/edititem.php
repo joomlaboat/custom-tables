@@ -139,7 +139,7 @@ class CustomTablesModelEditItem extends JModelLegacy
         if ($this->listing_id !== null and (is_numeric($this->listing_id) or (!str_contains($this->listing_id, '=') and !str_contains($this->listing_id, '<') and !str_contains($this->listing_id, '>')))) {
             //Normal listing ID or CMD
             $query = 'SELECT ' . implode(',', $this->ct->Table->selects) . ' FROM ' . $this->ct->Table->realtablename
-                . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . $this->ct->db->quote($this->listing_id) . ' LIMIT 1';
+                . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . database::quote($this->listing_id) . ' LIMIT 1';
 
             $rows = database::loadAssocList($query);
 
@@ -399,20 +399,20 @@ class CustomTablesModelEditItem extends JModelLegacy
             $query = 'CREATE TEMPORARY TABLE ct_tmp AS TABLE ' . $this->ct->Table->realtablename . ' WITH NO DATA';
             database::setQuery($query);
 
-            $query = 'INSERT INTO ct_tmp (SELECT * FROM ' . $this->ct->Table->realtablename . ' WHERE ' . $this->ct->Table->realidfieldname . ' = ' . $this->ct->db->quote($listing_id) . ')';
+            $query = 'INSERT INTO ct_tmp (SELECT * FROM ' . $this->ct->Table->realtablename . ' WHERE ' . $this->ct->Table->realidfieldname . ' = ' . database::quote($listing_id) . ')';
 
         } else {
-            $query = 'CREATE TEMPORARY TABLE ct_tmp SELECT * FROM ' . $this->ct->Table->realtablename . ' WHERE ' . $this->ct->Table->realidfieldname . ' = ' . $this->ct->db->quote($listing_id);
+            $query = 'CREATE TEMPORARY TABLE ct_tmp SELECT * FROM ' . $this->ct->Table->realtablename . ' WHERE ' . $this->ct->Table->realidfieldname . ' = ' . database::quote($listing_id);
         }
         database::setQuery($query);
 
         $sets = array();
-        $sets[] = $this->ct->Table->realidfieldname . '=' . $this->ct->db->quote($new_id);
+        $sets[] = $this->ct->Table->realidfieldname . '=' . database::quote($new_id);
 
-        $query = 'UPDATE ct_tmp SET ' . implode(',', $sets) . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . $this->ct->db->quote($listing_id);
+        $query = 'UPDATE ct_tmp SET ' . implode(',', $sets) . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . database::quote($listing_id);
         database::setQuery($query);
 
-        $query = 'INSERT INTO ' . $this->ct->Table->realtablename . ' SELECT * FROM ct_tmp WHERE ' . $this->ct->Table->realidfieldname . '=' . $this->ct->db->quote($new_id);
+        $query = 'INSERT INTO ' . $this->ct->Table->realtablename . ' SELECT * FROM ct_tmp WHERE ' . $this->ct->Table->realidfieldname . '=' . database::quote($new_id);
         database::setQuery($query);
 
         common::inputSet("listing_id", $new_id);
@@ -688,7 +688,7 @@ class CustomTablesModelEditItem extends JModelLegacy
         }
 
         //get data
-        $query = 'SELECT ' . implode(',', $fields_to_save) . ' FROM ' . $this->ct->Table->realtablename . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . $this->ct->db->quote($listing_id) . ' LIMIT 1';
+        $query = 'SELECT ' . implode(',', $fields_to_save) . ' FROM ' . $this->ct->Table->realtablename . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . database::quote($listing_id) . ' LIMIT 1';
         $rows = database::loadAssocList($query);
 
         if (count($rows) != 1)
@@ -888,7 +888,6 @@ class CustomTablesModelEditItem extends JModelLegacy
             return '';
 
         $query = 'SELECT ' . implode(',', $this->ct->Table->selects) . ' FROM ' . $this->ct->Table->realtablename . ' ORDER BY ' . $this->ct->Table->realidfieldname . ' DESC LIMIT 1';
-        $this->ct->db->setQuery($query);
         $rows = database::loadAssocList($query);
         if (count($rows) != 1) {
             $msg = 'Record not saved';
@@ -1094,8 +1093,8 @@ class CustomTablesModelEditItem extends JModelLegacy
 
         if ($new_value != '') {
             $query = 'UPDATE ' . $this->ct->Table->realtablename
-                . ' SET ' . $to_field['realfieldname'] . '= ' . $this->ct->db->quote($new_value)
-                . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . $this->ct->db->quote($to_listing_id);
+                . ' SET ' . $to_field['realfieldname'] . '= ' . database::quote($new_value)
+                . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . database::quote($to_listing_id);
 
             database::setQuery($query);
             return true;

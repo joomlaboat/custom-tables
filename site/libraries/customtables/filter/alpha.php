@@ -44,8 +44,6 @@ class Alpha
 				}
 				else
 				{
-						$db = Factory::getDBO();
-
 						$parentid=Tree::getOptionIdFull(common::inputGet('optionname','','STRING'));
 
 

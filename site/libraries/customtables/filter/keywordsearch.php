@@ -346,7 +346,6 @@ class CustomTablesKeywordSearch
 
     function getKeywordSearch($inner_str, $where, &$result_rows, &$count, &$listing_ids)
     {
-        $db = Factory::getDBO();
         $inner = array($inner_str);
         $query = 'SELECT *, ' . $this->ct->Table->realtablename . '.' . $this->ct->Table->realidfieldname . ' AS listing_id';
         if ($this->ct->Table->published_field_found)

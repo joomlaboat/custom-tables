@@ -160,23 +160,17 @@ class CTUser
             return $rows[0];
     }
 
-    static public function GetUserGroups(int $userid)
+    static public function GetUserGroups(int $userid): string
     {
-        $db = Factory::getDBO();
-
         $groups = Access::getGroupsByUser($userid);
-        $groupid_list = '(' . implode(',', $groups) . ')';
-        $query = $db->getQuery(true);
-        $query->select('title');
-        $query->from('#__usergroups');
-        $query->where('id IN ' . $groupid_list);
-        $db->setQuery($query);
-        $rows = $db->loadRowList();
-        $grouplist = array();
+        $groupIdList = '(' . implode(',', $groups) . ')';
+        $query = 'SELECT title FROM #__usergroups WHERE id IN ' . $groupIdList;
+        $rows = database::loadRowList($query);
+        $groupList = array();
         foreach ($rows as $group)
-            $grouplist[] = $group[0];
+            $groupList[] = $group[0];
 
-        return implode(',', $grouplist);
+        return implode(',', $groupList);
     }
 
     public static function CreateUser($realtablename, $realidfieldname, $email, $name, $usergroups, $listing_id, $useridfieldname): bool
@@ -207,7 +201,6 @@ class CTUser
         return true;
     }
 
-    //------------- USER CREATION
     static public function CreateUserAccount($fullname, $username, $password, $email, $group_names, &$msg): ?int
     {
         //Get group IDs
@@ -259,14 +252,11 @@ class CTUser
         }
 
         //Apply group
-        $db = Factory::getDBO();
 
         foreach ($group_ids as $group_id) {
             $query = 'INSERT #__user_usergroup_map SET user_id=' . $user->id . ', group_id=' . $group_id;
             database::setQuery($query);
         }
-
-        //---------------------------------------
 
         // Compile the notification mail values.
         $data = $user->getProperties();
@@ -324,15 +314,16 @@ class CTUser
         return $user->id;
     }
 
+    //------------- USER CREATION
+
     static protected function getUserGroupIDsByName($group_names): ?array
     {
-        $db = Factory::getDBO();
         $new_names = array();
         $names = explode(',', $group_names);
         foreach ($names as $name) {
             $n = preg_replace("/[^[:alnum:][:space:]]/u", '', trim($name));
             if ($n != '')
-                $new_names[] = 'title=' . $db->quote($n);
+                $new_names[] = 'title=' . database::quote($n);
         }
 
         if (count($new_names) == 0)
@@ -355,15 +346,13 @@ class CTUser
 
     static public function UpdateUserField(string $realtablename, string $realidfieldname, string $useridfieldname, string $existing_user_id, $listing_id)
     {
-        $db = Factory::getDBO();
-        $query = 'UPDATE ' . $realtablename . ' SET ' . $useridfieldname . '=' . $existing_user_id . ' WHERE ' . $realidfieldname . '=' . $db->quote($listing_id) . ' LIMIT 1';
+        $query = 'UPDATE ' . $realtablename . ' SET ' . $useridfieldname . '=' . $existing_user_id . ' WHERE ' . $realidfieldname . '=' . database::quote($listing_id) . ' LIMIT 1';
         database::setQuery($query);
     }
 
     static public function CheckIfUserNameExist(string $username): bool
     {
-        $db = Factory::getDBO();
-        $query = 'SELECT id FROM #__users WHERE username=' . $db->quote($username) . ' LIMIT 1';
+        $query = 'SELECT id FROM #__users WHERE username=' . database::quote($username) . ' LIMIT 1';
         $rows = database::loadAssocList($query);
         if (count($rows) == 1)
             return true;
@@ -373,8 +362,7 @@ class CTUser
 
     static public function CheckIfUserExist(string $username, string $email)
     {
-        $db = Factory::getDBO();
-        $query = 'SELECT id FROM #__users WHERE username=' . $db->quote($username) . ' AND email=' . $db->quote($email) . ' LIMIT 1';
+        $query = 'SELECT id FROM #__users WHERE username=' . database::quote($username) . ' AND email=' . database::quote($email) . ' LIMIT 1';
         $rows = database::loadAssocList($query);
         if (count($rows) != 1)
             return 0;
@@ -387,8 +375,7 @@ class CTUser
     {
         $existing_user = '';
         $existing_name = '';
-        $db = Factory::getDBO();
-        $query = 'SELECT id, username, name FROM #__users WHERE email=' . $db->quote($email) . ' LIMIT 1';
+        $query = 'SELECT id, username, name FROM #__users WHERE email=' . database::quote($email) . ' LIMIT 1';
         $rows = database::loadAssocList($query);
         if (count($rows) == 1) {
             $row = $rows[0];
@@ -424,7 +411,6 @@ class CTUser
         return $isOk;
     }
 
-    //checkAccess
     public static function CheckAuthorization(CT &$ct, int $action = 1)
     {
         if ($action == 0)
@@ -477,6 +463,8 @@ class CTUser
 
         return true;
     }
+
+    //checkAccess
 
     public static function checkIfItemBelongsToUser(CT &$ct, string $userIdField, string $listing_id): bool
     {
@@ -589,7 +577,7 @@ class CTUser
         }
 
         if ($listing_id != '' and $listing_id != 0)
-            $wheres[] = $ct->Table->realidfieldname . '=' . $ct->db->quote($listing_id);
+            $wheres[] = $ct->Table->realidfieldname . '=' . database::quote($listing_id);
 
         if ($wheres_owner_str != '')
             $wheres[] = '(' . $wheres_owner_str . ')';
@@ -612,8 +600,6 @@ class CTUser
         if ($valueArrayString == '')
             return '';
 
-        $db = Factory::getDBO();
-
         $where = array();
         $valueArray = explode(',', $valueArrayString);
         foreach ($valueArray as $value) {
@@ -633,5 +619,16 @@ class CTUser
             $groups[] = $opt['title'];
 
         return implode(',', $groups);
+    }
+
+    function authorise(string $action, ?string $assetName): bool
+    {
+        if (defined('_JEXEC')) {
+            $user = Factory::getUser();
+            return $user->authorise($action, $assetName);
+        } else {
+
+        }
+        return false;
     }
 }

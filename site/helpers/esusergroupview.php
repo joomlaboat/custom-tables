@@ -9,6 +9,7 @@
  **/
 
 // Check to ensure this file is included in Joomla!
+use CustomTables\database;
 use Joomla\CMS\Factory;
 
 if (!defined('_JEXEC') and !defined('WPINC')) {
@@ -19,16 +20,8 @@ class JHTMLESUserGroupView
 {
     public static function render($value, $field = '')
     {
-
-        $db = Factory::getDBO();
-
-        $query = $db->getQuery(true);
-        $query->select('#__usergroups.title AS name');
-        $query->from('#__usergroups');
-        $query->where('id=' . (int)$value);
-        $query->limit('1');
-
-        $options = database::loadObjectList((string)$query);
+        $query = 'SELECT #__usergroups.title AS name FROM #__usergroups WHERE id=' . (int)$value . ' LIMIT 1';
+        $options = database::loadObjectList($query);
 
         if (count($options) == 0)
             return '';
