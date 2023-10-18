@@ -35,6 +35,8 @@ class CustomtablesViewFields extends JViewLegacy
     var $tableid;
     var $table_row;
     var $allTables;
+    var $docuemnt;
+    var $item;
 
     public function display($tpl = null)
     {
@@ -88,15 +90,15 @@ class CustomtablesViewFields extends JViewLegacy
 
         $this->allTables = Tables::getAllTables();
 
+        // Set the document
+        $this->document = Factory::getDocument();
+        $this->setDocument($this->document);
+
         // Display the template
         if ($this->version < 4)
             parent::display($tpl);
         else
             parent::display('quatro');
-
-        // Set the document
-        $document = Factory::getDocument();
-        $this->setDocument($document);
     }
 
     /**
@@ -160,11 +162,12 @@ class CustomtablesViewFields extends JViewLegacy
      */
     public function setDocument(Joomla\CMS\Document\Document $document): void
     {
-        $isNew = ($this->item->id < 1);
-        $document->setTitle(Text::_($isNew ? 'COM_CUSTOMTABLES_FIELDS_NEW' : 'COM_CUSTOMTABLES_FIELDS_EDIT'));
-        $document->addCustomTag('<script src="' . JURI::root(true) . '/administrator/components/com_customtables/views/fields/submitbutton.js"></script>');
-
-        JText::script('view not acceptable. Error');
+        if ($this->item !== null) {
+            $isNew = ($this->item->id < 1);
+            $document->setTitle(Text::_($isNew ? 'COM_CUSTOMTABLES_FIELDS_NEW' : 'COM_CUSTOMTABLES_FIELDS_EDIT'));
+            $document->addCustomTag('<script src="' . JURI::root(true) . '/administrator/components/com_customtables/views/fields/submitbutton.js"></script>');
+            JText::script('view not acceptable. Error');
+        }
     }
 
     /**

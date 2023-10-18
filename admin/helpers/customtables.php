@@ -123,11 +123,8 @@ abstract class CustomtablesHelper
 
         JHtmlSidebar::addEntry(Text::_('COM_CUSTOMTABLES_SUBMENU_LISTOFTABLES'), 'index.php?option=com_customtables&view=listoftables', $submenu === 'listoftables');
         JHtmlSidebar::addEntry(Text::_('COM_CUSTOMTABLES_SUBMENU_LISTOFLAYOUTS'), 'index.php?option=com_customtables&view=listoflayouts', $submenu === 'listoflayouts');
-
         JHtmlSidebar::addEntry(Text::_('COM_CUSTOMTABLES_SUBMENU_DATABASECHECK'), 'index.php?option=com_customtables&view=databasecheck', $submenu === 'databasecheck');
-
         JHtmlSidebar::addEntry(Text::_('COM_CUSTOMTABLES_SUBMENU_DOCUMENTATION'), 'index.php?option=com_customtables&view=documentation', $submenu === 'documentation');
-
     }
 
     /**
@@ -224,6 +221,7 @@ abstract class CustomtablesHelper
         preg_match_all('!\d+!', $string, $numbers);
         // check if we have any numbers
         if (isset($numbers[0]) && self::checkArray($numbers[0])) {
+            $searchReplace = [];
             foreach ($numbers[0] as $number) {
                 $searchReplace[$number] = self::numberToString((int)$number);
             }

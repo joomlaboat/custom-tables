@@ -13,6 +13,7 @@
 \defined('_JEXEC') or die;
 
 use CustomTables\CT;
+use CustomTables\ListOfLayouts;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ContentHelper;
 use Joomla\CMS\Language\Text;

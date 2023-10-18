@@ -202,8 +202,6 @@ class CustomtablesControllerRecords extends JControllerForm
             $listing_id = $cid[0];
         }
 
-        //throw new Exception('stop here');
-
         $tableid = common::inputGetInt('tableid', 0);
         // Setup redirect info.
 

@@ -80,7 +80,7 @@ $edit = "index.php?option=com_customtables&view=listoflayouts&task=layouts.edit"
             <?php echo $item->id; ?>
         </td>
 
-        <td scope="row">
+        <td>
             <?php
             $layoutsize = strlen($item->layoutcode);
             echo number_format($layoutsize);

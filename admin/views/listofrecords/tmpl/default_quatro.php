@@ -18,6 +18,7 @@ use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Router\Route;
 
 //HTMLHelper::_('behavior.multiselect');
+$saveOrderingUrl = null;
 
 if ($this->saveOrder and $this->ordering_realfieldname != '') {
     $saveOrderingUrl = 'index.php?option=com_customtables&task=listofrecords.ordering&tableid=' . $this->ct->Table->tableid . '&tmpl=component';

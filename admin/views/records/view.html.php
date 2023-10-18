@@ -40,6 +40,7 @@ class CustomtablesViewRecords extends JViewLegacy
     var int $refId;
     var string $referral;
     var string $formLink;
+    var $document;
 
     public function display($tpl = null)
     {
@@ -60,14 +61,10 @@ class CustomtablesViewRecords extends JViewLegacy
         $this->row = $this->ct->Table->loadRecord($listing_id);
 
         $key = common::inputGetCmd('key');
-        if ($key != '') {
+        if ($key != '')
             Inputbox::renderTableJoinSelectorJSON($this->ct, $key);
-        } else
+        else
             $this->renderForm($tpl, $params);
-
-        // Set the document
-        $document = Factory::getDocument();
-        $this->setDocument($document);
     }
 
     protected function renderForm($tpl): bool
@@ -109,10 +106,11 @@ class CustomtablesViewRecords extends JViewLegacy
         // Display the template
         $this->formLink = JURI::root(false) . 'administrator/index.php?option=com_customtables&amp;view=records&amp;layout=edit&amp;tableid=' . $this->tableId . '&id=' . $this->ct->Params->listing_id;
 
-        parent::display($tpl);
-
         // Set the document
-        $this->setDocument();
+        $this->document = Factory::getDocument();
+        $this->setDocument($this->document);
+
+        parent::display($tpl);
         return true;
     }
 
@@ -154,7 +152,9 @@ class CustomtablesViewRecords extends JViewLegacy
 
     public function setDocument(Joomla\CMS\Document\Document $document): void
     {
-        $isNew = $this->ct->Params->listing_id == 0;
-        $document->setTitle(Text::_($isNew ? 'COM_CUSTOMTABLES_RECORDS_NEW' : 'COM_CUSTOMTABLES_RECORDS_EDIT'));
+        if (isset($this->ct) and $this->ct !== null) {
+            $isNew = $this->ct->Params->listing_id == 0;
+            $document->setTitle(Text::_($isNew ? 'COM_CUSTOMTABLES_RECORDS_NEW' : 'COM_CUSTOMTABLES_RECORDS_EDIT'));
+        }
     }
 }

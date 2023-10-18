@@ -34,6 +34,7 @@ class CustomtablesViewTables extends JViewLegacy
     var $canDo;
     var $canCreate;
     var $canEdit;
+    var $item;
 
     /**
      * display method of View
@@ -80,15 +81,15 @@ class CustomtablesViewTables extends JViewLegacy
             throw new Exception(implode("\n", $errors), 500);
         }
 
+        // Set the document
+        $this->document = Factory::getDocument();
+        $this->setDocument($this->document);
+
         // Display the template
         if ($this->version < 4)
             parent::display($tpl);
         else
             parent::display('quatro');
-
-        // Set the document
-        $document = Factory::getDocument();
-        $this->setDocument($document);
     }
 
 
@@ -137,9 +138,11 @@ class CustomtablesViewTables extends JViewLegacy
      */
     public function setDocument(Joomla\CMS\Document\Document $document): void
     {
-        $isNew = ($this->item->id < 1);
-        $document->setTitle(Text::_($isNew ? 'COM_CUSTOMTABLES_TABLES_NEW' : 'COM_CUSTOMTABLES_TABLES_EDIT'));
-        $document->addCustomTag('<script src="' . JURI::root(true) . '/administrator/components/com_customtables/views/tables/submitbutton.js"></script>');
+        if ($this->item !== null) {
+            $isNew = ($this->item->id < 1);
+            $document->setTitle(Text::_($isNew ? 'COM_CUSTOMTABLES_TABLES_NEW' : 'COM_CUSTOMTABLES_TABLES_EDIT'));
+            $document->addCustomTag('<script src="' . JURI::root(true) . '/administrator/components/com_customtables/views/tables/submitbutton.js"></script>');
+        }
     }
 
     /**

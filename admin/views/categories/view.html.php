@@ -26,10 +26,21 @@ use Joomla\CMS\Version;
  */
 class CustomtablesViewCategories extends JViewLegacy
 {
-    /**
-     * display method of View
-     * @return void
-     */
+    var $document;
+    var $version;
+    var $form;
+    var $item;
+    var $script;
+    var $state;
+    var $canDo;
+    var $canCreate;
+    var $canEdit;
+    var $canState;
+    var $canDelete;
+    var $ref;
+    var $refid;
+    var $referral;
+
     public function display($tpl = null)
     {
         $version = new Version;
@@ -43,7 +54,6 @@ class CustomtablesViewCategories extends JViewLegacy
         // get action permissions
 
         $this->canDo = ContentHelper::getActions('com_customtables', 'categories', $this->item->id);
-
         $this->canCreate = $this->canDo->get('categories.create');
         $this->canEdit = $this->canDo->get('categories.edit');
         $this->canState = $this->canDo->get('categories.edit.state');
@@ -69,12 +79,12 @@ class CustomtablesViewCategories extends JViewLegacy
             throw new Exception(implode("\n", $errors), 500);
         }
 
+        // Set the document
+        $this->document = Factory::getDocument();
+        $this->setDocument($this->document);
+
         // Display the template
         parent::display($tpl);
-
-        // Set the document
-        $document = Factory::getDocument();
-        $this->setDocument($document);
     }
 
     /**
@@ -144,13 +154,15 @@ class CustomtablesViewCategories extends JViewLegacy
      */
     public function setDocument(Joomla\CMS\Document\Document $document): void
     {
-        $isNew = ($this->item->id < 1);
-        $document->setTitle(Text::_($isNew ? 'COM_CUSTOMTABLES_CATEGORIES_NEW' : 'COM_CUSTOMTABLES_CATEGORIES_EDIT'));
+        if ($this->item !== null) {
+            $isNew = ($this->item->id < 1);
+            $document->setTitle(Text::_($isNew ? 'COM_CUSTOMTABLES_CATEGORIES_NEW' : 'COM_CUSTOMTABLES_CATEGORIES_EDIT'));
 
-        if ($this->version < 4)
-            $document->addCustomTag('<script src=' . JURI::root(true) . '/administrator/components/com_customtables/views/categories/submitbutton.js"></script>');
+            if ($this->version < 4)
+                $document->addCustomTag('<script src=' . JURI::root(true) . '/administrator/components/com_customtables/views/categories/submitbutton.js"></script>');
 
-        //JText::script('view not acceptable. Error');
+            //JText::script('view not acceptable. Error');
+        }
     }
 
     /**

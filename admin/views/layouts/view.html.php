@@ -33,6 +33,8 @@ class CustomtablesViewLayouts extends JViewLegacy
 
     var CT $ct;
     var $allTables;
+    var $document;
+    var $item;
 
     public function display($tpl = null)
     {
@@ -57,9 +59,10 @@ class CustomtablesViewLayouts extends JViewLegacy
                 . 'FROM #__customtables_layouts WHERE id=' . $layoutId . ' LIMIT 1';
 
         $rows = database::loadObjectList($query);
-        if (count($rows) == 1)
+
+        if (count($rows) == 1) {
             $this->item = $rows[0];
-        else {
+        } else {
             $emptyItem = ['id' => 0, 'tableid' => null, 'layoutname' => null, 'layoutcode' => null, 'layoutmobile' => null, 'layoutcss' => null, 'layoutjs' => null, 'ts' => 0];
             $this->item = (object)$emptyItem;
         }
@@ -104,16 +107,16 @@ class CustomtablesViewLayouts extends JViewLegacy
             $this->active_tab = 'layoutjs-tab';
 
         $this->allTables = Tables::getAllTables();
+        $this->document = Factory::getDocument();
+
+        // Set the document
+        $this->setDocument($this->document);
 
         // Display the template
         if ($this->ct->Env->version < 4)
             parent::display($tpl);
         else
             parent::display('quatro');
-
-        // Set the document
-        $document = Factory::getDocument();
-        $this->setDocument($document);
     }
 
     /**
@@ -205,10 +208,12 @@ class CustomtablesViewLayouts extends JViewLegacy
      */
     public function setDocument(Joomla\CMS\Document\Document $document): void
     {
-        $isNew = ($this->item->id < 1);
-        $document->setTitle(Text::_($isNew ? 'COM_CUSTOMTABLES_LAYOUTS_NEW' : 'COM_CUSTOMTABLES_LAYOUTS_EDIT'));
-        $document->addCustomTag('<script src="' . JURI::root(true) . '/administrator/components/com_customtables/views/layouts/submitbutton.js"></script>');
-        JText::script('view not acceptable. Error');
+        if ($this->item !== null) {
+            $isNew = ($this->item->id < 1);
+            $document->setTitle(Text::_($isNew ? 'COM_CUSTOMTABLES_LAYOUTS_NEW' : 'COM_CUSTOMTABLES_LAYOUTS_EDIT'));
+            $document->addCustomTag('<script src="' . JURI::root(true) . '/administrator/components/com_customtables/views/layouts/submitbutton.js"></script>');
+            JText::script('view not acceptable. Error');
+        }
     }
 
     /**
