@@ -165,7 +165,7 @@ class Environment
 
             $this->loadTwig = $params->get('loadTwig') == '1';
             $this->toolbarIcons = strval($params->get('toolbaricons'));
-            $this->legacySupport = $params->get('legacysupport') == '';
+            $this->legacySupport = $params->get('legacysupport') == 'legacy';
 
             $this->folderToSaveLayouts = $params->get('folderToSaveLayouts');
             if ($this->folderToSaveLayouts !== null)

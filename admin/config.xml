@@ -69,7 +69,7 @@
                 default="puretwig"
                 description="Support old style layout syntax, example: *fieldname*, [fieldname], |fieldname|, {button:save}. Use Twig tags instead: {{ fieldname.title }}, {{ fieldname }}, {{ fieldname.value }}, {{ html.button('save') }}"
         >
-            <option value="">Twig and Legacy</option>
+            <option value="legacy">Twig and Legacy</option>
             <option value="puretwig">Pure Twig</option>
         </field>
 
