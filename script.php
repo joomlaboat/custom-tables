@@ -76,8 +76,22 @@ class com_customtablesInstallerScript
      */
     function postflight($type, $parent)
     {
-        // get application
-        $app = Factory::getApplication();
+        if (!file_exists(JPATH_SITE . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'ct_images'))
+            mkdir(JPATH_SITE . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'ct_images');
+
+        $path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR;
+        $loader_file = $path . 'loader.php';
+        if (file_exists($loader_file)) {
+            //Do not run on uninstall
+            require_once($loader_file);
+            CTLoader(true);
+            $ct = new CT;
+
+            $result = IntegrityChecks::check($ct, true, false);
+            if (count($result) > 0)
+                echo '<ol><li>' . implode('</li><li>', $result) . '</li></ol>';
+        }
+
         // set the default component settings
         if ($type == 'install') {
             // Install the global extension assets permission.
@@ -114,21 +128,7 @@ class com_customtablesInstallerScript
         }
         */
 
-        if (!file_exists(JPATH_SITE . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'ct_images'))
-            mkdir(JPATH_SITE . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'ct_images');
 
-        $path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR;
-        $loader_file = $path . 'loader.php';
-        if (file_exists($loader_file)) {
-            //Do not run in on uninstall
-            require_once($loader_file);
-            CTLoader(true);
-            $ct = new CT;
-
-            $result = IntegrityChecks::check($ct, true, false);
-            if (count($result) > 0)
-                echo '<ol><li>' . implode('</li><li>', $result) . '</li></ol>';
-        }
     }
 
     /**
