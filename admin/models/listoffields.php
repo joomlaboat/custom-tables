@@ -143,7 +143,7 @@ class CustomtablesModelListoffields extends JModelList
             if (stripos($search, 'id:') === 0) {
                 $where [] = 'a.id = ' . (int)substr($search, 3);
             } else {
-                $search = database::quote('%' . database::quote($search) . '%');
+                $search = database::quote('%' . $search . '%');
                 $where [] = '(a.fieldname LIKE ' . $search . ' OR a.fieldtitle LIKE ' . $search . ')';
             }
         }

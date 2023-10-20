@@ -41,8 +41,49 @@ class Languages
                 $this->LanguageList[] = $row;
             }
             return $this->LanguageList;
-        } else
-            return [];
+        } else {
+
+            require_once ABSPATH . 'wp-admin/includes/translation-install.php';
+            $languages = get_available_languages();
+            $translations = wp_get_available_translations();
+
+            $language_info = array();
+            $language_info[] = (object)[
+                'id' => 1,
+                'language' => 'en_US',
+                'caption' => 'English',
+                'title' => 'English (United States)',
+                'original_sef' => 'en',
+                'sef' => 'en'];
+
+            $i = 2;
+            foreach ($languages as $lang_code) {
+                $translation = $this->wp_findLanguageTranslation($translations, $lang_code);
+
+                $parts = explode('_', $lang_code);
+                $sef = $parts[0];
+
+                $language_info[] = (object)[
+                    'id' => $i,
+                    'language' => $lang_code,
+                    'caption' => $translation['english_name'],
+                    'title' => $translation['english_name'] . ' (' . $translation['native_name'] . ')',
+                    'original_sef' => $sef,
+                    'sef' => $sef];
+
+                $i += 1;
+            }
+            return $language_info;
+        }
+    }
+
+    protected function wp_findLanguageTranslation($translations, $lang_code)
+    {
+        foreach ($translations as $translation) {
+            if ($translation['language'] == $lang_code)
+                return $translation;
+        }
+        return null;
     }
 
     function getLangPostfix(): string
