@@ -249,8 +249,9 @@ function doTheTask(CT &$ct, $task, $edit_model, $this_)
             $saveField = new SaveFieldQuerySet($ct, $ct->Table->record, false);
             $field = new Field($ct, $fieldrow);
 
+
             if ($saveField->Try2CreateUserAccount($field))
-                return (object)array('link' => $link, 'msg' => null, 'status' => null);
+                return (object)array('link' => $link, 'msg' => 'User create', 'status' => 'notice');
             else
                 return (object)array('link' => $link, 'msg' => JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_USER_NOTCREATED'), 'status' => 'error');
 

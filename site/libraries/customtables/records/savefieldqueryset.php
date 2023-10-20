@@ -1026,7 +1026,7 @@ class SaveFieldQuerySet
 
             $email = $this->ct->Env->user->email . '';
             if ($email != '') {
-                $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_ALREADY_EXISTS'), 'error');
+                $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_ALREADY_EXISTS'), 'warning');
                 return false; //all good, user already assigned.
             }
         }

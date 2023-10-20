@@ -30,12 +30,18 @@ class CTUser
 {
     var int $id;
     var array $groups;
+    var ?string $email;
     var bool $isUserAdministrator;
+    var ?string $name;
+    var ?string $username;
 
     public function __construct()
     {
         $this->id = 0;
         $this->groups = [];
+        $this->email = null;
+        $this->name = null;
+        $this->username = null;
 
         if (defined('_JEXEC')) {
             $version_object = new Version;
@@ -48,9 +54,12 @@ class CTUser
 
             $this->id = is_null($user) ? 0 : $user->id;
 
-            if ($user !== null)
+            if ($user !== null) {
                 $this->groups = $user->get('groups');
-
+                $this->email = $user->email;
+                $this->name = $user->name;
+                $this->username = $user->username;
+            }
             $this->isUserAdministrator = in_array(8, $this->groups);//8 is Super Users
 
         } else {
