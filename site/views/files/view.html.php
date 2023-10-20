@@ -20,6 +20,7 @@ use CustomTables\CT;
 use CustomTables\database;
 use CustomTables\Field;
 use CustomTables\Fields;
+use Joomla\CMS\Factory;
 
 class CustomTablesViewFiles extends JViewLegacy
 {
@@ -179,7 +180,7 @@ class CustomTablesViewFiles extends JViewLegacy
         return $content;
     }
 
-    function render_file_output($filepath)
+    function render_file_output($filepath): bool
     {
         if (strlen($filepath) > 8 and str_starts_with($filepath, '/images/'))
             $file = JPATH_SITE . str_replace('/', DIRECTORY_SEPARATOR, $filepath);
@@ -188,7 +189,7 @@ class CustomTablesViewFiles extends JViewLegacy
 
         if (!file_exists($file)) {
             $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_FILE_NOT_FOUND'), 'error');
-            return;
+            return false;
         }
 
         $content = file_get_contents($file);
@@ -196,7 +197,12 @@ class CustomTablesViewFiles extends JViewLegacy
         $parts = explode('/', $file);
         $filename = end($parts);
 
-        $content = $this->ProcessContentWithCustomPHP($content, $this->row);
+        try {
+            $content = $this->ProcessContentWithCustomPHP($content, $this->row);
+        } catch (Exception $e) {
+            Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
+            return false;
+        }
 
         if (ob_get_contents()) ob_end_clean();
 

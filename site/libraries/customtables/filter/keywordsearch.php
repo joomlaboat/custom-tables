@@ -359,10 +359,10 @@ class CustomTablesKeywordSearch
         if ($this->esordering)
             Ordering::getOrderingQuery($ordering, $query, $inner, $this->esordering, $this->ct->Languages->Postfix, $this->ct->Table->realtablename);
 
-        $query .= ' FROM ' . $this->ct->Table->realtablename . ' ';
-        $query .= implode(' ', $inner) . ' ';
-        $query .= ' WHERE ' . $where . ' ';
-        $query .= ' GROUP BY listing_id ';
+        $query .= ' FROM ' . $this->ct->Table->realtablename;
+        $query .= ' ' . implode(' ', $inner);
+        $query .= ' WHERE ' . $where;
+        $query .= ' GROUP BY listing_id';
 
         if (count($ordering) > 0)
             $query .= ' ORDER BY ' . implode(',', $ordering);
