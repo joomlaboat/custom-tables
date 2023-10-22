@@ -14,6 +14,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\database;
 use CustomTables\Fields;
+use CustomTables\ListOfTables;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 
@@ -110,7 +111,7 @@ foreach ($this->items as $i => $item): ?>
             else {
                 echo '<a href="' . JURI::root(true) . '/administrator/index.php?option=com_customtables&view=listofrecords&tableid=' . $item->id . '">'
                     . Text::_('COM_CUSTOMTABLES_TABLES_RECORDS_LABEL')
-                    . ' (' . $this->getNumberOfRecords($item->realtablename, $item->realidfieldname) . ')</a>';
+                    . ' (' . listOfTables::getNumberOfRecords($item->realtablename, $item->realidfieldname) . ')</a>';
             }
             ?>
         </td>

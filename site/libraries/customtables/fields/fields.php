@@ -823,10 +823,9 @@ class Fields
         return $row->id;
     }
 
-    public static function addLanguageField($tablename, $original_fieldname, $new_fieldname): bool
+    public static function addLanguageField($tablename, $original_fieldname, $new_fieldname, ?string $AdditionOptions = ''): bool
     {
         $fields = Fields::getExistingFields($tablename, false);
-
         foreach ($fields as $field) {
             if ($field['column_name'] == $original_fieldname) {
                 $AdditionOptions = '';
@@ -837,6 +836,12 @@ class Fields
                 return true;
             }
         }
+
+        if ($original_fieldname == $new_fieldname) {
+            Fields::AddMySQLFieldNotExist($tablename, $new_fieldname, $field['column_type'], $AdditionOptions);
+            return true;
+        }
+
         return false;
     }
 
@@ -845,11 +850,15 @@ class Fields
         if (!Fields::checkIfFieldExists($realtablename, $realfieldname)) {
             $query = 'ALTER TABLE ' . $realtablename . ' ADD COLUMN ' . $realfieldname . ' ' . $fieldType . ' ' . $options;
 
-            try {
+            if (defined('_JEXEC')) {
+                try {
+                    database::setQuery($query);
+                } catch (Exception $e) {
+                    $app = Factory::getApplication();
+                    $app->enqueueMessage($e->getMessage(), 'error');
+                }
+            } elseif (defined('WPINC')) {
                 database::setQuery($query);
-            } catch (Exception $e) {
-                $app = Factory::getApplication();
-                $app->enqueueMessage($e->getMessage(), 'error');
             }
         }
     }

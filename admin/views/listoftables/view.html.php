@@ -209,22 +209,4 @@ class CustomtablesViewListoftables extends JViewLegacy
             }
         }
     }
-
-    protected function getNumberOfRecords($realtablename, $realidfield)
-    {
-        $query = 'SELECT COUNT(' . $realidfield . ') AS count FROM ' . $realtablename . ' LIMIT 1';
-
-        try {
-            $rows = database::loadObjectList($query);
-        } catch (Exception $e) {
-            echo $e->getMessage();
-
-            $app = Factory::getApplication();
-            $app->enqueueMessage('Table "' . $realtablename . '" - ' . $e->getMessage(), 'error');
-            return 0;
-        }
-
-
-        return $rows[0]->count;
-    }
 }

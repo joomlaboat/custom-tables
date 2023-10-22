@@ -42,6 +42,7 @@ class CTUser
         $this->email = null;
         $this->name = null;
         $this->username = null;
+        $this->isUserAdministrator = false;
 
         if (defined('_JEXEC')) {
             $version_object = new Version;
@@ -63,18 +64,22 @@ class CTUser
             $this->isUserAdministrator = in_array(8, $this->groups);//8 is Super Users
 
         } else {
-            $this->id = get_current_user_id();
+            if (function_exists('get_current_user_id')) {
+                $this->id = get_current_user_id();
 
-            $current_user = wp_get_current_user();
-            $this->groups = $current_user->roles;
+                if (function_exists('wp_get_current_user')) {
+                    $current_user = wp_get_current_user();
+                    $this->groups = $current_user->roles;
 
-            if (current_user_can('activate_plugins'))
-                $this->isUserAdministrator = true;
-            else
-                $this->isUserAdministrator = false;
+                    if (current_user_can('activate_plugins'))
+                        $this->isUserAdministrator = true;
+                    else
+                        $this->isUserAdministrator = false;
 
-            //$current_user = wp_get_current_user();
-            //$has_capability = $current_user->has_cap('capability_name');
+                    //$current_user = wp_get_current_user();
+                    //$has_capability = $current_user->has_cap('capability_name');
+                }
+            }
         }
     }
 

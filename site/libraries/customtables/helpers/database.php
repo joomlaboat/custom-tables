@@ -2,6 +2,7 @@
 
 namespace CustomTables;
 
+use Exception;
 use Joomla\CMS\Factory;
 
 class database
@@ -111,7 +112,11 @@ class database
             if ($limitStart !== null)
                 $query .= ' OFFSET ' . $limitStart;
 
-            return $wpdb->get_results(str_replace('#__', $wpdb->prefix, $query));
+            $results = $wpdb->get_results(str_replace('#__', $wpdb->prefix, $query));
+            if ($wpdb->last_error !== '')
+                throw new Exception($wpdb->last_error);
+
+            return $results;
         }
         return null;
     }
@@ -125,6 +130,8 @@ class database
         } elseif (defined('WPINC')) {
             global $wpdb;
             $wpdb->query(str_replace('#__', $wpdb->prefix, $query));
+            if ($wpdb->last_error !== '')
+                throw new Exception($wpdb->last_error);
         }
     }
 
@@ -138,6 +145,48 @@ class database
         } elseif (defined('WPINC')) {
             global $wpdb;
             $wpdb->query(str_replace('#__', $wpdb->prefix, $query));
+            return $wpdb->insert_id;
+        }
+        return null;
+    }
+
+    public static function updateSets(string $tableName, array $sets, array $where): bool
+    {
+        $query = 'UPDATE ' . $tableName . ' SET ' . implode(',', $sets) . ' WHERE ' . implode(',', $where);
+        if (defined('_JEXEC')) {
+            $db = Factory::getDBO();
+            $db->setQuery($query);
+            $db->execute();
+            return true;
+        } elseif (defined('WPINC')) {
+            global $wpdb;
+            $new_query = str_replace('#__', $wpdb->prefix, $query);
+            $wpdb->query($new_query);
+
+            if ($wpdb->last_error !== '')
+                throw new Exception($wpdb->last_error);
+
+            return true;
+        }
+        return false;
+    }
+
+    public static function insertSets(string $tableName, array $sets): ?int
+    {
+        $query = 'INSERT ' . $tableName . ' SET ' . implode(',', $sets);
+        if (defined('_JEXEC')) {
+            $db = Factory::getDBO();
+            $db->setQuery($query);
+            $db->execute();
+            return $db->insertid();
+        } elseif (defined('WPINC')) {
+            global $wpdb;
+            $new_query = str_replace('#__', $wpdb->prefix, $query);
+            $wpdb->query($new_query);
+
+            if ($wpdb->last_error !== '')
+                throw new Exception($wpdb->last_error);
+
             return $wpdb->insert_id;
         }
         return null;

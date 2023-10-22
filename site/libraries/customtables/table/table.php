@@ -45,7 +45,6 @@ class Table
 
     function __construct($Languages, $Env, $tablename_or_id_not_sanitized, $useridfieldname = null)
     {
-        $this->db = Factory::getDBO();
         $this->Languages = $Languages;
         $this->Env = $Env;
         $this->tableid = 0;

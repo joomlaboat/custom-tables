@@ -93,10 +93,10 @@ class common
         if (defined('_JEXEC')) {
             return Factory::getApplication()->input->getString($parameter, $default);
         } else {
-            if (!isset($_GET[$parameter]))
+            if (!isset($_REQUEST[$parameter]))
                 return $default;
 
-            $source = strip_tags($_GET[$parameter]);
+            $source = strip_tags(wp_unslash($_REQUEST[$parameter]));
             return (string)sanitize_text_field($source);
         }
     }

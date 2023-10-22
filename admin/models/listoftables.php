@@ -14,7 +14,8 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
-use CustomTables\database;
+use CustomTables\CT;
+use CustomTables\ListOfTables;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Version;
@@ -26,6 +27,9 @@ jimport('joomla.application.component.modellist');
  */
 class CustomtablesModelListOfTables extends JModelList
 {
+    var CT $ct;
+    var $helperListOfLayout;
+
     public function __construct($config = array())
     {
         if (empty($config['filter_fields'])) {
@@ -41,6 +45,12 @@ class CustomtablesModelListOfTables extends JModelList
         }
 
         parent::__construct($config);
+
+        $this->ct = new CT;
+        $this->ct->setParams();
+
+        require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . 'admin-listoftables.php');
+        $this->helperListOfLayout = new listOfTables($this->ct);
     }
 
     /**
@@ -50,8 +60,12 @@ class CustomtablesModelListOfTables extends JModelList
      */
     public function getItems()
     {
-        // load parent items
-        return parent::getItems();
+        $items = parent::getItems();
+
+        if (is_array($items))
+            return $items;
+        else
+            return [];
     }
 
     /**
@@ -96,47 +110,15 @@ class CustomtablesModelListOfTables extends JModelList
      */
     protected function getListQuery()
     {
-        $categoryname = '(SELECT categoryname FROM #__customtables_categories AS categories WHERE categories.id=a.tablecategory LIMIT 1)';
-        $fieldcount = '(SELECT COUNT(fields.id) FROM #__customtables_fields AS fields WHERE fields.tableid=a.id AND fields.published=1 LIMIT 1)';
-        $selects = array();
-        $selects[] = ESTables::getTableRowSelects();
-        $selects[] = $categoryname . ' AS categoryname';
-        $selects[] = $fieldcount . ' AS fieldcount';
-
-        $query = 'SELECT ' . implode(',', $selects) . ' FROM ' . database::quoteName('#__customtables_tables') . ' AS a';
-        $where = [];
-
-        // Filter by published state
         $published = $this->getState('filter.published');
-        if (is_numeric($published))
-            $where [] = 'a.published = ' . (int)$published;
-        elseif (is_null($published) or $published === '')
-            $where [] = '(a.published = 0 OR a.published = 1)';
-
-        // Filter by search.
         $search = $this->getState('filter.search');
-        if (!empty($search)) {
-            if (stripos($search, 'id:') === 0) {
-                $where [] = 'a.id = ' . (int)substr($search, 3);
-            } else {
-                $search = database::quote('%' . $search . '%');
-                $where [] = '(a.tablename LIKE ' . $search . ')';
-            }
-        }
-
-        // Filter by Tableid.
-        if ($category = $this->getState('filter.tablecategory')) {
-            $where [] = 'a.tablecategory = ' . database::quote((int)$category);
-        }
-
-        $query .= ' WHERE ' . implode(' AND ', $where);
-        // Add the list ordering clause.
+        $category = $this->getState('filter.tablecategory');
         $orderCol = $this->state->get('list.ordering', 'a.id');
-        $orderDirn = $this->state->get('list.direction', 'asc');
-        if ($orderCol != '')
-            $query .= ' ORDER BY ' . database::quoteName($orderCol) . ' ' . $orderDirn;
+        $orderDirection = $this->state->get('list.direction', 'asc');
+        //$limit = $this->state->get('list.limit', 20);
+        //$start = $this->state->get('list.start', 0);
 
-        return $query;
+        return $this->helperListOfLayout->getListQuery($published, $search, $category, $orderCol, $orderDirection);//, $limit, $start);
     }
 
     /**

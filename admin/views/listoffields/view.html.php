@@ -39,7 +39,6 @@ class CustomtablesViewListoffields extends JViewLegacy
     function display($tpl = null)
     {
         $this->ct = new CT;
-        $app = Factory::getApplication();
 
         if ($this->getLayout() !== 'modal') {
             // Include helper submenu

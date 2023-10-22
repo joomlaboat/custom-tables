@@ -13,6 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use CustomTables\database;
+use CustomTables\ListOfTables;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 use CustomTables\Fields;
@@ -120,7 +121,7 @@ foreach ($this->items as $i => $item): ?>
                 echo Text::_('COM_CUSTOMTABLES_TABLES_ID_FIELD_NOT_SET');
             else {
                 echo '<a class="btn btn-secondary" aria-describedby="tip-tablerecords' . $item->id . '" href="' . JURI::root(true) . '/administrator/index.php?option=com_customtables&view=listofrecords&tableid=' . $item->id . '">'
-                    . $this->getNumberOfRecords($item->realtablename, $item->realidfieldname) . '</a>'
+                    . listOfTables::getNumberOfRecords($item->realtablename, $item->realidfieldname) . '</a>'
                     . '<div role="tooltip" id="tip-tablerecords' . $item->id . '">' . Text::_('COM_CUSTOMTABLES_TABLES_RECORDS_LABEL') . '</div>';
             }
             ?>
