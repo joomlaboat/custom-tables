@@ -243,9 +243,9 @@ class ESTables
 
         if ($old_tablename != $tablename) {
             //rename table
-            $tablestatus = ESTables::getTableStatus($database, $dbPrefix, $old_tablename);
+            $tableStatus = ESTables::getTableStatus($database, $dbPrefix, $old_tablename);
 
-            if (count($tablestatus) > 0) {
+            if (count($tableStatus) > 0) {
                 $query = 'RENAME TABLE ' . database::quoteName($database . '.' . $dbPrefix . 'customtables_table_' . $old_tablename) . ' TO '
                     . database::quoteName($database . '.' . $dbPrefix . 'customtables_table_' . $tablename) . ';';
 

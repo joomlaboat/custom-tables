@@ -106,7 +106,7 @@ class ListOfTables
     {
         $table_row = ESTables::getTableRowByID($tableId);
 
-        if (isset($table_row->tablename) and (!isset($table_row->customtablename) or $table_row->customtablename === null)) // do not delete third-party tables
+        if (isset($table_row->tablename) and (!isset($table_row->customtablename))) // do not delete third-party tables
         {
             $realtablename = database::getDBPrefix() . 'customtables_table_' . $table_row->tablename; //not available for custom tablenames
             $serverType = database::getServerType();
@@ -129,11 +129,13 @@ class ListOfTables
         return true;
     }
 
-    function save($tableId): array
+    function save(?int $tableId): ?array
     {
+        // Check if running in WordPress context
         if (defined('WPINC')) {
             check_admin_referer('create-table', '_wpnonce_create-table');
 
+            // Check user capabilities
             if (!current_user_can('install_plugins')) {
                 wp_die(
                     '<h1>' . __('You need a higher level of permission.') . '</h1>' .
@@ -143,26 +145,48 @@ class ListOfTables
             }
         }
 
+
+        // Get database name and prefix
         $database = database::getDataBaseName();
         $dbPrefix = database::getDBPrefix();
+
+        // Initialize variables
         $moreThanOneLanguage = false;
         $fields = Fields::getListOfExistingFields('#__customtables_tables', false);
-
         $sets = [];
-        if (function_exists("transliterator_transliterate")) {
-            //$tablename = transliterator_transliterate("Any-Latin; Latin-ASCII; Lower()", common::inputPost('tablename'));
-            $tablename = transliterator_transliterate("Any-Latin; Latin-ASCII; Lower()", common::inputGetString('tablename'));
+        $tableTitle = null;
 
-        } else {
-            $tablename = common::inputGetString('tablename');
-            //$tablename = common::inputPost('tablename');
+        // Process table name
+        if (function_exists("transliterator_transliterate"))
+            $newTableName = transliterator_transliterate("Any-Latin; Latin-ASCII; Lower()", common::inputGetString('tablename'));
+        else
+            $newTableName = common::inputGetString('tablename');
+
+        $newTableName = strtolower(trim(preg_replace("/\W/", "", $newTableName)));
+
+        // Save as Copy
+        $old_tablename = '';
+        if (common::inputGetCmd('task') === 'save2copy') {
+            $originalTableId = common::inputGetInt('originaltableid');
+            if ($originalTableId !== null) {
+                $old_tablename = ESTables::getTableName($originalTableId);
+
+                // Handle copy table name
+                $copyTableName = $newTableName;
+                if ($old_tablename == $newTableName) {
+                    $copyTableName = 'copy_of_' . $newTableName;
+                }
+
+                while (ESTables::getTableID($newTableName) != 0) {
+                    $copyTableName = 'copy_of_' . $newTableName;
+                }
+
+                $tableId = null;
+                $newTableName = $copyTableName;
+            }
         }
 
-        $tablename = strtolower(trim(preg_replace("/\W/", "", $tablename)));
-
-        $tableid = 0;//(int)$data['id'];
-        $tableTitle = null;
-        $sets [] = 'tablename=' . database::quote($tablename);
+        // Process multilingual fields
         foreach ($this->ct->Languages->LanguageList as $lang) {
             $id_title = 'tabletitle';
             $id_desc = 'description';
@@ -190,65 +214,69 @@ class ListOfTables
             $moreThanOneLanguage = true; //More than one language installed
         }
 
-        //If it's a new table, check if field name is unique or add number "_1" if it's not.
-        if ($tableid == 0)
-            $tablename = ESTables::checkTableName($tablename);
+        // If it's a new table, check if field name is unique or add number "_1" if it's not.
+        if ($tableId === null) {
+            $already_exists = ESTables::getTableID($newTableName);
+            if ($already_exists == 0) {
+                $sets [] = 'tablename=' . database::quote($newTableName);
+            } else {
+                return null; //Abort if the table with this name already exists.
+            }
 
-        if ($tableid != 0 and (string)common::inputPostString('customtablename') == '')//do not rename real table if it's a third-party table - not part of the Custom Tables
-        {
-            ESTables::renameTableIfNeeded($tableid, $database, $dbPrefix, $tablename);
-        }
+            try {
+                $tableId = database::insertSets('#__customtables_tables', $sets);
+            } catch (Exception $e) {
+                return [$e->getMessage()];
+            }
 
-        $old_tablename = '';
-        // Alter the unique field for save as copy
-        if (common::inputGetCmd('task') === 'save2copy') {
-            $originalTableId = common::inputGetInt('originaltableid', 0);
-            if ($originalTableId != 0) {
-                $old_tablename = ESTables::getTableName($originalTableId);
+        } else {
 
-                if ($old_tablename == $tablename)
-                    $tablename = 'copy_of_' . $tablename;
+            //Case: Table renamed, check if the new name is available.
+            $this->ct->getTable($tableId);
+            if ($newTableName != $this->ct->Table->tablename) {
+                $already_exists = ESTables::getTableID($newTableName);
+                if ($already_exists != 0)
+                    return null; //Abort if the table with this name already exists.
+            }
 
-                while (ESTables::getTableID($tablename) != 0)
-                    $tablename = 'copy_of_' . $tablename;
+            if (common::inputPostString('customtablename') == '')//do not rename real table if it's a third-party table - not part of the Custom Tables
+            {
+                //This function will find the old Table Name of existing table and rename MySQL table.
+                ESTables::renameTableIfNeeded($tableId, $database, $dbPrefix, $newTableName);
+                $sets [] = 'tablename=' . database::quote($newTableName);
+            }
+
+            try {
+                database::updateSets('#__customtables_tables', $sets, ['id=' . $tableId]);
+            } catch (Exception $e) {
+                return [$e->getMessage()];
             }
         }
 
+        //Create MySQLTable
         $messages = array();
-        $customtablename = common::inputGetString('customtablename');
+        $customTableName = common::inputGetString('customtablename');
+        if ($customTableName == '-new-') {
+            // Case: Creating a new third-party table
+            $customTableName = $newTableName;
+            ESTables::createTableIfNotExists($database, $dbPrefix, $newTableName, $tableTitle, $customTableName);
+            $messages[] = ['New third-party table created.'];
 
-        try {
-            if ($tableId == 0)
-                $tableId = database::insertSets('#__customtables_tables', $sets);
-            else
-                database::updateSets('#__customtables_tables', $sets, ['id=' . $tableId]);
-
-        } catch (Exception $e) {
-            return [$e->getMessage()];
-        }
-
-        if ($customtablename == '-new-') {
-            $customtablename = $tablename;
-            ESTables::createTableIfNotExists($database, $dbPrefix, $tablename, $tableTitle, $customtablename);
-            return ['New third-party table created.'];
-
+            //Add fields if it's a third-party table and no fields added yet.
+            ESTables::addThirdPartyTableFieldsIfNeeded($database, $newTableName, $customTableName);
+            $messages[] = __('Third-party fields added.', 'customtables');
         } else {
-            if ($tableId !== null) {
-                $originalTableId = common::inputGetInt('originaltableid', 0);
+            // Case: Updating an existing table or creating a new custom table
+            $originalTableId = common::inputGetInt('originaltableid', 0);
 
-                if ($originalTableId != 0 and $old_tablename != '') {
-                    ESTables::copyTable($this->ct, $originalTableId, $tablename, $old_tablename, $customtablename);
-                    $messages[] = __('Table copied.', 'customtables');
-                }
-
-                ESTables::createTableIfNotExists($database, $dbPrefix, $tablename, $tableTitle, $customtablename);
+            if ($originalTableId != 0 and $old_tablename != '') {
+                // Copying an existing table
+                ESTables::copyTable($this->ct, $originalTableId, $newTableName, $old_tablename, $customTableName);
+                $messages[] = __('Table copied.', 'customtables');
+            } else {
+                // Creating a new custom table (without copying)
+                ESTables::createTableIfNotExists($database, $dbPrefix, $newTableName, $tableTitle, $customTableName);
                 $messages[] = __('Table created.', 'customtables');
-
-                //Add fields if it's a third-party table and no fields added yet.
-                if ($customtablename !== null and $customtablename != '') {
-                    ESTables::addThirdPartyTableFieldsIfNeeded($database, $tablename, $customtablename);
-                    $messages[] = __('Third-party fields added.', 'customtables');
-                }
             }
         }
         return $messages;
