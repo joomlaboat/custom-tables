@@ -192,7 +192,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
         <input type="hidden" name="filter_order" value="<?php echo $this->lists['order']; ?>"/>
         <input type="hidden" name="filter_order_Dir" value="<?php echo $this->lists['order_Dir']; ?>"/>
         <input type="hidden" name="Itemid"
-               value="<?php echo common::inputGet('Itemid', 0, 'INT'); ?>"/>
+               value="<?php echo common::inputGetInt('Itemid', 0); ?>"/>
 
         <?php echo JHTML::_('form.token'); ?>
     </form>

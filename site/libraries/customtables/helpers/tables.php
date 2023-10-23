@@ -213,7 +213,7 @@ class ESTables
         return database::loadObjectList('SHOW TABLE STATUS FROM ' . database::quoteName($database) . ' LIKE ' . database::quote($dbPrefix . 'customtables_table_' . $tablename));
     }
 
-    public static function insertRecords(string $realtablename, array $sets): int
+    public static function insertRecords(string $realtablename, array $sets): ?int
     {
         $serverType = database::getServerType();
         if ($serverType == 'postgresql') {
@@ -232,8 +232,16 @@ class ESTables
         try {
             return database::insert($query);
         } catch (Exception $e) {
-            Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
-            return false;
+
+            if (defined('_JEXEC')) {
+                Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
+            } elseif (defined('WPINC')) {
+                die($e->getMessage());
+                return null;
+            } else
+                die($e->getMessage());
+
+            return null;
         }
     }
 

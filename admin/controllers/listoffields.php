@@ -134,29 +134,20 @@ class CustomtablesControllerListOfFields extends JControllerAdmin
 
     public function delete()
     {
-        $tableid = common::inputGet('tableid', 0, 'int');
+        $tableId = common::inputGetInt('tableid');
 
-        if ($tableid != 0) {
-            $tableRow = ESTables::getTableRowByIDAssoc($tableid);
-            if (!is_object($tableRow) and $tableRow == 0) {
+        if ($tableId !== null) {
+            $ct = new CT();
+            $ct->getTable($tableId);
+
+            if ($ct->Table->tablename === null) {
                 Factory::getApplication()->enqueueMessage('Table not found', 'error');
                 return;
-            } else {
-                $tablename = $tableRow['tablename'];
             }
         } else {
             Factory::getApplication()->enqueueMessage('Table not set', 'error');
             return;
         }
-
-        $paramsArray = [];
-        $paramsArray['estableid'] = $tableid;
-        $paramsArray['establename'] = $tablename;
-        $_params = new JRegistry;
-        $_params->loadArray($paramsArray);
-
-        $ct = new CT($_params, false);
-        $ct->setTable($tableRow);
 
         $cid = common::inputPost('cid', array(), 'array');
         $cid = ArrayHelper::toInteger($cid);
@@ -171,7 +162,7 @@ class CustomtablesControllerListOfFields extends JControllerAdmin
         }
 
         $redirect = 'index.php?option=' . $this->option;
-        $redirect .= '&view=listoffields&tableid=' . (int)$tableid;
+        $redirect .= '&view=listoffields&tableid=' . (int)$tableId;
 
         $msg = 'COM_CUSTOMTABLES_LISTOFFIELDS_N_ITEMS_DELETED';
         if (count($cid) == 1)

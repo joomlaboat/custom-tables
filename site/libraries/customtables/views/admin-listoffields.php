@@ -20,27 +20,85 @@ use JHtml;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
+use Joomla\Utilities\ArrayHelper;
 
 class ListOfFields
 {
     var CT $ct;
-    var array $items;
-    var string $editLink;
+    var ?array $items;
+    var ?string $editLink;
 
-    var bool $canState;
-    var bool $canDelete;
-    var bool $canEdit;
-    var bool $saveOrder;
+    var ?bool $canState;
+    var ?bool $canDelete;
+    var ?bool $canEdit;
+    var ?bool $saveOrder;
 
-    function __construct(CT $ct, array $items, bool $canState, bool $canDelete, bool $canEdit, bool $saveOrder)
+    function __construct(CT $ct, ?array $items = null, ?bool $canState = null, ?bool $canDelete = null, ?bool $canEdit = null, ?bool $saveOrder = null)
     {
         $this->ct = $ct;
         $this->items = $items;
-        $this->editLink = "index.php?option=com_customtables&view=listoffields&task=fields.edit&tableid=" . $this->ct->Table->tableid;
-        $this->canState = $canState;
-        $this->canDelete = $canDelete;
-        $this->canEdit = $canEdit;
-        $this->saveOrder = $saveOrder;
+        if (isset($this->ct->Table))
+            $this->editLink = "index.php?option=com_customtables&view=listoffields&task=fields.edit&tableid=" . $this->ct->Table->tableid;
+        else
+            $this->editLink = null;
+
+        $this->canState = $canState ?? false;
+        $this->canDelete = $canDelete ?? false;
+        $this->canEdit = $canEdit ?? false;
+        $this->saveOrder = $saveOrder ?? false;
+    }
+
+    function getListQuery($published = null, $search = null, $type = null, $orderCol = null, $orderDirection = null, $limit = 0, $start = 0): string
+    {
+        $this->tableid = common::inputGetInt('tableid', 0);
+        $tabletitle = '(SELECT tabletitle FROM #__customtables_tables AS tables WHERE tables.id=a.tableid)';
+        $serverType = database::getServerType();
+
+        if ($serverType == 'postgresql')
+            $realfieldname_query = 'CASE WHEN customfieldname!=\'\' THEN customfieldname ELSE CONCAT(\'es_\',fieldname) END AS realfieldname';
+        else
+            $realfieldname_query = 'IF(customfieldname!=\'\', customfieldname, CONCAT(\'es_\',fieldname)) AS realfieldname';
+
+        $query = 'SELECT a.*, ' . $tabletitle . ' AS tabletitle, ' . $realfieldname_query . ' FROM ' . database::quoteName('#__customtables_fields') . ' AS a';
+        $where = [];
+
+        // Filter by published state
+        if (is_numeric($published))
+            $where [] = 'a.published = ' . (int)$published;
+        elseif (is_null($published) or $published === '')
+            $where [] = '(a.published = 0 OR a.published = 1)';
+
+        // Filter by search.
+        if (!empty($search)) {
+            if (stripos($search, 'id:') === 0) {
+                $where [] = 'a.id = ' . (int)substr($search, 3);
+            } else {
+                $search = database::quote('%' . $search . '%');
+                $where [] = '(a.fieldname LIKE ' . $search . ' OR a.fieldtitle LIKE ' . $search . ')';
+            }
+        }
+
+        // Filter by Type.
+        if ($type !== null)
+            $where [] = 'a.type = ' . database::quote($type);
+
+        if ($this->tableid != 0) {
+            $where [] = 'a.tableid = ' . database::quote($this->tableid);
+        }
+
+        $query .= ' WHERE ' . implode(' AND ', $where);
+
+        // Add the list ordering clause.
+        if ($orderCol != '')
+            $query .= ' ORDER BY ' . database::quoteName($orderCol) . ' ' . $orderDirection;
+
+        if ($limit != 0)
+            $query .= ' LIMIT ' . $limit;
+
+        if ($start != 0)
+            $query .= ' OFFSET ' . $start;
+
+        return $query;
     }
 
     public function renderBody(): string
@@ -180,8 +238,13 @@ class ListOfFields
     public static function htmlEscape($var, $charset = 'UTF-8', $shorten = false, $length = 40)
     {
         if (self::checkString($var)) {
-            $filter = new JFilterInput();
-            $string = $filter->clean(html_entity_decode(htmlentities($var, ENT_COMPAT, $charset)), 'HTML');
+            if (class_exists("JFilterInput")) {
+                $filter = new JFilterInput();
+                $string = $filter->clean(html_entity_decode(htmlentities($var, ENT_COMPAT, $charset)), 'HTML');
+            } else {
+                $string = html_entity_decode(htmlentities($var, ENT_COMPAT, $charset));
+            }
+
             if ($shorten) {
                 return self::shorten($string, $length);
             }
@@ -227,7 +290,6 @@ class ListOfFields
         return $string;
     }
 
-
     protected function checkTypeParams(string $type, string $typeParams): string
     {
         if ($type == 'sqljoin' or $type == 'records') {
@@ -244,5 +306,47 @@ class ListOfFields
             return '<br/><p class="alert-error">' . implode(', ', $error) . '</p>';
         }
         return '';
+    }
+
+    function save(?int $tableId, ?int $fieldId): bool
+    {
+        $fieldId = Fields::saveField($tableId, $fieldId);
+
+        if ($fieldId == null)
+            return false;
+
+        echo '$fieldId=' . $fieldId;
+        die;
+
+        $redirect = 'index.php?option=' . $this->option;
+        $extraTask = common::inputGetCmd('extratask', '');
+
+        //Postpone extra task
+        if ($extraTask != '') {
+            $redirect .= '&extratask=' . $extraTask;
+            $redirect .= '&old_typeparams=' . common::inputGet('old_typeparams', '', 'BASE64');
+            $redirect .= '&new_typeparams=' . common::inputGet('new_typeparams', '', 'BASE64');
+            $redirect .= '&fieldid=' . $fieldid;
+
+            if (common::inputGetInt('stepsize', 10) != 10)
+                $redirect .= '&stepsize=' . common::inputGetInt('stepsize', 10);
+        }
+
+        if ($extraTask != '' or $this->task == 'apply' or $this->task == 'save2copy')
+            $redirect .= '&view=listoffields&tableid=' . (int)$tableid . '&task=fields.edit&id=' . (int)$fieldid;
+        elseif ($this->task == 'save2new')
+            $redirect .= '&view=listoffields&tableid=' . (int)$tableid . '&task=fields.edit';
+        else
+            $redirect .= '&view=listoffields&tableid=' . (int)$tableid;
+
+        if ($fieldid != null) {
+            // Redirect to the item screen.
+            $this->setRedirect(
+                JRoute::_($redirect, false)
+            );
+            return true;
+        }
+
+        return false;
     }
 }

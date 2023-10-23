@@ -107,11 +107,11 @@ class common
             return Factory::getApplication()->input->getFloat($parameter, $default);
         } else {
             // Allow a-z, 0-9, underscore, dot, dash. Also remove leading dots from result.
-            if (!isset($_GET[$parameter]))
+            if (!isset($_REQUEST[$parameter]))
                 return $default;
 
             // Only use the first floating point value
-            preg_match('/-?[0-9]+(\.[0-9]+)?/', (string)$_GET[$parameter], $matches);
+            preg_match('/-?[0-9]+(\.[0-9]+)?/', (string)$_REQUEST[$parameter], $matches);
             return @ (float)$matches[0];
         }
     }
@@ -122,10 +122,10 @@ class common
             return Factory::getApplication()->input->getInt($parameter, $default);
         } else {
             // Allow a-z, 0-9, underscore, dot, dash. Also remove leading dots from result.
-            if (!isset($_GET[$parameter]))
+            if (!isset($_REQUEST[$parameter]))
                 return $default;
 
-            preg_match('/-?[0-9]+/', (string)$_GET[$parameter], $matches);
+            preg_match('/-?[0-9]+/', (string)$_REQUEST[$parameter], $matches);
             return @ (int)$matches[0];
         }
     }
@@ -136,7 +136,7 @@ class common
             return Factory::getApplication()->input->post->getInt($parameter, $default);
         } else {
             // Allow a-z, 0-9, underscore, dot, dash. Also remove leading dots from result.
-            if (!isset($_GET[$parameter]))
+            if (!isset($_POST[$parameter]))
                 return $default;
 
             preg_match('/-?[0-9]+/', (string)$_POST[$parameter], $matches);
@@ -150,10 +150,10 @@ class common
             return Factory::getApplication()->input->getInt($parameter, $default);
         } else {
             // Allow a-z, 0-9, underscore, dot, dash. Also remove leading dots from result.
-            if (!isset($_GET[$parameter]))
+            if (!isset($_REQUEST[$parameter]))
                 return $default;
 
-            preg_match('/-?[0-9]+/', (string)$_GET[$parameter], $matches);
+            preg_match('/-?[0-9]+/', (string)$_REQUEST[$parameter], $matches);
             return @ abs((int)$matches[0]);
         }
     }
@@ -164,7 +164,7 @@ class common
             return Factory::getApplication()->input->getCmd($parameter, $default);
         } else {
             // Allow a-z, 0-9, underscore, dot, dash. Also remove leading dots from result.
-            if (!isset($_GET[$parameter]))
+            if (!isset($_REQUEST[$parameter]))
                 return $default;
 
             $result = (string)preg_replace('/[^A-Z0-9_\.-]/i', '', $_GET[$parameter]);
@@ -172,12 +172,12 @@ class common
         }
     }
 
-    public static function inputGet($parameter, $default = null, $filter = null)
+    public static function inputGet(string $parameter, $default = null, string $filter)
     {
         if (defined('_JEXEC')) {
             return Factory::getApplication()->input->get($parameter, $default, $filter);
         } else {
-
+            die('common::inputGet not supported in WordPress');
         }
     }
 
@@ -186,7 +186,7 @@ class common
         if (defined('_JEXEC')) {
             return Factory::getApplication()->input->post->get($parameter, $default, $filter);
         } else {
-
+            die('common::inputPost not supported in WordPress');
         }
     }
 
@@ -195,7 +195,7 @@ class common
         if (defined('_JEXEC')) {
             Factory::getApplication()->input->set($parameter, $value);
         } else {
-
+            die('common::inputSet not supported in WordPress');
         }
     }
 
@@ -204,7 +204,7 @@ class common
         if (defined('_JEXEC')) {
             return Factory::getApplication()->input->files->get($fileId);
         } else {
-
+            die('common::inputFiles not supported in WordPress');
         }
     }
 
@@ -213,7 +213,7 @@ class common
         if (defined('_JEXEC')) {
             Factory::getApplication()->input->cookie->set($parameter, $value, $time, $path, $domain);
         } else {
-
+            die('common::inputCookieSet not supported in WordPress');
         }
     }
 
@@ -222,7 +222,7 @@ class common
         if (defined('_JEXEC')) {
             return Factory::getApplication()->cookie->get($parameter);
         } else {
-
+            die('common::inputCookieGet not supported in WordPress');
         }
     }
 
@@ -231,7 +231,7 @@ class common
         if (defined('_JEXEC')) {
             return Factory::getApplication()->input->server->get($parameter, $default, $filter);
         } else {
-
+            die('common::inputServer not supported in WordPress');
         }
     }
 }

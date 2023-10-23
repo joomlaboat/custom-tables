@@ -275,5 +275,5 @@ $max_file_size = JoomlaBasicMisc::file_upload_max_size();
     <input type="hidden" name="id" value="<?php echo $this->optionRecord->id; ?>"/>
     <input type="hidden" name="task" value=""/>
     <input type="hidden" name="Itemid"
-           value="<?php echo common::inputGet('Itemid', 0, 'INT'); ?>"/>
+           value="<?php echo common::inputGetInt('Itemid', 0); ?>"/>
 </form>

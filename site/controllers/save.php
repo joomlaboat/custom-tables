@@ -194,11 +194,8 @@ function CustomTablesSave($task, $this_)
 					onClick=\'window.open("' . $link . '","win2","' . $status . '"); return false; \'>
 					</p>';
 
-                    common::inputGet('view', 'details');
-
-
+                    common::inputGetCmd('view', 'details');
                     return true;
-
 
                 } else {
                     $link = $ct->Env->WebsiteRoot . 'index.php?option=com_customtables&view=catalog&Itemid=' . common::inputGet('Itemid', 0, 'INT');
@@ -207,8 +204,6 @@ function CustomTablesSave($task, $this_)
                         $this_->setRedirect($link, $msg);
                     else
                         $this_->setRedirect($link);
-
-
                 }
             }
         } else {

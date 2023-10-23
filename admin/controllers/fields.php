@@ -93,15 +93,18 @@ class CustomtablesControllerFields extends JControllerForm
 
     public function save($key = null, $urlVar = null)
     {
-        $tableid = common::inputGet('tableid', 0, 'int');
+        $tableId = common::inputGetInt('tableid');
+        $fieldId = common::inputGetInt('id');
+        if ($fieldId == 0)
+            $fieldId = null;
 
         // get the referral details
         $this->ref = common::inputGet('ref', 0, 'word');
         $this->refid = common::inputGet('refid', 0, 'int');
 
-        $fieldid = Fields::saveField();
+        $fieldId = Fields::saveField($tableId, $fieldId);
 
-        if ($fieldid == null) {
+        if ($fieldId == null) {
             $app = Factory::getApplication();
             $app->enqueueMessage('Could not save the field.', 'error');
         }
@@ -114,20 +117,20 @@ class CustomtablesControllerFields extends JControllerForm
             $redirect .= '&extratask=' . $extraTask;
             $redirect .= '&old_typeparams=' . common::inputGet('old_typeparams', '', 'BASE64');
             $redirect .= '&new_typeparams=' . common::inputGet('new_typeparams', '', 'BASE64');
-            $redirect .= '&fieldid=' . $fieldid;
+            $redirect .= '&fieldid=' . $fieldId;
 
             if (common::inputGetInt('stepsize', 10) != 10)
                 $redirect .= '&stepsize=' . common::inputGetInt('stepsize', 10);
         }
 
         if ($extraTask != '' or $this->task == 'apply' or $this->task == 'save2copy')
-            $redirect .= '&view=listoffields&tableid=' . (int)$tableid . '&task=fields.edit&id=' . (int)$fieldid;
+            $redirect .= '&view=listoffields&tableid=' . (int)$tableId . '&task=fields.edit&id=' . (int)$fieldId;
         elseif ($this->task == 'save2new')
-            $redirect .= '&view=listoffields&tableid=' . (int)$tableid . '&task=fields.edit';
+            $redirect .= '&view=listoffields&tableid=' . (int)$tableId . '&task=fields.edit';
         else
-            $redirect .= '&view=listoffields&tableid=' . (int)$tableid;
+            $redirect .= '&view=listoffields&tableid=' . (int)$tableId;
 
-        if ($fieldid != null) {
+        if ($fieldId != null) {
             // Redirect to the item screen.
             $this->setRedirect(
                 JRoute::_($redirect, false)
@@ -183,8 +186,8 @@ class CustomtablesControllerFields extends JControllerForm
 
     protected function getRedirectToItemAppend($recordId = null, $urlVar = 'id')
     {
-        $tmpl = common::inputGet('tmpl');
-        $layout = common::inputGet('layout', 'edit', 'string');
+        $tmpl = common::inputGetCmd('tmpl');
+        $layout = common::inputGetString('layout', 'edit');
 
         $ref = common::inputGet('ref', 0, 'string');
         $refId = common::inputGet('refid', 0, 'int');

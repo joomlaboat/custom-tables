@@ -221,7 +221,7 @@ class ImportTables
     }
 
     public static function insertRecords(string $table, array $rows, bool $addPrefix = true, array $exceptions = array(), bool $force_id = false,
-                                         string $add_field_prefix = '', array $field_conversion_map = array(), bool $save_checked_out = false): int
+                                         string $add_field_prefix = '', array $field_conversion_map = array(), bool $save_checked_out = false): ?int
     {
         if ($addPrefix)
             $mysqlTableName = '#__customtables_' . $table;

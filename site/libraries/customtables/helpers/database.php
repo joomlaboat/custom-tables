@@ -145,6 +145,9 @@ class database
         } elseif (defined('WPINC')) {
             global $wpdb;
             $wpdb->query(str_replace('#__', $wpdb->prefix, $query));
+            if ($wpdb->last_error !== '')
+                throw new Exception($wpdb->last_error);
+            
             return $wpdb->insert_id;
         }
         return null;

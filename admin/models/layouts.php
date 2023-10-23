@@ -69,11 +69,11 @@ class CustomtablesModelLayouts extends JModelAdmin
         }
 
         // The front end calls this model and uses a_id to avoid id clashes, so we need to check for that first.
-        if (common::inputGet('a_id')) {
-            $id = common::inputGet('a_id', 0, 'INT');
+        if (common::inputGetInt('a_id')) {
+            $id = common::inputGetInt('a_id', 0);
         } // The back end uses id, so we use that the rest of the time and set it to 0 by default.
         else {
-            $id = common::inputGet('id', 0, 'INT');
+            $id = common::inputGetint('id', 0);
         }
 
         $user = Factory::getUser();
@@ -111,15 +111,14 @@ class CustomtablesModelLayouts extends JModelAdmin
         // Only load these values if no id is found
         if (0 == $id) {
             // Set redirected field name
-            $redirectedField = common::inputGet('ref', null, 'STRING');
+            $redirectedField = common::inputGetString('ref');
             // Set redirected field value
-            $redirectedValue = common::inputGet('refid', 0, 'INT');
+            $redirectedValue = common::inputGetInt('refid', 0);
             if (0 != $redirectedValue && $redirectedField) {
                 // Now set the local-redirected field default value
                 $form->setValue($redirectedField, null, $redirectedValue);
             }
         }
-
         return $form;
     }
 
@@ -542,7 +541,7 @@ class CustomtablesModelLayouts extends JModelAdmin
         }
 
         // Alter the unique field for save as copy
-        if (common::inputGet('task') === 'save2copy') {
+        if (common::inputGetCmd('task') === 'save2copy') {
             // Automatic handling of other unique fields
             $uniqueFields = $this->getUniqueFields();
             if (CustomtablesHelper::checkArray($uniqueFields)) {

@@ -29,7 +29,7 @@ class Field
 
     var int $id;
     var array $params;
-    var string $type;
+    var ?string $type;
     var int $isrequired;
     var ?string $defaultvalue;
 
@@ -56,42 +56,46 @@ class Field
         }
 
         $this->id = $fieldRow['id'];
-        $this->type = $fieldRow['type'];
-        $this->fieldrow = $fieldRow;
-        $this->layout = $fieldRow['layout'] ?? null; //rendering layout
-
-        if (!array_key_exists('fieldtitle' . $ct->Languages->Postfix, $fieldRow)) {
-            $this->title = 'fieldtitle' . $ct->Languages->Postfix . ' - not found';
-        } else {
-            $vlu = $fieldRow['fieldtitle' . $ct->Languages->Postfix];
-            if ($vlu == '')
-                $this->title = $fieldRow['fieldtitle'];
-            else
-                $this->title = $vlu;
-        }
-
-        if (!array_key_exists('description' . $ct->Languages->Postfix, $fieldRow)) {
-            $this->description = 'description' . $ct->Languages->Postfix . ' - not found';
-        } else {
-            $vlu = $fieldRow['description' . $ct->Languages->Postfix];
-            if ($vlu == '')
-                $this->description = $fieldRow['description'];
-            else
-                $this->description = $vlu;
-        }
-
         $this->fieldname = $fieldRow['fieldname'];
         $this->realfieldname = $fieldRow['realfieldname'];
-        $this->isrequired = intval($fieldRow['isrequired']);
-        $this->defaultvalue = $fieldRow['defaultvalue'];
-        $this->valuerule = $fieldRow['valuerule'];
-        $this->valuerulecaption = $fieldRow['valuerulecaption'];
-        $this->prefix = $this->ct->Env->field_input_prefix;
-        $this->comesfieldname = $this->prefix . $this->fieldname;
-        $this->params = JoomlaBasicMisc::csv_explode(',', $fieldRow['typeparams'], '"', false);
 
-        if ($parseParams and $this->type != 'virtual')
-            $this->parseParams($row, $this->type);
+        if ($fieldRow['type'] !== null) {
+            $this->type = $fieldRow['type'];
+            $this->fieldrow = $fieldRow;
+            $this->layout = $fieldRow['layout'] ?? null; //rendering layout
+
+            if (!array_key_exists('fieldtitle' . $ct->Languages->Postfix, $fieldRow)) {
+                $this->title = 'fieldtitle' . $ct->Languages->Postfix . ' - not found';
+            } else {
+                $vlu = $fieldRow['fieldtitle' . $ct->Languages->Postfix];
+                if ($vlu == '')
+                    $this->title = $fieldRow['fieldtitle'];
+                else
+                    $this->title = $vlu;
+            }
+
+            if (!array_key_exists('description' . $ct->Languages->Postfix, $fieldRow)) {
+                $this->description = 'description' . $ct->Languages->Postfix . ' - not found';
+            } else {
+                $vlu = $fieldRow['description' . $ct->Languages->Postfix];
+                if ($vlu == '')
+                    $this->description = $fieldRow['description'];
+                else
+                    $this->description = $vlu;
+            }
+
+            $this->isrequired = intval($fieldRow['isrequired']);
+            $this->defaultvalue = $fieldRow['defaultvalue'];
+            $this->valuerule = $fieldRow['valuerule'];
+            $this->valuerulecaption = $fieldRow['valuerulecaption'];
+            $this->prefix = $this->ct->Env->field_input_prefix;
+            $this->comesfieldname = $this->prefix . $this->fieldname;
+            $this->params = JoomlaBasicMisc::csv_explode(',', $fieldRow['typeparams'], '"', false);
+
+            if ($parseParams and $this->type != 'virtual')
+                $this->parseParams($row, $this->type);
+        } else
+            $this->type = null;
     }
 
     function parseParams(?array $row, string $type): void
@@ -161,46 +165,58 @@ class Fields
 
     public static function deleteField_byID(CT &$ct, $fieldid): bool
     {
-        $ImageFolder = JPATH_SITE . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'esimages';
+        if ($ct->Table->tablename === null) {
+            die('deleteField_byID: Table not selected.');
+        }
+
+        if (defined('_JEXEC'))
+            $ImageFolder = JPATH_SITE . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'esimages';
+        else
+            $ImageFolder = false;
+
         $fieldrow = Fields::getFieldRow($fieldid, true);
 
         if (is_null($fieldrow))
             return false;
 
         $field = new Field($ct, $fieldrow);
-        $tableRow = ESTables::getTableRowByID($field->fieldrow['tableid']);
+        $tableRow = $ct->Table->tablerow;
 
-        //for Image Gallery
-        if ($field->type == 'imagegallery') {
-            //Delete all photos belongs to the gallery
+        if ($field->type !== null) {
+            //for Image Gallery
+            if ($field->type == 'imagegallery') {
+                //Delete all photos belongs to the gallery
 
-            $imageMethods = new CustomTablesImageMethods;
-            $gallery_table_name = '#__customtables_gallery_' . $tableRow->tablename . '_' . $field->fieldname;
-            $imageMethods->DeleteGalleryImages($gallery_table_name, $field->fieldrow['tableid'], $field->fieldname, $field->params, true);
-
-            //Delete gallery table
-            $query = 'DROP TABLE IF EXISTS ' . $gallery_table_name;
-            database::setQuery($query);
-        } elseif ($field->type == 'filebox') {
-            //Delete all files belongs to the filebox
-
-            $fileBoxTableName = '#__customtables_filebox_' . $tableRow->tablename . '_' . $field->fieldname;
-            CustomTablesFileMethods::DeleteFileBoxFiles($fileBoxTableName, $field->fieldrow['tableid'], $field->fieldname, $field->params);
-
-            //Delete gallery table
-            $query = 'DROP TABLE IF EXISTS ' . $fileBoxTableName;
-            database::setQuery($query);
-        } elseif ($field->type == 'image') {
-            if (Fields::checkIfFieldExists($tableRow->realtablename, $field->realfieldname)) {
                 $imageMethods = new CustomTablesImageMethods;
-                $imageMethods->DeleteCustomImages($tableRow->realtablename, $field->realfieldname, $ImageFolder, $field->params[0], $tableRow->realidfieldname, true);
+                $gallery_table_name = '#__customtables_gallery_' . $tableRow['tablename'] . '_' . $field->fieldname;
+                $imageMethods->DeleteGalleryImages($gallery_table_name, $field->fieldrow['tableid'], $field->fieldname, $field->params, true);
+
+                //Delete gallery table
+                $query = 'DROP TABLE IF EXISTS ' . $gallery_table_name;
+                database::setQuery($query);
+            } elseif ($field->type == 'filebox') {
+                //Delete all files belongs to the filebox
+
+                $fileBoxTableName = '#__customtables_filebox_' . $tableRow['tablename'] . '_' . $field->fieldname;
+                CustomTablesFileMethods::DeleteFileBoxFiles($fileBoxTableName, $field->fieldrow['tableid'], $field->fieldname, $field->params);
+
+                //Delete gallery table
+                $query = 'DROP TABLE IF EXISTS ' . $fileBoxTableName;
+                database::setQuery($query);
+            } elseif ($field->type == 'image') {
+                if (Fields::checkIfFieldExists($tableRow['realtablename'], $field->realfieldname)) {
+                    if (defined('_JEXEC')) {
+                        $imageMethods = new CustomTablesImageMethods;
+                        $imageMethods->DeleteCustomImages($tableRow['realtablename'], $field->realfieldname, $ImageFolder, $field->params[0], $tableRow['realidfieldname'], true);
+                    }
+                }
+            } elseif ($field->type == 'user' or $field->type == 'userid' or $field->type == 'sqljoin') {
+                Fields::removeForeignKey($tableRow['realtablename'], $field->realfieldname);
+            } elseif ($field->type == 'file') {
+                // delete all files
+                //if(file_exists($filename))
+                //unlink($filename);
             }
-        } elseif ($field->type == 'user' or $field->type == 'userid' or $field->type == 'sqljoin') {
-            Fields::removeForeignKey($tableRow->realtablename, $field->realfieldname);
-        } elseif ($field->type == 'file') {
-            // delete all files
-            //if(file_exists($filename))
-            //unlink($filename);
         }
 
         $realFieldNames = array();
@@ -223,7 +239,7 @@ class Fields
         foreach ($realFieldNames as $realfieldname) {
             if ($field->type != 'dummy' and !Fields::isVirtualField($fieldrow)) {
                 $msg = '';
-                Fields::deleteMYSQLField($tableRow->realtablename, $realfieldname, $msg);
+                Fields::deleteMYSQLField($tableRow['realtablename'], $realfieldname, $msg);
             }
         }
 
@@ -708,39 +724,83 @@ class Fields
         return null;
     }
 
-    public static function saveField()
+    public static function saveField(?int $tableId, ?int $fieldId): ?int
     {
+        require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'utilities' . DIRECTORY_SEPARATOR . 'importtables.php');
+
         $ct = new CT;
-        $data = common::inputGet('jform', array(), 'ARRAY');
-        $task = common::inputGetCmd('task');
-
-        //clean field name
-        if (function_exists("transliterator_transliterate"))
-            $fieldName = transliterator_transliterate("Any-Latin; Latin-ASCII; Lower()", $data['fieldname']);
-        else
-            $fieldName = $data['fieldname'];
-
-        $fieldName = strtolower(trim(preg_replace("/[^a-zA-Z\d]/", "", $fieldName)));
-        if (strlen($fieldName) > 40)
-            $fieldName = substr($fieldName, 0, 40);
-
-        $fieldid = common::inputGetInt('id');
-        $tableid = $data['tableid'];
-
-        if ($task == 'save2copy') {
-            $query = 'UPDATE #__customtables_fields SET checked_out=0, checked_out_time=NULL WHERE id=' . $fieldid;
-            database::setQuery($query);
-            $fieldid = 0;
+        $table_row = ESTables::getTableRowByID($tableId);
+        if (!is_object($table_row)) {
+            if (defined('_JEXEC'))
+                Factory::getApplication()->enqueueMessage('Table not found', 'error');
+            return null;
         }
 
-        $data['id'] = $fieldid;
+        if (defined('_JEXEC')) {
+            $data = common::inputGet('jform', array(), 'ARRAY');
+        } else {
+            $data = [];
+            $data['tableid'] = $tableId;
+            $data['fieldname'] = common::inputGetString('fieldname');
 
-        if ($fieldid == 0)
-            $fieldName = self::checkFieldName($tableid, $fieldName);
+            $moreThanOneLang = false;
+            foreach ($ct->Languages->LanguageList as $lang) {
+                $id_title = 'fieldtitle';
+                $id_description = 'description';
 
-        $data['fieldname'] = $fieldName;
+                if ($moreThanOneLang) {
+                    $id_title .= '_' . $lang->sef;
+                    $id_description .= '_' . $lang->sef;
+                }
+                $data[$id_title] = common::inputGetString($id_title);
+                $data[$id_description] = common::inputGetString($id_description);
+                $moreThanOneLang = true; //More than one language installed
+            }
+
+            $data['type'] = common::inputGetCmd('type');
+            $data['typeparams'] = common::inputGetString('typeparams');
+            $data['isrequired'] = common::inputGetInt('isrequired', 0);
+            $data['defaultvalue'] = common::inputGetString('defaultvalue');
+            $data['allowordering'] = common::inputGetInt('allowordering', 1);
+            $data['valuerule'] = common::inputGetString('valuerule');
+            $data['valuerulecaption'] = common::inputGetString('valuerulecaption');
+            $data['fieldname'] = common::inputGetString('fieldname');
+        }
+
+        $task = common::inputGetCmd('task');
+
+        // Process field name
+        if (function_exists("transliterator_transliterate"))
+            $newFieldName = transliterator_transliterate("Any-Latin; Latin-ASCII; Lower()", $data['fieldname']);
+        else
+            $newFieldName = $data['fieldname'];
+
+        $newFieldName = strtolower(trim(preg_replace("/\W/", "", $newFieldName)));
+
+        //Shorten the Field Name
+        if (strlen($newFieldName) > 40)
+            $newFieldName = substr($newFieldName, 0, 40);
+
+        $data['fieldname'] = $newFieldName;
+
+        if ($fieldId !== null and $task == 'save2copy') {
+            //Checkout
+            $query = 'UPDATE #__customtables_fields SET checked_out=0, checked_out_time=NULL WHERE id=' . $fieldId;
+            database::setQuery($query);
+            $fieldId = 0;
+        }
+
+        if ($fieldId === null) {
+            $already_exists = Fields::getFieldID($tableId, $newFieldName);
+            if ($already_exists == 0) {
+                $sets [] = 'fieldname=' . database::quote($newFieldName);
+            } else {
+                return null; //Abort if the table with this name already exists.
+            }
+        }
+
         $data['checked_out'] = 0;
-        $data['checked_out_time'] = null;
+        $data['checked_out_time'] = NULL;
 
         //Add language fields to the fields' table if necessary
         $moreThanOneLang = false;
@@ -762,28 +822,21 @@ class Fields
             $moreThanOneLang = true; //More than one language installed
         }
 
-        $table_row = ESTables::getTableRowByID($tableid);
-
-        if (!is_object($table_row)) {
-            Factory::getApplication()->enqueueMessage('Table not found', 'error');
-            return null;
-        }
-
         if ($table_row->customtablename == $table_row->tablename) {
             //do not create fields to third-party tables
             //Third-party table but managed by the Custom Tables
-            $data['customfieldname'] = $data['fieldname'];
+            $sets [] = 'customfieldname=' . database::quote($newFieldName);
         }
 
-        if ($fieldid != 0) {
-            $data_old = ['id' => $fieldid];
+        if ($fieldId !== null) {
+            $data_old = ['id' => $fieldId];
             ImportTables::updateRecords('#__customtables_fields', $data, $data_old, false, array(), true, true);
         } else {
-            $data['ordering'] = self::getMaxOrdering($tableid) + 1;
-            $fieldid = ImportTables::insertRecords('#__customtables_fields', $data, false, array(), true, '', [], true);
+            $data['ordering'] = self::getMaxOrdering($tableId) + 1;
+            $fieldId = ImportTables::insertRecords('#__customtables_fields', $data, false, array(), true, '', [], true);
         }
 
-        if (!self::update_physical_field($ct, $table_row, $fieldid, $data)) {
+        if (!self::update_physical_field($ct, $table_row, $fieldId, $data)) {
             //Cannot create
             return null;
         }
@@ -793,23 +846,7 @@ class Fields
         if ($data['type'] == 'ordering')
             self::findAndFixOrderingFieldRecords($table_row, (($data['customfieldname'] ?? '') != '' ? $data['customfieldname'] : 'es_' . $data['fieldname']));
 
-        return $fieldid;
-    }
-
-    protected static function checkFieldName($tableid, $fieldname): string
-    {
-        $new_fieldname = $fieldname;
-
-        while (1) {
-            $already_exists = Fields::getFieldID($tableid, $new_fieldname);
-
-            if ($already_exists != 0) {
-                $new_fieldname .= 'copy';
-            } else
-                break;
-        }
-
-        return $new_fieldname;
+        return $fieldId;
     }
 
     public static function getFieldID($tableid, $fieldname): int
@@ -898,6 +935,8 @@ class Fields
         //---------------------------------- Convert Field
 
         $new_type = $data['type'];
+        if ($new_type === null)
+            return false;
 
         //Virtuality
         if (isset($data['isrequired']) == 2 and ((int)$data['isrequired'] == 2 or (int)$data['isrequired'] == 3)) {
@@ -906,7 +945,9 @@ class Fields
             $defaultValue = $data['defaultvalue'];
         }
 
-        $PureFieldType = Fields::getPureFieldType($new_type, $new_typeparams, (int)$data['isrequired'], $defaultValue);
+        $PureFieldType = '';
+        if ($new_type !== null and $new_typeparams !== null)
+            $PureFieldType = Fields::getPureFieldType($new_type, $new_typeparams, (int)$data['isrequired'], $defaultValue);
 
         if ($realfieldname != '')
             $fieldFound = Fields::checkIfFieldExists($realtablename, $realfieldname);
@@ -1054,7 +1095,7 @@ class Fields
             return database::loadAssocList($query);
     }
 
-    public static function getPureFieldType($ct_fieldType, $typeParams, int $isRequiredOrGenerated = 0, ?string $defaultValue = null): string
+    public static function getPureFieldType(string $ct_fieldType, string $typeParams, int $isRequiredOrGenerated = 0, ?string $defaultValue = null): string
     {
         $ct_fieldTypeArray = Fields::getProjectedFieldType($ct_fieldType, $typeParams);
         if ($isRequiredOrGenerated == 2 or $isRequiredOrGenerated == 3) {
@@ -1684,6 +1725,22 @@ class Fields
             echo 'Caught exception: ', $e->getMessage(), "\n";
             die;
         }
+    }
+
+    protected static function checkFieldName($tableId, $fieldName): string
+    {
+        $new_fieldname = $fieldName;
+
+        while (1) {
+            $already_exists = Fields::getFieldID($tableId, $new_fieldname);
+
+            if ($already_exists != 0) {
+                $new_fieldname .= 'copy';
+            } else
+                break;
+        }
+
+        return $new_fieldname;
     }
 }
 

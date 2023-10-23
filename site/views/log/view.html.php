@@ -66,7 +66,7 @@ class CustomTablesViewLog extends JViewLegacy
         if ($this->limit == 0)
             $this->limit = 20;
 
-        $this->limitStart = common::inputGet('start', 0, 'INT');
+        $this->limitStart = common::inputGetInt('start', 0);
         // In case limit has been changed, adjust it
         $this->limitStart = ($this->limit != 0 ? (floor($this->limitStart / $this->limit) * $this->limit) : 0);
 

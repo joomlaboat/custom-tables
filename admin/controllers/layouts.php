@@ -230,10 +230,10 @@ class CustomtablesControllerLayouts extends JControllerForm
      */
     protected function getRedirectToItemAppend($recordId = null, $urlVar = 'id')
     {
-        $tmpl = common::inputGet('tmpl');
-        $layout = common::inputGet('layout', 'edit', 'string');
+        $tmpl = common::inputGetCmd('tmpl');
+        $layout = common::inputGetString('layout', 'edit');
 
-        $ref = common::inputGet('ref', 0, 'string');
+        $ref = common::inputGetString('ref', 0, 'string');
         $refid = common::inputGet('refid', 0, 'int');
 
         // Setup redirect info.

@@ -28,7 +28,7 @@ jimport('joomla.application.component.modellist');
 class CustomtablesModelListOfTables extends JModelList
 {
     var CT $ct;
-    var $helperListOfLayout;
+    var $helperListOfTables;
 
     public function __construct($config = array())
     {
@@ -50,7 +50,7 @@ class CustomtablesModelListOfTables extends JModelList
         $this->ct->setParams();
 
         require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . 'admin-listoftables.php');
-        $this->helperListOfLayout = new listOfTables($this->ct);
+        $this->helperListOfTables = new listOfTables($this->ct);
     }
 
     /**
@@ -118,7 +118,7 @@ class CustomtablesModelListOfTables extends JModelList
         //$limit = $this->state->get('list.limit', 20);
         //$start = $this->state->get('list.start', 0);
 
-        return $this->helperListOfLayout->getListQuery($published, $search, $category, $orderCol, $orderDirection);//, $limit, $start);
+        return $this->helperListOfTables->getListQuery($published, $search, $category, $orderCol, $orderDirection);//, $limit, $start);
     }
 
     /**

@@ -16,7 +16,9 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 jimport('joomla.application.component.modellist');
 
 use CustomTables\common;
+use CustomTables\CT;
 use CustomTables\database;
+use CustomTables\ListOfFields;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use CustomTables\DataTypes;
@@ -28,6 +30,8 @@ use Joomla\CMS\Version;
 class CustomtablesModelListoffields extends JModelList
 {
     var $tableid;
+    var CT $ct;
+    var $helperListOfFields;
 
     public function __construct($config = array())
     {
@@ -42,6 +46,12 @@ class CustomtablesModelListoffields extends JModelList
             );
         }
         parent::__construct($config);
+
+        $this->ct = new CT;
+        $this->ct->setParams();
+
+        require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . 'admin-listoftables.php');
+        $this->helperListOfFields = new listOfFields($this->ct);
     }
 
     /**
@@ -117,55 +127,14 @@ class CustomtablesModelListoffields extends JModelList
      */
     protected function getListQuery()
     {
-        $this->tableid = common::inputGetInt('tableid', 0);
-        $tabletitle = '(SELECT tabletitle FROM #__customtables_tables AS tables WHERE tables.id=a.tableid)';
-        $serverType = database::getServerType();
-
-        if ($serverType == 'postgresql')
-            $realfieldname_query = 'CASE WHEN customfieldname!=\'\' THEN customfieldname ELSE CONCAT(\'es_\',fieldname) END AS realfieldname';
-        else
-            $realfieldname_query = 'IF(customfieldname!=\'\', customfieldname, CONCAT(\'es_\',fieldname)) AS realfieldname';
-
-        $query = 'SELECT a.*, ' . $tabletitle . ' AS tabletitle, ' . $realfieldname_query . ' FROM ' . database::quoteName('#__customtables_fields') . ' AS a';
-        $where = [];
-
-        // Filter by published state
         $published = $this->getState('filter.published');
-
-        if (is_numeric($published))
-            $where [] = 'a.published = ' . (int)$published;
-        elseif (is_null($published) or $published === '')
-            $where [] = '(a.published = 0 OR a.published = 1)';
-
-        // Filter by search.
         $search = $this->getState('filter.search');
-        if (!empty($search)) {
-            if (stripos($search, 'id:') === 0) {
-                $where [] = 'a.id = ' . (int)substr($search, 3);
-            } else {
-                $search = database::quote('%' . $search . '%');
-                $where [] = '(a.fieldname LIKE ' . $search . ' OR a.fieldtitle LIKE ' . $search . ')';
-            }
-        }
-
-        // Filter by Type.
-        if ($type = $this->getState('filter.type'))
-            $where [] = 'a.type = ' . database::quote($type);
-
-        if ($this->tableid != 0) {
-            $where [] = 'a.tableid = ' . database::quote($this->tableid);
-        }
-
-        // Add the list ordering clause.
-        $orderCol = $this->state->get('list.ordering', 'a.ordering');
-        $orderDirn = $this->state->get('list.direction', 'asc');
-
-        $query .= ' WHERE ' . implode(' AND ', $where);
-
-        if ($orderCol != '')
-            $query .= ' ORDER BY ' . database::quoteName($orderCol) . ' ' . $orderDirn;
-
-        return $query;
+        $type = $this->getState('filter.type');
+        $orderCol = $this->state->get('list.ordering', 'a.id');
+        $orderDirection = $this->state->get('list.direction', 'asc');
+        //$limit = $this->state->get('list.limit', 20);
+        //$start = $this->state->get('list.start', 0);
+        return $this->helperListOfFields->getListQuery($published, $search, $type, $orderCol, $orderDirection);//, $limit, $start);
     }
 
     /**
