@@ -35,7 +35,7 @@ class JFormFieldCTOption extends JFormFieldList
     protected function getOptions()//$name, $value, &$node, $control_name)
     {
         $currentoptionid = 0;
-        if (common::inputGet('id'))
+        if (common::inputGetInt('id'))
             $currentoptionid = common::inputGetInt('id', 0);
 
         $query = 'SELECT id,title FROM #__customtables_options WHERE id!=' . $currentoptionid . ' ORDER BY title';

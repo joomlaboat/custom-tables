@@ -62,11 +62,11 @@ class CustomtablesModelCategories extends JModelAdmin
         }
 
         // The front end calls this model and uses a_id to avoid id clashes, so we need to check for that first.
-        if (common::inputGet('a_id')) {
-            $id = common::inputGet('a_id', 0, 'INT');
+        if (common::inputGetInt('a_id')) {
+            $id = common::inputGetInt('a_id', 0);
         } // The back end uses id, so we use that the rest of the time and set it to 0 by default.
         else {
-            $id = common::inputGet('id', 0, 'INT');
+            $id = common::inputGetInt('id', 0);
         }
 
         $user = Factory::getUser();
@@ -492,7 +492,7 @@ class CustomtablesModelCategories extends JModelAdmin
 
     public function save($data)
     {
-        if (common::inputGet('task') === 'save2copy') {
+        if (common::inputGetCMD('task') === 'save2copy') {
             // Automatic handling of other unique fields
             $uniqueFields = $this->getUniqueFields();
             if (CustomtablesHelper::checkArray($uniqueFields)) {

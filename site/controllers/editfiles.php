@@ -122,4 +122,4 @@ if (!CTUser::CheckAuthorization($ct, 5)) {
 
             parent::display();
     }
-}//switch(common::inputGet('task','','CMD'))
+}

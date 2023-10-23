@@ -134,7 +134,8 @@ class CustomtablesModelListoffields extends JModelList
         $orderDirection = $this->state->get('list.direction', 'asc');
         //$limit = $this->state->get('list.limit', 20);
         //$start = $this->state->get('list.start', 0);
-        return $this->helperListOfFields->getListQuery($published, $search, $type, $orderCol, $orderDirection);//, $limit, $start);
+        $tableId = common::inputGetInt('tableid');
+        return $this->helperListOfFields->getListQuery($tableId, $published, $search, $type, $orderCol, $orderDirection);//, $limit, $start);
     }
 
     /**

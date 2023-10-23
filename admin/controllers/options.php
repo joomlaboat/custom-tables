@@ -159,7 +159,7 @@ class CustomTablesControllerOptions extends JControllerForm
 
     protected function getRedirectToItemAppend($recordId = null, $urlVar = 'id')
     {
-        $tmpl = common::inputGet('tmpl');
+        $tmpl = common::inputGetCMD('tmpl');
         $layout = common::inputGet('layout', 'edit', 'string');
 
         $ref = common::inputGet('ref', 0, 'string');
