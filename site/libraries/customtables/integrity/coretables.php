@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Native Component and WordPress 6.x Plugin
  * @package Custom Tables
  * @subpackage integrity/tables.php
  * @author Ivan Komlev <support@joomlaboat.com>
@@ -36,7 +36,7 @@ class IntegrityCoreTables extends IntegrityChecks
 
         if (defined('_JEXEC'))
             IntegrityCoreTables::createCoreTableIfNotExists($ct, IntegrityCoreTables::getCoreTableFields_Categories());
-        
+
         IntegrityCoreTables::createCoreTableIfNotExists($ct, IntegrityCoreTables::getCoreTableFields_Log());
 
         if ($ct->Env->advancedTagProcessor) {

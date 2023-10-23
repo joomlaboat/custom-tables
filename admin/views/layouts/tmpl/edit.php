@@ -1,6 +1,6 @@
 <?php
 /**
- * CustomTables Joomla! 3.x/4.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Native Component
  * @package Custom Tables
  * @subpackage administrator/components/com_customtables/views/layouts/tmpl/edit.php
  * @author Ivan Komlev <support@joomlaboat.com>

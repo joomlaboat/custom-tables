@@ -3,7 +3,7 @@
 use CustomTables\database;
 
 /**
- * CustomTables Joomla! 3.x/4.x Native Component
+ * CustomTables Joomla! 3.x/4.x/5.x Native Component and WordPress 6.x Plugin
  * @package Custom Tables
  * @author Ivan Komlev <support@joomlaboat.com>
  * @link https://joomlaboat.com
