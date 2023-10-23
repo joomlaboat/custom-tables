@@ -172,7 +172,7 @@ class common
         }
     }
 
-    public static function inputGet(string $parameter, $default = null, string $filter)
+    public static function inputGet(string $parameter, $default, string $filter)
     {
         if (defined('_JEXEC')) {
             return Factory::getApplication()->input->get($parameter, $default, $filter);

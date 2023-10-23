@@ -18,8 +18,6 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 
-$tables = $this->prepareTables();
-
 $document = Factory::getDocument();
 $document->addCustomTag('<script src="' . JURI::root(true) . '/media/vendor/jquery/js/jquery.min.js"></script>');
 $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/raphael.min.js"></script>');
@@ -31,7 +29,7 @@ $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_cu
     <style>
         #canvas_container {
             width: 100%;
-            min-height: <?php echo (count($tables)>50 ? '4000' : '2000'); ?>px;
+            min-height: <?php echo (count($this->diagram->tables)>50 ? '4000' : '2000'); ?>px;
             border: 1px solid #aaa;
         }
     </style>
@@ -40,7 +38,6 @@ $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_cu
         <div class="col-md-12">
             <div id="j-main-container" class="j-main-container">
 
-
                 <?php
                 //$this->filterForm = $this->get('FilterForm');
                 //echo $this->filterForm->renderField('tablecategory'); ?>
@@ -48,16 +45,6 @@ $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_cu
                 <?php echo HTMLHelper::_('uitab.startTabSet', 'schemaTab', ['active' => 'diagram', 'recall' => true, 'breakpoint' => 768]); ?>
 
                 <?php echo HTMLHelper::_('uitab.addTab', 'schemaTab', 'diagram', Text::_('COM_CUSTOMTABLES_TABLES_DIAGRAM')); ?>
-
-                <?php
-                // Search tools bar
-
-                /*
-                echo LayoutHelper::render('joomla.searchtools.default', array('view' => $this,
-                    'options' => array('filtersHidden' => 0), 'filtersHidden' => 0
-                ));
-*/
-                ?>
 
                 <div id="canvas_container"></div>
 
@@ -81,7 +68,7 @@ $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_cu
                 <script>
 
                     TableCategoryID = <?php echo (int)$this->state->get('list.tablecategory'); ?>;
-                    AllTables = <?php echo json_encode($tables); ?>;
+                    AllTables = <?php echo json_encode($this->diagram->tables); ?>;
 
                 </script>
 

@@ -11,13 +11,13 @@ Raphael.fn.connection = function (obj1, obj2, line, bg) {
     let bb1 = obj1.getBBox(),
         bb2 = obj2.getBBox(),
         p = [{x: bb1.x + bb1.width / 2, y: bb1.y - 1},
-        {x: bb1.x + bb1.width / 2, y: bb1.y + bb1.height + 1},
-        {x: bb1.x - 1, y: bb1.y + bb1.height / 2},
-        {x: bb1.x + bb1.width + 1, y: bb1.y + bb1.height / 2},
-        {x: bb2.x + bb2.width / 2, y: bb2.y - 1},
-        {x: bb2.x + bb2.width / 2, y: bb2.y + bb2.height + 1},
-        {x: bb2.x - 1, y: bb2.y + bb2.height / 2},
-        {x: bb2.x + bb2.width + 1, y: bb2.y + bb2.height / 2}],
+            {x: bb1.x + bb1.width / 2, y: bb1.y + bb1.height + 1},
+            {x: bb1.x - 1, y: bb1.y + bb1.height / 2},
+            {x: bb1.x + bb1.width + 1, y: bb1.y + bb1.height / 2},
+            {x: bb2.x + bb2.width / 2, y: bb2.y - 1},
+            {x: bb2.x + bb2.width / 2, y: bb2.y + bb2.height + 1},
+            {x: bb2.x - 1, y: bb2.y + bb2.height / 2},
+            {x: bb2.x + bb2.width + 1, y: bb2.y + bb2.height / 2}],
         d = {}, dis = [];
     for (let i = 0; i < 4; i++) {
         for (let j = 4; j < 8; j++) {
@@ -51,7 +51,7 @@ Raphael.fn.connection = function (obj1, obj2, line, bg) {
     } else {
         let color = typeof line == "string" ? line : "#000";
         return {
-			//bg: bg && bg.split && this.path(path).attr({stroke: bg.split("|")[0], fill: "none", "stroke-width": bg.split("|")[1] || 3}),
+            //bg: bg && bg.split && this.path(path).attr({stroke: bg.split("|")[0], fill: "none", "stroke-width": bg.split("|")[1] || 3}),
             bg: bg && bg.split && this.path(path).attr({stroke: bg.split("|")[0], fill: "none", "stroke-width": '10'}),
             line: this.path(path).attr({stroke: color, fill: "none", "stroke-width": '2'}),
             from: obj1,
@@ -60,44 +60,44 @@ Raphael.fn.connection = function (obj1, obj2, line, bg) {
     }
 };
 
-let TableListPresenter = function(box_width,box_height,tables) {
+let TableListPresenter = function (box_width, box_height, tables) {
 
     let dragger = function () {
             this.set.oBB = this.set.getBBox();
             //this.animate({"fill-opacity": .2}, 500);
         },
-		
+
         move = function (dx, dy) {
             let bb = this.set.getBBox();
 
             this.set.translate(this.set.oBB.x - bb.x + dx, this.set.oBB.y - bb.y + dy);
-			
-			BlocksPositions[this.index].x = bb.x ;
-			BlocksPositions[this.index].y = bb.y ;
 
-            
-			for (let i = connections.length; i--;) {
+            BlocksPositions[this.index].x = bb.x;
+            BlocksPositions[this.index].y = bb.y;
+
+
+            for (let i = connections.length; i--;) {
                 paper.connection(connections[i]);
             }
             //paper.safari();
         },
         up = function () {
-			document.cookie = "jCustomTablesSchema" + (TableCategoryID > 0 ? TableCategoryID : '') + "=" + JSON.stringify(BlocksPositions)+';max-age=31536000;SameSite=Strict';
+            document.cookie = "jCustomTablesSchema" + (TableCategoryID > 0 ? TableCategoryID : '') + "=" + JSON.stringify(BlocksPositions) + ';max-age=31536000;SameSite=Strict';
         },
 
         connections = [];
-		
-	connection_fields = [];
-	connection_tables = [];
+
+    connection_fields = [];
+    connection_tables = [];
 
     let paper = null;
     let sets = [];
 
-	let calculatedColumnWidth = 120;
-	let calculatedLeftOffset = 25;
-	
-	if(tables.length < 10)
-		calculatedLeftOffset = 100;
+    let calculatedColumnWidth = 120;
+    let calculatedLeftOffset = 25;
+
+    if (tables.length < 10)
+        calculatedLeftOffset = 100;
 
     let settings = {
         paper: {
@@ -117,161 +117,151 @@ let TableListPresenter = function(box_width,box_height,tables) {
             text: {
                 topOffset: 10,
                 leftOffset: 5
-            }            
+            }
         }
     };
 
     let tableGrid = [];
     for (let i = settings.paper.table.gridColumns - 1; i >= 0; i--) {
-        tableGrid.push(0);        
+        tableGrid.push(0);
     }
 
     let currentGridColumn = 0;
-	
-    this.draw = function(element) {
+
+    this.draw = function (element) {
         paper = new Raphael(
-            element, 
-            settings.paper.height, 
+            element,
+            settings.paper.height,
             settings.paper.width
-        );  
-		
-		let c = getCookie('jCustomTablesSchema' + (TableCategoryID > 0 ? TableCategoryID : ''));
-		if(c && c != "")
-			BlocksPositions = JSON.parse(c);
-		
-        for(let tableIndex = 0; tableIndex < tables.length; tableIndex++) {
+        );
+
+        let c = getCookie('jCustomTablesSchema' + (TableCategoryID > 0 ? TableCategoryID : ''));
+        if (c && c != "")
+            BlocksPositions = JSON.parse(c);
+
+        for (let tableIndex = 0; tableIndex < tables.length; tableIndex++) {
             drawTable(tables[tableIndex]);
         }
-		
-		addConnections();
-		
+
+        addConnections();
+
         for (let i = 0, ii = sets.length; i < ii; i++) {
             //let color = Raphael.getColor();
             sets[i].attr({cursor: "move"});
             sets[i].drag(move, dragger, up);
         }
-        
+
     }
-	function addConnections()
-	{
-		for (let i = 0; i < connection_fields.length; i++)
-		{
-			let f = connection_fields[i];
-			
-			for (let t = 0; t < connection_tables.length; t++)
-			{		
-				let tbl = connection_tables[t];
-				if(tbl.name == f.join_table)
-				{
-					connections.push(paper.connection(sets[tbl.table_object_index][0], sets[f.table_object_index][f.field_object_index], f.joincolor));
-					break;
-				}
-			}
-		}
-	}
 
-	function printRow(set, rectLeft, rectTop,text,bg_color,color,align,index)
-	{
-		let header_rect = paper.rect(
-                rectLeft, 
-                rectTop, 
-                settings.column.rect.width, 
-                settings.column.rect.height
-            ).attr({'fill': bg_color});
+    function addConnections() {
+        for (let i = 0; i < connection_fields.length; i++) {
+            let f = connection_fields[i];
 
-		let tablename_text = paper
-                .text(
-                    rectLeft +  settings.column.rect.width / 2, 
-                    rectTop + settings.column.text.topOffset, 
-                    text
-                ).attr({'text-anchor': align,'fill': color});
-		
-		set.push(header_rect);
-		set.push(tablename_text);				
-		
-		header_rect.set = set;
-		header_rect.index = index;
+            for (let t = 0; t < connection_tables.length; t++) {
+                let tbl = connection_tables[t];
+                if (tbl.name == f.join_table) {
+                    connections.push(paper.connection(sets[tbl.table_object_index][0], sets[f.table_object_index][f.field_object_index], f.joincolor));
+                    break;
+                }
+            }
+        }
+    }
+
+    function printRow(set, rectLeft, rectTop, text, bg_color, color, align, index) {
+        let header_rect = paper.rect(
+            rectLeft,
+            rectTop,
+            settings.column.rect.width,
+            settings.column.rect.height
+        ).attr({'fill': bg_color});
+
+        let tablename_text = paper
+            .text(
+                rectLeft + settings.column.rect.width / 2,
+                rectTop + settings.column.text.topOffset,
+                text
+            ).attr({'text-anchor': align, 'fill': color});
+
+        set.push(header_rect);
+        set.push(tablename_text);
+
+        header_rect.set = set;
+        header_rect.index = index;
         tablename_text.set = set;
-		tablename_text.index = index;
-		
-		rectTop += settings.column.rect.height;
-		return rectTop;
-	}
+        tablename_text.index = index;
+
+        rectTop += settings.column.rect.height;
+        return rectTop;
+    }
 
     function drawTable(table) {
-		
-		let index = sets.length;
-		
+
+        let index = sets.length;
+
         let set = paper.set();
         let rectLeft = 0;
         let rectTop = 0;
-			
-		if(BlocksPositions.length > index)
-		{
-			rectLeft = BlocksPositions[index].x;
-            rectTop =  BlocksPositions[index].y;
-		}
-		else
-		{
-			rectLeft = settings.paper.table.leftOffset + (currentGridColumn) * (settings.column.rect.width + settings.paper.table.leftOffset);
-			rectTop = tableGrid[currentGridColumn] || settings.paper.table.topOffset;
-			BlocksPositions.push({'x' : rectLeft, 'y' : rectTop});
-		}
-		
-		rectTop = printRow(set, rectLeft, rectTop, table.name,table.color,table.text_color,'center',sets.length);
-		
-        for (let i=0; i < table.columns.length;i++)
-		{
+
+        if (BlocksPositions.length > index) {
+            rectLeft = BlocksPositions[index].x;
+            rectTop = BlocksPositions[index].y;
+        } else {
+            rectLeft = settings.paper.table.leftOffset + (currentGridColumn) * (settings.column.rect.width + settings.paper.table.leftOffset);
+            rectTop = tableGrid[currentGridColumn] || settings.paper.table.topOffset;
+            BlocksPositions.push({'x': rectLeft, 'y': rectTop});
+        }
+
+        rectTop = printRow(set, rectLeft, rectTop, table.name, table.color, table.text_color, 'center', sets.length);
+
+        for (let i = 0; i < table.columns.length; i++) {
             let column = table.columns[i].name;
-			
-			let color = "#000000";
-			if(table.columns[i].type == 'sqljoin' || table.columns[i].type == 'records')
-			{
-				if(table.columns[i].joincolor != '')
-					color = table.columns[i].joincolor;
-			}
-			
+
+            let color = "#000000";
+            if (table.columns[i].type == 'sqljoin' || table.columns[i].type == 'records') {
+                if (table.columns[i].joincolor != '')
+                    color = table.columns[i].joincolor;
+            }
+
             let rect = paper.rect(
-                rectLeft, 
-                rectTop, 
-                settings.column.rect.width, 
+                rectLeft,
+                rectTop,
+                settings.column.rect.width,
                 settings.column.rect.height
             ).attr({'fill': "#f8f8f8"});
-			
+
             let text = paper
                 .text(
-                    rectLeft + settings.column.text.leftOffset, 
-                    rectTop + settings.column.text.topOffset, 
+                    rectLeft + settings.column.text.leftOffset,
+                    rectTop + settings.column.text.topOffset,
                     column
                 ).attr({'text-anchor': 'start', 'fill': color});
 
             rectTop += settings.column.rect.height;
-           
-			
-			if(table.columns[i].type == 'sqljoin' || table.columns[i].type == 'records')
-			{
-				connection_fields.push({
-					'join_table' : table.columns[i].join,
-					'table_object_index' : sets.length,
-					'field_object_index': set.length,
-					'joincolor' : table.columns[i].joincolor
-					});
-			}
-			set.push(rect);
+
+
+            if (table.columns[i].type == 'sqljoin' || table.columns[i].type == 'records') {
+                connection_fields.push({
+                    'join_table': table.columns[i].join,
+                    'table_object_index': sets.length,
+                    'field_object_index': set.length,
+                    'joincolor': table.columns[i].joincolor
+                });
+            }
+            set.push(rect);
             set.push(text);
-			
+
 
             rect.set = set;
-			rect.index = index;
+            rect.index = index;
             text.set = set;
-			text.index = index;
+            text.index = index;
         }
 
-		connection_tables.push({
-					'name' : table.name,
-					'table_object_index' : sets.length,
-		});
-		
+        connection_tables.push({
+            'name': table.name,
+            'table_object_index': sets.length,
+        });
+
         sets.push(set);
         updateTableGrid(rectTop);
     }
@@ -289,36 +279,35 @@ let TableListPresenter = function(box_width,box_height,tables) {
                 shortestColumn = i;
                 minColumnHeight = tableGrid[i];
             }
-        };
+        }
+        ;
         currentGridColumn = shortestColumn;
     }
-	
-	function getCookie(cname)
-    {
+
+    function getCookie(cname) {
         let name = cname + "=";
         let decodedCookie = decodeURIComponent(document.cookie);
         let ca = decodedCookie.split(';');
 
-        for(let i = 0; i <ca.length; i++)
-        {
+        for (let i = 0; i < ca.length; i++) {
             let c = ca[i];
             while (c.charAt(0) == ' ')
                 c = c.substring(1);
-            
-			if (c.indexOf(name) == 0)
+
+            if (c.indexOf(name) == 0)
                 return c.substring(name.length, c.length);
         }
         return "";
     }
 };
 
-window.onload = function(){  
+window.onload = function () {
 
-	let box = document.getElementById('canvas_container');
-	let width = box.clientWidth;
-	let height = box.clientHeight;
+    let box = document.getElementById('canvas_container');
+    let width = box.clientWidth;
+    let height = box.clientHeight;
 
-	let tableListPresenter = new TableListPresenter(width, height, AllTables);
+    let tableListPresenter = new TableListPresenter(width, height, AllTables);
 
     tableListPresenter.draw(document.getElementById('canvas_container'));
 }  

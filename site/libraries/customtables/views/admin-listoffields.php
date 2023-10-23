@@ -48,7 +48,7 @@ class ListOfFields
         $this->saveOrder = $saveOrder ?? false;
     }
 
-    function getListQuery($published = null, $search = null, $type = null, $orderCol = null, $orderDirection = null, $limit = 0, $start = 0): string
+    function getListQuery(int $tableId, $published = null, $search = null, $type = null, $orderCol = null, $orderDirection = null, $limit = 0, $start = 0): string
     {
         $this->tableid = common::inputGetInt('tableid', 0);
         $tabletitle = '(SELECT tabletitle FROM #__customtables_tables AS tables WHERE tables.id=a.tableid)';
@@ -61,6 +61,8 @@ class ListOfFields
 
         $query = 'SELECT a.*, ' . $tabletitle . ' AS tabletitle, ' . $realfieldname_query . ' FROM ' . database::quoteName('#__customtables_fields') . ' AS a';
         $where = [];
+
+        $where [] = 'tableid=' . $tableId;
 
         // Filter by published state
         if (is_numeric($published))
