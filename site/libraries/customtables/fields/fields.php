@@ -742,6 +742,7 @@ class Fields
             $data = [];
             $data['tableid'] = $tableId;
             $data['fieldname'] = common::inputGetString('fieldname');
+            $data['type'] = common::inputGetCMD('type');
 
             $moreThanOneLang = false;
             foreach ($ct->Languages->LanguageList as $lang) {

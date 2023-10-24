@@ -22,8 +22,9 @@ class Documentation
 {
     var bool $internal_use = false;
     var float $version;
+    var bool $onlyWordpress;
 
-    function __construct()
+    function __construct(bool $onlyWordpress = false)
     {
         if (defined('_JEXEC')) {
             $version = new Version;
@@ -32,6 +33,7 @@ class Documentation
             $this->version = 6;
 
         $this->internal_use = true;
+        $this->onlyWordpress = $onlyWordpress;
     }
 
     function getFieldTypes(): string
@@ -62,7 +64,14 @@ class Documentation
             $hideDefaultExample = (bool)(int)$type_att->hidedefaultexample;
             $isDeprecated = (bool)(int)$type_att->deprecated;
 
-            if (!$isDeprecated) {
+            $active = true;
+
+            if ($this->onlyWordpress) {
+                if (!((string)$type_att->wordpress == 'true'))
+                    $active = false;
+            }
+
+            if ($active and !$isDeprecated) {
 
                 $class = 'ct_doc_free';
                 if ($is4Pro)

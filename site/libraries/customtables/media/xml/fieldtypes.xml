@@ -721,7 +721,7 @@
     </type>
 
     <type ct_name="int" name="int" label="Integer Number" description="Provides an integer number inputbox."
-          ct_alias="int" disabled="false" ct_special="false" priority="1">
+          ct_alias="int" disabled="false" ct_special="false" priority="1" wordpress="true">
         <editparams name="int" label="Input Element Parameters" description="">
             <params>
                 <param type="string" name="cssclass" label="CSS Class" description="Name or names of CSS class(s)."/>
@@ -1326,7 +1326,7 @@
 
     <type ct_name="string" name="string" label="Text String (Single Line)"
           description="Provides a text box for data entry." ct_alias="string"
-          disabled="false" ct_special="false" priority="1">
+          disabled="false" ct_special="false" priority="1" wordpress="true">
         <params>
             <param name="length" label="Length" description="Number of characters. Number of characters not bytes."
                    hidden="false" default="255" type="number" min="1" max="1024"

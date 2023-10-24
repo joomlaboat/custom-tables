@@ -21,6 +21,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 use Joomla\Utilities\ArrayHelper;
+use JoomlaBasicMisc;
 
 class ListOfFields
 {
@@ -350,5 +351,38 @@ class ListOfFields
         }
 
         return false;
+    }
+
+    function getFieldTypesFromXML(bool $onlyWordpress = false): ?array
+    {
+        $xml = JoomlaBasicMisc::getXMLData('fieldtypes.xml');
+        if (count($xml) == 0 or !isset($xml->type))
+            return null;
+
+        $options = [];
+
+        foreach ($xml->type as $type) {
+            $type_att = $type->attributes();
+            $is4Pro = (bool)(int)$type_att->proversion;
+            $isDeprecated = (bool)(int)$type_att->deprecated;
+
+            $active = true;
+
+            if ($onlyWordpress) {
+                if (!((string)$type_att->wordpress == 'true'))
+                    $active = false;
+            }
+
+            if ($active and !$isDeprecated) {
+                $option = [];
+
+                $option['name'] = (string)$type_att->ct_name;
+                $option['label'] = (string)$type_att->label;
+                $option['description'] = (string)$type_att->description;
+                $option['proversion'] = $is4Pro;
+                $options[] = $option;
+            }
+        }
+        return $options;
     }
 }
