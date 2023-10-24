@@ -147,6 +147,8 @@ class ListOfLayouts
         $sets[] = 'layoutname=' . database::quote($newLayoutName);
         $sets[] = 'modified_by=' . (int)$this->ct->Env->user->id;
         $sets[] = 'modified=NOW()';
+        $sets[] = 'layouttype=' . common::inputGetString('layouttype');
+        $sets[] = 'tableid=' . common::inputGetInt('table');
 
         // set the metadata to the Item Data
         /*

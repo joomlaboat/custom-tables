@@ -19,6 +19,47 @@ class Forms
         $this->ct = &$ct;
     }
 
+    /**
+     * Render an HTML select box populated with options from a database query.
+     *
+     * @param string $objectId The HTML element's ID and name attribute.
+     * @param string $tableName The name of the database table to query.
+     * @param array $selects An array of fields to select from the table.
+     * @param array|null $where An optional array of conditions to apply in the WHERE clause.
+     * @param string|null $orderBy An optional field to use for sorting the results.
+     *
+     * @return string The HTML select box element.
+     *
+     * @throws \Exception If there is an error in the database query.
+     */
+
+    public static function renderHTMLSelectBoxFromDB(string $objectId, string $tableName, array $selects, ?array $where = null, ?string $orderBy = null): string
+    {
+        $sql = 'SELECT ' . implode(',', $selects) . ' FROM '
+            . $tableName;
+
+        if ($where !== null and count($where) > 0)
+            $sql .= ' WHERE ' . implode(' AND ', $where);
+
+        if ($orderBy !== null)
+            $sql .= ' ORDER BY ' . $orderBy;
+
+        $options = database::loadAssocList($sql);
+
+        $selectBoxOptions = [];
+
+        if (count($options) > 0) {
+            $keys = [];
+            foreach ($options[0] as $key => $opt)
+                $keys[] = $key;
+
+            foreach ($options as $option)
+                $selectBoxOptions[] = '<option value="' . $option[$keys[0]] . '">' . $option[$keys[1]] . '</option>';
+        }
+
+        return '<select name="' . $objectId . '" id="' . $objectId . '">' . implode('', $selectBoxOptions) . '</select>';
+    }
+
     function renderFieldLabel($field, $allowSortBy = false)
     {
         $OrderingField = null;
