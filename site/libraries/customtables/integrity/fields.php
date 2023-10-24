@@ -57,7 +57,14 @@ class IntegrityFields extends IntegrityChecks
 
         $task = common::inputGetCmd('task');
         $taskFieldName = common::inputGetCmd('fieldname');
-        $taskTableId = common::inputGetInt('tableid');
+
+        if (defined('_JEXEC'))
+            $taskTableId = common::inputGetInt('tableid');
+        elseif (defined('WPINC'))
+            $taskTableId = common::inputGetInt('table');
+        else
+            return 'Integrity Check not supported';
+
         $projected_data_type = null;
 
         foreach ($ExistingFields as $ExistingField) {
@@ -231,7 +238,7 @@ class IntegrityFields extends IntegrityChecks
         foreach ($projected_fields as $projected_field) {
             $proj_field = $projected_field['realfieldname'];
             $fieldType = $projected_field['type'];
-            if ($fieldType != 'dummy' and !Fields::isVirtualField($projected_field)) {
+            if ($fieldType !== null and $fieldType != 'dummy' and !Fields::isVirtualField($projected_field)) {
                 IntegrityFields::addFieldIfNotExists($ct, $ct->Table->realtablename, $ExistingFields, $proj_field, $fieldType, $projected_field['typeparams']);
             }
         }
@@ -302,7 +309,7 @@ class IntegrityFields extends IntegrityChecks
         return '';
     }
 
-    public static function addFieldIfNotExists(CT $ct, $realtablename, $ExistingFields, $proj_field, $fieldType, $typeParams): bool
+    public static function addFieldIfNotExists(CT $ct, $realtablename, $ExistingFields, $proj_field, string $fieldType, $typeParams): bool
     {
         if ($fieldType == 'multilangstring' or $fieldType == 'multilangtext') {
             $moreThanOneLanguage = false;
@@ -344,7 +351,7 @@ class IntegrityFields extends IntegrityChecks
         return false;
     }
 
-    protected static function addField($realtablename, $realfieldname, $fieldType, $typeParams)
+    protected static function addField($realtablename, $realfieldname, string $fieldType, $typeParams)
     {
         $PureFieldType = Fields::getPureFieldType($fieldType, $typeParams);
         Fields::AddMySQLFieldNotExist($realtablename, $realfieldname, $PureFieldType, '');

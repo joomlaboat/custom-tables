@@ -68,7 +68,7 @@ class Environment
             }
             $this->field_prefix = 'es_';
         } else
-            $this->field_prefix = 'ct_';
+            $this->field_prefix = 'es_'; //$this->field_prefix = 'ct_'; ct is in future
 
         $this->field_input_prefix = 'com' . $this->field_prefix;
 

@@ -53,15 +53,15 @@ class ListOfTables
 
     function getListQuery($published = null, $search = null, $category = null, $orderCol = null, $orderDirection = null, $limit = 0, $start = 0): string
     {
-        $fieldcount = '(SELECT COUNT(fields.id) FROM #__customtables_fields AS fields WHERE fields.tableid=a.id AND fields.published=1 LIMIT 1)';
+        $fieldCount = '(SELECT COUNT(fields.id) FROM #__customtables_fields AS fields WHERE fields.tableid=a.id AND (fields.published=0 or fields.published=1) LIMIT 1)';
         $selects = array();
         $selects[] = ESTables::getTableRowSelects();
 
         if (defined('_JEXEC')) {
-            $categoryname = '(SELECT categoryname FROM #__customtables_categories AS categories WHERE categories.id=a.tablecategory LIMIT 1)';
-            $selects[] = $categoryname . ' AS categoryname';
+            $categoryName = '(SELECT categoryname FROM #__customtables_categories AS categories WHERE categories.id=a.tablecategory LIMIT 1)';
+            $selects[] = $categoryName . ' AS categoryname';
         }
-        $selects[] = $fieldcount . ' AS fieldcount';
+        $selects[] = $fieldCount . ' AS fieldcount';
 
         $query = 'SELECT ' . implode(',', $selects) . ' FROM ' . database::quoteName('#__customtables_tables') . ' AS a';
         $where = [];

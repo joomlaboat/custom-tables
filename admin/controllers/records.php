@@ -188,7 +188,7 @@ class CustomtablesControllerRecords extends JControllerForm
      */
     protected function getRedirectToItemAppend($listing_id = null, $urlVar = 'id'): string
     {
-        $tmpl = common::inputGetCMD('tmpl');
+        $tmpl = common::inputGetCmd('tmpl');
         $layout = common::inputGetString('layout', 'edit');
 
         $ref = common::inputGet('ref', 0, 'string');

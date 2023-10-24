@@ -158,7 +158,7 @@ class common
         }
     }
 
-    public static function inputGetCMD(string $parameter, $default = null)
+    public static function inputGetCmd(string $parameter, $default = null)
     {
         if (defined('_JEXEC')) {
             return Factory::getApplication()->input->getCmd($parameter, $default);

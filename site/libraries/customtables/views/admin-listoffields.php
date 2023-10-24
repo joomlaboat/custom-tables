@@ -318,9 +318,8 @@ class ListOfFields
         if ($fieldId == null)
             return false;
 
-        echo '$fieldId=' . $fieldId;
-        die;
-
+        return true;
+        /*
         $redirect = 'index.php?option=' . $this->option;
         $extraTask = common::inputGetCmd('extratask', '');
 
@@ -351,6 +350,7 @@ class ListOfFields
         }
 
         return false;
+        */
     }
 
     function getFieldTypesFromXML(bool $onlyWordpress = false): ?array

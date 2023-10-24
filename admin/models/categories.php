@@ -492,7 +492,7 @@ class CustomtablesModelCategories extends JModelAdmin
 
     public function save($data)
     {
-        if (common::inputGetCMD('task') === 'save2copy') {
+        if (common::inputGetCmd('task') === 'save2copy') {
             // Automatic handling of other unique fields
             $uniqueFields = $this->getUniqueFields();
             if (CustomtablesHelper::checkArray($uniqueFields)) {

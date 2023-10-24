@@ -358,7 +358,7 @@ class CustomtablesModelTables extends JModelAdmin
         $old_tablename = '';
 
         // Alter the unique field for save as copy
-        if (common::inputGetCMD('task') === 'save2copy') {
+        if (common::inputGetCmd('task') === 'save2copy') {
             $originalTableId = common::inputGetInt('originaltableid', 0);
 
             if ($originalTableId != 0) {
