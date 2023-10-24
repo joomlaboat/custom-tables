@@ -256,7 +256,7 @@ foreach ($this->allTables as $table) {
             </div>
 
             <script>
-                updateTypeParams("jform_type", "jform_typeparams", "typeparams_box");
+                updateTypeParams("jform_type", "jform_typeparams", "typeparams_box", "Joomla");
                 <?php if(!$this->ct->Env->advancedTagProcessor): ?>
                 disableProField("jform_defaultvalue");
                 disableProField("jform_valuerule");

@@ -57,13 +57,10 @@ foreach ($this->allTables as $table) {
 
 <script>
     <?php
+    if ($this->ct->Env->advancedTagProcessor)
+        echo 'proversion=true;' . PHP_EOL;
 
-    if ($this->ct->Env->advancedTagProcessor) {
-        echo '
-		proversion=true;
-';
-    }
-    echo 'all_tables=' . json_encode($this->allTables) . ';';
+    echo 'all_tables=' . json_encode($this->allTables) . ';' . PHP_EOL;
     ?>
 </script>
 
@@ -257,15 +254,13 @@ foreach ($this->allTables as $table) {
 
 
         <script>
-            updateTypeParams("jform_type", "jform_typeparams", "typeparams_box");
+            updateTypeParams("jform_type", "jform_typeparams", "typeparams_box", "Joomla");
             <?php if(!$this->ct->Env->advancedTagProcessor): ?>
             disableProField("jform_defaultvalue");
             disableProField("jform_valuerule");
             disableProField("jform_valuerulecaption");
             <?php endif; ?>
         </script>
-
-
     </div>
 
     <div id="ct_fieldtypeeditor_box" style="display: none;"><?php

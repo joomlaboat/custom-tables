@@ -144,8 +144,7 @@ function renderInputBox(id, param, vlu, attributes, fieldTypeParametersList) {
     return '<input data-type="' + param_att.type + '" type="text" id="' + id + '" value="' + vlu + '" ' + attributes + '>';
 }
 
-function updateTypeParams(type_id, typeparams_id_, typeparams_box_id_)//type selection
-{
+function updateTypeParams(type_id, typeparams_id_, typeparams_box_id_, CMSType) {
     type_obj = document.getElementById(type_id);
     typeparams_id = typeparams_id_;
     typeparams_obj = document.getElementById(typeparams_id);
@@ -153,7 +152,7 @@ function updateTypeParams(type_id, typeparams_id_, typeparams_box_id_)//type sel
     typeparams_box_obj = document.getElementById(typeparams_box_id_);
 
     if (!field_type_loaded) {
-        loadTypes(typeparams_box_obj, type_id, typeparams_id, typeparams_box_id_);
+        loadTypes(typeparams_box_obj, type_id, typeparams_id, typeparams_box_id_, CMSType);
     } else {
         updateParameters();
     }
@@ -1121,11 +1120,21 @@ function loadTypes_silent() {
     }
 }
 
-function loadTypes(typeparams_box_obj, jform_type, jform_typeparams, typeparams_box) {
+function loadTypes(typeparams_box_obj, jform_type, jform_typeparams, typeparams_box, CMSType) {
     typeparams_box_obj.innerHTML = 'Loading...';
 
-    let parts = location.href.split("/administrator/");
-    const url = parts[0] + '/index.php?option=com_customtables&view=xml&xmlfile=fieldtypes&Itemid=-1';
+    let url = '';
+    if (CMSType == 'Joomla') {
+        let parts = location.href.split("/administrator/");
+        url = parts[0] + '/index.php?option=com_customtables&view=xml&xmlfile=fieldtypes&Itemid=-1';
+    } else if (CMSType == 'WordPress') {
+        let parts = location.href.split("wp-admin/admin.php?");
+        url = parts[0] + 'wp-admin/admin.php?page=customtables-xml&xmlfile=fieldtypes';
+    } else {
+        typeparams_box_obj.innerHTML = 'CMS Not Supported.';
+        return;
+    }
+
     const params = "";
     let http = CreateHTTPRequestObject();   // defined in ajax.js
 
@@ -1148,7 +1157,7 @@ function loadTypes(typeparams_box_obj, jform_type, jform_typeparams, typeparams_
 
                 field_types = json_object.fieldtypes.type;
                 field_type_loaded = true;
-                updateTypeParams(jform_type, jform_typeparams, typeparams_box);
+                updateTypeParams(jform_type, jform_typeparams, typeparams_box, CMSType);
             }
         };
         http.send(params);

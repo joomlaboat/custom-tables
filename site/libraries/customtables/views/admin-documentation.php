@@ -23,8 +23,9 @@ class Documentation
     var bool $internal_use = false;
     var float $version;
     var bool $onlyWordpress;
+    var bool $hideProVersion;
 
-    function __construct(bool $onlyWordpress = false)
+    function __construct(bool $onlyWordpress = false, bool $hideProVersion = false)
     {
         if (defined('_JEXEC')) {
             $version = new Version;
@@ -34,6 +35,7 @@ class Documentation
 
         $this->internal_use = true;
         $this->onlyWordpress = $onlyWordpress;
+        $this->hideProVersion = $hideProVersion;
     }
 
     function getFieldTypes(): string
@@ -70,6 +72,9 @@ class Documentation
                 if (!((string)$type_att->wordpress == 'true'))
                     $active = false;
             }
+
+            if ($this->hideProVersion and $is4Pro)
+                $active = false;
 
             if ($active and !$isDeprecated) {
 
@@ -682,9 +687,24 @@ class Documentation
 
         foreach ($tagSets as $tagSet) {
             $tagSetAtt = $tagSet->attributes();
+            $is4Pro = (bool)(int)$tagSetAtt->proversion;
+            $isDeprecated = (bool)(int)$tagSetAtt->deprecated;
 
-            if ((int)$tagSetAtt->deprecated == 0) {
-                $is4Pro = (bool)(int)$tagSetAtt->proversion;
+            $active = true;
+
+            /*
+            if ($this->onlyWordpress) {
+                if (!((string)$type_att->wordpress == 'true'))
+                    $active = false;
+            }
+            */
+
+            if ($this->hideProVersion and $is4Pro) {
+                $active = false;
+            }
+
+            if ($active and !$isDeprecated) {
+
                 $class = 'ct_doc_tagset_free';
                 if ($is4Pro)
                     $class = 'ct_doc_tagset_pro';
@@ -718,7 +738,20 @@ class Documentation
             $hidedefaultexample = (bool)(int)$tag_att->hidedefaultexample;
             $isDeprecated = (bool)(int)$tag_att->deprecated;
 
-            if (!$isDeprecated) {
+            $active = true;
+            /*
+if ($this->onlyWordpress) {
+    if (!((string)$type_att->wordpress == 'true'))
+        $active = false;
+            }
+            */
+
+            if ($this->hideProVersion and $is4Pro) {
+                $active = false;
+            }
+
+            if ($active and !$isDeprecated) {
+
                 $class = 'ct_doc_free';
                 if ($is4Pro)
                     $class = 'ct_doc_pro';
