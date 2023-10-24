@@ -147,7 +147,7 @@ class database
             $wpdb->query(str_replace('#__', $wpdb->prefix, $query));
             if ($wpdb->last_error !== '')
                 throw new Exception($wpdb->last_error);
-            
+
             return $wpdb->insert_id;
         }
         return null;
@@ -237,7 +237,11 @@ class database
             if ($limitStart !== null)
                 $query .= ' OFFSET ' . $limitStart;
 
-            return $wpdb->get_results(str_replace('#__', $wpdb->prefix, $query), ARRAY_A);
+            $result = $wpdb->get_results(str_replace('#__', $wpdb->prefix, $query), ARRAY_A);
+            if ($wpdb->last_error !== '')
+                throw new Exception($wpdb->last_error);
+
+            return $result;
         }
         return null;
     }

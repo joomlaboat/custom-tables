@@ -30,7 +30,7 @@
         </fieldset>
 
         <fieldset name="FILTERS" label="COM_MENUS_FILTERS_FIELDSET_LABEL"
-                  description="Filter or 'where clause' is used to extract only those records that fulfill a specified condition. Also, a Limit clause to specify the number of records to return.">
+                  description="Filter or 'where clause' is used to extract only those records that fulfill a specified condition.">
             <field type="text" name="filter" filter="raw" default="" label="Search Parameter"
                    description="Field to search in = (or &#60; or &#60;= or &#62; or &#62;= or != and == 'exact match')
 		value (or Twig tag as {{ user.id }} for example ) to have more then one condition use 'and', 'or'

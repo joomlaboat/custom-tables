@@ -119,8 +119,11 @@ class Environment
         $this->clean = (bool)common::inputGetInt('clean', 0);
         $this->isModal = (bool)common::inputGetInt('modal', 0);
         $this->frmt = common::inputGetCmd('frmt', 'html');
-        if (common::inputGetCmd('layout', '') == 'json')
-            $this->frmt = 'json';
+
+        if (defined('_JEXEC')) {
+            if (common::inputGetCmd('layout', '') == 'json')
+                $this->frmt = 'json';
+        }
 
         if (defined('_JEXEC')) {
             $mainframe = Factory::getApplication();

@@ -36,8 +36,17 @@ class ListOfLayouts
     {
         // Select some fields
         $tabletitle = '(SELECT tabletitle FROM #__customtables_tables AS tables WHERE tables.id=a.tableid LIMIT 1)';
-        $modifiedby = '(SELECT name FROM #__users AS u WHERE u.id=a.modified_by LIMIT 1)';
-        $query = 'SELECT a.*, ' . $tabletitle . ' AS tabletitle, ' . $modifiedby . ' AS modifiedby';
+
+        if (defined('_JEXEC')) {
+            $modifiedby = '(SELECT name FROM #__users AS u WHERE u.id=a.modified_by LIMIT 1)';
+        } elseif (defined('WPINC')) {
+            $modifiedby = '(SELECT display_name FROM #__users AS u WHERE u.ID=a.modified_by LIMIT 1)';
+        } else
+            $modifiedby = 'NULL';
+
+        $layoutSize = 'LENGTH(layoutcode)';
+
+        $query = 'SELECT a.*, ' . $tabletitle . ' AS tabletitle, ' . $modifiedby . ' AS modifiedby, ' . $layoutSize . ' AS layout_size';
 
         // From the customtables_item table
         $query .= ' FROM ' . database::quoteName('#__customtables_layouts') . ' AS a';
@@ -104,5 +113,79 @@ class ListOfLayouts
             }
         }
         return $items;
+    }
+
+    function save(?int $layoutId): bool
+    {
+        // Check if running in WordPress context
+        if (defined('WPINC')) {
+            check_admin_referer('create-layout', '_wpnonce_create-layout');
+
+            // Check user capabilities
+            if (!current_user_can('install_plugins')) {
+                wp_die(
+                    '<h1>' . __('You need a higher level of permission.') . '</h1>' .
+                    '<p>' . __('Sorry, you are not allowed to create layouts.') . '</p>',
+                    403
+                );
+            }
+        }
+
+        $sets = [];
+        //$tableTitle = null;
+
+        // Process layout name
+        if (function_exists("transliterator_transliterate"))
+            $newLayoutName = transliterator_transliterate("Any-Latin; Latin-ASCII; Lower()", common::inputGetString('layoutname'));
+        else
+            $newLayoutName = common::inputGetString('layoutname');
+
+//        $filter = JFilterInput::getInstance();
+
+        $newLayoutName = str_replace(" ", "_", $newLayoutName);
+        $newLayoutName = trim(preg_replace("/[^a-z A-Z_\d]/", "", $newLayoutName));
+        $sets[] = 'layoutname=' . database::quote($newLayoutName);
+        $sets[] = 'modified_by=' . (int)$this->ct->Env->user->id;
+        $sets[] = 'modified=NOW()';
+
+        // set the metadata to the Item Data
+        /*
+        if (isset($data['metadata']) && isset($data['metadata']['author'])) {
+            $data['metadata']['author'] = $filter->clean($data['metadata']['author'], 'TRIM');
+
+            $metadata = new JRegistry;
+            $metadata->loadArray($data['metadata']);
+            $data['metadata'] = (string)$metadata;
+        }
+
+        // Set the Params Items to data
+        if (isset($data['params']) && is_array($data['params'])) {
+            $params = new JRegistry;
+            $params->loadArray($data['params']);
+            $data['params'] = (string)$params;
+        }
+*/
+        // Alter the unique field for save as copy
+        /*
+        if (common::inputGetCmd('task') === 'save2copy') {
+            // Automatic handling of other unique fields
+            $uniqueFields = $this->getUniqueFields();
+            if (CustomtablesHelper::checkArray($uniqueFields)) {
+                foreach ($uniqueFields as $uniqueField) {
+                    $data[$uniqueField] = $this->generateUnique($uniqueField, $data[$uniqueField]);
+                }
+            }
+        }
+        */
+
+        //$Layouts = new Layouts($this->ct);
+        //$Layouts->storeAsFile($data);
+
+        if ($layoutId !== null)
+            database::updateSets('#__customtables_layouts', $sets, ['id=' . $layoutId]);
+        else
+            database::insertSets('#__customtables_layouts', $sets);
+
+        return true;
     }
 }

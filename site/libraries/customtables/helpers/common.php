@@ -80,7 +80,7 @@ class common
         if (defined('_JEXEC')) {
             return Factory::getApplication()->input->post->getString($parameter, $default);
         } else {
-            if (!isset($_GET[$parameter]))
+            if (!isset($_POST[$parameter]))
                 return $default;
 
             $source = strip_tags($_POST[$parameter]);
@@ -116,7 +116,7 @@ class common
         }
     }
 
-    public static function inputGetInt($parameter, $default = null)
+    public static function inputGetInt(string $parameter, ?int $default = null)
     {
         if (defined('_JEXEC')) {
             return Factory::getApplication()->input->getInt($parameter, $default);
@@ -158,7 +158,7 @@ class common
         }
     }
 
-    public static function inputGetCMD($parameter, $default = null)
+    public static function inputGetCMD(string $parameter, $default = null)
     {
         if (defined('_JEXEC')) {
             return Factory::getApplication()->input->getCmd($parameter, $default);
@@ -167,7 +167,7 @@ class common
             if (!isset($_REQUEST[$parameter]))
                 return $default;
 
-            $result = (string)preg_replace('/[^A-Z0-9_\.-]/i', '', $_GET[$parameter]);
+            $result = (string)preg_replace('/[^A-Z0-9_\.-]/i', '', $_REQUEST[$parameter]);
             return ltrim($result, '.');
         }
     }
