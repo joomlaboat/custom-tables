@@ -492,16 +492,16 @@ class CT
         //Apply default values
         foreach ($this->Table->fields as $fieldRow) {
 
-            if (!$saveField->checkIfFieldAlreadyInTheList($fieldRow['fieldname'])) {
-                $saveFieldSet = $saveField->applyDefaults($fieldRow);
-                if ($saveFieldSet !== null) {
-                    $saveField->saveQuery[] = $saveFieldSet;
-                }
+            if (!$saveField->checkIfFieldAlreadyInTheList($fieldRow['realfieldname'])) {
+                $saveField->applyDefaults($fieldRow);
+                //if ($saveFieldSet !== null) {
+                //$saveField->saveQuery[] = $saveFieldSet;
+                //}
             }
         }
 
-        if (count($saveField->saveQuery) > 0)
-            database::update($this->Table->realtablename, $saveField->saveQuery, [$this->Table->realidfieldname => $listing_id]);
+        if (count($saveField->row_new) > 0)
+            database::update($this->Table->realtablename, $saveField->row_new, [$this->Table->realidfieldname => $listing_id]);
 
         //End of Apply default values
 
