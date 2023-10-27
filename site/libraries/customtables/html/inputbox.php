@@ -512,7 +512,7 @@ class Inputbox
         $result = '';
 
         if ($value === null) {
-            $value = common::inputGet($this->ct->Env->field_prefix . $this->field->fieldname, '', 'ALNUM');
+            $value = common::inputGetAlnum($this->ct->Env->field_prefix . $this->field->fieldname, '');
             if ($value == '')
                 $value = $this->defaultValue;
         }
@@ -701,7 +701,7 @@ class Inputbox
 
         $value = $this->row[$this->field->realfieldname . $postfix] ?? null;
         if ($value === null) {
-            $value = common::inputGet($this->prefix . $this->field->fieldname . $postfix, '', 'STRING');
+            $value = common::inputGetString($this->prefix . $this->field->fieldname . $postfix, '');
             if ($value == '')
                 $value = $this->defaultValue;
         }
@@ -1078,7 +1078,7 @@ class Inputbox
     protected function render_color(?string $value): string
     {
         if ($value === null) {
-            $value = common::inputGet($this->ct->Env->field_prefix . $this->field->fieldname, '', 'ALNUM');
+            $value = common::inputGetAlnum($this->ct->Env->field_prefix . $this->field->fieldname, '');
             if ($value == '')
                 $value = $this->defaultValue;
         }
@@ -1333,7 +1333,7 @@ class Inputbox
             . 'data-type="filelink"';
 
         if ($value === null) {
-            $value = SaveFieldQuerySet::get_record_type_value($this->ct, $this->field);
+            $value = SaveFieldQuerySet::get_record_type_value($this->field);
             common::inputGetInt($this->ct->Env->field_prefix . $this->field->fieldname);
             if ($value == '')
                 $value = $this->defaultValue;
@@ -1446,7 +1446,7 @@ class Inputbox
         $result = '';
 
         if ($value === null) {
-            $value = common::inputGet($this->ct->Env->field_prefix . $this->field->fieldname, '', 'CMD');
+            $value = common::inputGetCmd($this->ct->Env->field_prefix . $this->field->fieldname, '');
 
             if ($value == '')
                 $value = $this->defaultValue;
@@ -1541,7 +1541,7 @@ class Inputbox
             $fieldname = $this->field->fieldname . $postfix;
 
             if ($this->ct->isRecordNull($this->row))
-                $value = common::inputGet($this->ct->Env->field_prefix . $fieldname, '', 'STRING');
+                $value = common::inputGetString($this->ct->Env->field_prefix . $fieldname, '');
             else
                 $value = $this->row[$this->field->realfieldname . $postfix];
 
@@ -1631,7 +1631,7 @@ class Inputbox
 
     protected function getWhereParameters(): array
     {
-        $value = common::inputGet('where', '', 'BASE64');
+        $value = common::inputGetBase64('where', '');
         $b = base64_decode($value);
         $b = str_replace(' or ', ' and ', $b);
         $b = str_replace(' OR ', ' and ', $b);

@@ -38,21 +38,29 @@ class Filtering
         $this->showPublished = $showPublished;
 
         if ($this->ct->Table->published_field_found) {
+
+            //TODO: Fix this mess by replacing the state with a text code like 'published','unpublished','everything','any','trash'
             //$showPublished = 0 - show published
             //$showPublished = 1 - show unpublished
-            //$shoPublished = 2 - show any
+            //$showPublished = 2 - show everything
+            //$showPublished = -1 - show published and unpublished
+            //$showPublished = -2 - show trashed
 
+            if ($this->showPublished == 0)
+                $this->where[] = $this->ct->Table->realtablename . '.published=1';
             if ($this->showPublished == 1)
                 $this->where[] = $this->ct->Table->realtablename . '.published=0';
-            elseif ($this->showPublished != 2)
-                $this->where[] = $this->ct->Table->realtablename . '.published=1';
+            if ($this->showPublished == -1)
+                $this->where[] = '(' . $this->ct->Table->realtablename . '.published=0 OR ' . $this->ct->Table->realtablename . '.published=1)';
+            if ($this->showPublished == -2)
+                $this->where[] = $this->ct->Table->realtablename . '.published=-2';
         }
     }
 
     function addQueryWhereFilter(): void
     {
-        if (common::inputGet('where', '', 'BASE64')) {
-            $decodedURL = common::inputGet('where', '', 'BASE64');
+        if (common::inputGetBase64('where')) {
+            $decodedURL = common::inputGetBase64('where', '');
             $decodedURL = urldecode($decodedURL);
             $decodedURL = str_replace(' ', '+', $decodedURL);
             $filter_string = $this->sanitizeAndParseFilter(base64_decode($decodedURL));
@@ -920,7 +928,7 @@ class Filtering
     {
         if (str_contains($vL, '$get_')) {
             $getPar = str_replace('$get_', '', $vL);
-            $a = common::inputGet($getPar, '', 'CMD');
+            $a = common::inputGetCmd($getPar, '');
             if ($a == '')
                 return '';
             return common::inputGetInt($getPar);
@@ -932,7 +940,7 @@ class Filtering
     {
         if (str_contains($vL, '$get_')) {
             $getPar = str_replace('$get_', '', $vL);
-            return common::inputGet($getPar, '', 'CMD');
+            return common::inputGetCmd($getPar, '');
         }
 
         return $vL;

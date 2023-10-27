@@ -27,13 +27,13 @@ class updateImages
         $stepSize = common::inputGetInt('stepsize', 10);
         $startIndex = common::inputGetInt('startindex', 0);
 
-        $old_typeparams = base64_decode(common::inputGet('old_typeparams', '', 'BASE64'));
+        $old_typeparams = base64_decode(common::inputGetBase64('old_typeparams', ''));
         if ($old_typeparams == '')
             return array('error' => 'old_typeparams not set');
 
         $old_params = JoomlaBasicMisc::csv_explode(',', $old_typeparams);
 
-        $new_typeparams = base64_decode(common::inputGet('new_typeparams', '', 'BASE64'));
+        $new_typeparams = base64_decode(common::inputGetBase64('new_typeparams', ''));
         if ($new_typeparams == '')
             return array('error' => 'new_typeparams not set');
 

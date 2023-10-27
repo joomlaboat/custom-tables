@@ -16,6 +16,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\Fields;
 use CustomTables\Layouts;
+use CustomTables\ListOfLayouts;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
@@ -33,6 +34,9 @@ $wa->useScript('keepalive')
 
 require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR
     . 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'layouteditor' . DIRECTORY_SEPARATOR . 'layouteditor.php');
+
+require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR
+    . 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . 'admin-listoflayouts.php');
 
 $onPageLoads = array();
 $typeBoxId = "jform_layouttype";
@@ -168,7 +172,7 @@ foreach ($this->allTables as $table) {
     $this->getMenuItems();
     ?>
 
-    <div id="allLayoutRaw" style="display:none;"><?php echo json_encode($this->getLayouts()); ?></div>
+    <div id="allLayoutRaw" style="display:none;"><?php echo json_encode(ListOfLayouts::getLayouts()); ?></div>
     <div id="dependencies_content" style="display:none;">
 
         <h3><?php echo Text::_('COM_CUSTOMTABLES_LAYOUTS_WHAT_IS_USING_IT', true); ?></h3>

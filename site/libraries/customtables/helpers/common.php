@@ -8,7 +8,7 @@ use JUri;
 
 class common
 {
-    public static function enqueueMessage($text, $type)
+    public static function enqueueMessage($text, $type): void
     {
         if (defined('_JEXEC')) {
             Factory::getApplication()->enqueueMessage($text, $type);
@@ -53,7 +53,7 @@ class common
     public static function curPageURL(): string
     {
         if (defined('_JEXEC')) {
-            $WebsiteRoot = str_replace(JURI::root(true), '', JURI::root(false));
+            $WebsiteRoot = str_replace(JURI::root(true), '', JURI::root());
             $RequestURL = $_SERVER["REQUEST_URI"];
 
             if ($WebsiteRoot != '' and $WebsiteRoot[strlen($WebsiteRoot) - 1] == '/') {
@@ -66,7 +66,7 @@ class common
             $WebsiteRoot = str_replace(site_url(), '', home_url());
             $RequestURL = $_SERVER["REQUEST_URI"];
 
-            if ($WebsiteRoot !== '' && substr($WebsiteRoot, -1) === '/') {
+            if ($WebsiteRoot !== '' && str_ends_with($WebsiteRoot, '/')) {
                 if ($RequestURL !== '' && $RequestURL[0] === '/') {
                     $WebsiteRoot = rtrim($WebsiteRoot, '/');
                 }
@@ -111,7 +111,7 @@ class common
                 return $default;
 
             // Only use the first floating point value
-            preg_match('/-?[0-9]+(\.[0-9]+)?/', (string)$_REQUEST[$parameter], $matches);
+            preg_match('/-?\d+(\.\d+)?/', (string)$_REQUEST[$parameter], $matches);
             return @ (float)$matches[0];
         }
     }
@@ -125,7 +125,7 @@ class common
             if (!isset($_REQUEST[$parameter]))
                 return $default;
 
-            preg_match('/-?[0-9]+/', (string)$_REQUEST[$parameter], $matches);
+            preg_match('/-?\d+/', (string)$_REQUEST[$parameter], $matches);
             return @ (int)$matches[0];
         }
     }
@@ -139,7 +139,7 @@ class common
             if (!isset($_POST[$parameter]))
                 return $default;
 
-            preg_match('/-?[0-9]+/', (string)$_POST[$parameter], $matches);
+            preg_match('/-?\d+/', (string)$_POST[$parameter], $matches);
             return @ (int)$matches[0];
         }
     }
@@ -153,7 +153,7 @@ class common
             if (!isset($_REQUEST[$parameter]))
                 return $default;
 
-            preg_match('/-?[0-9]+/', (string)$_REQUEST[$parameter], $matches);
+            preg_match('/-?\d+/', (string)$_REQUEST[$parameter], $matches);
             return @ abs((int)$matches[0]);
         }
     }
@@ -167,8 +167,63 @@ class common
             if (!isset($_REQUEST[$parameter]))
                 return $default;
 
-            $result = (string)preg_replace('/[^A-Z0-9_\.-]/i', '', $_REQUEST[$parameter]);
+            $result = (string)preg_replace('/[^A-Z\d_\.-]/i', '', $_REQUEST[$parameter]);
             return ltrim($result, '.');
+        }
+    }
+
+    public static function inputGetRow(string $parameter, $default = null)
+    {
+        if (defined('_JEXEC')) {
+            return Factory::getApplication()->input->get($parameter, $default, "RAW");
+        } else {
+            // Allow a-z, 0-9, underscore, dot, dash. Also remove leading dots from result.
+            if (!isset($_REQUEST[$parameter]))
+                return $default;
+
+            return stripslashes($_REQUEST[$parameter]);
+        }
+    }
+
+    public static function inputGetBase64(string $parameter, $default = null)
+    {
+        if (defined('_JEXEC')) {
+            return Factory::getApplication()->input->get($parameter, $default, 'BASE64');
+        } else {
+            // Allow a-z, 0-9, underscore, dot, dash. Also remove leading dots from result.
+            if (!isset($_REQUEST[$parameter]))
+                return $default;
+
+            // Allow a-z, 0-9, slash, plus, equals.
+            return (string)preg_replace('/[^A-Z\d\/+=]/i', '', $_REQUEST[$parameter]);
+        }
+    }
+
+    public static function inputGetWord(string $parameter, $default = null)
+    {
+        if (defined('_JEXEC')) {
+            return Factory::getApplication()->input->get($parameter, $default, 'BASE64');
+        } else {
+            // Allow a-z, 0-9, underscore, dot, dash. Also remove leading dots from result.
+            if (!isset($_REQUEST[$parameter]))
+                return $default;
+
+            // Only allow characters a-z, and underscores
+            return (string)preg_replace('/[^A-Z_]/i', '', $_REQUEST[$parameter]);
+        }
+    }
+
+    public static function inputGetAlnum(string $parameter, $default = null)
+    {
+        if (defined('_JEXEC')) {
+            return Factory::getApplication()->input->get($parameter, $default, 'ALNUM');
+        } else {
+            // Allow a-z, 0-9, underscore, dot, dash. Also remove leading dots from result.
+            if (!isset($_REQUEST[$parameter]))
+                return $default;
+
+            // Allow a-z and 0-9 only
+            return (string)preg_replace('/[^A-Z\d]/i', '', $_REQUEST[$parameter]);
         }
     }
 
@@ -177,7 +232,7 @@ class common
         if (defined('_JEXEC')) {
             return Factory::getApplication()->input->get($parameter, $default, $filter);
         } else {
-            die('common::inputGet not supported in WordPress');
+            echo 'common::inputGet not supported in WordPress';
         }
     }
 
@@ -186,7 +241,7 @@ class common
         if (defined('_JEXEC')) {
             return Factory::getApplication()->input->post->get($parameter, $default, $filter);
         } else {
-            die('common::inputPost not supported in WordPress');
+            echo 'common::inputPost not supported in WordPress';
         }
     }
 
@@ -195,7 +250,7 @@ class common
         if (defined('_JEXEC')) {
             Factory::getApplication()->input->set($parameter, $value);
         } else {
-            die('common::inputSet not supported in WordPress');
+            echo 'common::inputSet not supported in WordPress';
         }
     }
 
@@ -204,7 +259,7 @@ class common
         if (defined('_JEXEC')) {
             return Factory::getApplication()->input->files->get($fileId);
         } else {
-            die('common::inputFiles not supported in WordPress');
+            echo 'common::inputFiles not supported in WordPress';
         }
     }
 

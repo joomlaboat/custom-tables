@@ -238,7 +238,7 @@ class IntegrityFields extends IntegrityChecks
         foreach ($projected_fields as $projected_field) {
             $proj_field = $projected_field['realfieldname'];
             $fieldType = $projected_field['type'];
-            if ($fieldType !== null and $fieldType != 'dummy' and !Fields::isVirtualField($projected_field)) {
+            if ($fieldType !== null and $projected_field['typeparams'] !== null and $fieldType != 'dummy' and !Fields::isVirtualField($projected_field)) {
                 IntegrityFields::addFieldIfNotExists($ct, $ct->Table->realtablename, $ExistingFields, $proj_field, $fieldType, $projected_field['typeparams']);
             }
         }
@@ -309,7 +309,7 @@ class IntegrityFields extends IntegrityChecks
         return '';
     }
 
-    public static function addFieldIfNotExists(CT $ct, $realtablename, $ExistingFields, $proj_field, string $fieldType, $typeParams): bool
+    public static function addFieldIfNotExists(CT $ct, $realtablename, $ExistingFields, $proj_field, string $fieldType, string $typeParams): bool
     {
         if ($fieldType == 'multilangstring' or $fieldType == 'multilangtext') {
             $moreThanOneLanguage = false;
@@ -351,10 +351,12 @@ class IntegrityFields extends IntegrityChecks
         return false;
     }
 
-    protected static function addField($realtablename, $realfieldname, string $fieldType, $typeParams)
+    protected static function addField($realtablename, $realfieldname, string $fieldType, string $typeParams)
     {
         $PureFieldType = Fields::getPureFieldType($fieldType, $typeParams);
         Fields::AddMySQLFieldNotExist($realtablename, $realfieldname, $PureFieldType, '');
-        Factory::getApplication()->enqueueMessage('Field "' . $realfieldname . '" added.', 'notice');
+
+        if (defined('_JEXEC'))
+            Factory::getApplication()->enqueueMessage('Field "' . $realfieldname . '" added.', 'notice');
     }
 }

@@ -11,6 +11,8 @@
 namespace CustomTables;
 
 // no direct access
+use Exception;
+
 if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
@@ -22,6 +24,12 @@ class ListOfLayouts
     function __construct(CT $ct)
     {
         $this->ct = $ct;
+    }
+
+    public static function getLayouts()
+    {
+        $query = 'SELECT id,layoutname,tableid,layouttype FROM #__customtables_layouts WHERE published=1 ORDER BY layoutname';
+        return database::loadObjectList($query);
     }
 
     function getItems($published, $search, $layoutType, $tableid, $orderCol, $orderDirection, $limit, $start): array
@@ -131,7 +139,6 @@ class ListOfLayouts
             }
         }
 
-        $sets = [];
         //$tableTitle = null;
 
         // Process layout name
@@ -140,15 +147,17 @@ class ListOfLayouts
         else
             $newLayoutName = common::inputGetString('layoutname');
 
-//        $filter = JFilterInput::getInstance();
-
         $newLayoutName = str_replace(" ", "_", $newLayoutName);
         $newLayoutName = trim(preg_replace("/[^a-z A-Z_\d]/", "", $newLayoutName));
-        $sets[] = 'layoutname=' . database::quote($newLayoutName);
-        $sets[] = 'modified_by=' . (int)$this->ct->Env->user->id;
-        $sets[] = 'modified=NOW()';
-        $sets[] = 'layouttype=' . common::inputGetString('layouttype');
-        $sets[] = 'tableid=' . common::inputGetInt('table');
+        $data['layoutname'] = $newLayoutName;//$sets[] = 'layoutname=' . database::quote($newLayoutName);
+        $data['modified_by'] = (int)$this->ct->Env->user->id;//$sets[] = 'modified_by=' . (int)$this->ct->Env->user->id;
+        $data['modified'] = current_time('mysql', 1); // This will use the current date and time in MySQL format;//$sets[] = 'modified=NOW()';
+        $data['layouttype'] = common::inputGetString('layouttype');//$sets[] = 'layouttype=' . database::quote(common::inputGetString('layouttype'));
+        $data['tableid'] = common::inputGetInt('table');//$sets[] = 'tableid=' . common::inputGetInt('table');
+        $data['layoutcode'] = common::inputGetRow('layoutcode');//$sets[] = 'layoutcode=' . database::quote(common::inputGetRow('layoutcode'), true);
+        $data['layoutmobile'] = common::inputGetRow('layoutmobile');//$sets[] = 'layoutmobile=' . database::quote(common::inputGetRow('layoutmobile'), true);
+        $data['layoutcss'] = common::inputGetRow('layoutcss');//$sets[] = 'layoutcss=' . database::quote(common::inputGetRow('layoutcss'), true);
+        $data['layoutjs'] = common::inputGetRow('layoutjs');//$sets[] = 'layoutjs=' . database::quote(common::inputGetRow('layoutjs'), true);
 
         // set the metadata to the Item Data
         /*
@@ -183,11 +192,14 @@ class ListOfLayouts
         //$Layouts = new Layouts($this->ct);
         //$Layouts->storeAsFile($data);
 
-        if ($layoutId !== null)
-            database::updateSets('#__customtables_layouts', $sets, ['id=' . $layoutId]);
-        else
-            database::insertSets('#__customtables_layouts', $sets);
-
+        try {
+            if ($layoutId !== null)
+                database::update('#__customtables_layouts', $data, ['id' => $layoutId]);
+            else
+                database::insert('#__customtables_layouts', $data);
+        } catch (Exception $e) {
+            return false;
+        }
         return true;
     }
 }

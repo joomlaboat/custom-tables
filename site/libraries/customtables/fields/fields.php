@@ -252,7 +252,7 @@ class Fields
     public static function getFieldRow($fieldid = 0, $assocList = false)
     {
         if ($fieldid == 0)
-            $fieldid = common::inputGet('fieldid', 0, 'INT');
+            $fieldid = common::inputGetInt('fieldid', 0);
 
         $query = 'SELECT ' . Fields::getFieldRowSelects() . ' FROM #__customtables_fields AS s WHERE id=' . $fieldid . ' LIMIT 1';//published=1 AND
 
@@ -591,10 +591,10 @@ class Fields
         database::setQuery($query);
     }
 
-    public static function getFieldName($fieldid): string
+    public static function getFieldName(int $fieldid): string
     {
         if ($fieldid == 0)
-            $fieldid = common::inputGet('fieldid', 0, 'INT');
+            $fieldid = common::inputGetInt('fieldid', 0);
 
         $query = 'SELECT fieldname FROM #__customtables_fields AS s WHERE s.published=1 AND s.id=' . $fieldid . ' LIMIT 1';
         $rows = database::loadObjectList($query);
@@ -629,7 +629,7 @@ class Fields
     public static function getFieldAssocByName(string $fieldname, int $tableid): ?array
     {
         if ($fieldname == '')
-            $fieldname = common::inputGet('fieldname', '', 'CMD');
+            $fieldname = common::inputGetCmd('fieldname', '');
 
         if ($fieldname == '')
             return null;
@@ -726,6 +726,9 @@ class Fields
 
     public static function saveField(?int $tableId, ?int $fieldId): ?int
     {
+        if ($fieldId == 0)
+            $fieldId = null; // new field
+
         require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'utilities' . DIRECTORY_SEPARATOR . 'importtables.php');
 
         $ct = new CT;

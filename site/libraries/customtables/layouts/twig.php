@@ -190,10 +190,12 @@ class TwigProcessor
         //{{ record.number }}	-	wizard ok
         //{{ record.published }}	-	wizard ok
 
-        $CustomTablesWordPluginPath = JPATH_SITE . DIRECTORY_SEPARATOR . 'plugins' . DIRECTORY_SEPARATOR . 'content' . DIRECTORY_SEPARATOR . 'customtablesword' . DIRECTORY_SEPARATOR . 'customtablesword.php';
-        if (file_exists($CustomTablesWordPluginPath)) {
-            require_once($CustomTablesWordPluginPath);
-            $this->twig->addGlobal('phpword', new Twig_PHPWord_Tags());
+        if (defined('_JEXEC')) {
+            $CustomTablesWordPluginPath = JPATH_SITE . DIRECTORY_SEPARATOR . 'plugins' . DIRECTORY_SEPARATOR . 'content' . DIRECTORY_SEPARATOR . 'customtablesword' . DIRECTORY_SEPARATOR . 'customtablesword.php';
+            if (file_exists($CustomTablesWordPluginPath)) {
+                require_once($CustomTablesWordPluginPath);
+                $this->twig->addGlobal('phpword', new Twig_PHPWord_Tags());
+            }
         }
 
         $this->variables = [];
@@ -529,7 +531,7 @@ class fieldObject
 
     public function title()
     {
-        return $this->field->title;
+        return $this->field->title ?? '';
     }
 
     public function l($allowSortBy = false)
@@ -564,6 +566,9 @@ class fieldObject
 
     public function edit()
     {
+        if (!isset($this->field->fieldrow))
+            return 'Fields not found';
+
         if (Fields::isVirtualField($this->field->fieldrow))
             return $this->value();
 

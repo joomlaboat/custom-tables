@@ -76,8 +76,8 @@ class CT_FieldTypeTag_FileBox
             . '&amp;listing_id=' . $listing_id
             . '&amp;returnto=' . $ct->Env->encoded_current_url;
 
-        if (common::inputGet('tmpl', '', 'CMD') != '')
-            $fileManagerLink .= '&tmpl=' . common::inputGet('tmpl', '', 'CMD');
+        if (common::inputGetCmd('tmpl'))
+            $fileManagerLink .= '&tmpl=' . common::inputGetCmd('tmpl', '');
 
         if ($ct->Params->ItemId > 0)
             $fileManagerLink .= '&amp;Itemid=' . $ct->Params->ItemId;

@@ -185,7 +185,7 @@ class Ordering
         } else {
             if ($this->Params->forceSortBy != '') {
                 $ordering_param_string = $this->Params->forceSortBy;
-            } elseif (common::inputGet('esordering', '', 'CMD')) {
+            } elseif (common::inputGetCmd('esordering', '')) {
                 $ordering_param_string = common::inputGetString('esordering', '');
                 $ordering_param_string = trim(preg_replace("/[^a-zA-Z-+%.: ,_]/", "", $ordering_param_string));
             } else {

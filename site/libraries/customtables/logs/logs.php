@@ -32,12 +32,12 @@ trait Logs
         // 9 - File Deleted
 
         $sets = array();
-        $sets[] = (int)$this->Env->userid;
+        $sets[] = (int)$this->Env->user->id;
         $sets[] = 'NOW()';
         $sets[] = (int)$this->tableid;
         $sets[] = (int)$listing_id;
         $sets[] = (int)$action;
-        $sets[] = (int)common::inputGet('Itemid', 0, 'INT');
+        $sets[] = (int)common::inputGetInt('Itemid', 0);
 
         //Value from sets
         $fields = ['userid', 'datetime', 'tableid', 'listingid', 'action', 'Itemid'];

@@ -87,7 +87,7 @@ class Twig_Html_Tags
             $link .= '&amp;ModuleId=' . $this->ct->Params->ModuleId;
 
         if (common::inputGetCmd('tmpl', '') != '')
-            $link .= '&amp;tmpl=' . common::inputGet('tmpl', '', 'CMD');
+            $link .= '&amp;tmpl=' . common::inputGetCmd('tmpl', '');
 
         if (!is_null($this->ct->Params->ModuleId))
             $link .= '&amp;ModuleId=' . $this->ct->Params->ModuleId;
@@ -221,7 +221,7 @@ class Twig_Html_Tags
             return '';
 
         if ($returnto == '')
-            $returnto = base64_decode(common::inputGet('returnto', '', 'BASE64'));
+            $returnto = base64_decode(common::inputGetBase64('returnto', ''));
 
         if ($returnto == '')
             return '';

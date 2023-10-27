@@ -215,7 +215,7 @@ class Twig_Url_Tags
 
     function getuint($param, $default = 0)
     {
-        return common::inputGet($param, $default, 'UINT');
+        return common::inputGetUInt($param, $default);
     }
 
     function getfloat($param, $default = 0): float
@@ -225,7 +225,7 @@ class Twig_Url_Tags
 
     function getword($param, $default = ''): string
     {
-        return common::inputGet($param, $default, 'WORD');
+        return common::inputGetWord($param, $default);
     }
 
     function getalnum($param, $default = ''): string

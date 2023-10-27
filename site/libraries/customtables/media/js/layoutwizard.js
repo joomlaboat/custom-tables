@@ -21,6 +21,7 @@ let languages = [];
 function loadLayout(version) {
     joomlaVersion = version;
     let obj = document.getElementById("allLayoutRaw");
+
     if (obj)
         wizardLayouts = JSON.parse(obj.innerHTML);
 }
@@ -30,39 +31,52 @@ function openLayoutWizard() {
 }
 
 //Used in layouteditor.php
-function loadFields(tableselector_id_, field_box_id_) {
+function loadFields(tableselector_id_, field_box_id_, CMSType) {
     tableselector_id = tableselector_id_;
     field_box_id = field_box_id_;
     tableselector_obj = document.getElementById(tableselector_id);
-    loadFieldsUpdate();
+    loadFieldsUpdate(CMSType);
 }
 
-function loadFieldsUpdate() {
+function loadFieldsUpdate(CMSType) {
     let tableid = tableselector_obj.value;
     if (tableid !== current_table_id)
-        loadFieldsData(tableid);
+        loadFieldsData(tableid, CMSType);
 }
 
-function loadFieldsData(tableid) {
+function loadFieldsData(tableid, CMSType) {
     current_table_id = 0;
     tableid = parseInt(tableid);
     if (isNaN(tableid) || tableid === 0)
         return;//table not selected
 
-    const parts = location.href.split("/administrator/");
-    const websiteroot = parts[0] + "/administrator/";
-    const url = websiteroot + "index.php?option=com_customtables&view=api&frmt=json&task=getfields&tableid=" + tableid;
+    let url = '';
+    if (CMSType === 'Joomla') {
+        const parts = location.href.split("/administrator/");
+        const websiteRoot = parts[0] + "/administrator/";
+        url = websiteRoot + "index.php?option=com_customtables&view=api&frmt=json&task=getfields&tableid=" + tableid;
+    } else if (CMSType === 'WordPress') {
+        let parts = location.href.split("wp-admin/admin.php?");
+        url = parts[0] + 'wp-admin/admin.php?page=customtables-api-fields&table=' + tableid;
+    } else {
+        alert('loadTags: CMS Not Supported.');
+        return;
+    }
 
     if (typeof fetch === "function") {
+
         fetch(url, {method: 'GET', mode: 'no-cors', credentials: 'same-origin'}).then(function (response) {
+
             if (response.ok) {
                 response.json().then(function (json) {
+
                     wizardFields = Array.from(json);
                     current_table_id = tableid;
                     updateFieldsBox();
                 });
-            } else
+            } else {
                 console.log('Network request for products.json failed with response ' + response.status + ': ' + response.statusText);
+            }
 
         }).catch(function (err) {
             console.log('Fetch Error :-S', err);

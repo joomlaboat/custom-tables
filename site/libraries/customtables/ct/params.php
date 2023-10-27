@@ -88,6 +88,7 @@ class Params
         $this->ModuleId = null;
         $this->blockExternalVars = $blockExternalVars;
         $this->sortBy = null;
+        $this->allowContentPlugins = false;
 
         if (defined('_JEXEC'))
             $this->constructJoomlaParams($menu_params, $blockExternalVars, $ModuleId);
@@ -285,8 +286,8 @@ class Params
 
         //Form Saved
 
-        if (!$blockExternalVars and common::inputGet('returnto', '', 'BASE64'))
-            $this->returnTo = base64_decode(common::inputGet('returnto', '', 'BASE64'));
+        if (!$blockExternalVars and common::inputGetBase64('returnto'))
+            $this->returnTo = base64_decode(common::inputGetBase64('returnto', ''));
         else
             $this->returnTo = $menu_params->get('returnto');
 
@@ -321,7 +322,7 @@ class Params
         $this->filter = null;
         $this->showPublished = 2;//Show Any
         $this->limit = null;
-        $this->publishStatus = null;
+        $this->publishStatus = 1;
         $this->returnTo = null;
         $this->guestCanAddNew = null;
         $this->requiredLabel = null;
@@ -369,11 +370,11 @@ class Params
 
     function setWPParams($menu_params = null, $blockExternalVars = true, ?string $ModuleId = null): void
     {
-
+        $this->setDefault();
     }
 
     protected function constructWPParams(array $menu_params = null): void
     {
-
+        $this->setDefault();
     }
 }

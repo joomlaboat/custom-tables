@@ -31,8 +31,8 @@ class Alpha
 				if($this->ct->Params->blockExternalVars)
 						return;
 
-				$esfieldtype=common::inputGet('esfieldtype','','CMD');
-				$esfieldname=common::inputGet('esfieldname','','CMD');
+				$esfieldtype=common::inputGetCmd('esfieldtype','');
+				$esfieldname=common::inputGetCmd('esfieldname','');
 
 				if($esfieldtype!='customtables')
 				{
@@ -44,7 +44,7 @@ class Alpha
 				}
 				else
 				{
-						$parentid=Tree::getOptionIdFull(common::inputGet('optionname','','STRING'));
+						$parentid=Tree::getOptionIdFull(common::inputGetString('optionname',''));
 
 
 						$query = 'SELECT familytreestr, optionname '

@@ -78,7 +78,7 @@ class ESTables
         return false;
     }
 
-    public static function getTableRowByID(int $tableid)
+    public static function getTableRowByID(int $tableid): ?object
     {
         if ($tableid == 0)
             return null;
@@ -213,37 +213,6 @@ class ESTables
         return database::loadObjectList('SHOW TABLE STATUS FROM ' . database::quoteName($database) . ' LIKE ' . database::quote($dbPrefix . 'customtables_table_' . $tablename));
     }
 
-    public static function insertRecords(string $realtablename, array $sets): ?int
-    {
-        $serverType = database::getServerType();
-        if ($serverType == 'postgresql') {
-            $set_fieldNames = array();
-            $set_values = array();
-            foreach ($sets as $set) {
-                $break_sets = explode('=', $set);
-                $set_fieldNames[] = $break_sets[0];
-                $set_values[] = $break_sets[1];
-            }
-            $query = 'INSERT INTO ' . $realtablename . ' (' . implode(',', $set_fieldNames) . ') VALUES (' . implode(',', $set_values) . ')';
-        } else {
-            $query = 'INSERT ' . $realtablename . ' SET ' . implode(', ', $sets);
-        }
-
-        try {
-            return database::insert($query);
-        } catch (Exception $e) {
-
-            if (defined('_JEXEC')) {
-                Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
-            } elseif (defined('WPINC')) {
-                die($e->getMessage());
-                return null;
-            } else
-                die($e->getMessage());
-
-            return null;
-        }
-    }
 
     public static function renameTableIfNeeded($tableid, $database, $dbPrefix, $tablename): void
     {
@@ -265,7 +234,7 @@ class ESTables
     public static function getTableName($tableid = 0): ?string
     {
         if ($tableid == 0)
-            $tableid = common::inputGet('tableid', 0, 'INT');
+            $tableid = common::inputGetInt('tableid', 0);
 
         $query = 'SELECT tablename FROM #__customtables_tables AS s WHERE id=' . (int)$tableid . ' LIMIT 1';
         $rows = database::loadObjectList($query);
@@ -343,7 +312,7 @@ class ESTables
         return true;
     }
 
-    public static function getTableRowByName($tablename = '')
+    public static function getTableRowByName($tablename = ''): ?object
     {
         if ($tablename === null)
             return null;

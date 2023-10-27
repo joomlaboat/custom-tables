@@ -19,42 +19,44 @@ use Joomla\CMS\Version;
 use CustomTables\CT;
 
 $theme = 'eclipse';
-$document = Factory::getDocument();
 
-$document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/ajax.js"></script>');
+if (defined('_JEXEC')) {
+    $document = Factory::getDocument();
 
-$version_object = new Version;
-$version = (int)$version_object->getShortVersion();
+    $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/ajax.js"></script>');
 
-$document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/typeparams_common.js"></script>');
+    $version_object = new Version;
+    $version = (int)$version_object->getShortVersion();
 
-$document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/typeparams_common.js"></script>');
-if ($version < 4)
-    $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/typeparams.js"></script>');
-else
-    $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/typeparams_j4.js"></script>');
+    $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/typeparams_common.js"></script>');
 
-$document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/layoutwizard.js"></script>');
-$document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/layouteditor.js"></script>');
-$document->addCustomTag('<link href="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/css/layouteditor.css" rel="stylesheet">');
+    if ($version < 4)
+        $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/typeparams.js"></script>');
+    else
+        $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/typeparams_j4.js"></script>');
 
-$document->addCustomTag('<link rel="stylesheet" href="' . JURI::root(true) . '/components/com_customtables/libraries/codemirror/lib/codemirror.css">');
-$document->addCustomTag('<link rel="stylesheet" href="' . JURI::root(true) . '/components/com_customtables/libraries/codemirror/addon/hint/show-hint.css">');
+    $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/layoutwizard.js"></script>');
+    $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/layouteditor.js"></script>');
+    $document->addCustomTag('<link href="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/css/layouteditor.css" rel="stylesheet">');
 
-$document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/codemirror/lib/codemirror.js"></script>');
-$document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/codemirror/addon/mode/overlay.js"></script>');
+    $document->addCustomTag('<link rel="stylesheet" href="' . JURI::root(true) . '/components/com_customtables/libraries/codemirror/lib/codemirror.css">');
+    $document->addCustomTag('<link rel="stylesheet" href="' . JURI::root(true) . '/components/com_customtables/libraries/codemirror/addon/hint/show-hint.css">');
 
-$document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/codemirror/addon/hint/show-hint.js"></script>');
-$document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/codemirror/addon/hint/xml-hint.js"></script>');
-$document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/codemirror/addon/hint/html-hint.js"></script>');
-$document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/codemirror/mode/xml/xml.js"></script>');
-$document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/codemirror/mode/javascript/javascript.js"></script>');
-$document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/codemirror/mode/css/css.js"></script>');
-$document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/codemirror/mode/htmlmixed/htmlmixed.js"></script>');
-$document->addCustomTag('<link rel="stylesheet" href="' . JURI::root(true) . '/components/com_customtables/libraries/codemirror/theme/' . $theme . '.css">');
+    $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/codemirror/lib/codemirror.js"></script>');
+    $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/codemirror/addon/mode/overlay.js"></script>');
 
-if ($version >= 4)
-    $document->addCustomTag('<link rel="stylesheet" href="' . JURI::root(true) . '/media/system/css/fields/switcher.css">');
+    $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/codemirror/addon/hint/show-hint.js"></script>');
+    $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/codemirror/addon/hint/xml-hint.js"></script>');
+    $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/codemirror/addon/hint/html-hint.js"></script>');
+    $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/codemirror/mode/xml/xml.js"></script>');
+    $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/codemirror/mode/javascript/javascript.js"></script>');
+    $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/codemirror/mode/css/css.js"></script>');
+    $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/codemirror/mode/htmlmixed/htmlmixed.js"></script>');
+    $document->addCustomTag('<link rel="stylesheet" href="' . JURI::root(true) . '/components/com_customtables/libraries/codemirror/theme/' . $theme . '.css">');
+
+    if ($version >= 4)
+        $document->addCustomTag('<link rel="stylesheet" href="' . JURI::root(true) . '/media/system/css/fields/switcher.css">');
+}
 
 function renderEditor($textareacode, $textareaid, $typeboxid, $textareatabid, &$onPageLoads)
 {
@@ -82,7 +84,7 @@ function renderEditor($textareacode, $textareaid, $typeboxid, $textareatabid, &$
         elt.style.paddingLeft = (basePadding + off) + "px";
       });
 
-		loadTagParams("' . $typeboxid . '","' . $textareatabid . '");
+		loadTagParams("' . $typeboxid . '","' . $textareatabid . '","Joomla");
 		
 	';
     if (count($onPageLoads) == 0) {
@@ -102,7 +104,7 @@ function renderEditor($textareacode, $textareaid, $typeboxid, $textareatabid, &$
         }
 
         $code .= '
-				loadFields("jform_tableid","fieldWizardBox");
+				loadFields("jform_tableid","fieldWizardBox","Joomla");
 				loadLayout(' . $ct->Env->version . ');
 				
 				addExtraEvents();
@@ -117,9 +119,14 @@ function renderEditor($textareacode, $textareaid, $typeboxid, $textareatabid, &$
 function getKnownLanguages(): string
 {
     $list = array();
-    $rows = database::loadObjectList('SELECT sef, title_native FROM #__languages ORDER BY sef');
-    foreach ($rows as $row)
-        $list[] = '["' . $row->sef . '","' . $row->title_native . '"]';
+
+    if (defined('_JEXEC')) {
+        $rows = database::loadObjectList('SELECT sef, title_native FROM #__languages ORDER BY sef');
+        foreach ($rows as $row)
+            $list[] = '["' . $row->sef . '","' . $row->title_native . '"]';
+    } elseif (defined('_JEXEC')) {
+        $list[] = '[en,"English"]';
+    }
 
     return implode(',', $list);
 }
@@ -140,7 +147,7 @@ function render_onPageLoads($onPageLoads, $version)
 		';
 
     $result_js = '
-	<script>
+	
 
 	joomlaVersion =' . $version . ';
 	define_cmLayoutEditor();
@@ -149,20 +156,21 @@ function render_onPageLoads($onPageLoads, $version)
     window.onload = function()
 	{
 		//changeBackIcon();
-		loadTypes_silent("ct_processMessageBox");
+		loadTypes_silent("Joomla");
 
 	' . implode('', $onPageLoads) . '
 		adjustEditorHeight();
 
     };
 	
-	setTimeout(addTabExtraEvents, 500);
+	//setTimeout(addTabExtraEvents, 500);
 
-    </script>';
+    ';
 
-    $document = Factory::getDocument();
-    $document->addCustomTag($result_js);
-
+    if (defined('_JEXEC')) {
+        $document = Factory::getDocument();
+        $document->addCustomTag('<script>' . $result_js . '</script>');
+    }
     return $result;
 
 }

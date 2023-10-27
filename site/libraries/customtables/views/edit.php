@@ -59,7 +59,7 @@ class Edit
                 die(json_encode($res));
             }
 
-            $this->ct->app->enqueueMessage('Edit Layout not set.', 'error');
+            $this->ct->app->enqueueMessage('Edit Layout not set.2', 'error');
             return false;
         }
         $this->ct->LayoutVariables['layout_type'] = $this->layoutType;
@@ -90,7 +90,7 @@ class Edit
         return $result;
     }
 
-    function render($row, $formLink, $formName): string
+    function render(?array $row, string $formLink, string $formName, bool $addFormTag = true): string
     {
         $result = '';
 
@@ -100,16 +100,16 @@ class Edit
         if (!is_null($this->ct->Params->ModuleId))
             $formName .= $this->ct->Params->ModuleId;
 
-        if ($this->ct->Env->legacySupport) {
-            $path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR;
-            require_once($path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'edittags.php');
-            require_once($path . 'layout.php');
+        if (defined('_JEXEC')) {
+            if ($this->ct->Env->legacySupport) {
+                $path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR;
+                require_once($path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'edittags.php');
+                require_once($path . 'layout.php');
+            }
+            HTMLHelper::_('jquery.framework');
+            jimport('joomla.html.html.bootstrap');
+            $this->ct->loadJSAndCSS();
         }
-
-        HTMLHelper::_('jquery.framework');
-        jimport('joomla.html.html.bootstrap');
-
-        $this->ct->loadJSAndCSS();
 
         if (!$this->ct->Params->blockExternalVars and $this->ct->Params->showPageHeading) {
             $result .= '<div class="page-header' . strip_tags($this->ct->Params->pageClassSFX ?? '') . '"><h2 itemprop="headline">'
@@ -118,11 +118,14 @@ class Edit
 
         $listing_id = $this->row[$this->ct->Table->realidfieldname] ?? 0;
 
-        $result .= '<form action="' . $formLink . '" method="post" name="' . $formName . '" id="' . $formName . '" class="form-validate form-horizontal well" '
-            . 'data-tableid="' . $this->ct->Table->tableid . '" data-recordid="' . $listing_id . '" '
-            . 'data-version=' . $this->ct->Env->version . '>';
+        if ($addFormTag) {
+            $result .= '<form action="' . $formLink . '" method="post" name="' . $formName . '" id="' . $formName . '" class="form-validate form-horizontal well" '
+                . 'data-tableid="' . $this->ct->Table->tableid . '" data-recordid="' . $listing_id . '" '
+                . 'data-version=' . $this->ct->Env->version . '>';
+        }
 
-        $result .= ($this->ct->Env->version < 4 ? '<fieldset>' : '<fieldset class="options-form">');
+        if (defined('_JEXEC'))
+            $result .= ($this->ct->Env->version < 4 ? '<fieldset>' : '<fieldset class="options-form">');
 
         //Calendars of the child should be built again, because when Dom was ready they didn't exist yet.
 
@@ -138,10 +141,20 @@ class Edit
             $pageLayout = $this->layoutContent;
 
         $twig = new TwigProcessor($this->ct, $pageLayout, false, false, true, $this->pageLayoutNameString, $this->pageLayoutLink);
-        $pageLayout = $twig->process($this->row);
 
-        if ($twig->errorMessage !== null)
-            $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
+        try {
+            $pageLayout = $twig->process($this->row);
+        } catch (Exception $e) {
+            die('Caught exception: ' . $e->getMessage());
+        }
+
+        if ($twig->errorMessage !== null) {
+            if (defined('_JEXEC')) {
+                $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
+            } else {
+                die($twig->errorMessage);
+            }
+        }
 
         if ($this->ct->Params->allowContentPlugins)
             $pageLayout = JoomlaBasicMisc::applyContentPlugins($pageLayout);
@@ -150,8 +163,8 @@ class Edit
 
         $returnTo = '';
 
-        if (common::inputGet('returnto', '', 'BASE64'))
-            $returnTo = base64_decode(common::inputGet('returnto', '', 'BASE64'));
+        if (common::inputGetBase64('returnto'))
+            $returnTo = base64_decode(common::inputGetBase64('returnto', ''));
         elseif ($this->ct->Params->returnTo)
             $returnTo = $this->ct->Params->returnTo;
 
@@ -168,10 +181,19 @@ class Edit
         if (!is_null($this->ct->Params->ModuleId))
             $result .= '<input type="hidden" name="ModuleId" id="ModuleId" value="' . $this->ct->Params->ModuleId . '" />';
 
-        $result .= (common::inputGetCmd('tmpl', '') != '' ? '<input type="hidden" name="tmpl" value="' . common::inputGetCmd('tmpl', '') . '" />' : '')
-            . JHtml::_('form.token')
-            . '</fieldset>
-</form>';
+        if (defined('_JEXEC')) {
+            $result .= (common::inputGetCmd('tmpl', '') != '' ? '<input type="hidden" name="tmpl" value="' . common::inputGetCmd('tmpl', '') . '" />' : '');
+            $result .= JHtml::_('form.token');
+
+        } elseif (defined('WPINC')) {
+            //$result .= wp_nonce_field('create-record', '_wpnonce_create-record'); Plugin calls it
+        }
+
+        if (defined('_JEXEC'))
+            $result .= '</fieldset>';
+
+        if ($addFormTag)
+            $result .= '</form>';
 
         return $result;
     }

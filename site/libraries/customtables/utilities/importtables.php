@@ -41,7 +41,7 @@ class ImportTables
         }
     }
 
-    public static function processContent(CT &$ct, $data, $menutype, &$msg, $category = '', $importFields = true, $importLayouts = true, $importMenu = true)
+    public static function processContent(CT &$ct, $data, $menutype, &$msg, $category = '', $importFields = true, $importLayouts = true, $importMenu = true): bool
     {
         $keyword = '<customtablestableexport>';
         if (!str_contains($data, $keyword)) {
@@ -56,10 +56,10 @@ class ImportTables
         return ImportTables::processData($ct, $JSON_data, $menutype, $msg, $category, $importFields, $importLayouts, $importMenu);
     }
 
-    protected static function processData(CT &$ct, $jsondata, $menutype, &$msg, $category, $importfields, $importlayouts, $importmenu)
+    protected static function processData(CT &$ct, $jsondata, $menutype, &$msg, $category, $importfields, $importlayouts, $importmenu): bool
     {
         foreach ($jsondata as $table) {
-            $tableid = ImportTables::processTable($table['table'], $msg, $category);
+            $tableid = ImportTables::processTable($table['table'], $category);
 
             if ($tableid != 0) {
                 //Ok, table created or found and updated
@@ -75,10 +75,10 @@ class ImportTables
                 if ($importmenu)
                     ImportTables::processMenu($table['menu'], $menutype, $msg);
 
-                $result = IntegrityChecks::check($ct, $check_core_tables = false, $check_custom_tables = true);
+                IntegrityChecks::check($ct, false);
 
                 if (isset($table['records']))
-                    ImportTables::processRecords($table['table']['tablename'], $table['records'], $msg);
+                    ImportTables::processRecords($table['table']['tablename'], $table['records']);
             } else {
                 $msg = 'Could not Add or Update table "' . $table['table']['tablename'] . '"';
                 Factory::getApplication()->enqueueMessage($msg, 'error');
@@ -89,7 +89,7 @@ class ImportTables
         return true;
     }
 
-    protected static function processTable(&$table_new, &$msg, $categoryname)
+    protected static function processTable($table_new, $categoryname)
     {
         //This function creates the table and returns table's id.
         //If table with same name already exists then existing table will be updated, and it's ID will be returned.
@@ -193,7 +193,7 @@ class ImportTables
         return '';
     }
 
-    protected static function dbQuoteByType($value, $type = null)
+    protected static function dbQuoteByType($value, $type = null): float|int|string|null
     {
         if ($type === null) {
             if ($value === null)
@@ -228,7 +228,7 @@ class ImportTables
         else
             $mysqlTableName = $table;
 
-        $inserts = array();
+        $data = [];
         $keys = array_keys($rows);
         $ignore_fields = ['asset_id', 'created_by', 'modified_by', 'version', 'hits', 'publish_up', 'publish_down', 'checked_out_time'];
 
@@ -240,13 +240,13 @@ class ImportTables
 
         foreach ($keys as $key) {
             $isOk = false;
-            $type = null;
+            //$type = null;
 
             if (isset($field_conversion_map[$key])) {
                 $isOk = true;
                 if (is_array($field_conversion_map[$key])) {
                     $fieldname = $field_conversion_map[$key]['name'];
-                    $type = $field_conversion_map[$key]['type'];
+                    //$type = $field_conversion_map[$key]['type'];
                 } else
                     $fieldname = $field_conversion_map[$key];
             } elseif (count($field_conversion_map) > 0 and in_array($key, $field_conversion_map)) {
@@ -277,22 +277,18 @@ class ImportTables
 
                         if ($filedType != '') {
                             Fields::AddMySQLFieldNotExist($mysqlTableName, $key, $filedType, '');
-                            if ($rows[$key] === null) {
-
-                            }
-
-                            $inserts[] = $fieldname . '=' . ImportTables::dbQuoteByType($rows[$key], $type);
+                            $data[$fieldname] = $rows[$key];
                         }
                     }
                 } else {
-                    $inserts[] = $fieldname . '=' . ImportTables::dbQuoteByType($rows[$key], $type);
+                    $data[$fieldname] = $rows[$key];
                 }
             }
         }
-        return ESTables::insertRecords($mysqlTableName, $inserts);
+        return database::insert($mysqlTableName, $data);
     }
 
-    protected static function updateTableCategory($tableid, &$table_new, $categoryName)
+    protected static function updateTableCategory($tableid, $table_new, $categoryName): void
     {
         if (isset($table_new['tablecategory']))
             $categoryId_ = $table_new['tablecategory'];
@@ -333,10 +329,8 @@ class ImportTables
 
             } else {
                 //Create Category
-                $inserts = array();
-                $inserts[] = 'categoryname=' . database::quote($categoryName);
-
-                $categoryId = ESTables::insertRecords('#__customtables_categories', $inserts);
+                $inserts = ['categoryname' => $categoryName];
+                $categoryId = database::insert('#__customtables_categories', $inserts);
             }
         }
 
@@ -369,12 +363,12 @@ class ImportTables
         return $rows[0];
     }
 
-    protected static function processFields($tableid, $tableName, $fields, &$msg)
+    protected static function processFields($tableid, $tableName, $fields, &$msg): bool
     {
         $ct = new CT;
 
         foreach ($fields as $field) {
-            $fieldid = ImportTables::processField($ct, $tableid, $tableName, $field, $msg);
+            $fieldid = ImportTables::processField($ct, $tableid, $tableName, $field);
             if ($fieldid != 0) {
                 //Good
             } else {
@@ -385,7 +379,7 @@ class ImportTables
         return true;
     }
 
-    protected static function processField(CT &$ct, $tableid, $tableName, &$field_new)
+    protected static function processField(CT $ct, $tableid, $tableName, &$field_new)
     {
         //This function creates the table field and returns field's id.
         //If field with same name already exists then existing field will be updated, and it's ID will be returned.
@@ -411,10 +405,10 @@ class ImportTables
         return $fieldid;
     }
 
-    protected static function processLayouts(CT &$ct, $tableid, $layouts, &$msg)
+    protected static function processLayouts(CT &$ct, $tableid, $layouts, &$msg): bool
     {
         foreach ($layouts as $layout) {
-            $layoutId = ImportTables::processLayout($ct, $tableid, $layout, $msg);
+            $layoutId = ImportTables::processLayout($ct, $tableid, $layout);
             if ($layoutId == 0) {
                 $msg = 'Could not Add or Update layout "' . $layout['layoutname'] . '"';
                 return false;
@@ -423,7 +417,7 @@ class ImportTables
         return true;
     }
 
-    protected static function processLayout(CT &$ct, $tableid, &$layout_new, &$msg)
+    protected static function processLayout(CT &$ct, $tableid, &$layout_new)
     {
         //This function creates layout and returns its id.
         //If layout with same name already exists then existing layout will be updated, and it's ID will be returned.
@@ -445,11 +439,11 @@ class ImportTables
         return $layoutId;
     }
 
-    protected static function processMenu($menu, $menutype, &$msg)
+    protected static function processMenu($menu, $menutype, &$msg): bool
     {
         $menus = array();
         foreach ($menu as $menuitem) {
-            $menuid = ImportTables::processMenuItem($menuitem, $menutype, $msg, $menus);
+            $menuid = ImportTables::processMenuItem($menuitem, $menutype, $menus);
             if ($menuid != 0) {
                 //All Good
             } else {
@@ -460,7 +454,7 @@ class ImportTables
         return true;
     }
 
-    protected static function processMenuItem(&$menuitem_new, $menutype, &$msg, &$menus)
+    protected static function processMenuItem(&$menuitem_new, $menutype, &$menus)
     {
         //This function creates menuitem and returns its id.
         //If menuitem with same alias already exists then existing menuitem will be updated, and it's ID will be returned.
@@ -473,7 +467,7 @@ class ImportTables
             return false;
 
         $component_id = (int)$component['extension_id'];
-        $menuitem_new['component_id'] = (int)$component_id;
+        $menuitem_new['component_id'] = $component_id;
 
         if ($menutype != '' and $menutype != $menuitem_new['menutype'])
             $new_menuType = $menutype;
@@ -486,12 +480,12 @@ class ImportTables
 
         if (!is_array($menutype_old) or count($menutype_old) == 0) {
             //Create new menu type
-            $inserts = array();
-            $inserts[] = 'asset_id=0';
-            $inserts[] = 'menutype=' . database::quote($new_menutype_alias);
-            $inserts[] = 'title=' . database::quote($new_menuType);
-            $inserts[] = 'description=' . database::quote('Menu Type created by CustomTables');
-            $menu_types_id = ESTables::insertRecords('#__menu_types', $inserts);
+            $data = [];
+            $data['asset_id'] = 0;
+            $data['menutype'] = $new_menutype_alias;
+            $data['title'] = $new_menuType;
+            $data['description'] = 'Menu Type created by CustomTables';
+            database::insert('#__menu_types', $data);
         }
 
         $menuitem_new['checked_out'] = 0;
@@ -537,7 +531,7 @@ class ImportTables
             $menuitem_new['rgt'] = $lft + 1;
             $menuitem_new['link'] = str_replace('com_extrasearch', 'com_customtables', $menuitem_new['link']);
             $menuitem_new['id'] = null;
-            $menuitem_new['component_id'] = (int)$component_id;
+            $menuitem_new['component_id'] = $component_id;
             $menuitem_new['alias'] = $menuitem_alias;
             $menuitem_new['menytype'] = $new_menutype_alias;
 
@@ -586,7 +580,7 @@ class ImportTables
         return true;
     }
 
-    public static function addMenu($title, $alias, $link, $menuTypeOrTitle, $extension_name, $access_, $menuParamsString, $home = 0)
+    public static function addMenu($title, $alias, $link, $menuTypeOrTitle, $extension_name, $access_, $menuParamsString, $home = 0): bool
     {
         $menuType = JoomlaBasicMisc::slugify($menuTypeOrTitle);
         ImportTables::addMenutypeIfNotExist($menuType, $menuTypeOrTitle);
@@ -660,7 +654,7 @@ class ImportTables
         return true;
     }
 
-    public static function addMenutypeIfNotExist($menutype, $menutype_title)
+    public static function addMenutypeIfNotExist($menutype, $menutype_title): void
     {
         $menutype_old = ImportTables::getRecordByField('#__menu_types', 'menutype', $menutype, false);
 

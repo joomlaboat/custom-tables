@@ -145,7 +145,6 @@ class ListOfTables
             }
         }
 
-
         // Get database name and prefix
         $database = database::getDataBaseName();
         $dbPrefix = database::getDBPrefix();
@@ -153,7 +152,6 @@ class ListOfTables
         // Initialize variables
         $moreThanOneLanguage = false;
         $fields = Fields::getListOfExistingFields('#__customtables_tables', false);
-        $sets = [];
         $tableTitle = null;
 
         // Process table name
@@ -206,11 +204,11 @@ class ListOfTables
 
             $tableTitleValue = common::inputGetString($id_title);
             if ($tableTitleValue !== null)
-                $sets [] = $id_title . '=' . database::quote($tableTitleValue);
+                $data [$id_title] = $tableTitleValue;
 
             $tableDescription = common::inputGetString($id_desc);
             if ($tableDescription !== null)
-                $sets [] = $id_desc . '=' . database::quote($tableDescription);
+                $data [$id_desc] = $tableDescription;
             $moreThanOneLanguage = true; //More than one language installed
         }
 
@@ -218,13 +216,13 @@ class ListOfTables
         if ($tableId === null) {
             $already_exists = ESTables::getTableID($newTableName);
             if ($already_exists == 0) {
-                $sets [] = 'tablename=' . database::quote($newTableName);
+                $data ['tablename'] = $newTableName;
             } else {
                 return null; //Abort if the table with this name already exists.
             }
 
             try {
-                $tableId = database::insertSets('#__customtables_tables', $sets);
+                database::insert('#__customtables_tables', $data);
             } catch (Exception $e) {
                 return [$e->getMessage()];
             }
@@ -243,11 +241,11 @@ class ListOfTables
             {
                 //This function will find the old Table Name of existing table and rename MySQL table.
                 ESTables::renameTableIfNeeded($tableId, $database, $dbPrefix, $newTableName);
-                $sets [] = 'tablename=' . database::quote($newTableName);
+                $data['tablename'] = $newTableName;
             }
 
             try {
-                database::updateSets('#__customtables_tables', $sets, ['id=' . $tableId]);
+                database::update('#__customtables_tables', $data, ['id' => $tableId]);
             } catch (Exception $e) {
                 return [$e->getMessage()];
             }
@@ -260,11 +258,11 @@ class ListOfTables
             // Case: Creating a new third-party table
             $customTableName = $newTableName;
             ESTables::createTableIfNotExists($database, $dbPrefix, $newTableName, $tableTitle, $customTableName);
-            $messages[] = ['New third-party table created.'];
+            //$messages[] = ['New third-party table created.'];
 
             //Add fields if it's a third-party table and no fields added yet.
             ESTables::addThirdPartyTableFieldsIfNeeded($database, $newTableName, $customTableName);
-            $messages[] = __('Third-party fields added.', 'customtables');
+            //$messages[] = __('Third-party fields added.', 'customtables');
         } else {
             // Case: Updating an existing table or creating a new custom table
             $originalTableId = common::inputGetInt('originaltableid', 0);
@@ -272,11 +270,11 @@ class ListOfTables
             if ($originalTableId != 0 and $old_tablename != '') {
                 // Copying an existing table
                 ESTables::copyTable($this->ct, $originalTableId, $newTableName, $old_tablename, $customTableName);
-                $messages[] = __('Table copied.', 'customtables');
+                //$messages[] = __('Table copied.', 'customtables');
             } else {
                 // Creating a new custom table (without copying)
                 ESTables::createTableIfNotExists($database, $dbPrefix, $newTableName, $tableTitle, $customTableName);
-                $messages[] = __('Table created.', 'customtables');
+                //$messages[] = __('Table created.', 'customtables');
             }
         }
         return $messages;

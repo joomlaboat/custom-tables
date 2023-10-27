@@ -319,10 +319,4 @@ class CustomtablesViewLayouts extends JViewLegacy
         }
         return $result;
     }
-
-    protected function getLayouts()
-    {
-        $query = 'SELECT id,layoutname,tableid,layouttype FROM #__customtables_layouts WHERE published=1 ORDER BY layoutname';
-        return database::loadObjectList($query);
-    }
 }

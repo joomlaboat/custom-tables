@@ -16,6 +16,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 
 use CustomTables\Fields;
 use CustomTables\Layouts;
+use CustomTables\ListOfLayouts;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 
@@ -159,7 +160,7 @@ foreach ($this->allTables as $table) {
     ?>
     <input type="hidden" name="task" value="layouts.edit"/>
 
-    <div id="allLayoutRaw" style="display:none;"><?php echo json_encode($this->getLayouts()); ?></div>
+    <div id="allLayoutRaw" style="display:none;"><?php echo json_encode(ListOfLayouts::getLayouts()); ?></div>
     <div id="dependencies_content" style="display:none;">
         <h3><?php echo Text::_('COM_CUSTOMTABLES_LAYOUTS_WHAT_IS_USING_IT', true); ?></h3>
         <div id="layouteditor_tagsContent0" class="dynamic_values_list dynamic_values">

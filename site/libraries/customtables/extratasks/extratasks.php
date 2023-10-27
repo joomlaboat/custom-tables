@@ -39,8 +39,8 @@ class extraTasks
         $stepSize = common::inputGetInt('stepsize', 10);
 
         if ($extraTask != '') {
-            $extraTasksUpdate = 'extraTasksUpdate("' . $extraTask . '","' . common::inputGet('old_typeparams', '', 'BASE64') . '","'
-                . common::inputGet('new_typeparams', '', 'BASE64') . '",' . (int)$tableid . ',' . (int)$fieldid . ',"' . $table_row->tabletitle . '","'
+            $extraTasksUpdate = 'extraTasksUpdate("' . $extraTask . '","' . common::inputGetBase64('old_typeparams', '') . '","'
+                . common::inputGetBase64('new_typeparams', '') . '",' . (int)$tableid . ',' . (int)$fieldid . ',"' . $table_row->tabletitle . '","'
                 . $field_row->fieldtitle . '",' . $stepSize . ');';
 
             $js = '

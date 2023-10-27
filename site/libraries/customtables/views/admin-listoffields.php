@@ -326,8 +326,8 @@ class ListOfFields
         //Postpone extra task
         if ($extraTask != '') {
             $redirect .= '&extratask=' . $extraTask;
-            $redirect .= '&old_typeparams=' . common::inputGet('old_typeparams', '', 'BASE64');
-            $redirect .= '&new_typeparams=' . common::inputGet('new_typeparams', '', 'BASE64');
+            $redirect .= '&old_typeparams=' . common::inputGetBase64('old_typeparams', '');
+            $redirect .= '&new_typeparams=' . common::inputGetBase64('new_typeparams', '');
             $redirect .= '&fieldid=' . $fieldid;
 
             if (common::inputGetInt('stepsize', 10) != 10)

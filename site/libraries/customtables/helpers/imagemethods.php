@@ -283,7 +283,7 @@ class CustomTablesImageMethods
                 $uploadedFile = $image_file_id;
 
             if (is_object('Factory::getApplication()'))
-                $is_base64encoded = common::inputGet('base64encoded', '', 'CMD');
+                $is_base64encoded = common::inputGetCmd('base64encoded', '');
             else
                 $is_base64encoded = '';
 

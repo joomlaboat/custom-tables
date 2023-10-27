@@ -16,6 +16,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\common;
 use CustomTables\CT;
 use CustomTables\Layouts;
+use CustomTables\record;
 use Joomla\CMS\Factory;
 use Joomla\Utilities\ArrayHelper;
 
@@ -72,7 +73,20 @@ class CustomtablesControllerRecords extends JControllerForm
         $tableId = common::inputGet('tableid', 0, 'int');
         $ct->getTable($tableId);
 
-        $listing_id = common::inputGetCmd('id', 0);
+        $recordClassFilePath = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'records' . DIRECTORY_SEPARATOR . 'record.php';
+        require_once($recordClassFilePath);
+        $record = new record($ct);
+
+        $Layouts = new Layouts($ct);
+        $record->editForm->layoutContent = $Layouts->createDefaultLayout_Edit($ct->Table->fields, false);
+
+        $listing_id = common::inputGetCmd('id');
+        $saved = $record->save($listing_id, false);
+        $listing_id = $record->listing_id;
+
+
+        /*
+
 
         $params = new JRegistry;
         $params->loadArray(['listingid' => $listing_id]);
@@ -84,17 +98,18 @@ class CustomtablesControllerRecords extends JControllerForm
         $editModel->editForm = new Edit($ct);
         $editModel->listing_id = $listing_id;
 
-        $Layouts = new Layouts($ct);
-        $editModel->editForm->layoutContent = $Layouts->createDefaultLayout_Edit($ct->Table->fields, false);
+
 
         $msg_ = '';
         $link = '';
-        $saved = false;
 
-        if ($this->task == 'save2copy')
-            $saved = $editModel->copy($msg_, $link);
-        elseif ($this->task == 'save' or $this->task == 'apply' or $this->task == 'save2new')
-            $saved = $editModel->store($msg_, $link);
+        */
+
+
+        //if ($this->task == 'save2copy')
+        //    $saved = $editModel->copy($msg_, $link);
+        //elseif ($this->task == 'save' or $this->task == 'apply' or $this->task == 'save2new')
+        //$saved = $editModel->store($msg_, $link);
 
         $redirect = 'index.php?option=' . $this->option;
 

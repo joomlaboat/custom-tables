@@ -66,7 +66,7 @@ class SaveFieldQuerySet
         $listing_id = $this->row[$this->ct->Table->realidfieldname];
         switch ($this->field->type) {
             case 'records':
-                $value = self::get_record_type_value($this->ct, $this->field);
+                $value = self::get_record_type_value($this->field);
                 if ($value === null) {
                     $this->row[$this->field->realfieldname] = null;
                     return null;
@@ -141,7 +141,7 @@ class SaveFieldQuerySet
                         }
 
                     } else
-                        $value = common::inputGet($this->field->comesfieldname, '', 'ALNUM');
+                        $value = common::inputGetAlnum($this->field->comesfieldname, '');
 
                     $value = strtolower($value);
                     $value = str_replace('#', '', $value);
@@ -302,7 +302,7 @@ class SaveFieldQuerySet
                 return ($value === null ? null : $this->field->realfieldname . '=' . database::quote($value));
 
             case 'float':
-                $value = common::inputGet($this->field->comesfieldname, null, 'FLOAT');
+                $value = common::inputGetFloat($this->field->comesfieldname);
 
                 if (isset($value)) {
                     $this->row[$this->field->realfieldname] = $value;
@@ -591,7 +591,7 @@ class SaveFieldQuerySet
         return null;
     }
 
-    public static function get_record_type_value(CT $ct, Field $field): ?string
+    public static function get_record_type_value(Field $field): ?string
     {
         if (count($field->params) > 2) {
             $esr_selector = $field->params[2];
@@ -617,7 +617,7 @@ class SaveFieldQuerySet
                     if ($valueArray) {
                         return self::getCleanRecordValue($valueArray);
                     } else {
-                        $value_off = $valueArray = common::inputPostInt($field->comesfieldname . '_off');
+                        $value_off = common::inputPostInt($field->comesfieldname . '_off');
                         if ($value_off) {
                             return '';
                         } else {
@@ -1101,19 +1101,6 @@ class SaveFieldQuerySet
         return true;
     }
 
-    function runUpdateQuery($saveQuery, $listing_id): void
-    {
-        if (count($saveQuery) > 0) {
-            $query = 'UPDATE ' . $this->ct->Table->realtablename . ' SET ' . implode(', ', $saveQuery) . ' WHERE ' . $this->ct->Table->realidfieldname . '=' . database::quote($listing_id);
-
-            try {
-                database::setQuery($query);
-            } catch (Exception $e) {
-                $this->ct->app->enqueueMessage($e->getMessage(), 'error');
-            }
-        }
-    }
-
     public function checkSendEmailConditions(string $listing_id, string $condition): bool
     {
         if ($condition == '')
@@ -1141,7 +1128,7 @@ class SaveFieldQuerySet
         return false;
     }
 
-    function sendEmailIfAddressSet(string $listing_id, array $row)//,$new_username,$new_password)
+    function sendEmailIfAddressSet(string $listing_id, array $row): void//,$new_username,$new_password)
     {
         if ($this->ct->Params->onRecordAddSendEmailTo != '')
             $status = $this->sendEmailNote($listing_id, $this->ct->Params->onRecordAddSendEmailTo, $row);

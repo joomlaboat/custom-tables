@@ -497,6 +497,43 @@ class Layouts
         return $result;
     }
 
+    function createDefaultLayout_Edit_WP($fields, $addToolbar = true): string
+    {
+        $this->layoutType = 2;
+        $result = '<table class="form-table" role="presentation">';
+
+        $fieldTypes_to_skip = ['log', 'phponview', 'phponchange', 'phponadd', 'md5', 'id', 'server', 'userid', 'viewcount', 'lastviewtime', 'changetime', 'creationtime', 'imagegallery', 'filebox', 'dummy', 'virtual'];
+
+        foreach ($fields as $field) {
+
+            if (!in_array($field['type'], $fieldTypes_to_skip)) {
+
+                $result .= '
+            <tr class="form-field ' . ((int)$field['isrequired'] == 1 ? 'form-required' : 'form') . '">
+                        <th scope="row">
+                            <label for="' . $this->ct->Env->field_input_prefix . $field['fieldname'] . '">'
+                    . '{{ ' . $field['fieldname'] . '.title }}'
+                    . ((int)$field['isrequired'] == 1 ? '<span class="description">(' . __('required', $this->plugin_text_domain) . ')</span>' : '')
+                    . '</label>
+                        </th>
+                        <td>
+                            {{ ' . $field['fieldname'] . '.edit }}
+                        </td>
+                    </tr>
+            ';
+
+            }
+        }
+
+        $result .= '</table>';
+
+
+        if ($addToolbar)
+            $result .= '<div style="text-align:center;">{{ button("save") }} {{ button("saveandclose") }} {{ button("saveascopy") }} {{ button("cancel") }}</div>
+';
+        return $result;
+    }
+
     public function storeAsFile($data): void
     {
         if ($this->ct->Env->folderToSaveLayouts !== null) {

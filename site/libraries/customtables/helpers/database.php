@@ -53,39 +53,13 @@ class database
             $db = Factory::getDBO();
             return $db->serverType == 'postgresql';
         } elseif (defined('WPINC')) {
-            if (strpos(DB_HOST, 'mysql') !== false) {
+            if (str_contains(DB_HOST, 'mysql')) {
                 return 'mysql';
-            } elseif (strpos(DB_HOST, 'pgsql') !== false) {
+            } elseif (str_contains(DB_HOST, 'pgsql')) {
                 return 'postgresql';
             } else {
                 return 'Unknown';
             }
-        }
-        return null;
-    }
-
-    public static function quote($value)
-    {
-        if (defined('_JEXEC')) {
-            $db = Factory::getDBO();
-            return $db->quote($value);
-        } elseif (defined('WPINC')) {
-            global $wpdb;
-            return $wpdb->prepare('%s', $value);
-
-            //    %d for integers
-            //    %f for floating-point numbers
-        }
-        return null;
-    }
-
-    public static function quoteName($value)
-    {
-        if (defined('_JEXEC')) {
-            $db = Factory::getDBO();
-            return $db->quoteName($value);
-        } elseif (defined('WPINC')) {
-            return $value;
         }
         return null;
     }
@@ -135,64 +109,143 @@ class database
         }
     }
 
-    public static function insert($query): ?int
+    /**
+     * Inserts data into a database table in a cross-platform manner (Joomla and WordPress).
+     *
+     * @param string $tableName The name of the table to insert data into.
+     * @param array $data An associative array of data to insert. Keys represent column names, values represent values to be inserted.
+     *
+     * @return int|null The ID of the last inserted record, or null if the insert operation failed.
+     * @throws Exception If an error occurs during the insert operation.
+     *
+     * @since 3.1.8
+     */
+    public static function insert(string $tableName, array $data): ?int
     {
         if (defined('_JEXEC')) {
-            $db = Factory::getDBO();
+            $db = Factory::getDbo();
+            $query = $db->getQuery(true);
+
+            // Construct the insert statement
+            $columns = array();
+            $values = array();
+
+            foreach ($data as $key => $value) {
+                $columns[] = $db->quoteName($key);
+                $values[] = $db->quote($value);
+            }
+
+            $query->insert($db->quoteName($tableName))
+                ->columns($columns)
+                ->values(implode(',', $values));
+
             $db->setQuery($query);
-            $db->execute();
-            return $db->insertid();
+
+            try {
+                $db->execute();
+                return $db->insertid(); // Return the last inserted ID
+            } catch (Exception $e) {
+                throw new Exception($e->getMessage());
+            }
         } elseif (defined('WPINC')) {
             global $wpdb;
-            $wpdb->query(str_replace('#__', $wpdb->prefix, $query));
+            $wpdb->insert(str_replace('#__', $wpdb->prefix, $tableName), $data);
+
             if ($wpdb->last_error !== '')
                 throw new Exception($wpdb->last_error);
 
-            return $wpdb->insert_id;
+            $id = $wpdb->insert_id;
+            if (!$id)
+                return null;
+
+            return $id;
         }
         return null;
     }
 
-    public static function updateSets(string $tableName, array $sets, array $where): bool
+    public static function quoteName($value)
     {
-        $query = 'UPDATE ' . $tableName . ' SET ' . implode(',', $sets) . ' WHERE ' . implode(',', $where);
         if (defined('_JEXEC')) {
             $db = Factory::getDBO();
+            return $db->quoteName($value);
+        } elseif (defined('WPINC')) {
+            return $value;
+        }
+        return null;
+    }
+
+    public static function quote($value, bool $row = true): ?string
+    {
+        if (defined('_JEXEC')) {
+            $db = Factory::getDBO();
+            return $db->quote($value);
+        } elseif (defined('WPINC')) {
+
+            global $wpdb;
+
+            if ($row)
+                return '\'' . esc_sql($value) . '\'';
+            else
+                return $wpdb->prepare('%s', $value);
+
+            //    %d for integers
+            //    %f for floating-point numbers
+        }
+        return null;
+    }
+
+    /**
+     * Updates data in a database table in a cross-platform manner (Joomla and WordPress).
+     *
+     * @param string $tableName The name of the table to update.
+     * @param array $data An associative array of data to update. Keys represent column names, values represent new values.
+     * @param array $where An associative array specifying which rows to update. Keys represent column names, values represent conditions for the update.
+     *
+     * @return bool True if the update operation is successful, otherwise false.
+     * @throws Exception If an error occurs during the update operation.
+     *
+     * @since 3.1.8
+     */
+    public static function update(string $tableName, array $data, array $where): bool
+    {
+        if (defined('_JEXEC')) {
+
+            $db = Factory::getDbo();
+            $query = $db->getQuery(true);
+
+            // Construct the update statement
+            $fields = array();
+            foreach ($data as $key => $value) {
+                $fields[] = $db->quoteName($key) . ' = ' . $db->quote($value);
+            }
+
+            $conditions = array();
+            foreach ($where as $key => $value) {
+                $conditions[] = $db->quoteName($key) . ' = ' . $db->quote($value);
+            }
+
+            $query->update($db->quoteName($tableName))
+                ->set($fields)
+                ->where($conditions);
+
             $db->setQuery($query);
-            $db->execute();
-            return true;
+
+            try {
+                $db->execute();
+                return true; // Update successful
+            } catch (Exception $e) {
+                throw new Exception($e->getMessage());
+            }
+
         } elseif (defined('WPINC')) {
             global $wpdb;
-            $new_query = str_replace('#__', $wpdb->prefix, $query);
-            $wpdb->query($new_query);
-
+            $wpdb->update(str_replace('#__', $wpdb->prefix, $tableName), $data, $where);
             if ($wpdb->last_error !== '')
                 throw new Exception($wpdb->last_error);
 
             return true;
         }
         return false;
-    }
-
-    public static function insertSets(string $tableName, array $sets): ?int
-    {
-        $query = 'INSERT ' . $tableName . ' SET ' . implode(',', $sets);
-        if (defined('_JEXEC')) {
-            $db = Factory::getDBO();
-            $db->setQuery($query);
-            $db->execute();
-            return $db->insertid();
-        } elseif (defined('WPINC')) {
-            global $wpdb;
-            $new_query = str_replace('#__', $wpdb->prefix, $query);
-            $wpdb->query($new_query);
-
-            if ($wpdb->last_error !== '')
-                throw new Exception($wpdb->last_error);
-
-            return $wpdb->insert_id;
-        }
-        return null;
     }
 
     public static function getNumRowsOnly($query): int
@@ -216,6 +269,10 @@ class database
         return floatval($result[0]['@@version']);
     }
 
+    /**
+     * @throws Exception
+     * @since 3.1.8
+     */
     public static function loadAssocList($query, $limitStart = null, $limit = null)
     {
         if (defined('_JEXEC')) {
@@ -297,6 +354,5 @@ class database
         }
         return null;
     }
-
 
 }

@@ -1084,10 +1084,22 @@ function findTheType(typename) {
 }
 
 //Used in onchange event
-function loadTypes_silent() {
+function loadTypes_silent(CMSType) {
 
     let parts = location.href.split("/administrator/");
-    const url = parts[0] + '/index.php?option=com_customtables&view=xml&xmlfile=fieldtypes&Itemid=-1';
+
+    let url = '';
+    if (CMSType == 'Joomla') {
+        let parts = location.href.split("/administrator/");
+        url = parts[0] + '/index.php?option=com_customtables&view=xml&xmlfile=fieldtypes&Itemid=-1';
+    } else if (CMSType == 'WordPress') {
+        let parts = location.href.split("wp-admin/admin.php?");
+        url = parts[0] + 'wp-admin/admin.php?page=customtables-api-xml&xmlfile=fieldtypes';
+    } else {
+        alert('loadTags: CMS Not Supported.');
+        return;
+    }
+
     const params = "";
     let http = CreateHTTPRequestObject();   // defined in ajax.js
 
@@ -1121,6 +1133,7 @@ function loadTypes_silent() {
 }
 
 function loadTypes(typeparams_box_obj, jform_type, jform_typeparams, typeparams_box, CMSType) {
+
     typeparams_box_obj.innerHTML = 'Loading...';
 
     let url = '';
@@ -1129,7 +1142,7 @@ function loadTypes(typeparams_box_obj, jform_type, jform_typeparams, typeparams_
         url = parts[0] + '/index.php?option=com_customtables&view=xml&xmlfile=fieldtypes&Itemid=-1';
     } else if (CMSType == 'WordPress') {
         let parts = location.href.split("wp-admin/admin.php?");
-        url = parts[0] + 'wp-admin/admin.php?page=customtables-xml&xmlfile=fieldtypes';
+        url = parts[0] + 'wp-admin/admin.php?page=customtables-api-xml&xmlfile=fieldtypes';
     } else {
         typeparams_box_obj.innerHTML = 'CMS Not Supported.';
         return;

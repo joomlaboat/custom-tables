@@ -17,6 +17,7 @@ let tagsets = [];
 let current_layout_type = 0;
 
 function updateTagsParameters() {
+
     if (type_obj == null)
         return;
 
@@ -64,22 +65,31 @@ function findTagSets(layouttypeid, priority) {
     return tagsets_;
 }
 
-function loadTagParams(type_id, tags_box) {
+function loadTagParams(type_id, tags_box, CMSType) {
 
     type_obj = document.getElementById(type_id);
 
     if (!layout_tags_loaded) {
-        loadTags(type_id, tags_box);
+        loadTags(type_id, tags_box, CMSType);
     } else {
         updateTagsParameters();
     }
 }
 
-function loadTags(type_id, tags_box) {
+function loadTags(type_id, tags_box, CMSType) {
     type_obj = document.getElementById(type_id);
 
-    let parts = location.href.split("/administrator/");
-    const url = parts[0] + '/index.php?option=com_customtables&view=xml&xmlfile=tags';
+    let url = '';
+    if (CMSType == 'Joomla') {
+        let parts = location.href.split("/administrator/");
+        url = parts[0] + '/index.php?option=com_customtables&view=xml&xmlfile=tags&Itemid=-1';
+    } else if (CMSType == 'WordPress') {
+        let parts = location.href.split("wp-admin/admin.php?");
+        url = parts[0] + 'wp-admin/admin.php?page=customtables-api-xml&xmlfile=tags';
+    } else {
+        alert('loadTags: CMS Not Supported.');
+        return;
+    }
 
     const params = "";
 
@@ -106,7 +116,7 @@ function loadTags(type_id, tags_box) {
                 layout_tags = s.layouts.tagset;
 
                 layout_tags_loaded = true;
-                loadTagParams(type_id, tags_box);
+                loadTagParams(type_id, tags_box, CMSType);
 
             }
         };
@@ -774,7 +784,6 @@ function define_cmLayoutEditor1(modeName, nextModeName) {
         const layoutEditorOverlay =
             {
                 token: function (stream, state) {
-
                     if (stream.match("[")) {
                         let hasParameters = false;
                         let level = 1;
@@ -801,6 +810,8 @@ function define_cmLayoutEditor1(modeName, nextModeName) {
                             }
                         }
                     } else if (stream.match("{")) {
+
+
                         let hasParameters2 = false;
                         let level2 = 1;
                         let ch2 = "";
@@ -837,6 +848,7 @@ function define_cmLayoutEditor1(modeName, nextModeName) {
 }
 
 function do_render_current_TagSets() {
+
     if (type_obj === null)
         return;
 
@@ -1000,6 +1012,11 @@ function addExtraEvents() {
 
 function addExtraEvent(index) {
     let cm = codemirror_editors[index];
+    addExtraEvent2CMObject(cm);
+}
+
+function addExtraEvent2CMObject(cm) {
+
     cm.refresh();
 
     cm.on('dblclick', function () {
