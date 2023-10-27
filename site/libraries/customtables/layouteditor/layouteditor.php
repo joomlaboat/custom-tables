@@ -163,7 +163,7 @@ function render_onPageLoads($onPageLoads, $version)
 
     };
 	
-	//setTimeout(addTabExtraEvents, 500);
+	setTimeout(addTabExtraEvents, 500);
 
     ';
 
