@@ -46,7 +46,7 @@ class SaveFieldQuerySet
     {
         $this->ct = &$ct;
         $this->row_old = $row;
-        $this->row_new = $row;
+        $this->row_new = [];
 
         $this->isCopy = $isCopy;
         //$this->saveQuery = [];
@@ -180,6 +180,7 @@ class SaveFieldQuerySet
                     $value = common::inputGetString($this->field->comesfieldname . $postfix);
 
                     if (isset($value)) {
+                        $this->row_old[$this->field->realfieldname . $postfix] = $value;
                         $this->row_new[$this->field->realfieldname . $postfix] = $value;
                         //$sets[] = $this->field->realfieldname . $postfix . '=' . database::quote($value);
                     }
@@ -210,6 +211,7 @@ class SaveFieldQuerySet
                     $value = ComponentHelper::filterText(common::inputPost($this->field->comesfieldname . $postfix, null, 'raw'));
 
                     if (isset($value)) {
+                        $this->row_old[$this->field->realfieldname . $postfix] = $value;
                         $this->row_new[$this->field->realfieldname . $postfix] = $value;
                         //$sets[] = $this->field->realfieldname . $postfix . '=' . database::quote($value);
                     }
@@ -439,6 +441,7 @@ class SaveFieldQuerySet
                     $value = common::inputGetInt($this->field->comesfieldname . $postfix);
 
                     if (isset($value)) {
+                        $this->row_old[$this->field->realfieldname . $postfix] = $value;
                         $this->row_new[$this->field->realfieldname . $postfix] = $value;
                         //$sets[] = $this->field->realfieldname . $postfix . '=' . $value;
                     }
@@ -672,9 +675,9 @@ class SaveFieldQuerySet
     function setNewValue($value): void
     {
         //Original value but modified during the process
-        $this->row_old[$this->ct->Table->realidfieldname] = $value;
+        $this->row_old[$this->field->realfieldname] = $value;
         //$this->row_new is empty at the beginning and if record needs to be updated new item with the key is added.
-        $this->row_new[$this->ct->Table->realidfieldname] = $value;
+        $this->row_new[$this->field->realfieldname] = $value;
     }
 
     protected function toHex($n): string
