@@ -110,6 +110,63 @@ function updateFieldsBox() {
 }
 
 function renderTabs(tabSetId, tabs) {
+    console.log(typeof wp);
+    console.log(wp.version);
+
+    if (typeof wp !== 'undefined') {
+        return renderTabsWordPress(tabSetId, tabs);
+    } else if (typeof Joomla !== 'undefined') {
+        return renderTabsJoomla(tabSetId, tabs);
+    } else {
+        console.log('CMS not supported.');
+        return 'CMS not supported.';
+    }
+}
+
+function activateTabsWordPress(tabClassName) {
+
+    const tabs = document.querySelectorAll('[data-tabs=".gtabs.' + tabClassName + '"]');
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function () {
+            // Activate the clicked tab and deactivate others
+            tabs.forEach(t => t.classList.remove('nav-tab-active'));
+            this.classList.add('nav-tab-active');
+
+            const tabsContentContainer = document.querySelectorAll('.' + tabClassName);
+            if (tabsContentContainer.length > 0) {
+                const tabsContentDivs = tabsContentContainer[0].querySelectorAll('.gtab');
+
+                tabsContentDivs.forEach(t => t.classList.remove('active'));
+                //this.classList.add('active');
+
+                let tabId = this.dataset.tab;
+                let tabDiv = document.querySelectorAll(tabId);
+                tabDiv.forEach(t => t.classList.add('active'));
+            }
+        });
+    });
+}
+
+function renderTabsWordPress(tabSetId, tabs) {
+
+    let buttons = '';
+    let divs = '';
+    for (let i = 0; i < tabs.length; i++) {
+        let tab = tabs[i];
+
+        let cssclass_buttons = "";
+        let cssclass_divs = "";
+        if (i === 0) {
+            cssclass_buttons = ' nav-tab-active';
+            cssclass_divs = ' active';
+        }
+        buttons += '<button data-toggle="tab" data-tabs=".gtabs.' + tabSetId + '" data-tab=".' + tab.id + '-tab' + (i + 1) + '" class="nav-tab' + cssclass_buttons + '" >' + tab.title + '</button>';
+        divs += '<div class="gtab' + cssclass_divs + ' ' + tab.id + '-tab' + (i + 1) + '" style="margin-left:-20px;">' + tab.content + '</div>';
+    }
+    return '<h2 class="nav-tab-wrapper wp-clearfix">' + buttons + '</h2><div class="gtabs ' + tabSetId + '">' + divs + '</div>';
+}
+
+function renderTabsJoomla(tabSetId, tabs) {
     // Tabs is the array of tab elements [{"title":"Tab Title","id":"Tab Name","content":"Tab Content"}...]
 
     if (joomlaVersion < 4) {
