@@ -33,7 +33,7 @@ class Forms
      * @throws \Exception If there is an error in the database query.
      */
 
-    public static function renderHTMLSelectBoxFromDB(string $objectId, string $tableName, array $selects, ?array $where = null, ?string $orderBy = null): string
+    public static function renderHTMLSelectBoxFromDB(string $objectId, ?int $value, bool $addSelectOption, string $tableName, array $selects, ?array $where = null, ?string $orderBy = null, array $arguments = []): string
     {
         $sql = 'SELECT ' . implode(',', $selects) . ' FROM '
             . $tableName;
@@ -53,11 +53,15 @@ class Forms
             foreach ($options[0] as $key => $opt)
                 $keys[] = $key;
 
-            foreach ($options as $option)
-                $selectBoxOptions[] = '<option value="' . $option[$keys[0]] . '">' . $option[$keys[1]] . '</option>';
+            if ($addSelectOption)
+                $selectBoxOptions[] = '<option value=""' . ($value === null ? ' selected="selected"' : '') . '>- Select</option>';
+
+            foreach ($options as $option) {
+                $selectBoxOptions[] = '<option value="' . $option[$keys[0]] . '"' . ((int)$option[$keys[0]] === $value ? ' selected="selected"' : '') . '>' . $option[$keys[1]] . '</option>';
+            }
         }
 
-        return '<select name="' . $objectId . '" id="' . $objectId . '">' . implode('', $selectBoxOptions) . '</select>';
+        return '<select name="' . $objectId . '" id="' . $objectId . '" ' . implode(' ', $arguments) . '>' . implode('', $selectBoxOptions) . '</select>';
     }
 
     function renderFieldLabel($field, $allowSortBy = false)

@@ -79,7 +79,7 @@ function loadFieldsData(tableid, CMSType) {
             }
 
         }).catch(function (err) {
-            console.log('Fetch Error :-S', err);
+            console.log('Fetch Error :', err);
         });
     } else {
         //for IE
@@ -110,8 +110,6 @@ function updateFieldsBox() {
 }
 
 function renderTabs(tabSetId, tabs) {
-    console.log(typeof wp);
-    console.log(wp.version);
 
     if (typeof wp !== 'undefined') {
         return renderTabsWordPress(tabSetId, tabs);

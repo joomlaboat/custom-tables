@@ -385,16 +385,16 @@ class Layouts
         }
 
         return array(
-            1 => 'Simple Catalog',
-            5 => 'Catalog Page',
-            6 => 'Catalog Item',
-            2 => 'Details',
+            1 => 'Catalog',
+            //5 => 'Catalog Page',
+            //6 => 'Catalog Item',
+            2 => 'Edit Form',
             4 => 'Details',
-            3 => 'COM_CUSTOMTABLES_LAYOUTS_DETAILS',
-            7 => 'Email Message',
-            8 => 'XML File',
-            9 => 'CSV File',
-            10 => 'JSON File'
+            //3 => 'COM_CUSTOMTABLES_LAYOUTS_DETAILS',
+            //7 => 'Email Message',
+            //8 => 'XML File',
+            //9 => 'CSV File',
+            //10 => 'JSON File'
         );
     }
 
