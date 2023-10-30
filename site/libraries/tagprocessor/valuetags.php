@@ -16,7 +16,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 use CustomTables\CT;
 use CustomTables\CTUser;
 
-$types_path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR;
+$types_path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR;
 require_once($types_path . '_type_ct.php');
 require_once($types_path . '_type_file.php');
 require_once($types_path . '_type_gallery.php');
@@ -271,7 +271,7 @@ class tagProcessor_Value
                             $vlu = implode(',', $b);
                         } elseif ($fieldType == 'file') {
                             if (isset($pureValueOptionArr[1]) and $pureValueOptionArr[1] != '') {
-                                $processor_file = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_file.php';
+                                $processor_file = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_file.php';
                                 require_once($processor_file);
 
                                 $new_array = array();

@@ -27,10 +27,10 @@ use CustomTables\SaveFieldQuerySet;
 
 jimport('joomla.application.component.model');
 
-$siteLibPath = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR;
+$siteLibPath = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR;
 require_once($siteLibPath . 'layout.php');
 
-$libPath = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'tagprocessor' . DIRECTORY_SEPARATOR;
+$libPath = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'tagprocessor' . DIRECTORY_SEPARATOR;
 require_once($libPath . 'valuetags.php');
 
 class CustomTablesModelEditItem extends JModelLegacy
@@ -561,7 +561,7 @@ class CustomTablesModelEditItem extends JModelLegacy
         $row = $rows[0];
 
         if ($this->ct->Env->legacySupport) {
-            require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'layout.php');
+            require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'layout.php');
             $LayoutProc = new LayoutProcessor($this->ct);
             $LayoutProc->layout = $link;
             $link = $LayoutProc->fillLayout($row, "", '[]', true);

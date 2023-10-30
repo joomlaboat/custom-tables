@@ -20,7 +20,8 @@ use JoomlaBasicMisc;
 use Joomla\CMS\Factory;
 use JHTML;
 
-JHTML::addIncludePath(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'helpers');
+if (defined('_JEXEC'))
+    JHTML::addIncludePath(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'helpers');
 
 class SearchInputBox
 {

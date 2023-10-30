@@ -199,7 +199,7 @@ class Twig_Url_Tags
         if ($include_host)
             $WebsiteRoot = Uri::root();
         else
-            $WebsiteRoot = Uri::root(true);
+            $WebsiteRoot = CUSTOMTABLES_MEDIA_HOME_URL;
 
         if ($add_trailing_slash) {
             if ($WebsiteRoot == '' or $WebsiteRoot[strlen($WebsiteRoot) - 1] != '/') //Root must have a slash character / in the end

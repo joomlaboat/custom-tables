@@ -14,7 +14,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
     die('Restricted access');
 }
 
-require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'tagprocessor' . DIRECTORY_SEPARATOR . 'edittags.php');
+require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'tagprocessor' . DIRECTORY_SEPARATOR . 'edittags.php');
 
 jimport('joomla.html.html.bootstrap');
 JHtml::_('behavior.keepalive');
@@ -37,7 +37,7 @@ if (isset($this->row[$this->ct->Table->realidfieldname]))
 else
     $listing_id = 0;
 
-require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'layout.php');
+require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'layout.php');
 $LayoutProc = new LayoutProcessor($this->ct, $this->pageLayout);
 
 //Better to run tag processor before rendering form edit elements because of IF statments that can exclude the part of the layout that contains form fields.

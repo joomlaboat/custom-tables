@@ -24,7 +24,7 @@ class JFormFieldESCatalogLayout extends JFormFieldList
 
     protected function getOptions(): array
     {
-        $path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR;
+        $path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR;
         require_once($path . 'loader.php');
         CTLoader();
 

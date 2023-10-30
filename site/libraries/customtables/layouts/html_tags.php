@@ -96,10 +96,11 @@ class Twig_Html_Tags
 
         if ($this->ct->Env->toolbarIcons != '')
             $img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbarIcons . ' fa-plus-circle" data-icon="' . $this->ct->Env->toolbarIcons . ' fa-plus-circle" title="' . $alt . '"></i>';
-        else
-            $img = '<img src="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/images/icons/new.png" alt="' . $alt . '" title="' . $alt . '" />';
+        else {
+            $img = '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/new.png" alt="' . $alt . '" title="' . $alt . '" />';
+        }
 
-        return '<a href="' . URI::root(true) . $link . '" id="ctToolBarAddNew' . $this->ct->Table->tableid . '" class="toolbarIcons">' . $img . '</a>';
+        return '<a href="' . CUSTOMTABLES_MEDIA_HOME_URL . $link . '" id="ctToolBarAddNew' . $this->ct->Table->tableid . '" class="toolbarIcons">' . $img . '</a>';
     }
 
     function importcsv()
@@ -291,7 +292,7 @@ class Twig_Html_Tags
                         $icons = ['publish' => 'fa-check-circle', 'unpublish' => 'fa-ban', 'refresh' => 'fa-sync', 'delete' => 'fa-trash'];
                         $img = '<i class="ba-btn-transition ' . $this->ct->Env->toolbarIcons . ' ' . $icons[$mode] . '" data-icon="' . $this->ct->Env->toolbarIcons . ' ' . $icons[$mode] . '" title="' . $alt . '"></i>';
                     } else
-                        $img = '<img src="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/images/icons/' . $mode . '.png" border="0" alt="' . $alt . '" title="' . $alt . '" />';
+                        $img = '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/' . $mode . '.png" border="0" alt="' . $alt . '" title="' . $alt . '" />';
 
                     $link = 'javascript:ctToolBarDO("' . $mode . '", ' . $this->ct->Table->tableid . ')';
                     $html_buttons[] = '<div id="' . $rid . '" class="toolbarIcons"><a href=\'' . $link . '\'>' . $img . '</a></div>';
@@ -313,9 +314,7 @@ class Twig_Html_Tags
     protected function getAvailableModes()
     {
         $available_modes = array();
-
-        $user = Factory::getUser();
-        if ($user->id != 0) {
+        if ($this->ct->Env->user->id != 0) {
             $publish_userGroup = (int)$this->ct->Params->publishUserGroups;
 
             if (JoomlaBasicMisc::checkUserGroupAccess($publish_userGroup)) {
@@ -360,7 +359,7 @@ class Twig_Html_Tags
 
         $onClick = 'window.open("' . $link . '","win2","status=no,toolbar=no,scrollbars=yes,titlebar=no,menubar=no,resizable=yes,width=640,height=480,directories=no,location=no");return false;';
         if ($this->ct->Env->print == 1) {
-            $vlu = '<p><a href="#" onclick="window.print();return false;"><img src="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/images/icons/print.png" alt="' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PRINT') . '"  /></a></p>';
+            $vlu = '<p><a href="#" onclick="window.print();return false;"><img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/print.png" alt="' . JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PRINT') . '"  /></a></p>';
         } else {
             if ($label == '')
                 $label = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_PRINT');
@@ -441,7 +440,7 @@ class Twig_Html_Tags
 
         $vlu = 'Search field name is wrong';
 
-        require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries'
+        require_once(CUSTOMTABLES_LIBRARIES_PATH
             . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'html' . DIRECTORY_SEPARATOR . 'searchinputbox.php');
 
         $SearchBox = new SearchInputBox($this->ct, 'esSearchBox');

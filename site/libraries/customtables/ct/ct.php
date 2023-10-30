@@ -306,8 +306,11 @@ class CT
             return;
         }
 
-        $limit_var = 'com_customtables.limit_' . $this->Params->ItemId;
-        $this->Limit = $this->app->getUserState($limit_var, 0);
+        if (defined('_JEXEC')) {
+            $limit_var = 'com_customtables.limit_' . $this->Params->ItemId;
+            $this->Limit = $this->app->getUserState($limit_var, 0);
+        } else
+            $this->Limit = 0;
 
         //Grouping
         if ($this->Params->groupBy != '')
@@ -326,7 +329,11 @@ class CT
             }
         } else {
             $this->LimitStart = common::inputGetInt('start', 0);
-            $this->Limit = $this->app->getUserState($limit_var, 0);
+
+            if (defined('_JEXEC'))
+                $this->Limit = $this->app->getUserState($limit_var, 0);
+            else
+                $this->Limit = 0;
 
             if ($this->Limit == 0 and (int)$this->Params->limit > 0) {
                 $this->Limit = (int)$this->Params->limit;
@@ -344,53 +351,58 @@ class CT
             $this->document->addCustomTag('<script src="' . URI::root(true) . '/media/jui/js/jquery.min.js"></script>');
             $this->document->addCustomTag('<script src="' . URI::root(true) . '/media/jui/js/bootstrap.min.js"></script>');
         } else {
-
-            HTMLHelper::_('jquery.framework');
-            $this->document->addCustomTag('<link rel="stylesheet" href="' . URI::root(true) . '/media/system/css/fields/switcher.css">');
+            if (defined('_JEXEC')) {
+                HTMLHelper::_('jquery.framework');
+                $this->document->addCustomTag('<link rel="stylesheet" href="' . URI::root(true) . '/media/system/css/fields/switcher.css">');
+            }
         }
 
-        $this->document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/js/jquery.uploadfile.js"></script>');
-        $this->document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/js/jquery.form.js"></script>');
-        $this->document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/js/ajax.js"></script>');
-        $this->document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/js/base64.js"></script>');
-        $this->document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/js/catalog.js"></script>');
-        $this->document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/js/edit.js"></script>');
-        $this->document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/js/esmulti.js"></script>');
-        $this->document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/js/modal.js"></script>');
-        $this->document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/js/uploader.js"></script>');
+        if (defined('_JEXEC')) {
+            $this->document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/jquery.uploadfile.js"></script>');
+            $this->document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/jquery.form.js"></script>');
+            $this->document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/ajax.js"></script>');
+            $this->document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/base64.js"></script>');
+            $this->document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/catalog.js"></script>');
+            $this->document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/edit.js"></script>');
+            $this->document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/esmulti.js"></script>');
+            $this->document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/modal.js"></script>');
+            $this->document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/uploader.js"></script>');
 
-        $this->document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/libraries/virtualselect/virtual-select.min.js"></script>');
-        $this->document->addCustomTag('<link rel="stylesheet" href="' . URI::root(true) . '/components/com_customtables/libraries/virtualselect/virtual-select.min.css" />');
+            $this->document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/libraries/virtualselect/virtual-select.min.js"></script>');
+            $this->document->addCustomTag('<link rel="stylesheet" href="' . URI::root(true) . '/components/com_customtables/libraries/virtualselect/virtual-select.min.css" />');
+        }
 
-        $params = ComponentHelper::getParams('com_customtables');
-        $googleMapAPIKey = $params->get('googlemapapikey');
+        if (defined('_JEXEC')) {
+            $params = ComponentHelper::getParams('com_customtables');
+            $googleMapAPIKey = $params->get('googlemapapikey');
 
-        if ($googleMapAPIKey !== null and $googleMapAPIKey != '')
-            $this->document->addCustomTag('<script src="https://maps.google.com/maps/api/js?key=' . $googleMapAPIKey . '&sensor=false"></script>');
+            if ($googleMapAPIKey !== null and $googleMapAPIKey != '')
+                $this->document->addCustomTag('<script src="https://maps.google.com/maps/api/js?key=' . $googleMapAPIKey . '&sensor=false"></script>');
 
-        $this->document->addCustomTag('<script src="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/js/combotree.js"></script>');
-        $this->document->addCustomTag('<script>let ctWebsiteRoot = "' . $this->Env->WebsiteRoot . '";</script>');
+            $this->document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/combotree.js"></script>');
+            $this->document->addCustomTag('<script>let ctWebsiteRoot = "' . $this->Env->WebsiteRoot . '";</script>');
 
-        if ($this->Params->ModuleId == null)
-            $this->document->addCustomTag('<script>ctItemId = "' . $this->Params->ItemId . '";</script>');
+            if ($this->Params->ModuleId == null)
+                $this->document->addCustomTag('<script>ctItemId = "' . $this->Params->ItemId . '";</script>');
 
-        //Styles
-        $this->document->addCustomTag('<link href="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/css/style.css" type="text/css" rel="stylesheet" >');
-        $this->document->addCustomTag('<link href="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/css/modal.css" type="text/css" rel="stylesheet" >');
-        $this->document->addCustomTag('<link href="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/css/uploadfile.css" rel="stylesheet">');
+            //Styles
+            $this->document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style.css" type="text/css" rel="stylesheet" >');
+            $this->document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/modal.css" type="text/css" rel="stylesheet" >');
+            $this->document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/uploadfile.css" rel="stylesheet">');
 
-        $this->document->addCustomTag('<link href="' . URI::root(true) . '/media/system/css/fields/calendar.min.css" rel="stylesheet" />');
-        $this->document->addCustomTag('<script src="' . URI::root(true) . '/media/system/js/fields/calendar-locales/date/gregorian/date-helper.min.js" defer></script>');
-        $this->document->addCustomTag('<script src="' . URI::root(true) . '/media/system/js/fields/calendar.min.js" defer></script>');
+            $this->document->addCustomTag('<link href="' . URI::root(true) . '/media/system/css/fields/calendar.min.css" rel="stylesheet" />');
+            $this->document->addCustomTag('<script src="' . URI::root(true) . '/media/system/js/fields/calendar-locales/date/gregorian/date-helper.min.js" defer></script>');
+            $this->document->addCustomTag('<script src="' . URI::root(true) . '/media/system/js/fields/calendar.min.js" defer></script>');
 
-        Text::script('COM_CUSTOMTABLES_JS_SELECT_RECORDS');
-        Text::script('COM_CUSTOMTABLES_JS_SELECT_DO_U_WANT_TO_DELETE1');
-        Text::script('COM_CUSTOMTABLES_JS_SELECT_DO_U_WANT_TO_DELETE');
-        Text::script('COM_CUSTOMTABLES_JS_NOTHING_TO_SAVE');
-        Text::script('COM_CUSTOMTABLES_JS_SESSION_EXPIRED');
-        Text::script('COM_CUSTOMTABLES_SELECT');
-        Text::script('COM_CUSTOMTABLES_SELECT_NOTHING');
-        Text::script('COM_CUSTOMTABLES_ADD');
+            Text::script('COM_CUSTOMTABLES_JS_SELECT_RECORDS');
+            Text::script('COM_CUSTOMTABLES_JS_SELECT_DO_U_WANT_TO_DELETE1');
+            Text::script('COM_CUSTOMTABLES_JS_SELECT_DO_U_WANT_TO_DELETE');
+            Text::script('COM_CUSTOMTABLES_JS_NOTHING_TO_SAVE');
+            Text::script('COM_CUSTOMTABLES_JS_SESSION_EXPIRED');
+            Text::script('COM_CUSTOMTABLES_SELECT');
+            Text::script('COM_CUSTOMTABLES_SELECT_NOTHING');
+            Text::script('COM_CUSTOMTABLES_ADD');
+        }
     }
 
     public function deleteSingleRecord($listing_id): int

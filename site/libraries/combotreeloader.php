@@ -55,7 +55,7 @@ if (!defined('_JEXEC')) {
 
 
 if ($independat) {
-    require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'combotreeloader.php');
+    require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'combotreeloader.php');
 
     $tableName = common::inputGet('establename', '', 'CMD');
     $fieldName = common::inputGet('esfieldname', '', 'CMD');

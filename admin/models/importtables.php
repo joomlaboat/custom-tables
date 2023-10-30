@@ -23,7 +23,7 @@ use CustomTables\ImportTables;
 // Import Joomla! libraries
 jimport('joomla.application.component.model');
 
-require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'uploader.php');
+require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'uploader.php');
 
 class CustomTablesModelImportTables extends JModelList
 {

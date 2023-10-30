@@ -28,34 +28,18 @@ class Layouts
     var ?int $tableId;
     var ?int $layoutId;
     var ?int $layoutType;
+    var ?string $pageLayoutNameString;
+    var ?string $pageLayoutLink;
+    var ?string $layoutCode;
 
     function __construct(&$ct)
     {
         $this->ct = &$ct;
         $this->tableId = null;
         $this->layoutType = null;
-    }
-
-    function getLayoutRowById(int $layoutId): ?array
-    {
-        $serverType = database::getServerType();
-        if ($serverType == 'postgresql')
-            $query = 'SELECT id, tableid, layoutname, layoutcode, layoutmobile, layoutcss, layoutjs, '
-                . 'CASE WHEN modified IS NULL THEN extract(epoch FROM created) '
-                . 'ELSE extract(epoch FROM modified) AS ts, '
-                . 'layouttype '
-                . 'FROM #__customtables_layouts WHERE id=' . $layoutId . ' LIMIT 1';
-        else
-            $query = 'SELECT id, tableid, layoutname, layoutcode, layoutmobile, layoutcss, layoutjs, '
-                . 'IF(modified IS NULL,UNIX_TIMESTAMP(created),UNIX_TIMESTAMP(modified)) AS ts, '
-                . 'layouttype '
-                . 'FROM #__customtables_layouts WHERE id=' . $layoutId . ' LIMIT 1';
-
-        $rows = database::loadAssocList($query);
-        if (count($rows) != 1)
-            return null;
-
-        return $rows[0];
+        $this->pageLayoutNameString = null;
+        $this->pageLayoutLink = null;
+        $this->layoutCode = null;
     }
 
     function processLayoutTag(string &$htmlresult): bool
@@ -87,27 +71,38 @@ class Layouts
         return true;
     }
 
-    function getLayout(string $layoutName, bool $processLayoutTag = true, bool $checkLayoutFile = true, bool $addHeaderCode = true): string
+    function getLayout(string|int $layoutNameOrId, bool $processLayoutTag = true, bool $checkLayoutFile = true, bool $addHeaderCode = true): string
     {
-        if ($layoutName == '')
-            return '';
+        if (is_int($layoutNameOrId)) {
+            if ($layoutNameOrId == 0)
+                return '';
 
-        if (self::isLayoutContent($layoutName)) {
-            $this->layoutType = 0;
-            return $layoutName;
+            $where = 'id=' . $layoutNameOrId;
+        } else {
+            if ($layoutNameOrId == '')
+                return '';
+
+            if (self::isLayoutContent($layoutNameOrId)) {
+                $this->layoutType = 0;
+                return $layoutNameOrId;
+            }
+
+            $where = 'layoutname=' . database::quote($layoutNameOrId);
         }
+
+
         $serverType = database::getServerType();
         if ($serverType == 'postgresql')
             $query = 'SELECT id, tableid, layoutname, layoutcode, layoutmobile, layoutcss, layoutjs, '
                 . 'CASE WHEN modified IS NULL THEN extract(epoch FROM created) '
                 . 'ELSE extract(epoch FROM modified) AS ts, '
                 . 'layouttype '
-                . 'FROM #__customtables_layouts WHERE layoutname=' . database::quote($layoutName) . ' LIMIT 1';
+                . 'FROM #__customtables_layouts WHERE ' . $where . ' LIMIT 1';
         else
             $query = 'SELECT id, tableid, layoutname, layoutcode, layoutmobile, layoutcss, layoutjs, '
                 . 'IF(modified IS NULL,UNIX_TIMESTAMP(created),UNIX_TIMESTAMP(modified)) AS ts, '
                 . 'layouttype '
-                . 'FROM #__customtables_layouts WHERE layoutname=' . database::quote($layoutName) . ' LIMIT 1';
+                . 'FROM #__customtables_layouts WHERE ' . $where . ' LIMIT 1';
 
         $rows = database::loadAssocList($query);
         if (count($rows) != 1)
@@ -121,8 +116,8 @@ class Layouts
         if ($this->ct->Env->isMobile and trim($row['layoutmobile']) != '') {
 
             $layoutCode = $row['layoutmobile'];
-            if ($checkLayoutFile and $this->ct->Env->folderToSaveLayouts !== null) {
-                $content = $this->getLayoutFileContent($row['id'], $layoutName, $layoutCode, $row['ts'], $layoutName . '_mobile.html', 'layoutmobile');
+            if ($checkLayoutFile and $this->ct->Env->folderToSaveLayouts !== null and is_string($layoutNameOrId)) {
+                $content = $this->getLayoutFileContent($row['id'], $layoutNameOrId, $layoutCode, $row['ts'], $layoutNameOrId . '_mobile.html', 'layoutmobile');
                 if ($content != null)
                     $layoutCode = $content;
             }
@@ -130,8 +125,8 @@ class Layouts
         } else {
 
             $layoutCode = $row['layoutcode'];
-            if ($checkLayoutFile and $this->ct->Env->folderToSaveLayouts !== null) {
-                $content = $this->getLayoutFileContent($row['id'], $layoutName, $layoutCode, $row['ts'], $layoutName . '.html', 'layoutcode');
+            if ($checkLayoutFile and $this->ct->Env->folderToSaveLayouts !== null and is_string($layoutNameOrId)) {
+                $content = $this->getLayoutFileContent($row['id'], $layoutNameOrId, $layoutCode, $row['ts'], $layoutNameOrId . '.html', 'layoutcode');
                 if ($content != null)
                     $layoutCode = $content;
             }
@@ -144,6 +139,9 @@ class Layouts
         if ($addHeaderCode)
             $this->addCSSandJSIfNeeded($row, $checkLayoutFile);
 
+        $this->pageLayoutNameString = $row['layoutname'];
+        $this->pageLayoutLink = '/administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $row['id'];
+        $this->layoutCode = $layoutCode;
         return $layoutCode;
     }
 
@@ -243,10 +241,12 @@ class Layouts
             $twig = new TwigProcessor($this->ct, $layoutContent, $this->ct->LayoutVariables['getEditFieldNamesOnly'] ?? false);
             $layoutContent = '<style>' . $twig->process($this->ct->Table->record ?? null) . '</style>';
 
-            if ($twig->errorMessage !== null)
-                $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
+            if (defined('_JEXEC')) {
+                if ($twig->errorMessage !== null)
+                    $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
 
-            $this->ct->document->addCustomTag($layoutContent);
+                $this->ct->document->addCustomTag($layoutContent);
+            }
         }
 
         $layoutContent = trim($layoutRow['layoutjs'] ?? '');
@@ -260,10 +260,12 @@ class Layouts
             $twig = new TwigProcessor($this->ct, $layoutContent, $this->ct->LayoutVariables['getEditFieldNamesOnly'] ?? false);
             $layoutContent = $twig->process($this->ct->Table->record);
 
-            if ($twig->errorMessage !== null)
-                $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
+            if (defined('_JEXEC')) {
+                if ($twig->errorMessage !== null)
+                    $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
 
-            $this->ct->document->addCustomTag('<script>' . $layoutContent . '</script>');
+                $this->ct->document->addCustomTag('<script>' . $layoutContent . '</script>');
+            }
         }
     }
 
@@ -285,185 +287,6 @@ class Layouts
             }
         }
         return true;
-    }
-
-    function createDefaultLayout_SimpleCatalog($fields, $addToolbar = true): string
-    {
-        $this->layoutType = 1;
-
-        $result = '<style>' . PHP_EOL . 'datagrid th{text-align:left;}' . PHP_EOL . '.datagrid td{text-align:left;}' . PHP_EOL . '</style>' . PHP_EOL;
-        $result .= '<div style="float:right;">{{ html.recordcount }}</div>' . PHP_EOL;
-
-        if ($addToolbar) {
-            $result .= '<div style="float:left;">{{ html.add }}</div>' . PHP_EOL;
-            $result .= '<div style="text-align:center;">{{ html.print }}</div>' . PHP_EOL;
-        }
-
-        $result .= '<div class="datagrid">' . PHP_EOL;
-
-        if ($addToolbar)
-            $result .= '<div>{{ html.batch(\'edit\',\'publish\',\'unpublish\',\'refresh\',\'delete\') }}</div>';
-
-        $result .= PHP_EOL;
-
-        $fieldtypes_to_skip = ['log', 'imagegallery', 'filebox', 'dummy'];
-        $fieldTypesWithSearch = ['email', 'string', 'multilangstring', 'text', 'multilangtext', 'sqljoin', 'records', 'user', 'userid', 'int', 'checkbox'];
-        $fieldtypes_allowed_to_orderby = ['string', 'email', 'url', 'sqljoin', 'phponadd', 'phponchange', 'int', 'float', 'ordering', 'changetime', 'creationtime', 'date', 'multilangstring', 'customtables', 'userid', 'user', 'virtual'];
-
-        $result .= PHP_EOL . '<table>' . PHP_EOL;
-
-        $result .= self::renderTableHead($fields, $addToolbar, $fieldtypes_to_skip, $fieldTypesWithSearch, $fieldtypes_allowed_to_orderby);
-
-        $result .= PHP_EOL . '<tbody>';
-        $result .= PHP_EOL . '{% block record %}';
-        $result .= PHP_EOL . '<tr>' . PHP_EOL;
-
-        //Look for ordering field type
-        if ($addToolbar) {
-            foreach ($fields as $field) {
-                if ($field['type'] == 'ordering') {
-                    $result .= '<td style="text-align:center;">{{ ' . $field['fieldname'] . ' }}</td>' . PHP_EOL;
-                }
-            }
-        }
-
-        if ($addToolbar)
-            $result .= '<td style="text-align:center;">{{ html.toolbar("checkbox") }}</td>' . PHP_EOL;
-
-        $result .= '<td style="text-align:center;"><a href="{{ record.link(true) }}">{{ record.id }}</a></td>' . PHP_EOL;
-
-        foreach ($fields as $field) {
-
-            if ($field['type'] != 'ordering' && !in_array($field['type'], $fieldtypes_to_skip)) {
-
-                if ($field['type'] == 'url')
-                    $fieldValue = '<a href="{{ ' . $field['fieldname'] . ' }}" target="_blank">{{ ' . $field['fieldname'] . ' }}</a>';
-                else
-                    $fieldValue = '{{ ' . $field['fieldname'] . ' }}';
-
-                $result .= '<td>' . $fieldValue . '</td>' . PHP_EOL;
-            }
-        }
-
-        if ($addToolbar)
-            $result .= '<td>{{ html.toolbar("edit","publish","refresh","delete") }}</td>' . PHP_EOL;
-
-        $result .= '</tr>';
-
-        $result .= PHP_EOL . '{% endblock %}';
-        $result .= PHP_EOL . '</tbody>';
-        $result .= PHP_EOL . '</table>' . PHP_EOL;
-
-        $result .= PHP_EOL;
-        $result .= '</div>' . PHP_EOL;
-
-        if ($addToolbar)
-            $result .= '<br/><div style="text-align:center;">{{ html.pagination }}</div>' . PHP_EOL;
-
-        return $result;
-    }
-
-    protected function renderTableHead($fields, $addToolbar, $fieldtypes_to_skip, $fieldTypesWithSearch, $fieldtypes_allowed_to_orderby): string
-    {
-        $result = '<thead><tr>' . PHP_EOL;
-
-        //Look for ordering field type
-        if ($addToolbar) {
-            foreach ($fields as $field) {
-                if ($field['type'] == 'ordering')
-                    $result .= '<th class="short">{{ ' . $field['fieldname'] . '.label(true) }}</th>' . PHP_EOL;
-            }
-        }
-
-        if ($addToolbar)
-            $result .= '<th class="short">{{ html.batch("checkbox") }}</th>' . PHP_EOL;
-
-        if ($addToolbar)
-            $result .= '<th class="short">{{ record.label(true) }}</th>' . PHP_EOL;
-        else
-            $result .= '<th class="short">{{ record.label(false) }}</th>' . PHP_EOL;
-
-        foreach ($fields as $field)
-            $result .= self::renderTableColumnHeader($field, $addToolbar, $fieldtypes_to_skip, $fieldTypesWithSearch, $fieldtypes_allowed_to_orderby);
-
-        if ($addToolbar)
-            $result .= '<th>Action<br/>{{ html.searchbutton }}</th>' . PHP_EOL;
-
-        $result .= '</tr></thead>' . PHP_EOL . PHP_EOL;
-
-        return $result;
-    }
-
-    function renderTableColumnHeader($field, $addToolbar, $fieldtypes_to_skip, $fieldtypesWithSearch, $fieldtypes_allowed_to_orderby): string
-    {
-        $result = '';
-
-        if ($field['type'] != 'ordering' && !in_array($field['type'], $fieldtypes_to_skip)) {
-
-            $result .= '<th>';
-
-            if ($field['allowordering'] && in_array($field['type'], $fieldtypes_allowed_to_orderby))
-
-                if (Fields::isVirtualField($field))
-                    $result .= '{{ ' . $field['fieldname'] . '.title }}';
-                else
-                    $result .= '{{ ' . $field['fieldname'] . '.label(true) }}';
-
-            else
-                $result .= '{{ ' . $field['fieldname'] . '.title }}';
-
-            if ($addToolbar and in_array($field['type'], $fieldtypesWithSearch)) {
-
-                if ($field['type'] == 'checkbox' || $field['type'] == 'sqljoin' || $field['type'] == 'records')
-                    $result .= '<br/>{{ html.search("' . $field['fieldname'] . '","","reload") }}';
-                else
-                    $result .= '<br/>{{ html.search("' . $field['fieldname'] . '") }}';
-            }
-
-            $result .= '</th>' . PHP_EOL;
-        }
-
-        return $result;
-    }
-
-    function createDefaultLayout_CSV($fields): string
-    {
-        $this->layoutType = 9;
-
-        $result = '';
-
-        $fieldTypes_to_skip = ['log', 'imagegallery', 'filebox', 'dummy', 'ordering'];
-        $fieldTypes_to_pureValue = ['image', 'imagegallery', 'filebox', 'file'];
-
-        foreach ($fields as $field) {
-
-            if (!in_array($field['type'], $fieldTypes_to_skip)) {
-                if ($result !== '')
-                    $result .= ',';
-
-                $result .= '"{{ ' . $field['fieldname'] . '.title }}"';
-            }
-        }
-
-        $result .= PHP_EOL . "{% block record %}";
-
-        $firstField = true;
-        foreach ($fields as $field) {
-
-            if (!in_array($field['type'], $fieldTypes_to_skip)) {
-
-                if (!$firstField)
-                    $result .= ',';
-
-                if (!in_array($field['type'], $fieldTypes_to_pureValue))
-                    $result .= '"{{ ' . $field['fieldname'] . ' }}"';
-                else
-                    $result .= '"{{ ' . $field['fieldname'] . '.value }}"';
-
-                $firstField = false;
-            }
-        }
-        return $result . PHP_EOL . "{% endblock %}";
     }
 
     function createDefaultLayout_Edit($fields, $addToolbar = true): string
@@ -578,7 +401,7 @@ class Layouts
     function parseRawLayoutContent(string $content, bool $applyContentPlugins = true): string
     {
         if ($this->ct->Env->legacySupport) {
-            require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'layout.php');
+            require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'layout.php');
 
             $LayoutProc = new LayoutProcessor($this->ct);
             $LayoutProc->layout = $content;
@@ -595,5 +418,329 @@ class Layouts
             $content = JoomlaBasicMisc::applyContentPlugins($content);
 
         return $content;
+    }
+
+    function renderMixedLayout(int $layoutId): string
+    {
+        $this->getLayout($layoutId);
+        //$this->getLayoutRowById($layoutId);
+
+        if ($this->layoutType === null)
+            return 'CustomTable: Layout "' . $layoutId . '" not found';
+        /*
+         * <option value="1">Simple Catalog</option>
+                <option value="5">Catalog Page</option>
+                <option value="6">Catalog Item</option>
+                <option value="2">Edit form</option>
+                <option value="4">Details</option>
+                <!--<option value="3">COM_CUSTOMTABLES_LAYOUTS_RECORD_LINK</option>-->
+                <option value="7">Email Message</option>
+                <option value="8">XML File</option>
+                <option value="9">CSV File</option>
+                <option value="10">JSON File</option>
+         */
+
+        if ($this->layoutType == 1 or $this->layoutType == 5) {
+            return $this->renderCatalog();
+        }
+        return 'CustomTable: Unknown Layout Type';
+    }
+
+    protected function renderCatalog(): string
+    {
+        if ($this->ct->Env->frmt == 'html')
+            $this->ct->loadJSAndCSS();
+
+        // -------------------- Table
+
+        if ($this->ct->Table === null) {
+            echo 'Load Table';
+            $this->ct->getTable($this->ct->Params->tableName);
+
+            if ($this->ct->Table->tablename === null) {
+                $this->ct->app->enqueueMessage('Catalog View: Table not selected.', 'error');
+                return 'Catalog View: Table not selected.';
+            }
+        }
+
+        // --------------------- Filter
+        $this->ct->setFilter($this->ct->Params->filter, $this->ct->Params->showPublished);
+
+        if (!$this->ct->Params->blockExternalVars) {
+            if (common::inputGetString('filter', '') and is_string(common::inputGetString('filter', '')))
+                $this->ct->Filter->addWhereExpression(common::inputGetString('filter', ''));
+        }
+
+        if (!$this->ct->Params->blockExternalVars)
+            $this->ct->Filter->addQueryWhereFilter();
+
+        // --------------------- Shopping Cart
+        if ($this->ct->Params->showCartItemsOnly) {
+            $cookieValue = common::inputCookieGet($this->ct->Params->showCartItemsPrefix . $this->ct->Table->tablename);
+
+            if (isset($cookieValue)) {
+                if ($cookieValue == '') {
+                    $this->ct->Filter->where[] = $this->ct->Table->realtablename . '.' . $this->ct->Table->tablerow['realidfieldname'] . '=0';
+                } else {
+                    $items = explode(';', $cookieValue);
+                    $arr = array();
+                    foreach ($items as $item) {
+                        $pair = explode(',', $item);
+                        $arr[] = $this->ct->Table->realtablename . '.' . $this->ct->Table->tablerow['realidfieldname'] . '=' . (int)$pair[0];//id must be a number
+                    }
+                    $this->ct->Filter->where[] = '(' . implode(' OR ', $arr) . ')';
+                }
+            } else {
+                //Show only shopping cart items. TODO: check the query
+                $this->ct->Filter->where[] = $this->ct->Table->realtablename . '.' . $this->ct->Table->tablerow['realidfieldname'] . '=0';
+            }
+        }
+
+        if ($this->ct->Params->listing_id !== null)
+            $this->ct->Filter->where[] = $this->ct->Table->realtablename . '.' . $this->ct->Table->tablerow['realidfieldname'] . '=' . database::quote($this->ct->Params->listing_id);
+
+        // --------------------- Sorting
+        $this->ct->Ordering->parseOrderByParam();
+
+        // --------------------- Limit
+        if ($this->ct->Params->listing_id !== null)
+            $this->ct->applyLimits(1);
+        else
+            $this->ct->applyLimits($this->ct->Params->limit);
+
+        $this->ct->LayoutVariables['layout_type'] = $this->layoutType;
+
+        // -------------------- Load Records
+        if (!$this->ct->getRecords()) {
+
+            if (defined('_JEXEC'))
+                $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_TABLE_NOT_FOUND'), 'error');
+
+            return 'CustomTables: Records not loaded.';
+        }
+
+        // -------------------- Parse Layouts
+        if ($this->ct->Env->frmt == 'json') {
+
+            $pathViews = CUSTOMTABLES_LIBRARIES_PATH
+                . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR;
+
+            require_once($pathViews . 'json.php');
+            $jsonOutput = new ViewJSON($this->ct);
+            die($jsonOutput->render($this->layoutCode));
+        }
+
+        $twig = new TwigProcessor($this->ct, $this->layoutCode, false, false, true, $this->pageLayoutNameString, $this->pageLayoutLink);
+        $pageLayout = $twig->process();
+
+        if (defined('_JEXEC')) {
+            if ($twig->errorMessage !== null)
+                $this->ct->app->enqueueMessage($twig->errorMessage, 'error');
+
+            if ($this->ct->Params->allowContentPlugins)
+                $pageLayout = JoomlaBasicMisc::applyContentPlugins($pageLayout);
+        }
+        return $pageLayout;
+    }
+
+    function getLayoutRowById(int $layoutId): ?array
+    {
+        $serverType = database::getServerType();
+        if ($serverType == 'postgresql')
+            $query = 'SELECT id, tableid, layoutname, layoutcode, layoutmobile, layoutcss, layoutjs, '
+                . 'CASE WHEN modified IS NULL THEN extract(epoch FROM created) '
+                . 'ELSE extract(epoch FROM modified) AS ts, '
+                . 'layouttype '
+                . 'FROM #__customtables_layouts WHERE id=' . $layoutId . ' LIMIT 1';
+        else
+            $query = 'SELECT id, tableid, layoutname, layoutcode, layoutmobile, layoutcss, layoutjs, '
+                . 'IF(modified IS NULL,UNIX_TIMESTAMP(created),UNIX_TIMESTAMP(modified)) AS ts, '
+                . 'layouttype '
+                . 'FROM #__customtables_layouts WHERE id=' . $layoutId . ' LIMIT 1';
+
+        $rows = database::loadAssocList($query);
+        if (count($rows) != 1)
+            return null;
+
+        return $rows[0];
+    }
+
+    function createDefaultLayout_CSV($fields): string
+    {
+        $this->layoutType = 9;
+
+        $result = '';
+
+        $fieldTypes_to_skip = ['log', 'imagegallery', 'filebox', 'dummy', 'ordering'];
+        $fieldTypes_to_pureValue = ['image', 'imagegallery', 'filebox', 'file'];
+
+        foreach ($fields as $field) {
+
+            if (!in_array($field['type'], $fieldTypes_to_skip)) {
+                if ($result !== '')
+                    $result .= ',';
+
+                $result .= '"{{ ' . $field['fieldname'] . '.title }}"';
+            }
+        }
+
+        $result .= PHP_EOL . "{% block record %}";
+
+        $firstField = true;
+        foreach ($fields as $field) {
+
+            if (!in_array($field['type'], $fieldTypes_to_skip)) {
+
+                if (!$firstField)
+                    $result .= ',';
+
+                if (!in_array($field['type'], $fieldTypes_to_pureValue))
+                    $result .= '"{{ ' . $field['fieldname'] . ' }}"';
+                else
+                    $result .= '"{{ ' . $field['fieldname'] . '.value }}"';
+
+                $firstField = false;
+            }
+        }
+        return $result . PHP_EOL . "{% endblock %}";
+    }
+
+    function createDefaultLayout_SimpleCatalog(array $fields, bool $addToolbar = true): string
+    {
+        $this->layoutType = 1;
+
+        $result = '<style>' . PHP_EOL . 'datagrid th{text-align:left;}' . PHP_EOL . '.datagrid td{text-align:left;}' . PHP_EOL . '</style>' . PHP_EOL;
+        $result .= '<div style="float:right;">{{ html.recordcount }}</div>' . PHP_EOL;
+
+        if ($addToolbar) {
+            $result .= '<div style="float:left;">{{ html.add }}</div>' . PHP_EOL;
+            $result .= '<div style="text-align:center;">{{ html.print }}</div>' . PHP_EOL;
+        }
+
+        $result .= '<div class="datagrid">' . PHP_EOL;
+
+        if ($addToolbar)
+            $result .= '<div>{{ html.batch(\'edit\',\'publish\',\'unpublish\',\'refresh\',\'delete\') }}</div>';
+
+        $result .= PHP_EOL;
+
+        $fieldtypes_to_skip = ['log', 'imagegallery', 'filebox', 'dummy'];
+        $fieldTypesWithSearch = ['email', 'string', 'multilangstring', 'text', 'multilangtext', 'sqljoin', 'records', 'user', 'userid', 'int', 'checkbox'];
+        $fieldtypes_allowed_to_orderby = ['string', 'email', 'url', 'sqljoin', 'phponadd', 'phponchange', 'int', 'float', 'ordering', 'changetime', 'creationtime', 'date', 'multilangstring', 'customtables', 'userid', 'user', 'virtual'];
+
+        $result .= PHP_EOL . '<table>' . PHP_EOL;
+
+        $result .= self::renderTableHead($fields, $addToolbar, $fieldtypes_to_skip, $fieldTypesWithSearch, $fieldtypes_allowed_to_orderby);
+
+        $result .= PHP_EOL . '<tbody>';
+        $result .= PHP_EOL . '{% block record %}';
+        $result .= PHP_EOL . '<tr>' . PHP_EOL;
+
+        //Look for ordering field type
+        if ($addToolbar) {
+            foreach ($fields as $field) {
+                if ($field['type'] == 'ordering') {
+                    $result .= '<td style="text-align:center;">{{ ' . $field['fieldname'] . ' }}</td>' . PHP_EOL;
+                }
+            }
+        }
+
+        if ($addToolbar)
+            $result .= '<td style="text-align:center;">{{ html.toolbar("checkbox") }}</td>' . PHP_EOL;
+
+        $result .= '<td style="text-align:center;"><a href="{{ record.link(true) }}">{{ record.id }}</a></td>' . PHP_EOL;
+
+        foreach ($fields as $field) {
+
+            if ($field['type'] != 'ordering' && !in_array($field['type'], $fieldtypes_to_skip)) {
+
+                if ($field['type'] == 'url')
+                    $fieldValue = '<a href="{{ ' . $field['fieldname'] . ' }}" target="_blank">{{ ' . $field['fieldname'] . ' }}</a>';
+                else
+                    $fieldValue = '{{ ' . $field['fieldname'] . ' }}';
+
+                $result .= '<td>' . $fieldValue . '</td>' . PHP_EOL;
+            }
+        }
+
+        if ($addToolbar)
+            $result .= '<td>{{ html.toolbar("edit","publish","refresh","delete") }}</td>' . PHP_EOL;
+
+        $result .= '</tr>';
+
+        $result .= PHP_EOL . '{% endblock %}';
+        $result .= PHP_EOL . '</tbody>';
+        $result .= PHP_EOL . '</table>' . PHP_EOL;
+
+        $result .= PHP_EOL;
+        $result .= '</div>' . PHP_EOL;
+
+        if ($addToolbar)
+            $result .= '<br/><div style="text-align:center;">{{ html.pagination }}</div>' . PHP_EOL;
+
+        return $result;
+    }
+
+    protected function renderTableHead(array $fields, bool $addToolbar, array $fieldtypes_to_skip, array $fieldTypesWithSearch, array $fieldtypes_allowed_to_orderby): string
+    {
+        $result = '<thead><tr>' . PHP_EOL;
+
+        //Look for ordering field type
+        if ($addToolbar) {
+            foreach ($fields as $field) {
+                if ($field['type'] == 'ordering')
+                    $result .= '<th class="short">{{ ' . $field['fieldname'] . '.label(true) }}</th>' . PHP_EOL;
+            }
+        }
+
+        if ($addToolbar)
+            $result .= '<th class="short">{{ html.batch("checkbox") }}</th>' . PHP_EOL;
+
+        if ($addToolbar)
+            $result .= '<th class="short">{{ record.label(true) }}</th>' . PHP_EOL;
+        else
+            $result .= '<th class="short">{{ record.label(false) }}</th>' . PHP_EOL;
+
+        foreach ($fields as $field)
+            $result .= self::renderTableColumnHeader($field, $addToolbar, $fieldtypes_to_skip, $fieldTypesWithSearch, $fieldtypes_allowed_to_orderby);
+
+        if ($addToolbar)
+            $result .= '<th>Action<br/>{{ html.searchbutton }}</th>' . PHP_EOL;
+
+        $result .= '</tr></thead>' . PHP_EOL . PHP_EOL;
+
+        return $result;
+    }
+
+    function renderTableColumnHeader(array $field, bool $addToolbar, array $fieldtypes_to_skip, array $fieldtypesWithSearch, array $fieldtypes_allowed_to_orderby): string
+    {
+        $result = '';
+
+        if ($field['type'] != 'ordering' && !in_array($field['type'], $fieldtypes_to_skip)) {
+
+            $result .= '<th>';
+
+            if ($field['allowordering'] && in_array($field['type'], $fieldtypes_allowed_to_orderby))
+
+                if (Fields::isVirtualField($field))
+                    $result .= '{{ ' . $field['fieldname'] . '.title }}';
+                else
+                    $result .= '{{ ' . $field['fieldname'] . '.label(true) }}';
+
+            else
+                $result .= '{{ ' . $field['fieldname'] . '.title }}';
+
+            if ($addToolbar and in_array($field['type'], $fieldtypesWithSearch)) {
+
+                if ($field['type'] == 'checkbox' || $field['type'] == 'sqljoin' || $field['type'] == 'records')
+                    $result .= '<br/>{{ html.search("' . $field['fieldname'] . '","","reload") }}';
+                else
+                    $result .= '<br/>{{ html.search("' . $field['fieldname'] . '") }}';
+            }
+
+            $result .= '</th>' . PHP_EOL;
+        }
+
+        return $result;
     }
 }

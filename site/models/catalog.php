@@ -18,7 +18,7 @@ use CustomTables\CT;
 
 jimport('joomla.application.component.model');
 
-$siteLib = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR;
+$siteLib = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR;
 require_once($siteLib . 'layout.php');
 
 class CustomTablesModelCatalog extends JModelLegacy

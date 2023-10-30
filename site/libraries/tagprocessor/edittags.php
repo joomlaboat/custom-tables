@@ -71,7 +71,7 @@ class tagProcessor_Edit
 
     protected static function process_fields(CT &$ct, &$pageLayout, &$row, $getEditFieldNamesOnly = false): array
     {
-        require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'esinputbox.php');
+        require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'esinputbox.php');
 
         $inputBox = new ESInputBox($ct);
 

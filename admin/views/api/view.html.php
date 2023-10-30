@@ -19,7 +19,7 @@ use CustomTables\Fields;
 // import Joomla view library
 jimport('joomla.application.component.view');
 
-$path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries'
+$path = CUSTOMTABLES_LIBRARIES_PATH
     . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'extratasks' . DIRECTORY_SEPARATOR;
 
 require_once($path . 'updateimages.php');

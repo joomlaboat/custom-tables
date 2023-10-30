@@ -128,7 +128,7 @@ class Environment
         if (defined('_JEXEC')) {
             $mainframe = Factory::getApplication();
             if ($mainframe->getCfg('sef')) {
-                $this->WebsiteRoot = Uri::root(true);
+                $this->WebsiteRoot = CUSTOMTABLES_MEDIA_HOME_URL;
                 if ($this->WebsiteRoot == '' or $this->WebsiteRoot[strlen($this->WebsiteRoot) - 1] != '/') //Root must have the slash character "/" in the end
                     $this->WebsiteRoot .= '/';
             } else

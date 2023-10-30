@@ -19,7 +19,7 @@ JHTML::addIncludePath(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTOR
 
 // Include library dependencies
 
-$libpath = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'tagprocessor' . DIRECTORY_SEPARATOR;
+$libpath = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'tagprocessor' . DIRECTORY_SEPARATOR;
 require_once($libpath . 'generaltags.php');//added to twig
 require_once($libpath . 'fieldtags.php');//added to twig
 require_once($libpath . 'settags.php'); //added to twig
@@ -29,7 +29,7 @@ require_once($libpath . 'itemtags.php');//not all added to twig
 require_once($libpath . 'valuetags.php');//added to twig
 require_once($libpath . 'shopingtags.php');
 
-require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_ct.php');
+require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_ct.php');
 
 class LayoutProcessor
 {

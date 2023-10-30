@@ -23,7 +23,7 @@ class CustomTablesController extends JControllerLegacy
         if ($file != '') {
             //Load file instead
 
-            $processor_file = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_file.php';
+            $processor_file = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_file.php';
             require_once($processor_file);
             CT_FieldTypeTag_file::process_file_link($file);
 

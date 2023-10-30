@@ -172,37 +172,39 @@ class Ordering
 
     function parseOrderByParam(): void
     {
-        //get sort field (and direction) example "price desc"
-        $app = Factory::getApplication();
-        $ordering_param_string = '';
+        if (defined('_JEXEC')) {
+            //get sort field (and direction) example "price desc"
+            $app = Factory::getApplication();
+            $ordering_param_string = '';
 
-        if ($this->Params->blockExternalVars) {
-            //module or plugin
-            if ($this->Params->forceSortBy != '')
-                $ordering_param_string = $this->Params->forceSortBy;
-            elseif ($this->Params->sortBy != '')
-                $ordering_param_string = $this->Params->sortBy;
-        } else {
-            if ($this->Params->forceSortBy != '') {
-                $ordering_param_string = $this->Params->forceSortBy;
-            } elseif (common::inputGetCmd('esordering', '')) {
-                $ordering_param_string = common::inputGetString('esordering', '');
-                $ordering_param_string = trim(preg_replace("/[^a-zA-Z-+%.: ,_]/", "", $ordering_param_string));
+            if ($this->Params->blockExternalVars) {
+                //module or plugin
+                if ($this->Params->forceSortBy != '')
+                    $ordering_param_string = $this->Params->forceSortBy;
+                elseif ($this->Params->sortBy != '')
+                    $ordering_param_string = $this->Params->sortBy;
             } else {
-                $Itemid = common::inputGetInt('Itemid', 0);
-                $ordering_param_string = $app->getUserState('com_customtables.orderby_' . $Itemid, '');
+                if ($this->Params->forceSortBy != '') {
+                    $ordering_param_string = $this->Params->forceSortBy;
+                } elseif (common::inputGetCmd('esordering', '')) {
+                    $ordering_param_string = common::inputGetString('esordering', '');
+                    $ordering_param_string = trim(preg_replace("/[^a-zA-Z-+%.: ,_]/", "", $ordering_param_string));
+                } else {
+                    $Itemid = common::inputGetInt('Itemid', 0);
+                    $ordering_param_string = $app->getUserState('com_customtables.orderby_' . $Itemid, '');
 
-                if ($ordering_param_string == '') {
-                    if ($this->Params->sortBy !== null and $this->Params->sortBy != '')
-                        $ordering_param_string = $this->Params->sortBy;
+                    if ($ordering_param_string == '') {
+                        if ($this->Params->sortBy !== null and $this->Params->sortBy != '')
+                            $ordering_param_string = $this->Params->sortBy;
+                    }
                 }
             }
-        }
-        $this->ordering_processed_string = $ordering_param_string;
+            $this->ordering_processed_string = $ordering_param_string;
 
-        //set state
-        if (!$this->Params->blockExternalVars)
-            $app->setUserState('com_customtables.esorderby', $this->ordering_processed_string);
+            //set state
+            if (!$this->Params->blockExternalVars)
+                $app->setUserState('com_customtables.esorderby', $this->ordering_processed_string);
+        }
     }
 
     function getSortByFields(): ?object

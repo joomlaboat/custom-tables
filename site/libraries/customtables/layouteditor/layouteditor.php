@@ -23,21 +23,21 @@ $theme = 'eclipse';
 if (defined('_JEXEC')) {
     $document = Factory::getDocument();
 
-    $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/ajax.js"></script>');
+    $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/ajax.js"></script>');
 
     $version_object = new Version;
     $version = (int)$version_object->getShortVersion();
 
-    $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/typeparams_common.js"></script>');
+    $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/typeparams_common.js"></script>');
 
     if ($version < 4)
-        $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/typeparams.js"></script>');
+        $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/typeparams.js"></script>');
     else
-        $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/typeparams_j4.js"></script>');
+        $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/typeparams_j4.js"></script>');
 
-    $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/layoutwizard.js"></script>');
-    $document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/layouteditor.js"></script>');
-    $document->addCustomTag('<link href="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/css/layouteditor.css" rel="stylesheet">');
+    $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/layoutwizard.js"></script>');
+    $document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/layouteditor.js"></script>');
+    $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/layouteditor.css" rel="stylesheet">');
 
     $document->addCustomTag('<link rel="stylesheet" href="' . JURI::root(true) . '/components/com_customtables/libraries/codemirror/lib/codemirror.css">');
     $document->addCustomTag('<link rel="stylesheet" href="' . JURI::root(true) . '/components/com_customtables/libraries/codemirror/addon/hint/show-hint.css">');

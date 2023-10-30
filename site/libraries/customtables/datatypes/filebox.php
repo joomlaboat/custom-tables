@@ -67,7 +67,7 @@ class CT_FieldTypeTag_FileBox
 
     public static function renderFileBoxIcon(CT $ct, string $listing_id, string $fileBoxName, string $title): string
     {
-        $iconPath = Uri::root(true) . '/components/com_customtables/libraries/customtables/media/images/icons/';
+        $iconPath = CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/';
         $rid = $ct->Table->tableid . 'x' . $listing_id;
 
         $fileManagerLink = 'index.php?option=com_customtables&amp;view=editfiles'

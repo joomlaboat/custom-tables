@@ -6,6 +6,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 use \Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
 
 if (!function_exists('str_contains')) {
     function str_contains($haystack, $needle): bool
@@ -28,6 +29,14 @@ function CTLoader($include_utilities = false, $include_html = false, $PLUGIN_NAM
 
     if (!defined('CUSTOMTABLES_LIBRARIES_PATH'))
         define('CUSTOMTABLES_LIBRARIES_PATH', $libraryPath);
+
+    if (defined('_JEXEC')) {
+        define('CUSTOMTABLES_MEDIA_WEBPATH', CUSTOMTABLES_MEDIA_WEBPATH . '');
+        define('CUSTOMTABLES_MEDIA_HOME_URL', URI::root(true));
+    } elseif (defined('WPINC')) {
+        define('CUSTOMTABLES_MEDIA_WEBPATH', home_url() . '/wp-content/plugins/customtables/libraries/customtables/media/');
+        define('CUSTOMTABLES_MEDIA_HOME_URL', home_url());
+    }
 
     if (!defined('_JEXEC') or ($loadTwig === null or $loadTwig or Factory::getApplication()->getName() == 'administrator') and !class_exists('Twig')) {
 

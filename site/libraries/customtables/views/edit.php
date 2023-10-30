@@ -72,7 +72,7 @@ class Edit
             $this->row = $row;
 
         if ($this->ct->Env->legacySupport) {
-            $path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR;
+            $path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR;
             require_once($path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'edittags.php');
             require_once($path . 'layout.php');
 
@@ -102,7 +102,7 @@ class Edit
 
         if (defined('_JEXEC')) {
             if ($this->ct->Env->legacySupport) {
-                $path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR;
+                $path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR;
                 require_once($path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'edittags.php');
                 require_once($path . 'layout.php');
             }

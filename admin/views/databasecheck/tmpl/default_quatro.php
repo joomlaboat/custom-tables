@@ -20,8 +20,8 @@ use Joomla\CMS\Language\Text;
 
 $document = Factory::getDocument();
 $document->addCustomTag('<script src="' . JURI::root(true) . '/media/vendor/jquery/js/jquery.min.js"></script>');
-$document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/raphael.min.js"></script>');
-$document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/diagram.js"></script>');
+$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/raphael.min.js"></script>');
+$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/diagram.js"></script>');
 ?>
 
 <form action="<?php echo JRoute::_('index.php?option=com_customtables&view=databasecheck'); ?>" method="post"

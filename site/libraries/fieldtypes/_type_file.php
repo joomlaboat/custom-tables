@@ -532,7 +532,7 @@ class CT_FieldTypeTag_file
         $parts = explode('.', $file);
         $file_extension = end($parts);
 
-        $image_src = JURI::root(true) . '/components/com_customtables/libraries/customtables/media/images/fileformats/48px/' . $file_extension . '.png';
+        $image_src = CUSTOMTABLES_MEDIA_WEBPATH . 'images/fileformats/48px/' . $file_extension . '.png';
 
         $result = '
                 <div style="margin:10px; border:lightgrey 1px solid;border-radius:10px;padding:10px;display:inline-block;vertical-align:top;" id="ct_uploadedfile_box_' . $field->fieldname . '">';
@@ -619,7 +619,7 @@ class CT_FieldTypeTag_file
 
     public static function CheckIfFile2download(&$segments, &$vars): bool
     {
-        $path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR;
+        $path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR;
         require_once($path . 'loader.php');
         CTLoader();
 
@@ -636,7 +636,7 @@ class CT_FieldTypeTag_file
                     $vars['view'] = 'files';
                     $vars['key'] = $segments[0];
 
-                    $processor_file = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_file.php';
+                    $processor_file = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_file.php';
                     require_once($processor_file);
 
                     CT_FieldTypeTag_file::process_file_link(end($segments));

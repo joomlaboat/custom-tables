@@ -140,7 +140,7 @@ function CustomTablesSave($task, $this_)
                 $msg = $ct->Params->msgItemIsSaved;
 
             if ($ct->Env->legacySupport) {
-                $siteLibraryPath = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR;
+                $siteLibraryPath = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR;
                 require_once($siteLibraryPath . 'layout.php');
 
                 $LayoutProc = new LayoutProcessor($ct);

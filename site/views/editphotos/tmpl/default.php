@@ -17,7 +17,7 @@ use CustomTables\common;
 use Joomla\CMS\Factory;
 
 $document = Factory::getDocument();
-$document->addCustomTag('<script src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/js/imagegallery.js"></script>');
+$document->addCustomTag('<script src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'js/imagegallery.js"></script>');
 
 ?>
 <style>

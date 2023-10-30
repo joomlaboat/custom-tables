@@ -423,7 +423,7 @@ class JHTMLESRecords
         $single_box = JHTMLESRecords::getSingle($ct, $ct_noFilter, $valueArray, $field,
             $control_name, '_selector', $style, $cssClass, $attribute, '', $tableName, $dynamic_filter, $place_holder);
 
-        $icon_path = JURI::root(true) . '/components/com_customtables/libraries/customtables/media/images/icons/';
+        $icon_path = CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/';
         $htmlResult .= '<div style="padding-bottom:20px;"><div style="width:90%;" id="' . $control_name . '_box"></div>'
             . '<div style="height:30px;">'
             . '<div id="' . $control_name . '_addButton" style="visibility: visible;"><img src="' . $icon_path . 'new.png" alt="Add" title="Add" style="cursor: pointer;" '

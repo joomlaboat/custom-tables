@@ -31,11 +31,11 @@ class CustomTablesRouter implements JComponentRouterInterface
 
         //Check if it's a file to download
 
-        $libraryPath = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries';
+        $libraryPath = CUSTOMTABLES_LIBRARIES_PATH;
         if (!defined('CUSTOMTABLES_LIBRARIES_PATH'))
             define('CUSTOMTABLES_LIBRARIES_PATH', $libraryPath);
 
-        require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_file.php');
+        require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_file.php');
         if (CT_FieldTypeTag_file::CheckIfFile2download($segments, $vars)) {
             //rerouted
             $vars['option'] = 'com_customtables';

@@ -13,7 +13,7 @@ if (!defined('_JEXEC') and !defined('WPINC')) {
 }
 
 jimport('joomla.application.component.view'); //Important to get menu parameters
-require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_file.php');
+require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_file.php');
 
 use CustomTables\common;
 use CustomTables\CT;

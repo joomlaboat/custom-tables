@@ -237,7 +237,7 @@ class Inputbox
         $params->loadArray($paramsArray);
         $ct->setParams($params);
 
-        $pathViews = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries'
+        $pathViews = CUSTOMTABLES_LIBRARIES_PATH
             . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR;
 
         require_once($pathViews . 'json.php');
@@ -321,14 +321,14 @@ class Inputbox
                 return $this->render_text($value);
 
             case 'multilangtext'://dok
-                require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . 'multilangtext.php');
+                require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . 'multilangtext.php');
                 return $this->render_multilangtext();
 
             case 'checkbox':
                 return $this->render_checkbox($value);
 
             case 'image': //Default value cannot be used with this data type.
-                $image_type_file = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_image.php';
+                $image_type_file = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_image.php';
                 require_once($image_type_file);
 
                 return CT_FieldTypeTag_image::renderImageFieldBox($this->ct, $this->field, $this->prefix, $this->row);
@@ -338,7 +338,7 @@ class Inputbox
 
             case 'blob': //Default value cannot be used with this data type.
             case 'file':
-                $file_type_file = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_file.php';
+                $file_type_file = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_file.php';
                 require_once($file_type_file);
                 return CT_FieldTypeTag_file::renderFileFieldBox($this->ct, $this->field, $this->row);
 
@@ -1464,7 +1464,7 @@ class Inputbox
 
     protected function getImageGallery($listing_id): string
     {
-        require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_gallery.php');
+        require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'fieldtypes' . DIRECTORY_SEPARATOR . '_type_gallery.php');
 
         $result = '';
         $getGalleryRows = CT_FieldTypeTag_imagegallery::getGalleryRows($this->ct->Table->tablename, $this->field->fieldname, $listing_id);
@@ -1480,7 +1480,7 @@ class Inputbox
 
         if (count($imageSRCList) > 0) {
 
-            $result .= '<div style="width:100%;overflow:scroll;border:1px dotted grey;background-image: url(\'' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/images/icons/bg.png\');">
+            $result .= '<div style="width:100%;overflow:scroll;border:1px dotted grey;background-image: url(\'' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/bg.png\');">
 
 		<table><tbody><tr>';
 
@@ -1501,7 +1501,7 @@ class Inputbox
 
     protected function getFileBox($listing_id): string
     {
-        require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR
+        require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR
             . 'customtables' . DIRECTORY_SEPARATOR . 'datatypes' . DIRECTORY_SEPARATOR . 'filebox.php');
 
         $manageButton = '';

@@ -152,13 +152,13 @@ class JHTMLESUserGroups
 
         $htmlresult .= '<div style="padding-bottom:20px;"><div style="width:90%;" id="' . $control_name . '_box"></div>'
             . '<div style="height:30px;">'
-            . '<div id="' . $control_name . '_addButton" style="visibility:visible;"><img src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/images/icons/new.png" alt="Add" title="Add" style="cursor: pointer;" '
+            . '<div id="' . $control_name . '_addButton" style="visibility:visible;"><img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/new.png" alt="Add" title="Add" style="cursor: pointer;" '
             . 'onClick="ctInputBoxRecords_addItem(\'' . $control_name . '\',\'_selector\')" /></div>'
             . '<div id="' . $control_name . '_addBox" style="visibility:hidden;">'
             . '<div style="float:left;">' . $single_box . '</div>'
-            . '<img src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/images/icons/plus.png" alt="Add" title="Add" '
+            . '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/plus.png" alt="Add" title="Add" '
             . 'style="cursor: pointer;float:left;margin-top:8px;margin-left:3px;" onClick="ctInputBoxRecords_DoAddItem(\'' . $control_name . '\',\'_selector\')" />'
-            . '<img src="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/images/icons/cancel.png" alt="Cancel" title="Cancel" style="cursor: pointer;float:left;margin-top:6px;margin-left:10px;" '
+            . '<img src="' . CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/cancel.png" alt="Cancel" title="Cancel" style="cursor: pointer;float:left;margin-top:6px;margin-left:10px;" '
             . 'onClick="ctInputBoxRecords_cancel(\'' . $control_name . '\')" />'
 
             . '</div>'

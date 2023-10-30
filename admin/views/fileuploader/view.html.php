@@ -22,7 +22,7 @@ class CustomTablesViewFileUploader extends JViewLegacy
 {
     function display($tpl = null)
     {
-        require_once(JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'uploader.php');
+        require_once(CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'uploader.php');
 
         if (ob_get_contents()) ob_end_clean();
 

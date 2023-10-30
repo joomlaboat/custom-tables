@@ -102,7 +102,10 @@ class Twig_Record_Tags
             $view_link .= ($returnto != '' ? '&amp;returnto=' . $returnto : '');
         }
 
-        return Route::_($view_link);
+        if (defined('_JEXEC'))
+            return Route::_($view_link);
+        else
+            return $view_link;
     }
 
     function published(string $type = '', string $customTextPositive = "Published", string $customTextNegative = "Unpublished")

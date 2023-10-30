@@ -24,7 +24,7 @@ $wa->useScript('keepalive')
     ->useScript('form.validate');
 
 $document = Factory::getDocument();
-$document->addCustomTag('<link href="' . JURI::root(true) . '/components/com_customtables/libraries/customtables/media/css/style.css" rel="stylesheet">');
+$document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/style.css" rel="stylesheet">');
 
 ?>
 

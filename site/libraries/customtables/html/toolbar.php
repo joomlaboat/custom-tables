@@ -33,7 +33,7 @@ class RecordToolbar
         $this->isEditable = $isEditable;
         $this->isPublishable = $isPublishable;
         $this->isDeletable = $isDeletable;
-        $this->iconPath = Uri::root(true) . '/components/com_customtables/libraries/customtables/media/images/icons/';
+        $this->iconPath = CUSTOMTABLES_MEDIA_WEBPATH . 'images/icons/';
     }
 
     public function render(array $row, $mode)
@@ -95,6 +95,9 @@ class RecordToolbar
 
     protected function renderEditIcon($isModal = false): string
     {
+        if (defined('WPINC'))
+            return 'CustomTables: Edit Icons not supported in WP yet.';
+
         $alt = JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_EDIT');
 
         if ($this->ct->Env->toolbarIcons != '')

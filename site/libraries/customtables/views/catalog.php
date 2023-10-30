@@ -29,14 +29,14 @@ class Catalog
         $this->ct = &$ct;
     }
 
-    function render(?string $layoutName = null, $limit = 0): string
+    function render(string|int|null $layoutName = null, $limit = 0): string
     {
         if ($this->ct->Env->frmt == 'html')
             $this->ct->loadJSAndCSS();
 
         if ($this->ct->Env->legacySupport) {
 
-            $site_path = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR;
+            $site_path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR;
 
             require_once($site_path . 'layout.php');
             require_once($site_path . 'tagprocessor' . DIRECTORY_SEPARATOR . 'catalogtag.php');
@@ -112,10 +112,17 @@ class Catalog
         $pageLayoutLink = null;
         $itemLayoutNameString = null;
 
-        if (!is_null($layoutName) and $layoutName != '') {
+        if ($layoutName === '')
+            $layoutName = null;
+
+        if ($layoutName !== null) {
             $pageLayout = $Layouts->getLayout($layoutName);
-            $pageLayoutNameString = (($layoutName ?? '') == '' ? 'InlinePageLayout' : $layoutName);
-            $pageLayoutLink = '/administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $Layouts->layoutId;
+            if (isset($Layouts->layoutId)) {
+                $pageLayoutNameString = (($layoutName ?? '') == '' ? 'InlinePageLayout' : $layoutName);
+                $pageLayoutLink = '/administrator/index.php?option=com_customtables&view=listoflayouts&task=layouts.edit&id=' . $Layouts->layoutId;
+            } else {
+                echo 'Layout "' . $layoutName . '" not found.';
+            }
         } else {
             if ($this->ct->Env->frmt == 'csv') {
                 $pageLayout = $Layouts->createDefaultLayout_CSV($this->ct->Table->fields);
@@ -131,7 +138,12 @@ class Catalog
                     $pageLayout = '{% block record %}' . $itemLayout . '{% endblock %}';
                     $pageLayoutNameString = 'Generated_Basic_Page_Layout';
                 } else {
-                    $pageLayout = $Layouts->createDefaultLayout_SimpleCatalog($this->ct->Table->fields);
+
+                    if ($this->ct->Table->fields !== null)
+                        $pageLayout = $Layouts->createDefaultLayout_SimpleCatalog($this->ct->Table->fields);
+                    else
+                        $pageLayout = 'CustomTables: Fields not set.';
+
                     $pageLayoutNameString = 'Generated_Page_Layout';
                 }
             }
@@ -141,8 +153,11 @@ class Catalog
 
 // -------------------- Load Records
         if (!$this->ct->getRecords()) {
-            $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_TABLE_NOT_FOUND'), 'error');
-            return 'Table not found';
+
+            if (defined('_JEXEC'))
+                $this->ct->app->enqueueMessage(JoomlaBasicMisc::JTextExtended('COM_CUSTOMTABLES_ERROR_TABLE_NOT_FOUND'), 'error');
+
+            return 'CustomTables: Records not loaded.';
         }
 
 // -------------------- Parse Layouts
@@ -176,7 +191,7 @@ class Catalog
 
         if ($this->ct->Env->frmt == 'json') {
 
-            $pathViews = JPATH_SITE . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'libraries'
+            $pathViews = CUSTOMTABLES_LIBRARIES_PATH
                 . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR;
 
             require_once($pathViews . 'json.php');

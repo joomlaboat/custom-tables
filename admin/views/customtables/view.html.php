@@ -86,7 +86,7 @@ class CustomtablesViewCustomtables extends JViewLegacy
     public function setDocument(Joomla\CMS\Document\Document $document): void
     {
         // add dashboard style sheets
-        $document->addCustomTag('<link href="' . URI::root(true) . '/components/com_customtables/libraries/customtables/media/css/dashboard.css" type="text/css" rel="stylesheet" >');
+        $document->addCustomTag('<link href="' . CUSTOMTABLES_MEDIA_WEBPATH . 'css/dashboard.css" type="text/css" rel="stylesheet" >');
 
         // set page title
         $document->setTitle(Text::_('COM_CUSTOMTABLES_DASHBOARD'));
