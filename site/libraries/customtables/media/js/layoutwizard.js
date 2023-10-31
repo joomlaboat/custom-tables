@@ -203,7 +203,8 @@ function renderTabsJoomla(tabSetId, tabs) {
 }
 
 function replaceOldFieldTitleTagsWithTwigStyle() {
-    let editor = codemirror_editors[codemirror_active_index];
+
+    let editor = getActiveEditor();
     let documentText = editor.getValue();
     let count = 0;
     let changesMade = false;
@@ -509,7 +510,7 @@ function showModalFieldTagForm(tagStartChar, postfix, tagEndChar, tag, top, left
 
         let result = '{{ ' + tag + postfix + ' }}';
 
-        let editor = codemirror_editors[codemirror_active_index];
+        let editor = getActiveEditor();//codemirror_editors[codemirror_active_index];
         let doc = editor.getDoc();
         doc.replaceRange(result, cursor_from, cursor_to, "");
         return;
@@ -549,8 +550,8 @@ function showModalFieldTagForm(tagStartChar, postfix, tagEndChar, tag, top, left
 
 //Used in generated html link
 function addFieldTag(tagStartChar, postfix, tagEndChar, tag, param_count) {
-    const index = 0;
-    const cm = codemirror_editors[index];
+
+    let cm = getActiveEditor();
 
     if (param_count > 0) {
         const cr = cm.getCursor();
@@ -570,7 +571,7 @@ function addFieldTag(tagStartChar, postfix, tagEndChar, tag, param_count) {
 }
 
 function FillLayout() {
-    let editor = codemirror_editors[codemirror_active_index];
+    let editor = getActiveEditor();//codemirror_editors[codemirror_active_index];
     let t = parseInt(document.getElementById("jform_layouttype").value);
     if (isNaN(t) || t === 0) {
         alert("Type not selected.");
@@ -1050,3 +1051,12 @@ function getLayout_Record() {
     return result;
 }
 
+function getActiveEditor() {
+    let cm;
+    if (typeof wp !== 'undefined')
+        cm = codemirror_editors[codemirror_active_index].codemirror;
+    else if (typeof Joomla !== 'undefined')
+        cm = codemirror_editors[codemirror_active_index];
+
+    return cm;
+}

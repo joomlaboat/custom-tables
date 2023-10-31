@@ -185,7 +185,7 @@ function showModal() {
     // When the user clicks on <span> (x), close the modal
     span.onclick = function () {
         modal.style.display = "none";
-        const cm = codemirror_editors[0];
+        let cm = getActiveEditor();
         cm.focus();
     };
 
@@ -193,7 +193,7 @@ function showModal() {
     window.onclick = function (event) {
         if (event.target === modal) {
             modal.style.display = "none";
-            const cm = codemirror_editors[0];
+            const cm = getActiveEditor();
             cm.focus();
         }
     };
@@ -339,7 +339,7 @@ function showModalTagForm(tagStartChar, postfix, tagEndChar, tag, top, left, lin
         if (typeof (param_att.twigsimplereplacement) !== "undefined" && param_att.twigsimplereplacement !== "") {
             let cursor_from = {line: line, ch: positions[0]};
             let cursor_to = {line: line, ch: positions[1]};
-            let editor = codemirror_editors[codemirror_active_index];
+            let editor = getActiveEditor();//codemirror_editors[codemirror_active_index];
             let doc = editor.getDoc();
             doc.replaceRange(param_att.twigsimplereplacement, cursor_from, cursor_to, "");
             return true;
@@ -351,7 +351,7 @@ function showModalTagForm(tagStartChar, postfix, tagEndChar, tag, top, left, lin
             paramValueString = safeOld2NewParamConversion(paramValueString);
 
             let result = param_att.twigreplacestartchar + paramValueString + param_att.twigreplaceendchar;
-            let editor = codemirror_editors[codemirror_active_index];
+            let editor = getActiveEditor();//codemirror_editors[codemirror_active_index];
             let doc = editor.getDoc();
             doc.replaceRange(result, cursor_from, cursor_to, "");
             return true;
@@ -404,14 +404,14 @@ function showModalTagForm(tagStartChar, postfix, tagEndChar, tag, top, left, lin
             let cursor_from = {line: line, ch: positions[0]};
             let cursor_to = {line: line, ch: positions[1]};
             let result = param_att.twigreplacestartchar + paramValueString + param_att.twigreplaceendchar;
-            let editor = codemirror_editors[codemirror_active_index];
+            let editor = getActiveEditor();//codemirror_editors[codemirror_active_index];
             let doc = editor.getDoc();
             doc.replaceRange(result, cursor_from, cursor_to, "");
             return true;
         } else if (typeof (param_att.twigsimplereplacement) !== "undefined" && param_att.twigsimplereplacement !== "") {
             let cursor_from = {line: line, ch: positions[0]};
             let cursor_to = {line: line, ch: positions[1]};
-            let editor = codemirror_editors[codemirror_active_index];
+            let editor = getActiveEditor();//codemirror_editors[codemirror_active_index];
             let doc = editor.getDoc();
             doc.replaceRange(param_att.twigsimplereplacement, cursor_from, cursor_to, "");
             return true;
@@ -450,7 +450,7 @@ function showModalTagForm(tagStartChar, postfix, tagEndChar, tag, top, left, lin
 function addTag(tagstartchar, tagendchar, tag, param_count) {
 
     let postfix = '';
-    let cm = codemirror_editors[0];
+    let cm = getActiveEditor();//codemirror_editors[0];
 
     if (param_count > 0) {
 
@@ -467,10 +467,9 @@ function addTag(tagstartchar, tagendchar, tag, param_count) {
 }
 
 function updateCodeMirror(text) {
-    const editor = codemirror_editors[codemirror_active_index];
-
-    const doc = editor.getDoc();
-    const cursor = doc.getCursor();
+    let cm = getActiveEditor();
+    const doc = cm.getDoc();
+    const cursor = cm.getCursor();
     doc.replaceRange(text, cursor);
 }
 
@@ -714,7 +713,7 @@ function findTagObjectByName(tagStartChar, tagEndChar, lookForTag) {
     return null;
 }
 
-function getParamEditForm(tagObject, line, positions, isNew, countParams, tagStartChar, postfix, tagEndChar, paramValueString, fieldTypeParametersList) {
+function getParamEditForm(tagObject, line_number, positions, isNew, countParams, tagStartChar, postfix, tagEndChar, paramValueString, fieldTypeParametersList) {
 
     let result = renderParamBox(tagObject, "current_tagparameter", paramValueString, fieldTypeParametersList);
     result += '<div class="dynamic_values"><span class="dynamic_values_label">Tag with parameter:</span> ';
@@ -729,7 +728,7 @@ function getParamEditForm(tagObject, line, positions, isNew, countParams, tagSta
     result += '<div style="text-align:center;">';
 
     let postfixClean = postfix.replaceAll('"', '****quote****');
-    result += '<button id="clsave" onclick=\'return saveParams(event,' + countParams + ',' + line + ',' + positions[0] + ',' + positions[1] + ',' + isNew + ',"' + tagStartChar + '","' + tagEndChar + '","' + postfixClean + '");\' class="btn btn-small button-apply btn-success">Save</button>';
+    result += '<button id="clsave" onclick=\'return saveParams(event,' + countParams + ',' + line_number + ',' + positions[0] + ',' + positions[1] + ',' + isNew + ',"' + tagStartChar + '","' + tagEndChar + '","' + postfixClean + '");\' class="btn btn-small button-apply btn-success">Save</button>';
     result += ' <button id="clclose" onclick=\'return closeModal(event);\' class="btn btn-small button-cancel btn-danger">Cancel</button>';
     result += '</div>';
     return result;
@@ -756,12 +755,11 @@ function saveParams(e, countParams, line_number, pos1, pos2, isNew, tagStartChar
 
     let cursor_from = {line: line_number, ch: pos1};
     let cursor_to = {line: line_number, ch: pos2};
-    let editor = codemirror_editors[codemirror_active_index];
+    let editor = getActiveEditor();
     let doc = editor.getDoc();
     doc.replaceRange(result, cursor_from, cursor_to, "");
     document.getElementById('layouteditor_Modal').style.display = "none";
-    let cm = codemirror_editors[0];
-    cm.focus();
+    editor.focus();
     return false;
 }
 
@@ -769,7 +767,7 @@ function closeModal(e) {
     e.preventDefault();
 
     document.getElementById('layouteditor_Modal').style.display = "none";
-    const cm = codemirror_editors[0];
+    const cm = getActiveEditor();//codemirror_editors[0];
     cm.focus();
     return false;
 }
@@ -941,7 +939,7 @@ function addTabExtraEvents3() {
                 setTimeout(function () {
                     codemirror_active_index = index;
                     codemirror_active_areatext_id = 'jform_' + code;
-                    let cm = codemirror_editors[index];
+                    let cm = getActiveEditor();//codemirror_editors[index];
                     cm.refresh();
                     adjustEditorHeight();
                 }, 100);
@@ -960,7 +958,7 @@ function addTabExtraEvent4(id) {
             setTimeout(function () {
                 codemirror_active_index = index;
                 codemirror_active_areatext_id = 'jform_' + id;
-                let cm = codemirror_editors[index];
+                let cm = getActiveEditor();//codemirror_editors[index];
                 cm.refresh();
                 adjustEditorHeight();
             }, 100);
@@ -991,7 +989,7 @@ function addTabExtraEvents() {
     let index = 0;
     codemirror_active_index = index;
     codemirror_active_areatext_id = 'jform_' + tabs[0];
-    let cm = codemirror_editors[index];
+    let cm = getActiveEditor();//codemirror_editors[index];
 
     if (typeof (cm) == "undefined")
         return;
@@ -1011,58 +1009,63 @@ function addExtraEvents() {
 }
 
 function addExtraEvent(index) {
+
     let cm = codemirror_editors[index];
-    addExtraEvent2CMObject(cm);
-}
-
-function addExtraEvent2CMObject(cm) {
-
     cm.refresh();
 
     cm.on('dblclick', function () {
+        //cm.state
+        let cr = null;
+        let line = null;
+        cr = cm.getCursor();
+        line = cm.getLine(cr.line);
+        doExtraCodeMirrorEvent(cr.ch, line, cr.line, cm.cursorCoords(cr, "window"));
+    }, true);
+}
 
-        let cr = cm.getCursor();
-        let line = cm.getLine(cr.line);
-        let positions = findTagInLine(cr.ch, line);
+function doExtraCodeMirrorEvent(ch, lineString, lineNumber, mousePos) {
+    console.log(lineString);
+    let positions = findTagInLine(ch, lineString);
+    console.log(positions);
 
-        if (positions != null) {
-            let startChar = line.substring(positions[0], positions[0] + 1); //+1 to have 1 character
-            if (startChar === '{') {
-                let startChar2 = line.substring(positions[0] - 1, positions[0] + 1);
-                if (startChar2 === '{{')
-                    startChar = '{{';
-            }
-
-            let endChar = line.substring(positions[1] - 1, positions[1] - 1 + 1);//-1 because position ends after the tag
-            if (endChar === '}') {
-                let endChar2 = line.substring(positions[1] - 1, positions[1] - 1 + 2);
-                if (endChar2 === '}}')
-                    endChar = '}}';
-            }
-
-            let tag = line.substring(positions[0] + 1, positions[1] - 1);//-1 because position ends after the tag
-
-            if (startChar === '{{') {
-                positions[0] = positions[0] - 1;
-                positions[1] = positions[1] + 1;
-            }
-
-            let postfix = ''; //todo
-            let mousePos = cm.cursorCoords(cr, "window");
-
-            showModalForm(startChar, postfix, endChar, tag, mousePos.top, mousePos.left, cr.line, positions, 0);
-        } else {
-
-            let positionsRange = findTagInMultiline(cm, cr.ch, cr.line);
-            if (positionsRange !== null) {
-
-                convertOldSimpleCatalogToNew(cm, positionsRange);
-            } else {
-                alert("The tag has a syntax error or too complex for me to understand.")
-            }
+    if (positions != null) {
+        let startChar = lineString.substring(positions[0], positions[0] + 1); //+1 to have 1 character
+        if (startChar === '{') {
+            let startChar2 = lineString.substring(positions[0] - 1, positions[0] + 1);
+            if (startChar2 === '{{')
+                startChar = '{{';
         }
 
-    }, true);
+        let endChar = lineString.substring(positions[1] - 1, positions[1] - 1 + 1);//-1 because position ends after the tag
+        if (endChar === '}') {
+            let endChar2 = lineString.substring(positions[1] - 1, positions[1] - 1 + 2);
+            if (endChar2 === '}}')
+                endChar = '}}';
+        }
+
+        let tag = lineString.substring(positions[0] + 1, positions[1] - 1);//-1 because position ends after the tag
+
+        if (startChar === '{{') {
+            positions[0] = positions[0] - 1;
+            positions[1] = positions[1] + 1;
+        }
+
+        let postfix = ''; //todo
+
+        console.log("startChar:" + startChar);
+        console.log("line2:" + lineString);
+        console.log("endChar:" + endChar);
+        showModalForm(startChar, postfix, endChar, tag, mousePos.top, mousePos.left, lineNumber, positions, 0);
+    } else {
+        let cm = getActiveEditor();
+        let positionsRange = findTagInMultiline(cm, cr.ch, cr.line);
+        if (positionsRange !== null) {
+
+            convertOldSimpleCatalogToNew(cm, positionsRange);
+        } else {
+            alert("The tag has a syntax error or too complex for me to understand.")
+        }
+    }
 }
 
 function convertOldSimpleCatalogToNew(cm, positionsRange) {
