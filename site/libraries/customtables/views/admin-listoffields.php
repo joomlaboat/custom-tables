@@ -33,6 +33,7 @@ class ListOfFields
     var ?bool $canDelete;
     var ?bool $canEdit;
     var ?bool $saveOrder;
+    var string $dbPrefix;
 
     function __construct(CT $ct, ?array $items = null, ?bool $canState = null, ?bool $canDelete = null, ?bool $canEdit = null, ?bool $saveOrder = null)
     {
@@ -47,6 +48,7 @@ class ListOfFields
         $this->canDelete = $canDelete ?? false;
         $this->canEdit = $canEdit ?? false;
         $this->saveOrder = $saveOrder ?? false;
+        $this->dbPrefix = database::getDBPrefix();
     }
 
     function getListQuery(int $tableId, $published = null, $search = null, $type = null, $orderCol = null, $orderDirection = null, $limit = 0, $start = 0): string
@@ -121,6 +123,8 @@ class ListOfFields
     protected function renderBodyLine(object $item, int $i, $canCheckin, $userChkOut): string
     {
         $hashRealTableName = database::realTableName($this->ct->Table->realtablename);
+        $hashRealTableName = str_replace($this->dbPrefix, '#__', $hashRealTableName);
+
         $result = '<tr class="row' . ($i % 2) . '" data-draggable-group="' . $this->ct->Table->tableid . '">';
 
         if ($this->canState or $this->canDelete) {

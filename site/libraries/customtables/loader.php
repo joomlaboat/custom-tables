@@ -17,6 +17,9 @@ if (!function_exists('str_contains')) {
 
 function CTLoader($include_utilities = false, $include_html = false, $PLUGIN_NAME_DIR = null, $componentName = 'com_customtables', ?bool $loadTwig = null)
 {
+    if (defined('CUSTOMTABLES_MEDIA_WEBPATH'))
+        return;
+
     if ($loadTwig === null and defined('_JEXEC')) {
         $params = JComponentHelper::getParams($componentName);
         $loadTwig = $params->get('loadTwig');
@@ -31,8 +34,8 @@ function CTLoader($include_utilities = false, $include_html = false, $PLUGIN_NAM
         define('CUSTOMTABLES_LIBRARIES_PATH', $libraryPath);
 
     if (defined('_JEXEC')) {
-        define('CUSTOMTABLES_MEDIA_WEBPATH', CUSTOMTABLES_MEDIA_WEBPATH . '');
-        define('CUSTOMTABLES_MEDIA_HOME_URL', URI::root(true));
+        define('CUSTOMTABLES_MEDIA_WEBPATH', URI::root(false) . 'components/com_customtables/libraries/customtables/media/');
+        define('CUSTOMTABLES_MEDIA_HOME_URL', URI::root(false));
     } elseif (defined('WPINC')) {
         define('CUSTOMTABLES_MEDIA_WEBPATH', home_url() . '/wp-content/plugins/customtables/libraries/customtables/media/');
         define('CUSTOMTABLES_MEDIA_HOME_URL', home_url());

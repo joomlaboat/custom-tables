@@ -210,13 +210,18 @@ class database
     {
         if (defined('_JEXEC')) {
 
-            $db = Factory::getDbo();
+            //$db = Factory::getDbo();
+            $db = Factory::getContainer()->get('DatabaseDriver');
+
             $query = $db->getQuery(true);
 
             // Construct the update statement
             $fields = array();
             foreach ($data as $key => $value) {
-                $fields[] = $db->quoteName($key) . ' = ' . $db->quote($value);
+                if ($value === null)
+                    $fields[] = $db->quoteName($key) . ' = NULL';
+                else
+                    $fields[] = $db->quoteName($key) . ' = ' . $db->quote($value);
             }
 
             $conditions = array();

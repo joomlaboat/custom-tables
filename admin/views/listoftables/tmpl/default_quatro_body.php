@@ -58,6 +58,8 @@ foreach ($this->items as $i => $item): ?>
                 <?php
                 if ($this->ct->Env->advancedTagProcessor) {
                     $hashRealTableName = database::realTableName($item->realtablename);
+                    $hashRealTableName = str_replace($dbPrefix, '#__', $hashRealTableName);
+
                     echo '<br/><span style="color:grey;">' . $hashRealTableName . '</span>';
                 }
                 ?>

@@ -87,18 +87,28 @@ class SaveFieldQuerySet
                 if (isset($value)) {
                     $value = preg_replace("/[^A-Za-z\d\-]/", '', $value);
 
+                    echo '$this->field->comesfieldname=' . $this->field->comesfieldname . '<br>';
+                    echo '$value=' . $value . '<br>';
+
+                    if ($value === null)
+                        return;
+
+                    if ($value == '') {
+                        echo 'set val null<br>';
+                        $this->setNewValue(null);
+                        return;
+                    }
+
                     if (is_numeric($value)) {
                         if ($value == 0) {
                             $this->setNewValue(null);
-                            return;// $this->field->realfieldname . '=NULL';
+                            return;
                         }
-                        // $this->field->realfieldname . '=' . $value;
                     } else {
                         if ($value == '') {
                             $this->setNewValue(null);
-                            return;// $this->field->realfieldname . '=NULL';
+                            return;
                         }
-                        // $this->field->realfieldname . '=' . database::quote($value);
                     }
                     $this->setNewValue($value);
                     return;

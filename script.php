@@ -79,7 +79,7 @@ class com_customtablesInstallerScript
         if (!file_exists(JPATH_SITE . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'ct_images'))
             mkdir(JPATH_SITE . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'ct_images');
 
-        $path = CUSTOMTABLES_LIBRARIES_PATH . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR;
+        $path = JPATH_SITE . 'components' . DIRECTORY_SEPARATOR . 'com_customtables' . DIRECTORY_SEPARATOR . 'customtables' . DIRECTORY_SEPARATOR;
         $loader_file = $path . 'loader.php';
         if (file_exists($loader_file)) {
             //Do not run on uninstall

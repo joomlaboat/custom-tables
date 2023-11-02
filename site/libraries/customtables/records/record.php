@@ -67,6 +67,8 @@ class record
             $this->row_old[$this->ct->Table->realidfieldname] = '';// Why?
 
         $fieldsToSave = $this->getFieldsToSave($this->row_old); //will Read page Layout to find fields to save
+        print_r($fieldsToSave);
+
 
         if (($this->ct->LayoutVariables['captcha'] ?? null)) {
             if (!$this->check_captcha()) {
@@ -116,7 +118,13 @@ class record
             $this->listing_id = database::insert($this->ct->Table->realtablename, $saveField->row_new);
         } else {
             $this->updateLog($this->listing_id);
-            database::update($this->ct->Table->realtablename, $saveField->row_new, [$this->ct->Table->realidfieldname => $this->listing_id]);
+
+            try {
+                database::update($this->ct->Table->realtablename, $saveField->row_new, [$this->ct->Table->realidfieldname => $this->listing_id]);
+            } catch (Exception $e) {
+                die('Error: ' . $e->getMessage());
+                throw new Exception($e->getMessage());
+            }
         }
 
         if (count($saveField->row_new) < 1) {
@@ -178,6 +186,7 @@ class record
                 }
             }
         }
+
         return true;
     }
 
